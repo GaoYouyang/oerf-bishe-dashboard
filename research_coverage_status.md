@@ -87,6 +87,23 @@
 
 ## 不建议继续扩大的方向
 
+### 2026-07-17 DG-WPCGLS fresh multi-seed NO-GO
+
+- 已从“需要真实 covariance”推进到“covariance 是否改变三维 inverse”：
+  显式 detector whitener 与 BOST wrapper 保持严格 `4F+4A^T`。
+- 真实 PSU detector geometry、8 类 analytic reaction morphologies、16 个
+  fresh calibration/field/noise replicates 上，DG-CovGate 相对
+  component-IID 的 mean field gain 为 `+1.178%`，95% CI
+  `[+0.786%, +1.571%]`。
+- 预注册尾部门失败：p10 `-1.029%`，>1% harm `10.94%`；annular kernel
+  平均约 `-2.04%`。Oracle covariance 出现同样尾部，因此不能只继续增加
+  flow-off repeats 或模型容量。
+- 当前最窄研究问题改为：covariance 改变 normal spectrum 后，怎样联合选择
+  fixed SPD preconditioner、whitening tempering 与 early stopping，并用
+  deployment-visible signal 控制 reacting-front tail risk。
+- 本机 16 种子运行约 `14.5 s`；当前网络和 Mac 算力均不是短板。真实
+  flow-off repeats 与独立 session 仍是最终迁移瓶颈。
+
 - 不再大规模扩 Nature/Science 光谱仪硬件论文：它们能证明课题组很强，但不帮助何远哲 BOST 定题。
 - 不再把等离子体/材料合成作为主线：与用户物理基础和何远哲带教方向距离较远。
 - 不再追求“所有燃烧论文都收录”：对本科毕设会稀释主线。

@@ -441,6 +441,100 @@ def _graph_whitened_coordinates(
     return whitened / np.sqrt(float(covariance_scale * fit.sigma2))
 
 
+def apply_covariance_whitening(
+    fit: CovarianceFit,
+    centered: np.ndarray,
+    *,
+    eigenvectors: np.ndarray,
+    covariance_scale: float = 1.0,
+) -> np.ndarray:
+    """Apply the fitted inverse covariance square root.
+
+    The input must already be centered. ``covariance_scale`` multiplies the
+    fitted covariance, which is useful for predictive mean correction or a
+    known sample-specific noise scale. Low-rank drift factors are applied in
+    the fitted base-whitened coordinates.
+    """
+
+    values = np.asarray(centered, dtype=np.float64)
+    if values.ndim < 2 or values.shape[-1] != 2:
+        raise ValueError("centered values must end with [node,2]")
+    node_count = int(values.shape[-2])
+    if fit.mean.shape != (node_count, 2):
+        raise ValueError("fit mean does not match centered values")
+    scale = float(covariance_scale)
+    if not np.isfinite(scale) or scale <= 0.0:
+        raise ValueError("covariance_scale must be finite and positive")
+    leading_shape = values.shape[:-2]
+    canonical = values.reshape(-1, node_count, 2)
+
+    if fit.diagonal_variance is not None:
+        variance = np.asarray(fit.diagonal_variance, dtype=np.float64)
+        if variance.shape != (node_count, 2) or np.any(variance <= 0.0):
+            raise ValueError("diagonal covariance fit is invalid")
+        return (
+            canonical / np.sqrt(scale * variance)[None]
+        ).reshape(*leading_shape, node_count, 2)
+
+    whitened = _graph_whitened_coordinates(
+        fit,
+        canonical,
+        eigenvectors=eigenvectors,
+        covariance_scale=scale,
+    )
+    if fit.low_rank_vectors is not None:
+        vectors = np.asarray(fit.low_rank_vectors, dtype=np.float64)
+        eigenvalues = np.asarray(
+            fit.low_rank_eigenvalues,
+            dtype=np.float64,
+        )
+        dimension = 2 * node_count
+        if (
+            vectors.ndim != 2
+            or vectors.shape[1] != dimension
+            or eigenvalues.shape != (vectors.shape[0],)
+            or np.any(eigenvalues < 0.0)
+        ):
+            raise ValueError("low-rank covariance factors are invalid")
+        flat = whitened.reshape(-1, dimension)
+        attenuation = 1.0 - 1.0 / np.sqrt(1.0 + eigenvalues)
+        projection = flat @ vectors.T
+        flat = flat - (projection * attenuation[None]) @ vectors
+        whitened = flat.reshape(-1, node_count, 2)
+    return whitened.reshape(*leading_shape, node_count, 2)
+
+
+def covariance_whitening_matrix(
+    fit: CovarianceFit,
+    *,
+    eigenvectors: np.ndarray,
+    covariance_scale: float = 1.0,
+) -> np.ndarray:
+    """Materialize a small detector-domain whitening matrix.
+
+    The dense matrix is intended for the 2-D detector residual domain, not the
+    3-D reconstruction volume. It makes the transpose operation explicit and
+    auditable when wrapping a matrix-free BOST forward operator.
+    """
+
+    node_count = int(fit.mean.shape[0])
+    if fit.mean.shape != (node_count, 2):
+        raise ValueError("fit mean must have shape [node,2]")
+    dimension = 2 * node_count
+    basis = np.eye(dimension, dtype=np.float64).reshape(
+        dimension,
+        node_count,
+        2,
+    )
+    transformed = apply_covariance_whitening(
+        fit,
+        basis,
+        eigenvectors=eigenvectors,
+        covariance_scale=float(covariance_scale),
+    ).reshape(dimension, dimension)
+    return transformed.T
+
+
 def _graph_logdet(
     fit: CovarianceFit,
     *,

@@ -991,3 +991,68 @@ BOST detector graph、held-out camera、whitened PCGLS 与 front reconstruction�
 **证据等级。** **L2 geometry + L3 synthetic acquisition planning**。使用真实
 detector graph，未使用真实 temporal repeats，未做三维 reconstruction，不宣称
 算法优越。
+
+## 42. 正确 covariance 确实帮助平均重建，但坏尾部仍然否决它
+
+DG-CovGate 回答了“50 张 flow-off 才够稳”，这次继续问更关键的一步：
+把正确 covariance 接进三维 inverse 后，field 和 front 是否真的改善？
+
+我先实现了一个线性 detector whitening wrapper：
+
+```text
+B(x) = L A(x)
+B^T(r) = A^T L^T(r)
+```
+
+它支持 component IID、diagonal、graph heat、node amplitude 和低秩 drift，
+并通过 detector-level 与完整 BOST adjoint identity。包装后固定 K 步 PCGLS
+仍然只有 K 次 forward 和 K 次 adjoint，没有把 whitening 当成“免费多跑一次
+物理算子”。
+
+单种子 smoke 看起来很好：graph-correlated noise 下 DG-CovGate 的 field gain
+中位数是 `+2.567%`，oracle 为 `+2.611%`，而 IID truth 下 gate 自动退回
+component-IID。这个结果只用了 3.38 秒，所以我没有继续庆祝，而是立即冻结
+16 个全新 calibration/field/noise seed。
+
+多种子结果更真实：
+
+- mean field gain `+1.178%`；
+- 16-replicate Student-t 95% CI `[+0.786%, +1.571%]`；
+- gradient mean gain `+0.932%`；
+- front-F1 mean gain `+0.01225`；
+- 但 field p10 `-1.029%`；
+- `>1%` harm rate `10.94%`。
+
+预注册要求 p10 至少 `-0.5%`、harm 不超过 `10%`，所以判 **NO-GO**。16 个
+replicate 中只有 6 个单次 smoke 过门，10 个不过。
+
+最重要的诊断是 DG-CovGate 与 oracle covariance 几乎重合。annular kernel
+平均约 `-2.04%`，thin front 也有坏尾部；oracle 同样如此。这说明问题不是
+“50 张还没把 covariance 拟合准”，而是 whitening 改变了 normal operator 的
+谱以后，继续使用 IID objective 下选定的 Sobolev strength=5 和固定四步
+early stopping，会产生 morphology-dependent bias/variance tradeoff。
+
+**讲人话：**给每种噪声正确的权重，平均上确实更准；但重建算法的“方向盘”
+还是按旧路面调的，遇到环状薄结构会偶尔偏得更多。正确噪声模型是必要条件，
+不是自动成功按钮。
+
+下一步先在已经打开的 16 种子上做 post-open 诊断：
+
+1. 扫固定 Sobolev strength，检查预条件器是否必须随 covariance 联动；
+2. 扫 partial whitening/precision tempering，寻找 mean 与 p10 的 Pareto；
+3. 若能把 annular/thin 尾部压住，再冻结全新种子；
+4. deterministic 路线过门后，才允许小型 operator/controller 学习 selector。
+
+学习模型必须击败“正确 whitening + 重新条件化的经典 PCGLS”，不能把
+deterministic GLS 的收益归功于网络。
+
+完整入口：
+
+- [严格 NO-GO 说明](psu_b0_dg_wpcgls_multiseed_no_go_2026-07-17.md)
+- [冻结配置](../demo_t16_operator/configs/psu_b0_dg_wpcgls_multiseed_v1.json)
+- [四联图](../demo_t16_operator/results/psu_b0_dg_wpcgls_multiseed/psu_b0_dg_wpcgls_multiseed_figure.png)
+- [结果 JSON](../demo_t16_operator/results/psu_b0_dg_wpcgls_multiseed/report.json)
+
+**证据等级。** **L2 real detector geometry + L3 fresh synthetic
+reconstruction pilot**。没有真实 flow-off repeats、实验三维真值或 neural
+operator comparison。

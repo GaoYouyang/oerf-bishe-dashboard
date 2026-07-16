@@ -511,3 +511,34 @@
   planning：50 repeats 首次通过预设 coverage/likelihood/harm/activation 全部门，
   真实数据授权仍为 false。正式边界见
   `docs/psu_b0_detector_graph_covariance_acquisition_gate_2026-07-17.md`。
+
+## 2026-07-17 covariance-weighted inverse 下游重建核验
+
+- BOS uncertainty 主证据补齐：Rajendran et al.,
+  `10.1088/1361-6501/ab60c8` 使用 displacement uncertainty 与稀疏 Poisson
+  operators 传播 density uncertainty，并报告 sharp density changes 会把
+  uncertainty 传播到视场其他位置。OSTI accepted manuscript 可公开阅读。
+- correlated-noise inverse 的新颖性边界补齐：Generalized least-squares CT
+  已明确联合 detector blur 与 correlated noise model；因此“对测量做 covariance
+  whitening/GLS”不能作为本项目独立新意。BOST 贡献必须来自真实 flow-off
+  acquisition、detector geometry、同调用 inverse 与 reacting-front/tail-risk
+  验证。
+- 新增 `DetectorCovarianceWhitening` 与 `WhitenedMeasurementOperator`：
+  component-IID、diagonal、graph、amplitude 与 low-rank drift 都可组成显式
+  `L/L^T`；定向测试验证 factorized/dense whitening 一致、detector adjoint
+  identity 与 BOST wrapper `K F + K A^T` 调用合同。
+- 单种子 smoke 在 graph noise 下给出 DG-CovGate/oracle 中位 field gain
+  `+2.567%/+2.611%`，但只作为机制筛查。随后在结果打开前提交
+  `f061acb`，冻结 16 个全新 calibration/field/noise replicates。
+- fresh multi-seed 主结果：DG-CovGate mean gain `+1.178%`，replicate-cluster
+  95% CI `[+0.786%, +1.571%]`，front-F1 mean `+0.01225`；但 p10
+  `-1.029%`、>1% harm `10.94%`，未过预注册 `-0.5%/10%` 门，判 NO-GO。
+- Oracle covariance 的 mean/p10/harm 与 DG-CovGate 几乎相同，说明本轮尾部
+  主要不是 R=50 estimator error，而是 whitened objective、固定四步 early
+  stopping 与 IID 条件下选择的 Sobolev preconditioner 之间的耦合。annular
+  kernel 是最明确失败族。
+- 下一步只做 post-open covariance-conditioned preconditioner / whitening
+  tempering 诊断；若存在 Pareto 改善，再冻结全新种子。未通过 deterministic
+  baseline 前，不训练 learned selector，不声称优于 NeRIF/FNO/DeepONet。
+- 严格说明：
+  `docs/psu_b0_dg_wpcgls_multiseed_no_go_2026-07-17.md`。
