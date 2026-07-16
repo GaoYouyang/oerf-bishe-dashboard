@@ -18,6 +18,12 @@ import torch
 from demo_t16_operator.psu_b0_streaming_operator import (
     zero_outer_boundary_support,
 )
+from demo_t16_operator.psu_b0_detector_graph_features import (
+    DETECTOR_GRAPH_FEATURE_SCHEMA,
+    build_detector_knn_graph,
+    detector_graph_diagnostics,
+    detector_graph_front_features,
+)
 from demo_t16_operator.psu_b0_view_decomposed_features import (
     VIEW_DECOMPOSED_FEATURE_SCHEMA,
     view_adjoint_conflict_features,
@@ -179,6 +185,54 @@ def _feature_batch(
     )
 
 
+def _detector_feature_batch(
+    *,
+    wrapped: DevelopmentSplit,
+    operator: Any,
+    graph: dict[str, torch.Tensor],
+    device: torch.device,
+    rays_per_view: int,
+    batch_size: int = 12,
+) -> tuple[np.ndarray, tuple[str, ...], dict[str, Any]]:
+    split = wrapped.data
+    feature_parts = []
+    started = time.perf_counter()
+    operator.reset_call_counts()
+    for start in range(0, len(split.truth), int(batch_size)):
+        stop = min(start + int(batch_size), len(split.truth))
+        with torch.no_grad():
+            features, names = detector_graph_front_features(
+                split.observation_uv[start:stop].to(device),
+                sigma_by_view=split.sigma_by_view[start:stop].to(device),
+                view_mask=split.view_mask[start:stop].to(device),
+                graph=graph,
+                projection_u_xyz=operator.projection_u,
+                projection_v_xyz=operator.projection_v,
+                rays_per_view=rays_per_view,
+            )
+        feature_parts.append(features.cpu())
+    _synchronize(device)
+    calls = operator.call_report()
+    return (
+        torch.cat(feature_parts, dim=0).numpy(),
+        names,
+        {
+            "split": split.name,
+            "sample_count": len(split.truth),
+            "wall_seconds": float(time.perf_counter() - started),
+            "feature_kind": "detector_graph_front",
+            "logical_grouped_adjoint_calls_per_sample": 0,
+            "per_ray_scatter_traversals": 0,
+            "equal_flop_to_pooled_adjoint": False,
+            "maximum_group_sum_relative_error": 0.0,
+            "batch_invocations": {
+                "forward": int(calls["forward_calls"]),
+                "adjoint": int(calls["adjoint_calls"]),
+            },
+        },
+    )
+
+
 def _fallback_route(
     *,
     blend: float,
@@ -324,8 +378,11 @@ def _stress_audit(
 
 def build_public_summary(private: dict[str, Any]) -> dict[str, Any]:
     return {
-        "schema_version": PUBLIC_SCHEMA,
-        "feature_schema": VIEW_DECOMPOSED_FEATURE_SCHEMA,
+        "schema_version": private.get(
+            "public_schema_version",
+            PUBLIC_SCHEMA,
+        ),
+        "feature_schema": private["feature_schema"],
         "status": private["status"],
         "evidence_scope": private["evidence_scope"],
         "configuration": copy.deepcopy(private["configuration_public"]),
@@ -333,6 +390,9 @@ def build_public_summary(private: dict[str, Any]) -> dict[str, Any]:
             private["regeneration_checks"]
         ),
         "expert_bank": copy.deepcopy(private["expert_bank"]),
+        "detector_graph_diagnostics": copy.deepcopy(
+            private.get("detector_graph_diagnostics")
+        ),
         "feature_schema_summary": copy.deepcopy(
             private["feature_schema_summary"]
         ),
@@ -372,6 +432,24 @@ def run_probe(
     device_name: str,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     config = _load_json(config_path)
+    explicit_feature_kind = str(
+        config.get("explicit_feature_kind", "view_adjoint_conflict")
+    )
+    explicit_feature_set = str(
+        config.get("explicit_feature_set_name", "view_conflict")
+    )
+    combined_feature_set = str(
+        config.get(
+            "combined_feature_set_name",
+            "pooled_plus_view_conflict",
+        )
+    )
+    method_prefix = str(config.get("method_prefix", "vd0"))
+    feature_schema = (
+        DETECTOR_GRAPH_FEATURE_SCHEMA
+        if explicit_feature_kind == "detector_graph_front"
+        else VIEW_DECOMPOSED_FEATURE_SCHEMA
+    )
     development_config = _load_json(
         root / str(config["source_development_config"])
     )
@@ -412,6 +490,24 @@ def run_probe(
             geometry["nominal_finite_aperture_sample_count"]
         ),
     )
+    detector_graph = None
+    graph_diagnostics = None
+    if explicit_feature_kind == "detector_graph_front":
+        graph_config = config["detector_graph"]
+        detector_graph = build_detector_knn_graph(
+            nominal_geometry["detector_xy"],
+            view_count=int(geometry["view_count"]),
+            rays_per_view=rays_per_view,
+            neighbor_count=int(graph_config["neighbor_count"]),
+            least_squares_ridge=float(
+                graph_config["least_squares_ridge"]
+            ),
+        )
+        graph_diagnostics = detector_graph_diagnostics(detector_graph)
+    elif explicit_feature_kind != "view_adjoint_conflict":
+        raise ValueError(
+            f"unsupported explicit_feature_kind: {explicit_feature_kind}"
+        )
     true_operator = _make_operator(
         true_geometry,
         grid_size=grid_size,
@@ -449,32 +545,43 @@ def run_probe(
 
     features_by_split: dict[str, dict[str, np.ndarray]] = {}
     feature_execution = []
-    conflict_names: tuple[str, ...] = ()
+    explicit_names: tuple[str, ...] = ()
     pooled_names = tuple(
         pooled_probe["feature_schema_summary"][
             "initial_normal_spectrum"
         ]["feature_names"]
     )
     for split_name, wrapped in splits.items():
-        conflict, conflict_names, ledger = _feature_batch(
-            wrapped=wrapped,
-            operator=nominal_operator,
-            device=device,
-            rays_per_view=rays_per_view,
-        )
+        if explicit_feature_kind == "detector_graph_front":
+            if detector_graph is None:
+                raise RuntimeError("detector graph was not initialized")
+            explicit, explicit_names, ledger = _detector_feature_batch(
+                wrapped=wrapped,
+                operator=nominal_operator,
+                graph=detector_graph,
+                device=device,
+                rays_per_view=rays_per_view,
+            )
+        else:
+            explicit, explicit_names, ledger = _feature_batch(
+                wrapped=wrapped,
+                operator=nominal_operator,
+                device=device,
+                rays_per_view=rays_per_view,
+            )
         pooled = np.asarray(
             pooled_probe["features_private"][split_name][
                 "initial_normal_spectrum"
             ],
             dtype=np.float64,
         )
-        if len(pooled) != len(conflict):
+        if len(pooled) != len(explicit):
             raise ValueError("pooled and view-decomposed features do not align")
         features_by_split[split_name] = {
             "pooled_initial_normal": pooled,
-            "view_conflict": conflict,
-            "pooled_plus_view_conflict": np.concatenate(
-                (pooled, conflict),
+            explicit_feature_set: explicit,
+            combined_feature_set: np.concatenate(
+                (pooled, explicit),
                 axis=1,
             ),
         }
@@ -564,7 +671,7 @@ def run_probe(
                 gain_targets_by_blend[blend],
                 regularization=float(route["mean_regularization"]),
             )
-            method = f"vd0_{feature_set}_{route_name}"
+            method = f"{method_prefix}_{feature_set}_{route_name}"
             methods.append(method)
             selection_models[method] = {
                 "parameters": copy.deepcopy(route),
@@ -661,8 +768,8 @@ def run_probe(
         (row["candidate_method"], row["split"]): row
         for row in summaries
     }
-    pooled_method = "vd0_pooled_initial_normal_strict"
-    combined_method = "vd0_pooled_plus_view_conflict_strict"
+    pooled_method = f"{method_prefix}_pooled_initial_normal_strict"
+    combined_method = f"{method_prefix}_{combined_feature_set}_strict"
     combined_beats_pooled = all(
         summary_lookup[(combined_method, split_name)][
             "mean_field_gain_percent"
@@ -688,9 +795,13 @@ def run_probe(
         and float(row["gain_geometric_mean_maximum_defect"]) <= 2e-5
         for row in transfer_execution
     )
-    grouped_sum_error = max(
-        float(row["maximum_group_sum_relative_error"])
-        for row in feature_execution
+    grouped_sum_error = (
+        max(
+            float(row["maximum_group_sum_relative_error"])
+            for row in feature_execution
+        )
+        if explicit_feature_kind == "view_adjoint_conflict"
+        else 0.0
     )
     public_config = copy.deepcopy(config)
     public_config["inherited_strict_oof_gate"] = copy.deepcopy(
@@ -700,12 +811,23 @@ def run_probe(
         rq_config["development_gate"]
     )
     private = {
-        "schema_version": PRIVATE_SCHEMA,
-        "feature_schema": VIEW_DECOMPOSED_FEATURE_SCHEMA,
-        "status": STATUS,
-        "evidence_scope": (
-            "REAL_PSU_SUPPORT_GEOMETRY_WITH_ANALYTIC_REACTION_MORPHOLOGY_"
-            "AND_SYNTHETIC_CAMERA_NOISE_POSTOPEN_VIEW_DECOMPOSITION_PROBE"
+        "schema_version": str(
+            config.get("private_schema_version", PRIVATE_SCHEMA)
+        ),
+        "public_schema_version": str(
+            config.get("public_schema_version", PUBLIC_SCHEMA)
+        ),
+        "feature_schema": feature_schema,
+        "status": str(config.get("result_status", STATUS)),
+        "evidence_scope": str(
+            config.get(
+                "evidence_scope",
+                (
+                    "REAL_PSU_SUPPORT_GEOMETRY_WITH_ANALYTIC_REACTION_"
+                    "MORPHOLOGY_AND_SYNTHETIC_CAMERA_NOISE_POSTOPEN_"
+                    "VIEW_DECOMPOSITION_PROBE"
+                ),
+            )
         ),
         "configuration_private": {
             "root": str(root.resolve()),
@@ -728,10 +850,31 @@ def run_probe(
             "pooled_features_reused_without_reconstruction": True,
             "finite_action_targets_reused_without_reconstruction": True,
             "feature_and_route_screen_use_risk_train_only": True,
-            "grouped_adjoint_sum_matches_pooled": grouped_sum_error <= 2e-5,
+            "grouped_adjoint_sum_matches_pooled": (
+                grouped_sum_error <= 2e-5
+                if explicit_feature_kind == "view_adjoint_conflict"
+                else None
+            ),
             "maximum_group_sum_relative_error": grouped_sum_error,
-            "grouped_operator_traverses_each_ray_scatter_once": True,
+            "grouped_operator_traverses_each_ray_scatter_once": (
+                explicit_feature_kind == "view_adjoint_conflict"
+            ),
             "grouped_operator_equal_flop_to_pooled_adjoint": False,
+            "detector_coordinates_recovered_before_graph_features": (
+                explicit_feature_kind == "detector_graph_front"
+            ),
+            "detector_features_avoid_pseudo_grid_reshape": (
+                explicit_feature_kind == "detector_graph_front"
+            ),
+            "detector_feature_operator_calls_are_zero": (
+                all(
+                    row["batch_invocations"]
+                    == {"forward": 0, "adjoint": 0}
+                    for row in feature_execution
+                )
+                if explicit_feature_kind == "detector_graph_front"
+                else None
+            ),
             "opened_fresh_not_loaded": True,
             "fixed_spd_and_call_ledgers_pass": bool(
                 reconstruction_ledgers_valid
@@ -742,20 +885,21 @@ def run_probe(
             "baseline_candidate_id": baseline_id,
             "deployment_uses_family_labels": False,
         },
+        "detector_graph_diagnostics": copy.deepcopy(graph_diagnostics),
         "feature_schema_summary": {
             "pooled_initial_normal": {
                 "feature_count": len(pooled_names),
                 "feature_names": list(pooled_names),
             },
-            "view_conflict": {
-                "feature_count": len(conflict_names),
-                "feature_names": list(conflict_names),
+            explicit_feature_set: {
+                "feature_count": len(explicit_names),
+                "feature_names": list(explicit_names),
             },
-            "pooled_plus_view_conflict": {
-                "feature_count": len(pooled_names) + len(conflict_names),
+            combined_feature_set: {
+                "feature_count": len(pooled_names) + len(explicit_names),
                 "feature_names": [
                     *pooled_names,
-                    *conflict_names,
+                    *explicit_names,
                 ],
             },
         },
@@ -792,9 +936,22 @@ def run_probe(
             ),
             "fresh_repeat_authorized": False,
             "decision": (
-                "VD0_VIEW_CONFLICT_SUPPORTED_FOR_NEXT_ARCHITECTURE_STAGE"
+                str(
+                    config.get(
+                        "positive_decision",
+                        (
+                            "VD0_VIEW_CONFLICT_SUPPORTED_FOR_NEXT_"
+                            "ARCHITECTURE_STAGE"
+                        ),
+                    )
+                )
                 if combined_gate and combined_beats_pooled
-                else "VD0_VIEW_CONFLICT_NOT_YET_TRANSFER_SUPPORTED"
+                else str(
+                    config.get(
+                        "negative_decision",
+                        "VD0_VIEW_CONFLICT_NOT_YET_TRANSFER_SUPPORTED",
+                    )
+                )
             ),
         },
         "execution": execution,
@@ -824,7 +981,12 @@ def run_probe(
             "validation_and_calibration_are_postopen_diagnostics": True,
             "fresh_values_loaded": False,
             "fresh_repeat_authorized": False,
-            "grouped_invocation_is_equal_flop_to_pooled_adjoint": False,
+            "grouped_invocation_is_equal_flop_to_pooled_adjoint": (
+                False
+                if explicit_feature_kind == "view_adjoint_conflict"
+                else None
+            ),
+            "detector_graph_is_a_regular_pixel_grid": False,
             "experimental_field_truth_used": False,
             "real_psu_measurement_values_used": False,
             "analytic_morphology_is_cfd": False,

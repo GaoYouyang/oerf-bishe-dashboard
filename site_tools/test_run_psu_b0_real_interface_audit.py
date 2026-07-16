@@ -6,6 +6,7 @@ import pytest
 from site_tools.run_psu_b0_real_interface_audit import (
     PUBLIC_SCHEMA,
     build_public_summary,
+    detector_xy_from_matlab_zero_based_indices,
     deterministic_quantile_indices,
 )
 
@@ -18,6 +19,25 @@ def test_quantile_selection_is_ordered_unique_and_magnitude_free() -> None:
     assert set(selected).issubset(set(active))
     with pytest.raises(ValueError, match="strictly increasing"):
         deterministic_quantile_indices(active[::-1], 3)
+
+
+def test_detector_coordinates_follow_matlab_column_major_order() -> None:
+    coordinates = detector_xy_from_matlab_zero_based_indices(
+        np.asarray([0, 2, 3, 4, 11]),
+        image_height=3,
+        image_width=4,
+    )
+    scale = 3.0
+    expected = np.asarray(
+        [
+            [-1.5 / scale, -1.0 / scale],
+            [-1.5 / scale, 1.0 / scale],
+            [-0.5 / scale, -1.0 / scale],
+            [-0.5 / scale, 0.0],
+            [1.5 / scale, 1.0 / scale],
+        ]
+    )
+    assert np.allclose(coordinates, expected)
 
 
 def test_public_summary_strips_private_provenance() -> None:

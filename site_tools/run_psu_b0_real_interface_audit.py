@@ -64,6 +64,39 @@ def deterministic_quantile_indices(indices: np.ndarray, count: int) -> np.ndarra
     return selected
 
 
+def detector_xy_from_matlab_zero_based_indices(
+    indices: np.ndarray,
+    *,
+    image_height: int,
+    image_width: int,
+) -> np.ndarray:
+    """Recover centered detector coordinates from MATLAB linear indices.
+
+    The source camera code stores images with MATLAB column-major ``im(:)``
+    ordering. The corrected mask shards contain ``find(mask) - 1``, so row and
+    column are recovered with modulo/division by the image height. Both axes
+    use one common pixel scale to preserve detector-neighborhood distances.
+    """
+
+    values = np.asarray(indices, dtype=np.int64).reshape(-1)
+    height = int(image_height)
+    width = int(image_width)
+    if height < 2 or width < 2:
+        raise ValueError("image dimensions must both exceed one pixel")
+    if np.any(values < 0) or np.any(values >= height * width):
+        raise ValueError("detector indices fall outside the image")
+    row = values % height
+    column = values // height
+    pixel_scale = float(max(height - 1, width - 1))
+    return np.stack(
+        (
+            (column - 0.5 * (width - 1)) / pixel_scale,
+            (row - 0.5 * (height - 1)) / pixel_scale,
+        ),
+        axis=1,
+    ).astype(np.float64, copy=False)
+
+
 def _load_json(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
@@ -89,6 +122,15 @@ def _load_selected_view(
         raise ValueError(f"unverified view bundle: {view_dir.name}")
     if mask_manifest.get("status") != MASK_STATUS:
         raise ValueError(f"unverified corrected masks: {view_dir.name}")
+    bundle_view = bundle_manifest["view"]
+    mask_view = mask_manifest["view"]
+    image_height = int(bundle_view["image_height"])
+    image_width = int(bundle_view["image_width"])
+    if (
+        image_height != int(mask_view["image_height"])
+        or image_width != int(mask_view["image_width"])
+    ):
+        raise ValueError(f"bundle and mask image dimensions disagree: {view_dir.name}")
 
     active = np.load(
         mask_dir / "amask_all_zero_based.npy",
@@ -145,6 +187,11 @@ def _load_selected_view(
         "sample_points": sample_points,
         "projection_u": projection_u,
         "projection_v": projection_v,
+        "detector_xy": detector_xy_from_matlab_zero_based_indices(
+            selected,
+            image_height=image_height,
+            image_width=image_width,
+        ),
         "line_length": np.asarray(b0["length"], dtype=np.float64),
         "system_constant": np.asarray(
             fields["Csys_all"][selected, 0],
@@ -157,6 +204,9 @@ def _load_selected_view(
         "active_row_count": int(active.size),
         "selected_ray_count": int(selected.size),
         "selected_index_sha256": _array_sha256(selected),
+        "image_height_pixels": image_height,
+        "image_width_pixels": image_width,
+        "detector_indexing": "MATLAB_COLUMN_MAJOR_FIND_MINUS_ONE",
         "bundle_manifest_sha256": _sha256(bundle_manifest_path),
         "mask_manifest_sha256": _sha256(mask_manifest_path),
         "b0_hit_count": int(np.count_nonzero(b0["hit"])),
@@ -198,6 +248,7 @@ def load_real_support_geometry(
             "sample_points",
             "projection_u",
             "projection_v",
+            "detector_xy",
             "line_length",
             "system_constant",
         )

@@ -893,3 +893,53 @@ RQ 的下一假设是 pooled `g0` 把相机之间的冲突抹掉了。于是我�
 - [VD0-A 判决](psu_b0_view_decomposed_probe_no_go_2026-07-17.md)
 - [公开摘要](psu_b0_view_decomposed_probe_public_summary.json)
 - [四联图](../demo_t16_operator/results/psu_b0_view_decomposed_probe/psu_b0_view_decomposed_probe_figure.png)
+
+## 39. VD0-B 恢复真实 detector 邻域，但仍不能安全路由
+
+VD0-A 之后，下一步被严格限制为“二维 front proxy + camera pose”，不能直接训练 DeepSets。实现时先发现一个容易制造假结果的问题：每台相机的 256 条射线是从一百多万 active pixels 按分位点抽出的，抽样顺序不能排成 `16 x 16` 当作真实图像。于是本轮先从 MATLAB 列主序线性索引恢复 detector row/column，在真实不规则 pixel 坐标上建 8 邻域图，再用局部加权最小二乘估计位移 Jacobian。
+
+新增 30 个 observable descriptors：邻域对比、Jacobian、front top-10% 能量集中、structure anisotropy、divergence/curl balance，以及把二维主方向经 `Ruvecs/Rvvecs` 投到世界坐标后的无符号方向一致性。它们不使用三维 truth、形态标签、重建场、迭代后 residual 或 PSU 实测 deflection。
+
+结果有一条真实但不足以继续扩容的信号：
+
+- pooled 的 leave-one-family / leave-one-noise 为 **-0.999% / -2.217%**；
+- detector-only 为 **+1.051% / +1.118%**；
+- pooled+detector 为 **+0.907% / +0.947%**。
+
+但真正的 validation/calibration 转移失败：
+
+- pooled+detector field gain **+2.805% / +2.901%**，没有双 split 击败 pooled 的 **+3.321% / +2.907%**；
+- field harm **12.5% / 10.0%**，超过 5%；
+- front mean **-0.077% / -0.778%**；
+- front p10 **-7.873% / -7.242%**。
+
+因此判决是 **`VD0B_DETECTOR_POSE_NOT_TRANSFER_SUPPORTED_STOP_SET_ENCODER`**。这不是说 detector geometry 没用，而是说当前特征能看到开发压力，却不能决定哪个 PCGLS 专家对 front 安全。尤其 legacy `camera_correlated` noise 仍是在伪方格上生成的，不能把 leave-one-noise 的正数当作 measured camera covariance 证据。
+
+下一步不再训练网络，先做两件更接近实验的问题：
+
+1. 用 PSU 公开 `epsu/epsv` 做真实-vs-synthetic feature distribution audit，只检查工作域，不训练；
+2. 向师兄要 flow-off/reference repeats，估计真实 detector graph covariance、view bias 和 temporal drift。
+
+若真实位移特征大部分落在 synthetic 95% 区间之外，当前路由研究只保留为接口和负结果；必须先改数据生成器，而不是增加模型容量。
+
+**证据等级。** **L2 + L3**。真实 PSU support/detector geometry，analytic morphology，synthetic noise，post-open mechanism probe；没有 real measurement training、fresh repeat、experimental field truth 或 superiority。
+
+## 40. 真实 PSU 位移证明当前 synthetic detector 工作域不够
+
+VD0-B 判 NO-GO 后，立刻执行了原定的 P0 measurement-distribution audit。读取公开 PSU `epsu/epsv`，对真实和 synthetic 都做 per-view RMS normalization，只比较 detector 邻域空间结构，不把 RMS 当作 measured noise sigma。
+
+PSU 当前本地 9-view 数据只有 **1 个真实物理流场**。枚举 6-9 active views 得到 130 个 camera subsets，但它们明确不是 130 个独立样本。
+
+结果：
+
+- validation/calibration 到 train 中心的稳健距离中位数 **1.646 / 1.350**；
+- real subsets 为 **3.076**；
+- real 到最近 train row 的中位距离 **1.873**，validation/calibration 为 **0.883 / 0.755**；
+- **130/130** real subsets 至少一个 informative feature 超出 train 95% 包络；
+- 平均 feature outside fraction 为 **23.99%**，validation/calibration 只有 **2.72% / 7.44%**。
+
+超界最明显的是 neighbor contrast 和 local Jacobian：真实 mean contrast **1.544**，synthetic 97.5% 上界 **0.897**；真实 mean log-Jacobian **3.392**，synthetic 上界 **2.851**。
+
+这不能证明差异一定来自 shock，因为 optical-flow noise、registration、mask boundary、camera bias、finite aperture 和真实高频 front 都可能贡献。但它足以证明当前 synthetic generator 没有覆盖真实输入工作域。因此 set encoder 继续封存，下一步改成 flow-off covariance、graph-correlated noise 和 held-out camera/front endpoint。
+
+**证据等级。** **L0 输入值 + L3 工作域审计**。使用真实公开 deflection values，但没有实验 3D truth、独立 flow fields、reconstruction 或训练；只能证明 descriptor mismatch。
