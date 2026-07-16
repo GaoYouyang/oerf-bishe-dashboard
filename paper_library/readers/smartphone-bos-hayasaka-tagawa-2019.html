@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mobile visualization of density fields using smartphone background-oriented schlieren · 术语导读</title>
+  <style>
+    :root { --bg:#f7f8f6; --panel:#fff; --ink:#1d2328; --muted:#65717a; --line:#d9e0df; --green:#16756f; --blue:#315f93; --amber:#9a6a00; --soft:#eef6f3; --shadow:0 16px 36px rgba(30,45,55,.08); }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif; color:var(--ink); background:linear-gradient(90deg,rgba(247,248,246,.94),rgba(247,248,246,.76)),url("../../assets/backgrounds/oerf-refractive-field.png") right -150px top 18px / min(920px,92vw) auto no-repeat fixed,var(--bg); line-height:1.62; letter-spacing:0; }
+    header, main { padding:28px clamp(18px,4vw,58px); }
+    header { border-bottom:1px solid var(--line); background:linear-gradient(180deg,#fff,#edf6f3); }
+    h1 { margin:14px 0 10px; max-width:1100px; font-size:clamp(28px,4vw,48px); line-height:1.12; letter-spacing:0; }
+    h2 { margin:26px 0 12px; font-size:24px; }
+    p { margin:6px 0; }
+    .muted, .en { color:var(--muted); }
+    .buttons, .chips, .focus-grid, .page-links, .term-actions, .mini-terms { display:flex; flex-wrap:wrap; gap:8px; }
+    .button, .page-links a, .term-actions a { display:inline-flex; align-items:center; min-height:34px; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); text-decoration:none; font-weight:700; }
+    .button.primary { background:var(--green); border-color:var(--green); color:#fff; }
+    .summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:18px 0; }
+    .summary div, .focus-term, .term-row, .note { border:1px solid var(--line); border-radius:8px; background:var(--panel); box-shadow:var(--shadow); }
+    .summary div { padding:14px 16px; }
+    .summary b { display:block; font-size:28px; line-height:1; color:var(--green); }
+    .note { padding:14px 16px; color:var(--muted); box-shadow:none; }
+    .chips span { border-radius:999px; padding:5px 9px; background:#eaf0f7; color:var(--blue); font-size:12px; font-weight:700; }
+    .guide-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:12px 0 20px; }
+    .guide-card, .topic-card { border:1px solid var(--line); border-radius:8px; background:rgba(255,255,255,.94); padding:13px; min-width:0; }
+    .guide-card { border-left:4px solid var(--green); }
+    .guide-card b { display:block; color:var(--green); font-size:13px; margin-bottom:5px; }
+    .guide-card p, .topic-card p { margin:0; color:#43545c; font-size:13px; line-height:1.55; }
+    .topic-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:12px 0 20px; }
+    .topic-card span { display:inline-flex; border-radius:999px; padding:4px 8px; background:var(--soft); color:var(--green); font-size:12px; font-weight:800; }
+    .topic-card h3 { margin:8px 0 5px; font-size:16px; line-height:1.3; }
+    .topic-card a { display:inline-flex; align-items:center; min-height:30px; margin-top:8px; padding:5px 8px; border:1px solid var(--line); border-radius:7px; background:#fff; color:var(--blue); text-decoration:none; font-size:12px; font-weight:800; }
+    .focus-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .focus-term { padding:15px; }
+    .term-title, .term-name { color:var(--green); font-weight:800; text-decoration:none; }
+    .term-title span { display:block; color:var(--muted); font-weight:600; font-size:13px; }
+    .term-actions { margin-top:8px; }
+    .term-actions a { min-height:28px; padding:4px 7px; color:var(--blue); font-size:12px; }
+    .page-map { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .page-card { border:1px solid var(--line); border-radius:8px; background:#fff; padding:12px; }
+    .page-title { display:inline-flex; margin-bottom:6px; color:var(--green); font-size:18px; font-weight:900; text-decoration:none; }
+    .page-card small { display:block; color:var(--muted); }
+    .mini-term { display:inline-flex; align-items:center; gap:5px; border-radius:999px; padding:4px 7px; background:#f6efe2; border:1px solid #ead7b5; color:var(--amber); font-size:12px; font-weight:700; text-decoration:none; }
+    .mini-term span { color:#6f5b2b; font-weight:700; }
+    .toolbar { display:grid; grid-template-columns:minmax(240px,1fr) 190px; gap:10px; margin:16px 0; }
+    input, select { min-height:42px; border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:#fff; font:inherit; }
+    .term-list { display:grid; gap:12px; }
+    .term-row { display:grid; grid-template-columns:minmax(0,1fr) 240px; gap:14px; padding:15px; }
+    .term-row p { margin:4px 0; }
+    .term-side { display:flex; flex-direction:column; align-items:flex-start; gap:7px; }
+    .term-side span { border-radius:999px; padding:4px 8px; background:var(--soft); color:var(--green); font-size:12px; font-weight:700; }
+    .term-side b { font-size:24px; color:var(--amber); }
+    .page-links a { min-height:28px; padding:4px 7px; font-size:12px; color:var(--blue); }
+    .more { color:var(--muted); font-size:12px; padding:4px 0; }
+    footer { margin-top:28px; color:var(--muted); font-size:12px; }
+    @media (max-width:1080px) { .guide-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .topic-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:900px) { .summary, .focus-grid, .term-row, .toolbar, .page-map, .guide-grid, .topic-grid { grid-template-columns:1fr; } body { background-attachment:scroll; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="buttons">
+      <a class="button" href="../index.html">Back to paper library</a>
+      <a class="button" href="../term_index.html">PDF term index</a>
+      <a class="button" href="../../index.html#glossary">Glossary</a>
+      <a class="button" href="../paper_detail.html?id=smartphone-bos-hayasaka-tagawa-2019">Paper detail</a>
+    </div>
+    <h1>Mobile visualization of density fields using smartphone background-oriented schlieren</h1>
+    <p class="muted">Keisuke Hayasaka, Yoshiyuki Tagawa</p>
+    <p class="muted">Experiments in Fluids · 2019</p>
+    <div class="buttons">
+      <a class="button primary" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf" target="_blank" rel="noreferrer">Open PDF</a>
+      <a class="button" href="https://link.springer.com/content/pdf/10.1007/s00348-019-2817-z.pdf" target="_blank" rel="noreferrer">Online PDF</a>
+      <a class="button" href="https://link.springer.com/article/10.1007/s00348-019-2817-z" target="_blank" rel="noreferrer">Publisher / source</a>
+    </div>
+    <div class="summary">
+      <div><b>10</b><span>matched terms</span></div>
+      <div><b>174</b><span>term hits</span></div>
+      <div><b>6</b><span>categories</span></div>
+      <div><b>support</b><span>BOS low-cost demo</span></div>
+    </div>
+    <div class="chips"><span>BOST 主线 · 4</span><span>数学基础 · 2</span><span>PIV/速度场 · 1</span><span>光学诊断 · 1</span><span>实验/数据 · 1</span><span>流体/燃烧 · 1</span></div>
+  </header>
+  <main>
+    <section class="note">
+      <p><b>阅读定位：</b>本科阶段如果要做一个低成本 BOS/位移场 demo，这篇比大型风洞或多相机系统更可落地；也能帮助你向师兄说明硬件、参考图、背景纹理和手机相机带来的真实误差。</p>
+      <p><b>精读时提取：</b>smartphone BOS、density-field visualization、natural/printed background、mobile camera calibration、low-cost experiment design。</p>
+      <p><b>边界说明：</b>本页只保存术语命中、解释和页码跳转，不复制论文正文。点击页码会回到原 PDF 的对应页。</p>
+    </section>
+    <h2>读这篇的路线</h2>
+    <section class="guide-grid">
+            <article class="guide-card">
+              <b>定位角色</b>
+              <p>实验几何与误差控制：重点看相机、背景、视角、mask 和坐标标定如何影响结果。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>抓方法图</b>
+              <p>优先找 optical setup、forward model、reconstruction pipeline、evaluation table，不先陷入所有推导。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>抽可复现变量</b>
+              <p>记录输入数据、几何参数、噪声/视角设置、baseline、loss/regularization 和评价指标。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>查术语页码</b>
+              <p>用本页的术语卡片跳到 PDF 对应页，建立自己的概念索引。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>转成毕设问题</b>
+              <p>把这篇文献写成一个可执行问题：我能复现哪一段、比较什么、问师兄要什么数据。</p>
+            </article>
+            </section>
+    <h2>关联毕设选题</h2>
+    <section class="topic-grid">
+            <article class="topic-card">
+              <span>T6</span>
+              <h3>几何标定误差</h3>
+              <p>由标题、分组或关键词匹配；用于判断这篇文献可服务的选题模块。</p>
+              <a href="../../topic_deep_dive.html?id=T6">打开选题详情</a>
+            </article>
+
+            <article class="topic-card">
+              <span>T8</span>
+              <h3>计算流动可视化综述线</h3>
+              <p>由标题、分组或关键词匹配；用于判断这篇文献可服务的选题模块。</p>
+              <a href="../../topic_deep_dive.html?id=T8">打开选题详情</a>
+            </article>
+            </section>
+    <h2>先看这几个术语</h2>
+    <section class="focus-grid">
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场 <span>Density field, rho(x,y,z)</span></a>
+              <p>单位体积质量分布，是可压缩流、热羽流、火焰和喷流诊断中的核心物理量。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=12" target="_blank" rel="noreferrer">p.12</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%AF%86%E5%BA%A6%E5%9C%BA">跨论文反查</a>
+                <a href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影 <span>Background-Oriented Schlieren, BOS</span></a>
+              <p>用已知背景图案作为参考尺。流场中的折射率梯度会让光线发生微小偏折，最终表现为背景图像的像素位移。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=14" target="_blank" rel="noreferrer">p.14</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=15" target="_blank" rel="noreferrer">p.15</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1">跨论文反查</a>
+                <a href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度 <span>Refractive index gradient, grad n</span></a>
+              <p>折射率空间变化率，是造成光线偏折和背景图像位移的核心原因。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=12" target="_blank" rel="noreferrer">p.12</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6">跨论文反查</a>
+                <a href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场 <span>Background displacement field</span></a>
+              <p>流场存在前后背景图案在图像上的像素偏移，通常有水平和竖直两个分量。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=13" target="_blank" rel="noreferrer">p.13</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=14" target="_blank" rel="noreferrer">p.14</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA">跨论文反查</a>
+                <a href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E4%BA%92%E7%9B%B8%E5%85%B3%E4%BD%8D%E7%A7%BB%E4%BC%B0%E8%AE%A1#glossary" target="_blank" rel="noreferrer">互相关位移估计 <span>Cross-correlation displacement estimation</span></a>
+              <p>把图像切成窗口，通过相关峰值估计局部位移，PIV 和 BOS 都常用。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=13" target="_blank" rel="noreferrer">p.13</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E4%BA%92%E7%9B%B8%E5%85%B3%E4%BD%8D%E7%A7%BB%E4%BC%B0%E8%AE%A1">跨论文反查</a>
+                <a href="../../index.html?term=%E4%BA%92%E7%9B%B8%E5%85%B3%E4%BD%8D%E7%A7%BB%E4%BC%B0%E8%AE%A1#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F#glossary" target="_blank" rel="noreferrer">粒子图像测速 <span>Particle Image Velocimetry, PIV</span></a>
+              <p>通过连续图像中示踪粒子位移估计速度场，是实验流体力学常用速度测量方法。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=14" target="_blank" rel="noreferrer">p.14</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=15" target="_blank" rel="noreferrer">p.15</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F">跨论文反查</a>
+                <a href="../../index.html?term=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场 <span>Refractive index field, n(x,y,z)</span></a>
+              <p>空间中每一点的折射率分布，决定光线在流场中如何弯折。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA">跨论文反查</a>
+                <a href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97#glossary" target="_blank" rel="noreferrer">实验日志 <span>Experiment log</span></a>
+              <p>记录每次数据、代码版本、参数、结果图和失败原因的结构化日志。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97">跨论文反查</a>
+                <a href="../../index.html?term=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+            </section>
+    <h2>按页术语地图</h2>
+    <section class="note">
+      <p><b>使用方式：</b>先点 p.页码打开原 PDF，再看这一页命中的概念。这个区域相当于“读论文导航”，不是论文正文重排。</p>
+    </section>
+    <section class="page-map">
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=1" target="_blank" rel="noreferrer">p.1</a>
+                <small>28 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>15x</span></a><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>10x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>3x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a>
+                <small>30 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>9x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>8x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>7x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E4%BA%92%E7%9B%B8%E5%85%B3%E4%BD%8D%E7%A7%BB%E4%BC%B0%E8%AE%A1#glossary" target="_blank" rel="noreferrer">互相关位移估计<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97#glossary" target="_blank" rel="noreferrer">实验日志<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F#glossary" target="_blank" rel="noreferrer">粒子图像测速<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=3" target="_blank" rel="noreferrer">p.3</a>
+                <small>14 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E4%BA%92%E7%9B%B8%E5%85%B3%E4%BD%8D%E7%A7%BB%E4%BC%B0%E8%AE%A1#glossary" target="_blank" rel="noreferrer">互相关位移估计<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=4" target="_blank" rel="noreferrer">p.4</a>
+                <small>15 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E4%BA%92%E7%9B%B8%E5%85%B3%E4%BD%8D%E7%A7%BB%E4%BC%B0%E8%AE%A1#glossary" target="_blank" rel="noreferrer">互相关位移估计<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F#glossary" target="_blank" rel="noreferrer">粒子图像测速<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=5" target="_blank" rel="noreferrer">p.5</a>
+                <small>18 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E4%BA%92%E7%9B%B8%E5%85%B3%E4%BD%8D%E7%A7%BB%E4%BC%B0%E8%AE%A1#glossary" target="_blank" rel="noreferrer">互相关位移估计<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%9D%A1%E4%BB%B6%E6%95%B0#glossary" target="_blank" rel="noreferrer">条件数<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=6" target="_blank" rel="noreferrer">p.6</a>
+                <small>7 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=7" target="_blank" rel="noreferrer">p.7</a>
+                <small>9 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>4x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>4x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=8" target="_blank" rel="noreferrer">p.8</a>
+                <small>7 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=9" target="_blank" rel="noreferrer">p.9</a>
+                <small>6 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>6x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=10" target="_blank" rel="noreferrer">p.10</a>
+                <small>6 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>2x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=11" target="_blank" rel="noreferrer">p.11</a>
+                <small>15 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E7%A9%86%E5%B0%94-%E5%BD%AD%E8%8B%A5%E6%96%AF%E4%BC%AA%E9%80%86#glossary" target="_blank" rel="noreferrer">穆尔-彭若斯伪逆<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=12" target="_blank" rel="noreferrer">p.12</a>
+                <small>3 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=13" target="_blank" rel="noreferrer">p.13</a>
+                <small>3 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E4%BA%92%E7%9B%B8%E5%85%B3%E4%BD%8D%E7%A7%BB%E4%BC%B0%E8%AE%A1#glossary" target="_blank" rel="noreferrer">互相关位移估计<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=14" target="_blank" rel="noreferrer">p.14</a>
+                <small>8 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>4x</span></a><a class="mini-term" href="../../index.html?term=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F#glossary" target="_blank" rel="noreferrer">粒子图像测速<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>2x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=15" target="_blank" rel="noreferrer">p.15</a>
+                <small>5 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>4x</span></a><a class="mini-term" href="../../index.html?term=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F#glossary" target="_blank" rel="noreferrer">粒子图像测速<span>1x</span></a></div>
+              </article>
+            </section>
+    <h2>全术语检索</h2>
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="搜索术语、英文名、类别、解释，例如 BOST / density / PINN" />
+      <select id="category">
+        <option value="all">All categories</option>
+        <option value="BOST 主线">BOST 主线</option><option value="PIV/速度场">PIV/速度场</option><option value="光学诊断">光学诊断</option><option value="实验/数据">实验/数据</option><option value="数学基础">数学基础</option><option value="流体/燃烧">流体/燃烧</option>
+      </select>
+    </div>
+    <section id="terms" class="term-list">
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;密度场&quot;, &quot;en&quot;: &quot;Density field, rho(x,y,z)&quot;, &quot;category&quot;: &quot;流体/燃烧&quot;, &quot;explain&quot;: &quot;单位体积质量分布，是可压缩流、热羽流、火焰和喷流诊断中的核心物理量。&quot;, &quot;use&quot;: &quot;BOST 重建折射率后常把它转成密度，再进一步解释温度、压力或流动结构。&quot;, &quot;pitfall&quot;: &quot;密度不是温度；需要状态方程、压力假设和组分信息才能进一步换算。&quot;, &quot;keywords&quot;: &quot;density field; gas density measurement; volumetric density; compressible flow&quot;, &quot;count&quot;: 50, &quot;pages&quot;: [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12], &quot;page_hits&quot;: [{&quot;page&quot;: 1, &quot;count&quot;: 10}, {&quot;page&quot;: 2, &quot;count&quot;: 9}, {&quot;page&quot;: 3, &quot;count&quot;: 5}, {&quot;page&quot;: 4, &quot;count&quot;: 5}, {&quot;page&quot;: 5, &quot;count&quot;: 5}, {&quot;page&quot;: 6, &quot;count&quot;: 1}, {&quot;page&quot;: 7, &quot;count&quot;: 4}, {&quot;page&quot;: 8, &quot;count&quot;: 3}, {&quot;page&quot;: 10, &quot;count&quot;: 2}, {&quot;page&quot;: 11, &quot;count&quot;: 5}, {&quot;page&quot;: 12, &quot;count&quot;: 1}], &quot;page_count&quot;: 11}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场</a>
+                <p class="en">Density field, rho(x,y,z)</p>
+                <p>单位体积质量分布，是可压缩流、热羽流、火焰和喷流诊断中的核心物理量。</p>
+                <p><b>读这篇时看什么：</b>BOST 重建折射率后常把它转成密度，再进一步解释温度、压力或流动结构。</p>
+                <p><b>易混点：</b>密度不是温度；需要状态方程、压力假设和组分信息才能进一步换算。</p>
+              </div>
+              <div class="term-side">
+                <span>流体/燃烧</span>
+                <b>50 hits</b>
+                <small>11 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=12" target="_blank" rel="noreferrer">p.12</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%AF%86%E5%BA%A6%E5%9C%BA">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;背景纹影&quot;, &quot;en&quot;: &quot;Background-Oriented Schlieren, BOS&quot;, &quot;category&quot;: &quot;BOST 主线&quot;, &quot;explain&quot;: &quot;用已知背景图案作为参考尺。流场中的折射率梯度会让光线发生微小偏折，最终表现为背景图像的像素位移。&quot;, &quot;use&quot;: &quot;这是 BOST、PIV-BOST 和很多系统误差分析的入口。算法通常先处理 BOS 图像位移，再进入三维反演或速度补偿。&quot;, &quot;pitfall&quot;: &quot;BOS 直接测到的是图像位移或偏折效应，不是速度场、温度场或密度场本身。&quot;, &quot;keywords&quot;: &quot;BOS; background displacement; optical flow BOS; density gradient visualization&quot;, &quot;count&quot;: 42, &quot;pages&quot;: [1, 2, 3, 4, 5, 6, 11, 12, 14, 15], &quot;page_hits&quot;: [{&quot;page&quot;: 1, &quot;count&quot;: 15}, {&quot;page&quot;: 2, &quot;count&quot;: 8}, {&quot;page&quot;: 3, &quot;count&quot;: 1}, {&quot;page&quot;: 4, &quot;count&quot;: 1}, {&quot;page&quot;: 5, &quot;count&quot;: 5}, {&quot;page&quot;: 6, &quot;count&quot;: 2}, {&quot;page&quot;: 11, &quot;count&quot;: 1}, {&quot;page&quot;: 12, &quot;count&quot;: 1}, {&quot;page&quot;: 14, &quot;count&quot;: 4}, {&quot;page&quot;: 15, &quot;count&quot;: 4}], &quot;page_count&quot;: 10}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影</a>
+                <p class="en">Background-Oriented Schlieren, BOS</p>
+                <p>用已知背景图案作为参考尺。流场中的折射率梯度会让光线发生微小偏折，最终表现为背景图像的像素位移。</p>
+                <p><b>读这篇时看什么：</b>这是 BOST、PIV-BOST 和很多系统误差分析的入口。算法通常先处理 BOS 图像位移，再进入三维反演或速度补偿。</p>
+                <p><b>易混点：</b>BOS 直接测到的是图像位移或偏折效应，不是速度场、温度场或密度场本身。</p>
+              </div>
+              <div class="term-side">
+                <span>BOST 主线</span>
+                <b>42 hits</b>
+                <small>10 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=14" target="_blank" rel="noreferrer">p.14</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=15" target="_blank" rel="noreferrer">p.15</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1">跨论文反查</a>
+                  <a href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;折射率梯度&quot;, &quot;en&quot;: &quot;Refractive index gradient, grad n&quot;, &quot;category&quot;: &quot;BOST 主线&quot;, &quot;explain&quot;: &quot;折射率空间变化率，是造成光线偏折和背景图像位移的核心原因。&quot;, &quot;use&quot;: &quot;很多 BOS 公式从折射率梯度的路径积分出发；PIV-BOST 补偿也依赖它解释像素偏移。&quot;, &quot;pitfall&quot;: &quot;从梯度恢复标量场需要积分或约束，噪声会带来漂移和边界问题。&quot;, &quot;keywords&quot;: &quot;refractive index gradient; ray deflection; gradient integration; Poisson integration&quot;, &quot;count&quot;: 41, &quot;pages&quot;: [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12], &quot;page_hits&quot;: [{&quot;page&quot;: 1, &quot;count&quot;: 3}, {&quot;page&quot;: 2, &quot;count&quot;: 7}, {&quot;page&quot;: 3, &quot;count&quot;: 5}, {&quot;page&quot;: 4, &quot;count&quot;: 5}, {&quot;page&quot;: 5, &quot;count&quot;: 5}, {&quot;page&quot;: 6, &quot;count&quot;: 1}, {&quot;page&quot;: 7, &quot;count&quot;: 4}, {&quot;page&quot;: 8, &quot;count&quot;: 3}, {&quot;page&quot;: 10, &quot;count&quot;: 2}, {&quot;page&quot;: 11, &quot;count&quot;: 5}, {&quot;page&quot;: 12, &quot;count&quot;: 1}], &quot;page_count&quot;: 11}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度</a>
+                <p class="en">Refractive index gradient, grad n</p>
+                <p>折射率空间变化率，是造成光线偏折和背景图像位移的核心原因。</p>
+                <p><b>读这篇时看什么：</b>很多 BOS 公式从折射率梯度的路径积分出发；PIV-BOST 补偿也依赖它解释像素偏移。</p>
+                <p><b>易混点：</b>从梯度恢复标量场需要积分或约束，噪声会带来漂移和边界问题。</p>
+              </div>
+              <div class="term-side">
+                <span>BOST 主线</span>
+                <b>41 hits</b>
+                <small>11 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=12" target="_blank" rel="noreferrer">p.12</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;背景位移场&quot;, &quot;en&quot;: &quot;Background displacement field&quot;, &quot;category&quot;: &quot;BOST 主线&quot;, &quot;explain&quot;: &quot;流场存在前后背景图案在图像上的像素偏移，通常有水平和竖直两个分量。&quot;, &quot;use&quot;: &quot;这是 BOS 测量的直接数据，也是 BOST forward model 和 reprojection error 的主要比较对象。&quot;, &quot;pitfall&quot;: &quot;位移场不是速度场；不要把 u/v 像素位移和流体速度 u/v 混用。&quot;, &quot;keywords&quot;: &quot;image displacement; BOS displacement field; pixel shift; deflection measurement&quot;, &quot;count&quot;: 22, &quot;pages&quot;: [3, 4, 6, 7, 8, 9, 10, 11, 13, 14], &quot;page_hits&quot;: [{&quot;page&quot;: 3, &quot;count&quot;: 1}, {&quot;page&quot;: 4, &quot;count&quot;: 1}, {&quot;page&quot;: 6, &quot;count&quot;: 3}, {&quot;page&quot;: 7, &quot;count&quot;: 1}, {&quot;page&quot;: 8, &quot;count&quot;: 1}, {&quot;page&quot;: 9, &quot;count&quot;: 6}, {&quot;page&quot;: 10, &quot;count&quot;: 2}, {&quot;page&quot;: 11, &quot;count&quot;: 3}, {&quot;page&quot;: 13, &quot;count&quot;: 2}, {&quot;page&quot;: 14, &quot;count&quot;: 2}], &quot;page_count&quot;: 10}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场</a>
+                <p class="en">Background displacement field</p>
+                <p>流场存在前后背景图案在图像上的像素偏移，通常有水平和竖直两个分量。</p>
+                <p><b>读这篇时看什么：</b>这是 BOS 测量的直接数据，也是 BOST forward model 和 reprojection error 的主要比较对象。</p>
+                <p><b>易混点：</b>位移场不是速度场；不要把 u/v 像素位移和流体速度 u/v 混用。</p>
+              </div>
+              <div class="term-side">
+                <span>BOST 主线</span>
+                <b>22 hits</b>
+                <small>10 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=13" target="_blank" rel="noreferrer">p.13</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=14" target="_blank" rel="noreferrer">p.14</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA">跨论文反查</a>
+                  <a href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;互相关位移估计&quot;, &quot;en&quot;: &quot;Cross-correlation displacement estimation&quot;, &quot;category&quot;: &quot;光学诊断&quot;, &quot;explain&quot;: &quot;把图像切成窗口，通过相关峰值估计局部位移，PIV 和 BOS 都常用。&quot;, &quot;use&quot;: &quot;传统、稳健、容易解释，适合作为位移估计 baseline。&quot;, &quot;pitfall&quot;: &quot;窗口大小会影响空间分辨率和噪声；强折射或大位移时可能丢峰。&quot;, &quot;keywords&quot;: &quot;cross-correlation; PIV interrogation window; BOS displacement; subpixel peak&quot;, &quot;count&quot;: 8, &quot;pages&quot;: [2, 3, 4, 5, 13], &quot;page_hits&quot;: [{&quot;page&quot;: 2, &quot;count&quot;: 1}, {&quot;page&quot;: 3, &quot;count&quot;: 2}, {&quot;page&quot;: 4, &quot;count&quot;: 2}, {&quot;page&quot;: 5, &quot;count&quot;: 2}, {&quot;page&quot;: 13, &quot;count&quot;: 1}], &quot;page_count&quot;: 5}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E4%BA%92%E7%9B%B8%E5%85%B3%E4%BD%8D%E7%A7%BB%E4%BC%B0%E8%AE%A1#glossary" target="_blank" rel="noreferrer">互相关位移估计</a>
+                <p class="en">Cross-correlation displacement estimation</p>
+                <p>把图像切成窗口，通过相关峰值估计局部位移，PIV 和 BOS 都常用。</p>
+                <p><b>读这篇时看什么：</b>传统、稳健、容易解释，适合作为位移估计 baseline。</p>
+                <p><b>易混点：</b>窗口大小会影响空间分辨率和噪声；强折射或大位移时可能丢峰。</p>
+              </div>
+              <div class="term-side">
+                <span>光学诊断</span>
+                <b>8 hits</b>
+                <small>5 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=13" target="_blank" rel="noreferrer">p.13</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E4%BA%92%E7%9B%B8%E5%85%B3%E4%BD%8D%E7%A7%BB%E4%BC%B0%E8%AE%A1">跨论文反查</a>
+                  <a href="../../index.html?term=%E4%BA%92%E7%9B%B8%E5%85%B3%E4%BD%8D%E7%A7%BB%E4%BC%B0%E8%AE%A1#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;粒子图像测速&quot;, &quot;en&quot;: &quot;Particle Image Velocimetry, PIV&quot;, &quot;category&quot;: &quot;PIV/速度场&quot;, &quot;explain&quot;: &quot;通过连续图像中示踪粒子位移估计速度场，是实验流体力学常用速度测量方法。&quot;, &quot;use&quot;: &quot;PIV-BOST 的核心是用 BOST 折射率场补偿 PIV 测量中的折射误差。&quot;, &quot;pitfall&quot;: &quot;PIV 的像素位移经过时间间隔和尺度换算才是速度；与 BOS 背景位移不是同一个量。&quot;, &quot;keywords&quot;: &quot;PIV; particle image velocimetry; velocity measurement; tracer particles&quot;, &quot;count&quot;: 5, &quot;pages&quot;: [2, 4, 14, 15], &quot;page_hits&quot;: [{&quot;page&quot;: 2, &quot;count&quot;: 1}, {&quot;page&quot;: 4, &quot;count&quot;: 1}, {&quot;page&quot;: 14, &quot;count&quot;: 2}, {&quot;page&quot;: 15, &quot;count&quot;: 1}], &quot;page_count&quot;: 4}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F#glossary" target="_blank" rel="noreferrer">粒子图像测速</a>
+                <p class="en">Particle Image Velocimetry, PIV</p>
+                <p>通过连续图像中示踪粒子位移估计速度场，是实验流体力学常用速度测量方法。</p>
+                <p><b>读这篇时看什么：</b>PIV-BOST 的核心是用 BOST 折射率场补偿 PIV 测量中的折射误差。</p>
+                <p><b>易混点：</b>PIV 的像素位移经过时间间隔和尺度换算才是速度；与 BOS 背景位移不是同一个量。</p>
+              </div>
+              <div class="term-side">
+                <span>PIV/速度场</span>
+                <b>5 hits</b>
+                <small>4 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=14" target="_blank" rel="noreferrer">p.14</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=15" target="_blank" rel="noreferrer">p.15</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F">跨论文反查</a>
+                  <a href="../../index.html?term=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;折射率场&quot;, &quot;en&quot;: &quot;Refractive index field, n(x,y,z)&quot;, &quot;category&quot;: &quot;BOST 主线&quot;, &quot;explain&quot;: &quot;空间中每一点的折射率分布，决定光线在流场中如何弯折。&quot;, &quot;use&quot;: &quot;NeRIF 最直接的输出对象通常就是折射率场；后续可通过 Gladstone-Dale 关系换算密度。&quot;, &quot;pitfall&quot;: &quot;折射率变化很小，数值尺度容易被忽略；画图时常显示 n-1 或归一化扰动。&quot;, &quot;keywords&quot;: &quot;refractive index field; optical path; gas refractivity; refractive-index perturbation&quot;, &quot;count&quot;: 3, &quot;pages&quot;: [2], &quot;page_hits&quot;: [{&quot;page&quot;: 2, &quot;count&quot;: 3}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场</a>
+                <p class="en">Refractive index field, n(x,y,z)</p>
+                <p>空间中每一点的折射率分布，决定光线在流场中如何弯折。</p>
+                <p><b>读这篇时看什么：</b>NeRIF 最直接的输出对象通常就是折射率场；后续可通过 Gladstone-Dale 关系换算密度。</p>
+                <p><b>易混点：</b>折射率变化很小，数值尺度容易被忽略；画图时常显示 n-1 或归一化扰动。</p>
+              </div>
+              <div class="term-side">
+                <span>BOST 主线</span>
+                <b>3 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;实验日志&quot;, &quot;en&quot;: &quot;Experiment log&quot;, &quot;category&quot;: &quot;实验/数据&quot;, &quot;explain&quot;: &quot;记录每次数据、代码版本、参数、结果图和失败原因的结构化日志。&quot;, &quot;use&quot;: &quot;你后续想做学习日志网页，这个概念要提前嵌入：每周能复现自己的结果。&quot;, &quot;pitfall&quot;: &quot;没有日志，参数扫描越多越乱，最后很难写论文方法和结果。&quot;, &quot;keywords&quot;: &quot;experiment log; reproducibility; configuration; result tracking; research diary&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [2], &quot;page_hits&quot;: [{&quot;page&quot;: 2, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97#glossary" target="_blank" rel="noreferrer">实验日志</a>
+                <p class="en">Experiment log</p>
+                <p>记录每次数据、代码版本、参数、结果图和失败原因的结构化日志。</p>
+                <p><b>读这篇时看什么：</b>你后续想做学习日志网页，这个概念要提前嵌入：每周能复现自己的结果。</p>
+                <p><b>易混点：</b>没有日志，参数扫描越多越乱，最后很难写论文方法和结果。</p>
+              </div>
+              <div class="term-side">
+                <span>实验/数据</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=2" target="_blank" rel="noreferrer">p.2</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;条件数&quot;, &quot;en&quot;: &quot;Condition number&quot;, &quot;category&quot;: &quot;数学基础&quot;, &quot;explain&quot;: &quot;常用最大非零奇异值与最小非零奇异值之比衡量反演对观测扰动的敏感程度。比值越大，微小噪声越可能被放大。&quot;, &quot;use&quot;: &quot;比较不同相机布局、视角数和标定扰动下的线性化 BOST forward 健康度。&quot;, &quot;pitfall&quot;: &quot;条件数只描述局部线性与所选范数；正则化、非线性 ray bending 和先验会改变实际误差。&quot;, &quot;keywords&quot;: &quot;condition number; ill-conditioned; noise amplification; singular spectrum; camera geometry&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [5], &quot;page_hits&quot;: [{&quot;page&quot;: 5, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%9D%A1%E4%BB%B6%E6%95%B0#glossary" target="_blank" rel="noreferrer">条件数</a>
+                <p class="en">Condition number</p>
+                <p>常用最大非零奇异值与最小非零奇异值之比衡量反演对观测扰动的敏感程度。比值越大，微小噪声越可能被放大。</p>
+                <p><b>读这篇时看什么：</b>比较不同相机布局、视角数和标定扰动下的线性化 BOST forward 健康度。</p>
+                <p><b>易混点：</b>条件数只描述局部线性与所选范数；正则化、非线性 ray bending 和先验会改变实际误差。</p>
+              </div>
+              <div class="term-side">
+                <span>数学基础</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=5" target="_blank" rel="noreferrer">p.5</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%9D%A1%E4%BB%B6%E6%95%B0">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%9D%A1%E4%BB%B6%E6%95%B0#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;穆尔-彭若斯伪逆&quot;, &quot;en&quot;: &quot;Moore-Penrose pseudoinverse&quot;, &quot;category&quot;: &quot;数学基础&quot;, &quot;explain&quot;: &quot;当 A 不可逆或不是方阵时，A+ 给出最小二乘意义下的最小范数解。它能拟合可观测部分，但不会凭空恢复零空间信息。&quot;, &quot;use&quot;: &quot;建立小矩阵 inverse baseline、定义 range/null projector，并核对 closed-form query update。&quot;, &quot;pitfall&quot;: &quot;直接对很小奇异值取倒数会放大噪声；真实反问题通常还需要截断或 Tikhonov 正则化。&quot;, &quot;keywords&quot;: &quot;pseudoinverse; pinv; least squares; minimum norm; nullspace projector&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [11], &quot;page_hits&quot;: [{&quot;page&quot;: 11, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E7%A9%86%E5%B0%94-%E5%BD%AD%E8%8B%A5%E6%96%AF%E4%BC%AA%E9%80%86#glossary" target="_blank" rel="noreferrer">穆尔-彭若斯伪逆</a>
+                <p class="en">Moore-Penrose pseudoinverse</p>
+                <p>当 A 不可逆或不是方阵时，A+ 给出最小二乘意义下的最小范数解。它能拟合可观测部分，但不会凭空恢复零空间信息。</p>
+                <p><b>读这篇时看什么：</b>建立小矩阵 inverse baseline、定义 range/null projector，并核对 closed-form query update。</p>
+                <p><b>易混点：</b>直接对很小奇异值取倒数会放大噪声；真实反问题通常还需要截断或 Tikhonov 正则化。</p>
+              </div>
+              <div class="term-side">
+                <span>数学基础</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fsmartphone_bos_hayasaka_tagawa_2019_springer_ccby.pdf#page=11" target="_blank" rel="noreferrer">p.11</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E7%A9%86%E5%B0%94-%E5%BD%AD%E8%8B%A5%E6%96%AF%E4%BC%AA%E9%80%86">跨论文反查</a>
+                  <a href="../../index.html?term=%E7%A9%86%E5%B0%94-%E5%BD%AD%E8%8B%A5%E6%96%AF%E4%BC%AA%E9%80%86#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+            </section>
+    <footer>Generated from open cached PDFs with pypdf. Private/WebVPN PDFs are excluded from public reader pages.</footer>
+  </main>
+  <script>
+    const search = document.getElementById('search');
+    const category = document.getElementById('category');
+    const rows = Array.from(document.querySelectorAll('.term-row'));
+    function apply() {
+      const q = search.value.trim().toLowerCase();
+      const parts = q.split(/\s+/).filter(Boolean);
+      rows.forEach((row) => {
+        const data = JSON.parse(row.dataset.text);
+        const text = row.innerText.toLowerCase();
+        const okQ = !parts.length || parts.every((part) => text.includes(part));
+        const okC = category.value === 'all' || data.category === category.value;
+        row.style.display = okQ && okC ? '' : 'none';
+      });
+    }
+    const params = new URLSearchParams(location.search);
+    const initial = params.get('q') || params.get('term') || '';
+    if (initial) search.value = initial;
+    search.addEventListener('input', apply);
+    category.addEventListener('change', apply);
+    apply();
+  </script>
+  <script src="../../site_link_router.js" data-site-root="../../"></script>
+</body>
+</html>

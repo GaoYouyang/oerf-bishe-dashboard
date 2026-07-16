@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>何远哲同步主线 | OERF 毕设导航</title>
+  <style>
+    :root {
+      --bg: #f7faf9;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #607080;
+      --line: #d8e1df;
+      --green: #16756f;
+      --blue: #315f93;
+      --amber: #9a6a00;
+      --red: #a34335;
+      --soft-green: #e8f3f0;
+      --soft-blue: #eaf0f7;
+      --soft-amber: #f8f0dc;
+      --soft-red: #f8ece9;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, rgba(22, 117, 111, 0.11), transparent 340px), var(--bg);
+    }
+    header, main, footer {
+      width: min(1220px, calc(100vw - 36px));
+      margin: 0 auto;
+    }
+    header { padding: 34px 0 20px; }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(32px, 4.7vw, 58px);
+      line-height: 1.06;
+    }
+    h2 { margin: 34px 0 12px; font-size: 25px; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .nav, .button-row, .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+    }
+    .button, .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 750;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .button.primary { background: var(--green); border-color: var(--green); color: #fff; }
+    .tag { min-height: 28px; border-radius: 999px; font-size: 12px; }
+    .tag.green { background: var(--soft-green); color: var(--green); border-color: #c9e3de; }
+    .tag.blue { background: var(--soft-blue); color: var(--blue); border-color: #d3dfed; }
+    .tag.amber { background: var(--soft-amber); color: var(--amber); border-color: #e8d3a5; }
+    .tag.red { background: var(--soft-red); color: var(--red); border-color: #edc8c0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card, .notice {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+    }
+    .notice { border-left: 5px solid var(--green); background: linear-gradient(90deg, var(--soft-green), #fff 72%); }
+    .notice.warning { border-left-color: var(--amber); background: linear-gradient(90deg, var(--soft-amber), #fff 72%); }
+    .notice.danger { border-left-color: var(--red); background: linear-gradient(90deg, var(--soft-red), #fff 72%); }
+    .metric b {
+      display: block;
+      font-size: 30px;
+      line-height: 1.05;
+      color: var(--green);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 12px 0 18px;
+    }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+    th { background: #edf5f2; color: #2f3b41; }
+    tr:last-child td { border-bottom: 0; }
+    ul, ol { margin: 8px 0 0; padding-left: 22px; color: var(--muted); }
+    li { margin-bottom: 7px; }
+    .rank {
+      display: inline-flex;
+      justify-content: center;
+      min-width: 34px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 800;
+      color: #fff;
+      background: var(--green);
+    }
+    .rank.b { background: var(--blue); }
+    .rank.c { background: var(--amber); }
+    .rank.risk { background: var(--red); }
+    footer {
+      color: var(--muted);
+      font-size: 12px;
+      padding: 28px 0 34px;
+    }
+    @media (max-width: 900px) {
+      .grid, .grid.two { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <a class="button" href="./index.html">返回主工作台</a>
+      <a class="button primary" href="./he_review_portal.html">师兄 5 分钟审核入口</a>
+      <a class="button" href="./paper_library/index.html">论文库</a>
+      <a class="button" href="./he_bost_citation_spine.html">引用脊柱</a>
+      <a class="button" href="./nrip_reproducibility_audit.html">NRIP 可复现性</a>
+      <a class="button" href="./tdbost_reproducibility_audit.html">TDBOST / 4D BOST 审计</a>
+      <a class="button" href="./m3b_six_axis_dashboard.html">M3B 六轴实验</a>
+      <a class="button" href="./m3b_interaction_dashboard.html">M3B 交叉验证</a>
+      <a class="button" href="./m3b_family_selector_dashboard.html">M3B 跨形态 Selector</a>
+      <a class="button" href="./operator_learning_bost_bridge.html">T16 算子学习 × BOST</a>
+      <a class="button" href="./operator_3d_innovation_lab.html">算子 × 三维创新实验室</a>
+      <a class="button" href="./operator_nullspace_evidence_dashboard.html">几何 / 零空间证据</a>
+      <a class="button" href="./document_reader.html?doc=t16_operator_ablation_review_brief.md">T16 三种子消融</a>
+      <a class="button" href="./topic_execution_playbook.html">选题执行手册</a>
+      <a class="button" href="./agent_for_science_bost_bridge.html">Agent 辅助 BOST</a>
+      <a class="button" href="./he_bost_14day_reading_plan.html">14 天精读执行包</a>
+      <a class="button" href="./first_month_experiment_board.html">第一月实验板</a>
+      <a class="button" href="./code_data_reuse_dashboard.html">公开代码/数据执行页</a>
+      <a class="button" href="./fulltext_access_queue.html">受限全文队列</a>
+      <a class="button" href="./xmu_vpn_private_library_protocol.html">VPN/私有库边界</a>
+    </div>
+    <h1>何远哲同步主线</h1>
+    <p>这页把何远哲相关论文、BOST/NeRIF/PIV-BOST/4D BOST 路线、公开论文库和私有全文队列收束成一个可执行的毕业设计导航。最后更新：2026-07-10。</p>
+    <div class="grid">
+      <div class="card metric"><b>604</b><span>公开论文入口；新增 INR 初始化两篇关键先例。</span></div>
+      <div class="card metric"><b>48</b><span>受限全文目标；只进本地私有库，不上传 GitHub Pages。</span></div>
+      <div class="card metric"><b>168</b><span>T16 已运行三维 paired samples；FNO/U-Net/physics lift 分层验收。</span></div>
+      <div class="card metric"><b>30 runs</b><span>gate、共享/独立双专家与 matched free/null corrector；v2c 另做闭式 query audit。</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice">
+      <h3>当前总建议</h3>
+      <p>根据师兄提出的“三维重建 + 算子学习”，当前工作重心转为 <strong>T16：少视角 BOST 的 support-consistent 双分支神经算子</strong>。NeRIF 不被放弃，而是作为 forward physics、per-instance baseline 和 test-time refinement；PIV-BOST 与完整 4D BOST 暂列二级升级。</p>
+      <p>168-sample closure 与三种子消融确认 FNO 主干值得继续，18-run gate 筛查否定简单单标量门控。最新 3-seed dual v1 又给出更具体的方向：双输出有互补；support-view 闭式融合的 field oracle regret 为 0.014%，而 query-trained router 为 0.233%且权重近 0.50。拿给师兄审核的重点因此升级为：是否以 support physics 为锚点，用独立专家与 query cameras 只学受限修正/零空间残差。</p>
+      <p>M3B 时序线也已从固定 rank 扩展为 864 格跨形态 nested-LOFO selector：无 held-out camera 时 mean regret 为 0.252%，加入 held-out 为 0.210%；直接最小化 held-out residual 反而失败。它现在可以作为 T16 的 temporal capacity-control 升级层，而不是把 rank 3 硬编码进神经算子。</p>
+      <div class="button-row"><a class="button primary" href="./operator_nullspace_evidence_dashboard.html">打开最新证据总页</a><a class="button" href="./document_reader.html?doc=t16_geometry_nullspace_review_brief.md">v2c 师兄 brief</a><a class="button" href="./operator_3d_innovation_lab.html">模型与文献总页</a><a class="button" href="./m3b_family_selector_dashboard.html">M3B Selector</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2FREADME.md">可运行代码</a></div>
+    </section>
+
+    <h2>一张路线图</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>路线</th>
+          <th>适合做成什么题目</th>
+          <th>最需要师兄给什么</th>
+          <th>我的真实建议</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="rank">T16</span><br /><strong>三维重建 + 神经算子</strong></td>
+          <td>面向少视角 BOST 的 support-consistent 双分支神经算子与三维折射率场重建。</td>
+          <td>先确认 inverse/evolution；再确认能否留 query camera、提供 geometry、paired data 或真实 test-view 验收。</td>
+          <td>当前优先。独立专家、null 上界、learned null 负对照和 query-calibrated v2c 已跑通；下一步做真实 geometry、等容量 controls 与 query-camera VOI。</td>
+        </tr>
+        <tr>
+          <td><span class="rank">A</span><br /><strong>NeRIF/BOST 鲁棒性</strong></td>
+          <td>面向少视角背景纹影层析的神经隐式折射率场重构与鲁棒性分析。</td>
+          <td>九视角 BOST 位移场或原图、相机几何、mask、参考切片或重投影指标。</td>
+          <td>首选。最稳、最贴何远哲，也最容易写成完整本科论文。</td>
+        </tr>
+        <tr>
+          <td><span class="rank b">B</span><br /><strong>PIV-BOST 补偿</strong></td>
+          <td>基于 BOST 折射率场的 PIV 速度测量误差补偿与传播分析。</td>
+          <td>PIV 图像对或速度场、同步 BOST 重构、时间间隔、像素尺寸、补偿公式。</td>
+          <td>适合真实数据明确时做；没有数据时先做 image/velocity-layer toy。</td>
+        </tr>
+        <tr>
+          <td><span class="rank c">C</span><br /><strong>4D BOST 子问题</strong></td>
+          <td>四维背景纹影层析中的跨形态无真值容量选择、时序先验与可靠性分析。</td>
+          <td>一小段时序 BOST 数据、相机几何、support/test view、帧率同步和组内必须保真的物理量。</td>
+          <td>已有 864 格 synthetic 底盘；下一步只做真实/geometry transfer 与 UQ，不承诺复现完整 TOG。</td>
+        </tr>
+        <tr>
+          <td><span class="rank b">F</span><br /><strong>位移质量控制</strong></td>
+          <td>BOS/PIV-BOST 位移估计、光流 benchmark 与质量控制工具。</td>
+          <td>reference/deformed background、PIV raw image pair、当前组内位移算法或 bad-frame 规则。</td>
+          <td>很实用。可以作为 A/B 的副线，也可能成为第一月最有价值交付。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>何远哲主线论文矩阵</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>论文</th>
+          <th>公开/私有状态</th>
+          <th>你要从中提取什么</th>
+          <th>对应路线</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Neural refractive index field</strong><br />Physics of Fluids 2025, DOI <a href="https://doi.org/10.1063/5.0250899">10.1063/5.0250899</a></td>
+          <td><span class="tag green">arXiv PDF 已公开缓存</span></td>
+          <td>forward model、坐标网络、loss、采样策略、九视角实验、重投影验证、L2/SSIM/CC/PSNR。</td>
+          <td>A 路线核心。</td>
+        </tr>
+        <tr>
+          <td><strong>Simultaneous PIV-BOST</strong><br />Experiments in Fluids 2025, DOI <a href="https://doi.org/10.1007/s00348-025-04093-y">10.1007/s00348-025-04093-y</a></td>
+          <td><span class="tag amber">P0 私有全文队列</span></td>
+          <td>BOST 到 PIV 光路误差补偿公式、同步采集链路、补偿前后速度误差、数据字段。</td>
+          <td>B 路线核心。</td>
+        </tr>
+        <tr>
+          <td><strong>Tensor Decomposition-Based 4D BOST</strong><br />ACM TOG 2026, DOI <a href="https://doi.org/10.1145/3809488">10.1145/3809488</a></td>
+          <td><span class="tag amber">P0 私有全文队列</span></td>
+          <td>XYZT 张量表示、低秩分解、时序一致性、内存/速度 trade-off、能拆给本科生的子模块。</td>
+          <td>C 路线核心。</td>
+        </tr>
+        <tr>
+          <td><strong>Stereo-velocity compensation in turbulent combustion</strong><br />Proceedings of the Combustion Institute 2026, DOI <a href="https://doi.org/10.1016/j.proci.2026.106175">10.1016/j.proci.2026.106175</a></td>
+          <td><span class="tag amber">P0 私有全文队列</span></td>
+          <td>从 planar PIV-BOST 升级到 stereo-PIV 的相机/标定/速度误差层级；本科阶段如何降级。</td>
+          <td>B 路线展望。</td>
+        </tr>
+        <tr>
+          <td><strong>Neural Refractive Index Primitives</strong><br />Combustion and Flame 2026 / arXiv, DOI <a href="https://doi.org/10.1016/j.combustflame.2026.115082">10.1016/j.combustflame.2026.115082</a></td>
+          <td><span class="tag green">arXiv PDF 已公开缓存</span></td>
+          <td>hash-like encoding、多尺度表示、automatic/discrete gradient loss、mask、真实火焰 BOS 对照。</td>
+          <td>A 路线外部竞品。</td>
+        </tr>
+        <tr>
+          <td><strong>Open-source BOS tomography dataset</strong><br />Experiments in Fluids 2026, DOI <a href="https://doi.org/10.1007/s00348-026-04189-z">10.1007/s00348-026-04189-z</a></td>
+          <td><span class="tag green">开放数据/PDF 已整理</span></td>
+          <td>无组内数据时的真实感数据接口、view manifest、limited-view 子采样、baseline 验证。</td>
+          <td>A/F 保底数据。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>近期论文库补漏</h2>
+    <div class="notice warning">
+      <p>公开论文库已扩展到 604 篇入口、192 篇可公开缓存 PDF；除 VIDON、GNOT、CORAL、Neural Correction Operator 等组件来源外，又补入 Learned Initializations 与 STRAINER 两篇 INR 初始化关键先例。T16 v3a 已确认 ridge-FNO 在 K=4/6/8 三预算通过开发门槛，下一步只推进 NeRIF warm-start、独立 forward 与真实数据审计。</p>
+    </div>
+    <div class="grid two">
+      <div class="card">
+        <h3>对你最有价值的 4 个补漏方向</h3>
+        <ul>
+          <li>TDLAS + BOS 同步温度测量：连接 OERF 吸收光谱诊断和 BOS。</li>
+          <li>time-series schlieren + extended phase-consistent DMD：连接 4D/时序先验。</li>
+          <li>Fibre BOS：连接单相机/内窥/光纤多视角的硬件前史。</li>
+          <li>single-pixel correlation BOS：连接 computational imaging 和低成本测量。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>如何使用这些补漏论文</h3>
+        <ul>
+          <li>不开题时逐篇精读，只在相关工作中按“BOS 光路/应用/时序/计算成像”引用。</li>
+          <li>若师兄说先做实验系统或位移质量控制，再把这些条目提升到精读。</li>
+          <li>如果需要全文，通过 WebVPN 下载到本地私有库，不上传 GitHub。</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>三个月预研执行</h2>
+    <section class="notice warning">
+      <h3>无组内数据时的保底推进</h3>
+      <p>新增 <a href="./code_data_reuse_dashboard.html">公开代码与数据复用执行页</a>：Open BOS dataset 做主 benchmark，TDBOST/NRIP 只读结构，RTNF/PyAbel 等明确许可项目作为轻量参考，OpenPIV/Photon 这类 GPL 工具只作外部依赖或方法参考。这样你即使暂时拿不到 OERF 内部数据，也能先把 loader、metrics、可视化和报告工具做起来。</p>
+    </section>
+    <table>
+      <thead>
+        <tr>
+          <th>阶段</th>
+          <th>学习重点</th>
+          <th>必须产出</th>
+          <th>验收方式</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>第 1-2 周</td>
+          <td>补 BOS/BOST 物理链条、Gladstone-Dale、PIV 基础和 NeRIF 论文。</td>
+          <td>M0/M1 可运行合成 demo；一页公式链；何远哲问题清单。</td>
+          <td>能向师兄讲清楚“位移 -> 折射率梯度 -> 三维场”的 forward model。</td>
+        </tr>
+        <tr>
+          <td>第 3-5 周</td>
+          <td>反问题、体素 baseline、坐标场、Fourier/hash encoding、噪声/视角扫描。</td>
+          <td>视角数、噪声、容量、mask 的实验矩阵；图表自动生成。</td>
+          <td>至少能复现一个传统 baseline 和一个 NeRIF-style toy 的对照。</td>
+        </tr>
+        <tr>
+          <td>第 6-8 周</td>
+          <td>PIV-BOST 误差传播、图像层/速度层补偿、OpenPIV/Farneback/RAFT-PIV 对照。</td>
+          <td>M3A 从 vector toy 升级到 particle-image 或真实 velocity-field loader。</td>
+          <td>补偿前后 RMSE、bad-region mask、confidence/downstream error 能成图。</td>
+        </tr>
+        <tr>
+          <td>第 9-12 周</td>
+          <td>4D low-rank toy、temporal consistency、真实数据 manifest、开题报告。</td>
+          <td>M3B 六轴与交叉实验报告、真实/公开数据接口、开题 6-8 页 memo。</td>
+          <td>带着图、失败边界和数据请求去找何远哲定题。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>一年毕设路线</h2>
+    <ol>
+      <li><strong>开题前：</strong>用 synthetic/open data 保底，选 A 主线，准备 B/C/F 升级接口。</li>
+      <li><strong>第 1 学期前半：</strong>完成传统 baseline、NeRIF-style 重构、系统误差扫描和论文图雏形。</li>
+      <li><strong>第 1 学期后半：</strong>接一小份组内真实数据，做数据 manifest、mask/geometry/重投影质量报告。</li>
+      <li><strong>寒假：</strong>按师兄建议选择 B 或 C 升级；没有数据则把 A/F 做深。</li>
+      <li><strong>第 2 学期：</strong>完成消融、指标、可视化、开源/私有边界说明和毕业论文正文。</li>
+      <li><strong>答辩前：</strong>把公开图表、不能公开的数据、内部结果和论文引用边界分开，避免把组内数据或受限 PDF 放到公开页面。</li>
+    </ol>
+
+    <h2>明天醒来后可做的 VPN 下载协作</h2>
+    <section class="notice danger">
+      <h3>无人值守限制</h3>
+      <p>我已经测试过当前 WebVPN/Springer PDF 的命令行直连，服务器返回 <code>/fingerprint</code> 验证页，不是论文 PDF。因此无人值守时不适合强行下载。最稳的协作方式是：你白天在浏览器里过验证码并下载 PDF 到 <code>private_library/inbox/</code>，我负责自动匹配、重命名、更新私有索引和公开阅读队列。</p>
+      <p>最新 `must` 缺口复查显示：8 篇仍没有本地公开缓存文件；其中 4D BOST 已通过 ACM OA / CC BY 4.0 HTML 与 eReader 完成正式全文精读，只是 raw PDF 尚未缓存。PIV-BOST、BOS sensitivity、UBOST、Direct BOST-RBF、instantaneous 3D flame BOST、volumetric BOST 和 PIV refractive-index uncertainty 仍走出版社、学校或师兄合法入口。</p>
+      <p>即使 GitHub 仓库保持 private，也不把学校订阅 PDF 推到仓库或 Pages；仓库权限、Pages 可见性和期刊/数据库许可是三件事。你自己的电脑上会保留完整私有索引，公开站点只同步“已在私有库/待读全文/精读目标”的状态。</p>
+    </section>
+    <table>
+      <thead>
+        <tr>
+          <th>你做</th>
+          <th>我做</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>从 WebVPN 进入 Springer/ScienceDirect，优先补 PIV-BOST、stereo PIV-BOST 等 P0 全文；4D BOST 已可直接用 ACM eReader 精读，无需重复走 VPN。</td>
+          <td>把文件归入本机私有 PDF 区，更新本机私有索引和私有状态报告。</td>
+        </tr>
+        <tr>
+          <td>如果文件名乱也没关系，直接放进 <code>private_library/inbox/</code>。</td>
+          <td>用 DOI/题名/首页文本自动匹配；匹配不确定的放入人工复核清单。</td>
+        </tr>
+        <tr>
+          <td>不需要把订阅 PDF 发到 GitHub 或公开网页。</td>
+          <td>公开网页只显示“已在私有库/待读全文/出版社入口/精读目标”，保证分享给师兄时不携带受限全文。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>直接问何远哲的 10 个问题</h2>
+    <ol>
+      <li>师兄说的算子学习是 `projection/displacement -> 3D field` 的 inverse operator，还是 `3D history -> 4D evolution`？</li>
+      <li>第一月更希望我交付：geometry/data loader、lift/U-Net/FNO 消融、NeRIF initialization，还是时序 operator toy？</li>
+      <li>能否给一份不涉密样例数据：BOST 位移场/原图、PIV 图像对、4D 序列或参考切片？</li>
+      <li>真实数据的坐标系、单位、mask、view order、calibration 文件如何定义？</li>
+      <li>组内认可的 baseline 是 voxel/SIRT/Landweber/UBOST，还是 NeRIF 代码里的 baseline？</li>
+      <li>当前 FNO field 更好但三视角 held-out 没更好；真实数据最认可 test camera、重投影、边界、积分量还是专家切片？</li>
+      <li>输入应是 raw BOS image、displacement、sinogram/projection，还是传统重建初值？</li>
+      <li>是否认可 operator output 作为 NeRIF/TDBOST 初值，再用 forward loss 做少量 refinement？</li>
+      <li>哪些图可以写本科论文或放公开网页，哪些只能组内看？</li>
+      <li>下次汇报前，我交付哪 3 张图最有用？</li>
+    </ol>
+
+    <h2>来源与入口</h2>
+    <div class="button-row">
+      <a class="button" href="https://github.com/laserdiagnostics/oerf-lab-website">OERF 官网源码</a>
+      <a class="button" href="https://laserdiagnostics.github.io/oerf-lab-website/">OERF 官网</a>
+      <a class="button" href="https://arxiv.org/abs/2409.14722">NeRIF arXiv</a>
+      <a class="button" href="./he_bost_citation_spine.html">He/BOST 引用脊柱</a>
+      <a class="button" href="./he_bost_14day_reading_plan.html">14 天精读执行包</a>
+      <a class="button" href="./first_month_experiment_board.html">第一月实验板</a>
+      <a class="button" href="./m3b_interaction_dashboard.html">M3B 交叉实验页</a>
+      <a class="button" href="./m3b_family_selector_dashboard.html">M3B 跨形态 Selector</a>
+      <a class="button" href="./operator_learning_bost_bridge.html">T16 算子学习专项页</a>
+      <a class="button" href="./operator_3d_innovation_lab.html">算子 × 三维创新实验室</a>
+      <a class="button" href="./operator_nullspace_evidence_dashboard.html">最新证据总页</a>
+      <a class="button" href="./document_reader.html?doc=t16_geometry_nullspace_review_brief.md">v2c 审核 brief</a>
+      <a class="button" href="./document_reader.html?doc=t16_reliability_gate_review_brief.md">T16 reliability brief</a>
+      <a class="button" href="./document_reader.html?doc=t16_operator_smoke_review_brief.md">T16 师兄审核 brief</a>
+      <a class="button" href="./document_reader.html?doc=t16_operator_ablation_review_brief.md">T16 三种子消融 brief</a>
+      <a class="button" href="./document_reader.html?doc=t16_operator_learning_path.md">T16 学习路径</a>
+      <a class="button" href="./topic_execution_playbook.html">选题执行手册</a>
+      <a class="button" href="https://link.springer.com/article/10.1007/s00348-025-04093-y">PIV-BOST Springer</a>
+      <a class="button" href="https://dl.acm.org/doi/10.1145/3809488">4D BOST ACM</a>
+      <a class="button" href="https://link.springer.com/collections/hgiejbeedh">Springer BOS 专题</a>
+    </div>
+  </main>
+
+  <footer>
+    公开页面只缓存可公开开放 PDF。通过学校 VPN 或数据库订阅获得的全文，只作为个人学习材料进入本机私有库。
+  </footer>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

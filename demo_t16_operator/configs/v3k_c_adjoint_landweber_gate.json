@@ -1,0 +1,66 @@
+{
+  "name": "t16_v3k_c_adjoint_landweber_zero_learning_gate_v1",
+  "dataset_config": "v3c_dev2_dataset.json",
+  "private_dataset_npz": "v3i_variable_geometry_work/t16_v3i_variable_geometry_dataset.npz",
+  "base_checkpoint": "v3d_fno_optimizer_work/20260901/base/checkpoints/base_fno.pt",
+  "output_dir": "v3k_c_adjoint_landweber_gate",
+  "selection_split": "val",
+  "methods": [
+    "standard",
+    "jacobi"
+  ],
+  "pair_design": {
+    "repeats_per_source": 4,
+    "counterfactual_stride": 5,
+    "assignment_seed": 20261371,
+    "ridge_relative": 0.000001,
+    "evaluation_geometry_partition_by_split": {
+      "val": "validation",
+      "test_iid": "geometry_ood",
+      "test_noise_ood": "geometry_ood",
+      "test_family_ood": "stress",
+      "test_joint_ood": "stress"
+    }
+  },
+  "numerical_protocol": {
+    "step_fractions": [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 1.9],
+    "iteration_counts": [1, 2, 4, 8, 16, 32, 64],
+    "diagonal_floor_relative": 0.001,
+    "project_initial_fno_to_nonnegative_support": true,
+    "project_after_every_iteration": true,
+    "selection_metric": "source_field_mean_rel_l2_after_layout_collapse",
+    "selection_tie_break": "fewer_iterations_then_smaller_step_fraction",
+    "audit_camera_used_for_selection": false,
+    "test_splits_read_after_selection_commit": true
+  },
+  "gate": {
+    "maximum_adjoint_relative_error": 1e-12,
+    "maximum_gradient_relative_error": 1e-6,
+    "maximum_normalized_step_fraction": 1.9,
+    "minimum_validation_gain_vs_feasible_fno_pct": 1.0,
+    "minimum_validation_field_cluster_ci95_low_pct": 0.0,
+    "minimum_validation_positive_field_fraction": 0.75,
+    "maximum_validation_harm_rate_gt_1pct": 0.1,
+    "minimum_geometry_ood_gain_vs_feasible_fno_pct": 0.0,
+    "minimum_joint_ood_gain_vs_feasible_fno_pct": -0.25,
+    "minimum_validation_audit_gain_pct": 0.0,
+    "minimum_geometry_ood_audit_gain_pct": 0.0,
+    "bootstrap_seed": 20261671,
+    "bootstrap_replicates": 10000
+  },
+  "claims_boundary": {
+    "development_only": true,
+    "zero_learning_gate_only": true,
+    "known_synthetic_support_used": true,
+    "learned_step_tested": false,
+    "learned_preconditioner_tested": false,
+    "per_view_set_aggregation_tested": false,
+    "superiority_tested": false,
+    "blind_final_opened": false,
+    "existing_development_splits_previously_read": true,
+    "coordinate_channel_contract_regenerated": false,
+    "real_bost_geometry_present": false,
+    "private_dataset_public": false,
+    "checkpoint_weights_public": false
+  }
+}

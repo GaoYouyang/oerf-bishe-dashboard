@@ -1,0 +1,123 @@
+{
+  "schema_version": "psu-b0-pcgls-conditional-headroom-config-1.0",
+  "status": "POSTOPEN_DEVELOPMENT_DIAGNOSTIC_FRESH_EXCLUDED",
+  "source_development_config": "demo_t16_operator/configs/psu_b0_residual_risk_development_v1.json",
+  "source_strong_frontier": "docs/psu_b0_strong_spectral_frontier_development_public_summary.json",
+  "data_firewall": {
+    "selection_split": "risk_train",
+    "transfer_splits": [
+      "risk_validation",
+      "risk_calibration"
+    ],
+    "opened_fresh_use": "FORBIDDEN"
+  },
+  "solver": {
+    "stages": 4,
+    "logical_calls": {
+      "forward": 4,
+      "adjoint": 4
+    },
+    "baseline": {
+      "candidate_id": "pcgls4_s4_e0.05_isotropic",
+      "strength": 4.0,
+      "epsilon": 0.05,
+      "axis_weights_xyz": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    }
+  },
+  "candidate_grid": {
+    "strengths": [
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      7.0
+    ],
+    "epsilons": [
+      0.02,
+      0.05,
+      0.1
+    ],
+    "axis_weight_patterns_xyz": {
+      "isotropic": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "x_low": [
+        0.5,
+        1.0,
+        1.0
+      ],
+      "x_high": [
+        2.0,
+        1.0,
+        1.0
+      ],
+      "y_low": [
+        1.0,
+        0.5,
+        1.0
+      ],
+      "y_high": [
+        1.0,
+        2.0,
+        1.0
+      ],
+      "z_low": [
+        1.0,
+        1.0,
+        0.5
+      ],
+      "z_high": [
+        1.0,
+        1.0,
+        2.0
+      ]
+    }
+  },
+  "observable_strata": {
+    "relative_noise_bin_edges": [
+      0.04,
+      0.07
+    ],
+    "relative_noise_bin_labels": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "view_noise_interpretation": "synthetic_declared_noise_proxy_not_yet_a_real_deployment_feature"
+  },
+  "selection_rule": {
+    "primary": "mean_combined_loss",
+    "tie_breaks": [
+      "mean_field_relative_l2",
+      "candidate_id"
+    ]
+  },
+  "reported_strategies": [
+    "train_global",
+    "train_view_count",
+    "train_view_count_plus_noise",
+    "train_family_label",
+    "split_family_truth_oracle",
+    "sample_combined_truth_oracle",
+    "sample_field_truth_oracle"
+  ],
+  "decision_thresholds": {
+    "meaningful_mean_field_headroom_percent": 2.0,
+    "stable_bootstrap_lower_percent": 0.0
+  },
+  "claim_boundary": {
+    "per_sample_oracle_is_deployable": false,
+    "split_family_oracle_is_deployable": false,
+    "train_family_label_is_available_on_real_measurements": false,
+    "relative_noise_is_already_validated_on_real_measurements": false,
+    "experimental_field_truth_used": false,
+    "analytic_morphology_is_cfd": false,
+    "algorithm_superiority": false
+  }
+}

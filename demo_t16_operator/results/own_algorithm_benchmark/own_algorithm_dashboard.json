@@ -1,0 +1,873 @@
+{
+  "experiment": "t16_provisional_ray_set_operator_v3b",
+  "scientific_status": "PROVISIONAL_MODEL_PARTIAL_SUPERIORITY_1_OF_3",
+  "development_fields_only": true,
+  "algorithm_name_status": "provisional_working_label_not_novelty_claim",
+  "methods": [
+    "ridge",
+    "ridge_unet_aug",
+    "ridge_fno_aug",
+    "ridge_deeponet",
+    "ray_set_operator"
+  ],
+  "labels": {
+    "ridge": "validation-locked ridge",
+    "ridge_unet_aug": "ridge residual 3D U-Net",
+    "ridge_fno_aug": "ridge residual FNO",
+    "ridge_deeponet": "ridge residual DeepONet",
+    "ray_set_operator": "provisional geometry-conditioned ray-set operator"
+  },
+  "independent_test_field_count": 96,
+  "model_seed_count": 3,
+  "reconstruction_budgets": [
+    4,
+    6,
+    8
+  ],
+  "audit_query_index": 3,
+  "q_audit_used_for_training_or_selection": false,
+  "locked_neural_baselines": {
+    "4": "ridge_fno_aug",
+    "6": "ridge_fno_aug",
+    "8": "ridge_fno_aug"
+  },
+  "parameter_counts": {
+    "K4:ridge_unet_aug": 94193,
+    "K4:ridge_fno_aug": 44203,
+    "K4:ridge_deeponet": 49313,
+    "K4:ray_set_operator": 45973,
+    "K6:ridge_unet_aug": 94193,
+    "K6:ridge_fno_aug": 44203,
+    "K6:ridge_deeponet": 49313,
+    "K6:ray_set_operator": 45973,
+    "K8:ridge_unet_aug": 94193,
+    "K8:ridge_fno_aug": 44203,
+    "K8:ridge_deeponet": 49313,
+    "K8:ray_set_operator": 45973
+  },
+  "summary": [
+    {
+      "total_budget": 4,
+      "method": "ray_set_operator",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.4357799985446036,
+      "mean_audit_reprojection_rel_l2": 0.5345713814151369,
+      "mean_improvement_vs_classical_pct": 26.93071927039632,
+      "median_improvement_vs_classical_pct": 13.46466723743377,
+      "p10_improvement_vs_classical_pct": 5.650455134021979,
+      "harm_rate_gt_1pct_vs_classical": 0.0,
+      "improvement_ci95_cluster_low": 24.058154089711973,
+      "improvement_ci95_cluster_high": 29.735537182420526
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.5579373134920995,
+      "mean_audit_reprojection_rel_l2": 0.6557429057235519,
+      "mean_improvement_vs_classical_pct": 0.0,
+      "median_improvement_vs_classical_pct": 0.0,
+      "p10_improvement_vs_classical_pct": 0.0,
+      "harm_rate_gt_1pct_vs_classical": 0.0,
+      "improvement_ci95_cluster_low": 0.0,
+      "improvement_ci95_cluster_high": 0.0
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_deeponet",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.4881803101032145,
+      "mean_audit_reprojection_rel_l2": 0.6030545411631465,
+      "mean_improvement_vs_classical_pct": 16.10205560805891,
+      "median_improvement_vs_classical_pct": 6.057713574141586,
+      "p10_improvement_vs_classical_pct": 1.473731414974335,
+      "harm_rate_gt_1pct_vs_classical": 0.0,
+      "improvement_ci95_cluster_low": 13.718549638518416,
+      "improvement_ci95_cluster_high": 18.552500969514362
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_fno_aug",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.43949867298619616,
+      "mean_audit_reprojection_rel_l2": 0.5383795078895572,
+      "mean_improvement_vs_classical_pct": 26.115294531761982,
+      "median_improvement_vs_classical_pct": 12.695408098010617,
+      "p10_improvement_vs_classical_pct": 5.578652930252905,
+      "harm_rate_gt_1pct_vs_classical": 0.0,
+      "improvement_ci95_cluster_low": 23.315726104484174,
+      "improvement_ci95_cluster_high": 28.87308759240287
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_unet_aug",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.47492583747953176,
+      "mean_audit_reprojection_rel_l2": 0.5845168289573242,
+      "mean_improvement_vs_classical_pct": 19.042448644360675,
+      "median_improvement_vs_classical_pct": 6.6381477513505525,
+      "p10_improvement_vs_classical_pct": 2.0068148296808714,
+      "harm_rate_gt_1pct_vs_classical": 0.0,
+      "improvement_ci95_cluster_low": 16.600164265595293,
+      "improvement_ci95_cluster_high": 21.470185595584717
+    },
+    {
+      "total_budget": 6,
+      "method": "ray_set_operator",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.34105072064428693,
+      "mean_audit_reprojection_rel_l2": 0.40862667423466015,
+      "mean_improvement_vs_classical_pct": 29.216321850756795,
+      "median_improvement_vs_classical_pct": 14.612655480076251,
+      "p10_improvement_vs_classical_pct": 6.511822652266052,
+      "harm_rate_gt_1pct_vs_classical": 0.0,
+      "improvement_ci95_cluster_low": 26.546965974408725,
+      "improvement_ci95_cluster_high": 31.829682475132568
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.44497674501811463,
+      "mean_audit_reprojection_rel_l2": 0.5098560221182803,
+      "mean_improvement_vs_classical_pct": 0.0,
+      "median_improvement_vs_classical_pct": 0.0,
+      "p10_improvement_vs_classical_pct": 0.0,
+      "harm_rate_gt_1pct_vs_classical": 0.0,
+      "improvement_ci95_cluster_low": 0.0,
+      "improvement_ci95_cluster_high": 0.0
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_deeponet",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.3810203045917054,
+      "mean_audit_reprojection_rel_l2": 0.46163143235672677,
+      "mean_improvement_vs_classical_pct": 19.498252147673185,
+      "median_improvement_vs_classical_pct": 6.493590874557033,
+      "p10_improvement_vs_classical_pct": 1.00713024210381,
+      "harm_rate_gt_1pct_vs_classical": 0.0,
+      "improvement_ci95_cluster_low": 16.509270392590896,
+      "improvement_ci95_cluster_high": 22.442284296640597
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_fno_aug",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.34954393468797207,
+      "mean_audit_reprojection_rel_l2": 0.42283444572240114,
+      "mean_improvement_vs_classical_pct": 26.52432292962331,
+      "median_improvement_vs_classical_pct": 13.801031095593205,
+      "p10_improvement_vs_classical_pct": 6.887393890426094,
+      "harm_rate_gt_1pct_vs_classical": 0.0,
+      "improvement_ci95_cluster_low": 23.799954790204946,
+      "improvement_ci95_cluster_high": 29.166276271705446
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_unet_aug",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.3850269454220931,
+      "mean_audit_reprojection_rel_l2": 0.4588127760992695,
+      "mean_improvement_vs_classical_pct": 18.126815880940626,
+      "median_improvement_vs_classical_pct": 6.172360022442473,
+      "p10_improvement_vs_classical_pct": -0.4830063485278319,
+      "harm_rate_gt_1pct_vs_classical": 0.07291666666666666,
+      "improvement_ci95_cluster_low": 15.406088169888273,
+      "improvement_ci95_cluster_high": 20.787911296001692
+    },
+    {
+      "total_budget": 8,
+      "method": "ray_set_operator",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.3161657886424412,
+      "mean_audit_reprojection_rel_l2": 0.40544699354925084,
+      "mean_improvement_vs_classical_pct": 24.946495740681907,
+      "median_improvement_vs_classical_pct": 12.22599130464257,
+      "p10_improvement_vs_classical_pct": 3.827120717899389,
+      "harm_rate_gt_1pct_vs_classical": 0.0,
+      "improvement_ci95_cluster_low": 22.217291546335762,
+      "improvement_ci95_cluster_high": 27.605355892168834
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.39950583937267464,
+      "mean_audit_reprojection_rel_l2": 0.4929283346670369,
+      "mean_improvement_vs_classical_pct": 0.0,
+      "median_improvement_vs_classical_pct": 0.0,
+      "p10_improvement_vs_classical_pct": 0.0,
+      "harm_rate_gt_1pct_vs_classical": 0.0,
+      "improvement_ci95_cluster_low": 0.0,
+      "improvement_ci95_cluster_high": 0.0
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_deeponet",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.3437540893339448,
+      "mean_audit_reprojection_rel_l2": 0.45066943480115795,
+      "mean_improvement_vs_classical_pct": 17.810922208661886,
+      "median_improvement_vs_classical_pct": 5.248533174657134,
+      "p10_improvement_vs_classical_pct": -1.8761528125001303,
+      "harm_rate_gt_1pct_vs_classical": 0.1875,
+      "improvement_ci95_cluster_low": 14.937313810578827,
+      "improvement_ci95_cluster_high": 20.651650302678917
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_fno_aug",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.31663047395543087,
+      "mean_audit_reprojection_rel_l2": 0.4045965885226097,
+      "mean_improvement_vs_classical_pct": 24.67255237921992,
+      "median_improvement_vs_classical_pct": 12.478838733232672,
+      "p10_improvement_vs_classical_pct": 4.774875444742848,
+      "harm_rate_gt_1pct_vs_classical": 0.0,
+      "improvement_ci95_cluster_low": 22.15250488217053,
+      "improvement_ci95_cluster_high": 27.16377439347673
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_unet_aug",
+      "independent_field_count": 96,
+      "model_seed_count": 3,
+      "source_domain_count": 4,
+      "classical_champion": "ridge",
+      "mean_field_rel_l2": 0.34937211858212114,
+      "mean_audit_reprojection_rel_l2": 0.4470323673190756,
+      "mean_improvement_vs_classical_pct": 16.227235021667095,
+      "median_improvement_vs_classical_pct": 3.9616062587745646,
+      "p10_improvement_vs_classical_pct": -2.3735981040145817,
+      "harm_rate_gt_1pct_vs_classical": 0.17708333333333331,
+      "improvement_ci95_cluster_low": 13.655932992487644,
+      "improvement_ci95_cluster_high": 18.72043290297544
+    }
+  ],
+  "domains": [
+    {
+      "total_budget": 4,
+      "method": "ray_set_operator",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.6375169199373988,
+      "mean_audit_reprojection_rel_l2": 0.7174247486723794,
+      "mean_improvement_vs_classical_pct": 7.817814764254077
+    },
+    {
+      "total_budget": 4,
+      "method": "ray_set_operator",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.22122466864271298,
+      "mean_audit_reprojection_rel_l2": 0.31958155054599047,
+      "mean_improvement_vs_classical_pct": 48.337824555861665
+    },
+    {
+      "total_budget": 4,
+      "method": "ray_set_operator",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.6451987019843525,
+      "mean_audit_reprojection_rel_l2": 0.7439871844318177,
+      "mean_improvement_vs_classical_pct": 8.282226428478667
+    },
+    {
+      "total_budget": 4,
+      "method": "ray_set_operator",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.23917970361395013,
+      "mean_audit_reprojection_rel_l2": 0.35729204201036024,
+      "mean_improvement_vs_classical_pct": 43.285011332990884
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.6911488845944405,
+      "mean_audit_reprojection_rel_l2": 0.7872540528575579,
+      "mean_improvement_vs_classical_pct": 0.0
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.41955478861927986,
+      "mean_audit_reprojection_rel_l2": 0.5036681021253268,
+      "mean_improvement_vs_classical_pct": 0.0
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.7031535704930624,
+      "mean_audit_reprojection_rel_l2": 0.8059155493974686,
+      "mean_improvement_vs_classical_pct": 0.0
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.4178920102616151,
+      "mean_audit_reprojection_rel_l2": 0.5261339185138544,
+      "mean_improvement_vs_classical_pct": 0.0
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_deeponet",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.6753827730814616,
+      "mean_audit_reprojection_rel_l2": 0.7658545499046644,
+      "mean_improvement_vs_classical_pct": 2.309128830976651
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_deeponet",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.28890326370795566,
+      "mean_audit_reprojection_rel_l2": 0.4119059838768509,
+      "mean_improvement_vs_classical_pct": 31.677025193672716
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_deeponet",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.6836279382308325,
+      "mean_audit_reprojection_rel_l2": 0.782703850004408,
+      "mean_improvement_vs_classical_pct": 2.790247690833757
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_deeponet",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.3048072653926081,
+      "mean_audit_reprojection_rel_l2": 0.4517537808666627,
+      "mean_improvement_vs_classical_pct": 27.631820716752532
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_fno_aug",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.6399466925197177,
+      "mean_audit_reprojection_rel_l2": 0.7224298069874445,
+      "mean_improvement_vs_classical_pct": 7.465928141089525
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_fno_aug",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.22640167963173655,
+      "mean_audit_reprojection_rel_l2": 0.31774091875801486,
+      "mean_improvement_vs_classical_pct": 46.96826850066739
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_fno_aug",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.6481959703895781,
+      "mean_audit_reprojection_rel_l2": 0.7568502889739142,
+      "mean_improvement_vs_classical_pct": 7.8544800498759555
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_fno_aug",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.2434503494037522,
+      "mean_audit_reprojection_rel_l2": 0.3564970168388552,
+      "mean_improvement_vs_classical_pct": 42.172501435415064
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_unet_aug",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.666808755033546,
+      "mean_audit_reprojection_rel_l2": 0.7656661785311168,
+      "mean_improvement_vs_classical_pct": 3.5791502773674835
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_unet_aug",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.2730067239867317,
+      "mean_audit_reprojection_rel_l2": 0.37558067041552734,
+      "mean_improvement_vs_classical_pct": 35.71223637092188
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_unet_aug",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.6780702256494098,
+      "mean_audit_reprojection_rel_l2": 0.7863092256916895,
+      "mean_improvement_vs_classical_pct": 3.606896657972802
+    },
+    {
+      "total_budget": 4,
+      "method": "ridge_unet_aug",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.28181764524843955,
+      "mean_audit_reprojection_rel_l2": 0.4105112411909633,
+      "mean_improvement_vs_classical_pct": 33.27151127118055
+    },
+    {
+      "total_budget": 6,
+      "method": "ray_set_operator",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.5156722205380598,
+      "mean_audit_reprojection_rel_l2": 0.5657531366580062,
+      "mean_improvement_vs_classical_pct": 9.393909970379658
+    },
+    {
+      "total_budget": 6,
+      "method": "ray_set_operator",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.15933669586148527,
+      "mean_audit_reprojection_rel_l2": 0.24508878019534883,
+      "mean_improvement_vs_classical_pct": 51.85302308919006
+    },
+    {
+      "total_budget": 6,
+      "method": "ray_set_operator",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.51871725378765,
+      "mean_audit_reprojection_rel_l2": 0.5876339980297618,
+      "mean_improvement_vs_classical_pct": 9.437305065029854
+    },
+    {
+      "total_budget": 6,
+      "method": "ray_set_operator",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.17047671238995257,
+      "mean_audit_reprojection_rel_l2": 0.23603078205552364,
+      "mean_improvement_vs_classical_pct": 46.18104927842762
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.568182036280632,
+      "mean_audit_reprojection_rel_l2": 0.6415963967641195,
+      "mean_improvement_vs_classical_pct": 0.0
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.3248057961463928,
+      "mean_audit_reprojection_rel_l2": 0.38382988423109055,
+      "mean_improvement_vs_classical_pct": 0.0
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.5720089102784792,
+      "mean_audit_reprojection_rel_l2": 0.6423603271444639,
+      "mean_improvement_vs_classical_pct": 0.0
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.3149102373669545,
+      "mean_audit_reprojection_rel_l2": 0.37163748033344746,
+      "mean_improvement_vs_classical_pct": 0.0
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_deeponet",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.5584997894863287,
+      "mean_audit_reprojection_rel_l2": 0.6311970510416561,
+      "mean_improvement_vs_classical_pct": 1.717843784453019
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_deeponet",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.19719184935092926,
+      "mean_audit_reprojection_rel_l2": 0.28714380423641866,
+      "mean_improvement_vs_classical_pct": 39.92894873489254
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_deeponet",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.5598186987141768,
+      "mean_audit_reprojection_rel_l2": 0.6294300879041353,
+      "mean_improvement_vs_classical_pct": 2.1533287793560003
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_deeponet",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.20857088081538677,
+      "mean_audit_reprojection_rel_l2": 0.29875478624469703,
+      "mean_improvement_vs_classical_pct": 34.192887291991184
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_fno_aug",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.5151692438456748,
+      "mean_audit_reprojection_rel_l2": 0.5857166701720821,
+      "mean_improvement_vs_classical_pct": 9.498893660216739
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_fno_aug",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.17988291631142297,
+      "mean_audit_reprojection_rel_l2": 0.2588797611080938,
+      "mean_improvement_vs_classical_pct": 45.51673747658004
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_fno_aug",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.5168973273701138,
+      "mean_audit_reprojection_rel_l2": 0.5934251522024473,
+      "mean_improvement_vs_classical_pct": 9.773047576137408
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_fno_aug",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.18622625122467676,
+      "mean_audit_reprojection_rel_l2": 0.25331619940698147,
+      "mean_improvement_vs_classical_pct": 41.30861300555906
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_unet_aug",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.5544516667723656,
+      "mean_audit_reprojection_rel_l2": 0.6208285685214731,
+      "mean_improvement_vs_classical_pct": 2.563653996998436
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_unet_aug",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.21663772480355367,
+      "mean_audit_reprojection_rel_l2": 0.2989716872365938,
+      "mean_improvement_vs_classical_pct": 34.14452998322903
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_unet_aug",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.5541683062911034,
+      "mean_audit_reprojection_rel_l2": 0.6159433072639836,
+      "mean_improvement_vs_classical_pct": 3.2645998573359445
+    },
+    {
+      "total_budget": 6,
+      "method": "ridge_unet_aug",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.2148500838213497,
+      "mean_audit_reprojection_rel_l2": 0.2995075413750278,
+      "mean_improvement_vs_classical_pct": 32.5344796861991
+    },
+    {
+      "total_budget": 8,
+      "method": "ray_set_operator",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.44878997405370075,
+      "mean_audit_reprojection_rel_l2": 0.5461267150110668,
+      "mean_improvement_vs_classical_pct": 6.680419403175148
+    },
+    {
+      "total_budget": 8,
+      "method": "ray_set_operator",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.16790021490305662,
+      "mean_audit_reprojection_rel_l2": 0.2510920334607363,
+      "mean_improvement_vs_classical_pct": 48.00980950747502
+    },
+    {
+      "total_budget": 8,
+      "method": "ray_set_operator",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.45464450162318015,
+      "mean_audit_reprojection_rel_l2": 0.5645148352616364,
+      "mean_improvement_vs_classical_pct": 6.700572514891005
+    },
+    {
+      "total_budget": 8,
+      "method": "ray_set_operator",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.1933284639898274,
+      "mean_audit_reprojection_rel_l2": 0.26005439046356416,
+      "mean_improvement_vs_classical_pct": 38.39518153718645
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.4799775034189224,
+      "mean_audit_reprojection_rel_l2": 0.6055696432789167,
+      "mean_improvement_vs_classical_pct": 0.0
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.3187745586037636,
+      "mean_audit_reprojection_rel_l2": 0.37841592108209926,
+      "mean_improvement_vs_classical_pct": 0.0
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.48643498743573826,
+      "mean_audit_reprojection_rel_l2": 0.6159960950414339,
+      "mean_improvement_vs_classical_pct": 0.0
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.31283630803227425,
+      "mean_audit_reprojection_rel_l2": 0.3717316792656978,
+      "mean_improvement_vs_classical_pct": 0.0
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_deeponet",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.4818847941027748,
+      "mean_audit_reprojection_rel_l2": 0.6029042676091194,
+      "mean_improvement_vs_classical_pct": -0.4432392076422876
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_deeponet",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.19176098414593268,
+      "mean_audit_reprojection_rel_l2": 0.283118249848485,
+      "mean_improvement_vs_classical_pct": 40.21897167013307
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_deeponet",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.48565416286389035,
+      "mean_audit_reprojection_rel_l2": 0.6108258209294744,
+      "mean_improvement_vs_classical_pct": 0.15617300425397038
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_deeponet",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.21571641622318163,
+      "mean_audit_reprojection_rel_l2": 0.3058294008175532,
+      "mean_improvement_vs_classical_pct": 31.311783367902795
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_fno_aug",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.44610002305772567,
+      "mean_audit_reprojection_rel_l2": 0.5462405950658852,
+      "mean_improvement_vs_classical_pct": 7.225533335146303
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_fno_aug",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.17232280566046634,
+      "mean_audit_reprojection_rel_l2": 0.2484037544992235,
+      "mean_improvement_vs_classical_pct": 46.59901751789326
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_fno_aug",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.4528431677156024,
+      "mean_audit_reprojection_rel_l2": 0.5671105173726877,
+      "mean_improvement_vs_classical_pct": 7.058724051704015
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_fno_aug",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.19525589938792917,
+      "mean_audit_reprojection_rel_l2": 0.25663148715264267,
+      "mean_improvement_vs_classical_pct": 37.806934612136104
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_unet_aug",
+      "source_split": "test_family_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.4811803297036224,
+      "mean_audit_reprojection_rel_l2": 0.5956263889869055,
+      "mean_improvement_vs_classical_pct": -0.08006492427931143
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_unet_aug",
+      "source_split": "test_iid",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.20872885268181562,
+      "mean_audit_reprojection_rel_l2": 0.29077695216983557,
+      "mean_improvement_vs_classical_pct": 35.169551253221506
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_unet_aug",
+      "source_split": "test_joint_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.4857180731164084,
+      "mean_audit_reprojection_rel_l2": 0.6022143537799517,
+      "mean_improvement_vs_classical_pct": 0.31038836685827365
+    },
+    {
+      "total_budget": 8,
+      "method": "ridge_unet_aug",
+      "source_split": "test_noise_ood",
+      "independent_field_count": 24,
+      "mean_field_rel_l2": 0.22186121882663834,
+      "mean_audit_reprojection_rel_l2": 0.2995117743396097,
+      "mean_improvement_vs_classical_pct": 29.509065390867914
+    }
+  ],
+  "superiority": [
+    {
+      "total_budget": 4,
+      "locked_neural_baseline": "ridge_fno_aug",
+      "independent_field_count": 96,
+      "mean_field_superiority_pct": 1.7693172347356316,
+      "field_superiority_ci95_low": 1.1350182085596339,
+      "field_superiority_ci95_high": 2.4315618353799113,
+      "p10_field_superiority_pct": -0.7401742823550688,
+      "harm_rate_gt_1pct": 0.07291666666666666,
+      "mean_audit_superiority_pct": 0.1328145342207102,
+      "parameter_ratio_vs_locked_baseline": 1.0400425310499288,
+      "development_superiority_gate_pass": false
+    },
+    {
+      "total_budget": 6,
+      "locked_neural_baseline": "ridge_fno_aug",
+      "independent_field_count": 96,
+      "mean_field_superiority_pct": 5.362894007452872,
+      "field_superiority_ci95_low": 4.487860602787558,
+      "field_superiority_ci95_high": 6.252746547271501,
+      "p10_field_superiority_pct": -0.7213448327794779,
+      "harm_rate_gt_1pct": 0.05208333333333333,
+      "mean_audit_superiority_pct": 1.6060820924488735,
+      "parameter_ratio_vs_locked_baseline": 1.0400425310499288,
+      "development_superiority_gate_pass": true
+    },
+    {
+      "total_budget": 8,
+      "locked_neural_baseline": "ridge_fno_aug",
+      "independent_field_count": 96,
+      "mean_field_superiority_pct": 1.087535010423521,
+      "field_superiority_ci95_low": 0.565808767836568,
+      "field_superiority_ci95_high": 1.6442735761306326,
+      "p10_field_superiority_pct": -1.0186467811025819,
+      "harm_rate_gt_1pct": 0.12499999999999999,
+      "mean_audit_superiority_pct": -0.7554957866603966,
+      "parameter_ratio_vs_locked_baseline": 1.0400425310499288,
+      "development_superiority_gate_pass": false
+    }
+  ]
+}

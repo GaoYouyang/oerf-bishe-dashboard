@@ -1,0 +1,44 @@
+{
+  "name": "t16_v3i_balanced_variable_geometry_dataset_v1",
+  "base_dataset_config": "v3c_dev2_dataset.json",
+  "base_dataset_npz": "t16_v3c_dev2_dataset.npz",
+  "private_dataset_npz": "v3i_variable_geometry_work/t16_v3i_variable_geometry_dataset.npz",
+  "public_output_dir": "v3i_variable_geometry_dataset",
+  "total_budget": 6,
+  "audit_query_index": 3,
+  "reference_mask": [1, 0, 1, 0, 1, 1, 1, 0, 1],
+  "ridge_relative": 0.000001,
+  "geometry_period_degrees": 180.0,
+  "geometry_partition_seed": 20261201,
+  "geometry_partition_counts": {
+    "train": 16,
+    "validation": 4,
+    "geometry_ood": 4,
+    "stress": 4
+  },
+  "assignment_seed": 20261221,
+  "split_partition_map": {
+    "train": "train",
+    "val": "validation",
+    "test_iid": "geometry_ood",
+    "test_noise_ood": "geometry_ood",
+    "test_family_ood": "stress",
+    "test_joint_ood": "stress"
+  },
+  "gate": {
+    "require_one_geometry_per_source": true,
+    "require_all_28_geometries": true,
+    "maximum_within_split_geometry_count_imbalance": 0,
+    "require_shared_full_view_noise": true,
+    "require_audit_camera_excluded": true,
+    "require_train_validation_geometry_disjoint": true
+  },
+  "claims_boundary": {
+    "dataset_development_only": true,
+    "functional_training_completed": false,
+    "superiority_tested": false,
+    "blind_final_opened": false,
+    "real_bost_geometry_present": false,
+    "private_dataset_npz_public": false
+  }
+}

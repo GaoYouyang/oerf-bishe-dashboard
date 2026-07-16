@@ -1,0 +1,81 @@
+{
+  "schema_version": "psu-b0-ogse-pcgls-development-config-2.0",
+  "status": "POSTOPEN_DEVELOPMENT_DIAGNOSTIC_FRESH_EXCLUDED",
+  "source_development_config": "demo_t16_operator/configs/psu_b0_residual_risk_development_v1.json",
+  "source_headroom_public_summary": "docs/psu_b0_pcgls_conditional_headroom_public_summary.json",
+  "source_probe_public_summary": "docs/psu_b0_observable_morphology_probe_public_summary.json",
+  "data_firewall": {
+    "expert_bank_and_oof_screen_split": "risk_train",
+    "diagnostic_transfer_splits": [
+      "risk_validation",
+      "risk_calibration"
+    ],
+    "opened_fresh_use": "FORBIDDEN"
+  },
+  "expert_bank": {
+    "strategy": "greedy_train_truth_oracle_cover",
+    "sizes": [
+      4,
+      6,
+      8
+    ],
+    "baseline_candidate_id": "pcgls4_s4_e0.05_isotropic",
+    "deployment_uses_family_labels": false
+  },
+  "selector_screen": {
+    "target": "per_sample_field_gain_of_each_expert",
+    "folds": 4,
+    "fold_stratification_only": "synthetic_morphology_family",
+    "ridge_lambda_grid": [
+      0.1,
+      1.0,
+      10.0
+    ],
+    "temperature_grid": [
+      0.5,
+      1.0,
+      2.0
+    ],
+    "maximum_blend_grid": [
+      0.25,
+      0.5,
+      1.0
+    ],
+    "confidence_margin_quantiles": [
+      0.0,
+      0.25,
+      0.5,
+      0.75
+    ]
+  },
+  "strict_oof_gate": {
+    "minimum_coverage": 0.25,
+    "minimum_mean_field_gain_percent": 0.0,
+    "minimum_p10_field_gain_percent": 0.0,
+    "maximum_harm_over_one_percent_rate": 0.05,
+    "maximum_accepted_harm_over_one_percent_rate": 0.05
+  },
+  "development_gate": {
+    "minimum_validation_mean_field_gain_percent": 2.0,
+    "minimum_calibration_mean_field_gain_percent": 2.0,
+    "minimum_bootstrap_lower_percent": 0.0,
+    "maximum_harm_over_one_percent_rate": 0.05
+  },
+  "solver_contract": {
+    "stages": 4,
+    "logical_calls": {
+      "forward": 4,
+      "adjoint": 4
+    },
+    "initial_normal_shared_with_first_adjoint": true,
+    "expert_mixture": "convex_in_log_space",
+    "fixed_within_solve": true
+  },
+  "claim_boundary": {
+    "validation_and_calibration_are_postopen_diagnostics": true,
+    "fresh_repeat_authorized": false,
+    "experimental_field_truth_used": false,
+    "analytic_morphology_is_cfd": false,
+    "algorithm_superiority": false
+  }
+}

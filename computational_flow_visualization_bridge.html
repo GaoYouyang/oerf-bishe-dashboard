@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Computational Flow Visualization Bridge | OERF BOST</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f6;
+      --panel: #ffffff;
+      --ink: #1d2328;
+      --muted: #64727d;
+      --line: #d8e0df;
+      --teal: #16756f;
+      --blue: #315f93;
+      --gold: #9a6718;
+      --red: #a6483c;
+      --soft: #eef7f4;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    header, main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px clamp(18px, 4vw, 46px);
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f2f8f6);
+    }
+    h1 { margin: 16px 0 10px; font-size: clamp(30px, 4vw, 52px); line-height: 1.08; }
+    h2 { margin: 34px 0 12px; font-size: 26px; }
+    h3 { margin: 20px 0 8px; font-size: 18px; }
+    p { margin: 8px 0; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { background: #eef2f3; padding: 2px 5px; border-radius: 5px; }
+    ul, ol { padding-left: 22px; }
+    li { margin: 6px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 11px 12px;
+    }
+    th { background: #edf5f2; color: #24433f; font-size: 13px; }
+    td { font-size: 14px; }
+    .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .button, .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .tag { background: var(--soft); color: var(--teal); border-color: #cde2dc; }
+    .lead { max-width: 960px; color: var(--muted); font-size: 17px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 16px;
+    }
+    .card strong { color: var(--teal); }
+    .note {
+      border-left: 4px solid var(--teal);
+      background: #fff;
+      padding: 12px 14px;
+      margin: 16px 0;
+    }
+    .metric {
+      font-size: 34px;
+      color: var(--teal);
+      font-weight: 800;
+      display: block;
+      line-height: 1;
+    }
+    .warn { color: var(--red); font-weight: 700; }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <a class="button" href="./index.html">返回总工作台</a>
+      <a class="button" href="./he_review_portal.html">师兄审核入口</a>
+      <a class="button" href="./paper_library/index.html">打开论文库</a>
+      <a class="button" href="document_reader.html?doc=opening_report_draft.md">开题报告草稿</a>
+    </div>
+    <h1>Computational Flow Visualization 桥梁</h1>
+    <p class="lead">这页把 Cell Reports Physical Science 2024 的 “Computational flow visualization to reveal hidden properties of complex flow with optical and computational methods” 翻译成你的毕设语言：BOST/NeRIF 不是泛 AI，而是用光学观测和计算反演揭示复杂流动中不可直接测得的隐藏物理量。</p>
+    <div class="grid">
+      <div class="card"><span class="metric">1</span><p>总纲论文：Cell Reports Physical Science 2024，开题第 1 章最适合引用。</p></div>
+      <div class="card"><span class="metric">5</span><p>隐藏量映射：折射率、密度/温度、速度误差、时序结构、数据质量。</p></div>
+      <div class="card"><span class="metric">0</span><p>不要把它写成单独算法题；它是 OERF 方法论和题目站位。</p></div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>总判断</h2>
+      <div class="note">
+        <p><strong>给开题报告用的一句话：</strong>本课题属于 computational flow visualization：通过背景纹影等光学观测获取复杂反应流的间接投影信息，再用物理约束、反问题求解和神经隐式表示重构折射率、密度、速度误差或时序结构等隐藏物理量。</p>
+      </div>
+      <p>这篇 Perspective 的价值不是让你复现一个新网络，而是帮你把 OERF 的光学诊断、计算成像、机器学习流动显示和 Agent for Science 语言统一起来。对师兄来说，它能说明你理解的是课题组的测量范式，而不是只追一个 AI 名词。</p>
+    </section>
+
+    <section>
+      <h2>hidden properties 怎么落到你的题目</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>路线</th>
+            <th>隐藏物理量</th>
+            <th>光学观测</th>
+            <th>计算方法</th>
+            <th>本科可交付</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>NeRIF / BOST</strong></td>
+            <td>三维折射率场、密度场、温度场。</td>
+            <td>多视角背景位移、折射率梯度造成的偏折。</td>
+            <td>传统层析 baseline、coordinate MLP、重投影一致性。</td>
+            <td>少视角/噪声/采样鲁棒性图，reprojection error。</td>
+          </tr>
+          <tr>
+            <td><strong>PIV-BOST</strong></td>
+            <td>被折射率场污染的速度误差。</td>
+            <td>PIV 粒子图像 + 同步 BOST 折射率场。</td>
+            <td>位移/光流估计、折射补偿、速度误差传播。</td>
+            <td>补偿前后速度误差图，image-layer benchmark。</td>
+          </tr>
+          <tr>
+            <td><strong>4D BOST</strong></td>
+            <td>高速三维流场的时序结构和低秩动态。</td>
+            <td>高速多视角 BOST 序列。</td>
+            <td>tensor decomposition、plane factors、temporal consistency。</td>
+            <td>rank/noise/frame-count 扫描和 temporal metric。</td>
+          </tr>
+          <tr>
+            <td><strong>M3C 系统误差</strong></td>
+            <td>隐藏的数据质量问题：坏视角、mask、标定误差、分辨率上限。</td>
+            <td>每视角背景、扰动图、位移场、mask、相机几何。</td>
+            <td>view health report、manifest 校验、重投影残差统计。</td>
+            <td>真实数据接入前的质量控制工具。</td>
+          </tr>
+          <tr>
+            <td><strong>Agent for Science 辅助层</strong></td>
+            <td>参数空间里的失败模式、最佳配置和可复现实验记录。</td>
+            <td>不是新光学数据，而是实验运行日志和结果图。</td>
+            <td>自动参数扫描、报告生成、失败案例索引。</td>
+            <td>每周自动报告、结果索引、师兄可查的实验台账。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>核心文献读法</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>文献</th>
+            <th>作用</th>
+            <th>你要抽取</th>
+            <th>入口</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Huang et al. 2024</strong><br />Computational flow visualization</td>
+            <td>开题总纲：optical + computational methods reveal hidden flow properties。</td>
+            <td>术语、研究意义图、hidden properties 表述、OERF 站位。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fcomputational_flow_visualization_huang_2024_crps.pdf">本地 PDF</a> / <a href="https://doi.org/10.1016/j.xcrp.2024.102282">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>He et al. 2025</strong><br />NeRIF</td>
+            <td>把 computational flow visualization 落到 BOST 折射率场重构。</td>
+            <td>神经隐式场、projection loss、BOST forward model、指标。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fnerif_he_2025_arxiv2409.14722.pdf">本地 PDF</a> / <a href="https://doi.org/10.1063/5.0250899">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Zheng / He et al. 2025</strong><br />simultaneous PIV-BOST</td>
+            <td>把 hidden property 从折射率场推进到速度测量误差补偿。</td>
+            <td>同步测量、折射误差、PIV 补偿层级、数据需求。</td>
+            <td><a href="https://doi.org/10.1007/s00348-025-04093-y">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>He et al. 2026</strong><br />4D BOST</td>
+            <td>把 computational flow visualization 推进到高速四维场。</td>
+            <td>tensor decomposition、4D data organization、temporal fidelity、rank-memory-time trade-off。</td>
+            <td><a href="https://doi.org/10.1145/3809488">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Special issue on computational imaging for flow visualization</strong></td>
+            <td>社区化语境：这不是单篇 NeRIF 的孤立尝试。</td>
+            <td>computational imaging for flow visualization 的 broader framing。</td>
+            <td><a href="https://doi.org/10.1088/1361-6501/ae08dd">DOI</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>开题写法</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>题目不要写成</h3>
+          <p><span class="warn">“基于 AI 的流场重建”</span></p>
+          <p>这个说法太泛，也容易被问：物理在哪里、实验在哪里、为什么不是普通计算机视觉？</p>
+        </div>
+        <div class="card">
+          <h3>题目可以写成</h3>
+          <p><strong>“面向少视角背景纹影层析的神经隐式折射率场重构与鲁棒性分析”</strong></p>
+          <p>它把 optical measurement、inverse problem、neural representation 和 uncertainty 都放在正确位置。</p>
+        </div>
+        <div class="card">
+          <h3>研究意义可以写成</h3>
+          <p>复杂反应流中的折射率、密度、温度、速度误差和时序结构往往不能被相机直接观测，需要通过光学投影和计算反演共同揭示。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Agent for Science 只能这样接</h2>
+      <p>蔡老师主页把 Agent for Science 列为公开方向之一，但本科阶段不能把它做成空泛聊天机器人。最稳的定义是：</p>
+      <div class="note">
+        <p><strong>Agent for BOST experiments：</strong>自动生成参数扫描、运行 NeRIF / baseline / PIV-BOST toy、收集指标、归档失败案例、生成每周 HTML 报告和师兄可审查的图表。</p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>自动化动作</th>
+            <th>服务哪个主线</th>
+            <th>为什么不是空壳</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>生成 view/noise/capacity/rank 实验矩阵。</td>
+            <td>NeRIF / 4D BOST。</td>
+            <td>直接产出论文第 4-5 章指标表。</td>
+          </tr>
+          <tr>
+            <td>检查 manifest、mask、位移场和权限字段。</td>
+            <td>真实数据接入 / M3C。</td>
+            <td>直接服务师兄给数据后的质量控制。</td>
+          </tr>
+          <tr>
+            <td>生成失败案例索引和每周报告。</td>
+            <td>所有路线。</td>
+            <td>减少“跑了但忘了为什么失败”的科研损耗。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>问何远哲师兄</h2>
+      <ol>
+        <li>我把本题表述成 computational flow visualization + BOST/NeRIF，是否符合组里对这个方向的理解？</li>
+        <li>我的 hidden property 应该主写折射率/密度/温度，还是把 PIV 速度误差和 4D 时序结构也放进展望？</li>
+        <li>开题报告里是否需要把 Cell Reports Physical Science 2024 放在 OERF 总纲位置？</li>
+        <li>Agent for Science 辅助层是否值得做成参数扫描和自动报告工具，还是本科阶段不必强调？</li>
+        <li>如果只给一小份真实数据，师兄更希望我先做质量报告，还是直接跑重构/补偿算法？</li>
+      </ol>
+    </section>
+  </main>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

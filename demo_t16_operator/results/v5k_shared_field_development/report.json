@@ -1,0 +1,258 @@
+{
+  "architecture": {
+    "explicit_target_physics_decoder": true,
+    "fno_or_camera_token_attention": false,
+    "name": "Shared-field Krylov RIO v2",
+    "signed_target_row_space_probes": false,
+    "source_adjoint_and_fisher_statistics": true,
+    "source_krylov_stack": true,
+    "target_fisher_query": false,
+    "target_independent_shared_field": true,
+    "target_observation_at_inference": false,
+    "target_operator_at_inference": true,
+    "zero_correction_initialization": true
+  },
+  "candidate": "shared_field",
+  "claim_ceiling": "No OERF or experimental superiority claim is allowed from this configuration.",
+  "dataset": {
+    "design_lock_rows_constructed": 0,
+    "families": {
+      "design_lock": [],
+      "train": [
+        "expanding_kernel",
+        "interacting_fronts"
+      ],
+      "validation": [
+        "jet_shear",
+        "shock_cell"
+      ]
+    },
+    "non_oracle_noise_estimator": "paired flow-off difference MAD",
+    "rigs": {
+      "design_lock": [],
+      "train": [
+        "train-rig-a",
+        "train-rig-b",
+        "train-rig-c",
+        "train-rig-d"
+      ],
+      "validation": [
+        "validation-rig-a",
+        "validation-rig-b"
+      ]
+    },
+    "synthetic_generator_only": true,
+    "train_rows": 160,
+    "validation_rows": 80
+  },
+  "decision": {
+    "candidate_methods": {
+      "correct": "sf_rio_krylov_stack",
+      "no_target": "sf_rio_adjoint_only",
+      "shuffled": "sf_rio_shuffled_source_operator"
+    },
+    "cells": [
+      {
+        "analytic_dc": 2.8164531226980336,
+        "family": "jet_shear",
+        "relative_gain_vs_strongest_baseline": -0.022608856789725795,
+        "rig_id": "validation-rig-a",
+        "row_count": 20,
+        "sf_rio_adjoint_only": 2.625934806032855,
+        "sf_rio_krylov_stack": 2.6853041900016086,
+        "sf_rio_shuffled_source_operator": 2.7082384251687217,
+        "strongest_baseline_method": "sf_rio_adjoint_only",
+        "zero_correction": 2.714371204510893
+      },
+      {
+        "analytic_dc": 3.2038724821863185,
+        "family": "shock_cell",
+        "relative_gain_vs_strongest_baseline": -0.01799026785043978,
+        "rig_id": "validation-rig-a",
+        "row_count": 20,
+        "sf_rio_adjoint_only": 3.1026447657202207,
+        "sf_rio_krylov_stack": 3.087377322850245,
+        "sf_rio_shuffled_source_operator": 3.042614835100802,
+        "strongest_baseline_method": "zero_correction",
+        "zero_correction": 3.0328161480064693
+      },
+      {
+        "analytic_dc": 3.5426023779972384,
+        "family": "jet_shear",
+        "relative_gain_vs_strongest_baseline": -0.006332539505917945,
+        "rig_id": "validation-rig-b",
+        "row_count": 20,
+        "sf_rio_adjoint_only": 3.0182291513173727,
+        "sf_rio_krylov_stack": 3.037342206656003,
+        "sf_rio_shuffled_source_operator": 3.0398263166687833,
+        "strongest_baseline_method": "sf_rio_adjoint_only",
+        "zero_correction": 3.343667363437138
+      },
+      {
+        "analytic_dc": 5.179038813236046,
+        "family": "shock_cell",
+        "relative_gain_vs_strongest_baseline": 0.010755426867665063,
+        "rig_id": "validation-rig-b",
+        "row_count": 20,
+        "sf_rio_adjoint_only": 4.637375039541434,
+        "sf_rio_krylov_stack": 4.587498091445711,
+        "sf_rio_shuffled_source_operator": 4.713386032114693,
+        "strongest_baseline_method": "sf_rio_adjoint_only",
+        "zero_correction": 4.957189380958047
+      }
+    ],
+    "claim_ceiling": "No OERF or experimental superiority claim is allowed from this configuration.",
+    "development_only": true,
+    "label": "NO_DESIGN_LOCK_OPEN",
+    "overall_cell_mean_relative_gain": -0.009044059319604614,
+    "positive_rig_family_fraction": 0.25,
+    "thresholds": {
+      "checkpoint_selection_split": "validation",
+      "design_lock_forbidden_before_freeze": true,
+      "maximum_cluster_degradation": 0.05,
+      "minimum_positive_rig_family_fraction": 0.75,
+      "minimum_relative_gain": 0.1,
+      "primary_metric": "cluster_mean_whitened_target_residual_rmse",
+      "truth_field_forbidden_for_training_and_selection": true
+    },
+    "worst_cell_degradation": 0.022608856789725795
+  },
+  "environment": {
+    "device": "cpu",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "python": "3.11.5",
+    "torch": "2.13.0",
+    "torch_threads": 4
+  },
+  "evidence_label": "synthetic_mechanism_development_only",
+  "freeze_manifest_sha256": "be1676e5682cea1616a0c0de19c5333cbe37e76023ba6a7d15987b40d56ea408",
+  "limitations": [
+    "Synthetic weak-deflection forward model only; this is not an OERF experiment.",
+    "Development validation is reused for checkpoint selection, so it is not confirmatory evidence.",
+    "Two design-lock rigs remain unopened and are insufficient for a publication-level rig claim.",
+    "DeepONet, FNO/FFNO, NIO-style and learned iterative baselines are not yet in this v0 gate."
+  ],
+  "method_summary": [
+    {
+      "mean_whitened_target_residual_rmse": 3.1245801356078777,
+      "median_whitened_target_residual_rmse": 2.579140425637747,
+      "method": "zero_correction",
+      "scored_rows_including_seeds": 160,
+      "split": "train"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.512011024228136,
+      "median_whitened_target_residual_rmse": 2.956501668981148,
+      "method": "zero_correction",
+      "scored_rows_including_seeds": 80,
+      "split": "validation"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.2065175294124786,
+      "median_whitened_target_residual_rmse": 2.6424228624192168,
+      "method": "analytic_dc",
+      "scored_rows_including_seeds": 160,
+      "split": "train"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.6854916990294084,
+      "median_whitened_target_residual_rmse": 3.1133988284143856,
+      "method": "analytic_dc",
+      "scored_rows_including_seeds": 80,
+      "split": "validation"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 1.8898030389326328,
+      "median_whitened_target_residual_rmse": 1.7588102516436992,
+      "method": "sf_rio_adjoint_only",
+      "scored_rows_including_seeds": 480,
+      "split": "train"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.346045940652971,
+      "median_whitened_target_residual_rmse": 2.9964594770565665,
+      "method": "sf_rio_adjoint_only",
+      "scored_rows_including_seeds": 240,
+      "split": "validation"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 2.094995098542084,
+      "median_whitened_target_residual_rmse": 1.8349263401384626,
+      "method": "sf_rio_krylov_stack",
+      "scored_rows_including_seeds": 480,
+      "split": "train"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.349380452738392,
+      "median_whitened_target_residual_rmse": 2.9859471444629655,
+      "method": "sf_rio_krylov_stack",
+      "scored_rows_including_seeds": 240,
+      "split": "validation"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 2.4958387963892434,
+      "median_whitened_target_residual_rmse": 2.198635869855185,
+      "method": "sf_rio_shuffled_source_operator",
+      "scored_rows_including_seeds": 480,
+      "split": "train"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.3760164022632493,
+      "median_whitened_target_residual_rmse": 2.939661147250044,
+      "method": "sf_rio_shuffled_source_operator",
+      "scored_rows_including_seeds": 240,
+      "split": "validation"
+    }
+  ],
+  "schema": "v5h-gc-rio-development-report-1",
+  "training_records": [
+    {
+      "best_epoch": 18,
+      "best_validation_metric": 3.284167818374684,
+      "checkpoint_public": false,
+      "checkpoint_sha256": "0d15e7c2d7d526fc6010499e45aa17533d0e25985e97ee94de919e1c9b580006",
+      "method": "sf_rio_adjoint_only",
+      "model_seed": 3101
+    },
+    {
+      "best_epoch": 30,
+      "best_validation_metric": 3.380822794902233,
+      "checkpoint_public": false,
+      "checkpoint_sha256": "52b7ddc8f8dd74e3397d93b0e63254c8fd97c15317c4942869d38cd5c823851b",
+      "method": "sf_rio_adjoint_only",
+      "model_seed": 3102
+    },
+    {
+      "best_epoch": 5,
+      "best_validation_metric": 3.373147208681995,
+      "checkpoint_public": false,
+      "checkpoint_sha256": "9c44320596da42348634bc76b2f43c1d43cc7c95b928bbce3cb21dd8747ec0e7",
+      "method": "sf_rio_adjoint_only",
+      "model_seed": 3103
+    },
+    {
+      "best_epoch": 14,
+      "best_validation_metric": 3.3304806170751124,
+      "checkpoint_public": false,
+      "checkpoint_sha256": "019f55785be9c943410146b79e6bd472f6c6397225e6f1c479804e0f7ef89e0c",
+      "method": "sf_rio_krylov_stack",
+      "model_seed": 3101
+    },
+    {
+      "best_epoch": 2,
+      "best_validation_metric": 3.416145219675866,
+      "checkpoint_public": false,
+      "checkpoint_sha256": "f5415a9f4c7f4d88cbfd86ea215b4e5ce705b7adeaa7643fee0277cc50fab482",
+      "method": "sf_rio_krylov_stack",
+      "model_seed": 3102
+    },
+    {
+      "best_epoch": 22,
+      "best_validation_metric": 3.3015155214641974,
+      "checkpoint_public": false,
+      "checkpoint_sha256": "53b215d5070f13baa6c3a000804468fe662ecfbc5fd9b60c1f975b02f7fe022d",
+      "method": "sf_rio_krylov_stack",
+      "model_seed": 3103
+    }
+  ]
+}

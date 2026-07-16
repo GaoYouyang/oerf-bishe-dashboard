@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>XMU WebVPN 与私有论文库边界 | OERF 毕设导航</title>
+  <style>
+    :root {
+      --bg: #f7faf9;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #607080;
+      --line: #d8e1df;
+      --green: #16756f;
+      --blue: #315f93;
+      --red: #aa3f31;
+      --amber: #9a6a00;
+      --soft-green: #e8f3f0;
+      --soft-blue: #eaf0f7;
+      --soft-red: #f8ece9;
+      --soft-amber: #f8f0dc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.7;
+      letter-spacing: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, rgba(22, 117, 111, 0.10), transparent 320px), var(--bg);
+    }
+    header, main {
+      width: min(1180px, calc(100vw - 36px));
+      margin: 0 auto;
+      min-width: 0;
+    }
+    header { padding: 34px 0 18px; }
+    a { color: var(--blue); text-decoration: none; overflow-wrap: anywhere; }
+    a:hover { text-decoration: underline; }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.08;
+    }
+    h2 { margin: 30px 0 12px; font-size: 24px; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    .button-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .button.primary { background: var(--green); border-color: var(--green); color: #fff; }
+    .grid { display: grid; gap: 12px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card, .notice {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    .notice { border-left: 5px solid var(--green); background: linear-gradient(90deg, var(--soft-green), #fff 72%); }
+    .risk { border-left-color: var(--red); background: linear-gradient(90deg, var(--soft-red), #fff 72%); }
+    table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+    th { background: #eef5f2; color: #2f3b41; }
+    tr:last-child td { border-bottom: 0; }
+    .tag {
+      display: inline-flex;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      border: 1px solid var(--line);
+    }
+    code {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+    .ok { background: var(--soft-green); color: var(--green); border-color: #cce4dc; }
+    .wait { background: var(--soft-amber); color: var(--amber); border-color: #ead7b5; }
+    .deny { background: var(--soft-red); color: var(--red); border-color: #edc8c0; }
+    ul { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+    li { margin-bottom: 7px; }
+    footer { color: var(--muted); font-size: 12px; margin: 34px 0; }
+    @media (max-width: 860px) {
+      .grid.two, .grid.three { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="button" href="./index.html">返回主导航</a>
+    <h1>XMU WebVPN 与私有论文库边界</h1>
+    <p>这页给自己和师兄说明：学校 VPN 可以帮助个人阅读受限文献，但公开 GitHub Pages 只放合法可公开链接和开放 PDF。最后更新：2026-07-09。</p>
+    <div class="button-row">
+      <a class="button primary" href="./paper_library/index.html">公开 PDF 跳转库</a>
+      <a class="button" href="./pdf_cache_audit.html">公开缓存边界审计</a>
+      <a class="button" href="./fulltext_access_queue.html">受限全文访问队列</a>
+      <a class="button" href="./thesis_pathway_matrix.html">选题路线深挖矩阵</a>
+      <a class="button" href="./learning_log.html">学习日志模板</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice">
+      <h3>核心原则</h3>
+      <p>公开网站只缓存能确认开放许可或开放来源的 PDF。通过 XMU WebVPN、图书馆订阅、出版社机构访问拿到的 PDF 只进本机 `private_library/`，不提交到 GitHub，不做公开跳转页。</p>
+    </section>
+
+    <section class="notice risk">
+      <h3>为什么即使“只是给师兄看”也不上传订阅 PDF</h3>
+      <p>这个工作台当前通过 GitHub Pages 发布，页面地址可以被浏览器直接访问；即使仓库本身不主动传播，Pages 上的文件仍可能被公开读取、缓存或转发。仓库是否设置为 private 也不能作为分发订阅 PDF 的依据，因为期刊平台和学校数据库许可通常限制全文再发布。学校 VPN/图书馆订阅 PDF 适合个人学习、页码定位和本机精读笔记，不适合作为网页附件发布。公开页会保留 DOI、出版社入口、私有队列、阅读目标和我们自己的分析；PDF 本体放在本机 <code>private_library/pdfs/</code>。</p>
+    </section>
+
+    <section class="notice">
+      <h3>当前受限全文队列</h3>
+      <p>本地私有队列已扩展到 48 篇：7 篇 P0 必补全文、18 篇 P1 方法/基线、18 篇 P2 旁支备选、5 篇 P3 远景背景。公开版只展示 DOI、出版社入口和精读目标；真正下载到本机的 PDF 仍只保存在 `private_library/`。</p>
+      <div class="button-row">
+        <a class="button primary" href="./fulltext_access_queue.html">查看队列</a>
+        <a class="button" href="./he_yuanzhe_sync_dashboard.html">何远哲同步主线</a>
+      </div>
+    </section>
+
+    <section class="notice risk">
+      <h3>2026-07-09 实测：无人值守下载边界</h3>
+      <p>当前尝试用 WebVPN 代理后的 Springer PDF 地址直连 PIV-BOST 论文时，服务器返回的是 <code>/fingerprint</code> 指纹/验证页，而不是 PDF。后续不在无人值守状态下硬闯验证；如果需要补全文，白天由用户在浏览器里完成验证码或学校授权流程，把 PDF 放进 <code>private_library/inbox/</code>，再由本地同步脚本匹配到私有论文库。</p>
+    </section>
+
+    <section class="notice">
+      <h3>下载后如何真正编入你的论文库</h3>
+      <p>如果 PDF 是通过 WebVPN、学校订阅或个人账号下载的，把它当作“本地私有全文”：保存到 <code>private_library/inbox/</code> 后运行 <code>python3 private_library/tools/sync_private_library.py</code>。如果浏览器已经把文件放进系统下载目录，可以运行 <code>python3 private_library/tools/sync_private_library.py --scan-downloads --max-scan-files 20</code>，脚本会只读取最近下载的候选 PDF，匹配成功后复制到 <code>private_library/pdfs/</code>，并更新本机 <code>private_library/index.html</code> 与状态报告。</p>
+      <p>这个流程不会联网、不会上传、不会把受限 PDF 写进公开 <code>paper_library/</code>。公开网页只同步“已在私有库/待下载/出版社入口/精读目标”等状态，方便你发给师兄确认研究路线。</p>
+    </section>
+
+    <h2>WebVPN 实测工作流</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>可用路径</h3>
+        <ul>
+          <li>进入 XMU WebVPN 后打开厦门大学知识资源港。</li>
+          <li>在数据库导航里按数据库首字母筛选，例如 `S` 找 SpringerLink / ScienceDirect，`A` 找 AIP / ACM。</li>
+          <li>优先使用 WebVPN 代理后的“直达”按钮，不走 CARSI 或统一身份认证。</li>
+          <li>进入出版社站内后，再用 DOI、文章题名或期刊名搜索论文。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>无人值守规则</h3>
+        <ul>
+          <li>遇到验证码、人机验证、二维码、统一身份认证或购买页，停止该篇下载尝试。</li>
+          <li>把条目标为“需白天手动协助”，继续做公开来源检索和网页整理。</li>
+          <li>不保存账号密码到网页、仓库或论文元数据。</li>
+          <li>下载到本地的受限 PDF 只用于个人学习和页码定位。</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>目标数据库</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>入口</th>
+          <th>首字母</th>
+          <th>对应主线</th>
+          <th>公开网页处理</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SpringerLink</strong></td>
+          <td>S</td>
+          <td>Experiments in Fluids：PIV-BOST、BOS optical flow、TBOS、BOS velocimetry。</td>
+          <td><span class="tag ok">开放 PDF 可缓存</span> <span class="tag wait">订阅 PDF 只记 DOI</span></td>
+        </tr>
+        <tr>
+          <td><strong>AIP Scitation</strong></td>
+          <td>A</td>
+          <td>Physics of Fluids：NeRIF、DMD、flow diagnostics 相关论文。</td>
+          <td>NeRIF 用 arXiv 可公开缓存；AIP 受限 PDF 只保留 DOI/期刊入口。</td>
+        </tr>
+        <tr>
+          <td><strong>ACM Digital Library</strong></td>
+          <td>A</td>
+          <td>ACM TOG 4D BOST / tensor decomposition。</td>
+          <td>只放 DOI/ACM 入口；若需全文 PDF，放本地私有目录。</td>
+        </tr>
+        <tr>
+          <td><strong>ScienceDirect</strong></td>
+          <td>S</td>
+          <td>Combustion and Flame、Aerospace Science and Technology、Measurement / SoftwareX。</td>
+          <td>OA 可缓存；订阅页只放 DOI/ScienceDirect 入口。</td>
+        </tr>
+        <tr>
+          <td><strong>Optica / OSA</strong></td>
+          <td>O</td>
+          <td>Applied Optics、Optics Express、Optics Letters、CTC/TAS/BOS/事件相机。</td>
+          <td>Optica Open/Figshare 开放稿可缓存；验证页或受控 PDF 不缓存。</td>
+        </tr>
+        <tr>
+          <td><strong>IOPscience</strong></td>
+          <td>I</td>
+          <td>Measurement Science and Technology、JPCS、PIV/BOS 工具与误差论文。</td>
+          <td>开放或机构库版本可缓存；IOP 受控 PDF 不缓存。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>何远哲主线的私有阅读优先级</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>优先级</th>
+          <th>论文</th>
+          <th>读取方式</th>
+          <th>要摘出的内容</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>P0</td>
+          <td><strong>Neural Refractive Index Field</strong><br />Physics of Fluids, DOI 10.1063/5.0250899</td>
+          <td>arXiv 公开版已足够精读；正式 DOI 用于引用。</td>
+          <td>forward model、loss、神经场参数化、实验设置、评价指标、失败边界。</td>
+        </tr>
+        <tr>
+          <td>P0</td>
+          <td><strong>Instantaneous refractive index compensation on the velocity measurement using simultaneous PIV-BOST</strong><br />Experiments in Fluids, DOI 10.1007/s00348-025-04093-y</td>
+          <td>通过 SpringerLink WebVPN 入口或师兄合法分享路径读取。</td>
+          <td>同步采集链路、折射误差如何进入 PIV、补偿发生在哪一层、实验数据字段。</td>
+        </tr>
+        <tr>
+          <td>P0</td>
+          <td><strong>Tensor Decomposition-Based Four-dimensional BOST</strong><br />ACM TOG, DOI 10.1145/3809488</td>
+          <td>通过 ACM/WebVPN 或师兄路径读取；公开站不缓存 PDF。</td>
+          <td>4D 表示、rank 选择、训练加速、时间一致性指标、可拆成本科子问题的模块。</td>
+        </tr>
+        <tr>
+          <td>P1</td>
+          <td><strong>Stereo-velocity PIV-BOST</strong><br />Proceedings of the Combustion Institute, DOI 10.1016/j.proci.2026.106175</td>
+          <td>ScienceDirect/WebVPN 或出版社入口。</td>
+          <td>stereo PIV 的 calibration/disparity layer、速度矢量误差、与 2025 PIV-BOST 的关系。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>公开网页可以写什么</h2>
+    <div class="grid three">
+      <div class="card">
+        <h3>可以公开</h3>
+        <ul>
+          <li>题名、作者、年份、期刊、DOI。</li>
+          <li>官方出版社入口、arXiv、NASA、OSTI、机构库、作者开放稿。</li>
+          <li>自己写的摘要、路线图、选题建议、学习计划。</li>
+          <li>开放许可 PDF 的本地缓存链接。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>只放本地私有</h3>
+        <ul>
+          <li>学校订阅下载的出版社 PDF。</li>
+          <li>需要登录、机构权限或购买才能访问的 PDF。</li>
+          <li>只允许个人研究学习、不允许再分发的 accepted manuscript。</li>
+          <li>组内未公开数据、代码、标定参数和实验图片。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>需要师兄确认</h3>
+        <ul>
+          <li>真实 BOST/PIV-BOST/4D 数据能否出现在本科论文。</li>
+          <li>组内代码能否复用、截图或描述。</li>
+          <li>未发表实验图是否能作为内部答辩材料。</li>
+          <li>本科论文公开版和内部版是否需要分离。</li>
+        </ul>
+      </div>
+    </div>
+
+    <section class="notice risk" style="margin-top:16px;">
+      <h3>给师兄的一句话说明</h3>
+      <p>这个网页中的公开 PDF 只来自可公开缓存来源；通过学校 VPN 读取的受限全文只用于本人学习，不上传公开仓库。若后续涉及组内真实数据或未公开结果，会单独按课题组要求处理。</p>
+    </section>
+
+    <footer>
+      本页不包含任何账号、密码或受限 PDF 链接。公开版本只用于研究计划沟通和资料边界说明。
+    </footer>
+  </main>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="T16 算子学习与三维重构的同重建预算红队判决：S-only、S∪Q direct、learned correction 与 numerical query-null update。" />
+  <title>同重建预算判决 | OERF 算子学习</title>
+  <style>
+    :root {
+      --ink:#17272c; --muted:#5d6d72; --line:#cfdad8; --paper:#f6f8f6;
+      --teal:#1e7669; --blue:#356f91; --coral:#b95e49; --gold:#9a741c;
+      --teal-soft:#e9f3f0; --coral-soft:#faeee9; --blue-soft:#edf4f8;
+      --radius:7px; --shadow:0 8px 24px rgba(25,49,53,.08);
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0; color:var(--ink); background:var(--paper); font-family:Inter,"Noto Sans SC","PingFang SC",system-ui,sans-serif;
+      line-height:1.65;
+    }
+    body::before {
+      content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:linear-gradient(rgba(246,248,246,.94),rgba(246,248,246,.94)),url("./assets/backgrounds/oerf-refractive-field.png") center/cover no-repeat;
+    }
+    a { color:var(--blue); }
+    a:focus-visible, button:focus-visible { outline:3px solid #e3ae45; outline-offset:2px; }
+    .skip { position:absolute; top:-60px; left:12px; z-index:4; padding:9px 12px; color:white; background:var(--ink); }
+    .skip:focus { top:10px; }
+    header, main, footer { width:min(1180px,calc(100vw - 34px)); margin:0 auto; }
+    header { padding:22px 0 28px; border-bottom:1px solid var(--line); }
+    main { padding-bottom:48px; }
+    footer { padding:22px 0 38px; color:var(--muted); font-size:13px; }
+    nav, .actions, .segments, .chips { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    nav a, .button, .segment {
+      min-height:44px; display:inline-flex; align-items:center; justify-content:center; padding:8px 12px;
+      border:1px solid var(--line); border-radius:var(--radius); color:var(--ink); background:rgba(255,255,255,.95);
+      font:inherit; font-weight:760; text-decoration:none; cursor:pointer;
+    }
+    .button.primary, .segment[aria-pressed="true"] { color:white; border-color:var(--teal); background:var(--teal); }
+    .eyebrow { margin-top:18px; color:var(--teal); font-size:12px; font-weight:850; text-transform:uppercase; }
+    h1,h2,h3 { margin-top:0; line-height:1.24; letter-spacing:0; }
+    h1 { margin:8px 0 6px; font-size:39px; }
+    h2 { margin-bottom:8px; font-size:27px; }
+    h3 { margin-bottom:5px; font-size:18px; }
+    p { margin:6px 0; }
+    .lead { max-width:900px; color:#41545a; font-size:16px; }
+    .metrics { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:19px; }
+    .metric { min-height:116px; padding:15px; border:1px solid var(--line); border-radius:var(--radius); background:rgba(255,255,255,.96); box-shadow:var(--shadow); }
+    .metric b { display:block; margin-bottom:5px; color:var(--teal); font-size:27px; }
+    .metric span { color:var(--muted); font-size:12px; }
+    .verdict { margin-top:16px; padding:16px 17px; border:1px solid #d9afa4; border-left:5px solid var(--coral); border-radius:var(--radius); background:rgba(250,238,233,.97); }
+    .verdict strong { display:block; margin-bottom:4px; }
+    section { padding:29px 0; border-bottom:1px solid var(--line); }
+    .section-head { display:flex; justify-content:space-between; gap:18px; align-items:flex-end; margin-bottom:15px; }
+    .section-head p { max-width:780px; color:var(--muted); }
+    .protocol { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .protocol article { padding:17px; border-left:4px solid var(--blue); background:rgba(255,255,255,.92); }
+    .protocol article:nth-child(2) { border-left-color:var(--gold); }
+    .protocol article:nth-child(3) { border-left-color:var(--coral); }
+    .protocol b { display:block; color:var(--blue); font-size:24px; }
+    .protocol small { color:var(--muted); }
+    .table-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:white; box-shadow:var(--shadow); }
+    table { width:100%; min-width:930px; border-collapse:collapse; font-size:13px; }
+    th,td { padding:11px 10px; border-bottom:1px solid #e1e8e6; text-align:right; vertical-align:top; }
+    th:first-child,td:first-child { text-align:left; }
+    th { color:#394c52; background:#edf2f0; }
+    .bad { color:#9a3d2e; font-weight:800; }
+    .mixed { color:#8b6613; font-weight:800; }
+    .good { color:#176b5e; font-weight:800; }
+    .note { margin-top:11px; color:var(--muted); font-size:13px; }
+    .figure-grid { display:grid; grid-template-columns:1.35fr .65fr; gap:12px; }
+    figure { margin:0; padding:11px; border:1px solid var(--line); border-radius:var(--radius); background:white; box-shadow:var(--shadow); }
+    figure img { display:block; width:100%; height:auto; }
+    figcaption { margin-top:8px; color:var(--muted); font-size:12px; }
+    .insight-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .insight { min-height:205px; padding:17px; border:1px solid var(--line); border-top:4px solid var(--teal); border-radius:var(--radius); background:rgba(255,255,255,.94); }
+    .insight:nth-child(2) { border-top-color:var(--gold); }
+    .insight:nth-child(3) { border-top-color:var(--blue); }
+    .insight:nth-child(4) { border-top-color:var(--coral); }
+    .pill { display:inline-block; padding:3px 7px; border-radius:5px; color:var(--teal); background:var(--teal-soft); font-size:12px; font-weight:800; }
+    .pill.coral { color:#994431; background:var(--coral-soft); }
+    .pill.blue { color:#315f79; background:var(--blue-soft); }
+    code { padding:1px 4px; border-radius:4px; background:#edf2f0; font-family:"SFMono-Regular",Consolas,monospace; font-size:.92em; overflow-wrap:anywhere; word-break:break-word; white-space:normal; }
+    .loading { min-height:180px; padding:24px; border:1px solid var(--line); background:white; }
+    @media (max-width:900px) {
+      .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .figure-grid,.insight-grid { grid-template-columns:1fr; }
+    }
+    @media (max-width:620px) {
+      header,main,footer { width:min(100% - 24px,1180px); }
+      h1 { font-size:31px; }
+      .metrics,.protocol { grid-template-columns:1fr; }
+      .section-head { align-items:flex-start; flex-direction:column; }
+      nav a { flex:1 1 auto; }
+      .segments { width:100%; }
+      .segment { flex:1 1 45%; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">跳到主内容</a>
+  <header>
+    <nav aria-label="主导航">
+      <a href="./operator-learning/">学习主页</a>
+      <a href="./ridge_fno_nerif_roadmap.html">v3a 执行主页</a>
+      <a href="./own_algorithm_lab.html">v3b 自有算法</a>
+      <a href="./operator_nullspace_evidence_dashboard.html">T16 假设审计</a>
+      <a href="./document_reader.html?doc=qc_snco_red_team_audit.md">红队审计</a>
+      <a href="./document_reader.html?doc=fair_camera_budget_review_brief.md">师兄简报</a>
+      <a href="./index.html">研究总站</a>
+    </nav>
+    <div class="eyebrow">T16 v2d · controlled inference audit</div>
+    <h1>同重建预算判决</h1>
+    <p class="lead">回答最朴素也最致命的问题：同样让一个新视角进入推理时，用它标定零空间修正，是否真的比把它直接加入三维重建更好？</p>
+    <div class="metrics">
+      <div class="metric"><b id="passMetric">0 / 3</b><span>4/6/8 三档预算通过数</span></div>
+      <div class="metric"><b id="fieldMetric">88</b><span>独立三维测试体场</span></div>
+      <div class="metric"><b id="seedMetric">3</b><span>模型种子，先按体场汇总</span></div>
+      <div class="metric"><b>20,000</b><span>五来源域等权分层 bootstrap</span></div>
+      <div class="metric"><b>K + 1</b><span>K 个重建视角 + 1 个锁定审计相机</span></div>
+    </div>
+    <div class="verdict">
+      <strong>当前 checkpoint 路径未通过；QC-SNCO 不再作为投稿主模型扩张。</strong>
+      <span>这不是最终否定所有受约束修正：旧 checkpoint 的训练 mask 与新受控 mask 不匹配，88 个体场也已参与前期开发。正确结论是 <code>PILOT_ONLY_CURRENT_CHECKPOINT_PATH_FAILS</code>，下一步要么重训后锁定新测试集，要么转向更贴何远哲主线的 operator warm-start NeRIF。</span>
+    </div>
+  </header>
+
+  <main id="main">
+    <section>
+      <div class="section-head"><div><div class="eyebrow">协议</div><h2>三个相机角色先冻结，再看结果</h2></div></div>
+      <div class="protocol">
+        <article><b>S</b><h3>K−1 个 support views</h3><p>只负责初始 physics lift、Residual/Absolute experts 和 support-fit。</p><small>不读取 Q_fit 或 Q_audit。</small></article>
+        <article><b>Q_fit</b><h3>1 个推理视角</h3><p>同一个视角分别进入 <code>S∪Q direct</code>、learned alpha 和 numerical null update。</p><small>fixed 为 80°；其他策略只作次级审计。</small></article>
+        <article><b>Q_audit</b><h3>锁定 60° 审计视角</h3><p>在 support 和 query 选择前就冻结，完全不参与模型、alpha、λ 或方法选择。</p><small>因此实际采集数是 K+1，不偷换成总硬件预算 K。</small></article>
+      </div>
+    </section>
+
+    <section id="results">
+      <div class="section-head">
+        <div><div class="eyebrow">主结果</div><h2>切换 query 策略查看风险</h2><p>表中百分比先跨 3 个模型种子按体场汇总，再让五个来源 split 等权。负数表示落后于同预算 <code>S∪Q direct</code>。</p></div>
+        <div class="segments" role="group" aria-label="选择 query 策略">
+          <button class="segment" type="button" data-strategy="fixed" aria-pressed="true">固定 80°</button>
+          <button class="segment" type="button" data-strategy="max_gap" aria-pressed="false">最大角间隙</button>
+          <button class="segment" type="button" data-strategy="adaptive_energy" aria-pressed="false">自适应能量</button>
+          <button class="segment" type="button" data-strategy="random" aria-pressed="false">随机</button>
+        </div>
+      </div>
+      <div id="resultArea" class="loading" aria-live="polite">正在读取校验后的结果...</div>
+      <p class="note">“完整性校验通过”只表示行数、互斥 mask、零空间泄漏、checksum 和统计合同正确；它不等于科学方法通过。</p>
+    </section>
+
+    <section>
+      <div class="section-head"><div><div class="eyebrow">图表</div><h2>均值与个体伤害必须一起看</h2></div></div>
+      <div class="figure-grid">
+        <figure><img src="./demo_t16_operator/results/fair_camera_budget/t16_fair_camera_budget_verdict.png" alt="三种重建预算下 learned correction 与 numerical update 相对 direct reconstruction 的改善" /><figcaption>除 K=6 max-gap 的微弱正均值外，修正路线普遍明显落后 direct；该例置信区间仍跨 0。</figcaption></figure>
+        <figure><img src="./demo_t16_operator/results/fair_camera_budget/t16_fair_camera_budget_harm.png" alt="三种重建预算下 learned correction 相对 direct reconstruction 的个体伤害率" /><figcaption>即使均值偶尔接近 0，大量体场仍被伤害，不能用平均数掩盖。</figcaption></figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head"><div><div class="eyebrow">研究转向</div><h2>这次负结果真正打开的四条路</h2></div></div>
+      <div class="insight-grid">
+        <article class="insight"><span class="pill">v3a 已推进</span><h3>Ridge-initialized residual FNO</h3><p>training-mask-matched 审计表明，FBP-lift operator 仍失败；ridge-FNO 在 K=4/6/8 相对强 ridge 改善约 21.54% / 19.68% / 16.91%，三档 development gates 通过。</p><p><strong>边界：</strong>仍是线性 synthetic；<a href="./ridge_fno_nerif_roadmap.html">查看完整 v3a 路线</a>。</p></article>
+        <article class="insight"><span class="pill blue">v3e compute gate</span><h3>FNO epoch 与五架构成本已锁</h3><p><code>carry continuation-Adam + restart cosine</code> 是 240-epoch validation 冠军；v3e 又完成参数、FLOPs-v1、MPS 时间/内存与 time-to-target。</p><p><strong>下一步：</strong><a href="./own_algorithm_lab.html#v3e-compute-accounting">等待 geometry Go 并补 matched error–compute curves</a>；允许功能 pilot，比较结论继续关闭。</p></article>
+        <article class="insight"><span class="pill">机制线索</span><h3>几何价值可能大于模型组件</h3><p>K=6 max-gap 下 learned correction 相对 direct 的均值约 +0.56%，但 CI 跨 0、p10 约 −5.9%、28.7% 体场受损。</p><p><strong>启发：</strong>相机布局/VOI 值得研究，但必须以风险分布和真实安装约束为核心。</p></article>
+        <article class="insight"><span class="pill coral">保留负结果</span><h3>Null consistency 不等于 field correctness</h3><p>最大 support leakage 仍约 2.3e−9，但三维场常明显更差。这是一个清楚、可展示、可写进本科论文的机制性反例。</p><p><strong>边界：</strong>当前仍是 8×16×16 线性 synthetic forward。</p></article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head"><div><div class="eyebrow">可复现资产</div><h2>所有数字都能回到脚本和逐体场数据</h2></div></div>
+      <div class="actions">
+        <a class="button primary" href="./document_reader.html?doc=fair_camera_budget_review_brief.md">打开师兄一页简报</a>
+        <a class="button" href="./document_reader.html?doc=demo_t16_operator%2FREADME.md">复跑说明</a>
+        <a class="button" href="./demo_t16_operator/run_fair_camera_budget.py">实验脚本</a>
+        <a class="button" href="./demo_t16_operator/results/fair_camera_budget/fair_camera_budget_report.json">机器可读报告</a>
+        <a class="button" href="./demo_t16_operator/results/fair_camera_budget/fair_camera_budget_summary.csv">体场聚类汇总</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>T16 v2d · 2026-07-11。当前页面判决的是既有 checkpoint 路径，不把 exploratory synthetic audit 冒充真实 OERF 证据。</footer>
+
+  <script>
+    (() => {
+      const dataUrl = './demo_t16_operator/results/fair_camera_budget/fair_camera_budget_dashboard.json';
+      let payload = null;
+      let strategy = 'fixed';
+      const format = (value, digits = 2) => `${Number(value).toFixed(digits)}%`;
+      const find = (budget, method) => payload.summary.find(row => Number(row.total_budget) === budget && row.query_strategy === strategy && row.method === method);
+      const status = row => {
+        if (Number(row.improvement_vs_union_ci95_cluster_low) > 5 && Number(row.p10_improvement_vs_union_pct) >= 0 && Number(row.harm_rate_gt_1pct_vs_union) <= .05) return '<span class="good">通过</span>';
+        if (Number(row.mean_improvement_vs_union_pct) > 0) return '<span class="mixed">均值略正，风险失败</span>';
+        return '<span class="bad">未通过</span>';
+      };
+      function render() {
+        if (!payload) return;
+        const budgets = [...new Set(payload.summary.map(row => Number(row.total_budget)))].sort((a,b) => a-b);
+        const rows = budgets.map(budget => {
+          const direct = find(budget, 'union_support_fit_direct');
+          const learned = find(budget, 'learned_query_correction');
+          const numeric = find(budget, 'numeric_query_null_update');
+          return `<tr>
+            <td><strong>K=${budget}</strong><br><small>S=${budget-1}, Q_fit=1, Q_audit=1</small></td>
+            <td>${format(direct.mean_improvement_vs_support_pct)}</td>
+            <td>${format(learned.mean_improvement_vs_support_pct)}</td>
+            <td class="${Number(learned.mean_improvement_vs_union_pct) >= 0 ? 'mixed' : 'bad'}">${format(learned.mean_improvement_vs_union_pct)}</td>
+            <td>[${format(learned.improvement_vs_union_ci95_cluster_low)}, ${format(learned.improvement_vs_union_ci95_cluster_high)}]</td>
+            <td>${format(learned.p10_improvement_vs_union_pct)}</td>
+            <td>${format(100 * Number(learned.harm_rate_gt_1pct_vs_union),1)}</td>
+            <td>${format(numeric.mean_improvement_vs_union_pct)}</td>
+            <td>${status(learned)}</td>
+          </tr>`;
+        }).join('');
+        document.getElementById('resultArea').className = 'table-wrap';
+        document.getElementById('resultArea').innerHTML = `<table>
+          <thead><tr><th>重建预算</th><th>S∪Q direct<br>vs S</th><th>Learned<br>vs S</th><th>Learned<br>vs direct</th><th>95% cluster CI</th><th>p10 vs direct</th><th>伤害率 &gt;1%</th><th>Numeric<br>vs direct</th><th>科学判决</th></tr></thead>
+          <tbody>${rows}</tbody></table>`;
+      }
+      document.querySelectorAll('[data-strategy]').forEach(button => button.addEventListener('click', () => {
+        strategy = button.dataset.strategy;
+        document.querySelectorAll('[data-strategy]').forEach(item => item.setAttribute('aria-pressed', item === button ? 'true' : 'false'));
+        render();
+      }));
+      fetch(dataUrl).then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      }).then(data => {
+        payload = data;
+        document.getElementById('fieldMetric').textContent = data.independent_test_fields;
+        document.getElementById('seedMetric').textContent = data.model_seed_count;
+        document.getElementById('passMetric').textContent = `${data.verdicts.filter(row => row.current_checkpoint_path_pass).length} / ${data.verdicts.length}`;
+        render();
+      }).catch(() => {
+        document.getElementById('resultArea').innerHTML = '结果数据未能加载。请通过 GitHub Pages 或本地 HTTP 服务打开本页。';
+      });
+    })();
+  </script>
+  <script src="./site_link_router.js"></script>
+</body>
+</html>

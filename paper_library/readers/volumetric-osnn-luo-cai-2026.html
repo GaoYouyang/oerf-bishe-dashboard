@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Volumetric Optical Scattering Neural Networks · 术语导读</title>
+  <style>
+    :root { --bg:#f7f8f6; --panel:#fff; --ink:#1d2328; --muted:#65717a; --line:#d9e0df; --green:#16756f; --blue:#315f93; --amber:#9a6a00; --soft:#eef6f3; --shadow:0 16px 36px rgba(30,45,55,.08); }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif; color:var(--ink); background:linear-gradient(90deg,rgba(247,248,246,.94),rgba(247,248,246,.76)),url("../../assets/backgrounds/oerf-refractive-field.png") right -150px top 18px / min(920px,92vw) auto no-repeat fixed,var(--bg); line-height:1.62; letter-spacing:0; }
+    header, main { padding:28px clamp(18px,4vw,58px); }
+    header { border-bottom:1px solid var(--line); background:linear-gradient(180deg,#fff,#edf6f3); }
+    h1 { margin:14px 0 10px; max-width:1100px; font-size:clamp(28px,4vw,48px); line-height:1.12; letter-spacing:0; }
+    h2 { margin:26px 0 12px; font-size:24px; }
+    p { margin:6px 0; }
+    .muted, .en { color:var(--muted); }
+    .buttons, .chips, .focus-grid, .page-links, .term-actions, .mini-terms { display:flex; flex-wrap:wrap; gap:8px; }
+    .button, .page-links a, .term-actions a { display:inline-flex; align-items:center; min-height:34px; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); text-decoration:none; font-weight:700; }
+    .button.primary { background:var(--green); border-color:var(--green); color:#fff; }
+    .summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:18px 0; }
+    .summary div, .focus-term, .term-row, .note { border:1px solid var(--line); border-radius:8px; background:var(--panel); box-shadow:var(--shadow); }
+    .summary div { padding:14px 16px; }
+    .summary b { display:block; font-size:28px; line-height:1; color:var(--green); }
+    .note { padding:14px 16px; color:var(--muted); box-shadow:none; }
+    .chips span { border-radius:999px; padding:5px 9px; background:#eaf0f7; color:var(--blue); font-size:12px; font-weight:700; }
+    .guide-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:12px 0 20px; }
+    .guide-card, .topic-card { border:1px solid var(--line); border-radius:8px; background:rgba(255,255,255,.94); padding:13px; min-width:0; }
+    .guide-card { border-left:4px solid var(--green); }
+    .guide-card b { display:block; color:var(--green); font-size:13px; margin-bottom:5px; }
+    .guide-card p, .topic-card p { margin:0; color:#43545c; font-size:13px; line-height:1.55; }
+    .topic-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:12px 0 20px; }
+    .topic-card span { display:inline-flex; border-radius:999px; padding:4px 8px; background:var(--soft); color:var(--green); font-size:12px; font-weight:800; }
+    .topic-card h3 { margin:8px 0 5px; font-size:16px; line-height:1.3; }
+    .topic-card a { display:inline-flex; align-items:center; min-height:30px; margin-top:8px; padding:5px 8px; border:1px solid var(--line); border-radius:7px; background:#fff; color:var(--blue); text-decoration:none; font-size:12px; font-weight:800; }
+    .focus-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .focus-term { padding:15px; }
+    .term-title, .term-name { color:var(--green); font-weight:800; text-decoration:none; }
+    .term-title span { display:block; color:var(--muted); font-weight:600; font-size:13px; }
+    .term-actions { margin-top:8px; }
+    .term-actions a { min-height:28px; padding:4px 7px; color:var(--blue); font-size:12px; }
+    .page-map { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .page-card { border:1px solid var(--line); border-radius:8px; background:#fff; padding:12px; }
+    .page-title { display:inline-flex; margin-bottom:6px; color:var(--green); font-size:18px; font-weight:900; text-decoration:none; }
+    .page-card small { display:block; color:var(--muted); }
+    .mini-term { display:inline-flex; align-items:center; gap:5px; border-radius:999px; padding:4px 7px; background:#f6efe2; border:1px solid #ead7b5; color:var(--amber); font-size:12px; font-weight:700; text-decoration:none; }
+    .mini-term span { color:#6f5b2b; font-weight:700; }
+    .toolbar { display:grid; grid-template-columns:minmax(240px,1fr) 190px; gap:10px; margin:16px 0; }
+    input, select { min-height:42px; border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:#fff; font:inherit; }
+    .term-list { display:grid; gap:12px; }
+    .term-row { display:grid; grid-template-columns:minmax(0,1fr) 240px; gap:14px; padding:15px; }
+    .term-row p { margin:4px 0; }
+    .term-side { display:flex; flex-direction:column; align-items:flex-start; gap:7px; }
+    .term-side span { border-radius:999px; padding:4px 8px; background:var(--soft); color:var(--green); font-size:12px; font-weight:700; }
+    .term-side b { font-size:24px; color:var(--amber); }
+    .page-links a { min-height:28px; padding:4px 7px; font-size:12px; color:var(--blue); }
+    .more { color:var(--muted); font-size:12px; padding:4px 0; }
+    footer { margin-top:28px; color:var(--muted); font-size:12px; }
+    @media (max-width:1080px) { .guide-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .topic-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:900px) { .summary, .focus-grid, .term-row, .toolbar, .page-map, .guide-grid, .topic-grid { grid-template-columns:1fr; } body { background-attachment:scroll; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="buttons">
+      <a class="button" href="../index.html">Back to paper library</a>
+      <a class="button" href="../term_index.html">PDF term index</a>
+      <a class="button" href="../../index.html#glossary">Glossary</a>
+      <a class="button" href="../paper_detail.html?id=volumetric-osnn-luo-cai-2026">Paper detail</a>
+    </div>
+    <h1>Volumetric Optical Scattering Neural Networks</h1>
+    <p class="muted">Xuhao Luo, Qiang Song, Weiwei Cai, Lei Chen, Enbo Yang, Hao Wang, Zhipei Sun, Yueqiang Hu, Joel K. W. Yang, Huigao Duan</p>
+    <p class="muted">arXiv · 2026</p>
+    <div class="buttons">
+      <a class="button primary" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf" target="_blank" rel="noreferrer">Open PDF</a>
+      <a class="button" href="https://arxiv.org/pdf/2605.13177" target="_blank" rel="noreferrer">Online PDF</a>
+      <a class="button" href="https://arxiv.org/abs/2605.13177" target="_blank" rel="noreferrer">Publisher / source</a>
+    </div>
+    <div class="summary">
+      <div><b>4</b><span>matched terms</span></div>
+      <div><b>6</b><span>term hits</span></div>
+      <div><b>4</b><span>categories</span></div>
+      <div><b>optional</b><span>OERF optical computing</span></div>
+    </div>
+    <div class="chips"><span>BOST 主线 · 1</span><span>反问题/层析 · 1</span><span>实验/数据 · 1</span><span>流体/燃烧 · 1</span></div>
+  </header>
+  <main>
+    <section class="note">
+      <p><b>阅读定位：</b>光学神经网络/光计算的前沿旁支；不是何远哲 BOST 主线，但能帮助理解 OERF 为什么关注“物理传播本身作为计算”的路线。</p>
+      <p><b>精读时提取：</b>first-Born approximation、near-field scattering、inverse design、optical compressed imaging、MNIST/VesselMNIST3D 指标。</p>
+      <p><b>边界说明：</b>本页只保存术语命中、解释和页码跳转，不复制论文正文。点击页码会回到原 PDF 的对应页。</p>
+    </section>
+    <h2>读这篇的路线</h2>
+    <section class="guide-grid">
+            <article class="guide-card">
+              <b>定位角色</b>
+              <p>BOS/BOST 或计算流动可视化支撑文献：先读它解决的测量问题，再判断能否转化为本科可做的小模块。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>抓方法图</b>
+              <p>优先找 optical setup、forward model、reconstruction pipeline、evaluation table，不先陷入所有推导。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>抽可复现变量</b>
+              <p>记录输入数据、几何参数、噪声/视角设置、baseline、loss/regularization 和评价指标。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>查术语页码</b>
+              <p>用本页的术语卡片跳到 PDF 对应页，建立自己的概念索引。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>转成毕设问题</b>
+              <p>把这篇文献写成一个可执行问题：我能复现哪一段、比较什么、问师兄要什么数据。</p>
+            </article>
+            </section>
+    <h2>关联毕设选题</h2>
+    <section class="topic-grid">
+            <article class="topic-card">
+              <span>T1</span>
+              <h3>NeRIF/BOST 鲁棒性</h3>
+              <p>由标题、分组或关键词匹配；用于判断这篇文献可服务的选题模块。</p>
+              <a href="../../topic_deep_dive.html?id=T1">打开选题详情</a>
+            </article>
+            </section>
+    <h2>先看这几个术语</h2>
+    <section class="focus-grid">
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型 <span>Forward model</span></a>
+              <p>给定三维物理场和相机几何，计算理论上应该观测到什么图像位移、投影或信号。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=16" target="_blank" rel="noreferrer">p.16</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B">跨论文反查</a>
+                <a href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场 <span>Refractive index field, n(x,y,z)</span></a>
+              <p>空间中每一点的折射率分布，决定光线在流场中如何弯折。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=11" target="_blank" rel="noreferrer">p.11</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA">跨论文反查</a>
+                <a href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97#glossary" target="_blank" rel="noreferrer">实验日志 <span>Experiment log</span></a>
+              <p>记录每次数据、代码版本、参数、结果图和失败原因的结构化日志。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=20" target="_blank" rel="noreferrer">p.20</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97">跨论文反查</a>
+                <a href="../../index.html?term=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场 <span>Density field, rho(x,y,z)</span></a>
+              <p>单位体积质量分布，是可压缩流、热羽流、火焰和喷流诊断中的核心物理量。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=9" target="_blank" rel="noreferrer">p.9</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%AF%86%E5%BA%A6%E5%9C%BA">跨论文反查</a>
+                <a href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+            </section>
+    <h2>按页术语地图</h2>
+    <section class="note">
+      <p><b>使用方式：</b>先点 p.页码打开原 PDF，再看这一页命中的概念。这个区域相当于“读论文导航”，不是论文正文重排。</p>
+    </section>
+    <section class="page-map">
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=7" target="_blank" rel="noreferrer">p.7</a>
+                <small>1 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=9" target="_blank" rel="noreferrer">p.9</a>
+                <small>2 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=11" target="_blank" rel="noreferrer">p.11</a>
+                <small>1 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=16" target="_blank" rel="noreferrer">p.16</a>
+                <small>1 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=20" target="_blank" rel="noreferrer">p.20</a>
+                <small>1 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97#glossary" target="_blank" rel="noreferrer">实验日志<span>1x</span></a></div>
+              </article>
+            </section>
+    <h2>全术语检索</h2>
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="搜索术语、英文名、类别、解释，例如 BOST / density / PINN" />
+      <select id="category">
+        <option value="all">All categories</option>
+        <option value="BOST 主线">BOST 主线</option><option value="反问题/层析">反问题/层析</option><option value="实验/数据">实验/数据</option><option value="流体/燃烧">流体/燃烧</option>
+      </select>
+    </div>
+    <section id="terms" class="term-list">
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;前向模型&quot;, &quot;en&quot;: &quot;Forward model&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;给定三维物理场和相机几何，计算理论上应该观测到什么图像位移、投影或信号。&quot;, &quot;use&quot;: &quot;你做合成数据和 NeRIF 训练时，前向模型是最重要的代码模块。&quot;, &quot;pitfall&quot;: &quot;前向模型过于简化会让 demo 好看但无法迁移真实数据；需要明确小角度、直线光线或 ray tracing 假设。&quot;, &quot;keywords&quot;: &quot;forward model; differentiable projection; ray tracing; BOS simulation&quot;, &quot;count&quot;: 2, &quot;pages&quot;: [9, 16], &quot;page_hits&quot;: [{&quot;page&quot;: 9, &quot;count&quot;: 1}, {&quot;page&quot;: 16, &quot;count&quot;: 1}], &quot;page_count&quot;: 2}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型</a>
+                <p class="en">Forward model</p>
+                <p>给定三维物理场和相机几何，计算理论上应该观测到什么图像位移、投影或信号。</p>
+                <p><b>读这篇时看什么：</b>你做合成数据和 NeRIF 训练时，前向模型是最重要的代码模块。</p>
+                <p><b>易混点：</b>前向模型过于简化会让 demo 好看但无法迁移真实数据；需要明确小角度、直线光线或 ray tracing 假设。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>2 hits</b>
+                <small>2 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=16" target="_blank" rel="noreferrer">p.16</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;折射率场&quot;, &quot;en&quot;: &quot;Refractive index field, n(x,y,z)&quot;, &quot;category&quot;: &quot;BOST 主线&quot;, &quot;explain&quot;: &quot;空间中每一点的折射率分布，决定光线在流场中如何弯折。&quot;, &quot;use&quot;: &quot;NeRIF 最直接的输出对象通常就是折射率场；后续可通过 Gladstone-Dale 关系换算密度。&quot;, &quot;pitfall&quot;: &quot;折射率变化很小，数值尺度容易被忽略；画图时常显示 n-1 或归一化扰动。&quot;, &quot;keywords&quot;: &quot;refractive index field; optical path; gas refractivity; refractive-index perturbation&quot;, &quot;count&quot;: 2, &quot;pages&quot;: [7, 11], &quot;page_hits&quot;: [{&quot;page&quot;: 7, &quot;count&quot;: 1}, {&quot;page&quot;: 11, &quot;count&quot;: 1}], &quot;page_count&quot;: 2}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场</a>
+                <p class="en">Refractive index field, n(x,y,z)</p>
+                <p>空间中每一点的折射率分布，决定光线在流场中如何弯折。</p>
+                <p><b>读这篇时看什么：</b>NeRIF 最直接的输出对象通常就是折射率场；后续可通过 Gladstone-Dale 关系换算密度。</p>
+                <p><b>易混点：</b>折射率变化很小，数值尺度容易被忽略；画图时常显示 n-1 或归一化扰动。</p>
+              </div>
+              <div class="term-side">
+                <span>BOST 主线</span>
+                <b>2 hits</b>
+                <small>2 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=11" target="_blank" rel="noreferrer">p.11</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;实验日志&quot;, &quot;en&quot;: &quot;Experiment log&quot;, &quot;category&quot;: &quot;实验/数据&quot;, &quot;explain&quot;: &quot;记录每次数据、代码版本、参数、结果图和失败原因的结构化日志。&quot;, &quot;use&quot;: &quot;你后续想做学习日志网页，这个概念要提前嵌入：每周能复现自己的结果。&quot;, &quot;pitfall&quot;: &quot;没有日志，参数扫描越多越乱，最后很难写论文方法和结果。&quot;, &quot;keywords&quot;: &quot;experiment log; reproducibility; configuration; result tracking; research diary&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [20], &quot;page_hits&quot;: [{&quot;page&quot;: 20, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97#glossary" target="_blank" rel="noreferrer">实验日志</a>
+                <p class="en">Experiment log</p>
+                <p>记录每次数据、代码版本、参数、结果图和失败原因的结构化日志。</p>
+                <p><b>读这篇时看什么：</b>你后续想做学习日志网页，这个概念要提前嵌入：每周能复现自己的结果。</p>
+                <p><b>易混点：</b>没有日志，参数扫描越多越乱，最后很难写论文方法和结果。</p>
+              </div>
+              <div class="term-side">
+                <span>实验/数据</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=20" target="_blank" rel="noreferrer">p.20</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;密度场&quot;, &quot;en&quot;: &quot;Density field, rho(x,y,z)&quot;, &quot;category&quot;: &quot;流体/燃烧&quot;, &quot;explain&quot;: &quot;单位体积质量分布，是可压缩流、热羽流、火焰和喷流诊断中的核心物理量。&quot;, &quot;use&quot;: &quot;BOST 重建折射率后常把它转成密度，再进一步解释温度、压力或流动结构。&quot;, &quot;pitfall&quot;: &quot;密度不是温度；需要状态方程、压力假设和组分信息才能进一步换算。&quot;, &quot;keywords&quot;: &quot;density field; gas density measurement; volumetric density; compressible flow&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [9], &quot;page_hits&quot;: [{&quot;page&quot;: 9, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场</a>
+                <p class="en">Density field, rho(x,y,z)</p>
+                <p>单位体积质量分布，是可压缩流、热羽流、火焰和喷流诊断中的核心物理量。</p>
+                <p><b>读这篇时看什么：</b>BOST 重建折射率后常把它转成密度，再进一步解释温度、压力或流动结构。</p>
+                <p><b>易混点：</b>密度不是温度；需要状态方程、压力假设和组分信息才能进一步换算。</p>
+              </div>
+              <div class="term-side">
+                <span>流体/燃烧</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fvolumetric_optical_scattering_nn_luo_2026_arxiv2605.13177.pdf#page=9" target="_blank" rel="noreferrer">p.9</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%AF%86%E5%BA%A6%E5%9C%BA">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+            </section>
+    <footer>Generated from open cached PDFs with pypdf. Private/WebVPN PDFs are excluded from public reader pages.</footer>
+  </main>
+  <script>
+    const search = document.getElementById('search');
+    const category = document.getElementById('category');
+    const rows = Array.from(document.querySelectorAll('.term-row'));
+    function apply() {
+      const q = search.value.trim().toLowerCase();
+      const parts = q.split(/\s+/).filter(Boolean);
+      rows.forEach((row) => {
+        const data = JSON.parse(row.dataset.text);
+        const text = row.innerText.toLowerCase();
+        const okQ = !parts.length || parts.every((part) => text.includes(part));
+        const okC = category.value === 'all' || data.category === category.value;
+        row.style.display = okQ && okC ? '' : 'none';
+      });
+    }
+    const params = new URLSearchParams(location.search);
+    const initial = params.get('q') || params.get('term') || '';
+    if (initial) search.value = initial;
+    search.addEventListener('input', apply);
+    category.addEventListener('change', apply);
+    apply();
+  </script>
+  <script src="../../site_link_router.js" data-site-root="../../"></script>
+</body>
+</html>

@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>论文详情 | OERF / BOST Paper Library</title>
+  <link rel="icon" href="data:," />
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6faf8;
+      --paper: #ffffff;
+      --ink: #1e2d34;
+      --muted: #60727c;
+      --line: #d7e2df;
+      --green: #147b68;
+      --blue: #2d639c;
+      --gold: #9a6a12;
+      --red: #9d4438;
+      --soft: #eaf4f1;
+      --blue-soft: #edf4fb;
+      --gold-soft: #f8f0dc;
+      --shadow: 0 18px 42px rgba(28, 55, 50, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(246, 250, 248, .94), rgba(246, 250, 248, .78)),
+        url("../assets/backgrounds/oerf-refractive-field.png") right -140px top 18px / min(920px, 92vw) auto no-repeat fixed,
+        linear-gradient(180deg, rgba(20, 123, 104, .10), transparent 390px),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .shell {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 24px 0 62px;
+    }
+    .topbar,
+    .button-row,
+    .pill-row,
+    .term-cloud,
+    .group-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .topbar { justify-content: space-between; margin-bottom: 18px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.92);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 8px 18px rgba(28, 55, 50, .04);
+    }
+    .button.primary { background: var(--green); border-color: var(--green); color: #fff; }
+    .button:hover { text-decoration: none; border-color: var(--green); }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 230px;
+      gap: 22px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.93);
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3vw, 30px);
+      overflow: hidden;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--soft);
+      border: 1px solid #c7ded9;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    h1 {
+      margin: 13px 0 10px;
+      max-width: 920px;
+      font-size: clamp(27px, 4vw, 46px);
+      line-height: 1.12;
+      letter-spacing: 0;
+      overflow-wrap: anywhere;
+    }
+    .authors,
+    .venue,
+    .muted {
+      color: var(--muted);
+    }
+    .authors { margin: 0 0 5px; font-size: 16px; }
+    .venue { margin: 0; font-size: 14px; }
+    .preview {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      min-height: 286px;
+      background: #f8fbfa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .preview img {
+      width: 100%;
+      height: 100%;
+      min-height: 286px;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+    .no-preview {
+      padding: 20px;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f8fbfa;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 850;
+      overflow-wrap: anywhere;
+    }
+    .pill.must { background: #e7f3ee; color: var(--green); border-color: #cbe3dc; }
+    .pill.support { background: var(--blue-soft); color: var(--blue); border-color: #d3e1f0; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 16px 0 0;
+    }
+    .stats div,
+    .panel,
+    .mini-card,
+    .term-card,
+    .related-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.93);
+      box-shadow: var(--shadow);
+    }
+    .stats div { padding: 12px; box-shadow: none; background: #fbfdfc; }
+    .stats b { display: block; color: var(--green); font-size: 24px; line-height: 1.05; overflow-wrap: anywhere; }
+    .stats span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 16px;
+      align-items: start;
+      margin-top: 16px;
+    }
+    .maincol,
+    .sidecol {
+      display: grid;
+      gap: 14px;
+      min-width: 0;
+    }
+    .sidecol {
+      position: sticky;
+      top: 14px;
+    }
+    .panel,
+    .mini-card,
+    .term-card,
+    .related-card { padding: 16px; }
+    .panel h2,
+    .mini-card h2 {
+      margin: 0 0 10px;
+      font-size: 21px;
+      line-height: 1.25;
+    }
+    .panel p { margin: 8px 0; color: #34474f; overflow-wrap: anywhere; }
+    .route {
+      counter-reset: step;
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .route li {
+      position: relative;
+      min-height: 46px;
+      padding: 11px 12px 11px 50px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfc;
+      color: #33474f;
+      overflow-wrap: anywhere;
+    }
+    .route li::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 12px;
+      top: 11px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 13px;
+    }
+    .term-grid,
+    .related-grid,
+    .insight-grid,
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      gap: 10px;
+    }
+    .term-card h3,
+    .related-card h3,
+    .insight-card h3,
+    .topic-card h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+    .term-card p,
+    .related-card p,
+    .insight-card p,
+    .topic-card p,
+    .mini-card p {
+      margin: 5px 0;
+      color: var(--muted);
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+    .insight-card,
+    .topic-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfc;
+      padding: 14px;
+      min-width: 0;
+    }
+    .insight-card {
+      border-left: 4px solid var(--green);
+    }
+    .topic-card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .topic-card .button {
+      align-self: flex-start;
+      margin-top: auto;
+      min-height: 32px;
+      padding: 6px 9px;
+      font-size: 12px;
+    }
+    .section-lead {
+      margin: -2px 0 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .read-map {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      margin-top: 12px;
+    }
+    .read-map div {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfc;
+      padding: 11px;
+      min-width: 0;
+    }
+    .read-map b {
+      display: block;
+      color: var(--green);
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    .read-map span {
+      display: block;
+      color: #51636b;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .term-cloud a,
+    .group-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 8px;
+      border: 1px solid #d5e1de;
+      border-radius: 7px;
+      background: #f7faf8;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+    .term-cloud a:hover,
+    .group-links a:hover { text-decoration: none; border-color: var(--green); }
+    .access-note {
+      border-left: 4px solid var(--gold);
+      background: var(--gold-soft);
+      padding: 12px 14px;
+      border-radius: 0 8px 8px 0;
+      color: #55453b;
+    }
+    .empty {
+      padding: 18px;
+      border: 1px dashed #b6c8c2;
+      border-radius: 8px;
+      background: rgba(255,255,255,.75);
+      color: var(--muted);
+    }
+    .error {
+      padding: 18px;
+      border: 1px solid #ecc5bd;
+      border-radius: 8px;
+      background: #fff4f1;
+      color: var(--red);
+    }
+    footer {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    @media (max-width: 920px) {
+      .hero,
+      .layout,
+      .stats,
+      .read-map { grid-template-columns: 1fr; }
+      .sidecol { position: static; }
+      .preview { min-height: 210px; }
+      .preview img { min-height: 210px; }
+    }
+    @media (max-width: 620px) {
+      .shell { width: min(100% - 24px, 1180px); padding-top: 16px; }
+      .topbar { display: block; }
+      .topbar .button-row { margin-bottom: 10px; }
+      body { background-attachment: scroll; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="button-row">
+        <a class="button primary" href="./index.html">返回论文库</a>
+        <a class="button" href="../index.html">总工作台</a>
+        <a class="button" href="./term_index.html">PDF 术语索引</a>
+      </div>
+      <div class="button-row" id="topActions"></div>
+    </div>
+
+    <header class="hero" id="hero">
+      <div>
+        <span class="eyebrow">Paper detail</span>
+        <h1>正在加载论文详情</h1>
+        <p class="authors muted">从论文库元数据读取中...</p>
+      </div>
+      <div class="preview"><div class="no-preview">Loading</div></div>
+    </header>
+
+    <main id="content"></main>
+    <footer>本页由 <code>paper_library/papers.json</code> 动态渲染，只展示阅读导航与元数据，不复制论文正文。</footer>
+  </div>
+
+  <script src="../glossary_terms.js"></script>
+  <script src="../topic_deep_dive_data.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const requestedId = params.get("id") || "";
+    const glossaryTerms = window.OERF_GLOSSARY_TERMS || [];
+    const topicDives = window.OERF_TOPIC_DEEP_DIVES || [];
+    const hero = document.getElementById("hero");
+    const content = document.getElementById("content");
+    const topActions = document.getElementById("topActions");
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function normalizeText(value) {
+      return String(value || "").toLowerCase().replace(/\s+/g, " ").trim();
+    }
+
+    function assetHref(localPdf) {
+      return "../asset_viewer.html?asset=" + encodeURIComponent("paper_library/" + localPdf);
+    }
+
+    function readerHref(paper) {
+      return paper.local_pdf ? `readers/${encodeURIComponent(paper.id)}.html` : "";
+    }
+
+    function doiHref(doi) {
+      return doi ? `https://doi.org/${encodeURIComponent(doi)}` : "";
+    }
+
+    function hasVerifiedOnlineFullText(paper) {
+      return paper.online_fulltext_verified === true;
+    }
+
+    function tagClass(priority) {
+      return priority === "must" ? "must" : priority === "support" ? "support" : "";
+    }
+
+    function termMatches(text, term) {
+      const aliases = [term.zh, term.en, term.keywords, ...(term.aliases || [])];
+      return aliases.filter(Boolean).some((alias) => normalizeText(text).includes(normalizeText(alias)));
+    }
+
+    function paperText(paper) {
+      return [
+        paper.title, paper.authors, paper.venue, paper.group, paper.why,
+        paper.extract, paper.access, paper.doi, paper.year
+      ].filter(Boolean).join(" ");
+    }
+
+    function matchedTerms(paper, limit = 10) {
+      const text = paperText(paper);
+      return glossaryTerms.filter((term) => termMatches(text, term)).slice(0, limit);
+    }
+
+    function button(label, href, cls = "", external = false) {
+      if (!href) return "";
+      return `<a class="button ${cls}" href="${escapeHtml(href)}"${external ? ' target="_blank" rel="noreferrer"' : ""}>${escapeHtml(label)}</a>`;
+    }
+
+    function renderActions(paper) {
+      const actions = [
+        button("术语导读/页码地图", readerHref(paper), "primary"),
+        button("打开本地 PDF", paper.local_pdf ? assetHref(paper.local_pdf) : "", paper.local_pdf ? "" : "", true),
+        button(hasVerifiedOnlineFullText(paper) ? "在线全文" : "在线 PDF 入口", paper.online_pdf_url || "", "", true),
+        button("出版社 / DOI", paper.landing_url || doiHref(paper.doi), "", true)
+      ].filter(Boolean).join("");
+      return actions || '<span class="pill">暂无可跳转入口</span>';
+    }
+
+    function inferRole(paper) {
+      const group = normalizeText(paper.group);
+      const text = normalizeText(paperText(paper));
+      if (group.includes("he mainline") || text.includes("yuanzhe he")) return "何远哲同步主线：优先精读，适合直接转化为毕设问题定义。";
+      if (text.includes("bost") || text.includes("background-oriented schlieren tomography") || text.includes("refractive index")) return "BOST / 折射率重构支撑文献：用于补模型、误差、实验或算法背景。";
+      if (text.includes("bos") || text.includes("schlieren")) return "BOS / Schlieren 光学诊断邻近文献：用于建立实验直觉、系统误差和可视化基础。";
+      if (text.includes("neural") || text.includes("pinn") || text.includes("tomography")) return "算法与反问题邻近文献：用于补可微重建、神经场或层析 baseline。";
+      return "OERF 大方向背景文献：用于了解课题组能力边界和可能的跨方向接口。";
+    }
+
+    function readingSteps(paper) {
+      const steps = [
+        `先确认这篇在你的计划里的角色：${inferRole(paper)}`,
+        `读摘要、引言和实验/方法图，提取“它解决了什么测量问题”。`,
+        `精读 Why / Extract：${paper.extract || "把关键公式、数据需求、实验条件和评价指标整理出来。"}`,
+        paper.local_pdf
+          ? "打开术语导读页，按页码地图查 BOST、折射率场、正则化、PIV 等关键词。"
+          : hasVerifiedOnlineFullText(paper)
+            ? "打开已核在线全文入口，按 Why / Extract 精读方法、实验和附录；同时记清它没有本地缓存文件。"
+            : "这篇暂时没有已核本地或在线全文，先读出版社/DOI 页面和可访问的摘要；PDF 入口可能仍受验证或订阅限制。",
+        "把它归入一个毕设模块：物理模型、数据获取、baseline、误差评估、可视化或师兄沟通问题。"
+      ];
+      return steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("");
+    }
+
+    function renderTermCards(terms) {
+      if (!terms.length) {
+        return '<div class="empty">这篇的元数据没有匹配到现有术语库。打开论文后可以继续手动补术语。</div>';
+      }
+      return `<div class="term-grid">${terms.map((term) => `
+        <article class="term-card">
+          <h3><a href="../index.html?term=${encodeURIComponent(term.zh)}#glossary">${escapeHtml(term.zh)}</a></h3>
+          <p>${escapeHtml(term.en || "")}</p>
+          <p>${escapeHtml(term.explain || "")}</p>
+          <p><strong>易混点：</strong>${escapeHtml(term.pitfall || "阅读时注意区分观测量、反演量和物理量。")}</p>
+        </article>
+      `).join("")}</div>`;
+    }
+
+    function topicScore(paper, topic) {
+      const text = normalizeText(paperText(paper));
+      const topicText = normalizeText([
+        topic.id, topic.title, topic.shortTitle, topic.scope, topic.researchAbstract,
+        ...(topic.knowledge || []), ...(topic.software || []),
+        ...(topic.corePapers || []).flat()
+      ].filter(Boolean).join(" "));
+      let score = 0;
+      ["bost", "bos", "schlieren", "piv", "nerif", "neural", "tomography", "optical flow", "4d", "uncertainty", "calibration", "spectrometer", "combustion"].forEach((word) => {
+        if (text.includes(word) && topicText.includes(word)) score += 2;
+      });
+      if (normalizeText(paper.group).includes("he mainline") && ["T1", "T3", "T4"].includes(topic.id)) score += 5;
+      if (text.includes("piv") && topic.id === "T3") score += 5;
+      if (text.includes("optical flow") && topic.id === "T5") score += 5;
+      if ((text.includes("calibration") || text.includes("geometry")) && topic.id === "T6") score += 4;
+      if ((text.includes("uncertainty") || text.includes("uq")) && topic.id === "T2") score += 4;
+      if ((text.includes("tensor") || text.includes("4d") || text.includes("time-resolved")) && topic.id === "T4") score += 4;
+      if ((text.includes("operator") || text.includes("deeponet") || text.includes("fno") || text.includes("inverse reconstruction")) && topic.id === "T16") score += 6;
+      return score;
+    }
+
+    function renderTopicMatches(paper) {
+      let matches = topicDives
+        .map((topic) => ({ topic, score: topicScore(paper, topic) }))
+        .filter((item) => item.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 4);
+      if (!matches.length) {
+        matches = topicDives.slice(0, 3).map((topic) => ({ topic, score: 1 }));
+      }
+      return `<div class="topic-grid">${matches.map(({ topic }) => `
+        <article class="topic-card">
+          <span class="pill">${escapeHtml(topic.id)} · ${escapeHtml(topic.fit || "topic")}</span>
+          <h3>${escapeHtml(topic.shortTitle || topic.title)}</h3>
+          <p>${escapeHtml(topic.verdict || topic.scope || "")}</p>
+          <a class="button" href="../topic_deep_dive.html?id=${encodeURIComponent(topic.id)}">打开选题详情</a>
+        </article>
+      `).join("")}</div>`;
+    }
+
+    function renderInsightGrid(paper) {
+      const role = inferRole(paper);
+      const hasLocal = Boolean(paper.local_pdf);
+      const hasOnline = hasVerifiedOnlineFullText(paper);
+      const items = [
+        ["它在毕设中的位置", role],
+        ["可转化成的任务", hasLocal
+          ? "从术语导读页提取模型、变量、误差指标，再转成可复现实验清单。"
+          : hasOnline
+            ? "从在线全文提取模型、实验参数和失败边界，再转成可复现实验清单；记录未本地缓存的访问边界。"
+            : "先把它作为背景或对照，不把未读全文当作核心证据。"],
+        ["最该截图/记录", "方法总图、forward model、实验几何、数据接口、评价指标、失败条件。"],
+        ["和师兄沟通", "问这篇是否是组内认可 baseline、是否有对应数据/代码、哪些假设在真实系统里最容易失效。"]
+      ];
+      return `<div class="insight-grid">${items.map(([title, text]) => `
+        <article class="insight-card">
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(text)}</p>
+        </article>
+      `).join("")}</div>`;
+    }
+
+    function renderRelated(paper, papers) {
+      const related = papers
+        .filter((item) => item.id !== paper.id && item.group === paper.group)
+        .slice(0, 8);
+      if (!related.length) {
+        return '<div class="empty">同组暂时没有更多条目；可以回论文库按关键词继续筛选。</div>';
+      }
+      return `<div class="related-grid">${related.map((item) => `
+        <article class="related-card">
+          <span class="pill ${tagClass(item.priority)}">${escapeHtml(item.priority)}</span>
+          <h3><a href="paper_detail.html?id=${encodeURIComponent(item.id)}">${escapeHtml(item.title)}</a></h3>
+          <p>${escapeHtml(item.authors || "")}</p>
+          <p>${escapeHtml(item.venue || "")} · ${escapeHtml(item.year || "")}</p>
+        </article>
+      `).join("")}</div>`;
+    }
+
+    function renderPaper(paper, papers) {
+      document.title = `${paper.title} | 论文详情`;
+      const terms = matchedTerms(paper);
+      const hasLocal = Boolean(paper.local_pdf);
+      const hasOnline = hasVerifiedOnlineFullText(paper);
+      const preview = paper.preview
+        ? `<a href="${escapeHtml(hasLocal ? assetHref(paper.local_pdf) : (paper.online_pdf_url || paper.landing_url || "#"))}" target="_blank" rel="noreferrer"><img src="${escapeHtml(paper.preview)}" alt="${escapeHtml(paper.title)} preview" /></a>`
+        : `<div class="no-preview">${hasLocal ? "PDF cached" : hasOnline ? "Online full text" : "Publisher / online entry"}</div>`;
+
+      topActions.innerHTML = renderActions(paper);
+      hero.innerHTML = `
+        <div>
+          <span class="eyebrow">${hasLocal ? "Cached open PDF" : hasOnline ? "Verified online full text" : "Publisher / verified source"}</span>
+          <h1>${escapeHtml(paper.title)}</h1>
+          <p class="authors">${escapeHtml(paper.authors || "")}</p>
+          <p class="venue">${escapeHtml(paper.venue || "")} · ${escapeHtml(paper.year || "")}${paper.doi ? " · " + escapeHtml(paper.doi) : ""}</p>
+          <div class="pill-row" style="margin-top:14px;">
+            <span class="pill ${tagClass(paper.priority)}">${escapeHtml(paper.priority || "support")}</span>
+            <span class="pill">${escapeHtml(paper.group || "ungrouped")}</span>
+            <span class="pill">${hasLocal ? "本地开放 PDF" : hasOnline ? "在线全文 / 未本地缓存" : "出版社入口 / 无全文缓存"}</span>
+          </div>
+          <div class="stats">
+            <div><b>${hasLocal ? "local" : hasOnline ? "online" : "landing"}</b><span>full-text access</span></div>
+            <div><b>${terms.length}</b><span>matched terms</span></div>
+            <div><b>${escapeHtml(paper.priority || "support")}</b><span>priority</span></div>
+            <div><b>${escapeHtml(paper.year || "-")}</b><span>year</span></div>
+          </div>
+        </div>
+        <div class="preview">${preview}</div>
+      `;
+
+      content.innerHTML = `
+        <div class="layout">
+          <section class="maincol">
+            <article class="panel">
+              <h2>为什么收录</h2>
+              <p>${escapeHtml(paper.why || "这篇是当前方向的支撑文献。")}</p>
+            </article>
+            <article class="panel">
+              <h2>读这篇要抽取什么</h2>
+              <p>${escapeHtml(paper.extract || "重点提取问题定义、方法链条、实验条件、数据需求、评价指标和局限。")}</p>
+            </article>
+            <article class="panel">
+              <h2>推荐阅读路径</h2>
+              <div class="read-map">
+                <div><b>1. 先定角色</b><span>它是核心、baseline、实验误差、工具，还是大背景。</span></div>
+                <div><b>2. 再抽变量</b><span>观测量、未知量、几何、loss、数据格式和指标。</span></div>
+                <div><b>3. 对接选题</b><span>把论文内容挂到 16 个毕设候选题中的一个模块。</span></div>
+                <div><b>4. 形成问题</b><span>整理成可以问何远哲师兄的 2-3 个具体问题。</span></div>
+              </div>
+              <ol class="route">${readingSteps(paper)}</ol>
+            </article>
+            <article class="panel">
+              <h2>从这篇延伸到毕设</h2>
+              <p class="section-lead">这里把论文从“读过”变成“能用于选题、复现、问师兄”的材料。</p>
+              ${renderInsightGrid(paper)}
+            </article>
+            <article class="panel">
+              <h2>关联选题</h2>
+              <p class="section-lead">根据标题、分组和关键词自动匹配到当前 ${topicDives.length || 16} 个候选毕设方向。匹配是阅读辅助，不等同于最终定题。</p>
+              ${renderTopicMatches(paper)}
+            </article>
+            <article class="panel">
+              <h2>相关术语</h2>
+              ${renderTermCards(terms)}
+            </article>
+            <article class="panel">
+              <h2>同组近邻文献</h2>
+              ${renderRelated(paper, papers)}
+            </article>
+          </section>
+          <aside class="sidecol">
+            <article class="mini-card">
+              <h2>入口</h2>
+              <div class="button-row">${renderActions(paper)}</div>
+            </article>
+            <article class="mini-card">
+              <h2>访问状态</h2>
+              <p class="access-note">${escapeHtml(paper.access || "暂未记录访问状态。")}</p>
+            </article>
+            <article class="mini-card">
+              <h2>分组反查</h2>
+              <div class="group-links">
+                <a href="./index.html?group=${encodeURIComponent(paper.group || "")}">论文库同组</a>
+                <a href="./index.html?q=${encodeURIComponent(paper.doi || paper.title || "")}">回库定位</a>
+                <a href="../document_reader.html?doc=paper_library%2Fpapers.json">元数据阅读器</a>
+              </div>
+            </article>
+            <article class="mini-card">
+              <h2>术语快查</h2>
+              <div class="term-cloud">${terms.map((term) => `<a href="../index.html?term=${encodeURIComponent(term.zh)}#glossary">${escapeHtml(term.zh)}</a>`).join("") || '<span class="muted">暂无匹配术语</span>'}</div>
+            </article>
+          </aside>
+        </div>
+      `;
+    }
+
+    function renderIndex(papers) {
+      hero.innerHTML = `
+        <div>
+          <span class="eyebrow">Paper detail</span>
+          <h1>请选择一篇论文</h1>
+          <p class="authors">URL 里没有提供 <code>id</code> 参数。下面列出主线和最近收录的入口。</p>
+        </div>
+        <div class="preview"><div class="no-preview">Paper detail</div></div>
+      `;
+      topActions.innerHTML = button("回论文库", "./index.html", "primary");
+      const picks = papers.filter((paper) => paper.priority === "must").concat(papers.slice(-12)).slice(0, 18);
+      content.innerHTML = `<section class="panel"><h2>可选论文</h2>${renderRelated({ id: "", group: "" }, picks.map((paper) => ({ ...paper, group: "" })))}</section>`;
+    }
+
+    async function load() {
+      const response = await fetch("./papers.json", { cache: "no-store" });
+      if (!response.ok) throw new Error(`papers.json HTTP ${response.status}`);
+      const papers = await response.json();
+      if (!requestedId) {
+        renderIndex(papers);
+        return;
+      }
+      const paper = papers.find((item) => item.id === requestedId);
+      if (!paper) {
+        hero.innerHTML = `<div><span class="eyebrow">Not found</span><h1>没有找到这篇论文</h1><p class="authors">id=${escapeHtml(requestedId)}</p></div><div class="preview"><div class="no-preview">404</div></div>`;
+        content.innerHTML = '<div class="error">这个论文 id 不在公开论文库里。可能是旧链接，或者还没有进入 public export。</div>';
+        return;
+      }
+      renderPaper(paper, papers);
+    }
+
+    load().catch((error) => {
+      hero.innerHTML = `<div><span class="eyebrow">Error</span><h1>论文详情读取失败</h1><p class="authors">${escapeHtml(error.message || error)}</p></div><div class="preview"><div class="no-preview">Error</div></div>`;
+      content.innerHTML = '<div class="error">请回到论文库重新打开这篇论文。如果在线页面刚发布，GitHub Pages 可能还在刷新。</div>';
+    });
+  </script>
+  <script src="../site_link_router.js" data-site-root="../"></script>
+</body>
+</html>

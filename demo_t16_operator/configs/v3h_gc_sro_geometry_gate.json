@@ -1,0 +1,50 @@
+{
+  "name": "t16_v3h_gc_sro_geometry_identifiability_gate_v1",
+  "dataset_config": "v3c_dev2_dataset.json",
+  "own_algorithm_config": "own_algorithm_benchmark.json",
+  "dataset_npz": "t16_v3c_dev2_dataset.npz",
+  "output_dir": "v3h_gc_sro_geometry_gate",
+  "total_budget": 6,
+  "audit_query_index": 3,
+  "reference_mask": [1, 0, 1, 0, 1, 1, 1, 0, 1],
+  "ridge_relative": 0.000001,
+  "geometry_evaluation_split": "val",
+  "geometry_period_degrees": 180.0,
+  "partition_seed": 20261201,
+  "partition_counts": {
+    "train": 16,
+    "validation": 4,
+    "geometry_ood": 4,
+    "stress": 4
+  },
+  "geometry_gate": {
+    "minimum_variable_unique_masks": 20,
+    "minimum_changed_fraction_after_shuffle": 0.9,
+    "minimum_mean_ridge_error_range_pct": 5.0,
+    "minimum_median_field_best_worst_spread_pct": 10.0,
+    "minimum_operator_condition_cv": 0.05,
+    "current_protocol_must_have_at_least_two_masks": true
+  },
+  "gc_sro": {
+    "base_checkpoint": "v3d_fno_optimizer_work/20260901/base/checkpoints/base_fno.pt",
+    "model_seed": 20261211,
+    "descriptor_hidden": 16,
+    "descriptor_embedding": 8,
+    "adapter_hidden": 6,
+    "spectral_modes": [4, 6, 6],
+    "maximum_correction_scale": 0.25,
+    "freeze_base": true,
+    "exactness_samples_per_split": 4,
+    "optimizer_steps_checked": 3,
+    "protocol_learning_rate": 0.001,
+    "descriptor_modes": ["geometry", "mask_only", "static", "shuffled"]
+  },
+  "claims_boundary": {
+    "development_only": true,
+    "real_bost_geometry_present": false,
+    "superiority_tested": false,
+    "blind_final_opened": false,
+    "checkpoint_weights_public": false,
+    "dataset_npz_public": false
+  }
+}

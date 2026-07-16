@@ -1,0 +1,1237 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BOST 三维重建与风险路由算子研究台 | Gao Youyang</title>
+  <meta name="description" content="聚焦算子学习与 BOST 三维重建的自有算法、证据门槛、公开数据、论文路线和师兄数据合同。" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23147d70'/%3E%3Cpath d='M13 43V17h18c9 0 14 5 14 13s-5 13-14 13H13zm9-8h8c4 0 6-2 6-5s-2-5-6-5h-8v10z' fill='white'/%3E%3C/svg%3E" />
+  <style>
+    :root {
+      --ink:#17252b; --muted:#607178; --line:#ccd7d4; --bg:#f3f6f4; --paper:#fff;
+      --teal:#146f66; --teal-soft:#e7f3ef; --blue:#315f93; --blue-soft:#eaf1f8;
+      --gold:#8a651b; --gold-soft:#f7f0dd; --coral:#a34f43; --coral-soft:#faece8;
+      --green:#39724f; --shadow:0 10px 28px rgba(24,42,47,.06); --radius:8px;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0; color:var(--ink); background:var(--bg);
+      font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+      line-height:1.65; letter-spacing:0;
+    }
+    body::before {
+      content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:url("assets/backgrounds/oerf-refractive-field.png") center / cover no-repeat; opacity:.05;
+    }
+    a { color:var(--blue); }
+    button,input,select { font:inherit; }
+    button { cursor:pointer; }
+    code,pre,.formula { font-family:"SFMono-Regular",Consolas,monospace; }
+    header,main,footer { width:min(1240px,calc(100vw - 36px)); margin:0 auto; }
+    header { padding:22px 0 30px; border-bottom:1px solid var(--line); }
+    main { padding-bottom:46px; }
+    footer { padding:24px 0 36px; color:var(--muted); font-size:12px; }
+    h1,h2,h3 { line-height:1.22; letter-spacing:0; }
+    h1 { max-width:1180px; margin:18px 0 9px; font-size:40px; }
+    h2 { margin:0; font-size:28px; }
+    h3 { margin:0; font-size:18px; }
+    p { margin:7px 0; }
+    section.band { padding:30px 0; border-bottom:1px solid var(--line); }
+    .skip { position:absolute; top:-60px; left:12px; z-index:10; padding:8px 12px; color:#fff; background:var(--ink); }
+    .skip:focus { top:10px; }
+    .nav,.actions,.chips,.filters,.segmented { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+    .nav a,.button,.segment {
+      display:inline-flex; align-items:center; justify-content:center; min-height:42px; padding:8px 12px;
+      border:1px solid var(--line); border-radius:7px; color:var(--ink); background:rgba(255,255,255,.96);
+      text-decoration:none; font-weight:760;
+    }
+    .button.primary,.segment.active { color:#fff; border-color:var(--teal); background:var(--teal); }
+    .eyebrow { color:var(--teal); font-size:12px; font-weight:850; text-transform:uppercase; }
+    .lead { max-width:1020px; color:#42545c; font-size:16px; }
+    .hero-grid { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr); gap:14px; align-items:stretch; margin-top:20px; }
+    .decision,.panel,.card,.metric,figure {
+      min-width:0; border:1px solid var(--line); border-radius:var(--radius); background:rgba(255,255,255,.96); box-shadow:var(--shadow);
+    }
+    .decision { padding:19px; border-top:5px solid var(--teal); }
+    .decision h2 { margin:5px 0 8px; font-size:24px; }
+    .decision ol { margin:12px 0 0; padding-left:22px; }
+    .archive-details { margin-top:14px; border:1px solid var(--line); border-radius:6px; background:#f7faf9; }
+    .archive-details summary { cursor:pointer; padding:12px 14px; font-weight:800; color:var(--teal); }
+    .archive-details[open] summary { border-bottom:1px solid var(--line); }
+    .archive-details ol { margin:12px 16px 16px; }
+    .metric-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .real-metric-grid { grid-template-columns:repeat(4,minmax(0,1fr)); margin:14px 0; }
+    .metric { min-height:112px; padding:14px; }
+    .metric b { display:block; margin-bottom:4px; color:var(--teal); font-size:28px; }
+    .metric span { color:var(--muted); font-size:12px; }
+    .alert { margin-top:15px; padding:15px 17px; border:1px solid #d9c187; border-left:5px solid var(--gold); border-radius:var(--radius); background:rgba(250,246,233,.97); }
+    .alert strong { display:block; margin-bottom:4px; }
+    .alert.critical { border-color:#ddb8af; border-left-color:var(--coral); background:rgba(252,240,236,.97); }
+    .alert.success { border-color:#b9d4ce; border-left-color:var(--teal); background:rgba(238,247,244,.97); }
+    .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:14px; margin-bottom:16px; }
+    .section-head p { max-width:850px; color:var(--muted); }
+    .chip { display:inline-flex; min-height:25px; align-items:center; padding:3px 8px; border:1px solid #bcd7d1; border-radius:999px; color:var(--teal); background:var(--teal-soft); font-size:11px; font-weight:800; }
+    .chip.blue { color:var(--blue); border-color:#c6d7e7; background:var(--blue-soft); }
+    .chip.gold { color:var(--gold); border-color:#dfcd9e; background:var(--gold-soft); }
+    .chip.coral { color:var(--coral); border-color:#e3c2b9; background:var(--coral-soft); }
+    .evidence-grid,.candidate-grid,.source-grid,.data-grid,.week-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; }
+    .evidence-card,.candidate-card,.source-card,.data-card,.week-card { min-width:0; padding:16px; border:1px solid var(--line); border-radius:var(--radius); background:rgba(255,255,255,.96); box-shadow:var(--shadow); }
+    .evidence-card { border-top:4px solid var(--blue); }
+    .evidence-card[data-state="failed"] { border-top-color:var(--coral); }
+    .evidence-card[data-state="passed"] { border-top-color:var(--teal); }
+    .evidence-card[data-state="next"] { border-top-color:var(--gold); }
+    .evidence-card h3,.candidate-card h3,.source-card h3,.data-card h3,.week-card h3 { margin:8px 0 5px; }
+    .evidence-card p,.candidate-card p,.source-card p,.data-card p,.week-card p { color:#4c5e65; font-size:13px; }
+    .evidence-card.hidden,.candidate-card.hidden { display:none; }
+    .result-table-wrap { width:100%; overflow-x:auto; margin-top:14px; border:1px solid var(--line); border-radius:var(--radius); background:#fff; }
+    table { width:100%; min-width:760px; border-collapse:collapse; font-size:13px; }
+    th,td { padding:10px 11px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { color:#42545c; background:#eef3f1; }
+    tr:last-child td { border-bottom:0; }
+    .positive { color:var(--teal); font-weight:800; }
+    .negative { color:var(--coral); font-weight:800; }
+    .pipeline { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; margin:14px 0; }
+    .pipeline div { position:relative; min-height:112px; padding:12px; border-top:4px solid var(--teal); background:rgba(255,255,255,.94); }
+    .pipeline div:not(:last-child)::after { content:"→"; position:absolute; right:-10px; top:37px; z-index:2; color:var(--blue); font-size:20px; font-weight:900; }
+    .pipeline b { display:block; margin-bottom:4px; font-size:12px; }
+    .pipeline span { color:var(--muted); font-size:11px; }
+    .formula { width:100%; overflow-x:auto; padding:11px 12px; color:#1f4b61; background:#edf5f8; white-space:nowrap; font-size:12px; }
+    .two-col { display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,.72fr); gap:12px; align-items:start; }
+    .panel { padding:17px; }
+    figure { margin:0; padding:10px; }
+    figure img { display:block; width:100%; height:auto; border-radius:5px; }
+    figcaption { margin-top:7px; color:var(--muted); font-size:11px; }
+    .candidate-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .candidate-card { display:flex; min-height:390px; flex-direction:column; border-top:4px solid var(--gold); }
+    .candidate-card.primary { border-top-color:var(--teal); background:rgba(239,248,245,.98); }
+    .candidate-card .body { flex:1; }
+    .candidate-card dl { margin:8px 0; font-size:12px; }
+    .candidate-card dt { margin-top:7px; color:var(--muted); font-weight:800; }
+    .candidate-card dd { margin:2px 0 0; }
+    .candidate-card .button { width:100%; margin-top:10px; }
+    .filter-field { min-width:190px; flex:1; }
+    .filter-field label { display:block; margin-bottom:4px; color:var(--muted); font-size:12px; font-weight:760; }
+    input[type="search"],select,textarea { width:100%; min-height:43px; padding:9px 11px; border:1px solid var(--line); border-radius:7px; color:var(--ink); background:#fff; }
+    .data-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .data-card { min-height:280px; border-left:4px solid var(--blue); }
+    .source-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .source-card { display:flex; min-height:315px; flex-direction:column; border-top:4px solid var(--blue); }
+    .source-card .body { flex:1; }
+    .source-card .actions { margin-top:10px; }
+    .source-card .button { min-height:38px; font-size:12px; }
+    .week-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .week-card { min-height:230px; border-top:4px solid var(--teal); }
+    .week-card ol { margin:8px 0 0; padding-left:20px; color:#4c5e65; font-size:13px; }
+    .checkline { display:grid; grid-template-columns:21px minmax(0,1fr); gap:8px; align-items:start; margin-top:10px; font-weight:760; }
+    .checkline input { width:18px; height:18px; margin-top:3px; accent-color:var(--teal); }
+    .checkline.checked { color:var(--teal); }
+    pre { overflow:auto; margin:10px 0; padding:12px; color:#dce9e6; background:#173037; border-radius:6px; font-size:12px; }
+    textarea { min-height:220px; resize:vertical; line-height:1.6; }
+    .library-strip { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:14px; }
+    .library-strip div { padding:13px; border-top:4px solid var(--blue); background:rgba(255,255,255,.94); }
+    .library-strip b { display:block; color:var(--blue); font-size:23px; }
+    .empty { padding:20px; color:var(--muted); text-align:center; }
+    @media (max-width:980px) {
+      .hero-grid,.two-col { grid-template-columns:1fr; }
+      .candidate-grid,.source-grid,.data-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .pipeline { grid-template-columns:repeat(3,minmax(0,1fr)); }
+      .pipeline div:nth-child(3)::after { display:none; }
+      .week-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .real-metric-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width:680px) {
+      header,main,footer { width:min(100% - 24px,1240px); }
+      h1 { font-size:34px; }
+      .nav { flex-wrap:nowrap; overflow-x:auto; padding-bottom:6px; scrollbar-width:thin; }
+      .nav a { flex:0 0 auto; }
+      .metric-grid,.real-metric-grid,.evidence-grid,.candidate-grid,.source-grid,.data-grid,.week-grid,.library-strip { grid-template-columns:1fr; }
+      .pipeline { grid-template-columns:1fr; }
+      .pipeline div::after { display:none; }
+      .section-head { align-items:flex-start; flex-direction:column; }
+      .filter-field { min-width:100%; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">跳到主内容</a>
+  <header>
+    <nav class="nav" aria-label="主导航">
+      <a href="operator-learning/">学习主页</a>
+      <a href="#reproduce">复现实验</a>
+      <a href="#psu-real">PSU 真实数据门禁</a>
+      <a href="#evidence">实验证据</a>
+      <a href="#spectral-pilot">OGSE → RQ → VD0</a>
+      <a href="#algorithm">主算法</a>
+      <a href="document_reader.html?doc=docs%2Fbost_gc_spd_pcgls_research_contract_2026-07-16.md">SPD-PCGLS 前驱合同</a>
+      <a href="#candidates">算法备选</a>
+      <a href="document_reader.html?doc=docs%2Fdomain_consistent_bost_operator_research_route_2026-07-16.md">域一致研究路线</a>
+      <a href="document_reader.html?doc=docs%2Froute_b_dco_trail_research_contract_2026-07-16.md">路线 B 合同</a>
+      <a href="document_reader.html?doc=docs%2Fv6b_limited_query_preregistration_2026-07-16.md">V6B 预注册</a>
+      <a href="document_reader.html?doc=docs%2Fdf_srco_manuscript_working_draft_2026-07-16.md">方法论文工作稿</a>
+      <a href="#data">数据迁移</a>
+      <a href="#reading">核心论文</a>
+      <a href="#plan">12 周计划</a>
+      <a href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">本轮学习日志</a>
+      <a href="#senior">师兄审核</a>
+      <a href="paper_library/index.html">公开论文库</a>
+    </nav>
+    <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
+    <h1>BOST 三维重建与风险路由算子研究台</h1>
+    <p class="lead">当前主线已经收窄为一个可证伪问题：怎样从多相机 BOST 的逐视角观测中，安全选择固定 SPD 频谱专家，在同样 <code>4F+4Aᵀ</code> 预算下同时改善三维场误差与反应前沿。页面把均值收益、坏尾部、front 保真、数据泄漏和真实迁移分别记账。</p>
+    <div class="hero-grid">
+      <section class="decision">
+        <div class="chips"><span class="chip blue">VD0-A INTERFACE · PASS</span><span class="chip coral">VD0-A REPRESENTATION · NO-GO</span><span class="chip gold">NEXT · IMAGE-PLANE + CAMERA POSE</span><span class="chip gold">RQ FIELD GATE · PASS</span><span class="chip coral">FRONT SAFETY · FAIL</span><span class="chip coral">MO-RQ · NO-GO</span><span class="chip blue">PCGLS-4 · SAME-CALL WIN</span><span class="chip blue">B0 A/Aᵀ · PASS</span><span class="chip blue">70-VIEW SPLIT · FROZEN</span><span class="chip coral">INDEPENDENT REPEAT · NOT AUTHORIZED</span></div>
+        <h2>逐视角伴随拆对了，但“只看三维方向冲突”还不够</h2>
+        <p>VD0-A 已经把九台相机的 <code>g₀,ᵥ=AᵥᵀWᵥyᵥ</code> 在一次射线散射遍历中拆开，求和回到 pooled 伴随的最大相对误差只有 <strong>1.78×10⁻⁷</strong>。但 18 维范数/夹角/抵消统计拼接 pooled 特征后，validation/calibration field gain 只有 <strong>2.258% / 1.604%</strong>，calibration harm <strong>6.67%</strong>、front mean <strong>-1.376%</strong>，所以接口 PASS、表示 NO-GO。</p>
+        <ol>
+          <li><strong>接口门：</strong>逐视角场求和逐值复原 pooled；ray scatter 一次，但额外体场内存与逐视角有限差分伴随不能写成“免费”。</li>
+          <li><strong>表示门：</strong>pure view-conflict 无严格路线；拼接路线低于双 2% 门，且 calibration field/front 都恶化。</li>
+          <li><strong>弱机制信号：</strong>leave-one-family mean 从 pooled 的 -0.999% 提到 +0.199%，但 leave-one-noise 仍为 -0.347%。</li>
+          <li><strong>唯一下一步：</strong>补逐视角二维 front proxy 与 camera pose；未过 leave-one-family/noise 就不训练 DeepSets。</li>
+          <li><strong>证据边界：</strong>fresh 与 final audit 不打开；当前不是 OERF 实验成功，也没有击败 NeRIF/FNO/UNO-CG。</li>
+        </ol>
+        <details class="archive-details">
+          <summary>展开完整研究档案：几何域、伴随、强基线与 36 条证据链</summary>
+        <ol>
+          <li>MATLAB <code>find()</code> 掩膜为 1-based；作者 Python/TensorFlow 直接 gather。真实 inactive mask 最大值等于测量总数，必须显式减 1。</li>
+          <li>全九视角 cone 段中有 184,128.681 m 位于 box 外；pooled 路径长度加权比例为 9.8976%。</li>
+          <li>0、3、6 号视角各有约 25%–26% cone 路径在 box 外；250,597 条 full-box-zero 中，182,023 条仍被非零 cone 区间“救回”。</li>
+          <li>active 中心线掩膜当前 0 条命中，inactive/boundary 在 0、3、6 号视角约 1.10%–1.35% 命中；这更像边界/域合同风险，不等于 active 测量已被证明错误。</li>
+          <li>A1 把作者区间裁到前向 box，改变 1,879,113 条射线并移除总路径 2.4282%，但仍保留双锥和 miss→box 回退，只是兼容消融。</li>
+          <li>B0/B1 已在全部 49,766,400 条中心线上通过端点、径向 cone、中点、长度和有限性不变量；这叫“声明的计算域被机械执行”，不叫物理域已证实。</li>
+          <li>B1 只保留 B0 总路径的 15.1880%，并排除 0 号视角 1,350 条 active 中心线；它们全是作者 cone miss 后使用 box fallback 的真实测量。</li>
+          <li>B2 的 8/16/32 点有限孔径审计已完成：active B1 固定分母权重仍保留 99.99465% / 99.99198% / 99.96442%。</li>
+          <li>B3 证明政策本身会放大差异：32 点下 87.5% floor 排除 1,773 条 active B1，严格 <code>drop_any_out</code> 却排除 99,617 条；当前不从 opened 数据挑阈值。</li>
+          <li>B1 轴向反号会丢失公开参考命中的全部 10,627,472 条 active 中心线；这证明 axis 符号具有实质空间语义。</li>
+          <li>15° / 20° 只保留 48.7807% / 84.8418% active hits；30° / 35° 虽几乎全命中，active support IoU 仍只有 73.1381% / 57.4330%。</li>
+          <li>70 个公开视角已恰好划分为 9 support、7 development、18 primary audit、12 camera audit 和 24 joint audit；final audit 不得参与选模、停止或参数选择。</li>
+          <li>B0 标量场接口已冻结：有限差分 → 三线性采样 → Ru/Rv 投影 → fixed-denominator；伴随由同一原语严格转置。</li>
+          <li>真实九视角几何子集共 2,304 条 active rays、36,864 个 QMC-16 样本；16³/32³ MPS float32 dot defect 为 7.28e-8 / 9.89e-8。</li>
+          <li>全量 10,628,822 条 support rays、约 1.70 亿有限孔径样本已进入流式 B0 inverse；float32 全规模伴随门失败，float64 dot defect 为 3.46e-15。</li>
+          <li>固定 4 步、同样 4F+5Aᵀ 下，16³/32³ support residual 为 0.78771 / 0.62713；32³ 绝对下降 0.16058，九个视角全部改善。</li>
+          <li>5.017 GB 私有紧凑 stencil cache 已通过零差 forward/adjoint 门；完整 pair 中位数 37.92→17.04 秒，固定 CGLS 218.03→74.95 秒。</li>
+          <li>合成 12³ Landweber 把投影残差降到 0.00503，但 field-L2 仍是 0.450；这直接证明 projection fit 不等于唯一三维真值。</li>
+          <li>首个 2,227 参数 learned spectral preconditioner 在 IID 相对强 Sobolev 提升 4.26%–4.62%，但 joint OOD 为 -0.43% 到 -0.20%、三种子伤害率均 33.3%，按预注册判为 0/3 NO-GO。</li>
+          <li>post-open active-view envelope 在 4–5 views 上精确回退 Sobolev，使 joint harm 降到 0；但 family OOD 的 20.8%–25% harm 原样保留，证明 view-only gate 不足。</li>
+          <li>冻结后的 OCRRG fresh 经验指标为 3/3 synthetic gate pass：五个 support split 的 coverage 为 26.4%–47.2%、平均 gain 为 +1.04%–+1.66%；仍有 4 条 accepted harm，集中在两个 6-view 样本。</li>
+          <li>post-open 代码审计复算 504 条首步特征，发现 development/calibration 在 support 投影后提特征，而 deployment 在投影前提特征；两种顺序改变 7/504 条决策，旧 conformal 解释撤回。</li>
+          <li>同预算 Sobolev-PCGLS-4 只在 <code>risk_validation</code> 选参，随后在未参与选择的 <code>risk_calibration</code> 相对三种子 learned 均值把场误差再降低 4.94%；验证集降低 5.00%。</li>
+          <li>七个已打开 stress split 上，PCGLS-4 的描述性平均改善均为正；168 个诊断场 pooled field-L2 为 0.6246，而 raw learned 为 0.6711。</li>
+          <li>因此旧模型的问题不再是“风险门不够好”，而是它保护的单步学习方向已被零参数、同 <code>4F+4Aᵀ</code> 的经典 Krylov 方法淘汰。</li>
+          <li>首个 2,527 参数 geometry/noise-conditioned fixed-SPD PCGLS 已完成三种子开发：validation field gain 只有 +0.016% 至 +0.054%，calibration 为 -0.165% 至 +0.056%，判为 0/3 NO-GO。</li>
+          <li>105 个固定 SPD-PCGLS 候选的逐样本 truth oracle 在 validation / calibration 保留 +6.52% / +7.22% headroom；按 view count 或 view+noise 选择不能迁移，说明短板是可观测形态识别。</li>
+          <li>共享首伴随场 <code>g₀=AᵀWy</code> 的 44 个特征确实含形态信号；四专家 OMSE 在 calibration 只有 +1.29% 且 harm 6.67%，分类路线不足。</li>
+          <li>收益回归 OGSE 修正“基线 top-1 仍被混合”的语义错误后，严格路线 validation +2.42%、calibration +1.65%，两个 split 的 &gt;1% harm 都为 0；六项门过 5 项，仍判 NO-GO。</li>
+          <li>放宽风险可达到 +3.56% / +2.55%，却有 -12.67% / -7.37% 最坏退化；下一步只研究可观测收益下分位与安全单专家插值，不扩网络宽度。</li>
+          <li>Risk-Quantile 单专家动作缓存已完成：mean-only field gain 为 +3.321% / +2.907%，field 主门通过，但 calibration 有 1/30 个 &gt;1% harm。</li>
+          <li>反应前沿审计否决了“场门通过即成功”：calibration front-F1 均值 -0.261%，最坏斜激波 -30.876%。</li>
+          <li>加入 field quantile、field harm、front lower-quantile 与 front-harm 后，field gain 降到 +1.192% / +1.382%，calibration front 仍为 -0.060%；多目标路线 NO-GO。</li>
+          <li>VD0-A 逐视角伴随接口已通过：最大 grouped-sum relative error 1.78e-7；整轮 5.97 秒、436 MB，没有新增 train action reconstruction。</li>
+          <li>VD0-A 的 18 维伴随冲突表示未迁移：pooled+view 为 +2.258% / +1.604%，calibration harm 6.67%、front mean -1.376%。</li>
+          <li>下一候选收缩为 VD0-B：只补逐视角图像平面 front proxy 与 camera pose；未过压力审计不训练 DeepSets。</li>
+          <li>首步 residual contraction 不能在第一步之前选择固定预条件器；若使用它，必须先跑一步基线再 restart/FCG，并把额外调用写进预算。</li>
+          <li>因此 B0 + fixed-denominator indicator 是最小假设参考；B1 与 B3 阈值只作 held-out 消融。</li>
+        </ol>
+        </details>
+        <div class="actions" style="margin-top:14px;">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_geometry_domain_contract_gate_2026-07-16.md">读几何域门禁</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fpsu_all_view_geometry_audit_summary.json">看公开九视角 JSON</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fpsu_fixed_domain_geometry_public_summary.json">看 B0/B1 严格汇总</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fpsu_b3_policy_public_summary.json">看 B2/B3 政策汇总</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fpsu_b1_parameter_sensitivity_and_heldout_protocol_2026-07-16.md">读 B1 敏感性与留出协议</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fpsu_heldout_camera_protocol_public_summary.json">看 70 视角分区</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_reconstruction_interface_gate_2026-07-16.md">读 B0 重建接口门禁</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_full_support_cgls_and_resolution_gate_2026-07-16.md">读全 support CGLS 与分辨率门禁</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_compact_cache_and_fast_reference_gate_2026-07-16.md">读紧凑缓存与快速参考</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_spectral_preconditioner_no_go_2026-07-16.md">读谱预条件器 NO-GO</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_residual_risk_fresh_result_2026-07-16.md">读 OCRRG fresh 判决</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_residual_risk_postopen_diagnosis_2026-07-16.md">读特征契约诊断</a>
+          <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_pcgls_no_go_2026-07-16.md">读 PCGLS 强基线判决</a>
+          <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_conditioned_pcgls_development_no_go_2026-07-16.md">读 SPD-PCGLS V1 判决</a>
+          <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_pcgls_conditional_headroom_2026-07-16.md">读条件化上限审计</a>
+          <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_ogse_pcgls_development_no_go_2026-07-16.md">读 OGSE V2 判决</a>
+          <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_rq_ogse_pcgls_development_hold_2026-07-17.md">读 RQ / front HOLD 判决</a>
+          <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_view_decomposed_probe_no_go_2026-07-17.md">读 VD0-A 判决</a>
+          <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_view_decomposed_probe%2Fpsu_b0_view_decomposed_probe_figure.pdf">看 VD0-A 四联图</a>
+          <a class="button" href="document_reader.html?doc=docs%2Frq_ogse_manuscript_working_draft_2026-07-17.md">读论文工作稿</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fdomain_consistent_bost_operator_research_route_2026-07-16.md">读最新研究路线</a>
+          <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_all_view_geometry_audit%2Fpsu_all_view_geometry_audit_figure.png">看论文级图</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">读讲人话日志</a>
+        </div>
+      </section>
+      <div class="metric-grid">
+        <div class="metric"><b>VD0-A 1.78×10⁻⁷</b><span>九个逐视角伴随场求和回到 pooled 的最大相对误差；接口 PASS</span></div>
+        <div class="metric"><b>+2.26% / +1.60%</b><span>pooled + adjoint-conflict 严格路线；低于双 2% 门且 calibration harm 6.67%</span></div>
+        <div class="metric"><b>5.97 s / 436 MB</b><span>102 个样本特征、OOF 与 6 条转移路线；证明当前瓶颈不是网速或本机算力</span></div>
+        <div class="metric"><b>RQ +3.32% / +2.91%</b><span>mean-only 单专家路线通过 field-L2 主门；不是完整算法成功</span></div>
+        <div class="metric"><b>Front worst -30.88%</b><span>相关噪声斜激波暴露 pooled 首伴随特征无法保护反应前沿</span></div>
+        <div class="metric"><b>MO-RQ +1.19% / +1.38%</b><span>显式 field/front 风险头更谨慎，但低于 2% 效用门且 front 未闭合</span></div>
+        <div class="metric"><b>49,766,400</b><span>九视角真实射线逐条机械普查；不是抽样外推</span></div>
+        <div class="metric"><b>9.8976%</b><span>A0 cone 总路径按长度汇总后落在 reconstruction box 外</span></div>
+        <div class="metric"><b>A1 2.4282%</b><span>作者兼容裁剪从全部混合域路径中移除的比例</span></div>
+        <div class="metric"><b>B1 / B0 15.188%</b><span>是总中心线路径比，不是体积、概率或重建质量</span></div>
+        <div class="metric"><b>1,350 active</b><span>0 号视角 B1 miss；原作者全部回退为约 0.231 m box 路径</span></div>
+        <div class="metric"><b>99.9644%</b><span>QMC-32 下 active B1 固定分母有限孔径权重保留率</span></div>
+        <div class="metric"><b>99,617</b><span>QMC-32 strict drop-any-OOD 会删除的 active B1 中心线；不是权重损失</span></div>
+        <div class="metric"><b>Axis flip → 0%</b><span>公开参考命中的 10,627,472 条 active 中心线全部丢失</span></div>
+        <div class="metric"><b>15° → 48.78%</b><span>active hit 只剩不到一半；angle 不是温和超参数</span></div>
+        <div class="metric"><b>70 / 70 frozen</b><span>五个互斥 split 完整覆盖；六个 rotation run 是主审计单位</span></div>
+        <div class="metric"><b>9.89×10⁻⁸</b><span>真实几何 32³ MPS float32 的 A/Aᵀ relative dot defect</span></div>
+        <div class="metric"><b>10,628,822</b><span>全部 corrected active support rays 已进入真实流式 inverse</span></div>
+        <div class="metric"><b>3.46×10⁻¹⁵</b><span>全量 float64 的 A/Aᵀ relative dot defect</span></div>
+        <div class="metric"><b>0.62713</b><span>32³、固定 4 步 CGLS 的 support relative measurement L2</span></div>
+        <div class="metric"><b>20.39%</b><span>32³ 相对 16³ 的同 rays、同 calls support residual 改善</span></div>
+        <div class="metric"><b>17.04 s</b><span>32³ cached 完整 F+Aᵀ same-session 中位时间</span></div>
+        <div class="metric"><b>2.909×</b><span>缓存固定 4 步 CGLS 相对原 direct reference 的加速</span></div>
+        <div class="metric"><b>0.005 ≠ 0.450</b><span>合成投影残差与 field-L2；三维不可辨识性的直接反例</span></div>
+        <div class="metric"><b>IID +4.26%–4.62%</b><span>2,227 参数谱修正在三种子、同 4F+4Aᵀ 下的分布内信号</span></div>
+        <div class="metric"><b>Joint OOD 0/3</b><span>均值 -0.43% 至 -0.20%，p10 约 -4.5%，三种子伤害率均 33.3%</span></div>
+        <div class="metric"><b>Fallback harm 0%</b><span>4–5 views 上 correction coverage 也为 0%；这是拒答成功，不是 OOD 正收益</span></div>
+        <div class="metric"><b>Family harm 20.8%–25%</b><span>仍在 6–8-view 支持域内，说明下一门必须加入 residual/morphology risk</span></div>
+        <div class="metric"><b>Empirical gate 3/3</b><span>三种冻结种子满足预设 synthetic 指标；conformal 解释已因特征契约失配撤回</span></div>
+        <div class="metric"><b>Coverage 26.4%–47.2%</b><span>五个 6–9-view support fresh split 均保留非零学习器覆盖</span></div>
+        <div class="metric"><b>7 / 504 drift</b><span>support 投影顺序改变 accept/fallback 决策；最大 prediction 移动 0.826%</span></div>
+        <div class="metric"><b>4 accepted harm</b><span>来自两个 6-view 样本；下一轮必须做 group-conditional risk</span></div>
+        <div class="metric"><b>PCGLS-4 · 4F+4Aᵀ</b><span>零参数，与旧 learned direction 完全相同的算子调用预算</span></div>
+        <div class="metric"><b>Validation +5.00%</b><span>PCGLS-4 相对三个 raw learned seed 逐场均值的场误差降低</span></div>
+        <div class="metric"><b>Calibration +4.94%</b><span>未参与强基线选参的数据上仍保持配对改善</span></div>
+        <div class="metric"><b>0.6246 &lt; 0.6711</b><span>168 个已打开诊断场：PCGLS-4 对比 raw learned pooled field-L2</span></div>
+        <div class="metric"><b>SPD-PCGLS V1 · 0/3</b><span>2,527 参数、三种子、同 4F+4Aᵀ；没有种子达到 2% 开发门槛</span></div>
+        <div class="metric"><b>Residual +1.71% ≠ Field +0.03%</b><span>最明显的 validation 观测拟合增益没有转化成三维场增益</span></div>
+        <div class="metric"><b>Oracle +6.52% / +7.22%</b><span>105 个固定 SPD 候选的逐样本 validation / calibration 条件化上限</span></div>
+        <div class="metric"><b>Family +2.69% / +2.38%</b><span>不可部署形态标签能迁移；view count 与 noise 分层不能</span></div>
+        <div class="metric"><b>OGSE +2.42% / +1.65%</b><span>严格可观测收益路由；calibration 未达到预注册 2%</span></div>
+        <div class="metric"><b>Strict harm 0% / 0%</b><span>基线 top-1 精确回退后没有超过 1% 的受害样本</span></div>
+      </div>
+    </div>
+    <div class="alert critical"><strong>当前主结论 · field signal survives，front safety 未闭合</strong><span>RQ 的有限单专家动作空间证明 pooled 可观测量能抓到可迁移 field utility，但 quantile/harm 头无法同时保持 2% 收益与反应前沿。下一步不再调当前阈值，也不打开 fresh，而是重做表示：从 pooled <code>g₀</code> 转向逐视角 residual/backprojection set，并把 field utility 与 front preservation 分开预测。当前没有实验三维真值、真实 flow-off covariance、独立 repeat，也未完成 UNO-CG、NeuralIF、TV-superiorized PCG 公平对照，故不宣称新算法成功或 OERF 实验有效。</span></div>
+  </header>
+
+  <main id="main">
+    <section id="evidence" class="band">
+      <div class="section-head">
+        <div><div class="eyebrow">证据梯形</div><h2>每个负结果都改变下一步</h2><p>用筛选器区分局部正信号、完整判决失败和下一门槛；正信号不自动等于 gate pass。失败卡不是历史包袱，而是新算法结构的约束来源。</p></div>
+        <div class="segmented" role="group" aria-label="证据筛选">
+          <button class="segment active" type="button" data-evidence-filter="all">全部</button>
+          <button class="segment" type="button" data-evidence-filter="passed">正信号</button>
+          <button class="segment" type="button" data-evidence-filter="failed">已否掉</button>
+          <button class="segment" type="button" data-evidence-filter="next">待验收</button>
+        </div>
+      </div>
+      <div class="evidence-grid" id="evidenceGrid">
+        <article class="evidence-card" data-state="passed"><span class="chip">E0 · numerical</span><h3>v3k-F 确认半收敛与停止缺口</h3><p>discrepancy 对 noise OOD 平均 +7.10%，但伤害率 12.5%；联合 OOD 对同 PBB endpoint 仍略退化。learned stop 继续关闭。</p><a href="document_reader.html?doc=v3k_f_noise_stopping_review_brief.md">读可部署停止审计</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E1 · failure</span><h3>无门控 correction 在联合 OOD 爆炸</h3><p>IID +72.08%，joint OOD 却 -326.51%，96.88% 样本伤害。大 IID 提升不能成为算法结论。</p><a href="demo_t16_operator/results/candidate_operator_smoke/report.json">看未门控报告</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E3 · 3 seeds</span><h3>CG-PDNO 本身出现稳定工程信号</h3><p>新字段/几何池 test 平均 +21.77%，最大种子伤害 0%；train/validation/test geometry id 无重叠。</p><a href="demo_t16_operator/results/cg_pdno_trust_fresh/report.json">看 fresh 报告</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E4 · negative</span><h3>简单噪声门不具通用增量</h3><p>在 CG-PDNO 上把 test gain 从 +21.77% 压到 +13.36%，且验证尾部未改善。当前不纳入主模型。</p><a href="demo_t16_operator/results/cg_pdno_trust_fresh/residual_gate_diagnostic.json">看诊断 JSON</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E5 · independent</span><h3>固定 PG base 被强 PBB 否掉</h3><p>独立锁集相对 PBB 平均 -17.90%，p10 -31.42%，100% 样本伤害；说明“网络修正弱数值基线”没有论文价值。</p><a href="demo_t16_operator/results/base_correction_independent_gate/report.json">看 v1 报告</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E6 · stronger base</span><h3>PBB base 仍有尾部伤害</h3><p>锁集平均 -0.102%，p10 -2.819%，伤害率 19.44%。均值接近零不等于可靠。</p><a href="demo_t16_operator/results/pbb_base_correction_independent_gate/report.json">看 v2 报告</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E7 · guard</span><h3>saturation guard 仍未过线</h3><p>锁集平均 +0.281%，但 p10 -0.831%、伤害率 7.5%，没有达到预注册 2% / 0 / 5% 门槛。</p><a href="demo_t16_operator/results/pbb_saturation_guard_independent_gate/report.json">看 v3 报告</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E8 · selective UQ</span><h3>ensemble disagreement 无法排序风险</h3><p>选择集 raw ensemble 平均 -0.546%、伤害率 19.44%；无阈值同时满足覆盖、p10 与 harm，算法自动全回退。</p><a href="demo_t16_operator/results/pbb_ensemble_selective_gate/report.json">看 v4 报告</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E9 · first-open mismatch</span><h3>盲孔径 residual margin 被未见形态击穿</h3><p>锁集 mean +1.753%，但 p10 -17.784%、条件伤害 37.5%；34/36 次选到孔径网格端点。五项 gate 只过两项。</p><a href="document_reader.html?doc=v5a_blind_aperture_first_open_review.md">看 v5a 首开复盘</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E10 · archived M0</span><h3>support 语义错误已被审计抓住</h3><p>旧 M0 将 soft support 的 320 个正数全部激活；6/6 端点与 0 coverage 只能作缺陷轨迹。修正后为阈值 0.05、96/320。</p><a href="document_reader.html?doc=demo_t16_operator%2Fresults%2Fv5b_rig_shared_profile_pilot_m0_soft_support_bug%2FREADME.md">读缺陷说明</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E11 · Stage 0</span><h3>异构 renderer 的最近孔径语义闭合</h3><p>72 行收敛扫描中仅 (29,41) 与 (35,41) 同时通过；M1 冻结用 (35,41)，native/shared/gain-profiled 三口径均 6/6。</p><a href="demo_t16_operator/results/v5b_forward_model_convergence/report.json">看收敛报告</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E12 · M1 negative</span><h3>fixed-ridge 与当前 outer 门仍不可靠</h3><p>oracle 6/6，SSE-only 5/6，fixed-ridge 4/6；11 个 accepted 中 5 个 audit RMS 增加，最坏 +32.11%。</p><a href="demo_t16_operator/results/v5b_rig_shared_profile_pilot/report.json">看 M1 报告</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E13 · v5c first-open</span><h3>联合 radius+κ cross-view 选择被否掉</h3><p>最近孔径 3/6，六块 κ 全撞上界，真删相机稳定性均值 0.375；0/48 接受只能说明回退生效，不能说明方法安全有效。</p><a href="demo_t16_operator/results/v5c_nested_crossview_first_open/report.json">看冻结报告</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E14 · v5d Phase A</span><h3>对角白化下没有可冻结复杂度规则</h3><p>Morozov 0.50 的 5/6 是 opened-truth 十选一；单位 discrepancy 为 0/6，GCV 为 3/6。相关噪声、oracle σ/support 与仅 2 rigs 共同阻止方法冻结。</p><a href="document_reader.html?doc=demo_t16_operator%2Fresults%2Fv5d_decoupled_complexity_postopen_diagnosis%2FREADME.md">读假设审计</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E15 · v5e mechanism</span><h3>残差自由度解释了“0.50 假目标”</h3><p>用 residual-DF 归一化后，target 1.0 达到 4/6、0 radius boundary；exact covariance 对 GCV/UPRE/DF-corrected 都无稳定增量。只保留自由度机制，不保留 oracle whitening 叙事。</p><a href="demo_t16_operator/results/v5e_covariance_whitening_diagnostic/report.json">看成对诊断</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E16 · v5f NO-GO</span><h3>双正则仍无法跨视角迁移</h3><p>raw field mean -0.077%、p10 -3.655%、25% harm；outer gate 2/48 且 audit 2/2 harm，changed-radius outer-audit correlation -0.104。</p><a href="document_reader.html?doc=demo_t16_operator%2Fresults%2Fv5f_outer_audit_postopen_diagnosis%2FREADME.md">读 NO-GO</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E17 · v5g NO FREEZE</span><h3>几何/残差迁移不能跨 rig</h3><p>8 个固定 predictor 中，残差场虽有 17/24 描述性 sample sign，但只有 1/3 block 和 0/2 rig 同号；不做 ranking 或 threshold sweep。</p><a href="document_reader.html?doc=demo_t16_operator%2Fresults%2Fv5g_geometry_residual_transfer_postopen%2FREADME.md">读可复核边界</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E18 · v5h/v5i</span><h3>Target-conditioned GC-RIO 被 zero 否掉</h3><p>补齐 zero-correction 后，Fisher query 为 -4.083%、signed probes 为 -4.270%，两者均 0/4 cells 为正；design-lock rows 始终为 0。</p><a href="demo_t16_operator/results/v5i_signed_probe_development/report.json">看 v1 报告</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E19 · oracle diagnostic</span><h3>共享三维场仍有可学习上限</h3><p>相对解析 source correction，truth-field correction、paired-target shared field 与 clean target 的不可实现上限分别保留 51.0%、66.8%、70.6% target headroom。</p><a href="demo_t16_operator/results/v5j_gc_rio_headroom_diagnostic/report.json">看上限分解</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E20 · adaptive signal</span><h3>Zero-init shared field 同时改善投影与三维场</h3><p>三种子 prediction ensemble 在 opened validation 为 +6.329%、4/4；三维 L2 平均 +5.07%，40 个场中 70% 变好。ensemble 是 post-open 选择，不能开锁。</p><a href="demo_t16_operator/results/v5l_shared_field_ensemble_diagnostic/report.json">看 ensemble 诊断</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E21 · v5m new data</span><h3>新 rig 外推分化，平均正数不能掩盖失败</h3><p>不重训迁移到 4 rigs × 2 新拓扑：target cell mean +4.736%，但仅 3/8 为正、最坏 -8.287%；field truth 仍 +3.69%、76.56% 变好。</p><a href="demo_t16_operator/results/v5m_shared_field_extension/report.json">看逐 cell 报告</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E22 · v5n strong baseline</span><h3>纯共享场被 PBB-32 明确否掉</h3><p>extension 总体 RMSE：ensemble 5.6119，PBB-32 4.8450；ensemble 相对 PBB 为 -15.83%，仅 1/8 cells 胜出，最坏差 50.69%。</p><a href="demo_t16_operator/results/v5n_strong_classical_baselines/report.json">看冻结强基线报告</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E23 · v5o hypothesis</span><h3>学习先验只在低预算出现小信号</h3><p>SFIO-PAPBB 在 proxy B=11 相对 PBB-11 为 +3.378%，但这是看过 extension curve 后的 post-open 点；train-selected 版本仅 +0.405%、4/8。</p><a href="demo_t16_operator/results/v5o_prior_anchored_frontier/report.json">看预算前沿</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E24 · v5p preregistered</span><h3>低预算混合逆解未通过新鲜门禁</h3><p>固定 8F/9A 候选相对 PBB-9 为 +2.575%，但只有 8/18 cells 为正、最坏退化 6.643%，且本机慢 5.14×；三门全部失败。</p><a href="demo_t16_operator/results/v5p_fresh_budget_gate/report.json">看首开报告</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E25 · v5q post-open</span><h3>Source consistency 能排序，但不能安全路由</h3><p>source/target gain 的 field/cell Spearman 为 0.554/0.802、6/6 rigs 同向；自然零阈值仅 +1.543%，正 cells 55.56%，selected harm 22.77%。</p><a href="demo_t16_operator/results/v5q_postopen_topology_diagnosis/report.json">看防泄漏诊断</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E26 · v5r reserved view</span><h3>Audit camera 提均值，不解决条件伤害</h3><p>reserved-positive fallback 为 +3.405%、12/18 cells、worst -0.986%，但 selected harm 33.71%，rig D 的 field Spearman 仅 0.016。</p><a href="demo_t16_operator/results/v5r_reserved_view_reliability_diagnosis/report.json">看完整 NO-GO</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E27 · v5s global low-rank</span><h3>全局 GC-BiLOC 与 oracle shared subspace 同时失败</h3><p>GC-BiLOC discrepancy error 0.8285，full-matrix ridge 0.5217；前 16 个 measurement/voxel 奇异方向仅覆盖 34.0%/38.4% 能量。</p><a href="demo_t16_operator/results/v5s_dco_low_rank_screening/report.json">看结构筛选</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E28 · v5t-v5v representation</span><h3>切线、校准后低秩与相机固定核均被排除</h3><p>truth geometry 只移除 8.39% 失配；每相机 5×5 kernel oracle 仍为 0.9043。有限孔径效应必须细化到 ray 与深度。</p><a href="demo_t16_operator/results/v5v_camera_local_kernel_correction/report.json">看核诊断</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip gold">E29 · v5x oracle-only NO-GO</span><h3>逐射线 3D 局部核接近但未过表示门槛</h3><p>row-wise oracle mean/worst 为 0.3587/0.4084，未过预设 0.35；两阶段 predictor 为 0.8160。它只生成端到端学习假设。</p><a href="demo_t16_operator/results/v5x_ray_conditioned_voxel_kernel/report.json">看 oracle 与预测分离</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip gold">E30 · v5z mechanism NO-GO</span><h3>稳定线性模型留下小信号，判决仍未通过</h3><p>891 参数 ray-kernel error 0.7707，相对 full-matrix ridge 改善 5.359%，低于 10%；aggregate worst ratio 0.777 也不等于逐 rig 无伤害。</p><a href="demo_t16_operator/results/v5z_stabilized_direct_ray_kernel/report.json">看稳定化报告</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E31 · v6a capacity stop</span><h3>超网络到 8.08%，但 rig 稳定性不过关</h3><p>三种子 ensemble error 0.7485，只赢 6/12 rigs，最大 paired-rig 退化 13.69%；aggregate worst ratio 0.761 不能授权安全门。</p><a href="demo_t16_operator/results/v6a_ray_kernel_hypernetwork_development/report.json">看 V6A NO-GO</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">E32 · protocol conformance only</span><h3>少查询防火墙能工作，也能暴露模型外失配</h3><p>64 维 toy 中，27-gate 对同族 truth 近数值精度；加入模型外残差后，K=32 hidden-action error 仍为 11.88%，且被同预算最小范数校准的 10.80% 反超。它只通过查询/伴随协议，不打开 V6B。</p><a href="demo_t16_operator/results/v6b_protocol_conformance/report.json">看双侧结果</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E33 · V6C post-open NO DOMINANCE</span><h3>永远开启低秩补丁会把噪声当信号</h3><p>模型外 K=32 从 gate 11.999% 降到 8.383%，但 in-class 从 0.0163% 恶化到 0.1970%。结构 gate + residual calibration 有潜力，却不是统一胜者。</p><a href="demo_t16_operator/results/v6c_hybrid_gate_secant_postopen/report.json">保留正负两侧</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">E34 · POST-OPEN TOY ONLY</span><h3>异方差 covariance gate 留下一条待验假设</h3><p>K=32 时 in-class 激活中位数 0、模型外 0.9997；DF-gated SRCO 保持 gate 的 0.0178%，并把模型外 error 降到 8.768%。covariance 是 generator-known，结果不授权预注册、真实安全或论文主张。</p><a href="demo_t16_operator/results/v6d_df_gated_srco_postopen/report.json">看逐 rig 与激活</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E35 · real loader conformance</span><h3>5.23 GB PSU 9-view 数值几何过门</h3><p><code>siz=[2160,2560,9]</code>；400×350×350 网格反推 150×130×130 mm。19 个方向样本的单位范数最大误差 2.32e-8，9 个相机中心被独立解析。</p><a href="document_reader.html?doc=docs%2Fpsu_9view_numeric_loader_gate_2026-07-16.md">看门禁</a> · <a href="document_reader.html?doc=docs%2Fpsu_9view_numeric_loader_summary.json">看聚合 JSON</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E36 · official NIRT preflight</span><h3>数据可读，不等于作者入口可跑</h3><p>11/11 源文件 AST 通过，但当前缺 TensorFlow、默认路径/checkpoint 缺失并有 6 个静态 blocker；仅三组常驻数组下界已约 9.25 GiB。</p><a href="site_tools/official_nirt_preflight.py">看机器可读 preflight</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E37 · A0 real 9-view</span><h3>作者混合域在 0/3/6 视角稳定失配</h3><p>49,766,400 条射线中，cone 总路径有 9.8976% 落在 box 外；250,597 条 full-box-zero 中 182,023 条仍被 cone 区间使用。这是几何 NO-GO，不是重建结果。</p><a href="document_reader.html?doc=docs%2Fpsu_all_view_geometry_audit_summary.json">看严格公开 JSON</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">E38 · A1 compatibility</span><h3>裁入前向 box 机械有效，但仍是混合域</h3><p>A1 改变 1,879,113 条射线、移除作者总路径 2.4282%，且产生 789,416 条显式零长度行。它保留双锥与 miss→box，不是最终物理域。</p><a href="document_reader.html?doc=docs%2Fpsu_clipped_hybrid_public_summary.json">看 A1 公开汇总</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">E39 · B0/B1 real census</span><h3>声明的计算域已被严格执行，物理域未定</h3><p>B0/B1 的全量端点、cone 径向/中点、长度与有限性不变量通过。但 B1 只保留 B0 路径 15.1880%，并排除 1,350 条 view-0 active 射线，所以只能作 sampling-hull 消融。</p><a href="document_reader.html?doc=docs%2Fpsu_fixed_domain_geometry_public_summary.json">看 B0/B1 公开汇总</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E40 · B2 discrete support</span><h3>有限孔径权重损失小，但只证明离散支持</h3><p>QMC-8/16/32 下 active B1 固定分母权重保留 99.99465% / 99.99198% / 99.96442%。三组设计非嵌套，无置信区间；不是 continuous containment 或重建结果。</p><a href="document_reader.html?doc=docs%2Fpsu_aperture_sensitivity_public_summary.json">看 B2 严格摘要</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">E41 · B3 policy sensitivity</span><h3>整射线删除会放大很小的局部越界</h3><p>QMC-32 active B1 中，87.5% / 93.75% floor 排除 1,773 / 4,405 条，drop-any-OOD 排除 99,617 条。阈值未选择，held-out gate 仍锁定。</p><a href="document_reader.html?doc=docs%2Fpsu_b3_policy_public_summary.json">看五政策账本</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">E42 · B1 parameter stress</span><h3>axis、angle 与 vertex 依赖已经真实量化</h3><p>axis 反号使 active hit/IoU 归零；15° 只保留 48.7807% active hits；六个 5 mm vertex stress 的 active support IoU 为 89.3126%–93.0639%。它只证明参数敏感，不授权选参。</p><a href="document_reader.html?doc=docs%2Fpsu_b1_parameter_sensitivity_public_summary.json">看 12 变体严格摘要</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E43 · 70-view firewall</span><h3>70 个视角完整分区且没有泄漏</h3><p>9 support + 7 development + 18 primary + 12 camera + 24 joint = 70；每个视角恰好一次。六个未见 rotation run 是独立主审计块，像素不能伪装成重复实验。</p><a href="document_reader.html?doc=docs%2Fpsu_heldout_camera_protocol_public_summary.json">看冻结协议摘要</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">E44 · scorer conformance</span><h3>最终评分器先于模型和 audit 数据冻结</h3><p>评分器绑定 checkpoint/config/data 哈希，拒绝重复视角、路径逃逸、mask 重叠和缺失 18-view 网格；同时强制六块 sign、repeatability、p95、ambient 与 calibration 五门。</p><a href="site_tools/score_psu_heldout_reprojection.py">看评分器</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E45 · B0 inverse interface</span><h3>真实几何 A/Aᵀ 接口在子集闭合</h3><p>九视角 2,304-ray 子集上，16³/32³ CPU64 dot defect 为 4.97e-16 / 1.78e-16，MPS32 为 7.28e-8 / 9.89e-8。合成 residual 0.005 仍对应 field-L2 0.450，禁止把重投影写成三维真值。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_reconstruction_interface_gate_2026-07-16.md">看接口门禁</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E46 · full support precision</span><h3>一千万射线下 float32 被否，float64 通过</h3><p>10,628,822 条 support rays、约 1.70 亿 QMC samples 上，float32 random-dual defect 为 2.04e-5，略高于冻结 2e-5；float64 为 3.46e-15。门槛没有事后放宽。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_streaming_precision_public_summary.json">看精度门禁</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E47 · same-call resolution</span><h3>32³ 在九视角同 calls 下全部改善</h3><p>固定 4F+5Aᵀ，16³/32³ support residual 为 0.78771 / 0.62713，绝对下降 0.16058、相对改善 20.39%；九个 support views 全部同向。它是分辨率信号，不是 field truth。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_full_support_cgls_and_resolution_gate_2026-07-16.md">读完整门禁</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E48 · exact compact cache</span><h3>移除重复 geometry/stencil，算子逐值不变</h3><p>5.017 GB cache 在 14.94 秒内构建；direct/cached forward 与 adjoint relative difference 均为 0，pair 中位数 37.92→17.04 秒，same-session 加速 2.225×。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_compact_cache_public_summary.json">看冻结 benchmark</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E49 · cached CGLS replay</span><h3>相同 residual 与体场，固定优化快 2.91 倍</h3><p>原 32³ reference 与 cached replay 的 residual 绝对差为 0，volume relative difference 1.17e-16；4-step optimization 218.03→74.95 秒。只提高吞吐，不提高证据等级。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_cached_reference_public_summary.json">看 reference 对照</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E50 · learned spectral 0/3</span><h3>熟悉分布有增益，联合越界必须回退</h3><p>相对 validation-selected Sobolev，IID 为 +4.26%–+4.62%；joint OOD 为 -0.43% 到 -0.20%，p10 约 -4.5%，三种子 >1% harm 均 33.3%。当前无门控候选正式 NO-GO。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_spectral_preconditioner_no_go_2026-07-16.md">读完整判决</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">E51 · post-open fallback</span><h3>exact view fallback 止住一类伤害，未解决形态风险</h3><p>4–5-view OOD 上 correction coverage=0，使 joint harm 从 33.3% 降到 0；6–8-view family OOD 仍有 20.8%–25% harm。实现门通过，view-only 方法门失败。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_support_envelope_postopen_diagnosis_2026-07-16.md">读机制诊断</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">E52 · empirical fresh 3/3</span><h3>冻结指标可复现，但只保留为经验筛选信号</h3><p>五个 support fresh split 的 coverage 为 26.4%–47.2%、平均 gain 为 +1.04%–+1.66%；3–5-view 两组精确回退，仍有 4 条 accepted harm。特征契约缺陷使 conformal 解释关闭。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_residual_risk_fresh_result_2026-07-16.md">读原 fresh 判决</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E53 · feature contract fail</span><h3>support 投影顺序让 calibration 与 deployment 不再同分</h3><p>504 条部署特征逐值复现冻结报告；改回 calibration 顺序后 7 条决策改变，prediction 最大移动 0.826%。经验指标不消失，但 split-conformal 解释正式撤回。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_residual_risk_postopen_diagnosis_2026-07-16.md">读完整诊断</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E54 · multi-veto partial only</span><h3>相机相关支路抓到 2 条，低频 plume 支路仍漏 2 条</h3><p>294 个 development-only 候选中选出的阈值在 opened fresh 上拒掉 correlated-noise shock，但 support IID harm 不变；当前 development 缺少能自然选出 plume 风险门的压力样本。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_multiveto_development_screen_2026-07-16.md">读开发筛选</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E55 · same-call PCGLS no-go</span><h3>零参数 PCGLS-4 淘汰当前学习方向</h3><p>同为 4F+4Aᵀ，PCGLS-4 在 validation / calibration 相对三种子 learned 均值降低场误差 5.00% / 4.94%；168 个 opened 诊断场 pooled field-L2 为 0.6246，对手为 0.6711。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_pcgls_no_go_2026-07-16.md">读强基线判决</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E56 · conditioned SPD 0/3</span><h3>小网络改善投影拟合，没有改善三维场</h3><p>2,527 参数、三种子、同 4F+4Aᵀ：validation field gain +0.016% 至 +0.054%，calibration -0.165% 至 +0.056%；measurement residual 却改善 +0.596% 至 +1.709%。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_conditioned_pcgls_development_no_go_2026-07-16.md">读 V1 判决</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E57 · finite-family headroom</span><h3>频谱家族有上限，view/noise 路由没有迁移</h3><p>105 个同预算固定 SPD 候选中，逐样本 truth oracle 在 validation / calibration 为 +6.52% / +7.22%；形态标签为 +2.69% / +2.38%，view count 与 view+noise 路由 calibration 均为负。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_pcgls_conditional_headroom_2026-07-16.md">读上限审计</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E58 · observable morphology</span><h3>首伴随场含形态信息，但分类不等于安全路由</h3><p>44 个 <code>g₀=AᵀWy</code> 特征比 geometry/noise 元数据更能识别专家；hard selector 有正迁移信号，但没有候选同时通过 train OOF accepted-harm 门。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_observable_morphology_probe_public_summary.json">看探针摘要</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E59 · OMSE classification no-go</span><h3>四专家形态分类在 calibration 仍伤害样本</h3><p>修正精确回退后，strict OMSE validation +2.03%、calibration +1.29%；calibration 的 &gt;1% harm 为 6.67%，说明“最可能形态”不是可靠的逐样本收益下界。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_omse_pcgls_development_public_summary.json">看 OMSE 摘要</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">E60 · OGSE 5/6 gates</span><h3>收益回归清零灾难尾部，但 calibration 少 0.349%</h3><p>strict OGSE validation +2.42%、calibration +1.65%，95% CI 下界均为正且 harm 0%；六项开发门只差 calibration mean。放宽路线虽过均值，却有 -12.67% / -7.37% 最坏退化。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_ogse_pcgls_development_no_go_2026-07-16.md">读严格判决</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E61 · RQ field signal</span><h3>有限单专家动作空间通过 field-L2 主门</h3><p>mean-only RQ 在 validation/calibration 为 +3.321% / +2.907%，95% CI 下界均大于 0，p10 为 0。它证明单专家安全插值比旧 softmax 混合更有潜力，但 calibration 仍有 1/30 个 &gt;1% field harm。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_rq_ogse_pcgls_development_hold_2026-07-17.md">读 RQ 判决</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E62 · reacting-front safety fail</span><h3>场误差改善不能保证 shock/front 保真</h3><p>RQ strict calibration 的 front-F1 均值 -0.261%、p10 -3.515%，相关噪声斜激波最坏 -30.876%。因此 field 主门不能单独授权独立 repeat 或论文成功主张。</p><a href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_rq_ogse_pcgls_development%2Fpsu_b0_rq_ogse_pcgls_development_figure.pdf">看四联图</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E63 · multi-objective RQ no-go</span><h3>front veto 降低激进行为，却丢失主要效用</h3><p>显式加入 field/front lower-quantile 与 harm heads 后，validation/calibration field gain 只有 +1.192% / +1.382%；field harm 为 0，但 calibration front 均值仍为 -0.060%。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_mo_rq_ogse_pcgls_development_public_summary.json">看公开摘要</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E64 · grouped adjoint interface</span><h3>逐视角伴随求和以 1.78e-7 复原 pooled</h3><p>每条射线散射贡献只生成一次，再写入对应相机槽；九视角求和与原伴随闭合。它是一轮 grouped 调用，但保留九份体场仍增加内存和有限差分后处理。</p><a href="demo_t16_operator/psu_b0_reconstruction_interface.py">看接口源码</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E65 · VD0-A representation no-go</span><h3>18 个伴随冲突统计没有形成安全迁移</h3><p>pooled+view strict 在 validation/calibration 为 +2.258% / +1.604%，calibration field harm 6.67%、front mean -1.376%；pure view-conflict 没有严格路线。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_view_decomposed_probe_no_go_2026-07-17.md">读完整判决</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">E66 · VD0-B one-step allowance</span><h3>只补二维 front proxy 与相机姿态</h3><p>拼接路线在 leave-one-family 从 -0.999% 提到 +0.199%，但 leave-one-noise 仍为 -0.347%。下一轮只补尚未测试的图像平面 ridge/频谱和 camera pose；未过门不训练 DeepSets。</p><a href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_view_decomposed_probe%2Fpsu_b0_view_decomposed_probe_figure.pdf">看四联图</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">G-next · data decision</span><h3>新数据决定 RayKernel-DCO 还是 TRAIL-4D</h3><p>有多光圈/标定 probe 就冻结 V6B few-query fresh gate；有带 timestamp 的连续序列就对齐 TDBOST 做 event-conditioned 4D。</p><a href="#senior">看师兄审核问题</a></article>
+      </div>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>实验</th><th>证据域</th><th>核心指标</th><th>稳定性 / 对照</th><th>判决</th></tr></thead>
+          <tbody>
+            <tr><td>前驱 unrolled4</td><td>noise OOD</td><td class="negative">-78.35%</td><td class="positive">+38.19%</td><td>fresh fields 上 0% harm；噪声输入仍为 generator-known</td></tr>
+            <tr><td>前驱 unrolled4</td><td>joint OOD</td><td class="negative">-157.41%</td><td class="positive">+16.20%</td><td>证明 trust 机制可能有用，不证明可部署</td></tr>
+            <tr><td>CG-PDNO</td><td>validation</td><td class="positive">+41.14%</td><td>noise gate +38.29%</td><td>两字段伤害；噪声门未抓住</td></tr>
+            <tr><td>CG-PDNO</td><td>development-fresh test</td><td class="positive">+21.77%</td><td>noise gate +13.36%</td><td>两者 0% harm；保留 raw，停止 noise-only gate</td></tr>
+            <tr><td>Base-Correction v1</td><td>independent lock / PBB</td><td class="negative">-17.90%</td><td>accept 0%</td><td>p10 -31.42%，100% harm；固定 PG base 淘汰</td></tr>
+            <tr><td>PBB correction v2</td><td>independent lock / PBB</td><td class="negative">-0.102%</td><td>accept 100%</td><td>p10 -2.819%，19.44% harm；失败</td></tr>
+            <tr><td>saturation v3</td><td>independent lock / PBB</td><td class="positive">+0.281%</td><td>accept 99.17%</td><td>p10 -0.831%，7.5% harm；仍失败</td></tr>
+            <tr><td>5-head selective v4</td><td>family-held-out lock / PBB</td><td>raw 不授权</td><td>0%</td><td>select 无可行阈值，严格回退，gain 0%</td></tr>
+            <tr><td>blind aperture v5a</td><td>unseen family / radius / rig / noise</td><td class="positive">+1.753%</td><td>coverage 66.67%</td><td class="negative">p10 -17.784%，总体 harm 25%，conditional harm 37.5%；失败</td></tr>
+            <tr><td>rig-shared profile v5b M0</td><td>8×8×5 archived / known support bug</td><td>raw +0.817%</td><td>coverage 0%</td><td class="negative">320/320 体素误激活；profile 0/6、truth-field 3/6、matrix 1/6 仅作失败轨迹</td></tr>
+            <tr><td>rig-shared profile v5b M1</td><td>8×8×5 development / converged renderer / 96-voxel support</td><td>SSE-only 5/6；fixed-ridge 4/6</td><td>coverage 22.92%</td><td class="negative">accepted inner L2 +9.36%，但 audit increase 5/11、最坏 +32.11%；安全门失败</td></tr>
+            <tr><td>nested cross-view v5c</td><td>new generator families / frozen seed / two rigs</td><td class="negative">joint radius+κ 3/6；fixed-ridge 5/6</td><td>coverage 0%</td><td class="negative">κ boundary 6/6、camera-deletion stability 0.375；NO-GO</td></tr>
+            <tr><td>decoupled complexity v5d Phase A</td><td>opened v5c / 10 truth-ranked variants / diagonal oracle whitening</td><td>Morozov 0.50 5/6*；GCV 3/6</td><td>不做路由</td><td class="negative">*opened-truth 调参；Morozov 1.00 0/6、radius boundary 4/6；NO METHOD FREEZE</td></tr>
+            <tr><td>covariance + residual-DF v5e</td><td>opened v5c / exact covariance from clean synthetic truth</td><td class="positive">DF-corrected 4/6；0 radius boundary</td><td>不做路由</td><td>exact whitening 对 DF-corrected 0 增量；机制信号，不是方法胜利</td></tr>
+            <tr><td>dual regularization v5f</td><td>opened v5c / separate calibration and reconstruction κ</td><td class="negative">raw mean -0.077%；p10 -3.655%</td><td>2/48</td><td class="negative">25% field harm；accepted audit harm 2/2；outer→audit NO-GO</td></tr>
+            <tr><td>geometry + residual transfer v5g</td><td>opened v5f / target operator known / oracle σ</td><td>descriptive sample 17/24；<em>r</em>=0.135</td><td>不做路由</td><td class="negative">block 1/3；rig 0/2；NO METHOD FREEZE</td></tr>
+            <tr><td>GC-RIO v0 / signed-probe v1</td><td>new synthetic train/validation rigs；flow-off MAD σ</td><td class="negative">-4.083% / -4.270% vs zero</td><td>target observation 不进 predictor</td><td class="negative">均 0/4 cells；NO DESIGN-LOCK OPEN</td></tr>
+            <tr><td>shared-field ensemble v2</td><td>opened validation；3 fixed seeds；post-open ensemble</td><td class="positive">target +6.329%；3D field +5.07%</td><td>4/4 target cells；70% fields improve</td><td>生成下一假设，不是预注册胜利</td></tr>
+            <tr><td>new-rig extension v5m</td><td>4 unseen rigs × 2 new topologies；no retraining</td><td>target cell mean +4.736%；field +3.69%</td><td>3/8 target cells；76.56% fields improve</td><td class="negative">worst -8.287%；NO DESIGN-LOCK OPEN</td></tr>
+            <tr><td>strong classical baseline v5n</td><td>train-selected PBB-32；same v5m extension</td><td class="negative">ensemble vs PBB -15.829%</td><td>1/8 target cells；PBB field +24.98%</td><td class="negative">纯网络重建器定位淘汰</td></tr>
+            <tr><td>SFIO-PAPBB v5o</td><td>train-selected anchor=0.1, k=32；proxy B=35</td><td>ratio +0.405%；cell mean -0.651%</td><td>4/8 target cells</td><td class="negative">worst -9.438%；低预算 B=11 仅生成新假设</td></tr>
+            <tr><td>SFIO-PAPBB v5p</td><td>6 fresh rigs × 3 fresh topologies；8F/9A vs PBB-9 9F/9A</td><td>ratio +2.575%；cell mean +0.005%</td><td>8/18 rig-family cells</td><td class="negative">worst -6.643%；5.14× slower；FRESH NO-GO</td></tr>
+            <tr><td>source-consistency diagnosis v5q</td><td>opened v5p；17 source-observable features；label firewall</td><td>field/cell Spearman +0.554 / +0.802</td><td>zero-threshold fallback 10/18 cells</td><td class="negative">overall +1.543%；selected harm 22.77%；NO GATE AUTHORIZED</td></tr>
+            <tr><td>reserved-view reliability v5r</td><td>opened v5p fields；1 audit camera excluded from reconstruction</td><td>field/cell Spearman +0.548 / +0.674</td><td>reserved sign fallback 12/18 cells</td><td class="negative">overall +3.405%；selected harm 33.71%；RELIABILITY NO-GO</td></tr>
+            <tr><td>global GC-BiLOC v5s</td><td>12 synthetic development rigs；full truth matrix only for scoring</td><td class="negative">0.8285 vs full-matrix ridge 0.5217</td><td>rank 24×24；oracle shared subspace 0.8054</td><td class="negative">-58.81%；GLOBAL LOW-RANK NO-GO</td></tr>
+            <tr><td>camera-local tangent v5t</td><td>post-open truth-parameter oracle</td><td>secant 0.2607；first-order 0.5050</td><td>parameter-gap error 0.5607；no estimator</td><td class="negative">REPRESENTATION NO-GO；不可部署</td></tr>
+            <tr><td>calibrated renderer + fixed camera kernel v5u-v5v</td><td>truth geometry；synthetic renderer residual</td><td class="negative">CAL-HOSVD 0.8094；camera-kernel 0.9171</td><td>full-matrix ridge 0.4762；adjoint defect 4.4e-16</td><td class="negative">GLOBAL/CAMERA-INVARIANT STRUCTURES NO-GO</td></tr>
+            <tr><td>isolated aperture kernel v5w</td><td>only radius 0 vs finite aperture differs</td><td>fixed left kernel 0.8074 vs ridge 0.8143</td><td>worst 0.9724 vs 1.4181</td><td class="negative">+0.854%；未过 10%</td></tr>
+            <tr><td>ray-conditioned kernel v5x</td><td>truth-calibrated aperture-only development</td><td class="positive">row-wise oracle 0.3587</td><td>two-stage predictor 0.8160；1113× compact</td><td class="negative">表示有 headroom；预测 NO-GO</td></tr>
+            <tr><td>stable direct ray kernel v5z</td><td>complete operator rows；24 fit + 6 selection rigs</td><td class="positive">0.7707；vs ridge +5.359%</td><td>worst ratio 0.777；891 params</td><td class="negative">DEVELOPMENT NO-GO；保留线性基线</td></tr>
+            <tr><td>ray-kernel hypernetwork v6a</td><td>opened synthetic development；3 seeds</td><td class="positive">0.7485；vs ridge +8.080%</td><td>6/12 rigs；max paired degradation +13.69%；122.6× compact</td><td class="negative">NO-GO；STOP CAPACITY ESCALATION</td></tr>
+            <tr><td>V6B protocol conformance</td><td>toy in-class + synthetic misspecification；12 rigs；K=4/8/16/32</td><td>in-class 2.4e-12；misspecified 0.1188</td><td>secant@32 0.1080；dot max 2.59e-13；0 truth-adjoint</td><td>协议通过；模型外失败可见；fresh V6B 仍 UNCONSTRUCTED</td></tr>
+            <tr><td>V6C always-on SRCO</td><td>post-open new seed；12+12 rigs；0.2% calibration noise</td><td>misspecified 0.08383</td><td>in-class 0.001970 vs gate 0.000163</td><td class="negative">NOT DOMINANT；生成噪声触发假设</td></tr>
+            <tr><td>V6D DF-gated SRCO</td><td>second-stage post-open toy；16+16 rigs；K=4/8/16/32</td><td>misspecified 0.08768；16/16 胜 gate</td><td>in-class p90/max relative harm 0.78%/1.73%；dot 2.88e-13</td><td>generator-known covariance；未预注册、无科学主张</td></tr>
+            <tr><td>positive spectral preconditioner</td><td>真实 PSU support 几何 + 解析反应流形态；3 seeds；4 stages</td><td>IID +4.26%–+4.62% vs Sobolev</td><td>joint OOD -0.43% 至 -0.20%；harm 33.3%</td><td class="negative">0/3；无门控候选 NO-GO</td></tr>
+            <tr><td>active-view support envelope</td><td>同 opened split/checkpoint；不重训；6–9 views 才启用 learned</td><td>joint/view harm 归零；gain 约 0</td><td>family harm 20.8%–25%；coverage 100%</td><td>实现门通过；view-only 科学门失败</td></tr>
+            <tr><td>OCRRG residual-risk gate</td><td>冻结后 fresh；7×24 fields；3 seeds；真实 PSU support 几何</td><td>support gain +1.04% 至 +1.66%；coverage 26.4%–47.2%</td><td>经验指标 3/3；4 条 accepted harm 来自 2 个样本</td><td>指标可复现；feature contract fail，conformal 解释撤回</td></tr>
+            <tr><td>Observable Multi-Veto v2 screen</td><td>旧 development 选 294 个有限候选；opened fresh 只作诊断</td><td>camera veto 拒掉 2/4 harm；plume 仍 2/4</td><td>selected 6-view extra margin = 0%；未事后调到 0.6%</td><td class="negative">partial mechanism only；不允许 freeze</td></tr>
+            <tr><td>Sobolev-PCGLS-4 strong frontier</td><td>validation-only 选 strength/epsilon；calibration 保持未参与选择</td><td class="positive">vs learned：validation +5.00%；calibration +4.94%</td><td>4F+4Aᵀ；0 参数；opened stress 每类至少赢 20/24</td><td class="negative">当前 learned steepest direction NO-GO；主线转向 SPD-PCGLS</td></tr>
+            <tr><td>BOST-GC-SPD-PCGLS V1</td><td>risk_train 训练；validation 选 checkpoint；calibration 单次确认；fresh excluded</td><td>validation +0.016% 至 +0.054%；calibration -0.165% 至 +0.056%</td><td>2,527 参数；4F+4Aᵀ；measurement residual +0.596% 至 +1.709%</td><td class="negative">0/3 NO-GO；先做 conditional-headroom audit</td></tr>
+            <tr><td>finite SPD-PCGLS headroom</td><td>105 candidates；train-only selection；validation/calibration transfer；fresh excluded</td><td class="positive">sample oracle +6.52% / +7.22%；family label +2.69% / +2.38%</td><td>view count +0.76% / -0.26%；view+noise -0.11% / -5.65%</td><td>频谱家族有上限；简单元数据路由 NO-GO</td></tr>
+            <tr><td>OMSE-PCGLS classification</td><td>shared first adjoint；4 fixed experts；train OOF；post-open transfer</td><td>validation +2.03%；calibration +1.29%</td><td>calibration harm 6.67%；最坏 -6.43%</td><td class="negative">形态分类 NO-GO；改为逐专家收益与风险</td></tr>
+            <tr><td>OGSE-PCGLS V2 strict</td><td>train-only greedy bank；gain regression；baseline-top exact fallback；fresh excluded</td><td class="positive">validation +2.42%；calibration +1.65%；CI lower 均 &gt;0</td><td class="positive">&gt;1% harm 0% / 0%；4F+4Aᵀ</td><td class="negative">5/6 gates；calibration mean 未到 2%，NO-GO</td></tr>
+            <tr><td>OGSE-PCGLS diagnostic</td><td>同 opened development；放宽 OOF risk，只作机制诊断</td><td class="positive">validation +3.56%；calibration +2.55%</td><td class="negative">最坏 -12.67% / -7.37%；harm 4.17% / 6.67%</td><td class="negative">收益潜力存在；风险尾部禁止部署</td></tr>
+            <tr><td>RQ single-expert mean-only</td><td>13 个有限动作缓存；648 个 train-OOF 路由配置；fresh excluded</td><td class="positive">field +3.321% / +2.907%；CI lower 均 &gt;0</td><td class="negative">field harm 0% / 3.33%；front worst -27.40% / -30.88%</td><td class="negative">field gate PASS；front safety HOLD</td></tr>
+            <tr><td>RQ quantile + harm</td><td>exact LP pinball heads + logistic harm；同有限动作</td><td>field +1.979% / +1.777%</td><td class="positive">field harm 0% / 0%</td><td class="negative">安全性提高但低于双 2% 门；NO-GO</td></tr>
+            <tr><td>MO-RQ field + front</td><td>576 个 train-OOF 多目标路由；post-open front threshold</td><td>field +1.192% / +1.382%</td><td>front mean +0.375% / -0.060%；field harm 0% / 0%</td><td class="negative">效用与 front 安全均未闭合；NO-GO</td></tr>
+            <tr><td>VD0-A grouped adjoint</td><td>逐视角 <code>AᵥᵀWᵥyᵥ</code>；一次 ray scatter；fresh excluded</td><td class="positive">group sum error 1.78e-7；5.97 s / 436 MB</td><td>pooled+view field +2.258% / +1.604%；calibration front -1.376%</td><td class="negative">接口 PASS；18 维伴随冲突表示 NO-GO</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="spectral-pilot" class="band">
+      <div class="section-head"><div><div class="eyebrow">最新算法筛选 · observable risk-routed Krylov</div><h2>从 OGSE 到 RQ：场收益过线，前沿安全把结论拉回 HOLD</h2><p>Sobolev-PCGLS-4、有限 SPD 上限与 OGSE 先建立了同预算基线。RQ 随后把动作空间收缩为“基线或单个固定专家”，并用 OOF 均值、分位数和伤害概率选择动作。field-L2 主门出现了可迁移信号，但 shock/front 审计揭示 pooled 首伴随特征无法识别跨相机冲突；所以当前最有价值的结果是一个明确的表示瓶颈，而不是一个已成功的新模型。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_rq_ogse_pcgls_development_hold_2026-07-17.md">打开 RQ / front 判决</a><a class="button" href="document_reader.html?doc=docs%2Frq_ogse_manuscript_working_draft_2026-07-17.md">论文工作稿</a></div></div>
+      <div class="pipeline" aria-label="RQ-OGSE-PCGLS 当前算法证据流水线">
+        <div><b>Strong baseline</b><span>validation-selected Sobolev-PCGLS-4；零参数，同 4F+4Aᵀ</span></div>
+        <div><b>Finite headroom</b><span>105 个固定 SPD 候选；sample oracle validation/calibration +6.52%/+7.22%</span></div>
+        <div><b>Finite actions</b><span>基线 + 3 专家 × 4 个插值步长；每个动作只重建一次</span></div>
+        <div><b>OOF risk heads</b><span>mean、exact-LP lower quantile 与 logistic harm；不读取 fresh</span></div>
+        <div><b>Front audit</b><span>field、gradient 与 top-10% front-F1 分账；primary pass 不覆盖 secondary safety</span></div>
+        <div><b>Next representation</b><span>逐视角 residual/backprojection set + field/front 双头</span></div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_pcgls_no_go/psu_b0_pcgls_no_go_figure.png" alt="同预算 PCGLS-4 对 Sobolev、当前学习方向和 PCGLS-3 的四联强基线比较图" /><figcaption>A/B：validation、calibration 与 opened stress 的配对误差降低；C：逐场胜率；D：同调用预算前沿。只有 validation/calibration 支撑当前开发判决，fresh 分区已打开，仅作描述性诊断。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip blue">4F+4Aᵀ</span><span class="chip blue">0 trainable parameters</span><span class="chip coral">old learner no-go</span></div>
+          <h3 style="margin-top:10px;">为什么这不是“换一个 baseline”这么简单</h3>
+          <ol>
+            <li><strong>验证集：</strong>PCGLS-4 相对三种子 raw learned 均值降低 field-L2 5.00%，配对 bootstrap 区间 [3.57%, 6.51%]。</li>
+            <li><strong>未参与选参的 calibration：</strong>降低 4.94%，区间 [3.69%, 6.26%]，逐场赢 28/30。</li>
+            <li><strong>同预算：</strong>固定执行四步后不需要计算未使用的 <code>Aᵀr₄</code>；PCGLS-4 与 learned 都是 4F+4Aᵀ。</li>
+            <li><strong>更省预算的对手：</strong>PCGLS-3 只用 3F+3Aᵀ，168 场 pooled 误差 0.6604，仍优于 raw learned 的 0.6711。</li>
+            <li><strong>研究含义：</strong>旧网络只改善了固定 steepest descent，没有发现超过 Krylov 历史子空间的结构。</li>
+          </ol>
+          <div class="actions"><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_pcgls_no_go_public_summary.json">严格公开 JSON</a><a class="button" href="demo_t16_operator/configs/psu_b0_strong_spectral_frontier_development_v1.json">冻结筛选配置</a><a class="button" href="demo_t16_operator/psu_b0_classical_baselines.py">PCGLS 源码</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_pcgls_no_go%2Fpsu_b0_pcgls_no_go_figure.pdf">论文图 PDF</a></div>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_conditioned_pcgls_development/psu_b0_conditioned_pcgls_development_figure.png" alt="条件化固定 SPD-PCGLS 三种子开发结果、负尾、投影与三维场解耦及训练曲线" /><figcaption>A：三种子均远低于 2% 开发门；B：validation/calibration 的 p10 全为负；C：measurement residual 改善没有迁移到 field-L2；D：优化损失下降但 PCGLS 前沿几乎不动。fresh 未读取。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip coral">0/3 development no-go</span><span class="chip blue">2,527 parameters</span><span class="chip blue">60.32 s on M5</span></div>
+          <h3 style="margin-top:10px;">V1 已经回答了什么</h3>
+          <ol>
+            <li>模型结构和训练程序有效：零初始化逐值等于基线，正定性、固定 multiplier 和调用账本均通过。</li>
+            <li>科学门失败：所有种子的 mean gain 都远低于 2%，所有 bootstrap 下界都小于 0。</li>
+            <li>seed 42/43 在 calibration 出现净恶化，最坏逐场为 -3.91% / -2.91%。</li>
+            <li>观测残差可下降 0.60%–1.71%，但场误差只变化 -0.165%–+0.056%，再次暴露少视角 null-space。</li>
+            <li>下一实验先测有限候选的 truth-oracle 与可观测分层 headroom；只有存在可迁移上限，才重新设计 selector。</li>
+          </ol>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_conditioned_pcgls_development_no_go_2026-07-16.md">完整判决</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_conditioned_pcgls_development_public_summary.json">公开 JSON</a><a class="button" href="demo_t16_operator/psu_b0_conditioned_pcgls.py">模型源码</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_conditioned_pcgls_development%2Fpsu_b0_conditioned_pcgls_development_figure.pdf">论文图 PDF</a></div>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_pcgls_conditional_headroom/psu_b0_pcgls_conditional_headroom_figure.png" alt="105 个固定 SPD-PCGLS 候选的全局、视角、噪声、形态和逐样本条件化上限审计图" /><figcaption>A：简单元数据路由不能跨 validation/calibration 迁移；B：只有逐样本 truth oracle 清除负尾；C：measurement residual 不是三维场专家选择器；D：不同合成形态确实偏好不同频谱专家。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip blue">105 fixed SPD experts</span><span class="chip blue">same 4F+4Aᵀ</span><span class="chip gold">sample oracle +7.22%</span></div>
+          <h3 style="margin-top:10px;">上限审计排除了“频谱家族根本没用”</h3>
+          <ol>
+            <li>逐样本 oracle 在 validation/calibration 为 +6.52% / +7.22%，说明候选家族有真实条件化空间。</li>
+            <li>不可部署 family label 仍能迁移 +2.69% / +2.38%，说明形态而非 view count 是关键变量。</li>
+            <li>view count 与 view+noise 在 calibration 为负，禁止用更多 geometry/noise MLP 容量解释失败。</li>
+            <li>measurement residual 与 field gain 再次脱钩，专家路由必须学习三维风险 proxy。</li>
+          </ol>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_pcgls_conditional_headroom_2026-07-16.md">完整上限报告</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_pcgls_conditional_headroom_public_summary.json">公开 JSON</a><a class="button" href="demo_t16_operator/configs/psu_b0_pcgls_conditional_headroom_v1.json">冻结配置</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_pcgls_conditional_headroom%2Fpsu_b0_pcgls_conditional_headroom_figure.pdf">论文图 PDF</a></div>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_ogse_pcgls_development/psu_b0_ogse_pcgls_development_figure.png" alt="OGSE-PCGLS 的专家库上限、严格与诊断均值置信区间、最坏负尾和效用风险门图" /><figcaption>A：4–8 个贪心专家保留约 4.16%–5.09% train oracle；B：严格路线 validation 过 2%、calibration 未过；C：精确基线回退清除灾难尾部；D：没有路线同时满足双 split 效用与风险。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip gold">5 / 6 development gates</span><span class="chip blue">harm 0% / 0%</span><span class="chip coral">fresh remains sealed</span></div>
+          <h3 style="margin-top:10px;">OGSE V2 的真实进步与明确缺口</h3>
+          <ol>
+            <li><strong>严格路线：</strong>validation +2.423%，calibration +1.651%，bootstrap 下界都大于 0。</li>
+            <li><strong>安全性：</strong>非基线专家必须 top-1 且 margin 过门；两个 split 的 &gt;1% harm 都为 0。</li>
+            <li><strong>诊断上限：</strong>放宽路线 +3.560% / +2.554%，却出现 -12.669% / -7.369% 最坏退化。</li>
+            <li><strong>判决：</strong>calibration mean 未到 2%，所以不是“接近就算过”，而是严格 NO-GO。</li>
+          </ol>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_ogse_pcgls_development_no_go_2026-07-16.md">完整判决</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_ogse_pcgls_development_public_summary.json">公开 JSON</a><a class="button" href="demo_t16_operator/psu_b0_morphology_spectral_experts.py">算法源码</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_ogse_pcgls_development%2Fpsu_b0_ogse_pcgls_development_figure.pdf">论文图 PDF</a></div>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_rq_ogse_pcgls_development/psu_b0_rq_ogse_pcgls_development_figure.png" alt="RQ 单专家动作的收益风险、四路消融、场误差与反应前沿冲突及最终 HOLD 判决图" /><figcaption>A：有限动作空间存在高收益与坏尾；B：mean-only 保留最高场收益，quantile/harm 清除 field harm 但损失效用；C：field-L2 改善与 front-F1 不等价；D：field 主门通过不授权完整算法 GO。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip gold">field gate pass</span><span class="chip coral">front safety fail</span><span class="chip coral">fresh excluded</span></div>
+          <h3 style="margin-top:10px;">RQ 与多目标审计真正回答了什么</h3>
+          <ol>
+            <li><strong>Mean-only：</strong>validation/calibration field gain +3.321% / +2.907%，但 calibration field harm 为 3.33%。</li>
+            <li><strong>Quantile + harm：</strong>field harm 清零，收益降为 +1.979% / +1.777%，未通过双 2% 门。</li>
+            <li><strong>Front 冲突：</strong>mean-only calibration front 均值 -0.261%，最坏相关噪声斜激波 -30.876%。</li>
+            <li><strong>多目标路线：</strong>field +1.192% / +1.382%，front +0.375% / -0.060%；更保守但仍未安全。</li>
+            <li><strong>判决：</strong>primary field signal 保留，完整算法 HOLD；不生成 independent repeat。</li>
+          </ol>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_rq_ogse_pcgls_development_hold_2026-07-17.md">完整 HOLD 判决</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_rq_ogse_pcgls_development_public_summary.json">RQ 公开 JSON</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_mo_rq_ogse_pcgls_development_public_summary.json">多目标 JSON</a><a class="button" href="demo_t16_operator/psu_b0_risk_quantile_experts.py">风险路由源码</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_rq_ogse_pcgls_development%2Fpsu_b0_rq_ogse_pcgls_development_figure.pdf">论文图 PDF</a></div>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <div class="panel">
+          <h3>下一候选：View-Decomposed Risk Router</h3>
+          <p>RQ 已证明 pooled <code>g₀</code> 的均值信息够用，却不能识别哪个相机正在支持或破坏 shock/front。下一版把每台相机当作一个带物理特征的集合元素，先编码逐视角证据，再用置换不变聚合预测 field utility 与 front-preservation risk。</p>
+          <div class="formula">hᵥ=φ(rᵥ, AᵥᵀWᵥyᵥ, cameraᵥ); &nbsp; z=ρ({hᵥ}); &nbsp; e*=argmax μfield,e(z); &nbsp; accept=qfield&gt;0 ∧ qfront≥0 ∧ pharm&lt;δ</div>
+          <ol>
+            <li>逐视角白化 residual 的低/中/高频能量、峰度和 image-plane ridge coherence。</li>
+            <li>逐视角伴随贡献 <code>g₀,ᵥ=AᵥᵀWᵥyᵥ</code> 的范数份额、两两 cosine 与协方差特征值。</li>
+            <li>先用 ridge + 显式统计量做 VD0；只有 leave-one-family/noise 迁移有信号，才上 DeepSets。</li>
+            <li>保持 baseline-or-single-expert 动作与 fixed SPD；front 门不再作为事后附加指标。</li>
+          </ol>
+        </div>
+        <div class="panel">
+          <h3>什么结果才有论文价值</h3>
+          <ol>
+            <li>同 4F+4Aᵀ 下 mean field gain ≥2%，且配对 bootstrap 95% 下界 &gt;0。</li>
+            <li>gradient-L2 和 front top-10% F1 不出现实质恶化。</li>
+            <li>6/7/8/9 views、plume/thin-front/shock、IID/相关噪声逐层报告，不只报 pooled mean。</li>
+            <li>三个训练种子至少两个通过；独立 repeat 在生成前冻结代码、配置、基线和停止规则。</li>
+            <li>真实迁移至少有 held-out displacement；若无 3D truth，明确分开 synthetic field-L2 与 experimental reprojection。</li>
+          </ol>
+          <div class="actions"><a class="button primary" href="#reading">看强基线与碰撞文献</a><a class="button" href="#senior">看向师兄索取的数据</a></div>
+        </div>
+      </div>
+      <div class="alert critical"><strong>准确对师兄表述</strong><span>当前可以说：“有限单专家 RQ 在 opened development 的 field-L2 上达到 +3.32% / +2.91%，但一个 calibration 场恶化 -1.90%，相关噪声斜激波的 front-F1 最坏下降约 31%；quantile/harm 与 front-risk 路由能清除 field harm，却把收益压到 2% 以下且仍未保住 calibration front。下一步因此改为逐视角 residual/backprojection set encoder。”不能说“已经提出并验证了优于 DeepONet、FNO、UNO-CG、NeRIF 或组内方法的新模型”。</span></div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_spectral_preconditioner_pilot/psu_b0_spectral_preconditioner_pilot_figure.png" alt="已归档的 PSU 正定谱 steepest-direction 候选在 IID 和联合 OOD 上的 NO-GO 图" /><figcaption>归档证据：旧候选相对固定 Sobolev 有 IID 正信号，但联合 OOD 失败；现在又被同预算 PCGLS-4 整体超过，因此不再投入门控修补。</figcaption></figure>
+        <div class="panel">
+          <h3>旧路线为何停止</h3>
+          <p>OCRRG 的特征契约缺陷、四条 accepted harm 和 Multi-Veto 漏掉 plume 都仍是真实缺陷；但即使把这些风险门全部修好，也只能让一个已经弱于 PCGLS 的候选更谨慎。继续在旧 fresh 上调门会同时产生数据泄漏和研究资源浪费。</p>
+          <div class="actions"><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_spectral_preconditioner_no_go_2026-07-16.md">旧候选 NO-GO</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_residual_risk_postopen_diagnosis_2026-07-16.md">特征契约缺陷</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_multiveto_development_screen_2026-07-16.md">Multi-Veto 诊断</a></div>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_support_envelope_postopen/psu_b0_support_envelope_postopen_figure.png" alt="PSU active-view 支持域回退对均值、尾部、伤害率和 coverage 的四联机制图" /><figcaption>View/joint OOD 通过 0% correction coverage 回到 Sobolev；family OOD 仍在视角支持域内，尾部和伤害率没有改善。它验证拒答机制，不验证新算法泛化。</figcaption></figure>
+        <div class="panel">
+          <h3>第二代不能只加一个 view gate</h3>
+          <p>下一候选需要 hard view-support envelope 与 learned residual-risk trust 同时成立。候选只有在支持域内、且白化 residual 分布与相对 Sobolev 风险均可信时才允许修正。</p>
+          <div class="formula">P = P_sob + τ_view(z) · τ_risk(z,r) · (Pθ − P_sob)</div>
+          <ol>
+            <li><code>τ_view=0</code> 时逐值回退，不允许近似 fallback。</li>
+            <li><code>τ_risk</code> 读取跨相机 residual 均值、最大值、离散度和 correction magnitude。</li>
+            <li>训练加入 thin-front、camera dropout 与相关噪声压力。</li>
+            <li>fresh gate 同时报 coverage、accepted gain、p10、harm、wall time 和 calls。</li>
+            <li>若只能靠 coverage=0 过门，算法仍判 NO-GO。</li>
+          </ol>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_support_envelope_postopen_diagnosis_2026-07-16.md">读完整诊断</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_support_envelope_postopen_public_summary.json">公开 JSON</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_support_envelope_postopen%2Fpsu_b0_support_envelope_postopen_figure.pdf">论文图 PDF</a></div>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_residual_risk_fresh/psu_b0_residual_risk_fresh_figure.png" alt="OCRRG 在五个支持域 fresh split 与两个低视角越界 split 上的伤害率、覆盖率、增益和尾部审计图" /><figcaption>A：门控前后 &gt;1% harm；B：coverage 与 mean gain；C：p10；D：三种子 coverage，3–5-view 两组精确回退。图底部明确标注解析形态、无实验三维真值和 4 条 accepted harm。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip gold">empirical metrics 3 / 3</span><span class="chip gold">synthetic only</span><span class="chip coral">conformal interpretation withdrawn</span></div>
+          <h3 style="margin-top:10px;">OCRRG：先判断“该不该用学习器”</h3>
+          <p>冻结实现只读取第一步可观测量，用 ridge 预测相对 Sobolev 的 gain，再减去 one-sided overprediction quantile。经验 accept / fallback 与重建指标可复现；但 development 与 deployment 的 support 投影顺序不同，所以当前公式只描述设计意图，不再代表有效的 conformal 保证。</p>
+          <div class="formula">accept = support(z) ∧ distance(z) ≤ d* ∧ [ĝ(z) − q̂seed] ≥ −1%</div>
+          <h3 style="margin-top:15px;">基础薄弱时按这个顺序学</h3>
+          <ol>
+            <li><strong>线性逆问题：</strong>先懂 residual、伴随梯度、预条件和为什么 Sobolev 是强基线。</li>
+            <li><strong>回归与校准：</strong>手算 ridge；区分预测均值、预测下界和 coverage。</li>
+            <li><strong>选择性预测：</strong>同时画 risk-coverage，理解“拒答更多”不等于算法更强。</li>
+            <li><strong>物理迁移：</strong>把合成相关噪声换成 flow-off covariance，再谈实验可靠性。</li>
+          </ol>
+          <div class="alert critical"><strong>当前最重要的反例</strong><span>一个 6-view plume 在两个种子退化约 2.6%；一个强相关 6-view oblique shock 在两个种子退化 4.5%–5.7%。此外 support-order 特征契约改变 7/504 条决策。下一轮先统一 feature function，再做双支路风险否决；不在当前 fresh 上调阈值。</span></div>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_residual_risk_fresh_result_2026-07-16.md">完整判决与师兄问题</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_residual_risk_fresh_public_summary.json">公开 JSON</a><a class="button" href="demo_t16_operator/configs/psu_b0_residual_risk_fresh_prereg_v1.json">冻结协议</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_residual_risk_fresh%2Fpsu_b0_residual_risk_fresh_figure.pdf">论文图 PDF</a></div>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_residual_risk_postopen_diagnosis/psu_b0_residual_risk_postopen_diagnosis_figure.png" alt="OCRRG post-open 诊断图，展示六视角风险、校准分布失衡、两类失败支路和特征契约缺陷" /><figcaption>A：accepted harm 只出现在 6-view；B：8/9-view calibration 严重不足；C：低频过修正与相关噪声是两个不同坏尾部；D：support-order 先改变 7 条决策，view-only quantile 仍抓不到 4 条 harm。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip coral">feature contract fail</span><span class="chip gold">camera veto catches 2 / 4</span><span class="chip coral">plume veto misses 2 / 4</span></div>
+          <h3 style="margin-top:10px;">v2 先修一个确定性函数，再加两个物理否决器</h3>
+          <p>solver 实际搜索的是 support 投影后的方向，因此 v2 会只保留一个 canonical feature function，并在 train、validation、calibration、fresh 与 deployment 逐值复用。双支路分数由 opened fresh 启发，只能去新的 independent repeat 接受检验。</p>
+          <div class="formula">accept = support ∧ pooled vote ∧ ¬ spectral-stress ∧ ¬ camera-correlation-stress ∧ six-view backoff</div>
+          <ol>
+            <li><strong>契约门：</strong>同一个 feature function 的输出、prediction、distance 和 decision 全部做逐值测试。</li>
+            <li><strong>采样门：</strong>6/7/8/9-view 字段数按构造平衡，不再让随机 mask 偏向 6-view。</li>
+            <li><strong>形态门：</strong>leave-one-family-out 选模型，部署特征不得读取 family/noise 标签。</li>
+            <li><strong>风险门：</strong>用有限候选 + Learn then Test 选阈值，不在 audit set 上扫到好看。</li>
+            <li><strong>确认门：</strong>冻结后生成全新 morphology、noise、mask、seed；旧 fresh 永久只作诊断。</li>
+          </ol>
+          <div class="alert critical"><strong>development screen 仍判不能冻结</strong><span>294 个有限候选中，development 选出的宽松 veto 能拒掉两条 correlated-noise shock harm，却仍接受两条 low-frequency plume harm；事后加约 0.6% 的 6-view margin 虽可能抓住 plume，但属于 fresh leakage，禁止使用。</span></div>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_residual_risk_postopen_diagnosis_2026-07-16.md">读完整缺陷与 v2 路线</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_multiveto_development_screen_2026-07-16.md">读 Multi-Veto 开发筛选</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_multiveto_development_screen_public_summary.json">筛选 JSON</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_residual_risk_postopen_diagnosis%2Fpsu_b0_residual_risk_postopen_diagnosis_figure.pdf">诊断图 PDF</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="algorithm" class="band">
+      <div class="section-head"><div><div class="eyebrow">当前候选 · VD0-B view-decomposed risk routing</div><h2>VD-RR-PCGLS：接口已闭合，下一步只补二维 front 与相机姿态</h2><p>VD0-A 已证明逐视角伴随可以审计地暴露，并在一次 ray scatter 后求和复原 pooled；但只用范数、夹角和抵消统计，不能安全识别相关噪声与 front 风险。当前最小新假设进一步收窄为：把每台相机的二维位移图 front proxy 和真实 camera pose 与对应伴随贡献成对保留，才可能区分“物理 front 一致支持”和“某些视角被相关噪声污染”。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_view_decomposed_probe_no_go_2026-07-17.md">VD0-A 判决</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_view_decomposed_probe%2Fpsu_b0_view_decomposed_probe_figure.pdf">四联图 PDF</a></div></div>
+      <div class="pipeline" aria-label="VD-RR-PCGLS 算法流水线">
+        <div><b>Per-view observations</b><span>每台相机保留白化 residual、mask、view geometry 与图像频谱</span></div>
+        <div><b>Per-view adjoints · PASS</b><span><code>g₀,ᵥ=AᵥᵀWᵥyᵥ</code> grouped sum error 1.78e-7；额外内存/FDA 成本已记账</span></div>
+        <div><b>Adjoint conflict · NO-GO</b><span>18 维范数份额、pairwise cosine 与抵消统计没有通过 transfer/stress 门</span></div>
+        <div><b>VD0-B explicit features</b><span>补 image-plane ridge/频谱、camera pose 与逐视角配对；仍用低容量 ridge</span></div>
+        <div><b>Set encoder · SEALED</b><span>只有 VD0-B 同时通过 leave-one-family/noise，才启用小型 DeepSets</span></div>
+        <div><b>Dual risk heads</b><span>分别预测 field utility 与 front-preservation lower bound / harm</span></div>
+        <div><b>Single expert PCGLS</b><span>只选 baseline 或一个 fixed-SPD 专家；保持 4F+4Aᵀ 公平预算</span></div>
+      </div>
+      <div class="formula">hᵥ=φ(rᵥ,g₀,ᵥ,cameraᵥ); &nbsp; z=ρ({hᵥ}); &nbsp; e*=argmax μfield,e(z); &nbsp; accept=[qfield,e*&gt;0]∧[qfront,e*≥0]∧[pharm,e*&lt;δ]</div>
+      <div class="two-col" style="margin-top:14px;">
+        <div class="panel">
+          <h3>分阶段最小实现</h3>
+          <ol>
+            <li><strong>VD0-A 接口门 · 已过：</strong>grouped sum relative error 1.78e-7；一次 ray scatter，且明确不是 equal-FLOP pooled Aᵀ。</li>
+            <li><strong>VD0-A 伴随冲突 · NO-GO：</strong>pooled+view 为 +2.258% / +1.604%，calibration harm 6.67%、front mean -1.376%。</li>
+            <li><strong>VD0-B 显式特征 · 当前：</strong>只补逐视角二维 high-frequency/ridge/anisotropy 与 camera pose，保持 ridge OOF。</li>
+            <li><strong>VD1 集合编码 · 未授权：</strong>只有 VD0-B 在 leave-one-family/noise 都改善 field/front 风险，才训练小型 DeepSets；相机顺序随机置换。</li>
+            <li><strong>VD2 风险路由：</strong>field 与 front 两个下界都过门，才选择一个固定专家；否则逐值回退 Sobolev-PCGLS-4。</li>
+            <li><strong>VD3 独立重复：</strong>代码、动作库、特征、阈值和停止规则冻结后，才生成新 morphology/noise/view masks。</li>
+          </ol>
+          <h3 style="margin-top:16px;">一个必须先修正的时序问题</h3>
+          <p><code>first-step residual contraction</code> 只有跑完第一步后才存在，不能拿来选择第一步之前的固定预条件器。若后续使用它，必须明确采用“先跑一步基线再 restart”或 Flexible CG，并把新增调用与重启代价列入公平预算；当前 VD0 不使用该特征。</p>
+        </div>
+        <div class="panel">
+          <h3>必须同时跑的对照与消融</h3>
+          <ol>
+            <li>identity CGLS、L2/H1 Tikhonov、静态 Sobolev steepest descent。</li>
+            <li>静态各向同性与各向异性 PCGLS-3/4。</li>
+            <li>TV-superiorized PCGLS，检查 thin front 是否只是 TV 先验更合适。</li>
+            <li>只学停止步，不学 multiplier；区分“选迭代次数”与“学预条件器”。</li>
+            <li>pooled <code>g₀</code>、per-view residual only、per-view adjoint only、两者联合四组输入消融。</li>
+            <li>mean-only、field-risk、front-risk、field+front 四种 selector 消融。</li>
+            <li>显式统计量、DeepSets、简单 attention 三种表示；样本不足时不使用大 Transformer。</li>
+            <li>leave-one-family-out 与 leave-one-noise-profile-out；不能只做随机场切分。</li>
+          </ol>
+          <h3 style="margin-top:16px;">证据防火墙</h3>
+          <p><code>risk_train</code> 只做 OOF 模型和阈值选择；<code>risk_validation</code> 与 <code>risk_calibration</code> 现已打开，只能用于当前机制开发。旧 fresh 也已打开，只作诊断。VD-RR 必须在全新冻结分区上做一次真正 independent repeat，不能继续在这些数据上调到好看。</p>
+        </div>
+      </div>
+      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/psu_b0_view_decomposed_probe/psu_b0_view_decomposed_probe_figure.png" alt="VD0-A 逐视角伴随冲突探针四联图，展示 field transfer、calibration front 与 harm、留一族和留一噪声压力审计及最终接口通过表示失败判决" /><figcaption>A：逐视角冲突没有击败 pooled；B：拼接后效用下降且 calibration front/harm 未闭合；C：形态迁移略有缓和、噪声迁移仍失败；D：接口 PASS、表示 NO-GO，下一步只补 image-plane front proxy 与 camera pose。</figcaption></figure>
+      <div class="alert critical"><strong>当前停止规则</strong><span>VD0-A 已排除“只靠伴随方向冲突就够”的假设。VD0-B 若不能同时改善 leave-one-family 与 leave-one-noise 的 field/front 风险，就停止集合编码主线；不训练 DeepSets，不生成 fresh。即使 field mean ≥2%，只要 calibration front mean 为负、front p10 越界或 field harm 超过 5%，仍判 NO-GO。RQ 的 +3.321% / +2.907% 必须始终与 -30.876% front 最坏值一起出现。</span></div>
+      <div class="actions" style="margin:12px 0 2px;"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_view_decomposed_probe_no_go_2026-07-17.md">读 VD0-A 判决</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_view_decomposed_probe_public_summary.json">公开 JSON</a><a class="button" href="demo_t16_operator/psu_b0_view_decomposed_features.py">逐视角特征源码</a><a class="button" href="site_tools/run_psu_b0_view_decomposed_probe.py">完整实验脚本</a><a class="button" href="demo_t16_operator/configs/psu_b0_view_decomposed_probe_v1.json">冻结配置</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_rq_ogse_pcgls_development_hold_2026-07-17.md">RQ / front 基线判决</a></div>
+      <div class="two-col" style="margin-top:14px;">
+        <div class="panel"><h3>拿到组内数据后的平移接口</h3><ol><li>把解析 phantom field-L2 保留为受控 sanity check。</li><li>把真实 displacement 分成 reconstruction cameras 与从不进入训练/停止的 held-out cameras。</li><li>用 flow-off repeats 估计每相机 covariance，替换 generator-known noise。</li><li>若有 PIV-BOST，同步报告折射补偿后的 velocity error，而不是只报重投影。</li></ol></div>
+        <div class="panel"><h3>仍保留的两条数据触发支线</h3><ol><li><strong>RayKernel-DCO：</strong>只有拿到多 f-number / focus 或 calibration phantom，才重启 finite-aperture operator mismatch。</li><li><strong>TRAIL-4D：</strong>只有拿到连续 timestamp、缺帧与异步信息，才对齐 TDBOST 研究突变保持。</li></ol><p>它们不是当前训练并行线，避免在没有对应证据时同时摊开三个大模型。</p></div>
+      </div>
+    </section>
+
+    <section id="candidates" class="band">
+      <div class="section-head"><div><div class="eyebrow">垂直研究路线</div><h2>一个逐视角主线，两个由组内数据触发的支线</h2><p>当前直接推进 VD-RR-PCGLS 的接口门和低容量探针；RQ 已完成并判 HOLD。有限孔径算子校正与 4D 突变保持不并行烧算力，只有拿到对应 OERF 标定或连续序列后才启动。</p></div></div>
+      <div class="filters">
+        <div class="filter-field"><label for="candidateSearch">搜索机制</label><input id="candidateSearch" type="search" placeholder="aperture / ray kernel / calibration / 4D / transport" /></div>
+        <div class="filter-field"><label for="candidateReady">数据条件</label><select id="candidateReady"><option value="all">全部</option><option value="now">现在可做</option><option value="lab">需组内数据</option><option value="future">远期</option></select></div>
+      </div>
+      <div class="candidate-grid" id="candidateGrid" style="margin-top:14px;">
+        <article class="candidate-card primary" data-ready="now" data-search="view decomposed risk router per camera residual adjoint DeepSets front PCGLS spectral expert 3D reconstruction"><div class="body"><div class="chips"><span class="chip blue">P0 current mainline</span><span class="chip coral">RQ HOLD</span></div><h3>A. VD-RR-PCGLS</h3><p>把每台相机的白化 residual、伴随贡献和 front coherence 保留为集合元素，分别预测 field utility 与 front-preservation risk；只有双门通过才选择一个固定 SPD 专家。</p><dl><dt>已有证据</dt><dd>RQ field +3.321% / +2.907%，但 calibration field harm 3.33%、front 最坏 -30.876%；多目标路线只有 +1.192% / +1.382%</dd><dt>最近门</dt><dd>先验证逐视角分解逐值闭合且不增加逻辑 Aᵀ；再做 leave-one-family/noise 线性探针，未过不训练 DeepSets</dd><dt>创新边界</dt><dd>DeepSets 本身不是新意；贡献必须来自 BOST 逐视角冲突量、field/front 双风险合同、同调用预算与真实 held-out camera 证据</dd></dl></div><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_rq_ogse_pcgls_development_hold_2026-07-17.md">从 RQ / front 判决开始</a></article>
+        <article class="candidate-card primary" data-ready="now" data-search="RayKernel DCO finite aperture depth of field local voxel kernel hypernetwork exact adjoint"><div class="body"><div class="chips"><span class="chip">data-triggered branch</span><span class="chip coral">v6a NO-GO</span></div><h3>B. RayKernel-DCO</h3><p>每条 ray 用几何条件化小网络生成局部 3D 核，校正 thin/high-fidelity aperture discrepancy；同一核给出 forward/adjoint。</p><dl><dt>已有证据</dt><dd>线性 +5.36%，超网络 +8.08%；但仅 6/12 rigs 胜出，最大 paired-rig 退化 13.69%</dd><dt>下一数据</dt><dd>多 f-number / focus、calibration phantom、flow-off repeats、可调用 F 与 Fᵀ/VJP</dd><dt>必须击败</dt><dd>full-matrix ridge、局部多项式、cone-ray renderer、Learned Operator Correction、ReSeSOp</dd></dl></div><a class="button primary" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">从结构漏斗开始学习</a></article>
+        <article class="candidate-card" data-ready="lab" data-search="v6b fresh rig few query adaptation K forward zero truth adjoint aperture layout OOD"><div class="body"><div class="chips"><span class="chip gold">data-triggered gate</span><span class="chip coral">UNCONSTRUCTED</span></div><h3>C. V6B fresh-rig few-query adaptation</h3><p>只继承 V6A 的 ray-local 结构假设，不继承权重。在 query-limited cache 从头训练；每个 fresh rig 用 K=32 次 high-fidelity forward、0 次 truth adjoint 拟合 27 个 channel gates。</p><dl><dt>48 rigs</dt><dd>fresh-A/B/C 各 16；rig 是统计单位，views、rows、probes 不扩充样本量</dd><dt>10% 解锁</dt><dd>vs 冻结 B* 改善 ≥10%、CI 排除 0、至少 36/48 胜出且各层 ≥8/16，才打开 inverse</dd><dt>25% 强 GO</dt><dd>改善 ≥25% 且 A/B/C 各 ≥12/16；安全门另要求 p90 退化 ≤5%、max ≤20%、各层聚合非负</dd></dl></div><a class="button" href="document_reader.html?doc=docs%2Fv6b_limited_query_preregistration_2026-07-16.md">看 V6B-1.0 协议</a></article>
+        <article class="candidate-card" data-ready="now" data-search="DF gated SRCO structured residual calibration noise floor multisecant active probes exact adjoint"><div class="body"><div class="chips"><span class="chip gold">archived hypothesis</span><span class="chip coral">NOT PREREGISTERED</span></div><h3>D. DF-gated SRCO</h3><p>27-gate 先解释 ray-local 有限孔径结构；toy 用 generator-known 对角 covariance 判断是否启用 rank≤K 补丁，真实部署必须改由独立 flow-off repeats 估计噪声地板，并用解析 transpose 进入 inverse。</p><dl><dt>toy 信号</dt><dd>模型外 K=32 为 0.08768，优于 gate 0.12142 与同预算 calibration 0.11261；in-class 激活中位数 0</dd><dt>不是新意</dt><dd>加性低秩/multisecant 已有谱系；贡献必须来自 BOST 结构、主动 probe、噪声与严格 query 证据</dd><dt>下一门</dt><dd>新 renderer seed、外部 <code>photon</code>、flow-off covariance；V6C/V6D 永久排除出 fresh</dd></dl></div><a class="button" href="document_reader.html?doc=docs%2Fsrco_postopen_hypothesis_2026-07-16.md">看 SRCO 假设合同</a></article>
+        <article class="candidate-card primary" data-ready="lab" data-search="TRAIL 4D TDBOST transport low rank sparse innovation birth extinction topology asynchronous missing frames"><div class="body"><div class="chips"><span class="chip">data-triggered alternate</span><span class="chip coral">需连续序列</span></div><h3>E. TRAIL-4D</h3><p>以 TDBOST 为直接基线，把可输运低秩主体和稀疏创新拆开，专门评估新生、熄灭、拓扑断裂、缺帧和相机异步。</p><dl><dt>真实困境</dt><dd>固定 rank 会抹平瞬态事件；逐帧重建忽略时序，普通 FNO 可能平均化尖锐变化</dd><dt>最小数据</dt><dd>50-200 帧连续 run、真实 timestamp、同步误差、缺帧位置和 TDBOST 输入</dd><dt>必须击败</dt><dd>TDBOST、固定 Tucker/CP、逐帧 PBB/NeRIF、transport-only、innovation-only、3D+time FNO</dd></dl></div><a class="button primary" href="https://doi.org/10.1145/3809488">TDBOST 正式入口</a></article>
+        <article class="candidate-card" data-ready="now" data-search="thesis safe deliverable negative evidence benchmark reproduction interface"><div class="body"><div class="chips"><span class="chip blue">本科交付</span><span class="chip gold">不依赖新数据</span></div><h3>F. 可保底但不降标准的交付</h3><p>若组内数据延迟，完成结构证伪链、PCGLS 强基线、真实数据 loader/adjoint audit 和一套可复现 benchmark；论文主张保持关闭。</p><dl><dt>可展示</dt><dd>PCGLS 前沿、逐场失败图、精确伴随、参数/误差 Pareto、交互研究网页</dd><dt>不可替代</dt><dd>不能把 synthetic near-signal 写成 OERF 成果</dd><dt>转正条件</dt><dd>得到独立真实 mismatch、held-out displacement 或带 timestamp 的连续序列</dd></dl></div><a class="button" href="#plan">看 12 周验收路径</a></article>
+      </div>
+      <div id="candidateEmpty" class="empty" hidden>没有匹配的候选。</div>
+    </section>
+
+    <section id="data" class="band">
+      <div class="section-head"><div><div class="eyebrow">数据与迁移</div><h2>四层证据，真实 rig 与可控 synthetic 分账</h2><p>没有公开资源同时提供多光圈、多布局、受限 forward、可核验 adjoint 与实验三维真值。PSU、<code>photon</code> 和 OERF 各自只承担一段证据，不能拼成“已经外部成功”。</p></div><a class="button" href="document_reader.html?doc=docs%2Fpublic_external_bost_benchmark_audit_2026-07-16.md">外部基准审计</a></div>
+      <div class="data-grid">
+        <article class="data-card"><span class="chip blue">D0 · 可控真值</span><h3>Analytic phantom</h3><p>验证伴随、梯度、support、field/front error、消融和统计协议。</p><p><strong>不能证明：</strong>真实成像链或模型失配。</p><a href="demo_t16_operator/README.md">打开当前可复现实验</a></article>
+        <article class="data-card"><span class="chip blue">D1 · 外部合成</span><h3><code>photon</code> CUDA renderer</h3><p>在 NVIDIA/CUDA 服务器冻结 f-number、focus/object distance 与 camera layout，生成 fresh-A/B/C 和已知密度场，做跨 renderer synthetic smoke。</p><p><strong>不能证明：</strong>真实光学或 OERF 有效；仓库也没有现成精确 <code>Fᵀ</code>。</p><a href="https://github.com/lalitkrajendran/photon">作者仓库</a></article>
+        <article class="data-card"><span class="chip blue">D2 · 固定真实 rig</span><h3>PSU flight-body BOS</h3><p>70 views 中按公开流程做 9-view NIRT、held-out deflection、真实 mask/噪声/标定 loader，只检验固定装置 reconstruction/reprojection consistency。</p><p><strong>不能证明：</strong>跨 f-number 泛化或实验 field-L2；f/32 与 f/22 属于不同相机/镜头，不是 aperture sweep。</p><a href="https://doi.org/10.26208/1VE2-5C19">数据 DOI</a></article>
+        <article class="data-card"><span class="chip blue">D3 · 组内应用</span><h3>NeRIF / TDBOST / OERF</h3><p>NeRIF 数据需合理请求；TDBOST 公开代码无根许可证且投影器/完整数据不齐。只有独立 session、phantom、held-out camera 或 timestamp 合同满足后，才打开 apparatus-specific 或 TRAIL-4D 主张。</p><p><strong>不能公开：</strong>未授权训练包、组内原始数据与私有派生产物。</p><a href="https://arxiv.org/abs/2409.14722">NeRIF</a> · <a href="https://github.com/Hyz617/TDBOST">TDBOST 只读入口</a></article>
+      </div>
+      <div class="alert success"><strong>PSU 核心包已验证 · 尚未重建</strong><span>5.118 GB ZIP 已完整下载并通过 size、SHA-256 与 CRC；5.228 GB MAT 已完成流式 header/shape 审计：97 个命名变量、400×350×350 网格、49,766,400 个 ray/deflection entries。证据仅为 <code>SCHEMA_CONFORMANT</code>，没有运行 NIRT、没有 held-out reprojection、没有三维结果。原数据与派生产物只在忽略 Git 的本机私有存储中保留。</span></div>
+      <div class="library-strip">
+        <div><b>27</b><span>本机私有论文/资料库 PDF</span></div>
+        <div><b>5.118 GB</b><span>PSU 9-view ZIP：size/hash/CRC 通过</span></div>
+        <div><b>schema</b><span>MAT header/shape 通过；NIRT 未运行</span></div>
+        <div><b>0</b><span>订阅/VPN PDF 上传 GitHub</span></div>
+      </div>
+      <p style="color:var(--muted);font-size:12px;">其余文件包含待匹配公开版、重复项或失败下载，不能把“磁盘里有文件”当成“已审计全文”。私有库继续本机使用，公开页面只放 DOI、合法开放全文与自写分析。</p>
+    </section>
+
+    <section id="reading" class="band">
+      <div class="section-head"><div><div class="eyebrow">角色化论文</div><h2>先读 PCGLS 与 learned preconditioner，再回到 BOST 物理</h2><p>当前阅读目的不是收集更多模型名，而是确定：怎样保持正定与 Krylov 结构、什么强经典基线必须补、现有 learned preconditioner 已经占据什么，以及 BOST 梯度观测/相机集合还能留下什么独立贡献。</p></div></div>
+      <div class="alert success"><strong>两周最短精读顺序</strong><span>先读 Notay Flexible CG、Li et al. learned PCG preconditioner、NeuralIF、UNO-CG、TV-superiorized PCG；再读 Regression Quantiles、Conformalized Quantile Regression 和 selective risk-coverage。每篇提取预条件器保证、风险目标、coverage、迭代预算、跨几何测试和失败条件。随后读 PSU BOST、NeRIF、TDBOST、cone-ray BOS，把数值结构映射到梯度观测、有限孔径、可变相机集合和形态坏尾部。</span></div>
+      <div class="source-grid">
+        <article class="source-card"><div class="body"><span class="chip">OERF 主线</span><h3>NeRIF</h3><p><strong>读：</strong>continuous refractive-index/gradient field、9 视角合成/实验设计、光路积分与 Bunsen flame。</p><p><strong>边界：</strong>数据是合理请求，不存在可直接宣称已复现的公开训练包；我们的 few-query operator correction 也不能冒充首个 neural-field BOST。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1063/5.0250899">正式版</a><a class="button" href="https://arxiv.org/html/2409.14722v2">开放全文</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip">何远哲主线</span><h3>TDBOST 4D</h3><p><strong>读：</strong>XY-ZT/XZ-YT/YZ-XT 张量分解、轻量网络与时空保真。</p><p><strong>边界：</strong>公开仓库可只读审计数据格式与 4D 结构，但无根许可证、投影器和完整数据不齐；未经授权不改作、不重发。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1145/3809488">ACM TOG</a><a class="button" href="https://github.com/Hyz617/TDBOST">代码树</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip">实验耦合</span><h3>PIV-BOST compensation</h3><p><strong>读：</strong>折射率重建如何进入 PIV 速度误差补偿。</p><p><strong>提取：</strong>未来主指标是否应从 field L2 转为 velocity correction。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1007/s00348-025-04093-y">Experiments in Fluids</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip blue">算子基线</span><h3>FNO / F-FNO</h3><p><strong>读：</strong>spectral kernel、mode truncation、resolution experiment 与 factorization。</p><p><strong>提取：</strong>thin-front 高频丢失和规则网格偏置。</p></div><div class="actions"><a class="button" href="https://openreview.net/forum?id=c8P9NQVtmnO">FNO</a><a class="button" href="https://iclr.cc/virtual/2023/poster/10680">F-FNO</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">直接碰撞</span><h3>FCG-NO</h3><p><strong>读：</strong>把 neural operator 作为 flexible conjugate-gradient 的非线性预条件器、Krylov residual 采样和 solver-aligned loss。</p><p><strong>边界：</strong>“神经算子 + Krylov preconditioner”已由 ICML 2024 占据；我们的贡献必须来自 BOST 梯度观测、有限孔径失配、可变相机集与严格回退证据。</p></div><div class="actions"><a class="button primary" href="https://openreview.net/forum?id=J0ty1o7nCj">ICML / OpenReview</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">经典强基线</span><h3>Optimal spectral filters</h3><p><strong>读：</strong>如何用 calibration data 预计算谱滤波器、风险函数与参数选择，而不是默认手工 Tikhonov。</p><p><strong>提取：</strong>learned spectral direction 必须同时比较 validation-selected Sobolev、Tikhonov/TSVD 和非神经最优滤波；仅出现 Fourier multiplier 不构成新意。</p></div><div class="actions"><a class="button" href="https://epubs.siam.org/doi/10.1137/100812938">SIAM 正式页</a><a class="button" href="https://epubs.siam.org/doi/10.1137/15M1019581">Near-optimal filters</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">最新预印本</span><h3>Krylov-subspace neural preconditioning</h3><p><strong>读：</strong>静态 residual 预训练后，再用 Krylov 子空间主角度做 solver-aligned 微调。</p><p><strong>边界：</strong>这是 2025 预印本，不是 BOST 证据；它提示下一轮 loss 应关注迭代轨迹和跨几何，而不只看最终 field loss。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2507.15452">开放预印本</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip blue">算子基线</span><h3>DeepONet / NIO</h3><p><strong>读：</strong>branch/trunk、sensor/query 与 inverse operator 组合。</p><p><strong>提取：</strong>固定 sensor branch 为什么不天然适配可变相机集合。</p></div><div class="actions"><a class="button" href="https://doi.org/10.1038/s42256-021-00302-5">DeepONet</a><a class="button" href="https://proceedings.mlr.press/v202/molinaro23a.html">NIO</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip blue">几何对手</span><h3>GINO / VIDON</h3><p><strong>读：</strong>不规则几何到 latent grid、可变传感器置换不变编码。</p><p><strong>提取：</strong>ray-set encoder 必须击败的结构对手。</p></div><div class="actions"><a class="button" href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/70518ea42831f02afc3a2828993935ad-Abstract-Conference.html">GINO</a><a class="button" href="https://arxiv.org/abs/2205.11404">VIDON</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">模型驱动</span><h3>Learned Primal-Dual</h3><p><strong>读：</strong>每层 forward/adjoint、learned primal/dual memory 与 CT 设定。</p><p><strong>提取：</strong>CG-PDNO 不能重复声称“首次把物理算子放进网络”。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/1707.06474">作者公开版</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">非唯一性</span><h3>Deep Null Space Learning</h3><p><strong>读：</strong><code>I-A⁺A</code> 投影、数据一致性与收敛边界。</p><p><strong>提取：</strong>reprojection 好不等于场正确；VN-UQNO 的理论起点。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/1806.06137">开放全文</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">真实稀疏视角</span><h3>NeDF</h3><p><strong>读：</strong>受限 optical access、少角度 density-gradient field 与 nonlinear ray-traced LES。</p><p><strong>提取：</strong>普通 sparse-view neural field 位置已经被占据。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2409.19971">开放全文</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">真实噪声/UQ</span><h3>Bayesian flow tomography</h3><p><strong>读：</strong>physics-informed inverse、posterior uncertainty 与可观测性。</p><p><strong>提取：</strong>不确定度必须校准，而不只是 ensemble 方差。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2108.09247">开放全文</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">真实成像链</span><h3>Unified BOST</h3><p><strong>读：</strong>raw distortion 与 volumetric reconstruction 的统一优化。</p><p><strong>提取：</strong>RI-DualBOST 必须证明跨 pattern 泛化或 uncertainty propagation 的独立价值。</p></div><div class="actions"><a class="button" href="https://doi.org/10.1007/s00348-020-2912-1">正式版</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">公开现实锚点</span><h3>Open-source BOS tomography dataset</h3><p><strong>读：</strong>70 views、NIRT/TV、9-view limited reconstruction 与 held-out validation deflection。</p><p><strong>提取：</strong>第一个真实 loader 与相机留出协议；不要把站内简称当正式方法名。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2508.17120">论文</a><a class="button" href="https://www.datacommons.psu.edu/download/engineering/molnar-et-al-open-source-bos-tomography-dataset-of-high-speed-flow-over-a-flight-body-2025/">数据</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">可靠性邻近</span><h3>A Simple Guard for Learned Optimizers</h3><p><strong>读：</strong>learned optimizer 与 generic fallback 的条件切换、OOD 与收敛边界。</p><p><strong>提取：</strong>“learned + fallback + gate”不是空白；BOST 必须给出自己的可观测门控证据。</p></div><div class="actions"><a class="button" href="https://proceedings.mlr.press/v162/premont-schwarz22a.html">PMLR 正式页</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">OCRRG 理论边界</span><h3>Conformal Risk Control</h3><p><strong>读：</strong>校准样本、风险函数、有限样本控制与交换性假设。</p><p><strong>提取：</strong>当前 one-sided gain bound 只能约束同分布校准语境；任意 morphology/noise OOD 不自动受保证。</p></div><div class="actions"><a class="button primary" href="https://research.google/pubs/conformal-risk-control/">作者项目页</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">条件风险进阶</span><h3>Automatically Adaptive Conformal Risk Control</h3><p><strong>读：</strong>怎样让风险控制随样本难度自适应，而不只依赖人工给定的离散群组。</p><p><strong>提取：</strong>它支持“学习难度条件”的方向，但当前 BOST calibration 太小；v2 先限制为两个物理 stress 支路，不能直接声称任意条件控制。</p></div><div class="actions"><a class="button primary" href="https://proceedings.mlr.press/v258/blot25a.html">AISTATS / PMLR</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">选择后保证</span><h3>Confidence on the Focal</h3><p><strong>读：</strong>当算法先挑出“值得接管”的样本后，为什么普通 marginal coverage 不能自动转成 risk | accept。</p><p><strong>提取：</strong>OCRRG 的下一理论版本要审计 selection-conditional target；coverage 与 accepted harm 必须同时报告。</p></div><div class="actions"><a class="button primary" href="https://academic.oup.com/jrsssb/article/87/4/1239/8113856">JRSS B 正式版</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">OCRRG 结构碰撞</span><h3>Learned CG preconditioners</h3><p><strong>读：</strong>学习预条件器如何进入 CG、solver-aligned 训练与 DeepONet 线性系统预条件。</p><p><strong>提取：</strong>“网络做预条件器”不是新意；BOST 贡献必须来自梯度观测、强 Sobolev、可变相机、可观测风险门与 exact fallback。</p></div><div class="actions"><a class="button" href="https://proceedings.mlr.press/v202/li23e.html">ICML / PMLR</a><a class="button" href="https://epubs.siam.org/doi/10.1137/24M162861X">SIAM 正式页</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">Krylov 理论门</span><h3>Notay · Flexible Conjugate Gradients</h3><p><strong>读：</strong>当预条件器随迭代变化时，为什么要显式正交化搜索方向，以及变化幅度怎样影响收敛。</p><p><strong>提取：</strong>静态 learned multiplier 可继续用标准 PCGLS；只要让网络逐步看 residual，就必须转入 flexible CG 对照，不能沿用标准 PCG 叙事。</p></div><div class="actions"><a class="button primary" href="https://epubs.siam.org/doi/abs/10.1137/S1064827599362314">SIAM 正式页</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">直接碰撞</span><h3>Neural incomplete factorization</h3><p><strong>读：</strong>GNN 如何生成稀疏 incomplete factorization，以及只靠 matrix-vector products 的 stochastic Frobenius loss。</p><p><strong>提取：</strong>可逆/稀疏因子和 solver-level 迭代下降已经有成熟先例；我们的低维频谱参数化必须在 matrix-free BOST、可变相机与跨分辨率上形成差异。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2305.16368">开放全文</a><a class="button" href="https://github.com/paulhausner/neural-incomplete-factorization">代码</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">最新强碰撞</span><h3>UNO-CG</h3><p><strong>读：</strong>Unitary Neural Operator 作为机器学习预条件器，怎样把收敛性质嵌入混合 CG solver。</p><p><strong>提取：</strong>“FNO 风格网络 + CG + convergence by construction”本身已不够新；BOST 方法必须给出梯度测量、几何条件化、前沿保持和真实 held-out camera 的专属证据。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2508.02681">开放全文</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">层析强基线</span><h3>TV-superiorized PCG</h3><p><strong>读：</strong>在保持投影数据一致性下降的同时，用 total variation 作为次级准则改善病态层析图像。</p><p><strong>提取：</strong>thin front 改善若可由非学习 TV superiorization 获得，就不能归功于神经预条件器；它必须进入同 calls 或同 wall-time 对照。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/1807.10151">开放全文</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">有限孔径物理</span><h3>Depth-of-field BOS cone ray</h3><p><strong>读：</strong>f/22 到 f/4 的真实有限孔径实验，以及 cone-ray forward/inverse 如何解释 thin-ray 失配。</p><p><strong>边界：</strong>论文是最直接的物理依据，但数据和代码未公开；不能把阅读证据写成已跑外部 benchmark。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2402.15954">开放全文</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">可解释 BOST 基线</span><h3>Direct RBF-based BOST</h3><p><strong>读：</strong>用连续 RBF 参数化折射率/密度场并直接处理 BOS tomography 的 forward/inverse。</p><p><strong>提取：</strong>RayKernel-DCO 不能只比 voxel ridge；必须证明 operator correction 对连续场重建也有价值。</p></div><div class="actions"><a class="button" href="https://opg.optica.org/oe/fulltext.cfm?uri=oe-30-11-19100">Optics Express 全文</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">算子失配理论</span><h3>Learned Operator Correction</h3><p><strong>读：</strong>forward 与 adjoint correction、收敛条件和 approximation error。</p><p><strong>提取：</strong>不能只学 forward residual；伴随与 inverse stability 也要审计。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2005.07069">作者公开版</a><a class="button" href="https://epubs.siam.org/doi/10.1137/20M1338460">SIAM 正式版</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">多保真碰撞</span><h3>Multifidelity Deep Neural Operators</h3><p><strong>读：</strong>低保真 operator 与少量高保真数据如何学习 residual correlation。</p><p><strong>提取：</strong>“便宜物理 + 少量高保真修正”不是 SRCO 的新意；必须把贡献限定在 BOST 结构、查询协议、噪声门和 inverse 证据。</p></div><div class="actions"><a class="button" href="https://doi.org/10.1103/PhysRevResearch.4.023210">Physical Review Research</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">算子失配综述</span><h3>Inverse Problems with Learned Forward Operators</h3><p><strong>读：</strong>learned restriction 与 simplified-physics correction 两条范式。</p><p><strong>提取：</strong>RigCal 先做低维物理参数，学习模块只能在剩余 discrepancy 有证据时加入。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2311.12528">开放全文</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">失配基准</span><h3>InverseNet（2026 预印本）</h3><p><strong>读：</strong>ideal / mismatched / oracle-corrected / blind-calibration 四情景。</p><p><strong>提取：</strong>复现实验表应分开“模型本身强”与“对 mismatch 稳健”。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2603.04538">预印本</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">条件风险</span><h3>Learn then Test / selective risk</h3><p><strong>读：</strong>有限样本风险控制、coverage 与 reject option。</p><p><strong>提取：</strong>v5b 必须报告 risk | accept，并说明保证依赖的交换性/分布假设。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2110.01052">Learn then Test</a><a class="button" href="https://jmlr.org/papers/v11/el-yaniv10a.html">Risk-Coverage</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">RQ-OGSE 核心</span><h3>Regression Quantiles</h3><p><strong>读：</strong>pinball loss 怎样从条件均值转向条件分位数，以及不同分位对应什么不对称误差代价。</p><p><strong>提取：</strong>RQ0 不再最小化专家 gain 的 MSE，而是直接估计低分位；但小样本下分位估计仍需 OOF 和独立 calibration。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.2307/1913643">Econometrica 原文</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">RQ-OGSE 校准</span><h3>Conformalized Quantile Regression</h3><p><strong>读：</strong>分位模型如何用 held-out residual 做有限样本区间校准，以及异方差下为何比固定宽度区间更有效。</p><p><strong>提取：</strong>可用于构造 per-expert gain lower bound；保证依赖交换性，不能自动覆盖新形态、真实 OERF 或 selection-conditional risk。</p></div><div class="actions"><a class="button primary" href="https://proceedings.neurips.cc/paper_files/paper/2019/hash/5103c3584b063c431bd1268e9b5e76fb-Abstract.html">NeurIPS 正式页</a><a class="button" href="https://proceedings.neurips.cc/paper/2019/file/5103c3584b063c431bd1268e9b5e76fb-Paper.pdf">开放 PDF</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">共享校准边界</span><h3>Blind calibration by convex optimization</h3><p><strong>读：</strong>多个未知信号、未知测量增益、稀疏先验与显式 normalization gauge。</p><p><strong>提取：</strong>共享多场和固定尺度都不是新意；反应场也不自动满足稀疏假设。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/1111.7248">开放全文</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">优化工具边界</span><h3>Variable Projection</h3><p><strong>读：</strong>消去线性变量后的 reduced objective/Jacobian 与约束处理。</p><p><strong>提取：</strong>VarPro 改善优化效率，不会消除 gauge 或凭空制造孔径信息。</p></div><div class="actions"><a class="button" href="https://www.cs.umd.edu/~oleary/software/varpro/varpro.pdf">作者稿</a><a class="button" href="https://www.nist.gov/publications/variable-projection-nonlinear-least-squares-problems">NIST</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">v5d 必读</span><h3>Generalized Cross-Validation</h3><p><strong>读：</strong>hat matrix、effective degrees of freedom 与未知噪声下的预测风险。</p><p><strong>提取：</strong>为什么不同孔径算子不能只比较各自最小训练/CV residual；先把模型复杂度写进分母。</p></div><div class="actions"><a class="button primary" href="https://www.tandfonline.com/doi/abs/10.1080/00401706.1979.10489751">原始论文</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">v5d 必读</span><h3>Morozov Discrepancy Principle</h3><p><strong>读：</strong>已知噪声水平时，选择恰好把 residual 降到噪声尺度的正则。</p><p><strong>提取：</strong>把 v5c 的 truth-scaled sigma 替换成 flow-off 标定，是走向真实 BOST 的必要条件。</p></div><div class="actions"><a class="button primary" href="https://www.mathnet.ru/eng/zvmmf/v8/i2/p295">原文入口</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">碰撞边界</span><h3>Joint blur/model/regularization identification</h3><p><strong>读：</strong>Reeves 与 Mersereau 已用 GCV 联合识别 blur、图像模型和正则参数。</p><p><strong>提取：</strong>“联合选光学参数与正则”不是原创；我们的新意必须来自 BOST 物理、泄漏控制和真实 f-stop 证据。</p></div><div class="actions"><a class="button" href="https://pubmed.ncbi.nlm.nih.gov/18296164/">索引与摘要</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">可辨识性</span><h3>Profile likelihood</h3><p><strong>读：</strong>结构不可辨识、实际不可辨识、完整 profile 与实验设计。</p><p><strong>提取：</strong>局部正曲率不等于全局唯一；结构失败需要新测量而不是更强网络。</p></div><div class="actions"><a class="button" href="https://doi.org/10.1093/bioinformatics/btp358">正式入口</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">物理参数陷阱</span><h3>Model discrepancy in calibration</h3><p><strong>读：</strong>模型误差如何把物理参数估计推向错误值。</p><p><strong>提取：</strong>观测拟合改善不能证明 effective aperture 等于真实入口瞳。</p></div><div class="actions"><a class="button" href="https://doi.org/10.1088/0266-5611/30/11/114007">正式入口</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">强失配对手</span><h3>Learned ReSeSOp</h3><p><strong>读：</strong>不精确 forward 下的 subspace/stripe 更新与 learned inexactness。</p><p><strong>提取：</strong>未来 discrepancy-aware BOST 必须与它比较，不能只打普通 FNO。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2410.23061">开放稿</a><a class="button" href="https://doi.org/10.1088/1361-6420/adef73">正式版</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">2026 碰撞边界</span><h3>Geometry Calibration in Tomography</h3><p><strong>读：</strong>differentiable ray model 如何联合优化几何参数与重建。</p><p><strong>提取：</strong>“联合几何校准 + 重建”已不是空白；新意必须落在 BOST 的 ray-local aperture discrepancy、少查询和严格伴随。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2606.21405">开放预印本</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">神经场强对手</span><h3>Neural refractive-index primitives</h3><p><strong>读：</strong>hash encoding、离散梯度、3D mask 与大规模折射率场表示。</p><p><strong>提取：</strong>更强编码器本身不是 RayKernel-DCO 的创新；未来 inverse 比较不能故意用弱 neural field。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2605.11454">开放预印本</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">SRCO 碰撞</span><h3>Least-change secant updates</h3><p><strong>读：</strong>满足 secant 条件的最小改动、Broyden 更新与结构约束。</p><p><strong>提取：</strong>低秩 residual update 公式不是新意；需要 BOST 结构保持、probe 设计和误差界。</p></div><div class="actions"><a class="button" href="https://epubs.siam.org/doi/10.1137/1021091">SIAM 正式入口</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">2026 最近碰撞</span><h3>Physics-guided operator correction</h3><p><strong>读：</strong>misspecified physics prior 加 learnable correction 的通用框架。</p><p><strong>提取：</strong>“物理算子 + 加性校正”已经被直接提出；SRCO 只能从 strict query、BOST 几何、noise gate 和 inverse consistency 建立差异。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2606.03469">开放预印本</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">主动探针边界</span><h3>OED with correlated observations</h3><p><strong>读：</strong>有限预算下的观测设计、相关误差 covariance 与信息准则。</p><p><strong>提取：</strong>主动选择观测不是新意；BOST probe 必须用 flow-off covariance 做 whitening/加权，并与随机正交同预算比较。</p></div><div class="actions"><a class="button" href="https://epubs.siam.org/doi/10.1137/21M1418666">SIAM 正式页</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">主动算子学习</span><h3>Active acquisition for neural operators</h3><p><strong>读：</strong>主动输入函数、分辨率、极端事件与选择性时间步怎样节约高保真数据。</p><p><strong>边界：</strong>这些方法选训练样本或时间步，不等于在目标 rig 上选校准输入向量；只能启发 acquisition，不能充当 SRCO 的直接先例或胜出证据。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2410.19725">理论边界</a><a class="button" href="https://proceedings.mlr.press/v238/li24k.html">MRA-FNO</a><a class="button" href="https://arxiv.org/abs/2204.02488">极端事件</a><a class="button" href="https://proceedings.mlr.press/v267/kim25m.html">选择时间步</a></div></article>
+      </div>
+    </section>
+
+    <section id="plan" class="band">
+      <div class="section-head"><div><div class="eyebrow">保姆式路径</div><h2>12 周，从 PCGLS 基础走到逐视角独立重复</h2><p>基础薄弱时先把“会说”变成“能手推、能复现、能证伪”。RQ0/RQ1 与 VD0-A 已完成；当前先理解为什么 grouped adjoint 接口正确却没有带来安全迁移，再实现 VD0-B。任何 DeepSets 或 fresh repeat 都必须等显式特征、风险目标、专家动作空间、基线和门槛冻结后再启动。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_view_decomposed_probe_no_go_2026-07-17.md">VD0-A 判决</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_rq_ogse_pcgls_development_hold_2026-07-17.md">RQ / front 判决</a><a class="button" href="document_reader.html?doc=docs%2Fdomain_consistent_bost_operator_research_route_2026-07-16.md">最新研究路线</a></div></div>
+      <div class="week-grid" id="weekGrid">
+        <article class="week-card"><span class="chip">W1</span><h3>线性算子与伴随</h3><ol><li>矩阵、SVD、秩与零空间</li><li>手推 <code>Ax</code> / <code>Aᵀz</code></li><li>完成 dot-product toy</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w1" />能解释伴随为何不是逆矩阵</label></article>
+        <article class="week-card"><span class="chip">W2</span><h3>流体与 BOS 物理链</h3><ol><li>连续方程、物质导数、涡量</li><li>T→ρ→n→deflection</li><li>thin ray、cone ray、DOF</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w2" />能画出有限孔径如何改变每条 ray</label></article>
+        <article class="week-card"><span class="chip">W3-4</span><h3>逆问题强基线</h3><ol><li>least squares / Tikhonov</li><li>CGLS、PCGLS、TV superiorization</li><li>同 calls / wall-clock 账本</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w34" />能手推 PCGLS 的 alpha、beta 与停止账本</label></article>
+        <article class="week-card"><span class="chip">W5</span><h3>频谱与正定预条件</h3><ol><li>FFT、频率半径与 Sobolev multiplier</li><li>condition number / eigen clustering</li><li>Notay Flexible CG 边界</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w5" />能解释为什么 multiplier 必须为正且 solve 内固定</label></article>
+        <article class="week-card"><span class="chip">W6-7 · 已有代码</span><h3>RQ 与风险目标</h3><ol><li>复现 13 个有限动作缓存</li><li>手写 ridge / LP pinball / logistic IRLS</li><li>field、gradient、front、harm 分账</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w67" />能解释 field gain 正为何 front 仍可能恶化 31%</label></article>
+        <article class="week-card"><span class="chip">W8 · 已完成</span><h3>VD0-A grouped adjoint</h3><ol><li>证明逐视角伴随求和等于 pooled</li><li>实现 18 维范数/夹角/抵消统计</li><li>完成 leave-one-family/noise 探针并判 NO-GO</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w8" />能解释“接口通过”和“方法通过”为什么不同</label></article>
+        <article class="week-card"><span class="chip">W9 · 当前</span><h3>VD0-B 二维 front + camera pose</h3><ol><li>逐视角 high-frequency/ridge/anisotropy</li><li>相机姿态与观测成对编码</li><li>同一有限动作库做压力消融</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w9" />能解释二维 front proxy 为什么可能补足三维夹角统计</label></article>
+        <article class="week-card"><span class="chip coral">W10-11 · sealed</span><h3>VD1 集合编码与独立 repeat</h3><ol><li>VD0-B 过门后才训练小型 DeepSets</li><li>冻结后生成全新 seeds</li><li>接入 flow-off covariance / held-out camera</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w1011" />能分开 post-open 开发与真正独立证据</label></article>
+        <article class="week-card"><span class="chip">W12</span><h3>师兄红队与投稿判决</h3><ol><li>碰撞审计与强基线</li><li>失败图、成本和限制</li><li>Go / revise / thesis-only</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w12" />每个摘要句都能指向独立证据</label></article>
+      </div>
+      <div class="alert"><strong>本机训练策略</strong><span>Apple M5 / 32 GB 足够当前阶段：VD0-A 的 102 样本 grouped feature、OOF 和 6 条转移路线只用 5.97 秒、峰值 436 MB；训练集 16 个动作结果直接复用，没有重跑。当前瓶颈是可观测表示、独立数据与物理终点，不是网速；网络只影响论文/数据下载。VD0-B 仍不需要租 GPU，也不应并发跑多个 MPS 训练争抢统一内存。只有显式路线先过门，并需要 64³–128³ 多模型多种子、UNO-CG 大规模公平对照或 <code>photon</code> CUDA renderer 时才租服务器。<a href="document_reader.html?doc=docs%2Flocal_compute_and_server_gate_2026-07-16.md">看算力与服务器门禁</a></span></div>
+    </section>
+
+    <section id="psu-real" class="band">
+      <div class="section-head">
+        <div><div class="eyebrow">真实外部数据 · L3/L4 几何域合同</div><h2>PSU：九视角全 support inverse 已闭合，70 视角 final audit 仍封存</h2><p>九个 support views 已通过 shard、mask、setup、SHA-256、shape、dtype 和上下游 manifest 重验；B1 参数依赖、全量 float64 伴随、固定预算 CGLS 与同 calls 分辨率门禁也已完成。绿色只表示执行或协议完整，红色科学判决来自真实计算域与未完成物理门，不是下载、VPN 或训练速度故障。</p></div>
+        <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_full_support_cgls_and_resolution_gate_2026-07-16.md">读全 support inverse</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_reconstruction_interface_gate_2026-07-16.md">读 B0 重建接口</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b1_parameter_sensitivity_and_heldout_protocol_2026-07-16.md">读敏感性与留出协议</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_geometry_domain_contract_gate_2026-07-16.md">读几何域门禁</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_heldout_camera_protocol_public_summary.json">70-view JSON</a><a class="button" href="https://doi.org/10.26208/1VE2-5C19">官方数据 DOI</a></div>
+      </div>
+      <div class="pipeline" aria-label="PSU 真实数据证据流水线">
+        <div><b>1 · Archive</b><span>ZIP、MAT size、SHA-256、CRC 均通过</span></div>
+        <div><b>2 · Stream</b><span>11 个核心变量按视角低内存转码并全流校验</span></div>
+        <div><b>3 · Masks</b><span>确认 MATLAB 1-based → Python 0-based 适配</span></div>
+        <div><b>4 · A0 census</b><span>49,766,400 条作者 box/cone 区间逐条审计</span></div>
+        <div><b>5 · A1 ablation</b><span>裁入前向 box；保留作者双锥与 fallback</span></div>
+        <div><b>6 · B0-B3</b><span>固定域 → 有限孔径 indicator → mask 政策敏感性</span></div>
+        <div><b>7 · B1 stress</b><span>axis、angle、vertex 共 12 组预声明真实审计</span></div>
+        <div><b>8 · 70-view firewall</b><span>五层 split + 18-view scorer；final audit 仍 sealed</span></div>
+        <div><b>9 · B0 inverse interface</b><span>exact A/Aᵀ + gauge + logical-call contract</span></div>
+        <div><b>10 · Full support inverse</b><span>10,628,822 rays；float64 4-step CGLS 已闭合</span></div>
+        <div><b>11 · Resolution gate</b><span>同 4F+5Aᵀ 下 32³ residual 比 16³ 低 20.39%</span></div>
+        <div><b>12 · Exact compact cache</b><span>相同离散算子；pair 2.225×、CGLS 2.909×</span></div>
+      </div>
+      <div class="metric-grid real-metric-grid">
+        <div class="metric"><b>9 / 9</b><span>视角全部经过哈希、shape、dtype 和 manifest 绑定复核</span></div>
+        <div class="metric"><b>0 · 3 · 6</b><span>三个视角重复出现 full-box miss、cone 域外和 boundary 暴露</span></div>
+        <div class="metric"><b>9.8976%</b><span>A0 pooled cone 路径长度位于 reconstruction box 外</span></div>
+        <div class="metric"><b>2.4282%</b><span>A1 从作者全部混合域路径中移除；只作兼容消融</span></div>
+        <div class="metric"><b>15.1880%</b><span>B1 单叶 cone-box 总路径 / B0 前向 box 总路径</span></div>
+        <div class="metric"><b>1,350</b><span>view 0 active 中心线在 B1 下 miss；作者原流程全部 fallback</span></div>
+        <div class="metric"><b>99.9644%</b><span>QMC-32 active B1 固定分母支持保留率</span></div>
+        <div class="metric"><b>99,617</b><span>QMC-32 strict drop-any-OOD 的 active B1 删除数</span></div>
+        <div class="metric"><b>0%</b><span>axis 反号后的 active hit 与 support IoU</span></div>
+        <div class="metric"><b>48.7807%</b><span>15° B1 保留的 active hit fraction</span></div>
+        <div class="metric"><b>6 blocks</b><span>10/20/30/60/70/80° 是 primary audit 独立运行块</span></div>
+        <div class="metric"><b>p = 1/64</b><span>候选六块全胜时的预声明单侧 exact sign probability</span></div>
+        <div class="metric"><b>2,304 rays</b><span>九视角真实几何接口子集；不按位移或残差选射线</span></div>
+        <div class="metric"><b>7.28e-8 / 9.89e-8</b><span>16³ / 32³ MPS float32 精确伴随缺陷</span></div>
+        <div class="metric"><b>10.63 M rays</b><span>全量 support inverse；每个 logical call 含约 1.70 亿 aperture samples</span></div>
+        <div class="metric"><b>3.46e-15</b><span>全量 32³ float64 random-dual dot defect</span></div>
+        <div class="metric"><b>0.7877 → 0.6271</b><span>16³ 到 32³，同 rays、QMC、dtype 与 4F+5Aᵀ</span></div>
+        <div class="metric"><b>≈5.35 GiB</b><span>32³ 完整 pair 的进程最大 RSS；当前 Mac 可承载</span></div>
+        <div class="metric"><b>5.017 GB</b><span>私有 compact cache；不进入 GitHub Pages</span></div>
+        <div class="metric"><b>74.95 s</b><span>cached 32³ 固定 4-step CGLS optimization</span></div>
+      </div>
+      <div class="two-col">
+        <figure><img src="demo_t16_operator/results/psu_all_view_geometry_audit/psu_all_view_geometry_audit_figure.png" alt="PSU 九视角作者几何域四面板审计，0、3、6 号视角以灰带标记" /><figcaption>A：cone 路径落在 box 外的比例；B：full-box-zero、box miss 但 cone 非零、最终零长度；C：active/inactive 位移上下文；D：掩膜命中坏几何。灰带是 0、3、6 号 NO-GO 视角。确定性射线普查，无统计误差条；不是重建或算法图。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip">AUDITS COMPLETE</span><span class="chip blue">70-VIEW PROTOCOL FROZEN</span><span class="chip coral">FINAL PAYLOAD SEALED</span></div>
+          <h3 style="margin-top:10px;">现在可以相信什么</h3>
+          <ol><li>250,597 条 full-box-zero；其中 182,023 条仍被非零 cone 区间采用</li><li>全九视角 cone 域外路径共 184,128.681 m</li><li>A1 改变 1,879,113 条射线，所有正长度中心线端点回到前向 box</li><li>B0/B1 全量解析不变量通过，但 B1 只保留 B0 总路径 15.1880%</li><li>B2/B3 已完成 8/16/32 点离散支持与五政策审计</li><li>axis 反号使全部公开参考 active hits 丢失；15° 只保留 48.7807%</li><li>全 support float64 inverse 与 32³ reference 已闭合；cached replay 数值等价且快 2.91×</li><li>70/70 视角分区与 18-view 最终评分接口已冻结，audit 仍未打开</li></ol>
+          <p><strong>仍不能声称：</strong>support fit 等于真实 3D truth、held-out camera 泛化、TensorFlow NIRT、NeRIF/FNO/DeepONet superiority、25 度 cone 的物理边界含义。</p>
+          <div class="actions"><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_all_view_geometry_audit%2Fpsu_all_view_geometry_audit_figure.pdf">论文图 PDF</a><a class="button" href="document_reader.html?doc=demo_t16_operator%2Fresults%2Fpsu_all_view_geometry_audit%2Fpsu_all_view_geometry_audit_figure_manifest.json">图清单</a></div>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_clipped_hybrid_audit/psu_clipped_hybrid_audit_figure.png" alt="PSU A1 作者兼容裁剪消融四面板图" /><figcaption>A1 只隔离“裁入前向 box”的机械影响。灰带对应 0、3、6 号改变视角；active 中心线不变，inactive 受影响。图不证明固定物理域或重建改善。</figcaption></figure>
+        <figure><img src="demo_t16_operator/results/psu_fixed_domain_geometry_audit/psu_fixed_domain_geometry_audit_figure.png" alt="PSU B0 前向 box 与 B1 单叶 cone-box 九视角对比图" /><figcaption>B0/B1 是独立解析域合同。B1 保留 B0 命中射线的 46.3%，但只保留总路径 15.188%；星号标记 view 0 存在 active B1 miss。这是中心线普查，不是 25 度 cone 的物理验证。</figcaption></figure>
+      </div>
+      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/psu_b3_policy_audit/psu_b3_policy_sensitivity_figure.png" alt="PSU B2 有限孔径支持和 B3 几何安全掩膜五政策敏感性四联图" /><figcaption>A：active B0/B1 固定分母孔径权重；B：active B1 整射线删除放大；C：inactive B1 对政策高度敏感；D：QMC-32 严格删除集中于部分视角。8/16/32 点设计非嵌套，无置信区间；图不含重建、held-out 或算法优越性。</figcaption></figure>
+      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/psu_b1_parameter_sensitivity/psu_b1_parameter_sensitivity_figure.png" alt="PSU B1 axis、angle 和 vertex 十二变体九视角参数敏感性四面板图" /><figcaption>A：active 中心线命中保留；B：与公开 25° 参考的 active 区间 IoU；C：候选路径占 B0 路径比例；D：逐视角 active hit。axis flip 是语义反例，5 mm 是粗应力测试；图不是参数优化、标定误差或重建结果。</figcaption></figure>
+      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/psu_b0_interface_audit/psu_b0_interface_audit_figure.png" alt="PSU B0 重建接口精确伴随、调用时间、MPS 内存与合成残差四联图" /><figcaption>A：16³/32³ CPU/MPS dot-product defect；B/C：2,304-ray 小子集调用与内存快照；D：合成 Landweber residual。真实几何没有运行 inverse，合成 field-L2 仍为 0.450；图只证明接口闭合。</figcaption></figure>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_streaming_baseline/psu_b0_streaming_baseline_figure.png" alt="PSU 16立方全 support 固定预算 CGLS 伴随、残差、逐视角和三维切片图" /><figcaption>16³ 全 support float64 固定 4 步 CGLS。图证明完整流式 inverse 可运行并降低 support residual；切片没有实验三维真值，不能解释为真实密度场。</figcaption></figure>
+        <figure><img src="demo_t16_operator/results/psu_b0_streaming_resolution/psu_b0_streaming_resolution_figure.png" alt="PSU 16立方与32立方同调用预算分辨率对照图" /><figcaption>32³ 相对 16³ 在九个 support views 全部改善，pooled residual 绝对下降 0.16058。该图只授权“分辨率是 support fit 瓶颈”，不授权 held-out 泛化或算法优越性。</figcaption></figure>
+      </div>
+      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/psu_b0_compact_cache/psu_b0_compact_cache_figure.png" alt="PSU紧凑插值缓存的完整算子计时、CGLS加速、数值等价和证据边界四联图" /><figcaption>A/B：同会话完整 pair 与冻结 4-step CGLS 的 direct/cached 对照；C：forward、adjoint、volume 与 residual 数值差；D：缓存规模和严格边界。缓存只减少重复计算，不改变离散算子、调用预算或科学证据等级。</figcaption></figure>
+      <div class="actions" style="margin:12px 0 2px;"><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_clipped_hybrid_audit%2Fpsu_clipped_hybrid_audit_figure.pdf">A1 图 PDF</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_fixed_domain_geometry_audit%2Fpsu_fixed_domain_geometry_audit_figure.pdf">B0/B1 图 PDF</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b3_policy_audit%2Fpsu_b3_policy_sensitivity_figure.pdf">B2/B3 图 PDF</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b1_parameter_sensitivity%2Fpsu_b1_parameter_sensitivity_figure.pdf">B1 参数图 PDF</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_interface_audit%2Fpsu_b0_interface_audit_figure.pdf">B0 接口图 PDF</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_streaming_baseline%2Fpsu_b0_streaming_baseline_figure.pdf">16³ CGLS 图 PDF</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_streaming_resolution%2Fpsu_b0_streaming_resolution_figure.pdf">分辨率图 PDF</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_compact_cache%2Fpsu_b0_compact_cache_figure.pdf">缓存门禁图 PDF</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_streaming_resolution_public_summary.json">分辨率 JSON</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_compact_cache_public_summary.json">缓存 benchmark</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_cached_reference_public_summary.json">缓存 CGLS 对照</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_heldout_camera_protocol_public_summary.json">70-view 协议 JSON</a></div>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>层级</th><th>空间域</th><th>当前证据</th><th>判决</th></tr></thead>
+          <tbody>
+            <tr><td>A0 author exact</td><td>双锥非零优先；miss 回 box</td><td>0/3/6 视角域不一致；pooled 域外 9.8976%</td><td class="negative">真实训练 NO-GO</td></tr>
+            <tr><td>A1 clipped hybrid</td><td>A0 裁入前向 box；保留 fallback</td><td>移除总路径 2.4282%；正长度端点机械合法</td><td>兼容消融，不是固定域</td></tr>
+            <tr><td>B0 forward box</td><td>显式 <code>t≥0</code> slab 固定计算域</td><td>49,515,803 条命中；端点/长度/有限性不变量通过</td><td class="positive">保守主基线</td></tr>
+            <tr><td>B1 one-nappe cone-box</td><td><code>box ∩ 单叶锥</code>；miss 不回退</td><td>机械通过；B1/B0 路径 15.188%；1,350 active miss</td><td>待 axis/vertex/angle 物理审核</td></tr>
+            <tr><td>B2 aperture indicator</td><td>逐样本 <code>1_D(x)</code>；固定原分母</td><td>8/16/32 点完成；active B1 最低保留 99.9644%</td><td class="positive">离散支持审计完成</td></tr>
+            <tr><td>B3 geometry-safe mask</td><td>keep / empty / 87.5% / 93.75% / any-OOD</td><td>不改标签；strict policy 在 QMC-32 删除 99,617 active B1</td><td>政策未选择；held-out 锁定</td></tr>
+            <tr><td>B4 parameter stress</td><td>axis / 15-35° / vertex ±5 mm</td><td>12 变体九视角完成；axis flip active IoU = 0</td><td>依赖已量化；不得选参</td></tr>
+            <tr><td>H0 70-view protocol</td><td>9 support / 7 dev / 54 final audit</td><td>70/70 无重叠；primary 为六个 rotation blocks</td><td class="positive">协议冻结；payload sealed</td></tr>
+            <tr><td>I0 B0 inverse interface</td><td>scalar perturbation + zero-boundary gauge</td><td>真实几何 16³/32³ exact A/Aᵀ 通过；合成 inverse 闭环</td><td class="positive">接口通过</td></tr>
+            <tr><td>I1 full support CGLS</td><td>10,628,822 rays；QMC16；float64</td><td>dot 3.46e-15；固定 4 步 residual 0.78771</td><td class="positive">数值闭合；无 field truth</td></tr>
+            <tr><td>I2 resolution gate</td><td>16³ vs 32³；同 rays、dtype、4F+5Aᵀ</td><td>0.78771 → 0.62713；九视角全部改善</td><td class="positive">32³ 冻结为低分辨率 reference</td></tr>
+            <tr><td>I3 exact compact cache</td><td>固定 lower corner/fraction/projection/scale</td><td>F/Aᵀ diff 0；pair 2.225×；CGLS 2.909×</td><td class="positive">后续 32³ 快速物理层</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert critical"><strong>这不是网络或 GPU 故障，也不能靠 support 调参绕过</strong><span>真实核心包、九视角产物、B0-B3、B1 参数敏感性、全 support inverse 与 70-view 协议都已完成。现在真正缺的是 axis/vertex/angle 的独立物理来源、development flow-off repeatability、calibration perturbation 和一次严格 final audit；更大 GPU 只在这些门给出正信号后用于扩分辨率和多种子比较。</span></div>
+    </section>
+
+    <section id="reproduce" class="band">
+      <div class="section-head"><div><div class="eyebrow">复现实验</div><h2>RQ、front 风险、强基线与 sealed repeat 分开复核</h2><p>当前最短链从 Sobolev-PCGLS-4、有限候选上限、OGSE 到 RQ 单专家与多目标 front 审计；每个候选保持 4F+4Aᵀ，并把 private sample rows 与公开摘要分开。PSU 几何、全 support inverse 和 exact cache 仍可重放；VD-RR、真正独立 repeat、官方 NIRT、真实 held-out reconstruction 和 <code>photon</code> CUDA 尚未运行。</p></div></div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>当前最短复核</h3>
+          <pre>PYTHONPATH=. .venv/bin/python -m pytest -q
+
+# 当前主线最短复核：上限、可观测特征、专家路由、论文图
+PYTHONPATH=. .venv/bin/python -m pytest -q \
+  demo_t16_operator/test_psu_b0_classical_baselines.py \
+  demo_t16_operator/test_psu_b0_initial_normal_features.py \
+  demo_t16_operator/test_psu_b0_morphology_spectral_experts.py \
+  site_tools/test_run_psu_b0_pcgls_conditional_headroom.py \
+  site_tools/test_run_psu_b0_observable_morphology_probe.py \
+  site_tools/test_run_psu_b0_omse_pcgls_development.py \
+  site_tools/test_run_psu_b0_ogse_pcgls_development.py \
+  site_tools/test_plot_psu_b0_ogse_pcgls_development.py
+PYTHONPATH=. .venv/bin/python site_tools/plot_psu_b0_ogse_pcgls_development.py \
+  --input docs/psu_b0_ogse_pcgls_development_public_summary.json \
+  --output demo_t16_operator/results/psu_b0_ogse_pcgls_development/psu_b0_ogse_pcgls_development_figure.png
+
+# RQ 单专家、field/front 多目标审计与论文图；全部排除 fresh
+PYTHONPATH=. .venv/bin/python -m pytest -q \
+  demo_t16_operator/test_psu_b0_risk_quantile_experts.py \
+  site_tools/test_run_psu_b0_rq_ogse_pcgls_development.py \
+  site_tools/test_run_psu_b0_mo_rq_ogse_pcgls_development.py \
+  site_tools/test_plot_psu_b0_rq_ogse_pcgls_development.py
+PYTHONPATH=. .venv/bin/python site_tools/run_psu_b0_rq_ogse_pcgls_development.py \
+  --config demo_t16_operator/configs/psu_b0_rq_ogse_pcgls_development_v1.json \
+  --development-report private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_development_v1/private_report.json \
+  --probe-private-report private_library/external_datasets/psu_bost_flight_body/b0_observable_morphology_probe_v1/private_report.json \
+  --view-root private_library/external_datasets/psu_bost_flight_body/all_view_geometry_audit \
+  --device mps \
+  --private-output private_library/external_datasets/psu_bost_flight_body/b0_rq_ogse_pcgls_development_v1/private_report.json \
+  --public-output docs/psu_b0_rq_ogse_pcgls_development_public_summary.json
+PYTHONPATH=. .venv/bin/python site_tools/run_psu_b0_mo_rq_ogse_pcgls_development.py \
+  --config demo_t16_operator/configs/psu_b0_mo_rq_ogse_pcgls_development_v1.json \
+  --development-report private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_development_v1/private_report.json \
+  --probe-private-report private_library/external_datasets/psu_bost_flight_body/b0_observable_morphology_probe_v1/private_report.json \
+  --rq-private-report private_library/external_datasets/psu_bost_flight_body/b0_rq_ogse_pcgls_development_v1/private_report.json \
+  --view-root private_library/external_datasets/psu_bost_flight_body/all_view_geometry_audit \
+  --device mps \
+  --private-output private_library/external_datasets/psu_bost_flight_body/b0_mo_rq_ogse_pcgls_development_v1/private_report.json \
+  --public-output docs/psu_b0_mo_rq_ogse_pcgls_development_public_summary.json
+PYTHONPATH=. .venv/bin/python site_tools/plot_psu_b0_rq_ogse_pcgls_development.py \
+  --rq docs/psu_b0_rq_ogse_pcgls_development_public_summary.json \
+  --multi docs/psu_b0_mo_rq_ogse_pcgls_development_public_summary.json \
+  --output demo_t16_operator/results/psu_b0_rq_ogse_pcgls_development/psu_b0_rq_ogse_pcgls_development_figure.png
+
+.venv/bin/python demo_t16_operator/run_v5p_fresh_budget_gate.py
+.venv/bin/python demo_t16_operator/run_v5q_postopen_topology_diagnosis.py
+.venv/bin/python demo_t16_operator/run_v5r_reserved_view_reliability_diagnosis.py
+.venv/bin/python demo_t16_operator/run_v5s_dco_low_rank_screening.py
+.venv/bin/python demo_t16_operator/plot_v5s_dco_low_rank_screening.py
+.venv/bin/python demo_t16_operator/run_v5t_camera_local_tangent_diagnosis.py
+.venv/bin/python demo_t16_operator/plot_v5t_camera_local_tangent_diagnosis.py
+.venv/bin/python demo_t16_operator/run_v5u_calibrated_renderer_residual_screening.py
+.venv/bin/python demo_t16_operator/plot_v5u_calibrated_renderer_residual_screening.py
+.venv/bin/python demo_t16_operator/run_v5v_camera_local_kernel_correction.py
+.venv/bin/python demo_t16_operator/run_v5w_clean_aperture_kernel_screening.py
+.venv/bin/python demo_t16_operator/run_v5x_ray_conditioned_voxel_kernel.py
+.venv/bin/python demo_t16_operator/run_v5y_direct_ray_conditioned_kernel.py
+.venv/bin/python demo_t16_operator/run_v5z_stabilized_direct_ray_kernel.py
+.venv/bin/python demo_t16_operator/run_v6a_ray_kernel_hypernetwork_development.py
+.venv/bin/python demo_t16_operator/run_v6b_protocol_conformance.py
+.venv/bin/python demo_t16_operator/run_v6c_hybrid_gate_secant_postopen.py
+.venv/bin/python demo_t16_operator/run_v6d_df_gated_srco_postopen.py
+PYTHONPATH=. .venv/bin/python -m pytest -q \
+  demo_t16_operator/test_limited_query_calibration.py \
+  demo_t16_operator/test_v6b_protocol_conformance.py \
+  demo_t16_operator/test_v6c_hybrid_gate_secant_postopen.py \
+  demo_t16_operator/test_v6d_df_gated_srco_postopen.py
+.venv/bin/python demo_t16_operator/plot_v5s_v6a_operator_structure_funnel.py
+.venv/bin/python demo_t16_operator/build_v5p_v6a_release_manifest.py
+.venv/bin/python demo_t16_operator/validate_v5p_v6a_release.py
+
+# PSU 下载、schema、数值 loader 与官方入口 preflight；不等于 NIRT 已复现
+.venv/bin/python site_tools/psu_bost_selective_fetch.py --refresh-index
+.venv/bin/python site_tools/psu_bost_selective_fetch.py --fetch-minimal
+PYTHONPATH=. .venv/bin/python -m pytest -q \
+  site_tools/test_psu_bost_selective_fetch.py \
+  site_tools/test_psu_bost_mat_audit.py \
+  site_tools/test_psu_bost_mat_sample.py \
+  site_tools/test_psu_bost_loader_conformance.py \
+  site_tools/test_official_nirt_preflight.py \
+  site_tools/test_build_psu_public_summary.py
+
+# PSU A0/A1/B0/B1/B2/B3 合同实现与公开汇总；私有输入路径不写入网页
+PYTHONPATH=. .venv/bin/python -m pytest -q \
+  site_tools/test_run_psu_all_view_geometry_audit.py \
+  site_tools/test_psu_bost_domain_clipped_geometry.py \
+  site_tools/test_psu_bost_forward_geometry.py \
+  site_tools/test_run_psu_fixed_domain_geometry_audit.py \
+  site_tools/test_psu_bost_aperture_domain.py \
+  site_tools/test_run_psu_aperture_domain_audit.py \
+  site_tools/test_psu_bost_geometry_safe_masks.py \
+  site_tools/test_build_psu_aperture_sensitivity_public_summary.py \
+  site_tools/test_build_psu_b3_policy_public_summary.py \
+  site_tools/test_build_psu_all_view_public_summary.py \
+  site_tools/test_build_psu_clipped_hybrid_public_summary.py \
+  site_tools/test_build_psu_fixed_domain_public_summary.py \
+  site_tools/test_build_psu_b1_parameter_sensitivity_public_summary.py \
+  site_tools/test_validate_psu_heldout_camera_protocol.py \
+  site_tools/test_score_psu_heldout_reprojection.py \
+  site_tools/test_plot_psu_all_view_geometry_audit.py \
+  site_tools/test_plot_psu_clipped_hybrid_audit.py \
+  site_tools/test_plot_psu_fixed_domain_geometry_audit.py \
+  site_tools/test_plot_psu_b3_policy_audit.py
+
+# 同预算经典/PCGLS 强基线；只在 development validation 选参
+PYTHONPATH=. .venv/bin/python -m pytest -q \
+  demo_t16_operator/test_psu_b0_classical_baselines.py \
+  site_tools/test_run_psu_b0_classical_frontier_development.py \
+  site_tools/test_run_psu_b0_strong_spectral_frontier_development.py \
+  site_tools/test_analyze_psu_b0_pcgls_no_go.py \
+  site_tools/test_plot_psu_b0_pcgls_no_go.py
+PYTHONPATH=. .venv/bin/python site_tools/run_psu_b0_strong_spectral_frontier_development.py \
+  --config demo_t16_operator/configs/psu_b0_strong_spectral_frontier_development_v1.json \
+  --development-report private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_development_v1/private_report.json \
+  --fresh-report private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_fresh_v1/private_report.json \
+  --classical-report private_library/external_datasets/psu_bost_flight_body/b0_classical_frontier_development_v1/private_report.json \
+  --view-root private_library/external_datasets/psu_bost_flight_body/all_view_geometry_audit \
+  --device mps \
+  --private-output private_library/external_datasets/psu_bost_flight_body/b0_strong_spectral_frontier_development_v1/private_report.json \
+  --public-output docs/psu_b0_strong_spectral_frontier_development_public_summary.json
+PYTHONPATH=. .venv/bin/python site_tools/analyze_psu_b0_pcgls_no_go.py \
+  --input private_library/external_datasets/psu_bost_flight_body/b0_strong_spectral_frontier_development_v1/private_report.json \
+  --output docs/psu_b0_pcgls_no_go_public_summary.json
+PYTHONPATH=. .venv/bin/python site_tools/plot_psu_b0_pcgls_no_go.py \
+  --input docs/psu_b0_pcgls_no_go_public_summary.json \
+  --output demo_t16_operator/results/psu_b0_pcgls_no_go/psu_b0_pcgls_no_go_figure.png
+
+# 固定 SPD 条件化 PCGLS V1；train/validation/calibration 分账，fresh 完全排除
+PYTHONPATH=. .venv/bin/python -m pytest -q \
+  demo_t16_operator/test_psu_b0_conditioned_pcgls.py \
+  site_tools/test_run_psu_b0_conditioned_pcgls_development.py \
+  site_tools/test_plot_psu_b0_conditioned_pcgls_development.py
+PYTHONPATH=. .venv/bin/python site_tools/run_psu_b0_conditioned_pcgls_development.py \
+  --config demo_t16_operator/configs/psu_b0_conditioned_pcgls_development_v1.json \
+  --development-report private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_development_v1/private_report.json \
+  --view-root private_library/external_datasets/psu_bost_flight_body/all_view_geometry_audit \
+  --device mps \
+  --checkpoint-dir private_library/external_datasets/psu_bost_flight_body/b0_conditioned_pcgls_development_v1/checkpoints \
+  --private-output private_library/external_datasets/psu_bost_flight_body/b0_conditioned_pcgls_development_v1/private_report.json \
+  --public-output docs/psu_b0_conditioned_pcgls_development_public_summary.json
+PYTHONPATH=. .venv/bin/python site_tools/plot_psu_b0_conditioned_pcgls_development.py \
+  --input docs/psu_b0_conditioned_pcgls_development_public_summary.json \
+  --output demo_t16_operator/results/psu_b0_conditioned_pcgls_development/psu_b0_conditioned_pcgls_development_figure.png
+
+# 条件化上限、首伴随形态探针、OMSE 与 OGSE；全部为 post-open development
+PYTHONPATH=. .venv/bin/python -m pytest -q \
+  demo_t16_operator/test_psu_b0_initial_normal_features.py \
+  demo_t16_operator/test_psu_b0_morphology_spectral_experts.py \
+  site_tools/test_run_psu_b0_pcgls_conditional_headroom.py \
+  site_tools/test_run_psu_b0_observable_morphology_probe.py \
+  site_tools/test_run_psu_b0_omse_pcgls_development.py \
+  site_tools/test_run_psu_b0_ogse_pcgls_development.py \
+  site_tools/test_plot_psu_b0_pcgls_conditional_headroom.py \
+  site_tools/test_plot_psu_b0_ogse_pcgls_development.py
+PYTHONPATH=. .venv/bin/python site_tools/run_psu_b0_pcgls_conditional_headroom.py \
+  --config demo_t16_operator/configs/psu_b0_pcgls_conditional_headroom_v1.json \
+  --development-report private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_development_v1/private_report.json \
+  --view-root private_library/external_datasets/psu_bost_flight_body/all_view_geometry_audit \
+  --device mps \
+  --private-output private_library/external_datasets/psu_bost_flight_body/b0_pcgls_conditional_headroom_v1/private_report.json \
+  --public-output docs/psu_b0_pcgls_conditional_headroom_public_summary.json
+PYTHONPATH=. .venv/bin/python site_tools/plot_psu_b0_pcgls_conditional_headroom.py \
+  --input docs/psu_b0_pcgls_conditional_headroom_public_summary.json \
+  --output demo_t16_operator/results/psu_b0_pcgls_conditional_headroom/psu_b0_pcgls_conditional_headroom_figure.png
+PYTHONPATH=. .venv/bin/python site_tools/run_psu_b0_observable_morphology_probe.py \
+  --config demo_t16_operator/configs/psu_b0_observable_morphology_probe_v1.json \
+  --development-report private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_development_v1/private_report.json \
+  --headroom-private-report private_library/external_datasets/psu_bost_flight_body/b0_pcgls_conditional_headroom_v1/private_report.json \
+  --view-root private_library/external_datasets/psu_bost_flight_body/all_view_geometry_audit \
+  --device mps \
+  --private-output private_library/external_datasets/psu_bost_flight_body/b0_observable_morphology_probe_v1/private_report.json \
+  --public-output docs/psu_b0_observable_morphology_probe_public_summary.json
+PYTHONPATH=. .venv/bin/python site_tools/run_psu_b0_ogse_pcgls_development.py \
+  --config demo_t16_operator/configs/psu_b0_ogse_pcgls_development_v2.json \
+  --development-report private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_development_v1/private_report.json \
+  --probe-private-report private_library/external_datasets/psu_bost_flight_body/b0_observable_morphology_probe_v1/private_report.json \
+  --headroom-private-report private_library/external_datasets/psu_bost_flight_body/b0_pcgls_conditional_headroom_v1/private_report.json \
+  --view-root private_library/external_datasets/psu_bost_flight_body/all_view_geometry_audit \
+  --device mps \
+  --private-output private_library/external_datasets/psu_bost_flight_body/b0_ogse_pcgls_development_v2/private_report.json \
+  --public-output docs/psu_b0_ogse_pcgls_development_public_summary.json
+PYTHONPATH=. .venv/bin/python site_tools/plot_psu_b0_ogse_pcgls_development.py \
+  --input docs/psu_b0_ogse_pcgls_development_public_summary.json \
+  --output demo_t16_operator/results/psu_b0_ogse_pcgls_development/psu_b0_ogse_pcgls_development_figure.png
+
+# 真实 PSU support 几何上的旧 learned spectral direction；已被 PCGLS-4 淘汰
+PYTHONPATH=. .venv/bin/python -m pytest -q \
+  demo_t16_operator/test_psu_b0_reaction_phantoms.py \
+  demo_t16_operator/test_psu_b0_residual_risk.py \
+  demo_t16_operator/test_psu_b0_spectral_preconditioner.py \
+  site_tools/test_run_psu_b0_spectral_preconditioner_pilot.py \
+  site_tools/test_plot_psu_b0_spectral_preconditioner_pilot.py \
+  site_tools/test_run_psu_b0_residual_risk_fresh.py \
+  site_tools/test_validate_psu_b0_residual_risk_fresh.py \
+  site_tools/test_plot_psu_b0_residual_risk_fresh.py
+.venv/bin/python -m site_tools.plot_psu_b0_spectral_preconditioner_pilot \
+  --summary docs/psu_b0_spectral_preconditioner_pilot_public_summary.json \
+  --output-stem demo_t16_operator/results/psu_b0_spectral_preconditioner_pilot/psu_b0_spectral_preconditioner_pilot_figure
+
+# OCRRG fresh 不重复运行；下面只从冻结私有报告独立重建聚合和公开图
+PYTHONPATH=. .venv/bin/python site_tools/validate_psu_b0_residual_risk_fresh.py \
+  --private-report private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_fresh_v1/private_report.json \
+  --public-summary docs/psu_b0_residual_risk_fresh_public_summary.json \
+  --preregistration demo_t16_operator/configs/psu_b0_residual_risk_fresh_prereg_v1.json \
+  --output private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_fresh_v1/validation.json
+PYTHONPATH=. .venv/bin/python site_tools/plot_psu_b0_residual_risk_fresh.py \
+  --summary docs/psu_b0_residual_risk_fresh_public_summary.json \
+  --output-prefix demo_t16_operator/results/psu_b0_residual_risk_fresh/psu_b0_residual_risk_fresh_figure
+
+# opened fresh 只作 post-open 诊断：复现部署特征、审计 support-order 契约和两类漏判
+PYTHONPATH=. .venv/bin/python site_tools/analyze_psu_b0_residual_risk_postopen.py \
+  --root . \
+  --preregistration demo_t16_operator/configs/psu_b0_residual_risk_fresh_prereg_v1.json \
+  --development-report private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_development_v1/private_report.json \
+  --fresh-report private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_fresh_v1/private_report.json \
+  --view-root private_library/external_datasets/psu_bost_flight_body/all_view_geometry_audit \
+  --checkpoint-dir private_library/external_datasets/psu_bost_flight_body/b0_spectral_preconditioner_pilot_v1/checkpoints \
+  --device mps \
+  --private-output private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_postopen_diagnosis_v1/private_report.json \
+  --public-output docs/psu_b0_residual_risk_postopen_diagnosis_public_summary.json
+PYTHONPATH=. .venv/bin/python site_tools/plot_psu_b0_residual_risk_postopen.py \
+  --summary docs/psu_b0_residual_risk_postopen_diagnosis_public_summary.json \
+  --output-prefix demo_t16_operator/results/psu_b0_residual_risk_postopen_diagnosis/psu_b0_residual_risk_postopen_diagnosis_figure
+PYTHONPATH=. .venv/bin/python site_tools/screen_psu_b0_multiveto_development.py \
+  --config demo_t16_operator/configs/psu_b0_multiveto_development_screen_v1.json \
+  --development-report private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_development_v1/private_report.json \
+  --postopen-report private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_postopen_diagnosis_v1/private_report.json \
+  --private-output private_library/external_datasets/psu_bost_flight_body/b0_multiveto_development_screen_v1/private_report.json \
+  --public-output docs/psu_b0_multiveto_development_screen_public_summary.json
+
+# 已打开数据上的 exact view-support fallback；只作机制诊断
+PYTHONPATH=. .venv/bin/python -m pytest -q \
+  site_tools/test_run_psu_b0_support_envelope_diagnosis.py \
+  site_tools/test_plot_psu_b0_support_envelope_diagnosis.py
+.venv/bin/python -m site_tools.plot_psu_b0_support_envelope_diagnosis \
+  --summary docs/psu_b0_support_envelope_postopen_public_summary.json \
+  --output-stem demo_t16_operator/results/psu_b0_support_envelope_postopen/psu_b0_support_envelope_postopen_figure</pre>
+          <div class="chips"><span class="chip" id="fullTestCount">709 tests passed</span><span class="chip blue">VD0-A grouped adjoint audited</span><span class="chip blue">PCGLS + headroom + OGSE audited</span><span class="chip blue">RQ + front-risk audited</span><span class="chip blue">B0-B3 + B1 stress real audit</span><span class="chip blue">10.63M-ray inverse complete</span><span class="chip blue">32³ exact cache reference</span><span class="chip blue">70-view split validated</span><span class="chip blue">18-view scorer conformance</span><span class="chip blue">1576 release checks passed</span><span class="chip coral">independent repeat sealed</span><span class="chip coral">final audit sealed</span></div>
+          <p>学习入口：<a href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">讲人话学习日志</a> · <a href="document_reader.html?doc=docs%2Fpsu_b0_rq_ogse_pcgls_development_hold_2026-07-17.md">RQ / front HOLD 判决</a> · <a href="document_reader.html?doc=docs%2Frq_ogse_manuscript_working_draft_2026-07-17.md">论文工作稿</a> · <a href="document_reader.html?doc=docs%2Fdomain_consistent_bost_operator_research_route_2026-07-16.md">域一致 BOST / 神经算子路线</a> · <a href="document_reader.html?doc=docs%2Fpsu_b0_ogse_pcgls_development_no_go_2026-07-16.md">OGSE V2 判决</a> · <a href="document_reader.html?doc=docs%2Fpsu_b0_pcgls_conditional_headroom_2026-07-16.md">条件化上限</a> · <a href="document_reader.html?doc=docs%2Fpsu_b0_pcgls_no_go_2026-07-16.md">PCGLS 强基线</a> · <a href="document_reader.html?doc=docs%2Fpsu_b0_full_support_cgls_and_resolution_gate_2026-07-16.md">全 support CGLS 与分辨率</a> · <a href="document_reader.html?doc=docs%2Fpsu_b0_compact_cache_and_fast_reference_gate_2026-07-16.md">紧凑缓存与快速参考</a></p>
+          <p>实验入口：<a href="demo_t16_operator/run_v5s_dco_low_rank_screening.py">全局低秩 runner</a> · <a href="demo_t16_operator/run_v5x_ray_conditioned_voxel_kernel.py">逐 ray oracle runner</a> · <a href="demo_t16_operator/run_v5z_stabilized_direct_ray_kernel.py">稳定线性 runner</a> · <a href="demo_t16_operator/run_v6a_ray_kernel_hypernetwork_development.py">V6A runner</a> · <a href="demo_t16_operator/limited_query_calibration.py">少查询内核</a> · <a href="demo_t16_operator/run_v6b_protocol_conformance.py">V6B 协议自检</a> · <a href="demo_t16_operator/results/v6b_protocol_conformance/report.json">V6B 报告</a> · <a href="demo_t16_operator/results/v6c_hybrid_gate_secant_postopen/report.json">V6C 正负结果</a> · <a href="demo_t16_operator/results/v6d_df_gated_srco_postopen/report.json">V6D 诊断</a> · <a href="demo_t16_operator/results/v6d_df_gated_srco_postopen/metrics.csv">V6D 逐 rig CSV</a> · <a href="demo_t16_operator/validate_v5p_v6a_release.py">独立 validator</a></p>
+        </div>
+        <figure><img src="demo_t16_operator/results/operator_structure_funnel_v5s_v6a.png" alt="V5S 到 V6A 算子结构漏斗复现图" /><figcaption>每个结果目录含 report、CSV/模型产物与 SHA-256 清单；结构漏斗只读取这些报告，不手填好看的数字。V6A 是 development NO-GO，V6B 尚未构造。</figcaption></figure>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/v6b_protocol_conformance/v6b_protocol_conformance.png" alt="V6B 少查询协议在同模型族与模型外残差上的双侧自检" /><figcaption>左图只证明 27-gate 线性系统和伴随实现正确；右图故意加入模型外低秩残差，K=32 时同预算最小范数校准反超候选。该失败必须保留，不能包装成 V6B 科学胜利。</figcaption></figure>
+        <div class="panel"><h3>这一步真正解锁了什么</h3><ol><li><code>K+1</code> 查询拒绝、K 次 forward / 0 truth-adjoint 记账</li><li>matrix-free forward 与同核 transpose，20 对 dot test</li><li>27-gate recovery、真实残差梯度有限差分与首评分前哈希</li><li>输入维数 64 大于 K=32，避免 secant 在 toy 中看完整基</li></ol><p><strong>仍未解锁：</strong>fresh-A/B/C、外部 renderer、PSU 重建、OERF inverse 或论文优越性。</p></div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/v6d_df_gated_srco_postopen/v6d_df_gated_srco_postopen.png" alt="DF-gated SRCO 在纯结构误差和模型外误差上的后验诊断" /><figcaption>噪声地板让补丁在 in-class 近乎关闭、在模型外近乎全开；图来自第二阶段 post-open toy，不是 fresh V6B、外部 renderer 或 OERF 结果。</figcaption></figure>
+        <div class="panel"><h3>下一次必须换证据域</h3><ol><li>冻结 SRCO、DF 公式与同预算 Broyden/TSVD/LoRA 基线</li><li>随机 probe 对照反应场 POD、thin-front、leverage/D-optimal</li><li>用 flow-off repeats 估 covariance，不再使用 generator-known noise</li><li>先开全新 renderer seed，再开 <code>photon</code>，最后才是 OERF session</li></ol><p><strong>停止规则：</strong>若外部 residual 未超过噪声 2 倍、或 DF gate 不能稳定区分两层，关闭 SRCO 分支。</p></div>
+      </div>
+    </section>
+
+    <section id="senior" class="band">
+      <div class="section-head"><div><div class="eyebrow">何远哲对齐</div><h2>请师兄审核 VD0-A 的负结果与 VD0-B 的最小补充是否贴合组内失败</h2><p>本地 PSU 接口已经能在一次 ray scatter 中暴露逐视角伴随，并以 1.78e-7 复原 pooled；但只用三维伴随范数和夹角没有通过迁移门。现在最关键的问题变成：组内 NeRIF/TDBOST/BOST 的 shock/front 失败，是否会在二维位移图的 ridge/频谱和 camera pose 条件下呈现更可识别的逐视角冲突。</p></div><a class="button" href="document_reader.html?doc=he_yuanzhe_minimum_data_contract.md">完整数据合同</a></div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>二十七个必须确认的问题</h3>
+          <ol>
+            <li>组内 NeRIF/TDBOST/BOST 最常见的失败是否集中在 shock、thin front、低频 plume，还是其他结构？能否给出一两个典型失败 case？</li>
+            <li>现有 forward/adjoint 能否返回逐视角 <code>g₀,ᵥ=AᵥᵀWᵥyᵥ</code>，且这些贡献求和逐值等于 pooled <code>g₀</code>？这会不会增加逻辑 Aᵀ 调用？</li>
+            <li>真实项目中能否固定一个 static PCGLS / NIRT / NeRIF 强基线，并给每个 case 保留从不参与选模的 held-out camera？</li>
+            <li>field-L2、front/shock 位置与宽度、held-out displacement、PIV 补偿误差中，哪一个应是组内认可的主终点？</li>
+            <li>选择性方法允许困难样本精确回退强基线是否有应用价值？最低可接受 coverage 与最大可接受 front harm 分别是多少？</li>
+            <li>能否提供少量 flow-off repeats，用来把 generator-known covariance 换成真实相机噪声，并校准 gain lower bound？</li>
+            <li>能否先封装最小 <code>F</code>、逐视角 <code>Fᵀ/Jᵀ</code>、ray、mask、grid、unit 接口，而不需要先交付完整组内数据？</li>
+            <li>PSU/OERF 从 MATLAB <code>find()</code> 进 Python/TensorFlow 前，mask 是否统一做 <code>-1</code> 的零基适配？</li>
+            <li>作者 cone 公式是双锥，但 B1 必须选单叶；<code>(-1,-0.1,0)</code> 的符号是否真有物理方向意义？</li>
+            <li>vertex <code>(0.06,0.015,0)</code> 与 25° 是来自 CAD/visual hull/经验裁剪，还是有独立物理标定？</li>
+            <li>cone miss 时回退到整个 box 是有意的训练域设计，还是为了避免零长度行的工程处理？</li>
+            <li><code>oob_mat</code> 当前恒为 1：域外有限孔径样本是否本来应该被屏蔽？如果是，固定原样本分母是否符合组内积分约定？</li>
+            <li>输入是 raw image、displacement 还是 phase？有没有 confidence/brightness？</li>
+            <li>能否提供九路 ray/标定、mask、坏点、体网格和单位？</li>
+            <li>现有 NeRIF/TDBOST 是否能调用 <code>F</code> 与 <code>Fᵀ/Jᵀ</code>？</li>
+            <li>flow-off 重复帧是否足以估计逐相机/逐像素 covariance？</li>
+            <li>能否封存一套真实 case/layout，并留一条 camera 只作 audit？</li>
+            <li>主终点优先 field、held-out view、thin-front、PIV correction 还是速度？</li>
+            <li>是否保存 f-number、焦距、物距、焦平面和相机型号？reference 图能否估 PSF/blur？</li>
+            <li>组内 forward 是 thin ray、cone ray、bilinear ray tracing 还是经验 distortion correction？</li>
+            <li>是否有已知密度/温度、自由流边界或其他绝对幅值锚？相机间相对增益怎样标定？</li>
+            <li>组内孔径参数代表机械光圈、有效入口瞳，还是由 PSF 拟合出的 effective aperture？</li>
+            <li>能否把一套 calibration phantom 冻结成每个 fresh rig 最多 K 次 <code>F x</code>、第 K+1 次拒绝的接口？V6B 不请求 truth adjoint。</li>
+            <li>NeRIF/TDBOST 数据、代码与派生指标分别允许本机使用、组内运行、公开摘要到什么范围？</li>
+            <li>PSU 作者九视角的 camera 2/3/4 × rotation 0/50/90 是否也适合作为组内 support/held-out 设计参照？</li>
+            <li>真实实验中应把 rotation、session 还是 timestamp block 作为独立统计单位？同一图内像素明确不作独立重复。</li>
+            <li>若只有 held-out displacement 而没有 3D truth，是否接受 image-space consistency + synthetic field-L2 作为毕设双层终点？</li>
+          </ol>
+          <div class="alert critical"><strong>数据决定证据等级</strong><span>VD0-A 接口门已完成，VD0-B 可以继续在本机补二维 front 与 camera pose 探针；但没有真实逐视角 forward/adjoint、flow-off covariance、held-out camera 与组内失败 case 时，只能形成 synthetic 方法证据，不能宣称 OERF 实验有效。VD0-B 若仍失败就停止 set encoder；没有 aperture 标定不启动 RayKernel-DCO，没有连续 timestamp 不启动 TRAIL-4D。</span></div>
+        </div>
+        <div class="panel">
+          <label for="seniorMessage" style="font-weight:800;">可直接发给师兄</label>
+          <textarea id="seniorMessage" readonly>师兄，我把当前毕设主线进一步收窄成了“BOST 三维重建中的逐视角风险路由 + 固定 SPD-PCGLS”。先说明边界：目前结果来自真实 PSU 相机几何、解析反应场形态和合成噪声，是 post-open development，不是 OERF 实验结果，也没有宣称优于 NeRIF、FNO、UNO-CG 或组内方法。
+
+同预算强基线和有限专家上限已经补齐。Sobolev-PCGLS-4 淘汰了旧 learned steepest-direction；105 个固定 SPD 候选的逐样本 oracle 在 validation/calibration 仍有 +6.52%/+7.22%，说明动作空间有潜力，难点在可观测选择。
+
+我随后完成了 Risk-Quantile 单专家路由。每个样本只允许 baseline 或一个固定专家，并在 train OOF 上比较 mean、lower quantile 与 harm probability。mean-only 路线的 field-L2 gain 达到 +3.321%/+2.907%，但 calibration 有一个 -1.897% field harm。更关键的是，calibration front-F1 均值 -0.261%，相关噪声斜激波最坏下降 -30.876%。加入 field/front quantile 和 harm 双头后，field harm 清零，但 field gain 只有 +1.192%/+1.382%，calibration front 仍为 -0.060%。所以总判是 HOLD，不打开 fresh。
+
+我已经完成 VD0-A。逐视角伴随 g0,v=A_vᵀW_v y_v 在一次 ray scatter 后求和复原 pooled g0，最大相对误差 1.78e-7；整轮只用 5.97 秒、436 MB。但 18 个范数/夹角/抵消统计没有形成安全迁移：pooled+view strict 在 validation/calibration 只有 +2.258%/+1.604%，calibration field harm 6.67%、front mean -1.376%。pure view-conflict 没有严格路线。留一形态从 pooled 的 -0.999% 改善到 +0.199%，留一噪声仍为 -0.347%。因此当前判决是“接口 PASS，伴随冲突表示 NO-GO”，还不能训练 DeepSets。
+
+下一步只做 VD0-B：为每台相机补白化二维位移图的 high-frequency、ridge/梯度集中度和方向各向异性，并把 camera pose/projection basis 与对应观测、伴随贡献成对输入。仍先用低容量 ridge 做 leave-one-family/noise；若不能同时减少 field/front harm，就停止集合编码主线。
+
+想请您重点判断四件事：
+1）组内 NeRIF/TDBOST/BOST 的典型失败是否确实集中在 shock/thin-front；二维位移图里是否能看到某些相机 ridge/频谱异常？
+2）组内 forward/adjoint 能否像本地接口一样返回逐视角 A_vᵀW_v y_v；grouped 计算的额外内存和有限差分伴随应怎样公平记账？
+3）组内认可的主终点应是 field-L2、front 位置/宽度、held-out displacement、PIV 补偿还是速度？
+4）困难样本回退强基线是否有应用价值；最低 coverage 和最大可接受 front harm 大约是多少？
+
+若方向合理，我最小请求：一两个典型失败 case；少量 flow-off repeats；一条 held-out camera 或独立 session；以及 F、逐视角 Fᵀ/Jᵀ、ray、mask、grid、unit 的最小接口。没有实验 3D truth 时，也想确认 synthetic field/front truth + experimental held-out displacement/PIV correction 的双层终点是否可接受。</textarea>
+          <div class="actions" style="margin-top:10px;"><button id="copySenior" class="button primary" type="button">复制消息</button><span id="copyStatus" aria-live="polite" style="color:var(--muted);font-size:12px;"></span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>版本 2026.07.17-y。研究结论以仓库 report/JSON/checksum/validator 为准；页面只做可读映射。VD0-A 已完成逐视角 grouped adjoint：九视角求和复原 pooled 的最大相对误差 1.78e-7，整轮 5.97 秒、436 MB；但 18 维伴随冲突表示拼接 pooled 后只有 +2.258% / +1.604%，calibration harm 6.67%、front mean -1.376%，因此接口 PASS、表示 NO-GO。RQ mean-only 的 +3.321% / +2.907% 与 front 最坏 -30.876% 继续作为基线。下一步只允许 VD0-B 补图像平面 front proxy 与 camera pose；未过 leave-one-family/noise 不训练 DeepSets，不生成 independent repeat。TV/learned-stopping/UNO-CG 公平对照、flow-off covariance 与真实 held-out reconstruction 仍未完成。受限论文、组内数据、逐射线索引、私有 cache、checkpoint 和重建体不进入 GitHub Pages。</p>
+  </footer>
+  <script>
+    (() => {
+      const evidenceButtons = [...document.querySelectorAll('[data-evidence-filter]')];
+      const evidenceCards = [...document.querySelectorAll('.evidence-card')];
+      evidenceButtons.forEach(button => button.addEventListener('click', () => {
+        evidenceButtons.forEach(item => item.classList.toggle('active', item === button));
+        const filter = button.dataset.evidenceFilter;
+        evidenceCards.forEach(card => card.classList.toggle('hidden', filter !== 'all' && card.dataset.state !== filter));
+      }));
+
+      const search = document.getElementById('candidateSearch');
+      const ready = document.getElementById('candidateReady');
+      const candidateCards = [...document.querySelectorAll('.candidate-card')];
+      function renderCandidates() {
+        const query = search.value.trim().toLowerCase();
+        let visible = 0;
+        candidateCards.forEach(card => {
+          const matchesQuery = !query || card.dataset.search.toLowerCase().includes(query) || card.textContent.toLowerCase().includes(query);
+          const matchesReady = ready.value === 'all' || card.dataset.ready === ready.value;
+          const show = matchesQuery && matchesReady;
+          card.classList.toggle('hidden', !show);
+          if (show) visible += 1;
+        });
+        document.getElementById('candidateEmpty').hidden = visible > 0;
+      }
+      search.addEventListener('input', renderCandidates);
+      ready.addEventListener('change', renderCandidates);
+
+      const storageKey = 'oerf-general-operator-roadmap-v1';
+      let stored = {};
+      try { stored = JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch (_) { stored = {}; }
+      document.querySelectorAll('[data-week]').forEach(input => {
+        input.checked = Boolean(stored[input.dataset.week]);
+        input.closest('.checkline').classList.toggle('checked', input.checked);
+        input.addEventListener('change', () => {
+          stored[input.dataset.week] = input.checked;
+          input.closest('.checkline').classList.toggle('checked', input.checked);
+          localStorage.setItem(storageKey, JSON.stringify(stored));
+        });
+      });
+
+      document.getElementById('copySenior').addEventListener('click', async () => {
+        const text = document.getElementById('seniorMessage').value;
+        try {
+          await navigator.clipboard.writeText(text);
+          document.getElementById('copyStatus').textContent = '已复制';
+        } catch (_) {
+          document.getElementById('seniorMessage').select();
+          document.getElementById('copyStatus').textContent = '请按 Command+C 复制';
+        }
+      });
+    })();
+  </script>
+  <script src="site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

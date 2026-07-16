@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BOST System Error Bridge | OERF BOST</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f6;
+      --panel: #ffffff;
+      --ink: #1d2328;
+      --muted: #64727d;
+      --line: #d8e0df;
+      --teal: #16756f;
+      --blue: #315f93;
+      --gold: #9a6718;
+      --red: #a6483c;
+      --soft: #eef7f4;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    header, main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px clamp(18px, 4vw, 46px);
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f2f8f6);
+    }
+    h1 { margin: 16px 0 10px; font-size: clamp(30px, 4vw, 52px); line-height: 1.08; }
+    h2 { margin: 34px 0 12px; font-size: 26px; }
+    h3 { margin: 20px 0 8px; font-size: 18px; }
+    p { margin: 8px 0; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { background: #eef2f3; padding: 2px 5px; border-radius: 5px; }
+    ul, ol { padding-left: 22px; }
+    li { margin: 6px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 11px 12px;
+    }
+    th { background: #edf5f2; color: #24433f; font-size: 13px; }
+    td { font-size: 14px; }
+    .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .button, .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .tag { background: var(--soft); color: var(--teal); border-color: #cde2dc; }
+    .lead { max-width: 960px; color: var(--muted); font-size: 17px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 16px;
+    }
+    .card strong { color: var(--teal); }
+    .note {
+      border-left: 4px solid var(--teal);
+      background: #fff;
+      padding: 12px 14px;
+      margin: 16px 0;
+    }
+    .metric {
+      font-size: 34px;
+      color: var(--teal);
+      font-weight: 800;
+      display: block;
+      line-height: 1;
+    }
+    .warn { color: var(--red); font-weight: 700; }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <a class="button" href="./index.html">返回总工作台</a>
+      <a class="button" href="document_reader.html?doc=data_request_checklist.md">数据请求清单</a>
+      <a class="button" href="./paper_library/index.html">打开论文库</a>
+      <a class="button" href="document_reader.html?doc=paper_to_demo_map.md">论文到 demo 映射</a>
+    </div>
+    <h1>BOST 真实数据质量与系统误差桥梁</h1>
+    <p class="lead">这页把 NeRIF / PIV-BOST / 4D BOST 之外的一个关键问题单独拎出来：如果何远哲师兄给一小份真实 BOST 或 PIV-BOST 数据，你不能只问“能不能训练网络”，而要先判断 view geometry、mask/ROI、spatial resolution、calibration、位移场和重投影误差是否可信。</p>
+    <div class="grid">
+      <div class="card"><span class="metric">6</span><p>真实数据质量层：几何、mask、位移、分辨率、标定、权限。</p></div>
+      <div class="card"><span class="metric">8</span><p>核心支撑论文：BOS 综述、方向光线、光学系统、telecentric TBOS、CTC 分辨率、view registration。</p></div>
+      <div class="card"><span class="metric">3</span><p>本科可交付：manifest 校验、view health report、resolution / reprojection error 图。</p></div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>总判断</h2>
+      <div class="note">
+        <p><strong>给师兄看的说法：</strong>我可以把真实 BOST 数据接入拆成一个数据质量控制层：先检查每个视角的几何、mask、位移场、背景纹理、空间分辨率和重投影误差，再决定是否跑 NeRIF、传统 baseline、PIV-BOST 补偿或 4D 低秩重构。</p>
+      </div>
+      <p>这条线非常适合本科毕业设计的“稳态贡献”：即使暂时拿不到完整内部代码，也能帮组里把数据接口和误差报告做清楚。它不替代何远哲主线，而是让主线更容易落到真实实验数据上。</p>
+    </section>
+
+    <section>
+      <h2>真实数据先查什么</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>层级</th>
+            <th>要检查的字段</th>
+            <th>可能造成的问题</th>
+            <th>可做成的图或表</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>view geometry</strong></td>
+            <td>相机外参、内参、视线方向、光路是否 pinhole / telecentric / endoscopic、自定义标定。</td>
+            <td>重建坐标系错位；少视角网络看似收敛但物理位置偏。</td>
+            <td>视角方向球面图、camera-to-volume 示意图、有效视域交集。</td>
+          </tr>
+          <tr>
+            <td><strong>mask / ROI</strong></td>
+            <td>火焰/喷流区域、背景有效区、遮挡、窗口边界、坏视角。</td>
+            <td>网络把无效背景当信号；传统 baseline 被边界伪影主导。</td>
+            <td>每视角 mask 覆盖率、坏点比例、ROI 一致性热图。</td>
+          </tr>
+          <tr>
+            <td><strong>displacement field</strong></td>
+            <td>位移算法、相关窗口/光流参数、confidence、outlier mask、单位。</td>
+            <td>位移噪声直接进入折射率梯度；PIV-BOST 补偿误差被放大。</td>
+            <td>位移幅值图、confidence 图、bad-vector ratio、reprojection residual。</td>
+          </tr>
+          <tr>
+            <td><strong>spatial resolution</strong></td>
+            <td>视角数、背景纹理尺度、光学系统放大率、景深、重构网格。</td>
+            <td>高频结构不是被算法“重构差”，而是系统本身不可分辨。</td>
+            <td>resolution phantom、edge/line-spread 曲线、view-count vs resolution 表。</td>
+          </tr>
+          <tr>
+            <td><strong>calibration / forward model</strong></td>
+            <td>光线模型、折射路径近似、Gladstone-Dale 常数、密度/温度转换假设。</td>
+            <td>物理量单位和尺度不可信；真实数据无法和论文指标对齐。</td>
+            <td>重投影误差分布、单位转换链、参数敏感性 tornado 图。</td>
+          </tr>
+          <tr>
+            <td><strong>permission</strong></td>
+            <td>能否写论文、能否公开图、能否给师兄外的人看、是否需要匿名化。</td>
+            <td>做了结果但不能用于毕业论文或组会材料。</td>
+            <td>manifest 中的 public / internal / confidential 标记。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>论文怎么读</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>论文</th>
+            <th>抽取重点</th>
+            <th>接到你的毕设</th>
+            <th>入口</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Raffel 2015</strong><br />Background-oriented schlieren techniques</td>
+            <td>BOS 灵敏度、位移测量、实验限制、误差来源。</td>
+            <td>第 2 章 BOS/BOST 实验基础；M3C 的 error taxonomy。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fraffel_bos_techniques_2015_springer_ccby.pdf">本地 PDF</a> / <a href="https://doi.org/10.1007/s00348-015-1927-5">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Li et al. 2026</strong><br />Directional rays BOS spatial resolution</td>
+            <td>directional rays、空间分辨率、背景光路设计、光线方向约束。</td>
+            <td>解释为什么 BOST 的上限不只由神经网络决定，还受光路和背景成像约束。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fdirectional_rays_bos_li_2025_arxiv2509.04992.pdf">本地 PDF</a> / <a href="https://doi.org/10.1007/s00348-026-04190-6">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Zhou et al. 2025</strong><br />Optimization of optical systems for BOS</td>
+            <td>entocentric vs telecentric、景深、放大率、边界层 BOS、光学系统优化。</td>
+            <td>真实 OERF 数据接入前，先问系统相机模型和光学约束；不要默认 pinhole。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fbos_optical_system_optimization_zhou_2025_iop.pdf">本地 PDF</a> / <a href="https://doi.org/10.1088/1361-6501/ad8944">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Zigunov 2025</strong><br />Telecentric single-camera BOS tomography</td>
+            <td>single-camera、telecentric、rotating nozzle、parallel-ray density tomography、TRON-BOS 数据。</td>
+            <td>作为低风险 geometry/data interface 参照；不要把它当 OERF 九视角 BOST 替代品。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fsingle_camera_bos_tomography_zigunov_2025.pdf">本地 PDF</a> / <a href="https://doi.org/10.1007/s00348-025-04052-7">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Yu/Liu/Cai 2017</strong><br />CTC spatial resolution quantification</td>
+            <td>三维层析空间分辨率、phantom、resolution metric。</td>
+            <td>虽然是 CTC，不是 BOST，但非常适合把“重构质量”从 L2 扩展到 resolution。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fctc_spatial_resolution_yu_cai_2017_oe_ccby.pdf">本地 PDF</a> / <a href="https://doi.org/10.1364/OE.25.024093">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Liu/Cai 2019-2020</strong><br />view registration / endoscopic tomography</td>
+            <td>view registration、单相机内窥、标定模型、真实几何误差。</td>
+            <td>把 M3C 写成“真实系统误差工具”时，直接连到 OERF 计算成像前史。</td>
+            <td><a href="https://doi.org/10.1364/AO.58.002596">view registration DOI</a> / <a href="https://doi.org/10.1364/JOSAB.396415">calibration DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>BOS 25-year review / NASA BOS engineering</strong></td>
+            <td>真实实验系统、背景图案、flight / ground-test / wind-tunnel 应用边界。</td>
+            <td>给开题第 1 章补工程可信度：BOS/BOST 是实验诊断工具，不只是图像算法。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fbos_25_years_review_nasa_2025.pdf">本地 PDF</a> / <a href="https://doi.org/10.2514/1.J065669">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>TRON-BOS Zenodo data</strong></td>
+            <td>公开数据包、文件体量、MATLAB pipeline、license、metadata。</td>
+            <td>无组内数据时，可用它学习 manifest 和数据体量规划；不下载 GB 级数据进网页。</td>
+            <td><a href="https://zenodo.org/records/18118110">Zenodo</a> / <a href="document_reader.html?doc=open_data_code_benchmark_map.md">本地数据地图</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>本科可交付版本</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>M3C-1 数据 manifest 校验</h3>
+          <p>把真实或公开 BOST 数据整理成统一 manifest：图像路径、相机参数、mask、位移场、单位、权限、可公开字段。缺字段时不崩溃，而是生成 checklist。</p>
+        </div>
+        <div class="card">
+          <h3>M3C-2 view health report</h3>
+          <p>每个视角输出背景纹理、位移幅值、bad-vector ratio、mask 覆盖率和重投影残差。师兄能一眼看到哪个 view 可信、哪个 view 应该剔除。</p>
+        </div>
+        <div class="card">
+          <h3>M3C-3 resolution / forward-model sanity check</h3>
+          <p>用 phantom 或 synthetic field 扫 view count、noise、grid size 和光线模型，报告空间分辨率、重构误差和高频结构可信边界。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>问何远哲师兄的问题</h2>
+      <ol>
+        <li>组内真实 BOST/PIV-BOST 数据的相机模型更接近 pinhole、telecentric、endoscopic，还是自定义标定？</li>
+        <li>已有 displacement field 是互相关、光流、DaVis/PIVlab/OpenPIV，还是组内自写算法？是否有 confidence 或 outlier mask？</li>
+        <li>真实数据里最大误差通常来自位移提取、view registration、mask/ROI、光学窗口、空间分辨率，还是物性转换？</li>
+        <li>师兄更需要我做算法复现，还是先做数据 manifest、view health report 和误差图？</li>
+        <li>论文里能公开哪些真实数据图：原始背景、扰动图、位移场、mask、切片、指标，还是只能画示意图？</li>
+        <li>如果做 PIV-BOST，补偿发生在 raw image、displacement/correlation、calibration/disparity，还是 velocity-vector layer？</li>
+        <li>如果做 4D BOST，是否已有 frame-wise quality flag、bad frame、时序同步误差或 rank/noise/frame-count 的评估需求？</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>写作边界</h2>
+      <div class="note">
+        <p><span class="warn">不要写成：</span>我解决了真实 OERF BOST 系统误差。</p>
+        <p><strong>应该写成：</strong>我建立了一个面向 BOST/NeRIF 数据接入的系统误差检查与质量报告框架，用于在算法重构前量化 view geometry、mask、位移场、空间分辨率和重投影一致性。</p>
+      </div>
+      <p>这个边界能保护你的毕业设计：贡献不是“空泛 AI”，也不是“完整复现实验系统”，而是一个真实课题组可能会用到的前处理和质量控制工具。</p>
+    </section>
+  </main>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

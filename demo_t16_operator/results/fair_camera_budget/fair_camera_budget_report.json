@@ -1,0 +1,95 @@
+{
+  "status": "completed_equal_camera_budget_red_team_audit",
+  "experiment": "t16_equal_camera_budget_red_team_v2d",
+  "environment": {
+    "python": "3.11.5",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "torch": "2.13.0",
+    "device": "cpu"
+  },
+  "protocol": {
+    "budget_rule": "K-1 support views reconstruct; one Q_fit view calibrates or joins direct reconstruction",
+    "audit_rule": "one predeclared camera outside support and Q_fit is locked as Q_audit and never fits alpha or selects a method",
+    "fixed_query_index": 4,
+    "audit_query_index": 3,
+    "query_strategies": [
+      "fixed",
+      "random",
+      "max_gap",
+      "adaptive_energy"
+    ],
+    "field_truth_in_inference": false,
+    "field_truth_for_retrospective_metrics_only": true,
+    "source_split_view_labels_reused_for_fields_only": true,
+    "training_mask_matches_controlled_evaluation": false
+  },
+  "design": {
+    "independent_test_fields": 88,
+    "model_seed_count": 3,
+    "total_budgets": [
+      4,
+      6,
+      8
+    ],
+    "query_strategy_count": 4,
+    "methods": [
+      "support_physics_lift",
+      "union_physics_lift",
+      "support_fit_base",
+      "union_support_fit_direct",
+      "learned_query_correction",
+      "numeric_query_null_update"
+    ],
+    "sample_method_rows": 19008,
+    "cluster_rows_after_seed_collapse": 6336,
+    "bootstrap_replicates": 20000
+  },
+  "verdicts": [
+    {
+      "total_budget": 4,
+      "fixed_learned_gain_vs_support_pct": 1.1219123074645876,
+      "adaptive_learned_gain_vs_support_pct": 1.0393023534631682,
+      "fixed_over_adaptive_retention": 1.0794859683769078,
+      "minimum_fixed_retention": 0.8,
+      "retention_ratio_point_threshold_pass": true,
+      "minimum_same_budget_gain_pct": 5.0,
+      "same_budget_union_direct_pass": false,
+      "current_checkpoint_path_pass": false
+    },
+    {
+      "total_budget": 6,
+      "fixed_learned_gain_vs_support_pct": 1.3698907340286346,
+      "adaptive_learned_gain_vs_support_pct": 1.3673654663711647,
+      "fixed_over_adaptive_retention": 1.0018468125161677,
+      "minimum_fixed_retention": 0.8,
+      "retention_ratio_point_threshold_pass": true,
+      "minimum_same_budget_gain_pct": 5.0,
+      "same_budget_union_direct_pass": false,
+      "current_checkpoint_path_pass": false
+    },
+    {
+      "total_budget": 8,
+      "fixed_learned_gain_vs_support_pct": 1.1767674999715507,
+      "adaptive_learned_gain_vs_support_pct": 1.1767674999715507,
+      "fixed_over_adaptive_retention": 1.0,
+      "minimum_fixed_retention": 0.8,
+      "retention_ratio_point_threshold_pass": true,
+      "minimum_same_budget_gain_pct": 5.0,
+      "same_budget_union_direct_pass": false,
+      "current_checkpoint_path_pass": false
+    }
+  ],
+  "scientific_status": "PILOT_ONLY_CURRENT_CHECKPOINT_PATH_FAILS",
+  "claims_boundary": [
+    "The result is an equal-reconstruction-budget test inside the existing 8x16x16 linear synthetic forward model.",
+    "K is the reconstruction-view budget; the locked Q_audit camera is an additional evaluation instrument, so installed-camera count is K+1.",
+    "Q_audit is separate from Q_fit, but field truth remains available for retrospective synthetic metrics.",
+    "The independent unit is the three-dimensional field; model seeds are collapsed before bootstrap intervals.",
+    "The fixed camera is fixed for this canonical nine-view layout and is not yet an OERF hardware placement.",
+    "The numerical query-null update is a linear baseline, not a nonlinear ray-geometry solver.",
+    "Its ridge and correction cap are fixed diagnostics rather than validation-tuned numerical baselines.",
+    "The reused checkpoints were trained with the earlier view-dropout distribution, not the controlled fixed-query masks; a training-matched rerun is required before a final algorithm verdict.",
+    "The 88 fields have informed earlier v1-v2c development and therefore remain an exploratory development audit rather than a locked final test.",
+    "Passing this audit would not remove the independent-forward and real-data requirements."
+  ]
+}

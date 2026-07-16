@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>毕设选题详情档案 | OERF 毕设导航</title>
+  <link rel="icon" href="data:," />
+  <style>
+    :root {
+      --bg: #f6faf8;
+      --panel: #ffffff;
+      --ink: #203038;
+      --muted: #61727c;
+      --line: #d7e2df;
+      --green: #16756f;
+      --blue: #315f93;
+      --amber: #9a6818;
+      --red: #9e4338;
+      --teal-soft: #e8f3f0;
+      --blue-soft: #eaf0f7;
+      --amber-soft: #f8f0dc;
+      --red-soft: #f8ece9;
+      --shadow: 0 18px 46px rgba(27, 57, 51, .09);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(22, 117, 111, .12), transparent 360px),
+        var(--bg);
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: url("./assets/backgrounds/oerf-refractive-field.png");
+      background-size: min(980px, 92vw) auto;
+      background-position: right -80px top 24px;
+      background-repeat: no-repeat;
+      opacity: .10;
+      mix-blend-mode: multiply;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header, main {
+      position: relative;
+      width: min(1240px, calc(100vw - 36px));
+      margin: 0 auto;
+    }
+    header { padding: 30px 0 18px; }
+    .topbar, .button-row, .topic-switcher, .pill-row, .resource-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .button, .nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.86);
+      color: var(--ink);
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button.primary { background: var(--green); border-color: var(--green); color: #fff; }
+    .button:hover, .nav-link:hover { text-decoration: none; filter: brightness(.98); }
+    h1 {
+      margin: 18px 0 10px;
+      max-width: 980px;
+      font-size: clamp(30px, 4.7vw, 58px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+    .subtitle {
+      max-width: 980px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+    select, input {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 12px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 14px;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 275px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+      padding: 12px 0 56px;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+    .sidebar {
+      position: sticky;
+      top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.88);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .side-head {
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid var(--line);
+      background: #f0f7f4;
+    }
+    .side-head strong { display: block; }
+    .side-head span { display: block; color: var(--muted); font-size: 13px; margin-top: 3px; }
+    .topic-list {
+      display: grid;
+      max-height: calc(100vh - 150px);
+      overflow: auto;
+      padding: 8px;
+      gap: 6px;
+    }
+    .nav-link {
+      justify-content: flex-start;
+      width: 100%;
+      min-height: 42px;
+      padding: 8px 10px;
+      font-size: 13px;
+      line-height: 1.25;
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+    .nav-link.active {
+      background: var(--teal-soft);
+      border-color: #b9dad3;
+      color: var(--green);
+    }
+    .content { display: grid; gap: 14px; }
+    .panel, .hero-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.92);
+      box-shadow: var(--shadow);
+    }
+    .hero-panel {
+      padding: clamp(18px, 3vw, 28px);
+      overflow: hidden;
+    }
+    .topic-id {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      min-height: 34px;
+      border-radius: 8px;
+      background: var(--green);
+      color: #fff;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+    .topic-title { margin: 0; font-size: clamp(26px, 3.6vw, 42px); line-height: 1.15; }
+    .verdict {
+      margin: 12px 0 0;
+      font-size: 17px;
+      color: #43545c;
+    }
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .score-tile {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fbfa;
+      padding: 12px;
+      min-height: 104px;
+    }
+    .score-tile span { display: block; color: var(--muted); font-size: 13px; }
+    .score-tile b { display: block; margin-top: 5px; font-size: 24px; color: var(--green); }
+    .bar {
+      height: 7px;
+      border-radius: 999px;
+      background: #e7efed;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .bar i { display: block; height: 100%; width: var(--w); background: var(--green); border-radius: inherit; }
+    .bar.risk i { background: var(--red); }
+    .panel { padding: 18px; }
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 21px;
+      line-height: 1.25;
+    }
+    .panel p { margin: 0 0 10px; color: var(--muted); }
+    .section-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .triple-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .mini {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfc;
+      padding: 13px;
+      min-height: 100%;
+    }
+    .mini h3 { margin: 0 0 8px; font-size: 16px; }
+    ul, ol { margin: 8px 0 0; padding-left: 22px; color: var(--muted); }
+    li { margin-bottom: 7px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #f8fbfa;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .pill.core { background: var(--teal-soft); color: var(--green); border-color: #cce4dc; }
+    .pill.high { background: var(--blue-soft); color: var(--blue); border-color: #d5e2f2; }
+    .pill.medium { background: var(--amber-soft); color: var(--amber); border-color: #ead5ac; }
+    .pill.low { background: var(--red-soft); color: var(--red); border-color: #edc8c0; }
+    .reading-list, .video-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+      gap: 10px;
+    }
+    .video-list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+    .reading-card, .video-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 13px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .reading-card h3, .video-card h3 {
+      margin: 0 0 5px;
+      font-size: 16px;
+      line-height: 1.3;
+    }
+    .reading-card p, .video-card p { margin: 0 0 8px; }
+    .reading-card .resource-actions, .video-card .button { margin-top: auto; }
+    .reading-card h3, .video-card h3, .pill, .button { overflow-wrap: anywhere; }
+    .resource-kind {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 8px;
+      border: 1px solid #d5e1de;
+      border-radius: 999px;
+      background: #f6faf8;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .topic-map {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .map-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfc;
+      padding: 12px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .map-card b {
+      display: block;
+      color: var(--green);
+      font-size: 13px;
+    }
+    .map-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .map-card .button {
+      align-self: flex-start;
+      min-height: 31px;
+      padding: 5px 8px;
+      font-size: 12px;
+      margin-top: auto;
+    }
+    .study-ladder {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 9px;
+      margin-top: 10px;
+    }
+    .ladder-step {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfc;
+      padding: 11px;
+      min-width: 0;
+    }
+    .ladder-step b {
+      display: block;
+      color: var(--green);
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    .ladder-step span {
+      color: #53656d;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .read-route {
+      border-top: 1px solid var(--line);
+      margin-top: 8px;
+      padding-top: 8px;
+      color: #42545c;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .read-route b {
+      color: var(--green);
+    }
+    .section-note {
+      margin: -2px 0 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .route {
+      counter-reset: route;
+      display: grid;
+      gap: 9px;
+      margin-top: 10px;
+    }
+    .route li {
+      list-style: none;
+      position: relative;
+      min-height: 46px;
+      margin: 0;
+      padding: 11px 12px 11px 50px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfc;
+    }
+    .route li::before {
+      counter-increment: route;
+      content: counter(route);
+      position: absolute;
+      left: 12px;
+      top: 11px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .empty-state {
+      border: 1px dashed #b7c7c3;
+      border-radius: 8px;
+      padding: 18px;
+      background: rgba(255,255,255,.72);
+      color: var(--muted);
+    }
+    footer {
+      width: min(1240px, calc(100vw - 36px));
+      margin: 0 auto 34px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .topic-list { max-height: none; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .score-grid, .triple-grid, .topic-map, .study-ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 680px) {
+      header, main, footer { width: min(100vw - 24px, 1240px); }
+      .score-grid, .section-grid, .triple-grid, .topic-map, .study-ladder { grid-template-columns: 1fr; }
+      .topic-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-height: 260px;
+      }
+      .nav-link {
+        min-height: 38px;
+        padding: 7px 8px;
+        font-size: 12px;
+      }
+      .hero-panel, .panel { padding: 15px; }
+      body::before { background-size: 760px auto; background-position: right -210px top 80px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <a class="button" href="./index.html#topics">返回选题库</a>
+      <a class="button" href="./topic_execution_playbook.html">执行手册</a>
+      <a class="button" href="./he_yuanzhe_sync_dashboard.html">何远哲同步线</a>
+      <a class="button" href="./paper_library/index.html">论文库</a>
+    </div>
+    <h1>毕设选题详情档案</h1>
+    <p class="subtitle">每个题目都按同一套标准展开：研究摘要、通俗物理解释、执行路径、难度、软硬件、知识基础、核心文献和高相关学习入口。适合你自己定题，也适合发给师兄快速挑问题。</p>
+    <div class="topic-switcher" style="margin-top:16px;">
+      <label for="topicSelect"><strong>快速切换：</strong></label>
+      <select id="topicSelect"></select>
+      <input id="topicSearch" type="search" placeholder="筛选题目，例如 PIV、4D、低成本" />
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="side-head">
+        <strong id="topicCount">候选题档案</strong>
+        <span>点击切换详情，筛选不会删除内容。</span>
+      </div>
+      <nav id="topicNav" class="topic-list" aria-label="选题导航"></nav>
+    </aside>
+
+    <section id="topicContent" class="content" aria-live="polite"></section>
+  </main>
+
+  <footer>内容基于本地 OERF/He/BOST 调研库整理。论文摘要均为阅读导向总结，不复制论文原摘要。</footer>
+
+  <script src="./topic_deep_dive_data.js"></script>
+  <script>
+    const topics = window.OERF_TOPIC_DEEP_DIVES || [];
+    const nav = document.getElementById('topicNav');
+    const content = document.getElementById('topicContent');
+    const select = document.getElementById('topicSelect');
+    const search = document.getElementById('topicSearch');
+    const topicCount = document.getElementById('topicCount');
+    if (topicCount) topicCount.textContent = `${topics.length} 个候选题`;
+
+    const fitLabel = {
+      core: ['何远哲主线', 'core'],
+      high: ['高贴合', 'high'],
+      medium: ['中贴合', 'medium'],
+      low: ['低贴合', 'low']
+    };
+
+    function scoreBar(value, reverse = false) {
+      const clamped = Math.max(1, Math.min(5, Number(value) || 1));
+      const width = `${clamped * 20}%`;
+      return `<div class="bar ${reverse ? 'risk' : ''}" style="--w:${width}"><i></i></div>`;
+    }
+
+    function scoreText(value, reverse = false) {
+      const labels = reverse
+        ? ['极低', '低', '中', '高', '极高']
+        : ['很弱', '偏弱', '中等', '较强', '很强'];
+      return labels[Math.max(1, Math.min(5, Number(value) || 1)) - 1];
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function listItems(items) {
+      return (items || []).map(item => `<li>${escapeHtml(item)}</li>`).join('');
+    }
+
+    function pillList(items) {
+      return `<div class="pill-row">${(items || []).map(item => `<span class="pill">${escapeHtml(item)}</span>`).join('')}</div>`;
+    }
+
+    function isExternalUrl(url) {
+      return /^https?:\/\//i.test(url);
+    }
+
+    function linkAttrs(url) {
+      return isExternalUrl(url) ? ' target="_blank" rel="noreferrer"' : '';
+    }
+
+    function linkKind(url) {
+      const value = String(url || '');
+      if (value.includes('paper_library/index.html')) return '论文库筛选';
+      if (value.includes('term_index.html')) return '术语索引';
+      if (value.includes('document_reader.html')) return '站内文档';
+      if (value.includes('asset_viewer.html')) return '站内资源';
+      if (/^https?:\/\/doi\.org\//i.test(value)) return 'DOI / 出版源';
+      if (/arxiv\.org/i.test(value)) return value.includes('/pdf/') ? 'arXiv PDF' : 'arXiv';
+      if (/github\.com/i.test(value)) return '代码 / GitHub';
+      if (/youtube\.com|youtu\.be|bilibili\.com/i.test(value)) return '视频';
+      if (/readthedocs|docs\.opencv|openpiv|pivlab/i.test(value)) return '软件/文档';
+      if (/springer|sciencedirect|pubs\.aip|opg\.optica|dl\.acm|iopscience/i.test(value)) return '出版社页';
+      return isExternalUrl(value) ? '外部来源' : '站内页面';
+    }
+
+    function topicSearchQuery(topic) {
+      const words = [
+        topic.id,
+        topic.shortTitle,
+        topic.title,
+        ...(topic.knowledge || []).slice(0, 3)
+      ].join(' ');
+      return words
+        .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function topicMap(topic) {
+      const query = topicSearchQuery(topic);
+      const firstTerm = (topic.knowledge || [topic.shortTitle || topic.title])[0] || 'BOST';
+      const cards = [
+        ['论文库筛选', '打开同主题论文、PDF 和详情页。', `./paper_library/index.html?q=${encodeURIComponent(query)}`],
+        ['术语索引', '先补概念，再回论文读公式和图。', `./index.html?term=${encodeURIComponent(firstTerm)}#glossary`],
+        ['执行手册', '把想法拆成可交付 demo、图表和日志。', './topic_execution_playbook.html'],
+        ['师兄同步线', '把问题整理成能直接问何远哲的清单。', './he_yuanzhe_sync_dashboard.html']
+      ];
+      return `<div class="topic-map">${cards.map(([title, desc, href]) => `
+        <article class="map-card">
+          <b>${escapeHtml(title)}</b>
+          <span>${escapeHtml(desc)}</span>
+          <a class="button" href="${escapeHtml(href)}"${linkAttrs(href)}>打开</a>
+        </article>
+      `).join('')}</div>`;
+    }
+
+    function studyLadder(topic) {
+      const steps = [
+        ['概念', '先读通俗物理解释和术语，避免只会调代码。'],
+        ['核心论文', '精读 2-3 篇主文献，抽问题、数据、评价指标。'],
+        ['最小闭环', '用 synthetic 或公开数据跑出 forward -> inverse -> metric。'],
+        ['敏感性', '扫描噪声、视角、参数或标定误差，形成结果图。'],
+        ['沟通升级', '拿图和失败案例问师兄是否接真实数据。']
+      ];
+      return `<div class="study-ladder">${steps.map(([title, desc]) => `
+        <article class="ladder-step"><b>${escapeHtml(title)}</b><span>${escapeHtml(desc)}</span></article>
+      `).join('')}</div>`;
+    }
+
+    function readingCards(topic) {
+      return (topic.corePapers || []).map(([label, title, why, url]) => `
+        <article class="reading-card">
+          <span class="pill high">${escapeHtml(label)}</span>
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(why)}</p>
+          <div class="read-route"><b>读法：</b>先读摘要和方法图，再抽取“问题定义、输入数据、baseline、指标、局限”。读完后回到本页执行路径里找它对应哪一步。</div>
+          <div class="resource-actions">
+            <span class="resource-kind">${escapeHtml(linkKind(url))}</span>
+            <a class="button" href="${escapeHtml(url)}"${linkAttrs(url)}>打开文献入口</a>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function videoCards(topic) {
+      return (topic.videoResources || []).map(([title, why, url]) => `
+        <article class="video-card">
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(why)}</p>
+          <div class="resource-actions">
+            <span class="resource-kind">${escapeHtml(linkKind(url))}</span>
+            <a class="button" href="${escapeHtml(url)}"${linkAttrs(url)}>打开资源</a>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function renderNav(activeId) {
+      const q = search.value.trim().toLowerCase();
+      nav.innerHTML = '';
+      topics
+        .filter(topic => !q || `${topic.id} ${topic.title} ${topic.researchAbstract} ${topic.shortTitle}`.toLowerCase().includes(q))
+        .forEach(topic => {
+          const link = document.createElement('a');
+          link.className = `nav-link ${topic.id === activeId ? 'active' : ''}`;
+          link.href = `?id=${encodeURIComponent(topic.id)}`;
+          link.textContent = `${topic.id} ${topic.shortTitle}`;
+          link.addEventListener('click', event => {
+            event.preventDefault();
+            setTopic(topic.id, true);
+          });
+          nav.appendChild(link);
+        });
+      if (!nav.children.length) {
+        nav.innerHTML = '<div class="empty-state">没有匹配的题目。换一个关键词试试。</div>';
+      }
+    }
+
+    function renderSelect(activeId) {
+      select.innerHTML = topics.map(topic => `<option value="${topic.id}">${topic.id} ${escapeHtml(topic.shortTitle)}</option>`).join('');
+      select.value = activeId;
+    }
+
+    function renderTopic(topic) {
+      const [label, cls] = fitLabel[topic.fit] || fitLabel.medium;
+      content.innerHTML = `
+        <article class="hero-panel">
+          <span class="topic-id">${escapeHtml(topic.id)}</span>
+          <h2 class="topic-title">${escapeHtml(topic.title)}</h2>
+          <p class="verdict">${escapeHtml(topic.verdict)}</p>
+          <div class="pill-row" style="margin-top:14px;">
+            <span class="pill ${cls}">${label}</span>
+            <span class="pill">范围：${escapeHtml(topic.scope)}</span>
+          </div>
+          <div class="score-grid">
+            <div class="score-tile"><span>可毕业性</span><b>${topic.feasibility}/5</b>${scoreBar(topic.feasibility)}<span>${scoreText(topic.feasibility)}</span></div>
+            <div class="score-tile"><span>新意</span><b>${topic.novelty}/5</b>${scoreBar(topic.novelty)}<span>${scoreText(topic.novelty)}</span></div>
+            <div class="score-tile"><span>风险</span><b>${topic.risk}/5</b>${scoreBar(topic.risk, true)}<span>${scoreText(topic.risk, true)}</span></div>
+            <div class="score-tile"><span>执行难度</span><b>${escapeHtml(topic.difficulty.split('：')[0])}</b><span>${escapeHtml(topic.difficulty)}</span></div>
+          </div>
+          ${topicMap(topic)}
+        </article>
+
+        <section class="section-grid">
+          <article class="panel">
+            <h2>研究方向摘要</h2>
+            <p>${escapeHtml(topic.researchAbstract)}</p>
+          </article>
+          <article class="panel">
+            <h2>物理背景通俗解释</h2>
+            <p>${escapeHtml(topic.physicsPlain)}</p>
+          </article>
+        </section>
+
+        <section class="panel">
+          <h2>学习台阶</h2>
+          <p class="section-note">这个区域是给初学者用的：从“看懂概念”一路走到“拿着图和问题去找师兄”。</p>
+          ${studyLadder(topic)}
+        </section>
+
+        <section class="panel">
+          <h2>执行路径</h2>
+          <ol class="route">${listItems(topic.execution)}</ol>
+        </section>
+
+        <section class="triple-grid">
+          <article class="mini">
+            <h3>软件基础</h3>
+            ${pillList(topic.software)}
+          </article>
+          <article class="mini">
+            <h3>硬件/数据基础</h3>
+            <ul>${listItems(topic.hardware)}</ul>
+          </article>
+          <article class="mini">
+            <h3>知识基础</h3>
+            <ul>${listItems(topic.knowledge)}</ul>
+          </article>
+        </section>
+
+        <section class="panel">
+          <h2>预期产出</h2>
+          ${pillList(topic.deliverables)}
+        </section>
+
+        <section class="panel">
+          <h2>基础文献阅读</h2>
+          <p>下面是这个题目最该先读的文献入口和阅读时要抽取的内容。按钮会跳到 DOI、出版社、论文库筛选或已有桥接页。</p>
+          <div class="reading-list">${readingCards(topic)}</div>
+        </section>
+
+        <section class="panel">
+          <h2>视频/课程/软件入口</h2>
+          <p>这些资源只作为学习辅助。能进入论文正文的依据仍应来自论文、官方文档或课题组材料。</p>
+          <div class="video-list">${videoCards(topic)}</div>
+        </section>
+
+        <section class="section-grid">
+          <article class="panel">
+            <h2>要问何远哲师兄</h2>
+            <ul>${listItems(topic.askSenior)}</ul>
+          </article>
+          <article class="panel">
+            <h2>风险控制</h2>
+            <ul>${listItems(topic.riskControl)}</ul>
+          </article>
+        </section>
+      `;
+    }
+
+    function requestedTopicId() {
+      const params = new URLSearchParams(window.location.search);
+      const raw = params.get('id') || params.get('topic') || window.location.hash.replace(/^#/, '') || 'T1';
+      return raw.trim().toUpperCase();
+    }
+
+    function setTopic(id, pushState = false) {
+      const normalizedId = (id || 'T1').trim().toUpperCase();
+      const topic = topics.find(item => item.id === normalizedId) || topics[0];
+      if (!topic) {
+        content.innerHTML = '<div class="empty-state">还没有选题数据。</div>';
+        return;
+      }
+      renderTopic(topic);
+      renderNav(topic.id);
+      renderSelect(topic.id);
+      document.title = `${topic.id} ${topic.shortTitle} | 毕设选题详情档案`;
+      if (pushState) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('id', topic.id);
+        url.searchParams.delete('topic');
+        url.hash = '';
+        history.pushState({ id: topic.id }, '', url);
+      }
+    }
+
+    select.addEventListener('change', () => setTopic(select.value, true));
+    search.addEventListener('input', () => {
+      const active = requestedTopicId() || select.value || 'T1';
+      renderNav(active);
+    });
+    window.addEventListener('popstate', () => {
+      setTopic(requestedTopicId(), false);
+    });
+
+    setTopic(requestedTopicId(), false);
+  </script>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

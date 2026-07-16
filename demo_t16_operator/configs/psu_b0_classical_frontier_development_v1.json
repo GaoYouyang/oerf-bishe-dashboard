@@ -1,0 +1,75 @@
+{
+  "schema_version": "psu-b0-classical-frontier-development-config-1.0",
+  "status": "POSTOPEN_DEVELOPMENT_ONLY",
+  "source_development_config": "demo_t16_operator/configs/psu_b0_residual_risk_development_v1.json",
+  "source_fresh_preregistration": "demo_t16_operator/configs/psu_b0_residual_risk_fresh_prereg_v1.json",
+  "selection_split": "risk_validation",
+  "untouched_development_check_split": "risk_calibration",
+  "fresh_interpretation": "OPENED_DIAGNOSTIC_ONLY_NOT_NEW_CONFIRMATORY_EVIDENCE",
+  "solver": {
+    "tikhonov_stages": 4,
+    "l2_lambda_grid": [
+      0.0,
+      1.0,
+      3.0,
+      10.0,
+      30.0,
+      100.0,
+      300.0,
+      1000.0,
+      3000.0,
+      10000.0,
+      30000.0,
+      100000.0
+    ],
+    "h1_lambda_grid": [
+      0.0,
+      0.0001,
+      0.0003,
+      0.001,
+      0.003,
+      0.01,
+      0.03,
+      0.1,
+      0.3,
+      1.0,
+      3.0
+    ],
+    "selection_metric": "mean_combined_loss",
+    "selection_tie_breaks": [
+      "mean_field_relative_l2",
+      "smaller_regularization_lambda"
+    ],
+    "cgls_stage_counts": [
+      3,
+      4
+    ]
+  },
+  "call_budget_interpretation": {
+    "learned_and_sobolev_reference": {
+      "forward": 4,
+      "adjoint": 4
+    },
+    "tikhonov_l2_and_h1": {
+      "forward": 4,
+      "adjoint": 4
+    },
+    "cgls_3": {
+      "forward": 3,
+      "adjoint": 4,
+      "label": "within-total-call-budget-adjacent"
+    },
+    "cgls_4": {
+      "forward": 4,
+      "adjoint": 5,
+      "label": "one-extra-adjoint-frontier"
+    }
+  },
+  "claim_boundary": {
+    "tv_baseline_included": false,
+    "hybrid_parameter_choice_included": false,
+    "fresh_values_are_unopened": false,
+    "experimental_field_truth_used": false,
+    "algorithm_superiority": false
+  }
+}

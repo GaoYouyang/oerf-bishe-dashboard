@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>选题路线深挖矩阵 | OERF 毕设导航</title>
+  <style>
+    :root {
+      --bg: #f7f8f6;
+      --panel: #ffffff;
+      --ink: #1d2328;
+      --muted: #65717a;
+      --line: #d9e0df;
+      --teal: #16756f;
+      --blue: #315f93;
+      --red: #aa3f31;
+      --gold: #a46a14;
+      --green: #3f7b43;
+      --soft-teal: #e8f3f0;
+      --soft-blue: #eaf0f7;
+      --soft-red: #f8ece9;
+      --soft-gold: #f6efe2;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, rgba(22, 117, 111, 0.09), transparent 320px), var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.7;
+      letter-spacing: 0;
+    }
+    header, main {
+      width: min(1220px, calc(100vw - 36px));
+      margin: 0 auto;
+    }
+    header { padding: 34px 0 18px; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.08;
+    }
+    h2 { margin: 30px 0 12px; font-size: 24px; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    .button-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .button.primary { background: var(--teal); border-color: var(--teal); color: #fff; }
+    .grid { display: grid; gap: 12px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card, .notice {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+    }
+    .notice { border-left: 5px solid var(--teal); background: linear-gradient(90deg, var(--soft-teal), #fff 72%); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+    th { background: #eef3f1; color: #2f3b41; }
+    tr:last-child td { border-bottom: 0; }
+    .tag {
+      display: inline-flex;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      border: 1px solid var(--line);
+    }
+    .core { background: var(--soft-teal); color: var(--teal); border-color: #c5dfd9; }
+    .blue { background: var(--soft-blue); color: var(--blue); border-color: #cfdced; }
+    .gold { background: var(--soft-gold); color: var(--gold); border-color: #ead7b5; }
+    .risk { background: var(--soft-red); color: var(--red); border-color: #edc8c0; }
+    ul { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+    li { margin-bottom: 7px; }
+    footer { color: var(--muted); font-size: 12px; margin: 34px 0; }
+    @media (max-width: 900px) {
+      .grid.two, .grid.three { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="button" href="./index.html">返回主导航</a>
+    <h1>选题路线深挖矩阵</h1>
+    <p>把“我可以做什么”拆成可问师兄、可拿数据、可写论文、可降级毕业的路线。核心仍然贴住何远哲的 BOST / NeRIF / PIV-BOST / 4D BOST。最后更新：2026-07-09。</p>
+    <div class="button-row">
+      <a class="button primary" href="./he_review_portal.html">师兄审核入口</a>
+      <a class="button" href="./topic_execution_playbook.html">选题执行手册</a>
+      <a class="button" href="./first_month_experiment_board.html">第一月实验执行板</a>
+      <a class="button" href="./xmu_vpn_private_library_protocol.html">VPN 与私有论文库边界</a>
+      <a class="button" href="./paper_library/index.html">论文跳转库</a>
+      <a class="button" href="document_reader.html?doc=displacement_qc_route_f.md">F 位移质量控制</a>
+      <a class="button" href="./learning_log.html">学习日志模板</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice">
+      <h3>总判断</h3>
+      <p>本科最稳主线不是泛 AI，也不是完整实验系统，而是“BOST/NeRIF 重构闭环 + 数据质量/误差分析 + 可升级到 PIV-BOST 或 4D BOST 的接口”。这个主线能同时满足蔡老师的计算成像/机器学习流动显示方向、何远哲的论文谱系和本科可交付性。</p>
+    </section>
+
+    <h2>路线优先级</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>路线</th>
+          <th>一句话题目</th>
+          <th>贴何远哲</th>
+          <th>可毕业性</th>
+          <th>风险</th>
+          <th>第一月交付</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag core">A 首选</span></td>
+          <td><strong>少视角 BOST 的神经隐式折射率场重构与鲁棒性分析</strong></td>
+          <td>NeRIF 直接主线。</td>
+          <td>最高：合成数据即可闭环。</td>
+          <td>真实相机几何和组内 baseline 需要师兄确认。</td>
+          <td>phantom、forward projection、传统 baseline、coordinate MLP、view/noise/capacity 扫描。</td>
+        </tr>
+        <tr>
+          <td><span class="tag blue">B 强相关</span></td>
+          <td><strong>面向 PIV-BOST 的折射误差补偿 toy 与数据接口</strong></td>
+          <td>2025 simultaneous PIV-BOST 直接相关；公开摘要已能确认一拖九内窥 BOST、Bunsen 火焰、低速 PIV 中央平面和百分之几量级速度误差。</td>
+          <td>中高：可先用 synthetic PIV / OpenPIV。</td>
+          <td>真实 PIV-BOST 同步数据、标定和速度误差口径复杂。</td>
+          <td>粒子图像畸变模拟、OpenPIV baseline、补偿前后速度误差图。</td>
+        </tr>
+        <tr>
+          <td><span class="tag gold">C 挑战</span></td>
+          <td><strong>4D BOST 的跨形态无真值容量选择与 temporal reliability</strong></td>
+          <td>ACM TOG 4D BOST 直接相关。</td>
+          <td>中高：已有 864 格 synthetic 底盘，真实迁移仍需师兄数据。</td>
+          <td>完整复现过重；synthetic LOFO 不等于 geometry/真实泛化。</td>
+          <td>多 morphology benchmark、support/spectrum/temporal selector、full-rank 拒答、UQ 与 geometry transfer。</td>
+        </tr>
+        <tr>
+          <td><span class="tag blue">D 实用</span></td>
+          <td><strong>BOST/PIV-BOST 真实数据质量控制与 view registration 报告工具</strong></td>
+          <td>服务师兄真实实验处理。</td>
+          <td>高：有数据时很有用，无数据时可用模板。</td>
+          <td>需要组内最小样例和保密边界。</td>
+          <td>manifest、mask/ROI、view geometry、displacement confidence、bad-view report。</td>
+        </tr>
+        <tr>
+          <td><span class="tag blue">F 工具</span></td>
+          <td><strong>BOS/PIV-BOST 位移估计、光流 benchmark 与质量控制工具</strong></td>
+          <td>直接服务 BOST/NeRIF/PIV-BOST 的图像入口和真实数据筛查。</td>
+          <td>高：合成背景/粒子图像即可启动。</td>
+          <td>不能跑成纯 CV 排行榜，必须接回重构或速度误差传播。</td>
+          <td>OpenPIV/Farneback/DIS/RAFT-PIV 对照、bad-region mask、confidence、runtime、downstream error。</td>
+        </tr>
+        <tr>
+          <td><span class="tag gold">G 辅助</span></td>
+          <td><strong>Agent for BOST 参数扫描、日志和图表报告</strong></td>
+          <td>贴蔡老师 Agent for Science，但不应单独成主线。</td>
+          <td>中高：作为 A/B/C 的工具层很好。</td>
+          <td>如果没有物理 pipeline，会变成泛工具。</td>
+          <td>实验 registry、自动画图、失败样本归档、每周报告生成。</td>
+        </tr>
+        <tr>
+          <td><span class="tag gold">H 旁支</span></td>
+          <td><strong>事件相机高速流动/结构可视化的数据重构与质量评估</strong></td>
+          <td>贴蔡组 event-triggered BOS、adaptive event-frame schlieren、EBIV/DMD，不是何远哲主线。</td>
+          <td>中：公开论文多，真实 event 数据要问组里。</td>
+          <td>容易偏成传感器/计算机视觉题，需绑定 BOS/PIV-BOST 图像层。</td>
+          <td>事件数据表示、time-window reconstruction、frame-event fusion toy、重建质量指标。</td>
+        </tr>
+        <tr>
+          <td><span class="tag risk">I 备选</span></td>
+          <td><strong>单相机/金属颗粒多物理量测量的图像算法复现与误差分析</strong></td>
+          <td>贴 OERF 低碳燃料、金属颗粒燃烧和计算成像，不贴 He/BOST 主线。</td>
+          <td>中：可做图像算法复现，但实验数据依赖强。</td>
+          <td>物理背景和燃烧化学会增多，可能冲淡 BOST 主线。</td>
+          <td>RGB thermometry/sizing toy、粒子检测、尺寸/温度误差传播和数据需求清单。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>旁支路线怎么用</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>H：事件相机高速可视化</h3>
+        <ul>
+          <li>代表文献：event-triggered BOS、adaptive event-frame schlieren、EBIV/DMD benchmark、flexible-structure event-triggered visualization。</li>
+          <li>可迁移到主线的能力：高频采样、低存储压力、时间窗重构、frame-event fusion、DMD/投影背景设计。</li>
+          <li>本科可问法：如果组里有 event camera 数据，我能否做一个“事件数据到 BOS/PIV 位移质量指标”的工具，而不是完整传感器论文？</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>I：金属颗粒/单相机诊断</h3>
+        <ul>
+          <li>代表文献：iron particle heat exchange、single RGB camera thermometry/sizing、digital in-line holography、iron/ammonia co-firing。</li>
+          <li>可迁移到主线的能力：低成本成像、多物理量同步测量、粒子检测、温度/尺寸误差传播、实验数据标注。</li>
+          <li>本科可问法：如果 BOST 数据暂时不给，能否拿一小段公开或组内粒子图像做图像测量算法复现，作为备选毕业题？</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>A 路线：NeRIF/BOST 主线拆解</h2>
+    <div class="grid three">
+      <div class="card">
+        <h3>物理问题</h3>
+        <ul>
+          <li>折射率场或密度场如何导致背景图案位移。</li>
+          <li>多视角位移/偏折观测如何反推 3D refractive index field。</li>
+          <li>少视角、噪声、遮挡、mask、相机几何误差如何影响重构。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>算法问题</h3>
+        <ul>
+          <li>体素网格、SART/TV/LSQR 与 coordinate MLP 的差异。</li>
+          <li>Fourier/SIREN/hash encoding 对高频折射率结构的影响。</li>
+          <li>loss 如何同时包含 projection consistency、smoothness 和边界约束。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>论文贡献写法</h3>
+        <ul>
+          <li>建立可复现实验闭环和 baseline。</li>
+          <li>系统比较 view count、噪声、网络容量、encoding、regularization。</li>
+          <li>给出面向真实 BOST 数据接入的质量控制和参数建议。</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>B 路线：PIV-BOST 降级与升级</h2>
+    <section class="notice">
+      <h3>从 Springer 摘要能先做出的拆解</h3>
+      <p>2025 PIV-BOST 论文的正式摘要已经足够把本科 toy 定得更具体：用一组多视角/内窥式 BOST 重构火焰周围折射率场，再把折射率梯度转成 PIV 平面上的像素偏移，最后评估速度误差补偿。你不需要等全文才开始写代码；先做 synthetic refractive-index field、particle image pair、OpenPIV 互相关和 before/after velocity error。</p>
+    </section>
+    <table>
+      <thead>
+        <tr>
+          <th>层级</th>
+          <th>能做什么</th>
+          <th>数据需求</th>
+          <th>问师兄的问题</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>图像层</td>
+          <td>模拟折射造成的粒子图像偏折，比较 dewarping 前后互相关峰和速度误差。</td>
+          <td>synthetic PIV image 或 OpenPIV/piv-image-generator。</td>
+          <td>组里 PIV-BOST 补偿是先修正图像，还是先重构折射率场再修正速度？</td>
+        </tr>
+        <tr>
+          <td>标定层</td>
+          <td>把 refractive distortion 当作 disparity / calibration error，做非参数校正 toy。</td>
+          <td>相机标定、视角几何、背景/粒子图像。</td>
+          <td>stereo PIV-BOST 的核心痛点是 calibration、matching、还是 vector correction？</td>
+        </tr>
+        <tr>
+          <td>速度层</td>
+          <td>比较补偿前后速度矢量场的 bias、RMSE、vorticity、divergence 和异常向量比例。</td>
+          <td>PIV 速度场或可公开 synthetic velocity field。</td>
+          <td>师兄希望本科交付图像工具、速度误差图，还是完整 PIV-BOST pipeline 的一个模块？</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>F 路线：位移/光流质量控制，不做纯 CV 排行榜</h2>
+    <section class="notice">
+      <h3>最稳的工具型交付</h3>
+      <p>如果师兄说真实 BOST/PIV-BOST 最大痛点在图像前处理、位移场、坏区域或筛帧，F 路线可以直接启动。它用 synthetic background / particle image pair 起步，比较 OpenPIV、Farneback、DIS/TV-L1 或 RAFT-lite，输出 bad-region mask、confidence、runtime 和 downstream error，并把结果接回 A 的 NeRIF/BOST 重构、B 的 PIV-BOST 补偿或 D 的真实数据质量报告。详细执行页见 <a href="document_reader.html?doc=displacement_qc_route_f.md">displacement_qc_route_f.md</a>。</p>
+    </section>
+
+    <h2>C 路线：4D BOST 不完整复现，只拆可毕业子问题</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>可做子问题</h3>
+        <ul>
+          <li>动态 phantom：平移涡、脉动热羽流、moving Gaussian density blob。</li>
+          <li>逐帧重构 vs 低秩/张量表示：比较时间一致性和噪声传播。</li>
+          <li>rank/noise/frame-count/view-count 扫描：形成毕业论文中最扎实的结果图。</li>
+          <li>DMD mode energy、low-rank+sparse residual、temporal smoothness 作为评价指标。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>不要承诺</h3>
+        <ul>
+          <li>不承诺复现 ACM TOG 全部网络和实验结果。</li>
+          <li>不承诺拿到完整高速多视角真实数据。</li>
+          <li>不把 TDBOST 无许可证仓库代码直接搬进本科项目。</li>
+          <li>不把 4D 论文级画质作为第一阶段目标。</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>知识补课路径</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>阶段</th>
+          <th>必须掌握</th>
+          <th>最低验收</th>
+          <th>服务哪条路线</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>第 1-2 周：流体力学入门</td>
+          <td>连续介质、速度场、梯度/散度/旋度、边界层、可压缩性、密度和折射率关系。</td>
+          <td>能解释为什么温度/密度扰动会造成 BOS 位移，并能读懂速度场/涡量图。</td>
+          <td>A/B/D/F</td>
+        </tr>
+        <tr>
+          <td>第 2-3 周：光学诊断</td>
+          <td>Gladstone-Dale、ray deflection、schlieren/BOS、背景图案、cross-correlation、mask/ROI。</td>
+          <td>能画出 background image 到 displacement 到 refractive index field 的链路。</td>
+          <td>A/B/D/F</td>
+        </tr>
+        <tr>
+          <td>第 3-4 周：反问题和层析</td>
+          <td>Radon/line integral、ill-posedness、SART/TV/LSQR、regularization、重投影误差。</td>
+          <td>跑通一个 2D/3D toy tomography baseline，并能解释为什么少视角会病态。</td>
+          <td>A/C</td>
+        </tr>
+        <tr>
+          <td>第 4-6 周：PyTorch 与神经场</td>
+          <td>coordinate MLP、Fourier features、SIREN/hash encoding、autograd、batch sampling、loss 设计。</td>
+          <td>训练一个从坐标到标量场的 MLP，并输出切片、投影和误差曲线。</td>
+          <td>A/C</td>
+        </tr>
+        <tr>
+          <td>第 6-8 周：PIV/光流</td>
+          <td>interrogation window、互相关、uncertainty、Horn/LK/Farneback/RAFT-PIV、异常向量剔除。</td>
+          <td>用 OpenPIV 或 synthetic PIV 生成补偿前后速度误差图。</td>
+          <td>B/D/F</td>
+        </tr>
+        <tr>
+          <td>第 8-10 周：4D 表示</td>
+          <td>low-rank tensor、TensoRF/K-Planes、DMD、Robust PCA、temporal consistency。</td>
+          <td>完成一个动态 phantom 的 rank/noise/frame-count 表格。</td>
+          <td>C</td>
+        </tr>
+        <tr>
+          <td>选修：事件相机/高速成像</td>
+          <td>event stream、time surface、event-to-frame reconstruction、strobe illumination、frame-event fusion、Kalman filtering。</td>
+          <td>能把事件流或合成事件数据重建成帧，并给出时序误差、噪声和存储量对比。</td>
+          <td>H/G，辅助 B/C/F</td>
+        </tr>
+        <tr>
+          <td>选修：颗粒/燃烧图像诊断</td>
+          <td>RGB pyrometry、粒子检测/分割、尺寸估计、辐射/温度标定、金属颗粒燃烧基本概念。</td>
+          <td>能解释单 RGB 相机为什么可以同时估计温度和粒径，并能列出需要师兄提供的标定量。</td>
+          <td>I，课题组全貌</td>
+        </tr>
+        <tr>
+          <td>贯穿：科研工程</td>
+          <td>数据 manifest、git、实验 registry、图表模板、日志、可复现实验和公开/私有边界。</td>
+          <td>每周能交一个可运行脚本、一页结果图和一段问题记录。</td>
+          <td>A/B/C/D/F/G/H/I</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>下一次问何远哲的精确问题</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>定主线</h3>
+        <ul>
+          <li>我是否应该以 NeRIF/BOST 鲁棒性为本科主线？</li>
+          <li>组里更缺 PIV-BOST 补偿、4D 时序、还是真实数据质量控制？</li>
+          <li>第一月你最希望我交付 data loader、baseline、参数扫描还是可视化报告？</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>定数据</h3>
+        <ul>
+          <li>是否能给一份最小不涉密样例：flow-off、flow-on、mask、视角几何、位移场？</li>
+          <li>哪些图可以写进本科论文，哪些只能内部展示？</li>
+          <li>组内是否已有 baseline 或评价口径，我应该对齐哪一个？</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>首选 A 路线工作包</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>工作包</th>
+          <th>目标</th>
+          <th>具体任务</th>
+          <th>输出图表</th>
+          <th>失败降级</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>WP1 forward model</td>
+          <td>把 BOST 观测链条从概念变成可运行代码。</td>
+          <td>构造 3D refractive-index phantom；近似生成多视角 projection / displacement；保留相机数、噪声、mask、ROI 参数。</td>
+          <td>phantom 切片、view-wise displacement、重投影示意图。</td>
+          <td>如果 3D 太重，先做 2D Radon / projected-density toy，再逐步升维。</td>
+        </tr>
+        <tr>
+          <td>WP2 classical baseline</td>
+          <td>避免毕业设计变成“只训练一个网络”。</td>
+          <td>实现或调用 FBP/SART/LSQR/Tikhonov 至少一种；统一输入输出和误差指标。</td>
+          <td>baseline 重构切片、error map、view-count 曲线。</td>
+          <td>如果 3D baseline 难写，先用 scikit-image 2D SART 建立可解释对照。</td>
+        </tr>
+        <tr>
+          <td>WP3 neural field</td>
+          <td>做简化 NeRIF，不追求论文全量复现。</td>
+          <td>coordinate MLP 输入 `(x,y,z)` 输出 `n` 或 `delta n`；比较 Fourier / SIREN / plain MLP；加入 projection loss 与 smoothness。</td>
+          <td>loss curve、切片对比、encoding 消融、训练时间表。</td>
+          <td>如果 ray integration 过重，先用 projection-matrix toy 或 precomputed rays。</td>
+        </tr>
+        <tr>
+          <td>WP4 robustness map</td>
+          <td>形成最像研究贡献的结果。</td>
+          <td>扫描 view count、noise、mask ratio、bad view、network width、encoding frequency；比较 neural vs classical。</td>
+          <td>heatmap、pareto 曲线、失败案例 gallery、推荐参数表。</td>
+          <td>如果 GPU 不够，把扫描维度减少到 view/noise/encoding 三项。</td>
+        </tr>
+        <tr>
+          <td>WP5 real-data adapter</td>
+          <td>给组内真实数据留接口，即使暂时拿不到数据也不空。</td>
+          <td>定义 manifest；检查 flow-off / flow-on / geometry / displacement / mask / permissions；能加载一组样例并画 view-quality report。</td>
+          <td>数据完整性表、view quality 图、bad-view 标记、缺失字段列表。</td>
+          <td>没有真实数据时用 open BOS / synthetic manifest 演示完整流程。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>三个月预研节奏</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>阶段</th>
+          <th>目标</th>
+          <th>每周产出</th>
+          <th>是否需要师兄</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>第 1-2 周</td>
+          <td>读懂 BOS/BOST/NeRIF 的最小物理链条。</td>
+          <td>变量链条图、Raffel/NeRIF 精读卡、2D Radon toy。</td>
+          <td>只需确认：真实数据输出的是折射率、密度还是温度。</td>
+        </tr>
+        <tr>
+          <td>第 3-4 周</td>
+          <td>跑通 synthetic BOST forward + classical baseline。</td>
+          <td>3/5/7/9 view 曲线、noise 曲线、baseline 错误图。</td>
+          <td>问 baseline 对齐：SART/UBOST/组内代码哪个更合适。</td>
+        </tr>
+        <tr>
+          <td>第 5-6 周</td>
+          <td>跑通 coordinate MLP / simplified NeRIF。</td>
+          <td>encoding 消融、训练曲线、重投影一致性图。</td>
+          <td>问 NeRIF loss 是否需要按组内版本调整。</td>
+        </tr>
+        <tr>
+          <td>第 7-8 周</td>
+          <td>做鲁棒性扫描，形成第一批论文级图。</td>
+          <td>view/noise/mask/bad-view heatmap、失败案例和推荐参数。</td>
+          <td>请师兄挑最像组内痛点的误差维度。</td>
+        </tr>
+        <tr>
+          <td>第 9-10 周</td>
+          <td>选择升级线：PIV-BOST、4D BOST 或 real-data QC。</td>
+          <td>PIV image-pair toy / rank scan / manifest report 三选一。</td>
+          <td>必须由师兄确认第二阶段方向。</td>
+        </tr>
+        <tr>
+          <td>第 11-12 周</td>
+          <td>整理开题材料和数据请求。</td>
+          <td>开题 memo、10 页 PPT 骨架、数据字段清单、风险表。</td>
+          <td>请师兄确认题目、数据边界和第一月正式任务。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>一年毕业设计路线图</h2>
+    <div class="grid three">
+      <div class="card">
+        <h3>大四上前半</h3>
+        <ul>
+          <li>确定题目 A，B/C/D 只保留一个升级方向。</li>
+          <li>完成 synthetic forward、baseline、simplified neural field。</li>
+          <li>写出开题报告第 1-2 章：背景、文献、问题定义。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>大四上后半</h3>
+        <ul>
+          <li>系统跑鲁棒性实验，固定指标和图表格式。</li>
+          <li>若拿到组内样例，完成 real-data adapter 和质量报告。</li>
+          <li>形成中期检查材料：5 张核心结果图 + 1 张路线图。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>大四下</h3>
+        <ul>
+          <li>做升级章节：PIV-BOST toy、4D rank scan 或真实数据 QA。</li>
+          <li>收束论文：方法、实验、讨论、失败边界和未来工作。</li>
+          <li>准备答辩：把“我没完整复现论文”转化为“我完成了可复现子问题和误差图谱”。</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>最值得避免的坑</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>技术坑</h3>
+        <ul>
+          <li>一上来追完整 4D BOST 或真实实验台，导致三个月没有可运行结果。</li>
+          <li>只调神经网络，不写 forward model 和 baseline，论文站不住。</li>
+          <li>只报平均 L2，不看局部失败、bad view、mask、重投影误差和训练时间。</li>
+          <li>把 PIV-BOST 写成速度场后处理，却没有说明图像层、标定层、速度层的接口区别。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>沟通坑</h3>
+        <ul>
+          <li>问师兄“能不能给数据”太泛；应问具体字段、单位、权限和第一周交付。</li>
+          <li>把课题组所有方向都当候选主线，导致导师看不到你真正要做什么。</li>
+          <li>公开网页上传订阅 PDF；正确做法是公开页放 DOI/开放 PDF，订阅版只放本地私有库。</li>
+          <li>学习流体力学没有产物；每周必须把一个概念转成图、代码或问题。</li>
+        </ul>
+      </div>
+    </div>
+
+    <footer>
+      本页是选题决策矩阵，不替代师兄确认。每条路线都保留“最小可毕业版本”和“数据到位后的升级版本”。
+    </footer>
+  </main>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>公开代码与数据复用执行页 | OERF 毕设导航</title>
+  <style>
+    :root {
+      --bg: #f7faf9;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #607080;
+      --line: #d8e1df;
+      --green: #16756f;
+      --blue: #315f93;
+      --amber: #9a6a00;
+      --red: #a34335;
+      --soft-green: #e8f3f0;
+      --soft-blue: #eaf0f7;
+      --soft-amber: #f8f0dc;
+      --soft-red: #f8ece9;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+      color: var(--ink);
+      background: var(--bg);
+    }
+    header, main, footer {
+      width: min(1220px, calc(100vw - 36px));
+      margin: 0 auto;
+    }
+    header {
+      padding: 34px 0 18px;
+      background: linear-gradient(180deg, rgba(49, 95, 147, 0.10), transparent);
+    }
+    h1 { margin: 14px 0 10px; font-size: clamp(31px, 4.5vw, 56px); line-height: 1.08; }
+    h2 { margin: 34px 0 12px; font-size: 25px; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .nav, .button-row, .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+    }
+    .button, .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 750;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .tag { min-height: 28px; border-radius: 999px; font-size: 12px; }
+    .green { background: var(--soft-green); color: var(--green); border-color: #c9e3de; }
+    .blue { background: var(--soft-blue); color: var(--blue); border-color: #d3dfed; }
+    .amber { background: var(--soft-amber); color: var(--amber); border-color: #e8d3a5; }
+    .red { background: var(--soft-red); color: var(--red); border-color: #edc8c0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card, .notice {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+    }
+    .notice { border-left: 5px solid var(--blue); background: linear-gradient(90deg, var(--soft-blue), #fff 72%); }
+    .notice.warning { border-left-color: var(--amber); background: linear-gradient(90deg, var(--soft-amber), #fff 72%); }
+    .metric b { display: block; font-size: 30px; color: var(--blue); line-height: 1.05; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 12px 0 18px;
+    }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+    th { background: #eef4f8; color: #2f3b41; }
+    tr:last-child td { border-bottom: 0; }
+    ul, ol { margin: 8px 0 0; padding-left: 22px; color: var(--muted); }
+    li { margin-bottom: 7px; }
+    footer { color: var(--muted); font-size: 12px; padding: 28px 0 34px; }
+    @media (max-width: 900px) {
+      .grid, .grid.two { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <a class="button" href="./index.html">返回主工作台</a>
+      <a class="button primary" href="./he_yuanzhe_sync_dashboard.html">何远哲同步主线</a>
+      <a class="button" href="document_reader.html?doc=code_data_reuse_audit.md">详细审计</a>
+      <a class="button" href="document_reader.html?doc=open_data_code_benchmark_map.md">Benchmark 路线图</a>
+      <a class="button" href="document_reader.html?doc=open_bos_dataset_access_protocol.md">Open BOS 协议</a>
+      <a class="button" href="./nrip_reproducibility_audit.html">NRIP 可复现性审计</a>
+      <a class="button" href="./tdbost_reproducibility_audit.html">TDBOST / 4D BOST 审计</a>
+    </div>
+    <h1>公开代码与数据复用执行页</h1>
+    <p>这页把开源代码、公开数据和许可边界压缩成“本科毕设下一步怎么用”。最后复核：2026-07-10；来源包括 GitHub API、DataCite、Figshare、Zenodo、出版社、arXiv 和项目主页。</p>
+    <div class="grid">
+      <div class="card metric"><b>1</b><span>主 benchmark：Open BOS tomography dataset。</span></div>
+      <div class="card metric"><b>2</b><span>可直接较安全参考：PyAbel / RTNF 等明确 MIT 项目。</span></div>
+      <div class="card metric"><b>4+</b><span>无 license 或 GPL 项目只按边界使用。</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice">
+      <h3>总判断</h3>
+      <p>核心 BOST/NeRIF 代码应尽量自写；公开代码只作依赖、结构参考或 benchmark 对照。最推荐的落地组合是：Open BOS dataset 做数据接口预演，自写 NeRIF/BOST toy，OpenPIV 作为外部 PIV 依赖，TDBOST/NRIP 仓库只读结构，TU Graz/NeDF/Zenodo 数据只做本地 benchmark，不把大数据或受限代码塞进 GitHub Pages。</p>
+    </section>
+
+    <h2>第一周该用什么</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>资源</th>
+          <th>当前复核状态</th>
+          <th>第一周动作</th>
+          <th>不要做</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Open-source BOS tomography dataset</strong><br />DOI <a href="https://doi.org/10.26208/1VE2-5C19">10.26208/1VE2-5C19</a></td>
+          <td><span class="tag amber">DataCite rightsList 为空</span><br />12 个 zip 约 51.66 GB；论文 DOI <a href="https://doi.org/10.1007/s00348-026-04189-z">10.1007/s00348-026-04189-z</a>。</td>
+          <td>只用已解析的 70-view manifest 和 5/7/9-view subset 预案；先做 loader / view grid / report。</td>
+          <td>不要全量下载进仓库；不要复制其中 codebase；不要把高速飞行体结果写成火焰结论。</td>
+        </tr>
+        <tr>
+          <td><strong>Hyz617/TDBOST</strong><br /><a href="https://github.com/Hyz617/TDBOST">GitHub</a></td>
+          <td><span class="tag red">GitHub API: no license</span><br />最近 pushed: 2026-04-04。</td>
+          <td>只读 README、configs、dataloader、TDmodel、render、run loop，写 “TDBOST 模块 -> M3B 模块” 对照。</td>
+          <td>不要复制代码；不要把 README 的 open-source 字样当成 LICENSE。</td>
+        </tr>
+        <tr>
+          <td><strong>NRIP / Neural-Implicit-Reconstruction-for-BOS</strong><br /><a href="https://github.com/Weihu22/Neural-Implicit-Reconstruction-for-BOS">GitHub</a></td>
+          <td><span class="tag red">GitHub API: no license</span><br />最近 pushed: 2026-05-11；483 个 blob、约 2.57 GB，大量为 C++/VS 构建产物。</td>
+          <td>先读 <a href="./nrip_reproducibility_audit.html">可复现性审计</a>；独立实现 hash/Fourier、mask、gradient 和 ray-budget 消融，不照搬源码。</td>
+          <td>不要直接作为本科主代码基底；不要镜像仓库；README 示例参数与代码默认值并不完全相同。</td>
+        </tr>
+        <tr>
+          <td><strong>RTNF / single-view RI tomography</strong><br /><a href="https://github.com/brandonyzhao/rtnf">GitHub</a></td>
+          <td><span class="tag green">MIT license</span><br />项目主页本机请求遇到证书链问题，但 GitHub 元数据可读。</td>
+          <td>学习 neural field + refractive ray tracing 的工程组织，最多做一个极简 curved-ray sanity check。</td>
+          <td>不要把单视角 CVPR 问题写成 BOST baseline。</td>
+        </tr>
+        <tr>
+          <td><strong>OpenPIV Python / photon</strong></td>
+          <td><span class="tag amber">GPL-3.0</span><br />OpenPIV 最近 pushed: 2026-06-19；photon 较旧。</td>
+          <td>OpenPIV 作为外部依赖跑 PIV image-pair baseline；photon 只读 PIV/BOS synthetic image generation 思路。</td>
+          <td>不要复制 GPL 源码进非 GPL 毕业仓库；不要把 OpenPIV 当 3D BOST 重构方法。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>可下载数据怎么分层</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>数据/补充材料</th>
+          <th>当前许可/体量</th>
+          <th>本科用途</th>
+          <th>仓库边界</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>NeDF Figshare supplement</strong><br /><a href="https://doi.org/10.60893/figshare.pof.27606522.v1">10.60893/figshare.pof.27606522.v1</a></td>
+          <td><span class="tag green">CC BY 4.0</span>，约 1.46 MB。</td>
+          <td>读 sparse-view neural deflection field 的补充材料，补 A 路线相关工作。</td>
+          <td>可公开引用；是否缓存大文件按当前库策略处理。</td>
+        </tr>
+        <tr>
+          <td><strong>TU Graz RI-gradient U-Net data/code</strong><br /><a href="https://doi.org/10.3217/vyf5w-yqf81">10.3217/vyf5w-yqf81</a></td>
+          <td><span class="tag green">CC BY 4.0</span>。</td>
+          <td>做 supervised refractive-gradient reconstruction 的外部 benchmark；用于理解数据组织和评价指标。</td>
+          <td>数据较大，只放 DOI/manifest；不要塞进 Pages。</td>
+        </tr>
+        <tr>
+          <td><strong>TU Graz HBOS code/data split</strong><br /><a href="https://doi.org/10.3217/7k9f0-7wb03">10.3217/7k9f0-7wb03</a></td>
+          <td><span class="tag green">CC BY 4.0</span>。</td>
+          <td>读 heterodyne BOS / phase-processing 代码结构，补 F/M3C 系统误差与位移处理背景。</td>
+          <td>只下载本地；公开页放 DOI 和提取目标。</td>
+        </tr>
+        <tr>
+          <td><strong>Helium jet BOS velocimetry</strong><br /><a href="https://zenodo.org/records/6136052">Zenodo 6136052</a></td>
+          <td><span class="tag green">CC BY 4.0</span>；DataCite rightsList 与 Zenodo metadata 已核。5 个文件约 3.53 GiB / 3.79 GB。</td>
+          <td>练 OpenPIV/PIVPy、BOS image-pair 和 velocity statistics。</td>
+          <td>不进仓库；只做本地 benchmark。</td>
+        </tr>
+        <tr>
+          <td><strong>TRON-BOS sample data</strong><br /><a href="https://zenodo.org/records/18118110">Zenodo 18118110</a></td>
+          <td><span class="tag green">CC BY 4.0</span>；DataCite rightsList 与 Zenodo metadata 已核。13 个文件约 15.19 GiB / 16.31 GB。</td>
+          <td>若研究 telecentric/rotating-nozzle BOS tomography，可读小脚本和 metadata。</td>
+          <td>数据太大；代码仓库无 license，不能复制。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>三条可执行路线</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Route A-data</h3>
+        <p><strong>Open BOS loader/report。</strong> 使用已有 70-view manifest，做 5/7/9-view subset、view grid、mask/deflection 字段检查和公开 report。</p>
+        <div class="tag-row"><span class="tag green">最推荐</span><span class="tag blue">贴 NeRIF/BOST</span></div>
+      </div>
+      <div class="card">
+        <h3>Route B-image</h3>
+        <p><strong>PIV-BOST image-pair toy。</strong> 用自写粒子图像或外部生成器思路，OpenPIV 作为依赖，比较 raw image / displacement / velocity 三层补偿。</p>
+        <div class="tag-row"><span class="tag amber">需要边界</span><span class="tag blue">贴 PIV-BOST</span></div>
+      </div>
+      <div class="card">
+        <h3>Route C-structure</h3>
+        <p><strong>TDBOST/NRIP structure reading。</strong> 只把 public repo 的模块结构转成自己的 M3B/M3C 计划，不复用无 license 代码；NRIP 的 clean-room 参数与消融路线见<a href="./nrip_reproducibility_audit.html">NRIP 审计页</a>，4D 方法骨架、真实 M3B 图和 rank/bias 实验矩阵见<a href="./tdbost_reproducibility_audit.html">TDBOST / 4D BOST 审计页</a>。</p>
+        <div class="tag-row"><span class="tag amber">只读结构</span><span class="tag blue">贴 4D/NRIP</span></div>
+      </div>
+    </div>
+
+    <h2>建议给师兄看的说法</h2>
+    <section class="notice warning">
+      <h3>一句话</h3>
+      <p>我不会直接搬无 license 或 GPL 代码，而是用公开数据和项目结构把 loader、metrics、可视化、参数扫描和质量报告先做出来；真实 OERF 数据给到后，只替换 manifest、geometry、mask 和 evaluation target。</p>
+    </section>
+
+    <h2>复核来源</h2>
+    <div class="button-row">
+      <a class="button" href="https://github.com/Hyz617/TDBOST">TDBOST GitHub</a>
+      <a class="button" href="https://github.com/Weihu22/Neural-Implicit-Reconstruction-for-BOS">NRIP GitHub</a>
+      <a class="button" href="https://doi.org/10.1016/j.combustflame.2026.115082">NRIP 正式 DOI</a>
+      <a class="button" href="./nrip_reproducibility_audit.html">NRIP 专项审计</a>
+      <a class="button" href="https://github.com/brandonyzhao/rtnf">RTNF GitHub</a>
+      <a class="button" href="https://github.com/OpenPIV/openpiv-python">OpenPIV Python</a>
+      <a class="button" href="https://doi.org/10.26208/1VE2-5C19">Open BOS DataCite</a>
+      <a class="button" href="https://doi.org/10.60893/figshare.pof.27606522.v1">NeDF Figshare</a>
+      <a class="button" href="https://doi.org/10.3217/vyf5w-yqf81">TU Graz U-Net data/code</a>
+    </div>
+  </main>
+
+  <footer>
+    公开代码和数据复用边界会随仓库 license、DataCite rights、项目更新而变化；正式写论文或公开代码前，应再复核一次原始页面。
+  </footer>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

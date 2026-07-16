@@ -1,0 +1,32 @@
+{
+  "name": "t16_provisional_ray_set_operator_v3b",
+  "dataset_config": "direct_operator_dataset.json",
+  "output_dir": "own_algorithm_benchmark",
+  "work_dir": "own_algorithm_work",
+  "reconstruction_budgets": [4, 6, 8],
+  "fixed_query_index": 4,
+  "audit_query_index": 3,
+  "training_seeds": [20260731, 20260732, 20260733],
+  "ridge_relative_grid": [0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1],
+  "bootstrap_seed": 20260731,
+  "bootstrap_replicates": 20000,
+  "minimum_superiority_ci_low_pct": 2.0,
+  "minimum_p10_superiority_pct": -2.0,
+  "maximum_harm_rate_gt_1pct": 0.1,
+  "maximum_parameter_ratio": 1.5,
+  "development_fields_only": true,
+  "models": {
+    "deeponet": {
+      "branch_hidden": 64,
+      "trunk_hidden": 64,
+      "rank": 48,
+      "pool_shape": [4, 4, 4]
+    },
+    "ray_set_operator": {
+      "view_features": 6,
+      "hidden_channels": 12,
+      "n_modes": [4, 6, 6],
+      "n_layers": 3
+    }
+  }
+}

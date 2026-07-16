@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OERF 资源查看器</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7f4;
+      --paper: #ffffff;
+      --ink: #1d252b;
+      --muted: #62717a;
+      --line: #d8e1df;
+      --teal: #16756f;
+      --blue: #315f93;
+      --gold: #9a6a12;
+      --red: #a74735;
+      --soft: #eaf4f1;
+      --shadow: 0 18px 42px rgba(32, 48, 56, 0.08);
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(245, 247, 244, 0.92), rgba(245, 247, 244, 0.74)),
+        url("./assets/backgrounds/oerf-refractive-field.png") right -130px top 18px / min(940px, 92vw) auto no-repeat fixed,
+        linear-gradient(180deg, rgba(22, 117, 111, 0.08), transparent 360px),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .shell {
+      width: min(1240px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 24px 0 64px;
+    }
+    .top,
+    .actions,
+    .meta,
+    .tips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .top {
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      font-weight: 800;
+      font-size: 13px;
+      text-decoration: none;
+      box-shadow: 0 8px 20px rgba(32, 48, 56, 0.04);
+    }
+    .button.primary {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+    }
+    .button:hover { text-decoration: none; border-color: var(--teal); }
+    .hero,
+    .viewer,
+    .note {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow);
+    }
+    .hero {
+      padding: clamp(18px, 3vw, 28px);
+      margin-bottom: 16px;
+      border-left: 4px solid var(--teal);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--teal);
+      border: 1px solid #c7ded9;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.12;
+      max-width: 980px;
+      overflow-wrap: anywhere;
+    }
+    .intro {
+      max-width: 900px;
+      margin: 13px 0 0;
+      color: #40525b;
+      font-size: 16px;
+    }
+    .meta { margin-top: 15px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #f2f5f3;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+    .tips {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .note {
+      padding: 13px 14px;
+      min-width: 0;
+    }
+    .note b {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--teal);
+      font-size: 13px;
+    }
+    .note p {
+      margin: 0;
+      color: #43545c;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .viewer {
+      min-height: 360px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.96);
+    }
+    .paper-context {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 12px;
+      margin-bottom: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .paper-context[hidden] { display: none; }
+    .paper-context h2 {
+      margin: 0 0 6px;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+    .paper-context p {
+      margin: 5px 0;
+      color: #43545c;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .paper-route,
+    .page-term-panel {
+      margin-top: 11px;
+      padding-top: 11px;
+      border-top: 1px solid var(--line);
+    }
+    .paper-route {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .route-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfdfc;
+      padding: 10px;
+      min-width: 0;
+    }
+    .route-card b,
+    .page-term-panel b {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--teal);
+      font-size: 12px;
+    }
+    .route-card p,
+    .page-term-panel p {
+      margin: 0;
+      color: #43545c;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .page-term-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .term-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 28px;
+      max-width: 100%;
+      border: 1px solid #ead7b5;
+      border-radius: 999px;
+      background: #f8f1e4;
+      color: var(--gold);
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+    .term-chip:hover { text-decoration: none; border-color: var(--gold); }
+    .term-chip span {
+      color: #6f5b2b;
+      font-weight: 800;
+    }
+    .context-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      align-content: flex-start;
+      justify-content: flex-end;
+    }
+    .context-actions .button {
+      min-height: 32px;
+      padding: 6px 9px;
+      font-size: 12px;
+    }
+
+    .viewer-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      background: #f8fbfa;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .viewer-head span {
+      overflow-wrap: anywhere;
+    }
+    .image-wrap {
+      display: grid;
+      place-items: center;
+      padding: clamp(12px, 2.4vw, 26px);
+      min-height: 360px;
+      background: #fbfdfc;
+    }
+    .image-wrap img {
+      display: block;
+      max-width: 100%;
+      max-height: min(78vh, 980px);
+      height: auto;
+      border: 1px solid #dbe4e2;
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: 0 14px 34px rgba(32, 48, 56, 0.09);
+    }
+    .pdf-wrap {
+      height: min(82vh, 980px);
+      min-height: 620px;
+      background: #f2f5f3;
+    }
+    .pdf-wrap object,
+    .pdf-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #fff;
+    }
+    .fallback {
+      padding: 18px;
+      color: var(--muted);
+    }
+    .error {
+      margin: 0;
+      border: 1px solid #efc8c0;
+      border-radius: var(--radius);
+      background: #fff4f1;
+      color: var(--red);
+      padding: 14px;
+    }
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    @media (max-width: 860px) {
+      .tips { grid-template-columns: 1fr; }
+      .paper-context { grid-template-columns: 1fr; }
+      .paper-route { grid-template-columns: 1fr; }
+      .context-actions { justify-content: flex-start; }
+      .top { display: block; }
+      .actions { margin-top: 10px; }
+      .pdf-wrap { min-height: 560px; height: 76vh; }
+    }
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 24px, 1240px); padding-top: 14px; }
+      .button { min-height: 36px; }
+      .pdf-wrap { min-height: 520px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="top">
+      <div class="actions">
+        <a class="button primary" href="./index.html">返回导航</a>
+        <a class="button" href="./paper_library/index.html">论文库</a>
+      </div>
+      <div class="actions">
+        <a class="button" id="rawLink" href="#">打开原始文件</a>
+      </div>
+    </div>
+
+    <header class="hero">
+      <div class="eyebrow" id="kind">Asset</div>
+      <h1 id="title">正在加载资源</h1>
+      <p class="intro" id="intro">站内图表和本地公开 PDF 会先进入这个查看页，避免直接打开裸文件。</p>
+      <div class="meta" id="meta"></div>
+    </header>
+
+    <section class="tips" aria-label="阅读提示">
+      <div class="note"><b>怎么看</b><p id="tipRead">图表先看标题和来源路径，再回到对应 demo 或桥梁页理解它支撑哪一步。</p></div>
+      <div class="note"><b>怎么用</b><p id="tipUse">需要放进汇报或开题材料时，优先引用原始文件和对应论文/代码说明。</p></div>
+      <div class="note"><b>边界</b><p>本页只包装站内公开资源；学校订阅或 VPN-only 全文不应放进公开页面。</p></div>
+    </section>
+
+    <section class="paper-context" id="paperContext" hidden aria-label="论文上下文"></section>
+
+    <main class="viewer" id="viewer">
+      <p class="fallback">Loading...</p>
+    </main>
+
+    <footer>Public asset wrapper. For text, code, JSON, CSV and BibTeX, use document_reader.html.</footer>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const asset = params.get("asset") || "";
+    const titleParam = params.get("title") || "";
+    const rawLink = document.getElementById("rawLink");
+    const titleEl = document.getElementById("title");
+    const kindEl = document.getElementById("kind");
+    const introEl = document.getElementById("intro");
+    const metaEl = document.getElementById("meta");
+    const viewerEl = document.getElementById("viewer");
+    const tipReadEl = document.getElementById("tipRead");
+    const tipUseEl = document.getElementById("tipUse");
+    const paperContextEl = document.getElementById("paperContext");
+    const imageExtensions = new Set(["png", "jpg", "jpeg", "gif", "svg", "webp"]);
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function validateAssetPath(path) {
+      if (!path || path.includes("\\") || path.startsWith("/") || path.includes("://")) return false;
+      if (path.split("/").some((part) => part === ".." || part === "")) return false;
+      const first = path.split("/")[0];
+      return !["private_library", "tmp_downloads", ".git", "_public_pages_export"].includes(first);
+    }
+
+    function extName(path) {
+      const clean = path.split("?")[0].split("#")[0];
+      const idx = clean.lastIndexOf(".");
+      return idx >= 0 ? clean.slice(idx + 1).toLowerCase() : "";
+    }
+
+    function prettyPath(path) {
+      return path.replace(/^\.?\//, "");
+    }
+
+    function prettyTitle(path) {
+      const name = prettyPath(path).split("/").pop() || path;
+      return name
+        .replace(/\.[a-z0-9]+$/i, "")
+        .replace(/[_-]+/g, " ")
+        .replace(/\b\w/g, (letter) => letter.toUpperCase());
+    }
+
+    function resolveAssetUrl(path) {
+      return new URL(path, location.href).href;
+    }
+
+    function currentPdfPage() {
+      const hash = location.hash || "";
+      const match = hash.match(/page=(\d+)/i);
+      return match ? Number(match[1]) : 0;
+    }
+
+    function termChip(term) {
+      const termName = term.zh || "";
+      const href = `./paper_library/term_index.html?q=${encodeURIComponent(termName)}`;
+      return `<a class="term-chip" href="${href}">${escapeHtml(termName)}<span>${Number(term.count || 0)}x</span></a>`;
+    }
+
+    function pageTermPanel(termItem) {
+      if (!termItem) return "";
+      const page = currentPdfPage();
+      const pageSummary = page
+        ? (termItem.page_summary || []).find((item) => Number(item.page) === page)
+        : null;
+      if (pageSummary && (pageSummary.terms || []).length) {
+        const hidden = Number(pageSummary.hidden_terms || 0);
+        return `
+          <div class="page-term-panel">
+            <b>当前 PDF 第 ${page} 页术语地图</b>
+            <p>这一页共命中 ${Number(pageSummary.total || 0)} 次术语。先看这些词，再回到 PDF 图、公式和上下文里核对。</p>
+            <div class="page-term-grid">
+              ${(pageSummary.terms || []).map(termChip).join("")}
+              ${hidden ? `<span class="term-chip">+${hidden}<span>more</span></span>` : ""}
+            </div>
+          </div>
+        `;
+      }
+      const topTerms = (termItem.terms || []).slice(0, 8);
+      if (!topTerms.length) return "";
+      return `
+        <div class="page-term-panel">
+          <b>整篇论文高频术语</b>
+          <p>未指定页码或当前页没有术语命中。先用这些高频概念建立阅读坐标。</p>
+          <div class="page-term-grid">${topTerms.map(termChip).join("")}</div>
+        </div>
+      `;
+    }
+
+    async function loadPaperContext() {
+      if (!asset.startsWith("paper_library/pdfs/")) return;
+      try {
+        const [papersResponse, termsResponse] = await Promise.all([
+          fetch("./paper_library/papers.json", { cache: "no-store" }),
+          fetch("./paper_library/term_index.json", { cache: "no-store" }).catch(() => null)
+        ]);
+        if (!papersResponse.ok) return;
+        const papers = await papersResponse.json();
+        const termIndex = termsResponse && termsResponse.ok ? await termsResponse.json() : [];
+        const localPdf = asset.replace(/^paper_library\//, "");
+        const paper = papers.find((item) => item.local_pdf === localPdf);
+        if (!paper) return;
+        const termItem = Array.isArray(termIndex)
+          ? termIndex.find((item) => item.local_pdf === localPdf)
+          : null;
+        paperContextEl.hidden = false;
+        paperContextEl.innerHTML = `
+          <div>
+            <h2>${escapeHtml(paper.title || "论文上下文")}</h2>
+            <p><strong>为什么收录：</strong>${escapeHtml(paper.why || "这篇是当前方向的支撑文献。")}</p>
+            <p><strong>读这篇要抽取：</strong>${escapeHtml(paper.extract || "问题定义、方法链条、数据需求、评价指标和局限。")}</p>
+            <p><strong>分组：</strong>${escapeHtml(paper.group || "未分组")} · ${escapeHtml(paper.priority || "support")}</p>
+            <div class="paper-route">
+              <article class="route-card"><b>先定位</b><p>确认这篇论文服务哪个选题或工具模块，不要孤立精读。</p></article>
+              <article class="route-card"><b>再看页码</b><p>如果从术语页跳来，优先核对当前页图、公式和术语上下文。</p></article>
+              <article class="route-card"><b>最后回写</b><p>把可复现变量、数据需求和风险写进选题详情或学习日志。</p></article>
+            </div>
+            ${pageTermPanel(termItem)}
+          </div>
+          <div class="context-actions">
+            <a class="button primary" href="./paper_library/paper_detail.html?id=${encodeURIComponent(paper.id)}">论文详情页</a>
+            <a class="button" href="./paper_library/readers/${encodeURIComponent(paper.id)}.html">术语导读</a>
+            <a class="button" href="./paper_library/index.html?q=${encodeURIComponent(paper.title || paper.id)}">回论文库定位</a>
+            <a class="button" href="./topic_deep_dive.html">选题详情档案</a>
+          </div>
+        `;
+      } catch {
+        paperContextEl.hidden = true;
+      }
+    }
+
+    async function render() {
+      if (!validateAssetPath(asset)) {
+        titleEl.textContent = "资源路径无效";
+        viewerEl.innerHTML = '<p class="error">这个链接没有指定可公开读取的站内资源。</p>';
+        rawLink.removeAttribute("href");
+        return;
+      }
+
+      const ext = extName(asset);
+      const url = resolveAssetUrl(asset);
+      rawLink.href = url;
+      kindEl.textContent = ext ? ext.toUpperCase() : "Asset";
+      titleEl.textContent = titleParam || prettyTitle(asset);
+      metaEl.innerHTML = [
+        `<span class="pill">${escapeHtml(prettyPath(asset))}</span>`,
+        `<span class="pill">${escapeHtml(ext || "file")}</span>`
+      ].join("");
+
+      if (imageExtensions.has(ext)) {
+        introEl.textContent = "这是站内图表/示意图的可分享查看页：保留原图比例，同时提供返回、原始文件和上下文入口。";
+        tipReadEl.textContent = "先确认图名和路径，再回到对应 demo、开题包或图示脚本里看它服务的论点。";
+        tipUseEl.textContent = "汇报时可打开原始文件获取清晰图；正式论文中要注明它来自自己的 demo 或整理图示。";
+        viewerEl.innerHTML = `<div class="viewer-head"><span>图像预览</span><span>${escapeHtml(prettyPath(asset))}</span></div><div class="image-wrap"><img src="${escapeHtml(url)}" alt="${escapeHtml(titleEl.textContent)}" /></div>`;
+        return;
+      }
+
+      if (ext === "pdf") {
+        const pdfUrl = `${url}${location.hash || ""}`;
+        introEl.textContent = "这是本地公开 PDF 的包装查看页。若它有单篇导读页，论文库仍是更适合精读和术语检索的入口。";
+        tipReadEl.textContent = "先用论文库/术语索引定位这篇 PDF 的作用，再在这里快速翻页核对图、公式和方法细节。";
+        tipUseEl.textContent = "不要把学校 VPN 或订阅全文放到公开页；本页只应承载确认可公开缓存的 PDF。";
+        viewerEl.innerHTML = `<div class="viewer-head"><span>PDF 预览</span><span>${escapeHtml(prettyPath(asset))}</span></div><div class="pdf-wrap"><object data="${escapeHtml(pdfUrl)}" type="application/pdf"><iframe src="${escapeHtml(pdfUrl)}" title="${escapeHtml(titleEl.textContent)}"></iframe></object></div>`;
+        await loadPaperContext();
+        return;
+      }
+
+      introEl.textContent = "这个文件类型更适合用文档阅读器查看。";
+      viewerEl.innerHTML = `<div class="fallback"><p>当前资源类型不是图像或 PDF。请打开原始文件，或改用 <a href="./document_reader.html?doc=${encodeURIComponent(asset)}">文档阅读器</a>。</p></div>`;
+    }
+
+    render().finally(() => {
+      document.title = `${titleEl.textContent} | OERF 资源查看器`;
+    });
+    window.addEventListener("hashchange", () => {
+      if (asset.startsWith("paper_library/pdfs/")) loadPaperContext();
+    });
+  </script>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

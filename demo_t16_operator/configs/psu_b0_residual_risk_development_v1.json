@@ -1,0 +1,89 @@
+{
+  "schema_version": "psu-b0-residual-risk-development-1.0",
+  "status": "DEVELOPMENT_ONLY_FRESH_AUDIT_NOT_CREATED_OR_OPENED",
+  "created_at_utc": "2026-07-16T12:30:00Z",
+  "evidence_scope": "REAL_PSU_SUPPORT_GEOMETRY_WITH_ANALYTIC_REACTION_MORPHOLOGY_AND_SYNTHETIC_CAMERA_NOISE_DEVELOPMENT_ONLY",
+  "source_pilot": {
+    "config": "demo_t16_operator/configs/psu_b0_spectral_preconditioner_pilot_v1.json",
+    "public_summary": "docs/psu_b0_spectral_preconditioner_pilot_public_summary.json",
+    "checkpoint_seeds": [20261741, 20261742, 20261743],
+    "selected_sobolev_strength": 5.0
+  },
+  "geometry": {
+    "view_count": 9,
+    "rays_per_view": 256,
+    "grid_size": 32,
+    "true_finite_aperture_sample_count": 32,
+    "nominal_finite_aperture_sample_count": 8,
+    "active_view_range": [6, 9]
+  },
+  "development_splits": {
+    "risk_train": {
+      "count": 48,
+      "families": ["plume", "wavy_front", "thin_front", "double_front", "annular_kernel", "oblique_shock"],
+      "field_seed_start": 202625000,
+      "mask_seed": 202625101,
+      "noise_seed": 202625201,
+      "relative_noise_levels": [0.02, 0.04, 0.06, 0.08],
+      "noise_profiles": ["iid", "camera_correlated"],
+      "truth_operator": "qmc32"
+    },
+    "risk_validation": {
+      "count": 24,
+      "families": ["plume", "wavy_front", "thin_front", "double_front", "annular_kernel", "oblique_shock"],
+      "field_seed_start": 202626000,
+      "mask_seed": 202626101,
+      "noise_seed": 202626201,
+      "relative_noise_levels": [0.025, 0.05, 0.075, 0.10],
+      "noise_profiles": ["iid", "camera_correlated"],
+      "truth_operator": "qmc32"
+    },
+    "risk_calibration": {
+      "count": 30,
+      "families": ["plume", "wavy_front", "thin_front", "double_front", "annular_kernel", "oblique_shock"],
+      "field_seed_start": 202627000,
+      "mask_seed": 202627101,
+      "noise_seed": 202627201,
+      "relative_noise_levels": [0.03, 0.055, 0.08, 0.105],
+      "noise_profiles": ["iid", "camera_correlated"],
+      "truth_operator": "qmc32"
+    }
+  },
+  "camera_noise_profiles": {
+    "iid": {
+      "correlation_fraction": 0.0,
+      "view_bias_fraction": 0.0,
+      "signal_fraction": 0.0
+    },
+    "camera_correlated": {
+      "correlation_fraction": 0.45,
+      "view_bias_fraction": 0.18,
+      "signal_fraction": 0.15
+    }
+  },
+  "risk_model": {
+    "family": "standardized_ridge_gain_regression_with_one_sided_split_conformal_lower_bound",
+    "ridge_grid": [0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0],
+    "conformal_alpha": 0.10,
+    "distance_quantile": 0.975,
+    "minimum_lower_gain_percent_grid": [-1.0, 0.0, 0.5, 1.0],
+    "development_selection_rule": "maximize validation mean selected gain subject to validation harm over 1 percent at most 0.05 and coverage at least 0.20; break ties by higher coverage then higher margin",
+    "deployment_decision_stage": 1,
+    "decision_held_for_all_stages": true
+  },
+  "solver": {
+    "stages": 4,
+    "deployment_logical_calls": {
+      "forward": 4,
+      "adjoint": 4
+    }
+  },
+  "claim_boundary": {
+    "fresh_audit_opened": false,
+    "experimental_field_truth": false,
+    "analytic_morphology_is_cfd": false,
+    "camera_noise_is_measured_psu_noise": false,
+    "conformal_exchangeability_guarantees_hold_under_arbitrary_ood": false,
+    "algorithm_superiority": false
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "schema_version": "psu-b0-streaming-baseline-preregistration-1.0",
+  "status": "FROZEN_BEFORE_DEVELOPMENT_ROTATION_40_ACCESS",
+  "frozen_at_utc": "2026-07-16T10:24:00Z",
+  "revision": {
+    "id": "R1_FULL_SCALE_PRECISION_GATE",
+    "timing": "BEFORE_ANY_DEVELOPMENT_ROTATION_40_ACCESS",
+    "reason": "Full-scale float32 failed the preregistered inner-product criterion while full-scale float64 passed; the threshold was not relaxed.",
+    "discarded_authoritative_precision": "float32",
+    "authoritative_precision": "float64"
+  },
+  "scope": "FULL_NINE_SUPPORT_VIEW_LOW_RESOLUTION_B0_RESOURCE_AND_CGLS_GATE_NO_DEVELOPMENT_NO_FINAL_AUDIT",
+  "data": {
+    "support_views": 9,
+    "selection": "all_corrected_active_rows",
+    "measurement_components": [
+      "epsu_all",
+      "epsv_all"
+    ],
+    "measurement_magnitude_used_for_ray_selection": false,
+    "development_rotation_40_access": "FORBIDDEN",
+    "final_audit_access": "SEALED"
+  },
+  "operator": {
+    "domain": "B0_FORWARD_BOX",
+    "grid_shape_zyx": [
+      16,
+      16,
+      16
+    ],
+    "bounds_m": {
+      "minimum_xyz": [
+        -0.11,
+        -0.11,
+        -0.11
+      ],
+      "maximum_xyz": [
+        0.11,
+        0.11,
+        0.11
+      ]
+    },
+    "finite_aperture_sample_count": 16,
+    "aperture_design": "paired_hammersley_path_disk_samples",
+    "chunk_rays": 32768,
+    "dtype": "float64",
+    "device": "cpu",
+    "gauge": "zero_one_voxel_outer_boundary",
+    "positivity": false,
+    "logical_call": "one_complete_deterministic_traversal_of_all_selected_support_ray_chunks"
+  },
+  "interface_profile": {
+    "dot_test_dual": "deterministic_random_vector",
+    "seed": 20260717,
+    "float64_relative_dot_error_maximum": 1e-11,
+    "full_forward_adjoint_pair_wall_seconds_local_maximum": 600,
+    "process_max_rss_bytes_local_maximum": 25769803776
+  },
+  "inverse": {
+    "solver": "cgls",
+    "start": "zero_field",
+    "iterations": 4,
+    "iteration_budget_selected_on_support_or_development": false,
+    "regularization": "zero_boundary_gauge_plus_fixed_krylov_early_stopping_only",
+    "evaluation_forward_calls_reported_separately": true,
+    "direct_vs_recurrence_residual_relative_difference_maximum": 0.0001
+  },
+  "required_outputs": [
+    "logical_operator_call_ledger",
+    "full_support_wall_time_and_peak_rss",
+    "float32_full_stream_dot_test",
+    "cgls_relative_measurement_residual_history",
+    "per_view_support_relative_residual",
+    "private_reconstruction_volume_and_checksum",
+    "public_aggregate_summary_without_paths_or_measurement_values",
+    "development_and_final_audit_access_flags"
+  ],
+  "claim_boundary": {
+    "support_fit_is_heldout_generalization": false,
+    "support_fit_is_unique_three_dimensional_truth": false,
+    "field_l2_available": false,
+    "algorithm_superiority": false,
+    "server_required_before_this_gate": false
+  }
+}

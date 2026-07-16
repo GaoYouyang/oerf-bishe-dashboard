@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Classical Tomography Baseline Bridge | OERF BOST</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f6;
+      --panel: #ffffff;
+      --ink: #1d2328;
+      --muted: #64727d;
+      --line: #d8e0df;
+      --teal: #16756f;
+      --blue: #315f93;
+      --gold: #9a6718;
+      --red: #a6483c;
+      --soft: #eef7f4;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    header, main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px clamp(18px, 4vw, 46px);
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f2f6fb);
+    }
+    h1 { margin: 16px 0 10px; font-size: clamp(30px, 4vw, 52px); line-height: 1.08; }
+    h2 { margin: 34px 0 12px; font-size: 26px; }
+    h3 { margin: 20px 0 8px; font-size: 18px; }
+    p { margin: 8px 0; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .button, .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .tag { background: var(--soft); color: var(--teal); border-color: #cde2dc; }
+    .lead { max-width: 960px; color: var(--muted); font-size: 17px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 16px;
+    }
+    .card strong { color: var(--teal); }
+    .note {
+      border-left: 4px solid var(--blue);
+      background: #fff;
+      padding: 12px 14px;
+      margin: 16px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 11px 12px;
+    }
+    th { background: #eef3f9; color: #263d59; font-size: 13px; }
+    td { font-size: 14px; }
+    code { background: #eef2f3; padding: 2px 5px; border-radius: 5px; }
+    ul, ol { padding-left: 22px; }
+    li { margin: 6px 0; }
+    .metric { font-size: 34px; color: var(--blue); font-weight: 800; display: block; line-height: 1; }
+    .warn { color: var(--red); font-weight: 700; }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <a class="button" href="./index.html">返回总工作台</a>
+      <a class="button" href="./paper_library/index.html">打开论文库</a>
+      <a class="button" href="./neural_field_encoding_bridge.html">神经场编码桥梁</a>
+      <a class="button" href="document_reader.html?doc=paper_to_demo_map.md">论文到 demo 映射</a>
+    </div>
+    <h1>传统层析 Baseline 到 NeRIF/BOST 的桥梁</h1>
+    <p class="lead">这页回答一个导师和师兄都可能会问的问题：如果不用 NeRIF，传统 BOST/CT 重构应该和谁比？答案不是泛泛说“传统方法”，而是明确列出 ART/SART/FBP/TV/LSQR/ASTRA/scikit-image 这些可引用、可解释、可实现的 baseline 层级。</p>
+    <div class="grid">
+      <div class="card"><span class="metric">8</span><p>新增经典层析/反问题入口。</p></div>
+      <div class="card"><span class="metric">2</span><p>新增可缓存开放 PDF：TV-min CT 与 scikit-image。</p></div>
+      <div class="card"><span class="metric">4</span><p>建议 baseline：FBP/SART、TV、LSQR/CGLS、NeRIF。</p></div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>总判断</h2>
+      <div class="note">
+        <p><strong>给师兄看的说法：</strong>NeRIF 的对照不应该只写“voxel baseline”。更清楚的写法是：传统线性层析可以按 FBP / ART-SART / regularized least squares / TV minimization 分层；本科 demo 可以先用 scikit-image 跑 Radon + iradon_sart，再视数据复杂度迁移到 ASTRA 或自写 forward/backprojection。</p>
+      </div>
+      <p>BOST 和医学 CT 的物理观测不同，但数学上都会落到“有限投影下恢复空间场”的反问题。传统 baseline 的价值不是抢主线，而是帮你证明 NeRIF 的提升来自 sparse-view、regularization、continuous-field prior 或 forward model，而不是拿一个过弱的对照。</p>
+    </section>
+
+    <section>
+      <h2>根文献与工具怎么用</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>入口</th>
+            <th>该抽什么</th>
+            <th>和 NeRIF/BOST 的关系</th>
+            <th>本地/在线入口</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ART, Gordon/Bender/Herman 1970</strong></td>
+            <td>把投影方程写成线性系统，并用逐投影校正迭代求解。</td>
+            <td>解释 voxel algebraic reconstruction 的源头；适合写“传统离散场 baseline”。</td>
+            <td><a href="https://doi.org/10.1016/0022-5193(70)90109-8">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>SART, Andersen/Kak 1984</strong></td>
+            <td>同时更新、权重归一、relaxation 和 sparse-view 行为。</td>
+            <td>最适合本科 demo 的传统 baseline 名称；Open BOS/NIRT 文献也常把 SART/ASART 作为对照。</td>
+            <td><a href="https://engineering.purdue.edu/RVL/Publications/SART_84.pdf">Purdue PDF</a> / <a href="https://doi.org/10.1177/016173468400600107">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Kak & Slaney textbook</strong></td>
+            <td>Radon、投影切片定理、FBP、ART/SART、采样和分辨率。</td>
+            <td>物理本科补 tomography 直觉的首选教材；读相关章节，不用通读。</td>
+            <td><a href="https://www.slaney.org/pct/pct-toc.html">官方在线目录</a></td>
+          </tr>
+          <tr>
+            <td><strong>Sidky/Kao/Pan TV-min CT 2011</strong></td>
+            <td>constrained TV minimization，数据一致性和正则化的取舍。</td>
+            <td>少视角/低信噪下，TV 是神经场之前最自然的强 baseline 之一。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf">本地 PDF</a> / <a href="https://doi.org/10.1118/1.3560887">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Chambolle-Pock 2011</strong></td>
+            <td>TV/凸成像问题的 primal-dual 优化框架。</td>
+            <td>如果真的实现 TV baseline，可以引用它解释优化器，而不是只写“加 TV loss”。</td>
+            <td><a href="https://hal.science/hal-00490826/document">HAL PDF</a> / <a href="https://doi.org/10.1007/s10851-010-0251-1">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>ASTRA Toolbox</strong></td>
+            <td>GPU projection/backprojection，FBP/SIRT/SART/CGLS 等算法接口。</td>
+            <td>如果 M1/M2 从 toy 升级到更真实投影几何，ASTRA 是可落地工具。</td>
+            <td><a href="https://ir.cwi.nl/pub/23858/23858D.pdf">CWI PDF</a> / <a href="https://doi.org/10.1016/j.ultramic.2015.05.002">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>scikit-image</strong></td>
+            <td>Radon / inverse Radon / SART 示例和 Python 图像处理基础。</td>
+            <td>最快跑通 2D tomography toy；适合 Week 4-6 补反问题与 baseline。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fscikit_image_vanderwalt_2014_peerj.pdf">本地 PDF</a> / <a href="https://peerj.com/articles/453">PeerJ</a></td>
+          </tr>
+          <tr>
+            <td><strong>LSQR, Paige/Saunders 1982</strong></td>
+            <td>稀疏线性 least-squares 与 Krylov 迭代。</td>
+            <td>给 CGLS/LSQR baseline、semi-convergence 和 stopping rule 一个正式引用。</td>
+            <td><a href="https://doi.org/10.1145/355984.355989">DOI</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>建议的 Baseline 层级</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>层级</th>
+            <th>推荐实现</th>
+            <th>能说明什么</th>
+            <th>不要夸大的地方</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>B0 FBP / inverse Radon</strong></td>
+            <td>scikit-image <code>radon</code> / <code>iradon</code>，用于 2D phantom。</td>
+            <td>让你理解投影、角度、滤波反投影和少角度 artifact。</td>
+            <td>BOST 不是医学 CT；FBP 只是教学和 sanity check。</td>
+          </tr>
+          <tr>
+            <td><strong>B1 SART / voxel iterative</strong></td>
+            <td>scikit-image <code>iradon_sart</code> 或 ASTRA SART/SIRT。</td>
+            <td>给 NeRIF 一个公平的传统迭代 baseline。</td>
+            <td>真实 BOST 几何、位移场和 refractive-index conversion 仍需单独处理。</td>
+          </tr>
+          <tr>
+            <td><strong>B2 regularized least squares</strong></td>
+            <td>自写 <code>Ax=b</code> + Tikhonov/LSQR/CGLS，小规模先跑。</td>
+            <td>把 noise、condition number、semi-convergence 和 stopping rule 写清楚。</td>
+            <td>不要把过小 toy 的结论当作真实 3D 火焰结论。</td>
+          </tr>
+          <tr>
+            <td><strong>B3 TV / sparse-gradient baseline</strong></td>
+            <td>2D/3D phantom 上做 TV regularization 或 primal-dual 简化版。</td>
+            <td>和 NeRIF 比较“平滑先验 vs 连续神经场先验”的差异。</td>
+            <td>TV 会偏好分段常数，火焰/折射率场不一定满足。</td>
+          </tr>
+          <tr>
+            <td><strong>B4 NeRIF / neural field</strong></td>
+            <td>coordinate MLP + encoding + BOST projection loss。</td>
+            <td>主线贡献：连续场、稀疏视角、重投影一致性、可做 encoding ablation。</td>
+            <td>不能只和弱 baseline 比；需要说明传统 baseline 参数已合理。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>最小执行路线</h2>
+      <ol>
+        <li>用 scikit-image 做一个 2D Gaussian / flame-like phantom：生成 30、15、9、5 个投影角。</li>
+        <li>跑 FBP、SART、Tikhonov/LSQR、TV 简化版，输出 L2、SSIM、重投影残差和 artifact 图。</li>
+        <li>把同一 phantom 交给 M1/M2 的 coordinate MLP / Fourier encoding 版本，比较少视角和噪声下的边界。</li>
+        <li>把结论写成一句话：NeRIF 的优势在哪些 view/noise/field-complexity 条件下出现，哪些条件下传统方法已经足够强。</li>
+        <li>如果师兄给真实数据，再把 toy 中的 <code>A</code> 和 projection operator 替换为 OERF 几何/位移场接口。</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>下次问何远哲</h2>
+      <ul>
+        <li>NeRIF 论文或组内代码的传统 baseline 具体是哪一种：UBOST、SART、TV、RBF-BOST，还是组内体素法？</li>
+        <li>baseline 参数是否有固定设置，例如 relaxation、iteration count、TV weight、early stopping？</li>
+        <li>真实 BOST 数据更应该比较 field error、reprojection residual、density/temperature error，还是 visual quality？</li>
+        <li>如果我先做 scikit-image/ASTRA 的 toy baseline，师兄是否认为对开题有帮助？</li>
+        <li>是否有组内可公开的 phantom 或 synthetic case，用来避免 baseline 只停在通用 CT？</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>写作边界</h2>
+      <p class="warn">不要写成：医学 CT 算法可以直接当作 BOST 算法。</p>
+      <p>更准确的写法是：ART/SART/TV/LSQR 提供了有限投影反问题的 baseline 语言和实现工具；BOST/NeRIF 的特殊性在于观测量来自背景图案位移/偏折，forward model、标定、折射率-密度-温度链路和真实实验误差都不同。</p>
+      <p>本页最后更新：2026-07-08。已缓存的 PDF 仅限 arXiv 或开放 PeerJ/HAL 文件；Purdue/CWI/HAL 等在线 PDF 若许可边界不够明确，仅保留跳转入口。</p>
+    </section>
+  </main>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

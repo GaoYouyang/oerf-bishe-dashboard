@@ -1,0 +1,137 @@
+{
+  "configuration": {
+    "grid_shape": [
+      400,
+      350,
+      350
+    ],
+    "image_columns": 2560,
+    "image_rows": 2160,
+    "measurement_count": 49766400,
+    "views": 9
+  },
+  "coordinate_contract": [
+    {
+      "axis": 0,
+      "centered": true,
+      "dimension": 400,
+      "extent_matches_official": true,
+      "field": "X",
+      "inferred_cell_centered_extent_m": 0.15,
+      "lower_cell_center_m": -0.0748125,
+      "separable_on_landmarks": true,
+      "spacing_m": 0.000375,
+      "upper_cell_center_m": 0.07481249999999999
+    },
+    {
+      "axis": 1,
+      "centered": true,
+      "dimension": 350,
+      "extent_matches_official": true,
+      "field": "Y",
+      "inferred_cell_centered_extent_m": 0.13,
+      "lower_cell_center_m": -0.06481428571428571,
+      "separable_on_landmarks": true,
+      "spacing_m": 0.00037142857142857143,
+      "upper_cell_center_m": 0.06481428571428571
+    },
+    {
+      "axis": 2,
+      "centered": true,
+      "dimension": 350,
+      "extent_matches_official": true,
+      "field": "Z",
+      "inferred_cell_centered_extent_m": 0.13,
+      "lower_cell_center_m": -0.06481428571428571,
+      "separable_on_landmarks": true,
+      "spacing_m": 0.00037142857142857143,
+      "upper_cell_center_m": 0.06481428571428571
+    }
+  ],
+  "evidence_scope": "AGGREGATE_SELECTED_NUMERIC_LOADER_CONTRACT_NO_RECONSTRUCTION",
+  "generated_by": [
+    "site_tools/psu_bost_mat_sample.py",
+    "site_tools/psu_bost_loader_conformance.py",
+    "site_tools/official_nirt_preflight.py",
+    "site_tools/build_psu_public_summary.py"
+  ],
+  "limitations": [
+    "deterministic landmarks and measurement rows are aggregate loader evidence, not full-array distribution statistics",
+    "deflection arrays and masks are not yet numerically audited",
+    "the official NIRT entrypoint was not executed",
+    "there is no held-out reprojection, 3-D truth or algorithm superiority result"
+  ],
+  "numeric_contract_checks": {
+    "coordinate_extents_match_official_meters": true,
+    "coordinate_grid_is_centered": true,
+    "coordinate_landmarks_are_separable": true,
+    "direction_samples_are_unit_vectors": true,
+    "grid_shapes_match_official": true,
+    "official_nine_view_count": true,
+    "ray_sample_indices_aligned": true,
+    "ray_samples_are_finite": true,
+    "ray_width_matches_siz_product": true,
+    "sampled_apertures_are_positive": true,
+    "sampled_camera_centers_match_view_count": true,
+    "selected_stream_integrity_valid": true,
+    "source_snapshot_consistent": true
+  },
+  "official_nirt_preflight": {
+    "blocker_codes": [
+      "GPU_DEVICE_FORCED",
+      "WINDOWS_CUDA_PATH_HARDCODED",
+      "INVALID_TF_ONES_CALL",
+      "MISSING_AUTO_W_CONTRACT",
+      "TENSOR_SLICE_ASSIGN",
+      "CWD_RELATIVE_DATA_PATH"
+    ],
+    "blocker_count": 6,
+    "dependencies": {
+      "numpy": {
+        "importable": true,
+        "version": "2.4.6"
+      },
+      "scipy": {
+        "importable": true,
+        "version": "1.17.1"
+      },
+      "tensorflow": {
+        "importable": false
+      }
+    },
+    "host_physical_memory_bytes": 34359738368,
+    "known_persistent_floor_bytes": 9934886400,
+    "known_persistent_floor_gib": 9.252583980560303,
+    "safe_next_gate": "TINY_SYNTHETIC_GEOMETRY_AND_STREAMING_LOADER_FIXTURE",
+    "status": "FULL_AUTHOR_NIRT_NO_GO_CURRENT_ENVIRONMENT"
+  },
+  "public_export_policy": {
+    "contains_author_source_copy": false,
+    "contains_private_paths": false,
+    "contains_raw_arrays": false,
+    "contains_scalar_samples": false
+  },
+  "ray_contract": {
+    "aperture_max": 0.001931818181818182,
+    "aperture_min": 0.001640625,
+    "direction_norm_max": 1.0000000231560102,
+    "direction_norm_max_abs_error": 2.3156010220404255e-08,
+    "direction_norm_min": 0.99999997987098,
+    "sampled_measurements": 19,
+    "sampled_unique_camera_centers": 9
+  },
+  "reader_memory_probe": {
+    "maximum_resident_set_size_bytes": 52838400,
+    "numeric_payload_bytes": 392000000,
+    "scope": "ONE_LOCAL_CACHED_RUN_MEMORY_EVIDENCE_NOT_A_SPEED_BENCHMARK",
+    "variable": "X"
+  },
+  "schema_version": "psu-hsof-public-loader-summary-1.0",
+  "source": {
+    "dataset_doi": "https://doi.org/10.26208/1VE2-5C19",
+    "file_label": "HSOF_9CAM_RT.mat",
+    "file_size_bytes": 5227925615,
+    "sha256": "622852cb06faa90271479b78ffe98e6d02bc50217ebde067226f727569f8c788"
+  },
+  "status": "LOADER_NUMERIC_CONTRACT_CONFORMANT"
+}

@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>受限全文访问队列 | OERF 毕设导航</title>
+  <style>
+    :root { --bg:#f7faf9; --panel:#fff; --ink:#202a31; --muted:#64727c; --line:#d8e1df; --green:#16756f; --blue:#315f93; --red:#a23d32; --amber:#9a6818; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif; line-height:1.65; letter-spacing:0; color:var(--ink); background:var(--bg); }
+    header, main { width:min(1220px, calc(100vw - 36px)); margin:0 auto; min-width:0; }
+    header { padding:32px 0 18px; }
+    h1 { margin:12px 0 10px; font-size:clamp(30px,4vw,48px); line-height:1.1; }
+    h2 { margin:28px 0 12px; font-size:24px; }
+    p { margin:0 0 12px; color:var(--muted); }
+    a { color:var(--blue); text-decoration:none; overflow-wrap:anywhere; }
+    a:hover { text-decoration:underline; }
+    code { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; white-space:normal; overflow-wrap:anywhere; }
+    .toolbar { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; }
+    .button { display:inline-flex; align-items:center; min-height:36px; padding:7px 11px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); font-weight:700; }
+    .button.primary { background:var(--green); color:#fff; border-color:var(--green); }
+    .notice { background:var(--panel); border:1px solid var(--line); border-left:5px solid var(--green); border-radius:8px; padding:15px; margin:14px 0; min-width:0; overflow-wrap:anywhere; }
+    .metrics { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:16px 0; }
+    .metric { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:13px; }
+    .metric b { display:block; font-size:24px; }
+    .muted { color:var(--muted); }
+    table { width:100%; table-layout:fixed; border-collapse:collapse; background:#fff; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+    th,td { padding:11px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; font-size:14px; overflow-wrap:anywhere; }
+    th { background:#edf5f2; color:#2f3b41; }
+    tr:last-child td { border-bottom:0; }
+    .tag { display:inline-flex; padding:3px 8px; border-radius:999px; font-size:12px; font-weight:800; border:1px solid var(--line); white-space:normal; overflow-wrap:anywhere; }
+    .p0 { color:#fff; background:var(--red); border-color:var(--red); }
+    .p1 { color:#114f4a; background:#e5f2ef; border-color:#c9e3de; }
+    .p2 { color:var(--amber); background:#fff4de; border-color:#ead5ac; }
+    .p3 { color:var(--blue); background:#eef4ff; border-color:#d5e2f2; }
+    footer { color:var(--muted); font-size:12px; margin:30px 0; }
+    @media (max-width:900px) { .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } table { display:block; overflow-x:auto; } }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="button" href="./index.html">返回主导航</a>
+    <h1>受限全文访问队列</h1>
+    <p>这页列 DOI、出版社/开放阅读入口、优先级和精读目标，不包含订阅 PDF。它既安排 WebVPN/图书馆/师兄合法路径下的个人精读顺序，也跟踪“已有在线全文、但没有稳定本地文件”的开放访问状态。</p>
+    <div class="toolbar">
+      <a class="button primary" href="./paper_library/index.html">公开论文库</a>
+      <a class="button" href="./xmu_vpn_private_library_protocol.html">WebVPN/私有库边界</a>
+      <a class="button" href="./pdf_cache_audit.html">PDF 缓存边界审计</a>
+      <a class="button" href="./thesis_pathway_matrix.html">选题路线矩阵</a>
+    </div>
+    <div class="metrics">
+      <div class="metric"><b>48</b><span class="muted">原始访问目标，含 1 项已在线解决</span></div>
+      <div class="metric"><b>7</b><span class="muted">P0 必补全文</span></div>
+      <div class="metric"><b>18</b><span class="muted">P1 方法/基线</span></div>
+      <div class="metric"><b>18</b><span class="muted">P2 旁支备选</span></div>
+      <div class="metric"><b>5</b><span class="muted">P3 远景背景</span></div>
+    </div>
+  </header>
+  <main>
+    <section class="notice">
+      <strong>如何使用</strong>
+      <p>P0 用来支撑你的毕业设计主线判断：何远哲 PIV-BOST / 4D BOST、蔡组 direct BOST、Grauer UBOST、BOS 灵敏度和 PIV 折射率误差。4D BOST 已通过 ACM HTML/eReader 解决正式全文阅读，不再需要 WebVPN；它保留在原始队列里用于记录状态。P1 用来补传统基线与误差评估，P2/P3 用于旁支和全景背景。</p>
+      <p>下载后的 PDF 只放本机 <code>private_library/inbox/</code> 或 <code>private_library/pdfs/</code>，运行本地同步脚本后进入私有库；公开 GitHub Pages 不上传这些 PDF。</p>
+      <p>如果浏览器把文件直接保存到系统下载目录，可以用本地同步脚本扫描最近下载的候选文件：<code>python3 private_library/tools/sync_private_library.py --scan-downloads --max-scan-files 20</code>。匹配成功的 PDF 会复制到本机私有库，公开网页只保留状态和 DOI。</p>
+    </section>
+    <h2>下载与精读队列</h2>
+    <table>
+      <thead><tr><th>优先级</th><th>论文</th><th>来源</th><th>路线</th><th>精读提取目标</th><th>入口</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="tag p0">P0</span></td>
+          <td><strong>The background oriented schlieren technique: sensitivity, accuracy, resolution and application to a three-dimensional density field</strong><br /><span class="muted">Erik Goldhahn, Jorg Seume</span></td>
+          <td>Experiments in Fluids<br />2007<br /><a href="https://doi.org/10.1007/s00348-007-0331-1" target="_blank" rel="noreferrer">10.1007/s00348-007-0331-1</a></td>
+          <td>BOS实验误差基础</td>
+          <td>精读BOS灵敏度、精度、分辨率和三维密度应用，是开题解释实验可行性的底层依据。<br /><span class="muted">建议文件名：<code>erikgoldhahn_the_background_oriented_schlieren_technique_sensitivity_accuracy_resolution_and_appl_2007_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s00348-007-0331-1" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p0">P0</span></td>
+          <td><strong>Tensor Decomposition-Based Four-dimensional Background-Oriented Schlieren Tomography for High-Speed, High-Fidelity Flow Field Reconstruction</strong><br /><span class="muted">Yuanzhe He, Yutao Zheng, Shijie Xu, Ning Liu, Yingzheng Liu, Weiwei Cai</span></td>
+          <td>ACM Transactions on Graphics<br />2026<br /><a href="https://doi.org/10.1145/3809488" target="_blank" rel="noreferrer">10.1145/3809488</a></td>
+          <td>He/4D BOST主线</td>
+          <td>ACM 已标 Open access / CC BY 4.0；2026-07-10 已核 HTML 正文和 19 页 eReader 可读，并完成专项精读。raw PDF 下载仍依赖 ACM 浏览器会话；如需本地文件可在浏览器手动下载后再按许可决定是否缓存。<br /><span class="muted">当前无需再把它当“只能看摘要”的全文缺口。</span></td>
+          <td><a class="button" href="https://dl.acm.org/doi/epdf/10.1145/3809488" target="_blank" rel="noreferrer">打开 eReader</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p0">P0</span></td>
+          <td><strong>Instantaneous refractive index compensation on the velocity measurement using simultaneous PIV-BOST</strong><br /><span class="muted">Yutao Zheng, Yuanzhe He, Jingruo Chen, Minshuo Li, Shijie Xu, Bi Wen, Yingzheng Liu, Weiwei Cai</span></td>
+          <td>Experiments in Fluids<br />2025<br /><a href="https://doi.org/10.1007/s00348-025-04093-y" target="_blank" rel="noreferrer">10.1007/s00348-025-04093-y</a></td>
+          <td>He/PIV-BOST主线</td>
+          <td>He/Yuanzhe PIV-BOST 主线。通过 XMU WebVPN/SpringerLink 若能下载 PDF，只放 private_library/pdfs/，不要上传 GitHub。<br /><span class="muted">建议文件名：<code>zheng_he_piv_bost_compensation_2025_springer_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s00348-025-04093-y" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p0">P0</span></td>
+          <td><strong>Instantaneous refractive index compensation on stereo-velocity measurement in turbulent combustion</strong><br /><span class="muted">Yutao Zheng, Yuanzhe He, Lianhao Feng, Shijie Xu, Ning Liu, Miaosheng He, Hong Liu, Yingzheng Liu, Weiwei Cai</span></td>
+          <td>Proceedings of the Combustion Institute<br />2026<br /><a href="https://doi.org/10.1016/j.proci.2026.106175" target="_blank" rel="noreferrer">10.1016/j.proci.2026.106175</a></td>
+          <td>He/PIV-BOST扩展</td>
+          <td>PIV-BOST 升级支线。若 ScienceDirect/WebVPN 可读全文，作为 B 路线/stereo PIV-BOST 讨论材料。<br /><span class="muted">建议文件名：<code>zheng_he_stereo_piv_bost_combustion_2026_sciencedirect_private.pdf</code></span></td>
+          <td><a class="button" href="https://www.sciencedirect.com/science/article/pii/S1540748926001732" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p0">P0</span></td>
+          <td><strong>Uncertainty of flow velocity measurements due to refractive index fluctuations</strong><br /><span class="muted">Raimund Schlüßler, Jürgen Czarske, Andreas Fischer</span></td>
+          <td>Optics and Lasers in Engineering<br />2014<br /><a href="https://doi.org/10.1016/j.optlaseng.2013.10.011" target="_blank" rel="noreferrer">10.1016/j.optlaseng.2013.10.011</a></td>
+          <td>PIV-BOST误差动机</td>
+          <td>直接支撑为什么折射率扰动会污染PIV速度测量，需摘出误差传播和速度不确定度语言。<br /><span class="muted">建议文件名：<code>raimundschller_uncertainty_of_flow_velocity_measurements_due_to_refractive_index_fluctuations_2014_private.pdf</code></span></td>
+          <td><a class="button" href="https://doi.org/10.1016/j.optlaseng.2013.10.011" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p0">P0</span></td>
+          <td><strong>Fast and robust volumetric refractive index measurement by unified background-oriented schlieren tomography</strong><br /><span class="muted">Samuel J. Grauer, Adam M. Steinberg</span></td>
+          <td>Experiments in Fluids<br />2020<br /><a href="https://doi.org/10.1007/s00348-020-2912-1" target="_blank" rel="noreferrer">10.1007/s00348-020-2912-1</a></td>
+          <td>统一BOST基线</td>
+          <td>Grauer统一BOST是NeRIF和Open BOS数据链的重要前史，需摘出体折射率重构框架和稳健性指标。<br /><span class="muted">建议文件名：<code>samueljgrauer_fast_and_robust_volumetric_refractive_index_measurement_by_unified_background_orient_2020_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s00348-020-2912-1" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p0">P0</span></td>
+          <td><strong>Direct background-oriented schlieren tomography using radial basis functions</strong><br /><span class="muted">Huajun Cai, Yang Song, Yunjing Ji, Zhenhua Li, Anzhi He</span></td>
+          <td>Optics Express<br />2022<br /><a href="https://doi.org/10.1364/OE.459872" target="_blank" rel="noreferrer">10.1364/OE.459872</a></td>
+          <td>蔡组BOST算法根文献</td>
+          <td>何远哲NeRIF/4D BOST前的直接BOST路线，需摘出RBF参数化、forward model和误差评估。<br /><span class="muted">建议文件名：<code>huajuncai_direct_background_oriented_schlieren_tomography_using_radial_basis_functions_2022_private.pdf</code></span></td>
+          <td><a class="button" href="https://opg.optica.org/oe/fulltext.cfm?uri=oe-30-11-19100" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Algorithm for Time-Resolved Background-Oriented Schlieren Tomography Applied to High-Speed Flows</strong><br /><span class="muted">Joseph P. Molnar, Samuel J. Grauer</span></td>
+          <td>AIAA SCITECH 2025 Forum<br />2025<br /><a href="https://doi.org/10.2514/6.2025-1060" target="_blank" rel="noreferrer">10.2514/6.2025-1060</a></td>
+          <td>4D/TBOS外部对照</td>
+          <td>补时间分辨BOST算法路线，和何远哲4D BOST比较时可用作外部参照。<br /><span class="muted">建议文件名：<code>josephpmolnar_algorithm_for_time_resolved_background_oriented_schlieren_tomography_applied_to_high_2025_private.pdf</code></span></td>
+          <td><a class="button" href="https://arc.aiaa.org/doi/10.2514/6.2025-1060" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>On the applicability of background oriented optical tomography for large scale aerodynamic investigations</strong><br /><span class="muted">M. Raffel, H. Richard, G. E. A. Meier</span></td>
+          <td>Experiments in Fluids<br />2000<br /><a href="https://doi.org/10.1007/s003480050408" target="_blank" rel="noreferrer">10.1007/s003480050408</a></td>
+          <td>BOS optical tomography前史</td>
+          <td>补大尺度气动测量中BOS tomography可行性，是BOST源头之一。<br /><span class="muted">建议文件名：<code>mraffel_on_the_applicability_of_background_oriented_optical_tomography_for_large_scale_aerod_2000_private.pdf</code></span></td>
+          <td><a class="button" href="https://doi.org/10.1007/s003480050408" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>A pyramid approach for background-oriented schlieren tomography</strong><br /><span class="muted">Wei Hu, Lijun Yang, Yue Zhang, Pengcheng Wang, Siyi Zhang, Jingxuan Li</span></td>
+          <td>Experiments in Fluids<br />2026<br /><a href="https://doi.org/10.1007/s00348-025-04153-3" target="_blank" rel="noreferrer">10.1007/s00348-025-04153-3</a></td>
+          <td>BOST coarse-to-fine邻居</td>
+          <td>精读pyramid/coarse-to-fine重构语言，可启发本科demo的多尺度baseline。<br /><span class="muted">建议文件名：<code>weihu_a_pyramid_approach_for_background_oriented_schlieren_tomography_2026_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s00348-025-04153-3" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Reconstruction refinement of hybrid background-oriented schlieren tomography</strong><br /><span class="muted">Wei Hu, Lijun Yang, Yue Zhang, Pengcheng Wang, Jingxuan Li</span></td>
+          <td>Physics of Fluids<br />2024<br /><a href="https://doi.org/10.1063/5.0190778" target="_blank" rel="noreferrer">10.1063/5.0190778</a></td>
+          <td>BOST refinement邻居</td>
+          <td>精读hybrid BOST refinement，作为NeRIF/4D BOST前的传统优化改进路线。<br /><span class="muted">建议文件名：<code>weihu_reconstruction_refinement_of_hybrid_background_oriented_schlieren_tomography_2024_private.pdf</code></span></td>
+          <td><a class="button" href="https://pubs.aip.org/aip/pof/article/36/2/023618/3266814/Reconstruction-refinement-of-hybrid-background" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Quantifying numerical uncertainty in background-oriented schlieren</strong><br /><span class="muted">Pranjal Anand, Jiacheng Zhang, Lalit K. Rajendran, Sally P. M. Bane, Pavlos P. Vlachos</span></td>
+          <td>Experiments in Fluids<br />2024<br /><a href="https://doi.org/10.1007/s00348-023-03734-4" target="_blank" rel="noreferrer">10.1007/s00348-023-03734-4</a></td>
+          <td>BOS不确定度</td>
+          <td>精读数值不确定度量化，帮助毕业论文避免只报单一L2误差。<br /><span class="muted">建议文件名：<code>pranjalanand_quantifying_numerical_uncertainty_in_background_oriented_schlieren_2024_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s00348-023-03734-4" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Adaptively balanced Poisson-constrained physics-informed neural networks for robust displacement integration in background-oriented Schlieren</strong><br /><span class="muted">Hao Liu, Hongzhe Wang, Yang Song, Yunjing Ji, Jiancheng Lai, Zhenhua Li</span></td>
+          <td>Journal of the Optical Society of America A<br />2026<br /><a href="https://doi.org/10.1364/JOSAA.581983" target="_blank" rel="noreferrer">10.1364/JOSAA.581983</a></td>
+          <td>BOS位移积分/物理约束</td>
+          <td>精读Poisson约束与自适应平衡loss，用于M3C系统误差和位移积分baseline。<br /><span class="muted">建议文件名：<code>haoliu_adaptively_balanced_poisson_constrained_physics_informed_neural_networks_for_robust_2026_private.pdf</code></span></td>
+          <td><a class="button" href="https://opg.optica.org/josaa/abstract.cfm?uri=josaa-43-2-333" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Density measurements using the Background Oriented Schlieren technique</strong><br /><span class="muted">L. Venkatakrishnan, G. E. A. Meier</span></td>
+          <td>Experiments in Fluids<br />2004<br /><a href="https://doi.org/10.1007/s00348-004-0807-1" target="_blank" rel="noreferrer">10.1007/s00348-004-0807-1</a></td>
+          <td>BOS定量密度根文献</td>
+          <td>补密度测量与Gladstone-Dale链条，是从位移到密度/折射率的基础。<br /><span class="muted">建议文件名：<code>lvenkatakrishnan_density_measurements_using_the_background_oriented_schlieren_technique_2004_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s00348-004-0807-1" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Computerized background-oriented schlieren</strong><br /><span class="muted">G. Meier</span></td>
+          <td>Experiments in Fluids<br />2002<br /><a href="https://doi.org/10.1007/s00348-002-0450-7" target="_blank" rel="noreferrer">10.1007/s00348-002-0450-7</a></td>
+          <td>BOS根文献</td>
+          <td>补BOS早期方法定义和工程动机，用于文献综述第一层。<br /><span class="muted">建议文件名：<code>gmeier_computerized_background_oriented_schlieren_2002_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s00348-002-0450-7" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Spatiotemporally controlled illumination strategy for event-based imaging velocimetry</strong><br /><span class="muted">Jiajun Cao, Xin Zeng, Weiwei Cai, Yingzheng Liu</span></td>
+          <td>Optics Letters<br />2026<br /><a href="https://doi.org/10.1364/OL.585869" target="_blank" rel="noreferrer">10.1364/OL.585869</a></td>
+          <td>OERF EBIV照明控制</td>
+          <td>补事件相机+受控照明策略，服务未来event-based flow visualization题目。<br /><span class="muted">建议文件名：<code>jiajuncao_spatiotemporally_controlled_illumination_strategy_for_event_based_imaging_velocimetr_2026_private.pdf</code></span></td>
+          <td><a class="button" href="https://opg.optica.org/ol/abstract.cfm?uri=ol-51-5-1116" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>A temporally adaptive particle tracking velocimetry with continuous-wave illumination by fusing event and frame cameras</strong><br /><span class="muted">Xin Zeng, Jiajun Cao, Zhen Lyu, Weiwei Cai, Yingzheng Liu</span></td>
+          <td>Journal of Visualization<br />2025<br /><a href="https://doi.org/10.1007/s12650-025-01053-w" target="_blank" rel="noreferrer">10.1007/s12650-025-01053-w</a></td>
+          <td>OERF事件+帧PTV</td>
+          <td>若做AI/事件相机方向，精读事件帧融合、连续光照和tracking评价。<br /><span class="muted">建议文件名：<code>xinzeng_a_temporally_adaptive_particle_tracking_velocimetry_with_continuous_wave_illuminatio_2025_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s12650-025-01053-w" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>An event-triggered background-oriented schlieren technique combined with dynamic projection using dynamic mirror device</strong><br /><span class="muted">Zhen Lyu, Weiwei Cai, Yingzheng Liu</span></td>
+          <td>Measurement Science and Technology<br />2024<br /><a href="https://doi.org/10.1088/1361-6501/ad6172" target="_blank" rel="noreferrer">10.1088/1361-6501/ad6172</a></td>
+          <td>OERF事件触发BOS</td>
+          <td>蔡组事件触发/动态投影BOS，适合判断事件相机支线是否能和BOST主线相接。<br /><span class="muted">建议文件名：<code>zhenlyu_an_event_triggered_background_oriented_schlieren_technique_combined_with_dynamic_pro_2024_private.pdf</code></span></td>
+          <td><a class="button" href="https://doi.org/10.1088/1361-6501/ad6172" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Event-guided dual-tracer strategy for reliable particle matching in particle-based velocimetry</strong><br /><span class="muted">Jiajun Cao, Xin Zeng, Tao Cai, Weiwei Cai, Yingzheng Liu</span></td>
+          <td>Optics Letters<br />2026<br /><a href="https://doi.org/10.1364/OL.605684" target="_blank" rel="noreferrer">10.1364/OL.605684</a></td>
+          <td>OERF双示踪粒子匹配</td>
+          <td>补particle matching可靠性、dual tracer设计和事件相机辅助策略。<br /><span class="muted">建议文件名：<code>jiajuncao_event_guided_dual_tracer_strategy_for_reliable_particle_matching_in_particle_based_v_2026_private.pdf</code></span></td>
+          <td><a class="button" href="https://opg.optica.org/ol/abstract.cfm?uri=ol-51-13-3677" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Experimental study of transonic jet based on Tomo-PIV and Tomo-BOS</strong><br /><span class="muted">Xintao Lu, Wenxuan She, Hang Zhao, Yuhu Qu, Tong Jia, Yuan Xiong, Shuang Chen, Qi Gao</span></td>
+          <td>Science China Technological Sciences<br />2026<br /><a href="https://doi.org/10.1007/s11431-025-3091-0" target="_blank" rel="noreferrer">10.1007/s11431-025-3091-0</a></td>
+          <td>Tomo-PIV + Tomo-BOS联合诊断</td>
+          <td>补PIV-BOST之外的速度-密度联合测量路线，适合综述与备选题。<br /><span class="muted">建议文件名：<code>xintaolu_experimental_study_of_transonic_jet_based_on_tomo_piv_and_tomo_bos_2026_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s11431-025-3091-0" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Projection background-oriented schlieren</strong><br /><span class="muted">Joshua M. Weisberger, Brett F. Bathel</span></td>
+          <td>Applied Optics<br />2022<br /><a href="https://doi.org/10.1364/AO.458770" target="_blank" rel="noreferrer">10.1364/AO.458770</a></td>
+          <td>projection BOS</td>
+          <td>补NASA/投影式BOS路线，可作为光路/背景设计变体。<br /><span class="muted">建议文件名：<code>joshuamweisberger_projection_background_oriented_schlieren_2022_private.pdf</code></span></td>
+          <td><a class="button" href="https://opg.optica.org/ao/abstract.cfm?uri=ao-61-20-6006" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Whole-field density measurements by &#x27;synthetic schlieren&#x27;</strong><br /><span class="muted">S. B. Dalziel, G. O. Hughes, B. R. Sutherland</span></td>
+          <td>Experiments in Fluids<br />2000<br /><a href="https://doi.org/10.1007/s003480050391" target="_blank" rel="noreferrer">10.1007/s003480050391</a></td>
+          <td>synthetic schlieren前史</td>
+          <td>补synthetic schlieren与BOS关系，解释背景纹影方法谱系。<br /><span class="muted">建议文件名：<code>sbdalziel_whole_field_density_measurements_by_synthetic_schlieren_2000_private.pdf</code></span></td>
+          <td><a class="button" href="https://doi.org/10.1007/s003480050391" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Three-dimensional shock wave reconstruction using multiple high-speed digital cameras and background-oriented schlieren imaging</strong><br /><span class="muted">Kyle O. Winter, Michael J. Hargather</span></td>
+          <td>Experiments in Fluids<br />2019<br /><a href="https://doi.org/10.1007/s00348-019-2738-x" target="_blank" rel="noreferrer">10.1007/s00348-019-2738-x</a></td>
+          <td>三维冲击波BOS</td>
+          <td>精读多高速相机三维冲击波重构，补真实3D BOS实验场景。<br /><span class="muted">建议文件名：<code>kyleowinter_three_dimensional_shock_wave_reconstruction_using_multiple_high_speed_digital_camera_2019_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s00348-019-2738-x" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Tomographic background oriented schlieren using plenoptic cameras</strong><br /><span class="muted">Jenna K. Davis, Christopher J. Clifford, Dustin L. Kelly, Brian S. Thurow</span></td>
+          <td>Measurement Science and Technology<br />2022<br /><a href="https://doi.org/10.1088/1361-6501/ac3b09" target="_blank" rel="noreferrer">10.1088/1361-6501/ac3b09</a></td>
+          <td>单相机/光场TBOS</td>
+          <td>补plenoptic camera TBOS，用于单相机/少硬件选题备选。<br /><span class="muted">建议文件名：<code>jennakdavis_tomographic_background_oriented_schlieren_using_plenoptic_cameras_2022_private.pdf</code></span></td>
+          <td><a class="button" href="https://iopscience.iop.org/article/10.1088/1361-6501/ac3b09" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p1">P1</span></td>
+          <td><strong>Background-oriented Schlieren tomography using gated recurrent unit</strong><br /><span class="muted">Lin Bo, Huajun Cai, Yang Song, Yunjing Ji, Zhenhua Li, Anzhi He</span></td>
+          <td>Optics Express<br />2023<br /><a href="https://doi.org/10.1364/OE.505992" target="_blank" rel="noreferrer">10.1364/OE.505992</a></td>
+          <td>循环网络BOST邻居</td>
+          <td>精读GRU如何引入先验/序列信息，作为神经场之外的AI-BOST对照。<br /><span class="muted">建议文件名：<code>linbo_background_oriented_schlieren_tomography_using_gated_recurrent_unit_2023_private.pdf</code></span></td>
+          <td><a class="button" href="https://opg.optica.org/abstract.cfm?uri=oe-31-23-39182" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Convection Over Coffee: Revisiting a Steamy Background-Oriented Schlieren Dataset</strong><br /><span class="muted">Joseph P. Molnar, Frederik Fuest, Samuel J. Grauer</span></td>
+          <td>AIAA SCITECH 2026 Forum<br />2026<br /><a href="https://doi.org/10.2514/6.2026-1499" target="_blank" rel="noreferrer">10.2514/6.2026-1499</a></td>
+          <td>BOS教学数据集线索</td>
+          <td>可选阅读，若找到公开数据入口可用于教学/小demo，但不作为主线基准。<br /><span class="muted">建议文件名：<code>josephpmolnar_convection_over_coffee_revisiting_a_steamy_background_oriented_schlieren_dataset_2026_private.pdf</code></span></td>
+          <td><a class="button" href="https://arc.aiaa.org/doi/10.2514/6.2026-1499" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Experimental Closure of Mean Reaction-Progress Balance in NH3/CH4 Turbulent Premixed Flames</strong><br /><span class="muted">Minshuo Li, Jingruo Chen, Yuanzhe He, Yutao Zheng, Shijie Xu, Ning Liu, Weiwei Cai</span></td>
+          <td>Flow, Turbulence and Combustion<br />2026<br /><a href="https://doi.org/10.1007/s10494-026-00737-z" target="_blank" rel="noreferrer">10.1007/s10494-026-00737-z</a></td>
+          <td>He/OERF反应流旁支</td>
+          <td>何远哲参与的氨/甲烷湍流预混火焰实验论文；只在补真实燃烧实验背景、reaction-progress balance 和 laser diagnostics 语境时精读。<br /><span class="muted">建议文件名：<code>minshuoli_experimental_closure_of_mean_reaction_progress_balance_in_nh3_ch4_turbulent_premixed_2026_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s10494-026-00737-z" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Investigation on heat exchange of iron particle combustion based on simultaneous multi-physics field measurements</strong><br /><span class="muted">Yutao Zheng, Jingruo Chen, Yuanzhe He, Minshuo Li, Xiuxiu Chen, Shijie Xu, Xin Wen, Yingzheng Liu, Weiwei Cai</span></td>
+          <td>Combustion and Flame<br />2025<br /><a href="https://doi.org/10.1016/j.combustflame.2025.114309" target="_blank" rel="noreferrer">10.1016/j.combustflame.2025.114309</a></td>
+          <td>He/OERF多物理测量旁支</td>
+          <td>何远哲参与的铁颗粒燃烧多物理场测量；用于理解OERF实验诊断能力和燃烧应用背景，不抢BOST主线时间。<br /><span class="muted">建议文件名：<code>yutaozheng_investigation_on_heat_exchange_of_iron_particle_combustion_based_on_simultaneous_mul_2025_private.pdf</code></span></td>
+          <td><a class="button" href="https://www.sciencedirect.com/science/article/abs/pii/S0010218025003475" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>4D multi-kHz time-resolved laser-induced incandescence for comprehensive soot characterization in turbulent flames</strong><br /><span class="muted">Marcel Muller, Mikhail Vassilyev, Weiwei Cai, Franz Huber, Stefan Will</span></td>
+          <td>Applied Optics Early Posting<br />2026<br /><a href="https://doi.org/10.1364/AO.603424" target="_blank" rel="noreferrer">10.1364/AO.603424</a></td>
+          <td>OERF 4D optical diagnostics neighbor</td>
+          <td>4D BOST 之外的另一条 X-Y-Z-T 高速体诊断路线。只借数据组织、时间分辨率、4D 指标和可视化语言，不建议改成碳烟主线。<br /><span class="muted">建议文件名：<code>muller_cai_4d_multikhz_laser_induced_incandescence_2026_applied_optics_private.pdf</code></span></td>
+          <td><a class="button" href="https://opg.optica.org/ao/abstract.cfm?doi=10.1364/AO.603424" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Special issue on computational imaging for flow visualization</strong><br /><span class="muted">Weiwei Cai, Chong Pan, Qi Gao</span></td>
+          <td>Measurement Science and Technology<br />2025<br /><a href="https://doi.org/10.1088/1361-6501/ae08dd" target="_blank" rel="noreferrer">10.1088/1361-6501/ae08dd</a></td>
+          <td>OERF computational imaging perspective</td>
+          <td>蔡老师作为作者/guest editor 的 computational imaging for flow visualization 特刊导言；适合支撑开题里“光学诊断 + 计算重构”作为一条课题组范式，而不是孤立算法。<br /><span class="muted">建议文件名：<code>cai_computational_imaging_flow_visualization_special_issue_2025_iop_private.pdf</code></span></td>
+          <td><a class="button" href="https://iopscience.iop.org/article/10.1088/1361-6501/ae08dd" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Data assimilation using ensemble Kalman filter and low-dimensional manifolds for reacting flow</strong><br /><span class="muted">Yan Zhuang, Shijie Xu, Yutao Zheng, Chuangxin He, Weiwei Cai, Yingzheng Liu</span></td>
+          <td>Physics of Fluids<br />2025<br /><a href="https://doi.org/10.1063/5.0255969" target="_blank" rel="noreferrer">10.1063/5.0255969</a></td>
+          <td>OERF reacting-flow simulation and data assimilation</td>
+          <td>作为远期展望阅读：BOST/NeRIF 重构出来的折射率/密度/温度场，未来可能成为 CFD、低维流形或数据同化的观测输入。<br /><span class="muted">建议文件名：<code>zhuang_cai_enkf_low_dimensional_manifolds_reacting_flow_2025_pof_private.pdf</code></span></td>
+          <td><a class="button" href="https://pubs.aip.org/aip/pof/article/37/3/033616/3339469/Data-assimilation-using-ensemble-Kalman-filter-and" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Benchmark evaluation of event-based imaging velocimetry using digital micro-mirror device</strong><br /><span class="muted">Jiajun Cao, Xin Zeng, Zhen Lyu, Weiwei Cai, Hong Liu, Sen Li</span></td>
+          <td>Experiments in Fluids<br />2025<br /><a href="https://doi.org/10.1007/s00348-025-04003-2" target="_blank" rel="noreferrer">10.1007/s00348-025-04003-2</a></td>
+          <td>OERF事件相机旁支</td>
+          <td>事件相机/EBIV/DMD 旁支。只有在 F 路线继续展开时再精读全文。<br /><span class="muted">建议文件名：<code>cao_cai_ebiv_dmd_benchmark_2025_springer_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s00348-025-04003-2" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Assimilating mean velocity fields of a shockwave-boundary layer interaction from background-oriented schlieren measurements using physics-informed neural networks</strong><br /><span class="muted">L. Rohlfs, J. Weiss</span></td>
+          <td>Physics of Fluids<br />2024<br /><a href="https://doi.org/10.1063/5.0208040" target="_blank" rel="noreferrer">10.1063/5.0208040</a></td>
+          <td>PINN-BOS assimilation</td>
+          <td>可选阅读，补shock/boundary-layer中BOS+速度同化思路。<br /><span class="muted">建议文件名：<code>lrohlfs_assimilating_mean_velocity_fields_of_a_shockwave_boundary_layer_interaction_from_bac_2024_private.pdf</code></span></td>
+          <td><a class="button" href="https://pubs.aip.org/aip/pof/article/36/7/076134/3302279/Assimilating-mean-velocity-fields-of-a-shockwave" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Digital micromirror device enriched nearly single-pixel 3D calibration framework for particle-based velocimetry techniques</strong><br /><span class="muted">Xin Zeng, Jiajun Cao, Xin Wen, Weiwei Cai, Di Peng, Benlong Wang, Yingzheng Liu</span></td>
+          <td>Measurement Science and Technology<br />2025<br /><a href="https://doi.org/10.1088/1361-6501/adc322" target="_blank" rel="noreferrer">10.1088/1361-6501/adc322</a></td>
+          <td>PIV/PTV calibration and DMD computational imaging</td>
+          <td>蔡组粒子测速/计算成像旁支；用于补 PIV-BOST 的相机标定、视差/几何误差和 particle-based velocimetry 工程接口。<br /><span class="muted">建议文件名：<code>zeng_cai_dmd_single_pixel_3d_calibration_particle_velocimetry_2025_iop_private.pdf</code></span></td>
+          <td><a class="button" href="https://iopscience.iop.org/article/10.1088/1361-6501/adc322" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Simultaneous temperature and velocity measurements based on novel fluid density-matched phosphorescent microspheres</strong><br /><span class="muted">Tao Cai, Di Luan, Ruiyu Fu, Yingzheng Liu, Di Peng, Weiwei Cai, Hong Liu</span></td>
+          <td>Experiments in Fluids<br />2025<br /><a href="https://doi.org/10.1007/s00348-025-03965-7" target="_blank" rel="noreferrer">10.1007/s00348-025-03965-7</a></td>
+          <td>PIV/temperature simultaneous diagnostics</td>
+          <td>PIV-BOST 旁支：同步速度/温度测量、密度匹配示踪粒子和误差耦合。可在读 PIV-BOST 后作为测速误差与多物理场测量背景。<br /><span class="muted">建议文件名：<code>cai_phosphorescent_microspheres_temperature_velocity_2025_springer_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s00348-025-03965-7" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Axisymmetric background-oriented schlieren measurement for cylindrical combustion flow in micro-rocket torches</strong><br /><span class="muted">Y. Hirayama, S. Ogawa</span></td>
+          <td>Physics of Fluids<br />2025<br /><a href="https://doi.org/10.1063/5.0248981" target="_blank" rel="noreferrer">10.1063/5.0248981</a></td>
+          <td>axisymmetric BOS and combustion applications</td>
+          <td>轴对称先验+BOS 的反应流应用，适合补 M3C 的物理先验/Abel-like 降维讨论。<br /><span class="muted">建议文件名：<code>hirayama_axisymmetric_bos_micro_rocket_torches_2025_aip_private.pdf</code></span></td>
+          <td><a class="button" href="https://pubs.aip.org/aip/pof/article/37/2/026108/3333980/Axisymmetric-background-oriented-schlieren" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Heterodyne Background-Oriented Schlieren for Diagnostics of Reactive Flows</strong><br /><span class="muted">Sami Tasmany, Jakob Woisetschlaeger, Johannes Guertler, Robert Kuschmierz, Juergen Czarske</span></td>
+          <td>ASME Turbo Expo / Volume 3A: Combustion, Fuels &amp; Emissions<br />2025<br /><a href="https://doi.org/10.1115/GT2025-152641" target="_blank" rel="noreferrer">10.1115/GT2025-152641</a></td>
+          <td>heterodyne BOS and reactive-flow diagnostics</td>
+          <td>HBOS 反应流/燃气轮机会议扩展。若 Heterodyne BOS 成为旁支，精读相位处理、热声振荡和工程部署。<br /><span class="muted">建议文件名：<code>tasmany_heterodyne_bost_reactive_flows_gt2025_asme_private.pdf</code></span></td>
+          <td><a class="button" href="https://doi.org/10.1115/GT2025-152641" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Holographic background-oriented schlieren</strong><br /><span class="muted">Yu Wang, Yingchun Wu, Xuecheng Wu, Lei Wang</span></td>
+          <td>Optics Letters<br />2026<br /><a href="https://doi.org/10.1364/OL.597682" target="_blank" rel="noreferrer">10.1364/OL.597682</a></td>
+          <td>holographic BOS</td>
+          <td>可选阅读，理解BOS与数字全息/相位测量结合的旁支。<br /><span class="muted">建议文件名：<code>yuwang_holographic_background_oriented_schlieren_2026_private.pdf</code></span></td>
+          <td><a class="button" href="https://doi.org/10.1364/OL.597682" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Supersonic Projectile Flow Field Reconstruction Using Background Oriented Schlieren and Physics Informed Convolutional Neural Networks</strong><br /><span class="muted">Miguel A. Escudero, Benoît G. Marinus, Karthik Depuru-Mohan, Marco Debiasi, Alistair J. Saddington</span></td>
+          <td>AIAA AVIATION FORUM AND ASCEND 2025<br />2025<br /><a href="https://doi.org/10.2514/6.2025-3198" target="_blank" rel="noreferrer">10.2514/6.2025-3198</a></td>
+          <td>physics-informed CNN BOS</td>
+          <td>可选阅读，补CNN/physics-informed重构邻居。<br /><span class="muted">建议文件名：<code>miguelaescudero_supersonic_projectile_flow_field_reconstruction_using_background_oriented_schlieren_2025_private.pdf</code></span></td>
+          <td><a class="button" href="https://arc.aiaa.org/doi/10.2514/6.2025-3198" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Development of a single-camera volumetric thermometry for gas flows based on space division multiplexing</strong><br /><span class="muted">Qian Wang, Hecong Liu, Weiwei Cai</span></td>
+          <td>Science China Technological Sciences<br />2022<br /><a href="https://doi.org/10.1007/s11431-021-2017-7" target="_blank" rel="noreferrer">10.1007/s11431-021-2017-7</a></td>
+          <td>single-camera computational imaging and thermometry</td>
+          <td>单相机/空间复用/三维体测温路线，适合补 BOST/NeRIF 的有限角度、低硬件成本和单相机体重构背景。<br /><span class="muted">建议文件名：<code>wang_cai_single_camera_volumetric_thermometry_2022_springer_private.pdf</code></span></td>
+          <td><a class="button" href="https://link.springer.com/article/10.1007/s11431-021-2017-7" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Tomographic Background-Oriented Schlieren Facility for Buoyancy-Driven Flows and Flames</strong><br /><span class="muted">Reese A. Peck Cowles, Joseph P. Molnar, Amit K. Singh, Samuel J. Grauer</span></td>
+          <td>AIAA SCITECH 2025 Forum<br />2025<br /><a href="https://doi.org/10.2514/6.2025-1058" target="_blank" rel="noreferrer">10.2514/6.2025-1058</a></td>
+          <td>火焰/浮力流TBOS设施</td>
+          <td>可选阅读，适合补真实实验装置与火焰应用。<br /><span class="muted">建议文件名：<code>reeseapeckcowles_tomographic_background_oriented_schlieren_facility_for_buoyancy_driven_flows_and_fla_2025_private.pdf</code></span></td>
+          <td><a class="button" href="https://arc.aiaa.org/doi/10.2514/6.2025-1058" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Three-dimensional tomographic reconstruction for gaseous fuel jets based on background oriented schlieren technique</strong><br /><span class="muted">Xuesong Li, Shuicheng Gong, Fuhao Zhang, Zhiyin Ma, Gang Xun</span></td>
+          <td>Journal of the Energy Institute<br />2025<br /><a href="https://doi.org/10.1016/j.joei.2025.102118" target="_blank" rel="noreferrer">10.1016/j.joei.2025.102118</a></td>
+          <td>燃料射流TBOS</td>
+          <td>可选阅读，若毕设转向燃料射流/燃烧场TBOS则补。<br /><span class="muted">建议文件名：<code>xuesongli_three_dimensional_tomographic_reconstruction_for_gaseous_fuel_jets_based_on_backgrou_2025_private.pdf</code></span></td>
+          <td><a class="button" href="https://doi.org/10.1016/j.joei.2025.102118" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p2">P2</span></td>
+          <td><strong>Velocity field reconstruction of buoyancy-driven convection flow based on synthetic temperature data of background-oriented schlieren technique</strong><br /><span class="muted">Zhenggang Ren, Jing Wang, Rui Su, Yingnan Shen, Xiaodong Ruan</span></td>
+          <td>Physics of Fluids<br />2026<br /><a href="https://doi.org/10.1063/5.0309305" target="_blank" rel="noreferrer">10.1063/5.0309305</a></td>
+          <td>BOS-derived velocity field and data assimilation</td>
+          <td>BOS-derived temperature data 到 Navier-Stokes/data-assimilation velocity-field reconstruction 的外部邻居。用于区分 PIV-BOST image/velocity compensation 与非 PIV 的速度场反演。<br /><span class="muted">建议文件名：<code>ren_bos_temperature_velocity_assimilation_2026_aip_private.pdf</code></span></td>
+          <td><a class="button" href="https://pubs.aip.org/aip/pof/article/38/3/033333/3340887/Velocity-field-reconstruction-of-buoyancy-driven" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p3">P3</span></td>
+          <td><strong>Background-Oriented Schlieren Velocimetry of Helium Coolant Flow in Additively Manufactured Channels</strong><br /><span class="muted">Cody S. Wiggins, Yuqiao Fan, Chris Crawford</span></td>
+          <td>IEEE Transactions on Plasma Science<br />2026<br /><a href="https://doi.org/10.1109/TPS.2026.3680839" target="_blank" rel="noreferrer">10.1109/TPS.2026.3680839</a></td>
+          <td>BOS velocimetry and energy-system flow diagnostics</td>
+          <td>BOS velocimetry 在氦冷却通道/能源系统中的应用，低优先级；用于拓展应用图谱，不作为主线。<br /><span class="muted">建议文件名：<code>wiggins_helium_coolant_bos_velocimetry_2026_ieee_private.pdf</code></span></td>
+          <td><a class="button" href="https://doi.org/10.1109/TPS.2026.3680839" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p3">P3</span></td>
+          <td><strong>Recent advances and applications of digital holography in multiphase reactive/nonreactive flows: a review</strong><br /><span class="muted">Jianqing Huang, Weiwei Cai, Yingchun Wu, Xuecheng Wu</span></td>
+          <td>Measurement Science and Technology<br />2021<br /><a href="https://doi.org/10.1088/1361-6501/ac32ea" target="_blank" rel="noreferrer">10.1088/1361-6501/ac32ea</a></td>
+          <td>digital holography and particle diagnostics</td>
+          <td>OERF 数字全息/多相流诊断综述，用于建立课题组非 BOST 的三维诊断全景。若时间有限，晚于 NeRIF、PIV-BOST、4D BOST 阅读。<br /><span class="muted">建议文件名：<code>huang_cai_digital_holography_multiphase_flows_review_2021_iop_private.pdf</code></span></td>
+          <td><a class="button" href="https://iopscience.iop.org/article/10.1088/1361-6501/ac32ea" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p3">P3</span></td>
+          <td><strong>In-situ quantification of spatiotemporally resolved particle concentration in iron powder combustion using holographic imaging</strong><br /><span class="muted">Jianqing Huang, Zhiyong Wu, Weiwei Cai, Edouard Berrocal, Marcus Alden, Zhongshan Li</span></td>
+          <td>Powder Technology<br />2022<br /><a href="https://doi.org/10.1016/j.powtec.2022.117554" target="_blank" rel="noreferrer">10.1016/j.powtec.2022.117554</a></td>
+          <td>holographic particle concentration diagnostics</td>
+          <td>时空颗粒浓度与全息三维诊断支线。作为 OERF 颗粒/多相反应流背景材料，不建议作为本科毕设主线。<br /><span class="muted">建议文件名：<code>huang_cai_iron_particle_concentration_holography_2022_elsevier_private.pdf</code></span></td>
+          <td><a class="button" href="https://www.sciencedirect.com/science/article/pii/S0032591022004449" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p3">P3</span></td>
+          <td><strong>Comparative Analysis of Schlieren and Background Oriented Schlieren Visualization of Hydrogen Jets Exiting an Outward Opening Injector</strong><br /><span class="muted">Alexis Tinchon, Camille Hespel, Pierre-Yves Passaggia, Gavin Dober, Fabrice Foucher</span></td>
+          <td>ASME 2025 ICE Forward Conference<br />2026<br /><a href="https://doi.org/10.1115/ICEF2025-164665" target="_blank" rel="noreferrer">10.1115/ICEF2025-164665</a></td>
+          <td>hydrogen jet visualization and BOS applications</td>
+          <td>氢喷流应用背景，低优先级；只在需要低碳能源安全 BOS 应用例子时阅读。<br /><span class="muted">建议文件名：<code>tinchon_hydrogen_jets_schlieren_bos_2026_asme_private.pdf</code></span></td>
+          <td><a class="button" href="https://doi.org/10.1115/ICEF2025-164665" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+        <tr>
+          <td><span class="tag p3">P3</span></td>
+          <td><strong>Volume expansion and micro-explosion of combusting iron particles analyzed using magnified holographic imaging</strong><br /><span class="muted">Jianqing Huang, Zhiyong Wu, Weiwei Cai, Edouard Berrocal, Marcus Alden, Zhongshan Li</span></td>
+          <td>Powder Technology<br />2023<br /><a href="https://doi.org/10.1016/j.powtec.2023.118412" target="_blank" rel="noreferrer">10.1016/j.powtec.2023.118412</a></td>
+          <td>iron particle combustion and holographic imaging</td>
+          <td>铁颗粒燃烧/全息支线，与何远哲参与的铁颗粒多物理场测量论文相邻。可用于了解 OERF 的低碳金属燃料诊断对象。<br /><span class="muted">建议文件名：<code>huang_cai_iron_particle_microexplosion_holography_2023_elsevier_private.pdf</code></span></td>
+          <td><a class="button" href="https://www.sciencedirect.com/science/article/pii/S0032591023001695" target="_blank" rel="noreferrer">出版社入口</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <footer>本页由本机私有队列元数据生成；只发布公开元数据和入口，不发布任何受限 PDF。</footer>
+  </main>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

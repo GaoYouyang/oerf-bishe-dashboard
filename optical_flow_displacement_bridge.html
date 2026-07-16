@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Optical Flow / Displacement Bridge | OERF BOST</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f6;
+      --panel: #ffffff;
+      --ink: #1d2328;
+      --muted: #64727d;
+      --line: #d8e0df;
+      --teal: #16756f;
+      --blue: #315f93;
+      --gold: #9a6718;
+      --red: #a6483c;
+      --soft: #eef7f4;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    header, main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px clamp(18px, 4vw, 46px);
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f2f8f6);
+    }
+    h1 { margin: 16px 0 10px; font-size: clamp(30px, 4vw, 52px); line-height: 1.08; }
+    h2 { margin: 34px 0 12px; font-size: 26px; }
+    h3 { margin: 20px 0 8px; font-size: 18px; }
+    p { margin: 8px 0; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { background: #eef2f3; padding: 2px 5px; border-radius: 5px; }
+    ul, ol { padding-left: 22px; }
+    li { margin: 6px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 11px 12px;
+    }
+    th { background: #edf5f2; color: #24433f; font-size: 13px; }
+    td { font-size: 14px; }
+    .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .button, .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .tag { background: var(--soft); color: var(--teal); border-color: #cde2dc; }
+    .lead { max-width: 960px; color: var(--muted); font-size: 17px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 16px;
+    }
+    .card strong { color: var(--teal); }
+    .note {
+      border-left: 4px solid var(--teal);
+      background: #fff;
+      padding: 12px 14px;
+      margin: 16px 0;
+    }
+    .metric {
+      font-size: 34px;
+      color: var(--teal);
+      font-weight: 800;
+      display: block;
+      line-height: 1;
+    }
+    .warn { color: var(--red); font-weight: 700; }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <a class="button" href="./index.html">返回总工作台</a>
+      <a class="button" href="./paper_library/index.html">打开论文库</a>
+      <a class="button" href="./pdf_cache_audit.html">PDF 审计</a>
+      <a class="button" href="document_reader.html?doc=paper_to_demo_map.md">论文到 demo 映射</a>
+    </div>
+    <h1>光流/位移估计到 PIV-BOST 的桥梁</h1>
+    <p class="lead">这页回答 PIV-BOST 和 BOST 前处理里一个很容易混淆的问题：Horn-Schunck、Lucas-Kanade、Farneback、FlowNet、PWC-Net、RAFT 这些方法负责估计图像位移或速度代理；它们不是折射率场重构算法本身，但会决定 BOST/NeRIF 看到的观测质量。</p>
+    <div class="grid">
+      <div class="card"><span class="metric">9</span><p>新增 optical-flow / displacement 根文献。</p></div>
+      <div class="card"><span class="metric">1+4</span><p>Farneback 本地缓存；FlowNet、FlowNet2、PWC-Net、RAFT 保留 arXiv 直读入口。</p></div>
+      <div class="card"><span class="metric">1</span><p>核心边界：光流估位移，BOST/NeRIF 重构折射率场。</p></div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>总判断</h2>
+      <div class="note">
+        <p><strong>给师兄看的说法：</strong>如果我同步 PIV-BOST，应该把任务拆成 image-pair displacement、uncertainty/confidence、refractive-index compensation 或 reconstruction 三层。光流文献服务第一层和第二层；NeRIF/PIV-BOST/4D BOST 仍然是折射率场、PIV 速度补偿和时空重构主线。</p>
+      </div>
+      <p>这个区分对本科题目很重要。若没有 OERF 的完整九视角 BOST 数据，也可以先做一个可验证的图像层工具：用合成 BOS/PIV 图像比较 OpenPIV 互相关、Farneback、RAFT-PIV 或 RAFT-style optical flow 的位移误差，再把误差传播到一个简化折射率/密度重建 toy。这样题目贴实验需求，又不会把“深度光流”包装成完整 BOST。</p>
+    </section>
+
+    <section>
+      <h2>九篇怎么读</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>论文</th>
+            <th>该抽什么</th>
+            <th>接到 PIV-BOST / BOST 的位置</th>
+            <th>本地/在线入口</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Horn-Schunck 1981</strong><br />Determining Optical Flow</td>
+            <td>亮度守恒、全局平滑正则、aperture problem 和变分迭代。</td>
+            <td>解释为什么位移场需要正则、mask 和 confidence；适合写 BOS 光流 baseline 的数学根。</td>
+            <td><a href="https://doi.org/10.1016/0004-3702(81)90024-2">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Lucas-Kanade 1981</strong><br />Iterative Image Registration</td>
+            <td>局部窗口最小二乘、图像梯度、Gauss-Newton 更新。</td>
+            <td>连接 PIV interrogation window、BOS 局部位移和 feature tracking；窗口大小会直接影响偏差/方差。</td>
+            <td><a href="https://dblp.org/rec/conf/ijcai/LucasK81">DBLP</a></td>
+          </tr>
+          <tr>
+            <td><strong>Farneback 2003</strong><br />Polynomial Expansion</td>
+            <td>二次多项式邻域模型、dense displacement、实用 CPU baseline。</td>
+            <td>适合先做 BOS 图像 pair 的快速 dense optical-flow 对照；OpenCV 路线容易复现。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Ffarneback_two_frame_motion_polynomial_expansion_2003_diva.pdf">本地 PDF</a> / <a href="https://doi.org/10.1007/3-540-45103-X_50">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Brox et al. 2004</strong><br />Theory for Warping</td>
+            <td>coarse-to-fine、warping、robust data term、gradient constancy。</td>
+            <td>说明强位移/大形变下为什么需要金字塔和 warp；这也是后续深度光流的共同骨架。</td>
+            <td><a href="https://lmb.informatik.uni-freiburg.de/Publications/2004/Bro04a/brox_eccv04_of.pdf">作者 PDF</a> / <a href="https://doi.org/10.1007/978-3-540-24673-2_3">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Barron/Fleet/Beauchemin 1994</strong><br />Performance of Optical Flow Techniques</td>
+            <td>endpoint error、angular error、benchmark sequence、failure modes。</td>
+            <td>给 M3A/M3C 位移估计 demo 的评价指标；不要只放漂亮矢量图。</td>
+            <td><a href="https://www.cs.toronto.edu/~fleet/research/Papers/ijcv-94.pdf">作者 PDF</a> / <a href="https://doi.org/10.1007/BF01420984">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>FlowNet 2015</strong></td>
+            <td>FlowNetS/C、correlation layer、synthetic training data。</td>
+            <td>深度光流起点；可用于解释 RAFT-PIV 不是“凭空的 AI”，而是图像位移估计范式变化。</td>
+            <td><a href="https://arxiv.org/pdf/1504.06852">arXiv PDF</a> / <a href="https://doi.org/10.1109/ICCV.2015.316">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>FlowNet2 2017</strong></td>
+            <td>stacked network、small displacement、intermediate warping、训练 schedule。</td>
+            <td>说明深度光流要解决真实小位移和细节，不只是堆 CNN。</td>
+            <td><a href="https://arxiv.org/pdf/1612.01925">arXiv PDF</a> / <a href="https://doi.org/10.1109/CVPR.2017.179">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>PWC-Net 2018</strong></td>
+            <td>pyramid、warping、cost volume 三件套。</td>
+            <td>把传统多尺度思想和 CNN 特征匹配连起来；比直接读 RAFT 更容易理解。</td>
+            <td><a href="https://arxiv.org/pdf/1709.02371">arXiv PDF</a> / <a href="https://doi.org/10.1109/CVPR.2018.00931">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>RAFT 2020</strong></td>
+            <td>all-pairs 4D correlation volume、recurrent update、upsampling、泛化。</td>
+            <td>RAFT-PIV 的直接母体；如果做 neural optical flow 对照，这篇要和 RAFT-PIV 一起读。</td>
+            <td><a href="https://arxiv.org/pdf/2003.12039">arXiv PDF</a> / <a href="https://doi.org/10.1007/978-3-030-58536-5_24">DOI</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>本科可落地的实验拆法</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>层级</th>
+            <th>可做内容</th>
+            <th>需要的数据/代码</th>
+            <th>对何远哲方向的价值</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>D0 sanity check</strong></td>
+            <td>用一张背景点图合成已知位移，比较 LK/Farneback/互相关的 endpoint error。</td>
+            <td>Python + OpenCV + OpenPIV；自己合成小位移和噪声。</td>
+            <td>快速建立“位移估计误差会污染重构”的直觉。</td>
+          </tr>
+          <tr>
+            <td><strong>D1 BOS image-pair benchmark</strong></td>
+            <td>用公开或组内脱敏 BOS 图像 pair 输出 displacement、mask、confidence 和残差图。</td>
+            <td>OpenPIV/BOS、Farneback、可选 RAFT/RAFT-PIV；需要问师兄图像格式和标定参数。</td>
+            <td>直接贴近 BOST/NeRIF 的观测前处理。</td>
+          </tr>
+          <tr>
+            <td><strong>D2 PIV-BOST image-layer compensation</strong></td>
+            <td>把 BOST 折射位移或折射率场转成 PIV 粒子图像去畸变，再跑 PIV 位移/速度。</td>
+            <td>一对原始 PIV 图像、同步 BOS/BOST 位移或折射率场、OpenPIV baseline。</td>
+            <td>最贴何远哲 PIV-BOST，但依赖组内真实数据和补偿接口。</td>
+          </tr>
+          <tr>
+            <td><strong>D3 neural optical-flow ablation</strong></td>
+            <td>对比 Farneback/OpenPIV/RAFT-PIV 在噪声、粒子密度、背景纹理、强折射下的表现。</td>
+            <td>公开 PIV 数据、RAFT-PIV 数据或合成图像；最好有 GPU。</td>
+            <td>可作为 PIV-BOST 的工程支线，不替代 NeRIF/4D BOST。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>问何远哲师兄的问题</h2>
+      <ol>
+        <li>组内 BOST 当前位移估计主要用 cross-correlation、optical flow、wOFA，还是自写方法？</li>
+        <li>PIV-BOST 的补偿发生在 raw image、calibration/disparity、correlation map，还是 exported velocity field 上？</li>
+        <li>是否能给一组脱敏 image pair：reference/background、distorted background、PIV particle pair、BOST reconstruction 或位移场？</li>
+        <li>如果没有真实数据，本科阶段用合成 BOS/PIV 图像做 displacement benchmark，师兄是否认可？</li>
+        <li>最终评价更看重 endpoint error、velocity error、reprojection residual，还是折射率/密度场误差？</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>写作边界</h2>
+      <div class="note">
+        <p><span class="warn">不要写成：</span>光流算法可以直接重构折射率场。</p>
+        <p><strong>应该写成：</strong>光流/互相关从 BOS 或 PIV 图像中估计二维位移场；BOST/NeRIF 再把多视角位移观测、几何标定和折射率物理模型结合起来做三维/四维重构。</p>
+      </div>
+      <p>这条边界能保护你的题目：你可以大胆学习 RAFT/PWC/FlowNet，但毕业设计主线仍然贴 OERF 的实验诊断问题，而不是变成普通计算机视觉 optical flow benchmark。</p>
+    </section>
+  </main>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

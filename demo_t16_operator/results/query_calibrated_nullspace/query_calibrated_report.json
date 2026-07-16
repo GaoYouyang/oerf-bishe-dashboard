@@ -1,0 +1,102 @@
+{
+  "status": "completed_query_calibrated_support_nullspace_audit",
+  "experiment": "t16_query_calibrated_support_nullspace_v2c",
+  "environment": {
+    "python": "3.11.5",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "torch": "2.13.0",
+    "device": "cpu"
+  },
+  "protocol": {
+    "support_rule": "original declared sample views reconstruct the base field",
+    "one_query_rule": "choose the withheld view with maximum predicted correction-projection energy",
+    "amplitude_rule": "closed-form clipped least squares against noisy query observations",
+    "alpha_interval": [
+      0.0,
+      1.0
+    ],
+    "field_truth_in_deployed_methods": false,
+    "field_oracle_is_retrospective_only": true
+  },
+  "design": {
+    "test_sample_seed_cells": 264,
+    "method_sample_rows": 1584,
+    "seed_count": 3,
+    "methods": [
+      "support_fit_base",
+      "full_null_correction",
+      "query_binary_one",
+      "query_line_search_one",
+      "query_line_search_all",
+      "field_oracle_line_search"
+    ],
+    "corrector_parameters": 13105
+  },
+  "method_findings": {
+    "support_fit_base": {
+      "sample_seed_cells": 264,
+      "mean_field_improvement_pct": 0.0,
+      "p10_field_improvement_pct": 0.0,
+      "field_better_than_base_fraction": 0.0,
+      "mean_alpha": 0.0,
+      "zero_alpha_fraction": 1.0
+    },
+    "full_null_correction": {
+      "sample_seed_cells": 264,
+      "mean_field_improvement_pct": -0.1257138208071508,
+      "p10_field_improvement_pct": -4.954573432406576,
+      "field_better_than_base_fraction": 0.6098484848484849,
+      "mean_alpha": 1.0,
+      "zero_alpha_fraction": 0.0
+    },
+    "query_binary_one": {
+      "sample_seed_cells": 264,
+      "mean_field_improvement_pct": 0.6767896419662283,
+      "p10_field_improvement_pct": -0.023156173329414755,
+      "field_better_than_base_fraction": 0.4431818181818182,
+      "mean_alpha": 0.5454545454545454,
+      "zero_alpha_fraction": 0.45454545454545453
+    },
+    "query_line_search_one": {
+      "sample_seed_cells": 264,
+      "mean_field_improvement_pct": 0.7458075458095568,
+      "p10_field_improvement_pct": -0.33842643833428054,
+      "field_better_than_base_fraction": 0.5265151515151515,
+      "mean_alpha": 0.5608982167057958,
+      "zero_alpha_fraction": 0.32575757575757575
+    },
+    "query_line_search_all": {
+      "sample_seed_cells": 264,
+      "mean_field_improvement_pct": 0.9555343332395814,
+      "p10_field_improvement_pct": 0.0,
+      "field_better_than_base_fraction": 0.6553030303030303,
+      "mean_alpha": 0.5797237869290407,
+      "zero_alpha_fraction": 0.2840909090909091
+    },
+    "field_oracle_line_search": {
+      "sample_seed_cells": 264,
+      "mean_field_improvement_pct": 1.2116914297041017,
+      "p10_field_improvement_pct": 0.0,
+      "field_better_than_base_fraction": 0.8181818181818182,
+      "mean_alpha": 0.628563018854298,
+      "zero_alpha_fraction": 0.18181818181818182
+    }
+  },
+  "key_findings": {
+    "one_query_line_search_mean_field_improvement_pct": 0.7458075458095568,
+    "one_query_line_search_better_fraction": 0.5265151515151515,
+    "all_query_line_search_mean_field_improvement_pct": 0.9555343332395814,
+    "all_query_line_search_better_fraction": 0.6553030303030303,
+    "field_oracle_directional_headroom_pct": 1.2116914297041017,
+    "maximum_support_correction_leakage": 2.261745664292789e-09
+  },
+  "claims_boundary": [
+    "The query-calibrated methods consume additional camera measurements at inference and are not zero-extra-view methods.",
+    "The query cameras are synthetic canonical views with the same noise model, not OERF hardware measurements.",
+    "The selected one-query angle is chosen from already available withheld synthetic views; physical camera placement remains separate.",
+    "Closed-form amplitude calibration relies on the declared linear forward operator and a fixed learned correction direction.",
+    "The field-oracle line search uses ground truth only as a retrospective directional upper bound.",
+    "The support-nullspace guarantee applies to the current linear operator and numerical precision only.",
+    "Three optimization seeds and 8x16x16 fields are a closure test, not a publication-scale claim."
+  ]
+}

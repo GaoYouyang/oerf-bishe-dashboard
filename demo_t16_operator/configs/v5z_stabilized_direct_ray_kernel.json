@@ -1,0 +1,25 @@
+{
+  "schema": "v5z-stabilized-direct-ray-kernel-postopen-development-1",
+  "evidence_label": "post_v5y_optimization_stabilization_development_only",
+  "claim_ceiling": "Opened rigs, truth-side geometry, and complete operator rows are used. A pass only authorizes preregistration of new synthetic rigs.",
+  "source_config": "configs/v5s_dco_low_rank_screening.json",
+  "voxel_kernel_radius": 1,
+  "internal_fit_rigs": 24,
+  "optimizer": {
+    "steps": 4000,
+    "batch_rays": 1024,
+    "learning_rate": 0.003,
+    "gradient_clip_norm": 1.0,
+    "cosine_eta_fraction": 0.01,
+    "weight_decay_grid": [0.0, 0.0001, 0.01],
+    "seed": 261731,
+    "device": "mps_if_available"
+  },
+  "full_matrix_ridge_grid": [1e-06, 0.0001, 0.01, 0.1, 1.0],
+  "development_reference_rule": {
+    "maximum_v5x_oracle_relative_aperture_error": 0.4,
+    "minimum_prediction_improvement_over_full_matrix_ridge": 0.1,
+    "maximum_worst_rig_ratio_to_full_matrix_ridge": 1.0
+  },
+  "design_lock_construction_forbidden": true
+}

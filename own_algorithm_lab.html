@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Gao Youyang 的 BOST 自有算法开发与公平基线竞技场：DeepONet 容量审计、FNO 同场前沿、自研模型机制门槛、统计审计和 NeRIF 升级路线。" />
+  <title>自有算法开发与公平基线竞技场 | OERF 毕设</title>
+  <style>
+    :root {
+      --ink:#15272c; --muted:#5d6d72; --line:#cbd8d5; --bg:#f3f6f4; --paper:#fff;
+      --teal:#126e64; --teal-soft:#e7f3ef; --blue:#315f93; --blue-soft:#eaf1f8;
+      --coral:#a94f3e; --coral-soft:#faebe7; --gold:#886719; --gold-soft:#f8f0da;
+      --shadow:0 9px 25px rgba(25,48,54,.07); --radius:7px;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background-color:rgba(243,246,244,.96); background-image:url("./assets/backgrounds/oerf-refractive-field.png"); background-size:cover; background-position:center; background-attachment:fixed; background-blend-mode:screen; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; line-height:1.68; letter-spacing:0; }
+    a { color:var(--blue); }
+    button,input { font:inherit; }
+    button { cursor:pointer; }
+    a:focus-visible,button:focus-visible,input:focus-visible { outline:3px solid #e1ac43; outline-offset:2px; }
+    code { padding:1px 4px; border-radius:4px; background:#e9efed; font-family:"SFMono-Regular",Consolas,monospace; overflow-wrap:anywhere; white-space:normal; }
+    .skip { position:absolute; left:12px; top:-60px; z-index:6; padding:9px 12px; color:#fff; background:var(--ink); }
+    .skip:focus { top:10px; }
+    header,main,footer { width:min(1240px,calc(100vw - 36px)); margin:0 auto; }
+    header { padding:22px 0 28px; border-bottom:1px solid var(--line); }
+    main { padding:0 0 52px; }
+    footer { padding:22px 0 38px; color:var(--muted); font-size:12px; }
+    nav,.actions,.tabs,.segments,.pill-row { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+    nav a,.button,.tab,.segment { display:inline-flex; min-height:44px; align-items:center; justify-content:center; padding:8px 12px; border:1px solid var(--line); border-radius:var(--radius); color:var(--ink); background:rgba(255,255,255,.96); text-decoration:none; font-weight:780; }
+    .button.primary,.tab[aria-selected="true"],.segment[aria-pressed="true"] { color:#fff; border-color:var(--teal); background:var(--teal); }
+    .button.coral { color:#8e3e32; border-color:#d9b4aa; }
+    .eyebrow { margin-top:18px; color:var(--teal); font-size:12px; font-weight:850; text-transform:uppercase; }
+    h1,h2,h3 { margin-top:0; line-height:1.22; letter-spacing:0; }
+    h1 { margin:8px 0 8px; max-width:920px; font-size:39px; }
+    h2 { margin-bottom:7px; font-size:27px; }
+    h3 { margin-bottom:5px; font-size:18px; }
+    p { margin:6px 0; }
+    .lead { max-width:980px; color:#40545a; font-size:16px; }
+    .metrics { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:18px; }
+    .metric { min-height:108px; padding:14px; border:1px solid var(--line); border-radius:var(--radius); background:rgba(255,255,255,.97); box-shadow:var(--shadow); }
+    .metric b { display:block; margin-bottom:4px; color:var(--teal); font-size:25px; }
+    .metric span { color:var(--muted); font-size:12px; }
+    .verdict { margin-top:15px; padding:15px 16px; border:1px solid #b9d5cf; border-left:5px solid var(--teal); border-radius:var(--radius); background:rgba(235,246,242,.98); overflow-wrap:anywhere; word-break:break-word; }
+    .verdict strong,.verdict span { display:block; min-width:0; }
+    .verdict.warning { border-color:#dfc8a0; border-left-color:var(--gold); background:rgba(250,245,229,.98); }
+    section.band { padding:28px 0; border-bottom:1px solid var(--line); }
+    .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:14px; }
+    .section-head p { max-width:800px; color:var(--muted); }
+    .pipeline { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); overflow:hidden; border:1px solid var(--line); border-radius:var(--radius); background:rgba(255,255,255,.97); box-shadow:var(--shadow); }
+    .stage { min-height:210px; padding:16px; border-right:1px solid var(--line); }
+    .stage:last-child { border-right:0; }
+    .stage::before { content:attr(data-step); display:block; margin-bottom:8px; color:var(--teal); font-size:25px; font-weight:850; }
+    .stage:nth-child(2)::before { color:var(--blue); }
+    .stage:nth-child(3)::before { color:var(--coral); }
+    .stage:nth-child(4)::before { color:var(--gold); }
+    .stage small { color:var(--muted); }
+    .tabs { position:sticky; top:0; z-index:4; padding:10px 0; border-bottom:1px solid var(--line); background:rgba(243,246,244,.97); backdrop-filter:blur(8px); }
+    .tab-panel { padding-top:25px; }
+    .tab-panel[hidden] { display:none; }
+    .grid-two,.grid-three,.model-grid,.gate-grid,.protocol-grid,.task-grid { display:grid; gap:11px; }
+    .grid-two,.task-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .grid-three,.model-grid,.gate-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .protocol-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .model,.gate,.task,.note-card { min-width:0; padding:15px; border:1px solid var(--line); border-radius:var(--radius); background:rgba(255,255,255,.97); box-shadow:var(--shadow); }
+    .model { border-top:4px solid var(--blue); }
+    .model.own { border-top-color:var(--teal); }
+    .model.future { border-top-color:var(--gold); }
+    .model small,.task small { color:var(--muted); }
+    .pill { display:inline-flex; align-items:center; min-height:28px; padding:4px 8px; border-radius:999px; color:#155c55; background:var(--teal-soft); font-size:11px; font-weight:800; }
+    .pill.blue { color:#315f93; background:var(--blue-soft); }
+    .pill.coral { color:#914335; background:var(--coral-soft); }
+    .pill.gold { color:#795b16; background:var(--gold-soft); }
+    .table-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:#fff; box-shadow:var(--shadow); }
+    table { width:100%; min-width:930px; border-collapse:collapse; font-size:13px; }
+    th,td { padding:10px; border-bottom:1px solid #e0e8e6; text-align:right; vertical-align:top; }
+    th:first-child,td:first-child { text-align:left; }
+    th { color:#3c5055; background:#ebf1ef; }
+    .good { color:#126b5e; font-weight:830; }
+    .bad { color:#9a4031; font-weight:830; }
+    .caution { color:#856216; font-weight:830; }
+    .figure-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:13px; }
+    figure { margin:0; padding:11px; border:1px solid var(--line); border-radius:var(--radius); background:#fff; box-shadow:var(--shadow); }
+    figure img { display:block; width:100%; height:auto; }
+    figcaption { margin-top:8px; color:var(--muted); font-size:12px; }
+    .gate { border-left:4px solid var(--gold); }
+    .gate.pass { border-left-color:var(--teal); }
+    .gate.stop { border-left-color:var(--coral); }
+    .task { border-left:4px solid var(--blue); }
+    .task label { display:grid; grid-template-columns:21px minmax(0,1fr); gap:9px; font-weight:780; }
+    .task input { width:18px; height:18px; margin:3px 0 0; accent-color:var(--teal); }
+    .progress { margin:11px 0 16px; }
+    .progress-line { display:flex; justify-content:space-between; gap:12px; margin-bottom:5px; color:var(--muted); font-size:12px; }
+    .progress-track { height:9px; overflow:hidden; border-radius:5px; background:#dce6e3; }
+    .progress-track span { display:block; width:0; height:100%; background:var(--teal); }
+    .equation { overflow:auto; padding:15px; border:1px solid var(--line); border-radius:var(--radius); color:#dcebea; background:#1b3035; font-family:"SFMono-Regular",Consolas,monospace; white-space:pre; }
+    @media (max-width:1020px) { .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } .pipeline { grid-template-columns:repeat(2,minmax(0,1fr)); } .stage { border-bottom:1px solid var(--line); } .model-grid,.gate-grid,.protocol-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:680px) { header,main,footer { width:min(100% - 24px,1240px); } h1 { font-size:31px; } .metrics,.pipeline,.grid-two,.grid-three,.model-grid,.gate-grid,.protocol-grid,.task-grid,.figure-grid { grid-template-columns:1fr; } .stage { border-right:0; } .section-head { align-items:flex-start; flex-direction:column; } nav a,.tab { flex:1 1 44%; } .tabs { position:static; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">跳到主内容</a>
+  <header>
+    <nav aria-label="主导航">
+      <a href="./ridge_fno_nerif_roadmap.html">v3a 学习与 NeRIF 路线</a>
+      <a href="./operator-learning/">算子学习主页</a>
+      <a href="./projected_bb_noise_gate_lab.html">v3k-E 噪声停止门</a>
+      <a href="./strong_numerical_controls_lab.html">v3k-D 强数值门</a>
+      <a href="./topic_deep_dive.html?id=T16">T16 完整档案</a>
+      <a href="./he_review_portal.html">师兄审核入口</a>
+      <a href="./paper_library/?q=operator">论文库</a>
+      <a href="./index.html">研究总站</a>
+    </nav>
+    <div class="eyebrow">T16 v3b-v3k-E · own-method development arena</div>
+    <h1>自有算法开发与公平基线竞技场</h1>
+    <p class="lead">目标不是“换一个网络名字”，而是在同一数据、误差与成本预算下，提出可被机制对照否定的 BOST 算子。v3k-E 已完成 FNO/ridge 双起点上的 BB1、BB2 与 alternating projected BB：同预算均值加速成立，但 validation 尾部和 noise OOD 失败。下一步开发 noise-aware stopping 与全调用记账 SPG，不训练 conditional scalar。</p>
+    <div class="metrics">
+      <div class="metric"><b id="statusMetric">读取中</b><span>v3b 三个相机预算的历史开发门槛。</span></div>
+      <div class="metric"><b>STOP v3c</b><span>frozen per-view adapter 已停止，保留为负对照。</span></div>
+      <div class="metric"><b id="optimizerMetric">240 ep</b><span>三策略 FNO 固定 epoch 审计；blind final 仍封存。</span></div>
+      <div class="metric"><b>3 seeds</b><span>模型种子先按三维场折叠，不冒充独立物理样本。</span></div>
+      <div class="metric"><b>K=4/6/8</b><span>每个相机预算独立训练并锁定 clean Q_audit。</span></div>
+      <div class="metric"><b>0.138640</b><span>v3k-E 128-call wide PBB validation field L2。</span></div>
+    </div>
+    <div class="verdict warning" id="headlineVerdict"><strong>当前判决：v3k-E 同预算加速成立，但噪声停止门失败。</strong><span>wide alternating PBB 用 128 calls 得到 0.138640，却在 37.5% validation fields 伤害超过 1%，noise-OOD 平均 -11.56%。先过 discrepancy/SPG/fresh lock，learned stopping、superiority 与 blind final 全部关闭。</span></div>
+  </header>
+
+  <main id="main">
+    <section class="band">
+      <div class="section-head"><div><div class="eyebrow">v3k-C 伴随残差执行阶梯</div><h2>数学方向已过门，现在先补强对手</h2><p>v3k-B 否定了 scalar angle attention；v3k-C 证明经校验的 adjoint residual 确实能改善当前 synthetic warm start。这不是新算法，而是把创新门槛从“胜 raw FNO”推高到“胜调优的数值迭代”。</p></div></div>
+      <div class="pipeline">
+        <article class="stage" data-step="01"><h3>算子合同 PASS</h3><p>28 布局的 <code>A</code>、<code>Aᵀ</code>、mask 与 Q_audit 已锁定；实验中不修改冻结 FNO。</p><small>真实 BOST 仍需师兄确认曲线光路/Jacobian 接口。</small></article>
+        <article class="stage" data-step="02"><h3>代数校验 PASS</h3><p>inner-product 最大误差 <code>1.94e-15</code>，finite-difference gradient 最大误差 <code>2.44e-8</code>。</p><small>硬 support 投影已通过幂等性测试。</small></article>
+        <article class="stage" data-step="03"><h3>Landweber 成为强基线</h3><p><code>β=1.9,T=64</code> 在 validation 相对 feasible FNO 改善 <code>44.60%</code>。</p><small>它是 geometry-normalized <code>β/Lₘ</code>，不是全局绝对步长。</small></article>
+        <article class="stage" data-step="04"><h3>强数值对照 PASS</h3><p>global、geometry、quadratic、lookup 与 ridge-start 已按 <code>A/Aᵀ</code> 账本比较。</p><small>quadratic 精度更低，但成本从 128 增至 193 calls。</small></article>
+        <article class="stage" data-step="05"><h3>projected BB 已完成</h3><p>BB1/BB2/alternating、clip、fallback 与 128-call 公平预算已经独立复算。</p><small>平均加速成立；validation tail 与 noise-OOD 门禁失败。</small></article>
+        <article class="stage" data-step="06"><h3>下一门：noise-aware stop</h3><p>先做 whitened discrepancy、residual whiteness 与全调用记账 SPG，再判断是否需要学习停止。</p><small>确定性 stopping 与 fresh lock 未完成前，不训练 scalar，不开 voxel/set/attention。</small></article>
+      </div>
+    </section>
+
+    <section class="band" id="v3k-d-strong-controls">
+      <div class="section-head"><div><div class="eyebrow">v3k-D strong numerical controls</div><h2>绝对精度冠军不等于同预算冠军</h2><p>validation-only 同时筛选 ridge lambda、FNO/ridge 双起点、global/geometry/quadratic/lookup。选择承诺写入后才计算 Q_audit 与四个已查看 development domains。</p></div><a class="button primary" href="./strong_numerical_controls_lab.html">打开独立学习与决策页</a></div>
+      <div class="gate-grid">
+        <article class="gate pass"><span class="pill">absolute champion</span><h3>0.143855</h3><p>FNO quadratic 的 validation field L2；相对 feasible FNO +45.5258%。</p></article>
+        <article class="gate pass"><span class="pill blue">128-call frontier</span><h3>0.147083</h3><p>FNO geometry Landweber，64 A + 64 Aᵀ。</p></article>
+        <article class="gate"><span class="pill gold">193-call endpoint</span><h3>+1.2443%</h3><p>quadratic 相对 geometry 的 validation 平均收益；使用额外 65 次 A。</p></article>
+        <article class="gate stop"><span class="pill coral">noise OOD</span><h3>-0.9128%</h3><p>quadratic 相对更便宜 geometry baseline 的平均反向。</p></article>
+        <article class="gate stop"><span class="pill coral">coarse lookup</span><h3>0 条件化</h3><p>低/高谱区都选回 <code>β=1.9,T=64</code>。</p></article>
+        <article class="gate"><span class="pill blue">truth oracle</span><h3>1.5866%</h3><p>逐场规则选择的不可部署上界；67.5% 场由非单一冠军最好。</p></article>
+      </div>
+      <div class="figure-grid" style="grid-template-columns:1fr;"><figure><img src="./demo_t16_operator/results/v3k_d_strong_numerical_controls/t16_v3k_d_strong_numerical_controls.png" alt="v3k-D 强数值控制的绝对误差、调用前沿、跨域收益和二次步长审计" /><figcaption>同一图同时保留 validation absolute error、A/Aᵀ 调用预算、五域场级收益和投影前二次步长审计。强对强比较与弱起点比较不能混写。</figcaption></figure></div>
+      <div class="verdict warning" id="v3kDVerdict"><strong>控制门 PASS；后续 v3k-E 已完成 PBB 审计。</strong><span>v3k-D 仍是固定步、quadratic 与 lookup 的历史强基线；当前训练许可由 v3k-E 噪声停止门决定，learned scalar 尚未授权。</span></div>
+      <p class="actions"><a class="button primary" href="./document_reader.html?doc=v3k_d_strong_numerical_controls_brief.md">完整结果与七天路线</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_d_strong_numerical_controls%2Fv3k_d_validation_screen.csv">474 行选择表</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_d_strong_numerical_controls%2Fv3k_d_pairwise_summary.csv">135 条成对比较</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_d_strong_numerical_controls%2Fv3k_d_operator_call_ledger.csv">调用账本</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fvalidate_v3k_d_strong_controls_results.py">独立 validator</a></p>
+    </section>
+
+    <section class="band" id="v3k-e-projected-bb">
+      <div class="section-head"><div><div class="eyebrow">v3k-E projected BB and noise stopping</div><h2>同预算更快，不代表含噪重构更可靠</h2><p>strict/wide PBB 分开在 validation 选择，选择承诺写入后才打开四个 development audit 域。每步严格计 1A+1Aᵀ；field、reprojection 和最终 objective forward 不混入求解器预算。</p></div><a class="button primary" href="./projected_bb_noise_gate_lab.html">打开独立学习与决策页</a></div>
+      <div class="gate-grid">
+        <article class="gate pass"><span class="pill">same-call mean</span><h3>0.138640</h3><p>wide alternating PBB 的 validation field L2；fixed Landweber 为 0.147083。</p></article>
+        <article class="gate pass"><span class="pill blue">call budget</span><h3>128 = 128</h3><p>PBB 与 geometry Landweber 都使用 64 A + 64 Aᵀ。</p></article>
+        <article class="gate stop"><span class="pill coral">validation tail</span><h3>37.5%</h3><p>独立字段退化超过 1%；p10 gain 为 -14.04%。</p></article>
+        <article class="gate stop"><span class="pill coral">noise OOD</span><h3>-11.56%</h3><p>继续降低 data objective 时，真实场误差已进入半收敛反向。</p></article>
+        <article class="gate"><span class="pill gold">strict cap</span><h3>98.44%</h3><p>非首 BB1 steps 被 1.9/L 上界裁剪，轨迹退回 fixed-step。</p></article>
+        <article class="gate pass"><span class="pill blue">family / joint</span><h3>+14.83 / +12.29%</h3><p>更充分数据一致性在形态压力域有价值，但不能抵消噪声失败。</p></article>
+      </div>
+      <div class="figure-grid" style="grid-template-columns:1fr;"><figure><img src="./demo_t16_operator/results/v3k_e_projected_bb_gate/t16_v3k_e_projected_bb_gate.png" alt="v3k-E 投影 BB 同预算、跨域和步长裁剪审计" /><figcaption>这张图同时回答绝对误差、算子调用预算、五域翻转和 strict/wide 机制差异。validation/test 域仍是 development evidence，不是 fresh blind。</figcaption></figure></div>
+      <div class="verdict warning" id="v3kEVerdict"><strong>均值门 PASS，尾部与噪声门 FAIL；learned stopping 仍为 BLOCKED。</strong><span>下一步只授权 whitened discrepancy、residual-whiteness/L-curve 与全调用记账 SPG；确定性规则仍留 fresh-lock headroom 后才允许小型 risk-stop model。</span></div>
+      <p class="actions"><a class="button primary" href="./document_reader.html?doc=v3k_e_projected_bb_review_brief.md">完整结果与研究路线</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_e_projected_bb_gate%2Fv3k_e_validation_screen.csv">180 行选择表</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_e_projected_bb_gate%2Fv3k_e_pairwise_summary.csv">45 条成对比较</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_e_projected_bb_gate%2Fv3k_e_operator_call_ledger.csv">调用账本</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fvalidate_v3k_e_projected_bb_results.py">独立 validator</a></p>
+    </section>
+
+    <section class="band" id="v3c-protocol">
+      <div class="section-head"><div><div class="eyebrow">v3c 工程闸门</div><h2>先保证不比 FNO 差，再允许新分支学习</h2><p>这里只验证 zero-init、冻结底座和数据分离，没有测试重建 superiority。</p></div></div>
+      <div class="verdict" id="v3cVerdict"><strong>正在读取 v3c 协议报告。</strong></div>
+      <div class="protocol-grid" style="margin-top:12px;">
+        <article class="gate pass"><span class="pill">exact fallback</span><h3 id="v3cExact">待读取</h3><p>适配器初始输出必须与基础 FNO 逐元素一致。</p></article>
+        <article class="gate pass"><span class="pill blue">small adapter</span><h3 id="v3cParams">待读取</h3><p>基础 FNO 冻结，只训练 set encoder、risk gate 和 zero-init head。</p></article>
+        <article class="gate pass"><span class="pill gold">new dev2</span><h3 id="v3cDev2">待读取</h3><p>全新 IID/noise/thin-front/joint 开发场，不与 v3b 样本复用。</p></article>
+        <article class="gate stop"><span class="pill coral">hard block</span><h3>Blind final 未封存</h3><p>导师确认 geometry、强基线、分析脚本和失败规则前，不生成最终种子，不允许确认性结论。</p></article>
+      </div>
+      <p class="actions"><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3c_protocol_gate%2Fv3c_protocol_gate.json">协议报告</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3c_protocol_gate%2Fv3c_dev2_split_commitments.csv">dev2 分割承诺</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3c_protocol_gate.py">闸门脚本</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fconfigs%2Fv3c_blind_preregistration.json">blind 预注册</a></p>
+    </section>
+
+    <section class="band" id="v3c-k6-result">
+      <div class="section-head"><div><div class="eyebrow">K=6 dev2 判决</div><h2>当前 frozen per-view adapter 停止</h2><p>三个种子从同一 FNO checkpoint 分叉，continued FNO 和 adapter 使用相同追加 12 epochs、batch order、loss、learning rate 与 validation rule。</p></div></div>
+      <div class="verdict warning" id="v3cK6Verdict"><strong>正在读取 K=6 dev2 结果。</strong></div>
+      <div class="protocol-grid" style="margin-top:12px;">
+        <article class="gate stop"><span class="pill coral">primary fail</span><h3 id="adapterContinued">待读取</h3><p>adapter 必须超过同 checkpoint 的 continued FNO，而不是只超过训练不足的 base。</p></article>
+        <article class="gate pass"><span class="pill">weak signal</span><h3 id="adapterBase">待读取</h3><p>ray-set 分支有小幅正信号，但收益不足以抵消冻结底座的机会成本。</p></article>
+        <article class="gate pass"><span class="pill blue">saturation warning</span><h3 id="continuedBase">待读取</h3><p>24 epochs FNO 尚未饱和；新结构必须和充分收敛的对手比。</p></article>
+        <article class="gate stop"><span class="pill gold">cost failure</span><h3 id="adapterCost">待读取</h3><p>per-view 3D encoder 参数少但计算密集；后续必须同时审计 wall time 与推理延迟。</p></article>
+      </div>
+      <div class="figure-grid" style="grid-template-columns:minmax(0,1fr);">
+        <figure><img src="./demo_t16_operator/results/v3c_k6_dev2_pilot/t16_v3c_k6_dev2.png" alt="v3c K=6 dev2 三方法绝对误差和三组配对优势" /><figcaption>adapter 比 base FNO 稳定小幅更好，但明显输给 continued FNO。负结果不开启 blind final。</figcaption></figure>
+      </div>
+      <div class="grid-two" style="margin-top:12px;">
+        <article class="note-card"><h3>停止的结构</h3><p>不继续扩大 frozen per-view 3D adapter。它在四个 dev2 域全部输给 continued FNO，且训练和推理更慢。</p></article>
+        <article class="note-card"><h3>v3d 只保留一条窄路</h3><p>以 NeurIPS 2025 F-Adapter 为最近邻强基线，检验 BOST 相机/光线采集几何能否条件化频带 adapter；不再搭建独立大分支。</p></article>
+      </div>
+      <p class="actions"><a class="button" href="./document_reader.html?doc=v3c_k6_dev2_negative_result_brief.md">师兄负结果 brief</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3c_k6_dev2_pilot%2Fv3c_k6_report.json">机器报告</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3c_k6_dev2_pilot%2Fv3c_k6_pairwise_summary.csv">配对统计</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3c_k6_dev2_pilot.py">训练脚本</a></p>
+    </section>
+
+    <section class="band" id="v3d-fno-saturation">
+      <div class="section-head"><div><div class="eyebrow">v3d baseline gate</div><h2>96 epochs 仍未 plateau：新 adapter 暂缓</h2><p>三种子沿用 v3c 的 K=6 输入、ridge anchor 和 24-epoch base schedule；每个 continuation block 从选中 checkpoint 出发，并重置 AdamW/cosine schedule，只用 validation 决定是否保留。</p></div></div>
+      <div class="verdict warning" id="v3dSaturationVerdict"><strong>正在读取 FNO plateau 审计。</strong></div>
+      <div class="protocol-grid" style="margin-top:12px;">
+        <article class="gate pass"><span class="pill blue">validation trajectory</span><h3 id="v3dValChange">待读取</h3><p>24→96 epochs 的三种子 mean validation L2；test 和 Q_audit 不参与停止点选择。</p></article>
+        <article class="gate stop"><span class="pill coral">plateau fail</span><h3 id="v3dLastBlock">待读取</h3><p>末个 block 必须低于 mean 0.5% / max-seed 1.0%，并连续满足两次。</p></article>
+        <article class="gate pass"><span class="pill">dev2 diagnostic</span><h3 id="v3dDev2Gain">待读取</h3><p>相对 epoch 24 的 field improvement，仅作后置解释，不用于选 epoch。</p></article>
+        <article class="gate pass"><span class="pill gold">local MPS</span><h3 id="v3dCost">待读取</h3><p>三种子到 96 epochs 的平均累计训练时间；公开结果不含权重或 NPZ。</p></article>
+      </div>
+      <div class="figure-grid" style="grid-template-columns:minmax(0,1fr);">
+        <figure><img src="./demo_t16_operator/results/v3d_fno_saturation_audit/t16_v3d_fno_saturation.png" alt="K=6 FNO 三种子 validation trajectory、逐 block 改善和 dev2 后置诊断" /><figcaption>左、中两图决定 plateau；右图只解释已冻结协议下的 dev2 行为，不能反向选择 checkpoint。</figcaption></figure>
+      </div>
+      <div class="grid-two" style="margin-top:12px;">
+        <article class="note-card"><h3>历史阻断</h3><p>24/36-epoch FNO 不能作为“强且已收敛”的最终对手；这一步触发了后续三 optimizer protocols 审计。</p></article>
+        <article class="note-card"><h3>后续去向</h3><p>240-epoch 审计已在下一节锁定固定 epoch FNO baseline；本节保留为训练不足如何制造虚假创新的证据。</p></article>
+      </div>
+      <p class="actions"><a class="button" href="./document_reader.html?doc=v3d_fno_validation_plateau_brief.md">plateau 师兄 brief</a><a class="button" href="./document_reader.html?doc=v3d_geometry_data_manifest.md">geometry/data 清单</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3d_fno_saturation_audit%2Fv3d_fno_saturation_report.json">机器报告</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3d_fno_saturation_audit%2Fv3d_fno_validation_summary.csv">validation 表</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3d_fno_saturation_audit.py">训练脚本</a></p>
+    </section>
+
+    <section class="band" id="v3d-optimizer-audit">
+      <div class="section-head"><div><div class="eyebrow">v3d optimizer protocol audit</div><h2>固定 epoch FNO 已锁，v3e 继续补齐比较合同</h2><p>三条策略共享同一 24-epoch checkpoint 与每 block batch-order contract；continuation Adam 在 base 后新建，只在 continuation blocks 间保留 moments。训练从 raw endpoint 继续，全部冻结后才读取 dev2。</p></div></div>
+      <div class="verdict warning" id="optimizerVerdict"><strong>正在读取 240-epoch 优化协议审计。</strong></div>
+      <div class="protocol-grid" style="margin-top:12px;">
+        <article class="gate pass"><span class="pill blue">validation champion</span><h3 id="optimizerChampion">待读取</h3><p>固定 epoch FNO 审计中必须击败的 optimizer protocol。</p></article>
+        <article class="gate pass"><span class="pill">best validation</span><h3 id="optimizerValidation">待读取</h3><p>三种子 epoch-240 prefix-best mean validation L2。</p></article>
+        <article class="gate stop"><span class="pill coral">superiority gate</span><h3 id="optimizerPlateau">待读取</h3><p>validation 冠军仍需满足连续末端两 block 的 0.5% / 1.0% plateau 规则。</p></article>
+        <article class="gate pass"><span class="pill gold">post-selection dev2</span><h3 id="optimizerDev2">待读取</h3><p>相对共同 epoch-24 base 的 field 改善，只作冻结后的诊断。</p></article>
+      </div>
+      <div class="figure-grid" style="grid-template-columns:minmax(0,1fr);">
+        <figure><img src="./demo_t16_operator/results/v3d_fno_optimizer_audit/t16_v3d_fno_optimizer_audit.png" alt="三种 FNO 优化协议的 validation 轨迹、逐 block 改善和 dev2 后置诊断" /><figcaption>long-cosine 在 192 epochs 达到 plateau，却不是 validation 冠军；“先停下来”和“最强 baseline”不能混为一谈。</figcaption></figure>
+      </div>
+      <div class="grid-two" style="margin-top:12px;">
+        <article class="note-card"><h3>FNO epoch 基线：通过</h3><p>冻结 <code>carry continuation-Adam + restart cosine · 240 epochs</code>。v3e 已补五架构成本账本；跨架构结论还需共同的 60/120/180/240 error–compute curves。</p></article>
+        <article class="note-card"><h3>论文闸门：未通过</h3><p>冠军仍未 plateau，geometry 未确认；v3e 虽已补成本 schema，但 matched error–compute curves 仍缺。blind final、确认性 superiority、NeRIF 特权 refinement 与论文标题继续关闭。</p></article>
+        <article class="note-card"><h3>冠军 vs restart-both</h3><p id="optimizerPairRestart">待读取</p><small>平均好不等于尾部安全；必须同时看 p10、harm 与最差 OOD 域。</small></article>
+        <article class="note-card"><h3>冠军 vs plateaued long-cosine</h3><p id="optimizerPairLong">待读取</p><small>若自有模型只赢约 1%，optimizer protocol 足以解释该差值。</small></article>
+      </div>
+      <p class="actions"><a class="button primary" href="./document_reader.html?doc=v3d_fno_optimizer_protocol_brief.md">固定 epoch 与双闸门 brief</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3d_fno_optimizer_audit%2Fv3d_optimizer_report.json">机器报告</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3d_fno_optimizer_audit%2Fv3d_optimizer_validation_summary.csv">validation 轨迹</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3d_fno_optimizer_audit%2Fv3d_optimizer_pairwise_summary.csv">配对诊断</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3d_fno_optimizer_audit.py">训练脚本</a><a class="button" href="./document_reader.html?doc=v3d_geometry_data_manifest.md">geometry/data 清单</a></p>
+    </section>
+
+    <section class="band" id="v3e-compute-accounting">
+      <div class="section-head"><div><div class="eyebrow">v3e compute gate</div><h2>参数少不等于便宜：五架构成本账本</h2><p>每个模型用三个全新 Python worker，在同一 K=6、8×16×16、42-channel 输入上测量。FLOPs-v1 是带边界的解析估计，MPS 时间和内存是实测；这里不使用误差给架构排性能名次。</p></div></div>
+      <div class="verdict warning" id="computeVerdict"><strong>正在读取跨架构成本报告。</strong></div>
+      <div class="protocol-grid" style="margin-top:12px;">
+        <article class="gate pass"><span class="pill blue">FNO anchor</span><h3 id="computeFno">待读取</h3><p>成本锚点；唯一已有 24→240 validation trajectory 的架构。</p></article>
+        <article class="gate pass"><span class="pill">fast control</span><h3 id="computeDeepONet">待读取</h3><p>固定网格 DeepONet 的推理与完整训练步成本。</p></article>
+        <article class="gate stop"><span class="pill coral">expensive branch</span><h3 id="computeRaySet">待读取</h3><p>逐视角 3D encoder 的成本不能被相近参数量掩盖。</p></article>
+        <article class="gate stop"><span class="pill gold">PEFT warning</span><h3 id="computeAdapter">待读取</h3><p>只更新 4,988 参数，仍需执行 frozen FNO 与 set encoder。</p></article>
+      </div>
+      <div class="figure-grid" style="grid-template-columns:minmax(0,1fr);">
+        <figure><img src="./demo_t16_operator/results/v3e_compute_accounting/t16_v3e_compute_accounting.png" alt="五种三维重构模型的参数、MPS 延迟、估计 FLOPs 和训练内存比较" /><figcaption>左：总参数与可训练参数；中：同步 MPS 推理和训练步延迟；右：FLOPs-v1 与观测训练分配。成本坐标不是 accuracy 排名。</figcaption></figure>
+      </div>
+      <div class="table-wrap" id="computeTable" style="margin-top:12px;"><table><tbody><tr><td>成本结果载入中。</td></tr></tbody></table></div>
+      <div class="grid-two" style="margin-top:12px;">
+        <article class="note-card"><h3>最重要的反直觉结论</h3><p id="computeParameterLesson">待读取</p><small>PEFT 减少 optimizer state，不自动消除前向、激活或逐视角编码成本。</small></article>
+        <article class="note-card"><h3>time-to-target 与最终冠军不同</h3><p id="computeTargetLesson">待读取</p><small>终点误差、固定时间误差和达到阈值的最短时间必须同时报告。</small></article>
+        <article class="note-card"><h3>已完成</h3><p>15 个独立 worker、五模型 cost profile、参数/解析 FLOPs/MPS 时间/内存、FNO 固定 checkpoint 与 time-to-target、provenance hashes 和 validator。</p></article>
+        <article class="note-card"><h3>仍未完成</h3><p>v3f-v3g 已补 DeepONet/FNO 前沿与 DeepONet 容量审计；U-Net、F-Adapter 与 GC-SRO 候选仍缺共同的 60/120/180/240 validation curve。真实 geometry、端到端 NeRIF 和 blind final 继续关闭。</p></article>
+      </div>
+      <p class="actions"><a class="button primary" href="./document_reader.html?doc=v3e_compute_accounting_brief.md">师兄审核 brief</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3e_compute_accounting%2Fv3e_compute_report.json">机器报告</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3e_compute_accounting%2Fv3e_compute_profiles.csv">五模型成本表</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3e_compute_accounting%2Fv3e_fno_time_to_target.csv">time-to-target</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3e_compute_accounting.py">核算脚本</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fvalidate_v3e_compute_results.py">独立 validator</a></p>
+    </section>
+
+    <section class="band" id="v3f-deeponet-fno-frontier">
+      <div class="section-head"><div><div class="eyebrow">v3f matched development frontier</div><h2>DeepONet 更快，但当前质量—时间前沿被 FNO 支配</h2><p>DeepONet 先做四学习率、三种子的 validation-only screen，再复用 FNO 的 24→240 epoch 三优化协议。跨架构赢家先由每个三维场等权的 epoch-240 validation 冻结，之后才计算 128 个复用 dev2 场与 clean Q_audit；dev2 在早期版本已查看，不是全项目的新盲集。</p></div></div>
+      <div class="verdict warning" id="frontierVerdict"><strong>正在读取 DeepONet/FNO 同场前沿。</strong></div>
+      <div class="protocol-grid" style="margin-top:12px;">
+        <article class="gate pass"><span class="pill blue">validation winner</span><h3 id="frontierWinner">待读取</h3><p>只由三种子 epoch-240 mean validation L2 决定。</p></article>
+        <article class="gate stop"><span class="pill coral">quality gap</span><h3 id="frontierValidation">待读取</h3><p>当前固定网格 DeepONet 与 FNO 最终验证误差。</p></article>
+        <article class="gate stop"><span class="pill gold">Pareto audit</span><h3 id="frontierPareto">待读取</h3><p>DeepONet 四个固定 checkpoints 是否存在更快且更准的 FNO 见证点。</p></article>
+        <article class="gate pass"><span class="pill">post-selection dev2</span><h3 id="frontierDev2">待读取</h3><p>冻结赢家后的 field CI、p10、harm、域与种子诊断。</p></article>
+      </div>
+      <div class="figure-grid" style="grid-template-columns:minmax(0,1fr);">
+        <figure><img src="./demo_t16_operator/results/v3f_deeponet_frontier/t16_v3f_deeponet_fno_frontier.png" alt="DeepONet 三种优化协议与 FNO 的验证曲线、误差时间前沿和后置 dev2 域诊断" /><figcaption>左：每个三维场等权的 validation 学习曲线；中：同 checkpoint 的实测时间—误差；右：本轮冻结后才计算、但早期已查看过的 dev2 域优势。绿色不等于论文通过。</figcaption></figure>
+      </div>
+      <div class="table-wrap" id="frontierTable" style="margin-top:12px;"><table><tbody><tr><td>前沿结果载入中。</td></tr></tbody></table></div>
+      <p style="color:var(--muted);font-size:12px;">时间来自同一台 Apple Silicon MPS 的不同训练运行，不是 interleaved fresh-worker benchmark；开发结论同时保留 v3e 单步成本，投稿前需重测端到端 time-to-quality。</p>
+      <div class="grid-two" style="margin-top:12px;">
+        <article class="note-card"><h3>效率优势真实，主重建器仍失败</h3><p id="frontierMechanism">待读取</p><small>这里只否定当前 pooled branch + rank-48 global trunk basis，不外推到所有 DeepONet。</small></article>
+        <article class="note-card"><h3>下一版结构：GC-SRO</h3><p id="frontierNext">保留 FNO 三维空间混合；DeepONet/set branch 只编码 ray、mask、angle 与 calibration，再以 zero-init 方式调制少量 spectral groups。</p><small>工作名不等于原创性；必须通过 static、geometry shuffle、mask-only 和 parameter-matched FNO 消融。</small></article>
+        <article class="note-card"><h3>最低公平补强已完成</h3><p>v3g 已把原计划升级为 8 架构 × 3 学习率 × 3 种子的完整 validation-only screen，并只给短程冠军补三种子 240-epoch 曲线；结果见下一节。</p></article>
+        <article class="note-card"><h3>仍然关闭</h3><p>真实 geometry、组内 BOST 数据、新的 untouched blind final、确认性 superiority、GC-SRO 原创性与端到端 NeRIF 比较均未完成；当前 gate pass 只说明 FNO 是稳定强 control。CI 折叠模型种子后重采样场，三 seed 只作方向诊断。</p></article>
+      </div>
+      <p class="actions"><a class="button primary" href="./document_reader.html?doc=v3f_deeponet_fno_frontier_brief.md">师兄审核与下一版结构 brief</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3f_deeponet_frontier%2Fv3f_deeponet_frontier_report.json">机器报告</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3f_deeponet_frontier%2Fv3f_architecture_frontier.csv">误差—时间表</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3f_deeponet_frontier%2Fv3f_cross_architecture_pairwise.csv">配对统计</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3f_deeponet_frontier.py">训练脚本</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fvalidate_v3f_deeponet_frontier.py">独立 validator</a></p>
+    </section>
+
+    <section class="band" id="v3g-deeponet-capacity-audit">
+      <div class="section-head"><div><div class="eyebrow">v3g bounded baseline audit</div><h2>短程冠军没有成为长程强基线</h2><p>八个可训练 DeepONet 变体覆盖 rank 32/48/64/96 与不同三维池化分配，每个在三个学习率、三个种子上固定训练 24 epochs；两个高分辨率变体因超过 1.5× 参数上限在训练前排除。只有验证集冠军进入三协议 240-epoch 延长，selection commit 之后才读取已复用 dev2。</p></div></div>
+      <div class="verdict warning" id="capacityVerdict"><strong>正在读取 DeepONet 容量审计。</strong></div>
+      <div class="protocol-grid" style="margin-top:12px;">
+        <article class="gate pass"><span class="pill blue">24-epoch screen</span><h3 id="capacityWinner">待读取</h3><p>三种子 mean validation 选择架构与学习率。</p></article>
+        <article class="gate pass"><span class="pill gold">search ledger</span><h3 id="capacityBudget">待读取</h3><p>完整搜索成本与未进入最终曲线的成本分开报告。</p></article>
+        <article class="gate stop"><span class="pill coral">long-horizon reversal</span><h3 id="capacityLong">待读取</h3><p>短程冠军与 v3f rank-48 reference 的 240-epoch validation。</p></article>
+        <article class="gate stop"><span class="pill coral">post-selection dev2</span><h3 id="capacityDev2">待读取</h3><p>相对 reference 的 field-cluster CI、p10、harm 与种子方向。</p></article>
+      </div>
+      <div class="figure-grid" style="grid-template-columns:minmax(0,1fr);">
+        <figure><img src="./demo_t16_operator/results/v3g_deeponet_capacity_audit/t16_v3g_deeponet_capacity_audit.png" alt="DeepONet 架构学习率筛选、长程 validation 对照和复用 dev2 配对诊断" /><figcaption>左：72-run validation-only screen；中：短程冠军、rank-48 reference 与 FNO 的 24/60/120/180/240 曲线；右：冻结后复用 dev2 的 field-cluster 诊断。负值表示 v3g 候选更差。</figcaption></figure>
+      </div>
+      <div class="table-wrap" id="capacityTable" style="margin-top:12px;"><table><tbody><tr><td>容量筛选结果载入中。</td></tr></tbody></table></div>
+      <div class="grid-two" style="margin-top:12px;">
+        <article class="note-card"><h3>这不是“所有 DeepONet 都失败”</h3><p>本协议只延长短程冠军；第二名 pool 2×8×4 与第三名 rank 96 没有 240-epoch 曲线。结论只是在预声明预算内没有找到可替换 rank-48 reference 的候选。</p></article>
+        <article class="note-card"><h3>短程筛选的课</h3><p id="capacityLesson">待读取</p><small>早期优化速度、最终误差与 scheduler 交互是三件事；必须报告冠军差距、排名稳定性与搜索成本。</small></article>
+        <article class="note-card"><h3>基线预算停止点</h3><p>毕设执行档冻结 v3f rank 48；只有师兄明确认为投稿审稿会要求时，才一次性预注册 top-3 long-horizon 补充，不允许看 dev2 后继续扩表。</p></article>
+        <article class="note-card"><h3>下一步不再加纯 rank</h3><p>保留 FNO 的三维空间混合，把 branch/set encoder 用作 acquisition conditioner；必须同时击败 parameter-matched wider FNO、static adapter、mask-only 与 shuffled-geometry controls。</p></article>
+      </div>
+      <p class="actions"><a class="button primary" href="./document_reader.html?doc=v3g_deeponet_capacity_audit_brief.md">师兄审核与学习 brief</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3g_deeponet_capacity_audit%2Fv3g_deeponet_capacity_report.json">机器报告</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3g_deeponet_capacity_audit%2Fv3g_variant_manifest.csv">参数清单</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3g_deeponet_capacity_audit%2Fv3g_screen_summary.csv">72-run 汇总</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3g_deeponet_capacity_audit%2Fv3g_validation_comparison.csv">长程对照</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3g_deeponet_capacity_audit.py">训练脚本</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fvalidate_v3g_deeponet_capacity_results.py">独立 validator</a></p>
+    </section>
+
+    <section class="band" id="v3h-geometry-identifiability">
+      <div class="section-head"><div><div class="eyebrow">v3h acquisition-geometry gate</div><h2>先证明几何可以被学习，再训练自研算子</h2><p>对 9 个候选角度固定留出 60°，枚举其余 8 中选 6 的全部 28 种布局。每种布局使用同一批 40 个 validation 场和共享全视角噪声，把“场难度”与“布局难度”分开。</p></div></div>
+      <div class="gate-grid">
+        <article class="gate stop"><span class="pill coral">旧数据阻断</span><h3 id="geoCurrent">1 mask · 0 bit</h3><p>328 个变体共用一布局，correct/shuffled geometry 不可辨识。</p></article>
+        <article class="gate"><span class="pill blue">新协议</span><h3 id="geoVariable">28 masks</h3><p>16 train / 4 validation / 4 geometry-OOD / 4 stress。</p></article>
+        <article class="gate"><span class="pill blue">布局效应</span><h3 id="geoRange">64.95%</h3><p>28 布局 ridge 平均场误差的相对跨度。</p></article>
+        <article class="gate"><span class="pill blue">GC-SRO v0</span><h3 id="geoEngineering">工程闸门 PASS</h3><p>零初始化、冻结 FNO、置换不变与等参数消融已检查；优越性未测。</p></article>
+      </div>
+      <div class="figure-grid"><figure><img src="./demo_t16_operator/results/v3h_gc_sro_geometry_gate/t16_v3h_gc_sro_geometry_gate.png" alt="28 种相机布局、算子条件数与 ridge 场误差对照" /><figcaption>左：28 种布局的角度占用；中：算子条件数与误差；右：最好、旧固定与最差布局的场级分布。</figcaption></figure></div>
+      <div class="callout warning" id="geometryVerdict"><strong>当前判决：不在旧固定 K=6 数据上训练 GC-SRO。</strong><span>只允许开始变几何功能实验；盲测集、优越性和“新算法”声明继续关闭。</span></div>
+      <p class="actions"><a class="button primary" href="./document_reader.html?doc=v3h_gc_sro_geometry_gate_brief.md">师兄审核 brief</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3h_gc_sro_geometry_gate%2Fv3h_geometry_manifest.csv">28 布局清单</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3h_gc_sro_geometry_gate%2Fv3h_field_geometry_spread.csv">场级差异</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3h_gc_sro_geometry_gate%2Fv3h_gc_sro_control_contract.csv">消融合同</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3h_gc_sro_geometry_gate.py">可复跑脚本</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fvalidate_v3h_gc_sro_geometry_results.py">独立 validator</a></p>
+    </section>
+
+    <section class="band" id="v3i-variable-geometry-dataset">
+      <div class="section-head"><div><div class="eyebrow">v3i balanced data contract</div><h2>328 个场已覆盖 28 布局，功能训练可以开始</h2><p>每个原始场只分配一个几何，分配在各 source split 内严格均衡。训练、validation、geometry-OOD 与 stress 布局在训练前冻结，全视角噪声按场共享，不把噪声重采样当成几何收益。</p></div></div>
+      <div class="gate-grid">
+        <article class="gate"><span class="pill blue">私有张量</span><h3 id="datasetShape">328 × 42 × 8 × 16 × 16</h3><p>one field / one geometry；压缩 NPZ 仅留本机。</p></article>
+        <article class="gate"><span class="pill blue">训练分区</span><h3 id="datasetTrain">16 布局 · 10 场/布局</h3><p>160 个场，几何熵 4.00 bit。</p></article>
+        <article class="gate"><span class="pill blue">未见 validation</span><h3 id="datasetVal">4 布局 · 10 场/布局</h3><p>与训练布局完全不相交。</p></article>
+        <article class="gate stop"><span class="pill coral">声明边界</span><h3>优越性未测</h3><p>只授权五组、三种子功能 pilot；真实 geometry 与 blind final 未开放。</p></article>
+      </div>
+      <div class="figure-grid"><figure><img src="./demo_t16_operator/results/v3i_variable_geometry_dataset/t16_v3i_variable_geometry_dataset.png" alt="v3i 每个 source split 的布局分配、相机覆盖和几何熵" /><figcaption>左：一场一布局的分配矩阵；中：各分区的激活相机覆盖，60° 始终留作 Q_audit；右：分区内几何熵。</figcaption></figure></div>
+      <div class="callout" id="datasetVerdict"><strong>数据闸门 PASS：授权功能实验。</strong><span>下一轮比较 locked FNO、static、K-cardinality、shuffled geometry 与 correct geometry；不用本轮数据调开 blind final。</span></div>
+      <p class="actions"><a class="button primary" href="./document_reader.html?doc=v3i_variable_geometry_dataset_brief.md">数据合同与师兄问题</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3i_variable_geometry_dataset%2Fv3i_source_geometry_assignment.csv">328 场分配表</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3i_variable_geometry_dataset%2Fv3i_geometry_balance.csv">布局平衡表</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3i_variable_geometry_dataset%2Fv3i_input_channel_manifest.csv">42 通道表</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3i_variable_geometry_dataset.py">生成器</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fvalidate_v3i_variable_geometry_results.py">独立 validator</a></p>
+    </section>
+
+    <section class="band" id="v3j-gc-sro-functional-result">
+      <div class="section-head"><div><div class="eyebrow">v3j matched mechanism pilot</div><h2>通用残差有效，几何机制没有通过</h2><p>4 个等参数 adapter × 3 种子 × 24 epochs，全部在未见 validation 布局上选 checkpoint。shuffled geometry 在各 partition 内使用无固定点一一错配，与 batch 顺序无关。</p></div></div>
+      <div class="gate-grid">
+        <article class="gate"><span class="pill blue">通用 adapter</span><h3 id="functionalStaticGain">+3.6336%</h3><p>static spectral adapter 相对 locked FNO 的 validation 改善。</p></article>
+        <article class="gate stop"><span class="pill coral">几何 vs static</span><h3 id="functionalStaticCompare">-0.00019%</h3><p>CI 跨 0，只有 1/3 种子为正。</p></article>
+        <article class="gate stop"><span class="pill coral">几何 vs shuffled</span><h3 id="functionalShuffleCompare">-0.01628%</h3><p>确定性错几何并不比正确几何差。</p></article>
+        <article class="gate stop"><span class="pill coral">信息衰减</span><h3 id="functionalSwap">0.1785%</h3><p>同权重替换 descriptor 时 correction 的平均相对变化。</p></article>
+      </div>
+      <div class="figure-grid"><figure><img src="./demo_t16_operator/results/v3j_gc_sro_functional_pilot/t16_v3j_gc_sro_functional_pilot.png" alt="v3j 四种几何描述符对照的学习曲线、配对收益与五域绝对误差" /><figcaption>左：四方法的匹配 validation 曲线；中：correct geometry 相对各 control 的配对收益与 field-cluster CI；右：不隐藏绝对误差和 family OOD 失效。</figcaption></figure></div>
+      <div class="callout warning" id="functionalVerdict"><strong>机制闸门 FAIL：停止当前 GC-SRO 结构的扩参。</strong><span>几何 embedding 会变，但没有传递为有用的空间 correction。下一个有界问题是“同场多布局反事实监督能否恢复机制”。</span></div>
+      <div class="grid-three" style="margin-top:12px;">
+        <article class="note-card"><h3>先查数据</h3><p>每个 field 在 epoch 间重采样多个布局，不增加模型容量；区分 one-field/one-geometry 监督不足与结构失效。</p></article>
+        <article class="note-card"><h3>再查结构</h3><p>若反事实监督仍失败，让体素级 correction 直接看逐视角反投影与角度，而不是只接收全局 FiLM 向量。</p></article>
+        <article class="note-card"><h3>论文门槛仍关闭</h3><p>还需变几何训练的 FNO/VIDON-style 强基线、真实 camera/ray calibration 与新 blind final。</p></article>
+      </div>
+      <p class="actions"><a class="button primary" href="./document_reader.html?doc=v3j_gc_sro_functional_negative_result_brief.md">负结果、原因与 v3k 决策树</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3j_gc_sro_functional_pilot%2Fv3j_pairwise_mechanism.csv">机制配对表</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3j_gc_sro_functional_pilot%2Fv3j_same_model_descriptor_swap.csv">120 条 swap 诊断</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3j_gc_sro_functional_pilot%2Fv3j_training_history.csv">288 条曲线</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3j_gc_sro_functional_pilot.py">训练脚本</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fvalidate_v3j_gc_sro_functional_results.py">独立 validator</a></p>
+    </section>
+
+    <section class="band" id="v3k-a-counterfactual-result">
+      <div class="section-head"><div><div class="eyebrow">v3k-A equal-exposure counterfactual audit</div><h2>几何信号恢复了，但小于论文门槛</h2><p>M1 让每个训练场的一个布局重复 4 次；M4 让同一场看到 4 个不同布局。两臂都是 160 个独立场、640 行、相同优化步和 1,023 个可训练参数，validation 对每个场评估全部 4 个未见布局。</p></div></div>
+      <div class="gate-grid">
+        <article class="gate pass"><span class="pill">correct vs shuffled</span><h3 id="counterfactualShuffleGain">+0.0675%</h3><p id="counterfactualShuffleCI">CI [+0.0410%, +0.0952%]；3/3 seeds 正向。</p></article>
+        <article class="gate"><span class="pill gold">M4-M1 interaction</span><h3 id="counterfactualInteraction">+0.0349%</h3><p id="counterfactualInteractionCI">CI [+0.0126%, +0.0580%]；多布局有小作用。</p></article>
+        <article class="gate"><span class="pill blue">correction swap</span><h3 id="counterfactualCorrectionSwap">8.1399%</h3><p>正确/错配 descriptor 已明显改变空间 correction。</p></article>
+        <article class="gate stop"><span class="pill coral">最终场收益</span><h3 id="counterfactualFieldSwap">+0.0130%</h3><p id="counterfactualFieldSwapCI">同模型 swap CI [-0.0138%, +0.0391%]，改动未对准误差方向。</p></article>
+      </div>
+      <div class="figure-grid" style="grid-template-columns:1fr;"><figure><img src="./demo_t16_operator/results/v3k_a_counterfactual_supervision/t16_v3k_a_counterfactual_supervision.png" alt="v3k-A M1 与 M4 匹配学习曲线、correct geometry 配对收益、曝光交互和同模型 descriptor swap" /><figcaption>从左到右：M1/M4 的 correct-shuffled validation 曲线；correct 相对 static/shuffled 的 field-cluster CI；M4-M1 几何收益交互；同权重 descriptor swap 的 correction 变化与最终场收益。虚线 +0.25% 是预注册最小有意义收益。</figcaption></figure></div>
+      <div class="verdict warning" id="counterfactualVerdict"><strong>预注册机制闸门 FAIL：停止全局 geometry-to-channel modulation 的容量搜索。</strong><span>小幅信号说明 v3j 确有数据配对不足，但 validation CI 上界只有 +0.0952%，仍远低于 +0.25%；下一步只检验体素级 ray-set 分支，不再加 global hidden width。</span></div>
+      <div class="grid-three" style="margin-top:12px;">
+        <article class="note-card"><h3>这次真正学到什么</h3><p>反事实监督让 correction swap 从 v3j 的 0.1785% 升至 8.1399%，说明几何信息已经进入模型；瓶颈变成“修正方向是否对应局部射线欠定误差”。</p></article>
+        <article class="note-card"><h3>v3k-B 结构假设</h3><p>每个体素直接聚合逐视角 backprojection、mask 与角度 token；共享相机编码器 + masked attention/Deep Sets + zero-init support-limited correction。</p></article>
+        <article class="note-card"><h3>论文闸门仍关闭</h3><p>空间机制先胜 static/shuffled，再补 variable-geometry FNO/VIDON 强基线、真实 camera/ray calibration 和新的 blind final。</p></article>
+      </div>
+      <p class="actions"><a class="button primary" href="./document_reader.html?doc=v3k_a_counterfactual_supervision_brief.md">设计、结果与 v3k-B 学习路线</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_a_counterfactual_supervision%2Fv3k_a_pairwise_mechanism.csv">40 条配对机制表</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_a_counterfactual_supervision%2Fv3k_a_exposure_interaction.csv">20 条 M4-M1 交互</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_a_counterfactual_supervision%2Fv3k_a_descriptor_swap.csv">960 条 swap 诊断</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3k_a_counterfactual_supervision.py">正式 runner</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fvalidate_v3k_a_counterfactual_results.py">独立 validator</a></p>
+      <p class="actions"><a class="button" href="https://proceedings.neurips.cc/paper/2017/hash/f22e4747da1aa27e363d86d40ff442fe-Abstract.html">Deep Sets</a><a class="button" href="https://arxiv.org/abs/2205.11404">VIDON</a><a class="button" href="https://ojs.aaai.org/index.php/AAAI/article/view/11671">FiLM</a><a class="button" href="https://openreview.net/pdf?id=86dXbqT5Ua">GINO</a></p>
+    </section>
+
+    <section class="band" id="v3k-b-voxel-ray-set">
+      <div class="section-head"><div><div class="eyebrow">v3k-B voxel-local ray-set audit</div><h2>局部射线值有用，标量角度配对有害</h2><p>M4 等曝光数据上的 4 方法 × 3 种子匹配实验。所有方法共用 frozen FNO、160 个训练场、每场 4 布局、24 epochs 和 915 个可训练参数。</p></div></div>
+      <div class="gate-grid">
+        <article class="gate pass"><span class="pill">ray values vs geometry-only</span><h3 id="raySetGeometryGain">+1.4445%</h3><p id="raySetGeometryCI">CI [+0.5149%, +2.3801%]；3/3 seeds 正向。</p></article>
+        <article class="gate stop"><span class="pill coral">correct vs shuffled pairing</span><h3 id="raySetPairingGain">-0.1967%</h3><p id="raySetPairingCI">CI [-0.4023%, -0.0075%]；正确配对反而更差。</p></article>
+        <article class="gate"><span class="pill blue">correction sensitivity</span><h3 id="raySetCorrectionSwap">19.0683%</h3><p>同权重只重排 active-ray 角度配对，correction 已显著变化。</p></article>
+        <article class="gate stop"><span class="pill coral">same-model field effect</span><h3 id="raySetFieldSwap">-0.3586%</h3><p id="raySetFieldSwapCI">CI [-0.6490%, -0.1108%]；0/3 seeds 正向。</p></article>
+      </div>
+      <div class="figure-grid" style="grid-template-columns:1fr;"><figure><img src="./demo_t16_operator/results/v3k_b_voxel_ray_set_pilot/t16_v3k_b_voxel_ray_set_pilot.png" alt="v3k-B 体素射线集的训练曲线、机制收益、OOD 和同模型角度配对交换审计" /><figcaption>从左到右：四方法 validation 曲线；correct 相对 controls 的 field-cluster CI；几何/OOD 迁移；同权重 pairing swap 对输入、attention、correction 与最终三维场的影响。</figcaption></figure></div>
+      <div class="verdict warning" id="raySetVerdict"><strong>机制判决：停止 attention width/head scaling。</strong><span>网络确实使用了角度配对，但这个信号与误差修正方向错位。这是开发集机制证据，不是优越性结论。</span></div>
+      <div class="grid-three" style="margin-top:12px;">
+        <article class="note-card"><h3>同信息负对照</h3><p>正式 shuffled-pairing 保持完全相同的 mask、ray values 和 angle multiset，只在每个 active camera set 内循环重排角度，168 行均无 fixed point。</p></article>
+        <article class="note-card"><h3>红队修正</h3><p>预试中曾用整个布局 derangement，它错误地激活了底座未见的相机，已停止且未纳入正式结果。</p></article>
+        <article class="note-card"><h3>v3k-C 已完成</h3><p>纯数值 projected Landweber 已通过代数、field/Q_audit 与 OOD 闸门。它现在是强基线，不是论文创新。</p></article>
+      </div>
+      <p class="actions"><a class="button primary" href="./document_reader.html?doc=v3k_b_voxel_ray_set_negative_result_brief.md">完整负结果与 v3k-C 铺路</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_b_voxel_ray_set_pilot%2Fv3k_b_pairwise_mechanism.csv">20 条机制配对</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_b_voxel_ray_set_pilot%2Fv3k_b_same_model_ray_swap.csv">480 条 swap 证据</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_b_voxel_ray_set_pilot%2Fv3k_b_ray_angle_pairing_derangement.csv">168 行配对清单</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3k_b_voxel_ray_set_pilot.py">正式 runner</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fvalidate_v3k_b_voxel_ray_set_results.py">独立 validator</a></p>
+      <p class="actions"><a class="button" href="https://arxiv.org/abs/1707.06474">Learned Primal-Dual</a><a class="button" href="https://arxiv.org/abs/1704.04058">Iterative deep inverse problems</a><a class="button" href="https://arxiv.org/abs/2205.11404">VIDON</a><a class="button" href="https://proceedings.mlr.press/v97/lee19d.html">Set Transformer</a></p>
+    </section>
+
+    <section class="band" id="v3k-c-adjoint-gate">
+      <div class="section-head"><div><div class="eyebrow">v3k-C zero-new-learning adjoint gate</div><h2>伴随方向有效，但还不是新算法</h2><p>从同一个冻结 FNO 起点出发，分开 raw FNO、非负硬支撑投影、standard Landweber 和 Jacobi-Landweber。选择函数只读 validation field error，写入 commit 后才计算 Q_audit 与四个 development test domains。</p></div></div>
+      <div class="gate-grid">
+        <article class="gate pass"><span class="pill">adjoint identity</span><h3 id="adjointError">1.94e-15</h3><p>28 个布局的最大内积相对误差。</p></article>
+        <article class="gate pass"><span class="pill blue">gradient check</span><h3 id="gradientError">2.44e-8</h3><p>中心有限差分与显式梯度的最大相对误差。</p></article>
+        <article class="gate"><span class="pill gold">free feasibility</span><h3 id="supportGain">+4.4745%</h3><p>raw FNO 只做相同非负硬支撑投影的 validation 场级收益。</p></article>
+        <article class="gate pass"><span class="pill">Landweber vs feasible FNO</span><h3 id="landweberGain">+44.6024%</h3><p id="landweberCI">95% field-cluster CI [+40.1023%, +49.1099%]。</p></article>
+        <article class="gate pass"><span class="pill blue">minimum OOD mean</span><h3 id="minOodGain">+22.4001%</h3><p>四个 development test domains 中最小的平均场级收益。</p></article>
+        <article class="gate stop"><span class="pill coral">worst-layout tail</span><h3 id="worstLayoutMean">+19.4737% mean</h3><p id="worstLayoutTail">但最坏单场 -17.5799%，&gt;1% harm rate 9.375%。</p></article>
+      </div>
+      <div class="figure-grid" style="grid-template-columns:1fr;"><figure><img src="./demo_t16_operator/results/v3k_c_adjoint_landweber_gate/t16_v3k_c_adjoint_landweber_gate.png" alt="v3k-C 伴随与梯度检查、validation-only Landweber 网格、五域收益置信区间和绝对场误差" /><figcaption>从左到右：28 布局代数检查；112 格 validation-only 选择；projected Landweber 相对 feasible FNO 的场级 bootstrap CI；raw/投影/standard/Jacobi 的绝对误差。相对收益与绝对误差同时保留。</figcaption></figure></div>
+      <div class="verdict" id="v3kCVerdict"><strong>数值闸门 PASS：调优的 projected Landweber 从此是必须击败的基线。</strong><span id="selectedSchedule">validation 选中 standard · β=1.9 · 64 iterations。</span></div>
+      <div class="grid-three" style="margin-top:12px;">
+        <article class="note-card"><h3>红队修复已纳入正式结果</h3><p>soft support 不是幂等投影，旧结果已作废；正式版使用 <code>1[support&gt;0]·ReLU(x)</code>，并从 selection artifact 完全删除 Q_audit/reprojection 列。</p></article>
+        <article class="note-card"><h3>证明的是数据项方向</h3><p><code>Aᵀ(y-Ax)</code> 是声明 forward 数据项的负梯度，不是“真实场误差保证下降”。当前 forward 还是分 z 切片的线性 toy operator。</p></article>
+        <article class="note-card"><h3>下一步只开 conditional scalar</h3><p>先加 global absolute step、closed-form line search、K/noise lookup 和 ridge-start；候选 <code>0&lt;βθ(q)&lt;2</code> 必须按相同 <code>A/Aᵀ</code> 调用数降低均值与尾部风险。</p></article>
+      </div>
+      <p class="actions"><a class="button primary" href="./document_reader.html?doc=v3k_c_adjoint_landweber_gate_brief.md">完整结果、四周学习路线与师兄问题</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_c_adjoint_landweber_gate%2Fv3k_c_validation_screen.csv">112 格选择表</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_c_adjoint_landweber_gate%2Fv3k_c_pairwise_summary.csv">20 组场级比较</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_c_adjoint_landweber_gate%2Fv3k_c_layout_summary.csv">20 个布局 cell</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3k_c_adjoint_landweber_gate.py">正式 runner</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fvalidate_v3k_c_adjoint_landweber_results.py">独立 validator</a></p>
+      <p class="actions"><a class="button" href="https://arxiv.org/abs/1704.04058">Iterative deep inverse problems</a><a class="button" href="https://arxiv.org/abs/1707.06474">Learned Primal-Dual</a><a class="button" href="https://arxiv.org/abs/1712.02862">MoDL</a><a class="button" href="https://doi.org/10.1137/20M1338460">Learned operator correction</a></p>
+    </section>
+
+    <section class="band" id="v3d-prior-art">
+      <div class="section-head"><div><div class="eyebrow">最近邻查重</div><h2>低秩与 frequency adapter 已有人做，创新门槛必须上移</h2><p>以下均为官方论文页。它们不是“灵感列表”，而是 v3d 必须实现或明确区分的最近邻。</p></div><a class="button" href="./document_reader.html?doc=v3d_prior_art_and_novelty_gate.md">打开完整创新门槛</a></div>
+      <div class="verdict warning"><strong>不允许把 LoRA-FNO、低秩谱核或 frequency adapter 本身写成原创。</strong><span>暂存的研究假设是 acquisition geometry-conditioned F-Adapter，并必须通过 geometry shuffle/constant/static 三个机制消融。</span></div>
+      <div class="grid-three" style="margin-top:12px;">
+        <article class="note-card"><span class="pill coral">closest threat</span><h3>F-Adapter · NeurIPS 2025</h3><p>已系统比较 Fourier operator PEFT，并按频率复杂度分配 adapter 容量；还报告 LoRA 在该场景明显偏弱。</p><p><a href="https://proceedings.neurips.cc/paper_files/paper/2025/hash/a12e362d89d4e0b40760f839f91550ee-Abstract-Conference.html">官方论文页</a></p></article>
+        <article class="note-card"><span class="pill gold">low-rank prior</span><h3>R2-FFNO · ACML 2025</h3><p>已经对 FFNO 谱核做 reduced-rank factorization，并发现 rank 存在性能饱和点。</p><p><a href="https://proceedings.mlr.press/v304/chou26a.html">PMLR 论文页</a></p></article>
+        <article class="note-card"><span class="pill blue">tensor prior</span><h3>MG-TFNO · TMLR 2024</h3><p>已用全局 tensor factorization 压缩 Fourier-domain parameters；参数压缩本身不是本项目贡献。</p><p><a href="https://openreview.net/forum?id=oFqHIkw8sd">TMLR / OpenReview</a></p></article>
+        <article class="note-card"><span class="pill">geometry prior</span><h3>GINO · NeurIPS 2023</h3><p>geometry-informed operator 概念已存在，但它处理物理域形状；本项目需证明采集算子几何的不同问题。</p><p><a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/70518ea42831f02afc3a2828993935ad-Abstract-Conference.html">官方论文页</a></p></article>
+        <article class="note-card"><span class="pill blue">机制闸门</span><h3>三个不可省略的消融</h3><p>正确 geometry 必须同时胜 shuffled geometry、constant geometry 与同 rank static adapter，否则 geometry claim 失败。</p></article>
+        <article class="note-card"><span class="pill coral">blind block</span><h3>先 dev2，后 blind</h3><p>只有相对最强 PEFT control 的 CI、三种子、p10、harm、Q_audit 与成本全部过门槛，才申请封存 blind final。</p></article>
+      </div>
+    </section>
+
+    <div class="tabs" role="tablist" aria-label="算法开发视图">
+      <button class="tab" id="tab-results" type="button" role="tab" data-tab="results" aria-selected="true">实时结果</button>
+      <button class="tab" id="tab-baselines" type="button" role="tab" data-tab="baselines" aria-selected="false">必须击败谁</button>
+      <button class="tab" id="tab-gates" type="button" role="tab" data-tab="gates" aria-selected="false">怎样才算赢</button>
+      <button class="tab" id="tab-route" type="button" role="tab" data-tab="route" aria-selected="false">下一轮改法</button>
+      <button class="tab" id="tab-learn" type="button" role="tab" data-tab="learn" aria-selected="false">我的学习任务</button>
+    </div>
+
+    <section class="tab-panel" id="results" role="tabpanel" aria-labelledby="tab-results">
+      <div class="section-head"><div><div class="eyebrow">训练输出</div><h2>先看 paired field superiority，再看漂亮案例</h2><p>基线只允许用 validation 选择；Q_audit、test field 和最终图都不能回头改模型。</p></div></div>
+      <div class="table-wrap" id="resultTable"><table><tbody><tr><td>三种子训练完成后自动载入。</td></tr></tbody></table></div>
+      <div class="figure-grid">
+        <figure><img src="./demo_t16_operator/results/own_algorithm_benchmark/t16_own_algorithm_errors.png" alt="自有模型与 ridge、U-Net、FNO、DeepONet 的三预算体场误差" /><figcaption>同输入、同训练预算的绝对 field relative L2；越低越好。</figcaption></figure>
+        <figure><img src="./demo_t16_operator/results/own_algorithm_benchmark/t16_own_algorithm_superiority.png" alt="自有模型相对 validation 锁定神经基线的三预算配对优势" /><figcaption>自有模型相对 validation-locked 最强神经基线的 paired field 增益与 field-cluster CI。</figcaption></figure>
+      </div>
+      <p class="actions"><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fown_algorithm_benchmark%2Fown_algorithm_report.json">机器报告</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fown_algorithm_benchmark%2Fown_algorithm_superiority.csv">superiority CSV</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_own_algorithm_benchmark.py">训练脚本</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fvalidate_own_algorithm_results.py">独立 validator</a></p>
+    </section>
+
+    <section class="tab-panel" id="baselines" role="tabpanel" aria-labelledby="tab-baselines" hidden>
+      <div class="section-head"><div><div class="eyebrow">基线阶梯</div><h2>不是只和一个弱 FNO 比</h2><p>开发筛选、确认性实验和论文级真实验证分三层增加对手。</p></div></div>
+      <div class="model-grid">
+        <article class="model"><span class="pill blue">当前已跑</span><h3>Ridge / Tikhonov</h3><p>强数值锚点；validation 选正则，不用 test 选。</p><small>排除“网络只是在修复过弱 FBP”的解释。</small></article>
+        <article class="model"><span class="pill blue">当前已跑</span><h3>Matched 3D U-Net</h3><p>同 ray/angle/ridge 输入、同 loss、同 epoch；参数约为候选两倍。</p><small>排除普通局部卷积已足够。</small></article>
+        <article class="model"><span class="pill blue">epoch + cost 已锁</span><h3>Residual FNO</h3><p><code>carry continuation-Adam + restart cosine</code> 到 240 epochs；完整 validation curve、long-cosine control 和 v3e 成本坐标同报。</p><small>跨架构还需 matched 60/120/180/240 error–compute curves。</small></article>
+        <article class="model"><span class="pill blue">v3g 容量已审计</span><h3>Residual DeepONet</h3><p>branch 编码 pooled ray views，trunk 查询坐标；rank/三维 pooling/学习率已有 72-run 有界筛选。</p><small>短程 rank-64 冠军未替换 rank-48 长程 reference。</small></article>
+        <article class="model future"><span class="pill gold">下一盲测必须</span><h3>CGLS / TV / RBF</h3><p>相同 K、相同 geometry、validation 锁迭代数和正则。</p><small>防止学习收益只是传统法没调好。</small></article>
+        <article class="model"><span class="pill blue">v3k-E 已跑</span><h3>Landweber / quadratic / PBB</h3><p>按实际 A/Aᵀ calls 比较固定步、逐场二次步与 strict/wide BB1/BB2。</p><small>下一必要对手是全 trial-call 记账 SPG 与 noise-aware stopping。</small></article>
+        <article class="model future"><span class="pill gold">论文前必须</span><h3>GRU-BOST / NeRIF / NRIP</h3><p>根据静态/时序任务选择；operator-only 和各自 + same NeRIF refinement 分开。</p><small>不能让自有模型独享 physics refinement。</small></article>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="gates" role="tabpanel" aria-labelledby="tab-gates" hidden>
+      <div class="section-head"><div><div class="eyebrow">胜出合同</div><h2>“平均更好”远远不够</h2></div></div>
+      <div class="gate-grid">
+        <article class="gate stop"><h3>v3c 实际配置</h3><p>主对手是 continued FNO；CI 下界&gt;0；p10≥-2%；伤害率≤10%；clean Q_audit≥-1%；三个 seed 均值全正。当前全部未通过。</p></article>
+        <article class="gate"><h3>v3d 开发门槛</h3><p>固定 60/120/180/240 epoch compute checkpoints；同时胜 validation 冠军与 plateaued control；CI 下界&gt;0、p10≥0、伤害率≤5%，OOD/Q_audit 不反向。</p></article>
+        <article class="gate"><h3>确认性门槛</h3><p>方法和分析冻结后才生成全新 blind fields；加入独立 forward/真实样例，不能继续用 dev2 调 rank、频带或阈值。</p></article>
+        <article class="gate"><h3>计算门槛</h3><p>参数、MACs/FLOPs、峰值显存、训练时间、推理时间与摊销盈亏点并列，不能只报参数量。</p></article>
+        <article class="gate"><h3>几何门槛</h3><p>轮换多个 audit cameras；clean/noisy 双版本；geometry drift、missing camera、最大角间隙和 cone-ray forward。</p></article>
+        <article class="gate"><h3>NeRIF 门槛</h3><p>与 random/ridge/FNO/DeepONet warm-start 共用同一 NeRIF、optimizer、K 与 stop rule；比较端到端 time-to-quality。</p></article>
+        <article class="gate stop"><h3>停止条件</h3><p>新盲测不能稳定超过 FNO/DeepONet，或只靠更多参数/测试调参取胜：停止“新模型”主张，转为失败边界研究。</p></article>
+      </div>
+      <div class="equation" style="margin-top:13px">Primary superiority = 100 × (E_locked-baseline - E_own) / E_locked-baseline
+
+v3c actual: comparator = continued FNO; CI_low &gt; 0; p10 ≥ -2%; harm(&lt;-1%) ≤ 10%; Q_audit ≥ -1%; every seed mean &gt; 0
+v3d development: strongest PEFT control; CI_low &gt; 0; p10 ≥ 0; harm ≤ 5%; geometry shuffle / constant / static must lose
+v3k-D controls: FNO/ridge starts + global/geometry/quadratic/lookup + explicit A/Aᵀ frontier
+v3k-E control: BB1/BB2/alternating PBB improves mean at 128 calls but fails validation tail and noise OOD
+next deterministic gate: whitened discrepancy + residual whiteness + fully charged SPG; learned stopping remains blocked
+Confirmatory: frozen method + unseen blind fields + independent forward / real evidence</div>
+    </section>
+
+    <section class="tab-panel" id="route" role="tabpanel" aria-labelledby="tab-route" hidden>
+      <div class="section-head"><div><div class="eyebrow">失败驱动迭代</div><h2>只根据 validation 和预声明反例改结构</h2></div></div>
+      <div class="grid-two">
+        <article class="note-card"><h3>历史：adapter 输给 continued FNO</h3><p>frozen per-view 3D adapter 已停止并保留为负对照，不通过加 width 追平。</p></article>
+        <article class="note-card"><h3>历史：v3k-B 机制已被否定</h3><p>raw local rays 相对 geometry-only 有用，但 scalar angle pairing 在群体统计和同模型 swap 中都使最终场变差；不再加 attention heads 或 hidden width。</p></article>
+        <article class="note-card"><h3>当前：v3k-E 噪声停止门失败</h3><p>wide alternating PBB 在 128 calls 下达到 0.138640，但 validation tail 37.5%、noise-OOD -11.56%；下一步先做 discrepancy/residual-whiteness/SPG，不训练停止网络。</p></article>
+        <article class="note-card"><h3>并行：真实 forward/adjoint Go/No-Go</h3><p>请师兄确认曲线光路的 <code>F(x)</code>/<code>J(x)ᵀ</code> 或可微 forward loss，并锁定单位、mask、坐标、support 与 Q_audit。</p></article>
+        <article class="note-card"><h3>下一轮：conditional-step 最小阶梯</h3><p>先完成 global step、line search、lookup 与 ridge-start controls，再只学有界 scalar step/stopping；未胜强对手就不开 voxel preconditioner。</p></article>
+        <article class="note-card"><h3>若 K=4 好、K=8 差</h3><p>检查谱模态、低秩 rank 与 ridge 已足够强时的过修正；只在新 validation fields 上选择 budget-conditioned shrinkage，并始终保留同 rank plain adapter。</p></article>
+        <article class="note-card"><h3>若 mean 好、尾部差</h3><p>不继续追均值；加入 per-field risk predictor、worst-domain loss、near-null thin-front adversary，并报告 selective fallback 系统风险。</p></article>
+        <article class="note-card"><h3>若 Q_audit 变差</h3><p>说明 model 在 used views 上学得更像，但三维方向错。先增加多 audit camera、geometry jitter 与 clean/noisy 双审计；只有 v3d 过门槛后才允许检验 NeRIF physics refinement。</p></article>
+        <article class="note-card"><h3>若 DeepONet 最强</h3><p>研究 continuous query/basis 是否更适合当前低分辨率；自有方法可转向 geometry-conditioned branch 或 modulation，而不是强行保留 attention。</p></article>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="learn" role="tabpanel" aria-labelledby="tab-learn" hidden>
+      <div class="section-head"><div><div class="eyebrow">基础到研究</div><h2>你要亲手掌握的十三个闭环</h2><p>网站和代理可以帮你铺路，但论文答辩时这些必须由你自己推导、运行和解释。</p></div></div>
+      <div class="progress"><div class="progress-line"><span>自有算法掌握进度</span><b id="learnProgress">0 / 13</b></div><div class="progress-track"><span id="learnBar"></span></div></div>
+      <div class="task-grid">
+        <article class="task"><label><input type="checkbox" data-check="contract" /><span>讲清公平输入合同</span></label><p>为什么所有模型都必须看到同样的 ridge、ray、mask、angle、support 和坐标？</p><small>产物：一张 channel manifest。</small></article>
+        <article class="task"><label><input type="checkbox" data-check="deeponet" /><span>复算 v3g DeepONet 容量审计</span></label><p>推导 branch coefficient 与 trunk basis 的内积输出，手算 rank/pool 参数量，并解释短程排名为何在 240 epochs 翻转。</p><small>产物：shape 表、参数量和自己复画的 screen/长程曲线。</small></article>
+        <article class="task"><label><input type="checkbox" data-check="fno" /><span>手写 FNO spectral layer</span></label><p>理解 modes、hidden width、local path 和为什么 ray-set 统计只是额外归纳偏置。</p><small>产物：1D FFT toy。</small></article>
+        <article class="task"><label><input type="checkbox" data-check="lowrank" /><span>复现 PEFT 强对照</span></label><p>读懂 LoRA、vanilla adapter、F-Adapter 和低秩谱核的差别，再实现 geometry-conditioned coefficients 与零初始化回退。</p><small>产物：shape 推导、参数/成本表与 geometry shuffle 单元测试。</small></article>
+        <article class="task"><label><input type="checkbox" data-check="stats" /><span>自己算 paired gate</span></label><p>从 field-level delta 算 mean、p10、harm、分层 bootstrap 和 seed variation。</p><small>产物：复算一档 K 的表。</small></article>
+        <article class="task"><label><input type="checkbox" data-check="failure" /><span>解释一个失败样本</span></label><p>把 near-null geometry、thin front、used-view residual 和 Q_audit 误差连成物理解释。</p><small>产物：一张失败案例图。</small></article>
+        <article class="task"><label><input type="checkbox" data-check="convergence" /><span>复算 optimizer protocol gate</span></label><p>解释 Adam moments、block cosine 与 long cosine；为什么 long-cosine 已 plateau 却不是 validation 冠军。</p><small>产物：复画 24→240 validation/error/time 曲线。</small></article>
+        <article class="task"><label><input type="checkbox" data-check="compute-frontier" /><span>复算成本与 error–compute frontier</span></label><p>先从 v3e 手算 MAC/FLOPs、参数、内存与 latency，再给所有候选补 60/120/180/240 validation curve。</p><small>产物：time-to-target、Pareto 表和“4,988 参数为何仍慢”的口述解释。</small></article>
+        <article class="task"><label><input type="checkbox" data-check="geometry-contract" /><span>读懂 geometry/data 合同</span></label><p>能说清 intrinsics、extrinsics、ray table、mask、displacement、坐标轴、单位和 held-out audit view 的角色。</p><small>产物：给一个脱敏样例写 shape/unit/role manifest。</small></article>
+        <article class="task"><label><input type="checkbox" data-check="counterfactual-dose" /><span>复算 M1/M4 等曝光对照</span></label><p>先按 field 折叠 4 layouts 和 3 seeds，再复算 correct-vs-shuffled 与 M4-M1 interaction；解释为什么 20,160 行不等于 20,160 个独立样本。</p><small>产物：一页因果对照表与 +0.25% 门槛说明。</small></article>
+        <article class="task"><label><input type="checkbox" data-check="spatial-ray-set" /><span>复盘 v3k-B 同信息对照</span></label><p>逐体素标出 per-view backprojection token、mask、angle pairing 和 zero-init correction，说清为什么 whole-layout shuffle 不公平。</p><small>产物：自己复算 correct-vs-geometry-only 和 correct-vs-pairing-shuffle 的方向相反。</small></article>
+        <article class="task"><label><input type="checkbox" data-check="adjoint-residual" /><span>手推伴随残差与 Landweber</span></label><p>从 <code>1/2 ||Ax-y||²</code> 推到 <code>Aᵀ(Ax-y)</code>，再解释为什么 <code>Aᵀ(y-Ax₀)</code> 比单独传角度更贴近应修正的方向。</p><small>产物：2D phantom 的 Landweber 数值对照、tensor shape 表和一次 gradient check。</small></article>
+        <article class="task"><label><input type="checkbox" data-check="v3kc-reproduce" /><span>独立复算 v3k-C 数值闸门</span></label><p>运行 10 项单测与 validator，从 112 格 screen 找回 <code>β=1.9,T=64</code>，再检查 selection artifact 无 Q_audit 列。</p><small>产物：自己复算 validation CI、worst-layout tail 和 global/geometry-normalized step 区别。</small></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>T16 v3b-v3k-C · 自有算法工作标签不等于原创性结论。当前页面只接受同信息、同误差与成本预算、可复跑和可失败的证据。</footer>
+
+  <script>
+    (() => {
+      const dataUrl = './demo_t16_operator/results/own_algorithm_benchmark/own_algorithm_dashboard.json';
+      const methodOrder = ['ridge','ridge_unet_aug','ridge_fno_aug','ridge_deeponet','ray_set_operator'];
+      const format = value => Number(value).toFixed(3);
+      const percent = value => `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(2)}%`;
+      fetch(dataUrl).then(response => {
+        if (!response.ok) throw new Error('training results not published yet');
+        return response.json();
+      }).then(data => {
+        const passed = data.superiority.filter(row => row.development_superiority_gate_pass).length;
+        document.getElementById('statusMetric').textContent = `${passed} / ${data.reconstruction_budgets.length}`;
+        const verdict = document.getElementById('headlineVerdict');
+        verdict.classList.toggle('warning', passed !== data.reconstruction_budgets.length);
+        if (verdict.dataset.v3c !== 'loaded' && verdict.dataset.v3dOptimizer !== 'loaded' && verdict.dataset.v3e !== 'loaded' && verdict.dataset.v3f !== 'loaded' && verdict.dataset.v3g !== 'loaded') verdict.innerHTML = `<strong>v3b 三种子开发审计：${passed}/${data.reconstruction_budgets.length} 档胜出门槛通过。</strong><span>当前只有 K=6 全部满足开发门槛；这仍是已查看的小尺寸线性 synthetic development set，不是确认性 superiority。</span>`;
+        const summary = new Map(data.summary.map(row => [`${row.total_budget}:${row.method}`, row]));
+        const superiority = new Map(data.superiority.map(row => [Number(row.total_budget), row]));
+        const rows = data.reconstruction_budgets.flatMap(budget => methodOrder.map(method => {
+          const row = summary.get(`${budget}:${method}`);
+          if (!row) return '';
+          const own = method === 'ray_set_operator';
+          const budgetSup = superiority.get(Number(budget));
+          const sup = own ? budgetSup : null;
+          const status = own ? (sup.development_superiority_gate_pass ? '<span class="good">开发门槛通过</span>' : '<span class="bad">未全面胜出</span>') : method === budgetSup?.locked_neural_baseline ? '<span class="caution">validation 锁定对手</span>' : '对照';
+          return `<tr><td><strong>K=${budget} · ${data.labels[method]}</strong></td><td>${format(row.mean_field_rel_l2)}</td><td>${format(row.mean_audit_reprojection_rel_l2)}</td><td>${own ? percent(sup.mean_field_superiority_pct) : '—'}</td><td>${own ? `[${percent(sup.field_superiority_ci95_low)}, ${percent(sup.field_superiority_ci95_high)}]` : '—'}</td><td>${own ? percent(sup.p10_field_superiority_pct) : '—'}</td><td>${own ? `${(100 * sup.harm_rate_gt_1pct).toFixed(1)}%` : '—'}</td><td>${status}</td></tr>`;
+        })).join('');
+        document.getElementById('resultTable').innerHTML = `<table><thead><tr><th>预算与方法</th><th>field L2</th><th>clean Q_audit L2</th><th>自有方法 vs 锁定对手</th><th>95% field CI</th><th>p10</th><th>伤害率</th><th>判决</th></tr></thead><tbody>${rows}</tbody></table>`;
+      }).catch(error => {
+        document.getElementById('resultTable').innerHTML = `<table><tbody><tr><td><strong>训练结果尚未发布。</strong><br />${error.message}</td></tr></tbody></table>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3c_protocol_gate/v3c_protocol_gate.json').then(response => {
+        if (!response.ok) throw new Error('v3c protocol report unavailable');
+        return response.json();
+      }).then(data => {
+        const zero = data.zero_initialization;
+        const parameters = data.parameters;
+        const dev2 = data.dev2;
+        const verdict = document.getElementById('v3cVerdict');
+        verdict.innerHTML = `<strong>v3c 架构闸门已通过；blind final 仍未封存。</strong><span>本闸门只证明初始不退化、冻结底座可验证与 dev2 不重叠，不证明新算法更准。</span>`;
+        document.getElementById('v3cExact').textContent = `${zero.stratified_exactness_sample_count} 样本 · 输出差 ${Number(zero.maximum_absolute_output_difference_vs_base_fno).toExponential(2)} · 底座漂移 ${Number(zero.maximum_frozen_base_parameter_drift).toExponential(2)}`;
+        document.getElementById('v3cParams').textContent = `${Number(parameters.adapter_trainable).toLocaleString()} 可训练 · ${Number(parameters.combined_total).toLocaleString()} 总参数`;
+        document.getElementById('v3cDev2').textContent = `${dev2.field_count} fields · seed/field/observation 重叠 ${dev2.sample_seed_overlap_with_v3b}/${dev2.field_content_hash_overlap_with_v3b}/${dev2.clean_observation_hash_overlap_with_v3b}`;
+      }).catch(error => {
+        document.getElementById('v3cVerdict').innerHTML = `<strong>v3c 协议报告尚未发布。</strong><span>${error.message}</span>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3c_k6_dev2_pilot/v3c_k6_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('K=6 dev2 report unavailable');
+        return response.json();
+      }).then(data => {
+        const pairs = new Map(data.pairwise_summary.map(row => [row.comparison, row]));
+        const primary = pairs.get('adapter_vs_continued_fno');
+        const weak = pairs.get('adapter_vs_base_fno');
+        const continuation = pairs.get('continued_fno_vs_base_fno');
+        const costs = data.cost_summary;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3c = 'loaded';
+        headline.classList.add('warning');
+        if (headline.dataset.v3d !== 'loaded' && headline.dataset.v3dOptimizer !== 'loaded' && headline.dataset.v3e !== 'loaded' && headline.dataset.v3f !== 'loaded' && headline.dataset.v3g !== 'loaded') headline.innerHTML = `<strong>当前判决：v3c frozen per-view adapter 停止，blind final 继续关闭。</strong><span>adapter 相对 continued FNO 为 ${percent(primary.mean_field_superiority_pct)}，训练/推理成本为 ${Number(costs.adapter_to_continued_training_time_ratio).toFixed(2)}×/${Number(costs.adapter_to_continued_inference_time_ratio).toFixed(2)}×；v3d 以 F-Adapter 为最近邻，检验 BOST 采集几何条件化是否有独立收益。</span>`;
+        document.getElementById('v3cK6Verdict').innerHTML = `<strong>K=6 dev2 开发门槛失败：停止当前 frozen per-view adapter。</strong><span>它比 base FNO 有小改善，但在同一追加 12 epochs 下显著输给 continued FNO；blind final 继续关闭。</span>`;
+        document.getElementById('adapterContinued').textContent = `${percent(primary.mean_field_superiority_pct)} · CI [${percent(primary.field_superiority_ci95_low)}, ${percent(primary.field_superiority_ci95_high)}]`;
+        document.getElementById('adapterBase').textContent = `${percent(weak.mean_field_superiority_pct)} · p10 ${percent(weak.p10_field_superiority_pct)}`;
+        document.getElementById('continuedBase').textContent = `${percent(continuation.mean_field_superiority_pct)} · p10 ${percent(continuation.p10_field_superiority_pct)}`;
+        document.getElementById('adapterCost').textContent = `训练 ${Number(costs.adapter_to_continued_training_time_ratio).toFixed(2)}× · 推理 ${Number(costs.adapter_to_continued_inference_time_ratio).toFixed(2)}×`;
+      }).catch(error => {
+        document.getElementById('v3cK6Verdict').innerHTML = `<strong>K=6 dev2 结果尚未发布。</strong><span>${error.message}</span>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3d_fno_saturation_audit/v3d_fno_saturation_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('FNO plateau report unavailable');
+        return response.json();
+      }).then(data => {
+        const validation = [...data.validation_summary].sort((a,b) => Number(a.cumulative_epochs) - Number(b.cumulative_epochs));
+        const diagnostics = [...data.test_summary].sort((a,b) => Number(a.cumulative_epochs) - Number(b.cumulative_epochs));
+        const first = validation[0];
+        const last = validation[validation.length - 1];
+        const finalDiagnostic = diagnostics[diagnostics.length - 1];
+        const validationReduction = 100 * (Number(first.mean_validation_rel_l2) - Number(last.mean_validation_rel_l2)) / Number(first.mean_validation_rel_l2);
+        document.getElementById('v3dValChange').textContent = `${Number(first.mean_validation_rel_l2).toFixed(4)} → ${Number(last.mean_validation_rel_l2).toFixed(4)} · ${percent(validationReduction)}`;
+        document.getElementById('v3dLastBlock').textContent = `mean ${percent(last.mean_relative_validation_improvement_pct)} · max ${percent(last.max_seed_relative_validation_improvement_pct)}`;
+        document.getElementById('v3dDev2Gain').textContent = `${percent(finalDiagnostic.mean_field_superiority_vs_epoch24_pct)} · CI [${percent(finalDiagnostic.field_superiority_ci95_low)}, ${percent(finalDiagnostic.field_superiority_ci95_high)}]`;
+        document.getElementById('v3dCost').textContent = `${Number(last.mean_cumulative_train_seconds).toFixed(2)} s / seed`;
+        const verdict = document.getElementById('v3dSaturationVerdict');
+        verdict.innerHTML = `<strong>到 ${data.max_total_epochs} epochs 仍未达到预注册 validation plateau。</strong><span>末个 12-epoch block 的 mean/max-seed 改善仍为 ${percent(last.mean_relative_validation_improvement_pct)} / ${percent(last.max_seed_relative_validation_improvement_pct)}；F-Adapter 与自有 geometry 分支继续阻断。</span>`;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3d = 'loaded';
+        headline.classList.add('warning');
+        if (headline.dataset.v3dOptimizer !== 'loaded' && headline.dataset.v3e !== 'loaded' && headline.dataset.v3f !== 'loaded' && headline.dataset.v3g !== 'loaded') headline.innerHTML = `<strong>当前判决：FNO 到 ${data.max_total_epochs} epochs 仍未 plateau，新 adapter 暂缓。</strong><span>validation 相对 epoch 24 改善 ${percent(validationReduction)}；先延长强基线并确认真实 geometry 是否变化，blind final 继续关闭。</span>`;
+      }).catch(error => {
+        document.getElementById('v3dSaturationVerdict').innerHTML = `<strong>FNO plateau 结果尚未发布。</strong><span>${error.message}</span>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3d_fno_optimizer_audit/v3d_optimizer_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('optimizer protocol report unavailable');
+        return response.json();
+      }).then(data => {
+        const summaries = new Map(data.strategy_summary.map(row => [row.strategy, row]));
+        const tests = new Map(data.test_summary.map(row => [row.strategy, row]));
+        const pairs = new Map(data.pairwise_summary.map(row => [row.comparator, row]));
+        const champion = summaries.get(data.validation_champion);
+        const championTest = tests.get(data.validation_champion);
+        const longCosine = summaries.get('carry_adam_long_cosine');
+        const restartPair = pairs.get('restart_adam_restart_cosine');
+        const longPair = pairs.get('carry_adam_long_cosine');
+        document.getElementById('optimizerMetric').textContent = `${data.max_total_epochs} ep`;
+        document.getElementById('optimizerChampion').textContent = champion.label;
+        document.getElementById('optimizerValidation').textContent = `${Number(champion.final_mean_selected_validation_rel_l2).toFixed(5)} · ${Number(champion.mean_cumulative_train_seconds).toFixed(2)} s/seed`;
+        document.getElementById('optimizerPlateau').textContent = `last ${percent(champion.last_block_mean_improvement_pct)} / ${percent(champion.last_block_max_seed_improvement_pct)} · 未 plateau`;
+        document.getElementById('optimizerDev2').textContent = `${percent(championTest.mean_field_superiority_vs_base24_pct)} · field ${Number(championTest.mean_field_rel_l2).toFixed(4)}`;
+        document.getElementById('optimizerPairRestart').textContent = `mean ${percent(restartPair.mean_field_superiority_pct)} · CI [${percent(restartPair.field_superiority_ci95_low)}, ${percent(restartPair.field_superiority_ci95_high)}] · p10 ${percent(restartPair.p10_field_superiority_pct)} · 最差 ${restartPair.worst_domain} ${percent(restartPair.worst_domain_mean_field_superiority_pct)}`;
+        document.getElementById('optimizerPairLong').textContent = `mean ${percent(longPair.mean_field_superiority_pct)} · CI [${percent(longPair.field_superiority_ci95_low)}, ${percent(longPair.field_superiority_ci95_high)}] · p10 ${percent(longPair.p10_field_superiority_pct)} · 最差 ${longPair.worst_domain} ${percent(longPair.worst_domain_mean_field_superiority_pct)}`;
+        const verdict = document.getElementById('optimizerVerdict');
+        verdict.innerHTML = `<strong>固定 epoch FNO 基线已锁定；matched error–compute 与确认性 superiority 未通过。</strong><span>${champion.label} 的 validation 最低，但到 ${data.max_total_epochs} epochs 仍未 plateau；${longCosine.label} 已从 epoch ${longCosine.plateau_onset_endpoint_epoch} plateau，却比冠军弱。v3e 已补成本 schema，下一步让候选共同填写 learning curves。</span>`;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3dOptimizer = 'loaded';
+        headline.classList.add('warning');
+        if (headline.dataset.v3e !== 'loaded' && headline.dataset.v3f !== 'loaded' && headline.dataset.v3g !== 'loaded') headline.innerHTML = `<strong>当前判决：240-epoch FNO 开发基线已锁定，跨架构比较与论文闸门仍关闭。</strong><span>validation 冠军是 ${champion.label}；它仍未 plateau，且 geometry 尚未确认。v3e 成本报告载入后再判断下一步 matched curves。</span>`;
+      }).catch(error => {
+        document.getElementById('optimizerVerdict').innerHTML = `<strong>优化协议结果尚未发布。</strong><span>${error.message}</span>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3e_compute_accounting/v3e_compute_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('compute-accounting report unavailable');
+        return response.json();
+      }).then(data => {
+        const profiles = new Map(data.profiles.map(row => [row.method, row]));
+        const fno = profiles.get('ridge_fno_aug');
+        const deeponet = profiles.get('ridge_deeponet');
+        const raySet = profiles.get('ray_set_operator');
+        const adapter = profiles.get('zero_init_ray_set_adapter');
+        const target = (strategy, value) => data.fno_time_to_target.find(row => row.strategy === strategy && Math.abs(Number(row.target_validation_rel_l2) - value) < 1e-9);
+        const championTarget = target('carry_adam_restart_cosine', 0.10);
+        const longTarget = target('carry_adam_long_cosine', 0.10);
+        const championTarget09 = target('carry_adam_restart_cosine', 0.09);
+        const longTarget09 = target('carry_adam_long_cosine', 0.09);
+        const mib = value => `${(Number(value) / 1048576).toFixed(1)} MiB`;
+        const trainRatio = row => Number(row.training_step_p50_ms) / Number(fno.training_step_p50_ms);
+        const inferenceRatio = row => Number(row.inference_p50_ms) / Number(fno.inference_p50_ms);
+        document.getElementById('computeFno').textContent = `${(Number(fno.forward_estimated_flops_v1) / 1e6).toFixed(2)} M FLOPs-v1 · ${Number(fno.inference_p50_ms).toFixed(2)} / ${Number(fno.training_step_p50_ms).toFixed(2)} ms`;
+        document.getElementById('computeDeepONet').textContent = `${Number(deeponet.inference_p50_ms).toFixed(2)} / ${Number(deeponet.training_step_p50_ms).toFixed(2)} ms · train ${trainRatio(deeponet).toFixed(2)}× FNO`;
+        document.getElementById('computeRaySet').textContent = `${Number(raySet.training_step_p50_ms).toFixed(2)} ms · ${trainRatio(raySet).toFixed(2)}× FNO · ${mib(raySet.training_peak_mps_allocated_bytes_observed)}`;
+        document.getElementById('computeAdapter').textContent = `${Number(adapter.trainable_parameters).toLocaleString()} 可训练 · train ${trainRatio(adapter).toFixed(2)}× · infer ${inferenceRatio(adapter).toFixed(2)}× FNO`;
+        document.getElementById('computeParameterLesson').textContent = `adapter 只训练 ${Number(adapter.trainable_parameters).toLocaleString()} / ${Number(adapter.total_parameters).toLocaleString()} 参数，但完整训练步仍为 FNO 的 ${trainRatio(adapter).toFixed(2)}×；逐视角 3D set encoder 才是主要成本。`;
+        document.getElementById('computeTargetLesson').textContent = `样本等权修正后，三协议到 240 epochs 都未达到 L2≤0.09（champion ${championTarget09.target_reached ? '已达到' : '未达到'}，long-cosine ${longTarget09.target_reached ? '已达到' : '未达到'}）；对 L2≤0.10，long-cosine 为 epoch ${longTarget.first_endpoint_epoch} / ${Number(longTarget.mean_cumulative_train_seconds).toFixed(2)} s，最终冠军为 epoch ${championTarget.first_endpoint_epoch} / ${Number(championTarget.mean_cumulative_train_seconds).toFixed(2)} s。`;
+        document.getElementById('computeVerdict').innerHTML = `<strong>v3e 成本 schema 已完成；精度结论转交下一节 v3f。</strong><span>${data.method_count} 个模型 × ${data.worker_repeats} 个独立 worker 已有参数、FLOPs-v1、同步 MPS 时间与内存。该快照本身不按误差排序；v3f 另行补齐 DeepONet/FNO matched curves。</span>`;
+        const readiness = new Map(data.readiness.map(row => [row.method, row]));
+        const rows = data.profiles.map(row => {
+          const state = readiness.get(row.method);
+          const curveStatus = state.matched_error_compute_frontier_complete ? '<span class="good">跨架构完整</span>' : state.fixed_240_epoch_validation_curve_complete ? '<span class="caution">FNO curve 已有 · 对手未齐</span>' : '<span class="caution">缺 matched curve</span>';
+          return `<tr><td><strong>${row.label}</strong></td><td>${Number(row.total_parameters).toLocaleString()}</td><td>${Number(row.trainable_parameters).toLocaleString()}</td><td>${(Number(row.forward_estimated_flops_v1) / 1e6).toFixed(2)} M</td><td>${Number(row.inference_p50_ms).toFixed(2)} ms</td><td>${Number(row.training_step_p50_ms).toFixed(2)} ms</td><td>${mib(row.training_peak_mps_allocated_bytes_observed)}</td><td>${curveStatus}</td></tr>`;
+        }).join('');
+        document.getElementById('computeTable').innerHTML = `<table><thead><tr><th>方法</th><th>总参数</th><th>可训练参数</th><th>FLOPs-v1</th><th>推理 p50 · B=1</th><th>训练步 p50 · B=12</th><th>MPS 训练峰值</th><th>error–compute</th></tr></thead><tbody>${rows}</tbody></table>`;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3e = 'loaded';
+        headline.classList.add('warning');
+        if (headline.dataset.v3f !== 'loaded' && headline.dataset.v3g !== 'loaded') headline.innerHTML = `<strong>当前判决：FNO epoch 基线与五架构成本账本已锁，正在读取 v3f DeepONet/FNO matched curves。</strong><span>adapter 虽仅 ${Number(adapter.trainable_parameters).toLocaleString()} 个可训练参数，训练仍为 FNO 的 ${trainRatio(adapter).toFixed(2)}×。</span>`;
+      }).catch(error => {
+        document.getElementById('computeVerdict').innerHTML = `<strong>跨架构成本结果尚未发布。</strong><span>${error.message}</span>`;
+        document.getElementById('computeTable').innerHTML = `<table><tbody><tr><td>${error.message}</td></tr></tbody></table>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3f_deeponet_frontier/v3f_deeponet_frontier_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('DeepONet/FNO frontier unavailable');
+        return response.json();
+      }).then(data => {
+        const dominance = data.dominance_diagnostic;
+        const pair = data.cross_architecture_pairwise;
+        const final = data.final_validation_rel_l2;
+        const fmt = value => Number(value).toFixed(4);
+        const pct = value => `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(2)}%`;
+        const winner = data.validation_champion_architecture.toUpperCase();
+        document.getElementById('frontierWinner').textContent = `${winner} · 240 ep`;
+        document.getElementById('frontierValidation').textContent = `FNO ${fmt(final.fno)} · DeepONet ${fmt(final.deeponet)}`;
+        document.getElementById('frontierPareto').textContent = `${dominance.observed_pareto_dominated_deeponet_fixed_checkpoint_count} / ${dominance.observed_deeponet_fixed_checkpoint_count} DeepONet checkpoints`;
+        document.getElementById('frontierDev2').textContent = `${pct(pair.mean_field_superiority_pct)} · CI [${pct(pair.field_superiority_ci95_low)}, ${pct(pair.field_superiority_ci95_high)}]`;
+        document.getElementById('frontierMechanism').textContent = `DeepONet 仅用 FNO 的 ${Number(dominance.deeponet_forward_flops_v1_to_fno_ratio).toFixed(2)}× FLOPs-v1、${Number(dominance.deeponet_inference_p50_to_fno_ratio).toFixed(2)}× 推理与 ${Number(dominance.deeponet_training_step_p50_to_fno_ratio).toFixed(2)}× 训练步时间；但 FNO 在 epoch ${dominance.first_fno_endpoint_better_than_deeponet_final_epoch}、约 ${Number(dominance.first_fno_endpoint_better_than_deeponet_final_seconds).toFixed(2)} s 已超过 DeepONet 240-epoch 最终质量。`;
+        const rows = [...data.frontier].sort((left, right) => Number(left.cumulative_epochs) - Number(right.cumulative_epochs) || String(left.architecture).localeCompare(String(right.architecture))).map(row => `<tr><td><strong>${row.architecture === 'fno' ? 'FNO' : 'DeepONet'}</strong></td><td>${row.cumulative_epochs}</td><td>${fmt(row.mean_validation_rel_l2)}</td><td>${Number(row.mean_cumulative_train_seconds).toFixed(2)} s</td><td>${(Number(row.forward_estimated_flops_v1) / 1e6).toFixed(2)} M</td><td>${Number(row.inference_p50_ms).toFixed(2)} ms</td><td>${Number(row.training_step_p50_ms).toFixed(2)} ms</td></tr>`).join('');
+        document.getElementById('frontierTable').innerHTML = `<table><thead><tr><th>架构</th><th>epoch</th><th>validation L2</th><th>累计训练 / seed</th><th>FLOPs-v1</th><th>推理 p50</th><th>训练步 p50</th></tr></thead><tbody>${rows}</tbody></table>`;
+        document.getElementById('frontierVerdict').innerHTML = `<strong>当前 49k DeepONet 的效率优势真实，但质量—时间前沿被 FNO 支配。</strong><span>FNO 最终 validation 相对低 ${Number(dominance.fno_final_validation_advantage_vs_deeponet_pct).toFixed(2)}%；本轮冻结后在复用 dev2 上平均优势 ${pct(pair.mean_field_superiority_pct)}，四域与三种子方向一致。CI 不含 seed-level 不确定性；development gate 通过只是在确认 FNO 强 control，不开放新的 blind final。</span>`;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3f = 'loaded';
+        headline.classList.add('warning');
+        if (headline.dataset.v3g !== 'loaded') headline.innerHTML = `<strong>当前判决：不把 pooled DeepONet 当主重建器；下一版保留 FNO 主干，只让 set branch 编码采集几何。</strong><span>v3f 中 FNO ${fmt(final.fno)} vs DeepONet ${fmt(final.deeponet)}；自研 GC-SRO 必须通过 static / geometry-shuffle / mask-only / parameter-matched controls，真实 geometry 与论文闸门仍关闭。</span>`;
+      }).catch(error => {
+        document.getElementById('frontierVerdict').innerHTML = `<strong>DeepONet/FNO 前沿结果尚未发布。</strong><span>${error.message}</span>`;
+        document.getElementById('frontierTable').innerHTML = `<table><tbody><tr><td>${error.message}</td></tr></tbody></table>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3g_deeponet_capacity_audit/v3g_deeponet_capacity_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('DeepONet capacity audit unavailable');
+        return response.json();
+      }).then(data => {
+        const fmt = value => Number(value).toFixed(6);
+        const pct = value => `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(3)}%`;
+        const screen = [...data.screen_summary].sort((left, right) => Number(left.mean_best_validation_rel_l2) - Number(right.mean_best_validation_rel_l2) || Number(left.parameter_count) - Number(right.parameter_count));
+        const best = screen[0];
+        const runner = screen[1];
+        const bestByVariant = new Map();
+        screen.forEach(row => {
+          const existing = bestByVariant.get(row.variant_id);
+          if (!existing || Number(row.mean_best_validation_rel_l2) < Number(existing.mean_best_validation_rel_l2)) bestByVariant.set(row.variant_id, row);
+        });
+        const final = data.final_validation_rel_l2;
+        const referencePair = data.cross_baseline_pairwise.find(row => row.comparator === 'v3f_reference_deeponet');
+        const candidateLong = Number(final.v3g_selected_deeponet);
+        const referenceLong = Number(final.v3f_reference_deeponet);
+        const longDelta = 100 * (candidateLong - referenceLong) / referenceLong;
+        const screenMargin = 100 * (Number(runner.mean_best_validation_rel_l2) - Number(best.mean_best_validation_rel_l2)) / Number(best.mean_best_validation_rel_l2);
+        document.getElementById('capacityWinner').textContent = `${data.selected_variant.replaceAll('_', ' ')} · lr ${data.selected_learning_rate}`;
+        document.getElementById('capacityBudget').textContent = `${data.screen_run_count} runs · ${Number(data.screen_total_seconds).toFixed(2)} s`;
+        document.getElementById('capacityLong').textContent = `candidate ${fmt(candidateLong)} · ref ${fmt(referenceLong)}`;
+        document.getElementById('capacityDev2').textContent = `${pct(referencePair.mean_field_superiority_pct)} · CI [${pct(referencePair.field_superiority_ci95_low)}, ${pct(referencePair.field_superiority_ci95_high)}]`;
+        document.getElementById('capacityLesson').textContent = `24-epoch 冠军只比第二名好 ${screenMargin.toFixed(3)}%，到 240 epochs 却比 rank-48 reference 差 ${longDelta.toFixed(3)}%。短程 screen 更像多保真筛选的第一层，不能被当作最终架构证据。`;
+        const rows = [...bestByVariant.values()].sort((left, right) => Number(left.mean_best_validation_rel_l2) - Number(right.mean_best_validation_rel_l2)).map((row, index) => `<tr><td><strong>${index + 1}. ${row.variant_id.replaceAll('_', ' ')}</strong></td><td>${row.learning_rate}</td><td>${Number(row.parameter_count).toLocaleString()}</td><td>${fmt(row.mean_best_validation_rel_l2)}</td><td>${fmt(row.min_best_validation_rel_l2)} – ${fmt(row.max_best_validation_rel_l2)}</td><td>${row.variant_id === data.selected_variant ? '<span class="caution">延长到 240 ep</span>' : '<span>按协议不延长</span>'}</td></tr>`).join('');
+        document.getElementById('capacityTable').innerHTML = `<table><thead><tr><th>每个架构的最佳 cell</th><th>lr</th><th>参数</th><th>24-ep mean best val</th><th>三 seed 范围</th><th>后续</th></tr></thead><tbody>${rows}</tbody></table>`;
+        document.getElementById('capacityVerdict').innerHTML = `<strong>有界容量筛选没有找到可替换 rank-48 reference 的 DeepONet。</strong><span>短程冠军 ${data.selected_variant} 在 240 epochs 相对 reference validation 为 ${pct(-longDelta)} 的“改善”，冻结后复用 dev2 为 ${pct(referencePair.mean_field_superiority_pct)}，CI 跨 0、三个种子中两个方向为负。当前应停止 ad-hoc rank/pool 扩表，把 rank 48 保留为 control。</span>`;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3g = 'loaded';
+        headline.classList.add('warning');
+        if (headline.dataset.v3h !== 'loaded' && headline.dataset.v3i !== 'loaded') headline.innerHTML = `<strong>当前判决：DeepONet 公平补强完成但未改写结论；停止加纯 rank，开始 GC-SRO 机制 controls。</strong><span>v3g 的 72-run screen 选出 rank 64，但 240-epoch validation ${fmt(candidateLong)} 仍略逊 rank 48 的 ${fmt(referenceLong)}，FNO 为 ${fmt(final.fno)}。下一步只检验正确 acquisition geometry 是否胜 wider-FNO、static、mask-only 与 shuffled-geometry 对照。</span>`;
+      }).catch(error => {
+        document.getElementById('capacityVerdict').innerHTML = `<strong>DeepONet 容量审计尚未发布。</strong><span>${error.message}</span>`;
+        document.getElementById('capacityTable').innerHTML = `<table><tbody><tr><td>${error.message}</td></tr></tbody></table>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3h_gc_sro_geometry_gate/v3h_gc_sro_geometry_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('GC-SRO geometry gate unavailable');
+        return response.json();
+      }).then(data => {
+        const geometry = data.geometry_diagnostics;
+        const engineering = data.gc_sro_engineering_gate;
+        document.getElementById('geoCurrent').textContent = `${geometry.current_unique_geometry_masks} mask · ${Number(geometry.current_geometry_entropy_bits).toFixed(0)} bit`;
+        document.getElementById('geoVariable').textContent = `${geometry.variable_unique_geometry_masks} masks · ${Number(geometry.variable_geometry_entropy_bits_if_balanced).toFixed(2)} bit`;
+        document.getElementById('geoRange').textContent = `${Number(geometry.mean_ridge_error_range_pct_across_geometries).toFixed(2)}%`;
+        document.getElementById('geoEngineering').textContent = engineering.engineering_gate_pass ? '工程闸门 PASS' : '工程闸门 FAIL';
+        document.getElementById('geometryVerdict').innerHTML = `<strong>当前判决：旧数据只有 ${geometry.current_unique_geometry_masks} 个布局，不允许训练几何条件模型。</strong><span>28 布局中 ridge 平均场误差跨度 ${Number(geometry.mean_ridge_error_range_pct_across_geometries).toFixed(2)}%，旧布局在已查看 validation 场排名 ${geometry.reference_geometry_rank_of_28}/28。GC-SRO 只通过零初始化、冻结基线和置换不变工程闸门；可开始变几何功能实验，优越性与 blind final 仍关闭。</span>`;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3h = 'loaded';
+        headline.classList.add('warning');
+        if (headline.dataset.v3i !== 'loaded') headline.innerHTML = `<strong>当前判决：先构建变采集几何数据，不在旧 K=6 数据上训练 GC-SRO。</strong><span>布局本身使 ridge 平均场误差跨度达 ${Number(geometry.mean_ridge_error_range_pct_across_geometries).toFixed(2)}%；下一步用 correct geometry 对照 shuffled/static/K-cardinality 验证机制，而不是立即追求一个好看分数。</span>`;
+      }).catch(error => {
+        document.getElementById('geometryVerdict').innerHTML = `<strong>v3h 几何闸门尚未发布。</strong><span>${error.message}</span>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3i_variable_geometry_dataset/v3i_variable_geometry_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('v3i variable-geometry dataset audit unavailable');
+        return response.json();
+      }).then(data => {
+        const train = data.split_audit.train;
+        const validation = data.split_audit.val;
+        document.getElementById('datasetShape').textContent = data.input_shape.join(' × ');
+        document.getElementById('datasetTrain').textContent = `${train.unique_geometries} 布局 · ${train.minimum_fields_per_geometry} 场/布局`;
+        document.getElementById('datasetVal').textContent = `${validation.unique_geometries} 布局 · ${validation.minimum_fields_per_geometry} 场/布局`;
+        document.getElementById('datasetVerdict').innerHTML = `<strong>数据闸门 ${data.dataset_gate_pass ? 'PASS' : 'FAIL'}：${data.next_decision.functional_pilot_authorized ? '授权五组三种子功能实验' : '继续阻断训练'}。</strong><span>${data.sample_count} 个场覆盖 ${data.unique_geometry_count} 布局，训练布局熵 ${Number(train.geometry_entropy_bits).toFixed(2)} bit；私有 NPZ 不公开。superiority 与 blind final 仍关闭。</span>`;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3i = 'loaded';
+        headline.classList.add('warning');
+        if (headline.dataset.v3j !== 'loaded') {
+          headline.innerHTML = `<strong>当前判决：变几何数据合同已通过，开始功能性 GC-SRO 机制对照。</strong><span>下一轮仅比较 locked FNO、static、K-cardinality、shuffled geometry 和 correct geometry 的三种子短程曲线；这不是论文 superiority 训练。</span>`;
+          headline.__latestHtml = headline.innerHTML;
+        }
+        if (!headline.__versionGuard) {
+          headline.__versionGuard = new MutationObserver(() => {
+            if (headline.__latestHtml && headline.innerHTML !== headline.__latestHtml) headline.innerHTML = headline.__latestHtml;
+          });
+          headline.__versionGuard.observe(headline, { childList: true, subtree: true, characterData: true });
+        }
+      }).catch(error => {
+        document.getElementById('datasetVerdict').innerHTML = `<strong>v3i 数据闸门尚未发布。</strong><span>${error.message}</span>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3j_gc_sro_functional_pilot/v3j_gc_sro_functional_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('v3j GC-SRO functional result unavailable');
+        return response.json();
+      }).then(data => {
+        const primary = new Map(data.primary_gate_rows.map(row => [row.comparator, row]));
+        const vsStatic = primary.get('static');
+        const vsShuffled = primary.get('shuffled_geometry');
+        const swap = data.same_model_descriptor_swap;
+        const pct = (value, digits = 5) => `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(digits)}%`;
+        document.getElementById('functionalStaticGain').textContent = pct(data.generic_static_adapter_validation_gain_vs_locked_fno_pct, 4);
+        document.getElementById('functionalStaticCompare').textContent = pct(vsStatic.mean_field_gain_pct);
+        document.getElementById('functionalShuffleCompare').textContent = pct(vsShuffled.mean_field_gain_pct);
+        document.getElementById('functionalSwap').textContent = `${Number(swap.mean_correction_swap_relative_pct).toFixed(4)}%`;
+        document.getElementById('functionalVerdict').innerHTML = `<strong>机制闸门 ${data.functional_mechanism_gate_pass ? 'PASS' : 'FAIL'}：${data.functional_mechanism_gate_pass ? '才允许进入强基线训练' : '停止当前 GC-SRO 结构的扩参'}。</strong><span>static adapter 改善 ${pct(data.generic_static_adapter_validation_gain_vs_locked_fno_pct, 4)}，但 correct vs static 为 ${pct(vsStatic.mean_field_gain_pct)}、correct vs shuffled 为 ${pct(vsShuffled.mean_field_gain_pct)}，都只有 1/3 种子正向。几何会改变 embedding，但 correction 只变 ${Number(swap.mean_correction_swap_relative_pct).toFixed(4)}%；下一步先做同场多布局反事实监督。</span>`;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3j = 'loaded';
+        headline.classList.add('warning');
+        if (headline.dataset.v3k !== 'loaded' && headline.dataset.v3kb !== 'loaded') {
+          headline.innerHTML = `<strong>当前判决：GC-SRO 几何机制闸门失败，停止扩参。</strong><span>通用 spectral adapter 相对 locked FNO 改善 ${pct(data.generic_static_adapter_validation_gain_vs_locked_fno_pct, 4)}，但正确几何不能胜 static/shuffled。先用同场多布局监督区分数据与结构原因，优越性与 blind final 继续关闭。</span>`;
+          headline.__latestHtml = headline.innerHTML;
+        }
+        if (!headline.__versionGuard) {
+          headline.__versionGuard = new MutationObserver(() => {
+            if (headline.__latestHtml && headline.innerHTML !== headline.__latestHtml) headline.innerHTML = headline.__latestHtml;
+          });
+          headline.__versionGuard.observe(headline, { childList: true, subtree: true, characterData: true });
+        }
+      }).catch(error => {
+        document.getElementById('functionalVerdict').innerHTML = `<strong>v3j 功能实验尚未发布。</strong><span>${error.message}</span>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3k_a_counterfactual_supervision/v3k_a_counterfactual_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('v3k-A counterfactual result unavailable');
+        return response.json();
+      }).then(data => {
+        const pairwise = data.pairwise_mechanism;
+        const interactions = data.exposure_interactions;
+        const find = (rows, criteria) => rows.find(row => Object.entries(criteria).every(([key, value]) => String(row[key]) === String(value)));
+        const shuffled = find(pairwise, {training_arm:'m4_counterfactual', source_split:'val', comparator:'shuffled_geometry'});
+        const interaction = find(interactions, {source_split:'val', comparator:'shuffled_geometry'});
+        const swap = data.same_model_descriptor_swap.find(row => row.training_arm === 'm4_counterfactual');
+        const pct = (value, digits = 4) => `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(digits)}%`;
+        document.getElementById('counterfactualShuffleGain').textContent = pct(shuffled.mean_field_gain_pct);
+        document.getElementById('counterfactualShuffleCI').textContent = `CI [${pct(shuffled.field_cluster_ci95_low_pct)}, ${pct(shuffled.field_cluster_ci95_high_pct)}]；${shuffled.positive_seed_count}/3 seeds 正向。`;
+        document.getElementById('counterfactualInteraction').textContent = pct(interaction.mean_interaction_gain_pct);
+        document.getElementById('counterfactualInteractionCI').textContent = `CI [${pct(interaction.field_cluster_ci95_low_pct)}, ${pct(interaction.field_cluster_ci95_high_pct)}]；多布局有小作用。`;
+        document.getElementById('counterfactualCorrectionSwap').textContent = `${Number(swap.mean_correction_swap_relative_pct).toFixed(4)}%`;
+        document.getElementById('counterfactualFieldSwap').textContent = pct(swap.mean_correct_descriptor_field_gain_pct);
+        document.getElementById('counterfactualFieldSwapCI').textContent = `同模型 swap CI [${pct(swap.field_cluster_ci95_low_pct)}, ${pct(swap.field_cluster_ci95_high_pct)}]，改动未对准误差方向。`;
+        document.getElementById('counterfactualVerdict').innerHTML = `<strong>预注册机制闸门 ${data.counterfactual_data_mechanism_gate_pass ? 'PASS' : 'FAIL'}：${data.counterfactual_data_mechanism_gate_pass ? '仅授权确认性设计' : '停止全局 geometry-to-channel modulation 的容量搜索'}。</strong><span>M4 correct vs shuffled 为 ${pct(shuffled.mean_field_gain_pct)}，CI 上界 ${pct(shuffled.field_cluster_ci95_high_pct)} 仍低于 +0.25%；correction swap ${Number(swap.mean_correction_swap_relative_pct).toFixed(4)}%，最终场收益仅 ${pct(swap.mean_correct_descriptor_field_gain_pct)}。下一步转体素级 ray-set 条件化。</span>`;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3k = 'loaded';
+        headline.classList.add('warning');
+        if (headline.dataset.v3kb !== 'loaded') {
+          headline.innerHTML = `<strong>当前判决：同场多布局恢复了小幅几何信号，但没有达到论文门槛。</strong><span>correct vs shuffled 为 ${pct(shuffled.mean_field_gain_pct)} [${pct(shuffled.field_cluster_ci95_low_pct)}, ${pct(shuffled.field_cluster_ci95_high_pct)}]，低于预注册 +0.25%；停止全局 FiLM 扩参，下一步只检验体素级 ray-set 分支。superiority 与 blind final 继续关闭。</span>`;
+          headline.__latestHtml = headline.innerHTML;
+        }
+        if (!headline.__versionGuard) {
+          headline.__versionGuard = new MutationObserver(() => {
+            if (headline.__latestHtml && headline.innerHTML !== headline.__latestHtml) headline.innerHTML = headline.__latestHtml;
+          });
+          headline.__versionGuard.observe(headline, { childList: true, subtree: true, characterData: true });
+        }
+      }).catch(error => {
+        document.getElementById('counterfactualVerdict').innerHTML = `<strong>v3k-A 反事实实验尚未发布。</strong><span>${error.message}</span>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3k_b_voxel_ray_set_pilot/v3k_b_voxel_ray_set_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('v3k-B voxel ray-set result unavailable');
+        return response.json();
+      }).then(data => {
+        const find = comparator => data.pairwise_mechanism.find(row => row.source_split === 'val' && row.comparator === comparator);
+        const geometry = find('geometry_only');
+        const pairing = find('shuffled_pairing');
+        const swap = data.same_model_ray_set_swap;
+        const pct = (value, digits = 4) => `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(digits)}%`;
+        document.getElementById('raySetGeometryGain').textContent = pct(geometry.mean_field_gain_pct);
+        document.getElementById('raySetGeometryCI').textContent = `CI [${pct(geometry.field_cluster_ci95_low_pct)}, ${pct(geometry.field_cluster_ci95_high_pct)}]；${geometry.positive_seed_count}/3 seeds 正向。`;
+        document.getElementById('raySetPairingGain').textContent = pct(pairing.mean_field_gain_pct);
+        document.getElementById('raySetPairingCI').textContent = `CI [${pct(pairing.field_cluster_ci95_low_pct)}, ${pct(pairing.field_cluster_ci95_high_pct)}]；正确配对反而更差。`;
+        document.getElementById('raySetCorrectionSwap').textContent = `${Number(swap.mean_correction_swap_relative_pct).toFixed(4)}%`;
+        document.getElementById('raySetFieldSwap').textContent = pct(swap.mean_correct_ray_set_field_gain_pct);
+        document.getElementById('raySetFieldSwapCI').textContent = `CI [${pct(swap.field_cluster_ci95_low_pct)}, ${pct(swap.field_cluster_ci95_high_pct)}]；${swap.positive_seed_count}/3 seeds 正向。`;
+        document.getElementById('raySetVerdict').innerHTML = `<strong>机制判决：当前 ray-angle 配对有害，停止 attention 扩参。</strong><span>局部 ray values 相对 geometry-only 改善 ${pct(geometry.mean_field_gain_pct)}，但 correct pairing 相对同信息 shuffled pairing 为 ${pct(pairing.mean_field_gain_pct)}；同模型 swap 再现 ${pct(swap.mean_correct_ray_set_field_gain_pct)} 有害场效应。</span>`;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3kb = 'loaded';
+        headline.classList.add('warning');
+        if (headline.dataset.v3kc !== 'loaded') {
+          headline.innerHTML = `<strong>当前判决：v3k-B 已证实当前角度配对机制有害，停止 attention 扩参。</strong><span>局部射线值本身有用，但 <code>sinθ/cosθ</code> pairing 把 correction 推向错误方向。下一步先复现 Landweber，再只检验 <code>Aᵀ(y-Ax₀)</code> 伴随残差 token；superiority 与 blind final 继续关闭。</span>`;
+          headline.__latestHtml = headline.innerHTML;
+        }
+        if (!headline.__versionGuard) {
+          headline.__versionGuard = new MutationObserver(() => {
+            if (headline.__latestHtml && headline.innerHTML !== headline.__latestHtml) headline.innerHTML = headline.__latestHtml;
+          });
+          headline.__versionGuard.observe(headline, { childList: true, subtree: true, characterData: true });
+        }
+      }).catch(error => {
+        document.getElementById('raySetVerdict').innerHTML = `<strong>v3k-B 体素射线集结果尚未发布。</strong><span>${error.message}</span>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3k_c_adjoint_landweber_gate/v3k_c_adjoint_landweber_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('v3k-C adjoint gate unavailable');
+        return response.json();
+      }).then(data => {
+        const decision = data.next_decision || {};
+        if (decision.learned_scalar_development_training_authorized !== false || decision.learned_scalar_confirmatory_training_authorized !== false) throw new Error('v3k-D training authorization drift');
+        const pct = (value, digits = 4) => `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(digits)}%`;
+        const scientific = value => Number(value).toExponential(2);
+        const pair = (split, candidate, comparator) => data.pairwise_summary.find(row => row.source_split === split && row.candidate === candidate && row.comparator === comparator);
+        const preferred = `landweber_${data.preferred_numerical_method}`;
+        const validation = pair('val', preferred, 'feasible_fno');
+        const support = pair('val', 'feasible_fno', 'locked_fno_raw');
+        const development = ['test_iid','test_noise_ood','test_family_ood','test_joint_ood'].map(split => pair(split, preferred, 'feasible_fno'));
+        const minimum = development.reduce((left, right) => Number(left.mean_field_gain_pct) < Number(right.mean_field_gain_pct) ? left : right);
+        const worst = data.worst_layout;
+        const selected = data.selected_hyperparameters[data.preferred_numerical_method];
+        document.getElementById('adjointError').textContent = scientific(data.operator_checks.maximum_adjoint_inner_product_relative_error);
+        document.getElementById('gradientError').textContent = scientific(data.operator_checks.maximum_finite_difference_gradient_relative_error);
+        document.getElementById('supportGain').textContent = pct(support.mean_field_gain_pct);
+        document.getElementById('landweberGain').textContent = pct(validation.mean_field_gain_pct);
+        document.getElementById('landweberCI').textContent = `95% field-cluster CI [${pct(validation.field_cluster_ci95_low_pct)}, ${pct(validation.field_cluster_ci95_high_pct)}]。`;
+        document.getElementById('minOodGain').textContent = pct(minimum.mean_field_gain_pct);
+        document.getElementById('worstLayoutMean').textContent = `${pct(worst.mean_field_gain_pct)} mean`;
+        document.getElementById('worstLayoutTail').textContent = `${worst.source_split} · ${worst.geometry_id}；最坏单场 ${pct(worst.minimum_field_gain_pct)}，>1% harm rate ${pct(100 * worst.harm_rate_gt_1pct, 3)}。`;
+        document.getElementById('selectedSchedule').textContent = `validation 选中 ${data.preferred_numerical_method} · β=${selected.step_fraction} · ${selected.iterations} iterations。`;
+        document.getElementById('v3kCVerdict').innerHTML = `<strong>数值闸门 ${data.zero_learning_gate_pass ? 'PASS' : 'FAIL'}：伴随方向有效，固定 Landweber 升格为必做基线。</strong><span>只授权 conditional scalar 的 development 原型；confirmatory scalar、voxel preconditioner、set aggregation、superiority 与 blind final 仍关闭。</span>`;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3kc = 'loaded';
+        headline.classList.add('warning');
+        if (headline.dataset.v3kd !== 'loaded' && headline.dataset.v3ke !== 'loaded') {
+          headline.innerHTML = `<strong>当前判决：v3k-C 证明伴随数据一致性值得继续，Landweber 成为必须击败的基线。</strong><span>validation 场级收益 ${pct(validation.mean_field_gain_pct)} [${pct(validation.field_cluster_ci95_low_pct)}, ${pct(validation.field_cluster_ci95_high_pct)}]；v3k-D 强数值对照载入前，不训练 conditional scalar。</span>`;
+          headline.__latestHtml = headline.innerHTML;
+        }
+        if (!headline.__versionGuard) {
+          headline.__versionGuard = new MutationObserver(() => {
+            if (headline.__latestHtml && headline.innerHTML !== headline.__latestHtml) headline.innerHTML = headline.__latestHtml;
+          });
+          headline.__versionGuard.observe(headline, { childList: true, subtree: true, characterData: true });
+        }
+      }).catch(error => {
+        document.getElementById('v3kCVerdict').innerHTML = `<strong>v3k-C 伴随方向闸门尚未发布。</strong><span>${error.message}</span>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3k_d_strong_numerical_controls/v3k_d_strong_controls_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('v3k-D strong controls unavailable');
+        return response.json();
+      }).then(data => {
+        const pct = (value, digits = 4) => `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(digits)}%`;
+        const frontier = data.operator_call_frontier;
+        const geometry = frontier.find(row => Number(row.maximum_operator_calls_per_sample) === 128);
+        const quadratic = frontier.find(row => Number(row.maximum_operator_calls_per_sample) === 193);
+        document.getElementById('v3kDVerdict').innerHTML = `<strong>控制门 ${data.strong_numerical_controls_complete ? 'PASS' : 'FAIL'}，learned scalar 仍为 BLOCKED。</strong><span>${quadratic.best_method_label} 是 193-call 精度冠军（${Number(quadratic.source_field_mean_rel_l2).toFixed(6)}）；128-call 前沿为 ${geometry.best_method_label}（${Number(geometry.source_field_mean_rel_l2).toFixed(6)}）。truth-oracle headroom ${pct(data.truth_oracle_diagnostic.mean_oracle_headroom_vs_champion_pct)} 只授权下一步 BB 审计，不授权训练。</span>`;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3kd = 'loaded';
+        headline.classList.add('warning');
+        if (headline.dataset.v3ke !== 'loaded') {
+          headline.__latestHtml = `<strong>当前判决：v3k-D 强数值对照完成，先补 projected BB，不训练 learned scalar。</strong><span>193-call quadratic 是绝对精度冠军；128-call 前沿仍是 geometry Landweber。lookup 没有条件化价值，fresh lock 仍未封存。</span>`;
+          headline.innerHTML = headline.__latestHtml;
+        }
+      }).catch(error => {
+        document.getElementById('v3kDVerdict').innerHTML = `<strong>v3k-D 强数值对照尚未发布。</strong><span>${error.message}</span>`;
+      });
+
+      fetch('./demo_t16_operator/results/v3k_e_projected_bb_gate/v3k_e_projected_bb_dashboard.json').then(response => {
+        if (!response.ok) throw new Error('v3k-E projected BB gate unavailable');
+        return response.json();
+      }).then(data => {
+        const pct = (value, digits = 3) => `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(digits)}%`;
+        const validation = data.wide_pbb_vs_fixed_landweber.val;
+        const noise = data.wide_pbb_vs_fixed_landweber.test_noise_ood;
+        const calls = data.same_call_budget;
+        if (data.next_decision.learned_scalar_development_training_authorized !== false) throw new Error('v3k-E learned-stop authorization drift');
+        document.getElementById('v3kEVerdict').innerHTML = `<strong>均值门 PASS，尾部与噪声门 FAIL；learned stopping 仍为 BLOCKED。</strong><span>同预算 ${calls.fno_pbb_wide_total_calls} calls 下 validation mean gain ${pct(validation.mean_field_gain_pct)}，但 harm&gt;1% 为 ${pct(100 * validation.harm_rate_gt_1pct)}，noise-OOD 为 ${pct(noise.mean_field_gain_pct)}。下一步只授权确定性 noise-aware stopping 与 full-call SPG。</span>`;
+        const headline = document.getElementById('headlineVerdict');
+        headline.dataset.v3ke = 'loaded';
+        headline.classList.add('warning');
+        headline.__latestHtml = `<strong>当前判决：v3k-E 同预算 PBB 加速成立，但噪声停止门失败。</strong><span>validation mean gain ${pct(validation.mean_field_gain_pct)}，harm&gt;1% ${pct(100 * validation.harm_rate_gt_1pct)}；noise-OOD ${pct(noise.mean_field_gain_pct)}。先做 discrepancy/SPG/fresh lock，不训练 learned stopping。</span>`;
+        headline.innerHTML = headline.__latestHtml;
+      }).catch(error => {
+        document.getElementById('v3kEVerdict').innerHTML = `<strong>v3k-E projected BB 结果尚未发布。</strong><span>${error.message}</span>`;
+      });
+
+      document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => {
+        const selected = button.dataset.tab;
+        document.querySelectorAll('[data-tab]').forEach(item => item.setAttribute('aria-selected', item === button ? 'true' : 'false'));
+        document.querySelectorAll('.tab-panel').forEach(panel => { panel.hidden = panel.id !== selected; });
+      }));
+
+      const storageKey = 'oerf-own-algorithm-learning-v3b';
+      const checks = [...document.querySelectorAll('[data-check]')];
+      let state = {};
+      try { state = JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch (_) { state = {}; }
+      function updateProgress() {
+        const done = checks.filter(input => input.checked).length;
+        document.getElementById('learnProgress').textContent = `${done} / ${checks.length}`;
+        document.getElementById('learnBar').style.width = `${100 * done / checks.length}%`;
+      }
+      checks.forEach(input => {
+        input.checked = Boolean(state[input.dataset.check]);
+        input.addEventListener('change', () => {
+          state[input.dataset.check] = input.checked;
+          localStorage.setItem(storageKey, JSON.stringify(state));
+          updateProgress();
+        });
+      });
+      updateProgress();
+    })();
+  </script>
+  <script src="./site_link_router.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+{
+  "schema_version": "psu-b0-observable-morphology-probe-config-1.0",
+  "status": "POSTOPEN_DEVELOPMENT_DIAGNOSTIC_FRESH_EXCLUDED",
+  "source_development_config": "demo_t16_operator/configs/psu_b0_residual_risk_development_v1.json",
+  "source_headroom_public_summary": "docs/psu_b0_pcgls_conditional_headroom_public_summary.json",
+  "data_firewall": {
+    "fit_and_cross_validation_split": "risk_train",
+    "diagnostic_transfer_splits": [
+      "risk_validation",
+      "risk_calibration"
+    ],
+    "opened_fresh_use": "FORBIDDEN"
+  },
+  "feature_sets": [
+    "measurement_metadata",
+    "initial_normal_spectrum",
+    "metadata_plus_initial_normal"
+  ],
+  "ridge_selector": {
+    "folds": 4,
+    "lambda_grid": [
+      0.0001,
+      0.001,
+      0.01,
+      0.1,
+      1.0,
+      10.0,
+      100.0
+    ],
+    "minimum_oof_coverage": 0.25,
+    "maximum_oof_harm_over_one_percent_rate": 0.05,
+    "maximum_oof_accepted_harm_over_one_percent_rate": 0.05,
+    "relaxed_diagnostic_omits_accepted_harm_constraint": true,
+    "confidence_threshold_candidates": "all_unique_oof_margins_plus_exact_fallback"
+  },
+  "solver_contract": {
+    "expert_bank_source": "risk_train_family_label_selection",
+    "baseline_candidate_id": "pcgls4_s4_e0.05_isotropic",
+    "initial_normal_shared_with_first_pcgls_adjoint": true,
+    "logical_calls_after_integrated_implementation": {
+      "forward": 4,
+      "adjoint": 4
+    }
+  },
+  "claim_boundary": {
+    "current_probe_is_an_integrated_solver": false,
+    "family_label_is_available_at_deployment": false,
+    "calibration_is_still_untouched": false,
+    "experimental_field_truth_used": false,
+    "analytic_morphology_is_cfd": false,
+    "algorithm_superiority": false
+  }
+}

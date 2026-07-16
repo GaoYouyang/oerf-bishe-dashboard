@@ -1,0 +1,65 @@
+{
+  "schema_version": "psu-b0-view-decomposed-probe-config-1.0",
+  "status": "POSTOPEN_MECHANISM_PROBE_FRESH_EXCLUDED",
+  "source_development_config": "demo_t16_operator/configs/psu_b0_residual_risk_development_v1.json",
+  "source_rq_config": "demo_t16_operator/configs/psu_b0_rq_ogse_pcgls_development_v1.json",
+  "source_headroom_public_summary": "docs/psu_b0_pcgls_conditional_headroom_public_summary.json",
+  "source_ogse_public_summary": "docs/psu_b0_ogse_pcgls_development_public_summary.json",
+  "data_firewall": {
+    "feature_and_action_target_split": "risk_train",
+    "diagnostic_transfer_splits": [
+      "risk_validation",
+      "risk_calibration"
+    ],
+    "opened_fresh_use": "FORBIDDEN"
+  },
+  "feature_sets": [
+    "pooled_initial_normal",
+    "view_conflict",
+    "pooled_plus_view_conflict"
+  ],
+  "view_decomposition": {
+    "grouping": "contiguous_camera_ray_blocks",
+    "per_ray_scatter_traversals": 1,
+    "recorded_grouped_adjoint_invocations_per_sample": 1,
+    "equal_flop_to_pooled_adjoint": false,
+    "reason": "retaining all camera fields adds grouped output memory and one finite-difference adjoint per view"
+  },
+  "mean_route_screen": {
+    "folds": 4,
+    "fold_stratification_only": "synthetic_morphology_family",
+    "regularization_grid": [
+      0.1,
+      1.0,
+      10.0,
+      100.0
+    ],
+    "minimum_score_grid": [
+      0.0,
+      0.5,
+      1.0
+    ],
+    "stress_audits": [
+      "leave_one_morphology_family_out",
+      "leave_one_noise_profile_out"
+    ]
+  },
+  "solver_contract": {
+    "stages": 4,
+    "logical_calls_per_reconstruction": {
+      "forward": 4,
+      "adjoint": 4
+    },
+    "expert_action": "one_baseline_to_single_expert_log_spd_path",
+    "fixed_within_solve": true
+  },
+  "claim_boundary": {
+    "mechanism_probe_only": true,
+    "validation_and_calibration_are_postopen_diagnostics": true,
+    "fresh_repeat_authorized": false,
+    "experimental_field_truth_used": false,
+    "real_psu_measurement_values_used": false,
+    "analytic_morphology_is_cfd": false,
+    "algorithm_superiority": false
+  }
+}

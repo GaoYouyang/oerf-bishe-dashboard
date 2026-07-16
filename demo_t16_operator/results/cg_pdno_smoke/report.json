@@ -1,0 +1,175 @@
+{
+  "evidence_label": "engineering_smoke_only",
+  "claim_status": "NOT_AUTHORIZED_FOR_SUPERIORITY",
+  "reason": "same linear generator/operator, small controlled phantoms, validation-selected checkpoints and no public or real BOST field truth",
+  "contract": {
+    "input": "observation + view mask + calibrated diagonal noise + view angles + support",
+    "output": "3D nonnegative field",
+    "forward_calls": 4,
+    "adjoint_calls": 4,
+    "learned_stop": false,
+    "deterministic_fallback": "prewhitened projected gradient with fixed normalized step"
+  },
+  "adjoint_relative_error": 1.051277081387525e-06,
+  "geometry_overlap": {
+    "train_validation": [],
+    "development_test": []
+  },
+  "summaries": [
+    {
+      "seed": 71,
+      "split": "validation",
+      "model_mean_relative_l2": 0.25248292088508606,
+      "fallback_mean_relative_l2": 0.43157830834388733,
+      "mean_relative_gain_percent": 40.70487976074219,
+      "harm_rate_over_1_percent": 0.0
+    },
+    {
+      "seed": 71,
+      "split": "test",
+      "model_mean_relative_l2": 0.502609133720398,
+      "fallback_mean_relative_l2": 0.6364235877990723,
+      "mean_relative_gain_percent": 22.454744338989258,
+      "harm_rate_over_1_percent": 0.0
+    },
+    {
+      "seed": 72,
+      "split": "validation",
+      "model_mean_relative_l2": 0.2556345462799072,
+      "fallback_mean_relative_l2": 0.43157830834388733,
+      "mean_relative_gain_percent": 40.02581024169922,
+      "harm_rate_over_1_percent": 0.0
+    },
+    {
+      "seed": 72,
+      "split": "test",
+      "model_mean_relative_l2": 0.5060422420501709,
+      "fallback_mean_relative_l2": 0.6364235877990723,
+      "mean_relative_gain_percent": 21.993667602539062,
+      "harm_rate_over_1_percent": 0.0
+    },
+    {
+      "seed": 73,
+      "split": "validation",
+      "model_mean_relative_l2": 0.2460394948720932,
+      "fallback_mean_relative_l2": 0.43157830834388733,
+      "mean_relative_gain_percent": 42.66679000854492,
+      "harm_rate_over_1_percent": 0.0
+    },
+    {
+      "seed": 73,
+      "split": "test",
+      "model_mean_relative_l2": 0.5073001384735107,
+      "fallback_mean_relative_l2": 0.6364235877990723,
+      "mean_relative_gain_percent": 21.863739013671875,
+      "harm_rate_over_1_percent": 0.0
+    }
+  ],
+  "aggregate": {
+    "validation": {
+      "model_mean_relative_l2": 0.2513856540123622,
+      "fallback_mean_relative_l2": 0.43157830834388733,
+      "mean_relative_gain_percent": 41.132493336995445,
+      "maximum_harm_rate_over_1_percent": 0.0
+    },
+    "test": {
+      "model_mean_relative_l2": 0.5053171714146932,
+      "fallback_mean_relative_l2": 0.6364235877990723,
+      "mean_relative_gain_percent": 22.104050318400066,
+      "maximum_harm_rate_over_1_percent": 0.0
+    }
+  },
+  "config": {
+    "evidence_label": "engineering_smoke_only",
+    "grid_size": 8,
+    "depth": 4,
+    "view_angles_degrees": [
+      0,
+      25,
+      50,
+      80,
+      110,
+      140,
+      165
+    ],
+    "counts": {
+      "train": 64,
+      "validation": 16,
+      "test": 24
+    },
+    "families": {
+      "train": [
+        "gaussian",
+        "flame"
+      ],
+      "validation": [
+        "gaussian",
+        "flame"
+      ],
+      "test": [
+        "thin_front",
+        "flame"
+      ]
+    },
+    "relative_noise": {
+      "train": [
+        0.015,
+        0.03,
+        0.06
+      ],
+      "validation": [
+        0.02,
+        0.05
+      ],
+      "test": [
+        0.04,
+        0.08
+      ]
+    },
+    "active_views": {
+      "train": [
+        4,
+        5,
+        6
+      ],
+      "validation": [
+        4,
+        5
+      ],
+      "test": [
+        3,
+        4
+      ]
+    },
+    "camera_noise_factors": [
+      0.65,
+      0.85,
+      1.0,
+      1.25,
+      1.7,
+      0.75,
+      1.45
+    ],
+    "model": {
+      "stages": 4,
+      "proximal_width": 8,
+      "controller_hidden": 12,
+      "step_min": 0.2,
+      "step_max": 1.8,
+      "initial_step": 1.0
+    },
+    "training": {
+      "seeds": [
+        71,
+        72,
+        73
+      ],
+      "epochs": 80,
+      "learning_rate": 0.002,
+      "weight_decay": 1e-06,
+      "validation_every": 5
+    },
+    "data_seed": 20260715,
+    "power_iterations": 20
+  }
+}

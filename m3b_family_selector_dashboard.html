@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>M3B 跨形态无真值 Rank Selector | 4D BOST</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f7f5;
+      --panel: #ffffff;
+      --ink: #1f292d;
+      --muted: #617077;
+      --line: #d8e1de;
+      --green: #196e63;
+      --green-soft: #eaf5f1;
+      --blue: #315f8d;
+      --blue-soft: #edf3f9;
+      --amber: #97601c;
+      --amber-soft: #fbf3e4;
+      --red: #a24d41;
+      --red-soft: #fbefec;
+      --radius: 8px;
+      --shadow: 0 8px 24px rgba(31, 55, 50, 0.07);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url("./assets/backgrounds/oerf-refractive-field.png") center 12% / cover no-repeat;
+      opacity: 0.055;
+      pointer-events: none;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header, main, footer { width: min(1200px, calc(100% - 32px)); margin: 0 auto; }
+    header { padding: 24px 0 30px; border-bottom: 1px solid var(--line); }
+    main { padding: 6px 0 38px; }
+    footer { padding: 22px 0 34px; color: var(--muted); font-size: 12px; }
+    h1 { margin: 15px 0 10px; max-width: 1040px; font-size: clamp(32px, 4.5vw, 50px); line-height: 1.08; }
+    h2 { margin: 0 0 10px; font-size: 25px; line-height: 1.25; }
+    h3 { margin: 0 0 7px; font-size: 17px; line-height: 1.3; }
+    p { margin: 7px 0; }
+    code { padding: 1px 5px; border-radius: 4px; background: #edf1ef; color: #38464b; overflow-wrap: anywhere; }
+    .nav, .button-row, .tag-row, .segmented { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .button, .segment {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .button:hover, .segment:hover { border-color: #9eb7b1; text-decoration: none; }
+    .button.primary, .segment.active { background: var(--green); border-color: var(--green); color: #fff; }
+    .eyebrow { color: var(--green); font-size: 12px; font-weight: 900; text-transform: uppercase; }
+    .lead { max-width: 1020px; color: #46575e; font-size: 16px; }
+    .metrics, .grid, .figure-grid, .pipeline { display: grid; gap: 12px; }
+    .metrics { grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: 18px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .pipeline { grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: stretch; }
+    .metric, .card, .figure-card, .readout, .notice, .pipeline-step {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: var(--shadow);
+    }
+    .metric { min-height: 106px; padding: 14px; }
+    .metric b { display: block; color: var(--green); font-size: 27px; line-height: 1.05; }
+    .metric span { display: block; margin-top: 7px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    section { padding: 25px 0; border-bottom: 1px solid var(--line); }
+    .notice { padding: 15px 17px; border-left: 4px solid var(--green); }
+    .notice.warning { border-left-color: var(--amber); background: var(--amber-soft); }
+    .notice.danger { border-left-color: var(--red); background: var(--red-soft); }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 3px 8px;
+      border: 1px solid #c9d9d5;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .tag.blue { color: var(--blue); background: var(--blue-soft); border-color: #d0ddea; }
+    .tag.amber { color: var(--amber); background: var(--amber-soft); border-color: #ead3a9; }
+    .tag.red { color: var(--red); background: var(--red-soft); border-color: #e8c9c2; }
+    .segmented { margin: 12px 0; }
+    .readout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; padding: 18px; }
+    .readout-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .readout-stat { padding: 10px; border: 1px solid var(--line); border-radius: 6px; background: #f8faf9; }
+    .readout-stat b { display: block; color: var(--green); font-size: 21px; }
+    .readout-stat span { display: block; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .card { padding: 15px; box-shadow: none; }
+    .finding b.number { display: inline-grid; place-items: center; width: 28px; height: 28px; margin-bottom: 8px; border-radius: 50%; background: var(--green); color: #fff; }
+    .pipeline-step { position: relative; padding: 14px; box-shadow: none; }
+    .pipeline-step b { color: var(--green); }
+    .pipeline-step:not(:last-child)::after { content: "\2192"; position: absolute; right: -12px; top: 42%; color: var(--green); font-weight: 900; z-index: 2; }
+    .figure-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .figure-card { margin: 0; padding: 10px; box-shadow: none; }
+    .figure-card img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 5px; background: #fff; }
+    .figure-card figcaption { margin-top: 8px; color: #46575e; font-size: 13px; }
+    .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+    table { width: 100%; border-collapse: collapse; min-width: 850px; }
+    th, td { padding: 10px 11px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #edf4f1; color: #294641; font-size: 12px; }
+    td { font-size: 13px; }
+    tbody tr:last-child td { border-bottom: 0; }
+    ul, ol { margin: 8px 0; padding-left: 21px; }
+    li { margin: 5px 0; }
+    @media (max-width: 980px) {
+      .metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .pipeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .pipeline-step::after { display: none; }
+      .readout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 680px) {
+      header, main, footer { width: min(100% - 22px, 1200px); }
+      .metrics, .grid.two, .grid.three, .figure-grid, .pipeline { grid-template-columns: 1fr; }
+      h1 { font-size: 32px; }
+      .button, .segment { max-width: 100%; overflow-wrap: anywhere; }
+      body::before { background-attachment: scroll; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav" aria-label="M3B family selector 导航">
+      <a class="button" href="./index.html">返回总导航</a>
+      <a class="button" href="./m3b_interaction_dashboard.html">上一轮交叉实验</a>
+      <a class="button" href="./tdbost_reproducibility_audit.html">TDBOST 审计</a>
+      <a class="button" href="./operator_3d_innovation_lab.html">算子 × 三维主线</a>
+      <a class="button" href="./operator_nullspace_evidence_dashboard.html">最新几何 / 零空间证据</a>
+      <a class="button" href="./he_review_portal.html">师兄审核入口</a>
+      <a class="button primary" href="./document_reader.html?doc=m3b_family_selector_brief.md">一页审核 brief</a>
+    </nav>
+    <div class="eyebrow">M3B observable capacity selection · nested LOFO · 2026-07-10</div>
+    <h1>4D BOST 跨形态无真值 Rank Selector</h1>
+    <p class="lead">上一轮证明固定 rank 会随 noise、views 和 dynamics 失效；这一轮再去掉两个捷径：不再只用一个 phantom，也不允许测试时看 field truth。四种三维形态整类留出，selector 只能依据奇异谱、support 数据一致性和时序物理统计决定压缩容量，并允许选择 full rank 拒绝平滑。</p>
+    <div class="metrics" aria-label="实验规模">
+      <div class="metric"><b>4×3×4×3</b><span>morphology × dynamics × noise × support views。</span></div>
+      <div class="metric"><b>864</b><span>144 环境 × 6 个配对观测噪声 seed。</span></div>
+      <div class="metric"><b>6,048</b><span>7 个 rank 候选；包含 full rank 18。</span></div>
+      <div class="metric"><b>Nested LOFO</b><span>外层整类留出；内层只在训练 family 调正则。</span></div>
+      <div class="metric"><b>0.210%</b><span>带 held-out 多特征 selector 的 mean oracle regret。</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="notice">
+        <h3>当前研究判断</h3>
+        <p><strong>真正有效的不是“用一台 held-out 相机选 rank”，而是多种可观测证据的互补。</strong> 固定 rank 3 的 mean/p95 oracle regret 为 1.561%/5.635%；LOFO selector 不用 held-out view 时降到 0.252%/1.267%，加入 held-out 后为 0.210%/1.054%。反而直接最小化 held-out residual 会恶化到 2.423%/9.467%。因此 held-out residual 只能作为风险特征，不能冒充 field quality。</p>
+      </div>
+      <div class="tag-row" style="margin-top:12px;">
+        <span class="tag">test-time 无 field truth</span>
+        <span class="tag blue">leave-one-family-out</span>
+        <span class="tag amber">full-rank abstention</span>
+        <span class="tag red">synthetic transfer，不是实流泛化</span>
+      </div>
+    </section>
+
+    <section>
+      <div class="notice warning">
+        <h3>后续 geometry/UQ 实验已完成</h3>
+        <p>六类 synthetic angular layout 的 nested leave-one-geometry-out 已扩展到 1,728 observation cells 与 12,096 rank candidates。无 held-out selector mean/p95 regret 为 0.273%/1.196%，93.81% 单元在 oracle 1% 内；morphology/dynamics/noise 比 geometry 更主导剩余失败。combined UQ 失效，prediction std 可筛风险，但 full-rank fallback 会恶化系统风险。</p>
+        <div class="button-row" style="margin-top:12px;"><a class="button primary" href="./operator_nullspace_evidence_dashboard.html#geometry">查看几何迁移图表</a><a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Fgeometry_uq%2Fgeometry_report.json">完整 geometry JSON</a><a class="button" href="./document_reader.html?doc=demo_m3b%2Fvalidate_geometry_uq_results.py">独立验证器</a></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>切换核心证据</h2>
+      <div class="segmented" role="group" aria-label="选择证据视角">
+        <button class="segment active" type="button" data-evidence="selector" aria-pressed="true">Selector</button>
+        <button class="segment" type="button" data-evidence="morphology" aria-pressed="false">Morphology</button>
+        <button class="segment" type="button" data-evidence="heldout" aria-pressed="false">Held-out</button>
+        <button class="segment" type="button" data-evidence="ablation" aria-pressed="false">特征消融</button>
+        <button class="segment" type="button" data-evidence="failure" aria-pressed="false">失败格</button>
+      </div>
+      <div class="readout">
+        <div>
+          <h3 id="evidence-title">组合 selector 把固定 rank 的尾部风险压低</h3>
+          <p id="evidence-summary">不使用 held-out camera 的 LOFO ridge 已在 92.4% 观测格进入 oracle 1% 范围，并在 77.8% 格子优于固定 rank 3。加入 held-out 后覆盖率为 94.4%，收益存在但不是决定性。</p>
+          <p id="evidence-action"><strong>下一步：</strong>把 ridge 替换成带不确定度和拒答的容量控制头，并做 leave-one-geometry-out。</p>
+        </div>
+        <div class="readout-stats">
+          <div class="readout-stat"><b id="evidence-primary">0.252%</b><span id="evidence-primary-label">no-held-out mean regret</span></div>
+          <div class="readout-stat"><b id="evidence-secondary">1.267%</b><span id="evidence-secondary-label">no-held-out p95</span></div>
+          <div class="readout-stat"><b id="evidence-tertiary">92.4%</b><span id="evidence-tertiary-label">1%-oracle coverage</span></div>
+          <div class="readout-stat"><b id="evidence-quaternary">77.8%</b><span id="evidence-quaternary-label">beats fixed rank 3</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>六张核心图</h2>
+      <div class="figure-grid">
+        <figure class="figure-card">
+          <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Ffamily_selector%2Fm3b_selector_regret.png"><img src="./demo_m3b/results/family_selector/m3b_selector_regret.png" alt="M3B observable rank selector mean and p95 regret" /></a>
+          <figcaption><strong>Selector 主结果。</strong> 组合 LOFO 模型显著压低 mean 和 p95 regret；held-out residual minimum 是明确反例。</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Ffamily_selector%2Fm3b_family_oracle_map.png"><img src="./demo_m3b/results/family_selector/m3b_family_oracle_map.png" alt="M3B oracle rank map across four morphologies noise and views" /></a>
+          <figcaption><strong>Morphology operating map。</strong> blobs-sheet 倾向 rank 2-5，vortex-ring 倾向 5-18；noise 上升时最佳容量整体下降。</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Ffamily_selector%2Fm3b_selector_family_generalization.png"><img src="./demo_m3b/results/family_selector/m3b_selector_family_generalization.png" alt="M3B selector regret on each held-out phantom family" /></a>
+          <figcaption><strong>整类留出热图。</strong> 固定 rank 3 在 vortex-ring 上最差；训练 family 选一个固定 rank 又在 blobs-sheet 上失效，证明 per-case adaptation 有必要。</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Ffamily_selector%2Fm3b_selector_feature_ablation.png"><img src="./demo_m3b/results/family_selector/m3b_selector_feature_ablation.png" alt="M3B LOFO observable feature group ablation" /></a>
+          <figcaption><strong>特征消融。</strong> spectrum、support、temporal 单组 mean regret 为 0.789%/0.614%/0.668%；组合后为 0.252%。</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Ffamily_selector%2Fm3b_selector_rank_distribution.png"><img src="./demo_m3b/results/family_selector/m3b_selector_rank_distribution.png" alt="M3B selected rank distribution by selector" /></a>
+          <figcaption><strong>容量分布。</strong> support minimum 大量退化成 full rank，held-out minimum 又偏向 rank 1；组合模型才覆盖从 rank 2 到 full rank 的多种工作区。</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Ffamily_selector%2Fm3b_observable_alignment.png"><img src="./demo_m3b/results/family_selector/m3b_observable_alignment.png" alt="M3B observable residual and field-error alignment" /></a>
+          <figcaption><strong>代理指标失配。</strong> support residual 逐格 Pearson 为 0.901，但直接取最小仍偏 full rank；held-out 的全局 Pearson 仅 0.037。</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>实验协议与防泄漏门</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>层级</th><th>允许使用</th><th>禁止使用</th><th>验证证据</th></tr></thead>
+          <tbody>
+            <tr><td><strong>外层 LOFO</strong></td><td>其余 3 个 family 的全部候选与 field truth，用于训练。</td><td>被留出的 morphology family 的任意标签或真值。</td><td>JSON 对每个 fold 明列 <code>heldout_family</code>、<code>training_families</code> 和训练行数。</td></tr>
+            <tr><td><strong>内层调参</strong></td><td>训练 family 之间再做 leave-one-family-out，选择 ridge lambda。</td><td>外层测试 family 的 selector regret。</td><td>每个 lambda 的 inner-LOFO mean regret 全部保留。</td></tr>
+            <tr><td><strong>测试时特征</strong></td><td>rank、奇异谱、support residual、时序导数、mass 曲率、负值比例、view count、观测高频 proxy。</td><td><code>family</code>、<code>dynamics</code>、noise label、field L2、oracle rank、target。</td><td>脚本启动时硬检查 forbidden features；独立 validator 再检查每个模型。</td></tr>
+            <tr><td><strong>离线评价</strong></td><td>field truth 只计算 oracle、regret 和 failure cell。</td><td>把 oracle rank 当成真实部署规则。</td><td>6,048 行候选表保留 full-rank 对照和逐格 oracle 一致性。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>七种主选择器对账</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Selector</th><th>Mean regret</th><th>P95</th><th>1% 内覆盖</th><th>相对 rank 3</th><th>判断</th></tr></thead>
+          <tbody>
+            <tr><td>固定 rank 3</td><td>1.561%</td><td>5.635%</td><td>53.8%</td><td>基线</td><td>跨 morphology 不稳。</td></tr>
+            <tr><td>训练 family 固定 rank</td><td>0.865%</td><td>5.878%</td><td>77.1%</td><td>+0.658%</td><td>均值改善，但 blobs-sheet 尾部失效。</td></tr>
+            <tr><td>95% singular energy</td><td>1.484%</td><td>10.593%</td><td>66.6%</td><td>+0.033%</td><td>能量阈值不能代表 field task。</td></tr>
+            <tr><td>Support residual minimum</td><td>0.770%</td><td>3.669%</td><td>78.4%</td><td>+0.748%</td><td>多数格退化为 full rank，仍缺容量代价。</td></tr>
+            <tr><td>Held-out residual minimum</td><td><span class="tag red">2.423%</span></td><td>9.467%</td><td>47.3%</td><td>-0.880%</td><td>不能单独当 field quality。</td></tr>
+            <tr><td><strong>LOFO，多特征，无 held-out</strong></td><td><strong>0.252%</strong></td><td>1.267%</td><td>92.4%</td><td>+1.259%</td><td>当前最实用版本，不占用额外相机。</td></tr>
+            <tr><td><strong>LOFO，多特征 + held-out</strong></td><td><strong>0.210%</strong></td><td><strong>1.054%</strong></td><td><strong>94.4%</strong></td><td><strong>+1.301%</strong></td><td>最佳，但额外收益只有 0.042 percentage point。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>从 toy selector 到可投稿模型</h2>
+      <p>工作名 <strong>OCS-BOST</strong> 只用于讨论，不主张命名或方法原创性。创新点不能写成“用 ridge 选 rank”，而应落在 BOST 观测算子约束下的容量控制、可靠性和失败回退。</p>
+      <div class="pipeline" aria-label="OCS-BOST proposed pipeline">
+        <div class="pipeline-step"><b>1. 可截断 4D 表示</b><p>共享 tensor/operator backbone 输出 rank 2-full 的候选或嵌套 factors。</p></div>
+        <div class="pipeline-step"><b>2. 可观测证据</b><p>factor spectrum、support residual、时序导数、积分量和可选 held-out。</p></div>
+        <div class="pipeline-step"><b>3. 容量分布</b><p>输出每个 rank 的风险分布，不只做一个硬分类。</p></div>
+        <div class="pipeline-step"><b>4. UQ / 拒答</b><p>低可识别度时回退 full rank，或保留多个候选。</p></div>
+        <div class="pipeline-step"><b>5. NeRIF 精修</b><p>只对高风险时刻做 per-instance physics refinement，控制算力。</p></div>
+      </div>
+      <div class="grid three" style="margin-top:12px;">
+        <article class="card finding"><b class="number">1</b><h3>可发表的最小增量</h3><p>leave-one-geometry-out + real held-out view，证明 selector 不只记住 synthetic morphology。</p></article>
+        <article class="card finding"><b class="number">2</b><h3>最关键消融</h3><p>无 support physics、无 temporal traces、无 abstention、固定 capacity、oracle upper bound。</p></article>
+        <article class="card finding"><b class="number">3</b><h3>真正展示点</h3><p>同一 4D 序列随视角/噪声自动切换容量，标出风险时刻，并展示 full-rank/NeRIF 回退。</p></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>三组必须保留的失败格</h2>
+      <div class="grid three">
+        <article class="card"><h3>低估瞬态容量</h3><p><code>blobs_sheet / transient / noise 0.07 / 5 views</code>：no-held-out 常选 rank 2，oracle rank 5，最坏 regret 2.58%。</p></article>
+        <article class="card"><h3>过估高噪 filament</h3><p><code>jet_filaments / chirp / noise 0.28 / 7 views</code>：with-held-out 选 rank 12，oracle rank 5，最坏 regret 2.84%。</p></article>
+        <article class="card"><h3>固定 rank 丢失无噪结构</h3><p><code>vortex_ring / chirp / noise 0 / 7 views</code>：固定 rank 3 regret 7.67%，oracle 为 full rank 18。</p></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>请何远哲直接判断的 8 件事</h2>
+      <div class="grid two">
+        <article class="card">
+          <h3>方法与真实工作流</h3>
+          <ol>
+            <li>TDBOST 的 rank、plane factor、feature width 或容量是否实际需要按 case 调？</li>
+            <li>组里目前用训练视角 residual、test view，还是直接看 reference field 选容量？</li>
+            <li>能否保留一台相机只做 validation；如果不能，support residual 是否可导出？</li>
+            <li>最终必须保真的量是 field、峰值、频率、积分密度，还是激波/火焰位置？</li>
+          </ol>
+        </article>
+        <article class="card">
+          <h3>数据与下一轮</h3>
+          <ol start="5">
+            <li>能否给 18-30 帧、3/5/7/9 views 的小型脱敏 deflection 或 reconstruction tensor？</li>
+            <li>四种 synthetic morphology 应替换成组内哪些典型流场与 failure mode？</li>
+            <li>下一步先做 leave-one-geometry-out、bias/sync/exposure blur，还是直接接真实数据？</li>
+            <li>这条线适合作为独立 4D BOST 毕设，还是 T16 神经算子的 temporal capacity-control 子模块？</li>
+          </ol>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="notice warning">
+        <h3>和 T16 算子学习主线的结合</h3>
+        <p>M3B 的 selector 不应该停在 temporal SVD。它可以成为 T16 的时序升级层：静态 QC-SNCO 负责每帧三维重建与 query-camera 校准，M3B 的可观测容量头决定短窗 temporal operator / tensor factors 的复杂度。geometry/UQ 结果同时提醒：拒答后不能未经验证就切 full rank 或 NeRIF，fallback 必须重新算 system risk。</p>
+        <div class="button-row" style="margin-top:12px;"><a class="button primary" href="./operator_nullspace_evidence_dashboard.html">打开最新证据总页</a><a class="button" href="./operator_3d_innovation_lab.html">算子 × 三维实验室</a><a class="button" href="./document_reader.html?doc=view_reliability_dual_branch_operator_proposal.md">完整算法提案</a></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="notice danger">
+        <h3>不能越过的解释边界</h3>
+        <p>四类 morphology 都是人为 stress test；LOFO 只证明 synthetic morphology transfer。六个 seed 只改变观测噪声，不是六个独立流动工况。forward model 仍是 straight-ray stack，没有真实 calibration、curved ray、mask、同步误差、曝光模糊或 camera PSF。全局 affine field alignment 和 oracle rank 只用于离线评价，不能进入真实部署。</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>可复现入口</h2>
+      <div class="button-row">
+        <a class="button primary" href="./document_reader.html?doc=demo_m3b%2Frun_m3b_family_selector.py">正式脚本</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2Fconfigs%2Ffamily_selector.json">实验配置</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2Fvalidate_family_selector_results.py">独立验证器</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Ffamily_selector%2Ffamily_selector_report.json">完整报告 JSON</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Ffamily_selector%2Ffamily_selector_summary.csv">Selector 摘要</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Ffamily_selector%2Ffamily_selector_ablation_summary.csv">特征消融摘要</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Ffamily_selector%2Ffamily_selector_selected.csv">6,048 条选择决策</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Ffamily_selector%2Ffamily_selector_checksums.sha256">核心表 SHA-256</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2FREADME.md">M3B README</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>正式运行日期：2026-07-10。结果来自 864 个观测格、6,048 个候选重建和 nested leave-one-phantom-family-out 评价；CSV 再生哈希稳定，独立验证器已通过。本页不声称复现 TDBOST 或验证真实 OERF 流场。</footer>
+
+  <script>
+    const evidenceData = {
+      selector: {
+        title: "组合 selector 把固定 rank 的尾部风险压低",
+        summary: "不使用 held-out camera 的 LOFO ridge 已在 92.4% 观测格进入 oracle 1% 范围，并在 77.8% 格子优于固定 rank 3。加入 held-out 后覆盖率为 94.4%，收益存在但不是决定性。",
+        action: "把 ridge 替换成带不确定度和拒答的容量控制头，并做 leave-one-geometry-out。",
+        stats: ["0.252%", "no-held-out mean regret", "1.267%", "no-held-out p95", "92.4%", "1%-oracle coverage", "77.8%", "beats fixed rank 3"]
+      },
+      morphology: {
+        title: "Morphology 是 rank 的一阶变量",
+        summary: "blobs-sheet 的 oracle 主要落在 rank 2-5，vortex-ring 主要落在 rank 5-full；864 格里 rank 2/3/5/8/12/full 分别赢 77/116/230/245/124/72 次。",
+        action: "让师兄把四种 toy morphology 替换成组内真实常见流动结构，再做 leave-one-flow-regime-out。",
+        stats: ["245", "rank 8 oracle cells", "72", "full-rank oracle cells", "2.63%", "rank 3 regret on vortex", "0.53%", "rank 3 regret on blobs"]
+      },
+      heldout: {
+        title: "Held-out view 有用，但绝不是直接优化目标",
+        summary: "直接最小化 held-out residual 的 mean/p95 regret 高达 2.423%/9.467%；把它加入多特征模型只比无 held-out 版本再降低 0.042 percentage point。",
+        action: "把 held-out camera 定位为 calibration/UQ audit，而不是单独的 rank objective。",
+        stats: ["2.423%", "held-out-min mean regret", "9.467%", "held-out-min p95", "0.037", "global Pearson", "+0.042 pp", "combined feature gain"]
+      },
+      ablation: {
+        title: "单组特征都不够，多证据互补才有效",
+        summary: "capacity+spectrum、support、temporal 单组 mean regret 分别为 0.789%、0.614%、0.668%；组合后降到 0.252%，说明创新应围绕多证据约束与可靠性，而不是 ridge 本身。",
+        action: "下一版做 feature masking、calibration shift 和 uncertainty ablation，验证组合收益是否仍存在。",
+        stats: ["0.789%", "capacity+spectrum", "0.614%", "support only", "0.668%", "temporal only", "0.252%", "combined, no held-out"]
+      },
+      failure: {
+        title: "Pooled mean 之外仍有两类结构性失败",
+        summary: "低噪 transient blobs 会被低估容量；高噪 chirp filaments 会被过估容量。最坏 with-held-out regret 为 2.84%，说明 selector 仍需 uncertainty 和拒答。",
+        action: "把这两类格子写成固定 regression tests，并要求新模型同时降低 mean、p95 和 worst-cell risk。",
+        stats: ["2.58%", "under-capacity worst", "2.84%", "over-capacity worst", "7.67%", "fixed-rank worst", "18", "noise-free vortex oracle rank"]
+      }
+    };
+
+    function renderEvidence(key) {
+      const item = evidenceData[key];
+      document.querySelectorAll(".segment").forEach((button) => {
+        const active = button.dataset.evidence === key;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      document.getElementById("evidence-title").textContent = item.title;
+      document.getElementById("evidence-summary").textContent = item.summary;
+      document.getElementById("evidence-action").innerHTML = `<strong>下一步：</strong>${item.action}`;
+      ["primary", "secondary", "tertiary", "quaternary"].forEach((id, index) => {
+        document.getElementById(`evidence-${id}`).textContent = item.stats[index * 2];
+        document.getElementById(`evidence-${id}-label`).textContent = item.stats[index * 2 + 1];
+      });
+    }
+
+    document.querySelectorAll(".segment").forEach((button) => {
+      button.addEventListener("click", () => renderEvidence(button.dataset.evidence));
+    });
+    renderEvidence("selector");
+  </script>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

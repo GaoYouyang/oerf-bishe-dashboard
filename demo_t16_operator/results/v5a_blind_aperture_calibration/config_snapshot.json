@@ -1,0 +1,147 @@
+{
+  "evidence_label": "v5a_first_open_finite_aperture_blind_calibration_gate",
+  "grid_size": 8,
+  "depth": 5,
+  "counts": {
+    "independent_select": 30,
+    "independent_lock": 36
+  },
+  "families": {
+    "independent_select": [
+      "expanding_kernel",
+      "jet_shear",
+      "interacting_fronts",
+      "shock_cell"
+    ],
+    "independent_lock": [
+      "helical_plume",
+      "stratified_ignition"
+    ]
+  },
+  "relative_noise": {
+    "independent_select": [
+      0.025,
+      0.045,
+      0.07
+    ],
+    "independent_lock": [
+      0.035,
+      0.06,
+      0.09
+    ]
+  },
+  "active_views": {
+    "independent_select": [
+      3,
+      4,
+      5
+    ],
+    "independent_lock": [
+      3,
+      4,
+      5
+    ]
+  },
+  "camera_noise_factors": [
+    0.72,
+    0.91,
+    1.08,
+    1.31,
+    0.84,
+    1.47,
+    1.16
+  ],
+  "candidate_aperture_radii": [
+    0.0,
+    0.04,
+    0.08,
+    0.12,
+    0.16
+  ],
+  "independent_rigs": {
+    "independent_select": {
+      "angles_degrees": [
+        5,
+        32,
+        60,
+        88,
+        116,
+        145,
+        174
+      ],
+      "audit_camera_index": 6,
+      "cone_u": 0.075,
+      "cone_z": 0.055,
+      "bend": 0.04,
+      "reconstruction_path_samples": 21,
+      "reconstruction_aperture_samples": 9,
+      "truth_path_samples": 31,
+      "truth_aperture_samples": 23,
+      "true_aperture_radii": [
+        0.04,
+        0.08,
+        0.12
+      ],
+      "correlation_fraction": 0.0,
+      "signal_fraction": 0.0
+    },
+    "independent_lock": {
+      "angles_degrees": [
+        12,
+        40,
+        68,
+        97,
+        126,
+        154,
+        179
+      ],
+      "audit_camera_index": 0,
+      "cone_u": 0.105,
+      "cone_z": 0.078,
+      "bend": 0.06,
+      "reconstruction_path_samples": 23,
+      "reconstruction_aperture_samples": 9,
+      "truth_path_samples": 37,
+      "truth_aperture_samples": 29,
+      "true_aperture_radii": [
+        0.06,
+        0.1,
+        0.14
+      ],
+      "correlation_fraction": 0.0,
+      "signal_fraction": 0.0
+    }
+  },
+  "algorithm": {
+    "probe_stages": 2,
+    "total_call_budget": 60,
+    "probe_solver": "projected_bb",
+    "final_solver": "projected_fista",
+    "cross_view_folds": 2,
+    "bb_normalized_step_min": 0.2,
+    "bb_normalized_step_max": 1.8,
+    "soft_temperatures": [
+      0.04,
+      0.08,
+      0.16,
+      0.32,
+      0.64,
+      1.28
+    ],
+    "lipschitz_safety_factor": 1.001
+  },
+  "selection_gate": {
+    "quantile_count": 31,
+    "minimum_coverage": 0.2,
+    "minimum_p10_gain_percent": 0.0,
+    "maximum_harm_rate_over_1_percent": 0.05
+  },
+  "claim_gate": {
+    "minimum_mismatch_penalty_percent": 2.0,
+    "minimum_mean_gain_percent": 2.0,
+    "minimum_p10_gain_percent": 0.0,
+    "maximum_harm_rate_over_1_percent": 0.05,
+    "maximum_audit_reprojection_increase_percent": 0.0
+  },
+  "data_seed": 2026071502
+}

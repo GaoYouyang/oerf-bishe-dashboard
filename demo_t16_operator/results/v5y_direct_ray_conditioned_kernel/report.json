@@ -1,0 +1,112 @@
+{
+  "claim_ceiling": "Opened rigs, truth-side geometry, and complete operator rows are used. A pass only authorizes preregistration of new synthetic rigs.",
+  "config_sha256": "89aef092c6946bdf285c444fb966aeaf0d0541df90c9e78b90224f6fd43a9e64",
+  "decision": "DIRECT_RAY_KERNEL_DEVELOPMENT_NO_GO",
+  "development_reference_rule": {
+    "maximum_v5x_oracle_relative_aperture_error": 0.4,
+    "maximum_worst_rig_ratio_to_full_matrix_ridge": 1.0,
+    "minimum_prediction_improvement_over_full_matrix_ridge": 0.1
+  },
+  "development_summary": {
+    "direct_ray_conditioned_kernel": {
+      "mean_probe_forward_relative_error": 0.19994618431476244,
+      "mean_probe_gradient_cosine": 0.9872777019278305,
+      "mean_relative_aperture_residual_error": 1.9769032626465657,
+      "mean_relative_operator_error": 0.1829258422267558,
+      "worst_probe_gradient_cosine": 0.9648164305197316,
+      "worst_relative_aperture_residual_error": 4.159821299505405
+    },
+    "full_matrix_geometry_ridge": {
+      "mean_probe_forward_relative_error": 0.02101159710423483,
+      "mean_probe_gradient_cosine": 0.9994679164917888,
+      "mean_relative_aperture_residual_error": 0.8143254077888312,
+      "mean_relative_operator_error": 0.07639016799104999,
+      "worst_probe_gradient_cosine": 0.998710519889218,
+      "worst_relative_aperture_residual_error": 1.418147888415064
+    },
+    "thin_ray_high_fidelity": {
+      "mean_probe_forward_relative_error": 0.04914506129115753,
+      "mean_probe_gradient_cosine": 0.9990722189266764,
+      "mean_relative_aperture_residual_error": 1.0,
+      "mean_relative_operator_error": 0.10146171314536899,
+      "worst_probe_gradient_cosine": 0.9978913549468046,
+      "worst_relative_aperture_residual_error": 1.0
+    }
+  },
+  "evidence_label": "post_v5x_direct_operator_row_training_development_only",
+  "limitations": [
+    "The direct objective was designed after opening v5x.",
+    "All development rigs were previously opened in v5s-v5x.",
+    "Truth geometry and complete high-fidelity operator rows are used.",
+    "The finite-aperture renderer is a prescribed linear weak-BOST surrogate.",
+    "MPS execution is not claimed bitwise deterministic.",
+    "No limited calibration probes, fresh rigs, inverse reconstruction, nonlinear field-dependent rays, or real data are tested."
+  ],
+  "materialized_operator_dot_product_relative_defect": 1.7703575695430694e-15,
+  "model_size": {
+    "compression_ratio_vs_full_matrix_predictor": 1113.2121212121212,
+    "direct_model_coefficients": 891,
+    "full_matrix_predictor_coefficients": 991872,
+    "kernel_coefficients_per_ray": 27,
+    "ray_feature_dimension": 33
+  },
+  "prediction_improvement_over_full_matrix_ridge": -1.4276575969974048,
+  "prediction_worst_rig_ratio_to_full_matrix_ridge": 2.9332775047561945,
+  "reproduced_v5s_manifest_sha256": "982eadadf626da3762e390e6d572a4c1a7d049ef83069b0be3ddd9a3f3ce5af0",
+  "sample_accounting": {
+    "design_lock_rigs": 0,
+    "development_operator_rows": 2016,
+    "development_rigs": 12,
+    "probe_fields": 9,
+    "rays_per_rig": 168,
+    "train_operator_rows": 5040,
+    "train_rigs": 30
+  },
+  "schema": "v5y-direct-ray-conditioned-kernel-postopen-development-1",
+  "source_config_sha256": "e2ea5216915d2dcaa48043647766b1499c62fc19b816f726257930c6217d05b6",
+  "source_provenance": {
+    "determinism_boundary": "The stored MPS reference is artifact- and tolerance-validated; bitwise equality across devices or Torch builds is not claimed.",
+    "diagnosis_config": "d239cb11738e9999905065355eaa0fba06df55fdccc6cc00f7c956d069942cc1",
+    "direct_dependency_sha256": {
+      "configs/v5s_dco_low_rank_screening.json": "3ad750a7cb539c88f9ee9c0750163e3a0755d258df2f7dcfbb10a37d6d08fd05",
+      "configs/v5y_direct_ray_conditioned_kernel.json": "d239cb11738e9999905065355eaa0fba06df55fdccc6cc00f7c956d069942cc1",
+      "gc_rio/protocol.py": "0d9b79e5feedb6cf432cb6ed89cc63c3d712291189a19d6c41fcdbcdc072c206",
+      "independent_reaction_bost.py": "c76d78914b208f3014ce513ffb5ff25448efd21a6cd8a4eb02ae9fabada3da20",
+      "release_provenance.py": "9cd946a3811b99e4e8e5bc4f6dae8c7439ed147010d9e0f5acd49044363e9cfe",
+      "results/v5s_dco_low_rank_screening/report.json": "242766667cf4d1405abe8e3c5668240ac5574bb1562a5ee5aa0336286190bedf",
+      "results/v5x_ray_conditioned_voxel_kernel/report.json": "ab4532ac238056ec62ab596ced58e6548ecb55aff70c7427099c1d8ed035855e",
+      "run_v5s_dco_low_rank_screening.py": "457915749bd5214a98072186b0c109096e312a459174df45ea2cc2f38f55cf1a",
+      "run_v5t_camera_local_tangent_diagnosis.py": "e9d97d01a4170cc79d45aa263f4178e828361c7ac2cae7b825d24c8138009454",
+      "run_v5u_calibrated_renderer_residual_screening.py": "19ce6e2a22ea07a199a05327f117deec801f237a48bde6a3715c8e04c6d07fd4",
+      "run_v5w_clean_aperture_kernel_screening.py": "4ccf684f5c9e9167633d6f8ea50ffdea133a0e6277c87bba94cf501f99f67de3",
+      "run_v5x_ray_conditioned_voxel_kernel.py": "50a0d8d8cf874176e6e165d602fe800fd7cf7c115b483f114dc490b57219d350",
+      "run_v5y_direct_ray_conditioned_kernel.py": "c8ec99215116a8555373d607ed28038ea241a1c10544f1f0f481eeaf88c324c8"
+    },
+    "entrypoint": "c8ec99215116a8555373d607ed28038ea241a1c10544f1f0f481eeaf88c324c8",
+    "runner": "c8ec99215116a8555373d607ed28038ea241a1c10544f1f0f481eeaf88c324c8",
+    "runtime_environment": {
+      "device": "mps",
+      "machine": "arm64",
+      "numpy_version": "2.4.6",
+      "operating_system": "Darwin",
+      "operating_system_release": "25.5.0",
+      "python_implementation": "CPython",
+      "python_version": "3.11.5",
+      "torch_version": "2.13.0",
+      "word_size": "64"
+    },
+    "source_config": "3ad750a7cb539c88f9ee9c0750163e3a0755d258df2f7dcfbb10a37d6d08fd05",
+    "torch_version": "2.13.0"
+  },
+  "training_protocol": {
+    "complete_operator_rows_used": true,
+    "device": "mps",
+    "internal_fit_rigs": 24,
+    "internal_selection_rigs": 6,
+    "refit_rigs": 30,
+    "selected_weight_decay": 1e-05,
+    "selection_relative_aperture_error": 1.860338982645425,
+    "truth_calibrated_geometry_used": true
+  },
+  "v5x_oracle_mean_relative_aperture_error": 0.35873598328741757
+}

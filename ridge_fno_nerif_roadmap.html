@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Gao Youyang 的 OERF 算子学习与 NeRIF 研究执行主页：ridge-FNO 候选、逐周学习、实验闸门与师兄沟通。" />
+  <title>Ridge-FNO → NeRIF 研究执行主页 | OERF 毕设</title>
+  <style>
+    :root {
+      --ink:#16272c; --muted:#5d6d72; --line:#cbd8d5; --bg:#f3f6f4; --paper:#fff;
+      --teal:#146f66; --teal-soft:#e7f3ef; --blue:#315f93; --blue-soft:#eaf1f8;
+      --coral:#a95040; --coral-soft:#faece8; --gold:#8b681d; --gold-soft:#f7f0dd;
+      --shadow:0 9px 25px rgba(27,48,53,.07); --radius:7px;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0; color:var(--ink); background:var(--bg);
+      font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+      line-height:1.67; letter-spacing:0;
+    }
+    body::before {
+      content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:linear-gradient(rgba(243,246,244,.94),rgba(243,246,244,.94)),url("./assets/backgrounds/oerf-refractive-field.png") center/cover no-repeat;
+    }
+    a { color:var(--blue); }
+    button,input { font:inherit; }
+    button { cursor:pointer; }
+    a:focus-visible,button:focus-visible,input:focus-visible { outline:3px solid #e2ad46; outline-offset:2px; }
+    code { padding:1px 4px; border-radius:4px; background:#eaf0ee; font-family:"SFMono-Regular",Consolas,monospace; overflow-wrap:anywhere; white-space:normal; }
+    .skip { position:absolute; top:-60px; left:12px; z-index:5; padding:9px 12px; color:#fff; background:var(--ink); }
+    .skip:focus { top:10px; }
+    header,main,footer { width:min(1220px,calc(100vw - 36px)); margin:0 auto; }
+    header { padding:22px 0 27px; border-bottom:1px solid var(--line); }
+    main { padding-bottom:48px; }
+    footer { padding:23px 0 38px; color:var(--muted); font-size:12px; }
+    nav,.actions,.tabs,.segments,.chips { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+    nav a,.button,.tab,.segment {
+      display:inline-flex; min-height:44px; align-items:center; justify-content:center; padding:8px 12px;
+      border:1px solid var(--line); border-radius:var(--radius); color:var(--ink); background:rgba(255,255,255,.96);
+      text-decoration:none; font-weight:760;
+    }
+    .button.primary,.tab[aria-selected="true"],.segment[aria-pressed="true"] { color:#fff; border-color:var(--teal); background:var(--teal); }
+    .button.coral { color:#8c3f32; border-color:#dcb7ae; background:#fff; }
+    .eyebrow { margin-top:18px; color:var(--teal); font-size:12px; font-weight:850; text-transform:uppercase; }
+    h1,h2,h3 { margin-top:0; line-height:1.22; letter-spacing:0; }
+    h1 { margin:8px 0 7px; font-size:39px; }
+    h2 { margin-bottom:7px; font-size:27px; }
+    h3 { margin-bottom:5px; font-size:18px; }
+    p { margin:6px 0; }
+    .lead { max-width:970px; color:#40535a; font-size:16px; }
+    .metrics { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:19px; }
+    .metric { min-height:112px; padding:15px; border:1px solid var(--line); border-radius:var(--radius); background:rgba(255,255,255,.97); box-shadow:var(--shadow); }
+    .metric b { display:block; margin-bottom:4px; color:var(--teal); font-size:26px; }
+    .metric span { color:var(--muted); font-size:12px; }
+    .verdict { margin-top:16px; padding:16px 17px; border:1px solid #b8d6cf; border-left:5px solid var(--teal); border-radius:var(--radius); background:rgba(235,246,242,.98); }
+    .verdict strong { display:block; margin-bottom:4px; }
+    section.band { padding:29px 0; border-bottom:1px solid var(--line); }
+    .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:15px; }
+    .section-head p { max-width:800px; color:var(--muted); }
+    .pipeline { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:rgba(255,255,255,.96); box-shadow:var(--shadow); }
+    .stage { position:relative; min-height:190px; padding:17px; border-right:1px solid var(--line); }
+    .stage:last-child { border-right:0; }
+    .stage::before { content:attr(data-step); display:block; margin-bottom:9px; color:var(--teal); font-size:26px; font-weight:850; }
+    .stage:nth-child(2)::before { color:var(--blue); }
+    .stage:nth-child(3)::before { color:var(--coral); }
+    .stage:nth-child(4)::before { color:var(--gold); }
+    .stage small { color:var(--muted); }
+    .workspace { padding-top:22px; }
+    .tabs { position:sticky; top:0; z-index:3; padding:10px 0; border-bottom:1px solid var(--line); background:rgba(243,246,244,.96); backdrop-filter:blur(8px); }
+    .tab { flex:0 1 auto; }
+    .tab-panel { padding-top:25px; }
+    .tab-panel[hidden] { display:none; }
+    .task-grid,.week-grid,.paper-grid,.gate-grid,.question-grid,.risk-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; }
+    .task,.week,.paper,.gate,.question,.risk {
+      min-width:0; padding:16px; border:1px solid var(--line); border-radius:var(--radius); background:rgba(255,255,255,.96); box-shadow:var(--shadow);
+    }
+    .task { border-left:4px solid var(--teal); }
+    .task:nth-child(2n) { border-left-color:var(--blue); }
+    .task label,.week label { display:grid; grid-template-columns:21px minmax(0,1fr); gap:9px; align-items:start; font-weight:780; }
+    .task input,.week input { width:18px; height:18px; margin:3px 0 0; accent-color:var(--teal); }
+    .task p,.week p,.paper p,.gate p,.risk p { color:#4d6066; }
+    .task small,.week small,.paper small { color:var(--muted); }
+    .progress { margin:12px 0 18px; }
+    .progress-track { height:9px; overflow:hidden; border-radius:5px; background:#dce6e3; }
+    .progress-track span { display:block; width:0; height:100%; background:var(--teal); transition:width .2s ease; }
+    .progress-line { display:flex; justify-content:space-between; gap:12px; margin-bottom:5px; color:var(--muted); font-size:12px; }
+    .week { border-top:4px solid var(--blue); }
+    .week:nth-child(3n+2) { border-top-color:var(--teal); }
+    .week:nth-child(3n) { border-top-color:var(--gold); }
+    .week b { display:inline-block; margin-bottom:5px; color:var(--blue); }
+    .table-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:#fff; box-shadow:var(--shadow); }
+    table { width:100%; min-width:920px; border-collapse:collapse; font-size:13px; }
+    th,td { padding:11px 10px; border-bottom:1px solid #e0e8e6; text-align:right; vertical-align:top; }
+    th:first-child,td:first-child { text-align:left; }
+    th { color:#3d5055; background:#ebf1ef; }
+    .good { color:#146b5e; font-weight:830; }
+    .bad { color:#9a4031; font-weight:830; }
+    .caution { color:#886516; font-weight:830; }
+    .figure-grid { display:grid; grid-template-columns:1.2fr .8fr; gap:12px; margin-top:13px; }
+    figure { margin:0; padding:11px; border:1px solid var(--line); border-radius:var(--radius); background:#fff; box-shadow:var(--shadow); }
+    figure img { display:block; width:100%; height:auto; }
+    figcaption { margin-top:8px; color:var(--muted); font-size:12px; }
+    .paper { border-top:4px solid var(--blue); }
+    .paper .role { color:var(--teal); font-size:12px; font-weight:850; }
+    .paper h3 a { color:var(--ink); text-decoration:none; }
+    .paper h3 a:hover { color:var(--blue); text-decoration:underline; }
+    .gate { border-left:4px solid var(--gold); }
+    .gate.pass { border-left-color:var(--teal); }
+    .gate.stop { border-left-color:var(--coral); }
+    .question strong { display:block; margin-bottom:5px; color:var(--blue); }
+    .risk { border-top:4px solid var(--coral); }
+    .note { margin-top:11px; color:var(--muted); font-size:13px; }
+    @media (max-width:980px) {
+      .metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .pipeline { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .stage:nth-child(2) { border-right:0; }
+      .stage:nth-child(-n+2) { border-bottom:1px solid var(--line); }
+      .figure-grid { grid-template-columns:1fr; }
+    }
+    @media (max-width:680px) {
+      header,main,footer { width:min(100% - 24px,1220px); }
+      h1 { font-size:31px; }
+      .metrics,.pipeline,.task-grid,.week-grid,.paper-grid,.gate-grid,.question-grid,.risk-grid { grid-template-columns:1fr; }
+      .stage { border-right:0; border-bottom:1px solid var(--line); }
+      .stage:last-child { border-bottom:0; }
+      .section-head { align-items:flex-start; flex-direction:column; }
+      nav a,.tab { flex:1 1 42%; }
+      .tabs { position:static; }
+      .segments { width:100%; }
+      .segment { flex:1 1 28%; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">跳到主内容</a>
+  <header>
+    <nav aria-label="主导航">
+      <a href="./own_algorithm_lab.html">自有算法竞技场</a>
+      <a href="./operator-learning/">算子学习主页</a>
+      <a href="./operator_fair_budget_dashboard.html">v2d 同预算判决</a>
+      <a href="./he_review_portal.html">师兄审阅入口</a>
+      <a href="./paper_library/">论文库</a>
+      <a href="./index.html">研究总站</a>
+    </nav>
+    <div class="eyebrow">T16 v3a · execution home</div>
+    <h1>Ridge-FNO → NeRIF 研究执行主页</h1>
+    <p class="lead">从三维反问题基础、强数值基线和训练分布匹配开始，逐步走到自有几何条件化模型、NeRIF 物理细化与真实无真值验证。ridge-FNO 现已定位为必须击败的强基线；v3b 自有 ray-set 增强候选只有 K=6 通过开发门槛，尚未全面胜出。</p>
+    <div class="metrics">
+      <div class="metric"><b id="candidatePass">3 / 3</b><span>ridge-FNO 在 K=4/6/8 development gates</span></div>
+      <div class="metric"><b id="testFields">96</b><span>独立 synthetic 测试体场</span></div>
+      <div class="metric"><b id="seedCount">3</b><span>模型种子，先按体场折叠</span></div>
+      <div class="metric"><b>5,184</b><span>sample-method 结果行</span></div>
+      <div class="metric"><b>20,000</b><span>四测试域等权 bootstrap</span></div>
+    </div>
+    <div class="verdict">
+      <strong>研究主线已改为“开发自有算法，并用 ridge-FNO/DeepONet/U-Net 作为强对手”。</strong>
+      <span>v3c frozen per-view adapter 已停止。三策略审计锁定 <code>carry continuation-Adam + restart cosine · 240 epochs</code> 为 FNO 冠军；v3e 五架构成本 schema 已完成，并证明少量 trainable parameters 不等于低成本。geometry 为 Go 后可写功能 pilot；matched error–compute、确认性 superiority、blind final 和 NeRIF 仍暂缓。</span>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="band">
+      <div class="section-head"><div><div class="eyebrow">方法主线</div><h2>四层闭环，不把网络单独神化</h2></div></div>
+      <div class="pipeline">
+        <article class="stage" data-step="01"><h3>固定相机预算</h3><p>K 个重建相机只产生 displacement / deflection 与 geometry；额外一个相机锁定为审计。</p><small>训练、早停、选 λ、选模型都看不到 Q_audit。</small></article>
+        <article class="stage" data-step="02"><h3>强数值可观测分量</h3><p>先用 ridge，后续升级 CGLS/TV 或 RBF direct，得到稳定但可能过平滑的粗场。</p><small>这一步是当前正结果成立的前提。</small></article>
+        <article class="stage" data-step="03"><h3>Epoch + compute + geometry 闸门</h3><p>冻结 240-epoch FNO 冠军、plateaued control 和 v3e 成本 schema；geometry 为 Go 后写功能 pilot并补 matched learning curves。</p><small>允许实现，不允许确认性 superiority。</small></article>
+        <article class="stage" data-step="04"><h3>NeRIF 物理细化</h3><p>仅当 v3d 开发门槛通过，再以 <code>Interp(x0)+zero-init residual MLP</code> 比较总时间、最终质量和失败率。</p><small>论文主指标是 time-to-Q_audit-quality，不是网络 forward time。</small></article>
+      </div>
+    </section>
+
+    <div class="workspace">
+      <div class="tabs" role="tablist" aria-label="研究执行视图">
+        <button class="tab" type="button" role="tab" aria-selected="true" aria-controls="today" id="tab-today" data-tab="today">现在做什么</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="weeks" id="tab-weeks" data-tab="weeks">12 周路线</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="evidence" id="tab-evidence" data-tab="evidence">实验判决</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="papers" id="tab-papers" data-tab="papers">角色化文献</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="senior" id="tab-senior" data-tab="senior">师兄沟通</button>
+      </div>
+
+      <section class="tab-panel" id="today" role="tabpanel" aria-labelledby="tab-today">
+        <div class="section-head"><div><div class="eyebrow">未来 7 天</div><h2>基础薄弱时，只推进这六个闭环任务</h2><p>每项都留下一个可检查产物；读完不算完成，能推导、能运行、能解释才算。</p></div></div>
+        <div class="progress">
+          <div class="progress-line"><span>本周执行进度</span><b id="todayProgress">0 / 6</b></div>
+          <div class="progress-track"><span id="todayBar"></span></div>
+        </div>
+        <div class="task-grid">
+          <article class="task"><label><input type="checkbox" data-check="today-ridge" /><span>推导 ridge 逆解与 SVD filter factor</span></label><p>从 <code>min ||Ax-y||² + λ||x||²</code> 推到 <code>Aᵀ(AAᵀ+λI)⁻¹y</code>，解释小奇异值为什么放大噪声。</p><small>产物：一页手写推导 + K=4/6/8 奇异值图。</small></article>
+          <article class="task"><label><input type="checkbox" data-check="today-code" /><span>复跑 v3a validator 并读懂 mask 合同</span></label><p>确认 Q_audit=60° 不进输入、训练、早停和 ridge 选择；理解 reconstruction budget K 与 installed cameras K+1。</p><small>产物：终端截图/日志 + 你自己的三句话解释。</small></article>
+          <article class="task"><label><input type="checkbox" data-check="today-fno" /><span>写出 residual FNO 的张量形状</span></label><p>沿着 15 通道输入、3D spectral mixing、ridge skip 到体场输出画数据流；不背网络名词。</p><small>产物：一张 shape diagram + 参数量核对。</small></article>
+          <article class="task"><label><input type="checkbox" data-check="today-nerif" /><span>精读 NeRIF forward 与 loss</span></label><p>只抽坐标输入、折射率输出、ray sampling、gradient/deflection、loss 和 stopping rule。</p><small>产物：一张 forward-loss 卡；不先追所有实验细节。</small></article>
+          <article class="task"><label><input type="checkbox" data-check="today-warm" /><span>定义四种 warm-start 公平对照</span></label><p>random NeRIF、ridge→NeRIF、ridge-FNO→NeRIF、oracle low-pass→NeRIF 使用同一网络、K、optimizer 和 stopping rule。</p><small>产物：冻结的实验矩阵与计时边界。</small></article>
+          <article class="task"><label><input type="checkbox" data-check="today-senior" /><span>把十问发给何远哲并锁定两周审计</span></label><p>优先拿到输入输出定义、最小 geometry/data、组内 NeRIF baseline 和无真值主指标。</p><small>产物：师兄回复摘要 + 数据合同，不急着承诺题名。</small></article>
+        </div>
+        <div class="actions" style="margin-top:14px">
+          <a class="button primary" href="./document_reader.html?doc=ridge_fno_nerif_review_brief.md">打开师兄一页简报</a>
+          <a class="button" href="./demo_t16_operator/run_direct_operator_pilot.py">查看 v3a 脚本</a>
+          <a class="button" href="./demo_t16_operator/validate_direct_operator_results.py">查看 validator</a>
+          <a class="button coral" href="./operator_fair_budget_dashboard.html">回看为什么旧路线停止</a>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="weeks" role="tabpanel" aria-labelledby="tab-weeks" hidden>
+        <div class="section-head"><div><div class="eyebrow">12 周</div><h2>每两周一次继续或降级判决</h2><p>不同时开 DeepONet、Transformer、4D 和 UQ。一个闸门不过，就缩题而不是堆模型。</p></div></div>
+        <div class="week-grid">
+          <article class="week"><label><input type="checkbox" data-check="week-1" /><span><b>第 1 周</b><br />冻结问题与数据合同</span></label><p>锁输入是 raw image、displacement 还是 projection；输出是 n、ρ、T 还是 ∇n；锁 K、geometry 与主指标。</p><small>闸门：何远哲确认最小数据和 NeRIF forward/loss。</small></article>
+          <article class="week"><label><input type="checkbox" data-check="week-2" /><span><b>第 2 周</b><br />NeRIF timing baseline</span></label><p>复现一个场，记录 random init 的 loss、Q_val、Q_audit 与 wall time 曲线。</p><small>不过：降为 NeRIF 复现与误差分析毕设。</small></article>
+          <article class="week"><label><input type="checkbox" data-check="week-3" /><span><b>第 3 周</b><br />独立 forward</span></label><p>补 cone-ray、有限孔径或至少不同离散化；做单位、坐标、ray 与 gradient tests。</p><small>目的：避免训练和测试共用同一个简化 forward 的 inverse crime。</small></article>
+          <article class="week"><label><input type="checkbox" data-check="week-4" /><span><b>第 4 周</b><br />强基线冻结</span></label><p>CGLS/TV、RBF/ridge、random NeRIF、compact NRIP-style INR；锁 final manifest。</p><small>不过：只做 synthetic benchmark，不承诺真实论文。</small></article>
+          <article class="week"><label><input type="checkbox" data-check="week-5" /><span><b>第 5 周</b><br />新 fields 确认 v3a</span></label><p>一次性运行 ridge-FNO 与 matched U-Net/FNO；不回看 final fields 调参。</p><small>闸门：三预算至少 2/3 风险门槛通过。</small></article>
+          <article class="week"><label><input type="checkbox" data-check="week-6" /><span><b>第 6 周</b><br />OOD 与近零空间红队</span></label><p>thin front、双峰、geometry drift、光流偏差、缺失相机和最大角间隙。</p><small>不过：停 operator 创新，改做 OOD 边界研究。</small></article>
+          <article class="week"><label><input type="checkbox" data-check="week-7" /><span><b>第 7 周</b><br />v3d 最近邻对照</span></label><p>LoRA、vanilla adapter、F-Adapter、last-block 与 acquisition-conditioned 分支从同一收敛 checkpoint 出发。</p><small>必须同时报告参数、墙钟、收敛曲线、逐域 CI、p10 与 harm。</small></article>
+          <article class="week"><label><input type="checkbox" data-check="week-8" /><span><b>第 8 周</b><br />v3d 开发闸门</span></label><p>只在 dev2 选秩、调制位置和正则；geometry 分支必须胜 plain/control。</p><small>不过：停止自有结构主张；通过后才冻结协议并讨论 NeRIF。</small></article>
+          <article class="week"><label><input type="checkbox" data-check="week-9" /><span><b>第 9 周</b><br />真实数据接入</span></label><p>displacement、内外参、ray table、mask、单位与独立相机角色逐项核对。</p><small>禁止用 Q_audit 选迭代数或模型。</small></article>
+          <article class="week"><label><input type="checkbox" data-check="week-10" /><span><b>第 10 周</b><br />无真值证据链</span></label><p>LOCO、独立重复采集、残差空间结构与 PLIF/front/PIV/积分 trace。</p><small>没有独立物理 trace：只声称跨视角一致，不声称真实 3D 准确。</small></article>
+          <article class="week"><label><input type="checkbox" data-check="week-11" /><span><b>第 11 周</b><br />锁定复跑与成本</span></label><p>三种子、field/run cluster bootstrap、训练成本、摊销盈亏点、尾部失败。</p><small>闸门由预注册指标决定，不用最好看的 case 决定。</small></article>
+          <article class="week"><label><input type="checkbox" data-check="week-12" /><span><b>第 12 周</b><br />八图论文包</span></label><p>方法图、相机预算、强基线、时间曲线、OOD、风险、真实审计和失败案例。</p><small>冻结模型，不再增加网络家族。</small></article>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="evidence" role="tabpanel" aria-labelledby="tab-evidence" hidden>
+        <div class="section-head">
+          <div><div class="eyebrow">v3a 证据</div><h2>好结果先接受红队，再决定是否升级</h2><p>百分比均相对 validation-locked classical champion；本实验三个预算的 champion 都是非负 ridge。</p></div>
+          <div class="segments" role="group" aria-label="选择重建预算">
+            <button class="segment" type="button" data-budget="4" aria-pressed="true">K=4</button>
+            <button class="segment" type="button" data-budget="6" aria-pressed="false">K=6</button>
+            <button class="segment" type="button" data-budget="8" aria-pressed="false">K=8</button>
+          </div>
+        </div>
+        <div id="resultTable" class="table-wrap" aria-live="polite"><p style="padding:18px">正在读取校验后的 v3a 数据...</p></div>
+        <p class="note">当前最弱边界是 K=8 thin-front family OOD，平均改善仅约 4.08%。总体 gate 通过不等于每一个域都超过 5%。</p>
+        <div class="figure-grid">
+          <figure><img src="./demo_t16_operator/results/direct_operator_pilot/t16_direct_operator_improvement.png" alt="FBP、ridge、U-Net、FNO 及 ridge 初始化 residual 方法在三种相机预算下的体场改善" /><figcaption>只有强 ridge 起点后的 residual 模型稳定为正；ridge-FNO 在三档预算均超过 5% 材料性门槛。</figcaption></figure>
+          <figure><img src="./demo_t16_operator/results/direct_operator_pilot/t16_direct_operator_domains.png" alt="六种方法在 IID、噪声 OOD、family OOD 和 joint OOD 下的三维场误差" /><figcaption>裸 lift operator 在 family/joint OOD 失败；ridge-FNO 缩小失败但未消除 family gap。</figcaption></figure>
+        </div>
+        <div class="gate-grid" style="margin-top:13px">
+          <article class="gate pass"><h3>当前通过</h3><p>training/evaluation mask 匹配；每 K 独立训练；3 seeds；96 fields；p10 和 harm gate；Q_audit 同时改善。</p></article>
+          <article class="gate stop"><h3>投稿前仍阻断</h3><p>真实 ray geometry、全新 blind fields、CGLS/TV/RBF、NeRIF 总时间、可变布局、真实重复采集。</p></article>
+          <article class="gate"><h3>可解释机制</h3><p>数值逆解先恢复可观测稳定分量，FNO 学习低幅先验修正；弱 FBP lift 迫使网络重猜全场并在 OOD 崩溃。</p></article>
+          <article class="gate stop"><h3>禁止过度结论</h3><p>不能写“FNO 优于传统法”“跨 family 已解决”“NeRIF 已加速”或“真实三维场准确”。</p></article>
+        </div>
+        <div class="actions" style="margin-top:14px">
+          <a class="button primary" href="./demo_t16_operator/results/direct_operator_pilot/direct_operator_report.json">机器报告</a>
+          <a class="button" href="./demo_t16_operator/results/direct_operator_pilot/direct_operator_summary.csv">field summary</a>
+          <a class="button" href="./demo_t16_operator/results/direct_operator_pilot/direct_operator_domains.csv">domain results</a>
+          <a class="button" href="./demo_t16_operator/results/direct_operator_pilot/direct_operator_checksums.sha256">checksums</a>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="papers" role="tabpanel" aria-labelledby="tab-papers" hidden>
+        <div class="section-head"><div><div class="eyebrow">阅读脊柱</div><h2>每篇论文只承担一个角色</h2><p>先抽方法合同和失败边界，再读网络细节。以下链接均指向作者、出版社或正式会议页面。</p></div></div>
+        <div class="paper-grid">
+          <article class="paper"><div class="role">OERF 主方法</div><h3><a href="https://doi.org/10.1063/5.0250899">NeRIF · Physics of Fluids 2025</a></h3><p>抽 continuous refractive-index field、BOST forward/loss、ray sampling、实验验证。</p><small>不能支持：跨样本算子或 learned warm-start。</small></article>
+          <article class="paper"><div class="role">稀疏视角邻居</div><h3><a href="https://doi.org/10.1063/5.0241191">NeDF · Physics of Fluids 2024</a></h3><p>抽 gradient field、5–180 camera study、nonlinear ray synthetic 与 hierarchical sampling。</p><small>不能支持：预训练 direct operator。</small></article>
+          <article class="paper"><div class="role">2026 强竞品</div><h3><a href="https://doi.org/10.1016/j.combustflame.2026.115082">Neural Refractive Index Primitives</a></h3><p>抽 hash/Fourier、discrete gradient、3D mask 和真实双火焰非物理饱和失败。</p><small><a href="./paper_library/readers/nrip-lu-2026.html">本地术语导读</a>；公开代码无明确 LICENSE，不直接搬运。</small></article>
+          <article class="paper"><div class="role">BOST 直接学习前史</div><h3><a href="https://doi.org/10.1364/OE.505992">GRU-BOST · Optics Express 2023</a></h3><p>抽 projection sequence、3D reconstruction、真实 candle flame 和留出相机。</p><small>不能支持：固定有序 GRU 自动等于 neural operator。</small></article>
+          <article class="paper"><div class="role">逆算子定义</div><h3><a href="https://proceedings.mlr.press/v202/molinaro23a.html">Neural Inverse Operators · ICML 2023</a></h3><p>理解 inverse map、DeepONet/FNO 组合和传感器/噪声鲁棒性实验。</p><small>不能支持：其 operator-to-function 输入等同 BOST camera stack。</small></article>
+          <article class="paper"><div class="role">INR 初始化直接先例</div><h3><a href="https://openaccess.thecvf.com/content/CVPR2021/html/Tancik_Learned_Initializations_for_Optimizing_Coordinate-Based_Neural_Representations_CVPR_2021_paper.html">Learned Initializations · CVPR 2021</a></h3><p>抽 meta-initialization、time-to-quality 和 partial observation 下的泛化。</p><small>不能支持：measurement-conditioned BOST 初始化。</small></article>
+          <article class="paper"><div class="role">可迁移 INR 特征</div><h3><a href="https://research.google/pubs/learning-transferable-features-for-implicit-neural-representations/">STRAINER · NeurIPS 2024</a></h3><p>抽 shared encoder layers 作为新 INR 初始化，以及 in/OOD fitting。</p><small>不能外推：图像早期 10 dB 收益直接变成 NeRIF 加速。</small></article>
+          <article class="paper"><div class="role">可变相机集合</div><h3><a href="https://arxiv.org/abs/2205.11404">VIDON · arXiv 2022</a></h3><p>抽传感器数量/位置变化、排列不变聚合和 sensor coordinate encoding。</p><small>不能支持：只有 PDE 实验就足以证明 BOST 有效。</small></article>
+          <article class="paper"><div class="role">Operator-neural field 桥</div><h3><a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/df54302388bbc145aacaa1a54a4a5933-Abstract-Conference.html">CORAL · NeurIPS 2023</a></h3><p>抽 arbitrary geometry、coordinate neural fields 与 latent modulation。</p><small>不能支持：已完成投影反演或 NeRIF warm-start。</small></article>
+          <article class="paper"><div class="role">概念警戒</div><h3><a href="https://proceedings.mlr.press/v235/pal24a.html">O-INR · ICML 2024</a></h3><p>理解 INR 的 operator-theoretic reformulation 和 integral transform。</p><small>不能写成“operator 自动生成 NeRIF 权重”。</small></article>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="senior" role="tabpanel" aria-labelledby="tab-senior" hidden>
+        <div class="section-head"><div><div class="eyebrow">高信息量沟通</div><h2>先问清数据和证据，再冻结题名</h2></div></div>
+        <div class="question-grid">
+          <article class="question"><strong>01 · 算子到底学什么？</strong><p><code>displacement→3D field</code>，还是 <code>3D history→future field</code>？</p></article>
+          <article class="question"><strong>02 · 输出物理量</strong><p>最终锁 refractive index、density、temperature 还是 gradient field？</p></article>
+          <article class="question"><strong>03 · 最小复现包</strong><p>能否提供 NeRIF forward、loss、calibration、mask 与一例数据？</p></article>
+          <article class="question"><strong>04 · Warm-start 形式</strong><p>更接受初始化体场、调制 shared NeRIF，还是生成全部权重？</p></article>
+          <article class="question"><strong>05 · 独立样本</strong><p>有多少 CFD/phantom 工况？相邻帧和同一 case 如何分组？</p></article>
+          <article class="question"><strong>06 · 真实数据字段</strong><p>是否有 raw image、displacement、内外参、ray table、mask 和重复采集？</p></article>
+          <article class="question"><strong>07 · 相机布局变化</strong><p>论文是否必须支持角度变化、不同设备或缺失相机？</p></article>
+          <article class="question"><strong>08 · 无真值主指标</strong><p>组内最认可 held-out camera、PLIF/front、PIV compensation 还是积分量？</p></article>
+          <article class="question"><strong>09 · 强基线范围</strong><p>是否同意 CGLS/TV、RBF、GRU-BOST、NeRIF 以及 NeDF/NRIP 对照？</p></article>
+          <article class="question"><strong>10 · 阶段性止损</strong><p>能否先批准两周审计，并在第 2/6/8/10 周明确继续或降级？</p></article>
+        </div>
+        <div class="risk-grid" style="margin-top:13px">
+          <article class="risk"><h3>最强反例</h3><p>构造 <code>A_S h ≈ 0</code> 但 <code>A_Q h ≠ 0</code> 的 thin-front/双峰扰动。若 warm-start 更快拟合 used views，却让 Q_audit 更差，路线失败。</p></article>
+          <article class="risk"><h3>最低论文贡献</h3><p>BOST 几何条件化 + 强数值起点 + zero-residual NeRIF + 固定预算 + OOD/独立审计。单纯“FNO 接 MLP”不够。</p></article>
+          <article class="risk"><h3>本科保底</h3><p>若真实数据或 NeRIF 接口拿不到，保留 v2d/v3a 为“强数值与神经先验的 OOD 边界”严谨 benchmark。</p></article>
+          <article class="risk"><h3>投稿升级</h3><p>至少两个未见 family、两个 geometry/noise OOD、两个真实工况、独立重复采集和端到端成本。</p></article>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>T16 v3a · 2026-07-11。当前页面把 development candidate、下一步学习和投稿阻断放在同一条证据链中，不把 synthetic 好结果冒充真实 OERF 结论。</footer>
+
+  <script>
+    (() => {
+      const storageKey = 'oerf-ridge-fno-nerif-v3a';
+      const checks = [...document.querySelectorAll('[data-check]')];
+      let state = {};
+      try { state = JSON.parse(localStorage.getItem(storageKey) || '{}'); } catch (_) { state = {}; }
+      checks.forEach(input => {
+        input.checked = Boolean(state[input.dataset.check]);
+        input.addEventListener('change', () => {
+          state[input.dataset.check] = input.checked;
+          localStorage.setItem(storageKey, JSON.stringify(state));
+          updateProgress();
+        });
+      });
+      function updateProgress() {
+        const today = checks.filter(input => input.dataset.check.startsWith('today-'));
+        const done = today.filter(input => input.checked).length;
+        document.getElementById('todayProgress').textContent = `${done} / ${today.length}`;
+        document.getElementById('todayBar').style.width = `${100 * done / today.length}%`;
+      }
+      updateProgress();
+
+      document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => {
+        const selected = button.dataset.tab;
+        document.querySelectorAll('[data-tab]').forEach(item => item.setAttribute('aria-selected', item === button ? 'true' : 'false'));
+        document.querySelectorAll('.tab-panel').forEach(panel => { panel.hidden = panel.id !== selected; });
+      }));
+
+      const dataUrl = './demo_t16_operator/results/direct_operator_pilot/direct_operator_dashboard.json';
+      let payload = null;
+      let budget = 4;
+      const pct = (value, digits=2) => `${Number(value).toFixed(digits)}%`;
+      const rowFor = method => payload.summary.find(row => Number(row.total_budget) === budget && row.method === method);
+      function renderResults() {
+        if (!payload) return;
+        const methods = ['physics_lift','ridge','unet','fno','ridge_unet','ridge_fno'];
+        const rows = methods.map(method => {
+          const row = rowFor(method);
+          const verdict = payload.verdicts.find(item => Number(item.total_budget) === budget && item.method === method);
+          const label = payload.labels[method];
+          const passed = verdict && verdict.development_gate_pass;
+          const status = method === payload.classical_champions[String(budget)] ? '<span class="caution">锁定 classical champion</span>' : passed ? '<span class="good">通过</span>' : method.startsWith('ridge_') ? '<span class="bad">风险门槛失败</span>' : '<span class="bad">未通过</span>';
+          return `<tr><td><strong>${label}</strong></td><td>${Number(row.mean_field_rel_l2).toFixed(4)}</td><td>${pct(row.mean_improvement_vs_classical_pct)}</td><td>[${pct(row.improvement_ci95_cluster_low)}, ${pct(row.improvement_ci95_cluster_high)}]</td><td>${pct(row.p10_improvement_vs_classical_pct)}</td><td>${pct(100 * Number(row.harm_rate_gt_1pct_vs_classical),1)}</td><td>${Number(row.mean_audit_reprojection_rel_l2).toFixed(4)}</td><td>${status}</td></tr>`;
+        }).join('');
+        document.getElementById('resultTable').innerHTML = `<table><thead><tr><th>K=${budget} 方法</th><th>field L2</th><th>vs classical</th><th>95% cluster CI</th><th>p10</th><th>伤害率 &gt;1%</th><th>Q_audit L2</th><th>判决</th></tr></thead><tbody>${rows}</tbody></table>`;
+      }
+      document.querySelectorAll('[data-budget]').forEach(button => button.addEventListener('click', () => {
+        budget = Number(button.dataset.budget);
+        document.querySelectorAll('[data-budget]').forEach(item => item.setAttribute('aria-pressed', item === button ? 'true' : 'false'));
+        renderResults();
+      }));
+      fetch(dataUrl).then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      }).then(data => {
+        payload = data;
+        const candidate = data.verdicts.filter(row => row.method === 'ridge_fno');
+        document.getElementById('candidatePass').textContent = `${candidate.filter(row => row.development_gate_pass).length} / ${candidate.length}`;
+        document.getElementById('testFields').textContent = data.independent_test_field_count;
+        document.getElementById('seedCount').textContent = data.model_seed_count;
+        renderResults();
+      }).catch(() => {
+        document.getElementById('resultTable').innerHTML = '<p style="padding:18px">结果数据未能加载。请通过 GitHub Pages 或本地 HTTP 服务打开本页。</p>';
+      });
+    })();
+  </script>
+  <script src="./site_link_router.js"></script>
+</body>
+</html>

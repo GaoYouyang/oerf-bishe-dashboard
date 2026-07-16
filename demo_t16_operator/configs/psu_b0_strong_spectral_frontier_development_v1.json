@@ -1,0 +1,137 @@
+{
+  "schema_version": "psu-b0-strong-spectral-frontier-development-config-1.0",
+  "status": "POSTOPEN_DEVELOPMENT_ONLY",
+  "source_development_config": "demo_t16_operator/configs/psu_b0_residual_risk_development_v1.json",
+  "source_fresh_preregistration": "demo_t16_operator/configs/psu_b0_residual_risk_fresh_prereg_v1.json",
+  "selection_split": "risk_validation",
+  "untouched_development_check_split": "risk_calibration",
+  "fresh_interpretation": "OPENED_DIAGNOSTIC_ONLY_NOT_NEW_CONFIRMATORY_EVIDENCE",
+  "generalized_sobolev": {
+    "strength_grid": [
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      7.0
+    ],
+    "epsilon_grid": [
+      0.02,
+      0.05,
+      0.1
+    ],
+    "axis_weight_patterns_xyz": {
+      "isotropic": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "x_low": [
+        0.5,
+        1.0,
+        1.0
+      ],
+      "x_high": [
+        2.0,
+        1.0,
+        1.0
+      ],
+      "y_low": [
+        1.0,
+        0.5,
+        1.0
+      ],
+      "y_high": [
+        1.0,
+        2.0,
+        1.0
+      ],
+      "z_low": [
+        1.0,
+        1.0,
+        0.5
+      ],
+      "z_high": [
+        1.0,
+        1.0,
+        2.0
+      ]
+    }
+  },
+  "scheduled_sobolev": {
+    "schedules": [
+      [3.0, 3.0, 3.0, 3.0],
+      [4.0, 4.0, 4.0, 4.0],
+      [5.0, 5.0, 5.0, 5.0],
+      [6.0, 6.0, 6.0, 6.0],
+      [7.0, 7.0, 7.0, 7.0],
+      [8.0, 8.0, 8.0, 8.0],
+      [8.0, 7.0, 6.0, 5.0],
+      [7.0, 6.0, 5.0, 4.0],
+      [6.0, 5.0, 4.0, 3.0],
+      [5.0, 4.0, 3.0, 2.0],
+      [8.0, 6.0, 4.0, 2.0],
+      [7.0, 5.0, 3.0, 1.0],
+      [6.0, 4.0, 2.0, 0.0],
+      [5.0, 6.0, 7.0, 8.0],
+      [4.0, 5.0, 6.0, 7.0],
+      [3.0, 4.0, 5.0, 6.0],
+      [2.0, 3.0, 4.0, 5.0],
+      [2.0, 4.0, 6.0, 8.0],
+      [1.0, 3.0, 5.0, 7.0],
+      [0.0, 2.0, 4.0, 6.0],
+      [6.0, 5.0, 5.0, 6.0],
+      [5.0, 6.0, 6.0, 5.0],
+      [7.0, 5.0, 5.0, 7.0],
+      [5.0, 7.0, 7.0, 5.0]
+    ]
+  },
+  "sobolev_pcgls": {
+    "stage_counts": [
+      3,
+      4
+    ],
+    "strength_grid": [
+      0.0,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0,
+      6.0,
+      7.0,
+      8.0
+    ],
+    "epsilon_grid": [
+      0.02,
+      0.05,
+      0.1
+    ]
+  },
+  "call_budget_interpretation": {
+    "pcgls_3": {
+      "forward": 3,
+      "adjoint": 3,
+      "final_unused_normal_skipped": true
+    },
+    "pcgls_4": {
+      "forward": 4,
+      "adjoint": 4,
+      "final_unused_normal_skipped": true,
+      "exactly_matches_learned_operator_calls": true
+    }
+  },
+  "selection_rule": {
+    "primary": "mean_combined_loss",
+    "tie_breaks": [
+      "mean_field_relative_l2",
+      "lexicographic_candidate_id"
+    ]
+  },
+  "claim_boundary": {
+    "candidate_count_is_small_enough_for_validation_only_screen": true,
+    "fresh_values_are_unopened": false,
+    "tv_baseline_included": false,
+    "experimental_field_truth_used": false,
+    "algorithm_superiority": false
+  }
+}

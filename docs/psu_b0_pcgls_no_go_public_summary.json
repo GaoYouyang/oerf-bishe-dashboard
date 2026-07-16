@@ -1,0 +1,376 @@
+{
+  "claim_boundary": {
+    "algorithm_superiority": false,
+    "analytic_morphology_is_cfd": false,
+    "experimental_field_truth_used": false,
+    "fresh_diagnostic_is_confirmatory": false,
+    "new_learned_pcgls_candidate_implemented": false,
+    "pcgls_is_a_new_algorithm": false,
+    "postopen_development_only": true,
+    "real_psu_measurement_values_used": false
+  },
+  "evidence_scope": "POSTOPEN_DEVELOPMENT_DIAGNOSIS_ON_REAL_PSU_SUPPORT_GEOMETRY_WITH_ANALYTIC_REACTION_MORPHOLOGY_AND_SYNTHETIC_NOISE",
+  "interpretation": {
+    "what_failed": "The residual-conditioned positive spectral direction was compared against fixed Sobolev steepest descent, but a standard Sobolev-preconditioned Krylov recurrence extracts substantially more value from the same four forward and four adjoint calls.",
+    "what_remains_valid": "The PSU B0 operator, synthetic stress generator, observable-risk diagnostics, and exact fallback machinery remain reusable.",
+    "why_this_matters": "The learned controller's apparent gain is not evidence of a better inverse operator once a strong same-budget Krylov baseline is included."
+  },
+  "literature_boundary": [
+    {
+      "lesson": "A changing preconditioner requires a flexible recurrence or explicit orthogonalization; standard PCG theory no longer applies.",
+      "title": "Flexible Conjugate Gradients",
+      "url": "https://epubs.siam.org/doi/abs/10.1137/S1064827599362314"
+    },
+    {
+      "lesson": "Learned SPD factorizations inside PCG are established prior art, so BOST novelty must come from the optical operator and finite-aperture/view/noise conditioning.",
+      "title": "Learning Preconditioners for Conjugate Gradient PDE Solvers",
+      "url": "https://proceedings.mlr.press/v202/li23e.html"
+    },
+    {
+      "lesson": "Learning a structured factorization is another strong prior-art control and offers an unsupervised matrix loss.",
+      "title": "Neural incomplete factorization",
+      "url": "https://openreview.net/forum?id=FozLrZ3CI5"
+    },
+    {
+      "lesson": "Unitary neural operators can be constructed as convergence-safe learned preconditioners; a generic Fourier-neural-PCG claim is therefore not novel by itself.",
+      "title": "UNO-CG",
+      "url": "https://arxiv.org/abs/2508.02681"
+    },
+    {
+      "lesson": "TV-superiorized PCG is a necessary non-learning tomography baseline before claiming front or shock preservation.",
+      "title": "Superiorization of PCG for tomography",
+      "url": "https://arxiv.org/abs/1807.10151"
+    }
+  ],
+  "next_algorithm_routes": [
+    {
+      "idea": "Predict one bounded positive geometry/noise-conditioned Fourier multiplier before iteration and hold it fixed for all PCGLS stages.",
+      "minimum_baselines": [
+        "static Sobolev PCGLS",
+        "validation-tuned anisotropic PCGLS",
+        "NeuralIF or learned approximate-inverse concept control",
+        "four-step unpreconditioned CGLS"
+      ],
+      "proof_obligation": "The cached multiplier must stay positive and self-adjoint, so the restricted preconditioner remains SPD.",
+      "rank": 1,
+      "risk": "medium",
+      "working_name": "BOST-GC-SPD-PCGLS"
+    },
+    {
+      "idea": "Keep the classical iterates and learn only whether to stop at stages one through four or fall back to a smoother iterate.",
+      "proof_obligation": "Selection must use truth-free residual/geometry features and a new independent calibration and audit.",
+      "rank": 2,
+      "risk": "low_to_medium",
+      "working_name": "BOST-PCGLS learned stopping and safeguard"
+    },
+    {
+      "idea": "Allow a residual-adaptive learned SPD map but replace standard CG recurrence with flexible CG and explicit orthogonalization.",
+      "proof_obligation": "Compare against Notay-style flexible CG and account for all stored directions and local neural evaluations.",
+      "rank": 3,
+      "risk": "high",
+      "working_name": "BOST flexible learned Krylov"
+    }
+  ],
+  "no_go_gate": {
+    "all_opened_fresh_split_mean_gains_above_zero": true,
+    "calibration_bootstrap_lower_gain_above_zero": true,
+    "current_learned_direction_is_no_go": true,
+    "minimum_opened_fresh_win_count": 20,
+    "same_forward_and_adjoint_calls_as_learned": true,
+    "selected_only_on_risk_validation": true,
+    "validation_bootstrap_lower_gain_above_zero": true,
+    "zero_trainable_parameters": true
+  },
+  "paired_split_summary": [
+    {
+      "bootstrap_mean_95_interval_percent": [
+        3.567158983990015,
+        6.508469473985556
+      ],
+      "holm_adjusted_sign_test_p_value": 5.9604644775390625e-06,
+      "learned_field_relative_l2_mean": 0.6421019240385956,
+      "learned_methods_averaged": [
+        "raw_seed_20261741",
+        "raw_seed_20261742",
+        "raw_seed_20261743"
+      ],
+      "one_sided_sign_test_p_value": 1.4901161193847656e-06,
+      "pcgls_field_relative_l2_mean": 0.6126855860153834,
+      "pcgls_method": "pcgls_4_selected",
+      "pcgls_relative_error_reduction_mean_percent": 5.004680097779598,
+      "pcgls_relative_error_reduction_median_percent": 4.2922603943176245,
+      "pcgls_relative_error_reduction_minimum_percent": -0.6490347849215965,
+      "pcgls_relative_error_reduction_p10_percent": 0.6897963490651919,
+      "pcgls_win_count": 23,
+      "pcgls_win_rate": 0.9583333333333334,
+      "sample_count": 24,
+      "split": "risk_validation"
+    },
+    {
+      "bootstrap_mean_95_interval_percent": [
+        3.691225988945462,
+        6.257173754884968
+      ],
+      "holm_adjusted_sign_test_p_value": 2.169981598854065e-06,
+      "learned_field_relative_l2_mean": 0.6482648018333648,
+      "learned_methods_averaged": [
+        "raw_seed_20261741",
+        "raw_seed_20261742",
+        "raw_seed_20261743"
+      ],
+      "one_sided_sign_test_p_value": 4.33996319770813e-07,
+      "pcgls_field_relative_l2_mean": 0.6177568972110749,
+      "pcgls_method": "pcgls_4_selected",
+      "pcgls_relative_error_reduction_mean_percent": 4.93530049511361,
+      "pcgls_relative_error_reduction_median_percent": 4.93700703651634,
+      "pcgls_relative_error_reduction_minimum_percent": -0.4955773562638385,
+      "pcgls_relative_error_reduction_p10_percent": 0.4619531342938111,
+      "pcgls_win_count": 28,
+      "pcgls_win_rate": 0.9333333333333333,
+      "sample_count": 30,
+      "split": "risk_calibration"
+    },
+    {
+      "bootstrap_mean_95_interval_percent": [
+        5.503544028772877,
+        9.200904653514705
+      ],
+      "holm_adjusted_sign_test_p_value": 5.364418029785156e-07,
+      "learned_field_relative_l2_mean": 0.645207488288482,
+      "learned_methods_averaged": [
+        "raw_seed_20261741",
+        "raw_seed_20261742",
+        "raw_seed_20261743"
+      ],
+      "one_sided_sign_test_p_value": 5.960464477539063e-08,
+      "pcgls_field_relative_l2_mean": 0.5998960348467032,
+      "pcgls_method": "pcgls_4_selected",
+      "pcgls_relative_error_reduction_mean_percent": 7.304453261772399,
+      "pcgls_relative_error_reduction_median_percent": 6.800845257443994,
+      "pcgls_relative_error_reduction_minimum_percent": 0.9890448026925746,
+      "pcgls_relative_error_reduction_p10_percent": 1.7743203981485949,
+      "pcgls_win_count": 24,
+      "pcgls_win_rate": 1.0,
+      "sample_count": 24,
+      "split": "fresh_iid_support"
+    },
+    {
+      "bootstrap_mean_95_interval_percent": [
+        7.55264793469834,
+        10.820147955542236
+      ],
+      "holm_adjusted_sign_test_p_value": 5.364418029785156e-07,
+      "learned_field_relative_l2_mean": 0.6838383285535706,
+      "learned_methods_averaged": [
+        "raw_seed_20261741",
+        "raw_seed_20261742",
+        "raw_seed_20261743"
+      ],
+      "one_sided_sign_test_p_value": 5.960464477539063e-08,
+      "pcgls_field_relative_l2_mean": 0.6202639242013296,
+      "pcgls_method": "pcgls_4_selected",
+      "pcgls_relative_error_reduction_mean_percent": 9.157900096991323,
+      "pcgls_relative_error_reduction_median_percent": 8.798112417011975,
+      "pcgls_relative_error_reduction_minimum_percent": 1.3501859683546928,
+      "pcgls_relative_error_reduction_p10_percent": 4.680621205481394,
+      "pcgls_win_count": 24,
+      "pcgls_win_rate": 1.0,
+      "sample_count": 24,
+      "split": "fresh_family_ood"
+    },
+    {
+      "bootstrap_mean_95_interval_percent": [
+        5.11260471216214,
+        8.49199088106325
+      ],
+      "holm_adjusted_sign_test_p_value": 5.364418029785156e-07,
+      "learned_field_relative_l2_mean": 0.6342272042400307,
+      "learned_methods_averaged": [
+        "raw_seed_20261741",
+        "raw_seed_20261742",
+        "raw_seed_20261743"
+      ],
+      "one_sided_sign_test_p_value": 5.960464477539063e-08,
+      "pcgls_field_relative_l2_mean": 0.591672761986653,
+      "pcgls_method": "pcgls_4_selected",
+      "pcgls_relative_error_reduction_mean_percent": 6.758845789390086,
+      "pcgls_relative_error_reduction_median_percent": 6.606647555593542,
+      "pcgls_relative_error_reduction_minimum_percent": 0.9065313226916601,
+      "pcgls_relative_error_reduction_p10_percent": 2.1218518942610265,
+      "pcgls_win_count": 24,
+      "pcgls_win_rate": 1.0,
+      "sample_count": 24,
+      "split": "fresh_correlated_noise_ood"
+    },
+    {
+      "bootstrap_mean_95_interval_percent": [
+        7.019593063401862,
+        11.2396006806081
+      ],
+      "holm_adjusted_sign_test_p_value": 5.9604644775390625e-06,
+      "learned_field_relative_l2_mean": 0.6985993029342757,
+      "learned_methods_averaged": [
+        "raw_seed_20261741",
+        "raw_seed_20261742",
+        "raw_seed_20261743"
+      ],
+      "one_sided_sign_test_p_value": 1.4901161193847656e-06,
+      "pcgls_field_relative_l2_mean": 0.6352563127875328,
+      "pcgls_method": "pcgls_4_selected",
+      "pcgls_relative_error_reduction_mean_percent": 9.068667610950554,
+      "pcgls_relative_error_reduction_median_percent": 8.308862886076762,
+      "pcgls_relative_error_reduction_minimum_percent": -0.9386367431555838,
+      "pcgls_relative_error_reduction_p10_percent": 3.270502312217899,
+      "pcgls_win_count": 23,
+      "pcgls_win_rate": 0.9583333333333334,
+      "sample_count": 24,
+      "split": "fresh_family_noise_ood"
+    },
+    {
+      "bootstrap_mean_95_interval_percent": [
+        2.6201933454979316,
+        5.657476667263376
+      ],
+      "holm_adjusted_sign_test_p_value": 0.000771939754486084,
+      "learned_field_relative_l2_mean": 0.6545646414160728,
+      "learned_methods_averaged": [
+        "raw_seed_20261741",
+        "raw_seed_20261742",
+        "raw_seed_20261743"
+      ],
+      "one_sided_sign_test_p_value": 0.000771939754486084,
+      "pcgls_field_relative_l2_mean": 0.6293972469866276,
+      "pcgls_method": "pcgls_4_selected",
+      "pcgls_relative_error_reduction_mean_percent": 4.110860861646034,
+      "pcgls_relative_error_reduction_median_percent": 3.2122331269096893,
+      "pcgls_relative_error_reduction_minimum_percent": -1.9744221609337735,
+      "pcgls_relative_error_reduction_p10_percent": -0.12716186503523458,
+      "pcgls_win_count": 20,
+      "pcgls_win_rate": 0.8333333333333334,
+      "sample_count": 24,
+      "split": "fresh_geometry_ood"
+    },
+    {
+      "bootstrap_mean_95_interval_percent": [
+        5.187864049206438,
+        9.425412671673802
+      ],
+      "holm_adjusted_sign_test_p_value": 5.364418029785156e-07,
+      "learned_field_relative_l2_mean": 0.7197062538729774,
+      "learned_methods_averaged": [
+        "raw_seed_20261741",
+        "raw_seed_20261742",
+        "raw_seed_20261743"
+      ],
+      "one_sided_sign_test_p_value": 5.960464477539063e-08,
+      "pcgls_field_relative_l2_mean": 0.6682838822404543,
+      "pcgls_method": "pcgls_4_selected",
+      "pcgls_relative_error_reduction_mean_percent": 7.24180250183183,
+      "pcgls_relative_error_reduction_median_percent": 6.821668838794874,
+      "pcgls_relative_error_reduction_minimum_percent": 0.4575343120000334,
+      "pcgls_relative_error_reduction_p10_percent": 1.246757453798652,
+      "pcgls_win_count": 24,
+      "pcgls_win_rate": 1.0,
+      "sample_count": 24,
+      "split": "fresh_joint_ood"
+    },
+    {
+      "bootstrap_mean_95_interval_percent": [
+        4.072658732499328,
+        7.374113797534272
+      ],
+      "holm_adjusted_sign_test_p_value": 5.9604644775390625e-06,
+      "learned_field_relative_l2_mean": 0.6617852933704853,
+      "learned_methods_averaged": [
+        "raw_seed_20261741",
+        "raw_seed_20261742",
+        "raw_seed_20261743"
+      ],
+      "one_sided_sign_test_p_value": 1.4901161193847656e-06,
+      "pcgls_field_relative_l2_mean": 0.6273157012959322,
+      "pcgls_method": "pcgls_4_selected",
+      "pcgls_relative_error_reduction_mean_percent": 5.736755874205284,
+      "pcgls_relative_error_reduction_median_percent": 6.111144716799863,
+      "pcgls_relative_error_reduction_minimum_percent": -0.3303788738913864,
+      "pcgls_relative_error_reduction_p10_percent": 0.40359266375424596,
+      "pcgls_win_count": 23,
+      "pcgls_win_rate": 0.9583333333333334,
+      "sample_count": 24,
+      "split": "fresh_exact_operator_control"
+    }
+  ],
+  "pooled_fresh_frontier": [
+    {
+      "adjoint_calls": 4,
+      "field_relative_l2_mean": 0.6828161531261036,
+      "field_relative_l2_median": 0.6495136618614197,
+      "forward_calls": 4,
+      "method": "sobolev_selected",
+      "sample_count": 168,
+      "total_operator_calls": 8,
+      "trainable_parameter_count": 0
+    },
+    {
+      "adjoint_calls": 4,
+      "field_relative_l2_mean": 0.6711326446679851,
+      "field_relative_l2_median": 0.651954174041748,
+      "forward_calls": 4,
+      "method": "raw_learned_seed_mean",
+      "sample_count": 168,
+      "total_operator_calls": 8,
+      "trainable_parameter_count": 2227
+    },
+    {
+      "adjoint_calls": 4,
+      "field_relative_l2_mean": 0.6767676295269103,
+      "field_relative_l2_median": 0.6440064311027527,
+      "forward_calls": 4,
+      "method": "gated_learned_seed_mean",
+      "sample_count": 168,
+      "total_operator_calls": 8,
+      "trainable_parameter_count": 2227
+    },
+    {
+      "adjoint_calls": 3,
+      "field_relative_l2_mean": 0.6604373446177869,
+      "field_relative_l2_median": 0.6353151798248291,
+      "forward_calls": 3,
+      "method": "pcgls_3_selected",
+      "sample_count": 168,
+      "total_operator_calls": 6,
+      "trainable_parameter_count": 0
+    },
+    {
+      "adjoint_calls": 4,
+      "field_relative_l2_mean": 0.6245836949064618,
+      "field_relative_l2_median": 0.5990663170814514,
+      "forward_calls": 4,
+      "method": "pcgls_4_selected",
+      "sample_count": 168,
+      "total_operator_calls": 8,
+      "trainable_parameter_count": 0
+    }
+  ],
+  "schema_version": "psu-b0-pcgls-no-go-analysis-public-1.0",
+  "selected_pcgls": {
+    "candidate_id": "pcgls4_s4_e0.05",
+    "family": "pcgls_4",
+    "mean_combined_loss": 0.5632794673244158,
+    "mean_field_relative_l2": 0.6126855909824371,
+    "mean_front_top10_f1": 0.5312254677216212,
+    "mean_gradient_relative_l2": 0.8002407352129618,
+    "mean_measurement_relative_l2": 0.26689150370657444,
+    "parameters": {
+      "axis_weights_xyz": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "epsilon": 0.05,
+      "stages": 4,
+      "strength": 4.0
+    },
+    "sample_count": 24
+  },
+  "status": "CURRENT_LEARNED_STEEPEST_DIRECTION_NO_GO_AFTER_STRONG_BASELINE"
+}

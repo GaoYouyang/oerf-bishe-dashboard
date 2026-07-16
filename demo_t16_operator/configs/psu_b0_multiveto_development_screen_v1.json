@@ -1,0 +1,28 @@
+{
+  "schema_version": "psu-b0-multiveto-development-screen-1.0",
+  "status": "POSTOPEN_DEVELOPMENT_SCREEN_ONLY_NOT_A_PREREGISTRATION",
+  "created_at_utc": "2026-07-16T16:45:00Z",
+  "source_development_report": "private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_development_v1/private_report.json",
+  "source_postopen_diagnosis": "private_library/external_datasets/psu_bost_flight_body/b0_residual_risk_postopen_diagnosis_v1/private_report.json",
+  "feature_contract": "psu-b0-canonical-support-projected-risk-2.0",
+  "threshold_grid": {
+    "train_stress_quantiles": [0.7, 0.8, 0.9, 0.95, 0.975, 1.0],
+    "include_no_veto": true,
+    "six_view_extra_margin_percent": [0.0, 0.25, 0.5, 1.0, 1.5, 2.0]
+  },
+  "selection": {
+    "split": "risk_validation",
+    "coverage_minimum": 0.2,
+    "overall_harm_over_one_percent_rate_maximum": 0.05,
+    "per_view_harm_over_one_percent_rate_maximum": 0.1,
+    "objective": "maximize mean selected gain, then coverage, then prefer stricter stress thresholds and smaller six-view backoff"
+  },
+  "claim_boundary": {
+    "opened_fresh_used_for_threshold_selection": false,
+    "opened_fresh_used_for_diagnosis_after_selection": true,
+    "new_independent_repeat": false,
+    "candidate_frozen": false,
+    "conformal_guarantee": false,
+    "algorithm_superiority": false
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "name": "t16_v3j_gc_sro_variable_geometry_functional_pilot_v1",
+  "dataset_config": "v3c_dev2_dataset.json",
+  "private_dataset_npz": "v3i_variable_geometry_work/t16_v3i_variable_geometry_dataset.npz",
+  "v3i_dashboard": "v3i_variable_geometry_dataset/v3i_variable_geometry_dashboard.json",
+  "base_checkpoint": "v3d_fno_optimizer_work/20260901/base/checkpoints/base_fno.pt",
+  "output_dir": "v3j_gc_sro_functional_pilot",
+  "work_dir": "v3j_gc_sro_functional_work",
+  "model_seeds": [20261301, 20261302, 20261303],
+  "methods": ["static", "k_cardinality", "shuffled_geometry", "correct_geometry"],
+  "training": {
+    "device": "cpu",
+    "batch_size": 12,
+    "epochs": 24,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0,
+    "lambda_gradient": 0.12,
+    "lambda_reprojection": 0.02,
+    "lambda_boundary": 0.02,
+    "gradient_clip_norm": 2.0
+  },
+  "gc_sro": {
+    "descriptor_hidden": 16,
+    "descriptor_embedding": 8,
+    "adapter_hidden": 6,
+    "spectral_modes": [4, 6, 6],
+    "maximum_correction_scale": 0.25,
+    "freeze_base": true
+  },
+  "functional_gate": {
+    "primary_split": "val",
+    "required_comparators": ["static", "k_cardinality", "shuffled_geometry"],
+    "minimum_mean_field_gain_pct": 0.0,
+    "minimum_field_cluster_ci95_low_pct": 0.0,
+    "required_positive_seed_count": 3,
+    "minimum_mean_audit_gain_pct": -1.0,
+    "bootstrap_seed": 20261391,
+    "bootstrap_replicates": 10000
+  },
+  "claims_boundary": {
+    "development_only": true,
+    "mechanism_functional_pilot": true,
+    "matched_variable_geometry_fno_trained": false,
+    "superiority_tested": false,
+    "blind_final_opened": false,
+    "real_bost_geometry_present": false,
+    "checkpoint_weights_public": false,
+    "private_dataset_public": false
+  }
+}

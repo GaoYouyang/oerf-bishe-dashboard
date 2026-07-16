@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OERF / BOST PDF 可读性与缓存边界审计</title>
+  <style>
+    :root {
+      --bg: #f7faf9;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #607080;
+      --line: #d9e2e4;
+      --green: #147b68;
+      --blue: #2866b1;
+      --red: #aa3f31;
+      --amber: #9a6a00;
+      --soft-green: #eaf6f2;
+      --soft-blue: #edf4ff;
+      --soft-red: #faeeeb;
+      --soft-amber: #f8f0dc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef8f5, transparent 320px), var(--bg);
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    header, main {
+      width: min(1160px, calc(100vw - 36px));
+      margin: 0 auto;
+    }
+    header { padding: 34px 0 18px; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.08;
+    }
+    h2 { margin: 30px 0 12px; font-size: 24px; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    .button-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .button.primary { background: var(--green); border-color: var(--green); color: #fff; }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .card, .metric, .notice {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+    }
+    .metric b { display: block; color: var(--green); font-size: 32px; line-height: 1; margin-bottom: 6px; }
+    .metric span { color: var(--muted); font-size: 13px; }
+    .notice { border-left: 5px solid var(--green); background: linear-gradient(90deg, var(--soft-green), #fff 72%); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+    th { background: #eef5f2; color: #2f3b41; }
+    tr:last-child td { border-bottom: 0; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      border: 1px solid var(--line);
+    }
+    .ok { background: var(--soft-green); color: var(--green); border-color: #cce4dc; }
+    .link { background: var(--soft-blue); color: var(--blue); border-color: #d2e0f1; }
+    .risk { background: var(--soft-red); color: var(--red); border-color: #edc8c0; }
+    .wait { background: var(--soft-amber); color: var(--amber); border-color: #ead7b5; }
+    .grid { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    ul { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+    li { margin-bottom: 7px; }
+    footer { color: var(--muted); font-size: 12px; margin: 34px 0; }
+    @media (max-width: 840px) {
+      .summary, .grid { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="button" href="./index.html">返回主导航</a>
+    <h1>PDF 可读性与缓存边界审计</h1>
+    <p>用途：给自己和师兄一个清楚边界，说明哪些论文可以在本网页直接打开本地 PDF，哪些只能放出版社、DOI、arXiv、NASA、OSTI 或作者开放入口。最后更新：2026-07-10。</p>
+    <div class="button-row">
+      <a class="button primary" href="./paper_library/index.html">打开 PDF 跳转库</a>
+      <a class="button" href="document_reader.html?doc=paper_library%2Fpapers.json">查看论文元数据</a>
+      <a class="button" href="./fulltext_access_queue.html">受限全文访问队列</a>
+      <a class="button" href="document_reader.html?doc=source_audit.md">来源审计原始记录</a>
+      <a class="button" href="./public_site_size_strategy.html">公开站体积策略</a>
+    </div>
+    <div class="summary">
+      <div class="metric"><b>561</b><span>当前论文与阅读入口</span></div>
+      <div class="metric"><b>192</b><span>已验证开放 PDF</span></div>
+      <div class="metric"><b>24</b><span>假缓存/边界项已清理</span></div>
+      <div class="metric"><b>192</b><span>单篇术语导读页</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice">
+      <h3>一句话原则</h3>
+      <p>只缓存能确认来自 arXiv、NASA/NTRS、OSTI/DOE、机构库、作者主页或开放许可出版社的 PDF；ACM、Springer、Elsevier、AIP、Optica 等页面如果返回访问控制、验证页、订阅 PDF 或版权不清，就只放官方入口，不复制 PDF。</p>
+    </section>
+
+    <section class="notice">
+      <h3>本轮新增：OERF 4D-LII 官方补充材料</h3>
+      <p>Müller / Cai et al. 2026 Applied Optics 的 4D multi-kHz LII 正文仍只放正式 DOI；单独缓存 Optica Figshare supplement，DOI <a href="https://doi.org/10.6084/m9.figshare.32728065.v3">10.6084/m9.figshare.32728065.v3</a>。Figshare API 与本地校验一致：CC BY 4.0、15 页、2,691,186 bytes、MD5 <code>9281b97441b106326d042f621cb2b08e</code>。它是补充材料，不冒充出版社正文全文。</p>
+    </section>
+
+    <section class="notice">
+      <h3>XMU WebVPN 私有库边界</h3>
+      <p>通过学校 VPN 或图书馆订阅读取到的受限 PDF 只放本机 `private_library/`，该目录已加入不上传清单；公开网页只保留 DOI、出版社入口、WebVPN 访问路径和阅读建议。当前受限全文访问队列列出 48 篇优先精读目标，详见 <a href="./xmu_vpn_private_library_protocol.html">XMU WebVPN 与私有论文库协议</a> 与 <a href="./fulltext_access_queue.html">受限全文访问队列</a>。</p>
+    </section>
+
+    <h2>何远哲主线论文状态</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>论文</th>
+          <th>当前处理</th>
+          <th>原因</th>
+          <th>建议</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Neural Refractive Index Field / NeRIF</strong><br />Physics of Fluids, DOI 10.1063/5.0250899</td>
+          <td><span class="tag ok">已缓存开放 PDF</span></td>
+          <td>arXiv 版本可公开阅读；正式引用保留 AIP 期刊 DOI。</td>
+          <td>毕业设计 P0 必读；从 forward model、implicit field、projection consistency 和实验设置摘笔记。</td>
+        </tr>
+        <tr>
+          <td><strong>Simultaneous PIV-BOST 折射补偿</strong><br />Experiments in Fluids, DOI 10.1007/s00348-025-04093-y</td>
+          <td><span class="tag link">出版社入口</span></td>
+          <td>Unpaywall 报告无 OA location；Springer PDF 链命令行请求返回 HTML 挑战页，不是 PDF。公开 Springer 摘要已确认一拖九内窥 BOST、Bunsen 火焰、低速 PIV 中央平面、神经网络重构三维折射率场和速度误差补偿目标；页面为订阅预览。</td>
+          <td>先用摘要级事实做 synthetic PIV-BOST toy 和数据请求清单；全文若需精读，优先通过学校 WebVPN 或请师兄提供合法阅读路径，PDF 只放本地私有目录。</td>
+        </tr>
+        <tr>
+          <td><strong>Tensor Decomposition-Based 4D BOST</strong><br />ACM TOG, DOI 10.1145/3809488</td>
+          <td><span class="tag ok">HTML / eReader 可读</span><span class="tag risk">raw PDF 暂不缓存</span></td>
+          <td>2026-07-10 浏览器复核：ACM 标注 Open access / CC BY 4.0；官方 HTML full text 与 19 页、29.4 MB eReader 均可完整加载。`doi/pdf` / signed CDN URL 在无浏览器会话的命令行仍返回 Cloudflare 403，所以未伪装成本地 PDF。</td>
+          <td>论文详情页提供 eReader 直达；专项页已提取 MM factor、DC、loss、9-view/500-frame 验证、显存和消融参数。本科题仍只拆 clean-room 子问题，不搬无 LICENSE TDBOST 代码。</td>
+        </tr>
+        <tr>
+          <td><strong>Hyz617 / TDBOST 公开仓库</strong></td>
+          <td><span class="tag wait">结构参考</span></td>
+          <td>仓库未见 LICENSE；README 的 open-source 说法不能自动等价为可复制许可。</td>
+          <td>只学习 configs、dataloader、TDmodel、render、run.py 等工程组织；不用、不错搬、先问许可。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>近期新增与修正</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>条目</th>
+          <th>PDF 状态</th>
+          <th>为什么补</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Natural thermal convection BOS measurement</strong><br />Journal of Physics: Conference Series, DOI 10.1088/1742-6596/1748/2/022022</td>
+          <td><span class="tag ok">IOP/JPCS CC BY PDF 已缓存</span></td>
+          <td>Crossref 与 IOP 元数据均显示 VOR 为 CC BY 3.0；官方 PDF 端点返回真实 8 页、0.90 MB PDF。该文补 T12 低成本演示和本科基础直觉：自然热对流是比超声速射流/火焰更低风险的 BOS 入门对象，可用于理解背景图案、位移提取、折射率梯度、密度/温度驱动流动和弱流场的局限。</td>
+        </tr>
+        <tr>
+          <td><strong>Natural-background / smartphone / projected-background BOS support batch</strong><br />Springer DOI 10.1007/s00348-009-0709-3; Elsevier/OSTI DOI 10.1016/j.buildenv.2022.109529; OSTI 3013500; OSTI DOI 10.63044/b16jat41</td>
+          <td><span class="tag ok">2 篇 OSTI PDF 已缓存</span><span class="tag link">2 篇官方入口</span></td>
+          <td>Hargather & Settles 2010 natural-background BOS 根论文只放 Springer/DOI 入口；Boudreaux et al. 2022 reference-free natural-background BOS accepted manuscript 从 OSTI official purl 缓存并核到 20 页；Boudreaux/Root/Jatana/Accawi 2025 smartphone BOS conference PDF 从 OSTI official purl 缓存并核到 9 页；Jatana/Boudreaux/Zhang 2026 projected-background BOS 已核 OSTI/DOI，但本轮下载过慢且半截文件已删除，只放官方入口。该批服务自然背景、参考帧缺失、手机低成本成像、投影背景质量和外场 BOS 系统健康报告，不改变 He/NeRIF/PIV-BOST/4D BOST 主线。</td>
+        </tr>
+        <tr>
+          <td><strong>Plenoptic / light-field BOS bridge batch</strong><br />MST DOI 10.1088/1361-6501/aa7f3d; OSTI 1510185; AIAA/OSTI DOI 10.2514/6.2020-2206; OSTI DOI 10.2172/1392767; Springer/OSTI DOI 10.1007/978-3-031-39062-3_19</td>
+          <td><span class="tag ok">3 篇 OSTI PDF 已缓存</span><span class="tag link">2 篇官方入口</span></td>
+          <td>Klemkowsky et al. 2017 plenoptic BOS 根论文只放 IOP/DOI 入口，因 PDF 路由返回 Radware/HTML 且许可为 IOP standard；OSTI/Sandia 2018 plenoptic camera BOS 4 页 PDF、OSTI/AIAA 2020 high-magnification long-working-distance plenoptic BOS 9 页 PDF、Sandia 2017 hypersonic diagnostics light-field report 21 页 PDF 均已从 official purl 缓存并生成封面/术语导读；Hall et al. 2024 书章已核 OSTI/Springer DOI，但官方 purl 是 697 页、56 MB 全书 PDF，按公开站体积策略只放入口。该批补 OERF 计算成像/光场、单相机三维直觉、真实光学系统约束和 T6/T12 旁支背景，不替代 He/NeRIF/PIV-BOST/4D BOST 主线。</td>
+        </tr>
+        <tr>
+          <td><strong>High-resolution quantitative Schlieren for supersonic jets and shock waves</strong><br />Journal of Visualization, DOI 10.1007/s12650-025-01082-5; arXiv 2411.14069</td>
+          <td><span class="tag ok">arXiv PDF 已缓存</span><span class="tag link">Springer DOI 入口</span></td>
+          <td>Springer / Crossref 正式元数据显示期刊版 VOR 为 TDM-only，因此公开库不缓存 Springer PDF；本轮缓存 16 页、2.28 MB 的 arXiv 版本，并生成封面和单篇术语导读。该文补 T12/T15/M3C：高分辨率定量 Schlieren、亚毫米超声速射流、shock diamond 密度梯度和系统灵敏度/分辨率讨论，作为 BOS/BOST 光路与密度梯度背景，不改变 He/NeRIF/PIV-BOST/4D BOST 主线。</td>
+        </tr>
+        <tr>
+          <td><strong>TAS nonlinear inverse-problem algorithms</strong><br />Communications in Optimization Theory / arXiv, DOI 10.23952/cot.2025.28</td>
+          <td><span class="tag ok">arXiv PDF 已缓存</span></td>
+          <td>OpenAlex 显示期刊页、arXiv 和 PMC 均有开放全文；为降低再分发不确定性，公开库缓存 arXiv PDF，并保留正式 DOI。该文用于补蔡老师 TAS/非线性层析反问题谱系：固定点迭代、无导数求解和 superiorization 可作为 NeRIF/BOST 的数学反问题背景。</td>
+        </tr>
+        <tr>
+          <td><strong>OERF single-camera / holography / multi-physics diagnostics sweep</strong><br />Springer, IOP, Elsevier DOI batch, 2021-2025</td>
+          <td><span class="tag link">5 篇官方入口</span><span class="tag risk">无新增可缓存出版社 PDF</span></td>
+          <td>新增 simultaneous temperature/velocity phosphorescent microspheres、single-camera volumetric thermometry、digital holography review、iron-particle micro-explosion holography、iron-powder concentration holography。OpenAlex/Crossref 核验后多为 closed/TDM/出版社受控访问，故只进公开跳转和本地私有全文队列；它们用于课题组全方向地图，不改变 He/NeRIF/PIV-BOST/4D BOST 主线。</td>
+        </tr>
+        <tr>
+          <td><strong>Event-based PIV for high-speed flows</strong><br />Willert, Measurement Science and Technology, DOI 10.1088/1361-6501/ade27a</td>
+          <td><span class="tag ok">DLR 机构库 PDF 已缓存</span></td>
+          <td>Crossref 显示 IOP VOR 为 CC BY 4.0；IOP 官方 PDF 在命令行触发 Radware 验证页，但 DLR 机构库提供 13 页 publisher-version PDF，题名、DOI 和页数已核。用于补 PIV-BOST/EBIV 图像层、粒子测速和高速时间分辨率语言。</td>
+        </tr>
+        <tr>
+          <td><strong>Flow-induced U-shaped buckled membrane visualization</strong><br />Journal of Visualization, DOI 10.1007/s12650-025-01065-6</td>
+          <td><span class="tag link">Springer DOI 入口</span></td>
+          <td>OpenAlex 核到 Zhen Lyu、Weiwei Cai、Benlong Wang、Yingzheng Liu；用于 F 路线柔性膜/流固耦合可视化实验对象背景。OpenAlex 显示 closed access，无 repository full text，因此公开库只放 DOI 入口。</td>
+        </tr>
+        <tr>
+          <td><strong>Event-triggered flexible-structure visualization</strong><br />Measurement Science and Technology, DOI 10.1088/1361-6501/ad25da</td>
+          <td><span class="tag link">IOP DOI 入口</span></td>
+          <td>OpenAlex/DOI 核到 Zhen Lyu、Weiwei Cai、Yingzheng Liu；主题是事件相机、strobe laser、k-means 时间窗重构和 Kalman filtering。IOP 页面在本环境触发 Radware CAPTCHA，且未找到可缓存 repository PDF，因此只放 DOI/元数据入口。</td>
+        </tr>
+        <tr>
+          <td><strong>Single RGB iron-particle thermometry/sizing</strong><br />Measurement, DOI 10.1016/j.measurement.2024.115679</td>
+          <td><span class="tag link">出版社/Figshare 入口</span></td>
+          <td>OpenAlex/DOI 核到 Measurement OA 正式条目和 Figshare repository 页面，作者包括 Jingruo Chen、Yutao Zheng、Shijie Xu、Yingzheng Liu、Weiwei Cai。命令行 Figshare PDF 下载返回 403 HTML，不是 PDF，因此公开库只保留 ScienceDirect/Figshare 入口。</td>
+        </tr>
+        <tr>
+          <td><strong>EBIV / DMD benchmark</strong><br />Experiments in Fluids, DOI 10.1007/s00348-025-04003-2</td>
+          <td><span class="tag link">出版社入口</span></td>
+          <td>OpenAlex/Crossref/Springer 核到 SJTU/OERF 作者 Jiajun Cao、Xin Zeng、Zhen Lyu、Weiwei Cai、Hong Liu、Sen Li。Springer 页面为订阅预览 / exclusive rights，未找到可缓存开放 PDF。</td>
+        </tr>
+        <tr>
+          <td><strong>TAS root sweep</strong><br />Applied Optics / APL / Applied Physics B / Elsevier DOI batch, 2008-2018</td>
+          <td><span class="tag link">10 篇官方入口</span><span class="tag risk">无新增缓存 PDF</span></td>
+          <td>补蔡老师 hyperspectral / multispectral absorption tomography 根论文链：temperature/concentration 数值成像、regularization parameter、POD 低维表示、controlled-experiment validation、temperature-parallel simulated annealing、DLAS velocity uncertainty、calibration-free WMS、high-resolution flow thermometry、MUMAS 和 spectral-line selection。Crossref/出版社均已核；Optica 多个 PDF 端点返回 Radware/validation HTML，AIP 返回 403，Springer 返回 HTML challenge，Elsevier 为 TDM/受控访问，所以只放官方 fulltext/abstract/DOI 入口。</td>
+        </tr>
+        <tr>
+          <td><strong>BOST/BOS method-neighbor sweep</strong><br />evolutionary BOST / optical-flow QA / plenoptic BOS / PINN-BOS / TIMes, 2017-2026</td>
+          <td><span class="tag ok">1 篇 MDPI CC BY PDF 已缓存</span><span class="tag link">12 篇官方入口</span></td>
+          <td>新增 13 篇 BOST/BOS 方法邻居：evolutionary BOST、laser-speckle heated-jet TBOS、hot-cylinder refractive-index BOS、BOS-to-velocity/pressure PINN、CNN displacement super-resolution、speckle sensitivity、dynamic backgrounds、dual-view plenoptic BOS、plenoptic BOS mini-review、wildfire 3D BOST、TIMes emission + refractive-index tomography、spray-flame TIMes 和 serpentine-nozzle TBOS。仅 MDPI Aerospace plenoptic BOS mini-review 可稳定下载 CC BY 4.0 PDF 并生成封面；Springer 2021/2023 自动 PDF 返回验证 HTML，Optica/AIP/IOP/AIAA/Elsevier 条目只放官方入口或在线 PDF 链接。</td>
+        </tr>
+        <tr>
+          <td><strong>OpenAlex Cai author sweep</strong><br />MST `10.1088/1361-6501/ae08dd`; SCTS `10.1007/s11431-023-2629-2`; Research Square `10.21203/rs.3.rs-5364482/v1`; Optics Express DOI batch</td>
+          <td><span class="tag ok">1 篇 Research Square CC BY PDF 已缓存</span><span class="tag link">5 篇官方入口</span></td>
+          <td>用 OpenAlex 作者 `A5089978492` 做发现线索后，再回到 Crossref/出版社核验。新增 computational imaging for flow visualization 专刊导言、untrained neural network for LTAS、schlieren wavelet optical-flow velocimetry、4D tomographic two-color pyrometry、fan-beam TDLAS tomographic sensor、hyperspectral absorption tomography。Research Square 预印本首页和 Crossref 均标 CC BY 4.0，已缓存 22 页 PDF；Optics Express 三篇虽然 Crossref 显示 VOR-OA，但自动 PDF 请求返回 Optica JS/Radware 验证 HTML，因此只放官方 fulltext/abstract 入口；IOP/Springer 条目为 standard/TDM/closed，不缓存。</td>
+        </tr>
+        <tr>
+          <td><strong>OpenAlex Cai 2025-2026 update sweep</strong><br />PoF `10.1063/5.0244699`; PoF `10.1063/5.0213196`; AFM `10.1002/adfm.202519542`</td>
+          <td><span class="tag ok">1 篇 Cambridge repository PDF 已缓存</span><span class="tag link">2 篇 AIP DOI 入口</span></td>
+          <td>按 OpenAlex 作者 `A5089978492` 追近两年条目后逐 DOI 回核。Physics of Fluids 2025 entrainment 论文含 Weiwei Cai，但 OpenAlex 标 closed/no repository full text，不缓存 AIP PDF；Physics of Fluids 2024 time-resolved tomo-PIV 前作不含 Weiwei Cai，只作为同系列流场诊断背景入口；Advanced Functional Materials 2026 二维材料可调红外探测器综述 Crossref 标 CC BY-NC-ND 4.0，OpenAlex 给 Cambridge repository full text，已缓存 59 页 PDF 并生成封面。该批用于补 OERF 全方向，不改变 He/NeRIF/PIV-BOST/4D BOST 主线。</td>
+        </tr>
+        <tr>
+          <td><strong>CLEO/EDTM computational spectrometry update</strong><br />CLEO `10.1109/CLEO/Europe-EQEC65582.2025.11110956`; CLEO `10.1109/CLEO/Europe-EQEC65582.2025.11111103`; EDTM `10.1109/EDTM61175.2025.11041634`</td>
+          <td><span class="tag ok">2 篇机构开放 PDF 已缓存</span><span class="tag link">1 篇 DOI/会议入口</span></td>
+          <td>按 OpenAlex/Crossref 近两年蔡老师条目回核后新增 3 篇 computational spectrometry/metasurface 旁支。Q-BIC metasurface diffusion-model inverse design 已缓存 Cambridge Apollo accepted-version PDF；broadband van der Waals junction spectrometer 已缓存 Aalto accepted-version PDF；electrically tunable LN metasurface 的 Optica/IEEE PDF 自动访问返回 HTML/不可访问页，因此只放 DOI/会议入口。该批用于课题组全方向图谱和硬件编码 + 计算反演背景，不作为 He/BOST 主线。</td>
+        </tr>
+        <tr>
+          <td><strong>MERL single-view dynamic airflow sensing</strong><br />MERL TR2026-038 / ICASSP 2026</td>
+          <td><span class="tag link">官方 PDF 直链</span><span class="tag risk">不缓存</span></td>
+          <td>新增 2026 “Single View Camera-Based Dynamic Airflow Sensing”。MERL PDF 可公开打开，但首页版权脚注写明个人使用允许、再分发到服务器或列表需 IEEE 许可，因此公开库只保留 MERL technical report 页面和 PDF 直链，不复制本地 PDF。该文服务 single-view / low-cost / physics-informed BOS demo：image-rendering schlieren loss、PINN、Boussinesq approximation、Navier-Stokes + heat-transfer residual 和 learned thermal transport coefficients。</td>
+        </tr>
+        <tr>
+          <td><strong>EBIV / PIV / derived-field support sweep</strong><br />ETFS `10.1016/j.expthermflusci.2025.111425`; EIF `10.1007/s00348-024-03766-4`; SoftwareX `10.1016/j.softx.2025.102356`; IJTF `10.1016/j.ijft.2024.100744`</td>
+          <td><span class="tag ok">2 篇开放 PDF 已缓存</span><span class="tag link">2 篇开放入口</span></td>
+          <td>新增事件相机测速评估、in-line PIV、pykitPIV 和 BOS 温度场到湍流重建 4 篇支撑文献。DLR repository 的 EBIV PDF 与 Springer in-line PIV CC BY PDF 均已下载并用 pdfinfo/正文题名核验；SoftwareX pykitPIV 与 International Journal of Thermofluids BOS-derived-flow 条目均为开放文章，但 ScienceDirect PDF 自动请求返回 403，故只放 DOI/出版社入口。</td>
+        </tr>
+        <tr>
+          <td><strong>Agent for Science / self-driving labs support batch</strong><br />arXiv `2408.06292`; arXiv `2410.05080`; arXiv `2502.05151`; Nat. Commun. `10.1038/s41467-025-59231-1`; Nature `10.1038/s41586-023-06792-0`</td>
+          <td><span class="tag ok">3 篇 arXiv PDF 已缓存</span><span class="tag link">2 篇 Nature 官方入口</span></td>
+          <td>新增 AI Scientist、ScienceAgentBench、LLM for scientific discovery survey、self-driving labs 和 Coscientist 5 条 Agent for Science 支撑文献。三篇 arXiv PDF 已核为 186 页、60 页和 46 页真实 PDF，并生成封面与术语导读；Nature Communications / Nature 两篇 Crossref 核到开放许可，但命令行 PDF 请求返回 Springer Nature client-challenge HTML，不缓存本地 PDF。该批只服务 BOST/NeRIF 参数扫描、数据健康报告、学习日志和会前报告辅助层，不替代何远哲主线。</td>
+        </tr>
+        <tr>
+          <td><strong>BOS optical-flow / PIV-error / TomoBOS support batch</strong><br />Research Square `10.21203/rs.3.rs-7770410/v1`; `10.21203/rs.3.rs-4495643/v1`; FMI `10.1016/j.flowmeasinst.2025.103042`; Optics Express `10.1364/OE.540033`; Symmetry `10.3390/sym16050596`; AIAA `10.2514/6.2019-3288`</td>
+          <td><span class="tag ok">2 篇 CC BY PDF 已缓存</span><span class="tag link">4 篇 DOI/官方入口</span></td>
+          <td>新增实时亚像素 BOS 光流、PIV 折射率匹配误差、wavelet optical-flow BOS、VMBOS 全空间折射率补偿、轴对称/弱非轴对称喷流 TBOS 和 NASA Langley TomoBOS 能力建设。两篇 Research Square 预印本均标 CC BY 4.0，已分别核为 28 页和 19 页真实 PDF 并生成封面与术语导读；Elsevier 无仓储全文，Optica 自动 PDF 路由返回 HTML/验证页，MDPI `/pdf` route 本轮返回 403，AIAA 未找到稳定公开 PDF，因此只放官方入口。该批只服务 F 路线、PIV-BOST 图像层误差和 M3C 系统误差支撑。</td>
+        </tr>
+        <tr>
+          <td><strong>Springer BOS collection gap sweep</strong><br />EIF `10.1007/s00348-026-04220-3`; `10.1007/s00348-025-04166-y`; `10.1007/s00348-025-03980-8`; `10.1007/s00348-025-03957-7`</td>
+          <td><span class="tag ok">1 篇 Springer CC BY PDF 已缓存</span><span class="tag link">3 篇 Springer 入口</span></td>
+          <td>按 Springer `Background Oriented Schlieren` 专题集合补漏。dual-view accelerating flames 3D morphology 论文 Crossref/Springer 标 VOR CC BY 4.0，官方 13 页 PDF 已缓存并生成封面；AC-SDBD calibration schlieren thermometry、phase-shifting profilometry BOS、fractal-like background + DIC BOS 均为 Springer TDM/受控访问或未确认开放许可，只放出版社入口。已存在的 directional rays BOS arXiv 缓存条目未重复入库。</td>
+        </tr>
+        <tr>
+          <td><strong>Cai Scholar top-20 gap sweep</strong><br />Science `10.1126/science.aax8814`; AST `10.1016/j.ast.2018.10.002`; CPC `10.1016/j.cpc.2008.02.012`; Nat. Commun. `10.1038/s41467-024-44702-8`</td>
+          <td><span class="tag ok">1 篇 Nature Communications PDF 已缓存</span><span class="tag link">3 篇官方入口</span></td>
+          <td>按蔡老师 Google Scholar 高引条目补齐 4 个本地缺口：single-nanowire spectrometers、燃烧不稳定非侵入诊断综述、simulated annealing multispectral tomography、broadband van der Waals tunnel diode spectrometer。Nature Communications 2024 为 CC BY 4.0，已缓存 7 页官方 PDF；King's Research Portal 的 Science 2019 accepted manuscript cover page 明确只允许个人研究/学习下载且禁止 further distribution，所以不缓存；Elsevier AST/CPC 条目无开放全文位置，只保留 ScienceDirect/DOI 入口。</td>
+        </tr>
+        <tr>
+          <td><strong>OERF / He high-value PDF gap sweep</strong><br />PIV-BOST, 4D BOST, Volumetric BOST precursor, UBOST, POCI LII / annular flame, IOP metal-particle review / holography</td>
+          <td><span class="tag risk">无新增可缓存 PDF</span><span class="tag link">边界说明已新增</span></td>
+          <td>新增 `oerf_pdf_gap_sweep_2026_07_08.md`。本轮逐条复测后，Springer 高价值条目多返回订阅/购买 HTML，ScienceDirect open-access 页面 PDF 自动请求返回 403，IOP 条目多为 standard/TDM 链接，ResearchGate 不缓存；因此只新增边界说明和阅读建议。</td>
+        </tr>
+        <tr>
+          <td><strong>Traditional TBOS arXiv baselines</strong><br />arXiv `2503.17705`; arXiv `2311.10332`</td>
+          <td><span class="tag ok">2 篇 arXiv PDF 已缓存</span></td>
+          <td>新增 buoyant plume TBOS 与 overexpanded supersonic jet TBOS 两篇传统实验 baseline。前者 42 页，八相机、Poisson projected density、SART；后者 21 页，四相机、FBP/SART、NPR 与相机参数影响。两者用于 M3C view-count / camera-quality / SART baseline，不作为 He 主线替代。</td>
+        </tr>
+        <tr>
+          <td><strong>PyAbel / Abel transform validation toolchain</strong><br />RSI `10.1063/1.5092635`; arXiv `1902.09007`; GitHub `PyAbel/PyAbel`</td>
+          <td><span class="tag ok">arXiv PDF 已缓存</span></td>
+          <td>PyAbel 是 Kaganovich 2020 BOS/interferometry benchmark 里用到的 open-source Python 工具链。已缓存 9 页 arXiv PDF；正式引用保留 Review of Scientific Instruments DOI。GitHub API 元数据返回 MIT license，但 license endpoint 本轮因 rate limit 未重复抓取。</td>
+        </tr>
+        <tr>
+          <td><strong>NASA optical-flow / ground-test BOS engineering batch</strong><br />NTRS `20180002139`, `20190000199`, `20190002831`, `20205001759`, `20170000930`, `20170010206`, `20170001727`, `20170011066`, `20170005509`, `20250010967` 等</td>
+          <td><span class="tag ok">12 篇 NASA 官方 PDF 已缓存</span></td>
+          <td>已缓存 `20180002139`、`20190000199`、`20190002831`、`20205001759`、`20170000930`、`20140011477`、`20150004105`、`20170010206`、`20170001727`、`20170011066`、`20170005509`、`20250010967` 的 NASA/NTRS 官方 PDF；页数从 1 页到 38 页不等。该批覆盖 cross-correlation vs optical flow、实时/Fourier BOS、11-ft transonic TomoBOS、retroreflective plume-shock、GRC ground-test、rocket-engine altitude-test、hypersonic inlet、supersonic-aircraft / celestial-object flight BOS 和 2026 ground-test advancements。</td>
+        </tr>
+        <tr>
+          <td><strong>Optical-flow BOS underwater shock + free-field detonation BOS</strong><br />Springer `10.1007/s00348-016-2271-0`; Springer `10.1007/s00193-026-01268-2`</td>
+          <td><span class="tag ok">2 篇 Springer OA 已缓存</span></td>
+          <td>两篇 Crossref/Springer 均显示 CC BY 4.0；前者支撑 BOS optical-flow 位移估计 baseline，后者支撑高速冲击波/爆轰应用边界。已下载官方 PDF 并用 `pdfinfo` 核到 11 页和 8 页。</td>
+        </tr>
+        <tr>
+          <td><strong>Real-time / Fourier BOS engineering batch</strong><br />NASA `10.64631/doyj7956`; AIAA `10.2514/6.2022-1310`; IOP `10.1088/1361-6501/ab4211`</td>
+          <td><span class="tag ok">NASA Fourier BOS PDF 已缓存</span><span class="tag link">AIAA/IOP 官方入口</span></td>
+          <td>NASA NTRS `20250009318` 标记 PUBLIC、export control NO，18.1 MB PDF 已成功缓存并生成封面；AIAA/IOP 条目仍未确认可缓存开放 PDF，因此继续只放官方入口。</td>
+        </tr>
+        <tr>
+          <td><strong>BOS optical-flow / validation / high-speed 3D gap batch</strong><br />Optica / Springer / IOP / Hindawi-Wiley / Elsevier / AIAA DOI batch</td>
+          <td><span class="tag link">官方入口</span></td>
+          <td>补 11 篇位移算法、projection BOS、BOS/interferometry benchmark、3D shock/supersonic TBOS 和 dataset 线索。Optica 直链返回 HTML 验证页，Hindawi/Wiley PDF 返回 403，IOP/JPCS PDF 返回 HTML 验证页，Elsevier/AIAA/Springer 无确认开放 PDF，所以只放入口。</td>
+        </tr>
+        <tr>
+          <td><strong>Yutao Zheng 3D flame surface measurements</strong><br />Combustion and Flame, DOI `10.1016/j.combustflame.2023.113103`</td>
+          <td><span class="tag ok">Cambridge repository PDF 已缓存</span></td>
+          <td>OERF 源码把该方向写成 “Multi-kHz three-dimensional flame imaging” 且 DOI 指向不匹配论文；按正式题名和 ScienceDirect/Crossref 校正后，Cambridge repository PDF 首页标注 Elsevier open access / CC BY 4.0，适合缓存为 OERF 三维火焰表面、FSD 和曲率测量前史。</td>
+        </tr>
+        <tr>
+          <td><strong>BOS AI displacement / U-Net refractive-gradient batch</strong><br />JOSA A `10.1364/JOSAA.487192`; Optics Express `10.1364/OE.557791`; SPIE `10.1117/1.OE.64.9.094107`; TU Graz `10.3217/vyf5w-yqf81`</td>
+          <td><span class="tag link">官方入口 + 数据入口</span></td>
+          <td>补 Swin Transformer、complex-background CNN、U-Net 折射率梯度重构和 CC BY 4.0 data/code；Optica/SPIE PDF 访问返回验证页或 closed metadata，TU Graz zip 约 1.8 GB，所以只放入口不缓存。</td>
+        </tr>
+        <tr>
+          <td><strong>TU Graz heterodyne BOS flame data/code split</strong><br />Repository DOI `10.3217/7k9f0-7wb03`</td>
+          <td><span class="tag link">数据/代码入口</span></td>
+          <td>DataCite 显示 CC BY 4.0；网页文件清单显示 `Python_Codes.zip` 约 23.7 MB、`Data_Sets.zip` 约 1.8 GB。只放入口，方便先读代码和文件结构，不把 zip 放进仓库。</td>
+        </tr>
+        <tr>
+          <td><strong>Smartphone BOS + hydrogen-leak BOS/MGR-Net chain</strong><br />Springer `10.1007/s00348-019-2817-z`; Elsevier DOI batch `10.1016/j.ijhydene.2013.10.152`, `10.1016/j.psep.2023.05.021`, `10.1016/j.est.2024.110764`, `10.1016/j.ijhydene.2025.151592`, `10.1016/j.ijhydene.2025.153163`</td>
+          <td><span class="tag ok">1 篇 Springer OA 已缓存</span> <span class="tag link">5 篇出版社入口</span></td>
+          <td>Smartphone BOS 的 Springer VOR 为 CC BY 4.0，官方 PDF 已缓存；氢泄漏链用于说明 BOS 可接到浓度、密度、压力、弱信号神经诊断和迁移学习，但 Elsevier 条目只放 ScienceDirect/DOI 入口，不缓存 TDM/受控 PDF。</td>
+        </tr>
+        <tr>
+          <td><strong>TRON-BOS Zenodo sample data</strong><br />Zenodo DOI `10.5281/zenodo.18118110`</td>
+          <td><span class="tag link">数据入口</span></td>
+          <td>Zenodo license 为 CC BY 4.0，但主数据包很大：`DaVis.zip` 约 9.1 GB、`Delta.mat` 约 1.38 GB、`Sinograms.mat` 约 1.28 GB。网页只放 DOI/Zenodo 入口，不把大文件塞进 GitHub Pages。</td>
+        </tr>
+        <tr>
+          <td><strong>Uncertainty-based weighted least squares density integration for BOS</strong><br />Rajendran et al., 2020, DOI 10.1007/s00348-020-03071-w</td>
+          <td><span class="tag ok">OSTI PDF 已缓存</span></td>
+          <td>把不确定度权重带进密度积分，可转化为 NeRIF/BOST 的 confidence map、loss weighting 或误差传播论证。</td>
+        </tr>
+        <tr>
+          <td><strong>BOS with vector tomography for axisymmetric pressure fields</strong><br />Ichihara et al., 2022, DOI 10.1007/s00348-022-03524-4</td>
+          <td><span class="tag ok">Springer OA PDF 已缓存</span></td>
+          <td>补 CT-BOS 以外的 vector tomography 思路，适合把 BOST 从密度/折射率扩到压力场反演背景。</td>
+        </tr>
+        <tr>
+          <td><strong>Onboard BOS using consumer-grade hardware</strong><br />Quinn et al., 2025, DOI 10.1017/aer.2024.119</td>
+          <td><span class="tag ok">Cambridge OA PDF 已缓存</span></td>
+          <td>低成本硬件、振动、配准和 onboard jet-flow 可视化，适合支撑本科可做 demo 的工程约束。</td>
+        </tr>
+        <tr>
+          <td><strong>Limitations of tomoBOS in a lean H2-air premixed flame</strong><br />Iapaolo et al., 2024, DOI 10.1088/1742-6596/2893/1/012107</td>
+          <td><span class="tag ok">IOP CC BY PDF 已缓存</span></td>
+          <td>直接讨论氢气预混火焰 tomoBOS 的物性假设、ARAP 光线模型和温度重构误差，和 OERF 火焰 BOST 前史相近。</td>
+        </tr>
+        <tr>
+          <td><strong>Pocket Schlieren smartphone BOS</strong><br />Rabha et al., 2025, DOI 10.1007/s00348-025-04071-4</td>
+          <td><span class="tag ok">arXiv PDF 已缓存</span></td>
+          <td>作为低成本 BOS 演示和前处理质量控制背景；正式引用保留 Springer DOI，不把它写成 OERF 多视角 BOST 替代路线。</td>
+        </tr>
+        <tr>
+          <td><strong>Forward projected BOS for sparks</strong><br />Kottakalam et al., 2025, DOI 10.1007/s00348-025-04041-w</td>
+          <td><span class="tag ok">Springer OA PDF 已缓存</span></td>
+          <td>投影背景和 fast checkerboard demodulation 可支撑 M3C 的背景生成、位移估计和小尺度强热源系统设计讨论。</td>
+        </tr>
+        <tr>
+          <td><strong>Event-Based Background-Oriented Schlieren</strong><br />Shiba et al., 2024, DOI 10.1109/TPAMI.2023.3328188</td>
+          <td><span class="tag ok">arXiv PDF 已缓存</span></td>
+          <td>事件相机 BOS 的官方代码/数据路线，适合学习 event/frame 数据结构、HDF5、光流和高时间分辨可视化工程组织；只作旁支启发。</td>
+        </tr>
+        <tr>
+          <td><strong>Event-triggered BOS heated jet</strong><br />Lyu, Cai, Liu, 2024, DOI 10.1364/OL.515700</td>
+          <td><span class="tag ok">Optica Open / Figshare PDF 已缓存</span></td>
+          <td>Crossref 显示 Optics Letters 正式版为 Optica OA license；Figshare 文件端点返回真实 4 页 PDF，首页文字核对为蔡组 event-triggered BOS heated jet。用于补 kFPS heated-jet visualization、event camera、pulsed laser speckle projection 和长时段低成本记录。</td>
+        </tr>
+        <tr>
+          <td><strong>Event-triggered BOS with dynamic mirror device</strong><br />Lyu, Cai, Liu, 2024, DOI 10.1088/1361-6501/ad6172</td>
+          <td><span class="tag link">出版社入口</span></td>
+          <td>把 event-triggered BOS 与 DMD 动态投影结合，用于补 OERF 高速/低成本/投影背景旁支；未找到可缓存开放 PDF。</td>
+        </tr>
+        <tr>
+          <td><strong>Adaptive event-frame schlieren</strong><br />Lyu, Cai, Wang, Liu, 2025, DOI 10.1364/OL.545691</td>
+          <td><span class="tag ok">Optica Open / Figshare PDF 已缓存</span></td>
+          <td>Crossref 显示 Optics Letters 正式版为 Optica OA license；Figshare 文件端点返回真实 5 页 PDF，首页文字核对为 frame camera 与 event camera 融合的自适应时间分辨率 schlieren。只作 4D/高速可视化传感器背景，不替代 NeRIF/PIV-BOST/4D BOST 主线。</td>
+        </tr>
+        <tr>
+          <td><strong>NeDF AIP Figshare supplement</strong><br />Li et al., 2024, DOI 10.60893/figshare.pof.27606522.v1</td>
+          <td><span class="tag ok">CC BY 4.0 PDF 已缓存</span></td>
+          <td>补齐 NeDF 正式 PoF DOI `10.1063/5.0241191` 后，缓存其补充材料，用于提取 metrics、训练超参和网络结构，支撑 NeRIF-vs-NeDF 方法对照。</td>
+        </tr>
+        <tr>
+          <td><strong>Neural Refractive Index Primitives</strong><br />Lu et al., 2026, DOI 10.1016/j.combustflame.2026.115082</td>
+          <td><span class="tag ok">arXiv PDF 已缓存</span><span class="tag link">正式 DOI 已回填</span></td>
+          <td>NRIP 是 NeRIF 后续竞品/邻居，本轮把条目从 arXiv landing 升级为 Combustion and Flame 正式引用；开放阅读仍走已缓存 arXiv PDF。</td>
+        </tr>
+        <tr>
+          <td><strong>Single View Refractive Index Tomography with Neural Fields</strong><br />Zhao et al., CVPR 2024, DOI 10.1109/CVPR52733.2024.02396</td>
+          <td><span class="tag ok">arXiv PDF 已缓存</span><span class="tag ok">supplement 已缓存</span><span class="tag link">MIT 代码入口</span></td>
+          <td>不是 BOS/燃烧论文，只作为计算视觉 neural refractive tomography 方法邻居；用于学习 curved-ray tracing through neural fields、single-view ambiguity 和可复现实验组织。</td>
+        </tr>
+        <tr>
+          <td><strong>Background-oriented schlieren (BOS) techniques</strong><br />Raffel, 2015, DOI 10.1007/s00348-015-1927-5</td>
+          <td><span class="tag ok">Springer CC BY PDF 已缓存</span></td>
+          <td>BOS/BOST 入门根文献，适合先补位移测量、灵敏度、误差来源和实验约束；本轮用开放索引与官方 Springer PDF 交叉确认后缓存。</td>
+        </tr>
+        <tr>
+          <td><strong>Investigation of a neural implicit representation tomography method for flow diagnostics</strong><br />Kelly and Thurow, 2024, DOI 10.1088/1361-6501/ad296a</td>
+          <td><span class="tag ok">IOP open PDF 已缓存</span></td>
+          <td>这是 NeRIF 的外部方法邻居，强调 coordinate neural representation、tomographic projection supervision 和 flow diagnostics 场重构；适合放进 NeRIF vs FluidNeRF/NIRT/NRIP 的 related work 表。</td>
+        </tr>
+        <tr>
+          <td><strong>FluidNeRF / NeuroFluid neural-field flow reconstruction bridge</strong><br />Auburn ETD 2024; ICML/PMLR 2022; arXiv 2203.01762</td>
+          <td><span class="tag ok">NeuroFluid arXiv PDF 已缓存</span><span class="tag link">FluidNeRF dissertation 在线 PDF</span></td>
+          <td>FluidNeRF AIAA 正式论文没有开放 PDF，Auburn ETD 提供 56.6 MB 博士论文 PDF，因此只放在线入口；NeuroFluid 的 arXiv/PMLR PDF 已缓存，用于补 neural radiance field / differentiable rendering / fluid dynamics grounding 的方法背景。二者只用于解释 NeRF/NeRIF 边界，不作为 BOST baseline。</td>
+        </tr>
+        <tr>
+          <td><strong>Neural field / encoding foundation sweep</strong><br />Fourier Features; SIREN; NeRF; Instant-NGP; DeepSDF; Occupancy Networks; Neural Fields survey</td>
+          <td><span class="tag ok">7 篇开放 PDF 已缓存</span><span class="tag link">正式 proceedings / DOI 入口</span></td>
+          <td>补齐 NeRIF/NRIP/NIRT 背后的 coordinate neural field 基础：Fourier/positional encoding、periodic activation、ray integration、multiresolution hash encoding、连续标量场和 neural-field 术语体系。该批服务 related work 和方法理解，不作为 BOST 折射率场重构 baseline，也不把计算视觉渲染结果直接拿来和何远哲论文数值对比。</td>
+        </tr>
+        <tr>
+          <td><strong>Classical tomography / inverse baseline sweep</strong><br />ART; SART; Kak &amp; Slaney; TV-min CT; Chambolle-Pock; ASTRA; scikit-image; LSQR</td>
+          <td><span class="tag ok">2 篇开放 PDF 已缓存</span><span class="tag link">6 篇 DOI/官方/机构入口</span></td>
+          <td>补齐 NeRIF/BOST 需要回答的传统 baseline 问题：FBP/Radon、ART/SART、regularized least squares、TV minimization、ASTRA/scikit-image 可运行工具链和 LSQR 稀疏最小二乘。Sidky TV-min 用 arXiv PDF 缓存，scikit-image 用 PeerJ/HAL 开放 PDF 缓存；SART、ASTRA、Chambolle-Pock 等有在线或机构副本但再分发许可需谨慎，因此只放入口。</td>
+        </tr>
+        <tr>
+          <td><strong>Optical flow / displacement foundation sweep</strong><br />Horn-Schunck; Lucas-Kanade; Farneback; Brox; Barron; FlowNet; FlowNet2; PWC-Net; RAFT</td>
+          <td><span class="tag ok">1 篇开放 PDF 已缓存</span><span class="tag link">4 篇 arXiv 直读</span><span class="tag link">4 篇 DOI/DBLP/作者入口</span></td>
+          <td>补齐 PIV-BOST 和 BOS 位移估计的图像层根文献：Horn-Schunck/Lucas-Kanade 给亮度守恒、局部窗口和正则化语言；Farneback 可作为实用 dense optical-flow baseline；FlowNet/PWC-Net/RAFT 解释 neural optical flow 与 RAFT-PIV 的来源。Farneback 用 Linkoping/DiVA PDF 缓存；FlowNet/FlowNet2/PWC-Net/RAFT 保留 arXiv 直读入口，不纳入本次 public deploy 的本地缓存；Brox/Barron 只放作者 PDF 入口，Horn/ScienceDirect 与 Lucas/旧 CMU 下载不缓存。</td>
+        </tr>
+        <tr>
+          <td><strong>Axisymmetric RI-BOS + EBIV / INR support sweep</strong><br />Optics Express `10.1364/OE.27.005990`; Shock Waves `10.1007/s00193-022-01071-9`; Experiments in Fluids `10.1007/s00348-022-03441-6`, `10.1007/s00348-023-03641-8`; Mathematics `10.3390/math14030572`; Science China Tech Sci `10.1007/s11431-025-3089-0`; Mechanical Engineering Journal `10.1299/mej.19-00393`</td>
+          <td><span class="tag ok">1 篇 MDPI CC BY PDF 已缓存</span><span class="tag link">6 篇 DOI/出版社/官方 PDF 入口</span></td>
+          <td>本批补 NeRIF/BOST 的轴对称折射率反演、scalar-potential 约束、事件相机测速、INR dense EBIV、蔡组 schlieren wavelet optical-flow velocimetry 和 derived-field / stress-tensor BOS 边界。MDPI INR-EBIV 官方 PDF 为 CC BY 4.0，已缓存并生成封面与单篇术语导读；Optica/Springer/J-STAGE/Science China 入口保留 DOI 或官方 PDF route，但自动访问遇到验证壳、HTML wrapper、受控许可或缺少明确再分发许可，因此不缓存公开 PDF。</td>
+        </tr>
+        <tr>
+          <td><strong>AIAA 2025 advanced / 4D diagnostics + early TBOS support sweep</strong><br />AIAA `10.2514/6.2025-1059`, `10.2514/6.2025-1057`, `10.2514/6.2025-1056`, `10.2514/6.2025-1061`, `10.2514/6.2015-1690`, `10.2514/6.2018-0008`; AIP/RSI `10.1063/1.4934576`</td>
+          <td><span class="tag link">7 篇 DOI/出版社入口</span><span class="tag risk">无新增缓存 PDF</span></td>
+          <td>补 time-resolved gridless 3D scalar-field tomography、4D projectile/rain impact、4D emission tomography of reacting waves、self-aligned focusing schlieren、turbomachinery TBOS、asymmetric shock-containing jet TBOS 和 density-stratified-fluid BOS。AIAA PDF route 返回 403 或 SSL/受控访问行为，AIP/RSI PDF route 未暴露明确开放再分发许可，因此只放 DOI/出版社入口，不缓存 PDF。</td>
+        </tr>
+        <tr>
+          <td><strong>Influence of inhomogeneous refractive index fields on PIV</strong><br />Vanselow and Fischer, 2018, DOI 10.1016/j.optlaseng.2018.03.020</td>
+          <td><span class="tag ok">SUUB Bremen 二次公开版本已缓存</span></td>
+          <td>PIV-BOST 支线的关键前史：把非均匀折射率导致的 particle-position / velocity error 和 standard/stereo/tomographic PIV 差异讲清楚；公开 PDF 是 postprint，正式引用仍用出版社 DOI。</td>
+        </tr>
+        <tr>
+          <td><strong>PIV optical distortion correction</strong><br />Zha et al., 2016, DOI 10.1088/0957-0233/27/8/085201</td>
+          <td><span class="tag ok">IOP open PDF 已缓存</span></td>
+          <td>本轮重新验证 IOP PDF 直链，确认返回真实 17 页 PDF；这篇能帮助 PIV-BOST 讨论 image-layer dewarping、back-projection/ray tracing 和 vector-field correction 的取舍。</td>
+        </tr>
+        <tr>
+          <td><strong>Adaptive PIV based on sharpness metrics</strong><br />Teich et al., 2018, DOI 10.1186/s41476-018-0073-0</td>
+          <td><span class="tag ok">JEOS / EDP Sciences PDF 已缓存</span></td>
+          <td>官方开放 PDF 返回真实 `%PDF`，页面标注 Open Access / CC BY 4.0；用于补 PIV-BOST image-layer sharpness / wavefront-aberration correction 背景。</td>
+        </tr>
+        <tr>
+          <td><strong>Non-parametric 3D disparity calibration for PIV/LPT</strong><br />Michaelis et al., 2021, DOI 10.18409/ispiv.v1i1.116</td>
+          <td><span class="tag ok">ISPIV repository PDF 已缓存</span></td>
+          <td>ISPIV 2021 官方会议库 PDF 返回真实 `%PDF`；用于补真实相机、窗口和 calibration residual distortion 的 3D disparity correction 思路。</td>
+        </tr>
+        <tr>
+          <td><strong>PIV thermal plume / shock-wave distortion neighbors</strong><br />DOI 10.1063/5.0233759; 10.1088/0957-0233/20/12/125402; 10.1007/s00348-015-2004-9</td>
+          <td><span class="tag link">只放 DOI/出版社入口</span></td>
+          <td>AIP direct PDF 返回 403，IOP / Springer / SPIE / ASCE 条目未确认 redistribution-safe PDF；这些论文只作为 PIV-BOST 误差链与相关工作入口，不复制全文。</td>
+        </tr>
+        <tr>
+          <td><strong>4D tensor / dynamic neural-field representation sweep</strong><br />TensoRF; Tensor4D; K-Planes; HexPlane; TiNeuVox; D-TensoRF</td>
+          <td><span class="tag ok">6 篇 arXiv PDF 已缓存</span></td>
+          <td>这些论文来自 arXiv 开放 PDF，正式 DOI 覆盖 ECCV/CVPR/SIGGRAPH Asia；用于解释 4D BOST 的 tensor factorization、plane-factor spacetime representation、time-aware voxels 和 rank-memory-time 评价，不作为 BOST 折射率场数值 baseline。</td>
+        </tr>
+        <tr>
+          <td><strong>4D temporal metrics / dynamic tomography sweep</strong><br />DMD; sparsity-promoting DMD; dynamic X-ray tomography; DRKF; low-rank+sparse dynamic MRI; Robust PCA</td>
+          <td><span class="tag ok">5 篇 arXiv PDF 已缓存</span><span class="tag link">2 篇 DOI/出版社入口</span></td>
+          <td>新增 7 篇用于支撑 4D BOST 的时序评价和低秩先验语言：Schmid DMD 与 Otazo low-rank+sparse dynamic MRI 只放 DOI/出版社入口；Tu DMD、sparsity-promoting DMD、dynamic X-ray motion model、dimension-reduction Kalman filter 和 Robust PCA 均缓存 arXiv PDF。它们是 temporal metrics / dynamic inverse-problem 背景，不作为 BOST 重构 baseline。</td>
+        </tr>
+        <tr>
+          <td><strong>Optimization of optical systems for BOS</strong><br />Zhou et al., 2025, DOI 10.1088/1361-6501/ad8944</td>
+          <td><span class="tag ok">IOP open PDF 已缓存</span></td>
+          <td>12 页开放 PDF 已核验；补 BOST/NeRIF 实验设计里的 entocentric/telecentric optics、depth of field、magnification、boundary-layer BOS 和系统优化约束。</td>
+        </tr>
+        <tr>
+          <td><strong>Enhanced Background Oriented Schlieren (EBOS)</strong><br />Cozzi &amp; Göttlich, 2019, DOI 10.1088/1742-6596/1249/1/012017</td>
+          <td><span class="tag ok">Polimi/IOP CC BY PDF 已缓存</span></td>
+          <td>Crossref 显示 IOP VOR 为 CC BY 3.0；IOP 官方 PDF 端点完整下载不稳定，Polimi 机构库稳定返回同一篇 IOP PDF。用于补多张未扰动背景图、背景刚体位移、多图平均、interrogation area、particle image density 和 cross-correlation uncertainty reduction。</td>
+        </tr>
+        <tr>
+          <td><strong>BOS velocimetry / super-temporal / quantitative schlieren additions</strong><br />DOI 10.1007/s00348-025-04043-8; 10.1007/s00348-025-04015-y; 10.1007/s00348-025-03958-6</td>
+          <td><span class="tag ok">3 篇 Springer OA PDF 已缓存</span></td>
+          <td>三篇均为 Experiments in Fluids 2025 open access / CC BY 4.0 PDF，已核验标题、页数和 PDF 文件头；用于补全尺寸 helicopter BOS velocimetry、schlieren space-to-time reconstruction 和 characteristics-based quantitative schlieren。它们服务速度诊断/4D 时间先验/定量 schlieren 边界，不替代何远哲 NeRIF/PIV-BOST/4D BOST 主线。</td>
+        </tr>
+        <tr>
+          <td><strong>DOE / hidden-grid / fringe-demodulation BOS phase processing</strong><br />DOI 10.1364/AO.572042; 10.1016/j.optlaseng.2019.105908; 10.1016/j.optlaseng.2022.107307; 10.1016/j.expthermflusci.2025.111434</td>
+          <td><span class="tag ok">3 篇 arXiv PDF 已缓存</span><span class="tag link">1 篇 ScienceDirect 入口</span></td>
+          <td>已缓存 deep-learning assisted fringe demodulation、GPU-assisted DOE-BOS 和 hidden-grid BOS 的 arXiv PDF；强折射流体 fringe tracking 只有正式 ScienceDirect/DOI 入口，不复制 PDF。该组用于补背景编码、条纹相位、windowed Fourier/root-MUSIC、强折射跟踪失效等前处理边界。</td>
+        </tr>
+        <tr>
+          <td><strong>CTC/FCT open survey for flame tomography foundation</strong><br />Frontiers in Photonics, DOI 10.3389/fphot.2022.845971</td>
+          <td><span class="tag ok">Frontiers CC BY 4.0 PDF 已缓存</span></td>
+          <td>已核 Crossref、Frontiers license 和 PDF 文件头；19 页开放综述用于补 3D flame chemiluminescence tomography 的 theory、projection model、ART/SART、regularization、compressed sensing、deep learning 和 applications。只作为 OERF 三维火焰层析基础，不改变 He/BOST/NeRIF 主线。</td>
+        </tr>
+        <tr>
+          <td><strong>Numerical BOS for phase reconstruction</strong><br />Liu et al., 2025, DOI 10.3390/photonics12070626</td>
+          <td><span class="tag ok">MDPI CC BY PDF 已缓存</span></td>
+          <td>21 页开放 PDF 已核验；补 ray tracing forward model、optical-flow displacement extraction、conjugate-gradient phase reconstruction、JHTDB turbulence 和 shock-wave degradation limits。</td>
+        </tr>
+        <tr>
+          <td><strong>Counterflow diffusion flame BOS</strong><br />Jun et al., 2026, DOI 10.6108/JPNE.2026.6.1.087</td>
+          <td><span class="tag ok">JPNE CC BY-NC PDF 已缓存</span></td>
+          <td>11 页开放 PDF 已核验；补 counterflow diffusion flame、refractive-index gradient identification、Fourier displacement extraction 和 inverse Abel transform。</td>
+        </tr>
+        <tr>
+          <td><strong>Holographic / plenoptic / jet / facility BOS additions</strong><br />2022-2026 official DOI links</td>
+          <td><span class="tag link">官方入口</span><span class="tag wait">不缓存</span></td>
+          <td>新增 Holographic BOS、plenoptic-camera TBOS、gaseous fuel jet BOS tomography、AIAA buoyancy-driven flows/flames TBOS facility；Optica/IOP/ScienceDirect/AIAA 自动 PDF 请求返回验证页或 403，因此只放正式 DOI/出版社入口。</td>
+        </tr>
+        <tr>
+          <td><strong>NeRIF / 4D BOST reference-chain additions</strong><br />2000-2025 BOS/TBOS/PIV-error official DOI links</td>
+          <td><span class="tag ok">Hayabusa Springer OA PDF 已缓存</span><span class="tag wait">其余官方入口</span></td>
+          <td>新增 19 篇参考链论文：BOS 光学断层起源、synthetic schlieren、Schlieren/Shadowgraph 综述、graded-index ray tracing、CBOS/CGBOS、3D density assessment、NASA Langley TBOS、hypersonic/ballistic BOS、PIV 折射率误差和 optical-flow uncertainty。仅 `10.1007/s00348-024-03943-5` 确认为 CC BY 4.0 PDF 并缓存；IOP/AIAA/Elsevier/Optica/Springer 受控页面只保留 DOI/出版社入口。</td>
+        </tr>
+        <tr>
+          <td><strong>Zenodo helium jet BOS velocimetry dataset</strong><br />Settles and Liberzon, 2022, DOI 10.5281/zenodo.6136052</td>
+          <td><span class="tag link">数据入口</span><span class="tag wait">大 zip 不缓存</span></td>
+          <td>Zenodo API 显示 CC BY 4.0；四个 run zip 约 0.85-1.07 GB，README 直链返回 403。当前只放数据集 landing/download 入口，用作 OpenPIV-BOS / PIV-BOST 前置训练数据来源，不把 GB 级数据提交进 GitHub Pages。</td>
+        </tr>
+        <tr>
+          <td><strong>Bayesian PINN flow tomography UQ</strong><br />Molnar and Grauer, 2022, DOI 10.1088/1361-6501/ac5437</td>
+          <td><span class="tag ok">arXiv PDF 已缓存</span><span class="tag link">正式 DOI 已核</span></td>
+          <td>IOP 正式版 license 不作为公开仓库缓存依据；arXiv `2108.09247` 下载成功并核验 18 页。该文不是 BOS 专篇，但把 LoS tomography、physics-informed regularization、Bayesian uncertainty 和 semi-convergence 放在同一框架，适合补 NeRIF/4D BOST 的可信重构背景。</td>
+        </tr>
+        <tr>
+          <td><strong>Physics-informed BOS journal arXiv cache</strong><br />Molnar et al., 2023, DOI 10.1007/s00348-022-03554-y</td>
+          <td><span class="tag ok">arXiv PDF 已缓存</span><span class="tag link">正式 DOI 已核</span></td>
+          <td>Springer 正式页的 license 为 text/data mining，故不缓存出版商 PDF；arXiv `2208.04280v2` 下载成功并核验 30 页，封面题名、作者和摘要均指向 “Estimating Density, Velocity, and Pressure Fields in Supersonic Flows Using Physics-Informed BOS”。</td>
+        </tr>
+        <tr>
+          <td><strong>PINNs for fluid mechanics review</strong><br />Cai et al., 2021, DOI 10.1007/s10409-021-01148-1</td>
+          <td><span class="tag ok">OSTI public PDF 已缓存</span><span class="tag link">Springer DOI 保留</span></td>
+          <td>缓存 OSTI `2282982` public PDF，用于补 physics-informed BOS / scientific ML 的 loss 设计、data/physics balance 和 inverse-problem pitfalls。该文作者 Shengze Cai 不是 SJTU Weiwei Cai，网页中已明确标注以避免谱系混淆。</td>
+        </tr>
+        <tr>
+          <td><strong>Model-based / physics-informed BOS neural reconstruction batch</strong><br />Advanced Imaging / TU Graz / AIP / AIAA / SPIE / MERL</td>
+          <td><span class="tag ok">Advanced Imaging CC BY PDF 已缓存</span><span class="tag ok">indoor airflow arXiv PDF 已缓存</span><span class="tag wait">大 zip 与受控 PDF 不缓存</span></td>
+          <td>新增 `10.3788/AI.2025.10028` model-based neural network BOST，Researching.cn 官方 PDF 明确 CC BY 4.0 并缓存 11 页；TU Graz data/scripts zip 约 769 MB、heterodyne BOS dataset 约 4.4 GB，只放仓库入口；AIP/AIAA/SPIE PDF 请求返回 403 或 HTML；Indoor Airflow 条目已核正式 ICASSP DOI `10.1109/ICASSP49660.2025.10889412`，开放阅读仍使用已缓存 arXiv `2509.14442` 的 3 页 PDF，并保留 MERL 作为额外官方来源。</td>
+        </tr>
+        <tr>
+          <td><strong>PINN for rotating 3D velocimetry</strong><br />Moaven et al., 2026, DOI 10.1007/s00348-026-04203-4</td>
+          <td><span class="tag ok">Springer CC BY PDF 已缓存</span><span class="tag link">正式 DOI 已核</span></td>
+          <td>Crossref 显示 Experiments in Fluids 67, article 46，VOR license 为 CC BY 4.0；官方 23 页 PDF 已缓存并生成封面。该文不是 BOST/何远哲主线，但可补 PINN + sparse/noisy 3D velocimetry、Navier-Stokes/continuity regularization 和 PIV-BOST 速度场验证语言。</td>
+        </tr>
+        <tr>
+          <td><strong>Simultaneous optical velocity and density measurements</strong><br />Kalenko et al., 2025, DOI 10.1063/5.0275821</td>
+          <td><span class="tag link">官方 PDF 直链</span><span class="tag wait">不缓存</span></td>
+          <td>AIP/Crossref 显示 CC BY-NC 4.0，但本地命令行直取 PDF 返回 403；当前只放 AIP 官方 PDF 链，用作 PIV-BOST 同步速度-密度/折射测量背景。</td>
+        </tr>
+        <tr>
+          <td><strong>OERF plasma / materials OSTI accepted manuscripts</strong><br />Nature DOI 10.1038/s41586-023-06694-1; Nature Synthesis DOI 10.1038/s44160-025-00914-4</td>
+          <td><span class="tag ok">2 篇 DOE/OSTI PDF 已缓存</span></td>
+          <td>已缓存 Nature 2023 “A stable atmospheric-pressure plasma...” 的 43 页 OSTI accepted manuscript，以及 Nature Synthesis 2026 “Electrified vapour deposition...” 的 63 页 DOE PAGES/OSTI accepted manuscript；出版社页面保留为正式引用入口。这两篇只服务 OERF 全方向背景，不改变 He/BOST 主线。</td>
+        </tr>
+        <tr>
+          <td><strong>TBOS for axisymmetric and weakly non-axisymmetric supersonic jets</strong><br />Jia et al., 2024, DOI 10.3390/sym16050596</td>
+          <td><span class="tag link">官方在线 PDF 直链</span></td>
+          <td>MDPI 网页 PDF 入口返回 HTML，但官方 mdpi-res 资源直链确认是 18 页 PDF；因原 PDF 约 65 MB，不放入 GitHub Pages 仓库，只保留封面预览和在线 PDF 跳转。</td>
+        </tr>
+        <tr>
+          <td><strong>TU/e iron-particle combustion repository PDFs</strong><br />Peng / Liu / Kong / Cai, 2024-2025, DOI 10.1016/j.combustflame.2024.113509 and 10.1016/j.combustflame.2025.113974</td>
+          <td><span class="tag link">机构库 PDF 直链</span><span class="tag wait">不缓存</span></td>
+          <td>TU/e PDF 可直接阅读，但首页写明 Taverne license，适合私人学习下载/打印，不适合复制进公开仓库；网页只保留机构库 landing/PDF 入口，用于补 OERF 金属颗粒燃烧旁支。</td>
+        </tr>
+        <tr>
+          <td><strong>Tomo-PIV and Tomo-BOS transonic jet experiment</strong><br />Lu et al., 2026, DOI 10.1007/s11431-025-3091-0</td>
+          <td><span class="tag link">Science China / Springer 页面入口</span></td>
+          <td>Springer PDF 链返回 HTML 页面，不作为 PDF 缓存；用于补 Tomo-PIV/Tomo-BOS 联合诊断和 transonic jet 工程背景。</td>
+        </tr>
+        <tr>
+          <td><strong>BOS development for jets in supersonic crossflow</strong><br />Franzen et al., 2024, DOI 10.2514/6.2024-0857</td>
+          <td><span class="tag link">AIAA 页面入口</span></td>
+          <td>AIAA PDF 不确认开放缓存；用于补高速横向喷注/超声速横流中的 BOS 系统搭建背景。</td>
+        </tr>
+        <tr>
+          <td><strong>Single-shot schlieren density reconstruction + RDE exhaust tomography</strong><br />DOI 10.1063/5.0274621; 10.2514/6.2024-2035</td>
+          <td><span class="tag link">官方 DOI 入口</span><span class="tag wait">不缓存</span></td>
+          <td>Crossref 已核 Physics of Fluids 2025 single-shot schlieren AI 反演和 AIAA 2024 RDE exhaust schlieren tomography；AIP/AIAA PDF 请求均返回 Cloudflare/403 challenge，且未确认开放再分发许可，因此只入论文库链接和 BibTeX，不缓存 PDF。</td>
+        </tr>
+        <tr>
+          <td><strong>Optical Diagnostics with Background Oriented Schlieren thesis</strong><br />Cakir, Lund University, 2024</td>
+          <td><span class="tag link">Lund 官方 PDF 直链</span><span class="tag wait">57 MB 不缓存</span></td>
+          <td>Lund Research Portal 显示博士论文 PDF、90 页、57.2 MB、CC BY-ND；该文适合作为 BOS 实验/光流/燃烧应用长读材料，但文件过大且非核心论文，公开库只放官方页面和 PDF 直链，不把大 PDF 塞入 GitHub Pages。</td>
+        </tr>
+        <tr>
+          <td><strong>BOS ballistic-range review + plenoptic BOS dissertation</strong><br />DOI 10.1051/epjconf/20134501034; Auburn ETD 10415/4827</td>
+          <td><span class="tag ok">EPJ PDF 已缓存</span><span class="tag link">Auburn 入口不缓存</span></td>
+          <td>EPJ 2013 ballistic-range BOS review 页面显示 Open Access 与 CC BY-NC 2.0，官方 8 页 PDF 已缓存并生成封面；Auburn 2015 plenoptic BOS dissertation 页面可读且提供 5.992 MB PDF，但未见明确开放再分发许可，因此只放官方入口和 PDF 直链。</td>
+        </tr>
+        <tr>
+          <td><strong>MIRAGE synthetic BOS/schlieren + projected virtual-source schlieren + unsupervised BOS registration</strong><br />DOI 10.1088/1361-6501/ae4f0a; 10.1364/opticaopen.32226972; 10.1016/j.measurement.2026.121572</td>
+          <td><span class="tag ok">2 篇开放 PDF 已缓存</span><span class="tag link">1 篇正式 DOI 入口</span></td>
+          <td>IOP MIRAGE 论文 Crossref 和 PDF 首页均标 CC BY 4.0，13 页 PDF 已缓存；Optica Open / figshare 单端 schlieren 预印本 11 页 PDF 已缓存；Measurement 2026 无监督 registration 网络已核正式 DOI，但 SSRN PDF 返回 403 HTML、Elsevier 只暴露 TDM/API 路径，因此只放 DOI/ScienceDirect 入口。该批服务 synthetic benchmark、低成本演示和 BOS 位移前处理，不改变 He/NeRIF/PIV-BOST/4D BOST 主线。</td>
+        </tr>
+        <tr>
+          <td><strong>2025-2026 BOS/Schlieren system-error and 3D quantitative imaging batch</strong><br />DOI 10.1063/5.0299618; 10.2514/6.2026-2293; 10.1016/bs.po.2025.02.001; 10.1088/1361-6501/ae46c7; 10.1364/OL.576200; 10.1088/1361-6501/ae44b9; 10.5139/jksas.2025.53.1.1; 10.1117/12.3116412</td>
+          <td><span class="tag link">8 篇官方入口</span><span class="tag wait">不缓存</span></td>
+          <td>补入 detonation-exhaust BOS velocity/density diagnosis、AIAA synthetic raytraced BOS velocimetry、Progress in Optics 3D quantitative schlieren imaging、plenoptic/automatic self-aligned focusing schlieren、microscale schlieren parameter analysis、BOS vibration correction 和 CNN BOS denoising。AIP 条目虽显示 CC BY-NC 4.0，但自动 PDF 端点返回 403 HTML；AIAA、Elsevier、IOP、Optica、DBpia 和 SPIE 条目未暴露明确开放再分发许可，因此只放 DOI/出版社入口。本批服务 T5/T6/T12/T13/T15 的前处理、系统误差、光路约束和 3D 定量 schlieren 背景，不改变 He 主线。</td>
+        </tr>
+        <tr>
+          <td><strong>Formal DOI / extreme-flow Schlieren next batch</strong><br />DOI 10.1016/j.fusengdes.2026.115906; 10.2514/6.2026-1893; 10.1134/s1063784226700428</td>
+          <td><span class="tag link">2 篇新增官方入口</span><span class="tag wait">1 篇正式 DOI 升级</span></td>
+          <td>Helium coolant-channel BOS validation 已由 SSRN 预印本升级到 Fusion Engineering and Design 正式 DOI；AIAA impinged shock LAS + high-speed schlieren 用于补 OERF extreme-flow optical diagnostics 背景；Technical Physics color/panoramic/narrow-field schlieren 用于补光路/系统灵敏度背景。Crossref/出版社入口已核，但 Elsevier/AIAA/Springer 仅暴露 TDM、受控访问或无明确开放再分发许可，因此只放 DOI/官方入口，不缓存 PDF。</td>
+        </tr>
+        <tr>
+          <td><strong>High-speed BOS / pulsed-illumination support batch</strong><br />DOI 10.2514/6.2026-3492; 10.1364/LACSEA.2024.LTu3E.2</td>
+          <td><span class="tag link">2 篇官方入口</span><span class="tag wait">不缓存</span></td>
+          <td>AIAA/CEAS 2026 heated high-subsonic dual-stream jet wavepacket extraction 补高速 BOS 电影里的相干结构/时序特征提取背景；Optica Sensing Congress 2024 high-speed SAFS+BOS with pulsed laser illumination 补脉冲照明、同步、曝光和光路系统约束。AIAA PDF route 返回 Cloudflare challenge，HAL document route 返回 cookie-verification HTML；Optica viewmedia route 返回 202 HTML/TDM reservation，均未确认可公开缓存 PDF，因此只放 DOI/官方入口。</td>
+        </tr>
+        <tr>
+          <td><strong>BOS density validation / calibration / applied visualization batch</strong><br />DOI 10.1007/s00348-024-03772-6; 10.1088/1742-6596/2509/1/012023; 10.3390/en17194867; 10.3390/en16010540; 10.3390/aerospace11080603; 10.1364/AO.509665; 10.1364/OL.605166; 10.1364/OL.428011; 10.1051/epjconf/202226401034; 10.24425/mms.2024.148534; 10.1364/AO.553974</td>
+          <td><span class="tag ok">4 篇开放 PDF 已缓存</span><span class="tag link">7 篇官方入口</span></td>
+          <td>MDPI fuel-vaporization BOS、MDPI plasma-actuator thermal BOS、MDPI high-speed self-aligned focusing schlieren velocimetry 和 EPJ fringe-projection quantitative schlieren 已通过文件头、pdfinfo 和封面生成检查并缓存。BOS + laser Rayleigh scattering、hidden-grid BOS、physically based focusing-schlieren simulation、Scheimpflug tilted-plane focusing schlieren、compact SAFS、wedge-prism BOS calibration、compact gas-jet density retrieval 等条目只放官方入口或在线 PDF 路由：Springer/IOP/Optica 自动访问返回 HTML/验证页/TDM wrapper，PAN PDF 虽可打开但未确认开放再分发许可。本批服务标定、外部密度验证、低成本/高速光路和 M3C 数据健康报告，不改变 He 主线。</td>
+        </tr>
+        <tr>
+          <td><strong>Projected-background BOS / high-speed SAFS retry batch</strong><br />OSTI 10.63044/b16jat41; MDPI 10.3390/aerospace11080603; arXiv 2504.05433</td>
+          <td><span class="tag ok">2 篇公开 PDF 已缓存</span><span class="tag link">1 篇开放入口不缓存</span></td>
+          <td>OSTI 2026 “High contrast pattern projection to enable background oriented Schlieren based air leak detection...” official purl 返回真实 9 页 PDF，已缓存并生成封面/术语导读。MDPI 2024 high-speed SAFS velocimetry 官方 PDF 首页显示 CC BY 4.0，16 页 PDF 已缓存；虽然体积约 17.4 MB，但它直接补高速 SAFS 光路、速度测量和系统约束。arXiv 2504.05433 knife-edge-free colour schlieren 已核为真实 16 页、约 23.8 MB PDF，但属于低成本 schlieren 支撑项，按公开站体积策略只放在线入口。</td>
+        </tr>
+        <tr>
+          <td><strong>arXiv BOS / fluid-foundation / refractive neural tomography batch</strong><br />arXiv 2603.21905; 2603.13512; 2306.06558</td>
+          <td><span class="tag ok">3 篇公开 PDF 已缓存</span></td>
+          <td>新增 traveling pressure waves inside a droplet、internal ocean-wave laboratory BOS 和 physics-based optical neural network refractive-index tomography 三篇 arXiv PDF，均已核文件头、页数、首页题名并生成封面和单篇术语导读。它们分别服务 BOS pressure/density spatiotemporal reconstruction、流体力学补课/低门槛实验直觉，以及 NeRIF 邻近的神经折射率层析表示；均为公开预印本，不涉及 WebVPN/订阅 PDF 上传。</td>
+        </tr>
+        <tr>
+          <td><strong>MHz-rate BOST post-detonation supplement</strong><br />Optica Figshare `10.6084/m9.figshare.19303847.v3`; Applied Optics `10.1364/AO.449654`</td>
+          <td><span class="tag ok">1 篇 CC BY 4.0 supplement 已缓存</span></td>
+          <td>Gomez / Grauer et al. 的 Applied Optics 正文仍只放 Optica 官方入口；本轮缓存的是 Optica Publishing Group Figshare 上的官方补充 PDF。Figshare API 显示 license 为 CC BY 4.0，文件 `5585417.pdf` 为 514072 bytes，MD5 `de1e95842776b6c053a7dd8abcf9e157`；本地 `pdfinfo` 核到 4 页 PDF，并生成封面、论文详情页、PDF 包装页和单篇术语导读。该条用于补高速/time-resolved BOST、post-detonation blast、synthetic-error 和 shock-front validation；不把 supplement 误当成正式论文全文。</td>
+        </tr>
+        <tr>
+          <td><strong>BOS image-quality / simultaneous PIV+BOS / refractive-error batch</strong><br />arXiv 1303.0915; JPCS 10.1088/1742-6596/2293/1/012002; arXiv 2205.08752 / ETFS 10.1016/j.expthermflusci.2022.110681</td>
+          <td><span class="tag ok">3 篇公开 PDF 已缓存</span></td>
+          <td>Gojani et al. BOS image-analysis factors 使用 arXiv 14 页 PDF 缓存，补背景图案、互相关窗口、位移质量和实验参数敏感性。Faruoli et al. JPCS small synthetic jet simultaneous PIV+BOS 官方 IOP PDF 为开放会议论文，已缓存 13 页，用作 PIV+BOS 同步测量的入门案例。Li et al. tracer-based velocimetry refractive-index error 使用 arXiv 36 页 PDF 缓存，虽约 27 MB，但直接量化非均匀折射率下 tracer/PIV 测速误差，是解释何远哲 PIV-BOST 补偿动机的强支撑，因此按公开站体积策略作为大文件例外。</td>
+        </tr>
+        <tr>
+          <td><strong>Focusing / self-aligned / rainbow schlieren optical-system batch</strong><br />DOI 10.21203/rs.3.rs-9473921/v1; 10.2514/6.2026-0011; 10.2514/6.2026-0010; 10.2514/6.2025-0238; 10.1007/s00348-024-03951-5; 10.1007/s10494-025-00687-y; 10.1364/OL.511274; 10.1364/AO.533087; 10.1117/12.3066003; 10.1364/AO.579510; arXiv 2504.05433</td>
+          <td><span class="tag ok">1 篇开放 PDF 已缓存</span><span class="tag link">10 篇官方入口</span></td>
+          <td>Research Square “Design and validation of Self-Aligned Focusing Schlieren optical systems” PDF 首页与 Crossref license 均显示 CC BY 4.0，34 页 PDF 已缓存并生成单篇术语导读/页码地图。AIAA 的 plenoptic SAFS、time-resolved SAFS、ray-traced focusing-schlieren velocimetry，Springer 的 holographic focusing schlieren / rainbow schlieren tomography，Optica 的 digital/self-aligned focusing schlieren、optically constrained SAFS、弱折射率梯度 schlieren sensitivity，SPIE 的 high-speed digital focusing schlieren，以及 arXiv knife-edge-free colour schlieren 只放官方/开放入口；未确认可再分发 PDF 时不缓存。本批用于 T12 低成本演示、T15 系统误差、M3C 光路约束和 F 路线 synthetic/ray-traced benchmark。</td>
+        </tr>
+        <tr>
+          <td><strong>MST pattern-projected schlieren / BOS sensitivity support</strong><br />DOI 10.1088/1361-6501/aaa6ed; 10.1088/1361-6501/ab1582</td>
+          <td><span class="tag link">2 篇官方入口</span><span class="tag wait">不缓存</span></td>
+          <td>新增 Measurement Science and Technology 2018 “Pattern-projected schlieren imaging method using a diffractive optics element” 与 2019 “An experimental sensitivity comparison of the schlieren and background-oriented schlieren techniques applied to hypersonic flow”。Crossref/IOP 元数据已核，自动 PDF route 返回 Radware/HTML 验证页且未确认开放再分发许可，因此只放 DOI/IOP 入口。它们用于补 T5/T6/T12/T15 的投影背景、schlieren/BOS sensitivity、hypersonic flow 光路比较和系统参数讨论。</td>
+        </tr>
+        <tr>
+          <td><strong>Bi-telecentric schlieren wind-tunnel visualization</strong><br />DOI 10.1007/s00348-025-04061-6</td>
+          <td><span class="tag link">1 篇官方入口</span><span class="tag wait">不缓存</span></td>
+          <td>新增 Experiments in Fluids 2025 “An assessment of a bi-telecentric visualization system for schlieren imaging in high-speed wind tunnels”。Crossref 显示 Springer VOR/TDM license，官方 PDF route 返回 HTML 而非 PDF，因此只放 DOI/Springer 入口。该条用于补 telecentric / bi-telecentric 光路、high-speed wind-tunnel schlieren、放大率/视场/灵敏度约束和 M3C 系统健康报告。</td>
+        </tr>
+        <tr>
+          <td><strong>Knife-edge-free schlieren / FCD-BOS displacement support</strong><br />DOI 10.1364/AO.597572; 10.1016/j.expthermflusci.2022.110598</td>
+          <td><span class="tag ok">1 篇开放 PDF 已缓存</span><span class="tag link">1 篇官方入口</span></td>
+          <td>Applied Optics / arXiv 2026 “Using lens aperture as a knife-edge in schlieren imaging” 使用 arXiv `2603.08293` 开放 PDF，已核 11 页并生成封面与单篇术语导读；用于补低成本 schlieren cutoff 光路、对准复杂度和系统健康报告。Experimental Thermal and Fluid Science 2022 FCD-BOS 文章页显示 Open access / Creative Commons license，但命令行 PDF route 返回 403、SSL handshake failure 或 406，因此只放 ScienceDirect/DOI 入口，不缓存全文；用于补 checkerboard/Fourier demodulation 位移处理和大密度梯度边界。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>不可缓存但仍重要的论文</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>BOS / BOST 基础</h3>
+        <ul>
+          <li>UBOST / 早期 Springer BOST 条目仍以官方入口为主；Raffel 2015 已在本轮用 Springer CC BY 官方 PDF 缓存。</li>
+          <li>UBOST 2020：何远哲主线重要 baseline，但 Springer PDF 未确认开放缓存。</li>
+          <li>Hybrid / pyramid / GRU BOST：AIP、Springer、Optica 多为受控或验证页，当前只放 DOI/出版社入口。</li>
+          <li>wOFA / Schmidt and Woike 2021：OSF PDF 可在线读且首页核验通过，但 OSF DataCite 元数据写明 No license；Case Western BOS Processing Software 页面可作工具入口，本站不缓存 PDF 或软件包。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>OERF / 蔡组旁支</h3>
+        <ul>
+          <li>Optica/Optics Express 的若干 Gold 页面可读，但命令行直取 PDF 时返回验证页；只保留官方页面。</li>
+          <li>ScienceDirect open access 页面若 PDF 直取失败，不把 HTML 或 403 结果伪装成 PDF。</li>
+          <li>Nature/Science/ACM 等只在有 OSTI、arXiv、作者主页或明确开放 PDF 时缓存。</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>给师兄看的真实边界</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>问题</th>
+          <th>建议问法</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>核心论文全文</td>
+          <td>“4D BOST 的 ACM 正式全文我已读；PIV-BOST 是否有组内允许我阅读的版本？另外正文与 TDBOST 公开 config 的 rank、decoder 和 test split 差异应以哪个版本为准？”</td>
+        </tr>
+        <tr>
+          <td>代码许可</td>
+          <td>“TDBOST 仓库没有 LICENSE，我只看结构，不使用代码；如果要对齐接口，是否可以用组内许可版本或伪代码？”</td>
+        </tr>
+        <tr>
+          <td>真实数据</td>
+          <td>“公开网页只放 synthetic demo 和开放数据；如果有真实 BOST/PIV-BOST/4D 样例，我会按组内要求不公开原始数据。”</td>
+        </tr>
+        <tr>
+          <td>毕业设计选题</td>
+          <td>“我先做 NeRIF/BOST 鲁棒性；PIV-BOST 和 4D BOST 作为第二阶段模块，取决于您能给的数据和最需要的工具。”</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <footer>
+      维护备注：每次新增 PDF 都需要同时检查文件头、页数/首页、来源权限、元数据、封面预览和本地链接；未确认开放的论文只放官方跳转。
+    </footer>
+  </main>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

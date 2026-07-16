@@ -1,0 +1,42 @@
+{
+  "name": "t16_ablation_v1",
+  "dataset_config": "smoke.json",
+  "training_seeds": [20260710, 20260711, 20260712],
+  "experiments": [
+    {
+      "id": "residual_fno",
+      "label": "Residual FNO",
+      "backbone": "fno",
+      "residual": true,
+      "lambda_reprojection": 0.015,
+      "purpose": "Reference architecture and loss from the verified smoke checkpoint."
+    },
+    {
+      "id": "absolute_fno",
+      "label": "Absolute-output FNO",
+      "backbone": "fno",
+      "residual": false,
+      "lambda_reprojection": 0.015,
+      "purpose": "Ablate the residual skip while retaining the same calibrated physics-lift input."
+    },
+    {
+      "id": "fno_no_reprojection",
+      "label": "FNO without reprojection loss",
+      "backbone": "fno",
+      "residual": true,
+      "lambda_reprojection": 0.0,
+      "purpose": "Test whether the differentiable BOST consistency term changes field and held-out behavior."
+    },
+    {
+      "id": "matched_unet",
+      "label": "Parameter-matched U-Net",
+      "backbone": "unet",
+      "residual": true,
+      "lambda_reprojection": 0.015,
+      "model": {
+        "base_channels": 6
+      },
+      "purpose": "Compare local convolutions and spectral mixing at a closer trainable-parameter budget."
+    }
+  ]
+}

@@ -1,0 +1,236 @@
+{
+  "schema_version": "psu-heldout-camera-preregistration-1.0",
+  "registration_status": "FROZEN_BEFORE_ARCHIVE_04_05_PAYLOAD_SCORING",
+  "frozen_at_utc": "2026-07-16T08:36:28Z",
+  "dataset": {
+    "name": "Open-source BOS tomography dataset of high-speed flow over a flight body",
+    "doi": "10.26208/1VE2-5C19",
+    "paper": "https://arxiv.org/abs/2508.17120",
+    "official_index": "https://www.datacommons.psu.edu/download/engineering/molnar-et-al-open-source-bos-tomography-dataset-of-high-speed-flow-over-a-flight-body-2025/",
+    "camera_ids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "rotation_degrees": [
+      0,
+      10,
+      20,
+      30,
+      40,
+      50,
+      60,
+      70,
+      80,
+      90
+    ],
+    "view_count": 70,
+    "independent_experimental_unit": "MODEL_ROTATION_RUN_BLOCK",
+    "pixel_independence_assumption": false
+  },
+  "author_support_contract": {
+    "camera_ids": [
+      2,
+      3,
+      4
+    ],
+    "rotation_degrees": [
+      0,
+      50,
+      90
+    ],
+    "view_count": 9,
+    "evidence": [
+      "The released AEDC_pprocess.m sets cincl = 2:4.",
+      "The released AEDC_pprocess_auto.m sets ang_list = [0 50 90] for HSOF_9CAM_RT.mat.",
+      "The dataset paper states that nine views from the master-camera column at 0, 50, and 90 degrees were assimilated."
+    ]
+  },
+  "splits": [
+    {
+      "id": "support_reconstruction",
+      "role": "Only views permitted in reconstruction, optimization, forward-model fitting, regularization selection on support residuals, and checkpoint updates.",
+      "camera_ids": [
+        2,
+        3,
+        4
+      ],
+      "rotation_degrees": [
+        0,
+        50,
+        90
+      ],
+      "expected_view_count": 9,
+      "access_stage": "OPEN"
+    },
+    {
+      "id": "development_rotation_40",
+      "role": "The only external views permitted for model-family choice, stopping-rule choice, calibration of practical margins, or rejection before final audit.",
+      "camera_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "rotation_degrees": [
+        40
+      ],
+      "expected_view_count": 7,
+      "access_stage": "OPEN_AFTER_RECONSTRUCTION_INTERFACE_FREEZE"
+    },
+    {
+      "id": "audit_rotation_same_cameras",
+      "role": "Primary final audit: independent rotation runs using the same physical camera ids as the nine-view support set.",
+      "camera_ids": [
+        2,
+        3,
+        4
+      ],
+      "rotation_degrees": [
+        10,
+        20,
+        30,
+        60,
+        70,
+        80
+      ],
+      "expected_view_count": 18,
+      "access_stage": "SEALED_UNTIL_SINGLE_FINAL_OPEN"
+    },
+    {
+      "id": "audit_camera_same_runs",
+      "role": "Secondary camera-layout audit on the three rotation runs used by reconstruction, using cameras excluded from support.",
+      "camera_ids": [
+        1,
+        5,
+        6,
+        7
+      ],
+      "rotation_degrees": [
+        0,
+        50,
+        90
+      ],
+      "expected_view_count": 12,
+      "access_stage": "SEALED_UNTIL_SINGLE_FINAL_OPEN"
+    },
+    {
+      "id": "audit_joint_camera_rotation",
+      "role": "Stress audit with both unseen rotations and cameras excluded from support.",
+      "camera_ids": [
+        1,
+        5,
+        6,
+        7
+      ],
+      "rotation_degrees": [
+        10,
+        20,
+        30,
+        60,
+        70,
+        80
+      ],
+      "expected_view_count": 24,
+      "access_stage": "SEALED_UNTIL_SINGLE_FINAL_OPEN"
+    }
+  ],
+  "data_access_firewall": {
+    "development_may_influence_model_selection": true,
+    "audit_may_influence_model_selection": false,
+    "audit_may_influence_stopping": false,
+    "audit_may_influence_parameter_selection": false,
+    "required_before_audit_open": [
+      "git commit id",
+      "method and baseline checkpoint SHA-256",
+      "configuration SHA-256",
+      "support and development prediction SHA-256",
+      "forward-model version and ray-sample budget",
+      "fixed metric implementation tests",
+      "one declared candidate versus one frozen B0 reference"
+    ],
+    "multiple_candidate_rule": "If more than one candidate is opened on final audit, no unadjusted superiority claim is permitted; use Holm correction across declared candidates or label the result exploratory."
+  },
+  "primary_endpoint": {
+    "name": "rotation_block_active_vector_relative_l2",
+    "formula": "sqrt(sum_active((u_hat-u)^2+(v_hat-v)^2)) / sqrt(sum_active(u^2+v^2))",
+    "aggregation": "Pool cameras 2, 3, and 4 within each rotation, then treat the six unseen rotations as six paired experimental blocks.",
+    "comparison": "candidate versus frozen B0 fixed-domain reference",
+    "direction": "LOWER_IS_BETTER"
+  },
+  "secondary_endpoints": [
+    {
+      "name": "active_vector_rmse_px",
+      "aggregation": "per view, per rotation block, pooled"
+    },
+    {
+      "name": "active_vector_mae_px",
+      "aggregation": "per view, per rotation block, pooled"
+    },
+    {
+      "name": "active_vector_error_p95_px",
+      "aggregation": "per view and per rotation block"
+    },
+    {
+      "name": "ambient_predicted_deflection_rms_px",
+      "aggregation": "per view and pooled"
+    },
+    {
+      "name": "front_band_vector_rmse_px",
+      "aggregation": "Top 10 percent of measured active deflection-gradient magnitude within each audit view; diagnostic only."
+    },
+    {
+      "name": "runtime_peak_memory_forward_adjoint_calls",
+      "aggregation": "whole reconstruction and held-out rendering"
+    }
+  ],
+  "success_gate": {
+    "primary_sign_gate": "The candidate must lower the primary endpoint in all six audit_rotation_same_cameras rotation blocks. Under a predeclared one-sided exact sign test this corresponds to p = 1/64 = 0.015625.",
+    "practical_significance_gate": "The median active-vector RMSE reduction across the six rotation blocks must exceed the flow-off repeatability floor estimated on development data with the same averaging and masking procedure.",
+    "tail_gate": "The candidate may not worsen active vector-error p95 by more than the development-estimated repeatability floor in any primary audit rotation block.",
+    "ambient_gate": "Pooled ambient predicted-deflection RMS may not increase versus B0.",
+    "calibration_gate": "The primary sign gate must remain satisfied under the frozen calibration perturbation audit. If calibration covariance or repeat target data are unavailable, experimental superiority remains locked.",
+    "claim_if_flowoff_repeats_missing": "REPROJECTION_DIAGNOSTIC_ONLY_NO_PRACTICAL_SIGNIFICANCE_OR_EXPERIMENTAL_SUPERIORITY"
+  },
+  "stopping_and_budget": {
+    "maximum_iterations_or_calls": "Frozen on support plus development_rotation_40 only.",
+    "early_stopping_inputs": [
+      "support reconstruction loss",
+      "support discrepancy relative to flow-off noise if available",
+      "development_rotation_40 primary and tail metrics"
+    ],
+    "forbidden_early_stopping_inputs": [
+      "any final audit residual",
+      "any final audit image",
+      "any final audit qualitative rendering"
+    ],
+    "fairness": [
+      "same support views and masks",
+      "same finite-aperture sample budget",
+      "same regularization-selection budget",
+      "same forward and adjoint call accounting",
+      "same wall-clock and peak-memory reporting"
+    ]
+  },
+  "archive_map": {
+    "processed_deflections_rotations_0_10_20": "molnar-et-al-open-source-bos-tomography-dataset-2025-04.zip",
+    "processed_deflections_rotations_30_to_90": "molnar-et-al-open-source-bos-tomography-dataset-2025-05.zip",
+    "nine_view_support_mat": "molnar-et-al-open-source-bos-tomography-dataset-2025-06.zip",
+    "raw_masks_and_deflection_work_products": "molnar-et-al-open-source-bos-tomography-dataset-2025-07.zip through -10.zip as listed by the official index"
+  },
+  "reporting_rules": [
+    "Report every audit view and every independent rotation block; no pooled-only result.",
+    "Do not bootstrap pixels as independent experiments.",
+    "No field-L2 claim is allowed because the experimental dataset has no independent 3D density truth.",
+    "A lower held-out residual establishes image-space consistency, not unique recovery of the true 3D field.",
+    "Qualitative shock images cannot override a failed primary or tail gate.",
+    "B1 axis, vertex, and angle may not be selected using the parameter-sensitivity audit."
+  ]
+}

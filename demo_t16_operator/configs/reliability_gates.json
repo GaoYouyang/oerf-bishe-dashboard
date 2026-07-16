@@ -1,0 +1,66 @@
+{
+  "name": "t16_reliability_gate_v1",
+  "dataset_config": "smoke.json",
+  "training_seeds": [20260710, 20260711, 20260712],
+  "experiments": [
+    {
+      "id": "residual_reference",
+      "label": "Residual FNO",
+      "input_variant": "base",
+      "residual": true,
+      "purpose": "Reference with alpha fixed to one."
+    },
+    {
+      "id": "absolute_reference",
+      "label": "Absolute-output FNO",
+      "input_variant": "base",
+      "residual": false,
+      "purpose": "Reference with no physics-lift skip."
+    },
+    {
+      "id": "fixed_view_gate",
+      "label": "Fixed view gate",
+      "input_variant": "base",
+      "residual": true,
+      "gate": {
+        "type": "fixed_view",
+        "view_channel": 2,
+        "reference_fraction": 0.5555555555555556
+      },
+      "purpose": "Keep alpha=1 for 5/7-view training conditions and reduce it to 0.6 for three-view OOD."
+    },
+    {
+      "id": "learned_metadata_gate",
+      "label": "Learned metadata gate",
+      "input_variant": "base",
+      "residual": true,
+      "gate": {
+        "type": "learned",
+        "feature_channels": [2, 3],
+        "hidden_channels": 8,
+        "max_scale": 1.25
+      },
+      "purpose": "Learn alpha from observable view fraction and declared noise/quality metadata."
+    },
+    {
+      "id": "quality_channel_residual",
+      "label": "Residual FNO + observed residual",
+      "input_variant": "observable_quality",
+      "residual": true,
+      "purpose": "Control whether the extra observable quality channel helps without a gate."
+    },
+    {
+      "id": "learned_observable_gate",
+      "label": "Learned observable gate",
+      "input_variant": "observable_quality",
+      "residual": true,
+      "gate": {
+        "type": "learned",
+        "feature_channels": [2, 3, 7],
+        "hidden_channels": 8,
+        "max_scale": 1.25
+      },
+      "purpose": "Learn alpha from view fraction, metadata, and train-normalized observed-view lift reprojection residual."
+    }
+  ]
+}

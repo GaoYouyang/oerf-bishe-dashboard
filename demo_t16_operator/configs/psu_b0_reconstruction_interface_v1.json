@@ -1,0 +1,71 @@
+{
+  "schema_version": "psu-b0-reconstruction-interface-preregistration-1.0",
+  "status": "FROZEN_BEFORE_DEVELOPMENT_ROTATION_40_ACCESS",
+  "frozen_at_utc": "2026-07-16T09:33:41Z",
+  "scope": "LOW_RESOLUTION_LINEARIZED_B0_REFERENCE_AND_INTERFACE_GATE_NO_FINAL_AUDIT_ACCESS",
+  "field": {
+    "unknown": "scalar_refractive_index_or_density_perturbation",
+    "grid_layout": "batch,channel,z,y,x",
+    "coordinate_order": "x,y,z",
+    "default_bounds_m": {
+      "minimum": [-0.11, -0.11, -0.11],
+      "maximum": [0.11, 0.11, 0.11]
+    },
+    "gauge": "zero_outer_voxel_boundary",
+    "gauge_reason": "BOS observes spatial gradients and therefore has an additive scalar-field nullspace",
+    "positivity": "NOT_ASSUMED_FOR_PERTURBATION_FIELD"
+  },
+  "forward": {
+    "domain": "B0_FORWARD_BOX",
+    "gradient": "voxel_centered_first_order_boundary_and_centered_interior_finite_difference",
+    "interpolation": "trilinear_closed_box",
+    "finite_aperture_design": "paired_hammersley_path_disk_samples",
+    "reference_sample_count": 16,
+    "sensitivity_sample_counts": [8, 32],
+    "sample_domain_policy": "multiply_each_sample_by_B0_indicator",
+    "normalization": "original_fixed_sample_count_no_survivor_renormalization",
+    "measurement": "L_times_Csys_over_M_times_sum_of_gradient_projected_on_Ru_and_Rv"
+  },
+  "adjoint": {
+    "construction": "exact_transpose_of_the_same_finite_difference_trilinear_projection_primitives",
+    "tiny_float64_relative_dot_error_maximum": 1e-11,
+    "real_geometry_float32_relative_dot_error_maximum": 2e-5,
+    "independent_learned_adjoint_forbidden": true
+  },
+  "support_data": {
+    "permitted_views": "support_reconstruction_only",
+    "camera_ids": [2, 3, 4],
+    "rotation_degrees": [0, 50, 90],
+    "view_count": 9,
+    "development_rotation_40_access": "FORBIDDEN_UNTIL_THIS_INTERFACE_AND_RESOURCE_PROFILE_PASS",
+    "final_audit_access": "SEALED"
+  },
+  "baseline": {
+    "family": ["fixed_step_landweber", "projected_barzilai_borwein", "cgls"],
+    "first_smoke": "fixed_step_landweber",
+    "spectral_estimation_calls_reported_separately": true,
+    "logical_call": "one complete traversal of all declared support ray chunks",
+    "evaluation_render_calls_excluded_from_optimization_budget_and_reported_separately": true,
+    "stopping_inputs": [
+      "support_active_relative_l2",
+      "support_discrepancy_if_flow_off_noise_is_available",
+      "development_rotation_40_only_after_interface_freeze"
+    ]
+  },
+  "required_gates": [
+    "finite_difference_adjoint_identity",
+    "matrix_free_forward_adjoint_dot_product",
+    "matrix_free_equals_materialized_tiny_fixture",
+    "fixed_denominator_out_of_domain_fixture",
+    "call_accounting",
+    "16_cubed_and_32_cubed_peak_memory_and_wall_time",
+    "real_support_geometry_dot_product",
+    "heldout_scorer_output_contract"
+  ],
+  "claim_boundary": {
+    "interface_pass_is_reconstruction_superiority": false,
+    "support_fit_is_heldout_generalization": false,
+    "heldout_reprojection_is_unique_3d_truth": false,
+    "field_l2_on_psu_experiment_available": false
+  }
+}

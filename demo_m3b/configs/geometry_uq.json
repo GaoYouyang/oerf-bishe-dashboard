@@ -1,0 +1,75 @@
+{
+  "experiment_name": "M3B leave-one-geometry-out capacity selection and abstention",
+  "grid": {
+    "n": 24,
+    "nz": 10,
+    "frame_count": 18,
+    "families": [
+      "blobs_sheet",
+      "vortex_ring",
+      "expanding_shell",
+      "jet_filaments"
+    ],
+    "dynamics": [
+      "smooth",
+      "chirp",
+      "transient"
+    ],
+    "noise_levels": [
+      0.0,
+      0.14,
+      0.28
+    ],
+    "view_counts": [
+      5,
+      7
+    ],
+    "geometries": [
+      "uniform",
+      "rotated_uniform",
+      "limited_arc",
+      "dual_cluster",
+      "jittered",
+      "calibration_offset_2deg"
+    ],
+    "ranks": [
+      1,
+      2,
+      3,
+      5,
+      8,
+      12,
+      18
+    ],
+    "seed_count": 4,
+    "seed_base": 20260730
+  },
+  "selectors": {
+    "energy_threshold": 0.95,
+    "ridge_lambdas": [
+      0.0001,
+      0.01,
+      0.1,
+      1.0,
+      10.0,
+      100.0
+    ],
+    "risk_coverages": [
+      1.0,
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5,
+      0.4
+    ],
+    "high_risk_regret_pct": 1.0
+  },
+  "claims_boundary": [
+    "Geometry families are synthetic angular layouts and one controlled calibration-offset signature, not OERF camera calibrations.",
+    "Leave-one-geometry-out tests transfer across declared synthetic layouts, not unseen hardware, optics, masks, or curved-ray physics.",
+    "Uncertainty scores use only model predictions and observable features, but percentile normalization assumes a batch from the current test geometry.",
+    "Full-rank fallback rejects additional temporal compression; it does not repair framewise forward-model bias.",
+    "Ground-truth field error is used only for retrospective regret, risk-coverage, and failure-cell auditing."
+  ]
+}

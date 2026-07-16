@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Undersampled Dynamic X-Ray Tomography With Dimension Reduction Kalman Filter · 术语导读</title>
+  <style>
+    :root { --bg:#f7f8f6; --panel:#fff; --ink:#1d2328; --muted:#65717a; --line:#d9e0df; --green:#16756f; --blue:#315f93; --amber:#9a6a00; --soft:#eef6f3; --shadow:0 16px 36px rgba(30,45,55,.08); }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif; color:var(--ink); background:linear-gradient(90deg,rgba(247,248,246,.94),rgba(247,248,246,.76)),url("../../assets/backgrounds/oerf-refractive-field.png") right -150px top 18px / min(920px,92vw) auto no-repeat fixed,var(--bg); line-height:1.62; letter-spacing:0; }
+    header, main { padding:28px clamp(18px,4vw,58px); }
+    header { border-bottom:1px solid var(--line); background:linear-gradient(180deg,#fff,#edf6f3); }
+    h1 { margin:14px 0 10px; max-width:1100px; font-size:clamp(28px,4vw,48px); line-height:1.12; letter-spacing:0; }
+    h2 { margin:26px 0 12px; font-size:24px; }
+    p { margin:6px 0; }
+    .muted, .en { color:var(--muted); }
+    .buttons, .chips, .focus-grid, .page-links, .term-actions, .mini-terms { display:flex; flex-wrap:wrap; gap:8px; }
+    .button, .page-links a, .term-actions a { display:inline-flex; align-items:center; min-height:34px; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); text-decoration:none; font-weight:700; }
+    .button.primary { background:var(--green); border-color:var(--green); color:#fff; }
+    .summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:18px 0; }
+    .summary div, .focus-term, .term-row, .note { border:1px solid var(--line); border-radius:8px; background:var(--panel); box-shadow:var(--shadow); }
+    .summary div { padding:14px 16px; }
+    .summary b { display:block; font-size:28px; line-height:1; color:var(--green); }
+    .note { padding:14px 16px; color:var(--muted); box-shadow:none; }
+    .chips span { border-radius:999px; padding:5px 9px; background:#eaf0f7; color:var(--blue); font-size:12px; font-weight:700; }
+    .guide-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:12px 0 20px; }
+    .guide-card, .topic-card { border:1px solid var(--line); border-radius:8px; background:rgba(255,255,255,.94); padding:13px; min-width:0; }
+    .guide-card { border-left:4px solid var(--green); }
+    .guide-card b { display:block; color:var(--green); font-size:13px; margin-bottom:5px; }
+    .guide-card p, .topic-card p { margin:0; color:#43545c; font-size:13px; line-height:1.55; }
+    .topic-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:12px 0 20px; }
+    .topic-card span { display:inline-flex; border-radius:999px; padding:4px 8px; background:var(--soft); color:var(--green); font-size:12px; font-weight:800; }
+    .topic-card h3 { margin:8px 0 5px; font-size:16px; line-height:1.3; }
+    .topic-card a { display:inline-flex; align-items:center; min-height:30px; margin-top:8px; padding:5px 8px; border:1px solid var(--line); border-radius:7px; background:#fff; color:var(--blue); text-decoration:none; font-size:12px; font-weight:800; }
+    .focus-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .focus-term { padding:15px; }
+    .term-title, .term-name { color:var(--green); font-weight:800; text-decoration:none; }
+    .term-title span { display:block; color:var(--muted); font-weight:600; font-size:13px; }
+    .term-actions { margin-top:8px; }
+    .term-actions a { min-height:28px; padding:4px 7px; color:var(--blue); font-size:12px; }
+    .page-map { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .page-card { border:1px solid var(--line); border-radius:8px; background:#fff; padding:12px; }
+    .page-title { display:inline-flex; margin-bottom:6px; color:var(--green); font-size:18px; font-weight:900; text-decoration:none; }
+    .page-card small { display:block; color:var(--muted); }
+    .mini-term { display:inline-flex; align-items:center; gap:5px; border-radius:999px; padding:4px 7px; background:#f6efe2; border:1px solid #ead7b5; color:var(--amber); font-size:12px; font-weight:700; text-decoration:none; }
+    .mini-term span { color:#6f5b2b; font-weight:700; }
+    .toolbar { display:grid; grid-template-columns:minmax(240px,1fr) 190px; gap:10px; margin:16px 0; }
+    input, select { min-height:42px; border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:#fff; font:inherit; }
+    .term-list { display:grid; gap:12px; }
+    .term-row { display:grid; grid-template-columns:minmax(0,1fr) 240px; gap:14px; padding:15px; }
+    .term-row p { margin:4px 0; }
+    .term-side { display:flex; flex-direction:column; align-items:flex-start; gap:7px; }
+    .term-side span { border-radius:999px; padding:4px 8px; background:var(--soft); color:var(--green); font-size:12px; font-weight:700; }
+    .term-side b { font-size:24px; color:var(--amber); }
+    .page-links a { min-height:28px; padding:4px 7px; font-size:12px; color:var(--blue); }
+    .more { color:var(--muted); font-size:12px; padding:4px 0; }
+    footer { margin-top:28px; color:var(--muted); font-size:12px; }
+    @media (max-width:1080px) { .guide-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .topic-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:900px) { .summary, .focus-grid, .term-row, .toolbar, .page-map, .guide-grid, .topic-grid { grid-template-columns:1fr; } body { background-attachment:scroll; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="buttons">
+      <a class="button" href="../index.html">Back to paper library</a>
+      <a class="button" href="../term_index.html">PDF term index</a>
+      <a class="button" href="../../index.html#glossary">Glossary</a>
+      <a class="button" href="../paper_detail.html?id=dynamic-xray-drkf-hakkarainen-2019">Paper detail</a>
+    </div>
+    <h1>Undersampled Dynamic X-Ray Tomography With Dimension Reduction Kalman Filter</h1>
+    <p class="muted">Janne Hakkarainen, Zenith Purisha, Antti Solonen, Samuli Siltanen</p>
+    <p class="muted">IEEE Transactions on Computational Imaging / arXiv · 2019</p>
+    <div class="buttons">
+      <a class="button primary" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf" target="_blank" rel="noreferrer">Open PDF</a>
+      <a class="button" href="https://arxiv.org/pdf/1805.00871" target="_blank" rel="noreferrer">Online PDF</a>
+      <a class="button" href="https://doi.org/10.1109/TCI.2019.2896527" target="_blank" rel="noreferrer">Publisher / source</a>
+    </div>
+    <div class="summary">
+      <div><b>14</b><span>matched terms</span></div>
+      <div><b>103</b><span>term hits</span></div>
+      <div><b>5</b><span>categories</span></div>
+      <div><b>support</b><span>4D temporal metrics / dynamic tomography</span></div>
+    </div>
+    <div class="chips"><span>反问题/层析 · 8</span><span>实验/数据 · 3</span><span>光学诊断 · 1</span><span>反问题/数值 · 1</span><span>数学基础 · 1</span></div>
+  </header>
+  <main>
+    <section class="note">
+      <p><b>阅读定位：</b>dimension-reduction Kalman filter 是“低维状态 + 动态观测”的清晰范例，适合给 4D BOST 的 frame-count / time update / uncertainty 设计提供方法邻居。</p>
+      <p><b>精读时提取：</b>dimension reduction, Kalman filter, undersampled projections, state-space dynamics, prior covariance, temporal update and measurement update.</p>
+      <p><b>边界说明：</b>本页只保存术语命中、解释和页码跳转，不复制论文正文。点击页码会回到原 PDF 的对应页。</p>
+    </section>
+    <h2>读这篇的路线</h2>
+    <section class="guide-grid">
+            <article class="guide-card">
+              <b>定位角色</b>
+              <p>四维/时序重构支撑：重点看低秩、时序一致性、内存和速度之间的取舍。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>抓方法图</b>
+              <p>优先找 optical setup、forward model、reconstruction pipeline、evaluation table，不先陷入所有推导。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>抽可复现变量</b>
+              <p>记录输入数据、几何参数、噪声/视角设置、baseline、loss/regularization 和评价指标。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>查术语页码</b>
+              <p>用本页的术语卡片跳到 PDF 对应页，建立自己的概念索引。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>转成毕设问题</b>
+              <p>把这篇文献写成一个可执行问题：我能复现哪一段、比较什么、问师兄要什么数据。</p>
+            </article>
+            </section>
+    <h2>关联毕设选题</h2>
+    <section class="topic-grid">
+            <article class="topic-card">
+              <span>T1</span>
+              <h3>NeRIF/BOST 鲁棒性</h3>
+              <p>由标题、分组或关键词匹配；用于判断这篇文献可服务的选题模块。</p>
+              <a href="../../topic_deep_dive.html?id=T1">打开选题详情</a>
+            </article>
+
+            <article class="topic-card">
+              <span>T2</span>
+              <h3>少视角与不确定度</h3>
+              <p>由标题、分组或关键词匹配；用于判断这篇文献可服务的选题模块。</p>
+              <a href="../../topic_deep_dive.html?id=T2">打开选题详情</a>
+            </article>
+
+            <article class="topic-card">
+              <span>T4</span>
+              <h3>4D BOST 低秩时序</h3>
+              <p>由标题、分组或关键词匹配；用于判断这篇文献可服务的选题模块。</p>
+              <a href="../../topic_deep_dive.html?id=T4">打开选题详情</a>
+            </article>
+            </section>
+    <h2>先看这几个术语</h2>
+    <section class="focus-grid">
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化 <span>Regularization</span></a>
+              <p>给反问题增加额外约束，例如平滑、稀疏、低秩、物理方程或边界条件。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=13" target="_blank" rel="noreferrer">p.13</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=14" target="_blank" rel="noreferrer">p.14</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=17" target="_blank" rel="noreferrer">p.17</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E6%AD%A3%E5%88%99%E5%8C%96">跨论文反查</a>
+                <a href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题 <span>Inverse problem</span></a>
+              <p>从观测反推未知物理场。BOST 从多视角位移反推三维折射率/密度，就是典型反问题。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=15" target="_blank" rel="noreferrer">p.15</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=17" target="_blank" rel="noreferrer">p.17</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%8F%8D%E9%97%AE%E9%A2%98">跨论文反查</a>
+                <a href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%90%88%E6%88%90%E6%95%B0%E6%8D%AE#glossary" target="_blank" rel="noreferrer">合成数据 <span>Synthetic data / phantom</span></a>
+              <p>人为构造的已知真值数据，用来测试重构算法和误差传播。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=13" target="_blank" rel="noreferrer">p.13</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%90%88%E6%88%90%E6%95%B0%E6%8D%AE">跨论文反查</a>
+                <a href="../../index.html?term=%E5%90%88%E6%88%90%E6%95%B0%E6%8D%AE#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E6%8B%89%E4%B8%9C%E5%8F%98%E6%8D%A2#glossary" target="_blank" rel="noreferrer">拉东变换 <span>Radon transform</span></a>
+              <p>把二维函数沿不同角度的直线积分，形成角度-探测器坐标上的投影数据，是理解 CT 和简化层析 forward 的经典模型。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E6%8B%89%E4%B8%9C%E5%8F%98%E6%8D%A2">跨论文反查</a>
+                <a href="../../index.html?term=%E6%8B%89%E4%B8%9C%E5%8F%98%E6%8D%A2#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型 <span>Forward model</span></a>
+              <p>给定三维物理场和相机几何，计算理论上应该观测到什么图像位移、投影或信号。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=14" target="_blank" rel="noreferrer">p.14</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=15" target="_blank" rel="noreferrer">p.15</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B">跨论文反查</a>
+                <a href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3#glossary" target="_blank" rel="noreferrer">奇异值分解 <span>Singular Value Decomposition, SVD</span></a>
+              <p>把矩阵写成 A = U Sigma V^T。奇异值说明不同方向被观测放大或压低多少，V 中对应零奇异值的方向构成零空间。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=8" target="_blank" rel="noreferrer">p.8</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3">跨论文反查</a>
+                <a href="../../index.html?term=%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流 <span>Optical flow</span></a>
+              <p>估计两帧图像间每个像素的运动或位移，是 BOS 位移估计的重要方法之一。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=13" target="_blank" rel="noreferrer">p.13</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=14" target="_blank" rel="noreferrer">p.14</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%85%89%E6%B5%81">跨论文反查</a>
+                <a href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E4%BC%B4%E9%9A%8F%E7%AE%97%E5%AD%90#glossary" target="_blank" rel="noreferrer">伴随算子 <span>Adjoint operator</span></a>
+              <p>若 forward operator A 把体场映到观测，伴随 A* 把观测残差按内积意义反传回体场。离散实矩阵下常对应转置 A^T，但它通常不是逆算子。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=13" target="_blank" rel="noreferrer">p.13</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E4%BC%B4%E9%9A%8F%E7%AE%97%E5%AD%90">跨论文反查</a>
+                <a href="../../index.html?term=%E4%BC%B4%E9%9A%8F%E7%AE%97%E5%AD%90#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+            </section>
+    <h2>按页术语地图</h2>
+    <section class="note">
+      <p><b>使用方式：</b>先点 p.页码打开原 PDF，再看这一页命中的概念。这个区域相当于“读论文导航”，不是论文正文重排。</p>
+    </section>
+    <section class="page-map">
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=1" target="_blank" rel="noreferrer">p.1</a>
+                <small>3 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E4%BC%B4%E9%9A%8F%E7%AE%97%E5%AD%90#glossary" target="_blank" rel="noreferrer">伴随算子<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=2" target="_blank" rel="noreferrer">p.2</a>
+                <small>5 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%8B%89%E4%B8%9C%E5%8F%98%E6%8D%A2#glossary" target="_blank" rel="noreferrer">拉东变换<span>4x</span></a><a class="mini-term" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a>
+                <small>7 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E6%8B%89%E4%B8%9C%E5%8F%98%E6%8D%A2#glossary" target="_blank" rel="noreferrer">拉东变换<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=4" target="_blank" rel="noreferrer">p.4</a>
+                <small>7 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>4x</span></a><a class="mini-term" href="../../index.html?term=%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3#glossary" target="_blank" rel="noreferrer">奇异值分解<span>3x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a>
+                <small>4 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%8B%89%E4%B8%9C%E5%8F%98%E6%8D%A2#glossary" target="_blank" rel="noreferrer">拉东变换<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=8" target="_blank" rel="noreferrer">p.8</a>
+                <small>11 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>9x</span></a><a class="mini-term" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3#glossary" target="_blank" rel="noreferrer">奇异值分解<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a>
+                <small>10 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>7x</span></a><a class="mini-term" href="../../index.html?term=%E5%90%88%E6%88%90%E6%95%B0%E6%8D%AE#glossary" target="_blank" rel="noreferrer">合成数据<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a>
+                <small>12 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>8x</span></a><a class="mini-term" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E5%90%88%E6%88%90%E6%95%B0%E6%8D%AE#glossary" target="_blank" rel="noreferrer">合成数据<span>2x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=11" target="_blank" rel="noreferrer">p.11</a>
+                <small>3 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>3x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=12" target="_blank" rel="noreferrer">p.12</a>
+                <small>8 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>4x</span></a><a class="mini-term" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E5%90%88%E6%88%90%E6%95%B0%E6%8D%AE#glossary" target="_blank" rel="noreferrer">合成数据<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E9%80%86%E7%8A%AF%E7%BD%AA#glossary" target="_blank" rel="noreferrer">逆犯罪<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=13" target="_blank" rel="noreferrer">p.13</a>
+                <small>10 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E5%90%88%E6%88%90%E6%95%B0%E6%8D%AE#glossary" target="_blank" rel="noreferrer">合成数据<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E4%BC%B4%E9%9A%8F%E7%AE%97%E5%AD%90#glossary" target="_blank" rel="noreferrer">伴随算子<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=14" target="_blank" rel="noreferrer">p.14</a>
+                <small>5 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=15" target="_blank" rel="noreferrer">p.15</a>
+                <small>5 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E4%BD%8E%E7%A7%A9%E5%85%88%E9%AA%8C#glossary" target="_blank" rel="noreferrer">低秩先验<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E5%B0%91%E8%A7%86%E8%A7%92%E9%87%8D%E6%9E%84#glossary" target="_blank" rel="noreferrer">少视角重构<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=16" target="_blank" rel="noreferrer">p.16</a>
+                <small>11 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题<span>7x</span></a><a class="mini-term" href="../../index.html?term=%E7%97%85%E6%80%81%E6%80%A7#glossary" target="_blank" rel="noreferrer">病态性<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E5%9F%BA%E7%BA%BF%E6%96%B9%E6%B3%95#glossary" target="_blank" rel="noreferrer">基线方法<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=17" target="_blank" rel="noreferrer">p.17</a>
+                <small>2 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>1x</span></a></div>
+              </article>
+            </section>
+    <h2>全术语检索</h2>
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="搜索术语、英文名、类别、解释，例如 BOST / density / PINN" />
+      <select id="category">
+        <option value="all">All categories</option>
+        <option value="光学诊断">光学诊断</option><option value="反问题/层析">反问题/层析</option><option value="反问题/数值">反问题/数值</option><option value="实验/数据">实验/数据</option><option value="数学基础">数学基础</option>
+      </select>
+    </div>
+    <section id="terms" class="term-list">
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;正则化&quot;, &quot;en&quot;: &quot;Regularization&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;给反问题增加额外约束，例如平滑、稀疏、低秩、物理方程或边界条件。&quot;, &quot;use&quot;: &quot;传统 BOST baseline 和 NeRIF loss 都离不开正则化；它也是参数扫描的核心。&quot;, &quot;pitfall&quot;: &quot;正则化太强会过平滑，太弱会噪声放大；必须用指标和图像同时判断。&quot;, &quot;keywords&quot;: &quot;regularization; Tikhonov; TV; smoothness; loss weight&quot;, &quot;count&quot;: 49, &quot;pages&quot;: [3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 16, 17], &quot;page_hits&quot;: [{&quot;page&quot;: 3, &quot;count&quot;: 3}, {&quot;page&quot;: 4, &quot;count&quot;: 4}, {&quot;page&quot;: 5, &quot;count&quot;: 1}, {&quot;page&quot;: 8, &quot;count&quot;: 9}, {&quot;page&quot;: 9, &quot;count&quot;: 7}, {&quot;page&quot;: 10, &quot;count&quot;: 8}, {&quot;page&quot;: 11, &quot;count&quot;: 3}, {&quot;page&quot;: 12, &quot;count&quot;: 4}, {&quot;page&quot;: 13, &quot;count&quot;: 5}, {&quot;page&quot;: 14, &quot;count&quot;: 3}, {&quot;page&quot;: 16, &quot;count&quot;: 1}, {&quot;page&quot;: 17, &quot;count&quot;: 1}], &quot;page_count&quot;: 12}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化</a>
+                <p class="en">Regularization</p>
+                <p>给反问题增加额外约束，例如平滑、稀疏、低秩、物理方程或边界条件。</p>
+                <p><b>读这篇时看什么：</b>传统 BOST baseline 和 NeRIF loss 都离不开正则化；它也是参数扫描的核心。</p>
+                <p><b>易混点：</b>正则化太强会过平滑，太弱会噪声放大；必须用指标和图像同时判断。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>49 hits</b>
+                <small>12 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=13" target="_blank" rel="noreferrer">p.13</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=14" target="_blank" rel="noreferrer">p.14</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=17" target="_blank" rel="noreferrer">p.17</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%AD%A3%E5%88%99%E5%8C%96">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;反问题&quot;, &quot;en&quot;: &quot;Inverse problem&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;从观测反推未知物理场。BOST 从多视角位移反推三维折射率/密度，就是典型反问题。&quot;, &quot;use&quot;: &quot;开题报告要把你的项目放在“光学诊断 + 反问题 + 神经表示”这个框架里。&quot;, &quot;pitfall&quot;: &quot;反问题通常病态，不能只靠训练 loss 下降说明结果可靠。&quot;, &quot;keywords&quot;: &quot;inverse problem; inverse modeling; optical inverse problem; computational imaging&quot;, &quot;count&quot;: 17, &quot;pages&quot;: [1, 2, 3, 5, 8, 15, 16, 17], &quot;page_hits&quot;: [{&quot;page&quot;: 1, &quot;count&quot;: 1}, {&quot;page&quot;: 2, &quot;count&quot;: 1}, {&quot;page&quot;: 3, &quot;count&quot;: 3}, {&quot;page&quot;: 5, &quot;count&quot;: 1}, {&quot;page&quot;: 8, &quot;count&quot;: 1}, {&quot;page&quot;: 15, &quot;count&quot;: 2}, {&quot;page&quot;: 16, &quot;count&quot;: 7}, {&quot;page&quot;: 17, &quot;count&quot;: 1}], &quot;page_count&quot;: 8}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题</a>
+                <p class="en">Inverse problem</p>
+                <p>从观测反推未知物理场。BOST 从多视角位移反推三维折射率/密度，就是典型反问题。</p>
+                <p><b>读这篇时看什么：</b>开题报告要把你的项目放在“光学诊断 + 反问题 + 神经表示”这个框架里。</p>
+                <p><b>易混点：</b>反问题通常病态，不能只靠训练 loss 下降说明结果可靠。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>17 hits</b>
+                <small>8 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=15" target="_blank" rel="noreferrer">p.15</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=17" target="_blank" rel="noreferrer">p.17</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%8F%8D%E9%97%AE%E9%A2%98">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;合成数据&quot;, &quot;en&quot;: &quot;Synthetic data / phantom&quot;, &quot;category&quot;: &quot;实验/数据&quot;, &quot;explain&quot;: &quot;人为构造的已知真值数据，用来测试重构算法和误差传播。&quot;, &quot;use&quot;: &quot;这是你即使没有组内数据也能毕业的底盘。先用 phantom 跑通 forward/inverse/metrics。&quot;, &quot;pitfall&quot;: &quot;合成数据过于理想会掩盖真实图像噪声、标定误差和缺失视角问题。&quot;, &quot;keywords&quot;: &quot;synthetic phantom; simulated BOS; ground truth field; benchmark data&quot;, &quot;count&quot;: 7, &quot;pages&quot;: [9, 10, 12, 13], &quot;page_hits&quot;: [{&quot;page&quot;: 9, &quot;count&quot;: 2}, {&quot;page&quot;: 10, &quot;count&quot;: 2}, {&quot;page&quot;: 12, &quot;count&quot;: 1}, {&quot;page&quot;: 13, &quot;count&quot;: 2}], &quot;page_count&quot;: 4}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%90%88%E6%88%90%E6%95%B0%E6%8D%AE#glossary" target="_blank" rel="noreferrer">合成数据</a>
+                <p class="en">Synthetic data / phantom</p>
+                <p>人为构造的已知真值数据，用来测试重构算法和误差传播。</p>
+                <p><b>读这篇时看什么：</b>这是你即使没有组内数据也能毕业的底盘。先用 phantom 跑通 forward/inverse/metrics。</p>
+                <p><b>易混点：</b>合成数据过于理想会掩盖真实图像噪声、标定误差和缺失视角问题。</p>
+              </div>
+              <div class="term-side">
+                <span>实验/数据</span>
+                <b>7 hits</b>
+                <small>4 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=13" target="_blank" rel="noreferrer">p.13</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%90%88%E6%88%90%E6%95%B0%E6%8D%AE">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%90%88%E6%88%90%E6%95%B0%E6%8D%AE#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;拉东变换&quot;, &quot;en&quot;: &quot;Radon transform&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;把二维函数沿不同角度的直线积分，形成角度-探测器坐标上的投影数据，是理解 CT 和简化层析 forward 的经典模型。&quot;, &quot;use&quot;: &quot;先用 scikit-image phantom/sinogram toy 学视角不足、噪声和重建误差，再迁移到 BOST 的偏折/梯度观测。&quot;, &quot;pitfall&quot;: &quot;BOST 观测不是普通衰减 CT 的标量线积分；折射率梯度、光路几何和可能的 ray bending 都使 forward 不同。&quot;, &quot;keywords&quot;: &quot;Radon transform; sinogram; line integral; tomography; sparse view&quot;, &quot;count&quot;: 7, &quot;pages&quot;: [2, 3, 5], &quot;page_hits&quot;: [{&quot;page&quot;: 2, &quot;count&quot;: 4}, {&quot;page&quot;: 3, &quot;count&quot;: 1}, {&quot;page&quot;: 5, &quot;count&quot;: 2}], &quot;page_count&quot;: 3}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%8B%89%E4%B8%9C%E5%8F%98%E6%8D%A2#glossary" target="_blank" rel="noreferrer">拉东变换</a>
+                <p class="en">Radon transform</p>
+                <p>把二维函数沿不同角度的直线积分，形成角度-探测器坐标上的投影数据，是理解 CT 和简化层析 forward 的经典模型。</p>
+                <p><b>读这篇时看什么：</b>先用 scikit-image phantom/sinogram toy 学视角不足、噪声和重建误差，再迁移到 BOST 的偏折/梯度观测。</p>
+                <p><b>易混点：</b>BOST 观测不是普通衰减 CT 的标量线积分；折射率梯度、光路几何和可能的 ray bending 都使 forward 不同。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>7 hits</b>
+                <small>3 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%8B%89%E4%B8%9C%E5%8F%98%E6%8D%A2">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%8B%89%E4%B8%9C%E5%8F%98%E6%8D%A2#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;前向模型&quot;, &quot;en&quot;: &quot;Forward model&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;给定三维物理场和相机几何，计算理论上应该观测到什么图像位移、投影或信号。&quot;, &quot;use&quot;: &quot;你做合成数据和 NeRIF 训练时，前向模型是最重要的代码模块。&quot;, &quot;pitfall&quot;: &quot;前向模型过于简化会让 demo 好看但无法迁移真实数据；需要明确小角度、直线光线或 ray tracing 假设。&quot;, &quot;keywords&quot;: &quot;forward model; differentiable projection; ray tracing; BOS simulation&quot;, &quot;count&quot;: 6, &quot;pages&quot;: [9, 10, 12, 14, 15], &quot;page_hits&quot;: [{&quot;page&quot;: 9, &quot;count&quot;: 1}, {&quot;page&quot;: 10, &quot;count&quot;: 2}, {&quot;page&quot;: 12, &quot;count&quot;: 1}, {&quot;page&quot;: 14, &quot;count&quot;: 1}, {&quot;page&quot;: 15, &quot;count&quot;: 1}], &quot;page_count&quot;: 5}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型</a>
+                <p class="en">Forward model</p>
+                <p>给定三维物理场和相机几何，计算理论上应该观测到什么图像位移、投影或信号。</p>
+                <p><b>读这篇时看什么：</b>你做合成数据和 NeRIF 训练时，前向模型是最重要的代码模块。</p>
+                <p><b>易混点：</b>前向模型过于简化会让 demo 好看但无法迁移真实数据；需要明确小角度、直线光线或 ray tracing 假设。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>6 hits</b>
+                <small>5 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=14" target="_blank" rel="noreferrer">p.14</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=15" target="_blank" rel="noreferrer">p.15</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;奇异值分解&quot;, &quot;en&quot;: &quot;Singular Value Decomposition, SVD&quot;, &quot;category&quot;: &quot;数学基础&quot;, &quot;explain&quot;: &quot;把矩阵写成 A = U Sigma V^T。奇异值说明不同方向被观测放大或压低多少，V 中对应零奇异值的方向构成零空间。&quot;, &quot;use&quot;: &quot;用小型 BOST forward matrix 的奇异谱判断可观测 rank、噪声放大和 exact null headroom。&quot;, &quot;pitfall&quot;: &quot;小 synthetic 矩阵的 SVD 结论不自动代表真实 cone-ray 系统；大规模系统也通常不能直接做完整 SVD。&quot;, &quot;keywords&quot;: &quot;SVD; singular value; rank; nullspace; inverse problem&quot;, &quot;count&quot;: 4, &quot;pages&quot;: [4, 8], &quot;page_hits&quot;: [{&quot;page&quot;: 4, &quot;count&quot;: 3}, {&quot;page&quot;: 8, &quot;count&quot;: 1}], &quot;page_count&quot;: 2}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3#glossary" target="_blank" rel="noreferrer">奇异值分解</a>
+                <p class="en">Singular Value Decomposition, SVD</p>
+                <p>把矩阵写成 A = U Sigma V^T。奇异值说明不同方向被观测放大或压低多少，V 中对应零奇异值的方向构成零空间。</p>
+                <p><b>读这篇时看什么：</b>用小型 BOST forward matrix 的奇异谱判断可观测 rank、噪声放大和 exact null headroom。</p>
+                <p><b>易混点：</b>小 synthetic 矩阵的 SVD 结论不自动代表真实 cone-ray 系统；大规模系统也通常不能直接做完整 SVD。</p>
+              </div>
+              <div class="term-side">
+                <span>数学基础</span>
+                <b>4 hits</b>
+                <small>2 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=8" target="_blank" rel="noreferrer">p.8</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%A5%87%E5%BC%82%E5%80%BC%E5%88%86%E8%A7%A3#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;光流&quot;, &quot;en&quot;: &quot;Optical flow&quot;, &quot;category&quot;: &quot;光学诊断&quot;, &quot;explain&quot;: &quot;估计两帧图像间每个像素的运动或位移，是 BOS 位移估计的重要方法之一。&quot;, &quot;use&quot;: &quot;你可以做 BOS 位移估计 benchmark，比较传统相关法、Horn-Schunck、Lucas-Kanade 和现代光流。&quot;, &quot;pitfall&quot;: &quot;光流估计的是图像亮度模式运动，不等于物理粒子速度；BOS 中还需和折射模型连接。&quot;, &quot;keywords&quot;: &quot;optical flow; Horn-Schunck; Lucas-Kanade; BOS displacement estimation&quot;, &quot;count&quot;: 3, &quot;pages&quot;: [12, 13, 14], &quot;page_hits&quot;: [{&quot;page&quot;: 12, &quot;count&quot;: 1}, {&quot;page&quot;: 13, &quot;count&quot;: 1}, {&quot;page&quot;: 14, &quot;count&quot;: 1}], &quot;page_count&quot;: 3}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流</a>
+                <p class="en">Optical flow</p>
+                <p>估计两帧图像间每个像素的运动或位移，是 BOS 位移估计的重要方法之一。</p>
+                <p><b>读这篇时看什么：</b>你可以做 BOS 位移估计 benchmark，比较传统相关法、Horn-Schunck、Lucas-Kanade 和现代光流。</p>
+                <p><b>易混点：</b>光流估计的是图像亮度模式运动，不等于物理粒子速度；BOS 中还需和折射模型连接。</p>
+              </div>
+              <div class="term-side">
+                <span>光学诊断</span>
+                <b>3 hits</b>
+                <small>3 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=13" target="_blank" rel="noreferrer">p.13</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=14" target="_blank" rel="noreferrer">p.14</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%85%89%E6%B5%81">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;伴随算子&quot;, &quot;en&quot;: &quot;Adjoint operator&quot;, &quot;category&quot;: &quot;反问题/数值&quot;, &quot;explain&quot;: &quot;若 forward operator A 把体场映到观测，伴随 A* 把观测残差按内积意义反传回体场。离散实矩阵下常对应转置 A^T，但它通常不是逆算子。&quot;, &quot;use&quot;: &quot;BOST 中可用伴随/反投影形成 physics lift、梯度方向或传统迭代重建的更新。&quot;, &quot;pitfall&quot;: &quot;A* y 只是把信息摊回去，不等于恢复真实 x；少视角、缩放和几何权重都会影响结果。&quot;, &quot;keywords&quot;: &quot;adjoint operator; transpose; backprojection; gradient; BOST forward&quot;, &quot;count&quot;: 2, &quot;pages&quot;: [1, 13], &quot;page_hits&quot;: [{&quot;page&quot;: 1, &quot;count&quot;: 1}, {&quot;page&quot;: 13, &quot;count&quot;: 1}], &quot;page_count&quot;: 2}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E4%BC%B4%E9%9A%8F%E7%AE%97%E5%AD%90#glossary" target="_blank" rel="noreferrer">伴随算子</a>
+                <p class="en">Adjoint operator</p>
+                <p>若 forward operator A 把体场映到观测，伴随 A* 把观测残差按内积意义反传回体场。离散实矩阵下常对应转置 A^T，但它通常不是逆算子。</p>
+                <p><b>读这篇时看什么：</b>BOST 中可用伴随/反投影形成 physics lift、梯度方向或传统迭代重建的更新。</p>
+                <p><b>易混点：</b>A* y 只是把信息摊回去，不等于恢复真实 x；少视角、缩放和几何权重都会影响结果。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/数值</span>
+                <b>2 hits</b>
+                <small>2 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=13" target="_blank" rel="noreferrer">p.13</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E4%BC%B4%E9%9A%8F%E7%AE%97%E5%AD%90">跨论文反查</a>
+                  <a href="../../index.html?term=%E4%BC%B4%E9%9A%8F%E7%AE%97%E5%AD%90#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;滤波反投影&quot;, &quot;en&quot;: &quot;Filtered backprojection, FBP&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;先在投影域做频率滤波，再把各角度投影反投影回空间的解析层析方法。它快、透明，适合作为第一条传统 baseline。&quot;, &quot;use&quot;: &quot;在 2D Radon toy 中比较 FBP 与 SART，观察少视角条纹、噪声放大和正则化需求。&quot;, &quot;pitfall&quot;: &quot;FBP 的标准公式依赖特定直线积分几何；不能直接把 CT 实现当成真实 BOST 求解器。&quot;, &quot;keywords&quot;: &quot;FBP; filtered backprojection; ramp filter; CT reconstruction; baseline&quot;, &quot;count&quot;: 2, &quot;pages&quot;: [1, 13], &quot;page_hits&quot;: [{&quot;page&quot;: 1, &quot;count&quot;: 1}, {&quot;page&quot;: 13, &quot;count&quot;: 1}], &quot;page_count&quot;: 2}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影</a>
+                <p class="en">Filtered backprojection, FBP</p>
+                <p>先在投影域做频率滤波，再把各角度投影反投影回空间的解析层析方法。它快、透明，适合作为第一条传统 baseline。</p>
+                <p><b>读这篇时看什么：</b>在 2D Radon toy 中比较 FBP 与 SART，观察少视角条纹、噪声放大和正则化需求。</p>
+                <p><b>易混点：</b>FBP 的标准公式依赖特定直线积分几何；不能直接把 CT 实现当成真实 BOST 求解器。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>2 hits</b>
+                <small>2 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=13" target="_blank" rel="noreferrer">p.13</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;病态性&quot;, &quot;en&quot;: &quot;Ill-posedness&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;解可能不存在、不唯一，或者对噪声极端敏感，这是少视角层析的核心困难。&quot;, &quot;use&quot;: &quot;你的鲁棒性分析、少视角扫描和正则化设计都可以围绕病态性展开。&quot;, &quot;pitfall&quot;: &quot;不要把“网络能输出一张图”误当成“问题已经有唯一正确解”。&quot;, &quot;keywords&quot;: &quot;ill-posed inverse problem; instability; non-uniqueness; sparse-view tomography&quot;, &quot;count&quot;: 2, &quot;pages&quot;: [16], &quot;page_hits&quot;: [{&quot;page&quot;: 16, &quot;count&quot;: 2}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E7%97%85%E6%80%81%E6%80%A7#glossary" target="_blank" rel="noreferrer">病态性</a>
+                <p class="en">Ill-posedness</p>
+                <p>解可能不存在、不唯一，或者对噪声极端敏感，这是少视角层析的核心困难。</p>
+                <p><b>读这篇时看什么：</b>你的鲁棒性分析、少视角扫描和正则化设计都可以围绕病态性展开。</p>
+                <p><b>易混点：</b>不要把“网络能输出一张图”误当成“问题已经有唯一正确解”。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>2 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=16" target="_blank" rel="noreferrer">p.16</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E7%97%85%E6%80%81%E6%80%A7">跨论文反查</a>
+                  <a href="../../index.html?term=%E7%97%85%E6%80%81%E6%80%A7#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;低秩先验&quot;, &quot;en&quot;: &quot;Low-rank prior&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;假设数据可以由较少的基模式表示，用于稳定反演和压缩时序重构。&quot;, &quot;use&quot;: &quot;是 4D BOST 子模块的可毕业切口：比较逐帧重构与低秩时序表示。&quot;, &quot;pitfall&quot;: &quot;低秩可能丢掉瞬态小结构；需要用误差图说明哪些区域被牺牲。&quot;, &quot;keywords&quot;: &quot;low-rank prior; temporal coherence; dynamic tomography; 4D BOST&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [15], &quot;page_hits&quot;: [{&quot;page&quot;: 15, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E4%BD%8E%E7%A7%A9%E5%85%88%E9%AA%8C#glossary" target="_blank" rel="noreferrer">低秩先验</a>
+                <p class="en">Low-rank prior</p>
+                <p>假设数据可以由较少的基模式表示，用于稳定反演和压缩时序重构。</p>
+                <p><b>读这篇时看什么：</b>是 4D BOST 子模块的可毕业切口：比较逐帧重构与低秩时序表示。</p>
+                <p><b>易混点：</b>低秩可能丢掉瞬态小结构；需要用误差图说明哪些区域被牺牲。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=15" target="_blank" rel="noreferrer">p.15</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E4%BD%8E%E7%A7%A9%E5%85%88%E9%AA%8C">跨论文反查</a>
+                  <a href="../../index.html?term=%E4%BD%8E%E7%A7%A9%E5%85%88%E9%AA%8C#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;基线方法&quot;, &quot;en&quot;: &quot;Baseline method&quot;, &quot;category&quot;: &quot;实验/数据&quot;, &quot;explain&quot;: &quot;用于对比新方法的传统或简单方法，帮助判断改进是否真实。&quot;, &quot;use&quot;: &quot;你的 NeRIF 项目至少需要一个 voxel/SIRT/Tikhonov 或逐帧 baseline。&quot;, &quot;pitfall&quot;: &quot;不要只和自己方法的不同超参数比；答辩老师会问传统方法在哪里。&quot;, &quot;keywords&quot;: &quot;baseline; ablation; control experiment; voxel reconstruction; traditional tomography&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [16], &quot;page_hits&quot;: [{&quot;page&quot;: 16, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%9F%BA%E7%BA%BF%E6%96%B9%E6%B3%95#glossary" target="_blank" rel="noreferrer">基线方法</a>
+                <p class="en">Baseline method</p>
+                <p>用于对比新方法的传统或简单方法，帮助判断改进是否真实。</p>
+                <p><b>读这篇时看什么：</b>你的 NeRIF 项目至少需要一个 voxel/SIRT/Tikhonov 或逐帧 baseline。</p>
+                <p><b>易混点：</b>不要只和自己方法的不同超参数比；答辩老师会问传统方法在哪里。</p>
+              </div>
+              <div class="term-side">
+                <span>实验/数据</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=16" target="_blank" rel="noreferrer">p.16</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%9F%BA%E7%BA%BF%E6%96%B9%E6%B3%95">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%9F%BA%E7%BA%BF%E6%96%B9%E6%B3%95#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;少视角重构&quot;, &quot;en&quot;: &quot;Sparse-view reconstruction&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;相机视角数量有限时进行三维重构，信息不足导致伪影和不稳定。&quot;, &quot;use&quot;: &quot;非常适合本科切入：3/5/7/9 视角扫描、噪声扫描和 baseline 对比都能形成清晰图表。&quot;, &quot;pitfall&quot;: &quot;少视角不是单纯减少输入张数；相机角度分布和缺失方向同样重要。&quot;, &quot;keywords&quot;: &quot;sparse-view reconstruction; limited-view tomography; limited-angle tomography; few-view BOST&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [15], &quot;page_hits&quot;: [{&quot;page&quot;: 15, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%B0%91%E8%A7%86%E8%A7%92%E9%87%8D%E6%9E%84#glossary" target="_blank" rel="noreferrer">少视角重构</a>
+                <p class="en">Sparse-view reconstruction</p>
+                <p>相机视角数量有限时进行三维重构，信息不足导致伪影和不稳定。</p>
+                <p><b>读这篇时看什么：</b>非常适合本科切入：3/5/7/9 视角扫描、噪声扫描和 baseline 对比都能形成清晰图表。</p>
+                <p><b>易混点：</b>少视角不是单纯减少输入张数；相机角度分布和缺失方向同样重要。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=15" target="_blank" rel="noreferrer">p.15</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%B0%91%E8%A7%86%E8%A7%92%E9%87%8D%E6%9E%84">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%B0%91%E8%A7%86%E8%A7%92%E9%87%8D%E6%9E%84#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;逆犯罪&quot;, &quot;en&quot;: &quot;Inverse crime&quot;, &quot;category&quot;: &quot;实验/数据&quot;, &quot;explain&quot;: &quot;用同一个离散 forward 生成训练/测试观测，又用它做重建与验收，会让模型在过于匹配的世界里显得异常准确。&quot;, &quot;use&quot;: &quot;T16 必须用不同分辨率、ray tracer、扰动或真实装置做 independent-forward audit。&quot;, &quot;pitfall&quot;: &quot;随机切分 phantom 并不能消除 inverse crime；forward 离散、几何、噪声与标定也要改变。&quot;, &quot;keywords&quot;: &quot;inverse crime; independent forward; simulator mismatch; synthetic benchmark; generalization&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [12], &quot;page_hits&quot;: [{&quot;page&quot;: 12, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E9%80%86%E7%8A%AF%E7%BD%AA#glossary" target="_blank" rel="noreferrer">逆犯罪</a>
+                <p class="en">Inverse crime</p>
+                <p>用同一个离散 forward 生成训练/测试观测，又用它做重建与验收，会让模型在过于匹配的世界里显得异常准确。</p>
+                <p><b>读这篇时看什么：</b>T16 必须用不同分辨率、ray tracer、扰动或真实装置做 independent-forward audit。</p>
+                <p><b>易混点：</b>随机切分 phantom 并不能消除 inverse crime；forward 离散、几何、噪声与标定也要改变。</p>
+              </div>
+              <div class="term-side">
+                <span>实验/数据</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fdynamic_xray_tomography_drkf_hakkarainen_2019_arxiv.pdf#page=12" target="_blank" rel="noreferrer">p.12</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E9%80%86%E7%8A%AF%E7%BD%AA">跨论文反查</a>
+                  <a href="../../index.html?term=%E9%80%86%E7%8A%AF%E7%BD%AA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+            </section>
+    <footer>Generated from open cached PDFs with pypdf. Private/WebVPN PDFs are excluded from public reader pages.</footer>
+  </main>
+  <script>
+    const search = document.getElementById('search');
+    const category = document.getElementById('category');
+    const rows = Array.from(document.querySelectorAll('.term-row'));
+    function apply() {
+      const q = search.value.trim().toLowerCase();
+      const parts = q.split(/\s+/).filter(Boolean);
+      rows.forEach((row) => {
+        const data = JSON.parse(row.dataset.text);
+        const text = row.innerText.toLowerCase();
+        const okQ = !parts.length || parts.every((part) => text.includes(part));
+        const okC = category.value === 'all' || data.category === category.value;
+        row.style.display = okQ && okC ? '' : 'none';
+      });
+    }
+    const params = new URLSearchParams(location.search);
+    const initial = params.get('q') || params.get('term') || '';
+    if (initial) search.value = initial;
+    search.addEventListener('input', apply);
+    category.addEventListener('change', apply);
+    apply();
+  </script>
+  <script src="../../site_link_router.js" data-site-root="../../"></script>
+</body>
+</html>

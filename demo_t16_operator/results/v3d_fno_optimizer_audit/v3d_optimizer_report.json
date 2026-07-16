@@ -1,0 +1,175 @@
+{
+  "status": "completed",
+  "scientific_status": "V3D_FNO_VALIDATION_CHAMPION_NOT_PLATEAUED_BY_MAX_EPOCH",
+  "environment": {
+    "python": "3.11.5",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "torch": "2.13.0",
+    "requested_device": "mps",
+    "runtime_device": "mps"
+  },
+  "provenance": {
+    "experiment_config_sha256": "7e65352c80435af26e611847dd7f295b19f9f1c543e6897bd046202b637733fa",
+    "dataset_config_sha256": "b4e16567cb9724eae1945b9c0ba214e4ecd404c16316b00c94ad577e87ea654b",
+    "training_script_sha256": "ef89ed483ccf72c48142e67a944afe2ba9d035d93761963b9327e90ffdccda26",
+    "train_eval_script_sha256": "97a2de2079fd86152382e5d7c08c46eae555bc142b6c0a9b96479819794efdf3",
+    "data_script_sha256": "a7d7cc431fc6a91601ca44289f8415a20a76ce63dc382166086ec130863066e7",
+    "dataset_npz_sha256": "38e7b8ee6571aac58f02b86625f999ea6e9313b61668a33f036066c2bc22fdfc",
+    "dataset_npz_public": false,
+    "checkpoint_weights_public": false
+  },
+  "protocol": {
+    "same_base_checkpoint_per_seed_across_strategies": true,
+    "same_block_batch_seed_across_strategies": true,
+    "batch_order_contract_hash_recorded_per_block": true,
+    "batch_order_contract_binds_actual_train_indices": true,
+    "validation_metric_aggregated_per_sample": true,
+    "base_optimizer_state_carried_into_continuation": false,
+    "carry_adam_means_across_continuation_blocks_only": true,
+    "training_state_continues_from_raw_block_endpoint": true,
+    "reported_checkpoint_is_validation_prefix_best": true,
+    "dev2_computed_after_all_validation_decisions": true,
+    "test_or_q_audit_used_for_strategy_or_checkpoint_selection": false,
+    "blind_final_opened": false,
+    "test_unit": "128 three-dimensional dev2 fields after collapsing model seeds"
+  },
+  "validation_champion": "carry_adam_restart_cosine",
+  "champion_plateau_decision": {
+    "plateau_reached": false,
+    "required_consecutive_final_plateau_blocks": 2,
+    "observed_consecutive_final_plateau_blocks": 0,
+    "plateau_onset_endpoint_epoch": null,
+    "reference_checkpoint_epoch": null,
+    "selection_metric": "prefix_best_validation_relative_l2",
+    "selection_uses_validation_only": true,
+    "test_and_q_audit_locked_out_of_selection": true
+  },
+  "strategy_summary": [
+    {
+      "strategy": "restart_adam_restart_cosine",
+      "label": "restart Adam + restart cosine",
+      "validation_champion": false,
+      "plateau_reached": false,
+      "plateau_onset_endpoint_epoch": null,
+      "observed_consecutive_final_plateau_blocks": 0,
+      "final_mean_selected_validation_rel_l2": 0.0994717332224051,
+      "final_mean_endpoint_validation_rel_l2": 0.09950608213742573,
+      "last_block_mean_improvement_pct": 0.8620760102124763,
+      "last_block_max_seed_improvement_pct": 1.13425724327887,
+      "mean_cumulative_train_seconds": 45.67757261338799
+    },
+    {
+      "strategy": "carry_adam_restart_cosine",
+      "label": "carry continuation-Adam + restart cosine",
+      "validation_champion": true,
+      "plateau_reached": false,
+      "plateau_onset_endpoint_epoch": null,
+      "observed_consecutive_final_plateau_blocks": 0,
+      "final_mean_selected_validation_rel_l2": 0.09413853076597055,
+      "final_mean_endpoint_validation_rel_l2": 0.09416488322118917,
+      "last_block_mean_improvement_pct": 0.905167265163568,
+      "last_block_max_seed_improvement_pct": 0.9609584987780406,
+      "mean_cumulative_train_seconds": 46.45889487497819
+    },
+    {
+      "strategy": "carry_adam_long_cosine",
+      "label": "carry continuation-Adam + long cosine",
+      "validation_champion": false,
+      "plateau_reached": true,
+      "plateau_onset_endpoint_epoch": 192,
+      "observed_consecutive_final_plateau_blocks": 6,
+      "final_mean_selected_validation_rel_l2": 0.09572554950912793,
+      "final_mean_endpoint_validation_rel_l2": 0.09572925480703513,
+      "last_block_mean_improvement_pct": 0.013699789538150242,
+      "last_block_max_seed_improvement_pct": 0.027489580156685595,
+      "mean_cumulative_train_seconds": 43.34640102864554
+    }
+  ],
+  "test_summary": [
+    {
+      "strategy": "base_24",
+      "independent_field_count": 128,
+      "model_seed_count": 3,
+      "mean_field_rel_l2": 0.35132814712900046,
+      "mean_clean_audit_rel_l2": 0.41972212367303047,
+      "mean_field_superiority_vs_base24_pct": 0.0,
+      "field_superiority_ci95_low": 0.0,
+      "field_superiority_ci95_high": 0.0,
+      "every_domain_mean_nonnegative_vs_base24": true
+    },
+    {
+      "strategy": "carry_adam_long_cosine",
+      "independent_field_count": 128,
+      "model_seed_count": 3,
+      "mean_field_rel_l2": 0.3036995246754183,
+      "mean_clean_audit_rel_l2": 0.322349662000003,
+      "mean_field_superiority_vs_base24_pct": 21.681088491972545,
+      "field_superiority_ci95_low": 20.63814111627473,
+      "field_superiority_ci95_high": 22.695683752895835,
+      "every_domain_mean_nonnegative_vs_base24": true
+    },
+    {
+      "strategy": "carry_adam_restart_cosine",
+      "independent_field_count": 128,
+      "model_seed_count": 3,
+      "mean_field_rel_l2": 0.30319603518000804,
+      "mean_clean_audit_rel_l2": 0.32259459076643304,
+      "mean_field_superiority_vs_base24_pct": 22.09077331949237,
+      "field_superiority_ci95_low": 21.038137514292735,
+      "field_superiority_ci95_high": 23.122716138809714,
+      "every_domain_mean_nonnegative_vs_base24": true
+    },
+    {
+      "strategy": "restart_adam_restart_cosine",
+      "independent_field_count": 128,
+      "model_seed_count": 3,
+      "mean_field_rel_l2": 0.3041780645629236,
+      "mean_clean_audit_rel_l2": 0.3219640526998167,
+      "mean_field_superiority_vs_base24_pct": 20.914659509061387,
+      "field_superiority_ci95_low": 19.90110825986515,
+      "field_superiority_ci95_high": 21.91002550346215,
+      "every_domain_mean_nonnegative_vs_base24": true
+    }
+  ],
+  "pairwise_summary": [
+    {
+      "candidate": "carry_adam_restart_cosine",
+      "comparator": "restart_adam_restart_cosine",
+      "independent_field_count": 128,
+      "model_seed_count": 3,
+      "mean_field_superiority_pct": 2.0771864268816653,
+      "field_superiority_ci95_low": 1.7541495755095573,
+      "field_superiority_ci95_high": 2.382440879010468,
+      "p10_field_superiority_pct": -1.2191921401259673,
+      "field_harm_rate_gt_1pct": 0.1640625,
+      "mean_audit_superiority_pct": 1.3734577788428028,
+      "worst_domain": "test_family_ood",
+      "worst_domain_mean_field_superiority_pct": -0.7754746053720838,
+      "every_domain_mean_field_nonnegative": false
+    },
+    {
+      "candidate": "carry_adam_restart_cosine",
+      "comparator": "carry_adam_long_cosine",
+      "independent_field_count": 128,
+      "model_seed_count": 3,
+      "mean_field_superiority_pct": 0.7236715839287251,
+      "field_superiority_ci95_low": 0.6539001877460352,
+      "field_superiority_ci95_high": 0.7931669758794095,
+      "p10_field_superiority_pct": -0.316340525973872,
+      "field_harm_rate_gt_1pct": 0.0,
+      "mean_audit_superiority_pct": 0.5405746560838192,
+      "worst_domain": "test_family_ood",
+      "worst_domain_mean_field_superiority_pct": -0.13079359214413752,
+      "every_domain_mean_field_nonnegative": false
+    }
+  ],
+  "claims_boundary": [
+    "Carry Adam means carrying moments across continuation blocks after a newly initialized continuation optimizer; base-training optimizer moments are not restored.",
+    "The current budget is matched attempted epochs within one FNO architecture, not a cross-architecture equal-FLOPs guarantee.",
+    "The three branches isolate optimizer-state carry and cosine horizon only within this fixed K=6 synthetic setup.",
+    "Attempted cumulative epochs count compute; validation prefix-best checkpoints do not feed back into the raw continuation state.",
+    "A plateau is an operational result under the locked optimizer protocols, not a global optimization proof.",
+    "Dev2 diagnostics were computed only after strategy and checkpoint selection and cannot open the blind final.",
+    "No real BOST superiority, acquisition-geometry benefit or paper-level novelty follows from this audit."
+  ]
+}

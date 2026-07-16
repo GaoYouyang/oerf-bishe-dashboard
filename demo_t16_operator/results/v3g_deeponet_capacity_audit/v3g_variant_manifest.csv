@@ -1,0 +1,11 @@
+pre_registered_order,variant_id,label,screen,branch_hidden,trunk_hidden,rank,pool_depth_bins,pool_height_bins,pool_width_bins,parameter_count,reference_parameter_count,parameter_cap,parameter_ratio_to_reference,within_parameter_cap,hypothesis,exclusion_reason
+0,r48_p444_reference,"reference: rank 48, pool 4x4x4",True,64,64,48,4,4,4,49313,49313,73969,1.0,True,v3f reference,
+1,r32_p444,"lower rank 32, pool 4x4x4",True,64,64,32,4,4,4,47233,49313,73969,0.9578204530245574,True,rank 48 may overfit the small synthetic training set,
+2,r64_p444,"rank 64, pool 4x4x4",True,64,64,64,4,4,4,51393,49313,73969,1.0421795469754427,True,the reference basis rank may be too restrictive,
+3,r96_p444,"rank 96, pool 4x4x4",True,64,64,96,4,4,4,55553,49313,73969,1.1265386409263278,True,a wider separable basis may recover more field structure,
+4,r48_p244,"coarse depth: rank 48, pool 2x4x4",True,64,64,48,2,4,4,28833,49313,73969,0.5846936913187192,True,depth pooling may regularize the ill-conditioned axis,
+5,r48_p822,"depth-preserving: rank 48, pool 8x2x2",True,64,64,48,8,2,2,28833,49313,73969,0.5846936913187192,True,retain all eight depth bins while compressing transverse bins,
+6,r48_p284,"anisotropic y: rank 48, pool 2x8x4",True,64,64,48,2,8,4,49313,49313,73969,1.0,True,camera geometry may reward extra resolution along y,
+7,r48_p248,"anisotropic x: rank 48, pool 2x4x8",True,64,64,48,2,4,8,49313,49313,73969,1.0,True,camera geometry may reward extra resolution along x,
+8,r48_p844_excluded,"full depth, 4x4 transverse bins",False,64,64,48,8,4,4,90273,49313,73969,1.8306126173625616,False,excluded before training because it exceeds the parameter cap,pre-registered parameter-cap exclusion
+9,r48_p488_excluded,high transverse resolution,False,64,64,48,4,8,8,172193,49313,73969,3.4918378520876847,False,excluded before training because it exceeds the parameter cap,pre-registered parameter-cap exclusion

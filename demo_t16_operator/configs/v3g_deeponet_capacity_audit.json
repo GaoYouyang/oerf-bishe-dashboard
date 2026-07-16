@@ -1,0 +1,162 @@
+{
+  "name": "t16_v3g_deeponet_capacity_lr_audit_v1",
+  "dataset_config": "v3c_dev2_dataset.json",
+  "own_algorithm_config": "own_algorithm_benchmark.json",
+  "output_dir": "v3g_deeponet_capacity_audit",
+  "work_dir": "v3g_deeponet_capacity_work",
+  "total_budget": 6,
+  "fixed_query_index": 4,
+  "audit_query_index": 3,
+  "ridge_relative_grid": [0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1],
+  "training_seeds": [20260901, 20260902, 20260903],
+  "screen_learning_rates": [0.001, 0.002, 0.004],
+  "base_epochs": 24,
+  "continuation_block_epochs": 12,
+  "max_total_epochs": 240,
+  "continuation_learning_rate": 0.001,
+  "checkpoint_acceptance_min_abs_improvement": 0.00001,
+  "fixed_epoch_checkpoints": [60, 120, 180, 240],
+  "parameter_cap_reference_variant": "r48_p444_reference",
+  "parameter_cap_ratio": 1.5,
+  "screen_selection_metric": "mean_seed_best_validation_rel_l2_at_epoch_24",
+  "screen_tie_break": ["lower_parameter_count", "variant_id", "learning_rate"],
+  "bootstrap_seed": 20261121,
+  "bootstrap_replicates": 20000,
+  "variants": [
+    {
+      "id": "r48_p444_reference",
+      "label": "reference: rank 48, pool 4x4x4",
+      "screen": true,
+      "branch_hidden": 64,
+      "trunk_hidden": 64,
+      "rank": 48,
+      "pool_shape": [4, 4, 4],
+      "hypothesis": "v3f reference"
+    },
+    {
+      "id": "r32_p444",
+      "label": "lower rank 32, pool 4x4x4",
+      "screen": true,
+      "branch_hidden": 64,
+      "trunk_hidden": 64,
+      "rank": 32,
+      "pool_shape": [4, 4, 4],
+      "hypothesis": "rank 48 may overfit the small synthetic training set"
+    },
+    {
+      "id": "r64_p444",
+      "label": "rank 64, pool 4x4x4",
+      "screen": true,
+      "branch_hidden": 64,
+      "trunk_hidden": 64,
+      "rank": 64,
+      "pool_shape": [4, 4, 4],
+      "hypothesis": "the reference basis rank may be too restrictive"
+    },
+    {
+      "id": "r96_p444",
+      "label": "rank 96, pool 4x4x4",
+      "screen": true,
+      "branch_hidden": 64,
+      "trunk_hidden": 64,
+      "rank": 96,
+      "pool_shape": [4, 4, 4],
+      "hypothesis": "a wider separable basis may recover more field structure"
+    },
+    {
+      "id": "r48_p244",
+      "label": "coarse depth: rank 48, pool 2x4x4",
+      "screen": true,
+      "branch_hidden": 64,
+      "trunk_hidden": 64,
+      "rank": 48,
+      "pool_shape": [2, 4, 4],
+      "hypothesis": "depth pooling may regularize the ill-conditioned axis"
+    },
+    {
+      "id": "r48_p822",
+      "label": "depth-preserving: rank 48, pool 8x2x2",
+      "screen": true,
+      "branch_hidden": 64,
+      "trunk_hidden": 64,
+      "rank": 48,
+      "pool_shape": [8, 2, 2],
+      "hypothesis": "retain all eight depth bins while compressing transverse bins"
+    },
+    {
+      "id": "r48_p284",
+      "label": "anisotropic y: rank 48, pool 2x8x4",
+      "screen": true,
+      "branch_hidden": 64,
+      "trunk_hidden": 64,
+      "rank": 48,
+      "pool_shape": [2, 8, 4],
+      "hypothesis": "camera geometry may reward extra resolution along y"
+    },
+    {
+      "id": "r48_p248",
+      "label": "anisotropic x: rank 48, pool 2x4x8",
+      "screen": true,
+      "branch_hidden": 64,
+      "trunk_hidden": 64,
+      "rank": 48,
+      "pool_shape": [2, 4, 8],
+      "hypothesis": "camera geometry may reward extra resolution along x"
+    },
+    {
+      "id": "r48_p844_excluded",
+      "label": "full depth, 4x4 transverse bins",
+      "screen": false,
+      "branch_hidden": 64,
+      "trunk_hidden": 64,
+      "rank": 48,
+      "pool_shape": [8, 4, 4],
+      "hypothesis": "excluded before training because it exceeds the parameter cap"
+    },
+    {
+      "id": "r48_p488_excluded",
+      "label": "high transverse resolution",
+      "screen": false,
+      "branch_hidden": 64,
+      "trunk_hidden": 64,
+      "rank": 48,
+      "pool_shape": [4, 8, 8],
+      "hypothesis": "excluded before training because it exceeds the parameter cap"
+    }
+  ],
+  "strategies": [
+    {
+      "id": "restart_adam_restart_cosine",
+      "label": "restart Adam + restart cosine",
+      "carry_optimizer": false,
+      "cosine_horizon": "block"
+    },
+    {
+      "id": "carry_adam_restart_cosine",
+      "label": "carry continuation-Adam + restart cosine",
+      "carry_optimizer": true,
+      "cosine_horizon": "block"
+    },
+    {
+      "id": "carry_adam_long_cosine",
+      "label": "carry continuation-Adam + long cosine",
+      "carry_optimizer": true,
+      "cosine_horizon": "continuation"
+    }
+  ],
+  "validation_plateau_rule": {
+    "metric": "prefix_best_validation_relative_l2",
+    "maximum_mean_relative_improvement_pct_per_block": 0.5,
+    "maximum_seed_relative_improvement_pct_per_block": 1.0,
+    "required_consecutive_final_plateau_blocks": 2,
+    "selection_uses_validation_only": true,
+    "test_and_q_audit_locked_out_of_selection": true
+  },
+  "development_gate": {
+    "minimum_field_superiority_ci95_low_pct": 0.0,
+    "minimum_p10_field_superiority_pct": 0.0,
+    "maximum_field_harm_rate_gt_1pct": 0.05,
+    "require_every_domain_mean_nonnegative": true,
+    "require_every_seed_mean_positive": true
+  }
+}

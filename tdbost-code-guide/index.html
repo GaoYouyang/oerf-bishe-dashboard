@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="面向零代码基础本科生的 TDBOST 中文逐语句代码导读、文件地图和 BOS 三维重构主流程。" />
+  <title>TDBOST 中文代码导读 | OERF 毕设导航</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主内容</a>
+
+  <header class="page-width">
+    <nav class="top-nav" aria-label="页面导航">
+      <a href="../index.html">OERF 研究总站</a>
+      <a href="../operator-learning/">算子学习主页</a>
+      <a href="./" aria-current="page">TDBOST 代码导读</a>
+      <a href="./data.html">数据说明</a>
+      <a href="./audit.html">运行审计</a>
+      <a class="nav-source" href="https://github.com/Hyz617/TDBOST" target="_blank" rel="noreferrer">师兄原仓库</a>
+    </nav>
+
+    <div class="hero">
+      <div>
+        <div class="eyebrow">TDBOST · Beginner Code Atlas</div>
+        <h1>师兄代码，我到底该从哪里读？</h1>
+        <p class="lead">不要从 2,158 行的训练器第一行硬啃。先顺着“数据 → 光线 → 四维场 → BOS 前向物理 → 损失 → 参数更新”读通一条主链，再逐层打开细节。</p>
+        <div class="chips" aria-label="导读状态">
+          <span class="chip">23 个核心文件</span>
+          <span class="chip blue">9,290 行中文注释版</span>
+          <span class="chip gold">可执行 AST 与原版一致</span>
+          <span class="chip coral">零基础阅读顺序已分层</span>
+        </div>
+      </div>
+      <aside class="hero-note">
+        <strong>先建立正确认识</strong>
+        <p>这份公开代码的主体是“张量分解隐式场 + BOS 物理逆问题优化”，不是标准 FNO/DeepONet 跨样本算子学习。它最适合帮助你理解三维场到二维位移的前向算子。</p>
+        <p><a href="./audit.html">先看为什么当前快照不能直接在 Mac 上训练 →</a></p>
+      </aside>
+    </div>
+
+    <div class="stat-strip" aria-label="注释版统计">
+      <div class="stat"><b>5,908</b><span>师兄原始 Python/PYI 行数</span></div>
+      <div class="stat"><b>+3,382</b><span>新增中文解释与 docstring</span></div>
+      <div class="stat"><b>0</b><span>缺少中文函数/类说明</span></div>
+      <div class="stat"><b>23 / 23</b><span>执行语法树与原版一致</span></div>
+    </div>
+  </header>
+
+  <main id="main" class="page-width">
+    <section class="band" aria-labelledby="routeTitle">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">四站主线</div>
+          <h2 id="routeTitle">第一次只读这四站</h2>
+        </div>
+        <p>每张卡都会直接切换下方代码查看器。第一遍只回答“输入是什么、输出是什么、下一步调用谁”，不要试图记住每个公式。</p>
+      </div>
+
+      <div class="route-grid">
+        <a class="route-card" href="?file=run.py" data-file="run.py">
+          <span class="route-step">第 1 站 · 总入口</span>
+          <h3>先把整条调用链看见</h3>
+          <p>找到配置、训练集、MMmodel、Trainer、train() 和最终模型保存位置。</p>
+          <code>run.py → configs/config.py</code>
+        </a>
+        <a class="route-card" href="?file=dataloader%2FBOS_dataset.py" data-file="dataloader/BOS_dataset.py">
+          <span class="route-step">第 2 站 · 数据</span>
+          <h3>一条训练样本长什么样</h3>
+          <p>认出 rays、二维位移、time 和 w2c，不要被历史变量名 all_rgbs 误导。</p>
+          <code>BOS_dataset.read_meta()</code>
+        </a>
+        <a class="route-card" href="?file=TDmodel%2FMMmodel.py" data-file="TDmodel/MMmodel.py">
+          <span class="route-step">第 3 站 · 场表示</span>
+          <h3>六个平面怎样表示四维场</h3>
+          <p>理解 XY/XZ/YZ 与 XT/YT/ZT 的查询、相乘、拼接和 MLP 解码。</p>
+          <code>MMmodel → TD_Base.forward()</code>
+        </a>
+        <a class="route-card" href="?file=All_util%2Ftrainer.py" data-file="All_util/trainer.py">
+          <span class="route-step">第 4 站 · 训练</span>
+          <h3>误差怎样反过来改变三维场</h3>
+          <p>只追 sample_data、renderer、loss、backward 和 optimizer.step。</p>
+          <code>Trainer.train()</code>
+        </a>
+      </div>
+    </section>
+
+    <section id="reader" class="band" aria-labelledby="readerTitle">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">交互式源码地图</div>
+          <h2 id="readerTitle">边看文件角色，边读中文注释</h2>
+        </div>
+        <p>左侧可按 main、光线、模型、loss 等关键词筛选文件；右侧可搜索当前文件。按 Command/Ctrl + K 可直接进入代码搜索。</p>
+      </div>
+
+      <div class="reader-shell">
+        <aside class="file-panel" aria-label="源码文件导航">
+          <label class="field-label" for="fileSearch">筛选文件与概念</label>
+          <input id="fileSearch" type="search" placeholder="例如 光线 / MMmodel / loss" autocomplete="off" />
+          <div id="fileGroups" class="file-groups"></div>
+        </aside>
+
+        <article class="viewer-panel" aria-live="polite">
+          <div class="viewer-header">
+            <div class="viewer-kicker" id="filePath">run.py</div>
+            <div class="viewer-title-row">
+              <h3 id="fileTitle">总入口</h3>
+              <div class="chips">
+                <span class="chip" id="fileLevel">必读</span>
+                <span class="chip blue" id="fileLines">396 行</span>
+              </div>
+            </div>
+            <p class="viewer-description" id="fileDescription"></p>
+            <p class="viewer-description"><strong id="fileFocus"></strong></p>
+            <div class="viewer-shapes">
+              <div class="shape-box"><b>输入：</b><span id="fileInput"></span></div>
+              <div class="shape-box"><b>输出：</b><span id="fileOutput"></span></div>
+            </div>
+            <div class="viewer-actions">
+              <a id="upstreamLink" class="button" href="https://github.com/Hyz617/TDBOST" target="_blank" rel="noreferrer">对照师兄原文件</a>
+              <button id="copyLink" class="button" type="button">复制当前文件链接</button>
+              <span id="copyStatus" role="status" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <div class="code-toolbar">
+            <div class="search-field">
+              <label class="field-label" for="codeSearch">搜索当前文件</label>
+              <input id="codeSearch" type="search" placeholder="main / forward / loss / 【主线】" autocomplete="off" />
+            </div>
+            <button id="prevMatch" class="button" type="button" disabled>上一处</button>
+            <span id="matchStatus" class="match-status">输入关键词</span>
+            <button id="nextMatch" class="button" type="button" disabled>下一处</button>
+          </div>
+
+          <div class="code-viewport" tabindex="0" aria-label="中文注释源码">
+            <div id="codeLines" class="code-lines">
+              <div class="loading">正在载入中文注释源码…</div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="mapTitle">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">脑中地图</div>
+          <h2 id="mapTitle">读任何一行时，都先问它在哪一层</h2>
+        </div>
+      </div>
+      <div class="info-grid">
+        <article class="info-card">
+          <h3>数据层</h3>
+          <p>像素坐标、相机位姿、时间和真实 u/v 位移被整理为一批光线。</p>
+          <ul>
+            <li><code>rays [B,6]</code></li>
+            <li><code>displacement [B,2]</code></li>
+            <li><code>time [B,1]</code></li>
+          </ul>
+        </article>
+        <article class="info-card">
+          <h3>场与物理层</h3>
+          <p>MMmodel 查询 n(x,y,z,t)，TD_Base 在六个邻域点做有限差分，再沿光线积分。</p>
+          <ul>
+            <li>低维平面压缩四维场</li>
+            <li>中心差分得到三维梯度</li>
+            <li>W2C 投影为图像位移</li>
+          </ul>
+        </article>
+        <article class="info-card">
+          <h3>训练层</h3>
+          <p>预测位移与真实位移比较，误差通过自动求导回到张量平面和 MLP 参数。</p>
+          <ul>
+            <li>MSE 数据误差</li>
+            <li>TV / 边界 / 路径约束</li>
+            <li>backward + Adam 更新</li>
+          </ul>
+        </article>
+      </div>
+      <div class="notice">
+        <strong>来源与使用边界</strong>
+        本页代码来自 <a href="https://github.com/Hyz617/TDBOST" target="_blank" rel="noreferrer">Hyz617/TDBOST</a>
+        的提交 <code>3393ca700fd0447685caf4314d87e0f99fc3ef12</code>，中文内容是学习导读。
+        获取时上游根目录未附 LICENSE；这里不新增或解释授权，进一步复制、修改或再发布前应向作者确认许可。
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-width">
+    <p>OERF 毕业设计研究导航 · TDBOST 零基础代码导读。公开页面不包含原始实验数据、编译二进制、模型权重或本机私有文件。</p>
+  </footer>
+
+  <script src="./source-manifest.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

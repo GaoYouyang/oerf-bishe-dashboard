@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A constrained, total-variation minimization algorithm for low-intensity X-ray CT · 术语导读</title>
+  <style>
+    :root { --bg:#f7f8f6; --panel:#fff; --ink:#1d2328; --muted:#65717a; --line:#d9e0df; --green:#16756f; --blue:#315f93; --amber:#9a6a00; --soft:#eef6f3; --shadow:0 16px 36px rgba(30,45,55,.08); }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif; color:var(--ink); background:linear-gradient(90deg,rgba(247,248,246,.94),rgba(247,248,246,.76)),url("../../assets/backgrounds/oerf-refractive-field.png") right -150px top 18px / min(920px,92vw) auto no-repeat fixed,var(--bg); line-height:1.62; letter-spacing:0; }
+    header, main { padding:28px clamp(18px,4vw,58px); }
+    header { border-bottom:1px solid var(--line); background:linear-gradient(180deg,#fff,#edf6f3); }
+    h1 { margin:14px 0 10px; max-width:1100px; font-size:clamp(28px,4vw,48px); line-height:1.12; letter-spacing:0; }
+    h2 { margin:26px 0 12px; font-size:24px; }
+    p { margin:6px 0; }
+    .muted, .en { color:var(--muted); }
+    .buttons, .chips, .focus-grid, .page-links, .term-actions, .mini-terms { display:flex; flex-wrap:wrap; gap:8px; }
+    .button, .page-links a, .term-actions a { display:inline-flex; align-items:center; min-height:34px; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); text-decoration:none; font-weight:700; }
+    .button.primary { background:var(--green); border-color:var(--green); color:#fff; }
+    .summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:18px 0; }
+    .summary div, .focus-term, .term-row, .note { border:1px solid var(--line); border-radius:8px; background:var(--panel); box-shadow:var(--shadow); }
+    .summary div { padding:14px 16px; }
+    .summary b { display:block; font-size:28px; line-height:1; color:var(--green); }
+    .note { padding:14px 16px; color:var(--muted); box-shadow:none; }
+    .chips span { border-radius:999px; padding:5px 9px; background:#eaf0f7; color:var(--blue); font-size:12px; font-weight:700; }
+    .guide-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:12px 0 20px; }
+    .guide-card, .topic-card { border:1px solid var(--line); border-radius:8px; background:rgba(255,255,255,.94); padding:13px; min-width:0; }
+    .guide-card { border-left:4px solid var(--green); }
+    .guide-card b { display:block; color:var(--green); font-size:13px; margin-bottom:5px; }
+    .guide-card p, .topic-card p { margin:0; color:#43545c; font-size:13px; line-height:1.55; }
+    .topic-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:12px 0 20px; }
+    .topic-card span { display:inline-flex; border-radius:999px; padding:4px 8px; background:var(--soft); color:var(--green); font-size:12px; font-weight:800; }
+    .topic-card h3 { margin:8px 0 5px; font-size:16px; line-height:1.3; }
+    .topic-card a { display:inline-flex; align-items:center; min-height:30px; margin-top:8px; padding:5px 8px; border:1px solid var(--line); border-radius:7px; background:#fff; color:var(--blue); text-decoration:none; font-size:12px; font-weight:800; }
+    .focus-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .focus-term { padding:15px; }
+    .term-title, .term-name { color:var(--green); font-weight:800; text-decoration:none; }
+    .term-title span { display:block; color:var(--muted); font-weight:600; font-size:13px; }
+    .term-actions { margin-top:8px; }
+    .term-actions a { min-height:28px; padding:4px 7px; color:var(--blue); font-size:12px; }
+    .page-map { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .page-card { border:1px solid var(--line); border-radius:8px; background:#fff; padding:12px; }
+    .page-title { display:inline-flex; margin-bottom:6px; color:var(--green); font-size:18px; font-weight:900; text-decoration:none; }
+    .page-card small { display:block; color:var(--muted); }
+    .mini-term { display:inline-flex; align-items:center; gap:5px; border-radius:999px; padding:4px 7px; background:#f6efe2; border:1px solid #ead7b5; color:var(--amber); font-size:12px; font-weight:700; text-decoration:none; }
+    .mini-term span { color:#6f5b2b; font-weight:700; }
+    .toolbar { display:grid; grid-template-columns:minmax(240px,1fr) 190px; gap:10px; margin:16px 0; }
+    input, select { min-height:42px; border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:#fff; font:inherit; }
+    .term-list { display:grid; gap:12px; }
+    .term-row { display:grid; grid-template-columns:minmax(0,1fr) 240px; gap:14px; padding:15px; }
+    .term-row p { margin:4px 0; }
+    .term-side { display:flex; flex-direction:column; align-items:flex-start; gap:7px; }
+    .term-side span { border-radius:999px; padding:4px 8px; background:var(--soft); color:var(--green); font-size:12px; font-weight:700; }
+    .term-side b { font-size:24px; color:var(--amber); }
+    .page-links a { min-height:28px; padding:4px 7px; font-size:12px; color:var(--blue); }
+    .more { color:var(--muted); font-size:12px; padding:4px 0; }
+    footer { margin-top:28px; color:var(--muted); font-size:12px; }
+    @media (max-width:1080px) { .guide-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .topic-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:900px) { .summary, .focus-grid, .term-row, .toolbar, .page-map, .guide-grid, .topic-grid { grid-template-columns:1fr; } body { background-attachment:scroll; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="buttons">
+      <a class="button" href="../index.html">Back to paper library</a>
+      <a class="button" href="../term_index.html">PDF term index</a>
+      <a class="button" href="../../index.html#glossary">Glossary</a>
+      <a class="button" href="../paper_detail.html?id=tv-min-low-intensity-ct-sidky-2011">Paper detail</a>
+    </div>
+    <h1>A constrained, total-variation minimization algorithm for low-intensity X-ray CT</h1>
+    <p class="muted">Emil Y. Sidky, Chien-Min Kao, Xiaochuan Pan</p>
+    <p class="muted">Medical Physics / arXiv · 2011</p>
+    <div class="buttons">
+      <a class="button primary" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf" target="_blank" rel="noreferrer">Open PDF</a>
+      <a class="button" href="https://arxiv.org/pdf/1011.4630" target="_blank" rel="noreferrer">Online PDF</a>
+      <a class="button" href="https://doi.org/10.1118/1.3560887" target="_blank" rel="noreferrer">Publisher / source</a>
+    </div>
+    <div class="summary">
+      <div><b>5</b><span>matched terms</span></div>
+      <div><b>54</b><span>term hits</span></div>
+      <div><b>1</b><span>categories</span></div>
+      <div><b>support</b><span>Classical tomography / inverse baseline</span></div>
+    </div>
+    <div class="chips"><span>反问题/层析 · 5</span></div>
+  </header>
+  <main>
+    <section class="note">
+      <p><b>阅读定位：</b>少投影/低信噪层析常用 TV regularization；它给 NeRIF/BOST 的传统稀疏视角 baseline 和 loss-weight 扫描提供反问题参照。</p>
+      <p><b>精读时提取：</b>constrained TV minimization, low-intensity CT, iterative reconstruction, data fidelity vs regularization, sparse/noisy projection behavior.</p>
+      <p><b>边界说明：</b>本页只保存术语命中、解释和页码跳转，不复制论文正文。点击页码会回到原 PDF 的对应页。</p>
+    </section>
+    <h2>读这篇的路线</h2>
+    <section class="guide-grid">
+            <article class="guide-card">
+              <b>定位角色</b>
+              <p>BOS/BOST 或计算流动可视化支撑文献：先读它解决的测量问题，再判断能否转化为本科可做的小模块。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>抓方法图</b>
+              <p>优先找 optical setup、forward model、reconstruction pipeline、evaluation table，不先陷入所有推导。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>抽可复现变量</b>
+              <p>记录输入数据、几何参数、噪声/视角设置、baseline、loss/regularization 和评价指标。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>查术语页码</b>
+              <p>用本页的术语卡片跳到 PDF 对应页，建立自己的概念索引。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>转成毕设问题</b>
+              <p>把这篇文献写成一个可执行问题：我能复现哪一段、比较什么、问师兄要什么数据。</p>
+            </article>
+            </section>
+    <h2>关联毕设选题</h2>
+    <section class="topic-grid">
+            <article class="topic-card">
+              <span>T1</span>
+              <h3>NeRIF/BOST 鲁棒性</h3>
+              <p>由标题、分组或关键词匹配；用于判断这篇文献可服务的选题模块。</p>
+              <a href="../../topic_deep_dive.html?id=T1">打开选题详情</a>
+            </article>
+            </section>
+    <h2>先看这几个术语</h2>
+    <section class="focus-grid">
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影 <span>Filtered backprojection, FBP</span></a>
+              <p>先在投影域做频率滤波，再把各角度投影反投影回空间的解析层析方法。它快、透明，适合作为第一条传统 baseline。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=15" target="_blank" rel="noreferrer">p.15</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=17" target="_blank" rel="noreferrer">p.17</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=18" target="_blank" rel="noreferrer">p.18</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=19" target="_blank" rel="noreferrer">p.19</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1">跨论文反查</a>
+                <a href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=ART%20/%20SIRT%20/%20SART#glossary" target="_blank" rel="noreferrer">ART / SIRT / SART <span>Algebraic reconstruction techniques</span></a>
+              <p>把层析重构离散成线性方程组后，用迭代方式求解的经典体素方法。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=11" target="_blank" rel="noreferrer">p.11</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=ART%20/%20SIRT%20/%20SART">跨论文反查</a>
+                <a href="../../index.html?term=ART%20/%20SIRT%20/%20SART#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化 <span>Regularization</span></a>
+              <p>给反问题增加额外约束，例如平滑、稀疏、低秩、物理方程或边界条件。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=15" target="_blank" rel="noreferrer">p.15</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=18" target="_blank" rel="noreferrer">p.18</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E6%AD%A3%E5%88%99%E5%8C%96">跨论文反查</a>
+                <a href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%B0%91%E8%A7%86%E8%A7%92%E9%87%8D%E6%9E%84#glossary" target="_blank" rel="noreferrer">少视角重构 <span>Sparse-view reconstruction</span></a>
+              <p>相机视角数量有限时进行三维重构，信息不足导致伪影和不稳定。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=20" target="_blank" rel="noreferrer">p.20</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%B0%91%E8%A7%86%E8%A7%92%E9%87%8D%E6%9E%84">跨论文反查</a>
+                <a href="../../index.html?term=%E5%B0%91%E8%A7%86%E8%A7%92%E9%87%8D%E6%9E%84#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型 <span>Forward model</span></a>
+              <p>给定三维物理场和相机几何，计算理论上应该观测到什么图像位移、投影或信号。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B">跨论文反查</a>
+                <a href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+            </section>
+    <h2>按页术语地图</h2>
+    <section class="note">
+      <p><b>使用方式：</b>先点 p.页码打开原 PDF，再看这一页命中的概念。这个区域相当于“读论文导航”，不是论文正文重排。</p>
+    </section>
+    <section class="page-map">
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=2" target="_blank" rel="noreferrer">p.2</a>
+                <small>2 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影<span>2x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a>
+                <small>5 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%B0%91%E8%A7%86%E8%A7%92%E9%87%8D%E6%9E%84#glossary" target="_blank" rel="noreferrer">少视角重构<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=4" target="_blank" rel="noreferrer">p.4</a>
+                <small>4 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影<span>4x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=6" target="_blank" rel="noreferrer">p.6</a>
+                <small>1 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a>
+                <small>6 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=ART%20/%20SIRT%20/%20SART#glossary" target="_blank" rel="noreferrer">ART / SIRT / SART<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a>
+                <small>2 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=ART%20/%20SIRT%20/%20SART#glossary" target="_blank" rel="noreferrer">ART / SIRT / SART<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=11" target="_blank" rel="noreferrer">p.11</a>
+                <small>4 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影<span>3x</span></a><a class="mini-term" href="../../index.html?term=ART%20/%20SIRT%20/%20SART#glossary" target="_blank" rel="noreferrer">ART / SIRT / SART<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=15" target="_blank" rel="noreferrer">p.15</a>
+                <small>8 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影<span>7x</span></a><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=16" target="_blank" rel="noreferrer">p.16</a>
+                <small>6 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=17" target="_blank" rel="noreferrer">p.17</a>
+                <small>3 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影<span>3x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=18" target="_blank" rel="noreferrer">p.18</a>
+                <small>6 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=19" target="_blank" rel="noreferrer">p.19</a>
+                <small>6 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影<span>6x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=20" target="_blank" rel="noreferrer">p.20</a>
+                <small>1 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%B0%91%E8%A7%86%E8%A7%92%E9%87%8D%E6%9E%84#glossary" target="_blank" rel="noreferrer">少视角重构<span>1x</span></a></div>
+              </article>
+            </section>
+    <h2>全术语检索</h2>
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="搜索术语、英文名、类别、解释，例如 BOST / density / PINN" />
+      <select id="category">
+        <option value="all">All categories</option>
+        <option value="反问题/层析">反问题/层析</option>
+      </select>
+    </div>
+    <section id="terms" class="term-list">
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;滤波反投影&quot;, &quot;en&quot;: &quot;Filtered backprojection, FBP&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;先在投影域做频率滤波，再把各角度投影反投影回空间的解析层析方法。它快、透明，适合作为第一条传统 baseline。&quot;, &quot;use&quot;: &quot;在 2D Radon toy 中比较 FBP 与 SART，观察少视角条纹、噪声放大和正则化需求。&quot;, &quot;pitfall&quot;: &quot;FBP 的标准公式依赖特定直线积分几何；不能直接把 CT 实现当成真实 BOST 求解器。&quot;, &quot;keywords&quot;: &quot;FBP; filtered backprojection; ramp filter; CT reconstruction; baseline&quot;, &quot;count&quot;: 37, &quot;pages&quot;: [2, 3, 4, 6, 11, 15, 16, 17, 18, 19], &quot;page_hits&quot;: [{&quot;page&quot;: 2, &quot;count&quot;: 2}, {&quot;page&quot;: 3, &quot;count&quot;: 1}, {&quot;page&quot;: 4, &quot;count&quot;: 4}, {&quot;page&quot;: 6, &quot;count&quot;: 1}, {&quot;page&quot;: 11, &quot;count&quot;: 3}, {&quot;page&quot;: 15, &quot;count&quot;: 7}, {&quot;page&quot;: 16, &quot;count&quot;: 5}, {&quot;page&quot;: 17, &quot;count&quot;: 3}, {&quot;page&quot;: 18, &quot;count&quot;: 5}, {&quot;page&quot;: 19, &quot;count&quot;: 6}], &quot;page_count&quot;: 10}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">滤波反投影</a>
+                <p class="en">Filtered backprojection, FBP</p>
+                <p>先在投影域做频率滤波，再把各角度投影反投影回空间的解析层析方法。它快、透明，适合作为第一条传统 baseline。</p>
+                <p><b>读这篇时看什么：</b>在 2D Radon toy 中比较 FBP 与 SART，观察少视角条纹、噪声放大和正则化需求。</p>
+                <p><b>易混点：</b>FBP 的标准公式依赖特定直线积分几何；不能直接把 CT 实现当成真实 BOST 求解器。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>37 hits</b>
+                <small>10 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=15" target="_blank" rel="noreferrer">p.15</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=17" target="_blank" rel="noreferrer">p.17</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=18" target="_blank" rel="noreferrer">p.18</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=19" target="_blank" rel="noreferrer">p.19</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%BB%A4%E6%B3%A2%E5%8F%8D%E6%8A%95%E5%BD%B1#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;ART / SIRT / SART&quot;, &quot;en&quot;: &quot;Algebraic reconstruction techniques&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;把层析重构离散成线性方程组后，用迭代方式求解的经典体素方法。&quot;, &quot;use&quot;: &quot;它们是 NeRIF 论文里最自然的传统 baseline。你要能解释为什么神经场可能比体素 baseline 更连续或更稳。&quot;, &quot;pitfall&quot;: &quot;传统 baseline 不等于落后；它们可解释、稳定、容易做误差分析，是答辩时的参照物。&quot;, &quot;keywords&quot;: &quot;ART; SIRT; SART; algebraic reconstruction; iterative reconstruction&quot;, &quot;count&quot;: 7, &quot;pages&quot;: [9, 10, 11], &quot;page_hits&quot;: [{&quot;page&quot;: 9, &quot;count&quot;: 5}, {&quot;page&quot;: 10, &quot;count&quot;: 1}, {&quot;page&quot;: 11, &quot;count&quot;: 1}], &quot;page_count&quot;: 3}">
+              <div>
+                <a class="term-name" href="../../index.html?term=ART%20/%20SIRT%20/%20SART#glossary" target="_blank" rel="noreferrer">ART / SIRT / SART</a>
+                <p class="en">Algebraic reconstruction techniques</p>
+                <p>把层析重构离散成线性方程组后，用迭代方式求解的经典体素方法。</p>
+                <p><b>读这篇时看什么：</b>它们是 NeRIF 论文里最自然的传统 baseline。你要能解释为什么神经场可能比体素 baseline 更连续或更稳。</p>
+                <p><b>易混点：</b>传统 baseline 不等于落后；它们可解释、稳定、容易做误差分析，是答辩时的参照物。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>7 hits</b>
+                <small>3 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=11" target="_blank" rel="noreferrer">p.11</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=ART%20/%20SIRT%20/%20SART">跨论文反查</a>
+                  <a href="../../index.html?term=ART%20/%20SIRT%20/%20SART#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;正则化&quot;, &quot;en&quot;: &quot;Regularization&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;给反问题增加额外约束，例如平滑、稀疏、低秩、物理方程或边界条件。&quot;, &quot;use&quot;: &quot;传统 BOST baseline 和 NeRIF loss 都离不开正则化；它也是参数扫描的核心。&quot;, &quot;pitfall&quot;: &quot;正则化太强会过平滑，太弱会噪声放大；必须用指标和图像同时判断。&quot;, &quot;keywords&quot;: &quot;regularization; Tikhonov; TV; smoothness; loss weight&quot;, &quot;count&quot;: 6, &quot;pages&quot;: [3, 10, 15, 16, 18], &quot;page_hits&quot;: [{&quot;page&quot;: 3, &quot;count&quot;: 2}, {&quot;page&quot;: 10, &quot;count&quot;: 1}, {&quot;page&quot;: 15, &quot;count&quot;: 1}, {&quot;page&quot;: 16, &quot;count&quot;: 1}, {&quot;page&quot;: 18, &quot;count&quot;: 1}], &quot;page_count&quot;: 5}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化</a>
+                <p class="en">Regularization</p>
+                <p>给反问题增加额外约束，例如平滑、稀疏、低秩、物理方程或边界条件。</p>
+                <p><b>读这篇时看什么：</b>传统 BOST baseline 和 NeRIF loss 都离不开正则化；它也是参数扫描的核心。</p>
+                <p><b>易混点：</b>正则化太强会过平滑，太弱会噪声放大；必须用指标和图像同时判断。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>6 hits</b>
+                <small>5 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=15" target="_blank" rel="noreferrer">p.15</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=18" target="_blank" rel="noreferrer">p.18</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%AD%A3%E5%88%99%E5%8C%96">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;少视角重构&quot;, &quot;en&quot;: &quot;Sparse-view reconstruction&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;相机视角数量有限时进行三维重构，信息不足导致伪影和不稳定。&quot;, &quot;use&quot;: &quot;非常适合本科切入：3/5/7/9 视角扫描、噪声扫描和 baseline 对比都能形成清晰图表。&quot;, &quot;pitfall&quot;: &quot;少视角不是单纯减少输入张数；相机角度分布和缺失方向同样重要。&quot;, &quot;keywords&quot;: &quot;sparse-view reconstruction; limited-view tomography; limited-angle tomography; few-view BOST&quot;, &quot;count&quot;: 3, &quot;pages&quot;: [3, 20], &quot;page_hits&quot;: [{&quot;page&quot;: 3, &quot;count&quot;: 2}, {&quot;page&quot;: 20, &quot;count&quot;: 1}], &quot;page_count&quot;: 2}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%B0%91%E8%A7%86%E8%A7%92%E9%87%8D%E6%9E%84#glossary" target="_blank" rel="noreferrer">少视角重构</a>
+                <p class="en">Sparse-view reconstruction</p>
+                <p>相机视角数量有限时进行三维重构，信息不足导致伪影和不稳定。</p>
+                <p><b>读这篇时看什么：</b>非常适合本科切入：3/5/7/9 视角扫描、噪声扫描和 baseline 对比都能形成清晰图表。</p>
+                <p><b>易混点：</b>少视角不是单纯减少输入张数；相机角度分布和缺失方向同样重要。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>3 hits</b>
+                <small>2 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=20" target="_blank" rel="noreferrer">p.20</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%B0%91%E8%A7%86%E8%A7%92%E9%87%8D%E6%9E%84">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%B0%91%E8%A7%86%E8%A7%92%E9%87%8D%E6%9E%84#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;前向模型&quot;, &quot;en&quot;: &quot;Forward model&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;给定三维物理场和相机几何，计算理论上应该观测到什么图像位移、投影或信号。&quot;, &quot;use&quot;: &quot;你做合成数据和 NeRIF 训练时，前向模型是最重要的代码模块。&quot;, &quot;pitfall&quot;: &quot;前向模型过于简化会让 demo 好看但无法迁移真实数据；需要明确小角度、直线光线或 ray tracing 假设。&quot;, &quot;keywords&quot;: &quot;forward model; differentiable projection; ray tracing; BOS simulation&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [9], &quot;page_hits&quot;: [{&quot;page&quot;: 9, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型</a>
+                <p class="en">Forward model</p>
+                <p>给定三维物理场和相机几何，计算理论上应该观测到什么图像位移、投影或信号。</p>
+                <p><b>读这篇时看什么：</b>你做合成数据和 NeRIF 训练时，前向模型是最重要的代码模块。</p>
+                <p><b>易混点：</b>前向模型过于简化会让 demo 好看但无法迁移真实数据；需要明确小角度、直线光线或 ray tracing 假设。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftv_min_low_intensity_ct_sidky_2011_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+            </section>
+    <footer>Generated from open cached PDFs with pypdf. Private/WebVPN PDFs are excluded from public reader pages.</footer>
+  </main>
+  <script>
+    const search = document.getElementById('search');
+    const category = document.getElementById('category');
+    const rows = Array.from(document.querySelectorAll('.term-row'));
+    function apply() {
+      const q = search.value.trim().toLowerCase();
+      const parts = q.split(/\s+/).filter(Boolean);
+      rows.forEach((row) => {
+        const data = JSON.parse(row.dataset.text);
+        const text = row.innerText.toLowerCase();
+        const okQ = !parts.length || parts.every((part) => text.includes(part));
+        const okC = category.value === 'all' || data.category === category.value;
+        row.style.display = okQ && okC ? '' : 'none';
+      });
+    }
+    const params = new URLSearchParams(location.search);
+    const initial = params.get('q') || params.get('term') || '';
+    if (initial) search.value = initial;
+    search.addEventListener('input', apply);
+    category.addEventListener('change', apply);
+    apply();
+  </script>
+  <script src="../../site_link_router.js" data-site-root="../../"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "t16_full_v1",
+  "seed": 20260710,
+  "grid_size": 24,
+  "depth": 16,
+  "max_views": 9,
+  "splits": {
+    "train": {"count": 1000, "families": ["gaussian", "flame"], "views": [5, 7], "noise": [0.02, 0.05]},
+    "val": {"count": 160, "families": ["gaussian", "flame"], "views": [5, 7], "noise": [0.02, 0.05]},
+    "test_iid": {"count": 200, "families": ["gaussian", "flame"], "views": [5, 7], "noise": [0.02, 0.05]},
+    "test_view_ood": {"count": 160, "families": ["gaussian", "flame"], "views": [3], "noise": [0.02, 0.05]},
+    "test_noise_ood": {"count": 160, "families": ["gaussian", "flame"], "views": [5, 7], "noise": [0.10]},
+    "test_joint_ood": {"count": 160, "families": ["gaussian", "flame"], "views": [3], "noise": [0.10]},
+    "test_family_ood": {"count": 200, "families": ["thin_front"], "views": [5, 7], "noise": [0.02, 0.05]}
+  },
+  "training": {
+    "device": "auto",
+    "batch_size": 8,
+    "epochs": 80,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "lambda_gradient": 0.12,
+    "lambda_reprojection": 0.02,
+    "lambda_boundary": 0.02,
+    "early_stop_patience": 12
+  },
+  "models": {
+    "fno": {"hidden_channels": 32, "n_modes": [8, 10, 10], "n_layers": 4},
+    "unet": {"base_channels": 16}
+  }
+}

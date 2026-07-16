@@ -1,0 +1,133 @@
+{
+  "status": "VARIABLE_GEOMETRY_DATASET_GATE_PASS_FUNCTIONAL_TRAINING_NOT_RUN",
+  "protocol": {
+    "one_field_one_geometry": true,
+    "shared_full_view_noise": true,
+    "geometry_partition_fixed_before_training": true,
+    "source_split_geometry_partition_map": {
+      "train": "train",
+      "val": "validation",
+      "test_iid": "geometry_ood",
+      "test_noise_ood": "geometry_ood",
+      "test_family_ood": "stress",
+      "test_joint_ood": "stress"
+    },
+    "ridge_relative": 1e-06
+  },
+  "dashboard": {
+    "experiment": "t16_v3i_balanced_variable_geometry_dataset_v1",
+    "scientific_status": "VARIABLE_GEOMETRY_DATASET_GATE_PASS_FUNCTIONAL_TRAINING_NOT_RUN",
+    "dataset_gate_pass": true,
+    "sample_count": 328,
+    "unique_source_count": 328,
+    "unique_geometry_count": 28,
+    "input_shape": [
+      328,
+      42,
+      8,
+      16,
+      16
+    ],
+    "input_channel_count": 42,
+    "split_audit": {
+      "train": {
+        "source_fields": 160,
+        "geometry_partition": "train",
+        "unique_geometries": 16,
+        "geometry_entropy_bits": 4.0,
+        "minimum_fields_per_geometry": 10,
+        "maximum_fields_per_geometry": 10
+      },
+      "val": {
+        "source_fields": 40,
+        "geometry_partition": "validation",
+        "unique_geometries": 4,
+        "geometry_entropy_bits": 2.0,
+        "minimum_fields_per_geometry": 10,
+        "maximum_fields_per_geometry": 10
+      },
+      "test_iid": {
+        "source_fields": 32,
+        "geometry_partition": "geometry_ood",
+        "unique_geometries": 4,
+        "geometry_entropy_bits": 2.0,
+        "minimum_fields_per_geometry": 8,
+        "maximum_fields_per_geometry": 8
+      },
+      "test_noise_ood": {
+        "source_fields": 32,
+        "geometry_partition": "geometry_ood",
+        "unique_geometries": 4,
+        "geometry_entropy_bits": 2.0,
+        "minimum_fields_per_geometry": 8,
+        "maximum_fields_per_geometry": 8
+      },
+      "test_family_ood": {
+        "source_fields": 32,
+        "geometry_partition": "stress",
+        "unique_geometries": 4,
+        "geometry_entropy_bits": 2.0,
+        "minimum_fields_per_geometry": 8,
+        "maximum_fields_per_geometry": 8
+      },
+      "test_joint_ood": {
+        "source_fields": 32,
+        "geometry_partition": "stress",
+        "unique_geometries": 4,
+        "geometry_entropy_bits": 2.0,
+        "minimum_fields_per_geometry": 8,
+        "maximum_fields_per_geometry": 8
+      }
+    },
+    "gate_checks": {
+      "one_geometry_per_source": true,
+      "all_28_geometries_present": true,
+      "within_split_assignment_exactly_balanced": true,
+      "shared_full_view_noise_exact": true,
+      "audit_camera_mask_excluded": true,
+      "audit_camera_input_channels_zero": true,
+      "train_validation_geometries_disjoint": true,
+      "inputs_and_targets_finite": true,
+      "input_channel_contract_42": true
+    },
+    "private_dataset": {
+      "public": false,
+      "relative_path_recorded_publicly": true,
+      "sha256": "9931abb14b38381c652d32f8a664b40fed36ee30e3c840c5ccda2835aab2540a",
+      "compressed_bytes": 21282395
+    },
+    "next_decision": {
+      "functional_pilot_authorized": true,
+      "controls": [
+        "locked_fno",
+        "static",
+        "k_cardinality",
+        "shuffled_geometry",
+        "correct_geometry"
+      ],
+      "seeds": 3,
+      "superiority_training_authorized": false,
+      "blind_final_opened": false
+    },
+    "claims_boundary": {
+      "dataset_development_only": true,
+      "functional_training_completed": false,
+      "superiority_tested": false,
+      "blind_final_opened": false,
+      "real_bost_geometry_present": false,
+      "private_dataset_npz_public": false
+    }
+  },
+  "environment": {
+    "python": "3.11.5 (v3.11.5:cce6ba91b3, Aug 24 2023, 10:50:31) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "numpy": "2.4.6"
+  },
+  "provenance": {
+    "config_sha256": "cea95d5e05d43b0dcc97ba443459b6482bf8625b8cd85f0810c0e124b59135b9",
+    "base_config_sha256": "b4e16567cb9724eae1945b9c0ba214e4ecd404c16316b00c94ad577e87ea654b",
+    "base_dataset_sha256": "38e7b8ee6571aac58f02b86625f999ea6e9313b61668a33f036066c2bc22fdfc",
+    "builder_sha256": "c5e9f4ea288180b540dcf97c8922db1a63c858eb62bc328255f9c6e918085aeb",
+    "geometry_module_sha256": "b1bea3dcab86724be80765dd5ed2d056f0fbc1689bd405fb7501a5306d400ad4"
+  }
+}

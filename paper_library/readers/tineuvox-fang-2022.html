@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fast Dynamic Radiance Fields with Time-Aware Neural Voxels · 术语导读</title>
+  <style>
+    :root { --bg:#f7f8f6; --panel:#fff; --ink:#1d2328; --muted:#65717a; --line:#d9e0df; --green:#16756f; --blue:#315f93; --amber:#9a6a00; --soft:#eef6f3; --shadow:0 16px 36px rgba(30,45,55,.08); }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif; color:var(--ink); background:linear-gradient(90deg,rgba(247,248,246,.94),rgba(247,248,246,.76)),url("../../assets/backgrounds/oerf-refractive-field.png") right -150px top 18px / min(920px,92vw) auto no-repeat fixed,var(--bg); line-height:1.62; letter-spacing:0; }
+    header, main { padding:28px clamp(18px,4vw,58px); }
+    header { border-bottom:1px solid var(--line); background:linear-gradient(180deg,#fff,#edf6f3); }
+    h1 { margin:14px 0 10px; max-width:1100px; font-size:clamp(28px,4vw,48px); line-height:1.12; letter-spacing:0; }
+    h2 { margin:26px 0 12px; font-size:24px; }
+    p { margin:6px 0; }
+    .muted, .en { color:var(--muted); }
+    .buttons, .chips, .focus-grid, .page-links, .term-actions, .mini-terms { display:flex; flex-wrap:wrap; gap:8px; }
+    .button, .page-links a, .term-actions a { display:inline-flex; align-items:center; min-height:34px; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); text-decoration:none; font-weight:700; }
+    .button.primary { background:var(--green); border-color:var(--green); color:#fff; }
+    .summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:18px 0; }
+    .summary div, .focus-term, .term-row, .note { border:1px solid var(--line); border-radius:8px; background:var(--panel); box-shadow:var(--shadow); }
+    .summary div { padding:14px 16px; }
+    .summary b { display:block; font-size:28px; line-height:1; color:var(--green); }
+    .note { padding:14px 16px; color:var(--muted); box-shadow:none; }
+    .chips span { border-radius:999px; padding:5px 9px; background:#eaf0f7; color:var(--blue); font-size:12px; font-weight:700; }
+    .guide-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:12px 0 20px; }
+    .guide-card, .topic-card { border:1px solid var(--line); border-radius:8px; background:rgba(255,255,255,.94); padding:13px; min-width:0; }
+    .guide-card { border-left:4px solid var(--green); }
+    .guide-card b { display:block; color:var(--green); font-size:13px; margin-bottom:5px; }
+    .guide-card p, .topic-card p { margin:0; color:#43545c; font-size:13px; line-height:1.55; }
+    .topic-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:12px 0 20px; }
+    .topic-card span { display:inline-flex; border-radius:999px; padding:4px 8px; background:var(--soft); color:var(--green); font-size:12px; font-weight:800; }
+    .topic-card h3 { margin:8px 0 5px; font-size:16px; line-height:1.3; }
+    .topic-card a { display:inline-flex; align-items:center; min-height:30px; margin-top:8px; padding:5px 8px; border:1px solid var(--line); border-radius:7px; background:#fff; color:var(--blue); text-decoration:none; font-size:12px; font-weight:800; }
+    .focus-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .focus-term { padding:15px; }
+    .term-title, .term-name { color:var(--green); font-weight:800; text-decoration:none; }
+    .term-title span { display:block; color:var(--muted); font-weight:600; font-size:13px; }
+    .term-actions { margin-top:8px; }
+    .term-actions a { min-height:28px; padding:4px 7px; color:var(--blue); font-size:12px; }
+    .page-map { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .page-card { border:1px solid var(--line); border-radius:8px; background:#fff; padding:12px; }
+    .page-title { display:inline-flex; margin-bottom:6px; color:var(--green); font-size:18px; font-weight:900; text-decoration:none; }
+    .page-card small { display:block; color:var(--muted); }
+    .mini-term { display:inline-flex; align-items:center; gap:5px; border-radius:999px; padding:4px 7px; background:#f6efe2; border:1px solid #ead7b5; color:var(--amber); font-size:12px; font-weight:700; text-decoration:none; }
+    .mini-term span { color:#6f5b2b; font-weight:700; }
+    .toolbar { display:grid; grid-template-columns:minmax(240px,1fr) 190px; gap:10px; margin:16px 0; }
+    input, select { min-height:42px; border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:#fff; font:inherit; }
+    .term-list { display:grid; gap:12px; }
+    .term-row { display:grid; grid-template-columns:minmax(0,1fr) 240px; gap:14px; padding:15px; }
+    .term-row p { margin:4px 0; }
+    .term-side { display:flex; flex-direction:column; align-items:flex-start; gap:7px; }
+    .term-side span { border-radius:999px; padding:4px 8px; background:var(--soft); color:var(--green); font-size:12px; font-weight:700; }
+    .term-side b { font-size:24px; color:var(--amber); }
+    .page-links a { min-height:28px; padding:4px 7px; font-size:12px; color:var(--blue); }
+    .more { color:var(--muted); font-size:12px; padding:4px 0; }
+    footer { margin-top:28px; color:var(--muted); font-size:12px; }
+    @media (max-width:1080px) { .guide-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .topic-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:900px) { .summary, .focus-grid, .term-row, .toolbar, .page-map, .guide-grid, .topic-grid { grid-template-columns:1fr; } body { background-attachment:scroll; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="buttons">
+      <a class="button" href="../index.html">Back to paper library</a>
+      <a class="button" href="../term_index.html">PDF term index</a>
+      <a class="button" href="../../index.html#glossary">Glossary</a>
+      <a class="button" href="../paper_detail.html?id=tineuvox-fang-2022">Paper detail</a>
+    </div>
+    <h1>Fast Dynamic Radiance Fields with Time-Aware Neural Voxels</h1>
+    <p class="muted">Jiemin Fang, Taoran Yi, Xinggang Wang, Lingxi Xie, Xiaopeng Zhang, Wenyu Liu, Matthias Niessner, Qi Tian</p>
+    <p class="muted">SIGGRAPH Asia 2022 / arXiv · 2022</p>
+    <div class="buttons">
+      <a class="button primary" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf" target="_blank" rel="noreferrer">Open PDF</a>
+      <a class="button" href="https://arxiv.org/pdf/2205.15285" target="_blank" rel="noreferrer">Online PDF</a>
+      <a class="button" href="https://doi.org/10.1145/3550469.3555383" target="_blank" rel="noreferrer">Publisher / source</a>
+    </div>
+    <div class="summary">
+      <div><b>6</b><span>matched terms</span></div>
+      <div><b>32</b><span>term hits</span></div>
+      <div><b>3</b><span>categories</span></div>
+      <div><b>optional</b><span>4D tensor / dynamic neural-field representation</span></div>
+    </div>
+    <div class="chips"><span>神经场/AI · 4</span><span>反问题/层析 · 1</span><span>实验/数据 · 1</span></div>
+  </header>
+  <main>
+    <section class="note">
+      <p><b>阅读定位：</b>时间感知 voxel 表示能补 4D 场的显式网格/体素路线，对比 4D BOST 的 tensor factorization 是否比逐帧体素更省显存。</p>
+      <p><b>精读时提取：</b>time-aware neural voxels, dynamic radiance fields, voxel-feature interpolation, training speed, memory/runtime trade-off.</p>
+      <p><b>边界说明：</b>本页只保存术语命中、解释和页码跳转，不复制论文正文。点击页码会回到原 PDF 的对应页。</p>
+    </section>
+    <h2>读这篇的路线</h2>
+    <section class="guide-grid">
+            <article class="guide-card">
+              <b>定位角色</b>
+              <p>四维/时序重构支撑：重点看低秩、时序一致性、内存和速度之间的取舍。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>抓方法图</b>
+              <p>优先找 optical setup、forward model、reconstruction pipeline、evaluation table，不先陷入所有推导。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>抽可复现变量</b>
+              <p>记录输入数据、几何参数、噪声/视角设置、baseline、loss/regularization 和评价指标。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>查术语页码</b>
+              <p>用本页的术语卡片跳到 PDF 对应页，建立自己的概念索引。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>转成毕设问题</b>
+              <p>把这篇文献写成一个可执行问题：我能复现哪一段、比较什么、问师兄要什么数据。</p>
+            </article>
+            </section>
+    <h2>关联毕设选题</h2>
+    <section class="topic-grid">
+            <article class="topic-card">
+              <span>T1</span>
+              <h3>NeRIF/BOST 鲁棒性</h3>
+              <p>由标题、分组或关键词匹配；用于判断这篇文献可服务的选题模块。</p>
+              <a href="../../topic_deep_dive.html?id=T1">打开选题详情</a>
+            </article>
+
+            <article class="topic-card">
+              <span>T4</span>
+              <h3>4D BOST 低秩时序</h3>
+              <p>由标题、分组或关键词匹配；用于判断这篇文献可服务的选题模块。</p>
+              <a href="../../topic_deep_dive.html?id=T4">打开选题详情</a>
+            </article>
+            </section>
+    <h2>先看这几个术语</h2>
+    <section class="focus-grid">
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C#glossary" target="_blank" rel="noreferrer">消融实验 <span>Ablation study</span></a>
+              <p>逐个去掉或改变模型组件，观察性能变化，用来证明每个设计是否有用。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=11" target="_blank" rel="noreferrer">p.11</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C">跨论文反查</a>
+                <a href="../../index.html?term=%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%20/%20%E5%82%85%E9%87%8C%E5%8F%B6%E7%89%B9%E5%BE%81#glossary" target="_blank" rel="noreferrer">位置编码 / 傅里叶特征 <span>Positional encoding / Fourier features</span></a>
+              <p>把低维坐标映射到高频特征，帮助 MLP 表达细节结构。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%20/%20%E5%82%85%E9%87%8C%E5%8F%B6%E7%89%B9%E5%BE%81">跨论文反查</a>
+                <a href="../../index.html?term=%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%20/%20%E5%82%85%E9%87%8C%E5%8F%B6%E7%89%B9%E5%BE%81#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化 <span>Regularization</span></a>
+              <p>给反问题增加额外约束，例如平滑、稀疏、低秩、物理方程或边界条件。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=7" target="_blank" rel="noreferrer">p.7</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E6%AD%A3%E5%88%99%E5%8C%96">跨论文反查</a>
+                <a href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%9F%BA%E7%BA%BF%E6%96%B9%E6%B3%95#glossary" target="_blank" rel="noreferrer">基线方法 <span>Baseline method</span></a>
+              <p>用于对比新方法的传统或简单方法，帮助判断改进是否真实。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=11" target="_blank" rel="noreferrer">p.11</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%9F%BA%E7%BA%BF%E6%96%B9%E6%B3%95">跨论文反查</a>
+                <a href="../../index.html?term=%E5%9F%BA%E7%BA%BF%E6%96%B9%E6%B3%95#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%93%88%E5%B8%8C%E7%BC%96%E7%A0%81#glossary" target="_blank" rel="noreferrer">哈希编码 <span>Hash encoding / multi-resolution hash grid</span></a>
+              <p>用多分辨率哈希表表示空间特征，常用于加速神经场训练和提高局部细节表达。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=8" target="_blank" rel="noreferrer">p.8</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%93%88%E5%B8%8C%E7%BC%96%E7%A0%81">跨论文反查</a>
+                <a href="../../index.html?term=%E5%93%88%E5%B8%8C%E7%BC%96%E7%A0%81#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%BC%A0%E9%87%8F%E5%88%86%E8%A7%A3#glossary" target="_blank" rel="noreferrer">张量分解 <span>Tensor decomposition</span></a>
+              <p>把高维时空数据拆成低秩因子，减少参数量并利用时序/空间相关性。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=8" target="_blank" rel="noreferrer">p.8</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%BC%A0%E9%87%8F%E5%88%86%E8%A7%A3">跨论文反查</a>
+                <a href="../../index.html?term=%E5%BC%A0%E9%87%8F%E5%88%86%E8%A7%A3#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+            </section>
+    <h2>按页术语地图</h2>
+    <section class="note">
+      <p><b>使用方式：</b>先点 p.页码打开原 PDF，再看这一页命中的概念。这个区域相当于“读论文导航”，不是论文正文重排。</p>
+    </section>
+    <section class="page-map">
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=2" target="_blank" rel="noreferrer">p.2</a>
+                <small>1 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=4" target="_blank" rel="noreferrer">p.4</a>
+                <small>1 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%20/%20%E5%82%85%E9%87%8C%E5%8F%B6%E7%89%B9%E5%BE%81#glossary" target="_blank" rel="noreferrer">位置编码 / 傅里叶特征<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a>
+                <small>5 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%20/%20%E5%82%85%E9%87%8C%E5%8F%B6%E7%89%B9%E5%BE%81#glossary" target="_blank" rel="noreferrer">位置编码 / 傅里叶特征<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C#glossary" target="_blank" rel="noreferrer">消融实验<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=6" target="_blank" rel="noreferrer">p.6</a>
+                <small>4 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C#glossary" target="_blank" rel="noreferrer">消融实验<span>2x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=7" target="_blank" rel="noreferrer">p.7</a>
+                <small>5 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C#glossary" target="_blank" rel="noreferrer">消融实验<span>4x</span></a><a class="mini-term" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=8" target="_blank" rel="noreferrer">p.8</a>
+                <small>2 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%93%88%E5%B8%8C%E7%BC%96%E7%A0%81#glossary" target="_blank" rel="noreferrer">哈希编码<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E5%BC%A0%E9%87%8F%E5%88%86%E8%A7%A3#glossary" target="_blank" rel="noreferrer">张量分解<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a>
+                <small>10 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%20/%20%E5%82%85%E9%87%8C%E5%8F%B6%E7%89%B9%E5%BE%81#glossary" target="_blank" rel="noreferrer">位置编码 / 傅里叶特征<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C#glossary" target="_blank" rel="noreferrer">消融实验<span>5x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a>
+                <small>1 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%20/%20%E5%82%85%E9%87%8C%E5%8F%B6%E7%89%B9%E5%BE%81#glossary" target="_blank" rel="noreferrer">位置编码 / 傅里叶特征<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=11" target="_blank" rel="noreferrer">p.11</a>
+                <small>3 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%9F%BA%E7%BA%BF%E6%96%B9%E6%B3%95#glossary" target="_blank" rel="noreferrer">基线方法<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C#glossary" target="_blank" rel="noreferrer">消融实验<span>1x</span></a></div>
+              </article>
+            </section>
+    <h2>全术语检索</h2>
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="搜索术语、英文名、类别、解释，例如 BOST / density / PINN" />
+      <select id="category">
+        <option value="all">All categories</option>
+        <option value="反问题/层析">反问题/层析</option><option value="实验/数据">实验/数据</option><option value="神经场/AI">神经场/AI</option>
+      </select>
+    </div>
+    <section id="terms" class="term-list">
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;消融实验&quot;, &quot;en&quot;: &quot;Ablation study&quot;, &quot;category&quot;: &quot;神经场/AI&quot;, &quot;explain&quot;: &quot;逐个去掉或改变模型组件，观察性能变化，用来证明每个设计是否有用。&quot;, &quot;use&quot;: &quot;适合你的论文图：编码方式、loss 项、视角数量、正则化权重、噪声水平都可以消融。&quot;, &quot;pitfall&quot;: &quot;消融不是随机试几个参数；每一组都要回答一个清晰问题。&quot;, &quot;keywords&quot;: &quot;ablation study; parameter scan; loss weight; model capacity; robustness&quot;, &quot;count&quot;: 13, &quot;pages&quot;: [5, 6, 7, 9, 11], &quot;page_hits&quot;: [{&quot;page&quot;: 5, &quot;count&quot;: 1}, {&quot;page&quot;: 6, &quot;count&quot;: 2}, {&quot;page&quot;: 7, &quot;count&quot;: 4}, {&quot;page&quot;: 9, &quot;count&quot;: 5}, {&quot;page&quot;: 11, &quot;count&quot;: 1}], &quot;page_count&quot;: 5}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C#glossary" target="_blank" rel="noreferrer">消融实验</a>
+                <p class="en">Ablation study</p>
+                <p>逐个去掉或改变模型组件，观察性能变化，用来证明每个设计是否有用。</p>
+                <p><b>读这篇时看什么：</b>适合你的论文图：编码方式、loss 项、视角数量、正则化权重、噪声水平都可以消融。</p>
+                <p><b>易混点：</b>消融不是随机试几个参数；每一组都要回答一个清晰问题。</p>
+              </div>
+              <div class="term-side">
+                <span>神经场/AI</span>
+                <b>13 hits</b>
+                <small>5 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=11" target="_blank" rel="noreferrer">p.11</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;位置编码 / 傅里叶特征&quot;, &quot;en&quot;: &quot;Positional encoding / Fourier features&quot;, &quot;category&quot;: &quot;神经场/AI&quot;, &quot;explain&quot;: &quot;把低维坐标映射到高频特征，帮助 MLP 表达细节结构。&quot;, &quot;use&quot;: &quot;你的 NeRIF 复现可以把编码频率、层数、宽度作为第一批参数扫描。&quot;, &quot;pitfall&quot;: &quot;高频编码可能增强细节，也可能更容易拟合噪声。&quot;, &quot;keywords&quot;: &quot;positional encoding; Fourier features; sinusoidal features; spectral bias&quot;, &quot;count&quot;: 9, &quot;pages&quot;: [4, 5, 9, 10], &quot;page_hits&quot;: [{&quot;page&quot;: 4, &quot;count&quot;: 1}, {&quot;page&quot;: 5, &quot;count&quot;: 2}, {&quot;page&quot;: 9, &quot;count&quot;: 5}, {&quot;page&quot;: 10, &quot;count&quot;: 1}], &quot;page_count&quot;: 4}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%20/%20%E5%82%85%E9%87%8C%E5%8F%B6%E7%89%B9%E5%BE%81#glossary" target="_blank" rel="noreferrer">位置编码 / 傅里叶特征</a>
+                <p class="en">Positional encoding / Fourier features</p>
+                <p>把低维坐标映射到高频特征，帮助 MLP 表达细节结构。</p>
+                <p><b>读这篇时看什么：</b>你的 NeRIF 复现可以把编码频率、层数、宽度作为第一批参数扫描。</p>
+                <p><b>易混点：</b>高频编码可能增强细节，也可能更容易拟合噪声。</p>
+              </div>
+              <div class="term-side">
+                <span>神经场/AI</span>
+                <b>9 hits</b>
+                <small>4 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=10" target="_blank" rel="noreferrer">p.10</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%20/%20%E5%82%85%E9%87%8C%E5%8F%B6%E7%89%B9%E5%BE%81">跨论文反查</a>
+                  <a href="../../index.html?term=%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81%20/%20%E5%82%85%E9%87%8C%E5%8F%B6%E7%89%B9%E5%BE%81#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;正则化&quot;, &quot;en&quot;: &quot;Regularization&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;给反问题增加额外约束，例如平滑、稀疏、低秩、物理方程或边界条件。&quot;, &quot;use&quot;: &quot;传统 BOST baseline 和 NeRIF loss 都离不开正则化；它也是参数扫描的核心。&quot;, &quot;pitfall&quot;: &quot;正则化太强会过平滑，太弱会噪声放大；必须用指标和图像同时判断。&quot;, &quot;keywords&quot;: &quot;regularization; Tikhonov; TV; smoothness; loss weight&quot;, &quot;count&quot;: 6, &quot;pages&quot;: [2, 5, 6, 7], &quot;page_hits&quot;: [{&quot;page&quot;: 2, &quot;count&quot;: 1}, {&quot;page&quot;: 5, &quot;count&quot;: 2}, {&quot;page&quot;: 6, &quot;count&quot;: 2}, {&quot;page&quot;: 7, &quot;count&quot;: 1}], &quot;page_count&quot;: 4}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">正则化</a>
+                <p class="en">Regularization</p>
+                <p>给反问题增加额外约束，例如平滑、稀疏、低秩、物理方程或边界条件。</p>
+                <p><b>读这篇时看什么：</b>传统 BOST baseline 和 NeRIF loss 都离不开正则化；它也是参数扫描的核心。</p>
+                <p><b>易混点：</b>正则化太强会过平滑，太弱会噪声放大；必须用指标和图像同时判断。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>6 hits</b>
+                <small>4 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=7" target="_blank" rel="noreferrer">p.7</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%AD%A3%E5%88%99%E5%8C%96">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%AD%A3%E5%88%99%E5%8C%96#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;基线方法&quot;, &quot;en&quot;: &quot;Baseline method&quot;, &quot;category&quot;: &quot;实验/数据&quot;, &quot;explain&quot;: &quot;用于对比新方法的传统或简单方法，帮助判断改进是否真实。&quot;, &quot;use&quot;: &quot;你的 NeRIF 项目至少需要一个 voxel/SIRT/Tikhonov 或逐帧 baseline。&quot;, &quot;pitfall&quot;: &quot;不要只和自己方法的不同超参数比；答辩老师会问传统方法在哪里。&quot;, &quot;keywords&quot;: &quot;baseline; ablation; control experiment; voxel reconstruction; traditional tomography&quot;, &quot;count&quot;: 2, &quot;pages&quot;: [11], &quot;page_hits&quot;: [{&quot;page&quot;: 11, &quot;count&quot;: 2}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%9F%BA%E7%BA%BF%E6%96%B9%E6%B3%95#glossary" target="_blank" rel="noreferrer">基线方法</a>
+                <p class="en">Baseline method</p>
+                <p>用于对比新方法的传统或简单方法，帮助判断改进是否真实。</p>
+                <p><b>读这篇时看什么：</b>你的 NeRIF 项目至少需要一个 voxel/SIRT/Tikhonov 或逐帧 baseline。</p>
+                <p><b>易混点：</b>不要只和自己方法的不同超参数比；答辩老师会问传统方法在哪里。</p>
+              </div>
+              <div class="term-side">
+                <span>实验/数据</span>
+                <b>2 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=11" target="_blank" rel="noreferrer">p.11</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%9F%BA%E7%BA%BF%E6%96%B9%E6%B3%95">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%9F%BA%E7%BA%BF%E6%96%B9%E6%B3%95#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;哈希编码&quot;, &quot;en&quot;: &quot;Hash encoding / multi-resolution hash grid&quot;, &quot;category&quot;: &quot;神经场/AI&quot;, &quot;explain&quot;: &quot;用多分辨率哈希表表示空间特征，常用于加速神经场训练和提高局部细节表达。&quot;, &quot;use&quot;: &quot;如果普通 NeRIF 太慢，哈希编码是后续加速实验方向。&quot;, &quot;pitfall&quot;: &quot;实现复杂度更高，也可能引入额外超参数；本科初期不必硬上。&quot;, &quot;keywords&quot;: &quot;hash encoding; multi-resolution hash grid; neural field acceleration; instant NGP&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [8], &quot;page_hits&quot;: [{&quot;page&quot;: 8, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%93%88%E5%B8%8C%E7%BC%96%E7%A0%81#glossary" target="_blank" rel="noreferrer">哈希编码</a>
+                <p class="en">Hash encoding / multi-resolution hash grid</p>
+                <p>用多分辨率哈希表表示空间特征，常用于加速神经场训练和提高局部细节表达。</p>
+                <p><b>读这篇时看什么：</b>如果普通 NeRIF 太慢，哈希编码是后续加速实验方向。</p>
+                <p><b>易混点：</b>实现复杂度更高，也可能引入额外超参数；本科初期不必硬上。</p>
+              </div>
+              <div class="term-side">
+                <span>神经场/AI</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=8" target="_blank" rel="noreferrer">p.8</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%93%88%E5%B8%8C%E7%BC%96%E7%A0%81">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%93%88%E5%B8%8C%E7%BC%96%E7%A0%81#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;张量分解&quot;, &quot;en&quot;: &quot;Tensor decomposition&quot;, &quot;category&quot;: &quot;神经场/AI&quot;, &quot;explain&quot;: &quot;把高维时空数据拆成低秩因子，减少参数量并利用时序/空间相关性。&quot;, &quot;use&quot;: &quot;4D BOST 论文的关键词。你可以做低秩 X-Y-Z-T toy，而不是完整复现 TOG 系统。&quot;, &quot;pitfall&quot;: &quot;低秩假设并不总成立；剧烈湍流或火焰细节可能需要更高秩或局部模型。&quot;, &quot;keywords&quot;: &quot;tensor decomposition; low-rank representation; CP decomposition; Tucker decomposition; 4D reconstruction&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [8], &quot;page_hits&quot;: [{&quot;page&quot;: 8, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%BC%A0%E9%87%8F%E5%88%86%E8%A7%A3#glossary" target="_blank" rel="noreferrer">张量分解</a>
+                <p class="en">Tensor decomposition</p>
+                <p>把高维时空数据拆成低秩因子，减少参数量并利用时序/空间相关性。</p>
+                <p><b>读这篇时看什么：</b>4D BOST 论文的关键词。你可以做低秩 X-Y-Z-T toy，而不是完整复现 TOG 系统。</p>
+                <p><b>易混点：</b>低秩假设并不总成立；剧烈湍流或火焰细节可能需要更高秩或局部模型。</p>
+              </div>
+              <div class="term-side">
+                <span>神经场/AI</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Ftineuvox_time_aware_neural_voxels_fang_2022_arxiv.pdf#page=8" target="_blank" rel="noreferrer">p.8</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%BC%A0%E9%87%8F%E5%88%86%E8%A7%A3">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%BC%A0%E9%87%8F%E5%88%86%E8%A7%A3#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+            </section>
+    <footer>Generated from open cached PDFs with pypdf. Private/WebVPN PDFs are excluded from public reader pages.</footer>
+  </main>
+  <script>
+    const search = document.getElementById('search');
+    const category = document.getElementById('category');
+    const rows = Array.from(document.querySelectorAll('.term-row'));
+    function apply() {
+      const q = search.value.trim().toLowerCase();
+      const parts = q.split(/\s+/).filter(Boolean);
+      rows.forEach((row) => {
+        const data = JSON.parse(row.dataset.text);
+        const text = row.innerText.toLowerCase();
+        const okQ = !parts.length || parts.every((part) => text.includes(part));
+        const okC = category.value === 'all' || data.category === category.value;
+        row.style.display = okQ && okC ? '' : 'none';
+      });
+    }
+    const params = new URLSearchParams(location.search);
+    const initial = params.get('q') || params.get('term') || '';
+    if (initial) search.value = initial;
+    search.addEventListener('input', apply);
+    category.addEventListener('change', apply);
+    apply();
+  </script>
+  <script src="../../site_link_router.js" data-site-root="../../"></script>
+</body>
+</html>
