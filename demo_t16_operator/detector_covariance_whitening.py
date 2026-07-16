@@ -18,6 +18,91 @@ from .detector_graph_covariance import (
 WHITENING_SCHEMA = "psu-b0-detector-covariance-whitening-1.0"
 
 
+def spatially_tempered_covariance_fit(
+    component_fit: CovarianceFit,
+    graph_fit: CovarianceFit,
+    *,
+    spatial_exponent: float,
+) -> CovarianceFit:
+    """Interpolate only the detector-graph covariance spectrum.
+
+    The component-IID fit supplies the mean, global scale, and u/v covariance.
+    The graph fit supplies only its unit-mean spatial spectrum. Raising that
+    spectrum to ``spatial_exponent`` provides an auditable path from spatial
+    IID (zero) to the fitted graph spectrum (one) without changing component
+    calibration at the same time.
+    """
+
+    exponent = float(spatial_exponent)
+    if not np.isfinite(exponent) or not 0.0 <= exponent <= 1.0:
+        raise ValueError("spatial_exponent must lie in [0,1]")
+    for name, fit in (
+        ("component_fit", component_fit),
+        ("graph_fit", graph_fit),
+    ):
+        if (
+            fit.diagonal_variance is not None
+            or fit.sigma2 is None
+            or fit.spatial_eigenvalues is None
+            or fit.component_covariance is None
+        ):
+            raise ValueError(f"{name} must be a separable graph-style fit")
+        if fit.node_amplitude is not None or fit.low_rank_vectors is not None:
+            raise ValueError(
+                f"{name} cannot contain amplitude or low-rank corrections"
+            )
+    if component_fit.mean.shape != graph_fit.mean.shape:
+        raise ValueError("component and graph fits must use the same detector")
+    if not np.allclose(
+        component_fit.mean,
+        graph_fit.mean,
+        rtol=0.0,
+        atol=1e-12,
+    ):
+        raise ValueError("component and graph fits must use the same mean")
+
+    target = np.asarray(
+        graph_fit.spatial_eigenvalues,
+        dtype=np.float64,
+    )
+    baseline = np.asarray(
+        component_fit.spatial_eigenvalues,
+        dtype=np.float64,
+    )
+    if target.shape != baseline.shape or np.any(target <= 0.0):
+        raise ValueError("component and graph spectra must align and be positive")
+    tempered = np.exp(exponent * np.log(target))
+    tempered = tempered / np.mean(tempered)
+    parameters = {
+        **component_fit.parameters,
+        "spatial_tempering_exponent": exponent,
+        "source_graph_kind": str(graph_fit.kind),
+        "source_graph_spatial_fraction": float(
+            graph_fit.parameters.get("spatial_fraction", 0.0)
+        ),
+        "source_graph_diffusion_time": float(
+            graph_fit.parameters.get("diffusion_time", 0.0)
+        ),
+        "component_parameters_held_fixed": 1.0,
+    }
+    return CovarianceFit(
+        kind=f"spatially_tempered_graph_{exponent:g}",
+        mean=np.asarray(component_fit.mean, dtype=np.float64).copy(),
+        sigma2=float(component_fit.sigma2),
+        spatial_eigenvalues=tempered,
+        component_covariance=np.asarray(
+            component_fit.component_covariance,
+            dtype=np.float64,
+        ).copy(),
+        node_amplitude=None,
+        low_rank_vectors=None,
+        low_rank_eigenvalues=None,
+        diagonal_variance=None,
+        parameters=parameters,
+        training_nll_per_dimension=float("nan"),
+    )
+
+
 class DetectorCovarianceWhitening(nn.Module):
     """Apply one fitted detector covariance model per camera view.
 
@@ -177,6 +262,9 @@ class WhitenedMeasurementOperator(nn.Module):
         self.base_operator = base_operator
         self.whitening = whitening
         self.grid_shape = tuple(int(value) for value in base_operator.grid_shape)
+        self.spacing_xyz = tuple(
+            float(value) for value in base_operator.spacing_xyz
+        )
         self.ray_count = expected_rays
 
     @property
@@ -205,4 +293,5 @@ __all__ = [
     "DetectorCovarianceWhitening",
     "WHITENING_SCHEMA",
     "WhitenedMeasurementOperator",
+    "spatially_tempered_covariance_fit",
 ]

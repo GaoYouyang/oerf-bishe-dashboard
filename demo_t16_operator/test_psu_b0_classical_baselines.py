@@ -10,6 +10,7 @@ from .psu_b0_classical_baselines import (
     GeneralizedSobolevDirection,
     ScheduledSobolevDirection,
     preconditioned_cgls_reconstruction,
+    preconditioned_cgls_trajectory,
     quadratic_tikhonov_reconstruction,
 )
 from .psu_b0_reconstruction_interface import (
@@ -233,6 +234,83 @@ def test_initial_normal_factory_shares_the_first_adjoint() -> None:
         atol=1e-10,
         rtol=1e-10,
     )
+
+
+def test_fixed_pcgls_trajectory_matches_independent_stage_counts() -> None:
+    generator = torch.Generator().manual_seed(2706)
+    reference_operator = _operator()
+    truth = torch.randn(
+        (2, 1, *reference_operator.grid_shape),
+        generator=generator,
+        dtype=torch.float64,
+    )
+    observation = reference_operator(truth).detach()
+    kwargs = {
+        "sigma_by_view": torch.full((2, 3), 0.15, dtype=torch.float64),
+        "view_mask": torch.ones((2, 3), dtype=torch.float64),
+        "rays_per_view": 7,
+    }
+    operator = _operator()
+    operator.reset_call_counts()
+    trajectory = preconditioned_cgls_trajectory(
+        operator,
+        observation,
+        checkpoint_stages=(2, 3, 4, 5),
+        preconditioner=GeneralizedSobolevDirection(
+            operator.grid_shape,
+            strength=5.0,
+            epsilon=0.05,
+        ).to(torch.float64),
+        **kwargs,
+    )
+    assert operator.call_report() == {"forward_calls": 5, "adjoint_calls": 5}
+    for stages, snapshot in trajectory.items():
+        independent_operator = _operator()
+        independent = preconditioned_cgls_reconstruction(
+            independent_operator,
+            observation,
+            stages=stages,
+            preconditioner=GeneralizedSobolevDirection(
+                independent_operator.grid_shape,
+                strength=5.0,
+                epsilon=0.05,
+            ).to(torch.float64),
+            **kwargs,
+        )
+        assert snapshot.forward_calls == stages
+        assert snapshot.adjoint_calls == stages
+        assert len(snapshot.history) == stages
+        assert "beta" not in snapshot.history[-1]
+        assert torch.allclose(
+            snapshot.volume,
+            independent.volume,
+            atol=1e-10,
+            rtol=1e-10,
+        )
+        assert torch.allclose(
+            snapshot.residual_uv,
+            independent.residual_uv,
+            atol=1e-10,
+            rtol=1e-10,
+        )
+
+
+def test_fixed_pcgls_trajectory_rejects_invalid_checkpoints() -> None:
+    operator = _operator()
+    observation = torch.zeros((1, 21, 2), dtype=torch.float64)
+    with pytest.raises(ValueError, match="checkpoint_stages"):
+        preconditioned_cgls_trajectory(
+            operator,
+            observation,
+            sigma_by_view=torch.ones((1, 3), dtype=torch.float64),
+            view_mask=torch.ones((1, 3), dtype=torch.float64),
+            rays_per_view=7,
+            checkpoint_stages=(0, 2),
+            preconditioner=GeneralizedSobolevDirection(
+                operator.grid_shape,
+                strength=5.0,
+            ).to(torch.float64),
+        )
 
 
 def test_invalid_regularizer_and_lambda_are_rejected() -> None:

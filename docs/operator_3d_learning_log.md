@@ -1056,3 +1056,104 @@ deterministic GLS 的收益归功于网络。
 **证据等级。** **L2 real detector geometry + L3 fresh synthetic
 reconstruction pilot**。没有真实 flow-off repeats、实验三维真值或 neural
 operator comparison。
+
+## 43. 重新条件化很强，但 pooled 早停规则再次证明“平均赢”不够
+
+DG-WPCGLS 的坏尾部出现后，我没有直接训练 controller，而是先做了 120 个
+低自由度候选：5 个 spatial tempering、5 个 Sobolev strength、4 个 stages，
+再加 full graph anchor。为了避免重复从头求 2/3/4/5 步，我增加了 trajectory
+checkpoint 复用，并用逐值测试证明它等于独立求解。逻辑调用仍是 6,784 对，
+物理调用降到 2,464 对，运行只用了 41 秒。
+
+原始选择规则挑出 `full_graph_s3_k4`，前后两半相对旧 `component_s5_k4`
+都约提高 24%–25%。但这里不能庆祝：`component_s3_k4` 自己已经贡献约
+24%，大部分收益只是经典 Sobolev 预条件器重调。
+
+换成公平的同 strength、同 stage 基线后，graph covariance 的真实 pooled
+增量为：
+
+- mean `+1.406%`；
+- cluster 95% CI `[+1.235%, +1.578%]`；
+- p10 `+0.166%`；
+- harm `2.34%`；
+- worst `-7.920%`。
+
+也就是说，大多数场受益，但极少数 annular/oblique 场会严重回退。为了看
+能否只用部署可见量保护尾部，我又保存了 stage 2–5 的 whitened residual、
+residual reduction、alpha、beta、relative update 和 gradient/field norm。
+
+正式规则审计有 348 条：
+
+- 单阈值 stage-4/5：0 条通过选择门；
+- rollback/continue：5 条通过选择门；
+- 最佳规则在 selection 为 `+3.765%`、worst `-1.775%`；
+- 到 opened diagnostic 仍有 `+3.340%` mean，但 p10 `-1.746%`、harm
+  `12.5%`、worst `-17.532%`。
+
+因此严格判 **`OBSERVABLE_POOLED_STOPPING_RULE_NO_GO`**，fresh 不打开。
+
+**讲人话：**六个总量就像只看汽车的平均转速和油耗，不能告诉我们是哪一个
+轮子在打滑。继续加深 MLP 只会更擅长记住 64 个选择场，不会自动获得逐相机
+的物理信息。
+
+下一步优先补一个 deterministic TV/Huber-superiorized PCGLS，先看
+edge-preserving regularization 能不能天然压住 annular/shock 尾部。若它成立，
+再让小型 operator 学 bounded proximal map；另一支线才是保留逐相机 detector
+graph、pose 和 covariance spectrum 的 set controller。
+
+完整说明：
+
+- [严格 NO-GO](psu_b0_covariance_conditioning_stopping_no_go_2026-07-17.md)
+- [结果四联图](../demo_t16_operator/results/psu_b0_covariance_stopping_rule_audit/psu_b0_covariance_conditioning_audit.png)
+
+**证据等级。** **L2 real detector geometry + L3 post-open synthetic
+mechanism audit**。没有真实 flow-off、实验三维真值或 fresh confirmation。
+
+## 44. TV/Huber 方向做对了，但它的额外 forward 不划算
+
+上一节决定先补 TV/Huber 强基线。这次没有把 PCGLS 结果拿去随手平滑，而是
+按 SupPCG 的定义实现：
+
+1. 每轮先沿 TV 或 Huber 的负梯度做不增加 penalty 的小扰动；
+2. 步长按 `gamma * a^ell` 递减，保证扰动总量可控；
+3. 扰动后重建 measurement residual；
+4. 再做 fixed-SPD PCG 更新。
+
+关键成本是第 3 步。普通 PCGLS-K 用 `K F + K A^T`，SupPCG-K 用
+`(2K-1) F + K A^T`。所以 SupPCG-3 必须与总调用相同的 graph-PCGLS-4
+比较，不能只和同 stage 的 graph-PCGLS-3 比。
+
+两个已打开 replicate 的初始 scale smoke 中，最佳 Huber-3 在同 stage 仅有
+`+0.124%` mean，小于 1% 的坏尾为 0；说明 front/annular 的确有一点结构信号。
+但换成同总调用的 graph-PCGLS-4 后：
+
+- mean `-6.016%`；
+- p10 `-10.299%`；
+- harm `87.5%`；
+- worst `-15.551%`。
+
+唯一授权的深阶段扩展也失败。48 个候选中最佳 Huber-6 对调用预算下界
+graph-PCGLS-8 为：
+
+- mean `-8.518%`；
+- p10 `-25.463%`；
+- harm `68.75%`；
+- worst `-26.411%`。
+
+因此按预先写入配置的停止规则，关闭 SupPCG 性能分支，不再调 gamma。
+
+**讲人话：**TV/Huber 的小修正确实偶尔能让边缘更好，但每修一次都要重新拍
+一遍“虚拟投影”。同样的计算钱拿去多做一轮普通 PCGLS，整体更划算。继续
+调步长只会在两个已见 replicate 上过拟合。
+
+下一步换成每迭代只用一对 `A/A^T` 的 primal-dual/PDHG，直接求解
+data + TV/Huber 目标。只有它能同时改善 mean 和坏尾，才考虑让小网络学习
+bounded proximal 参数。
+
+完整说明：
+
+- [严格 NO-GO](psu_b0_edge_superiorization_budget_no_go_2026-07-17.md)
+- [结果四联图](../demo_t16_operator/results/psu_b0_edge_superiorization_tail_smoke/psu_b0_edge_superiorization_no_go.png)
+
+**证据等级。** **L2 real detector geometry + L3 two-replicate post-open
+scale/tail smoke**。没有 full opened grid、fresh、真实 flow-off 或实验真值。

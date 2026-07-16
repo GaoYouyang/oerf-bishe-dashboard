@@ -1,0 +1,57 @@
+{
+  "schema_version": "psu-b0-edge-superiorization-tail-smoke-config-1.0",
+  "status": "POSTOPEN_TAIL_SCALE_EXTENSION_DECLARED_BEFORE_EXECUTION",
+  "evidence_scope": "TWO_OPENED_REPLICATE_DEEPER_TV_HUBER_TAIL_SMOKE_ON_REAL_PSU_DETECTOR_GEOMETRY_AND_SYNTHETIC_REACTION_FIELDS",
+  "source_stopping_no_go": "demo_t16_operator/results/psu_b0_covariance_stopping_rule_audit/report.json",
+  "source_multiseed_config": "demo_t16_operator/configs/psu_b0_dg_wpcgls_multiseed_v1.json",
+  "source_smoke_config": "demo_t16_operator/configs/psu_b0_dg_wpcgls_smoke_v1.json",
+  "replicate_indices": [0, 8],
+  "solver": {
+    "sobolev_strength": 3.0,
+    "sobolev_epsilon": 0.05
+  },
+  "baselines": {
+    "component_stages": 4,
+    "graph_stages": [4, 5, 6, 7, 8, 9]
+  },
+  "screen": {
+    "penalties": ["tv", "huber"],
+    "stages": [5, 6],
+    "perturbation_inner_steps": [1, 2, 4],
+    "perturbation_initial_steps": [0.32, 0.64, 1.28, 2.56],
+    "perturbation_decays": [0.7],
+    "smoothing": 0.001,
+    "huber_delta": 0.5,
+    "maximum_backtracks": 64,
+    "superiorized_candidate_count_expected": 48
+  },
+  "ranking": {
+    "primary": "higher_mean_field_gain_vs_graph_budget_floor_percent",
+    "tie_breaks": [
+      "higher_field_gain_vs_graph_budget_floor_p10_percent",
+      "lower_field_harm_vs_graph_budget_floor_over_one_percent_rate",
+      "higher_mean_front_gain_vs_graph_budget_floor",
+      "lower_total_operator_calls",
+      "lexicographic_candidate_id"
+    ],
+    "ranking_is_tail_scale_smoke_only": true,
+    "ranking_does_not_authorize_full_grid_or_fresh": true
+  },
+  "stopping_rule": {
+    "if_no_candidate_beats_graph_budget_floor_mean": "CLOSE_SUPPCG_BRANCH_AND_MOVE_TO_ONE_PAIR_PRIMAL_DUAL_BASELINE",
+    "no_further_gamma_or_inner_step_tuning_after_this_screen": true
+  },
+  "claim_boundary": {
+    "both_replicates_already_opened": true,
+    "tail_scale_smoke_is_postopen": true,
+    "real_detector_geometry_used": true,
+    "experimental_flow_field_truth_used": false,
+    "real_flowoff_repeats_used": false,
+    "synthetic_correlated_noise_used": true,
+    "analytic_reaction_morphology_is_cfd": false,
+    "algorithm_superiority_claimed": false,
+    "full_opened_grid_authorized": false,
+    "fresh_seed_set_opened": false,
+    "neural_operator_training_authorized": false
+  }
+}

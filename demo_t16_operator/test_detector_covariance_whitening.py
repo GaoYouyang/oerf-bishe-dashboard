@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 import numpy as np
+import pytest
 import torch
 
 from .detector_covariance_whitening import (
     DetectorCovarianceWhitening,
     WhitenedMeasurementOperator,
+    spatially_tempered_covariance_fit,
 )
 from .detector_graph_covariance import (
     CovarianceFit,
@@ -155,6 +159,9 @@ def test_wrapped_bost_operator_is_adjoint_and_call_accounted() -> None:
         dtype=torch.float64,
     )
     wrapped = WhitenedMeasurementOperator(base, whitening)
+    assert wrapped.spacing_xyz == tuple(
+        float(value) for value in base.spacing_xyz
+    )
     generator = torch.Generator().manual_seed(8105)
     volume = torch.randn(
         (2, 1, *base.grid_shape),
@@ -188,3 +195,107 @@ def test_wrapped_bost_operator_is_adjoint_and_call_accounted() -> None:
     assert result.forward_calls == 3
     assert result.adjoint_calls == 3
     assert wrapped.call_report() == {"forward_calls": 3, "adjoint_calls": 3}
+
+
+def test_spatial_tempering_has_iid_and_graph_spectrum_endpoints() -> None:
+    component, _, _ = _graph_fit()
+    graph = replace(
+        component,
+        kind="gated_graph",
+        spatial_eigenvalues=np.linspace(
+            0.4,
+            1.6,
+            len(component.spatial_eigenvalues),
+        ),
+        parameters={
+            **component.parameters,
+            "spatial_fraction": 0.75,
+            "diffusion_time": 1.2,
+        },
+    )
+    graph = replace(
+        graph,
+        spatial_eigenvalues=(
+            graph.spatial_eigenvalues
+            / np.mean(graph.spatial_eigenvalues)
+        ),
+    )
+
+    iid = spatially_tempered_covariance_fit(
+        component,
+        graph,
+        spatial_exponent=0.0,
+    )
+    full_spatial = spatially_tempered_covariance_fit(
+        component,
+        graph,
+        spatial_exponent=1.0,
+    )
+    assert np.allclose(
+        iid.spatial_eigenvalues,
+        np.ones_like(component.spatial_eigenvalues),
+    )
+    assert np.allclose(
+        full_spatial.spatial_eigenvalues,
+        graph.spatial_eigenvalues,
+    )
+    assert np.allclose(
+        full_spatial.component_covariance,
+        component.component_covariance,
+    )
+    assert full_spatial.sigma2 == component.sigma2
+    assert full_spatial.parameters["component_parameters_held_fixed"] == 1.0
+
+
+def test_spatial_tempering_zero_matches_component_whitening() -> None:
+    fitted, _, eigenvectors = _graph_fit()
+    component = replace(
+        fitted,
+        kind="component_iid",
+        spatial_eigenvalues=np.ones_like(fitted.spatial_eigenvalues),
+        parameters={
+            **fitted.parameters,
+            "spatial_fraction": 0.0,
+            "diffusion_time": 0.0,
+        },
+    )
+    graph = replace(
+        component,
+        kind="gated_graph",
+        spatial_eigenvalues=np.linspace(
+            0.5,
+            1.5,
+            len(component.spatial_eigenvalues),
+        ),
+    )
+    tempered = spatially_tempered_covariance_fit(
+        component,
+        graph,
+        spatial_exponent=0.0,
+    )
+    baseline = DetectorCovarianceWhitening(
+        [component],
+        eigenvectors_by_view=[eigenvectors],
+        scale_by_view=[1.0],
+        predictive_mean_correction=True,
+        dtype=torch.float64,
+    )
+    endpoint = DetectorCovarianceWhitening(
+        [tempered],
+        eigenvectors_by_view=[eigenvectors],
+        scale_by_view=[1.0],
+        predictive_mean_correction=True,
+        dtype=torch.float64,
+    )
+    assert torch.equal(baseline.matrix, endpoint.matrix)
+
+
+@pytest.mark.parametrize("value", [-0.01, 1.01, np.nan, np.inf])
+def test_spatial_tempering_rejects_invalid_exponent(value: float) -> None:
+    component, _, _ = _graph_fit()
+    with pytest.raises(ValueError, match="spatial_exponent"):
+        spatially_tempered_covariance_fit(
+            component,
+            component,
+            spatial_exponent=value,
+        )

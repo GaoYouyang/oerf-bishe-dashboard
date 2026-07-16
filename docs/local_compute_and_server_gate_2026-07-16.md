@@ -33,12 +33,30 @@
 
 不是。
 
-- 实测下载吞吐约 `310 Mbps`；
-- base RTT 约 `287 ms`，交互延迟偏高，但不影响已经下载到本地的 PSU 反演；
+- 2026-07-17 再测 `networkQuality` 下行约 `70.1 Mbps`；
+- base RTT 约 `254 ms`，交互延迟偏高，但不影响已经下载到本地的 PSU 反演；
+- GitHub、arXiv、Springer 首页总耗时约 `1.64 / 1.07 / 3.51 s`；
 - 当前 `A/Aᵀ`、CGLS、缓存与绘图都不访问互联网；
 - chunk profile 显示约 `82%` 的单次时间花在重复生成 aperture geometry 与 trilinear stencil，而不是下载。
 
-因此当前不需要用户调整网络或 VPN。网络只会影响后续下载新数据、论文或远端服务器传输，不会加速本机 support inverse。
+吞吐会随代理和时间波动，Springer 的首字节明显慢于 GitHub/arXiv，但当前不需要
+用户调整网络或 VPN。网络只会影响后续下载新数据、论文或远端服务器传输，
+不会加速本机 support inverse。
+
+## 3.1 本轮时序优化的实测收益
+
+covariance-conditioned PCGLS 网格原先对 stage 2/3/4/5 分别从头求解。
+现在固定 covariance 与 Sobolev strength 后只运行一条最大 5-stage trajectory，
+再读取前缀 checkpoint：
+
+- 120 candidates × 16 replicates；
+- 逻辑 `A/Aᵀ` calls 保持 `6,784`；
+- 物理 calls 从 `6,784` 降到 `2,464`，减少 `63.68%`；
+- 墙钟 `41.15 s`，进程峰值约 `573 MB`；
+- checkpoint 与独立求解逐值测试一致。
+
+因此当前最有效的“增加并行”不是让多个 MPS 训练互相抢统一内存，而是先消除
+重复轨迹，再把文献核验、统计审计、网页/日志/制图作为独立轻任务并行推进。
 
 ## 4. 为什么不同时跑多个重型反演
 

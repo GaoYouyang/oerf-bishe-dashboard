@@ -1,0 +1,44 @@
+{
+  "schema_version": "psu-b0-covariance-stopping-feature-audit-config-1.0",
+  "status": "POSTOPEN_FEATURE_AUDIT_DECLARED_BEFORE_TRAJECTORY_RERUN",
+  "evidence_scope": "OPENED_16_REPLICATE_OBSERVABLE_GRAPH_WHITENED_PCGLS_TRAJECTORY_AUDIT",
+  "source_diagnosis_config": "demo_t16_operator/configs/psu_b0_covariance_conditioned_pcgls_diagnosis_v1.json",
+  "source_diagnosis_report": "demo_t16_operator/results/psu_b0_covariance_conditioned_pcgls_diagnosis/report.json",
+  "source_multiseed_config": "demo_t16_operator/configs/psu_b0_dg_wpcgls_multiseed_v1.json",
+  "source_smoke_config": "demo_t16_operator/configs/psu_b0_dg_wpcgls_smoke_v1.json",
+  "replicate_partition": {
+    "selection": [0, 1, 2, 3, 4, 5, 6, 7],
+    "opened_diagnostic_check": [8, 9, 10, 11, 12, 13, 14, 15]
+  },
+  "graph_trajectory": {
+    "covariance": "dg_covgate",
+    "sobolev_strength": 3.0,
+    "sobolev_epsilon": 0.05,
+    "checkpoint_stages": [2, 3, 4, 5]
+  },
+  "fair_baseline": {
+    "covariance": "component_iid",
+    "sobolev_strength": 3.0,
+    "sobolev_epsilon": 0.05,
+    "stages": 4
+  },
+  "observable_features": [
+    "relative_whitened_residual_objective",
+    "residual_objective_reduction_from_previous_stage",
+    "pcgls_alpha",
+    "previous_pcgls_beta",
+    "relative_volume_update",
+    "volume_gradient_to_field_norm"
+  ],
+  "claim_boundary": {
+    "all_replicates_already_opened": true,
+    "feature_or_rule_selection_is_postopen": true,
+    "truth_is_used_only_for_diagnostic_labels": true,
+    "candidate_rule_must_use_observable_features_only": true,
+    "experimental_flow_field_truth_used": false,
+    "real_flowoff_repeats_used": false,
+    "synthetic_correlated_noise_used": true,
+    "algorithm_superiority_claimed": false,
+    "fresh_seed_set_opened": false
+  }
+}

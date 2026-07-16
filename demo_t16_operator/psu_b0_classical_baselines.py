@@ -368,8 +368,83 @@ def preconditioned_cgls_reconstruction(
     """
 
     count = int(stages)
+    return _preconditioned_cgls_trajectory(
+        operator,
+        observation_uv,
+        sigma_by_view=sigma_by_view,
+        view_mask=view_mask,
+        rays_per_view=rays_per_view,
+        stages=count,
+        checkpoint_stages=(count,),
+        preconditioner=preconditioner,
+        preconditioner_factory=preconditioner_factory,
+        denominator_floor=denominator_floor,
+    )[count]
+
+
+def preconditioned_cgls_trajectory(
+    operator: Any,
+    observation_uv: torch.Tensor,
+    *,
+    sigma_by_view: torch.Tensor,
+    view_mask: torch.Tensor,
+    rays_per_view: int,
+    checkpoint_stages: Sequence[int],
+    preconditioner: SearchDirection,
+    denominator_floor: float = 1e-20,
+) -> dict[int, IterativeReconstruction]:
+    """Return selected iterates from one fixed-preconditioner PCGLS solve.
+
+    This execution helper removes duplicated prefix work when several fixed
+    iteration counts are compared. Each returned reconstruction retains its
+    logical call budget, while the wrapped operator performs only the maximum
+    checkpoint count. The intermediate volumes are identical to independent
+    solves when the supplied fixed preconditioner is stage-fraction invariant,
+    as are the static Sobolev maps used by the covariance diagnosis.
+    """
+
+    checkpoints = tuple(sorted({int(value) for value in checkpoint_stages}))
+    if not checkpoints or checkpoints[0] < 1:
+        raise ValueError("checkpoint_stages must contain positive integers")
+    return _preconditioned_cgls_trajectory(
+        operator,
+        observation_uv,
+        sigma_by_view=sigma_by_view,
+        view_mask=view_mask,
+        rays_per_view=rays_per_view,
+        stages=checkpoints[-1],
+        checkpoint_stages=checkpoints,
+        preconditioner=preconditioner,
+        preconditioner_factory=None,
+        denominator_floor=denominator_floor,
+    )
+
+
+def _preconditioned_cgls_trajectory(
+    operator: Any,
+    observation_uv: torch.Tensor,
+    *,
+    sigma_by_view: torch.Tensor,
+    view_mask: torch.Tensor,
+    rays_per_view: int,
+    stages: int,
+    checkpoint_stages: Sequence[int],
+    preconditioner: SearchDirection | None,
+    preconditioner_factory: Any | None,
+    denominator_floor: float,
+) -> dict[int, IterativeReconstruction]:
+    count = int(stages)
     if count < 1:
         raise ValueError("stages must be positive")
+    checkpoints = tuple(sorted({int(value) for value in checkpoint_stages}))
+    if (
+        not checkpoints
+        or checkpoints[0] < 1
+        or checkpoints[-1] != count
+    ):
+        raise ValueError(
+            "checkpoint_stages must be positive and include stages"
+        )
     if (preconditioner is None) == (preconditioner_factory is None):
         raise ValueError(
             "provide exactly one preconditioner or preconditioner_factory"
@@ -420,6 +495,7 @@ def preconditioned_cgls_reconstruction(
     if torch.any(gamma < -float(denominator_floor)):
         raise ValueError("preconditioner is not positive on the initial normal")
     history: list[dict[str, torch.Tensor]] = []
+    outputs: dict[int, IterativeReconstruction] = {}
     for stage in range(count):
         projected_white = active * operator(direction) / sigma
         denominator = torch.sum(
@@ -437,20 +513,28 @@ def preconditioned_cgls_reconstruction(
             residual_white.square(),
             dim=(1, 2),
         ) / initial_objective
-        if stage + 1 == count:
-            history.append(
-                {
-                    "stage": torch.full_like(
-                        alpha,
-                        stage + 1,
-                        dtype=torch.int64,
-                    ),
-                    "alpha": alpha,
-                    "relative_objective_before": objective_before,
-                    "relative_objective_after": objective_after,
-                    **diagnostics,
-                }
+        completed = stage + 1
+        terminal_row = {
+            "stage": torch.full_like(
+                alpha,
+                completed,
+                dtype=torch.int64,
+            ),
+            "alpha": alpha,
+            "relative_objective_before": objective_before,
+            "relative_objective_after": objective_after,
+            **diagnostics,
+        }
+        if completed in checkpoints:
+            outputs[completed] = IterativeReconstruction(
+                volume=current.clone(),
+                residual_uv=(residual_white * sigma).clone(),
+                history=[*history, terminal_row],
+                forward_calls=completed,
+                adjoint_calls=completed,
             )
+        if completed == count:
+            history.append(terminal_row)
             break
         next_normal = operator.adjoint(active * residual_white / sigma)
         next_residual_uv = residual_white * sigma
@@ -477,22 +561,14 @@ def preconditioned_cgls_reconstruction(
         gamma = next_gamma
         history.append(
             {
-                "stage": torch.full_like(alpha, stage + 1, dtype=torch.int64),
-                "alpha": alpha,
+                **terminal_row,
                 "beta": beta,
-                "relative_objective_before": objective_before,
-                "relative_objective_after": objective_after,
-                **diagnostics,
             }
         )
         diagnostics = next_diagnostics
-    return IterativeReconstruction(
-        volume=current,
-        residual_uv=residual_white * sigma,
-        history=history,
-        forward_calls=count,
-        adjoint_calls=count,
-    )
+    if set(outputs) != set(checkpoints):
+        raise RuntimeError("PCGLS trajectory did not emit every checkpoint")
+    return outputs
 
 
 __all__ = [
@@ -500,5 +576,6 @@ __all__ = [
     "GeneralizedSobolevDirection",
     "ScheduledSobolevDirection",
     "preconditioned_cgls_reconstruction",
+    "preconditioned_cgls_trajectory",
     "quadratic_tikhonov_reconstruction",
 ]
