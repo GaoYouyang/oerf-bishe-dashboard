@@ -943,3 +943,51 @@ PSU 当前本地 9-view 数据只有 **1 个真实物理流场**。枚举 6-9 ac
 这不能证明差异一定来自 shock，因为 optical-flow noise、registration、mask boundary、camera bias、finite aperture 和真实高频 front 都可能贡献。但它足以证明当前 synthetic generator 没有覆盖真实输入工作域。因此 set encoder 继续封存，下一步改成 flow-off covariance、graph-correlated noise 和 held-out camera/front endpoint。
 
 **证据等级。** **L0 输入值 + L3 工作域审计**。使用真实公开 deflection values，但没有实验 3D truth、独立 flow fields、reconstruction 或训练；只能证明 descriptor mismatch。
+
+## 41. 先回答“要多少张 flow-off”，再谈真实 covariance
+
+公开 PSU 论文说每次测试原本拍了 2000 张 flow-off 和 2000 张 flow-on，但公开
+ZIP 索引只给每个 camera-rotation condition 一张平均 flow-on TIFF 和复合
+reference/deflected 产物。98 张 `withoutCylinder` TIFF 是不同标定靶角度，不是
+同一条件下的时间重复。因此公开包可以给 detector geometry，不能用来估时间
+covariance。
+
+这次在真实 PSU 九相机 detector 坐标上做了一个采集规划实验。每台相机的
+256 条 detector rays 构成 8 邻域图，模型从简单到复杂依次是：
+
+1. `u/v` 两分量 IID；
+2. graph-heat 空间相关；
+3. graph + 每个 detector node 的平滑异方差；
+4. 在白化坐标中再加一个 rank-1 低频同步漂移。
+
+每次只用 75% repeats 拟合，25% repeats 选择是否启用复杂模型；最后在 160 张
+完全封闭的合成测试帧上算 likelihood、coverage 和 harm。三类压力族、8 个
+随机种子、9 台相机共得到 7776 条 trial rows。
+
+**结果：**
+
+- 4/8/12/20/32 张都没有通过全部门；
+- 32 张最坏 coverage p90 误差仍是 12.44 个百分点；
+- 50 张降到 5.625 个百分点，第一次通过 8 个百分点门；
+- 50 张时 graph truth 的 NLL gain 中位数是 0.03448 nat/dim；
+- IID false activation 为 0，p90 harm 为 0；
+- nonstationary truth 的 rank-1 drift 启用率达到 90.28%，IID 为 0。
+
+**讲人话：**20 张足够“看出图相关性可能存在”，但不够把不确定度校准得稳。
+32 张已经接近，却仍有坏尾部。当前给师兄的请求应明确写成每台相机至少
+50 张，并把约 13 张永久留出，不能先平均、不能拿去挑模型。
+
+这个结论仍只是采集规划，不是重建成功。图 covariance、graph Matérn 和低秩
+漂移都不是空白创新。真正可能形成论文的部分，是把真实 flow-off 标定接入
+BOST detector graph、held-out camera、whitened PCGLS 与 front reconstruction，
+并证明它改变了真实三维反演的可靠性。
+
+完整说明：
+
+- [DG-CovGate 技术说明](psu_b0_detector_graph_covariance_acquisition_gate_2026-07-17.md)
+- [公开归档 repeat 审计](psu_flowoff_repeat_inventory_public_summary.json)
+- [结果图](../demo_t16_operator/results/psu_b0_detector_graph_covariance_gate/psu_b0_detector_graph_covariance_gate_figure.png)
+
+**证据等级。** **L2 geometry + L3 synthetic acquisition planning**。使用真实
+detector graph，未使用真实 temporal repeats，未做三维 reconstruction，不宣称
+算法优越。

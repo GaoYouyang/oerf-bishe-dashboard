@@ -1,0 +1,102 @@
+{
+  "schema_version": "psu-b0-detector-graph-covariance-gate-config-1.0",
+  "result_status": "SYNTHETIC_ACQUISITION_PLANNING_ON_REAL_DETECTOR_GRAPH",
+  "source_detector_config": "demo_t16_operator/configs/psu_b0_detector_pose_probe_v1.json",
+  "source_archive_index": "data_templates/open_bos_zip_file_content.txt",
+  "source_dataset_doi": "10.26208/1VE2-5C19",
+  "source_paper": "https://arxiv.org/html/2508.17120v2",
+  "geometry": {
+    "view_count": 9,
+    "rays_per_view": 256,
+    "finite_aperture_sample_count": 8
+  },
+  "simulation": {
+    "families": [
+      "component_iid",
+      "graph_heat",
+      "nonstationary_drift"
+    ],
+    "repeat_counts": [
+      4,
+      8,
+      12,
+      20,
+      32,
+      50
+    ],
+    "seed_count": 8,
+    "base_seed": 61703,
+    "sealed_test_repeat_count": 160
+  },
+  "graph_grid": {
+    "diffusion_times": [
+      0.2,
+      0.5,
+      0.9,
+      1.2,
+      1.8,
+      2.8
+    ],
+    "spatial_fractions": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      0.9
+    ],
+    "correlations": [
+      -0.5,
+      -0.25,
+      0.0,
+      0.25,
+      0.5
+    ],
+    "variance_ratios": [
+      0.65,
+      0.85,
+      1.0,
+      1.25,
+      1.55
+    ]
+  },
+  "gated_model": {
+    "validation_fraction": 0.25,
+    "minimum_validation_gain_per_dimension": 0.0025,
+    "amplitude_smoothing_strengths": [
+      0.5,
+      2.0,
+      8.0,
+      32.0
+    ],
+    "low_rank_drift": {
+      "rank_options": [
+        1
+      ],
+      "shrinkage_strengths": [
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ]
+    }
+  },
+  "diagonal_shrinkage": {
+    "prior_strength": 20.0
+  },
+  "acquisition_gate": {
+    "minimum_graph_heat_median_nll_gain": 0.005,
+    "minimum_graph_heat_p10_nll_gain": 0.0,
+    "maximum_iid_p90_nll_harm": 0.003,
+    "minimum_graph_heat_activation_rate": 0.75,
+    "maximum_iid_activation_rate": 0.25,
+    "maximum_all_family_p90_coverage_error": 0.08
+  },
+  "claim_boundary": {
+    "real_detector_geometry_used": true,
+    "real_flowoff_repeats_used": false,
+    "real_temporal_covariance_estimated": false,
+    "synthetic_noise_families_used": true,
+    "three_dimensional_reconstruction_performed": false,
+    "algorithm_superiority_claimed": false
+  }
+}

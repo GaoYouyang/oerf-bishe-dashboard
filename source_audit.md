@@ -487,3 +487,27 @@
 - NeRIF AIP 页面：`https://pubs.aip.org/aip/pof/article/37/1/017143/3331552/Neural-refractive-index-field-Unlocking-the`
 - PIV-BOST Springer 页面：`https://link.springer.com/article/10.1007/s00348-025-04093-y`
 - 4D BOST ACM 页面：`https://dl.acm.org/doi/10.1145/3809488`
+
+## 2026-07-17 flow-off covariance 与采集量补充核验
+
+- PSU 正式论文/开放正文说明每次 test acquisition 含 2000 张 flow-off 和
+  2000 张 flow-on、10 Hz 采集，并明确 calibration/deflection-sensing uncertainty
+  不在当前 uncertainty 分析内：
+  `https://arxiv.org/html/2508.17120v2`。
+- 公开归档的 12 个 ZIP / 1838 个文件条目只暴露每个 camera-rotation condition
+  一张平均 flow-on TIFF 和复合 reference/deflected 产物；98 张
+  `withoutCylinder` TIFF 是不同 calibration target angles，不是固定条件的
+  temporal repeats。公开索引不授权 temporal covariance estimation。
+- Dynamic-background BOS 论文说明，不同 reference backgrounds 的 median
+  能降低 background-dependent systematic error；反复平均同一静态 reference
+  不能自动消除该类系统误差：
+  `https://link.springer.com/article/10.1007/s00348-021-03285-6`。
+- Graph heat/Matérn covariance 和时空 graph kernels 已有直接先验工作：
+  `https://proceedings.mlr.press/v130/borovitskiy21a.html`、
+  `https://proceedings.mlr.press/v151/nikitin22a.html`。因此“在 detector graph
+  上加 covariance”本身不作为创新；必须由 BOST flow-off acquisition、
+  held-out camera、inverse/adjoint 与 front-reconstruction 闭环提供独立贡献。
+- 本地 DG-CovGate 只给出真实 detector geometry 上的 synthetic acquisition
+  planning：50 repeats 首次通过预设 coverage/likelihood/harm/activation 全部门，
+  真实数据授权仍为 false。正式边界见
+  `docs/psu_b0_detector_graph_covariance_acquisition_gate_2026-07-17.md`。
