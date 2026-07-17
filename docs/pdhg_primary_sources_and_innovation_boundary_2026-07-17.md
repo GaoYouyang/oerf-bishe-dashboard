@@ -159,9 +159,9 @@ proximal 或可证明的平均非扩张映射，应称为 learned denoiser/unrol
 3. Pock & Chambolle, *Diagonal Preconditioning for First Order Primal-Dual
    Algorithms in Convex Optimization*, ICCV 2011：绝对行列和与对角 metric。
    [DOI](https://doi.org/10.1109/ICCV.2011.6126441)
-4. Ma et al., *Preconditioned Primal-Dual Hybrid Gradient Algorithm for
-   Composite Optimization and Its Tight Convergence Conditions*：固定预条件
-   PDHG 的收敛条件与紧性；不能把固定 metric 结论自动外推到逐步学习 metric。
+4. Ma et al., *Understanding the Convergence of the Preconditioned PDHG
+   Method: A View of Indefinite Proximal ADMM*：固定预条件 PDHG 的收敛条件与
+   紧性；不能把固定 metric 结论自动外推到逐步学习 metric。
    [开放稿](https://arxiv.org/abs/2301.02984) ·
    [DOI](https://doi.org/10.1007/s10915-023-02105-9)
 5. Loris & Verhoeven, *On a generalization of the iterative soft-thresholding

@@ -84,6 +84,31 @@ def _forward_difference_axis_adjoint(
     return torch.movedim(output, -1, axis)
 
 
+def _absolute_forward_difference_axis(
+    values: torch.Tensor,
+    *,
+    axis: int,
+    spacing: float,
+) -> torch.Tensor:
+    moved = torch.movedim(values, axis, -1)
+    output = torch.zeros_like(moved)
+    output[..., :-1] = (moved[..., :-1] + moved[..., 1:]) / spacing
+    return torch.movedim(output, -1, axis)
+
+
+def _absolute_forward_difference_axis_adjoint(
+    values: torch.Tensor,
+    *,
+    axis: int,
+    spacing: float,
+) -> torch.Tensor:
+    moved = torch.movedim(values, axis, -1)
+    output = torch.zeros_like(moved)
+    output[..., :-1] += moved[..., :-1] / spacing
+    output[..., 1:] += moved[..., :-1] / spacing
+    return torch.movedim(output, -1, axis)
+
+
 def regularization_gradient(
     volume: torch.Tensor,
     *,
@@ -148,6 +173,8 @@ class ForwardNeumannRegularizationOperator:
         self.spacing_xyz = spacing
         self.gradient_calls = 0
         self.gradient_adjoint_calls = 0
+        self.absolute_forward_calls = 0
+        self.absolute_adjoint_calls = 0
 
     def __call__(self, volume: torch.Tensor) -> torch.Tensor:
         self.gradient_calls += 1
@@ -163,10 +190,63 @@ class ForwardNeumannRegularizationOperator:
             spacing_xyz=self.spacing_xyz,
         )
 
+    def absolute_forward(self, volume: torch.Tensor) -> torch.Tensor:
+        """Apply linear ``|D_+| x``, not the nonlinear ``abs(D_+ x)``."""
+
+        if volume.ndim != 4:
+            raise ValueError("volume must have shape [batch,z,y,x]")
+        self.absolute_forward_calls += 1
+        dx = _absolute_forward_difference_axis(
+            volume,
+            axis=-1,
+            spacing=self.spacing_xyz[0],
+        )
+        dy = _absolute_forward_difference_axis(
+            volume,
+            axis=-2,
+            spacing=self.spacing_xyz[1],
+        )
+        dz = _absolute_forward_difference_axis(
+            volume,
+            axis=-3,
+            spacing=self.spacing_xyz[2],
+        )
+        return torch.stack((dx, dy, dz), dim=1)
+
+    def absolute_adjoint(self, gradient: torch.Tensor) -> torch.Tensor:
+        """Apply the exact transpose of :meth:`absolute_forward`."""
+
+        if gradient.ndim != 5 or gradient.shape[1] != 3:
+            raise ValueError("gradient must have shape [batch,3,z,y,x]")
+        self.absolute_adjoint_calls += 1
+        return (
+            _absolute_forward_difference_axis_adjoint(
+                gradient[:, 0],
+                axis=-1,
+                spacing=self.spacing_xyz[0],
+            )
+            + _absolute_forward_difference_axis_adjoint(
+                gradient[:, 1],
+                axis=-2,
+                spacing=self.spacing_xyz[1],
+            )
+            + _absolute_forward_difference_axis_adjoint(
+                gradient[:, 2],
+                axis=-3,
+                spacing=self.spacing_xyz[2],
+            )
+        )
+
     def call_report(self) -> dict[str, int]:
         return {
             "gradient_calls": self.gradient_calls,
             "gradient_adjoint_calls": self.gradient_adjoint_calls,
+        }
+
+    def absolute_call_report(self) -> dict[str, int]:
+        return {
+            "absolute_forward_calls": self.absolute_forward_calls,
+            "absolute_adjoint_calls": self.absolute_adjoint_calls,
         }
 
 
@@ -219,15 +299,19 @@ def _edge_penalty_from_gradient(
 
 
 def regularization_site_mask(support: torch.Tensor) -> torch.Tensor:
-    """Return sites where a forward-Neumann support gradient may be nonzero."""
+    """Return source sites of real forward-Neumann rows touching support.
+
+    The terminal corner has no forward row in any component and therefore
+    remains inactive even when it belongs to ``support``.
+    """
 
     values = torch.as_tensor(support, dtype=torch.bool)
     if values.ndim != 3:
         raise ValueError("support must have shape [z,y,x]")
-    sites = values.clone()
-    sites[:, :, :-1] |= values[:, :, 1:]
-    sites[:, :-1, :] |= values[:, 1:, :]
-    sites[:-1, :, :] |= values[1:, :, :]
+    sites = torch.zeros_like(values)
+    sites[:, :, :-1] |= values[:, :, :-1] | values[:, :, 1:]
+    sites[:, :-1, :] |= values[:, :-1, :] | values[:, 1:, :]
+    sites[:-1, :, :] |= values[:-1, :, :] | values[1:, :, :]
     return sites
 
 

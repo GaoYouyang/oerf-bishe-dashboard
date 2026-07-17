@@ -1,7 +1,18 @@
 # Covariance-aware signed BOST factor-majorized diagonal/block PDHG 设计说明
 
 日期：2026-07-17
-状态：`DESIGN_ONLY / NOT_IMPLEMENTED / NOT_RUN / NO_WIN_CLAIM`
+状态：`GATE_A_PRE_ATTESTATION_MECHANICS_ONLY_VIEW_LOCAL_SINGLE_FROZEN_SCALE / FORMAL_GATE_A_NOT_ATTESTED / GATE_B_NOT_RUN / NO_FRESH_REAL_OR_WIN_CLAIM`
+
+2026-07-17 实现进度说明：tiny CPU/float64 signed-factor oracle、显式活动坐标
+`E/E^T`、production `P/P^T`、`|G_c|/|G_c|^T`、组合后取绝对值的
+`|H R Q|/|H R Q|^T`，以及 `|D_+|/|D_+|^T` 已落地，并在尚未 attested
+的工作树上观察到定向对齐。
+production matrix-free ones-pass、camera/site shared step、exact-zero mask、删除
+常数账本、底层物理调用账本与固定 6 步 Huber recurrence 也已与独立 site-major
+dense oracle 逐步对齐。当前实现只接受一个冻结 measurement-scale 实例和彼此独立
+的 view-local whitening blocks；声明跨 camera covariance 时会 fail closed。这仍不等于
+正式 Gate A attestation：冻结配置/输入/测试节点/代码 fingerprint、clean-commit
+CPU/MPS 报告和独立 validator 尚未生成。
 
 > 本文只定义下一算法候选、证明义务、实现门禁和证伪协议，不报告任何胜出结果。
 > 全文严格分为“可证明事实 / 实现假设 / 待证伪假设”；条件性定理不等于当前实现已通过。
@@ -39,7 +50,7 @@ D   = D_+ E
 - 令 `Q_b` 为每条 ray 的 camera-plane `u/v` 投影，`R_b` 为带符号 `ray_scale` 的对角作用，`H_b` 为 covariance whitening，`s_d` 为冻结 measurement normalization；定义
   `W_b = s_d H_b R_b Q_b`。因此 camera projection 和完整的带符号 `ray_scale` 必须并入 `W_b`，不能留在 `P` 中。
 - `D_+` 是先验使用的 forward-Neumann 3D gradient；它与物理 `G_c` 分账，并有独立精确伴随。
-- 若 whitening 存在跨 camera 非零项，`b` 必须取整个 covariance-connected block；不得把一个耦合矩阵伪拆成独立 camera block。
+- 若 whitening 存在跨 camera 非零项，`b` 必须取整个 covariance-connected block；不得把一个耦合矩阵伪拆成独立 camera block。当前 production 接口尚未实现该一般情形，因此只能接受每个 view 独立的 block；任何 cross-view coupling 声明都会在构造阶段被拒绝。
 
 `P >= 0` 只在上述分账下成立。若使用带负权的高阶插值、带符号求积，或把 camera projection / signed ray scale 留在 `P`，下面的 majorization 证明立即失效。
 
@@ -246,7 +257,7 @@ omega_D,col = E^T |D_+|^T 1.
 - trilinear stencil 的 stored weights 全部 finite、非负，且 absolute forward/transpose 使用完全相同的 index、mask、sample count 和 chunk order。
 - `|W_b|` 是组合后 `W_b=s_d H_b R_b Q_b` 的逐元素绝对值；不能用 `abs(H_b @ z)` 冒充 `|H_b|z`。
 - `|W_b|` 可在 camera/covariance block 尺度物化；若只能使用 `W_hat_b >= |W_b|`，必须单独证明 dominance，并把更松的 bound 写入方法名。
-- batch 中若 calibration scale 不同，metric 按样本独立计算；不得广播一个 truth-derived 或其他样本的 metric。
+- 一般算法若 batch 中 calibration scale 不同，metric 必须按样本独立计算；不得广播一个 truth-derived 或其他样本的 metric。当前 production setup 更窄：只接受一个冻结 scale 实例和 `batch_index=0`，多实例输入直接拒绝，尚不主张 batched metric 已实现。
 - cache fingerprint 至少包含 geometry、projection、ray scale、whitener、scale provenance、support/gauge、grid shape/spacing、stencil、measurement normalization、dtype 和代码 commit。任一变化均使 cache stale 并 fail closed。
 
 ### 10. Setup 成本与 physical-call ledger
@@ -285,6 +296,20 @@ cache_fingerprint
 
 若 absolute-factor 实现内部直接调用 signed production operator，相关调用必须按实际 `F/A^T` 计数，不能因目的叫“setup”而归零。cold-start、单次 reconstruction 和多次摊销三张表都必须保留。
 
+当前 pre-attestation 实现还做两项窄审计：每次 wrapper 调用前后都读取 measurement
+factor 与 regularization factor 自身的计数器，物理增量不是恰好一次就失败；setup 同时
+保存 wrapper 与 physical 两份 ledger。对 exact-zero data 行，运行时保存活动/删除索引、
+被删除 target 值和 `0.5 * ||y_deleted||^2`，目标函数只在活动 residual 上计算后显式加回
+该常数。二者都只证明本 fixture 没有漏账，不替代正式 fingerprint attestation。
+
+为防 setup 后修改 factor 使 zero ledger 失效，当前 pre-attestation 路径只接受 sealed
+exact measurement/regularization 实现，并保存全部 setup-critical tensors 的 identity、
+pointer、shape、dtype、device、PyTorch version 与内容 SHA-256；solver/scorer 每次入口
+都重新核对。内容 hash 专门覆盖 `tensor.data[...]` 这类不增加 `_version` 的 storage 写入。
+该检查会同步并复制 tensor 到 CPU，因此它只用于小型 mechanics fixture，**不得用于
+Gate B wall-time**。性能路径必须改成运行前一次 attestation、不可变执行副本与独立的
+post-run hash，再重新冻结计时协议。
+
 ### 11. Tiny dense oracle：固定 6 步
 
 1. 构造两个 camera block 的 tiny float64 问题，显式给出 0/1 `E`、signed `G_c`、nonnegative `P`、signed `W_b`、`D_+`，并刻意包含一个零 data 行和一个零 TV site。
@@ -300,7 +325,7 @@ cache_fingerprint
 
 | ID | 冻结检查 | 建议 float64 门限 |
 |---|---|---:|
-| E1-01 | `E>=0`、`P>=0`、block partition、projection/ray scale 位于 `W_b` | exact / fail closed |
+| E1-01 | `E>=0`、`P>=0`、view-local block partition、cross-view metadata 拒绝、projection/ray scale 位于 `W_b` | exact / fail closed |
 | E1-02 | `A/A^T`、`P/P^T`、`G_c/G_c^T`、`D/D^T` dot-product | relative error `<=1e-8` |
 | E1-03 | tiny dense `M_b>=|A_b|`、`N>=|D|` | violation `<=1e-12 * scale` |
 | E1-04 | dense 与 matrix-free 行列和、camera/site maximum | relative error `<=1e-10` |
@@ -312,6 +337,7 @@ cache_fingerprint
 | E1-10 | setup、solver、scorer、prefix-reuse ledger negative controls | exact counts |
 | E1-11 | setup API 不接收 truth/morphology；scale provenance 审计 | real 路径仅允许 independent calibration |
 | E1-12 | CPU float64 与 MPS float32 固定 fixture | field relative difference `<=5e-4` |
+| E1-13 | 非零 coupling 无论多小都保留；非零 `zero_tolerance` 与多 scale instance 输入 | fail closed |
 
 E1 只证明数值合同和账本可信，不证明重建效果。
 
@@ -396,4 +422,12 @@ median wall-time ratio vs graph frontier      <= 3.0
 
 ### 17. 最终声明边界
 
-截至本文写入时：signed factor majorizer 尚未实现，tiny dense oracle 尚未运行，E1 未通过，独立 flow-off/calibration scale 不存在，同预算性能门未执行。因此本文不声称候选优于 scalar PDHG、PCGLS、TV/Huber、learned primal-dual 或任何现有方法；它只给出一条可证明、可实现、也可被明确关闭的下一算法路线。
+截至最新状态，signed factor majorizer 的 tiny dense oracle、production 因子组件、
+matrix-free ones-pass、exact-zero/physical-call ledger 和 6 步 TV/Huber recurrence
+在非 attested 工作树的单一冻结 scale、view-local covariance fixture 上观察到定向与
+跨接口对齐，但
+Gate A 尚未在冻结 fingerprint 的 clean commit 上生成正式 CPU/MPS attestation，
+因此 E1 仍不能签字；独立 flow-off/calibration scale 不存在，同预算性能门也未执行。
+因此本文不声称候选优于 scalar PDHG、PCGLS、TV/Huber、learned primal-dual
+或任何现有方法；当前观察仅限于 mechanics 对照，并继续保留可被明确关闭的
+算法路线。

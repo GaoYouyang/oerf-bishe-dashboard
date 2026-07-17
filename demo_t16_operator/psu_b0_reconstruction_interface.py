@@ -281,6 +281,45 @@ def _finite_difference_axis_adjoint(
     return torch.movedim(output, -1, axis)
 
 
+def _absolute_finite_difference_axis(
+    values: torch.Tensor,
+    *,
+    axis: int,
+    spacing: float,
+) -> torch.Tensor:
+    """Apply the elementwise absolute value of one difference matrix."""
+
+    moved = torch.movedim(values, axis, -1)
+    output = torch.zeros_like(moved)
+    output[..., 0] = (moved[..., 0] + moved[..., 1]) / spacing
+    output[..., -1] = (moved[..., -2] + moved[..., -1]) / spacing
+    if moved.shape[-1] > 2:
+        output[..., 1:-1] = (
+            moved[..., :-2] + moved[..., 2:]
+        ) / (2.0 * spacing)
+    return torch.movedim(output, -1, axis)
+
+
+def _absolute_finite_difference_axis_adjoint(
+    values: torch.Tensor,
+    *,
+    axis: int,
+    spacing: float,
+) -> torch.Tensor:
+    """Apply the exact transpose of an absolute difference matrix."""
+
+    moved = torch.movedim(values, axis, -1)
+    output = torch.zeros_like(moved)
+    output[..., 0] += moved[..., 0] / spacing
+    output[..., 1] += moved[..., 0] / spacing
+    output[..., -2] += moved[..., -1] / spacing
+    output[..., -1] += moved[..., -1] / spacing
+    if moved.shape[-1] > 2:
+        output[..., :-2] += moved[..., 1:-1] / (2.0 * spacing)
+        output[..., 2:] += moved[..., 1:-1] / (2.0 * spacing)
+    return torch.movedim(output, -1, axis)
+
+
 def finite_difference_gradient(
     volume: torch.Tensor,
     *,
@@ -293,6 +332,38 @@ def finite_difference_gradient(
     dx = _finite_difference_axis(volume, axis=-1, spacing=spacing_xyz[0])
     dy = _finite_difference_axis(volume, axis=-2, spacing=spacing_xyz[1])
     dz = _finite_difference_axis(volume, axis=-3, spacing=spacing_xyz[2])
+    return torch.stack((dx, dy, dz), dim=1)
+
+
+def absolute_finite_difference_gradient(
+    volume: torch.Tensor,
+    *,
+    spacing_xyz: tuple[float, float, float],
+) -> torch.Tensor:
+    """Apply ``|G_c|``, the entrywise absolute difference matrix.
+
+    This is not ``abs(finite_difference_gradient(volume))``. Each signed
+    centered or one-sided stencil coefficient is replaced by its absolute
+    value before the matrix is applied.
+    """
+
+    if volume.ndim != 4:
+        raise ValueError("volume must have shape [batch,z,y,x]")
+    dx = _absolute_finite_difference_axis(
+        volume,
+        axis=-1,
+        spacing=spacing_xyz[0],
+    )
+    dy = _absolute_finite_difference_axis(
+        volume,
+        axis=-2,
+        spacing=spacing_xyz[1],
+    )
+    dz = _absolute_finite_difference_axis(
+        volume,
+        axis=-3,
+        spacing=spacing_xyz[2],
+    )
     return torch.stack((dx, dy, dz), dim=1)
 
 
@@ -313,6 +384,28 @@ def finite_difference_gradient_adjoint(
             gradient[:, 1], axis=-2, spacing=spacing_xyz[1]
         )
         + _finite_difference_axis_adjoint(
+            gradient[:, 2], axis=-3, spacing=spacing_xyz[2]
+        )
+    )
+
+
+def absolute_finite_difference_gradient_adjoint(
+    gradient: torch.Tensor,
+    *,
+    spacing_xyz: tuple[float, float, float],
+) -> torch.Tensor:
+    """Apply the exact transpose of the absolute finite-difference gradient."""
+
+    if gradient.ndim != 5 or gradient.shape[1] != 3:
+        raise ValueError("gradient must have shape [batch,3,z,y,x]")
+    return (
+        _absolute_finite_difference_axis_adjoint(
+            gradient[:, 0], axis=-1, spacing=spacing_xyz[0]
+        )
+        + _absolute_finite_difference_axis_adjoint(
+            gradient[:, 1], axis=-2, spacing=spacing_xyz[1]
+        )
+        + _absolute_finite_difference_axis_adjoint(
             gradient[:, 2], axis=-3, spacing=spacing_xyz[2]
         )
     )
@@ -379,7 +472,33 @@ class PSUB0VoxelGradientOperator(torch.nn.Module):
             grid_maximum_xyz,
             dtype=dtype,
         )
-        ray_count = stencil.ray_count
+        sample_indices = torch.as_tensor(stencil.indices)
+        sample_weights = _as_float_tensor(stencil.weights, dtype=dtype)
+        sample_valid = torch.as_tensor(stencil.valid)
+        if sample_indices.dtype != torch.int64:
+            raise ValueError("sample_indices must have dtype int64")
+        if sample_valid.dtype != torch.bool:
+            raise ValueError("sample_valid must have dtype bool")
+        if sample_indices.ndim != 3 or sample_indices.shape[-1] != 8:
+            raise ValueError("sample_indices must have shape [ray,sample,8]")
+        if sample_weights.shape != sample_indices.shape:
+            raise ValueError("sample_weights must have shape [ray,sample,8]")
+        expected_valid_shape = sample_indices.shape[:2]
+        if sample_valid.shape != expected_valid_shape:
+            raise ValueError("sample_valid must have shape [ray,sample]")
+        if sample_indices.shape[0] < 1 or sample_indices.shape[1] < 1:
+            raise ValueError("at least one ray and one sample are required")
+        voxel_count = prod(shape)
+        if torch.any((sample_indices < 0) | (sample_indices >= voxel_count)):
+            raise ValueError(
+                "sample_indices must lie in [0, prod(grid_shape))"
+            )
+        if torch.any(sample_weights < 0):
+            raise ValueError("trilinear interpolation weights must be nonnegative")
+        if torch.any(sample_weights.masked_select(~sample_valid[:, :, None])):
+            raise ValueError("weights for invalid samples must be exactly zero")
+
+        ray_count = int(sample_indices.shape[0])
         projection_u = _as_float_tensor(projection_u_xyz, dtype=dtype)
         projection_v = _as_float_tensor(projection_v_xyz, dtype=dtype)
         if projection_u.shape != (ray_count, 3) or projection_v.shape != (
@@ -401,7 +520,6 @@ class PSUB0VoxelGradientOperator(torch.nn.Module):
                 raise ValueError("support must match grid_shape")
             if torch.any((support_tensor < 0) | (support_tensor > 1)):
                 raise ValueError("support must lie in [0,1]")
-
         self.grid_shape = shape
         self.grid_minimum_xyz = tuple(float(value) for value in minimum)
         self.grid_maximum_xyz = tuple(float(value) for value in maximum)
@@ -411,11 +529,11 @@ class PSUB0VoxelGradientOperator(torch.nn.Module):
             float((maximum[1] - minimum[1]) / (ny - 1)),
             float((maximum[2] - minimum[2]) / (nz - 1)),
         )
-        self.sample_count = stencil.sample_count
+        self.sample_count = int(sample_indices.shape[1])
         self.ray_count = ray_count
-        self.register_buffer("sample_indices", stencil.indices.to(torch.int64))
-        self.register_buffer("sample_weights", stencil.weights.to(dtype))
-        self.register_buffer("sample_valid", stencil.valid.to(torch.bool))
+        self.register_buffer("sample_indices", sample_indices)
+        self.register_buffer("sample_weights", sample_weights)
+        self.register_buffer("sample_valid", sample_valid)
         self.register_buffer("projection_u", projection_u)
         self.register_buffer("projection_v", projection_v)
         self.register_buffer(
@@ -444,25 +562,85 @@ class PSUB0VoxelGradientOperator(torch.nn.Module):
             )
         return values.to(dtype=self.sample_weights.dtype)
 
+    def trilinear_interpolation(
+        self,
+        voxel_components: torch.Tensor,
+    ) -> torch.Tensor:
+        """Apply nonnegative trilinear ``P`` independently per component.
+
+        The input shape is ``[batch,component,z,y,x]`` and the returned shape
+        is ``[batch,component,ray,sample]``. Calling this factor directly does
+        not increment the logical full-operator call counters.
+        """
+
+        values = voxel_components.to(dtype=self.sample_weights.dtype)
+        if values.ndim != 5 or tuple(values.shape[-3:]) != self.grid_shape:
+            raise ValueError(
+                "voxel_components must have shape [batch,component,z,y,x]"
+            )
+        flat = values.flatten(2)
+        indices = self.sample_indices.reshape(-1)
+        gathered = flat[:, :, indices].reshape(
+            len(values),
+            values.shape[1],
+            self.ray_count,
+            self.sample_count,
+            8,
+        )
+        return torch.sum(
+            gathered * self.sample_weights[None, None, :, :, :],
+            dim=-1,
+        )
+
+    def trilinear_interpolation_adjoint(
+        self,
+        sampled_components: torch.Tensor,
+    ) -> torch.Tensor:
+        """Apply exact ``P^T`` to ``[batch,component,ray,sample]`` values."""
+
+        values = sampled_components.to(dtype=self.sample_weights.dtype)
+        if values.ndim != 4 or values.shape[2:] != (
+            self.ray_count,
+            self.sample_count,
+        ):
+            raise ValueError(
+                "sampled_components must have shape "
+                "[batch,component,ray,sample]"
+            )
+        contribution = (
+            values[:, :, :, :, None]
+            * self.sample_weights[None, None, :, :, :]
+        )
+        flat_contribution = contribution.reshape(
+            len(values),
+            values.shape[1],
+            -1,
+        )
+        flat_indices = self.sample_indices.reshape(-1)
+        expanded_indices = flat_indices.reshape(1, 1, -1).expand(
+            len(values),
+            values.shape[1],
+            -1,
+        )
+        voxel_flat = torch.zeros(
+            (len(values), values.shape[1], prod(self.grid_shape)),
+            dtype=values.dtype,
+            device=values.device,
+        )
+        voxel_flat.scatter_add_(2, expanded_indices, flat_contribution)
+        return voxel_flat.reshape(
+            len(values),
+            values.shape[1],
+            *self.grid_shape,
+        )
+
     def _forward(self, volume: torch.Tensor) -> torch.Tensor:
         values = self._canonical_volume(volume) * self.support
         gradient = finite_difference_gradient(
             values,
             spacing_xyz=self.spacing_xyz,
         )
-        flat = gradient.flatten(2)
-        indices = self.sample_indices.reshape(-1)
-        gathered = flat[:, :, indices].reshape(
-            len(values),
-            3,
-            self.ray_count,
-            self.sample_count,
-            8,
-        )
-        sampled = torch.sum(
-            gathered * self.sample_weights[None, None, :, :, :],
-            dim=-1,
-        )
+        sampled = self.trilinear_interpolation(gradient)
         u = torch.einsum("bcrs,rc->brs", sampled, self.projection_u)
         v = torch.einsum("bcrs,rc->brs", sampled, self.projection_v)
         projected = torch.stack((u.sum(dim=-1), v.sum(dim=-1)), dim=-1)
@@ -481,22 +659,13 @@ class PSUB0VoxelGradientOperator(torch.nn.Module):
             + residual[:, :, 1:2] * self.projection_v[None, :, :]
         )
         component = component * self.ray_scale[None, :, None]
-        contribution = (
-            component.permute(0, 2, 1)[:, :, :, None, None]
-            * self.sample_weights[None, None, :, :, :]
+        sampled_component = component.permute(0, 2, 1)[:, :, :, None].expand(
+            -1,
+            -1,
+            -1,
+            self.sample_count,
         )
-        flat_contribution = contribution.reshape(len(residual), 3, -1)
-        flat_indices = self.sample_indices.reshape(-1)
-        expanded_indices = flat_indices.reshape(1, 1, -1).expand(
-            len(residual), 3, -1
-        )
-        gradient_flat = torch.zeros(
-            (len(residual), 3, prod(self.grid_shape)),
-            dtype=residual.dtype,
-            device=residual.device,
-        )
-        gradient_flat.scatter_add_(2, expanded_indices, flat_contribution)
-        gradient = gradient_flat.reshape(len(residual), 3, *self.grid_shape)
+        gradient = self.trilinear_interpolation_adjoint(sampled_component)
         volume = finite_difference_gradient_adjoint(
             gradient,
             spacing_xyz=self.spacing_xyz,

@@ -22,6 +22,24 @@ EXCLUDED_PREFIXES = (
     "paper_library/pdfs/",
 )
 EXCLUDED_SUFFIXES = (".pt", ".pth", ".ckpt")
+ALLOWLISTABLE_PUBLICATION_SUFFIXES = frozenset({".npz", ".npy", ".mat"})
+PERMANENTLY_BLOCKED_SUFFIXES = frozenset(
+    {".pt", ".pth", ".ckpt", ".pem", ".key"}
+)
+BLOCKED_PUBLICATION_SUFFIXES = (
+    ALLOWLISTABLE_PUBLICATION_SUFFIXES | PERMANENTLY_BLOCKED_SUFFIXES
+)
+
+
+@dataclass(frozen=True)
+class PublicBinaryAllowance:
+    source_path: str
+    content_purpose: str
+
+
+# Public arrays must be reviewed one file at a time. Directory and glob entries
+# are intentionally unsupported.
+PUBLIC_BINARY_ALLOWLIST: tuple[PublicBinaryAllowance, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -40,7 +58,46 @@ def should_exclude(relative_path: str) -> bool:
         normalized = normalized[2:]
     return any(
         normalized.startswith(prefix) for prefix in EXCLUDED_PREFIXES
-    ) or normalized.lower().endswith(EXCLUDED_SUFFIXES)
+    ) or is_blocked_publication_path(normalized)
+
+
+def is_blocked_publication_path(relative_path: str) -> bool:
+    normalized = PurePosixPath(relative_path).as_posix()
+    suffix = PurePosixPath(normalized).suffix.lower()
+    if suffix in PERMANENTLY_BLOCKED_SUFFIXES:
+        return True
+    if suffix not in ALLOWLISTABLE_PUBLICATION_SUFFIXES:
+        return False
+    allowed_paths: set[str] = set()
+    for entry in PUBLIC_BINARY_ALLOWLIST:
+        allowed = PurePosixPath(entry.source_path).as_posix()
+        if (
+            not allowed
+            or allowed.startswith("../")
+            or any(token in allowed for token in ("*", "?", "[", "]"))
+            or PurePosixPath(allowed).suffix.lower()
+            not in ALLOWLISTABLE_PUBLICATION_SUFFIXES
+        ):
+            raise ValueError("public binary allowlist entries must be exact array paths")
+        if not entry.content_purpose.strip():
+            raise ValueError("public binary allowances must document their purpose")
+        allowed_paths.add(allowed)
+    return normalized not in allowed_paths
+
+
+def _assert_regular_source(repo_root: Path, relative: str) -> Path:
+    source = repo_root
+    for part in PurePosixPath(relative).parts:
+        source = source / part
+        if source.is_symlink():
+            raise RuntimeError(
+                f"Tracked symlinks are forbidden in Pages artifacts: {relative}"
+            )
+    if not source.is_file():
+        raise FileNotFoundError(
+            f"Tracked source is missing or not a regular file: {relative}"
+        )
+    return source
 
 
 def tracked_paths(repo_root: Path) -> list[str]:
@@ -68,9 +125,7 @@ def _copy_tracked_files(
     excluded_checkpoint_bytes = 0
 
     for relative in paths:
-        source = repo_root / relative
-        if not source.is_file():
-            raise FileNotFoundError(f"Tracked source is missing or not a file: {relative}")
+        source = _assert_regular_source(repo_root, relative)
 
         size = source.stat().st_size
         if relative.startswith("paper_library/pdfs/"):
@@ -85,7 +140,7 @@ def _copy_tracked_files(
 
         destination = output_root / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, destination)
+        shutil.copy2(source, destination, follow_symlinks=False)
         copied_files += 1
         copied_bytes += size
 

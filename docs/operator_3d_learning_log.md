@@ -7,7 +7,7 @@
 ## 先把证据等级说清楚
 
 - **L0：真实实验/论文证据。** 目前没有。这里没有 OpenBOS/OERF 真实测量，也没有论文级 superiority 结果。
-- **L1：预注册的新鲜合成开发证据。** 有固定配置、固定 checkpoint 和首开前冻结的门禁，但数据仍是 synthetic proxy；可以否定或支持一个开发假设，不能直接证明真实装置有效。
+- **L1：预注册的 held-out synthetic development。** 有固定配置、固定 checkpoint 和首开前冻结的门禁，但数据仍是 synthetic proxy；只有训练/校准/部署特征合同一致时才能支持或否定一个开发假设，不能直接证明真实装置有效。
 - **L2：合成数据上的 post-open 诊断。** 已经看过结果后才提出规则、挑 ensemble 或分析机制，只能生成下一轮假设，不能倒写成预注册成功。
 - **L3：实现/数据合同检查。** 例如哈希、调用次数、梯度方向、样本归属和字段完整性。它说明实验做得是否可审计，不等于方法效果。
 
@@ -40,7 +40,7 @@
 
 **学到什么。** “少一次算子调用”不等于“整体更快”；“比 PBB-9 好一点”不等于“低预算方法成立”；field truth 诊断也不能替代 target residual 主门禁。更重要的是，失败发生在首开前已冻结规则的 synthetic development 上，所以可以诚实地说这条低预算假设没有过门，而不是继续给同一 prior 加结构。
 
-**证据等级。** **L1 + L3**。这是 `preregistered_fresh_synthetic_development`，报告明确写着 `FRESH_DEVELOPMENT_NO_GO`，但仍然只是合成弱偏折 proxy，不是论文成果或 OERF 结果。
+**证据等级。** **L1 + L3**。原始报告字段是 `preregistered_fresh_synthetic_development` / `FRESH_DEVELOPMENT_NO_GO`；本文统一称 held-out synthetic development，且它仍只是合成弱偏折 proxy，不是论文成果或 OERF 结果。
 
 ## 3. V5Q/V5R 留下的教训：能排序不等于能安全路由
 
@@ -511,7 +511,7 @@ P_{\theta,\tau}
 
 完整入口：[视角支持域回退诊断](psu_b0_support_envelope_postopen_diagnosis_2026-07-16.md) · [严格公开摘要](psu_b0_support_envelope_postopen_public_summary.json) · [四联图](../demo_t16_operator/results/psu_b0_support_envelope_postopen/psu_b0_support_envelope_postopen_figure.png)
 
-## 28. 风险门第一次通过 fresh，但仍抓漏了两个危险病例
+## 28. OCRRG 曾被记录为 synthetic gate pass，后续合同审计撤回该解释
 
 这一轮没有继续扩大谱网络。我们冻结了一个更小的问题：只看部署时能拿到的
 residual、精确伴随梯度、视角 mask 和候选方向，能不能判断“这次该不该让
@@ -523,8 +523,9 @@ inverse-Sobolev 的 field-gain，再减去 split-conformal 的保守误差分位
 四步求解；否则整条路径精确回到 Sobolev。判断本身不需要把两种重建都跑完，
 所以仍是相同的 `4F+4Aᵀ`。
 
-fresh 协议先在提交 `cd5d4a0` 中冻结，再打开七组各 24 个新场。三种模型
-种子都通过了预注册候选门：
+当时的 held-out synthetic 协议先在提交 `cd5d4a0` 中冻结，再打开七组各 24 个
+新场。按后来发现不一致的 feature-order contract，三种模型种子曾被记录为通过
+候选门：
 
 - support IID：coverage 36.1%，平均 gain +1.38%，harm 2.78%；
 - 未见形态：coverage 26.4%，平均 gain +1.04%，harm 0；
@@ -532,21 +533,23 @@ fresh 协议先在提交 `cd5d4a0` 中冻结，再打开七组各 24 个新场�
 - 未见形态 + 强噪声：coverage 27.8%，平均 gain +1.41%，harm 0；
 - 3 至 5 视角两组：coverage 0，逐值回退 Sobolev。
 
-**用人话说：**风险门把原学习器“见什么都出手”改成了“有把握才出手”。
-它确实大幅压低了坏尾部，同时没有在所有支持域样本上装死。这是一个真实
-进步，但还不是成功算法。
+**用人话说：**这张历史表格描述了风险门把“见什么都出手”改成“有把握才
+出手”，并在该批 synthetic rows 上压低坏尾部。但后续发现 calibration 与 deployment
+使用了不同的 feature order，所以这些数字只能保留为 post-open 描述，不能再写成
+gate pass、conformal 保证或“真实进步”。
 
 独立 validator 找到 4 条被接受后仍恶化超过 1% 的记录，只来自两个源样本：
 一个 6-view plume 在两个种子上退化约 2.6%，一个强相关噪声的 6-view
 oblique shock 在两个种子上退化 4.5% 至 5.7%。这说明 pooled risk model
 对最低支持视角数和特定物理形态仍不够保守。
 
-下一步不是在当前 fresh 上扫阈值，而是换全新 seeds 做独立重复，并把风险
+下一步不是在该批已打开数据上扫阈值，而是先统一 canonical feature function，再
+换全新 seeds 做独立重复，并把风险
 校准改成按 view count、形态族和噪声强度分组。真实迁移前还必须用师兄提供
 的 flow-off repeats 替换合成 covariance。没有这一步，不能宣称逐样本安全、
 任意 OOD conformal 保证或优于 FNO/DeepONet。
 
-完整入口：[fresh 判决](psu_b0_residual_risk_fresh_result_2026-07-16.md) · [公开 JSON](psu_b0_residual_risk_fresh_public_summary.json) · [论文图](../demo_t16_operator/results/psu_b0_residual_risk_fresh/psu_b0_residual_risk_fresh_figure.png)
+完整入口：[历史判决与后续修正](psu_b0_residual_risk_fresh_result_2026-07-16.md) · [公开 JSON](psu_b0_residual_risk_fresh_public_summary.json) · [诊断图](../demo_t16_operator/results/psu_b0_residual_risk_fresh/psu_b0_residual_risk_fresh_figure.png)
 
 ## 29. 我把“3/3 过门”重新拆开，发现 conformal 契约其实没闭合
 
@@ -1254,3 +1257,115 @@ BOST 算子上的赛车。它没有逐元素构造 `|W|P|G_c|E`，没有 MPS 正
 没有 Gate B 性能，更没有创新优势。下一步仍是把真实 factor 的行列 majorizer
 接进来，并先在 tiny dense oracle 上逐项对齐；只要 Gate A 有一项不满足，就不
 打开 field truth 做性能比较。
+
+## 47. 网速够用，真正卡住的是依赖顺序和逐元素证书
+
+先把“是不是网络太慢”排除掉。本机实测下行 `75.8 Mbps`、上行 `37.5 Mbps`，
+下载代码、论文元数据和中小文件已经够用；`284 ms` latency 表示一次请求来回要
+等约 0.284 秒，所以逐个打开很多小网页会显得拖沓，但可以靠批量请求和缓存减轻。
+当前耗时更大的部分是本地测试、矩阵算子核对和一次只能跑一个的 MPS 数值任务，
+因此继续换网络并不会解除当前的主要阻塞。
+
+执行方式也从“前一件做完才开始下一件”改成了依赖图：互不依赖的文献核验、
+因子接口和 CPU 测试可以并行；只有上游证书齐全后，才把它们汇入 Gate A；正式
+MPS 仍保留一个串行任务，避免争用统一内存并破坏计时。固定 4-worker 的最新
+记录是 `958` 项并行测试通过，再单独跑 `1` 项 MPS parity，包含 151 项
+fast 合同和旧 artifact 链接审计的 medium 总时长为 `14.29 s`。这里提速的是反馈循环，不是
+科学门槛。
+
+A0 红队同时纠正了一个关键概念：norm-bound prototype 只说明“按一个整体范数
+上界缩小步长后，tiny 矩阵没有越过稳定边界”；它不等于逐元素 factor
+certificate。正式证书必须知道每一行、每一列收到多少绝对系数，并处理严格为零
+的行列。只给一个整体 norm，就像只知道整栋楼的总承重，不能据此断言每根梁都
+分配正确。
+
+这一轮已经把证书需要的部件分别做出来并用 tiny dense 或伴随恒等式核对：活动
+坐标的 `E/E^T`、三线性插值的 `P/P^T`、中心差分的 `|G_c|/|G_c|^T`、先组合再
+取绝对值的 `|HRQ|/|HRQ|^T`、前向 Neumann 正则项的 `|D_+|/|D_+|^T`，以及删除
+严格零耦合行列后仍保留目标函数常数项的 zero constant ledger。signed chain
+也已经与原来的物理 forward/adjoint 组合逐值对齐。
+
+为什么 `|HRQ|` 不能写成 `|H||RQ|`？取一个最小例子：
+
+```text
+H  = [1, 1]，RQ = [1, -1]^T
+HRQ = 1*1 + 1*(-1) = 0，所以 |HRQ| = 0
+|H||RQ| = [1, 1] [1, 1]^T = 2
+```
+
+真实组合里两个带符号通道会相消；如果每一层先取绝对值，相消信息就被抹掉，
+得到的是另一个更松的上界 `2`，不是组合矩阵该位置的逐元素绝对值 `0`。所以要
+先把 `H`、`R`、`Q` 的带符号系数组合完，再对组合结果取绝对值。
+
+边界仍要说清：目前只在单一冻结 scale、view-local covariance fixture 上把分段接口、
+端到端 signed chain、ones-pass 和 production 6-step Huber recurrence 与 site-major
+dense oracle 对齐；但冻结 fingerprint、
+clean-commit CPU/MPS attestation 与独立 validator 未通过，Gate B 的同预算性能比较
+更没有打开。
+
+下一步只有四项：
+
+1. 冻结配置、输入、测试节点和代码 fingerprint，补齐 setup/solver/scorer 及
+   signed/absolute 调用账本。
+2. 在同一冻结 fixture 上完成
+   CPU/MPS Gate A attestation；任一项不符就停在 Gate A。
+3. 只有 Gate A 全部通过后，才串行运行 Gate B，对 scalar、block、factor 与
+   graph-PCGLS 做同调用预算比较。
+
+## 48. 红队真的拦住了四个“看起来能跑”的错误
+
+第一次单 fixture 因子链组装后没有直接宣布 Gate A 通过，而是交给独立红队找反例。
+它抓到了四个会制造假安全的问题：TV 三分量的展平顺序与 site-major 数学
+合同不一致；三线性插值的 `-1` 索引会静默读取最后一个 voxel；fast 门原来
+没有跑新因子测试；Pages 会把含 truth/weights 的 `.npz` 复制进公开产物。
+
+四项现在都已 fail closed：TV 在进入 dense oracle 前显式转成
+`(z,y,x,component)`；索引、shape、dtype、valid/weight 一致性均在构造阶段检查；
+fast 当前直接运行 170 项合同测试；Pages 默认拒绝 `.npz/.npy/.mat` 与 checkpoint/key。
+另外补上了 Huber 分段目标和孤立终端 TV site 反例。
+
+修复后，production matrix-free 路径用同一个 target 跑 6 步 Huber PDHG，每步的
+primal、extrapolated primal、data dual 和 TV dual 都与独立 dense oracle 对齐；目标值
+还显式加回了删除零行的常数项。最新快速门为 `170 passed`，四进程源码测试
+`977 passed`，串行 MPS parity `1 passed`，完整 medium matrix `16.81 s`。
+
+**这一次学到的东西：**快不是少做审计，而是把审计放进两三秒内必跑的反馈环。
+当前只能标为 `GATE_A_PRE_ATTESTATION_MECHANICS_ONLY_VIEW_LOCAL_SINGLE_FROZEN_SCALE`；在 fingerprint、clean commit 和独立
+attestation 完成前，不得称 `GATE_A_PASS`，更不得说新算法已经更好。
+
+## 49. 提速了验证反馈，没有越过科学门槛
+
+实测表明，当前主瓶颈不是下载网速，而是本地计算和证据依赖顺序：CPU 源码
+测试固定用 4 个 worker 并行，MPS parity 和正式数值任务仍串行，避免争用统一
+内存和污染计时。统一 medium 反馈由上一轮串行的 `28.91 s` 降到已验证的
+`16.81 s`，在测试数增加后仍缩短约 `41.9%`；这只说明测试周转更快，不是算法性能结论。
+
+当前狭口径仍是 `GATE_A_PRE_ATTESTATION_MECHANICS_ONLY_VIEW_LOCAL_SINGLE_FROZEN_SCALE`，正式 Gate A attestation **未通过**。几条
+看似琐碎的边界是为了防止“能跑”变成假证据：exact-zero 只允许删除严格零
+耦合，不得用近似零偷换问题；view-local 索引防止把全局射线编号错当某一视角内
+编号；single-instance 限制防止把一个样本的 calibration scale 或 metric 广播给其他
+样本；call ledger 必须把 setup、solver、scorer 和绝对值因子调用分开记账，否则
+同预算比较会虚假便宜；deleted-constant 必须加回删除零行留下的目标函数常数，
+否则缩约前后的目标值不再可比。
+
+要到可发布的声明，还需冻结 config、input、test-node 和 code fingerprint，在 clean
+commit 上完成固定 fixture 的 CPU/MPS attestation 与独立 validator；Gate A 全过后
+才能打开 Gate B 的同调用预算比较。即使 Gate B 有信号，仍需独立 flow-off/calibration
+scale、held-out camera/session 和真实实验证据，才能超出“机制实验”的窄结论。
+
+## 50. 红队用底层写入绕过冻结，我把它继续封住了
+
+第二轮红队不是重复跑测试，而是专门扮演“不守规矩的调用者”。它先构造互相矛盾的
+whitening metadata，又让 measurement/TV 子类实际算两次却伪报一次；这说明只相信
+公开 `call_report()` 不够。现在 pre-attestation 只接受 sealed exact 实现，view-local、
+single-scale 和 cross-view support 字段必须彼此一致，物理账本直接读取底层计数器。
+
+随后红队又用 `tensor.data[...]` 改写 kernel。普通 `add_()` 会增加 PyTorch `_version`，
+但这种 storage 写入不会，所以第一版冻结令牌仍会放行，删除零行的目标常数也随之失真。
+修复后，令牌还包含所有 setup-critical tensor 内容的 SHA-256；普通写入和 storage 写入
+都会在 solver/scorer 前被拒绝。
+
+这项严格检查会把 tensor 同步到 CPU 做 hash，所以只能用于 tiny mechanics fixture，
+不能拿它测新算法速度。未来 Gate B 要另做不可变执行副本，只在计时前后核验 hash。
+当前状态仍是 `GATE_A_PRE_ATTESTATION_MECHANICS_ONLY_VIEW_LOCAL_SINGLE_FROZEN_SCALE`；
+它没有“PASS”字样，也不授权性能、fresh、真实重建或论文胜出结论。
