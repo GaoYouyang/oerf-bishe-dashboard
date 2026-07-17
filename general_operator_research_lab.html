@@ -158,6 +158,7 @@
   <header>
     <nav class="nav" aria-label="主导航">
       <a href="operator-learning/">学习主页</a>
+      <a href="#pdhg-no-go">PDHG NO-GO → Block metric</a>
       <a href="#covariance-conditioning">最新 conditioning 审计</a>
       <a href="#reproduce">复现实验</a>
       <a href="#psu-real">PSU 真实数据门禁</a>
@@ -182,12 +183,12 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>BOST 三维重建与风险路由算子研究台</h1>
-    <p class="lead">当前主线已经收窄为一个可证伪问题：detector covariance 改变 data metric 与 Krylov trajectory 后，怎样在强经典基线上保护反应前沿和稀有坏尾部。conditioning、pooled stopping 与 TV/Huber SupPCG 都已完成调用预算审计；下一候选转向每迭代只用一对 <code>A/Aᵀ</code> 的 primal-dual/PDHG，页面继续把经典重调、结构正则、尾部风险和真实迁移分开记账。</p>
+    <p class="lead">当前主线已经从“先试一个 PDHG”推进到可量化的 conditioning 缺口：E1 116/116 tests、12 条 stress、32 个候选与 784 条 paired rows 全部完成，冻结 scalar-step PDHG 网格严格 NO-GO。data-only PDHG 到 K=32 仍停在 field-L2 0.9959，而同预算 graph-PCGLS 为 0.4211；下一步只验证 covariance-aware signed factor-majorized block-diagonal metric，先让 data block 离开零场附近，再逐层决定 TV/Huber、warm start、nullspace 与 bounded operator learning。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">VD0-A INTERFACE · PASS</span><span class="chip coral">VD0-B ROUTING · NO-GO</span><span class="chip coral">REAL PSU FEATURE DOMAIN · OOD</span><span class="chip blue">DG-COVGATE R=50 · SYNTHETIC PASS</span><span class="chip coral">DG-WPCGLS 16-SEED · NO-GO</span><span class="chip blue">RETUNED COMPONENT · +23.78%</span><span class="chip blue">FAIR GRAPH INCREMENT · +1.406%</span><span class="chip coral">GRAPH WORST · -7.920%</span><span class="chip coral">POOLED STOPPING · NO-GO</span><span class="chip coral">RULE WORST · -17.532%</span><span class="chip coral">SUPPCG BUDGET · NO-GO</span><span class="chip coral">SUPPCG BEST · -6.016%</span><span class="chip blue">CALLS · -63.68%</span><span class="chip coral">FRESH · SEALED</span><span class="chip gold">NEXT · ONE-PAIR PDHG/TV</span><span class="chip coral">SET ENCODER · SEALED</span><span class="chip blue">B0 A/Aᵀ · PASS</span><span class="chip coral">REAL RECONSTRUCTION GAIN · NOT AUTHORIZED</span></div>
-        <h2>强基线成立；pooled stopping 与 SupPCG 调用效率均 NO-GO</h2>
-        <p>120 个已见数据候选证明，旧 <code>strength=5</code> 并不是公平强基线：只把 component-IID PCGLS 重调到 <code>s3-k4</code> 就得到约 <strong>+23.78%</strong> pooled gain。full graph 在同 strength、同 stage 的公平基线上仍有 <strong>+1.406%</strong> 平均增量，但最坏场回退 <strong>-7.920%</strong>；348 条 pooled 早停规则在后半区最坏 <strong>-17.532%</strong>。随后正确记入 residual rebuild forward 的 TV/Huber SupPCG，在初始 32 个和唯一授权的 48 个扩展候选中均未击败同总调用 graph-PCGLS：最佳浅层候选 mean <strong>-6.016%</strong>，深层最佳 <strong>-8.518%</strong>。因此关闭 SupPCG 性能分支，不再调 gamma；fresh 与 neural proximal 继续封存，下一步测试 one-pair primal-dual/PDHG。</p>
+        <div class="chips"><span class="chip coral">SCALAR PDHG V2 · NO-GO</span><span class="chip blue">E1 · 116 / 116</span><span class="chip blue">STRESS · 12 / 12 PASS</span><span class="chip blue">ROWS · 784 VALID</span><span class="chip coral">FIELD MEAN · -68.43%</span><span class="chip coral">HARM · 16 / 16</span><span class="chip blue">RUNTIME · 1.207× PASS</span><span class="chip gold">NEXT · BLOCK-DIAGONAL METRIC</span><span class="chip coral">FRESH · SEALED</span><span class="chip coral">NEURAL · SEALED</span><span class="chip blue">B0 A/Aᵀ · PASS</span><span class="chip coral">REAL RECONSTRUCTION GAIN · NOT AUTHORIZED</span></div>
+        <h2>Scalar-step PDHG 已严格证伪；下一步只修 conditioning</h2>
+        <p>v1 在 MPS 审计导出阶段基础设施失效，0 条性能行；该失败原样留在私有审计库。v2 只修“先搬 CPU、再转 float64”，其余协议不变并从头重跑。最终 32 个 TV/Huber 候选全部未过门：排名第一相对 graph-PCGLS mean <strong>-68.432%</strong>、p10 <strong>-120.638%</strong>、16/16 harm；只有 paired runtime <strong>1.207×</strong> 通过。data-only PDHG 到 K=32 仍为 field-L2 <strong>0.995881</strong>，证明当前首先是统一 scalar step 被空间梯度尺度压住，而不是“再调一个 alpha”就能解决。</p>
         <ol>
           <li><strong>接口门：</strong>逐视角场求和逐值复原 pooled；ray scatter 一次，但额外体场内存与逐视角有限差分伴随不能写成“免费”。</li>
           <li><strong>真实坐标门：</strong>MATLAB <code>find</code> 的零基索引按列优先还原 row/column；不再把 256 条稀疏 rays 伪装成 16×16 图像。</li>
@@ -196,7 +197,9 @@
           <li><strong>公平基线判决：</strong>约 24% 来自经典 Sobolev 重调；covariance 的公平增量约 1.4%，不能把重调收益写成新算法贡献。</li>
           <li><strong>pooled stopping 判决：</strong>六个标量无法识别逐相机/morphology 冲突；规则在第二半区最坏 -17.53%，fresh 继续封存。</li>
           <li><strong>SupPCG 判决：</strong>同 stage 有 +0.124% 微弱机制信号，但同总 calls 最佳 -6.016%；深阶段最佳 -8.518%，停止调参。</li>
-          <li><strong>本地可继续：</strong>实现 one-pair primal-dual/PDHG TV/Huber 强基线；只有它收缩 annular/shock 尾部，才学习 bounded proximal map。</li>
+          <li><strong>PDHG v2 判决：</strong>E1 116/116 tests 与 12/12 stress 通过后，32 个候选形成 784 条配对指标；排名第一仍为 mean -68.432%、16/16 harm，scalar-step 路线关闭。</li>
+          <li><strong>尺度诊断：</strong>两个 opened replicate 的 gradient/data 范数平方比约 2.84e4–3.73e4；data-only PDHG 到 K=32 仍近零场，先解决 block conditioning，不再扫 alpha。</li>
+          <li><strong>本地下一门：</strong>只实现并验证 signed factor-majorized block-diagonal metric；先过 data-only 收敛和安全 majorizer，再依次开放 TV/Huber、warm start 与 nullspace。</li>
           <li><strong>组内数据请求：</strong>每台相机同一固定条件至少 50 张未经平均的 flow-off/reference repeats，保留时间顺序、坏点/置信度与 reference 图；25% 永久留出。</li>
           <li><strong>证据边界：</strong>fresh 与 final audit 不打开；当前不是 OERF 实验成功，也没有击败 NeRIF/FNO/UNO-CG。</li>
         </ol>
@@ -342,13 +345,64 @@
         <div class="metric"><b>Strict harm 0% / 0%</b><span>基线 top-1 精确回退后没有超过 1% 的受害样本</span></div>
       </div>
     </div>
-    <div class="alert critical"><strong>当前主结论 · 强基线、公平增量和调用效率必须同时报告</strong><span>conditioning 网格排除“旧 strength=5 是强基线”的假设，并证明 graph covariance 在公平 s3-k4 基线上保留约 1.4% 均值增量；pooled stopping 又证明平均收益不能授权 controller。TV/Huber SupPCG 虽有同-stage 微弱信号，却因 residual rebuild forward 在同总调用下严格失败，因此也已关闭。现在转向 one-pair primal-dual/PDHG；学习器只能在击败该强 deterministic baseline、保护 front/tail 并通过 fresh/held-out camera 后解锁。真实 OERF 授权仍需 flow-off 留出帧、held-out camera/session 与实验终点。</span></div>
+    <div class="alert critical"><strong>当前主结论 · scalar-step PDHG 也已严格关闭</strong><span>conditioning 网格先纠正 PCGLS 强基线，SupPCG 再因额外 forward 的公平预算失败；最新 scalar-step PDHG 虽通过实现、stress 与 runtime 门，却在 16/16 场上伤害 graph-PCGLS。现在只允许做块对角预条件的 Gate A/B，不允许把 rank-1、TV/Huber 或“用了 PDHG”包装成创新。学习器继续封存，真实 OERF 授权仍需 flow-off 留出帧、held-out camera/session 与实验终点。</span></div>
   </header>
 
   <main id="main">
+    <section id="pdhg-no-go" class="band">
+      <div class="section-head">
+        <div><div class="eyebrow">最新严格判决 · 2026-07-17</div><h2>Scalar PDHG 没有过线；问题先落在 block conditioning</h2><p>v1 只暴露了 MPS 审计导出缺陷，0 条性能行，不能排名。v2 仅修复“先转 CPU、再转 float64”，从 E1 116/116 tests、12 条 stress 到 784 条配对指标全部重跑。排名第一只是失败网格中的最不差者，不是可用算法。</p></div>
+        <div class="actions">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_scalar_pdhg_no_go_and_block_diagonal_gate_2026-07-17.md">读严格判决与下一门</a>
+          <a class="button" href="demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/summary.json">脱敏摘要 JSON</a>
+          <a class="button" href="demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/candidate_grid.csv">32 候选表</a>
+          <a class="button" href="demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/decision_gates.csv">门禁表</a>
+        </div>
+      </div>
+      <div class="alert critical"><strong>Rank 1 不等于通过</strong><span><code>pdhg_huber_a1of256_k4</code> 只是在 32 个失败候选中排名第一：相对同预算 graph-PCGLS 的 mean field gain 为 -68.432%，p10 -120.638%，16/16 场受害。只有 1.207× 配对运行时间通过预设 3× 门；准确度、形态与尾部门全部失败。本结论仅覆盖两个已打开 replicate、oracle-scale 合成观测、zero-init、scalar-step 与冻结 K/alpha 网格；不否定一般 PDHG、TV/Huber、warm start、块预条件或真实 OERF 方法。</span></div>
+      <div class="metric-grid">
+        <div class="metric"><b>0.9959 vs 0.4211</b><span>K=32 data-only PDHG 与 graph-PCGLS 的绝对 field-L2</span></div>
+        <div class="metric"><b>-68.432%</b><span>失败网格 rank-1 相对 graph-PCGLS 的 mean field gain</span></div>
+        <div class="metric"><b>16 / 16 harm</b><span>两个 opened replicate、八种场形态均受害</span></div>
+        <div class="metric"><b>1.207× · pass</b><span>最后十对 AB/BA 中位 wall-time ratio；唯一通过的门</span></div>
+        <div class="metric"><b>2.84e4–3.73e4</b><span>gradient/data 范数平方比，提示统一 scalar step 的尺度失衡</span></div>
+        <div class="metric"><b>116 / 116 tests</b><span>v2 E1 全通过；科学失败不是测试或导出失败</span></div>
+      </div>
+      <div class="pipeline" aria-label="Scalar PDHG NO-GO 证据流水线">
+        <div><b>01 v1 / amendment</b><span>导出失效留档；只修基础设施，不动算法</span></div>
+        <div><b>02 E1</b><span>116 tests、固定 commit 与节点哈希</span></div>
+        <div><b>03 Stress</b><span>12/12 完成；384 次 F/A/D/Dᵀ</span></div>
+        <div><b>04 Formal grid</b><span>32 candidates、49 methods、784 paired rows</span></div>
+        <div><b>05 Decision</b><span>accuracy、structure、tail 全部 NO-GO</span></div>
+        <div><b>06 Next gate</b><span>block majorizer → data-only → TV/Huber</span></div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/budget_frontier.png" alt="Scalar PDHG 与 graph-PCGLS 在四个算子调用预算上的绝对 field-L2 前沿" /><figcaption>data-only PDHG 从 K=4 到 K=32 只由 0.99964 降到 0.99588；graph-PCGLS 同期从 0.62871 降到 0.42109。这里显示的是绝对误差，不用百分比掩盖“近零场”停滞。</figcaption></figure>
+        <div class="panel">
+          <h3>为什么先修 metric，而不是加网络</h3>
+          <ol>
+            <li>数据块与 3D 梯度块的尺度差了约两个数量级的范数、四个数量级的能量。</li>
+            <li>统一 scalar step 同时受最硬梯度方向约束，有限 K 下 data update 几乎不动。</li>
+            <li>TV/Huber 相对同 K data-only 的增量全部为负，说明正则尚未进入“有用但需调参”的阶段。</li>
+            <li>下一步先构造正的 signed factor-majorized primal/dual block metric，并用安全条件和 data-only 收敛证伪。</li>
+            <li>只有经典块预条件器过 Gate A/B，才允许讨论 learned bounded metric；否则网络只是隐藏尺度错误。</li>
+          </ol>
+          <div class="actions"><a class="button" href="demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/README.md">公开包说明与复核命令</a><a class="button" href="site_tools/analyze_psu_b0_pdhg_v2_no_go.py">脱敏分析源码</a></div>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/regularization_gain_heatmap.png" alt="TV 与 Huber 候选相对相同迭代 data-only PDHG 的增量热图" /><figcaption>所有正则候选相对同 K data-only 均为负；最接近零的差异仍不能授权继续扫 alpha。该图只定位当前离散和步长下的失败，不否定 TV/Huber 一般有效性。</figcaption></figure>
+        <figure><img src="demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/morphology_gain_heatmap.png" alt="Scalar PDHG 排名第一候选在八类反应场形态上的场、梯度与前沿增益" /><figcaption>annular、thin、shock 等八类均未形成安全支路；不能用某一幅看起来平滑的体渲染替代逐形态配对指标。</figcaption></figure>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/decision_gate_audit.png" alt="Scalar PDHG 准确度、形态、尾部与运行时间门禁审计" /><figcaption>运行时间门通过不抵消科学门失败。公开摘要不包含本机路径、私有几何、JUnit 环境值或组内材料。</figcaption></figure>
+        <figure><img src="demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/winner_runtime_pairs.png" alt="失败网格排名第一候选的 AB BA 配对运行时间与三倍门禁" /><figcaption>AB/BA 配对抑制热机和顺序偏差；最后十对中位比 1.207×。它只证明成本可承受，不证明重建有效。</figcaption></figure>
+      </div>
+    </section>
+
     <section id="covariance-conditioning" class="band">
       <div class="section-head">
-        <div><div class="eyebrow">最新可验证增量 · 2026-07-17</div><h2>Conditioning 有公平收益；pooled stopping 与 SupPCG 均未保护尾部</h2><p>这轮先把“调好经典 PCGLS”和“使用 detector covariance”拆开，再依次测试 pooled 轨迹规则与真正计入额外 forward 的 TV/Huber superiorization。measurement covariance 值得保留，但两种尾部保护都已停止；下一强基线转向 one-pair primal-dual edge regularization。</p></div>
+        <div><div class="eyebrow">前置证据 · 2026-07-17</div><h2>Conditioning 有公平收益；三条 pooled edge 路线均未保护尾部</h2><p>这里保留为什么曾经启动 PDHG：先拆开经典 PCGLS 重调与 detector covariance，再依次否掉 pooled stopping、TV/Huber SupPCG。随后 scalar-step PDHG 也在上方严格 NO-GO；measurement covariance 继续保留，但下一步只修 block metric。</p></div>
         <div class="actions">
           <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_covariance_conditioning_stopping_no_go_2026-07-17.md">读严格判决</a>
           <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_edge_superiorization_budget_no_go_2026-07-17.md">读 SupPCG 判决</a>
@@ -363,19 +417,20 @@
         <div><b>04 Tail audit</b><span>worst -7.920%；均值优势不等于逐场安全</span></div>
         <div><b>05 Observable routing</b><span>348 条 pooled rules；selection 过门、diagnostic 崩溃</span></div>
         <div><b>06 SupPCG audit</b><span>80 个 TV/Huber 候选；同 calls 最佳仍为负</span></div>
-        <div><b>07 Decision</b><span>fresh sealed；下一步 one-pair PDHG/TV</span></div>
+        <div><b>07 Decision</b><span>scalar PDHG 已 NO-GO；下一步 block metric</span></div>
       </div>
       <div class="two-col" style="margin-top:14px;">
         <figure><img src="demo_t16_operator/results/psu_b0_covariance_stopping_rule_audit/psu_b0_covariance_conditioning_audit.png" alt="Covariance-conditioned PCGLS 四联图，展示经典预条件器重调与 covariance 公平增量、不同停止深度的均值和尾部、规则跨半区失败及动作分布" /><figcaption>A：约 24% 主要来自经典重调；B：stage 增加提高均值但恶化尾部；C/D：前半区安全的 pooled 规则在后半区出现 -17.53% 最坏回退。所有规则选择均为 post-open，不授权 fresh。</figcaption></figure>
         <div class="panel">
-          <h3>SupPCG 已证伪，下一步不是继续调 gamma</h3>
+          <h3>SupPCG 与 scalar PDHG 均已证伪</h3>
           <ol>
             <li><strong>SupPCG 已关闭：</strong>同-stage +0.124% 的微弱信号抵不过 residual rebuild；同总 calls 最佳 -6.016%。</li>
-            <li><strong>下一强基线：</strong>用 primal-dual/PDHG 直接求 data + TV/Huber，每迭代保持一对 <code>A/Aᵀ</code>。</li>
+            <li><strong>Scalar PDHG 已关闭：</strong>同一冻结网格的 rank-1 mean -68.432%、16/16 harm，不能继续扫 alpha。</li>
+            <li><strong>下一强基线：</strong>先做 signed factor-majorized block-diagonal PDHG，Gate A/B 只检查 majorizer 安全与 data-only 收敛。</li>
             <li><strong>主终点改成双门：</strong>field-L2 与 front/shock 位置或 F1 同时过门；另报 p10、harm、worst 和平均调用。</li>
-            <li><strong>学习器仍封存：</strong>只有 one-pair deterministic proximal 有效，才让小网络学习 bounded threshold/map，不直接合成三维场。</li>
+            <li><strong>学习器仍封存：</strong>只有经典 block metric 有效，才让小网络学习 bounded correction，不直接合成三维场。</li>
             <li><strong>并行数据线：</strong>继续请求每相机至少 50 张未经平均 flow-off，25% 时间块永久留出。</li>
-            <li><strong>停止条件：</strong>若 PDHG 仍不能收缩 annular/shock 尾部，关闭 pooled edge-controller 分支，转入逐相机结构或 TDBOST 时空支线。</li>
+            <li><strong>停止条件：</strong>若 block metric 仍不能让 data-only 在同 K 明显离开零场，关闭当前 PDHG 分支，不进入 TV/Huber 或 controller。</li>
           </ol>
           <div class="alert critical"><strong>不能对师兄说“已经有 25% 新算法提升”</strong><span>正确说法是：经典重调约 +24%；graph covariance 在同强度同 stage 下约 +1.4%，但存在稀有大回退；六个 pooled 轨迹标量的风险规则不迁移。当前最有价值的是找到了新的强基线和表示瓶颈。</span></div>
           <div class="actions">
@@ -391,12 +446,13 @@
       <div class="two-col" style="margin-top:14px;">
         <figure><img src="demo_t16_operator/results/psu_b0_edge_superiorization_tail_smoke/psu_b0_edge_superiorization_no_go.png" alt="TV 与 Huber superiorized PCGLS 调用预算四联图，展示普通 graph-PCGLS 深度前沿、同 stage 与同总调用差异、形态局部信号和严格 NO-GO 判决" /><figcaption>A：更深的普通 PCGLS 是必须比较的强对手；B/C：同-stage edge 信号很小且形态相关；D：初始和深阶段候选在同总调用下全部为负，按预声明停止规则关闭 SupPCG。</figcaption></figure>
         <div class="panel">
-          <h3>为什么下一步改成 one-pair PDHG</h3>
+          <h3>为什么曾改成 one-pair PDHG，以及它为何仍失败</h3>
           <ol>
             <li>SupPCG-K 需要 <code>(2K-1)F + K Aᵀ</code>；普通 PCGLS-K 只需 <code>KF + K Aᵀ</code>。</li>
             <li>初始 32 候选最佳同-stage +0.124%，但对 call-budget floor 为 -6.016%。</li>
             <li>唯一授权的 48 候选 tail extension 最佳为 -8.518%，p10 -25.463%、harm 68.75%。</li>
             <li>PDHG 可在每迭代一对物理算子调用内联合 data fidelity 与 TV/Huber，才是公平的下一经典基线。</li>
+            <li>正式 scalar-step 实验表明“调用公平”还不够：K=32 data-only field-L2 仍为 0.995881，首先受制于 block scaling。</li>
             <li>这仍是两个已见 replicate 的 post-open 证伪；不能外推成“TV 一般无效”。</li>
           </ol>
           <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_edge_superiorization_budget_no_go_2026-07-17.md">读完整调用审计</a><a class="button" href="demo_t16_operator/configs/psu_b0_edge_superiorization_tail_smoke_v1.json">看停止规则配置</a><a class="button" href="demo_t16_operator/results/psu_b0_edge_superiorization_tail_smoke/candidate_summaries.csv">看候选汇总</a></div>
@@ -419,6 +475,7 @@
         <article class="evidence-card" data-state="failed"><span class="chip coral">E37 · fresh inverse NO-GO</span><h3>正确 whitening 均值为正，尾部仍失败</h3><p>16 fresh replicates：DG-CovGate mean +1.178%，95% CI [0.786%,1.571%]；但 p10 -1.029%、harm 10.94%。Oracle 同样伤 annular/thin，下一步转向 covariance-conditioned PCGLS。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_dg_wpcgls_multiseed_no_go_2026-07-17.md">读严格判决</a></article>
         <article class="evidence-card" data-state="failed"><span class="chip coral">E38 · conditioning / stopping NO-GO</span><h3>公平增量存在，pooled 风险规则不迁移</h3><p>经典 s3-k4 重调贡献约 +23.78%；full graph 的公平增量为 +1.406% [1.235%,1.578%]，但最坏 -7.920%。348 条可观测规则中选出的规则在第二半区 p10 -1.746%、harm 12.5%、worst -17.532%，fresh 继续封存。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_covariance_conditioning_stopping_no_go_2026-07-17.md">读严格判决</a></article>
         <article class="evidence-card" data-state="failed"><span class="chip coral">E59 · SupPCG budget NO-GO</span><h3>同-stage 有微弱信号，同总调用全部失败</h3><p>3D TV/Huber 内核、非上升扰动与调用账本均通过测试。初始 32 候选最佳同-stage +0.124%，但同 calls mean -6.016%、p10 -10.299%、harm 87.5%；唯一 48 候选 tail extension 最佳 -8.518%，按配置停止调参。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_edge_superiorization_budget_no_go_2026-07-17.md">读调用预算判决</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E60 · scalar PDHG NO-GO</span><h3>实现与成本过门，统一步长仍停在近零场</h3><p>v2 的 E1 116/116 tests、12/12 stress 与 784 条配对指标有效；rank-1 对 graph-PCGLS mean -68.432%、p10 -120.638%、16/16 harm。K=32 data-only 为 0.995881，下一步只开 block-majorizer Gate A/B。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_scalar_pdhg_no_go_and_block_diagonal_gate_2026-07-17.md">读严格判决</a></article>
         <article class="evidence-card" data-state="passed"><span class="chip">E0 · numerical</span><h3>v3k-F 确认半收敛与停止缺口</h3><p>discrepancy 对 noise OOD 平均 +7.10%，但伤害率 12.5%；联合 OOD 对同 PBB endpoint 仍略退化。learned stop 继续关闭。</p><a href="document_reader.html?doc=v3k_f_noise_stopping_review_brief.md">读可部署停止审计</a></article>
         <article class="evidence-card" data-state="failed"><span class="chip coral">E1 · failure</span><h3>无门控 correction 在联合 OOD 爆炸</h3><p>IID +72.08%，joint OOD 却 -326.51%，96.88% 样本伤害。大 IID 提升不能成为算法结论。</p><a href="demo_t16_operator/results/candidate_operator_smoke/report.json">看未门控报告</a></article>
         <article class="evidence-card" data-state="passed"><span class="chip">E3 · 3 seeds</span><h3>CG-PDNO 本身出现稳定工程信号</h3><p>新字段/几何池 test 平均 +21.77%，最大种子伤害 0%；train/validation/test geometry id 无重叠。</p><a href="demo_t16_operator/results/cg_pdno_trust_fresh/report.json">看 fresh 报告</a></article>
@@ -767,7 +824,7 @@
       </div>
       <div class="two-col" style="margin-top:14px;">
         <figure><img src="demo_t16_operator/results/psu_b0_dg_wpcgls_multiseed/psu_b0_dg_wpcgls_multiseed_figure.png" alt="DG-WPCGLS 多种子四联图，展示正确 covariance 的平均三维场增益、形态依赖、p10 与伤害率门以及 16 个 replicate 的分布" /><figcaption>DG-WPCGLS fresh pilot：正确 covariance 的均值与 95% CI 为正，但 annular/thin 尾部使 p10 与 harm 门失败。Oracle 几乎重合，说明下一步必须联动 inverse conditioning，而不是只增加 covariance 拟合复杂度。</figcaption></figure>
-        <div class="panel"><h3>这条上游 NO-GO 已经完成两轮后续诊断</h3><ol><li><strong>保留：</strong>显式 <code>L/Lᵀ</code> whitening、真实 detector graph、严格调用记账。</li><li><strong>确认：</strong>旧 strength=5 不是强基线；component s3-k4 已带来约 24% 改善。</li><li><strong>公平增量：</strong>full graph s3-k4 相对 component s3-k4 为 +1.406%，但 worst -7.920%。</li><li><strong>规则审计：</strong>六个 pooled 轨迹标量无法保护尾部，后半区 worst -17.532%。</li><li><strong>SupPCG 审计：</strong>同-stage 微弱正信号没有通过同总调用门，tail extension 也失败。</li><li><strong>当前解锁：</strong>只解锁 one-pair primal-dual deterministic baseline，不解锁 fresh 或更大 controller。</li></ol><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_dg_wpcgls_multiseed_no_go_2026-07-17.md">上游 16-seed NO-GO</a><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_covariance_conditioning_stopping_no_go_2026-07-17.md">conditioning 判决</a><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_edge_superiorization_budget_no_go_2026-07-17.md">SupPCG 判决</a><a class="button" href="demo_t16_operator/results/psu_b0_covariance_conditioned_pcgls_diagnosis/validation_report.json">验证 JSON</a><a class="button" href="demo_t16_operator/detector_covariance_whitening.py">whitening 源码</a></div></div>
+        <div class="panel"><h3>这条上游 NO-GO 已经完成三轮后续诊断</h3><ol><li><strong>保留：</strong>显式 <code>L/Lᵀ</code> whitening、真实 detector graph、严格调用记账。</li><li><strong>确认：</strong>旧 strength=5 不是强基线；component s3-k4 已带来约 24% 改善。</li><li><strong>公平增量：</strong>full graph s3-k4 相对 component s3-k4 为 +1.406%，但 worst -7.920%。</li><li><strong>规则审计：</strong>六个 pooled 轨迹标量无法保护尾部，后半区 worst -17.532%。</li><li><strong>SupPCG 审计：</strong>同-stage 微弱正信号没有通过同总调用门，tail extension 也失败。</li><li><strong>Scalar PDHG 审计：</strong>调用公平但 conditioning 失败，rank-1 mean -68.432%、16/16 harm。</li><li><strong>当前解锁：</strong>只解锁固定 block-majorizer 的 Gate A/B，不解锁 fresh 或 controller。</li></ol><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_dg_wpcgls_multiseed_no_go_2026-07-17.md">上游 16-seed NO-GO</a><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_covariance_conditioning_stopping_no_go_2026-07-17.md">conditioning 判决</a><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_edge_superiorization_budget_no_go_2026-07-17.md">SupPCG 判决</a><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_scalar_pdhg_no_go_and_block_diagonal_gate_2026-07-17.md">PDHG 判决</a><a class="button" href="demo_t16_operator/results/psu_b0_covariance_conditioned_pcgls_diagnosis/validation_report.json">验证 JSON</a><a class="button" href="demo_t16_operator/detector_covariance_whitening.py">whitening 源码</a></div></div>
       </div>
       <div class="two-col" style="margin-top:14px;">
         <figure><img src="demo_t16_operator/results/psu_b0_covariance_stopping_rule_audit/psu_b0_covariance_conditioning_audit.png" alt="Covariance conditioning 与 pooled stopping 四联图" /><figcaption>最新审计：经典重调、covariance 公平增量和规则尾部分账。选择半区安全不代表第二半区迁移；mean 为正时仍必须看 p10、harm 和 worst。</figcaption></figure>
@@ -848,7 +905,10 @@
         <article class="source-card"><div class="body"><span class="chip coral">直接碰撞</span><h3>Neural incomplete factorization</h3><p><strong>读：</strong>GNN 如何生成稀疏 incomplete factorization，以及只靠 matrix-vector products 的 stochastic Frobenius loss。</p><p><strong>提取：</strong>可逆/稀疏因子和 solver-level 迭代下降已经有成熟先例；我们的低维频谱参数化必须在 matrix-free BOST、可变相机与跨分辨率上形成差异。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2305.16368">开放全文</a><a class="button" href="https://github.com/paulhausner/neural-incomplete-factorization">代码</a></div></article>
         <article class="source-card"><div class="body"><span class="chip coral">最新强碰撞</span><h3>UNO-CG</h3><p><strong>读：</strong>Unitary Neural Operator 作为机器学习预条件器，怎样把收敛性质嵌入混合 CG solver。</p><p><strong>提取：</strong>“FNO 风格网络 + CG + convergence by construction”本身已不够新；BOST 方法必须给出梯度测量、几何条件化、前沿保持和真实 held-out camera 的专属证据。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2508.02681">开放全文</a></div></article>
         <article class="source-card"><div class="body"><span class="chip gold">层析强基线</span><h3>TV-superiorized PCG</h3><p><strong>读：</strong>在保持投影数据一致性下降的同时，用 total variation 作为次级准则改善病态层析图像。</p><p><strong>提取：</strong>thin front 改善若可由非学习 TV superiorization 获得，就不能归功于神经预条件器；它必须进入同 calls 或同 wall-time 对照。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/1807.10151">开放全文</a></div></article>
-        <article class="source-card"><div class="body"><span class="chip blue">当前 P0 必读</span><h3>Chambolle–Pock / PDHG</h3><p><strong>读：</strong>把白化 data fidelity 与 3D TV/Huber 写成 saddle-point，推导 primal/dual proximal、算子范数步长条件与 ergodic convergence。</p><p><strong>提取：</strong>先实现每迭代一对 <code>A/Aᵀ</code> 的 deterministic 强基线；只有它在同调用预算改善 field、front 和坏尾部，才允许学习受限 proximal 参数。</p></div><div class="actions"><a class="button primary" href="https://link.springer.com/article/10.1007/s10851-010-0251-1">原始论文</a><a class="button" href="https://orbit.dtu.dk/en/publications/convex-optimization-problem-prototyping-for-image-reconstruction-/">CT 实现论文</a><a class="button" href="https://lcondat.github.io/research.html">作者开放资料</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip blue">当前 P0 必读</span><h3>Chambolle–Pock / PDHG</h3><p><strong>读：</strong>把白化 data fidelity 与 3D TV/Huber 写成 saddle-point，推导 primal/dual proximal、算子范数步长条件与 ergodic convergence。</p><p><strong>提取：</strong>scalar-step 已严格失败；现在用原始理论检查固定 block metric。只有经典预条件版本在同调用预算改善 field、front 和坏尾部，才允许学习受限 metric correction。</p></div><div class="actions"><a class="button primary" href="https://link.springer.com/article/10.1007/s10851-010-0251-1">原始论文</a><a class="button" href="https://orbit.dtu.dk/en/publications/convex-optimization-problem-prototyping-for-image-reconstruction-/">CT 实现论文</a><a class="button" href="https://lcondat.github.io/research.html">作者开放资料</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip blue">当前 P0 必读</span><h3>Diagonal preconditioned PDHG</h3><p><strong>读：</strong>Pock–Chambolle 如何由算子绝对行列和构造 primal/dual 对角度量，以及为什么正负抵消后的 <code>K1</code> 不能代替 <code>|K|1</code>。</p><p><strong>提取：</strong>照搬对角步长只是经典基线；BOST 的研究问题只能落在带符号 matrix-free factor majorizer、covariance block、调用成本与前沿坏尾证据。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1109/ICCV.2011.6126441">ICCV 原论文</a><a class="button" href="document_reader.html?doc=docs%2Fpdhg_primary_sources_and_innovation_boundary_2026-07-17.md">逐式阅读边界</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">收敛边界</span><h3>PrePDHG convergence</h3><p><strong>读：</strong>固定预条件度量下的收敛条件、条件紧性与何时不能直接沿用 scalar CP 定理。</p><p><strong>提取：</strong>第一版坚持固定正度量与安全 majorizer；若让网络逐迭代改变 metric，必须重新证明受控变化，不能借用固定度量结论。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1007/s10915-023-02105-9">JSC 正式版</a><a class="button" href="https://arxiv.org/abs/2301.02984">开放稿</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">层析实现</span><h3>Chambolle–Pock for CT</h3><p><strong>读：</strong>CT 中 data fidelity、TV、有限差分与伴随的 problem prototyping。</p><p><strong>提取：</strong>“PDHG + 层析 + TV”早已存在；本科阶段真正可交付的是正确离散、块尺度、可复现实验和诚实的失败门。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1088/0031-9155/57/10/3065">Physics in Medicine &amp; Biology</a><a class="button" href="https://arxiv.org/abs/1111.5632">开放稿</a></div></article>
         <article class="source-card"><div class="body"><span class="chip coral">有限孔径物理</span><h3>Depth-of-field BOS cone ray</h3><p><strong>读：</strong>f/22 到 f/4 的真实有限孔径实验，以及 cone-ray forward/inverse 如何解释 thin-ray 失配。</p><p><strong>边界：</strong>论文是最直接的物理依据，但数据和代码未公开；不能把阅读证据写成已跑外部 benchmark。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2402.15954">开放全文</a></div></article>
         <article class="source-card"><div class="body"><span class="chip coral">可解释 BOST 基线</span><h3>Direct RBF-based BOST</h3><p><strong>读：</strong>用连续 RBF 参数化折射率/密度场并直接处理 BOS tomography 的 forward/inverse。</p><p><strong>提取：</strong>RayKernel-DCO 不能只比 voxel ridge；必须证明 operator correction 对连续场重建也有价值。</p></div><div class="actions"><a class="button" href="https://opg.optica.org/oe/fulltext.cfm?uri=oe-30-11-19100">Optics Express 全文</a></div></article>
         <article class="source-card"><div class="body"><span class="chip coral">算子失配理论</span><h3>Learned Operator Correction</h3><p><strong>读：</strong>forward 与 adjoint correction、收敛条件和 approximation error。</p><p><strong>提取：</strong>不能只学 forward residual；伴随与 inverse stability 也要审计。</p></div><div class="actions"><a class="button" href="https://arxiv.org/abs/2005.07069">作者公开版</a><a class="button" href="https://epubs.siam.org/doi/10.1137/20M1338460">SIAM 正式版</a></div></article>
@@ -876,7 +936,7 @@
     </section>
 
     <section id="plan" class="band">
-      <div class="section-head"><div><div class="eyebrow">保姆式路径</div><h2>12 周第一轮：从 PCGLS 基础走到 edge-safe inverse</h2><p>基础薄弱时先把“会说”变成“能手推、能复现、能证伪”。covariance conditioning、pooled stopping 与 TV/Huber SupPCG 三轮审计已经完成；当前学习和开发只推进 one-pair PDHG 强基线。只有它在坏尾部上给出稳定机制，下一轮才解锁 bounded proximal operator；DeepSets 与 fresh 继续封存。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_edge_superiorization_budget_no_go_2026-07-17.md">最新严格判决</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_detector_graph_covariance_acquisition_gate_2026-07-17.md">CovGate 协议</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">讲人话日志</a></div></div>
+      <div class="section-head"><div><div class="eyebrow">保姆式路径</div><h2>13 周第一轮：从 PCGLS 基础走到可证伪的 block metric</h2><p>基础薄弱时先把“会说”变成“能手推、能复现、能证伪”。covariance conditioning、pooled stopping、TV/Huber SupPCG 与 scalar PDHG 四轮审计均已完成。当前只推进块对角 majorizer 的 Gate A/B：先让 data-only 在同 K 下真实收敛，再讨论正则、warm start 和 bounded operator learning；DeepSets、fresh 与 final 继续封存。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_scalar_pdhg_no_go_and_block_diagonal_gate_2026-07-17.md">最新严格判决</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_detector_graph_covariance_acquisition_gate_2026-07-17.md">CovGate 协议</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">讲人话日志</a></div></div>
       <div class="week-grid" id="weekGrid">
         <article class="week-card"><span class="chip">W1</span><h3>线性算子与伴随</h3><ol><li>矩阵、SVD、秩与零空间</li><li>手推 <code>Ax</code> / <code>Aᵀz</code></li><li>完成 dot-product toy</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w1" />能解释伴随为何不是逆矩阵</label></article>
         <article class="week-card"><span class="chip">W2</span><h3>流体与 BOS 物理链</h3><ol><li>连续方程、物质导数、涡量</li><li>T→ρ→n→deflection</li><li>thin ray、cone ray、DOF</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w2" />能画出有限孔径如何改变每条 ray</label></article>
@@ -888,7 +948,8 @@
         <article class="week-card"><span class="chip">W10 · 已完成</span><h3>Covariance 获取与白化接口</h3><ol><li>实现 component/diagonal/graph/oracle covariance</li><li>验证 <code>L/Lᵀ</code>、<code>B/Bᵀ</code> 与同调用 PCGLS</li><li>完成 R=50 acquisition gate 和 16-seed NO-GO</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w10" />能解释“均值为正”为什么不等于算法可推进</label></article>
         <article class="week-card"><span class="chip blue">W11 · 已完成</span><h3>Conditioning 与 stopping 证伪</h3><ol><li>120 候选拆出经典重调与 graph 公平增量</li><li>复用 PCGLS trajectory，物理调用减 63.68%</li><li>348 条 observable rule 跨半区失败，fresh 不开</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w11" />能说明 +24%、+1.406% 与 -17.532% 分别来自哪里</label></article>
         <article class="week-card"><span class="chip blue">W12 · 已完成</span><h3>TV/Huber SupPCG 证伪</h3><ol><li>实现 3D penalty、非上升扰动与调用账本</li><li>32 个 scale + 48 个 tail 候选均未过同 calls 门</li><li>按预声明停止 gamma 调参，fresh 不开</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w12" />能解释同-stage +0.124% 为什么仍是预算 NO-GO</label></article>
-        <article class="week-card"><span class="chip gold">NEXT · 当前</span><h3>One-pair primal-dual</h3><ol><li>手推 saddle-point 与 primal/dual proximal</li><li>验证步长、算子范数和每轮一对调用</li><li>与 graph-PCGLS 深度前沿做 field/front/tail 比较</li></ol><label class="checkline"><input type="checkbox" data-week="rk-next-pdhg" />能解释 PDHG 为什么不需要 SupPCG 的 residual rebuild forward</label></article>
+        <article class="week-card"><span class="chip blue">W13 · 已完成</span><h3>Scalar PDHG 严格证伪</h3><ol><li>分开记录 v1 基础设施失效与 v2 科学结果</li><li>E1 116/116 tests、12 条 stress、784 rows 全部闭合</li><li>从近零场与范数失衡定位 conditioning 问题</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w13" />能解释 rank-1 为什么不等于 gate pass</label></article>
+        <article class="week-card"><span class="chip gold">NEXT · 当前</span><h3>Block-majorized PDHG Gate A/B</h3><ol><li>手推 signed factor majorizer 与正步长条件</li><li>CPU toy 验证 metric 安全、伴随与 data-only 收敛</li><li>同 K 比 scalar PDHG 与 graph-PCGLS，未过不加 TV/网络</li></ol><label class="checkline"><input type="checkbox" data-week="rk-next-block-pdhg" />能说明 block metric 如何解除最硬梯度方向对 data step 的压制</label></article>
       </div>
       <div class="alert"><strong>本机、并行与网络策略 · 2026-07-17 实测</strong><span>Apple M5 / 32 GB 足够当前阶段：120 候选 × 16 replicates 的 conditioning 网格为 41.15 秒、峰值约 573 MB；trajectory prefix 复用把物理 <code>A/Aᵀ</code> calls 从 6,784 降到 2,464，减少 63.68%。当前 <code>networkQuality</code> 约 70.1 Mbps、base RTT 254 ms；GitHub/arXiv/Springer 首页总耗时约 1.64/1.07/3.51 秒。网络会拖慢论文和数据下载，但不会拖慢本地 inverse。采用“四线流水”：MPS 重实验单列；文献/数据核验、统计红队、网页/日志/制图并行；短测试放 CPU 空档。真正瓶颈是证据依赖和缺少 flow-off repeats、held-out camera/session。只有进入 64³–128³ 多模型多种子、UNO-CG 或 <code>photon</code> CUDA renderer 后才租服务器。<a href="document_reader.html?doc=docs%2Flocal_compute_and_server_gate_2026-07-16.md">看算力与服务器门禁</a></span></div>
     </section>
@@ -1260,7 +1321,7 @@ PYTHONPATH=. .venv/bin/python site_tools/plot_psu_b0_edge_superiorization_no_go.
     </section>
 
     <section id="senior" class="band">
-      <div class="section-head"><div><div class="eyebrow">何远哲对齐</div><h2>请师兄审核公平增量、SupPCG NO-GO 与 PDHG 转向</h2><p>约 25% 的改善大部分来自经典 Sobolev 重调；graph covariance 的公平增量为 +1.406%，但最坏 -7.920%。pooled stopping 与正确记入额外 forward 的 TV/Huber SupPCG 都未保护尾部：浅层预算最佳 -6.016%，深层最佳 -8.518%。因此 fresh 与大 controller 继续封存，下一步先做每迭代一对 <code>A/Aᵀ</code> 的 deterministic primal-dual/PDHG。</p></div><a class="button" href="document_reader.html?doc=he_yuanzhe_minimum_data_contract.md">完整数据合同</a></div>
+      <div class="section-head"><div><div class="eyebrow">何远哲对齐</div><h2>请师兄审核 scalar PDHG NO-GO 与 block metric 门禁</h2><p>最新 v2 不是一次“训练成功”，而是一次干净的证伪：E1 116/116 tests、12/12 stress 和 784 条配对指标有效，但 scalar-step rank-1 相对 graph-PCGLS mean -68.432%、16/16 harm；data-only K=32 仍为 0.995881。下一步建议只做固定双块/对角预条件的 Gate A/B，不启动网络。</p></div><a class="button" href="document_reader.html?doc=he_yuanzhe_minimum_data_contract.md">完整数据合同</a></div>
       <div class="two-col">
         <div class="panel">
           <h3>二十七个必须确认的问题</h3>
@@ -1296,8 +1357,34 @@ PYTHONPATH=. .venv/bin/python site_tools/plot_psu_b0_edge_superiorization_no_go.
           <div class="alert critical"><strong>数据决定证据等级</strong><span>VD0-B 与 DG-WPCGLS 16-seed gate 均未授权神经控制器。真实 PSU 当前只有一个物理场，130 个相机组合不能替代独立重复；没有 flow-off covariance、held-out camera/session、真实逐视角 forward/adjoint 与组内失败 case 时，只能形成 synthetic mechanism + real-domain audit，不能宣称 OERF 方法有效。没有 aperture 标定不启动 RayKernel-DCO，没有连续 timestamp 不启动 TRAIL-4D。</span></div>
         </div>
         <div class="panel">
-          <label for="seniorMessage" style="font-weight:800;">可直接发给师兄</label>
-          <textarea id="seniorMessage" readonly>师兄，我把当前毕设主线继续收窄为“BOST 三维重建中 covariance-weighted PCGLS 的前沿保护与有界算子学习”。先说明边界：目前重建收益仍来自真实 PSU 相机几何、解析反应场与合成噪声；真实 PSU 只用于 detector 特征域审计，不是 OERF 实验结果，也没有宣称优于 NeRIF、FNO、UNO-CG 或组内方法。
+          <label for="seniorMessage" style="font-weight:800;">可直接发给师兄 · 最新短版</label>
+          <textarea id="seniorMessage" readonly>师兄，我把 scalar-step PDHG 的严格筛选跑完了，想请您审核下一步是否贴近组内真实问题。
+
+先说明边界：这只是两个已打开 replicate、真实 PSU 几何上的解析反应场与 oracle-scale 合成观测，不是 fresh、真实 OERF 重建，也没有宣称优于 NeRIF、TDBOST、FNO 或组内方法。v1 因 MPS 审计导出错误没有产生任何性能行；v2 只修复“先搬 CPU、再转 float64”，算法、候选、门槛和数据均未改，并从头重跑。
+
+v2 的 E1 为 116/116 tests，12/12 stress 完成，正式网格有 32 个候选、49 个方法和 784 条配对指标。结果是严格 NO-GO：失败网格中排名第一的 pdhg_huber_a1of256_k4 相对同预算 graph-PCGLS 的 mean field gain 为 -68.432%，p10 -120.638%，16/16 场受害；只有 paired runtime 1.207× 通过 3× 成本门。data-only PDHG 到 K=32 的绝对 field-L2 仍为 0.995881，而 graph-PCGLS 为 0.421089。
+
+诊断上，两个 replicate 的 gradient/data 范数平方比约为 28,375 和 37,320，root-scale ratio 约 168 和 193。我的理解是统一 scalar step 被最硬的空间梯度块约束，有限 K 下 data update 几乎不动；TV/Huber 相对同 K data-only 也全部为负。因此不应继续扫 alpha，也不应直接加网络。
+
+我建议下一阶段暂命名 CA-SFM-BPDHG，只作为工作标签，不主张已有创新或优势。先做固定的 covariance-aware signed factor-majorized block-diagonal metric：
+1）Gate A：证明/数值验证 metric 正性、majorizer 安全、伴随和逻辑调用账本；
+2）Gate B：只跑 data-only，要求同 K 明显优于 scalar PDHG，并接近 graph-PCGLS 的预算前沿；
+3）Gate C：B 通过后才开放 TV/Huber，检查 field、gradient、front、p10、harm 和 worst；
+4）Gate D：再比较 zero-init 与 graph-PCGLS warm start，并把 warm-start calls 计入总预算；
+5）Gate E：最后才做 geometry-only nullspace，经典门通过后才考虑 learned bounded metric。
+
+想请您重点确认五件事：
+1）组内当前 BOST/NeRIF/TDBOST 最常见的真实失败是 shock、thin front、低频 plume，还是其他结构？
+2）组内认可的主要终点是 field、front 位置/宽度、held-out displacement、PIV 补偿误差还是速度？
+3）现有 forward/adjoint 能否给出 F、逐视角 Fᵀ/Jᵀ、ray、mask、grid 与单位的最小接口？
+4）是否有每台相机同一固定条件至少 50 帧未经平均的 flow-off/reference repeats，并可永久留出 25%？
+5）是否接受我先把固定双块预条件 PDHG 做成强经典基线，过门后再把算子学习限制为有界 metric correction，而不是直接输出三维场？
+
+您看这个 block-conditioning 转向是否合理？哪一项最贴近您手上的数据和后续论文计划？</textarea>
+          <details class="archive-details" style="margin-top:12px;">
+            <summary>展开历史长版说明</summary>
+          <label for="seniorArchive" style="font-weight:800;">此前 covariance / SupPCG 全链路</label>
+          <textarea id="seniorArchive" readonly>师兄，我把当前毕设主线继续收窄为“BOST 三维重建中 covariance-weighted PCGLS 的前沿保护与有界算子学习”。先说明边界：目前重建收益仍来自真实 PSU 相机几何、解析反应场与合成噪声；真实 PSU 只用于 detector 特征域审计，不是 OERF 实验结果，也没有宣称优于 NeRIF、FNO、UNO-CG 或组内方法。
 
 同预算强基线已经补齐。Sobolev-PCGLS-4 淘汰旧 learned steepest-direction；有限 SPD 专家 oracle 仍有约 6.5%–7.2% headroom。RQ 单专家路由的 field gain 为 +3.321%/+2.907%，但相关噪声斜激波的 front-F1 最坏下降 -30.876%，所以不能只按 field-L2 宣称成功。
 
@@ -1323,6 +1410,7 @@ VD0-B 也已完成。我从 MATLAB find 索引恢复真实 detector row/column�
 5）能否提供一两个 NeRIF/TDBOST/BOST 典型失败 case，以及 F、逐视角 Fᵀ/Jᵀ、ray、mask、grid、unit 的最小接口？
 
 拿到 flow-off repeats 后，我会先估每相机的空间相关、异方差、方向耦合与跨相机漂移，构造 graph-correlated synthetic noise ladder，并用未参与拟合的 flow-off 帧检查真实 feature envelope coverage。只有 one-pair primal-dual 强基线或后续 bounded proximal operator 在 fresh seeds 与真实 held-out camera/session 同时保护 field、front、p10 和 harm，才形成方法主张。您看这个转向是否贴近组内真实问题？</textarea>
+          </details>
           <div class="actions" style="margin-top:10px;"><button id="copySenior" class="button primary" type="button">复制消息</button><span id="copyStatus" aria-live="polite" style="color:var(--muted);font-size:12px;"></span></div>
         </div>
       </div>
@@ -1330,7 +1418,7 @@ VD0-B 也已完成。我从 MATLAB find 索引恢复真实 detector row/column�
   </main>
 
   <footer>
-    <p>版本 2026.07.17-ae。研究结论以仓库 report/JSON/checksum/validator 为准；页面只做可读映射。约 +23.78% 来自经典 component-PCGLS 的 Sobolev 重调；full graph 在公平 s3-k4 基线上保留 +1.406% mean，但 worst -7.920%。pooled stopping 在第二半区 worst -17.532%。随后 32 个初始与 48 个 tail TV/Huber SupPCG 候选均未通过同总调用门：浅层最佳 mean -6.016%、p10 -10.299%、harm 87.5%；深层最佳 mean -8.518%、p10 -25.463%、harm 68.75%，因此按配置关闭 SupPCG，不再调 gamma。fresh、神经 controller 与独立 final 均继续封存；下一步只在 opened 数据上实现 one-pair primal-dual/PDHG TV/Huber。真实授权仍必须经过 flow-off covariance、held-out camera/session 与实验重建。受限论文、组内数据、逐射线索引、私有 cache、checkpoint 和重建体不进入 GitHub Pages。</p>
+    <p>版本 2026.07.17-af。研究结论以仓库 report/JSON/checksum/validator 为准；页面只做可读映射。经典重调、graph covariance、pooled stopping 与 SupPCG 的前置证据均保留；最新 scalar-step PDHG v2 在 E1 116/116 tests、12/12 stress 与 784 条配对指标有效的前提下严格 NO-GO：rank-1 mean -68.432%、p10 -120.638%、16/16 harm，只有 1.207× runtime 门通过。该结论只覆盖两个 opened replicate、oracle-scale 合成观测与冻结 scalar 网格，不否定一般 PDHG/TV/Huber。fresh、神经 controller 与独立 final 均继续封存；下一步只做固定 block-majorizer Gate A/B。真实授权仍必须经过 flow-off covariance、held-out camera/session 与实验重建。受限论文、组内数据、逐射线索引、私有 cache、checkpoint、原始 784 rows 和重建体不进入 GitHub Pages。</p>
   </footer>
   <script>
     (() => {

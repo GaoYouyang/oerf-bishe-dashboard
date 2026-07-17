@@ -21,6 +21,7 @@ EXCLUDED_PREFIXES = (
     "private_library/",
     "paper_library/pdfs/",
 )
+EXCLUDED_SUFFIXES = (".pt", ".pth", ".ckpt")
 
 
 @dataclass(frozen=True)
@@ -29,13 +30,17 @@ class ArtifactStats:
     copied_bytes: int
     excluded_pdf_files: int
     excluded_pdf_bytes: int
+    excluded_checkpoint_files: int
+    excluded_checkpoint_bytes: int
 
 
 def should_exclude(relative_path: str) -> bool:
     normalized = PurePosixPath(relative_path).as_posix()
     while normalized.startswith("./"):
         normalized = normalized[2:]
-    return any(normalized.startswith(prefix) for prefix in EXCLUDED_PREFIXES)
+    return any(
+        normalized.startswith(prefix) for prefix in EXCLUDED_PREFIXES
+    ) or normalized.lower().endswith(EXCLUDED_SUFFIXES)
 
 
 def tracked_paths(repo_root: Path) -> list[str]:
@@ -59,6 +64,8 @@ def _copy_tracked_files(
     copied_bytes = 0
     excluded_pdf_files = 0
     excluded_pdf_bytes = 0
+    excluded_checkpoint_files = 0
+    excluded_checkpoint_bytes = 0
 
     for relative in paths:
         source = repo_root / relative
@@ -69,6 +76,9 @@ def _copy_tracked_files(
         if relative.startswith("paper_library/pdfs/"):
             excluded_pdf_files += 1
             excluded_pdf_bytes += size
+        if relative.lower().endswith(EXCLUDED_SUFFIXES):
+            excluded_checkpoint_files += 1
+            excluded_checkpoint_bytes += size
 
         if should_exclude(relative):
             continue
@@ -84,6 +94,8 @@ def _copy_tracked_files(
         copied_bytes=copied_bytes,
         excluded_pdf_files=excluded_pdf_files,
         excluded_pdf_bytes=excluded_pdf_bytes,
+        excluded_checkpoint_files=excluded_checkpoint_files,
+        excluded_checkpoint_bytes=excluded_checkpoint_bytes,
     )
 
 
@@ -132,6 +144,8 @@ def build_artifact(
         "copied_bytes": stats.copied_bytes,
         "excluded_pdf_files": stats.excluded_pdf_files,
         "excluded_pdf_bytes": stats.excluded_pdf_bytes,
+        "excluded_checkpoint_files": stats.excluded_checkpoint_files,
+        "excluded_checkpoint_bytes": stats.excluded_checkpoint_bytes,
         "pdf_delivery": (
             "Tracked open-access PDFs are omitted from the Pages artifact. "
             "The custom 404 route redirects their stable Pages paths to the "
@@ -169,6 +183,8 @@ def main() -> int:
                 "copied_bytes": stats.copied_bytes,
                 "excluded_pdf_files": stats.excluded_pdf_files,
                 "excluded_pdf_bytes": stats.excluded_pdf_bytes,
+                "excluded_checkpoint_files": stats.excluded_checkpoint_files,
+                "excluded_checkpoint_bytes": stats.excluded_checkpoint_bytes,
             },
             sort_keys=True,
         )

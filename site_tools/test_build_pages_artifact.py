@@ -18,6 +18,9 @@ def test_pages_artifact_excludes_pdf_payload_and_private_files() -> None:
     assert MODULE.should_exclude("private_library/example.pdf")
     assert MODULE.should_exclude(".github/workflows/pages.yml")
     assert MODULE.should_exclude("build/pages-site/index.html")
+    assert MODULE.should_exclude("demo/results/seed_1/best.pt")
+    assert MODULE.should_exclude("demo/results/model.PTH")
+    assert MODULE.should_exclude("demo/results/training.ckpt")
 
 
 def test_pages_artifact_keeps_public_site_and_evidence() -> None:

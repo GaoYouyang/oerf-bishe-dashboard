@@ -1,0 +1,153 @@
+{
+  "claim_boundary": {
+    "already_opened_replicates_only": true,
+    "experimental_deployment_scale_available": false,
+    "fresh_data_opened": false,
+    "neural_training_authorized": false,
+    "oracle_scale_synthetic_benchmark": true
+  },
+  "counts": {
+    "controls_and_references": 17,
+    "formal_candidates": 32,
+    "invalid_candidates": 0,
+    "methods": 49,
+    "paired_metric_rows": 784,
+    "valid_candidate_rows": 512
+  },
+  "decision_gates": [
+    {
+      "gate": "mean field gain",
+      "observed": -68.43220961698987,
+      "operator": ">=",
+      "passed": false,
+      "threshold": 1.0
+    },
+    {
+      "gate": "field gain p10",
+      "observed": -120.63780500031906,
+      "operator": ">=",
+      "passed": false,
+      "threshold": -1.0
+    },
+    {
+      "gate": "field harm rate",
+      "observed": 1.0,
+      "operator": "<=",
+      "passed": false,
+      "threshold": 0.0625
+    },
+    {
+      "gate": "worst field gain",
+      "observed": -140.9229342716363,
+      "operator": ">=",
+      "passed": false,
+      "threshold": -3.0
+    },
+    {
+      "gate": "mean gradient gain",
+      "observed": -31.46370226123289,
+      "operator": ">=",
+      "passed": false,
+      "threshold": 0.0
+    },
+    {
+      "gate": "mean front gain",
+      "observed": -0.22012193780392408,
+      "operator": ">=",
+      "passed": false,
+      "threshold": 0.0
+    },
+    {
+      "gate": "critical-family front gain",
+      "observed": -0.19439024180173875,
+      "operator": ">=",
+      "passed": false,
+      "threshold": 0.0
+    },
+    {
+      "gate": "replicate 0 mean field gain",
+      "observed": -59.18974117183109,
+      "operator": ">",
+      "passed": false,
+      "threshold": 0.0
+    },
+    {
+      "gate": "replicate 8 mean field gain",
+      "observed": -77.67467806214862,
+      "operator": ">",
+      "passed": false,
+      "threshold": 0.0
+    },
+    {
+      "gate": "paired wall-time ratio",
+      "observed": 1.2068474476273274,
+      "operator": "<=",
+      "passed": true,
+      "threshold": 3.0
+    }
+  ],
+  "diagnosis": {
+    "best_regularized_gain_vs_data_only_percent": -2.9817798860359295e-06,
+    "data_only_pdhg_mean_field_relative_l2_by_k": {
+      "16": 0.9980289004743099,
+      "32": 0.995880626142025,
+      "4": 0.9996439963579178,
+      "8": 0.9991213083267212
+    },
+    "gradient_to_data_norm_squared_ratio_by_replicate": [
+      28375.127503565538,
+      37320.71311499622
+    ],
+    "graph_pcgls_mean_field_relative_l2_by_k": {
+      "16": 0.4637612495571375,
+      "32": 0.42108878679573536,
+      "4": 0.6287072747945786,
+      "8": 0.5491103548556566
+    },
+    "not_supported": [
+      "PDHG is generally ineffective",
+      "TV or Huber regularization is generally ineffective",
+      "the result generalizes to fresh seeds, cameras, or experiments"
+    ],
+    "regularization_site_counts": [
+      3332
+    ],
+    "supported_conclusion": "the frozen scalar-step formulation is conditioning-limited and regularization-inactive at K<=32 on this E2 oracle-scale benchmark"
+  },
+  "evidence_level": "E2_POSTOPEN_TWO_REPLICATE_SCALE_SMOKE",
+  "integrity": {
+    "junit_or_environment_published": false,
+    "private_artifact_sha256_by_opaque_role": {
+      "call_ledger": "dd2c19a4ec1515a175b39e13c95531f1a1a26263dd644a2d580353cf8f767ec8",
+      "candidate_summaries": "043438d15cea77245bd5c24ca19386ad776cf1d670b0c2df8ad0e6bd70ab8ab2",
+      "method_summaries": "aed5dfe4138d2922dd68ef19d158f1d5a7c3e516f64ac552bf2b6efc483f0eca",
+      "metric_rows": "6af9b53324393ee05ac791311fb49c009aa62c32714dabae74de8ab75f55658e",
+      "report": "0b068950ac0a199e71787e460aefaf350f1aa1201135789f3f1a1d420e89ad2d",
+      "timing_audit": "dbf014dc6a3e056a91a752df0abba54f0c5d0eed5231d0acdd39784a57c7098d"
+    },
+    "private_bundle_checksums_verified": true,
+    "private_paths_published": false
+  },
+  "interpretation": "frozen_scalar_step_pdhg_grid_no_go_not_a_general_pdhg_or_tv_no_go",
+  "preflight": {
+    "solver_adjoint_calls": 384,
+    "solver_forward_calls": 384,
+    "solver_gradient_adjoint_calls": 384,
+    "solver_gradient_calls": 384,
+    "status": "PDHG_PREFLIGHT_VALID",
+    "stress_run_count": 12,
+    "valid": true
+  },
+  "rank_one_candidate": {
+    "candidate_id": "pdhg_huber_a1of256_k4",
+    "field_gain_p10_percent": -120.63780500031906,
+    "mean_field_gain_vs_graph_percent": -68.43220961698987,
+    "mean_front_gain": -0.22012193780392408,
+    "mean_gradient_gain_percent": -31.46370226123289,
+    "paired_wall_time_ratio": 1.2068474476273274,
+    "ranking_winner_is_not_a_passing_method": true,
+    "worst_field_gain_percent": -140.9229342716363
+  },
+  "schema_version": "psu-b0-pdhg-v2-public-no-go-audit-1.0",
+  "status": "POSTOPEN_PDHG_SCALE_NO_GO"
+}

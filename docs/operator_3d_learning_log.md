@@ -1157,3 +1157,100 @@ bounded proximal 参数。
 
 **证据等级。** **L2 real detector geometry + L3 two-replicate post-open
 scale/tail smoke**。没有 full opened grid、fresh、真实 flow-off 或实验真值。
+
+## 45. One-pair PDHG 跑完了：问题不是慢一点，而是几乎没离开零场
+
+这轮先发生了一次必须如实保留的基础设施失败。v1 的 12 条 stress trajectory
+各自完成 32 轮后，审计代码尝试让 MPS tensor 在一次操作里同时搬到 CPU 并转
+`float64`，PyTorch MPS 不支持，于是得到 `PDHG_PREFLIGHT_INVALID`。它没有产生
+任何性能行，所以不能说算法成功或失败。
+
+我没有覆盖这次失败。原始 JSON 留在本地私有审计库，公开仓库只保留脱敏摘要；
+随后冻结 v2，只允许把导出改成“先搬 CPU，再在 CPU 转 float64”，其他数据、
+步长、候选、门槛和 MPS float32 求解全部不变。新增回归测试后，E1 116/116 tests
+和全仓 875 项测试都通过。
+
+v2 完整跑了：
+
+- 12/12 stress trajectories 通过；
+- 32 个 PDHG 候选 + 17 个 controls，共 49 methods；
+- 784 条 paired metric rows，0 个 invalid candidate；
+- 判决为 **`POSTOPEN_PDHG_SCALE_NO_GO`**。
+
+排名第一是 `pdhg_huber_a1of256_k4`，但“第一”只表示它在 32 个失败候选中最不
+差。相对同预算 graph-PCGLS：
+
+- mean field gain `-68.432%`；
+- p10 `-120.638%`；
+- 16/16 个场都超过 1% harm；
+- worst `-140.923%`；
+- gradient mean `-31.464%`；
+- front mean `-0.2201`；
+- 两个 replicate mean 都为负；
+- 只有 wall-time ratio `1.207 < 3` 通过。
+
+最关键的不是“TV 没用”，而是 data-only PDHG 自己也几乎没动：
+
+| K | data-only PDHG field-L2 | graph-PCGLS field-L2 |
+|---:|---:|---:|
+| 4 | 0.999644 | 0.628707 |
+| 8 | 0.999121 | 0.549110 |
+| 16 | 0.998029 | 0.463761 |
+| 32 | 0.995881 | 0.421089 |
+
+零场的 relative error 就约等于 1。PDHG 做 32 轮仍是 0.9959，说明体场还没有
+走到 TV/Huber 能发挥作用的位置。32 个正则候选相对各自 data-only 的最好收益
+也是微小负数。
+
+原因线索很强：两个 replicate 的 spatial-gradient norm squared 约 78,600，而
+data block 只有 2.11–2.78，相差约 2.8 万–3.7 万倍。一个统一 scalar step 被
+空间梯度块的最坏尺度压住，data-fitting 每步推进极小。
+
+**讲人话：**我们让一个人同时推轻箱子和一块巨石，又规定两只手每次只能移动
+同样短的距离。为了不让推巨石的手失稳，推轻箱子的手也被限制得几乎不动。
+下一步不是继续换 TV 的 alpha，而是给 data、空间梯度和不同 voxel/camera
+分配各自安全的步长。
+
+下一候选是 covariance-aware signed factor-majorized block-diagonal PDHG。先做
+tiny dense majorizer、零耦合、伴随和 diagonal-metric 安全检查；然后只跑
+data-only Gate B。若 K=32 不能比 scalar PDHG 至少降低 25% field error，就直接
+停止，不加 TV、warm start、nullspace 或网络。
+
+只有 block data-only 真正离开零场以后，才依次解锁：
+
+1. 两个冻结尺度的 TV/Huber activation；
+2. 把 graph-PCGLS warm-start calls 计入同总预算的混合方法；
+3. geometry-only near-nullspace penalty；
+4. 最后才是 bounded learned metric / selector。
+
+完整入口：
+
+- [v2 公开 NO-GO 审计](../demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/README.md)
+- [下一轮 block-diagonal gate](psu_b0_scalar_pdhg_no_go_and_block_diagonal_gate_2026-07-17.md)
+- [signed factor majorizer 设计](covariance_majorized_pdhg_design_2026-07-17.md)
+
+**证据等级。** 两个已见 replicate 的 **E2 oracle-scale mechanism diagnostic**。
+没有 fresh seed、held-out camera/session、真实 flow-off scale 或 OERF 实验真值；
+神经训练继续封存。
+
+## 46. 并行没有拿来同时抢 MPS，而是提前做 Gate A0
+
+为了缩短等待，我把工作拆成三条互不争用的支线：网页与证据只读审计、PDHG
+一手文献与创新边界、CPU-only block metric 原型。正式 MPS 仍串行，因为多个
+训练/逆解进程会争同一块统一内存，也会破坏 wall-time 的公平比较。
+
+Gate A0 新增了一个不接正式 runner 的 signed factor block-norm 原型和 10 项 CPU
+测试。它能检查：
+
+1. 正负 factor 在 forward/adjoint 中保留符号；
+2. majorizer 只用 factor coefficient 的绝对值；
+3. 空 primal/dual block 和非正步长 fail-closed；
+4. 用声明的 factor norm bound 构造后，tiny dense 真正的 normalized `K` 范数小于 1；
+5. power iteration 只标记为未认证估计，默认不能进入更新；若只做诊断，必须在
+   构造和执行两处分别显式 opt-in。
+
+**讲人话：**现在搭好的只是“安全带扣能不能扣上”的小样机，还不是装到真实
+BOST 算子上的赛车。它没有逐元素构造 `|W|P|G_c|E`，没有 MPS 正式 runner，
+没有 Gate B 性能，更没有创新优势。下一步仍是把真实 factor 的行列 majorizer
+接进来，并先在 tiny dense oracle 上逐项对齐；只要 Gate A 有一项不满足，就不
+打开 field truth 做性能比较。
