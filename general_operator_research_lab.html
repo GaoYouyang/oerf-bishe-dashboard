@@ -14,9 +14,9 @@
       --green:#39724f; --shadow:0 10px 28px rgba(24,42,47,.06); --radius:8px;
     }
     * { box-sizing:border-box; }
-    html { scroll-behavior:smooth; }
+    html { overflow-x:clip; scroll-behavior:smooth; }
     body {
-      margin:0; color:var(--ink); background:var(--bg);
+      margin:0; overflow-x:clip; color:var(--ink); background:var(--bg);
       font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
       line-height:1.65; letter-spacing:0;
     }
@@ -165,7 +165,7 @@
       <a href="#m2-t0">M2 算子学习</a>
       <a href="#m2-projection">投影判决</a>
       <a href="#n1-stopping">N1 停止门</a>
-      <a href="#n1-5-confirmation">N1.5 确认</a>
+      <a href="#n1-6-result">N1.6 判决</a>
       <a href="#algorithm">安全算子</a>
       <a href="#candidates">算法路线</a>
       <a href="document_reader.html?doc=docs%2Fcancellation_aware_operator_learning_literature_map_2026-07-17.md">文献地图</a>
@@ -178,12 +178,12 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">研究主线已经从“再调一个重建网络”收敛到一个可证伪的逆问题：三维 BOST 的 sensor noise、forward-model mismatch 与真正影响重建的 <code>Aᵀε</code> 必须分开。N1.5 已完成可见失配预测、同预算重建闭环和一次冻结合成确认；高阶教师让 12/12 个场改善，却只取得 3.63% field mean，未过 5% 门。下一步不再调同一个 beta，而是学习伴随/可观测子空间中的失配。</p>
+    <p class="lead">研究主线已经从“再调一个重建网络”收敛到一个可证伪的逆问题：三维 BOST 的 sensor noise、forward-model mismatch 与真正影响有限步重建的伴随响应必须分开。N1.6 已完成零高阶部署调用的低秩校正筛选：完整 mismatch oracle 有 8.62% field headroom，但共享 rank-4 表示只剩 4.99%，可部署预测器最终为 3.54% 且输给简单 damping。下一步不扩同一网络，而是先检验由当前 <code>A/Aᵀ</code> 生成的几何条件化 Krylov 表示。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">M2.2 · NULL HEADROOM</span><span class="chip coral">N1.2 · 0 / 16 DECISIONS</span><span class="chip coral">N1.3 · 0 / 128 PASS</span><span class="chip coral">N1.4 · 0 / 33 PASS</span><span class="chip coral">N1.5 · CONFIRMATION NO-GO</span><span class="chip blue">FIELD · +3.63%</span><span class="chip blue">H1 · +10.31%</span><span class="chip coral">REAL FLOW-OFF · ABSENT</span></div>
-        <h2>当前唯一主线：从预测完整 ε 转向学习逆问题真正感受的 Aᵀε</h2>
-        <p>N1.5-A 证明可见曲率 ridge 能降低 measurement mismatch，却不能稳定改善三维场；N1.5-B 又证明直接四阶反演会恶化，而“高阶只做误差教师、低阶继续求解”稳定。候选在 Git 预冻结后打开 6 个新几何簇：12/12 场正增益、worst +0.90%，但 field mean 只有 +3.63%，因此正式 NO-GO。这个结果把下一算法压缩到 adjoint-consistent / range-aware approximation error，而不是继续增加 FNO 宽度。</p>
+        <div class="chips"><span class="chip blue">M2.2 · NULL HEADROOM</span><span class="chip coral">N1.2 · 0 / 16 DECISIONS</span><span class="chip coral">N1.3 · 0 / 128 PASS</span><span class="chip coral">N1.4 · 0 / 33 PASS</span><span class="chip coral">N1.5 · CONFIRMATION NO-GO</span><span class="chip coral">N1.6 · POSTOPEN NO-GO</span><span class="chip blue">EXACT ORACLE · +8.62%</span><span class="chip blue">DEPLOYABLE · +3.54%</span><span class="chip coral">REAL FLOW-OFF · ABSENT</span></div>
+        <h2>当前唯一主线：用当前 A/Aᵀ 生成几何条件化 correction space</h2>
+        <p>N1.6 把模型失配放进 measurement space，再统一经过当前低阶伴随；部署调用、泄漏和回退都守住了。结果却同时暴露表示与预测瓶颈：exact mismatch oracle 为 +8.62%，共享 rank-4 oracle 只有 +4.99%，raw ridge 的伴随残差还比 damping 恶化 25.36%。因此下一步是先测试 per-geometry Krylov basis 的表示上限，过门后才训练有界系数网络；不会在已打开 development 上调 rank 或换大 MLP。</p>
         <ol>
           <li><strong>M2.2 只授权数学 headroom：</strong>exact SVD projector 保留 JACRU 约 45.28% field gain，并把内部 reprojection 对齐到约 1e-14；它不可部署，也不是论文算法。</li>
           <li><strong>M2.6 找到谱机制：</strong>camera-block 明显加速 residual，但 setup 为 1001F-equiv oracle，且 harm 8.33%；不能写成效率胜利。</li>
@@ -195,13 +195,14 @@
           <li><strong>N1.3 robust-data：</strong>最佳平均 field +16.91%，却有 -50.91% worst；严格 Huber-versus-quadratic 独立贡献最多约 +0.85%。</li>
           <li><strong>N1.4 adaptive edge：</strong>33 个同预算候选 0 pass；27 个 adaptive 逐一输给 matching uniform，最好一组仍平均落后 0.94%。</li>
           <li><strong>N1.5 confirmation：</strong>高阶教师 beta=.75 在新 6 geometry/12 fields 上 field +3.63%、H1 +10.31%、worst +0.90%；只因 field mean 未达 5% 而 NO-GO。</li>
-          <li><strong>N1.6 唯一候选：</strong>固定高阶教师为 strong control，小网络只预测 <code>Aᵀ(G<sub>H</sub>-G<sub>L</sub>)</code> 的低秩有界系数，并保留 damping fail-closed 回退。</li>
+          <li><strong>N1.6 opened NO-GO：</strong>可部署 field +3.54%、H1 +8.24%、worst +0.17%，但相对 damping -0.18%、takeover 50%；5 项冻结门失败，不开 confirmation。</li>
+          <li><strong>N1.7 下一表示门：</strong>用 measured residual、damping 与两次 <code>AAᵀ</code> probe 构造每个 geometry 自己的 Krylov basis；先测 oracle，未过就不训练。</li>
           <li><strong>外部依赖：</strong>Mac 足够继续做 12³–16³ 高低保真机制证伪；真正需要师兄的是 f-number/焦面/标定不确定性、可调用 <code>A/Aᵀ</code>、原始图像与永久 audit camera。</li>
         </ol>
         <div class="actions" style="margin:14px 0;">
-          <a class="button primary" href="#n1-stopping">看 N1.0–N1.5 判决</a>
-          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_5_high_order_teacher_confirmation_no_go_2026-07-18.md">N1.5 确认判决</a>
-          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_5_advisor_review_brief_2026-07-18.md">发给师兄的一页</a>
+          <a class="button primary" href="#n1-6-result">看 N1.6 判决</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_6_adjoint_low_rank_no_go_2026-07-18.md">完整 NO-GO 与 N1.7</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_6_advisor_review_brief_2026-07-18.md">发给师兄的一页</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_primary_literature_audit_2026-07-18.md">24 篇一级来源</a>
           <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">讲人话日志</a>
           <a class="button" href="#reproduce">本机复现</a>
@@ -1386,18 +1387,18 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
       </div>
       <div class="two-col" style="margin-top:14px;">
         <div class="panel">
-          <div class="chips"><span class="chip coral">NO METHOD AUTHORIZATION</span><span class="chip coral">N1.2–N1.5 CLOSED</span><span class="chip blue">FROZEN CONFIRMATION</span><span class="chip gold">N1.6 Aᵀε NEXT</span></div>
-          <h3 style="margin-top:10px;">进入 N1.6 前最值得学的四件事</h3>
+          <div class="chips"><span class="chip coral">NO METHOD AUTHORIZATION</span><span class="chip coral">N1.2–N1.6 CLOSED</span><span class="chip blue">N1.6 EVIDENCE FROZEN</span><span class="chip gold">N1.7 KRYLOV NEXT</span></div>
+          <h3 style="margin-top:10px;">进入 N1.7 前最值得学的四件事</h3>
           <ol>
             <li>cone-ray / finite aperture：镜头孔径怎样改变每个 pixel 对体积的采样。</li>
             <li>Bayesian approximation error：为什么 <code>G_H-G_L</code> 要有独立均值与 covariance。</li>
-            <li>inverse crime：为什么高低保真训练与 confirmation 不能共享 field/geometry seeds。</li>
-            <li>held-out camera likelihood：没有三维真值时怎样留下真正独立的物理证据。</li>
+            <li>Krylov subspace / CGLS：为什么有限步求解器只响应 correction 的特定谱分量。</li>
+            <li>inverse crime 与 held-out camera：为什么高低保真训练和最终物理验证必须隔离。</li>
           </ol>
-          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_5_high_order_teacher_confirmation_no_go_2026-07-18.md">打开 N1.5 完整复盘</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">学习日志 88–94</a></div>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_6_adjoint_low_rank_no_go_2026-07-18.md">打开 N1.6 与 N1.7 路线</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">学习日志 88–95</a></div>
         </div>
         <div class="panel">
-          <h3>拿给何远哲师兄确认的 N1.5 最小数据合同</h3>
+          <h3>拿给何远哲师兄确认的 N1.7 最小数据合同</h3>
           <ol>
             <li>当前 forward 是否为 straight/curved ray，是否显式采样 aperture？</li>
             <li>能否提供 f-number、焦距、焦面、背景距离和标定 bootstrap/covariance？</li>
@@ -1405,7 +1406,7 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
             <li>能否永久留一台 audit camera、一个完整 session 和一档 f-number？</li>
             <li>是否有原始 reference/distorted images、optical-flow confidence 与 phantom/CFD/PIV 证据？</li>
           </ol>
-          <div class="alert critical"><strong>当前论文边界</strong><span>可以写 N1.2–N1.5 的 synthetic 负证据、高阶教师稳定基线和冻结确认协议；不能写新算法已胜 DeepONet/FNO/NeRIF、真实 BOST 泛化或可部署速度。</span></div>
+          <div class="alert critical"><strong>当前论文边界</strong><span>可以写 N1.2–N1.6 的 synthetic 负证据、高阶教师基线、oracle 分解与冻结协议；不能写新算法已胜 DeepONet/FNO/NeRIF、真实 BOST 泛化或可部署速度。</span></div>
           <div class="actions"><a class="button" href="site_tools/validate_jacru_m2_3_m2_4_evidence.py">M2.3–M2.4 validator</a><a class="button" href="site_tools/validate_jacru_m2_5_m2_6_evidence.py">M2.5–M2.6 validator</a><a class="button" href="site_tools/validate_jacru_m2_7_m2_8_evidence.py">M2.7–M2.8 validator</a></div>
         </div>
       </div>
@@ -1474,23 +1475,78 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
           <div class="alert critical"><strong>冻结边界</strong><span>这六个 seeds 已经打开，今后不能用于改 beta、改特征或改门槛后再声称独立确认。</span></div>
         </div>
         <div class="panel">
-          <div class="chips"><span class="chip gold">N1.6 · NEXT HYPOTHESIS</span><span class="chip blue">ADJOINT CONSISTENT</span><span class="chip coral">REAL DATA CONTRACT NEEDED</span></div>
-          <h3 style="margin-top:10px;">下一算法只学习逆问题真正看见的失配</h3>
-          <div class="formula">g(x,z)=A(z)<sup>T</sup>[G<sub>H</sub>(x,z)-G<sub>L</sub>(x,z)]</div>
+          <div class="chips"><span class="chip coral">N1.6 · NO-GO</span><span class="chip blue">ORACLE HEADROOM EXISTS</span><span class="chip gold">N1.7 · KRYLOV NEXT</span></div>
+          <h3 style="margin-top:10px;">共享低秩基已证伪；下一步让表示随 A/Aᵀ 变化</h3>
+          <div class="formula">B<sub>z</sub>=[d,r,AA<sup>T</sup>d,AA<sup>T</sup>r]; &nbsp; δy=d+B<sub>z</sub>c<sub>θ</sub>(visible)</div>
           <ol>
-            <li><strong>AT-AEM-Mean：</strong>先比较 geometry-conditioned <code>Aᵀε</code> 均值，不用网络。</li>
-            <li><strong>AT-AEM-LR：</strong>fit split 固定低秩场基，只预测受限系数。</li>
-            <li><strong>AT-AEM-Op：</strong>ray-set/operator network 只预测系数；高阶教师与 damping 都保留为 strong controls。</li>
-            <li><strong>Fail closed：</strong>逐 geometry 风险或 held-out camera residual 不过门，自动回退低阶基线。</li>
+            <li><strong>表示先失败：</strong>exact mismatch +8.62%，rank-4 adjoint oracle 只剩 +4.99%，且仍有相对 damping 的受害 case。</li>
+            <li><strong>预测再失败：</strong>raw ridge 的 evaluator adjoint-residual gain 为 -25.36%；fail-closed 只能把一半 case 退回 damping。</li>
+            <li><strong>N1.7 representation gate：</strong>两次 <code>AAᵀ</code> probe 构造 geometry-specific basis；oracle 不过门就不训练。</li>
+            <li><strong>同预算：</strong>warm 12 + probes 2 + refine 10，仍为 25F/24Aᵀ；高阶教师、damping 和 matched CGLS 保留为 controls。</li>
           </ol>
-          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_5_advisor_review_brief_2026-07-18.md">让师兄审核 N1.6</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">读日志 92–94</a></div>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_6_adjoint_low_rank_no_go_2026-07-18.md">读 N1.6 与 N1.7 设计</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">读日志第 95 节</a></div>
         </div>
       </div>
       <div class="pipeline" style="grid-template-columns:repeat(4,minmax(0,1fr)); margin-top:16px;">
-        <div><b>1 · paired physics</b><span>同一 x/geometry 运行 G<sub>L</sub>/G<sub>H</sub>；sensor covariance 另记</span></div>
-        <div><b>2 · adjoint target</b><span>比较 ε、range projection 与 Aᵀε；主门始终是 field/H1/tail</span></div>
-        <div><b>3 · bounded learner</b><span>小网络只给低秩系数，不直接输出三维 truth</span></div>
-        <div><b>4 · real audit</b><span>永久 held-out camera/session/f-number；失败即回退高阶教师或 low CGLS</span></div>
+        <div><b>1 · visible Krylov basis</b><span>当前 geometry、measured residual 与 A/Aᵀ 生成 basis；不读取 fresh ε</span></div>
+        <div><b>2 · representation gate</b><span>先测 adjoint-optimal oracle 的 field/H1/tail；失败即停止 learner</span></div>
+        <div><b>3 · finite-K learner</b><span>有界网络只给系数，损失穿过 10 步 CGLS；measurement L2 仅辅助</span></div>
+        <div><b>4 · real audit</b><span>永久 held-out camera/session/f-number；失败即回退 damping 或 low CGLS</span></div>
+      </div>
+
+      <div class="section-head" id="n1-6-result" style="margin-top:34px; scroll-margin-top:88px;">
+        <div>
+          <div class="eyebrow">N1.6 · precommitted code 0f4ac73 · opened development · 2026-07-18</div>
+          <h3>完整 mismatch 有空间，固定低秩表示和 ridge 预测器都没有过门</h3>
+          <p>算法严格使用 measured observation、geometry、CGLS-12 warm field/projection；部署 25F/24Aᵀ、零高阶调用。6 个 geometry clusters 一次性打开后，fail-closed 候选 field +3.54%、H1 +8.24%，却相对 component damping -0.18%，takeover 只有 50%。正式状态是 <code>POSTOPEN_NO_GO_NO_CONFIRMATION_ROUTE</code>。</p>
+        </div>
+        <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_6_adjoint_low_rank_no_go_2026-07-18.md">完整判决与 N1.7</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_6_advisor_review_brief_2026-07-18.md">师兄一页 brief</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_6_adjoint_low_rank_prereg_2026-07-18.md">预注册</a><a class="button" href="demo_t16_operator/results/jacru_n1_6_adjoint_low_rank_development_full1/summary.json">机器摘要</a><a class="button" href="demo_t16_operator/results/jacru_n1_6_adjoint_low_rank_development_full1/checksums.sha256">SHA-256</a></div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><b class="negative">NO-GO</b><span>11 项 future-confirmation checks 中 5 项失败；不运行 confirmation</span></div>
+        <div class="metric"><b>+3.54%</b><span>可部署候选 field gain vs matched low CGLS-24；冻结门为 5%</span></div>
+        <div class="metric"><b class="positive">+8.24%</b><span>H1 mean gain；通过 3% 门，但不能覆盖 field 与基线失败</span></div>
+        <div class="metric"><b class="negative">-0.18%</b><span>相对 component damping 的 field gain；简单基线仍更好</span></div>
+        <div class="metric"><b>50%</b><span>takeover rate；另一半 case 由 fail-closed 回退 damping</span></div>
+        <div class="metric"><b>25F / 24Aᵀ</b><span>可部署预算；high-order F/Aᵀ 均为 0</span></div>
+      </div>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>分解控制</th><th>field vs low</th><th>field vs damping</th><th>adjoint residual vs damping</th><th>告诉我们什么</th></tr></thead>
+          <tbody>
+            <tr><td>component damping</td><td>+3.720%</td><td>0</td><td>0</td><td>最简单 deployable strong baseline</td></tr>
+            <tr><td>selected fail-closed</td><td>+3.539%</td><td class="negative">-0.184%</td><td>+1.128%</td><td>安全回退工作，预测优势不存在</td></tr>
+            <tr><td>raw predictor diagnostic</td><td>+3.459%</td><td class="negative">-0.222%</td><td class="negative">-25.357%</td><td>没有 envelope 时方向明显错误</td></tr>
+            <tr><td>adjoint rank-4 oracle</td><td>+4.985%</td><td>+1.440%</td><td class="positive">+48.309%</td><td>共享 basis 有小空间，尾部仍不安全</td></tr>
+            <tr><td>measurement-L2 rank-4 oracle</td><td>+5.245%</td><td>+1.711%</td><td>+47.296%</td><td>measurement 最优不等于 field 最优</td></tr>
+            <tr><td>high-order teacher beta=.75</td><td>+4.798%</td><td>+1.173%</td><td>+17.768%</td><td>稳定教师，部署需 1 次高阶 F</td></tr>
+            <tr><td>exact mismatch oracle</td><td class="positive">+8.616%</td><td class="positive">+5.306%</td><td class="positive">+100%</td><td>物理 headroom 存在，但不是可部署方法</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/jacru_n1_6_adjoint_low_rank_development_full1/diagnostic.png" alt="N1.6 伴随加权低秩 opened-development 三联图，展示校准网格、oracle 与部署候选 field gate，以及逐 geometry 增益" width="2880" height="936" loading="lazy" decoding="async" /><figcaption>中图虚线是冻结 5% field 门。exact mismatch 明显越线；rank-4 adjoint oracle 停在门边；可部署 fail-closed 与 damping 都低于门。右图只有一个 geometry cluster 越过 5%，所以不能用均值遮住几何依赖。</figcaption></figure>
+      <div class="two-col" style="margin-top:16px;">
+        <div class="panel">
+          <h3>初学者怎样读这个 NO-GO</h3>
+          <ol>
+            <li><strong>ε：</strong>高保真和便宜 forward 对同一个三维场给出的观测差。</li>
+            <li><strong>Aᵀε：</strong>这份观测差经过当前反投影后，真正推动三维解变化的部分。</li>
+            <li><strong>低秩 basis：</strong>用少数模板表示很多 correction；跨几何模板不随射线旋转，是本轮第一瓶颈。</li>
+            <li><strong>oracle：</strong>允许 evaluator 看答案来测方法上限；它帮助定位问题，但绝不能叫部署算法。</li>
+            <li><strong>fail-closed：</strong>预测越界就回退简单基线；它能阻止坏决定，却不能证明预测器学对。</li>
+          </ol>
+        </div>
+        <div class="panel">
+          <h3>N1.7 先做的最小实验</h3>
+          <ol>
+            <li>锁定 2 次 <code>AAᵀ</code> probe 与 10 步 refine 的 25F/24Aᵀ 预算。</li>
+            <li>用 fit/calibration 生成 per-geometry Krylov basis，不打开 OOD/fresh/final。</li>
+            <li>只运行 representation oracle；必须超过 damping、高阶教师、5% field 和逐 geometry tail。</li>
+            <li>oracle 通过后才写系数 learner；训练目标穿过有限步 CGLS，并保留 raw/fail-closed 双报告。</li>
+            <li>拿到师兄数据后，把 finite aperture、ray bending 或 calibration perturbation 作为真实 mismatch，而不是继续只用离散阶数 surrogate。</li>
+          </ol>
+          <div class="alert critical"><strong>当前论文边界</strong><span>N1.6 只能写成 synthetic 机制证伪和下一协议依据；不能声称优于 FNO、DeepONet、NeRIF、TDBOST，也不能把 exact oracle 写成算法成功。</span></div>
+        </div>
       </div>
     </section>
 

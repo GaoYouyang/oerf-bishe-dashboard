@@ -2358,3 +2358,34 @@ damping 再好 `+0.6864%`。smooth/interface family 分别为 `+2.1703%/+5.0944%
 下一算法改学正规方程真正感受的 `A^T epsilon` 或 measurement-range 分量，并把本轮高阶教师
 作为固定强基线。完整数字、物理边界和师兄问题见
 [N1.5 confirmation NO-GO](jacru_n1_5_high_order_teacher_confirmation_no_go_2026-07-18.md)。
+
+## 95. N1.6：不是“网络太小”，而是固定地图和导航员一起出了问题
+
+N1.6 按预注册把完整 measurement mismatch 分成两步：先用 fit split 学一个跨几何共享的
+PCA basis，再让 ridge 根据 measured observation、camera summary 和 CGLS-12 暖启动状态预测
+四个系数。预测结果留在 measurement space，统一经过当前几何的 `A^T`，部署时不读三维真值、
+不调用高阶 forward，也不自造一个和 forward 脱节的 adjoint。
+
+唯一一次 opened development 的可部署结果是 field `+3.539%`、H1 `+8.242%`、worst
+`+0.167%`。表面上全部场没有超过 1% 的伤害，但它有一半 case 触发 fail-closed，且相对简单
+component damping 反而差 `0.184%`，所以 5 项冻结门失败，confirmation 继续关闭。
+
+Oracle 把失败拆得很清楚：
+
+- exact mismatch 能带来 field `+8.616%`，说明物理校正仍有空间；
+- rank-4 adjoint oracle 只剩 `+4.985%`，固定共享 basis 丢掉约一半可用幅度，并仍有一个
+  相对 damping 的受害 case；
+- raw ridge 的伴随残差相对 damping 恶化 `25.357%`，说明系数预测方向也没有迁移；
+- fail-closed 把 raw 错误挡住了，但挡错不等于学对。
+
+**讲人话：**我们先画了一张所有相机几何共用的“四条路线地图”，再让一个小导航员选择走哪条。
+真实路网会随相机和射线旋转，所以地图本身不够；导航员到了新几何又把方向猜错。继续把 ridge
+换成更大的 MLP，最多只是在错误地图上训练更复杂的导航员。
+
+下一步暂名 N1.7 KCRC：不再使用静态 PCA。它从当前 residual、damping 和低阶 `AA^T` 生成每个
+geometry 自己的 Krylov basis；先检查这个可部署 basis 的 oracle 上限，再决定是否训练有界
+hypernetwork。两次 `AA^T` probe 配合 10 步 refine，仍严格匹配 `25F/24A^T`。训练目标也从
+measurement L2 改为穿过有限步 CGLS 后的 field/H1 response。
+
+完整数字、一级来源、师兄问题和复现命令见
+[N1.6 adjoint low-rank NO-GO](jacru_n1_6_adjoint_low_rank_no_go_2026-07-18.md)。
