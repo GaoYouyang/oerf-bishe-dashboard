@@ -187,10 +187,13 @@ truth-residual oracle 对 raw center 更安全，但 clean-target ratio 高达�
 
 ## 8. 复现入口
 
-- 冻结配置：`demo_t16_operator/configs/jacru_n1_1_flowoff_covariance_proximal_postopen_v1.json`
-- 正式 runner：`site_tools/run_jacru_n1_1_flowoff_covariance_proximal.py`
-- 独立 validator：`site_tools/validate_jacru_n1_1_flowoff_covariance_proximal.py`
-- 正式结果：`demo_t16_operator/results/jacru_n1_1_flowoff_covariance_proximal_postopen_public/`
-- raw-center post-open audit：`site_tools/audit_jacru_n1_1_raw_center_postopen.py`
-- raw-center 结果：`demo_t16_operator/results/jacru_n1_1_raw_center_postopen_audit_public/`
-- 正式 evidence checksums 与 raw-center audit checksums 分开保存；任何文件变化都应 fail closed。
+- [冻结配置](../demo_t16_operator/configs/jacru_n1_1_flowoff_covariance_proximal_postopen_v1.json)
+- [正式 runner](../site_tools/run_jacru_n1_1_flowoff_covariance_proximal.py)
+- [独立 validator](../site_tools/validate_jacru_n1_1_flowoff_covariance_proximal.py)
+- [正式结果机器摘要](../demo_t16_operator/results/jacru_n1_1_flowoff_covariance_proximal_postopen_public/summary.json)
+- [正式 evidence checksums](../demo_t16_operator/results/jacru_n1_1_flowoff_covariance_proximal_postopen_public/checksums.sha256)
+- [raw-center post-open audit runner](../site_tools/audit_jacru_n1_1_raw_center_postopen.py)
+- [raw-center 结果机器摘要](../demo_t16_operator/results/jacru_n1_1_raw_center_postopen_audit_public/summary.json)
+- [raw-center audit checksums](../demo_t16_operator/results/jacru_n1_1_raw_center_postopen_audit_public/checksums.sha256)
+
+正式 evidence 与 raw-center audit 的 checksums 分开保存；任何文件变化都应 fail closed。
