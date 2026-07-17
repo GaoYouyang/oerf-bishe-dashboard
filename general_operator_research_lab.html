@@ -177,25 +177,28 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">研究主线已进一步收敛到“含噪/失配观测下的三维 BOST 数据一致性 + 有界算子学习”。M2.2 证明 learned proposal 的场收益与仿射一致性在数学上可以共存；M2.6–M2.7 证明 camera-local coupling 能在调用预算内快速逼近观测；M2.8 与 N1.0 又连续证伪简单插值和 26 个可观测早停候选。当前真正缺口是独立 flow-off covariance、held-out camera 与 robust data fidelity，不是再堆一个更大的 FNO。</p>
+    <p class="lead">研究主线已收敛到“含噪/失配观测下的三维 BOST 数据一致性 + 有界算子学习”。N1.1 已把 synthetic flow-off 均值、camera/component covariance 与 anchored Tikhonov 接起来：平均 field signal 很强，但 14 个候选-模型组合全部被界面尾部或 continuous-clean-target 门否决；post-open raw-center 审计也为 0 个可观测候选通过。下一步是修正 finite-sample conformal、session-level calibration、逐相机门与 model-mismatch floor，不是再堆一个更大的 FNO。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">M2.2 · NULL HEADROOM</span><span class="chip blue">M2.7 · 23F TARGET PASS</span><span class="chip coral">M2.8 · CALIBRATION NO-GO</span><span class="chip coral">N1.0 · 0 / 26 JOINT-SAFE</span><span class="chip blue">6,660 SELECTIONS VALIDATED</span><span class="chip coral">FLOW-OFF · ABSENT</span><span class="chip coral">METHOD WIN · NOT AUTHORIZED</span></div>
+        <div class="chips"><span class="chip blue">M2.2 · NULL HEADROOM</span><span class="chip coral">N1.0 · 0 / 26 JOINT-SAFE</span><span class="chip coral">N1.1 · 0 / 14 PASS</span><span class="chip blue">1,260 ROWS + 60 CALIBRATIONS</span><span class="chip coral">RAW-CENTER SAFETY · 0 PASS</span><span class="chip coral">REAL FLOW-OFF · ABSENT</span><span class="chip coral">METHOD WIN · NOT AUTHORIZED</span></div>
         <h2>当前唯一主线：先把噪声与模型失配分开，再学习有界的重建算子</h2>
-        <p>exact camera-block affine PCG 已把“求解器不够快”排除为主要阻断项；真正冲突是越强地拟合带 bias/noise 的 <code>y</code>，越可能伤害特定界面场。N1.0 把 26 个 residual-threshold 候选分成 field-tail-safe 与 clean-renderer-safe 两区，但两区没有交点。下一算法必须先由独立 flow-off repeats 定义 whitener <code>W</code>，再比较固定 covariance-PCGLS、Huber/Student-t 与 TV/H1；经典方法先过联合门，才允许学习 <code>β</code>、proximal step 或 bounded stopping operator。</p>
+        <p>exact camera-block affine PCG 已把“求解器不够快”排除为主要阻断项。N1.1 进一步证明，即使在对候选有利的、同 session synthetic flow-off 标定下，paired structured GLS 也会稳定伤害 <code>base_seed=2113 / single_interface</code>；unpaired structured 则保护场尾部却破坏 clean-target consistency。exact nuisance oracle 同样失败，说明下一算法必须显式拆开 sensor covariance、model mismatch 与 raw-center safety。</p>
         <ol>
           <li><strong>M2.2 只授权数学 headroom：</strong>exact SVD projector 保留 JACRU 约 45.28% field gain，并把内部 reprojection 对齐到约 1e-14；它不可部署，也不是论文算法。</li>
           <li><strong>M2.6 找到谱机制：</strong>camera-block 明显加速 residual，但 setup 为 1001F-equiv oracle，且 harm 8.33%；不能写成效率胜利。</li>
           <li><strong>M2.7 排除“还不够快”：</strong>K=9、23F 时 JACRU mean reprojection 已到 matched CGLS 的 0.852x，worst field 仍为 -8.89%。</li>
           <li><strong>M2.8 关闭简单插值：</strong>固定 alpha 无通过点；逐样本看真值的连续插值 ceiling 仍无法救回同一界面样本。</li>
-          <li><strong>N1.0 JACRU：</strong>26 个可观测候选中 6 个 tail-safe、11 个 renderer-safe、0 个 joint-safe；最佳 tail-safe 的 clean ratio 仍为 1.639x / 3.160x。</li>
-          <li><strong>N1.0 pooled CNN：</strong>0 个 tail-safe、8 个 renderer-safe、0 个 joint-safe；说明冲突不是 JACRU 单点故障。</li>
-          <li><strong>下一算法门：</strong>独立 flow-off whitening + robust fidelity + held-out fail-closed 必须同时过 field/H1、renderer、harm/worst、coverage 与端到端成本。</li>
+          <li><strong>N1.0 JACRU：</strong>26 个可观测候选中 6 个 tail-safe、11 个 clean-target-safe、0 个 joint-safe；最佳 tail-safe 的 clean ratio 仍为 1.639x / 3.160x。</li>
+          <li><strong>N1.0 pooled CNN：</strong>0 个 tail-safe、8 个 clean-target-safe、0 个 joint-safe；说明冲突不是 JACRU 单点故障。</li>
+          <li><strong>N1.1 paired structured：</strong>JACRU development field +42.13%、clean ratio 0.619×，但 harm 8.33%、worst -6.05%；pooled worst -8.89%。</li>
+          <li><strong>N1.1 exact nuisance：</strong>精确偏置均值与精确 IID covariance 仍未救回尾部，covariance 估计误差不是唯一阻断项。</li>
+          <li><strong>post-open raw-center 门：</strong>paired JACRU development 仅 +0.72%，却有 27.78% harm、worst -22.66%；这个新门只指导 N1.2，不能改写正式判决。</li>
+          <li><strong>下一算法门：</strong>session-level flow-off + conformal + per-camera/lower discrepancy + robust fidelity + held-out fail-closed 必须同时过 field/H1、clean target、raw/classical 双参考、coverage 与端到端成本。</li>
           <li><strong>外部依赖：</strong>Mac 足够继续做 12³–16³ 机制证伪；真正需要师兄的是 flow-off temporal repeats、可调用 <code>A/Aᵀ</code>、永久 audit camera 与独立物理证据。</li>
         </ol>
         <div class="actions" style="margin:14px 0;">
-          <a class="button primary" href="#n1-stopping">看 N1.0 判决</a>
-          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_0_observable_stopping_no_go_2026-07-18.md">严格证据文档</a>
+          <a class="button primary" href="#n1-stopping">看 N1.0–N1.1 判决</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_1_flowoff_covariance_proximal_no_go_2026-07-18.md">N1.1 严格证据</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_primary_literature_audit_2026-07-18.md">24 篇一级来源</a>
           <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">讲人话日志</a>
           <a class="button" href="#reproduce">本机复现</a>
@@ -1285,7 +1288,7 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
         <div>
           <div class="eyebrow">N1.0 · 37 stopping specs · 6,660 selections · opened synthetic only</div>
           <h3>可观测早停把冲突分成两个安全区，但两区没有交点</h3>
-          <p>本轮复用冻结的 M2.7 K=0–10 轨迹，不重训、不看真值选择。26 个 residual-threshold 候选只读取 measured residual、相对 CGLS-12 residual 或 linear-system residual；11 个固定 K 只作对照。结果不是“所有规则都差”，而是早停能保护 field tail、晚停能保护 independent renderer，却没有一个阈值同时保护两者。</p>
+          <p>本轮复用冻结的 M2.7 K=0–10 轨迹，不重训、不看真值选择。26 个 residual-threshold 候选只读取 measured residual、相对 CGLS-12 residual 或 linear-system residual；11 个固定 K 只作对照。结果不是“所有规则都差”，而是早停能保护 field tail、晚停能保护 continuous-clean-target consistency，却没有一个阈值同时保护两者。该指标仍使用同一个 voxel <code>A</code>，不是 independent renderer。</p>
         </div>
         <div class="actions">
           <a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_0_observable_stopping_no_go_2026-07-18.md">读严格判决</a>
@@ -1295,33 +1298,70 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
         </div>
       </div>
       <div class="metric-grid">
-        <div class="metric"><b class="negative">0 / 26</b><span>JACRU joint-safe 可观测候选；6 个 tail-safe、11 个 renderer-safe，但集合无交点</span></div>
-        <div class="metric"><b class="negative">0 / 26</b><span>pooled CNN joint-safe；0 个 tail-safe、8 个 renderer-safe，说明不是 JACRU 单点故障</span></div>
-        <div class="metric"><b>1.639x / 3.160x</b><span>JACRU 最佳 tail-safe 规则的 clean-renderer mean / max ratio，仍明显越门</span></div>
-        <div class="metric"><b class="negative">8.33% / -7.55%</b><span>JACRU 最佳 renderer-safe 规则的 harm / worst field gain</span></div>
-        <div class="metric"><b class="negative">8.33% / -11.78%</b><span>pooled CNN 最佳 renderer-safe 规则的 harm / worst field gain</span></div>
+        <div class="metric"><b class="negative">0 / 26</b><span>JACRU joint-safe 可观测候选；6 个 tail-safe、11 个 clean-target-safe，但集合无交点</span></div>
+        <div class="metric"><b class="negative">0 / 26</b><span>pooled CNN joint-safe；0 个 tail-safe、8 个 clean-target-safe，说明不是 JACRU 单点故障</span></div>
+        <div class="metric"><b>1.639x / 3.160x</b><span>JACRU 最佳 tail-safe 规则的 continuous-clean-target mean / max ratio，仍明显越门</span></div>
+        <div class="metric"><b class="negative">8.33% / -7.55%</b><span>JACRU 最佳 clean-target-safe 规则的 harm / worst field gain</span></div>
+        <div class="metric"><b class="negative">8.33% / -11.78%</b><span>pooled CNN 最佳 clean-target-safe 规则的 harm / worst field gain</span></div>
         <div class="metric"><b>24F / 23A</b><span>轨迹最大调用；exact camera-block 的 1001F-equiv setup 另列且不算部署证据</span></div>
       </div>
-      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/jacru_n1_0_observable_discrepancy_stopping_postopen_public/diagnostic.png" alt="N1.0 可观测早停 Pareto 审计，比较 JACRU 与 pooled CNN 的 field tail、independent renderer consistency、选择迭代和调用成本" width="2540" height="1712" loading="lazy" decoding="async" /><figcaption>N1.0：左侧是 field 与 renderer 的双安全区，右侧展开代表规则的 K、harm、worst 与调用。绿色单门通过不等于联合授权；两种网络的 joint-safe count 都是 0。</figcaption></figure>
+      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/jacru_n1_0_observable_discrepancy_stopping_postopen_public/diagnostic.png" alt="N1.0 可观测早停 Pareto 审计，比较 JACRU 与 pooled CNN 的 field tail、同一 voxel 算子下的 continuous clean target consistency、选择迭代和调用成本" width="2540" height="1712" loading="lazy" decoding="async" /><figcaption>N1.0：左侧是 field 与 continuous-clean-target 的双安全区，右侧展开代表规则的 K、harm、worst 与调用。该 clean 指标不是独立 renderer；绿色单门通过也不等于联合授权。</figcaption></figure>
       <div class="panel" style="margin-top:14px;">
           <div class="chips"><span class="chip coral">NO METHOD AUTHORIZATION</span><span class="chip blue">TRUTH-FREE SELECTION TESTED</span><span class="chip gold">FLOW-OFF REQUIRED</span></div>
           <h3 style="margin-top:10px;">为什么不能再调一个阈值</h3>
           <ol>
-            <li><strong>太早：</strong><code>base_residual_x4</code> 平均 K=1.89，JACRU harm 仅 2.78%，但 clean renderer 平均仍为 base 的 1.639 倍。</li>
-            <li><strong>再晚：</strong><code>base_residual_x1.5</code> 平均 K=3.97，renderer 已安全，harm 却回到 8.33%，worst 为 -7.55%。</li>
-            <li><strong>换网络：</strong>pooled CNN 没有任何 tail-safe 可观测候选，最佳 renderer-safe 规则 worst 为 -11.78%。</li>
+            <li><strong>太早：</strong><code>base_residual_x4</code> 平均 K=1.89，JACRU harm 仅 2.78%，但 continuous-clean-target residual 平均仍为 base 的 1.639 倍。</li>
+            <li><strong>再晚：</strong><code>base_residual_x1.5</code> 平均 K=3.97，clean-target consistency 已安全，harm 却回到 8.33%，worst 为 -7.55%。</li>
+            <li><strong>换网络：</strong>pooled CNN 没有任何 tail-safe 可观测候选，最佳 clean-target-safe 规则 worst 为 -11.78%。</li>
             <li><strong>结论：</strong>标量 residual stopping 不足以区分真实场、camera bias 与 correlated noise。</li>
           </ol>
           <div class="actions"><a class="button" href="site_tools/run_jacru_n1_0_observable_discrepancy_stopping.py">runner</a><a class="button" href="site_tools/validate_jacru_n1_0_evidence.py">独立 validator</a><a class="button" href="demo_t16_operator/results/jacru_n1_0_observable_discrepancy_stopping_postopen_public/checksums.sha256">SHA-256</a></div>
       </div>
+      <div class="section-head" style="margin-top:30px;">
+        <div>
+          <div class="eyebrow">N1.1 · 3 model seeds · 30 cases · 1,260 candidate rows · opened synthetic only</div>
+          <h3>Flow-off covariance 带来强平均信号，仍被稳定界面反例严格否决</h3>
+          <p>64/64/64 个 fit、threshold-calibration、audit repeats 分别估计同 session 均值、camera/component covariance 与未见覆盖率；随后用 dense covariance-weighted anchored Tikhonov 求一个不读 field truth 的机制上界。14 个候选-模型组合全部 NO-GO，0 个 oracle 通过全部门。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_1_flowoff_covariance_proximal_no_go_2026-07-18.md">读 N1.1 严格复盘</a>
+          <a class="button" href="demo_t16_operator/results/jacru_n1_1_flowoff_covariance_proximal_postopen_public/summary.json">正式机器摘要</a>
+          <a class="button" href="demo_t16_operator/results/jacru_n1_1_raw_center_postopen_audit_public/summary.json">raw-center 事后审计</a>
+          <a class="button" href="site_tools/validate_jacru_n1_1_flowoff_covariance_proximal.py">独立 validator</a>
+          <a class="button" href="demo_t16_operator/results/jacru_n1_1_flowoff_covariance_proximal_postopen_public/checksums.sha256">正式 SHA-256</a>
+        </div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><b class="negative">0 / 14</b><span>全部候选-模型最终通过数；deployable-input 与 oracle pass 都是 0</span></div>
+        <div class="metric"><b>+42.13%</b><span>paired structured JACRU development mean field gain vs best matched；不能覆盖 8.33% harm</span></div>
+        <div class="metric"><b>0.619×</b><span>同候选 continuous-clean-target residual / base；使用同一个 voxel A，不是独立 renderer</span></div>
+        <div class="metric"><b class="negative">-6.05% / -8.89%</b><span>同一 single-interface case 上 JACRU / pooled CNN 的 development worst</span></div>
+        <div class="metric"><b>93.49% / 93.54%</b><span>paired / unpaired audit coverage；64 样本普通 q95 并不等于 finite-sample 95%</span></div>
+        <div class="metric"><b class="negative">0 raw-safe</b><span>post-open raw-center 六门下可观测候选通过数；只用于冻结下一协议</span></div>
+      </div>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>候选 / 模型</th><th>development field / clean</th><th>development tail</th><th>OOD field / clean</th><th>为什么失败</th></tr></thead>
+          <tbody>
+            <tr><td>paired structured / JACRU</td><td class="positive">+42.133% / 0.619×</td><td class="negative">harm 8.33%；worst -6.054%</td><td class="positive">+34.420% / 0.668×</td><td class="negative">稳定界面反例</td></tr>
+            <tr><td>paired structured / pooled CNN</td><td class="positive">+41.009% / 0.616×</td><td class="negative">harm 8.33%；worst -8.891%</td><td class="positive">+34.292% / 0.667×</td><td class="negative">稳定界面反例</td></tr>
+            <tr><td>unpaired structured / JACRU</td><td>+43.169% / 1.207×</td><td class="positive">harm 0%；worst +0.937%</td><td class="negative">+34.827% / 1.401×</td><td class="negative">clean-target 一致性</td></tr>
+            <tr><td>paired exact mean + IID oracle</td><td>与 paired estimated 几乎一致</td><td class="negative">worst -6.169% / -9.002%</td><td>平均增益仍为正</td><td class="negative">精确 nuisance 也救不回</td></tr>
+            <tr><td>truth-residual oracle</td><td>raw-center tail 安全</td><td>直接读取 field truth</td><td class="negative">clean ratio 约 9×</td><td class="negative">不可部署且一致性失败</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/jacru_n1_1_flowoff_covariance_proximal_postopen_public/diagnostic.png" alt="N1.1 flow-off covariance anchored Tikhonov 上界四联图，展示 field gain 与 continuous clean target、尾部伤害、独立 flow-off audit 和逐门判决" width="2600" height="1838" loading="lazy" decoding="async" /><figcaption>N1.1 正式结果：左上平均增益很强，右上显示 paired 路线仍越过 5% harm 与 -5% worst 门；左下 93.5% 左右的 coverage 与 64 样本普通 q95 的有限样本行为一致；右下任何一格绿色都不能替代整行授权。</figcaption></figure>
+      <div class="alert critical"><strong>独立复核通过，研究边界仍受限</strong><span>标准库-only validator 重算 60 / 1,260 / 84 / 180 / 12 行与 14 个最终判决，确认 0 pass、checksums 和 authorization 一致；但 flow-off scale 仍按目标 clean RMS 条件化，ordinary q95 不是 strict conformal 95%，oracle coverage 借用了 estimated gate，正式产物也没有完整记录 CLI 与全部传递依赖哈希。它仍是 opened synthetic NO-GO，不能升级为算法或真实校准证据。</span></div>
       <div class="two-col" style="margin-top:14px;">
         <div class="panel">
-          <h3>N1.1 的真实数学接口</h3>
+          <h3>N1.2 的修正数学接口</h3>
           <div class="formula">B = W A; &nbsp; r = W(Ax-y); &nbsp; min ρ(r) + βR(x)</div>
           <ol>
-            <li>用独立 flow-off repeats 拟合低参数 camera-block whitener <code>W</code>，不是把 <code>(AAᵀ)⁻¹</code> 叫噪声协方差。</li>
-            <li>先比较固定 Gaussian、Huber、Student-t 与 Tikhonov/TV/H1；经典 ceiling 过门后才学习 <code>β</code> 或 proximal operator。</li>
-            <li>永久留一台 camera 或 ray block；held-out evidence 不支持时强制回退到冻结 robust baseline。</li>
+            <li>一个 session-level flow-off packet 服务多个场；噪声尺度只读 background intensity 等部署可见量。</li>
+            <li>用 split-conformal 第 62 个次序统计量，同时冻结 global upper、per-camera max upper 与 lower gate。</li>
+            <li>每个 mean/covariance/threshold 候选单独做 audit coverage；同时保护 strongest classical 与 raw center。</li>
+            <li>先比较 Gaussian、Huber、Student-t 与 Tikhonov/TV/H1；经典 matrix-free ceiling 过门后才学习 bounded <code>β</code> 或 proximal operator。</li>
           </ol>
         </div>
         <div class="panel">
@@ -1337,12 +1377,12 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
       </div>
       <div class="pipeline" style="grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:16px;">
         <div><b>N1.0 · Scalar stopping closed</b><span>26 个可观测候选无联合安全点；不再搜索 residual 标量阈值</span></div>
-        <div><b>N2 · Held-out fail-closed</b><span>永久留 audit camera / ray block；独立观测不支持时退回 matched robust baseline</span></div>
-        <div><b>N1.1 · Covariance + robust proximal</b><span>先比较 flow-off whitening + Huber/Student-t + fixed β；经典 ceiling 通过后才学习 operator</span></div>
+        <div><b>N1.1 · Dense covariance ceiling closed</b><span>强平均信号仍伤界面尾部；0/14 pass，禁止方法授权</span></div>
+        <div><b>N1.2 · Corrected fail-closed</b><span>conformal + camera/lower gate + raw/classical 双参考 + model-mismatch floor</span></div>
       </div>
       <div class="two-col" style="margin-top:14px;">
         <div class="panel">
-          <div class="chips"><span class="chip coral">NO METHOD AUTHORIZATION</span><span class="chip blue">M2.3–M2.8 VALIDATED</span><span class="chip blue">N1.0 NO-GO</span><span class="chip gold">FLOW-OFF CONTRACT NEXT</span></div>
+          <div class="chips"><span class="chip coral">NO METHOD AUTHORIZATION</span><span class="chip blue">N1.1 1,260 ROWS</span><span class="chip coral">0 / 14 PASS</span><span class="chip gold">N1.2 PROTOCOL NEXT</span></div>
           <h3 style="margin-top:10px;">现在最值得学的四件事</h3>
           <ol>
             <li>discrepancy principle：为什么 noisy inverse 不应把 residual 压到零。</li>
@@ -1557,7 +1597,7 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
     </section>
 
     <section id="plan" class="band">
-      <div class="section-head"><div><div class="eyebrow">保姆式路径 · 当前主线 N1</div><h2>先看懂残差早停的两个安全区，再学习真正的 flow-off 白化</h2><p>基础薄弱时不要从“发明大网络”开始。先能手推 <code>Ax=y</code>、CGLS/PCGLS 和 early stopping，复算 N1.0 为什么 26 个可观测候选没有联合安全点；再学习 covariance、whitening、Huber/Student-t 与 held-out camera。只有经典、固定、可解释的方法先过 field、renderer、tail 与成本四门，才进入 bounded operator learning。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_0_observable_stopping_no_go_2026-07-18.md">N1.0 初学者判决</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_primary_literature_audit_2026-07-18.md">N1 一级来源</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_protocol_red_team_2026-07-18.md">N1 协议红队</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">讲人话日志</a></div></div>
+      <div class="section-head"><div><div class="eyebrow">保姆式路径 · 当前主线 N1.2</div><h2>先看懂 N1.1 为什么均值很强仍失败，再修 finite-sample 与逐相机安全门</h2><p>基础薄弱时不要从“发明大网络”开始。先能手推 <code>Ax=y</code>、CGLS/PCGLS、anchored Tikhonov 与 discrepancy principle；再复算 N1.1 的 covariance、coverage、raw-center harm 和 model-mismatch floor。只有经典、固定、可解释的方法先过 field、continuous-clean-target、tail、coverage 与成本门，才进入 bounded operator learning。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_1_flowoff_covariance_proximal_no_go_2026-07-18.md">N1.1 初学者复盘</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_primary_literature_audit_2026-07-18.md">N1 一级来源</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_protocol_red_team_2026-07-18.md">N1 协议红队</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">讲人话日志</a></div></div>
       <div class="week-grid" id="weekGrid">
         <article class="week-card"><span class="chip">W1</span><h3>线性算子与伴随</h3><ol><li>矩阵、SVD、秩与零空间</li><li>手推 <code>Ax</code> / <code>Aᵀz</code></li><li>完成 dot-product toy</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w1" />能解释伴随为何不是逆矩阵</label></article>
         <article class="week-card"><span class="chip">W2</span><h3>流体与 BOS 物理链</h3><ol><li>连续方程、物质导数、涡量</li><li>T→ρ→n→deflection</li><li>thin ray、cone ray、DOF</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w2" />能画出有限孔径如何改变每条 ray</label></article>
@@ -1577,8 +1617,9 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
         <article class="week-card"><span class="chip blue">W18 · 已完成 NO AUTH</span><h3>Certified grouped majorizer</h3><ol><li>证明任意合法 partition 均满足 <code>M<sub>P</sub>≥|A|</code></li><li>130 次证书审计零违反</li><li>4/8 胜负与最坏 harm 否决性能授权</li></ol><label class="checkline"><input type="checkbox" data-week="rk-v3-partition" />能解释 10.72% mean gain 为什么仍未授权论文主张</label></article>
         <article class="week-card"><span class="chip blue">W19 · 已完成 NO-GO</span><h3>RCCF 风险校准与回退</h3><ol><li>严格隔离 train / model selection / risk calibration / fresh</li><li>Bonferroni CP 风险/coverage 与独立完整政策指纹绑定</li><li>46 项测试、136 次审计；可靠接管 coverage 为 0</li></ol><label class="checkline"><input type="checkbox" data-week="rk-v4-rccf" />能解释零失败为何仍至少约需 59 个接管样本</label></article>
         <article class="week-card"><span class="chip blue">W20 · 已归档</span><h3>Support-set 与公开层析桥</h3><ol><li>只在 train/model-selection 比较 envelope / Mahalanobis / kNN support</li><li>冻结后换全新 calibration，禁止复用 v4 risk rigs</li><li>ASTRA/TIGRE 加空间 front harm 与 actual-A 成本</li></ol><label class="checkline"><input type="checkbox" data-week="rk-v4-support" />能说明为什么不能事后放宽当前支持包络</label></article>
-        <article class="week-card"><span class="chip blue">W21 · 已完成 NO-GO</span><h3>N1.0 可观测早停上界</h3><ol><li>手推 first-crossing 与 K=0–10 调用账本</li><li>复算 JACRU 6 个 tail-safe、11 个 renderer-safe、0 个 joint-safe</li><li>理解 simulator scale、exact block 与真实 flow-off 的区别</li></ol><label class="checkline"><input type="checkbox" data-week="rk-n1-observable-stopping" />能不用“模型不行”解释两个安全区为什么无交点</label></article>
-        <article class="week-card"><span class="chip gold">W22 · 当前</span><h3>N1.1 flow-off covariance</h3><ol><li>从 repeats 估 mean、camera block、low-rank + diagonal covariance</li><li>验证 SPD、whitening round-trip、held-out coverage 与时间漂移</li><li>同 calls 比较 fixed PCGLS、Huber、Student-t、TV/H1</li></ol><label class="checkline"><input type="checkbox" data-week="rk-n1-flowoff-whitening" />能解释 <code>(AAᵀ)⁻¹</code> 为什么不是噪声协方差</label></article>
+        <article class="week-card"><span class="chip blue">W21 · 已完成 NO-GO</span><h3>N1.0 可观测早停上界</h3><ol><li>手推 first-crossing 与 K=0–10 调用账本</li><li>复算 JACRU 6 个 tail-safe、11 个 clean-target-safe、0 个 joint-safe</li><li>理解 simulator scale、exact block 与真实 flow-off 的区别</li></ol><label class="checkline"><input type="checkbox" data-week="rk-n1-observable-stopping" />能不用“模型不行”解释两个安全区为什么无交点</label></article>
+        <article class="week-card"><span class="chip blue">W22 · 已完成 NO-GO</span><h3>N1.1 flow-off covariance ceiling</h3><ol><li>从 64/64/64 repeats 估 mean、camera random effect 与 audit coverage</li><li>复算 paired +42.13% mean 仍被同一界面 tail 否决</li><li>理解 exact nuisance、raw-center safety 与 dense budget 边界</li></ol><label class="checkline"><input type="checkbox" data-week="rk-n1-flowoff-whitening" />能解释平均增益很强为什么仍是 0/14 pass</label></article>
+        <article class="week-card"><span class="chip gold">W23 · 当前</span><h3>N1.2 corrected fail-closed</h3><ol><li>手推 64 样本 conformal 第 62 个次序统计量</li><li>实现 candidate-specific global / camera-max / lower coverage</li><li>加入 raw/classical 双参考与 model-mismatch floor</li></ol><label class="checkline"><input type="checkbox" data-week="rk-n1-corrected-conformal" />能把 sensor noise、forward mismatch 与 proposal harm 分开记账</label></article>
         <article class="week-card"><span class="chip gold">PARALLEL · 数据请求</span><h3>H2 / 4D 真实迁移门</h3><ol><li>向师兄确认 calibration pair 或 timestamp sequence</li><li>永久留 camera/session，按 rig/session 切分</li><li>只有 metadata 与终点齐全才写真实论文合同</li></ol><label class="checkline"><input type="checkbox" data-week="rk-next-h2-h3" />能根据数据合同选择 H2 或 4D</label></article>
       </div>
       <div class="alert"><strong>本机、并行与网络策略 · 2026-07-17 实测</strong><span>当前正式 Diag-D0 与 Metric-A 小型 smoke 都是本机计算，网络不在关键路径。公开 NeRIF 的 21.9 MB arXiv PDF 实测 13.14 秒（约 1.66 MB/s），本项目 Pages 271 kB 为 1.72 秒；无需调整 VPN。CPU 可并行文献、测试、图表和页面，MPS 正式轨迹与 CPU64 审计保持单路。Mac 足够跑 16³、多 rig、小 MLP/ridge；32³ 多 seed 先 profile，64³–128³ 或 differentiable cone/curved-ray renderer 才触发服务器门。眼下最大的外部依赖是实验室数据合同。<a href="document_reader.html?doc=docs%2Foerf_parallel_execution_protocol_2026-07-17.md">看完整并行协议</a> · <a href="document_reader.html?doc=docs%2Flocal_compute_and_server_gate_2026-07-16.md">看算力与服务器门禁</a></span></div>

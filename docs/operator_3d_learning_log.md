@@ -2186,3 +2186,59 @@ TV/H1；只有经典方法先得到 joint-safe 区，才学习 beta、proximal s
 operator。
 
 完整判决见 [N1.0 observable stopping NO-GO](jacru_n1_0_observable_stopping_no_go_2026-07-18.md)。
+
+## 84. N1.1：先用 flow-off 标定，再做 anchored Tikhonov 上界
+
+这次没有训练新的 operator。我们先把每个 evaluation rig 的 synthetic flow-off 分成三份：64 帧
+拟合均值/covariance、64 帧定 threshold、64 帧只做 audit。paired 模式模拟同一 session，允许
+flow-off 估计目标帧共享的 camera/component offset；unpaired 模式只学习偏置分布。
+
+然后以网络输出 `x0` 为中心，求 covariance-weighted anchored Tikhonov：
+
+```text
+x(lambda) = x0 - A^T (A A^T + lambda C)^-1 (A x0 - y)
+```
+
+选满足 calibration discrepancy 的最大 lambda，也就是“观测允许时尽量少改网络”。dense
+`AA^T` 只作 toy ceiling：12 个几何合计 12,012F-equivalent，不能说可部署。
+
+**讲人话：**我们先用静止背景测相机自己会抖多少，再决定网络结果最多应该被观测拉动多少。
+
+## 85. 平均增益超过 40%，为什么仍然必须写 NO-GO
+
+paired structured 的 JACRU development field gain 为 `+42.133%`，OOD 为 `+34.420%`；clean
+target ratio 也降到 `0.619x / 0.668x`。数字很漂亮，但 `base_seed=2113 / single_interface`
+仍在三个模型种子上受害，development harm `8.33%`、worst `-6.054%`。pooled CNN 同一 case
+worst 为 `-8.891%`。
+
+更关键的是，直接给 evaluator 精确 bias mean 和精确 IID covariance，受害样本仍未消失。这把
+问题从“covariance 估不准”推进到了“bias 与物理场在当前欠定算子里不可辨识、模型失配和 robust
+data term 不足”。14 个候选-模型组合全部 NO-GO，0 个 oracle 通过全部门。
+
+**讲人话：**平均分很高，但同一道薄界面题每次都答错。毕业设计要的是能解释并保护这种反例，
+不是把它藏在平均数里。
+
+## 86. 打开结果后才发现：还必须保护 raw network center
+
+正式门比较的是 strongest matched classical baseline。打开结果后才补查 correction 相对它自己的
+raw learned proposal 是否安全，因此这项只能标为 post-open diagnostic，不能修改正式判决。
+
+paired structured 相对 raw center：JACRU development mean 只有 `+0.716%`，但 27.78% 样本
+受害、worst `-22.662%`；pooled CNN mean 为 `-2.394%`，harm 38.89%、worst `-23.229%`。
+所有不读 truth、不读 exact nuisance 的候选在双 split raw-safety 六项门下仍是 0 pass。
+
+下一协议必须同时比较 strongest classical 和 raw center。只赢一个参照，不能叫安全改进。
+
+## 87. 红队把 N1.2 的修正顺序定清楚了
+
+N1.1 的 NO-GO 有价值，但协议还有十个不能忽略的缺口：64 样本普通 95th quantile 的新点覆盖
+实际约 93.85%；flow-off 噪声尺度仍按目标 clean RMS 条件化；oracle coverage 借用了 estimated
+gate；clean target 使用同一个 voxel `A`，不是独立 renderer；scratch/formal CLI 和传递依赖哈希
+也没有完整写入产物。
+
+所以 N1.2 的顺序已经冻结为：session-level calibration -> finite-sample conformal 第 62 个次序
+统计量 -> candidate-specific audit -> global/per-camera/lower 三门 -> raw/classical 双参考 ->
+model-mismatch floor -> matrix-free multi-shift Lanczos。经典 IID/structured GLS、whitened CGLS、
+Huber/Student-t 全部过门后，才允许学习 bounded lambda 或 robust weight。
+
+完整复盘见 [N1.1 flow-off covariance proximal NO-GO](jacru_n1_1_flowoff_covariance_proximal_no_go_2026-07-18.md)。

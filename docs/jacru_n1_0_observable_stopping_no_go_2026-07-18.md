@@ -9,9 +9,9 @@
 N1.0 没有得到可授权的早停规则，但它把 M2.8 留下的疑问进一步封住了：
 
 1. 我们冻结并比较了 37 个 stopping specs，其中 26 个是只依赖 residual 的非固定迭代候选；两种网络、180 条方法/种子/样本轨迹共生成 6,660 行选择结果。
-2. JACRU 的 26 个可观测候选中，6 个保护了 field tail，11 个保护了 clean independent renderer，**联合安全候选为 0**。
-3. pooled CNN 的 26 个可观测候选中，0 个保护 field tail，8 个保护 renderer，**联合安全候选仍为 0**。
-4. 早停在 K 约 1--2 时可以保住部分界面场，但 clean renderer residual 仍过大；继续到 K 约 4--6 后 renderer 变好，原先的尾部伤害重新出现。
+2. JACRU 的 26 个可观测候选中，6 个保护了 field tail，11 个保护了 continuous-clean-target consistency，**联合安全候选为 0**。该 clean 指标仍使用同一个 voxel `A`，不是 independent renderer。
+3. pooled CNN 的 26 个可观测候选中，0 个保护 field tail，8 个保护 continuous-clean-target consistency，**联合安全候选仍为 0**。
+4. 早停在 K 约 1--2 时可以保住部分界面场，但 continuous-clean-target residual 仍过大；继续到 K 约 4--6 后该一致性变好，原先的尾部伤害重新出现。
 5. 因此，当前冲突不是找一个更聪明的标量阈值就能解决。下一步需要独立 flow-off 标定、covariance whitening 与 held-out camera fail-closed；不能直接训练 stopping MLP。
 
 这是一个有价值的负结果：它阻止我们把 opened synthetic 上调出来的阈值伪装成可部署算法，也说明 N1 的核心不是“什么时候停”，而是“用什么噪声模型定义数据一致性”。
@@ -28,7 +28,7 @@ b = A x_net - y
 x_K = x_net - A^T z_K,  K = 0, ..., 10
 ```
 
-选择器只允许读取冻结结果中的可观测 residual 字段，不得读取 field truth、clean renderer、OOD 标签或 case family。若阈值直到 K=10 都未命中，返回 prepared CGLS-12 base，但仍计入完整尝试预算。
+选择器只允许读取冻结结果中的可观测 residual 字段，不得读取 field truth、continuous clean target、OOD 标签或 case family。若阈值直到 K=10 都未命中，返回 prepared CGLS-12 base，但仍计入完整尝试预算。
 
 ### 37 个候选规格
 
@@ -45,16 +45,16 @@ x_K = x_net - A^T z_K,  K = 0, ..., 10
 
 ### JACRU
 
-| 代表候选 | 平均 K | mean field gain | harm / worst | clean renderer ratio mean / max | 判决 |
+| 代表候选 | 平均 K | mean field gain | harm / worst | continuous-clean-target ratio mean / max | 判决 |
 |---|---:|---:|---:|---:|---|
-| `base_residual_x4` | 1.889 | +44.11% | 2.78% / -1.98% | 1.639x / 3.160x | tail-safe，renderer 不安全 |
-| `base_residual_x1.5` | 3.972 | +41.52% | 8.33% / -7.55% | 1.096x / 1.298x | renderer-safe，tail 不安全 |
+| `base_residual_x4` | 1.889 | +44.11% | 2.78% / -1.98% | 1.639x / 3.160x | tail-safe，clean-target 不安全 |
+| `base_residual_x1.5` | 3.972 | +41.52% | 8.33% / -7.55% | 1.096x / 1.298x | clean-target-safe，tail 不安全 |
 
-`base_residual_x4` 已是 6 个 tail-safe 候选中 renderer 最好的一个，但 mean clean ratio 仍为 `1.639x`，最坏达到 `3.160x`；明显越过 `1.10x / 1.50x` development 门。`base_residual_x1.5` 已进入 renderer 安全区，却恢复为 `8.33%` harm，最坏 field gain `-7.55%`；越过 `5% / -5%` 尾部门。
+`base_residual_x4` 已是 6 个 tail-safe 候选中 clean-target consistency 最好的一个，但 mean clean ratio 仍为 `1.639x`，最坏达到 `3.160x`；明显越过 `1.10x / 1.50x` development 门。`base_residual_x1.5` 已进入 clean-target 安全区，却恢复为 `8.33%` harm，最坏 field gain `-7.55%`；越过 `5% / -5%` 尾部门。
 
 ### pooled CNN
 
-pooled CNN 没有任何 tail-safe 可观测候选。renderer-safe 中 field tail 最好的 `system_fraction_0.02` 平均选择 K=6.389，mean field gain 为 `+40.00%`，clean ratio 为 `0.904x / 1.195x`，但 harm 仍为 `8.33%`，worst field gain 为 `-11.78%`。
+pooled CNN 没有任何 tail-safe 可观测候选。clean-target-safe 中 field tail 最好的 `system_fraction_0.02` 平均选择 K=6.389，mean field gain 为 `+40.00%`，clean ratio 为 `0.904x / 1.195x`，但 harm 仍为 `8.33%`，worst field gain 为 `-11.78%`。
 
 所以这不是 JACRU 独有故障，也不能归因于一次模型训练。两种 learned proposal 都显示同一个结构性现象：越强地服从含噪 `y`，越可能把不可辨认的 bias/noise 写回欠定三维场。
 
@@ -66,7 +66,7 @@ pooled CNN 没有任何 tail-safe 可观测候选。renderer-safe 中 field tail
 - camera bias 在当前 full-row-rank `A` 下可以被某个 field correction 精确解释，单帧 target 无法区分二者；
 - exact camera-block preconditioner 是 `(AA^T)_camera^-1`，不是 detector noise covariance；
 - development split 已参与 T0 model early stopping，不能再冒充独立 calibration/lock split；
-- clean renderer 只用于事后评分，没有进入 stopping rule。
+- continuous clean target 只用于事后评分，没有进入 stopping rule；该指标是同一个 voxel `A` 的预测与 continuous target 之差，不是独立 renderer 或 held-out camera。
 
 因此 N1.0 只能被称为 **post-open observable stopping ceiling**。它没有验证 flow-off whitening，也没有证明真实 BOST 早停失败。
 
@@ -118,6 +118,6 @@ min_x rho(r) + beta R(x)
 
 可以写：
 
-> 在打开的有限孔径 BOST synthetic fixture 上，基于 measured residual、base-relative residual 与 linear-system residual 的 26 个可观测早停候选均无法同时满足 independent-renderer consistency 与 field-tail safety。该结果说明，对含 camera bias 的欠定仿射目标，标量 residual stopping 不足以解除数据一致性与尾部恢复之间的冲突，并支持转向独立 flow-off covariance、稳健数据项与 held-out fail-closed validation。
+> 在打开的有限孔径 BOST synthetic fixture 上，基于 measured residual、base-relative residual 与 linear-system residual 的 26 个可观测早停候选均无法同时满足同一 voxel 算子下的 continuous-clean-target consistency 与 field-tail safety。该结果说明，对含 camera bias 的欠定仿射目标，标量 residual stopping 不足以解除数据一致性与尾部恢复之间的冲突，并支持转向独立 flow-off covariance、稳健数据项与 held-out fail-closed validation。这里没有 independent renderer 证据。
 
 不能写：提出了新早停算法、优于 DeepONet/FNO/NeRIF/TDBOST、真实 BOST 泛化成功、flow-off whitening 已验证、可部署效率已证明或高水平论文已经完成。
