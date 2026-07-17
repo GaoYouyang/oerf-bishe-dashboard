@@ -1,0 +1,131 @@
+{
+  "schema_version": "jacru-m2-7-target-no-harm-pareto-ceiling-postopen-config-1.0",
+  "report_schema_version": "jacru-m2-7-target-no-harm-pareto-ceiling-postopen-report-1.0",
+  "status": "FROZEN_BEFORE_FIRST_TARGET_NO_HARM_PARETO_CEILING_EXECUTION",
+  "frozen_date": "2026-07-17",
+  "evidence_level": "E1_OPENED_T0_EXACT_CAMERA_BLOCK_TARGET_PARETO_CEILING_NO_FRESH",
+  "figure_title": "M2.7 target/no-harm Pareto ceiling under 24-call cap",
+  "readme_title": "JACRU-M2.7 target/no-harm Pareto ceiling",
+  "preconditioner_oracle_only": true,
+  "report_status": {
+    "success": "M2_7_TARGET_NO_HARM_PARETO_FEASIBLE_ORACLE_ONLY",
+    "no_go": "M2_7_TARGET_NO_HARM_PARETO_ORACLE_NO_GO"
+  },
+  "source_t0_config": "demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json",
+  "source_t0_config_sha256": "e4e0dbb3cc3e573e5c7ed025bae50b3eb6d66ffdd511772b30fa222ce791a5fd",
+  "source_t0_results": "demo_t16_operator/results/jacru_m2_learned_residual_t0_public",
+  "source_t0_summary_sha256": "60ea9cab9966502254d24b4b99645603a52ba80cda14b09e8bf862545edb6cdb",
+  "source_m2_2_config": "demo_t16_operator/configs/jacru_m2_2_exact_nullspace_oracle_postopen_v1.json",
+  "source_m2_2_config_sha256": "8d346bcab173e4d9e6484cce42021e7e99b54768081de3f5a1c2a2a4aa8fb8e5",
+  "source_m2_2_results": "demo_t16_operator/results/jacru_m2_2_exact_nullspace_oracle_postopen_public",
+  "source_m2_2_summary_sha256": "a6a57561c982d650b935c3ae7d8251c853f104e5d5cf9bf4bbd48134e257023a",
+  "source_m2_3_config": "demo_t16_operator/configs/jacru_m2_3_matrix_free_projection_postopen_v1.json",
+  "source_m2_3_config_sha256": "1a709203f6fb5db252f6c7f404d4e20927687da0026dccfeed83519b378dd955",
+  "source_m2_3_results": "demo_t16_operator/results/jacru_m2_3_matrix_free_projection_postopen_public",
+  "source_m2_3_summary_sha256": "2e66200e0e63c0b20af277a5b4bad4b01e036b3226d0e848924112b8c01c8536",
+  "source_m2_4_config": "demo_t16_operator/configs/jacru_m2_4_affine_observation_projection_postopen_v1.json",
+  "source_m2_4_config_sha256": "42df2c243d2abd7ab7c9c24303f89502eafa6c2eec26f425353d4b74ff1d52ce",
+  "source_m2_4_results": "demo_t16_operator/results/jacru_m2_4_affine_observation_projection_postopen_public",
+  "source_m2_4_summary_sha256": "dfd4994895ca35a8bd60ca62f3adf41ccaac0fcb7a9a7edb7c2441bcf42ac2e4",
+  "source_m2_5_config": "demo_t16_operator/configs/jacru_m2_5_exact_jacobi_preconditioner_oracle_postopen_v1.json",
+  "source_m2_5_config_sha256": "8a34a2cb41902993a7fb50d62a72eb0e4373832226695001454981effae38673",
+  "source_m2_5_results": "demo_t16_operator/results/jacru_m2_5_exact_jacobi_preconditioner_oracle_postopen_public",
+  "source_m2_5_summary_sha256": "c74a86f74a9bda6e549d59b4f14e1ab0bf4b43380ddd0ce6d0f1ecc1e43d8711",
+  "source_m2_6_config": "demo_t16_operator/configs/jacru_m2_6_camera_block_preconditioner_oracle_postopen_v1.json",
+  "source_m2_6_config_sha256": "713eea51c8c5fa99639226913efa21048a8e8afb18eedbdae8f6111357a96d86",
+  "source_m2_6_results": "demo_t16_operator/results/jacru_m2_6_camera_block_preconditioner_oracle_postopen_public",
+  "source_m2_6_summary_sha256": "f85863208e98fafa06f91555b6ee63fae1f3575e13b84554eaed784d3aafbe78",
+  "reason_for_ceiling": "M2.6 showed strong camera-block residual acceleration but selected K=12 exceeded the 24-forward-call cap and still harmed one development single-interface case across every model seed. M2.7 enumerates every integer K from 0 through 10 under the exact camera-block oracle to decide whether pure affine acceleration has any joint residual/field/no-harm point before more complex preconditioners are considered.",
+  "methods": [
+    "jacru_m2",
+    "pooled_cnn"
+  ],
+  "reference_anchor": {
+    "method": "prepared_cgls_base",
+    "iterations": 12,
+    "used_to_generate_network_features_but_not_as_projection_measurement_target": true
+  },
+  "projection": {
+    "snapshot_iterations": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "denominator_floor": 1e-30,
+    "variants": [
+      {
+        "name": "affine_pcg_dense_exact_camera_block_oracle",
+        "target_mode": "affine_observation",
+        "preconditioner": "dense_exact_camera_block_jacobi_oracle",
+        "damping_fraction_of_operator_norm_squared_bound": 0.0
+      }
+    ]
+  },
+  "retrospective_toy_oracle_audit": {
+    "enabled": true,
+    "maximum_grid_voxels": 1728,
+    "assembly_batch_size": 256,
+    "dtype": "float64",
+    "rank_relative_tolerance": 1e-10,
+    "rank_absolute_tolerance": 0.0,
+    "excluded_from_algorithm_and_efficiency_claims": true
+  },
+  "matched_budget": {
+    "learned_feature_preparation_forward_calls": 13,
+    "learned_feature_preparation_adjoint_calls": 13,
+    "projection_forward_calls_formula": "K+1",
+    "projection_adjoint_calls_formula": "K",
+    "matched_classical_pair_iterations_formula": "14+K",
+    "maximum_forward_calls": 24,
+    "maximum_adjoint_calls": 24,
+    "classical_methods": [
+      "cgls_matched",
+      "huber_pdhg_matched",
+      "base_landweber_matched"
+    ],
+    "dense_exact_camera_block_setup_is_excluded_oracle_and_reported": true,
+    "dense_norm_setup_excluded_and_reported": true,
+    "grouped_adjoint_is_not_equal_flop_to_pooled_adjoint": true
+  },
+  "development_selection_rule": {
+    "uses_ood": false,
+    "maximum_mean_visible_correction_fraction": 0.1,
+    "maximum_worst_case_visible_correction_fraction": 0.25,
+    "maximum_mean_reprojection_ratio_to_matched_cgls": 1.1,
+    "maximum_projection_closure_relative_error": 1e-10,
+    "maximum_paired_call_budget": 24,
+    "rank_by": "maximum_development_mean_field_gain_to_best_matched_classical",
+    "tie_breakers": [
+      "fewer_projection_iterations",
+      "smaller_damping_fraction",
+      "variant_name"
+    ]
+  },
+  "decision_gates": {
+    "development_field_gain_to_best_matched_classical_minimum_fraction": 0.05,
+    "development_h1_gain_to_best_matched_classical_minimum_fraction": 0.03,
+    "development_exact_oracle_error_reduction_retention_minimum_fraction": 0.5,
+    "development_reprojection_ratio_to_matched_cgls_maximum": 1.1,
+    "development_visible_correction_fraction_mean_maximum": 0.1,
+    "ood_field_gain_to_best_matched_classical_minimum_fraction": 0.02,
+    "ood_h1_gain_to_best_matched_classical_minimum_fraction": 0.0,
+    "ood_exact_oracle_error_reduction_retention_minimum_fraction": 0.5,
+    "ood_reprojection_ratio_to_matched_cgls_maximum": 1.15,
+    "ood_visible_correction_fraction_mean_maximum": 0.15,
+    "field_harm_threshold_fraction": 0.01,
+    "field_harm_rate_maximum": 0.05,
+    "worst_field_gain_minimum_fraction": -0.05,
+    "require_all_model_seed_mean_field_gains_positive": true,
+    "maximum_breakdown_rate": 0.0,
+    "maximum_projection_closure_relative_error": 1e-10,
+    "maximum_paired_call_budget": 24
+  },
+  "claim_boundary": {
+    "is_postopen_target_pareto_ceiling": true,
+    "uses_only_opened_synthetic_t0_for_selection_and_scoring": true,
+    "exact_camera_block_is_matrix_free_or_deployable": false,
+    "exact_camera_block_setup_is_in_matched_budget": false,
+    "is_runtime_or_efficiency_evidence": false,
+    "is_confirmatory_or_final": false,
+    "is_experimental_reconstruction": false,
+    "is_real_bost_generalization": false,
+    "opens_fresh_or_final": false,
+    "may_only_authorize_target_regularization_or_fail_closed_research": true
+  }
+}

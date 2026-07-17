@@ -1,0 +1,99 @@
+{
+  "schema_version": "jacru-m2-learned-residual-t0-config-1.0",
+  "status": "FROZEN_BEFORE_FIRST_T0_EXECUTION_NO_FRESH_OR_FINAL",
+  "frozen_date": "2026-07-17",
+  "evidence_level": "E1_INDEPENDENT_RENDERER_SYNTHETIC_TRAIN_DEVELOPMENT_OOD_SCREEN",
+  "fixture": {
+    "grid_shape": [12, 12, 12],
+    "detector_shape": [5, 5],
+    "samples_per_ray": 16,
+    "noise_relative_std": 0.01,
+    "camera_bias_relative_std": 0.02,
+    "enable_noise": true,
+    "enable_camera_bias": true
+  },
+  "splits": {
+    "train": {
+      "base_seeds": [1101, 1117, 1129, 1151, 1163, 1181, 1193, 1201, 1213, 1229, 1237, 1259, 1277, 1289, 1301, 1319],
+      "families": ["smooth_no_interface", "single_interface"]
+    },
+    "development": {
+      "base_seeds": [2101, 2113, 2129, 2141, 2153, 2161],
+      "families": ["smooth_no_interface", "single_interface"]
+    },
+    "ood": {
+      "base_seeds": [3109, 3121, 3137, 3163, 3181, 3191],
+      "families": ["smooth_no_interface", "single_interface", "two_interface"]
+    }
+  },
+  "physical_budget": {
+    "cgls_base_iterations": 12,
+    "learned_feature_forward_calls": 1,
+    "learned_feature_grouped_adjoint_calls": 1,
+    "classical_comparator_iterations": 13,
+    "dense_norm_batch_size": 256,
+    "dense_norm_safety_factor": 1.01,
+    "grouped_adjoint_is_not_equal_flop_to_pooled_adjoint": true
+  },
+  "training": {
+    "model_seeds": [17, 29, 43],
+    "epochs": 80,
+    "batch_size": 8,
+    "learning_rate": 0.002,
+    "weight_decay": 0.0001,
+    "gradient_clip_norm": 2.0,
+    "early_stop_patience": 18,
+    "minimum_epoch": 20,
+    "lambda_h1": 0.15,
+    "lambda_correction": 0.0005,
+    "lambda_gate": 0.0001,
+    "camera_dropout_probability": 0.2,
+    "device": "auto"
+  },
+  "models": {
+    "jacru_m2": {
+      "set_channels": 6,
+      "hidden_channels": 8,
+      "gate_hidden": 8,
+      "maximum_residual_magnitude": 0.25
+    },
+    "pooled_cnn": {
+      "hidden_channels": 8,
+      "maximum_residual_magnitude": 0.25
+    },
+    "grid_deeponet": {
+      "branch_hidden": 48,
+      "trunk_hidden": 48,
+      "rank": 24,
+      "maximum_residual_magnitude": 0.25
+    },
+    "pooled_fno": {
+      "hidden_channels": 8,
+      "n_modes": [4, 4, 4],
+      "n_layers": 3,
+      "maximum_residual_magnitude": 0.25
+    }
+  },
+  "methods": ["jacru_m2", "pooled_cnn", "grid_deeponet", "pooled_fno"],
+  "decision_gates": {
+    "development_field_gain_over_best_classical_minimum_fraction": 0.05,
+    "development_h1_gain_over_best_classical_minimum_fraction": 0.03,
+    "ood_field_gain_over_best_classical_minimum_fraction": 0.02,
+    "ood_h1_gain_over_best_classical_minimum_fraction": 0.0,
+    "development_reprojection_ratio_to_cgls_maximum": 1.10,
+    "ood_reprojection_ratio_to_cgls_maximum": 1.15,
+    "field_harm_threshold_fraction": 0.01,
+    "field_harm_rate_maximum": 0.05,
+    "worst_field_gain_minimum_fraction": -0.05,
+    "require_all_three_model_seed_mean_field_gains_positive": true
+  },
+  "claim_boundary": {
+    "is_experimental_reconstruction": false,
+    "is_cfd_validation": false,
+    "is_real_bost_generalization": false,
+    "is_interface_detection_evidence": false,
+    "is_confirmatory_or_final": false,
+    "opens_fresh_or_final": false,
+    "may_route_the_m2_architecture_to_a_larger_preregistered_gate": true
+  }
+}

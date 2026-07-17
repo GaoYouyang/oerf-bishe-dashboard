@@ -1,0 +1,54 @@
+{
+  "schema_version": "jacru-m2-2-exact-nullspace-oracle-postopen-config-1.0",
+  "status": "FROZEN_BEFORE_FIRST_EXACT_ORACLE_EXECUTION",
+  "frozen_date": "2026-07-17",
+  "evidence_level": "E1_OPENED_T0_DENSE_NULLSPACE_HEADROOM_ORACLE_NO_FRESH",
+  "source_t0_config": "demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json",
+  "source_t0_config_sha256": "e4e0dbb3cc3e573e5c7ed025bae50b3eb6d66ffdd511772b30fa222ce791a5fd",
+  "source_t0_results": "demo_t16_operator/results/jacru_m2_learned_residual_t0_public",
+  "source_t0_summary_sha256": "60ea9cab9966502254d24b4b99645603a52ba80cda14b09e8bf862545edb6cdb",
+  "methods": [
+    "jacru_m2",
+    "pooled_cnn"
+  ],
+  "reference": {
+    "method": "cgls",
+    "iterations": 24
+  },
+  "dense_oracle": {
+    "maximum_grid_voxels": 1728,
+    "assembly_batch_size": 256,
+    "dtype": "float64",
+    "rank_relative_tolerance": 1e-10,
+    "rank_absolute_tolerance": 0.0,
+    "factorize_once_per_geometry": true
+  },
+  "decision_gates": {
+    "development_field_gain_to_reference_minimum_fraction": 0.05,
+    "development_h1_gain_to_reference_minimum_fraction": 0.03,
+    "development_original_gain_retention_minimum_fraction": 0.25,
+    "development_reprojection_ratio_to_reference_maximum": 1.000001,
+    "ood_field_gain_to_reference_minimum_fraction": 0.02,
+    "ood_h1_gain_to_reference_minimum_fraction": 0.0,
+    "ood_original_gain_retention_minimum_fraction": 0.25,
+    "ood_reprojection_ratio_to_reference_maximum": 1.000001,
+    "field_harm_threshold_fraction": 0.01,
+    "field_harm_rate_maximum": 0.05,
+    "worst_field_gain_minimum_fraction": -0.05,
+    "maximum_internal_projection_residual": 1e-10,
+    "maximum_visible_null_correction_fraction": 1e-10,
+    "require_all_model_seed_mean_field_gains_positive": true
+  },
+  "claim_boundary": {
+    "is_dense_headroom_oracle": true,
+    "is_deployable_algorithm": false,
+    "is_runtime_or_efficiency_evidence": false,
+    "is_confirmatory_or_final": false,
+    "is_experimental_reconstruction": false,
+    "is_cfd_validation": false,
+    "is_real_bost_generalization": false,
+    "approximate_inverse_kernel_equals_true_optical_kernel": false,
+    "opens_fresh_or_final": false,
+    "may_only_authorize_matrix_free_approximation_research": true
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "schema_version": "jacru-m0-synthetic-gate-config-1.1-diagnostic",
+  "status": "POST_M0_NO_GO_AMENDMENT_DIAGNOSTIC_ONLY_SAME_OPEN_CASES",
+  "frozen_date": "2026-07-17",
+  "evidence_level": "E1_OPEN_DEVELOPMENT_DIAGNOSIS_NOT_CONFIRMATION",
+  "amendment": {
+    "source_config": "demo_t16_operator/configs/jacru_m0_synthetic_gate_v1.json",
+    "source_config_sha256": "1fa57a06a3899eae46106bcc76edaeba31504258dd030b6921330fe7d6849c01",
+    "source_summary": "demo_t16_operator/results/jacru_m0_synthetic_gate_public/summary.json",
+    "source_summary_sha256": "a5a22e7d1c477c0acf812d97c40ee00b6f36efe2bc1197ff4a31a02b798894ed",
+    "observed_failures": [
+      "raw adjoint initialization was not scaled by the data-operator norm",
+      "fixed-x data-free interface scored F1=1.0 before seeing observations",
+      "initial deployment gate was active and false-positive on every smooth case"
+    ],
+    "authorized_changes": [
+      "scale adjoint initialization by the inverse dense numerical norm bound",
+      "replace fixed-x initialization with a seeded random plane",
+      "start the deployment gate below threshold",
+      "reduce Adam learning rates after the observed divergence"
+    ],
+    "fresh_evidence_authorized": false
+  },
+  "fixture": {
+    "grid_shape": [12, 12, 12],
+    "detector_shape": [6, 6],
+    "samples_per_ray": 24,
+    "noise_relative_std": 0.01,
+    "camera_bias_relative_std": 0.02,
+    "enable_noise": true,
+    "enable_camera_bias": true
+  },
+  "cases": {
+    "split": "development",
+    "base_seeds": [101, 211],
+    "families": ["smooth_no_interface", "single_interface"]
+  },
+  "budget": {
+    "physical_forward_vjp_pairs_per_method": 24,
+    "dense_norm_batch_size": 256,
+    "dense_norm_safety_factor": 1.01
+  },
+  "methods": {
+    "cgls": {"iterations": 24},
+    "huber_pdhg": {
+      "iterations": 24,
+      "regularization_weight": 0.001,
+      "huber_delta": 0.08,
+      "step_safety": 0.98
+    },
+    "phase_only": {
+      "optimization_steps": 24,
+      "max_interfaces": 2,
+      "epsilon_voxels": 0.8,
+      "learning_rate": 0.005,
+      "initial_gate_logit": -1.5,
+      "adjoint_initialization_scale_mode": "inverse_dense_bound",
+      "background_smoothness_weight": 0.0001,
+      "phase_smoothness_weight": 0.0001,
+      "eikonal_weight": 0.001,
+      "gate_sparsity_weight": 0.0001,
+      "amplitude_weight": 0.00001
+    },
+    "jacru_no_bias": {
+      "outer_steps": 12,
+      "field_updates_per_outer": 1,
+      "interface_updates_per_outer": 1,
+      "bias_updates_per_outer": 0,
+      "epsilon_voxels": 0.8,
+      "field_learning_rate": 0.005,
+      "interface_learning_rate": 0.005,
+      "initial_phase_mode": "random_plane",
+      "initial_gate_logit": -1.5,
+      "initial_jump_amplitude": 0.02,
+      "adjoint_initialization_scale_mode": "inverse_dense_bound"
+    },
+    "jacru_bias": {
+      "outer_steps": 8,
+      "field_updates_per_outer": 1,
+      "interface_updates_per_outer": 1,
+      "bias_updates_per_outer": 1,
+      "epsilon_voxels": 0.8,
+      "field_learning_rate": 0.005,
+      "interface_learning_rate": 0.005,
+      "bias_learning_rate": 0.005,
+      "initial_phase_mode": "random_plane",
+      "initial_gate_logit": -1.5,
+      "initial_jump_amplitude": 0.02,
+      "adjoint_initialization_scale_mode": "inverse_dense_bound"
+    }
+  },
+  "primary_candidate": "jacru_bias",
+  "decision_gates": {
+    "mean_field_relative_l2_gain_minimum_fraction": 0.05,
+    "mean_h1_gain_minimum_fraction": 0.05,
+    "single_interface_assd_gain_minimum_fraction": 0.10,
+    "single_interface_f1_at_1dx_gain_minimum_absolute": 0.03,
+    "measured_reprojection_ratio_maximum": 1.05,
+    "smooth_case_field_harm_maximum_fraction": 0.01,
+    "require_every_seed_field_win": true
+  },
+  "claim_boundary": {
+    "is_experimental_reconstruction": false,
+    "is_cfd_validation": false,
+    "is_operator_learning": false,
+    "is_neural_operator_superiority": false,
+    "is_confirmatory_or_final": false,
+    "reuses_open_development_cases": true,
+    "may_diagnose_but_not_authorize_a_method": true
+  }
+}

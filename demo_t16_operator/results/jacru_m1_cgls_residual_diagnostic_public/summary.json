@@ -1,0 +1,244 @@
+{
+  "schema_version": "jacru-m0-independent-renderer-development-gate-1.0",
+  "status": "M0_NO_GO_OR_REVISE",
+  "evidence_level": "E1_OPEN_DEVELOPMENT_HYBRID_DIAGNOSIS_NOT_CONFIRMATION",
+  "source_config_sha256": "5061e85414fdcf9ca2d9a07ad1d530a1f45e9553289d01bff1b51ba5212dc569",
+  "case_count": 4,
+  "method_count": 5,
+  "metric_row_count": 20,
+  "fixture": {
+    "grid_shape": [
+      12,
+      12,
+      12
+    ],
+    "domain_minimum_xyz": [
+      -1.0,
+      -1.0,
+      -1.0
+    ],
+    "domain_maximum_xyz": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "detector_shape": [
+      6,
+      6
+    ],
+    "detector_half_width": 0.62,
+    "samples_per_ray": 24,
+    "geometry_azimuth_jitter_degrees": 1.25,
+    "geometry_elevation_jitter_degrees": 0.75,
+    "detector_shift_limit": 0.025,
+    "noise_relative_std": 0.01,
+    "camera_bias_relative_std": 0.02,
+    "enable_noise": true,
+    "enable_camera_bias": true
+  },
+  "case_contracts": [
+    {
+      "case_id": "a9159da5d4680ef97180",
+      "split": "development",
+      "family": "smooth_no_interface",
+      "base_seed": 101,
+      "geometry_digest": "a9cbd1623a2b86c87c20711f8ef7e7b42b52604c0dfb9d618ae685237f06b29f",
+      "observation_digest": "6ee735e0f50c1373f9f3d4d150a97eeaa7ae3fd145781f731e7e20ee981a15cb"
+    },
+    {
+      "case_id": "c21cdab553cf29a88312",
+      "split": "development",
+      "family": "single_interface",
+      "base_seed": 101,
+      "geometry_digest": "a9cbd1623a2b86c87c20711f8ef7e7b42b52604c0dfb9d618ae685237f06b29f",
+      "observation_digest": "93850fd9ab073f6a9145256c3c9a0a453537b7dc6bf6c1bce112bcc5c458b68d"
+    },
+    {
+      "case_id": "0c33a4d301afe4c89d89",
+      "split": "development",
+      "family": "smooth_no_interface",
+      "base_seed": 211,
+      "geometry_digest": "f99fb713433ccdbf022d3e22dd9e5c7cc8e72306db591b14bc0bf292487428a2",
+      "observation_digest": "2bdc78bcfe7f7f32fdf7ca1af6ae531c352910c6c31b25514ed55a62cb05d8f2"
+    },
+    {
+      "case_id": "f3238d2aa273be06bdf1",
+      "split": "development",
+      "family": "single_interface",
+      "base_seed": 211,
+      "geometry_digest": "f99fb713433ccdbf022d3e22dd9e5c7cc8e72306db591b14bc0bf292487428a2",
+      "observation_digest": "5615f8f7823b785d2a1b78bde1f17c246d6c8dd2b54badd085f3e3c67ca985c2"
+    }
+  ],
+  "norm_setup": {
+    "a9cbd1623a2b86c87c20711f8ef7e7b42b52604c0dfb9d618ae685237f06b29f": {
+      "matrix_shape": [
+        216,
+        1728
+      ],
+      "spectral_norm_squared": 9.725788373477847,
+      "bound": 9.823046257212626,
+      "safety_factor": 1.01,
+      "setup_forward_calls": 7,
+      "status": "DENSE_NUMERICAL_SVD_TIMES_SAFETY_FACTOR_NOT_INTERVAL_CERTIFIED"
+    },
+    "f99fb713433ccdbf022d3e22dd9e5c7cc8e72306db591b14bc0bf292487428a2": {
+      "matrix_shape": [
+        216,
+        1728
+      ],
+      "spectral_norm_squared": 10.044432554942437,
+      "bound": 10.144876880491863,
+      "safety_factor": 1.01,
+      "setup_forward_calls": 7,
+      "status": "DENSE_NUMERICAL_SVD_TIMES_SAFETY_FACTOR_NOT_INTERVAL_CERTIFIED"
+    }
+  },
+  "budget": {
+    "physical_forward_vjp_pairs_per_method": 24,
+    "dense_norm_batch_size": 256,
+    "dense_norm_safety_factor": 1.01
+  },
+  "aggregate": {
+    "cgls": {
+      "case_count": 4,
+      "field_relative_l2_mean": 0.4989110890067372,
+      "field_relative_l2_maximum": 0.563724439536388,
+      "h1_seminorm_relative_error_mean": 1.0223527555289416,
+      "h1_seminorm_relative_error_maximum": 1.0609056913639625,
+      "measured_reprojection_relative_l2_mean": 0.003739215312672963,
+      "measured_reprojection_relative_l2_maximum": 0.005885724508715548,
+      "clean_reprojection_relative_l2_mean": 0.021130332484622004,
+      "clean_reprojection_relative_l2_maximum": 0.024500001976501044,
+      "surface_assd_mean": 1.8434880250553005,
+      "surface_assd_maximum": 3.4641016151377544,
+      "surface_f1_at_1dx_mean": 0.2605711180947622,
+      "surface_f1_at_1dx_maximum": 0.5246474242639438,
+      "wall_seconds_mean": 0.016016989495255984,
+      "wall_seconds_maximum": 0.02320291695650667
+    },
+    "huber_pdhg": {
+      "case_count": 4,
+      "field_relative_l2_mean": 0.4801186375139215,
+      "field_relative_l2_maximum": 0.5469846065257308,
+      "h1_seminorm_relative_error_mean": 0.8741855909710811,
+      "h1_seminorm_relative_error_maximum": 0.9358994007461495,
+      "measured_reprojection_relative_l2_mean": 0.11492395625268942,
+      "measured_reprojection_relative_l2_maximum": 0.13636515529329177,
+      "clean_reprojection_relative_l2_mean": 0.11525201091238291,
+      "clean_reprojection_relative_l2_maximum": 0.13426467270684472,
+      "surface_assd_mean": 1.8390844181046908,
+      "surface_assd_maximum": 3.4641016151377544,
+      "surface_f1_at_1dx_mean": 0.2650533786505689,
+      "surface_f1_at_1dx_maximum": 0.539026786858632,
+      "wall_seconds_mean": 0.02491751049819868,
+      "wall_seconds_maximum": 0.03850912500638515
+    },
+    "phase_only": {
+      "case_count": 4,
+      "field_relative_l2_mean": 0.7521998823424003,
+      "field_relative_l2_maximum": 0.8533027530801438,
+      "h1_seminorm_relative_error_mean": 1.559763754340288,
+      "h1_seminorm_relative_error_maximum": 1.8271398001230124,
+      "measured_reprojection_relative_l2_mean": 0.12005818804588866,
+      "measured_reprojection_relative_l2_maximum": 0.17745208339205829,
+      "clean_reprojection_relative_l2_mean": 0.12063597098406043,
+      "clean_reprojection_relative_l2_maximum": 0.17452660865932246,
+      "surface_assd_mean": 1.7320508075688772,
+      "surface_assd_maximum": 3.4641016151377544,
+      "surface_f1_at_1dx_mean": 0.5,
+      "surface_f1_at_1dx_maximum": 1.0,
+      "wall_seconds_mean": 0.19492155202897266,
+      "wall_seconds_maximum": 0.6165625410503708
+    },
+    "jacru_no_bias": {
+      "case_count": 4,
+      "field_relative_l2_mean": 0.4950273138643839,
+      "field_relative_l2_maximum": 0.5565614423906496,
+      "h1_seminorm_relative_error_mean": 1.0117572082214759,
+      "h1_seminorm_relative_error_maximum": 1.043752498330243,
+      "measured_reprojection_relative_l2_mean": 0.010213058358866444,
+      "measured_reprojection_relative_l2_maximum": 0.011761865956063215,
+      "clean_reprojection_relative_l2_mean": 0.021222573093041944,
+      "clean_reprojection_relative_l2_maximum": 0.0231984737527802,
+      "surface_assd_mean": 1.7320508075688772,
+      "surface_assd_maximum": 3.4641016151377544,
+      "surface_f1_at_1dx_mean": 0.5,
+      "surface_f1_at_1dx_maximum": 1.0,
+      "wall_seconds_mean": 0.0276965627563186,
+      "wall_seconds_maximum": 0.03095637500518933
+    },
+    "jacru_bias": {
+      "case_count": 4,
+      "field_relative_l2_mean": 0.4969982027568724,
+      "field_relative_l2_maximum": 0.5576064809677163,
+      "h1_seminorm_relative_error_mean": 1.0132251538300279,
+      "h1_seminorm_relative_error_maximum": 1.0445363642921015,
+      "measured_reprojection_relative_l2_mean": 0.009641268920403059,
+      "measured_reprojection_relative_l2_maximum": 0.011495144283745758,
+      "clean_reprojection_relative_l2_mean": 0.020904316520497963,
+      "clean_reprojection_relative_l2_maximum": 0.022818227781043966,
+      "surface_assd_mean": 1.7320508075688772,
+      "surface_assd_maximum": 3.4641016151377544,
+      "surface_f1_at_1dx_mean": 0.5,
+      "surface_f1_at_1dx_maximum": 1.0,
+      "wall_seconds_mean": 0.028805583249777555,
+      "wall_seconds_maximum": 0.03388554201228544
+    }
+  },
+  "decision": {
+    "status": "M0_NO_GO_OR_REVISE",
+    "passed": false,
+    "candidate": "jacru_no_bias",
+    "best_baseline_by_mean_field_l2": "huber_pdhg",
+    "checks": {
+      "field_gain": false,
+      "h1_gain": false,
+      "assd_gain": false,
+      "f1_gain": false,
+      "reprojection": true,
+      "smooth_harm": false,
+      "every_seed_field_win": false
+    },
+    "diagnostics": {
+      "field_gain_fraction": -0.031052067521603253,
+      "h1_gain_fraction": -0.15737117915381632,
+      "single_interface_assd_gain_fraction": -15.182307584488417,
+      "single_interface_f1_at_1dx_gain_absolute": -0.5301067573011378,
+      "measured_reprojection_ratio": 0.08886796706171905,
+      "smooth_case_field_harm_fraction": 0.10291681387464235,
+      "per_seed_field_wins": [
+        false,
+        false
+      ]
+    },
+    "authorization": "DEVELOPMENT_MECHANISM_ROUTING_ONLY_NOT_A_METHOD_WIN"
+  },
+  "claim_boundary": {
+    "is_experimental_reconstruction": false,
+    "is_cfd_validation": false,
+    "is_operator_learning": false,
+    "is_neural_operator_superiority": false,
+    "is_confirmatory_or_final": false,
+    "reuses_open_development_cases": true,
+    "may_diagnose_residual_correction_but_not_authorize_a_method": true
+  },
+  "amendment": {
+    "source_m0_1_config_sha256": "4436b9e25e655948546e8f804f100e037d4e645b51588c596d2dd499af2e09c9",
+    "source_m0_1_summary_sha256": "145133f718bb14589545cb5490b328dcc9699afd39ce770cd2409dc39dcfdcb6",
+    "source_initialization_audit_sha256": "9cd5c8b3a13a093d5e43d9bbab1ebd8abe90d9c7a685427b905a786ae2eccfd8",
+    "observed_failures": [
+      "full-field Adam remained worse than CGLS and Huber after scale repair",
+      "the fixed-x interface score was entirely present before observations",
+      "camera-bias blocks consumed budget without improving reprojection"
+    ],
+    "new_hypothesis": "use 18 CGLS pairs for a stable base and spend only 6 pairs on a frozen-base jump/interface residual correction",
+    "fresh_evidence_authorized": false
+  },
+  "elapsed_seconds": 2.173462250037119,
+  "public_export_policy": {
+    "contains_truth_or_observation_arrays": false,
+    "contains_geometry_arrays": false,
+    "contains_only_aggregate_metrics_and_rendered_slices": true
+  }
+}

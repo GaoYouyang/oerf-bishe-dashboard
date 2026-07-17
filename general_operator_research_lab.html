@@ -161,6 +161,9 @@
       <a href="#d0-root-cause">当前结论</a>
       <a href="#spatial-benchmark">空间基准</a>
       <a href="#real-rotation40">真实观测</a>
+      <a href="#jacru-gate">JACRU 实测</a>
+      <a href="#m2-t0">M2 算子学习</a>
+      <a href="#m2-projection">投影判决</a>
       <a href="#algorithm">安全算子</a>
       <a href="#candidates">算法路线</a>
       <a href="document_reader.html?doc=docs%2Fcancellation_aware_operator_learning_literature_map_2026-07-17.md">文献地图</a>
@@ -173,10 +176,10 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">研究主线已收敛到“界面感知三维重建 + 几何集合条件算子”。PSU-S16 用独立解析梯度 renderer 建立了不与逆算子共用离散链的空间考卷；随后 rotation-40 的 3,847,050 条真实 active 射线完成逐行几何绑定。冻结 support CGLS 场在未见真实旋转上的 pooled reprojection relative-L2 为 0.9596，暴露出明确的跨视角泛化缺口。当前只有真实问题与可复现基线，没有新算法胜出，更没有实验三维真值。</p>
+    <p class="lead">研究主线已收敛到“界面感知三维重建 + 几何集合条件残差算子”。PSU-S16 用独立解析梯度 renderer 建立了不与逆算子共用离散链的空间考卷；rotation-40 的 3,847,050 条真实 active 射线暴露出明确跨视角缺口。首个 JACRU 候选也已接受强基线证伪：M1 只比 CGLS 好 0.78%，仍比 Huber-PDHG 差 3.11%，且早期界面分数受 data-free 初始化混杂。下一步是 CGLS 物理底座加跨样本学习残差；当前没有新算法胜出，更没有实验三维真值。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">ROT40 · 3.85M REAL RAYS</span><span class="chip coral">B0 OOD REL-L2 · 0.9596</span><span class="chip blue">PSU-S16 · E1 INTERFACE PASS</span><span class="chip blue">ROW BINDING · VERIFIED</span><span class="chip coral">RCCF V4 · MICRO NO-GO</span><span class="chip coral">REAL / 3D TRUTH · ABSENT</span><span class="chip coral">METHOD WIN · NOT AUTHORIZED</span></div>
+        <div class="chips"><span class="chip blue">ROT40 · 3.85M REAL RAYS</span><span class="chip coral">B0 OOD REL-L2 · 0.9596</span><span class="chip blue">PSU-S16 · E1 INTERFACE PASS</span><span class="chip coral">JACRU M1 · NO-GO</span><span class="chip blue">24F + 24R · MATCHED</span><span class="chip coral">REAL / 3D TRUTH · ABSENT</span><span class="chip coral">METHOD WIN · NOT AUTHORIZED</span></div>
         <h2>先用负结果锁定问题，再写最小可证伪算法</h2>
         <p>Gate B 在两个 opened replicate、八类解析反应场上比较 scalar、view-block、voxel-factor 三条严格同调用 A-only PDHG，并把 full-support Sobolev graph-PCGLS 作为 nonbinding headroom。K=32 时四者 field-L2 分别为 <strong>0.996031 / 0.995241 / 0.982876 / 0.421042</strong>。factor 在 15/16 个样本略优于 scalar，却只改善 <strong>1.321%</strong>，远低于冻结的 25% 机制门；front-F1 还只有 <strong>0.1366</strong>。结论是当前静态 factor metric 没有闭合有限预算差距；不能因 graph 支持与先验不同而把差距归结为唯一 Krylov 因果机制。</p>
         <ol>
@@ -1065,6 +1068,246 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
           </ol>
           <div class="alert critical"><strong>当前最强论文假设</strong><span>不是 smooth + level set 的简单拼接，而是 Jump-Aware Cone-Ray Unrolling：分别更新两侧光滑场、界面几何与跳跃强度；每层保留有限孔径数据一致性，并对可变相机集合和界面零空间给出消融与不确定性。</span></div>
           <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjump_aware_cone_ray_unrolling_novelty_gate_2026-07-17.md">JACRU 原创性红队</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">学习日志 61–62</a><a class="button" href="demo_t16_operator/configs/psu_rotation40_b0_reprojection_v1.json">冻结评分合同</a><a class="button" href="demo_t16_operator/results/psu_rotation40_b0_reprojection_public/README.md">公开资产边界</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="jacru-gate" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">JACRU M0-M1 · independent-renderer development · 2026-07-17</div>
+          <h2>第一个界面感知候选已被强基线证伪，路线因此更精确</h2>
+          <p>连续解析梯度负责生成观测，独立体素有限差分算子负责反演；两个 development seed、平滑/单界面场、1% 噪声和 2% camera bias。所有方法严格使用 24 次 forward 与 24 次 reverse/adjoint。真值只进入评分，不进入重建 API。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fjacru_m0_m1_negative_evidence_2026-07-17.md">读中文负证据判决</a>
+          <a class="button" href="demo_t16_operator/results/jacru_m0_m1_evidence_validation.json">看 validator</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_formal_red_team_2026-07-17.md">看正式红队</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">学习日志 63–65</a>
+        </div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><b>1.9878</b><span>M0 JACRU+bias 平均 field-L2；比 Huber-PDHG 差 314.03%</span></div>
+        <div class="metric"><b>1.000 → 0.974</b><span>单界面 F1：读取观测前的固定平面已满分，优化后反而下降</span></div>
+        <div class="metric"><b>0.7690</b><span>M0.1 修复尺度与初始化后改善 61.31%，但仍比 Huber 差 60.18%</span></div>
+        <div class="metric"><b>0.4950</b><span>M1 CGLS-18 + residual-6；比 CGLS 好 0.78%，仍比 Huber 差 3.11%</span></div>
+        <div class="metric"><b>24F + 24R</b><span>CGLS、Huber-PDHG、phase-only 与两个 JACRU 版本逐行预算一致</span></div>
+        <div class="metric"><b>0 / 6 gates</b><span>M1 只有 reprojection 通过；field、H1、front、smooth harm 与逐 seed 均未闭合</span></div>
+      </div>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>方法 / 轮次</th><th>field relative-L2</th><th>H1 相对误差</th><th>measured reprojection</th><th>严格解释</th></tr></thead>
+          <tbody>
+            <tr><td>Huber-PDHG-24</td><td class="positive">0.480119</td><td class="positive">0.874186</td><td>0.114924</td><td>当前场与梯度最强经典基线</td></tr>
+            <tr><td>CGLS-24</td><td>0.498911</td><td>1.022353</td><td class="positive">0.003739</td><td>数据拟合最强，但场误差高于 Huber</td></tr>
+            <tr><td>JACRU M0+bias</td><td class="negative">1.987836</td><td class="negative">3.174674</td><td class="negative">1.913683</td><td>从零联合优化全场失败</td></tr>
+            <tr><td>JACRU M0.1+bias</td><td class="negative">0.769049</td><td class="negative">1.138376</td><td class="negative">0.408105</td><td>尺度修复有效，但仍是 opened-dev NO-GO</td></tr>
+            <tr><td>JACRU M1 no-bias</td><td>0.495027</td><td>1.011757</td><td>0.010213</td><td>支持“经典底座 + 小残差”方向，不授权方法主张</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/jacru_m0_synthetic_gate_public/diagnostic.png" alt="JACRU M0 与 CGLS、Huber-PDHG 和 phase-only 在独立解析 renderer 开发样本上的场误差、H1、重投影和界面指标对比" width="2400" height="1500" loading="lazy" decoding="async" /><figcaption>M0 NO-GO。图中早期界面优势随后被初始化审计判定为混杂，不能保留为算法贡献。</figcaption></figure>
+        <figure><img src="demo_t16_operator/results/jacru_m0_initialization_audit_public/diagnostic.png" alt="JACRU 数据无关初始化审计，比较固定初始平面、随机平面和最终界面指标" width="2100" height="1200" loading="lazy" decoding="async" /><figcaption>初始化泄漏审计：固定平面在读取观测前已位于随机平面的 100 百分位；平滑场还产生 100% 初始假阳性。</figcaption></figure>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/jacru_m1_cgls_residual_diagnostic_public/diagnostic.png" alt="JACRU M1 以 CGLS 为底座后只优化六步残差的开发诊断图" width="2400" height="1500" loading="lazy" decoding="async" /><figcaption>M1 几乎恢复 CGLS，但未赢 Huber-PDHG；这是下一候选的结构依据，不是性能胜利。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip coral">NO METHOD WIN</span><span class="chip coral">NO INTERFACE CREDIT</span><span class="chip blue">NEGATIVE PACKET VALIDATED</span><span class="chip gold">M2 NEXT</span></div>
+          <h3 style="margin-top:10px;">M2 只学习经典方法没有解决的残差</h3>
+          <ol>
+            <li>固定预算 CGLS 先得到三维主场，不让网络重做稳定线性反演。</li>
+            <li>把逐相机 <code>Aᵥᵀ(yᵥ-Aᵥx₀)</code>、pose 和 active mask 作为可观测输入。</li>
+            <li>相机集合 encoder 必须顺序无关，输出 bounded、support-limited correction。</li>
+            <li>最后一层全零初始化，训练前与风险不足时都严格退回 CGLS。</li>
+            <li>开发门必须同时赢 Huber field/H1、守住 CGLS reprojection、跨 seed 与 OOD。</li>
+          </ol>
+          <div class="alert critical"><strong>fresh 仍封存</strong><span>M0.1 和 M1 已反复看到同一 development case。M2 先在新的 train/development/OOD split 上完成多模型比较；没有过门，不打开 final/fresh。</span></div>
+          <div class="actions"><a class="button primary" href="demo_t16_operator/results/jacru_m1_cgls_residual_diagnostic_public/summary.json">M1 机器摘要</a><a class="button" href="demo_t16_operator/configs/jacru_m1_cgls_residual_diagnostic_v1.json">M1 冻结配置</a><a class="button" href="demo_t16_operator/results/jacru_m0_initialization_audit_public/summary.json">初始化审计 JSON</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="m2-t0" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">M2-T0 · 3-seed learned residual screen · 2026-07-17</div>
+          <h2>场误差显著下降，但四种网络都没有守住测量一致性</h2>
+          <p>32 个 train、12 个 development 和 18 个已经打开的探索性 geometry+morphology OOD case；JACRU-M2、pooled 3D CNN、grid DeepONet 与官方 neuraloperator FNO 使用同一 CGLS 底座、同一可见输入和三个模型 seed。结果把下一创新问题钉在了一个可测量的矛盾上：如何保留 learned prior 的场收益，同时回到能够解释相机观测的解集。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fjacru_m2_t0_supervised_residual_no_go_2026-07-17.md">读完整 T0 判决</a>
+          <a class="button" href="demo_t16_operator/results/jacru_m2_learned_residual_t0_public/summary.json">机器摘要</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_m2_literature_landscape_2026-07-17.md">25 篇角色化文献</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">学习日志 66–74</a>
+        </div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><b>+46.16% / +32.38%</b><span>JACRU-M2 development / exploratory-OOD field gain；三个 seed 均为正</span></div>
+        <div class="metric"><b class="negative">28.56x / 35.10x</b><span>JACRU-M2 相对 CGLS 的逐 case 重投影比；物理一致性硬门失败</span></div>
+        <div class="metric"><b>+47.11% / +32.80%</b><span>更小 pooled CNN 的 field gain 反而略高；集合结构尚未证明必要</span></div>
+        <div class="metric"><b class="negative">53.16x</b><span>FNO 探索性 OOD 重投影比；最坏 field case 还退化 34.85%</span></div>
+        <div class="metric"><b>3,549–10,211</b><span>四模型参数范围；只是同量级 T0，不是严格参数匹配主实验</span></div>
+        <div class="metric"><b>68.63 s</b><span>Mac MPS 完成 12 个训练 run 与 420 行评分；当前硬件足够做快速证伪</span></div>
+      </div>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>方法</th><th>Dev field / H1 gain</th><th>Dev reproj / CGLS</th><th>OOD field / H1 gain</th><th>OOD reproj / CGLS</th><th>严格判决</th></tr></thead>
+          <tbody>
+            <tr><td>JACRU-M2 · 6,440 params</td><td class="positive">+46.16% / +50.24%</td><td class="negative">28.56x</td><td class="positive">+32.38% / +42.68%</td><td class="negative">35.10x</td><td>NO-GO：强先验，数据一致性失败</td></tr>
+            <tr><td>Pooled CNN · 3,549 params</td><td class="positive">+47.11% / +50.32%</td><td class="negative">27.91x</td><td class="positive">+32.80% / +41.85%</td><td class="negative">34.47x</td><td>NO-GO：场指标略胜 JACRU</td></tr>
+            <tr><td>Grid DeepONet · 8,162 params</td><td>+6.57% / +2.19%</td><td class="negative">9.37x</td><td>+3.74% / -1.59%</td><td class="negative">13.63x</td><td>NO-GO：收益不足且有尾部伤害</td></tr>
+            <tr><td>Pooled FNO · 10,211 params</td><td>+39.23% / +40.03%</td><td class="negative">40.52x</td><td>+19.84% / +25.80%</td><td class="negative">53.16x</td><td>NO-GO：OOD 最坏退化 34.85%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/jacru_m2_learned_residual_t0_public/diagnostic.png" alt="JACRU-M2、3D CNN、DeepONet 与 FNO 在合成 development 和探索性 OOD 上的场误差、H1、重投影、尾部伤害和模型种子稳定性诊断" width="2430" height="1530" loading="lazy" decoding="async" /><figcaption>T0 负结果：truth-space 指标与 measurement-space 指标发生系统性冲突。图、420 行原始评分和训练历史均有 SHA-256 清单。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip coral">M2 T0 NO-GO</span><span class="chip coral">NO SUPERIORITY</span><span class="chip blue">420 ROWS VALIDATED</span><span class="chip coral">M2.1 ALSO NO-GO</span></div>
+          <h3 style="margin-top:10px;">物理裁决已经实测，不再停留在设想</h3>
+          <ol>
+            <li><strong>保留底座。</strong>固定 CGLS 负责稳定、可解释的数据拟合；网络只提议 bounded residual。</li>
+            <li><strong>追加普通 correction。</strong>0/1/3/5/11 步 measured pullback 和 near-null spectral filter 已完成匹配预算实测。</li>
+            <li><strong>判决是 NO-GO。</strong>11 步仍比同预算 CGLS 的重投影差约 42–46 倍，零个点进入通过区。</li>
+            <li><strong>证明集合结构的价值。</strong>未来必须在 camera-count、pose、mask OOD 上赢 pooled CNN；同一固定几何上的小幅均值差不算贡献。</li>
+            <li><strong>继续封存 fresh。</strong>本页的 OOD 是已经打开的小型筛选，不是未来协议的 sealed OOD。</li>
+          </ol>
+          <div class="alert critical"><strong>当前最真实的论文问题</strong><span>怎样用有限次 matrix-free Krylov / affine projection，把 geometry-conditioned residual 中有用的近零空间分量和破坏观测的 row-space 分量分开？这比“再搭一个更大的 FNO”更贴近 BOST 反演的真实困难。</span></div>
+          <div class="actions"><a class="button primary" href="demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json">冻结 T0 配置</a><a class="button" href="demo_t16_operator/results/jacru_m2_learned_residual_t0_public/metric_rows.csv">420 行评分</a><a class="button" href="demo_t16_operator/results/jacru_m2_t0_evidence_validation.json">独立 validator</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_m2_preregistered_gate_2026-07-17.md">未来严格预注册</a></div>
+        </div>
+      </div>
+      <div class="section-head" style="margin-top:26px;">
+        <div>
+          <div class="eyebrow">M2.1 · matched 13+k call budget · post-open diagnostic</div>
+          <h3>场信息没有消失，但普通 Landweber 无法在 24 对调用内恢复可信投影</h3>
+          <p>第一版不公平地把 24 对 learned 路径与 CGLS-13 比较，已被作废并保留为错误记录。v1.1 对每个 k 同时重跑 CGLS-(13+k)、Huber-(13+k) 和 base-only Landweber，总计 1,620 行 learned 轨迹、450 行经典对照；有限步滤波明确不称为精确零空间投影。</p>
+        </div>
+        <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_m2_1_matched_data_consistency_no_go_2026-07-17.md">读 M2.1 完整判决</a><a class="button" href="demo_t16_operator/results/jacru_m2_1_matched_data_consistency_postopen_public/summary.json">机器摘要</a><a class="button" href="demo_t16_operator/results/jacru_m2_1_matched_data_consistency_postopen_public/matched_baseline_rows.csv">450 行匹配基线</a></div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><b>+45.34% / +35.68%</b><span>JACRU measured-11 相对同预算最强经典 field gain；场信息并非额外迭代伪造</span></div>
+        <div class="metric"><b class="negative">43.12x / 41.95x</b><span>相对 matched CGLS-24 的逐 case 重投影比；唯一但决定性的硬门失败</span></div>
+        <div class="metric"><b>+49.44% / +39.98%</b><span>相对 CGLS-12 + 12 步 base-only Landweber 的场增益</span></div>
+        <div class="metric"><b class="negative">2.282 / 3.189</b><span>near-null-11 的 ||Aδ|| / ||y-Ax0||；目标必须不高于 0.10</span></div>
+        <div class="metric"><b>2,070 rows</b><span>learned 轨迹与 matched baseline 分账；零步逐位复现 T0</span></div>
+        <div class="metric"><b>0 pass</b><span>所有方法、模式和步数都未同时进入 field 与 measurement 通过区</span></div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/jacru_m2_1_matched_data_consistency_postopen_public/diagnostic.png" alt="JACRU 和 pooled CNN 的 measured pullback 与 near-null 谱滤波在匹配总调用预算下的场增益、重投影比和最坏样本轨迹" width="2450" height="1635" loading="lazy" decoding="async" /><figcaption>M2.1 NO-GO：上排虚线左侧才是重投影门；全部轨迹仍停在 15–46 倍区域。下排显示场尾部改善，不能抵消 measurement gate。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip coral">MATCHED-BUDGET NO-GO</span><span class="chip blue">24F / 24A</span><span class="chip coral">FRESH SEALED</span><span class="chip gold">M2.2 HEADROOM FOUND</span></div>
+          <h3 style="margin-top:10px;">M2.2 已证明目标存在，下一步是 M2.3 matrix-free 近似</h3>
+          <ol>
+            <li>12³ dense SVD oracle 已运行，证明 field gain 与内部 measurement consistency 可以共存。</li>
+            <li>oracle 保留 92%–143% raw gain，因此 learned residual 路线暂不停止。</li>
+            <li>下一步实现固定预算 measurement-space PCG/LSQR，并加入 base-only Krylov 对照。</li>
+            <li>内部 <code>ker(A)</code> 仍不等于连续有限孔径 forward 的零空间；必须用独立 renderer 再投影。</li>
+            <li>数据一致性、unrolling 和 null-space learning 都有先例；创新只能来自 BOST 几何、可变相机集合、模型失配与双域证据的组合。</li>
+          </ol>
+          <div class="actions"><a class="button primary" href="demo_t16_operator/configs/jacru_m2_1_matched_data_consistency_postopen_v1_1.json">v1.1 冻结配置</a><a class="button" href="demo_t16_operator/results/jacru_m2_1_matched_data_consistency_postopen_public/metric_rows.csv">1,620 行轨迹</a><a class="button" href="demo_t16_operator/results/jacru_m2_1_matched_data_consistency_postopen_public/diagnostic.pdf">论文图 PDF</a><a class="button" href="demo_t16_operator/jacru_m2_data_consistency.py">校正源码</a></div>
+        </div>
+      </div>
+      <div class="section-head" style="margin-top:26px;">
+        <div>
+          <div class="eyebrow">M2.2 · exact dense null-space oracle · opened headroom only</div>
+          <h3>目标解在当前离散算子的 affine space 中确实存在</h3>
+          <p>12 个几何全部是 150 个独立 measurement 对 1,000 个 active voxel，numerical rank=150、nullity 至少 850。每个几何只做一次 CPU float64 SVD，把网络修正精确拆成 row 与 null 两部分；truth 不进入投影，只进入事后评分。dense setup 不计部署预算、不参与速度比较。</p>
+        </div>
+        <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_m2_2_exact_nullspace_headroom_2026-07-17.md">读 M2.2 完整判决</a><a class="button" href="demo_t16_operator/results/jacru_m2_2_exact_nullspace_oracle_postopen_public/summary.json">机器摘要</a><a class="button" href="demo_t16_operator/jacru_m2_exact_nullspace_oracle.py">oracle 源码</a></div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><b class="positive">+45.28% / +37.54%</b><span>JACRU exact-null development / exploratory-OOD field gain vs CGLS-24</span></div>
+        <div class="metric"><b class="positive">1.00000000000001</b><span>oracle / CGLS-24 measured reprojection ratio；内部一致到 float64 精度</span></div>
+        <div class="metric"><b>97.67% / 143.06%</b><span>JACRU raw field gain retention；OOD 删除有害 row 分量后反而改善</span></div>
+        <div class="metric"><b>0.913 / 0.903</b><span>JACRU correction 的 null norm fraction；主体先验位于 numerical null space</span></div>
+        <div class="metric"><b>150 / 1,000</b><span>numerical rank / active voxel；当前 toy 至少 850 维欠定方向</span></div>
+        <div class="metric"><b>ORACLE ONLY</b><span>不授权部署、效率、真实 BOST、JACRU 优越性或 fresh 开封</span></div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/jacru_m2_2_exact_nullspace_oracle_postopen_public/diagnostic.png" alt="JACRU 与 pooled CNN 的原始 learned prior 和 exact numerical-nullspace oracle 对比，展示 field、重投影一致性、row/null correction 能量与场收益保留率" width="2450" height="1635" loading="lazy" decoding="async" /><figcaption>M2.2 正 headroom、非算法胜出：SVD oracle 把 raw 网络约数百倍的重投影比精确拉回 1，同时保留主体场收益；它只给 M2.3 一个明确目标。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip blue">HEADROOM FOUND</span><span class="chip coral">NOT DEPLOYABLE</span><span class="chip coral">OPENED T0</span><span class="chip gold">M2.3 MATRIX-FREE</span></div>
+          <h3 style="margin-top:10px;">下一候选：measurement-space row removal</h3>
+          <div class="formula" style="margin:10px 0;">b=Aδ; &nbsp; (AAᵀ+λI)z=b; &nbsp; x̂=x_ref+δ-Aᵀz</div>
+          <ol>
+            <li>k 步 PCG 的每个 <code>AAᵀv</code> 只需一对 <code>Aᵀ/A</code>；算 b 和最终回投各补一对。</li>
+            <li>先比较普通 CG、Jacobi 与固定 low-rank；只有它们到不了 oracle 才学习 geometry-conditioned preconditioner。</li>
+            <li>同总调用对照 CGLS、Huber 与 base-only CG，避免再次出现额外迭代伪成功。</li>
+            <li>至少保留 exact oracle gain 的 50%，并把 reprojection 压到 matched CGLS 的 1.10x / 1.15x。</li>
+            <li>最终仍需独立 renderer；<code>ker(A_inverse)</code> 不自动等于真实光学零空间。</li>
+          </ol>
+          <div class="alert critical"><strong>创新边界</strong><span>null-space learning 和 data consistency 都有先例。可发表点只能来自有限孔径 BOST、可变相机集合、matrix-free projector、forward mismatch 双域审计与 OOD fail-closed 的完整组合；当前只证明这条组合值得继续。</span></div>
+          <div class="actions"><a class="button primary" href="demo_t16_operator/configs/jacru_m2_2_exact_nullspace_oracle_postopen_v1.json">冻结 oracle 配置</a><a class="button" href="demo_t16_operator/results/jacru_m2_2_exact_nullspace_oracle_postopen_public/metric_rows.csv">180 行指标</a><a class="button" href="demo_t16_operator/results/jacru_m2_2_exact_nullspace_oracle_postopen_public/diagnostic.pdf">论文图 PDF</a><a class="button" href="demo_t16_operator/results/jacru_m2_2_exact_nullspace_oracle_postopen_public/checksums.sha256">SHA-256 清单</a></div>
+        </div>
+      </div>
+
+      <div id="m2-projection" class="section-head" style="margin-top:30px;">
+        <div>
+          <div class="eyebrow">M2.3–M2.8 · matrix-free projection audit · opened synthetic only</div>
+          <h3>求解器已经够快，真正的矛盾转向含噪观测目标与尾部安全</h3>
+          <p>M2.3 从错误的 reference anchor 出发；M2.4 改成 <code>Ax=y</code>；M2.5 排除逐点 Jacobi；M2.6 找到 camera-local coupling；M2.7 在 24-call 内通过平均重投影门，却稳定伤害一个界面样本；M2.8 连逐样本看真值的连续插值上界都没有救回。这里展示的是可复现的研究判决，不是算法胜利。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fjacru_m2_3_to_m2_8_opened_evidence_2026-07-17.md">读严格判决</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_m2_3_to_m2_8_beginner_decision_guide_2026-07-17.md">从零理解这六步</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_m2_3_primary_literature_novelty_audit_2026-07-17.md">看一级来源与创新边界</a>
+          <a class="button" href="demo_t16_operator/results/jacru_m2_8_interpolation_calibration_ceiling_postopen_public/summary.json">M2.8 机器摘要</a>
+        </div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><b class="negative">14.79x</b><span>M2.3 最好 development 重投影比；收敛终点被 CGLS-12 reference anchor 锁住</span></div>
+        <div class="metric"><b class="negative">15.19x</b><span>M2.5 exact Jacobi 最好值；关闭 Hutchinson diagonal，不再估计已失败的对角结构</span></div>
+        <div class="metric"><b>0.270x</b><span>M2.6 camera-block K=12 重投影；同时 harm 8.33%、JACRU worst -9.31%，且超 24-call 主预算</span></div>
+        <div class="metric"><b>23F · 0.852x</b><span>M2.7 JACRU K=9 已在预算内通过 mean reprojection；worst 仍为 -8.89%</span></div>
+        <div class="metric"><b class="negative">97.22%</b><span>M2.8 K=10 truth-oracle alpha 的 development 可行率；不是 100%，不能成为校准算法</span></div>
+        <div class="metric"><b>α≈0.99</b><span>受害界面样本即使看真值选最佳连续插值，六个模型种子的 field gain 仍全部为负</span></div>
+      </div>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>阶段</th><th>只回答什么</th><th>最重要的证据</th><th>判决 / 后续</th></tr></thead>
+          <tbody>
+            <tr><td>M2.3 reference projection</td><td><code>Ax=Ax_ref</code> 的 matrix-free 近似</td><td class="negative">最好 reprojection 14.79x；终点弱于 matched CGLS</td><td>target NO-GO；预条件器不能修终点</td></tr>
+            <tr><td>M2.4 affine projection</td><td><code>Ax=y</code> 是否可达</td><td>exact residual ≈6e-16；identity CG K=4 仍约 15.93x</td><td>目标可达；有限预算慢</td></tr>
+            <tr><td>M2.5 exact Jacobi</td><td>逐 measurement scaling 是否足够</td><td class="negative">最好约 15.19x；exact diagonal 仍无 selection</td><td>关闭 diagonal family</td></tr>
+            <tr><td>M2.6 camera block</td><td>相机内相关是否是主要谱结构</td><td class="positive">残差强加速；closure ≈1e-15</td><td class="negative">1001F-equiv oracle；8.33% harm</td></tr>
+            <tr><td>M2.7 K≤10 Pareto</td><td>24-call 内是否存在联合可行点</td><td class="positive">K=9 mean reprojection 过门</td><td class="negative">同一界面 case 六种子受害</td></tr>
+            <tr><td>M2.8 calibration ceiling</td><td>固定/真值最优插值能否救尾部</td><td class="negative">固定 alpha 无通过点；truth ceiling 仍失败</td><td>停止堆预条件器；转向 noise-aware target</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/jacru_m2_6_camera_block_preconditioner_oracle_postopen_public/diagnostic.png" alt="M2.6 identity、exact Jacobi 与 exact camera-block 预条件器在相同调用预算下的场增益、可见校正、重投影和 oracle 保留率对比" width="2540" height="1710" loading="lazy" decoding="async" /><figcaption>M2.6：camera-block 的 residual acceleration 是真机制，但 selected development tail 未过 no-harm；图中 setup 不属于部署预算。</figcaption></figure>
+        <figure><img src="demo_t16_operator/results/jacru_m2_8_interpolation_calibration_ceiling_postopen_public/diagnostic.png" alt="M2.8 固定插值 alpha 在 K=9 和 K=10 下的场收益、重投影、伤害率，以及 truth-oracle 校准上界" width="2468" height="1640" loading="lazy" decoding="async" /><figcaption>M2.8：alpha 越接近 1 才能满足测量门，但尾部伤害不会消失；逐样本看真值的上界仍不能授权 observable calibrator。</figcaption></figure>
+      </div>
+      <div class="pipeline" style="grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:16px;">
+        <div><b>N1 · Noise-aware target</b><span>用 flow-off covariance 与 discrepancy principle 定义“噪声可解释”的 residual，不再追近零</span></div>
+        <div><b>N2 · Held-out fail-closed</b><span>永久留 audit camera / ray block；独立观测不支持时退回 matched robust baseline</span></div>
+        <div><b>N3 · Robust proximal</b><span>先比较 covariance + Huber/Student-t + fixed β；经典 ceiling 通过后才学习 regularization operator</span></div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <div class="panel">
+          <div class="chips"><span class="chip coral">NO METHOD AUTHORIZATION</span><span class="chip blue">M2.3–M2.6 VALIDATED</span><span class="chip blue">M2.7–M2.8 VALIDATED</span><span class="chip gold">NOISE CONTRACT NEXT</span></div>
+          <h3 style="margin-top:10px;">现在最值得学的四件事</h3>
+          <ol>
+            <li>discrepancy principle：为什么 noisy inverse 不应把 residual 压到零。</li>
+            <li>covariance whitening：camera-local correlation 如何进入数据项与 PCGLS。</li>
+            <li>robust data fidelity：Huber/Student-t 怎样限制异常 measurement 的影响。</li>
+            <li>fail-closed protocol：没有 truth 时怎样用 held-out evidence 拒绝危险接管。</li>
+          </ol>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_m2_3_to_m2_8_beginner_decision_guide_2026-07-17.md">打开保姆式学习指南</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_m2_5_preconditioner_design_red_team_2026-07-17.md">读预条件器红队</a></div>
+        </div>
+        <div class="panel">
+          <h3>拿给何远哲师兄确认的最小数据合同</h3>
+          <ol>
+            <li>同一 geometry 的 flow-off temporal repeats，能否估 detector covariance？</li>
+            <li>能否永久留一台 audit camera，或一组不参与 reconstruction 的 rays？</li>
+            <li>当前 forward 是否提供可调用的 <code>A</code>、<code>Aᵀ/Jᵀ</code>、ray、mask、pose 与单位？</li>
+            <li>主要误差更像背景噪声、标定漂移、有限孔径，还是 optical model mismatch？</li>
+            <li>同一相机几何会复用多少帧，setup 是否有真实摊销条件？</li>
+          </ol>
+          <div class="alert critical"><strong>当前论文边界</strong><span>可以写“camera-block 加速与 noisy-target 尾部冲突的 opened synthetic 负证据”；不能写“新算法已胜 DeepONet/FNO”、真实 BOST 泛化、可部署速度或 fresh confirmation。</span></div>
+          <div class="actions"><a class="button" href="site_tools/validate_jacru_m2_3_m2_4_evidence.py">M2.3–M2.4 validator</a><a class="button" href="site_tools/validate_jacru_m2_5_m2_6_evidence.py">M2.5–M2.6 validator</a><a class="button" href="site_tools/validate_jacru_m2_7_m2_8_evidence.py">M2.7–M2.8 validator</a></div>
         </div>
       </div>
     </section>

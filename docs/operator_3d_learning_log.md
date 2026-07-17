@@ -1865,3 +1865,280 @@ optimization；若 JACRU 只赢 CGLS、却赢不了同参数化的非神经 phas
 
 完整一手文献、强基线、失败门和给师兄的问题见
 [JACRU 原创性红队](jump_aware_cone_ray_unrolling_novelty_gate_2026-07-17.md)。
+
+## 63. JACRU-M0：算法输了，而且“漂亮的界面分数”原来是初始化送的
+
+这一轮终于没有停在算法草图，而是把一个最小 JACRU 写成了能运行、能被强基线推翻的程序。
+观测不是由逆算子自己生成：出题端沿射线积分连续解析梯度，答题端用有限差分加三线性插值的
+体素算子。两个 seed、平滑场和单界面场、1% 噪声、2% camera bias；CGLS、Huber-PDHG、
+phase-only 和两个 JACRU 版本全部限制为 24 次 forward 加 24 次 reverse/adjoint。
+
+结果非常明确。Huber-PDHG 平均 field-L2 是 `0.4801`，CGLS 是 `0.4989`，带 bias 的
+JACRU 是 `1.9878`，差了三倍以上。更严重的是，自动结果里看似很好的界面指标不能相信：
+固定 `x` 平面在算法读取任何观测之前，已经对两个单界面样本得到 `F1@1dx = 1.0`；最终
+优化后反而降到 `0.974`。生成器的界面方向和初始化方向碰巧对齐，这就是一种答案泄漏。
+
+**讲人话：**好比考试前把一道题的图形轮廓印在草稿纸上。即使程序没有读取 truth 文件，
+初始化本身也可能携带答案。今后所有界面模型都要先给“空白初始化”打分，报告最终相对初始
+改善，并在无界面场惩罚假阳性。
+
+## 64. M0.1 和 M1：修 bug 不能变成反复调参，真正留下的是职责分工
+
+M0.1 只在已经打开的四个开发 case 上做诊断：按算子范数缩放伴随初始化、随机化平面、让
+gate 从阈值以下开始，并降低学习率。field-L2 从 `1.9878` 降到 `0.7690`，修复幅度
+61.31%，说明尺度问题确实存在；但它仍比 Huber-PDHG 差 60.18%，所以还是 NO-GO。
+
+M1 换了一个更本质的结构：总预算仍是 24 对物理调用，先把 18 对交给 CGLS，冻结所得主场，
+只把余下 6 对交给 jump/interface 残差。平均 field-L2 降到 `0.4950`，比 CGLS 好
+`0.78%`，却仍比 Huber-PDHG 差 `3.11%`，H1 差 `15.74%`。只有重投影门通过，界面
+gate 根本没有被激活。
+
+这里不能挑 `0.78%` 当成功故事。真正有用的发现是：从零联合优化全场会把有限预算浪费在
+经典求解器早已会做的事情上；“物理底座 + 小残差”明显更稳定。跨报告 validator 已确认三轮
+每行都使用 24F/24R，授权结论只有“继续测试 learned residual operator”，没有方法胜出、
+界面增益或打开 fresh 的权限。
+
+完整数字见 [M0-M1 负证据判决](jacru_m0_m1_negative_evidence_2026-07-17.md)。
+
+## 65. M2：真正的算子学习不是逐样本拟合，而是跨样本学会“经典方法错在哪里”
+
+下一候选暂称 M2。每个样本先跑固定预算 CGLS 得到 `x0`，再计算逐相机数据残差
+`r_v = y_v - A_v x0` 和其伴随 lift `A_v^T r_v`。一个共享权重、相机顺序无关的 set
+encoder 读取这些 lift、pose 和 active mask，只输出一个受 support 与 gate 限制的小修正：
+
+```text
+x_hat = x0 + support * gate * ResidualOperator({A_v^T r_v, pose_v}, x0)
+```
+
+它和 M1 的关键区别是：M1 在每个测试样本上重新用 Adam 拟合参数，M2 要在 train 场上学
+一个函数到函数映射，再原样迁移到未见 morphology、camera count、pose、noise 和 bias。
+因此它才有资格与 DeepONet、FNO、3D CNN 比较“算子学习”能力。
+
+第一道保险是最后一层全零初始化：训练前输出必须逐位等于 CGLS；第二道是 correction bound，
+OOD 时不能任意覆盖物理解；第三道是可观测 fallback，风险信号不足就返回底座。训练真值只
+用于 train loss，模型 forward API 不能接收 truth、family label 或 interface mask。
+
+这一阶段的目标不是尽快画出赢图，而是用三到五天回答一个小而硬的问题：在相同重建调用预算
+下，一个跨几何学习的残差算子能否同时赢 Huber field/H1、守住 CGLS reprojection，并在
+多 seed 与 OOD 上不出现尾部伤害？答不上来就继续淘汰，不打开 fresh。
+
+## 66. M2-T0：四个小模型第一次在同一张算子学习考卷上正面对比
+
+M2 已经从框图变成了可运行代码。每个样本先做 12 步 CGLS，再把逐相机
+`A_v^T(y_v-A_v x0)`、相机 pose、mask、support 和 `x0` 交给网络。网络不接触 truth、场族
+标签或界面 mask；truth 只用于训练 loss 和最后评分。最后一层从全零开始，所以未经训练时
+模型逐位退回 CGLS。
+
+这次没有只跑“自己的模型”。同一套 32 个 train、12 个 development、18 个探索性 OOD
+case 上，同时训练了 JACRU-M2、pooled 3D CNN、fixed-grid DeepONet 和官方 neuraloperator
+FNO；每种方法 3 个模型 seed。参数量从 3,549 到 10,211，都属于 Mac 可以快速证伪的 T0
+规模，整轮 MPS 用了 68.63 秒。
+
+**讲人话：**以前只是问“这个想法能不能写出来”，现在开始问更严格的问题：“它比简单 CNN
+到底多学到了什么？”如果自己的结构连更简单的模型都赢不了，就没有必要先租大卡放大它。
+
+## 67. 场误差降了四成，但重投影坏了几十倍：这叫形态幻觉，不叫重建成功
+
+结果第一眼很诱人。JACRU-M2 相对 CGLS 的 field-L2 在 development 改善 `46.16%`，探索性
+OOD 改善 `32.38%`；H1 也分别改善 `50.24%` 和 `42.68%`。三个模型 seed 都为正，没有
+field harm case。
+
+可是同一个预测重新经过物理 forward 后，重投影相对 CGLS 放大到 `28.56x / 35.10x`。
+pooled CNN 的 field gain 还略高：`47.11% / 32.80%`，重投影同样坏到
+`27.91x / 34.47x`。DeepONet 更保守，却只有 `6.57% / 3.74%` field gain；FNO 在 OOD
+出现 `12.96%` harm rate，最坏样本退化 `34.85%`，重投影更达到 `53.16x`。
+
+这说明网络确实学到了合成训练场“通常长什么样”，却把输入观测当成了弱提示。它把欠定逆问题
+推向训练分布常见的形状，因此 truth-space 切片更漂亮；但这些形状不再解释相机实际测到的
+位移。如果论文只报告 NRMSE 或挑几张 slice，这个失败很容易被误包装成成功。
+
+**讲人话：**像是模型根据往年答案写出一篇很像标准答案的作文，却没有回答这次题目。三维图
+更漂亮不够，投回每台相机后还必须对得上原始观测。
+
+完整表格与禁止主张见 [M2-T0 负证据判决](jacru_m2_t0_supervised_residual_no_go_2026-07-17.md)。
+
+## 68. M2.1：下一步不是加宽网络，而是把每次提议拉回测量流形
+
+下一轮先不改网络结构，只在已经打开的 T0 上给四类预测追加确定性数据一致性校正：
+
+```text
+x_net = x0 + learned_correction
+x_(k+1) = support * (x_k + tau * A^T(y - A x_k))
+```
+
+会固定扫描 `0 / 1 / 3 / 5 / 11` 步，画出 field、H1 和 reprojection 的 Pareto 轨迹。这个
+post-open 诊断不产生新鲜证据，只回答一个决定路线生死的问题：网络得到的场收益，有多少能在
+重新满足观测后留下？
+
+判断标准也先写清楚：若 3--5 步校正能把 reprojection 压回 CGLS 的 `1.10x` 内，同时保留
+至少 `5%` field gain，才值得把 exact data-consistency block 写进训练图并进入更大预注册；
+若一拉回观测收益就消失，说明当前 correction 主要是错误零空间先验，应该停止，而不是靠增大
+参数量硬拟合。未来真正有论文价值的贡献会是“可变几何 residual proposal + 可证明的物理校正
++ OOD 风险回退”的完整机制，不是一张更低 NRMSE 的孤立图。
+
+## 69. M2.1 第一次运行为什么被我自己作废：多用 11 步就必须给经典方法 11 步
+
+第一版数据一致性诊断写完后，红队指出了一个很容易漏掉的公平性问题。learned 路径本来用了
+`CGLS-12 + 1 feature pair`；再追加 11 步 Landweber 后，总预算已经是 `24F/24A`。如果还只
+和 CGLS-13 比，任何重投影改善都可能只是“多算了 11 步”，不是网络贡献。
+
+所以第一版结果没有进入网页结论，而是原样留作错误记录。v1.1 在重新运行前加入三套逐预算
+对照：`CGLS-(13+k)`、`Huber-(13+k)`，以及 CGLS-12 后追加 `(k+1)` 步纯 Landweber。
+后者和 learned 路径的总 forward/adjoint 数完全相同，专门拆掉“额外迭代伪成功”。
+
+同时，代码接口新增了 `tau < 2/||A||²` 的硬检查；所谓 nullspace filter 也改成了更准确的
+near-null spectral filter。有限步只是 `(I-tau A^T A)^k`，不能写成精确投影。
+
+**讲人话：**如果我比别人多做 11 道演算，不能回头说是神经网络更聪明。先把计算额度拉平，
+才知道模型贡献还剩多少。
+
+## 70. 匹配到 24F/24A 后，场收益是真的，重投影失败也是真的
+
+v1.1 共评分 1,620 行 learned 轨迹和 450 行匹配基线；零步结果逐位复现 T0，最大 field 和
+reprojection 差都是 0。JACRU 加 11 步 measured pullback 后，development field-L2 为
+`0.3424`，exploratory OOD 为 `0.3982`；相对同预算最强经典场基线仍改善
+`45.34% / 35.68%`，相对 base-only Landweber 也改善 `49.44% / 39.98%`。
+
+这说明网络确实提供了额外的 truth-space 信息，不能简单归因于多跑物理迭代。但同预算
+CGLS-24 的 measured reprojection 已降到 `0.000813 / 0.000904`，JACRU 仍是
+`0.03180 / 0.03480`；逐 case 比值达到 `43.12x / 41.95x`。所有 field/H1/harm 门通过，
+唯一但决定性的 reprojection 门失败，零个点获准进入 fresh。
+
+near-null 路径也没有接近零空间：11 步后 JACRU 的
+`||A delta_k|| / ||y-Ax0||` 仍是 `2.282 / 3.189`，而未来门槛是 `<=0.10`。它不是差一点，
+而是固定步 Landweber 在强病态算子上衰减大奇异值分量仍太慢。
+
+**讲人话：**模型带来的三维形状信息可能是真的，但当前“验算器”来不及在有限预算里把错误
+成分筛掉。好内容和坏内容黏在一起，这就是下一算法要拆开的东西。
+
+完整判决见 [M2.1 匹配预算 NO-GO](jacru_m2_1_matched_data_consistency_no_go_2026-07-17.md)。
+
+## 71. M2.2 不先造新网络，先问一个更基础的问题：好修正能不能落在允许零空间里
+
+下一步先在 12³ toy 上做 exact SVD headroom oracle：取同预算经典参考 `x_ref`，把网络修正
+投到 approximate inverse operator 的精确零空间，得到
+
+```text
+x_oracle = x_ref + P_ker(A) (x_net - x_ref)
+```
+
+它不是可部署算法，只回答“场收益和内部投影一致性在数学上能否共存”。如果 exact oracle
+都保不住至少 25% 的原始 field gain，learned residual 路线应立即停止；如果 oracle 能保留，
+再实现 matrix-free Krylov/LSQR 近似，并用相同总调用预算与 base-only Krylov 对照。
+
+即使这一步成功，也不能把“零空间网络”本身写成原创。Deep Null Space Learning、Learned
+Primal-Dual、MoDL 和 data-proximal null-space methods 都已有先例。可能的贡献只能来自更窄、
+更真实的组合：有限孔径 BOST、可变相机集合、独立 renderer mismatch、matrix-free affine
+projection，以及对真实 held-out image consistency 的双域审计。
+
+这里还有一个必须记住的限制：`ker(A_inverse)` 只是体素有限差分近似算子的零空间，不一定是
+连续光学 forward 的零空间。未来即便内部 reprojection 变漂亮，也要把预测送回独立解析
+renderer 或真实观测验一次，否则仍可能只是服从了错误的物理近似。
+
+## 72. M2.2 exact oracle：终于把“场收益”和“投影一致性”同时放进一个解里
+
+M2.1 的失败留下一个悬而未决的问题：普通 Landweber 太慢，到底是算法路线不可能，还是我们
+没有用对投影工具？M2.2 在 12³ toy 上直接组装 dense `A`，对每个几何只做一次 float64 SVD，
+把网络 correction 精确分成 row-space 和 numerical-null-space 两部分。
+
+结果给出了第一条真正的正 headroom。所有 12 个几何都是 150 个 measurement 对 1,000 个
+active voxel，数值 rank 都为 150，因此至少有 850 维 numerical null space。JACRU correction
+的 null norm fraction 在 development / OOD 为 `0.913 / 0.903`；精确删除 row 分量后，
+reprojection 与 CGLS-24 一致到约 `1e-14`，field gain 仍有 `45.28% / 37.54%`，H1 gain
+为 `43.75% / 40.19%`。
+
+pooled CNN 也得到几乎相同结果：field gain `44.24% / 37.38%`。所以这次授权的是
+“通用 learned residual + affine projection”方向，不是 JACRU 结构赢了。
+
+**讲人话：**之前像一桶好水里混了泥，普通滤网 11 次还滤不干净。SVD oracle 证明泥和水在
+数学上确实能分开，而且滤完后好内容大多还在；接下来要做的是设计一个不靠昂贵 SVD 的快速
+滤法。
+
+完整证据见 [M2.2 exact-null headroom](jacru_m2_2_exact_nullspace_headroom_2026-07-17.md)。
+
+## 73. 为什么这仍然不能叫算法成功
+
+这个 oracle 故意不参与 runtime 或调用预算排名。真实三维 BOST 不可能把百万级算子组装成
+dense matrix 再做 SVD。它还只约束 approximate voxel operator：一个 correction 对这个
+`A` 不可见，不代表对独立连续 renderer、有限孔径光学或真实相机不可见。
+
+另外，850 维零空间本身就是一把双刃剑。它让网络有地方放入有用的 morphology prior，也让
+网络可以把训练集模板藏进观测完全看不到的方向。当前 positive headroom 依赖 synthetic truth
+训练和 opened split，不能证明真实 shock、density 或 refractive-index 恢复。
+
+因此状态写作 `HEADROOM_FOUND_ORACLE_ONLY`，不是 `GO`。网页上可以展示它，因为它精确回答了
+一个科学问题；论文里若没有 matrix-free 近似、独立 forward 和新数据门，这张图只能作为方法
+动机或 oracle 上界。
+
+## 74. M2.3：下一段真正要写的算法是 measurement-space row removal
+
+exact projector 可以写成：
+
+```text
+P_row delta = A^T (A A^T)^dagger A delta
+```
+
+这提示比体素 Landweber 更直接的 matrix-free 算法。先算 `b=A delta`，再用固定 k 步 PCG
+解 `(A A^T + lambda I)z=b`，最后输出 `x_ref + delta - A^T z`。每次 measurement-space
+矩阵乘法只调用一次 `A^T` 和一次 `A`；算 `b` 与最后回投各多一对，所以 k 步总计
+`(k+1)F/(k+1)A`。
+
+下一轮首先比较 unpreconditioned CG、Jacobi 和固定 low-rank preconditioner。只有普通方法在
+有限 k 下明显够不到 oracle，才有理由让网络学习 geometry-conditioned preconditioner 或停止
+规则。这样“算子学习”负责加速一个明确的线性代数瓶颈，而不是直接生成无法核验的三维场。
+
+门槛也很清楚：固定 k、同总调用 CGLS/Huber/base-only CG；保留至少 50% exact oracle gain；
+reprojection 回到 matched CGLS 的 `1.10x / 1.15x`；再做 camera-count/pose/mask OOD 和独立
+renderer。过不了就停在 oracle 动机，不打开 fresh。
+
+## 75. M2.3：公式写对了一半，目标却被旧底座锁住
+
+M2.3 用 PCG 解 `(AA^T+lambda I)z=A(x_net-x_ref)`，把 learned correction 的可见分量删掉。
+实现合同通过了，但 exact limit 只能满足 `Ax=Ax_ref`。这里的 `x_ref` 是 CGLS-12；同预算 CGLS
+已经继续迭代到更低 residual，所以预条件器再快也不能改变弱 anchor。最好 development
+reprojection 仍约为 matched CGLS 的 `14.79x`，正式 NO-GO。
+
+**讲人话：**我们造了一辆更快的车，却把终点设在旧位置。加速器没有办法把终点搬走。
+
+## 76. M2.4–M2.5：目标改成观测仿射集，逐点 Jacobi 仍不够
+
+M2.4 改解 `A x_net-y`，exact affine oracle 能把 residual 压到约 `6e-16`，说明目标集合确实
+可达；identity CG 在有限预算下仍慢。M2.5 使用 dense `A` 精确构造 `diag(AA^T)`，最好也只有
+约 `15.19x` matched-CGLS reprojection。它关闭了 Hutchinson diagonal 路线：没有必要用随机 probes
+去便宜估计一个已经被 exact 版本证伪的结构。
+
+## 77. M2.6：相机分块找到了真实谱结构，但均值不能覆盖受害样本
+
+exact camera-block 把每台相机内部的 50 个 measurement coordinates 联合求逆。K=12 时 JACRU
+development field gain `39.01%`、reprojection `0.270x`；CNN 也相近。闭合恒等式误差约 `1e-15`，
+所以不是实现假象。
+
+但两种网络都有 `8.33%` harm，最差 field gain 为 `-9.31% / -12.31%`。受害行全部来自同一个
+`single_interface / base_seed 2113`，跨六个模型种子稳定出现。exact block 还使用 `1001F-equiv`
+dense setup，K=12 超过 24-call 主预算。因此只能写“camera-local coupling 是强机制”，不能写算法成功。
+
+## 78. M2.7：K=9 已经够快，真正失败的是 target/no-harm 联合门
+
+补齐 K=0–10 后，JACRU 在 K=9、总预算 23F 时的 mean reprojection 已为 `0.852x`，CNN 为
+`0.914x`；两者都优于 matched CGLS 的平均 residual 门。可是 harm 仍是 `8.33%`，最差为
+`-8.89% / -11.89%`。K=10 没有改善尾部。
+
+这一步很关键：不能再说“只要 learned preconditioner 更强就会成功”。solver 已在预算内达到目标，
+目标本身仍会伤害含噪界面场。
+
+## 79. M2.8：连看真值的插值 oracle 都救不了简单校准
+
+我们测试 `x(alpha)=x_net-alpha(x_net-x_pcg)`。固定全局 alpha 没有通过点。随后 evaluator 获得一个
+不可能部署的特权：对每个样本看真值，并在满足逐样本 `1.1x` CGLS reprojection 门的连续 alpha
+区间中选择 field error 最小值。
+
+K=10 时两种网络的可行率仍只有 `97.22%`；问题界面样本即使选择约 `0.99` 的最优 alpha，六个
+模型种子的 field gain 仍全部为负。这个上界失败后，不能再训练一个 alpha-MLP 然后声称问题已解。
+
+## 80. 主线转向：噪声感知目标与 fail-closed，而不是继续堆预条件器
+
+下一轮先比较经典 discrepancy stopping、covariance-whitened PCGLS、Huber/Student-t data fidelity，
+并要求 held-out camera 或 independent renderer 决定是否接管。只有固定方法先出现 field/H1、
+held-out reprojection、harm/worst 与总成本的联合可行区，才允许学习 stopping 或 regularization operator。
+
+完整判决见 [M2.3–M2.8 opened evidence](jacru_m2_3_to_m2_8_opened_evidence_2026-07-17.md)。
