@@ -28,9 +28,19 @@ SOURCE_ROOTS = (
     "demo_m3b",
     "paper_library/tools",
 )
-MPS_CASE = (
-    "demo_t16_operator/test_psu_b0_primal_dual.py::"
-    "test_cpu_float32_and_mps_float32_match_on_fixed_short_run"
+MPS_CASES = (
+    (
+        "demo_t16_operator/test_psu_b0_primal_dual.py::"
+        "test_cpu_float32_and_mps_float32_match_on_fixed_short_run"
+    ),
+    (
+        "site_tools/test_psu_b0_gate_a_attestation_mps.py::"
+        "test_mps_factor_recurrence_matches_cpu_reference"
+    ),
+    (
+        "site_tools/test_psu_b0_gate_a_attestation_mps.py::"
+        "test_independent_mps_validator_recomputes_parity"
+    ),
 )
 FAST_CONTRACT_TESTS = (
     "site_tools/test_build_pages_artifact.py",
@@ -50,6 +60,7 @@ GATE_A_TARGETED_TESTS = (
     "demo_t16_operator/test_psu_b0_absolute_regularization_factor.py",
     "demo_t16_operator/test_psu_b0_signed_factor_majorizer.py",
     "demo_t16_operator/test_psu_b0_factor_majorizer_pipeline.py",
+    "site_tools/test_psu_b0_gate_a_attestation.py",
 )
 EXISTING_ARTIFACT = REPO_ROOT / "build/pages-site"
 THREAD_ENVIRONMENT = {
@@ -130,10 +141,10 @@ def _run_medium(runner: CommandRunner) -> None:
             "-n",
             "4",
             "--dist=loadfile",
-            f"--deselect={MPS_CASE}",
+            *(f"--deselect={case}" for case in MPS_CASES),
         ]
     )
-    runner.run(_pytest_command(MPS_CASE))
+    runner.run(_pytest_command(*MPS_CASES))
 
 
 def _short_sha(runner: CommandRunner) -> str:

@@ -71,9 +71,9 @@ def test_medium_uses_fixed_roots_then_serial_mps_case(
         "-n",
         "4",
         "--dist=loadfile",
-        f"--deselect={MODULE.MPS_CASE}",
+        *(f"--deselect={case}" for case in MODULE.MPS_CASES),
     ]
-    assert commands[3] == [sys.executable, "-m", "pytest", MODULE.MPS_CASE]
+    assert commands[3] == [sys.executable, "-m", "pytest", *MODULE.MPS_CASES]
     assert "." not in parallel[3:]
 
 

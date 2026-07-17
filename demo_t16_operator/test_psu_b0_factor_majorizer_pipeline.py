@@ -657,6 +657,43 @@ def test_solver_rejects_factor_mutation_after_setup(
         factor_pdhg_objective(setup, state, target)
 
 
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "tau",
+        "sigma_data",
+        "data_mask",
+        "active_primal_indices",
+        "pipeline_active_indices",
+        "voxel_spacing",
+    ],
+)
+def test_solver_rejects_derived_setup_or_geometry_mutation(
+    mutation: str,
+) -> None:
+    setup = _setup()
+    target = torch.zeros((2, 1, 2), dtype=torch.float64)
+    if mutation == "tau":
+        setup.tau.data[0] *= 1.1
+    elif mutation == "sigma_data":
+        setup.sigma_data_by_view.data[0] *= 1.1
+    elif mutation == "data_mask":
+        setup.data_row_mask.data.reshape(-1)[0] = False
+    elif mutation == "active_primal_indices":
+        setup.active_primal_indices.data[0] += 1
+    elif mutation == "pipeline_active_indices":
+        setup.pipeline._active_indices.data[0] += 1
+    elif mutation == "voxel_spacing":
+        setup.pipeline.voxel_operator.spacing_xyz = (1.1, 1.0, 1.0)
+    else:  # pragma: no cover - parametrization is exhaustive.
+        raise AssertionError(mutation)
+    with pytest.raises(
+        RuntimeError,
+        match="changed after (majorizer )?setup",
+    ):
+        run_factor_pdhg(setup, target, iterations=1)
+
+
 def test_embed_restrict_are_device_dtype_strict_and_do_not_use_dense_E() -> None:
     setup = _setup()
     pipeline = setup.pipeline

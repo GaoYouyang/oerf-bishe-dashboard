@@ -76,23 +76,17 @@ CPU 测试统一设置 `OMP_NUM_THREADS=1`、`MKL_NUM_THREADS=1`、
 固定源码根：
 
 ```bash
-env PYTHONPATH=. \
-  OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
-  VECLIB_MAXIMUM_THREADS=1 NUMEXPR_NUM_THREADS=1 \
-  .venv/bin/python -m pytest -q -n 4 --dist=loadfile \
-  demo_t16_operator site_tools demo_m3b paper_library/tools \
-  -k 'not cpu_float32_and_mps_float32_match_on_fixed_short_run'
-
-PYTHONPATH=. .venv/bin/python -m pytest -q \
-  demo_t16_operator/test_psu_b0_primal_dual.py::\
-test_cpu_float32_and_mps_float32_match_on_fixed_short_run
+.venv/bin/python site_tools/run_oerf_verification_matrix.py --tier medium
 ```
 
-2026-07-17 的第一次固定 4-worker 实测为 `918 passed / 11.54 s`；随着本轮新增
-模块并入，最新统一 medium 门为 `977 passed / 12.86 s`，随后串行 MPS
-parity 为 `1 passed / 1.02 s`。fast 已包含 170 项页面/因子合同测试与 46,214 个
-旧 artifact 链接审计；完整 medium matrix 总时长为 `16.81 s`。上一轮串行
-完整套件约为 `28.91 s`，在测试数增加后反馈时延仍缩短约 41.9%。
+脚本固定四个 CPU worker，并自动 deselect 后串行运行 3 个 MPS case，避免新增 MPS
+测试后忘记从并行阶段移出。
+
+2026-07-17 的第一次固定 4-worker 实测为 `918 passed / 11.54 s`。正式 Gate A
+合入后，最新统一 medium 门为 `1006 passed / 11.29 s`，随后 3 个串行 MPS case
+为 `3 passed / 0.87 s`；fast 为 `199 passed / 1.46 s`。完整 medium matrix
+总时长为 `15.88 s`。上一轮串行完整套件约为 `28.91 s`，在测试数继续增加后
+反馈时延仍缩短约 45%。
 
 ### Full：提交与发布前
 
@@ -107,7 +101,7 @@ clean-HEAD、输入 hash、测试节点 hash、结果目录和开封门。
 
 ## 5. 当前流水线状态
 
-已完成但尚未等同于正式 Gate A attestation：
+已完成并进入正式 Gate A mechanics attestation：
 
 - tiny CPU/float64 signed-factor majorizer 与 6-step recurrence；
 - production `P/P^T`；
@@ -116,22 +110,19 @@ clean-HEAD、输入 hash、测试节点 hash、结果目录和开封门。
 - strict coordinate `E/E^T` 与 exact-zero constant ledger；
 - production full-chain matrix-free ones-pass、camera/site shared step 与 exact-zero mask；
 - production 1/6-step Huber recurrence 与 site-major dense oracle 逐步对齐；
-- 4-worker 测试调度和依赖固定。
+- 4-worker 测试调度和依赖固定；
+- config/input/test-node/code/expanded-node/environment fingerprint 与 stale 负例；
+- setup/oracle/solver/scorer 的逻辑和物理账本；
+- clean commit CPU/MPS attestation、独立 NumPy oracle、333 项 validator checks；
+- validation report 与 release checksums 的第二次 `--no-write` 复核。
 
-仍未完成：
-
-- 冻结 config/input/test-node/code fingerprint 及 stale 负例；
-- setup/solver/scorer 的正式机器可读账本与独立 validator；
-- CPU/MPS 固定 fixture 的完整 Gate A attestation；
-- Gate B 性能比较。
-
-因此当前合法结论仍是：实现链取得了可验证增量，网络不是主瓶颈，Gate A 与
-算法性能均尚未通过。不得把测试提速或因子正确性写成重建优越性。
+仍未完成的是 Gate B 性能比较。当前合法结论是 `Gate A mechanics attested`，不是
+“算法有效”。本机环境虽记录完整 Torch/NumPy/pytest tree hash，仍不是隔离容器证明。
 
 ## 6. 后续顺序
 
-1. 冻结 Gate A 配置、测试 node 列表、代码与输入 hash。
-2. 在 clean commit 上生成 CPU/MPS attestation 及独立 validator；失败只修合同。
-3. Gate A 全通过后，才运行 scalar/block/factor 与 graph-PCGLS 的同调用 Gate B。
+1. 保留 Gate A 证据不变；后续源码修改必须重新 attestation。
+2. 冻结 Gate B 数据、scalar/block/factor/graph-PCGLS 基线、调用预算和失败门。
+3. Gate B 只跑 data-only；通过后才开放 TV/Huber 与 FM-CG-PDNO smoke。
 4. 先报告 mean、p10、harm、worst、gradient/front 与 cold-start 成本，再决定是否
    值得转向 learned hybrid 或申请远端算力。

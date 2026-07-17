@@ -1,18 +1,19 @@
 # Covariance-aware signed BOST factor-majorized diagonal/block PDHG 设计说明
 
 日期：2026-07-17
-状态：`GATE_A_PRE_ATTESTATION_MECHANICS_ONLY_VIEW_LOCAL_SINGLE_FROZEN_SCALE / FORMAL_GATE_A_NOT_ATTESTED / GATE_B_NOT_RUN / NO_FRESH_REAL_OR_WIN_CLAIM`
+状态：`FORMAL_GATE_A_ATTESTED_MECHANICS_ONLY_VIEW_LOCAL_SINGLE_FROZEN_SCALE / GATE_B_NOT_RUN / NO_FRESH_REAL_OR_WIN_CLAIM`
 
 2026-07-17 实现进度说明：tiny CPU/float64 signed-factor oracle、显式活动坐标
 `E/E^T`、production `P/P^T`、`|G_c|/|G_c|^T`、组合后取绝对值的
-`|H R Q|/|H R Q|^T`，以及 `|D_+|/|D_+|^T` 已落地，并在尚未 attested
-的工作树上观察到定向对齐。
+`|H R Q|/|H R Q|^T`，以及 `|D_+|/|D_+|^T` 已落地。
 production matrix-free ones-pass、camera/site shared step、exact-zero mask、删除
 常数账本、底层物理调用账本与固定 6 步 Huber recurrence 也已与独立 site-major
 dense oracle 逐步对齐。当前实现只接受一个冻结 measurement-scale 实例和彼此独立
 的 view-local whitening blocks；声明跨 camera covariance 时会 fail closed。这仍不等于
-正式 Gate A attestation：冻结配置/输入/测试节点/代码 fingerprint、clean-commit
-CPU/MPS 报告和独立 validator 尚未生成。
+正式 Gate A 已在 clean source commit `53f1bccb287744a6ab97d7d6c2a86d556515e34a`
+上生成：13/13 E1 PASS，20 个 selector 展开为 34 个 case、零跳过，独立 validator
+完成 333 项 core checks，并通过第二次 `--no-write` 复核。范围仍严格限于单一冻结
+scale、view-local synthetic mechanics；Gate B、fresh、真实数据和方法胜出均未运行。
 
 > 本文只定义下一算法候选、证明义务、实现门禁和证伪协议，不报告任何胜出结果。
 > 全文严格分为“可证明事实 / 实现假设 / 待证伪假设”；条件性定理不等于当前实现已通过。
@@ -296,13 +297,13 @@ cache_fingerprint
 
 若 absolute-factor 实现内部直接调用 signed production operator，相关调用必须按实际 `F/A^T` 计数，不能因目的叫“setup”而归零。cold-start、单次 reconstruction 和多次摊销三张表都必须保留。
 
-当前 pre-attestation 实现还做两项窄审计：每次 wrapper 调用前后都读取 measurement
+当前 formal mechanics 实现还做两项窄审计：每次 wrapper 调用前后都读取 measurement
 factor 与 regularization factor 自身的计数器，物理增量不是恰好一次就失败；setup 同时
 保存 wrapper 与 physical 两份 ledger。对 exact-zero data 行，运行时保存活动/删除索引、
 被删除 target 值和 `0.5 * ||y_deleted||^2`，目标函数只在活动 residual 上计算后显式加回
 该常数。二者都只证明本 fixture 没有漏账，不替代正式 fingerprint attestation。
 
-为防 setup 后修改 factor 使 zero ledger 失效，当前 pre-attestation 路径只接受 sealed
+为防 setup 后修改 factor 使 zero ledger 失效，当前 formal mechanics 路径只接受 sealed
 exact measurement/regularization 实现，并保存全部 setup-critical tensors 的 identity、
 pointer、shape、dtype、device、PyTorch version 与内容 SHA-256；solver/scorer 每次入口
 都重新核对。内容 hash 专门覆盖 `tensor.data[...]` 这类不增加 `_version` 的 storage 写入。
@@ -424,10 +425,9 @@ median wall-time ratio vs graph frontier      <= 3.0
 
 截至最新状态，signed factor majorizer 的 tiny dense oracle、production 因子组件、
 matrix-free ones-pass、exact-zero/physical-call ledger 和 6 步 TV/Huber recurrence
-在非 attested 工作树的单一冻结 scale、view-local covariance fixture 上观察到定向与
-跨接口对齐，但
-Gate A 尚未在冻结 fingerprint 的 clean commit 上生成正式 CPU/MPS attestation，
-因此 E1 仍不能签字；独立 flow-off/calibration scale 不存在，同预算性能门也未执行。
+已在 clean commit 的单一冻结 scale、view-local covariance fixture 上通过正式 Gate A。
+证明记录、JSON 与 checksum 见 `docs/psu_b0_gate_a_attestation_2026-07-17.md`。独立
+flow-off/calibration scale 不存在，同预算 Gate B 性能门也未执行。
 因此本文不声称候选优于 scalar PDHG、PCGLS、TV/Huber、learned primal-dual
 或任何现有方法；当前观察仅限于 mechanics 对照，并继续保留可被明确关闭的
 算法路线。

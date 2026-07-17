@@ -49,7 +49,22 @@ class FactorPipelineFreezeToken:
     tensor_records: tuple[tuple[Any, ...], ...]
     measurement_shape: tuple[int, int, int]
     measurement_scale: float
+    grid_shape: tuple[int, int, int]
+    grid_minimum_xyz: tuple[float, float, float]
+    grid_maximum_xyz: tuple[float, float, float]
+    voxel_spacing_xyz: tuple[float, float, float]
     regularization_spacing_xyz: tuple[float, float, float]
+    content_sha256: str
+
+
+@dataclass(frozen=True)
+class FactorMajorizerSetupFreezeToken:
+    """Mutation token for the factor token and every derived setup tensor."""
+
+    factor_freeze_token: FactorPipelineFreezeToken
+    tensor_records: tuple[tuple[Any, ...], ...]
+    eta: float
+    batch_index: int
     content_sha256: str
 
 
@@ -172,6 +187,7 @@ class PSUB0FactorPipeline:
                 self.measurement_factor.absolute_kernel,
             ),
             ("measurement.scale_by_view", self.measurement_factor.scale_by_view),
+            ("pipeline.active_indices", self._active_indices),
         )
         records: list[tuple[Any, ...]] = []
         digest = hashlib.sha256()
@@ -204,6 +220,16 @@ class PSUB0FactorPipeline:
                 self.measurement_factor.sample_count,
             ),
             measurement_scale=float(self.measurement_factor.measurement_scale),
+            grid_shape=self.grid_shape,
+            grid_minimum_xyz=tuple(
+                float(value) for value in self.voxel_operator.grid_minimum_xyz
+            ),
+            grid_maximum_xyz=tuple(
+                float(value) for value in self.voxel_operator.grid_maximum_xyz
+            ),
+            voxel_spacing_xyz=tuple(
+                float(value) for value in self.voxel_operator.spacing_xyz
+            ),
             regularization_spacing_xyz=tuple(
                 float(value)
                 for value in self.regularization_operator.spacing_xyz
@@ -401,6 +427,7 @@ class PSUB0FactorMajorizerSetup:
     setup_call_ledger: FactorPipelineCallLedger
     setup_physical_call_ledger: FactorPipelineCallLedger
     factor_freeze_token: FactorPipelineFreezeToken
+    setup_freeze_token: FactorMajorizerSetupFreezeToken
 
     @property
     def active_primal_count(self) -> int:
@@ -446,6 +473,101 @@ class PSUB0DeletedDataLedger:
     objective_constant: torch.Tensor
 
 
+def _build_setup_freeze_token(
+    *,
+    factor_freeze_token: FactorPipelineFreezeToken,
+    eta: float,
+    batch_index: int,
+    data_row_sums: torch.Tensor,
+    data_column_sums: torch.Tensor,
+    tv_row_sums: torch.Tensor,
+    tv_column_sums: torch.Tensor,
+    total_column_sums: torch.Tensor,
+    data_row_mask: torch.Tensor,
+    tv_row_mask: torch.Tensor,
+    tv_site_mask: torch.Tensor,
+    active_primal_mask: torch.Tensor,
+    active_primal_indices: torch.Tensor,
+    rho_data_by_view: torch.Tensor,
+    sigma_data_by_view: torch.Tensor,
+    rho_tv_by_site: torch.Tensor,
+    sigma_tv_by_site: torch.Tensor,
+    tau: torch.Tensor,
+) -> FactorMajorizerSetupFreezeToken:
+    named_tensors = (
+        ("setup.data_row_sums", data_row_sums),
+        ("setup.data_column_sums", data_column_sums),
+        ("setup.tv_row_sums", tv_row_sums),
+        ("setup.tv_column_sums", tv_column_sums),
+        ("setup.total_column_sums", total_column_sums),
+        ("setup.data_row_mask", data_row_mask),
+        ("setup.tv_row_mask", tv_row_mask),
+        ("setup.tv_site_mask", tv_site_mask),
+        ("setup.active_primal_mask", active_primal_mask),
+        ("setup.active_primal_indices", active_primal_indices),
+        ("setup.rho_data_by_view", rho_data_by_view),
+        ("setup.sigma_data_by_view", sigma_data_by_view),
+        ("setup.rho_tv_by_site", rho_tv_by_site),
+        ("setup.sigma_tv_by_site", sigma_tv_by_site),
+        ("setup.tau", tau),
+    )
+    records: list[tuple[Any, ...]] = []
+    digest = hashlib.sha256()
+    digest.update(factor_freeze_token.content_sha256.encode("ascii"))
+    digest.update(repr((float(eta), int(batch_index))).encode("ascii"))
+    for name, tensor in named_tensors:
+        shape = tuple(int(size) for size in tensor.shape)
+        dtype = str(tensor.dtype)
+        device = str(tensor.device)
+        records.append(
+            (
+                name,
+                id(tensor),
+                int(tensor.data_ptr()),
+                int(tensor._version),
+                shape,
+                dtype,
+                device,
+            )
+        )
+        digest.update(name.encode("utf-8"))
+        digest.update(repr((shape, dtype, device)).encode("ascii"))
+        contiguous_cpu = tensor.detach().contiguous().cpu()
+        digest.update(contiguous_cpu.view(torch.uint8).numpy().tobytes(order="C"))
+    return FactorMajorizerSetupFreezeToken(
+        factor_freeze_token=factor_freeze_token,
+        tensor_records=tuple(records),
+        eta=float(eta),
+        batch_index=int(batch_index),
+        content_sha256=digest.hexdigest(),
+    )
+
+
+def _current_setup_freeze_token(
+    setup: PSUB0FactorMajorizerSetup,
+) -> FactorMajorizerSetupFreezeToken:
+    return _build_setup_freeze_token(
+        factor_freeze_token=setup.pipeline.factor_freeze_token(),
+        eta=setup.eta,
+        batch_index=setup.batch_index,
+        data_row_sums=setup.data_row_sums,
+        data_column_sums=setup.data_column_sums,
+        tv_row_sums=setup.tv_row_sums,
+        tv_column_sums=setup.tv_column_sums,
+        total_column_sums=setup.total_column_sums,
+        data_row_mask=setup.data_row_mask,
+        tv_row_mask=setup.tv_row_mask,
+        tv_site_mask=setup.tv_site_mask,
+        active_primal_mask=setup.active_primal_mask,
+        active_primal_indices=setup.active_primal_indices,
+        rho_data_by_view=setup.rho_data_by_view,
+        sigma_data_by_view=setup.sigma_data_by_view,
+        rho_tv_by_site=setup.rho_tv_by_site,
+        sigma_tv_by_site=setup.sigma_tv_by_site,
+        tau=setup.tau,
+    )
+
+
 def _solver_tensor(
     setup: PSUB0FactorMajorizerSetup,
     value: Any,
@@ -467,6 +589,8 @@ def _require_single_instance(setup: PSUB0FactorMajorizerSetup) -> None:
         )
     if setup.pipeline.factor_freeze_token() != setup.factor_freeze_token:
         raise RuntimeError("factor state changed after majorizer setup")
+    if _current_setup_freeze_token(setup) != setup.setup_freeze_token:
+        raise RuntimeError("derived majorizer state changed after setup")
 
 
 def _expand_reduced_primal(
@@ -989,6 +1113,27 @@ def build_psu_b0_factor_majorizer_pipeline(
             "one-pass physical factor setup call ledger is inconsistent"
         )
 
+    factor_freeze_token = pipeline.factor_freeze_token()
+    setup_freeze_token = _build_setup_freeze_token(
+        factor_freeze_token=factor_freeze_token,
+        eta=eta,
+        batch_index=batch_index,
+        data_row_sums=data_row_sums,
+        data_column_sums=data_column_sums,
+        tv_row_sums=tv_row_sums,
+        tv_column_sums=tv_column_sums,
+        total_column_sums=total_column_sums,
+        data_row_mask=data_row_mask,
+        tv_row_mask=tv_row_mask,
+        tv_site_mask=tv_site_mask,
+        active_primal_mask=active_primal_mask,
+        active_primal_indices=active_primal_indices,
+        rho_data_by_view=rho_data_by_view,
+        sigma_data_by_view=sigma_data_by_view,
+        rho_tv_by_site=rho_tv_by_site,
+        sigma_tv_by_site=sigma_tv_by_site,
+        tau=tau,
+    )
     return PSUB0FactorMajorizerSetup(
         pipeline=pipeline,
         eta=eta,
@@ -1010,7 +1155,8 @@ def build_psu_b0_factor_majorizer_pipeline(
         tau=tau,
         setup_call_ledger=ledger,
         setup_physical_call_ledger=physical_ledger,
-        factor_freeze_token=pipeline.factor_freeze_token(),
+        factor_freeze_token=factor_freeze_token,
+        setup_freeze_token=setup_freeze_token,
     )
 
 
@@ -1018,6 +1164,7 @@ __all__ = [
     "FACTOR_MAJORIZER_PIPELINE_SCHEMA",
     "FactorPipelineCallLedger",
     "FactorPipelineFreezeToken",
+    "FactorMajorizerSetupFreezeToken",
     "PSUB0DeletedDataLedger",
     "PSUB0FactorMajorizerSetup",
     "PSUB0FactorPDHGState",

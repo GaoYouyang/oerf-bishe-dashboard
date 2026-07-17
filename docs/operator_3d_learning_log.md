@@ -1369,3 +1369,38 @@ single-scale 和 cross-view support 字段必须彼此一致，物理账本直�
 不能拿它测新算法速度。未来 Gate B 要另做不可变执行副本，只在计时前后核验 hash。
 当前状态仍是 `GATE_A_PRE_ATTESTATION_MECHANICS_ONLY_VIEW_LOCAL_SINGLE_FROZEN_SCALE`；
 它没有“PASS”字样，也不授权性能、fresh、真实重建或论文胜出结论。
+
+## 51. 这次 Gate A 真的通过了，但只通过了 mechanics
+
+这次没有把“测试绿了”直接写成通过。先把源码冻结在 clean commit，再由正式 runner
+生成报告；随后另一套 NumPy dense oracle 不导入 production solver，从 JSON 原语重建
+所有矩阵和六步 recurrence。第一次独立验证通过后，我又跑了第二次 `--no-write`。
+
+第二次复核真的抓到一个问题：科学数值没有变，但发布前后目录多出两个文件，目录
+安全预检的计数被误混进 core checks，导致 validation JSON 不能逐字复现。修复后重新
+提交、重新生成、重新验证，最终稳定为：13/13 E1 PASS，20 个 selector 展开 34 个
+case、零跳过，独立 validator 333 项 core checks；NumPy 六步最大状态误差约
+`4.13e-16`，MPS 最大状态差约 `1.04e-7`。
+
+讲人话就是：这个很小的 frozen mechanics 题上，公式、代码、伴随、步长、删除零项
+和调用次数终于对得上了，而且别人不必相信报告里的 PASS 字样，可以自己重算。
+
+边界同样重要：Gate B 没跑，fresh 没开，真实 OERF 没跑，没有任何模型胜出。执行
+环境虽然哈希了完整 Torch、NumPy、pytest 安装树，仍是同一台 Mac，不是假装成独立
+容器证明。
+
+## 52. 下一算法不再是“再堆一个 FNO”，而是可关闭的学习 proximal
+
+并行研究支线把下一候选收敛成 FM-CG-PDNO：保留显式 BOST forward/adjoint、
+covariance whitening 和 factor metric，只让一个小型共享 3D 网络输出受限 proximal
+修正。网络输出层零初始化，`beta=0` 时必须逐元素退化回 deterministic factor-PDHG。
+
+这样每个贡献都能单独问责：是 whitening 有用、factor step 有用，还是 learned
+proximal 有用。若关掉学习器后不等于经典算法，或收益只来自更多 calls，这条路线直接
+失败。Mac 先用 360 个小场、28 个整组隔离 geometry 做证伪；只有 Gate B 的经典
+factor metric 已有稳定正信号，才启动神经 smoke。
+
+物理问题仍需师兄选边：有光圈/phantom/高低保真算子对就做 RayKernel-DCO；有真实
+timestamp、曝光和缺帧日志就做 TRAIL-4D；只有静态多视角且能永久留一台 audit camera
+才重启 GQ-NIO。三条不能一起大训练。完整结构、指标、失败门和六个数据问题见
+`docs/fm_cg_pdno_research_route_2026-07-17.md`。
