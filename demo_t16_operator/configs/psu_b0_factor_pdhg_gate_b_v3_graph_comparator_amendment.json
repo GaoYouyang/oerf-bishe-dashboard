@@ -1,0 +1,218 @@
+{
+  "schema_version": "psu-b0-factor-pdhg-gate-b-config-1.2-graph-comparator-amendment",
+  "status": "FROZEN_POST_GRAPH_DIAGNOSTIC_PRE_FACTOR_PROTOCOL",
+  "evidence_role": "OPENED_DEVELOPMENT_MECHANISM_GATE",
+  "description": "Post-graph-diagnostic, pre-factor Gate B protocol using a same-run singleton exact-K graph control; factor decision rules remain unseen and unchanged.",
+  "amendment": {
+    "kind": "POST_GRAPH_DIAGNOSTIC_PRE_FACTOR_COMPARATOR_AMENDMENT",
+    "parent_v2_commit": "eea30a7dc231e1e3050983f7ccacd30b716d420f",
+    "parent_v2_config_sha256": "3b0623f9644cb8ea2bd4a35e6abfbc4b2f646757f706ee6d5247b20b94875719",
+    "v2_failure": "single_sample_graph_replay_differs_from_frozen_batch_release",
+    "graph_rows_computed_in_memory_before_v2_failure": 64,
+    "factor_setup_count_before_v3_freeze": 0,
+    "factor_solver_calls_before_v3_freeze": 0,
+    "factor_metric_rows_observed_before_v3_freeze": 0,
+    "emitted_metric_row_count": 0,
+    "emitted_timing_pair_count": 0,
+    "result_directory_created": false,
+    "graph_diagnostic_report_sha256": "5499333734aca7e8327546a3db354ec84b930f057862e89b5563df89be02fda4",
+    "parent_batch_replay_is_binding": false,
+    "scored_graph_control": "same_run_single_sample_exact_k_graph_pcgls",
+    "solver_math_changed": false,
+    "factor_decision_thresholds_changed": false,
+    "factor_decision_formula_changed": false,
+    "sample_or_checkpoint_set_changed": false
+  },
+  "replicate_indices": [
+    0,
+    8
+  ],
+  "reaction_families": [
+    "plume",
+    "wavy_front",
+    "thin_front",
+    "double_front",
+    "annular_kernel",
+    "oblique_shock",
+    "vortex_pair",
+    "multi_plume"
+  ],
+  "checkpoints": [
+    4,
+    8,
+    16,
+    32
+  ],
+  "methods": [
+    "scalar_a_only_pdhg",
+    "view_block_a_only_pdhg",
+    "voxel_factor_a_only_pdhg",
+    "graph_pcgls"
+  ],
+  "factor_modes": [
+    "scalar",
+    "view_block",
+    "voxel_factor"
+  ],
+  "expected_runtime_shape": {
+    "grid_size": 16,
+    "view_count": 9,
+    "rays_per_view": 256,
+    "finite_aperture_sample_count": 8,
+    "measurement_count": 4608,
+    "support_active_voxel_count": 2744,
+    "data_coupled_voxel_count": 2744
+  },
+  "data_role": {
+    "geometry": "REAL_PSU_DETECTOR_GEOMETRY",
+    "fields": "ANALYTIC_REACTION_PHANTOMS_WITH_CLEAN_TRUTH",
+    "noise": "SYNTHETIC_CORRELATED_GRAPH_HEAT",
+    "scale_by_view": "CLEAN_TRUTH_DERIVED_ORACLE_DEVELOPMENT_ONLY",
+    "statistical_unit": "TWO_REPLICATES_OF_EIGHT_PAIRED_MORPHOLOGIES_NOT_16_IID"
+  },
+  "operator_budget": {
+    "zero_initialization": true,
+    "exact_forward_calls_equal_checkpoint": true,
+    "exact_adjoint_calls_equal_checkpoint": true,
+    "tv_forward_calls_per_iteration": 0,
+    "tv_adjoint_calls_per_iteration": 0,
+    "graph_uses_exact_same_k": true,
+    "best_less_than_or_equal_k_selection_forbidden": true,
+    "early_stopping_forbidden": true
+  },
+  "objective_contract": {
+    "factor_unit": "0.5*||A0*z-b0||^2",
+    "graph_unit": "0.5*||A*x-b||^2",
+    "conversion": "J_graph=amplitude_scale^2*4608*J_factor",
+    "cross_method_raw_objective_ranking_forbidden": true
+  },
+  "timing_contract": {
+    "primary_scope": "per_field_one_shot_setup_plus_k32_solver",
+    "paired_execution": "serial_single_sample",
+    "synchronization": "before_and_after_each_timed_call",
+    "counterbalanced_by_replicate": true,
+    "scoring_hashing_and_plotting_inside_timed_region": false,
+    "process_cold_start_claimed": false,
+    "multi_frame_amortized_speed_claimed": false
+  },
+  "invalidity_policy": {
+    "source_hash_mismatch": "INVALID_NO_RANKING",
+    "test_preflight_failure": "INVALID_NO_RANKING",
+    "operator_or_target_equivalence_failure": "INVALID_NO_RANKING",
+    "missing_duplicate_nan_skip_or_oom": "INVALID_NO_RANKING",
+    "postopen_protocol_mutation": "INVALID_NO_RANKING"
+  },
+  "solver": {
+    "eta": 0.7,
+    "theta": 1.0,
+    "regularization_weight": 0.0
+  },
+  "timing_order_by_replicate": {
+    "0": [
+      "scalar",
+      "view_block",
+      "voxel_factor",
+      "graph"
+    ],
+    "8": [
+      "graph",
+      "voxel_factor",
+      "view_block",
+      "scalar"
+    ]
+  },
+  "operator_equivalence_seed": 2026071702,
+  "thresholds": {
+    "operator_equivalence_relative_error_max": 0.00005,
+    "factor_mean_reduction_vs_scalar_percent_min": 25.0,
+    "factor_positive_sample_count_min": 12,
+    "factor_worst_gain_vs_scalar_percent_min": -3.0,
+    "factor_graph_mean_error_gap_percent_max": 20.0,
+    "factor_mean_reduction_vs_view_block_percent_min": 3.0,
+    "factor_wall_time_ratio_vs_single_sample_graph_max": 3.0,
+    "target_normalization_relative_error_max": 1e-7,
+    "positive_gain_tolerance_percent": 0.0,
+    "mean_monotonic_tolerance": 1e-12
+  },
+  "claim_boundary": {
+    "real_psu_detector_geometry_used": true,
+    "analytic_reaction_fields_used": true,
+    "synthetic_correlated_noise_used": true,
+    "scale_by_view_uses_clean_truth": true,
+    "fresh_seed_set_opened": false,
+    "experimental_flow_truth_used": false,
+    "real_flowoff_repeats_used": false,
+    "neural_operator_training_authorized": false,
+    "algorithm_superiority_claimed": false
+  },
+  "test_preflight": {
+    "selectors": [
+      "demo_t16_operator/test_psu_b0_gate_b_data_only.py",
+      "site_tools/test_psu_b0_factor_interfaces.py::test_trilinear_p_and_pt_pass_dot_product_identity_without_full_calls",
+      "demo_t16_operator/test_psu_b0_factor_majorizer_pipeline.py::test_contract_validation_and_setup_signature_fail_closed",
+      "site_tools/test_psu_b0_gate_a_attestation_mps.py::test_mps_factor_recurrence_matches_cpu_reference",
+      "site_tools/test_build_psu_b0_gate_b_parent_snapshot.py",
+      "site_tools/test_psu_b0_gate_b_graph_path_diagnostic.py",
+      "site_tools/test_run_psu_b0_factor_gate_b.py",
+      "site_tools/test_validate_psu_b0_factor_gate_b.py"
+    ],
+    "expected_case_count": 40,
+    "expected_node_manifest_sha256": "25fde766ca11515ec40a45eb431eea52f41763e7b91dd7c21f5cd449cc20daf1"
+  },
+  "source_paths": {
+    "parent_gate_b_v2_config": "demo_t16_operator/configs/psu_b0_factor_pdhg_gate_b_v2_infrastructure_amendment.json",
+    "gate_b_v3_amendment_note": "docs/psu_b0_gate_b_graph_comparator_amendment_2026-07-17.md",
+    "gate_b_graph_diagnostic_runner_source": "site_tools/run_psu_b0_gate_b_graph_path_diagnostic.py",
+    "gate_b_graph_diagnostic_report": "demo_t16_operator/results/psu_b0_gate_b_graph_path_diagnostic/report.json",
+    "gate_b_graph_diagnostic_rows": "demo_t16_operator/results/psu_b0_gate_b_graph_path_diagnostic/metric_differences.csv",
+    "gate_b_graph_diagnostic_test_source": "site_tools/test_psu_b0_gate_b_graph_path_diagnostic.py",
+    "parent_gate_b_v1_config": "demo_t16_operator/configs/psu_b0_factor_pdhg_gate_b_v1.json",
+    "gate_b_amendment_note": "docs/psu_b0_gate_b_preperformance_infrastructure_amendment_2026-07-17.md",
+    "parent_pdhg_config": "demo_t16_operator/configs/psu_b0_pdhg_scale_smoke_v2_infrastructure_amendment.json",
+    "parent_pdhg_report": "demo_t16_operator/results/psu_b0_factor_pdhg_gate_b_parent_snapshot/manifest.json",
+    "parent_metric_rows": "demo_t16_operator/results/psu_b0_factor_pdhg_gate_b_parent_snapshot/metric_rows.csv",
+    "parent_public_summary": "demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/summary.json",
+    "parent_snapshot_builder_source": "site_tools/build_psu_b0_gate_b_parent_snapshot.py",
+    "parent_snapshot_test_source": "site_tools/test_build_psu_b0_gate_b_parent_snapshot.py",
+    "gate_a_attestation": "demo_t16_operator/results/psu_b0_gate_a_attestation/attestation.json",
+    "gate_a_validation_report": "demo_t16_operator/results/psu_b0_gate_a_attestation/validation_report.json",
+    "factor_pipeline_source": "demo_t16_operator/psu_b0_factor_majorizer_pipeline.py",
+    "gate_b_metric_source": "demo_t16_operator/psu_b0_gate_b_data_only.py",
+    "gate_b_runner_source": "site_tools/run_psu_b0_factor_gate_b.py",
+    "gate_b_validator_source": "site_tools/validate_psu_b0_factor_gate_b.py",
+    "gate_b_metric_test_source": "demo_t16_operator/test_psu_b0_gate_b_data_only.py",
+    "gate_b_runner_test_source": "site_tools/test_run_psu_b0_factor_gate_b.py",
+    "gate_b_validator_test_source": "site_tools/test_validate_psu_b0_factor_gate_b.py",
+    "factor_interface_test_source": "site_tools/test_psu_b0_factor_interfaces.py",
+    "factor_pipeline_test_source": "demo_t16_operator/test_psu_b0_factor_majorizer_pipeline.py",
+    "gate_a_mps_test_source": "site_tools/test_psu_b0_gate_a_attestation_mps.py"
+  },
+  "source_sha256": {
+    "parent_gate_b_v2_config": "3b0623f9644cb8ea2bd4a35e6abfbc4b2f646757f706ee6d5247b20b94875719",
+    "gate_b_v3_amendment_note": "58d102848bd0070b89cd54f6353c5d3bc484fefa6a6f932ab0033fb27aba6672",
+    "gate_b_graph_diagnostic_runner_source": "269d4e75cebbc99d6ec2cbe7500ff19eaeaff9b016db7eed5c8bc7b4a43a95cb",
+    "gate_b_graph_diagnostic_report": "5499333734aca7e8327546a3db354ec84b930f057862e89b5563df89be02fda4",
+    "gate_b_graph_diagnostic_rows": "3f69bcd9c2a13e283cdde2a648ae84275cb949de17464348a2b64fd4a413c0b3",
+    "gate_b_graph_diagnostic_test_source": "c502fefd3470f5eec111312e978740c0c3f7a4bd9dde4e225af2600d3a6c832d",
+    "parent_gate_b_v1_config": "7e4564d57e37fc2928534926e80c5df0bc51389db86514fcc3b15a35c59baca9",
+    "gate_b_amendment_note": "eeaadd73a055b8d523c9cb405db9c02e31a11dd76a17778a2c0a293760dab3f6",
+    "parent_pdhg_config": "0fbbe08df25c736c86132b09188aa9f9b2696d2b63802412a1cae99150a1b81b",
+    "parent_pdhg_report": "a27c4c3e04626259dc6ea67c050a4a970fe4b38394b61388c5596e80db73e2af",
+    "parent_metric_rows": "0b8ce72b35a4ee4c971994991d058c594a85bdefbd9fbda86957ac1b83d75a97",
+    "parent_public_summary": "d0fa8b018ab85437b356a2f53548ea5ae7aebe608762f7813065896e7ca9a1c7",
+    "parent_snapshot_builder_source": "34d23f2a34496d5cf6cfc892d4634582c43a9ce4af37155db1c3cae5013d3640",
+    "parent_snapshot_test_source": "f8ab383be6dfacfeca924ba9f65aa369944b6d1b77cbc2bbc832857f5de8d086",
+    "gate_a_attestation": "7e6aa629ddcc9a6926caecb30b79bc0d0f5b131ef3d2f132ff4df6482df27344",
+    "gate_a_validation_report": "269d51c14e06c5a71e43ff4e8ea30e42d0c27399d55b5e664ea945073c999107",
+    "factor_pipeline_source": "0da2457eab8f5201a02f75865879e03d0f4e6839d25f66b889edd4e64bfa6815",
+    "gate_b_metric_source": "b4e6a10f5dccb2cf2ec4d6abc67ec687b9fb01c7fc18a43d60036f03a3d9fb4c",
+    "gate_b_runner_source": "97895edaea853f5dd5dc2e9ef56734de3a619899099e5ede24a071ae95738b54",
+    "gate_b_validator_source": "71f74e3e0230a476110b561fd7cc70f26fa9e33a891996b036f0be963d7ed670",
+    "gate_b_metric_test_source": "b95c4feba2687c3344da1a2457de2bd5a0cb01598477814ae863d97dfb4011ef",
+    "gate_b_runner_test_source": "4dd84081c2cae562e945e68df05eb8aa659270cee2f30e2c68fcb5a7b054a35d",
+    "gate_b_validator_test_source": "7c72e578a7e694125ac06fc8695ef34de229f5cb8bc6911e16d0616523dbef4d",
+    "factor_interface_test_source": "823acda89bec2a430d02e650a27f8d4c5d3e977a0432bf296195651bf00f7ea7",
+    "factor_pipeline_test_source": "2e108cf48e65b8d7968b6401a096fea5cb808cbe61b32b1aba78a6bdf314c25e",
+    "gate_a_mps_test_source": "7a18ea423f4f402925cfb1dab2ccfb15cd91a7cc0d9fd3e49ff715bebf701d23"
+  }
+}

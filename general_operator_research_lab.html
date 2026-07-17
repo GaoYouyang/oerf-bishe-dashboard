@@ -158,9 +158,10 @@
   <header>
     <nav class="nav" aria-label="主导航">
       <a href="operator-learning/">学习主页</a>
-      <a href="#pdhg-no-go">PDHG NO-GO → Block metric</a>
-      <a href="#gate-a-progress">Gate A 实现进度</a>
-      <a href="#next-algorithm">下一算法与选路</a>
+      <a href="#pdhg-no-go">Scalar PDHG NO-GO</a>
+      <a href="#gate-a-progress">Gate A mechanics</a>
+      <a href="#factor-gate-b">Factor Gate B 判决</a>
+      <a href="#next-algorithm">下一物理分叉</a>
       <a href="#covariance-conditioning">最新 conditioning 审计</a>
       <a href="#reproduce">复现实验</a>
       <a href="#psu-real">PSU 真实数据门禁</a>
@@ -185,12 +186,12 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>BOST 三维重建与风险路由算子研究台</h1>
-    <p class="lead">scalar-step PDHG 的冻结网格已经严格 NO-GO；随后完成的不是性能补救，而是 source commit <code>53f1bcc</code> 上的正式 Gate A mechanics attestation。13/13 E1、34 个展开测试与独立 NumPy/MPS 重算均通过，第二次只读复核稳定；它只解锁 Gate B，不证明 block metric、FM-CG-PDNO 或任何神经算子更好。</p>
+    <p class="lead">Gate A mechanics 已完成正式 attestation，随后真正的 A-only deterministic Gate B 也已在 source commit <code>204bbe8</code> 上跑完并经 4,048 项独立重算确认。voxel-factor 相对 scalar 只有 1.321% mean gain、相对 view-block 只有 1.242%，与 exact-K graph-PCGLS 的 mean error gap 仍为 133.439%；按冻结门槛严格 NO-GO，原 FM-CG-PDNO neural smoke 不再解锁。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip coral">SCALAR PDHG V2 · NO-GO</span><span class="chip blue">PDHG-V2 SUITE · 116 / 116</span><span class="chip blue">STRESS · 12 / 12 PASS</span><span class="chip blue">ROWS · 784 VALID</span><span class="chip blue">GATE A · 13 / 13 ATTESTED</span><span class="chip blue">SOURCE · 53F1BCC</span><span class="chip blue">VALIDATOR · 333</span><span class="chip coral">GATE B · NOT RUN</span><span class="chip gold">NEXT · FREEZE GATE B</span><span class="chip coral">FRESH · SEALED</span><span class="chip coral">REAL / WIN · NOT AUTHORIZED</span></div>
-        <h2>Gate A mechanics 已正式闭环；下一步只开放确定性 Gate B</h2>
-        <p>v1 在 MPS 审计导出阶段基础设施失效，0 条性能行；该失败原样留在私有审计库。v2 只修“先搬 CPU、再转 float64”，其余协议不变并从头重跑。最终 32 个 TV/Huber 候选全部未过门：排名第一相对 graph-PCGLS mean <strong>-68.432%</strong>、p10 <strong>-120.638%</strong>、16/16 harm；只有 paired runtime <strong>1.207×</strong> 通过。data-only PDHG 到 K=32 仍为 field-L2 <strong>0.995881</strong>；这支持“统一 scalar step 受空间梯度尺度压制”的诊断，不构成 block metric 已改善的证据。</p>
+        <div class="chips"><span class="chip coral">SCALAR PDHG V2 · NO-GO</span><span class="chip blue">GATE A · 13 / 13 ATTESTED</span><span class="chip blue">GATE B · 256 ROWS</span><span class="chip blue">SOURCE · 204BBE8</span><span class="chip blue">VALIDATOR · 4,048</span><span class="chip coral">FACTOR GATE B · 5 / 8</span><span class="chip coral">FM-CG-PDNO · BLOCKED</span><span class="chip gold">NEXT · D0 + H2/H3</span><span class="chip coral">FRESH · SEALED</span><span class="chip coral">REAL / WIN · NOT AUTHORIZED</span></div>
+        <h2>静态 factor metric 有微弱信号，但不足以成为主算法</h2>
+        <p>Gate B 在两个 opened replicate、八类解析反应场上比较 scalar、view-block、voxel-factor 三条严格同调用 A-only PDHG 与 same-run exact-K graph-PCGLS。K=32 时四者 field-L2 分别为 <strong>0.996031 / 0.995241 / 0.982876 / 0.421042</strong>。factor 在 15/16 个样本略优于 scalar，却只改善 <strong>1.321%</strong>，远低于冻结的 25% 机制门；front-F1 还只有 <strong>0.1366</strong>。结论不是“差一点”，而是局部静态缩放没有捕获决定有限步性能的全局 Krylov 耦合。</p>
         <ol>
           <li><strong>接口门：</strong>逐视角场求和逐值复原 pooled；ray scatter 一次，但额外体场内存与逐视角有限差分伴随不能写成“免费”。</li>
           <li><strong>真实坐标门：</strong>MATLAB <code>find</code> 的零基索引按列优先还原 row/column；不再把 256 条稀疏 rays 伪装成 16×16 图像。</li>
@@ -202,9 +203,10 @@
           <li><strong>PDHG v2 判决：</strong>PDHG-v2 suite 116/116 tests 与 12/12 stress 通过后，32 个候选形成 784 条配对指标；排名第一仍为 mean -68.432%、16/16 harm，scalar-step 路线关闭。</li>
           <li><strong>尺度诊断：</strong>两个 opened replicate 的 gradient/data 范数平方比约 2.84e4–3.73e4；data-only PDHG 到 K=32 仍近零场，先解决 block conditioning，不再扫 alpha。</li>
           <li><strong>Gate A 结果：</strong>clean source commit、配置/输入/代码/测试/环境指纹、13 项 E1、独立 NumPy/MPS validator 与发布 checksum 已闭合；范围只到 frozen mechanics。</li>
-          <li><strong>本地下一门：</strong>另行冻结 Gate B 的数据、scalar/block/factor/graph-PCGLS 基线、同调用预算和失败门；先 data-only，未过门不启动网络。</li>
+          <li><strong>Gate B 结果：</strong>V4 source <code>204bbe8</code> 产生 256 条正式方法行；8 门过 5 门，mean/scalar、graph gap 与 voxel attribution 三门失败，独立 validator 重算 4,048 项。</li>
+          <li><strong>算法判决：</strong>停止 factor-PDHG、TV/Huber、warm start 与 FM-CG-PDNO smoke；D0 只诊断 majorizer 松弛，不回调门槛。</li>
           <li><strong>组内数据请求：</strong>每台相机同一固定条件至少 50 张未经平均的 flow-off/reference repeats，保留时间顺序、坏点/置信度与 reference 图；25% 永久留出。</li>
-          <li><strong>证据边界：</strong>fresh 与 final audit 不打开；当前不是 OERF 实验成功，也没有击败 NeRIF/FNO/UNO-CG。</li>
+          <li><strong>证据边界：</strong>fresh 与 final audit 不打开；当前不是 OERF 实验成功，也没有击败 NeRIF/FNO/FFNO/UNO-CG。</li>
         </ol>
         <details class="archive-details">
           <summary>展开完整研究档案：几何域、伴随、强基线与 40 条证据链</summary>
@@ -348,7 +350,7 @@
         <div class="metric"><b>Strict harm 0% / 0%</b><span>基线 top-1 精确回退后没有超过 1% 的受害样本</span></div>
       </div>
     </div>
-    <div class="alert critical"><strong>当前主结论 · mechanics 通过不等于算法通过</strong><span>scalar-step PDHG 仍在 16/16 场上伤害 graph-PCGLS；Gate A 只证明一个冻结尺度实例上的 view-local covariance mechanics 可审计。Gate B、fresh、真实 OERF 和方法优势都没有结果。学习器继续封存，真实授权仍需 flow-off 留出帧、held-out camera/session 与实验终点。</span></div>
+    <div class="alert critical"><strong>当前主结论 · Gate B 已完成且严格 NO-GO</strong><span>Gate A 证明公式与代码可审计，Gate B 则证明当前静态 factor metric 在有限调用预算里不够强。运行时间 2.403× 过门、15/16 小幅正增益都不能抵消 1.321% vs 25% 与 133.439% graph gap。学习器继续封存；下一论文路线必须由真实 forward mismatch 或 4D 时序困境重新立题。</span></div>
   </header>
 
   <main id="main">
@@ -387,7 +389,7 @@
             <li>数据块与 3D 梯度块的尺度差了约两个数量级的范数、四个数量级的能量。</li>
             <li>统一 scalar step 同时受最硬梯度方向约束，有限 K 下 data update 几乎不动。</li>
             <li>TV/Huber 相对同 K data-only 的增量全部为负，说明正则尚未进入“有用但需调参”的阶段。</li>
-            <li>下一步先构造正的 signed factor-majorized primal/dual block metric，并用安全条件和 data-only 收敛证伪。</li>
+            <li>随后构造的 signed factor-majorized block metric 已完成 Gate A/B；mechanics 通过，但 data-only Gate B 只有 +1.321% 并严格 NO-GO。</li>
             <li>只有经典块预条件器过 Gate A/B，才允许讨论 learned bounded metric；否则网络只是隐藏尺度错误。</li>
           </ol>
           <div class="actions"><a class="button" href="demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/README.md">公开包说明与复核命令</a><a class="button" href="site_tools/analyze_psu_b0_pdhg_v2_no_go.py">脱敏分析源码</a></div>
@@ -421,7 +423,7 @@
         <div class="metric"><b>333 checks</b><span>独立 validator；报告不信任自报 PASS</span></div>
         <div class="metric"><b>4.13e-16</b><span>NumPy 六步最大状态误差</span></div>
         <div class="metric"><b>1.04e-7</b><span>MPS 六步最大状态差；field 门为 5e-4</span></div>
-        <div class="metric"><b>GATE B · NOT RUN</b><span>性能、fresh、真实和胜出均未授权</span></div>
+        <div class="metric"><b>GATE B · NO-GO</b><span>mechanics 可信，但 factor 性能没有过冻结门</span></div>
       </div>
       <div class="pipeline" aria-label="Gate A 符号因子实现链">
         <div><b>01 Active E</b><span>严格 0/1 嵌入；显式删除零行列并记录常数项</span></div>
@@ -446,39 +448,84 @@
           <ol>
             <li><strong>CPU 四线：</strong>短测试、数学 oracle、文献/数据核验和页面/日志可同时进行。</li>
             <li><strong>MPS 单线：</strong>正式训练、parity 和 wall-time 测量串行，避免争抢统一内存。</li>
-            <li><strong>证据串行：</strong>Gate A 已通过；Gate B 仍需另行冻结，不会边看性能边改规则。</li>
+            <li><strong>证据串行：</strong>Gate A 已通过；Gate B 已在冻结阈值下完成并 NO-GO，没有边看性能边改规则。</li>
             <li><strong>当前网络：</strong>75.8 / 37.5 Mbps 足够中小文件；大量小 HTTP 请求受约 284 ms 基础 RTT 影响，所以用批量索引和本地缓存。</li>
           </ol>
         </div>
       </div>
-      <div class="alert critical"><strong>这仍不是新算法成果</strong><span>当前只能说：一个冻结尺度实例上的 view-local covariance mechanics 已正式 attested。Gate B 性能比较、fresh/real reconstruction 和方法胜出结论仍不存在；同一台 Mac 的完整安装树已入指纹，但不是隔离环境证明。</span></div>
+      <div class="alert critical"><strong>Mechanics 可信，候选性能仍被淘汰</strong><span>Gate A 的价值是让 Gate B 的 NO-GO 可解释，而不是把失败包装成成功。factor 性能比较已完成；fresh/real reconstruction 和方法胜出结论仍不存在。同一台 Mac 的完整安装树已入指纹，但不是隔离环境证明。</span></div>
+    </section>
+
+    <section id="factor-gate-b" class="band">
+      <div class="section-head">
+        <div><div class="eyebrow">正式 Gate B 判决 · 2026-07-17</div><h2>Voxel-factor 小幅改善 15/16 个场，仍以 5/8 门严格淘汰</h2><p>V4 是前三次 pre-performance fail-closed 修订后第一次打开 factor truth metrics 的正式运行。三种 PDHG 共用 2,322 个 A-coupled voxels，422 个 A-null support voxels 以零 gauge 嵌回；四方法在 K=4/8/16/32 使用严格相同的 signed F/Aᵀ 调用预算。独立 validator 重算 4,048 项并确认 NO-GO。</p></div>
+        <div class="actions">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_factor_pdhg_gate_b_no_go_2026-07-17.md">读完整判决与转向</a>
+          <a class="button" href="demo_t16_operator/results/psu_b0_factor_pdhg_gate_b_public/summary.json">公开摘要 JSON</a>
+          <a class="button" href="demo_t16_operator/results/psu_b0_factor_pdhg_gate_b_public/decision_gates.csv">八项门禁</a>
+          <a class="button" href="demo_t16_operator/results/psu_b0_factor_pdhg_gate_b/validation_report.json">独立验证</a>
+        </div>
+      </div>
+      <div class="metric-grid real-metric-grid">
+        <div class="metric"><b>1.321% / 25%</b><span>factor vs scalar mean gain / 冻结机制门</span></div>
+        <div class="metric"><b>1.242% / 3%</b><span>factor vs view-block attribution / 门槛</span></div>
+        <div class="metric"><b>133.439% / 20%</b><span>factor 对 graph 的 mean error gap / 上限</span></div>
+        <div class="metric"><b>15 / 16 positive</b><span>信号一致但幅度太小，不能只报正样本数</span></div>
+        <div class="metric"><b>0.1366 front-F1</b><span>factor K=32；graph-PCGLS 为 0.7443</span></div>
+        <div class="metric"><b>2.403× · pass</b><span>one-shot wall-time ratio；成本门通过不抵消科学门</span></div>
+        <div class="metric"><b>2322 + 422</b><span>A-coupled / A-null support voxels</span></div>
+        <div class="metric"><b>256 + 4,048</b><span>正式方法行 / 独立复核项</span></div>
+      </div>
+      <div class="pipeline" aria-label="Factor Gate B 决策流水线">
+        <div><b>01 Freeze</b><span>两 replicate、八形态、四 checkpoint、八门</span></div>
+        <div><b>02 A-only gauge</b><span>真正数据耦合 2,322；零空间 422 不加 epsilon</span></div>
+        <div><b>03 Equal calls</b><span>scalar / view / voxel / graph 均 exact K</span></div>
+        <div><b>04 Formal run</b><span>256 rows、16 timing pairs、无 skip/NaN/OOM</span></div>
+        <div><b>05 Independent audit</b><span>4,048 checks 与 release checksum 通过</span></div>
+        <div><b>06 Decision</b><span>5 pass / 3 fail；最终 NO-GO，FM-CG-PDNO smoke 不授权</span></div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_b0_factor_pdhg_gate_b_public/factor_gate_b_no_go.png" alt="Factor-PDHG Gate B 四联图，展示同调用 field 前沿、front F1、16 个配对增益与八项冻结门禁" width="2728" height="1826" loading="lazy" decoding="async" /><figcaption>A/B：graph-PCGLS 的全局 Krylov 方向在同调用预算下远强于三种局部 PDHG metric；C：factor 的 16 个配对增益大多为正但远低于 25% 门；D：八门过五门，三项核心机制门失败。图由经过 checksum 与独立验证的 formal bundle 重建。</figcaption></figure>
+        <div class="panel">
+          <h3>这次负结果如何帮下一步省时间</h3>
+          <ol>
+            <li><strong>不再训练 learned proximal：</strong><code>beta=0</code> 基线没有过门，网络只会掩盖 solver 缺口。</li>
+            <li><strong>D0 只做根因：</strong>比较 exact-|A| 与 factor majorizer tightness、长时轨迹；不以调参重开 Gate B。</li>
+            <li><strong>优先 H2：</strong>有光圈/焦平面/phantom 或 paired renderer，就学习有限孔径和景深的 forward discrepancy。</li>
+            <li><strong>其次 H3：</strong>有 timestamp/曝光/dropout 的连续序列，就做显式时空 forward 的 4D operator learning。</li>
+            <li><strong>H1 降级：</strong>只有能永久留 audit camera 才重开近零空间路线，且 direct-view 是强对照。</li>
+          </ol>
+          <div class="actions"><a class="button" href="demo_t16_operator/results/psu_b0_factor_pdhg_gate_b_public/README.md">公开包与复核命令</a><a class="button" href="site_tools/analyze_psu_b0_factor_gate_b_no_go.py">图表分析源码</a></div>
+        </div>
+      </div>
+      <div class="alert critical"><strong>明确禁止的表述</strong><span>不能说 factor-PDHG 已成功、不能说 FM-CG-PDNO 即将优于 FNO/DeepONet、不能把 15/16 正样本单独当胜出，也不能把 graph full-support 外推与 factor reduced gauge 混成普遍排名。本结果只是 opened synthetic E2 mechanism NO-GO。</span></div>
     </section>
 
     <section id="next-algorithm" class="band">
-      <div class="section-head"><div><div class="eyebrow">下一算法 · 待证伪研究合同</div><h2>FM-CG-PDNO：物理主干不动，只学习受限 proximal</h2><p>下一候选保留显式 BOST forward/adjoint、covariance whitening 与 factor-majorized <code>T/Sigma</code>，只用共享小型 3D 网络提出受限修正。输出层零初始化，<code>beta=0</code> 时必须逐元素退化为 deterministic factor-PDHG；否则无法分清收益来自物理 metric、更多 calls 还是黑箱容量。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Ffm_cg_pdno_research_route_2026-07-17.md">读完整算法与 benchmark</a><a class="button" href="#senior">看给师兄的问题</a></div></div>
-      <div class="pipeline" aria-label="FM-CG-PDNO 解锁顺序">
+      <div class="section-head"><div><div class="eyebrow">算法转向 · 由真实数据条件选题</div><h2>不为失败 solver 加网络；改学 forward discrepancy 或 4D dynamics</h2><p>FM-CG-PDNO 原合同要求 deterministic factor-PDHG 先过 Gate B；条件已经失败，所以 learned proximal smoke 正式阻断。下一候选必须重新绑定一个实验室真实物理困境：有 paired optical calibration 就做 RayKernel-DCO，有连续 timestamp/曝光/缺帧就做 TRAIL-4D。D0 只定位 majorizer 松弛来源，不作为新算法排名。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_factor_pdhg_gate_b_no_go_2026-07-17.md">读转向依据</a><a class="button" href="document_reader.html?doc=docs%2Ffm_cg_pdno_research_route_2026-07-17.md">看已关闭合同</a><a class="button" href="#senior">看给师兄的问题</a></div></div>
+      <div class="pipeline" aria-label="Gate B 后的新解锁顺序">
         <div><b>01 Gate A</b><span>13/13 mechanics attested</span></div>
-        <div><b>02 Gate B</b><span>scalar/block/factor/graph-PCGLS 同 calls</span></div>
-        <div><b>03 Smoke</b><span>64/16 小样本、zero-init、beta=0 退化</span></div>
-        <div><b>04 Mac dev</b><span>360 fields、28 geometries、3 seeds</span></div>
-        <div><b>05 Transfer</b><span>未见分辨率、geometry、renderer</span></div>
-        <div><b>06 Real</b><span>flow-off + held-out camera/session</span></div>
+        <div><b>02 Gate B</b><span>5 pass / 3 fail；最终 NO-GO，静态 factor 分支关闭</span></div>
+        <div><b>03 Neural stop</b><span>FM-CG-PDNO smoke 不授权</span></div>
+        <div><b>04 D0 diagnosis</b><span>exact-|A| tightness 与长时轨迹，只查根因</span></div>
+        <div><b>05 Data gate</b><span>H2 calibration pair 或 H3 timestamp sequence</span></div>
+        <div><b>06 New contract</b><span>新基线、fresh、held-out camera/session</span></div>
       </div>
       <div class="evidence-grid" style="margin-top:14px;">
-        <article class="evidence-card" data-state="next"><span class="chip gold">H1 · GQ-NIO</span><h3>静态少视角与近零空间</h3><p>只有能永久划分 <code>S/Q_fit/Q_audit</code> 相机和完整 ray/pose/mask 时启动。若同总相机数不能比直接强基线改善 3%，或 audit 收益不超过 flow-off 不确定度，关闭。</p></article>
-        <article class="evidence-card" data-state="next"><span class="chip gold">H2 · RayKernel-DCO</span><h3>有限孔径与光学算子失配</h3><p>需要两档光圈/焦平面、phantom 或 paired low/high-fidelity renderer。若真实 discrepancy 不到噪声地板 2 倍，或输给显式 cone-ray/标定优化，关闭。</p></article>
-        <article class="evidence-card" data-state="next"><span class="chip gold">H3 · TRAIL-4D</span><h3>异步缺帧与瞬态拓扑</h3><p>需要 50–200 帧连续序列、真实 timestamp、曝光和 dropout 日志。若收益只来自时间平滑，event p95、前缘时差或换 cadence 泛化失败，关闭。</p></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">H2 · 第一顺位</span><h3>RayKernel-DCO：有限孔径与光学算子失配</h3><p>需要两档光圈/焦平面、phantom 或 paired low/high-fidelity renderer。先证明真实 forward discrepancy 大于 flow-off 噪声地板 2 倍，再比较显式 cone-ray/标定优化与受约束 learned kernel correction。</p></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">H3 · 有序列则第一</span><h3>TRAIL-4D：异步缺帧与瞬态拓扑</h3><p>需要 50–200 帧连续序列、真实 timestamp、曝光和 dropout 日志。网络学习时空演化或低秩系数，显式 forward 不动；必须击败逐帧重建、时间平滑与低秩张量强基线。</p></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">H1 · 第三顺位</span><h3>GQ-NIO：静态少视角与近零空间</h3><p>此前 query correction 输给 direct-view 强对照。只有能永久划分 <code>S/Q_fit/Q_audit</code> 相机、完整 ray/pose/mask 且 direct baseline 仍有明确缺口时，才写新合同重开。</p></article>
       </div>
       <div class="two-col" style="margin-top:14px;">
-        <div class="panel"><h3>Mac 首轮公平基准</h3><ol><li>160 train、40 validation、五个测试域各 32 个场</li><li>DeepONet、FNO、可执行 FFNO、factor-PDHG、graph-PCGLS</li><li>主门：mean ≥3%、CI 下界 &gt;0、p10 ≥0、harm ≤5%</li><li>同步报告 gradient/front、held-out reprojection、worst 与真实 calls</li></ol></div>
+        <div class="panel"><h3>训练前先过的数据门</h3><ol><li>D0 只查 exact-|A| 与 factor majorizer 的松紧，不产生胜出候选</li><li>H2：paired optical discrepancy 至少是 flow-off noise floor 的 2×</li><li>H3：timestamp/exposure/dropout 完整，且能按整段 sequence 隔离 train/test</li><li>新合同再冻结 DeepONet/FNO/FFNO、graph-PCGLS/NeRIF 与物理消融</li></ol></div>
         <div class="panel"><h3>现在最该向师兄确认</h3><ol><li>主要瓶颈是孔径/标定，还是 4D 异步/缺帧？</li><li>能否暴露 <code>F</code>、<code>Fᵀ/Jᵀ</code>、ray、mask、grid、unit？</li><li>是否有 flow-off repeats、phantom、光学参数或 50–200 帧序列？</li><li>能否永久留一台 audit camera 和一个 session？</li></ol></div>
       </div>
-      <div class="alert"><strong>三条物理路线不能同时大训练</strong><span>有光学标定对优先 H2；有连续 timestamp 优先 H3；只有静态多视角且能留 audit camera 才做 H1。Gate B 没有稳定正信号前，FM-CG-PDNO 也不启动。</span></div>
+      <div class="alert critical"><strong>当前没有需要在 Mac 上连夜训练的大网络</strong><span>先拿到 H2 或 H3 的数据条件，才能定义可证伪的训练任务。此时继续训练 FM-CG-PDNO、FNO 或 FFNO 只会在合成封闭体系里寻找局部胜利；暂停训练是在保护论文可信度，不是停工。</span></div>
     </section>
 
     <section id="covariance-conditioning" class="band">
       <div class="section-head">
-        <div><div class="eyebrow">前置证据 · 2026-07-17</div><h2>Conditioning 有公平收益；三条 pooled edge 路线均未保护尾部</h2><p>这里保留为什么曾经启动 PDHG：先拆开经典 PCGLS 重调与 detector covariance，再依次否掉 pooled stopping、TV/Huber SupPCG。随后 scalar-step PDHG 也在上方严格 NO-GO；measurement covariance 继续保留，但下一步只修 block metric。</p></div>
+        <div><div class="eyebrow">前置证据 · 2026-07-17</div><h2>Conditioning 有公平收益；三条 pooled edge 路线均未保护尾部</h2><p>这里保留为什么曾经启动 PDHG：先拆开经典 PCGLS 重调与 detector covariance，再依次否掉 pooled stopping、TV/Huber SupPCG。scalar-step 与后续 factor-PDHG 均已严格 NO-GO；measurement covariance 仍是 forward/noise 模型的一部分，但不再支撑当前 PDHG 论文分支。</p></div>
         <div class="actions">
           <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_covariance_conditioning_stopping_no_go_2026-07-17.md">读严格判决</a>
           <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_edge_superiorization_budget_no_go_2026-07-17.md">读 SupPCG 判决</a>
@@ -493,7 +540,7 @@
         <div><b>04 Tail audit</b><span>worst -7.920%；均值优势不等于逐场安全</span></div>
         <div><b>05 Observable routing</b><span>348 条 pooled rules；selection 过门、diagnostic 崩溃</span></div>
         <div><b>06 SupPCG audit</b><span>80 个 TV/Huber 候选；同 calls 最佳仍为负</span></div>
-        <div><b>07 Decision</b><span>scalar PDHG 已 NO-GO；下一步 block metric</span></div>
+        <div><b>07 Decision</b><span>scalar 与 factor-PDHG 均 NO-GO；转 H2/H3</span></div>
       </div>
       <div class="two-col" style="margin-top:14px;">
         <figure><img src="demo_t16_operator/results/psu_b0_covariance_stopping_rule_audit/psu_b0_covariance_conditioning_audit.png" alt="Covariance-conditioned PCGLS 四联图，展示经典预条件器重调与 covariance 公平增量、不同停止深度的均值和尾部、规则跨半区失败及动作分布" width="2152" height="1735" loading="lazy" decoding="async" /><figcaption>A：约 24% 主要来自经典重调；B：stage 增加提高均值但恶化尾部；C/D：前半区安全的 pooled 规则在后半区出现 -17.53% 最坏回退。所有规则选择均为 post-open，不授权 fresh。</figcaption></figure>
@@ -502,11 +549,11 @@
           <ol>
             <li><strong>SupPCG 已关闭：</strong>同-stage +0.124% 的微弱信号抵不过 residual rebuild；同总 calls 最佳 -6.016%。</li>
             <li><strong>Scalar PDHG 已关闭：</strong>同一冻结网格的 rank-1 mean -68.432%、16/16 harm，不能继续扫 alpha。</li>
-            <li><strong>下一强基线：</strong>Gate A mechanics 已闭合；现在只冻结 scalar/block/factor 与 graph-PCGLS 的 data-only Gate B。</li>
+            <li><strong>Factor Gate B 已关闭：</strong>voxel factor 相对 scalar 仅 +1.321%，与 graph mean gap 133.439%。</li>
             <li><strong>主终点改成双门：</strong>field-L2 与 front/shock 位置或 F1 同时过门；另报 p10、harm、worst 和平均调用。</li>
-            <li><strong>学习器仍封存：</strong>只有经典 block metric 有效，才让小网络学习 bounded correction，不直接合成三维场。</li>
+            <li><strong>学习器仍封存：</strong>原 bounded proximal 不再启动；新学习器必须绑定 H2 forward mismatch 或 H3 4D dynamics。</li>
             <li><strong>并行数据线：</strong>继续请求每相机至少 50 张未经平均 flow-off，25% 时间块永久留出。</li>
-            <li><strong>停止条件：</strong>若 block metric 仍不能让 data-only 在同 K 明显离开零场，关闭当前 PDHG 分支，不进入 TV/Huber 或 controller。</li>
+            <li><strong>停止条件已触发：</strong>block/factor metric 没有在同 K 显著离开零场，当前 PDHG 分支不进入 TV/Huber 或 controller。</li>
           </ol>
           <div class="alert critical"><strong>不能对师兄说“已经有 25% 新算法提升”</strong><span>正确说法是：经典重调约 +24%；graph covariance 在同强度同 stage 下约 +1.4%，但存在稀有大回退；六个 pooled 轨迹标量的风险规则不迁移。当前最有价值的是找到了新的强基线和表示瓶颈。</span></div>
           <div class="actions">
@@ -551,8 +598,9 @@
         <article class="evidence-card" data-state="failed"><span class="chip coral">E37 · held-out synthetic NO-GO</span><h3>正确 whitening 均值为正，尾部仍失败</h3><p>16 个 held-out synthetic replicates：DG-CovGate mean +1.178%，95% CI [0.786%,1.571%]；但 p10 -1.029%、harm 10.94%。Oracle 同样伤 annular/thin，下一步转向 covariance-conditioned PCGLS。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_dg_wpcgls_multiseed_no_go_2026-07-17.md">读严格判决</a></article>
         <article class="evidence-card" data-state="failed"><span class="chip coral">E38 · conditioning / stopping NO-GO</span><h3>公平增量存在，pooled 风险规则不迁移</h3><p>经典 s3-k4 重调贡献约 +23.78%；full graph 的公平增量为 +1.406% [1.235%,1.578%]，但最坏 -7.920%。348 条可观测规则中选出的规则在第二半区 p10 -1.746%、harm 12.5%、worst -17.532%，fresh 继续封存。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_covariance_conditioning_stopping_no_go_2026-07-17.md">读严格判决</a></article>
         <article class="evidence-card" data-state="failed"><span class="chip coral">E59 · SupPCG budget NO-GO</span><h3>同-stage 有微弱信号，同总调用全部失败</h3><p>3D TV/Huber 内核、非上升扰动与调用账本均通过测试。初始 32 候选最佳同-stage +0.124%，但同 calls mean -6.016%、p10 -10.299%、harm 87.5%；唯一 48 候选 tail extension 最佳 -8.518%，按配置停止调参。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_edge_superiorization_budget_no_go_2026-07-17.md">读调用预算判决</a></article>
-        <article class="evidence-card" data-state="failed"><span class="chip coral">E60 · scalar PDHG NO-GO</span><h3>实现与成本过门，统一步长仍停在近零场</h3><p>PDHG-v2 suite 116/116 tests、12/12 stress 与 784 条配对指标有效；rank-1 对 graph-PCGLS mean -68.432%、p10 -120.638%、16/16 harm。后续 Gate A mechanics 已通过，但 Gate B 尚未运行。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_scalar_pdhg_no_go_and_block_diagonal_gate_2026-07-17.md">读严格判决</a></article>
-        <article class="evidence-card" data-state="passed"><span class="chip">E61 · Gate A attested</span><h3>单一冻结实例的 mechanics 正式通过</h3><p>source <code>53f1bcc</code>：13/13 E1、34 recorded + 34 replayed tests、333 validator checks。NumPy/MPS 独立重算与 release checksum 闭环；Gate B、fresh、真实重建和方法优势仍未运行。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_gate_a_attestation_2026-07-17.md">读证明记录</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E60 · scalar PDHG NO-GO</span><h3>实现与成本过门，统一步长仍停在近零场</h3><p>PDHG-v2 suite 116/116 tests、12/12 stress 与 784 条配对指标有效；rank-1 对 graph-PCGLS mean -68.432%、p10 -120.638%、16/16 harm。它触发了后续 Gate A/B，而不是成功基线。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_scalar_pdhg_no_go_and_block_diagonal_gate_2026-07-17.md">读严格判决</a></article>
+        <article class="evidence-card" data-state="passed"><span class="chip">E61 · Gate A attested</span><h3>单一冻结实例的 mechanics 正式通过</h3><p>source <code>53f1bcc</code>：13/13 E1、34 recorded + 34 replayed tests、333 validator checks。NumPy/MPS 独立重算与 release checksum 闭环；它只保证后续性能 NO-GO 可解释。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_gate_a_attestation_2026-07-17.md">读证明记录</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E62 · Factor Gate B NO-GO</span><h3>局部静态 metric 有小信号，仍输给全局 Krylov 耦合</h3><p>source <code>204bbe8</code>：256 rows、16 timing pairs、4,048 independent checks。factor vs scalar +1.321%，vs view +1.242%，graph gap 133.439%，8 门过 5 门；neural smoke 不授权。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_factor_pdhg_gate_b_no_go_2026-07-17.md">读完整判决</a></article>
         <article class="evidence-card" data-state="passed"><span class="chip">E0 · numerical</span><h3>v3k-F 确认半收敛与停止缺口</h3><p>discrepancy 对 noise OOD 平均 +7.10%，但伤害率 12.5%；联合 OOD 对同 PBB endpoint 仍略退化。learned stop 继续关闭。</p><a href="document_reader.html?doc=v3k_f_noise_stopping_review_brief.md">读可部署停止审计</a></article>
         <article class="evidence-card" data-state="failed"><span class="chip coral">E1 · failure</span><h3>无门控 correction 在联合 OOD 爆炸</h3><p>IID +72.08%，joint OOD 却 -326.51%，96.88% 样本伤害。大 IID 提升不能成为算法结论。</p><a href="demo_t16_operator/results/candidate_operator_smoke/report.json">看未门控报告</a></article>
         <article class="evidence-card" data-state="passed"><span class="chip">E3 · 3 seeds</span><h3>CG-PDNO 本身出现稳定工程信号</h3><p>新字段/几何池 test 平均 +21.77%，最大种子伤害 0%；train/validation/test geometry id 无重叠。</p><a href="demo_t16_operator/results/cg_pdno_trust_fresh/report.json">看 fresh 报告</a></article>
@@ -901,7 +949,7 @@
       </div>
       <div class="two-col" style="margin-top:14px;">
         <figure><img src="demo_t16_operator/results/psu_b0_dg_wpcgls_multiseed/psu_b0_dg_wpcgls_multiseed_figure.png" alt="DG-WPCGLS 多种子四联图，展示正确 covariance 的平均三维场增益、形态依赖、p10 与伤害率门以及 16 个 replicate 的分布" width="2135" height="1698" loading="lazy" decoding="async" /><figcaption>DG-WPCGLS fresh pilot：正确 covariance 的均值与 95% CI 为正，但 annular/thin 尾部使 p10 与 harm 门失败。Oracle 几乎重合，说明下一步必须联动 inverse conditioning，而不是只增加 covariance 拟合复杂度。</figcaption></figure>
-        <div class="panel"><h3>这条上游 NO-GO 已经完成四轮后续诊断</h3><ol><li><strong>保留：</strong>显式 <code>L/Lᵀ</code> whitening、真实 detector graph、严格调用记账。</li><li><strong>确认：</strong>旧 strength=5 不是强基线；component s3-k4 已带来约 24% 改善。</li><li><strong>公平增量：</strong>full graph s3-k4 相对 component s3-k4 为 +1.406%，但 worst -7.920%。</li><li><strong>规则审计：</strong>六个 pooled 轨迹标量无法保护尾部，后半区 worst -17.532%。</li><li><strong>SupPCG 审计：</strong>同-stage 微弱正信号没有通过同总调用门，tail extension 也失败。</li><li><strong>Scalar PDHG 审计：</strong>调用公平但 conditioning 失败，rank-1 mean -68.432%、16/16 harm。</li><li><strong>Gate A：</strong>单一冻结实例的 mechanics 已 13/13 attested；只解锁 Gate B，不解锁 fresh、controller 或胜出结论。</li></ol><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_dg_wpcgls_multiseed_no_go_2026-07-17.md">上游 16-seed NO-GO</a><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_covariance_conditioning_stopping_no_go_2026-07-17.md">conditioning 判决</a><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_edge_superiorization_budget_no_go_2026-07-17.md">SupPCG 判决</a><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_scalar_pdhg_no_go_and_block_diagonal_gate_2026-07-17.md">PDHG 判决</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_gate_a_attestation_2026-07-17.md">Gate A 证明</a><a class="button" href="demo_t16_operator/results/psu_b0_covariance_conditioned_pcgls_diagnosis/validation_report.json">验证 JSON</a></div></div>
+        <div class="panel"><h3>这条上游 NO-GO 已经走完确定性 PDHG 证伪链</h3><ol><li><strong>保留：</strong>显式 <code>L/Lᵀ</code> whitening、真实 detector graph、严格调用记账。</li><li><strong>确认：</strong>旧 strength=5 不是强基线；component s3-k4 已带来约 24% 改善。</li><li><strong>公平增量：</strong>full graph s3-k4 相对 component s3-k4 为 +1.406%，但 worst -7.920%。</li><li><strong>规则审计：</strong>六个 pooled 轨迹标量无法保护尾部，后半区 worst -17.532%。</li><li><strong>SupPCG 审计：</strong>同-stage 微弱正信号没有通过同总调用门，tail extension 也失败。</li><li><strong>Scalar PDHG 审计：</strong>调用公平但 conditioning 失败，rank-1 mean -68.432%、16/16 harm。</li><li><strong>Gate A：</strong>单一冻结实例的 mechanics 13/13 attested。</li><li><strong>Factor Gate B：</strong>256 rows 与 4,048 项复核有效，但 +1.321% 未过 25% 门；PDHG 分支关闭。</li></ol><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_dg_wpcgls_multiseed_no_go_2026-07-17.md">上游 16-seed NO-GO</a><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_covariance_conditioning_stopping_no_go_2026-07-17.md">conditioning 判决</a><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_edge_superiorization_budget_no_go_2026-07-17.md">SupPCG 判决</a><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_scalar_pdhg_no_go_and_block_diagonal_gate_2026-07-17.md">Scalar 判决</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_gate_a_attestation_2026-07-17.md">Gate A 证明</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_factor_pdhg_gate_b_no_go_2026-07-17.md">Factor Gate B</a></div></div>
       </div>
       <div class="two-col" style="margin-top:14px;">
         <figure><img src="demo_t16_operator/results/psu_b0_covariance_stopping_rule_audit/psu_b0_covariance_conditioning_audit.png" alt="Covariance conditioning 与 pooled stopping 四联图" width="2152" height="1735" loading="lazy" decoding="async" /><figcaption>最新审计：经典重调、covariance 公平增量和规则尾部分账。选择半区安全不代表第二半区迁移；mean 为正时仍必须看 p10、harm 和 worst。</figcaption></figure>
@@ -982,8 +1030,8 @@
         <article class="source-card"><div class="body"><span class="chip coral">直接碰撞</span><h3>Neural incomplete factorization</h3><p><strong>读：</strong>GNN 如何生成稀疏 incomplete factorization，以及只靠 matrix-vector products 的 stochastic Frobenius loss。</p><p><strong>提取：</strong>可逆/稀疏因子和 solver-level 迭代下降已经有成熟先例；我们的低维频谱参数化必须在 matrix-free BOST、可变相机与跨分辨率上形成差异。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2305.16368">开放全文</a><a class="button" href="https://github.com/paulhausner/neural-incomplete-factorization">代码</a></div></article>
         <article class="source-card"><div class="body"><span class="chip coral">最新强碰撞</span><h3>UNO-CG</h3><p><strong>读：</strong>Unitary Neural Operator 作为机器学习预条件器，怎样把收敛性质嵌入混合 CG solver。</p><p><strong>提取：</strong>“FNO 风格网络 + CG + convergence by construction”本身已不够新；BOST 方法必须给出梯度测量、几何条件化、前沿保持和真实 held-out camera 的专属证据。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2508.02681">开放全文</a></div></article>
         <article class="source-card"><div class="body"><span class="chip gold">层析强基线</span><h3>TV-superiorized PCG</h3><p><strong>读：</strong>在保持投影数据一致性下降的同时，用 total variation 作为次级准则改善病态层析图像。</p><p><strong>提取：</strong>thin front 改善若可由非学习 TV superiorization 获得，就不能归功于神经预条件器；它必须进入同 calls 或同 wall-time 对照。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/1807.10151">开放全文</a></div></article>
-        <article class="source-card"><div class="body"><span class="chip blue">当前 P0 必读</span><h3>Chambolle–Pock / PDHG</h3><p><strong>读：</strong>把白化 data fidelity 与 3D TV/Huber 写成 saddle-point，推导 primal/dual proximal、算子范数步长条件与 ergodic convergence。</p><p><strong>提取：</strong>scalar-step 已严格失败；现在用原始理论检查固定 block metric。只有经典预条件版本在同调用预算改善 field、front 和坏尾部，才允许学习受限 metric correction。</p></div><div class="actions"><a class="button primary" href="https://link.springer.com/article/10.1007/s10851-010-0251-1">原始论文</a><a class="button" href="https://orbit.dtu.dk/en/publications/convex-optimization-problem-prototyping-for-image-reconstruction-/">CT 实现论文</a><a class="button" href="https://lcondat.github.io/research.html">作者开放资料</a></div></article>
-        <article class="source-card"><div class="body"><span class="chip blue">当前 P0 必读</span><h3>Diagonal preconditioned PDHG</h3><p><strong>读：</strong>Pock–Chambolle 如何由算子绝对行列和构造 primal/dual 对角度量，以及为什么正负抵消后的 <code>K1</code> 不能代替 <code>|K|1</code>。</p><p><strong>提取：</strong>照搬对角步长只是经典基线；BOST 的研究问题只能落在带符号 matrix-free factor majorizer、covariance block、调用成本与前沿坏尾证据。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1109/ICCV.2011.6126441">ICCV 原论文</a><a class="button" href="document_reader.html?doc=docs%2Fpdhg_primary_sources_and_innovation_boundary_2026-07-17.md">逐式阅读边界</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">已完成基线 · 仍需懂</span><h3>Chambolle–Pock / PDHG</h3><p><strong>读：</strong>把白化 data fidelity 与 3D TV/Huber 写成 saddle-point，推导 primal/dual proximal、算子范数步长条件与 ergodic convergence。</p><p><strong>提取：</strong>scalar 与 factor Gate B 都已严格失败；现在阅读它是为了能解释 NO-GO、审计后续论文基线，不是继续调当前分支。</p></div><div class="actions"><a class="button primary" href="https://link.springer.com/article/10.1007/s10851-010-0251-1">原始论文</a><a class="button" href="https://orbit.dtu.dk/en/publications/convex-optimization-problem-prototyping-for-image-reconstruction-/">CT 实现论文</a><a class="button" href="https://lcondat.github.io/research.html">作者开放资料</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">已完成基线 · 仍需懂</span><h3>Diagonal preconditioned PDHG</h3><p><strong>读：</strong>Pock–Chambolle 如何由算子绝对行列和构造 primal/dual 对角度量，以及为什么正负抵消后的 <code>K1</code> 不能代替 <code>|K|1</code>。</p><p><strong>提取：</strong>本项目已把 signed matrix-free factor 做到 mechanics 可审计，并用正式 Gate B 证明它的有限步信号不足。下一步只做 tightness 根因诊断。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1109/ICCV.2011.6126441">ICCV 原论文</a><a class="button" href="document_reader.html?doc=docs%2Fpdhg_primary_sources_and_innovation_boundary_2026-07-17.md">逐式阅读边界</a></div></article>
         <article class="source-card"><div class="body"><span class="chip gold">收敛边界</span><h3>PrePDHG convergence</h3><p><strong>读：</strong>固定预条件度量下的收敛条件、条件紧性与何时不能直接沿用 scalar CP 定理。</p><p><strong>提取：</strong>第一版坚持固定正度量与安全 majorizer；若让网络逐迭代改变 metric，必须重新证明受控变化，不能借用固定度量结论。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1007/s10915-023-02105-9">JSC 正式版</a><a class="button" href="https://arxiv.org/abs/2301.02984">开放稿</a></div></article>
         <article class="source-card"><div class="body"><span class="chip gold">层析实现</span><h3>Chambolle–Pock for CT</h3><p><strong>读：</strong>CT 中 data fidelity、TV、有限差分与伴随的 problem prototyping。</p><p><strong>提取：</strong>“PDHG + 层析 + TV”早已存在；本科阶段真正可交付的是正确离散、块尺度、可复现实验和诚实的失败门。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1088/0031-9155/57/10/3065">Physics in Medicine &amp; Biology</a><a class="button" href="https://arxiv.org/abs/1111.5632">开放稿</a></div></article>
         <article class="source-card"><div class="body"><span class="chip coral">有限孔径物理</span><h3>Depth-of-field BOS cone ray</h3><p><strong>读：</strong>f/22 到 f/4 的真实有限孔径实验，以及 cone-ray forward/inverse 如何解释 thin-ray 失配。</p><p><strong>边界：</strong>论文是最直接的物理依据，但数据和代码未公开；不能把阅读证据写成已跑外部 benchmark。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2402.15954">开放全文</a></div></article>
@@ -1013,7 +1061,7 @@
     </section>
 
     <section id="plan" class="band">
-      <div class="section-head"><div><div class="eyebrow">保姆式路径</div><h2>从基础走到可证伪的 Gate B 与学习 proximal</h2><p>基础薄弱时先把“会说”变成“能手推、能复现、能证伪”。Gate A mechanics 已正式通过；现在先学会解释每个因子、步长和调用账本，再冻结 Gate B。只有确定性 factor metric 在同调用预算下有稳定正信号，才实现 FM-CG-PDNO。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_gate_a_attestation_2026-07-17.md">Gate A 证明记录</a><a class="button" href="document_reader.html?doc=docs%2Ffm_cg_pdno_research_route_2026-07-17.md">下一算法路线</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">讲人话日志</a></div></div>
+      <div class="section-head"><div><div class="eyebrow">保姆式路径</div><h2>从基础读懂 Gate B，再按数据条件进入 H2/H3</h2><p>基础薄弱时先把“会说”变成“能手推、能复现、能证伪”。Gate A/B 都已完成：你现在要能解释为什么局部 factor 有小信号却输给全局 Krylov 方向，以及 front-F1 为何比 field 均值更重要。下一阶段不是盲训网络，而是补 forward mismatch 或 4D dynamics 所需的光学、时序与算子学习基础。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_factor_pdhg_gate_b_no_go_2026-07-17.md">Gate B 判决与学习点</a><a class="button" href="document_reader.html?doc=docs%2Ffm_cg_pdno_research_route_2026-07-17.md">已关闭合同</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">讲人话日志</a></div></div>
       <div class="week-grid" id="weekGrid">
         <article class="week-card"><span class="chip">W1</span><h3>线性算子与伴随</h3><ol><li>矩阵、SVD、秩与零空间</li><li>手推 <code>Ax</code> / <code>Aᵀz</code></li><li>完成 dot-product toy</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w1" />能解释伴随为何不是逆矩阵</label></article>
         <article class="week-card"><span class="chip">W2</span><h3>流体与 BOS 物理链</h3><ol><li>连续方程、物质导数、涡量</li><li>T→ρ→n→deflection</li><li>thin ray、cone ray、DOF</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w2" />能画出有限孔径如何改变每条 ray</label></article>
@@ -1027,9 +1075,10 @@
         <article class="week-card"><span class="chip blue">W12 · 已完成</span><h3>TV/Huber SupPCG 证伪</h3><ol><li>实现 3D penalty、非上升扰动与调用账本</li><li>32 个 scale + 48 个 tail 候选均未过同 calls 门</li><li>按预声明停止 gamma 调参，fresh 不开</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w12" />能解释同-stage +0.124% 为什么仍是预算 NO-GO</label></article>
         <article class="week-card"><span class="chip blue">W13 · 已完成</span><h3>Scalar PDHG 严格证伪</h3><ol><li>分开记录 v1 基础设施失效与 v2 科学结果</li><li>PDHG-v2 suite 116/116、12 条 stress、784 rows</li><li>从近零场与范数失衡定位 conditioning 问题</li></ol><label class="checkline"><input type="checkbox" data-week="rk-w13" />能解释 rank-1 为什么不等于 gate pass</label></article>
         <article class="week-card"><span class="chip blue">W14 · 已完成</span><h3>Frozen-scale Gate A attestation</h3><ol><li>13/13 E1、34+34 tests、333 checks</li><li>独立 NumPy/MPS oracle 与 release hash</li><li>明确 mechanics pass 不等于性能 pass</li></ol><label class="checkline"><input type="checkbox" data-week="rk-next-block-pdhg" />能说明 Gate A 与 Gate B 的边界</label></article>
-        <article class="week-card"><span class="chip gold">NEXT · 当前</span><h3>Gate B + FM-CG-PDNO 准备</h3><ol><li>冻结 scalar/block/factor/graph-PCGLS 同 calls</li><li>补可执行 FFNO 与 360-field/28-geometry manifest</li><li>Gate B 过门后才做 beta=0 可退化 smoke</li></ol><label class="checkline"><input type="checkbox" data-week="rk-next-fm-cg-pdno" />能写出候选退化回经典算法的条件</label></article>
+        <article class="week-card"><span class="chip blue">W15 · 已完成</span><h3>Factor Gate B 严格证伪</h3><ol><li>256 rows、16 timing pairs、4,048 checks</li><li>区分 2,322 A-coupled 与 422 A-null voxels</li><li>5 门通过、3 门失败，最终 NO-GO；阻断 FM-CG-PDNO smoke</li></ol><label class="checkline"><input type="checkbox" data-week="rk-next-fm-cg-pdno" />能解释 15/16 正样本为什么仍是 NO-GO</label></article>
+        <article class="week-card"><span class="chip gold">NEXT · 当前</span><h3>D0 根因 + H2/H3 数据门</h3><ol><li>exact-|A| vs factor tightness，只做诊断</li><li>向师兄确认 calibration pair 或 timestamp sequence</li><li>按真实物理困境另写新算法合同</li></ol><label class="checkline"><input type="checkbox" data-week="rk-next-h2-h3" />能根据数据条件选择 H2 或 H3</label></article>
       </div>
-      <div class="alert"><strong>本机、并行与网络策略 · 2026-07-17 实测</strong><span>Apple M5 / 32 GB 足够当前 mechanics 与 16³–32³ 机制实验。最新 medium 为 1006 个并行 CPU tests + 3 个串行 MPS tests，约 15.88 秒；这不是算法性能。网络下行/上行约 75.8/37.5 Mbps，基础 RTT 约 284 ms，不是本地 inverse 的主瓶颈。CPU 可并行 oracle、文献、短测试与页面；MPS 和科学 runner 始终单列。真正瓶颈已转为 Gate B 证据依赖，以及缺少 flow-off repeats、held-out camera/session。进入 64³–128³ 多模型多种子或 <code>photon</code> CUDA renderer 后才触发服务器门。<a href="document_reader.html?doc=docs%2Foerf_parallel_execution_protocol_2026-07-17.md">看完整并行协议</a> · <a href="document_reader.html?doc=docs%2Flocal_compute_and_server_gate_2026-07-16.md">看算力与服务器门禁</a></span></div>
+      <div class="alert"><strong>本机、并行与网络策略 · 2026-07-17 实测</strong><span>Apple M5 / 32 GB 已在 32.49 秒内完成正式 Gate B，说明当前瓶颈不是 GPU 或网速。统一回归为 1,046 个 CPU tests + 3 个串行 MPS tests 全部通过；CPU 可并行文献、短测试、图表和页面，正式 MPS 数值任务仍单列。现在真正的关键路径是拿到 H2 的 calibration pair 或 H3 的 timestamp sequence，而不是租卡盲训。进入 64³–128³ 多模型多种子、cone/curved-ray differentiable renderer 后才触发服务器门。<a href="document_reader.html?doc=docs%2Foerf_parallel_execution_protocol_2026-07-17.md">看完整并行协议</a> · <a href="document_reader.html?doc=docs%2Flocal_compute_and_server_gate_2026-07-16.md">看算力与服务器门禁</a></span></div>
     </section>
 
     <section id="psu-real" class="band">
@@ -1399,7 +1448,7 @@ PYTHONPATH=. .venv/bin/python site_tools/plot_psu_b0_edge_superiorization_no_go.
     </section>
 
     <section id="senior" class="band">
-      <div class="section-head"><div><div class="eyebrow">何远哲对齐</div><h2>请师兄审核 Gate B 与三条真实物理选路</h2><p>scalar-step PDHG 已严格 NO-GO；随后 Gate A mechanics 在 clean commit 上 13/13 正式通过，但没有任何性能结果。下一步先做确定性 Gate B，再根据组内可提供的是光学标定对、连续时序还是静态 audit camera，三选一进入 RayKernel-DCO、TRAIL-4D 或 GQ-NIO。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Ffm_cg_pdno_research_route_2026-07-17.md">算法与选路</a><a class="button" href="document_reader.html?doc=he_yuanzhe_minimum_data_contract.md">完整数据合同</a></div></div>
+      <div class="section-head"><div><div class="eyebrow">何远哲对齐</div><h2>请师兄审核 Gate B NO-GO 与 H2/H3 数据分叉</h2><p>scalar-step、Gate A mechanics 和 deterministic factor Gate B 已形成完整证伪链。最新 Gate B 的 256 条方法行与 4,048 项独立复核有效，但 factor 只带来 +1.321% mean gain，原 FM-CG-PDNO smoke 已阻断。现在最需要师兄判断组内真实瓶颈和可给数据：paired optical calibration 对应 RayKernel-DCO，连续 timestamp/exposure/dropout 序列对应 TRAIL-4D。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_factor_pdhg_gate_b_no_go_2026-07-17.md">最新判决与选路</a><a class="button" href="document_reader.html?doc=he_yuanzhe_minimum_data_contract.md">完整数据合同</a></div></div>
       <div class="two-col">
         <div class="panel">
           <h3>二十七个必须确认的问题</h3>
@@ -1436,31 +1485,30 @@ PYTHONPATH=. .venv/bin/python site_tools/plot_psu_b0_edge_superiorization_no_go.
         </div>
         <div class="panel">
           <label for="seniorMessage" style="font-weight:800;">可直接发给师兄 · 最新短版</label>
-          <textarea id="seniorMessage" readonly>师兄，我把 scalar-step PDHG 的严格筛选跑完了，想请您审核下一步是否贴近组内真实问题。
+          <textarea id="seniorMessage" readonly>师兄，我把 deterministic factor-PDHG 的正式 Gate B 跑完了，想请您审核这个 NO-GO 和下一物理选路是否贴近组内需求。
 
-先说明边界：这只是两个已打开 replicate、真实 PSU 几何上的解析反应场与 oracle-scale 合成观测，不是 fresh、真实 OERF 重建，也没有宣称优于 NeRIF、TDBOST、FNO 或组内方法。v1 因 MPS 审计导出错误没有产生任何性能行；v2 只修复“先搬 CPU、再转 float64”，算法、候选、门槛和数据均未改，并从头重跑。
+先说明边界：这是两个已打开 replicate、真实 PSU detector geometry 上的八类解析反应场与 oracle-scale 合成相关噪声，不是 fresh、真实 OERF 重建，也没有宣称优于 NeRIF、TDBOST、FNO/FFNO 或组内方法。
 
-v2 的 PDHG 性能套件为 116/116 tests，12/12 stress 完成，正式网格有 32 个候选、49 个方法和 784 条配对指标。结果是严格 NO-GO：失败网格中排名第一的 pdhg_huber_a1of256_k4 相对同预算 graph-PCGLS 的 mean field gain 为 -68.432%，p10 -120.638%，16/16 场受害；只有 paired runtime 1.207× 通过 3× 成本门。data-only PDHG 到 K=32 的绝对 field-L2 仍为 0.995881，而 graph-PCGLS 为 0.421089。
+Gate A mechanics 先在 source 53f1bcc 上完成 13/13 E1、34+34 tests 与 333 项独立检查。随后 V4 Gate B 在 source 204bbe8 上比较 scalar、view-block、voxel-factor 三种严格 A-only PDHG 与 same-run exact-K graph-PCGLS；K=4/8/16/32 都使用相同的 K 次 F 与 K 次 Aᵀ。正式结果有 256 条方法行、16 个计时对，独立 validator 重算 4,048 项并通过。
 
-随后我把 block metric 的 mechanics 单独做成了正式 Gate A：source commit 53f1bcc，13/13 E1 PASS，20 个 selector 展开 34 个 case，独立 replay 仍为 34/34，validator 333 项检查并通过第二次只读复核。它只证明一个 view-local、single-scale synthetic fixture 的代码和公式对齐；Gate B、fresh、真实数据与方法优势都没有运行。
+结果严格 NO-GO：K=32 的 field-L2 分别是 scalar 0.996031、view-block 0.995241、voxel-factor 0.982876、graph-PCGLS 0.421042。factor 在 15/16 个场略优于 scalar，但 mean gain 只有 1.321%，远低于冻结的 25%；相对 view-block 只有 1.242%，没到 3%；相对 graph 的 mean error gap 仍有 133.439%，超过 20% 上限。factor 的 front-F1 只有 0.1366，而 graph 为 0.7443。八门过五门，因此不启动原 FM-CG-PDNO learned proximal，不继续扫 factor/eta/K，也不打开 fresh。
 
-诊断上，两个 replicate 的 gradient/data 范数平方比约为 28,375 和 37,320，root-scale ratio 约 168 和 193。我的理解是统一 scalar step 被最硬的空间梯度块约束，有限 K 下 data update 几乎不动；TV/Huber 相对同 K data-only 也全部为负。因此不应继续扫 alpha，也不应直接加网络。
+我的理解是：局部异质尺度确实有小信号，但有限步性能主要依赖 graph-PCGLS 的全局 Krylov 耦合；给失败的 deterministic backbone 加网络很可能只会掩盖问题。D0 只会在 opened tiny/streaming 数据上比较 exact-|A| 与 factor majorizer tightness、查看长时轨迹，用来定位根因，不作为新算法胜负实验。
 
-我建议下一阶段先冻结确定性 Gate B，再把学习候选暂命名 FM-CG-PDNO，只作为工作标签，不主张已有创新或优势：
-1）Gate A 已完成并保持冻结；后续修改 mechanics 源码必须重新 attestation；
-2）Gate B：只跑 data-only，要求同 K 明显优于 scalar PDHG，并接近 graph-PCGLS 的预算前沿；
-3）Gate C：B 通过后才开放 TV/Huber，检查 field、gradient、front、p10、harm 和 worst；
-4）Gate D：再比较 zero-init 与 graph-PCGLS warm start，并把 warm-start calls 计入总预算；
-5）Gate E：最后才做 geometry-only nullspace，经典门通过后才考虑 learned bounded metric。
+论文路线我建议按真实数据二选一：
+1）若有两档光圈/焦平面、phantom 或 paired low/high-fidelity renderer，优先做 RayKernel-DCO，学习有限孔径、景深、曲线光路或标定漂移的 forward discrepancy；
+2）若有 50–200 帧连续序列及真实 timestamp、曝光和 dropout 日志，优先做 TRAIL-4D，学习显式时空 forward 下的演化或低秩系数；
+3）静态 near-nullspace 路线只有能永久留 Q_audit 相机时再考虑，因为此前 query correction 输给 direct-view 强对照。
 
-想请您重点确认五件事：
-1）组内当前 BOST/NeRIF/TDBOST 最常见的真实失败是 shock、thin front、低频 plume，还是其他结构？
-2）组内认可的主要终点是 field、front 位置/宽度、held-out displacement、PIV 补偿误差还是速度？
-3）现有 forward/adjoint 能否给出 F、逐视角 Fᵀ/Jᵀ、ray、mask、grid 与单位的最小接口？
-4）是否有每台相机同一固定条件至少 50 帧未经平均的 flow-off/reference repeats，并可永久留出 25%？
-5）是否接受我先把固定双块预条件 PDHG 做成强经典基线，过门后再把算子学习限制为有界 metric correction，而不是直接输出三维场？
+想请您重点确认：
+1）组内当前最痛的是 finite-aperture/calibration mismatch，还是 4D 异步、缺帧与新生/熄灭？
+2）能否给两档光圈/焦平面、phantom、paired renderer 或已知密度/温度 CFD？
+3）是否保存每台相机未经平均的 flow-off/reference repeats、坏点与 confidence？
+4）是否有带 timestamp、曝光和 dropout 的连续高速序列？
+5）组内认可的主终点是 field、front 位置/宽度、held-out displacement、PIV 补偿还是速度？
+6）能否永久留一台相机和一个 session 不参与训练、选模与阈值设置？
 
-您看这个 block-conditioning 转向是否合理？哪一项最贴近您手上的数据和后续论文计划？</textarea>
+您看 H2 RayKernel-DCO 和 H3 TRAIL-4D 哪一条更贴近您手上的数据与后续论文计划？</textarea>
           <details class="archive-details" style="margin-top:12px;">
             <summary>展开历史长版说明</summary>
           <label for="seniorArchive" style="font-weight:800;">此前 covariance / SupPCG 全链路</label>
@@ -1498,7 +1546,7 @@ VD0-B 也已完成。我从 MATLAB find 索引恢复真实 detector row/column�
   </main>
 
   <footer>
-    <p>版本 2026.07.17-aj。研究结论以仓库 report/JSON/checksum/validator 为准；页面只做可读映射。scalar-step PDHG v2 在旧 PDHG-v2 suite 116/116 tests、12/12 stress 与 784 条配对指标有效的前提下严格 NO-GO。新的正式 Gate A 则在 source <code>53f1bcc</code> 上完成 13/13 mechanics records、34+34 tests、333 validator checks 与 release 复核；两套编号不再混写。Gate A 仅覆盖一个冻结尺度实例和 view-local covariance，不是一般 full-chain 或性能结论。Gate B、fresh、真实 OERF 和任何方法优势仍未运行；真实授权必须经过 flow-off covariance、held-out camera/session 与实验重建。受限论文、组内数据、逐射线索引、私有 cache、checkpoint、原始 784 rows 和重建体不进入 GitHub Pages。</p>
+    <p>版本 2026.07.17-al。研究结论以仓库 report/JSON/checksum/validator 为准；页面只做可读映射。scalar-step PDHG v2 在 116/116 tests、12/12 stress 与 784 条配对指标有效的前提下严格 NO-GO；Gate A 在 source <code>53f1bcc</code> 上完成 13/13 mechanics records、34+34 tests 与 333 checks；factor Gate B 又在 source <code>204bbe8</code> 上完成 256 条方法行、16 个计时对和 4,048 项独立复核，5 门通过、3 门失败，最终 NO-GO。三套证据编号不混写。fresh、真实 OERF 和任何方法优势仍未运行；原 FM-CG-PDNO smoke 已阻断，下一路线必须经过 H2/H3 数据门、held-out camera/session 与实验重建。受限论文、组内数据、逐射线索引、私有 cache、checkpoint、原始重建体不进入 GitHub Pages。</p>
   </footer>
   <script>
     (() => {

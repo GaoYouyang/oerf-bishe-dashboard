@@ -1,7 +1,21 @@
 # 算子学习与三维重建下一算法路线：FM-CG-PDNO
 
 日期：2026-07-17
-状态：`PREREGISTRATION DRAFT / NO PERFORMANCE RESULT / NO WIN CLAIM`
+状态：`CLOSED AFTER PREREGISTERED GATE B NO-GO / NO NEURAL SMOKE`
+
+## 0. Gate B 事后判决，不回写原假设
+
+V4 formal Gate B 已在 source commit `204bbe8` 上第一次完成 factor 轨迹。独立验证器
+重算 4,048 项检查并通过，但 deterministic voxel-factor PDHG 相对 scalar PDHG 的
+K=32 mean field reduction 只有 1.321%，相对 view-block 只有 1.242%，与 exact-K
+graph-PCGLS 的 mean error gap 为 133.439%。八项预注册门通过 5 项、失败 3 项，正式
+状态为 `GATE_B_E2_MECHANISM_NO_GO`。
+
+因此本文定义的解锁条件没有满足：不实现 learned proximal smoke，不打开 fresh，
+不把 FM-CG-PDNO 当作当前论文主算法。以下结构保留为被证伪研究合同，不能再解释为
+待执行承诺。下一步转向 forward-model discrepancy 的 RayKernel-DCO，或在有真实
+timestamp/缺帧序列时转 TRAIL-4D；完整判决见
+[Gate B NO-GO](psu_b0_factor_pdhg_gate_b_no_go_2026-07-17.md)。
 
 ## 1. 为什么选这条主线
 
@@ -104,12 +118,13 @@ held-out camera/session。真实数据没有体真值时，只能声明 held-out
 5. 能否固定一台不参与训练和选模的 audit camera？
 6. 能否先提供一段带 timestamp、曝光和缺帧信息的 50--200 帧序列？
 
-## 7. 立即执行顺序
+## 7. 原冻结执行顺序与实际停止点
 
 1. Gate A 已完成，只解锁 Gate B，不自动解锁神经网络。
-2. 冻结 360-field/28-geometry manifest，并补可执行 FFNO。
-3. 先跑 deterministic scalar/block/factor/graph-PCGLS 同调用 Gate B。
-4. Gate B 有稳定正信号后，再实现 `beta=0` 可退化的 FM-CG-PDNO smoke。
-5. 根据师兄对六个问题的答案，只选择 H1/H2/H3 中一条作为论文主物理问题。
+2. Gate B 的 16-sample、四方法、四 checkpoint 同调用比较已完成。
+3. Gate B 正式 NO-GO，原第 4 步的 FM-CG-PDNO smoke 被阻断。
+4. 不再为此分支补 360-field 训练或 FFNO 排名；先用 D0 定位 majorizer 松弛来源。
+5. 根据师兄可提供的数据，只选择 H2 RayKernel-DCO 或 H3 TRAIL-4D；H1 降为第三顺位。
 
-本文件是研究合同，不是结果报告。任何方法优势都必须由后续冻结实验产生。
+本文件现在是保留的失败研究合同，不是算法提案或结果胜出报告。任何新路线都必须
+另写物理假设、数据角色、基线与停止门，不能沿用本文件阈值后继续调参。

@@ -104,6 +104,24 @@
 - 本机 16 种子运行约 `14.5 s`；当前网络和 Mac 算力均不是短板。真实
   flow-off repeats 与独立 session 仍是最终迁移瓶颈。
 
+### 2026-07-17 deterministic factor-PDHG Gate B NO-GO
+
+- Gate A 在冻结 view-local/single-scale fixture 上完成 13/13 mechanics
+  attestation 后，V4 Gate B 首次真正运行 scalar、view-block、voxel-factor
+  A-only PDHG 与 same-run exact-K graph-PCGLS。
+- 两 replicate × 八类解析反应场 × 四 checkpoint × 四方法形成 256 条正式方法行；
+  独立 validator 重算 4,048 项 checksum、调用账本、配对关系与门禁并通过。
+- A-only 支持域必须拆成 2,322 个 data-coupled voxels 与 422 个 A-null support
+  voxels；旧 2,744 来自 A+D connectivity，不能拿来声明数据可辨识性。
+- K=32 voxel-factor 相对 scalar mean gain 仅 `+1.321%`，相对 view-block
+  `+1.242%`，与 graph-PCGLS 的 mean error gap 为 `133.439%`；front-F1
+  `0.1366`，graph 为 `0.7443`。八门过五门，正式判 NO-GO。
+- 关闭 static factor-PDHG、TV/Huber、warm start 与 FM-CG-PDNO learned
+  proximal smoke；D0 只查 exact-|A| / factor tightness 与长时轨迹，不回调性能门。
+- 下一论文方向按组内数据二选一：有 aperture/focus/phantom/paired renderer
+  优先 RayKernel-DCO；有 timestamp/exposure/dropout 连续序列优先 TRAIL-4D。
+  这两条均需另写基线、数据角色和 fresh/real 停止门。
+
 - 不再大规模扩 Nature/Science 光谱仪硬件论文：它们能证明课题组很强，但不帮助何远哲 BOST 定题。
 - 不再把等离子体/材料合成作为主线：与用户物理基础和何远哲带教方向距离较远。
 - 不再追求“所有燃烧论文都收录”：对本科毕设会稀释主线。

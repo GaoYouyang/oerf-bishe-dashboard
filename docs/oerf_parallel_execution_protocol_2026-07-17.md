@@ -28,21 +28,19 @@
 ## 2. 依赖图，而不是无限加并发
 
 ```text
-production operator map ----> exact |G|, P/P^T ----\
-math red team --------------> tiny dense oracle ----+--> Gate A integration
-exact composed |H R Q| -----------------------------/
-active coordinates + zero ledger ------------------/
-absolute TV factor --------------------------------/
+Gate A mechanics --PASS--> frozen Gate B --NO-GO--> close static factor-PDHG
+                                               |---> D0 bounded diagnosis
+                                               |---> H2 data contract
+                                               `---> H3 data contract
 
 primary literature ----------> innovation boundary ------> focused webpage
-public datasets --------------> migration ladder --------> benchmark plan
+public/synthetic data --------> loader + adjoint tests ---> migration scaffold
+real H2 sample --------------> forward mismatch audit ---> RayKernel-DCO gate
+real H3 sequence ------------> timing/event audit --------> TRAIL-4D gate
 test-latency audit -----------> fast/medium/full matrix --> every code loop
-
-Gate A integration --PASS--> frozen Gate B --> one serial MPS run --> evidence
-Gate A integration --FAIL--> fix implementation; do not interpret performance
 ```
 
-主线程只守住 Gate A 的最近阻塞项。子代理只领取有清楚输入、输出和独占文件的
+主线程只守住当前最近阻塞项。子代理只领取有清楚输入、输出和独占文件的
 支线；不把下一步立即依赖的工作交出去后原地等待，也不让两个代理同时修改同一
 文件。
 
@@ -82,11 +80,12 @@ CPU 测试统一设置 `OMP_NUM_THREADS=1`、`MKL_NUM_THREADS=1`、
 脚本固定四个 CPU worker，并自动 deselect 后串行运行 3 个 MPS case，避免新增 MPS
 测试后忘记从并行阶段移出。
 
-2026-07-17 的第一次固定 4-worker 实测为 `918 passed / 11.54 s`。正式 Gate A
-合入后，最新统一 medium 门为 `1006 passed / 11.29 s`，随后 3 个串行 MPS case
-为 `3 passed / 0.87 s`；fast 为 `199 passed / 1.46 s`。完整 medium matrix
-总时长为 `15.88 s`。上一轮串行完整套件约为 `28.91 s`，在测试数继续增加后
-反馈时延仍缩短约 45%。
+2026-07-17 的第一次固定 4-worker 实测为 `918 passed / 11.54 s`。本轮最新 clean
+snapshot 的统一 medium 门为 `1046 passed / 14.54 s`，随后 3 个串行 MPS case 为
+`3 passed / 1.10 s`；fast 为 `199 passed / 1.90 s`。连同 Pages 构建、46,248 个
+本地链接和三类隐私门，完整 full matrix 最近一次实测为 `23.06 s`。测试规模和
+发布审计都增加后，反馈时延仍控制在半分钟内；计时只用于工程调度，不用于算法
+优越性比较。
 
 ### Full：提交与发布前
 
@@ -101,7 +100,7 @@ clean-HEAD、输入 hash、测试节点 hash、结果目录和开封门。
 
 ## 5. 当前流水线状态
 
-已完成并进入正式 Gate A mechanics attestation：
+Gate A mechanics attestation 已完成：
 
 - tiny CPU/float64 signed-factor majorizer 与 6-step recurrence；
 - production `P/P^T`；
@@ -116,13 +115,31 @@ clean-HEAD、输入 hash、测试节点 hash、结果目录和开封门。
 - clean commit CPU/MPS attestation、独立 NumPy oracle、333 项 validator checks；
 - validation report 与 release checksums 的第二次 `--no-write` 复核。
 
-仍未完成的是 Gate B 性能比较。当前合法结论是 `Gate A mechanics attested`，不是
-“算法有效”。本机环境虽记录完整 Torch/NumPy/pytest tree hash，仍不是隔离容器证明。
+正式 factor-PDHG Gate B 也已在 source commit `204bbe8` 上完成。256 条方法行、
+16 个计时对和 4,048 项独立重算均有效，但预注册门只通过 5/8，因此判决为
+`GATE_B_E2_MECHANISM_NO_GO`：
+
+- K=32 voxel-factor 相对 scalar 的 mean field-L2 改善仅 `1.321%`，未过 `25%` 门；
+- 相对 view-block 仅 `1.242%`，未过 `3%` 门；
+- 对 graph-PCGLS 的 mean error gap 为 `133.439%`，超过 `20%` 上限；
+- 15/16 场为正、两 replicate 均为正且成本比 `2.403x` 过门，说明是“小而稳定的
+  机制信号”，不是偶然零结果；
+- K=32 front-F1 仅 `0.1366`，graph-PCGLS 为 `0.7443`，前沿保持尤其不足。
+
+因此 FM-CG-PDNO/learned proximal smoke 不再开放。当前并行工作的目标不是继续给
+静态预条件器换网络，而是同时完成 D0 机制诊断、H2/H3 数据契约、公开/合成迁移
+脚手架和页面证据维护；正式 science runner、MPS 计时和同一结果目录仍保持单路。
+本机环境虽记录完整 Torch/NumPy/pytest tree hash，仍不是隔离容器证明。
 
 ## 6. 后续顺序
 
-1. 保留 Gate A 证据不变；后续源码修改必须重新 attestation。
-2. 冻结 Gate B 数据、scalar/block/factor/graph-PCGLS 基线、调用预算和失败门。
-3. Gate B 只跑 data-only；通过后才开放 TV/Huber 与 FM-CG-PDNO smoke。
-4. 先报告 mean、p10、harm、worst、gradient/front 与 cold-start 成本，再决定是否
-   值得转向 learned hybrid 或申请远端算力。
+1. 保留 Gate A/Gate B 证据不变；任何新算法不得改写这组冻结结果。
+2. D0 只比较 exact-`|A|` 与 factor majorizer tightness 及长时轨迹，不重新打开
+   静态 factor-PDHG 排名，也不训练 learned proximal。
+3. 并行向师兄确认 H2/H3 最小数据契约：H2 需要 aperture/focus/calibration pair、
+   phantom 或 paired renderer 与 `F/F^T`；H3 需要 timestamp、exposure、dropout、
+   run boundary 和真实拓扑事件。
+4. 在等待数据时只做可迁移的 loader、坐标/单位审计、伴随点积测试、held-out
+   geometry/session 切分和合成失配压力测试；这些结果不能替代真实 OERF 证据。
+5. 有 H2 数据先开 RayKernel-DCO 最小 forward-discrepancy gate；有 H3 数据才开
+   TRAIL-4D 时序 gate。两类数据都没有时，不租卡、不盲训、不宣称算法优势。

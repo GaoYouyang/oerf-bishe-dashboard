@@ -20,9 +20,11 @@
 > whitening 的带符号 matrix-free BOST 算子，构造可证明安全、按相机或探测器
 > 结构分块的 primal-dual majorizer，并在同物理调用预算下改善反应前沿和坏尾？
 
-这仍只是研究假设。scalar-step PDHG v2 已完成，并在两个 opened replicate 上
-暴露出重复的近零场停滞；它只建立了 development conditioning 缺口，不授权新
-majorizer 的有效性或真实 OERF 外推。
+这条研究假设已经完成一次窄口径证伪。scalar-step PDHG v2 在两个 opened
+replicate 上暴露重复近零场停滞；随后 signed factor Gate A mechanics 通过，但
+deterministic Gate B 的 voxel-factor 相对 scalar 只改善 1.321%，与 graph-PCGLS
+的 mean error gap 仍为 133.439%，八门过五门并严格 NO-GO。它不授权 learned
+proximal，也不外推为一般 PDHG 或真实 OERF 无效。
 
 ## 2. 当前离散分账为何合理
 
@@ -190,7 +192,7 @@ proximal 或可证明的平均非扩张映射，应称为 learned denoiser/unrol
 - 上述内容是方法与 prior-art 审计，不是实验胜出；
 - scalar PDHG v2 已在 E1 116/116 tests、12/12 stress 和 784 条 paired rows 下
   得到严格 NO-GO；该结果只覆盖 zero-init、scalar-step 与冻结 K/alpha 网格；
-- signed factor 的 CPU block-norm A0 原型已有 10 项测试，但逐元素 BOST
-  majorizer 尚未接入，仍未通过 Gate A/B，也没有 performance 结果；
+- signed factor 已完成逐元素 BOST majorizer、13/13 Gate A attestation、256 条
+  Gate B 方法行与 4,048 项独立复核；Gate B 为 E2 mechanism NO-GO；
 - 没有 OERF flow-off、held-out camera/session 或实验三维真值；
 - fresh 与 learned proximal 继续封存。

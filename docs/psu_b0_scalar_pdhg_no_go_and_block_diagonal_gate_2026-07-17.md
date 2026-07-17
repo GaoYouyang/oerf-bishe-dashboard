@@ -1,7 +1,13 @@
 # Scalar-step PDHG NO-GO 与下一轮 block-diagonal gate
 
 日期：2026-07-17
-状态：`E2 POSTOPEN DIAGNOSIS / GATE A0 CPU PROTOTYPE / GATE A NOT PASSED`
+状态：`HISTORICAL SCALAR NO-GO / FOLLOW-UP GATE A PASSED / FACTOR GATE B NO-GO`
+
+后续更新：本文提出的 deterministic block/factor 路线已完成。Gate A mechanics
+正式通过；V4 Gate B 在 source `204bbe8` 上形成 256 条方法行并由独立 validator
+重算 4,048 项，但 voxel-factor 相对 scalar mean gain 仅 1.321%，八门过五门，
+因此按本文第 7 节停止规则关闭，不进入 TV、warm start、nullspace 或网络。完整
+结果见 [Factor Gate B NO-GO](psu_b0_factor_pdhg_gate_b_no_go_2026-07-17.md)。
 
 ## 1. 先给严格结论
 

@@ -1,7 +1,7 @@
 # Covariance-aware signed BOST factor-majorized diagonal/block PDHG 设计说明
 
 日期：2026-07-17
-状态：`FORMAL_GATE_A_ATTESTED_MECHANICS_ONLY_VIEW_LOCAL_SINGLE_FROZEN_SCALE / GATE_B_NOT_RUN / NO_FRESH_REAL_OR_WIN_CLAIM`
+状态：`FORMAL_GATE_A_ATTESTED / GATE_B_E2_MECHANISM_NO_GO / NO_FRESH_REAL_OR_WIN_CLAIM`
 
 2026-07-17 实现进度说明：tiny CPU/float64 signed-factor oracle、显式活动坐标
 `E/E^T`、production `P/P^T`、`|G_c|/|G_c|^T`、组合后取绝对值的
@@ -13,16 +13,19 @@ dense oracle 逐步对齐。当前实现只接受一个冻结 measurement-scale 
 正式 Gate A 已在 clean source commit `53f1bccb287744a6ab97d7d6c2a86d556515e34a`
 上生成：13/13 E1 PASS，20 个 selector 展开为 34 个 case、零跳过，独立 validator
 完成 333 项 core checks，并通过第二次 `--no-write` 复核。范围仍严格限于单一冻结
-scale、view-local synthetic mechanics；Gate B、fresh、真实数据和方法胜出均未运行。
+scale、view-local synthetic mechanics。随后 V4 Gate B 已在 source commit
+`204bbe8` 上完成 256 条方法行，并由独立 validator 重算 4,048 项：voxel-factor
+相对 scalar mean gain 仅 1.321%，与 graph-PCGLS 的 mean error gap 为 133.439%，
+八门过五门，正式 NO-GO。fresh、真实数据和方法胜出均未运行。
 
-> 本文只定义下一算法候选、证明义务、实现门禁和证伪协议，不报告任何胜出结果。
+> 本文记录候选、证明义务、实现门禁和已完成的证伪协议，不报告任何胜出结果。
 > 全文严格分为“可证明事实 / 实现假设 / 待证伪假设”；条件性定理不等于当前实现已通过。
 
 | 可证明事实 | 实现假设 | 待证伪假设 |
 |---|---|---|
 | 在所列非负因子条件下，因子乘积给出 `|A_b|` 的逐元素上界，并可推出 `eta^2` 步长安全界 | 当前 streaming BOST 可按同一因子边界重构 absolute-factor kernel，且 camera/site 共享步长可无歧义实现 | 更紧的 covariance-aware factor majorizer 能在同物理调用预算下改善收敛、结构指标和坏尾 |
 | Pock-Chambolle 对角预条件及绝对行列和思想属于 prior art | `|W_b|` 可在 covariance block 尺度显式物化，`P/P^T` 可流式执行而不组装 `A` | 独立 flow-off/calibration 得到的尺度仍能复现 synthetic oracle-scale 机制信号 |
-| 当前 synthetic runner 的 `scale_by_view` 由 clean truth 的 forward projection 构造 | 新实现会对因子、尺度来源、cache fingerprint 和调用账本 fail closed | 候选相对 scalar PDHG、强 graph-PCGLS 和冻结消融满足同预算门；当前没有此证据 |
+| 当前 synthetic runner 的 `scale_by_view` 由 clean truth 的 forward projection 构造 | 新实现会对因子、尺度来源、cache fingerprint 和调用账本 fail closed | 候选相对 scalar PDHG、强 graph-PCGLS 和冻结消融满足同预算门；Gate B 已证伪此假设 |
 
 ## 一、可证明事实
 
@@ -426,8 +429,8 @@ median wall-time ratio vs graph frontier      <= 3.0
 截至最新状态，signed factor majorizer 的 tiny dense oracle、production 因子组件、
 matrix-free ones-pass、exact-zero/physical-call ledger 和 6 步 TV/Huber recurrence
 已在 clean commit 的单一冻结 scale、view-local covariance fixture 上通过正式 Gate A。
-证明记录、JSON 与 checksum 见 `docs/psu_b0_gate_a_attestation_2026-07-17.md`。独立
-flow-off/calibration scale 不存在，同预算 Gate B 性能门也未执行。
-因此本文不声称候选优于 scalar PDHG、PCGLS、TV/Huber、learned primal-dual
-或任何现有方法；当前观察仅限于 mechanics 对照，并继续保留可被明确关闭的
-算法路线。
+证明记录、JSON 与 checksum 见 `docs/psu_b0_gate_a_attestation_2026-07-17.md`。
+同预算 Gate B 随后已完成并严格 NO-GO：factor vs scalar +1.321%，factor vs
+view-block +1.242%，graph gap 133.439%，5 门通过、3 门失败，最终 NO-GO。独立 flow-off/calibration
+scale 仍不存在。因此本文不声称候选优于 scalar PDHG、PCGLS、TV/Huber、learned
+primal-dual 或任何现有方法；当前 factor-PDHG 路线已关闭。

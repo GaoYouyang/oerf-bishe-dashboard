@@ -1404,3 +1404,44 @@ factor metric 已有稳定正信号，才启动神经 smoke。
 timestamp、曝光和缺帧日志就做 TRAIL-4D；只有静态多视角且能永久留一台 audit camera
 才重启 GQ-NIO。三条不能一起大训练。完整结构、指标、失败门和六个数据问题见
 `docs/fm_cg_pdno_research_route_2026-07-17.md`。
+
+## 53. Gate B 真跑完了：factor 有一点信号，但远远不够
+
+这次不是测试绿了，也不是又做一个小 toy。正式 V4 在 clean source commit
+`204bbe8` 上跑了 16 个场、四种算法和 `K=4/8/16/32` 四档预算，共 256 条方法行。
+独立验证器没有相信 runner 自报结论，而是重算了 4,048 项 checksum、调用账本、
+配对关系和八项门禁；最后确认结果有效，但判决是 **NO-GO**。
+
+讲人话：voxel-factor 像是给每个体素配一只不同大小的鞋，希望在病态地形里走得
+更快。它确实比所有体素穿同一双鞋的 scalar PDHG 稍快：15/16 个场有正改善，两次
+replicate 的均值都约 1.32%。但预先要求的是至少 25%，实际只有 1.321%；相对只按
+相机分块的 view-block 也只有 1.242%，没到 3%。同样 32 次 forward/adjoint，
+graph-PCGLS 的 field-L2 已到 0.421，factor-PDHG 还在 0.983，差距 133.4%。
+
+更要紧的是 front-F1：graph-PCGLS 为 0.744，scalar/view-block 约 0.36，factor
+反而只有 0.137。也就是说，它在总体 L2 上挪动了一点，却没有保护薄前缘和激波。
+对于反应流三维重建，这比“均值改善不够”更危险，因为好看的体渲染可能掩盖真正
+关心的结构已经坏了。
+
+这轮还澄清了活动域。support 内有 2,744 个 voxels，但真正被 A-only 数据耦合的
+只有 2,322 个，另有 422 个属于测量零空间。不能给这 422 个位置加 epsilon 就说
+“可重建”；它们必须靠明确空间先验、时间演化、多模态或额外相机补信息。
+
+因此现在明确停止：
+
+1. 不实现原 FM-CG-PDNO learned proximal smoke；它的经典退化基线没有过 Gate B。
+2. 不继续扫 factor exponent、eta、K 或阈值，把 1.3% 调成一次偶然成功。
+3. 不加 TV、warm start 后把收益算给 factor；那已经是另一个目标和调用预算。
+4. 不打开 fresh seed 去救 development gate 已失败的机制。
+
+接下来 D0 只做根因诊断：在 tiny/streaming opened 数据上比较 exact `|A|` 与 factor
+majorizer 的松紧，并看长时轨迹，回答“上界太松”还是“局部对角尺度本来就不是主
+矛盾”。它不是新的胜负实验。
+
+真正的论文路线要回到物理问题。有两档光圈、焦平面、phantom 或 paired renderer，
+优先做 RayKernel-DCO，让算子学习修正有限孔径/景深/曲线光路的 forward mismatch；
+有连续高速序列、timestamp、曝光和 dropout 日志，则优先做 TRAIL-4D。两条都保留
+显式光学 forward 与强 graph-PCGLS/NeRIF 对照，不再让网络掩盖一个失败的 solver。
+
+公开四联图、八项门和复核命令见
+`demo_t16_operator/results/psu_b0_factor_pdhg_gate_b_public/README.md`。
