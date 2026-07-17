@@ -1,0 +1,7 @@
+# PSU B0 D0 exact-|A| public diagnostic
+
+This is a checksum-verified post-NO-GO descriptive export from the completed opened synthetic D0 release. **Gate B remains closed.** At K128, exact-|A| row diagonalization lowers the mean normalized residual from 0.6171 to 0.2210: a 64.18% ratio-of-means reduction. The mean field error changes from 0.9599 to 0.9136, only a 4.83% ratio-of-means gain. The paired-percent means are 64.97% and 4.90%, respectively; they are reported separately because they are different estimands. Among the six evaluated checkpoints, descriptive mean field error is smallest at K64; K128 is higher in 10/16 opened rows, so no general early-stopping rule is claimed. Gradient error is worse than formal factor at K128.
+
+The 16 rows are two replicate clusters containing the same eight morphology families, not 16 IID experiments. Synthetic view scaling uses clean-truth projections, so the complete pipeline is not truth-blind. Tail slack is an operator-level p05 diagnostic, not average factor error. Graph-PCGLS is only a nonbinding headroom comparator because its support and prior contracts differ.
+
+No unique causal mechanism, new algorithm, experimental-flow truth, or generalization claim is made. The solver recurrence remains `SIGNED_A`. Run `PYTHONPATH=. .venv/bin/python site_tools/analyze_psu_b0_exact_absolute_diagnostic.py` from the repository root to regenerate. `checksums.sha256` covers exactly the declared public file set except itself.

@@ -1445,3 +1445,205 @@ majorizer 的松紧，并看长时轨迹，回答“上界太松”还是“局�
 
 公开四联图、八项门和复核命令见
 `demo_t16_operator/results/psu_b0_factor_pdhg_gate_b_public/README.md`。
+
+## 54. D0 把问题问清了：残差快很多，不等于三维场准很多
+
+这轮推进慢的主要原因不是网速。D0 的正式运行、独立重算和 Metric-A 小模型审计都在
+本机完成，耗时主要来自 CPU/MPS 数值计算、重复性检查和证据门禁；真正限制下一阶段的
+是实验室数据合同还没到位，而不是论文网页下载不够快。
+
+### D0 到底问了什么
+
+Gate B 已经说明 factor-PDHG 的提升太小。D0 没有继续换网络，而是追问一个更基础的
+问题：factor majorizer 用一个容易计算但偏松的上界近似 `|A|`，是不是这个上界中的
+符号抵消被忽略，导致行、列尺度过于保守？于是 D0 保持 signed `A/A^T`、初值、支持域、
+迭代次数和数据完全不变，只把用于对角步长的 factor mass 换成 exact-`|A|` mass。
+因此它是根因诊断，不是一个新重建算法的胜负赛。
+
+结果支持“factor 上界过松”这个机制解释。到 `K=128`，exact-abs-row 相对 formal
+factor-view 的 normalized residual 改善为 `64.183%`；但 field relative-L2 只从
+`0.959944` 降到 `0.913594`，改善 `4.828%`。所以最重要的一句话是：**64% 是数据残差
+口径，不是三维场重建精度提高 64%；场误差的对应改善约为 4.83%。**
+
+这里还有两个看起来很像、其实回答不同问题的平均数：
+
+- `ratio-of-means` 是先分别求两种方法的平均误差，再计算两组均值的相对差；D0 的正式
+  口径是 residual `64.183%`、field `4.828%`。
+- `paired mean` 是先对每个配对场计算改善百分比，再平均这些百分比；对应 residual
+  `64.971%`、field `4.905%`。
+
+两种算法都没有错，但它们不是同一个 estimand，不能挑较大的数字混写成一个结论。
+
+### 为什么还不能据此发“更准的重建算法”
+
+exact-abs-row 的场误差在六个预设检查点中，描述性均值最低的是 `K=64`：`0.911423`；
+到 `K=128` 反而变为 `0.913594`。逐行看，16 行里有 10 行在 `K=128` 比 `K=64`
+更差，而数据残差仍在继续下降。这提醒我们“拟合观测更好”可能不等于“恢复真实场更好”。
+但目前只比较了六个离散检查点，也同时看了多个指标；front-F1 甚至没有同向恶化。
+因此这里只能说 **K64 是六个检查点中的描述性最低均值**，不能宣布已经发现普适的
+semi-convergence 规律，更不能把 K64 直接写成通用早停规则。
+
+样本量也不能写成“16 个独立实验”。这 16 行来自 `2 replicate clusters x 8` 个共享
+morphology；同一种形态在两个 replicate 中有关联，所以不是 16 个 IID 样本。当前不据此
+构造 p-value、置信区间或广泛泛化结论。
+
+另一个容易忽略的混淆是 synthetic view scaling。当前每个视角的缩放使用 clean-truth
+projection RMS。求解递推本身不读取三维 field truth，但完整合成流程仍不是 truth-blind。
+真实部署必须改用 flow-off/reference repeats、独立 calibration 或其他观测可得尺度；
+否则“尺度估计”和“重建能力”会被混在一起。
+
+公开分析器没有只相信正式报告里的 PASS 字样。它重新读取轨迹和 tightness 数据，分开
+重算 ratio-of-means 与 paired mean，核对 16 行的分组结构、K64/K128 关系、Gate B 仍
+关闭、signed-`A` 递推边界和 truth-scaling 标记；独立 validator 共通过 61 项检查。
+公开包还固定文件清单和 SHA-256，意外多出的旧文件、被改动的正式决策或算术都应当
+fail closed。这提高的是结果的可审计性，不会把 synthetic diagnostic 升级成真实实验。
+
+### 接下来的 A、B、C 三条路线
+
+1. **Metric-A：抵消感知的几何条件化对角度量。** 从可部署的几何/算子特征估计
+   exact-`|A|` 行列 mass，目标是用更低构造成本接近 exact metric，同时保留 Schur 安全
+   审计。它是当前本科主线，但必须先证明不是只学到额外阻尼。
+2. **Metric-B：低秩全局残差校正和有限历史。** 在相同 reduced support、相同 signed
+   physics 和相同调用预算内，检验少量全局方向能否补足静态对角尺度看不到的耦合。
+   A 没过门前不扩大 B。
+3. **Metric-C：事件/不确定度感知的停止与正则。** 只有拿到真实连续 4D 序列、时间戳、
+   曝光、缺帧和重复测量后才启动；静态 D0 不能外推为 4D 成功。
+
+Metric-A 初版 smoke 已得到一个有用的**负结果**。独立审计发现，预测 metric 后又用
+held-out rig 的 exact mass 做逐元素裁剪，这仍依赖 exact oracle；它更像“exact metric
+再加学习型阻尼”，还没有实现真正便宜、可部署的替代。两个所谓 OOD rig 的平均结果也
+没有胜过 exact：独立补算 `K=32` 时，learned 与 exact 的平均 field relative-L2 分别约
+为 `0.40398` 和 `0.36928`，learned 更差约 `9.40%`；平均数据残差也更差。更重要的是，
+当前几何特征由 rig index 沿一条一维轨迹生成，换 seed 主要改变 jitter 和噪声，不等于
+真正的新几何 OOD。
+
+因此 Metric-A 目前不授权“算法替代”或“优于 exact”的声明。下一门禁必须：把部署输入
+类型与 truth/exact mass 完全隔离；独立采样 train、safety-calibration 和 fresh
+geometry-OOD；加入 factor、exact oracle、简单标量阻尼、unclipped learned 与
+calibrated envelope 五组；冻结 field relative-L2 为主指标，同时报告 residual、Schur
+violation、setup 成本和 `A/A^T` 调用。oracle-free learned 若不能在 fresh geometry 上
+稳定击败 factor 和简单阻尼，就停止扩大网络，而不是靠加层救结果。
+
+H2 rotation/optical mismatch 仍停在冻结但未构造状态。要启动它，师兄需要提供真实数据
+合同：相机几何与 provenance、rotation-40 forward/adjoint、mask、单位、manifest，最好
+再有 flow-off/reference repeats、有限孔径或高低保真 paired operator。没有这些输入，
+当前最诚实的成果是 D0 的机制诊断、Metric-A 的负审计和清晰的下一实验门，而不是一篇
+已经成功的高水平论文。
+
+## 55. Metric-A v2：修好随机种子后，表面上的胜利消失了
+
+初版 smoke 的问题是测试时偷用了 exact mass 做 `max` clipping。v2 先把这个漏洞从接口
+上堵住：训练使用 8 个完整 rig，另外 3 个 rig 只用于 safety calibration，最后 4 个
+fresh geometry-OOD rig 一次性评分。几何参数由独立随机量生成，noise seed 与 geometry
+seed 分开；推理对象 `InferenceRigFeatures` 只携带 row/column 的部署可见特征，不携带
+signed `A`、exact mass、truth 或 target。
+
+这次比较的不是“一个网络对一个弱基线”，而是六个标签、五种不同结果：
+
+| 方法 | 4 个 fresh rig 的平均 field relative-L2 | 不安全 rig |
+|---|---:|---:|
+| exact oracle | 0.703056 | 0/4 |
+| calibration envelope | 151737.302297 | 4/4 |
+| train-selected `0.5 x factor` | 0.862560 | 4/4 |
+| factor majorizer | 0.988963 | 0/4 |
+| raw oracle-free learned | 2.180e26 | 4/4 |
+
+`exact-factor interpolation` 在训练集最后选择 `alpha=1.0`，数值上完全等于 exact oracle，
+所以不能冒充第六个独立证据点。raw learned 在 OOD 上真正发散，不是图表显示问题。
+
+这里保留一条很重要的研究教训：旧版结果曾因 rig seed 随配置顺序变化而显示“平均值有
+信号”。把 seed 改成稳定的 `SHA256(base_seed, rig_id, split_role)` 后，fresh geometry
+真正改变，旧数字必须全部作废。新结果逐 rig 展开是：
+
+| fresh rig | envelope | scalar baseline | Schur violations |
+|---|---:|---:|---:|
+| ood-00 | 0.795978 | 0.950396 | 11 |
+| ood-01 | 606945.292717 | 1.063883 | 18 |
+| ood-02 | 1.114938 | 1.194957 | 1 |
+| ood-03 | 2.005558 | 0.241005 | 9 |
+
+它只在 `2/4` 个 rig 同时胜过 factor 和简单 baseline；`ood-01` 是灾难性 OOD 发散，
+`ood-03` 也明显输给简单 baseline。更关键的是四个 rig 全部不安全，共 `39` 次
+row/column/spectral violation。raw learned 有 `68` 次，`0.5 x factor` 也有 `28` 次；
+只有 factor 与 exact oracle 为零。因此 `metric_substitution_authorized=false`、
+`research_claim_authorized=false` 不是保守过头，而是被逐 rig 安全门直接否决。
+
+首轮独立审计发现的工程缺口已经修好：learned/calibrated 路线的 factor 特征构造已计入
+访问与成本账本；seed 不再依赖配置顺序；候选设置阶段由运行时 guard 实测 exact 调用为
+零；布尔配置测试也不再把字符串 `"0"` 当成真。15 个聚焦测试已通过。当前结果仍来自
+未提交源码快照，所以还要做一次独立重算、首次提交、clean-snapshot 重跑和 checksum
+核对。修复不会把 NO-GO 变成成功，只会让这个失败结论能够被别人准确复现。
+
+### 下一条更有希望的算法思想
+
+直接预测一个比 factor 更小的 mass 很难给确定性安全保证。更合适的 v3 思路是学习选择
+**安全分组**，而不是学习质量数值。若 signed operator 可写成 primitive contributions
+
+```text
+A = C1 + C2 + ... + CL,
+```
+
+对任意 partition `P`，都定义
+
+```text
+M_P = sum over groups G in P of abs(sum over l in G of C_l).
+```
+
+三角不等式自动给出 `M_P >= abs(A)`：每个 contribution 单独一组就是旧 factor；全部
+合成一组就是 exact oracle；中间分组提供“构造成本 - tightness”折中。网络只选择一个
+预定义 partition，任何选择都仍安全；真正要证明的是它能否在 fresh geometry 上比固定
+partition 更好，而不是重新证明网络输出数值的上界。
+
+## 56. v3：安全问题解决了，稳定选对的问题还没解决
+
+v2 的失败不是简单的“网络太小”。它暴露了一个硬矛盾：想比 factor 快，预测的 mass
+就必须更小；但只要某些位置低估，Schur 安全条件就可能被破坏。v3 因此不再让网络猜
+连续数值，而是先手工构造一组一定安全的 partitions，再让小模型只选 partition 编号。
+
+数学上，若固定线性化算子可以拆成
+
+```text
+A = C1 + C2 + ... + CL,
+```
+
+那么每个分组方案 `P` 都使用
+
+```text
+M_P = sum over groups G of abs(sum of C_l inside G).
+```
+
+三角不等式保证 `M_P >= abs(A)`。这次 26 个 synthetic rigs、5 种 partitions，一共
+130 次审计都是零违反。换句话说，在这个小型生成器里，“选错 partition 会不会把算法
+弄得数学不安全”已经被结构性消掉了。
+
+但准确度没有一起解决：
+
+| 方法 | 8 个 fresh rigs 的平均 field relative-L2 |
+|---|---:|
+| 训练选出的最佳固定分组 `paired_cross` | 0.489638 |
+| geometry-conditioned selector | 0.437171 |
+| all-in-one exact comparator | 0.316393 |
+
+selector 的平均数比固定分组好 `10.7155%`，看起来是目前最像“算法信号”的一行；但它
+只在 `4/8` 个 fresh rigs 胜出，最坏样本反而增加 `0.414402` 的 field-L2。exact 还比
+selector 低 `27.6271%`。所以最终仍是 `research_claim_authorized=false`。
+
+**讲人话：**我们已经造出一组不会越过护栏的挡位，但模型只在一半路况下选对挡位。
+平均数变好了，不代表可以放心部署。下一步不该把决策树换成大 Transformer，而是加
+一个只读可观测量的风险门：没有足够把握时回退到训练选出的固定分组，并用完全独立的
+risk-calibration split 冻结接管阈值。
+
+独立审计也抓到了三条必须公开的限制：当前 6 个所谓 safety rigs 参与了最终 stump 选择，
+只能算 model-selection，不是独立验证；toy 里所有方法都拿到完整 primitives，所以
+“all-in-one exact 很贵”尚未被真实内存/流式接口证明；成本数字只是解析 proxy，不是
+wall time。当前源码还没被 commit 锚定，validator 的性能与成本重算正在补强。因此这
+轮最准确的身份是：**有严格安全构造、但选择性能没有过门的合格负结果。**
+
+真实迁移的第一问也已经变得非常具体：师兄的 BOST/NeRIF forward 在固定线性化点，
+能否导出 `J = sum(C_l)` 的 signed primitives？如果不能，就立即停止 v3；如果可以，再
+判断自然分组究竟是 view、折射率梯度分量、aperture/quadrature sample 还是 ray segment。
+完整接口地图见 [v3 real-BOST interface map](v3_real_bost_interface_map_2026-07-17.md)。
+
+这一步仍不需要租服务器。16^3/tiny dense 的结构证伪在 Mac 上很快；只有风险回退在
+全新 fresh geometry 上同时过 selection-conditional harm、coverage、field/front 与
+真实构造成本门，才值得扩到 32^3 或真实 BOST decomposition。

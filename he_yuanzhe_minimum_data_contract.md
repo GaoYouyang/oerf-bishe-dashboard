@@ -1,11 +1,15 @@
 # 发给何远哲师兄的最小数据合同
 
-更新时间：2026-07-15
+更新时间：2026-07-17
 用途：把“能不能给我一些数据”改成一次可以回答、可以交付、不会反复补字段的请求。先拿最小包，不要求师兄一次整理完整论文数据。
 
 ## 可以直接发的短消息
 
 > 师兄，我准备先做“几何与噪声条件化的低调用次数 BOST 三维重建算子”，核心仍显式调用现有 forward/adjoint，不改实验物理。为了让公开数据上的代码以后能直接迁移，能否先给我一个最小样例包：同一工况 1-3 帧的九视角 reference/flow-on 图或处理后 displacement，九路视角的 mask 与标定/射线参数，一份现有重构结果，以及每个字段的单位和公开边界？如果只能给 displacement 也可以。另请确认组内 forward 是否已有 `F` 和 `F^T/J^T`，以及 flow-off 重复帧能否用于估计逐相机/逐像素噪声。我先只交付 loader、伴随检查、预白化强基线和 held-out-view 报告，不先动完整数据。
+
+当前 Metric-A 的技术追问可另发一句：
+
+> 我在合成审计里发现，直接预测比 factor 更紧的 row/column mass 会在新几何上破坏 Schur 安全。现在改成只选择“按三角不等式仍是上界”的 signed-contribution 分组。想请您确认组内 factor majorizer 是由哪些带符号 primitive terms 组成的；在最终取绝对值/求和之前，能否按 view、ray stencil、有限差分分量或插值项得到 `C_l`，使 `A=sum_l C_l`？不需要先给完整数据，只要说明接口和一次 tiny example，就能判断这个算法是否能迁移。
 
 ## P0：没有这些就不能迁移
 
@@ -19,6 +23,21 @@
 | 伴随 | `F^T(r)`、`J^T r` 或允许我实现后由师兄核对 | unrolled 算法和调用预算必需 |
 | 参考结果 | 同工况现有 voxel/NeRIF/TDBOST 输出，哪怕只有切片 | 只作 sanity check，不冒充真值 |
 | 权限 | 可否本机保存、组会展示、毕业论文使用、公开代码/图 | 数据进仓库前先锁边界 |
+
+## P0-B：决定 Metric-A v3 是否有真实接口
+
+| 问题 | 最小回答/样例 | 判决用途 |
+| --- | --- | --- |
+| factor 来源 | 当前 `M >= |A|` 是怎样从 ray/interpolation/gradient/view components 构造的 | 判断 D0 的松弛能否被结构化收紧 |
+| signed primitive | 能否写成 `A=sum_l C_l`，并给出 1 个 tiny rig 的各 `C_l` shape、符号和单位 | 验证 grouped majorizer 的数学接口 |
+| 可分组维度 | `l` 对应 view、u/v 分量、有限差分正负项、孔径样本还是其他因子 | 决定 partition 必须保留的物理语义 |
+| 构造成本 | singleton factor、部分分组、完整 signed `A`/exact `|A|` 各需几次 ray scatter、内存和 wall-time | 防止“更紧但更贵”被包装成加速 |
+| streaming 能力 | 是否可逐 block 累加 `sum_{l in G} C_l` 后取绝对值，而不保存完整矩阵 | 判断 32³/64³ 是否能本机或服务器执行 |
+| 支持与零质量 | data-coupled support 如何定义，零 row/column 怎样固定或剔除 | 使 Schur 证明在正质量支持上有定义 |
+
+若组内只能调用最终 `F/F^T`，拿不到 primitive decomposition，也无法低成本构造任何
+部分分组，那么 v3 只能保留为合成机制，不应继续投入大模型。此时应转向 H2 的 forward
+mismatch 或有真实序列的 4D 路线。
 
 ## P1：决定论文创新是否成立
 

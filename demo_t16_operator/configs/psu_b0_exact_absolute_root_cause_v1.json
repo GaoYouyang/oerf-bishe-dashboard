@@ -1,0 +1,138 @@
+{
+  "schema_version": "psu-b0-exact-absolute-root-cause-config-1.0",
+  "status": "FROZEN_PREPERFORMANCE_ROOT_CAUSE_DIAGNOSTIC",
+  "evidence_role": "OPENED_POST_NO_GO_NUMERICAL_MECHANISM_DIAGNOSTIC",
+  "description": "A bounded post-Gate-B diagnostic that separates factor-majorizer cancellation, per-view dual aggregation, and residual exact-K graph-PCGLS headroom. It cannot reopen Gate B or establish a new algorithm.",
+  "replicate_indices": [0, 8],
+  "reaction_families": [
+    "plume",
+    "wavy_front",
+    "thin_front",
+    "double_front",
+    "annular_kernel",
+    "oblique_shock",
+    "vortex_pair",
+    "multi_plume"
+  ],
+  "checkpoints": [4, 8, 16, 32, 64, 128],
+  "methods": [
+    "scalar_a_only_pdhg",
+    "formal_factor_view_a_only_pdhg",
+    "factor_row_hybrid_a_only_pdhg",
+    "exact_abs_view_a_only_pdhg",
+    "exact_abs_row_a_only_pdhg",
+    "graph_pcgls"
+  ],
+  "solver": {
+    "eta": 0.7,
+    "theta": 1.0,
+    "zero_initialization": true,
+    "early_stopping": false,
+    "best_at_or_below_k_selection": false
+  },
+  "exact_absolute": {
+    "basis_batch_size": 128,
+    "nonzero_tolerance": 0.0,
+    "power_iterations": 24,
+    "power_seed": 2026071703,
+    "full_dense_production_matrix_materialized": false,
+    "streamed_basis_columns_are_deterministic": true
+  },
+  "runtime": {
+    "device": "mps",
+    "dtype": "torch.float32",
+    "torch_cpu_threads": 8
+  },
+  "expected_runtime_shape": {
+    "grid_size": 16,
+    "view_count": 9,
+    "rays_per_view": 256,
+    "finite_aperture_sample_count": 8,
+    "measurement_count": 4608,
+    "support_active_voxel_count": 2744,
+    "factor_majorizer_active_coordinate_count": 2322,
+    "factor_majorizer_zero_coordinate_count": 422,
+    "signed_operator_nullspace_dimension": "UNKNOWN_NOT_EQUAL_TO_ZERO_COORDINATE_COUNT"
+  },
+  "data_contract": {
+    "geometry": "REAL_PSU_DETECTOR_GEOMETRY",
+    "fields": "OPENED_ANALYTIC_REACTION_PHANTOMS_WITH_CLEAN_TRUTH",
+    "noise": "OPENED_SYNTHETIC_CORRELATED_GRAPH_HEAT",
+    "scale_by_view": "OPENED_CLEAN_TRUTH_DERIVED_ORACLE_DEVELOPMENT_ONLY",
+    "statistical_unit": "TWO_REPLICATES_OF_EIGHT_PAIRED_MORPHOLOGIES_NOT_16_IID",
+    "fresh_seed_or_real_flow_opened": false
+  },
+  "metric_decomposition": {
+    "formal_factor_view_a_only_pdhg": "Formal Gate-B per-view M-row maximum plus per-column M sums",
+    "factor_row_hybrid_a_only_pdhg": "Diagnostic hybrid: same M-column metric with per-row M sums; isolates view aggregation",
+    "exact_abs_view_a_only_pdhg": "Signed A recurrence with exact |A| columns and per-view exact-row maximum; isolates factor cancellation at fixed view granularity",
+    "exact_abs_row_a_only_pdhg": "Signed A recurrence with exact |A| rows and columns; strongest static diagonal diagnostic",
+    "graph_pcgls": "Nonbinding headroom reference only; full-support Sobolev direction does not match the reduced PDHG support contract"
+  },
+  "thresholds": {
+    "dominance_absolute_tolerance": 0.000002,
+    "dominance_relative_tolerance": 0.00005,
+    "factor_replay_relative_error_maximum": 0.000005,
+    "power_estimate_sanity_maximum": 0.490245,
+    "descriptive_endpoint_k": 128,
+    "material_residual_gain_percent_min": 10.0,
+    "material_paired_sample_count_min": 12,
+    "material_high_quantile_slack_min": 0.1,
+    "nonbinding_exact_to_graph_field_ratio_min": 1.5
+  },
+  "classification_policy": {
+    "factorization_cancellation_material_descriptive": "At K128 exact-abs-view reduces the same-signed-A normalized residual by at least 10% in the mean and by at least 10% for at least 12 of 16 opened fields, with at least 10% high-quantile factor slack",
+    "view_aggregation_material_descriptive": "At K128 factor-row-hybrid reduces the same-signed-A normalized residual by at least 10% in the mean and by at least 10% for at least 12 of 16 opened fields",
+    "combined_static_diagonal_material_descriptive": "The exact-abs-row metric meets the same material rule but neither isolated intervention does",
+    "static_diagonal_gain_small_graph_headroom_nonbinding": "Exact-abs-row gains less than 10% while its K128 field error remains at least 1.5 times the nonbinding full-support graph reference",
+    "inconclusive": "all remaining valid outcomes",
+    "causal_krylov_proof_claimed": false,
+    "graph_used_in_primary_same_operator_decision": false
+  },
+  "invalidity_policy": {
+    "source_or_parent_hash_mismatch": "INVALID_NO_RANKING",
+    "dirty_repository": "INVALID_NO_RANKING",
+    "exact_A_exceeds_factor_M": "INVALID_NO_RANKING",
+    "factor_replay_differs_from_frozen_setup": "INVALID_NO_RANKING",
+    "active_gauge_or_sample_set_changes": "INVALID_NO_RANKING",
+    "nan_inf_missing_duplicate_or_skipped_row": "INVALID_NO_RANKING",
+    "forward_or_adjoint_calls_differ_from_exact_K": "INVALID_NO_RANKING",
+    "normalized_operator_safety_bound_exceeded": "INVALID_NO_RANKING"
+  },
+  "claim_boundary": {
+    "formal_gate_b_reopened": false,
+    "new_algorithm_claimed": false,
+    "algorithm_superiority_claimed": false,
+    "experimental_flow_truth_used": false,
+    "real_flowoff_repeats_used": false,
+    "neural_operator_training_authorized": false,
+    "generalization_claimed": false,
+    "support_null_prior_difference_disclosed": true,
+    "graph_comparison_binding": false,
+    "solver_recurrence_operator": "SIGNED_A",
+    "metric_only_uses_absolute_operator": true,
+    "allowed_claim": "opened synthetic numerical root-cause diagnostic only"
+  },
+  "source_paths": {
+    "parent_gate_b_report": "demo_t16_operator/results/psu_b0_factor_pdhg_gate_b/report.json",
+    "parent_gate_b_config": "demo_t16_operator/configs/psu_b0_factor_pdhg_gate_b_v4_a_only_connectivity_amendment.json",
+    "parent_pdhg_config": "demo_t16_operator/configs/psu_b0_pdhg_scale_smoke_v2_infrastructure_amendment.json",
+    "exact_absolute_module": "demo_t16_operator/psu_b0_exact_absolute_diagnostic.py",
+    "exact_absolute_test": "demo_t16_operator/test_psu_b0_exact_absolute_diagnostic.py",
+    "gate_b_data_only_module": "demo_t16_operator/psu_b0_gate_b_data_only.py",
+    "diagnostic_runner": "site_tools/run_psu_b0_exact_absolute_diagnostic.py",
+    "diagnostic_runner_test": "site_tools/test_run_psu_b0_exact_absolute_diagnostic.py",
+    "parent_gate_b_runner": "site_tools/run_psu_b0_factor_gate_b.py"
+  },
+  "source_sha256": {
+    "parent_gate_b_report": "cb52ba6adda2a757b4df503d201c3c81c313a5fa907877092ca46ff26a71b141",
+    "parent_gate_b_config": "9d05b06c80c9da93eaee91ee527ef4dbca4467e62d74e633233d241ea4d8cad3",
+    "parent_pdhg_config": "0fbbe08df25c736c86132b09188aa9f9b2696d2b63802412a1cae99150a1b81b",
+    "exact_absolute_module": "002aa3b715f64d6f84da4dc882397d87f2f75f4f2a961969067370fab056f584",
+    "exact_absolute_test": "233536ad888ccd9cd04fc4aafa97e9b1aa67eb01e61e525818495f895b404933",
+    "gate_b_data_only_module": "b4e6a10f5dccb2cf2ec4d6abc67ec687b9fb01c7fc18a43d60036f03a3d9fb4c",
+    "diagnostic_runner": "20c144f454733098b2afc09bed92a5d922f941d1a98003783dbea26e6d8c79d4",
+    "diagnostic_runner_test": "eef5627ec5b33e87f423c702b1887d2dc8ef0ba060654401f2494ad46e1d2337",
+    "parent_gate_b_runner": "fe24b2055c79b5b60deea1f3bf8f4dcb49791bf41ea5c54afbda04b8f6d3d4af"
+  }
+}

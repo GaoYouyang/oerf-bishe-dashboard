@@ -19,6 +19,8 @@
 | Crossref TTFB | 1.10 s | 正常可用 |
 | arXiv TTFB | 0.79 s | 正常可用 |
 | GitHub Pages TTFB | 1.29 s | 正常可用 |
+| 本项目 Pages 复测 | 271,088 B / 1.72 s，TTFB 1.03 s | 页面发布与在线回读不构成瓶颈 |
+| NeRIF arXiv PDF 复测 | 21,859,634 B / 13.14 s，约 1.66 MB/s | 20 MB 级公开论文下载正常；批量下载可后台串行 |
 
 测速显示所有请求经本机代理转发，因此 `networkQuality` 报告 loopback 接口；这
 不代表只测试了本机。当前不建议切换 VPN。只有连续三次出现下行低于 10 Mbps、
@@ -126,20 +128,30 @@ Gate A mechanics attestation 已完成：
   机制信号”，不是偶然零结果；
 - K=32 front-F1 仅 `0.1366`，graph-PCGLS 为 `0.7443`，前沿保持尤其不足。
 
-因此 FM-CG-PDNO/learned proximal smoke 不再开放。当前并行工作的目标不是继续给
-静态预条件器换网络，而是同时完成 D0 机制诊断、H2/H3 数据契约、公开/合成迁移
-脚手架和页面证据维护；正式 science runner、MPS 计时和同一结果目录仍保持单路。
-本机环境虽记录完整 Torch/NumPy/pytest tree hash，仍不是隔离容器证明。
+因此 FM-CG-PDNO/learned proximal smoke 不再开放。其后的 Diag-D0 已完成 CPU64
+审计、MPS 轨迹与 61 项独立复核：exact-row 在 `K=128` 的 residual ratio-of-means
+改善 `64.183%`，field relative-L2 只改善 `4.828%`；`K=64` 只是六个检查点中的
+描述性最低均值，不是通用早停规则。当前并行目标已经转为 Metric-A 的 oracle-free
+接口、几何 OOD、简单基线、场误差与成本门；H2/H3 数据合同、文献证据和页面维护
+继续作为不互相写同一文件的支线。正式 science runner、MPS 计时和同一结果目录仍
+保持单路。本机环境虽记录完整 Torch/NumPy/pytest tree hash，仍不是隔离容器证明。
 
 ## 6. 后续顺序
 
-1. 保留 Gate A/Gate B 证据不变；任何新算法不得改写这组冻结结果。
-2. D0 只比较 exact-`|A|` 与 factor majorizer tightness 及长时轨迹，不重新打开
-   静态 factor-PDHG 排名，也不训练 learned proximal。
-3. 并行向师兄确认 H2/H3 最小数据契约：H2 需要 aperture/focus/calibration pair、
-   phantom 或 paired renderer 与 `F/F^T`；H3 需要 timestamp、exposure、dropout、
-   run boundary 和真实拓扑事件。
-4. 在等待数据时只做可迁移的 loader、坐标/单位审计、伴随点积测试、held-out
-   geometry/session 切分和合成失配压力测试；这些结果不能替代真实 OERF 证据。
-5. 有 H2 数据先开 RayKernel-DCO 最小 forward-discrepancy gate；有 H3 数据才开
-   TRAIL-4D 时序 gate。两类数据都没有时，不租卡、不盲训、不宣称算法优势。
+1. **主线程 critical path：**先完成 Metric-A 的 oracle-free fresh-geometry smoke，
+   不等文献、网页或大数据下载；部署输入不得携带 exact mass/truth/target。
+2. **代码 worker：**独占原型、runner、config 和 result 目录，加入 train / safety-
+   calibration / fresh OOD、场 relative-L2、简单标量/插值基线、Schur 谱门与成本账本。
+3. **独立审计 worker：**只读重算算术、检查泄漏、调用公平和声明边界；发现 P1 后由
+   主线程改预注册，不让实现者自己给自己验收。
+4. **文献 worker：**批量核验一级来源、DOI/arXiv 和“证明了什么/没证明什么”；只写
+   独立文献地图，避免与页面编辑冲突。
+5. **学习与页面 worker：**把负结果、复现命令和给师兄的问题翻成初学者可用入口；
+   只在算法结果冻结后接入最新数字。
+6. **真实数据支线：**并行向师兄确认 H2/H3 最小合同。H2 需要 aperture/focus/
+   calibration pair、phantom 或 paired renderer 与 `F/F^T`；H3 需要 timestamp、
+   exposure、dropout、run boundary 和真实拓扑事件。
+7. **服务器门：**Mac 先完成 16^3 小模型证伪。只有 oracle-free 方法在 fresh geometry
+   上同时过 field、tail、safety 和成本门，才扩到 32^3；64^3 或多 rig 一夜超预算再租卡。
+8. 保留 Gate A/Gate B/Diag-D0 证据不变。没有 H2/H3 数据时继续做可迁移接口和合成
+   压力测试，但不租卡、不盲训、不宣称真实 OERF 或算法优势。

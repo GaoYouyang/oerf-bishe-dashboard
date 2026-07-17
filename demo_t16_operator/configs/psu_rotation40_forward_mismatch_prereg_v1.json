@@ -1,0 +1,93 @@
+{
+  "schema_version": "psu-rotation40-forward-mismatch-preregistration-1.1",
+  "status": "UNCONSTRUCTED_FROZEN_DEVELOPMENT_ONLY_H2_DIAGNOSTIC",
+  "hypothesis_id": "H2",
+  "scope": "REAL_PSU_ROTATION_40_AUTHOR_EXACT_VERSUS_B0_FIXED_DOMAIN_FINITE_APERTURE_FORWARD_MISMATCH_LOCALIZATION",
+  "development_partition": {
+    "rotation_degrees": 40,
+    "camera_ids": [2, 3, 4],
+    "support_camera_ids": [2, 3, 4],
+    "support_rotation_degrees": [0, 50, 90],
+    "camera_relation_to_support": "same_camera_ids_new_rotation_only",
+    "held_out_unit": "rotation_run_not_camera",
+    "camera_held_out": false
+  },
+  "frozen_field": {
+    "grid_shape_zyx": [32, 32, 32],
+    "bounds_m": {
+      "minimum": [-0.11, -0.11, -0.11],
+      "maximum": [0.11, 0.11, 0.11]
+    },
+    "required_manifest_status": "FROZEN_32CUBED_SUPPORT_FIELD",
+    "required_filename": "frozen_support_field_32cubed.npy",
+    "required_manifest_filename": "frozen_support_field_manifest.json",
+    "required_source_split": "SUPPORT_ONLY_FROZEN_BEFORE_ROTATION_40_ACCESS"
+  },
+  "geometry_provenance": {
+    "required_manifest_filename": "geometry_provenance.json",
+    "required_manifest_status": "ROTATION40_GEOMETRY_PROVENANCE_FROZEN",
+    "required_source_filename": "geometry_source/meas.py",
+    "required_source_split": "ROTATION_40_DEVELOPMENT"
+  },
+  "generator": {
+    "version": "psu-rotation40-forward-mismatch-generator-1.1",
+    "source_files": [
+      "site_tools/psu_rotation40_forward_mismatch.py",
+      "demo_t16_operator/psu_b0_reconstruction_interface.py",
+      "site_tools/psu_bost_aperture_domain.py",
+      "site_tools/psu_bost_forward_geometry.py"
+    ],
+    "source_sha256": {
+      "site_tools/psu_rotation40_forward_mismatch.py": "1e79a137d2e5fe02712953e5b2e77b7ab4f234b4be8876459fcb6e02deff8175",
+      "demo_t16_operator/psu_b0_reconstruction_interface.py": "0aa1695dacf16f95ea32aeb8d0b019451721a48e65238101549447f68e467ba8",
+      "site_tools/psu_bost_aperture_domain.py": "9b1481fa8b6ccc88f78cecbb6ebc3993e524fbe586162671209035035ccd280d",
+      "site_tools/psu_bost_forward_geometry.py": "88e7c02cb6186d9b71d011725fa9ea7fc935440db47499482ff97a4cb1d841d8"
+    }
+  },
+  "bounded_execution": {
+    "rays_per_camera": 256,
+    "qmc_sample_counts": [8, 16, 32],
+    "ray_selection": "ordered_active_mask_quantiles_without_measurement_magnitude",
+    "qmc_design": "deterministic_b0_sensitivity_probe_not_paired_convergence",
+    "qmc_interpretation": "B0_SENSITIVITY_ONLY_AUTHOR_ARRAY_IS_SINGLE_FIXED_ARTIFACT",
+    "fixed_denominator": "original_qmc_sample_count_no_survivor_renormalization",
+    "centerline_miss_policy": "include_selected_rays_and_report_zero_length_domain"
+  },
+  "private_bundle_contract": {
+    "bundle_root_is_cli_only": true,
+    "camera_directory_pattern": "camera_{camera_id:02d}",
+    "required_camera_identity_filename": "psu_rotation40_view_identity.json",
+    "required_author_forward_filename": "author_exact_forward_32cubed.npy",
+    "required_author_manifest_filename": "author_exact_forward_manifest.json",
+    "required_author_source_filename": "author_source/author_forward.py",
+    "author_manifest_status": "AUTHOR_EXACT_FORWARD_32CUBED_FROZEN_FIELD",
+    "camera_identity_status": "PSU_ROTATION40_VIEW_IDENTITY_FROZEN",
+    "author_forward_shape": "measurement_count_by_2",
+    "row_order": "MATLAB_COLUMN_MAJOR_FIND_MINUS_ONE",
+    "required_bundle_variable_count": 11,
+    "required_mask_filename": "amask_all_zero_based.npy",
+    "required_mask_variable": "amask_all"
+  },
+  "reporting": {
+    "report_pooled_metrics": true,
+    "report_per_camera_metrics": true,
+    "report_domain_accounting": true,
+    "report_centerline_misses": true,
+    "report_measurement_residuals": true,
+    "report_private_paths": false,
+    "report_ray_indices": false,
+    "report_field_values": false,
+    "report_measurement_values": false
+  },
+  "claim_boundary": {
+    "experimental_field_truth": false,
+    "author_exact_is_field_truth": false,
+    "diagnostic_is_algorithm_superiority": false,
+    "diagnostic_is_reconstruction_quality": false,
+    "rotation_40_is_development_only": true,
+    "rotation_40_is_held_out_from_support_rotations": true,
+    "camera_held_out": false,
+    "qmc_8_16_32_is_paired_convergence": false,
+    "final_audit_opened": false
+  }
+}

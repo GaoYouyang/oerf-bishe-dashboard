@@ -1,0 +1,82 @@
+{
+  "schema_version": "cancellation-aware-metric-surrogate-smoke-config-2.0",
+  "status": "DEVELOPMENT_ONLY_SYNTHETIC_INTERFACE_SMOKE",
+  "evidence_scope": "SYNTHETIC_TINY_SIGNED_MATRIX_THREE_WAY_GEOMETRY_SMOKE_ONLY",
+  "seeds": {
+    "geometry": 2026071977,
+    "noise": 2026071813,
+    "training": 2026071917
+  },
+  "rigs": {
+    "row_count": 14,
+    "column_count": 11,
+    "split_unit": "COMPLETE_RIG",
+    "random_ray_split_used": false,
+    "assignments": {
+      "train-00": "train",
+      "train-01": "train",
+      "train-02": "train",
+      "train-03": "train",
+      "train-04": "train",
+      "train-05": "train",
+      "train-06": "train",
+      "train-07": "train",
+      "cal-00": "safety_calibration",
+      "cal-01": "safety_calibration",
+      "cal-02": "safety_calibration",
+      "ood-00": "fresh_geometry_ood",
+      "ood-01": "fresh_geometry_ood",
+      "ood-02": "fresh_geometry_ood",
+      "ood-03": "fresh_geometry_ood"
+    }
+  },
+  "estimator": {
+    "hidden_dim": 16,
+    "steps": 160,
+    "learning_rate": 0.015
+  },
+  "calibration": {
+    "envelope_margin": 1.02,
+    "fresh_exact_access_forbidden": true
+  },
+  "comparators": {
+    "scalar_factor_grid": [
+      0.5,
+      0.75,
+      1.0,
+      1.25
+    ],
+    "exact_factor_alpha_grid": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "selection_metric": "FINAL_FIELD_RELATIVE_L2_TRAIN_MEAN"
+  },
+  "solver": {
+    "eta": 0.7,
+    "theta": 1.0,
+    "checkpoints": [
+      0,
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ]
+  },
+  "runtime": {
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "timing_role": "MEASURED_SINGLE_RUN_NONCOMPARATIVE"
+  },
+  "claim_boundary": {
+    "new_algorithm_claimed": false,
+    "real_data_used": false,
+    "generalization_claimed": false,
+    "superiority_claimed": false
+  }
+}

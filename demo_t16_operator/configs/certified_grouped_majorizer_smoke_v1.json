@@ -1,0 +1,95 @@
+{
+  "schema_version": "certified-grouped-majorizer-smoke-config-1.0",
+  "status": "DEVELOPMENT_ONLY_SYNTHETIC_CERTIFIED_PARTITION_SMOKE",
+  "evidence_scope": "SYNTHETIC_MULTIPRIMITIVE_CPU_SMOKE_ONLY",
+  "seeds": {
+    "geometry": 7101,
+    "noise": 7202
+  },
+  "rigs": {
+    "row_count": 16,
+    "column_count": 12,
+    "primitive_count": 6,
+    "split_unit": "COMPLETE_RIG",
+    "random_ray_split_used": false,
+    "assignments": {
+      "train-00": "train",
+      "train-01": "train",
+      "train-02": "train",
+      "train-03": "train",
+      "train-04": "train",
+      "train-05": "train",
+      "train-06": "train",
+      "train-07": "train",
+      "train-08": "train",
+      "train-09": "train",
+      "train-10": "train",
+      "train-11": "train",
+      "cal-00": "safety_calibration",
+      "cal-01": "safety_calibration",
+      "cal-02": "safety_calibration",
+      "cal-03": "safety_calibration",
+      "cal-04": "safety_calibration",
+      "cal-05": "safety_calibration",
+      "fresh-00": "fresh_geometry_ood",
+      "fresh-01": "fresh_geometry_ood",
+      "fresh-02": "fresh_geometry_ood",
+      "fresh-03": "fresh_geometry_ood",
+      "fresh-04": "fresh_geometry_ood",
+      "fresh-05": "fresh_geometry_ood",
+      "fresh-06": "fresh_geometry_ood",
+      "fresh-07": "fresh_geometry_ood"
+    }
+  },
+  "partitions": {
+    "fixed_partition_names": [
+      "paired_local",
+      "paired_cross",
+      "triad_bridge"
+    ],
+    "global_candidate_names": [
+      "singleton_factor",
+      "paired_local",
+      "paired_cross",
+      "triad_bridge"
+    ],
+    "selector_candidate_names": [
+      "singleton_factor",
+      "paired_local",
+      "paired_cross",
+      "triad_bridge"
+    ],
+    "exact_oracle_name": "all_in_one_exact",
+    "all_in_one_for_selector_forbidden": true,
+    "cost_proxy_role": "ANALYTIC_PROXY_NOT_WALL_TIME"
+  },
+  "selector": {
+    "model_class": "DEPTH_ONE_GEOMETRY_STUMP",
+    "train_top_k": 64,
+    "fresh_exact_truth_target_access_forbidden": true
+  },
+  "solver": {
+    "eta": 0.7,
+    "theta": 1.0,
+    "checkpoints": [
+      0,
+      1,
+      2,
+      4,
+      8,
+      16,
+      32
+    ]
+  },
+  "runtime": {
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "timing_role": "MEASURED_SINGLE_RUN_NONCOMPARATIVE"
+  },
+  "claim_boundary": {
+    "real_bost_claimed": false,
+    "generalization_claimed": false,
+    "paper_superiority_claimed": false,
+    "exact_oracle_is_deployable": false
+  }
+}
