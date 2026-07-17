@@ -1647,3 +1647,116 @@ wall time。当前源码还没被 commit 锚定，validator 的性能与成本�
 这一步仍不需要租服务器。16^3/tiny dense 的结构证伪在 Mac 上很快；只有风险回退在
 全新 fresh geometry 上同时过 selection-conditional harm、coverage、field/front 与
 真实构造成本门，才值得扩到 32^3 或真实 BOST decomposition。
+
+## 57. v4：不是继续堆网络，而是先学会什么时候不该接管
+
+v3 留下的矛盾很清楚：所有候选 partition 都有数学安全证书，但 selector 在 8 个 fresh
+rigs 中只赢 4 个，最坏样本还恶化 `0.414402`。这说明“不会把迭代步长弄得数学不安全”
+和“会为当前几何选到更好的重建路线”是两件事。把树模型换成更大的 FNO 或 Transformer
+不会自动消掉这个尾部风险。
+
+v4 暂名 **RCCF（Risk-Calibrated Certified Fallback）**。它保留 v3 的确定性 majorizer，
+但把学习器的权力缩小成“是否接管”：
+
+```text
+风险证据充足且几何仍在校准支持域内 -> 使用 selector 选择的安全 partition
+否则                                -> 回退冻结的 paired_cross
+任何数学证书失败                    -> 中止，不允许用回退掩盖
+```
+
+数据必须按完整 rig 分成四路，而且各自只有一种职责：
+
+| split | 可以做什么 | 绝对不能做什么 |
+|---|---|---|
+| train | 拟合候选 selector 与风险分数 | 决定最终阈值 |
+| model selection | 冻结特征、模型族、阈值网格和 fallback | 冒充独立风险验证 |
+| risk calibration | 给冻结策略计算风险上界与 coverage 下界 | 继续换模型、换特征 |
+| fresh test | 一次性报告最终 harm、coverage、field/front 与成本 | 回流调参 |
+
+### 初学者最该理解的统计事实
+
+假设风险校准中有 `n` 个真正被 selector 接管的独立样本，并且一次危险伤害都没看到。
+95% 单侧 Clopper-Pearson 上界仍不是 0，而是
+
+```text
+1 - 0.05^(1/n).
+```
+
+要让这个上界不超过 5%，`n` 约需 59。若还从多个阈值里挑最好的阈值，需要多重比较
+修正，样本通常更多。因此当前十几个或几十个 synthetic rigs 只能证明代码没有泄漏、
+回退逻辑可重放，不能写成“已证明真实伤害率小于 5%”。这是证据规模问题，不是模型速度
+问题。
+
+### 首轮 micro-smoke 真正要回答的问题
+
+1. fresh 推理是否完全不读取 truth、target、primitives、signed matrix 或未来轨迹？
+2. train、model selection、risk calibration、fresh 的 rig 是否互不重叠？
+3. 修改 fresh truth 或 target 后，选择结果是否保持不变？
+4. 修改 geometry feature 后，选择能否按冻结规则变化？
+5. 篡改风险阈值、fallback 标志、feature hash 或 split role，validator 是否拒绝？
+6. 所有候选和 fallback 的确定性证书是否仍为零违反？
+
+即使六项全过，结论也只是 **interface/protocol pass**，不是“RCCF 已优于 FNO、DeepONet
+或 NeRIF”。下一证据域依次是：可控 ASTRA/TIGRE 层析、公开 flight-body BOS、多物理
+PDEBench，最后才是 OERF 的固定线性化 Jacobian 和独立 session。
+
+### 现在最需要师兄回答的一句话
+
+> 现有 BOST/NeRIF forward 能否在同一固定线性化点、同一 mask 与同一 ray sampling 下，
+> 暴露满足 `Jv = sum_l C_l(v)` 且 `J^T q = sum_l C_l^T(q)` 的 signed primitives？
+
+若答案是否定的，RCCF 不应该继续包装成真实 BOST 算法；我们会保留方法学负结果，并把
+主力转向不依赖 primitive 的有限历史校正或真正有连续 metadata 的 4D 路线。完整预注册
+见 [v4 RCCF protocol](v4_risk_calibrated_certified_fallback_protocol_2026-07-17.md)。
+
+## 58. v4 首次红队：回退机制真的工作了，但 selector 暂时没有可用价值
+
+最高模型先完成了一版 RCCF micro-smoke，但独立复核没有直接放行。第一版虽然报告
+`0/3` 校准伤害和 `0.415` 风险上界，却漏了有限阈值搜索的多重比较修正，也把经验
+coverage 当成置信下界；fresh 风险还曾用全部 fresh rigs 作分母，而不是只用真正接管的
+样本。这些数字已经作废，不能进入论文或公开结论。
+
+修正后的 v1.4 做了六件关键事情：
+
+1. 三个冻结阈值使用 Bonferroni；风险和 coverage 各用 `0.025` family budget，联合置信
+   下界至少 95%。
+2. 同时计算风险 CP 上界与 coverage CP 下界，任一不过就全局回退。
+3. 校准对象绑定 rule、阈值网格、feature schema 和支持包络的 SHA-256；跨 rule 或 off-grid
+   阈值会拒绝。
+4. `float32`、二维特征和支持域外几何都只能 fallback；fresh 选择接口仍不接收 truth、
+   target、primitives、signed matrix 或 solver trajectory。
+5. 在任何离线轨迹前，逐 rig 验证求解器实际使用的 `A` 真等于 `sum(C_l)`；validator 既
+   全量重放，也用 SciPy 独立重算 CP 分位数和 selection-conditional 分母。
+6. 第二轮红队发现，仅绑定 rule 不够：攻击者可把 `Rmax=0.5` 放宽并重算一个内部自洽
+   hash。v1.4 因此让运行器从冻结 config **独立计算预期政策指纹**，同时绑定 alpha 分配、
+   risk/coverage 门、joint harm endpoints 与容差；“放宽门并重算内部 hash”的攻击现在也会
+   被拒绝。当前四个相关测试文件共 `46 passed`。
+
+提交前开发重放的结果是：
+
+| 证据 | 修正后的结果 | 能说明什么 |
+|---|---:|---|
+| 完整 rig split | 8 / 6 / 12 / 8 | train、选模、风险校准、fresh 已分开 |
+| partition / decomposition 审计 | 136 次，0 违反、0 mismatch | tiny generator 上的数学/接口一致性成立 |
+| calibration 诊断接管 | 1 / 12 | 支持包络和规则只覆盖极少校准样本 |
+| 风险上界 | 0.991667 | 远高于开发门 0.5，更不可能达到论文门 0.05 |
+| coverage 下界 | 0.000697 | 远低于开发门 0.25 |
+| 真正获准 coverage | 0 | 校准失败后没有偷偷保留接管 |
+| fresh 接管 | 0 / 8 | 八个 OOD rig 全部回退 `paired_cross` |
+| worst takeover harm | 未定义 | 没有接管样本，不能写成 0 harm |
+
+因此 `synthetic_micro_interface_gate_passed=false`，所有真实 BOST、泛化和优越性主张继续为
+false。这里的好消息不是“模型赢了”，而是失败模式已经变得可解释：数学证书和回退逻辑
+工作；当前 observable rule 加轴对齐支持包络几乎没有覆盖，selector 没有实用价值。
+
+下一步不能事后放宽包络来追 fresh 分数。合法路线只有两条：
+
+1. 在 train / model-selection 内预先比较轴对齐包络、正则化 Mahalanobis 距离和小型 kNN
+   support score，再用全新 risk calibration 冻结一种；
+2. 增加真正独立的 geometry clusters，并迁移到 ASTRA/TIGRE 空间层析，让 joint harm 加入
+   front 指标后重新校准。
+
+如果扩大独立校准样本后仍无法同时得到风险上界、coverage 下界和端到端成本优势，就应
+停止 RCCF selector，把“认证分组可构造、可靠选择不可得”作为负结果，并转向有限历史或
+真实 4D 时序路线。最高模型可以加速实现与审查，但不能把 12 个校准 rig 变成 94 个独立
+接管证据。

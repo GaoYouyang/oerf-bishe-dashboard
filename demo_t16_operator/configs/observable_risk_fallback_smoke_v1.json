@@ -1,0 +1,115 @@
+{
+  "schema_version": "observable-risk-fallback-smoke-config-1.4",
+  "status": "DEVELOPMENT_ONLY_SYNTHETIC_RCCF_INTERFACE_GATE",
+  "evidence_scope": "SYNTHETIC_FOUR_SPLIT_RCCF_CPU_MICRO_SMOKE_ONLY",
+  "seeds": {
+    "geometry": 1701,
+    "noise": 2701
+  },
+  "rigs": {
+    "row_count": 10,
+    "column_count": 8,
+    "primitive_count": 6,
+    "split_unit": "COMPLETE_RIG",
+    "random_ray_or_pixel_split_used": false,
+    "assignments": {
+      "train-00": "train",
+      "train-01": "train",
+      "train-02": "train",
+      "train-03": "train",
+      "train-04": "train",
+      "train-05": "train",
+      "train-06": "train",
+      "train-07": "train",
+      "model-00": "model_selection",
+      "model-01": "model_selection",
+      "model-02": "model_selection",
+      "model-03": "model_selection",
+      "model-04": "model_selection",
+      "model-05": "model_selection",
+      "risk-00": "risk_calibration",
+      "risk-01": "risk_calibration",
+      "risk-02": "risk_calibration",
+      "risk-03": "risk_calibration",
+      "risk-04": "risk_calibration",
+      "risk-05": "risk_calibration",
+      "risk-06": "risk_calibration",
+      "risk-07": "risk_calibration",
+      "risk-08": "risk_calibration",
+      "risk-09": "risk_calibration",
+      "risk-10": "risk_calibration",
+      "risk-11": "risk_calibration",
+      "fresh-00": "fresh_geometry_ood",
+      "fresh-01": "fresh_geometry_ood",
+      "fresh-02": "fresh_geometry_ood",
+      "fresh-03": "fresh_geometry_ood",
+      "fresh-04": "fresh_geometry_ood",
+      "fresh-05": "fresh_geometry_ood",
+      "fresh-06": "fresh_geometry_ood",
+      "fresh-07": "fresh_geometry_ood"
+    }
+  },
+  "partitions": {
+    "candidate_names": [
+      "singleton_factor",
+      "paired_local",
+      "paired_cross",
+      "triad_bridge"
+    ],
+    "fallback_partition": "paired_cross",
+    "forbidden_oracle": "all_in_one_exact",
+    "all_in_one_for_selector_forbidden": true
+  },
+  "model": {
+    "class": "DEPTH_ONE_OBSERVABLE_GEOMETRY_RISK_RULE",
+    "train_top_k": 16,
+    "failure_penalty": 0.5,
+    "field_harm_tolerance": 0.02,
+    "residual_harm_tolerance": 0.02,
+    "fresh_sensitive_access_forbidden": true
+  },
+  "solver": {
+    "eta": 0.7,
+    "theta": 1.0,
+    "checkpoints": [0, 1, 2, 4, 8]
+  },
+  "risk_calibration": {
+    "method": "ONE_SIDED_CLOPPER_PEARSON",
+    "confidence_alpha": 0.025,
+    "coverage_confidence_alpha": 0.025,
+    "multiplicity_correction": "BONFERRONI_FROZEN_FINITE_GRID"
+  },
+  "development_gate": {
+    "minimum_calibration_rigs": 12,
+    "minimum_fresh_rigs": 8,
+    "maximum_risk_upper": 0.5,
+    "minimum_takeover_coverage": 0.25,
+    "maximum_fresh_conditional_harm_rate": 0.0,
+    "maximum_worst_field_harm": 0.02,
+    "maximum_worst_residual_harm": 0.02
+  },
+  "future_paper_gate": {
+    "minimum_calibration_rigs": 128,
+    "minimum_fresh_rigs": 48,
+    "maximum_risk_upper": 0.05,
+    "minimum_takeover_coverage": 0.3,
+    "maximum_fresh_conditional_harm_rate": 0.05,
+    "maximum_worst_field_harm": 0.02,
+    "maximum_worst_residual_harm": 0.02,
+    "requires_real_bost_signed_primitive_interface": true,
+    "requires_independent_geometry_clusters": true,
+    "requires_measured_cost_pareto": true
+  },
+  "runtime": {
+    "device": "cpu",
+    "dtype": "torch.float64",
+    "timing_role": "MEASURED_SINGLE_RUN_DESCRIPTIVE_NONCOMPARATIVE"
+  },
+  "claim_boundary": {
+    "synthetic_interface_success_claimed": false,
+    "real_bost_claimed": false,
+    "generalization_claimed": false,
+    "paper_superiority_claimed": false,
+    "deeponet_fno_nerif_superiority_claimed": false
+  }
+}
