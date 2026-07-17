@@ -1,0 +1,106 @@
+{
+  "config": {
+    "bootstrap": {
+      "confidence_level": 0.95,
+      "participates_in_gate": false,
+      "replicates": 10000,
+      "seed": 15075,
+      "unit": "geometry_cluster"
+    },
+    "budget": {
+      "corrected_total_low_adjoint_calls": 24,
+      "corrected_total_low_forward_calls": 25,
+      "corrected_warm_cgls_iterations": 12,
+      "direct_high_order_reference_iterations": 25,
+      "low_cgls_reference_iterations": 25,
+      "visible_low_projection_forward_calls": 1,
+      "warm_cgls_iterations": 12
+    },
+    "claim_boundary": {
+      "includes_finite_aperture_ray_bending_or_calibration_drift": false,
+      "is_independent_of_the_opened_development_seed_set": true,
+      "is_real_bost_or_experimental_confirmation": false,
+      "is_synthetic_representation_mismatch_confirmation": true,
+      "may_change_candidate_after_open": false,
+      "may_claim_general_algorithm_superiority": false,
+      "opens_ood_or_final": false
+    },
+    "confirmation": {
+      "base_seeds": [
+        2536,
+        2727,
+        2363,
+        2824,
+        2829,
+        2507
+      ],
+      "families": [
+        "smooth_no_interface",
+        "single_interface"
+      ],
+      "seed_derivation": {
+        "collision_rule": "increment_until_unique",
+        "hash": "sha256",
+        "indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "integer_rule": "2200 + uint32_be(first_4_digest_bytes) mod 700",
+        "token_pattern": "jacru-n1-5-confirmation-v1:{index}"
+      },
+      "source_split_geometry_policy": "development"
+    },
+    "confirmation_gates": {
+      "case_field_harm_over_one_percent_rate_maximum": 0.0,
+      "each_family_mean_field_gain_over_low_cgls25_minimum": 0.0,
+      "mean_field_gain_over_component_damping_minimum": 0.0,
+      "mean_field_gain_over_low_cgls25_minimum": 0.05,
+      "mean_h1_gain_over_low_cgls25_minimum": 0.03,
+      "worst_geometry_cluster_field_gain_minimum": -0.01
+    },
+    "evaluated_controls": {
+      "component_damping_correction": true,
+      "direct_high_order_cgls25": true,
+      "exact_mismatch_oracle_evaluator_only": true,
+      "low_cgls25": true
+    },
+    "freeze_date": "2026-07-18",
+    "may_construct_or_evaluate_ood": false,
+    "schema_version": "jacru-n1-5-high-order-teacher-confirmation-1.0",
+    "selected_candidate": {
+      "beta": 0.75,
+      "candidate_id": "damping_high_order_b0p75",
+      "kind": "damping_to_high_order_teacher",
+      "may_be_changed_after_confirmation_open": false,
+      "selected_only_on_postopen_calibration": true
+    },
+    "source_n1_5_a_config": "demo_t16_operator/configs/jacru_n1_5_approximation_error_headroom_development_v1.json",
+    "source_n1_5_a_results": "demo_t16_operator/results/jacru_n1_5_approximation_error_headroom_development_full1",
+    "source_postopen_config": "demo_t16_operator/configs/jacru_n1_5_reconstruction_aware_postopen_development_v1.json",
+    "source_postopen_results": "demo_t16_operator/results/jacru_n1_5_reconstruction_aware_postopen_full1",
+    "source_t0_config": "demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json",
+    "status": "FROZEN_BEFORE_FIRST_CONFIRMATION_EXECUTION"
+  },
+  "exact_cli": "site_tools/run_jacru_n1_5_high_order_teacher_confirmation.py",
+  "git_commit_at_start": "67338a03fd73a0a2ea86ebf11e265e0df974dd15",
+  "numpy": "2.4.6",
+  "platform": "macOS-26.5.2-arm64-arm-64bit",
+  "python": "3.11.5 (v3.11.5:cce6ba91b3, Aug 24 2023, 10:50:31) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "schema": "jacru-n1-5-high-order-teacher-confirmation-provenance-1.0",
+  "source_sha256": {
+    "demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json": "e4e0dbb3cc3e573e5c7ed025bae50b3eb6d66ffdd511772b30fa222ce791a5fd",
+    "demo_t16_operator/configs/jacru_n1_5_approximation_error_headroom_development_v1.json": "62bb7e3950c869f90c508475234c763d8b9aca17df1e5d7955ac0e2275799fbd",
+    "demo_t16_operator/configs/jacru_n1_5_high_order_teacher_confirmation_v1.json": "cb4cba84d2f7b62ba83db3d897589906d6d0bb8ce270d64a2aa6578ea831ef01",
+    "demo_t16_operator/configs/jacru_n1_5_reconstruction_aware_postopen_development_v1.json": "b7601137cc9280d2924eb1c1eda09a2ae518741b8d4d4dffd8307e7b78055ff2",
+    "demo_t16_operator/jacru_n1_5_high_order_correction.py": "a54820b7581c681e4cf9bcd8bef58a8e6c52f9b5ab37544be32daa3824fa82c8",
+    "demo_t16_operator/results/jacru_n1_5_approximation_error_headroom_development_full1/summary.json": "5806315176e6fc20fe7119971b2e2fcfa3aacdbd62f2e7340ef3d032f693d01a",
+    "demo_t16_operator/results/jacru_n1_5_reconstruction_aware_postopen_full1/summary.json": "decbee1ed263316c77f85ea7f574e6253df53f2081771f9f9bdb4b9c66261618",
+    "site_tools/run_jacru_n1_5_high_order_teacher_confirmation.py": "88e6eecc58171fcf78ded7cfa393dba936ef6650e5e16de9d2da8b88fc00b23f",
+    "site_tools/run_jacru_n1_5_reconstruction_aware_postopen.py": "388e61a2b72ab8bee7ead06603d0745889f1de3b67dd4cb1e3a2c990ebb83ac6"
+  },
+  "torch": "2.13.0"
+}

@@ -165,6 +165,7 @@
       <a href="#m2-t0">M2 算子学习</a>
       <a href="#m2-projection">投影判决</a>
       <a href="#n1-stopping">N1 停止门</a>
+      <a href="#n1-5-confirmation">N1.5 确认</a>
       <a href="#algorithm">安全算子</a>
       <a href="#candidates">算法路线</a>
       <a href="document_reader.html?doc=docs%2Fcancellation_aware_operator_learning_literature_map_2026-07-17.md">文献地图</a>
@@ -177,12 +178,12 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">研究主线已收敛到“含噪/失配观测下的三维 BOST 数据一致性 + 有界算子学习”。N1.1 已把 synthetic flow-off 均值、camera/component covariance 与 anchored Tikhonov 接起来：平均 field signal 很强，但 14 个候选-模型组合全部被界面尾部或 continuous-clean-target 门否决；post-open raw-center 审计也为 0 个可观测候选通过。下一步是修正 finite-sample conformal、session-level calibration、逐相机门与 model-mismatch floor，不是再堆一个更大的 FNO。</p>
+    <p class="lead">研究主线已经从“再调一个重建网络”收敛到一个可证伪的逆问题：三维 BOST 的 sensor noise、forward-model mismatch 与真正影响重建的 <code>Aᵀε</code> 必须分开。N1.5 已完成可见失配预测、同预算重建闭环和一次冻结合成确认；高阶教师让 12/12 个场改善，却只取得 3.63% field mean，未过 5% 门。下一步不再调同一个 beta，而是学习伴随/可观测子空间中的失配。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">M2.2 · NULL HEADROOM</span><span class="chip coral">N1.0 · 0 / 26 JOINT-SAFE</span><span class="chip coral">N1.1 · 0 / 14 PASS</span><span class="chip blue">1,260 ROWS + 60 CALIBRATIONS</span><span class="chip coral">RAW-CENTER SAFETY · 0 PASS</span><span class="chip coral">REAL FLOW-OFF · ABSENT</span><span class="chip coral">METHOD WIN · NOT AUTHORIZED</span></div>
-        <h2>当前唯一主线：先把噪声与模型失配分开，再学习有界的重建算子</h2>
-        <p>exact camera-block affine PCG 已把“求解器不够快”排除为主要阻断项。N1.1 进一步证明，即使在对候选有利的、同 session synthetic flow-off 标定下，paired structured GLS 也会稳定伤害 <code>base_seed=2113 / single_interface</code>；unpaired structured 则保护场尾部却破坏 clean-target consistency。exact nuisance oracle 同样失败，说明下一算法必须显式拆开 sensor covariance、model mismatch 与 raw-center safety。</p>
+        <div class="chips"><span class="chip blue">M2.2 · NULL HEADROOM</span><span class="chip coral">N1.2 · 0 / 16 DECISIONS</span><span class="chip coral">N1.3 · 0 / 128 PASS</span><span class="chip coral">N1.4 · 0 / 33 PASS</span><span class="chip coral">N1.5 · CONFIRMATION NO-GO</span><span class="chip blue">FIELD · +3.63%</span><span class="chip blue">H1 · +10.31%</span><span class="chip coral">REAL FLOW-OFF · ABSENT</span></div>
+        <h2>当前唯一主线：从预测完整 ε 转向学习逆问题真正感受的 Aᵀε</h2>
+        <p>N1.5-A 证明可见曲率 ridge 能降低 measurement mismatch，却不能稳定改善三维场；N1.5-B 又证明直接四阶反演会恶化，而“高阶只做误差教师、低阶继续求解”稳定。候选在 Git 预冻结后打开 6 个新几何簇：12/12 场正增益、worst +0.90%，但 field mean 只有 +3.63%，因此正式 NO-GO。这个结果把下一算法压缩到 adjoint-consistent / range-aware approximation error，而不是继续增加 FNO 宽度。</p>
         <ol>
           <li><strong>M2.2 只授权数学 headroom：</strong>exact SVD projector 保留 JACRU 约 45.28% field gain，并把内部 reprojection 对齐到约 1e-14；它不可部署，也不是论文算法。</li>
           <li><strong>M2.6 找到谱机制：</strong>camera-block 明显加速 residual，但 setup 为 1001F-equiv oracle，且 harm 8.33%；不能写成效率胜利。</li>
@@ -190,15 +191,17 @@
           <li><strong>M2.8 关闭简单插值：</strong>固定 alpha 无通过点；逐样本看真值的连续插值 ceiling 仍无法救回同一界面样本。</li>
           <li><strong>N1.0 JACRU：</strong>26 个可观测候选中 6 个 tail-safe、11 个 clean-target-safe、0 个 joint-safe；最佳 tail-safe 的 clean ratio 仍为 1.639x / 3.160x。</li>
           <li><strong>N1.0 pooled CNN：</strong>0 个 tail-safe、8 个 clean-target-safe、0 个 joint-safe；说明冲突不是 JACRU 单点故障。</li>
-          <li><strong>N1.1 paired structured：</strong>JACRU development field +42.13%、clean ratio 0.619×，但 harm 8.33%、worst -6.05%；pooled worst -8.89%。</li>
-          <li><strong>N1.1 exact nuisance：</strong>精确偏置均值与精确 IID covariance 仍未救回尾部，covariance 估计误差不是唯一阻断项。</li>
-          <li><strong>post-open raw-center 门：</strong>paired JACRU development 仅 +0.72%，却有 27.78% harm、worst -22.66%；这个新门只指导 N1.2，不能改写正式判决。</li>
-          <li><strong>下一算法门：</strong>session-level flow-off + conformal + per-camera/lower discrepancy + robust fidelity + held-out fail-closed 必须同时过 field/H1、clean target、raw/classical 双参考、coverage 与端到端成本。</li>
-          <li><strong>外部依赖：</strong>Mac 足够继续做 12³–16³ 机制证伪；真正需要师兄的是 flow-off temporal repeats、可调用 <code>A/Aᵀ</code>、永久 audit camera 与独立物理证据。</li>
+          <li><strong>N1.2 post-audit：</strong>3 sessions、5 cases、8 candidates、16 decisions 全部 NO-GO；模型失配均值 22.41%，明确不属于 sensor noise。</li>
+          <li><strong>N1.3 robust-data：</strong>最佳平均 field +16.91%，却有 -50.91% worst；严格 Huber-versus-quadratic 独立贡献最多约 +0.85%。</li>
+          <li><strong>N1.4 adaptive edge：</strong>33 个同预算候选 0 pass；27 个 adaptive 逐一输给 matching uniform，最好一组仍平均落后 0.94%。</li>
+          <li><strong>N1.5 confirmation：</strong>高阶教师 beta=.75 在新 6 geometry/12 fields 上 field +3.63%、H1 +10.31%、worst +0.90%；只因 field mean 未达 5% 而 NO-GO。</li>
+          <li><strong>N1.6 唯一候选：</strong>固定高阶教师为 strong control，小网络只预测 <code>Aᵀ(G<sub>H</sub>-G<sub>L</sub>)</code> 的低秩有界系数，并保留 damping fail-closed 回退。</li>
+          <li><strong>外部依赖：</strong>Mac 足够继续做 12³–16³ 高低保真机制证伪；真正需要师兄的是 f-number/焦面/标定不确定性、可调用 <code>A/Aᵀ</code>、原始图像与永久 audit camera。</li>
         </ol>
         <div class="actions" style="margin:14px 0;">
-          <a class="button primary" href="#n1-stopping">看 N1.0–N1.1 判决</a>
-          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_1_flowoff_covariance_proximal_no_go_2026-07-18.md">N1.1 严格证据</a>
+          <a class="button primary" href="#n1-stopping">看 N1.0–N1.5 判决</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_5_high_order_teacher_confirmation_no_go_2026-07-18.md">N1.5 确认判决</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_5_advisor_review_brief_2026-07-18.md">发给师兄的一页</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_primary_literature_audit_2026-07-18.md">24 篇一级来源</a>
           <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">讲人话日志</a>
           <a class="button" href="#reproduce">本机复现</a>
@@ -402,6 +405,7 @@
         <figure><img src="demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/decision_gate_audit.png" alt="Scalar PDHG 准确度、形态、尾部与运行时间门禁审计" width="2070" height="1044" loading="lazy" decoding="async" /><figcaption>运行时间门通过不抵消科学门失败。公开摘要不包含本机路径、私有几何、JUnit 环境值或组内材料。</figcaption></figure>
         <figure><img src="demo_t16_operator/results/psu_b0_pdhg_scale_smoke_v2_public/winner_runtime_pairs.png" alt="失败网格排名第一候选的 AB BA 配对运行时间与三倍门禁" width="1835" height="864" loading="lazy" decoding="async" /><figcaption>AB/BA 配对抑制热机和顺序偏差；最后十对中位比 1.207×。它只证明成本可承受，不证明重建有效。</figcaption></figure>
       </div>
+
     </section>
 
     <section id="gate-a-progress" class="band">
@@ -1355,7 +1359,7 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
       <div class="alert critical"><strong>独立复核通过，研究边界仍受限</strong><span>标准库-only validator 重算 60 / 1,260 / 84 / 180 / 12 行与 14 个最终判决，确认 0 pass、checksums 和 authorization 一致；但 flow-off scale 仍按目标 clean RMS 条件化，ordinary q95 不是 strict conformal 95%，oracle coverage 借用了 estimated gate，正式产物也没有完整记录 CLI 与全部传递依赖哈希。它仍是 opened synthetic NO-GO，不能升级为算法或真实校准证据。</span></div>
       <div class="two-col" style="margin-top:14px;">
         <div class="panel">
-          <h3>N1.2 的修正数学接口</h3>
+          <h3>N1.2 已实现的修正数学接口</h3>
           <div class="formula">B = W A; &nbsp; r = W(Ax-y); &nbsp; min ρ(r) + βR(x)</div>
           <ol>
             <li>一个 session-level flow-off packet 服务多个场；噪声尺度只读 background intensity 等部署可见量。</li>
@@ -1382,28 +1386,111 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
       </div>
       <div class="two-col" style="margin-top:14px;">
         <div class="panel">
-          <div class="chips"><span class="chip coral">NO METHOD AUTHORIZATION</span><span class="chip blue">N1.1 1,260 ROWS</span><span class="chip coral">0 / 14 PASS</span><span class="chip gold">N1.2 PROTOCOL NEXT</span></div>
-          <h3 style="margin-top:10px;">现在最值得学的四件事</h3>
+          <div class="chips"><span class="chip coral">NO METHOD AUTHORIZATION</span><span class="chip coral">N1.2–N1.5 CLOSED</span><span class="chip blue">FROZEN CONFIRMATION</span><span class="chip gold">N1.6 Aᵀε NEXT</span></div>
+          <h3 style="margin-top:10px;">进入 N1.6 前最值得学的四件事</h3>
           <ol>
-            <li>discrepancy principle：为什么 noisy inverse 不应把 residual 压到零。</li>
-            <li>covariance whitening：camera-local correlation 如何进入数据项与 PCGLS。</li>
-            <li>robust data fidelity：Huber/Student-t 怎样限制异常 measurement 的影响。</li>
-            <li>fail-closed protocol：没有 truth 时怎样用 held-out evidence 拒绝危险接管。</li>
+            <li>cone-ray / finite aperture：镜头孔径怎样改变每个 pixel 对体积的采样。</li>
+            <li>Bayesian approximation error：为什么 <code>G_H-G_L</code> 要有独立均值与 covariance。</li>
+            <li>inverse crime：为什么高低保真训练与 confirmation 不能共享 field/geometry seeds。</li>
+            <li>held-out camera likelihood：没有三维真值时怎样留下真正独立的物理证据。</li>
           </ol>
-          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_m2_3_to_m2_8_beginner_decision_guide_2026-07-17.md">打开保姆式学习指南</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">学习日志 81–83</a></div>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_5_high_order_teacher_confirmation_no_go_2026-07-18.md">打开 N1.5 完整复盘</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">学习日志 88–94</a></div>
         </div>
         <div class="panel">
-          <h3>拿给何远哲师兄确认的最小数据合同</h3>
+          <h3>拿给何远哲师兄确认的 N1.5 最小数据合同</h3>
           <ol>
-            <li>同一 geometry 的 flow-off temporal repeats，能否估 detector covariance？</li>
-            <li>能否永久留一台 audit camera，或一组不参与 reconstruction 的 rays？</li>
-            <li>当前 forward 是否提供可调用的 <code>A</code>、<code>Aᵀ/Jᵀ</code>、ray、mask、pose 与单位？</li>
-            <li>主要误差更像背景噪声、标定漂移、有限孔径，还是 optical model mismatch？</li>
-            <li>同一相机几何会复用多少帧，setup 是否有真实摊销条件？</li>
+            <li>当前 forward 是否为 straight/curved ray，是否显式采样 aperture？</li>
+            <li>能否提供 f-number、焦距、焦面、背景距离和标定 bootstrap/covariance？</li>
+            <li>能否调用成对的 <code>G_L/G_Lᵀ</code> 与较高保真的 <code>G_H</code>，并记录每次 query？</li>
+            <li>能否永久留一台 audit camera、一个完整 session 和一档 f-number？</li>
+            <li>是否有原始 reference/distorted images、optical-flow confidence 与 phantom/CFD/PIV 证据？</li>
           </ol>
-          <div class="alert critical"><strong>当前论文边界</strong><span>可以写“camera-block 加速与 noisy-target 尾部冲突的 opened synthetic 负证据”；不能写“新算法已胜 DeepONet/FNO”、真实 BOST 泛化、可部署速度或 fresh confirmation。</span></div>
+          <div class="alert critical"><strong>当前论文边界</strong><span>可以写 N1.2–N1.5 的 synthetic 负证据、高阶教师稳定基线和冻结确认协议；不能写新算法已胜 DeepONet/FNO/NeRIF、真实 BOST 泛化或可部署速度。</span></div>
           <div class="actions"><a class="button" href="site_tools/validate_jacru_m2_3_m2_4_evidence.py">M2.3–M2.4 validator</a><a class="button" href="site_tools/validate_jacru_m2_5_m2_6_evidence.py">M2.5–M2.6 validator</a><a class="button" href="site_tools/validate_jacru_m2_7_m2_8_evidence.py">M2.7–M2.8 validator</a></div>
         </div>
+      </div>
+
+      <div class="section-head" style="margin-top:34px;">
+        <div>
+          <div class="eyebrow">N1.2–N1.4 · corrected opened-development evidence · 2026-07-18</div>
+          <h3>三次经典机制证伪，把下一算法压缩到 forward-model mismatch</h3>
+          <p>N1.2 修协议，N1.3 拆 mean/whitening/robust loss，N1.4 拆 warm start/edge weighting/regularization strength。结果不是“差一点过门”，而是同一薄界面尾部与 independent-clean consistency 反复冲突；因此 OOD、neural correction 和方法优越性仍全部封存。</p>
+        </div>
+        <div class="actions">
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_2_postaudit_protocol_no_go_2026-07-18.md">N1.2 判决</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_3_robust_data_whitening_factorial_no_go_2026-07-18.md">N1.3 判决</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_4_adaptive_edge_warm_robust_no_go_2026-07-18.md">N1.4 判决</a>
+        </div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><b class="negative">0 / 16</b><span>N1.2 post-audit candidate-method decisions；dense 与 evaluator-only oracle ceiling 也为 0 pass</span></div>
+        <div class="metric"><b>22.41%</b><span>N1.2 pilot voxel-versus-continuous mismatch mean；范围 15.73%–27.79%</span></div>
+        <div class="metric"><b class="negative">0 / 128</b><span>N1.3 完整 mean × whitening × loss × lambda 因子候选通过数</span></div>
+        <div class="metric"><b>+0.85%</b><span>N1.3 最佳 direct Huber-versus-quadratic field contribution；outlier stress 几乎不变</span></div>
+        <div class="metric"><b class="negative">0 / 33</b><span>N1.4 v1.1 matched warm/zero/adaptive 候选通过数；792 条 metric rows</span></div>
+        <div class="metric"><b class="negative">-0.94%</b><span>最好的 adaptive edge 相对同 lambda uniform warm 的平均 field 差</span></div>
+      </div>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>阶段</th><th>最强表面信号</th><th>决定性反证</th><th>冻结结论</th></tr></thead>
+          <tbody>
+            <tr><td>N1.2 session conformal</td><td>candidate calibration sanity 全通过</td><td class="negative">16 decisions、dense/oracle ceiling 均 0 pass</td><td>协议可运行，不授权 fresh</td></tr>
+            <tr><td>N1.3 robust data</td><td class="positive">field +16.91%；H1 +9.13%</td><td class="negative">worst -50.91%；clean 1.656× / 3.432×</td><td>Huber 只有小幅独立贡献</td></tr>
+            <tr><td>N1.4 zero-start λ=.2</td><td class="positive">field +28.81%；H1 +21.85%</td><td class="negative">2113/interface -15.01%；clean worst 3.00×</td><td>强均值不能覆盖稳定受害样本</td></tr>
+            <tr><td>N1.4 uniform warm λ=.2</td><td>2113/interface 相对 zero-start +10.66%</td><td class="negative">全体相对 zero-start -19.17%；clean worst 4.65×</td><td>warm start 只是移动冲突</td></tr>
+            <tr><td>N1.4 adaptive edge</td><td>27 组 truth-free edge maps</td><td class="negative">全部输给 matching uniform</td><td>关闭当前 edge-weight 设计</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/jacru_n1_4_adaptive_edge_warm_robust_factorial_full2/diagnostic.png" alt="N1.4 同预算 adaptive edge、uniform warm 与 zero-start Huber-PDHG 的 opened-development 判决图" loading="lazy" decoding="async" /><figcaption>N1.4 v1.1：图中任何平均增益都必须同时经过 harm、worst、known-interface 与 independent-clean 四组门。该图只来自 opened synthetic development；truth/clean 不进入 reconstruction API，但参与 diagnostic gate selection。</figcaption></figure>
+      <div class="alert critical"><strong>这不是算法胜利，也不是“训练还不够久”</strong><span>N1.3/N1.4 每个候选都严格计 24F/24AT；warm-start calls 没有被当成免费，zero-start 覆盖了全部同 lambda 对照。0 pass 的含义是当前 objective/forward 假设没有联合安全区，不是让网络继续搜超参数的许可。</span></div>
+
+      <div class="section-head" id="n1-5-confirmation" style="margin-top:32px; scroll-margin-top:88px;">
+        <div>
+          <div class="eyebrow">N1.5 · frozen synthetic confirmation · 2026-07-18</div>
+          <h3>高阶教师稳定，但 field 幅度不足：正式 NO-GO</h3>
+          <p>候选、代码、预算、5% field 门和六个 SHA-256 派生的新 geometry seeds 先提交为 <code>67338a0</code>，再一次性打开不可覆盖的确认输出。12 个场全部改善，但 field mean 只有 3.63%，所以不能把稳定小增益改写成算法胜利。</p>
+        </div>
+        <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_5_high_order_teacher_confirmation_no_go_2026-07-18.md">完整 NO-GO 判决</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_5_advisor_review_brief_2026-07-18.md">师兄一页 brief</a><a class="button" href="demo_t16_operator/results/jacru_n1_5_high_order_teacher_confirmation_once/summary.json">机器摘要</a></div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><b class="negative">NO-GO</b><span>六个新 geometry clusters 的冻结确认总判决</span></div>
+        <div class="metric"><b>+3.63%</b><span>field relative-L2 mean gain；冻结门为 5%</span></div>
+        <div class="metric"><b class="positive">+10.31%</b><span>H1 seminorm mean gain；通过 3% 门</span></div>
+        <div class="metric"><b class="positive">+0.90%</b><span>12 个场中的最坏 field gain；无伤害场</span></div>
+        <div class="metric"><b>+0.69%</b><span>相对 component damping 的额外 field gain</span></div>
+        <div class="metric"><b>2.17% / 5.09%</b><span>smooth / single-interface family mean field gain</span></div>
+      </div>
+      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/jacru_n1_5_high_order_teacher_confirmation_once/diagnostic.png" alt="N1.5 高阶教师冻结合成确认：方法均值、六个几何簇和两类场的 field gain" loading="lazy" decoding="async" /><figcaption>确认集仅检验连续解析梯度 renderer 与体素 FD/三线性算子之间的 synthetic representation mismatch。bootstrap 区间 2.16%–5.27% 只作描述，不进入门；真实 BOST、有限孔径、弯曲光线和标定漂移仍未验证。</figcaption></figure>
+      <div class="two-col" style="margin-top:16px;">
+        <div class="panel">
+          <div class="chips"><span class="chip blue">STABLE CONTROL</span><span class="chip coral">AMPLITUDE INSUFFICIENT</span><span class="chip gold">NO BETA RETUNING</span></div>
+          <h3 style="margin-top:10px;">N1.5 三个真正学到的结论</h3>
+          <ol>
+            <li><strong>measurement L2 不是 field proxy：</strong>curvature ridge 把失配压得更低，重建却输给简单 damping。</li>
+            <li><strong>高阶不等于稳定：</strong>direct fourth-order CGLS field 平均恶化；高阶只做教师、低阶继续求解才稳定。</li>
+            <li><strong>剩余上界有限：</strong>confirmation exact-mismatch oracle 也只有约 +5.67% field gain；继续调同族 beta 不值得再消耗确认集。</li>
+          </ol>
+          <div class="alert critical"><strong>冻结边界</strong><span>这六个 seeds 已经打开，今后不能用于改 beta、改特征或改门槛后再声称独立确认。</span></div>
+        </div>
+        <div class="panel">
+          <div class="chips"><span class="chip gold">N1.6 · NEXT HYPOTHESIS</span><span class="chip blue">ADJOINT CONSISTENT</span><span class="chip coral">REAL DATA CONTRACT NEEDED</span></div>
+          <h3 style="margin-top:10px;">下一算法只学习逆问题真正看见的失配</h3>
+          <div class="formula">g(x,z)=A(z)<sup>T</sup>[G<sub>H</sub>(x,z)-G<sub>L</sub>(x,z)]</div>
+          <ol>
+            <li><strong>AT-AEM-Mean：</strong>先比较 geometry-conditioned <code>Aᵀε</code> 均值，不用网络。</li>
+            <li><strong>AT-AEM-LR：</strong>fit split 固定低秩场基，只预测受限系数。</li>
+            <li><strong>AT-AEM-Op：</strong>ray-set/operator network 只预测系数；高阶教师与 damping 都保留为 strong controls。</li>
+            <li><strong>Fail closed：</strong>逐 geometry 风险或 held-out camera residual 不过门，自动回退低阶基线。</li>
+          </ol>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_5_advisor_review_brief_2026-07-18.md">让师兄审核 N1.6</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">读日志 92–94</a></div>
+        </div>
+      </div>
+      <div class="pipeline" style="grid-template-columns:repeat(4,minmax(0,1fr)); margin-top:16px;">
+        <div><b>1 · paired physics</b><span>同一 x/geometry 运行 G<sub>L</sub>/G<sub>H</sub>；sensor covariance 另记</span></div>
+        <div><b>2 · adjoint target</b><span>比较 ε、range projection 与 Aᵀε；主门始终是 field/H1/tail</span></div>
+        <div><b>3 · bounded learner</b><span>小网络只给低秩系数，不直接输出三维 truth</span></div>
+        <div><b>4 · real audit</b><span>永久 held-out camera/session/f-number；失败即回退高阶教师或 low CGLS</span></div>
       </div>
     </section>
 

@@ -1,0 +1,69 @@
+{
+  "schema_version": "jacru-n1-5-high-order-teacher-confirmation-1.0",
+  "status": "FROZEN_BEFORE_FIRST_CONFIRMATION_EXECUTION",
+  "freeze_date": "2026-07-18",
+  "source_t0_config": "demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json",
+  "source_n1_5_a_config": "demo_t16_operator/configs/jacru_n1_5_approximation_error_headroom_development_v1.json",
+  "source_n1_5_a_results": "demo_t16_operator/results/jacru_n1_5_approximation_error_headroom_development_full1",
+  "source_postopen_config": "demo_t16_operator/configs/jacru_n1_5_reconstruction_aware_postopen_development_v1.json",
+  "source_postopen_results": "demo_t16_operator/results/jacru_n1_5_reconstruction_aware_postopen_full1",
+  "confirmation": {
+    "source_split_geometry_policy": "development",
+    "base_seeds": [2536, 2727, 2363, 2824, 2829, 2507],
+    "families": ["smooth_no_interface", "single_interface"],
+    "seed_derivation": {
+      "token_pattern": "jacru-n1-5-confirmation-v1:{index}",
+      "hash": "sha256",
+      "integer_rule": "2200 + uint32_be(first_4_digest_bytes) mod 700",
+      "collision_rule": "increment_until_unique",
+      "indices": [0, 1, 2, 3, 4, 5]
+    }
+  },
+  "selected_candidate": {
+    "candidate_id": "damping_high_order_b0p75",
+    "kind": "damping_to_high_order_teacher",
+    "beta": 0.75,
+    "selected_only_on_postopen_calibration": true,
+    "may_be_changed_after_confirmation_open": false
+  },
+  "evaluated_controls": {
+    "low_cgls25": true,
+    "component_damping_correction": true,
+    "direct_high_order_cgls25": true,
+    "exact_mismatch_oracle_evaluator_only": true
+  },
+  "budget": {
+    "warm_cgls_iterations": 12,
+    "visible_low_projection_forward_calls": 1,
+    "corrected_warm_cgls_iterations": 12,
+    "corrected_total_low_forward_calls": 25,
+    "corrected_total_low_adjoint_calls": 24,
+    "low_cgls_reference_iterations": 25,
+    "direct_high_order_reference_iterations": 25
+  },
+  "confirmation_gates": {
+    "mean_field_gain_over_low_cgls25_minimum": 0.05,
+    "mean_h1_gain_over_low_cgls25_minimum": 0.03,
+    "worst_geometry_cluster_field_gain_minimum": -0.01,
+    "case_field_harm_over_one_percent_rate_maximum": 0.0,
+    "mean_field_gain_over_component_damping_minimum": 0.0,
+    "each_family_mean_field_gain_over_low_cgls25_minimum": 0.0
+  },
+  "bootstrap": {
+    "unit": "geometry_cluster",
+    "replicates": 10000,
+    "seed": 15075,
+    "confidence_level": 0.95,
+    "participates_in_gate": false
+  },
+  "may_construct_or_evaluate_ood": false,
+  "claim_boundary": {
+    "is_independent_of_the_opened_development_seed_set": true,
+    "is_synthetic_representation_mismatch_confirmation": true,
+    "is_real_bost_or_experimental_confirmation": false,
+    "includes_finite_aperture_ray_bending_or_calibration_drift": false,
+    "may_claim_general_algorithm_superiority": false,
+    "may_change_candidate_after_open": false,
+    "opens_ood_or_final": false
+  }
+}

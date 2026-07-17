@@ -305,6 +305,75 @@ def _edge_value(
     return float(torch.sum(values).item())
 
 
+def _scalar_huber_value(residual: Tensor, *, delta: float) -> float:
+    """Return the separable Huber data penalty used by the robust solver."""
+
+    magnitude = torch.abs(residual)
+    values = torch.where(
+        magnitude <= delta,
+        0.5 * magnitude.square() / delta,
+        magnitude - 0.5 * delta,
+    )
+    return float(torch.sum(values).item())
+
+
+def _validated_edge_weight_map(
+    edge_weight_map: Tensor | None,
+    *,
+    mask: Tensor,
+) -> Tensor | None:
+    if edge_weight_map is None:
+        return None
+    weights = torch.as_tensor(edge_weight_map).to(mask)
+    if weights.shape != mask.shape:
+        raise ValueError("edge_weight_map must match support shape")
+    if not bool(torch.all(torch.isfinite(weights))) or bool(torch.any(weights <= 0.0)):
+        raise ValueError("edge_weight_map must contain positive finite values")
+    return weights
+
+
+def _proximal_weighted_edge_conjugate(
+    dual: Tensor,
+    *,
+    regularization_weight: float,
+    edge_weight_map: Tensor,
+    dual_step: float,
+    penalty: EdgePenalty,
+    huber_delta: float,
+) -> Tensor:
+    if regularization_weight == 0.0:
+        return torch.zeros_like(dual)
+    radius = regularization_weight * edge_weight_map[None, None]
+    if penalty == "huber":
+        unconstrained = dual / (
+            1.0 + dual_step * huber_delta / radius
+        )
+    else:
+        unconstrained = dual
+    magnitude = torch.linalg.vector_norm(unconstrained, dim=1, keepdim=True)
+    scale = torch.clamp(radius / magnitude.clamp_min(1e-30), max=1.0)
+    return unconstrained * scale
+
+
+def _weighted_edge_value(
+    gradient: Tensor,
+    *,
+    edge_weight_map: Tensor,
+    penalty: EdgePenalty,
+    huber_delta: float,
+) -> float:
+    magnitude = torch.linalg.vector_norm(gradient, dim=1)
+    if penalty == "tv":
+        values = magnitude
+    else:
+        values = torch.where(
+            magnitude <= huber_delta,
+            0.5 * magnitude.square() / huber_delta,
+            magnitude - 0.5 * huber_delta,
+        )
+    return float(torch.sum(values * edge_weight_map[None]).item())
+
+
 def _pdhg_steps(
     *,
     data_norm_squared_bound: float,
@@ -512,8 +581,203 @@ def edge_preserving_pdhg_baseline(
     )
 
 
+@torch.no_grad()
+def robust_data_pdhg_baseline(
+    observation: Tensor,
+    *,
+    forward: LinearMap,
+    adjoint: LinearMap,
+    support: Tensor,
+    spacing_xyz: Sequence[float],
+    iterations: int,
+    regularization_weight: float,
+    data_norm_squared_bound: float,
+    data_huber_delta: float,
+    edge_penalty: EdgePenalty = "huber",
+    edge_huber_delta: float = 0.1,
+    ridge_weight: float = 0.0,
+    initial_field: Tensor | None = None,
+    edge_weight_map: Tensor | None = None,
+    step_safety: float = 0.99,
+    extrapolation: float = 1.0,
+    primal_step: float | None = None,
+    data_dual_step: float | None = None,
+    edge_dual_step: float | None = None,
+) -> InterfaceBaselineResult:
+    """Solve Huber-data plus isotropic TV/Huber regularization with PDHG.
+
+    The caller may inject a prewhitened operator pair and prewhitened
+    observation; this function never estimates covariance from the target.
+    With ``rho_delta(t)=t^2/(2 delta)`` near zero and ``|t|-delta/2`` in the
+    tails, the data-dual proximal is an analytic shrink followed by clipping
+    to ``[-1, 1]``. Every iteration uses exactly one injected forward and one
+    injected adjoint call.
+    """
+
+    target = _validated_observation(observation)
+    mask = _validated_support(support, reference=target)
+    spacing = _validated_spacing(spacing_xyz)
+    count = _positive_integer(iterations, name="iterations")
+    weight = _finite_scalar(
+        regularization_weight,
+        name="regularization_weight",
+        nonnegative=True,
+    )
+    data_bound = _finite_scalar(
+        data_norm_squared_bound,
+        name="data_norm_squared_bound",
+        positive=True,
+    )
+    data_delta = _finite_scalar(
+        data_huber_delta,
+        name="data_huber_delta",
+        positive=True,
+    )
+    edge_delta = _finite_scalar(
+        edge_huber_delta,
+        name="edge_huber_delta",
+        positive=True,
+    )
+    ridge = _finite_scalar(ridge_weight, name="ridge_weight", nonnegative=True)
+    spatial_weights = _validated_edge_weight_map(edge_weight_map, mask=mask)
+    safety = _finite_scalar(step_safety, name="step_safety", positive=True)
+    theta = _finite_scalar(extrapolation, name="extrapolation")
+    if edge_penalty not in {"tv", "huber"}:
+        raise ValueError("edge_penalty must be 'tv' or 'huber'")
+    if safety >= 1.0:
+        raise ValueError("step_safety must lie in (0,1)")
+    if not 0.0 <= theta <= 1.0:
+        raise ValueError("extrapolation must lie in [0,1]")
+    gradient_bound = gradient_operator_norm_squared_bound(spacing)
+    tau, sigma_data, sigma_edge, contract = _pdhg_steps(
+        data_norm_squared_bound=data_bound,
+        gradient_norm_squared_bound=gradient_bound,
+        regularization_weight=weight,
+        step_safety=safety,
+        primal_step=primal_step,
+        data_dual_step=data_dual_step,
+        edge_dual_step=edge_dual_step,
+    )
+
+    if initial_field is None:
+        field = torch.zeros_like(mask)
+    else:
+        field = torch.as_tensor(initial_field).to(target)
+        if field.shape != mask.shape:
+            raise ValueError("initial_field must match support shape")
+        if not bool(torch.all(torch.isfinite(field))):
+            raise ValueError("initial_field must contain only finite values")
+        field = field.clone() * mask
+    extrapolated = field.clone()
+    data_dual = torch.zeros_like(target)
+    edge_dual = torch.zeros(
+        (1, 3, *mask.shape),
+        dtype=target.dtype,
+        device=target.device,
+    )
+    operator = _CountedLinearOperator(
+        forward,
+        adjoint,
+        field_reference=field,
+        observation_reference=target,
+    )
+    history: list[HistoryRow] = []
+
+    for index in range(count):
+        projected = operator.forward(extrapolated)
+        residual = projected - target
+        unconstrained_data_dual = (
+            data_dual + sigma_data * residual
+        ) / (1.0 + sigma_data * data_delta)
+        data_dual = torch.clamp(unconstrained_data_dual, min=-1.0, max=1.0)
+        gradient = regularization_gradient(
+            extrapolated[None],
+            spacing_xyz=spacing,
+        )
+        ridge_value = 0.5 * ridge * float(_dot(extrapolated, extrapolated).item())
+        edge_argument = edge_dual + sigma_edge * gradient
+        if spatial_weights is None:
+            edge_dual = proximal_edge_conjugate(
+                edge_argument,
+                regularization_weight=weight,
+                dual_step=sigma_edge,
+                penalty=edge_penalty,
+                huber_delta=edge_delta,
+            )
+        else:
+            edge_dual = _proximal_weighted_edge_conjugate(
+                edge_argument,
+                regularization_weight=weight,
+                edge_weight_map=spatial_weights,
+                dual_step=sigma_edge,
+                penalty=edge_penalty,
+                huber_delta=edge_delta,
+            )
+        data_normal = operator.adjoint(data_dual) * mask
+        edge_normal = regularization_gradient_adjoint(
+            edge_dual,
+            spacing_xyz=spacing,
+        )[0]
+        next_field = (
+            field - tau * (data_normal + edge_normal)
+        ) / (1.0 + tau * ridge)
+        next_field = next_field * mask
+        update = next_field - field
+        extrapolated = (next_field + theta * update) * mask
+        field = next_field
+
+        data_value = _scalar_huber_value(residual, delta=data_delta)
+        edge_value = (
+            _edge_value(
+                gradient,
+                penalty=edge_penalty,
+                huber_delta=edge_delta,
+            )
+            if spatial_weights is None
+            else _weighted_edge_value(
+                gradient,
+                edge_weight_map=spatial_weights,
+                penalty=edge_penalty,
+                huber_delta=edge_delta,
+            )
+        )
+        history.append(
+            {
+                "iteration": index + 1,
+                "extrapolated_data_residual_norm": float(
+                    torch.linalg.vector_norm(residual).item()
+                ),
+                "extrapolated_robust_data_penalty": data_value,
+                "extrapolated_edge_penalty": edge_value,
+                "extrapolated_ridge_penalty": ridge_value,
+                "extrapolated_total_objective": (
+                    data_value + weight * edge_value + ridge_value
+                ),
+                "primal_update_norm": float(torch.linalg.vector_norm(update).item()),
+                "step_contract": contract,
+                "data_dual_saturation_fraction": float(
+                    torch.mean((torch.abs(data_dual) >= 1.0).to(target.dtype)).item()
+                ),
+            }
+        )
+        if not bool(torch.all(torch.isfinite(field))):
+            raise FloatingPointError("robust-data PDHG produced a non-finite field")
+        if not bool(torch.all(torch.isfinite(data_dual))):
+            raise FloatingPointError("robust-data PDHG produced a non-finite data dual")
+        if not bool(torch.all(torch.isfinite(edge_dual))):
+            raise FloatingPointError("robust-data PDHG produced a non-finite edge dual")
+
+    return _result(
+        field=field,
+        history=history,
+        operator=operator,
+        expected_calls=count,
+    )
+
+
 __all__ = [
     "InterfaceBaselineResult",
     "cgls_baseline",
     "edge_preserving_pdhg_baseline",
+    "robust_data_pdhg_baseline",
 ]

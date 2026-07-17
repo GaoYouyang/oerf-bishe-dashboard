@@ -2242,3 +2242,119 @@ model-mismatch floor -> matrix-free multi-shift Lanczos。经典 IID/structured 
 Huber/Student-t 全部过门后，才允许学习 bounded lambda 或 robust weight。
 
 完整复盘见 [N1.1 flow-off covariance proximal NO-GO](jacru_n1_1_flowoff_covariance_proximal_no_go_2026-07-18.md)。
+
+## 88. N1.2：把尺子校准了，仍然没有可安全放行的候选
+
+N1.2 先修协议，不急着造模型：同一 session 的 flow-off frames 不再假装成独立实验；64 个
+calibration score 的 95% 门改用第 62 个次序统计量；global、per-camera 和 lower gate 分开；
+strongest classical 与 raw network center 同时保护；sensor covariance 与 forward mismatch 分账。
+
+post-audit pilot 覆盖 3 个 session、5 个 case、8 个候选和 80 条 metric rows，所有 checksum
+通过，但 16 个 candidate-method decision、dense ceiling 和 evaluator-only oracle ceiling 的通过数
+都是 0。五个 case 的 voxel-versus-continuous mismatch 已有 `15.73%–27.79%`，且明确不属于
+sensor noise，也不能让部署 selector 读取。
+
+**讲人话：**以前的问题不只是算法跑不好，尺子的刻度也混了。现在尺子分清了“相机噪声”和
+“物理模型不准”，结果仍然告诉我们不能放行。这不是白做，而是阻止后面用错误噪声模型包装成功。
+
+严格复盘见 [N1.2 post-audit protocol NO-GO](jacru_n1_2_postaudit_protocol_no_go_2026-07-18.md)。
+
+## 89. N1.3：真正的 Huber 数据项只有约 0.85% 独立贡献
+
+N1.3 实现了 measurement-domain Huber-PDHG，并完整展开
+`mean x whitening x quadratic/Huber x spatial lambda`。6 个 session、128 个候选、3,072 条 metric
+和 192 条 direct contrast 最终 0 pass。
+
+平均最强的 diagonal candidate 有 `+16.91%` field gain，却伴随 `8.33%` harm、`-50.91%`
+worst 和 `1.656x/3.432x` clean residual。更重要的是，在完全相同 mean、whitening、lambda 下，
+Huber 相对 quadratic 最多只贡献 `+0.852%` nominal 和 `+0.849%` outlier field gain；加入 2%、
+8 sigma sparse outliers 后没有额外 dose response。
+
+**讲人话：**Huber 确实有一点用，但不是救命药。漂亮平均值主要来自“怎样减均值、怎样白化、
+怎样平滑”的组合，而同一个薄界面仍可能被严重伤害，所以现在训练网络去自动挑 Huber 参数只会
+把一个不成立的底座变黑箱。
+
+严格复盘见 [N1.3 robust-data factorial NO-GO](jacru_n1_3_robust_data_whitening_factorial_no_go_2026-07-18.md)。
+
+## 90. N1.4：warm start 能救一个薄界面，却会伤害更多别的场
+
+N1.4 用 CGLS-12 的粗场梯度生成 edge weights，再用 Huber-PDHG-12 细化。审计发现第一版只有
+`lambda=0.1` 的 zero-start control，无法拆开 warm start 与 lambda。v1.1 因此给
+`0.05/0.1/0.2` 全部补齐 matching zero-start，增加 seed-family 集合和分段调用 fail-closed
+检查，再完整重跑 33 个候选、792 行结果。
+
+最佳平均值是 zero-start `lambda=0.2`：field `+28.81%`、H1 `+21.85%`，但已知
+`2113/single-interface` 仍是 `-15.01%`，clean worst `3.00x`。uniform warm 把这个特例改善
+约 `10.66%`，却让全体同 lambda 平均 field 相对 zero-start 恶化 `19.17%`。27 个 adaptive
+edge 候选又全部输给 matching uniform；最好一组仍平均落后 `0.944%`。
+
+**讲人话：**warm start 像偏科补习，确实救回一道一直错的薄界面题，却让更多普通题失分。
+adaptive edge 也没有证明自己比普通均匀正则好。问题更像“观测模型把不同物理形态解释错了”，
+而不是“边缘平滑力度没调好”。
+
+严格复盘见 [N1.4 adaptive-edge warm NO-GO](jacru_n1_4_adaptive_edge_warm_robust_no_go_2026-07-18.md)。
+
+## 91. N1.5：下一算法改学 forward mismatch，不直接猜三维场
+
+新候选把便宜模型记作 `G_L`，把包含 finite aperture、必要时 curved rays 和 calibration
+perturbation 的高保真模型记作 `G_H`，专门学习或估计：
+
+```text
+epsilon(x,z) = G_H(x,z) - G_L(x,z)
+```
+
+第一步只做条件均值；第二步做 fixed low-rank covariance；前两步在 locked development 有
+headroom 后，第三步才允许小网络根据 f-number、view、pixel、geometry uncertainty 等部署可见量
+预测低秩系数。网络不输出三维场，也不能接收 test truth、family label 或 audit-camera residual。
+
+这条路线的物理依据比继续调正则更直接：NeRIF 明确处理 voxel discretization 与连续表示；
+cone-ray BOS 已证明有限孔径会让 thin-ray reconstruction 随 f-number 失稳；Bayesian
+approximation-error 文献则给出 accurate/coarse forward pairs 的统计补偿方法。
+
+**讲人话：**如果地图本身画错了，再聪明的导航也会走偏。N1.5 先学习“便宜地图和真实道路差
+在哪里”，再让经典重建或 NeRIF 使用这份误差说明书。它仍可能失败，但失败会回答一个真实光学
+问题，也更贴近师兄能审核和实验室能验证的方向。
+
+算法、泄漏红线、十个师兄问题和一级来源见
+[N1.5 conditional approximation-error protocol](jacru_n1_5_conditional_approximation_error_protocol_2026-07-18.md)。
+
+## 92. N1.5-A：前向误差预测得更准，不等于三维重建更准
+
+第一轮把目标定成连续 renderer 与体素 FD/三线性算子之间的 normalized mismatch。fit/calibration/
+development 按 12/4/6 个 geometry seed 分开；两种 phantom family 共用同一 geometry，因此没有把
+ray 或 field 行数伪装成独立样本数。
+
+最简单的 component damping 已把 mismatch L2 改善 `38.62%`。加入观测局部曲率、相机姿态和
+CGLS-12 暖启动残差后，ridge 在 opened development 平均改善 `45.62%`，相对 damping 再好
+`11.68%`；但 12 个场中有 2 个变差，触发 NO-GO。PCA-16 exact-coefficient oracle 的残余比
+只有 `0.3343`，说明失配有低秩表示空间，却没有证明这些系数能由部署可见量安全推断。
+
+**讲人话：**我们能把“地图哪里画错了”猜得更像，但这份猜测里有些部分根本不会影响导航，
+还有些小错会被逆问题放大。因此 measurement residual 不能单独当论文主指标。
+
+## 93. N1.5-B：高阶算子适合当老师，不适合直接接管求解
+
+四阶差分算子通过了约 `3e-16` 的伴随恒等式检查。直接用它做 CGLS-25，opened development 的
+field 反而平均恶化 `5.10%`；说明“离散阶数更高”不自动等于逆解更稳。
+
+把四阶算子只用于估计暖启动场上的 `G_HO-G_L`，再让稳定低阶算子做 12 步暖启动细化，则
+beta=0.75 在 opened development 得到 field `+4.799%`、H1 `+10.899%`、worst `+1.655%`，
+而 component damping 只有 field `+3.721%`。候选只在 calibration 上选 beta，并明确标成
+post-open hypothesis，不能当确认成功。
+
+**讲人话：**更敏锐的老师可以指出低阶模型哪里可能错，但让这个老师亲自驾驶反而不稳；当前
+最好结构是“高阶负责诊断，低阶负责求解”。
+
+## 94. 冻结确认：所有场都变好，但平均幅度没有过 5% 门
+
+候选、六个 SHA-256 派生的新 geometry seeds、预算和门槛先写入 Git 提交 `67338a0`，再一次性
+打开不可覆盖的 confirmation。12 个场全部为正增益：mean field `+3.6323%`、mean H1
+`+10.3084%`、worst field `+0.8979%`、worst geometry cluster `+1.3527%`；相对 component
+damping 再好 `+0.6864%`。smooth/interface family 分别为 `+2.1703%/+5.0944%`。
+
+唯一失败项是冻结的 field mean `>=5%` 门，所以正式状态为 `SYNTHETIC_CONFIRMATION_NO_GO`。
+这条结果稳定，却不够大。以后不能再用这六个种子调 beta。
+
+下一算法改学正规方程真正感受的 `A^T epsilon` 或 measurement-range 分量，并把本轮高阶教师
+作为固定强基线。完整数字、物理边界和师兄问题见
+[N1.5 confirmation NO-GO](jacru_n1_5_high_order_teacher_confirmation_no_go_2026-07-18.md)。

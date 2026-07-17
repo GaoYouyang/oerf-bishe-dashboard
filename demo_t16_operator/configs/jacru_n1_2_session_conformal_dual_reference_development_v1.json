@@ -1,0 +1,192 @@
+{
+  "schema_version": "jacru-n1-2-session-conformal-dual-reference-development-config-1.0",
+  "report_schema_version": "jacru-n1-2-session-conformal-dual-reference-development-report-1.0",
+  "status": "DEVELOPMENT_ONLY_NOT_PREREGISTERED_NOT_FORMAL",
+  "frozen_date": null,
+  "evidence_level": "E0_OPENED_SYNTHETIC_PROTOCOL_DEVELOPMENT_NO_FRESH",
+  "source_t0_config": "demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json",
+  "source_n1_1_results": "demo_t16_operator/results/jacru_n1_1_flowoff_covariance_proximal_postopen_public",
+  "methods": [
+    "jacru_m2",
+    "pooled_cnn"
+  ],
+  "session_nuisance": {
+    "manifest_id": "jacru-n1-2-opened-session-fixture-development-v1",
+    "nominal_iid_std_benchmark_units": 0.005,
+    "session_log_scale_std": 0.2,
+    "heteroscedastic_fraction": 0.4,
+    "camera_scale_multipliers": [0.9, 1.0, 1.1],
+    "component_scale_multipliers": [1.0, 1.15],
+    "persistent_camera_bias_relative_std": 2.0,
+    "frame_camera_jitter_relative_std": 0.75,
+    "fit_repeats": 64,
+    "threshold_calibration_repeats": 64,
+    "audit_repeats": 256,
+    "seed": 81271,
+    "scale_contract": "absolute normalized benchmark displacement units from frozen session/background metadata only; never clean or measured flow-on amplitude",
+    "real_instrument_units_calibrated": false
+  },
+  "covariance_estimator": {
+    "shrinkage": 0.25,
+    "ridge_fraction": 1e-06
+  },
+  "candidates": [
+    {
+      "id": "structured_joint_two_sided_95",
+      "mean_policy": "estimated",
+      "proximal_covariance_policy": "structured",
+      "selector_covariance_policy": "structured",
+      "target_two_sided_coverage": 0.95,
+      "gate_policy": "joint_two_sided",
+      "model_mismatch_policy": "sensor_only",
+      "model_mismatch_norm_fraction": 0.0,
+      "uses_truth": false,
+      "uses_exact_nuisance": false,
+      "selector_family": "session_joint_conformal_band"
+    },
+    {
+      "id": "isotropic_joint_two_sided_95",
+      "mean_policy": "estimated",
+      "proximal_covariance_policy": "isotropic",
+      "selector_covariance_policy": "isotropic",
+      "target_two_sided_coverage": 0.95,
+      "gate_policy": "joint_two_sided",
+      "model_mismatch_policy": "sensor_only",
+      "model_mismatch_norm_fraction": 0.0,
+      "uses_truth": false,
+      "uses_exact_nuisance": false,
+      "selector_family": "session_joint_conformal_band"
+    },
+    {
+      "id": "structured_joint_upper_95_ablation",
+      "mean_policy": "estimated",
+      "proximal_covariance_policy": "structured",
+      "selector_covariance_policy": "structured",
+      "target_two_sided_coverage": 0.9,
+      "gate_policy": "joint_upper_only",
+      "model_mismatch_policy": "sensor_only",
+      "model_mismatch_norm_fraction": 0.0,
+      "uses_truth": false,
+      "uses_exact_nuisance": false,
+      "selector_family": "session_joint_conformal_upper_ablation"
+    },
+    {
+      "id": "structured_global_upper_95_ablation",
+      "mean_policy": "estimated",
+      "proximal_covariance_policy": "structured",
+      "selector_covariance_policy": "structured",
+      "target_two_sided_coverage": 0.9,
+      "gate_policy": "global_upper_only",
+      "model_mismatch_policy": "sensor_only",
+      "model_mismatch_norm_fraction": 0.0,
+      "uses_truth": false,
+      "uses_exact_nuisance": false,
+      "selector_family": "session_global_conformal_upper_ablation"
+    },
+    {
+      "id": "structured_target_mismatch_oracle_fraction_025",
+      "mean_policy": "estimated",
+      "proximal_covariance_policy": "structured",
+      "selector_covariance_policy": "structured",
+      "target_two_sided_coverage": 0.95,
+      "gate_policy": "joint_two_sided",
+      "model_mismatch_policy": "exact_target_oracle_triangle_bound",
+      "model_mismatch_norm_fraction": 0.25,
+      "uses_truth": true,
+      "uses_exact_nuisance": false,
+      "selector_family": "evaluator_only_fractional_model_mismatch_oracle"
+    },
+    {
+      "id": "structured_target_mismatch_oracle_fraction_050",
+      "mean_policy": "estimated",
+      "proximal_covariance_policy": "structured",
+      "selector_covariance_policy": "structured",
+      "target_two_sided_coverage": 0.95,
+      "gate_policy": "joint_two_sided",
+      "model_mismatch_policy": "exact_target_oracle_triangle_bound",
+      "model_mismatch_norm_fraction": 0.5,
+      "uses_truth": true,
+      "uses_exact_nuisance": false,
+      "selector_family": "evaluator_only_fractional_model_mismatch_oracle"
+    },
+    {
+      "id": "structured_target_mismatch_oracle_fraction_075",
+      "mean_policy": "estimated",
+      "proximal_covariance_policy": "structured",
+      "selector_covariance_policy": "structured",
+      "target_two_sided_coverage": 0.95,
+      "gate_policy": "joint_two_sided",
+      "model_mismatch_policy": "exact_target_oracle_triangle_bound",
+      "model_mismatch_norm_fraction": 0.75,
+      "uses_truth": true,
+      "uses_exact_nuisance": false,
+      "selector_family": "evaluator_only_fractional_model_mismatch_oracle"
+    },
+    {
+      "id": "structured_exact_target_mismatch_oracle_fraction_100",
+      "mean_policy": "estimated",
+      "proximal_covariance_policy": "structured",
+      "selector_covariance_policy": "structured",
+      "target_two_sided_coverage": 0.95,
+      "gate_policy": "joint_two_sided",
+      "model_mismatch_policy": "exact_target_oracle_triangle_bound",
+      "model_mismatch_norm_fraction": 1.0,
+      "uses_truth": true,
+      "uses_exact_nuisance": false,
+      "selector_family": "evaluator_only_exact_model_mismatch_oracle"
+    }
+  ],
+  "dense_evaluator_ceiling": {
+    "assembly_batch_size": 64,
+    "rank_relative_tolerance": 1e-12,
+    "log10_alpha_bounds": [-12.0, 12.0],
+    "alpha_grid_count": 129,
+    "in_primary_runtime": false,
+    "in_matched_budget": false,
+    "may_claim_runtime_or_efficiency": false
+  },
+  "registered_classical_reference": {
+    "baseline_kind": "huber_pdhg_matched",
+    "projection_step": 11,
+    "total_forward_calls": 24,
+    "total_adjoint_calls": 24,
+    "selected_before_n1_2_candidate_results": true,
+    "per_case_best_classical_is_diagnostic_only": true
+  },
+  "calibration_gates": {
+    "same_session_repeat_coverage_mean_minimum": 0.93,
+    "same_session_repeat_coverage_minimum_packet": 0.9,
+    "same_session_repeat_clopper_pearson_lower_minimum": 0.85,
+    "condition_number_maximum": 10000.0
+  },
+  "decision_gates": {
+    "development_classical_field_gain_mean_minimum": 0.05,
+    "development_classical_h1_gain_mean_minimum": 0.03,
+    "ood_classical_field_gain_mean_minimum": 0.02,
+    "ood_classical_h1_gain_mean_minimum": 0.0,
+    "raw_field_gain_mean_minimum": 0.0,
+    "field_harm_threshold_fraction": 0.01,
+    "field_harm_rate_maximum": 0.05,
+    "worst_field_gain_minimum": -0.05,
+    "minimum_session_mean_field_gain": -0.05,
+    "minimum_family_mean_field_gain": 0.0,
+    "development_clean_ratio_mean_maximum": 1.1,
+    "development_clean_ratio_worst_maximum": 1.5,
+    "ood_clean_ratio_mean_maximum": 1.15,
+    "ood_clean_ratio_worst_maximum": 1.75,
+    "selector_valid_rate_minimum": 0.95,
+    "residual_closure_relative_error_maximum": 1e-10
+  },
+  "claim_boundary": {
+    "opened_synthetic_protocol_development": true,
+    "development_truth_used_for_checkpoint_selection": true,
+    "flowoff_scale_is_target_independent": true,
+    "flowoff_coverage_is_not_flowon_reconstruction_coverage": true,
+    "model_mismatch_is_separate_from_sensor_covariance": true,
+    "dense_evaluator_ceiling_is_deployable": false,
+    "may_claim_algorithm_superiority": false,
+    "may_claim_real_bost_generalization": false,
+    "may_open_fresh_or_final": false,
+    "may_only_authorize_formal_protocol_freeze_after_red_team": true
+  }
+}

@@ -10,6 +10,7 @@ import torch
 from .interface_baselines import (
     cgls_baseline,
     edge_preserving_pdhg_baseline,
+    robust_data_pdhg_baseline,
 )
 
 
@@ -73,7 +74,7 @@ def _run_pdhg(
 
 @pytest.mark.parametrize(
     "solver",
-    [cgls_baseline, edge_preserving_pdhg_baseline],
+    [cgls_baseline, edge_preserving_pdhg_baseline, robust_data_pdhg_baseline],
 )
 def test_public_solver_signatures_have_no_reference_field_parameter(solver) -> None:
     names = {name.lower() for name in inspect.signature(solver).parameters}
@@ -255,6 +256,115 @@ def test_invalid_explicit_pdhg_step_contract_is_rejected() -> None:
             edge_dual_step=1.0,
         )
 
+    assert operator.forward_calls == operator.adjoint_calls == 0
+
+
+class RepeatedScalarOperator:
+    def __init__(self, repeats: int) -> None:
+        self.repeats = repeats
+        self.forward_calls = 0
+        self.adjoint_calls = 0
+
+    def forward(self, field: torch.Tensor) -> torch.Tensor:
+        self.forward_calls += 1
+        return field.reshape(1).expand(self.repeats).clone()
+
+    def adjoint(self, measurement: torch.Tensor) -> torch.Tensor:
+        self.adjoint_calls += 1
+        return torch.sum(measurement).reshape(1, 1, 1)
+
+
+def test_robust_data_pdhg_resists_one_large_measurement_outlier() -> None:
+    observation = torch.tensor([1.0, 1.0, 1.0, 10.0], dtype=torch.float64)
+    support = torch.ones((1, 1, 1), dtype=torch.float64)
+    robust_operator = RepeatedScalarOperator(4)
+    least_squares_operator = RepeatedScalarOperator(4)
+
+    robust = robust_data_pdhg_baseline(
+        observation,
+        forward=robust_operator.forward,
+        adjoint=robust_operator.adjoint,
+        support=support,
+        spacing_xyz=(1.0, 1.0, 1.0),
+        iterations=500,
+        regularization_weight=0.0,
+        data_norm_squared_bound=4.0,
+        data_huber_delta=0.5,
+        ridge_weight=1e-8,
+    )
+    least_squares = edge_preserving_pdhg_baseline(
+        observation,
+        forward=least_squares_operator.forward,
+        adjoint=least_squares_operator.adjoint,
+        support=support,
+        spacing_xyz=(1.0, 1.0, 1.0),
+        iterations=500,
+        regularization_weight=0.0,
+        data_norm_squared_bound=4.0,
+    )
+
+    robust_value = float(robust.field.item())
+    least_squares_value = float(least_squares.field.item())
+    assert abs(robust_value - 1.0) < abs(least_squares_value - 1.0)
+    assert robust_value < 1.5
+    assert least_squares_value == pytest.approx(3.25, abs=1e-6)
+    assert robust.forward_calls == robust.adjoint_calls == 500
+    assert 0.0 < robust.history[-1]["data_dual_saturation_fraction"] <= 1.0
+
+
+def test_robust_data_pdhg_accepts_warm_start_and_spatial_edge_weights() -> None:
+    operator = CountingIdentity()
+    observation = torch.ones((3, 4, 5), dtype=torch.float64)
+    observation[0, 0, 0] = 0.0
+    initial = 0.25 * observation
+    edge_weights = torch.ones_like(observation)
+    edge_weights[:, :, 2:] = 0.2
+    result = robust_data_pdhg_baseline(
+        observation,
+        forward=operator.forward,
+        adjoint=operator.adjoint,
+        support=_support(),
+        spacing_xyz=(1.0, 1.5, 2.0),
+        iterations=12,
+        regularization_weight=0.05,
+        data_norm_squared_bound=1.0,
+        data_huber_delta=0.5,
+        initial_field=initial,
+        edge_weight_map=edge_weights,
+    )
+    assert result.forward_calls == result.adjoint_calls == 12
+    assert result.field[0, 0, 0] == 0.0
+    assert torch.linalg.vector_norm(result.field - observation) < torch.linalg.vector_norm(
+        initial - observation
+    )
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "message"),
+    [
+        ({"data_huber_delta": 0.0}, "data_huber_delta"),
+        ({"edge_huber_delta": 0.0}, "edge_huber_delta"),
+        ({"ridge_weight": -1.0}, "ridge_weight"),
+        ({"edge_penalty": "quadratic"}, "edge_penalty"),
+        ({"edge_weight_map": torch.zeros((3, 4, 5))}, "edge_weight_map"),
+        ({"initial_field": torch.zeros((2, 2, 2))}, "initial_field"),
+    ],
+)
+def test_robust_data_pdhg_rejects_invalid_inputs_before_calls(kwargs, message) -> None:
+    operator = CountingIdentity()
+    arguments = {
+        "forward": operator.forward,
+        "adjoint": operator.adjoint,
+        "support": _support(),
+        "spacing_xyz": (1.0, 1.0, 1.0),
+        "iterations": 3,
+        "regularization_weight": 0.1,
+        "data_norm_squared_bound": 1.0,
+        "data_huber_delta": 0.5,
+    }
+    arguments.update(kwargs)
+    with pytest.raises(ValueError, match=message):
+        robust_data_pdhg_baseline(torch.zeros((3, 4, 5)), **arguments)
     assert operator.forward_calls == operator.adjoint_calls == 0
 
 
