@@ -2142,3 +2142,47 @@ K=10 时两种网络的可行率仍只有 `97.22%`；问题界面样本即使选
 held-out reprojection、harm/worst 与总成本的联合可行区，才允许学习 stopping 或 regularization operator。
 
 完整判决见 [M2.3–M2.8 opened evidence](jacru_m2_3_to_m2_8_opened_evidence_2026-07-17.md)。
+
+## 81. N1.0 先不造网络：只问“看残差决定什么时候停”够不够
+
+M2.8 已经说明，把网络结果和 K=9/K=10 投影结果做固定插值，甚至让 evaluator 看真值逐样本挑
+最优 alpha，都不能把 measurement fit 和界面场尾部同时救回来。最自然的下一个问题不是立刻训练
+stopping network，而是先测试最简单、最容易解释的规则：每一步只看 measured residual、相对
+CGLS-12 的 residual，或 measurement-space system residual，第一次低于阈值就停止。
+
+本轮冻结了 37 个 specs：26 个 residual threshold 候选和 11 个固定 K 对照。它们复用 M2.7 的
+K=0--10 轨迹，没有重训、没有打开 fresh。选择器不能看 field truth、clean renderer 或 case
+family；阈值未命中就返回 prepared CGLS-12，并仍然支付完整尝试预算。
+
+**讲人话：**这一步是在测试“只看验算分数，能不能知道哪一刻该停笔”。如果连一整组透明、
+可解释的规则都找不到安全时刻，就不该马上做一个更黑箱的 MLP 来猜。
+
+## 82. 结果不是所有规则都差，而是出现了两个没有交点的安全区
+
+JACRU 的 26 个可观测候选里，6 个保护了 field tail，11 个保护了 independent clean renderer，
+联合安全数是 0。tail 最好的代表 `base_residual_x4` 平均在 K=1.89 停，harm 只有 `2.78%`，
+worst 是 `-1.98%`；但 clean renderer residual 平均是 base 的 `1.639x`，最坏 `3.160x`。
+
+renderer-safe 的代表 `base_residual_x1.5` 平均在 K=3.97 停，clean ratio 已降到
+`1.096x / 1.298x`，但 harm 回到 `8.33%`，worst 为 `-7.55%`。pooled CNN 更直接：26 个
+候选中没有任何 tail-safe 规则；最好的 renderer-safe 规则仍有 `8.33%` harm 和 `-11.78%`
+worst。
+
+**讲人话：**早点停，三维形状不容易被噪声破坏，但相机端还解释不好；晚点停，相机端变漂亮，
+某类尖锐界面却被错误测量拉坏了。阈值像一扇只能左右移动的门，而我们需要同时照顾门两边的
+人，当前没有一个位置两边都安全。
+
+## 83. 这还不是真正的 discrepancy principle，N1.1 必须先有 flow-off 标定
+
+N1.0 的 synthetic noise scale 来自 simulator 配置，不是实验测得的噪声协方差。exact
+camera-block 求逆的是 `(AA^T)_camera`，它描述 forward geometry 的谱结构，也不是 detector
+noise covariance。更关键的是，在当前 full-row-rank 的欠定算子下，camera bias 可以被某个
+三维场修正精确解释；只看一帧 `y`，算法没有信息判断它到底是物理场还是偏差。
+
+所以真正的 N1.1 需要每台相机同一条件至少 50 帧未经平均的 flow-off repeats，按时间块严格
+拆成 covariance fit、calibration、selection 和 lock audit，并永久留一台 camera 或一组 rays。
+先用这些数据拟合低参数 whitener `W`，比较固定 covariance-PCGLS、Huber/Student-t 和
+TV/H1；只有经典方法先得到 joint-safe 区，才学习 beta、proximal step 或 bounded stopping
+operator。
+
+完整判决见 [N1.0 observable stopping NO-GO](jacru_n1_0_observable_stopping_no_go_2026-07-18.md)。
