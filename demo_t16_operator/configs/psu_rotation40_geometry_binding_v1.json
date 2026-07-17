@@ -1,0 +1,43 @@
+{
+  "schema_version": "psu-rotation40-geometry-binding-config-1.0",
+  "status": "FROZEN_BEFORE_ROTATION40_GEOMETRY_BINDING",
+  "dataset": {
+    "doi": "10.26208/1VE2-5C19",
+    "rotation_degrees": 40,
+    "camera_ids": [2, 3, 4],
+    "image_shape_hw": [2160, 2560],
+    "row_order": "MATLAB_COLUMN_MAJOR_MATCHING_AUTHOR_EPSU_COLON"
+  },
+  "geometry_source": {
+    "member": "cal_pkg/Results/1-6-26/BackgroundData_180Deg_backplane_Camset_40Degree.mat",
+    "bytes": 752860846,
+    "sha256": "afa6f8217797b2572fa4b71c20508d44e6df39e953c158ea2002fb6610f75c43",
+    "required_variables": ["modelAngle", "Arotcam", "ray_dir"]
+  },
+  "camera_mapping": {
+    "2": {"support_zero_view_id": 0, "support_50_view_id": 3, "support_90_view_id": 6},
+    "3": {"support_zero_view_id": 1, "support_50_view_id": 4, "support_90_view_id": 7},
+    "4": {"support_zero_view_id": 2, "support_50_view_id": 5, "support_90_view_id": 8}
+  },
+  "derivation_contract": {
+    "vector_transform": "row_vector_at_rotation_equals_row_vector_at_zero_degrees_times_Arotcam_top_left_3x3",
+    "ray_direction_source": "official_rotation40_ray_dir_cells",
+    "origin_and_projection_source": "verified_zero_degree_support_rows_rotated_by_official_Arotcam",
+    "aperture_basis_source": "zero_degree_support_basis_rotated_by_official_Arotcam",
+    "scalar_source": "same_camera_support_Dfvec_Csys_all_Rapvec_after_exact_0_50_90_invariance_audit"
+  },
+  "tolerances": {
+    "rotation_matrix_orthogonality_max_abs": 1e-12,
+    "known_rotation_row_max_abs": 1e-6,
+    "official_rotation40_ray_max_abs": 1e-6,
+    "scalar_invariance_max_abs": 0.0
+  },
+  "claim_firewall": {
+    "development_only": true,
+    "final_rotations_opened": false,
+    "experimental_field_truth_available": false,
+    "reprojection_scored_by_this_stage": false,
+    "algorithm_superiority": false,
+    "publish_raw_geometry_or_measurements": false
+  }
+}

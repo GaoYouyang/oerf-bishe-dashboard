@@ -1778,3 +1778,90 @@ false。这里的好消息不是“模型赢了”，而是失败模式已经变
 **讲人话：**现在我们有了一张更难作弊的考卷。CGLS 很会把投影对上，却还原不好场；强 Sobolev 能把场误差压低，却牺牲重投影。下一算法真正要解决的是这个 Pareto 矛盾，同时守住 front 和 OOD 尾部。旧 free/nullspace corrector、positive spectral direction、简单 residual router 都已有 NO-GO，不能换名字重做。
 
 当前准确状态：**E1 independent-renderer interface PASS；算法胜出未测试。** 完整数字、图、代码与复现命令见 [PSU-S16 独立解析 renderer 说明](psu_s16_analytic_renderer_smoke_2026-07-17.md)。
+
+## 60. rotation-40：第一次真正打开未见风洞观测，但先停在正确的门前
+
+这一轮按预注册只打开 PSU flight-body 数据集的 `rotation 40` 开发文件，rotation 30、
+60、70、80 仍然封存。archive SHA、member bytes、CRC 和抽取后 SHA 全部匹配；公开仓库
+仍不包含作者原始数组。
+
+文件不是三维真值，而是七台相机各自的 `u_new / v_new` 位移和两类 mask。相机 2、3、4
+已按作者脚本的符号与 mask 规则生成私有 shard。它们的 active vector RMS 分别为
+`0.2462 / 0.3143 / 0.3257 px`，而 ambient RMS 已有
+`0.1756 / 0.1812 / 0.2092 px`。这提醒我们：真实测量中的背景偏差并不小，不能把合成实验
+里简单的 1% 白噪声当成完整现实。
+
+但我们没有立刻画一张“真实泛化成功”图。这个 MAT 缺 rotation-40 的 camera extrinsics、
+background extrinsics、逐像素 ray directions 和同一行绑定的 camera constants。没有这些
+量，预测和像素行可能错位，任何 residual 都可能是伪数字。对应的官方背景标定成员正在
+单独取回；几何通过作者脚本行级复核之前，`reprojection_scored=false`、
+`algorithm_superiority=false`。
+
+另一个小而关键的补丁是把前沿指标从“正好一个界面”扩展到 `0–2` 个界面：现在使用
+Hungarian 一一匹配，同时报告 ASSD、HD95、F1@1dx/2dx、法向角、漏检和假阳性；无界面
+场景预测出界面也会被罚。新旧指标回归共 **16 passed**。这让下一条“平滑背景 + 显式
+phase/interface”候选可以在 plume、单激波和双界面三种情形下接受同一套严格审计，而不
+会靠只挑最好看的那一道面取巧。
+
+**讲人话：**真实考卷已经拆开到观测这一页，但坐标和题号还没核对完。现在不抢答，
+先把行映射校准好；这比得到一个无法复现的漂亮分数更接近高质量论文。
+
+完整边界见 [rotation-40 开发集说明](psu_rotation40_development_open_2026-07-17.md)。
+
+## 61. 真实未见视角第一次闭环：基线不是“差一点”，而是几乎解释不了
+
+rotation-40 的官方 calibration member 已单独下载并通过 ZIP CRC、字节数和 SHA 核验。
+它给出的 `Arotcam` 是绕 x 轴 40° 的旋转；相机 2、3、4 全部 5,529,600 条官方 ray 与
+support 0° 行旋转后的最大误差只有 `2.5e-8–3.2e-8`。support 自己的 0/50/90 已知旋转
+关系也在 `6.2e-8` 内，`Dfvec / Csys / Rap` 则逐行 exact invariant。
+
+更关键的是，接线时发现了一个会让所有结果作废的 bug：MATLAB `epsu(:)'` 是列优先，
+旧 observation shard 却用了 NumPy 默认行优先。现在已改成显式 Fortran order，并用非
+对称数组测试锁死；旧 shard 没有参与正式评分。
+
+冻结合同随后在 3,847,050 条真实 active rays 上执行一次 full forward：
+
+| 范围 | relative-L2 | measured vector RMS | predicted vector RMS |
+|---|---:|---:|---:|
+| Camera 2 | 0.8242 | 0.2462 px | 0.0950 px |
+| Camera 3 | 0.9829 | 0.3143 px | 0.0719 px |
+| Camera 4 | 0.9856 | 0.3257 px | 0.0855 px |
+| pooled | **0.9596** | **0.3027 px** | **0.0826 px** |
+
+所有射线命中 B0，预测有限；6.98 秒和约 1.28 GB 峰值内存说明 Mac 当前完全够用。真正
+的问题不是算得慢，而是九视角 support 场几乎不能解释未见 40° 观测，尤其 cameras 3/4
+的预测幅值远小于实测。
+
+**讲人话：**以前我们只知道“三维反演可能不泛化”，现在第一次有一把真实尺子量出缺口。
+下一算法不能只在 support 上刷 loss；它必须处理可变相机集合、camera-wise 系统偏差、
+几何 OOD 和界面先验，并在 synthetic truth 上守住 field/front，在真实数据上守住 held-out
+reprojection。这正是“集合条件 INR + 显式数据一致性展开 + phase/interface 表示”比单独
+DeepONet/FNO 更有研究价值的原因。
+
+完整方法、结果图和可写/不可写边界见
+[rotation-40 真实重投影基线](psu_rotation40_real_reprojection_baseline_2026-07-17.md)。
+
+## 62. 原创性红队：level set 不是创新，分裂更新机制才可能是
+
+最高模型的只读红队把最危险的自我欺骗先划掉了：smooth background + level set 在 2017
+年前后已有层析先例；phase-field/perimeter 也有成熟逆问题文献；DeepONet 对移动间断的
+线性 reconstruction 下界、FNO/shift-DeepONet 的 nonlinear 对手都已发表；NeRIF 已经占据
+BOST 坐标网络与梯度一致性；finite-aperture forward 和 TDBOST 也分别有明确先例。
+
+所以“给 FNO 多一个 `phi` 通道”很难成为论文。现在暂称 **JACRU** 的候选只保留一个可能
+有价值的机制：利用
+
+```text
+grad n = smooth-side terms + [n] delta(phi) grad phi
+```
+
+把 smooth fields、interface geometry、jump amplitude 和 camera bias 分开更新，每层都经过
+exact cone-ray data consistency；set encoder 只处理可变相机集合，FNO 只做 smooth proximal。
+
+这条路线也被严格限制为先做“单激波 + 已知上游状态”。接触面、火焰面和爆轰反应区的
+跳跃条件不同，不能为了数据量把它们混成一个标签。真正的机制对照必须包含 phase-only
+optimization；若 JACRU 只赢 CGLS、却赢不了同参数化的非神经 phase baseline，就没有资格
+声称神经更新机制有贡献。
+
+完整一手文献、强基线、失败门和给师兄的问题见
+[JACRU 原创性红队](jump_aware_cone_ray_unrolling_novelty_gate_2026-07-17.md)。

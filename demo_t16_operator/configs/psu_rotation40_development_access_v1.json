@@ -1,0 +1,49 @@
+{
+  "schema_version": "psu-rotation40-development-access-config-1.0",
+  "status": "FROZEN_BEFORE_FIRST_ROTATION40_EXTRACTION",
+  "purpose": "OPEN_ONLY_THE_PREDECLARED_ROTATION40_DEVELOPMENT_RUN_AFTER_SUPPORT_INTERFACE_FREEZE",
+  "dataset": {
+    "doi": "10.26208/1VE2-5C19",
+    "archive_filename": "molnar-et-al-open-source-bos-tomography-dataset-2025-05.zip",
+    "archive_bytes": 4095655393,
+    "archive_sha256": "91c17faa7804ed0c56d28e27fc22407b818dce3b00e960533b19210b986cef82",
+    "member": "molnar-et-al-open-source-bos-tomography-dataset-2025/data/DEF_PROC/HSOF_DEF_ROT_040.mat",
+    "member_uncompressed_bytes": 587535524,
+    "member_compressed_bytes": 586637270,
+    "member_crc32_hex": "d27a7306",
+    "rotation_degrees": 40
+  },
+  "frozen_anchors": [
+    {
+      "path": "demo_t16_operator/configs/psu_heldout_camera_protocol_v1.json",
+      "sha256": "0c77d7e427a15eec1a5a6b87b1c31ca875d0c93fd0a084191c9d3180f3b1b774"
+    },
+    {
+      "path": "docs/psu_b0_cached_reference_run_public_summary.json",
+      "sha256": "e9a5777cda1943b326831893ae81ba239a238cc6f1efd41327dbd47b789cc845"
+    },
+    {
+      "path": "demo_t16_operator/configs/psu_rotation40_forward_mismatch_prereg_v1.json",
+      "sha256": "61fed8135493db1840845e1c6bd07c57cd17ca50d84bfd1c77473b5584c4a308"
+    }
+  ],
+  "authorized_uses": [
+    "schema_and_loader_audit",
+    "development_only_same_camera_new_rotation_reprojection",
+    "development_only_model_family_and_stopping_rejection",
+    "forward_mismatch_localization_without_field_truth"
+  ],
+  "forbidden_uses": [
+    "opening_any_other_rotation_member",
+    "calling_rotation40_confirmatory_or_final_evidence",
+    "claiming_experimental_field_l2_or_unique_three_dimensional_truth",
+    "publishing_raw_or_derived_measurement_arrays",
+    "using_rotation40_as_an_independent_camera_layout_audit"
+  ],
+  "public_export": {
+    "include_archive_or_member_hashes": true,
+    "include_local_paths": false,
+    "include_measurement_values": false,
+    "include_extracted_arrays": false
+  }
+}

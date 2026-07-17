@@ -160,6 +160,7 @@
       <a href="operator-learning/">学习主页</a>
       <a href="#d0-root-cause">当前结论</a>
       <a href="#spatial-benchmark">空间基准</a>
+      <a href="#real-rotation40">真实观测</a>
       <a href="#algorithm">安全算子</a>
       <a href="#candidates">算法路线</a>
       <a href="document_reader.html?doc=docs%2Fcancellation_aware_operator_learning_literature_map_2026-07-17.md">文献地图</a>
@@ -172,10 +173,10 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">Factor Gate B 与直接预测质量的 Metric-A v1/v2 均已严格 NO-GO；v3 的安全 partition 也只在 4/8 个 fresh rigs 胜出。RCCF v4 首轮已完成四路隔离、Bonferroni 风险/coverage 界、actual-operator 审计和可观测回退：136 次证书审计零违反，但校准风险上界 0.991667、coverage 下界 0.000697，获准接管为 0，8/8 fresh 全部回退。新的 PSU-S16 已用独立解析梯度 renderer 建立真实九视角几何上的 E1 空间基线；它通过接口验证，但 CGLS 平均 field-L2 仍为 0.7087，因此算法胜出尚未发生。</p>
+    <p class="lead">研究主线已收敛到“界面感知三维重建 + 几何集合条件算子”。PSU-S16 用独立解析梯度 renderer 建立了不与逆算子共用离散链的空间考卷；随后 rotation-40 的 3,847,050 条真实 active 射线完成逐行几何绑定。冻结 support CGLS 场在未见真实旋转上的 pooled reprojection relative-L2 为 0.9596，暴露出明确的跨视角泛化缺口。当前只有真实问题与可复现基线，没有新算法胜出，更没有实验三维真值。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip coral">FACTOR GATE B · NO-GO</span><span class="chip blue">DIAG-D0 · 61 CHECKS PASS</span><span class="chip coral">METRIC-A V2 · NO AUTH</span><span class="chip coral">RCCF V4 · MICRO NO-GO</span><span class="chip blue">PSU-S16 · E1 INTERFACE PASS</span><span class="chip blue">55 SPATIAL TESTS PASS</span><span class="chip coral">H2 / 4D · DATA WAIT</span><span class="chip coral">REAL / WIN · NOT AUTHORIZED</span></div>
+        <div class="chips"><span class="chip blue">ROT40 · 3.85M REAL RAYS</span><span class="chip coral">B0 OOD REL-L2 · 0.9596</span><span class="chip blue">PSU-S16 · E1 INTERFACE PASS</span><span class="chip blue">ROW BINDING · VERIFIED</span><span class="chip coral">RCCF V4 · MICRO NO-GO</span><span class="chip coral">REAL / 3D TRUTH · ABSENT</span><span class="chip coral">METHOD WIN · NOT AUTHORIZED</span></div>
         <h2>先用负结果锁定问题，再写最小可证伪算法</h2>
         <p>Gate B 在两个 opened replicate、八类解析反应场上比较 scalar、view-block、voxel-factor 三条严格同调用 A-only PDHG，并把 full-support Sobolev graph-PCGLS 作为 nonbinding headroom。K=32 时四者 field-L2 分别为 <strong>0.996031 / 0.995241 / 0.982876 / 0.421042</strong>。factor 在 15/16 个样本略优于 scalar，却只改善 <strong>1.321%</strong>，远低于冻结的 25% 机制门；front-F1 还只有 <strong>0.1366</strong>。结论是当前静态 factor metric 没有闭合有限预算差距；不能因 graph 支持与先验不同而把差距归结为唯一 Krylov 因果机制。</p>
         <ol>
@@ -1024,6 +1025,46 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
   --config demo_t16_operator/configs/psu_s16_analytic_renderer_smoke_v1.json \
   --output-dir demo_t16_operator/results/psu_s16_analytic_renderer_smoke_public</pre>
           <p>当前运行约 2–3 秒，Mac 不是瓶颈。32³、更多独立簇和神经基线只有在 16³ 机制门出现足够 headroom 后再开放。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="real-rotation40" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">PSU rotation-40 · real development observations · 2026-07-17</div>
+          <h2>真实未见视角已经闭环，冻结 support 场几乎解释不了它</h2>
+          <p>只打开预注册的 rotation-40 development member；rotation 30/60/70/80 仍封存。MATLAB column-major 位移行、官方 <code>ray_dir</code>、physical cameras 2/3/4 与 support 0° 几何完成逐像素绑定。下面是固定 CGLS-4 support 场的一次全 active-row forward，不是候选模型结果。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_rotation40_real_reprojection_baseline_2026-07-17.md">读完整实验边界</a>
+          <a class="button" href="docs/psu_rotation40_b0_reprojection_public_summary.json">结果 JSON</a>
+          <a class="button" href="docs/psu_rotation40_geometry_binding_public_summary.json">几何审计 JSON</a>
+          <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_rotation40_b0_reprojection_public%2Fdiagnostic.pdf">论文图 PDF</a>
+        </div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><b>3,847,050</b><span>cameras 2/3/4 全部真实 active rays；没有按位移大小抽样</span></div>
+        <div class="metric"><b>0.9596</b><span>pooled vector reprojection relative-L2；真实 image-space 基线很弱</span></div>
+        <div class="metric"><b>0.824 / 0.983 / 0.986</b><span>camera 2/3/4；物理相机差异不能被一个全局尺度掩盖</span></div>
+        <div class="metric"><b>0.3027 vs 0.0826 px</b><span>measured / predicted vector RMS；冻结场系统性低估幅值</span></div>
+        <div class="metric"><b>6.98 s</b><span>32³、16 aperture samples、float64、119 chunks 的单次 forward</span></div>
+        <div class="metric"><b>1.28 GB</b><span>峰值 RSS；当前 Mac 足够做轻量候选和完整基线筛选</span></div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_rotation40_b0_reprojection_public/diagnostic.png" alt="PSU rotation-40 真实观测上冻结 support CGLS 场的逐相机重投影误差、信号幅值和残差尾部" width="2376" height="810" loading="lazy" decoding="async" /><figcaption>真实 BOS development 观测的 aggregate-only 图。无原始位移、几何、预测数组或重建体；无 volumetric truth、无候选比较、无 final rotation。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip blue">REAL OBSERVATIONS</span><span class="chip blue">ROW MAP VERIFIED</span><span class="chip coral">BASELINE OOD FAIL</span><span class="chip coral">NO 3D TRUTH</span></div>
+          <h3 style="margin-top:10px;">这把真实尺子把选题变具体了</h3>
+          <ol>
+            <li><strong>目标不再是“做一个 FNO”。</strong>要解决 support 拟合无法迁移到未见相机几何与旋转的问题。</li>
+            <li><strong>输入必须含几何集合。</strong>相机位姿、数量、孔径、可靠度和 measurement mask 应由 permutation-invariant encoder 处理。</li>
+            <li><strong>输出不能只求平滑。</strong>平滑侧场与 shock/interface 奇异贡献需要分开更新，并通过 exact cone-ray forward 约束。</li>
+            <li><strong>两类证据必须并行。</strong>synthetic/CFD 报 field、H1、ASSD/HD95；真实数据只报 held-out image consistency。</li>
+            <li><strong>禁止便宜取巧。</strong>不能在 rotation-40 上拟合一个尺度因子后称泛化；任何 camera-wise correction 都要在 final rotations 一次性审计。</li>
+          </ol>
+          <div class="alert critical"><strong>当前最强论文假设</strong><span>不是 smooth + level set 的简单拼接，而是 Jump-Aware Cone-Ray Unrolling：分别更新两侧光滑场、界面几何与跳跃强度；每层保留有限孔径数据一致性，并对可变相机集合和界面零空间给出消融与不确定性。</span></div>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjump_aware_cone_ray_unrolling_novelty_gate_2026-07-17.md">JACRU 原创性红队</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">学习日志 61–62</a><a class="button" href="demo_t16_operator/configs/psu_rotation40_b0_reprojection_v1.json">冻结评分合同</a><a class="button" href="demo_t16_operator/results/psu_rotation40_b0_reprojection_public/README.md">公开资产边界</a></div>
         </div>
       </div>
     </section>
