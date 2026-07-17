@@ -159,6 +159,7 @@
     <nav class="nav" aria-label="主导航">
       <a href="operator-learning/">学习主页</a>
       <a href="#d0-root-cause">当前结论</a>
+      <a href="#spatial-benchmark">空间基准</a>
       <a href="#algorithm">安全算子</a>
       <a href="#candidates">算法路线</a>
       <a href="document_reader.html?doc=docs%2Fcancellation_aware_operator_learning_literature_map_2026-07-17.md">文献地图</a>
@@ -171,10 +172,10 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">Factor Gate B 与直接预测质量的 Metric-A v1/v2 均已严格 NO-GO；v3 的安全 partition 也只在 4/8 个 fresh rigs 胜出。RCCF v4 首轮已完成四路隔离、Bonferroni 风险/coverage 界、actual-operator 审计和可观测回退：136 次证书审计零违反，但校准风险上界 0.991667、coverage 下界 0.000697，获准接管为 0，8/8 fresh 全部回退。因此回退协议有效，selector 效用仍为 NO-GO。</p>
+    <p class="lead">Factor Gate B 与直接预测质量的 Metric-A v1/v2 均已严格 NO-GO；v3 的安全 partition 也只在 4/8 个 fresh rigs 胜出。RCCF v4 首轮已完成四路隔离、Bonferroni 风险/coverage 界、actual-operator 审计和可观测回退：136 次证书审计零违反，但校准风险上界 0.991667、coverage 下界 0.000697，获准接管为 0，8/8 fresh 全部回退。新的 PSU-S16 已用独立解析梯度 renderer 建立真实九视角几何上的 E1 空间基线；它通过接口验证，但 CGLS 平均 field-L2 仍为 0.7087，因此算法胜出尚未发生。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip coral">FACTOR GATE B · NO-GO</span><span class="chip blue">DIAG-D0 · 61 CHECKS PASS</span><span class="chip coral">METRIC-A V2 · NO AUTH</span><span class="chip coral">RCCF V4 · MICRO NO-GO</span><span class="chip blue">46 RCCF TESTS PASS</span><span class="chip coral">H2 / 4D · DATA WAIT</span><span class="chip coral">REAL / WIN · NOT AUTHORIZED</span></div>
+        <div class="chips"><span class="chip coral">FACTOR GATE B · NO-GO</span><span class="chip blue">DIAG-D0 · 61 CHECKS PASS</span><span class="chip coral">METRIC-A V2 · NO AUTH</span><span class="chip coral">RCCF V4 · MICRO NO-GO</span><span class="chip blue">PSU-S16 · E1 INTERFACE PASS</span><span class="chip blue">55 SPATIAL TESTS PASS</span><span class="chip coral">H2 / 4D · DATA WAIT</span><span class="chip coral">REAL / WIN · NOT AUTHORIZED</span></div>
         <h2>先用负结果锁定问题，再写最小可证伪算法</h2>
         <p>Gate B 在两个 opened replicate、八类解析反应场上比较 scalar、view-block、voxel-factor 三条严格同调用 A-only PDHG，并把 full-support Sobolev graph-PCGLS 作为 nonbinding headroom。K=32 时四者 field-L2 分别为 <strong>0.996031 / 0.995241 / 0.982876 / 0.421042</strong>。factor 在 15/16 个样本略优于 scalar，却只改善 <strong>1.321%</strong>，远低于冻结的 25% 机制门；front-F1 还只有 <strong>0.1366</strong>。结论是当前静态 factor metric 没有闭合有限预算差距；不能因 graph 支持与先验不同而把差距归结为唯一 Krylov 因果机制。</p>
         <ol>
@@ -950,6 +951,79 @@
           </ol>
           <div class="alert critical"><strong>development screen 仍判不能冻结</strong><span>294 个有限候选中，development 选出的宽松 veto 能拒掉两条 correlated-noise shock harm，却仍接受两条 low-frequency plume harm；事后加约 0.6% 的 6-view margin 虽可能抓住 plume，但属于 fresh leakage，禁止使用。</span></div>
           <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_b0_residual_risk_postopen_diagnosis_2026-07-16.md">读完整缺陷与 v2 路线</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_multiveto_development_screen_2026-07-16.md">读 Multi-Veto 开发筛选</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_b0_multiveto_development_screen_public_summary.json">筛选 JSON</a><a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_b0_residual_risk_postopen_diagnosis%2Fpsu_b0_residual_risk_postopen_diagnosis_figure.pdf">诊断图 PDF</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="spatial-benchmark" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">PSU-S16 · independent analytic renderer · 2026-07-17</div>
+          <h2>先建立一张不和逆算子共用离散链的三维考卷</h2>
+          <p>四类连续反应流形态代理直接给出 <code>q(x)</code> 与手写解析 <code>grad q(x)</code>；真实 PSU 九视角几何上的 QMC-64 有限孔径积分负责“出题”，QMC-8 体素有限差分算子负责“答题”。它移除一种 inverse crime，但仍是 synthetic morphology，不是 CFD 或实验三维真值。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_s16_analytic_renderer_smoke_2026-07-17.md">读完整说明</a>
+          <a class="button" href="demo_t16_operator/results/psu_s16_analytic_renderer_smoke_public/summary.json">结果 JSON</a>
+          <a class="button" href="demo_t16_operator/results/psu_s16_analytic_renderer_smoke_public/metric_rows.csv">逐场 CSV</a>
+          <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_s16_analytic_renderer_smoke_public%2Fdiagnostic.pdf">论文图 PDF</a>
+        </div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><b>0.1185%</b><span>QMC-32 对 QMC-64 最大相对观测差；解析积分已较稳定</span></div>
+        <div class="metric"><b>0.7087</b><span>CGLS-12 四场平均 field relative-L2；不是一个好看的成功数字</span></div>
+        <div class="metric"><b>1.4290</b><span>相对解析真值梯度的平均 H1-seminorm error</span></div>
+        <div class="metric"><b>0.062–0.070</b><span>support reprojection relative-L2；再次证明投影拟合不等于三维准确</span></div>
+        <div class="metric"><b>55 / 55</b><span>解析梯度、renderer、空间指标、支持域门和原算子相关测试</span></div>
+        <div class="metric"><b>5 / 5</b><span>公开结果包 checksum；独立 validator 通过</span></div>
+      </div>
+      <div class="pipeline" aria-label="PSU-S16 独立 renderer 流水线">
+        <div><b>Continuous phantom</b><span>plume、wrinkled interface、compression sheet、shock-expansion pair</span></div>
+        <div><b>Analytic gradient</b><span>不调用 inverse 的有限差分或三线性插值</span></div>
+        <div><b>QMC-64 truth</b><span>固定分母有限孔径积分；QMC-32 独立收敛审计</span></div>
+        <div><b>QMC-8 inverse</b><span>真实九视角 PSU support geometry；16³ voxel-gradient operator</span></div>
+        <div><b>Spatial metrics</b><span>field、H1、ASSD、HD95、1/2-voxel surface-F1、normal angle</span></div>
+        <div><b>Claim firewall</b><span>E1 wiring only；无 CFD、实验、fresh、FNO/DeepONet superiority</span></div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <figure><img src="demo_t16_operator/results/psu_s16_analytic_renderer_smoke_public/diagnostic.png" alt="PSU-S16 独立解析 renderer 四类形态真值、CGLS重建、误差与梯度剖面对照" width="2992" height="2728" loading="lazy" decoding="async" /><figcaption>真实 PSU 九视角几何上的 synthetic E1 基线。每行依次是真值切片、CGLS-12、signed error 与中心线梯度；图明确不作实验或算法优越性主张。</figcaption></figure>
+        <div class="panel">
+          <div class="chips"><span class="chip blue">E1 INTERFACE PASS</span><span class="chip coral">NO METHOD WIN</span><span class="chip coral">NOT EXPERIMENTAL</span></div>
+          <h3 style="margin-top:10px;">这张图真正改变了什么</h3>
+          <ol>
+            <li>低重投影残差与高 field/H1 误差同时出现，三维不可辨识性不再只是口头警告。</li>
+            <li>旧 top-10% exact-overlap F1 降级；前沿改用物理距离容差、ASSD/HD95 与法向角。</li>
+            <li>support gate 现有 axis、robust diagonal、shrinkage Mahalanobis、kNN 四种 score；conformal 只校冻结阈值。</li>
+            <li>常数 feature、单位、grid、renderer、sampling context 任一不匹配都 exact fallback。</li>
+            <li>实验数据没有 volumetric truth 时禁止计算 field/H1/surface 指标。</li>
+          </ol>
+          <div class="alert critical"><strong>两条太小的想法已先筛掉</strong><span>48 场 opened development probe 中，逐样本 Sobolev 标量强度 oracle 只比最佳固定强度多 1.711% headroom；加入各向异性轴权重也只有 2.690%。它们可做 baseline，暂不够当论文主创新。</span></div>
+          <div class="actions"><a class="button" href="demo_t16_operator/results/psu_s16_analytic_renderer_smoke_public/README.md">结果边界</a><a class="button" href="demo_t16_operator/configs/psu_s16_analytic_renderer_smoke_v1.json">冻结配置</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">学习日志第 59 节</a></div>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:14px;">
+        <div class="panel">
+          <h3>下一候选要解的不是“选一个强度”</h3>
+          <p>CGLS 的观测拟合好、场恢复差；强 Sobolev 的场误差低、重投影变差。新模型必须在这个 Pareto 前沿上提供可观测、可回退、跨形态稳定的改善，而不是再训练一个直接输出漂亮切片的黑箱。</p>
+          <div class="formula">min field + H1 + surface risk &nbsp; subject to &nbsp; held-out reprojection cap + equal call ledger + support-conformal fallback</div>
+          <ol>
+            <li>fallback 先用 validation-selected Sobolev/PCGLS，禁止弱 Landweber。</li>
+            <li>学习器只读 <code>y, sigma, view mask, geometry, AᵀWy</code>，不读 family 或 truth。</li>
+            <li>完整 phantom/geometry/noise 父簇分割；ray、voxel、frame 不能当独立样本。</li>
+            <li>先在 16³ development 证伪，再决定是否训练 32³ 神经对手。</li>
+          </ol>
+        </div>
+        <div class="panel">
+          <h3>本机复现</h3>
+          <pre>PYTHONPATH=. .venv/bin/python site_tools/run_psu_s16_analytic_renderer_smoke.py \
+  --config demo_t16_operator/configs/psu_s16_analytic_renderer_smoke_v1.json \
+  --view-root private_library/external_datasets/psu_bost_flight_body/all_view_geometry_audit \
+  --output-dir demo_t16_operator/results/psu_s16_analytic_renderer_smoke_public
+
+PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smoke.py \
+  --config demo_t16_operator/configs/psu_s16_analytic_renderer_smoke_v1.json \
+  --output-dir demo_t16_operator/results/psu_s16_analytic_renderer_smoke_public</pre>
+          <p>当前运行约 2–3 秒，Mac 不是瓶颈。32³、更多独立簇和神经基线只有在 16³ 机制门出现足够 headroom 后再开放。</p>
         </div>
       </div>
     </section>

@@ -1,0 +1,48 @@
+{
+  "schema_version": "psu-s16-analytic-renderer-smoke-config-1.0",
+  "status": "FROZEN_BEFORE_FIRST_EXECUTION_DEVELOPMENT_ONLY",
+  "frozen_date": "2026-07-17",
+  "evidence_level": "E1_SYNTHETIC_INTERFACE_SMOKE",
+  "geometry": {
+    "source": "PSU_NINE_SUPPORT_VIEW_GEOMETRY_PRIVATE_LOCAL_COPY",
+    "bounds_m": {
+      "minimum_xyz": [-0.11, -0.11, -0.11],
+      "maximum_xyz": [0.11, 0.11, 0.11]
+    },
+    "grid_size": 16,
+    "view_count": 9,
+    "rays_per_view": 64,
+    "truth_renderer_qmc_samples": 64,
+    "renderer_audit_qmc_samples": 32,
+    "inverse_operator_qmc_samples": 8
+  },
+  "phantoms": [
+    {"family": "smooth_plume", "seed": 1103},
+    {"family": "wrinkled_density_interface", "seed": 1201},
+    {"family": "oblique_compression_sheet", "seed": 1301},
+    {"family": "shock_expansion_pair", "seed": 1409}
+  ],
+  "noise": {
+    "model": "INDEPENDENT_GAUSSIAN_PER_RAY_COMPONENT_WITH_VIEW_RMS_SCALE",
+    "relative_to_clean_view_rms": 0.01,
+    "seeds": [5101, 5209, 5303, 5407]
+  },
+  "solver": {
+    "method": "WEIGHTED_CGLS",
+    "fixed_stages": 12,
+    "device": "cpu",
+    "dtype": "float32"
+  },
+  "metrics": {
+    "surface_tolerance_voxels": [1.0, 2.0],
+    "front_band_half_width_voxels": 1.5,
+    "top10_gradient_f1_is_primary": false
+  },
+  "claim_boundary": {
+    "is_experimental_reconstruction": false,
+    "is_cfd_validation": false,
+    "is_neural_operator_superiority": false,
+    "is_fresh_confirmatory_result": false,
+    "may_validate_independent_renderer_wiring": true
+  }
+}
