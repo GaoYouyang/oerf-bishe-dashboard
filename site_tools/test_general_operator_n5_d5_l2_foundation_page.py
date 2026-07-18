@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PAGE = ROOT / "general_operator_research_lab.html"
 REPORT = ROOT / "docs/n5_d5_l2_private_replay_foundation_2026-07-19.md"
+L2B_REPORT = ROOT / "docs/n5_d5_l2b_dual_v2_mechanism_2026-07-19.md"
 PLAN = ROOT / "data_templates/n5_d5_private_replay_plan.placeholder.json"
 
 
@@ -19,14 +20,14 @@ def test_page_orders_l2_after_l1_and_before_archived_d4c() -> None:
     html = PAGE.read_text(encoding="utf-8")
     section = _section()
 
-    assert 'href="#n5-d5-l2-foundation">D5 L2 回放门</a>' in html
+    assert 'href="#n5-d5-l2-foundation">D5 L2-B / 双路径门</a>' in html
     assert (
         html.index('href="#n5-d5-private-readiness"')
         < html.index('href="#n5-d5-l2-foundation"')
         < html.index('href="#n5-d4c"')
     )
-    assert "source commit 96419d7" in section
-    assert "PRIVATE REPLAY FOUNDATION READY，EXECUTION 仍锁定" in section
+    assert "N5-D5-L2-B describe-only + independent dual-path L1-v2" in section
+    assert "development test double 可跑，生产路径在授权前 fail closed" in section
 
 
 def test_page_explains_exact_triple_and_dual_authorization_budgets() -> None:
@@ -37,7 +38,7 @@ def test_page_explains_exact_triple_and_dual_authorization_budgets() -> None:
         "2 + 36 + 36 + 2 × (2 + 2 + 2 × 2 × 3) = 106 requests",
         "TRIPLE TOTAL 156",
         "DUAL TOTAL 106",
-        "BUILD_DUAL_PATH_L1_V2",
+        "dual-v2 已实现并接入 L2-A",
         "不得用 wrapper 相减补第三路",
     ):
         assert phrase in section
@@ -46,23 +47,41 @@ def test_page_explains_exact_triple_and_dual_authorization_budgets() -> None:
 def test_page_links_public_l2_code_templates_tests_and_beginner_report() -> None:
     section = _section()
     for target in (
+        "document_reader.html?doc=docs%2Fn5_d5_l2b_dual_v2_mechanism_2026-07-19.md",
         "document_reader.html?doc=docs%2Fn5_d5_l2_private_replay_foundation_2026-07-19.md",
+        "data_templates/n5_d5_l2b_describe_authorization.schema.json",
+        "data_templates/n5_d5_minimum_bost_interface_dual_v2.schema.json",
         "data_templates/n5_d5_private_replay_plan.schema.json",
         "data_templates/n5_d5_private_replay_plan.placeholder.json",
         "data_templates/n5_d5_private_physical_contract.placeholder.json",
         "data_templates/n5_d5_private_environment_lock.placeholder.json",
         "site_tools/n5_d5_private_replay_foundation.py",
-        "site_tools/test_n5_d5_private_replay_foundation.py",
+        "site_tools/n5_d5_l2b_describe_runner.py",
+        "site_tools/n5_d5_private_lab_readiness_dual_v2.py",
+        "site_tools/test_n5_d5_l2b_describe_runner.py",
+        "site_tools/test_n5_d5_private_lab_readiness_dual_v2.py",
+        "anchor=120-l2-b-与双路径-v2-能演练-只问两次-当前-mac-仍不准真实执行",
     ):
         assert target in section
 
 
 def test_page_and_report_keep_execution_science_and_training_locked() -> None:
     section = _section()
-    report = REPORT.read_text(encoding="utf-8")
+    report = REPORT.read_text(encoding="utf-8") + L2B_REPORT.read_text(
+        encoding="utf-8"
+    )
 
     for phrase in (
-        "0 ADAPTER CALLS",
+        "81 PROTOCOL / HOST-GATE TESTS PASS",
+        "PRODUCTION HOST BLOCKED",
+        "0 REAL ADAPTER CALLS",
+        "POST_LAUNCH_EXEC_REPLACEMENT_NOT_DENIED",
+        "PRIVATE_INPUT_ROOT_EXTERNAL_MUTATION_NOT_DENIED",
+        "DURABLE_NONCE_LEDGER_ROOT_NOT_PROTECTED",
+        "OUTPUT_ROOT_EXTERNAL_MUTATION_NOT_DENIED",
+        "BACKEND_CAPABILITY_ATTESTATION_NOT_EXTERNALLY_VERIFIED",
+        "global_nonce_uniqueness_proven=false",
+        "production_execution_authorized=false",
         "NO LAB RESULT",
         "formal_replay_authorized=false",
         "这不是算法成功，也不是论文结果",

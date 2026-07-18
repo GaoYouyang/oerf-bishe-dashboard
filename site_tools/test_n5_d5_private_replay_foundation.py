@@ -364,6 +364,52 @@ def test_l1_report_hash_and_status_tampering_are_blocked(
     assert "L1_STATIC_READY_FORMAL_LOCKED" in _foundation_codes(report)
 
 
+def test_snapshot_mode_never_rereads_plan_content_by_path(
+    private_foundation: dict[str, object], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    plan_path = private_foundation["plan_path"]
+    payload = plan_path.read_bytes()
+    metadata = plan_path.stat()
+    identity = (
+        int(metadata.st_dev),
+        int(metadata.st_ino),
+        int(metadata.st_size),
+        int(metadata.st_mtime_ns),
+    )
+    original_read_text = Path.read_text
+
+    def guarded_read_text(self: Path, *args: object, **kwargs: object) -> str:
+        if self == plan_path:
+            raise AssertionError("snapshot mode reopened plan content by path")
+        return original_read_text(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_text", guarded_read_text)
+    report = build_foundation_report(
+        plan_path,
+        repo_root=private_foundation["repo"],
+        enforce_public_committed=True,
+        plan_snapshot_payload=payload,
+        plan_snapshot_stat_identity=identity,
+    )
+
+    assert report["foundation_ready"] is True
+
+
+def test_l1_claim_authorizations_require_the_complete_false_key_set(
+    private_foundation: dict[str, object],
+) -> None:
+    l1 = copy.deepcopy(private_foundation["l1_report"])
+    l1["claim_authorizations"].pop("publication")
+    _write_json(private_foundation["l1_path"], l1)
+    plan = copy.deepcopy(private_foundation["plan"])
+    plan["l1_report"]["sha256"] = sha256_file(private_foundation["l1_path"])
+    _write_json(private_foundation["plan_path"], plan)
+
+    report = _report(private_foundation)
+
+    assert "L1_CLAIMS_CLOSED" in _foundation_codes(report)
+
+
 def test_l1_report_digest_mismatch_is_blocked(
     private_foundation: dict[str, object],
 ) -> None:

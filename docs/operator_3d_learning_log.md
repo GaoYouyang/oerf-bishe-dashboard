@@ -3245,3 +3245,65 @@ L2 局部通过只说明已覆盖的离散义务没失败。真实 BOST 物理�
 真实几何、标定、rig/session split、field relative-L2、逐 rig tail、Schur violation 与端到端成本上
 另行验证。完整推导与下一步见
 [N5-D5-L2-A 私有回放基础](n5_d5_l2_private_replay_foundation_2026-07-19.md)。
+
+## 120. L2-B 与双路径 v2：能演练“只问两次”，当前 Mac 仍不准真实执行
+
+119 节结束时，网页里还有两个明显空白：没有原生 direct 时只会提示“去建 dual L1”，真正的双路径
+Schema 还不存在；两次 describe 也只有流程图，没有可以拒绝第三次请求、输出洪泛和 token 重放的 runner。
+这一轮把这两件事补成了代码，但没有借机执行任何真实 renderer。
+
+双路径没有去改旧三路径 v1。新 `dual-v2` 只接受 curved 和 straight，逐项复用 v1 的 identity、field、
+observation、probe、state、tolerance、privacy 和 claims 合同，同时把成本锁成 2 describe、28 forward、
+4 JVP、2 VJP，共 36。AST 还会抓直接或先赋值再做的 curved-straight endpoint subtraction，以及
+`np.subtract/operator.sub` 和 `direct_residual` callable marker。成本也不再只和 36 这个常量对表，而是从
+2 条路径、2 个 tangent、1 个 cotangent 和 3 个 h 独立推导。这样“没有第三条路”不会被末端相减悄悄改写。24 项 dual 测试通过，
+其中一项把合法 dual L1 接入 L2-A，机器重算得到 `2+36+36+32=106`；所有 formal authorization 仍为 false。
+
+L2-B 的权限比 primary 小得多。授权文件只能写 `[describe]` 和 request count 2，不能 auto-chain；父进程
+发出的两条 request 绑定 authorization hash 与 one-time nonce hash，response 必须逐字等于事前 descriptor，
+累计 ledger 只能从 describe 1 走到 2。nonce marker 在已打开账本 inode 内用 `O_EXCL` 消费，所以同一 inode 内复制授权文件也不能再跑一次；这不等于全局账本根已经防同 UID 替换。
+
+第一次独立红队没有客气，指出了四个实质问题：路径 hash 后重开有 TOCTOU；nonce 没参与全局去重；
+descriptor 可以塞一个假的 `physical_correctness_authorized=true`；沙箱的读取面和进程树结论写得太强。
+修正后，authorization/plan/foundation 用同一 FD 完成 fstat、bounded read 和 hash，L2-A 重算后再比 inode/
+bytes；输出目录通过父目录 FD 原子创建并持有 inode；descriptor 改成禁止额外字段的严格 Schema；attestation
+明确写 `sandbox_read_surface_closed_world=false`、`process_exec_replacement_denied=false`、
+`detached_descendant_absence_globally_proven=false`。
+
+第二次红队继续发现：plan 虽已 snapshot，L2-A 仍按路径再读一次；nonce marker 不是 directory-FD 相对写；
+output FD 关闭后又按路径复验；L1 claims 缺键可能被空字典蒙混；更关键的是，允许 `process-exec` 后，恶意
+adapter 可以 exec 到另一个同样会输出合法两行 JSON 的程序。前三个竞态现已改成 snapshot bytes、ledger FD 和
+同一 output FD 上的闭世界验证，claims 也必须七键完整且逐个严格为 false。
+
+本机 fixture 观察到写文件、TCP、fork/subprocess、宿主环境、继承 FD、sibling temp read 均被拒；hang、
+stdout/stderr flood、第三行、forward label、duplicate key、NaN 和深嵌套都会 fail closed。但精确比对 response
+无法证明同一 PID 没有 exec 换程序，所以这次没有再靠一句 limitation 放行：默认生产入口会在读取授权、消费
+nonce 和创建输出前返回 blocker。测试只能 monkeypatch 内部 capability provider，状态固定为
+`L2B_DEVELOPMENT_TEST_DOUBLE_PASS_NO_SCIENCE_AUTHORIZATION`；公开调用签名没有 fixture、bypass、override、unsafe
+或 insecure 参数。macOS `sandbox-exec` 已 deprecated，系统读取又使用 broad allow 加前缀排除，因此当前 Mac
+没有生产 L2-B pass。
+
+第三次红队又指出：若把 development bypass 暴露成公开参数，复制 runner 就可能绕门；持有 ledger FD 只能保证
+当前 inode 内唯一，不能声称全局唯一；同样，输出在持有 FD 上验证也不能证明验证后不受同 UID 外部改写；AST
+还可能漏掉 lambda direct marker 和 `from operator import sub as minus`。现在公开 bypass 已移除，生产 capability
+必须同时证明 `process_exec_replacement_denied`、`durable_nonce_ledger_root_protected` 和
+`output_root_external_mutation_denied`。当时三项均不满足，因此 blocker 分别是
+`POST_LAUNCH_EXEC_REPLACEMENT_NOT_DENIED`、`DURABLE_NONCE_LEDGER_ROOT_NOT_PROTECTED` 和
+`OUTPUT_ROOT_EXTERNAL_MUTATION_NOT_DENIED`；报告诚实写 `global_nonce_uniqueness_proven=false`、
+`nonce_uniqueness_scope=CURRENT_OPEN_LEDGER_INODE_ONLY`。AST 的两个漏项也已补测试。
+
+第四次独立审计没有发现 P1，但找出四类 P2：元组解包和字典下标可绕过 endpoint subtraction heuristic；
+导入别名和 `setattr` 可绕过 direct marker；私有输入中间目录仍有同 UID 替换窗口；进程内 capability provider
+本身不是生产安全边界。前两类已加入 AST 和反例测试，limitations 改成“当前 heuristic 未检出”，不再写“callable
+不存在”。生产门则增加 `private_input_root_external_mutation_denied` 与
+`backend_capability_attestation_externally_verified`，当前五项能力都不满足；development monkeypatch 只被标为
+`PYTEST_MONKEYPATCHED_DEVELOPMENT_TEST_DOUBLE`。
+
+聚合测试现在是 81：旧 L1/L2-A 39、L2-B test double/host gate 18、dual-v2 24。新增测试明确证明 L2-A snapshot 模式不再按路径读取 plan 内容，正式流程在持有的 output FD 上完成闭世界验证，不会关闭后按路径重开；直接运行 CLI 也只返回结构化 host blocker，不读取授权或喷 traceback。这个数字不含一个真实 BOST 物理实验。
+真实 adapter、匿名 field、geometry/calibration、动态 ray/sample cost、primary、validator、decoder、三维 inverse、
+DeepONet/FNO/FFNO 训练仍全未发生。下一步不是继续堆 toy，而是把 dual/native-direct 问题和轻量 describe
+entrypoint 发给师兄审核，同时另行实现并红队验证能禁止 post-launch exec replacement、保护私有输入根/持久账本根/输出根并具备外部 capability attestation 的 backend。即使师兄先给
+出私有 callable，当前 Mac 也不创建或消费真实 describe 授权。
+
+完整威胁模型、36/106 推导、测试表、限制和师兄问题见
+[L2-B 与 dual-path v2 机制说明](n5_d5_l2b_dual_v2_mechanism_2026-07-19.md)。

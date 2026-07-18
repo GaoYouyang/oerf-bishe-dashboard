@@ -1,0 +1,328 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaoyouyang.github.io/oerf-bishe-dashboard/data_templates/n5_d5_minimum_bost_interface_dual_v2.schema.json",
+  "title": "N5-D5 minimum BOST dual-path callable interface v2",
+  "description": "An independent no-native-direct protocol for exactly curved and straight callables. It preserves the frozen three-path v1 evidence and forbids endpoint subtraction from being relabeled as a native residual path.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "protocol_variant",
+    "native_direct_residual_supported",
+    "identity",
+    "adapter",
+    "field",
+    "observation",
+    "paths",
+    "probe_plan",
+    "state_contract",
+    "engineering_tolerances",
+    "cost_contract",
+    "residual_contract",
+    "callable_contract",
+    "privacy",
+    "status_precedence",
+    "claim_authorizations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "n5-d5-minimum-bost-interface-dual-2.0"
+    },
+    "record_kind": {
+      "const": "LAB_ANONYMOUS_INTERFACE_DUAL_PATH"
+    },
+    "protocol_variant": {
+      "const": "dual_path_no_native_direct_v2"
+    },
+    "native_direct_residual_supported": {
+      "const": false
+    },
+    "identity": {
+      "type": "object"
+    },
+    "adapter": {
+      "type": "object"
+    },
+    "field": {
+      "type": "object"
+    },
+    "observation": {
+      "type": "object"
+    },
+    "paths": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "$ref": "#/$defs/dualPath"
+      },
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "required": [
+              "role"
+            ],
+            "properties": {
+              "role": {
+                "const": "curved"
+              }
+            }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "required": [
+              "role"
+            ],
+            "properties": {
+              "role": {
+                "const": "straight"
+              }
+            }
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      ]
+    },
+    "probe_plan": {
+      "type": "object"
+    },
+    "state_contract": {
+      "type": "object"
+    },
+    "engineering_tolerances": {
+      "type": "object"
+    },
+    "cost_contract": {
+      "$ref": "#/$defs/dualCostContract"
+    },
+    "residual_contract": {
+      "$ref": "#/$defs/residualContract"
+    },
+    "callable_contract": {
+      "$ref": "#/$defs/callableContract"
+    },
+    "privacy": {
+      "type": "object"
+    },
+    "status_precedence": {
+      "const": [
+        "NONFINITE",
+        "CONTRACT",
+        "PATH_ALIAS",
+        "COST",
+        "REPEATABILITY",
+        "BRANCH",
+        "STRUCTURE",
+        "FD",
+        "ADJOINT",
+        "LOW_SIGNAL_UNRESOLVED",
+        "PROTOCOL_OBLIGATIONS_MET"
+      ]
+    },
+    "claim_authorizations": {
+      "$ref": "#/$defs/claimAuthorizations"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "nonemptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "operationSupport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "forward",
+        "jvp",
+        "vjp"
+      ],
+      "properties": {
+        "forward": {
+          "const": true
+        },
+        "jvp": {
+          "const": true
+        },
+        "vjp": {
+          "const": true
+        }
+      }
+    },
+    "dualPath": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "path_id",
+        "callable_id",
+        "semantic_digest_sha256",
+        "operation_support"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "curved",
+            "straight"
+          ]
+        },
+        "path_id": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "callable_id": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "semantic_digest_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "operation_support": {
+          "$ref": "#/$defs/operationSupport"
+        }
+      }
+    },
+    "dualCostContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "describe_calls",
+        "forward_api_calls",
+        "jvp_api_calls",
+        "vjp_api_calls",
+        "primary_total_requests",
+        "all_calls_must_be_reported",
+        "ledger_must_be_cumulative",
+        "cost_attestation",
+        "maximum_stderr_bytes"
+      ],
+      "properties": {
+        "describe_calls": {
+          "const": 2
+        },
+        "forward_api_calls": {
+          "const": 28
+        },
+        "jvp_api_calls": {
+          "const": 4
+        },
+        "vjp_api_calls": {
+          "const": 2
+        },
+        "primary_total_requests": {
+          "const": 36
+        },
+        "all_calls_must_be_reported": {
+          "const": true
+        },
+        "ledger_must_be_cumulative": {
+          "const": true
+        },
+        "cost_attestation": {
+          "const": "source_instrumented_private_reviewed"
+        },
+        "maximum_stderr_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65536
+        }
+      }
+    },
+    "residualContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "native_direct_residual",
+        "endpoint_output_subtraction_forbidden",
+        "derived_residual_output_permitted",
+        "residual_evidence_scope"
+      ],
+      "properties": {
+        "native_direct_residual": {
+          "const": false
+        },
+        "endpoint_output_subtraction_forbidden": {
+          "const": true
+        },
+        "derived_residual_output_permitted": {
+          "const": false
+        },
+        "residual_evidence_scope": {
+          "const": "two_endpoint_callables_only"
+        }
+      }
+    },
+    "callableContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtime_direction_mode",
+        "precomputed_probe_arrays_are_sufficient",
+        "same_discrete_backend_required",
+        "branch_state_returned",
+        "diagnostic_state_returned"
+      ],
+      "properties": {
+        "runtime_direction_mode": {
+          "const": "arbitrary_runtime_x_v_q"
+        },
+        "precomputed_probe_arrays_are_sufficient": {
+          "const": false
+        },
+        "same_discrete_backend_required": {
+          "const": true
+        },
+        "branch_state_returned": {
+          "const": true
+        },
+        "diagnostic_state_returned": {
+          "const": true
+        }
+      }
+    },
+    "claimAuthorizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "real_bost_interface",
+        "physical_forward_correctness",
+        "derivative_correctness",
+        "reconstruction",
+        "algorithm_superiority",
+        "generalization",
+        "publication"
+      ],
+      "properties": {
+        "real_bost_interface": {
+          "const": false
+        },
+        "physical_forward_correctness": {
+          "const": false
+        },
+        "derivative_correctness": {
+          "const": false
+        },
+        "reconstruction": {
+          "const": false
+        },
+        "algorithm_superiority": {
+          "const": false
+        },
+        "generalization": {
+          "const": false
+        },
+        "publication": {
+          "const": false
+        }
+      }
+    }
+  }
+}

@@ -45,12 +45,20 @@ PUBLIC_FOUNDATION_SOURCES = (
     "site_tools/validate_n5_d5_minimum_interface_bridge.py",
     "site_tools/n5_d5_private_lab_readiness.py",
     "site_tools/test_n5_d5_private_lab_readiness.py",
+    "data_templates/n5_d5_minimum_bost_interface_dual_v2.schema.json",
+    "data_templates/n5_d5_lab_interface_dual_v2.placeholder.json",
+    "site_tools/n5_d5_private_lab_readiness_dual_v2.py",
+    "site_tools/test_n5_d5_private_lab_readiness_dual_v2.py",
     PLAN_SCHEMA_RELATIVE,
     PLAN_PLACEHOLDER_RELATIVE,
     ENVIRONMENT_LOCK_PLACEHOLDER_RELATIVE,
     PHYSICAL_CONTRACT_PLACEHOLDER_RELATIVE,
     "site_tools/n5_d5_private_replay_foundation.py",
     "site_tools/test_n5_d5_private_replay_foundation.py",
+    "data_templates/n5_d5_l2b_describe_authorization.schema.json",
+    "data_templates/n5_d5_l2b_describe_authorization.placeholder.json",
+    "site_tools/n5_d5_l2b_describe_runner.py",
+    "site_tools/test_n5_d5_l2b_describe_runner.py",
 )
 EXPECTED_PRIVATE_PAYLOAD_FILES = (
     "requests.jsonl",
@@ -315,6 +323,95 @@ def _private_file(
         "label": label,
         "sha256": sha256_file(path),
         "bytes": path.stat().st_size,
+    }
+
+
+def _private_snapshot_file(
+    repo_root: Path,
+    private_root: Path,
+    path: Path,
+    label: str,
+    audit: Audit,
+    *,
+    payload: bytes,
+    stat_identity: tuple[int, int, int, int],
+) -> dict[str, Any] | None:
+    """Audit one already-opened snapshot without reopening it for content."""
+    inside = _lexically_under(path, private_root) and _resolved_under(
+        path, private_root
+    )
+    audit.add(
+        f"{label.upper()}_UNDER_PRIVATE_ROOT",
+        inside,
+        f"{label} stays under private_library lexically and after resolution",
+    )
+    if not inside:
+        return None
+    no_symlink = not _contains_symlink(path, private_root)
+    audit.add(
+        f"{label.upper()}_NO_SYMLINK_COMPONENT",
+        no_symlink,
+        f"{label} and its path components are not symlinks",
+    )
+    flags = os.O_RDONLY
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    metadata: os.stat_result | None = None
+    descriptor = -1
+    try:
+        descriptor = os.open(path, flags)
+        candidate = os.fstat(descriptor)
+        candidate_identity = (
+            int(candidate.st_dev),
+            int(candidate.st_ino),
+            int(candidate.st_size),
+            int(candidate.st_mtime_ns),
+        )
+        if candidate_identity == stat_identity:
+            metadata = candidate
+    except OSError:
+        metadata = None
+    finally:
+        if descriptor >= 0:
+            os.close(descriptor)
+    regular = (
+        no_symlink
+        and metadata is not None
+        and stat.S_ISREG(metadata.st_mode)
+        and int(metadata.st_size) == len(payload)
+    )
+    audit.add(
+        f"{label.upper()}_REGULAR_FILE",
+        regular,
+        f"{label} still matches the caller-held regular-file snapshot",
+    )
+    if not regular or metadata is None:
+        return None
+    single_link = metadata.st_nlink == 1
+    audit.add(
+        f"{label.upper()}_NOT_HARDLINKED",
+        single_link,
+        f"{label} has exactly one filesystem link",
+    )
+    relative = _relative(repo_root, path)
+    ignored = _git(repo_root, "check-ignore", "-q", "--", relative).returncode == 0
+    tracked = (
+        _git(repo_root, "ls-files", "--error-unmatch", "--", relative).returncode == 0
+    )
+    audit.add(
+        f"{label.upper()}_GIT_IGNORED",
+        ignored,
+        f"{label} is protected by a Git ignore rule",
+    )
+    audit.add(
+        f"{label.upper()}_NOT_TRACKED",
+        not tracked,
+        f"{label} is absent from the public Git index",
+    )
+    return {
+        "label": label,
+        "sha256": sha256_bytes(payload),
+        "bytes": len(payload),
     }
 
 
@@ -676,6 +773,7 @@ def _config_capability_and_budget(
         and cost_contract.get("forward_api_calls") == expected_forward
         and cost_contract.get("jvp_api_calls") == expected_jvp
         and cost_contract.get("vjp_api_calls") == expected_vjp
+        and cost_contract.get("primary_total_requests", primary) == primary
     )
     audit.add(
         "L1_COST_CONTRACT_MATCHES_CAPABILITY",
@@ -752,6 +850,8 @@ def build_foundation_report(
     *,
     repo_root: Path = ROOT,
     enforce_public_committed: bool = True,
+    plan_snapshot_payload: bytes | None = None,
+    plan_snapshot_stat_identity: tuple[int, int, int, int] | None = None,
 ) -> dict[str, Any]:
     repo_root = repo_root.resolve()
     private_root = (repo_root / "private_library").resolve()
@@ -762,17 +862,35 @@ def build_foundation_report(
         audit,
         enforce_committed=enforce_public_committed,
     )
-    plan_entry = _private_file(
-        repo_root,
-        private_root,
-        plan_path,
-        "private_plan",
-        audit,
-    )
+    if (plan_snapshot_payload is None) != (plan_snapshot_stat_identity is None):
+        raise ValueError("plan snapshot payload and stat identity must be supplied together")
+    if plan_snapshot_payload is None:
+        plan_entry = _private_file(
+            repo_root,
+            private_root,
+            plan_path,
+            "private_plan",
+            audit,
+        )
+    else:
+        assert plan_snapshot_stat_identity is not None
+        plan_entry = _private_snapshot_file(
+            repo_root,
+            private_root,
+            plan_path,
+            "private_plan",
+            audit,
+            payload=plan_snapshot_payload,
+            stat_identity=plan_snapshot_stat_identity,
+        )
     plan: dict[str, Any] | None = None
     if plan_entry is not None:
         try:
-            value = json.loads(plan_path.read_text(encoding="utf-8"))
+            if plan_snapshot_payload is None:
+                text = plan_path.read_text(encoding="utf-8")
+            else:
+                text = plan_snapshot_payload.decode("utf-8")
+            value = json.loads(text)
             if isinstance(value, dict):
                 plan = value
             else:
@@ -851,19 +969,60 @@ def build_foundation_report(
         except (OSError, UnicodeDecodeError, json.JSONDecodeError):
             audit.add("L1_REPORT_PARSE", False, "L1 report is not valid JSON")
     if l1_report is not None:
+        expected_direct = bool(
+            plan["capability_profile"]["direct_residual_supported"]
+        )
+        if expected_direct:
+            l1_status_ready = (
+                l1_report.get("status")
+                == "STATIC_PRIVATE_INTAKE_READY_FORMAL_REPLAY_LOCKED"
+                and l1_report.get("ready_for_private_describe_probe") is True
+                and l1_report.get("formal_53_call_replay_authorized") is False
+                and int(l1_report.get("blocker_count", -1)) == 0
+            )
+            l1_detail = (
+                "three-path L1 report is static-ready while the 53-call replay remains locked"
+            )
+        else:
+            l1_status_ready = (
+                l1_report.get("status")
+                == "STATIC_PRIVATE_DUAL_PATH_INTAKE_READY_FORMAL_REPLAY_LOCKED"
+                and l1_report.get("protocol_variant")
+                == "dual_path_no_native_direct_v2"
+                and l1_report.get("capability_status")
+                == "NATIVE_DIRECT_RESIDUAL_UNAVAILABLE"
+                and l1_report.get("path_status")
+                == "EXACTLY_CURVED_AND_STRAIGHT"
+                and l1_report.get("wrapper_subtraction_status")
+                == "FORBIDDEN_AND_NOT_DETECTED_BY_STATIC_HEURISTIC"
+                and l1_report.get("direct_residual_marker_status")
+                == "ABSENT_BY_STATIC_HEURISTIC"
+                and l1_report.get("ready_for_private_describe_probe") is True
+                and l1_report.get("formal_dual_primary_36_call_replay_authorized")
+                is False
+                and l1_report.get("formal_triple_primary_53_call_replay_authorized")
+                is False
+                and l1_report.get("formal_replay_authorized") is False
+                and l1_report.get("primary_cost", {}).get("total") == 36
+                and l1_report.get("path_count") == 2
+                and int(l1_report.get("blocker_count", -1)) == 0
+            )
+            l1_detail = (
+                "dual-path L1-v2 report is static-ready while both 36/53-call replays remain locked"
+            )
         audit.add(
             "L1_STATIC_READY_FORMAL_LOCKED",
-            l1_report.get("status")
-            == "STATIC_PRIVATE_INTAKE_READY_FORMAL_REPLAY_LOCKED"
-            and l1_report.get("ready_for_private_describe_probe") is True
-            and l1_report.get("formal_53_call_replay_authorized") is False
-            and int(l1_report.get("blocker_count", -1)) == 0,
-            "L1 report is static-ready while formal replay remains locked",
+            l1_status_ready,
+            l1_detail,
         )
         audit.add(
             "L1_CLAIMS_CLOSED",
             isinstance(l1_report.get("claim_authorizations"), dict)
-            and not any(l1_report["claim_authorizations"].values()),
+            and set(l1_report["claim_authorizations"]) == set(CLAIM_KEYS)
+            and all(
+                l1_report["claim_authorizations"][key] is False
+                for key in CLAIM_KEYS
+            ),
             "L1 report keeps every scientific claim closed",
         )
         _verify_l1_public_attestation(repo_root, l1_report, audit)
@@ -1176,8 +1335,8 @@ def build_foundation_report(
     )
     audit.add(
         "L2B_ISOLATED_DESCRIBE_RUNNER_IMPLEMENTED",
-        False,
-        "L2-A does not execute the adapter; an isolated describe runner is still required",
+        True,
+        "a separately authorized isolated describe-only runner is now public and content-addressed; L2-A still does not execute it",
         severity="warning",
     )
     audit.add(
@@ -1247,11 +1406,11 @@ def _final_report(
     plan_digest = None
     if plan is not None:
         plan_digest = sha256_bytes(canonical_json(plan).encode("utf-8"))
-    capability_mismatch = "L1_CAPABILITY_PROFILE_MATCHES" in {
-        item["code"] for item in foundation_blockers
-    }
+    blocker_codes = {item["code"] for item in foundation_blockers}
+    capability_mismatch = "L1_CAPABILITY_PROFILE_MATCHES" in blocker_codes
+    l1_status_mismatch = "L1_STATIC_READY_FORMAL_LOCKED" in blocker_codes
     needs_dual_l1 = (
-        capability_mismatch
+        (capability_mismatch or l1_status_mismatch)
         and isinstance(plan, dict)
         and isinstance(plan.get("capability_profile"), dict)
         and plan["capability_profile"].get("direct_residual_supported") is False
@@ -1271,6 +1430,7 @@ def _final_report(
         "execution_policy_declared": foundation_ready and not execution_blockers,
         "private_describe_probe_authorized": False,
         "formal_replay_authorized": False,
+        "formal_36_call_replay_authorized": False,
         "formal_53_call_replay_authorized": False,
         "adapter_executed": False,
         "public_foundation_commit": public_commit,

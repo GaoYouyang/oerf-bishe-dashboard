@@ -6,6 +6,8 @@
 
 **当前状态：** `PRIVATE_REPLAY_FOUNDATION_IMPLEMENTED`、`ADAPTER_NOT_EXECUTED`、`FORMAL_REPLAY_LOCKED`、`MODEL_TRAINING_LOCKED`
 
+> **后续进度（同日）：** 本文记录冻结的 L2-A 基础。其后已经独立实现 dual-path L1-v2 与 L2-B describe-only development test double，并完成聚合 `81 passed` 的静态/fixture/host-gate 测试。四轮红队确认当前 macOS backend 不满足五项生产能力：禁止 post-launch exec replacement、保护私有输入根、保护持久 nonce 账本根、保护输出根、外部验证 backend capability。因此默认生产入口会在读取授权前 fail closed；真实 adapter 仍未收到，也没有运行私有 describe。新状态、红队修复和限制见 [L2-B 与 dual-path v2 说明](n5_d5_l2b_dual_v2_mechanism_2026-07-19.md)。本文第 12 节的“尚未实现”清单保留为当时快照，不再代表最新代码状态。
+
 ## 1. 先说人话结论
 
 以前网页把“53 次请求”写得太像真实接口验证的总成本。严格拆开后，53 只是一轮三路径基础回放自身：

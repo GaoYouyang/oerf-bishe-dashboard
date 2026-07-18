@@ -170,7 +170,7 @@
       <a href="operator-learning/">学习主页</a>
       <a href="#n5-d5">N5-D5 接口桥</a>
       <a href="#n5-d5-private-readiness">D5 私有接线</a>
-      <a href="#n5-d5-l2-foundation">D5 L2 回放门</a>
+      <a href="#n5-d5-l2-foundation">D5 L2-B / 双路径门</a>
       <a href="#n5-d4c">D4c 历史前置</a>
       <a href="#n5-d4b">D4b 冻结失败</a>
       <a href="#d0-root-cause">当前结论</a>
@@ -204,7 +204,7 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">当前只做一条垂直主线：把何远哲师兄的曲光线 BOST/NeRIF forward 接成可核验、可拒答的离散算子，再进入 decoder-chain、三维重建和算子学习。最新 N5-D5 要求的是<strong>接受任意运行时 <code>x/v/q</code> 的 curved/straight/direct forward、JVP 与 VJP callable</strong>，不是预先算好的两个 Jv 和一个 Jᵀq 数组。公开合成门已经用固定探针跑通接口协议；L2-A 又冻结了私有依赖、物理元数据、未知探针和完整授权预算，但真实 adapter 仍未执行，七类科学结论全部锁定。</p>
+    <p class="lead">当前只做一条垂直主线：把何远哲师兄的曲光线 BOST/NeRIF forward 接成可核验、可拒答的离散算子，再进入 decoder-chain、三维重建和算子学习。最新 N5-D5 要求的是<strong>接受任意运行时 <code>x/v/q</code> 的 curved/straight forward、JVP 与 VJP callable</strong>；有原生 direct-residual 才进入三路径，没有就诚实使用独立 dual-v2。公开合成门、L2-A、dual-v2 和两次 describe 的 development runner 已完成协议/恶意 fixture 测试；第二轮红队确认当前 Mac 无法禁止 post-launch exec replacement，因此生产入口在消费授权前主动拒绝。真实 adapter 仍未收到、未执行，七类科学结论全部锁定。</p>
     <div class="hero-grid">
       <section class="decision">
         <div class="chips"><span class="chip blue">N5-D5 · COMMIT ee792fd</span><span class="chip gold">53 SYNTHETIC REQUESTS</span><span class="chip blue">42 F · 6 Jv · 3 Jᵀq</span><span class="chip blue">1,370 VALIDATOR ASSERTIONS</span><span class="chip coral">ALL SCIENTIFIC CLAIMS CLOSED</span></div>
@@ -557,7 +557,7 @@
             <tr><td class="pending">REAL_ADAPTER_NOT_RECEIVED</td><td>师兄的真实最小包尚未到位</td><td>完善公开协议与提问</td><td>伪造实验室结果</td></tr>
             <tr><td class="negative">PRIVATE_INTAKE_READINESS_BLOCKED</td><td>位置、Git、Schema、hash、数组或源码静态项失败</td><td>按 blocker code 修复并生成新报告</td><td>绕过门禁运行 adapter</td></tr>
             <tr><td class="positive">STATIC_PRIVATE_INTAKE_READY_FORMAL_REPLAY_LOCKED</td><td>私有文件只在静态入口层未发现 blocker</td><td>人工 source review 与两次 describe 的准备</td><td>36/53 primary、训练或结果外推</td></tr>
-            <tr><td class="pending">FORMAL_REPLAY_LOCKED</td><td>L2-A 静态基础已完成，L2-B 隔离执行仍未实现</td><td>核对能力分支、预算、物理合同并实现 describe-only runner</td><td>把 L1/L2-A 绿灯称为真实接口 pass</td></tr>
+            <tr><td class="pending">FORMAL_REPLAY_LOCKED</td><td>L2-A、dual-v2 与 L2-B development test double 已完成；当前生产 backend 缺五项安全能力</td><td>核对能力分支、人工审阅源码与物理合同，并实现保护进程身份、私有输入/账本/输出根且具外部 attestation 的 backend</td><td>绕过 host gate 签发真实授权，或把 test-double 绿灯称为科学 pass</td></tr>
           </tbody>
         </table>
       </div>
@@ -578,36 +578,45 @@
     <section id="n5-d5-l2-foundation" class="band">
       <div class="section-head">
         <div>
-          <div class="eyebrow">最新机制增量 · N5-D5-L2-A private replay foundation · source commit 96419d7</div>
-          <h2>把“53 次小测试”改写成完整、分阶段、不可少算的私有回放合同</h2>
-          <p>L2-A 仍然不执行 adapter。它先把公开协议、私有输入闭包、物理元数据、能力分支、未知探针、输出白名单和授权预算绑在一起。最关键的修正是：<strong>53 只是三路径主回放自身，不是整个验证总成本</strong>；独立 validator 需要再跑一次基础协议，并额外消费结果前不可知的私有方向和步长。</p>
+          <div class="eyebrow">最新机制增量 · N5-D5-L2-B describe-only + independent dual-path L1-v2</div>
+          <h2>先把两次 describe 练到 fail-closed，再补真正可用的生产隔离 backend</h2>
+          <p>L2-A 负责把来源、物理元数据、输入闭包、未知探针和完整预算冻结；本轮补上了两次 describe 的 development test double，以及不伪造原生 residual 的独立 dual-v2。四轮红队进一步证明：当前 Mac 不能禁止启动后 <code>exec</code> 替换，私有输入根、持久 nonce 账本根与输出根也未受保护，backend capability 还没有外部 attestation，所以生产入口会在读取授权前返回五个 blocker。公开 API 没有 bypass 参数。完整三路径预算仍为 156，双路径为 106；当前全部结果都来自公开 fixture，真实接口仍是零调用。</p>
         </div>
         <div class="actions">
-          <a class="button primary" href="document_reader.html?doc=docs%2Fn5_d5_l2_private_replay_foundation_2026-07-19.md">从零读 L2-A 与预算推导</a>
+          <a class="button primary" href="document_reader.html?doc=docs%2Fn5_d5_l2b_dual_v2_mechanism_2026-07-19.md">从零读 L2-B、双路径与限制</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_l2_private_replay_foundation_2026-07-19.md">L2-A 基础与预算推导</a>
+          <a class="button" href="data_templates/n5_d5_l2b_describe_authorization.schema.json">两次 describe 授权 Schema</a>
+          <a class="button" href="data_templates/n5_d5_minimum_bost_interface_dual_v2.schema.json">dual-v2 接口 Schema</a>
+          <a class="button" href="site_tools/n5_d5_l2b_describe_runner.py">L2-B runner</a>
+          <a class="button" href="site_tools/n5_d5_private_lab_readiness_dual_v2.py">dual-v2 静态审计器</a>
+          <a class="button" href="site_tools/test_n5_d5_l2b_describe_runner.py">L2-B 恶意 fixture 测试</a>
+          <a class="button" href="site_tools/test_n5_d5_private_lab_readiness_dual_v2.py">dual-v2 反例测试</a>
           <a class="button" href="data_templates/n5_d5_private_replay_plan.schema.json">回放计划 Schema</a>
-          <a class="button" href="data_templates/n5_d5_private_replay_plan.placeholder.json">双路径计划模板</a>
+          <a class="button" href="data_templates/n5_d5_private_replay_plan.placeholder.json">回放计划模板</a>
           <a class="button" href="data_templates/n5_d5_private_physical_contract.placeholder.json">物理合同模板</a>
           <a class="button" href="data_templates/n5_d5_private_environment_lock.placeholder.json">依赖锁模板</a>
           <a class="button" href="site_tools/n5_d5_private_replay_foundation.py">L2-A 审计代码</a>
-          <a class="button" href="site_tools/test_n5_d5_private_replay_foundation.py">fail-closed 测试</a>
-          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=119-l2-a把53次不是总成本这件事正式写进了机器合同">讲人话日志 119</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=120-l2-b-与双路径-v2-能演练-只问两次-当前-mac-仍不准真实执行">讲人话日志 120</a>
         </div>
       </div>
 
       <div class="chips" style="margin:12px 0;">
-        <span class="chip blue">37 L1+L2 TESTS PASS</span>
+        <span class="chip blue">81 PROTOCOL / HOST-GATE TESTS PASS</span>
+        <span class="chip blue">L2-B 18</span>
+        <span class="chip blue">DUAL-V2 24</span>
         <span class="chip gold">TRIPLE TOTAL 156</span>
         <span class="chip gold">DUAL TOTAL 106</span>
-        <span class="chip coral">0 ADAPTER CALLS</span>
+        <span class="chip coral">PRODUCTION HOST BLOCKED</span>
+        <span class="chip coral">0 REAL ADAPTER CALLS</span>
         <span class="chip coral">NO LAB RESULT</span>
       </div>
-      <div class="alert critical"><strong>当前状态：PRIVATE REPLAY FOUNDATION READY，EXECUTION 仍锁定</strong><span>代码已经能审计一个未来的私有 bundle，但仓库中没有真实 adapter、没有 L1 绿色实验室报告，也没有 L2 正式结果。<code>private_describe_probe_authorized=false</code>、<code>formal_replay_authorized=false</code>、<code>adapter_executed=false</code>，七类科学授权全部为 false。</span></div>
+      <div class="alert critical"><strong>当前状态：development test double 可跑，生产路径在授权前 fail closed</strong><span>仓库能演练第三条响应、forward 标签、输出洪泛、挂起、当前 ledger inode 内的 nonce 重放、descriptor 夹带结论和多类越界行为；但默认 backend 同时返回 <code>POST_LAUNCH_EXEC_REPLACEMENT_NOT_DENIED</code>、<code>PRIVATE_INPUT_ROOT_EXTERNAL_MUTATION_NOT_DENIED</code>、<code>DURABLE_NONCE_LEDGER_ROOT_NOT_PROTECTED</code>、<code>OUTPUT_ROOT_EXTERNAL_MUTATION_NOT_DENIED</code> 与 <code>BACKEND_CAPABILITY_ATTESTATION_NOT_EXTERNALLY_VERIFIED</code>，不读取真实授权、不消费 nonce、不创建结果目录。<code>production_execution_authorized=false</code>、<code>formal_36_call_replay_authorized=false</code>、<code>formal_53_call_replay_authorized=false</code>、<code>formal_replay_authorized=false</code>。</span></div>
 
       <div class="metric-grid real-metric-grid">
         <div class="metric"><b>156</b><span>原生 direct 三路径：2 describe-only + 53 primary + 53 validator base + 48 private challenge</span></div>
         <div class="metric"><b>106</b><span>没有原生 direct 的双路径：2 + 36 + 36 + 32；不得用 wrapper 相减补第三路</span></div>
-        <div class="metric"><b>5 required roles</b><span>config、adapter source、base input、environment lock、physical contract 的闭世界输入</span></div>
-        <div class="metric"><b>8 private outputs</b><span>固定白名单；拒绝 public summary、额外文件、嵌套目录、symlink、hardlink 与覆盖旧 run</span></div>
+        <div class="metric"><b>2 describes only</b><span>独立授权写死 operations=[describe]、request count 2、auto-chain false</span></div>
+        <div class="metric"><b>inode-scoped nonce</b><span>当前持有账本 inode 内原子防重放；<code>global_nonce_uniqueness_proven=false</code></span></div>
       </div>
 
       <div class="two-col">
@@ -628,7 +637,7 @@
           <ol>
             <li>只检查 curved 与 straight；primary 为 2 describe + 28 forward + 4 JVP + 2 VJP = 36。</li>
             <li>validator 基础回放仍是 36；两路径 private challenge 为 32。</li>
-            <li>当前冻结 L1 Schema 只接受三路径，所以真实接口没有 native direct 时返回 <code>BUILD_DUAL_PATH_L1_V2</code>，先建新的双路径 L1。</li>
+            <li>旧三路径 v1 继续冻结；独立 dual-v2 已实现并接入 L2-A，机器可重算 36 与完整 106。</li>
             <li>不能在 wrapper 末端计算 <code>curved - straight</code>，再声称验证了 residual-native primitive。</li>
           </ol>
           <div class="formula wrap-formula">2 + 36 + 36 + 2 × (2 + 2 + 2 × 2 × 3) = 106 requests</div>
@@ -640,11 +649,11 @@
         <table>
           <thead><tr><th>阶段</th><th>初学者理解</th><th>当前实现</th><th>仍然禁止</th></tr></thead>
           <tbody>
-            <tr><td class="positive">L1 static</td><td>检查包裹、标签、哈希，不开机</td><td>已实现；12 项测试</td><td>describe、forward、重建</td></tr>
-            <tr><td class="pending">L2-A foundation</td><td>冻结谁能运行、要花多少次、结果只能写到哪里</td><td>已实现；L1+L2 共 37 项测试</td><td>任何 adapter 调用或科学结论</td></tr>
-            <tr><td class="pending">L2-B describe-only</td><td>隔离环境中只读两次设备铭牌</td><td>未实现</td><td>forward/JVP/VJP 自动连跑</td></tr>
+            <tr><td class="positive">L1 static</td><td>检查包裹、标签、哈希，不开机</td><td>三路径 v1 冻结；dual-v2 24 项测试并独立推导 36</td><td>describe、forward、重建</td></tr>
+            <tr><td class="positive">L2-A foundation</td><td>冻结谁能运行、要花多少次、结果只能写到哪里</td><td>已实现；兼容诚实双/三路径预算</td><td>任何 adapter 调用或科学结论</td></tr>
+            <tr><td class="pending">L2-B describe-only</td><td>隔离环境中只读两次设备铭牌</td><td>18 项 test-double/host-gate 测试；当前生产 backend 阻塞；真实运行 0 次</td><td>伪造 backend capability 运行真实包，或自动连跑 forward/JVP/VJP</td></tr>
             <tr><td class="pending">Primary replay</td><td>在一个匿名工作点查局部离散自洽</td><td>未授权；36 或 53</td><td>称为物理正确或完整 Jacobian</td></tr>
-            <tr><td class="pending">Validator + private challenge</td><td>第二次重跑并用事前不可知方向查固定答案</td><td>探针机制已实现，隔离执行未实现</td><td>把有限随机探针称为全空间证明</td></tr>
+            <tr><td class="pending">Validator + private challenge</td><td>第二次重跑并用事前不可知方向查固定答案</td><td>探针机制已实现；独立执行与 observed cost 未实现</td><td>把有限随机探针称为全空间证明</td></tr>
             <tr><td class="pending">N2 inverse / training</td><td>多视角三维重建与模型公平比较</td><td>等待真实数据合同、rig split 和 L2 结果</td><td>从 D5 小接口直接开 FNO/DeepONet</td></tr>
           </tbody>
         </table>
@@ -663,16 +672,29 @@
         </div>
       </div>
 
-      <div class="pipeline" aria-label="N5-D5-L2 后续执行路线">
-        <div><b>1 · 当前完成</b><span>L2-A provenance、闭世界输入/输出、能力分支、预算和私有探针机制。</span></div>
-        <div><b>2 · 下一代码门</b><span>实现不继承宿主环境、无网络、只允许两次 describe 的 L2-B runner。</span></div>
-        <div><b>3 · 双路径补丁</b><span>新建 dual-path L1-v2；保留冻结三路径 synthetic 证据，不改历史规则。</span></div>
-        <div><b>4 · 师兄审核</b><span>确认 native direct、任意方向 callable、物理合同和容差依据。</span></div>
-        <div><b>5 · 真实局部门</b><span>分别授权 primary 与 validator；失败也封存，不换 seed 反复抽到好结果。</span></div>
-        <div><b>6 · 才到论文算法</b><span>用真实 failure mode 选择 residual-native、branch-safe 或 derivative-auditable 方法。</span></div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="chips"><span class="chip blue">本机已观察</span><span class="chip gold">fixture only</span></div>
+          <h3 style="margin-top:12px;">这台 Mac 上哪些攻击会被拒绝</h3>
+          <p>测试中，写 stage/HOME/TMP/仓库、TCP、fork/subprocess、宿主自定义环境变量、继承 FD、读取 sibling temp secret 都没有形成合法协议结果；hang、stdout/stderr 洪泛、第三行和 malformed JSON 也 fail closed。输入用固定 FD snapshot 绑定 inode/bytes/hash，输出目录相对父 FD 原子创建并按白名单写入。</p>
+        </div>
+        <div class="panel">
+          <div class="chips"><span class="chip coral">明确未证明</span><span class="chip gold">不要外推</span></div>
+          <h3 style="margin-top:12px;">沙箱不是通用安全证明</h3>
+          <p><code>sandbox-exec</code> 已 deprecated；为启动系统 Python 保留了较宽的 system read，读取面不是 closed-world。profile 允许启动解释器，因此不声称 exec replacement 被禁止；末级 <code>O_NOFOLLOW</code> 不证明私有输入中间目录安全，持有 ledger/output FD 也不证明账本根全局唯一或验证后结果不受同 UID 改写。进程内 capability provider 不是外部 attestation，进程组消失和 <code>RLIMIT_RSS</code> 也不是全局子进程/硬内存证明。</p>
+        </div>
       </div>
 
-      <div class="alert critical"><strong>这不是算法成功，也不是论文结果</strong><span>L2-A 是让未来实验不自欺的证据基础设施。它没有训练模型，没有比较 DeepONet/FNO/FFNO，没有 field relative-L2、逐 rig tail、Schur violation 或端到端成本结果。真正可投稿的创新问题必须由真实 adapter 与多视角 inverse 数据暴露，再在冻结基线和隔离 audit 上验证。</span></div>
+      <div class="pipeline" aria-label="N5-D5-L2 后续执行路线">
+        <div><b>1 · 当前完成</b><span>L2-A、独立 dual-v2 与 L2-B development test double；聚合 81 项协议/fixture/host-gate 测试。</span></div>
+        <div><b>2 · 人工物理门</b><span>师兄确认 native direct、任意方向 callable、几何标定、branch 与容差依据。</span></div>
+        <div><b>3 · 私有静态门</b><span>真实文件只进 private_library；跑 L1 并逐行 source/physical review。</span></div>
+        <div><b>4 · 生产 backend</b><span>验证 exec replacement 被拒、私有输入/账本/输出根受保护并具外部 attestation；当前 Mac 不签真实授权。</span></div>
+        <div><b>5 · 单独 describe</b><span>新 backend 上签发一次性 token，只问两次；通过后仍停下人工复核。</span></div>
+        <div><b>6 · 才到论文算法</b><span>由真实 failure mode 选择 residual-native、branch-safe、decoder-chain 或 operator-learning 创新。</span></div>
+      </div>
+
+      <div class="alert critical"><strong>这不是算法成功，也不是论文结果</strong><span>81 项测试是让未来实验不自欺的协议基础设施，其中 18 项 L2-B 只属于 development test double/host gate。它没有训练模型，没有比较 DeepONet/FNO/FFNO，没有 field relative-L2、逐 rig tail、Schur violation 或端到端成本结果。真正可投稿的创新问题必须由真实 adapter 与多视角 inverse 数据暴露，再在冻结基线和生产隔离 audit 上验证。</span></div>
     </section>
 
     <section id="n5-d4c" class="band">
@@ -3643,7 +3665,7 @@ VD0-B 也已完成。我从 MATLAB find 索引恢复真实 detector row/column�
   </main>
 
   <footer>
-    <p>版本 2026.07.18-N2-PVGR-N2。研究结论以仓库 report/JSON/checksum 为准；页面只做可读映射。最新开发证据表明解析 OCBH 与完整离散 forward-JVP 在 float64 容差内一致并通过 9/9 机制格，但 Picard-1/2 在 matched residual 与当前 Mac CPU worst-case 墙钟汇总上更强；独立审计结论为 <code>PASS WITH WARNINGS — DEVELOPMENT MECHANISM EVIDENCE ONLY</code>。96-cell、reserved family、三维重建、DeepONet/FNO/FFNO 同预算比较、真实 OERF、泛化和论文授权全部保持关闭；N1.9 及更早分支保留为历史证据，其中 N1.9 learner 与新 split 均未启动。受限论文、组内数据、逐射线索引、私有 cache、checkpoint 与原始重建体不进入 GitHub Pages。</p>
+    <p>版本 2026.07.19-N5-D5-L2B-HOST-GATE-DUALV2。研究结论以仓库 report/JSON/checksum 为准；页面只做可读映射。最新增量实现两次 describe 的 development test double，以及不伪造 native residual、能从 schedule 独立推导成本的 dual-v2；聚合 81 项协议/静态/恶意 fixture/host-gate 测试通过。四轮红队确认当前 Mac 缺少禁止 post-launch exec replacement、保护私有输入/持久 nonce 账本/输出根、外部验证 backend capability 共五项生产能力，因此 L2-B 默认在读取授权前阻塞。历史冻结页面基线仍为<strong>版本 2026.07.18-N2-PVGR-N2</strong>，其独立审计状态为 <code>PASS WITH WARNINGS — DEVELOPMENT MECHANISM EVIDENCE ONLY</code>，N1.9 learner 与新 split 均未启动。真实 adapter 调用、36/53 primary、validator、三维重建、DeepONet/FNO/FFNO 同预算比较、真实 OERF、泛化和论文授权全部保持关闭。受限论文、VPN 内容、组内数据、逐射线索引、私有 cache、授权 token、checkpoint 与原始重建体不进入 GitHub Pages。</p>
   </footer>
   <script>
     (() => {
