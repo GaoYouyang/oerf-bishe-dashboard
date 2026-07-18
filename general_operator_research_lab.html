@@ -95,6 +95,8 @@
     .pending { color:var(--gold); font-weight:800; }
     .pending-state { border-top:4px solid var(--gold); }
     .pending-state b { color:var(--gold); }
+    .failed-state { border-top:4px solid var(--coral); }
+    .failed-state b { color:var(--coral); }
     .table-scroll-hint { display:none; margin:8px 2px -4px; color:var(--muted); font-size:12px; font-weight:760; }
     .pipeline { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; margin:14px 0; }
     .pipeline div { position:relative; min-height:112px; padding:12px; border-top:4px solid var(--teal); background:rgba(255,255,255,.94); }
@@ -180,6 +182,7 @@
       <a href="#n2-cvcr-n0">N2 孔径机制门</a>
       <a href="#n2-adrc-n1">N2 自动-离散残差</a>
       <a href="#n2-curved-ray">N2 曲光线与路由</a>
+      <a href="#n2-pvgr-n0">N2 三级路由判决</a>
       <a href="#algorithm">安全算子</a>
       <a href="#candidates">算法路线</a>
       <a href="document_reader.html?doc=docs%2Fcancellation_aware_operator_learning_literature_map_2026-07-17.md">文献地图</a>
@@ -192,24 +195,28 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">当前只做 N2：把 BOST 三维重建中的路径、孔径和梯度计算变成可审计的多保真算子。旧 N1 的规定 bend 已被新的场依赖 RK4 光线替代，完整 trajectory JVP/VJP 在三个既有开发 rig 上通过有限差分、点积、动量守恒和 64→128 步参考检查；但基础无量纲尺度下轨迹项只占方向导数的 0.021%–0.083%，很可能小于真实光流和标定不确定度。压力包络到 30× 才首次出现 &gt;1% 的轨迹/低高失配信号，100× 时全部越出合成视锥。当前主线因此收缩为“拓扑认证的随机高保真纠偏”，机器结论仍是 <code>CURVED_RAY_REHEARSAL_ONLY_RESERVED_FAMILIES_UNOPENED</code>，不授权审计、重建或论文成功。</p>
+    <p class="lead">当前只做 N2：把 BOST 三维重建中的梯度实现、直线近似与场依赖曲光线拆成 <code>L0 / M / H</code> 三级算子，再用条件无偏的稀疏高保真纠偏守住高保真目标。第一轮完整开发已经结束：数值和统计合同 9/9 通过，基础尺度下 <code>M</code> 把轨迹残差方差压到原混合残差的 0.7%–9.2%；但当前低成本风险代理 0/9 过门，Mac 端到端成本反而是全高保真的 2.48–2.51 倍。机器结论是 <code>DEVELOPMENT_ONLY_NO_AUDIT_AUTHORIZATION</code>。下一轮只推进共享状态向量化与一阶轨迹变分预测器，不把 oracle 余量写成算法成功。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">N2 CURVED RAY · E0 REHEARSAL</span><span class="chip gold">3 / 3 NUMERICAL VALIDITY</span><span class="chip coral">NO AUDIT AUTHORIZATION</span><span class="chip gold">BASE TRAJECTORY 0.021%–0.083%</span><span class="chip coral">N2 REAL CONTRACT · 0 / 7</span></div>
-        <h2>当前唯一主线：拓扑认证随机保真路由，不把“曲光线写出来”冒充创新</h2>
-        <p>clean-room 原型已能沿折射率场积分 RK4 曲光线，并把完整轨迹导数与冻结路径导数分开。现在要证伪的不是“程序是否可微”，而是实验室是否存在一个真实窗口：曲光线修正大于测量不确定度，同时还没有改变 support/front 事件或离开标定视锥。只有这个窗口存在，才值得用 <code>L + I/π·(H−L)</code> 做条件无偏的随机高保真纠偏。</p>
+        <div class="chips"><span class="chip blue">N2-PVGR-N0 · TRIFIDELITY</span><span class="chip gold">9 / 9 CONTRACT</span><span class="chip coral">0 / 9 PROXY SCREEN</span><span class="chip coral">NO AUDIT AUTHORIZATION</span><span class="chip gold">ORACLE HEADROOM 4 / 9</span></div>
+        <h2>当前唯一主线：先把三级物理算子做成可靠算法，再谈神经路由和论文胜出</h2>
+        <p>新原型将 automatic-gradient straight ray、central-gradient straight ray 和 central-gradient curved ray 分成三级，并真实执行 Bernoulli 稀疏 high 路线。它证明了三级分解有机制余量，也同时否决了当前曲率风险分数和 Python 证书实现。现在的目标不是调阈值挽救首版，而是先用共享状态消除重复成本，再用一阶轨迹变分直接预测 <code>H−M</code>。</p>
         <ol>
-          <li><strong>求解器证据：</strong>3/3 开发 rig 通过 64→128 步参考、出口/积分一致性、端点动量守恒、全轨迹 JVP 有限差分、VJP 点积和拓扑签名门。</li>
-          <li><strong>物理问题尚未成立：</strong>1× 基础尺度的轨迹 JVP 份额仅 0.021%–0.083%；任何百倍效率上限都可能只是 low/high 几乎相同的封闭体系现象。</li>
-          <li><strong>失效包络：</strong>30× 首次触发 &gt;1% 轨迹份额或输出失配；100× 三个 rig 均越出合成视锥，禁止继续用平滑 VJP 数字掩盖事件失效。</li>
-          <li><strong>新颖性边界：</strong>两级残差、曲光线伴随、有限孔径和一般拓扑处理均已有先例；当前仅剩“BOST 特定证书 + 随机纠偏 + forward/JVP/VJP 同状态”是待核实空位。</li>
+          <li><strong>机制成立：</strong>基础尺度 3/3 rig 的 <code>Var(H−M)/Var(H−L0)</code> 为 0.0068–0.0917，说明先隔离 gradient-mode mismatch 是对的。</li>
+          <li><strong>代理失败：</strong>当前可观测风险分数相对 constant-π 方差门 0/9 通过；smooth narrow 甚至增加约 9.7% 方差。</li>
+          <li><strong>有限余量：</strong>使用真实 <code>|H−M|</code> 的 oracle 分配 4/9 通过，只能证明存在可学习信号，不能作为部署算法。</li>
+          <li><strong>工程失败：</strong>解析查询账本为全 high 的 0.621875 倍，但当前逐 ray Python 证书使实测端到端成本升到 2.48–2.51 倍。</li>
           <li><strong>真实证据仍封存：</strong>必须从师兄取得米制 ROI、折射率/Gladstone-Dale 尺度、相机与背景标定、最大偏折工况、重复图像噪声及独立物理终点。</li>
         </ol>
         <div class="actions" style="margin:14px 0;">
-          <a class="button primary" href="#n2-curved-ray">看最新曲光线与路由证据</a>
+          <a class="button primary" href="#n2-pvgr-n0">看最新三级路由 NO-GO</a>
+          <a class="button" href="#n2-curved-ray">看曲光线前置证据</a>
           <a class="button" href="#n2-adrc-n1">看上一版 N2-ADRC-N1</a>
           <a class="button" href="#n2-cvcr-n0">看冻结的 N0</a>
           <a class="button" href="#n2-contract">打开真实数据合同</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n0_trifidelity_development_2026-07-18.md">三级路由完整报告</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_next_algorithm_candidates_2026-07-18.md">下一代算法候选</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=105-三级路线找到了机制余量但第一版路由和实现都应该判失败">讲人话日志 105</a>
           <a class="button" href="document_reader.html?doc=docs%2Fn2_cvcr_n0_postopen_reference_and_pivot_2026-07-18.md">完整 HOLD 与转向</a>
           <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=104-曲光线导数写对了但基础尺度下它可能小到没有实验意义">讲人话日志 104</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_9_advisor_review_brief_2026-07-18.md">发给师兄的 N1.9 brief</a>
@@ -2064,6 +2071,101 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
             <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=104-曲光线导数写对了但基础尺度下它可能小到没有实验意义">讲人话日志 104</a>
             <a class="button" href="demo_t16_operator/run_n2_adrc_n1_curved_ray_rehearsal.py">运行排练</a>
             <a class="button" href="demo_t16_operator/field_dependent_ray.py">曲光线源码</a>
+          </div>
+        </div>
+        <div id="n2-pvgr-n0" style="margin-top:26px;padding-top:26px;border-top:1px solid var(--line);scroll-margin-top:88px;">
+          <div class="chips"><span class="chip blue">N2-PVGR-N0 · TRIFIDELITY DEVELOPMENT</span><span class="chip gold">9 / 9 CONTRACT</span><span class="chip coral">0 / 9 PROXY SCREEN</span><span class="chip gold">ORACLE HEADROOM 4 / 9</span><span class="chip coral">NO AUDIT AUTHORIZATION</span></div>
+          <h3 style="margin-top:10px;">三级分解找到了机制余量，但当前风险代理与实现都应该判 NO-GO</h3>
+          <p>这是本页最新、也是最重要的一轮负结果。低路线 <code>L0</code> 使用直线光线与 automatic gradient，中路线 <code>M</code> 使用直线光线与 central difference，高路线 <code>H</code> 使用场依赖 RK4 曲光线与 central difference。<code>M</code> 成功隔离了 gradient-mode mismatch；但当前 curvature/tube 风险分数没有预测好 <code>H−M</code>，逐 ray 证书又重复计算了大量状态。结论是保留三级结构，淘汰首版路由器和首版执行方式。</p>
+          <div class="metric-grid real-metric-grid" style="margin-top:12px;">
+            <div class="metric"><b>0.7%–9.2%</b><span>1× 下 <code>Var(H−M)/Var(H−L0)</code>：三级机制有用</span></div>
+            <div class="metric failed-state"><b>0 / 9</b><span>当前 proxy 相对 constant-π 的 10% 方差改善门</span></div>
+            <div class="metric pending-state"><b>4 / 9</b><span>oracle allocation 通过：存在有限、尚未学会的 headroom</span></div>
+            <div class="metric failed-state"><b>2.48–2.51×</b><span>Mac 端到端 / full high：当前实现没有速度价值</span></div>
+          </div>
+          <figure style="margin-top:14px;">
+            <a href="demo_t16_operator/results/n2_pvgr_n0_trifidelity_development_v1/n2_pvgr_n0_trifidelity_development.png" aria-label="打开 N2-PVGR-N0 三级路由开发判决原尺寸图"><img src="demo_t16_operator/results/n2_pvgr_n0_trifidelity_development_v1/n2_pvgr_n0_trifidelity_development.png" alt="N2-PVGR-N0 四联开发判决图，展示三级残差机制、风险代理与 oracle 方差、物理有效性余量和真实成本" width="2520" height="1620" loading="lazy" decoding="async" /></a>
+            <figcaption>四幅图必须一起读：左上证明三级分解在基础尺度有机制余量；右上显示当前 proxy 没有稳定利用它；左下展示强折射时证书 fail closed；右下则否决了当前 Python 实现的加速主张。虚线是预先冻结的开发门，不是事后挑选。</figcaption>
+          </figure>
+          <p class="table-scroll-hint" aria-hidden="true">左右滑动查看完整七列</p>
+          <div class="result-table-wrap" tabindex="0" aria-label="N2-PVGR-N0 三个基础尺度开发 rig 的机制、路由和成本结果，窄屏可左右滑动">
+            <table>
+              <thead><tr><th>开发 rig</th><th>轨迹残差 / 混合残差方差</th><th>proxy / uniform</th><th>oracle / uniform</th><th>严格 future-mask safe</th><th>查询账本 / full H</th><th>Mac 实测 / full H</th></tr></thead>
+              <tbody>
+                <tr><td>smooth narrow</td><td class="positive">0.0481</td><td class="negative">1.0971</td><td class="positive">0.8344</td><td>1 / 64</td><td>0.6219</td><td class="negative">2.51</td></tr>
+                <tr><td>wrinkled wide</td><td class="positive">0.00679</td><td class="pending">0.9734</td><td class="pending">0.9068</td><td>0 / 64</td><td>0.6219</td><td class="negative">2.51</td></tr>
+                <tr><td>smooth wide</td><td class="positive">0.0917</td><td class="pending">0.9943</td><td class="positive">0.6682</td><td>10 / 64</td><td>0.6219</td><td class="negative">2.48</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="two-col" style="margin-top:14px;">
+            <figure>
+              <a href="demo_t16_operator/results/n2_pvgr_n0_trifidelity_development_v1/n2_pvgr_n0_derivative_contract.png" aria-label="打开 N2-PVGR-N0 导数与双副本损失合同原尺寸图"><img src="demo_t16_operator/results/n2_pvgr_n0_trifidelity_development_v1/n2_pvgr_n0_derivative_contract.png" alt="N2-PVGR-N0 导数合同图，展示冻结路由 JVP、VJP 点积、双独立副本损失和损失方向导数误差" width="2160" height="990" loading="lazy" decoding="async" /></a>
+              <figcaption>3/3 基础 rig 的 routed JVP、VJP 点积与双独立副本平方损失合同通过。这说明随机算子可被正确微分；它不补救失败的风险代理，也不等于训练或重建成功。</figcaption>
+            </figure>
+            <div class="panel">
+              <div class="chips"><span class="chip blue">经过反例修正的统计合同</span></div>
+              <ol>
+                <li><strong>条件无偏：</strong><code>Hhat=M+I/π·(H−M)</code>；<code>π&gt;0</code>，unsafe ray 固定 <code>π=1</code>。</li>
+                <li><strong>预算最优分配：</strong>等 high-call 成本下使用 <code>π=clip(cq, πmin, 1)</code>，而不是“先给 floor 再分剩余预算”。</li>
+                <li><strong>真稀疏执行：</strong>在线路径只接收被 Bernoulli mask 选中的 high 输出；完整 high replay 只用于审计。</li>
+                <li><strong>路由冻结：</strong>当前对物理参数求导时 detach <code>π</code> 与 mask；否则必须加入 sampling-distribution 的 score term。</li>
+                <li><strong>平方损失：</strong>同一随机副本会带 covariance 正偏差；训练合同使用两个独立副本的交叉内积。</li>
+              </ol>
+            </div>
+          </div>
+          <div class="formula">有限总体目标：μ<sub>H</sub>=N<sup>−1</sup>ΣH<sub>i</sub>；估计器：μ̂<sub>H</sub>=N<sup>−1</sup>Σ[M<sub>i</sub>+I<sub>i</sub>/π<sub>i</sub>(H<sub>i</sub>−M<sub>i</sub>)]；条件 trace variance：N<sup>−2</sup>Σ[(1−π<sub>i</sub>)/π<sub>i</sub>]‖H<sub>i</sub>−M<sub>i</sub>‖²。</div>
+          <div class="two-col" style="margin-top:14px;">
+            <div class="panel">
+              <h3>为什么这轮必须判失败</h3>
+              <ol>
+                <li>风险分数与真正 <code>|H−M|</code> 的排序相关在不同 rig 中不稳定，0/9 通过冻结方差门。</li>
+                <li>oracle 需要先读取全部 high residual，只是上界诊断，不是可部署算法。</li>
+                <li>强度 10× 时 3/3 rig 的 64 条 ray 全部离开合成 frustum，系统正确回退为全 high，但不存在加速空间。</li>
+                <li>当前 smoothstep 场没有活动 mask；严格 support crossing 只是假设未来 mask 启用后的压力测试。</li>
+                <li>float64 derivative/tube bounds 是开发证书，不是 outward-rounded interval proof。</li>
+                <li>没有真实 BOST 数据、米制单位、光流噪声或重建终点，不能声称实验价值与泛化。</li>
+              </ol>
+            </div>
+            <div class="panel">
+              <h3>下一轮只做两个高价值动作</h3>
+              <ol>
+                <li><strong>N0.1 共享状态向量化：</strong>让 <code>M</code>、证书和风险特征复用 positions、central gradient、cell id 与 margin；消除 Python 双层循环。</li>
+                <li><strong>N1 一阶轨迹变分预测：</strong>沿 straight-medium path 积分 <code>δr′=δd</code> 与 <code>δd′=F0+Aδr+Bδd</code>，直接预测有方向和抵消的 <code>H−M</code>。</li>
+                <li><strong>冻结进入门：</strong>每 rig proxy/uniform variance ≤0.90，且端到端 p90/full-high p10 &lt;0.90；任何一门不过就不训练大网络。</li>
+                <li><strong>神经路由后置：</strong>解析变分仍不足时，先用 cross-fitted GAM/小 MLP；只有输入本身是整场函数或时间历史，才考虑 DeepONet/FNO router。</li>
+                <li><strong>最终宿主：</strong>数据合同到位后接入 NeRIF/何远哲 4D BOST，评 field L2/H1、front、held-out reprojection、逐 rig Q95 与全链路成本。</li>
+              </ol>
+            </div>
+          </div>
+          <div class="pipeline" aria-label="从当前三级路由负结果到可发表候选的六步路径">
+            <div><b>N0.1 复用</b><span>共享 straight state，向量化 cell 与 frustum 证书</span></div>
+            <div><b>N1 变分</b><span>预测有方向的轨迹残差，而不是只看曲率大小</span></div>
+            <div><b>冻结筛选</b><span>逐 rig 方差、false-safe、work-variance 和实测时间同时过门</span></div>
+            <div><b>交叉拟合</b><span>独立 calibration 学路由，fresh test 只执行一次</span></div>
+            <div><b>真实迁移</b><span>与光流/标定不确定度比较，再进入三维重建</span></div>
+            <div><b>论文审计</b><span>强基线、消融、逐 rig 尾部、失败包络与可复现成本</span></div>
+          </div>
+          <div class="alert critical" style="margin-top:14px;"><strong>9/9 合同通过不是算法胜出</strong><span>它只证明这一套随机 forward/JVP/VJP 和离线审计在当前合成开发集内自洽。当前算法判决仍为 <code>ORACLE_HEADROOM_CURRENT_PROXY_AND_IMPLEMENTATION_NO_GO</code>；未打开 reserved family，未运行真实 BOST，未证明三维重建、跨几何泛化、论文创新或优于 DeepONet/FNO/NeRIF/NeDF。</span></div>
+          <div class="source-grid" style="margin-top:14px;">
+            <article class="source-card"><div class="body"><span class="chip coral">统计边界 · 1952</span><h3>Horvitz–Thompson estimator</h3><p>给出不等抽样概率的经典有限总体无偏估计器；本页的 <code>I/π</code> 纠偏不是新贡献。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1080/01621459.1952.10483446">正式 DOI</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip coral">梯度边界 · NeurIPS 2015</span><h3>Stochastic Computation Graphs</h3><p>解释参数依赖采样分布时的 score-function 与 pathwise 梯度边界，支持当前冻结概率合同。</p></div><div class="actions"><a class="button primary" href="https://proceedings.neurips.cc/paper/2015/hash/de03beffeed9da5f3639a621bcab5dd4-Abstract.html">官方论文页</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip blue">曲光线先例</span><h3>Adjoint Nonlinear Ray Tracing</h3><p>曲光线及其伴随已有成熟先例，因此新意不能放在“能对 ray tracer 反传”。</p></div><div class="actions"><a class="button primary" href="https://imaging.cs.cmu.edu/adjoint_nonlinear_tracing/">项目与论文</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip gold">神经折射率场 · CVPR 2024</span><h3>Single View Refractive Index Tomography</h3><p>展示神经场与折射率层析的强相关先行路线；后续必须把多保真贡献与一般 neural field 分开。</p></div><div class="actions"><a class="button primary" href="https://openaccess.thecvf.com/content/CVPR2024/html/Zhao_Single_View_Refractive_Index_Tomography_with_Neural_Fields_CVPR_2024_paper.html">CVF 官方全文</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip blue">OERF 主线</span><h3>NeRIF</h3><p>何远哲方向最直接的宿主：折射率/密度神经隐式场与 BOST 体重建。真实数据到位后应在它的指标和数据合同内验证。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1063/5.0250899">正式 DOI</a><a class="button" href="https://arxiv.org/html/2409.14722v2">开放全文</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip blue">OERF 4D 主线</span><h3>Tensor Decomposition-Based 4D BOST</h3><p>何远哲最新的 X-Y-Z-T 重建宿主；时间低秩结构与随机 ray fidelity 是后续可检验组合，但当前还没有数据合同。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1145/3809488">正式 DOI</a></div></article>
+          </div>
+          <div class="actions" style="margin-top:14px;">
+            <a class="button primary" href="demo_t16_operator/results/n2_pvgr_n0_trifidelity_development_v1/summary.md">开发判决摘要</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n0_trifidelity_development_v1/result.json">完整结果 JSON</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n0_trifidelity_development_v1/metrics.csv">逐 rig / stress CSV</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n0_trifidelity_development_v1/manifest.json">源码与结果校验</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n0_trifidelity_development_2026-07-18.md">完整开发报告</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_next_algorithm_candidates_2026-07-18.md">下一代算法候选</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=105-三级路线找到了机制余量但第一版路由和实现都应该判失败">讲人话日志 105</a>
+            <a class="button" href="demo_t16_operator/run_n2_pvgr_n0_trifidelity_development.py">运行程序</a>
+            <a class="button" href="demo_t16_operator/topology_certified_routing.py">统计路由源码</a>
+            <a class="button" href="demo_t16_operator/ray_safety_certificate.py">物理证书源码</a>
           </div>
         </div>
       </div>

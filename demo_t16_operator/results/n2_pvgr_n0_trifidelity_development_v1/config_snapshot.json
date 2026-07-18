@@ -1,0 +1,131 @@
+{
+  "schema": "n2-pvgr-n0-trifidelity-development-1.0",
+  "candidate_id": "N2-PVGR-N0",
+  "candidate_name": "physics-validity-gated randomized trifidelity ray operator",
+  "status": "development_only_no_audit_authorization",
+  "field_contract": "normalized_smoothstep_proxy_not_physical_density",
+  "active_renderer_topology": "continuous_field_without_mask_or_occupancy_branch",
+  "strict_support_certificate_role": "report_only_until_a_mask_or_front_changes_execution",
+  "device": "cpu",
+  "dtype": "float64",
+  "grid_shape_zyx": [
+    17,
+    17,
+    17
+  ],
+  "difference_step": 0.002,
+  "base_refractivity_scale": 0.0003,
+  "dimensionless_stress_scale_multipliers": [
+    1,
+    3,
+    10
+  ],
+  "population_count": 64,
+  "route_step_counts": {
+    "low_automatic": 64,
+    "medium_straight_central": 64,
+    "high_curved_central": 64,
+    "high_reference": 128
+  },
+  "certificate": {
+    "support_interval_count": 128,
+    "support_threshold_fraction_of_grid_peak": 0.1,
+    "frustum_half_width_u": 0.005,
+    "frustum_half_width_v": 0.005,
+    "numerical_path_buffer": 0.0,
+    "outward_rounded_interval_arithmetic": false
+  },
+  "routing": {
+    "pi_floor": 0.1,
+    "safe_ray_average_probability": 0.25,
+    "monte_carlo_replicates": 8192,
+    "quadratic_loss_replicates": 4096
+  },
+  "derivative_contract": {
+    "ray_count": 4,
+    "step_count": 10,
+    "monte_carlo_replicates": 4096,
+    "finite_difference_epsilon": 2e-05,
+    "direction_relative_norm": 0.08
+  },
+  "timing": {
+    "warmup_repeats": 1,
+    "measured_repeats": 5
+  },
+  "seed_roles": {
+    "population_state_base": 61001,
+    "routing_uniform_base": 62001,
+    "sparse_execution_base": 63001,
+    "derivative_state_base": 64001,
+    "derivative_direction_base": 65001,
+    "derivative_route_base": 66001
+  },
+  "development_cases": [
+    {
+      "id": "smooth_narrow_aperture",
+      "phantom_family": "smooth_plume",
+      "phantom_seed": 1729,
+      "rig": {
+        "view_angle_degrees": 22.0,
+        "detector_u": 0.05,
+        "detector_z": -0.04,
+        "aperture_radius": 0.035,
+        "path_half_length": 0.62,
+        "cone_u": 0.04,
+        "cone_z": 0.03,
+        "bend": 0.0
+      }
+    },
+    {
+      "id": "wrinkled_wide_aperture",
+      "phantom_family": "wrinkled_density_interface",
+      "phantom_seed": 2718,
+      "rig": {
+        "view_angle_degrees": 58.0,
+        "detector_u": -0.07,
+        "detector_z": 0.06,
+        "aperture_radius": 0.075,
+        "path_half_length": 0.62,
+        "cone_u": 0.07,
+        "cone_z": 0.05,
+        "bend": 0.0
+      }
+    },
+    {
+      "id": "smooth_wide_aperture",
+      "phantom_family": "smooth_plume",
+      "phantom_seed": 1729,
+      "rig": {
+        "view_angle_degrees": 22.0,
+        "detector_u": 0.05,
+        "detector_z": -0.04,
+        "aperture_radius": 0.075,
+        "path_half_length": 0.62,
+        "cone_u": 0.07,
+        "cone_z": 0.05,
+        "bend": 0.0
+      }
+    }
+  ],
+  "reserved_audit_families_not_opened": [
+    "oblique_compression_sheet",
+    "shock_expansion_pair"
+  ],
+  "development_screens": {
+    "maximum_high_reference_relative_l2": 0.01,
+    "maximum_sparse_replay_relative_l2": 1e-10,
+    "maximum_observed_geometry_false_safe_count": 0,
+    "maximum_empirical_to_exact_variance_relative_error": 0.08,
+    "maximum_proxy_to_uniform_exact_variance_ratio": 0.9,
+    "maximum_oracle_to_uniform_exact_variance_ratio": 0.9,
+    "maximum_trajectory_residual_to_total_residual_variance_ratio": 0.1,
+    "maximum_expected_field_query_cost_ratio": 0.9,
+    "maximum_observed_end_to_end_wall_time_ratio": 1.0,
+    "maximum_jvp_finite_difference_relative_error": 0.0001,
+    "maximum_vjp_dot_relative_error": 1e-10,
+    "maximum_derivative_mean_relative_error_in_standard_errors": 4.0,
+    "maximum_cross_loss_relative_error": 0.1,
+    "maximum_cross_loss_directional_derivative_relative_error": 0.1
+  },
+  "hard_conclusion": "DEVELOPMENT_ONLY_NO_AUDIT_AUTHORIZATION"
+}
