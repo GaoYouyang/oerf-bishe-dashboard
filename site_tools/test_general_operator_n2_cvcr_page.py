@@ -38,7 +38,7 @@ def test_page_exposes_machine_result_and_postopen_boundary() -> None:
     assert "6.25%" in section
     assert "原 HOLD、候选分数和所有授权均未改变" in section
     assert "4096 点自身" in section and "不能据此称为 exact truth" in section
-    assert "下一候选是设计假设，不是已提出的新算法" in section
+    assert "N1 已实现开发机制，但仍不是论文算法" in section
 
 
 def test_page_uses_frustum_wording_and_never_relabels_points_as_pupil_samples() -> None:

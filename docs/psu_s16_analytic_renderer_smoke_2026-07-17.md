@@ -102,7 +102,7 @@
 ## 8. 本机复现
 
 ```bash
-cd /Users/gaoyouyang/Documents/毕业设计/oerf-bishe-dashboard
+cd /path/to/oerf-bishe-dashboard
 
 PYTHONPATH=. .venv/bin/python site_tools/run_psu_s16_analytic_renderer_smoke.py \
   --config demo_t16_operator/configs/psu_s16_analytic_renderer_smoke_v1.json \

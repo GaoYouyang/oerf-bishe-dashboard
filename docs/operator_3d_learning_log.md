@@ -2614,3 +2614,57 @@ ray + 稀疏路径点”当低保真，把“AD/数值梯度 + 密路径点，�
 
 完整数字、先行工作碰撞和下一候选公式见
 [N2-CVCR-N0 事后参考与研究转向](n2_cvcr_n0_postopen_reference_and_pivot_2026-07-18.md)。
+
+## 103. 自动梯度加离散梯度不是新算法，但两级残差机制值得进入盲审计设计
+
+上一节提出“直接梯度/自动梯度做高低保真”后，我先查到了一个会改变选题边界的 2026 年论文：
+*Neural Refractive Index Primitives for Flame Field Reconstruction Using Background-Oriented Schlieren*。
+它已经用单一折射率 primitive 比较 automatic、central-discrete 和 hybrid gradient，并加入 smoothstep
+hash、3D mask 与 occupancy/hierarchical path sampling。所以“我把自动梯度和离散梯度组合起来”
+不能再当创新点。
+
+但这里仍有一个很具体的成本问题：automatic gradient 需要一次场查询和一次坐标 VJP；三维中心差分
+需要六次场查询。高分辨率、有限孔径、多路径点训练时，这个差别会反复出现。于是我写了一个完全独立
+的 clean-room 小模型，不复制 2026 作者仓库：用 smoothstep 三维网格模拟可二阶求导的 refractive-index
+primitive，低保真走 automatic gradient + straight path，高保真走 central difference + 规定的 high
+path，再用
+
+`mean(low_B) + mean(high_D - low_D)`
+
+估计高保真均值。B 和 D 独立有放回抽样，只有 residual 里面的 high/low 共用同一个 pupil/path state。
+
+四个开发场景都出现了描述性 matched-cost 收益：约 `1.36x-1.78x`。更关键的是 residual/high 方差
+只有 `0.0042-0.0266`，说明两条路线在这个小模型里高度相关。固定状态 JVP 相对误差在
+`7.3e-10-5.0e-9`，VJP dot 误差不超过 `2.0e-15`。这说明程序里的导数合同是自洽的。
+
+但是机器仍然只给 `DEVELOPMENT_ONLY_NO_AUDIT_AUTHORIZATION`。原因不是保守过头，而是两个
+wrinkled 场的半量到全量参考敏感度为 `0.122%` 和 `0.779%`，超过预设 `0.1%`。四个场只有两个
+通过。smooth+bend 的保守计时收益也最薄，大约只有 `1.10x`，不能宣传成普遍的大幅加速。
+
+**讲人话：**我们发现“便宜路线先算大部分、贵路线只修正差别”在平滑题目上像是有用的做法；但
+火焰皱褶附近，连用来评分的参考平均值还会随着采样数明显变化。现在最多能说“值得出一张更严格的
+新试卷”，不能说“新算法已经赢了”。
+
+这次还修了两个很容易写错进论文的地方。
+
+第一，原整数预算分配只是把连续最优比例取整，审计代理找到一个明确反例。我把它改成严格枚举预算
+边界，测试里永久保留这个反例。第二，forward estimator 无偏不代表平方损失无偏。随机 forward
+直接平方会多出 covariance，训练梯度也一般有偏。下一版必须用两个独立完整 estimator 的对称
+cross-product gradient，或显式扣除方差，不能看到 forward identity 就写“unbiased training”。
+
+现在最值得继续的创新点已经被压得很窄：不是 automatic/discrete，不是普通 multi-fidelity，也不是
+再起一个网络名，而是
+
+1. 对 `pupil x pixel footprint/PSF x path` 联合光学测度做多层或 multi-index 分配；
+2. forward、JVP、VJP 完全复用并记录随机状态；
+3. field-dependent ray ODE 的 VJP 包含 trajectory sensitivity；
+4. mask、frustum、support 或 flame-front crossing 时 fail closed；
+5. 最后在 unseen 形态、三维 field/H1/front、held-out reprojection 和端到端成本上过门。
+
+我现在的学习顺序也变清楚了：先读 2026 论文 2.2.1-2.2.3，弄懂 smoothstep、automatic/discrete
+gradient 和 loss；再手算两级方差与成本分配；接着读 JVP/VJP 和平方损失双样本；最后才进入 ray ODE、
+伴随轨迹灵敏度和联合 pupil/path multi-index。暂时不要把精力花在加 MLP 层数或直接跑 FNO 上。
+
+开发协议见 [N2-ADRC-N1 development protocol](n2_adrc_n1_development_protocol_2026-07-18.md)，
+一级来源与禁止主张见
+[Neural refractive primitive source audit](n2_neural_refractive_primitive_source_audit_2026-07-18.md)。
