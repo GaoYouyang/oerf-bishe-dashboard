@@ -3014,3 +3014,34 @@ raw residual 与 paired residual。它们的 finite difference 很好，required
 
 完整逐格数字、机理边界、下一协议和要问师兄的问题见
 [N5-D4b 32-cell 场导数普查结果审计](n2_pvgr_n5_d4b_population_field_derivative_result_audit_2026-07-19.md)。
+
+## 114. D4b 失败拆开了：不是求和顺序，support 也不是当前 forward 的 hard mask
+
+D4b 留下两个问号：`p14` 的 residual dot failure 会不会只是最后一次浮点求和不够准；6 个 topology
+failure 又到底是哪几个采样点变了。这轮只读已保存数组与冻结输入，没有重跑 forward/JVP/VJP，也没有
+改正式判决。
+
+第一个答案是否定的。`torch.sum`、`np.sum`、`np.dot`、`math.fsum`、Neumaier 与精确二进制有理数
+contraction 的结果几乎重合。精确值仍为 `1.84168e-10` 与 `1.53431e-10`，高于 `1e-10` 门。真正明显
+的是尺度：curved 和 straight 的 dot signal 各约 `1.0866e-5`，相减后 residual 只有 `7.5114e-10`，
+缩小 `14,467` 倍；绝对缺陷却仍保留在 `1e-19` 数量级。讲人话就是：不是“加法器算错”，而是两个
+大而接近的量相减后，原 relative denominator 变得特别苛刻。以后可以研究 mixed-scale/normwise
+伴随证书，但必须在新数据上先冻结规则，不能照着 `p14` 调阈值。
+
+第二个问号也被逐位打开。6 个 context 的 90 个 signature replay 与冻结 hash 全部一致，9 个
+`h=0.01` 扰动共翻了 21 位：12 个 `0→1`、9 个 `1→0`；16 位在 RK4 stage，主要集中于入口
+step 0/1 和出口附近 step 14，只涉及 ray 0/2。`h<=0.003` 两侧稳定，cell/frustum 一直没变。
+更重要的修正是：当前 forward 是连续 smoothstep renderer，support threshold 用于安全/拓扑诊断，
+并不是把 field 清零的 active mask。因此上一节“不同离散程序分支”的说法对现有 forward 过强；
+更准确的是“协议定义的 support-set signature 改变”。历史 gate 仍照合同 fail-closed，但下一协议应检验
+它是不是过度保守。
+
+一个很有用的旁证是：这 6 个 topology-changed context 中 24/24 map gate 都通过，required-h FD
+最大只有 `3.77e-7`，远低于 `1e-5`。这不能事后删除 topology gate，却形成了新的可证伪方向：允许
+simple、非 grazing 的 support 等值面随场平滑移动，用 transversality/interval-root certificate 区分
+“正常边界位移”和“根生成、消失、切触等真实拓扑事件”。若师兄的真实 renderer 有 hard mask、occupancy
+或 ray termination，这可能成为可信可微 BOST renderer 的核心算法；若没有，它只应是解释性证书。
+
+完整逐位表、误差分解、候选算法与要问师兄的 8 个问题见
+[N5-D4b post-open 失败取证](n2_pvgr_n5_d4b_postopen_forensics_2026-07-19.md)。当前仍没有 decoder、
+三维重建、算子训练、真实数据、泛化或论文授权。

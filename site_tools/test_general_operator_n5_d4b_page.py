@@ -19,6 +19,15 @@ AUDIT = (
     / "n2_pvgr_n5_d4b_population_field_derivative_result_audit_2026-07-19.md"
 )
 LEARNING_LOG = ROOT / "docs" / "operator_3d_learning_log.md"
+FORENSIC_ROOT = (
+    ROOT
+    / "demo_t16_operator"
+    / "results"
+    / "n2_pvgr_n5_d4b_postopen_forensics_v1"
+)
+FORENSIC_AUDIT = (
+    ROOT / "docs" / "n2_pvgr_n5_d4b_postopen_forensics_2026-07-19.md"
+)
 
 
 def _section() -> str:
@@ -31,13 +40,15 @@ def test_current_homepage_leads_with_the_validated_d4b_fail_closed_result() -> N
     section = _section()
 
     assert 'href="#n5-d4b"' in html
-    assert "D4b 严格 FAIL-CLOSED" in html
+    assert "D4b 判决不变，失败机制已拆开" in html
     assert "完整 32-cell 导数普查" in section
     assert "D4B_DERIVATIVE_CONTEXT_CHANGED_FAIL_CLOSED" in section
     assert "254 / 256" in section
     assert "128 / 128" in section
     assert "58 / 64" in section
     assert "333.070 s" in section
+    assert "14,466.67×" in section
+    assert "21 bits" in section
 
 
 def test_displayed_d4b_counts_and_claim_boundary_match_machine_result() -> None:
@@ -73,7 +84,10 @@ def test_d4b_section_links_only_public_explanatory_artifacts() -> None:
         "n2_pvgr_n5_d4b_population_field_derivative_v1/result.json",
         "n2_pvgr_n5_d4b_population_field_derivative_v1/validation_report.json",
         "n2_pvgr_n5_d4b_population_field_derivative.png",
-        "anchor=113-d4b-没有通过它帮我们看见了两种不能交给大网络掩盖的问题",
+        "docs%2Fn2_pvgr_n5_d4b_postopen_forensics_2026-07-19.md",
+        "n2_pvgr_n5_d4b_postopen_forensics_v1/result.json",
+        "n2_pvgr_n5_d4b_postopen_forensics.png",
+        "anchor=114-d4b-失败拆开了不是求和顺序support-也不是当前-forward-的-hard-mask",
     )
     for target in required:
         assert target in PAGE.read_text(encoding="utf-8")
@@ -82,10 +96,13 @@ def test_d4b_section_links_only_public_explanatory_artifacts() -> None:
     assert RESULT.is_file()
     assert (RESULT_ROOT / "validation_report.json").is_file()
     assert (RESULT_ROOT / "n2_pvgr_n5_d4b_population_field_derivative.png").is_file()
+    assert (FORENSIC_ROOT / "result.json").is_file()
+    assert (FORENSIC_ROOT / "n2_pvgr_n5_d4b_postopen_forensics.png").is_file()
 
 
 def test_learning_artifacts_preserve_the_d4b_failure_and_next_legal_gate() -> None:
     audit = AUDIT.read_text(encoding="utf-8")
+    forensic = FORENSIC_AUDIT.read_text(encoding="utf-8")
     log = LEARNING_LOG.read_text(encoding="utf-8")
 
     assert "254/256" in audit
@@ -94,3 +111,8 @@ def test_learning_artifacts_preserve_the_d4b_failure_and_next_legal_gate() -> No
     assert "结果前预注册 D4b-R" in audit
     assert "## 113. D4b 没有通过" in log
     assert "不能改变 D4b 的历史判决" in log
+    assert "14,466" in forensic
+    assert "21 个 support 位翻转" in forensic
+    assert "POSTOPEN_EXPLANATION_ONLY_NO_AUTHORIZATION" in forensic
+    assert "## 114. D4b 失败拆开了" in log
+    assert "support threshold 用于安全/拓扑诊断" in log

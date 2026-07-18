@@ -308,6 +308,7 @@
       <a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d3_result_audit_2026-07-18.md">N5 D3 32 格参考包</a>
       <a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4_tiny_field_derivative_result_audit_2026-07-18.md">N5 D4 场导数证书</a>
       <a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_population_field_derivative_result_audit_2026-07-19.md">N5 D4b 32 格判决</a>
+      <a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_postopen_forensics_2026-07-19.md">D4b 失败取证</a>
       <a href="../document_reader.html?doc=v3k_f_noise_stopping_review_brief.md">v3k-F 停止审计</a>
       <a href="../strong_numerical_controls_lab.html">v3k-D 强数值门</a>
       <a href="../operator_fair_budget_dashboard.html">同预算判决</a>
@@ -329,7 +330,7 @@
     </div>
     <div class="alert critical">
       <strong>当前科学判断：D4b 完整 32-cell 导数普查严格 FAIL-CLOSED；训练与 decoder 均保持锁定。</strong>
-      <span>结果前冻结的 256 个 map context 通过 254 个，128/128 结构控制通过，但 ordered topology 只有 58/64 稳定。两个 map 失败集中在 p14 的 residual dot identity；六个 topology 失败都发生在 <code>h=0.01</code> 的 support-bit 翻转。独立 validator 全量重算后保持 <code>D4B_DERIVATIVE_CONTEXT_CHANGED_FAIL_CLOSED</code>。<a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_population_field_derivative_result_audit_2026-07-19.md">打开 D4b 审计</a></span>
+      <span>结果前冻结的 256 个 map context 通过 254 个，128/128 结构控制通过，但 ordered topology 只有 58/64 稳定。新取证确认 p14 的精确 saved-array contraction 仍不过门，component signal 被 residual 相消压低约 14,467 倍；6 个 topology context 共定位 21 个 support-set flips。当前 smoothstep forward 没有 hard mask，因此下一步是重新设计可证伪证书，不是追认通过。<a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_postopen_forensics_2026-07-19.md">打开失败取证</a></span>
     </div>
   </header>
 
@@ -360,11 +361,12 @@
 
     <section id="latest-gate" class="band">
       <div class="section-head">
-        <div><div class="eyebrow">最新可复核增量</div><h2>D4b 证明 tiny pass 不能直接外推到完整开发总体</h2><p>D4b 对 32 cells、16 pairs、5 field units 的完整封闭 census 重做 detector、straight、raw/paired residual 的 JVP/VJP、七步长 FD、结构和 ordered-topology 审计。最新结论是“发现上下文依赖失败并可靠拒答”，不是“差一点成功”。</p></div>
-        <div class="actions"><a class="button primary" href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_population_field_derivative_result_audit_2026-07-19.md">D4b 结果审计</a><a class="button" href="../demo_t16_operator/results/n2_pvgr_n5_d4b_population_field_derivative_v1/validation_report.json">独立机器校验</a></div>
+        <div><div class="eyebrow">最新可复核增量</div><h2>D4b 失败已拆成低信号伴随与移动 support 等值面</h2><p>正式 D4b 仍严格失败。post-open 工具没有重算导数，只精确 contraction 已保存数组并重放 6 个失败 context 的 90 个 signature：所有 hash 与冻结 rows 一致，因而现在能把下一步写成明确的证书设计与学习任务。</p></div>
+        <div class="actions"><a class="button primary" href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_postopen_forensics_2026-07-19.md">失败取证与算法候选</a><a class="button" href="../demo_t16_operator/results/n2_pvgr_n5_d4b_postopen_forensics_v1/result.json">取证 JSON</a><a class="button" href="../demo_t16_operator/results/n2_pvgr_n5_d4b_population_field_derivative_v1/validation_report.json">正式独立校验</a></div>
       </div>
       <div class="figure-grid">
         <figure><img src="../demo_t16_operator/results/n2_pvgr_n5_d4b_population_field_derivative_v1/n2_pvgr_n5_d4b_population_field_derivative.png" alt="N5-D4b 32-cell 导数普查的逐格 dot defect、有限差分、几何余量和严格门通过率" /><figcaption>D4b：p14 的 worst dot 超过 1e-10；p04-p06、p09-p10 出现 h=0.01 support-topology 切换。254/256 和 58/64 都不能平均成总体通过。</figcaption></figure>
+        <figure><img src="../demo_t16_operator/results/n2_pvgr_n5_d4b_postopen_forensics_v1/n2_pvgr_n5_d4b_postopen_forensics.png" width="2880" height="1260" loading="lazy" decoding="async" alt="D4b 失败取证图，比较七种 contraction 并展示 21 个 support 位翻转" /><figcaption>七种 contraction 均未过冻结门；9 个 h/side context 共 21 flips。图只解释失败，不能修改 D4b。</figcaption></figure>
         <figure><img src="../demo_t16_operator/results/n2_pvgr_n5_d4_tiny_field_derivative_v1/n2_pvgr_n5_d4_tiny_field_derivative.png" alt="N5-D4 tiny selected 场导数证书" /><figcaption>D4 历史对照：四个 selected cells 全过，但共用一个 smooth field。D4b 的失败正说明为什么必须做总体扩展。</figcaption></figure>
       </div>
       <div class="panel" style="margin-top:11px;">
@@ -372,10 +374,11 @@
         <h3 style="margin-top:12px;">现在按这个顺序做</h3>
         <ol>
           <li><strong>已完成：</strong>D4b 正式运行、全量独立重放与 12 项结果合同测试；失败证据已固定，不重跑或改门。</li>
-          <li><strong>当前学习：</strong>先理解 hard support、active set、局部可微半径、JVP/VJP dot identity 和相消残差点积。</li>
-          <li><strong>当前实验：</strong>只读定位 <code>h=0.01</code> support flip，并比较 p14 保存导数的普通、补偿和 extended-precision contraction；这些诊断不能救回 D4b。</li>
-          <li><strong>下一授权门：</strong>只有 support 的物理语义明确后，才结果前预注册 topology-certified D4b-R；它通过后才允许 decoder-chain，之后才是 6+2 view 重建。</li>
-          <li><strong>问师兄：</strong>support/mask 的真实含义、observable 单位、flow-off repeats、camera/mask/confidence/covariance 与可对账的 <code>F/Jv/J^Tq</code> 小例子。</li>
+          <li><strong>已完成取证：</strong>精确有理数 contraction、90 次 signature replay、21 位逐 group/step/stage/ray/offset 定位；7 项合同测试通过。</li>
+          <li><strong>当前学习：</strong>先掌握 normwise backward error、相消条件数、level set、隐函数定理、simple root、transversality 与 interval Newton。</li>
+          <li><strong>下一开发门：</strong>在独立 population 比较原 dot-relative、mixed-scale/normwise 证书，以及 exact-bit、simple-root、cell/frustum 三种 topology gate。</li>
+          <li><strong>下一 fresh 门：</strong>所有公式、阈值、拒答规则与停止条件先冻结；fresh field/rig 只开一次，通过后才允许 decoder-chain 与 6+2 view 重建。</li>
+          <li><strong>问师兄：</strong>真实 renderer 是否有 hard mask/occupancy/ray termination，以及可对账的匿名 <code>F/Jv/J^Tq</code> 与 decoder 小例子。</li>
         </ol>
         <div class="trap"><strong>训练仍锁定：</strong>D4b 明确没有授权 population derivative。不得跳到 decoder、NeRIF、DeepONet、FNO/FFNO 或三维重建；下一步是 topology/support 与 residual-adjoint 的可证伪修复合同。</div>
       </div>
@@ -418,7 +421,7 @@
 
     <section id="research" class="band">
       <div class="section-head"><div><div class="eyebrow">研究决策</div><h2>先选证据问题，再选模型</h2><p>排名是当前执行顺序，不是方向的绝对价值。组内数据和师兄意见会改变排名。</p></div></div>
-      <div class="alert critical"><strong>当前第一研究问题：如何让 curved-ray renderer 对 hard support 切换可审计，并闭合小残差上的 adjoint contraction。</strong><span>D4b 已覆盖完整 32-cell 开发 census，并严格失败。现在先判断 support 是物理视场/光阑、计算域还是置信度 mask，再比较 active-set stability certificate、物理连续权重与 fail-closed 拒答；同时审计 p14 residual dot mismatch。DeepONet/FNO/FFNO 仍是未来公平基线，不是修复导数合同的工具。</span></div>
+      <div class="alert critical"><strong>当前第一研究问题：怎样给 residual 低信号与移动 support 等值面建立不过度保守的 fail-closed 导数证书。</strong><span>p14 已排除最终求和顺序，21 位也已定位；现在不再泛泛“查原因”。候选 A 用 mixed-scale/normwise backward-error 闭合伴随，候选 B 用 simple-root transversality 允许平滑 crossing 位移、拒绝根生成/消失/切触。只有师兄真实 renderer 含 hard mask/occupancy 时，B 才可能成为 forward 核心；DeepONet/FNO/FFNO 仍是未来公平基线。</span></div>
       <div id="trackGrid" class="track-grid" style="margin-top:14px;"></div>
     </section>
 
@@ -639,7 +642,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄好，我把“开发自有算子 + 三维重建”继续收缩为 topology-certified Picard residual operator，目前没有开始训练网络。\n\n当前选中路线：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已通过论文门槛：${passed}\n最近未通过：${pending}\n\nD4 tiny selected gate 曾以 32/32 maps、8/8 topology 通过；随后 D4b 在结果前冻结完整 32-cell census、16 matched pairs、5 field units、64 directions、256 maps、128 structures 与 960 topology signatures。正式结果是 254/256 maps、128/128 structures、58/64 topology，机器判决 D4B_DERIVATIVE_CONTEXT_CHANGED_FAIL_CLOSED。12,558,336 logical queries 用时 333.070 s、无重试；独立 validator 全量重生成输入和导数后保持同一失败判决。\n\n两个 map 失败集中在 wrinkled p14 的 raw/paired residual dot identity；六个 topology 失败都来自 h=0.01 的 support-bit 翻转，h<=0.003 稳定。当前不会事后改阈值或直接接 decoder，而是先做只读 contraction/support forensics，再结果前冻结 topology-certified D4b-R。想请你确认：组内 support/mask 是计算域、视场/光阑、背景置信度还是实际遮挡；observable 是 exit angle、path-integrated deflection 还是 pixel displacement；NeRIF/TDBOST decoder 是 voxel、MLP 还是 tensor decomposition；能否提供同 rig 单位、flow-off repeats、mask/confidence/covariance 和可对账 F/Jv/Jᵀq 小例子。D4b-R、decoder、6+2 reconstruction 与真实 noise floor 过门前，我不会训练 residual operator，也不会宣称优于 DeepONet、FNO/FFNO。`;
+        document.getElementById('briefText').value = `师兄好，我把“开发自有算子 + 三维重建”继续收缩为 certified residual BOST operator，目前没有开始训练网络。\n\n当前选中路线：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已通过论文门槛：${passed}\n最近未通过：${pending}\n\nD4 tiny selected gate 曾以 32/32 maps、8/8 topology 通过；随后 D4b 在结果前冻结完整 32-cell census、16 matched pairs、5 field units、64 directions、256 maps、128 structures 与 960 topology signatures。正式结果是 254/256 maps、128/128 structures、58/64 topology，机器判决 D4B_DERIVATIVE_CONTEXT_CHANGED_FAIL_CLOSED。12,558,336 logical queries 用时 333.070 s、无重试；独立 validator 全量重生成输入和导数后保持同一失败判决。\n\n我随后只读保存数组并重放失败 signature，没有改正式结果。七种 contraction（含精确二进制有理数）都显示 p14 两个 residual dot defect 仍高于 1e-10；curved/straight component signal 比 raw residual 大 14,466.67 倍，说明低信号条件化是主要放大机制。6 个 topology contexts 的 90 次 replay 全部复现冻结 hash，9 个 h=0.01 扰动共定位 21 个 support-set flips，h<=0.003 稳定；但当前 smoothstep forward 没有 hard mask，support threshold 主要用于证书/诊断。\n\n下一步我想在独立 development population 比较两类证书：A）dot-relative + normwise + absolute backward-error 的 mixed-scale adjoint gate；B）允许 simple/non-grazing crossing 平滑移动、拒绝 root birth/death/grazing 的 transversality-aware support gate。想请你确认真实 renderer 是否有 hard mask、occupancy pruning、ray termination 或 threshold branch；NeRIF/TDBOST decoder 是 voxel、MLP 还是 tensor decomposition；能否提供匿名最小相机/field/4-rays/F/Jv/Jᵀq case，以及 flow-off repeats、单位和 mask/confidence/covariance。fresh derivative、decoder、6+2 reconstruction 与真实 noise floor 过门前，我不会训练 residual operator，也不会宣称优于 DeepONet、FNO/FFNO。`;
       }
 
       function bindProfile() {
