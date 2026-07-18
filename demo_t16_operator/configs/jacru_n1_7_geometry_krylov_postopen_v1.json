@@ -1,0 +1,109 @@
+{
+  "schema_version": "jacru-n1-7-geometry-krylov-postopen-1.0",
+  "status": "POSTOPEN_REPRESENTATION_ORACLE_ONLY",
+  "frozen_date": "2026-07-18",
+  "evidence_level": "E1_SYNTHETIC_OPENED_DEVELOPMENT_REPRESENTATION_GATE",
+  "source_t0_config": "demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json",
+  "source_n1_5_a_config": "demo_t16_operator/configs/jacru_n1_5_approximation_error_headroom_development_v1.json",
+  "source_n1_5_confirmation": "demo_t16_operator/results/jacru_n1_5_high_order_teacher_confirmation_once",
+  "source_n1_6_result": "demo_t16_operator/results/jacru_n1_6_adjoint_low_rank_development_full1",
+  "preregistration_document": "docs/jacru_n1_7_geometry_krylov_prereg_2026-07-18.md",
+  "evaluated_partitions": ["calibration", "development"],
+  "may_construct_or_evaluate_ood": false,
+  "deployment_contract": {
+    "inputs": [
+      "measured_observation",
+      "component_damping",
+      "low_cgls_warm_field",
+      "low_cgls_warm_projection",
+      "current_low_forward",
+      "current_low_adjoint",
+      "reconstruction_support"
+    ],
+    "forbidden_inputs": [
+      "truth_volume",
+      "fresh_exact_mismatch",
+      "phantom_family_label",
+      "confirmation_target",
+      "high_order_forward_output"
+    ],
+    "basis_order": [
+      "damping",
+      "warm_residual",
+      "A_P_At_damping",
+      "A_P_At_warm_residual"
+    ],
+    "high_order_forward_calls": 0,
+    "high_order_adjoint_calls": 0,
+    "independent_learned_adjoint": false,
+    "learner_is_present": false
+  },
+  "budget": {
+    "warm_cgls_iterations": 12,
+    "warm_projection_forward_calls": 1,
+    "krylov_probe_forward_calls": 2,
+    "krylov_probe_adjoint_calls": 2,
+    "candidate_refine_iterations": 10,
+    "component_damping_refine_iterations": 12,
+    "low_reference_cgls_iterations": 24,
+    "low_reference_final_projection_forward_calls": 1,
+    "deployable_total_low_forward_calls": 25,
+    "deployable_total_low_adjoint_calls": 24
+  },
+  "basis": {
+    "normal_operator": "A_P_At",
+    "dependence_tolerance": 1e-10,
+    "orthonormalization": "ordered_two_pass_modified_gram_schmidt",
+    "minimum_accepted_rank": 2,
+    "maximum_orthonormality_defect": 1e-10
+  },
+  "coefficient_trust_region": {
+    "uses_exact_target": false,
+    "formula": "min(0.50*norm_d, max(4.0*norm_r, 0.10*norm_d))",
+    "damping_norm_cap_multiplier": 0.5,
+    "warm_residual_norm_multiplier": 4.0,
+    "damping_norm_floor_multiplier": 0.1
+  },
+  "oracle_screen": {
+    "adjoint_l2": 0.0001,
+    "finite_k_optimizer": "deterministic_multistart_powell_l2_ball",
+    "finite_k_starts": ["zero", "measurement_projection", "adjoint_projection"],
+    "finite_k_max_function_evaluations_per_start": 96,
+    "finite_k_xtol": 0.0001,
+    "finite_k_ftol": 1e-06,
+    "finite_k_is_guaranteed_global_optimum": false,
+    "primary_representation_candidate": "measurement_projection_oracle",
+    "finite_k_oracle_is_diagnostic_only": true,
+    "high_order_teacher_beta": 0.75,
+    "include_frozen_global_pca_rank4_probe_tax_control": true,
+    "include_exact_mismatch_refine12_control": true
+  },
+  "representation_gate": {
+    "mean_field_gain_over_low_cgls24_minimum": 0.05,
+    "mean_h1_gain_over_low_cgls24_minimum": 0.03,
+    "mean_field_gain_over_component_damping_minimum": 0.01,
+    "mean_field_gain_over_high_order_teacher_b0p75_minimum": 0.0,
+    "worst_case_field_gain_over_low_cgls24_minimum": 0.0,
+    "worst_geometry_field_gain_over_low_cgls24_minimum": 0.0,
+    "case_field_harm_over_one_percent_rate_vs_low_maximum": 0.0,
+    "case_field_harm_over_one_percent_rate_vs_component_damping_maximum": 0.0,
+    "mean_adjoint_residual_gain_over_component_damping_minimum": 0.5,
+    "mean_exact_oracle_field_gain_retention_minimum": 0.7,
+    "each_family_mean_field_gain_over_component_damping_strictly_positive": true,
+    "required_low_forward_calls": 25,
+    "required_low_adjoint_calls": 24,
+    "required_high_order_forward_calls": 0,
+    "required_high_order_adjoint_calls": 0
+  },
+  "claim_boundary": {
+    "is_postopen_exploratory": true,
+    "may_authorize_later_learner_preregistration": true,
+    "may_claim_learned_algorithm_gain": false,
+    "may_claim_confirmed_algorithm_gain": false,
+    "is_real_bost_evidence": false,
+    "is_complete_camera_model_error": false,
+    "opens_ood_fresh_or_final": false,
+    "independent_unit": "base_seed_geometry_cluster",
+    "paired_families_are_not_independent_rigs": true
+  }
+}

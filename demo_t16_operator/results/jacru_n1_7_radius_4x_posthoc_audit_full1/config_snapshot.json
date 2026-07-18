@@ -1,0 +1,126 @@
+{
+  "audit_context": {
+    "changes_from_frozen_protocol": [
+      "multiply_all_visible_coefficient_radius_terms_by_4",
+      "increase_powell_maxfev_per_start_from_96_to_384"
+    ],
+    "may_change_n1_7_verdict": false,
+    "may_select_a_learner": false,
+    "purpose": "separate trust-radius saturation from rank-4 span limitations",
+    "source_frozen_config": "demo_t16_operator/configs/jacru_n1_7_geometry_krylov_postopen_v1.json"
+  },
+  "basis": {
+    "dependence_tolerance": 1e-10,
+    "maximum_orthonormality_defect": 1e-10,
+    "minimum_accepted_rank": 2,
+    "normal_operator": "A_P_At",
+    "orthonormalization": "ordered_two_pass_modified_gram_schmidt"
+  },
+  "budget": {
+    "candidate_refine_iterations": 10,
+    "component_damping_refine_iterations": 12,
+    "deployable_total_low_adjoint_calls": 24,
+    "deployable_total_low_forward_calls": 25,
+    "krylov_probe_adjoint_calls": 2,
+    "krylov_probe_forward_calls": 2,
+    "low_reference_cgls_iterations": 24,
+    "low_reference_final_projection_forward_calls": 1,
+    "warm_cgls_iterations": 12,
+    "warm_projection_forward_calls": 1
+  },
+  "claim_boundary": {
+    "independent_unit": "base_seed_geometry_cluster",
+    "is_complete_camera_model_error": false,
+    "is_postopen_exploratory": true,
+    "is_real_bost_evidence": false,
+    "may_authorize_later_learner_preregistration": false,
+    "may_claim_confirmed_algorithm_gain": false,
+    "may_claim_learned_algorithm_gain": false,
+    "opens_ood_fresh_or_final": false,
+    "paired_families_are_not_independent_rigs": true
+  },
+  "coefficient_trust_region": {
+    "damping_norm_cap_multiplier": 2.0,
+    "damping_norm_floor_multiplier": 0.4,
+    "formula": "min(2.00*norm_d, max(16.0*norm_r, 0.40*norm_d))",
+    "uses_exact_target": false,
+    "warm_residual_norm_multiplier": 16.0
+  },
+  "deployment_contract": {
+    "basis_order": [
+      "damping",
+      "warm_residual",
+      "A_P_At_damping",
+      "A_P_At_warm_residual"
+    ],
+    "forbidden_inputs": [
+      "truth_volume",
+      "fresh_exact_mismatch",
+      "phantom_family_label",
+      "confirmation_target",
+      "high_order_forward_output"
+    ],
+    "high_order_adjoint_calls": 0,
+    "high_order_forward_calls": 0,
+    "independent_learned_adjoint": false,
+    "inputs": [
+      "measured_observation",
+      "component_damping",
+      "low_cgls_warm_field",
+      "low_cgls_warm_projection",
+      "current_low_forward",
+      "current_low_adjoint",
+      "reconstruction_support"
+    ],
+    "learner_is_present": false
+  },
+  "evaluated_partitions": [
+    "calibration",
+    "development"
+  ],
+  "evidence_level": "E1_SYNTHETIC_OPENED_DEVELOPMENT_POSTHOC_RADIUS_SENSITIVITY",
+  "frozen_date": "2026-07-18",
+  "may_construct_or_evaluate_ood": false,
+  "oracle_screen": {
+    "adjoint_l2": 0.0001,
+    "finite_k_ftol": 1e-06,
+    "finite_k_is_guaranteed_global_optimum": false,
+    "finite_k_max_function_evaluations_per_start": 384,
+    "finite_k_optimizer": "deterministic_multistart_powell_l2_ball",
+    "finite_k_oracle_is_diagnostic_only": true,
+    "finite_k_starts": [
+      "zero",
+      "measurement_projection",
+      "adjoint_projection"
+    ],
+    "finite_k_xtol": 0.0001,
+    "high_order_teacher_beta": 0.75,
+    "include_exact_mismatch_refine12_control": true,
+    "include_frozen_global_pca_rank4_probe_tax_control": true,
+    "primary_representation_candidate": "measurement_projection_oracle"
+  },
+  "preregistration_document": "docs/jacru_n1_7_geometry_krylov_prereg_2026-07-18.md",
+  "representation_gate": {
+    "case_field_harm_over_one_percent_rate_vs_component_damping_maximum": 0.0,
+    "case_field_harm_over_one_percent_rate_vs_low_maximum": 0.0,
+    "each_family_mean_field_gain_over_component_damping_strictly_positive": true,
+    "mean_adjoint_residual_gain_over_component_damping_minimum": 0.5,
+    "mean_exact_oracle_field_gain_retention_minimum": 0.7,
+    "mean_field_gain_over_component_damping_minimum": 0.01,
+    "mean_field_gain_over_high_order_teacher_b0p75_minimum": 0.0,
+    "mean_field_gain_over_low_cgls24_minimum": 0.05,
+    "mean_h1_gain_over_low_cgls24_minimum": 0.03,
+    "required_high_order_adjoint_calls": 0,
+    "required_high_order_forward_calls": 0,
+    "required_low_adjoint_calls": 24,
+    "required_low_forward_calls": 25,
+    "worst_case_field_gain_over_low_cgls24_minimum": 0.0,
+    "worst_geometry_field_gain_over_low_cgls24_minimum": 0.0
+  },
+  "schema_version": "jacru-n1-7-geometry-krylov-postopen-1.0",
+  "source_n1_5_a_config": "demo_t16_operator/configs/jacru_n1_5_approximation_error_headroom_development_v1.json",
+  "source_n1_5_confirmation": "demo_t16_operator/results/jacru_n1_5_high_order_teacher_confirmation_once",
+  "source_n1_6_result": "demo_t16_operator/results/jacru_n1_6_adjoint_low_rank_development_full1",
+  "source_t0_config": "demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json",
+  "status": "POSTOPEN_REPRESENTATION_ORACLE_ONLY"
+}

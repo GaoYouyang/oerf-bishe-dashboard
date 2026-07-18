@@ -1,0 +1,74 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+PAGE = ROOT / "general_operator_research_lab.html"
+RESULT = (
+    ROOT
+    / "demo_t16_operator/results/jacru_n1_7_geometry_krylov_postopen_full1"
+)
+
+
+def test_focused_page_exposes_n1_7_verdict_without_success_language() -> None:
+    html = PAGE.read_text(encoding="utf-8")
+    assert 'id="n1-7-result"' in html
+    assert "REPRESENTATION_NO_GO_STOP_BEFORE_LEARNER" in html
+    assert "+4.83%" in html
+    assert "56.72%" in html
+    assert "33,780F/33,780Aᵀ" in html
+    assert "74,010F/74,010Aᵀ" in html
+    assert "+6.186%" in html
+    assert "16/17" in html
+    assert "learner 未启动" in html
+    assert "docs%2Fjacru_n1_7_geometry_krylov_no_go_2026-07-18.md" in html
+    assert "docs%2Fjacru_n1_7_advisor_review_brief_2026-07-18.md" in html
+    assert "docs%2Fjacru_n1_7_radius_sensitivity_audit_2026-07-18.md" in html
+    assert "jacru_n1_7_radius_4x_posthoc_audit_full1/summary.json" in html
+
+
+def test_page_machine_summary_matches_frozen_no_go() -> None:
+    summary = json.loads((RESULT / "summary.json").read_text())
+    assert summary["status"] == "REPRESENTATION_NO_GO_STOP_BEFORE_LEARNER"
+    assert summary["primary_representation_gate"]["passed"] is False
+    assert summary["finite_k_diagnostic_gate"]["passed"] is False
+    assert summary["learner_was_trained"] is False
+    assert summary["opens_ood_fresh_or_final"] is False
+    assert summary["primary_development_aggregate"][
+        "mean_field_gain_over_low_cgls24"
+    ] < 0.05
+    assert summary["finite_k_evaluator_total_forward_calls"] == 33780
+    assert (
+        summary["finite_k_evaluator_total_forward_calls"]
+        == summary["finite_k_evaluator_total_adjoint_calls"]
+    )
+
+
+def test_public_n1_7_package_contains_no_model_checkpoint() -> None:
+    forbidden = {"pt", "pth", "ckpt", "npz", "npy", "mat"}
+    assert RESULT.is_dir()
+    assert not {path.suffix.lower().lstrip(".") for path in RESULT.iterdir()} & forbidden
+
+
+def test_radius_audit_is_posthoc_and_does_not_authorize_a_learner() -> None:
+    audit = ROOT / "demo_t16_operator/results/jacru_n1_7_radius_4x_posthoc_audit_full1"
+    config = json.loads(
+        (
+            ROOT
+            / "demo_t16_operator/configs/jacru_n1_7_radius_4x_posthoc_audit_v1.json"
+        ).read_text()
+    )
+    summary = json.loads((audit / "summary.json").read_text())
+    assert config["audit_context"]["may_change_n1_7_verdict"] is False
+    assert config["audit_context"]["may_select_a_learner"] is False
+    assert config["claim_boundary"]["may_authorize_later_learner_preregistration"] is False
+    assert summary["evidence_level"].endswith("POSTHOC_RADIUS_SENSITIVITY")
+    assert summary["status"] == "REPRESENTATION_NO_GO_STOP_BEFORE_LEARNER"
+    assert summary["learner_was_trained"] is False
+    assert summary["primary_representation_gate"]["passed_count"] == 15
+    assert summary["finite_k_diagnostic_gate"]["passed_count"] == 16
+    assert summary["finite_k_evaluator_development_forward_calls"] == 74010
+    assert summary["finite_k_evaluator_calibration_forward_calls"] == 42680
+    assert summary["finite_k_evaluator_package_forward_calls"] == 116690
