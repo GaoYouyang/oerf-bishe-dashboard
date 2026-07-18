@@ -2855,3 +2855,45 @@ grouped ratio 为 `0.198 [0.151, 0.264]`；最坏墙钟只是 OCBH 的 `0.315`�
 完整数字、失败格、盲态恢复和下一步见
 [N3 96 条件结果审计](n2_pvgr_n3_grouped_factorial_result_audit_2026-07-18.md)；可微三维接口的入口见
 [field JVP/VJP 到重建的最小设计](n2_pvgr_field_jvp_vjp_reconstruction_interface_design_2026-07-18.md)。
+
+## 109. H1024/H2048 把问题缩到两个小残差格：先别训练网络
+
+N3 留下 16 个 reference sentinel 失败格。这轮没有把 96 格全重跑，而是为每个失败格配一个
+同 field seed、同 stress、只改变一个 geometry factor 的 matched control，共 32 格。先冻结
+H256/H512/H1024、收缩率、finite/domain/topology、查询成本和条件 H2048，再正式运行。
+
+第一版 N4 在第二格需要 H2048 时暴露控制流错误：程序先调用最终 decision 问“是否升级”，最终
+decision 又要求 H2048 已存在。我保留 6 个 checkpoint 和堆栈，另开 N4.1；它不改任何样本或阈值，
+只先算完整 H1024 gates，再决定是否加载 H2048，而且不复用 N4 的 checkpoint。
+
+N4.1 真正算完 32 格以后又在画柱状图时退出：Matplotlib 不接受把整个 counts dict 当 category。
+这一次 105 个数值 checkpoint 已经完整。我先对文件路径和字节做 Merkle 封存，再做 artifact recovery；
+恢复只把 x 输入改为 key 列表，所有数值 level 都从已封存 checkpoint 读取。两个 validator 最后都通过，
+图也做了非空检查。
+
+最终机器判决仍是 `FAIL_CLOSED_EVALUATOR_REMAINS_UNAUTHORIZED`：
+
+- H1024 全门通过 `23/32`；
+- 9 格按规则升级 H2048；
+- 7 格升级后通过，最终 reference 为 `30/32`；
+- 2 格仍失败，都是 `smooth-s1871 / orientation_58 / narrow` 的 stress 1 和 3 controls。
+
+这两个失败不能简单说成“曲线射线没收敛”。32/32 的完整 detector output、finite、domain、stencil、
+direction 和 topology 都通过。两个格的 output H1024-H2048 relative-L2 都约 `6.686e-7`。真正没过的是
+matched residual relative-L2：`0.1647%` 和 `0.1392%`，略高于冻结的 `0.125%`。
+
+为什么这么敏感？stress 1 格的 H2048 matched residual norm 只有完整 output 的 `7.37e-5`；
+H1024-H2048 residual absolute difference 是 `3.01e-10`，相对完整 output 只有 `1.21e-7`。
+也就是说我们在拿两个很接近的完整量相减，再用一个极小残差当分母。wide aperture 对照残差更大，
+同一门就能通过。这提示“相消 + 小分母”可能是主因，但目前只是机理推断。
+
+**讲人话：**尺子的大刻度已经稳定，卡住的是两格很小的尾差。不能因为绝对差看起来小就事后改门，
+也不该马上训练 FNO 去拟合一个可能低于实验噪声的信号。下一步 N5 先比较 H4096/H8192、共享节点的
+direct paired residual quadrature、Richardson 和 compensated summation，再拿何远哲师兄的 flow-off
+repeats 把 synthetic units 映射到真实 pixel/noise units。只有 fresh reference gate 清除两格，才开放
+tiny field JVP/VJP；神经 residual operator 还在更后面。
+
+完整数字与禁止主张见
+[N4.1 评估器收敛结果审计](n2_pvgr_n4_1_evaluator_convergence_result_audit_2026-07-18.md)，下一轮四种
+reference 候选与 Go/No-Go 见
+[N5 cancellation-aware reference 路线](n2_pvgr_n5_cancellation_aware_reference_plan_2026-07-18.md)。

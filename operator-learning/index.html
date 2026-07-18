@@ -303,6 +303,7 @@
       <a href="../index.html">研究总站</a>
       <a href="../tdbost-code-guide/">TDBOST 代码导读</a>
       <a href="../operator_nullspace_evidence_dashboard.html">实验证据</a>
+      <a href="../document_reader.html?doc=docs%2Fn2_pvgr_n4_1_evaluator_convergence_result_audit_2026-07-18.md">N4.1 参考解审计</a>
       <a href="../document_reader.html?doc=v3k_f_noise_stopping_review_brief.md">v3k-F 停止审计</a>
       <a href="../strong_numerical_controls_lab.html">v3k-D 强数值门</a>
       <a href="../operator_fair_budget_dashboard.html">同预算判决</a>
@@ -323,8 +324,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert critical">
-      <strong>当前科学判断：N3 已严格 NO-AUTH；先稳参考解与 field adjoint，再训练残差算子。</strong>
-      <span>96 条件中，OCBH 主门 73/96、H256/H512 sentinel 80/96、计时 0/4。Picard-1 在 8/8 个 field units 的整体 matched error 更低，查询预算约为 OCBH 的 0.996，但一个已收敛条件的 Q95 尾部差 1.819%，因此不能宣称支配。<a href="../general_operator_research_lab.html#n2-pvgr-n3">打开 N3 证据台</a></span>
+      <strong>当前科学判断：N4.1 仍是 NO-AUTH；32 格完整输出已稳，两个小残差格仍未取得 reference 许可。</strong>
+      <span>H1024 全门通过 23/32，9 格升级 H2048，最终 30/32 通过。剩余两格都来自 smooth-s1871、orientation-58、narrow aperture；完整 output 与 topology 已过，卡在 matched-residual relative-L2 的 0.1647% / 0.1392%，高于冻结门 0.125%。当前先做 cancellation-aware reference 与实验噪声底，不训练网络。<a href="../document_reader.html?doc=docs%2Fn2_pvgr_n4_1_evaluator_convergence_result_audit_2026-07-18.md">打开 N4.1 审计</a></span>
     </div>
   </header>
 
@@ -355,21 +356,21 @@
 
     <section id="latest-gate" class="band">
       <div class="section-head">
-        <div><div class="eyebrow">最新可复核增量</div><h2>先把参考解与 field adjoint 做稳</h2><p>现在不该继续堆网络。先分清数值参考误差、Picard-1 的真实尾部残差和未来实验噪声底，才知道神经算子有没有值得学习的信号。</p></div>
-        <div class="actions"><a class="button primary" href="../general_operator_research_lab.html#n2-pvgr-n3">进入 N3 证据台</a><a class="button" href="../document_reader.html?doc=docs%2Fn2_pvgr_n3_grouped_factorial_result_audit_2026-07-18.md">中文结果审计</a></div>
+        <div><div class="eyebrow">最新可复核增量</div><h2>先解决两格小残差 reference，再碰 field adjoint</h2><p>N4.1 已把“参考解不稳”缩到两个 matched controls。下一步不是放宽门，而是用更细积分、paired quadrature 与真实 flow-off noise 判断这个尾差信号究竟可不可辨认。</p></div>
+        <div class="actions"><a class="button primary" href="../document_reader.html?doc=docs%2Fn2_pvgr_n4_1_evaluator_convergence_result_audit_2026-07-18.md">N4.1 结果审计</a><a class="button" href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_cancellation_aware_reference_plan_2026-07-18.md">N5 执行路线</a></div>
       </div>
       <div class="profile-panel">
-        <figure><img src="../demo_t16_operator/results/n2_pvgr_n3_grouped_factorial_v1/n2_pvgr_n3_grouped_factorial.png" alt="N2-PVGR-N3 96 条件筛查六联证据图" /><figcaption>六联图必须一起读：Picard-1 的分组均值信号不能抵消 evaluator、Q95 尾部和完整成本门。</figcaption></figure>
+        <figure><img src="../demo_t16_operator/results/n2_pvgr_n4_1_evaluator_convergence_v1/n2_pvgr_n4_1_evaluator_convergence.png" alt="N2-PVGR-N4.1 评估器收敛、逐格授权数量与计算成本" /><figcaption>左：H512→H1024 contraction；中：23 格 H1024 通过、9 格升级、30 格最终 reference；右：CPU 成本随 H 近线性增长。图表非算法性能。</figcaption></figure>
         <div class="panel">
-          <div class="chips"><span class="chip">8 field units · 96 conditions</span><span class="chip blue">sentinel 80 / 96</span><span class="chip coral">NO-AUTH</span></div>
-          <h3 style="margin-top:12px;">本周交付</h3>
+          <div class="chips"><span class="chip">32 selected cells</span><span class="chip blue">H1024 23 / 32</span><span class="chip">H2048 9 格</span><span class="chip coral">final 30 / 32 · NO-AUTH</span></div>
+          <h3 style="margin-top:12px;">现在按这个顺序做</h3>
           <ol>
-            <li>对 16 个 sentinel 失败格和匹配 controls 做 H1024 收敛审计。</li>
-            <li>从同一个 tensor-only curved forward 生成 field JVP/VJP，并过 dot/FD 双门。</li>
-            <li>跑 6 train + 2 sealed held-out views 的最小三维重建闭环。</li>
-            <li>向师兄确认单位、mask、ray geometry、flow-off noise 与 F/Fᵀ 或 Jᵀ/VJP。</li>
+            <li>复算两个失败格的 full-output、residual、absolute difference 和 Q95 尺度。</li>
+            <li>在 toy field 实现 direct paired residual quadrature，并与两个完整输出相减对照。</li>
+            <li>预先固定 H4096/H8192、Richardson 与 compensated summation 的 N5 表格和停止门。</li>
+            <li>向师兄申请位移单位、同 rig flow-off repeats、pixel/ray confidence 与 covariance。</li>
           </ol>
-          <div class="trap"><strong>训练许可：</strong>只有稳定的 <code>H-P1</code> 残差同时高于 evaluator 数值误差和实验噪声底，才训练小型残差算子；否则停止该网络方向。</div>
+          <div class="trap"><strong>训练仍锁定：</strong>只有 fresh N5 reference、field JVP/VJP 和实验 noise-floor 三门都通过，才训练 <code>Picard-1 + residual operator</code>；30/32 不能四舍五入成成功。</div>
         </div>
       </div>
     </section>
@@ -411,7 +412,7 @@
 
     <section id="research" class="band">
       <div class="section-head"><div><div class="eyebrow">研究决策</div><h2>先选证据问题，再选模型</h2><p>排名是当前执行顺序，不是方向的绝对价值。组内数据和师兄意见会改变排名。</p></div></div>
-      <div class="alert"><strong>当前第一研究问题：Picard-1 物理预条件之后，能否只学习可辨认的 <code>H-P1</code> 尾部残差，并保持 field-adjoint 闭合与失败回退。</strong><span>这只是由 N3 失败模式提出的算法假设，不是已有成功。第一关是 H1024 evaluator，第二关是 field JVP/VJP，第三关才是同预算 residual operator 与 DeepONet/FNO/FFNO。</span></div>
+      <div class="alert"><strong>当前第一研究问题：能否为弱曲率 BOST 构造 cancellation-aware、noise-aware、仍可 fail closed 的 residual reference。</strong><span>N4.1 表明完整 output 已稳，但两个 narrow controls 的微小 matched residual 仍未过门。先比较 raw subtraction、direct paired quadrature、H4096/H8192 与 Richardson；清除 reference 后才进入 field JVP/VJP，再后面才是 residual operator 与 DeepONet/FNO/FFNO。</span></div>
       <div id="trackGrid" class="track-grid" style="margin-top:14px;"></div>
     </section>
 
@@ -632,7 +633,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄好，我把“开发自有算子 + 三维重构”继续收缩为 Picard-1 物理预条件后的残差算子。\n\n当前选中路线：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已通过论文门槛：${passed}\n最近未通过：${pending}\n\nN3 在结果前冻结了 8 个 field units、32 个几何 case 和 96 个物理条件。OCBH 的离散 JVP teacher 为 96/96，但 primary 仅 73/96、H256/H512 sentinel 80/96、计时 0/4，所以正式判决是 NO-AUTH。Picard-1 在 8/8 field units 的整体 matched error 更低，grouped ratio 为 0.198 [0.151, 0.264]，query/OCBH 为 0.996；但 6 个 absolute-reference 失败受 evaluator 影响，另有一个已收敛条件的 Q95 比 OCBH 差 1.819%，因此我没有把它写成算法成功。\n\n下一步先用 H1024 审计 16 个 sentinel 失败格，再实现同一 curved forward 的 field JVP/VJP dot/FD 双门和 6-train/2-held-out 八视角重建。只有 H-P1 稳定高于数值误差与实验噪声底，才训练 Picard-1 + learned residual operator，并同预算比较 voxel/L-BFGS、DeepONet、FNO/FFNO。想请你确认：能否先给 1-3 帧 displacement/raw image + mask + ray geometry + flow-off repeats + baseline reconstruction；现有 F 与 Fᵀ/Jᵀ/VJP 是否可调用；能否封存两条 view 作 blind held-out；主终点优先 field、thin-front、held-out reprojection、PIV correction 还是速度？`;
+        document.getElementById('briefText').value = `师兄好，我把“开发自有算子 + 三维重构”继续收缩为 Picard-1 物理预条件后的残差算子，但 N4.1 说明现在还不能开始训练。\n\n当前选中路线：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已通过论文门槛：${passed}\n最近未通过：${pending}\n\nN4.1 对 N3 的 16 个 sentinel failures 和 16 个 same-field matched controls 跑了 H256/H512/H1024，并让 9 格按预注册升级 H2048。H1024 全门通过 23/32，最终 reference 30/32，机器仍是 NO-AUTH。32/32 的完整 detector output、finite/domain/topology 都通过；剩余两格都是 smooth-s1871、orientation-58、narrow aperture、stress 1/3，H1024-H2048 matched-residual relative-L2 为 0.1647% / 0.1392%，高于冻结门 0.125%。它们的绝对差很小且继续收缩，所以我没有事后放宽门，而是把问题改成 cancellation-aware reference。\n\n下一步先比较 H4096/H8192、direct paired residual quadrature、Richardson 和 compensated summation，并把误差映射到真实 flow-off noise units。想请你确认：能否提供同一 rig 的 displacement 单位/像素尺度、20 次左右 flow-off repeats、pixel/ray mask/confidence/covariance；组内 observable 是 exit angle、path-integrated deflection 还是最终 pixel displacement；现有 F 与 Fᵀ/Jᵀ/VJP 是否可调用；哪些 field/geometry 必须封存 blind？只有 fresh reference、field JVP/VJP 和 noise-floor 三门都过，才训练 residual operator 并同预算比较 DeepONet、FNO/FFNO。`;
       }
 
       function bindProfile() {
