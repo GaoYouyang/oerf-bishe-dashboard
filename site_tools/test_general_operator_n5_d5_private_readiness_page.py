@@ -13,7 +13,7 @@ READINESS = ROOT / "site_tools/n5_d5_private_lab_readiness.py"
 def _section() -> str:
     html = PAGE.read_text(encoding="utf-8")
     return html.split('id="n5-d5-private-readiness"', 1)[1].split(
-        'id="n5-d4c"', 1
+        'id="n5-d5-l2-foundation"', 1
     )[0]
 
 
@@ -22,13 +22,16 @@ def test_page_exposes_private_readiness_as_current_locked_gate() -> None:
     section = _section()
 
     assert 'href="#n5-d5-private-readiness">D5 私有接线</a>' in html
-    assert html.index('href="#n5-d5"') < html.index(
-        'href="#n5-d5-private-readiness"'
-    ) < html.index('href="#n5-d4c"')
+    assert (
+        html.index('href="#n5-d5"')
+        < html.index('href="#n5-d5-private-readiness"')
+        < html.index('href="#n5-d5-l2-foundation"')
+        < html.index('href="#n5-d4c"')
+    )
     for phrase in (
         "REAL ADAPTER NOT RECEIVED",
         "STATIC PREFLIGHT IMPLEMENTED",
-        "53-CALL FORMAL REPLAY LOCKED",
+        "36/53-CALL PRIMARY LOCKED",
         "MODEL TRAINING LOCKED",
         "当前没有绿色实验室报告",
         "静态绿灯只解锁人工源码复核与私有 describe 准备",

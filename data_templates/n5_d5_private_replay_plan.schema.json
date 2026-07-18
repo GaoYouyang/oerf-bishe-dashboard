@@ -1,0 +1,463 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaoyouyang.github.io/oerf-bishe-dashboard/data_templates/n5_d5_private_replay_plan.schema.json",
+  "title": "N5-D5-L2 private replay foundation plan",
+  "description": "A private, non-executing provenance and output-policy contract. Passing this schema never authorizes an adapter call or a scientific claim.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "plan_id",
+    "l1_report",
+    "private_bundle",
+    "capability_profile",
+    "authorization_budget",
+    "output_policy",
+    "challenge_policy",
+    "process_policy",
+    "physical_review",
+    "claim_authorizations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "n5-d5-private-replay-plan-1.0"
+    },
+    "record_kind": {
+      "const": "PRIVATE_LAB_REPLAY_FOUNDATION_PLAN"
+    },
+    "plan_id": {
+      "$ref": "#/$defs/pseudonym"
+    },
+    "l1_report": {
+      "$ref": "#/$defs/fileReference"
+    },
+    "private_bundle": {
+      "$ref": "#/$defs/privateBundle"
+    },
+    "capability_profile": {
+      "$ref": "#/$defs/capabilityProfile"
+    },
+    "authorization_budget": {
+      "$ref": "#/$defs/authorizationBudget"
+    },
+    "output_policy": {
+      "$ref": "#/$defs/outputPolicy"
+    },
+    "challenge_policy": {
+      "$ref": "#/$defs/challengePolicy"
+    },
+    "process_policy": {
+      "$ref": "#/$defs/processPolicy"
+    },
+    "physical_review": {
+      "$ref": "#/$defs/physicalReview"
+    },
+    "claim_authorizations": {
+      "$ref": "#/$defs/claimAuthorizations"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "not": {
+        "pattern": "(^/|(^|/)\\.\\.(/|$)|^file:)"
+      }
+    },
+    "pseudonym": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{5,79}$"
+    },
+    "fileReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relative_path",
+        "sha256"
+      ],
+      "properties": {
+        "relative_path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "inventoryEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relative_path",
+        "role",
+        "sha256",
+        "bytes"
+      ],
+      "properties": {
+        "relative_path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "role": {
+          "enum": [
+            "config",
+            "adapter_source",
+            "base_input",
+            "calibration",
+            "model_weight",
+            "native_library",
+            "environment_lock",
+            "physical_contract",
+            "network_profile",
+            "cost_instrumentation",
+            "other_private_dependency"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "privateBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root",
+        "closed_world_required",
+        "inventory"
+      ],
+      "properties": {
+        "root": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "closed_world_required": {
+          "const": true
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/inventoryEntry"
+          },
+          "minItems": 5
+        }
+      }
+    },
+    "capabilityProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "direct_residual_supported",
+        "direct_residual_semantics",
+        "arbitrary_runtime_directions_supported",
+        "precomputed_probe_arrays_are_sufficient",
+        "backend_dtype_preserved_and_reported",
+        "dynamic_ray_sample_ledger_required",
+        "fixed_zero_ray_sample_ledger_forbidden"
+      ],
+      "properties": {
+        "direct_residual_supported": {
+          "type": "boolean"
+        },
+        "direct_residual_semantics": {
+          "enum": [
+            "native_same_sample_residual",
+            "unavailable"
+          ]
+        },
+        "arbitrary_runtime_directions_supported": {
+          "const": true
+        },
+        "precomputed_probe_arrays_are_sufficient": {
+          "const": false
+        },
+        "backend_dtype_preserved_and_reported": {
+          "const": true
+        },
+        "dynamic_ray_sample_ledger_required": {
+          "const": true
+        },
+        "fixed_zero_ray_sample_ledger_forbidden": {
+          "const": true
+        }
+      }
+    },
+    "authorizationBudget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "describe_only_requests",
+        "primary_requests",
+        "validator_base_replay_requests",
+        "validator_private_probe_requests",
+        "total_requests",
+        "separate_authorization_tokens_required"
+      ],
+      "properties": {
+        "describe_only_requests": {
+          "const": 2
+        },
+        "primary_requests": {
+          "enum": [36, 53]
+        },
+        "validator_base_replay_requests": {
+          "enum": [36, 53]
+        },
+        "validator_private_probe_requests": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "total_requests": {
+          "type": "integer",
+          "minimum": 75
+        },
+        "separate_authorization_tokens_required": {
+          "const": true
+        }
+      }
+    },
+    "outputPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "result_directory",
+        "expected_payload_files",
+        "closed_world_required",
+        "refuse_overwrite",
+        "raw_trace_publication_permitted",
+        "public_summary_write_permitted"
+      ],
+      "properties": {
+        "result_directory": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "expected_payload_files": {
+          "const": [
+            "requests.jsonl",
+            "responses.jsonl",
+            "metrics.json",
+            "finite_difference_rows.csv",
+            "result.json",
+            "private_diagnostic.png",
+            "process_attestation.json",
+            "challenge_reveal.json"
+          ]
+        },
+        "closed_world_required": {
+          "const": true
+        },
+        "refuse_overwrite": {
+          "const": true
+        },
+        "raw_trace_publication_permitted": {
+          "const": false
+        },
+        "public_summary_write_permitted": {
+          "const": false
+        }
+      }
+    },
+    "challengePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entropy_source",
+        "entropy_bytes",
+        "generated_after_attestation",
+        "persisted_before_adapter_launch",
+        "reveal_location",
+        "validator_extra_tangent_count",
+        "validator_extra_cotangent_count",
+        "private_h_intervals"
+      ],
+      "properties": {
+        "entropy_source": {
+          "const": "os_csprng"
+        },
+        "entropy_bytes": {
+          "type": "integer",
+          "minimum": 32,
+          "maximum": 64
+        },
+        "generated_after_attestation": {
+          "const": true
+        },
+        "persisted_before_adapter_launch": {
+          "const": false
+        },
+        "reveal_location": {
+          "const": "private_result_after_adapter_exit"
+        },
+        "validator_extra_tangent_count": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 8
+        },
+        "validator_extra_cotangent_count": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 8
+        },
+        "private_h_intervals": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            ],
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      }
+    },
+    "processPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inherit_environment",
+        "allowed_environment_variables",
+        "python_hash_seed",
+        "python_no_user_site",
+        "python_no_bytecode",
+        "temporary_home_under_private_root",
+        "network_isolation_required",
+        "network_isolation_backend",
+        "independent_cost_instrumentation"
+      ],
+      "properties": {
+        "inherit_environment": {
+          "const": false
+        },
+        "allowed_environment_variables": {
+          "const": [
+            "HOME",
+            "LANG",
+            "LC_ALL",
+            "PATH",
+            "PYTHONHASHSEED",
+            "PYTHONNOUSERSITE",
+            "PYTHONDONTWRITEBYTECODE",
+            "TMPDIR"
+          ]
+        },
+        "python_hash_seed": {
+          "const": "0"
+        },
+        "python_no_user_site": {
+          "const": true
+        },
+        "python_no_bytecode": {
+          "const": true
+        },
+        "temporary_home_under_private_root": {
+          "const": true
+        },
+        "network_isolation_required": {
+          "const": true
+        },
+        "network_isolation_backend": {
+          "enum": [
+            "not_configured",
+            "macos_sandbox_profile",
+            "container_network_none",
+            "firejail_net_none"
+          ]
+        },
+        "independent_cost_instrumentation": {
+          "enum": [
+            "not_configured",
+            "backend_counter_private_reviewed",
+            "syscall_trace_private_reviewed"
+          ]
+        }
+      }
+    },
+    "physicalReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tolerances_reviewed",
+        "reviewer_pseudonym",
+        "review_digest_sha256"
+      ],
+      "properties": {
+        "tolerances_reviewed": {
+          "type": "boolean"
+        },
+        "reviewer_pseudonym": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/pseudonym"
+            }
+          ]
+        },
+        "review_digest_sha256": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/sha256"
+            }
+          ]
+        }
+      }
+    },
+    "claimAuthorizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "real_bost_interface",
+        "physical_forward_correctness",
+        "derivative_correctness",
+        "reconstruction",
+        "algorithm_superiority",
+        "generalization",
+        "publication"
+      ],
+      "properties": {
+        "real_bost_interface": {
+          "const": false
+        },
+        "physical_forward_correctness": {
+          "const": false
+        },
+        "derivative_correctness": {
+          "const": false
+        },
+        "reconstruction": {
+          "const": false
+        },
+        "algorithm_superiority": {
+          "const": false
+        },
+        "generalization": {
+          "const": false
+        },
+        "publication": {
+          "const": false
+        }
+      }
+    }
+  }
+}

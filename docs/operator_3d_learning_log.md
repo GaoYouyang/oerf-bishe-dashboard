@@ -3138,8 +3138,14 @@ helper，四类篡改测试也全部 fail-closed；但它仍是同一 Python/Num
 
 ## 117. D5：终于把“向师兄要一个最小接口”写成了能直接运行的合同
 
-D4c-v2 结束时，网页上一直写“向师兄要 4--16 rays、两个 Jv、一个 J^Tq”。这句话方向对，
-但还不够执行：师兄给什么文件、每条路径调用几次、branch 从哪里来、单位怎么记、结果由谁判，
+> **后续边界更正。** 本节记录冻结 synthetic 三路径协议。这里的“两个 Jv、一个 Jᵀq”是公开
+> 测试使用的 probe 数，不是让师兄交付三份预计算数组；真实后端必须接受任意运行时 `v/q`。
+> `1,370` 应理解为同一次确定性协议回放中的 validator 断言，不是 1,370 个独立物理实验。
+> “拿到接口后先跑 53 次”也已被 118/119 的分阶段授权取代：L1 static → L2-A → 单独 2 次
+> describe → 36/53 primary → 独立 validator + private challenge。
+
+D4c-v2 结束时，网页上一直写“向师兄要 4--16 rays、两个 Jv、一个 J^Tq”。当时想表达测试
+probe 数，但这个说法容易被误解成预计算数组，而且还不够执行：师兄给什么文件、每条路径调用几次、branch 从哪里来、单位怎么记、结果由谁判，
 都没有机器合同。D5 把这些空白补成 JSON Schema、JSONL adapter、runner 和完全独立的 validator。
 
 这轮先提交 `a8d8849` 冻结规则；公开审计发现结果会留下本机 Python 绝对路径，于是在入库前用
@@ -3150,7 +3156,7 @@ path/callable identity；forward 自己返回实际 branch state，输出分箱�
 
 正式 synthetic bundle 的全部三个 h 都被消费，最大 FD 相对误差 `2.07e-8`，三路径结构误差
 `1.20e-15`，伴随 normwise defect `9.28e-17`。独立 validator 使用新 nonce 重启同一 adapter，
-没有导入 runner、共享协议 helper 或 adapter，重算后完成 1,370 项检查。output、branch、metric、
+没有导入 runner、共享协议 helper 或 adapter，重算后完成 1,370 项 validator 断言。output、branch、metric、
 decision 和 stored request 五种篡改即使刷新 manifest 也会失败。
 
 **讲人话：**我们造好了一只标准插头，并用一台透明的合成机器证明插头、计数器和验电笔都能工作。
@@ -3160,13 +3166,17 @@ decision 和 stored request 五种篡改即使刷新 manifest 也会失败。
 
 下一步只需要师兄提供一个匿名小适配器，不必先交整套火焰数据。优先确认真实 residual 是在同一
 ray sample/integrand 层形成，还是两张 detector map 最后相减；再确认 hard mask、occupancy pruning、
-dynamic sampling 或 termination 是否真的存在。拿到接口后先跑固定 53 次调用；根据 FAIL_BRANCH、
+dynamic sampling 或 termination 是否真的存在。当时写成“拿到接口后先跑固定 53 次”，现已由
+L1/L2-A、单独 describe、primary、validator 的分阶段授权取代；真实 failure 仍根据 FAIL_BRANCH、
 FAIL_STRUCTURE、FAIL_FD/ADJOINT 或 low-signal unresolved 选择物理上真实的算法问题，仍不直接开 FNO。
 
 完整合同、复现命令、72 小时接线路线和可直接发给师兄的消息见
 [N5-D5 最小真实接口桥](n5_d5_minimum_real_interface_bridge_2026-07-19.md)。
 
 ## 118. D5-L1：真实代码还没到，但现在不会因为“私有”与“可验证”互相打架
+
+> **进度说明。** 本节的六项 L2 清单中，静态 provenance、物理合同、依赖 inventory、闭世界输出、
+> 禁 public summary 与私有 probe 机制已在 119/L2-A 实现；隔离执行与真实运行观察仍未实现。
 
 D5 的合成插头做好以后，我继续往真实实验室接口走了一步，马上撞到一个不能糊弄过去的矛盾：
 师兄的 adapter、匿名输入和 raw trace 必须放在 `private_library/`，不能进公开 Git；但已经冻结的
@@ -3187,7 +3197,7 @@ provenance 和私有结果 provenance 三层。原来的 synthetic D5 证据保�
 这里最容易误会的是“以后静态绿灯”也只叫
 `STATIC_PRIVATE_INTAKE_READY_FORMAL_REPLAY_LOCKED`。讲人话就是：文件在门口的证件和包装暂时没发现
 问题，可以让人审源码、准备两次 describe；它不说明里面的 forward 是真实折射光学，更不允许直接跑
-53 calls 或训练 FNO。正式回放前还缺双 provenance、物理阈值审核、完整依赖 hash、闭世界 manifest、
+36/53 primary 或训练 FNO。正式回放前还缺双 provenance、物理阈值审核、完整依赖 hash、闭世界 manifest、
 禁止 public summary 的硬门，以及 validator 临时生成的私有未知 probes。
 
 师兄需要接的最小骨架现在也缩成六个函数：描述、forward、JVP、VJP、标准输入向量和源码审阅说明。
@@ -3197,3 +3207,41 @@ direct residual，就诚实写没有，不能在 wrapper 末端相减两张 map 
 完整目录结构、命令、状态翻译、L2 清单和可直接发给何远哲师兄的消息见
 [N5-D5-L1 私有真实适配器接线](n5_d5_private_adapter_handoff_2026-07-19.md)。当前真实 adapter 仍未收到，
 因此没有绿色实验室报告，也没有三维重建、算法优越、泛化或论文授权。
+
+## 119. L2-A：把“53 次不是总成本”这件事正式写进了机器合同
+
+这一轮没有训练模型，也没有碰实验室数据，先修正了一个会影响后续所有结论的预算问题。原来网页常把
+“53 requests”说成真实接口的一轮验证，但 53 只是一轮三路径 primary：2 describe、42 forward、
+6 JVP、3 VJP。真正的独立 validator 还要再执行一次基础协议；为了防固定公开向量查表，还要在
+attestation 后生成新的 tangent、cotangent 和秘密 h。
+
+按当前冻结的 2 个私有 tangent、2 个 cotangent、3 个 h 来算，每条路径要多用
+`2 JVP + 2 VJP + 2×2×3 forward = 16` 个请求。三路径是 48，所以完整计划是
+`2 + 53 + 53 + 48 = 156`。如果师兄没有原生 direct residual，诚实的双路径计划是
+`2 + 36 + 36 + 32 = 106`，不能在 wrapper 末端减两张 detector map，假装第三条 residual-native
+路径已经存在。
+
+L2-A 现在把这套计算写成了代码，不靠手填总数。它从 config 读取 path、公开 probe 与 h 数量，
+从 L2 plan 读取私有 probe 与 h 区间，自动推导 primary、validator 和总预算；任何一项少算都会
+`AUTHORIZATION_BUDGET_EXACT` fail closed。当前 frozen L1 只接受三路径，所以计划声明 direct
+unavailable 时会明确指向 `BUILD_DUAL_PATH_L1_V2`，而不是诱导绕过合同。
+
+同时新增了两份私有说明：environment lock 绑定依赖版本与 hash；physical contract 绑定参数化、
+shape/spacing、axis/units、坐标手性、geometry/calibration hash、波长、sampling/interpolation/
+boundary/termination、backend/wire dtype、decoder checkpoint、动态 ray/sample 账本和噪声下限。
+物理审阅摘要必须等于这份合同的实际 hash，随便填一个 64 位字符串不能关门。
+
+私有 probe 也不再只换 nonce。系统 CSPRNG 在 attestation 后生成正交 `v/q`，并从三个预注册
+数量级区间各抽一个 log-uniform h；启动前只保存 seed+context commitment，不落盘 seed、向量或 h，
+adapter 退出后才写 private reveal。这降低固定向量查表风险，但有限随机探针仍不证明整个高维 Jacobian。
+
+L1+L2 targeted suite 现在是 `37 passed`。预算漂移、能力冲突、噪声为零、单位不一致、审阅 hash
+伪造、h 区间倒置、secret/绝对路径、extra file、symlink、hardlink 和结果篡改都会拒绝。要诚实强调：
+这些是机制测试，不是实验室结果。工具仍然没有 import 或执行 private adapter；isolated describe runner、
+OS 无网络、独立成本 observer、签名事件链、dual-path L1-v2 都还没完成。
+
+**我现在学到的关键区别：**hash 正确只说明文件没换，physical contract 齐全只说明解释被固定，
+L2 局部通过只说明已覆盖的离散义务没失败。真实 BOST 物理、三维场重建和算子模型是否有效，仍要在
+真实几何、标定、rig/session split、field relative-L2、逐 rig tail、Schur violation 与端到端成本上
+另行验证。完整推导与下一步见
+[N5-D5-L2-A 私有回放基础](n5_d5_l2_private_replay_foundation_2026-07-19.md)。

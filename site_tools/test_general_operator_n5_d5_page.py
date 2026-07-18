@@ -7,15 +7,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PAGE = ROOT / "general_operator_research_lab.html"
 RESULT_DIR = (
-    ROOT
-    / "demo_t16_operator/results/n5_d5_minimum_interface_bridge_synthetic_v1"
+    ROOT / "demo_t16_operator/results/n5_d5_minimum_interface_bridge_synthetic_v1"
 )
 REPORT = ROOT / "docs/n5_d5_minimum_real_interface_bridge_2026-07-19.md"
 
 
 def _section() -> str:
     html = PAGE.read_text(encoding="utf-8")
-    return html.split('id="n5-d5"', 1)[1].split('id="n5-d4c"', 1)[0]
+    return html.split('id="n5-d5"', 1)[1].split('id="n5-d5-private-readiness"', 1)[0]
 
 
 def test_page_centers_n5_d5_as_current_interface_bridge() -> None:
