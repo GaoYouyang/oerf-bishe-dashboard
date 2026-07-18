@@ -18,11 +18,12 @@ def _section() -> str:
     return html.split('id="n5-d4c"', 1)[1].split('id="n5-d4b"', 1)[0]
 
 
-def test_page_centers_semantic_v2_and_records_v1_no_go() -> None:
+def test_page_keeps_semantic_v2_as_historical_precursor_and_records_v1_no_go() -> None:
     html = PAGE.read_text(encoding="utf-8")
     section = _section()
 
-    assert 'href="#n5-d4c">D4c-v2 语义审计</a>' in html
+    assert 'href="#n5-d4c">D4c 历史前置</a>' in html
+    assert "D4c-v2 现在是历史前置证据" in section
     assert "D4c-v1 虽通过文件完整性检查" in html
     assert "语义 NO-GO" in html
     assert "protocol commit 09a50d1" in section
@@ -75,7 +76,7 @@ def test_reports_explain_semantic_boundary_and_primary_sources() -> None:
     assert "不表示候选导数已被证明正确" in report
     assert "10.1137/1.9780898718027" in report
     assert "10.1137/1.9780898717761" in report
-    assert "10.1145/3476576.3476671" in report
+    assert "10.1145/3450626.3459775" in report
     assert "10.1145/3272127.3275109" in report
     assert "10.1063/5.0250899" in report
     assert "语义主张已撤回" in historical

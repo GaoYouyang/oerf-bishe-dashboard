@@ -3135,3 +3135,33 @@ residual-native 对照；真实接口过门后才接 decoder chain 与 6+2 view 
 seed 重建所有输入、路径、指标与状态；结果为 `valid=true`。它没有导入 runner 或 certificate
 helper，四类篡改测试也全部 fail-closed；但它仍是同一 Python/NumPy 栈，不是跨语言复现，更不
 授权真实 BOST、三维重建、泛化或算法优越性。
+
+## 117. D5：终于把“向师兄要一个最小接口”写成了能直接运行的合同
+
+D4c-v2 结束时，网页上一直写“向师兄要 4--16 rays、两个 Jv、一个 J^Tq”。这句话方向对，
+但还不够执行：师兄给什么文件、每条路径调用几次、branch 从哪里来、单位怎么记、结果由谁判，
+都没有机器合同。D5 把这些空白补成 JSON Schema、JSONL adapter、runner 和完全独立的 validator。
+
+这轮先提交 `a8d8849` 冻结规则；公开审计发现结果会留下本机 Python 绝对路径，于是在入库前用
+`ee792fd` 增加命令脱敏和 validator 门，再重新正式运行合成参考适配器。每个 bundle 固定 53 个请求：2 次 describe、
+42 次 forward、6 次 JVP、3 次 VJP。三条路径 curved、straight、direct-residual 都要独立报告
+path/callable identity；forward 自己返回实际 branch state，输出分箱等 diagnostic 另记；每个响应还要
+带累计成本账本。runner 只保存原始 output/state/ledger，FD、伴随缺陷、三路径误差和结论由审计端推导。
+
+正式 synthetic bundle 的全部三个 h 都被消费，最大 FD 相对误差 `2.07e-8`，三路径结构误差
+`1.20e-15`，伴随 normwise defect `9.28e-17`。独立 validator 使用新 nonce 重启同一 adapter，
+没有导入 runner、共享协议 helper 或 adapter，重算后完成 1,370 项检查。output、branch、metric、
+decision 和 stored request 五种篡改即使刷新 manifest 也会失败。
+
+**讲人话：**我们造好了一只标准插头，并用一台透明的合成机器证明插头、计数器和验电笔都能工作。
+这不代表实验室的真实机器已经插上，更不代表三维重建或新算法成功。机器判决故意叫
+`SYNTHETIC_PROTOCOL_PASS_NO_LAB_AUTHORIZATION`，真实 BOST、物理正确、导数证明、重建、优越性、
+泛化和论文七类授权仍全是 false。
+
+下一步只需要师兄提供一个匿名小适配器，不必先交整套火焰数据。优先确认真实 residual 是在同一
+ray sample/integrand 层形成，还是两张 detector map 最后相减；再确认 hard mask、occupancy pruning、
+dynamic sampling 或 termination 是否真的存在。拿到接口后先跑固定 53 次调用；根据 FAIL_BRANCH、
+FAIL_STRUCTURE、FAIL_FD/ADJOINT 或 low-signal unresolved 选择物理上真实的算法问题，仍不直接开 FNO。
+
+完整合同、复现命令、72 小时接线路线和可直接发给师兄的消息见
+[N5-D5 最小真实接口桥](n5_d5_minimum_real_interface_bridge_2026-07-19.md)。

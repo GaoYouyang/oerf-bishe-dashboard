@@ -257,7 +257,7 @@ h_{change}\in(0.003,0.01].
 ## 7. 可复现入口
 
 ```bash
-cd /Users/gaoyouyang/Documents/毕业设计/oerf-bishe-dashboard
+cd /path/to/oerf-bishe-dashboard
 .venv/bin/python site_tools/n5_d4b_postopen_forensics.py \
   --output /tmp/n5_d4b_postopen_forensics_replay
 .venv/bin/python -m pytest -q \

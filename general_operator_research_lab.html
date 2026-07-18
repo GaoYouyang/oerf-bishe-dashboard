@@ -168,7 +168,8 @@
   <header>
     <nav class="nav" aria-label="主导航">
       <a href="operator-learning/">学习主页</a>
-      <a href="#n5-d4c">D4c-v2 语义审计</a>
+      <a href="#n5-d5">N5-D5 接口桥</a>
+      <a href="#n5-d4c">D4c 历史前置</a>
       <a href="#n5-d4b">D4b 冻结失败</a>
       <a href="#d0-root-cause">当前结论</a>
       <a href="#spatial-benchmark">空间基准</a>
@@ -201,28 +202,27 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">当前只做一条垂直主线：把曲光线 BOST forward 变成可核验、可拒答的离散算子，再进入 field JVP/VJP、三维重建和算子学习。D4b 冻结失败不改判；D4c-v1 虽通过文件完整性检查，却因没有真实调用 <code>F(x±hv)</code>、使用人工 branch 标签和隐藏 structure oracle，被红队判为<strong>语义 NO-GO</strong>。修正版 v2 在提交 <code>09a50d1</code> 后才正式运行，保存 <strong>720 cases、34,560 组实际正负 forward 与 36,000 条分层状态</strong>。当前候选收缩为 <strong>residual-native arithmetic + side-weighted report + randomized multi-probe + actual FD/structure/branch 三重拒答</strong>；本轮不选 threshold，也不解锁 decoder 或训练。</p>
+    <p class="lead">当前只做一条垂直主线：把何远哲师兄的曲光线 BOST/NeRIF forward 接成可核验、可拒答的离散算子，再进入 decoder-chain、三维重建和算子学习。最新 N5-D5 已把“向师兄要一个匿名小接口”写成机器合同：<strong>4--16 rays、curved/straight/direct 三路径、2 个 Jv、1 个 Jᵀq、真实 branch/diagnostic 分账与逐调用成本</strong>。合成参考包已经通过独立重放，但它只证明接口桥可用；真实 BOST、物理正确、完整导数、重建、优越性、泛化与论文结论仍全部锁定。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">N5-D4c-v2 · COMMIT 09a50d1</span><span class="chip gold">24 TRIALS · 720 CASES</span><span class="chip blue">34,560 ACTUAL FD PAIRS</span><span class="chip blue">36,000 STRATIFIED STATES</span><span class="chip coral">NO THRESHOLD SELECTED</span></div>
-          <h2>当前主线：把低信号、伴随盲区与真实分支分成不可互相替代的门</h2>
-        <p>D4c-v2 先提交语义修正再运行。它不是为了“让 p14 通过”，而是故意构造正确低信号、VJP 正交盲区、彼此自洽但同时错的 JVP/VJP、三路径 mismatch、diagnostic-only flip 和真实 piecewise branch。所有汇总保留 scenario、故障强度、probe 数与描述阈值，不再制造跨任务总分。</p>
+        <div class="chips"><span class="chip blue">N5-D5 · COMMIT ee792fd</span><span class="chip gold">53 REPLAYABLE REQUESTS</span><span class="chip blue">42 F · 6 Jv · 3 Jᵀq</span><span class="chip blue">1,370 INDEPENDENT CHECKS</span><span class="chip coral">ALL SCIENTIFIC CLAIMS CLOSED</span></div>
+        <h2>当前主线：先把真实 renderer 接进证据链，再决定哪一种算法值得做</h2>
+        <p>D5 不再增加 toy 分类分数，而是冻结一个最小 callable contract。适配器只能返回 output、实际 branch、diagnostic 和累计成本；有限差分、伴随缺陷、三路径结构与最终状态均由 runner 和不导入共享实现的 validator 重算。</p>
         <ol>
-          <li><strong>低信号：</strong>24/24 正确 cases 被旧 relative gate 拒绝；v2 只降级为 <code>LOW_SIGNAL_UNRESOLVED</code>，不自动 pass。</li>
-          <li><strong>单探针盲区：</strong>对第一个 tangent 正交的 VJP fault，1 probe 检出恒为 0；描述阈值 2 下，<code>1e-10</code> 故障需 16 probes 才达 24/24。</li>
-          <li><strong>自洽错误：</strong>同一错矩阵的 JVP/VJP 可以过 adjoint identity；真实 forward FD 只在冻结分辨率以上拒绝。</li>
-          <li><strong>residual-native：</strong>separate arithmetic 三档均被 actual FD 拒绝；直接形成 residual primitive 的 paired path 三档均通过。</li>
-          <li><strong>分支分账：</strong>diagnostic-only 是 24/24 state flip、0/24 branch flip；piecewise forward 是 24/24 branch crossing。</li>
-          <li><strong>后续仍锁定：</strong>fresh derivative gate → decoder-chain → 6+2 deterministic inverse → real noise units → 同预算 DeepONet/FNO/FFNO。</li>
+          <li><strong>固定预算：</strong>2 次 describe、42 次真实 forward、6 次 JVP、3 次 VJP，全部请求与响应留痕。</li>
+          <li><strong>三路径同查：</strong><code>direct = curved - straight</code> 必须同时在 output、JVP、VJP 层成立。</li>
+          <li><strong>全部步长：</strong><code>1e-5/1e-4/1e-3</code> 都消费，不允许看结果后只报 best-h。</li>
+          <li><strong>独立回放：</strong>validator 使用 fresh nonce 重启 adapter，重新生成探针并重算 1,370 项检查。</li>
+          <li><strong>篡改拒答：</strong>output、branch、metric、decision、stored request 即使重写 manifest 也会被抓住。</li>
+          <li><strong>下一门：</strong>拿到匿名真实 callable 后只跑同一小协议；由 branch/structure/FD 的真实失败选择创新问题。</li>
         </ol>
         <div class="actions" style="margin:14px 0;">
-          <a class="button primary" href="#n5-d4c">看 D4c 反例与检出率</a>
-          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n5_d4c_msra_semantic_v2_2026-07-19.md">v2 完整语义审计</a>
-          <a class="button" href="demo_t16_operator/results/n2_pvgr_n5_d4c_msra_semantic_v2/result.json">v2 机器结果</a>
-          <a class="button" href="demo_t16_operator/results/n2_pvgr_n5_d4c_msra_semantic_v2/validation_report.json">独立重放</a>
-          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n5_d4c_msra_development_2026-07-19.md">v1 红队撤回</a>
-          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=116-d4c-v2真实调用-forward-以后哪些结论才站得住">讲人话日志 116</a>
-          <a class="button" href="#n5-d4b">看冻结 D4b 证据</a>
+          <a class="button primary" href="#n5-d5">看 D5 接口、数字与接线步骤</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_minimum_real_interface_bridge_2026-07-19.md">D5 保姆式说明</a>
+          <a class="button" href="demo_t16_operator/results/n5_d5_minimum_interface_bridge_synthetic_v1/result.json">正式机器结果</a>
+          <a class="button" href="demo_t16_operator/results/n5_d5_minimum_interface_bridge_synthetic_v1/validation_report.json">1,370 项独立回放</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=117-d5终于把向师兄要一个最小接口写成了能直接运行的合同">讲人话日志 117</a>
+          <a class="button" href="#n5-d4c">看历史 D4c 反例</a>
           <a class="button" href="#senior">问师兄清单</a>
         </div>
         <details class="archive-details">
@@ -404,16 +404,98 @@
       </div>
       </details>
     </div>
-    <div class="alert critical"><strong>当前主结论 · D4c-v1 语义撤回，v2 用真实 forward 重做且仍不选阈值</strong><span>24/24 正确低信号 cases 只允许记为 unresolved；描述阈值 2 下，<code>1e-10</code> 首探针盲向 VJP 故障要到 16 probes 才达 24/24，<code>1e-12</code> 仍为 0/24。self-consistent wrong derivative 证明 adjoint identity 不能代替 actual FD；diagnostic state 与真实 branch state 已从 forward 返回值分账。D4b 历史失败不变，decoder、三维重建、神经算子训练、真实数据、泛化与论文主张仍全部 false。</span></div>
+    <div class="alert critical"><strong>当前主结论 · 接口桥已验证，真实物理门尚未打开</strong><span><code>SYNTHETIC_PROTOCOL_PASS_NO_LAB_AUTHORIZATION</code> 只说明 53 次调用、三路径恒等式、FD/伴随检查、状态分账和独立回放可以执行。它不证明真实 BOST，不证明物理正确，不证明完整 Jacobian，不证明三维重建，不证明算法优越，不证明泛化，也不证明论文成立。下一次有科学增量的动作是接入师兄的匿名真实 callable，而不是继续增加合成网络。</span></div>
   </header>
 
   <main id="main">
+    <section id="n5-d5" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">最新可验证增量 · N5-D5 minimum callable bridge · protocol commit ee792fd</div>
+          <h2>把“给我几个 Jv/Jᵀq”变成师兄可以交付、我可以独立验收的接口</h2>
+          <p>D5 是 D4c 合成反例与真实 renderer 之间的窄桥。它不复制整套 N2 数据合同，只要求一个匿名场向量、4--16 rays、三条路径、两组 tangent、一个 cotangent、真实状态和成本账本。合成参考适配器先证明协议不会漏调用、偷选步长或由被测程序自判成功。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fn5_d5_minimum_real_interface_bridge_2026-07-19.md">从零读 D5 与 72 小时路线</a>
+          <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fn5_d5_minimum_interface_bridge_synthetic_v1%2Finterface_bridge.png">放大四联证据图</a>
+          <a class="button" href="demo_t16_operator/results/n5_d5_minimum_interface_bridge_synthetic_v1/result.json">机器结果</a>
+          <a class="button" href="demo_t16_operator/results/n5_d5_minimum_interface_bridge_synthetic_v1/validation_report.json">独立回放</a>
+          <a class="button" href="demo_t16_operator/results/n5_d5_minimum_interface_bridge_synthetic_v1/requests.jsonl">53 个原始请求</a>
+          <a class="button" href="demo_t16_operator/results/n5_d5_minimum_interface_bridge_synthetic_v1/responses.jsonl">53 个原始响应</a>
+          <a class="button" href="data_templates/n5_d5_minimum_bost_interface.schema.json">JSON Schema</a>
+          <a class="button" href="data_templates/n5_d5_lab_interface.placeholder.json">实验室占位合同</a>
+          <a class="button" href="demo_t16_operator/configs/n5_d5_minimum_interface_bridge_preregistered_v1.json">冻结配置</a>
+        </div>
+      </div>
+
+      <div class="alert success"><strong>机器判决：SYNTHETIC_PROTOCOL_PASS_NO_LAB_AUTHORIZATION</strong><span>正式运行遵守公开命令脱敏后的提交 <code>ee792fd</code>，独立 validator 用新 nonce 重启适配器并重算所有指标，完成 <strong>1,370</strong> 项检查。通过的是 synthetic transport/semantic obligations；<code>claim_authorized=false</code>。</span></div>
+
+      <div class="metric-grid real-metric-grid">
+        <div class="metric"><b>53</b><span>完整 request/response；2 describe + 42 forward + 6 JVP + 3 VJP</span></div>
+        <div class="metric"><b>42 F + 6 Jv + 3 Jᵀq</b><span>三条路径各自调用，不用 hidden clean matrix 替代真实 forward</span></div>
+        <div class="metric"><b>1,370</b><span>manifest、源码提交、公开进程记录、fresh replay、raw output/state、指标和判决检查</span></div>
+        <div class="metric"><b>0 claims opened</b><span>真实接口、物理正确、导数证明、重建、优越性、泛化、论文全关闭</span></div>
+      </div>
+      <div class="metric-grid real-metric-grid">
+        <div class="metric"><b>2.07e-8</b><span>全部三个 h、三路径、两 tangent 的最大 FD 相对误差</span></div>
+        <div class="metric"><b>1.20e-15</b><span>output/JVP/VJP 三路径恒等式的最大相对残差</span></div>
+        <div class="metric"><b>9.28e-17</b><span>六组伴随探针的最大 normwise defect</span></div>
+        <div class="metric"><b>3.71e-2</b><span>最小 bilinear signal/action；本次不是低信号假通过</span></div>
+      </div>
+
+      <div class="two-col">
+        <figure>
+          <img src="demo_t16_operator/results/n5_d5_minimum_interface_bridge_synthetic_v1/interface_bridge.png" width="2640" height="1820" loading="lazy" decoding="async" alt="N5-D5 合成最小接口四联图，展示全步长有限差分、三路径结构残差、伴随缺陷与逐门状态" />
+          <figcaption>左上消费所有 h，不挑最好点；右上检查 direct-(curved-straight)；左下把伴随缺陷与信号强度同时报告；右下逐门显示接口义务。图标题明确写着 synthetic only。</figcaption>
+        </figure>
+        <div class="panel">
+          <div class="chips"><span class="chip blue">RAW TRACE</span><span class="chip gold">FRESH NONCE</span><span class="chip blue">THREE PATHS</span><span class="chip coral">FAIL CLOSED</span></div>
+          <h3 style="margin-top:12px;">你只需先学会读四层，不必一次读完 2,000 行</h3>
+          <ol>
+            <li><strong>物理函数：</strong><code>F_c(x)</code>、<code>F_s(x)</code> 与 <code>R(x)</code> 各表示什么。</li>
+            <li><strong>方向导数：</strong><code>Jv</code> 是场扰动到 detector；<code>Jᵀq</code> 是 detector 残差回到场。</li>
+            <li><strong>三种核对：</strong>actual FD、adjoint identity、三路径 structure 各抓不同错误。</li>
+            <li><strong>状态分账：</strong>真正改变 forward 的 branch 和只用于观察的 diagnostic 不能混。</li>
+            <li><strong>证据等级：</strong>接口 pass 只解锁下一实验，不解锁科学结论。</li>
+          </ol>
+          <div class="formula wrap-formula">protocol pass ≠ physical forward correctness ≠ complete derivative proof ≠ 3D reconstruction</div>
+        </div>
+      </div>
+
+      <div class="table-scroll-hint">表格可横向滚动；“出现时的算法方向”必须由真实接口结果触发</div>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>真实接口状态</th><th>它说明什么</th><th>优先检查</th><th>可能形成的算法题</th></tr></thead>
+          <tbody>
+            <tr><td class="negative">FAIL_CONTRACT / COST / PATH_ALIAS</td><td>接口身份、单位或调用账本不可信</td><td>适配器与代码审阅</td><td>不做算法，先修证据入口</td></tr>
+            <tr><td class="negative">FAIL_BRANCH</td><td>正负扰动走了不同控制流</td><td>mask、pruning、sample count、termination</td><td>局部稳定半径、边界项或 reparameterization</td></tr>
+            <tr><td class="negative">FAIL_STRUCTURE</td><td>direct residual 没有接成 curved-straight</td><td>sample/query/aperture 是否共享</td><td>residual-native paired ray primitive</td></tr>
+            <tr><td class="negative">FAIL_FD / ADJOINT</td><td>autodiff 与实际 forward 或转置关系不符</td><td>graph detach、precision、离散路由</td><td>可审计 matrix-free JVP/VJP</td></tr>
+            <tr><td class="pending">LOW_SIGNAL_UNRESOLVED</td><td>现有探针没有足够辨别力</td><td>预注册更多方向与检测地板</td><td>随机证书与拒答策略，不自动 pass</td></tr>
+            <tr><td class="positive">LAB INTERFACE REPLAYED</td><td>有限接口义务未失败</td><td>再做 decoder-chain 小门</td><td>之后才接 PCGLS/unrolling/operator model</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pipeline">
+        <div><b>1 · 协议已冻结</b><span>初版 <code>a8d8849</code>；公开路径脱敏门补入 <code>ee792fd</code> 后才生成入库结果。</span></div>
+        <div><b>2 · 合成桥已通过</b><span>53 responses、全 h、三路径、状态与成本全部留痕。</span></div>
+        <div><b>3 · 独立重放已通过</b><span>fresh nonce、重新启动、1,370 checks；五类篡改 fail closed。</span></div>
+        <div><b>4 · 当前唯一外部依赖</b><span>师兄提供匿名 4--16 rays callable 与真实单位/branch 规则。</span></div>
+        <div><b>5 · 结果决定算法</b><span>branch、structure、FD/adjoint 哪一门真失败，就垂直解决哪一项。</span></div>
+        <div><b>6 · 训练仍锁定</b><span>真实接口 → decoder-chain → 6+2 inverse 后才比较 DeepONet/FNO/FFNO。</span></div>
+      </div>
+
+      <div class="alert critical"><strong>七个禁止外推</strong><span>本节不证明真实 BOST；不证明物理正确；不证明完整 Jacobian；不证明三维重建；不证明算法优越；不证明泛化；不证明论文成立。两个 Jv 和一个 Jᵀq 在高维空间仍留下很大的未探测子空间，独立 validator 重启的也仍是同一套适配器，不是第二个物理 renderer。</span></div>
+      <div class="alert"><strong>可直接发给何远哲师兄</strong><span>“我已经把最小检查冻结成 42 次 forward、6 次 JVP、3 次 VJP。能否先给我一个匿名 4--16 rays 小例：field 或 decoder vector、curved/straight/direct callable（若 direct 不存在请明确）、precision、units、axis order、sampling/interpolation/termination 规则，以及 forward 真正使用的 branch state？我最想先确认 residual 是在同一 ray sample/integrand 层形成，还是两张 detector map 最后相减。raw lab trace 只放本地 private_library，不公开，也不会把接口通过写成重建或算法成功。”</span></div>
+    </section>
+
     <section id="n5-d4c" class="band">
       <div class="section-head">
         <div>
-          <div class="eyebrow">最新开发证据 · N5-D4c semantic-v2 · protocol commit 09a50d1</div>
+          <div class="eyebrow">历史前置证据 · N5-D4c semantic-v2 · protocol commit 09a50d1</div>
           <h2>证书先证明自己真的调用了 forward，再谈低信号与错梯度</h2>
-          <p>本轮在结果前固定 24 trials、1/2/4/8/16 probes、3 个 actual FD 步长、10 个描述阈值、4 档 fault magnitude 和 11 类反例。运行后保留 720 个 case 与完整分层网格，没有选 winner threshold；独立 validator 不导入 runner，从 seed 重建每个输入、路径、指标和状态，结果为 <code>valid=true</code>。</p>
+          <p><strong>D4c-v2 现在是历史前置证据。</strong>D4c-v1 虽通过文件完整性检查，却因伪 FD、人工 branch 和隐藏 structure oracle 被判为<strong>语义 NO-GO</strong>；v2 才在结果前固定 24 trials、1/2/4/8/16 probes、3 个 actual FD 步长、10 个描述阈值、4 档 fault magnitude 和 11 类反例，保留 720 个 case、34,560 组 actual FD 与 36,000 条分层状态。它说明 N5-D5 为什么必须同时要求 actual FD、三路径、真实 branch 与独立 replay；当前执行入口已经移到上方 D5。</p>
         </div>
         <div class="actions">
           <a class="button primary" href="document_reader.html?doc=docs%2Fn2_pvgr_n5_d4c_msra_semantic_v2_2026-07-19.md">读 v2 公式、反例与下一协议</a>
@@ -478,7 +560,7 @@
         <div><b>1 · 已完成</b><span>commit 09a50d1 先冻结语义合同，再运行 720 cases / 34,560 FD pairs / 36,000 states。</span></div>
         <div><b>2 · 独立重放通过</b><span><code>valid=true</code>；validator 不导入 runner，从 seed 重建 input hash、forward、三路径、gamma 与状态优先级。</span></div>
         <div><b>3 · 当前设计</b><span>把 residual-native、multi-probe、actual FD、三路径 structure 与 branch ledger 组成三态证书。</span></div>
-        <div><b>4 · D4d 最小接口</b><span>向师兄要匿名 4–16 rays、2 个 Jv、1 个 Jᵀq 与真实 branch/diagnostic state。</span></div>
+        <div><b>4 · N5-D5 已完成</b><span>匿名 4–16 rays 合同、2 个 Jv、1 个 Jᵀq、真实 branch/diagnostic 与调用账本已机器化。</span></div>
         <div><b>5 · Untouched audit</b><span>development 后才冻结唯一阈值与成本，fresh fields/rigs 只开一次。</span></div>
         <div><b>6 · 后续仍锁定</b><span>decoder-chain → 6+2 inverse → real noise units → 同预算 DeepONet/FNO/FFNO。</span></div>
       </div>

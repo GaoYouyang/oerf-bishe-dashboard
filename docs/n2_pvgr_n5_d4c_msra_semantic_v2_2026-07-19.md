@@ -201,7 +201,7 @@ BOST-specific failure，而且 residual-native 修复在同预算下改善三维
 2. [Griewank & Walther, *Evaluating Derivatives*](https://doi.org/10.1137/1.9780898717761)：
    先读第 2、3、14 章。重点是 forward/reverse 的程序语义、seed directions，以及控制流或
    非光滑程序不能只按普通 straight-line AD 理解。
-3. [Bangaru et al., *Systematically Differentiating Parametric Discontinuities*](https://doi.org/10.1145/3476576.3476671)：
+3. [Bangaru et al., *Systematically Differentiating Parametric Discontinuities*](https://doi.org/10.1145/3450626.3459775)：
    参数化不连续需要显式积分语义与边界项；这给真实 renderer 中 hard mask/occupancy/termination
    的后续处理提供方法背景，但不意味着可以直接套到 BOST。
 4. [Li et al., *Differentiable Monte Carlo Ray Tracing through Edge Sampling*](https://doi.org/10.1145/3272127.3275109)：

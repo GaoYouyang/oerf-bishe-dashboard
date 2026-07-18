@@ -351,7 +351,7 @@ paired residual 的 gamma score 三个尺度都很低，说明 JVP/VJP 内部闭
 ## 12. 可复现入口
 
 ```bash
-cd /Users/gaoyouyang/Documents/毕业设计/oerf-bishe-dashboard
+cd /path/to/oerf-bishe-dashboard
 
 # 预注册 commit
 git show --stat 38f091f
