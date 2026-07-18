@@ -10,6 +10,10 @@ RESULT = (
     ROOT
     / "demo_t16_operator/results/jacru_n1_7_geometry_krylov_postopen_full1"
 )
+RESULT_N18 = (
+    ROOT
+    / "demo_t16_operator/results/jacru_n1_8_hybrid_design_screen_postopen_audit_amended_full1"
+)
 
 
 def test_focused_page_exposes_n1_7_verdict_without_success_language() -> None:
@@ -72,3 +76,46 @@ def test_radius_audit_is_posthoc_and_does_not_authorize_a_learner() -> None:
     assert summary["finite_k_evaluator_development_forward_calls"] == 74010
     assert summary["finite_k_evaluator_calibration_forward_calls"] == 42680
     assert summary["finite_k_evaluator_package_forward_calls"] == 116690
+
+
+def test_focused_page_exposes_n1_8_no_auth_without_success_language() -> None:
+    html = PAGE.read_text(encoding="utf-8")
+    assert 'id="n1-8-result"' in html
+    assert "NO-AUTH" in html
+    assert "+6.343%" in html
+    assert "57.071%" in html
+    assert "9.474%" in html
+    assert "fresh 均未启动" in html
+    assert "docs%2Fjacru_n1_8_hybrid_design_no_auth_2026-07-18.md" in html
+    assert "docs%2Fjacru_n1_8_advisor_review_brief_2026-07-18.md" in html
+    assert "docs%2Fjacru_n1_8_hybrid_design_freeze_2026-07-18.md" in html
+    assert "jacru_n1_8_hybrid_design_screen_postopen_audit_amended_full1/summary.json" in html
+    assert "jacru_n1_8_hybrid_design_screen_postopen_audit_amended_full1/checksums.sha256" in html
+
+
+def test_n1_8_machine_summary_keeps_fresh_and_learner_closed() -> None:
+    summary = json.loads((RESULT_N18 / "summary.json").read_text())
+    assert summary["status"] == "NO_N1_8_CONFIRMATION_AUTHORIZATION"
+    assert summary["selection"]["authorized"] is False
+    assert summary["selection"]["selected_candidate_id"] is None
+    assert len(summary["candidate_gates"]) == 5
+    assert summary["learner_was_trained"] is False
+    assert summary["opens_new_geometry"] is False
+    assert summary["n1_7_development_case_identity_verified"] is True
+    camera = next(
+        row
+        for row in summary["candidate_gates"]
+        if row["candidate_id"] == "camera_block6_total_measurement_oracle"
+    )
+    assert camera["reconstruction_passed_count"] == 16
+    assert camera["reconstruction_passed"] is False
+    assert camera["physics_fidelity_passed"] is False
+    assert camera["extra_headroom_retention_over_component_damping"] < 0.6
+
+
+def test_public_n1_8_package_contains_no_model_checkpoint_or_array() -> None:
+    forbidden = {"pt", "pth", "ckpt", "npz", "npy", "mat"}
+    assert RESULT_N18.is_dir()
+    assert not {
+        path.suffix.lower().lstrip(".") for path in RESULT_N18.iterdir()
+    } & forbidden

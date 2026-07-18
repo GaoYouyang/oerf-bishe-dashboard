@@ -168,6 +168,7 @@
       <a href="#n1-stopping">N1 停止门</a>
       <a href="#n1-6-result">N1.6 判决</a>
       <a href="#n1-7-result">N1.7 判决</a>
+      <a href="#n1-8-result">N1.8 判决</a>
       <a href="#algorithm">安全算子</a>
       <a href="#candidates">算法路线</a>
       <a href="document_reader.html?doc=docs%2Fcancellation_aware_operator_learning_literature_map_2026-07-17.md">文献地图</a>
@@ -180,12 +181,12 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">研究主线已经从“再调一个重建网络”收敛到一个可证伪的逆问题：三维 BOST 的 sensor noise、forward-model mismatch 与真正影响有限步重建的 support-adjoint response 必须分开。N1.7 冻结协议的主 oracle field 为 +4.83%、exact retention 为 56.72%，所以在 learner 前正式 NO-GO。事后四倍半径审计把 field 提到 +5.56%，却仍未通过 retention 与 adjoint 门；这说明边界与四维 span 都有限制，下一步需要换表示和真实物理目标，而不是把四系数网络做大。</p>
+    <p class="lead">研究主线已经从“再调一个重建网络”收敛到一个可证伪的逆问题：三维 BOST 的 sensor noise、forward-model mismatch 与真正影响有限步重建的 support-adjoint response 必须分开。N1.8 在运行前冻结五种相机/射线表示和同一 25F/24Aᵀ 预算；Camera-Block-6 在已打开 synthetic development 上得到 +6.34% field、+13.20% H1，却因 incremental extra-headroom 57.07% 未到 60%，且 P Aᵀ gain 仅 9.47%，所以不授权 fresh 确认或 learner。下一步先判断 field-friendly 与 adjoint-friendly 方向能否共存，再设计几何条件化的有限步响应 basis。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">M2.2 · NULL HEADROOM</span><span class="chip coral">N1.2 · 0 / 16 DECISIONS</span><span class="chip coral">N1.3 · 0 / 128 PASS</span><span class="chip coral">N1.4 · 0 / 33 PASS</span><span class="chip coral">N1.5 · CONFIRMATION NO-GO</span><span class="chip coral">N1.6 · POSTOPEN NO-GO</span><span class="chip coral">N1.7 · REPRESENTATION NO-GO</span><span class="chip blue">EXACT-10 · +8.51%</span><span class="chip blue">FINITE-K SEARCH · +5.56%</span><span class="chip coral">LEARNER · NOT STARTED</span><span class="chip coral">REAL FLOW-OFF · ABSENT</span></div>
-        <h2>当前唯一主线：先拆清 span、边界与真实 mismatch，再设计下一表示</h2>
-        <p>N1.7 把每个 case 的 damping、warm residual 和两次 <code>A P Aᵀ</code> probe 正交成四维 correction frame；部署等价路径仍为 25F/24Aᵀ。冻结 measurement oracle 只有 +4.83% field、16.28% support-adjoint gain 和 56.72% exact retention。四倍半径事后审计排除了“只因触边”的解释：field 升到 +5.56%，但 retention/adjoint 仍只有 65.26%/28.36%。正式 NO-GO 不变；下一步在新数据上预注册 camera/ray hybrid 表示。</p>
+        <div class="chips"><span class="chip blue">M2.2 · NULL HEADROOM</span><span class="chip coral">N1.2 · 0 / 16 DECISIONS</span><span class="chip coral">N1.3 · 0 / 128 PASS</span><span class="chip coral">N1.4 · 0 / 33 PASS</span><span class="chip coral">N1.5 · CONFIRMATION NO-GO</span><span class="chip coral">N1.6 · POSTOPEN NO-GO</span><span class="chip coral">N1.7 · REPRESENTATION NO-GO</span><span class="chip coral">N1.8 · NO FRESH AUTH</span><span class="chip blue">CAMERA BLOCK · +6.34%</span><span class="chip coral">EXTRA · 57.07% &lt; 60%</span><span class="chip coral">LEARNER · NOT STARTED</span><span class="chip coral">REAL FLOW-OFF · ABSENT</span></div>
+        <h2>当前唯一主线：先证明重建方向与物理误差方向能共存，再学习 basis</h2>
+        <p>N1.8 比较 Krylov-4、fit-PCA2 + Krylov-6、Camera-Block-6、Pose-Fourier-K6 与 Detector-Moment-K6。Camera-Block 的有限步 field 最强且 12/12 无 &gt;1% harm，但没有跨过运行前冻结的 60% 增量 headroom；其 support-adjoint gain 更只有 9.47%。因此不靠降门槛进入 fresh，而先做 camera/adjoint union ceiling，决定下一算法应叫 forward correction 还是 solver-aware representation。</p>
         <ol>
           <li><strong>M2.2 只授权数学 headroom：</strong>exact SVD projector 保留 JACRU 约 45.28% field gain，并把内部 reprojection 对齐到约 1e-14；它不可部署，也不是论文算法。</li>
           <li><strong>M2.6 找到谱机制：</strong>camera-block 明显加速 residual，但 setup 为 1001F-equiv oracle，且 harm 8.33%；不能写成效率胜利。</li>
@@ -200,10 +201,12 @@
           <li><strong>N1.6 opened NO-GO：</strong>可部署 field +3.54%、H1 +8.24%、worst +0.17%，但相对 damping -0.18%、takeover 50%；5 项冻结门失败，不开 confirmation。</li>
           <li><strong>N1.7 representation NO-GO：</strong>per-case <code>A P Aᵀ</code> frame 的主 field +4.83%、retention 56.72%、adjoint gain 16.28%；17 门过 14 门，按预注册停止 learner。</li>
           <li><strong>N1.7-D 机制审计：</strong>四倍半径 measurement 为 +5.56%、15/17 门；finite-K 为 +6.19%、16/17 门，但仍读 truth 且 development 搜索用 74,010 对 evaluator calls。</li>
+          <li><strong>N1.8 五表示设计屏：</strong>Camera-Block-6 为 +6.34% field、+13.20% H1、57.07% extra-headroom、9.47% support-adjoint；16/17 重建门，机器状态 NO-AUTH，不打开 fresh。</li>
           <li><strong>外部依赖：</strong>Mac 足够继续做 12³–16³ 高低保真机制证伪；真正需要师兄的是 f-number/焦面/标定不确定性、可调用 <code>A/Aᵀ</code>、原始图像与永久 audit camera。</li>
         </ol>
         <div class="actions" style="margin:14px 0;">
-          <a class="button primary" href="#n1-7-result">看 N1.7 判决</a>
+          <a class="button primary" href="#n1-8-result">看 N1.8 判决</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_8_hybrid_design_no_auth_2026-07-18.md">完整 N1.8 NO-AUTH</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_7_geometry_krylov_no_go_2026-07-18.md">完整 N1.7 NO-GO</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_7_radius_sensitivity_audit_2026-07-18.md">四倍半径审计</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_7_advisor_review_brief_2026-07-18.md">发给师兄的一页</a>
@@ -1614,6 +1617,62 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
       </div>
     </section>
 
+    <section id="n1-8-result" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">N1.8 · freeze 9f8e030 · audit amendment d1c1b24 · opened development · 2026-07-18</div>
+          <h2>相机分块改善有限步重建，但没有证明它学到了真实 forward mismatch</h2>
+          <p>五个 basis 全部只读部署可见量、保持 25F/24Aᵀ，并在同一 6 个 geometry clusters、12 个 paired fields 上比较。最优 Camera-Block-6 只差一项重建门，但运行前门槛和独立机制门均不允许“差一点就算过”。结果只授权下一轮 post-hoc 上限诊断，不授权 fresh、learner、OOD 或真实 BOST 主张。</p>
+        </div>
+        <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_8_hybrid_design_no_auth_2026-07-18.md">完整 NO-AUTH</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_8_advisor_review_brief_2026-07-18.md">师兄一页 brief</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_8_hybrid_design_freeze_2026-07-18.md">运行前冻结</a><a class="button" href="demo_t16_operator/results/jacru_n1_8_hybrid_design_screen_postopen_audit_amended_full1/summary.json">机器摘要</a><a class="button" href="demo_t16_operator/results/jacru_n1_8_hybrid_design_screen_postopen_audit_amended_full1/checksums.sha256">SHA-256</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">讲人话日志 98</a></div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><b class="negative">NO-AUTH</b><span>五候选均不得进入 fresh confirmation 或 learner</span></div>
+        <div class="metric"><b class="positive">+6.34%</b><span>Camera-Block-6 field vs matched CGLS-24</span></div>
+        <div class="metric"><b class="positive">+13.20%</b><span>Camera-Block-6 H1；12/12 无 &gt;1% harm</span></div>
+        <div class="metric"><b class="negative">57.07%</b><span>incremental extra-headroom；冻结门为 60%</span></div>
+        <div class="metric"><b class="negative">9.47%</b><span>support-adjoint gain；forward-correction 门为 50%</span></div>
+        <div class="metric"><b>25F / 24Aᵀ</b><span>五候选统一总预算；0 high-order calls</span></div>
+      </div>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>冻结表示</th><th>field vs low</th><th>H1 vs low</th><th>field vs damping</th><th>extra-headroom</th><th>P Aᵀ gain</th><th>重建门</th></tr></thead>
+          <tbody>
+            <tr><td>Krylov-4 total</td><td>+5.319%</td><td>+9.695%</td><td>+1.734%</td><td>33.628%</td><td>27.025%</td><td>14/17</td></tr>
+            <tr><td>Fit-PCA2 + Krylov-6</td><td>+5.635%</td><td>+9.095%</td><td>+2.090%</td><td>40.517%</td><td class="negative">38.947%</td><td>15/17</td></tr>
+            <tr><td><strong>Camera-Block-6</strong></td><td class="positive"><strong>+6.343%</strong></td><td>+13.203%</td><td class="positive">+2.874%</td><td class="negative"><strong>57.071%</strong></td><td class="negative">9.474%</td><td class="negative">16/17</td></tr>
+            <tr><td>Pose-Fourier-K6</td><td>+6.148%</td><td class="positive">+13.369%</td><td>+2.645%</td><td class="negative">52.179%</td><td class="negative">8.417%</td><td class="negative">16/17</td></tr>
+            <tr><td>Detector-Moment-K6</td><td>+5.481%</td><td>+12.518%</td><td>+1.943%</td><td>38.831%</td><td class="negative">8.169%</td><td>15/17</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/jacru_n1_8_hybrid_design_screen_postopen_audit_amended_full1/diagnostic.png" alt="N1.8 五种相机与射线混合表示设计屏，分别展示 field gain、exact headroom retention 与 support-adjoint gain" width="2700" height="826" loading="lazy" decoding="async" /><figcaption>Camera-Block 与 Pose-Fourier 在 field/H1 上领先，但红色虚线右侧的 50% support-adjoint 机制门均远未达到。图是已打开 synthetic development 的设计证据，不是 fresh 或真实算法比较。独立审计修复了潜在负 adjoint fail-open；168 条科学指标与原运行逐项相同。</figcaption></figure>
+      <div class="two-col" style="margin-top:16px;">
+        <div class="panel">
+          <div class="chips"><span class="chip blue">16 / 17 RECONSTRUCTION</span><span class="chip coral">9.47% MECHANISM</span><span class="chip coral">NO THRESHOLD RETUNE</span></div>
+          <h3 style="margin-top:10px;">为什么 57.07% 不能算“差不多成功”</h3>
+          <ol>
+            <li>60% 在运行前冻结，且明确高于已经看过的 N1.7 事后 ceiling；降到 57% 会形成结果驱动调门。</li>
+            <li>extra-headroom 用误差差额之和计算，不把 damping 已有收益混进新表示的贡献。</li>
+            <li>即使忽略 2.93 个百分点缺口，9.47% 的 P Aᵀ gain 也不支持 forward-correction 解释。</li>
+            <li>6 个 geometry 只是 opened design units；没有置信区间、真实光学误差或 OOD 证据。</li>
+          </ol>
+        </div>
+        <div class="panel">
+          <div class="chips"><span class="chip gold">TWO K6 CONTRASTS NEXT</span><span class="chip blue">RESPONSE-AWARE BASIS</span><span class="chip coral">FRESH SEALED</span></div>
+          <h3 style="margin-top:10px;">下一算法从哪里长出来</h3>
+          <ol>
+            <li>只冻结 Residual-Contrast Global-K6：<code>{d,r,C1r,C2r,Kd,Kr}</code>，检验相机 residual 局部性与全局 normal response 是否互补。</li>
+            <li>只冻结 Damping-Contrast Global-K6：<code>{d,r,C1d,C2d,Kd,Kr}</code>，隔离 Camera-Block 收益是否主要来自 damping 分块。</li>
+            <li>两者若都失败，关闭 rank-6 camera/global-K；若存在联合 headroom，才生成 geometry-conditioned response basis。</li>
+            <li>训练目标必须穿过冻结有限步 CGLS，同时约束 field、H1、P Aᵀ、norm、tail 与调用预算。</li>
+            <li>真实迁移前向师兄确认 ray metadata、主要 mismatch、永久 audit camera/session 和主终点。</li>
+          </ol>
+        </div>
+      </div>
+      <div class="alert critical" style="margin-top:14px;"><strong>当前论文边界</strong><span>可以写 N1.8 的 opened synthetic 表示比较、严格 NO-AUTH 与由此导出的 response-aware 假设；不能写优于 DeepONet/FNO/NeRIF/TDBOST、fresh 泛化、真实三维精度或新算法已经成立。</span></div>
+    </section>
+
     <section id="algorithm" class="band">
       <div class="section-head"><div><div class="eyebrow">当前算法 · RCCF v4 audited NO-GO</div><h2>确定性证书管安全，独立风险门成功阻止了无证据接管</h2><p>v3 的每个 partition 都保持 <code>M<sub>P</sub>≥|A|</code>，但安全不等于选得准。v4 使用部署可见 geometry、冻结三阈值、95% 联合 family budget 和 <code>paired_cross</code> 回退。首轮校准没有同时得到风险与 coverage 证据，因此全局关闭 selector；这证明 fail-closed 路径可执行，不证明候选算法有性能价值。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=demo_t16_operator%2Fresults%2Fobservable_risk_fallback_smoke_public%2FREADME.md">看 v4 公开诊断</a><a class="button" href="document_reader.html?doc=docs%2Fv4_risk_calibrated_certified_fallback_protocol_2026-07-17.md">读 v4 预注册协议</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">读第 58 节复盘</a><a class="button" href="document_reader.html?doc=docs%2Fcancellation_aware_operator_learning_literature_map_2026-07-17.md">读文献证据地图</a></div></div>
       <div class="pipeline" aria-label="RCCF v4 算法流水线">
@@ -2342,7 +2401,7 @@ VD0-B 也已完成。我从 MATLAB find 索引恢复真实 detector row/column�
   </main>
 
   <footer>
-    <p>版本 2026.07.18-N1.7D。研究结论以仓库 report/JSON/checksum/validator 为准；页面只做可读映射。N1.7 冻结协议为严格 NO-GO：主 field +4.83%、exact retention 56.72%、support-adjoint gain 16.28%，learner 未启动。四倍半径事后审计把 field 提到 +5.56%，但仍只过 15/17；finite-K +6.19% 仍是 truth-conditioned evaluator。Factor Gate B、Metric-A v1/v2 与 N1.2–N1.6 也保持原判；真实 OERF、实验、泛化和论文优越性全部关闭。受限论文、组内数据、逐射线索引、私有 cache、checkpoint 与原始重建体不进入 GitHub Pages。</p>
+    <p>版本 2026.07.18-N1.8。研究结论以仓库 report/JSON/checksum 为准；页面只做可读映射。N1.8 Camera-Block-6 在已打开 synthetic development 上为 +6.34% field、57.07% incremental extra-headroom、9.47% support-adjoint gain，按运行前规则为 NO-AUTH，learner 与 fresh 均未启动。N1.7-D、Factor Gate B、Metric-A v1/v2 与 N1.2–N1.7 也保持原判；真实 OERF、实验、泛化和论文优越性全部关闭。受限论文、组内数据、逐射线索引、私有 cache、checkpoint 与原始重建体不进入 GitHub Pages。</p>
   </footer>
   <script>
     (() => {

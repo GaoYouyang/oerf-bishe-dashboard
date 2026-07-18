@@ -2432,3 +2432,38 @@ support-adjoint gain 只有 `28.364%`，所以还是没过完整门。
 射线坐标和每个几何自己的 Krylov 方向组合成新地图，再去新数据上检验。
 
 完整审计见 [N1.7-D 四倍半径敏感性](jacru_n1_7_radius_sensitivity_audit_2026-07-18.md)。
+
+## 98. N1.8：相机分块几乎过了重建门，但它可能画的是“捷径”而不是物理误差
+
+这次先把五种地图写死，再复用已经看过的 6 个 geometry 做设计筛选。所有地图都花同样的
+`25F/24A^T`：Krylov-4、fit-PCA + Krylov、按相机分块、按相机角度做 Fourier 调制，以及按
+detector 横纵坐标做一阶调制。没有训练网络，也没有打开新数据。
+
+Camera-Block-6 最好：field `+6.343%`、H1 `+13.203%`，12 个 case 都没有超过 1% 的伤害；
+它保留了 exact oracle 总收益的 `74.518%`。但我们运行前已经把更严格的“阻尼之外还能拿回多少”
+门设成 60%，它只有 `57.071%`，所以 17 项重建门只过 16 项，不能看完结果再把门改成 57%。
+
+更值得警惕的是，它对 `P A^T` 看到的 forward mismatch 只改善 `9.474%`，远低于 50%。
+
+**讲人话：**按相机把道路分开以后，重建车确实开得更快、更稳；但这张地图可能利用了当前
+求解器的捷径，并没有真实画出“光学前向模型错在哪里”。如果现在直接让 DeepONet/FNO 学这六个
+系数，可能得到一个 synthetic 上好看的导航员，却无法解释为什么能迁移到真实 BOST。
+
+所以机器状态是 `NO_N1_8_CONFIRMATION_AUTHORIZATION`。这不是毕业设计停止，而是关闭“直接训练
+这五种 basis”的分支。下一步先把 Camera-Block 的 field-friendly 方向与 Fit-PCA/Krylov 的
+adjoint-friendly 方向组成一个 post-hoc union ceiling，问低秩空间里是否同时存在两种性质；只有
+上限存在，才设计 geometry-conditioned、finite-step response-aware basis learner。新 geometry、
+fresh、OOD 和真实数据仍不打开。
+
+完整数字与给师兄的问题见
+[N1.8 相机/射线混合表示 NO-AUTH](jacru_n1_8_hybrid_design_no_auth_2026-07-18.md)。
+
+补充一次代码审计：原选择器在“17 个重建门全过、但 `P A^T` gain 为负”时仍可能把方法叫作
+solver-aware 并授权下一步。本次没有候选全过 17 门，所以结果没有被这个漏洞改变；但未来可能
+fail open。修正后负 gain 必须 NO-GO，每个候选必须达到设计 rank，并先核对 N1.7/N1.8 的
+case 与 geometry digest 相同。修正版重放的 168 条科学指标逐项不变，机器状态仍是 NO-AUTH。
+
+下一次只比较两个 rank-6 结构：`{d,r,C1r,C2r,Kd,Kr}` 和
+`{d,r,C1d,C2d,Kd,Kr}`。它们分别问“按相机拆 residual”与“按相机拆 damping”哪一个贡献了
+Camera-Block 的额外收益；如果两个都失败，就关闭这条 rank-6 camera/global-K 分支，而不是继续
+枚举更多网络。
