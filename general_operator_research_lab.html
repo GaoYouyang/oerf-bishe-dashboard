@@ -1747,6 +1747,8 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
         </div>
         <div class="actions">
           <a class="button primary" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=100-n2-第一步-把-等师兄给数据-改成七个机器可检查的门">先看本科生解释：第100节</a>
+          <a class="button" href="#n2-psu-rehearsal">PSU 接口演习</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fpsu_n2_public_rehearsal_2026-07-18.md">读完整演习报告</a>
           <a class="button" href="document_reader.html?doc=docs%2Foerf_n2_advisor_intake_brief_2026-07-18.md">师兄一页确认单</a>
           <a class="button" href="document_reader.html?doc=docs%2Foerf_n2_physical_mismatch_data_contract_2026-07-18.md">完整技术合同</a>
           <a class="button" href="data_templates/oerf_n2_lab_intake.placeholder.json">空白 intake JSON</a>
@@ -1776,6 +1778,40 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
           </tbody>
         </table>
       </div>
+      <div id="n2-psu-rehearsal" style="margin-top:18px;padding-top:18px;border-top:1px solid var(--line);">
+        <div class="chips"><span class="chip blue">PUBLIC PSU REHEARSAL</span><span class="chip coral">0 / 7 N2 AUTHORIZATION</span><span class="chip gold">PRIMARY SOURCE AUDITED</span></div>
+        <h3 style="margin-top:10px;">公开 PSU 是接口考场，不是真实有限孔径算法的成绩单</h3>
+        <p>我把开放论文、70-view 留出政策、公开归档清单、rotation-40 观测/几何和九视角 B0 <code>A/Aᵀ</code> 逐字段映射到 N2 合同。16 个字段组中，6 个有公开支持、2 个是公开负证据、3 个需本地绑定、2 个缺失、3 个禁止推断；正式七门仍全部关闭。</p>
+        <div class="metric-grid real-metric-grid" style="margin-top:12px;">
+          <div class="metric"><b>70 views / 10 runs</b><span>公开相机-旋转组织与留出政策可核对</span></div>
+          <div class="metric"><b>2000 acquired ≠ 0 exposed</b><span>论文报告每 test 采集 2000 张；归档未暴露可核验独立 repeats</span></div>
+          <div class="metric"><b class="positive">B0 A/Aᵀ audit pass</b><span>仅九 support views 接口证据；N2 operator gate 仍为 false</span></div>
+          <div class="metric"><b>8000 points / pixel</b><span>论文 cone-ray 的 8.5% CV 成本瓶颈，不是 surrogate 成绩</span></div>
+        </div>
+        <div class="two-col" style="margin-top:14px;">
+          <div>
+            <h3>现有公开证据可以支持</h3>
+            <ol>
+              <li>loader、<code>2160 × 2560</code> detector shape、像素位移与作者 mask 语义。</li>
+              <li>selected geometry、row order、B0 support 和小网格 <code>A/Aᵀ</code> 点积审计。</li>
+              <li>3 个 support rotations、1 个 development rotation、6 个 sealed audit rotations 的政策。</li>
+              <li>固定 mask 的 held-out reprojection 作为图像空间一致性终点。</li>
+            </ol>
+          </div>
+          <div>
+            <h3>现有公开证据不能支持</h3>
+            <ol>
+              <li>真实三维 field truth、field-L2 或“恢复了真实密度场”。</li>
+              <li>把 70 个视角当成时间重复，或估计逐固定条件 covariance floor。</li>
+              <li>把跨镜头/位置的 <code>f/22</code> 与 <code>f/32</code> 当同光路孔径因果对照。</li>
+              <li>真实 finite-aperture superiority、fresh 泛化或优于 NeRIF/NIRT/TDBOST。</li>
+            </ol>
+          </div>
+        </div>
+        <div class="formula" style="margin-top:12px;">接口演习 = 数据能读 + ray 能建 + A/Aᵀ 能跑 + 数值检查通过；算法证据 = 独立物理对照 + 永久留出 + 合法终点 + 重复统计 + 成本账本</div>
+        <div class="actions" style="margin-top:12px;"><a class="button primary" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=101-公开-psu-是接口考场不是有限孔径算法成绩单">本科生解释：第101节</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_n2_public_rehearsal_2026-07-18.md">完整字段审计</a><a class="button" href="docs/psu_n2_contract_rehearsal_public_summary.json">机器报告</a><a class="button" href="docs/psu_primary_source_fact_audit_2026-07-18.json">论文事实 JSON</a><a class="button" href="site_tools/build_psu_n2_contract_rehearsal.py">生成器</a><a class="button" href="https://arxiv.org/html/2508.17120">PSU 一级来源</a></div>
+      </div>
+      <div class="alert info" style="margin-top:14px;"><strong>下一候选只冻结问题，不宣称算法</strong><span>一级来源的真实瓶颈是 cone-ray 数据项约需 8000 points/pixel。下一预注册候选是“可解析低阶 aperture control variate + 独立高保真 residual correction”：learner 只分配样本或预测 control-variate 系数，最终 estimator 必须保持无偏、可做 A/Aᵀ 审计。它与已关闭的 v5y/v6a 确定性 operator replacement 不同；在 fresh geometry 与 OERF 合同到位前，只允许 synthetic cost/variance 假设。</span></div>
       <div class="two-col" style="margin-top:16px;">
         <div class="panel">
           <div class="chips"><span class="chip blue">PHYSICS FIRST</span><span class="chip coral">ONE PRIMARY MISMATCH</span></div>

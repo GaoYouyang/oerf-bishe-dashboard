@@ -2539,3 +2539,36 @@ calibration drift。网页因此不再把资料缺失画成红色 `FAIL`，而�
 
 完整合同见 [N2 真实物理失配与数据合同](oerf_n2_physical_mismatch_data_contract_2026-07-18.md)，一页
 提问稿见 [N2 师兄确认单](oerf_n2_advisor_intake_brief_2026-07-18.md)。
+
+## 101. 公开 PSU 是接口考场，不是有限孔径算法成绩单
+
+这次没有重跑 v5y/v6a，也没有训练新网络。我把 PSU 70-view 开放 BOST 的论文、压缩包清单、
+rotation-40 观测、几何审计、九视角 B0 `A/A^T` 和永久留出协议逐字段塞进 N2 rehearsal。
+机器只允许“公开支持、公开负证据、需本地核验、缺失、禁止推断”五种标签；遇到不知道的字段不会
+用默认值补齐。
+
+结果有 16 个字段组：6 个公开支持、2 个公开负证据、3 个需要本地绑定、2 个缺失、3 个禁止推断。
+七个正式 N2 门仍全部为 false，所有训练、audit、成功和 raw-data 授权也是 false。B0 operator 自己的
+接口审计确实过了：CPU64 最大点积误差低于 `5e-16`、MPS32 低于 `1e-7`；但“一个 operator 会跑”
+不等于“每个真实 view、condition 和 calibration 已经绑定成 N2 数据记录”。
+
+一级来源给了一个很重要的矛盾。论文说每次试验采集了 2000 张 flow-off 和 2000 张 flow-on；但当前
+公开压缩包 inventory 只看到每个 camera-rotation 的平均产物或复合容器，没有可逐帧核验的独立时间
+重复。所以“实验中采过 2000 张”不能写成“我们当前拥有 2000 个 repeats”，70 个旋转视角更不能
+拿来替代时间重复。
+
+论文里的 `f/22` 与 `f/32` 也不是干净孔径对照：85、105、200 mm 镜头、相机位置和 optical channel
+同时变化。它能提醒我们 finite aperture 重要，却不能证明 residual 差异就是 aperture 单独造成的。
+要做师兄方向的真实孔径论文，仍要同一光路、同一 geometry 下只改 f-number 或 focus。
+
+**讲人话：**公开 PSU 可以检查零件能不能装上、齿轮会不会转；但它没有给我们一台只换孔径、其余
+都不变的对照机器，也没有独立三维尺子。因此不能拿接口通过当“新算法恢复了真实流场”。
+
+这次还找到一个可继续深挖、但尚未授权训练的真实成本问题：论文的 cone-ray data operator 报告
+`8.5%` coefficient of variation，需要约 `8000` points per pixel。下一候选不再用网络直接替掉
+operator，而考虑“可解析低阶 control variate + 独立高保真 residual correction”：learner 只分配
+样本或预测 control-variate 系数，最终 estimator 保持无偏并保留误差条。这样与已失败的 v6a 容量
+升级不是同一实验，但仍必须先预注册 fresh geometry、逐 rig tail、`A/A^T` 和端到端成本门。
+
+完整字段表、师兄材料清单和复现命令见
+[PSU 到 N2 的接口演习](psu_n2_public_rehearsal_2026-07-18.md)。

@@ -1,0 +1,345 @@
+{
+  "advisor_requests": [
+    {
+      "item": "one complete real session manifest",
+      "purpose": "bind run/session/condition/geometry identity, timestamps, units, and provenance"
+    },
+    {
+      "item": "at least 50 unaveraged flow-off frames per fixed condition",
+      "purpose": "estimate detector noise and slow drift under the current engineering gate"
+    },
+    {
+      "item": "camera calibration, pixel/ray mapping, masks, and confidence",
+      "purpose": "bind observations to the physical forward model and catch row-order errors"
+    },
+    {
+      "item": "paired f-number or focus conditions on the same optical channel and geometry",
+      "purpose": "identify finite-aperture mismatch instead of assigning all residual error to aperture"
+    },
+    {
+      "item": "callable forward/adjoint or JVP/VJP plus a tiny reference case",
+      "purpose": "audit adjointness, units, support, and matched solver cost"
+    },
+    {
+      "item": "permanent camera, session, or geometry audit manifest with SHA-256",
+      "purpose": "test independent generalization without renaming opened views as fresh"
+    },
+    {
+      "item": "an independent physical endpoint when available",
+      "purpose": "separate field or interface accuracy from image-space consistency"
+    },
+    {
+      "item": "separate storage, training, thesis, figure, and public-release permissions",
+      "purpose": "keep laboratory data and calibration material out of the public repository"
+    }
+  ],
+  "authorization": {
+    "may_claim_algorithm_success": false,
+    "may_claim_real_bost_improvement": false,
+    "may_create_n2_dataset_record": false,
+    "may_open_locked_audit": false,
+    "may_preregister_n2_experiment": false,
+    "may_publish_raw_data": false,
+    "may_train_n2_model": false
+  },
+  "claim_boundary": [
+    "This is a field-level contract rehearsal, not an N2 dataset record.",
+    "The passed B0 operator interface is not a reconstruction or model result.",
+    "The public PSU archive has no independent three-dimensional field truth.",
+    "Held-out reprojection measures image-space consistency, not unique recovery of the true field.",
+    "No algorithm, real-data improvement, generalization, or publication claim is authorized."
+  ],
+  "dataset_public_facts": {
+    "archive_exposed_independent_flow_off_repeats_per_condition": 0,
+    "camera_count": 7,
+    "doi": "10.26208/1VE2-5C19",
+    "image_shape_hw": [
+      2160,
+      2560
+    ],
+    "independent_experimental_unit": "MODEL_ROTATION_RUN_BLOCK",
+    "name": "Open-source BOS tomography dataset of high-speed flow over a flight body",
+    "paper_reported_flow_off_frames_per_test": 2000,
+    "rotation_run_count": 10,
+    "view_count": 70
+  },
+  "decision": "GO_INTERFACE_REHEARSAL_STOP_N2_ALGORITHM_CLAIMS",
+  "evidence_scope": "PUBLIC_METADATA_AND_LOCAL_INTERFACE_REHEARSAL_NO_N2_DATASET_RECORD_NO_MODEL_RESULT",
+  "field_audit": {
+    "endpoints.heldout_reprojection": {
+      "evidence_refs": [
+        "heldout_protocol"
+      ],
+      "public_value": "rotation_block_active_vector_relative_l2",
+      "reason": "Rotation-block active-vector relative L2 is legal image-space evidence when masks stay frozen; it is not unique 3D truth.",
+      "status": "PUBLIC_SUPPORTED"
+    },
+    "field_domain.parameterization_units_and_support": {
+      "evidence_refs": [
+        "operator_interface"
+      ],
+      "reason": "The project B0 computational box is not evidence for the measured field variable, units, or physical support.",
+      "status": "FORBIDDEN_TO_INFER"
+    },
+    "field_domain.truth_available": {
+      "evidence_refs": [
+        "heldout_protocol",
+        "cell_payload"
+      ],
+      "public_value": false,
+      "reason": "The experimental archive has no independent three-dimensional field truth.",
+      "status": "PUBLIC_NEGATIVE"
+    },
+    "forward_model.B0_forward_adjoint": {
+      "evidence_refs": [
+        "operator_interface"
+      ],
+      "public_value": {
+        "cpu64_max_dot_error": 4.967548542968581e-16,
+        "grid_sizes": [
+          16,
+          32
+        ],
+        "mps32_max_dot_error": 9.886089458177594e-08,
+        "support_view_count": 9
+      },
+      "reason": "A deterministic nine-support-view B0 forward/adjoint interface passed tracked CPU64 and MPS32 dot-product audits; this is interface evidence only.",
+      "status": "PUBLIC_SUPPORTED"
+    },
+    "forward_model.published_cone_ray_sampling": {
+      "evidence_refs": [
+        "primary_source_facts"
+      ],
+      "public_value": {
+        "coefficient_of_variation": 0.085,
+        "points_per_pixel": 8000
+      },
+      "reason": "The paper reports a cone-ray data operator with 8.5% coefficient of variation and 8000 points per pixel; this is a cost motivation, not surrogate evidence.",
+      "status": "PUBLIC_SUPPORTED"
+    },
+    "identity.dataset_id": {
+      "evidence_refs": [
+        "heldout_protocol"
+      ],
+      "public_value": "doi:10.26208/1VE2-5C19",
+      "reason": "DOI and dataset title are present in the tracked public protocol.",
+      "status": "PUBLIC_SUPPORTED"
+    },
+    "identity.session_and_acquisition_time": {
+      "evidence_refs": [
+        "heldout_protocol"
+      ],
+      "reason": "The public summaries do not bind a verifiable acquisition timestamp or session identity.",
+      "status": "MISSING"
+    },
+    "permissions": {
+      "evidence_refs": [
+        "heldout_protocol"
+      ],
+      "reason": "Public availability alone does not fill project-specific storage, training, thesis, figure, or redistribution permissions.",
+      "status": "FORBIDDEN_TO_INFER"
+    },
+    "physical_mismatch.flow_off_repeats": {
+      "evidence_refs": [
+        "primary_source_facts",
+        "flowoff_inventory"
+      ],
+      "public_value": {
+        "independent_repeats_per_fixed_condition": 0,
+        "paper_reported_acquired_flow_off_frames_per_test": 2000,
+        "temporal_covariance_authorized": false
+      },
+      "reason": "The paper reports 2000 acquired frames per test, but the tracked archive inventory exposes zero independent temporal repeats per fixed condition; distinct rotations are distinct geometries.",
+      "status": "PUBLIC_NEGATIVE"
+    },
+    "physical_mismatch.primary": {
+      "evidence_refs": [
+        "primary_source_facts",
+        "flowoff_inventory",
+        "geometry_binding",
+        "operator_interface"
+      ],
+      "public_value": "unknown",
+      "reason": "Finite aperture, calibration drift, displacement error, and discretization cannot be ranked causally; the reported f/22 and f/32 groups also change lens and camera placement.",
+      "status": "FORBIDDEN_TO_INFER"
+    },
+    "sensors.image_shape": {
+      "evidence_refs": [
+        "cell_payload"
+      ],
+      "public_value": [
+        2160,
+        2560
+      ],
+      "reason": "All seven rotation-40 camera payloads report one common detector shape.",
+      "status": "PUBLIC_SUPPORTED"
+    },
+    "sensors.optics_and_calibration_rmse": {
+      "evidence_refs": [
+        "primary_source_facts",
+        "geometry_binding",
+        "cell_payload"
+      ],
+      "public_value": {
+        "background_reprojection_rmse_px": 0.49,
+        "camera_reprojection_rmse_px": 0.46,
+        "lens_group_count": 3,
+        "pixel_pitch_m": 6.5e-06,
+        "reported_f_numbers": [
+          22.0,
+          32.0
+        ]
+      },
+      "reason": "The paper reports lens groups, f-numbers, pixel pitch, and aggregate calibration RMSE, but it does not bind every N2 sensor alias to an optical channel, calibration version, and timestamp.",
+      "status": "LOCAL_VERIFICATION_REQUIRED"
+    },
+    "split_contract.materialized_digest": {
+      "evidence_refs": [
+        "heldout_protocol"
+      ],
+      "reason": "A policy summary is not the actual member manifest or recomputable split digest used by an N2 run.",
+      "status": "LOCAL_VERIFICATION_REQUIRED"
+    },
+    "split_contract.policy": {
+      "evidence_refs": [
+        "heldout_protocol"
+      ],
+      "public_value": {
+        "audit_camera_same_runs": 12,
+        "audit_joint_camera_rotation": 24,
+        "audit_rotation_same_cameras": 18,
+        "development_rotation_40": 7,
+        "support_reconstruction": 9
+      },
+      "reason": "The public protocol separates three support rotations, one development rotation, and six sealed audit rotations.",
+      "status": "PUBLIC_SUPPORTED"
+    },
+    "views.confidence_and_timestamps": {
+      "evidence_refs": [
+        "cell_payload"
+      ],
+      "reason": "The tracked public summaries do not bind a per-view confidence product or acquisition timestamps.",
+      "status": "MISSING"
+    },
+    "views.reference_flowon_displacement_mask": {
+      "evidence_refs": [
+        "cell_payload",
+        "heldout_protocol"
+      ],
+      "reason": "The archive inventory lists reference, deflected, displacement, and mask products, but a per-view manifest must bind exact files and checksums locally.",
+      "status": "LOCAL_VERIFICATION_REQUIRED"
+    }
+  },
+  "field_status_counts": {
+    "FORBIDDEN_TO_INFER": 3,
+    "LOCAL_VERIFICATION_REQUIRED": 3,
+    "MISSING": 2,
+    "PUBLIC_NEGATIVE": 2,
+    "PUBLIC_SUPPORTED": 6
+  },
+  "gate_results": [
+    {
+      "gate": "identity_and_units",
+      "n2_gate_passed": false,
+      "reason": "Acquisition/session identity and measured field semantics are missing.",
+      "rehearsal_state": "BLOCKED"
+    },
+    {
+      "gate": "observation_and_geometry",
+      "n2_gate_passed": false,
+      "reason": "Detector shape and selected geometry are known, but per-view confidence and calibration RMSE are not bound.",
+      "rehearsal_state": "PARTIAL"
+    },
+    {
+      "gate": "operator_and_adjoint",
+      "n2_gate_passed": false,
+      "reason": "The B0 nine-view operator audit passed, but no complete N2 dataset record binds it to every view and condition.",
+      "rehearsal_state": "INTERFACE_EVIDENCE_ONLY"
+    },
+    {
+      "gate": "physical_mismatch_evidence",
+      "n2_gate_passed": false,
+      "reason": "The primary mismatch is unknown and independent flow-off repeats per fixed condition are zero.",
+      "rehearsal_state": "BLOCKED"
+    },
+    {
+      "gate": "independent_split_lock",
+      "n2_gate_passed": false,
+      "reason": "A 70-view policy exists, but an N2 member manifest and recomputable split digest are not materialized here.",
+      "rehearsal_state": "POLICY_ONLY"
+    },
+    {
+      "gate": "endpoint_legality",
+      "n2_gate_passed": false,
+      "reason": "Held-out reprojection is a legal form, but the complete fixed-mask audit contract is not yet bound.",
+      "rehearsal_state": "LEGAL_FORM_ONLY"
+    },
+    {
+      "gate": "permissions_and_claims",
+      "n2_gate_passed": false,
+      "reason": "Project-specific storage, training, thesis, and redistribution permissions were not inferred.",
+      "rehearsal_state": "BLOCKED"
+    }
+  ],
+  "operator_interface_rehearsal": {
+    "n2_operator_gate_passed": false,
+    "passed_its_own_interface_audit": true,
+    "reason": "An audited support operator is necessary but not sufficient for a bound N2 dataset record."
+  },
+  "privacy": {
+    "emits_absolute_paths": false,
+    "emits_local_usernames": false,
+    "emits_only_public_aggregate_facts_and_hashes": true,
+    "emits_permission_values": false,
+    "emits_private_dataset_or_case_ids": false,
+    "emits_raw_arrays": false
+  },
+  "schema_version": "psu-n2-contract-rehearsal-public-1.0",
+  "snapshot_date": "2026-07-18",
+  "source_snapshot": [
+    {
+      "ref": "cell_payload",
+      "schema_version": "psu-rotation40-cell-payload-public-1.0",
+      "sha256": "3ee408c5c61ab2ad14431b5ff40fd9c7c179d415d2692a7533fb0cf43b13c8b5",
+      "status": "ROTATION40_REAL_DISPLACEMENT_PAYLOAD_READY_GEOMETRY_AND_REPROJECTION_UNAVAILABLE"
+    },
+    {
+      "ref": "flowoff_inventory",
+      "schema_version": "psu-flowoff-repeat-inventory-1.0",
+      "sha256": "40b0d5ada55dc25a4d32497c9d6753b259fba36d9a6670274b30771647056bb0",
+      "status": "PUBLIC_SUMMARY_WITHOUT_TOP_LEVEL_STATUS"
+    },
+    {
+      "ref": "geometry_binding",
+      "schema_version": "psu-rotation40-geometry-binding-public-1.0",
+      "sha256": "f7fcbc55004a40829fab4781a7ae7167d17f55ce0147fa8313cf0ba1a8008d98",
+      "status": "ROTATION40_GEOMETRY_ROW_BINDING_VERIFIED_DEVELOPMENT_REPROJECTION_READY"
+    },
+    {
+      "ref": "heldout_protocol",
+      "schema_version": "psu-heldout-camera-protocol-public-summary-1.0",
+      "sha256": "942d9b308c74d4c2b736c316c19ab4558b0df83e6ae463254ad354ab3ea8fea6",
+      "status": "PSU_70_VIEW_PARTITION_VALIDATED_AUDIT_PAYLOAD_SEALED"
+    },
+    {
+      "ref": "operator_interface",
+      "schema_version": "psu-b0-real-support-interface-public-summary-1.0",
+      "sha256": "d28b4d632d3beeac7e3f50621254ca0863ccbe8b8babb4f30989067fc46d2d0a",
+      "status": "REAL_SUPPORT_GEOMETRY_INTERFACE_PASS_NO_RECONSTRUCTION"
+    },
+    {
+      "ref": "primary_source_facts",
+      "schema_version": "psu-primary-source-fact-audit-1.0",
+      "sha256": "db3e267582d0a213c147f11e891f80acd860ced28be1379b89be0570678df60a",
+      "status": "PRIMARY_SOURCE_FACTS_VERIFIED_CLAIM_LIMITS_ATTACHED"
+    }
+  ],
+  "status": "PUBLIC_PSU_INTERFACE_REHEARSAL_ONLY_N2_BLOCKED",
+  "stop_rules": [
+    "Do not rerun or enlarge v5y/v6a RayKernel models on opened synthetic rigs.",
+    "Do not call 70 camera-rotation views 70 independent temporal repeats.",
+    "Do not freeze finite aperture as primary without paired real f-number or focus conditions on one optical channel and geometry.",
+    "Do not treat the paper's cross-camera f/22 versus f/32 setup as a clean aperture intervention because lens and placement are confounded.",
+    "Do not report field L2, three-dimensional truth, real improvement, or generalization from held-out reprojection alone."
+  ]
+}
