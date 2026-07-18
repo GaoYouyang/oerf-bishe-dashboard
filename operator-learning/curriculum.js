@@ -1,5 +1,5 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.18-n4.1",
+  version: "2026.07.18-n5-d2",
   updated: "2026-07-18",
   foundationChecks: [
     {
@@ -119,16 +119,16 @@ window.OPERATOR_LEARNING_GUIDE = {
       title: "先审参考答案，再比较算法",
       plain: "高精度数值解也不是天然真值；如果 H256 到 H512 还在变化，候选与它的差可能只是 evaluator 偏差。",
       formula: "e_H = ||F_H-F_2H|| / max(||F_2H||, ε)",
-      bost: "N4.1 用 16 个 N3 failures 加 16 个 matched controls 做到 H1024/条件 H2048；完整 output 32/32 过门，但 matched residual 最终只有 30/32 reference。",
-      trap: "30/32 不能四舍五入成成功；候选贴近未获授权的小残差 reference，也不能写成更符合真实光线物理。"
+      bost: "N4.1 用 16 个 N3 failures 加 16 个 matched controls 做到 H1024/条件 H2048，得到 30/32；N5-D2 又只对剩余两格及 controls 做到 H8192。下一步必须把两段证据按逐格 level 重新对账。",
+      trap: "D2 的 4/4 不能直接改写成 fresh 32/32；post-selected 补充证据必须先进入 adaptive reference ledger，不能跳过 provenance。"
     },
     {
       id: "cancellation-aware-reference",
       title: "小残差需要相消感知的尺子",
       plain: "当 curved 和 straight 两个完整量很接近时，它们的差很小；同样的绝对离散误差会被小分母放大。",
       formula: "r_H = F_H - S_H,  e_r = ||r_H-r_2H|| / ||r_2H||",
-      bost: "N4.1 两个最终失败格的 full-output relative-L2 约 6.686e-7，但 residual-relative 是 0.1647% / 0.1392%。下一步比较 direct paired quadrature、H4096/H8192 与 noise units。",
-      trap: "绝对误差很小不自动等于可忽略；必须先冻结实验 noise floor 和 observable，不能看结果后改归一化。"
+      bost: "D1 证明 paired/pairwise/Neumaier 与 raw 的差只占 H-refinement 差约十亿分之一，排除了累加顺序；D2 把四格加密到 H8192，最坏 final adjacent 1.183e-4、观测阶 2.19-2.54。",
+      trap: "排除浮点相消并找到 selected 二阶尾部，仍不等于真实实验可辨认；必须继续冻结 observable、flow-off noise floor 和 fresh/independent 边界。"
     },
     {
       id: "field-jvp-vjp",
@@ -271,8 +271,8 @@ window.OPERATOR_LEARNING_GUIDE = {
     {
       id: "W8", phase: "BOST 算子", week: "第 8 周", title: "参考解、相消残差与 field-adjoint 前门", hours: "14-18h", depends: ["W3", "W4", "W7"],
       learn: ["RK4 步长加密与经验收缩阶", "两个近似量相减的小分母问题", "direct paired quadrature、Richardson 与 noise floor", "JVP/VJP dot test"],
-      build: ["复算 N4.1 两个失败格的尺度账本", "实现 paired-residual toy 单元测试", "冻结 H4096/H8192 N5 表格", "向师兄索取 flow-off repeats 与 observable 单位"],
-      pass: ["不改 N4.1 门槛或删格", "能区分 residual-relative 与 full-output-relative", "fresh reference 通过前不启动网络", "field adjoint 只有 dot/FD 双门后才解锁"],
+      build: ["复算 D1 五种累加的 refinement fraction", "复算 D2 四格收缩比与观测阶", "组装 23×H1024 + 7×H2048 + 2×H8192 reference ledger", "向师兄索取 flow-off repeats 与 observable 单位"],
+      pass: ["能解释为什么 D1 排除机制而 D2 只补 selected tail", "能区分 residual-relative、Richardson indicator 与严格误差界", "32 格 adaptive pack 前不启动 field adjoint", "field adjoint 只有 dot/FD 双门后才解锁"],
       resources: ["n4-evaluator-audit", "n5-reference-plan", "n3-field-adjoint", "he-data-contract"],
       paper: "先证明训练标签与梯度值得相信；如果 H-P1 低于实验噪声，停止 residual operator 比硬做网络更正确。"
     },
@@ -383,13 +383,13 @@ window.OPERATOR_LEARNING_GUIDE = {
     {id:"he-data-contract",stage:"bost",level:"必做",type:"师兄沟通",title:"何远哲最小数据合同",url:"../document_reader.html?doc=he_yuanzhe_minimum_data_contract.md",local:"",read:"只要 1-3 帧的 observation、mask、ray、grid/unit、flow-off、baseline 和权限边界。",output:"把短消息发给师兄，并将回复转成 manifest，不口头猜接口。",verified:"本仓库公开合同模板；不含组内数据"},
     {id:"n3-grouped-audit",stage:"current",level:"必做",type:"正式结果审计",title:"N3 96 条件 grouped factorial NO-AUTH",url:"../general_operator_research_lab.html#n2-pvgr-n3",local:"../document_reader.html?doc=docs%2Fn2_pvgr_n3_grouped_factorial_result_audit_2026-07-18.md",read:"先读总门和 evaluator 失败，再读 Picard-1 的 8/8 强信号、Q95 反例、盲态恢复和禁止表述。",output:"不看页面复述为什么 P1 是下一强基线、却仍不能叫算法成功。",verified:"结果前预注册；96/96 checkpoints；41-file manifest；独立 validator；机器判决 NO-AUTH"},
     {id:"n4-evaluator-audit",stage:"current",level:"必做",type:"正式结果审计",title:"N4.1 H1024/H2048 evaluator convergence NO-AUTH",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n4_1_evaluator_convergence_result_audit_2026-07-18.md",local:"../demo_t16_operator/results/n2_pvgr_n4_1_evaluator_convergence_v1/summary.md",read:"先看 32/32 output/topology 通过，再逐项读 23/32 H1024、9 格 H2048 和两个 narrow controls 的 residual-relative 失败。",output:"手算两失败格的 residual/full-output 比、absolute difference 和 contraction，并解释为什么不能事后改 0.125% 门。",verified:"双预注册与恢复披露；105 个 hash-locked checkpoints；30/32 final references；两层 validator valid；figure nonblank；机器判决 NO-AUTH"},
-    {id:"n5-reference-plan",stage:"current",level:"必做",type:"下一实验设计",title:"N5 cancellation-aware reference 路线",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n5_cancellation_aware_reference_plan_2026-07-18.md",local:"",read:"比较 raw subtraction、H4096/H8192、direct paired-integrand quadrature、Richardson/compensated summation 和 flow-off noise gate。",output:"先完成 D1 toy 单元测试与冻结表格；不运行网络、不看新鲜格后改门。",verified:"设计草案；尚未预注册、尚无 N5 结果或算法授权"},
+    {id:"n5-reference-plan",stage:"current",level:"必做",type:"正式机制与尾差审计",title:"N5-D1/D2 cancellation 与 H8192 tail",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n5_d1_d2_result_audit_2026-07-18.md",local:"../demo_t16_operator/results/n2_pvgr_n5_d2_extreme_refinement_v1/summary.md",read:"先读 D1 为什么排除累加顺序，再逐格核对 D2 的 final adjacent、收缩比、观测阶、raw/paired 占比和禁止主张。",output:"手算四格 contraction 与 p，并画出 23×H1024 + 7×H2048 + 2×H8192 的下一 reference ledger。",verified:"D1/D2 均结果前预注册；42+6 tests；array-level independent validators valid；D2 4/4 selected tail resolved；模型与真实数据仍未授权"},
     {id:"n3-field-adjoint",stage:"current",level:"必做",type:"实现设计",title:"Field JVP/VJP 到 6+2 view 三维重建接口",url:"../document_reader.html?doc=docs%2Fn2_pvgr_field_jvp_vjp_reconstruction_interface_design_2026-07-18.md",local:"",read:"重点读四个现有模块的 detach 审计、冻结 row layout、tensor-only forward、dot/FD 双门和 held-out view 边界。",output:"先在小网格实现一个 forward closure，交付三组 dot test 与多 h 有限差分曲线。",verified:"设计已冻结；尚无 field-adjoint 或三维重建结果"},
     {id:"n3-recovery-disclosure",stage:"audit",level:"进阶",type:"研究诚信",title:"N3 KeyError 盲态分析恢复披露",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n3_blind_analysis_recovery_2026-07-18.md",local:"",read:"理解为什么 96 格完成后仍不能直接改字段继续汇总，以及 opaque Merkle 封存如何限制事后自由度。",output:"写出允许修改的唯一 query schema 映射和所有禁止修改项。",verified:"恢复协议先提交；checkpoint payload 未解析；96 格未重算"}
   ],
   researchTracks: [
     {
-      id:"pvgr-residual", rank:1, title:"Picard-1 + cancellation-aware residual operator", badge:"当前主线：N4.1 30/32，训练继续锁定", risk:"中高", novelty:"先解决 BOST 小残差 reference 的 paired quadrature 与 fidelity certificate，再用 curved-ray Picard 内部状态、field-adjoint 闭合、fail-closed fallback 和同调用预算构成完整算法；不是简单把 FNO 换名", data:"已有两个 synthetic field families、8 个 field units、N3 96 条件与 N4.1 的 32 selected cells/105 levels；仍缺两格 fresh reference、8-view reconstruction、独立 generator 和 OERF flow-off noise", hardware:"N4.1 在 Mac CPU 完成，H256/H512/H1024/H2048 中位数约 1.16/2.26/4.50/8.93 秒每格；N5 与 tiny field JVP/VJP 仍可本机，32³-64³ 多模型多种子再评估 GPU", question:"能否先为极小 H-P1/curved-straight residual 建立不被小分母误导的 reference 与实验可辨认性，再学习跨场/几何稳定的结构化尾差？", contribution:"N4.1 已证明 32/32 完整 output/topology 收敛，并把 NO-AUTH 缩到 smooth-s1871 narrow aperture 的两个微小 residual controls；候选贡献因此转为 paired reference + certificate + small operator + fallback 的联合设计。", next:"paired-residual toy→H4096/H8192/Richardson→flow-off noise units→fresh N5 gate→tensor-only field JVP/VJP→6+2 view reconstruction→小型 residual DeepONet/FNO/FFNO 对照→独立 generator→OERF。", stop:"若两格在更高 H/paired quadrature 下仍无稳定 reference，H-P1 低于实验噪声，fresh cell 不重复，同预算尾部不优于 P1，或 fallback 后成本接近 full high evaluator，则停止 residual operator 并转向 inverse/noise/4D。"
+      id:"pvgr-residual", rank:1, title:"Picard-1 + cancellation-aware residual operator", badge:"当前主线：D2 selected tail resolved，训练继续锁定", risk:"中高", novelty:"先用多保真 reference pack 与 curved-ray field derivative 把标签/梯度闭合，再以 Picard-1 内部状态、small residual operator、fail-closed fallback 和同调用预算构成算法；创新不来自把 FNO 换名", data:"已有两个 synthetic field families、8 个 field units、N3 96 条件、N4.1 32 cells 与 N5-D1/D2 H8192 补充；仍缺 32 格 pack、8-view reconstruction、独立 generator 和 OERF flow-off noise", hardware:"D2 在 32 GB Mac CPU 用 216 秒完成 528,482,304 logical queries；reference pack 与 tiny field JVP/VJP 可继续本机，32³-64³ 多模型多种子再评估 GPU", question:"能否把已稳定的 curved-straight residual reference 接成可微三维 forward，并只学习高于实验噪声、跨场/几何稳定且同预算有价值的 H-P1 尾差？", contribution:"D1 已排除浮点累加机制，D2 在四个 post-selected cells 上给出 2.19-2.54 阶尾部；候选贡献现在转为 adaptive reference + field-derivative certificate + small operator + fallback 的完整链。", next:"32 格 adaptive pack→tensor-only field JVP/VJP→6+2 view reconstruction→flow-off noise units→小型 residual DeepONet/FNO/FFNO 对照→独立 generator→OERF。", stop:"若 adaptive pack 无法统一 observable/provenance，field dot/FD 不闭合，H-P1 低于实验噪声，fresh/independent cell 不重复，同预算尾部不优于 P1，或 fallback 成本接近 full high evaluator，则停止 residual operator 并转向 inverse/noise/4D。"
     },
     {
       id:"correction", rank:2, title:"v3k-F 预白化停止与强数值侧门", badge:"确定性辅线；learned stop 继续关闭", risk:"中", novelty:"它主要是强基线和可部署停止问题，不单独宣称新算子", data:"v3k-F 仍是 development synthetic audit；真实 camera covariance 与 fresh blind 暂缺", hardware:"本机维护 discrepancy/SPG/call frontier，不为 learned stop 扩网络", question:"部署可得 covariance/noise proxy 能否稳定控制 semi-convergence，为残差算子提供不可逃避的强数值对手？", contribution:"discrepancy 对 noise OOD 相对 fixed Landweber 平均 +7.10%，但仍有 12.5% harm；平均改善不足以放行 learned stop。", next:"真实 flow-off covariance→pooled/worst-camera discrepancy→fresh lock→只作强数值基线。", stop:"确定性方法已解释全部 headroom 时，不训练 stopping network。"
@@ -429,7 +429,7 @@ window.OPERATOR_LEARNING_GUIDE = {
   seniorQuestions: [
     "组内 displacement 的单位是 pixel、归一化 detector coordinate 还是物理长度；forward observable 对应 exit angle、path-integrated deflection 还是最终 pixel displacement？",
     "同一 rig / flow-off 是否有 20 次左右 repeats，可否提供 per-pixel/ray mask、confidence 或 optical-flow covariance 来冻结实验噪声底？",
-    "N4.1 的 narrow-aperture residual floor 是否对应真实光圈/有限孔径工作域；组内通常怎样定义和验证这类小 residual reference？",
+    "D2 的 narrow-aperture selected tail 已到 H8192 且观测阶约 2.2-2.5；组内会把这种数值尾差与真实光圈、pixel displacement 和 flow-off noise 怎样对齐？",
     "组内所说的算子学习，是 projection-to-volume inverse operator，还是 3D/4D field evolution operator？",
     "能否给一份可脱敏的 displacement + camera geometry + mask/confidence + baseline reconstruction 最小数据包？",
     "哪些相机必须参与重建，是否允许保留 1-2 个 query cameras 只做标定/验证？",

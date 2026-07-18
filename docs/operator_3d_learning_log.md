@@ -2897,3 +2897,33 @@ tiny field JVP/VJP；神经 residual operator 还在更后面。
 [N4.1 评估器收敛结果审计](n2_pvgr_n4_1_evaluator_convergence_result_audit_2026-07-18.md)，下一轮四种
 reference 候选与 Go/No-Go 见
 [N5 cancellation-aware reference 路线](n2_pvgr_n5_cancellation_aware_reference_plan_2026-07-18.md)。
+
+## 110. 不是“加法算错了”：D1 排除相消假说，D2 在 H8192 找到二阶尾部
+
+N4.1 留下的两个失败格很容易让人产生一个直觉：curved 和 straight 两个完整积分很接近，最后
+相减时是不是发生了浮点相消？如果是，换成先逐节点相减、pairwise sum 或 Neumaier compensated
+sum，也许不用继续提高 H 就能过门。
+
+这次没有边试边改。我先写了共享节点的 paired-residual 内核，冻结四格、H1024/H2048、五种累加、
+toy 物理门、与 N4 route 的等价门和 1%/10% 判决，再做一次性 Git 证明。D1 的结果很干脆：两个
+失败格上，最强的非 raw 改动只占真实 H-refinement 差的 `1.27e-9` 和 `5.19e-10`。换句话说，
+加法顺序的影响比“能解释 floor”的 1% 门低了约七个数量级。独立 validator 从 `256x2` 数组重算后
+仍是 `D1_ACCUMULATION_ORDER_TOO_SMALL_TO_EXPLAIN_N4_FLOOR`。
+
+排除这个机制后，我才另开 D2，结果前冻结 H4096/H8192、final `6.25e-4` 门、`0.5` 收缩门、
+1% raw/paired 门和全部几何诊断。四格都过了：最坏 H4096-H8192 relative-L2 是 `1.183e-4`，
+最坏收缩比 `0.2199`，观测阶在 `2.19-2.54`。这符合 midpoint 积分进入约二阶尾部；H8192
+raw/paired 浮点差最坏只占 final refinement 的 `1.70e-8`。本机完成 5.28 亿次逻辑场查询约用
+216 秒，说明这一层 reference 审计不需要 GPU。
+
+**讲人话：**前面卡住的不是“电脑不会把小数加好”，而是 H2048 还没完全走进尾部。现在这四个
+已选 synthetic cells 的数值尺子稳了，但这仍不是自有算法胜利，更不是高质量论文结果。它是以后
+比较 Picard-1、DeepONet、FNO/FFNO 前必须补齐的一块地基。
+
+下一步先把 N4.1 的 23 个 H1024、7 个 H2048 和 D2 的 2 个 H8192 残差做成 32 格 adaptive
+reference pack，并逐数组哈希；然后才做 field JVP/VJP dot/FD 双门和 6+2 view 最小三维重建。
+真实 flow-off repeats、observable 单位和 covariance 仍需何远哲师兄提供。在这些门完成前，网络训练
+继续锁定。
+
+完整合同、逐格数字、图和禁止主张见
+[N5-D1/D2 结果审计](n2_pvgr_n5_d1_d2_result_audit_2026-07-18.md)。

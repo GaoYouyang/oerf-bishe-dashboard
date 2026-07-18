@@ -1,0 +1,117 @@
+{
+  "schema": "n2-pvgr-n5-d1-paired-residual-preregistered-1.0",
+  "candidate_id": "N2-PVGR-N5-D1-PAIR4",
+  "status": "preregistered_post_n4_mechanism_audit_no_algorithm_authorization",
+  "parent_n4_config": "demo_t16_operator/configs/n2_pvgr_n4_1_execution_amendment_preregistered_v1.json",
+  "parent_n4_result": "demo_t16_operator/results/n2_pvgr_n4_1_evaluator_convergence_v1/result.json",
+  "scientific_n4_config": "demo_t16_operator/configs/n2_pvgr_n4_evaluator_convergence_preregistered_v1.json",
+  "source_config": "demo_t16_operator/configs/n2_pvgr_n0_trifidelity_development_v1.json",
+  "pre_registration_attestation": "demo_t16_operator/configs/n2_pvgr_n5_d1_paired_residual_preregistration_attestation_v1.json",
+  "formal_output": "demo_t16_operator/results/n2_pvgr_n5_d1_paired_residual_v1",
+  "device": "cpu",
+  "dtype": "float64",
+  "population_count": 256,
+  "step_counts": [
+    1024,
+    2048
+  ],
+  "selection_contract": {
+    "selection_is_post_n4_and_not_an_independent_test": true,
+    "selected_pair_ids": [
+      "p04",
+      "p05"
+    ],
+    "selected_physical_cell_count": 4,
+    "rule": "the_two_N4_1_final_failures_and_their_same_field_same_stress_wide_controls"
+  },
+  "selected_cells": [
+    "smooth-s1871-orientation_58-narrow__stress_1",
+    "smooth-s1871-orientation_58-wide__stress_1",
+    "smooth-s1871-orientation_58-narrow__stress_3",
+    "smooth-s1871-orientation_58-wide__stress_3"
+  ],
+  "accumulation_methods": [
+    "raw_separate_subtraction",
+    "paired_naive",
+    "paired_pairwise",
+    "paired_neumaier",
+    "separate_neumaier_subtraction"
+  ],
+  "toy_contract": {
+    "constant_grid_size": 9,
+    "constant_ray_count": 8,
+    "constant_step_count": 16,
+    "weak_grid_size": 17,
+    "weak_ray_count": 6,
+    "weak_step_count": 48,
+    "weak_center_scale": 0.0004,
+    "weak_scale_difference": 0.0001,
+    "rotation_grid_size": 17,
+    "rotation_ray_count": 10,
+    "rotation_step_count": 36,
+    "rotation_angles_degrees": [
+      0.0,
+      90.0
+    ],
+    "toy_difference_step": 0.002
+  },
+  "gates": {
+    "maximum_constant_absolute_output": 0.0,
+    "maximum_weak_quadratic_finite_difference_relative_l2": 0.03,
+    "maximum_rotation_equivariance_relative_l2": 2e-10,
+    "maximum_frozen_route_equivalence_relative_l2": 5e-12,
+    "maximum_parent_n4_adjacent_metric_absolute_difference": 1e-12,
+    "maximum_accumulation_fraction_of_refinement_for_too_small": 0.01,
+    "minimum_accumulation_fraction_of_refinement_for_plausible": 0.1
+  },
+  "decision_contract": {
+    "too_small_requires_every_nonraw_method_on_both_failed_cells_below_one_percent_of_the_raw_H1024_H2048_absolute_difference": true,
+    "plausible_requires_at_least_one_nonraw_method_on_both_failed_cells_at_or_above_ten_percent": true,
+    "intermediate_or_mixed_results_are_inconclusive": true,
+    "D1_never_changes_the_N4_1_threshold_or_authorizes_a_reference": true,
+    "D1_never_authorizes_field_JVP_VJP_or_neural_training": true
+  },
+  "claim_authorizations": {
+    "fresh_reference": false,
+    "field_jvp_vjp": false,
+    "three_dimensional_reconstruction": false,
+    "neural_operator_training": false,
+    "neural_operator_superiority": false,
+    "real_data": false,
+    "generalization": false,
+    "paper_claim": false
+  },
+  "known_limitations": [
+    "post_N4_selected_mechanism_audit",
+    "only_four_smooth_s1871_cells",
+    "same_synthetic_field_and_geometry_generator_as_N4",
+    "no_experimental_noise_units",
+    "no_new_reference_threshold",
+    "summation_order_is_not_a_new_physical_observable"
+  ],
+  "stopping_rules": [
+    "Do not change selected cells, step counts, methods or gates after attestation.",
+    "If frozen-route equivalence or parent-N4 reproduction fails, stop with a contract failure.",
+    "Do not describe an accumulation-order result as evaluator convergence or algorithm success.",
+    "If accumulation is too small to explain the N4 floor, proceed only to a separately preregistered H4096/H8192 truncation probe.",
+    "If accumulation is plausible or inconclusive, do not replace the N4 metric without a fresh-cell audit.",
+    "Never open field-JVP/VJP, reconstruction or neural training from D1."
+  ],
+  "attested_files": {
+    "config": "demo_t16_operator/configs/n2_pvgr_n5_d1_paired_residual_preregistered_v1.json",
+    "runner": "demo_t16_operator/run_n2_pvgr_n5_d1_paired_residual.py",
+    "runner_test": "demo_t16_operator/test_run_n2_pvgr_n5_d1_paired_residual.py",
+    "protocol": "docs/n2_pvgr_n5_d1_paired_residual_preregistration_2026-07-18.md",
+    "attestation_builder": "site_tools/create_n2_pvgr_n5_d1_paired_residual_attestation.py",
+    "result_validator": "site_tools/validate_n2_pvgr_n5_d1_paired_residual.py",
+    "paired_kernel": "demo_t16_operator/cancellation_aware_residual.py",
+    "paired_kernel_test": "demo_t16_operator/test_cancellation_aware_residual.py",
+    "parent_n4_config": "demo_t16_operator/configs/n2_pvgr_n4_1_execution_amendment_preregistered_v1.json",
+    "parent_n4_result": "demo_t16_operator/results/n2_pvgr_n4_1_evaluator_convergence_v1/result.json",
+    "scientific_n4_config": "demo_t16_operator/configs/n2_pvgr_n4_evaluator_convergence_preregistered_v1.json",
+    "scientific_n4_runner": "demo_t16_operator/run_n2_pvgr_n4_evaluator_convergence.py",
+    "source_config": "demo_t16_operator/configs/n2_pvgr_n0_trifidelity_development_v1.json",
+    "field_dependent_ray": "demo_t16_operator/field_dependent_ray.py",
+    "shared_straight_state": "demo_t16_operator/shared_straight_state.py"
+  }
+}
