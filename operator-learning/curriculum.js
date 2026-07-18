@@ -1,6 +1,6 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.15-g",
-  updated: "2026-07-15",
+  version: "2026.07.18-n3",
+  updated: "2026-07-18",
   foundationChecks: [
     {
       id: "python-array",
@@ -113,6 +113,30 @@ window.OPERATOR_LEARNING_GUIDE = {
       formula: "x₀ = A_gᵀ y",
       bost: "Residual FNO 学的是 x-x₀，Absolute FNO 直接输出 x，两者在不同 OOD 域会翻转。",
       trap: "把 adjoint lift 通道输入网络不等于网络满足数据一致性。"
+    },
+    {
+      id: "evaluator-sentinel",
+      title: "先审参考答案，再比较算法",
+      plain: "高精度数值解也不是天然真值；如果 H256 到 H512 还在变化，候选与它的差可能只是 evaluator 偏差。",
+      formula: "e_H = ||F_H-F_2H|| / max(||F_2H||, ε)",
+      bost: "N3 的 16/96 sentinel 失败关闭了这些条件的 absolute-reference 解释，下一步必须加入 H1024 和已通过 controls。",
+      trap: "候选贴近一个未收敛参考解，不等于更符合真实光线物理；也不能事后放宽阈值救结果。"
+    },
+    {
+      id: "field-jvp-vjp",
+      title: "Field JVP/VJP 是三维重建的发动机",
+      plain: "JVP 告诉你场沿某个方向变化时观测怎样变；VJP 把所有观测残差一次拉回三维参数空间。",
+      formula: "Jv = dF(theta)[v],  grad L = J^T W^T W(F-y)",
+      bost: "同一个 curved-ray tensor forward 必须同时生成 JVP 和 VJP，并通过 dot test 与中心有限差分双门。",
+      trap: "能对弯曲强度求导，不等于能对三维场求导；删掉最后一个 detach 也不会自动补回中途断掉的图。"
+    },
+    {
+      id: "physics-residual-operator",
+      title: "物理预条件残差算子只学没算准的部分",
+      plain: "先用 Picard-1 给出便宜且物理可解释的近似，再让小模型学习高精度 H 与 P1 之间的结构化差。",
+      formula: "F_hat(theta,g) = P1(theta,g) + R_phi(theta,g,P1-state)",
+      bost: "N3 提示整体误差已经很小但少数 ray 的 Q95 仍会变差，残差模型应针对尾部而不是重做全部 forward。",
+      trap: "只有 H-P1 高于 evaluator 误差和实验噪声底才值得学；P2-P1 不是免费特征，fallback 也必须计入成本。"
     },
     {
       id: "call-frontier",
@@ -348,32 +372,38 @@ window.OPERATOR_LEARNING_GUIDE = {
     {id:"cg-pdno-research",stage:"research",level:"必做",type:"自有算法主页",title:"Base-Correction CG-PDNO research lab",url:"../general_operator_research_lab.html",local:"../document_reader.html?doc=cg_pdno_guarded_smoke_review_brief.md",read:"按 E0-E4 读正负证据，再看 Base-Correction 结构、调用账本和 Go/No-Go。",output:"能不看稿解释为什么 noise-only trust 在前驱模型有效、在 CG-PDNO 上却应停止。",verified:"8 tests；736 + 120 + 144 rows；3 independent validators；superiority locked"},
     {id:"v3k-f-stopping",stage:"inverse",level:"必做",type:"确定性停止审计",title:"v3k-F deployable noise-stopping audit",url:"../document_reader.html?doc=v3k_f_noise_stopping_review_brief.md",local:"",read:"比较 fixed Landweber、fixed PBB、discrepancy、oracle，重点看 mean 与 tail 为何分叉。",output:"手写 Morozov first-crossing、调用记账和不放行 learned stop 的三个理由。",verified:"24 tests；6,048 method rows；4,704 stopping rows；independent validator"},
     {id:"public-data-transfer",stage:"data",level:"必做",type:"公开数据地图",title:"OpenBOST / CFD / reacting-flow transfer map",url:"../document_reader.html?doc=public_dataset_transfer_map.md",local:"",read:"分清 analytic truth、independent CFD 和 real optical chain 各自能证明什么。",output:"为每个数据源写 loader contract、allowed claim 和 forbidden claim。",verified:"OpenBOST official Data Commons；RealPDEBench official card；Michigan Deep Blue；SDRBench；FiReSMOKE"},
-    {id:"he-data-contract",stage:"bost",level:"必做",type:"师兄沟通",title:"何远哲最小数据合同",url:"../document_reader.html?doc=he_yuanzhe_minimum_data_contract.md",local:"",read:"只要 1-3 帧的 observation、mask、ray、grid/unit、flow-off、baseline 和权限边界。",output:"把短消息发给师兄，并将回复转成 manifest，不口头猜接口。",verified:"本仓库公开合同模板；不含组内数据"}
+    {id:"he-data-contract",stage:"bost",level:"必做",type:"师兄沟通",title:"何远哲最小数据合同",url:"../document_reader.html?doc=he_yuanzhe_minimum_data_contract.md",local:"",read:"只要 1-3 帧的 observation、mask、ray、grid/unit、flow-off、baseline 和权限边界。",output:"把短消息发给师兄，并将回复转成 manifest，不口头猜接口。",verified:"本仓库公开合同模板；不含组内数据"},
+    {id:"n3-grouped-audit",stage:"current",level:"必做",type:"正式结果审计",title:"N3 96 条件 grouped factorial NO-AUTH",url:"../general_operator_research_lab.html#n2-pvgr-n3",local:"../document_reader.html?doc=docs%2Fn2_pvgr_n3_grouped_factorial_result_audit_2026-07-18.md",read:"先读总门和 evaluator 失败，再读 Picard-1 的 8/8 强信号、Q95 反例、盲态恢复和禁止表述。",output:"不看页面复述为什么 P1 是下一强基线、却仍不能叫算法成功。",verified:"结果前预注册；96/96 checkpoints；41-file manifest；独立 validator；机器判决 NO-AUTH"},
+    {id:"n3-field-adjoint",stage:"current",level:"必做",type:"实现设计",title:"Field JVP/VJP 到 6+2 view 三维重建接口",url:"../document_reader.html?doc=docs%2Fn2_pvgr_field_jvp_vjp_reconstruction_interface_design_2026-07-18.md",local:"",read:"重点读四个现有模块的 detach 审计、冻结 row layout、tensor-only forward、dot/FD 双门和 held-out view 边界。",output:"先在小网格实现一个 forward closure，交付三组 dot test 与多 h 有限差分曲线。",verified:"设计已冻结；尚无 field-adjoint 或三维重建结果"},
+    {id:"n3-recovery-disclosure",stage:"audit",level:"进阶",type:"研究诚信",title:"N3 KeyError 盲态分析恢复披露",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n3_blind_analysis_recovery_2026-07-18.md",local:"",read:"理解为什么 96 格完成后仍不能直接改字段继续汇总，以及 opaque Merkle 封存如何限制事后自由度。",output:"写出允许修改的唯一 query schema 映射和所有禁止修改项。",verified:"恢复协议先提交；checkpoint payload 未解析；96 格未重算"}
   ],
   researchTracks: [
     {
-      id:"cgpdno", rank:1, title:"Base-Correction CG-PDNO", badge:"主候选：3-seed 工程信号，superiority 未授权", risk:"中高", novelty:"可能来自 BOST 特有的 variable ray geometry + calibrated covariance + 共享物理 fallback + 尾部/调用前沿；不是首次 unrolling", data:"当前只有 straight-ray analytic phantom；已有 disjoint geometry pools 和 3 seeds，仍缺独立 generator、OpenBOST 与 OERF", hardware:"本机完成 Base-Correction 8³-32³、5 seeds 和 validator；64³+ 强基线再迁 GPU", question:"共享预白化物理 base 上的单次 geometry/covariance-conditioned correction，能否在同总调用前沿改善 sparse-view/thin-front，且不伤 p10/harm？", contribution:"当前 CG-PDNO development-fresh test 三种子平均 +21.77%、最大种子 harm 0%；前驱模型的 joint-OOD 灾难和 noise-only trust 负结果共同锁定了可回退结构。", next:"共享 physics base + 单次 correction→同调用 SPG/PBB/CGLS→V_lock→独立 cone/curved generator→OpenBOST→OERF。", stop:"若收益被 deterministic prewhitening/更多 calls 解释，或 V_lock 的 mean/p10/harm 未同时过门，停止扩模型并保留机制性负结果。"
+      id:"pvgr-residual", rank:1, title:"Picard-1 物理预条件残差算子", badge:"当前主线：N3 NO-AUTH 后的窄问题", risk:"中高", novelty:"可能来自 curved-ray Picard 内部状态、结构化 H-P1 尾部校正、field-adjoint 闭合、fail-closed fallback 与同调用预算的联合设计；不是简单换 FNO 名字", data:"已有两个 synthetic field families、8 个独立 field units 和 96 个物理条件；仍缺 H1024 稳定参考、8-view reconstruction、独立 generator 与 OERF 噪声底", hardware:"H1024 与小网格 field JVP/VJP 可先在 Mac CPU/MPS；32³-64³ 多模型多种子需再按实测内存决定是否租 GPU", question:"Picard-1 已吃掉主要曲光线误差后，H-P1 是否仍存在高于数值/实验噪声底、可跨场与几何泛化的结构化尾部残差？", contribution:"N3 已把研究目标从泛化的“做一个神经算子”缩成可检验问题：在约 1.0× OCBH logical query 下保留 P1 的整体优势，同时修复少数 ray/case 的 Q95 尾部，并让失败样本回到 full curved forward。", next:"H1024 evaluator→tensor-only field JVP/VJP→6+2 view reconstruction→residual/noise-floor audit→小型 residual DeepONet/FNO/FFNO 对照→独立 generator→OERF。", stop:"若 H-P1 不高于 evaluator 或实验噪声底、残差不跨 field/geometry 重复、同预算尾部不优于 P1，或 fallback 后端到端成本失去优势，停止训练并保留数值负结论。"
     },
     {
-      id:"correction", rank:2, title:"v3k-F 预白化停止与强数值侧门", badge:"确定性辅线；learned stop 继续关闭", risk:"中", novelty:"它主要是强基线和可部署停止问题，不单独宣称新算子", data:"v3k-F 仍是 development synthetic audit；真实 camera covariance 与 fresh blind 暂缺", hardware:"本机维护 discrepancy/SPG/call frontier，不为 learned stop 扩网络", question:"部署可得 covariance/noise proxy 能否稳定控制 semi-convergence，为 CG-PDNO 提供不可逃避的强数值对手？", contribution:"discrepancy 对 noise OOD 相对 fixed Landweber 平均 +7.10%，但仍有 12.5% harm；平均改善不足以放行 learned stop。", next:"真实 flow-off covariance→pooled/worst-camera discrepancy→fresh lock→只作 CG-PDNO 强基线。", stop:"确定性方法已解释全部 headroom 时，不训练 stopping network。"
+      id:"correction", rank:2, title:"v3k-F 预白化停止与强数值侧门", badge:"确定性辅线；learned stop 继续关闭", risk:"中", novelty:"它主要是强基线和可部署停止问题，不单独宣称新算子", data:"v3k-F 仍是 development synthetic audit；真实 camera covariance 与 fresh blind 暂缺", hardware:"本机维护 discrepancy/SPG/call frontier，不为 learned stop 扩网络", question:"部署可得 covariance/noise proxy 能否稳定控制 semi-convergence，为残差算子提供不可逃避的强数值对手？", contribution:"discrepancy 对 noise OOD 相对 fixed Landweber 平均 +7.10%，但仍有 12.5% harm；平均改善不足以放行 learned stop。", next:"真实 flow-off covariance→pooled/worst-camera discrepancy→fresh lock→只作强数值基线。", stop:"确定性方法已解释全部 headroom 时，不训练 stopping network。"
     },
     {
-      id:"baseline", rank:2, title:"240-epoch FNO + 有界 DeepONet baseline audit", badge:"epoch / cost / DeepONet budget 已锁", risk:"低-中", novelty:"低，但决定全部创新结论是否可信", data:"同一 K=6 validation protocol；策略和 checkpoint 冻结后才读取 dev2/Q_audit", hardware:"v3e：FNO 14.72M FLOPs-v1、1.49ms 推理、8.54ms 完整训练步；v3g 72-run DeepONet screen 本机 153.69s", question:"候选能否在 epoch、wall time、FLOPs 与内存多轴上形成稳定 Pareto 优势，而不是只赢一个弱 endpoint？", contribution:"validation 冠军、plateaued control、五架构成本 schema、DeepONet rank/pool/LR 有界审计、provenance hashes 与尾部/OOD 边界。", next:"冻结 rank-48 DeepONet control；停止规则稳定后补 operator warm-start 的 time-to-target。", stop:"不再用参数量或无限延长 baseline 阻塞写代码；top-3 DeepONet 补充只有师兄明确要求才一次性预注册，不能看 dev2 后扩表。"
+      id:"baseline", rank:3, title:"240-epoch FNO + 有界 DeepONet baseline audit", badge:"epoch / cost / DeepONet budget 已锁", risk:"低-中", novelty:"低，但决定全部创新结论是否可信", data:"同一 K=6 validation protocol；策略和 checkpoint 冻结后才读取 dev2/Q_audit", hardware:"v3e：FNO 14.72M FLOPs-v1、1.49ms 推理、8.54ms 完整训练步；v3g 72-run DeepONet screen 本机 153.69s", question:"候选能否在 epoch、wall time、FLOPs 与内存多轴上形成稳定 Pareto 优势，而不是只赢一个弱 endpoint？", contribution:"validation 冠军、plateaued control、五架构成本 schema、DeepONet rank/pool/LR 有界审计、provenance hashes 与尾部/OOD 边界。", next:"冻结 rank-48 DeepONet control；停止规则稳定后补 operator warm-start 的 time-to-target。", stop:"不再用参数量或无限延长 baseline 阻塞写代码；top-3 DeepONet 补充只有师兄明确要求才一次性预注册，不能看 dev2 后扩表。"
     },
     {
-      id:"qcsnco", rank:5, title:"Query-Calibrated Support-Null Correction Operator", badge:"停止当前 checkpoint；保留负结果", risk:"高", novelty:"组件邻近既有方法，且当前 direction 质量不足", data:"若恢复，需训练 mask 匹配、锁定新 fields、真实 cone-ray 与独立采集", hardware:"8-24 GB GPU；另需 Q_audit 仪器", question:"null consistency 为什么不能保证三维 field correctness？", contribution:"当前最可信贡献是机制性负结果与相机信息价值边界。", next:"不调新架构；只在 direct/warm-start 主线稳定后，决定是否做一次训练匹配复核。", stop:"v2d 在 K=4/6/8 的同预算门槛 0/3 通过，已触发停止条件。"
+      id:"sensor-design", rank:4, title:"BOST camera layout × inverse operator co-design", badge:"中期候选；依赖真实安装约束", risk:"中-高", novelty:"高，依赖真实安装约束", data:"多套可行相机布局、遮挡/标定/同步成本与真实或高保真 forward", hardware:"8-24 GB GPU；主要成本在实验几何与批量 forward", question:"在固定安装成本下，哪些视角布局能同时降低平均误差和最坏体场风险？", contribution:"block-camera VOI、风险约束布局、operator 与实验设计协同。", next:"先比较 uniform/max-gap/QR-Fisher/learned policy；K=6 max-gap 仅作假设来源，不作正结果。", stop:"布局收益在独立 geometry/真实装置消失，或安装成本不可接受时停止。"
     },
     {
-      id:"geometry", rank:6, title:"可变相机/光线几何神经算子", badge:"高风险升级", risk:"高", novelty:"高，但容易过度建模", data:"至少多套布局，必须 outer leave-one-geometry-out", hardware:"16-48 GB GPU；point/ray encoder 成本高", question:"固定网格 FNO 的失败是否主要来自观测几何变化？", contribution:"将 camera/ray metadata 与 inverse operator 显式联系，支持可变传感器。", next:"先用 metadata-FNO/padding+mask 建立强对照，再决定 GINO/VIDON/GNOT。", stop:"显式 metadata 基线已解决外推，或组内布局实际固定时停止。"
+      id:"cgpdno", rank:5, title:"历史支线：Base-Correction CG-PDNO", badge:"3-seed 工程信号；不再是当前主线", risk:"中高", novelty:"可能来自 variable ray geometry + calibrated covariance + 共享物理 fallback；但证据仍在 straight-ray analytic phantom", data:"已有 disjoint geometry pools 和 3 seeds，仍缺独立 generator、OpenBOST 与 OERF", hardware:"本机已完成 8³-32³ smoke；当前不继续扩模", question:"共享预白化物理 base 上的一次 correction 能否在 sparse-view BOST 同调用前沿不伤尾部？", contribution:"development-fresh test 平均 +21.77%、最大种子 harm 0%，但 joint-OOD 前驱灾难与 noise-only trust 负结果关闭了成功表述。", next:"仅作为 residual-operator 的历史对照和结构警告，不与 N3 curved-ray 证据混写。", stop:"除非 N3 residual target 与真实数据合同支持同一结构，否则不恢复扩展。"
     },
     {
-      id:"warmstart", rank:4, title:"Own operator warm-start NeRIF", badge:"baseline、geometry、v3d 三闸门后进入", risk:"中-高", novelty:"中-高", data:"需 NeRIF forward/loss、统一 stop rule 与至少少量真实样例", hardware:"本机 MPS 先做小场 timing；升尺度后再评 GPU", question:"通过 v3d 开发门槛的初值能否比 random/ridge/plateau FNO/DeepONet 更快达到相同 NeRIF 独立审计质量？", contribution:"把强数值反演、BOST acquisition-conditioned prior 与 per-instance continuous field 变成公平级联。", next:"只在 acquisition-conditioned 分支稳定胜 F-Adapter 与 geometry controls 后比较 random/ridge/FNO/DeepONet/own/oracle 六种初始化。", stop:"端到端总时间改善不足 30%、最终 Q_audit 变差或尾部伤害增加时不作主贡献。"
+      id:"qcsnco", rank:7, title:"Query-Calibrated Support-Null Correction Operator", badge:"停止当前 checkpoint；保留负结果", risk:"高", novelty:"组件邻近既有方法，且当前 direction 质量不足", data:"若恢复，需训练 mask 匹配、锁定新 fields、真实 cone-ray 与独立采集", hardware:"8-24 GB GPU；另需 Q_audit 仪器", question:"null consistency 为什么不能保证三维 field correctness？", contribution:"当前最可信贡献是机制性负结果与相机信息价值边界。", next:"不调新架构；只在 direct/warm-start 主线稳定后，决定是否做一次训练匹配复核。", stop:"v2d 在 K=4/6/8 的同预算门槛 0/3 通过，已触发停止条件。"
     },
     {
-      id:"sensor-design", rank:3, title:"BOST camera layout × inverse operator co-design", badge:"v2d 新线索", risk:"中-高", novelty:"高，依赖真实安装约束", data:"多套可行相机布局、遮挡/标定/同步成本与真实或高保真 forward", hardware:"8-24 GB GPU；主要成本在实验几何与批量 forward", question:"在固定安装成本下，哪些视角布局能同时降低平均误差和最坏体场风险？", contribution:"block-camera VOI、风险约束布局、operator 与实验设计协同。", next:"先比较 uniform/max-gap/QR-Fisher/learned policy；K=6 max-gap 仅作假设来源，不作正结果。", stop:"布局收益在独立 geometry/真实装置消失，或安装成本不可接受时停止。"
+      id:"geometry", rank:8, title:"可变相机/光线几何神经算子", badge:"高风险升级", risk:"高", novelty:"高，但容易过度建模", data:"至少多套布局，必须 outer leave-one-geometry-out", hardware:"16-48 GB GPU；point/ray encoder 成本高", question:"固定网格 FNO 的失败是否主要来自观测几何变化？", contribution:"将 camera/ray metadata 与 inverse operator 显式联系，支持可变传感器。", next:"先用 metadata-FNO/padding+mask 建立强对照，再决定 GINO/VIDON/GNOT。", stop:"显式 metadata 基线已解决外推，或组内布局实际固定时停止。"
     },
     {
-      id:"4d", rank:7, title:"3D inverse operator → 4D evolution/correction", badge:"远期扩展", risk:"很高", novelty:"高", data:"需同步高速多视角时序数据", hardware:"24-80 GB GPU 或明确低秩/分块设计", question:"低秩时空先验能否在不损伤瞬态前缘的情况下减少 4D BOST 的样本与计算量？", contribution:"与 He 的 TDBOST 时空线直接对齐。", next:"只在静态 3D 模型、几何接口和真实数据都过关后开始。", stop:"静态 3D 尚不稳定，或没有同步时序数据时不启动。"
+      id:"warmstart", rank:6, title:"Own operator warm-start NeRIF", badge:"baseline、geometry、v3d 三闸门后进入", risk:"中-高", novelty:"中-高", data:"需 NeRIF forward/loss、统一 stop rule 与至少少量真实样例", hardware:"本机 MPS 先做小场 timing；升尺度后再评 GPU", question:"通过 v3d 开发门槛的初值能否比 random/ridge/plateau FNO/DeepONet 更快达到相同 NeRIF 独立审计质量？", contribution:"把强数值反演、BOST acquisition-conditioned prior 与 per-instance continuous field 变成公平级联。", next:"只在 acquisition-conditioned 分支稳定胜 F-Adapter 与 geometry controls 后比较 random/ridge/FNO/DeepONet/own/oracle 六种初始化。", stop:"端到端总时间改善不足 30%、最终 Q_audit 变差或尾部伤害增加时不作主贡献。"
+    },
+    {
+      id:"4d", rank:9, title:"3D inverse operator → 4D evolution/correction", badge:"远期扩展", risk:"很高", novelty:"高", data:"需同步高速多视角时序数据", hardware:"24-80 GB GPU 或明确低秩/分块设计", question:"低秩时空先验能否在不损伤瞬态前缘的情况下减少 4D BOST 的样本与计算量？", contribution:"与 He 的 TDBOST 时空线直接对齐。", next:"只在静态 3D 模型、几何接口和真实数据都过关后开始。", stop:"静态 3D 尚不稳定，或没有同步时序数据时不启动。"
     }
   ],
   paperGates: [

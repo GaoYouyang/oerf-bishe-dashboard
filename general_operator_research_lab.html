@@ -182,6 +182,7 @@
       <a href="#n2-cvcr-n0">N2 孔径机制门</a>
       <a href="#n2-adrc-n1">N2 自动-离散残差</a>
       <a href="#n2-curved-ray">N2 曲光线与路由</a>
+      <a href="#n2-pvgr-n3">N3 96 条件 NO-AUTH</a>
       <a href="#n2-pvgr-n2">N2 算子一致 9/9</a>
       <a href="#n2-pvgr-n1">N2 变分修正 7/9</a>
       <a href="#n2-pvgr-n0">N2 三级路由判决</a>
@@ -197,23 +198,26 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">当前只做 N2：把 BOST 曲光线前向程序本身变成可核验的离散算子，再研究它怎样进入三维重建与算子学习。最新一轮用完整 RK4 forward-JVP 修正了旧 N1 的同伦定义和中央差分 Jacobian 不一致；解析 OCBH 与教师最坏只差 <strong>2.16e-14</strong>，九个 development 格全部过机制门。但 Picard-1/2 在同九格的 matched residual 与当前 Mac CPU worst-case 墙钟汇总上都优于 OCBH，所以当前结论不是“自有算法胜出”，而是找到了一条可信的导数骨架和更强的经典起点。机器结论仍为 <code>MECHANISM_BRIDGE_SIGNAL_ONLY_96_CELL_RECONSTRUCTION_AND_REAL_DATA_GATES_CLOSED</code>。</p>
+    <p class="lead">当前只做 N2/N3：把 BOST 曲光线前向程序变成可核验的离散算子，再接入 field JVP/VJP、三维重建和算子学习。最新的预注册筛查覆盖 <strong>8 个独立场、32 个几何 case、96 个物理条件</strong>：JVP teacher 96/96，但 OCBH 主门只过 73/96、H256/H512 sentinel 只过 80/96、四组计时门 0/4。Picard-1 在 8/8 field units 的整体 matched error 更低，查询预算与 OCBH 基本相同且墙钟更快，但 evaluator 未收敛的 6 格与一个 Q95 尾部反例禁止宣称支配。机器结论是 <code>GROUPED_FACTORIAL_FAIL_NO_FORWARD_AUTHORIZATION</code>：先做 H1024 evaluator audit，再进入 field JVP/VJP 和八视角重建。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">N2-PVGR-N2 · OPERATOR-CONSISTENT</span><span class="chip gold">9 / 9 MECHANISM</span><span class="chip blue">TEACHER 2.16e-14</span><span class="chip gold">PICARD BASELINE WINS</span><span class="chip coral">NO AUDIT AUTHORIZATION</span></div>
-          <h2>当前主线：精确离散 JVP 修掉了 7/9，但 Picard 强基线仍占优</h2>
-        <p>N2 不再把 automatic Hessian 塞进中央差分高保真程序，也不把完整动力学反馈误写成弯曲同伦的一阶轨迹切线。完整 forward-mode JVP 作为慢教师，解析 OCBH 作为可解释候选，Picard-1/2 作为历史强基线。最新证据把数学目标和程序对齐了，同时也否决了“OCBH 已经是最佳前向算法”的诱人说法。</p>
+        <div class="chips"><span class="chip blue">N2-PVGR-N3 · PREREGISTERED</span><span class="chip gold">8 FIELD UNITS · 96 CONDITIONS</span><span class="chip blue">TEACHER 96 / 96</span><span class="chip coral">SENTINEL 80 / 96</span><span class="chip coral">NO FORWARD AUTHORIZATION</span></div>
+          <h2>当前主线：Picard-1 是更强起点，但参考解和尾部还没过门</h2>
+        <p>N3 不再只看九格机制演示，而是先冻结 seed、几何、孔径、应力、阈值、统计单位和停止规则，再跑 96 个配对条件。结果一方面否决了 OCBH 的部署资格，另一方面也禁止把 Picard 的平均优势写成普遍支配。这次 NO-AUTH 已把下一个可发展问题缩小到“稳定 evaluator + Picard-1 结构化尾部残差 + 严格 field adjoint”。</p>
         <ol>
-          <li><strong>教师等价：</strong>OCBH 对完整离散 JVP 的输出/位置/方向最坏误差分别为 2.16e-14、4.95e-15、5.38e-15。</li>
-          <li><strong>机制桥接：</strong>OCBH 最坏 matched residual relative-L2 为 1.34%，九格 reference no-harm 最坏 1.064。</li>
-          <li><strong>经典反证：</strong>Picard-1/2 最坏 matched 仅 0.171%/0.0498%，成本约为 H128 的 0.0254×/0.0372×。</li>
-          <li><strong>当前角色：</strong>OCBH 更适合作风险特征、可微 renderer 骨架或 learned residual 输入，不能称为最终赢家。</li>
-          <li><strong>下一冻结门：</strong>先做 96-cell 分组 factorial，再做 field JVP/VJP、三维重建和等预算 DeepONet/FNO/FFNO。</li>
+          <li><strong>机制仍成立：</strong>discrete forward-JVP teacher 96/96 过门，OCBH 没有在程序导数上偷换目标。</li>
+          <li><strong>OCBH 不授权：</strong>primary 73/96、sentinel 80/96、timing 0/4，它只保留机制 teacher/diagnostic 角色。</li>
+          <li><strong>Picard-1 强信号：</strong>8/8 field units 的 geometric matched mean 更低，grouped ratio 0.198，墙钟最坏为 OCBH 的 0.315，query 为 0.996。</li>
+          <li><strong>不得宣称支配：</strong>6 格受 evaluator 失败影响；另一个已收敛条件的 Picard-1 Q95 比 OCBH 差 1.819%，超过 1% 门。</li>
+          <li><strong>下一冻结门：</strong>先对 16 个 sentinel 失败格做 H1024 收敛审计，再做 field JVP/VJP、6+2 view 重建与等预算 DeepONet/FNO/FFNO。</li>
           <li><strong>真实证据仍封存：</strong>必须从师兄取得米制 ROI、折射率/Gladstone-Dale 尺度、相机与背景标定、最大偏折工况、重复图像噪声及独立物理终点。</li>
         </ol>
         <div class="actions" style="margin:14px 0;">
-          <a class="button primary" href="#n2-pvgr-n2">看 N2 算子一致桥接</a>
-          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n2_operator_consistent_bridge_2026-07-18.md">完整推导与判决</a>
+          <a class="button primary" href="#n2-pvgr-n3">看 N3 96 条件判决</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n3_grouped_factorial_result_audit_2026-07-18.md">完整结果审计</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_field_jvp_vjp_reconstruction_interface_design_2026-07-18.md">field JVP/VJP 学习与实现路线</a>
+          <a class="button" href="#n2-pvgr-n2">看 N2 算子一致桥接</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n2_operator_consistent_bridge_2026-07-18.md">N2 完整推导与判决</a>
           <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=107-精确离散-jvp-修掉了-7-9-但-picard-又把我们打醒了">讲人话日志 107</a>
           <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_cone_ray_baseline_design_2026-07-18.md">cone-ray 强基线</a>
           <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n2_independent_evidence_audit_2026-07-18.md">独立证据审计</a>
@@ -2081,6 +2085,80 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
             <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=104-曲光线导数写对了但基础尺度下它可能小到没有实验意义">讲人话日志 104</a>
             <a class="button" href="demo_t16_operator/run_n2_adrc_n1_curved_ray_rehearsal.py">运行排练</a>
             <a class="button" href="demo_t16_operator/field_dependent_ray.py">曲光线源码</a>
+          </div>
+        </div>
+        <div id="n2-pvgr-n3" style="margin-top:26px;padding-top:26px;border-top:1px solid var(--line);scroll-margin-top:88px;">
+          <div class="chips"><span class="chip blue">N2-PVGR-N3 · PREREGISTERED GROUPED FACTORIAL</span><span class="chip gold">8 FIELD UNITS · 96 CONDITIONS</span><span class="chip blue">TEACHER 96 / 96</span><span class="chip coral">SENTINEL 80 / 96</span><span class="chip coral">FAIL CLOSED</span></div>
+          <h3 style="margin-top:10px;">96 条件没有给出可包装的“成功”，但给出了一条更窄、更真的算法路线</h3>
+          <p>这轮在看结果前先冻结两个 synthetic field families、每家族四个 seed、两个视向、两档孔径、三档应力、256 条共同 Sobol rays、H128/H256/H512 参考与所有门槛。统计单位是 8 个 <code>family × field seed</code>，不是 96 个独立样本，更不是 24,576 条 rays。</p>
+          <div class="metric-grid real-metric-grid" style="margin-top:12px;">
+            <div class="metric"><b>73 / 96</b><span>OCBH 对称 primary gate；不授权部署 forward</span></div>
+            <div class="metric"><b>96 / 96</b><span>discrete forward-JVP teacher；机制导数仍自洽</span></div>
+            <div class="metric"><b>80 / 96</b><span>H256/H512 sentinel；16 格参考解不足</span></div>
+            <div class="metric"><b>0 / 4</b><span>OCBH 交错计时门；p90/H128-p10 为 0.318–0.390</span></div>
+            <div class="metric"><b>0.198 [0.151, 0.264]</b><span>Picard-1 / OCBH grouped matched ratio 与 95% blocked interval</span></div>
+            <div class="metric"><b>0.996 query</b><span>Picard-1 最坏 logical query / OCBH；基本同预算</span></div>
+            <div class="metric"><b>0.315 wall</b><span>Picard-1 最坏 package p90 / OCBH p90；仅当前 Mac CPU</span></div>
+            <div class="metric"><b>+1.819% Q95</b><span>一个已收敛尾部条件比 OCBH 差；禁止 dominance</span></div>
+          </div>
+          <figure style="margin-top:14px;">
+            <a href="demo_t16_operator/results/n2_pvgr_n3_grouped_factorial_v1/n2_pvgr_n3_grouped_factorial.png" aria-label="打开 N2-PVGR-N3 96 条件分组开发筛查六联图"><img src="demo_t16_operator/results/n2_pvgr_n3_grouped_factorial_v1/n2_pvgr_n3_grouped_factorial.png" alt="N2-PVGR-N3 六联证据图，展示四种方法最坏 matched residual、H256 no-harm、分组 Picard 比率、8 个 field unit 误差、墙钟与 OCBH 继承门" width="2400" height="1350" loading="lazy" decoding="async" /></a>
+            <figcaption>必须六幅一起读：Picard 的分组均值强信号不能抵消 worst-condition、Q95、sentinel 和完整成本门。右下的 timing 为 0 直接触发总判决 <code>GROUPED_FACTORIAL_FAIL_NO_FORWARD_AUTHORIZATION</code>。</figcaption>
+          </figure>
+          <p class="table-scroll-hint" aria-hidden="true">左右滑动比较四种方法的 96 条件最坏值</p>
+          <div class="result-table-wrap" tabindex="0" aria-label="N2-PVGR-N3 四种方法的对称门、最坏误差、排序和墙钟">
+            <table>
+              <thead><tr><th>方法</th><th>symmetric pass</th><th>最坏 matched L2</th><th>最坏 H256 no-harm</th><th>最小 risk Spearman</th><th>最坏 p90/H128 p10</th><th>当前角色</th></tr></thead>
+              <tbody>
+                <tr><td>N1 continuous affine</td><td class="negative">3 / 96</td><td class="negative">0.31193</td><td class="negative">6.63539</td><td class="negative">0.76104</td><td>0.2328×</td><td class="negative">历史候选关闭</td></tr>
+                <tr><td>OCBH</td><td class="negative">73 / 96</td><td>0.04439</td><td class="negative">2.59969</td><td>0.96986</td><td class="negative">0.3904×</td><td class="pending">机制 teacher / diagnostic</td></tr>
+                <tr><td>Picard-1</td><td class="pending">90 / 96</td><td class="positive">0.002568</td><td class="positive">1.00938</td><td class="positive">0.99993</td><td class="positive">0.1086×</td><td class="pending">下一强物理基线；未授权</td></tr>
+                <tr><td>Picard-2</td><td class="pending">90 / 96</td><td class="positive">0.001935</td><td class="positive">1.00341</td><td class="positive">0.99993</td><td class="positive">0.1622×</td><td class="pending">高精度对照；query 1.494× OCBH</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="two-col" style="margin-top:14px;">
+            <div class="panel">
+              <h3>参考解哪里失效</h3>
+              <ol>
+                <li>smooth 有 10 格主要集中在 <code>orientation_58 + wide</code>：总输出已接近收敛，但小 matched residual 对步长仍敏感。</li>
+                <li>wrinkled seed 3163 的 orientation-22 六格，H256/H512 output L2 约 1.017e-4–1.023e-4，略超 1e-4 门。</li>
+                <li>同六格也是 Picard-1/2 全部 absolute-reference 失败的来源；不应先怪算法。</li>
+                <li>下一步用 H1024 加 matched controls 审计收敛阶，不放宽阈值。</li>
+              </ol>
+            </div>
+            <div class="panel">
+              <h3>新算法应学什么</h3>
+              <ol>
+                <li>不从零学完整 BOST forward，先用 Picard-1 吃掉主要轨迹误差。</li>
+                <li>只学 <code>H-P1</code> 结构化残差，同时对 field L2、per-ray Q95、held-out view 和 VJP dot test 过门。</li>
+                <li>不能把 <code>P2-P1</code> 当免费路由特征；算出它时已经支付 P2 查询。</li>
+                <li>神经校正失败时必须回到同配置 full curved forward，路由和 fallback 都算入成本。</li>
+              </ol>
+            </div>
+          </div>
+          <div class="pipeline" aria-label="N3 NO-AUTH 之后通向三维算子学习的六步路线">
+            <div><b>H1024 evaluator</b><span>16 fail + matched controls；收敛阶与端到端成本</span></div>
+            <div><b>Field JVP/VJP</b><span>同一 tensor-only curved operator；dot 和 FD 双门</span></div>
+            <div><b>8-view smoke</b><span>6 train + 2 sealed held-out；full curved 与 P1</span></div>
+            <div><b>Residual floor</b><span>只有 H-P1 高于数值与实验噪声才允许学</span></div>
+            <div><b>Operator baselines</b><span>voxel、DeepONet、FNO/FFNO、physics-residual 同预算</span></div>
+            <div><b>OERF migration</b><span>单位、标定、mask、view/frame layout 与物理终点</span></div>
+          </div>
+          <div class="alert critical" style="margin-top:14px;"><strong>严格判决：可以说 Picard-1 是更强起点，不能说它已成功</strong><span>8/8 field-unit 整体优势是 development signal；16 格 evaluator failure、1.819% Q95 尾部反例、每 family n=4、无真实噪声底和无三维重建共同关闭 paper/real/generalization claim。</span></div>
+          <div class="actions" style="margin-top:14px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fn2_pvgr_n3_grouped_factorial_result_audit_2026-07-18.md">中文结果审计与下一步</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n3_grouped_factorial_v1/result.json">30,571 行完整结果</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n3_grouped_factorial_v1/validation_report.json">发布后 validator 报告</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n3_grouped_factorial_v1/picard_forward_dominance.csv">Picard dominance CSV</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n3_grouped_factorial_v1/reference_sentinel.csv">H256/H512 sentinel CSV</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n3_grouped_factorial_v1/timing.csv">交错计时 CSV</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n3_grouped_factorial_v1/query_accounting.csv">查询账本 CSV</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n3_grouped_factorial_v1/manifest.json">41 文件哈希</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n3_96cell_preregistration_2026-07-18.md">原 96-cell 预注册</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n3_blind_analysis_recovery_2026-07-18.md">KeyError 盲态恢复披露</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_field_jvp_vjp_reconstruction_interface_design_2026-07-18.md">field JVP/VJP 保姆级路线</a>
+            <a class="button" href="site_tools/validate_n2_pvgr_n3_grouped_factorial.py">完整性 validator 源码</a>
           </div>
         </div>
         <div id="n2-pvgr-n2" style="margin-top:26px;padding-top:26px;border-top:1px solid var(--line);scroll-margin-top:88px;">

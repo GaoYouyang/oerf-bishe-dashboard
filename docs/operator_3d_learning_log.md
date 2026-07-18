@@ -2817,3 +2817,41 @@ headroom，才值得训练小型算子网络。之后还必须进入三维重建
 [N2 算子一致同伦桥接](n2_pvgr_n2_operator_consistent_bridge_2026-07-18.md)，有限孔径强基线与要向
 何远哲师兄索取的 12 项数据合同见
 [cone-ray 强基线设计](n2_pvgr_cone_ray_baseline_design_2026-07-18.md)。
+
+## 108. 96 条件跑完了：Picard-1 是更强起点，但现在还不能宣布赢
+
+上一节说要从九格扩到按 field seed 分组的 96 个条件，这轮真正做完了。
+开跑之前先把两个场家族、每家族四个 seed、两个视向、两档孔径、三档应力、
+256 条共同 Sobol rays、128/256/512 步参考、阈值、图表和停止规则提交到 Git，然后才看结果。
+所以独立证据仍只有 8 个 field units，96 个条件是每个场里的重复物理压力测试，
+不能写成 96 个独立样本。
+
+第一次运行把 96/96 个格和计时都算完后，在最终汇总遇到了一个
+`KeyError`：OCBH 账本用 `logical_scalar_grid_point_queries`，Picard 数据类用
+`total_field_point_queries`。两者这里表示同一种“一个坐标上的标量网格求值”，但字段名不同。
+我没有直接改 runner 再跑，也没有先打开数字；而是把 96 个 checkpoint 当作 opaque bytes 做
+Merkle 封存，先提交只允许这一个字段映射的盲态恢复协议，再解析结果。这个 crash 和恢复
+必须保留在将来的稿件里，不能为了好看删掉。
+
+总判决是 `GROUPED_FACTORIAL_FAIL_NO_FORWARD_AUTHORIZATION`，原因很具体：
+
+- OCBH primary 只过 `73/96`；
+- forward-JVP teacher 是 `96/96`，说明它仍然在算对的离散导数；
+- H256/H512 sentinel 只过 `80/96`，16 格的 evaluator 不足；
+- OCBH 四组 timing 是 `0/4`，p90/H128-p10 为 `0.318-0.390`，高于 0.25 门；
+- query 门为 `96/96`，所以问题不是账本丢失，而是精度、参考和实测成本。
+
+Picard-1 给了强信号：8/8 field units 的 12-condition 几何平均 matched error 都比 OCBH 低，
+grouped ratio 为 `0.198 [0.151, 0.264]`；最坏墙钟只是 OCBH 的 `0.315`，logical query 为
+`0.996`。但它仍然不能说赢：六个 absolute-reference 失败都与 wrinkled-3163/orientation-22
+的 evaluator 失败重合；另外在一个 sentinel 已过的条件里，Picard-1 的 Q95 比 OCBH 差 `1.819%`，
+超过预注册的 1% 尾部门。
+
+**讲人话：**当前不该再花时间证明 OCBH 是最佳 forward。它降级为离散机制 teacher，Picard-1
+变成三维重建的第一强物理基线。但在训练网络之前，要先用 H1024 把 16 个参考失败格审清，
+再做同一 curved operator 的 field JVP/VJP dot/FD 门和 6-train/2-held-out 八视角重建。只有
+`H-P1` 稳定高于数值误差与师兄数据的实验噪声底，才训练小型 residual operator。
+
+完整数字、失败格、盲态恢复和下一步见
+[N3 96 条件结果审计](n2_pvgr_n3_grouped_factorial_result_audit_2026-07-18.md)；可微三维接口的入口见
+[field JVP/VJP 到重建的最小设计](n2_pvgr_field_jvp_vjp_reconstruction_interface_design_2026-07-18.md)。
