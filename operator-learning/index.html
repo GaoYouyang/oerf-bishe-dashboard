@@ -307,6 +307,7 @@
       <a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d1_d2_result_audit_2026-07-18.md">N5 D1/D2 尾差审计</a>
       <a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d3_result_audit_2026-07-18.md">N5 D3 32 格参考包</a>
       <a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4_tiny_field_derivative_result_audit_2026-07-18.md">N5 D4 场导数证书</a>
+      <a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_population_field_derivative_result_audit_2026-07-19.md">N5 D4b 32 格判决</a>
       <a href="../document_reader.html?doc=v3k_f_noise_stopping_review_brief.md">v3k-F 停止审计</a>
       <a href="../strong_numerical_controls_lab.html">v3k-D 强数值门</a>
       <a href="../operator_fair_budget_dashboard.html">同预算判决</a>
@@ -326,9 +327,9 @@
       <div class="metric"><b id="gateMetric">0 / 8</b><span>论文硬门槛</span></div>
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
-    <div class="alert success">
-      <strong>当前科学判断：D4 的 tiny selected grid-field JVP/VJP 证书已通过独立校验；训练仍未解锁。</strong>
-      <span>结果前固定的 4 cells × 2 directions × 4 maps 共 32 个导数上下文全部通过，16/16 结构门和 8/8 ordered-topology contexts 也通过；最坏 dot defect 为 2.845e-11，最坏 required-h FD 为 1.485e-7。它只授权 D4b 32-cell expansion，不授权 decoder、三维重建、模型或真实数据结论。<a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4_tiny_field_derivative_result_audit_2026-07-18.md">打开 D4 审计</a></span>
+    <div class="alert critical">
+      <strong>当前科学判断：D4b 完整 32-cell 导数普查严格 FAIL-CLOSED；训练与 decoder 均保持锁定。</strong>
+      <span>结果前冻结的 256 个 map context 通过 254 个，128/128 结构控制通过，但 ordered topology 只有 58/64 稳定。两个 map 失败集中在 p14 的 residual dot identity；六个 topology 失败都发生在 <code>h=0.01</code> 的 support-bit 翻转。独立 validator 全量重算后保持 <code>D4B_DERIVATIVE_CONTEXT_CHANGED_FAIL_CLOSED</code>。<a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_population_field_derivative_result_audit_2026-07-19.md">打开 D4b 审计</a></span>
     </div>
   </header>
 
@@ -359,23 +360,24 @@
 
     <section id="latest-gate" class="band">
       <div class="section-head">
-        <div><div class="eyebrow">最新可复核增量</div><h2>D4 证明 tiny grid-field 导数闭合，但没有跳过逆问题</h2><p>D4 对 detector、straight、raw residual 与 paired residual 分别做 JVP/VJP、七步长 FD、结构和 ordered-topology 审计。最新结论是“选定四格的实现合同有效”，不是“三维或神经算子已成功”。</p></div>
-        <div class="actions"><a class="button primary" href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4_tiny_field_derivative_result_audit_2026-07-18.md">D4 结果审计</a><a class="button" href="../demo_t16_operator/results/n2_pvgr_n5_d4_tiny_field_derivative_v1/validation_report.json">机器校验</a></div>
+        <div><div class="eyebrow">最新可复核增量</div><h2>D4b 证明 tiny pass 不能直接外推到完整开发总体</h2><p>D4b 对 32 cells、16 pairs、5 field units 的完整封闭 census 重做 detector、straight、raw/paired residual 的 JVP/VJP、七步长 FD、结构和 ordered-topology 审计。最新结论是“发现上下文依赖失败并可靠拒答”，不是“差一点成功”。</p></div>
+        <div class="actions"><a class="button primary" href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_population_field_derivative_result_audit_2026-07-19.md">D4b 结果审计</a><a class="button" href="../demo_t16_operator/results/n2_pvgr_n5_d4b_population_field_derivative_v1/validation_report.json">独立机器校验</a></div>
       </div>
       <div class="figure-grid">
-        <figure><img src="../demo_t16_operator/results/n2_pvgr_n5_d4_tiny_field_derivative_v1/n2_pvgr_n5_d4_tiny_field_derivative.png" alt="N5-D4 多步长有限差分、JVP VJP dot defect、结构控制与机器判决" /><figcaption>D4：32/32 map contexts、16/16 structures、8/8 topology contexts 通过。紫色 residual 曲线最接近门槛，因此 D4b 必须保留 fail-closed 尾部审计。</figcaption></figure>
-        <figure><img src="../demo_t16_operator/results/n2_pvgr_n5_d3_adaptive_reference_v1/n2_pvgr_n5_d3_adaptive_reference.png" alt="N5-D3 32 格自适应残差参考包的步数分配、逐格范数和合同检查" /><figcaption>D3：23×H1024 raw、7×H2048 raw、2×H8192 paired-Neumaier 的 mixed reference pack，仍是 D4b 和重建的数值尺子。</figcaption></figure>
+        <figure><img src="../demo_t16_operator/results/n2_pvgr_n5_d4b_population_field_derivative_v1/n2_pvgr_n5_d4b_population_field_derivative.png" alt="N5-D4b 32-cell 导数普查的逐格 dot defect、有限差分、几何余量和严格门通过率" /><figcaption>D4b：p14 的 worst dot 超过 1e-10；p04-p06、p09-p10 出现 h=0.01 support-topology 切换。254/256 和 58/64 都不能平均成总体通过。</figcaption></figure>
+        <figure><img src="../demo_t16_operator/results/n2_pvgr_n5_d4_tiny_field_derivative_v1/n2_pvgr_n5_d4_tiny_field_derivative.png" alt="N5-D4 tiny selected 场导数证书" /><figcaption>D4 历史对照：四个 selected cells 全过，但共用一个 smooth field。D4b 的失败正说明为什么必须做总体扩展。</figcaption></figure>
       </div>
       <div class="panel" style="margin-top:11px;">
-        <div class="chips"><span class="chip">D4 validator valid</span><span class="chip blue">32 / 32 maps</span><span class="chip">1,573,152 queries</span><span class="chip coral">reconstruction / model claim 仍锁定</span></div>
+        <div class="chips"><span class="chip coral">D4b FAIL-CLOSED</span><span class="chip blue">254 / 256 maps</span><span class="chip coral">58 / 64 topology</span><span class="chip">12,558,336 queries</span><span class="chip coral">全部授权 false</span></div>
         <h3 style="margin-top:12px;">现在按这个顺序做</h3>
         <ol>
-          <li><strong>已完成：</strong>D3 mixed reference pack 与 D4 四格 tiny grid-field derivative certificate，均通过独立 validator。</li>
-          <li><strong>当前：</strong>结果前预注册 D4b 32-cell derivative expansion，并补 <code>decoder(theta) → field → detector</code> 链式 dot/FD。</li>
-          <li><strong>后续：</strong>只在 D4b 与 decoder 两门都通过后做 6-train-view / 2-held-out-view deterministic 三维重建，并记录 JVP/VJP 调用、墙钟和内存。</li>
-          <li>向师兄申请 displacement 单位、同 rig flow-off repeats、mask/confidence/covariance，把 synthetic 尾差映射到真实 noise units。</li>
+          <li><strong>已完成：</strong>D4b 正式运行、全量独立重放与 12 项结果合同测试；失败证据已固定，不重跑或改门。</li>
+          <li><strong>当前学习：</strong>先理解 hard support、active set、局部可微半径、JVP/VJP dot identity 和相消残差点积。</li>
+          <li><strong>当前实验：</strong>只读定位 <code>h=0.01</code> support flip，并比较 p14 保存导数的普通、补偿和 extended-precision contraction；这些诊断不能救回 D4b。</li>
+          <li><strong>下一授权门：</strong>只有 support 的物理语义明确后，才结果前预注册 topology-certified D4b-R；它通过后才允许 decoder-chain，之后才是 6+2 view 重建。</li>
+          <li><strong>问师兄：</strong>support/mask 的真实含义、observable 单位、flow-off repeats、camera/mask/confidence/covariance 与可对账的 <code>F/Jv/J^Tq</code> 小例子。</li>
         </ol>
-        <div class="trap"><strong>训练仍锁定：</strong>D4 只授权 32-cell derivative expansion。population derivative、decoder chain、6+2 view 重建与真实 noise-floor 未完成前，不训练 <code>Picard-1 + residual operator</code>，也不比较 DeepONet/FNO/FFNO 胜负。</div>
+        <div class="trap"><strong>训练仍锁定：</strong>D4b 明确没有授权 population derivative。不得跳到 decoder、NeRIF、DeepONet、FNO/FFNO 或三维重建；下一步是 topology/support 与 residual-adjoint 的可证伪修复合同。</div>
       </div>
     </section>
 
@@ -416,7 +418,7 @@
 
     <section id="research" class="band">
       <div class="section-head"><div><div class="eyebrow">研究决策</div><h2>先选证据问题，再选模型</h2><p>排名是当前执行顺序，不是方向的绝对价值。组内数据和师兄意见会改变排名。</p></div></div>
-      <div class="alert"><strong>当前第一研究问题：D4 的 tiny grid-field 证书能否扩到 32 格并穿过 decoder 参数化，再支撑 6+2 view 重建。</strong><span>D4 已证明四个 selected contexts 的 detector/residual JVP/VJP 实现闭合，但四格共用同一 smooth field，且尚未包含 neural decoder。D4b 必须覆盖 N4 failure/control population，再做 decoder-chain dot/FD；之后才进入 deterministic inverse。DeepONet/FNO/FFNO 仍是公平基线，不是当前起点。</span></div>
+      <div class="alert critical"><strong>当前第一研究问题：如何让 curved-ray renderer 对 hard support 切换可审计，并闭合小残差上的 adjoint contraction。</strong><span>D4b 已覆盖完整 32-cell 开发 census，并严格失败。现在先判断 support 是物理视场/光阑、计算域还是置信度 mask，再比较 active-set stability certificate、物理连续权重与 fail-closed 拒答；同时审计 p14 residual dot mismatch。DeepONet/FNO/FFNO 仍是未来公平基线，不是修复导数合同的工具。</span></div>
       <div id="trackGrid" class="track-grid" style="margin-top:14px;"></div>
     </section>
 
@@ -637,7 +639,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄好，我把“开发自有算子 + 三维重建”继续收缩为 Picard-1 物理预条件后的残差算子，目前还没有开始训练网络。\n\n当前选中路线：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已通过论文门槛：${passed}\n最近未通过：${pending}\n\nD3 已将 23×H1024 raw、7×H2048 raw 和 2×H8192 paired-Neumaier 组装成 32×256×2 float64 mixed reference pack。随后 D4 在结果前固定 4 个 p04/p05 failure-control cells、每格 2 个 field directions、4 种 detector/residual maps 和 7 个 h。正式结果 32/32 map、16/16 structure、8/8 ordered-topology contexts 通过；最坏 dot relative defect 2.845e-11，最坏 required-h FD 1.485e-7，1,573,152 logical queries、42.997 s、无重试。独立 validator 重新生成输入、重算导数/拓扑/成本后仍 valid。\n\nD4 只证明 17³ grid-field primitive 的 tiny selected derivative contract；四格共用 smooth-s1871，尚未测试 decoder(theta)→field→detector，更没有三维重建或模型成功。下一步只能先做 D4b 32-cell expansion 和 decoder-chain dot/FD，再进入 6-train-view / 2-held-out-view deterministic reconstruction。想请你确认：组内 observable 是 exit angle、path-integrated deflection 还是 pixel displacement；NeRIF/TDBOST 参数化是 voxel、MLP 还是 tensor decomposition；能否提供同 rig 的单位、约 20 次 flow-off repeats、mask/confidence/covariance，以及可对账的 F/Jv/Jᵀq 小例子；哪些 field/geometry 必须 blind？这些门与真实 noise floor 完成前，我不会训练 residual operator，也不会宣称优于 DeepONet、FNO/FFNO。`;
+        document.getElementById('briefText').value = `师兄好，我把“开发自有算子 + 三维重建”继续收缩为 topology-certified Picard residual operator，目前没有开始训练网络。\n\n当前选中路线：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已通过论文门槛：${passed}\n最近未通过：${pending}\n\nD4 tiny selected gate 曾以 32/32 maps、8/8 topology 通过；随后 D4b 在结果前冻结完整 32-cell census、16 matched pairs、5 field units、64 directions、256 maps、128 structures 与 960 topology signatures。正式结果是 254/256 maps、128/128 structures、58/64 topology，机器判决 D4B_DERIVATIVE_CONTEXT_CHANGED_FAIL_CLOSED。12,558,336 logical queries 用时 333.070 s、无重试；独立 validator 全量重生成输入和导数后保持同一失败判决。\n\n两个 map 失败集中在 wrinkled p14 的 raw/paired residual dot identity；六个 topology 失败都来自 h=0.01 的 support-bit 翻转，h<=0.003 稳定。当前不会事后改阈值或直接接 decoder，而是先做只读 contraction/support forensics，再结果前冻结 topology-certified D4b-R。想请你确认：组内 support/mask 是计算域、视场/光阑、背景置信度还是实际遮挡；observable 是 exit angle、path-integrated deflection 还是 pixel displacement；NeRIF/TDBOST decoder 是 voxel、MLP 还是 tensor decomposition；能否提供同 rig 单位、flow-off repeats、mask/confidence/covariance 和可对账 F/Jv/Jᵀq 小例子。D4b-R、decoder、6+2 reconstruction 与真实 noise floor 过门前，我不会训练 residual operator，也不会宣称优于 DeepONet、FNO/FFNO。`;
       }
 
       function bindProfile() {

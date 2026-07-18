@@ -1,6 +1,6 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.18-n5-d4",
-  updated: "2026-07-18",
+  version: "2026.07.19-n5-d4b",
+  updated: "2026-07-19",
   foundationChecks: [
     {
       id: "python-array",
@@ -135,8 +135,8 @@ window.OPERATOR_LEARNING_GUIDE = {
       title: "Field JVP/VJP 是三维重建的发动机",
       plain: "JVP 告诉你场沿某个方向变化时观测怎样变；VJP 把所有观测残差一次拉回三维参数空间。",
       formula: "Jv = dF(theta)[v],  grad L = J^T W^T W(F-y)",
-      bost: "D4 已在 4 个 selected cells、8 个方向上下文和 4 种 map 上同时通过 dot、多 h FD、结构与 ordered-topology 门；下一步扩到 32 格并检查 decoder 链式导数。",
-      trap: "D4 只证明 grid field primitive 的 tiny selected implementation contract；它没有证明 decoder 参数化、三维重建、真实数据或神经算子。"
+      bost: "D4 tiny gate 通过，但 D4b 扩到完整 32-cell census 后只有 254/256 maps、58/64 topology contexts 通过；decoder 与训练继续锁定。",
+      trap: "有限差分误差很小不等于同一离散程序拓扑未改变；hard support 在 h=0.01 翻转时必须 fail closed，不能用平均值或更大网络掩盖。"
     },
     {
       id: "physics-residual-operator",
@@ -271,9 +271,9 @@ window.OPERATOR_LEARNING_GUIDE = {
     {
       id: "W8", phase: "BOST 算子", week: "第 8 周", title: "参考解、相消残差与 field-adjoint 前门", hours: "14-18h", depends: ["W3", "W4", "W7"],
       learn: ["RK4 步长加密与经验收缩阶", "两个近似量相减的小分母问题", "direct paired quadrature、Richardson 与 noise floor", "JVP/VJP dot test"],
-      build: ["复算 D1 五种累加的 refinement fraction", "复算 D2 四格收缩比与观测阶", "核对 D3 的 23/7/2 映射、stacked hash 与 mixed 边界", "复核 D4 最坏 dot/FD、拓扑签名和 1573152-query 账本", "设计 D4b 32-cell 与 decoder-chain 预注册", "向师兄索取 flow-off repeats 与 observable 单位"],
-      pass: ["能解释为什么 D1 排除机制而 D2 只补 selected tail", "能解释 D3 为什么只是 mixed reference", "能从 D4 图中找出最坏 map 并与门槛比较", "能说明 tiny grid-field pass 为什么只解锁 32-cell/decoder gate 而不直接解锁重建"],
-      resources: ["n4-evaluator-audit", "n5-reference-plan", "n5-d3-reference-pack", "n5-d4-field-derivative", "n3-field-adjoint", "adjoint-nonlinear-ray", "he-data-contract"],
+      build: ["复算 D1 五种累加的 refinement fraction", "复算 D2 四格收缩比与观测阶", "核对 D3 的 23/7/2 映射、stacked hash 与 mixed 边界", "复核 D4 与 D4b 的 map/topology 差异", "定位 h=0.01 support flip 与 p14 residual dot 失败", "向师兄确认 support 物理语义和 flow-off 单位"],
+      pass: ["能解释为什么 D1 排除机制而 D2 只补 selected tail", "能解释 D3 为什么只是 mixed reference", "能从 D4b 图中指出 254/256 与 58/64 各自卡在哪里", "能区分 post-open 机理诊断和结果前新授权协议"],
+      resources: ["n4-evaluator-audit", "n5-reference-plan", "n5-d3-reference-pack", "n5-d4-field-derivative", "n5-d4b-population-derivative", "n3-field-adjoint", "adjoint-nonlinear-ray", "he-data-contract"],
       paper: "先证明训练标签与梯度值得相信；如果 H-P1 低于实验噪声，停止 residual operator 比硬做网络更正确。"
     },
     {
@@ -392,12 +392,13 @@ window.OPERATOR_LEARNING_GUIDE = {
     {id:"n5-reference-plan",stage:"current",level:"必做",type:"正式机制与尾差审计",title:"N5-D1/D2 cancellation 与 H8192 tail",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n5_d1_d2_result_audit_2026-07-18.md",local:"../demo_t16_operator/results/n2_pvgr_n5_d2_extreme_refinement_v1/summary.md",read:"先读 D1 为什么排除累加顺序，再逐格核对 D2 的 final adjacent、收缩比、观测阶、raw/paired 占比和禁止主张。",output:"手算四格 contraction 与 p，并画出 23×H1024 + 7×H2048 + 2×H8192 的下一 reference ledger。",verified:"D1/D2 均结果前预注册；42+6 tests；array-level independent validators valid；D2 4/4 selected tail resolved；模型与真实数据仍未授权"},
     {id:"n5-d3-reference-pack",stage:"current",level:"必做",type:"正式数值资产审计",title:"N5-D3 32-cell mixed adaptive reference pack",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n5_d3_result_audit_2026-07-18.md",local:"../demo_t16_operator/results/n2_pvgr_n5_d3_adaptive_reference_v1/summary.md",read:"核对 23/7/2 映射、stacked/cell-order hash、N4 Merkle root、source/assembly query 区别和 4/32 paired coverage。",output:"不看答案解释为什么“validator valid”不等于“统一 reference 或模型成功”。",verified:"32/32 unique；23/7/2 allocation；zero-query assembly；independent validator valid；所有广义 claim 仍 false"},
     {id:"n5-d4-field-derivative",stage:"current",level:"必做",type:"正式导数实现审计",title:"N5-D4 tiny selected field JVP/VJP certificate",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4_tiny_field_derivative_result_audit_2026-07-18.md",local:"../demo_t16_operator/results/n2_pvgr_n5_d4_tiny_field_derivative_v1/summary.md",read:"先看四格/八方向边界，再核对 worst dot、best/required-h FD、signal floor、ordered topology、strong detach control 和查询账本。",output:"不看结论解释为什么 32/32 map pass 只授权 D4b 32-cell expansion。",verified:"结果前协议 47278d1；32/32 maps、16/16 structures、8/8 topology；independent validator valid；reconstruction/model/real claims false"},
-    {id:"n3-field-adjoint",stage:"current",level:"必做",type:"实现设计",title:"Field JVP/VJP 到 6+2 view 三维重建接口",url:"../document_reader.html?doc=docs%2Fn2_pvgr_field_jvp_vjp_reconstruction_interface_design_2026-07-18.md",local:"",read:"重点读四个现有模块的 detach 审计、冻结 row layout、tensor-only forward、dot/FD 双门和 held-out view 边界。",output:"基于 D4 结果写出 32-cell、decoder-chain 与 6+2 三门的接口表。",verified:"D4 tiny selected grid-field certificate valid；D4b、decoder chain 与三维重建尚未完成"},
+    {id:"n5-d4b-population-derivative",stage:"current",level:"必做",type:"正式总体导数审计",title:"N5-D4b 32-cell derivative census FAIL-CLOSED",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_population_field_derivative_result_audit_2026-07-19.md",local:"../demo_t16_operator/results/n2_pvgr_n5_d4b_population_field_derivative_v1/summary.md",read:"先看 32 cells/16 pairs/5 field units 的非独立账本，再定位 p14 两个 residual dot failures 与六个 h=0.01 support-topology failures。",output:"画一张 map failure 与 topology failure 分开的因果图，并说明为什么 post-open contraction 或 stable-radius 诊断不能救回 D4b。",verified:"结果前协议 cba4f28；254/256 maps、128/128 structures、58/64 topology；independent validator valid；机器判决 FAIL-CLOSED；全部授权 false"},
+    {id:"n3-field-adjoint",stage:"current",level:"必做",type:"封存的后续设计",title:"Field JVP/VJP 到 6+2 view 三维重建接口",url:"../document_reader.html?doc=docs%2Fn2_pvgr_field_jvp_vjp_reconstruction_interface_design_2026-07-18.md",local:"",read:"重点读四个现有模块的 detach 审计、冻结 row layout、tensor-only forward、dot/FD 双门和 held-out view 边界。",output:"基于 D4b 失败写出必须先闭合的 topology-certified renderer 门，再标出 decoder 与 6+2 重建仍锁定。",verified:"D4 tiny valid；D4b fail closed；decoder chain 与三维重建未授权"},
     {id:"n3-recovery-disclosure",stage:"audit",level:"进阶",type:"研究诚信",title:"N3 KeyError 盲态分析恢复披露",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n3_blind_analysis_recovery_2026-07-18.md",local:"",read:"理解为什么 96 格完成后仍不能直接改字段继续汇总，以及 opaque Merkle 封存如何限制事后自由度。",output:"写出允许修改的唯一 query schema 映射和所有禁止修改项。",verified:"恢复协议先提交；checkpoint payload 未解析；96 格未重算"}
   ],
   researchTracks: [
     {
-      id:"pvgr-residual", rank:1, title:"Picard-1 + cancellation-aware residual operator", badge:"当前主线：D4 tiny field derivative valid，扩到 32 格与 decoder", risk:"中高", novelty:"先用多保真 reference pack 与 curved-ray field derivative 把标签/梯度闭合，再以 Picard-1 内部状态、small residual operator、fail-closed fallback 和同调用预算构成算法；创新不来自把 FNO 换名", data:"已有两个 synthetic field families、8 个 field units、N3 96 条件、D3 32×256×2 mixed reference pack，以及 D4 四格/八方向 grid-field derivative certificate；仍缺 32-cell derivative、decoder chain、8-view reconstruction、独立 generator 和 OERF flow-off noise", hardware:"D2 在 32 GB Mac CPU 用 216 秒完成 528,482,304 queries；D4 用 42.997 秒完成 1,573,152 queries、peak RSS 381.1 MiB；D4b 和 tiny decoder 可继续本机，32³-64³ 多模型多种子再评估 GPU", question:"D4 的 tiny grid-field certificate 能否在 32 个 failure/control cells 与 decoder(theta) 链上保持，再支撑 6+2 view deterministic reconstruction？", contribution:"D1 排除浮点累加，D2 找到 selected 二阶尾部，D3 建立可追溯 mixed reference，D4 证明四格 grid-field JVP/VJP 闭合；候选贡献继续收缩为 population derivative + inverse closure + small operator + fallback 的完整链。", next:"D4b 32-cell derivative→decoder-chain dot/FD→6+2 view reconstruction→flow-off noise units→小型 residual DeepONet/FNO/FFNO 对照→独立 generator→OERF。", stop:"若 D4b/decoder field dot/FD 不闭合、residual 导数结构失效、H-P1 低于实验噪声、fresh/independent cell 不重复、同预算尾部不优于 P1，或 fallback 成本接近 full high evaluator，则停止 residual operator 并转向 inverse/noise/4D。"
+      id:"pvgr-residual", rank:1, title:"Topology-certified Picard residual operator", badge:"当前主线：D4b FAIL-CLOSED，先修 support 拓扑与 residual adjoint", risk:"高", novelty:"把可微 curved-ray renderer、hard-support active set、local stability certificate、Picard-1 residual 与 fail-closed fallback 放进同一合同；创新不来自把 FNO 换名，也不允许用 soft mask 随意平滑真实边界", data:"已有 N3 96 条件、D3 32×256×2 mixed reference、D4 tiny pass 与 D4b 完整 32-cell fail-closed census；仍缺 support 物理语义、topology-certified rerun、decoder chain、8-view reconstruction、独立 generator 和 OERF flow-off noise", hardware:"D4b 在本机 CPU 用 333.070 秒完成 12,558,336 queries、峰值约 475.3 MiB；support/contraction forensics 仍可本机，32³-64³ 多模型多种子以后再评估 GPU", question:"hard support 的物理语义能否导出可审计的 local stable radius 或物理连续权重，并同时消除 p14 residual dot mismatch，而不改变历史 D4b 判决？", contribution:"D4b 首次把 tiny 导数证书扩到完整开发 census，并暴露两类局部失败：h=0.01 support active-set 切换与小残差 dot mismatch；候选贡献收缩为 topology certificate + inverse closure + small operator + fallback。", next:"只读 support/contraction forensics→结果前 D4b-R topology-certified contract→decoder-chain dot/FD→6+2 view reconstruction→真实 noise units→同预算 DeepONet/FNO/FFNO。", stop:"若 support 没有可辩护的物理连续化或稳定半径、残差 dot 不能闭合、D4b-R 任一 context 失败、H-P1 低于实验噪声、或同预算尾部不优于 P1，则停止 residual operator 并转向经典 inverse/noise/4D。"
     },
     {
       id:"correction", rank:2, title:"v3k-F 预白化停止与强数值侧门", badge:"确定性辅线；learned stop 继续关闭", risk:"中", novelty:"它主要是强基线和可部署停止问题，不单独宣称新算子", data:"v3k-F 仍是 development synthetic audit；真实 camera covariance 与 fresh blind 暂缺", hardware:"本机维护 discrepancy/SPG/call frontier，不为 learned stop 扩网络", question:"部署可得 covariance/noise proxy 能否稳定控制 semi-convergence，为残差算子提供不可逃避的强数值对手？", contribution:"discrepancy 对 noise OOD 相对 fixed Landweber 平均 +7.10%，但仍有 12.5% harm；平均改善不足以放行 learned stop。", next:"真实 flow-off covariance→pooled/worst-camera discrepancy→fresh lock→只作强数值基线。", stop:"确定性方法已解释全部 headroom 时，不训练 stopping network。"
@@ -445,8 +446,8 @@ window.OPERATOR_LEARNING_GUIDE = {
     "是否认可把 v3f rank-48 DeepONet 冻结为毕设 control；投稿前是否还需要一次性 top-3 long-horizon 补充？",
     "师兄最看重 field error、held-out reprojection、front location、速度还是失败率？",
     "是否有 NeRIF/TDBOST 可调用的 forward F(x) 与匹配 Jacobian-adjoint/VJP？真实 support 是否部署可得？",
-    "D4 目前只验证 17³ grid-field primitive；组内 NeRIF/TDBOST 的参数化是 voxel、MLP 还是 tensor decomposition，能否给一个 decoder-chain 导数对账样例？",
-    "D4b 若沿 N4 的 16 failure/control pairs 扩成 32 格，是否覆盖了师兄最关心的孔径、视角和折射强度，还是应优先替换成组内典型 geometry？",
+    "D4b 的六个 topology failure 都来自 h=0.01 的 support-bit 翻转；组内 support 是计算域、视场/光阑、背景置信度还是实际遮挡？",
+    "D4b 的 p14 residual dot mismatch 是否可用组内 F/Jv/Jᵀq 小例子逐段对账？NeRIF/TDBOST 的 decoder 是 voxel、MLP 还是 tensor decomposition？",
     "真实 displacement 是否提供 pixel/ray confidence、noise level 或 covariance proxy，能否只用 calibration split 估计？",
     "能否按独立 experiment case/geometry 封存一套从未查看的 blind fields？",
     "真实实验中多一台 query camera 的同步、标定和布置成本是多少？",

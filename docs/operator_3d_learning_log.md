@@ -2980,3 +2980,37 @@ flow-off covariance 仍要向何远哲师兄确认。DeepONet、FNO/FFNO 与自�
 
 完整数字、最坏上下文、成本和禁止主张见
 [N5-D4 场导数结果审计](n2_pvgr_n5_d4_tiny_field_derivative_result_audit_2026-07-18.md)。
+
+## 113. D4b 没有通过：它帮我们看见了两种不能交给大网络掩盖的问题
+
+D4 在四个 selected cells 上把 grid-field JVP/VJP 跑通以后，这轮按结果前协议扩到 N4/D3 的完整
+32-cell 开发总体。32 格组成 16 对、只有 5 个 field units，所以没有把方向、map 或同场 stress
+冒充成独立样本。输入、两组新随机方向、cotangent、七个 h、阈值和 12558336-query 账本都在
+正式结果前冻结。
+
+最终不是 PASS：256 个 map context 过了 254 个，128 个结构控制全过，64 个 ordered topology
+context 只有 58 个稳定。机器判决是 `D4B_DERIVATIVE_CONTEXT_CHANGED_FAIL_CLOSED`。独立
+validator 没有导入 runner 或 gate helper，重新生成全部输入、导数数组和 960 个拓扑签名后，仍得到
+完全相同的数字和判决。12 项结果合同测试也全部通过。
+
+两个 map 失败都在 `wrinkled-s3163 / orientation_22 / wide / stress 1` 的同一个平滑方向，且只影响
+raw residual 与 paired residual。它们的 finite difference 很好，required-h 最坏约 `1.27e-7`；
+但 dot relative defect 是 `1.84e-10` 和 `1.53e-10`，超过冻结的 `1e-10` 门。absolute defect 只有
+约 `1e-19`，这提示小残差 contraction 可能是问题，但我们不能看见结果后改用 absolute gate 把它救回。
+
+六个 topology 失败都发生在最大的 `h=0.01`。插值 cell 与 frustum sign 没变，support bit 变了；
+`h<=0.003` 时签名稳定。讲人话就是：最大的场扰动让少量采样点跨过了 hard support 边界，正负两边
+不再跑同一个离散程序分支。它不自动等于真实光学不连续，也不允许我们随手加一个 sigmoid。
+
+这次结果把下一步从“给 decoder 接上 autograd”改成两个更扎实的问题：第一，support 的物理语义到底
+是视场/光阑/计算域还是 mask，并能否给每个方向计算 local stability radius；第二，residual map 的 dot
+失败能否由 pairwise/Neumaier/extended-precision contraction 解释。两项都先做只读 post-open 诊断，
+不能改变 D4b 的历史判决。只有新的 topology-certified 合同结果前冻结并通过，才重新考虑 decoder-chain。
+
+**讲人话：**我们没有“差一点就成功”，而是在扩大样本后及时踩住刹车。好消息是问题没有散成一团：
+有限差分主体和结构接线很稳，失败集中在 hard support 切换与小残差点积。它们本身可以长成一个更有
+研究价值的方向：带拓扑证书和拒答机制的可微 BOST renderer。当前仍没有三维重建、模型训练、真实数据、
+泛化或论文授权。
+
+完整逐格数字、机理边界、下一协议和要问师兄的问题见
+[N5-D4b 32-cell 场导数普查结果审计](n2_pvgr_n5_d4b_population_field_derivative_result_audit_2026-07-19.md)。
