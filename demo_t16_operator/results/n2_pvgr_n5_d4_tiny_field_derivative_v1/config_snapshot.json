@@ -1,0 +1,237 @@
+{
+  "schema": "n2-pvgr-n5-d4-tiny-field-derivative-preregistered-1.0",
+  "candidate_id": "N2-PVGR-N5-D4-TINY-FIELD-DERIVATIVE",
+  "status": "preregistered_selected_context_implementation_gate_no_reconstruction_authorization",
+  "parent_d3_result": "demo_t16_operator/results/n2_pvgr_n5_d3_adaptive_reference_v1/result.json",
+  "parent_d3_pack": "demo_t16_operator/results/n2_pvgr_n5_d3_adaptive_reference_v1/reference_pack.json",
+  "parent_d3_manifest": "demo_t16_operator/results/n2_pvgr_n5_d3_adaptive_reference_v1/manifest.json",
+  "parent_d3_validation": "demo_t16_operator/results/n2_pvgr_n5_d3_adaptive_reference_v1/validation_report.json",
+  "parent_d1_config": "demo_t16_operator/configs/n2_pvgr_n5_d1_paired_residual_preregistered_v1.json",
+  "scientific_n4_config": "demo_t16_operator/configs/n2_pvgr_n4_evaluator_convergence_preregistered_v1.json",
+  "parent_n3_config": "demo_t16_operator/configs/n2_pvgr_n3_grouped_factorial_preregistered_v1.json",
+  "source_config": "demo_t16_operator/configs/n2_pvgr_n0_trifidelity_development_v1.json",
+  "pre_registration_attestation": "demo_t16_operator/configs/n2_pvgr_n5_d4_tiny_field_derivative_attestation_v1.json",
+  "frozen_input_archive": "demo_t16_operator/configs/n2_pvgr_n5_d4_tiny_field_derivative_frozen_inputs_v1.npz",
+  "formal_output": "demo_t16_operator/results/n2_pvgr_n5_d4_tiny_field_derivative_v1",
+  "formal_work_output": "demo_t16_operator/results/n2_pvgr_n5_d4_tiny_field_derivative_v1_work",
+  "device": "cpu",
+  "dtype": "float64",
+  "ray_count": 4,
+  "source_population_count": 256,
+  "step_count": 16,
+  "direction_count_per_cell": 2,
+  "selected_cells": [
+    {
+      "pack_index": 6,
+      "cell_id": "smooth-s1871-orientation_58-wide__stress_1",
+      "pair_id": "p04",
+      "role": "n3_failure",
+      "d3_identity_sha256": "a7753b6880934fe54c9882c6acbd7571f94c12d2776760cde4ed52ceb2269606"
+    },
+    {
+      "pack_index": 7,
+      "cell_id": "smooth-s1871-orientation_58-narrow__stress_1",
+      "pair_id": "p04",
+      "role": "matched_control",
+      "d3_identity_sha256": "7f357ac78457d3f48925d7c91144bfa2c0500678dd22598923281a6da9c9624e"
+    },
+    {
+      "pack_index": 8,
+      "cell_id": "smooth-s1871-orientation_58-wide__stress_3",
+      "pair_id": "p05",
+      "role": "n3_failure",
+      "d3_identity_sha256": "12f0c70a347abda3c532a7cb7cd7da3a66c07a85456cd97b2d7d639a0c7cd4fa"
+    },
+    {
+      "pack_index": 9,
+      "cell_id": "smooth-s1871-orientation_58-narrow__stress_3",
+      "pair_id": "p05",
+      "role": "matched_control",
+      "d3_identity_sha256": "918b42f60a8911dfc2b86f788552c382c9758e91394a92178a045b602be60c2e"
+    }
+  ],
+  "map_order": [
+    "curved_detector",
+    "straight_detector",
+    "raw_curved_minus_straight",
+    "paired_neumaier_residual"
+  ],
+  "observable_contract": {
+    "coordinate_order": [
+      "ray",
+      "u_v"
+    ],
+    "output_shape": [
+      4,
+      2
+    ],
+    "units": "synthetic_internal_deflection_units_not_calibrated_to_pixel_or_angle",
+    "curved_detector": "full_trajectory_curved_path_midpoint_integral",
+    "straight_detector": "frozen_straight_path_midpoint_integral",
+    "raw_curved_minus_straight": "separate_curved_detector_minus_straight_detector",
+    "paired_neumaier_residual": "matched_curved_minus_straight_integrands_then_neumaier_sum",
+    "field_shape": [
+      17,
+      17,
+      17
+    ]
+  },
+  "direction_contract": {
+    "seed_base": 65001,
+    "seed_rule": "stable_seed(seed_base, cell_id, direction_index)",
+    "cotangent_seed_base": 65101,
+    "cotangent_seed_rule": "stable_seed(cotangent_seed_base, cell_id, direction_index)",
+    "field_direction_modes_in_order": [
+      "smooth_avg_pool3d_kernel3_stride1_padding1",
+      "raw_torch_randn"
+    ],
+    "field_direction_source_distribution": "torch_randn_cpu_float64",
+    "field_direction_boundary_layers_zeroed": 2,
+    "field_direction_l2_normalized": true,
+    "cotangent_distribution": "rademacher_sign_of_torch_randn_cpu_float64_all_rows_and_uv_nonzero",
+    "cotangent_l2_normalized": true,
+    "same_direction_and_cotangent_for_all_maps_in_context": true
+  },
+  "finite_difference": {
+    "scheme": "fixed_symmetric_central",
+    "h_values": [
+      0.01,
+      0.003,
+      0.001,
+      0.0003,
+      0.0001,
+      3e-05,
+      1e-05
+    ],
+    "h_values_float64_hex": [
+      "0x1.47ae147ae147bp-7",
+      "0x1.89374bc6a7efap-9",
+      "0x1.0624dd2f1a9fcp-10",
+      "0x1.3a92a30553261p-12",
+      "0x1.a36e2eb1c432dp-14",
+      "0x1.f75104d551d69p-16",
+      "0x1.4f8b588e368f1p-17"
+    ],
+    "required_h_values": [
+      0.01,
+      0.003,
+      0.001
+    ],
+    "relative_error_denominator": "max(norm(fd),norm(jvp),1e-30)",
+    "absolute_roundoff_tolerance": "128*eps64*frozen_output_scale/h",
+    "minimum_symmetric_difference_signal": "1024*eps64*frozen_output_scale",
+    "no_h_reselection_after_attestation": true
+  },
+  "topology_contract": {
+    "support_threshold": "source_certificate_fraction_times_base_grid_peak",
+    "ordered_program_signature": "per_ray_per_RK4_stage_and_midpoint_per_central_stencil_offset_grid_cell_and_support_bit",
+    "ordered_program_signature_must_match_base_for_every_plus_minus_h": true,
+    "frustum_margin_signs_must_match_base_for_every_plus_minus_h": true,
+    "minimum_domain_and_stencil_margin_must_be_nonnegative": true,
+    "maximum_direction_norm_error": 1e-12
+  },
+  "gates": {
+    "maximum_dot_relative_defect": 1e-10,
+    "minimum_dot_signal_absolute": 1e-16,
+    "maximum_best_finite_difference_relative_l2": 1e-06,
+    "maximum_required_h_finite_difference_relative_l2": 1e-05,
+    "maximum_repeat_output_relative_l2": 2e-12,
+    "maximum_raw_structural_output_relative_l2": 5e-10,
+    "maximum_raw_structural_jvp_relative_l2": 5e-09,
+    "maximum_raw_structural_vjp_relative_l2": 5e-09,
+    "maximum_raw_paired_output_relative_l2": 5e-08,
+    "maximum_raw_paired_jvp_relative_l2": 5e-07,
+    "maximum_raw_paired_vjp_relative_l2": 5e-07,
+    "structural_absolute_tolerance_floor": 1e-17,
+    "minimum_full_vs_frozen_path_jvp_relative_difference_in_strong_toy_control": 0.0001,
+    "required_finite_fraction": 1.0,
+    "minimum_domain_margin": 0.0,
+    "minimum_stencil_margin": 0.0,
+    "maximum_direction_norm_error": 1e-12
+  },
+  "budget_contract": {
+    "curved_detector_logical_queries_per_closure": "35*R*S",
+    "straight_detector_logical_queries_per_closure": "7*R*S",
+    "raw_residual_logical_queries_per_closure": "42*R*S",
+    "paired_residual_logical_queries_per_closure": "42*R*S",
+    "closure_invocations_per_map_direction": 16,
+    "topology_signature_invocations_per_cell_direction": 15,
+    "topology_signature_logical_queries_per_invocation": "70*R*S = 28*R*S diagnostic_RK4 + 42*R*S ordered_stage_midpoint_stencil_support_sampling",
+    "expected_derivative_map_logical_queries": 1032192,
+    "expected_derivative_map_interpolation_dispatches": 175744,
+    "expected_topology_logical_queries": 537600,
+    "expected_topology_interpolation_dispatches": 61680,
+    "expected_total_logical_queries": 1569792,
+    "expected_total_interpolation_dispatches": 237424,
+    "expected_strong_toy_detach_control_logical_queries": 3360,
+    "expected_strong_toy_detach_control_interpolation_dispatches": 686,
+    "expected_grand_total_logical_queries": 1573152,
+    "expected_grand_total_interpolation_dispatches": 238110,
+    "jvp_vjp_are_counted_as_derivative_sweeps_not_zero_cost": true
+  },
+  "decision_contract": {
+    "pass_requires_every_cell_direction_map_gate": true,
+    "no_averaging_across_failed_contexts": true,
+    "pass_decision": "D4_TINY_SELECTED_FIELD_DERIVATIVE_CONTRACT_VALID",
+    "failure_decision": "D4_TINY_FIELD_DERIVATIVE_FAIL_CLOSED",
+    "context_change_decision": "D4_DERIVATIVE_CONTEXT_CHANGED_FAIL_CLOSED",
+    "pass_only_authorizes_preregistration_of_32_cell_derivative_expansion": true,
+    "pass_does_not_authorize_reconstruction_training_or_algorithm_claims": true
+  },
+  "claim_authorizations": {
+    "tiny_selected_field_derivative_contract": false,
+    "population_field_jvp_vjp": false,
+    "three_dimensional_reconstruction": false,
+    "neural_operator_training": false,
+    "neural_operator_superiority": false,
+    "real_data": false,
+    "generalization": false,
+    "paper_claim": false
+  },
+  "known_limitations": [
+    "all_four_selected_cells_share_one_smooth_s1871_field_unit_and_orientation",
+    "only_four_rays_and_two_field_directions_per_cell",
+    "selected_post_N4_failures_and_controls_not_independent_population_evidence",
+    "step_count_16_tests_program_derivatives_not_converged_forward_physics",
+    "synthetic_internal_units_without_camera_calibration_or_noise",
+    "host_sync_and_saved_tensor_bytes_not_yet_instrumented",
+    "grid_field_derivative_core_only_decoder_parameterization_not_yet_tested",
+    "no_reconstruction_neural_operator_real_data_or_generalization_test"
+  ],
+  "stopping_rules": [
+    "Do not change selected cells, ray prefix, map order, directions, cotangents, h values or gates after attestation.",
+    "If any parent artifact, source identity, generated field, ray prefix, direction or cotangent hash drifts, stop without a D4 result.",
+    "If a plus/minus perturbation changes an ordered program signature or a frustum margin sign, fail closed as a derivative-context change.",
+    "If any individual map, cell or direction fails, do not average it away.",
+    "Do not rerun the formal protocol with new seeds, h values or thresholds.",
+    "If a work output records an interrupted formal execution, preserve it and preregister a recovery protocol instead of deleting and retrying it.",
+    "A pass may only open a preregistered 32-cell derivative expansion; it cannot open reconstruction or model claims."
+  ],
+  "attested_files": {
+    "config": "demo_t16_operator/configs/n2_pvgr_n5_d4_tiny_field_derivative_preregistered_v1.json",
+    "gate_module": "demo_t16_operator/field_jvp_vjp_gate.py",
+    "gate_test": "demo_t16_operator/test_field_jvp_vjp_gate.py",
+    "ray_module": "demo_t16_operator/field_dependent_ray.py",
+    "analytic_phantom_module": "demo_t16_operator/analytic_bost_phantoms.py",
+    "automatic_discrete_module": "demo_t16_operator/automatic_discrete_multifidelity.py",
+    "cancellation_residual_module": "demo_t16_operator/cancellation_aware_residual.py",
+    "n0_source_runner": "demo_t16_operator/run_n2_pvgr_n0_trifidelity_development.py",
+    "n4_cell_expansion_runner": "demo_t16_operator/run_n2_pvgr_n4_evaluator_convergence.py",
+    "program_signature_module": "demo_t16_operator/field_program_signature.py",
+    "program_signature_test": "demo_t16_operator/test_field_program_signature.py",
+    "frozen_input_module": "demo_t16_operator/d4_frozen_inputs.py",
+    "runner": "demo_t16_operator/run_n2_pvgr_n5_d4_tiny_field_derivative.py",
+    "runner_test": "demo_t16_operator/test_run_n2_pvgr_n5_d4_tiny_field_derivative.py",
+    "protocol": "docs/n2_pvgr_n5_d4_tiny_field_derivative_preregistration_2026-07-18.md",
+    "attestation_builder": "site_tools/create_n2_pvgr_n5_d4_tiny_field_derivative_attestation.py",
+    "result_validator": "site_tools/validate_n2_pvgr_n5_d4_tiny_field_derivative.py",
+    "parent_d3_result": "demo_t16_operator/results/n2_pvgr_n5_d3_adaptive_reference_v1/result.json",
+    "parent_d3_pack": "demo_t16_operator/results/n2_pvgr_n5_d3_adaptive_reference_v1/reference_pack.json",
+    "parent_d3_manifest": "demo_t16_operator/results/n2_pvgr_n5_d3_adaptive_reference_v1/manifest.json",
+    "parent_d3_validation": "demo_t16_operator/results/n2_pvgr_n5_d3_adaptive_reference_v1/validation_report.json",
+    "parent_d1_config": "demo_t16_operator/configs/n2_pvgr_n5_d1_paired_residual_preregistered_v1.json",
+    "scientific_n4_config": "demo_t16_operator/configs/n2_pvgr_n4_evaluator_convergence_preregistered_v1.json",
+    "parent_n3_config": "demo_t16_operator/configs/n2_pvgr_n3_grouped_factorial_preregistered_v1.json",
+    "source_config": "demo_t16_operator/configs/n2_pvgr_n0_trifidelity_development_v1.json"
+  }
+}

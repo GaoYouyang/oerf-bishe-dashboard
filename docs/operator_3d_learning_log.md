@@ -2952,3 +2952,31 @@ H2048 raw subtraction，2 格来自 H8192 paired-Neumaier。整包数组哈希�
 
 完整映射、哈希、成本和禁止主张见
 [N5-D3 结果审计](n2_pvgr_n5_d3_result_audit_2026-07-18.md)。
+
+## 112. D4：这次通过的是“梯度发动机”，不是三维重建
+
+D3 把 32 格 reference 装好以后，最容易犯的错误是马上训练 FNO。可真正的下一步应该先确认：
+曲光线 forward 对三维场的导数到底能不能信。如果导数图在 RK4 中途断掉，loss 仍可能下降，
+但优化方向并不是原来物理 forward 的方向。
+
+这轮先在结果前固定四个小单元、每格四条光线、两种场扰动和七个有限差分步长。四种 map 分开测：
+完整曲光线 detector、直光线 detector、raw curved-straight residual，以及 paired-Neumaier residual。
+每个 map 都要同时过 JVP/VJP dot identity、三个指定 `h` 与 best-`h` 的有限差分、非退化信号、
+重复输出和 ordered topology。任何一格都不允许被平均掉。
+
+正式运行用了 42.997 秒，做了 1,573,152 次逻辑场查询，没有重试。32/32 map、16/16 结构门和
+8/8 topology contexts 全部通过。最坏 dot defect 是 `2.845e-11`，低于 `1e-10` 门；最坏 best-`h`
+FD 是 `3.062e-8`，低于 `1e-6`；三个强制步长中的最坏值是 `1.485e-7`，低于 `1e-5`。
+独立 validator 没有导入 D4 runner 或 gate helper，重新生成输入并重算全部导数后仍判定 valid。
+
+**讲人话：**现在能说“这四个选定 synthetic contexts 里，网格场到 detector 的正反导数基本是同一台
+机器”。还不能说“三维能重建”，因为每格只有四条光线；也不能说“NeRIF 已可训练”，因为这里测的是
+`field -> detector`，还没测 `MLP parameters -> field -> detector` 的链式导数。四格还共用同一个
+`smooth-s1871` 场，所以不能把它写成跨流场泛化。
+
+下一步先做结果前预注册的 D4b 32-cell expansion，再给一个小 decoder 加链式 dot/FD 门。只有这两关
+仍稳定，才进入 6-train-view / 2-held-out-view 的 deterministic 三维重建；真实 observable 单位和
+flow-off covariance 仍要向何远哲师兄确认。DeepONet、FNO/FFNO 与自有 residual operator 继续锁定。
+
+完整数字、最坏上下文、成本和禁止主张见
+[N5-D4 场导数结果审计](n2_pvgr_n5_d4_tiny_field_derivative_result_audit_2026-07-18.md)。
