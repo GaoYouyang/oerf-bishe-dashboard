@@ -14,6 +14,10 @@ RESULT_N18 = (
     ROOT
     / "demo_t16_operator/results/jacru_n1_8_hybrid_design_screen_postopen_audit_amended_full1"
 )
+RESULT_N19 = (
+    ROOT
+    / "demo_t16_operator/results/jacru_n1_9_global_contrast_postopen_full1"
+)
 
 
 def test_focused_page_exposes_n1_7_verdict_without_success_language() -> None:
@@ -118,4 +122,54 @@ def test_public_n1_8_package_contains_no_model_checkpoint_or_array() -> None:
     assert RESULT_N18.is_dir()
     assert not {
         path.suffix.lower().lstrip(".") for path in RESULT_N18.iterdir()
+    } & forbidden
+
+
+def test_focused_page_exposes_n1_9_branch_closure_without_success_language() -> None:
+    html = PAGE.read_text(encoding="utf-8")
+    assert 'id="n1-9-result"' in html
+    assert "N1.9 · BRANCH CLOSED" in html
+    assert "+6.207%" in html
+    assert "51.408%" in html
+    assert "35.787%" in html
+    assert "learner 与新 split 均未启动" in html
+    assert "Residual 算法胜出" in html
+    assert "docs%2Fjacru_n1_9_global_contrast_branch_closed_2026-07-18.md" in html
+    assert "docs%2Fjacru_n1_9_advisor_review_brief_2026-07-18.md" in html
+    assert "docs%2Fjacru_n1_9_global_contrast_freeze_2026-07-18.md" in html
+    assert "jacru_n1_9_global_contrast_postopen_full1/summary.json" in html
+    assert "jacru_n1_9_global_contrast_postopen_full1/checksums.sha256" in html
+
+
+def test_n1_9_machine_summary_closes_only_the_frozen_candidate_pair() -> None:
+    summary = json.loads((RESULT_N19 / "summary.json").read_text())
+    assert summary["status"] == "N1_9_RANK6_CAMERA_GLOBAL_K_BRANCH_CLOSED"
+    assert summary["selection"]["authorized"] is False
+    assert summary["selection"]["selected_candidate_id"] is None
+    assert summary["selection"]["rank6_camera_global_k_branch_closed"] is True
+    assert summary["learner_was_trained"] is False
+    assert summary["opens_new_geometry"] is False
+    assert summary["n1_7_development_case_identity_verified"] is True
+    assert summary["n1_8_development_case_identity_verified"] is True
+    assert summary["schur_gate_status"] == (
+        "NOT_APPLICABLE_NO_COVARIANCE_OR_MAJORIZER"
+    )
+    assert summary["deployable_method_end_to_end_cost_was_not_claimed"] is True
+    gates = {row["candidate_id"]: row for row in summary["candidate_gates"]}
+    residual = gates["residual_contrast_global_k6_total_measurement_oracle"]
+    damping = gates["damping_contrast_global_k6_total_measurement_oracle"]
+    assert residual["reconstruction_passed_count"] == 16
+    assert damping["reconstruction_passed_count"] == 15
+    assert residual["reconstruction_checks"]["extra_headroom_retention"] is False
+    assert damping["reconstruction_checks"]["exact_gain_retention"] is False
+    assert damping["reconstruction_checks"]["extra_headroom_retention"] is False
+    assert residual["operational_cost_passed"] is True
+    assert damping["operational_cost_passed"] is True
+
+
+def test_public_n1_9_package_contains_no_checkpoint_or_array() -> None:
+    forbidden = {"pt", "pth", "ckpt", "npz", "npy", "mat"}
+    assert RESULT_N19.is_dir()
+    assert not {
+        path.suffix.lower().lstrip(".") for path in RESULT_N19.iterdir()
     } & forbidden

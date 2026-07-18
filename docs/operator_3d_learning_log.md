@@ -2467,3 +2467,37 @@ case 与 geometry digest 相同。修正版重放的 168 条科学指标逐项�
 `{d,r,C1d,C2d,Kd,Kr}`。它们分别问“按相机拆 residual”与“按相机拆 damping”哪一个贡献了
 Camera-Block 的额外收益；如果两个都失败，就关闭这条 rank-6 camera/global-K 分支，而不是继续
 枚举更多网络。
+
+## 99. N1.9：界面恢复和观测一致性各赢一边，低秩拼接路线正式关闭
+
+这次严格按上一节只比较两个候选。设计、16 项上游 source hash、17 个重建门、两项本机成本门、
+精确 rank 6 和停止规则先提交为 `52490e5`，再运行完整 6 个已打开 geometry、12 个 paired fields。
+smoke 子集被代码强制标成 non-decisive，不能提前授权或关闭分支。
+
+Residual-Contrast 的结果是 field `+6.207%`、H1 `+10.672%`、相对 damping field `+2.672%`，
+exact retention `72.917%`；但真正衡量“阻尼以外还拿回多少”的 extra-headroom 只有
+`51.408% < 60%`，所以只能过 `16/17`。Damping-Contrast 为 field `+5.452%`、H1 `+8.768%`，
+exact retention `64.042%`、extra-headroom `36.864%`，过 `15/17`。两者的 support-adjoint gain
+分别为 `28.112%` 与 `35.787%`，都没有达到 50% 的 forward-correction 机制线。
+
+逐 case 出现一个很整齐、但只能作为新问题来源的分叉：Residual 在 12/12 个 case 的 H1 更低，
+在 6/6 个 single-interface case 的 field 更低；Damping 在 6/6 个 smooth case 略好，并在 8/12
+个 case 的 data residual 更低。
+
+**讲人话：**把每台相机的差异放进 residual，比较会保护火焰/密度界面；放进 damping，投影回观测
+更像原数据。两张地图各自照顾了一半目标，却都没有同时画对“最后三维场”和“真实前向误差”。
+继续在同一批旧题上增加第七、第八条路线，很容易变成看答案调地图。
+
+因此机器状态是 `N1_9_RANK6_CAMERA_GLOBAL_K_BRANCH_CLOSED`。关闭的是这两个预冻结、三相机、
+rank-6 synthetic 候选在旧 development 上继续堆 basis/learner；不是宣判所有 camera-aware 或
+global-K 方法无效。两项本机 solver-path 成本门虽然通过，但计时排除了 evaluator oracle 系数投影，
+每 case 也只测一次，不能写成部署速度优势。Schur 对当前无 covariance/majorizer 的候选不适用，
+不能伪填零违反。
+
+下一主线转成 N2：先和师兄确认真实 camera/ray/mask/calibration/held-out reprojection 合同，再按
+geometry/session/camera 留出不可回看的 split。新问题是“怎样同时保护界面恢复和 measurement
+consistency”，而不是“再换一个 DeepONet/FNO 名字”。没有真实数据合同时先做 adapter、伴随测试、
+基线和预注册；固定表示在新 split 上有 headroom 后，才允许训练 generator。
+
+完整证据见 [N1.9 分支关闭报告](jacru_n1_9_global_contrast_branch_closed_2026-07-18.md)，给师兄的
+短稿见 [N1.9 审核 brief](jacru_n1_9_advisor_review_brief_2026-07-18.md)。

@@ -169,6 +169,7 @@
       <a href="#n1-6-result">N1.6 判决</a>
       <a href="#n1-7-result">N1.7 判决</a>
       <a href="#n1-8-result">N1.8 判决</a>
+      <a href="#n1-9-result">N1.9 判决</a>
       <a href="#algorithm">安全算子</a>
       <a href="#candidates">算法路线</a>
       <a href="document_reader.html?doc=docs%2Fcancellation_aware_operator_learning_literature_map_2026-07-17.md">文献地图</a>
@@ -181,12 +182,12 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">研究主线已经从“再调一个重建网络”收敛到一个可证伪的逆问题：三维 BOST 的 sensor noise、forward-model mismatch 与真正影响有限步重建的 support-adjoint response 必须分开。N1.8 在运行前冻结五种相机/射线表示和同一 25F/24Aᵀ 预算；Camera-Block-6 在已打开 synthetic development 上得到 +6.34% field、+13.20% H1，却因 incremental extra-headroom 57.07% 未到 60%，且 P Aᵀ gain 仅 9.47%，所以不授权 fresh 确认或 learner。下一步先判断 field-friendly 与 adjoint-friendly 方向能否共存，再设计几何条件化的有限步响应 basis。</p>
+    <p class="lead">研究主线已经从“再调一个重建网络”收敛到一个可证伪的逆问题：三维 BOST 的界面恢复、forward-model mismatch 与 measurement/adjoint consistency 必须同时成立。N1.9 在提交 <code>52490e5</code> 后比较两个同为 rank-6、25F/24Aᵀ 的 contrast/global-K 表示；Residual-Contrast 得到 +6.207% field、+10.672% H1，却因阻尼后的 extra-headroom 51.408% 未到 60% 而止步 16/17。Damping-Contrast 更偏观测一致性，但只过 15/17。候选对分支已经关闭，下一主线转向真实 camera/ray/mask/calibration 合同与按 geometry/session/camera 留出的独立 holdout。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">M2.2 · NULL HEADROOM</span><span class="chip coral">N1.2 · 0 / 16 DECISIONS</span><span class="chip coral">N1.3 · 0 / 128 PASS</span><span class="chip coral">N1.4 · 0 / 33 PASS</span><span class="chip coral">N1.5 · CONFIRMATION NO-GO</span><span class="chip coral">N1.6 · POSTOPEN NO-GO</span><span class="chip coral">N1.7 · REPRESENTATION NO-GO</span><span class="chip coral">N1.8 · NO FRESH AUTH</span><span class="chip blue">CAMERA BLOCK · +6.34%</span><span class="chip coral">EXTRA · 57.07% &lt; 60%</span><span class="chip coral">LEARNER · NOT STARTED</span><span class="chip coral">REAL FLOW-OFF · ABSENT</span></div>
-        <h2>当前唯一主线：先证明重建方向与物理误差方向能共存，再学习 basis</h2>
-        <p>N1.8 比较 Krylov-4、fit-PCA2 + Krylov-6、Camera-Block-6、Pose-Fourier-K6 与 Detector-Moment-K6。Camera-Block 的有限步 field 最强且 12/12 无 &gt;1% harm，但没有跨过运行前冻结的 60% 增量 headroom；其 support-adjoint gain 更只有 9.47%。因此不靠降门槛进入 fresh，而先做 camera/adjoint union ceiling，决定下一算法应叫 forward correction 还是 solver-aware representation。</p>
+        <div class="chips"><span class="chip blue">M2.2 · NULL HEADROOM</span><span class="chip coral">N1.2 · 0 / 16 DECISIONS</span><span class="chip coral">N1.3 · 0 / 128 PASS</span><span class="chip coral">N1.4 · 0 / 33 PASS</span><span class="chip coral">N1.5 · CONFIRMATION NO-GO</span><span class="chip coral">N1.6 · POSTOPEN NO-GO</span><span class="chip coral">N1.7 · REPRESENTATION NO-GO</span><span class="chip coral">N1.8 · NO FRESH AUTH</span><span class="chip coral">N1.9 · BRANCH CLOSED</span><span class="chip blue">RESIDUAL · +6.207%</span><span class="chip coral">EXTRA · 51.408% &lt; 60%</span><span class="chip coral">LEARNER · NOT STARTED</span><span class="chip coral">REAL FLOW-OFF · ABSENT</span></div>
+        <h2>当前唯一主线：先拿到真实 mismatch 与 holdout 合同，再设计可验证算法</h2>
+        <p>N1.9 已把“contrast 乘 residual 还是 damping”这一窄问题跑完。Residual 更保护界面/H1，Damping 更贴近 data residual 与 support-adjoint；两个目标仍未统一，且两个候选都没有获得新 split 或 learner 授权。接下来不再枚举旧 development 上的低秩地图，而先把 camera pose、ray/pixel、mask/confidence、标定版本、<code>A/Aᵀ</code> 与永久 holdout 变成可审计的数据合同。</p>
         <ol>
           <li><strong>M2.2 只授权数学 headroom：</strong>exact SVD projector 保留 JACRU 约 45.28% field gain，并把内部 reprojection 对齐到约 1e-14；它不可部署，也不是论文算法。</li>
           <li><strong>M2.6 找到谱机制：</strong>camera-block 明显加速 residual，但 setup 为 1001F-equiv oracle，且 harm 8.33%；不能写成效率胜利。</li>
@@ -202,11 +203,13 @@
           <li><strong>N1.7 representation NO-GO：</strong>per-case <code>A P Aᵀ</code> frame 的主 field +4.83%、retention 56.72%、adjoint gain 16.28%；17 门过 14 门，按预注册停止 learner。</li>
           <li><strong>N1.7-D 机制审计：</strong>四倍半径 measurement 为 +5.56%、15/17 门；finite-K 为 +6.19%、16/17 门，但仍读 truth 且 development 搜索用 74,010 对 evaluator calls。</li>
           <li><strong>N1.8 五表示设计屏：</strong>Camera-Block-6 为 +6.34% field、+13.20% H1、57.07% extra-headroom、9.47% support-adjoint；16/17 重建门，机器状态 NO-AUTH，不打开 fresh。</li>
+          <li><strong>N1.9 contrast/global-K：</strong>Residual 为 +6.207% field、+10.672% H1、51.408% extra-headroom，16/17；Damping 为 15/17。机器状态 BRANCH CLOSED，两者均不进入 learner。</li>
           <li><strong>外部依赖：</strong>Mac 足够继续做 12³–16³ 高低保真机制证伪；真正需要师兄的是 f-number/焦面/标定不确定性、可调用 <code>A/Aᵀ</code>、原始图像与永久 audit camera。</li>
         </ol>
         <div class="actions" style="margin:14px 0;">
-          <a class="button primary" href="#n1-8-result">看 N1.8 判决</a>
-          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_8_hybrid_design_no_auth_2026-07-18.md">完整 N1.8 NO-AUTH</a>
+          <a class="button primary" href="#n1-9-result">看 N1.9 判决</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_9_advisor_review_brief_2026-07-18.md">发给师兄的 N1.9 brief</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_9_global_contrast_branch_closed_2026-07-18.md">完整 N1.9 报告</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_7_geometry_krylov_no_go_2026-07-18.md">完整 N1.7 NO-GO</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_7_radius_sensitivity_audit_2026-07-18.md">四倍半径审计</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_7_advisor_review_brief_2026-07-18.md">发给师兄的一页</a>
@@ -1603,16 +1606,16 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
           </ol>
         </div>
         <div class="panel">
-          <div class="chips"><span class="chip blue">READ-ONLY DECOMPOSE</span><span class="chip gold">N1.8 NEW SPLIT</span><span class="chip coral">REAL DATA NEEDED</span></div>
-          <h3 style="margin-top:10px;">下一步怎样继续而不自欺</h3>
+          <div class="chips"><span class="chip blue">HISTORICAL HANDOFF</span><span class="chip coral">N1.8 / N1.9 COMPLETE</span><span class="chip coral">REAL DATA NEEDED</span></div>
+          <h3 style="margin-top:10px;">N1.7 当时提出的路线已经跑完</h3>
           <ol>
             <li>四倍半径只读分解已完成：边界解释部分损失，但未触边的 measurement span 仍只过 15/17。</li>
-            <li>下一表示优先尝试同预算的 camera/ray hybrid-4 与 camera-block rank-6，再保留两次 A P Aᵀ probes。</li>
-            <li>新 dictionary、半径和 learner 必须先预注册，并使用新的 geometry/session split。</li>
-            <li>若 field-optimal correction 持续偏离真实 mismatch，支线改名 solver-aware regularizer，不再冒充 forward correction。</li>
-            <li>向师兄索取真实 A/Aᵀ、camera/ray metadata、高低保真 paired projections 与永久 audit camera/session。</li>
+            <li>N1.8 已比较 camera/ray hybrid 与 camera-block；N1.9 已比较 residual/damping contrast + global-K。</li>
+            <li>两个 N1.9 候选均未授权，因此没有把 dictionary、半径或 learner 带入新 split。</li>
+            <li>field-optimal correction 仍偏离 measurement/adjoint consistency，不能冒充真实 forward correction。</li>
+            <li>当前未完成项只剩真实 A/Aᵀ、camera/ray metadata、高低保真 paired projections 与永久 audit camera/session。</li>
           </ol>
-          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_7_advisor_review_brief_2026-07-18.md">打开师兄审核稿</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">讲人话日志第 96 节</a></div>
+          <div class="actions"><a class="button primary" href="#n1-9-result">打开当前 N1.9 判决</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_9_advisor_review_brief_2026-07-18.md">打开师兄审核稿</a></div>
         </div>
       </div>
     </section>
@@ -1659,18 +1662,72 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
           </ol>
         </div>
         <div class="panel">
-          <div class="chips"><span class="chip gold">TWO K6 CONTRASTS NEXT</span><span class="chip blue">RESPONSE-AWARE BASIS</span><span class="chip coral">FRESH SEALED</span></div>
-          <h3 style="margin-top:10px;">下一算法从哪里长出来</h3>
+          <div class="chips"><span class="chip coral">N1.9 COMPLETED</span><span class="chip coral">K6 BRANCH CLOSED</span><span class="chip blue">N2 DATA CONTRACT</span></div>
+          <h3 style="margin-top:10px;">两个 K6 已跑完，下一步不再堆 basis</h3>
           <ol>
-            <li>只冻结 Residual-Contrast Global-K6：<code>{d,r,C1r,C2r,Kd,Kr}</code>，检验相机 residual 局部性与全局 normal response 是否互补。</li>
-            <li>只冻结 Damping-Contrast Global-K6：<code>{d,r,C1d,C2d,Kd,Kr}</code>，隔离 Camera-Block 收益是否主要来自 damping 分块。</li>
-            <li>两者若都失败，关闭 rank-6 camera/global-K；若存在联合 headroom，才生成 geometry-conditioned response basis。</li>
-            <li>训练目标必须穿过冻结有限步 CGLS，同时约束 field、H1、P Aᵀ、norm、tail 与调用预算。</li>
-            <li>真实迁移前向师兄确认 ray metadata、主要 mismatch、永久 audit camera/session 和主终点。</li>
+            <li>Residual-Contrast 为 +6.207% field、51.408% extra-headroom，只过 16/17。</li>
+            <li>Damping-Contrast 的 support-adjoint 更高，却只有 36.864% extra-headroom，过 15/17。</li>
+            <li>两者都失败，按冻结规则关闭这对 rank-6 camera/global-K 候选；不能降到 51% 或继续加向量。</li>
+            <li>下一主线 N2 先确认真实 ray metadata、主要 mismatch、永久 audit camera/session 与主终点。</li>
+            <li>只有新 split 上的固定表示存在联合 headroom，才允许训练 geometry-conditioned generator。</li>
+          </ol>
+          <div class="actions"><a class="button primary" href="#n1-9-result">看 N1.9 分支关闭</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_9_advisor_review_brief_2026-07-18.md">师兄审核问题</a></div>
+        </div>
+      </div>
+      <div class="alert critical" style="margin-top:14px;"><strong>当前论文边界</strong><span>N1.8 learner 与 fresh 均未启动。可以写 opened synthetic 表示比较、严格 NO-AUTH 与由此导出的 response-aware 假设；不能写优于 DeepONet/FNO/NeRIF/TDBOST、fresh 泛化、真实三维精度或新算法已经成立。</span></div>
+    </section>
+
+    <section id="n1-9-result" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">N1.9 · preregistration 52490e5 · 16 source hashes · opened development · 2026-07-18</div>
+          <h2>Residual 更保护界面，Damping 更贴近观测；两者都没有统一两个目标</h2>
+          <p>两个候选只隔离 camera contrast 乘在 warm residual 还是 component damping，其他向量、rank、trust radius 与 25F/24Aᵀ 预算完全一致。Residual 在界面与 H1 上更强，Damping 的 data residual 与 support-adjoint 更好；但二者均未跨过运行前冻结的 extra-headroom 门，所以正式关闭这对候选，而不是挑均值较高者继续训练。</p>
+        </div>
+        <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjacru_n1_9_global_contrast_branch_closed_2026-07-18.md">完整分支关闭报告</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_9_advisor_review_brief_2026-07-18.md">师兄审核 brief</a><a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_9_global_contrast_freeze_2026-07-18.md">运行前冻结</a><a class="button" href="demo_t16_operator/results/jacru_n1_9_global_contrast_postopen_full1/summary.json">机器摘要</a><a class="button" href="demo_t16_operator/results/jacru_n1_9_global_contrast_postopen_full1/checksums.sha256">SHA-256</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">讲人话日志 99</a></div>
+      </div>
+      <div class="metric-grid">
+        <div class="metric"><b class="negative">BRANCH CLOSED</b><span>两个固定 K6 均不得进入新 split 或 learner</span></div>
+        <div class="metric"><b class="positive">+6.207%</b><span>Residual field vs matched CGLS-24</span></div>
+        <div class="metric"><b class="positive">+10.672%</b><span>Residual H1；12/12 优于 Damping</span></div>
+        <div class="metric"><b class="negative">51.408%</b><span>Residual extra-headroom；冻结门为 60%</span></div>
+        <div class="metric"><b class="negative">36.864%</b><span>Damping extra-headroom；exact retention 也未过门</span></div>
+        <div class="metric"><b>25F / 24Aᵀ</b><span>精确 rank 6；0 high-order calls；6 geometry</span></div>
+      </div>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>冻结表示</th><th>field vs low</th><th>H1 vs low</th><th>field vs damping</th><th>exact retention</th><th>extra-headroom</th><th>P Aᵀ gain</th><th>重建门</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Residual-Contrast Global-K6</strong></td><td class="positive"><strong>+6.207%</strong></td><td class="positive"><strong>+10.672%</strong></td><td class="positive">+2.672%</td><td>72.917%</td><td class="negative"><strong>51.408%</strong></td><td>28.112%</td><td class="negative">16/17</td></tr>
+            <tr><td>Damping-Contrast Global-K6</td><td>+5.452%</td><td>+8.768%</td><td>+1.888%</td><td class="negative">64.042%</td><td class="negative">36.864%</td><td>35.787%</td><td class="negative">15/17</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/jacru_n1_9_global_contrast_postopen_full1/diagnostic.png" alt="N1.9 Residual 与 Damping contrast global-K6 比较图，展示 field gain、阻尼后额外 headroom、support-adjoint gain 与排除 oracle 的本机 solver-path 成本" width="2880" height="810" loading="lazy" decoding="async" /><figcaption>虚线是运行前冻结门。Residual 的 field 已过 5%，但 extra-headroom 只有 51.408%；Damping 的 support-adjoint 更高，却牺牲更多重建 headroom。右图只计 shared warm、basis setup 与 refinement，排除 evaluator oracle 系数投影，不是可部署算法端到端时间。</figcaption></figure>
+      <div class="two-col" style="margin-top:16px;">
+        <div class="panel">
+          <div class="chips"><span class="chip blue">6 / 6 INTERFACE</span><span class="chip blue">12 / 12 H1</span><span class="chip coral">NO ROUTER TUNING</span></div>
+          <h3 style="margin-top:10px;">最有用的不是总分，而是物理分叉</h3>
+          <ol>
+            <li>Residual 在 6/6 single-interface cases 的 field 更低，并在 12/12 cases 的 H1 更低。</li>
+            <li>Damping 在 6/6 smooth cases 略好，并在 8/12 cases 的 data residual 更低。</li>
+            <li>Residual family gain 为 smooth +0.399%、interface +4.946%；收益主要来自界面场。</li>
+            <li>该模式来自已打开数据，只能生成新问题；不能事后做 family router 再计作同一次成功。</li>
+          </ol>
+        </div>
+        <div class="panel">
+          <div class="chips"><span class="chip coral">16 / 17 IS STILL FAIL</span><span class="chip blue">N2 PHYSICAL CONTRACT</span><span class="chip coral">REAL DATA REQUIRED</span></div>
+          <h3 style="margin-top:10px;">下一主线 N2：从真实 mismatch 合同开始</h3>
+          <ol>
+            <li>向师兄确认 pose、pixel/ray、mask/confidence、标定版本、参考图和时间/session ID。</li>
+            <li>先建立 <code>A/Aᵀ</code>、JVP/VJP 或 held-out reprojection 接口并做伴随、单位与 support 测试。</li>
+            <li>按 geometry/session/camera 永久留出，不再把已打开 OOD 重新命名为 fresh。</li>
+            <li>synthetic 有 truth 才报 field/H1；真实主终点优先 held-out camera reprojection、界面、稳定性和成本。</li>
+            <li>固定表示在新 split 有联合 headroom 后，才训练 coefficient/basis generator。</li>
           </ol>
         </div>
       </div>
-      <div class="alert critical" style="margin-top:14px;"><strong>当前论文边界</strong><span>可以写 N1.8 的 opened synthetic 表示比较、严格 NO-AUTH 与由此导出的 response-aware 假设；不能写优于 DeepONet/FNO/NeRIF/TDBOST、fresh 泛化、真实三维精度或新算法已经成立。</span></div>
+      <div class="alert critical" style="margin-top:14px;"><strong>当前论文边界</strong><span>可以写 N1.9 的预冻结候选对、严格分支关闭，以及“界面恢复与 measurement consistency 尚未统一”的 opened-synthetic 观察；不能写 Residual 算法胜出、camera/global-K 方法均无效、fresh/OOD 泛化、真实 BOST 提升或优于 DeepONet/FNO/NeRIF/TDBOST。</span></div>
     </section>
 
     <section id="algorithm" class="band">
@@ -2401,7 +2458,7 @@ VD0-B 也已完成。我从 MATLAB find 索引恢复真实 detector row/column�
   </main>
 
   <footer>
-    <p>版本 2026.07.18-N1.8。研究结论以仓库 report/JSON/checksum 为准；页面只做可读映射。N1.8 Camera-Block-6 在已打开 synthetic development 上为 +6.34% field、57.07% incremental extra-headroom、9.47% support-adjoint gain，按运行前规则为 NO-AUTH，learner 与 fresh 均未启动。N1.7-D、Factor Gate B、Metric-A v1/v2 与 N1.2–N1.7 也保持原判；真实 OERF、实验、泛化和论文优越性全部关闭。受限论文、组内数据、逐射线索引、私有 cache、checkpoint 与原始重建体不进入 GitHub Pages。</p>
+    <p>版本 2026.07.18-N1.9。研究结论以仓库 report/JSON/checksum 为准；页面只做可读映射。N1.9 Residual-Contrast 在已打开 synthetic development 上为 +6.207% field、51.408% extra-headroom，Damping-Contrast 为 +5.452% / 36.864%；按提交 <code>52490e5</code> 前冻结规则，两者分别只过 16/17 与 15/17，候选对分支关闭，learner 与新 split 均未启动。N1.8、N1.7-D、Factor Gate B、Metric-A v1/v2 与 N1.2–N1.7 也保持原判；真实 OERF、实验、泛化和论文优越性全部关闭。受限论文、组内数据、逐射线索引、私有 cache、checkpoint 与原始重建体不进入 GitHub Pages。</p>
   </footer>
   <script>
     (() => {
