@@ -1,0 +1,103 @@
+{
+  "schema": "n2-pvgr-n5-d4c-msra-development-preregistered-1.0",
+  "candidate_id": "N2-PVGR-N5-D4C-MSRA-BRANCH-SEMANTIC-CERTIFICATE",
+  "candidate_name": "mixed-scale randomized adjoint certificate with branch-semantic fail-closed controls",
+  "status": "preregistered_development_only_no_derivative_or_reconstruction_authorization",
+  "output": "demo_t16_operator/results/n2_pvgr_n5_d4c_msra_development_v1",
+  "device": "cpu",
+  "dtype": "float64",
+  "input_dimension": 4913,
+  "output_dimension": 8,
+  "trial_count": 24,
+  "seed_base": 70401,
+  "probe_counts": [1, 2, 4, 8, 16],
+  "gamma_threshold_grid": [0.25, 0.5, 1, 2, 4, 8, 16, 32, 64, 128],
+  "fault_relative_magnitudes": [1e-12, 1e-10, 1e-8, 1e-6],
+  "cancellation_deltas": [0.00000001, 0.000001, 0.0001],
+  "traditional_dot_relative_threshold": 1e-10,
+  "finite_difference_relative_threshold": 1e-8,
+  "structure_relative_threshold": 1e-8,
+  "hard_branch_fd_steps": [0.01, 0.001, 0.0001],
+  "scenario_contract": {
+    "clean_general": "correct linear forward/JVP/VJP",
+    "clean_low_bilinear_signal": "correct operator with first cotangent projected orthogonal to the first JVP",
+    "separate_cancellation_residual": "mathematically correct but numerically separate component subtraction",
+    "paired_cancellation_residual": "same residual matrix formed before JVP/VJP contraction",
+    "vjp_aligned_fault": "VJP-only fault aligned with the first frozen tangent",
+    "vjp_first_probe_blind_fault": "VJP-only fault orthogonal to the first tangent",
+    "jvp_aligned_fault": "JVP-only fault aligned with the frozen cotangent",
+    "self_consistent_wrong_derivative": "wrong JVP and VJP from one wrong matrix; adjoint identity holds but FD oracle fails",
+    "structure_mismatch": "direct residual derivative is internally adjoint-consistent but disagrees with frozen component difference",
+    "diagnostic_only_support_flip": "support signature changes while current smooth forward arithmetic is unchanged",
+    "hard_branch_crossing": "toy occupancy branch changes the actual forward matrix across plus/minus perturbations"
+  },
+  "branch_semantic_ledger": {
+    "smoothstep_interpolation_cell": {
+      "present_in_forward": true,
+      "role": "address_selection_with_c1_smoothstep_weights_not_a_python_mask",
+      "first_derivative_policy": "report_cell_change_and_require_fd_consistency_not_automatic_failure_after_c1_source_attestation"
+    },
+    "support_threshold_bit": {
+      "present_in_forward": false,
+      "role": "diagnostic_only_in_current_renderer",
+      "first_derivative_policy": "report_only_no_failure"
+    },
+    "frustum_margin_sign": {
+      "present_in_forward": false,
+      "role": "diagnostic_only_in_current_renderer",
+      "first_derivative_policy": "report_only_no_failure"
+    },
+    "domain_or_stencil_exception": {
+      "present_in_forward": true,
+      "role": "hard_failure_control_flow",
+      "first_derivative_policy": "fail_closed_if_base_or_any_perturbation_changes_validity"
+    },
+    "refractive_index_validity_exception": {
+      "present_in_forward": true,
+      "role": "hard_failure_control_flow",
+      "first_derivative_policy": "fail_closed_if_base_or_any_perturbation_changes_validity"
+    },
+    "hard_mask_occupancy_or_ray_termination": {
+      "present_in_forward": false,
+      "role": "absent_from_current_renderer_unknown_for_lab_renderer",
+      "first_derivative_policy": "if_present_fail_closed_on_active_set_or_termination_change_unless_a_separately_validated_boundary_derivative_is_used"
+    }
+  },
+  "retrospective_d4b": {
+    "role": "postopen_descriptive_only_never_used_to_select_threshold",
+    "rows": "demo_t16_operator/results/n2_pvgr_n5_d4b_population_field_derivative_v1/rows.json",
+    "result": "demo_t16_operator/results/n2_pvgr_n5_d4b_population_field_derivative_v1/result.json",
+    "manifest": "demo_t16_operator/results/n2_pvgr_n5_d4b_population_field_derivative_v1/manifest.json",
+    "forensics": "demo_t16_operator/results/n2_pvgr_n5_d4b_postopen_forensics_v1/result.json"
+  },
+  "decision_contract": {
+    "threshold_selection_is_forbidden": true,
+    "all_threshold_probe_pairs_must_be_reported": true,
+    "single_probe_adjoint_is_not_a_full_vjp_certificate": true,
+    "adjoint_identity_cannot_replace_fd_or_structure_controls": true,
+    "diagnostic_only_support_flip_must_not_be_relabelled_as_forward_branch_change": true,
+    "hard_branch_crossing_must_fail_closed_even_if_branch_local_dot_identity_passes": true,
+    "decision": "D4C_MSRA_DEVELOPMENT_CHARACTERIZATION_ONLY_NO_AUTHORIZATION"
+  },
+  "claim_authorizations": {
+    "change_historical_d4b_decision": false,
+    "select_gamma_threshold": false,
+    "field_derivative_interface": false,
+    "decoder_parameter_chain": false,
+    "three_dimensional_reconstruction": false,
+    "neural_operator_training": false,
+    "neural_operator_superiority": false,
+    "real_data": false,
+    "generalization": false,
+    "paper_claim": false
+  },
+  "stopping_rules": [
+    "Do not change seeds, trial count, probe counts, fault magnitudes, cancellation deltas, threshold grid or scenario labels after committing this preregistration.",
+    "Do not choose a winning gamma threshold from this development output.",
+    "Report intentional first-probe blind faults even if later probes detect them.",
+    "A self-consistent wrong derivative must remain a documented adjoint-test blind spot and must be rejected by FD evidence.",
+    "A diagnostic-only support flip may not be called a forward branch change in the current renderer.",
+    "A hard occupancy branch crossing must fail closed unless a separately validated boundary derivative is introduced.",
+    "Do not reinterpret retrospective D4b scores as a fresh pass."
+  ]
+}

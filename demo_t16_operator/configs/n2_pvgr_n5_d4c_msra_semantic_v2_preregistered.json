@@ -1,0 +1,95 @@
+{
+  "schema": "n2-pvgr-n5-d4c-msra-semantic-v2-preregistered-1.0",
+  "candidate_id": "N2-PVGR-N5-D4C-MSRA-SEMANTIC-V2",
+  "status": "preregistered_amendment_after_v1_semantic_red_team_no_bost_authorization",
+  "supersedes_for_semantic_claims": "n2_pvgr_n5_d4c_msra_development_v1",
+  "preserve_v1_as_negative_evidence": true,
+  "output": "demo_t16_operator/results/n2_pvgr_n5_d4c_msra_semantic_v2",
+  "device": "cpu",
+  "dtype": "float64",
+  "input_dimension": 4913,
+  "output_dimension": 8,
+  "trial_count": 24,
+  "seed_base": 71401,
+  "probe_counts": [1, 2, 4, 8, 16],
+  "h_values": [0.0001, 0.001, 0.01],
+  "side_weighted_gamma_threshold_grid": [0.25, 0.5, 1, 2, 4, 8, 16, 32, 64, 128],
+  "fault_relative_magnitudes": [1e-12, 1e-10, 1e-8, 1e-6],
+  "cancellation_deltas": [0.00000001, 0.000001, 0.0001],
+  "traditional_signal_relative_threshold": 1e-10,
+  "finite_difference_relative_threshold": 1e-9,
+  "structure_relative_threshold": 1e-9,
+  "diagnostic_support_threshold": 0.05,
+  "scenario_order": [
+    "clean_general",
+    "clean_low_bilinear_signal",
+    "separate_cancellation_residual",
+    "paired_cancellation_residual",
+    "vjp_aligned_fault",
+    "vjp_first_probe_blind_fault",
+    "jvp_aligned_fault",
+    "self_consistent_wrong_derivative",
+    "three_path_structure_mismatch",
+    "diagnostic_only_support_flip",
+    "actual_piecewise_branch_crossing"
+  ],
+  "semantic_requirements": {
+    "finite_difference": "must call the scenario forward at x_plus_hv and x_minus_hv for every frozen h and probe",
+    "branch_state": "must be returned by the actual forward call and compared at base plus and minus; no injected branch_changed label",
+    "structure": "must call independent curved straight and direct paths at output JVP and VJP levels; no hidden clean-matrix gate",
+    "gamma": "must weight output and input action scales by gamma_n_out and gamma_n_in separately",
+    "aggregation": "must report each scenario fault magnitude probe count and threshold separately; no pooled overall accuracy",
+    "status": "PASS_STRONG_SIGNAL LOW_SIGNAL_UNRESOLVED or FAIL with an explicit first failing obligation"
+  },
+  "finite_difference_contract": {
+    "formula": "central_two_sided",
+    "estimate": "(F(x+h*v)-F(x-h*v))/(2*h)",
+    "denominator": "2*h",
+    "path_scope_for_three_path_case": "direct_path_fd_only; curved_minus_straight is checked independently by output_jvp_vjp_structure_residuals",
+    "aggregation": "worst_value_over_every_h_and_every_probe_in_the_frozen_probe_prefix",
+    "best_h_selection_is_forbidden": true
+  },
+  "status_precedence": [
+    "NONFINITE",
+    "BRANCH",
+    "STRUCTURE",
+    "FD",
+    "ADJOINT",
+    "PASS_STRONG_SIGNAL_OR_LOW_SIGNAL_UNRESOLVED"
+  ],
+  "raw_evidence_contract": {
+    "case_identity": "trial scenario parameter_name and parameter_value_float_hex",
+    "input_attestation": "record SHA256 of base x and each actual x_plus_hv and x_minus_hv input",
+    "forward_attestation": "record raw output vectors and forward-returned branch and diagnostic states",
+    "replay": "independent validator regenerates every frozen case from seed and compares hashes outputs metrics and statuses",
+    "reported_metrics_are_not_validator_truth": true
+  },
+  "decision_contract": {
+    "threshold_selection_is_forbidden": true,
+    "all_h_values_must_be_consumed": true,
+    "all_threshold_probe_pairs_must_be_reported": true,
+    "v1_integrity_valid_does_not_imply_v1_semantic_valid": true,
+    "decision": "D4C_MSRA_SEMANTIC_V2_CHARACTERIZED_NO_BOST_AUTHORIZATION"
+  },
+  "claim_authorizations": {
+    "v1_semantic_fd_branch_structure_claim": false,
+    "select_gamma_threshold": false,
+    "field_derivative_interface": false,
+    "decoder_parameter_chain": false,
+    "three_dimensional_reconstruction": false,
+    "neural_operator_training": false,
+    "neural_operator_superiority": false,
+    "real_data": false,
+    "generalization": false,
+    "paper_claim": false
+  },
+  "stopping_rules": [
+    "Do not edit or delete the v1 source/result; preserve it as red-team negative evidence.",
+    "Do not modify v2 seeds, h values, probes, thresholds, scenarios or faults after committing this file.",
+    "Do not call a reference JVP difference a finite difference; every FD row must contain forward plus/minus values and actual h.",
+    "Do not accept an injected branch label; branch change must be derived from forward-returned states.",
+    "Do not use a hidden correct matrix as the structure gate; compare three explicit paths.",
+    "Do not pool fault magnitudes or scenario types into one performance score.",
+    "Do not select a threshold from this development output or reinterpret D4b."
+  ]
+}

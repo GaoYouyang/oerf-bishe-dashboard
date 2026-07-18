@@ -3045,3 +3045,93 @@ simple、非 grazing 的 support 等值面随场平滑移动，用 transversalit
 完整逐位表、误差分解、候选算法与要问师兄的 8 个问题见
 [N5-D4b post-open 失败取证](n2_pvgr_n5_d4b_postopen_forensics_2026-07-19.md)。当前仍没有 decoder、
 三维重建、算子训练、真实数据、泛化或论文授权。
+
+## 115. D4c压力测试：新指标能救假失败，但一个 dot test 绝对不够
+
+> **后验语义更正。** 本节记录的是已经冻结的 D4c-v1 历史运行。红队随后发现：v1 没有
+> 真正执行 `F(x±hv)`，branch change 是人工标签，structure error 使用隐藏正确矩阵；其
+> validator 只证明文件完整和既定逻辑一致。因此本节中的“FD/branch/structure 检出率”与
+> `74.72%` pooled classification 全部撤回，不作为算法或论文证据。仍可保留的只有两个
+> explicit-matrix 反例：低双线性信号会让 relative-dot 失真，单 tangent 存在 VJP 盲区。
+> 修正版见下一节 D4c-v2。
+
+这轮先在 commit `38f091f` 把 seed、24 个 trial、1/2/4/8/16 probes、10 个 gamma threshold、
+4 档故障强度和 11 类反例全部固定，然后才正式运行。结果有 3,600 条 base rows 和
+36,000 条 threshold/probe evaluations，没有选一个“最好看”的阈值。
+
+第一个反例是正确线性算子，但把 cotangent 故意投影到首个 JVP 的近正交方向。
+此时 VJP 完全正确，但旧 relative-dot 门把 24/24 全部拒绝；gamma-scaled normwise score
+的最大值只有 `1.40e-4`。这说明小 scalar signal 不等于错梯度。但正确处理也不是直接
+改判 PASS，而是标成 `LOW_SIGNAL_UNRESOLVED`，继续查多 probe、FD、structure 和 branch。
+
+第二个反例只改 VJP，并让错误向量与第一个 tangent 正交。一个 probe 对所有强度都是
+0 检出。在 threshold `2` 这个只作剖面、不作选参的位置，`1e-10` 错误用 2/4/8/16
+probes 的检出是 12/24、20/24、24/24、24/24；`1e-12` 即使 16 probes 也是 0/24。
+讲人话就是：多问几个方向能减少盲区，但不能证明 4913 维梯度的每个分量都对。
+
+第三个反例更严格：用同一个错矩阵同时生成 JVP 和 VJP。它们彼此是转置，所以所有
+adjoint identity 都可以过，但它们一起偏离真实 forward。本轮只有 FD 能抓它，且当前
+`1e-8` 门只稳定抓到 `1e-8/1e-6`，对 `1e-12/1e-10` 没有分辨力。因此任何只报 dot test
+的方法都不能单独证明梯度对真实 forward 正确。
+
+还有一个对 BOST 很直接的负结果：如果先用 float64 造出两个很接近的 component matrix，
+再做 `C-S`，那么即使后面使用 paired JVP/VJP，`delta=1e-8` 仍是 24/24 被 FD 拒绝。
+所以“抗相消”不能只在最后换求和器，必须在同一 ray sample、interpolation query 和投影基上
+先形成 curved-straight integrand residual，再累计。
+
+当前不选 gamma threshold，因为预注册网格里最高总体分类率也只有 `74.72%`：clean acceptance
+`83.33%`，fault detection `72.57%`。这个数足以证明新指标值得继续，不足以开 fresh
+derivative gate。下一步要在全新 BOST field/rig development population 上确定三态规则、多 probe 成本和
+residual-native 实现，然后才能冻结 untouched audit。
+
+完整历史输出见
+[N5-D4c-v1 开发屏](n2_pvgr_n5_d4c_msra_development_2026-07-19.md)。v1 的独立 validator
+只能解释为 integrity/logic `valid=true`，不能解释为 semantic valid。field derivative、decoder、
+三维重建、真实数据、泛化和论文授权仍全部为 false。
+
+## 116. D4c-v2：真实调用 forward 以后，哪些结论才站得住
+
+**为什么重做。** v1 最重要的教训是：文件哈希正确、表格行数正确、布尔门也按预期执行，仍然
+不等于实验语义正确。如果 FD 没有调用 `F(x±hv)`，branch 是人工标签，structure 又偷看正确
+矩阵，那么它只能证明一套自洽的模拟逻辑，不能证明我们想检查的 forward/JVP/VJP。
+
+**这次具体改了什么。** 我先提交 `09a50d1`，冻结 24 trials、720 个 case、3 个 `h`、最多
+16 个 tangents、10 个只作描述的 side-weighted thresholds、4 档故障和 11 类场景，然后才运行。
+每一条 FD 都保存真实 plus/minus forward 输出、输入哈希、forward 返回的 branch/diagnostic state；
+三路径 case 分别调用 curved、straight、direct 的 output/JVP/VJP。最终得到 34,560 组 FD pairs、
+1,536 条结构证据和 36,000 条不跨场景混合的状态记录。
+
+**最直观的结果。** 正确 low-signal cases 仍有 24/24 被旧 relative gate 拒绝，但 v2 只把它们
+标成 `LOW_SIGNAL_UNRESOLVED`。在描述 threshold 2 下，`1e-10` 首探针盲向 VJP fault 用
+1/2/4/8/16 probes 的检出为 0/7/19/22/24；`1e-12` 到 16 probes 仍是 0/24。多问方向能缩小
+盲区，但不能证明 4913 维梯度每个方向都对。
+
+**三种门各自负责什么。** 同一个错误矩阵同时生成 JVP/VJP 时，adjoint identity 完全可以通过；
+actual FD 在当前 `1e-9` 门下只稳定拒绝 `1e-8/1e-6`，弱两档仍会漏。direct residual path 对
+自己做 FD 也可以全部通过，但当它不等于 curved-straight 时，三路径 structure 门会在
+`1e-8/1e-6` 两档 48/48 拒绝。也就是说，adjoint、FD、structure 不能互相替代。
+
+**相消机制终于用了真实 FD。** separate arithmetic 在三个 component difference scales 下的
+16-probe 最坏 FD error 中位数分别是 `1.58e-3`、`1.46e-5`、`1.46e-7`，全部超过 `1e-9`；
+直接形成 residual primitive 的 paired path 三档都约 `1e-11`。这只是在 explicit-matrix toy 上
+证明“先算两个大量再相减”会污染中心差分，是否对应真实 BOST 必须拿实验室 renderer 测。
+
+**branch 也不再靠手填。** diagnostic-only case 是 24/24 diagnostic state flip、0/24 branch
+flip；piecewise forward 是 24/24 plus/minus branch crossing，并优先判 `FAIL_BRANCH`。这给下一步
+一个非常具体的接口要求：实验室 forward 必须返回真正影响控制流的 active state，support/frustum
+之类只用于报告的量不能混进去。
+
+**现在能说什么。** v2 修掉了 v1 的三类语义漏洞，并量化了每种门的检测地板。它仍是
+synthetic explicit-matrix certificate characterization，不是 BOST、NeRIF、三维重建或算子学习
+结果。`PASS_STRONG_SIGNAL` 也只表示有限义务未失败；弱的 injected fault 仍可能拿到这个状态。
+
+**下一步不再堆 toy。** 向师兄要一个匿名最小包：4--16 rays、一个 field/decoder vector、两个
+`Jv`、一个 `J^Tq`、curved/straight/direct callable（若存在）、precision、sampling/interpolation/
+termination 规则，以及 forward 返回的 branch/diagnostic state。先接 recorder 和 h-sweep，再做
+residual-native 对照；真实接口过门后才接 decoder chain 与 6+2 view inverse。
+
+完整公式、逐档表、复现命令和给师兄的七个问题见
+[D4c semantic-v2 审计](n2_pvgr_n5_d4c_msra_semantic_v2_2026-07-19.md)。独立 validator 已从
+seed 重建所有输入、路径、指标与状态；结果为 `valid=true`。它没有导入 runner 或 certificate
+helper，四类篡改测试也全部 fail-closed；但它仍是同一 Python/NumPy 栈，不是跨语言复现，更不
+授权真实 BOST、三维重建、泛化或算法优越性。

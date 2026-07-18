@@ -168,7 +168,8 @@
   <header>
     <nav class="nav" aria-label="主导航">
       <a href="operator-learning/">学习主页</a>
-      <a href="#n5-d4b">D4b 失败取证</a>
+      <a href="#n5-d4c">D4c-v2 语义审计</a>
+      <a href="#n5-d4b">D4b 冻结失败</a>
       <a href="#d0-root-cause">当前结论</a>
       <a href="#spatial-benchmark">空间基准</a>
       <a href="#real-rotation40">真实观测</a>
@@ -200,28 +201,28 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">当前只做一条垂直主线：把曲光线 BOST forward 变成可核验、可拒答的离散算子，再进入 field JVP/VJP、三维重建和算子学习。最新 D4b 已覆盖完整 <strong>32-cell 封闭开发总体、16 个 matched pairs、5 个 field units</strong>，严格判为 <code>D4B_DERIVATIVE_CONTEXT_CHANGED_FAIL_CLOSED</code>。post-open 取证进一步确认：p14 不是最终求和误差，而是 <strong>14,467× residual 低信号条件化</strong>；6 个 topology context 的变化可定位为 <strong>21 个 support-set bits</strong>，但当前 smoothstep forward 并没有 hard mask。下一步研究 mixed-scale adjoint certificate 与 transversality-aware support certificate，不跳到 decoder 或大网络。</p>
+    <p class="lead">当前只做一条垂直主线：把曲光线 BOST forward 变成可核验、可拒答的离散算子，再进入 field JVP/VJP、三维重建和算子学习。D4b 冻结失败不改判；D4c-v1 虽通过文件完整性检查，却因没有真实调用 <code>F(x±hv)</code>、使用人工 branch 标签和隐藏 structure oracle，被红队判为<strong>语义 NO-GO</strong>。修正版 v2 在提交 <code>09a50d1</code> 后才正式运行，保存 <strong>720 cases、34,560 组实际正负 forward 与 36,000 条分层状态</strong>。当前候选收缩为 <strong>residual-native arithmetic + side-weighted report + randomized multi-probe + actual FD/structure/branch 三重拒答</strong>；本轮不选 threshold，也不解锁 decoder 或训练。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">N5-D4b · PREREGISTERED</span><span class="chip gold">32 CELLS · 16 PAIRS · 5 FIELDS</span><span class="chip blue">128 / 128 STRUCTURE</span><span class="chip coral">254 / 256 MAPS</span><span class="chip coral">58 / 64 TOPOLOGY</span></div>
-          <h2>当前主线：把低信号伴随与移动等值面变成可证伪的导数证书</h2>
-        <p>D4 tiny gate 在四个 selected cells 上通过；D4b 扩到完整开发 census 后暴露上下文依赖失败。正式失败已冻结，随后只读保存数组与重放 signature：精确 contraction 仍不过门，21 个 support 位则被定位到少数 ray、RK4 stage 与 stencil offset。现在有两个具体算法问题，而不是一个含糊的“上神经网络”。</p>
+        <div class="chips"><span class="chip blue">N5-D4c-v2 · COMMIT 09a50d1</span><span class="chip gold">24 TRIALS · 720 CASES</span><span class="chip blue">34,560 ACTUAL FD PAIRS</span><span class="chip blue">36,000 STRATIFIED STATES</span><span class="chip coral">NO THRESHOLD SELECTED</span></div>
+          <h2>当前主线：把低信号、伴随盲区与真实分支分成不可互相替代的门</h2>
+        <p>D4c-v2 先提交语义修正再运行。它不是为了“让 p14 通过”，而是故意构造正确低信号、VJP 正交盲区、彼此自洽但同时错的 JVP/VJP、三路径 mismatch、diagnostic-only flip 和真实 piecewise branch。所有汇总保留 scenario、故障强度、probe 数与描述阈值，不再制造跨任务总分。</p>
         <ol>
-          <li><strong>map 失败：</strong>p14 的 raw/paired residual 在同一方向超过 <code>1e-10</code> relative dot gate；finite difference 与结构门仍通过。</li>
-          <li><strong>topology 失败：</strong>六个上下文只在最大 <code>h=0.01</code> 出现 21 个 support-set bit 翻转；插值 cell 与 frustum sign 保持不变，24/24 map gates 仍通过。</li>
-          <li><strong>不得事后救回：</strong>不能删掉 h、改 absolute gate、换 seed、删 cell 或把 254/256 平均成通过。</li>
-          <li><strong>当前学习：</strong>伴随闭合、normwise backward error、相消条件数、level-set transversality、隐函数定理与 interval root certificate。</li>
-          <li><strong>当前实验：</strong>只读取证已完成；下一步在独立 development population 上冻结 mixed-scale 与 simple-root 两类证书，不能用 p14 反调。</li>
+          <li><strong>低信号：</strong>24/24 正确 cases 被旧 relative gate 拒绝；v2 只降级为 <code>LOW_SIGNAL_UNRESOLVED</code>，不自动 pass。</li>
+          <li><strong>单探针盲区：</strong>对第一个 tangent 正交的 VJP fault，1 probe 检出恒为 0；描述阈值 2 下，<code>1e-10</code> 故障需 16 probes 才达 24/24。</li>
+          <li><strong>自洽错误：</strong>同一错矩阵的 JVP/VJP 可以过 adjoint identity；真实 forward FD 只在冻结分辨率以上拒绝。</li>
+          <li><strong>residual-native：</strong>separate arithmetic 三档均被 actual FD 拒绝；直接形成 residual primitive 的 paired path 三档均通过。</li>
+          <li><strong>分支分账：</strong>diagnostic-only 是 24/24 state flip、0/24 branch flip；piecewise forward 是 24/24 branch crossing。</li>
           <li><strong>后续仍锁定：</strong>fresh derivative gate → decoder-chain → 6+2 deterministic inverse → real noise units → 同预算 DeepONet/FNO/FFNO。</li>
         </ol>
         <div class="actions" style="margin:14px 0;">
-          <a class="button primary" href="#n5-d4b">看 D4b 当前判决</a>
-          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_population_field_derivative_result_audit_2026-07-19.md">完整结果审计</a>
-          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_postopen_forensics_2026-07-19.md">失败取证与算法候选</a>
-          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=114-d4b-失败拆开了不是求和顺序support-也不是当前-forward-的-hard-mask">讲人话日志 114</a>
-          <a class="button" href="demo_t16_operator/results/n2_pvgr_n5_d4b_postopen_forensics_v1/result.json">取证 JSON</a>
-          <a class="button" href="demo_t16_operator/results/n2_pvgr_n5_d4b_population_field_derivative_v1/validation_report.json">独立验证 JSON</a>
-          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_population_field_derivative_preregistration_2026-07-19.md">结果前协议</a>
+          <a class="button primary" href="#n5-d4c">看 D4c 反例与检出率</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n5_d4c_msra_semantic_v2_2026-07-19.md">v2 完整语义审计</a>
+          <a class="button" href="demo_t16_operator/results/n2_pvgr_n5_d4c_msra_semantic_v2/result.json">v2 机器结果</a>
+          <a class="button" href="demo_t16_operator/results/n2_pvgr_n5_d4c_msra_semantic_v2/validation_report.json">独立重放</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n5_d4c_msra_development_2026-07-19.md">v1 红队撤回</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=116-d4c-v2真实调用-forward-以后哪些结论才站得住">讲人话日志 116</a>
+          <a class="button" href="#n5-d4b">看冻结 D4b 证据</a>
           <a class="button" href="#senior">问师兄清单</a>
         </div>
         <details class="archive-details">
@@ -403,24 +404,104 @@
       </div>
       </details>
     </div>
-    <div class="alert critical"><strong>当前主结论 · D4b 判决不变，失败机制已拆开</strong><span>完整 32-cell census 仍严格 FAIL-CLOSED。只读取证排除了最终点积求和顺序，发现 p14 的 component-to-residual signal ratio 为 14,466.67；六个 topology contexts 共 21 个 support-set flips，且当前连续 renderer 并无 hard mask。decoder、三维重建、神经算子训练、真实数据、泛化与论文主张全部保持 false。</span></div>
+    <div class="alert critical"><strong>当前主结论 · D4c-v1 语义撤回，v2 用真实 forward 重做且仍不选阈值</strong><span>24/24 正确低信号 cases 只允许记为 unresolved；描述阈值 2 下，<code>1e-10</code> 首探针盲向 VJP 故障要到 16 probes 才达 24/24，<code>1e-12</code> 仍为 0/24。self-consistent wrong derivative 证明 adjoint identity 不能代替 actual FD；diagnostic state 与真实 branch state 已从 forward 返回值分账。D4b 历史失败不变，decoder、三维重建、神经算子训练、真实数据、泛化与论文主张仍全部 false。</span></div>
   </header>
 
   <main id="main">
+    <section id="n5-d4c" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">最新开发证据 · N5-D4c semantic-v2 · protocol commit 09a50d1</div>
+          <h2>证书先证明自己真的调用了 forward，再谈低信号与错梯度</h2>
+          <p>本轮在结果前固定 24 trials、1/2/4/8/16 probes、3 个 actual FD 步长、10 个描述阈值、4 档 fault magnitude 和 11 类反例。运行后保留 720 个 case 与完整分层网格，没有选 winner threshold；独立 validator 不导入 runner，从 seed 重建每个输入、路径、指标和状态，结果为 <code>valid=true</code>。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fn2_pvgr_n5_d4c_msra_semantic_v2_2026-07-19.md">读 v2 公式、反例与下一协议</a>
+          <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fn2_pvgr_n5_d4c_msra_semantic_v2%2Fsemantic_v2.png">放大 v2 四联图</a>
+          <a class="button" href="demo_t16_operator/results/n2_pvgr_n5_d4c_msra_semantic_v2/result.json">v2 机器结果</a>
+          <a class="button" href="demo_t16_operator/results/n2_pvgr_n5_d4c_msra_semantic_v2/validation_report.json">独立重放</a>
+          <a class="button" href="demo_t16_operator/configs/n2_pvgr_n5_d4c_msra_semantic_v2_preregistered.json">结果前配置</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n5_d4c_msra_development_2026-07-19.md">v1 语义撤回</a>
+        </div>
+      </div>
+
+      <div class="alert critical"><strong>机器判决：D4C_MSRA_SEMANTIC_V2_CHARACTERIZED_NO_BOST_AUTHORIZATION</strong><span>本轮只能说“synthetic explicit-matrix 上的证书语义与检测地板已被量化”。<code>threshold_selected=null</code>；不得把 <code>PASS_STRONG_SIGNAL</code> 写成导数正确，更不得外推到 BOST、NeRIF 或三维重建。</span></div>
+
+      <div class="metric-grid real-metric-grid">
+        <div class="metric"><b>24 / 24 unresolved</b><span>正确 low-signal cases 被旧 relative gate 全拒，但不自动改判 pass</span></div>
+        <div class="metric"><b>4.55e-5</b><span>同批 clean low-signal 的最大 side-weighted score</span></div>
+        <div class="metric"><b>16 probes → 24/24</b><span><code>1e-10</code> first-probe-blind VJP fault；threshold 2 只作剖面</span></div>
+        <div class="metric failed-state"><b>1e-12 → 0/24</b><span>即使 16 probes 仍无检出；必须报检测地板</span></div>
+      </div>
+      <div class="metric-grid real-metric-grid">
+        <div class="metric"><b>48 / 96</b><span>self-consistent wrong derivatives 被 actual FD 拒绝；<code>1e-12/1e-10</code> 仍漏检</span></div>
+        <div class="metric"><b>24 diagnostic / 0 branch</b><span>diagnostic-only state flip 不冒充 forward branch</span></div>
+        <div class="metric"><b>24 / 24 branch</b><span>真实 piecewise crossings 由 forward state 推导并 fail-closed</span></div>
+        <div class="metric failed-state"><b>0 pooled scores</b><span>禁止跨 scenario / magnitude 的总体准确率与 winner threshold</span></div>
+      </div>
+
+      <div class="two-col">
+        <figure>
+          <img src="demo_t16_operator/results/n2_pvgr_n5_d4c_msra_semantic_v2/semantic_v2.png" width="2880" height="1980" loading="lazy" decoding="async" alt="N5-D4c semantic-v2 四联图，展示正确低信号 unresolved、多 probe VJP 盲区、actual forward FD 与三路径结构残差" />
+          <figcaption>左上：低双线性信号必须显式 unresolved；右上：描述阈值与 probe 数对盲向 VJP 故障的影响，不选 winner；左下：真实 forward FD 暴露错误 JVP；右下：direct FD 可以通过而三路径恒等式失败。</figcaption>
+        </figure>
+        <div class="panel">
+          <div class="chips"><span class="chip blue">MIXED SCALE</span><span class="chip gold">RANDOM PROBES</span><span class="chip blue">FD + STRUCTURE</span><span class="chip coral">BRANCH FAIL-CLOSED</span></div>
+          <h3 style="margin-top:12px;">现在的候选是一个证书栈，不是单指标</h3>
+          <ol>
+            <li><strong>Residual-native arithmetic：</strong>在同一 ray sample/query 上先形成 curved-straight integrand difference，再累计。</li>
+            <li><strong>Side-weighted report：</strong>output/input contraction 分别使用 <code>γ8</code> 与 <code>γ4913</code>；它仍不是完整 autodiff 误差界。</li>
+            <li><strong>Randomized coverage：</strong>固定 cotangent 下增加预注册 tangents，不把单 probe 写成完整 VJP 证明。</li>
+            <li><strong>Independent gates：</strong>FD 抓自洽错误，structure 抓 residual 接线，branch ledger 只拒绝真正改变 forward 的事件。</li>
+            <li><strong>三态输出：</strong>strong pass、low-signal unresolved、fail；不用 normwise 小直接洗掉 relative 失败。</li>
+          </ol>
+          <div class="formula wrap-formula">adjoint consistency ≠ derivative correctness ≠ reconstruction accuracy</div>
+        </div>
+      </div>
+
+      <div class="table-scroll-hint">表格可横向滚动；threshold 2 与 16 probes 仅是预注册网格剖面</div>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>反例</th><th>关键结果</th><th>主责门</th><th>对算法的启发</th></tr></thead>
+          <tbody>
+            <tr><td>clean low signal</td><td>旧门拒绝 24/24；side score max 4.55e-5</td><td>side-weighted + 三态</td><td>低 signal 先降级 unresolved，不当作错梯度或自动 pass</td></tr>
+            <tr><td>blind VJP · 1e-10</td><td>1/2/4/8/16 probes 检出 0/7/19/22/24</td><td>random probes</td><td>多 probe 缩小盲区；仍不证明完整 4913 维 VJP</td></tr>
+            <tr><td>self-consistent wrong</td><td>adjoint 可全过；actual FD 只抓住 48/96</td><td>actual FD</td><td>dot identity 只证明彼此转置，不证明对真实 forward</td></tr>
+            <tr><td>three-path mismatch</td><td><code>1e-8/1e-6</code> structure 48/48 拒绝；direct FD 0/48 拒绝</td><td>curved/straight/direct</td><td>direct path 对自己可微，仍可能没有接成真实 residual</td></tr>
+            <tr><td>separate vs paired</td><td>separate 三档 72/72 FD 拒绝；paired 三档 72/72 通过</td><td>residual-native + FD</td><td>不能先构造两个近等大量再相减</td></tr>
+            <tr><td>diagnostic / piecewise</td><td>diagnostic 24 flip / 0 branch；piecewise 24/24 branch</td><td>forward-returned state</td><td>报告变量和真实控制流必须分账</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pipeline">
+        <div><b>1 · 已完成</b><span>commit 09a50d1 先冻结语义合同，再运行 720 cases / 34,560 FD pairs / 36,000 states。</span></div>
+        <div><b>2 · 独立重放通过</b><span><code>valid=true</code>；validator 不导入 runner，从 seed 重建 input hash、forward、三路径、gamma 与状态优先级。</span></div>
+        <div><b>3 · 当前设计</b><span>把 residual-native、multi-probe、actual FD、三路径 structure 与 branch ledger 组成三态证书。</span></div>
+        <div><b>4 · D4d 最小接口</b><span>向师兄要匿名 4–16 rays、2 个 Jv、1 个 Jᵀq 与真实 branch/diagnostic state。</span></div>
+        <div><b>5 · Untouched audit</b><span>development 后才冻结唯一阈值与成本，fresh fields/rigs 只开一次。</span></div>
+        <div><b>6 · 后续仍锁定</b><span>decoder-chain → 6+2 inverse → real noise units → 同预算 DeepONet/FNO/FFNO。</span></div>
+      </div>
+
+      <div class="alert"><strong>给师兄的当前核心问题</strong><span>“真实 NeRIF/BOST renderer 的 curved/straight contribution 是在同一 sample/integrand 层成对形成，还是先构造两个 detector maps 再相减？是否存在 hard mask、occupancy pruning、dynamic sample count 或 ray termination？能否给我一个匿名最小例：field/decoder parameters、4 rays、2 个 Jv、1 个 Jᵀq，并告诉我实际 precision 与 gradient-check noise floor？”</span></div>
+    </section>
+
     <section id="n5-d4b" class="band">
       <div class="section-head">
         <div>
           <div class="eyebrow">当前证据 · N5-D4b + post-open forensics · 2026-07-19</div>
           <h2>完整 32-cell 导数普查：正式失败不改判，数值机制已定位</h2>
-          <p>D4b 不是模型排行榜，而是检查同一 curved-ray forward 的场导数能否在完整封闭开发 census 中逐上下文成立。正式结果与独立重放一致；新取证只解释已保存结果，不重新调用导数，也不产生任何新授权。</p>
+          <p><strong>D4b 判决不变，失败机制已拆开。</strong>D4b 不是模型排行榜，而是检查同一 curved-ray forward 的场导数能否在完整封闭开发 census 中逐上下文成立。正式结果与独立重放一致；新取证只解释已保存结果，不重新调用导数，也不产生任何新授权。</p>
         </div>
         <div class="actions">
           <a class="button primary" href="document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_postopen_forensics_2026-07-19.md">读失败取证</a>
           <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fn2_pvgr_n5_d4b_postopen_forensics_v1%2Fn2_pvgr_n5_d4b_postopen_forensics.png">放大取证图</a>
           <a class="button" href="demo_t16_operator/results/n2_pvgr_n5_d4b_postopen_forensics_v1/result.json">取证机器结果</a>
           <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_population_field_derivative_result_audit_2026-07-19.md">正式结果审计</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_population_field_derivative_preregistration_2026-07-19.md">结果前协议</a>
           <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fn2_pvgr_n5_d4b_population_field_derivative_v1%2Fn2_pvgr_n5_d4b_population_field_derivative.png">放大结果图</a>
           <a class="button" href="demo_t16_operator/results/n2_pvgr_n5_d4b_population_field_derivative_v1/result.json">机器结果</a>
+          <a class="button" href="demo_t16_operator/results/n2_pvgr_n5_d4b_population_field_derivative_v1/validation_report.json">独立验证</a>
         </div>
       </div>
 
