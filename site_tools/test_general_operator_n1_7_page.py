@@ -18,6 +18,7 @@ RESULT_N19 = (
     ROOT
     / "demo_t16_operator/results/jacru_n1_9_global_contrast_postopen_full1"
 )
+N2_READINESS = ROOT / "docs/oerf_n2_contract_readiness_public_summary.json"
 
 
 def test_focused_page_exposes_n1_7_verdict_without_success_language() -> None:
@@ -173,3 +174,39 @@ def test_public_n1_9_package_contains_no_checkpoint_or_array() -> None:
     assert not {
         path.suffix.lower().lstrip(".") for path in RESULT_N19.iterdir()
     } & forbidden
+
+
+def test_focused_page_exposes_n2_contract_as_waiting_not_algorithm_success() -> None:
+    html = PAGE.read_text(encoding="utf-8")
+    assert 'id="n2-contract"' in html
+    assert "N2_WAITING_FOR_LAB_INPUT" in html
+    assert "资料齐备度 0 / 7" in html
+    assert "尚未运行算法，也没有算法成绩" in html
+    assert "先看本科生解释：第100节" in html
+    assert "左右滑动查看完整四列" in html
+    assert "这一步没有“算法增益”" in html
+    assert "docs%2Foerf_n2_physical_mismatch_data_contract_2026-07-18.md" in html
+    assert "docs%2Foerf_n2_advisor_intake_brief_2026-07-18.md" in html
+    assert "data_templates/oerf_n2_lab_intake.placeholder.json" in html
+    assert "data_templates/oerf_n2_real_bost_contract.schema.json" in html
+    assert "docs/oerf_n2_contract_readiness_public_summary.json" in html
+    assert "site_tools/validate_oerf_n2_real_bost_contract.py" in html
+    n2 = html.split('<section id="n2-contract"', 1)[1].split(
+        '<section id="algorithm"', 1
+    )[0]
+    assert '<td class="negative">FAIL</td>' not in n2
+    assert n2.count('class="pending">待') == 7
+
+
+def test_n2_public_readiness_is_redacted_and_authorizes_nothing() -> None:
+    report = json.loads(N2_READINESS.read_text(encoding="utf-8"))
+    assert report["status"] == "N2_WAITING_FOR_LAB_INPUT"
+    assert report["passed_gate_count"] == 0
+    assert report["required_gate_count"] == 7
+    assert len(report["failed_gates"]) == 7
+    assert not any(report["authorization"].values())
+    assert report["privacy"] == {
+        "permission_values_emitted": False,
+        "raw_dataset_or_case_ids_emitted": False,
+        "source_paths_emitted": False,
+    }

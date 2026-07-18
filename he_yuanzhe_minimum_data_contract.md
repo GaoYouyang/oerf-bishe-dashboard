@@ -3,9 +3,16 @@
 更新时间：2026-07-17
 用途：把“能不能给我一些数据”改成一次可以回答、可以交付、不会反复补字段的请求。先拿最小包，不要求师兄一次整理完整论文数据。
 
+> 2026-07-18 更新：N1.9 已关闭继续枚举 rank-6 basis 的路线。当前以
+> [N2 真实物理失配与数据合同](docs/oerf_n2_physical_mismatch_data_contract_2026-07-18.md)
+> 为准；机器 schema、空白 intake 和 fail-closed validator 分别位于
+> `data_templates/oerf_n2_real_bost_contract.schema.json`、
+> `data_templates/oerf_n2_lab_intake.placeholder.json` 与
+> `site_tools/validate_oerf_n2_real_bost_contract.py`。本页其余内容保留为历史请求清单。
+
 ## 可以直接发的短消息
 
-> 师兄，我准备先做“几何与噪声条件化的低调用次数 BOST 三维重建算子”，核心仍显式调用现有 forward/adjoint，不改实验物理。为了让公开数据上的代码以后能直接迁移，能否先给我一个最小样例包：同一工况 1-3 帧的九视角 reference/flow-on 图或处理后 displacement，九路视角的 mask 与标定/射线参数，一份现有重构结果，以及每个字段的单位和公开边界？如果只能给 displacement 也可以。另请确认组内 forward 是否已有 `F` 和 `F^T/J^T`，以及 flow-off 重复帧能否用于估计逐相机/逐像素噪声。我先只交付 loader、伴随检查、预白化强基线和 held-out-view 报告，不先动完整数据。
+> 师兄，我准备先做“几何与噪声条件化的低调用次数 BOST 三维重建算子”，核心仍显式调用现有 forward/adjoint，不改实验物理。为了让公开数据上的代码以后能直接迁移，能否先给我一个最小样例包：同一工况 1-3 帧的九视角 reference/flow-on 图或处理后 displacement，九路视角的 mask 与标定/射线参数，一份现有重构结果，以及每个字段的单位和公开边界？如果只能给 displacement 也可以。另请确认组内 forward 是否已有线性 `A/A^T`，或非线性 `F` 的 `JVP/VJP`，以及 flow-off 重复帧能否用于估计逐相机/逐像素噪声。我先只交付 loader、伴随检查、预白化强基线和 held-out-view 报告，不先动完整数据。
 
 当前 Metric-A 的技术追问可另发一句：
 
@@ -35,13 +42,13 @@
 | streaming 能力 | 是否可逐 block 累加 `sum_{l in G} C_l` 后取绝对值，而不保存完整矩阵 | 判断 32³/64³ 是否能本机或服务器执行 |
 | 支持与零质量 | data-coupled support 如何定义，零 row/column 怎样固定或剔除 | 使 Schur 证明在正质量支持上有定义 |
 
-若组内只能调用最终 `F/F^T`，拿不到 primitive decomposition，也无法低成本构造任何
+若组内只能调用最终线性 `A/A^T`，拿不到 primitive decomposition，也无法低成本构造任何
 部分分组，那么 v3 只能保留为合成机制，不应继续投入大模型。此时应转向 H2 的 forward
 mismatch 或有真实序列的 4D 路线。
 
 ## P1：决定论文创新是否成立
 
-1. **噪声标定**：每路相机至少 20-50 张 flow-off 重复帧；若已有光流置信度、相关峰值、亮度或 phase variance，一并给出。
+1. **噪声标定**：每个固定条件每路相机至少 50 张 flow-off 重复帧，并给逐文件 manifest；若已有光流置信度、相关峰值、亮度或 phase variance，一并给出。若要研究背景依赖误差，另需多个独立背景，不能用同背景 repeats 替代。
 2. **几何变化**：装置是否只有固定九路，还是不同实验日、裁剪、光纤映射或相机微移会变化？
 3. **support 来源**：support/mask 是独立 CAD/标定得到，还是看了重构结果后手工画的？部署时能否获得？
 4. **留出视角**：是否允许固定一条相机只作 `Q_audit`，不参加训练和停止？

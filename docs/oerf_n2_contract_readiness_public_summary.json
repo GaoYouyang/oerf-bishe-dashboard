@@ -1,0 +1,106 @@
+{
+  "authorization": {
+    "may_claim_algorithm_success": false,
+    "may_claim_real_bost_improvement": false,
+    "may_open_locked_audit": false,
+    "may_preregister_n2_experiment": false,
+    "may_publish_private_paths_or_raw_data": false,
+    "may_train_on_non_audit_units_after_preregistration": false
+  },
+  "claim_boundary": [
+    "This report validates metadata readiness only.",
+    "A sealed audit split cannot be opened by this validator.",
+    "A passing contract is not a reconstruction, generalization, or publication result.",
+    "Synthetic field metrics and experimental reprojection metrics remain separate."
+  ],
+  "declared_primary_endpoint": "heldout_reprojection_relative_l2",
+  "declared_primary_mismatch": "unknown",
+  "evidence_scope": "CONTRACT_READINESS_ONLY_NO_RECONSTRUCTION_NO_MODEL_RESULT",
+  "failed_gates": [
+    "identity_and_units",
+    "observation_and_geometry",
+    "operator_and_adjoint",
+    "physical_mismatch_evidence",
+    "independent_split_lock",
+    "endpoint_legality",
+    "permissions_and_claims"
+  ],
+  "frozen_thresholds": {
+    "dot_product_relative_error_max": 1e-06,
+    "finite_difference_relative_error_max": 0.0001,
+    "minimum_flow_off_repeats_per_fixed_condition": 50
+  },
+  "gates": [
+    {
+      "detail": "仍是待师兄填写的 intake 占位表",
+      "gate": "identity_and_units",
+      "passed": false
+    },
+    {
+      "detail": "接口样例至少要有一个 sensor、两个 reconstruction views 和一个 audit view",
+      "gate": "observation_and_geometry",
+      "passed": false
+    },
+    {
+      "detail": "只有 reprojection 或无 operator 接口，不能做同预算求解器实验",
+      "gate": "operator_and_adjoint",
+      "passed": false
+    },
+    {
+      "detail": "主失配尚未唯一冻结，或冻结发生在 audit 打开之后",
+      "gate": "physical_mismatch_evidence",
+      "passed": false
+    },
+    {
+      "detail": "split unit、至少两个 training units 或永久 audit units 尚未定义",
+      "gate": "independent_split_lock",
+      "passed": false
+    },
+    {
+      "detail": "held-out reprojection 需要永久 audit units 和预先固定 mask",
+      "gate": "endpoint_legality",
+      "passed": false
+    },
+    {
+      "detail": "尚未得到本机存储和非 audit 训练的明确许可",
+      "gate": "permissions_and_claims",
+      "passed": false
+    }
+  ],
+  "inventory": {
+    "audit_locked_view_count": 0,
+    "audit_unit_count": 0,
+    "fixed_condition_evidence_count": 0,
+    "minimum_flow_off_repeat_count_per_fixed_condition": 0,
+    "provenance_manifest_entry_count": 0,
+    "reconstruction_view_count": 0,
+    "sensor_count": 0,
+    "split_unit": "unknown",
+    "training_unit_count": 0,
+    "tuning_unit_count": 0,
+    "validation_unit_count": 0,
+    "validation_view_count": 0,
+    "view_count": 0
+  },
+  "next_actions": [
+    "仍是待师兄填写的 intake 占位表",
+    "接口样例至少要有一个 sensor、两个 reconstruction views 和一个 audit view",
+    "只有 reprojection 或无 operator 接口，不能做同预算求解器实验",
+    "主失配尚未唯一冻结，或冻结发生在 audit 打开之后",
+    "split unit、至少两个 training units 或永久 audit units 尚未定义",
+    "held-out reprojection 需要永久 audit units 和预先固定 mask",
+    "尚未得到本机存储和非 audit 训练的明确许可"
+  ],
+  "passed_gate_count": 0,
+  "privacy": {
+    "permission_values_emitted": false,
+    "raw_dataset_or_case_ids_emitted": false,
+    "source_paths_emitted": false
+  },
+  "private_identifiers_were_counted_but_not_emitted": false,
+  "record_kind": "LAB_INTAKE_PLACEHOLDER",
+  "required_gate_count": 7,
+  "schema_version": "oerf-n2-real-bost-contract-readiness-public-1.0",
+  "source_class": "unknown",
+  "status": "N2_WAITING_FOR_LAB_INPUT"
+}

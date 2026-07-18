@@ -2501,3 +2501,41 @@ consistency”，而不是“再换一个 DeepONet/FNO 名字”。没有真实�
 
 完整证据见 [N1.9 分支关闭报告](jacru_n1_9_global_contrast_branch_closed_2026-07-18.md)，给师兄的
 短稿见 [N1.9 审核 brief](jacru_n1_9_advisor_review_brief_2026-07-18.md)。
+
+## 100. N2 第一步：把“等师兄给数据”改成七个机器可检查的门
+
+N1.9 之后不能再在同一批 synthetic case 上换 basis。真正的问题是：实验室的主要误差到底来自
+有限孔径、光线弯曲、标定漂移、位移提取还是离散化？它们共享图像、几何、mask、forward 和 split，
+但需要的额外对照数据、forward fidelity 与论文终点不同，所以我先没有写新网络。
+
+这次做了一个 JSON 数据合同和 fail-closed 验证器。合同会检查七件事：case/来源/单位/support、观测和
+相机几何、线性 A/Aᵀ 或非线性 JVP/VJP、唯一主失配、独立 split、合法论文终点、存储与公开权限。它还直接拒绝
+train/audit 重叠、`../` 路径、无许可公开 raw data、拿重投影冒充唯一三维真值，以及 audit 参与选
+模型或早停。
+
+当前我们手里还没有 OERF 最小 case，所以空白 intake 的**资料齐备度**就是 `0/7`，状态
+`N2_WAITING_FOR_LAB_INPUT`。它不授权预注册、不授权训练、不打开 audit，也不允许写成功。测试里另有
+一个纯合同 fixture 能过 7/7，但代码强制把它标为 `CONTRACT_TEST_FIXTURE_VALIDATED_NOT_REAL_DATA`，
+不能冒充实验数据。
+
+**讲人话：**以前“师兄给我点数据”像要一箱没有标签的零件，拿到后才发现单位、相机、mask 或权限
+不齐。现在先给每个零件贴标签，并把最后一箱 audit 上锁。标签都齐只代表可以开始做实验，不代表
+机器已经造好，更不代表论文成功。
+
+独立红队随后发现，第一版门禁虽然报告谨慎，代码仍有能被绕过的地方：非法 schema 没有真正执行、
+`NaN` 能骗过数值比较、未授权合同仍返回成功退出码、session split 可能把 audit view 藏进 training，
+声明的 f-number 也没有和真实 sensor/condition 绑定。这些都已修正。现在验证器真正执行 JSON Schema
+2020-12；逐固定条件读取 flow-off manifest；复算 split digest；在 view/sensor/run/session/condition/
+geometry 任一拆分单位上强制 audit 角色一致；并要求真实记录有来源 manifest，synthetic fixture 不能靠
+改两个字符串冒充实验数据。专项回归为 `28/28` 通过。
+
+科学红队还把两种容易混淆的证据拆开：同一背景的 flow-off repeats 用来估时间噪声与慢漂移，多个
+独立背景才用来识别 pattern-dependent bias；PSU 公开数据说明标定状态应完整记录，但没有直接证明
+calibration drift。网页因此不再把资料缺失画成红色 `FAIL`，而用中性的“待实验室提供/待确认”。
+
+最重要的新决策是只让师兄先选一个 primary mismatch：若有多 f-number 和 cone forward，做有限孔径；
+若有多次标定/session，做标定漂移；若只有 raw image pairs，先做位移不确定度；若只有处理后位移和
+单一真实场，就先交 loader、adjoint 与强基线，继续关闭算法主张。
+
+完整合同见 [N2 真实物理失配与数据合同](oerf_n2_physical_mismatch_data_contract_2026-07-18.md)，一页
+提问稿见 [N2 师兄确认单](oerf_n2_advisor_intake_brief_2026-07-18.md)。

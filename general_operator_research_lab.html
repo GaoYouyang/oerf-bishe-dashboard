@@ -92,6 +92,10 @@
     tr:last-child td { border-bottom:0; }
     .positive { color:var(--teal); font-weight:800; }
     .negative { color:var(--coral); font-weight:800; }
+    .pending { color:var(--gold); font-weight:800; }
+    .pending-state { border-top:4px solid var(--gold); }
+    .pending-state b { color:var(--gold); }
+    .table-scroll-hint { display:none; margin:8px 2px -4px; color:var(--muted); font-size:12px; font-weight:760; }
     .pipeline { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; margin:14px 0; }
     .pipeline div { position:relative; min-height:112px; padding:12px; border-top:4px solid var(--teal); background:rgba(255,255,255,.94); }
     .pipeline div:not(:last-child)::after { content:"→"; position:absolute; right:-10px; top:37px; z-index:2; color:var(--blue); font-size:20px; font-weight:900; }
@@ -151,6 +155,8 @@
       .pipeline div::after { display:none; }
       .section-head { align-items:flex-start; flex-direction:column; }
       .filter-field { min-width:100%; }
+      .table-scroll-hint { display:block; }
+      .result-table-wrap { box-shadow:inset -14px 0 16px -18px rgba(23,37,43,.75); }
     }
   </style>
 </head>
@@ -170,6 +176,7 @@
       <a href="#n1-7-result">N1.7 判决</a>
       <a href="#n1-8-result">N1.8 判决</a>
       <a href="#n1-9-result">N1.9 判决</a>
+      <a href="#n2-contract">N2 数据合同</a>
       <a href="#algorithm">安全算子</a>
       <a href="#candidates">算法路线</a>
       <a href="document_reader.html?doc=docs%2Fcancellation_aware_operator_learning_literature_map_2026-07-17.md">文献地图</a>
@@ -185,7 +192,7 @@
     <p class="lead">研究主线已经从“再调一个重建网络”收敛到一个可证伪的逆问题：三维 BOST 的界面恢复、forward-model mismatch 与 measurement/adjoint consistency 必须同时成立。N1.9 在提交 <code>52490e5</code> 后比较两个同为 rank-6、25F/24Aᵀ 的 contrast/global-K 表示；Residual-Contrast 得到 +6.207% field、+10.672% H1，却因阻尼后的 extra-headroom 51.408% 未到 60% 而止步 16/17。Damping-Contrast 更偏观测一致性，但只过 15/17。候选对分支已经关闭，下一主线转向真实 camera/ray/mask/calibration 合同与按 geometry/session/camera 留出的独立 holdout。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">M2.2 · NULL HEADROOM</span><span class="chip coral">N1.2 · 0 / 16 DECISIONS</span><span class="chip coral">N1.3 · 0 / 128 PASS</span><span class="chip coral">N1.4 · 0 / 33 PASS</span><span class="chip coral">N1.5 · CONFIRMATION NO-GO</span><span class="chip coral">N1.6 · POSTOPEN NO-GO</span><span class="chip coral">N1.7 · REPRESENTATION NO-GO</span><span class="chip coral">N1.8 · NO FRESH AUTH</span><span class="chip coral">N1.9 · BRANCH CLOSED</span><span class="chip blue">RESIDUAL · +6.207%</span><span class="chip coral">EXTRA · 51.408% &lt; 60%</span><span class="chip coral">LEARNER · NOT STARTED</span><span class="chip coral">REAL FLOW-OFF · ABSENT</span></div>
+        <div class="chips"><span class="chip blue">M2.2 · NULL HEADROOM</span><span class="chip coral">N1.2 · 0 / 16 DECISIONS</span><span class="chip coral">N1.3 · 0 / 128 PASS</span><span class="chip coral">N1.4 · 0 / 33 PASS</span><span class="chip coral">N1.5 · CONFIRMATION NO-GO</span><span class="chip coral">N1.6 · POSTOPEN NO-GO</span><span class="chip coral">N1.7 · REPRESENTATION NO-GO</span><span class="chip coral">N1.8 · NO FRESH AUTH</span><span class="chip coral">N1.9 · BRANCH CLOSED</span><span class="chip gold">N2 · 7 项待确认</span><span class="chip blue">RESIDUAL · +6.207%</span><span class="chip coral">EXTRA · 51.408% &lt; 60%</span><span class="chip coral">LEARNER · NOT STARTED</span><span class="chip gold">REAL FLOW-OFF · 待提供</span></div>
         <h2>当前唯一主线：先拿到真实 mismatch 与 holdout 合同，再设计可验证算法</h2>
         <p>N1.9 已把“contrast 乘 residual 还是 damping”这一窄问题跑完。Residual 更保护界面/H1，Damping 更贴近 data residual 与 support-adjoint；两个目标仍未统一，且两个候选都没有获得新 split 或 learner 授权。接下来不再枚举旧 development 上的低秩地图，而先把 camera pose、ray/pixel、mask/confidence、标定版本、<code>A/Aᵀ</code> 与永久 holdout 变成可审计的数据合同。</p>
         <ol>
@@ -208,6 +215,7 @@
         </ol>
         <div class="actions" style="margin:14px 0;">
           <a class="button primary" href="#n1-9-result">看 N1.9 判决</a>
+          <a class="button" href="#n2-contract">打开 N2 数据合同</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_9_advisor_review_brief_2026-07-18.md">发给师兄的 N1.9 brief</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_9_global_contrast_branch_closed_2026-07-18.md">完整 N1.9 报告</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_7_geometry_krylov_no_go_2026-07-18.md">完整 N1.7 NO-GO</a>
@@ -1730,6 +1738,78 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
       <div class="alert critical" style="margin-top:14px;"><strong>当前论文边界</strong><span>可以写 N1.9 的预冻结候选对、严格分支关闭，以及“界面恢复与 measurement consistency 尚未统一”的 opened-synthetic 观察；不能写 Residual 算法胜出、camera/global-K 方法均无效、fresh/OOD 泛化、真实 BOST 提升或优于 DeepONet/FNO/NeRIF/TDBOST。</span></div>
     </section>
 
+    <section id="n2-contract" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">N2 · machine-readable intake · fail-closed · 2026-07-18</div>
+          <h2>先证明数据、物理和留出合同成立，再允许写新算法</h2>
+          <p><strong>我们还没拿到 OERF 最小真实 case，也尚未运行 N2 算法。</strong>第一步是向实验室确认七类必要信息；七项齐全后才允许预注册并使用非 audit 数据。技术上，这套清单已经落成 JSON schema、空白 intake、语义验证器和脱敏检查结果，机器状态为 <code>N2_WAITING_FOR_LAB_INPUT</code>。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=100-n2-第一步-把-等师兄给数据-改成七个机器可检查的门">先看本科生解释：第100节</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foerf_n2_advisor_intake_brief_2026-07-18.md">师兄一页确认单</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foerf_n2_physical_mismatch_data_contract_2026-07-18.md">完整技术合同</a>
+          <a class="button" href="data_templates/oerf_n2_lab_intake.placeholder.json">空白 intake JSON</a>
+          <a class="button" href="data_templates/oerf_n2_real_bost_contract.schema.json">查看字段规范</a>
+          <a class="button" href="docs/oerf_n2_contract_readiness_public_summary.json">查看机器检查结果</a>
+          <a class="button" href="site_tools/validate_oerf_n2_real_bost_contract.py">查看检查程序</a>
+        </div>
+      </div>
+      <div class="metric-grid real-metric-grid">
+        <div class="metric pending-state"><b>资料齐备度 0 / 7</b><span>待实验室确认七项；尚未运行算法，也没有算法成绩</span></div>
+        <div class="metric pending-state"><b>等待实验室输入</b><span>当前不授权预注册、训练或 audit 开封</span></div>
+        <div class="metric"><b>≤ 1e-6</b><span>未来线性 A/Aᵀ 点积相对误差门</span></div>
+        <div class="metric"><b>≥ 50</b><span>每固定条件 flow-off repeats 工程门；非普适样本量</span></div>
+      </div>
+      <p class="table-scroll-hint" aria-hidden="true">左右滑动查看完整四列</p>
+      <div class="result-table-wrap" tabindex="0" aria-label="七项真实数据合同，窄屏可左右滑动">
+        <table>
+          <thead><tr><th>合同门</th><th>现在</th><th>需要师兄/数据证明</th><th>不过门时禁止</th></tr></thead>
+          <tbody>
+            <tr><td>身份、单位与 support</td><td class="pending">待提供</td><td>case/run/session/geometry、来源 manifest、场变量、轴顺序、网格和米制边界</td><td>禁止猜轴、猜单位或拼接 case</td></tr>
+            <tr><td>观测与相机几何</td><td class="pending">待提供</td><td>raw/位移、mask、confidence、标定版本、ray bundle 或内外参</td><td>禁止训练固定 sensor tensor</td></tr>
+            <tr><td>operator 与伴随</td><td class="pending">待提供</td><td>线性 <code>A/Aᵀ</code> 或非线性 <code>F</code> 的 <code>JVP/VJP</code>、数值与 support 测试</td><td>禁止同预算 solver 论文主张</td></tr>
+            <tr><td>主物理失配</td><td class="pending">待确认</td><td>只选 aperture / bending / calibration / displacement / discretization 中一个</td><td>禁止给普通网络事后包装物理故事</td></tr>
+            <tr><td>独立 split 与 audit lock</td><td class="pending">待提供</td><td>view/sensor/run/session/geometry 单位、互斥列表、时间与可复算 SHA-256</td><td>禁止 fresh/OOD 措辞</td></tr>
+            <tr><td>主终点合法性</td><td class="pending">待确认</td><td>有独立真值才报 field/H1；否则用固定 mask 的 audit reprojection</td><td>禁止把重投影当唯一 3D 真值</td></tr>
+            <tr><td>权限与论文边界</td><td class="pending">待确认</td><td>本机保存/训练、组会、论文文字/图和公开派生指标分别确认</td><td>禁止组内文件进入 Git</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="two-col" style="margin-top:16px;">
+        <div class="panel">
+          <div class="chips"><span class="chip blue">PHYSICS FIRST</span><span class="chip coral">ONE PRIMARY MISMATCH</span></div>
+          <h3 style="margin-top:10px;">根据真实困境选择算法支路</h3>
+          <ol>
+            <li><strong>多 f-number/focus + cone forward：</strong>优先 finite-aperture discrepancy；比较 thin-ray、cone-ray、UBOS/NIRT 和 NeRIF 类表示。</li>
+            <li><strong>多 calibration/session：</strong>优先 calibration-drift conditioned unrolling；按 session 留出。</li>
+            <li><strong>raw image pairs + confidence：</strong>优先 displacement uncertainty；比较 Horn-Schunck、DeepFlow、CC/WOF。</li>
+            <li><strong>curved forward + JVP/VJP：</strong>研究 straight-to-curved correction，但必须过有限差分门。</li>
+            <li><strong>只有处理后位移和单一真实场：</strong>先做 loader、adjoint、强基线与 benchmark，不开新算法主张。</li>
+          </ol>
+        </div>
+        <div class="panel">
+          <div class="chips"><span class="chip gold">48 HOUR INTAKE</span><span class="chip coral">AUDIT STAYS SEALED</span></div>
+          <h3 style="margin-top:10px;">数据到手后的固定顺序</h3>
+          <ol>
+            <li>0–6 h：私有 manifest、权限、相对路径、checksum 与 split digest。</li>
+            <li>6–18 h：逐 view 原图/位移/mask/confidence、单位、轴与 ray 可视化。</li>
+            <li>18–30 h：dot-product、nonlinear finite difference、row order 与 support。</li>
+            <li>30–48 h：matched-call CGLS/Landweber/Tikhonov，只开 reconstruction/validation。</li>
+            <li>七门全过并先提交预注册后，才允许训练 non-audit units；验证器永不自动打开 audit。</li>
+          </ol>
+        </div>
+      </div>
+      <div class="source-grid" style="margin-top:14px;">
+        <article class="source-card"><div class="body"><span class="chip gold">位移链 · 同行评议研究</span><h3>Optical-flow BOS assessment</h3><p>背景 pattern、算法参数与高梯度结构会改变位移精度和可分辨范围。N2 因此把 raw pair、method、confidence 和 pattern ID 放入合同。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1007/s00348-022-03553-z">开放正式版</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">背景链 · 同行评议研究</span><h3>Dynamic-background BOS</h3><p>多独立背景可鉴别 pattern-dependent bias；同一背景的 flow-off repeats 主要估时间噪声与漂移，两类证据不再混写。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1007/s00348-021-03285-6">开放正式版</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">孔径链 · arXiv 研究稿</span><h3>Cone-ray depth of field</h3><p>有限孔径把单 ray 变成 ray bundle；f/22 到 f/4 显示 thin-ray 会平滑 sharp front。“同光路同几何成对采集”是本项目鉴别门，不是论文规定。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2402.15954">开放全文</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip blue">标定记录 · arXiv 研究稿</span><h3>PSU 70-view open BOST</h3><p>多姿态标定、共同全局坐标、固定 mask 与 validation views 给出合同范式；该论文没有直接研究 calibration drift。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2508.17120">开放全文</a><a class="button" href="https://doi.org/10.1007/s00348-026-04189-z">正式版</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip blue">神经场 · arXiv 研究稿</span><h3>Neural refractive index field</h3><p>九个光纤输入端形成九路投影；合成生成使用 RK4 弯曲光线，而当前 inversion 的标称路径建模差异是审慎推断，不是已完成消融。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2409.14722v2">开放全文</a></div></article>
+      </div>
+      <div class="alert critical"><strong>这一步没有“算法增益”</strong><span>schema 和 validator 是研究基础设施。它们能阻止数据泄漏、非法指标和错误权限，但不能证明新模型、真实重建或论文创新。下一次真正可证伪增量必须从师兄确认的一个 primary mismatch 和一个永久 audit unit 开始。</span></div>
+    </section>
+
     <section id="algorithm" class="band">
       <div class="section-head"><div><div class="eyebrow">当前算法 · RCCF v4 audited NO-GO</div><h2>确定性证书管安全，独立风险门成功阻止了无证据接管</h2><p>v3 的每个 partition 都保持 <code>M<sub>P</sub>≥|A|</code>，但安全不等于选得准。v4 使用部署可见 geometry、冻结三阈值、95% 联合 family budget 和 <code>paired_cross</code> 回退。首轮校准没有同时得到风险与 coverage 证据，因此全局关闭 selector；这证明 fail-closed 路径可执行，不证明候选算法有性能价值。</p></div><div class="actions"><a class="button primary" href="document_reader.html?doc=demo_t16_operator%2Fresults%2Fobservable_risk_fallback_smoke_public%2FREADME.md">看 v4 公开诊断</a><a class="button" href="document_reader.html?doc=docs%2Fv4_risk_calibrated_certified_fallback_protocol_2026-07-17.md">读 v4 预注册协议</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">读第 58 节复盘</a><a class="button" href="document_reader.html?doc=docs%2Fcancellation_aware_operator_learning_literature_map_2026-07-17.md">读文献证据地图</a></div></div>
       <div class="pipeline" aria-label="RCCF v4 算法流水线">
@@ -1866,7 +1946,7 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
         <article class="source-card"><div class="body"><span class="chip blue">当前真实基准</span><h3>PSU open-source 70-view BOST</h3><p><strong>读：</strong>70 views、9-view limited-data reconstruction、NIRT + TV、held-out deflection 与实验 state estimation。</p><p><strong>提取：</strong>数据集给了真实相机/位移/几何和独立 view 设计，但单个流场不能替代 flow-off noise repeats。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2508.17120">开放全文</a><a class="button" href="https://link.springer.com/article/10.1007/s00348-026-04189-z">正式版</a><a class="button" href="https://www.datacommons.psu.edu/download/engineering/molnar-et-al-open-source-bos-tomography-dataset-of-high-speed-flow-over-a-flight-body-2025/">官方数据</a></div></article>
         <article class="source-card"><div class="body"><span class="chip gold">物理与误差底座</span><h3>Raffel · BOS techniques review</h3><p><strong>读：</strong>背景相关、空间分辨率、路径积分、Gladstone-Dale、背景质量与 correlation noise。</p><p><strong>提取：</strong>detector feature 失配可能来自背景、窗口、噪声与处理链，不能自动解释为真实 shock。</p></div><div class="actions"><a class="button primary" href="https://link.springer.com/article/10.1007/s00348-015-1927-5">开放综述</a></div></article>
         <article class="source-card"><div class="body"><span class="chip gold">front 测量</span><h3>Optical-flow BOS for shock/compressible flow</h3><p><strong>读：</strong>光流如何解析局部高梯度、位移场如何连接密度梯度，以及 shock 附近的空间保真。</p><p><strong>提取：</strong>验证 front proxy 时必须同时考虑位移估计算法、reference frame 与高梯度 blur，不能只调路由器。</p></div><div class="actions"><a class="button" href="https://link.springer.com/article/10.1007/s00348-016-2271-0">shock-wave BOS</a><a class="button primary" href="https://link.springer.com/article/10.1007/s00348-022-03553-z">compressible-flow assessment</a></div></article>
-        <article class="source-card"><div class="body"><span class="chip coral">系统误差提醒</span><h3>Dynamic backgrounds for BOS systematic error</h3><p><strong>读：</strong>多 reference background 与 median displacement 怎样降低系统误差。</p><p><strong>提取：</strong>flow-off repeats 不只是估一个标量 σ；它们还应暴露 registration、background-dependent bias、坏点与空间相关结构。</p></div><div class="actions"><a class="button primary" href="https://link.springer.com/article/10.1007/s00348-021-03285-6">Experiments in Fluids</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">系统误差提醒</span><h3>Dynamic backgrounds for BOS systematic error</h3><p><strong>读：</strong>多独立 reference backgrounds 与 median displacement 怎样降低背景相关系统误差。</p><p><strong>提取：</strong>同背景 flow-off repeats 用于时间噪声与慢漂移；background-dependent bias 需要多个独立背景或受控背景位移，不能把两类证据混成一个标量 σ。</p></div><div class="actions"><a class="button primary" href="https://link.springer.com/article/10.1007/s00348-021-03285-6">Experiments in Fluids</a></div></article>
         <article class="source-card"><div class="body"><span class="chip blue">算子基线</span><h3>FNO / F-FNO</h3><p><strong>读：</strong>spectral kernel、mode truncation、resolution experiment 与 factorization。</p><p><strong>提取：</strong>thin-front 高频丢失和规则网格偏置。</p></div><div class="actions"><a class="button" href="https://openreview.net/forum?id=c8P9NQVtmnO">FNO</a><a class="button" href="https://iclr.cc/virtual/2023/poster/10680">F-FNO</a></div></article>
         <article class="source-card"><div class="body"><span class="chip coral">直接碰撞</span><h3>FCG-NO</h3><p><strong>读：</strong>把 neural operator 作为 flexible conjugate-gradient 的非线性预条件器、Krylov residual 采样和 solver-aligned loss。</p><p><strong>边界：</strong>“神经算子 + Krylov preconditioner”已由 ICML 2024 占据；我们的贡献必须来自 BOST 梯度观测、有限孔径失配、可变相机集与严格回退证据。</p></div><div class="actions"><a class="button primary" href="https://openreview.net/forum?id=J0ty1o7nCj">ICML / OpenReview</a></div></article>
         <article class="source-card"><div class="body"><span class="chip gold">经典强基线</span><h3>Optimal spectral filters</h3><p><strong>读：</strong>如何用 calibration data 预计算谱滤波器、风险函数与参数选择，而不是默认手工 Tikhonov。</p><p><strong>提取：</strong>learned spectral direction 必须同时比较 validation-selected Sobolev、Tikhonov/TSVD 和非神经最优滤波；仅出现 Fourier multiplier 不构成新意。</p></div><div class="actions"><a class="button" href="https://epubs.siam.org/doi/10.1137/100812938">SIAM 正式页</a><a class="button" href="https://epubs.siam.org/doi/10.1137/15M1019581">Near-optimal filters</a></div></article>
