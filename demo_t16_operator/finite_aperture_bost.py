@@ -45,6 +45,17 @@ def _validate_radii(radii: Sequence[float]) -> np.ndarray:
     return values
 
 
+def _validate_disk_points(points: np.ndarray) -> np.ndarray:
+    values = np.asarray(points, dtype=np.float64)
+    if values.ndim != 2 or values.shape[1] != 2 or values.shape[0] == 0:
+        raise ValueError("normalized_disk_points must have shape [sample, 2]")
+    if np.any(~np.isfinite(values)):
+        raise ValueError("normalized_disk_points must be finite")
+    if np.any(np.sum(values * values, axis=1) > 1.0 + 1e-12):
+        raise ValueError("normalized_disk_points must lie in the unit disk")
+    return values
+
+
 def _raw_operator(
     n: int,
     depth: int,
@@ -102,6 +113,77 @@ def _raw_operator(
                     )
                     pixel_row += interpolation @ derivative
                 rows[z_index, view_index, detector_index] = pixel_row / float(len(disk))
+    return rows
+
+
+def _raw_subray_operator_bank(
+    n: int,
+    depth: int,
+    angles_degrees: np.ndarray,
+    *,
+    aperture_radius: float,
+    normalized_disk_points: np.ndarray,
+    path_samples: int,
+    cone_u: float,
+    cone_z: float,
+    bend: float,
+) -> np.ndarray:
+    """Return one unnormalised operator for each prescribed aperture point."""
+
+    shape = (int(depth), int(n), int(n))
+    dz = _derivative_matrix(shape, 0)
+    dy = _derivative_matrix(shape, 1)
+    dx = _derivative_matrix(shape, 2)
+    detector_x = np.linspace(-0.82, 0.82, int(n))
+    detector_z = np.linspace(-0.82, 0.82, int(depth))
+    path = np.linspace(-1.5, 1.5, int(path_samples))
+    dl = float(path[1] - path[0])
+    disk = _validate_disk_points(normalized_disk_points)
+    rows = np.zeros(
+        (len(disk), depth, len(angles_degrees), n, depth * n * n),
+        dtype=np.float64,
+    )
+
+    for sample_index, (disk_x, disk_z) in enumerate(disk):
+        for z_index, z0 in enumerate(detector_z):
+            for view_index, angle in enumerate(np.asarray(angles_degrees, dtype=float)):
+                theta = np.deg2rad(angle)
+                line = np.array([np.cos(theta), np.sin(theta), 0.0])
+                transverse = np.array([-np.sin(theta), np.cos(theta), 0.0])
+                for detector_index, u0 in enumerate(detector_x):
+                    subray_u = float(u0 + aperture_radius * disk_x)
+                    subray_z = float(z0 + aperture_radius * disk_z)
+                    direction = line + float(cone_u) * subray_u * transverse
+                    direction = direction + float(cone_z) * subray_z * np.array(
+                        [0.0, 0.0, 1.0]
+                    )
+                    direction /= np.linalg.norm(direction)
+                    sensitivity = transverse - np.dot(transverse, direction) * direction
+                    sensitivity /= np.linalg.norm(sensitivity)
+                    interpolation = np.zeros(depth * n * n, dtype=np.float64)
+                    for distance in path:
+                        normalized = distance / max(abs(path[0]), abs(path[-1]))
+                        curve = (
+                            float(bend)
+                            * (1.0 - normalized * normalized)
+                            * (0.35 + abs(subray_u))
+                            * transverse
+                        )
+                        point = subray_u * transverse + subray_z * np.array(
+                            [0.0, 0.0, 1.0]
+                        )
+                        point = point + distance * direction + curve
+                        interpolation += _trilinear_row(
+                            float(point[0]), float(point[1]), float(point[2]), shape
+                        ) * dl
+                    derivative = (
+                        sensitivity[0] * dx
+                        + sensitivity[1] * dy
+                        + sensitivity[2] * dz
+                    )
+                    rows[sample_index, z_index, view_index, detector_index] = (
+                        interpolation @ derivative
+                    )
     return rows
 
 
@@ -244,3 +326,68 @@ def build_finite_aperture_operator_bank(
     if not np.all(np.isfinite(bank)):
         raise RuntimeError("finite-aperture operator bank contains non-finite values")
     return bank
+
+
+def build_aperture_subray_operator_bank(
+    n: int,
+    depth: int,
+    angles_degrees: np.ndarray,
+    normalized_disk_points: np.ndarray,
+    *,
+    aperture_radius: float,
+    path_samples: int = 22,
+    cone_u: float = 0.07,
+    cone_z: float = 0.05,
+    bend: float = 0.035,
+    normalization_scale: float | None = None,
+    dtype: np.dtype | type = np.float64,
+) -> np.ndarray:
+    """Build one operator per prescribed point on the normalized aperture disk.
+
+    The result has shape ``[sample,depth,view,detector,voxel]``.  This interface
+    is intended for quadrature and variance-reduction audits: it exposes the
+    aperture integrand without changing the historical deterministic renderer.
+    It remains the same prescribed weak-deflection geometry surrogate and is
+    not nonlinear ray tracing or an experimental camera model.
+    """
+
+    if n < 3 or depth < 2 or path_samples < 8:
+        raise ValueError("grid and path sampling are too small")
+    radius = float(aperture_radius)
+    if not np.isfinite(radius) or radius < 0.0:
+        raise ValueError("aperture_radius must be finite and non-negative")
+    angles = np.asarray(angles_degrees, dtype=float)
+    if angles.ndim != 1 or angles.size == 0:
+        raise ValueError("angles_degrees must be a non-empty one-dimensional array")
+    disk = _validate_disk_points(normalized_disk_points)
+    scale = (
+        finite_aperture_reference_scale(
+            n,
+            depth,
+            angles,
+            aperture_samples=1,
+            path_samples=path_samples,
+            cone_u=cone_u,
+            cone_z=cone_z,
+            bend=bend,
+        )
+        if normalization_scale is None
+        else float(normalization_scale)
+    )
+    if not np.isfinite(scale) or scale <= 0.0:
+        raise ValueError("normalization_scale must be finite and strictly positive")
+    raw = _raw_subray_operator_bank(
+        n,
+        depth,
+        angles,
+        aperture_radius=radius,
+        normalized_disk_points=disk,
+        path_samples=path_samples,
+        cone_u=cone_u,
+        cone_z=cone_z,
+        bend=bend,
+    )
+    output = (raw / scale).astype(dtype, copy=False)
+    if not np.all(np.isfinite(output)):
+        raise RuntimeError("aperture subray operator bank contains non-finite values")
+    return output

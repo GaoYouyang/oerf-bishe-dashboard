@@ -30,8 +30,8 @@ def test_page_keeps_interface_and_algorithm_claims_separate() -> None:
     )[0]
     assert "0 / 7 N2 AUTHORIZATION" in section
     assert "N2 operator gate 仍为 false" in section
-    assert "下一候选只冻结问题，不宣称算法" in section
-    assert "只允许 synthetic cost/variance 假设" in section
+    assert "下一候选是设计假设，不是已提出的新算法" in section
+    assert "当前不授权训练" in section
     assert "真实 finite-aperture superiority" in section
 
 

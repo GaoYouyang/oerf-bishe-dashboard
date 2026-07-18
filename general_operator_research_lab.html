@@ -177,6 +177,7 @@
       <a href="#n1-8-result">N1.8 判决</a>
       <a href="#n1-9-result">N1.9 判决</a>
       <a href="#n2-contract">N2 数据合同</a>
+      <a href="#n2-cvcr-n0">N2 孔径机制门</a>
       <a href="#algorithm">安全算子</a>
       <a href="#candidates">算法路线</a>
       <a href="document_reader.html?doc=docs%2Fcancellation_aware_operator_learning_literature_map_2026-07-17.md">文献地图</a>
@@ -189,33 +190,24 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">研究主线已经从“再调一个重建网络”收敛到一个可证伪的逆问题：三维 BOST 的界面恢复、forward-model mismatch 与 measurement/adjoint consistency 必须同时成立。N1.9 在提交 <code>52490e5</code> 后比较两个同为 rank-6、25F/24Aᵀ 的 contrast/global-K 表示；Residual-Contrast 得到 +6.207% field、+10.672% H1，却因阻尼后的 extra-headroom 51.408% 未到 60% 而止步 16/17。Damping-Contrast 更偏观测一致性，但只过 15/17。候选对分支已经关闭，下一主线转向真实 camera/ray/mask/calibration 合同与按 geometry/session/camera 留出的独立 holdout。</p>
+    <p class="lead">当前主线已进入 N2：有限孔径/路径积分怎样与 NeRIF 三维重建和可微算子一致性结合。第一个二折二次孔径控制变量已按预注册正常跑完，但参考积分在困难工况未收敛，机器保持 <code>HOLD_REFERENCE_QUADRATURE_NOT_CONVERGED</code>；4096 点事后阶数检查仍有约 0.12% 末级差。候选的描述性 RMSE 又明显输给 scrambled Sobol / sunflower QMC，且统计骨架与既有控制变量文献直接碰撞，因此 N0 冻结为基线。下一设计转向 NeRIF 双输出驱动的路径多保真残差、同随机状态 forward/JVP/VJP 与反应前沿 fail-closed，而不是继续给普通控制变量堆网络。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">M2.2 · NULL HEADROOM</span><span class="chip coral">N1.2 · 0 / 16 DECISIONS</span><span class="chip coral">N1.3 · 0 / 128 PASS</span><span class="chip coral">N1.4 · 0 / 33 PASS</span><span class="chip coral">N1.5 · CONFIRMATION NO-GO</span><span class="chip coral">N1.6 · POSTOPEN NO-GO</span><span class="chip coral">N1.7 · REPRESENTATION NO-GO</span><span class="chip coral">N1.8 · NO FRESH AUTH</span><span class="chip coral">N1.9 · BRANCH CLOSED</span><span class="chip gold">N2 · 7 项待确认</span><span class="chip blue">RESIDUAL · +6.207%</span><span class="chip coral">EXTRA · 51.408% &lt; 60%</span><span class="chip coral">LEARNER · NOT STARTED</span><span class="chip gold">REAL FLOW-OFF · 待提供</span></div>
-        <h2>当前唯一主线：先拿到真实 mismatch 与 holdout 合同，再设计可验证算法</h2>
-        <p>N1.9 已把“contrast 乘 residual 还是 damping”这一窄问题跑完。Residual 更保护界面/H1，Damping 更贴近 data residual 与 support-adjoint；两个目标仍未统一，且两个候选都没有获得新 split 或 learner 授权。接下来不再枚举旧 development 上的低秩地图，而先把 camera pose、ray/pixel、mask/confidence、标定版本、<code>A/Aᵀ</code> 与永久 holdout 变成可审计的数据合同。</p>
+        <div class="chips"><span class="chip gold">N2-CVCR-N0 · HOLD</span><span class="chip coral">REFERENCE · UNRESOLVED AT 4096</span><span class="chip coral">N0 NOVELTY · NO-GO</span><span class="chip blue">NEXT · NeRIF MULTI-FIDELITY</span><span class="chip gold">N2 REAL CONTRACT · 0 / 7</span><span class="chip coral">LEARNER · NOT AUTHORIZED</span></div>
+        <h2>当前唯一主线：把 NeRIF 的路径积分变成可审计的多保真算子</h2>
+        <p>N2-N0 已经回答两个关键问题：普通全局二次控制变量没有显示出超越强 QMC 的价值，且“拟合可积分近似 + residual correction”并不新。下一步不在旧结果上调到好看，而把低/高保真分别绑定到 NeRIF 的直接梯度与 AD/数值梯度、straight/curved ray、稀疏/密路径，再要求同一随机状态下 forward、JVP、VJP 与三维重建终点同时过门。</p>
         <ol>
-          <li><strong>M2.2 只授权数学 headroom：</strong>exact SVD projector 保留 JACRU 约 45.28% field gain，并把内部 reprojection 对齐到约 1e-14；它不可部署，也不是论文算法。</li>
-          <li><strong>M2.6 找到谱机制：</strong>camera-block 明显加速 residual，但 setup 为 1001F-equiv oracle，且 harm 8.33%；不能写成效率胜利。</li>
-          <li><strong>M2.7 排除“还不够快”：</strong>K=9、23F 时 JACRU mean reprojection 已到 matched CGLS 的 0.852x，worst field 仍为 -8.89%。</li>
-          <li><strong>M2.8 关闭简单插值：</strong>固定 alpha 无通过点；逐样本看真值的连续插值 ceiling 仍无法救回同一界面样本。</li>
-          <li><strong>N1.0 JACRU：</strong>26 个可观测候选中 6 个 tail-safe、11 个 clean-target-safe、0 个 joint-safe；最佳 tail-safe 的 clean ratio 仍为 1.639x / 3.160x。</li>
-          <li><strong>N1.0 pooled CNN：</strong>0 个 tail-safe、8 个 clean-target-safe、0 个 joint-safe；说明冲突不是 JACRU 单点故障。</li>
-          <li><strong>N1.2 post-audit：</strong>3 sessions、5 cases、8 candidates、16 decisions 全部 NO-GO；模型失配均值 22.41%，明确不属于 sensor noise。</li>
-          <li><strong>N1.3 robust-data：</strong>最佳平均 field +16.91%，却有 -50.91% worst；严格 Huber-versus-quadratic 独立贡献最多约 +0.85%。</li>
-          <li><strong>N1.4 adaptive edge：</strong>33 个同预算候选 0 pass；27 个 adaptive 逐一输给 matching uniform，最好一组仍平均落后 0.94%。</li>
-          <li><strong>N1.5 confirmation：</strong>高阶教师 beta=.75 在新 6 geometry/12 fields 上 field +3.63%、H1 +10.31%、worst +0.90%；只因 field mean 未达 5% 而 NO-GO。</li>
-          <li><strong>N1.6 opened NO-GO：</strong>可部署 field +3.54%、H1 +8.24%、worst +0.17%，但相对 damping -0.18%、takeover 50%；5 项冻结门失败，不开 confirmation。</li>
-          <li><strong>N1.7 representation NO-GO：</strong>per-case <code>A P Aᵀ</code> frame 的主 field +4.83%、retention 56.72%、adjoint gain 16.28%；17 门过 14 门，按预注册停止 learner。</li>
-          <li><strong>N1.7-D 机制审计：</strong>四倍半径 measurement 为 +5.56%、15/17 门；finite-K 为 +6.19%、16/17 门，但仍读 truth 且 development 搜索用 74,010 对 evaluator calls。</li>
-          <li><strong>N1.8 五表示设计屏：</strong>Camera-Block-6 为 +6.34% field、+13.20% H1、57.07% extra-headroom、9.47% support-adjoint；16/17 重建门，机器状态 NO-AUTH，不打开 fresh。</li>
-          <li><strong>N1.9 contrast/global-K：</strong>Residual 为 +6.207% field、+10.672% H1、51.408% extra-headroom，16/17；Damping 为 15/17。机器状态 BRANCH CLOSED，两者均不进入 learner。</li>
-          <li><strong>外部依赖：</strong>Mac 足够继续做 12³–16³ 高低保真机制证伪；真正需要师兄的是 f-number/焦面/标定不确定性、可调用 <code>A/Aᵀ</code>、原始图像与永久 audit camera。</li>
+          <li><strong>参考先行：</strong>原 576→1024 点在大孔径工况差 0.4101%，触发 HOLD；事后 2304→4096 仍有最大 0.1234%，所以没有可靠 exact target。</li>
+          <li><strong>强基线先行：</strong>B=32 时候选 pooled RMSE 0.0498241，scrambled Sobol 为 0.0229810；只作描述，不用弱 IID 基线制造“胜利”。</li>
+          <li><strong>原创性先行：</strong>StackMC、RegMC、Primary-Space ACV、NCV 与 RCV 直接限制 N0 的新颖性；N0 只保留作 BOST-specific baseline。</li>
+          <li><strong>物理接口先行：</strong>下一候选必须覆盖 <code>pupil × pixel footprint/PSF × path</code>，并把 straight/curved、direct-gradient/AD-gradient 的差异写入高低保真合同。</li>
+          <li><strong>真实证据仍封存：</strong>Mac 可以继续跑小型机制证伪；OERF 真实算法结论仍需师兄提供同几何多孔径、ray/calibration、原始观测和永久 audit unit。</li>
         </ol>
         <div class="actions" style="margin:14px 0;">
-          <a class="button primary" href="#n1-9-result">看 N1.9 判决</a>
-          <a class="button" href="#n2-contract">打开 N2 数据合同</a>
+          <a class="button primary" href="#n2-cvcr-n0">看 N2 孔径机制门</a>
+          <a class="button" href="#n2-contract">打开真实数据合同</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_cvcr_n0_postopen_reference_and_pivot_2026-07-18.md">完整 HOLD 与转向</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=102-第一个孔径控制变量没有过关但它把下一步照亮了">讲人话日志 102</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_9_advisor_review_brief_2026-07-18.md">发给师兄的 N1.9 brief</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_9_global_contrast_branch_closed_2026-07-18.md">完整 N1.9 报告</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_7_geometry_krylov_no_go_2026-07-18.md">完整 N1.7 NO-GO</a>
@@ -1811,7 +1803,72 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
         <div class="formula" style="margin-top:12px;">接口演习 = 数据能读 + ray 能建 + A/Aᵀ 能跑 + 数值检查通过；算法证据 = 独立物理对照 + 永久留出 + 合法终点 + 重复统计 + 成本账本</div>
         <div class="actions" style="margin-top:12px;"><a class="button primary" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=101-公开-psu-是接口考场不是有限孔径算法成绩单">本科生解释：第101节</a><a class="button" href="document_reader.html?doc=docs%2Fpsu_n2_public_rehearsal_2026-07-18.md">完整字段审计</a><a class="button" href="docs/psu_n2_contract_rehearsal_public_summary.json">机器报告</a><a class="button" href="docs/psu_primary_source_fact_audit_2026-07-18.json">论文事实 JSON</a><a class="button" href="site_tools/build_psu_n2_contract_rehearsal.py">生成器</a><a class="button" href="https://arxiv.org/html/2508.17120">PSU 一级来源</a></div>
       </div>
-      <div class="alert info" style="margin-top:14px;"><strong>下一候选只冻结问题，不宣称算法</strong><span>一级来源的真实瓶颈是 cone-ray 数据项约需 8000 points/pixel。下一预注册候选是“可解析低阶 aperture control variate + 独立高保真 residual correction”：learner 只分配样本或预测 control-variate 系数，最终 estimator 必须保持无偏、可做 A/Aᵀ 审计。它与已关闭的 v5y/v6a 确定性 operator replacement 不同；在 fresh geometry 与 OERF 合同到位前，只允许 synthetic cost/variance 假设。</span></div>
+      <div id="n2-cvcr-n0" style="margin-top:22px;padding-top:22px;border-top:1px solid var(--line);scroll-margin-top:88px;">
+        <div class="chips"><span class="chip gold">PREREGISTERED SYNTHETIC GATE</span><span class="chip coral">HOLD · REFERENCE NOT CONVERGED</span><span class="chip coral">N0 NOVELTY NO-GO</span><span class="chip blue">NEXT · NeRIF PATH MULTI-FIDELITY</span></div>
+        <h3 style="margin-top:10px;">程序正常结束；参考尺子与候选表现都不支持升级 learner</h3>
+        <p>第一条 N2 机制候选在运行前冻结四个 rig、16/32/64 条高保真子射线预算、32 个重复和五个强基线。原 reference gate 因大孔径工况的 576→1024 差异为 0.4101% 而 HOLD。事后另行冻结的 1024→4096 阶数检查没有重评分候选：两个 development rig 已低于 0.1% 末级线，两个困难 audit rig 仍略高，因此原判决不可改写。</p>
+        <div class="metric-grid real-metric-grid" style="margin-top:12px;">
+          <div class="metric pending-state"><b>HOLD</b><span>原预注册判决；不是运行错误，也不是算法成功</span></div>
+          <div class="metric"><b>0.1234%</b><span>2304→4096 最大末级相对 L2；高于描述性 0.1% 线</span></div>
+          <div class="metric"><b class="negative">2.168×</b><span>B=32 候选/最佳 pooled baseline RMSE；只作 opened 描述</span></div>
+          <div class="metric"><b>6.25%</b><span>相对 IID 的 paired harm；不能覆盖对强 QMC 的明显劣势</span></div>
+        </div>
+        <figure>
+          <a href="demo_t16_operator/results/n2_cvcr_n0_reference_sensitivity_postopen_v1/reference_sensitivity.png" aria-label="打开 N2-CVCR-N0 参考敏感性原尺寸图"><img src="demo_t16_operator/results/n2_cvcr_n0_reference_sensitivity_postopen_v1/reference_sensitivity.png" alt="N2-CVCR-N0 的 1024 到 4096 点参考阶数敏感性，两个困难审计工况在末级仍略高于百分之零点一线" width="2700" height="864" loading="lazy" decoding="async" /></a>
+          <figcaption>事后参考敏感性只回答“冻结参考是否稳定”。4096 点自身在左图被定义为比较终点，不能据此称为 exact truth；原 HOLD、候选分数和所有授权均未改变。手机端可点图打开原尺寸。</figcaption>
+        </figure>
+        <div class="two-col" style="margin-top:14px;">
+          <div class="panel">
+            <div class="chips"><span class="chip coral">为什么 N0 停止</span><span class="chip blue">强基线优先</span></div>
+            <h3 style="margin-top:10px;">性能和先行工作同时否定“直接神经化”</h3>
+            <ol>
+              <li>候选 pooled RMSE 0.0498241，scrambled Sobol 为 0.0229810；描述性差 116.805%。</li>
+              <li>两个 audit rig 的候选均比最强基线差约 126%；normal-action ratio 为 2.442× / 2.311×。</li>
+              <li>StackMC/RegMC 已覆盖交叉拟合与多项式残差估计；Primary-Space ACV 已覆盖可解析分片控制函数。</li>
+              <li>NCV/Automatic-Integration NCV 已覆盖神经可积控制函数；RCV 已进入可微逆渲染。</li>
+              <li>所以 N0 只作“BOST pupil 积分最近邻基线”，不再靠换 basis 或 MLP 追论文新意。</li>
+            </ol>
+          </div>
+          <div class="panel">
+            <div class="chips"><span class="chip gold">独立审计</span><span class="chip coral">下次必须修</span></div>
+            <h3 style="margin-top:10px;">四个不会被图表掩盖的门</h3>
+            <ol>
+              <li>GO 用 paired bootstrap/置信界，不只比较点估计。</li>
+              <li>稠密矩阵乘自身 <code>.T</code> 只叫内部转置自洽；生产 renderer 另做独立 adjoint/JVP/VJP。</li>
+              <li>逐元素回归系数、预计算和后处理都进入成本账本；只能在同一成本口径上谈速度。</li>
+              <li>偏差标准误改用中心化重复方差；逐 rig tail、front 与 support crossing 单独过门。</li>
+            </ol>
+          </div>
+        </div>
+        <div class="pipeline" aria-label="NeRIF 路径多保真下一候选">
+          <div><b>NeRIF 双输出</b><span><code>n(x)</code> 与直接梯度 <code>g(x)</code>；先审计 AD 一致性</span></div>
+          <div><b>低保真路径</b><span>direct-gradient、straight ray、稀疏 path points</span></div>
+          <div><b>高保真残差</b><span>AD/数值梯度、密路径；再扩展 curved/cone ray</span></div>
+          <div><b>共同随机状态</b><span>forward、JVP、VJP 复用 pupil/path 样本并独立验算</span></div>
+          <div><b>反应前沿回退</b><span>large aperture、boundary crossing、shock/front 尾部失控即回退</span></div>
+          <div><b>三维终点</b><span>field-L2、H1/front、held-out reprojection 与 time-to-target</span></div>
+        </div>
+        <div class="formula">E[h] = E[c] + E[h − c]；c = direct-gradient / straight / sparse path；h = AD-or-ND gradient / dense-or-curved path；省下高保真调用只有在 bias、JVP/VJP 与三维重建终点同时过门时才算收益</div>
+        <div class="source-grid" style="margin-top:14px;">
+          <article class="source-card"><div class="body"><span class="chip blue">OERF 宿主 · 一级来源</span><h3>Neural Refractive Index Field</h3><p>网络同时输出折射率与梯度，路径随机采样从 60 增至 200，并用 AD/ND 与双位移预测约束一致性。下一候选的高低保真接口直接从这里产生。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2409.14722v2">开放全文</a><a class="button" href="https://doi.org/10.1063/5.0250899">正式论文</a></div></article>
+          <article class="source-card"><div class="body"><span class="chip gold">有限孔径 · 一级来源</span><h3>Cone-ray depth-of-field BOST</h3><p>说明有限孔径要对 ray bundle 与路径共同积分，sharp fronts 会受 depth-of-field 平滑。它定义物理问题，不自动证明任何 surrogate 有效。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2402.15954">开放全文</a></div></article>
+          <article class="source-card"><div class="body"><span class="chip coral">直接碰撞</span><h3>Regression-based Monte Carlo</h3><p>多项式最小二乘、解析积分与 residual Monte Carlo 已有成熟框架；N0 不能据此主张统计新颖性。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2211.07422">论文与开放 PDF</a></div></article>
+          <article class="source-card"><div class="body"><span class="chip coral">直接碰撞</span><h3>Primary-Space Adaptive CV</h3><p>分片多项式控制函数、解析积分与高频 residual correction 已覆盖一般低维积分和复杂光传输。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2008.06722">论文与开放 PDF</a></div></article>
+          <article class="source-card"><div class="body"><span class="chip coral">学习控制变量</span><h3>StackMC / Neural CV</h3><p>交叉验证式控制变量和神经可积控制函数都有先行工作；后续强基线必须实现，而不是只在 related work 提一句。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/1606.02261">StackMC</a><a class="button" href="https://arxiv.org/abs/2006.01524">Neural CV</a></div></article>
+          <article class="source-card"><div class="body"><span class="chip blue">公开接口 · 非算法成绩</span><h3>PSU open BOST</h3><p>约 8000 points/pixel 指 frustum data-operator 积分点，不是全部 pupil samples。数据可练 loader/geometry/reprojection，不能替代同几何多孔径 OERF 对照。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2508.17120">开放全文</a></div></article>
+        </div>
+        <div class="actions" style="margin-top:14px;">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fn2_cvcr_n0_postopen_reference_and_pivot_2026-07-18.md">读完整判决与下一候选</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=102-第一个孔径控制变量没有过关但它把下一步照亮了">本科生解释：第 102 节</a>
+          <a class="button" href="demo_t16_operator/results/n2_cvcr_n0_mechanism_gate_v1/report.json">原机器判决</a>
+          <a class="button" href="demo_t16_operator/results/n2_cvcr_n0_mechanism_gate_v1/aggregate_metrics.csv">原聚合 CSV</a>
+          <a class="button" href="demo_t16_operator/results/n2_cvcr_n0_reference_sensitivity_postopen_v1/summary.json">阶数检查 JSON</a>
+          <a class="button" href="demo_t16_operator/results/n2_cvcr_n0_reference_sensitivity_postopen_v1/reference_ladder.csv">阶数检查 CSV</a>
+          <a class="button" href="demo_t16_operator/results/n2_cvcr_n0_reference_sensitivity_postopen_v1/README.md">公开结果边界</a>
+          <a class="button" href="demo_t16_operator/run_n2_cvcr_n0_reference_sensitivity.py">复现程序</a>
+        </div>
+      </div>
+      <div class="alert info" style="margin-top:14px;"><strong>下一候选是设计假设，不是已提出的新算法</strong><span>NeRIF 路径多保真只有在新预注册、独立参考、强控制变量/QMC 基线、forward/JVP/VJP 审计、反应前沿尾部和三维重建终点同时通过后才可能成为论文方法。当前不授权训练、真实算法增益、OERF 泛化或优于 NeRIF/DeepONet/FNO 的表述。</span></div>
       <div class="two-col" style="margin-top:16px;">
         <div class="panel">
           <div class="chips"><span class="chip blue">PHYSICS FIRST</span><span class="chip coral">ONE PRIMARY MISMATCH</span></div>

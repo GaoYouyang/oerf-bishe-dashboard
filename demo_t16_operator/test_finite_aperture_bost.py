@@ -5,6 +5,8 @@ import torch
 
 try:
     from .finite_aperture_bost import (
+        _disk_subrays,
+        build_aperture_subray_operator_bank,
         build_finite_aperture_operator_bank,
         finite_aperture_reference_scale,
     )
@@ -12,6 +14,8 @@ try:
     from .measurement_contract import BOSTBatch, DenseVolumeLinearBOST
 except ImportError:
     from finite_aperture_bost import (
+        _disk_subrays,
+        build_aperture_subray_operator_bank,
         build_finite_aperture_operator_bank,
         finite_aperture_reference_scale,
     )
@@ -102,3 +106,45 @@ def test_dense_volume_linear_bost_adjoint_identity_for_finite_aperture():
     lhs = torch.sum(operator.forward(volume, batch) * residual)
     rhs = torch.sum(volume * operator.adjoint(residual, batch))
     torch.testing.assert_close(lhs, rhs, rtol=1e-6, atol=1e-6)
+
+
+def test_prescribed_subray_bank_averages_to_historical_renderer():
+    angles = np.array([0.0, 47.0, 113.0])
+    disk = _disk_subrays(13)
+    scale = finite_aperture_reference_scale(
+        4, 3, angles, aperture_samples=13, path_samples=8
+    )
+    subrays = build_aperture_subray_operator_bank(
+        4,
+        3,
+        angles,
+        disk,
+        aperture_radius=0.16,
+        path_samples=8,
+        normalization_scale=scale,
+    )
+    historical = build_finite_aperture_operator_bank(
+        4,
+        3,
+        angles,
+        [0.16],
+        aperture_samples=13,
+        path_samples=8,
+        normalization_scale=scale,
+    )[0]
+    assert subrays.shape == (13, 3, 3, 4, 48)
+    np.testing.assert_allclose(
+        np.mean(subrays, axis=0), historical, rtol=2e-7, atol=2e-7
+    )
+
+
+def test_prescribed_subray_bank_rejects_points_outside_disk():
+    with np.testing.assert_raises(ValueError):
+        build_aperture_subray_operator_bank(
+            4,
+            3,
+            np.array([0.0, 90.0]),
+            np.array([[1.01, 0.0]]),
+            aperture_radius=0.1,
+            path_samples=8,
+        )
