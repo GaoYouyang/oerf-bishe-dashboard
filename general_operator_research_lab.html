@@ -179,6 +179,7 @@
       <a href="#n2-contract">N2 数据合同</a>
       <a href="#n2-cvcr-n0">N2 孔径机制门</a>
       <a href="#n2-adrc-n1">N2 自动-离散残差</a>
+      <a href="#n2-curved-ray">N2 曲光线与路由</a>
       <a href="#algorithm">安全算子</a>
       <a href="#candidates">算法路线</a>
       <a href="document_reader.html?doc=docs%2Fcancellation_aware_operator_learning_literature_map_2026-07-17.md">文献地图</a>
@@ -191,25 +192,26 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">当前只做 N2：把 BOST 三维重建中的孔径、路径和梯度计算变成可审计的多保真算子。N0 普通孔径控制变量已经因参考未收敛、弱于强 QMC 且新颖性碰撞而冻结。最新 <code>N2-ADRC-N1</code> 已完成开发态机制试验：自动梯度作低保真、中心离散梯度与规定高路径作高保真，四个反应流代理场在当前 CPU 成本口径下得到 1.36×–1.78× 的描述性 matched-cost MSE gain；但只有 2/4 通过参考敏感度门，机器仍固定为 <code>DEVELOPMENT_ONLY_NO_AUDIT_AUTHORIZATION</code>。2026 年 Neural Refractive Index Primitives 已覆盖 automatic/discrete/hybrid gradient、smoothstep hash 与层级采样，因此真正可能的新意只剩 BOST 特定的 <code>pupil × footprint/PSF × path</code> 联合分配、同状态 forward/JVP/VJP 和前沿越界 fail-closed。</p>
+    <p class="lead">当前只做 N2：把 BOST 三维重建中的路径、孔径和梯度计算变成可审计的多保真算子。旧 N1 的规定 bend 已被新的场依赖 RK4 光线替代，完整 trajectory JVP/VJP 在三个既有开发 rig 上通过有限差分、点积、动量守恒和 64→128 步参考检查；但基础无量纲尺度下轨迹项只占方向导数的 0.021%–0.083%，很可能小于真实光流和标定不确定度。压力包络到 30× 才首次出现 &gt;1% 的轨迹/低高失配信号，100× 时全部越出合成视锥。当前主线因此收缩为“拓扑认证的随机高保真纠偏”，机器结论仍是 <code>CURVED_RAY_REHEARSAL_ONLY_RESERVED_FAMILIES_UNOPENED</code>，不授权审计、重建或论文成功。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">N2-ADRC-N1 · DEVELOPMENT</span><span class="chip gold">2 / 4 SCREEN</span><span class="chip coral">NO AUDIT AUTHORIZATION</span><span class="chip coral">N0 · FROZEN NO-GO</span><span class="chip gold">N2 REAL CONTRACT · 0 / 7</span></div>
-        <h2>当前唯一主线：联合孔径-路径残差算子，不再发明泛化的“新网络名字”</h2>
-        <p>当前 clean-room 原型只验证一个窄机制：<code>E[h]=E[c]+E[h-c]</code> 能否在 BOST 的自动/离散梯度成本冲突中省高保真调用。它尚不是 NeRIF/NeDF/2026 primitive 的复现，也没有训练网络或完成三维重建。下一步不是继续调开发场，而是先冻结联合光学测度、独立参考、forward/JVP/VJP、前沿尾部与真实数据终点，再开从未使用的形态族。</p>
+        <div class="chips"><span class="chip blue">N2 CURVED RAY · E0 REHEARSAL</span><span class="chip gold">3 / 3 NUMERICAL VALIDITY</span><span class="chip coral">NO AUDIT AUTHORIZATION</span><span class="chip gold">BASE TRAJECTORY 0.021%–0.083%</span><span class="chip coral">N2 REAL CONTRACT · 0 / 7</span></div>
+        <h2>当前唯一主线：拓扑认证随机保真路由，不把“曲光线写出来”冒充创新</h2>
+        <p>clean-room 原型已能沿折射率场积分 RK4 曲光线，并把完整轨迹导数与冻结路径导数分开。现在要证伪的不是“程序是否可微”，而是实验室是否存在一个真实窗口：曲光线修正大于测量不确定度，同时还没有改变 support/front 事件或离开标定视锥。只有这个窗口存在，才值得用 <code>L + I/π·(H−L)</code> 做条件无偏的随机高保真纠偏。</p>
         <ol>
-          <li><strong>开发信号：</strong>四场景 residual/high 方差比为 0.0042–0.0266；matched-cost MSE gain 为 1.36×–1.78×，95% bootstrap 下界均高于 1。</li>
-          <li><strong>不能忽略的失败：</strong>wrinkled 两个场景的半量→全量参考敏感度为 0.122% 与 0.779%，超过 0.1% 门，因此只有 smooth 两个场景通过开发筛选。</li>
-          <li><strong>成本边界：</strong>31 次 warm CPU 计时下，最不利 p10(high) 对 p90(low/pair) 的保守增益为 1.10×–1.51×；这是本机批量代理，不是硬件无关复杂度结论。</li>
-          <li><strong>梯度边界：</strong>固定状态 JVP 相对误差为 7.3e-10–5.0e-9，VJP 点积为 2.0e-15 以内；但 path bend 是规定几何，尚未包含折射率依赖的轨迹灵敏度。</li>
-          <li><strong>真实证据仍封存：</strong>OERF 结论仍需师兄提供同几何多孔径、ray/calibration、原始观测、永久 audit unit 与独立物理终点。</li>
+          <li><strong>求解器证据：</strong>3/3 开发 rig 通过 64→128 步参考、出口/积分一致性、端点动量守恒、全轨迹 JVP 有限差分、VJP 点积和拓扑签名门。</li>
+          <li><strong>物理问题尚未成立：</strong>1× 基础尺度的轨迹 JVP 份额仅 0.021%–0.083%；任何百倍效率上限都可能只是 low/high 几乎相同的封闭体系现象。</li>
+          <li><strong>失效包络：</strong>30× 首次触发 &gt;1% 轨迹份额或输出失配；100× 三个 rig 均越出合成视锥，禁止继续用平滑 VJP 数字掩盖事件失效。</li>
+          <li><strong>新颖性边界：</strong>两级残差、曲光线伴随、有限孔径和一般拓扑处理均已有先例；当前仅剩“BOST 特定证书 + 随机纠偏 + forward/JVP/VJP 同状态”是待核实空位。</li>
+          <li><strong>真实证据仍封存：</strong>必须从师兄取得米制 ROI、折射率/Gladstone-Dale 尺度、相机与背景标定、最大偏折工况、重复图像噪声及独立物理终点。</li>
         </ol>
         <div class="actions" style="margin:14px 0;">
-          <a class="button primary" href="#n2-adrc-n1">看最新 N2-ADRC-N1</a>
+          <a class="button primary" href="#n2-curved-ray">看最新曲光线与路由证据</a>
+          <a class="button" href="#n2-adrc-n1">看上一版 N2-ADRC-N1</a>
           <a class="button" href="#n2-cvcr-n0">看冻结的 N0</a>
           <a class="button" href="#n2-contract">打开真实数据合同</a>
           <a class="button" href="document_reader.html?doc=docs%2Fn2_cvcr_n0_postopen_reference_and_pivot_2026-07-18.md">完整 HOLD 与转向</a>
-          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=103-自动梯度加离散梯度不是新算法但两级残差机制值得进入盲审计设计">讲人话日志 103</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=104-曲光线导数写对了但基础尺度下它可能小到没有实验意义">讲人话日志 104</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_9_advisor_review_brief_2026-07-18.md">发给师兄的 N1.9 brief</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_9_global_contrast_branch_closed_2026-07-18.md">完整 N1.9 报告</a>
           <a class="button" href="document_reader.html?doc=docs%2Fjacru_n1_7_geometry_krylov_no_go_2026-07-18.md">完整 N1.7 NO-GO</a>
@@ -1970,6 +1972,99 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
           <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=103-自动梯度加离散梯度不是新算法但两级残差机制值得进入盲审计设计">讲人话日志 103</a>
           <a class="button" href="demo_t16_operator/run_n2_adrc_n1_development_pilot.py">运行程序</a>
           <a class="button" href="demo_t16_operator/automatic_discrete_multifidelity.py">机制源码</a>
+        </div>
+        <div id="n2-curved-ray" style="margin-top:26px;padding-top:26px;border-top:1px solid var(--line);scroll-margin-top:88px;">
+          <div class="chips"><span class="chip blue">FIELD-DEPENDENT RK4 RAY</span><span class="chip gold">3 / 3 NUMERICAL VALIDITY</span><span class="chip coral">E0 SYNTHETIC REHEARSAL</span><span class="chip coral">RESERVED FAMILIES UNOPENED</span></div>
+          <h3 style="margin-top:10px;">曲光线和完整轨迹导数已经能被核对，但基础尺度下它可能小到没有实验价值</h3>
+          <p>新内核直接积分 <code>d(n d)/ds = grad(n)</code>，不再使用规定 bend。高保真路径上的位置与方向保留在计算图中；冻结路径对照只去掉场→轨迹链路，因此可以量出 trajectory sensitivity。三组既有开发 rig 的数值门全部通过，但这只说明离散求解器内部自洽，不代表真实 BOST 需要它，更不代表提出了新曲光线方法。</p>
+          <div class="metric-grid real-metric-grid" style="margin-top:12px;">
+            <div class="metric pending-state"><b>REHEARSAL ONLY</b><span>硬结论：不授权开封、重建、实验或论文主张</span></div>
+            <div class="metric"><b>3 / 3</b><span>参考、守恒、JVP/VJP、域与拓扑签名门全部通过</span></div>
+            <div class="metric"><b>0.021%–0.083%</b><span>1× 基础尺度的 trajectory / full directional JVP</span></div>
+            <div class="metric"><b>30× → 100×</b><span>30× 首次警告；100× 三个 rig 全部越出合成视锥</span></div>
+          </div>
+          <figure style="margin-top:14px;">
+            <a href="demo_t16_operator/results/n2_adrc_n1_curved_ray_rehearsal_v1/n2_adrc_n1_refractivity_envelope.png" aria-label="打开 N2 曲光线折射强度包络原尺寸图"><img src="demo_t16_operator/results/n2_adrc_n1_curved_ray_rehearsal_v1/n2_adrc_n1_refractivity_envelope.png" alt="N2 曲光线无量纲折射强度包络，展示直线与曲线输出失配、轨迹导数份额和合成视锥余量随压力倍数变化" width="2520" height="810" loading="lazy" decoding="async" /></a>
+            <figcaption>横轴是无量纲数值压力倍数，不是温度、密度或某种真实火焰条件。黑虚线只标开发诊断边界：左/中超过 1% 开始警告，右图低于 0 表示光线离开冻结的合成视锥。</figcaption>
+          </figure>
+          <p class="table-scroll-hint" aria-hidden="true">左右滑动查看完整六列</p>
+          <div class="result-table-wrap" tabindex="0" aria-label="N2 曲光线三个开发 rig 的数值合法性和压力断点，窄屏可左右滑动">
+            <table>
+              <thead><tr><th>开发 rig</th><th>64→128 参考</th><th>端点动量守恒</th><th>全轨迹 JVP FD</th><th>1× 轨迹份额</th><th>首个诊断断点</th></tr></thead>
+              <tbody>
+                <tr><td>smooth_narrow_aperture</td><td class="positive">0.3183%</td><td class="positive">0.2147%</td><td class="positive">8.14e-9</td><td>0.0830%</td><td class="pending">30×</td></tr>
+                <tr><td>wrinkled_wide_aperture</td><td class="positive">0.2609%</td><td class="positive">0.0349%</td><td class="positive">4.10e-9</td><td>0.0225%</td><td class="pending">30×</td></tr>
+                <tr><td>smooth_wide_aperture</td><td class="positive">0.3230%</td><td class="positive">0.1961%</td><td class="positive">1.06e-8</td><td>0.0215%</td><td class="pending">100×</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="two-col" style="margin-top:14px;">
+            <figure>
+              <a href="demo_t16_operator/results/n2_adrc_n1_curved_ray_rehearsal_v1/n2_adrc_n1_curved_ray_rehearsal.png" aria-label="打开 N2 曲光线排练数值合法性四联图"><img src="demo_t16_operator/results/n2_adrc_n1_curved_ray_rehearsal_v1/n2_adrc_n1_curved_ray_rehearsal.png" alt="N2 曲光线排练四联图，展示残差方差、计时效率上限、步长敏感度和轨迹导数份额" width="2160" height="1440" loading="lazy" decoding="async" /></a>
+              <figcaption>右上百倍量级只是弱弯曲场里的理论计时效率上限；它与左下/右下共同阅读才有意义，不能单独截出来当算法胜出图。</figcaption>
+            </figure>
+            <div class="panel">
+              <div class="chips"><span class="chip blue">已证明的数值不变量</span></div>
+              <ol>
+                <li>常折射率严格给出直线与零偏折；任何模板/域越界抛出错误，不做 silent clamp。</li>
+                <li>RK4 64→128 步参考差为 0.261%–0.323%，没有通过放宽 1% 门得到“成功”。</li>
+                <li>出口方向与积分曲率、端点光学动量与 <code>∫grad(n)ds</code> 分别独立核对。</li>
+                <li>完整轨迹 JVP 与中心有限差分相符，VJP/JVP 点积误差低于 8.6e-15。</li>
+                <li>同一名义路径的 frozen VJP 与 full VJP 数值不同，说明轨迹链路确实进入导数。</li>
+              </ol>
+            </div>
+          </div>
+          <div class="alert critical" style="margin-top:14px;"><strong>最大的风险不是程序失败，而是现实效应太小</strong><span>当前场只是 normalized scalar proxy，坐标也不是米；没有波长、气体组成、Gladstone-Dale 系数、相机和背景平面。1×/30×/100× 不能翻译成真实温度或密度。若实验里的曲光线修正小于 optical-flow 与 calibration uncertainty，这条线应停止，即使合成方差收益再漂亮。</span></div>
+          <div class="formula">候选假说：Ĥ = L + I/π · (H − L)，I ~ Bernoulli(π)；拓扑不安全 ray 强制 π=1。只有 π&gt;0、路由特征冻结且残差内共享同一 optical state 时，条件均值才保持为 H。</div>
+          <div class="two-col" style="margin-top:14px;">
+            <div class="panel">
+              <h3>下一算法到底创新在哪里</h3>
+              <ol>
+                <li><strong>不是两级残差：</strong>MLMC、MFMC、ACV 已覆盖。</li>
+                <li><strong>不是曲光线：</strong>非线性 ray adjoint、神经折射率场和 cone-ray BOS 都已有。</li>
+                <li><strong>不是 automatic + discrete：</strong>2026 primitive 已明确比较。</li>
+                <li><strong>待证伪空位：</strong>BOST 特定的事件/视锥/前沿证书，决定高保真概率，并让 forward/JVP/VJP 在相同随机状态下仍可审计。</li>
+                <li><strong>数学陷阱：</strong>若 π 随网络参数变化，不能直接穿过 Bernoulli 路由反传；需冻结路由或推导 score-function/pathwise 修正。</li>
+              </ol>
+            </div>
+            <div class="panel">
+              <h3>现在请师兄回答的七个物理问题</h3>
+              <ol>
+                <li>ROI 的米制尺寸和网络坐标归一化矩阵是什么？</li>
+                <li>背景/光源波长、气体组成、压力温度范围和 Gladstone-Dale 模型是什么？</li>
+                <li>相机内外参、pixel pitch、focus、f-number、背景平面和孔径模型能否给出？</li>
+                <li>哪组真实场的偏折最大，是否有同几何弱偏折对照？</li>
+                <li>能否提供 flow-off/on 原图、重复图像或 optical-flow confidence？</li>
+                <li>mask/occupancy/support 是训练前冻结，还是随网络更新？</li>
+                <li>是否有独立温度、密度、PLIF 或 held-out view 作为物理终点？</li>
+              </ol>
+            </div>
+          </div>
+          <div class="pipeline" aria-label="从曲光线排练到可发表算法的六步学习与研究路径">
+            <div><b>几何光学</b><span>手推 d(nd)/ds 与横向弱折射近似，理解直线何时成立</span></div>
+            <div><b>离散伴随</b><span>会做固定状态 JVP、VJP dot、ε ladder 和动量守恒</span></div>
+            <div><b>事件证书</b><span>AABB、support/front、grazing、background hit 与 frustum</span></div>
+            <div><b>随机纠偏</b><span>证明 I/π residual 的条件无偏和 squared-loss 双样本</span></div>
+            <div><b>fresh-instance 审计</b><span>新 seed、新 rig、逐 rig Q95 与 simultaneous interval</span></div>
+            <div><b>真实 BOST 终点</b><span>测量噪声以上的修正、held-out reprojection 与独立物理量</span></div>
+          </div>
+          <div class="source-grid" style="margin-top:14px;">
+            <article class="source-card"><div class="body"><span class="chip blue">光线方程一级来源</span><h3>NeDF nonlinear BOS synthesis</h3><p>使用 <code>d(nd)/ds=grad(n)</code>、三次插值和四阶 Runge-Kutta 生成高保真合成 BOS；支持本页的物理方程，不支持方法新颖性。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2409.19971">开放全文</a><a class="button" href="https://doi.org/10.1063/5.0241191">正式 DOI</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip coral">新颖性边界</span><h3>Adjoint Nonlinear Ray Tracing</h3><p>曲光线路径对折射率场的伴随已有明确先例，因此“实现 trajectory VJP”只能作为基础设施。</p></div><div class="actions"><a class="button primary" href="https://imaging.cs.cmu.edu/adjoint_nonlinear_tracing/">项目与论文</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip gold">有限孔径先例</span><h3>Depth-of-Field Effects in BOS</h3><p>cone-ray 与有限孔径 BOS 前向/反演已有系统研究；我们的待验证问题是拓扑安全的随机纠偏，不是有限孔径本身。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2402.15954">开放全文</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip coral">自动/离散边界</span><h3>2026 Neural Refractive Index Primitives</h3><p>single primitive、automatic/discrete/hybrid gradient、3D mask 与 occupancy sampling 均已有，继续约束 broad novelty。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2605.11454">开放全文</a></div></article>
+          </div>
+          <div class="actions" style="margin-top:14px;">
+            <a class="button primary" href="demo_t16_operator/results/n2_adrc_n1_curved_ray_rehearsal_v1/summary.md">曲光线排练摘要</a>
+            <a class="button" href="demo_t16_operator/results/n2_adrc_n1_curved_ray_rehearsal_v1/result.json">完整结果 JSON</a>
+            <a class="button" href="demo_t16_operator/results/n2_adrc_n1_curved_ray_rehearsal_v1/metrics.csv">三 rig CSV</a>
+            <a class="button" href="demo_t16_operator/results/n2_adrc_n1_curved_ray_rehearsal_v1/manifest.json">文件哈希与来源</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fn2_adrc_n1_curved_ray_rehearsal_2026-07-18.md">完整排练协议</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fn2_topology_certified_routing_hypothesis_2026-07-18.md">下一算法与先行工作</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=104-曲光线导数写对了但基础尺度下它可能小到没有实验意义">讲人话日志 104</a>
+            <a class="button" href="demo_t16_operator/run_n2_adrc_n1_curved_ray_rehearsal.py">运行排练</a>
+            <a class="button" href="demo_t16_operator/field_dependent_ray.py">曲光线源码</a>
+          </div>
         </div>
       </div>
       <div class="alert info" style="margin-top:14px;"><strong>N1 已实现开发机制，但仍不是论文算法</strong><span>只有在联合 pupil/footprint/path 目标、新预注册、独立参考、强 QMC/MLMC/MFMC/ACV 基线、field-dependent ray JVP/VJP、反应前沿尾部和三维重建终点同时通过后，才可能升级为论文方法。当前不授权真实算法增益、OERF 泛化或优于 NeRIF/NeDF/2026 primitive/DeepONet/FNO 的表述。</span></div>

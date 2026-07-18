@@ -1,0 +1,109 @@
+{
+  "schema": "n2-adrc-n1-curved-ray-rehearsal-1.0",
+  "candidate_id": "N2-ADRC-N1",
+  "status": "curved_ray_rehearsal_only_reserved_families_unopened",
+  "field_contract": "normalized_scalar_perturbation_not_physical_density",
+  "refractive_index_contract": "n_equals_one_plus_scale_times_normalized_grid_proxy",
+  "device": "cpu",
+  "dtype": "float64",
+  "grid_shape_zyx": [
+    17,
+    17,
+    17
+  ],
+  "difference_step": 0.002,
+  "refractivity_scale": 0.0003,
+  "dimensionless_stress_scale_multipliers": [
+    1,
+    3,
+    10,
+    30,
+    100
+  ],
+  "population_count": 64,
+  "reference_step_counts": [
+    64,
+    128
+  ],
+  "derivative_check": {
+    "ray_count": 4,
+    "step_count": 10,
+    "finite_difference_epsilon": 2e-05,
+    "direction_relative_norm": 0.08
+  },
+  "topology": {
+    "support_threshold_fraction_of_grid_peak": 0.1,
+    "frustum_half_width_u": 0.005,
+    "frustum_half_width_v": 0.005
+  },
+  "timing": {
+    "warmup_repeats": 2,
+    "measured_repeats": 9
+  },
+  "seed_roles": {
+    "population_state_base": 51001,
+    "derivative_state_base": 52001,
+    "direction_base": 53001
+  },
+  "development_rehearsal_cases": [
+    {
+      "id": "smooth_narrow_aperture",
+      "phantom_family": "smooth_plume",
+      "phantom_seed": 1729,
+      "rig": {
+        "view_angle_degrees": 22.0,
+        "detector_u": 0.05,
+        "detector_z": -0.04,
+        "aperture_radius": 0.035,
+        "path_half_length": 0.62,
+        "cone_u": 0.04,
+        "cone_z": 0.03,
+        "bend": 0.0
+      }
+    },
+    {
+      "id": "wrinkled_wide_aperture",
+      "phantom_family": "wrinkled_density_interface",
+      "phantom_seed": 2718,
+      "rig": {
+        "view_angle_degrees": 58.0,
+        "detector_u": -0.07,
+        "detector_z": 0.06,
+        "aperture_radius": 0.075,
+        "path_half_length": 0.62,
+        "cone_u": 0.07,
+        "cone_z": 0.05,
+        "bend": 0.0
+      }
+    },
+    {
+      "id": "smooth_wide_aperture",
+      "phantom_family": "smooth_plume",
+      "phantom_seed": 1729,
+      "rig": {
+        "view_angle_degrees": 22.0,
+        "detector_u": 0.05,
+        "detector_z": -0.04,
+        "aperture_radius": 0.075,
+        "path_half_length": 0.62,
+        "cone_u": 0.07,
+        "cone_z": 0.05,
+        "bend": 0.0
+      }
+    }
+  ],
+  "reserved_audit_families_not_opened": [
+    "oblique_compression_sheet",
+    "shock_expansion_pair"
+  ],
+  "rehearsal_screens": {
+    "maximum_high_half_to_full_relative_l2": 0.01,
+    "maximum_exit_vs_integral_relative_l2": 0.05,
+    "maximum_momentum_balance_relative_l2": 0.05,
+    "maximum_full_trajectory_jvp_relative_error": 0.0001,
+    "maximum_full_trajectory_vjp_dot_relative_error": 1e-10,
+    "minimum_stencil_margin": 0.02,
+    "require_topology_signature_stability": true
+  },
+  "hard_conclusion": "CURVED_RAY_REHEARSAL_ONLY_RESERVED_FAMILIES_UNOPENED"
+}
