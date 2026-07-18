@@ -2927,3 +2927,28 @@ reference pack，并逐数组哈希；然后才做 field JVP/VJP dot/FD 双门�
 
 完整合同、逐格数字、图和禁止主张见
 [N5-D1/D2 结果审计](n2_pvgr_n5_d1_d2_result_audit_2026-07-18.md)。
+
+## 111. 32 格参考包组好了，但它诚实地叫“混合包”
+
+D1/D2 结束时，下一步是把 N4.1 的 30 个已授权数组和 D2 的两个 H8192
+数组组成一把真正能被代码读取的尺子。这次 D3 没有再跑 forward，而是先冻结
+32 格顺序、源文件、哈希、步数和 `23/7/2` 映射，再作一次零 field-query 组装。
+
+最终包是 `32 x 256 x 2` float64，23 格来自 H1024 raw subtraction，7 格来自
+H2048 raw subtraction，2 格来自 H8192 paired-Neumaier。整包数组哈希是
+`8d2bba156028e4b14385f5a563d4d7c18817bb17a70dc0856bfeb240e8e765ed`，独立 validator
+重建了 105 个 N4 checkpoint 的 Merkle root、每格身份、数组哈希和 5.835 亿 source-query
+成本账本，最后判决 `D3_VALID_MIXED_RESIDUAL_REFERENCE_ONLY`。
+
+**讲人话：**32 格现在已经装进同一只箱子，并且每件东西都有条码。但箱子里
+有 30 件是旧的 raw 算法，两件是 paired-Neumaier；D1 只在四格上验证过两种路由
+等价，所以不能假装 32 格都是统一 paired 算法。这不会妨碍下一个小规模导数实验，
+但必须在论文边界里说清楚。
+
+下一步不是开始训练 FNO。D4 先把 detector output 和 curved-straight residual 的导数
+分开，用同一 tensor forward 做 JVP/VJP dot test、多 `h` 中心有限差分以及
+`VJP_residual = VJP_curved - VJP_straight` 结构核对。这一关真通过后，才有资格
+进入 6+2 view 三维重建。
+
+完整映射、哈希、成本和禁止主张见
+[N5-D3 结果审计](n2_pvgr_n5_d3_result_audit_2026-07-18.md)。

@@ -305,6 +305,7 @@
       <a href="../operator_nullspace_evidence_dashboard.html">实验证据</a>
       <a href="../document_reader.html?doc=docs%2Fn2_pvgr_n4_1_evaluator_convergence_result_audit_2026-07-18.md">N4.1 参考解审计</a>
       <a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d1_d2_result_audit_2026-07-18.md">N5 D1/D2 尾差审计</a>
+      <a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d3_result_audit_2026-07-18.md">N5 D3 32 格参考包</a>
       <a href="../document_reader.html?doc=v3k_f_noise_stopping_review_brief.md">v3k-F 停止审计</a>
       <a href="../strong_numerical_controls_lab.html">v3k-D 强数值门</a>
       <a href="../operator_fair_budget_dashboard.html">同预算判决</a>
@@ -325,8 +326,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert success">
-      <strong>当前科学判断：D1 已排除累加顺序，D2 的四个 selected cells 已在 H8192 进入稳定尾部；训练仍未解锁。</strong>
-      <span>N4.1 原机器判决仍冻结为 NO-AUTH。D1 发现补偿/成对求和只占真实 H-refinement 差的约 5.19e-10 至 1.27e-9；D2 的最坏 H4096-H8192 residual relative-L2 为 1.183e-4，最坏收缩比 0.2199，四格全部过预注册门。下一步先把 23 个 H1024、7 个 H2048、2 个 H8192 结果整合成 32 格自适应 reference pack，再做 tiny field JVP/VJP；真实 flow-off noise gate 仍缺。<a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d1_d2_result_audit_2026-07-18.md">打开 D1/D2 审计</a></span>
+      <strong>当前科学判断：D3 的 32 格自适应残差参考包已通过独立校验；训练仍未解锁。</strong>
+      <span>包内分配为 23×H1024 raw、7×H2048 raw 和 2×H8192 paired-Neumaier，因此机器判决是 <code>D3_VALID_MIXED_RESIDUAL_REFERENCE_ONLY</code>，不是统一 paired reference。整包为 32×256×2 float64，组装新增 field query 为 0，原参考成本账本为 583,532,544 queries。下一关是结果前预注册的 tiny field JVP/VJP；真实 flow-off noise gate 仍缺。<a href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d3_result_audit_2026-07-18.md">打开 D3 审计</a></span>
     </div>
   </header>
 
@@ -357,23 +358,23 @@
 
     <section id="latest-gate" class="band">
       <div class="section-head">
-        <div><div class="eyebrow">最新可复核增量</div><h2>D1 排除假机制，D2 找到真正的二阶尾部</h2><p>先相减再求和、pairwise 与 Neumaier 都没有解释 N4.1 floor；真正提高 H 后，四格在 H8192 的观测阶为 2.19-2.54。结论是“selected synthetic 数值尾部已稳定”，不是“新算法已成功”。</p></div>
-        <div class="actions"><a class="button primary" href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d1_d2_result_audit_2026-07-18.md">D1/D2 结果审计</a><a class="button" href="../demo_t16_operator/results/n2_pvgr_n5_d2_extreme_refinement_v1/validation_report.json">机器校验</a></div>
+        <div><div class="eyebrow">最新可复核增量</div><h2>D3 将 32 格数值尺子封装成可追溯参考包</h2><p>D1 排除累加顺序，D2 补齐两个 H8192 tail，D3 再严格按 N4.1 原顺序组装。最新结论是“mixed synthetic reference infrastructure 有效”，不是“三维算法已成功”。</p></div>
+        <div class="actions"><a class="button primary" href="../document_reader.html?doc=docs%2Fn2_pvgr_n5_d3_result_audit_2026-07-18.md">D3 结果审计</a><a class="button" href="../demo_t16_operator/results/n2_pvgr_n5_d3_adaptive_reference_v1/validation_report.json">机器校验</a></div>
       </div>
       <div class="figure-grid">
-        <figure><img src="../demo_t16_operator/results/n2_pvgr_n5_d1_paired_residual_v1/n2_pvgr_n5_d1_paired_residual.png" alt="N5-D1 五种累加顺序、冻结 route 等价性与合同检查" /><figcaption>D1：五种累加顺序给出几乎重合的 adjacent metric；两个失败格的累加差只占 refinement 差约十亿分之一。它排除一种机制，不是算法性能图。</figcaption></figure>
+        <figure><img src="../demo_t16_operator/results/n2_pvgr_n5_d3_adaptive_reference_v1/n2_pvgr_n5_d3_adaptive_reference.png" alt="N5-D3 32 格自适应残差参考包的步数分配、逐格范数和合同检查" /><figcaption>D3：32 格按 23×H1024、7×H2048、2×H8192 冻结，左至右显示步数分配、逐格 residual norm 与合同门。这是数值资产图，不是模型精度图。</figcaption></figure>
         <figure><img src="../demo_t16_operator/results/n2_pvgr_n5_d2_extreme_refinement_v1/n2_pvgr_n5_d2_extreme_refinement.png" alt="N5-D2 H4096 H8192 尾差、收缩比和浮点监测" /><figcaption>D2：四格 final adjacent 全部低于 6.25e-4，收缩比 0.171-0.220，观测阶 2.19-2.54；raw/paired 浮点占比最坏 1.70e-8。</figcaption></figure>
       </div>
       <div class="panel" style="margin-top:11px;">
-        <div class="chips"><span class="chip">D1 contract valid</span><span class="chip blue">D2 4 / 4</span><span class="chip">528,482,304 queries</span><span class="chip coral">real-data / model claim 仍锁定</span></div>
+        <div class="chips"><span class="chip">D3 validator valid</span><span class="chip blue">32 / 32 可追溯</span><span class="chip">assembly queries = 0</span><span class="chip coral">real-data / model claim 仍锁定</span></div>
         <h3 style="margin-top:12px;">现在按这个顺序做</h3>
         <ol>
-          <li>组装 32 格 adaptive reference pack：H1024 23 格、H2048 7 格、H8192 2 格，并逐数组哈希。</li>
-          <li>只在这个 pack 上预注册 tiny field JVP/VJP dot test 与多 h finite-difference 门。</li>
-          <li>再做 6-train-view / 2-held-out-view 的最小三维重建闭环和 A/Aᵀ 成本账本。</li>
+          <li><strong>已完成：</strong>32 格 mixed adaptive reference pack，逐数组哈希并通过独立 validator。</li>
+          <li><strong>当前：</strong>预注册 tiny field JVP/VJP，分开 detector output 和 residual derivative，通过 dot test、多 h finite difference 与结构恒等式。</li>
+          <li><strong>后续：</strong>只在导数门通过后做 6-train-view / 2-held-out-view 最小三维重建，并记录 JVP/VJP 调用、墙钟和内存。</li>
           <li>向师兄申请 displacement 单位、同 rig flow-off repeats、mask/confidence/covariance，把 synthetic 尾差映射到真实 noise units。</li>
         </ol>
-        <div class="trap"><strong>训练仍锁定：</strong>D2 是 post-N4/post-D1 selected synthetic probe；在 32 格 pack、field derivative 和真实 noise-floor 三门完成前，不训练 <code>Picard-1 + residual operator</code>，也不比较 DeepONet/FNO/FFNO 胜负。</div>
+        <div class="trap"><strong>训练仍锁定：</strong>D3 只授权 mixed synthetic reference infrastructure。field derivative、6+2 view 重建与真实 noise-floor 三门未完成前，不训练 <code>Picard-1 + residual operator</code>，也不比较 DeepONet/FNO/FFNO 胜负。</div>
       </div>
     </section>
 
@@ -414,7 +415,7 @@
 
     <section id="research" class="band">
       <div class="section-head"><div><div class="eyebrow">研究决策</div><h2>先选证据问题，再选模型</h2><p>排名是当前执行顺序，不是方向的绝对价值。组内数据和师兄意见会改变排名。</p></div></div>
-      <div class="alert"><strong>当前第一研究问题：如何把已稳定的多保真 reference 接成可微三维重建算子，并证明它在真实噪声下值得学习。</strong><span>D1 已排除累加误差，D2 已清除四个 selected cells 的 H8192 尾差；现在先做 32 格 adaptive pack 与 field JVP/VJP 双门，再问 H-P1 是否高于 flow-off noise、是否存在可学习且能跨 field/geometry 泛化的结构。DeepONet/FNO/FFNO 仍是后续公平基线，不是当前起点。</span></div>
+      <div class="alert"><strong>当前第一研究问题：同一 curved-ray forward 能否产生经 dot/FD 双重校验、可用于 6+2 view 重建的 field JVP/VJP。</strong><span>D3 已将 32 格数值参考闭合为 mixed pack。现在必须分开 detector-output derivative 与 curved-straight residual derivative，检查多 h 有限差、JVP/VJP dot identity、结构恒等式和调用/内存成本。这一门过了才能谈三维重建；DeepONet/FNO/FFNO 仍是后续公平基线，不是当前起点。</span></div>
       <div id="trackGrid" class="track-grid" style="margin-top:14px;"></div>
     </section>
 
@@ -635,7 +636,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄好，我把“开发自有算子 + 三维重建”继续收缩为 Picard-1 物理预条件后的残差算子，目前还没有开始训练网络。\n\n当前选中路线：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已通过论文门槛：${passed}\n最近未通过：${pending}\n\nN4.1 的 32 格里，H1024 通过 23 格，9 格升级 H2048，最终 30/32；剩余两格是 smooth-s1871、orientation-58、narrow、stress 1/3。随后我做了两个结果前预注册的机制实验。D1 比较 raw subtraction、direct paired、pairwise、Neumaier 等五种累加，两个失败格的最大累加差只占真实 H1024-H2048 refinement 差的 1.27e-9 和 5.19e-10，因此浮点累加不是 floor 主因。D2 对同四格跑 H4096/H8192，最坏 final residual relative-L2 为 1.183e-4（门 6.25e-4），最坏收缩比 0.2199（门 0.5），四格观测阶 2.19-2.54，独立 validator 已通过。这个结果只说明 selected synthetic 数值尾部稳定，不是算法或真实数据成功。\n\n下一步我会先把 23 个 H1024、7 个 H2048、2 个 H8192 残差组装成 32 格 adaptive reference pack，再做同一 curved-ray tensor forward 的 field JVP/VJP dot test 与多 h finite-difference 门，然后进入 6+2 view 最小三维重建。想请你确认：组内 observable 是 exit angle、path-integrated deflection 还是最终 pixel displacement；能否提供同一 rig 的位移单位/像素尺度、约 20 次 flow-off repeats、pixel/ray mask/confidence/covariance；现有 F 与 Fᵀ/Jᵀ/VJP 是否可调用；哪些 field/geometry 必须封存 blind？真实 noise-floor 与三维重建门完成前，我不会训练 residual operator，也不会宣称优于 DeepONet、FNO/FFNO。`;
+        document.getElementById('briefText').value = `师兄好，我把“开发自有算子 + 三维重建”继续收缩为 Picard-1 物理预条件后的残差算子，目前还没有开始训练网络。\n\n当前选中路线：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已通过论文门槛：${passed}\n最近未通过：${pending}\n\nN4.1 的 32 格里，H1024 通过 23 格，9 格升级 H2048，最终 30/32。D1 证明浮点累加不是尾差主因；D2 把剩余两格和对照加密到 H8192，最坏 final residual relative-L2 为 1.183e-4，最坏收缩比 0.2199，四格观测阶 2.19-2.54。D3 已将 23×H1024 raw、7×H2048 raw 和 2×H8192 paired-Neumaier 组装成 32×256×2 float64 参考包，整包哈希 8d2bba15…e765ed，独立 validator 通过，组装新增 field query 为 0。因为 paired 等价性只覆盖 4/32，机器判决只授权 mixed synthetic reference infrastructure，不授权统一 paired reference、三维重建或模型成功。\n\n下一步是对同一 curved-ray tensor forward 做 tiny field JVP/VJP 门：分开 detector output 与 curved-straight residual derivative，同时过 dot test、多 h 中心有限差分和 VJP_residual = VJP_curved - VJP_straight 结构核对，然后才进入 6+2 view 最小三维重建。想请你确认：组内 observable 是 exit angle、path-integrated deflection 还是最终 pixel displacement；能否提供同一 rig 的位移单位/像素尺度、约 20 次 flow-off repeats、pixel/ray mask/confidence/covariance；现有 F 与 Fᵀ/Jᵀ/VJP 是否可调用；哪些 field/geometry 必须封存 blind？真实 noise-floor 与三维重建门完成前，我不会训练 residual operator，也不会宣称优于 DeepONet、FNO/FFNO。`;
       }
 
       function bindProfile() {
