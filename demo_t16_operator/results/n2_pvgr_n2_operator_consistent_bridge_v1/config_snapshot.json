@@ -1,0 +1,45 @@
+{
+  "schema": "n2-pvgr-n2-operator-consistent-bridge-1.0",
+  "candidate_id": "N2-PVGR-N2-OCBH",
+  "candidate_name": "operator-consistent bend-homotopy analytic JVP",
+  "status": "development_only_no_audit_authorization",
+  "source_config": "demo_t16_operator/configs/n2_pvgr_n0_trifidelity_development_v1.json",
+  "previous_result": "demo_t16_operator/results/n2_pvgr_n1_variational_development_v1/result.json",
+  "execution_step_count": 128,
+  "reference_step_count": 256,
+  "reference_sentinel_step_count": 512,
+  "picard_sweep_counts": [
+    1,
+    2
+  ],
+  "teacher_discrete_jvp_step_count": 128,
+  "timing_stress_multiplier": 1.0,
+  "timing": {
+    "warmup_repeats": 2,
+    "measured_repeats": 20,
+    "interleave_seed": 75123
+  },
+  "development_screens": {
+    "maximum_teacher_output_relative_l2": 2e-10,
+    "maximum_teacher_position_tangent_relative_l2": 2e-10,
+    "maximum_teacher_direction_tangent_relative_l2": 2e-10,
+    "maximum_base_output_relative_l2": 2e-10,
+    "maximum_matched_residual_prediction_relative_l2": 0.02,
+    "maximum_corrected_residual_variance_ratio": 0.01,
+    "minimum_per_ray_risk_spearman": 0.99,
+    "minimum_valid_ray_fraction": 1.0,
+    "maximum_candidate_to_high_reference_relative_l2": 0.002,
+    "maximum_candidate_reference_error_to_high_execution_reference_error_ratio": 1.1,
+    "maximum_candidate_q95_reference_error_to_high_execution_q95_ratio": 1.1,
+    "maximum_high256_to_high512_output_relative_l2": 0.0001,
+    "maximum_matched_residual_256_to_512_relative_l2": 0.01,
+    "maximum_candidate_p90_to_high128_p10_wall_time_ratio": 0.25,
+    "maximum_candidate_to_high128_logical_point_query_ratio": 0.45
+  },
+  "reserved_audit_families_not_opened": [
+    "oblique_compression_sheet",
+    "shock_expansion_pair"
+  ],
+  "hard_conclusion_if_all_bridge_screens_pass": "MECHANISM_BRIDGE_SIGNAL_ONLY_96_CELL_RECONSTRUCTION_AND_REAL_DATA_GATES_CLOSED",
+  "hard_conclusion_otherwise": "DEVELOPMENT_ONLY_NO_AUDIT_AUTHORIZATION"
+}

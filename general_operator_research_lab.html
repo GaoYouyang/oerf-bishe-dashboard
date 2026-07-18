@@ -182,6 +182,7 @@
       <a href="#n2-cvcr-n0">N2 孔径机制门</a>
       <a href="#n2-adrc-n1">N2 自动-离散残差</a>
       <a href="#n2-curved-ray">N2 曲光线与路由</a>
+      <a href="#n2-pvgr-n2">N2 算子一致 9/9</a>
       <a href="#n2-pvgr-n1">N2 变分修正 7/9</a>
       <a href="#n2-pvgr-n0">N2 三级路由判决</a>
       <a href="#algorithm">安全算子</a>
@@ -196,25 +197,28 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">当前只做 N2：在 BOST 三维重建中，用共享直线状态构造一阶轨迹变分 defect correction，低成本预测全非线性曲光线 <code>H</code> 相对直线弱偏折 <code>M</code> 的小残差。正式 development 筛选中，matched residual 误差为 4.6%–6.9%，残余方差比为 0.003–0.023，逐 ray 风险排序 Spearman 为 0.926–0.996，完整候选 closure 的 p90/full-high p10 约为 0.088。但皱褶宽孔径的 3×/10× 工况恶化了对 256 步参考的 no-harm ratio，因此只有 <strong>7/9</strong> 过门，机器结论仍是 <code>DEVELOPMENT_ONLY_NO_AUDIT_AUTHORIZATION</code>。</p>
+    <p class="lead">当前只做 N2：把 BOST 曲光线前向程序本身变成可核验的离散算子，再研究它怎样进入三维重建与算子学习。最新一轮用完整 RK4 forward-JVP 修正了旧 N1 的同伦定义和中央差分 Jacobian 不一致；解析 OCBH 与教师最坏只差 <strong>2.16e-14</strong>，九个 development 格全部过机制门。但 Picard-1/2 在同九格的 matched residual 与当前 Mac CPU worst-case 墙钟汇总上都优于 OCBH，所以当前结论不是“自有算法胜出”，而是找到了一条可信的导数骨架和更强的经典起点。机器结论仍为 <code>MECHANISM_BRIDGE_SIGNAL_ONLY_96_CELL_RECONSTRUCTION_AND_REAL_DATA_GATES_CLOSED</code>。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">N2-PVGR-N1 · VARIATIONAL DEFECT</span><span class="chip gold">7 / 9 DEVELOPMENT</span><span class="chip blue">RISK ρ 0.926–0.996</span><span class="chip blue">WALL 0.088×</span><span class="chip coral">NO AUDIT AUTHORIZATION</span></div>
-        <h2>当前主线：变分缺陷修正已有强开发信号，但先解决离散一致性和高应力回退</h2>
-        <p>N1 不是又训练一个黑箱网络。它沿直线 medium path 积分 <code>δr′=δd</code> 和 <code>δd′=F0+Aδr+Bδd</code>，用折射率梯度、Hessian 与方向切空间预测有方向的 <code>H−M</code>。它已淘汰上一代曲率标量 proxy，但参考解审计暴露了 matched residual 收敛不等于 mixed closure 收敛；所以下一步是离散 RK4-JVP、Picard 强基线和可观测 fail-closed，不是盲目加大模型。</p>
+        <div class="chips"><span class="chip blue">N2-PVGR-N2 · OPERATOR-CONSISTENT</span><span class="chip gold">9 / 9 MECHANISM</span><span class="chip blue">TEACHER 2.16e-14</span><span class="chip gold">PICARD BASELINE WINS</span><span class="chip coral">NO AUDIT AUTHORIZATION</span></div>
+          <h2>当前主线：精确离散 JVP 修掉了 7/9，但 Picard 强基线仍占优</h2>
+        <p>N2 不再把 automatic Hessian 塞进中央差分高保真程序，也不把完整动力学反馈误写成弯曲同伦的一阶轨迹切线。完整 forward-mode JVP 作为慢教师，解析 OCBH 作为可解释候选，Picard-1/2 作为历史强基线。最新证据把数学目标和程序对齐了，同时也否决了“OCBH 已经是最佳前向算法”的诱人说法。</p>
         <ol>
-          <li><strong>预测信号：</strong>9/9 matched 工况的 residual relative-L2 为 0.046–0.069，risk Spearman 为 0.926–0.996。</li>
-          <li><strong>控制变量余量：</strong>加入变分修正后，匹配离散的 residual 方差剩余仅 0.30%–2.26%。</li>
-          <li><strong>完整成本：</strong>候选 p90/full-high p10 为 0.0875–0.0882；包含 medium、Hessian predictor 和 correction，但尚未包含 JVP/VJP 训练成本。</li>
-          <li><strong>两项失败：</strong>wrinkled wide 在 3×/10× 的 reference no-harm ratio 为 1.143/1.774，超过 1.10 门。</li>
-          <li><strong>离散漏洞：</strong><code>H128−M128</code> 收敛不保证 <code>M128+Δ̂128</code> 对 <code>H256</code> 无害；必须分开报告 matched 残差与 mixed closure。</li>
+          <li><strong>教师等价：</strong>OCBH 对完整离散 JVP 的输出/位置/方向最坏误差分别为 2.16e-14、4.95e-15、5.38e-15。</li>
+          <li><strong>机制桥接：</strong>OCBH 最坏 matched residual relative-L2 为 1.34%，九格 reference no-harm 最坏 1.064。</li>
+          <li><strong>经典反证：</strong>Picard-1/2 最坏 matched 仅 0.171%/0.0498%，成本约为 H128 的 0.0254×/0.0372×。</li>
+          <li><strong>当前角色：</strong>OCBH 更适合作风险特征、可微 renderer 骨架或 learned residual 输入，不能称为最终赢家。</li>
+          <li><strong>下一冻结门：</strong>先做 96-cell 分组 factorial，再做 field JVP/VJP、三维重建和等预算 DeepONet/FNO/FFNO。</li>
           <li><strong>真实证据仍封存：</strong>必须从师兄取得米制 ROI、折射率/Gladstone-Dale 尺度、相机与背景标定、最大偏折工况、重复图像噪声及独立物理终点。</li>
         </ol>
         <div class="actions" style="margin:14px 0;">
-          <a class="button primary" href="#n2-pvgr-n1">看 N1 变分修正 7/9</a>
-          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n1_variational_learning_guide_2026-07-18.md">从零学 N1</a>
-          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n0_1_shared_state_and_variational_protocol_2026-07-18.md">完整冻结协议</a>
-          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=106-变分预测第一次真正超过旧代理-但-7-9-不能写成成功">讲人话日志 106</a>
+          <a class="button primary" href="#n2-pvgr-n2">看 N2 算子一致桥接</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n2_operator_consistent_bridge_2026-07-18.md">完整推导与判决</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=107-精确离散-jvp-修掉了-7-9-但-picard-又把我们打醒了">讲人话日志 107</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_cone_ray_baseline_design_2026-07-18.md">cone-ray 强基线</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n2_independent_evidence_audit_2026-07-18.md">独立证据审计</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_operator_consistent_manuscript_working_draft_2026-07-18.md">论文工作稿</a>
+          <a class="button" href="#n2-pvgr-n1">看 N1 变分修正 7/9</a>
           <a class="button" href="#n2-pvgr-n0">看上一代三级路由 NO-GO</a>
           <a class="button" href="#n2-curved-ray">看曲光线前置证据</a>
           <a class="button" href="#n2-adrc-n1">看上一版 N2-ADRC-N1</a>
@@ -2079,6 +2083,90 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
             <a class="button" href="demo_t16_operator/field_dependent_ray.py">曲光线源码</a>
           </div>
         </div>
+        <div id="n2-pvgr-n2" style="margin-top:26px;padding-top:26px;border-top:1px solid var(--line);scroll-margin-top:88px;">
+          <div class="chips"><span class="chip blue">N2-PVGR-N2 · OPERATOR-CONSISTENT HOMOTOPY</span><span class="chip gold">9 / 9 MECHANISM BRIDGE</span><span class="chip blue">60 CORE TESTS</span><span class="chip gold">PICARD STRONGER</span><span class="chip coral">NO PAPER / REAL-DATA AUTHORIZATION</span></div>
+          <h3 style="margin-top:10px;">同一个离散算子、同一个 RK4、同一个中央差分：这次终于对准了导数目标</h3>
+          <p>定义只控制轨迹弯曲的同伦 <code>r'=normalize(q)</code>、<code>q'=epsilon F_delta(r,q)</code>，但观测积分始终使用完整 <code>F_delta</code>。于是同一步数下 <code>Y(0)=M</code>、<code>Y(1)=H</code>，而 <code>Y'(0)</code> 是精确的离散 trajectory defect。慢的 forward-mode JVP 和快的解析 OCBH 在 float64 容差内一致；同时加入修正过输出 off-by-one 的 Picard-1/2，防止只和弱基线比较。</p>
+          <div class="metric-grid real-metric-grid" style="margin-top:12px;">
+            <div class="metric"><b>1.34%</b><span>OCBH 最坏 matched residual relative-L2；旧 N1 为 6.85%</span></div>
+            <div class="metric"><b>2.16e-14</b><span>解析 OCBH 对完整 forward-JVP 教师的最坏输出误差</span></div>
+            <div class="metric"><b>1.064</b><span>OCBH 最坏 H256 reference no-harm；九格均低于 1.10 门</span></div>
+            <div class="metric"><b>0.151×</b><span>OCBH 最坏 p90 / H128 p10，仅描述当前 Mac CPU 实现</span></div>
+            <div class="metric"><b>0.171%</b><span>Picard-1 最坏 matched residual relative-L2</span></div>
+            <div class="metric"><b>0.0498%</b><span>Picard-2 最坏 matched residual relative-L2</span></div>
+            <div class="metric"><b>0.0254×</b><span>Picard-1 最坏 p90 / H128 p10</span></div>
+            <div class="metric"><b>0.0372×</b><span>Picard-2 最坏 p90 / H128 p10</span></div>
+          </div>
+          <figure style="margin-top:14px;">
+            <a href="demo_t16_operator/results/n2_pvgr_n2_operator_consistent_bridge_v1/n2_pvgr_n2_operator_consistent_bridge.png" aria-label="打开 N2-PVGR-N2 算子一致桥接六联证据图"><img src="demo_t16_operator/results/n2_pvgr_n2_operator_consistent_bridge_v1/n2_pvgr_n2_operator_consistent_bridge.png" alt="N2-PVGR-N2 六联开发证据图，比较旧 N1、OCBH、Picard 一次与两次更新的匹配误差、参考无害性、逐光线尾部、教师等价、参考收敛和墙钟成本" width="3000" height="1700" loading="lazy" decoding="async" /></a>
+            <figcaption>这张图不能只读左上：OCBH 修复了旧 N1 的 reference 失败，forward-JVP 教师也验证了离散导数；但 Picard-1/2 在当前九格的 worst matched residual 与 CPU 墙钟汇总上都更低，因此 OCBH 只获得机制桥接资格。该汇总不表示 Picard 在每个 no-harm 指标的每一格都逐项占优。</figcaption>
+          </figure>
+          <p class="table-scroll-hint" aria-hidden="true">左右滑动比较四种候选与完整高保真</p>
+          <div class="result-table-wrap" tabindex="0" aria-label="N2-PVGR-N2 四种候选在九个开发格中的最坏指标和当前实现成本">
+            <table>
+              <thead><tr><th>方法</th><th>最坏 matched residual L2</th><th>最坏 H256 no-harm</th><th>最坏逐 ray Q95 no-harm</th><th>最小 risk Spearman</th><th>最坏 p90/H128 p10</th><th>当前结论</th></tr></thead>
+              <tbody>
+                <tr><td>旧 N1 continuous affine</td><td>0.06854</td><td class="negative">1.77360</td><td class="negative">1.68768</td><td>0.92592</td><td>0.0956×</td><td class="negative">历史 7/9，不是精确同伦导数</td></tr>
+                <tr><td>OCBH</td><td class="positive">0.01337</td><td class="positive">1.06441</td><td class="positive">1.05611</td><td class="positive">0.99867</td><td>0.1508×</td><td class="pending">9/9 机制桥接；非最佳前向</td></tr>
+                <tr><td>Picard-1</td><td class="positive">0.001709</td><td class="positive">1.001015</td><td class="positive">1.000944</td><td>0.99982</td><td class="positive">0.0254×</td><td class="positive">当前九格强基线</td></tr>
+                <tr><td>Picard-2</td><td class="positive">0.000498</td><td class="positive">1.000986</td><td class="positive">1.000908</td><td>0.99991</td><td class="positive">0.0372×</td><td class="positive">当前九格最高精度基线</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="formula">弯曲同伦：q'=epsilon F_delta(r,q)；在 epsilon=0，d/dε[epsilon F(r_epsilon,q_epsilon)]=F0，所以轨迹切线 delta q'=F0。A_delta/B_delta 只进入观测 integrand 的路径导数。</div>
+          <div class="two-col" style="margin-top:14px;">
+            <div class="panel">
+              <h3>旧 N1 到底错在哪里</h3>
+              <ol>
+                <li><strong>混了两种线性化：</strong><code>F0+A delta r+B delta d</code> 是完整动力学的一次仿射/Newton 型修正，不是 <code>epsilon F</code> 在零点的一阶轨迹切线。</li>
+                <li><strong>混了两个离散算子：</strong>高保真使用中央差分梯度，输出 Jacobian 就必须微分中央差分程序，automatic Hessian 不能代替。</li>
+                <li><strong>教师先于简化：</strong>完整离散 forward-JVP 很慢，但它让解析 OCBH 的每个 endpoint、midpoint 和方向归一化都有可核验目标。</li>
+                <li><strong>参考仍是 synthetic：</strong>H256/H512 最坏完整输出差 4.365e-5、matched residual 差 0.004257，只证明当前九格参考足够细。</li>
+              </ol>
+            </div>
+            <div class="panel">
+              <h3>Picard 为什么改变研究路线</h3>
+              <ol>
+                <li>一次路径更新后必须在最终路径再算一次输出；否则名义 Picard-1 实际仍是 straight output。</li>
+                <li>修正后 P1/P2 分别需要 2/3 个七点 batch，查询和墙钟均已记账。</li>
+                <li>当前弱场里 Picard 已吃掉大部分轨迹误差，直接学习完整 <code>H</code> 没有合理 headroom。</li>
+                <li>更可信的神经任务是学习 <code>H-P1</code> 或 <code>P2-P1</code>，并只在强但无焦散、超过实验噪声的区域启用。</li>
+              </ol>
+            </div>
+          </div>
+          <div class="pipeline" aria-label="N2 算子一致桥接通向三维算子学习的六步路线">
+            <div><b>离散导数</b><span>手推同伦 product rule，复现 forward-JVP 与 OCBH 等价</span></div>
+            <div><b>经典强基线</b><span>Picard-1/2、Norton、cone-ray 全部公平计输出查询</span></div>
+            <div><b>96-cell 屏</b><span>按 field seed 分组，不把同一场里的 ray 当独立样本</span></div>
+            <div><b>可学余量</b><span>检查 H-P1、P2-P1 是否稳定大于数值与实验噪声</span></div>
+            <div><b>三维重建</b><span>field L2、front、held-out view、VJP、wall-time 同时过门</span></div>
+            <div><b>真实迁移</b><span>cone aperture、OERF 标定、flow-off/on repeats 与独立物理终点</span></div>
+          </div>
+          <div class="source-grid" style="margin-top:14px;">
+            <article class="source-card"><div class="body"><span class="chip coral">历史强基线</span><h3>Norton 1987 ray linking</h3><p>successive approximation 和一阶折射路径修正已有明确谱系；Picard 必须成为候选算法的最低比较线。</p></div><div class="actions"><a class="button primary" href="https://opg.optica.org/josaa/abstract.cfm?uri=josaa-4-10-1919">Optica 官方页</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip blue">动态射线理论</span><h3>Cerveny et al. 1984</h3><p>paraxial/dynamic ray tracing 给出轨迹扰动的成熟理论背景，约束“首次变分曲光线”的错误新颖性表述。</p></div><div class="actions"><a class="button primary" href="https://academic.oup.com/gji/article/79/1/89/601880">GJI 官方页</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip gold">有限孔径基线</span><h3>Cone-ray BOS</h3><p>真实相机把 pupil 内多条 ray 平均成像；它与单中心 ray 的轨迹修正是两个不同误差源。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2402.15954">开放全文</a><a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_cone_ray_baseline_design_2026-07-18.md">实现设计</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip blue">OERF 三维宿主</span><h3>NeRIF</h3><p>何远哲的神经折射率场是最直接的三维重建宿主；下一步必须在相同几何、观测和预算下接入，不能只比前向小残差。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2409.14722v2">开放全文</a><a class="button" href="https://doi.org/10.1063/5.0250899">正式 DOI</a></div></article>
+          </div>
+          <div class="alert critical" style="margin-top:14px;"><strong>独立审计：带警告通过，仅限开发阶段机制证据</strong><span>审计已核对 JSON/CSV、审计时 13/13 manifest 项、主门、教师、sentinel、计时与 query；同时记录 11 项警告。随后已把清单补到 20 项，但尚未接受第二轮独立复核。reserved phantom、三维重建、DeepONet/FNO/FFNO 同预算比较和真实 OERF 数据仍未开放；不得写成“算法成功”“优于现有模型”“真实泛化”或“可投稿成果”。</span></div>
+          <div class="actions" style="margin-top:14px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fn2_pvgr_n2_operator_consistent_bridge_2026-07-18.md">完整 N2 报告</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n2_independent_evidence_audit_2026-07-18.md">独立审计：PASS WITH WARNINGS</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_operator_consistent_manuscript_working_draft_2026-07-18.md">中文论文工作稿</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n2_operator_consistent_bridge_v1/summary.md">机器摘要</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n2_operator_consistent_bridge_v1/result.json">完整结果 JSON</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n2_operator_consistent_bridge_v1/metrics.csv">方法指标 CSV</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n2_operator_consistent_bridge_v1/teacher_metrics.csv">教师等价 CSV</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n2_operator_consistent_bridge_v1/reference_sentinel.csv">参考收敛 CSV</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n2_operator_consistent_bridge_v1/timing.csv">交错计时 CSV</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n2_operator_consistent_bridge_v1/manifest.json">哈希清单</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=107-精确离散-jvp-修掉了-7-9-但-picard-又把我们打醒了">讲人话日志 107</a>
+            <a class="button" href="demo_t16_operator/run_n2_pvgr_n2_operator_consistent_bridge.py">正式 runner</a>
+            <a class="button" href="demo_t16_operator/operator_consistent_homotopy_predictor.py">解析 OCBH</a>
+            <a class="button" href="demo_t16_operator/discrete_rk4_jvp_predictor.py">forward-JVP 教师</a>
+            <a class="button" href="demo_t16_operator/picard_curved_ray_baseline.py">Picard 基线</a>
+          </div>
+        </div>
         <div id="n2-pvgr-n1" style="margin-top:26px;padding-top:26px;border-top:1px solid var(--line);scroll-margin-top:88px;">
           <div class="chips"><span class="chip blue">N2-PVGR-N1 · VARIATIONAL DEFECT DEVELOPMENT</span><span class="chip gold">7 / 9 SCREEN</span><span class="chip blue">40 TARGETED TESTS</span><span class="chip coral">2 REFERENCE NO-HARM FAILURES</span><span class="chip coral">NO AUDIT AUTHORIZATION</span></div>
           <h3 style="margin-top:10px;">一阶轨迹变分修正已淘汰旧曲率代理，但高应力皱褶场还不能授权</h3>
@@ -3026,7 +3114,7 @@ VD0-B 也已完成。我从 MATLAB find 索引恢复真实 detector row/column�
   </main>
 
   <footer>
-    <p>版本 2026.07.18-N1.9。研究结论以仓库 report/JSON/checksum 为准；页面只做可读映射。N1.9 Residual-Contrast 在已打开 synthetic development 上为 +6.207% field、51.408% extra-headroom，Damping-Contrast 为 +5.452% / 36.864%；按提交 <code>52490e5</code> 前冻结规则，两者分别只过 16/17 与 15/17，候选对分支关闭，learner 与新 split 均未启动。N1.8、N1.7-D、Factor Gate B、Metric-A v1/v2 与 N1.2–N1.7 也保持原判；真实 OERF、实验、泛化和论文优越性全部关闭。受限论文、组内数据、逐射线索引、私有 cache、checkpoint 与原始重建体不进入 GitHub Pages。</p>
+    <p>版本 2026.07.18-N2-PVGR-N2。研究结论以仓库 report/JSON/checksum 为准；页面只做可读映射。最新开发证据表明解析 OCBH 与完整离散 forward-JVP 在 float64 容差内一致并通过 9/9 机制格，但 Picard-1/2 在 matched residual 与当前 Mac CPU worst-case 墙钟汇总上更强；独立审计结论为 <code>PASS WITH WARNINGS — DEVELOPMENT MECHANISM EVIDENCE ONLY</code>。96-cell、reserved family、三维重建、DeepONet/FNO/FFNO 同预算比较、真实 OERF、泛化和论文授权全部保持关闭；N1.9 及更早分支保留为历史证据，其中 N1.9 learner 与新 split 均未启动。受限论文、组内数据、逐射线索引、私有 cache、checkpoint 与原始重建体不进入 GitHub Pages。</p>
   </footer>
   <script>
     (() => {

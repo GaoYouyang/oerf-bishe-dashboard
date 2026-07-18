@@ -4,6 +4,16 @@
 >
 > 状态：数学候选与学习路线文档。本文没有声称真实实验、实验室数据、跨流场泛化或论文级算法成功。
 
+> **N2 勘误（2026-07-18）：**本文中的 N1 系统
+> `delta d' = F0 + A delta r + B delta d` 应准确称为“沿直线路径对完整动力学作一次
+> 仿射/Newton 型修正”，不是弯曲同伦 `d'=epsilon F` 在 `epsilon=0` 的精确离散 JVP。
+> 对该同伦求一阶导时，轨迹切线满足 `delta d'=F0`；`A/B` 只进入最终观测积分的
+> 路径导数。另一个关键区别是，高保真路线使用中央差分梯度，所以输出 Jacobian 必须
+> 对同一个中央差分算子求导，不能用当前位置的 automatic Hessian 替代。完整推导、
+> forward-mode 教师核验和 9/9 机制桥接见
+> [N2 算子一致同伦桥接](n2_pvgr_n2_operator_consistent_bridge_2026-07-18.md)。本文后续章节
+> 仍用于学习 N1 的物理直觉与历史实验，但不要把它们当成精确同伦导数的定义。
+
 ## 0. 先知道我们在解决什么问题
 
 BOS（Background-Oriented Schlieren，背景纹影）通过观察背景图案的位移，反推出光线经过流场后发生了多大的偏折。BOST（Background-Oriented Schlieren Tomography）进一步从多个观察方向的投影信息重建三维折射率场，进而间接研究密度、温度或反应流结构。

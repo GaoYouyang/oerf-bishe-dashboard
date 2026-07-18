@@ -1,5 +1,13 @@
 # N2-PVGR-N0.1 / N1：共享直线路径状态与轨迹变分预测器冻结协议
 
+> **后续审计勘误（2026-07-18）：**N1 的
+> `delta d'=F0+A delta r+B delta d` 是完整动力学的一次仿射/Newton 型直线路径修正，
+> 不是 `d'=epsilon F` 在 `epsilon=0` 的精确离散同伦 JVP。精确一阶同伦轨迹只保留
+> `delta d'=F0`，而中央差分算子的 `A_delta/B_delta` 只进入观测积分导数。N2 已用
+> forward-mode JVP 逐元素核对，并把两个 reference no-harm 失败修复到 9/9；但 Picard-1/2
+> 在当前弱合成场上更快更准，因此新的结果仍只是机制桥接，不是论文算法成功。见
+> [N2 算子一致同伦桥接](n2_pvgr_n2_operator_consistent_bridge_2026-07-18.md)。
+
 ## 为什么在训练路由器前多加这一轮
 
 `N2-PVGR-N0` 已经证明三件事：三级 `L0/M/H` 分解在基础尺度有机制余量；当前

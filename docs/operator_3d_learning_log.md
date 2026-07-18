@@ -2775,3 +2775,45 @@ JVP/VJP 和三维重建成本门。
 入门学习见 [N1 变分缺陷预测学习指南](n2_pvgr_n1_variational_learning_guide_2026-07-18.md)，数学合同、九行数据、
 失败门与先行工作边界见
 [N0.1/N1 共享状态与变分预测冻结协议](n2_pvgr_n0_1_shared_state_and_variational_protocol_2026-07-18.md)。
+
+## 107. 精确离散 JVP 修掉了 7/9，但 Picard 又把我们打醒了
+
+上一节留下了两个失败：皱褶宽孔径场的 `3x` 和 `10x` 在更细参考解下变差。最开始很容易把
+原因归咎于“应力太强”或者“还缺一个更大的网络”。这次往下查了一层，发现首先该修的是我们自己
+对一阶导数的定义。
+
+旧 N1 把 `A delta r + B delta d` 放进轨迹切线方程。它可以理解为沿直线路径对完整动力学做一次
+仿射修正，但它不是弯曲同伦 `d'=epsilon F` 在 `epsilon=0` 的精确导数。因为对
+`epsilon F` 求导时，`epsilon` 本身已经贡献了 `F0`，而 `F` 随路径变化的反馈还会再乘一个
+`epsilon`，属于二阶。精确的一阶轨迹切线只有 `delta d'=F0`；`A/B` 应在最后的观测积分求导时
+进入。另一个错误更隐蔽：高保真路线用的是中央差分梯度，所以 Jacobian 也必须对同一个中央差分
+程序求导，不能偷偷换成当前位置的 automatic Hessian。
+
+我写了两个互相核对的实现：一个把完整 RK4 程序送进 PyTorch forward-mode JVP，作为很慢但直接的
+教师；另一个解析传播同样的离散切线，叫 OCBH。九个开发格里，两者最坏 relative-L2 只有
+`2.16e-14`，说明解析程序确实在算同一个离散导数。OCBH 的 matched residual 最坏误差降到
+`1.34%`，原来两个 reference no-harm 失败降到 `1.007` 和 `1.064`，九格都过了当前机制门。
+其最坏 p90/H128 p10 约为 `0.151`，逻辑场查询比为 `0.4015625`。
+
+但真正重要的结果不是“终于 9/9”。我同时实现了历史上更朴素的 Picard 路径更新，并修掉了第一版
+返回旧路径观测的 off-by-one。修正后 Picard-1/2 在同九格上都比 OCBH 更快、更准：
+
+- Picard-1 最坏 matched residual relative-L2 为 `0.171%`，成本比约 `0.0254x`；
+- Picard-2 最坏 matched residual relative-L2 为 `0.0498%`，成本比约 `0.0372x`；
+- 两者最坏 reference no-harm 约为 `1.001`，也优于 OCBH 的 `1.064`。
+
+**讲人话：**我们把数学公式修对了，也证明 OCBH 是一个精确、便宜、可解释的一阶特征；但在当前
+弱合成场里，经典 Picard 更新更简单也更强。所以不能把 OCBH 包装成“自有算法已经胜出”。它更可能
+成为风险证书、可微 renderer 的导数骨架，或 `Picard-1 + learned residual` 的输入，而不是最终前向
+输出本身。
+
+下一轮会把问题从九个小格扩大到按 field seed 分组的 96 个物理格，避免把同一体场上的很多 ray
+误当成独立证据。只有在更强但仍无焦散的场中，`H-P1` 或 `P2-P1` 留下稳定、可学习且超过噪声的
+headroom，才值得训练小型算子网络。之后还必须进入三维重建、等 VJP/等墙钟 DeepONet/FNO/FFNO
+比较、有限孔径 cone-ray 和 OERF 真实几何。当前没有打开 reserved family，没有真实数据，也没有
+论文或泛化授权。
+
+完整推导与九格证据见
+[N2 算子一致同伦桥接](n2_pvgr_n2_operator_consistent_bridge_2026-07-18.md)，有限孔径强基线与要向
+何远哲师兄索取的 12 项数据合同见
+[cone-ray 强基线设计](n2_pvgr_cone_ray_baseline_design_2026-07-18.md)。
