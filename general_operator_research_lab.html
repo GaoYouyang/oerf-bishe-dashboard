@@ -182,6 +182,7 @@
       <a href="#n2-cvcr-n0">N2 孔径机制门</a>
       <a href="#n2-adrc-n1">N2 自动-离散残差</a>
       <a href="#n2-curved-ray">N2 曲光线与路由</a>
+      <a href="#n2-pvgr-n1">N2 变分修正 7/9</a>
       <a href="#n2-pvgr-n0">N2 三级路由判决</a>
       <a href="#algorithm">安全算子</a>
       <a href="#candidates">算法路线</a>
@@ -195,21 +196,26 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">当前只做 N2：把 BOST 三维重建中的梯度实现、直线近似与场依赖曲光线拆成 <code>L0 / M / H</code> 三级算子，再用条件无偏的稀疏高保真纠偏守住高保真目标。第一轮完整开发已经结束：数值和统计合同 9/9 通过，基础尺度下 <code>M</code> 把轨迹残差方差压到原混合残差的 0.7%–9.2%；但当前低成本风险代理 0/9 过门，Mac 端到端成本反而是全高保真的 2.48–2.51 倍。机器结论是 <code>DEVELOPMENT_ONLY_NO_AUDIT_AUTHORIZATION</code>。下一轮只推进共享状态向量化与一阶轨迹变分预测器，不把 oracle 余量写成算法成功。</p>
+    <p class="lead">当前只做 N2：在 BOST 三维重建中，用共享直线状态构造一阶轨迹变分 defect correction，低成本预测全非线性曲光线 <code>H</code> 相对直线弱偏折 <code>M</code> 的小残差。正式 development 筛选中，matched residual 误差为 4.6%–6.9%，残余方差比为 0.003–0.023，逐 ray 风险排序 Spearman 为 0.926–0.996，完整候选 closure 的 p90/full-high p10 约为 0.088。但皱褶宽孔径的 3×/10× 工况恶化了对 256 步参考的 no-harm ratio，因此只有 <strong>7/9</strong> 过门，机器结论仍是 <code>DEVELOPMENT_ONLY_NO_AUDIT_AUTHORIZATION</code>。</p>
     <div class="hero-grid">
       <section class="decision">
-        <div class="chips"><span class="chip blue">N2-PVGR-N0 · TRIFIDELITY</span><span class="chip gold">9 / 9 CONTRACT</span><span class="chip coral">0 / 9 PROXY SCREEN</span><span class="chip coral">NO AUDIT AUTHORIZATION</span><span class="chip gold">ORACLE HEADROOM 4 / 9</span></div>
-        <h2>当前唯一主线：先把三级物理算子做成可靠算法，再谈神经路由和论文胜出</h2>
-        <p>新原型将 automatic-gradient straight ray、central-gradient straight ray 和 central-gradient curved ray 分成三级，并真实执行 Bernoulli 稀疏 high 路线。它证明了三级分解有机制余量，也同时否决了当前曲率风险分数和 Python 证书实现。现在的目标不是调阈值挽救首版，而是先用共享状态消除重复成本，再用一阶轨迹变分直接预测 <code>H−M</code>。</p>
+        <div class="chips"><span class="chip blue">N2-PVGR-N1 · VARIATIONAL DEFECT</span><span class="chip gold">7 / 9 DEVELOPMENT</span><span class="chip blue">RISK ρ 0.926–0.996</span><span class="chip blue">WALL 0.088×</span><span class="chip coral">NO AUDIT AUTHORIZATION</span></div>
+        <h2>当前主线：变分缺陷修正已有强开发信号，但先解决离散一致性和高应力回退</h2>
+        <p>N1 不是又训练一个黑箱网络。它沿直线 medium path 积分 <code>δr′=δd</code> 和 <code>δd′=F0+Aδr+Bδd</code>，用折射率梯度、Hessian 与方向切空间预测有方向的 <code>H−M</code>。它已淘汰上一代曲率标量 proxy，但参考解审计暴露了 matched residual 收敛不等于 mixed closure 收敛；所以下一步是离散 RK4-JVP、Picard 强基线和可观测 fail-closed，不是盲目加大模型。</p>
         <ol>
-          <li><strong>机制成立：</strong>基础尺度 3/3 rig 的 <code>Var(H−M)/Var(H−L0)</code> 为 0.0068–0.0917，说明先隔离 gradient-mode mismatch 是对的。</li>
-          <li><strong>代理失败：</strong>当前可观测风险分数相对 constant-π 方差门 0/9 通过；smooth narrow 甚至增加约 9.7% 方差。</li>
-          <li><strong>有限余量：</strong>使用真实 <code>|H−M|</code> 的 oracle 分配 4/9 通过，只能证明存在可学习信号，不能作为部署算法。</li>
-          <li><strong>工程失败：</strong>解析查询账本为全 high 的 0.621875 倍，但当前逐 ray Python 证书使实测端到端成本升到 2.48–2.51 倍。</li>
+          <li><strong>预测信号：</strong>9/9 matched 工况的 residual relative-L2 为 0.046–0.069，risk Spearman 为 0.926–0.996。</li>
+          <li><strong>控制变量余量：</strong>加入变分修正后，匹配离散的 residual 方差剩余仅 0.30%–2.26%。</li>
+          <li><strong>完整成本：</strong>候选 p90/full-high p10 为 0.0875–0.0882；包含 medium、Hessian predictor 和 correction，但尚未包含 JVP/VJP 训练成本。</li>
+          <li><strong>两项失败：</strong>wrinkled wide 在 3×/10× 的 reference no-harm ratio 为 1.143/1.774，超过 1.10 门。</li>
+          <li><strong>离散漏洞：</strong><code>H128−M128</code> 收敛不保证 <code>M128+Δ̂128</code> 对 <code>H256</code> 无害；必须分开报告 matched 残差与 mixed closure。</li>
           <li><strong>真实证据仍封存：</strong>必须从师兄取得米制 ROI、折射率/Gladstone-Dale 尺度、相机与背景标定、最大偏折工况、重复图像噪声及独立物理终点。</li>
         </ol>
         <div class="actions" style="margin:14px 0;">
-          <a class="button primary" href="#n2-pvgr-n0">看最新三级路由 NO-GO</a>
+          <a class="button primary" href="#n2-pvgr-n1">看 N1 变分修正 7/9</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n1_variational_learning_guide_2026-07-18.md">从零学 N1</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n0_1_shared_state_and_variational_protocol_2026-07-18.md">完整冻结协议</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=106-变分预测第一次真正超过旧代理-但-7-9-不能写成成功">讲人话日志 106</a>
+          <a class="button" href="#n2-pvgr-n0">看上一代三级路由 NO-GO</a>
           <a class="button" href="#n2-curved-ray">看曲光线前置证据</a>
           <a class="button" href="#n2-adrc-n1">看上一版 N2-ADRC-N1</a>
           <a class="button" href="#n2-cvcr-n0">看冻结的 N0</a>
@@ -2071,6 +2077,94 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
             <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=104-曲光线导数写对了但基础尺度下它可能小到没有实验意义">讲人话日志 104</a>
             <a class="button" href="demo_t16_operator/run_n2_adrc_n1_curved_ray_rehearsal.py">运行排练</a>
             <a class="button" href="demo_t16_operator/field_dependent_ray.py">曲光线源码</a>
+          </div>
+        </div>
+        <div id="n2-pvgr-n1" style="margin-top:26px;padding-top:26px;border-top:1px solid var(--line);scroll-margin-top:88px;">
+          <div class="chips"><span class="chip blue">N2-PVGR-N1 · VARIATIONAL DEFECT DEVELOPMENT</span><span class="chip gold">7 / 9 SCREEN</span><span class="chip blue">40 TARGETED TESTS</span><span class="chip coral">2 REFERENCE NO-HARM FAILURES</span><span class="chip coral">NO AUDIT AUTHORIZATION</span></div>
+          <h3 style="margin-top:10px;">一阶轨迹变分修正已淘汰旧曲率代理，但高应力皱褶场还不能授权</h3>
+          <p>从直线参考路径 <code>(r0,d0)</code> 出发，N1 把全非线性曲光线相对直线 medium 的轨迹差写成非齐次变分系统。它给出有方向的预测，而不是只用曲率大小猜风险。当前结果证明 matched 128-step 目标上它具有强控制变量余量；但对 256-step reference 的 mixed closure 在两个皱褶宽孔径工况中恶化，所以机器只记录开发信号，不记录算法成功。</p>
+          <div class="metric-grid real-metric-grid" style="margin-top:12px;">
+            <div class="metric"><b>4.6%–6.9%</b><span>预测对 matched <code>H128−M128</code> relative-L2</span></div>
+            <div class="metric"><b>0.003–0.023</b><span>修正后 residual 方差 / 修正前 residual 方差</span></div>
+            <div class="metric"><b>0.926–0.996</b><span>逐 ray 变分 risk 对 true <code>|H−M|</code> Spearman</span></div>
+            <div class="metric"><b>0.087–0.088×</b><span>完整 candidate p90 / full-high p10，forward-only</span></div>
+          </div>
+          <figure style="margin-top:14px;">
+            <a href="demo_t16_operator/results/n2_pvgr_n1_variational_development_v1/n2_pvgr_n1_variational_development.png" aria-label="打开 N2-PVGR-N1 变分缺陷修正六联开发证据图"><img src="demo_t16_operator/results/n2_pvgr_n1_variational_development_v1/n2_pvgr_n1_variational_development.png" alt="N2-PVGR-N1 六联开发证据图，展示逐光线风险排序、匹配残差误差、方差剩余、混合离散无害性、参考误差和完整墙钟成本" width="3060" height="1620" loading="lazy" decoding="async" /></a>
+            <figcaption>六幅图必须一起读：上排说明 matched residual 的排序、精度与方差余量；左下的两根超门柱明确否决全工况授权；中下区分完整输出误差与小 residual 误差；右下只是 forward 墙钟，不代替 JVP/VJP 训练成本。</figcaption>
+          </figure>
+          <p class="table-scroll-hint" aria-hidden="true">左右滑动查看全部九行结果</p>
+          <div class="result-table-wrap" tabindex="0" aria-label="N2-PVGR-N1 三个开发 rig 与三个应力尺度的预测、方差、排序、参考和成本门">
+            <table>
+              <thead><tr><th>开发 rig</th><th>stress</th><th>matched residual L2</th><th>剩余方差比</th><th>risk Spearman</th><th>candidate / H256 L2</th><th>reference no-harm ratio</th><th>墙钟比</th><th>判决</th></tr></thead>
+              <tbody>
+                <tr><td>smooth narrow</td><td>1×</td><td>0.0464</td><td>0.0032</td><td>0.9957</td><td>0.000842</td><td>1.000</td><td>0.088</td><td class="positive">PASS</td></tr>
+                <tr><td>smooth narrow</td><td>3×</td><td>0.0467</td><td>0.0032</td><td>0.9958</td><td>0.000838</td><td>1.000</td><td>0.088</td><td class="positive">PASS</td></tr>
+                <tr><td>smooth narrow</td><td>10×</td><td>0.0486</td><td>0.0032</td><td>0.9961</td><td>0.000829</td><td>1.006</td><td>0.088</td><td class="positive">PASS</td></tr>
+                <tr><td>wrinkled wide</td><td>1×</td><td>0.0675</td><td>0.0220</td><td>0.9262</td><td>0.000281</td><td>1.034</td><td>0.088</td><td class="positive">PASS</td></tr>
+                <tr><td>wrinkled wide</td><td>3×</td><td>0.0675</td><td>0.0219</td><td>0.9262</td><td>0.000311</td><td class="negative">1.143</td><td>0.088</td><td class="negative">FAIL</td></tr>
+                <tr><td>wrinkled wide</td><td>10×</td><td>0.0685</td><td>0.0226</td><td>0.9259</td><td>0.000484</td><td class="negative">1.774</td><td>0.088</td><td class="negative">FAIL</td></tr>
+                <tr><td>smooth wide</td><td>1×</td><td>0.0514</td><td>0.0030</td><td>0.9932</td><td>0.000953</td><td>1.002</td><td>0.087</td><td class="positive">PASS</td></tr>
+                <tr><td>smooth wide</td><td>3×</td><td>0.0514</td><td>0.0030</td><td>0.9938</td><td>0.000952</td><td>1.005</td><td>0.087</td><td class="positive">PASS</td></tr>
+                <tr><td>smooth wide</td><td>10×</td><td>0.0520</td><td>0.0030</td><td>0.9930</td><td>0.000957</td><td>1.029</td><td>0.087</td><td class="positive">PASS</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="formula">非齐次 defect：δr′=δd，δd′=F0+Aδr+Bδd；A=P0[∇²n/n−(∇n∇nᵀ)/n²]；预测：Δ̂= ∫ projection(Aδr+Bδd) ds；修正 medium：M1=M+Δ̂。</div>
+          <div class="two-col" style="margin-top:14px;">
+            <div class="panel">
+              <h3>为什么 7/9 还不是论文结果</h3>
+              <ol>
+                <li>全部场都是 smoothstep synthetic development phantom，reserved family 仍封存。</li>
+                <li><code>H128−M128</code> 的积分误差会抵消，但 <code>M128+Δ̂128</code> 对 <code>H256</code> 的 mixed closure 不保留这种抵消。</li>
+                <li>3×/10× wrinkled-wide 在 matched residual 上仍很好，却在 reference no-harm 上失败，说明单一指标会误导。</li>
+                <li>当前成本只测 forward；训练中的 HVP/JVP/VJP、反向峰值内存和全重建还未过门。</li>
+                <li>变分方程、dynamic ray tracing、可微曲光线和多保真估计都有先例；新意不能写在公式本身。</li>
+              </ol>
+            </div>
+            <div class="panel">
+              <h3>下一版的六个硬任务</h3>
+              <ol>
+                <li><strong>Discrete RK4-JVP：</strong>直接线性化 high RK4 step，包括每步方向归一化。</li>
+                <li><strong>HVP 替代显式 Hessian：</strong>缩减内存，并为 field JVP/VJP 稳定铺路。</li>
+                <li><strong>Picard-1/2 强基线：</strong>排除 N1 只是换写一次迭代的可能。</li>
+                <li><strong>Cone-ray 分离：</strong>不把有限孔径/景深模糊错归因为轨迹弯曲。</li>
+                <li><strong>可观测回退门：</strong>对高应力皱褶场自动选 full high，不许用 truth 特征。</li>
+                <li><strong>重建终点：</strong>最终比 field relative-L2、front、held-out reprojection、逐 rig P95/P99 与调用账本。</li>
+              </ol>
+            </div>
+          </div>
+          <div class="pipeline" aria-label="N1 变分缺陷修正从基础学习到论文审计的六步路径">
+            <div><b>几何光学</b><span>BOS 直线弱偏折、曲光线 ODE 与投影几何</span></div>
+            <div><b>变分方程</b><span>Taylor、Jacobian/Hessian、切空间与 defect forcing</span></div>
+            <div><b>数值离散</b><span>RK4 收敛、matched/mixed 合同、JVP/VJP dot test</span></div>
+            <div><b>历史强基线</b><span>Norton/Picard、Lira-Vest、ANR 与 cone-ray</span></div>
+            <div><b>算子宿主</b><span>接入 NeRIF/4D BOST，对比 DeepONet/FNO 不同角色</span></div>
+            <div><b>真实审计</b><span>师兄数据合同、物理不确定度、独立时间/几何</span></div>
+          </div>
+          <div class="source-grid" style="margin-top:14px;">
+            <article class="source-card"><div class="body"><span class="chip blue">BOS 基础</span><h3>Raffel 2015 review</h3><p>弱偏折、背景位移、Gladstone–Dale 与实验误差的一级基线。</p></div><div class="actions"><a class="button primary" href="https://link.springer.com/article/10.1007/s00348-015-1927-5">开放正式版</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip coral">历史边界 · 1987</span><h3>Norton ray linking</h3><p>一阶折射率扰动路径与 successive approximation 已有明确先例，是 Picard 基线的来源。</p></div><div class="actions"><a class="button primary" href="https://opg.optica.org/josaa/abstract.cfm?uri=josaa-4-10-1919">官方摘要</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip coral">层析先例 · 1987</span><h3>Lira &amp; Vest correction</h3><p>扰动折射校正和两种迭代程序已在折射率层析中比较，不能略过。</p></div><div class="actions"><a class="button primary" href="https://opg.optica.org/ao/abstract.cfm?uri=ao-26-18-3919">官方摘要</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip coral">可微曲光线</span><h3>Adjoint Nonlinear Ray Tracing</h3><p>全非线光线、伴随、Hessian 与辛积分都有成熟先例，N1 必须比较而不能宣称首次。</p></div><div class="actions"><a class="button primary" href="https://imaging.cs.cmu.edu/adjoint_nonlinear_tracing/">项目与论文</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip gold">有限孔径</span><h3>Cone-ray BOS</h3><p>薄 ray 会漏掉景深模糊；它是轨迹弯曲之外必须分离的实验因素。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2402.15954">开放全文</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip blue">神经折射率层析</span><h3>Zhao et al. CVPR 2024</h3><p>在神经折射率场中可微追踪曲光线，是非线性 neural RI inversion 的强外部对照。</p></div><div class="actions"><a class="button primary" href="https://openaccess.thecvf.com/content/CVPR2024/html/Zhao_Single_View_Refractive_Index_Tomography_with_Neural_Fields_CVPR_2024_paper.html">CVF 官方全文</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip blue">OERF 宿主</span><h3>NeRIF</h3><p>何远哲三维 BOST 神经折射率场是最直接的重建宿主；当前 N1 还没有进入其真实数据和指标。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2409.14722v2">开放全文</a><a class="button" href="https://doi.org/10.1063/5.0250899">正式 DOI</a></div></article>
+            <article class="source-card"><div class="body"><span class="chip gold">OERF 重叠审计</span><h3>Tensor-decomposition 4D BOST</h3><p>公开记录已提到 ray-path distortion correction；拿到师兄的输入、目标和实现前，不能声称 N1 与它不重叠。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1145/3809488">正式 DOI</a><a class="button" href="https://me.sjtu.edu.cn/teacher_directory1/caiweiwei">蔡伟伟主页记录</a></div></article>
+          </div>
+          <div class="alert critical" style="margin-top:14px;"><strong>当前机器结论：7/9 只允许继续开发</strong><span>不允许写“已优于 DeepONet/FNO”、“已改善真实 BOST”、“已证明泛化”或“首次一阶曲光线”。当前有说服力的只是：一个 BOST 特定的低成本变分缺陷候选在合成 development 上显示强 matched 信号，同时被 reference no-harm 反例限制。</span></div>
+          <div class="actions" style="margin-top:14px;">
+            <a class="button primary" href="demo_t16_operator/results/n2_pvgr_n1_variational_development_v1/summary.md">开发判决摘要</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n1_variational_development_v1/result.json">完整结果 JSON</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n1_variational_development_v1/metrics.csv">九行指标 CSV</a>
+            <a class="button" href="demo_t16_operator/results/n2_pvgr_n1_variational_development_v1/manifest.json">源码与结果哈希</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n1_variational_learning_guide_2026-07-18.md">初学者学习指南</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fn2_pvgr_n0_1_shared_state_and_variational_protocol_2026-07-18.md">完整冻结协议</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=106-变分预测第一次真正超过旧代理-但-7-9-不能写成成功">讲人话日志 106</a>
+            <a class="button" href="demo_t16_operator/run_n2_pvgr_n1_variational_development.py">实验运行器</a>
+            <a class="button" href="demo_t16_operator/trajectory_variational_predictor.py">变分预测器源码</a>
+            <a class="button" href="demo_t16_operator/shared_straight_state.py">共享直线状态源码</a>
+            <a class="button" href="demo_t16_operator/test_trajectory_variational_predictor.py">19 项数学/数值测试</a>
           </div>
         </div>
         <div id="n2-pvgr-n0" style="margin-top:26px;padding-top:26px;border-top:1px solid var(--line);scroll-margin-top:88px;">

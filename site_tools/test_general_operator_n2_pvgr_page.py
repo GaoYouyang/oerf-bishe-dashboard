@@ -34,7 +34,7 @@ def test_page_makes_the_latest_no_go_easy_to_find_and_hard_to_misread() -> None:
     html = PAGE.read_text(encoding="utf-8")
     section = _section()
     assert 'href="#n2-pvgr-n0"' in html
-    assert "看最新三级路由 NO-GO" in html
+    assert "看上一代三级路由 NO-GO" in html
     assert "N2-PVGR-N0 · TRIFIDELITY DEVELOPMENT" in section
     assert "9 / 9 CONTRACT" in section
     assert "0 / 9 PROXY SCREEN" in section

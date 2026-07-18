@@ -129,7 +129,8 @@ def test_public_n1_8_package_contains_no_model_checkpoint_or_array() -> None:
 def test_focused_page_exposes_n1_9_branch_closure_without_success_language() -> None:
     html = PAGE.read_text(encoding="utf-8")
     assert 'id="n1-9-result"' in html
-    assert "N1.9 · BRANCH CLOSED" in html
+    assert "N1.9" in html
+    assert "BRANCH CLOSED" in html
     assert "+6.207%" in html
     assert "51.408%" in html
     assert "35.787%" in html
@@ -181,7 +182,8 @@ def test_focused_page_exposes_n2_contract_as_waiting_not_algorithm_success() -> 
     assert 'id="n2-contract"' in html
     assert "N2_WAITING_FOR_LAB_INPUT" in html
     assert "资料齐备度 0 / 7" in html
-    assert "尚未运行算法，也没有算法成绩" in html
+    assert "尚未运行 N2 真实重建算法" in html
+    assert "没有 OERF 真实重建成绩" in html
     assert "先看本科生解释：第100节" in html
     assert "左右滑动查看完整四列" in html
     assert "这一步没有“算法增益”" in html
@@ -192,7 +194,7 @@ def test_focused_page_exposes_n2_contract_as_waiting_not_algorithm_success() -> 
     assert "docs/oerf_n2_contract_readiness_public_summary.json" in html
     assert "site_tools/validate_oerf_n2_real_bost_contract.py" in html
     n2 = html.split('<section id="n2-contract"', 1)[1].split(
-        '<section id="algorithm"', 1
+        '<div id="n2-cvcr-n0"', 1
     )[0]
     assert '<td class="negative">FAIL</td>' not in n2
     assert n2.count('class="pending">待') == 7

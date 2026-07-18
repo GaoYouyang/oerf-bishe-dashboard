@@ -13,6 +13,7 @@ SKIP_PARTS = {
     ".venv",
     "__pycache__",
     "_public_pages_export",
+    "build",
     "private_library",
     "tmp_downloads",
 }
