@@ -3165,3 +3165,35 @@ FAIL_STRUCTURE、FAIL_FD/ADJOINT 或 low-signal unresolved 选择物理上真实
 
 完整合同、复现命令、72 小时接线路线和可直接发给师兄的消息见
 [N5-D5 最小真实接口桥](n5_d5_minimum_real_interface_bridge_2026-07-19.md)。
+
+## 118. D5-L1：真实代码还没到，但现在不会因为“私有”与“可验证”互相打架
+
+D5 的合成插头做好以后，我继续往真实实验室接口走了一步，马上撞到一个不能糊弄过去的矛盾：
+师兄的 adapter、匿名输入和 raw trace 必须放在 `private_library/`，不能进公开 Git；但已经冻结的
+synthetic runner 又要求 config 和 adapter source 都被同一个公开 commit 跟踪，独立 validator 还会
+从这个 commit 里重新读取源码。一个文件不可能既“永远不公开”又“必须存在于公开 commit”。
+
+这不是删掉 `.gitignore` 就能解决的。Git ignore 只是防误操作，不是权限系统，而且一旦把实验室代码
+写进公开历史，后来删除也不等于没泄露。正确做法是把证据拆成公开协议 provenance、私有实现
+provenance 和私有结果 provenance 三层。原来的 synthetic D5 证据保持冻结，不为了迁就真实代码而
+悄悄改判据。
+
+这轮先完成 L1 静态预检器。它不会 import adapter，也不会调用一次 renderer，只检查私有文件是否
+真的留在私有目录、是否被 Git 忽略且未跟踪、是否有 symlink/hardlink、Schema 与 hash 是否一致、
+`.npy` 的 size/dtype/finite 是否正确，以及源码里是否还有 placeholder、明显网络 import、凭据或
+绝对路径。12 个反例测试已经全部通过；拿公开 placeholder 去跑时会按预期以退出码 2 拒绝，
+`ready=false`、`formal=false`，七类 claim 仍是 0 个打开。
+
+这里最容易误会的是“以后静态绿灯”也只叫
+`STATIC_PRIVATE_INTAKE_READY_FORMAL_REPLAY_LOCKED`。讲人话就是：文件在门口的证件和包装暂时没发现
+问题，可以让人审源码、准备两次 describe；它不说明里面的 forward 是真实折射光学，更不允许直接跑
+53 calls 或训练 FNO。正式回放前还缺双 provenance、物理阈值审核、完整依赖 hash、闭世界 manifest、
+禁止 public summary 的硬门，以及 validator 临时生成的私有未知 probes。
+
+师兄需要接的最小骨架现在也缩成六个函数：描述、forward、JVP、VJP、标准输入向量和源码审阅说明。
+其中 forward 必须把真正改变控制流的 branch 与只用于观察的 diagnostic 分开。如果实验室没有原生
+direct residual，就诚实写没有，不能在 wrapper 末端相减两张 map 后冒充 residual-native 算子。
+
+完整目录结构、命令、状态翻译、L2 清单和可直接发给何远哲师兄的消息见
+[N5-D5-L1 私有真实适配器接线](n5_d5_private_adapter_handoff_2026-07-19.md)。当前真实 adapter 仍未收到，
+因此没有绿色实验室报告，也没有三维重建、算法优越、泛化或论文授权。

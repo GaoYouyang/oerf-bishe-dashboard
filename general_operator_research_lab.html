@@ -169,6 +169,7 @@
     <nav class="nav" aria-label="主导航">
       <a href="operator-learning/">学习主页</a>
       <a href="#n5-d5">N5-D5 接口桥</a>
+      <a href="#n5-d5-private-readiness">D5 私有接线</a>
       <a href="#n5-d4c">D4c 历史前置</a>
       <a href="#n5-d4b">D4b 冻结失败</a>
       <a href="#d0-root-cause">当前结论</a>
@@ -218,6 +219,7 @@
         </ol>
         <div class="actions" style="margin:14px 0;">
           <a class="button primary" href="#n5-d5">看 D5 接口、数字与接线步骤</a>
+          <a class="button" href="#n5-d5-private-readiness">看真实私有接线门</a>
           <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_minimum_real_interface_bridge_2026-07-19.md">D5 保姆式说明</a>
           <a class="button" href="demo_t16_operator/results/n5_d5_minimum_interface_bridge_synthetic_v1/result.json">正式机器结果</a>
           <a class="button" href="demo_t16_operator/results/n5_d5_minimum_interface_bridge_synthetic_v1/validation_report.json">1,370 项独立回放</a>
@@ -424,6 +426,7 @@
           <a class="button" href="demo_t16_operator/results/n5_d5_minimum_interface_bridge_synthetic_v1/responses.jsonl">53 个原始响应</a>
           <a class="button" href="data_templates/n5_d5_minimum_bost_interface.schema.json">JSON Schema</a>
           <a class="button" href="data_templates/n5_d5_lab_interface.placeholder.json">实验室占位合同</a>
+          <a class="button" href="#n5-d5-private-readiness">私有真实接线门</a>
           <a class="button" href="demo_t16_operator/configs/n5_d5_minimum_interface_bridge_preregistered_v1.json">冻结配置</a>
         </div>
       </div>
@@ -488,6 +491,84 @@
 
       <div class="alert critical"><strong>七个禁止外推</strong><span>本节不证明真实 BOST；不证明物理正确；不证明完整 Jacobian；不证明三维重建；不证明算法优越；不证明泛化；不证明论文成立。两个 Jv 和一个 Jᵀq 在高维空间仍留下很大的未探测子空间，独立 validator 重启的也仍是同一套适配器，不是第二个物理 renderer。</span></div>
       <div class="alert"><strong>可直接发给何远哲师兄</strong><span>“我已经把最小检查冻结成 42 次 forward、6 次 JVP、3 次 VJP。能否先给我一个匿名 4--16 rays 小例：field 或 decoder vector、curved/straight/direct callable（若 direct 不存在请明确）、precision、units、axis order、sampling/interpolation/termination 规则，以及 forward 真正使用的 branch state？我最想先确认 residual 是在同一 ray sample/integrand 层形成，还是两张 detector map 最后相减。raw lab trace 只放本地 private_library，不公开，也不会把接口通过写成重建或算法成功。”</span></div>
+    </section>
+
+    <section id="n5-d5-private-readiness" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">当前真实入口 · N5-D5-L1 private intake · L1 source commit 445089f · D5 protocol ee792fd</div>
+          <h2>真实 adapter：先安全接入，再允许运行</h2>
+          <p>实验室 adapter 必须留在 <code>private_library/</code>，但冻结的 public D5 runner 又要求被测源码存在于公开 Git commit；二者不能同时成立。L1 因此单独做静态、私有、fail-closed 的接入检查，且不会 import 或执行私有 adapter。<strong>当前没有绿色实验室报告</strong>：真实 adapter、匿名场向量和实验室配置尚未收到。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fn5_d5_private_adapter_handoff_2026-07-19.md">读私有接线与师兄交接</a>
+          <a class="button" href="data_templates/n5_d5_lab_interface.placeholder.json">复制占位合同</a>
+          <a class="button" href="data_templates/n5_d5_private_adapter_skeleton.py">看六函数教学骨架</a>
+          <a class="button" href="site_tools/n5_d5_private_lab_readiness.py">看静态预检器</a>
+          <a class="button" href="site_tools/test_n5_d5_private_lab_readiness.py">看 12 项反例测试</a>
+        </div>
+      </div>
+
+      <div class="chips" style="margin:12px 0;">
+        <span class="chip coral">REAL ADAPTER NOT RECEIVED</span>
+        <span class="chip blue">STATIC PREFLIGHT IMPLEMENTED</span>
+        <span class="chip coral">53-CALL FORMAL REPLAY LOCKED</span>
+        <span class="chip coral">MODEL TRAINING LOCKED</span>
+      </div>
+      <div class="alert critical"><strong>当前机器边界：53-call 正式回放未授权</strong><span><code>formal_53_call_replay_authorized=false</code>。L1 只解析配置、AST、哈希和数组，不调用 renderer。七类科学授权仍全部为 false；静态绿灯只解锁人工源码复核与私有 describe 准备，不解锁 53 calls、decoder、inverse、训练或论文主张。</span></div>
+
+      <div class="metric-grid real-metric-grid">
+        <div class="metric"><b>12 / 12</b><span>静态反例测试通过；含 symlink、hardlink、Git、哈希、dtype、NaN 与路径越界</span></div>
+        <div class="metric"><b>0 renderer calls</b><span>工具不 import adapter，不启动 transport，不读取任何 forward 输出</span></div>
+        <div class="metric"><b>3 private inputs</b><span>配置、入口源码、匿名 base array 分别绑定 label、bytes 与 SHA-256</span></div>
+        <div class="metric"><b>6 warnings open</b><span>双 provenance、物理阈值、依赖闭包、闭世界 manifest、禁 summary、私有 probes</span></div>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <div class="chips"><span class="chip blue">师兄接物理</span><span class="chip gold">学生跑门禁</span></div>
+          <h3 style="margin-top:12px;">师兄最少替换六个后端函数</h3>
+          <ol>
+            <li><code>describe_renderer()</code>：维度、单位、轴序、dtype、路径与成本语义。</li>
+            <li><code>forward_renderer()</code>：curved / straight / direct 的 output、真实 branch、diagnostic 和成本。</li>
+            <li><code>jvp_renderer()</code>：同一离散 forward 的方向作用，不查表。</li>
+            <li><code>vjp_renderer()</code>：detector 残差回到 field 或 decoder 参数空间。</li>
+            <li><code>canonical_field_vector()</code>：与配置完全一致的匿名扁平输入。</li>
+            <li><code>source_review_notes()</code>：路径语义、branch 来源、单位与成本的人工确认。</li>
+          </ol>
+        </div>
+        <div class="panel">
+          <div class="chips"><span class="chip blue">实际控制流</span><span class="chip gold">观察量</span></div>
+          <h3 style="margin-top:12px;">branch 与 diagnostic 必须分账</h3>
+          <p><strong>branch state</strong> 只记录真正影响 forward 的 active rays、sample count、hard mask、pruning、termination；<strong>diagnostic state</strong> 才放 domain margin、support 距离或输出分箱。没有原生 <code>direct_residual</code> 时应明确拒绝，不能把末端两张 map 相减伪装成 residual-native primitive。</p>
+          <div class="formula wrap-formula">private files ≠ public Git commit · static ready ≠ renderer validated</div>
+        </div>
+      </div>
+
+      <div class="table-scroll-hint">表格可横向滚动；绿色状态也不等于科学通过</div>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>状态</th><th>人话解释</th><th>允许做什么</th><th>明确禁止</th></tr></thead>
+          <tbody>
+            <tr><td class="pending">REAL_ADAPTER_NOT_RECEIVED</td><td>师兄的真实最小包尚未到位</td><td>完善公开协议与提问</td><td>伪造实验室结果</td></tr>
+            <tr><td class="negative">PRIVATE_INTAKE_READINESS_BLOCKED</td><td>位置、Git、Schema、hash、数组或源码静态项失败</td><td>按 blocker code 修复并生成新报告</td><td>绕过门禁运行 adapter</td></tr>
+            <tr><td class="positive">STATIC_PRIVATE_INTAKE_READY_FORMAL_REPLAY_LOCKED</td><td>私有文件只在静态入口层未发现 blocker</td><td>人工 source review 与两次 describe 的准备</td><td>53 calls、训练或结果外推</td></tr>
+            <tr><td class="pending">FORMAL_REPLAY_LOCKED</td><td>L2 双 provenance 与独立私有验证尚未完成</td><td>继续实现六道 warning 门</td><td>把 L1 绿灯称为真实接口 pass</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pipeline" aria-label="N5-D5-L2 私有正式回放前六道门">
+        <div><b>1 · 双 provenance</b><span>公开协议 commit 与私有实现 commit/hash 分开绑定。</span></div>
+        <div><b>2 · 物理阈值</b><span>师兄审核 precision、noise floor、FD 与 adjoint tolerance。</span></div>
+        <div><b>3 · 依赖闭包</b><span>源码、库、权重、标定、配置与缓存全部 content-address。</span></div>
+        <div><b>4 · 闭世界结果</b><span>目录文件集合必须等于 manifest；拒绝额外文件。</span></div>
+        <div><b>5 · 禁 public summary</b><span>实验室配置禁止公开时，runner 必须硬拒绝写摘要。</span></div>
+        <div><b>6 · 私有未知 probes</b><span>validator 运行后生成 probe，防止针对固定向量查表。</span></div>
+      </div>
+
+      <div class="alert critical"><strong>七个禁止外推继续生效</strong><span>L1 不证明真实 BOST；不证明物理正确或完整导数；不证明三维重建；不证明算法优越；不证明泛化；不证明论文成立。即使以后 L1 静态变绿，这些结论也不会自动打开。</span></div>
+      <div class="alert"><strong>现在发给何远哲师兄的最小请求</strong><span>“能否先给我一个匿名 4--16 rays 小包：一个 field/decoder vector、curved/straight/direct-residual callable（没有原生 direct 请明确）、两个 Jv、一个 Jᵀq，以及 units、axis order、dtype、sampling/interpolation/termination 和真实 branch-state 说明？我会把 adapter、输入和 raw trace 只留在本机 private_library，先做静态检查和两次 describe；双 provenance、私有 probes 与阈值审核未完成前不跑正式 53 次，也不把接口通过写成重建或算法成功。”</span></div>
     </section>
 
     <section id="n5-d4c" class="band">
