@@ -60,6 +60,8 @@ FAST_CONTRACT_TESTS = (
     "site_tools/test_general_operator_n5_d5_l2_foundation_page.py",
     "site_tools/test_general_operator_resolution_transfer_page.py",
     "site_tools/test_general_operator_multiresolution_diagnosis_page.py",
+    "site_tools/test_audit_psu_support_rotation_loro_preflight.py",
+    "site_tools/test_general_operator_support_loro_preflight_page.py",
     "site_tools/test_validate_psu_rotation40_resolution_transfer_public.py",
     "site_tools/test_run_psu_rotation40_multiresolution_diagnosis.py",
     "site_tools/test_validate_psu_rotation40_multiresolution_diagnosis_public.py",

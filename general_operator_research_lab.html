@@ -180,6 +180,7 @@
       <a href="#d0-root-cause">当前结论</a>
       <a href="#spatial-benchmark">空间基准</a>
       <a href="#multires-diagnosis">多分辨率诊断</a>
+      <a href="#support-loro-preflight">LORO 前置证据</a>
       <a href="#real-rotation40">真实观测</a>
       <a href="#jacru-gate">JACRU 实测</a>
       <a href="#m2-t0">M2 算子学习</a>
@@ -209,7 +210,7 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">当前只做一条垂直主线：围绕何远哲师兄的三维 BOST/NeRIF，把真实投影算子、稳定重建与算子学习接成可核验路线。最新机制诊断进一步收紧了 E68：<strong>同一 16³ 场换到 32³ 表示与 forward 已产生不可忽略的预测差，而从 <code>U(x16)</code> 到 <code>x32</code> 的冻结修正在 camera 2 与 camera 3/4 上方向冲突</strong>。所以现在不能把迁移反转便宜地归因于“高频过拟合”或 CGLS 第四步；下一步必须在 support rotations 内做 iteration-path 与质量投影分解，再决定多分辨率网络该学什么。</p>
+    <p class="lead">当前只做一条垂直主线：围绕何远哲师兄的三维 BOST/NeRIF，把真实投影算子、稳定重建与算子学习接成可核验路线。最新机制诊断进一步收紧了 E68：<strong>同一 16³ 场换到 32³ 表示与 forward 已产生不可忽略的预测差，而从 <code>U(x16)</code> 到 <code>x32</code> 的冻结修正在 camera 2 与 camera 3/4 上方向冲突</strong>，所以仍不能把迁移反转便宜地归因于“高频过拟合”或 CGLS 第四步。support LORO 的输入身份现已跨文件闭合：view 0–8 由官方源程序顺序与连续 block 绑定到 camera 2/3/4 × rotation 0/50/90，两级私有 cache 也证明在看同一批物理 rays。下一步才运行 iteration-path 与质量投影分解；当前没有把 preflight 写成算法分数。</p>
     <section id="resolution-transfer" style="margin-top:20px; scroll-margin-top:18px;">
       <div class="chips"><span class="chip coral">E68 · 16³ SCORE PRE-REGISTERED NO-GO</span><span class="chip gold">N = 1 ROTATION BLOCK</span><span class="chip blue">ROTATION HOLDOUT · NOT CAMERA HOLDOUT</span><span class="chip blue">3,847,050 REAL RAYS</span><span class="chip gold">NO FIELD TRUTH</span></div>
       <h2 style="margin-top:10px;">冻结的 32³+CGLS4 support 优势在 rotation-40 完全反转：先隔离网格与求解轨迹，再谈神经算子</h2>
@@ -293,6 +294,59 @@
           <img src="demo_t16_operator/results/psu_rotation40_multiresolution_diagnosis_public_v1/diagnostic.png" width="2700" height="1800" loading="eager" decoding="async" alt="PSU rotation-40 多分辨率机制诊断四联图，比较五条网格与场路径、固定 alpha 曲线和三台相机的 correction cosine" />
           <figcaption>左上：五个固定网格/场对照；右上：不选优的 alpha 路径；左下：camera 2 与 camera 3/4 修正方向冲突；右下：机器状态与禁止外推边界。</figcaption>
         </figure>
+      </div>
+    </section>
+    <section id="support-loro-preflight" style="margin-top:20px; scroll-margin-top:18px;">
+      <div class="chips"><span class="chip blue">E70 · PREFLIGHT PASS</span><span class="chip blue">9 SUPPORT VIEWS BOUND</span><span class="chip gold">16³ / 32³ HASH VERIFIED</span><span class="chip coral">NO LORO SCORE YET</span><span class="chip coral">NO FIELD TRUTH</span></div>
+      <h2 style="margin-top:10px;">先把九个匿名 view 的身份钉死：三折 leave-one-rotation-out 现在有了可复现输入合同</h2>
+      <p>官方 MATLAB 源程序按 rotation <code>0 → 50 → 90</code> 的外层循环、camera <code>2 → 3 → 4</code> 的内层循环拼接 <code>HSOF_9CAM_RT.mat</code>。九个 bundle manifest 又固定了连续等长 block，因此本次 preflight 跨文件绑定得到：<strong>0/1/2 是 rotation 0，3/4/5 是 rotation 50，6/7/8 是 rotation 90；每组三个依次为 camera 2/3/4</strong>。cache manifest 自身仍只有 view ID，并非单文件自证。</p>
+      <div class="real-metric-grid metric-grid">
+        <div class="metric"><b>3 × 3</b><span>3 个 support rotations × 3 台物理相机；每折整组留出三台相机</span></div>
+        <div class="metric"><b>10,628,822</b><span>两级 cache 共有的全部 corrected active rays；不是抽样 pilot</span></div>
+        <div class="metric"><b>1.11e-16</b><span>5.10 亿个坐标分量的跨网格最大归一化差；冻结门为 1e-12</span></div>
+        <div class="metric"><b>5.02 GB × 2</b><span>本机私有 compact cache；不进入 GitHub Pages 或公开论文库</span></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>view 身份表</h3>
+          <div class="result-table-wrap">
+            <table class="result-table">
+              <thead><tr><th>rotation</th><th>camera 2</th><th>camera 3</th><th>camera 4</th><th>LORO 角色</th></tr></thead>
+              <tbody>
+                <tr><td>0°</td><td>view 0</td><td>view 1</td><td>view 2</td><td>fold A 整组留出</td></tr>
+                <tr><td>50°</td><td>view 3</td><td>view 4</td><td>view 5</td><td>fold B 整组留出</td></tr>
+                <tr><td>90°</td><td>view 6</td><td>view 7</td><td>view 8</td><td>fold C 整组留出</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3 style="margin-top:16px;">为什么两个 cache 可以公平比较</h3>
+          <ul>
+            <li>observations、camera projection、ray scale、valid aperture mask 的数组哈希完全相同。</li>
+            <li>只有 lower-corner indices 与 trilinear fractions 随 16³/32³ 网格改变。</li>
+            <li><code>170,061,152</code> 个有效 aperture samples 全部从两级 compact coordinates 反算三维位置；最大归一化坐标差为 <code>1.11e-16</code>，门为 <code>1e-12</code>。</li>
+            <li>两个 cache 都以 <code>verify_hashes=True</code> 重开；rotation 40 与 final audit 未进入。</li>
+            <li>正式 runner 必须分别报告 train rotation、held-out rotation、逐 camera tail、normal residual 和 A/Aᵀ 成本。</li>
+          </ul>
+          <div class="alert critical"><strong>这一步不是性能结果</strong><span>它只跨文件闭合输入分组并验证 cache 完整性；cache manifest 自身没有 camera/rotation 字段。全 detector geometry audit 的既有 NO-GO 也没有被改写，本次可用性只指 corrected-active-ray B0 pipeline。没有 CGLS LORO 分数、没有 field relative-L2、没有跨流态泛化，更没有新算法优越性。</span></div>
+          <div class="actions" style="margin-top:13px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_support_rotation_loro_preflight_2026-07-19.md">读 preflight 说明</a>
+            <a class="button" href="docs/psu_support_rotation_loro_preflight_public_summary.json">机器公开摘要</a>
+            <a class="button" href="site_tools/audit_psu_support_rotation_loro_preflight.py">审计器源码</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=125-先确认每张卷子是谁的再开始三折考试">讲人话日志 125</a>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>下一次正式计算的固定顺序</h3>
+          <ol>
+            <li><strong>fold A：</strong>train rotations 50/90，held-out rotation 0。</li>
+            <li><strong>fold B：</strong>train rotations 0/90，held-out rotation 50。</li>
+            <li><strong>fold C：</strong>train rotations 0/50，held-out rotation 90。</li>
+            <li><strong>trajectory：</strong>只消费冻结的 <code>k=0,1,2,3,4,6,8,12</code> checkpoints。</li>
+            <li><strong>comparison：</strong>16³ 与 32³ 都从零场、同 dtype、同 QMC16、同 active rays 开始。</li>
+            <li><strong>decision：</strong>三折方向、最差 camera、Schur/data-consistency violation 与完整成本共同判决。</li>
+          </ol>
+          <p>这条路线先回答“32³ 的 support 优势是不是只在见过的 rotation 上成立、哪一步开始伤害 held-out rotation”。只有经典 trajectory 和 coarse-subspace 强基线解释不了的稳定剩余，才交给 MgNO/CNO/FNO/DeepONet 类神经算子学习。</p>
+        </div>
       </div>
     </section>
     <div class="hero-grid">
@@ -3824,7 +3878,7 @@ VD0-B 也已完成。我从 MATLAB find 索引恢复真实 detector row/column�
   </main>
 
   <footer>
-    <p>版本 2026.07.19-E69-MULTIRES-MECHANISM-UNRESOLVED。最新科学增量是在 E68 NO-GO 之后冻结并运行的 post-open 多分辨率机制诊断：同一 16³ 场切换到 32³ 表示/forward 的变化不可忽略，而冻结 fine correction 在 camera 2 与 camera 3/4 上方向冲突；机器因此保持机制未分离，不授权高频过拟合、CGLS4 唯一归因、field truth、统计泛化、算法优越性或论文主张。L2-D0 仍作为真实 callable 接线的历史机制证据保留，公开 registry 仍无生产 trust anchor，真实 adapter/外部 ledger/monitor 未运行。研究结论以仓库 report、JSON 和 checksum 为准；页面只做可读映射。受限论文、VPN 内容、组内数据、逐射线索引、私有 cache、授权 token、私钥、checkpoint 与原始重建体不进入 GitHub Pages。</p>
+    <p>版本 2026.07.19-E70-SUPPORT-LORO-PREFLIGHT。最新真实增量只闭合 support LORO 的输入身份与双网格 cache：官方源程序顺序和九个连续 bundle block 共同绑定 camera 2/3/4 × rotation 0/50/90，16³/32³ 私有 cache 的共同物理 ray 数组哈希一致且全部声明哈希已验证。当前没有 LORO 分数、field truth、统计泛化、算法优越性或论文性能主张。E69 仍保持机制未分离；L2-D0 仍作为真实 callable 接线的历史机制证据保留，公开 registry 仍无生产 trust anchor。研究结论以仓库 report、JSON 和 checksum 为准；页面只做可读映射。受限论文、VPN 内容、组内数据、逐射线索引、私有 cache、授权 token、私钥、checkpoint 与原始重建体不进入 GitHub Pages。</p>
   </footer>
   <script>
     (() => {

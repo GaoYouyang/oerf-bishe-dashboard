@@ -3435,3 +3435,17 @@ alpha 曲线最大差约 `1e-14`，图和隐私扫描也通过。它留下的术
 `fine-field correction` 只能读作 `x32-Ux16` 两个完整重建场之差，不能读成严格高频；跨网格 raw
 field norm 也没有乘体素体积，不能冒充连续物理能量。完整清单见
 [独立结果审计](psu_rotation40_multiresolution_diagnosis_independent_audit_2026-07-19.md)。
+
+## 125. 先确认每张“卷子”是谁的，再开始三折考试
+
+上一节决定在 support rotations `0/50/90` 内做整组 leave-one-rotation-out，但我发现还有一个不能凭印象跳过的问题：九个 support view 在机器文件里只有 `0..8`，如果 rotation/camera 身份没有钉死，所谓“整组留一 rotation”可能只是我们自己贴的标签。
+
+这次没有训练，也没有跑任何 LORO 分数。我先回到数据作者的 MATLAB 源程序。`AEDC_pprocess_auto.m` 按 `0,50,90` 的外层 rotation 循环拼接三个文件；每个文件又由 `AEDC_pprocess.m` 按 camera `2:4` 的内层循环拼接。因此 view 0/1/2 是 rotation 0 的 camera 2/3/4，view 3/4/5 是 rotation 50，view 6/7/8 是 rotation 90。九个 bundle manifest 还逐段证明每个 view 是 `HSOF_9CAM_RT.mat` 中连续的 5,529,600 rows，不是看残差后猜出来的顺序。
+
+为了让 16³ 和 32³ 后面跑三折时少做重复工作，我新建了私有 16³ compact cache。它和已有 32³ cache 都有 10,628,822 条 corrected active rays、每条 16 个 aperture samples、329 个 chunks，各约 5.02 GB。审计器用 `verify_hashes=True` 逐数组重开：observations、camera projection、ray scale 和 valid mask 的哈希完全相同；只有网格相关的 lower-corner index 与 trilinear fraction 不同。为了不只靠共同数组猜测，审计器还把 170,061,152 个有效 aperture sample、510,183,456 个坐标分量分 chunk 反算成归一化三维位置；最大差 `1.11e-16`，通过 `1e-12` 门。这才足以说明两级离散确实在看同一批物理观测与射线参数，而不是两个偷偷换过输入的数据集。
+
+机器状态是 `SUPPORT_ROTATION_LORO_PREFLIGHT_PASS`，但它只代表身份/cache 前置门通过。这里的身份是作者脚本、连续 block manifest 与本次 private report 的跨文件绑定；cache manifest 自己只有 view ID，并没有 camera/rotation 字段。全 detector geometry audit 的既有 NO-GO 也没有因此消失，本次“可用”只指 corrected-active-ray B0 pipeline。公开摘要不含路径、测量值、私有哈希或重建体，两个约 5 GB cache 和 private report 都不上传。现在仍然没有 field truth、没有 LORO score、没有跨流态泛化，更没有神经算子成功。
+
+下一步正式协议会固定三折：50/90 训练留 0，0/90 训练留 50，0/50 训练留 90；每折只消费 `k=0,1,2,3,4,6,8,12`，同时记录 train 与 held-out rotation、三台 camera tail、normal residual、A/Aᵀ 调用和 wall time。只有三折方向稳定，才继续做 coarse-subspace 投影与误差归因。
+
+完整映射、隐私边界和重放命令见 [support LORO preflight](psu_support_rotation_loro_preflight_2026-07-19.md)。
