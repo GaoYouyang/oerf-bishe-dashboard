@@ -3356,3 +3356,46 @@ forward 入口、field 还是 decoder 参数化、residual 在 ray/sample 层还
 [N5-D5 师兄首次沟通单](n5_d5_advisor_first_contact_2026-07-19.md)。
 
 本轮最终验证数字已重跑：L2-D0 `31 passed`，L1/L2 聚焦核心 `133 passed`，聚焦页面 `69 passed`，fast matrix `257 passed`。medium 四进程层为 `2242 passed, 3 failed, 55 warnings`；三条失败仍是已冻结的 D4c/N2 证据状态，与本轮 L2-D0 无关。按矩阵设计拆出的 18 项 macOS containment 和 3 项 MPS 串行层另外 `21 passed`。因此可以说本轮增量没有引入新回归，但不能说全仓 medium 全绿。
+
+## 123. 更细网格在练习题上赢了，换一个旋转角却输了
+
+这一轮终于不再继续堆安全合同，而是回到一个真实三维 BOST 科学问题：`32³` 在九个 support views 上把
+relative-L2 从 `16³` 的 `0.787711` 降到 `0.627132`，这 20.4% 的 support 改善会不会迁移到没参与重建的
+rotation-40？这里必须先说清：camera 仍是 2、3、4，未见的是 rotation run，不是新相机。
+
+为了不看结果改规则，我先把配置、runner、测试、forward、metric 和说明提交成 protocol commit
+`ba77a17f...`，确认结果目录不存在；再单独生成 attestation，绑定两个场、生成报告、support split、
+rotation-40 payload/geometry 与全部受监控代码的 hash。正式运行前还逐文件检查了三台相机的 `.npy` SHA、
+shape、dtype 和 manifest 交叉绑定。使用全部 `3,847,050` 条 active rays，每个候选只做一次完整 forward，
+公开包只写聚合数值和图。
+
+结果很清楚：16³/32³ 在 rotation-40 的 pooled rel-L2 是 `0.843263 / 0.959591`，也就是更细网格反而退化
+`0.116328`。camera 2、3、4 分别退化 `0.061519 / 0.110005 / 0.145689`，不是某一台相机拖累 pooled。
+equal-camera macro 也从 `0.825173` 退化到 `0.930910`。预注册要求至少改善 `0.01` 且三相机都不伤害，
+所以机器判决是明确 NO-GO。
+
+还有一个很直观的线索：rotation-40 实测位移 RMS 是 `0.302716 px`，16³ 预测只有 `0.143223 px`，32³ 更低到
+`0.082605 px`。我没有在 rotation-40 上补一个尺度因子，因为用同一数据拟合再评分就是泄漏。现在只能说
+support-fit 和 held-out reprojection 发生了反转；不能说 16³ 的真实三维场更准，也不能把三台相机冒充三次独立重复。
+
+这次 NO-GO 真正改变了算法方向：下一步不再把“更细网格”本身当创新，而是研究 coarse reconstruction 加
+受约束 fine correction。fine branch 必须保留数据一致性、满足 coarse restriction，并按整组 rotation 做留出；
+只要 correction 伤害任一 rotation/camera tail，就退回 coarse。工作名暂定 RTG-MRC，但在完成原创性检索前不称
+新算法。先补 32³ 的 early-stopping、H1/TV 和 coarse-to-fine 强基线，再考虑让网络只学稳定 correction。
+
+完整数字、边界、下一算法方程、第一阶段成功门与给师兄的五个问题见
+[rotation-40 分辨率迁移 NO-GO](psu_rotation40_resolution_transfer_result_2026-07-19.md)。
+
+两个独立审计随后把表述又收紧了一步。第一，机器里的 pooled 指标其实是把全部 ray 拼起来算一次 global
+norm ratio，不是三个相机 relative-L2 的 ray-count 加权平均；这个标签写错不改变数值或 NO-GO，因为
+equal-camera macro 与三项 camera delta 也全部退化。第二，本轮严格否证的是冻结的 `32³+CGLS4` package，
+不能把网格和固定四步 CGLS 的谱滤波/收敛阶段拆开归因。
+
+复现审计还找到了 attestation 漏掉的四个传递依赖和 requirements。它们本次与 protocol commit 完全一致，
+审计代理绕过 runner 重算全部 384 万 rays，所有指标与 JSON 最大差 `1.01e-14`；但预结果机制仍不能叫完整
+fail-closed。页面现在把这条 P1、四个依赖 hash、单侧预注册性质、`N=1 rotation block`、环境指纹和独立
+clone replay 命令全部公开。另加的公开包 validator 会限制任意 list/对象/数值预算并交叉核 JSON、CSV、PNG、
+PDF 与 checksum；它保护当前公开结果，不能倒推修复原 protocol。
+
+这让我学到：一个数值可以是真的，证据链仍可能不完整；一个 NO-GO 可以很有用，原因归因仍必须克制。
+下一版先补依赖闭包、正确 pooled 名称、support view identity 和 rotation-group baseline，再设计 RTG-MRC。

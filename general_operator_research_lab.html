@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BOST 三维重建与拓扑证书算子研究台 | Gao Youyang</title>
-  <meta name="description" content="聚焦曲光线 BOST 的可微前向、拓扑证书、场 JVP/VJP、三维重建与算子学习证据链。" />
+  <title>BOST 三维重建与算子学习研究台 | Gao Youyang</title>
+  <meta name="description" content="聚焦 BOST 三维重建、rotation-transfer、多分辨率数据一致 correction、可微前向与算子学习证据链。" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23147d70'/%3E%3Cpath d='M13 43V17h18c9 0 14 5 14 13s-5 13-14 13H13zm9-8h8c4 0 6-2 6-5s-2-5-6-5h-8v10z' fill='white'/%3E%3C/svg%3E" />
   <style>
     :root {
@@ -171,6 +171,7 @@
   <header>
     <nav class="nav" aria-label="主导航">
       <a href="operator-learning/">学习主页</a>
+      <a href="#resolution-transfer">最新真实 NO-GO</a>
       <a href="#n5-d5">N5-D5 接口桥</a>
       <a href="#n5-d5-private-readiness">D5 私有接线</a>
       <a href="#n5-d5-l2-foundation">D5 L2-B/C/D0 / 双路径门</a>
@@ -207,7 +208,45 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">当前只做一条垂直主线：把何远哲师兄的曲光线 BOST/NeRIF forward 接成可核验、可拒答的离散算子，再进入 decoder-chain、三维重建和算子学习。最新 N5-D5 要求的是<strong>接受任意运行时 <code>x/v/q</code> 的 curved/straight forward、JVP 与 VJP callable</strong>；有原生 direct-residual 才进入三路径，没有就诚实使用独立 dual-v2。公开合成门、L2-A、dual-v2 和两次 describe 的 development runner 已完成协议/恶意 fixture 测试；第二轮红队确认当前 Mac 无法禁止 post-launch exec replacement，因此生产入口在消费授权前主动拒绝。真实 adapter 仍未收到、未执行，七类科学结论全部锁定。</p>
+    <p class="lead">当前只做一条垂直主线：围绕何远哲师兄的三维 BOST/NeRIF，把真实投影算子、稳定重建与算子学习接成可核验路线。最新真实增量不是又一层接口安全工程，而是一个决定算法方向的预注册 NO-GO：<strong>32³ 在九个 support views 上明显优于 16³，却在同一相机组的 rotation-40 真实位移上三台全部退化</strong>。因此下一步停止把“更细网格/更大网络”当作自然进步，转向能拒绝不稳定 fine correction 的多分辨率、数据一致算子；N5-D5 真实 callable 接线仍作为后续组内迁移入口保留。</p>
+    <section id="resolution-transfer" style="margin-top:20px; scroll-margin-top:18px;">
+      <div class="chips"><span class="chip coral">E68 · 16³ SCORE PRE-REGISTERED NO-GO</span><span class="chip gold">N = 1 ROTATION BLOCK</span><span class="chip blue">ROTATION HOLDOUT · NOT CAMERA HOLDOUT</span><span class="chip blue">3,847,050 REAL RAYS</span><span class="chip gold">NO FIELD TRUTH</span></div>
+      <h2 style="margin-top:10px;">冻结的 32³+CGLS4 support 优势在 rotation-40 完全反转：先隔离网格与求解轨迹，再谈神经算子</h2>
+      <p>protocol commit、attestation、两个冻结场、payload/geometry 和逐文件哈希都在 16³ rotation-40 正式评分前锁定。pooled relative-L2 为 <strong>16³ 0.843263</strong> 对 <strong>32³ 0.959591</strong>；camera 2/3/4 的预注册 <code>16³ - 32³</code> 改善量分别为 -0.061519、-0.110005、-0.145689。三台相机共享一个 rotation-40 运行，所以这是一个真实 image-space reversal，不是三个独立重复，也不是三维场精度或算法优越性证明。</p>
+      <div class="real-metric-grid metric-grid">
+        <div class="metric failed-state"><b>-0.116328</b><span>预注册 pooled 改善量 <code>16³ - 32³</code>；方向为负，未过 +0.01 数值筛查线</span></div>
+        <div class="metric failed-state"><b>0 / 3</b><span>camera-wise nonworse；三台物理相机上的 32³ relative-L2 全部更差</span></div>
+        <div class="metric"><b>0.8252 → 0.9309</b><span>equal-camera macro；结论不是 camera 3 较多 rays 加权造成</span></div>
+        <div class="metric"><b>0.1432 → 0.0826 px</b><span>预测位移 RMS；32³ 对 rotation-40 的幅值低估更严重，未做事后尺度拟合</span></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>这次 NO-GO 怎样改变算法</h3>
+          <ol>
+            <li>保留 16³/coarse 稳定主体，fine branch 只学习受约束 correction。</li>
+            <li>要求 <code>R delta ≈ 0</code>、物理 forward data consistency 与 rotation-group 留出。</li>
+            <li>任一留出 rotation/camera tail 受损就回退 coarse，不让 pooled 平均掩盖伤害。</li>
+            <li>先做 early stopping、H1/TV、coarse-to-fine 强基线，再判断网络是否真有增量。</li>
+          </ol>
+          <div class="alert critical"><strong>当前授权边界</strong><span>可以说“冻结的 32³+CGLS4 support-fit 优势没有迁移到这一 rotation run”；不能把网格与四步 CGLS 的谱滤波轨迹拆开归因，也不能说 16³ 的真实三维场更准、32³ 统计过拟合、RTG-MRC 已是原创算法，或已经具备论文优越性。summary 中 pooled weighting 的冻结标签不精确；实际指标是 concatenated-all-ray vector relative-L2，勘误不改变判决。</span></div>
+          <div class="actions" style="margin-top:13px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_rotation40_resolution_transfer_result_2026-07-19.md">读结果、推理与下一算法</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fpsu_rotation40_resolution_transfer_prereg_2026-07-19.md">读预注册</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fpsu_rotation40_resolution_transfer_independent_audit_2026-07-19.md">读独立审计与勘误</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fpsu_rotation40_resolution_transfer_replay_2026-07-19.md">独立 clone 重放命令</a>
+            <a class="button" href="docs/psu_rotation40_resolution_transfer_environment_2026-07-19.json">运行环境 JSON</a>
+            <a class="button" href="site_tools/validate_psu_rotation40_resolution_transfer_public.py">独立公开包 validator</a>
+            <a class="button" href="demo_t16_operator/results/psu_rotation40_resolution_transfer_public_v1/summary.json">机器 summary</a>
+            <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_rotation40_resolution_transfer_public_v1%2Fdiagnostic.pdf">论文图 PDF</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=123-更细网格在练习题上赢了换一个旋转角却输了">讲人话日志 123</a>
+          </div>
+        </div>
+        <figure>
+          <img src="demo_t16_operator/results/psu_rotation40_resolution_transfer_public_v1/diagnostic.png" width="2640" height="1720" loading="eager" decoding="async" alt="PSU rotation-40 网格分辨率迁移四联图，显示 32 立方在 support 上改善但在 rotation-40 pooled 与三台相机上全部退化，并比较未缩放预测幅值" />
+          <figcaption>左上：pooled/逐相机真实位移重投影误差；右上：support 改善与 rotation-40 退化的反转；左下：未做 post-hoc scaling 的位移 RMS；右下：预注册机器判决与证据边界。</figcaption>
+        </figure>
+      </div>
+    </section>
     <div class="hero-grid">
       <section class="decision">
         <div class="chips"><span class="chip blue">N5-D5 · COMMIT ee792fd</span><span class="chip gold">53 SYNTHETIC REQUESTS</span><span class="chip blue">42 F · 6 Jv · 3 Jᵀq</span><span class="chip blue">1,370 VALIDATOR ASSERTIONS</span><span class="chip coral">ALL SCIENTIFIC CLAIMS CLOSED</span></div>
@@ -1294,6 +1333,7 @@
         <article class="evidence-card" data-state="passed"><span class="chip">E45 · B0 inverse interface</span><h3>真实几何 A/Aᵀ 接口在子集闭合</h3><p>九视角 2,304-ray 子集上，16³/32³ CPU64 dot defect 为 4.97e-16 / 1.78e-16，MPS32 为 7.28e-8 / 9.89e-8。合成 residual 0.005 仍对应 field-L2 0.450，禁止把重投影写成三维真值。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_reconstruction_interface_gate_2026-07-16.md">看接口门禁</a></article>
         <article class="evidence-card" data-state="passed"><span class="chip">E46 · full support precision</span><h3>一千万射线下 float32 被否，float64 通过</h3><p>10,628,822 条 support rays、约 1.70 亿 QMC samples 上，float32 random-dual defect 为 2.04e-5，略高于冻结 2e-5；float64 为 3.46e-15。门槛没有事后放宽。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_streaming_precision_public_summary.json">看精度门禁</a></article>
         <article class="evidence-card" data-state="passed"><span class="chip">E47 · same-call resolution</span><h3>32³ 在九视角同 calls 下全部改善</h3><p>固定 4F+5Aᵀ，16³/32³ support residual 为 0.78771 / 0.62713，绝对下降 0.16058、相对改善 20.39%；九个 support views 全部同向。它是分辨率信号，不是 field truth。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_full_support_cgls_and_resolution_gate_2026-07-16.md">读完整门禁</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">E68 · rotation-transfer NO-GO</span><h3>support 分辨率收益在 rotation-40 反转</h3><p>预注册全量 3,847,050 rays 上，16³/32³ pooled rel-L2 为 0.843263 / 0.959591；camera 2/3/4 的 32³ 全部退化。留出的是同相机的新 rotation run，不是新相机或 field truth。</p><a href="document_reader.html?doc=docs%2Fpsu_rotation40_resolution_transfer_result_2026-07-19.md">读 NO-GO 与算法转向</a></article>
         <article class="evidence-card" data-state="passed"><span class="chip">E48 · exact compact cache</span><h3>移除重复 geometry/stencil，算子逐值不变</h3><p>5.017 GB cache 在 14.94 秒内构建；direct/cached forward 与 adjoint relative difference 均为 0，pair 中位数 37.92→17.04 秒，same-session 加速 2.225×。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_compact_cache_public_summary.json">看冻结 benchmark</a></article>
         <article class="evidence-card" data-state="passed"><span class="chip">E49 · cached CGLS replay</span><h3>相同 residual 与体场，固定优化快 2.91 倍</h3><p>原 32³ reference 与 cached replay 的 residual 绝对差为 0，volume relative difference 1.17e-16；4-step optimization 218.03→74.95 秒。只提高吞吐，不提高证据等级。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_cached_reference_public_summary.json">看 reference 对照</a></article>
         <article class="evidence-card" data-state="failed"><span class="chip coral">E50 · learned spectral 0/3</span><h3>熟悉分布有增益，联合越界必须回退</h3><p>相对 validation-selected Sobolev，IID 为 +4.26%–+4.62%；joint OOD 为 -0.43% 到 -0.20%，p10 约 -4.5%，三种子 >1% harm 均 33.3%。当前无门控候选正式 NO-GO。</p><a href="document_reader.html?doc=docs%2Fpsu_b0_spectral_preconditioner_no_go_2026-07-16.md">读完整判决</a></article>
@@ -1621,39 +1661,40 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
     <section id="real-rotation40" class="band">
       <div class="section-head">
         <div>
-          <div class="eyebrow">PSU rotation-40 · real development observations · 2026-07-17</div>
-          <h2>真实未见视角已经闭环，冻结 support 场几乎解释不了它</h2>
-          <p>只打开预注册的 rotation-40 development member；rotation 30/60/70/80 仍封存。MATLAB column-major 位移行、官方 <code>ray_dir</code>、physical cameras 2/3/4 与 support 0° 几何完成逐像素绑定。下面是固定 CGLS-4 support 场的一次全 active-row forward，不是候选模型结果。</p>
+          <div class="eyebrow">PSU rotation-40 · real development observations · updated 2026-07-19</div>
+          <h2>同一相机组的未见旋转运行已经闭环：32³ support 优势发生反转</h2>
+          <p>只打开预注册的 rotation-40 development member；rotation 30/60/70/80 仍封存。camera 2/3/4 也参与了 support，真正留出的是 40° rotation run。MATLAB column-major 位移行、官方 ray geometry 与全部 active rows 已逐文件绑定。最新双提交预注册比较固定 16³/32³ CGLS-4 support 场，不拟合幅值、不重新重建，也不是新算法结果。</p>
         </div>
         <div class="actions">
           <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_rotation40_real_reprojection_baseline_2026-07-17.md">读完整实验边界</a>
           <a class="button" href="docs/psu_rotation40_b0_reprojection_public_summary.json">结果 JSON</a>
           <a class="button" href="docs/psu_rotation40_geometry_binding_public_summary.json">几何审计 JSON</a>
           <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_rotation40_b0_reprojection_public%2Fdiagnostic.pdf">论文图 PDF</a>
+          <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_rotation40_resolution_transfer_result_2026-07-19.md">最新分辨率迁移 NO-GO</a>
         </div>
       </div>
       <div class="metric-grid">
         <div class="metric"><b>3,847,050</b><span>cameras 2/3/4 全部真实 active rays；没有按位移大小抽样</span></div>
-        <div class="metric"><b>0.9596</b><span>pooled vector reprojection relative-L2；真实 image-space 基线很弱</span></div>
-        <div class="metric"><b>0.824 / 0.983 / 0.986</b><span>camera 2/3/4；物理相机差异不能被一个全局尺度掩盖</span></div>
-        <div class="metric"><b>0.3027 vs 0.0826 px</b><span>measured / predicted vector RMS；冻结场系统性低估幅值</span></div>
-        <div class="metric"><b>6.98 s</b><span>32³、16 aperture samples、float64、119 chunks 的单次 forward</span></div>
-        <div class="metric"><b>1.28 GB</b><span>峰值 RSS；当前 Mac 足够做轻量候选和完整基线筛选</span></div>
+        <div class="metric"><b>0.8433 vs 0.9596</b><span>16³ / 32³ pooled relative-L2；更细网格在 rotation-40 反而更差</span></div>
+        <div class="metric"><b>-0.0615 / -0.1100 / -0.1457</b><span>camera 2/3/4 的 16³-32³ 改善量；三台全部为负</span></div>
+        <div class="metric"><b>0.3027 / 0.1432 / 0.0826 px</b><span>measured / 16³ / 32³ vector RMS；32³ 幅值低估更严重</span></div>
+        <div class="metric"><b>6.63 / 6.66 s</b><span>16³ / 32³ 一次完整 forward；相同调用不等于参数量公平</span></div>
+        <div class="metric"><b>1 rotation block</b><span>三台相机共享同一物理运行；不能冒充三个独立重复</span></div>
       </div>
       <div class="two-col" style="margin-top:14px;">
-        <figure><img src="demo_t16_operator/results/psu_rotation40_b0_reprojection_public/diagnostic.png" alt="PSU rotation-40 真实观测上冻结 support CGLS 场的逐相机重投影误差、信号幅值和残差尾部" width="2376" height="810" loading="lazy" decoding="async" /><figcaption>真实 BOS development 观测的 aggregate-only 图。无原始位移、几何、预测数组或重建体；无 volumetric truth、无候选比较、无 final rotation。</figcaption></figure>
+        <figure><img src="demo_t16_operator/results/psu_rotation40_resolution_transfer_public_v1/diagnostic.png" alt="PSU rotation-40 真实观测上 16 立方与 32 立方 support CGLS 场的分辨率迁移 NO-GO 图" width="2640" height="1720" loading="lazy" decoding="async" /><figcaption>真实 BOS development 观测的 aggregate-only 分辨率迁移图。support 与 rotation-40 的趋势反转；无原始位移、几何、预测数组、volumetric truth 或 final rotation。</figcaption></figure>
         <div class="panel">
           <div class="chips"><span class="chip blue">REAL OBSERVATIONS</span><span class="chip blue">ROW MAP VERIFIED</span><span class="chip coral">BASELINE OOD FAIL</span><span class="chip coral">NO 3D TRUTH</span></div>
           <h3 style="margin-top:10px;">这把真实尺子把选题变具体了</h3>
           <ol>
-            <li><strong>目标不再是“做一个 FNO”。</strong>要解决 support 拟合无法迁移到未见相机几何与旋转的问题。</li>
+            <li><strong>目标不再是“做一个 FNO”。</strong>要解决 support 拟合无法迁移到同相机新旋转运行的问题。</li>
             <li><strong>输入必须含几何集合。</strong>相机位姿、数量、孔径、可靠度和 measurement mask 应由 permutation-invariant encoder 处理。</li>
             <li><strong>输出不能只求平滑。</strong>平滑侧场与 shock/interface 奇异贡献需要分开更新，并通过 exact cone-ray forward 约束。</li>
             <li><strong>两类证据必须并行。</strong>synthetic/CFD 报 field、H1、ASSD/HD95；真实数据只报 held-out image consistency。</li>
             <li><strong>禁止便宜取巧。</strong>不能在 rotation-40 上拟合一个尺度因子后称泛化；任何 camera-wise correction 都要在 final rotations 一次性审计。</li>
           </ol>
-          <div class="alert critical"><strong>当前最强论文假设</strong><span>不是 smooth + level set 的简单拼接，而是 Jump-Aware Cone-Ray Unrolling：分别更新两侧光滑场、界面几何与跳跃强度；每层保留有限孔径数据一致性，并对可变相机集合和界面零空间给出消融与不确定性。</span></div>
-          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fjump_aware_cone_ray_unrolling_novelty_gate_2026-07-17.md">JACRU 原创性红队</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md">学习日志 61–62</a><a class="button" href="demo_t16_operator/configs/psu_rotation40_b0_reprojection_v1.json">冻结评分合同</a><a class="button" href="demo_t16_operator/results/psu_rotation40_b0_reprojection_public/README.md">公开资产边界</a></div>
+          <div class="alert critical"><strong>当前最强、但尚未宣称原创的算法假设</strong><span>用 coarse reconstruction 保留稳定主体，fine branch 只给出受 coarse restriction、真实 forward data consistency 和 rotation-group 留出约束的 correction；任一留出块或相机 tail 受损就回退 coarse。先以 RTG-MRC 为工作名，完成经典 early-stopping/H1/TV 基线和一级文献碰撞后再决定是否训练。</span></div>
+          <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fpsu_rotation40_resolution_transfer_result_2026-07-19.md">RTG-MRC 最小可证伪路线</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=123-更细网格在练习题上赢了换一个旋转角却输了">学习日志 123</a><a class="button" href="demo_t16_operator/configs/psu_rotation40_resolution_transfer_preregistered_v1.json">冻结比较合同</a><a class="button" href="demo_t16_operator/results/psu_rotation40_resolution_transfer_public_v1/README.md">公开资产边界</a></div>
         </div>
       </div>
     </section>
@@ -3302,7 +3343,8 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
             <tr><td>H0 70-view protocol</td><td>9 support / 7 dev / 54 final audit</td><td>70/70 无重叠；primary 为六个 rotation blocks</td><td class="positive">协议冻结；payload sealed</td></tr>
             <tr><td>I0 B0 inverse interface</td><td>scalar perturbation + zero-boundary gauge</td><td>真实几何 16³/32³ exact A/Aᵀ 通过；合成 inverse 闭环</td><td class="positive">接口通过</td></tr>
             <tr><td>I1 full support CGLS</td><td>10,628,822 rays；QMC16；float64</td><td>dot 3.46e-15；固定 4 步 residual 0.78771</td><td class="positive">数值闭合；无 field truth</td></tr>
-            <tr><td>I2 resolution gate</td><td>16³ vs 32³；同 rays、dtype、4F+5Aᵀ</td><td>0.78771 → 0.62713；九视角全部改善</td><td class="positive">32³ 冻结为低分辨率 reference</td></tr>
+            <tr><td>I2 support resolution gate</td><td>16³ vs 32³；同 support rays、dtype、4F+5Aᵀ</td><td>0.78771 → 0.62713；九个 support views 全部改善</td><td class="pending">只保留为 support-fit reference；等待旋转迁移门</td></tr>
+            <tr><td>I3 rotation-transfer gate</td><td>同 camera 2/3/4；rotation 40；3,847,050 rays；各一次 forward</td><td>0.843263 → 0.959591；三相机全部退化</td><td class="negative">32³ 分辨率扩展 NO-GO；转向受约束 coarse-to-fine correction</td></tr>
             <tr><td>I3 exact compact cache</td><td>固定 lower corner/fraction/projection/scale</td><td>F/Aᵀ diff 0；pair 2.225×；CGLS 2.909×</td><td class="positive">后续 32³ 快速物理层</td></tr>
           </tbody>
         </table>
@@ -3734,7 +3776,7 @@ VD0-B 也已完成。我从 MATLAB find 索引恢复真实 detector row/column�
   </main>
 
   <footer>
-    <p>版本 2026.07.19-N5-D5-L2D0-OFFLINE-PREFIX-AUDITED。研究结论以仓库 report/JSON/checksum 为准；页面只做可读映射。最新增量在 L2-C 之上增加 L2-B authorization 目标语义 nonce 解析、调用者前缀重算、历史 claimed nonce digest 去重、静态 floor checkpoint、三角色 trust-context 签名、签署 MMD 校验和 31 项反例测试；累计 133 项定向机制测试通过。公开 registry 当前没有生产 trust anchor；前缀外部完整性、anti-rollback、L2-C report 真实性、同 UID verifier 完整性、角色操作独立性、在线原子 consume 和 fork freedom 均未证明。当前 Mac 仍缺禁止 post-launch exec replacement、保护私有输入/持久 nonce 账本/输出根与外部验证 backend capability 共五项生产能力。历史冻结页面基线仍为<strong>版本 2026.07.18-N2-PVGR-N2</strong>，其独立审计状态为 <code>PASS WITH WARNINGS — DEVELOPMENT MECHANISM EVIDENCE ONLY</code>，N1.9 learner 与新 split 均未启动。真实 external witness/ledger、adapter 调用、36/53 primary、validator、三维重建、DeepONet/FNO/FFNO 同预算比较、真实 OERF、泛化和论文授权全部保持关闭。受限论文、VPN 内容、组内数据、逐射线索引、私有 cache、授权 token、私钥、checkpoint 与原始重建体不进入 GitHub Pages。</p>
+    <p>版本 2026.07.19-E68-ROTATION-TRANSFER-NOGO。最新科学增量是双提交预注册的 PSU rotation-40 网格分辨率迁移审计：32³ 的 support-fit 优势在同相机新旋转运行上反转，三台相机全部退化，机器判为 NO-GO；它只授权一个 rotation block 的 image-space 结论，不授权 field truth、统计泛化、算法优越性或论文主张。L2-D0 仍作为真实 callable 接线的历史机制证据保留，公开 registry 仍无生产 trust anchor，真实 adapter/外部 ledger/monitor 未运行。研究结论以仓库 report、JSON 和 checksum 为准；页面只做可读映射。受限论文、VPN 内容、组内数据、逐射线索引、私有 cache、授权 token、私钥、checkpoint 与原始重建体不进入 GitHub Pages。</p>
   </footer>
   <script>
     (() => {
