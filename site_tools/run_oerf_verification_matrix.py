@@ -59,7 +59,10 @@ FAST_CONTRACT_TESTS = (
     "site_tools/test_n5_d5_l2d_replay_role_verifier.py",
     "site_tools/test_general_operator_n5_d5_l2_foundation_page.py",
     "site_tools/test_general_operator_resolution_transfer_page.py",
+    "site_tools/test_general_operator_multiresolution_diagnosis_page.py",
     "site_tools/test_validate_psu_rotation40_resolution_transfer_public.py",
+    "site_tools/test_run_psu_rotation40_multiresolution_diagnosis.py",
+    "site_tools/test_validate_psu_rotation40_multiresolution_diagnosis_public.py",
 )
 GATE_A_TARGETED_TESTS = (
     "demo_t16_operator/test_psu_b0_active_coordinates.py",

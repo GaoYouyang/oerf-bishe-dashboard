@@ -3399,3 +3399,39 @@ PDF 与 checksum；它保护当前公开结果，不能倒推修复原 protocol�
 
 这让我学到：一个数值可以是真的，证据链仍可能不完整；一个 NO-GO 可以很有用，原因归因仍必须克制。
 下一版先补依赖闭包、正确 pooled 名称、support view identity 和 rotation-group baseline，再设计 RTG-MRC。
+
+## 124. 我试着问“到底是网格坏了还是第四步算坏了”，答案是：现在还拆不干净
+
+上一轮只知道 `16³+CGLS4` 在 rotation-40 胜过 `32³+CGLS4`，但这个比较一次改变了太多东西。
+这次我先把五个对照和阈值写进 commit `48e32d7...`，连 runner 的传递 import 依赖一起锁住，推到 GitHub
+后才运行。final rotations 继续没打开，公开目录也仍然只有汇总值。
+
+最关键的对照是把 16³ 场用端点对齐三线性方法放到 32³，再用 32³ forward 计算。原来的
+`A16 x16` relative-L2 是 `0.843263`，`A32 U(x16)` 是 `0.856804`，光换表示和 forward 就差了
+`0.013541`，超过事前写的 `0.01` 数值屏。两个预测本身的差还是实测向量范数的 `0.111838`，所以不能把
+forward 离散变化当成可以忽略的小数误差。
+
+再看从 `U(x16)` 走到 `x32` 的冻结场修正，pooled 上它与当前残差的 cosine 是 `-0.052812`；但拆到相机后，
+camera 2 是 `+0.276931`，camera 3/4 是 `-0.137083/-0.162454`。也就是说，同一个 fine correction 对一台
+相机有帮助，对另外两台方向相反。固定 alpha 曲线也完全复现这个冲突：camera 2 在 alpha `0.25-0.50`
+改善，camera 3/4 随 alpha 增大一直变差。不能把 camera 2 的 post-open 最优 alpha 拿来当算法结果。
+
+机器最终没有给出“找到原因”，而是
+`OPENED_BLOCK_FORWARD_GRID_CHANGE_MATERIAL_MECHANISM_UNRESOLVED`。独立代码审计又提醒：机器门只用两个
+残差范数的差，理论上可能漏掉预测方向差；这次碰巧报告里的预测差也不小，但下一版必须把它正式纳入门。
+另外，16 与 32 不是嵌套节点，普通 trilinear `U/D` 不是正交 multigrid restriction/prolongation，不能把
+`x32-U(D(x32))` 直接叫严格高频。
+
+所以现在最真实的新发现不是“某个新模型赢了”，而是：**一个 pooled 全局 gate 不足以保护真实多相机 BOST
+修正，离散表示和求解轨迹还必须在 support rotation 内部分开验证。** 下一步只用 support rotations
+`0/50/90` 做整组 leave-one-rotation-out，重放 CGLS `k=1,2,3,4,6,8,12`，使用质量加权 coarse 子空间投影，
+再做可加误差归因。三折不能同向复现，就停止归因，不拿 rotation-40 继续调参数。
+
+完整数字、为什么不能叫高频过拟合、五篇最相关一级来源和下一算法骨架见
+[多分辨率机制诊断结果](psu_rotation40_multiresolution_diagnosis_result_2026-07-19.md)。
+
+结果提交 `87f5e79...` 推送后，独立代理又从私有输入重算全部 384 万 rays：JSON/CSV 最大差为 0，
+alpha 曲线最大差约 `1e-14`，图和隐私扫描也通过。它留下的术语勘误很重要：冻结图里的
+`fine-field correction` 只能读作 `x32-Ux16` 两个完整重建场之差，不能读成严格高频；跨网格 raw
+field norm 也没有乘体素体积，不能冒充连续物理能量。完整清单见
+[独立结果审计](psu_rotation40_multiresolution_diagnosis_independent_audit_2026-07-19.md)。

@@ -179,6 +179,7 @@
       <a href="#n5-d4b">D4b 冻结失败</a>
       <a href="#d0-root-cause">当前结论</a>
       <a href="#spatial-benchmark">空间基准</a>
+      <a href="#multires-diagnosis">多分辨率诊断</a>
       <a href="#real-rotation40">真实观测</a>
       <a href="#jacru-gate">JACRU 实测</a>
       <a href="#m2-t0">M2 算子学习</a>
@@ -208,7 +209,7 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">当前只做一条垂直主线：围绕何远哲师兄的三维 BOST/NeRIF，把真实投影算子、稳定重建与算子学习接成可核验路线。最新真实增量不是又一层接口安全工程，而是一个决定算法方向的预注册 NO-GO：<strong>32³ 在九个 support views 上明显优于 16³，却在同一相机组的 rotation-40 真实位移上三台全部退化</strong>。因此下一步停止把“更细网格/更大网络”当作自然进步，转向能拒绝不稳定 fine correction 的多分辨率、数据一致算子；N5-D5 真实 callable 接线仍作为后续组内迁移入口保留。</p>
+    <p class="lead">当前只做一条垂直主线：围绕何远哲师兄的三维 BOST/NeRIF，把真实投影算子、稳定重建与算子学习接成可核验路线。最新机制诊断进一步收紧了 E68：<strong>同一 16³ 场换到 32³ 表示与 forward 已产生不可忽略的预测差，而从 <code>U(x16)</code> 到 <code>x32</code> 的冻结修正在 camera 2 与 camera 3/4 上方向冲突</strong>。所以现在不能把迁移反转便宜地归因于“高频过拟合”或 CGLS 第四步；下一步必须在 support rotations 内做 iteration-path 与质量投影分解，再决定多分辨率网络该学什么。</p>
     <section id="resolution-transfer" style="margin-top:20px; scroll-margin-top:18px;">
       <div class="chips"><span class="chip coral">E68 · 16³ SCORE PRE-REGISTERED NO-GO</span><span class="chip gold">N = 1 ROTATION BLOCK</span><span class="chip blue">ROTATION HOLDOUT · NOT CAMERA HOLDOUT</span><span class="chip blue">3,847,050 REAL RAYS</span><span class="chip gold">NO FIELD TRUTH</span></div>
       <h2 style="margin-top:10px;">冻结的 32³+CGLS4 support 优势在 rotation-40 完全反转：先隔离网格与求解轨迹，再谈神经算子</h2>
@@ -244,6 +245,53 @@
         <figure>
           <img src="demo_t16_operator/results/psu_rotation40_resolution_transfer_public_v1/diagnostic.png" width="2640" height="1720" loading="eager" decoding="async" alt="PSU rotation-40 网格分辨率迁移四联图，显示 32 立方在 support 上改善但在 rotation-40 pooled 与三台相机上全部退化，并比较未缩放预测幅值" />
           <figcaption>左上：pooled/逐相机真实位移重投影误差；右上：support 改善与 rotation-40 退化的反转；左下：未做 post-hoc scaling 的位移 RMS；右下：预注册机器判决与证据边界。</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section id="multires-diagnosis" style="margin-top:20px; scroll-margin-top:18px;">
+      <div class="chips"><span class="chip coral">E69 · MECHANISM UNRESOLVED</span><span class="chip gold">POST-OPEN DEVELOPMENT</span><span class="chip blue">N = 1 ROTATION BLOCK</span><span class="chip blue">6 DIRECT FULL FORWARDS</span><span class="chip coral">NO CAUSAL CLAIM</span></div>
+      <h2 style="margin-top:10px;">不是简单的“高频过拟合”：representation/forward package 变化不可忽略，冻结场差又在三台相机上方向冲突</h2>
+      <p>协议 commit <code>48e32d7</code> 先固定 <code>A16·x16</code>、<code>A32·U(x16)</code>、<code>A16·D(x32)</code>、<code>A32·U(D(x32))</code> 与 <code>A32·x32</code>，再运行全部 rotation-40 active rays。机器分支被触发，但最终状态仍是 <strong>mechanism unresolved</strong>：网格/forward 替换不是零影响，冻结场差异也不是所有相机一致的有害方向。</p>
+      <div class="real-metric-grid metric-grid">
+        <div class="metric failed-state"><b>0.013541</b><span><code>A16·x16</code> 与 <code>A32·U(x16)</code> 的 absolute rel-L2 gap；超过冻结的 0.01 机制屏</span></div>
+        <div class="metric"><b>0.111838</b><span>两种预测之差除以实测向量 L2；这是 post-open 审计量，不是预注册门</span></div>
+        <div class="metric failed-state"><b>-0.052812</b><span>拼接全部 rays 的 global <code>cos(residual, fine correction)</code>；全局正向加入 correction 会变差</span></div>
+        <div class="metric"><b>+ / - / -</b><span>camera 2/3/4 correction cosine 符号；一个 pooled 标量掩盖真实几何冲突</span></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>这次真正新增了什么</h3>
+          <ol>
+            <li><strong>forward 表示不能忽略：</strong><code>A16·x16=0.843263</code>，<code>A32·U(x16)=0.856804</code>。</li>
+            <li><strong>单全局 gate 不够：</strong>camera 2 的修正 cosine 为 <code>+0.276931</code>，camera 3/4 为 <code>-0.137083/-0.162454</code>。</li>
+            <li><strong>普通 resize 不是 multigrid 投影：</strong>16/32 节点不嵌套，<code>DU≠I</code>；不能把 round-trip 剩余直接叫严格高频。</li>
+            <li><strong>下一步先查轨迹：</strong>只在 support rotations 0/50/90 做整组 LORO，重放 CGLS <code>k=1,2,3,4,6,8,12</code>。</li>
+          </ol>
+          <div class="alert critical"><strong>独立审计后的最窄结论</strong><span>机器状态中的 <code>FORWARD_GRID_CHANGE_MATERIAL</code> 只表示冻结的数值屏被触发。当前只授权“forward 离散表示与重建场差异均不可忽略、一个 rotation block 尚不能分离机制”；不授权高频过拟合、CGLS4 唯一归因、三维场精度、统计泛化或新算法成功。</span></div>
+          <h3 style="margin-top:16px;">对 RTG-MRC 的结构约束</h3>
+          <p>保留经典 coarse 主体；网络只提议细尺度 correction；通过 data-consistency projection 后，再按 rotation group、camera tail、Schur violation 与完整成本共同验收。任一关键相机受损就回退 coarse。先比较 early stopping、H1/TV 与 BOST pyramid 强基线，再比较 MgNO/CNO/FNO/DeepONet。</p>
+          <div class="actions" style="margin-top:13px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_rotation40_multiresolution_diagnosis_result_2026-07-19.md">读完整数字与下一实验</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fpsu_rotation40_multiresolution_diagnosis_protocol_2026-07-19.md">读冻结开发协议</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fpsu_rotation40_multiresolution_diagnosis_independent_audit_2026-07-19.md">读独立审计与术语勘误</a>
+            <a class="button" href="docs/psu_rotation40_multiresolution_diagnosis_environment_2026-07-19.json">post-open 环境 JSON</a>
+            <a class="button" href="site_tools/validate_psu_rotation40_multiresolution_diagnosis_public.py">独立公开包 validator</a>
+            <a class="button" href="demo_t16_operator/results/psu_rotation40_multiresolution_diagnosis_public_v1/summary.json">机器 summary</a>
+            <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fpsu_rotation40_multiresolution_diagnosis_public_v1%2Fdiagnostic.pdf">论文图 PDF</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=124-我试着问到底是网格坏了还是第四步算坏了答案是现在还拆不干净">讲人话日志 124</a>
+          </div>
+          <h3 style="margin-top:16px;">紧贴当前问题的五篇</h3>
+          <ol>
+            <li><a href="https://pubs.aip.org/aip/pof/article/37/1/017143/3331552/Neural-refractive-index-field-Unlocking-the">何远哲 NeRIF</a>：BOST forward、坐标场与 projection consistency。</li>
+            <li><a href="https://link.springer.com/article/10.1007/s00348-025-04153-3">Pyramid BOST</a>：场、图像 warp 与投影矩阵同步 coarse-to-fine。</li>
+            <li><a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/dc35c593e61f6df62db541b976d09dcf-Abstract-Conference.html">ReNO</a>：不同离散表示中的 operator aliasing。</li>
+            <li><a href="https://proceedings.iclr.cc/paper_files/paper/2024/hash/eb3c8135137c8a60425a0320869ad87e-Abstract-Conference.html">MgNO</a>：真正的 multigrid operator parameterization。</li>
+            <li><a href="https://www.aimsciences.org/article/doi/10.3934/ipi.2022037?viewType=HTML">Data-consistent networks</a>：修正投影与其不能保证场正确的边界。</li>
+          </ol>
+        </div>
+        <figure>
+          <img src="demo_t16_operator/results/psu_rotation40_multiresolution_diagnosis_public_v1/diagnostic.png" width="2700" height="1800" loading="eager" decoding="async" alt="PSU rotation-40 多分辨率机制诊断四联图，比较五条网格与场路径、固定 alpha 曲线和三台相机的 correction cosine" />
+          <figcaption>左上：五个固定网格/场对照；右上：不选优的 alpha 路径；左下：camera 2 与 camera 3/4 修正方向冲突；右下：机器状态与禁止外推边界。</figcaption>
         </figure>
       </div>
     </section>
@@ -3776,7 +3824,7 @@ VD0-B 也已完成。我从 MATLAB find 索引恢复真实 detector row/column�
   </main>
 
   <footer>
-    <p>版本 2026.07.19-E68-ROTATION-TRANSFER-NOGO。最新科学增量是双提交预注册的 PSU rotation-40 网格分辨率迁移审计：32³ 的 support-fit 优势在同相机新旋转运行上反转，三台相机全部退化，机器判为 NO-GO；它只授权一个 rotation block 的 image-space 结论，不授权 field truth、统计泛化、算法优越性或论文主张。L2-D0 仍作为真实 callable 接线的历史机制证据保留，公开 registry 仍无生产 trust anchor，真实 adapter/外部 ledger/monitor 未运行。研究结论以仓库 report、JSON 和 checksum 为准；页面只做可读映射。受限论文、VPN 内容、组内数据、逐射线索引、私有 cache、授权 token、私钥、checkpoint 与原始重建体不进入 GitHub Pages。</p>
+    <p>版本 2026.07.19-E69-MULTIRES-MECHANISM-UNRESOLVED。最新科学增量是在 E68 NO-GO 之后冻结并运行的 post-open 多分辨率机制诊断：同一 16³ 场切换到 32³ 表示/forward 的变化不可忽略，而冻结 fine correction 在 camera 2 与 camera 3/4 上方向冲突；机器因此保持机制未分离，不授权高频过拟合、CGLS4 唯一归因、field truth、统计泛化、算法优越性或论文主张。L2-D0 仍作为真实 callable 接线的历史机制证据保留，公开 registry 仍无生产 trust anchor，真实 adapter/外部 ledger/monitor 未运行。研究结论以仓库 report、JSON 和 checksum 为准；页面只做可读映射。受限论文、VPN 内容、组内数据、逐射线索引、私有 cache、授权 token、私钥、checkpoint 与原始重建体不进入 GitHub Pages。</p>
   </footer>
   <script>
     (() => {
