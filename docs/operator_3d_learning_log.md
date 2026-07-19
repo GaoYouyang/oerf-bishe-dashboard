@@ -3307,3 +3307,18 @@ entrypoint 发给师兄审核，同时另行实现并红队验证能禁止 post-
 
 完整威胁模型、36/106 推导、测试表、限制和师兄问题见
 [L2-B 与 dual-path v2 机制说明](n5_d5_l2b_dual_v2_mechanism_2026-07-19.md)。
+## 121. N5-D5-L2-C：把“谁说的”与“是不是真的”分开
+
+这一轮继续沿真实 adapter 接入主线推进，没有训练模型，也没有重复冻结的 L2-B/dual-v2 门。
+
+新增了一个只负责验证、不持有私钥的 L2-C 外部见证器。它要求两个不同 key role 分别签 capability payload 与 event/cost payload；同时把 authorization、plan、foundation、adapter、runner、challenge commitment、trust policy 和 output manifest 都绑定到同一次运行。红队发现若 policy digest 仍由调用者传入，攻击者可换自己的 trust root，因此该参数已删除：公开 verifier 只读固定 registry，而当前 registry 故意没有生产 anchor，会在读取真实 bundle 前 fail closed。
+
+事件顺序被固定成 14 步哈希链。删除、交换或修改事件会失败；subject 与 evidence 摘要还必须从实际文件重算。但页面也明确解释：哈希链只能发现“记录被改”，不能保证观察者没有漏记现实事件。两个不同 key 也不能自动证明两个操作者或进程真正独立。
+
+describe-only 成本被严格限制为两次 describe、零 forward/JVP/VJP，ray/sample/kernel 工作量必须写 `null`。这与未来论文需要的 `A/A^T`、ray/sample、完整 pipeline wall time、失败重试和 rig/session split 成本彻底分开。
+
+当前定向结果：`21 passed`。真实外部签名、真实 adapter、三维重建、模型训练和论文性能结论仍为 0。下一步是独立红队、Linux/实验室宿主能力设计，以及向师兄索取匿名 callable 和成本账本合同。
+
+最终聚合结果是旧 L1/L2-A/L2-B/dual-v2 81 加 L2-C 21，共 `102 passed`；聚焦页面 69 项通过，快速矩阵加入本轮合同后为 `226 passed`。medium 四进程首次暴露 macOS sandbox 进程组清理的并发 `EPERM`，因此矩阵把 18 项 L2-B containment 测试移到串行队列，串行结果全部通过；重新运行后并行层只剩 3 个早已冻结的 N2/D4c 失败，得到 `2211 passed, 3 failed`，另 3 项 MPS 串行通过。不能把 medium 写成全绿。
+
+最终独立红队确认普通数据攻击下没有剩余 P1。仍有两个明确 P2：没有受保护 replay ledger，所以 `one_time_acceptance_proven=false`；两个不同 key 不证明两个操作者或 signer service 独立，所以 `role_operational_independence_proven=false`。这两项在接入生产授权前都必须解决。

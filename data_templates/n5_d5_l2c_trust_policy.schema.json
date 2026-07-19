@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaoyouyang.github.io/oerf-bishe-dashboard/data_templates/n5_d5_l2c_trust_policy.schema.json",
+  "title": "N5-D5-L2-C external witness trust policy",
+  "description": "A verifier-registry-pinned Ed25519 trust policy for one host-capability witness and one declared out-of-process run-cost observer. Distinct keys do not by themselves prove operational independence, and the policy does not authorize a scientific claim or production execution.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "policy_id",
+    "policy_epoch",
+    "valid_from_utc",
+    "valid_until_utc",
+    "expected_predicate_type",
+    "required_signature_roles",
+    "signature_threshold",
+    "trusted_keys",
+    "claim_authorizations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "n5-d5-l2c-trust-policy-1.0"
+    },
+    "record_kind": {
+      "const": "OUT_OF_BAND_PINNED_WITNESS_TRUST_POLICY"
+    },
+    "policy_id": {
+      "$ref": "#/$defs/pseudonym"
+    },
+    "policy_epoch": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "valid_from_utc": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "valid_until_utc": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "expected_predicate_type": {
+      "const": "https://gaoyouyang.github.io/oerf-bishe-dashboard/attestations/n5-d5-l2c-external-witness/v1"
+    },
+    "required_signature_roles": {
+      "const": [
+        "host_capability_witness",
+        "run_cost_observer"
+      ]
+    },
+    "signature_threshold": {
+      "const": 2
+    },
+    "trusted_keys": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 8,
+      "items": {
+        "$ref": "#/$defs/trustedKey"
+      }
+    },
+    "claim_authorizations": {
+      "$ref": "#/$defs/claimAuthorizations"
+    }
+  },
+  "$defs": {
+    "pseudonym": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{5,79}$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "trustedKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key_id",
+        "role",
+        "algorithm",
+        "public_key_base64",
+        "operational_independence"
+      ],
+      "properties": {
+        "key_id": {
+          "$ref": "#/$defs/pseudonym"
+        },
+        "role": {
+          "enum": [
+            "host_capability_witness",
+            "run_cost_observer"
+          ]
+        },
+        "algorithm": {
+          "const": "ed25519"
+        },
+        "public_key_base64": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]{43}=$"
+        },
+        "operational_independence": {
+          "const": "OUT_OF_PROCESS_FROM_RUNNER"
+        }
+      }
+    },
+    "claimAuthorizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "real_bost_interface",
+        "physical_forward_correctness",
+        "derivative_correctness",
+        "reconstruction",
+        "algorithm_superiority",
+        "generalization",
+        "publication"
+      ],
+      "properties": {
+        "real_bost_interface": { "const": false },
+        "physical_forward_correctness": { "const": false },
+        "derivative_correctness": { "const": false },
+        "reconstruction": { "const": false },
+        "algorithm_superiority": { "const": false },
+        "generalization": { "const": false },
+        "publication": { "const": false }
+      }
+    }
+  }
+}

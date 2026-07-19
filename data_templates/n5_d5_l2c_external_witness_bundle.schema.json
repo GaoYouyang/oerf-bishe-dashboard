@@ -1,0 +1,387 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaoyouyang.github.io/oerf-bishe-dashboard/data_templates/n5_d5_l2c_external_witness_bundle.schema.json",
+  "title": "N5-D5-L2-C externally witnessed describe-only bundle",
+  "description": "A digest-only, two-role signed statement about host capability claims, an event hash chain, and externally observed describe-only cost. Signatures authenticate statements; they do not prove the statements are physically true.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "predicate_type",
+    "run_id",
+    "issued_at_utc",
+    "expires_at_utc",
+    "subject",
+    "host_capability_statement",
+    "event_chain",
+    "observed_cost",
+    "terminal_status",
+    "claim_authorizations",
+    "limitations",
+    "signatures"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "n5-d5-l2c-external-witness-bundle-1.0"
+    },
+    "record_kind": {
+      "const": "EXTERNALLY_WITNESSED_DESCRIBE_ONLY_CAPSULE"
+    },
+    "predicate_type": {
+      "const": "https://gaoyouyang.github.io/oerf-bishe-dashboard/attestations/n5-d5-l2c-external-witness/v1"
+    },
+    "run_id": {
+      "$ref": "#/$defs/pseudonym"
+    },
+    "issued_at_utc": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "expires_at_utc": {
+      "$ref": "#/$defs/utcTimestamp"
+    },
+    "subject": {
+      "$ref": "#/$defs/subject"
+    },
+    "host_capability_statement": {
+      "$ref": "#/$defs/hostCapabilityStatement"
+    },
+    "event_chain": {
+      "$ref": "#/$defs/eventChain"
+    },
+    "observed_cost": {
+      "$ref": "#/$defs/observedCost"
+    },
+    "terminal_status": {
+      "const": "DESCRIBE_ONLY_COMPLETE_NO_SCIENCE_AUTHORIZATION"
+    },
+    "claim_authorizations": {
+      "$ref": "#/$defs/claimAuthorizations"
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 16,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 20,
+        "maxLength": 600
+      }
+    },
+    "signatures": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 8,
+      "items": {
+        "$ref": "#/$defs/signature"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pseudonym": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{5,79}$"
+    },
+    "utcTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorization_sha256",
+        "replay_plan_sha256",
+        "foundation_report_sha256",
+        "adapter_entrypoint_sha256",
+        "runner_source_sha256",
+        "trust_policy_sha256",
+        "challenge_commitment_sha256",
+        "output_manifest_sha256"
+      ],
+      "properties": {
+        "authorization_sha256": { "$ref": "#/$defs/sha256" },
+        "replay_plan_sha256": { "$ref": "#/$defs/sha256" },
+        "foundation_report_sha256": { "$ref": "#/$defs/sha256" },
+        "adapter_entrypoint_sha256": { "$ref": "#/$defs/sha256" },
+        "runner_source_sha256": { "$ref": "#/$defs/sha256" },
+        "trust_policy_sha256": { "$ref": "#/$defs/sha256" },
+        "challenge_commitment_sha256": { "$ref": "#/$defs/sha256" },
+        "output_manifest_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "hostCapabilityStatement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "capabilities",
+        "evidence"
+      ],
+      "properties": {
+        "scope": {
+          "const": "SIGNED_WITNESS_ASSERTION_REQUIRES_EVIDENCE_AND_BACKEND_REVIEW"
+        },
+        "capabilities": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "process_exec_replacement_denied",
+            "private_input_root_external_mutation_denied",
+            "durable_nonce_ledger_root_protected",
+            "output_root_external_mutation_denied"
+          ],
+          "properties": {
+            "process_exec_replacement_denied": { "const": true },
+            "private_input_root_external_mutation_denied": { "const": true },
+            "durable_nonce_ledger_root_protected": { "const": true },
+            "output_root_external_mutation_denied": { "const": true }
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/capabilityEvidence"
+          }
+        }
+      }
+    },
+    "capabilityEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_code",
+        "result",
+        "artifact_sha256",
+        "measurement_tool_sha256",
+        "measurement_method",
+        "private_artifact_published"
+      ],
+      "properties": {
+        "capability_code": {
+          "enum": [
+            "PROCESS_EXEC_REPLACEMENT_DENIED",
+            "PRIVATE_INPUT_ROOT_EXTERNAL_MUTATION_DENIED",
+            "DURABLE_NONCE_LEDGER_ROOT_PROTECTED",
+            "OUTPUT_ROOT_EXTERNAL_MUTATION_DENIED"
+          ]
+        },
+        "result": { "const": "PASS" },
+        "artifact_sha256": { "$ref": "#/$defs/sha256" },
+        "measurement_tool_sha256": { "$ref": "#/$defs/sha256" },
+        "measurement_method": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 240
+        },
+        "private_artifact_published": { "const": false }
+      }
+    },
+    "eventChain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hash_algorithm",
+        "domain",
+        "event_count",
+        "final_event_sha256",
+        "events"
+      ],
+      "properties": {
+        "hash_algorithm": { "const": "sha256" },
+        "domain": { "const": "OERF:N5-D5:L2-C:EVENT:V1" },
+        "event_count": { "const": 14 },
+        "final_event_sha256": { "$ref": "#/$defs/sha256" },
+        "events": {
+          "type": "array",
+          "minItems": 14,
+          "maxItems": 14,
+          "items": { "$ref": "#/$defs/event" }
+        }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "event_type",
+        "request_index",
+        "operation",
+        "monotonic_ns",
+        "payload_sha256",
+        "previous_event_sha256",
+        "event_sha256"
+      ],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 0, "maximum": 13 },
+        "event_type": {
+          "enum": [
+            "RUN_CREATED",
+            "HOST_CAPABILITY_CAPTURE_STARTED",
+            "HOST_CAPABILITY_CAPTURE_FINISHED",
+            "AUTHORIZATION_BOUND",
+            "AUTHORIZATION_CONSUMED",
+            "PROCESS_STARTED",
+            "DESCRIBE_SENT",
+            "DESCRIBE_RECEIVED",
+            "PROCESS_EXITED",
+            "OUTPUT_BOUND",
+            "COST_OBSERVATION_FINALIZED",
+            "RUN_SEALED"
+          ]
+        },
+        "request_index": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "maximum": 2
+        },
+        "operation": {
+          "type": ["string", "null"],
+          "enum": ["describe", null]
+        },
+        "monotonic_ns": { "type": "integer", "minimum": 0 },
+        "payload_sha256": { "$ref": "#/$defs/sha256" },
+        "previous_event_sha256": { "$ref": "#/$defs/sha256" },
+        "event_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "observedCost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "observation_source",
+        "clock_kind",
+        "describe_only_wall_time_ns",
+        "describe_only_cpu_user_ns",
+        "describe_only_cpu_system_ns",
+        "describe_only_peak_rss_bytes",
+        "process_launches",
+        "failed_prior_attempts",
+        "describe_event_measurement_complete",
+        "unobserved_processes_possible",
+        "processes_observed",
+        "descendants_observed",
+        "external_operation_counts",
+        "describe_only_adapter_physics_work",
+        "memory_observation_status",
+        "observer_tool_sha256"
+      ],
+      "properties": {
+        "phase": { "const": "DESCRIBE_ONLY" },
+        "observation_source": { "const": "EXTERNAL_OUT_OF_PROCESS" },
+        "clock_kind": {
+          "enum": ["MONOTONIC", "MONOTONIC_RAW"]
+        },
+        "describe_only_wall_time_ns": { "type": "integer", "minimum": 1 },
+        "describe_only_cpu_user_ns": { "type": "integer", "minimum": 0 },
+        "describe_only_cpu_system_ns": { "type": "integer", "minimum": 0 },
+        "describe_only_peak_rss_bytes": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "process_launches": { "const": 1 },
+        "failed_prior_attempts": { "const": 0 },
+        "describe_event_measurement_complete": { "const": true },
+        "unobserved_processes_possible": { "const": false },
+        "processes_observed": { "const": 1 },
+        "descendants_observed": { "const": 0 },
+        "external_operation_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["describe", "forward", "jvp", "vjp"],
+          "properties": {
+            "describe": { "const": 2 },
+            "forward": { "const": 0 },
+            "jvp": { "const": 0 },
+            "vjp": { "const": 0 }
+          }
+        },
+        "describe_only_adapter_physics_work": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "ray_segments",
+            "integration_samples",
+            "kernel_evaluations"
+          ],
+          "properties": {
+            "status": { "const": "NOT_OBSERVED_IN_DESCRIBE_ONLY_RUN" },
+            "ray_segments": { "type": "null" },
+            "integration_samples": { "type": "null" },
+            "kernel_evaluations": { "type": "null" }
+          }
+        },
+        "memory_observation_status": {
+          "enum": [
+            "OBSERVED_PROCESS_TREE",
+            "NOT_RELIABLY_OBSERVED"
+          ]
+        },
+        "observer_tool_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key_id",
+        "role",
+        "algorithm",
+        "payload_scope",
+        "signed_payload_sha256",
+        "signature_base64"
+      ],
+      "properties": {
+        "key_id": { "$ref": "#/$defs/pseudonym" },
+        "role": {
+          "enum": ["host_capability_witness", "run_cost_observer"]
+        },
+        "algorithm": { "const": "ed25519" },
+        "payload_scope": {
+          "enum": [
+            "HOST_CAPABILITY_SUBJECT_AND_FINAL_SEAL",
+            "RUN_EVENT_CHAIN_AND_DESCRIBE_TELEMETRY"
+          ]
+        },
+        "signed_payload_sha256": { "$ref": "#/$defs/sha256" },
+        "signature_base64": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]{86}==$"
+        }
+      }
+    },
+    "claimAuthorizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "real_bost_interface",
+        "physical_forward_correctness",
+        "derivative_correctness",
+        "reconstruction",
+        "algorithm_superiority",
+        "generalization",
+        "publication"
+      ],
+      "properties": {
+        "real_bost_interface": { "const": false },
+        "physical_forward_correctness": { "const": false },
+        "derivative_correctness": { "const": false },
+        "reconstruction": { "const": false },
+        "algorithm_superiority": { "const": false },
+        "generalization": { "const": false },
+        "publication": { "const": false }
+      }
+    }
+  }
+}

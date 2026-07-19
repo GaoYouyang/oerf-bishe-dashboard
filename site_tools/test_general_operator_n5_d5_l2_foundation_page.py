@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PAGE = ROOT / "general_operator_research_lab.html"
 REPORT = ROOT / "docs/n5_d5_l2_private_replay_foundation_2026-07-19.md"
 L2B_REPORT = ROOT / "docs/n5_d5_l2b_dual_v2_mechanism_2026-07-19.md"
+L2C_REPORT = ROOT / "docs/n5_d5_l2c_external_witness_and_cost_capsule_2026-07-19.md"
 PLAN = ROOT / "data_templates/n5_d5_private_replay_plan.placeholder.json"
 
 
@@ -20,13 +21,13 @@ def test_page_orders_l2_after_l1_and_before_archived_d4c() -> None:
     html = PAGE.read_text(encoding="utf-8")
     section = _section()
 
-    assert 'href="#n5-d5-l2-foundation">D5 L2-B / 双路径门</a>' in html
+    assert 'href="#n5-d5-l2-foundation">D5 L2-B/C / 双路径门</a>' in html
     assert (
         html.index('href="#n5-d5-private-readiness"')
         < html.index('href="#n5-d5-l2-foundation"')
         < html.index('href="#n5-d4c"')
     )
-    assert "N5-D5-L2-B describe-only + independent dual-path L1-v2" in section
+    assert "N5-D5-L2-C external witness + L2-B describe-only" in section
     assert "development test double 可跑，生产路径在授权前 fail closed" in section
 
 
@@ -60,6 +61,13 @@ def test_page_links_public_l2_code_templates_tests_and_beginner_report() -> None
         "site_tools/n5_d5_private_lab_readiness_dual_v2.py",
         "site_tools/test_n5_d5_l2b_describe_runner.py",
         "site_tools/test_n5_d5_private_lab_readiness_dual_v2.py",
+        "document_reader.html?doc=docs%2Fn5_d5_l2c_external_witness_and_cost_capsule_2026-07-19.md",
+        "data_templates/n5_d5_l2c_trust_policy.schema.json",
+        "data_templates/n5_d5_l2c_trust_anchor_registry.json",
+        "data_templates/n5_d5_l2c_external_witness_bundle.schema.json",
+        "site_tools/n5_d5_l2c_external_witness.py",
+        "site_tools/test_n5_d5_l2c_external_witness.py",
+        "site_tools/requirements-n5-d5.txt",
         "anchor=120-l2-b-与双路径-v2-能演练-只问两次-当前-mac-仍不准真实执行",
     ):
         assert target in section
@@ -67,14 +75,21 @@ def test_page_links_public_l2_code_templates_tests_and_beginner_report() -> None
 
 def test_page_and_report_keep_execution_science_and_training_locked() -> None:
     section = _section()
-    report = REPORT.read_text(encoding="utf-8") + L2B_REPORT.read_text(
-        encoding="utf-8"
+    report = (
+        REPORT.read_text(encoding="utf-8")
+        + L2B_REPORT.read_text(encoding="utf-8")
+        + L2C_REPORT.read_text(encoding="utf-8")
     )
 
     for phrase in (
-        "81 PROTOCOL / HOST-GATE TESTS PASS",
+        "102 TARGETED MECHANISM TESTS PASS",
+        "L2-C 21",
+        "FAST MATRIX 226",
+        "MEDIUM: 3 FROZEN FAILURES",
+        "medium 并行层为 2211 passed / 3 个冻结 N2/D4c 失败",
         "PRODUCTION HOST BLOCKED",
         "0 REAL ADAPTER CALLS",
+        "0 EXTERNAL WITNESS RUNS",
         "POST_LAUNCH_EXEC_REPLACEMENT_NOT_DENIED",
         "PRIVATE_INPUT_ROOT_EXTERNAL_MUTATION_NOT_DENIED",
         "DURABLE_NONCE_LEDGER_ROOT_NOT_PROTECTED",
@@ -89,6 +104,25 @@ def test_page_and_report_keep_execution_science_and_training_locked() -> None:
         "没有真实 BOST、三维重建、算法基线比较、泛化或论文结果",
     ):
         assert phrase in section or phrase in report
+
+
+def test_page_separates_signed_claims_from_truth_and_model_cost() -> None:
+    section = _section()
+
+    for phrase in (
+        "2 distinct key roles",
+        "14 chained events",
+        "8 bound digests",
+        "0 auto authorization",
+        "host_capability_truth_independently_proven=false",
+        "role_operational_independence_proven=false",
+        "VERIFIER_CONTROLLED_REGISTRY_BYTES_CHANGED",
+        "production_backend_authorized=false",
+        "当前 cost capsule 为什么不能比较 FNO",
+        "36 或 106 是接口预算，不是算法速度",
+        "真实 signer/evidence 运行 0 次",
+    ):
+        assert phrase in section
 
 
 def test_default_private_plan_is_honest_dual_path_with_106_request_budget() -> None:

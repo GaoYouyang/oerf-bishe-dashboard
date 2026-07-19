@@ -68,12 +68,19 @@ def test_medium_uses_fixed_roots_then_serial_mps_case(
     assert parallel[:3] == [sys.executable, "-m", "pytest"]
     assert parallel[3:7] == list(MODULE.SOURCE_ROOTS)
     assert parallel[7:] == [
+        *(f"--ignore={target}" for target in MODULE.SERIAL_HOST_CONTAINMENT_TESTS),
         "-n",
         "4",
         "--dist=loadfile",
         *(f"--deselect={case}" for case in MODULE.MPS_CASES),
     ]
-    assert commands[3] == [sys.executable, "-m", "pytest", *MODULE.MPS_CASES]
+    assert commands[3] == [
+        sys.executable,
+        "-m",
+        "pytest",
+        *MODULE.SERIAL_HOST_CONTAINMENT_TESTS,
+    ]
+    assert commands[4] == [sys.executable, "-m", "pytest", *MODULE.MPS_CASES]
     assert "." not in parallel[3:]
 
 

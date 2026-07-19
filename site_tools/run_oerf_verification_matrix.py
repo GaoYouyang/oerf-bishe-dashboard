@@ -42,6 +42,9 @@ MPS_CASES = (
         "test_independent_mps_validator_recomputes_parity"
     ),
 )
+SERIAL_HOST_CONTAINMENT_TESTS = (
+    "site_tools/test_n5_d5_l2b_describe_runner.py",
+)
 FAST_CONTRACT_TESTS = (
     "site_tools/test_build_pages_artifact.py",
     "site_tools/test_build_psu_all_view_public_summary.py",
@@ -52,6 +55,8 @@ FAST_CONTRACT_TESTS = (
     "site_tools/test_build_psu_clipped_hybrid_public_summary.py",
     "site_tools/test_build_psu_fixed_domain_public_summary.py",
     "site_tools/test_build_psu_public_summary.py",
+    "site_tools/test_n5_d5_l2c_external_witness.py",
+    "site_tools/test_general_operator_n5_d5_l2_foundation_page.py",
 )
 GATE_A_TARGETED_TESTS = (
     "demo_t16_operator/test_psu_b0_active_coordinates.py",
@@ -138,12 +143,14 @@ def _run_medium(runner: CommandRunner) -> None:
     runner.run(
         [
             *_pytest_command(*SOURCE_ROOTS),
+            *(f"--ignore={target}" for target in SERIAL_HOST_CONTAINMENT_TESTS),
             "-n",
             "4",
             "--dist=loadfile",
             *(f"--deselect={case}" for case in MPS_CASES),
         ]
     )
+    runner.run(_pytest_command(*SERIAL_HOST_CONTAINMENT_TESTS))
     runner.run(_pytest_command(*MPS_CASES))
 
 
