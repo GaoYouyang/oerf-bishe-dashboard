@@ -70,7 +70,9 @@
     .alert strong { display:block; margin-bottom:4px; overflow-wrap:anywhere; }
     .alert.critical { border-color:#ddb8af; border-left-color:var(--coral); background:rgba(252,240,236,.97); }
     .alert.success { border-color:#b9d4ce; border-left-color:var(--teal); background:rgba(238,247,244,.97); }
-    .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:14px; margin-bottom:16px; }
+    .section-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:16px; }
+    .section-head > :first-child { min-width:0; flex:1 1 0; }
+    .section-head > .actions { min-width:0; max-width:520px; flex:0 1 520px; justify-content:flex-end; }
     .section-head p { max-width:850px; color:var(--muted); }
     .chip { display:inline-flex; min-height:25px; align-items:center; padding:3px 8px; border:1px solid #bcd7d1; border-radius:999px; color:var(--teal); background:var(--teal-soft); font-size:11px; font-weight:800; }
     .chip.blue { color:var(--blue); border-color:#c6d7e7; background:var(--blue-soft); }
@@ -142,6 +144,8 @@
     .empty { padding:20px; color:var(--muted); text-align:center; }
     @media (max-width:980px) {
       .hero-grid,.two-col { grid-template-columns:1fr; }
+      .section-head { flex-direction:column; }
+      .section-head > .actions { width:100%; max-width:none; justify-content:flex-start; }
       .candidate-grid,.source-grid,.data-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .pipeline { grid-template-columns:repeat(3,minmax(0,1fr)); }
       .pipeline div:nth-child(3)::after { display:none; }
@@ -156,7 +160,6 @@
       .metric-grid,.real-metric-grid,.evidence-grid,.candidate-grid,.source-grid,.data-grid,.week-grid,.library-strip { grid-template-columns:1fr; }
       .pipeline { grid-template-columns:1fr; }
       .pipeline div::after { display:none; }
-      .section-head { align-items:flex-start; flex-direction:column; }
       .filter-field { min-width:100%; }
       .table-scroll-hint { display:block; }
       .result-table-wrap { box-shadow:inset -14px 0 16px -18px rgba(23,37,43,.75); }
@@ -170,7 +173,7 @@
       <a href="operator-learning/">学习主页</a>
       <a href="#n5-d5">N5-D5 接口桥</a>
       <a href="#n5-d5-private-readiness">D5 私有接线</a>
-      <a href="#n5-d5-l2-foundation">D5 L2-B/C / 双路径门</a>
+      <a href="#n5-d5-l2-foundation">D5 L2-B/C/D0 / 双路径门</a>
       <a href="#n5-d4c">D4c 历史前置</a>
       <a href="#n5-d4b">D4b 冻结失败</a>
       <a href="#d0-root-cause">当前结论</a>
@@ -572,17 +575,19 @@
       </div>
 
       <div class="alert critical"><strong>七个禁止外推继续生效</strong><span>L1 不证明真实 BOST；不证明物理正确或完整导数；不证明三维重建；不证明算法优越；不证明泛化；不证明论文成立。即使以后 L1 静态变绿，这些结论也不会自动打开。</span></div>
-      <div class="alert"><strong>现在发给何远哲师兄的最小请求</strong><span>“能否先给我一个匿名 4--16 rays 小包：一个 field/decoder vector，以及接受任意运行时 <code>x/v/q</code> 的 curved/straight forward/JVP/VJP callable？若有原生 direct-residual 请一并提供，没有请明确。还需要 units、shape、spacing、axis order、dtype、geometry/calibration hash、sampling/interpolation/termination、noise floor 和真实 branch-state 说明。我会把 adapter、输入和 raw trace 只留在本机 private_library；先做静态检查和单独授权的两次 describe，绝不自动连跑正式回放。”</span></div>
+      <div class="alert"><strong>现在发给何远哲师兄的请求已压成一页</strong><span>第一次只确认真实 forward 入口、field/decoder 参数化、residual 形成位置、任意方向 JVP/VJP、hard branch、最小合法 batch、运行环境、组内真实痛点和隐私边界。4--16 rays 只是建议，不是硬要求；师兄只指入口也可以，wrapper 由我们写完再请他审核。 <a href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">打开可直接发送的沟通单</a></span></div>
     </section>
 
     <section id="n5-d5-l2-foundation" class="band">
       <div class="section-head">
         <div>
-          <div class="eyebrow">最新机制增量 · N5-D5-L2-C external witness + L2-B describe-only + dual-path L1-v2</div>
-          <h2>把“谁签了什么”与“物理上是不是真的”分开，再接真实 callable</h2>
-          <p>L2-A 冻结来源、物理元数据、输入闭包、未知探针和完整预算；L2-B 把权限缩成恰好两次 describe；本轮 L2-C 又加入 verifier-controlled policy registry、两个不同 Ed25519 key role、角色分域签名、14 步事件哈希链、真实 subject/evidence 文件重算、output manifest 绑定和 describe-only 外部遥测声明。不同 key 只证明 key 分离，不证明两个操作者或进程真的独立；当前公开 registry 也故意没有生产 trust anchor，所以真实 CLI 会在读取 bundle 前 fail closed。</p>
+          <div class="eyebrow">最新机制增量 · N5-D5-L2-D0 offline prefix + L2-C external witness + dual-path L1-v2</div>
+          <h2>先问清真实物理接口，再把“一次性”能证明到哪里说清</h2>
+          <p>L2-A 冻结来源、物理元数据、输入闭包、未知探针和完整预算；L2-B 把权限缩成恰好两次 describe；L2-C 加入固定 trust registry、两个签名角色、14 步事件链与 describe-only 遥测。本轮 L2-D0 从 index 0 重算<strong>调用者提供的签名前缀</strong>，核对固定静态 floor checkpoint，并要求 sequencer 与两个 monitor 的三角色证据。nonce 必须从通过 L2-B schema 的 authorization 中解析并域分离哈希，不再信任任意 commitment 文件摘要。它只证明该语义 nonce 在这份前缀中出现一次；前缀外部完整性、在线原子消费与跨观察者 gossip 均未证明，仍固定返回 <code>one_time_acceptance_proven=false</code>。第一次和师兄沟通则只问真实 forward、residual 位置、JVP/VJP、hard branch 和组内痛点，不让安全工程淹没科学问题。</p>
         </div>
         <div class="actions">
+          <a class="button primary" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">发给师兄的一页真实接口问题</a>
+          <a class="button primary" href="document_reader.html?doc=docs%2Fn5_d5_l2d_offline_prefix_and_role_evidence_2026-07-19.md">读 L2-D0 前缀、静态下界与盲区</a>
           <a class="button primary" href="document_reader.html?doc=docs%2Fn5_d5_l2b_dual_v2_mechanism_2026-07-19.md">从零读 L2-B、双路径与限制</a>
           <a class="button primary" href="document_reader.html?doc=docs%2Fn5_d5_l2c_external_witness_and_cost_capsule_2026-07-19.md">读 L2-C 签名、事件链与成本</a>
           <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_l2_private_replay_foundation_2026-07-19.md">L2-A 基础与预算推导</a>
@@ -597,38 +602,52 @@
           <a class="button" href="data_templates/n5_d5_l2c_external_witness_bundle.schema.json">L2-C bundle Schema</a>
           <a class="button" href="site_tools/n5_d5_l2c_external_witness.py">L2-C verifier</a>
           <a class="button" href="site_tools/test_n5_d5_l2c_external_witness.py">L2-C 红队测试</a>
+          <a class="button" href="data_templates/n5_d5_l2d_replay_role_policy.schema.json">L2-D0 policy Schema</a>
+          <a class="button" href="data_templates/n5_d5_l2d_trust_anchor_registry.json">L2-D0 空生产 registry</a>
+          <a class="button" href="data_templates/n5_d5_l2d_replay_role_bundle.schema.json">L2-D0 bundle Schema</a>
+          <a class="button" href="site_tools/n5_d5_l2d_replay_role_verifier.py">L2-D0 verifier</a>
+          <a class="button" href="site_tools/test_n5_d5_l2d_replay_role_verifier.py">L2-D0 负向测试</a>
           <a class="button" href="site_tools/requirements-n5-d5.txt">L2-C Python 依赖</a>
           <a class="button" href="data_templates/n5_d5_private_replay_plan.schema.json">回放计划 Schema</a>
           <a class="button" href="data_templates/n5_d5_private_replay_plan.placeholder.json">回放计划模板</a>
           <a class="button" href="data_templates/n5_d5_private_physical_contract.placeholder.json">物理合同模板</a>
           <a class="button" href="data_templates/n5_d5_private_environment_lock.placeholder.json">依赖锁模板</a>
           <a class="button" href="site_tools/n5_d5_private_replay_foundation.py">L2-A 审计代码</a>
-          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=120-l2-b-与双路径-v2-能演练-只问两次-当前-mac-仍不准真实执行">讲人话日志 120</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=122-l2-d0终于能检查签名前缀里只出现一次但还不能说全局只运行一次">讲人话日志 122</a>
         </div>
       </div>
 
       <div class="chips" style="margin:12px 0;">
-        <span class="chip blue">102 TARGETED MECHANISM TESTS PASS</span>
+        <span class="chip blue">133 TARGETED MECHANISM TESTS PASS</span>
+        <span class="chip blue">L2-D0 31</span>
         <span class="chip blue">L2-C 21</span>
         <span class="chip blue">L2-B 18</span>
         <span class="chip blue">DUAL-V2 24</span>
-        <span class="chip blue">FAST MATRIX 226</span>
+        <span class="chip blue">FAST MATRIX 257</span>
         <span class="chip gold">TRIPLE TOTAL 156</span>
         <span class="chip gold">DUAL TOTAL 106</span>
         <span class="chip coral">PRODUCTION HOST BLOCKED</span>
         <span class="chip coral">0 REAL ADAPTER CALLS</span>
         <span class="chip coral">0 EXTERNAL WITNESS RUNS</span>
+        <span class="chip coral">0 EXTERNAL LEDGER RUNS</span>
         <span class="chip coral">MEDIUM: 3 FROZEN FAILURES</span>
         <span class="chip coral">NO LAB RESULT</span>
       </div>
       <div class="alert critical"><strong>当前状态：development test double 可跑，生产路径在授权前 fail closed</strong><span>仓库能演练第三条响应、forward 标签、输出洪泛、挂起、当前 ledger inode 内的 nonce 重放、descriptor 夹带结论和多类越界行为；但默认 backend 同时返回 <code>POST_LAUNCH_EXEC_REPLACEMENT_NOT_DENIED</code>、<code>PRIVATE_INPUT_ROOT_EXTERNAL_MUTATION_NOT_DENIED</code>、<code>DURABLE_NONCE_LEDGER_ROOT_NOT_PROTECTED</code>、<code>OUTPUT_ROOT_EXTERNAL_MUTATION_NOT_DENIED</code> 与 <code>BACKEND_CAPABILITY_ATTESTATION_NOT_EXTERNALLY_VERIFIED</code>，不读取真实授权、不消费 nonce、不创建结果目录。<code>production_execution_authorized=false</code>、<code>formal_36_call_replay_authorized=false</code>、<code>formal_53_call_replay_authorized=false</code>、<code>formal_replay_authorized=false</code>。</span></div>
-      <div class="alert"><strong>验证矩阵边界</strong><span>核心 102、聚焦页面 69、fast 226 均通过。medium 并行层为 2211 passed / 3 个冻结 N2/D4c 失败；macOS containment 的 18 项测试已从并行池移到串行并全部通过，3 项 MPS 也串行通过。这里没有把 medium 写成全绿。</span></div>
+      <div class="alert"><strong>验证矩阵边界</strong><span>核心 133、聚焦页面 69、fast 257 均已实际通过。完整 medium 并行层实测为 2242 passed / 3 个冻结 N2/D4c 失败；失败仍是 semantic-v2 bundle 的两条历史验证状态和 opaque checkpoint 历史输出存在性，不是 L2-D0 回归。macOS containment 18 项与 MPS 3 项按设计拆出串行，实测 21 passed。这里没有把 medium 写成全绿。</span></div>
 
       <div class="metric-grid real-metric-grid">
         <div class="metric"><b>156</b><span>原生 direct 三路径：2 describe-only + 53 primary + 53 validator base + 48 private challenge</span></div>
         <div class="metric"><b>106</b><span>没有原生 direct 的双路径：2 + 36 + 36 + 32；不得用 wrapper 相减补第三路</span></div>
         <div class="metric"><b>2 describes only</b><span>独立授权写死 operations=[describe]、request count 2、auto-chain false</span></div>
         <div class="metric"><b>inode-scoped nonce</b><span>当前持有账本 inode 内原子防重放；<code>global_nonce_uniqueness_proven=false</code></span></div>
+      </div>
+
+      <div class="metric-grid real-metric-grid">
+        <div class="metric"><b>supplied prefix</b><span>从 index 0 重算 RFC 9162 式 Merkle root；外部完整性仍为 false</span></div>
+        <div class="metric"><b>3 trust-context roles</b><span>sequencer + monitor A + monitor B 共同绑 registry/policy/log epoch/challenge；仍不等于真实独立</span></div>
+        <div class="metric"><b>1 semantic nonce</b><span>从 L2-B authorization 解析后域分离哈希；只在该签名前缀内唯一</span></div>
+        <div class="metric"><b>0 live atomic consume</b><span><code>one_time_acceptance_proven=false</code>；不能降级成本地 marker</span></div>
       </div>
 
       <div class="metric-grid real-metric-grid">
@@ -672,6 +691,7 @@
             <tr><td class="positive">L2-A foundation</td><td>冻结谁能运行、要花多少次、结果只能写到哪里</td><td>已实现；兼容诚实双/三路径预算</td><td>任何 adapter 调用或科学结论</td></tr>
             <tr><td class="pending">L2-B describe-only</td><td>隔离环境中只读两次设备铭牌</td><td>18 项 test-double/host-gate 测试；当前生产 backend 阻塞；真实运行 0 次</td><td>伪造 backend capability 运行真实包，或自动连跑 forward/JVP/VJP</td></tr>
             <tr><td class="pending">L2-C external witness</td><td>两个外部角色签同一 subject、事件链与成本胶囊</td><td>verifier 与 21 项负向测试已实现；真实 signer/evidence 运行 0 次</td><td>把签名当事实证明，或由 runner 自签后清除生产 blocker</td></tr>
+            <tr><td class="pending">L2-D0 offline prefix</td><td>重算调用者前缀，解析目标语义 nonce，检查静态 floor 与全前缀自报摘要重复</td><td>31 项测试已实现；真实 ledger/monitor/gossip 运行 0 次</td><td>把历史自报 nonce 摘要写成已验证 raw nonce，把前缀内唯一写成全局一次性，或把静态 floor 写成 anti-rollback</td></tr>
             <tr><td class="pending">Primary replay</td><td>在一个匿名工作点查局部离散自洽</td><td>未授权；36 或 53</td><td>称为物理正确或完整 Jacobian</td></tr>
             <tr><td class="pending">Validator + private challenge</td><td>第二次重跑并用事前不可知方向查固定答案</td><td>探针机制已实现；独立执行与 observed cost 未实现</td><td>把有限随机探针称为全空间证明</td></tr>
             <tr><td class="pending">N2 inverse / training</td><td>多视角三维重建与模型公平比较</td><td>等待真实数据合同、rig split 和 L2 结果</td><td>从 D5 小接口直接开 FNO/DeepONet</td></tr>
@@ -694,9 +714,23 @@
 
       <div class="two-col">
         <div class="panel">
+          <div class="chips"><span class="chip blue">L2-D0 已实现</span><span class="chip gold">offline prefix only</span></div>
+          <h3 style="margin-top:12px;">调用者前缀为什么仍不是全局一次性证明</h3>
+          <p>当前 verifier 会重算每个 leaf、旧/新 Merkle root、固定静态 floor，并扫描全前缀的 acceptance ID、authorization ID/摘要和账本自报 nonce 摘要值。只有目标记录附有可按 L2-B schema 解析的 authorization，因此只有目标摘要能称为已验证语义 nonce；历史值只能称为 claimed digest。测试已构造两条从同一 floor 延伸、却都能各自通过的签名分支；离线文件也不能证明服务端做过线性化 <code>ISSUED → CONSUMED → ACCEPTED</code>。因此只写 <code>target_semantic_nonce_unique_in_supplied_signed_prefix=true</code>，同时保留 <code>prefix_completeness_external_to_bundle_proven=false</code>、<code>anti_rollback_protection_proven=false</code>、<code>log_fork_freedom_proven=false</code> 与 <code>online_atomic_consume_observed=false</code>。</p>
+        </div>
+        <div class="panel">
+          <div class="chips"><span class="chip blue">师兄首次沟通</span><span class="chip gold">physics first</span></div>
+          <h3 style="margin-top:12px;">第一次只需要九个可回答的问题</h3>
+          <p>先确认真实代码入口、field/decoder 参数化、curved/straight 与 residual 形成位置、任意方向 JVP/VJP、hard mask/termination/adaptive sampling、最小合法 batch、Linux/CUDA 环境、组内最痛的失败和隐私边界。4--16 rays 是建议，不是硬要求；师兄只指明入口也可以，wrapper 由我方编写后再交他审核。</p>
+          <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">打开可直接发送的微信稿</a>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
           <div class="chips"><span class="chip blue">L2-C 已实现</span><span class="chip gold">verifier only</span></div>
           <h3 style="margin-top:12px;">签名、哈希链和物理真实性各管什么</h3>
-          <p>固定 registry 防止调用者传入攻击者 policy，其当前空文件摘要还被编译进 verifier，单改 JSON 会触发 <code>VERIFIER_CONTROLLED_REGISTRY_BYTES_CHANGED</code>；Ed25519 只证明受信任 key 签过角色限定的规范化字节。subject 与私有 evidence 必须从真实文件重算。它们仍不能证明见证者没有漏记现实事件，更不能证明 BOST renderer、导数或重建正确；报告固定写 <code>host_capability_truth_independently_proven=false</code> 与 <code>role_operational_independence_proven=false</code>。</p>
+          <p>固定 registry 防止普通调用者传入攻击者 policy，其当前空文件摘要还被编译进 verifier，单改 JSON 会触发 <code>VERIFIER_CONTROLLED_REGISTRY_BYTES_CHANGED</code>；但同 UID 可以一起替换 Python 源码、registry 和摘要常量，所以报告仍写 <code>same_uid_trust_root_replacement_excluded=false</code> 与 <code>verifier_binary_integrity_proven=false</code>。Ed25519 只证明受信任 key 签过角色限定的规范化字节；L2-C report 在 D0 中只是被绑定的未认证 bytes，<code>l2c_report_authenticity_proven=false</code>。它们都不能证明 BOST renderer、导数或重建正确，因此 <code>host_capability_truth_independently_proven=false</code> 与 <code>role_operational_independence_proven=false</code> 继续保留。</p>
         </div>
         <div class="panel">
           <div class="chips"><span class="chip coral">只测 describe</span><span class="chip gold">不是模型成本</span></div>
@@ -719,16 +753,17 @@
       </div>
 
       <div class="pipeline" aria-label="N5-D5-L2 后续执行路线">
-        <div><b>1 · 当前完成</b><span>L2-A、独立 dual-v2、L2-B development test double 与 L2-C verifier；聚合 102 项定向机制测试。</span></div>
+        <div><b>1 · 当前完成</b><span>L2-A、独立 dual-v2、L2-B test double、L2-C 与 L2-D0 verifier；聚合 133 项定向机制测试。</span></div>
         <div><b>2 · 人工物理门</b><span>师兄确认 native direct、任意方向 callable、几何标定、branch 与容差依据。</span></div>
         <div><b>3 · 私有静态门</b><span>真实文件只进 private_library；跑 L1 并逐行 source/physical review。</span></div>
         <div><b>4 · 生产 backend</b><span>用独立 signer/evidence 证明 exec replacement 被拒、私有输入/账本/输出根受保护；当前只有 verifier。</span></div>
-        <div><b>5 · 外部见证</b><span>由 verifier registry 固定 policy、两个分域 key role、14 步事件链与 describe telemetry；人工审查后仍不自动运行。</span></div>
-        <div><b>6 · 单独 describe</b><span>新 backend 上签发一次性 token，只问两次；通过后停下人工复核。</span></div>
-        <div><b>7 · 才到论文算法</b><span>由真实 failure mode 选择 residual-native、branch-safe、decoder-chain 或 operator-learning 创新。</span></div>
+        <div><b>5 · 外部见证</b><span>固定 policy、两个 L2-C 角色、14 步事件链与 describe telemetry；人工审查后仍不自动运行。</span></div>
+        <div><b>6 · 在线一次性门</b><span>共享账本原子 consume、持久 checkpoint 与跨 observer gossip；当前只有离线 D0。</span></div>
+        <div><b>7 · 单独 describe</b><span>新 backend 上签发一次性 token，只问两次；通过后停下人工复核。</span></div>
+        <div><b>8 · 才到论文算法</b><span>由真实 failure mode 选择 residual-native、branch-safe、decoder-chain 或 operator-learning 创新。</span></div>
       </div>
 
-      <div class="alert critical"><strong>这不是算法成功，也不是论文结果</strong><span>102 项定向测试是让未来实验不自欺的协议基础设施，其中 L2-C 21 项只验证 envelope、policy pin、事件链和 describe-only telemetry。它没有真实外部 signer，没有训练模型，没有比较 DeepONet/FNO/FFNO，没有 field relative-L2、逐 rig tail、Schur violation 或端到端重建成本。真正可投稿的创新问题必须由真实 adapter 与多视角 inverse 数据暴露，再在冻结基线和生产隔离 audit 上验证。</span></div>
+      <div class="alert critical"><strong>这不是算法成功，也不是论文结果</strong><span>133 项定向测试是让未来实验不自欺的协议基础设施，其中 L2-C 21 项只验证签名/事件/describe telemetry，L2-D0 31 项只验证固定 registry、调用者前缀、目标语义 nonce 与历史 claimed digest 的区别、静态 floor、trust-context 签名与可构造的盲区。它没有真实外部 signer/ledger，没有训练模型，没有比较 DeepONet/FNO/FFNO，没有 field relative-L2、逐 rig tail、Schur violation 或端到端重建成本。真正可投稿的创新问题必须由真实 adapter 与多视角 inverse 数据暴露，再在冻结基线和生产隔离 audit 上验证。</span></div>
     </section>
 
     <section id="n5-d4c" class="band">
@@ -3699,7 +3734,7 @@ VD0-B 也已完成。我从 MATLAB find 索引恢复真实 detector row/column�
   </main>
 
   <footer>
-    <p>版本 2026.07.19-N5-D5-L2C-EXTERNAL-WITNESS-VERIFIER。研究结论以仓库 report/JSON/checksum 为准；页面只做可读映射。最新增量在 L2-B describe-only 与 dual-v2 之上增加 verifier-controlled policy registry、两个分域 Ed25519 key role、14 步事件链、subject/evidence 文件重算、output manifest 绑定和 describe-only telemetry verifier；累计 102 项定向机制测试通过。公开 registry 当前没有生产 trust anchor，角色操作独立性、证据真实性与 replay freshness 也未证明；签名不自动清除生产 blocker。当前 Mac 仍缺禁止 post-launch exec replacement、保护私有输入/持久 nonce 账本/输出根与外部验证 backend capability 共五项生产能力。历史冻结页面基线仍为<strong>版本 2026.07.18-N2-PVGR-N2</strong>，其独立审计状态为 <code>PASS WITH WARNINGS — DEVELOPMENT MECHANISM EVIDENCE ONLY</code>，N1.9 learner 与新 split 均未启动。真实 external witness、adapter 调用、36/53 primary、validator、三维重建、DeepONet/FNO/FFNO 同预算比较、真实 OERF、泛化和论文授权全部保持关闭。受限论文、VPN 内容、组内数据、逐射线索引、私有 cache、授权 token、私钥、checkpoint 与原始重建体不进入 GitHub Pages。</p>
+    <p>版本 2026.07.19-N5-D5-L2D0-OFFLINE-PREFIX-AUDITED。研究结论以仓库 report/JSON/checksum 为准；页面只做可读映射。最新增量在 L2-C 之上增加 L2-B authorization 目标语义 nonce 解析、调用者前缀重算、历史 claimed nonce digest 去重、静态 floor checkpoint、三角色 trust-context 签名、签署 MMD 校验和 31 项反例测试；累计 133 项定向机制测试通过。公开 registry 当前没有生产 trust anchor；前缀外部完整性、anti-rollback、L2-C report 真实性、同 UID verifier 完整性、角色操作独立性、在线原子 consume 和 fork freedom 均未证明。当前 Mac 仍缺禁止 post-launch exec replacement、保护私有输入/持久 nonce 账本/输出根与外部验证 backend capability 共五项生产能力。历史冻结页面基线仍为<strong>版本 2026.07.18-N2-PVGR-N2</strong>，其独立审计状态为 <code>PASS WITH WARNINGS — DEVELOPMENT MECHANISM EVIDENCE ONLY</code>，N1.9 learner 与新 split 均未启动。真实 external witness/ledger、adapter 调用、36/53 primary、validator、三维重建、DeepONet/FNO/FFNO 同预算比较、真实 OERF、泛化和论文授权全部保持关闭。受限论文、VPN 内容、组内数据、逐射线索引、私有 cache、授权 token、私钥、checkpoint 与原始重建体不进入 GitHub Pages。</p>
   </footer>
   <script>
     (() => {

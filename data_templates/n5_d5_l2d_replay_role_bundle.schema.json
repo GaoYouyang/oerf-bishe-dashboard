@@ -1,0 +1,256 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaoyouyang.github.io/oerf-bishe-dashboard/data_templates/n5_d5_l2d_replay_role_bundle.schema.json",
+  "title": "N5-D5-L2-D replay-prefix and role-evidence bundle",
+  "description": "A three-role signed caller-supplied replay-ledger prefix capsule. It verifies the target parsed nonce inside that supplied prefix but cannot prove external prefix completeness, global one-time acceptance, fork freedom, or operational independence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "predicate_type",
+    "run_id",
+    "issued_at_utc",
+    "expires_at_utc",
+    "trust_context",
+    "subject",
+    "acceptance",
+    "witnessed_prefix",
+    "previous_checkpoint",
+    "checkpoint",
+    "role_evidence",
+    "terminal_status",
+    "claim_authorizations",
+    "limitations",
+    "signatures"
+  ],
+  "properties": {
+    "schema_version": { "const": "n5-d5-l2d-replay-role-bundle-1.0" },
+    "record_kind": { "const": "EXTERNALLY_WITNESSED_REPLAY_PREFIX_AND_ROLE_EVIDENCE_CAPSULE" },
+    "predicate_type": {
+      "const": "https://gaoyouyang.github.io/oerf-bishe-dashboard/attestations/n5-d5-l2d-replay-role/v1"
+    },
+    "run_id": { "$ref": "#/$defs/pseudonym" },
+    "issued_at_utc": { "$ref": "#/$defs/utcTimestamp" },
+    "expires_at_utc": { "$ref": "#/$defs/utcTimestamp" },
+    "trust_context": { "$ref": "#/$defs/trustContext" },
+    "subject": { "$ref": "#/$defs/subject" },
+    "acceptance": { "$ref": "#/$defs/entryBody" },
+    "witnessed_prefix": { "$ref": "#/$defs/witnessedPrefix" },
+    "previous_checkpoint": { "$ref": "#/$defs/checkpoint" },
+    "checkpoint": { "$ref": "#/$defs/currentCheckpoint" },
+    "role_evidence": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/roleEvidence" }
+    },
+    "terminal_status": { "const": "PREFIX_AND_ROLE_EVIDENCE_VERIFIED_NO_PRODUCTION_AUTHORIZATION" },
+    "claim_authorizations": { "$ref": "#/$defs/claimAuthorizations" },
+    "limitations": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 16,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 20, "maxLength": 600 }
+    },
+    "signatures": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/signature" }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "pseudonym": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{5,79}$" },
+    "utcTimestamp": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "trustContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registry_id",
+        "registry_sha256",
+        "policy_id",
+        "policy_epoch",
+        "policy_sha256",
+        "predicate_type",
+        "ledger_namespace",
+        "log_id",
+        "log_epoch",
+        "challenge_commitment_sha256"
+      ],
+      "properties": {
+        "registry_id": { "$ref": "#/$defs/pseudonym" },
+        "registry_sha256": { "$ref": "#/$defs/sha256" },
+        "policy_id": { "$ref": "#/$defs/pseudonym" },
+        "policy_epoch": { "type": "integer", "minimum": 1 },
+        "policy_sha256": { "$ref": "#/$defs/sha256" },
+        "predicate_type": { "const": "https://gaoyouyang.github.io/oerf-bishe-dashboard/attestations/n5-d5-l2d-replay-role/v1" },
+        "ledger_namespace": { "$ref": "#/$defs/pseudonym" },
+        "log_id": { "$ref": "#/$defs/pseudonym" },
+        "log_epoch": { "type": "integer", "minimum": 1 },
+        "challenge_commitment_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorization_sha256",
+        "l2c_bundle_sha256",
+        "l2c_verification_report_sha256",
+        "challenge_commitment_sha256",
+        "nonce_commitment_sha256",
+        "trust_policy_sha256"
+      ],
+      "properties": {
+        "authorization_sha256": { "$ref": "#/$defs/sha256" },
+        "l2c_bundle_sha256": { "$ref": "#/$defs/sha256" },
+        "l2c_verification_report_sha256": { "$ref": "#/$defs/sha256" },
+        "challenge_commitment_sha256": { "$ref": "#/$defs/sha256" },
+        "nonce_commitment_sha256": { "$ref": "#/$defs/sha256" },
+        "trust_policy_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "entryBody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entry_kind",
+        "ledger_namespace",
+        "acceptance_id",
+        "run_id",
+        "authorization_id",
+        "nonce_sha256",
+        "authorization_sha256",
+        "l2c_bundle_sha256",
+        "l2c_verification_report_sha256",
+        "l2c_final_event_sha256",
+        "decision",
+        "recorded_at_utc"
+      ],
+      "properties": {
+        "entry_kind": { "const": "ONE_TIME_AUTHORIZATION_ACCEPTANCE" },
+        "ledger_namespace": { "$ref": "#/$defs/pseudonym" },
+        "acceptance_id": { "$ref": "#/$defs/pseudonym" },
+        "run_id": { "$ref": "#/$defs/pseudonym" },
+        "authorization_id": { "$ref": "#/$defs/pseudonym" },
+        "nonce_sha256": { "$ref": "#/$defs/sha256" },
+        "authorization_sha256": { "$ref": "#/$defs/sha256" },
+        "l2c_bundle_sha256": { "$ref": "#/$defs/sha256" },
+        "l2c_verification_report_sha256": { "$ref": "#/$defs/sha256" },
+        "l2c_final_event_sha256": { "$ref": "#/$defs/sha256" },
+        "decision": { "const": "FIRST_ACCEPT" },
+        "recorded_at_utc": { "$ref": "#/$defs/utcTimestamp" }
+      }
+    },
+    "ledgerEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "body", "leaf_sha256"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "body": { "$ref": "#/$defs/entryBody" },
+        "leaf_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "witnessedPrefix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hash_scheme", "complete_from_genesis", "entries"],
+      "properties": {
+        "hash_scheme": { "const": "RFC9162_SHA256_MERKLE_PREFIX_RECOMPUTED_FROM_GENESIS" },
+        "complete_from_genesis": { "const": true },
+        "entries": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 512,
+          "items": { "$ref": "#/$defs/ledgerEntry" }
+        }
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["log_id", "tree_size", "root_sha256", "issued_at_utc"],
+      "properties": {
+        "log_id": { "$ref": "#/$defs/pseudonym" },
+        "tree_size": { "type": "integer", "minimum": 0 },
+        "root_sha256": { "$ref": "#/$defs/sha256" },
+        "issued_at_utc": { "$ref": "#/$defs/utcTimestamp" }
+      }
+    },
+    "currentCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["log_id", "tree_size", "root_sha256", "issued_at_utc", "maximum_merge_delay_seconds"],
+      "properties": {
+        "log_id": { "$ref": "#/$defs/pseudonym" },
+        "tree_size": { "type": "integer", "minimum": 1 },
+        "root_sha256": { "$ref": "#/$defs/sha256" },
+        "issued_at_utc": { "$ref": "#/$defs/utcTimestamp" },
+        "maximum_merge_delay_seconds": { "type": "integer", "minimum": 1, "maximum": 600 }
+      }
+    },
+    "roleEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "key_id",
+        "operator_domain_id",
+        "service_identity_uri",
+        "credential_issuer_uri",
+        "evidence_kind",
+        "evidence_artifact_sha256",
+        "private_artifact_published"
+      ],
+      "properties": {
+        "role": { "enum": ["acceptance_sequencer", "checkpoint_monitor_a", "checkpoint_monitor_b"] },
+        "key_id": { "$ref": "#/$defs/pseudonym" },
+        "operator_domain_id": { "$ref": "#/$defs/pseudonym" },
+        "service_identity_uri": { "type": "string", "format": "uri", "maxLength": 300 },
+        "credential_issuer_uri": { "type": "string", "format": "uri", "maxLength": 300 },
+        "evidence_kind": { "const": "SERVICE_IDENTITY_AND_DEPLOYMENT_MEASUREMENT" },
+        "evidence_artifact_sha256": { "$ref": "#/$defs/sha256" },
+        "private_artifact_published": { "const": false }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key_id", "role", "algorithm", "payload_scope", "signed_payload_sha256", "signature_base64"],
+      "properties": {
+        "key_id": { "$ref": "#/$defs/pseudonym" },
+        "role": { "enum": ["acceptance_sequencer", "checkpoint_monitor_a", "checkpoint_monitor_b"] },
+        "algorithm": { "const": "ed25519" },
+        "payload_scope": { "enum": ["ACCEPTANCE_SUBJECT_AND_CHECKPOINT", "CHECKPOINT_PREFIX_AND_ROLE_EVIDENCE"] },
+        "signed_payload_sha256": { "$ref": "#/$defs/sha256" },
+        "signature_base64": { "type": "string", "pattern": "^[A-Za-z0-9+/]{86}==$" }
+      }
+    },
+    "claimAuthorizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "real_bost_interface",
+        "physical_forward_correctness",
+        "derivative_correctness",
+        "reconstruction",
+        "algorithm_superiority",
+        "generalization",
+        "publication"
+      ],
+      "properties": {
+        "real_bost_interface": { "const": false },
+        "physical_forward_correctness": { "const": false },
+        "derivative_correctness": { "const": false },
+        "reconstruction": { "const": false },
+        "algorithm_superiority": { "const": false },
+        "generalization": { "const": false },
+        "publication": { "const": false }
+      }
+    }
+  }
+}

@@ -3322,3 +3322,37 @@ describe-only 成本被严格限制为两次 describe、零 forward/JVP/VJP，ra
 最终聚合结果是旧 L1/L2-A/L2-B/dual-v2 81 加 L2-C 21，共 `102 passed`；聚焦页面 69 项通过，快速矩阵加入本轮合同后为 `226 passed`。medium 四进程首次暴露 macOS sandbox 进程组清理的并发 `EPERM`，因此矩阵把 18 项 L2-B containment 测试移到串行队列，串行结果全部通过；重新运行后并行层只剩 3 个早已冻结的 N2/D4c 失败，得到 `2211 passed, 3 failed`，另 3 项 MPS 串行通过。不能把 medium 写成全绿。
 
 最终独立红队确认普通数据攻击下没有剩余 P1。仍有两个明确 P2：没有受保护 replay ledger，所以 `one_time_acceptance_proven=false`；两个不同 key 不证明两个操作者或 signer service 独立，所以 `role_operational_independence_proven=false`。这两项在接入生产授权前都必须解决。
+
+## 122. L2-D0：终于能检查“签名前缀里只出现一次”，但还不能说“全局只运行一次”
+
+L2-C 结束时留下两个 P2：没有受保护 replay ledger；两把不同 key 不证明两方真的独立。本轮先做了一个
+离线 D0 verifier，把问题推进到机器可拒绝的程度，但没有为了把状态写绿而假装在线服务已经存在。
+
+它从 index 0 重算调用者声明的全前缀。叶子和内部节点使用 RFC 9162 式 `0x00/0x01` 域分离；上一 checkpoint
+必须等于 registry-pinned 静态 floor，新 checkpoint 必须由同一前缀重算。这只能说 floor 匹配，不能说 anti-rollback 已证明。
+
+独立安全审计指出，旧版把 `nonce_commitment` 文件的 SHA-256 当成 nonce，改一个序列化就可以换摘要。现在 verifier 必须用 L2-B 原 schema 解析目标 authorization，直接读取 `one_time_nonce`，再计算带固定 domain separation 的语义摘要。前缀中所有 acceptance ID、authorization ID、authorization 摘要和账本自报 nonce 摘要值都要全前缀唯一；即使重复发生在两条非目标历史记录之间也会拒绝。但历史记录没有附各自 authorization/issuer proof，所以只能称“自报摘要值唯一”；不能说它们的 raw nonce 语义全部已验证。
+
+三种角色现在是 sequencer、monitor A 和 monitor B。policy 要求三把不同 key、不同 operator-domain label 和
+不同 service identity，三份私有 evidence 文件也从真实 bytes 重算。三类签名现在共同绑定 registry/policy 摘要、log epoch、challenge、subject 和 checkpoint；bundle 有效期必须完全落在 policy 窗口内，实际 acceptance-to-checkpoint 时差必须不大于 checkpoint 自己签署的 MMD，该 MMD 又不得超 policy 上限。但“标签不同”仍不是组织事实证明，
+所以报告继续写 `role_operational_independence_proven=false`。同理，调用者前缀不能排除日志对另一个客户端
+展示另一条分支；没有在线共享状态、原子 consume 和 gossip，`one_time_acceptance_proven=false` 也继续保留。
+
+31 项测试已通过。新增反例覆盖：伪造 L2-C 成功 `status` 仍只被当作未认证 bytes；同一自报 nonce 摘要在非目标历史记录间重复；同一静态 floor 可分出两个各自通过的分支；bundle 越出 policy 窗口；实际延迟超过 policy 上限；checkpoint 自报 MMD=1s 但实际 10s 也必须拒绝；monitor 签名跨 policy context 重放；全零 enrollment review。这些测试不是让状态更好看，而是证明两个重要边界：`l2c_report_authenticity_proven=false`，`anti_rollback_protection_proven=false`。
+
+第三个部署边界也被明写：同 UID 可以一起替换 Python 源码、registry 和摘要常量，所以 `same_uid_trust_root_replacement_excluded=false`、`verifier_binary_integrity_proven=false`。真正生产判定必须搬到不同 UID 的 root-owned 只读安装或远程 verifier，本地 JSON 不能作权威授权凭证。
+
+公开 registry 仍故意没有生产 anchor，CLI 会在读取不存在的私有 bundle 前先返回
+`NO_L2D_PRODUCTION_TRUST_ANCHOR_ENROLLED`。真实外部 ledger、真实 monitor、gossip、adapter、三维重建与训练
+仍全部是 0。
+
+安全审阅同时给了一个很重要的方向纠偏：这些机制不能成为第一次和师兄沟通的主角。第一次只应问真实
+forward 入口、field 还是 decoder 参数化、residual 在 ray/sample 层还是 detector map 末端形成、能否做任意
+方向 JVP/VJP、是否有 hard branch、最小合法 batch、运行环境和组内真正痛点。为此新增了一页自然中文消息，
+不再让师兄第一次就评审 nonce、Ed25519 或 Landlock。
+
+完整证明边界、一级来源和后续在线状态机见
+[L2-D0 离线前缀与角色证据](n5_d5_l2d_offline_prefix_and_role_evidence_2026-07-19.md)；可直接发给师兄的版本见
+[N5-D5 师兄首次沟通单](n5_d5_advisor_first_contact_2026-07-19.md)。
+
+本轮最终验证数字已重跑：L2-D0 `31 passed`，L1/L2 聚焦核心 `133 passed`，聚焦页面 `69 passed`，fast matrix `257 passed`。medium 四进程层为 `2242 passed, 3 failed, 55 warnings`；三条失败仍是已冻结的 D4c/N2 证据状态，与本轮 L2-D0 无关。按矩阵设计拆出的 18 项 macOS containment 和 3 项 MPS 串行层另外 `21 passed`。因此可以说本轮增量没有引入新回归，但不能说全仓 medium 全绿。

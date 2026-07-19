@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaoyouyang.github.io/oerf-bishe-dashboard/data_templates/n5_d5_l2d_trust_anchor_registry.schema.json",
+  "title": "N5-D5-L2-D verifier-controlled replay trust registry",
+  "description": "A caller-inaccessible registry that pins one replay-ledger policy and a static floor checkpoint. The floor is only a lower bound; the public registry intentionally contains no production trust anchor.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "registry_id",
+    "production_trust_anchor_enrolled",
+    "active_policy_pins",
+    "claim_authorizations"
+  ],
+  "properties": {
+    "schema_version": { "const": "n5-d5-l2d-trust-anchor-registry-1.0" },
+    "record_kind": { "const": "VERIFIER_CONTROLLED_REPLAY_TRUST_ANCHOR_REGISTRY" },
+    "registry_id": { "$ref": "#/$defs/pseudonym" },
+    "production_trust_anchor_enrolled": { "type": "boolean" },
+    "active_policy_pins": {
+      "type": "array",
+      "maxItems": 8,
+      "items": { "$ref": "#/$defs/policyPin" }
+    },
+    "claim_authorizations": { "$ref": "#/$defs/claimAuthorizations" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "production_trust_anchor_enrolled": { "const": false } },
+        "required": ["production_trust_anchor_enrolled"]
+      },
+      "then": { "properties": { "active_policy_pins": { "maxItems": 0 } } },
+      "else": { "properties": { "active_policy_pins": { "minItems": 1 } } }
+    }
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "pseudonym": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{5,79}$" },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tree_size", "root_sha256"],
+      "properties": {
+        "tree_size": { "type": "integer", "minimum": 0 },
+        "root_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "policyPin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_id",
+        "policy_epoch",
+        "policy_sha256",
+        "predicate_type",
+        "required_signature_roles",
+        "log_epoch",
+        "floor_checkpoint",
+        "enrollment_review_sha256"
+      ],
+      "properties": {
+        "policy_id": { "$ref": "#/$defs/pseudonym" },
+        "policy_epoch": { "type": "integer", "minimum": 1 },
+        "policy_sha256": { "$ref": "#/$defs/sha256" },
+        "predicate_type": {
+          "const": "https://gaoyouyang.github.io/oerf-bishe-dashboard/attestations/n5-d5-l2d-replay-role/v1"
+        },
+        "required_signature_roles": {
+          "const": ["acceptance_sequencer", "checkpoint_monitor_a", "checkpoint_monitor_b"]
+        },
+        "log_epoch": { "type": "integer", "minimum": 1 },
+        "floor_checkpoint": { "$ref": "#/$defs/checkpoint" },
+        "enrollment_review_sha256": {
+          "allOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "not": { "const": "0000000000000000000000000000000000000000000000000000000000000000" } }
+          ]
+        }
+      }
+    },
+    "claimAuthorizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "real_bost_interface",
+        "physical_forward_correctness",
+        "derivative_correctness",
+        "reconstruction",
+        "algorithm_superiority",
+        "generalization",
+        "publication"
+      ],
+      "properties": {
+        "real_bost_interface": { "const": false },
+        "physical_forward_correctness": { "const": false },
+        "derivative_correctness": { "const": false },
+        "reconstruction": { "const": false },
+        "algorithm_superiority": { "const": false },
+        "generalization": { "const": false },
+        "publication": { "const": false }
+      }
+    }
+  }
+}

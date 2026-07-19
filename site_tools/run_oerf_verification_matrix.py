@@ -56,6 +56,7 @@ FAST_CONTRACT_TESTS = (
     "site_tools/test_build_psu_fixed_domain_public_summary.py",
     "site_tools/test_build_psu_public_summary.py",
     "site_tools/test_n5_d5_l2c_external_witness.py",
+    "site_tools/test_n5_d5_l2d_replay_role_verifier.py",
     "site_tools/test_general_operator_n5_d5_l2_foundation_page.py",
 )
 GATE_A_TARGETED_TESTS = (
