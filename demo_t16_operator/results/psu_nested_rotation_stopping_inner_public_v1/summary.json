@@ -1,0 +1,4106 @@
+{
+  "claim_boundary": {
+    "algorithm_superiority_authorized": false,
+    "cross_flow_generalization_authorized": false,
+    "experimental_field_truth_available": false,
+    "field_relative_l2_authorized": false,
+    "name_as_post_hoc_programmatically_withheld_cross_fit_reanalysis_only": true,
+    "neural_operator_trained": false,
+    "paper_claim_authorized": false,
+    "post_hoc_after_e71_outer_results_already_existed": true,
+    "publish_measurements_or_reconstruction_voxels": false,
+    "statistical_significance_authorized": false,
+    "statistically_independent_replication_authorized": false,
+    "universal_stopping_rule_authorized": false
+  },
+  "configuration": {
+    "forward": {
+      "chunk_rays": 32768,
+      "device": "cpu",
+      "dtype": "float64",
+      "finite_aperture_sample_count": 16,
+      "gauge": "zero_one_grid_node_outer_boundary",
+      "grid_maximum_xyz_m": [
+        0.11,
+        0.11,
+        0.11
+      ],
+      "grid_minimum_xyz_m": [
+        -0.11,
+        -0.11,
+        -0.11
+      ],
+      "grid_shapes_zyx": [
+        [
+          16,
+          16,
+          16
+        ],
+        [
+          32,
+          32,
+          32
+        ]
+      ],
+      "torch_threads": 8
+    },
+    "logical_call_budget": {
+      "both_grids_total_adjoint": 86,
+      "both_grids_total_forward": 122,
+      "per_grid_shared_full_adjoint_preflight_adjoint": 1,
+      "per_grid_shared_full_adjoint_preflight_forward": 1,
+      "per_grid_three_fits_total_adjoint": 43,
+      "per_grid_three_fits_total_forward": 61,
+      "per_unique_fit_cgls_adjoint": 13,
+      "per_unique_fit_cgls_forward": 12,
+      "per_unique_fit_nonzero_checkpoint_full_forward": 7,
+      "per_unique_fit_train_adjoint_preflight_adjoint": 1,
+      "per_unique_fit_train_adjoint_preflight_forward": 1
+    },
+    "nested_roles": [
+      {
+        "final_e71_train_rotations_degrees": [
+          50,
+          90
+        ],
+        "inner_directions": [
+          {
+            "target_rotation_degrees": 90,
+            "train_rotation_degrees": 50
+          },
+          {
+            "target_rotation_degrees": 50,
+            "train_rotation_degrees": 90
+          }
+        ],
+        "outer_rotation_degrees": 0
+      },
+      {
+        "final_e71_train_rotations_degrees": [
+          0,
+          90
+        ],
+        "inner_directions": [
+          {
+            "target_rotation_degrees": 90,
+            "train_rotation_degrees": 0
+          },
+          {
+            "target_rotation_degrees": 0,
+            "train_rotation_degrees": 90
+          }
+        ],
+        "outer_rotation_degrees": 50
+      },
+      {
+        "final_e71_train_rotations_degrees": [
+          0,
+          50
+        ],
+        "inner_directions": [
+          {
+            "target_rotation_degrees": 50,
+            "train_rotation_degrees": 0
+          },
+          {
+            "target_rotation_degrees": 0,
+            "train_rotation_degrees": 50
+          }
+        ],
+        "outer_rotation_degrees": 90
+      }
+    ],
+    "selector": {
+      "fallback_checkpoint": 4,
+      "grid_specific_selection_only": true,
+      "k0_is_allowed_but_means_null_field_safest_not_reconstruction_success": true,
+      "nonreference_candidate_requires_primary_risk_strictly_below_one_minus_tolerance": true,
+      "p95_ratio_numerical_tolerance": 1e-08,
+      "primary_risk": "MAX_OVER_TWO_INNER_DIRECTIONS_AND_MACRO_WORST_GROUP_P95_OF_METRIC_RATIO_TO_K4",
+      "ratio_denominator_tiny": 1e-15,
+      "reference_checkpoint": 4,
+      "relative_l2_additive_numerical_tolerance": 1e-08,
+      "require_both_inner_directions": true,
+      "require_every_group_and_camera_no_harm": true,
+      "secondary_tie_break": "MEAN_OVER_TWO_DIRECTIONS_OF_CAMERA_MACRO_RATIO_TO_K4",
+      "select_grid_from_outer_results": false,
+      "selector_operator_calls": {
+        "adjoint": 0,
+        "forward": 0
+      },
+      "strict_objective_improvement_tolerance": 1e-08,
+      "tertiary_tie_break": "EARLIEST_ITERATION"
+    },
+    "trajectory": {
+      "checkpoint_iterations": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        8,
+        12
+      ],
+      "checkpoint_zero_is_zero_field_before_any_update": true,
+      "maximum_iterations": 12,
+      "one_solver_pass_per_unique_fit": true,
+      "reference_checkpoint": 4,
+      "solver": "CGLS",
+      "start": "zero_field"
+    }
+  },
+  "directed_score_rows": [
+    {
+      "checkpoints": [
+        {
+          "iteration": 0,
+          "target": {
+            "camera_macro_relative_l2": 1.0,
+            "p95_ray_error_over_group_signal_rms": 2.199766270872992,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.0853489590309984,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2130122444963645,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2297531568534628,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0
+          }
+        },
+        {
+          "iteration": 1,
+          "target": {
+            "camera_macro_relative_l2": 0.9995675204156266,
+            "p95_ray_error_over_group_signal_rms": 2.1844063851929922,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.098496800445432,
+                "ray_count": 988006,
+                "vector_relative_l2": 0.9845054612336663,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.199464258083841,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0053183558548802,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2327369590918344,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0088787441583333,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0029081484503797,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0088787441583333
+          }
+        },
+        {
+          "iteration": 2,
+          "target": {
+            "camera_macro_relative_l2": 0.9930861713267118,
+            "p95_ray_error_over_group_signal_rms": 2.177724312010635,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.0518714854649867,
+                "ray_count": 988006,
+                "vector_relative_l2": 0.9725517638268951,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2033390191490665,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.003168522250588,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.238094366621432,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0035382279026528,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.9978479829854631,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0035382279026528
+          }
+        },
+        {
+          "iteration": 3,
+          "target": {
+            "camera_macro_relative_l2": 0.9945265061898896,
+            "p95_ray_error_over_group_signal_rms": 2.186194361893399,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.0588101009189783,
+                "ray_count": 988006,
+                "vector_relative_l2": 0.9763438247586854,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2087045662085814,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0025991106968224,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2460826663883857,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0046365831141613,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.9986636017614996,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0046365831141613
+          }
+        },
+        {
+          "iteration": 4,
+          "target": {
+            "camera_macro_relative_l2": 1.0018949127481527,
+            "p95_ray_error_over_group_signal_rms": 2.2118042962185456,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.085901983795099,
+                "ray_count": 988006,
+                "vector_relative_l2": 0.9846490040567021,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2326744894546082,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0119562688446568,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.260903969048144,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.009079465343099,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0060203979874471,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0119562688446568
+          }
+        },
+        {
+          "iteration": 6,
+          "target": {
+            "camera_macro_relative_l2": 1.0275065024768892,
+            "p95_ray_error_over_group_signal_rms": 2.2750963156702757,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1171599732081328,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.028648579703033,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2881098072434156,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0310034612356744,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2942807563858363,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0228674664919606,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.027595082796007,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0310034612356744
+          }
+        },
+        {
+          "iteration": 8,
+          "target": {
+            "camera_macro_relative_l2": 1.0659075385331693,
+            "p95_ray_error_over_group_signal_rms": 2.364263286722701,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1626990420097507,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0962346784966503,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3614958116235774,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.060895477938201,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.326373880468744,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0405924591646565,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0599905646438001,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0962346784966503
+          }
+        },
+        {
+          "iteration": 12,
+          "target": {
+            "camera_macro_relative_l2": 1.1781450927985888,
+            "p95_ray_error_over_group_signal_rms": 2.527963011103162,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.6583669371421683,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.3213929532676738,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.493526926769919,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.1140689234635872,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3806954516204746,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.098973401664505,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.1489203282410643,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.3213929532676738
+          }
+        }
+      ],
+      "fit_id": "08bd14d16cc17c954c01c5455e6e4baf5a658f098cb55de618ac232c05080b55",
+      "grid_size": 16,
+      "target_rotation_degrees": 50,
+      "train_rotation_degrees": 0
+    },
+    {
+      "checkpoints": [
+        {
+          "iteration": 0,
+          "target": {
+            "camera_macro_relative_l2": 1.0,
+            "p95_ray_error_over_group_signal_rms": 2.3374104085370764,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2374105308160246,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.453989637141677,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.365639161847385,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0
+          }
+        },
+        {
+          "iteration": 1,
+          "target": {
+            "camera_macro_relative_l2": 1.009038898429323,
+            "p95_ray_error_over_group_signal_rms": 2.344949997398723,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2369849386494485,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0066636574733507,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4583481888971717,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0067411816650167,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.368915352640719,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.013711856149602,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0100679645093027,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.013711856149602
+          }
+        },
+        {
+          "iteration": 2,
+          "target": {
+            "camera_macro_relative_l2": 1.0024399221974782,
+            "p95_ray_error_over_group_signal_rms": 2.344579519625726,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2433415373777916,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0018152148948647,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4566677074253858,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0001195927008357,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3692376285886323,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0053849589967343,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0029151598289243,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0053849589967343
+          }
+        },
+        {
+          "iteration": 3,
+          "target": {
+            "camera_macro_relative_l2": 1.0028960270467122,
+            "p95_ray_error_over_group_signal_rms": 2.348117890189789,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2486247340252397,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.000807052775285,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.459902681888659,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.00097171407483,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3737112937350275,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.006909314290022,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0037887870450883,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.006909314290022
+          }
+        },
+        {
+          "iteration": 4,
+          "target": {
+            "camera_macro_relative_l2": 1.006828070624138,
+            "p95_ray_error_over_group_signal_rms": 2.357121505422024,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2629026380982973,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0039870234468253,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.468006034052597,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0052445271079897,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3838260696850706,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0112526613175992,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.007918932444679,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0112526613175992
+          }
+        },
+        {
+          "iteration": 6,
+          "target": {
+            "camera_macro_relative_l2": 1.021057853444767,
+            "p95_ray_error_over_group_signal_rms": 2.3794824430189054,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2985915056959474,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0188140910606727,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4873564640838928,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0192832374301775,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.407085024998494,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0250762318434508,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.021981678630405,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0250762318434508
+          }
+        },
+        {
+          "iteration": 8,
+          "target": {
+            "camera_macro_relative_l2": 1.0394460078026841,
+            "p95_ray_error_over_group_signal_rms": 2.4024080985618217,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3325568727755552,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0378388617119216,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.508704351258189,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0390058370743187,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.430019865029024,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.041493324621812,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0400072686883035,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.041493324621812
+          }
+        },
+        {
+          "iteration": 12,
+          "target": {
+            "camera_macro_relative_l2": 1.114441382211553,
+            "p95_ray_error_over_group_signal_rms": 2.4366163320058316,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3902404873373757,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.1067586407940997,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.5365333944633695,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.117844410912966,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4638676978495924,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.1187210949275939,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.1164754415547258,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.1187210949275939
+          }
+        }
+      ],
+      "fit_id": "08bd14d16cc17c954c01c5455e6e4baf5a658f098cb55de618ac232c05080b55",
+      "grid_size": 16,
+      "target_rotation_degrees": 90,
+      "train_rotation_degrees": 0
+    },
+    {
+      "checkpoints": [
+        {
+          "iteration": 0,
+          "target": {
+            "camera_macro_relative_l2": 1.0,
+            "p95_ray_error_over_group_signal_rms": 2.233602579252902,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.120774906475366,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2724560012448016,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3071959970852944,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0
+          }
+        },
+        {
+          "iteration": 1,
+          "target": {
+            "camera_macro_relative_l2": 0.995562435571637,
+            "p95_ray_error_over_group_signal_rms": 2.222840068763269,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.11780025810095,
+                "ray_count": 1013446,
+                "vector_relative_l2": 0.9980273834500928,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.269221891755399,
+                "ray_count": 1310908,
+                "vector_relative_l2": 0.9967678568646879,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2937381194527915,
+                "ray_count": 1313096,
+                "vector_relative_l2": 0.9918920664001305,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 0.9950563267935523,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 0.9980273834500928
+          }
+        },
+        {
+          "iteration": 2,
+          "target": {
+            "camera_macro_relative_l2": 0.9979010500153146,
+            "p95_ray_error_over_group_signal_rms": 2.2129503400202273,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1115719098156465,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.001593998326214,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2731994625232534,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0033979406140152,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.265877203230835,
+                "ray_count": 1313096,
+                "vector_relative_l2": 0.9887112111057146,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 0.9975116815703247,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0033979406140152
+          }
+        },
+        {
+          "iteration": 3,
+          "target": {
+            "camera_macro_relative_l2": 0.9937958173980584,
+            "p95_ray_error_over_group_signal_rms": 2.2125869540711354,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1207403708671206,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0005946698594441,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2754948460531303,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0015671568057876,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2612213442913376,
+                "ray_count": 1313096,
+                "vector_relative_l2": 0.979225625528944,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 0.992870217803677,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0015671568057876
+          }
+        },
+        {
+          "iteration": 4,
+          "target": {
+            "camera_macro_relative_l2": 0.9964111637952082,
+            "p95_ray_error_over_group_signal_rms": 2.2154629182429284,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.126447415003856,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0037732294811674,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2780693898297018,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.001787087847811,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2595559420578617,
+                "ray_count": 1313096,
+                "vector_relative_l2": 0.9836731740566463,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 0.9950990911084405,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0037732294811674
+          }
+        },
+        {
+          "iteration": 6,
+          "target": {
+            "camera_macro_relative_l2": 1.0033495276958946,
+            "p95_ray_error_over_group_signal_rms": 2.231553758843195,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.146771709884349,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0095073509122228,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.282593528421844,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0011363236776105,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2770024405367604,
+                "ray_count": 1313096,
+                "vector_relative_l2": 0.9994049084978505,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0015878221594143,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0095073509122228
+          }
+        },
+        {
+          "iteration": 8,
+          "target": {
+            "camera_macro_relative_l2": 1.0067919351456205,
+            "p95_ray_error_over_group_signal_rms": 2.249692816357624,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.157564574766992,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.008786390172031,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.282018535596442,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0015114811516461,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3152212825897145,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.010077934113184,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0057963066372693,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.010077934113184
+          }
+        },
+        {
+          "iteration": 12,
+          "target": {
+            "camera_macro_relative_l2": 1.0111594958566223,
+            "p95_ray_error_over_group_signal_rms": 2.2615235424319313,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1724154221856145,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0091075789439026,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.267222287372004,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.000798608226512,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.364657674618641,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0235723003994526,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0107531129959413,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0235723003994526
+          }
+        }
+      ],
+      "fit_id": "4e194a93f41427494f1e37abb15d3163e505c7049ea06758e83f05983070d24d",
+      "grid_size": 16,
+      "target_rotation_degrees": 0,
+      "train_rotation_degrees": 50
+    },
+    {
+      "checkpoints": [
+        {
+          "iteration": 0,
+          "target": {
+            "camera_macro_relative_l2": 1.0,
+            "p95_ray_error_over_group_signal_rms": 2.3374104085370764,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2374105308160246,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.453989637141677,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.365639161847385,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0
+          }
+        },
+        {
+          "iteration": 1,
+          "target": {
+            "camera_macro_relative_l2": 0.9657762657749952,
+            "p95_ray_error_over_group_signal_rms": 2.294032195213137,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.9438457170514967,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.8897629688243992,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4573969480743596,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0033890786696351,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3667426273455052,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0041767498309515,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 0.9862491931365766,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0041767498309515
+          }
+        },
+        {
+          "iteration": 2,
+          "target": {
+            "camera_macro_relative_l2": 0.9559490822883369,
+            "p95_ray_error_over_group_signal_rms": 2.261727321818721,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.7537001909184682,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.8520418105262069,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.450924750408785,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0066564014036499,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.375439657005622,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0091490349351537,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 0.9844746153599273,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0091490349351537
+          }
+        },
+        {
+          "iteration": 3,
+          "target": {
+            "camera_macro_relative_l2": 0.9539778705332914,
+            "p95_ray_error_over_group_signal_rms": 2.260482050423297,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.7492554603998274,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.8437220394433531,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.448568873627709,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.006508216266923,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3835395006755076,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0117033558895985,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 0.9845126115275377,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0117033558895985
+          }
+        },
+        {
+          "iteration": 4,
+          "target": {
+            "camera_macro_relative_l2": 0.9578298440650134,
+            "p95_ray_error_over_group_signal_rms": 2.273533862653294,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.7513959340640046,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.8444868213659985,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4635239627274643,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0100889675139326,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3985227072880355,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0189137433151088,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 0.9894814570296124,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0189137433151088
+          }
+        },
+        {
+          "iteration": 6,
+          "target": {
+            "camera_macro_relative_l2": 0.9677650967187533,
+            "p95_ray_error_over_group_signal_rms": 2.3075013485130307,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.6986138395525707,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.8351596325566716,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.5127742521487355,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0247881872468936,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4429847673593157,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0433474703526948,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0056794271778284,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0433474703526948
+          }
+        },
+        {
+          "iteration": 8,
+          "target": {
+            "camera_macro_relative_l2": 0.9787837534719509,
+            "p95_ray_error_over_group_signal_rms": 2.3370805230829013,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.6676928739740495,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.8336528314572398,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.5644457479045903,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0440784541036718,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4692047671331605,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0586199748549407,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0201433164984621,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0586199748549407
+          }
+        },
+        {
+          "iteration": 12,
+          "target": {
+            "camera_macro_relative_l2": 1.0066990293594007,
+            "p95_ray_error_over_group_signal_rms": 2.3913030292196544,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.6676562538305597,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.8516799152735328,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.6318429406150305,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0810589340872574,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.511990016281257,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.087358238717412,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0504188072475829,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.087358238717412
+          }
+        }
+      ],
+      "fit_id": "4e194a93f41427494f1e37abb15d3163e505c7049ea06758e83f05983070d24d",
+      "grid_size": 16,
+      "target_rotation_degrees": 90,
+      "train_rotation_degrees": 50
+    },
+    {
+      "checkpoints": [
+        {
+          "iteration": 0,
+          "target": {
+            "camera_macro_relative_l2": 1.0,
+            "p95_ray_error_over_group_signal_rms": 2.233602579252902,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.120774906475366,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2724560012448016,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3071959970852944,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0
+          }
+        },
+        {
+          "iteration": 1,
+          "target": {
+            "camera_macro_relative_l2": 0.9992578845689789,
+            "p95_ray_error_over_group_signal_rms": 2.2282776962314976,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1163479906590226,
+                "ray_count": 1013446,
+                "vector_relative_l2": 0.9997463461546455,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2704544262753,
+                "ray_count": 1310908,
+                "vector_relative_l2": 0.9990107060456095,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3018670603626634,
+                "ray_count": 1313096,
+                "vector_relative_l2": 0.9990166015066814,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 0.9991109855966054,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 0.9997463461546455
+          }
+        },
+        {
+          "iteration": 2,
+          "target": {
+            "camera_macro_relative_l2": 1.0054190955577422,
+            "p95_ray_error_over_group_signal_rms": 2.2248020555503367,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.10524388069359,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0057026346295117,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2704034647518063,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0045141619591305,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2943200776903265,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0060404900845852,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0052620116897333,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0060404900845852
+          }
+        },
+        {
+          "iteration": 3,
+          "target": {
+            "camera_macro_relative_l2": 1.0033346543818586,
+            "p95_ray_error_over_group_signal_rms": 2.228608818723537,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.114219728217835,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0036951383006991,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2705128054522823,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.003087577886161,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2991858352848737,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0032212469587154,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0032201206124653,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0036951383006991
+          }
+        },
+        {
+          "iteration": 4,
+          "target": {
+            "camera_macro_relative_l2": 1.0058270479447973,
+            "p95_ray_error_over_group_signal_rms": 2.23303749156432,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1144722915768823,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0070948196470775,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.273360431090074,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.005105856429461,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3027601950871075,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0052804677578528,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0054383752378877,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0070948196470775
+          }
+        },
+        {
+          "iteration": 6,
+          "target": {
+            "camera_macro_relative_l2": 1.0118009140258089,
+            "p95_ray_error_over_group_signal_rms": 2.2455707296545198,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1197558519854787,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0151679379825485,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2811308599446134,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0098029241368098,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3137095727105734,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0104318799580685,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0107617894957395,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0151679379825485
+          }
+        },
+        {
+          "iteration": 8,
+          "target": {
+            "camera_macro_relative_l2": 1.0194837427454109,
+            "p95_ray_error_over_group_signal_rms": 2.265291040909383,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1352265964131343,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0242193157072208,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.290359794222678,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0176661796220596,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3361471682162964,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0165657329069517,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0181169878681304,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0242193157072208
+          }
+        },
+        {
+          "iteration": 12,
+          "target": {
+            "camera_macro_relative_l2": 1.0369460596002427,
+            "p95_ray_error_over_group_signal_rms": 2.3027153814382273,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.167676636576055,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0501639203213764,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.317330617606373,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.032800728661297,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3759964848244155,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.027873529818055,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0332346746019194,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0501639203213764
+          }
+        }
+      ],
+      "fit_id": "c814185aecdb4d9ac67ed828a9643688e0c28c827a2a0d425569d205c4ec00df",
+      "grid_size": 16,
+      "target_rotation_degrees": 0,
+      "train_rotation_degrees": 90
+    },
+    {
+      "checkpoints": [
+        {
+          "iteration": 0,
+          "target": {
+            "camera_macro_relative_l2": 1.0,
+            "p95_ray_error_over_group_signal_rms": 2.199766270872992,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.0853489590309984,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2130122444963645,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2297531568534628,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0
+          }
+        },
+        {
+          "iteration": 1,
+          "target": {
+            "camera_macro_relative_l2": 0.982745531993332,
+            "p95_ray_error_over_group_signal_rms": 2.160336129587579,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.0827235774232236,
+                "ray_count": 988006,
+                "vector_relative_l2": 0.9985220055122976,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.209403440918649,
+                "ray_count": 1363792,
+                "vector_relative_l2": 0.9971149653587471,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.135851182180535,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.9525996251089514,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.9812488607688,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 0.9985220055122976
+          }
+        },
+        {
+          "iteration": 2,
+          "target": {
+            "camera_macro_relative_l2": 0.9725326139499725,
+            "p95_ray_error_over_group_signal_rms": 2.112798101136345,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.0728112965568517,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0039076824233661,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2079912735195504,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0000332383203936,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.010539128221175,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.9136569211061579,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.9699081480912259,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0039076824233661
+          }
+        },
+        {
+          "iteration": 3,
+          "target": {
+            "camera_macro_relative_l2": 0.9644081487130931,
+            "p95_ray_error_over_group_signal_rms": 2.0959537079915553,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.080552147146366,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0030710548117248,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.208155818433267,
+                "ray_count": 1363792,
+                "vector_relative_l2": 0.9964239502779664,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.9681255918520177,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.8937294410495881,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.9612105785389935,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0030710548117248
+          }
+        },
+        {
+          "iteration": 4,
+          "target": {
+            "camera_macro_relative_l2": 0.9623110842670505,
+            "p95_ray_error_over_group_signal_rms": 2.085500754232639,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.0858949025026385,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.007352867264672,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.208502773334003,
+                "ray_count": 1363792,
+                "vector_relative_l2": 0.9974438582421447,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.9257814864610088,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.8821365272943348,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.958557774059936,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.007352867264672
+          }
+        },
+        {
+          "iteration": 6,
+          "target": {
+            "camera_macro_relative_l2": 0.9640161766822831,
+            "p95_ray_error_over_group_signal_rms": 2.072608045058582,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1044911442894323,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0206729500160754,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2036256297367176,
+                "ray_count": 1363792,
+                "vector_relative_l2": 0.9986375861604674,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.8652582008057785,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.8727379938703069,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.9585014490458796,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0206729500160754
+          }
+        },
+        {
+          "iteration": 8,
+          "target": {
+            "camera_macro_relative_l2": 0.9742611240329534,
+            "p95_ray_error_over_group_signal_rms": 2.0730758076254903,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1098799517261577,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.030443133929126,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.205733000867137,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0156386676268292,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.832828066567064,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.8767015705429053,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.9697263042170041,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.030443133929126
+          }
+        },
+        {
+          "iteration": 12,
+          "target": {
+            "camera_macro_relative_l2": 1.0128140234000684,
+            "p95_ray_error_over_group_signal_rms": 2.139762578690083,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.11940799298373,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0550466058636043,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2552029431805716,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0623727779944017,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.9073137335473132,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.9210226863421999,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0113392459625397,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0623727779944017
+          }
+        }
+      ],
+      "fit_id": "c814185aecdb4d9ac67ed828a9643688e0c28c827a2a0d425569d205c4ec00df",
+      "grid_size": 16,
+      "target_rotation_degrees": 50,
+      "train_rotation_degrees": 90
+    },
+    {
+      "checkpoints": [
+        {
+          "iteration": 0,
+          "target": {
+            "camera_macro_relative_l2": 1.0,
+            "p95_ray_error_over_group_signal_rms": 2.199766270872992,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.0853489590309984,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2130122444963645,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2297531568534628,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0
+          }
+        },
+        {
+          "iteration": 1,
+          "target": {
+            "camera_macro_relative_l2": 1.0028712653415528,
+            "p95_ray_error_over_group_signal_rms": 2.2071101873070385,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.099555202471786,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0083611607684226,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.220050514689829,
+                "ray_count": 1363792,
+                "vector_relative_l2": 0.9981833228773905,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2323138609709194,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0020693123788451,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0014554020254243,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0083611607684226
+          }
+        },
+        {
+          "iteration": 2,
+          "target": {
+            "camera_macro_relative_l2": 1.0066679768542164,
+            "p95_ray_error_over_group_signal_rms": 2.2147543180294385,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1307595489015556,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.017231360728663,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.223180609122224,
+                "ray_count": 1363792,
+                "vector_relative_l2": 0.9993434958011317,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.231960486637443,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0034290740328544,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0040945572727944,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.017231360728663
+          }
+        },
+        {
+          "iteration": 3,
+          "target": {
+            "camera_macro_relative_l2": 1.007225840406983,
+            "p95_ray_error_over_group_signal_rms": 2.2179330989800516,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1310783080422806,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0159024407738713,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2292773867512388,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0013347120300558,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2345949695555434,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0044403684170218,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.005119407417907,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0159024407738713
+          }
+        },
+        {
+          "iteration": 4,
+          "target": {
+            "camera_macro_relative_l2": 1.0097003073486384,
+            "p95_ray_error_over_group_signal_rms": 2.223216879404615,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1349890206755924,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.018721090080334,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2345454647990626,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.004269098497962,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.237061957240858,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0061107334676191,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0075686043214163,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.018721090080334
+          }
+        },
+        {
+          "iteration": 6,
+          "target": {
+            "camera_macro_relative_l2": 1.0195995659042723,
+            "p95_ray_error_over_group_signal_rms": 2.2434488081448767,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1380916674906283,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0311547443742224,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.253594564387846,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0143971610206945,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2545153057629657,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0132467923179,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0170211621790488,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0311547443742224
+          }
+        },
+        {
+          "iteration": 8,
+          "target": {
+            "camera_macro_relative_l2": 1.0300037786814513,
+            "p95_ray_error_over_group_signal_rms": 2.2603596684860037,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1448003717960944,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.047229898228981,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2689491436859646,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.022468781429653,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.266194789886885,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0203126563857199,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.026194233603017,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.047229898228981
+          }
+        },
+        {
+          "iteration": 12,
+          "target": {
+            "camera_macro_relative_l2": 1.05339470510671,
+            "p95_ray_error_over_group_signal_rms": 2.293174784337253,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.204283852261627,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0819973940318406,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.30664299723793,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0437865627097627,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2847969732392426,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0344001585785265,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0473701754357163,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0819973940318406
+          }
+        }
+      ],
+      "fit_id": "6f7840846bc0c29cbe3fe9cbe65c9316312aff94bb2e6135bfe0fb4203ad88b6",
+      "grid_size": 32,
+      "target_rotation_degrees": 50,
+      "train_rotation_degrees": 0
+    },
+    {
+      "checkpoints": [
+        {
+          "iteration": 0,
+          "target": {
+            "camera_macro_relative_l2": 1.0,
+            "p95_ray_error_over_group_signal_rms": 2.3374104085370764,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2374105308160246,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.453989637141677,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.365639161847385,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0
+          }
+        },
+        {
+          "iteration": 1,
+          "target": {
+            "camera_macro_relative_l2": 1.000448090089205,
+            "p95_ray_error_over_group_signal_rms": 2.3399016747531345,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.236905537726538,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.999486905944003,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.45468655528933,
+                "ray_count": 1205564,
+                "vector_relative_l2": 0.9990294277155259,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3716911383043313,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0028279366080861,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0009216454049086,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0028279366080861
+          }
+        },
+        {
+          "iteration": 2,
+          "target": {
+            "camera_macro_relative_l2": 1.0016793483221424,
+            "p95_ray_error_over_group_signal_rms": 2.340757791886051,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.237176139573839,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0004376143960627,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4554583697339756,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0001202137488518,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3734653456143637,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0044802168215128,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0022588206877912,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0044802168215128
+          }
+        },
+        {
+          "iteration": 3,
+          "target": {
+            "camera_macro_relative_l2": 1.0022769713335722,
+            "p95_ray_error_over_group_signal_rms": 2.3429747252852104,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2398026264618376,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0010713507637024,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4570689377161834,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0002900264334986,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.375743518142273,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.005469536803516,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.002896490604968,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.005469536803516
+          }
+        },
+        {
+          "iteration": 4,
+          "target": {
+            "camera_macro_relative_l2": 1.003958111404253,
+            "p95_ray_error_over_group_signal_rms": 2.344280635998391,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.241315086360139,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.003061582613047,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.458092563015372,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.001431112427158,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3778522497180345,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.007381639172554,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0045446334721575,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.007381639172554
+          }
+        },
+        {
+          "iteration": 6,
+          "target": {
+            "camera_macro_relative_l2": 1.0094937618260185,
+            "p95_ray_error_over_group_signal_rms": 2.348805097063207,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.248224109855544,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0092471047761185,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4612657655224153,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0075737043850903,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3849038811514145,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0116604763168466,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0098008526544902,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0116604763168466
+          }
+        },
+        {
+          "iteration": 8,
+          "target": {
+            "camera_macro_relative_l2": 1.0161228127534283,
+            "p95_ray_error_over_group_signal_rms": 2.355751345011297,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2557395446815396,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0161101133059376,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.465906122637292,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0148799440607186,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.394024144220465,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0173783808936285,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0162746489777796,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0173783808936285
+          }
+        },
+        {
+          "iteration": 12,
+          "target": {
+            "camera_macro_relative_l2": 1.0291662221482023,
+            "p95_ray_error_over_group_signal_rms": 2.3680649331531125,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.26642639013593,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0290499093621095,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.479431040475392,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0305438494528454,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.406493444379029,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.027904907629652,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0290405408575547,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0305438494528454
+          }
+        }
+      ],
+      "fit_id": "6f7840846bc0c29cbe3fe9cbe65c9316312aff94bb2e6135bfe0fb4203ad88b6",
+      "grid_size": 32,
+      "target_rotation_degrees": 90,
+      "train_rotation_degrees": 0
+    },
+    {
+      "checkpoints": [
+        {
+          "iteration": 0,
+          "target": {
+            "camera_macro_relative_l2": 1.0,
+            "p95_ray_error_over_group_signal_rms": 2.233602579252902,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.120774906475366,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2724560012448016,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3071959970852944,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0
+          }
+        },
+        {
+          "iteration": 1,
+          "target": {
+            "camera_macro_relative_l2": 0.9997841182485625,
+            "p95_ray_error_over_group_signal_rms": 2.2347158166008594,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.11705039723665,
+                "ray_count": 1013446,
+                "vector_relative_l2": 0.9998664419275111,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.272982219460987,
+                "ray_count": 1310908,
+                "vector_relative_l2": 0.9985820687110011,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.311911500955385,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0009038441071754,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 0.9996501259675832,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0009038441071754
+          }
+        },
+        {
+          "iteration": 2,
+          "target": {
+            "camera_macro_relative_l2": 1.0005099641655593,
+            "p95_ray_error_over_group_signal_rms": 2.236344488824859,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1135585492011777,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0002497023226335,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2738906082589505,
+                "ray_count": 1310908,
+                "vector_relative_l2": 0.9993629449430579,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.314419202912423,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0019172452309868,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0004679452354164,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0019172452309868
+          }
+        },
+        {
+          "iteration": 3,
+          "target": {
+            "camera_macro_relative_l2": 1.0015279875288774,
+            "p95_ray_error_over_group_signal_rms": 2.2364637910705074,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1120324410519142,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.00066833438498,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2755775093036097,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0010499256849106,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.315376998828447,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0028657025167413,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0017006003485394,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0028657025167413
+          }
+        },
+        {
+          "iteration": 4,
+          "target": {
+            "camera_macro_relative_l2": 1.0016402785599476,
+            "p95_ray_error_over_group_signal_rms": 2.2386383596807,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1102530244650124,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0007290884057658,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2763822067727624,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0012776853009149,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.320694674274086,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.002914061973162,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0018367990036785,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.002914061973162
+          }
+        },
+        {
+          "iteration": 6,
+          "target": {
+            "camera_macro_relative_l2": 1.0014776099364315,
+            "p95_ray_error_over_group_signal_rms": 2.23764563314959,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1155109133879995,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0022386970754065,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.27524861352268,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0018943711752908,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.319784627532113,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0002997615585976,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0013248949077589,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0022386970754065
+          }
+        },
+        {
+          "iteration": 8,
+          "target": {
+            "camera_macro_relative_l2": 1.0015822079323866,
+            "p95_ray_error_over_group_signal_rms": 2.23370672003847,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1240347391864547,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0055956757302376,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2751182713289766,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.002604064339102,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.310921341516303,
+                "ray_count": 1313096,
+                "vector_relative_l2": 0.99654688372782,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0006696367480314,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0055956757302376
+          }
+        },
+        {
+          "iteration": 12,
+          "target": {
+            "camera_macro_relative_l2": 1.0024777137622263,
+            "p95_ray_error_over_group_signal_rms": 2.2331822050131955,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.135512354987386,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0100407968044527,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2715774987318866,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0026576531062166,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.304733660263641,
+                "ray_count": 1313096,
+                "vector_relative_l2": 0.9947346913760102,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0005955142174152,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0100407968044527
+          }
+        }
+      ],
+      "fit_id": "b10f2b67d895d70270618fe7c41627f770154160b7e6d37fb74c82959a8bac43",
+      "grid_size": 32,
+      "target_rotation_degrees": 0,
+      "train_rotation_degrees": 50
+    },
+    {
+      "checkpoints": [
+        {
+          "iteration": 0,
+          "target": {
+            "camera_macro_relative_l2": 1.0,
+            "p95_ray_error_over_group_signal_rms": 2.3374104085370764,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2374105308160246,
+                "ray_count": 882658,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.453989637141677,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.365639161847385,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 1.0,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0
+          }
+        },
+        {
+          "iteration": 1,
+          "target": {
+            "camera_macro_relative_l2": 0.9688489217427412,
+            "p95_ray_error_over_group_signal_rms": 2.2972880770014816,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.9920958770896218,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.9022258517213171,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.458464210631262,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0029452450264114,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3645798825015625,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.001375668480495,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 0.9865596012828484,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0029452450264114
+          }
+        },
+        {
+          "iteration": 2,
+          "target": {
+            "camera_macro_relative_l2": 0.9596910805937006,
+            "p95_ray_error_over_group_signal_rms": 2.281500626587354,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.8863169862574873,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.8702480958124013,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4661763037338624,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0053541436064068,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.365111123916767,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0034710023622937,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 0.9838009296389694,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0053541436064068
+          }
+        },
+        {
+          "iteration": 3,
+          "target": {
+            "camera_macro_relative_l2": 0.9605465195878528,
+            "p95_ray_error_over_group_signal_rms": 2.2837228852716196,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.8908741790102686,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.8741509937336182,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.469984199170031,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.002631014389344,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.36559599657446,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0048575506405961,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 0.9840385798066151,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0048575506405961
+          }
+        },
+        {
+          "iteration": 4,
+          "target": {
+            "camera_macro_relative_l2": 0.9645789404039782,
+            "p95_ray_error_over_group_signal_rms": 2.2914225558745245,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.941211520415441,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.8855962301527001,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4689075779667626,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0002856928926753,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.367067148856088,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0078548981665594,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 0.9863014367857711,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0078548981665594
+          }
+        },
+        {
+          "iteration": 6,
+          "target": {
+            "camera_macro_relative_l2": 0.966739815662233,
+            "p95_ray_error_over_group_signal_rms": 2.2993341741984636,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.9852251398716791,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.888327119382157,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4669877385830836,
+                "ray_count": 1205564,
+                "vector_relative_l2": 0.9974937059830639,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3760678310962353,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0143986216214784,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 0.9888866370343898,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0143986216214784
+          }
+        },
+        {
+          "iteration": 8,
+          "target": {
+            "camera_macro_relative_l2": 0.9693431817873366,
+            "p95_ray_error_over_group_signal_rms": 2.3021689814743826,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.9788933074826025,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.8887464670386757,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.4649908920204444,
+                "ray_count": 1205564,
+                "vector_relative_l2": 0.9983063053294325,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3871066833909067,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0209767729939014,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 0.9924734147707823,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0209767729939014
+          }
+        },
+        {
+          "iteration": 12,
+          "target": {
+            "camera_macro_relative_l2": 0.974994953027962,
+            "p95_ray_error_over_group_signal_rms": 2.3005844270456715,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.971887927503491,
+                "ray_count": 882658,
+                "vector_relative_l2": 0.8914412310798537,
+                "view_id_zero_based": 6
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.466206048358041,
+                "ray_count": 1205564,
+                "vector_relative_l2": 1.0052143210687128,
+                "view_id_zero_based": 7
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.392757321192796,
+                "ray_count": 1240028,
+                "vector_relative_l2": 1.0283293069353199,
+                "view_id_zero_based": 8
+              }
+            ],
+            "ray_count": 3328250,
+            "vector_relative_l2": 0.99898211175151,
+            "view_ids_zero_based": [
+              6,
+              7,
+              8
+            ],
+            "worst_camera_relative_l2": 1.0283293069353199
+          }
+        }
+      ],
+      "fit_id": "b10f2b67d895d70270618fe7c41627f770154160b7e6d37fb74c82959a8bac43",
+      "grid_size": 32,
+      "target_rotation_degrees": 90,
+      "train_rotation_degrees": 50
+    },
+    {
+      "checkpoints": [
+        {
+          "iteration": 0,
+          "target": {
+            "camera_macro_relative_l2": 1.0,
+            "p95_ray_error_over_group_signal_rms": 2.233602579252902,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.120774906475366,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2724560012448016,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3071959970852944,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0
+          }
+        },
+        {
+          "iteration": 1,
+          "target": {
+            "camera_macro_relative_l2": 1.0000745405443674,
+            "p95_ray_error_over_group_signal_rms": 2.2329740458240637,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1198354484569344,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0002641259986378,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2731232611892964,
+                "ray_count": 1310908,
+                "vector_relative_l2": 0.9999933714511214,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.306985455249853,
+                "ray_count": 1313096,
+                "vector_relative_l2": 0.9999661241833429,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0000189151384251,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0002641259986378
+          }
+        },
+        {
+          "iteration": 2,
+          "target": {
+            "camera_macro_relative_l2": 1.0003861889858927,
+            "p95_ray_error_over_group_signal_rms": 2.23300741645112,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1174652603343405,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0007691117007267,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.273791669945804,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.000241476398008,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.30663798425142,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0001479788589434,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.000275667473392,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0007691117007267
+          }
+        },
+        {
+          "iteration": 3,
+          "target": {
+            "camera_macro_relative_l2": 1.001244914258689,
+            "p95_ray_error_over_group_signal_rms": 2.2346967071990536,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1194148878356387,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0018146563224433,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2744869015269784,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0011766544886356,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.307929949429666,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0007434319649882,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0010944185573014,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0018146563224433
+          }
+        },
+        {
+          "iteration": 4,
+          "target": {
+            "camera_macro_relative_l2": 1.0016397230264216,
+            "p95_ray_error_over_group_signal_rms": 2.2376506081774674,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1193853971114556,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0025634633045888,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.276427405294905,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0013591814106912,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3112174197102124,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0009965243639847,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0013796690904697,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0025634633045888
+          }
+        },
+        {
+          "iteration": 6,
+          "target": {
+            "camera_macro_relative_l2": 1.0027612533928043,
+            "p95_ray_error_over_group_signal_rms": 2.2435274752732117,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.124515197337142,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0041050023175606,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2788888677560464,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0019845419335167,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3185811246441475,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.002194215927336,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0023481393566298,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0041050023175606
+          }
+        },
+        {
+          "iteration": 8,
+          "target": {
+            "camera_macro_relative_l2": 1.004481605475296,
+            "p95_ray_error_over_group_signal_rms": 2.2520556847409874,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.137961184317995,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0063887937073352,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.281384776612859,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.0029005905188022,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.330850939220074,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0041554321997508,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0038502966137357,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0063887937073352
+          }
+        },
+        {
+          "iteration": 12,
+          "target": {
+            "camera_macro_relative_l2": 1.0073264442704495,
+            "p95_ray_error_over_group_signal_rms": 2.261794273147766,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.154239332830275,
+                "ray_count": 1013446,
+                "vector_relative_l2": 1.0112536793707685,
+                "view_id_zero_based": 0
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2863561488419135,
+                "ray_count": 1310908,
+                "vector_relative_l2": 1.003712498008293,
+                "view_id_zero_based": 1
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.3457439507728233,
+                "ray_count": 1313096,
+                "vector_relative_l2": 1.0070131554322868,
+                "view_id_zero_based": 2
+              }
+            ],
+            "ray_count": 3637450,
+            "vector_relative_l2": 1.0059944687523203,
+            "view_ids_zero_based": [
+              0,
+              1,
+              2
+            ],
+            "worst_camera_relative_l2": 1.0112536793707685
+          }
+        }
+      ],
+      "fit_id": "58ba730d4e385d720853aabc915edb1a001d5735919dc59fd7a5c691fa279a03",
+      "grid_size": 32,
+      "target_rotation_degrees": 0,
+      "train_rotation_degrees": 90
+    },
+    {
+      "checkpoints": [
+        {
+          "iteration": 0,
+          "target": {
+            "camera_macro_relative_l2": 1.0,
+            "p95_ray_error_over_group_signal_rms": 2.199766270872992,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.0853489590309984,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2130122444963645,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2297531568534628,
+                "ray_count": 1311324,
+                "vector_relative_l2": 1.0,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0
+          }
+        },
+        {
+          "iteration": 1,
+          "target": {
+            "camera_macro_relative_l2": 0.9868907590057906,
+            "p95_ray_error_over_group_signal_rms": 2.15929854674903,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.0803821843578123,
+                "ray_count": 988006,
+                "vector_relative_l2": 0.9994240766043652,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2047541987515755,
+                "ray_count": 1363792,
+                "vector_relative_l2": 0.9973094554836,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.1402336603285064,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.9639387449294067,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.9855639792800619,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 0.9994240766043652
+          }
+        },
+        {
+          "iteration": 2,
+          "target": {
+            "camera_macro_relative_l2": 0.9774786387243545,
+            "p95_ray_error_over_group_signal_rms": 2.1293803200733956,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.0793044044447413,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0006136667244274,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2042924548961995,
+                "ray_count": 1363792,
+                "vector_relative_l2": 0.999149028357263,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.066408796135647,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.9326732210913731,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.9755172216831116,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0006136667244274
+          }
+        },
+        {
+          "iteration": 3,
+          "target": {
+            "camera_macro_relative_l2": 0.9702483019957958,
+            "p95_ray_error_over_group_signal_rms": 2.1052832273799233,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.079857132993942,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0018624715780928,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2005176459922438,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.000256540503445,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.00746550934173,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.9086258939058498,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.9678915355329442,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0018624715780928
+          }
+        },
+        {
+          "iteration": 4,
+          "target": {
+            "camera_macro_relative_l2": 0.9699721132727479,
+            "p95_ray_error_over_group_signal_rms": 2.096007877667161,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.078016017866739,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.003757084358226,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.198592181647449,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0019231620493285,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 1.983266016248313,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.9042360934106888,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.9675141429048711,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.003757084358226
+          }
+        },
+        {
+          "iteration": 6,
+          "target": {
+            "camera_macro_relative_l2": 0.9799855134816906,
+            "p95_ray_error_over_group_signal_rms": 2.1169683883166694,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.074390332082563,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0065606744018356,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.204406674258175,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0038748071883983,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.020408943257793,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.9295210588548383,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.977706433104578,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0065606744018356
+          }
+        },
+        {
+          "iteration": 8,
+          "target": {
+            "camera_macro_relative_l2": 0.9901701814886087,
+            "p95_ray_error_over_group_signal_rms": 2.1491783919458727,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.078969552220571,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0108706526262456,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2183391722915715,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0092877863261047,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.0653052814878508,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.9503521055134758,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 0.9883298703475883,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0108706526262456
+          }
+        },
+        {
+          "iteration": 12,
+          "target": {
+            "camera_macro_relative_l2": 1.005367332558184,
+            "p95_ray_error_over_group_signal_rms": 2.1748021292129733,
+            "per_camera": [
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.0955779904579748,
+                "ray_count": 988006,
+                "vector_relative_l2": 1.0184597594626124,
+                "view_id_zero_based": 3
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.2536413236568658,
+                "ray_count": 1363792,
+                "vector_relative_l2": 1.0313135422567599,
+                "view_id_zero_based": 4
+              },
+              {
+                "p95_ray_error_over_camera_signal_rms": 2.049504998775327,
+                "ray_count": 1311324,
+                "vector_relative_l2": 0.9663286959551795,
+                "view_id_zero_based": 5
+              }
+            ],
+            "ray_count": 3663122,
+            "vector_relative_l2": 1.0055568625315017,
+            "view_ids_zero_based": [
+              3,
+              4,
+              5
+            ],
+            "worst_camera_relative_l2": 1.0313135422567599
+          }
+        }
+      ],
+      "fit_id": "58ba730d4e385d720853aabc915edb1a001d5735919dc59fd7a5c691fa279a03",
+      "grid_size": 32,
+      "target_rotation_degrees": 50,
+      "train_rotation_degrees": 90
+    }
+  ],
+  "evidence_scope": "ONE_REAL_PSU_FLOW_FIELD_SIX_SINGLE_ROTATION_CGLS_FITS_POST_HOC_PROGRAMMATICALLY_WITHHELD_CROSS_FIT_SELECTION_NO_FIELD_TRUTH",
+  "gates": {
+    "all_cache_hashes_verified_on_open": true,
+    "all_checkpoint_arrays_float64_finite_and_k0_zero": true,
+    "all_score_ledgers_use_complete_nine_views": true,
+    "all_solver_ledgers_use_only_train_rotation": true,
+    "all_solver_snapshots_fixed_before_nontrain_observations": true,
+    "all_train_adjoint_preflights_pass": true,
+    "all_unique_fit_call_budgets_pass": true,
+    "all_unique_fit_wall_caps_pass": true,
+    "both_shared_full_adjoint_preflights_pass": true,
+    "exactly_48_private_checkpoint_arrays": true,
+    "exactly_six_unique_fit_ids": true,
+    "global_122_forward_86_adjoint_budget_pass": true,
+    "inner_api_and_protocol_hash_set_exclude_e71_outer_source_files": true,
+    "process_memory_cap_pass": true,
+    "selector_used_zero_operator_calls": true
+  },
+  "logical_calls": {
+    "abandoned_building_attempt_additional_call_upper_bound": {
+      "adjoint": 0,
+      "forward": 0
+    },
+    "complete_artifact_budget": {
+      "adjoint": 86,
+      "forward": 122
+    },
+    "current_invocation_executed_complete_units": {
+      "adjoint": 86,
+      "forward": 122
+    },
+    "lifetime_execution_is_exact_only_when_abandoned_building_count_is_zero": true,
+    "shared_full_preflights": [
+      {
+        "cache_manifest_sha256": "PRIVATE_CACHE_MANIFEST_SHA256_REDACTED",
+        "grid_size": 16,
+        "implementation_call_report": {
+          "adjoint_calls": 1,
+          "forward_calls": 1,
+          "records": [
+            {
+              "b0_hit_count": 10628822,
+              "chunk_count": 329,
+              "max_rss_bytes_after_call": 5734727680,
+              "operation": "forward",
+              "ray_count": 10628822,
+              "view_ids_zero_based": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "wall_seconds": 12.652362250024453
+            },
+            {
+              "b0_hit_count": 10628822,
+              "chunk_count": 329,
+              "max_rss_bytes_after_call": 6039879680,
+              "operation": "adjoint",
+              "ray_count": 10628822,
+              "view_ids_zero_based": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "wall_seconds": 9.218175000045449
+            }
+          ]
+        },
+        "logical_calls": {
+          "adjoint": 1,
+          "forward": 1
+        },
+        "relative_error": 1.7702121034854433e-15,
+        "schema_version": "psu-nested-rotation-shared-preflight-1.0",
+        "seed": 2026071970,
+        "solver_config_sha256": "98a043a9626db88169a6f63e933d97545f371e799fae83c5a9cd1a764c53c398",
+        "view_ids_zero_based": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "wall_seconds": 22.073405707953498
+      },
+      {
+        "cache_manifest_sha256": "PRIVATE_CACHE_MANIFEST_SHA256_REDACTED",
+        "grid_size": 32,
+        "implementation_call_report": {
+          "adjoint_calls": 1,
+          "forward_calls": 1,
+          "records": [
+            {
+              "b0_hit_count": 10628822,
+              "chunk_count": 329,
+              "max_rss_bytes_after_call": 6806372352,
+              "operation": "forward",
+              "ray_count": 10628822,
+              "view_ids_zero_based": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "wall_seconds": 15.356255458085798
+            },
+            {
+              "b0_hit_count": 10628822,
+              "chunk_count": 329,
+              "max_rss_bytes_after_call": 7109525504,
+              "operation": "adjoint",
+              "ray_count": 10628822,
+              "view_ids_zero_based": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+              ],
+              "wall_seconds": 10.876742499996908
+            }
+          ]
+        },
+        "logical_calls": {
+          "adjoint": 1,
+          "forward": 1
+        },
+        "relative_error": 6.125239530127245e-15,
+        "schema_version": "psu-nested-rotation-shared-preflight-1.0",
+        "seed": 2026071971,
+        "solver_config_sha256": "98a043a9626db88169a6f63e933d97545f371e799fae83c5a9cd1a764c53c398",
+        "view_ids_zero_based": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "wall_seconds": 26.457411583978683
+      }
+    ]
+  },
+  "protocol_commit": "78eb2d5f5a31b6bca68652828ca194900b4326ff",
+  "resource": {
+    "abandoned_shared_preflight_building_count": 0,
+    "abandoned_unit_building_count": 0,
+    "machine": "arm64",
+    "numpy_version": "2.4.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "process_max_rss_bytes": 7109525504,
+    "python_version": "3.11.5",
+    "reused_complete_unit_count": 0,
+    "reused_shared_preflight_count": 0,
+    "torch_threads": 8,
+    "torch_version": "2.13.0",
+    "total_wall_seconds": 1104.6060480830492
+  },
+  "schema_version": "psu-nested-rotation-inner-public-summary-1.0",
+  "selection_sha256": "bbce7570ab7c7be5946b2c25102985c03833bec4442d2f003e94c898a12e12ea",
+  "source_e71_binding_declared_but_inner_api_has_no_source_path": {
+    "finalization_path": "demo_t16_operator/results/psu_support_rotation_loro_public_v1/finalization.json",
+    "finalization_sha256": "8d046d409468513cf239a22d8e54cc0f6d3084b156c03cccf63615ef4d0f52dc",
+    "outer_results_existed_before_e72_design": true,
+    "protocol_commit": "5e4e523f68825406a29a3c5f05257716bb4e7751",
+    "run_id": "ab994bec2beb06a2617137d753d3d107ce4e8160dffccce40c670c0f706b36e7",
+    "status": "SUPPORT_ROTATION_LORO_TRAJECTORY_COMPLETE_NO_FIELD_TRUTH",
+    "summary_path": "demo_t16_operator/results/psu_support_rotation_loro_public_v1/summary.json",
+    "summary_sha256": "08b76f597b3dd8a48fb7936dfea60e553ecbf8c7032ea3bf692a865ca09c9ca8"
+  },
+  "status": "NESTED_ROTATION_INNER_SELECTION_SEALED_NO_OUTER_EVALUATION",
+  "unique_fits": [
+    {
+      "checkpoint_iterations": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        8,
+        12
+      ],
+      "fit_id": "08bd14d16cc17c954c01c5455e6e4baf5a658f098cb55de618ac232c05080b55",
+      "grid_size": 16,
+      "logical_calls": {
+        "adjoint": 14,
+        "forward": 20
+      },
+      "nontrain_observations_loaded_after_solver_snapshots": true,
+      "score_call_view_id_sets": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      ],
+      "score_table_sha256": "f443fe94bb8c370bbeb25f6a6edd162787063ab3d9494ea44ed8d42b3a74d3ba",
+      "solver_breakdown": false,
+      "solver_call_view_id_sets": [
+        [
+          0,
+          1,
+          2
+        ]
+      ],
+      "train_adjoint_relative_error": 2.707851119157914e-14,
+      "train_rotation_degrees": 0,
+      "train_view_ids_zero_based": [
+        0,
+        1,
+        2
+      ],
+      "wall_seconds": 165.41845345892943
+    },
+    {
+      "checkpoint_iterations": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        8,
+        12
+      ],
+      "fit_id": "4e194a93f41427494f1e37abb15d3163e505c7049ea06758e83f05983070d24d",
+      "grid_size": 16,
+      "logical_calls": {
+        "adjoint": 14,
+        "forward": 20
+      },
+      "nontrain_observations_loaded_after_solver_snapshots": true,
+      "score_call_view_id_sets": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      ],
+      "score_table_sha256": "d24055ba39595fdf6eafa31ee55290e965ec165563119328693f69bb878cb31e",
+      "solver_breakdown": false,
+      "solver_call_view_id_sets": [
+        [
+          3,
+          4,
+          5
+        ]
+      ],
+      "train_adjoint_relative_error": 1.2055348368297877e-14,
+      "train_rotation_degrees": 50,
+      "train_view_ids_zero_based": [
+        3,
+        4,
+        5
+      ],
+      "wall_seconds": 168.3209630829515
+    },
+    {
+      "checkpoint_iterations": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        8,
+        12
+      ],
+      "fit_id": "c814185aecdb4d9ac67ed828a9643688e0c28c827a2a0d425569d205c4ec00df",
+      "grid_size": 16,
+      "logical_calls": {
+        "adjoint": 14,
+        "forward": 20
+      },
+      "nontrain_observations_loaded_after_solver_snapshots": true,
+      "score_call_view_id_sets": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      ],
+      "score_table_sha256": "d71696f7adeeaed1db3502133c75de30a025b9aa8c749cbe5f3086afaea31536",
+      "solver_breakdown": false,
+      "solver_call_view_id_sets": [
+        [
+          6,
+          7,
+          8
+        ]
+      ],
+      "train_adjoint_relative_error": 4.180182499058558e-14,
+      "train_rotation_degrees": 90,
+      "train_view_ids_zero_based": [
+        6,
+        7,
+        8
+      ],
+      "wall_seconds": 163.60413774999324
+    },
+    {
+      "checkpoint_iterations": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        8,
+        12
+      ],
+      "fit_id": "6f7840846bc0c29cbe3fe9cbe65c9316312aff94bb2e6135bfe0fb4203ad88b6",
+      "grid_size": 32,
+      "logical_calls": {
+        "adjoint": 14,
+        "forward": 20
+      },
+      "nontrain_observations_loaded_after_solver_snapshots": true,
+      "score_call_view_id_sets": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      ],
+      "score_table_sha256": "66ea1eeaeeb5ad129779ed48d102b0663d956b5353fb3688158e17d374830fe8",
+      "solver_breakdown": false,
+      "solver_call_view_id_sets": [
+        [
+          0,
+          1,
+          2
+        ]
+      ],
+      "train_adjoint_relative_error": 4.9684004666677e-16,
+      "train_rotation_degrees": 0,
+      "train_view_ids_zero_based": [
+        0,
+        1,
+        2
+      ],
+      "wall_seconds": 182.41851370804943
+    },
+    {
+      "checkpoint_iterations": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        8,
+        12
+      ],
+      "fit_id": "b10f2b67d895d70270618fe7c41627f770154160b7e6d37fb74c82959a8bac43",
+      "grid_size": 32,
+      "logical_calls": {
+        "adjoint": 14,
+        "forward": 20
+      },
+      "nontrain_observations_loaded_after_solver_snapshots": true,
+      "score_call_view_id_sets": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      ],
+      "score_table_sha256": "46c912d1ad63742df03b58b20bf2dbe1e2be62c29bdc29d9aff87bfa7da4f7d3",
+      "solver_breakdown": false,
+      "solver_call_view_id_sets": [
+        [
+          3,
+          4,
+          5
+        ]
+      ],
+      "train_adjoint_relative_error": 4.312866222444661e-14,
+      "train_rotation_degrees": 50,
+      "train_view_ids_zero_based": [
+        3,
+        4,
+        5
+      ],
+      "wall_seconds": 193.1776739580091
+    },
+    {
+      "checkpoint_iterations": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        8,
+        12
+      ],
+      "fit_id": "58ba730d4e385d720853aabc915edb1a001d5735919dc59fd7a5c691fa279a03",
+      "grid_size": 32,
+      "logical_calls": {
+        "adjoint": 14,
+        "forward": 20
+      },
+      "nontrain_observations_loaded_after_solver_snapshots": true,
+      "score_call_view_id_sets": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      ],
+      "score_table_sha256": "97edda60fe381ef8ef63a3feb36ce90fe6b8555bc7c4620f9d0187156c25d5d7",
+      "solver_breakdown": false,
+      "solver_call_view_id_sets": [
+        [
+          6,
+          7,
+          8
+        ]
+      ],
+      "train_adjoint_relative_error": 5.143685766966602e-15,
+      "train_rotation_degrees": 90,
+      "train_view_ids_zero_based": [
+        6,
+        7,
+        8
+      ],
+      "wall_seconds": 178.79215029196348
+    }
+  ]
+}

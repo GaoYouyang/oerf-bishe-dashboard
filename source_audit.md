@@ -363,7 +363,7 @@
 ## 2026-07-10 MHz-rate BOST / post-detonation supplement 补记
 
 - 已缓存 Gomez / Grauer et al. `Megahertz-rate background-oriented schlieren tomography in post-detonation blasts` 的 Optica Publishing Group Figshare supplement，Figshare DOI `10.6084/m9.figshare.19303847.v3`；正式 Applied Optics 正文仍按 DOI `10.1364/AO.449654` 和 Optica 页面处理，不缓存命令行受控的出版社全文 PDF。
-- Figshare public API 核验到：license 为 `CC BY 4.0`，文件 `5585417.pdf`，大小 `514072` bytes，download URL `https://ndownloader.figshare.com/files/52753835`，官方 `computed_md5` / `supplied_md5` 均为 `de1e95842776b6c053a7dd8abcf9e157`。本地下载后 MD5 一致，文件头为 `%PDF-1.7`。
+- Figshare public API 核验到：license 为 `CC BY 4.0`，文件 `5585417.pdf`，大小 `514072` bytes，download URL `https://ndownloader.figshare.com/files/52753835`，官方 `computed_md5` / `supplied_md5` 均为 `de1e95842776b6c053a7dd8abcf9e157`。本地下载后 MD5 一致，文件头为 `PDF_FILE_SIGNATURE_REDACTED`。
 - `pdfinfo` 核到本地文件 `paper_library/pdfs/megahertz_bost_gomez_2022_figshare_supplement.pdf` 为 4 页 A4 PDF；首页文本显示 supplement 题名和作者，并注明由作者按 Creative Commons Attribution 4.0 license 提供。本地已生成封面 `paper_library/previews/megahertz_bost_gomez_2022_figshare_supplement.png` 和单篇术语导读 `paper_library/readers/megahertz-bost-gomez-2022-supplement.html`。
 - 该条服务 4D / time-resolved BOST 背景：MHz-rate capture、post-detonation blast、synthetic-error checks、shock-front validation 和高速密度梯度可视化。它是开放 supplement，不替代正式论文全文，也不改变 He / NeRIF / PIV-BOST / 4D BOST 主线排序。
 - 本轮处理后公开论文库增至 547 篇入口，公开缓存 PDF 增至 192 篇；PDF 术语索引覆盖 192 篇公开 PDF、191 篇命中术语、53,910 次术语出现，并生成 192 个单篇术语导读/页码地图页。
@@ -372,7 +372,7 @@
 
 - 新增 `tdbost_reproducibility_audit.html`。正式引用使用 ACM TOG DOI `10.1145/3809488`；2026-07-10 已逐节核验 ACM 官方 HTML 全文与 19 页 eReader，并抽取 MM 的 `XY-ZT` / `XZ-YT` / `YZ-XT` plane-pair、3×128 Swish decoder、L=3 frequency encoding、随机分层 ray sampling、中心差分折射率梯度、偏折角与路径位移双积分、TV+L1 / boundary loss、6×200 DC 网络、coarse-to-fine 和 mixed precision 等方法细节。raw PDF 仍未缓存，页面明确区分“全文可读”和“本地文件可用”。
 - `Hyz617/TDBOST` 2026-07-10 GitHub API 复核：main tree `3393ca700fd0447685caf4314d87e0f99fc3ef12`，59 个 blob、共 2,287,454 bytes，最新提交 2026-04-04，无 release，`license: null`。页面只呈现模块名称与 clean-room 映射，不复制 `CPmodel.py`、`MMmodel.py`、projection extension、样例数据或训练代码；公开可见和 README 使用 “open-source” 字样都不自动产生再发布许可。
-- 仓库运行阻塞已逐项记录：`run.py` 在 CUDA 可用时硬编码 `cuda:3`；1,065,192-byte 投影扩展为 Linux x86-64 `.so`；`All_util/trainer.py` import 时即读取 `/home/hyz/Project/Data/...` 私有绝对路径；requirements 同时包含 `pyDOE==0.3.8` / `0.9.8`、三套 OpenCV 包和 `skimage==0.0`。因此不能把 README 的 clone / install / run 三步写成已验证流程。
+- 仓库运行阻塞已逐项记录：`run.py` 在 CUDA 可用时硬编码 `cuda:3`；1,065,192-byte 投影扩展为 Linux x86-64 `.so`；`All_util/trainer.py` import 时即读取 `/home/PUBLIC_USER_REDACTED/Project/Data/...` 私有绝对路径；requirements 同时包含 `pyDOE==0.3.8` / `0.9.8`、三套 OpenCV 包和 `skimage==0.0`。因此不能把 README 的 clone / install / run 三步写成已验证流程。
 - 样例 manifest 复核：fuel train 有 180 个 9-view x 20-time 唯一路径，fuel test 18 条路径全部与 train 重叠，不能作为独立 held-out；spray train 162 与 test 18 路径不重叠。自己的数据接口必须先报告 path overlap、view/time coverage 和 split 语义。
 - 正文与公开仓库存在必须向何远哲确认的版本差异：正文 Appendix A 写 decoder 为 3×128，公开 config 为 3 层、宽度 200；正文 4.4 写三组 tensor components 为 40/40/40，超参数节又把 `R=30, F=20` 写成默认折中，公开 config 使用 30/30/30 与 F=20；正文强调 test view 未参与重建，而 fuel manifest 的 test paths 与 train 重叠。当前只把这些列为配置/数据语义疑点，不擅自解释。
 - 2026-07-10 重新运行 `demo_m3b/run_m3b_4d_lowrank_bost.py`，输出与已存结果一致：framewise baseline mean relative L2 `0.365743`、temporal smoothness `0.278849`、centroid RMSE `0.040144`；rank 3 分别为 `0.347137`、`0.176693`、`0.038114`。因此当前 toy 支持“低秩先验可去抖并略降总体误差”，不支持“系统偏差已修正”或“已复现 4D BOST TOG”。

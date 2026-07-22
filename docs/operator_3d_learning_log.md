@@ -3449,3 +3449,1483 @@ field norm 也没有乘体素体积，不能冒充连续物理能量。完整清
 下一步正式协议会固定三折：50/90 训练留 0，0/90 训练留 50，0/50 训练留 90；每折只消费 `k=0,1,2,3,4,6,8,12`，同时记录 train 与 held-out rotation、三台 camera tail、normal residual、A/Aᵀ 调用和 wall time。只有三折方向稳定，才继续做 coarse-subspace 投影与误差归因。
 
 完整映射、隐私边界和重放命令见 [support LORO preflight](psu_support_rotation_loro_preflight_2026-07-19.md)。
+
+## 126. 三折考试跑完了：更细没有稳稳赢，但我终于看见了真正的问题
+
+这次不是再做准备。Mac 用了约 48 分钟，把 rotation 0、50、90 轮流整组留出；每一次都只用另外两个
+rotation 重建，再看没参与求解的三台相机。16³ 和 32³ 都保存了 `k=0,1,2,3,4,6,8,12`，一共 48 个
+CGLS 场。正式结果先说坏消息：固定 `k=4` 时，32³ 没有稳定赢 16³。三折等权的 camera-macro 改善量
+`16-32` 是 `-0.008178`，九个 camera 有的改善、有的变差，所有“每折、每 camera、每个尾部都不伤害”
+的门都没过。所以我不能说更细网格更准，更不能说已经有新算法。
+
+但我看到了比“谁赢一点”更有用的东西。六个组合，也就是 3 个留出 rotation × 2 个网格，全都发生同一件事：
+从第四步继续算到第十二步，训练观测越来越合，没见过的 rotation 却至少有一项 pooled、camera-macro、
+worst-camera 或 p95 变差。最明显的是留出 50° 的 16³，训练 macro 又下降 `0.0499`，留出 macro 却上升
+`0.1287`。这就是逆问题里的半收敛：继续“解题”不等于继续接近可迁移的物理信息，后面可能只是在吸收
+当前视角最容易拟合的不稳定方向。
+
+我还把 32³ 相对 16³ 的差拆成 coarse-range disagreement 和 fine-grid orthogonal complement。结果也没有
+便宜答案：留出 0° 时两项互相抵消、净伤害很小；50° 时两项都伤害；90° 时两项都改善。因此不能说
+“把高频删掉就好”，也不能说“只让网络学细节就好”。它们是不是有用取决于 rotation/camera geometry，
+未来的 correction 必须能按观测支持判断，判断不了就退回 coarse。
+
+下一步 E72 不需要等师兄给新数据，也不是马上堆 FNO。我只需再算 rotation 0、50、90 各自单独训练的
+16³/32³ 轨迹，共 6 条。对任意一个 outer heldout，只让另外两个 rotations 互相做 inner validation 来选停止步；
+outer 的分数绝不能参与选 `k`。然后把这个 nested rotation-aware stopping 和 fixed `k=4`、只看训练 residual、
+L-curve/GCV/discrepancy、H1/TV、heldout oracle 上界放在一张表里。它若不能在三折、九个 camera 和 p95 上
+都 no-harm，就老实失败；它若通过，才有资格成为后面神经 correction 的稳定基座。
+
+独立 validator 已经重新推导 fold 身份、调用预算、macro/worst、九个 camera 差、六个半收敛 screen 和
+Shapley closure；9 项篡改测试通过。公开摘要没有本地路径、测量值、重建体或私有报告 hash。完整数字、
+E72 方程、通过门和给师兄的五个问题见 [support LORO 正式结果](psu_support_rotation_loro_result_2026-07-19.md)。
+
+## 127. 内层选早了，第三个角度的一台相机还是受伤：E72 老实失败
+
+E72 不是又打开一个网络，而是先问一个基础问题：既然 E71 已经看到六条轨迹的半收敛，能不能用另外两个 rotation 互相验证，为第三个 rotation 选一个更安全的停止步？为了不让答案影响规则，我先把 checkpoint、指标、容差、回退和 outer 门全部提交。
+
+第一次启动就被预检拦住了。我把 `50°` 三台相机的 ray count 抄错，而且三个错数的总和巧合地和正确总和一样。如果只查“一共有多少 rays”，这个错误就会混过去。运行器逐 view 和两份 cache manifest 比较，在 adjoint check、CGLS 和 selection 之前停了。所以我能透明修正三个整数，并记录修订前的轨迹数和已选 checkpoint 数都是 `0`，不需要假装这个错误从没发生。
+
+正式运行是 `3 rotations x 2 grids = 6` 条唯一 CGLS 轨迹。每条都从零场开始，保存 `k=0,1,2,3,4,6,8,12`，一共 48 个私有 float64 场。本机用了 `1104.6 s`，峰值内存约 `7.11 GB`，完整证据预算是 `122 A / 86 A^T`。所有 solver 调用都只看它声明的 train rotation；选择器本身是 `0 A / 0 A^T`。
+
+inner 结果其实给了一点希望。要预测 outer `50°` 时，它只用 `0° -> 90°` 和 `90° -> 0°`。`16³` 的 `k=3` 通过所有 inner no-harm，最坏主风险是 `0.998017`；`32³` 的 `k=2` 是 `0.998749`。其他四个 outer-grid 单元找不到严格安全改善，所以回退 `k=4`。按 outer `0°/50°/90°` 且每个角度先 16³ 后 32³ 排列，密封选择是 `[4, 4, 3, 2, 4, 4]`。这六个选择先单独提交，后面才允许程序读 E71 outer。
+
+考试却没过。`16³/k3` 在 outer `50°` 的 macro 的确改善了 `0.001254`，但 group p95 上升，view 5 的 relative-L2 与 p95 分别变差约 `1.69% / 2.19%`。`32³/k2` 更明显：macro 自身就变差 `0.006310`，view 5 L2/p95 变差约 `3.03% / 3.83%`。所以即使 `16³` 三 outer 平均 macro 是正改善，也不能用平均把一台相机和尾部的伤害藏起来。两个网格都是 NO-GO。
+
+我现在不应该继续在同一份 outer 上改阈值，因为那只是把考试题变成练习题。E72 最有用的结论是：两个 rotation 间看似安全的 stopping，不会自动保护第三个 rotation 的相机尾部。下一代方法必须把 geometry、camera group 和 tail risk 显式放进合同，证明不了就回退经典解。而且先要在新 flow 上补 H1/TV、真 pyramid BOST 和有噪声尺度的 discrepancy 强基线，再让网络学可拒答 correction。
+
+完整数字、四联图、独立 validator、下一代三个算法候选和给师兄的问题见 [E72 正式结果](psu_nested_rotation_stopping_result_2026-07-19.md)。
+
+## 128. 不再只猜一个 k：所有候选和所有相机尾部一起受审
+
+E72 已经证明，只看平均分会被骗。`16³/k3` 的三折平均 macro 有一点改善，但 outer 50° 的 view 5 和 p95
+同时受伤。于是这一轮没有继续在同一份结果上调阈值，也没有马上训练 FNO。我先写了一个更严格的 E73-B
+证书核心。
+
+可以把它想成一次开卷考试。候选不只有 `k2`，而是提前写死的一组 `k1/k2/k3/k6/k8/k12`；卷面也不只有
+一个总分，而是 macro、worst camera、group p95 和每台相机的 L2/p95。每个独立 flow/session 最后只交一个
+“最坏扣分”：把所有候选、所有指标里最危险的那一项取最大。校准得到的上界因此一次包住整个表，后面从
+这组已冻结候选中选哪个 `k`，不能把不利相机悄悄删掉。
+
+另一个关键改动是“样本不够就真的没答案”。秩用
+`ceil((n+1)*(1-alpha))`。90% 覆盖至少要 9 个独立 calibration units，95% 至少 19 个，97.5% 至少 39 个，
+99% 至少 99 个；少于这个数量时，程序返回无穷上界并使用 `k4` fallback，不会把秩硬截到已有最大值。
+相机、ray、pixel 都不能拿来凑这个 `n`，因为它们共享同一个三维场和实验误差。
+
+代码还会检查三件容易接错的东西：特征名称与顺序、特征合同 SHA-256、预测器产物 SHA-256。support box 外
+直接回退。不过独立审稿提醒得很对：调用方同时递交“预测矩阵和正确哈希字符串”，不等于证明矩阵真由该
+模型产生。现在这层只是接口防呆；正式 runner 必须自己按哈希加载模型并计算预测。axis-aligned box 也会接受
+训练中没联合出现过的角点，所以它只能缩小明显外推，不能声称 OOD 安全或“被接管样本条件下 90% 安全”。
+
+独立代码审稿随后抓到两个真问题。第一，旧实现把“严格改善”写成 `upper < tolerance - margin`；如果允许
+0.1 的伤害、要求改善 0.05，一个仍然伤害 0.04 的候选竟可能被叫成改善。现在固定为 `upper < -margin`。
+第二，旧 dataclass 可以被直接构造，绕开校准函数的正尺度检查。现在构造器会重新验证正尺度、rank、quantile、
+fit/calibration/scale unit IDs 与哈希；prediction table 也把 action/metric 名称和顺序一起绑定。部署 unit 不能复用
+fit/calibration ID。尺度来源和单次未来单位边界也都进入机器合同。
+
+第二轮复审又发现一个更隐蔽的 Python 坑：NumPy 数组即使先设成只读，只要底层内存仍归数组自己所有，调用方
+还可以把 `WRITEABLE` 标志重新打开。这样就可能把绑定时为正的伤害改成负数。现在核心数组改成以不可变
+`bytes` 为底层的视图，重新打开写权限会直接失败；prediction 和 scale 还各自绑定 canonical float64 数值哈希，
+每次计算上界前再验一次。攻击测试已经覆盖“`+0.04` 被强改成 `-1.0` 也不能获准接管”和“任意正尺度替换也
+因数值哈希不符而拒绝”。
+
+当前是 `35` 项 E73 聚焦测试、`0` 个新 flow 分数、`0` 个已训练 predictor。第一轮 Mac pilot 会先用 16 个解析
+phantom 检查 schema、成本和强制回退；随后才考虑至少 64 个 family-aware instances，建议拆成
+`24 model-fit + 20 calibration + 20 sealed audit`。即使解析形态通过，也不能冒充 CFD 或真实反应流场。
+
+这一步的现实意义是给后续神经 correction 装一个“不会就退回经典解”的门，而不是把 conformal 包装器本身
+说成新三维网络。要成为论文贡献，还必须补 H1/TV/Pyramid BOST 强基线、多个独立真实 flow/session 和一次
+prospective audit。完整方程、样本量表、一级来源、Go/No-Go 与给师兄的问题见
+[E73-B 联合几何与相机尾部证书协议](e73_joint_geometry_tail_certificate_protocol_2026-07-19.md)。
+
+## 129. 模型自己算预测了，但不可信 feature 仍然不能接管
+
+上一轮留下一个很具体的洞：调用方可以同时递交 predicted harm 和“匹配的 predictor hash”。这次我先写了
+artifact-owned runner，让程序只读固定 JSON ridge 公式并亲自算预测。第一版虽然通过了 digest、shape、symlink
+和原子输出测试，独立安全审稿还是判它不能上线，原因很直接：feature vector 仍由调用方填写，模型来源正确并
+不等于输入来源正确。
+
+所以我没有把测试通过写成“正式 runner 完成”，而是把权限继续收紧。静态 predictor/scale/support/certificate/
+policy bundle 与每次 deployment 现在使用两个独立哈希；命令行只能访问 `private_library/e73_jgtce`，只收小写
+ID，不收任意路径，也不能 `--replace`。结果用独占 hard-link 发布，同一个声明物理单元先写消费 marker；改
+deployment 文件名或结果名不能重复用。JSON 会拒绝重复 key、NaN/Infinity、bool/数字字符串、过深结构，文件
+会拒绝路径穿越、父目录或最终 symlink、hard-link 和 FIFO。runner/core 源码也进入静态 bundle 的哈希绑定。
+
+最重要的行为是：precomputed feature 即使内部 diagnostic 本来会选 `k1`，正式输出仍固定为 `k4`，不会泄露或
+授权那个 candidate。当前状态因此叫
+`DEVELOPMENT_ONLY_CALLER_FEATURES_UNTRUSTED_NO_CANDIDATE_AUTHORIZATION`。这不是算法成功，甚至还不是可部署
+selector；它只证明模型工件来源和 fail-closed 发布比上一版更完整。
+
+数据审稿同时发现 E73 草案写了 `shear_layer/multi_lobe`，但真正的生成器是 `vortex_pair/multi_plume`，已经纠正。
+Phase-0 现在冻结 16 个 analytic proxy：八个真实支持 family 各两个 seed；九个 PSU view slot 分别计 L2/p95，
+不再把重复 camera ID 合并。一次 `k0,k1,k2,k3,k4,k6,k8,k12` 轨迹的完整预算是每 unit `20 A + 13 A^T`，
+16 个加共享 dot test 为 `321 A + 209 A^T`。
+
+但现在仍禁止启动计分。现有 compact cache 构造器会顺带打开真实 `observations_uv.npy`，而 synthetic schema pilot
+只该借 geometry；必须先写 geometry-only adapter，并用 open-file ledger 证明 observation 打开次数为零。29 维
+feature 公式也还没有代码与 hash，fallback 下游数组还没有和保存的 `k4` 做逐字节一致性门。因此 Phase-0 状态是
+`PHASE0_PREFLIGHT_NO_GO_CONTRACT_INCOMPLETE`，不是算法 NO-GO。
+
+完整的 16-unit manifest、29 维 feature、24 个指标、攻击面与四个启动阻断项见
+[E73 runner 与 Phase-0 前置审计](e73_formal_runner_and_phase0_preflight_2026-07-19.md)。
+
+## 130. “回退”也不能由配置随便起名：第二次安全复审又拦下一次假安全
+
+上一节说正式输出固定为 `k4`，但独立复审没有只看说明文字。它沿代码发现 policy parser 实际只检查
+“fallback 不在候选列表中”。如果有人把 policy 改成 `fallback_action=cgls_k5`，再把 policy 和 manifest 的
+SHA-256 全部重新算一遍，旧 runner 仍会把 `k5` 当作合法回退发布。候选授权标志虽然仍是 false，但“不会就
+回到同一个经典基线”的物理合同已经被偷偷换掉，所以这是合同级 P0，而不是文案小问题。
+
+现在 runner 代码本身新增唯一常量 `FORCED_FALLBACK_ACTION="cgls_k4"`。policy 不是 `k4`，或者候选列表
+反过来包含 `k4`，都必须拒绝。攻击测试不是只改文件让旧哈希失配，而是把恶意 policy 和 manifest 哈希一并
+重算，确认“内部完全自洽的假 bundle”仍然过不了。runner 与 certificate core 的两个源码哈希也分别补测，
+不再用一个测试名只覆盖其中一个字段。
+
+复审还指出，bundle、deployment 和结果发布原先会三次按路径重新打开 private root，严格说中间存在目录被
+替换的窗口。现在一次 `run` 只打开根目录一次，后续读取、消费账本和结果发布都沿同一个 file descriptor
+完成；新测试计数确认整个事务只调用一次根目录打开函数。E73 的代码/协议合同测试因此从 55 项增加到 58 项，
+另有 4 项聚焦网页映射测试。
+
+修复后同一位独立审稿者只读复查这三个点，判定 `3 CLOSED / 0 PARTIAL / 0 OPEN`，没有发现新的 P0/P1；
+我本地实际运行的 62 项 E73 聚焦检查也全部通过。这个数字只覆盖本轮代码与合同，不是 62 个物理实验。
+
+这里仍不能写“安全 runner 完成”。两个 CLI 哈希依赖可信操作者，不是签名启动链；同一真实 flow 人为改名
+仍可能绕过声明账本；进程在 marker 后崩溃会烧掉该单位；最重要的 raw-BOST feature 来源和下游 `k4` 数组
+逐字节一致性仍未闭合。当前结论只是：任意动作已不能冒充 fallback，根目录替换窗口更小，而 candidate
+authorization 继续保持关闭。
+
+## 131. 这次真的没有偷看 observation：先把 feature 的物理含义钉准
+
+Phase-0 原来卡在一个很朴素的问题：16³ compact cache 虽然主要是 ray geometry，但旧 store 一构造就会顺带
+打开 `observations_uv.npy`。我们想做的是 `y=A(x_proxy)` 的纯 synthetic schema test；程序哪怕只是“顺手打开”
+真实测量、嘴上说没使用，后面也很难向审稿人证明没有泄漏。
+
+我新写的 geometry-only store 只认识五类东西：插值 lower-corner、fraction、valid mask、投影向量和 ray scale。
+它没有 observation 属性，chunk 中 observation 固定为 `None`，任何人调用 `load_observations()` 都会得到
+`PermissionError`。manifest 若把 `ray_scale` 等角色偷偷指向 `observations_uv.npy`，也会在打开前拒绝。小型
+测试甚至直接删掉 observation 文件，geometry forward/adjoint 仍与完整 cache 逐值相同。
+
+然后我没有只相信程序自己的“我没打开”日志，而是用 Python 的 host audit hook 监听真实 cache 根下的文件打开。
+在 10,628,822 条 rays、9 个 view slots 上，它实际看见 manifest 和五类 geometry 数组，observation open count
+严格为 `0`。这没有产生任何重建分数，但把 Phase-0 最危险的数据偷看入口关掉了一层。
+
+29 维 feature 也从文字变成了代码。这里顺手纠正了一个物理命名：底层 `valid[ray,sample]` 表示 aperture sample
+是否落在网格内，所以它是 `global_valid_aperture_sample_fraction`，不是“有效 ray 比例”。前 23 维仍是固定
+geometry 摘要，后 6 维是 `k0..k4` measurement residual 和 `k4` normal residual。同一 geometry 上前 23 维
+完全不变，因此这批 16 个 phantom 依然不能证明 geometry learning。
+
+我还另写了一个不导入 producer 的 witness，用 Python `math` 独立重算全部 29 个值。攻击测试修改一个 feature
+并重算 feature hash，或者修改 input record 并重算 input hash，都会因为独立公式对不上被拒绝。当前总计新增
+16 项 geometry/feature 测试，E73 代码与协议合同从 58 项增加到 74 项。
+
+现在仍不能启动 16-unit 计分。缺的是正式 data runner：它必须自己从 synthetic observation 和 CGLS 早期状态
+构造 sufficient statistics，不能让调用方填写；拒答后的三维输出还必须与保存的 `k4` 数组逐字节相同。本轮
+代码与修订 config 也要先提交，之后才允许看 metric/harm。完整边界见
+[geometry-only 与 29 维 feature 说明](e73_geometry_feature_boundary_2026-07-19.md)。
+
+## 132. “文件名没看到 observation”还不够：把审计从门口走到算子里面
+
+上一节写“真的没有偷看”之后，独立审稿没有照单全收。它指出两个我必须承认的问题。第一，旧审计只按程序
+请求的 basename 计数；如果 geometry 文件是指向 observation 的符号链接，日志仍可能只写 geometry 名。第二，
+审计只构造了 adapter，并没有真的走 `iter_chunks()`、forward 和 adjoint。真实 cache 当时确实没有这些攻击，
+但“这次没出事”和“合同能拒绝这类事”不是同一个结论。
+
+修订后，可信 manifest digest 变成必填项。cache root 用目录 FD 持有，每个 geometry 文件通过 `O_NOFOLLOW` 只打开
+一次；NPY header、SHA-256 校验和 copy-on-write mmap 都沿同一个 FD 完成，不再“先检查路径、再让 NumPy 重开”。
+程序也在读 payload 前检查 device/inode，不能用 hard-link 冒充；manifest、
+source selection、view row、chunk、array record 和 claim boundary 都是严格字段白名单，不能在不起眼的嵌套字段里
+塞额外值。真实审计也不再现场读取 manifest 后自己相信自己，而是从 Git 忽略的私有 attestation 取得预先保存的
+digest。公开 JSON 只写“已绑定”，不公开私有 digest 或路径。
+
+这次真实复跑用了 10,628,822 条 rays，遍历 329 个 chunks，并实际执行一次 matrix-free forward 与 adjoint，耗时约
+26 秒。四条路径结束后，host hook 仍只看到 manifest 与五类 geometry 数组，observation open count 为 `0`。
+这是比上一节更强的证据，但范围仍只到这次受信 manifest、这份 adapter 和已执行的四条路径，不代表所有未来
+进程都被神奇地证明安全。现在五个 geometry 文件各只出现 1 次 open，而不是旧实现中 mmap/hash 分开重开的 4 次。
+
+审稿还纠正了我对 feature witness 的一句过头表述。witness 能抓到“改 feature 后只重算 feature hash”或“改 input
+后仍拿旧 feature”的不一致；如果攻击者把 input、29 个 feature 和全部 hash 一起按公开公式重做，它当然会通过。
+所以它叫独立公式见证，不叫来源认证。现在 artifact 与摘要都明确写着
+`INTERNAL_CONSISTENCY_ONLY_NOT_SOURCE_AUTHENTICITY`，并把 sufficient-stat provenance 保持为 false。真正的来源门
+只能由下一步 data runner 内部构造 residual 统计并绑定 runner/config hash 来关闭。
+
+这轮也补了非立方 `shape_zyx=[4,5,6]` 的轴顺序测试，防止立方 `16³` 把 x/z 交换错误藏起来。这里仍没有打开
+16-unit 的任何 field error 或 harm；补上“可信 digest 不可省略”“audit 拒绝空 trust root”和“整份自洽重生成确实
+会通过 witness”的正向边界测试，以及“恶意相对 FD 打开 observation 必须被 host hook 抓住”的测试后，E73 代码
+与协议合同现为 83 项。新增的是更可信的数据边界，不是算法胜利。
+
+## 133. 同一条 CGLS 里长出 feature，回退文件也必须真的是保存的 k4
+
+上一节留下的不是“再想一个网络”，而是一条具体的软件债：29 个 feature 虽然有 producer 和独立 witness，
+但 residual 还是可以由调用方填；说明文字虽然说失败就回 `k4`，真正落盘的三维数组也没有和保存 checkpoint
+逐字节对上。这次我先把这条数据链写出来，只在很小的内存夹具上跑，不打开 16 个 phantom 的任何分数。
+
+运行器现在先用 analytic proxy 自己算 `y=A(x)`，然后只跑一条普通 CGLS 到第 12 步。`k0/1/2/3/4/6/8/12`
+都从这条递推克隆，不会为了比较不同停止步重复跑前缀。feature 需要的 `k0..k4` measurement residual 和
+`A^T r4` 也直接取自同一递推，不再让外面的人递一张“我保证这些数是真的”的表。小夹具上保存的每个非零
+checkpoint 都和原来的 `cgls_solve` 完全相同；基础层调用顺序固定为一次 truth forward、一次 initial adjoint，
+再做 12 对 forward/adjoint，总计 `13 A + 13 A^T`。后面七次 scoring forward 还没有做。
+
+独立审稿第一次没有让它过关。审稿者做了一个会在每次 `iter_chunks()` 里偷读 observation、却一直谎报 open
+count 为 0 的假 store；旧通用入口居然还能返回“valid”。现在通用入口被明确降级为 `FIXTURE_ONLY`，即使这个
+恶意夹具暗读了 26 次，也永远不能得到生产状态。私有生产入口只接受精确的 geometry-only adapter 和 streaming
+operator 类型，manifest digest 也不再由调用方提供，只能从 Git 忽略的 private attestation 读取。
+
+审稿者还指出，内存里拿两份一样的 bytes 比一遍不算最终回退证明。现在 checkpoint payload map 是不可变的；
+finalizer 没有“请提交 fallback bytes”这个参数，只能把密封 `k4` 原样写成 `cgls_k4.npy` 和
+`forced_fallback.npy`。两个文件写完后会重新打开，比较完整 bytes 和 SHA；其余成员也全部重读，最后才写
+`finalization.json`。同一个 run ID 不能覆盖，文件改一个字节后 verifier 会失败。
+
+故障注入还覆盖了中途 denominator breakdown、adjoint NaN、伪造调用顺序、uint8 valid mask 和重复发布。
+当前 E73 聚焦链是 99 项合同，相关数据链 53 项通过，bounded fast matrix 是 418 passed；旧站点 46,771 个
+本地目标仍然 0 missing。它们都是软件检查，不是 94 个真实 flow。
+
+这里仍然不能启动 16-unit 分数。下一步必须先写九个 view slot 的专用 metric scorer：七个非零 checkpoint
+各一次 forward，24 个 metric 全部有限，harm 只准写成 `metric(candidate)-metric(k4)`，并且只落到私有目录。
+然后提交本轮代码，让生产入口在干净 Git commit 上重验 source snapshot、attestation、dot product、调用预算和
+空 score ledger。完整边界和给师兄的四个问题见
+[Phase-0 数据基础层说明](e73_phase0_data_foundation_2026-07-19.md)。
+
+## 134. 校验和能一起重算，所以还要把数组、历史和运行身份互相钉住
+
+第三轮独立审稿又做了一个更强的攻击：把保存的 `k1` 换成零场，再把 `finalization.json` 里的 SHA-256 一起
+重算。旧 verifier 只看“文件和登记的 hash 是否一致”，因此会放过这个自洽但假的 bundle。它还指出，16 个目录
+只有 run 名，没有把每个目录钉到冻结的 phantom 行；同一个 unit 完全可以换一个 run 名再跑一遍。
+
+现在每个保存 checkpoint 都会在 reopening 时重新计算 `L2` 和 `max-abs`，与同一步 solver history 对齐；history
+本身还要满足相对残差公式、measurement residual 非增、`beta_k=||s_k||²/||s_{k-1}||²` 和
+`alpha_k=||s_{k-1}||²/||Ap_{k-1}||²`。因此 history 多存一个 projected-direction norm，不再只看 `alpha/beta`
+是否为正。攻击测试真的把 `k1` 改成零场并重算最终 checksum，验证器会在“checkpoint 与 history 不一致”这一层
+拒绝；把正的 alpha 放大 1000 倍、把正 beta 放大两倍也都会失败。
+
+每个私有目录也新增了 `unit_manifest.json`，里面同时绑定 run ID、unit ID、A/B block、family、uint32 seed、冻结
+phantom 整行 hash、config hash、cache alias 和私有 source-manifest hash。finalizer 对输出根持有排他锁，先逐个
+重开旧 manifest 并检查旧目录之间也没有重复；随后在 bundle 外用 `.unit-claims/<unit_id>/` 的原子目录占位，保存
+原 manifest，完成后再保存 finalization hash。这样同一个 unit 换 run 名、把 u01 bundle 合法重标成 u02，或者把
+`k1` 整体取负并重算 bundle 内 checksum，都会与外部 local anchor 冲突。private attestation 的每层父路径都用
+`O_NOFOLLOW` 打开，即时父目录必须只有本人可访问，文件必须是本人拥有的 `0600` 单链接常规文件，读取前后还比较
+inode、size、mtime 和 ctime；重复 JSON key 也不再静默采用最后一个值。
+
+这里必须讲清一个不漂亮但诚实的边界：Python 模块里的下划线和 capability 不是密码学安全。当前合同明确要求
+本地 Python 进程可信，`same-process malicious-code resistance=false`，也没有数字签名。它防正常接线错误、普通
+落盘篡改和本协议覆盖的重哈希攻击；如果有人能在同一解释器中任意执行恶意代码，或者把 bundle、history、manifest
+全部按公开规则一起重造，仍需要只读归档、独立复算或以后引入签名来解决。
+
+本轮 data runner 故障注入为 23/23，相关数据链 59/59，E73 聚焦合同 107/107，bounded fast matrix
+为 429/429。这些总数都来自实际重跑，不是按新测试数简单相加。真实 private unit、24-metric scorer、harm 和
+16-unit 分数仍然都是 0。下一步先等独立审稿确认这个边界内没有 P0/P1，再提交源码；提交后只做不计分 preflight，
+不会因为基础设施更结实就偷偷把“可以算分”当成“算法已经成功”。
+
+## 135. 发布包还没上线，隐私扫描先找到了 8 处 cache 指纹
+
+新数据链的暂存差异没有带出私有 manifest digest，但是我把整个 Pages 预发布包重建后，又用本机
+attestation 里的真实值反向扫了一遍。结果发现 16³/32³ 两个私有 cache manifest 指纹在 4 个本来会被
+打包的历史 source/config/summary 文件里共出现 8 次。它们不是 VPN 密码，但是私有数据指纹，与网页上
+“不发布 private cache digest”的承诺相冲，所以不能因为 Pages 当时关着就忽略。
+
+build runner 现在从已跟踪的机器合同严格读出两个 cache digest，对所有准备复制的跟踪文件做精确字节
+扫描。命中文本时只在发布副本里换成 `PRIVATE_CACHE_MANIFEST_SHA256_REDACTED`，不改历史私有
+证据；如果同一指纹出现在不可解码二进制文件里，构建直接失败，不会默默复制。新增 3 个构建回归后，
+Pages builder 测试为 13/13。
+
+预发布构建报告明确记录 `4 files / 8 occurrences redacted`；用两个真实私有 digest 再扫新 artifact，
+命中数是 `0`。245 个 HTML 共 46,819 个本地目标仍是 `0 missing`。GitHub Pages 继续关闭；这一步是
+发布卫生修复，不是研究结果。
+
+## 136. 断电恢复和发布安全也要 fail closed，但这仍然不是算法突破
+
+第四轮独立复审没有找到新的算法结果，却找到了两类真实工程风险。第一类在 private finalizer：原子 claim 写完后如果
+进程退出，旧版会留下一个没有 bundle 的占位，之后整个输出根都因 claim/run 轴不一致而阻塞。第二类在 Pages
+builder：旧实现从工作树读内容却把 manifest 标成旧 `HEAD`，只识别当前配置里的小写摘要，而且其他目录的 PDF、
+凭据形状文本和绝对路径默认会进入发布包。这些都没有造成当前线上泄漏，因为仓库保持 private、Pages 仍关闭，
+但不能等真的公开后再修。
+
+private runner 现在先写不可变 `PREPARING_UNPUBLISHED`。只有 claim 没有 anchor、run 没有 finalization、成员轴是
+允许子集且每个现有成员与本次密封 bytes 完全相同，才会在根锁内把 residue 移到
+`.unit-claims/.orphan-quarantine/` 并留下恢复记录。claim 后、run 目录后、首成员后故障都可重试；manifest 冲突、
+state 缺失、成员篡改都会拒绝。若 `finalization.json` 已存在而 anchor 没写成，程序不会猜测它是否成功，继续人工
+NO-GO。两个 FD 泄漏也已关闭，output root 只沿 `O_NOFOLLOW` 父链创建最后一级，符号链接目标侧不会被顺手建目录。
+
+Pages builder 则改成只读固定 clean `HEAD` blobs，构建前后都绑定 commit + tree；tracked worktree 或 index 脏时直接
+拒绝。所有 PDF、Python、tests/config、checkpoint、数组、私钥和未知二进制默认不发布；私有 cache digest 从整个
+HEAD 的 cache/manifest 语义中发现，再按大小写混排、raw bytes、UTF-16LE/BE 统一检查。纯文本十六进制只在发布
+副本中替换，二进制编码、伪装 PDF、真实 HOME、PHY 账号形状、PEM 私钥和赋值型凭据任一命中都删除不完整产物并
+失败。定向攻击回归为 builder 22/22、runner 31/31；E73 聚焦 115/115，相关数据链 67/67。
+
+**突破监测：当前仍是“无算法突破”。** 这轮是可复现性与发布安全里程碑。只有新方法在未见 rig/session 上、同
+`A/A^T` 调用和端到端成本下，面对 fixed/discrepancy/hybrid CGLS、TV/Huber、NeRIF/NeDF 与神经算子强基线，
+同时改善 field relative-L2、逐相机尾部和 harm，并有重复、区间与消融，才标记为突破。合成均值提升、测试数增加、
+或者把 DeepONet/FNO 接上现有重建都不够。
+
+## 137. 半搬迁不能算隔离完成，发布包也不能沿一条后来被换掉的路径写
+
+上一轮的 orphan quarantine 仍有一个断电窗口：先把 run 搬进隔离目录、再搬 claim，如果进程恰好死在两次 rename
+之间，下一次会新建第二个隔离条目，证据被拆开；如果 claim 已搬走但 complete 还没写，旧流程甚至可能把它当成“没有
+claim”而继续。现在每个隔离条目先写不可变 `ISOLATION_PREPARED` 记录，逐个绑定现有 run 成员的 SHA-256；run 与
+claim 各自只能在 source 或 destination 一边出现，搬迁后分别 fsync 两个父目录。只有第二个不可变文件
+`isolation_complete.json` 与 prepared 记录完全对得上，事务才算关闭。run rename 前后、claim rename 前后、complete
+落盘后五个故障点都实际打断并重试过，最终仍只有一个隔离目录；其他 unit 遇到未完成事务会被阻断，旧版记录和被改过的
+completion 只能人工审计。
+
+Pages 的风险更像“门牌没变，但门后面的房子被换了”：旧代码检查 `build/` 不是 symlink 后，又按普通路径逐文件写和
+清理，检查与使用之间仍有竞态。新构建全程持有 repo/build/staging 的目录 FD，每一级都用 `O_NOFOLLOW`，发布前复核
+`build` inode，扫描通过后才在同一目录 rename；失败安装会恢复上一份完整 artifact，清理也只认本事务记录的 inode。
+内容扫描不再只看开头 1 KB 或原始文本：公开文本必须是 UTF-8，再生成有界的 NFKC、HTML、URL、JSON/JS 转义视图，
+Base64/data-URI PDF、内嵌 Bearer、数据库 DSN、大小写/转义用户目录和编码后的私有摘要都会 fail closed。目录置换测试
+确认仓库外 marker 没有被写入或删除。
+
+本轮实际回归为：Pages builder `51/51`，data-foundation runner `39/39`，三组定向合同合计 `98/98`，E73 聚焦
+`123/123`，相关链 `76/76`，bounded fast matrix `483/483`；旧 artifact 的 245 个 HTML、46,771 个本地目标仍为
+`0 missing`。这些数字是软件证据，不是 flow 数量。
+
+**突破监测：仍然没有算法突破。** 新增的是“证据不会在崩溃或发布时说谎”的工程里程碑。真实 private unit、metric
+scorer、harm、16-unit score、未见 rig/session field-L2 与逐相机尾部都还没有产生；因此不能把 `483 passed` 写成
+三维重建优于 DeepONet/FNO/FFNO，更不能写成论文性能结果。
+
+## 138. 半文件不能当记录，整树扫描也不能当发布封印
+
+第五轮审计继续沿着“崩溃恰好发生在最差的一行”来查。旧的 recovery record 和 completion 都用最终文件名
+直接 `O_EXCL` 写。这在正常退出时没问题，但断在创建和写完之间，就会留下空目录、零字节或半个 JSON。
+程序会拒绝它，却会让所有 unit 永久等人工处理。这不是数据伪造，但是真实的可用性与可恢复性缺口。
+
+现在 recovery record 先在 `<entry>.preparing` 目录内完整写入、同步，再在 quarantine 这一个父目录中原子改名。
+只有这个 prepared entry 可见后，run/claim 才能开始搬迁。若断在空 stage 或半个 record，因为源还没动，可安全
+丢弃并重建；若 record 已密封，就发布原条目续作。completion 也改成 `isolation_complete.json.preparing`，重读精确
+等于期望 bytes 后才改名。回归真的模拟了 record/completion 半写、stage 同步、entry 改名、run/claim 改名、目标父目录
+已同步和两个父目录都同步后的中断。发布 record 之前还会同步源 run/claim 的成员轴。
+
+这里没有假装 POSIX 突然有了跨父目录事务。run/claim 移动仍需两个父目录分别 `fsync`；现在顺序是先目标、后源，
+优先避免 neither/data-loss 窗口，但断电后仍可能需要用 source/destination XOR 把 both/neither 关闭为人工 NO-GO。要得到更强保证，
+需要 copy-verify 和各自父目录内的 sibling tombstone，不是多写一句“原子”。
+
+Pages 端的新问题是：扫描通过后到 rename 前，staging 还可能被晚注入一个文件。现在最终扫描会产生全树
+`(relative path, size, SHA-256)` 封印；同目录换入后，仍沿原 staging FD 重算，不等就回滚旧 artifact。敏感扫描也不再
+只做一遍 URL decode：三层 percent、HTML/JSON/JS、NFKC、Base64 中的私有摘要、换行 Base64 PDF、编码后的账号/密码，
+以及藏在公开文件名里的账号和私有摘要都有确定性反例。
+
+最后一轮反例还要求正式输出名在 seal 后和父目录 `fsync` 后各重绑一次；seal 计算本身异常、输出名被换绑或整树不等，都进入同一回滚路径，上一份完整 artifact 不会被异常新树占位。最终扫描也重新检查路径名，长/嵌套 Base64 和全大写真凭据不再被当成占位符。
+
+超过 8192 个 Base64 字符或超过三层可检测解码深度的内容现在不再被略过，而是直接让发布包 fail closed。
+
+本轮实际回归为 Pages builder `68/68`、data-foundation runner `53/53`、三组定向合同 `129/129`、E73 聚焦
+`137/137`、相关链 `90/90`、bounded fast matrix `514/514`。这些仍是软件合同和崩溃模型内的证据，不是 137 个 flow。
+
+**突破监测：尚无算法突破。** 这是一个值得标注的工程里程碑：它让未来的真实分数更难被半文件、拆分事务或
+发布竞态污染。但真实 private unit、24-metric scorer、harm、16-unit score、fresh rig/session、field truth 和任何方法相对
+DeepONet/FNO/FFNO/强经典基线的优越性仍然全部为 0。
+
+## 139. 先把“怎样算输赢”写成代码，再谈让模型上场
+
+上一节留下的下一步很具体：七个非零 CGLS checkpoint 怎样变成 24 个不可随意改口径的
+指标。现在 fixture scorer 已经写出来了。它只接受刚刚由 data-foundation runner 在内存中产生的
+`y=A(x_proxy)` 和同一条 CGLS 轨迹，按 `k1/k2/k3/k4/k6/k8/k12` 的顺序每个只做一次 forward。
+进入 scorer 时 operator 计数必须正好是 `13 A + 13 Aᵀ`，出口必须正好是 `20 A + 13 Aᵀ`，
+任何多跑或少跑都拒绝发布。
+
+24 个指标没有再藏在一句“看重投影误差”里。现在是四个全局投影量、九个 view slot 各两个
+L2/p95 尾部量，再加 field 和 gradient relative-L2。view id 必须严格是 `0..8`，各 slot ray count
+必须正好覆盖整个 operator，所以不能把不好看的一台相机并进 pooled mean 里。所有 harm 只有一个
+符号：`candidate metric - cgls_k4 metric`，正数就是 candidate 更差。
+
+真值、观测与每个 checkpoint 现在都有内部 bytes/hash 绑定，并在任何评分 forward 前检查；分母 floor 与 p95 的线性插值也已冻结，不能通过调用参数换尺子。我特意用一个“把 k12 替换成精确 truth，同时更新对应 fixture payload”的单元测试检查符号：这时 24 个误差都必须为 0，
+它相对非零 k4 的 field/gradient harm 必须为负。这只是“尺子没拿反”的测试，不是说 k12
+或任何新模型已经胜出。非有限 checkpoint、真值/观测/checkpoint 绑定漂移、额外 operator call、view 顺序漂移、非 fixture 状态和非冻结分母
+都已有 fail-closed 回归。
+
+fixture metric/harm 还能发布到一个由当前用户拥有的 `0700` 目录。它从根目录逐级 no-follow 打开，先写完 `0600` staging、`fsync`，再用 no-replace hard link 发布固定名称，最后按同一 inode 重开对比完整 bytes、owner、mode 和 link count。异常清理只会删除与本次 staging inode 一致的成员。已有 bundle 不能覆盖，符号链祖先也不能用。当前它明确是 fixture-only，尚未与真实 private finalizer
+集成。
+
+独立审查还找到三个会让“失败得不够早”的问题：后置 checkpoint 形状错时已消耗前几次 forward，同样 `13/13` 计数的另一 operator 轨迹可被误配，首次 staging `fsync` 失败会留下 preparing 文件。现在所有 checkpoint 的形状和 payload 在第一次评分 forward 前全部通过，foundation 必须持有同一 operator 实例，staging 在写入前就记下 inode 以便故障清理。另外加了不依赖 scorer 内部公式的 NumPy oracle，独立重算 pooled/per-view L2、p95/RMS、field 和 gradient 四类指标。
+
+最后一次复核又把窗口压缩到 staging 刚创建、还没有记下 inode 的瞬间。对初始 `fstat` 失败和 `umask 0777` 各做一个故障注入后，现在两条路径也不会留下空 `.preparing` 成员。
+
+定向 scorer 测试是 `19/19`，runner + scorer + Phase-0 contract 是 `80/80`，E73 聚焦集 `156/156`，相关链 `109/109`，bounded fast matrix `533/533`。这些数字均在文件冻结后实际重跑，没有按测试数做加法。
+
+**突破监测：仍无算法突破。** 这一步只让未来的模型无法靠合并差相机、改 harm 符号或漏算 `A/Aᵀ`
+来制造胜利。下一步是把 scorer 与 private foundation 绑到同一受控进程，然后做不计分 preflight。
+真实 16-unit score、predictor、fresh rig/session、DeepONet/FNO/FFNO 同门比较和论文性能主张仍然全部为 0。
+
+## 140. GCT-KMix：知道答案后随便混也不够好
+
+这次我没有先训练一个新网络，而是先问了一个更狠、也更省时间的问题：假设我们已经知道每个
+synthetic case 的三维真值，能不能在同一条零初值 CGLS 轨迹的
+`k={1,2,3,4,6,8,12}` 七个 checkpoint 之间，事后挑出最好的凸组合？如果连这个
+“作弊版上限”都不够好，就没有理由再花几天训练一个只能猜这些权重的 MLP。
+
+原来的 GCT-KMix 还要求每条 ray 的二维残差模不能超过 k4 安全包络。它是一个凸二阶锥问题，
+但不能只看 solver 写了 `success` 就当成全局答案，所以我固定使用会同时报告 primal/dual 的
+Clarabel。第一次 18-case 运行有一个 case 是 `AlmostSolved`，gap 为 `2.60e-8`，超过冻结的
+`1e-8`。我没有把它四舍五入成成功。第二次把每条 ray 约束两边同时除以正 limit，数学可行域
+不变，只改善数值尺度；结果仍有两个 `AlmostSolved`，而且 projection closure 也超门。因此两个
+attempt 都原样保留为 `GCT_KMIX_FAIL_CLOSED_SOLVER_OR_CONTRACT_FAILURE`。第二次不是“修好后算法
+输了”，而是“仍没拿到可发布的 tail-safe solver 证书”。
+
+真正让路线可以停止的是一个更简单的集合关系。记只要求权重非负且和为 1 的集合为
+`F_simplex`，再加逐 ray 安全约束的集合为 `F_tail`，显然：
+
+`F_tail subset F_simplex`。
+
+删掉安全约束只会让选择更多，所以 unconstrained truth oracle 的最小 field error 一定不大于
+tail-safe oracle；换成 gain 说，它是任何 tail-safe 混合都不可能超过的乐观上界。这一支没有
+退化：18/18 个 unconstrained oracle 都是 `Solved`，最大 relative primal-dual gap 只有
+`7.25e-11`，field metric 与 conic objective 的最大核对误差为 `3.89e-16`。
+
+逐 case 先算相对 GCT-KSelect 的 gain，再在 split 内取均值，得到：
+
+- development：乐观上界 `2.3334%`；
+- public exploratory OOD：乐观上界 `1.9649%`；
+- 结果前冻结门：两个 split 都必须至少 `5%`。
+
+因此即使 tail-safe solver 完美收敛，它也不可能通过 field 门。总 gate 是合取，field 门已经足够
+否决当前表示，所以结论是
+`ZERO_START_FIELD_HEADROOM_UPPER_BOUND_NO_GO_LEARNER_NOT_AUTHORIZED`。这没有修改两个原始
+fail-closed 包，也没有拿它们的近似权重当证书。
+
+这件事的物理含义比“模型没调好”更重要。零初值 CGLS checkpoint 都来自当前观测算子的
+row-space/Krylov 轨迹；在它们之间混合，只是在调谱滤波和停止位置，不能凭空创造有限视角下不可观
+的 near-null 成分。M2.2 的 exact oracle 已提示 null-space 有明显三维 field headroom，所以现在
+应该改变信息来源，而不是继续换 selector 名字：
+
+1. 冻结一个已有 learned field 作 warm start，并明确支付它的初始 projection 和推理成本；
+2. 在同一总 `A/Aᵀ` 预算下生成 warm-start CGLS 轨迹，先算新的 convex-hull truth ceiling；
+3. 只有 ceiling 同时过 field、H1 和逐 ray/camera 门，才训练 observable weight predictor；
+4. 再用 matrix-free measurement-space row-removal 检查 correction 是否真留在 near-null 方向；
+5. 最终仍需要 fresh geometry/rig-session、独立 renderer 和 OERF 数据，synthetic gain 不能升级为突破。
+
+这里的 JACRU 只是“连续解析梯度造观测、体素有限差分/三线性插值做 inverse”的窄义
+inverse-crime barrier。18 个 case 只有 6 个 geometry clusters，每个 geometry 下三种 morphology
+共享相机，不能当成 18 个独立 rig。它足够帮我们淘汰一个低上限表示，却不能证明真实 BOST、
+DeepONet/FNO/FFNO、NeRIF/TDBOST 或所有算子学习都失败。
+
+**突破监测：仍无算法突破。** 新增的是一张可信的“此路不值得训练”路标。下一次只有 fixed
+learned warm start 真正把 zero-start 没有的信息带进来，并在未见几何、强经典/神经基线、逐相机
+尾部与完整成本上共同过门，才可能出现算法级信号。
+
+## 141. Warm start 的场看起来很好，但它没来得及把测量对上
+
+上一节说要换信息来源，所以这次真的把四类已经训练好的模型当成固定 warm start 来测了。为了不让
+结果出来后再改模型，我先把 JACRU-M2、pooled CNN、grid DeepONet 和 pooled FNO 的三个随机种子，
+共 12 个 checkpoint 存成不允许 pickle 的 NPZ。每个文件、权重语义、训练分区、运行时版本和 FNO
+额外 metadata 都有哈希。正式评分器里没有 optimizer、backward 或 `_train_one`，只准加载这些字节。
+
+这里有一个容易被忽略的成本：模型不是看一眼原始位移就直接给答案。它先用 CGLS-12 做 base field，
+再算 terminal residual 和每相机 adjoint lift，总共已经花掉 `13F/13Aᵀ`。所以 warm start 的 `k=2`
+不是“只算两步”，而是总计 `16F/15Aᵀ`；同预算的强 CGLS 可以从零开始算 16 步。所有比较都按这个
+总账走，没有把网络输入当免费午餐。
+
+结果第一眼很诱人。JACRU-M2 在 development 的 `k=2` 相对每个 case 三种经典法中 field 更好的那一个，
+平均 field-L2 改善 `45.734%`，H1 改善 `40.888%`；pooled CNN 也有 `44.045%/39.427%`。但同一行的
+measured/independent-clean reprojection ratio 是 `14.5965/3.2276` 和 `14.4060/3.2206`，门是
+`<=1.10`。也就是说，三维场先验猜得像，却还没有把当前相机真正测到的位移对上。
+
+把 k 加到 10 后，JACRU 的 clean ratio 已降到 `1.096`，field/H1 仍有 `38.87%/33.87%`；但 measured
+ratio 还是 `13.509`，18 个 model-seed × case 单元里有 `16.7%` 出现超过 1% 的 field harm，worst
+也降到 `-5.8%`。这不是再挑一个 k 就能解决的擦线问题。四种架构、11 个 k 一共 88 个 decision cell，
+没有一个 development 全门通过，所以状态是：
+
+`M2_9_FIXED_WARM_CGLS_DEVELOPMENT_NO_GO`。
+
+为什么场和测量会分家？这个 toy 里每个 geometry 约 150 个测量，却有 1000 个 active voxel。网络能从
+训练分布带入测量本身无法唯一决定的场结构；CGLS 更新只改 `range(Aᵀ)` 部分，离散 exact-kernel 分量会
+被保留。数值审计确实看到最大 kernel drift 只有 `1.867e-14`，递推 residual 与重新 forward 的最大误差
+`1.073e-13`，所以不是代码悄悄改了核分量，也不是 CGLS 算错了。但“保留了核分量”只说明线性代数按
+预期工作，不说明这个核分量就是 field gain 的原因，更不等于真实光学零空间。
+
+同调用 CGNE 还帮忙排除了另一种误解。两者从同一个 learned field 出发、花同样 refinement 调用；在
+development `k=6`，warm CGLS 相对 CGNE 的 field/H1 大约再好 `3.4%/3.7%`，measured residual 约为
+CGNE 的 `0.56`。所以 CGLS 的有限步选择是有用的，只是它弥补不了前面 13 对调用留下的巨大 data gap。
+
+真正应该改的是 warm-start 接口，不是继续扫 k。下一候选先压缩输入成本：直接用 raw displacement、
+相机/ray geometry 和最多一次 pooled `Aᵀy`，不再先跑 CGLS-12。如果 proposal 只花 `0F/1Aᵀ`，再付
+一次 `Ax0`，同样 24 对预算里就能给 CGLS 留 23 步，而不是现在的 10 步。最小比较是：
+
+```text
+lean learned warm: 0F/1Aᵀ feature + 1F projection + CGLS-23 = 24F/24Aᵀ
+strong control: zero-start CGLS-24 = 24F/24Aᵀ
+```
+
+如果同一 rig 有很多连续帧，还可以把 row/near-null basis 的一次性计算按帧摊销；但 setup、每帧成本和
+break-even 帧数都要报告，换 rig 不能免费沿用旧 basis。再下一步才是仅用 held-out ray、noise floor 和
+geometry feature 做可拒答 gate，失败就回退强 CGLS。
+
+这次独立 validator 没有调用正式 runner 的聚合函数。它从 CSV 重算 792 条 baseline、3168 条 candidate、
+2880 条 CGNE、264 个 seed aggregate 和 88 个 decision cells，10/10 输出哈希通过，`errors=[]`；另一个
+只读审计也得到同一 NO-GO。
+
+**突破监测：仍无算法突破。** 但这张负结果很值钱：它把下一模型的创新问题从“换哪个 backbone”缩成了
+“怎样以极低 `A/Aᵀ` 成本带入 BOST 场先验，并在相同总预算下把测量一致性和坏尾一起闭合”。这才是后续
+低成本 geometry-conditioned operator、rig-amortized basis 和 observable fallback 应该共同回答的问题。
+
+## 142. 先别训练：我发现“零 correction 等于 CGLS-24”原来没那么简单
+
+上一节的草案是：一次 `Aᵀy` 交给小网络，再把网络输出当 warm start 跑 CGLS-23。账面上看正好是
+`24F/24Aᵀ`。但独立审计提醒了一个很要命的小坑：如果先形成一个非零初值再重启 CGLS，哪怕网络输出
+的 correction 恰好为零，也不严格等于从零开始连续跑 24 步 CGLS。因为“重启”把原来 Krylov 递推的
+方向状态丢掉了。这样以后如果模型路线赢一点，我们分不清是网络有用，还是 solver 换了。
+
+所以这次没有急着训练。我先写了一个叫 `LGWO-A24` 的安全壳。网络不直接给完整重建场，只允许对第一条
+方向 `Aᵀy` 加一个很小、有范数上限的扰动。第一步沿这个方向做精确线搜索；后面 23 步每次花一对
+`A/Aᵀ`，并在测量空间把新方向对历史方向做两遍重正交。这样 correction 为零时，它就退化到全重正交
+形式的 CGLS-24，而不是一个“看起来差不多”的重启算法。
+
+当前安全壳已经有 9 个测试通过：
+
+1. 总账严格是 `24F/24Aᵀ`；
+2. 零 correction 与 CGLS-24 的终点差只有约 `1e-16`；
+3. 每一步 measurement residual 不增加；
+4. correction 会被限制在 `eta ||Aᵀy||` 内；
+5. 输入越出 calibration envelope 时精确回退到零 correction；
+6. proposal 如果偷偷调用一次 operator，立即报错停止；
+7. API 没有 truth、family 或 split 参数。
+
+这仍然不是算法成果。它只说明以后训练出来的任何差异都有更干净的归因：零 correction 是强基线，网络
+只能靠一个受限方向扰动创造增量，不能靠换 solver 或偷物理调用。
+
+数据路线也重新分级了。公开世界里暂时找不到同时有真实 3D/4D BOST、多视角标定、可重算 `A/Aᵀ`、
+三维真值和明确许可证的完整数据集。下一步不能拿普通 CT 假装真实 BOST，而是四层推进：STEMPO 小型动态
+3D CT 只检查三维时空算子；MILD CH4/H2 DNS 提供 `133x83x66` 的密度/温度/组分，构造
+`physics-derived synthetic BOST`；TU Graz HBOS 负责真实背景、光照和位移前端；最后才接 OERF 的真实
+geometry、flow-off repeat 和连续帧。
+
+**突破监测：仍无算法突破。** 真正新增的是一条干净、可被证伪的算法接口，以及一条不会混淆证据等级的
+数据桥。下一次只有小模型在同 `24F/24Aᵀ` 下同时过 field、H1、measured/clean/held-out reprojection、
+逐 rig 尾部和 harm，才把状态从 `PROPOSED_UNRUN_CANDIDATE_NO_CLAIM` 往前移动。
+
+## 143. 理想的零空间方向确实有用，但网络还没有学会任何东西
+
+安全壳写好后，我没有马上训练，而是先做了一个“答案上限”测试：假如评估器直接告诉我们真值里哪一部分
+完全不会改变当前相机测量，把这部分当作第一方向的小扰动，LGWO-A24 到底有没有改善三维场的空间？如果连
+知道答案都没用，那训练网络只是在烧时间。
+
+这次用了 6 个已经打开的合成 case、3 套相机几何。每个 case 都从真值里精确拆出 row-space 和 null-space
+方向，再分别塞进同一个 `24F/24Aᵀ` 壳层。所有方向都有相同范数上限，不允许某一臂拿更大的 correction。
+
+结果很清楚：给 exact-null truth direction 时，`eta=0.05` 的平均 field/H1 改善是
+`+6.978%/+6.566%`，6 个 case 里最差也有 `+3.741%`；`eta=0.10` 是
+`+13.722%/+13.005%`，最差 `+7.262%`。因为方向在离散 kernel 里，measured 和同一 `A` 下的 clean-target residual ratio
+都保持在数值意义的 1。
+
+对照组更重要。只给 exact-row truth direction，measurement residual 确实下降了，但 field/H1 平均反而
+略差，大约 `-0.01%` 到 `-0.03%`。不过三条方向是各自归一化后再 clipping，完整方向并不等于另外两条
+applied direction 的和，所以不能拿 full-row 计算 null 的“独立因果贡献”。最窄的解释只是：当前 norm-matched
+方向屏支持继续研究测量看不见的场结构，不支持只堆 row-space 拟合，也没有证明一般 kernel 因果。
+
+我又写了一个不导入正式 runner 的 validator。它重新造 6 个 case、3 个 dense projector，重跑 36 条路径，
+对每行指标、聚合门、调用账本、哈希和关闭的授权字段做了 1,121 项断言，全部通过。
+
+它和正式运行仍共享底层 fixture、projector、solver 和 metric，所以证明的是“同一数学实现可确定复现”，
+不是第二套光学模型的独立验证。完整实验还花了 dense setup、评分和三次 SVD，总账是 `4053F/1008Aᵀ`；
+`24F/24Aᵀ` 只是一条 solver path 的部署预算，不能冒充整个 oracle 实验的端到端成本。
+
+但这里有三层刹车：第一，exact-null direction 直接偷看了三维真值，部署时根本拿不到；第二，配置冻结前已经
+看过其中一个 case 的几个 eta，所以这是 opened screen；第三，`12^3`、三相机和特定 support 的离散 kernel
+不等于真实 OERF 光学系统的零空间。
+
+**突破监测：仍无算法突破，但有可复现的表示层进展。** 现在终于知道小网络应该努力学什么：利用反应流形态、
+相机/ray geometry 和跨帧相关性，猜一个 approximate-null prior；同时必须在未见 rig 上知道何时猜不出来并
+精确回退。下一步只做不超过 8k 参数的小 pilot，先证明“能从可部署输入学到一点这个方向”，而不是直接堆 FNO。
+
+## 144. L1 不是“开训按钮”：先把 B 射线、三随机种子和坏尾锁死
+
+O1 给了一个值得追的信号，但它还是偷看真值的答案上限。为了不把“有上限”直接写成“模型能学会”，这次把
+下一步改成了机器可验证的 `LGWO-A24-L1` 协议。模型只有 2,729 个参数，输入只有 A 侧的 noisy displacement、
+一次 `A^T y`、A geometry 和 support。fit、early-stop、route 分别固定为 24、6、24 个 cases；每个 geometry
+cluster 都含 smooth plume、single interface、shock-expansion pair 三种形态，并固定三个 model seeds，不能
+训练完只展示最好的一次。
+
+我一开始把 B 设计成另一种 camera pose，但独立审计指出：如果 fit 时用 development-B，而 route-A 也是
+development pose family，就等于提前把 route 的相机布局放进训练。现在改为：fit/early 的 A 和 B 都属于
+train pose family，但 A/B 使用两套独立 SHA256 geometry seeds；route 才使用 development-A 与 OOD-B。B
+只是 evaluator：fit-B 可算辅助损失，early-B 只选 checkpoint，route-B 在所有模型冻结后才生成。模型 API
+没有任何 B 字段，也没有 `proposal_kwargs` 可以从 B payload 调模型。
+
+数据量增加并不自动等于证据更强，所以统计单位也先锁死。三个 families 和三个 model seeds 先在同一个
+geometry cluster 内平均，真正的独立单位只有 8 个 route clusters。主门要求平均 field gain 至少 5%，三个
+seed 各自至少 2%，50,000 次 cluster bootstrap 的 95% 下界大于 0，至少 7/8 clusters 为正；同时 H1 至少
+3%，A measured、A clean、B clean residual 均值不超过 1.05，harm 不超过 5%，worst 不低于 -5%。这比只看
+72 个 case-seed 平均值更难过，但不会把相关样本冒充独立重复。
+
+代码审计还抓到几个不能带进训练的坑：FP16 的 `1e-20` floor 会下溢并产生 NaN gradient；training proposal
+原来能原地修改 live anchor；tiny anchor 的限幅分支和 deployment 不一致；A24 甚至允许传入 checkpoint 25。
+现在 training state 只准 float32/float64，proposal 收到的是 clone，tiny branch 与 deployment 对齐，超过 24
+直接报错，bool reorthogonalization 也拒绝。异构 batch、恶意原地修改、tiny anchor、三条网络分支的非零梯度
+都加入了测试。
+
+零 head 还有一个很朴素的问题：它能完美证明 baseline recovery，但从严格零范数分支开始训练时梯度也会是
+零。因此 runner 先用 zero head 做 parity gate，再按当前固定 model seed 对 correction head 做一次且仅一次
+`Normal(0,1e-4)` 初始化，bias 保持零；尺度、次数和 seed 都写进 JSON，不允许看到结果后重来。用已经永久
+排除的 JACRU train seeds 做工程探针时，真实 `12^3`、三 families、完整 K=24 forward/backward 在当前 Mac
+上约 0.08 秒，账本为 `24F/24A^T`，34/34 参数张量都有有限非零梯度。这个数字只是未冻结的工程测量，正式
+summary 还要在预数据 commit 后由独立脚本重跑。
+
+**突破监测：仍无算法突破。** 当前真正完成的是“训练前的科学防火墙”：28 个既有 geometry seeds 永久排除，
+A/B seed 规则、三模型种子、route 门、权限边界、CPU float64 和完整成本字段都由 validator 锁定。下一步先
+提交这个冻结点，再只在排除数据上重跑 implementation gates；通过后才生成 fit，route 继续封存。
+
+## 145. Implementation gate 终于通过，但中间两次失败比 PASS 更重要
+
+预数据 commit 后，正式脚本第一次运行立刻停在 fixture constructor：JSON 里的 `schema` 是协议元数据，不能
+直接当成数据类参数。这个错误没有碰到模型，也没有生成科学结果。修复时我没有只加一行 `pop`，而是补了一个
+真正执行完整 `12^3`、三 family、K=24 forward/backward 的测试，防止以后只测 helper、主入口又坏掉。
+
+第二次确实走完了梯度路径，却暴露出更隐蔽的问题：同一个 model seed 两次运行的完整 state SHA256 不同。
+原因是当时只用 seed 初始化 correction head，前面的卷积层仍使用进程全局 RNG。也就是说结果表面“固定 seed”，
+实际上不能跨进程重放。此时 fit、early、route、fresh 都还没有生成，所以做了训练前协议修订 1.1：完整模型在
+`torch.random.fork_rng` 内按当前 seed 构造，CPU 上转 float64，且不推进全局 RNG。旧 config 哈希和修订原因都
+保存在 JSON 里，不能把它假装成原来就设计好了。
+
+第三次在 source commit `5230a5f` 上通过。A solver 账本严格为 `24F/24A^T`，B evaluator 为 `1F/0A^T`，
+34/34 参数张量都有有限非零梯度；完整模型 state SHA256 是 `8d1629b1...17028`。另起进程重跑后，除
+wall/CPU/RSS 外所有字段逐项相同。独立 validator 不导入 runner，重新构造模型 state，复核配置哈希、来源 commit、
+loss 算术、调用账本、route/fresh 文件系统扫描和所有 claim flags，共通过 57 项断言；checksum 也已封存。
+
+状态名特意没有写“fit 已授权”，而是
+`PASS_IMPLEMENTATION_GATES_FIT_RUNNER_IMPLEMENTATION_AUTHORIZED_ROUTE_SEALED`：现在只可以继续写 fit-only runner。
+正式 loss 的 H1 stencil、epsilon、normalization 维度、五个 trainable arms 和 checkpoint/resume 合同还没全部实现，
+所以科学 partition 仍保持 0 个 materialized cases。
+
+**突破监测：无算法突破。** 这次的价值是把三种很容易伪装成“训练已经开始”的问题提前抓住：入口没跑通、
+随机种子不完整、工程 smoke loss 冒充正式 loss。下一步先把 fit runner 的合同和测试补齐，再生成 24 个 fit cases；
+route 继续关着。
+
+## 146. 训练栈终于能互相对账，但这仍不是“模型跑起来了”
+
+这一轮没有立刻生成 24 个 fit cases。我先把上一节剩下的四块拼成了一条可以互相审计的链：五个训练臂、正式
+loss、三层缓存和 checkpoint。开始时各模块自己的测试都能过，但主审一接接口就发现两个真问题：`E2` 忘了乘
+support mask，意味着 support 外的误差会混进主指标；proposal cache 的字段虽然没有 truth，却可以把一个允许的
+引用字符串偷偷指向 `truth.npy`。这两处都在任何科学数据生成前修掉了。
+
+现在五个 arm 是精确 registry：`full=2729`、`fixed_direction=1000`、`g_only=681`、
+`no_raw_observation=2585`、`no_geometry=2225`。fixed-direction 不再用平值 `topk` 随机决定参数对应哪个 voxel，
+而是要求 binary support 内恰好 1000 个 active voxels，按 flattened z-y-x 顺序固定映射；不同 batch 的 index map
+不一致就直接停。它仍是容量不同的消融，不能拿来宣称结构优越性。
+
+正式 loss 也不再接受“空数组等于零损失”。field-L2 只看 `support>0.5`，H1 只看两个端点都 active 的物理
+spacing forward edges；A measured、A clean、B clean、`A delta` 和 `Ag` 必须 nonempty 且 ray shape 一致。
+少付一次 B forward 或把 projection 留空，loss 会 hard fail，而不是悄悄给一个好看的零惩罚。
+
+缓存现在有 proposal、training label、heldout-B evaluator 三个 resolve 后互不重叠的根。科学 proposal 只能从
+typed `JACRUInferencePayload` 入口生成，手工数组 writer 只允许 engineering artifact；每个 fit triplet 外绑真实
+source commit、config hash、fit manifest hash、entry hash 和 order。NPY/JSON 的 dtype、shape、hash、symlink、
+path traversal、pickle/object array、未知文件和覆盖都会独立重读检查。它不能从哲学上证明 observation 的数值绝不
+可能被恶意编码成 truth，但已经把正常 runner 的科学写入能力限制在 truth-free inference API 内。
+
+checkpoint 则固定为 epoch `0..30` 共 31 个节点。epoch 0 是 optimizer 尚未产生状态的零成本初始化；随后每个
+epoch 必须精确记录 8 个 cluster batches，即 batched API `192F/192A^T + 8B-F + 8 optimizer steps`。完整 AdamW
+参数、arm registry、parameter/buffer state schema、metric-history parent chain、route/early seal、wall/RSS 和
+nonfinite/fallback 都是硬字段。一个独立 chain validator 会重算 30 个 epoch 的累计 `5760F/5760A^T + 240B-F`
+和 240 optimizer steps，不能删失败 epoch、插入第 31 个 epoch 或改成 best-seed selection。
+
+协议因此在 scientific case 仍为 0 时修订到 `1.2`。这一修订没有增加任何成功 claim，只把代码里已经实现的
+arm、loss、cache、optimizer、checkpoint 和成本规则写进 canonical JSON。聚焦回归目前是 `123 passed`；旧的
+implementation evidence 因为 critical source 已改变，会主动失效，必须等新代码提交后在新 commit 上重跑，不能
+拿 `5230a5f` 的 PASS 替当前训练栈背书。
+
+文献边界也更清楚了。NPN 已经在做 learned null-space projection，Neural Correction Operator 已经研究 learned
+inverse correction，FCG-NO 已把 neural operator 放进 flexible Krylov 迭代；所以“网络学一个零空间/修正方向”本身
+不能再当创新。LGWO 仍可能成立的窄命题是：在严格不增加 `24F/24A^T` 部署预算的前提下，只修正首方向，并在
+未见 rig 上用 observable envelope fail closed，同时把坏尾、B-ray consistency 和总成本一起过门。
+
+**突破监测：仍无算法突破，也还没有训练结果。** 真正的进展是训练栈现在更难自欺：旧证据会因代码漂移失效，
+空监督不会被当成零损失，错误 arm 不能冒充 2729 参数 full，缓存也不能靠一个漂亮 descriptor 掩盖文件层问题。
+下一步只有在新 commit 上完成独立 pre-fit evidence 后，才允许第一次 materialize fit；route 和 fresh 继续为 0。
+
+## 147. 现在把“准备训练数据”和“真的开始训练”分成了两把钥匙
+
+上一节记录的是 protocol 1.2 的训练栈快照。这一轮独立复查又发现：即使每个模块单独能过测试，runner
+仍可能在同一个目录里一边写数据、一边给自己签“可以训练”的许可；成本表也可能只报一次 batch API，
+却不说这个 batch 实际包含三个 case。为了让这种自我授权和少报成本都过不了，协议在 0 个科学 case、
+0 个 optimizer step 的时候修订到了 1.3。旧的 implementation evidence 因为源码已经变化而失效，
+必须在新的干净 commit 上重做，不能拿以前的绿灯继续通行。
+
+先把一个容易说错的数字讲清楚。体网格是 `12 x 12 x 12 = 1728` 个 voxel，但最外一圈被固定为边界，
+真正参与重建的是中央 `10 x 10 x 10 = 1000` 个 voxel。现在 A 相机和 B 相机的 operator 都必须在
+第一次调用前绑到这一个 exact support；另一个同样有 1000 个点、但位置挪过的 mask 也不算。固定方向
+消融的 1000 个参数按全局 z-y-x 顺序逐个对应这 1000 个位置，不能随 case 重新编号。
+
+第一把钥匙叫 Stage 1，只准准备 24 个 fit cases。它要在仓库外绑定干净 source commit、protocol report、
+pre-fit evidence、24-entry manifest、独立第三次 GO 审计和唯一输出目录。拿到它以后，materializer 只能生成
+24 组 proposal、label 和 heldout-B cache，再从 proposal 侧的 24 组可观测量计算 normalization 和 25%
+calibration envelope；它不能构造 optimizer，也不能生成 early、route 或 fresh 数据。
+
+这里又补了一道很实在的防伪门：pre-fit evidence 不能只收一张我们自己写的“349 个测试都过了”汇总表。
+正式 clean-commit 回归必须保留 pytest 直接生成的 raw JUnit XML。packer 会给 XML 原始字节做 hash，
+逐条读取 `classname::name`，拒绝 failure、error、skipped、重名或漏掉的 negative-gate testcase，再把
+排序后的 testcase identity list 单独做 hash。Stage 1 会连同 protocol report、test manifest、test results、
+raw XML、implementation-gate report 和独立 validation 共六份输入一起绑定，所以事后改 JSON 数字、
+沿用旧 implementation 快照或删掉一条失败测试都对不上。
+
+第二把钥匙叫 Stage 2，只在这些 fit 文件已经冻结后签发。它会逐个检查 72 个 cache manifests 和 216 个
+数组的双重 hash，重新绑定 normalization、calibration、fit manifest 与 operator-ledger schema，并确认
+optimizer 仍然一步都没走。以后每个 checkpoint 还要带上 Stage-2 root 的 hash；checkpoint 目录外另存
+一个 node anchor，避免一个目录同时篡改模型、指标和账本后仍然“自洽”。
+
+成本现在也要用两种口径同时说。一个 cluster batch 含三个 family，因此每个 epoch 的真实 batched API
+是 `192 A-F + 192 A-A^T + 8 B-F`，对应的 case-equivalent 工作量是
+`576 A-F + 576 A-A^T + 24 B-F`。真实 autograd 探针进一步测得反向图是 552 个 A-F、576 个 A-A^T
+和 24 个 B-A^T case-equivalents，而不是手填成对称的 576/576；另有 8 个
+optimizer steps 和 392 条显式 ledger events。两张表、底层 operator counter 和 checkpoint metrics
+必须互相对得上；少报其中任何一张都不能过门。
+
+checkpoint 也从 1.0 升到 1.1。每条 arm/seed 仍是 epoch 0 到 30 的 31 个连续节点，但现在它不只检查
+文件 hash，还会按 arm 名和 model seed 重新构造 exact registered model，核对参数顺序、AdamW slots、
+双成本账本、Stage-2 授权和外部 node anchor。换 arm、换 seed、删掉失败 epoch 或拿另一条轨迹的 optimizer
+state 接着跑，都会直接停。
+
+本次真实复核分成两层。独立 protocol validator 对当前 config 做了 180 项断言，全部通过；它确认
+canonical config SHA256 是 `7de695ebc419ad2e7a7edba0c10d45b9ff31027a0252c41c2481faf56f4eb085`，
+scientific case 为 0，L1 route/fresh 文件命中为 0，所有成功 claim 都是 false。随后跑 18 个文件的
+聚焦 pytest，当前结果是 `349 passed`，fit runner、Stage-1/materializer、授权根、evidence packer、implementation gate、checkpoint、
+ledger、normalization、cache、loss、arm 和 protocol 测试都已全绿。
+
+所以现在最诚实的状态是：接口红灯已经修清，科学数据也没有被污染，训练没有偷偷开始；但仍不能把
+“349 passed”直接理解为可以开训。刚才的交互式回归是当前工作树检查，正式 Stage 1 还需要先形成干净
+commit，再用 pytest 输出 raw JUnit，重建 raw-input-bound implementation evidence 和 checksums，取得
+独立 GO，然后依次签 Stage 1、物化 24 个 fit cases、签 Stage 2。到正式运行时 testcase 数若变化，必须
+以新 JUnit 为准，不能抄用这里的 349。
+
+## 148. 加速不是跳门：把实现证据也纳入 Stage 1 原始证据
+
+这次“火力拉满”没有直接启动训练，因为并行审计发现一个会让后续结果失效的接口空洞：pre-fit packer 已经
+生成 implementation-gate 的工程报告和独立 validation，但 Stage 1 授权根仍只绑定 protocol、test manifest、
+test results 和 raw JUnit 四类输入。换句话说，旧工程报告有机会被当成新提交的证据。
+
+现在 protocol 1.3 明确冻结六项输入清单，并要求 implementation report 使用 1.1 schema、独立 validation
+使用 1.0 schema、至少 57 项断言，而且必须在授权所指向的干净 commit 上重跑。canonical hash 因此更新为
+`7de695ebc419ad2e7a7edba0c10d45b9ff31027a0252c41c2481faf56f4eb085`；协议仍为 180 项断言，完整聚焦回归为
+`349 passed`。fit runner 的测试还故意把真实 `AdamW.step()` 设为硬失败，所以这些数字只说明调度、
+授权、调用账本、checkpoint 和负向门可工作，不说明模型已经训练。
+
+并行的新颖性审计又核对了 DCDM、FCG-NO、Deep Null Space Learning、NPN、NeRIF、NeDF 与 TDBOST 等一级来源。
+“神经 Krylov”“学习零空间”“AI-BOST”都不能作为宽泛新颖性。当前唯一值得实证的窄问题，是 observable-only、
+geometry-conditioned、norm-bounded 的 first-direction correction，能否在固定 24F/24A^T 壳内改善未见 rig
+尾部且不破坏 A/B consistency。这个组合目前只能叫 `possibly differentiating, not yet evidenced`。
+
+**突破监测：仍无算法突破，0 scientific cases，0 optimizer steps。** 当前下一门是干净源码提交后的
+第三次独立 GO；只有它通过，Stage 1 才能物化 24 个 fit cases。
+
+**突破监测：无算法突破，0 scientific cases，0 optimizer steps。** 这次增加的是更严格的授权边界、
+1000-voxel 物理 support、fit-only normalization、双成本账本和可外部追溯的 checkpoint 链。它们不能替代
+模型性能，但能让将来真的出现 gain 时，我们更有把握知道它来自算法，而不是数据泄漏、少算成本或事后换规则。
+
+## 149. 这次真的加速了什么：把“少算一次”从论文账本里抓出来
+
+这轮没有多造一个网络名字，而是先检查训练时到底调用了多少次物理算子。原账本把反向传播想当然地写成
+对称的 24/24。真实 PyTorch autograd 探针显示：第一个 `A^T y` 只由固定观测生成，不需要向前追梯度；后面
+23 个 `A^T r_k` 才依赖模型输出。因此每个三 case cluster 的反向图实际是 23 次 A-forward 等价、24 次
+A-adjoint 等价，再加 held-out B loss 的 1 次 B-adjoint 等价。扩成每个 epoch 后是 `552 / 576 / 24`。
+这个差别不大，却很重要：以后和 DeepONet、FNO、NeRIF 或任何自有模型比总成本时，不能靠“看起来对称”填表。
+
+第二个修复是把 Stage 2 从“相信 materializer 说已经完成”改成“runner 自己重新验货”。现在它会重新遍历
+完整物化树，核对 summary、checksums、72 个 manifests、216 个 arrays、24 条有序记录、normalization、
+calibration、Stage-1 source inventory，以及前后 optimizer step 都为 0。summary 即使被重新计算 hash，
+只要其中一个 artifact、triplet 或源码来源和 cache 对不上，授权和 runner 都会停。
+
+第三个修复是证据链。protocol report、test manifest、test results、raw JUnit、implementation report、
+independent validation 六份原件都会进入包；validation 同时绑定 report 文件字节 hash 与规范 JSON hash。
+现在 18 文件聚焦回归是 `349 passed`，协议是 180 项，规范配置 hash 是
+`7de695ebc419ad2e7a7edba0c10d45b9ff31027a0252c41c2481faf56f4eb085`。
+
+下一次真正有科学信息的动作不是继续扩建门禁，而是把
+`docs/n5_d5_advisor_first_contact_2026-07-19.md` 发给何远哲师兄，确认真实 forward callable、curved/straight
+residual 在哪一层形成、JVP/VJP 是否可用、标定与单位、数据 split、现有基线和组内最痛的失败。没有这些
+答案，synthetic LGWO 只能保持候选算法，不得冒充 OERF 结果。
+
+**突破监测：没有算法突破。当前增量是可信成本与证据闭环；scientific cases = 0，optimizer steps = 0。**
+
+## 150. 第三次审计踩住刹车：绿灯测试不等于断电后还能续跑
+
+这一轮独立审计专门问了一个很朴素的问题：训练刚更新完参数，电脑就在写文件时断电，第二天到底能从哪一步
+继续？答案是当前还不能可靠回答。runner 先执行 `optimizer.step()`，随后分别写 operator ledger、checkpoint
+和 external anchor。checkpoint 自己已经会 staging、`fsync` 和原子 rename，但这三份证据合在一起还不是
+一个事务。
+
+所以可能出现四种诚实但麻烦的状态：参数在内存里更新过却没有磁盘记录；ledger 比 checkpoint 多一个 epoch；
+checkpoint 已经提交但 anchor 还没有；或者最终 ledger/anchor 文件只写了一半。现有验证会拒绝这些不一致，
+不会假装训练成功，这叫 fail-closed；但它也不能自动恢复，这不叫 crash-safe。
+
+这件事被标为 P0，意味着第一次正式 scientific optimizer step 仍禁止。不过我们不马上再造一套庞大的安全
+系统。下一动作仍是把 `docs/n5_d5_advisor_first_contact_2026-07-19.md` 发给何远哲师兄，先确认组内真实
+callable、curved/straight residual、JVP/VJP、标定、数据和强基线。只有师兄确认这条 LGWO 路线值得真实
+训练，才实现最小 epoch staging transaction、独立 anchor、原子 TIP 和四个故障注入点。
+
+完整审计和恢复门见
+[LGWO-A24-L1 epoch 事务与恢复独立审计](lgwo_a24_l1_epoch_transaction_audit_2026-07-20.md)。
+
+**突破监测：没有算法突破。新增的是一个会阻止伪成功的 P0 风险证据；scientific cases = 0，optimizer steps = 0。**
+
+## 151. 349 项全绿之后，复审仍成功伪造了“240 步”
+
+另一位独立审计者没有继续看页面，而是直接尝试欺骗 checkpoint 链。他发现现有测试只真的执行了一次
+`optimizer.step()`，然后把同一份 AdamW state 写进 epoch 1 到 30；因为验证器只要求 slot 的 step 是正整数，
+这条链仍可能自称跑满 240 步。恢复代码又根据 epoch 号推断已经完成的步数，于是“文件彼此一致”不等于
+“训练确实执行过这么多步”。
+
+第二个漏洞更直接：独立 chain validator 只检查 checkpoint 里填写的 operator-ledger hash 互不重复，
+没有打开真实 ledger 文件。测试可以凭空写 30 个 64 位十六进制字符串，就让 11,760 条事件和 240 步看起来
+存在。第三个 P0 仍是上一节的 epoch 跨事务崩溃窗口。
+
+这也解释了为什么工程测试数量不能当论文结果。当前只立即修两个边界清晰的洞：要求 AdamW slot
+`step == epoch * 8`，并让 chain validator 从明确的 ledger root 逐个读取和复算真实文件。epoch 事务、
+external anchor、runtime lock 和 TOCTOU 暂不继续扩建，先由师兄判断真实接口和物理问题是否值得启动这条 fit。
+
+完整 P0/P1/P2 表见
+[LGWO-A24-L1 第三轮独立只读复审](lgwo_a24_l1_third_readonly_audit_2026-07-20.md)。
+
+**突破监测：没有算法突破。新发现是证据漏洞，不是性能提升；scientific cases = 0，optimizer steps = 0。**
+
+## 152. 两个“纸面训练”漏洞已关，剩下一个真正的断电 P0
+
+上一节发现的问题现在有了可运行修复。checkpoint 在保存和加载时都要求每个 AdamW slot 的
+`step == epoch * 8`；epoch 1 必须是 8，epoch 30 必须是 240，一次 step 冒充完整轨迹会被拒绝。旧集成测试
+也因此先失败了一次：它真的只更新一次却保存 epoch 1。把测试改成真实的八个 cluster steps 后才恢复通过。
+
+独立 chain validator 现在还必须收到明确的 operator-ledger root。它只接受 `epoch_01.json` 到
+`epoch_30.json`，拒绝缺失、额外文件和 symlink，逐文件复算原始 SHA256，并读取全部 11,760 条事件，核对
+run/arm/seed/epoch、sequence、cluster、role、operation、purpose、batch size、API 与 case-equivalent 双成本，
+再把每 epoch 推导出的八个逻辑 steps 与 checkpoint 对上。只改 checkpoint 自报 hash 或清空 events 都过不了。
+
+18 文件聚焦回归从 349 增加到 `361 passed`，protocol validator 仍为 180 项，规范配置 hash 仍为
+`7de695ebc419ad2e7a7edba0c10d45b9ff31027a0252c41c2481faf56f4eb085`。这仍只是当前工作树回归，正式
+Stage 1 还要在干净 commit 上重建 raw JUnit 与证据包。
+
+剩下的 P0 是 epoch 跨事务恢复：参数更新、ledger、checkpoint、anchor 还不是一次可恢复提交。现在先把桌面
+的“请发给何远哲师兄_真实接口确认_2026-07-20.txt”发给师兄；只有真实接口值得继续，才实现最小事务与故障
+注入，不再无边界造基础设施。
+
+**突破监测：没有算法突破。2 个证据 P0 已关闭，1 个事务 P0 仍开放；scientific cases = 0，optimizer steps = 0。**
+
+## 153. 先把问题和失败判据写进论文，而不是先写胜利摘要
+
+这轮没有继续堆模型，也没有启动训练。我们先做了两份以后每天都能真正使用的地图：一份是
+[LGWO-A24 论文工作稿](lgwo_a24_registered_manuscript_working_draft_2026-07-20.md)，另一份是
+[14 天保姆式学习路线](lgwo_a24_14_day_caretaker_route_2026-07-20.md)。
+
+论文稿不是提前宣布“我们比 FNO 好”，而是提前规定：LGWO 如果要被认为有用，必须在相同数据、相同
+`24F/24A^T` 外壳和相同端到端成本下，正面比较 CGLS、简单阻尼/插值、learned warm-start、DCDM/FCG-NO
+风格方法以及直接 DeepONet/FNO/iFNO；不能只报平均场误差，还要报逐 rig 尾部、A/B reprojection、harm、
+wall time、内存和训练成本。planned figure 只写“这张图要回答什么”，结果格保持空白。这样将来即使方法失败，
+失败也会留下可审计的科学结论，而不是临时换指标。
+
+14 天路线则把门槛拆小：先看懂 `Ax=y` 和为什么 `A^T` 不是“把图像倒着算”；再手验 dot-product identity、
+跑公开 PSU 的 matrix-free forward/adjoint 与小规模 CGLS；然后读 LGWO 的零 correction 控制、固定预算和
+geometry split；最后根据师兄是否能给 JVP/VJP、native residual 和匿名最小几何，选择导数稳定、有限视角
+或同精度降成本中的一条真实支线。每天都有口述检查、产物和降级路线，不需要第一天就啃完整 NeRIF 代码。
+
+现在最重要的外部动作仍然很朴素：把
+[第一次真实接口沟通单](n5_d5_advisor_first_contact_2026-07-19.md) 发给何远哲师兄。没有 callable、residual
+层级、标定、split 与组内强基线，租 GPU 只会更快地产生无法解释的 synthetic 数字。
+
+**突破监测：没有算法突破。新增的是可证伪论文骨架和 14 天执行路径；scientific cases = 0，optimizer steps = 0。**
+
+## 154. 先问第一方向值不值得学：PSU-C1 给出了诚实的 NO-GO
+
+我们本来准备让一个小网络修改 CGLS 的第一条搜索方向。直觉上这很省：网络只给一个小偏转，后面仍由物理算子
+做 23 步。但“模型小”不等于“问题值得学”。最便宜的检查是先把三维真值交给一个只用于评价的 oracle，看看它
+在固定 5% 修正半径里，最多能给 24 步终点带来多少好处。
+
+第一次运行虽然完成了，却没有直接拿来写结论。独立复审发现六个问题：留出视角可能被静默丢掉；oracle 多算的
+一次伴随没记账；图片用真值挑了最好案例；本地几何没有和公开 PSU manifest 锁死；离线 fit 的 96 个
+case-equivalent 伴随没报告；失败时还会删掉临时目录。我们把第一次结果标成无效，并且不改方法、随机种子、split、
+半径和门槛，只补审计再重跑。
+
+审计版共 1,296 行：6 个描述性 split、每个 24 cases、9 种方法。独立 validator 重新算了 54 个聚合单元，结果
+为 `VALID`。两个最重要的数是：truth-only oracle 在 IID 只有 +1.1288% field gain，在 family-OOD 只有
++1.2465%；预先写好的门是每个 split 至少 +5%。所以第一方向不是当前值得扩成神经网络的自由度。linear
+observable 虽然有约 +1.03%/+1.05%，但同样没过 2% 均值门，也没有比 fixed direction 多 1 个百分点。
+
+真正让路线发生变化的是 inverse-Sobolev 对照。它在六个 split 上把解析场误差改善了约 42%--53%，held-out B
+也明显更好；但 active measured residual 经常更差，family-OOD 达到 baseline 的 4.53 倍。这不是“Sobolev
+算法胜利”，而是在告诉我们：24 步未正则化 CGLS 可能正在追噪声或模型误差，控制误差的关键更像是正则化强度和
+停止点，不是第一步往哪个方向偏 5%。
+
+下一主候选因此改成一个更低维的 observable regularization/stopping policy。它只看 geometry、noise、残差轨迹、
+`A^T r` 和少量 Ritz/Lanczos 标量，只输出受限的 `lambda_k`、固定谱基凸组合或 stop/continue，并且必须通过 active
+residual envelope、held-out proxy 和 deterministic fallback。先用 ridge/logistic 证明信号，再考虑小网络；若简单
+policy 没有过 fixed-strength、discrepancy、TV/Huber 和 FCG-NO-style 强基线，就停止。
+
+完整数字、图、可复现入口和给何远哲师兄的九个问题见
+[PSU-C1 NO-GO 与下一算法路线](lgwo_a24_psu_c1_simple_controls_no_go_2026-07-20.md)。
+
+**突破监测：无算法突破；有真实路线收缩。first-direction fit 未获授权，scientific L1 cases = 0，optimizer steps = 0。**
+
+## 155. 不再“搜一个更大的网络”：把下一题拆成五级可证伪实验
+
+PSU-C1 之后最危险的反应，是看到 inverse-Sobolev 的大 field gain 就立刻训练一个网络预测正则项。文献核对表明，
+“从 observation 学正则参数”、hybrid Krylov、flexible regularization、learned CG direction、neural
+preconditioner、unrolled data consistency 和 null-space learning 都已有直接先例。只写一个 MLP 输出 `lambda`
+既不新，也没有回答 BOST 中最真实的几何、噪声和一致性问题。
+
+因此新建了
+[正则化与停止策略文献地图](psu_c1_regularization_stopping_literature_map_2026-07-20.md)。它没有把论文名堆成清单，
+而是给每篇标了“在本项目里扮演什么角色、要提取什么、不能借它声称什么”。初学顺序先从 Hansen 的不适定
+逆问题和 Chung--Gazzola 的 hybrid projection 开始，再读学习正则参数、warm-start、DCDM、FCG-NO、MoDL
+和 Learned Primal-Dual，最后回到 NeRIF、TDBOST、公开 PSU 与 2026 Neural RI Primitives 的组内/新颖性边界。
+
+下一候选暂用工作名 OARS-BOST，但这只是整理实验的标签，不是算法成果。它保留 `A/A^T` 与经典 Krylov 主体，
+只允许控制器读取 geometry、noise、残差轨迹、`A^T r`、少量 Ritz/Lanczos 标量和独立 B consistency；输出被限制为
+有界正则强度、固定正则基的凸权重、stop/continue/reject。越出校准范围、破坏 residual envelope 或出现异常时，
+必须回退到 deterministic baseline。
+
+实验被拆成五级：S0 先比较 fixed-K、discrepancy/GCV 和 hybrid stopping；S1 只用 ridge/logistic 验证可观测信号；
+S2 才允许两层小 MLP；S3 才看多步轨迹；S4 必须等真实连续 run 和 TDBOST baseline。任何一级没有独立 headroom，
+就停止升级。第一项真正要跑的新实验也很朴素：保存每个 PSU case 从第 1 到 `K_max` 步的 field、A、B、H1、
+Ritz 与成本轨迹，先证明“最佳停止步是否真的随 case/geometry/noise 改变”。
+
+这一步把“开发自己的算法”变成了一个可以失败、可以复算、也能向师兄解释的研究问题。现在仍没有训练新模型，
+也没有真实 BOST 成绩；下一科学门是师兄确认真实 callable、主误差与强 baseline，然后再冻结 R0/R1 协议。
+
+**突破监测：没有算法突破。新增的是一条经过一级来源碰撞检查的模型阶梯和最低发表门；当前下一步为 R0 半收敛轨迹，不是神经训练。**
+
+## 156. 先问早停有没有标签：答案是没有，但看见了更真实的矛盾
+
+R0 真的把 168 个解析反应场 case 都从 `k=1` 跑到 `k=24`，共保存 4,032 个 checkpoint。原问题很简单：
+每个样本的最佳停止步会不会不同？如果会，而且差很多，我们才值得让一个小模型根据 residual、noise、geometry
+去猜 `k`。
+
+结果是 test-IID 和 family-OOD 的 truth-field oracle 在 48/48 个 case 上都选 `k=24`。这意味着把真值都交给
+oracle，它仍然只会回答“继续跑到最后”。这种标签不能支撑神经早停：网络学得再漂亮，本质上也只是常数 24。
+noise discrepancy 在高噪声和 joint-OOD 中确实选出了很多不同的 `k`，但相对 `k=24`，field 分别差约 0.35%
+和 0.32%，held-out B 也更差。标签有变化，却不是有用的变化。
+
+更值得继续的是另一组数。IID 从 `k=1` 到 `k=24`，field relative-L2 平均改善 6.41%，但 gradient
+relative-L2 平均恶化 30.96%；family-OOD 是改善 7.07%、恶化 23.80%。两个主分区的每一条轨迹都这样走，
+而且 24 个平均 checkpoint 都处在 field/gradient 的 Pareto 曲线上：多跑一步，field 更好一点，gradient
+就更坏一点。只挑停止点无法跳出这条曲线。
+
+这里还有一个初学者很容易混淆的地方：front top-10% F1 大多在上升。它只问“最强的一小部分边缘位置有没有
+重叠”，gradient L2 则比较整个三维梯度场的幅值和方向。主要前沿位置可以逐渐找准，同时体内出现更多弱振铃和
+高频误差，所以两个指标并不矛盾，也不能互相替代。
+
+下一步不训练停止网络。先用同一 `24F/24A^T` 预算画完整的 H1/Sobolev、Tikhonov、TV/Huber、hybrid
+projection 和 edge-superiorization 路径，看看能否造出支配旧 Pareto 曲线的新 checkpoint。只有经典固定方法
+无法解释、truth-only 新路径确有 headroom、observable 线性规则能保留信号，而且师兄确认真实 callable、主指标
+和组内基线后，才允许用小模型输出有界正则强度或固定滤波器的凸权重。
+
+完整报告、图和复现入口见
+[R0 早停 NO-GO 与正则化冲突](lgwo_a24_r0_semiconvergence_no_go_2026-07-20.md)。
+
+**突破监测：没有算法突破。R0 关闭了当前 24 步路径上的 learned stopping，打开的是“怎样改变路径以兼顾场值与梯度/前沿”的下一实验问题。**
+
+## 157. H1 锁箱过门了：我们找到了强基线，还没找到新算法
+
+R0 告诉我们，无正则 CGLS 跑得越久，体场误差越低，全局梯度误差却越高。这一轮没有马上训练
+网络，而是先问一个更基础的问题：经典 H1 正则能不能同时救 field 和 gradient？如果能，以后的新方法就不能只拿 CGLS
+当弱对手。
+
+首次正式运行之前，两位独立审计者又找到了几个容易让数字显得比实际更好的漏洞：四个主指标原本没有共用同一个 bootstrap
+采样 mask；个别灾难性 case 可能被平均数盖住；程序没有二次确认自己真的在预注册 commit 上运行；9 个 active views 还会让 9 视角
+几何的 held-out set 变空。我们在打开锁箱前把这些都修了，把 active views 改成 6--8，为四个终点统一用 50,000 次 cluster
+max-T bootstrap，并加上最差 case、最差 cluster、harm、active residual 和 held-out-B 硬门。
+
+正式运行只打开了一次，共 336 cases、672 条求解路径、3,360 条 checkpoint 记录。固定 H1 相对同预算 CGLS 的结果是：
+
+- IID：field `+3.6412%`，gradient `+7.8708%`，最差 case 仍为 `+1.3181% / +5.0631%`。
+- family-OOD：field `+4.0791%`，gradient `+8.1137%`，最差 case 为 `+1.8017% / +4.6598%`。
+- joint-OOD：field `+3.7626%`，gradient `+7.8189%`，最差 case 为 `+1.5587% / +2.5232%`。
+- 无失配 exact-operator control：field `+3.7152%`，gradient `+8.2085%`。
+- 四个分区的逐 case 和逐 cluster `>2% harm rate` 都是 0。
+
+一个不导入正式 runner 统计函数的独立 validator 又重算了 43,932 项，结果是 `VALID`。如果偷改 decision CSV 中的一个数，
+它会返回 `INVALID`。这一步很重要，因为“同一份代码说自己算对了”不等于独立复算。
+
+该怎样解读？好消息是，R0 的 field-gradient 冲突在这个合成体系中不是无法跳出的，改正则路径是对的。更重要的现实是：
+H1 是经典方法，不是我们的新算法。它现在变成了一个更强的“守门员”。后续 TV/Huber、H1-TV 混合或神经控制器，如果只赢 CGLS 却赢不了 H1，
+就没有充分的算法贡献。
+
+下一步仍不是训练大网络。先在完全相同的预算、split 和尾部门下比较固定 TV/Huber；只有它们和 H1 各自显示不可互换的优势，才实现
+H1-TV/Huber 固定凸组合或 hybrid path。只有不同 case 的最优组合真的不同，且 geometry/noise/residual/Ritz 能在不看 truth 的情况下预测它，才给一个小模型
+授权。
+
+完整预注册、表格、图、成本与师兄问题见
+[R2-A H1 合成锁箱结果](lgwo_a24_r2a_h1_lockbox_result_2026-07-20.md)。
+
+**突破监测：没有算法突破；有重要证据里程碑。H1 合成锁箱经独立复算通过，现在是下一阶段必须击败的强基线；新算法、真实 BOST、未见实验 rig、神经模型与论文成功仍为 0。**
+
+## 158. TV 还没开跑，先把“步子能迈多大”算诚实了
+
+H1 锁箱之后原计划直接比较 TV/Huber，但旧 scalar-PDHG 已经暴露过一个问题：统一步长太小，几十步内几乎停在零场。继续扫正则权重只会把“走不动”误诊成“TV 没用”。所以这一轮先解决更基础的问题：怎样给每个相机缺失模式的加权 BOST 算子算一个绝不会低估的谱范数上界。
+
+旧办法把射线投影 `M` 和三维差分 `D` 拆开，各自取最坏行列和再相乘。它严格，却非常松。在公开 PSU 九视角、QMC8、`32^3` 几何上，旧上界是 40 步幂迭代估计的约 56 到 85 倍。拿它做 PDHG 步长当然安全，但会慢得没有公平比较价值。
+
+新办法直接使用比较矩阵 `C = W|M||D|P`。代码逐 chunk 算 `C` 的行和与列和，不展开巨型矩阵；因为真实矩阵的每个绝对值都不超过 `C`，`||C||_1||C||_infinity` 仍是严格上界。小算例用显式 SVD 反查，流式和单块实现、不同 chunk 切法、CPU/MPS 路径都对上。
+
+正式 post-open 诊断固定了 10 个缺失视角模式，覆盖 4、6、8、9 个活动相机。新证书相对 power-40 estimate 为 `5.87--11.50x`，旧证书为 `55.86--84.76x`；等于把保守度再压低 `7.30--10.31x`。10/10 都选中新证书，建立证书的物理调用仍是 `0F/0A^T`。独立 validator 重算 155 项，返回 `VALID`。
+
+下一步也因此更清楚：新标量上界仍偏松，不能马上宣称 TV 会赢。最值得做的是从同一个 `C` 构造逐体素对角 majorizer `q_j = sum_i C_ij sum_k C_ik`，先在小矩阵上证明 `diag(q)-A^T A` 半正定，再接到 diagonal/block PDHG。只有 data-only 收敛先改善，才加入 TV/Huber；只有同预算击败封存 H1，才进入 H1-to-Huber hybrid 和有界学习选择器。
+
+完整推导、图和复现入口见 [R2-B0 范数证书诊断](lgwo_a24_r2b_norm_bound_diagnostic_2026-07-20.md)。
+
+**突破监测：阶段性基础设施突破，但没有算法或论文突破。严格证书约收紧一个数量级；TV/Huber 重建、field/H1/front 收益、真实 BOST 与泛化证据仍为 0。**
+
+## 159. 逐体素安全步长算出来了，也暴露了不能装作看不见的零覆盖
+
+上一轮只得到一把“全场共用的尺”：不管体素被多少射线穿过，PDHG 都只能用同一个最坏步长。这轮把比较矩阵的每行质量反传回体素，得到 `q=C^T(C1)`。直观地说，`q_j` 是体素 `j` 在当前相机、噪声权重和射线离散下被数据项“拉住”的严格强度上界。
+
+先没有相信自己的推导。我们在 `5 x 6 x 7` 网格上把整个加权物理矩阵逐列展开，直接检查 `diag(q)-A^T A` 的最小特征值，并额外试了 16 个随机二次型。streaming/单块、不同 chunk、support、全零权重、错误输入和 MPS 转 CPU float64 也都分别检查。聚焦回归 `29 passed`，产物 validator 重算 `333` 项后返回 `VALID`。
+
+公开 PSU 的 10 个缺失视角模式上，`max(q)` 比上轮 composed 上界再紧 `1.11--1.70x`，相对冻结 power-40 estimate 为 `4.57--6.84x`。这说明它仍保守，但比全局行列最坏乘积更精细。
+
+真正需要停下来想的是另一个数：support 内只有 `54.2%--68.6%` 的体素得到正 `q`，10 个 mask 累计有 `102,715` 个 support 内零质量。这不是说流场在那里为零。当前合同每视角只有 256 条射线、每条 QMC8，support 却是整个 `30^3` 内部立方体；零 `q` 只说明这个离散数据项没有触达该坐标。曲光线、更密射线或组内真实几何都可能改变它。
+
+所以不能直接把 `1/q` 塞进 TV/Huber 然后开跑。data-only 健康检查必须冻结零 `q` 坐标并保留 coverage ledger；完整求解要先给 forward-Neumann 正则梯度构造 `q_G=|GP|^T(|GP|1)`，再用 `q_total=sigma_A q_A+sigma_G q_G` 证明组合 metric 的 Schur 安全性。TV 可以把邻域先验传到数据未触达的坐标，但必须明说那是正则先验，不是相机突然提供了新信息。
+
+完整推导、图、NPZ 体素场、复现入口和下一道算法门见 [R2-B0D 逐体素 majorizer](lgwo_a24_r2b_diagonal_majorizer_2026-07-21.md)。
+
+**突破监测：没有算法或论文突破。有可验证的数值基础设施进展，并新发现了当前公开离散合同的稀疏覆盖风险；重建收益、真实 BOST、未见 rig 和论文主张仍为 0。**
+
+## 160. 第一个完整对角求解器跑了，结果是应该留下的 NO-GO
+
+这一轮把上节的计划真正接到了求解器。数据项用 `q_A`，forward-Neumann 正则梯度另外构造
+`q_G=|GP|^T(|GP|1)`，固定 dual steps 后得到 `q_total=sigma_A q_A+sigma_G q_G`。小网格上不仅检查
+`diag(q_G)-G_P^T G_P` 半正定，还把真实 PSU 小算子和梯度矩阵堆起来，直接算归一化谱范数。CPU、MPS、内容摘要、
+零质量冻结和每轮 `1F/1A^T` 共 `57 passed`。
+
+首次开发运行在提交过的固定配置上完成：6 个解析反应场 proxy、4--9 视角、固定噪声，scalar 和 diagonal
+都是 `20F/20A^T`。data-only 分支明确失败：field 平均恶化 `95.20%`，gradient 恶化 `338.59%`；它虽然
+把残差压得更低，却在 `q_A` 只覆盖 support `49.3%--68.6%` 时用极大局部步长追数据，所以不能当质量候选。
+
+加上 `q_G` 后 6/6 case 都补齐了 support，不再灾难性失败。但固定 Huber-gradient 下，field 只平均改善
+`+0.1469%`，gradient 在 6/6 case 全部恶化，平均 `-0.8203%`。因此预写开发门是 NO-GO。独立 validator
+重建 metric、重算汇总、核对调用与图像，`376 checks` 通过。这是算法候选的真失败，不是突破。
+
+下一步不盲扫 lambda。scalar 证书和 diagonal 证书都使各自的矩阵差半正定，所以用一个 case-level
+`beta in [0,1]` 做 `q_beta=(1-beta)q_scalar+beta q_diagonal` 仍是严格安全的标量凸组合。它可以在保留 scalar
+保底的同时逐步开放对角加速。但不能直接让网络输出逐体素 `beta_j`：那时已不是两个 PSD 矩阵的标量凸组合，
+安全证明会丢。先在已打开开发集画固定 beta 路径，若中间点确实同时救 field/gradient，再冻结一个 beta 到全新种子验证。
+
+完整数字、图、证明和下一候选见 [R2-C 对角 PDHG NO-GO](lgwo_a24_r2c_diagonal_pdhg_no_go_2026-07-21.md)。
+
+**突破监测：没有突破。新增的是一个经 376 项独立复算的开发 NO-GO，以及下一个可证明安全的 scalar--diagonal 插值候选；新算法、真实 BOST、泛化与论文成功仍为 0。**
+
+## 161. beta 路径全部跑完：安全不等于有用，这条支线正式关闭
+
+上一节留下的问题是：完全对角化太激进，那么只开放一部分对角步长会不会同时救 field 和
+gradient？这次用一个全局标量 `beta` 把 scalar 与 diagonal 证书做凸组合。因为两个端点都是同一联合
+正规矩阵的上界，它们的标量凸组合仍然安全。五个 beta 点都在显式小矩阵上过了 Schur PSD 检查，
+而且 beta=0 与独立 scalar solver 的最大体场差只有 `4.93e-8`。
+
+但质量结果没有给任何可供挑选的中间点。beta 从 0 走到 1 时，mean field gain 从 0 严格单调增到
+`+0.1469%`，mean gradient gain 却从 0 严格单调降到 `-0.8203%`。最佳可选内点 beta=0.25 也只有
+field `+0.0351%`，gradient `-0.1879%`，6/6 case 都伤 gradient。它没过预写双指标门，所以没有资格
+换新 seed 验证。
+
+这个单调趋势比“0.25 稍微好一点”更重要：预条件器只改变走向同一个优化目标的速度和路径，不会改变
+充分收敛后的解。在当前 20 步欠收敛区间，步长越大，残差和 field L2 稍好，高频梯度误差就越坏。
+继续加密 beta 网格只会变成看结果调参，训练一个 beta 预测网络则根本没有合格标签。
+
+下一条线因此必须改变正则路径本身：用封存 H1 强基线保住低频体场，再在同一总 `F/A^T` 预算中加有残差
+回退的 Huber/TV 或 edge-superiorization 局部修正。先用固定确定性路径去打冻结 H1；只有不同 case 的最优控制
+确实不同，且 geometry/noise/residual/Ritz 可以不看 truth 保留这些 headroom，才允许一个可拒答、可精确回退 H1
+的小控制器。
+
+运行共 36 条求解路径、`720F/720A^T` 和 36 次 evaluator forward；独立 validator 从 NPZ 重建 30 个证书、
+复算汇总、趋势、哈希、图像和结论边界，`709 checks` 通过。完整报告见
+[R2-C2 beta 插值 NO-GO](lgwo_a24_r2c2_beta_interpolation_no_go_2026-07-21.md)。
+
+**突破监测：没有突破。有效增量是一条经 709 项独立复算的单调反证，它正式关闭“只调全局 beta / 学 beta”支线，并把下一问题收窄到能否用改变目标路径的固定 hybrid 击败 H1。**
+
+## 162. 第一次 edge 预跑被审计否决，第二次才得到能成立的 NO-GO
+
+这一轮最重要的事情不是某个百分比，而是没有把做错的第一次运行藏起来。R2-D0 v1 已经跑出 42 行后，
+独立审计发现它把冻结 H1 的 `denominator_floor=1e-16` 写成了 `1e-20`；同时虽有 `rho=0` 纯数据控制，
+联合门却没有要求非零 edge 候选必须胜过它，伴随缺陷也只是记录，没有作为拒绝门。于是 v1 被明确标成
+`INVALID_PROTOCOL_DRIFT_NO_SCIENTIFIC_DECISION`。这些数既不能叫成功，也不能叫算法失败，只能保留为调试溯源。
+
+修订后的 R2-D1 没有假装自己还是第一次。配置明确写入“已观察 42 行”，恢复精确 H1 合同，并增加 matched
+`rho=0`、front-F1、held-out clean、伴随恒等式和 edge 实际正步长门。它比较了 `19+1`、`18+2`、`16+4`
+三种预算分配，每种测试 `rho=0,1,2,4`，另有 H1-20；6 个已见 case 共 78 条独立轨迹，每条都是
+`20F/20A^T`，没有共享 H1 前缀后只在表里补调用数。
+
+这一次得到的是有效 NO-GO。最接近的 `19+1, rho=4` 相对 H1-20 的 mean field/gradient gain 仍是
+`-0.4335%/-0.1233%`，加权 residual ratio 为 `1.0378`，超过预写 `1.02` 门。它相对自己的纯数据控制却有
+`+0.0676% field / +0.3959% gradient`，说明 edge 方向确实有局部作用。更激进的 `16+4, rho=4` 对控制的
+gradient gain 达 `+1.4886%`，但相对 H1-20 仍为 `-0.1917%`，residual ratio 恶化到 `1.2250`。
+
+讲人话就是：最后几步里，Huber 方向比普通数据梯度更会保护边缘；可是把 H1 的有效迭代拿走来换它，损失更大。
+所以这条支线关闭的是“替换 H1 末步”，不是武断地说所有 edge prior 都无效。也不继续在同六个 case 上扫
+`rho=8/16` 或 trust radius，因为 residual 已随 rho 系统恶化，继续调会变成看答案找参数。
+
+最后又做了一次真正独立的复算：validator 没调用 runner 的聚合/选择函数，而是从 78 行 CSV、78 份 histories
+和冻结配置重建 12 个汇总、选择行、matched `rho=0` 归因、20F/20A^T、5/6 held-out、front、伴随与 168 个
+修正步，共过 561 项检查。它也抓住一个不能抹掉的小缺口：runner 当时漏绑了一个 imported helper。提交 blob 与
+当前文件哈希一致，所以可以事后闭合依赖并保留 NO-GO；但这不等于执行瞬间的 manifest 完整。页面会明确写
+`PASS_WITH_POST_RUN_DEPENDENCY_CLOSURE`，下一次 runner 必须在运行前绑定完整 import closure。
+
+下一候选改成 R2-E0：完整保留 H1-20，缓存已经付费得到的 Krylov 搜索方向和 `A p_k`，再在 20 维系数空间内
+做不增加物理投影的固定重优化。先证明缓存版与冻结 H1 逐位一致、数据 residual 可由缓存精确重算、固定非学习
+目标能产生 headroom；只有这些成立，才考虑让小模型预测有界系数或 accept/fallback。
+
+完整协议、数字和下一步见
+[R2-D1 edge 预算分配 NO-GO](lgwo_a24_r2d1_edge_budget_allocation_no_go_2026-07-21.md)。
+
+**突破监测：没有突破。有效增量是一次公开保留的无效预跑、一个经 561 项独立复算且明确标注事后依赖闭合的 78 路同预算 NO-GO，以及“edge 有局部信号但不能替换 H1”的机制定位。真实 BOST、fresh seeds、泛化与论文成功仍为 0。**
+
+## 163. 把 H1 的 20 个方向全部留下再调权重，还是没有可用余量
+
+上一节留下的 R2-E0 已经真正跑完。思路很朴素：H1-20 的每一步都要付一次 forward 和一次
+adjoint，那就把 20 个搜索方向 `P` 和它们的投影 `A_w P` 全部缓存下来。H1 结束后，不再调用物理
+算子，只在 20 个系数上做小优化。这样既不牺牲 H1 的迭代，也不会偷偷增加昂贵的光线追迹预算。
+
+这次先遇到了两个很具体的软件问题，而且都没有藏。v1 在把 MPS 张量送到 CPU float64 做最小二乘时
+污染了右端项；v2 修了最小二乘，却漏掉 Huber 优化器里的同类转换。两个目录都只留下
+`invalid_attempt.json`，明确写 `result_valid=false`，没有把报错混进算法均值。v3 才把所有
+CPU-double 入口和 MPS 返回统一起来，并增加最小二乘、完整 Huber、residual-safe oracle 三个 MPS
+回归测试。
+
+讲人话解释这 20 维小问题：原来 H1 找到了一间只有 20 个方向的房间。R2-E0 允许在房间里任意挪动，
+但不允许打破墙。结果 data-only 最小二乘能把观测残差平均压到 H1 的 `0.8951`，却让 gradient error
+恶化 `1.6445%`；四个 Huber 权重几乎一步都走不动，最大场变化只有约 `1e-10`。truth-free 规则最后把
+`huber_ratio_200` 当诊断对象，但它只有 4/6 case 接受过步长，低于 0.8 门，而且质量等于 H1 到数值
+噪声尺度。
+
+最有价值的是 oracle。不给 residual 限制时，知道 truth 的 oracle 确实能把 gradient 改善
+`14.52%`，但 field 反而差 `2.384%`，观测 residual 变成 `10.23x`。把它压回预写 `1.02` 数据门后，
+只剩 `+0.0040% field / +0.1647% gradient`。也就是说，不是四个 Huber 权重没猜中，而是当前 20 个
+方向里没有足够的“既符合数据、又修好场和梯度”的移动空间。
+
+所以现在不能训练一个网络来预测 Huber ratio。那等于让网络在四个都不合格的标签里挑一个，看起来像
+算子学习，实际没有科学问题。下一条最窄路线应先扩展 span：比较 fixed flexible/preconditioned Krylov、
+一个有 residual 回退的 edge 方向，以及 BOST geometry/noise-conditioned 方向。先用 truth-only
+representation oracle 判断新方向是否真的增加联合余量；有余量以后，才讨论用部署可见特征预测方向或
+接受/拒绝。
+
+正式运行之后又单独写了一个不导入 runner/core 的 validator。它从 72 行 CSV、候选汇总、缓存和
+等价性账本、108 个几何输入摘要、Git blob、两次无效尝试与 PNG 重新核对，873 项全部通过，NO-GO
+判决不变。但这项审计是在运行后实现的，所以准确含义只是“落盘证据内部一致”，不能倒过来说正式运行
+事前就受它约束，更不能把它当成真实 BOST 或泛化验证。
+
+这里也要防止把常见组合写成创新。hybrid/recycled Krylov、flexible Krylov、FCG-NO 和 Neural Krylov
+都已有工作。我们若有差异，只能来自 BOST 的曲光线/标定/噪声困境、严格 data envelope、拒答和跨 rig
+尾部验证。没有何远哲师兄的真实 callable、JVP/VJP、残差层级和数据 split，就还不能替实验室决定这条
+差异是否真实存在。
+
+完整数字、数学式、失败记录、文献边界和给师兄的 8 个问题见
+[R2-E0 缓存 Krylov 子空间 NO-GO](lgwo_a24_r2e0_cached_krylov_subspace_no_go_2026-07-21.md)。
+
+**突破监测：没有突破。有效进展是关闭了“同一 H1-20 span 内调 Huber 权重 / 学权重选择器”支线，并把下一问题定位到真正扩展 span 的方向生成。真实 BOST、fresh、泛化和论文成功仍为 0。**
+
+## 164. R2-F0 还没开箱：先把“新方向真的有用”这句话算公平
+
+今天的真实增量不是跑出了更好的重建，而是把 R2-F0 的判题方式补得更严格。R2-E0 已经说明：只在 H1 的
+20 个旧方向里重新配系数，几乎没有同时改善 field 和 gradient 的空间。R2-F0 因此准备加入 residual
+backprojection、Huber 先验和 edge-gated backprojection 三类固定方向。但在打开六个复用 case 前，必须先
+排除一种很容易出现的假胜利：候选因为得到了更强的 truth-only 系数优化而赢，并不等于新方向真的扩展了表示空间。
+
+这就是为什么主对手必须是 **matched H1 span oracle**。候选 C5 在 `P20 + k` 个新方向组成的空间里，用
+synthetic truth 重配全部系数，再经过同一个 residual 与 field-trust 安全 ray。若只拿它和普通 H1-(20+k)
+迭代终点 C2 比，候选同时占了“新方向”和“truth 重配系数”两种便宜，无法知道收益来自哪里。C3 则把
+H1-(20+k) 的旧经典空间也交给完全相同的 joint objective、系数求解和安全 ray。只有 C5 稳定胜过 C3，才可说
+新增方向带来了 H1 继续迭代不能解释的表示余量；这仍只是离线 oracle 上界，不是可部署算法。
+
+C5 相对旧空间 C1 的增量也必须用**百分点**，不能用相对百分比。举个简单例子：假设 H1-20 的误差是
+`1.00`，C1 降到 `0.20`，它的改善是 `80%`；C5 再降到 `0.19`，改善是 `81%`。新增方向只多贡献了
+`81%-80%=1` 个百分点，而不是拿 `0.01/0.20` 算出的 `5%`。当前门要求 field 和 gradient 都至少增加
+`3` 个百分点。这样可以防止旧 oracle 已经很强、剩余误差很小时，把一个很小的绝对变化放大成看似漂亮的相对收益。
+
+rank floor 的敏感性也不能只换一个阈值标签。`1e-5`、`1e-6`、`1e-7` 会改变 SVD 认为哪些分量已经属于
+旧增广空间 `G=[A_w;sqrt(lambda)D]`，因此必须在每一档重新做 projector、重新生成投影后的方向、重新组成 span，
+再重新求 oracle 系数、安全 ray 和最终指标。若三档共用主阈值得到的同一批方向，只在最后重算 rank，那只能说明
+记账表稳定，不能说明科学判决稳定。R2-F0 要检查的是从“方向生成”到“oracle 终点”的整条链是否对 rank floor 稳定。
+
+`DirectionPacket` 是这条链的 truth firewall。讲人话就是：先把只靠实验时可见信息能生成的东西装进一个封包，
+例如 `x20`、缓存 residual、H1 基底、support、几何与权重摘要、冻结常数以及实测 `F/A^T` 调用账本；封包先落盘、
+计算哈希并封存，然后才允许另一个 `OraclePacket` 打开 synthetic truth。前一个封包不能收到 truth、clean field、
+field/gradient 指标、带 plume 或 shock 语义的 case 名称，也不能根据 oracle 结果更换 family。它防的是方向公式、参数或
+候选集合偷偷看答案。需要特别强调：C5 的系数和安全 ray 终点仍然看了 truth，所以 firewall 只证明“原始方向没有看
+truth”，不会把 C5 变成部署方法。
+
+数值计算还要把 MPS float32 与 CPU float64 分工。大体量物理投影可以继续在 Mac 的 MPS float32 上跑；但小型
+projector、SVD、截断最小二乘、oracle 系数和安全 ray 对微小奇异值很敏感，统一转到 CPU float64 计算，再把需要继续
+走物理路径的张量送回 MPS。这样保护的是 `1e-5` 量级的 rank、near-null 和 ray 判定不被 float32 舍入噪声伪造，
+不是在证明物理模型正确，也不是在证明真实 BOST 泛化。
+
+当前可复核的软件证据如下：方向核心与 runner 的聚焦单元测试为 `23 passed`；从仓库根目录显式使用
+`PYTHONPATH=.` 启动的独立 validator 测试为 `13 passed`，合并运行是 `36 passed`。synthetic validator 的
+伪造证据包包含 40 个方法、240 条主指标、144 条 rank-floor 指标、6 条 projector sensitivity 和 6 个 NPZ，
+独立重算 `20,185` 项，并对指标、case 删除、方法互换、调用账本、rank floor、方向哈希、NPZ、truth flag、
+artifact hash、敏感性指标和 projector 状态共 11 类篡改 fail-closed。这证明单元公式和 synthetic 验证器合同能抓住
+这些错误；它没有运行正式 runner，没有重新生成真实 `A/A^T`，也没有证明正式产物已经与 validator 完整兼容。
+
+因此正式 R2-F0 继续保持 `HOLD_R2F0_PROTOCOL_NOT_READY_TO_FREEZE`。配置中的源码绑定仍为空，正式目录与
+`.incomplete` 目录都不存在，**R2-F0 打开的正式科学 case 数仍为 0**。下一道门是：逐条闭合冻结前红队的 P0/P1
+问题，尤其是 end-to-end rank-floor、DirectionPacket 先封存后开 oracle、实测调用账本和原子证据清单；随后把
+runner、core、config、validator、既有证据与 import closure 绑定到同一个 HEAD，让 runner 产生的 synthetic
+dry-run 包通过独立 validator，再做第二轮红队复审。只有这些全部通过，才允许冻结配置并对六个已打开过的 mechanism
+case 做一次正式 R2-F0；即使过门，也只得到 `REPRESENTATION_SIGNAL_ONLY_NO_AUTHORIZATION`，不能直接训练网络或
+声称真实重建、泛化与论文成功。
+
+来源边界与冻结问题见 [R2-F0 一级来源边界](lgwo_a24_r2f0_primary_source_boundary_2026-07-21.md) 和
+[R2-F0 冻结前红队](lgwo_a24_r2f0_protocol_red_team_2026-07-21.md)。
+
+**突破监测：没有突破。今天新增的是更公平、可证伪的 R2-F0 判题合同，以及通过单元与 synthetic 篡改测试的验证器骨架；算法收益、正式科学结果、真实 BOST、fresh、泛化、学习器授权与论文成功仍为 0。**
+
+## 165. R2-F0 的软件护栏更严了，但科学盒子仍然没打开
+
+上一节说“先把方向封存，再看 synthetic truth”。第二轮红队继续追问：即使顺序没错，判题公式本身有没有可能让一个普通方向看起来像新方向？答案是有，而且这次确实找到了几处需要修的地方。
+
+最重要的一处是三方向联合 `RHE` 的对手。它不能只和 `R`、`H`、`E` 三个单方向比，还必须和 `RH`、`RE`、`EH` 三个双方向比。否则一个有效信息其实已经由两个方向提供，第三个方向只添了很小噪声，联合体仍可能被误报成“三者协同”。现在 `RHE` 必须超过六个真子空间；单测专门构造了“超过所有单方向、但输给一个双方向”的反例，结果必须 fail。
+
+第二处是“空间新颖”不能只看几根向量两两不平行。想象旧 `P20` 是一张二十维薄纸，新方向看起来彼此夹角很大，却可能整组仍几乎躺在旧纸面里。现在 runner 和独立 validator 分别用 PyTorch float64 与 NumPy 计算 canonical correlation、最小主角和实际秩增量。只有整个新子空间确实从旧空间里伸出来，才有资格进入表示门。
+
+第三处是数值精度。Mac 的 MPS 很适合跑大投影，但 float32 不适合在 `1e-5` 附近决定一个奇异方向该保留还是删除。现在小型线性代数、oracle 系数、安全 ray、field/gradient 指标和最终判门都留在 CPU float64；只有明确送进物理算子的 endpoint 才转换设备 dtype。若任何连续指标离门槛太近，协议直接给出 numerical ambiguity，不允许靠最后几位舍入赢。
+
+独立 validator 也不再只核对 runner 写出的数字。正式结构要求保存 PSU 离散射线采样的索引、三线性权重、投影坐标和 ray scale；validator 只用 NumPy 重建一套 `A/A^T`，重新计算 40 个主方法投影、三档 floor 的 24 个投影、伴随探针和自己的内积恒等式。小型正例能通过，修改投影或伴随后会 fail。这说明将来正式包里的公开 PSU 物理核可以被另一套实现复核，但不说明真实 OERF 曲光线、标定或实验噪声已经正确。
+
+当前聚焦套件为 `77 passed`，Ruff、字节码编译、配置状态和差异检查也通过。这里的 77 是软件测试数，不是实验 case 数。正式配置仍是 `HOLD_R2F0_PROTOCOL_NOT_READY_TO_FREEZE`，源码绑定为空，正式目录与 `.incomplete` 都不存在，**打开的 R2-F0 科学 case 仍然是 0**。
+
+接下来先等第二轮只读红队给出最终 P0/P1 清单，再决定能否冻结公开 PSU reused-case audit。更重要的外部门没有变化：需要用 [给何远哲师兄的首次接口清单](n5_d5_advisor_first_contact_2026-07-19.md) 确认真实 callable、straight/curved residual 层级、JVP/VJP、几何标定、主要失败模式、认可基线、数据 split 和宿主合同。没有这些信息，可以继续把公开机制实验做严谨，但不能替实验室发明真实物理困难。
+
+**突破监测：没有突破。新增的是更难被假阳性骗过的协议、独立离散物理核复算和 77 项软件证据；正式表示收益、可部署学习器、真实 BOST、fresh、泛化与论文成功仍为 0。**
+
+## 166. 不再继续造协议：先把师兄的九个回答变成研究路线
+
+R2-F0 的软件护栏已经足够多，继续增加签名、账本或 synthetic 角色不会告诉我们实验室真正卡在哪里。当前最有价值的动作，是让何远哲师兄确认真实 forward、数据和主痛点。仓库原本已有七门 N2 数据合同、空白 JSON 和 validator，但它们适合机器检查，不适合边聊微信或开会边记录。因此新增了一个独立的 [真实接口回复工作台](../advisor_interface_intake.html)。
+
+工作台只问九类事实：主痛点、场参数化、可调用的 `A/Aᵀ` 或 forward/JVP/VJP、straight/curved/direct residual 的形成层级、hard branch、独立 split 单位、最小匿名资料、组内强基线与主指标、保存和论文权限。未知值保持“待确认”，不会用默认选项替师兄补答案。
+
+这些问题不是通用 AI 问卷。NeRIF 的一级来源明确给出九路投影、实验 8+1 留出、DeepFlow 位移、按标定 ray 反向采样；数值数据生成附录使用 RK4 ray tracing，而结论把 nonlinear ray tracing 作为可继续集成的能力。因此我们必须向师兄确认真实反演代码到底处在哪一层，不能从论文措辞直接断言。同步 PIV-BOST 又表明，三维折射率重建会进入真实速度测量补偿链，小火焰条件下报告的瞬时速度误差量级约为 ±2%；所以最终指标不能只剩一个三维 field L2，还要问同步、像面、梯度与最终物理量误差。
+
+工作台目前预写八条条件路线：导数一致性、straight-to-curved discrepancy、有限孔径、标定漂移、位移提取、有限视角、端到端成本和 4D 序列。每条只给出第一项可失败实验、必须比较的强基线与停止条件。例如只有当主痛点选 ray bending、存在成对路径且 callable 支持导数时，才显示 `ROUTE_PAIRED_RAY_MISMATCH_READY`；缺任何条件就返回 `NEEDS_*`，不会自动命名新算法。
+
+页面的真实交互测试已经完成：选择 ray bending、implicit field、forward+JVP+VJP、独立 curved/straight、无已知 hard branch、session split，加上最小 callable/geometry/high-fidelity forward、组内基线和本机保存权限后，进度为 `9/9`，路线正确变为 paired-ray mismatch；保存、刷新恢复和清空均通过。测试草稿已经清空。桌面与 390px 移动端没有文本溢出，静态页面测试为 `3 passed`。
+
+导出的 `ADVISOR_REPLY_DRAFT` 仍不是 N2 数据合同。收到师兄确认后，要人工核对事实并映射到 `data_templates/oerf_n2_lab_intake.placeholder.json`，再运行七门 validator。工作台中的所有 claim 位默认都是 false；它不授权训练、audit 开封、私有数据上传、真实 BOST 改善、泛化或论文成功。
+
+**突破监测：没有突破。新增的是把“等师兄回复”变成可操作、可分流、不会偷填事实的本地工作台；真实 callable、真实数据、正式重建结果和论文贡献仍为 0。**
+
+## 167. 先用一个小实验把五个基础概念串起来，再碰大网络
+
+前面的路线已经把伴随、gauge、CGLS、几何漂移和算子学习分别讲过，但对初学者来说，它们仍像五门不相干的课。这次新增了一个 CPU-only 的一维线性小实验，把它们接在同一条因果链里：64 维 synthetic field 经过 24 个均值为零的导数核形成 measurement；核的位置由一个标量几何参数控制。这个参数只是 operator shift 教具，不是相机标定或真实曲光线模型。
+
+实验先过三项结构门。随机向量上的伴随内积相对误差为 `2.41e-16`；常数场响应比为 `1.84e-17`；把任意场整体加 `0.7` 后，measurement 相对变化为 `2.63e-16`。它们说明离散转置和预设 gauge 结构按代码工作，不说明 forward 是正确 BOST 物理。
+
+随后比较四条路线。fixed ridge 只看 `y`，geometry-conditioned ridge 看 `[y,g*y]`；两者使用完全相同的 240 个训练 case、噪声、truth 与 ridge alpha。nominal Tikhonov 永远用 `A0`；exact Tikhonov 每个 case 都得到正确 `Ag`，所以只是 privileged teacher。在 `g=0/0.02/0.06` 三点，conditioned 相对 fixed 的平均 field error 降低 `19.68%/39.27%/52.47%`。但外推时 exact teacher 的 `0.04766` 仍优于 conditioned 的 `0.06382`，提示“把物理算子弄对”仍有余量。
+
+最值得记住的是 CGLS 半收敛。第 7 步 field error 最低，为 `0.11065`，measurement residual 为 `0.03412`；继续到第 36 步，residual 降到 `0.01340`，field error 却爆到 `5.31624`。所以实验室以后即使给出漂亮 reprojection，也不能把它自动当作三维场正确，必须有 stopping、正则化、held-out view 和独立物理指标。
+
+独立审计补充了三个必须当面写出的限制。第一，conditioned ridge 有 3,072 个系数，fixed ridge 只有 1,536 个，而且前者多拿了几何侧信息；所以这是 information/capacity ablation，不是同容量架构竞赛。第二，第 7 步由 synthetic truth 事后选出，只是 oracle diagnostic，不能当部署 stopping rule。第三，clean-measurement residual 用 evaluator-only 无噪声投影计算，不是模型收到的 noisy residual。
+
+代码、测试、JSON、两张 CSV 与四联图已放入 `learning_labs/`。定向测试增至 `6 passed`，其中一项实际运行两次并比较完整 report 与数组；报告还记录 Python、NumPy、Matplotlib、平台和源码 SHA-256。默认结果与第二次独立运行的四个产物逐字节一致。这个确定性只证明同一环境能重放，不证明真实物理。完整讲解见 [算子基础小实验中文导读](operator_foundations_lab_guide_2026-07-21.md)。
+
+**突破监测：没有突破。当前新增证据严格属于 `EDUCATIONAL_SYNTHETIC_LINEAR_PROXY_ONLY`；真实 BOST、三维重建、新算法、DeepONet/FNO 优越性、跨 rig 泛化和论文成功仍为 0。下一有效门仍是师兄确认 callable、residual 层级、JVP/VJP、几何、split、基线与权限。**
+
+## 168. 第一次明确让 `A_true` 和 `A_est` 分家：标定修正有功效，但安全门会漏检
+
+一维小实验默认算法知道正确几何，这次把更接近真实 BOST 的麻烦单独拿出来：连续解析场和真实 ray 生成观测 `y=A_true x+noise`，重建却只拿到带方位、俯仰、滚转和横向平移偏差的 `A_est`。观测侧用解析梯度积分，反演侧用 `10^3` voxel 的有限差分加三线性采样，避免直接用同一离散矩阵造数据再求逆。它仍是直线平行射线 synthetic proxy，不是 OERF 真实相机或曲光线。
+
+实验冻结 6 个 rig、每 rig 6 台相机、3 种 morphology proxy，共每档 18 个场；同一 case 内所有方法共享观测、Tikhonov solver 和正则强度。标定误差幅度从 0 增至 0.5/1/2 时，离散算子的相对 Frobenius 失配约为 `0/0.0571/0.1133/0.2229`。1 档对应本教具中平均 ray direction 误差约 0.97 度，但不能把它当实验室阈值。
+
+第一种 naive LOCO 完全不看体真值：每个候选在五台相机上重建，在第六台 noisy measurement 上评分，六折平均最小者被选中。它在 1/2 档对全部 18 个 case 改善 field error，平均收益为 `5.66%/13.27%`；但零失配时平均反而恶化 `0.35%`、最差恶化 `1.71%`，0.5 档也有个案恶化 `0.78%`。这直接证伪了“held-out reprojection 最小就天然安全”。
+
+固定半步阻尼把修正幅度乘 0.5，在 0.5/1/2 档分别平均改善 `1.44%/3.87%/8.29%`，这三档的 18 个 case 都非劣化；但零失配仍平均恶化 `0.11%`，所以简单阻尼也不能当授权门。
+
+第三种 single-frame LOCO-LCB 只在六台相机的配对 residual 改善下置信界为正时才修正，否则退回 reported geometry。它在四档都保持 `100%` 非劣化，却在 0.5/1/2 档分别回退 `94%/72%/50%`。这不是成功，而是安全与功效的明确冲突。
+
+考虑 TDBOST/4D 可能让多帧共享一套标定，又加入 multiframe camera-block LCB：同一 rig 的三个场先在每台相机内平均证据，再跨六个 camera block 算 heuristic LCB。它在 2 档把回退率从 50% 降到 17%，平均收益从 `7.76%` 增至 `9.58%`；但 1 档反而回退 83%、只平均改善 `0.85%`。原因不能直接写成定论，当前可见现象是不同场对标定参数的可观测性会互相增强，也会互相稀释。这里的统计单位是 camera block，不是 session/rig；`2.015` 也只是近似单侧 `t_5` 的机制筛查常数，没有正式置信覆盖主张。
+
+所以总门保留 `NO-GO`，没有移动阈值追求 PASS。更值得继续的问题也因此收窄：网络不应直接回归完整位姿，而应先判断每帧/每相机证据是否可靠。不过这里不能提前把残差权重叫作 observability weight；下一轮必须先用不用训练的可靠性对照检验功效，再看 geometry JVP/VJP 是否足以单独定义真正的标定可观测性。
+
+独立审计还要求把“argmin 没用 truth”与“整条函数没有 truth 能力”分开。修订后，per-field 与 multiframe selector 只接收删去 truth/clean 的 deployment record；field/clean evaluator 指标在选择之后附加，并额外冻结逐相机 fold score CSV，才能从结果包独立复算 pooling。完整物理解释、角色表、结果表、三条候选模型、复跑命令与给师兄的 10 个问题见 [三维 BOST 标定失配小实验导读](calibration_mismatch_lab_guide_2026-07-21.md)。
+
+**突破监测：没有突破。新增的是 `SYNTHETIC_3D_BOST_POSE_MISMATCH_MECHANISM_ONLY` 证据和一个明确 NO-GO：naive residual selection 不安全，严格 fail-closed 功效不足。真实相机标定、曲光线、实验三维真值、DeepONet/FNO/NeRIF 对比、跨 rig 泛化和论文成功仍为 0。**
+
+## 169. 可靠性权重不是可观测性：中等失配有线索，小失配仍失败
+
+上一节最后留下一个容易说错的词：如果某台相机的残差变化更稳定，就给它更高“可观测性权重”。一级来源和独立审计都指出，这个命名不成立。残差一致性最多说明 measurement reliability；真正的 calibration observability 要看残差对位姿、焦距或畸变参数的 Jacobian、尺度化 `J^T J` 谱、近零特征方向和参数耦合。当前 frozen ledger 没有 geometry JVP/VJP，所以这轮统一改称 camera reliability screen。
+
+实验没有重新调用 forward、adjoint 或重建器，也没有训练网络。它只重放上一轮冻结的 3,024 条逐相机 LOCO score。对每个目标 synthetic rig，主候选留下它不看，只用其他 5 个 rig 估计六台相机的闭式权重：若某相机的候选残差改善和其余相机改善的中位数长期同向，权重较高；负相关截到零，随后把原始权重限制在 `[0.5,2]`，归一化后的最大最小比不超过 4。
+
+第二轮审计把“代码没用真值”加固成结构隔离。deployment loader 现在只验证并打开 camera-score CSV，从它自身推导 rig、family、档位和候选；它不解析、也不携带包含 field/oracle 汇总的上游 report。决策冻结后 evaluator 才验证完整 checksum 并加载真值指标。poison test 把 report 替换成伪造 truth summary 后，部署决策仍逐项不变，而 evaluator 必须因 checksum 不匹配拒绝。这比只检查 selector 函数签名更强，但仍只是本地软件隔离，不是外部安全证明。
+
+先做了一个必要的旧基线检查。uniform replay 与 v2 的 24 个 rig-severity 决策逐项相同，mismatch 为 0。之后比较主 LORO reliability 权重：1 档平均 field gain 从 uniform 的 `0.85%` 增至 `4.05%`，增加 `3.19` 个百分点，回退率从 `83.33%` 降到 `16.67%`；2 档从 `9.58%` 增至 `11.20%`，增加 `1.62` 个百分点，六个 rig 都得到正 field gain。但 2 档 seed 503 相对 uniform 少了 `0.99` 个百分点，说明逐 rig 尾部并非全赢。
+
+真正决定 NO-GO 的是 0.5 档：uniform 和主候选都 100% 回退，平均收益、改善 case 比例都为 0。冻结门要求所有非零档平均收益至少 5%、改善比例至少 75%；主候选在这里没有功效，1 档均值也只有 4.05%。因此状态是 `POSTOPEN_CAMERA_RELIABILITY_WEIGHT_REPLAY_NO_GO`，没有调低 `2.015` 或事后移动门槛追 PASS。
+
+“同预算”也被审计收窄为相同在线物理预算。uniform 在线选择读取 3,024 个 score value；主 LORO 六折要额外读取 15,120 个训练 score value，再读取 3,024 个目标 score value，总计 18,144。两者新增 forward、adjoint 和重建调用都为 0，但端到端计算量不同；wall time 与 peak memory 本轮没有测，不能写成成本相同。
+
+六台相机的平均 LORO 权重也暴露出一个风险：camera 2 约为 `0.0889`，其余约为 `0.166--0.195`。这可以解释当前六个 synthetic rig 的改善，却可能只是记住了固定 camera identity。如果真实装置换了相机顺序、数量或几何，这个模式未必存在。六个 LOCO fold 的五相机训练集还高度重叠，同一 score surface 同时用于候选准入与排序；所以 `2.015` 仍只是描述性 t5-style heuristic，不能解释成置信覆盖、安全证书或显著性。
+
+下一模型因此拆成三条线，而不是把所有信息塞进一个网络：`q_rel` 读取独立 sentinel 帧的 whitened residual 和噪声尺度；`q_cal` 只在拿到 geometry JVP/VJP 后，从 scaled `J^T J`、近零方向和耦合构造；`q_field` 用 view-conditioned normal operator 或边际谱/秩增益衡量对三维场的独立信息。三条经典基线分别过门后，才允许一个有界组合器输出权重、阻尼或停止建议，物理 solver 仍负责几何更新。
+
+完整数字、初学者解释、同预算对照、六篇一级来源、30-rig sealed audit 合同与给师兄的问题见 [相机可靠性权重回放结果](calibration_camera_reliability_screen_result_2026-07-21.md)。
+
+**突破监测：没有突破。新增的真实价值是把“残差可靠性”和“几何可观测性”分开，并证实有界 LORO 权重只提高中、大失配的回放功效，未解决小失配。新 forward、新重建、真实数据、fresh rig、神经算子、泛化和论文成功仍为 0。**
+
+## 170. `q_cal` 第一次真正消去未知场：raw 敏感性有值，data-only 辨识力是零
+
+这一轮没有继续调相机残差权重，而是直接计算几何 Jacobian。局部模型写成 `y=A(eta)x+noise`，`eta` 包含 yaw、pitch、roll、shift-u 和 shift-v 五个无量纲 mode，`x` 是 1000 维 voxel field。对比三个量：known-field raw `C^T C`、消去自由场的 data-only `S0`、加 ridge 先验后的 `S_lambda`。
+
+最重要的结果是一个结构性 NO-GO。六相机算子是 `300 x 1000`且满行秩，自由场的数据切空间已填满 300 维观测空间。因此几何变化在数据中造成的局部变化都能被某个 voxel perturbation 吸收。六个 rig 的 estimated/teacher `S0` 相对秩全是 `0/5`，trace retention 最大只有约 `7.6e-30`。raw `J^T J` 即使很大，也不等于 joint reconstruction 中的几何可辨识性。
+
+第一轮独立审计抓住了两个容易造假阳性的问题。其一，原型用连续 analytic renderer 算 teacher Jacobian，却用离散 voxel operator 消去 nuisance field，两者不属于同一 likelihood。正式版已改成 voxelized truth 经同一 forward family 生成 teacher；连续 renderer 只生成 noisy pilot observation。其二，三相机排序使用了六相机 pilot 重建的 `x_hat`，所以合法含义是“全相机 pilot 辅助的下一次相机布置”，不是“只靠这三台就能当帧自洽重建”。
+
+在这个修正后的同模型 teacher 中，参考 `alpha=0.002` 的 prior-conditioned 排序出现了一条值得追踪的线索：estimated-vs-teacher profile 排序 Spearman 平均 `0.956`、最低 `0.910`，选中子集的 oracle D-efficiency 中位 `0.990`、最低 `0.922`。相比之下，estimated raw 的 D-efficiency 中位只有 `0.235`。但 estimated Jacobian 相对 teacher 的平均 L2 误差仍有 `0.818`，所以只能说排序结构在这个 post-open proxy 中部分保留，不能说 `q_cal` 数值已被准确预测。
+
+alpha 扫描进一步说明正曲率是先验制造的。teacher 的 median trace retention 从 `alpha=1e-6` 的 `0.0055%` 增到 `alpha=1` 的 `53.26%`，同一 rig 的最优子集随 alpha 切换 2 到 3 次。因此不能挑最好看的 alpha 宣称成功，必须说明场先验、噪声白化和参数尺度。
+
+对毕设最有用的结论不是“这条路不行”，而是创新问题被定位了：要让 data-only `S0` 真正出现非零方向，必须引入已知 calibration target、低维物理场、4D 共享张量/时间基，或明确受约束的 neural-field tangent。其中 4D 共享低秩场与何远哲师兄的 TDBOST 主线最直接。下一个有效机制实验应先问：缩小 nuisance tangent 后 `S0` 的最小特征值是否真的抬起；然后才训练任何 DeepONet/FNO/NeRIF 组件。
+
+完整数字、入门反例、三条研究入口、一级来源、复跑命令与给师兄的问题见 [`q_cal` 剖面结果导读](calibration_qcal_profile_result_2026-07-21.md)。专项测试为 `13 passed`，正式产物的 report、四张 CSV、四联图和 checksum 已固定。
+
+**突破监测：没有突破。新增的是一个经过两轮数学/代码审计的结构性 data-only NO-GO，以及一条只在参考先验、同模型、post-open synthetic proxy 下过门的相机排序线索。真实 BOST、subset-only 部署、fresh rig、自动标定、神经算子、重建改善、泛化和论文成功仍为 0。**
+
+## 171. 多帧确实把 0/5 抬成 5/5，但噪声让它仍然不能用
+
+上一节留下的问题是：如果六帧共享一套相机几何，并且场不再逐帧自由变化，几何信息会不会从 nuisance tangent 里露出来？这次没有直接训练 FNO，而是先把最常见的“4D 结构”逐个做成可证伪控制。
+
+结果先关闭了三个看似聪明、实际无效的说法。每帧自由 voxel 仍是 `0/5`；把序列写成 `X=Phi H`、但 `Phi/H` 都允许变化，仍是 `0/5`；只固定时间系数、让空间因子自由变化，也仍是 `0/5`。原因很直接：当前 `A` 满行秩，几何导数造成的变化可以由 `delta Phi` 吸收。低秩、Tucker、CP 或神经隐式表示本身，不会自动创造联合标定信息。
+
+真正抬秩的是已知输运 `x_t=W_t x0`。一个共同初场必须同时解释六帧，因此精确输运的 profile rank 在三个新 rig 上都是 `5/5`。但最弱广义 retention 只有 `9.76e-5` 到 `3.63e-4`，中位 `1.34e-4`；trace retention 中位也只有 `1.36%`。这说明五个方向原则上都非零，却有非常薄的最弱方向。
+
+v1 在注册噪声下给出 q relative-L2 中位 `9.41`，但旧门仍会接受，因为 residual 只有约 `0.74 sigma`。独立审计指出，这个归一化漏掉了 nuisance 和五个几何参数消耗的自由度：`m=1152`、`rank(B)=512` 时，正确剩余自由度是 `635`，纯噪声的旧 RMS 期望正好约 `sqrt(635/1152)=0.742`。所以残差小根本不代表参数可信。
+
+审计还找到了一个真实代码错误：q-trial 循环把最后一个 reacting scene 的 field 误传给所有 `teacher_*` 列。它不影响 deployable `q_hat` 或 v1 的 NO-GO，但 v1 的 teacher CRLB 和 teacher q error 全部作废。v2 保留相同随机 seed namespace，按 model scene 重新选 teacher field，并加零噪声余项单测。现在无噪声 teacher q error 中位为 `0.00145`，说明堆叠、导数符号和局部线性链路是对的；注册噪声下 teacher q error 中位 `10.54`、严格 teacher CRLB 中位 `11.05`，失败主要来自 practical SNR。
+
+SNR sweep 又把门槛量化出来。把当前 synthetic base sigma 降到 `1/128` 时，plugin q error 中位 `0.0895`、teacher CRLB `0.0863`，9 个案例中 7 个通过新不确定度门；到 `1/64`，q error 中位仍有 `0.174`，但 95% 最大半径过宽，0 个授权；注册 sigma 下 0 个授权。这个 sweep 固定同一噪声方向只改幅度，因此只是 post-open threshold map，不是 coverage 或泛化证明。
+
+冻结 PCA 基展示了相反的危险。rank 4/8/16 的最弱广义 retention 中位约 `0.864/0.798/0.648`，看起来远强于输运；但 clean model residual 中位仍约 `9.13%/5.95%/5.42%`，最差到 `32.67%`。这不是“低秩效果好”，而是先验把 nuisance 空间压小后制造强曲率，同时把真实场塞错了。
+
+反应流 proxy 则给出更细的折中。仅输运无法解释 birth，NIS 9/9 拒绝；加入一个共享 source 后 nominal residual 回到数值零，但最弱 retention 降到 `1.58e-5`、q error 中位升到 `20.39`。越真实的 nuisance 会保护场拟合，也会抹掉更多几何信息。把 innovation 放回每帧自由后，结构又完全回到 `0/5`。
+
+v2 因此不再用“rank 满 + residual <2”授权。它要求 99% chi-square NIS、plug-in 95% 最大半径不超过 `0.25 q_ref`、局部参数包络不越过 `0.1`、更新显著且 profile 满秩。reference noise 下 exact 和所有 mismatch 的授权数都是 0；10% velocity mismatch、错误时间顺序和未建模 birth 的旧 false accept 被关闭。这个“0 false accept”不是算法成功，因为正确精确输运也全部拒答；它只证明门现在知道自己没把握。
+
+对算子学习的直接启发是：网络不能再被设计成一个直接输出相机位姿的黑盒。更合理的结构是让 DeepONet/FNO 预测 transport/innovation tangent、warm start 或 anchor 权重，再由真实 forward JVP/VJP、held-out camera/time NIS 和置信椭球决定是否更新。经典底座必须先实现迭代 variable projection、q-amplitude sweep 和 500-noise bootstrap。完整结果见 [多帧 q_cal v2](temporal_qcal_tangent_result_2026-07-21.md)，文献路线见 [动态算子一级来源](temporal_operator_primary_sources_2026-07-21.md)。
+
+**突破监测：没有突破。新增的是“多帧精确输运可结构性抬秩，但当前 SNR 仍实践不可辨”的严格 NO-GO、对 v1 teacher 泄漏的公开纠错，以及一个能关闭旧 false accept 的不确定度门。真实 BOST、真实 4D reconstruction、神经算子优越性、fresh audit、泛化和论文成功仍为 0。**
+
+## 172. 500 次独立噪声后，真正坏掉的是 plug-in 覆盖率
+
+v2 的 `1/128` 低噪声窗口只是固定噪声方向的 SNR 地图，不能证明 95% 置信域真能覆盖 95%。这次对 3 个 rig、3 个方向、6 个 `q` 幅度和 5 个噪声档分别生成 500 个独立高斯复本，总计评估 270,000 次 teacher/plug-in 估计；另外跑了 864 个 one-step 与稠密 iterative variable projection 的配对 trial。
+
+数值实现门是过的：三个 rig 的 full profile Jacobian 中心差分相对误差在 `1.98e-6` 到 `5.35e-6`，864 个 iterative trial 无数值失败，objective 全部单调。但预注册主门仍是 NO-GO：`q=q_ref, noise=1/128` 的 teacher coverage 只有 8/9 cell 过门，plug-in 只有 5/9。plug-in pooled relative-L2 中位 0.0743、p90 0.1390 看上去都不大，但这不能弥补置信域欠覆盖。
+
+最有用的定位出现在 `q=2 q_ref` 的低噪声格。teacher 九个 cell 的平均 coverage 仍约 94.9%，plug-in 却只有 48.0%，两个 cell 甚至为 0。同时 projected nonlinear remainder 中位只是线性响应的 0.54%。这说明主因不是局部 affine forward 已完全失效，而是 nominal `B(0)` 场拟合把部分几何信号吸收进 `x_hat`，随后的 plug-in covariance 又没有包含场误差、同数据相关性和 Jacobian 变化。
+
+这个机制直接把下一步收窄为两个不用大网络的基线：一是对 nuisance field 一阶正交的 profile score 加 sandwich covariance；二是 frame/view cross-fitting，用不重叠数据估场和构造 geometry score。后者只能减少同噪声耦合，不会自动消除场估计误差，所以必须与前者分开对照。
+
+经典 iterative variable projection 给出了弱而混合的改善：q 误差中位从 0.1094 降到 0.0996，下降 8.91%，没达到冻结的 10% 门；field 和六帧 sequence 中位只改善 1.33% 和 1.90%。`q=2` 子组改善较强，`q=0.5` 一个子格还略差，不能挑子组写成稳定优越。总体 86% trial 触发 trust bound，也超过预注册的 5% 上限；本轮不回头改门。
+
+完整入门解释、主格表、三个下一算法形状、复现命令和禁止主张见 [500 噪声 + variable projection 结果导读](temporal_qcal_bootstrap_varpro_result_2026-07-22.md)。
+
+**突破监测：没有突破。新增的是一个通过独立噪声覆盖审计定位的 plug-in 欠覆盖机制，以及一个未过门的经典 iterative reference。新算法、神经算子、真实 BOST/4D 重建、fresh 方向泛化、论文成功和突破仍为 0。**
+
+## 173. 97.9% 覆盖并不比 95% 更好：这次失败在过度保守
+
+上一节发现 plug-in 置信域会漏掉真值，这一轮把“点估计中心”和“区间宽度”分开查。数据仍是已经打开过的 3 个 synthetic rig 和 3 个旧方向；每个 rig 另加一个 `q=0`，再对 `q/q_ref=1,2` 生成新噪声。21 个 cell 各 500 次，共 10,500 条观测，前 250 次只校准，后 250 次只评估。
+
+先看点估计。one-step plug-in 的 `||q_hat-q||/q_ref` 中位是 `0.08610`，iterative full-profile 降到 `0.07192`，改善 `16.46%`；field 和 sequence 中位也分别改善 `2.87%`、`3.09%`。但只有 `64.44%` 的配对观测 q 误差更好，还不是逐例稳定胜出。完整 profile 的第一步中位误差反而是 `0.50545`，说明从零初值出发的一次大公式并不能代替通常 5 次 profile evaluation 的迭代。
+
+再看不确定度。plug-in 原生 pooled coverage 只有 `72.93%`；同一个 iterative 终点上的 GN sandwich 和 exact-score Godambe 都是 `93.09%`，21 个 cell 中 19 个达到 90%。这说明完整 profile 已经修掉了主要问题。exact bread 与 GN bread 的结果又几乎重合：逐观测统计量相对差中位约 `0.124%`，所以当前低噪声局部 proxy 里，复杂 residual-curvature 项不是主要矛盾。
+
+预注册协议没有直接接受 93.09%，而是在每个 calibration cell 取有限样本 95% 顺序统计量，再用 21 个阈值的最大值统一校准。这样评估覆盖率升到 `97.90%`，21/21 cell 都超过 90%，最大半轴中位只有 `0.2562 q_ref`。第一眼很像成功，但覆盖率的 95% Clopper--Pearson 区间是 `97.48%--98.27%`，整个区间都高于目标 95%。区间可以靠保守放大得到，所以冻结门故意要求 95% 必须落在这个区间内；本轮因此严格是 `POSTOPEN_DEVELOPMENT_FORENSICS_NO_GO`。
+
+奇偶帧 cross-fit 也被真正证伪。它原生 coverage 只有 `62.61%`；若用 worst-cell 包络硬补，coverage 会到 `99.81%`，但半轴中位膨胀到 `3.149 q_ref`。同一段序列的奇偶帧共享初场、输运、相机和模型误差，不是独立 acquisition，切帧不能凭空完成去偏。
+
+结果打开后做了一项明确标成 post-hoc 的校准粒度复算。把所有 calibration score 合并后取 pooled 95% 阈值，评估 coverage 是 `94.50%`，95% 区间 `93.84%--95.10%`，21/21 cell 仍超过 90%，半轴中位还降到 `0.2345 q_ref`。这个数不能改写本轮判决，因为阈值方案是在看过结果后换的，而且还是同三个旧 rig；但它给下一轮一个很具体的预注册候选：在全新 rig/session 上比较 pooled、分层收缩和 global worst-cell 三种校准，必须同时守住总体 95%、逐 rig 尾部与区间功效。
+
+对算子学习的启发也更清楚了。若真实 full-profile 太贵，网络不应直接宣布 `q`，而应预测 warm start、低秩 nuisance/transport tangent、预条件或有界校准修正；随后由真实 forward/JVP/VJP 做少量 correction，并以 profile score、held-out 物理指标和 fail-closed 半径接受或回退。要把中心偏差继续往下压，则需要 flow-off/known-target 或独立 acquisition 支持 physical-target orthogonal score，而不是继续在三个 synthetic rig 上调 sandwich。
+
+完整数字、数学边界、事后探索表和给师兄的问题见 [联合剖面推断 v4 结果](temporal_qcal_profile_inference_result_2026-07-22.md)。
+
+**突破监测：没有突破。新增的是一个通过 10,500 条配对观测确认的 full-profile development signal、一个因过度覆盖而严格保留的 NO-GO，以及一个只能用于冻结 fresh 协议的 pooled-calibration 线索。新算法、真实 BOST/4D 重建、跨 rig 泛化、论文成功和突破仍为 0。**
+
+## 174. 模型能学会尺度，也能在关系翻转时把 hard rig 覆盖打到 11%
+
+v4 留下一个很具体的问题：最坏 cell 包络太宽，pooled frame calibration 又可能让 frame 多的 easy rig 占更多票。真实接口还没到位，所以这轮没有碰休眠 fresh BOST 盒子，而是先做一个带正例、负对照和反例的层级校准教学实验。
+
+三个情景都严格按独立 rig 切成 120 个 fit、120 个 calibration 和 400 个 evaluation；每个 rig 只有 30--240 帧，难 rig 故意更少。逐 frame pooled 在可观测情景的 observation-weighted coverage 看起来有 `92.39%`，但按 rig 等权只有 `87.34%`，hard quartile 更只有 `56.79%`。同一个结果已经说明，不能把同一段 sequence 的大量 frame 当作大量新实验。
+
+低容量 log-ridge 只从 fit rig 学部署可见特征与 score scale 的关系，再在 calibration rig 上冻结 inflation。在可观测情景中，它的 hard coverage 达到 `93.76%`，相对 frame pooled 增加 `36.97` 个百分点；中位半径又比 equal-rig 小 `24.04%`。这证明 toy 里确实有可利用的尺度信息，但不证明真实 BOST 也有。
+
+负对照更重要。难度完全隐藏时，log-ridge 的 fit R2 只有 `1.39%`，hard coverage 与 equal-rig 只差 `0.19` 个百分点；模型没有凭空创造信息。关系翻转时，fit R2 仍高达 `95.21%`、学到正 slope `0.8838`，evaluation 真 slope 却是 `-0.8887`。此时 rig mean coverage 降到 `69.96%`，hard quartile 只剩 `11.23%`，p10 只有 `2.77%`。训练拟合很好，部署仍可以非常错。
+
+所以当前候选不再是“用 FNO 直接预测 q”。更可信的结构是：物理摘要驱动低容量 scale/tangent proposal，support/relationship gate 判断是否在域内；域内仍做独立 session calibration 和 1--2 次 exact profile correction，域外退回保守 A0；最后用 held-out view、field/gradient 与 PIV velocity endpoint 接受或拒绝。网络只有在同预算下超过 log-ridge、equal-rig、full-profile fixed warm start 后才有资格进入。
+
+完整结果、算法框图、六个师兄问题和禁止主张见 [rig/session 层级校准 toy 结果](rig_session_calibration_toy_result_2026-07-22.md)，入门练习见 [校准学习路线](rig_session_calibration_learning_route_2026-07-22.md)。定向测试 `7 passed`，结果散列 5/5 通过，严格 JSON 也可解析。
+
+**突破监测：没有突破。新增的是一个可复现的 cluster-size bias 机制、一个 learned-scale 适用窗口和一个非常强的 OOD 失败反例。真实 acquisition、真实 callable、三维/4D 重建、神经算子优越性、跨 rig 泛化和论文成功仍为 0。**
+
+## 176. 高频模型在离散投影上更好，却在连续导数下 7/7 更差
+
+公开 NIR-BOS 代码审计之后，我没有直接照搬 Fourier/hash 网络，而是先问一个更基础的问题：如果训练 renderer 用固定步长中心差分，网络会不会利用这个差分算子的频率盲区？为避免同一个离散链出题和答题，观测由连续解析场梯度与 96 点积分生成，逆端只看到 32 点 ray samples 和独立参数化；6 个 train、2 个 development、2 个 test 角完全分离。
+
+第一轮 4 个解析反应形态、两档噪声、两个优化 seed 的预检没有授权 GCS selector。高频 `[1,2,4,8,16]` 模型的 central held-out projection 平均略好，field relative-L2 却在 5/8 单元明显更差；场与 central-test 损害方向的一致率只有 0.25。这个结果说明共享 central renderer 可能遮住场问题，但还不能定因。
+
+随后冻结 14 个全新 dense angles，并用 `FD(h)`、`FD(h/2)`、`FD(h/4)` 与 automatic derivative 重渲染同一已训练模型。排除唯一事后观察单元后，高频模型的 dense-AD 在 7/7 单元比低频差；中位高频减低频为 `+0.48161`，高频 AD 减自身 `FD(h)` 为 `+0.54144`。development GCS 与 dense-AD 损害的 Spearman 为 `0.82143`，原 central test 重放漂移为 0。
+
+数学原因可以直接手推。对 `sin(pi f x)`，中心差分导数与连续导数的振幅比为 `sinc(pi f h)`。当前 `h=2/15` 时，`f=4` 只保留 0.594，`f=8` 变成 -0.062，`f=16` 只有 0.061。网络可以在离散 renderer 的近盲频带放入很强结构，central projection 看不明显，AD 会把它完整暴露。
+
+这个机制与 2026 *Neural Refractive Index Primitives* 报告的 Fourier + AD 梯度噪声一致，但不能声称首次发现：该论文已经比较 automatic/discrete/hybrid，ReNO 已经定义 operator aliasing，mip-NeRF 也已处理尺度相关采样混叠。我们新增的只是一个 BOST 梯度投影 clean-room 反例和可复现审计。
+
+完整学习路线见 [梯度混叠零基础导图](gcs_gradient_aliasing_learning_route_2026-07-22.md)，冻结审计见 [连续 renderer 配置](gcs_fourier_continuous_audit_freeze_2026-07-22.md)。
+
+**突破监测：没有突破。新增的是通过 7/7 单元、独立角度和四档 renderer 支持的 synthetic 连续/离散混叠机制；新算法、真实 BOST、算子学习、泛化、论文成功和突破仍为 0。**
+
+## 177. 多尺度护栏改善了连续投影，但没有可靠改善三维场
+
+确认机制后，我先在唯一已打开的 `wrinkled / 8% noise / seed 101` 上筛候选。AD-only、固定 25% AD hybrid 和四 renderer 等权高频模型的 field relative-L2 分别是 `0.23420 / 0.14303 / 0.13538`，都没有超过低频基线 `0.13340`。因此没有把普通 hybrid 包装成新想法。
+
+下一候选 MGRS 使用低频稳健基座和零输出高频残差。残差同时拟合 AD 与 `FD(h), FD(h/2), FD(h/4)`；每个 development checkpoint 必须四项逐一不劣于基座，平均至少改善 0.5%，否则精确恢复零残差。配置、门和两阶段 split 在新结果产生前以 commit `d3ae73a` 冻结，runner 再以 commit `687e22f` 提交。
+
+Stage A 的正式结果是 NO-GO。`MGRS-56` 场改善 0/3，中位场差 `+0.001859`；`MGRS-6816` 场改善 2/3，dense-AD 中位改善 `-0.027056`，但场中位只改善 `-0.001082`，未达到预写 `-0.002`。12 条 seed-level 路径中 MGRS-56/MGRS-6816 分别只有 2/6 与 4/6 残差获准。Stage B 的四个 oblique/shock 单元因此保持未运行。
+
+这次失败很有解释力：四个 renderer 都在相同有限角集合上看投影。它们能抑制只适配某一差分步长的高频，却不能阻止残差进入相机投影的近零空间。下一候选不应继续堆 renderer，而应先做带 `L2 + H1` 最小残差的经典基线，再与 TV/Huber 对照；只有学习式频带 gate 在同预算下超过这些基线，才有理由进入神经算子。
+
+完整数字、师兄五问和复现命令见 [MGRS Stage A 结果](gcs_mgrs_stage_gate_result_2026-07-22.md)。
+
+**突破监测：没有突破。新增的是一个会精确退回基座的可运行算法候选，以及一个保持 Stage B 密封的严格 Stage A NO-GO。新算法优越性、算子学习、真实 OERF、跨 rig 泛化、论文成功和突破仍为 0。**
+
+## 175. 公开代码能看，不等于能跑；默认 test 也不等于独立测试
+
+这轮找到了一份很贴近我们方向的公开实现：2026 年 *Neural Refractive Index Primitives* 的作者仓库。它有 Phantom 1、MATLAB 生成链、Python 神经隐式训练和 CUDA ray marcher，表面上看像是终于可以直接训练了。我没有立刻改代码开跑，而是先把仓库固定在 commit `a385cce...`，逐项检查许可、数据身份、split、路径、设备和依赖。
+
+先说能跑的部分。作者的 Fourier 编码是一个相对独立的 PyTorch 数学核。我在 Apple MPS 上给它两个三维点，输出形状是 `2 x 39`；前向、一阶导和二阶导都为有限值。这个绿灯很有用，说明本机可以先写 clean-room 的 Fourier/小 MLP/指标实验，不必所有事情都等服务器。
+
+但完整入口还是红灯。`main_BOS.py` 会自行覆盖命令行并强制 `--fp16 --cuda_ray`，设备选择只有 CUDA 或 CPU；renderer 顶层无条件导入 CUDA raymarcher，hash 还把一个 tensor 写死到 CUDA。环境文件锁定 Windows、MSYS2 和 CUDA 11.8，数据 JSON 又用 Windows 反斜杠。64 个文件引用在 Mac 上原样一个都找不到，替换分隔符后才是 64/64。删掉一个参数远远不够。
+
+真正改变 benchmark 设计的是 split 审计。仓库写着 12 train、2 validation、2 test，但 validation 的两个位姿和 test 的两个位姿都分别复用了训练集前两个位姿；validation 和 test 的两对位姿又完全相同。再把 image、mask、img-mask 与 RI integral 解码成像素数组比较，validation/test 的 8/8 对全部相同。文件哈希略有区别只是 PNG 编码层差别，像素内容没有独立性。
+
+这意味着默认 `test` 不能承担 unseen-camera 证据。它最多帮我们检查保存、绘图或数值流程。下一步必须重新生成独立角度，最好冻结连续角区留出；否则“test error”这个名字会让人误以为已经检验视角泛化。
+
+另外，MATLAB 和 Python 各有一个 Phantom 1 目录，但逐相对路径、文件大小和 SHA-256 完全相同：都是 71 个文件、92,846,449 bytes、同一个 tree hash。因此仍然只有一个独立三维场。把它加很多噪声、切很多 rays 或复制很多视角，都不能把一个函数变成 operator learning 的多 field 样本。
+
+算法路线也因此收窄。2026 论文已经做过 Fourier/hash、automatic/discrete/hybrid gradient、mask 和层级采样，“换编码”不能写成创新。更值得先测的是一个 `GCS-Hash` 诊断：看固定审计 rays 上离散梯度与 AD 梯度的失配，能否提前预测 hash 的噪声过拟合或边界饱和。它若没有预测力，就关闭自适应解冻，不再堆网络。
+
+如果诊断有跨 field 预测力，再做主候选：Fourier 稳定基座加有界 hash residual，gate 只看部署可见的光流置信度、跨视角 residual、噪声和 geometry；support 外回退 Fourier。它必须同时超过 Fourier、hash 和固定 50:50 混合，并对参数量、ray samples、wall-clock、公平输入和最坏场 harm 分账。
+
+正式指标也做了纠正。折射率本身接近 1，直接对完整 `n` 算 relative-L2 会把误差稀释；主 field 指标应对 `delta n = n - n0` 计算，并同时报告 gradient/front、新相机 displacement、边界饱和、逐场尾部和成本。单个 held-out projection 不能代替三维真值。
+
+完整机器报告、图、许可边界、三个算法候选和服务器迁移顺序见 [公开 NIR-BOS 复现门禁](open_nir_bos_release_readiness_audit_2026-07-22.md) 与 [三维 benchmark 合同](open_nir_bos_benchmark_contract_2026-07-22.md)。
+
+**突破监测：没有突破。新增的是一个真实 MPS 组件绿灯、完整入口的可复核红灯、默认 split 泄漏和单 field 身份的机器证据。作者训练、三维重建、真实火焰、算法优越、跨场泛化和论文成功仍为 0。**
+
+## 178. 残差更平滑了，总场仍然可能往错的方向走
+
+MGRS Stage A 失败后，这一轮没有继续堆 renderer，而是先把经典正则对照补齐。低频基场冻结，`[6,8,16]` 高频残差仍从严格零输出开始。我在固定 `7^3` 内点上用 `h/4` 差分构造归一化 `L2+H1` 和 `L2+Huber-gradient`，各扫三个强度，再加无正则 MGRS control。所有候选共用 240 步、四 renderer、两个 seed 和精确回退规则。
+
+42 次 MPS 拟合用时 232.57 秒，低频基场与 MGRS control 对旧证据的最大重放差都是 0。结果仍是 NO-GO：最好的 `L2+Huber 0.003` 的 field 中位差为 `-0.001482`，相对 MGRS 只多改善 `0.000400`，未达 `0.001` 增量门；H1 中位差仍为 `+0.001275`。六个正则候选没有一个过全门，Stage B 保持密封。
+
+最重要的学习不是“H1 没用”。设基场误差为 `e0`，残差为 `d`，总 H1 误差的变化是 `2<grad(e0),grad(d)> + ||grad(d)||^2`。我们惩罚的是残差自身的二次项，但不知道它和基场真误差的交叉项是正还是负。所以“残差更平滑”不能保证“总场更正确”。
+
+已开路径也支持这个定位：28 条获准残差的 dense-AD 全部改善，但只有 14 条同时改善 field/H1。wrinkled 单元的 7/7 获准路径改善，smooth 只有 7/21，说明可能存在形态依赖；但这只是已开开发线索，不是泛化证据。
+
+下一候选应该改问题：先比较正则总场 `n0+d` 的 H1/TV/Huber，再用 held-out residual、残差粗糙度、geometry 或时间一致性建立可拒答的 correction-alignment gate。不再在相同 residual-only 目标上继续扫 lambda。
+
+完整方法、数字、公式、复现命令与师兄五问见 [残差正则 Stage A NO-GO](gcs_regularized_residual_stage_a_result_2026-07-22.md)。
+
+**突破监测：没有突破。新增的是 42 次可复现经典正则对照、一个保持 Stage B 密封的 NO-GO，以及“残差范数无法控制总误差交叉项”的下一步定位。新算法、真实 BOST、算子学习优越、跨 rig 泛化、论文成功和突破仍为 0。**
+
+## 179. 总场能量也不是真值，但它可能帮我们拒绝坏修正
+
+上一轮 residual-only H1 无法控制基场误差与残差的交叉项，所以这次把正则直接放到总场 `n0+d`。为了不把“场整体缩小”误认为梯度先验成功，同时加了纯总场 L2 对照。代码、9 条路径、双对照增量门和 Stage B 密封规则先固化在 commit `9553fcd`，再运行 54 次 MPS 拟合。
+
+结果仍是 NO-GO。最好 `total_h1_0p01` 的 field 中位差为 `-0.001565`，相对 MGRS 多改善 `0.000483`，相对最好 residual-only 只多 `0.000083`；truth-H1 中位仍恶化 `+0.001434`。纯 L2 0.003 已经做到 `-0.001494`，说明那一点 field 收益大部分可能是保守收缩，不是梯度结构被正确恢复。
+
+更直接的反例是：`total_h1_0p01` 确实让候选总场的归一化 H1 能量中位降了 `0.73%`，但它到真值的 H1 误差却更大。这说明“更平滑”仍不等于“更真”，尤其对 wrinkled interface 和 shock。
+
+但 36 条获准路径的事后诊断给出了新线索。这些路径的 dense-AD 全部改善，只有 18 条同时改善 field/H1。若再要求总场 L2 不增，可保留全部 18 条改善，但仍错放 5 条有害修正；总场 Huber 不增则保留 10 条改善、错放 0，但漏掉 8 条改善。这已经是一条很清楚的 safety-recall Pareto，但只有 3 个独立物理单元，9 个候选重复不能当成 9 倍样本。
+
+下一候选改为 **Observable Energy-Alignment Gate**：不再改重建网络，而是用总场 L2/H1/Huber 有符号变化、残差粗糙度、四 renderer margin、噪声与 geometry 判断是否接受修正，不确定就精确回退。先在 smooth/wrinkled 同 family 里扩 phantom seeds、噪声和角度缺失，按 seed/geometry 分组留一；不打开 oblique/shock Stage B。
+
+完整数字、混淆矩阵、新候选输入和师兄五问见 [总场正则 NO-GO 与能量门线索](gcs_total_field_regularization_result_2026-07-22.md)。
+
+**突破监测：没有突破。新增的是 54 次总场经典对照 NO-GO、对“平滑不等于真实”的直接反例，以及一个只能进入扩样验证的事后能量门假设。可部署 gate、新算法、真实 BOST、算子学习优越、跨 rig 泛化、论文成功和突破仍为 0。**

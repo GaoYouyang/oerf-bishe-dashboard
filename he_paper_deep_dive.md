@@ -230,7 +230,7 @@ NeRIF 是三维重构。如果每个时间帧都独立做一次三维重构，�
 - 正文 4.4 写三组 tensor components 为 40/40/40；超参数节又把 `R=30, F=20` 写成默认质量/成本折中；公开 config 使用 30/30/30 与 F=20。
 - Appendix A 写 decoder 为 3 x 128；公开 config 写 3 层、width 200。
 - 正文强调 test view 未参与重建；公开 fuel manifest 的 18 个 test paths 全部与 train 重叠，而 spray 的 162/18 paths 才互不重叠。
-- 公开仓库根目录无 LICENSE，并且存在 `cuda:3`、Linux x86-64 projection `.so`、`/home/hyz/...` import-time 路径和冲突 requirements。它是重要结构线索，不是已验证的一键复现包。
+- 公开仓库根目录无 LICENSE，并且存在 `cuda:3`、Linux x86-64 projection `.so`、`/home/PUBLIC_USER_REDACTED/...` import-time 路径和冲突 requirements。它是重要结构线索，不是已验证的一键复现包。
 
 ### 你能复现什么
 

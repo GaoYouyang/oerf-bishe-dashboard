@@ -1,0 +1,264 @@
+{
+  "schema_version": "oerf-temporal-qcal-bootstrap-varpro-1.0",
+  "evidence_class": "PREREGISTERED_POSTOPEN_SYNTHETIC_ESTIMATOR_AUDIT",
+  "protocol": "docs/temporal_qcal_bootstrap_varpro_protocol_2026-07-22.md",
+  "status": "POSTOPEN_SYNTHETIC_ESTIMATOR_NO_GO",
+  "result_label": "synthetic estimator gate not cleared",
+  "config": {
+    "base": {
+      "seed": 20260721,
+      "grid_shape": [
+        8,
+        8,
+        8
+      ],
+      "detector_shape": [
+        4,
+        4
+      ],
+      "detector_half_width": 0.62,
+      "samples_per_ray": 16,
+      "base_seeds": [
+        709,
+        811,
+        907
+      ],
+      "phantom_families": [
+        "smooth_plume",
+        "wrinkled_density_interface",
+        "shock_expansion_pair"
+      ],
+      "frame_count": 6,
+      "fit_session_count": 4,
+      "pca_ranks": [
+        4,
+        8,
+        16
+      ],
+      "structural_rank": 2,
+      "q_trial_count": 3,
+      "q_norm": 0.04,
+      "observation_noise_fraction": 0.002,
+      "noise_multipliers": [
+        0.0,
+        0.0078125,
+        0.015625,
+        0.03125,
+        0.0625,
+        0.125,
+        0.25,
+        0.5,
+        1.0,
+        2.0,
+        4.0,
+        8.0
+      ],
+      "reconstruction_ridge_alpha": 0.002,
+      "nuisance_ridge_alpha": 1e-08,
+      "transport_displacement_per_frame": [
+        0.16,
+        0.08,
+        -0.05
+      ],
+      "velocity_mismatch_scale": 1.1,
+      "birth_strength": 0.12,
+      "fd_steps": [
+        0.1,
+        0.05,
+        0.025,
+        0.0125,
+        0.00625,
+        0.003125,
+        0.0015625,
+        0.00078125,
+        0.000390625
+      ],
+      "fd_relative_tolerance": 0.005,
+      "profile_rcond": 1e-09,
+      "dense_chunk_size": 32,
+      "residual_sigma_gate": 2.0,
+      "confidence_level": 0.95,
+      "nis_two_sided_alpha": 0.01,
+      "confidence_radius_fraction_of_qref": 0.25,
+      "local_parameter_radius": 0.1
+    },
+    "seed": 20260722,
+    "q_ref": 0.04,
+    "amplitude_multipliers": [
+      0.0,
+      0.125,
+      0.25,
+      0.5,
+      1.0,
+      2.0
+    ],
+    "noise_multipliers": [
+      0.0078125,
+      0.015625,
+      0.03125,
+      0.0625,
+      1.0
+    ],
+    "bootstrap_replicates": 500,
+    "coverage_level": 0.95,
+    "coverage_floor": 0.925,
+    "confidence_interval_level": 0.95,
+    "primary_amplitude_multiplier": 1.0,
+    "primary_noise_multiplier": 0.0078125,
+    "false_accept_qref_error": 0.75,
+    "varpro_amplitude_multipliers": [
+      0.5,
+      1.0,
+      2.0
+    ],
+    "varpro_noise_multipliers": [
+      0.0078125,
+      0.015625
+    ],
+    "varpro_replicates": 16,
+    "varpro_max_iterations": 8,
+    "trust_initial_radius": 0.02,
+    "trust_max_radius": 0.04,
+    "trust_min_radius": 1e-06,
+    "trust_accept_ratio": 0.1,
+    "trust_shrink_ratio": 0.25,
+    "trust_expand_ratio": 0.75,
+    "lm_relative_damping": 0.0001,
+    "armijo_constant": 0.0001,
+    "armijo_max_backtracks": 8,
+    "step_tolerance": 1e-06,
+    "iterative_median_improvement_floor": 0.1
+  },
+  "counts": {
+    "bootstrap_cell_rows": 540,
+    "bootstrap_replicates_per_cell": 500,
+    "underlying_bootstrap_estimates": 270000,
+    "nonlinear_remainder_rows": 54,
+    "varpro_trials": 864,
+    "rigs": 3,
+    "directions_per_rig": 3,
+    "dense_forward_calls": 5088
+  },
+  "gates": {
+    "numerical": {
+      "passed": true,
+      "expected_bootstrap_rows": 540,
+      "expected_varpro_trials": 864
+    },
+    "teacher_primary_coverage_control": {
+      "passed": false,
+      "passing_cells": 8,
+      "required_cells": 9
+    },
+    "plugin_primary_development_screen": {
+      "passed": false,
+      "passing_cells": 5,
+      "required_cells": 9,
+      "pooled_relative_l2_median": 0.07433997770421047,
+      "pooled_relative_l2_p90": 0.13896778112293767,
+      "pooled_false_accept_fraction_all": 0.0,
+      "fresh": false,
+      "why_not_fresh": "the primary amplitude and low-noise cell were selected after v2 was opened"
+    },
+    "iterative_affine_varpro_reference": {
+      "passed": false,
+      "trial_count": 864,
+      "numerical_failure_count": 0,
+      "one_step_median_relative_l2": 0.10936503159184607,
+      "iterative_median_relative_l2": 0.09962007995409408,
+      "median_reduction_fraction": 0.08910482167755845,
+      "one_step_p90_relative_l2": 0.27292434604407956,
+      "iterative_p90_relative_l2": 0.2714591477597686,
+      "one_step_max_relative_l2": 0.8090615579982712,
+      "iterative_max_relative_l2": 0.7768264475600224,
+      "objective_monotone_fraction": 1.0,
+      "trust_hit_fraction": 0.8599537037037037
+    }
+  },
+  "direction_coverage_limitation": {
+    "random_directions_per_rig": 3,
+    "positive_and_negative_axes_tested": false,
+    "weak_generalized_direction_tested": false,
+    "candidate_status_possible_this_round": false
+  },
+  "cost_accounting": {
+    "rig_rows": [
+      {
+        "base_seed": 709,
+        "profile_design_fd_relative_error": 2.4091694533991996e-06,
+        "affine_cross_precompute_seconds": 0.041256583062931895,
+        "affine_reference_peak_bytes": 103809024,
+        "profile_evaluation_count_including_fd": 1571,
+        "factorization_count_including_fd": 1571,
+        "normal_assembly_count_including_fd": 1571,
+        "jacobian_solve_count_including_fd": 1273,
+        "measurement_rows": 1152,
+        "field_parameters": 512,
+        "nominal_rank": 512
+      },
+      {
+        "base_seed": 811,
+        "profile_design_fd_relative_error": 1.9817872489374805e-06,
+        "affine_cross_precompute_seconds": 0.04063808300998062,
+        "affine_reference_peak_bytes": 103809024,
+        "profile_evaluation_count_including_fd": 1611,
+        "factorization_count_including_fd": 1611,
+        "normal_assembly_count_including_fd": 1611,
+        "jacobian_solve_count_including_fd": 1313,
+        "measurement_rows": 1152,
+        "field_parameters": 512,
+        "nominal_rank": 512
+      },
+      {
+        "base_seed": 907,
+        "profile_design_fd_relative_error": 5.348200707698517e-06,
+        "affine_cross_precompute_seconds": 0.03972108301240951,
+        "affine_reference_peak_bytes": 103809024,
+        "profile_evaluation_count_including_fd": 1721,
+        "factorization_count_including_fd": 1721,
+        "normal_assembly_count_including_fd": 1721,
+        "jacobian_solve_count_including_fd": 1423,
+        "measurement_rows": 1152,
+        "field_parameters": 512,
+        "nominal_rank": 512
+      }
+    ],
+    "wall_seconds": 63.296594624989666,
+    "dense_reference_only": true,
+    "matrix_free_A_or_AT_call_claim_authorized": false
+  },
+  "claim_authorization": {
+    "new_algorithm": false,
+    "learned_operator": false,
+    "real_bost_calibration": false,
+    "real_3d_or_4d_reconstruction": false,
+    "cross_rig_generalization": false,
+    "paper_success": false,
+    "breakthrough": false
+  },
+  "interpretation": [
+    "teacher_linear is an evaluator-only implementation control",
+    "one_step_plugin covariance is a data-dependent proxy, not a strict finite-sample CRLB",
+    "iterative affine variable projection is a classical dense numerical reference, not a novel learned operator",
+    "all results use same-family synthetic voxel forward and do not replace a real OERF data contract"
+  ],
+  "provenance": {
+    "source_path": "learning_labs/temporal_qcal_bootstrap_varpro_lab.py",
+    "source_sha256": "7e496a621c47d7cfa255512c3b12b70b79e05b43a18518516fc33dbcd2a7515e",
+    "protocol_path": "docs/temporal_qcal_bootstrap_varpro_protocol_2026-07-22.md",
+    "protocol_sha256": "fbfe96948458125c5df698fdadcee52bf4a271cf2ecb10b27900cfc912975ad3",
+    "seed_namespace": "oerf-temporal-qcal-bootstrap-varpro-1.0",
+    "classification": "POSTOPEN_DEVELOPMENT_AFTER_TEMPORAL_QCAL_TANGENT_V2"
+  },
+  "required_next_gate": [
+    "He Yuanzhe confirms the real callable, straight/curved residual hierarchy, JVP/VJP, geometry tolerances, timestamps, anchors, and target endpoints",
+    "if this development screen passes, run a frozen positive/negative-axis and weakest-direction stress audit",
+    "implement a matrix-free equal-call-budget reference only after the laboratory host contract is known"
+  ],
+  "environment": {
+    "python": "3.11.5",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "schema_version": "oerf-operator-foundations-lab-1.0",
+  "status": "EDUCATIONAL_LAB_COMPLETE_NO_SCIENTIFIC_AUTHORIZATION",
+  "evidence_class": "EDUCATIONAL_SYNTHETIC_LINEAR_PROXY_ONLY",
+  "purpose": "teach_adjoint_gauge_semiconvergence_and_operator_shift",
+  "reproducibility": {
+    "python_version": "3.11.5",
+    "numpy_version": "2.4.6",
+    "matplotlib_version": "3.11.0",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "source_file_sha256": "39801dd33126e6763969c28a46785eb0576a66894a6d5b44041729a0965cb320"
+  },
+  "config": {
+    "seed": 20260721,
+    "field_size": 64,
+    "measurement_count": 24,
+    "training_case_count": 240,
+    "test_case_count": 48,
+    "training_geometry_limit": 0.03,
+    "interpolation_geometry": 0.02,
+    "extrapolation_geometry": 0.06,
+    "observation_noise_fraction": 0.012,
+    "semiconvergence_noise_fraction": 0.06,
+    "ridge_alpha": 0.002,
+    "tikhonov_lambda": 0.008,
+    "cgls_iterations": 36
+  },
+  "training_contract": {
+    "same_training_cases_for_fixed_and_conditioned_maps": true,
+    "fixed_map_inputs": [
+      "measurement"
+    ],
+    "conditioned_map_inputs": [
+      "measurement",
+      "geometry_times_measurement"
+    ],
+    "fixed_map_parameter_count": 1536,
+    "conditioned_map_parameter_count": 3072,
+    "comparison_role": "information_and_capacity_ablation_not_architecture_ranking",
+    "training_truth_used_for_supervision": true,
+    "truth_used_at_inference": false,
+    "truth_used_for_evaluation": true,
+    "exact_physics_tikhonov_role": "teacher_reference_not_deployable_when_geometry_unknown",
+    "clean_measurement_metric_role": "evaluator_only_clean_projection_error"
+  },
+  "structural_checks": {
+    "adjoint_identity_relative_error": 2.411534683383294e-16,
+    "adjoint_identity_passed": true,
+    "constant_gauge_response_ratio": 1.8361788848117403e-17,
+    "constant_gauge_passed": true,
+    "null_shift_observation_relative_difference": 2.63147242209612e-16,
+    "null_shift_counterexample_passed": true,
+    "all_metrics_finite": true,
+    "semiconvergence_observed": true
+  },
+  "semiconvergence": {
+    "best_iteration_selection": "synthetic_truth_oracle_diagnostic_only_not_deployable",
+    "truth_used_to_select_best_iteration": true,
+    "best_field_iteration": 7,
+    "best_field_relative_l2": 0.11065191659260382,
+    "final_field_relative_l2": 5.316236706561023,
+    "best_iteration_measurement_relative_l2": 0.034123215968549135,
+    "final_measurement_relative_l2": 0.01340415376267269
+  },
+  "regimes": {
+    "nominal": {
+      "geometry": 0.0,
+      "inside_training_range": true,
+      "case_count": 48,
+      "methods": {
+        "fixed_ridge_map": {
+          "field_relative_l2_mean": 0.03242884510296783,
+          "field_relative_l2_median": 0.03204654784256664,
+          "field_relative_l2_worst": 0.06268739993688598,
+          "gradient_relative_l2_mean": 0.1387510298507997,
+          "gradient_relative_l2_worst": 0.29954289942453244,
+          "clean_measurement_relative_l2_mean": 0.025490384652715022,
+          "clean_measurement_relative_l2_worst": 0.059478592959596656
+        },
+        "geometry_conditioned_ridge_map": {
+          "field_relative_l2_mean": 0.026047483718651,
+          "field_relative_l2_median": 0.02385406833779261,
+          "field_relative_l2_worst": 0.056726478602262355,
+          "gradient_relative_l2_mean": 0.13534498783607932,
+          "gradient_relative_l2_worst": 0.29636682188755664,
+          "clean_measurement_relative_l2_mean": 0.011817296291746352,
+          "clean_measurement_relative_l2_worst": 0.020667154539400868
+        },
+        "nominal_physics_tikhonov": {
+          "field_relative_l2_mean": 0.04732161096014797,
+          "field_relative_l2_median": 0.04636003624199022,
+          "field_relative_l2_worst": 0.0977161310378452,
+          "gradient_relative_l2_mean": 0.24032738962336267,
+          "gradient_relative_l2_worst": 0.4478223723215781,
+          "clean_measurement_relative_l2_mean": 0.010154052732598782,
+          "clean_measurement_relative_l2_worst": 0.01271004644706648
+        },
+        "exact_physics_tikhonov": {
+          "field_relative_l2_mean": 0.04732161096014797,
+          "field_relative_l2_median": 0.04636003624199022,
+          "field_relative_l2_worst": 0.0977161310378452,
+          "gradient_relative_l2_mean": 0.24032738962336267,
+          "gradient_relative_l2_worst": 0.4478223723215781,
+          "clean_measurement_relative_l2_mean": 0.010154052732598782,
+          "clean_measurement_relative_l2_worst": 0.01271004644706648
+        }
+      }
+    },
+    "interpolation": {
+      "geometry": 0.02,
+      "inside_training_range": true,
+      "case_count": 48,
+      "methods": {
+        "fixed_ridge_map": {
+          "field_relative_l2_mean": 0.05207759358858427,
+          "field_relative_l2_median": 0.04623173824040944,
+          "field_relative_l2_worst": 0.09622858596368868,
+          "gradient_relative_l2_mean": 0.1675678990569449,
+          "gradient_relative_l2_worst": 0.34218042085277145,
+          "clean_measurement_relative_l2_mean": 0.055265682763564306,
+          "clean_measurement_relative_l2_worst": 0.09862772178129113
+        },
+        "geometry_conditioned_ridge_map": {
+          "field_relative_l2_mean": 0.03162736595177935,
+          "field_relative_l2_median": 0.027733840712763438,
+          "field_relative_l2_worst": 0.0797809540204887,
+          "gradient_relative_l2_mean": 0.14976853186340264,
+          "gradient_relative_l2_worst": 0.34324896916931047,
+          "clean_measurement_relative_l2_mean": 0.020371091308623673,
+          "clean_measurement_relative_l2_worst": 0.04687028337277784
+        },
+        "nominal_physics_tikhonov": {
+          "field_relative_l2_mean": 0.09217620897984537,
+          "field_relative_l2_median": 0.08746235181785247,
+          "field_relative_l2_worst": 0.12884880493375833,
+          "gradient_relative_l2_mean": 0.2705057967322355,
+          "gradient_relative_l2_worst": 0.4962292342150952,
+          "clean_measurement_relative_l2_mean": 0.0858332243538401,
+          "clean_measurement_relative_l2_worst": 0.111321704925299
+        },
+        "exact_physics_tikhonov": {
+          "field_relative_l2_mean": 0.0451812215384386,
+          "field_relative_l2_median": 0.044047916318325456,
+          "field_relative_l2_worst": 0.08599717186974265,
+          "gradient_relative_l2_mean": 0.23468269270498968,
+          "gradient_relative_l2_worst": 0.4526722497358947,
+          "clean_measurement_relative_l2_mean": 0.009386196142293394,
+          "clean_measurement_relative_l2_worst": 0.0127125045152386
+        }
+      }
+    },
+    "extrapolation": {
+      "geometry": 0.06,
+      "inside_training_range": false,
+      "case_count": 48,
+      "methods": {
+        "fixed_ridge_map": {
+          "field_relative_l2_mean": 0.13427539716788262,
+          "field_relative_l2_median": 0.13618978955432187,
+          "field_relative_l2_worst": 0.20795046508817475,
+          "gradient_relative_l2_mean": 0.32271090921568374,
+          "gradient_relative_l2_worst": 0.5510877834071398,
+          "clean_measurement_relative_l2_mean": 0.16513750641889932,
+          "clean_measurement_relative_l2_worst": 0.23438304063100637
+        },
+        "geometry_conditioned_ridge_map": {
+          "field_relative_l2_mean": 0.06381912123224608,
+          "field_relative_l2_median": 0.06137105980784353,
+          "field_relative_l2_worst": 0.14058767771948305,
+          "gradient_relative_l2_mean": 0.22959316648951045,
+          "gradient_relative_l2_worst": 0.5112343010629061,
+          "clean_measurement_relative_l2_mean": 0.06166026132826715,
+          "clean_measurement_relative_l2_worst": 0.12011316043967364
+        },
+        "nominal_physics_tikhonov": {
+          "field_relative_l2_mean": 0.2528786716798086,
+          "field_relative_l2_median": 0.24602279836326374,
+          "field_relative_l2_worst": 0.3751420607837522,
+          "gradient_relative_l2_mean": 0.4615326034105329,
+          "gradient_relative_l2_worst": 0.6541674265751363,
+          "clean_measurement_relative_l2_mean": 0.2620601248913382,
+          "clean_measurement_relative_l2_worst": 0.32000890209299476
+        },
+        "exact_physics_tikhonov": {
+          "field_relative_l2_mean": 0.04766396001944617,
+          "field_relative_l2_median": 0.04745704850893015,
+          "field_relative_l2_worst": 0.08023522107520487,
+          "gradient_relative_l2_mean": 0.23694881236842733,
+          "gradient_relative_l2_worst": 0.3762909071966667,
+          "clean_measurement_relative_l2_mean": 0.009651255172084401,
+          "clean_measurement_relative_l2_worst": 0.013364746116331008
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "nominal": {
+      "conditioned_vs_fixed_field_gain_percent": 19.678040843128336
+    },
+    "interpolation": {
+      "conditioned_vs_fixed_field_gain_percent": 39.26876460222566
+    },
+    "extrapolation": {
+      "conditioned_vs_fixed_field_gain_percent": 52.47147088870351
+    }
+  },
+  "claim_boundary": {
+    "bost_renderer_validated": false,
+    "reacting_flow_simulation_performed": false,
+    "real_data_used": false,
+    "new_algorithm_claimed": false,
+    "deeponet_or_fno_beaten": false,
+    "generalization_claimed": false,
+    "paper_success_claimed": false,
+    "breakthrough_claimed": false
+  }
+}

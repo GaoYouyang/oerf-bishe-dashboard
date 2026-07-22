@@ -1,0 +1,113 @@
+{
+  "schema_version": "gcs-fourier-pretest-report-1.0",
+  "status": "GCS_PRIMARY_SELECTOR_CLOSED_AFTER_PRETEST",
+  "evidence_level": "E1_POSTOPEN_SYNTHETIC_DIAGNOSTIC_ONLY",
+  "source": {
+    "lab_schema": "gcs-fourier-cleanroom-bost-lab-1.0",
+    "config_sha256": "4314b243f33721e395f7f9b2606294289c9d8c1c9334bdc573ee900cb4289482",
+    "implementation_sha256": "c2de62275404e1126cd18a6a7fec4e3500776f8b420e96fa368565a08868e1d7",
+    "git": {
+      "commit": "965d27a896204b8946aab72efc6765b64b782282",
+      "tracked_worktree_clean_at_start": true,
+      "ignored_known_scratch_rows": 11
+    }
+  },
+  "hardware": {
+    "torch_version": "2.13.0",
+    "mps_built": true,
+    "mps_available": true,
+    "cuda_available": false
+  },
+  "geometry": {
+    "camera_split": {
+      "train": [
+        0.0,
+        30.0,
+        60.0,
+        90.0,
+        120.0,
+        150.0
+      ],
+      "development": [
+        15.0,
+        105.0
+      ],
+      "test": [
+        45.0,
+        135.0
+      ]
+    },
+    "split_angle_overlap_count": 0,
+    "detector_shape": [
+      8,
+      8
+    ],
+    "rays_per_view": 64,
+    "truth_sample_count": 96,
+    "neural_sample_count": 32,
+    "voxel_sample_count": 16,
+    "fixed_denominator": true,
+    "straight_parallel_rays": true
+  },
+  "operator_audit": {
+    "adjoint_relative_error_by_split": {
+      "train": 1.5956987908793963e-07,
+      "development": 0.0,
+      "test": 2.3683524830175884e-07
+    },
+    "maximum_allowed": 2e-05,
+    "all_passed": true
+  },
+  "execution": {
+    "model_row_count": 40,
+    "neural_fit_count": 32,
+    "paired_unit_count": 8,
+    "all_numeric_outputs_finite": true,
+    "elapsed_seconds": 33.86812358396128
+  },
+  "diagnostic": {
+    "paired_unit_count": 8,
+    "field_harm_count": 5,
+    "field_help_count": 0,
+    "test_harm_count": 0,
+    "test_help_count": 0,
+    "field_test_sign_concordance_fraction": 0.25,
+    "spearman_high_gcs_vs_field_delta": 0.6904761904761906,
+    "spearman_high_gcs_vs_test_delta": -0.2380952380952381,
+    "auroc_high_gcs_for_field_harm": 0.8
+  },
+  "predeclared_decision": {
+    "checks": {
+      "minimum_field_harm_units": true,
+      "minimum_field_nonharm_units": true,
+      "minimum_field_spearman": true,
+      "minimum_field_harm_auroc": true,
+      "minimum_field_test_sign_concordance": false
+    },
+    "passed": false,
+    "status": "GCS_PRIMARY_SELECTOR_CLOSED_AFTER_PRETEST"
+  },
+  "claim_authorization": {
+    "diagnostic_signal_on_this_synthetic_pretest": false,
+    "new_algorithm": false,
+    "algorithm_superiority": false,
+    "real_bost_reconstruction": false,
+    "cross_scene_generalization": false,
+    "paper_success": false,
+    "breakthrough": false
+  },
+  "claim_boundary": {
+    "continuous_analytic_teacher_not_cfd_or_experiment": true,
+    "teacher_inverse_quadrature_and_parameterization_are_different": true,
+    "camera_angles_are_disjoint_across_train_development_test": true,
+    "model_seed_is_a_repeat_not_an_independent_physical_sample": true,
+    "field_noise_unit_is_the_paired_unit": true,
+    "test_split_is_logically_not_cryptographically_sealed": true,
+    "parameter_counts_are_not_matched_between_frequency_bands": true,
+    "not_an_external_author_implementation": true,
+    "not_a_real_bost_reconstruction": true,
+    "not_an_operator_learning_superiority_test": true,
+    "not_a_cross_scene_generalization_test": true,
+    "not_a_paper_success_or_breakthrough_test": true
+  }
+}

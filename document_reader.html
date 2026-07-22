@@ -1122,6 +1122,20 @@
         .slice(0, 80) || "section";
     }
 
+    function anchorCompatibilityKey(value) {
+      return String(value).normalize("NFKC").toLowerCase().replaceAll("-", "");
+    }
+
+    function resolveAnchorTarget(requestedAnchor) {
+      const exact = document.getElementById(requestedAnchor);
+      if (exact) return exact;
+      const key = anchorCompatibilityKey(requestedAnchor);
+      const candidates = Array.from(
+        contentEl.querySelectorAll("h1[id], h2[id], h3[id], h4[id]")
+      ).filter((heading) => anchorCompatibilityKey(heading.id) === key);
+      return candidates.length === 1 ? candidates[0] : null;
+    }
+
     function autoLinkBareUrls(htmlText) {
       return htmlText.replace(/(^|[\s([{])((?:https?:\/\/|doi:10\.)[^\s<>"'\x60]+)/gi, (_, prefix, rawUrl) => {
         let clean = rawUrl;
@@ -2065,8 +2079,10 @@
       applySearch();
       if (anchor) {
         requestAnimationFrame(() => {
-          const target = document.getElementById(anchor);
-          if (target) target.scrollIntoView({ block: "start" });
+          requestAnimationFrame(() => {
+            const target = resolveAnchorTarget(anchor);
+            if (target) target.scrollIntoView({ block: "start" });
+          });
         });
       }
     }

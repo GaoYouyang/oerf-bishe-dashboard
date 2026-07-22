@@ -1,0 +1,503 @@
+{
+  "schema_version": "oerf-temporal-qcal-profile-inference-1.0",
+  "evidence_class": "POSTOPEN_SAME_RIG_PROFILE_INFERENCE_FORENSICS",
+  "status": "POSTOPEN_DEVELOPMENT_FORENSICS_NO_GO",
+  "result_label": "profile-inference development gate not cleared",
+  "config": {
+    "base": {
+      "seed": 20260721,
+      "grid_shape": [
+        8,
+        8,
+        8
+      ],
+      "detector_shape": [
+        4,
+        4
+      ],
+      "detector_half_width": 0.62,
+      "samples_per_ray": 16,
+      "base_seeds": [
+        709,
+        811,
+        907
+      ],
+      "phantom_families": [
+        "smooth_plume",
+        "wrinkled_density_interface",
+        "shock_expansion_pair"
+      ],
+      "frame_count": 6,
+      "fit_session_count": 4,
+      "pca_ranks": [
+        4,
+        8,
+        16
+      ],
+      "structural_rank": 2,
+      "q_trial_count": 3,
+      "q_norm": 0.04,
+      "observation_noise_fraction": 0.002,
+      "noise_multipliers": [
+        0.0,
+        0.0078125,
+        0.015625,
+        0.03125,
+        0.0625,
+        0.125,
+        0.25,
+        0.5,
+        1.0,
+        2.0,
+        4.0,
+        8.0
+      ],
+      "reconstruction_ridge_alpha": 0.002,
+      "nuisance_ridge_alpha": 1e-08,
+      "transport_displacement_per_frame": [
+        0.16,
+        0.08,
+        -0.05
+      ],
+      "velocity_mismatch_scale": 1.1,
+      "birth_strength": 0.12,
+      "fd_steps": [
+        0.1,
+        0.05,
+        0.025,
+        0.0125,
+        0.00625,
+        0.003125,
+        0.0015625,
+        0.00078125,
+        0.000390625
+      ],
+      "fd_relative_tolerance": 0.005,
+      "profile_rcond": 1e-09,
+      "dense_chunk_size": 32,
+      "residual_sigma_gate": 2.0,
+      "confidence_level": 0.95,
+      "nis_two_sided_alpha": 0.01,
+      "confidence_radius_fraction_of_qref": 0.25,
+      "local_parameter_radius": 0.1
+    },
+    "seed": 20260722,
+    "q_ref": 0.04,
+    "amplitude_multipliers": [
+      0.0,
+      1.0,
+      2.0
+    ],
+    "noise_multiplier": 0.0078125,
+    "replicates": 500,
+    "calibration_replicates": 250,
+    "coverage_level": 0.95,
+    "coverage_floor": 0.9,
+    "pooled_coverage_floor": 0.925,
+    "radius_median_ceiling_qref": 0.5,
+    "radius_p90_ceiling_qref": 1.0,
+    "field_degradation_ceiling": 0.02,
+    "finite_difference_step": 1e-05
+  },
+  "counts": {
+    "cells": 21,
+    "trial_rows": 10500,
+    "calibration_rows": 5250,
+    "evaluation_rows": 5250,
+    "uncertainty_cell_rows": 105,
+    "point_cell_rows": 84,
+    "rigs": 3,
+    "dense_forward_calls": 4656
+  },
+  "calibration_envelopes": {
+    "plugin_native": {
+      "threshold": 103.2524206581322,
+      "chi_square_5_ratio": 9.326809283254171,
+      "same_opened_rigs_only": true,
+      "valid": true
+    },
+    "iterative_gn_sandwich": {
+      "threshold": 14.134120644626549,
+      "chi_square_5_ratio": 1.2767375989703216,
+      "same_opened_rigs_only": true,
+      "valid": true
+    },
+    "iterative_exact_godambe": {
+      "threshold": 14.154403049504122,
+      "chi_square_5_ratio": 1.2785697121633401,
+      "same_opened_rigs_only": true,
+      "valid": true
+    },
+    "iterative_penalized_contrast": {
+      "threshold": 13.832455580051194,
+      "chi_square_5_ratio": 1.2494881407321403,
+      "same_opened_rigs_only": true,
+      "valid": true
+    },
+    "corrected_crossfit_wald": {
+      "threshold": 483.5298734055149,
+      "chi_square_5_ratio": 43.677338344842745,
+      "same_opened_rigs_only": true,
+      "valid": true
+    }
+  },
+  "gates": {
+    "derivative_checks": {
+      "passed": true
+    },
+    "numerical": {
+      "passed": true
+    },
+    "primary_iterative_exact_godambe": {
+      "passed": false,
+      "evaluation_coverage": 0.979047619047619,
+      "evaluation_coverage_cp95_lower": 0.9748012212640143,
+      "evaluation_coverage_cp95_upper": 0.9827489952366806,
+      "passing_cells": 21,
+      "required_cells": 21,
+      "calibrated_radius_qref_median": 0.25622518542526407,
+      "calibrated_radius_qref_p90": 0.2781834190009543,
+      "field_median_relative_degradation_vs_plugin": -0.028676582189372947,
+      "sequence_median_relative_degradation_vs_plugin": -0.03088238571191415
+    }
+  },
+  "limitations": [
+    "all directions and rigs were opened in v3",
+    "calibration and evaluation halves differ only by synthetic noise draws",
+    "500 noise replicates per cell do not create independent rigs",
+    "known Gaussian sigma, exact transport, and synthetic truth remain oracle controls",
+    "the penalized profile contrast is not a likelihood-ratio statistic",
+    "cross-fitting frames does not create independent physical acquisitions"
+  ],
+  "claim_authorization": {
+    "new_algorithm": false,
+    "learned_operator": false,
+    "real_bost_calibration": false,
+    "real_3d_or_4d_reconstruction": false,
+    "cross_rig_generalization": false,
+    "paper_success": false,
+    "breakthrough": false
+  },
+  "cost_accounting": {
+    "wall_seconds": 634.7037910830695,
+    "dense_reference_only": true,
+    "matrix_free_call_budget_claim_authorized": false,
+    "cell_batch_rows": [
+      {
+        "base_seed": 709,
+        "direction_index": -1,
+        "amplitude_multiplier": 0.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.022690874990075827,
+        "plugin_batch_wall_seconds_per_observation": 4.5381749980151656e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.11636720795650035,
+        "crossfit_batch_wall_seconds_per_observation": 0.0002327344159130007,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 709,
+        "direction_index": 0,
+        "amplitude_multiplier": 1.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.022952000028453767,
+        "plugin_batch_wall_seconds_per_observation": 4.5904000056907535e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.11851395899429917,
+        "crossfit_batch_wall_seconds_per_observation": 0.00023702791798859834,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 709,
+        "direction_index": 0,
+        "amplitude_multiplier": 2.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.023462709039449692,
+        "plugin_batch_wall_seconds_per_observation": 4.692541807889938e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.11765512498095632,
+        "crossfit_batch_wall_seconds_per_observation": 0.00023531024996191263,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 709,
+        "direction_index": 1,
+        "amplitude_multiplier": 1.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.024268832989037037,
+        "plugin_batch_wall_seconds_per_observation": 4.853766597807407e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.11879300000146031,
+        "crossfit_batch_wall_seconds_per_observation": 0.00023758600000292062,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 709,
+        "direction_index": 1,
+        "amplitude_multiplier": 2.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.023430083063431084,
+        "plugin_batch_wall_seconds_per_observation": 4.686016612686217e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.115095250075683,
+        "crossfit_batch_wall_seconds_per_observation": 0.000230190500151366,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 709,
+        "direction_index": 2,
+        "amplitude_multiplier": 1.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.022444749949499965,
+        "plugin_batch_wall_seconds_per_observation": 4.488949989899993e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.1182534999679774,
+        "crossfit_batch_wall_seconds_per_observation": 0.0002365069999359548,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 709,
+        "direction_index": 2,
+        "amplitude_multiplier": 2.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.023732292000204325,
+        "plugin_batch_wall_seconds_per_observation": 4.746458400040865e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.12020341702736914,
+        "crossfit_batch_wall_seconds_per_observation": 0.00024040683405473828,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 811,
+        "direction_index": -1,
+        "amplitude_multiplier": 0.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.023061082931235433,
+        "plugin_batch_wall_seconds_per_observation": 4.612216586247086e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.11740833299700171,
+        "crossfit_batch_wall_seconds_per_observation": 0.0002348166659940034,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 811,
+        "direction_index": 0,
+        "amplitude_multiplier": 1.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.02305245795287192,
+        "plugin_batch_wall_seconds_per_observation": 4.610491590574384e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.11249495798256248,
+        "crossfit_batch_wall_seconds_per_observation": 0.00022498991596512497,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 811,
+        "direction_index": 0,
+        "amplitude_multiplier": 2.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.02210116700734943,
+        "plugin_batch_wall_seconds_per_observation": 4.420233401469886e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.1142805409617722,
+        "crossfit_batch_wall_seconds_per_observation": 0.0002285610819235444,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 811,
+        "direction_index": 1,
+        "amplitude_multiplier": 1.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.02337958395946771,
+        "plugin_batch_wall_seconds_per_observation": 4.675916791893542e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.1151664589997381,
+        "crossfit_batch_wall_seconds_per_observation": 0.0002303329179994762,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 811,
+        "direction_index": 1,
+        "amplitude_multiplier": 2.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.02248966705519706,
+        "plugin_batch_wall_seconds_per_observation": 4.497933411039412e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.11487299995496869,
+        "crossfit_batch_wall_seconds_per_observation": 0.00022974599990993738,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 811,
+        "direction_index": 2,
+        "amplitude_multiplier": 1.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.023517583031207323,
+        "plugin_batch_wall_seconds_per_observation": 4.7035166062414646e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.11651754193007946,
+        "crossfit_batch_wall_seconds_per_observation": 0.00023303508386015892,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 811,
+        "direction_index": 2,
+        "amplitude_multiplier": 2.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.022841416066512465,
+        "plugin_batch_wall_seconds_per_observation": 4.568283213302493e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.1159814998973161,
+        "crossfit_batch_wall_seconds_per_observation": 0.0002319629997946322,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 907,
+        "direction_index": -1,
+        "amplitude_multiplier": 0.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.028299375087954104,
+        "plugin_batch_wall_seconds_per_observation": 5.6598750175908205e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.12933991593308747,
+        "crossfit_batch_wall_seconds_per_observation": 0.00025867983186617495,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 907,
+        "direction_index": 0,
+        "amplitude_multiplier": 1.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.023523957934230566,
+        "plugin_batch_wall_seconds_per_observation": 4.7047915868461134e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.11682095797732472,
+        "crossfit_batch_wall_seconds_per_observation": 0.00023364191595464946,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 907,
+        "direction_index": 0,
+        "amplitude_multiplier": 2.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.02393558295443654,
+        "plugin_batch_wall_seconds_per_observation": 4.787116590887308e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.11622791597619653,
+        "crossfit_batch_wall_seconds_per_observation": 0.00023245583195239305,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 907,
+        "direction_index": 1,
+        "amplitude_multiplier": 1.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.023372417083010077,
+        "plugin_batch_wall_seconds_per_observation": 4.674483416602016e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.11819291696883738,
+        "crossfit_batch_wall_seconds_per_observation": 0.00023638583393767476,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 907,
+        "direction_index": 1,
+        "amplitude_multiplier": 2.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.023721000063233078,
+        "plugin_batch_wall_seconds_per_observation": 4.744200012646616e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.1178701251046732,
+        "crossfit_batch_wall_seconds_per_observation": 0.00023574025020934642,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 907,
+        "direction_index": 2,
+        "amplitude_multiplier": 1.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.02413037500809878,
+        "plugin_batch_wall_seconds_per_observation": 4.826075001619756e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.11609458294697106,
+        "crossfit_batch_wall_seconds_per_observation": 0.0002321891658939421,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      },
+      {
+        "base_seed": 907,
+        "direction_index": 2,
+        "amplitude_multiplier": 2.0,
+        "replicates": 500,
+        "plugin_batch_wall_seconds": 0.02346033393405378,
+        "plugin_batch_wall_seconds_per_observation": 4.6920667868107557e-05,
+        "plugin_batched_ridge_rhs": 500,
+        "crossfit_batch_wall_seconds": 0.11363716702908278,
+        "crossfit_batch_wall_seconds_per_observation": 0.00022727433405816556,
+        "crossfit_cholesky_factorizations": 2,
+        "crossfit_batched_field_rhs": 1000,
+        "crossfit_batched_jacobian_rhs": 5000
+      }
+    ],
+    "per_trial_estimator_and_evaluator_counts_separated": true,
+    "cost_superiority_claim_authorized": false
+  },
+  "provenance": {
+    "source_path": "learning_labs/temporal_qcal_profile_inference_lab.py",
+    "source_sha256": "164d3acd3f21a3f99eb82c10830ab265cdab5e1b41addd635c4b4d4f9703c9a3",
+    "protocol_path": "docs/temporal_qcal_profile_inference_protocol_2026-07-22.md",
+    "protocol_sha256": "5c71afe5717fa0305b41564eb75cf104393e2280f9c46f4c63bccbd74df806c0",
+    "seed_namespace": "oerf-temporal-qcal-profile-inference-1.0",
+    "classification": "POSTOPEN_DEVELOPMENT_AFTER_V3"
+  },
+  "required_next_gate": [
+    "freeze new rig, field, camera, transport, signed-axis, null, and anchor-weak manifest before opening",
+    "obtain the laboratory callable and real acquisition covariance contract from He Yuanzhe",
+    "derive a physical-target orthogonal score that addresses ridge centre bias rather than only interval width"
+  ],
+  "environment": {
+    "python": "3.11.5",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  }
+}

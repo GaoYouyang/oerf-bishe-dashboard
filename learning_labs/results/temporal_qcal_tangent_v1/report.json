@@ -1,0 +1,234 @@
+{
+  "schema_version": "oerf-temporal-qcal-tangent-lab-1.0",
+  "evidence_class": "POSTOPEN_SYNTHETIC_TEMPORAL_TANGENT_DIAGNOSTIC_ONLY",
+  "status": "POSTOPEN_TEMPORAL_TANGENT_NO_GO",
+  "configuration": {
+    "seed": 20260721,
+    "grid_shape": [
+      8,
+      8,
+      8
+    ],
+    "detector_shape": [
+      4,
+      4
+    ],
+    "detector_half_width": 0.62,
+    "samples_per_ray": 16,
+    "base_seeds": [
+      709,
+      811,
+      907
+    ],
+    "phantom_families": [
+      "smooth_plume",
+      "wrinkled_density_interface",
+      "shock_expansion_pair"
+    ],
+    "frame_count": 6,
+    "fit_session_count": 4,
+    "pca_ranks": [
+      4,
+      8,
+      16
+    ],
+    "structural_rank": 2,
+    "q_trial_count": 3,
+    "q_norm": 0.04,
+    "observation_noise_fraction": 0.002,
+    "reconstruction_ridge_alpha": 0.002,
+    "nuisance_ridge_alpha": 1e-08,
+    "transport_displacement_per_frame": [
+      0.16,
+      0.08,
+      -0.05
+    ],
+    "velocity_mismatch_scale": 1.1,
+    "birth_strength": 0.12,
+    "fd_steps": [
+      0.1,
+      0.05,
+      0.025,
+      0.0125,
+      0.00625,
+      0.003125,
+      0.0015625,
+      0.00078125,
+      0.000390625
+    ],
+    "fd_relative_tolerance": 0.005,
+    "profile_rcond": 1e-09,
+    "dense_chunk_size": 32,
+    "residual_sigma_gate": 2.0
+  },
+  "pose_modes": [
+    {
+      "name": "yaw",
+      "pose_field": "azimuth_degrees",
+      "camera_pattern": [
+        1.0,
+        -0.8,
+        0.6,
+        -1.0,
+        0.7,
+        -0.5
+      ],
+      "physical_unit": "degree",
+      "rms_per_dimensionless_unit": 0.7895146188218007
+    },
+    {
+      "name": "pitch",
+      "pose_field": "elevation_degrees",
+      "camera_pattern": [
+        0.45,
+        -0.55,
+        -0.7,
+        0.6,
+        -0.35,
+        0.75
+      ],
+      "physical_unit": "degree",
+      "rms_per_dimensionless_unit": 0.5830951894845301
+    },
+    {
+      "name": "roll",
+      "pose_field": "roll_degrees",
+      "camera_pattern": [
+        0.35,
+        -0.5,
+        0.65,
+        -0.25,
+        0.55,
+        -0.75
+      ],
+      "physical_unit": "degree",
+      "rms_per_dimensionless_unit": 0.5358015801892837
+    },
+    {
+      "name": "shift_u",
+      "pose_field": "shift_u",
+      "camera_pattern": [
+        0.008,
+        -0.006,
+        0.004,
+        -0.008,
+        0.006,
+        -0.004
+      ],
+      "physical_unit": "domain_unit",
+      "rms_per_dimensionless_unit": 0.00621825270205921
+    },
+    {
+      "name": "shift_v",
+      "pose_field": "shift_v",
+      "camera_pattern": [
+        -0.005,
+        0.007,
+        -0.006,
+        0.004,
+        -0.007,
+        0.005
+      ],
+      "physical_unit": "domain_unit",
+      "rms_per_dimensionless_unit": 0.005773502691896258
+    }
+  ],
+  "experiment_contract": {
+    "forward_family": "same voxel operator for nominal, perturbed, nuisance, and evaluator paths",
+    "fit_audit_separation": "PCA bases use independent fit-session seeds; q scenes use disjoint base seeds",
+    "temporal_interpretation": "zero-boundary trilinear translation plus optional shared birth proxy",
+    "geometry_estimator": "local variable projection at reported geometry",
+    "teacher_geometry_used_for_decisions": false,
+    "real_oerf_data_used": false,
+    "restricted_or_vpn_material_used": false
+  },
+  "gates": {
+    "numerical": {
+      "passed": true,
+      "maximum_fd_relative_change": 0.004607751501380867,
+      "maximum_projector_orthogonality_defect": 3.752999573600916e-15,
+      "maximum_nuisance_residual_orthogonality_defect": 2.484350938745495e-15,
+      "maximum_profile_symmetry_defect": 0.0,
+      "minimum_profile_eigenvalue_relative_to_raw": 1.3390529509445919e-31
+    },
+    "structural_controls": {
+      "passed": true,
+      "zero_control_count": 15,
+      "known_target_count": 3
+    },
+    "exact_transport_conditional_signal": {
+      "passed": false,
+      "q_relative_l2": {
+        "minimum": 3.4708243426344016,
+        "median": 9.407650490000087,
+        "maximum": 18.131798768177227
+      },
+      "corrected_residual_sigma_rms": {
+        "minimum": 0.7178014873845517,
+        "median": 0.74428637864644,
+        "maximum": 0.7658719474097282
+      }
+    },
+    "mismatch_fail_closed": {
+      "passed": false,
+      "trial_count": 27,
+      "false_accept_count": 9
+    },
+    "shared_birth_research_signal": {
+      "passed": true,
+      "meaning": "model-class follow-up signal only; not an algorithm or reacting-flow result"
+    }
+  },
+  "fit_basis_diagnostics": [
+    {
+      "base_seed": 709,
+      "family": "smooth_plume",
+      "fit_true_matrix_rank": 16,
+      "fit_pilot_matrix_rank": 24,
+      "fit_pilot_relative_l2": 0.4463334346647129
+    },
+    {
+      "base_seed": 811,
+      "family": "wrinkled_density_interface",
+      "fit_true_matrix_rank": 16,
+      "fit_pilot_matrix_rank": 24,
+      "fit_pilot_relative_l2": 0.5668323860269239
+    },
+    {
+      "base_seed": 907,
+      "family": "shock_expansion_pair",
+      "fit_true_matrix_rank": 16,
+      "fit_pilot_matrix_rank": 24,
+      "fit_pilot_relative_l2": 0.5714927021150694
+    }
+  ],
+  "counts": {
+    "rigs": 3,
+    "frames_per_scene": 6,
+    "model_rows": 42,
+    "q_trials": 126,
+    "structural_rows": 21,
+    "fd_rows": 15,
+    "dense_voxel_forward_calls": 4512
+  },
+  "claim_authorization": {
+    "conditional_synthetic_temporal_tangent_signal": false,
+    "new_algorithm": false,
+    "real_bost_calibration": false,
+    "real_3d_or_4d_reconstruction": false,
+    "operator_learning_success": false,
+    "cross_rig_generalization": false,
+    "paper_success": false,
+    "breakthrough": false
+  },
+  "required_next_gate": [
+    "He Yuanzhe confirms real callable, geometry JVP/VJP, and field representation",
+    "real timestamps, shared-geometry scope, transport mismatch, birth/extinction, and baselines are frozen",
+    "a fresh multi-rig estimator audit adds field, held-out-view, temporal, and cost endpoints"
+  ],
+  "environment": {
+    "python": "3.11.5",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "numpy": "2.4.6"
+  }
+}

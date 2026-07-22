@@ -33,6 +33,7 @@
     header { padding:22px 0 30px; border-bottom:1px solid var(--line); }
     main { padding-bottom:46px; }
     footer { padding:24px 0 36px; color:var(--muted); font-size:12px; }
+    footer > p + p { display:none; }
     h1,h2,h3 { line-height:1.22; letter-spacing:0; }
     h1 { max-width:1180px; margin:18px 0 9px; font-size:40px; }
     h2 { margin:0; font-size:28px; }
@@ -63,6 +64,7 @@
     .archive-details ol { margin:12px 16px 16px; }
     .metric-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
     .real-metric-grid { grid-template-columns:repeat(4,minmax(0,1fr)); margin:14px 0; }
+    .diagnostic-metric-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:14px 0; }
     .metric { min-height:112px; padding:14px; }
     .metric b { display:block; margin-bottom:4px; color:var(--teal); font-size:28px; }
     .metric span { color:var(--muted); font-size:12px; }
@@ -111,6 +113,9 @@
     .panel { padding:17px; }
     figure { margin:0; padding:10px; }
     figure img { display:block; width:100%; height:auto; border-radius:5px; }
+    .result-figure-stack { display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px; }
+    .wide-figure-frame { width:100%; aspect-ratio:3.08; overflow:hidden; border-radius:5px; background:#fff; }
+    .wide-figure-frame img { width:100%; height:100%; object-fit:cover; object-position:top; border-radius:0; }
     figcaption { margin-top:7px; color:var(--muted); font-size:11px; }
     .candidate-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
     .candidate-card { display:flex; min-height:390px; flex-direction:column; border-top:4px solid var(--gold); }
@@ -147,6 +152,7 @@
       .section-head { flex-direction:column; }
       .section-head > .actions { width:100%; max-width:none; justify-content:flex-start; }
       .candidate-grid,.source-grid,.data-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .diagnostic-metric-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .pipeline { grid-template-columns:repeat(3,minmax(0,1fr)); }
       .pipeline div:nth-child(3)::after { display:none; }
       .week-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -158,6 +164,7 @@
       .nav { flex-wrap:nowrap; overflow-x:auto; padding-bottom:6px; scrollbar-width:thin; }
       .nav a { flex:0 0 auto; }
       .metric-grid,.real-metric-grid,.evidence-grid,.candidate-grid,.source-grid,.data-grid,.week-grid,.library-strip { grid-template-columns:1fr; }
+      .diagnostic-metric-grid { grid-template-columns:1fr; }
       .pipeline { grid-template-columns:1fr; }
       .pipeline div::after { display:none; }
       .filter-field { min-width:100%; }
@@ -171,6 +178,7 @@
   <header>
     <nav class="nav" aria-label="主导航">
       <a href="operator-learning/">学习主页</a>
+      <a href="#gcs-gradient-aliasing">梯度混叠与 MGRS</a>
       <a href="#resolution-transfer">最新真实 NO-GO</a>
       <a href="#n5-d5">N5-D5 接口桥</a>
       <a href="#n5-d5-private-readiness">D5 私有接线</a>
@@ -180,6 +188,30 @@
       <a href="#d0-root-cause">当前结论</a>
       <a href="#spatial-benchmark">空间基准</a>
       <a href="#multires-diagnosis">多分辨率诊断</a>
+      <a href="#nested-stopping-result">E72 嵌套停止判决</a>
+      <a href="#e73-jgtce">E73 联合尾部证书</a>
+      <a href="#m2-9-fixed-warm">M2.9 Warm NO-GO</a>
+      <a href="#lgwo-a24">LGWO-A24 L1</a>
+      <a href="#lgwo-psu-c1-controls">PSU-C1 路线收缩</a>
+      <a href="#lgwo-r0-stopping">R0 早停 NO-GO</a>
+      <a href="#lgwo-r2a-h1-lockbox">R2-A H1 锁箱</a>
+      <a href="#lgwo-r2b-norm-bound">R2-B0 严格范数证书</a>
+      <a href="#lgwo-r2b-diagonal-majorizer">R2-B0D 逐体素证书</a>
+      <a href="#lgwo-r2c-diagonal-pdhg">R2-C 对角 PDHG NO-GO</a>
+      <a href="#lgwo-r2c2-beta-interpolation">R2-C2 β 插值支线关闭</a>
+      <a href="#lgwo-r2d1-edge-budget">R2-D1 edge 预算 NO-GO</a>
+      <a href="#lgwo-r2e0-cached-krylov">R2-E0 子空间 NO-GO</a>
+      <a href="#lgwo-r2f0-span-audit">R2-F0 扩展 span 协议</a>
+      <a href="advisor_interface_intake.html">师兄回复工作台</a>
+      <a href="#lgwo-guidance">论文与14天路线</a>
+      <a href="#calibration-mismatch-lab">标定失配 NO-GO</a>
+      <a href="#camera-reliability-screen">相机可靠性回放</a>
+      <a href="#temporal-qcal-profile-inference"><code>q_cal</code> 联合推断路线</a>
+      <a href="#rig-session-calibration">rig/session 校准与漂移门</a>
+      <a href="#open-nir-bos-readiness">公开 NIR-BOS 复现门</a>
+      <a href="#gct-kmix-o1">GCT-KMix 上界判决</a>
+      <a href="#breakthrough-watch">突破监测</a>
+      <a href="#support-loro-result">LORO 正式结果</a>
       <a href="#support-loro-preflight">LORO 前置证据</a>
       <a href="#real-rotation40">真实观测</a>
       <a href="#jacru-gate">JACRU 实测</a>
@@ -210,7 +242,1445 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">当前只做一条垂直主线：围绕何远哲师兄的三维 BOST/NeRIF，把真实投影算子、稳定重建与算子学习接成可核验路线。最新机制诊断进一步收紧了 E68：<strong>同一 16³ 场换到 32³ 表示与 forward 已产生不可忽略的预测差，而从 <code>U(x16)</code> 到 <code>x32</code> 的冻结修正在 camera 2 与 camera 3/4 上方向冲突</strong>，所以仍不能把迁移反转便宜地归因于“高频过拟合”或 CGLS 第四步。support LORO 的输入身份现已跨文件闭合：view 0–8 由官方源程序顺序与连续 block 绑定到 camera 2/3/4 × rotation 0/50/90，两级私有 cache 也证明在看同一批物理 rays。下一步才运行 iteration-path 与质量投影分解；当前没有把 preflight 写成算法分数。</p>
+    <p class="lead">当前主线进一步收窄到何远哲师兄 NeRIF 邻近的一个具体问题：<strong>神经折射率场的连续导数，与训练时有限差分/有限采样 renderer 是否表达同一个三维场</strong>。clean-room 审计、MGRS、residual-only 正则和总场正则已连续完成四层证伪：投影更好、残差更小或总场更平滑，都不会自动变成真实三维误差更小。Stage B 仍保持密封。当前新候选是可拒答的 <strong>Observable Energy-Alignment Gate</strong>：不再改重建网络，而是用部署可见的能量、renderer margin、噪声与 geometry 决定修正是否值得接受。</p>
+    <div id="breakthrough-watch" class="alert critical" style="margin-top:18px; scroll-margin-top:18px;">
+      <strong>突破监测 · 当前没有算法突破</strong>
+      <span>新增 54 次总场 L2/H1/Huber 对照，8/8 候选仍全部 NO-GO。最好总场 H1 的 field 中位差为 <code>-0.001565</code>，比最佳 residual-only 只多 <code>0.000083</code>；即使候选总场 H1 能量下降 0.73%，truth-H1 仍恶化 <code>+0.001434</code>。事后能量门只生成扩样假设：L2 非增保留 18/18 改善但错放 5 条有害路径，Huber 非增错放 0 但漏掉 8/18 改善。四个 oblique/shock 留出单元没有运行；新算法、真实 OERF、泛化、论文成功和突破仍为 0。</span>
+    </div>
+    <section id="gcs-gradient-aliasing" style="margin-top:20px; scroll-margin-top:18px;">
+      <div class="chips"><span class="chip blue">连续/离散机制 · 7/7</span><span class="chip coral">MGRS · NO-GO</span><span class="chip coral">RESIDUAL PRIOR · 0/6</span><span class="chip coral">TOTAL-FIELD PRIOR · 0/8</span><span class="chip gold">ENERGY GATE · POSTOPEN HYPOTHESIS</span><span class="chip gold">STAGE B · 未打开</span><span class="chip coral">NO REAL / PAPER / BREAKTHROUGH CLAIM</span></div>
+      <div class="section-head" style="margin-top:10px;">
+        <div>
+          <h2>为什么离散投影看起来更好，三维场反而可能更错</h2>
+          <p>这个模块把当前最值得继续追的物理-算法矛盾单独展开：BOST 积分的是折射率梯度，高频 Fourier 表示经过固定步长中心差分后会被强烈衰减甚至变号。训练 renderer 可能看不见网络藏进去的高频结构，而 continuous AD 与新角度会重新把它暴露出来。</p>
+        </div>
+        <div class="actions"><a class="button primary" href="document_reader.html?doc=docs%2Fgcs_gradient_aliasing_learning_route_2026-07-22.md">从零学清楚</a><a class="button" href="document_reader.html?doc=docs%2Fgcs_mgrs_stage_gate_result_2026-07-22.md">读正式判决</a><a class="button" href="asset_viewer.html?asset=learning_labs%2Fresults%2Fgcs_fourier_continuous_audit_v1%2Fcontinuous_audit.pdf">机制图 PDF</a></div>
+      </div>
+
+      <div class="diagnostic-metric-grid">
+        <div class="metric"><b>7 / 7</b><span>未用于事后探针的 family-noise 单元中，高频 dense-angle AD 全部比低频差</span></div>
+        <div class="metric"><b>+0.48161</b><span>dense unseen-angle AD relative-L2 的中位高频减低频；正数表示更差</span></div>
+        <div class="metric"><b>0.82143</b><span>development GCS 与 dense-AD 损害的 Spearman；仅是 synthetic 关联</span></div>
+        <div class="metric failed-state"><b>0 / 2</b><span>冻结 MGRS 候选通过 Stage A 的数量；Stage B 未运行</span></div>
+        <div class="metric failed-state"><b>-0.00108</b><span>MGRS-6816 最佳场误差中位差；未达到预写 -0.002 门</span></div>
+        <div class="metric"><b>-0.02706</b><span>同一候选 dense-AD 中位差；投影改善没有可靠转成场改善</span></div>
+        <div class="metric failed-state"><b>0 / 6</b><span>L2+H1 / L2+Huber 残差正则候选通过全门的数量</span></div>
+        <div class="metric failed-state"><b>+0.000400</b><span>最好 Huber 相对 MGRS 的 field 增量；未达 +0.001 门</span></div>
+        <div class="metric failed-state"><b>28 / 28 vs 14 / 28</b><span>获准路径中 dense-AD 改善数，与同时 field/H1 改善数</span></div>
+        <div class="metric failed-state"><b>0 / 8</b><span>总场 L2/H1/Huber 候选通过 field、truth-H1 与双对照门的数量</span></div>
+        <div class="metric failed-state"><b>-0.001565</b><span>最好总场 H1 field 中位差；相对最佳 residual-only 只多 0.000083</span></div>
+        <div class="metric"><b>18 / 18 + 5 harm</b><span>事后 L2 非增门保留的改善与仍错放的有害路径</span></div>
+        <div class="metric"><b>10 / 18 + 0 harm</b><span>事后 Huber 非增门保留的改善与错放；尚未留出验证</span></div>
+      </div>
+
+      <div class="pipeline" aria-label="BOST 梯度混叠与候选算法路径">
+        <div><b>1 · 连续三维场</b><span>解析 reaction-flow morphology 只负责生成不共享逆端离散链的观测。</span></div>
+        <div><b>2 · 稀疏 BOST</b><span>六个训练角积分投影梯度；两个 development 与两个 test 角分离。</span></div>
+        <div><b>3 · 差分盲频带</b><span><code>sinc(pi f h)</code> 让 f=8 只剩 -0.062、f=16 只剩 0.061。</span></div>
+        <div><b>4 · 连续审计</b><span>14 个新角分别用 AD、FD(h)、FD(h/2)、FD(h/4) 重渲染。</span></div>
+        <div><b>5 · MGRS 护栏</b><span>零残差起步；四 renderer 同意才准入，否则精确退回低频基座。</span></div>
+        <div><b>6 · 残差正则对照</b><span>42 次 L2+H1/Huber 拟合；投影保住，field/H1 全门 0/6。</span></div>
+        <div><b>7 · 总场正则对照</b><span>54 次 L2/H1/Huber 拟合；“更平滑”仍不等于“更真”，全门 0/8。</span></div>
+        <div><b>8 · 下一门</b><span>扩展同 family 开发面板，按 seed/geometry 留一验证能量对齐拒答门。</span></div>
+      </div>
+
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>频率 f</th><th>FD/AD 振幅比</th><th>训练 renderer 实际看见什么</th><th>研究含义</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><code>0.9710</code></td><td>几乎完整</td><td>低频主体结构较稳定</td></tr>
+            <tr><td>4</td><td><code>0.5936</code></td><td>只剩约六成</td><td>已出现明显尺度依赖</td></tr>
+            <tr><td>6</td><td><code>0.2339</code></td><td>只剩约四分之一</td><td>高频残差需要强约束</td></tr>
+            <tr><td>8</td><td><code>-0.0620</code></td><td>近乎消失且符号翻转</td><td>网络可利用离散盲区</td></tr>
+            <tr><td>16</td><td><code>0.0607</code></td><td>近乎不可见</td><td>central 投影好不能证明连续场好</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="result-figure-stack">
+        <figure><div class="wide-figure-frame"><img src="learning_labs/results/gcs_fourier_continuous_audit_v1/continuous_audit.png" alt="连续与离散梯度渲染器在七个未见 synthetic 单元上的差异审计" width="2992" height="968" loading="eager" decoding="async" /></div><figcaption>机制图：核心事实是高频场从 FD(h) 换到 AD 后误差系统性暴露。该图不含实验数据。</figcaption></figure>
+        <figure><div class="wide-figure-frame"><img src="learning_labs/results/gcs_mgrs_stage_gate_v1/mgrs_stage_gate.png" alt="MGRS 两候选在 Stage A 的场误差与连续投影误差变化" width="2816" height="1803" loading="eager" decoding="async" /></div><figcaption>Stage A 预览：负数表示候选优于低频基座。完整 PDF 保留 Stage B 密封面板；四个留出单元没有运行。</figcaption></figure>
+        <figure><div class="wide-figure-frame"><img src="learning_labs/results/gcs_regularized_residual_stage_a_v1/regularization_screen.png" alt="L2 H1 与 L2 Huber 残差正则在已开 Stage A 上的 field H1 与 dense AD 对照" width="2948" height="1892" loading="lazy" decoding="async" /></div><figcaption>经典正则对照：每个点是一个 family-noise 单元的两 seed 中位数。dense-AD 几乎不变，field/H1 却不同步；Stage B 保持密封。</figcaption></figure>
+        <figure><div class="wide-figure-frame"><img src="learning_labs/results/gcs_total_field_regularization_stage_a_v1/total_field_screen.png" alt="总场 L2 H1 与 Huber 在已开 Stage A 上的 field truth H1 dense AD 和能量变化对照" width="3564" height="2156" loading="lazy" decoding="async" /></div><figcaption>总场对照：左下显示最强 H1 确实降低了候选场自身能量，右上却显示 truth-H1 仍恶化。这是“平滑不等于真实”的直接反例。</figcaption></figure>
+      </div>
+
+      <div class="alert critical"><strong>最重要的研究判断</strong><span>同相机投影损失无法区分近零空间方向；residual-only 范数不控制与基场误差的交叉项；总场平滑先验又会把真实 wrinkled/shock 高频当成噪声。下一步不是更大的 reconstruction network，而是增加能预测“这个修正方向是好是坏”的独立观测与可拒答门。</span></div>
+
+      <div class="source-grid" style="margin-top:14px;">
+        <article class="source-card"><div class="body"><span class="chip blue">何远哲直接主线</span><h3>NeRIF</h3><p><strong>读：</strong>神经场怎样同时表示折射率和梯度，AD/数值微分一致性、随机 ray sampling、九视角数值验证与实验 fiber bundle 各承担什么证据。</p><p><strong>边界：</strong>它已经包含 AD/ND consistency；不能把“混合两个导数”当新意。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2409.14722v2">开放全文</a><a class="button" href="https://doi.org/10.1063/5.0250899">期刊 DOI</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip coral">最新强碰撞</span><h3>Neural Refractive Index Primitives</h3><p><strong>读：</strong>Fourier/hash、automatic/discrete/hybrid gradient、jitter、mask 与 hierarchical sampling。</p><p><strong>边界：</strong>论文已报告 Fourier + AD 放大梯度噪声，固定 hybrid、换 hash、加 jitter 均不足以作为独立创新。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2605.11454">2026 开放全文</a><a class="button" href="https://github.com/Weihu22/Neural-Implicit-Reconstruction-for-BOS">作者代码</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip gold">理论与相邻方法</span><h3>ReNO + mip-NeRF</h3><p><strong>读：</strong>ReNO 的 operator aliasing 与 representation equivalence；mip-NeRF 的 sampling footprint 与积分位置编码。</p><p><strong>提取：</strong>新意必须落在 BOST 梯度投影、可观察门和真实 optical footprint，而不是泛称“首次抗混叠”。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2305.19913">ReNO</a><a class="button" href="https://arxiv.org/abs/2103.13415">mip-NeRF</a></div></article>
+      </div>
+
+      <div class="evidence-grid" style="margin-top:14px;">
+        <article class="evidence-card" data-state="passed"><span class="chip blue">现在先学</span><h3>七天基础路径</h3><p>Day 1 手推 sinc 传递函数；Day 2 用 PyTorch 对照 AD/FD；Day 3 画 BOST forward；Day 4 复现连续审计；Day 5 用 SVD 理解零空间；Day 6 对读两篇神经折射率场；Day 7 写带回退和独立 split 的算法卡。</p><a href="document_reader.html?doc=docs%2Fgcs_gradient_aliasing_learning_route_2026-07-22.md">打开逐日验收</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">下一算法门</span><h3>Observable Energy-Alignment Gate</h3><p>先在 smooth/wrinkled 同 family 内扩 phantom seed、噪声、角度缺失和 ray sampling，比较 L2/Huber 固定非增门与低容量可拒答 gate。必须按 seed/geometry 分组留一，不确定精确回退；Stage B 仍不打开。</p><a href="document_reader.html?doc=docs%2Fgcs_total_field_regularization_result_2026-07-22.md">看混淆矩阵与扩样协议</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">请师兄确认</span><h3>真实 renderer 与主终点</h3><p>需要确认 AD/ND 的真实用法与步长、ray sampling 密度、held-out camera、straight/curved/finite-aperture 层级，以及最终应优化 field、temperature、displacement 还是 PIV velocity compensation。</p><a href="document_reader.html?doc=docs%2Fgcs_mgrs_stage_gate_result_2026-07-22.md&amp;anchor=6-%E9%9C%80%E8%A6%81%E4%BD%95%E8%BF%9C%E5%93%B2%E5%B8%88%E5%85%84%E7%A1%AE%E8%AE%A4%E7%9A%84%E4%BA%94%E4%B8%AA%E9%97%AE%E9%A2%98">复制五问</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">严格禁止</span><h3>当前不能写进摘要的句子</h3><p>不能说已发明安全能量 gate、优于 NeRIF/FNO、解决真实 BOST、证明跨形态/跨分辨率泛化或完成论文。当前只有机制 PASS、三轮算法/经典对照 NO-GO 和一个事后扩样假设。</p><a href="document_reader.html?doc=learning_labs%2Fresults%2Fgcs_total_field_energy_gate_diagnostic_v1%2Fdiagnostic.json">查看最新机器可读边界</a></article>
+      </div>
+
+      <div class="actions" style="margin-top:14px;"><a class="button primary" href="document_reader.html?doc=docs%2Fgcs_total_field_regularization_result_2026-07-22.md">总场 NO-GO + 能量门</a><a class="button" href="document_reader.html?doc=learning_labs%2Fresults%2Fgcs_total_field_regularization_stage_a_v1%2Fsummary.json">总场 JSON</a><a class="button" href="document_reader.html?doc=learning_labs%2Fresults%2Fgcs_total_field_energy_gate_diagnostic_v1%2Fdiagnostic.json">能量门 JSON</a><a class="button" href="learning_labs/results/gcs_total_field_regularization_stage_a_v1/unit_rows.csv">总场逐单元 CSV</a><a class="button" href="asset_viewer.html?asset=learning_labs%2Fresults%2Fgcs_total_field_regularization_stage_a_v1%2Ftotal_field_screen.pdf">总场图 PDF</a><a class="button" href="document_reader.html?doc=docs%2Fgcs_regularized_residual_stage_a_result_2026-07-22.md">残差 NO-GO 报告</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=179-%E6%80%BB%E5%9C%BA%E8%83%BD%E9%87%8F%E4%B9%9F%E4%B8%8D%E6%98%AF%E7%9C%9F%E5%80%BC-%E4%BD%86%E5%AE%83%E5%8F%AF%E8%83%BD%E5%B8%AE%E6%88%91%E4%BB%AC%E6%8B%92%E7%BB%9D%E5%9D%8F%E4%BF%AE%E6%AD%A3">讲人话日志</a></div>
+    </section>
+    <section id="m2-9-fixed-warm" style="margin-top:20px; scroll-margin-top:18px;">
+      <div class="chips"><span class="chip coral">M2.9 · DEVELOPMENT NO-GO</span><span class="chip blue">12 HASH-FROZEN CHECKPOINTS</span><span class="chip blue">6 DEV / 18 OPENED OOD CASES</span><span class="chip gold">k = 0..10 · 3 CLASSICAL CONTROLS + CGNE</span><span class="chip coral">NO FRESH / REAL / BREAKTHROUGH CLAIM</span></div>
+      <h2 style="margin-top:10px;">场先验保住了，测量一致性没追上：停止给昂贵 warm start 扫步数，重做低成本输入接口</h2>
+      <p>四类网络、三个模型种子的 12 个 checkpoint 在 reconstruction 评分前保存为无 pickle NPZ，并锁定权重语义、训练分区、运行时与 FNO metadata。正式 runner 只加载固定字节，不含 optimizer、backward 或重训练。learned proposal 的现有输入先花 <code>13F/13Aᵀ</code> 运行 CGLS-12、terminal residual 与 grouped lift；之后才从非零初值运行 CGLS。结果出现稳定但不能发表成胜利的张力：JACRU/CNN 的 field 与 H1 明显优于同预算经典重建，data residual 却比 pair-rounded CGLS 大一个数量级，88 个 development decision cells 没有一个全门通过。</p>
+      <div class="real-metric-grid metric-grid">
+        <div class="metric"><b>+45.734%</b><span>JACRU-M2 development <code>k=2</code> mean field gain；H1 gain 为 +40.888%</span></div>
+        <div class="metric failed-state"><b>14.5965×</b><span>同一行 measured reprojection / pair-rounded CGLS；冻结门为 ≤1.10</span></div>
+        <div class="metric"><b>1.867e-14</b><span>最大 retrospective exact-kernel drift；证明数值不变量，不证明 kernel 有用</span></div>
+        <div class="metric failed-state"><b>0 / 44</b><span>四个 architecture × 11 个 k 的 development 合格点；无合法 OOD 选择</span></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>最窄、但有用的科学结论</h3>
+          <ol>
+            <li><strong>不是 CGLS 算错：</strong>3168 条 warm rows 无 breakdown，递推 residual 与独立 forward 的最大 closure 为 <code>1.073e-13</code>。</li>
+            <li><strong>不是偷换预算：</strong><code>k&gt;0</code> 候选总计 <code>(14+k)F/(13+k)Aᵀ</code>；componentwise、pair-rounded CGLS 和 Huber-PDHG 均按预注册预算重算。</li>
+            <li><strong>场先验与 row-space 一致性分家：</strong>150 个测量约束 1000 个 active voxels。模型能带入统计场结构，但 10 步 refinement 追不上把 24 步都用于拟合数据的 zero-start CGLS。</li>
+            <li><strong>核保留不是因果证明：</strong>小 drift 只确认 <code>Pker xk=Pker x0</code> 的离散线性代数；field gain 可能来自 kernel、near-null、row-space prior 或训练偏置。</li>
+            <li><strong>同调用 CGNE 排除 solver 故障：</strong>development <code>k=6</code> 时，JACRU warm CGLS 相对 CGNE 仍有约 +3.40% field、+3.71% H1，measured residual ratio 约 0.56；但这不足以击败总预算基线。</li>
+          </ol>
+          <div class="alert critical"><strong>准确判决 · 不是算法突破</strong><span>可以说“固定 learned warm field 在当前 opened synthetic toy 中携带明显 field prior，但现有 13-pair feature 接口没有在同总预算下闭合 data consistency，因此 DEVELOPMENT NO-GO”。不能说 learned warm start 普遍失败、exact kernel 造成了 gain、真实 BOST 已验证、跨 rig 泛化、NeRIF/TDBOST/DeepONet/FNO 优越性或论文成功。</span></div>
+          <div class="actions" style="margin-top:13px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fjacru_m2_9_fixed_warm_cgls_result_2026-07-20.md">读结果与下一算法</a>
+            <a class="button" href="demo_t16_operator/results/jacru_m2_9_fixed_warm_cgls_postopen_public/summary.json">机器 summary</a>
+            <a class="button" href="demo_t16_operator/results/jacru_m2_9_fixed_warm_cgls_postopen_validation/validation.json">独立 validation</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fjacru_m2_9_fixed_warm_cgls_frozen_protocol_2026-07-20.md">结果前冻结协议</a>
+            <a class="button" href="site_tools/validate_jacru_m2_9_fixed_warm_cgls.py">独立 validator</a>
+            <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Fjacru_m2_9_fixed_warm_cgls_postopen_public%2Fdiagnostic.pdf">论文图 PDF</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=141-warm-start-的场看起来很好但它没来得及把测量对上">讲人话日志 141</a>
+          </div>
+        </div>
+        <figure>
+          <img src="demo_t16_operator/results/jacru_m2_9_fixed_warm_cgls_postopen_public/diagnostic.png" width="2430" height="1475" loading="eager" decoding="async" alt="M2.9 四联图，展示四种 learned warm-start 架构随 CGLS checkpoint 变化的 field gain、measured 与 clean reprojection ratio，以及逐 case 最坏 field gain" />
+          <figcaption>左上：field gain 均值；右上：measured reprojection 相对 pair-rounded CGLS，虚线为 1.10 门；左下：independent-clean ratio；右下：逐 case 最坏 field gain。曲线揭示真实 Pareto 冲突，不存在可事后挑出的全门成功点。</figcaption>
+        </figure>
+      </div>
+      <p class="table-scroll-hint">表格可横向滚动</p>
+      <div class="result-table-wrap">
+        <table>
+          <thead><tr><th>Architecture</th><th>field 最佳 k</th><th>Field / H1 gain</th><th>Measured / clean ratio</th><th>Harm / worst</th><th>判决</th></tr></thead>
+          <tbody>
+            <tr><td>JACRU-M2</td><td>2</td><td class="positive">+45.734% / +40.888%</td><td class="negative">14.5965 / 3.2276</td><td>0% / +7.853%</td><td class="negative">reprojection NO-GO</td></tr>
+            <tr><td>pooled CNN</td><td>2</td><td class="positive">+44.045% / +39.427%</td><td class="negative">14.4060 / 3.2206</td><td>0% / +7.598%</td><td class="negative">reprojection NO-GO</td></tr>
+            <tr><td>grid DeepONet</td><td>2</td><td>+2.143% / -11.971%</td><td class="negative">6.8996 / 1.7343</td><td>16.667% / -29.999%</td><td class="negative">六门失败</td></tr>
+            <tr><td>pooled FNO</td><td>1</td><td class="positive">+36.743% / +34.628%</td><td class="negative">29.5586 / 7.2277</td><td>5.556% / -2.606%</td><td class="negative">reprojection + harm NO-GO</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel" style="margin-top:14px;">
+        <h3>下一主候选 · LGWO-A24 Lean Geometry-Conditioned Warm Operator / Anchored Direction</h3>
+        <p>不再把网络输出当非零初值后重启 CGLS-23；那样即使 correction 为零，也会因丢失 Krylov 状态而与 CGLS-24 混入 solver-shell 差异。新壳只让网络扰动第一条 <code>Aᵀy</code> 搜索方向，第一步精确线搜索，之后 23 步在 measurement space 全重正交：</p>
+        <div class="formula wrap-formula">1Aᵀ pooled anchor + 1F anchored projection + 23 × (1F + 1Aᵀ) = 24F/24Aᵀ；delta=0 control = fully reorthogonalized CGLS-24</div>
+        <div class="evidence-grid" style="margin-top:12px;">
+          <article class="evidence-card" data-state="next"><span class="chip gold">A · 先证成本假设</span><h3>低成本 proposal</h3><p>先用小型 geometry-conditioned CNN/DeepONet/FNO 比较 <code>Aᵀy</code> 与 zero-start CGLS-24。若 field、H1、measured/clean、harm、worst 任一过不了冻结门，立即关闭。</p></article>
+          <article class="evidence-card" data-state="next"><span class="chip gold">B · 再证信息来源</span><h3>Kernel 因果四臂</h3><p>只在 opened synthetic evaluator 比较 full warm、exact-null-erased、row-space-erased 与 zero-start。没有 full-over-null-erased 稳定差异，就禁止把 gain 归因于 kernel prior。</p></article>
+          <article class="evidence-card" data-state="next"><span class="chip gold">C · 对接 TDBOST</span><h3>Rig basis 跨帧摊销</h3><p>固定 rig 的 randomized SVD/Lanczos setup 必须报告一次性成本、每帧成本与 break-even 帧数；换 rig 不得免费沿用旧 basis。</p></article>
+          <article class="evidence-card" data-state="next"><span class="chip gold">D · 最后才做安全门</span><h3>Held-out ray fallback</h3><p>只用 residual、geometry、noise floor 与 held-out rays 决定接受或回退。若必须看 truth 才能挑出好 case，就没有可部署选择器。</p></article>
+        </div>
+      </div>
+    </section>
+    <section id="lgwo-a24" style="margin-top:20px; scroll-margin-top:18px;">
+      <div class="chips"><span class="chip blue">O1 OBSERVED · L1 IMPLEMENTATION GATE PASS</span><span class="chip blue">24 FIT / 6 EARLY / 24 SEALED ROUTE</span><span class="chip blue">3 FAMILIES · 3 MODEL SEEDS</span><span class="chip gold">2,729 PARAM · 24F/24Aᵀ</span><span class="chip coral">NO BREAKTHROUGH · NO TRAINING RESULT</span></div>
+      <h2 style="margin-top:10px;">从 truth-oracle 余量转向可部署学习：L1 已把数据、尾部和权限边界先锁死</h2>
+      <p>M2.9 已经说明“大模型先花 13 对调用猜完整场，再用很少步数追数据”不成立。LGWO-A24 把问题缩到一个更硬、也更容易证伪的命题：<strong>只用 A 侧 raw displacement、ray/camera geometry 和一次 pooled <code>Aᵀy</code>，小网络能否给第一搜索方向一个有用但受限的 approximate-null 偏转；若不能，就在同一 solver 壳内精确退回 CGLS-24。</strong>O1 只证明表示余量；L1 进一步固定独立 A/B geometry seeds、三类 morphology、三模型种子、cluster-level 统计和 7/8 正簇尾部门。B 永远不进入 proposal，route 只有所有方法冻结后才能一次打开。</p>
+      <div class="real-metric-grid metric-grid">
+        <div class="metric"><b>+6.978%</b><span>exact-null truth、eta=0.05 的 opened mean field gain；H1 +6.566%</span></div>
+        <div class="metric"><b>+13.722%</b><span>exact-null truth、eta=0.10 的 opened mean field gain；H1 +13.005%</span></div>
+        <div class="metric"><b>+3.741%</b><span>eta=0.05 的 6-case worst field gain；measured/same-A clean-target ratio 均约 1</span></div>
+        <div class="metric failed-state"><b>0 trained</b><span>模型、OOD、fresh、真实 OERF 或优越性证据；oracle 直接读取 truth</span></div>
+      </div>
+      <div class="real-metric-grid metric-grid" style="margin-top:10px;">
+        <div class="metric"><b>216 / 1000</b><span>measurement degrees of freedom / active voxels；数值 rank 216、nullity 784</span></div>
+        <div class="metric"><b>4053F / 1008Aᵀ</b><span>完整 O1 含 setup、baseline、36 candidates 与评分；另有 3 次 dense SVD</span></div>
+        <div class="metric"><b>eta 未选择</b><span>冻结前已看过一个 case 的 0.05/0.10/0.25；O1 只能描述</span></div>
+        <div class="metric failed-state"><b>route sealed</b><span>24 个 route cases 与 OOD-B 尚未生成；当前只授权实现 fit-only runner</span></div>
+        <div class="metric"><b>24 / 6 / 24</b><span>fit / early-stop / sealed route；每个 cluster 含三种 morphology</span></div>
+        <div class="metric"><b>3 fixed seeds</b><span>禁止挑 best seed；任一 primary seed 无 eligible checkpoint 就不开 route</span></div>
+        <div class="metric"><b>7 / 8 clusters</b><span>route 正收益簇硬门；harm ≤5%，worst ≥-5%</span></div>
+        <div class="metric"><b>B evaluator-only</b><span>fit/early B 为独立 train seeds；route 才是 development-A / OOD-B</span></div>
+        <div class="metric"><b>34 / 34 gradients</b><span>opened engineering batch 的全部参数张量梯度有限且非零</span></div>
+        <div class="metric"><b>57 assertions</b><span>独立 validator 不导入 runner；复核来源、哈希、账本、算术和 claim</span></div>
+        <div class="metric"><b>8d1629b1…</b><span>完整模型与 head 的固定初始化 state SHA256；跨进程重放一致</span></div>
+        <div class="metric"><b>0 route/fresh paths</b><span>repo 专用 L1 文件系统扫描无命中；科学 partition 仍为 0 case</span></div>
+      </div>
+      <div class="panel" id="lgwo-prefit-gate" style="margin-top:14px; border-top:4px solid var(--blue); scroll-margin-top:18px;">
+        <div class="chips"><span class="chip blue">PRE-FIT PROTOCOL 1.3</span><span class="chip blue">2 P0 CLOSED</span><span class="chip coral">1 P0 OPEN</span><span class="chip gold">ADVISOR INTERFACE FIRST</span><span class="chip coral">NO SCIENTIFIC AUTHORIZATION</span><span class="chip coral">NO ALGORITHM BREAKTHROUGH</span></div>
+        <h3 style="margin-top:8px;">训练前栈 1.3：五臂同壳比较，先锁支撑、成本和授权</h3>
+        <p>协议 1.3 将 <strong>full、fixed_direction、g_only、no_raw_observation、no_geometry</strong> 五个精确注册臂放在同一 <code>24F/24Aᵀ</code> solver shell 内，并固定 fit-only manifest、正式 loss、三类缓存、归一化/校准包络、tensor-only checkpoint 与链式验证。它目前只是经验证的训练前合同：<strong>尚未获得 scientific fit 授权</strong>，没有生成科学 case，也没有执行 optimizer step。</p>
+        <div class="metric-grid" style="margin-top:10px;">
+          <div class="metric"><b>2729 · 1000</b><span>full / fixed_direction 参数量</span></div>
+          <div class="metric"><b>681 · 2585</b><span>g_only / no_raw_observation 参数量</span></div>
+          <div class="metric"><b>2225</b><span>no_geometry 参数量；五臂均固定 CPU float64</span></div>
+          <div class="metric"><b>1000 active</b><span><code>12³</code> 网格去掉外边界后的 <code>10³</code> 规范支撑；全局 z-y-x 次序，禁止按个案重映射</span></div>
+          <div class="metric"><b>361 passed</b><span>18 文件工作树聚焦工程回归；正式授权仍以 clean-commit raw JUnit 为准</span></div>
+          <div class="metric"><b>180 assertions</b><span>独立 protocol validator 复算配置、成本、分区和 claim 边界</span></div>
+          <div class="metric"><b>7de695ebc419</b><span>protocol 1.3 规范化 JSON SHA256 前 12 位</span></div>
+          <div class="metric failed-state"><b>0 cases · 0 steps</b><span>fit / early / route / fresh scientific materialization 均为 0；optimizer steps 为 0</span></div>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <div>
+            <div class="alert success" style="margin-top:0;"><strong>双口径成本账本</strong><span>每个 fit epoch 同时记录 batched API 口径 <code>A:192F/192Aᵀ, B:8F</code> 和按 3-case 展开的 case-equivalent 口径 <code>A:576F/576Aᵀ, B:24F</code>。新增真实 autograd 探针测得 backward 为 <code>552 A-F + 576 A-Aᵀ + 24 B-Aᵀ</code> 等价调用；它不再靠对称数字猜测。</span></div>
+            <div class="alert info"><strong>两阶段外部授权</strong><span>Stage 1 必须用干净 source commit、protocol report、raw JUnit、test manifest/results、implementation-gate report 与独立 validation 共 6 类原始证据签发物化授权；Stage 2 会重新遍历完整物化树，交叉绑定 24 个 fit case 的 72 个 manifests、216 个 arrays、normalization/envelope、summary 与 checksums，再由 runner 独立复验；第一个 optimizer step 前仍必须为 0。<strong>当前两个正式授权根均未签发。</strong></span></div>
+            <div class="actions" style="margin-top:10px;">
+              <a class="button primary" href="demo_t16_operator/configs/lgwo_a24_l1_sealed_observable_pilot_v1.json">protocol 1.3</a>
+              <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_l1_fit_runner_contract_2026-07-20.md">fit runner contract</a>
+              <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_l1_fit_stack_independent_audit_2026-07-20.md">独立初审</a>
+              <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_l1_fit_stack_reaudit_2026-07-20.md">第二次独立重审</a>
+              <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_l1_novelty_claim_boundary_2026-07-20.md">新颖性边界审计</a>
+              <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_l1_epoch_transaction_audit_2026-07-20.md">epoch 事务 P0</a>
+              <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_l1_third_readonly_audit_2026-07-20.md">第三轮复审</a>
+            </div>
+          </div>
+          <div>
+            <div class="alert critical" style="margin-top:0;"><strong>当前第一硬门：先确认真实接口</strong><span>361 项测试通过不会自行签发科学权限。先把 <a href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">一页真实接口问题</a> 发给何远哲师兄，再用<a href="advisor_interface_intake.html">师兄回复工作台</a>记录 callable、residual 层级、JVP/VJP、标定、数据、split、基线与权限。没有这个答案，不继续扩建训练系统，也不物化科学数据。</span></div>
+            <div class="alert success"><strong>两个证据 P0 已关闭</strong><span>checkpoint 现在强制每个 AdamW slot 满足 <code>step = epoch×8</code>；独立 chain validator 必须从明确的 ledger root 读取 <code>epoch_01..30.json</code>，复算全部 11,760 条事件、双成本与 240 个逻辑 steps，并拒绝缺失、额外、符号链接、hash 或事件级伪造。</span></div>
+            <div class="alert critical"><strong>仍有一个 P0：epoch 跨事务恢复</strong><span>参数更新、ledger、checkpoint 与 external anchor 尚不是一个可恢复事务。它能 fail-closed，但不能保证任意断电点可续跑。只在真实接口值得继续后按<a href="document_reader.html?doc=docs%2Flgwo_a24_l1_epoch_transaction_audit_2026-07-20.md">最小协议</a>实现。审计前后证据见<a href="document_reader.html?doc=docs%2Flgwo_a24_l1_third_readonly_audit_2026-07-20.md">第三轮只读复审</a>。</span></div>
+            <div class="alert critical"><strong>不能越界的结论</strong><span>不能把 361 个工程测试写成模型通过；不能把 O1 truth-oracle 余量写成网络学会了 null-space；不能把 synthetic mean gain、同一 A clean target 或 CT/MRI 邻域结果写成 BOST、真实流场或泛化成功。<strong>当前没有算法突破。</strong></span></div>
+          </div>
+        </div>
+        <div class="formula wrap-formula" style="margin-top:12px;">canonical protocol SHA256 = 7de695ebc419ad2e7a7edba0c10d45b9ff31027a0252c41c2481faf56f4eb085</div>
+      </div>
+      <div id="lgwo-psu-c1-controls" style="margin-top:20px; padding-top:18px; border-top:4px solid var(--coral); scroll-margin-top:18px;">
+        <div class="chips"><span class="chip coral">PSU-C1 · VALID NO-GO</span><span class="chip blue">1,296 ROWS · 54 CELLS</span><span class="chip blue">24F/24Aᵀ EACH</span><span class="chip gold">REGULARIZATION ROUTE OPEN</span><span class="chip coral">NO MODEL · NO BREAKTHROUGH</span></div>
+        <h3 style="margin-top:9px;">先证伪第一方向，再把学习对象移到正则化轨迹</h3>
+        <p>这不是 LGWO-L1 训练结果。PSU-C1 在已经打开的公开 PSU 九视角几何与解析反应场上，比较 scale、三 seed random、train-fitted fixed、linear observable、truth-only oracle 和同预算 inverse-Sobolev。审计修订没有改方法、split、随机种子、半径或门；独立 validator 重算全部指标后确认 <code>NO_GO_FIRST_DIRECTION_HEADROOM_ABSENT_POSTOPEN</code>。</p>
+        <div class="real-metric-grid metric-grid">
+          <div class="metric failed-state"><b>1.1288%</b><span>IID truth-only oracle field gain；冻结门为 5%</span></div>
+          <div class="metric failed-state"><b>1.2465%</b><span>family-OOD truth-only oracle field gain；同样未过门</span></div>
+          <div class="metric failed-state"><b>1.030 / 1.054%</b><span>linear observable IID / family-OOD；未过 2% 均值与 fixed-margin 门</span></div>
+          <div class="metric"><b>0.699 / 0.615%</b><span>train-fitted fixed 的两个主分区收益；说明简单全局先验已解释部分小信号</span></div>
+          <div class="metric"><b>51.52 / 45.06%</b><span>inverse-Sobolev IID / family-OOD analytic field gain；强机制线索，不是算法胜利</span></div>
+          <div class="metric failed-state"><b>1.68× / 4.53×</b><span>同一 Sobolev 对照 active measured residual；field 与 data consistency 冲突</span></div>
+          <div class="metric"><b>0.362 / 0.507</b><span>同一 Sobolev held-out-B ratio；proxy 改善，不等于真实体真值</span></div>
+          <div class="metric"><b>96 Aᵀ setup</b><span>linear fit 的 train+validation case-equivalent 成本；每个算法推理另为 24F/24Aᵀ</span></div>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <div>
+            <div class="alert critical" style="margin-top:0;"><strong>准确判决：停止 bounded first-direction 神经 fit</strong><span>oracle 读取三维 truth 仍只有约 1% headroom，所以把 linear map 扩成 CNN、DeepONet 或 FNO 只会用更多成本追一个未过门的自由度。L1 scientific cases 和 optimizer steps 仍为 0。</span></div>
+            <div class="alert success"><strong>下一主候选：observable regularization / stopping policy</strong><span>只读 geometry、noise、残差轨迹、<code>Aᵀr</code> 和少量 Ritz/Lanczos 标量；只输出受限 <code>lambda_k</code>、固定谱基凸组合或 stop/continue，并保留 residual envelope 与 deterministic fallback。先用 ridge/logistic 证明信号，再考虑小网络。</span></div>
+            <div class="alert critical"><strong>仍需师兄确认</strong><span>如果真实主痛点其实是 curved-ray bias、标定或 4D 时空成本，而不是 semiconvergence/regularization，这条候选就要降级。先确认 callable、JVP/VJP、residual 层级、数据 split 与组内最强 baseline。</span></div>
+            <div class="actions" style="margin-top:12px;">
+              <a class="button primary" href="document_reader.html?doc=docs%2Flgwo_a24_psu_c1_simple_controls_no_go_2026-07-20.md">读完整判决与下一算法</a>
+              <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_c1_regularization_stopping_literature_map_2026-07-20.md">正则化/停止文献地图</a>
+              <a class="button" href="demo_t16_operator/results/lgwo_a24_psu_simple_controls_rehearsal_v1/summary.json">机器 summary</a>
+              <a class="button" href="demo_t16_operator/results/lgwo_a24_psu_simple_controls_validation_v1/validation.json">独立 validation</a>
+              <a class="button" href="demo_t16_operator/results/lgwo_a24_psu_simple_controls_rehearsal_v1/metric_rows.csv">1,296 行 CSV</a>
+              <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Flgwo_a24_psu_simple_controls_visualization_v1%2Fpsu_c1_scale_separated.pdf">论文式 PDF</a>
+              <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=154-先问第一方向值不值得学psu-c1-给出了诚实的-no-go">讲人话日志 154</a>
+            </div>
+          </div>
+          <figure>
+            <img src="demo_t16_operator/results/lgwo_a24_psu_simple_controls_visualization_v1/psu_c1_scale_separated.png" width="3780" height="2058" loading="eager" decoding="async" alt="PSU-C1 六联分尺度图，上排显示首方向 oracle 和简单对照远低于 5% 门，下排显示 active residual、held-out B 与 inverse-Sobolev 的场收益和测量残差冲突" />
+            <figcaption>上排专门放大 bounded first-direction，避免被 42%--53% 的 Sobolev field gain 淹没；右下明确显示 Sobolev 在场误差与 active measured residual 之间的冲突。全部为 post-open analytic rehearsal。</figcaption>
+          </figure>
+        </div>
+        <p class="table-scroll-hint">表格可横向滚动</p>
+        <div class="result-table-wrap">
+          <table>
+            <thead><tr><th>方法</th><th>IID field gain</th><th>family-OOD field gain</th><th>A measured ratio</th><th>held-out B ratio</th><th>判决</th></tr></thead>
+            <tbody>
+              <tr><td>random angular mean</td><td>-0.0093%</td><td>-0.0113%</td><td>约 1</td><td>约 1</td><td>无随机假收益</td></tr>
+              <tr><td>train-fitted fixed</td><td>+0.6987%</td><td>+0.6149%</td><td>0.9924 / 0.9939</td><td>0.9966 / 0.9973</td><td>小信号</td></tr>
+              <tr><td>linear observable</td><td>+1.0302%</td><td>+1.0542%</td><td>0.9912 / 0.9917</td><td>0.9947 / 0.9949</td><td class="negative">均值与 margin 门失败</td></tr>
+              <tr><td>truth-only oracle</td><td>+1.1288%</td><td>+1.2465%</td><td>0.9906 / 0.9905</td><td>0.9888 / 0.9876</td><td class="negative">5% headroom 门失败</td></tr>
+              <tr><td>inverse-Sobolev5</td><td class="positive">+51.5234%</td><td class="positive">+45.0628%</td><td class="negative">1.6752 / 4.5303</td><td>0.3619 / 0.5073</td><td class="pending">转向 regularization/stopping 机制</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="lgwo-r0-stopping" style="margin-top:22px; padding-top:20px; border-top:4px solid var(--teal); scroll-margin-top:18px;">
+        <div class="chips"><span class="chip coral">R0 · VALID NO-GO</span><span class="chip blue">168 PATHS · 4,032 CHECKPOINTS</span><span class="chip blue">k=1...24 · 24F/24Aᵀ</span><span class="chip gold">FIELD–GRADIENT PATH CONFLICT</span><span class="chip coral">NO STOPPING MODEL · NO BREAKTHROUGH</span></div>
+        <h3 style="margin-top:9px;">体场误差一路降到 k24：早停网络没有可学标签，下一步必须改变重建路径</h3>
+        <p>R0 没有训练网络。它先把零修正 fully reorthogonalized CGLS 的每个 checkpoint 保存下来，用 truth-only oracle 检查 instance-specific stopping 是否有足够 headroom 与标签多样性。validation 选择 <code>k=24</code>；IID 与 family-OOD 的逐 case field oracle 也全部选择末步，所以 R1 observable stopping screen 和 neural model 都没有获得授权。独立的 post-open 机制分析随后发现：field relative-L2 随迭代下降，gradient relative-L2 却在两个主分区的全部 48 条轨迹上持续上升。</p>
+        <div class="real-metric-grid metric-grid">
+          <div class="metric failed-state"><b>48 / 48</b><span>IID + family-OOD truth-field oracle 全选 <code>k=24</code>；没有 instance-specific 早停标签</span></div>
+          <div class="metric failed-state"><b>0.000%</b><span>两个主分区 truth-field oracle 相对 fixed k24 的 field gain；5% headroom 门失败</span></div>
+          <div class="metric"><b>+6.405%</b><span>IID field relative-L2 从 k1 到 k24 的 paired mean improvement</span></div>
+          <div class="metric failed-state"><b>+30.961%</b><span>同一 IID 路径的 gradient relative-L2 degradation；数值越大越差</span></div>
+          <div class="metric"><b>+7.065%</b><span>family-OOD field improvement；95% bootstrap interval 为 6.481%--7.614%</span></div>
+          <div class="metric failed-state"><b>+23.803%</b><span>family-OOD gradient degradation；95% bootstrap interval 为 20.557%--26.917%</span></div>
+          <div class="metric"><b>24 / 24</b><span>两个主分区的 mean checkpoints 全部位于 field/gradient Pareto 路径</span></div>
+          <div class="metric"><b>1,098 checks</b><span>独立机制 validator 复算曲线、逐 case 单调性、oracle、discrepancy 与 claim boundary</span></div>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <div class="panel">
+            <h3>怎样读这组结果</h3>
+            <ol>
+              <li><strong>别训练停止网络：</strong>field oracle 已读取三维真值，却仍在 48/48 个主 case 上输出常数 24；更大的 MLP、DeepONet 或 FNO 不会凭空制造标签。</li>
+              <li><strong>标签多样不等于有用：</strong>noise-OOD discrepancy 选出 10 个不同 k、IQR 4，但 field 比 k24 差 0.353%，held-out-B ratio 为 1.0146；joint-OOD 同样双指标变差。</li>
+              <li><strong>真正的问题在路径：</strong>field 与 gradient 的最优步分别是 k24 和 k1；旧 checkpoint 只是在两者之间交换，无法同时改进。</li>
+              <li><strong>front F1 是第三个目标：</strong>IID front F1 从 k1 到 k24 仍改善 14.84%，平均峰值在 k22。强前沿位置变准不等于全局梯度幅值更准，论文必须分开报告。</li>
+              <li><strong>下一门是经典正则：</strong>先比较固定 H1/Sobolev、Tikhonov、TV/Huber、hybrid projection 与 edge-superiorization；只有它们留下 observable headroom，才允许小模型控制有界强度或滤波器凸权重。</li>
+            </ol>
+            <div class="alert critical"><strong>准确判决 · 不是算法成功</strong><span>可以说“当前 24 步 synthetic CGLS 路径没有可学的 field-optimal 早停标签，并出现 field/gradient 多目标冲突”。不能说已经提出新正则算法、改进 NeRIF/TDBOST/FNO、验证真实 BOST、证明泛化或取得突破。</span></div>
+            <div class="alert success"><strong>下一条可发表问题</strong><span>在相同 A/Aᵀ 与端到端预算下，能否构造受保护的 H1–TV–Sobolev/hybrid 路径，使至少一部分新 checkpoint 同时降低 field 与 gradient/front 风险，并保持 active residual envelope、held-out view 与逐 rig 尾部？先做确定性基线，再判断是否需要算子学习。</span></div>
+          </div>
+          <figure>
+            <img src="demo_t16_operator/results/lgwo_a24_r0_regularization_conflict_postopen_v1/diagnostic.png" width="2340" height="1762" loading="eager" decoding="async" alt="R0 四联机制图：场值误差随 CGLS 迭代下降，梯度误差上升，IID 与 family-OOD 形成 field-gradient 交换路径，front F1 呈独立变化" />
+            <figcaption>A/B 是 field 与 gradient 的相反走势；C 把两个主分区的 24 个 checkpoint 画成交换路径；D 说明 front F1 不能用 gradient relative-L2 代替。公开 PSU 几何、解析反应形态、合成噪声、post-open descriptive only。</figcaption>
+          </figure>
+        </div>
+        <p class="table-scroll-hint">表格可横向滚动</p>
+        <div class="result-table-wrap">
+          <table>
+            <thead><tr><th>split</th><th>field 最优 k</th><th>gradient 最优 k</th><th>field k1→k24</th><th>gradient k1→k24</th><th>front F1 k1→k24</th><th>front mean 最优 k</th></tr></thead>
+            <tbody>
+              <tr><td>IID</td><td class="positive">24</td><td class="negative">1</td><td class="positive">+6.405%</td><td class="negative">恶化 30.961%</td><td>+14.844%</td><td>22</td></tr>
+              <tr><td>family-OOD</td><td class="positive">24</td><td class="negative">1</td><td class="positive">+7.065%</td><td class="negative">恶化 23.803%</td><td>+13.822%</td><td>24</td></tr>
+              <tr><td>noise-OOD</td><td>24</td><td>1</td><td>+6.407%</td><td>恶化 31.158%</td><td>+9.775%</td><td>16</td></tr>
+              <tr><td>geometry-OOD</td><td>24</td><td>1</td><td>+5.329%</td><td>恶化 27.205%</td><td>+8.864%</td><td>17</td></tr>
+              <tr><td>joint-OOD</td><td>24</td><td>1</td><td>+5.787%</td><td>恶化 25.541%</td><td>+10.340%</td><td>16</td></tr>
+              <tr><td>exact-operator control</td><td>24</td><td>1</td><td>+6.546%</td><td>恶化 28.440%</td><td>+10.639%</td><td>24</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pipeline" aria-label="R0 之后的正则化路径实验顺序">
+          <div><b>R2-A · fixed paths</b><span>同 24F/24Aᵀ 比 H1/Sobolev、Tikhonov、TV/Huber 与 hybrid；画完整 Pareto，不只挑最好点。</span></div>
+          <div><b>R2-B · path oracle</b><span>检查新路径能否支配旧 field/gradient 曲线；没有 truth headroom 就停止。</span></div>
+          <div><b>R2-C · linear signal</b><span>只用 geometry/noise/residual/Ritz 特征做 ridge 或 logistic，先验证可观察信号。</span></div>
+          <div><b>R2-D · bounded learner</b><span>只在前三门通过后，用小模型输出有界强度或固定滤波器凸权重，并保留回退。</span></div>
+          <div><b>R3 · real callable</b><span>接入师兄的 A/Aᵀ、JVP/VJP、标定、held-out camera 与组内强基线。</span></div>
+          <div><b>Paper gate</b><span>未见 rig/session、尾部、A/B、成本、外部复核与真实物理证据必须同时成立。</span></div>
+        </div>
+        <div class="actions" style="margin-top:12px;">
+          <a class="button primary" href="document_reader.html?doc=docs%2Flgwo_a24_r0_semiconvergence_no_go_2026-07-20.md">读完整 R0 判决与下一算法</a>
+          <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_r0_semiconvergence_protocol_2026-07-20.md">R0 冻结协议</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r0_semiconvergence_v1/summary.json">原始机器判决</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r0_semiconvergence_validation_v1/validation.json">原始独立 validation</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r0_regularization_conflict_postopen_v1/summary.json">机制机器结果</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r0_regularization_conflict_validation_v1/validation.json">1,098-check validation</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r0_regularization_conflict_postopen_v1/curve.csv">168 行聚合曲线</a>
+          <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Flgwo_a24_r0_regularization_conflict_postopen_v1%2Fdiagnostic.pdf">论文式 PDF</a>
+          <a class="button" href="site_tools/analyze_lgwo_a24_r0_regularization_conflict.py">分析脚本</a>
+          <a class="button" href="site_tools/validate_lgwo_a24_r0_regularization_conflict.py">独立验证脚本</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=156-先问早停有没有标签答案是没有但看见了更真实的矛盾">讲人话日志 156</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">给何远哲师兄的问题</a>
+        </div>
+      </div>
+      <div id="lgwo-r2a-h1-lockbox" style="margin-top:22px; padding-top:20px; border-top:4px solid var(--teal); scroll-margin-top:18px;">
+        <div class="chips"><span class="chip blue">R2-A · VALID SYNTHETIC LOCKBOX</span><span class="chip blue">336 CASES · 84 CLUSTERS</span><span class="chip blue">20F/20Aᵀ EACH PATH</span><span class="chip gold">H1 IS THE NEW REQUIRED BASELINE</span><span class="chip coral">EVIDENCE MILESTONE · NOT A BREAKTHROUGH</span></div>
+        <h3 style="margin-top:9px;">经典 H1 同时拉低 field 和 gradient：旧 Pareto 冲突有出口，但新算法还没出现</h3>
+        <p>R2-A 在首次正式运行前冻结了 H1 参数、同预算 CGLS 对照、四个分区、cluster-level 统计、最差 case/cluster、active residual、held-out B 和成本账本。候选只是 <code>lambda_H1=1e-3, lambda_L2=0, k20</code> 的经典 H1；它的作用是先证明改变正则化路径真的能跳出 R0 的 field-gradient 交换曲线，并为后续 TV/Huber/hybrid/学习方法立一个更强的对手。</p>
+        <div class="real-metric-grid metric-grid">
+          <div class="metric"><b>+3.641%</b><span>IID mean field gain；simultaneous 95% lower bound +3.191%</span></div>
+          <div class="metric"><b>+7.871%</b><span>IID mean gradient gain；simultaneous lower bound +7.390%</span></div>
+          <div class="metric"><b>+4.079%</b><span>family-OOD mean field gain；最差 case +1.802%</span></div>
+          <div class="metric"><b>+8.114%</b><span>family-OOD mean gradient gain；最差 case +4.660%</span></div>
+          <div class="metric"><b>+3.763 / +7.819%</b><span>joint-OOD field / gradient mean gain；同时变 morphology、view 和 noise</span></div>
+          <div class="metric"><b>0 harm</b><span>四分区逐 case 和逐 cluster 的 field/gradient &gt;2% harm rate 均为 0</span></div>
+          <div class="metric"><b>0.924–0.937</b><span>四分区 mean held-out-B ratio；合成独立视角改善，不是真实 rig 泛化</span></div>
+          <div class="metric"><b>43,932</b><span>独立 validator 重算项；篡改 decision CSV 的故障注入返回 INVALID</span></div>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <div class="panel">
+            <h3>怎样读这组数</h3>
+            <ol>
+              <li><strong>路线判断前进了：</strong>R0 的冲突不是只能通过事后挑停止步处理；一条显式正则路径可以同时改善 field 和 gradient。</li>
+              <li><strong>平均数没有盖住坏例：</strong>IID、family-OOD、joint-OOD 和无失配对照的最差 case 双终点仍为正，并且 harm rate 为 0。</li>
+              <li><strong>一致性仍是门：</strong>joint-OOD mean active residual ratio 为 1.0387，最差 1.1380。以后的方法不能靠过度平滑换取 field/gradient 数字。</li>
+              <li><strong>H1 变成必比强基线：</strong>任何 TV/Huber、H1–TV hybrid 或学习控制器只胜 CGLS 都不够，必须在同预算、尾部和 active/held-out 门下胜 H1。</li>
+            </ol>
+            <div class="alert success"><strong>重要证据里程碑</strong><span>新 seed clustered synthetic lockbox 和独立复算都通过，因此已授权下一步 TV/Huber 与 hybrid 比较。这是可靠的研究进展，不是宣称突破。</span></div>
+            <div class="alert critical"><strong>不可越界</strong><span>H1 是经典方法，不是自有算法。本轮不包含 DeepONet/FNO/NeRIF/TDBOST 对照、真实 BOST、未见实验 rig 或论文性能主张。</span></div>
+          </div>
+          <figure>
+            <img src="demo_t16_operator/results/lgwo_a24_r2a_h1_lockbox_v1/diagnostic.png" width="2380" height="1668" loading="eager" decoding="async" alt="R2-A H1 合成锁箱诊断图，显示四个分区的 field 与 gradient 收益、active residual、held-out B 和尾部结果" />
+            <figcaption>336 cases、84 clusters，候选与 CGLS 各使用 20F/20Aᵀ。图中展示平均、分区与尾部；全部是公开 PSU 几何+解析反应形态 synthetic lockbox。</figcaption>
+          </figure>
+        </div>
+        <p class="table-scroll-hint">表格可横向滚动</p>
+        <div class="result-table-wrap">
+          <table>
+            <thead><tr><th>split</th><th>mean field gain</th><th>mean gradient gain</th><th>worst-case field / gradient</th><th>active mean / worst</th><th>held-out mean / worst</th></tr></thead>
+            <tbody>
+              <tr><td>IID</td><td class="positive">+3.6412%</td><td class="positive">+7.8708%</td><td>+1.3181% / +5.0631%</td><td>1.0065 / 1.0886</td><td>0.9368 / 0.9851</td></tr>
+              <tr><td>family-OOD</td><td class="positive">+4.0791%</td><td class="positive">+8.1137%</td><td>+1.8017% / +4.6598%</td><td>1.0023 / 1.0898</td><td>0.9243 / 0.9813</td></tr>
+              <tr><td>joint-OOD</td><td class="positive">+3.7626%</td><td class="positive">+7.8189%</td><td>+1.5587% / +2.5232%</td><td>1.0387 / 1.1380</td><td>0.9327 / 0.9871</td></tr>
+              <tr><td>exact-operator control</td><td class="positive">+3.7152%</td><td class="positive">+8.2085%</td><td>+1.7050% / +5.6476%</td><td>1.0133 / 1.0606</td><td>0.9352 / 0.9732</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pipeline" aria-label="H1 锁箱之后的算法研究顺序">
+          <div><b>R2-B1 · TV/Huber</b><span>先做确定性强对照，同一 20F/20Aᵀ、split、尾部和 residual 门。</span></div>
+          <div><b>R2-B2 · fixed hybrid</b><span>只在 H1 与 TV 有不可互换优势时，比 H1–TV/Huber 固定凸组合。</span></div>
+          <div><b>R2-B3 · path oracle</b><span>检查逐 case 最优权重是否真不同；没有 truth headroom 就停止学习。</span></div>
+          <div><b>R2-C1 · linear screen</b><span>只读 geometry/noise/residual/Ritz，用 ridge/logistic 先证明可观测信号。</span></div>
+          <div><b>R2-C2 · bounded learner</b><span>小模型只输出有界凸权重或 accept/fallback-to-H1，不直接猜三维场。</span></div>
+          <div><b>Real gate</b><span>师兄的 A/Aᵀ、residual 层级、标定、强基线和独立 rig/session 到位后才谈论文主张。</span></div>
+        </div>
+        <div class="actions" style="margin-top:12px;">
+          <a class="button primary" href="document_reader.html?doc=docs%2Flgwo_a24_r2a_h1_lockbox_result_2026-07-20.md">读师兄审核版结果</a>
+          <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_r2a_h1_lockbox_protocol_2026-07-20.md">预注册协议</a>
+          <a class="button" href="demo_t16_operator/configs/lgwo_a24_r2a_h1_lockbox_v1.json">冻结配置</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2a_h1_lockbox_v1/summary.json">正式 summary</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2a_h1_lockbox_v1/decision_rows.csv">336 行 paired CSV</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2a_h1_lockbox_validation_v1/validation.json">43,932-check validation</a>
+          <a class="button" href="site_tools/validate_lgwo_a24_r2a_h1_lockbox.py">独立验证脚本</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=157-h1-锁箱过门了我们找到了强基线还没找到新算法">讲人话日志 157</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">给何远哲师兄的六个关键问题</a>
+        </div>
+      </div>
+      <div id="lgwo-r2b-norm-bound" style="margin-top:22px; padding-top:20px; border-top:4px solid var(--gold); scroll-margin-top:18px;">
+        <div class="chips"><span class="chip gold">R2-B0 · STRICT NORM CERTIFICATE</span><span class="chip blue">PUBLIC PSU · QMC8 · 32³</span><span class="chip blue">10 MISSING-VIEW MASKS</span><span class="chip gold">0F / 0Aᵀ SETUP</span><span class="chip coral">INFRASTRUCTURE BREAKTHROUGH · NOT ALGORITHM SUCCESS</span></div>
+        <h3 style="margin-top:9px;">把 PDHG 的安全上界收紧约一个数量级：TV/Huber 终于有一把可信的步长尺</h3>
+        <p>旧 scalar-PDHG 已经证明：只扫正则权重解决不了 block conditioning。R2-B0 因此先不重建场，而是给每个相机 mask 的加权物理算子建立严格谱范数证书。新构造直接使用 <code>C = W|M||D|P</code> 的行列和；由 <code>|WMDP| ≤ C</code> 可得 <code>||WA||² ≤ ||C||₁||C||∞</code>。它保留旧 factorized 证书作审计，同时在 CPU float64 累计，兼容 CPU/MPS、流式和 H1 使用的单块算子。</p>
+        <div class="real-metric-grid metric-grid">
+          <div class="metric"><b>5.87–11.50×</b><span>新 composed strict bound / power-40 estimate；均值 8.734×</span></div>
+          <div class="metric"><b>55.86–84.76×</b><span>旧 factorized strict bound / power-40 estimate；均值 71.382×</span></div>
+          <div class="metric"><b>7.30–10.31×</b><span>旧上界 / 新上界；10/10 missing-view mask 均选择新证书</span></div>
+          <div class="metric"><b>0F / 0Aᵀ</b><span>严格证书只遍历局部 factors；40F/40Aᵀ 的 power estimate 单独记账</span></div>
+          <div class="metric"><b>7 / 7</b><span>SVD、流式/单块、chunk 不变性、非法输入、幂迭代账本定向测试</span></div>
+          <div class="metric"><b>155 · VALID</b><span>独立复核 mask、算术、调用、hash、claim boundary 与公开泄漏词</span></div>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <div class="panel">
+            <h3>初学者先抓住三件事</h3>
+            <ol>
+              <li><strong>绿色不是算法分数：</strong>它是严格上界；蓝色 power-40 只是谱尺度估计，不能冒充上界。</li>
+              <li><strong>收紧上界的意义：</strong>安全步长不必再被旧证书额外缩小约 8.39 倍，但新证书仍比 estimate 大 6–11 倍。</li>
+              <li><strong>下一步不是盲扫 alpha：</strong>应从同一个比较矩阵构造逐体素对角 majorizer，先改善 data-only conditioning，再谈 TV/Huber。</li>
+            </ol>
+            <div class="alert success"><strong>阶段性基础设施突破</strong><span>10 个公开真实几何 mask 上，严格证书稳定收紧约一个数量级；SVD、MPS、调用账本和独立 validator 已闭环。</span></div>
+            <div class="alert critical"><strong>科学结论仍未打开</strong><span>本轮没有 field truth、重建结果、TV/Huber 收益、真实 OERF 数据或未见 rig。<code>new_algorithm=false / reconstruction_success=false / breakthrough=false</code>。</span></div>
+          </div>
+          <figure>
+            <img src="demo_t16_operator/results/lgwo_a24_r2b_norm_bound_diagnostic_v1/norm_bound_diagnostic.png" width="2196" height="1494" loading="eager" decoding="async" alt="R2-B0 严格范数证书诊断图，对比 10 个缺失视角模式上的 power-40 估计、新 composed 上界和旧 factorized 上界" />
+            <figcaption>上图用对数轴比较三种谱尺度；下图显示严格证书相对 power estimate 的松弛倍数。Power iteration 不是上界，图只诊断证书保守度，不评价重建精度。</figcaption>
+          </figure>
+        </div>
+        <div class="pipeline" aria-label="严格范数证书之后的 TV Huber 路线">
+          <div><b>R2-B0 · strict scalar</b><span>已完成：两个严格上界、10 个 mask、0F/0Aᵀ、155-check validation。</span></div>
+          <div><b>R2-B0D · diagonal majorizer</b><span>已完成：密集 PSD 反查、10 个 q 场、0F/0Aᵀ 与 333-check validation。</span></div>
+          <div><b>R2-B1a · data-only</b><span>同 20F/20Aᵀ 先比 scalar、diagonal/block PDHG 与 H1/CGLS 收敛。</span></div>
+          <div><b>R2-B1b · TV/Huber</b><span>只有 data-only 离开零场后，才冻结有限 alpha/delta 网格。</span></div>
+          <div><b>R2-B2 · H1→Huber</b><span>只有 TV 与 H1 有不可互换优势，才测固定 warm hybrid 与尾部。</span></div>
+          <div><b>Real gate</b><span>师兄的 callable、残差层级、标定、强基线和真实 split 到位后才谈论文主张。</span></div>
+        </div>
+        <div class="actions" style="margin-top:12px;">
+          <a class="button primary" href="document_reader.html?doc=docs%2Flgwo_a24_r2b_norm_bound_diagnostic_2026-07-20.md">读初学者推导与下一算法</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2b_norm_bound_diagnostic_v1/summary.json">10-mask 机器结果</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2b_norm_bound_diagnostic_v1/validation.json">155-check validation</a>
+          <a class="button" href="site_tools/run_lgwo_a24_r2b_norm_bound_diagnostic.py">诊断 runner</a>
+          <a class="button" href="site_tools/validate_lgwo_a24_r2b_norm_bound_diagnostic.py">独立 validator</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=158-tv-还没开跑先把步子能迈多大算诚实了">讲人话日志 158</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">给何远哲师兄的问题单</a>
+        </div>
+      </div>
+      <div id="lgwo-r2b-diagonal-majorizer" style="margin-top:22px; padding-top:20px; border-top:4px solid var(--teal); scroll-margin-top:18px;">
+        <div class="chips"><span class="chip gold">R2-B0D · CERTIFIED VOXEL DIAGONAL</span><span class="chip blue">PUBLIC PSU · QMC8 · 32³</span><span class="chip gold">0F / 0Aᵀ SETUP</span><span class="chip blue">333 CHECKS · VALID</span><span class="chip coral">BREAKTHROUGH: NO</span></div>
+        <h3 style="margin-top:9px;">从“全场一把尺”到逐体素安全质量：数学门已过，稀疏覆盖风险也暴露了</h3>
+        <p>对 <code>B=WA</code> 和非负比较矩阵 <code>C=W|M||D|P</code>，新实现逐 chunk 计算 <code>r=C1</code> 与 <code>q=Cᵀr</code>。加权 Cauchy--Schwarz 给出 <code>||Bx||²≤Σⱼqⱼxⱼ²</code>，因而 <code>diag(q)-BᵀB</code> 半正定。这不仅是一个更紧的全局上界，还保留了哪些体素被当前离散数据项强或弱耦合的空间结构。</p>
+        <div class="formula wrap-formula">q = Cᵀ(C1) ⇒ ||WAx||² ≤ xᵀdiag(q)x ⇒ ||WA||² ≤ max(q) ≤ ||C||₁||C||∞</div>
+        <div class="diagnostic-metric-grid">
+          <div class="metric"><b>4.57–6.84×</b><span><code>max(q)</code> / 冻结 power-40 estimate；均值 5.922×</span></div>
+          <div class="metric"><b>1.11–1.70×</b><span>上轮 composed bound / <code>max(q)</code>；均值再收紧 1.461×</span></div>
+          <div class="metric"><b>54.2–68.6%</b><span>support 内 <code>q&gt;0</code> 体素比例；这是当前离散合同，不是物理真值覆盖</span></div>
+          <div class="metric"><b>102,715</b><span>10 个 mask 累计 support 内零 <code>q</code> 坐标，必须显式记账</span></div>
+          <div class="metric"><b>4,186–11,296×</b><span>每 mask 正 <code>q</code> 的 p95/p05，显示强空间非均匀性</span></div>
+          <div class="metric"><b>333 · VALID</b><span>NPZ 重算、hash、support、逐 case 算术、冻结上游与 claim boundary</span></div>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <div class="panel">
+            <h3>这张图对初学者最重要的三个信号</h3>
+            <ol>
+              <li><strong>数学证书通过：</strong>小网格显式展开物理矩阵，PSD、16 个随机二次型、streaming/单块、chunk 不变性与 MPS 路径均过门。</li>
+              <li><strong>上界更紧但仍保守：</strong><code>max(q)</code> 比旧 composed 界再紧约 1.46倍，却仍比 power estimate 大约 5.92倍。</li>
+              <li><strong>零 <code>q</code> 不等于零流场：</strong>它只说明当前 256 rays/view、QMC8、straight-ray 离散数据项没有耦合该坐标。</li>
+            </ol>
+            <div class="alert success"><strong>真实可验证增量</strong><span>现在可以为每个缺失视角 mask 生成严格逐体素数据 majorizer，建立期为 0F/0Aᵀ，并保留完整 q 场供独立审计。</span></div>
+            <div class="alert critical"><strong>不得越过的边界</strong><span>没有运行重建，没有 field/gradient/front 收益，没有真实 OERF 数据或未见 rig。<code>new_algorithm=false / reconstruction_success=false / breakthrough=false</code>。</span></div>
+          </div>
+          <figure>
+            <img src="demo_t16_operator/results/lgwo_a24_r2b_diagonal_majorizer_v1/diagonal_majorizer_diagnostic.png" width="2448" height="1656" loading="eager" decoding="async" alt="R2-B0D 逐体素 BOST majorizer 诊断，展示严格上界、保守度、中心切片和 q 的空间动态范围" />
+            <figcaption>A/B 对比冻结 power 估计与两层严格证书；C 是全视角中心切片；D 显示 support 内正 q 跨越多个数量级。黑区不能解释为真实流场为零。</figcaption>
+          </figure>
+        </div>
+        <div class="pipeline" aria-label="逐体素数据证书之后的求解路线">
+          <div><b>R2-B0D · q_A</b><span>已完成：严格数据对角证书、PSD 密集反查与空间风险地图。</span></div>
+          <div><b>R2-B0E · q_G</b><span>已完成：forward-Neumann 局部质量、组合 Schur 显式矩阵反查。</span></div>
+          <div><b>R2-C0 · full diagonal</b><span>已证伪：data-only 灾难性伤害；加 q_G 后 field 微改善但 gradient 6/6 恶化。</span></div>
+          <div><b>R2-Cβ · safe blend</b><span>已完成并关闭：field 收益与 gradient 伤害随 β 严格单调，0/3 内点过门。</span></div>
+          <div><b>R2-C1 · fresh validation</b><span>未授权；不加密 β 网格，不训练没有合格标签的 β 预测器。</span></div>
+          <div><b>R2-D0 · path change</b><span>下一门：固定 H1-to-Huber/TV 或 edge-superiorization，同预算挑战冻结 H1。</span></div>
+          <div><b>Real gate</b><span>师兄 callable、曲/直光线层级、标定、真实 split 与主指标到位后才谈论文主张。</span></div>
+        </div>
+        <div class="actions" style="margin-top:12px;">
+          <a class="button primary" href="document_reader.html?doc=docs%2Flgwo_a24_r2b_diagonal_majorizer_2026-07-21.md">读完整推导与下一道门</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2b_diagonal_majorizer_v1/summary.json">10-mask summary</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2b_diagonal_majorizer_v1/validation.json">333-check validation</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2b_diagonal_majorizer_v1/voxel_diagonals.npz">完整 q 场 NPZ</a>
+          <a class="button" href="site_tools/run_lgwo_a24_r2b_diagonal_majorizer_diagnostic.py">诊断 runner</a>
+          <a class="button" href="site_tools/validate_lgwo_a24_r2b_diagonal_majorizer_diagnostic.py">独立 validator</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=159-逐体素安全步长算出来了也暴露了不能装作看不见的零覆盖">讲人话日志 159</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">给何远哲师兄的接口问题</a>
+        </div>
+      </div>
+      <div id="lgwo-r2c-diagonal-pdhg" style="margin-top:22px; padding-top:20px; border-top:4px solid var(--coral); scroll-margin-top:18px;">
+        <div class="chips"><span class="chip coral">R2-C · DEVELOPMENT NO-GO</span><span class="chip blue">PUBLIC PSU · 6 CASES</span><span class="chip gold">20F / 20Aᵀ EACH</span><span class="chip blue">376 CHECKS · VALID</span><span class="chip coral">BREAKTHROUGH: NO</span></div>
+        <h3 style="margin-top:9px;">完整对角 PDHG 通过了数学门，却没有通过重建质量门</h3>
+        <p>这是 R2-B 之后第一次真正把严格证书接进求解器。新实现构造 <code>q_G=|GP|ᵀ(|GP|1)</code>，再组合 <code>q_total=σ_Aq_A+σ_Gq_G</code>，逐体素用 <code>τ_j=0.99/q_total,j</code>。显式小矩阵已验证 <code>diag(q_G)-G_PᵀG_P</code> 和堆叠 BOST/gradient Schur 半正定；求解保持每轮一次物理 forward 和一次 adjoint。但数学稳定只是入场券，不等于有限预算下的 field/gradient 质量更好。</p>
+        <div class="formula wrap-formula">q_G = |GP|ᵀ(|GP|1) · q_total = σ_Aq_A + σ_Gq_G · ||Σ½ K T½||² ≤ 0.99 &lt; 1</div>
+        <div class="diagnostic-metric-grid">
+          <div class="metric"><b>+0.1469%</b><span>Huber-gradient 分支 mean field gain；6/6 case 都是微小正值</span></div>
+          <div class="metric"><b>-0.8203%</b><span>mean gradient gain；6/6 case 全部恶化，因此预写门失败</span></div>
+          <div class="metric"><b>-95.20% / -338.59%</b><span>data-only mean field / gradient gain；暴露零覆盖与极大局部步长的伤害</span></div>
+          <div class="metric"><b>49.3–68.6%</b><span>6 case 中 support 内 <code>q_A&gt;0</code> 比例；其余不能被当成零真值</span></div>
+          <div class="metric"><b>480F / 480Aᵀ</b><span>24 条求解路径总预算；另有 24F 独立 evaluator 记账</span></div>
+          <div class="metric"><b>376 · VALID NO-GO</b><span>独立重建 q_total、汇总、调用、图像、hash 和 claim boundary</span></div>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <div class="panel">
+            <h3>先看懂失败，再设计下一个算法</h3>
+            <ol>
+              <li><strong>残差低不等于重建好：</strong>data-only diagonal 的测量残差只有 scalar 的 0.47 倍，field 和 gradient 却大幅更差。</li>
+              <li><strong><code>q_G</code> 是先验耦合：</strong>它让未被数据项直接触达的坐标也有局部质量，但没有凭空增加相机信息。</li>
+              <li><strong>全强度对角化过了头：</strong>它在 20 次内稍快地救 field，却稳定伤害 gradient，不能用平均数盖住。</li>
+            </ol>
+            <div class="alert critical"><strong>当前判决：NO-GO</strong><span><code>full_diagonal_candidate=false / algorithm_success=false / real_reconstruction=false / paper_success=false / breakthrough=false</code>。</span></div>
+            <div class="alert info"><strong>后续结果：安全 β 插值也已 NO-GO</strong><span>五个点全部跑完，最佳内点 <code>β=0.25</code> 仍是 field <code>+0.0351%</code>、gradient <code>-0.1879%</code>。见下方 R2-C2，该支线已关闭。</span></div>
+          </div>
+          <figure>
+            <img src="demo_t16_operator/results/lgwo_a24_r2c_diagonal_pdhg_development_v1/diagonal_pdhg_diagnostic.png" width="2584" height="1767" loading="eager" decoding="async" alt="R2-C 对角 PDHG 开发 NO-GO 诊断，展示 field gradient 增益、零覆盖伤害和同预算收敛轨迹" />
+            <figcaption>A 显示 Huber 分支的 field 小改善与 gradient 一致恶化；C 显示 data-only 在稀疏 q_A 覆盖下的灾难性质量伤害；D 只比较同预算开发轨迹，不是泛化曲线。</figcaption>
+          </figure>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <figure>
+            <img src="demo_t16_operator/results/lgwo_a24_r2c_diagonal_pdhg_development_v1/representative_reconstruction.png" width="2375" height="1406" loading="lazy" decoding="async" alt="R2-C 代表性中心切片，真值 proxy、scalar PDHG、diagonal PDHG 及误差图" />
+            <figcaption>20 次后两种 PDHG 仍接近零场，差异很小。这张“不够漂亮”的图恰好说明当前 Huber-PDHG 还不是能挑战冻结 H1 的强基线。</figcaption>
+          </figure>
+          <div class="panel">
+            <h3>已执行的 β 证明与判决</h3>
+            <div class="formula wrap-formula">q_β = (1-β) q_scalar P + β q_diagonal, &nbsp; β∈[0,1]</div>
+            <p>因为 <code>diag(q_scalar P)-KᵀΣK</code> 和 <code>diag(q_diagonal)-KᵀΣK</code> 都半正定，它们的<strong>标量凸组合</strong>仍半正定。<code>β=0</code> 是标量保底，<code>β=1</code> 是本轮失败的完整对角端。</p>
+            <ol>
+              <li><code>β={0,.25,.5,.75,1}</code> 已在同一已打开开发集完整运行。</li>
+              <li>field 收益随 β 严格上升，gradient 收益随 β 严格下降；中间点没有双指标信号。</li>
+              <li>因为 0/3 可选内点过门，fresh seed 实验不获授权，也不能训练 β 控制器。</li>
+              <li>下一实验必须改变目标/正则路径，不是继续改变到达同一解的速度。</li>
+            </ol>
+          </div>
+        </div>
+        <div class="actions" style="margin-top:12px;">
+          <a class="button primary" href="document_reader.html?doc=docs%2Flgwo_a24_r2c_diagonal_pdhg_no_go_2026-07-21.md">读完整 NO-GO 与 β 证明</a>
+          <a class="button" href="demo_t16_operator/configs/lgwo_a24_r2c_diagonal_pdhg_development_v1.json">首跑前冻结配置</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2c_diagonal_pdhg_development_v1/summary.json">24 路 summary</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2c_diagonal_pdhg_development_v1/rows.csv">逐 case CSV</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2c_diagonal_pdhg_development_v1/validation.json">376-check validation</a>
+          <a class="button" href="site_tools/run_lgwo_a24_r2c_diagonal_pdhg_development.py">开发 runner</a>
+          <a class="button" href="site_tools/validate_lgwo_a24_r2c_diagonal_pdhg_development.py">独立 validator</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=160-第一个完整对角求解器跑了结果是应该留下的-no-go">讲人话日志 160</a>
+          <a class="button" href="#lgwo-r2c2-beta-interpolation">看 β 支线关闭证据</a>
+        </div>
+      </div>
+      <div id="lgwo-r2c2-beta-interpolation" style="margin-top:22px; padding-top:20px; border-top:4px solid var(--coral); scroll-margin-top:18px;">
+        <div class="chips"><span class="chip coral">R2-C2 · POST-OPEN NO-GO</span><span class="chip blue">6 CASES · 5 β POINTS</span><span class="chip gold">720F / 720Aᵀ</span><span class="chip blue">709 CHECKS · VALID</span><span class="chip coral">FRESH NOT AUTHORIZED</span></div>
+        <h3 style="margin-top:9px;">β 越大，field 越好、gradient 越坏：不是没调对点，而是路径本身没有双指标余量</h3>
+        <p>新证书用一个全局标量 <code>β</code> 在 scalar 与 full diagonal 两个安全端点间做凸组合。五个点都通过显式 Schur PSD 与内容哈希检查；<code>β=0</code> 对独立 scalar solver 的最大 field 差仅 <code>4.93e-8</code>。但从 0 到 1，mean field gain 从 0 严格增至 <code>+0.1469%</code>，mean gradient gain 却严格降至 <code>-0.8203%</code>。三个预写可选内点全部失败，因此不开 fresh。</p>
+        <div class="formula wrap-formula">q_β = (1-β)q_scalar P + βq_diagonal · diag(q_β)-KᵀΣK ⩽ 0 · τ_j = 0.99/q_β,j</div>
+        <div class="diagnostic-metric-grid">
+          <div class="metric"><b>0 / 3</b><span>可选内点通过 field + gradient + tail + residual 联合门</span></div>
+          <div class="metric"><b>+0.0351%</b><span>选择规则下 <code>β=0.25</code> 的 mean field gain</span></div>
+          <div class="metric"><b>-0.1879%</b><span>同一 <code>β=0.25</code> 的 mean gradient gain；6/6 伤害</span></div>
+          <div class="metric"><b>0.9926</b><span><code>β=0.25</code> 测量残差比；拟合更快不等于梯度更准</span></div>
+          <div class="metric"><b>36 paths</b><span><code>720F/720Aᵀ</code> solve + 36 evaluator F，每条预算相同</span></div>
+          <div class="metric"><b>709 · VALID NO-GO</b><span>独立重建 30 个证书、复算汇总、趋势、图与边界</span></div>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <figure>
+            <img src="demo_t16_operator/results/lgwo_a24_r2c2_beta_interpolation_diagnosis_v1/beta_interpolation_diagnostic.png" width="2584" height="1747" loading="eager" decoding="async" alt="R2-C2 全局 beta 插值诊断，展示 field 收益和 gradient 伤害的单调权衡、残差和同预算轨迹" />
+            <figcaption>A/B 是决定性证据：绿线微升，红线持续下降。C 显示步长放大与残差降低同时发生；D 只是已打开 case 的欠收敛轨迹。</figcaption>
+          </figure>
+          <div class="panel">
+            <h3>为什么现在不能“让网络学 β”</h3>
+            <ol>
+              <li><strong>没有合格标签：</strong>0.25、0.5、0.75 的 gradient mean 全为负，且每个 case 都受害。</li>
+              <li><strong>只是有限步路径：</strong>预条件器不改变优化目标，充分收敛后不会产生新的重建解。</li>
+              <li><strong>不能结果驱动加密：</strong>在已打开集上继续找 0.05 或 0.10 只会放大单指标微小波动。</li>
+              <li><strong>证明不是成绩：</strong>Schur 安全只说步长不越界，不说 field、gradient 或真实流场更准。</li>
+            </ol>
+            <div class="alert critical"><strong>分支关闭</strong><span><code>global_beta_candidate=false / fresh_validation_authorized=false / learned_beta_label=false / breakthrough=false</code>。</span></div>
+          </div>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <figure>
+            <img src="demo_t16_operator/results/lgwo_a24_r2c2_beta_interpolation_diagnosis_v1/representative_beta_reconstruction.png" width="2774" height="1368" loading="lazy" decoding="async" alt="R2-C2 代表性中心切片，对比真值 proxy、scalar、beta 0.25 和 beta 1 及误差" />
+            <figcaption>20 步后三个重建仍接近零场，说明当前图比较的是欠收敛路径，不是能挑战 H1 的最终质量。</figcaption>
+          </figure>
+          <div class="panel">
+            <h3>这个后续候选已经执行：结果见下一节</h3>
+            <p><strong>R2-D1 · H1-to-edge-preserving safeguarded path</strong> 已另行冻结并完成 <code>19+1 / 18+2 / 16+4</code> 预算比较。edge 相对纯数据控制有正信号，但所有非零候选仍输给 H1-20，因此这段保留为当时的预注册逻辑，正式判决以下一节为准。</p>
+            <ol>
+              <li>先做固定 split/强度，对手至少是 CGLS、冻结 H1、scalar Huber 和简单阻尼。</li>
+              <li>同时过 field、gradient、front、active residual、held-out clean/B 与尾部门。</li>
+              <li>只有固定路径产生超过 H1 的 headroom，才检查不同 case 是否需要不同控制。</li>
+              <li>只有部署可见特征能预测这个控制，才授权一个可拒答、可回退 H1 的小模型。</li>
+            </ol>
+            <div class="alert info"><strong>真实物理门仍在</strong><span>需何远哲师兄确认 callable、曲/直光线残差层级、几何标定、主痛点、强基线、数据与 split；当前不替实验室造结论。</span></div>
+          </div>
+        </div>
+        <div class="actions" style="margin-top:12px;">
+          <a class="button primary" href="document_reader.html?doc=docs%2Flgwo_a24_r2c2_beta_interpolation_no_go_2026-07-21.md">读完整证明、数字与路线判决</a>
+          <a class="button" href="demo_t16_operator/configs/lgwo_a24_r2c2_beta_interpolation_diagnosis_v1.json">运行前冻结配置</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2c2_beta_interpolation_diagnosis_v1/summary.json">36 路 summary</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2c2_beta_interpolation_diagnosis_v1/rows.csv">逐 case/β CSV</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2c2_beta_interpolation_diagnosis_v1/validation.json">709-check validation</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2c2_beta_interpolation_diagnosis_v1/metric_maps.npz">完整 q_β NPZ</a>
+          <a class="button" href="site_tools/run_lgwo_a24_r2c2_beta_interpolation_diagnosis.py">诊断 runner</a>
+          <a class="button" href="site_tools/validate_lgwo_a24_r2c2_beta_interpolation_diagnosis.py">独立 validator</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=161-beta-路径全部跑完安全不等于有用这条支线正式关闭">讲人话日志 161</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">给何远哲师兄的接口问题</a>
+        </div>
+      </div>
+      <div id="lgwo-r2d1-edge-budget" style="margin-top:22px; padding-top:20px; border-top:4px solid var(--coral); scroll-margin-top:18px;">
+        <div class="chips"><span class="chip coral">R2-D0 v1 · INVALID PROTOCOL</span><span class="chip coral">R2-D1 · POST-OPEN NO-GO</span><span class="chip blue">6 CASES · 78 PATHS</span><span class="chip gold">1560F / 1560Aᵀ</span><span class="chip blue">561-CHECK INDEPENDENT AUDIT</span><span class="chip coral">FRESH NOT AUTHORIZED</span></div>
+        <h3 style="margin-top:9px;">edge 方向比纯数据修正好，但替换 H1 末步仍然输：局部机制信号不等于算法 headroom</h3>
+        <p>R2-D1 比较 <code>19+1</code>、<code>18+2</code>、<code>16+4</code> 三种 H1/修正预算，每种固定 <code>ρ=0,1,2,4</code>。非零候选必须同时胜过 H1-20 与 matched <code>ρ=0</code>，并过 field、gradient、front、held-out、residual、伴随和调用门。选择行 <code>19+1, ρ=4</code> 对纯数据控制确有 <code>+0.0676% field / +0.3959% gradient</code>，但相对真正对手 H1-20 仍是 <code>-0.4335% / -0.1233%</code>，加权 residual 比为 <code>1.0378</code>，所以关闭“替换 H1 末步”支线。</p>
+        <div class="alert critical"><strong>先保留错误，再给结论</strong><span>第一次 R2-D0 已产生 42 行后才发现 <code>denominator_floor</code> 与冻结 H1 不同，并缺少 edge-vs-data-control、伴随、front 和 held-out 门。该目录已有 <code>INVALID_PROTOCOL_NOTICE</code>，禁止把 v1 叫作成功或 NO-GO。R2-D1 明确披露已观察行并另行冻结，才是本节判决来源。</span></div>
+        <div class="alert info"><strong>先看绝对质量，再看小百分比</strong><span>H1-20 的 mean field/gradient relative-L2 仍约为 <code>0.881 / 1.130</code>，代表切片接近低幅模糊场；truth 与 observation 又使用同一 QMC8 forward，没有曲光线、几何失配、位移估计误差或真实相关噪声。因此这里是 inverse-crime 型弱重建机制诊断。9 个 edge 组合虽都在 6/6 case 上胜 matched 控制，且 Huber 势能下降约 <code>0.82%–6.01%</code>，但只有 6 个已见 case、没有统计确认；held-out 汇总实际为 <code>n=5</code>。</span></div>
+        <div class="alert critical"><strong>561 项独立复算通过，但只允许写“运行后依赖闭合”</strong><span>validator 独立重建 12 个 aggregate、选择行、matched <code>ρ=0</code>、调用账本、5/6 held-out、front、伴随和 168 个修正步，NO-GO 不变。runner 当时却漏列一个 imported helper；提交 blob 与当前文件哈希一致，只能事后闭合，不能证明执行瞬间没有短暂未提交改动。准确状态为 <code>PASS_WITH_POST_RUN_DEPENDENCY_CLOSURE</code>，下一次实验必须运行前绑定完整 import closure。</span></div>
+        <div class="diagnostic-metric-grid">
+          <div class="metric"><b>-0.4335%</b><span>选择行相对 H1-20 的 mean field gain；6/6 伤害</span></div>
+          <div class="metric"><b>-0.1233%</b><span>选择行相对 H1-20 的 mean gradient gain</span></div>
+          <div class="metric"><b>+0.3959%</b><span>同一行相对 matched <code>ρ=0</code> 的 gradient gain；edge 有局部信号</span></div>
+          <div class="metric"><b>1.0378</b><span>weighted residual / H1-20；预写门为 ≤1.02</span></div>
+          <div class="metric"><b>1.10e-7</b><span>最大伴随恒等式相对缺陷；安全结构正常工作</span></div>
+          <div class="metric"><b>0 / 9</b><span>非零 edge 候选通过全部联合门；不开 fresh</span></div>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <figure>
+            <img src="demo_t16_operator/results/lgwo_a24_r2d1_budget_allocation_diagnosis_v1/r2d1_budget_allocation_diagnosis.png" width="2622" height="1786" loading="eager" decoding="async" alt="R2-D1 三种 H1 与 edge 修正预算分配随倾斜比变化的 field gradient 数据控制增益和残差比诊断" />
+            <figcaption>A/B：所有轨迹仍低于 H1-20；C：相对 matched 纯数据控制的 edge-specific gradient 信号随 rho 增强；D：同时付出越来越差的数据残差。</figcaption>
+          </figure>
+          <div class="panel">
+            <h3>该留下哪一句研究结论</h3>
+            <ol>
+              <li><strong>不是 edge 完全无效：</strong>三种预算里，非零 rho 相对各自数据控制均改善 field/gradient。</li>
+              <li><strong>失败在预算替换：</strong>拿走越多 H1 步，edge-specific 收益越大，但丢掉的 H1 进展更大。</li>
+              <li><strong>不能继续盲扫：</strong>rho 增大时 residual 系统恶化；在同六个 case 上扫 8、16 或 delta 会变成结果驱动调参。</li>
+              <li><strong>物理结论仍封闭：</strong>这里是公开 PSU 几何上的解析反应形态 proxy，不是真实折射率场或实验 rig。</li>
+            </ol>
+            <div class="alert critical"><strong>有效 NO-GO，不是突破</strong><span><code>replacement_path=false / fresh_validation_authorized=false / learned_edge_label=false / breakthrough=false</code>。</span></div>
+          </div>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <figure>
+            <img src="demo_t16_operator/results/lgwo_a24_r2d1_budget_allocation_diagnosis_v1/r2d1_representative_slice.png" width="2812" height="1368" loading="lazy" decoding="async" alt="R2-D1 代表性中心切片，对比解析真值 proxy、H1-20、匹配纯数据控制和选择的 edge 修正候选" />
+            <figcaption>代表切片只帮助定位误差形态；选择与结论来自全部六个 case 的联合门，不从这张图挑参数。</figcaption>
+          </figure>
+          <div class="panel">
+            <h3>R2-E0 已执行：完整保留 H1 后，固定子空间仍没有 headroom</h3>
+            <p>当时预注册的候选已经完成：完整运行 H1-20，缓存搜索方向 <code>P</code> 与投影 <code>A<sub>w</sub>P</code>，再以 <code>0F/0Aᵀ</code> 在 20 维系数空间重优化。缓存实现确实与冻结 H1 对齐，但四个固定 Huber 候选和 residual-safe truth oracle 均失败；正式数字见下一节。</p>
+            <ol>
+              <li>缓存/调用合同已通过，证明失败不是少跑 H1 或偷加物理调用。</li>
+              <li>固定 Huber 的 nonzero step 只有浮点尺度，不形成学习标签。</li>
+              <li>truth-safe oracle 也不过门，瓶颈定位为 span，而非权重选择。</li>
+              <li>下一门要生成新方向；真实 callable 与物理合同仍需师兄确认。</li>
+            </ol>
+          </div>
+        </div>
+        <div class="actions" style="margin-top:12px;">
+          <a class="button primary" href="document_reader.html?doc=docs%2Flgwo_a24_r2d1_edge_budget_allocation_no_go_2026-07-21.md">读完整协议、数字与下一候选</a>
+          <a class="button" href="demo_t16_operator/configs/lgwo_a24_r2d1_budget_allocation_diagnosis_v1.json">R2-D1 冻结配置</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2d1_budget_allocation_diagnosis_v1/report.json">78 路 report</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2d1_budget_allocation_diagnosis_v1/metric_rows.csv">逐 case CSV</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2d1_budget_allocation_diagnosis_v1/independent_validation.json">561-check 独立验证</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2d0_safeguarded_edge_correction_v1/INVALID_PROTOCOL_NOTICE.json">R2-D0 无效协议通知</a>
+          <a class="button" href="site_tools/run_lgwo_a24_r2d1_budget_allocation_diagnosis.py">R2-D1 runner</a>
+          <a class="button" href="site_tools/validate_lgwo_a24_r2d1_budget_allocation_diagnosis.py">独立 validator</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=162-第一次-edge-预跑被审计否决第二次才得到能成立的-no-go">讲人话日志 162</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">给何远哲师兄的接口问题</a>
+        </div>
+      </div>
+      <div id="lgwo-r2e0-cached-krylov" style="margin-top:22px; padding-top:20px; border-top:4px solid var(--coral); scroll-margin-top:18px;">
+        <div class="chips"><span class="chip coral">R2-E0 · POST-OPEN NO-GO</span><span class="chip blue">6 CASES · 72 ROWS</span><span class="chip gold">SHARED 20F/20Aᵀ · REDUCED 0/0</span><span class="chip blue">873-CHECK POST-RUN AUDIT</span><span class="chip coral">V1/V2 INVALID PRESERVED</span><span class="chip coral">NO FRESH / REAL CLAIM</span></div>
+        <h3 style="margin-top:9px;">H1 的 20 个方向可以无额外物理调用地重新配权，但当前 span 没有数据一致的联合质量余量</h3>
+        <p>R2-E0 完整运行冻结 H1-20，缓存场方向 <code>P</code> 与投影 <code>A<sub>w</sub>P</code>，随后只在 20 个系数上比较数据最小二乘、简单插值、四个固定 Huber balance ratio 和两个 truth-only oracle。缓存路径与 reference 对齐，所有 reduced 方法均为 <code>0F/0Aᵀ</code>；但 0/4 固定 Huber 候选具备部署资格，residual-safe truth oracle 也远低于预写 <code>5% field / 5% gradient</code> 门。</p>
+        <div class="alert critical"><strong>实现成功，不等于科学成功</strong><span>代码证明了“已经付费得到的 Krylov 方向可以缓存并在低维空间重优化”；结果同时证明，在当前六个已打开 synthetic proxy 上，冻结 20 维 span 不支持一个兼顾数据、field 与 gradient 的可用更新。因此不训练 Huber 权重选择器，不打开 fresh，也不写成新算法、真实重建或泛化成功。</span></div>
+        <div class="alert info"><strong>两次软件失败完整保留</strong><span>v1 的 reduced least-squares、v2 的 Huber reoptimizer 都因 MPS 到 CPU float64 转换错误而终止，各自只保留 <code>invalid_attempt.json</code>。v3 统一 CPU-double 边界并通过三条 MPS 回归后才产生本节 72 行有效结果；无效运行不进入均值。</span></div>
+        <div class="alert critical"><strong>873 项事后独立一致性审计通过</strong><span>validator 不导入 runner/core，独立复算 72 行矩形、汇总、truth-free 选择、posthoc/oracle 门、缓存等价性、20/20 与 0/0 调用、108 个几何输入摘要、source/config blob、两次无效运行和全 false claim boundary。准确状态是 <code>VALIDATION_PASS_POST_RUN_INTERNAL_CONSISTENCY_ONLY</code>：验证器在正式运行后实现，只证明已保存证据自洽，不是运行前预注册约束，也不证明真实重建、泛化、算法或论文成功。</span></div>
+        <div class="diagnostic-metric-grid">
+          <div class="metric failed-state"><b>0 / 4</b><span>固定 Huber 候选通过联合部署门；没有可训练标签</span></div>
+          <div class="metric"><b>+0.1184%</b><span>data exact mean field gain；同时 gradient 为 <code>-1.6445%</code></span></div>
+          <div class="metric"><b>0.8951</b><span>data exact weighted residual ratio；更合数据不等于场更准</span></div>
+          <div class="metric failed-state"><b>+0.0040%</b><span>residual-safe truth oracle field gain；远低于 5% 门</span></div>
+          <div class="metric failed-state"><b>+0.1647%</b><span>同一 oracle gradient gain；仍远低于 5% 门</span></div>
+          <div class="metric"><b>20/20 + 0/0</b><span>每 case 共享 H1 物理调用 + reduced stage 物理调用</span></div>
+        </div>
+        <p class="table-scroll-hint">表格可横向滚动</p>
+        <div class="result-table-wrap">
+          <table>
+            <thead><tr><th>角色</th><th>mean field gain</th><th>mean gradient gain</th><th>weighted residual / H1</th><th>accepted</th><th>允许结论</th></tr></thead>
+            <tbody>
+              <tr><td>H1-20 cached</td><td>0</td><td>0</td><td>1.0000</td><td>6/6</td><td>冻结基线与缓存等价控制</td></tr>
+              <tr><td>data exact</td><td class="positive">+0.1184%</td><td class="negative">-1.6445%</td><td>0.8951</td><td>6/6</td><td>数据拟合与梯度质量冲突</td></tr>
+              <tr><td>Huber ratio 2.0</td><td>+0.000002%</td><td>0.0000%</td><td>1.0000</td><td class="negative">4/6</td><td>truth-free 诊断对象；不合格</td></tr>
+              <tr><td>truth oracle safe</td><td class="positive">+0.0040%</td><td class="positive">+0.1647%</td><td>1.0200</td><td>evaluator-only</td><td>上界不过门；不可部署</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <figure>
+            <img src="demo_t16_operator/results/lgwo_a24_r2e0_cached_krylov_diagnosis_v3/r2e0_representative_slice.png" width="2850" height="627" loading="eager" decoding="async" alt="R2-E0 代表性中心切片，对比解析真值 proxy、H1、数据最小二乘、固定 Huber 与 residual-safe truth oracle" />
+            <figcaption>切片帮助看清“更合观测但边缘更差”的误差形态；参数选择和 NO-GO 来自全部六个 case 的冻结联合门，不从图片挑结果。</figcaption>
+          </figure>
+          <div class="panel">
+            <h3>为什么现在要扩展 span，而不是继续调权重</h3>
+            <ol>
+              <li><strong>固定 Huber 基本不动：</strong>最大 relative field shift 约 <code>1.4e-10</code>，不是可学习的质量信号。</li>
+              <li><strong>data exact 有结构性代价：</strong>残差下降，但 6/6 case 的 gradient 都受害。</li>
+              <li><strong>truth 上界也被数据门压扁：</strong>unrestricted oracle 有 <code>+14.52%</code> gradient，却付出 <code>10.23x</code> residual；压回 1.02 后收益几乎消失。</li>
+              <li><strong>下一步必须生成新方向：</strong>先做 R2-F0 span expressivity audit，再决定是否值得训练小网络。</li>
+            </ol>
+            <div class="alert critical"><strong>突破监测：否</strong><span><code>new_algorithm=false / fresh=false / real_bost=false / generalization=false / paper_success=false / breakthrough=false</code>。</span></div>
+          </div>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <div class="panel">
+            <h3>R2-F0：只审计三类真正的新方向</h3>
+            <ol>
+              <li><strong>Flexible prior-conditioned：</strong>让固定 H1/Huber 局部预条件器作用于 <code>Aᵀr</code>，产生原 H1 span 外方向。</li>
+              <li><strong>Residual-safe edge：</strong>由 edge/Hessian proxy 生成单方向，经投影正交化与解析 residual 回退。</li>
+              <li><strong>BOST-conditioned：</strong>只读 view mask、噪声、residual/Ritz 轨迹与几何摘要，并允许拒答和精确回退 H1。</li>
+            </ol>
+            <p>第一阶段仍只做 representation oracle。扩展 span 若没有明显 joint headroom，就停止；有 headroom 且部署可见特征能预测，才进入学习。</p>
+          </div>
+          <div class="panel">
+            <h3>创新边界与真实接口门</h3>
+            <p><a href="https://proceedings.mlr.press/v235/rudikov24a.html">FCG-NO</a> 已把 neural operator 用作 flexible CG 非线性预条件器；<a href="https://arxiv.org/abs/2007.00207">hybrid projection with recycling</a> 已覆盖 Krylov 回收；<a href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/e88870ec82f2469b0ddf32c817920c68-Abstract-Conference.html">Neural Krylov</a> 已学习不变子空间。我们的潜在差异只能落在 BOST 几何/噪声/曲光线失配、可核验 data envelope、拒答和跨 rig 尾部验证上。</p>
+            <div class="alert"><strong>先问师兄，再决定真实路线</strong><span>需要确认 callable、straight/curved residual 层级、<code>A/Aᵀ</code> 或 JVP/VJP、标定、主痛点、强基线、数据与 split；否则只继续公开 PSU 机制实验，不替实验室造结论。</span></div>
+          </div>
+        </div>
+        <div class="actions" style="margin-top:12px;">
+          <a class="button primary" href="document_reader.html?doc=docs%2Flgwo_a24_r2e0_cached_krylov_subspace_no_go_2026-07-21.md">读完整数学、数字与下一路线</a>
+          <a class="button" href="demo_t16_operator/configs/lgwo_a24_r2e0_cached_krylov_diagnosis_v3.json">v3 冻结配置</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2e0_cached_krylov_diagnosis_v3/report.json">72 行 report</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2e0_cached_krylov_diagnosis_v3/metric_rows.csv">逐 case 指标</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2e0_cached_krylov_diagnosis_v3/equivalence_rows.csv">缓存等价性</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2e0_cached_krylov_diagnosis_v3/independent_validation.json">873-check 独立验证</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2e0_cached_krylov_diagnosis_v3/r2e0_cached_krylov_diagnosis.png">正式诊断总图</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2e0_cached_krylov_diagnosis_v1/invalid_attempt.json">v1 无效运行</a>
+          <a class="button" href="demo_t16_operator/results/lgwo_a24_r2e0_cached_krylov_diagnosis_v2/invalid_attempt.json">v2 无效运行</a>
+          <a class="button" href="site_tools/run_lgwo_a24_r2e0_cached_krylov_diagnosis.py">R2-E0 runner</a>
+          <a class="button" href="site_tools/validate_lgwo_a24_r2e0_cached_krylov_diagnosis.py">独立 validator</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=163-把-h1-的-20-个方向全部留下再调权重还是没有可用余量">讲人话日志 163</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">给何远哲师兄的接口问题</a>
+        </div>
+      </div>
+      <div id="lgwo-r2f0-span-audit" style="margin-top:22px; padding-top:20px; border-top:4px solid var(--gold); scroll-margin-top:18px;">
+        <div class="chips"><span class="chip gold">R2-F0 · PROTOCOL HOLD</span><span class="chip coral">0 FORMAL CASES OPENED</span><span class="chip blue">PLANNED 6 × 40 RECTANGLE</span><span class="chip blue">MATCHED H1-k SPAN ORACLE</span><span class="chip coral">NO LEARNER / FRESH / REAL CLAIM</span></div>
+        <h3 style="margin-top:9px;">先证明新方向本身有表示余量，再讨论让神经网络生成它</h3>
+        <p>R2-F0 只回答一个很窄的问题：在六个已经打开的 synthetic development cases 上，部署时可见的 <code>R=A<sub>w</sub>ᵀr</code>、Huber 先验方向 <code>H</code> 和 edge-gated 方向 <code>E</code>，经 H1 增广度量 <code>G=[A<sub>w</sub>;√λD]</code> 投影出旧 <code>P20</code> span 后，是否仍能提供数值可分辨、非近零空间的联合 field/gradient 表示余量。这里尚无系数预测器；所有最优系数都读取 synthetic truth，因此只能是离线表示上界。</p>
+        <div class="alert critical"><strong>为什么当前仍是 HOLD</strong><span>第一版协议只拿候选 truth oracle 对比 H1-21/22/23 的普通迭代终点，会把“truth 重配全部系数”的收益错归因于新方向。现在已改成同 objective、同 residual+field trust ray 的 matched H1-k span oracle，并加入增广 rank、near-null、逐方法 <code>(F,Aᵀ)</code>、truth firewall、H1-next 恒等正控制、三档 rank floor、独立 NumPy 物理核复算和原子输出。定向软件套件已通过，但第二轮独立红队尚未签字，且尚未冻结 source closure 或运行正式包；因此配置保持 <code>HOLD_R2F0_PROTOCOL_NOT_READY_TO_FREEZE</code>，结果目录必须为空。</span></div>
+        <div class="diagnostic-metric-grid">
+          <div class="metric"><b>R / H / E</b><span>三个固定 truth-free 原始方向；<code>Q=-DᵀDx</code> 只作归因控制</span></div>
+          <div class="metric"><b>7 families</b><span><code>R,H,E,RH,RE,EH,RHE</code> 全矩形报告，不从已见 truth 挑部署赢家</span></div>
+          <div class="metric"><b>3 oracle layers</b><span>unrestricted、residual-only、residual+field-trust 分开保存</span></div>
+          <div class="metric"><b>1e-5 / 1e-6 / 1e-7</b><span>projector、effective rank 与最终 passing-family 集合必须稳定</span></div>
+          <div class="metric"><b>≤ 1.02 / ≤ 0.25</b><span>逐 case observed residual 比与相对场移动半径</span></div>
+          <div class="metric"><b>77 passed</b><span>core、runner、独立 validator、防篡改与页面合同；只属软件证据</span></div>
+          <div class="metric"><b>NumPy A / Aᵀ</b><span>从离散采样权重独立复算投影、伴随和内积恒等式</span></div>
+          <div class="metric failed-state"><b>突破监测：否</b><span>当前只有可证伪协议和单元证据，没有 R2-F0 科学结果</span></div>
+        </div>
+        <p class="table-scroll-hint">表格可横向滚动</p>
+        <div class="result-table-wrap">
+          <table>
+            <thead><tr><th>层级</th><th>比较对象</th><th>truth 用途</th><th>物理调用语义</th><th>能回答什么</th></tr></thead>
+            <tbody>
+              <tr><td>C0</td><td>H1-20 native</td><td>只评估</td><td><code>20F/20Aᵀ</code></td><td>共同起点</td></tr>
+              <tr><td>C1</td><td>旧 P20 safe joint oracle</td><td>重配系数</td><td><code>20F/20Aᵀ</code>；reduced <code>0/0</code></td><td>仅重配旧方向的上界</td></tr>
+              <tr><td>C2</td><td>H1-(20+k) native</td><td>只评估</td><td><code>(20+k)F/(20+k)Aᵀ</code></td><td>强经典延续基线</td></tr>
+              <tr><td>C3</td><td>H1-(20+k) safe span oracle</td><td>重配系数</td><td>与 C2 相同 span；reduced <code>0/0</code></td><td>候选必须击败的表示上界</td></tr>
+              <tr><td>C4</td><td>P20 + R/H/E unrestricted oracle</td><td>重配系数</td><td>逐 family 保存独立 <code>(F,Aᵀ)</code></td><td>只显示理论方向，不能部署</td></tr>
+              <tr><td>C5</td><td>P20 + R/H/E residual+field-safe oracle</td><td>重配系数与 ray 终点</td><td>同 C4；另记 evaluator/validation</td><td>唯一可进入表示门的候选，仍非算法</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <div class="panel">
+            <h3>只有同时过这些门，才算“值得另开学习协议”</h3>
+            <ol>
+              <li>相对 matched C3 的 mean field 与 gradient gain 都至少 <code>5%</code>，median 至少 <code>3%</code>，worst 不低于 <code>-1%</code>。</li>
+              <li>相对旧 C1 的 H1-20 基准改善增量都至少 <code>3 个百分点</code>；这不是“再相对除一次”的百分比。逐 case residual、field trust、held-out 和 harm count 均不过界。</li>
+              <li>新增 span 在增广度量下必须真的增加秩，最小主角和奇异值比均须过门，pairwise cosine 不高于 <code>0.995</code>；三档 floor 必须各自重建投影方向、物理 endpoint 与 oracle，方向排列也必须保持 endpoint 与指标不变。</li>
+              <li>即使全部通过，也只产生 <code>REPRESENTATION_SIGNAL_ONLY_NO_AUTHORIZATION</code>，下一轮仍需重新冻结 learner、fresh 与真实数据协议。</li>
+            </ol>
+          </div>
+          <div class="panel">
+            <h3>它为什么还不是论文创新</h3>
+            <p>prior-conditioned Krylov、flexible nonlinear preconditioning、subspace recycling 与 learned Krylov basis 都有明确先例；NeRIF 也已经把隐式神经场用于 BOST 三维重建。R2-F0 的可讨论价值只能是一个更窄的 BOST-specific 审计：方向不看 truth、系数上界严格匹配、数据/场双安全、成本逐项可核验。只有后续固定部署规则在未见 rig 与真实实验接口上保持收益，才可能发展成方法贡献。</p>
+            <div class="alert"><strong>仍需何远哲师兄提供的最小合同</strong><span>真实 callable、straight/curved residual 层级、JVP/VJP 或 <code>A/Aᵀ</code>、几何标定、主要失败模式、认可的强基线、数据字段与 split。没有这些信息时，本轮只形成公开 PSU inverse-crime 机制证据，不替实验室推断真实困难。</span></div>
+          </div>
+        </div>
+        <div class="two-col" style="margin-top:12px;">
+          <div class="panel">
+            <h3>第二轮加固关闭了哪些“假通过”入口</h3>
+            <ol>
+              <li><strong>联合方向不能和自己比：</strong><code>RHE</code> 必须超过三个单方向与三个双方向，共六个真子空间；归因增益必须达到冻结的 <code>1%</code>，不是只要大于零。</li>
+              <li><strong>整段空间而非几根向量：</strong>独立复算 canonical correlation、最小主角与 <code>rank([P20,Q])-rank(P20)</code>，并在三档 floor 上检查 passing-family 集合。</li>
+              <li><strong>判决留在 float64：</strong>系数、安全 ray、field/gradient 指标与门限比较均在 CPU float64；只有明确的物理算子端点按设备 dtype 转换。</li>
+              <li><strong>靠近门槛就拒绝判决：</strong>连续门设百分点评价与无量纲数值 margin，过近时返回 numerical ambiguity，而不是借舍入获得 PASS。</li>
+            </ol>
+          </div>
+          <div class="panel">
+            <h3>独立物理核证明了什么、没证明什么</h3>
+            <p>validator 不导入 PyTorch runner，而是用标准库与 NumPy 从封包内的三线性采样索引、权重、投影坐标和 ray scale 重建公开 PSU 离散 <code>A</code> 与 <code>Aᵀ</code>；它逐 case 复算 40 个主投影、三档 floor 的 24 个投影、伴随探针及自己的内积恒等式，并对篡改 fail-closed。</p>
+            <div class="alert"><strong>边界不能跨过</strong><span>这只说明“未来正式 PSU 包可被不同实现核对”的结构已单测。它尚未在正式 R2-F0 包上运行，更不证明 OERF curved-ray callable、几何标定、真实噪声或实验重建正确。</span></div>
+          </div>
+        </div>
+        <div class="actions" style="margin-top:12px;">
+          <a class="button primary" href="document_reader.html?doc=docs%2Flgwo_a24_r2f0_protocol_red_team_2026-07-21.md">读冻结前红队</a>
+          <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_r2f0_protocol_response_2026-07-21.md">逐项看红队回应</a>
+          <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_r2f0_primary_source_boundary_2026-07-21.md">读一级来源创新边界</a>
+          <a class="button" href="demo_t16_operator/configs/lgwo_a24_r2f0_span_expressivity_audit_v1.json">HOLD 配置</a>
+          <a class="button" href="demo_t16_operator/span_expansion_directions.py">方向与安全 ray 核心</a>
+          <a class="button" href="site_tools/run_lgwo_a24_r2f0_span_expressivity_audit.py">HOLD runner</a>
+          <a class="button" href="site_tools/validate_lgwo_a24_r2f0_span_expressivity_audit.py">独立 validator</a>
+          <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=165-r2-f0-的软件护栏更严了但科学盒子仍然没打开">讲人话日志 165</a>
+          <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">给师兄的接口清单</a>
+        </div>
+      </div>
+      <div id="lgwo-guidance" class="panel" style="margin-top:14px; border-top:4px solid var(--blue); scroll-margin-top:18px;">
+        <div class="chips"><span class="chip blue">REGISTERED MANUSCRIPT SCAFFOLD</span><span class="chip gold">14-DAY CARETAKER ROUTE</span><span class="chip coral">RESULT CELLS EMPTY BY DESIGN</span></div>
+        <h3 style="margin-top:8px;">先把“怎样才算成功”写清，再开始训练</h3>
+        <p>这两个入口把学习与论文写作接到同一条证据链。论文工作稿预先锁定研究问题、预算匹配基线、逐 rig 尾部、消融、统计与失败报告；14 天路线从 <code>Ax=y</code>、伴随和 CGLS 开始，逐步走到 PSU matrix-free 复现、N5-D5 接口沟通与一次可审核的实验计划。它们不会把空白结果格填成成功，也不会因为已有工程测试很多就催促租 GPU。</p>
+        <!-- operator foundations lab -->
+        <div id="operator-foundations-lab" class="panel" style="margin-top:12px; border-top:4px solid var(--teal); scroll-margin-top:18px;">
+          <div class="chips"><span class="chip blue">EDUCATIONAL SYNTHETIC LINEAR PROXY ONLY</span><span class="chip gold">CPU · DETERMINISTIC</span><span class="chip coral">NO BOST / ALGORITHM / PAPER CLAIM</span></div>
+          <h3 style="margin-top:8px;">先亲眼看见：残差更小，三维场未必更真</h3>
+          <p>新增的算子基础小实验用一维导数观测代理，把 <code>A/Aᵀ</code>、常数 gauge、CGLS 半收敛、operator shift 与最小几何条件化放进一次可复跑流程。它不训练 DeepONet/FNO，也不模拟曲光线或真实反应流；目的只是让 Day 2--6 的基础概念从公式变成可检查证据。</p>
+          <div class="metric-grid" style="margin-top:10px;">
+            <div class="metric"><b>6 passed</b><span>伴随、gauge、truth-free inference、重复运行一致与不可覆盖产物门</span></div>
+            <div class="metric"><b>k*=7 oracle</b><span>由 synthetic truth 事后选出；继续到 36 步时 residual 更低但 field error 升至 5.316</span></div>
+            <div class="metric"><b>52.47%</b><span>单种子一维 proxy 外推点 conditioned 对 fixed 的平均场误差降低；非泛化证据</span></div>
+            <div class="metric failed-state"><b>突破监测：否</b><span>0 real BOST、0 三维重建、0 新算法、0 DeepONet/FNO 对比</span></div>
+          </div>
+          <div class="two-col" style="margin-top:12px; align-items:start;">
+            <figure style="margin:0;"><a href="learning_labs/results/operator_foundations_v1/operator_foundations_lab.png" aria-label="打开算子基础小实验四联图"><img src="learning_labs/results/operator_foundations_v1/operator_foundations_lab.png" width="2376" height="1512" loading="lazy" decoding="async" alt="算子基础教学四联图：导数观测核、CGLS 半收敛、三种几何区间的平均场误差和一个外推重建示例" /></a><figcaption>固定种子教学代理：右上显示 measurement residual 继续下降而 field error 在第 7 步后上升；左下的几何条件化收益不能外推为真实 BOST 或跨 rig 泛化。</figcaption></figure>
+            <div class="panel" style="margin:0;">
+              <h3>这张图真正允许你说什么</h3>
+              <ol>
+                <li>离散内积恒等式、常数 gauge 与 null-shift 反例按预设结构通过；它们不证明 sensing physics 正确。</li>
+                <li>fixed 与 conditioned ridge 使用同一批 240 个训练 case；conditioned 多看标量几何，且系数从 <code>1,536</code> 增至 <code>3,072</code>。这是 information/capacity ablation，不是同容量架构排名。</li>
+                <li><code>g=0/0.02/0.06</code> 的 conditioned-vs-fixed mean field gain 为 <code>19.68%/39.27%/52.47%</code>；只有一个种子、一个 generator 和一个标量外推点。</li>
+                <li>外推时 exact-physics Tikhonov 的 field error <code>0.04766</code> 仍低于 conditioned ridge 的 <code>0.06382</code>；正确 forward 仍是不能跳过的教师上界。</li>
+              </ol>
+              <div class="alert" style="margin-bottom:10px;"><strong>独立审计</strong><span>Ridge inference 未发现测试 truth 输入；但第 7 步由 truth 选出，只是 oracle diagnostic。表中的 clean-measurement residual 也是 evaluator-only 无噪声投影误差，不是实际 noisy observation residual。</span></div>
+              <div class="alert critical" style="margin-bottom:0;"><strong>当前状态</strong><span><code>EDUCATIONAL_LAB_COMPLETE_NO_SCIENTIFIC_AUTHORIZATION</code>。在师兄确认真实 callable、residual 层级、JVP/VJP、几何标定、split 与基线前，不把这个小实验放大成网络训练或论文结果。</span></div>
+            </div>
+          </div>
+          <div class="actions" style="margin-top:12px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Foperator_foundations_lab_guide_2026-07-21.md">中文逐图导读</a>
+            <a class="button" href="learning_labs/results/operator_foundations_v1/report.json">机器报告</a>
+            <a class="button" href="learning_labs/results/operator_foundations_v1/metric_rows.csv">指标 CSV</a>
+            <a class="button" href="learning_labs/results/operator_foundations_v1/semiconvergence.csv">半收敛 CSV</a>
+            <a class="button" href="learning_labs/operator_foundations_lab.py">实验源码</a>
+            <a class="button" href="learning_labs/test_operator_foundations_lab.py">定向测试</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=167-先用一个小实验把五个基础概念串起来再碰大网络">讲人话日志 167</a>
+          </div>
+        </div>
+        <!-- end operator foundations lab -->
+        <!-- calibration mismatch lab -->
+        <div id="calibration-mismatch-lab" class="panel" style="margin-top:12px; border-top:4px solid var(--coral); scroll-margin-top:18px;">
+          <div class="chips"><span class="chip coral">SYNTHETIC 3D BOST POSE-MISMATCH ONLY</span><span class="chip blue">A_TRUE != A_EST</span><span class="chip gold">MECHANISM GATE: NO-GO</span></div>
+          <h3 style="margin-top:8px;">标定误差值得研究，但“残差最小”还不够安全</h3>
+          <p>新增的 CPU 小实验第一次把生成观测的真实 ray operator 与重建收到的误报 operator 分开：6 个 synthetic rig、每 rig 6 台相机、3 种解析形态、每档 18 个场。所有方法共享同一观测、Tikhonov solver 与正则强度；LOCO 只看 noisy held-out-camera measurement，不看体真值或 clean observation。</p>
+          <div class="metric-grid" style="margin-top:10px;">
+            <div class="metric"><b>1 档 +5.66%</b><span>naive LOCO 平均 field gain，18/18 改善；这一档平均 ray-direction 误差约 0.97°，但零失配平均恶化 0.35%，所以不安全</span></div>
+            <div class="metric"><b>100% non-worse</b><span>single/multiframe camera-block LCB 在四档均守住逐 case 非劣化；代价是 0.5/1 档大量回退</span></div>
+            <div class="metric"><b>2 档 +9.58%</b><span>multiframe camera-block LCB 平均收益、回退 17%；1 档时却回退 83%，跨帧证据会被可观测性稀释</span></div>
+            <div class="metric failed-state"><b>突破监测：否</b><span>总门 NO-GO；0 real geometry、0 curved ray、0 neural operator、0 DeepONet/FNO/NeRIF 排名</span></div>
+          </div>
+          <div class="two-col" style="margin-top:12px; align-items:start;">
+            <figure style="margin:0;"><a href="learning_labs/results/calibration_mismatch_v2/calibration_mismatch_lab.png" aria-label="打开三维 BOST 标定失配四联图"><img src="learning_labs/results/calibration_mismatch_v2/calibration_mismatch_lab.png" width="2376" height="1548" loading="lazy" decoding="async" alt="三维 BOST 合成标定失配四联图：各方法场误差、LOCO 候选曲线、算子与射线角误差、多帧 camera-block fail-closed 逐案例收益" /></a><figcaption>右下保留所有非零失配 case。图中的收益只属于已知误差方向与符号的一维合成标定模式；exact geometry 与 truth-selected candidate 都是不可部署教师。</figcaption></figure>
+            <div class="panel" style="margin:0;">
+              <h3>这次真正打开的研究问题</h3>
+              <ol>
+                <li><strong>naive LOCO 有功效但会误修：</strong>2 档平均改善 13.27%，零失配最差却恶化 1.71%；held-out residual 不是安全证书。</li>
+                <li><strong>固定半步不是授权门：</strong>0.5/1/2 档保持逐 case 非劣化，但零失配仍有 -0.56% 的最差伤害。</li>
+                <li><strong>LCB 可拒答但低功效：</strong>单帧版本在 1 档回退 72%；multiframe camera-block pooling 只在大失配增益明显。它跨 6 个 camera block 做 heuristic LCB，不是 6 个独立 session，也没有正式置信覆盖主张。</li>
+                <li><strong>下一步先把概念拆开：</strong>残差一致性只能形成 measurement reliability；真正的 calibration observability 需要 geometry JVP/VJP 与尺度化 <code>J<sup>T</sup>J</code>。先比较便宜的有界权重，再决定是否值得训练小网络。</li>
+              </ol>
+              <div class="alert" style="margin-bottom:10px;"><strong>与 OERF 的连接</strong><span>NeRIF 支持连续场与观测约束，TDBOST 提供 4D 多帧共享几何的研究动机；公开来源没有证明课题组已经解决未知相机几何。真实多帧是否共享标定、forward 是否接收几何/JVP/VJP，仍需何远哲师兄确认。</span></div>
+              <div class="alert critical" style="margin-bottom:0;"><strong>当前判决</strong><span><code>MECHANISM_SCREEN_COMPLETE_NO_ALGORITHM_OR_REAL_DATA_CLAIM</code>。不移动阈值追 PASS，不把 5.66%/13.27% 写成真实重建、泛化或论文结果。</span></div>
+            </div>
+          </div>
+          <div class="actions" style="margin-top:12px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fcalibration_mismatch_lab_guide_2026-07-21.md">中文实验导读</a>
+            <a class="button" href="learning_labs/results/calibration_mismatch_v2/report.json">机器报告</a>
+            <a class="button" href="learning_labs/results/calibration_mismatch_v2/case_metrics.csv">逐 case CSV</a>
+            <a class="button" href="learning_labs/results/calibration_mismatch_v2/candidate_curves.csv">候选曲线 CSV</a>
+            <a class="button" href="learning_labs/results/calibration_mismatch_v2/camera_fold_scores.csv">逐相机 fold CSV</a>
+            <a class="button" href="learning_labs/calibration_mismatch_lab.py">实验源码</a>
+            <a class="button" href="learning_labs/test_calibration_mismatch_lab.py">定向测试</a>
+            <a class="button" href="https://arxiv.org/abs/2606.21405">可微几何标定原文</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=168-第一次明确让-a_true-和-a_est-分家标定修正有功效但安全门会漏检">讲人话日志 168</a>
+          </div>
+        </div>
+        <!-- end calibration mismatch lab -->
+        <!-- camera reliability screen -->
+        <div id="camera-reliability-screen" class="panel" style="margin-top:12px; border-top:4px solid var(--teal); scroll-margin-top:18px;">
+          <div class="chips"><span class="chip blue">POST-OPEN SYNTHETIC REPLAY</span><span class="chip gold">LORO BOUNDED RELIABILITY</span><span class="chip coral">MECHANISM GATE: NO-GO</span></div>
+          <h3 style="margin-top:8px;">残差一致性提高了中等失配检出率，但它不是几何可观测性</h3>
+          <p>在冻结的 <code>calibration_mismatch_v2</code> 逐相机 ledger 上，主候选每次留下 1 个目标 synthetic rig，只用其余 5 个 rig 学六个闭式相机权重。权重衡量该相机的候选残差改善是否与其余相机一致，并限制在 <code>[0.5, 2]</code>、最大最小比不超过 4。deployment 阶段只打开 camera-score CSV，不解析或携带上游 report/evaluator；决策冻结后才加载体真值指标。</p>
+          <div class="metric-grid" style="margin-top:10px;">
+            <div class="metric"><b>0.85% → 4.05%</b><span>1 档平均 field gain；相对 uniform 增加 3.19 个百分点，回退率从 83.33% 降到 16.67%</span></div>
+            <div class="metric"><b>9.58% → 11.20%</b><span>2 档平均 field gain；6/6 rig 改善，但 seed 503 相对 uniform 仍低 0.99 个百分点</span></div>
+            <div class="metric"><b>0.5 档仍为 0</b><span>主候选 100% 回退，小失配功效没有打开；冻结 5% / 75% 机制门因此失败</span></div>
+            <div class="metric failed-state"><b>突破监测：否</b><span>0 new forward、0 reconstruction、0 neural training、0 fresh rig、0 real BOST claim</span></div>
+          </div>
+          <div class="two-col" style="margin-top:12px; align-items:start;">
+            <figure style="margin:0;"><a href="learning_labs/results/calibration_camera_reliability_v1/camera_reliability_weight_replay.png" aria-label="打开相机可靠性权重回放四联图"><img src="learning_labs/results/calibration_camera_reliability_v1/camera_reliability_weight_replay.png" width="2376" height="1548" loading="lazy" decoding="async" alt="相机可靠性权重回放四联图：各失配档平均场收益、回退率、六台相机平均 LORO 权重与逐 rig 相对 uniform 增量" /></a><figcaption>右下保留 2 档 seed 503 的负增量。相机 2 被持续降权只是当前六个已打开 synthetic rig 的 camera-role pattern，不能外推到换序或换几何的装置。</figcaption></figure>
+            <div class="panel" style="margin:0;">
+              <h3>把下一算法拆成三个可证伪模块</h3>
+              <ol>
+                <li><strong><code>q_rel</code> 可靠性：</strong>只读独立 sentinel 帧的 whitened residual 与噪声尺度；先击败 inverse-variance、MAD/Huber 和本轮 consensus baseline。</li>
+                <li><strong><code>q_cal</code> 标定可观测性：</strong>从 geometry JVP/VJP、尺度化 <code>J<sup>T</sup>J</code> 谱、近零方向与参数耦合构造；没有导数接口时不得用残差权重冒名。</li>
+                <li><strong><code>q_field</code> 场信息量：</strong>用 view-conditioned normal-operator probe、边际谱/秩增益判断一个视角是否约束三维场 near-null mode。</li>
+                <li><strong>组合器最后才学：</strong>只输出有界权重、阻尼或停止建议；几何更新仍由物理 solver 完成，并把 select、sentinel、target 帧彻底分开。</li>
+              </ol>
+              <div class="alert" style="margin-bottom:10px;"><strong>统计边界</strong><span>6 个 LOCO camera fold 高度相关；同一 score surface 还同时参与候选准入和排序。<code>2.015</code> 只是描述性 t5-style 常数，没有置信覆盖、安全证书或显著性含义。</span></div>
+              <div class="alert critical" style="margin-bottom:0;"><strong>当前判决</strong><span><code>POSTOPEN_CAMERA_RELIABILITY_WEIGHT_REPLAY_NO_GO</code>。LORO 不能把已打开数据变回 fresh；中、大失配的均值线索不能写成新算法、泛化或论文结果。</span></div>
+            </div>
+          </div>
+          <div class="two-col" style="margin-top:12px;">
+            <div class="panel">
+              <h3>为什么这仍是有用的失败</h3>
+              <p>uniform 回放与 v2 的 24 个 rig-severity 决策逐项一致。主候选把相机 2 的平均权重压到约 <code>0.0889</code>，其余约 <code>0.166--0.195</code>，并改变了 1/2 档的准入功效；所以“相机证据不应总是等权”是可复验线索。但 0.5 档仍全退，继续在这 6 个 rig 上调相关系数或换小网络只会扩大选择偏差。</p>
+              <div class="alert" style="margin-bottom:0;"><strong>成本不能偷换</strong><span>两者新增物理调用和重建均为 0，但不是端到端同计算预算：uniform 在线读取 3,024 个 score value；主 LORO 离线拟合加在线选择共读取 18,144 个。wall time 与 peak memory 本轮未测。</span></div>
+            </div>
+            <div class="panel">
+              <h3>下一次才允许称为验证的合同</h3>
+              <p>至少需要独立 select/sentinel/target 相机帧、连续 off-grid 且方向未知的位姿误差、相机身份置换、真实 JVP/VJP 与不少于 30 个 sealed audit rig/session。结果须同时报告 field-L2、front/gradient、逐 rig 尾部、harm rate、Schur/Jacobian violation、调用数、wall time 和内存。</p>
+            </div>
+          </div>
+          <div class="actions" style="margin-top:12px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fcalibration_camera_reliability_screen_result_2026-07-21.md">中文结果与下一步</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fcalibration_camera_reliability_screen_protocol_2026-07-21.md">回放协议</a>
+            <a class="button" href="learning_labs/results/calibration_camera_reliability_v1/report.json">机器报告</a>
+            <a class="button" href="learning_labs/results/calibration_camera_reliability_v1/case_metrics.csv">逐 case CSV</a>
+            <a class="button" href="learning_labs/results/calibration_camera_reliability_v1/rig_metrics.csv">逐 rig CSV</a>
+            <a class="button" href="learning_labs/results/calibration_camera_reliability_v1/decision_metrics.csv">决策 CSV</a>
+            <a class="button" href="learning_labs/results/calibration_camera_reliability_v1/policy_weights.csv">权重 CSV</a>
+            <a class="button" href="learning_labs/calibration_camera_reliability_screen.py">实验源码</a>
+            <a class="button" href="learning_labs/test_calibration_camera_reliability_screen.py">定向测试</a>
+            <a class="button" href="https://arxiv.org/html/2409.14722v2">NeRIF 原文</a>
+            <a class="button" href="https://arxiv.org/html/2211.10525">可微未标定成像</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=169-可靠性权重不是可观测性中等失配有线索小失配仍失败">讲人话日志 169</a>
+          </div>
+        </div>
+        <!-- end camera reliability screen -->
+        <!-- q_cal profile diagnostic -->
+        <div id="calibration-qcal-profile" class="panel" style="margin-top:12px; border-top:4px solid var(--coral); scroll-margin-top:18px;">
+          <div class="chips"><span class="chip blue">POST-OPEN SYNTHETIC DIAGNOSTIC</span><span class="chip gold">PRIOR-CONDITIONED RANKING: PASS</span><span class="chip coral">DATA-ONLY IDENTIFIABILITY: NO-GO</span></div>
+          <h3 style="margin-top:8px;">自由 voxel field 会把局部几何变化吃掉：raw <code>J<sup>T</sup>J</code> 不是可辨识性</h3>
+          <p>对局部模型 <code>y=A(eta)x+noise</code>，本轮同时计算 known-field raw Gram、消去自由三维场后的 data-only profile Gram，以及 ridge 先验下的 regularized profile curvature。全相机代理算子为 <code>300 x 1000</code> 且满行秩，因此未知自由场可吸收全部五个几何方向的局部数据变化。</p>
+          <div class="metric-grid" style="margin-top:10px;">
+            <div class="metric failed-state"><b>0 / 5</b><span>6 个 rig 的 estimated/teacher data-only 相对秩全为 0；最大 trace retention 约 7.6e-30</span></div>
+            <div class="metric"><b>0.956 / 0.910</b><span>参考 alpha 下 estimated-vs-teacher profile 排序 Spearman 平均 / 最低</span></div>
+            <div class="metric"><b>0.990 / 0.922</b><span>estimated profile 选中子集的 oracle D-efficiency 中位 / 最低；只是先验排序线索</span></div>
+            <div class="metric failed-state"><b>突破监测：否</b><span>0 real BOST、0 sealed rig、0 auto-calibration、0 neural training、0 reconstruction gain claim</span></div>
+          </div>
+          <div class="two-col" style="margin-top:12px; align-items:start;">
+            <figure style="margin:0;"><a href="learning_labs/results/calibration_qcal_profile_v1/qcal_profile_diagnostic.png" aria-label="打开 q_cal profile 四联图"><img src="learning_labs/results/calibration_qcal_profile_v1/qcal_profile_diagnostic.png" width="2376" height="1548" loading="lazy" decoding="async" alt="q_cal 剖面四联图：data-only 信息坍缩、相机子集排序相关性、D-efficiency 和 ridge alpha 敏感性" /></a><figcaption>绿色排序信号不覆盖红色总门。<code>S_lambda</code> 的正曲率来自 ridge 先验；alpha 从 1e-6 到 1 时，teacher 的 median trace retention 从 0.0055% 增到 53.26%。</figcaption></figure>
+            <div class="panel" style="margin:0;">
+              <h3>审计后保留的严格合同</h3>
+              <ol>
+                <li><strong>同一 forward family：</strong>teacher 由 voxelized truth 经同一离散 operator 生成；连续 renderer 只生成 noisy pilot observation，不再混成假 Schur likelihood。</li>
+                <li><strong>只能叫 pilot-assisted design：</strong><code>x_hat</code> 用了 6 相机 pilot，因此只评价“下一次保留 3 台”，不声称 subset-only 当帧重建可行。</li>
+                <li><strong>数值 fail-closed：</strong>5 个 mode 各自搜索有限差分稳定平台；所有 600 个子集-alpha 记录的 raw/profile Gram 均须满秩，非有限 score 直接拒绝。</li>
+                <li><strong>排序好不等于数值准：</strong>estimated-vs-teacher Jacobian relative-L2 平均仍为 0.818，所以不宣称准确估计了 <code>q_cal</code>。</li>
+              </ol>
+              <div class="alert critical" style="margin-bottom:0;"><strong>总判决</strong><span><code>POSTOPEN_QCAL_PROFILE_DATA_ONLY_NO_GO</code>。参考先验排序门过线，不能把 data-only rank 0 改写成几何可观测或自动标定成功。</span></div>
+            </div>
+          </div>
+          <div class="two-col" style="margin-top:12px;">
+            <div class="panel">
+              <h3>最贴近何远哲师兄的创新入口</h3>
+              <p>用 4D 张量/时间基让多帧共享低维场 tangent，不再给每帧 1000 个自由 voxel。首先检查降维后 data-only <code>S0</code> 的最小特征值是否从零抬起；这一机制过门后，才让 NeRIF/DeepONet/FNO 学低维 basis、PSD 更正或有界阻尼。</p>
+            </div>
+            <div class="panel">
+              <h3>下一道真实门</h3>
+              <p>需要师兄确认 geometry JVP/VJP、straight/curved residual 层级、真实场参数化、多帧共享结构、噪声协方差、calibration target/sentinel、认可基线和 rig/session split。没有这些事实前，不替实验室发明真实结论。</p>
+            </div>
+          </div>
+          <div class="actions" style="margin-top:12px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fcalibration_qcal_profile_result_2026-07-21.md">中文结果与研究入口</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fcalibration_qcal_profile_protocol_2026-07-21.md">剖面协议</a>
+            <a class="button" href="learning_labs/results/calibration_qcal_profile_v1/report.json">机器报告</a>
+            <a class="button" href="learning_labs/results/calibration_qcal_profile_v1/rig_metrics.csv">逐 rig CSV</a>
+            <a class="button" href="learning_labs/results/calibration_qcal_profile_v1/alpha_metrics.csv">alpha 扫描 CSV</a>
+            <a class="button" href="learning_labs/results/calibration_qcal_profile_v1/subset_metrics.csv">子集 CSV</a>
+            <a class="button" href="learning_labs/results/calibration_qcal_profile_v1/fd_metrics.csv">有限差分 CSV</a>
+            <a class="button" href="learning_labs/calibration_qcal_profile_lab.py">实验源码</a>
+            <a class="button" href="learning_labs/test_calibration_qcal_profile_lab.py">13 项定向测试</a>
+            <a class="button" href="https://epubs.siam.org/doi/10.1137/0710036">Variable Projection</a>
+            <a class="button" href="https://arxiv.org/abs/1206.6532">Nuisance Inverse Problems</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=170-q_cal-第一次真正消去未知场raw-敏感性有值data-only-辨识力是零">讲人话日志 170</a>
+          </div>
+        </div>
+        <!-- end q_cal profile diagnostic -->
+        <!-- temporal q_cal tangent diagnostic -->
+        <div id="temporal-qcal-tangent" class="panel" style="margin-top:12px; border-top:4px solid var(--gold); scroll-margin-top:18px;">
+          <div class="chips"><span class="chip blue">4D TANGENT DIAGNOSTIC v2</span><span class="chip gold">STRUCTURAL RANK: 5/5</span><span class="chip coral">PRACTICAL IDENTIFIABILITY: NO-GO</span></div>
+          <h3 style="margin-top:8px;">多帧输运解除了零秩，却没有在当前噪声下救活几何标定</h3>
+          <p>这一轮把上面的单帧问题真正扩展成连续六帧：<code>y_t=A(eta)x_t</code>。我们不把“低秩”当答案，而是逐一 profile 每帧自由场、未知双因子低秩、固定时间基、共享静态场、冻结 PCA 基、已知输运、输运加新生项和逐帧自由 innovation。v1 的 deployable NO-GO 保留；独立审计发现其 teacher 场作用域错误后，v2 用同一随机案例重新计算，并加入广义信息谱、SNR sweep、卡方 NIS 和 95% 置信半径拒答。</p>
+          <div class="metric-grid" style="margin-top:10px;">
+            <div class="metric failed-state"><b>5 个 0/5 控制</b><span>自由场、未知低秩双因子、固定时间基、静态重复与逐帧自由 innovation 全部保持零秩</span></div>
+            <div class="metric"><b>1.34e-4</b><span>精确输运最弱广义 retention 中位；rank 虽为 5/5，最弱方向仍非常薄</span></div>
+            <div class="metric failed-state"><b>9.41×</b><span>注册噪声下 q relative-L2 中位；teacher CRLB 中位 11.05×，不是网络调参能掩盖的 SNR 门</span></div>
+            <div class="metric"><b>0 false accept</b><span>reference noise 下 exact 与三类 mismatch 均未获更新授权；旧门的 9 个错误接受被 NIS + 置信半径关闭</span></div>
+          </div>
+          <div class="two-col" style="margin-top:12px; align-items:start;">
+            <figure style="margin:0;"><a href="learning_labs/results/temporal_qcal_tangent_v2/temporal_qcal_tangent_diagnostic.png" aria-label="打开多帧 q_cal 切空间与 SNR 四联图"><img src="learning_labs/results/temporal_qcal_tangent_v2/temporal_qcal_tangent_diagnostic.png" width="2790" height="1710" loading="lazy" decoding="async" alt="多帧 BOST q_cal 四联图：结构控制的最弱广义信息、模型偏差与曲率、精确输运 SNR sweep、注册噪声下不确定度拒答" /></a><figcaption>A 图证明低秩本身不创造信息；B 图显示冻结 PCA 曲率很强却伴随 5%--30% 场模型残差；C 图定位极低噪声窗口；D 图保留所有注册噪声失败，不用平均值遮住尾部。</figcaption></figure>
+            <div class="panel" style="margin:0;">
+              <h3>这次最有价值的发现</h3>
+              <ol>
+                <li><strong>结构可辨识不等于实践可辨识：</strong>精确输运的 nominal residual 是数值零，profile rank 也是 5/5，但 CRLB 已预言当前噪声下参数误差会超过真扰动约十倍。</li>
+                <li><strong>低秩可能制造假信心：</strong>pilot PCA rank 4/8/16 的最弱广义 retention 中位约 0.864/0.798/0.648，却留下约 9.13%/5.95%/5.42% 的 clean model residual。</li>
+                <li><strong>反应项形成真实折中：</strong>共享 birth 把场残差降回数值零，却把最弱 retention 压到 1.58e-5、q error 推到 20.39；nuisance 越真实，几何信息可能越少。</li>
+                <li><strong>拒答是算法的一部分：</strong>10% velocity mismatch 的曲率反而更大，但 9/9 NIS 全失败；错误时间顺序和未建模 birth 也全部拒答。</li>
+              </ol>
+              <div class="alert critical" style="margin-bottom:0;"><strong>总判决</strong><span><code>POSTOPEN_TEMPORAL_TANGENT_NO_GO</code>。这是机制和安全门的真实进展，不是自动标定、重建、算子学习、泛化或论文成功。</span></div>
+            </div>
+          </div>
+          <div class="two-col" style="margin-top:12px; align-items:start;">
+            <div class="panel">
+              <h3>SNR 阈值告诉我们什么</h3>
+              <div class="result-table-wrap" tabindex="0" aria-label="多帧 q_cal SNR 阈值表，窄屏可左右滑动"><table>
+                <thead><tr><th>噪声倍率</th><th>plugin q 误差中位</th><th>teacher CRLB</th><th>授权</th></tr></thead>
+                <tbody>
+                  <tr><td>0</td><td>0.0215</td><td>0</td><td>0/9；无噪声不作统计更新</td></tr>
+                  <tr><td>1/128</td><td>0.0895</td><td>0.0863</td><td>7/9</td></tr>
+                  <tr><td>1/64</td><td>0.174</td><td>0.173</td><td>0/9；95% 半径仍过宽</td></tr>
+                  <tr><td>1/16</td><td>0.698</td><td>0.691</td><td>0/9</td></tr>
+                  <tr><td>1</td><td>9.41</td><td>11.05</td><td>0/9</td></tr>
+                </tbody>
+              </table></div>
+              <p>若只靠 iid 重复把标准误差压低 128 倍，量级上需要约 <code>128^2=16384</code> 倍独立信息。更值得研究的是 target/sentinel、外部 PIV/速度约束、主动视角设计或真正可信的动力学，而不是简单把时间窗拉长。</p>
+            </div>
+            <div class="panel">
+              <h3>下一算法的正确形状</h3>
+              <ol>
+                <li><strong>经典底座：</strong>迭代 transport-profiled variable projection，先完成 q-amplitude、500-noise bootstrap、coverage、held-out time/camera NIS。</li>
+                <li><strong>可学习部分：</strong>DeepONet/FNO 只提议 transport/innovation tangent、warm start 或 anchor 权重；不得直接授权 geometry update。</li>
+                <li><strong>物理验证器：</strong>真实 forward JVP/VJP + 置信椭球 + held-out reprojection/PIV endpoint；不可信就回退或拒答。</li>
+                <li><strong>必须击败：</strong>TDBOST、固定 Tucker/CP、PCA、精确/失配 transport、ordinary DeepONet/FNO 和同调用预算 variable projection。</li>
+              </ol>
+            </div>
+          </div>
+          <div class="two-col" style="margin-top:12px;">
+            <div class="panel">
+              <h3>零基础 7 步阅读与复现</h3>
+              <ol>
+                <li>手算二维投影：为什么 <code>(I-P_B)C</code> 才是剩余几何信息。</li>
+                <li>用 SVD 验证自由场与未知低秩双因子都是 0/5。</li>
+                <li>理解广义谱 <code>G_raw^-1/2 S G_raw^-1/2</code>，区分 rank、最弱方向和 trace。</li>
+                <li>学习 chi-square NIS、Fisher/CRLB 与“残差小但参数不准”。</li>
+                <li>读 variable projection，再逐行看本轮 local q estimator。</li>
+                <li>读 NeRIF/TDBOST，把 implicit/tensor field 翻译成 nuisance tangent。</li>
+                <li>复现 v2 图，并能口头解释 PCA、transport、birth 三者的偏差-信息折中。</li>
+              </ol>
+            </div>
+            <div class="panel">
+              <h3>现在最该问师兄的 6 个量</h3>
+              <p>共享几何的连续帧数与 timestamp；curved/straight callable 和 geometry JVP/VJP；真实 yaw/pitch/shift 容差；flow-off/reference covariance 与 temporal drift；是否有 calibration target/PIV/front sentinel；TDBOST rank/time-window 及 birth/extinction 失败案例。没有这些量，任何“大模型更好”都只是封闭 synthetic 体系里的故事。</p>
+            </div>
+          </div>
+          <div class="actions" style="margin-top:12px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Ftemporal_qcal_tangent_result_2026-07-21.md">读 v2 严格结果</a>
+            <a class="button" href="document_reader.html?doc=docs%2Ftemporal_qcal_tangent_protocol_2026-07-21.md">协议与纠错附录</a>
+            <a class="button" href="document_reader.html?doc=docs%2Ftemporal_operator_primary_sources_2026-07-21.md">一级文献路线</a>
+            <a class="button" href="learning_labs/results/temporal_qcal_tangent_v2/report.json">机器报告</a>
+            <a class="button" href="learning_labs/results/temporal_qcal_tangent_v2/model_metrics.csv">逐模型 CSV</a>
+            <a class="button" href="learning_labs/results/temporal_qcal_tangent_v2/q_trials.csv">621 条 q 评估</a>
+            <a class="button" href="learning_labs/results/temporal_qcal_tangent_v2/structural_controls.csv">结构控制 CSV</a>
+            <a class="button" href="learning_labs/temporal_qcal_tangent_lab.py">实验源码</a>
+            <a class="button" href="learning_labs/test_temporal_qcal_tangent_lab.py">定向测试</a>
+            <a class="button" href="https://doi.org/10.1145/3809488">TDBOST</a>
+            <a class="button" href="https://arxiv.org/abs/1705.06079">动态 transport tomography</a>
+          </div>
+        </div>
+        <!-- end temporal q_cal tangent diagnostic -->
+        <!-- temporal q_cal bootstrap and variable projection audit -->
+        <div id="temporal-qcal-bootstrap" class="panel" style="margin-top:12px; border-top:4px solid var(--coral); scroll-margin-top:18px;">
+          <div class="chips"><span class="chip blue">500-NOISE COVERAGE AUDIT</span><span class="chip gold">270,000 ESTIMATES</span><span class="chip coral">PLUGIN + VARPRO: NO-GO</span></div>
+          <h3 style="margin-top:8px;">误差看起来不大，95% 置信域却没有 95% 覆盖：场解在吸收几何信号</h3>
+          <p>v2 的低噪声窗口只是固定噪声方向的 SNR 地图。本轮在 3 个 rig、9 个固定方向、6 个 <code>q</code> 幅度和 5 个噪声档上，每个 cell 生成 500 个独立高斯复本；另外对 one-step 与稠密 affine variable projection 做 864 个配对 trial。数值链路通过，但三道科学门都没有全过。</p>
+          <div class="metric-grid" style="margin-top:10px;">
+            <div class="metric"><b>270,000</b><span>teacher + plug-in 估计器评估；不同 amplitude/noise cell 不复用标准噪声</span></div>
+            <div class="metric failed-state"><b>8/9 · 5/9</b><span>注册低噪声主格 teacher / plug-in coverage 通过 cell；要求均为 9/9</span></div>
+            <div class="metric failed-state"><b>8.91%</b><span>iterative q 中位误差降幅；未达冻结 10% 门，trust hit 达 86.0%</span></div>
+            <div class="metric failed-state"><b>突破监测：否</b><span>0 fresh、0 real BOST、0 learned operator、0 reconstruction/generalization/paper claim</span></div>
+          </div>
+          <div class="two-col" style="margin-top:12px; align-items:start;">
+            <figure style="margin:0;"><a href="learning_labs/results/temporal_qcal_bootstrap_varpro_v1/temporal_qcal_bootstrap_varpro.png" aria-label="打开 q_cal 独立噪声覆盖与 variable projection 四联图"><img src="learning_labs/results/temporal_qcal_bootstrap_varpro_v1/temporal_qcal_bootstrap_varpro.png" width="2790" height="1710" loading="lazy" decoding="async" alt="多帧 BOST q_cal 四联图：plug-in 联合覆盖热图、误差尾部、非线性余项与配对 variable projection 误差" /></a><figcaption>A 图的左上角暴露大幅低噪声下的 plug-in 欠覆盖；D 图保留全部 864 个配对点，没有只报平均改善。</figcaption></figure>
+            <div>
+              <h3>为什么这是比“误差 0.07”更重要的结果</h3>
+              <ol>
+                <li><strong>主格误差不大也不等于校准：</strong>plug-in pooled relative-L2 中位 / p90 是 0.0743 / 0.1390，但仍有 4/9 coverage cell 失败。</li>
+                <li><strong>大幅度暴露场-几何混淆：</strong><code>q=2 q_ref</code>、最低噪声时 teacher 平均 coverage 约 94.9%，plug-in 却只有 48.0%，两个 cell 为 0。</li>
+                <li><strong>不是单纯 affine 失效：</strong>同一网格的 projected nonlinear remainder 中位只是线性响应的 0.54%，teacher 仍校准。</li>
+                <li><strong>机制假设：</strong>nominal 场拟合把部分几何信号吸收进 <code>x_hat</code>，plug-in covariance 却没有计入场误差、同数据相关和 Jacobian 变化。这是后验机制解释，必须用新方向验证。</li>
+              </ol>
+              <div class="alert critical" style="margin-bottom:0;"><strong>机器判决</strong><span><code>POSTOPEN_SYNTHETIC_ESTIMATOR_NO_GO</code>。这不是 variable projection 新算法，也不是真实标定、三维/4D 重建或论文成功。</span></div>
+            </div>
+          </div>
+          <div class="result-table-wrap" tabindex="0" aria-label="q_cal coverage 与 variable projection 预注册门结果，窄屏可左右滑动" style="margin-top:12px;"><table>
+            <thead><tr><th>门</th><th>实际</th><th>要求</th><th>判决</th></tr></thead>
+            <tbody>
+              <tr><td>teacher 主格 coverage</td><td>8/9 cell</td><td>9/9</td><td class="pending">FAIL</td></tr>
+              <tr><td>plug-in 主格 coverage</td><td>5/9 cell</td><td>9/9</td><td class="pending">FAIL</td></tr>
+              <tr><td>iterative median q 降幅</td><td>8.91%</td><td>&gt;=10%</td><td class="pending">FAIL</td></tr>
+              <tr><td>iterative p90 / maximum</td><td>0.2715 / 0.7768</td><td>均不劣于 0.2729 / 0.8091</td><td>PASS</td></tr>
+              <tr><td>objective monotone</td><td>864/864</td><td>&gt;=95%</td><td>PASS</td></tr>
+              <tr><td>trust-bound hit</td><td>86.0%</td><td>&lt;=5%</td><td class="pending">FAIL</td></tr>
+            </tbody>
+          </table></div>
+          <div class="two-col" style="margin-top:12px; align-items:start;">
+            <div>
+              <h3>下一算法优先级</h3>
+              <ol>
+                <li><strong>Profile-orthogonal score + sandwich covariance：</strong>把 nuisance field 对 score 的一阶影响显式消去，再计入估场误差；这是当前最直接的经典强基线。</li>
+                <li><strong>Frame/view cross-fitting 对照：</strong>不重叠帧估场与构造 score，只检验同噪声耦合；不把它预设成去偏成功。</li>
+                <li><strong>真实接口后才学 tangent：</strong>DeepONet/FNO/NeRIF 只提议 transport/innovation tangent、warm start 或 damping，由 profile score + 真实 JVP/VJP + held-out 终点授权。</li>
+              </ol>
+            </div>
+            <div>
+              <h3>下一轮必须换新证据</h3>
+              <p>本轮 270,000 条已经打开，只能用来冻结下一估计器。新 audit 至少要加五个 mode 的正/负单轴和每个 rig 最弱广义方向；更重要的是让何远哲师兄确认真实 callable、straight/curved residual、JVP/VJP、timestamp、anchor/sentinel、TDBOST 失败例和组内基线。</p>
+            </div>
+          </div>
+          <div class="actions" style="margin-top:12px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Ftemporal_qcal_bootstrap_varpro_result_2026-07-22.md">读严格结果与下一算法</a>
+            <a class="button" href="document_reader.html?doc=docs%2Ftemporal_qcal_bootstrap_varpro_protocol_2026-07-22.md">读预注册协议</a>
+            <a class="button" href="learning_labs/results/temporal_qcal_bootstrap_varpro_v1/report.json">机器报告</a>
+            <a class="button" href="learning_labs/results/temporal_qcal_bootstrap_varpro_v1/bootstrap_cells.csv">540 行 coverage cells</a>
+            <a class="button" href="learning_labs/results/temporal_qcal_bootstrap_varpro_v1/nonlinear_remainder.csv">非线性余项</a>
+            <a class="button" href="learning_labs/results/temporal_qcal_bootstrap_varpro_v1/varpro_trials.csv">864 个配对 trial</a>
+            <a class="button" href="learning_labs/results/temporal_qcal_bootstrap_varpro_v1/varpro_cells.csv">逐 cell 尾部</a>
+            <a class="button" href="learning_labs/temporal_qcal_bootstrap_varpro_lab.py">实验源码</a>
+            <a class="button" href="learning_labs/test_temporal_qcal_bootstrap_varpro_lab.py">5 项定向测试</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=172-500-次独立噪声后真正坏掉的是-plug-in-覆盖率">讲人话日志 172</a>
+          </div>
+        </div>
+        <!-- end temporal q_cal bootstrap and variable projection audit -->
+        <!-- temporal q_cal profile inference audit -->
+        <div id="temporal-qcal-profile-inference" class="panel" style="margin-top:12px; border-top:4px solid var(--coral); scroll-margin-top:18px;">
+          <div class="chips"><span class="chip blue">POST-OPEN PROFILE INFERENCE v4</span><span class="chip gold">10,500 OBSERVATIONS</span><span class="chip coral">OVER-COVERAGE NO-GO</span></div>
+          <h3 style="margin-top:8px;">97.9% 覆盖并不比 95% 更好：完整 profile 有信号，最坏 cell 包络过度保守</h3>
+          <p>这轮把场与几何联合估计的三个问题拆开：点估计中心、协方差形状、校准尺度。3 个已打开 synthetic rig 的 21 个 cell 各生成 500 个新噪声复本，前后各 250 个用于校准与内部评估。它是同 rig 的 development forensic，不是 fresh、真实 BOST 或算法授权。</p>
+          <div class="alert critical"><strong>机器判决：<code>POSTOPEN_DEVELOPMENT_FORENSICS_NO_GO</code></strong><span>exact Godambe 覆盖率为 97.90%，但其 95% 区间是 97.48%--98.27%，完全高于目标 95%。覆盖可以靠放大区间获得，所以过度覆盖也必须判 FAIL。</span></div>
+          <div class="diagnostic-metric-grid" style="margin-top:10px;">
+            <div class="metric failed-state"><b>97.90%</b><span>冻结 global worst-cell 包络后的覆盖；21/21 cell 过 90%，但总体显著过度保守</span></div>
+            <div class="metric"><b>16.46%</b><span>iterative full-profile 相对 plug-in 的 q 中位误差降幅；配对改善率 64.44%</span></div>
+            <div class="metric"><b>0.2562 / 0.2782</b><span>校准最大半轴中位 / p90，单位为 <code>q_ref</code>；宽度门通过</span></div>
+          </div>
+          <div class="two-col" style="margin-top:12px; align-items:start;">
+            <figure style="margin:0;"><a href="learning_labs/results/temporal_qcal_profile_inference_v1/temporal_qcal_profile_inference.png" aria-label="打开 q_cal 联合剖面推断四联图"><img src="learning_labs/results/temporal_qcal_profile_inference_v1/temporal_qcal_profile_inference.png" width="2790" height="1710" loading="lazy" decoding="async" alt="多帧 BOST q_cal 联合剖面推断四联图：原生与校准覆盖、点误差、覆盖宽度和场误差配对" /></a><figcaption>A/C 图必须一起读：覆盖升高只有在半轴仍有功效时才有意义；D 图保留全部 5,250 个评估观测的 field 配对终点。</figcaption></figure>
+            <div>
+              <h3>这次真正学到的三件事</h3>
+              <ol>
+                <li><strong>完整 profile 修掉了主要偏差：</strong>q 中位误差从 0.08610 降到 0.07192，field/sequence 中位也改善 2.87%/3.09%。</li>
+                <li><strong>exact bread 不是当前主矛盾：</strong>GN 与 exact Godambe 的原生 pooled coverage 都是 93.09%，半轴相对差中位约 0.087%。</li>
+                <li><strong>奇偶帧 cross-fit 失败：</strong>原生 coverage 仅 62.61%；硬校准到 99.81% 时，半轴中位膨胀到 3.149 <code>q_ref</code>。</li>
+              </ol>
+              <div class="alert info" style="margin-bottom:0;"><strong>突破监测：否</strong><span>新算法、真实三维/4D 重建、跨 rig 泛化、论文成功与突破仍全部为 0。</span></div>
+            </div>
+          </div>
+          <div class="result-table-wrap" tabindex="0" aria-label="q_cal profile inference 方法覆盖和宽度对照，窄屏可左右滑动" style="margin-top:12px;"><table>
+            <thead><tr><th>方法</th><th>原生 coverage</th><th>包络后 coverage</th><th>包络倍率</th><th>校准半轴中位</th></tr></thead>
+            <tbody>
+              <tr><td>plug-in native</td><td>72.93%</td><td>99.75%</td><td>9.327x</td><td>0.7054</td></tr>
+              <tr><td>iterative GN / exact</td><td>93.09% / 93.09%</td><td>97.90% / 97.90%</td><td>1.277x / 1.279x</td><td>0.2561 / 0.2562</td></tr>
+              <tr><td>penalized profile contrast</td><td>93.52%</td><td>97.77%</td><td>1.249x</td><td>不解释为 Wald 半轴</td></tr>
+              <tr><td>corrected cross-fit Wald</td><td>62.61%</td><td>99.81%</td><td>43.677x</td><td>3.1491</td></tr>
+            </tbody>
+          </table></div>
+          <div class="alert warning" style="margin-top:12px;"><strong>事后线索，不改本轮判决</strong><span>同一冻结 CSV 上改用 pooled calibration，内部评估 coverage 为 94.50%，95% 区间 93.84%--95.10%，最差 cell 91.2%，半轴中位 0.2345 <code>q_ref</code>。它只能用来事前冻结下一轮 fresh-rig 协议，不能称为本轮成功。</span></div>
+          <div class="pipeline" aria-label="q_cal 联合推断下一研究顺序">
+            <div><b>1 · fresh 校准基线</b><span>新 rig/session、正负单轴、null 与 anchor weak direction；先冻结 pooled、分层收缩、global-max 三种经典阈值。</span></div>
+            <div><b>2 · 接入真实物理</b><span>向何远哲师兄确认 callable、straight/curved residual、JVP/VJP、独立重复、噪声 covariance 与物理终点。</span></div>
+            <div><b>3 · 中心偏差修正</b><span>用 flow-off/known-target/可信输运构造 physical-target orthogonal score，不允许读取 synthetic truth。</span></div>
+            <div><b>4 · 再学 proposal</b><span>网络只提议 warm start、tangent、预条件或有界校准修正；exact solver 与 held-out 物理门负责接受或回退。</span></div>
+          </div>
+          <div class="actions" style="margin-top:12px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Ftemporal_qcal_profile_inference_result_2026-07-22.md">读中文结果与算法路线</a>
+            <a class="button" href="learning_labs/results/temporal_qcal_profile_inference_v1/report.json">打开机器报告</a>
+            <a class="button" href="document_reader.html?doc=docs%2Ftemporal_qcal_profile_inference_advisor_questions_2026-07-22.md">发给师兄的 8 个问题</a>
+          </div>
+          <details class="archive-details">
+            <summary>展开技术证据、推导与复现文件</summary>
+            <div class="actions" style="padding:0 14px 14px;">
+              <a class="button" href="document_reader.html?doc=docs%2Fprofile_inference_foundations_2026-07-22.md">7 天基础学习路线</a>
+              <a class="button" href="document_reader.html?doc=docs%2Ftemporal_qcal_profile_inference_protocol_2026-07-22.md">冻结协议</a>
+              <a class="button" href="document_reader.html?doc=docs%2Ftemporal_qcal_fresh_audit_dormant_contract_2026-07-22.md">休眠 fresh 合同</a>
+              <a class="button" href="learning_labs/results/temporal_qcal_profile_inference_v1/trial_metrics.csv">10,500 行 trial</a>
+              <a class="button" href="learning_labs/results/temporal_qcal_profile_inference_v1/uncertainty_cells.csv">105 行不确定度 cell</a>
+              <a class="button" href="learning_labs/results/temporal_qcal_profile_inference_v1/point_cells.csv">84 行点估计 cell</a>
+              <a class="button" href="learning_labs/results/temporal_qcal_profile_inference_v1/derivative_checks.csv">导数差分检查</a>
+              <a class="button" href="learning_labs/results/temporal_qcal_profile_inference_v1/cost_cells.csv">成本账本</a>
+              <a class="button" href="learning_labs/temporal_qcal_profile_inference_lab.py">实验源码</a>
+              <a class="button" href="learning_labs/test_temporal_qcal_profile_inference_lab.py">数学与代码测试</a>
+              <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=173-979-覆盖并不比-95-更好这次失败在过度保守">讲人话日志 173</a>
+            </div>
+          </details>
+        </div>
+        <!-- end temporal q_cal profile inference audit -->
+        <!-- rig/session calibration mechanism toy -->
+        <div id="rig-session-calibration" class="panel" style="margin-top:12px; border-top:4px solid var(--gold); scroll-margin-top:18px;">
+          <div class="chips"><span class="chip blue">EDUCATIONAL CLUSTER TOY</span><span class="chip gold">120 / 120 / 400 RIG SPLIT</span><span class="chip coral">SHIFT FALSIFIER</span></div>
+          <h3 style="margin-top:8px;">尺度可以学，但关系一翻转，hard-rig coverage 会从 93.76% 跌到 11.23%</h3>
+          <p>这轮不碰休眠 fresh BOST 盒子，而是先把层级切分做成有正例、无信息负对照和 OOD 反例的教学实验。每个情景用 120 个 fit rig、120 个 calibration rig 和 400 个 locked evaluation rig；同 rig 内只有 30--240 个相关 frame。</p>
+          <div class="alert warning"><strong>机器状态：<code>EDUCATIONAL_MECHANISM_SIGNAL_COMPLETE</code></strong><span>四条预注册教学检查均满足，只说明机制与反例被复现。它不是 BOST forward、新算法、三维/4D 重建或泛化授权。</span></div>
+          <div class="diagnostic-metric-grid" style="margin-top:10px;">
+            <div class="metric"><b>93.76%</b><span>可观测异方差时 log-ridge 的 hard-quartile coverage；frame-pooled 仅 56.79%</span></div>
+            <div class="metric"><b>-24.04%</b><span>可观测情景中 log-ridge 相对 equal-rig 的中位半径变化；coverage 与宽度一起过门</span></div>
+            <div class="metric failed-state"><b>11.23%</b><span>fit/cal 与 evaluation 条件关系翻转后，log-ridge 的 hard-quartile coverage</span></div>
+          </div>
+          <div class="two-col" style="margin-top:12px; align-items:start;">
+            <figure style="margin:0;"><a href="learning_labs/results/rig_session_calibration_toy_v1/rig_session_calibration_toy.png" aria-label="打开 rig session 层级校准四联图"><img src="learning_labs/results/rig_session_calibration_toy_v1/rig_session_calibration_toy.png" width="2520" height="1620" loading="lazy" decoding="async" alt="rig session 层级校准四联图：逐 rig 平均覆盖、hard quartile 覆盖、半径代理以及拟合关系与评估真关系" /></a><figcaption>A/B/C 必须合读覆盖与宽度；D 显示 sign-flip 中 fit slope 为正而 evaluation 真 slope 为负，训练拟合好并不等于部署安全。</figcaption></figure>
+            <div>
+              <h3>三种世界分别告诉我们什么</h3>
+              <ol>
+                <li><strong>可观测：</strong>fit <code>R²=96.92%</code>，log-ridge 将 hard coverage 从 56.79% 提到 93.76%，中位半径比 equal-rig 短 24.04%。</li>
+                <li><strong>隐藏：</strong>fit <code>R²=1.39%</code>，log-ridge 与 equal-rig 的 hard coverage 只差 0.19 个百分点；没有信息就停止加深网络。</li>
+                <li><strong>关系翻转：</strong>fit <code>R²=95.21%</code>，但学得 slope <code>+0.8838</code>、evaluation 真 slope <code>-0.8887</code>，hard coverage 只剩 11.23%。</li>
+              </ol>
+              <div class="alert info" style="margin-bottom:0;"><strong>突破监测：否</strong><span>新增的是 cluster-size bias 与 OOD 失败的可复现证据；真实接口、真实 acquisition 和论文算法结果仍为 0。</span></div>
+            </div>
+          </div>
+          <div class="result-table-wrap" tabindex="0" aria-label="rig session 校准方法的覆盖和宽度对照，窄屏可左右滑动" style="margin-top:12px;"><table>
+            <thead><tr><th>情景 / 方法</th><th>rig mean</th><th>hard quartile</th><th>rig p10</th><th>中位半径</th><th>解释</th></tr></thead>
+            <tbody>
+              <tr><td>observable / frame pooled</td><td>87.34%</td><td class="negative">56.79%</td><td>55.99%</td><td>3.9086</td><td>easy rig 的更多 frame 抬高 pooled 观感</td></tr>
+              <tr><td>observable / equal rig</td><td>92.77%</td><td>72.98%</td><td>73.22%</td><td>4.5982</td><td>减少 cluster-size bias，但仍不自适应难度</td></tr>
+              <tr><td>observable / log-ridge</td><td>94.87%</td><td class="positive">93.76%</td><td>89.56%</td><td>3.4928</td><td>只在可见尺度关系保持时有用</td></tr>
+              <tr><td>hidden / equal vs log-ridge</td><td>91.83% / 91.71%</td><td>68.88% / 68.70%</td><td>66.63% / 66.25%</td><td>4.3137 / 4.3196</td><td>低 R² 负对照，网络不应升级</td></tr>
+              <tr><td>sign-flip / log-ridge</td><td class="negative">69.96%</td><td class="negative">11.23%</td><td class="negative">2.77%</td><td>3.4162</td><td>区间很窄但错误，必须 support gate + fallback</td></tr>
+              <tr><td>三情景 / oracle</td><td>95.07% / 95.01% / 94.71%</td><td>95.01% / 94.91% / 94.89%</td><td>92.63% / 92.52% / 92.12%</td><td>3.4057 / 3.2432 / 3.3176</td><td>不可部署，只检查生成与尺度上界</td></tr>
+            </tbody>
+          </table></div>
+          <div class="pipeline" aria-label="带漂移门的 acquisition conditioned profile operator 候选路线">
+            <div><b>1 · 真实独立单位</b><span>先由师兄确认 shot/session/acquisition；同序列切帧不能冒充新 rig。</span></div>
+            <div><b>2 · 经典 A0</b><span>固定 pooled、equal-rig、shrinkage、worst-rig 与 full-profile reference。</span></div>
+            <div><b>3 · 学 scale/tangent</b><span>先 log-ridge，再让 DeepSets/FNO 预测尺度、transport tangent 或 warm start。</span></div>
+            <div><b>4 · support gate</b><span>监测 geometry、covariance、信息谱和 residual relation；门外拒答。</span></div>
+            <div><b>5 · exact correction</b><span>用真实 forward/JVP/VJP 做 1--2 次修正，失败退回 A0。</span></div>
+            <div><b>6 · 物理验收</b><span>unseen rig 尾部、held-out view、field/gradient 与 PIV velocity endpoint 同时报告。</span></div>
+          </div>
+          <div class="actions" style="margin-top:12px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Frig_session_calibration_toy_result_2026-07-22.md">读结果与下一算法结构</a>
+            <a class="button" href="document_reader.html?doc=docs%2Frig_session_calibration_learning_route_2026-07-22.md">从零学习层级校准</a>
+            <a class="button" href="learning_labs/results/rig_session_calibration_toy_v1/report.json">打开机器报告</a>
+          </div>
+          <details class="archive-details">
+            <summary>展开冻结协议、逐 rig 账本、源码与测试</summary>
+            <div class="actions" style="padding:0 14px 14px;">
+              <a class="button" href="document_reader.html?doc=docs%2Frig_session_calibration_toy_protocol_2026-07-22.md">冻结协议</a>
+              <a class="button" href="document_reader.html?doc=docs%2Ftemporal_qcal_fresh_activation_audit_2026-07-22.md">fresh 激活缺口</a>
+              <a class="button" href="learning_labs/results/rig_session_calibration_toy_v1/method_summary.csv">15 行方法表</a>
+              <a class="button" href="learning_labs/results/rig_session_calibration_toy_v1/rig_metrics.csv">6,000 行逐 rig 账本</a>
+              <a class="button" href="learning_labs/results/rig_session_calibration_toy_v1/fit_diagnostics.csv">三情景拟合诊断</a>
+              <a class="button" href="learning_labs/results/rig_session_calibration_toy_v1/checksums.sha256">SHA-256 清单</a>
+              <a class="button" href="learning_labs/rig_session_calibration_toy.py">实验源码</a>
+              <a class="button" href="learning_labs/test_rig_session_calibration_toy.py">7 项定向测试</a>
+              <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=174-模型能学会尺度也能在关系翻转时把-hard-rig-覆盖打到-11">讲人话日志 174</a>
+            </div>
+          </details>
+        </div>
+        <!-- end rig/session calibration mechanism toy -->
+        <!-- public NIR-BOS release readiness audit -->
+        <div id="open-nir-bos-readiness" class="panel" style="margin-top:12px; border-top:4px solid var(--coral); scroll-margin-top:18px;">
+          <div class="chips"><span class="chip blue">PUBLIC CODE PINNED</span><span class="chip gold">MPS KERNEL PASS</span><span class="chip coral">FULL RELEASE BLOCKED</span></div>
+          <h3 style="margin-top:8px;">Fourier 二阶导能在 Mac 跑，但默认 12/2/2 不是独立视角测试</h3>
+          <p>公开 <em>Neural Refractive Index Primitives</em> 仓库已固定到 <code>a385cce...</code>。这轮没有复制作者源码/数据，而是从固定 commit 生成相对路径、哈希、split、许可与运行门禁；唯一执行的作者组件是 Fourier 编码的 MPS 前向、一阶导和二阶导烟测。</p>
+          <div class="alert warning"><strong>机器状态：<code>FOURIER_MPS_KERNEL_PASS_FULL_RELEASE_BLOCKED</code></strong><span>组件烟测通过；作者训练、CUDA renderer、三维重建、真实火焰和算法优越均未执行。根目录无许可证，外部代码/数据继续只留本机，不进入本站。</span></div>
+          <div class="diagnostic-metric-grid" style="margin-top:10px;">
+            <div class="metric"><b>39 · finite</b><span>Apple MPS 上 Fourier 输出维度；forward、一阶导、二阶导均为有限值</span></div>
+            <div class="metric"><b>0 / 64 → 64 / 64</b><span>Windows 路径在 POSIX 原样全失效；规范化分隔符后文件才全部存在</span></div>
+            <div class="metric failed-state"><b>2 / 2 + 2 / 2</b><span>validation 与 test 相机位姿都复用 train 前两个位姿，不是 unseen camera</span></div>
+            <div class="metric failed-state"><b>8 / 8 identical</b><span>validation/test 的图像、mask、img-mask 与 RI integral 解码后逐像素相同</span></div>
+          </div>
+          <div class="two-col" style="margin-top:12px; align-items:start;">
+            <figure style="margin:0;"><a href="learning_labs/results/open_nir_bos_release_audit_v1/readiness_audit.png" aria-label="打开公开 NIR-BOS 代码可复现性审计图"><picture><source media="(max-width: 700px)" srcset="learning_labs/results/open_nir_bos_release_audit_v1/readiness_audit_mobile.png" width="1007" height="2015" /><img src="learning_labs/results/open_nir_bos_release_audit_v1/readiness_audit.png" width="2520" height="864" loading="lazy" decoding="async" alt="公开 NIR-BOS 仓库审计图：发布包体量、Phantom 1 文件拆分以及当前主机通过与阻塞门" /></picture></a><figcaption>绿色只代表 commit、数据存在和 Fourier 局部核；红色是独立视角、POSIX loader、CUDA、许可与完整训练。不能把局部绿灯合并成三维重建成功。</figcaption></figure>
+            <div>
+              <h3>先修 benchmark，再训练新模型</h3>
+              <ol>
+                <li><strong>R0 复现门：</strong>重建独立角度 validation/test，修正 loader，先跑 CGLS/TV 与 Fourier-discrete。</li>
+                <li><strong>GCS-Hash 诊断：</strong>验证离散/AD 梯度失配能否在独立 corruption 上提前预测 hash 过拟合或饱和；预测不了就关闭。</li>
+                <li><strong>主候选 CFH/NASH-Mix：</strong>Fourier 稳定基座 + 有界 hash residual + 部署可见 gate；必须超过单专家与固定 50:50。</li>
+                <li><strong>4D 与 exact correction：</strong>只有何师兄给出独立 sequence、论文匹配代码、真实 forward/JVP/VJP 后才启动。</li>
+              </ol>
+              <div class="alert info" style="margin-bottom:0;"><strong>突破监测：否</strong><span>新增的是 split 泄漏证据、Mac 组件绿灯和可证伪路线；没有训练、重建或性能突破。</span></div>
+            </div>
+          </div>
+          <div class="result-table-wrap" tabindex="0" aria-label="公开 NIR-BOS 复现门、证据与下一动作，窄屏可左右滑动" style="margin-top:12px;"><table>
+            <thead><tr><th>门</th><th>当前证据</th><th>判定</th><th>下一动作</th></tr></thead>
+            <tbody>
+              <tr><td>数据身份</td><td>MATLAB/Python Phantom 树均为 71 files、92,846,449 bytes、同 tree SHA</td><td class="negative">只有 1 个独立 field</td><td>至少补 5 个独立 synthetic fields，再谈 operator learning</td></tr>
+              <tr><td>视角独立</td><td>val/test 均复用 train pose；val/test 资产逐像素重复</td><td class="negative">默认 test 不合法</td><td>从新角度重新生成，冻结连续角区留出</td></tr>
+              <tr><td>Mac 组件</td><td>Fourier <code>2 x 39</code>；一阶/二阶 AD finite</td><td class="positive">局部核通过</td><td>clean-room tiny loader/MLP/analytic BOS</td></tr>
+              <tr><td>完整作者入口</td><td>强制 CUDA ray、无条件 CUDA JIT、hash 写死 CUDA、Windows environment</td><td class="negative">当前主机阻塞</td><td>NVIDIA 上先做 50--100 step baseline smoke</td></tr>
+              <tr><td>许可</td><td>根目录无许可；仅子组件有独立 license</td><td class="negative">不再分发</td><td>联系作者确认；我们只写 clean-room 实现</td></tr>
+              <tr><td>新算法门</td><td>Fourier/hash、AD/discrete/hybrid、mask 已被 2026 论文覆盖</td><td class="pending">假设未验证</td><td>只研究噪声/饱和 gate、fail-closed residual 与时序失效保护</td></tr>
+            </tbody>
+          </table></div>
+          <div class="pipeline" aria-label="公开 NIR-BOS 到 OERF 算子学习的三阶段执行路线">
+            <div><b>1 · 本机 R0</b><span>路径、独立相机 split、delta-n 指标、CGLS/TV、Fourier MPS 小实验。</span></div>
+            <div><b>2 · NVIDIA R1</b><span>固定作者 commit，先复现 Fourier/hash × discrete/hybrid，再做 matched-cost corruption。</span></div>
+            <div><b>3 · 多 field D2</b><span>按 CFD run/field 切分；DeepONet/FNO/FFNO 与逐实例隐式法分赛道比较。</span></div>
+            <div><b>4 · 组内 D4/D5</b><span>用何师兄真实 geometry、session 与 callable；无真值时不越过 projection 证据。</span></div>
+          </div>
+          <div class="actions" style="margin-top:12px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fopen_nir_bos_release_readiness_audit_2026-07-22.md">读完整复现审计</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fopen_nir_bos_benchmark_contract_2026-07-22.md">读算法与 benchmark 合同</a>
+            <a class="button" href="learning_labs/results/open_nir_bos_release_audit_v1/report.json">机器报告</a>
+            <a class="button" href="https://arxiv.org/html/2605.11454">一级来源论文</a>
+            <a class="button" href="https://github.com/Weihu22/Neural-Implicit-Reconstruction-for-BOS">作者仓库</a>
+          </div>
+          <details class="archive-details">
+            <summary>展开源码哈希、图表校验、审计器与讲人话日志</summary>
+            <div class="actions" style="padding:0 14px 14px;">
+              <a class="button" href="learning_labs/results/open_nir_bos_release_audit_v1/source_inventory.csv">11 个关键文件哈希</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_release_audit_v1/checksums.sha256">本站产物 SHA-256</a>
+              <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=175-公开代码能看不等于能跑默认-test-也不等于独立测试">讲人话日志 175</a>
+            </div>
+          </details>
+        </div>
+        <!-- end public NIR-BOS release readiness audit -->
+        <div class="two-col" style="margin-top:12px;">
+          <div>
+            <div class="alert info" style="margin-top:0;"><strong>论文稿回答什么</strong><span>LGWO-A24 是否在完全相同的 <code>24F/24Aᵀ</code> 外壳、相同数据和相同端到端成本下，优于 CGLS、简单阻尼/插值、learned warm-start、DCDM/FCG-NO-style 对照与直接 DeepONet/FNO/iFNO；任何优势还必须在未见 rig 尾部、A/B consistency、wall time 与内存上成立。</span></div>
+            <div class="actions" style="margin-top:10px;">
+              <a class="button primary" href="document_reader.html?doc=docs%2Flgwo_a24_registered_manuscript_working_draft_2026-07-20.md">打开论文工作稿</a>
+              <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_l1_novelty_claim_boundary_2026-07-20.md">复核新颖性边界</a>
+            </div>
+          </div>
+          <div>
+            <div class="alert success" style="margin-top:0;"><strong>14 天后应得到什么</strong><span>不是“训练出论文”，而是能手推一次伴随一致性、跑通公开 PSU 小实验、解释为何 field error 与 reprojection 会冲突、根据师兄是否提供 JVP/VJP 选择下一实验，并形成一页可以交给师兄审核的预注册计划。</span></div>
+            <div class="actions" style="margin-top:10px;">
+              <a class="button primary" href="document_reader.html?doc=docs%2Flgwo_a24_14_day_caretaker_route_2026-07-20.md">开始 14 天路线</a>
+              <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">师兄接口沟通单</a>
+              <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=153-先把问题和失败判据写进论文而不是先写胜利摘要">讲人话日志 153</a>
+            </div>
+          </div>
+        </div>
+        <div class="alert critical" style="margin-bottom:0;"><strong>当前真实状态</strong><span>R2-E0 已在 <code>6</code> 个复用的 post-open synthetic mechanism cases 上完成 <code>72</code> 行 reduced 诊断，但仍是 <code>0 fresh / 0 real scientific cases / no training / no breakthrough</code>。在何远哲师兄确认真实 callable、curved/straight residual 层级、JVP/VJP、标定、数据 split 和强基线以前，不启动真实科学训练。</span></div>
+      </div>
+      <div class="panel" style="margin-top:14px; border-top:4px solid var(--gold);">
+        <div class="chips"><span class="chip gold">PRIMARY-SOURCE BOUNDARY MAP</span><span class="chip coral">OVERLAP AUDIT FIRST</span></div>
+        <h3 style="margin-top:8px;">七篇决定当前路线边界的一级来源</h3>
+        <p>已有工作已经覆盖 null-space 学习、粗解校正、神经预条件器、反向 neural operator、hybrid Krylov 和 instance-specific regularization。PSU-C1 关闭了 bounded first-direction fit；R0 又关闭了当前 24 步 CGLS 路径上的 instance-specific stopping。现在可检验的差异只能更窄：先在固定 BOST 物理壳中构造新的正则化 Pareto 路径，再判断部署可见量能否安全控制有界强度、滤波器凸权重和拒答，并用 rig shift、A/B consistency、尾部风险与端到端成本证明它是否值得。</p>
+        <div class="source-grid" style="margin-top:10px;">
+          <article class="source-card" style="min-height:0; border-top-color:var(--coral);"><div class="body"><span class="chip coral">最直接重叠</span><h3>NPN · Null-space projection</h3><p>已将观测矩阵 null-space 的低维投影/系数作为成像逆问题先验。不能再声称“首次学习 null-space”；只能在 BOST 几何、同预算与 fail-closed 尾部门下寻找差异。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2510.01608">arXiv abstract</a><a class="button" href="https://arxiv.org/html/2510.01608">HTML full text</a></div></article>
+          <article class="source-card" style="min-height:0; border-top-color:var(--coral);"><div class="body"><span class="chip coral">校正范式重叠</span><h3>Neural Correction Operator</h3><p>已研究从低保真/粗解到校正场的 neural correction。不能再声称“网络校正天然优于 direct inverse”；差异需落在 BOST operator、预算壳和独立 B/尾部证据。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1016/j.jcp.2026.115039">JCP DOI</a><a class="button" href="https://arxiv.org/html/2507.18875">arXiv HTML</a></div></article>
+          <article class="source-card" style="min-height:0; border-top-color:var(--blue);"><div class="body"><span class="chip blue">Solver 对照</span><h3>FCG-NO</h3><p>已把 neural operator 放进 flexible CG 的 nonlinear preconditioner。不能再声称“首次结合 operator learning 与 Krylov”；若不实现 FCG，不应把 LGWO 直接叫 preconditioner。</p></div><div class="actions"><a class="button primary" href="https://proceedings.mlr.press/v235/rudikov24a.html">PMLR record</a><a class="button" href="https://raw.githubusercontent.com/mlresearch/v235/main/assets/rudikov24a/rudikov24a.pdf">official PDF</a></div></article>
+          <article class="source-card" style="min-height:0; border-top-color:var(--blue);"><div class="body"><span class="chip blue">Inverse operator 基线</span><h3>iFNO</h3><p>已针对 forward/inverse 双向问题设计可逆 Fourier blocks，并在多任务上比较。不能用未经调参的普通 FNO 作为唯一对手；需报告 field/H1、残差、调用数、时间与 shift。</p></div><div class="actions"><a class="button primary" href="https://proceedings.mlr.press/v258/long25a.html">PMLR record</a><a class="button" href="https://raw.githubusercontent.com/mlresearch/v258/main/assets/long25a/long25a.pdf">official PDF</a></div></article>
+          <article class="source-card" style="min-height:0; border-top-color:var(--gold);"><div class="body"><span class="chip gold">当前数学主干</span><h3>Hybrid Projection Survey</h3><p>系统连接 Krylov 子空间、半收敛、显式正则和投影空间参数选择。它说明下一步应先实现强 classical hybrid/stopping，而不是把任何收益预先归因于网络。</p></div><div class="actions"><a class="button primary" href="https://doi.org/10.1137/21M1441420">SIAM Review DOI</a></div></article>
+          <article class="source-card" style="min-height:0; border-top-color:var(--gold);"><div class="body"><span class="chip gold">最直接学习边界</span><h3>Learning Regularization Parameters</h3><p>从 observation 预测 instance-specific regularization parameter 已有先例。候选新意必须来自 BOST 几何/轨迹、输出安全集、held-out B 与 fail-closed 回退，而不是“用 MLP 预测 lambda”本身。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2104.06594">开放论文</a></div></article>
+          <article class="source-card" style="min-height:0; border-top-color:var(--coral);"><div class="body"><span class="chip coral">2026 新颖性威胁</span><h3>Neural RI Primitives</h3><p>single refractive-index primitive、hash encoding、automatic/discrete gradient、3D mask 与层级采样均已有。它封住“换 implicit field/梯度实现”式宽泛创新，并把本项目推向 solver-control 问题。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2605.11454">arXiv record</a></div></article>
+        </div>
+        <div class="alert" style="margin-bottom:0;"><strong>可能差异化命题（候选，不是结果）</strong><span>当前候选不争夺“通用 neural operator”“首次 null-space learning”或“首次学习正则参数”，而是先检验一个 BOST-specific、budget-preserving 的 H1–TV–Sobolev/hybrid 路径能否支配旧 field-gradient Pareto 曲线；只有新路径存在 headroom，才测试 geometry/noise/trajectory-conditioned、可拒答的控制器安全选择正则强度或谱基凸权重。fixed、discrepancy/GCV、hybrid、TV/Huber 与 ridge/logistic、真实接口、未见 rig 和独立复核必须先到位。</span></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>算法骨架与可证明边界</h3>
+          <div class="formula wrap-formula">g = P<sub>S</sub>Aᵀy；z = g + bounded_delta；u<sub>0</sub> = Az；alpha<sub>0</sub> = &lt;y,u<sub>0</sub>&gt;/||u<sub>0</sub>||²</div>
+          <ol>
+            <li><strong>第一步精确线搜索：</strong>从零场沿 learned-perturbed direction 更新，因此 measurement residual 不会比未更新更大。</li>
+            <li><strong>23 步全重正交：</strong>每步只付一次 <code>Aᵀr</code> 与一次 <code>As</code>，用两遍 Gram-Schmidt 保持 measurement directions 共轭。</li>
+            <li><strong>零 correction 因果控制：</strong>恢复 fully reorthogonalized CGLS-24；不把换 solver 壳产生的差异算给网络。</li>
+            <li><strong>有界 correction：</strong><code>||delta||₂ &lt;= eta ||Aᵀy||₂</code>，首轮 <code>eta=0.05</code>；几何或噪声越出 calibration envelope 就设置 <code>delta=0</code>。</li>
+            <li><strong>调用与能力防火墙：</strong>proposal 只收 A observation、A pooled adjoint、A geometry 和 support；正式 runner 只接受源码中的精确 <code>LDFieldFiLM8</code> 与纯 <code>state_dict</code>。counter drift 会报错，但不把任意 Python closure 冒充安全沙箱。</li>
+          </ol>
+          <div class="alert info"><strong>O1 方向对照</strong><span>exact-null truth 在两个固定半径都达到 9/9 描述性阈值；exact-row truth 虽降低 measured residual，field/H1 却略差。三臂各自归一化与 clipping，<code>delta_full != delta_null + delta_row</code>，所以不能作加性 kernel 因果分解。O1 未检查 held-out ray、三模型种子、OOD 或 fresh。</span></div>
+          <div class="alert info"><strong>Implementation gate 的两次 fail-closed</strong><span>第一次抓到协议元数据被误传给 fixture constructor；第二次抓到 backbone 没有被 model seed 完整控制。修订 1.1 在任何 fit/early/route/fresh case 生成前固定全模型 RNG；最终 source commit <code>5230a5f</code> 的双进程非 timing 字段完全一致。这里通过的是训练基础设施，不是模型效果。</span></div>
+          <div class="alert critical"><strong>同一 A 的 clean target 不是独立物理验证</strong><span>O1 的 clean residual 仍通过同一离散 forward <code>A</code> 计算；exact-null 臂残差不变主要由构造保证。复算 validator 也共享底层 fixture/projector/solver/metric，只证明确定性重放，不替代独立 forward <code>B</code>、held-out rays 或真实实验。</span></div>
+          <div class="alert critical"><strong>当前不能说什么</strong><span>truth oracle 直接读取三维答案，且所有 case 已打开；它不证明网络能从观测学到 correction、BOST geometry 条件化有效、未见 rig 泛化、真实反应流验证或相对 NeRIF/NeDF/DeepONet/FNO/NOWS 的新颖性。</span></div>
+          <div class="actions" style="margin-top:13px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Flgwo_a24_anchored_candidate_protocol_2026-07-20.md">读完整候选协议</a>
+            <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_o1_exact_direction_result_2026-07-20.md">读 O1 结果</a>
+            <a class="button" href="demo_t16_operator/results/lgwo_a24_exact_direction_oracle_opened_v1/summary.json">机器 summary</a>
+            <a class="button" href="demo_t16_operator/results/lgwo_a24_exact_direction_oracle_opened_v1/independent_validation/validation.json">独立 validation</a>
+            <a class="button" href="demo_t16_operator/results/lgwo_a24_exact_direction_oracle_opened_v1/checksums.sha256">O1 checksums</a>
+            <a class="button" href="asset_viewer.html?asset=demo_t16_operator%2Fresults%2Flgwo_a24_exact_direction_oracle_opened_v1%2Fdiagnostic_v2.pdf">论文式图 PDF</a>
+            <a class="button" href="demo_t16_operator/lgwo_a24_anchored_cdls.py">算法安全壳</a>
+            <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_learnable_direction_pilot_2026-07-20.md">L1 密封试验</a>
+            <a class="button" href="demo_t16_operator/configs/lgwo_a24_l1_sealed_observable_pilot_v1.json">L1 机器协议</a>
+            <a class="button" href="site_tools/validate_lgwo_a24_l1_protocol.py">L1 fail-closed validator</a>
+            <a class="button" href="demo_t16_operator/results/lgwo_a24_l1_implementation_gates_v1/summary.json">implementation summary</a>
+            <a class="button" href="demo_t16_operator/results/lgwo_a24_l1_implementation_gates_v1/independent_validation/validation.json">implementation validation</a>
+            <a class="button" href="demo_t16_operator/results/lgwo_a24_l1_implementation_gates_v1/checksums.sha256">implementation checksums</a>
+            <a class="button" href="demo_t16_operator/lgwo_a24_learnable_direction.py">2,729 参数模型与训练 twin</a>
+            <a class="button" href="demo_t16_operator/lgwo_a24_l1_fixture.py">A/B 权限隔离</a>
+            <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_public_data_bridge_2026-07-20.md">公开数据桥</a>
+            <a class="button" href="document_reader.html?doc=docs%2Flgwo_a24_primary_literature_map_2026-07-20.md">一级来源文献地图</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=143-理想的零空间方向确实有用但网络还没有学会任何东西">讲人话日志 143</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=145-implementation-gate-终于通过但中间两次失败比-pass-更重要">讲人话日志 145</a>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>从今天到第一次有资格打开 OOD</h3>
+          <ol>
+            <li><strong>P0 · 已完成：</strong>小矩阵安全壳 + 6-case truth-oracle 表示屏 + 1,121 项独立复算。</li>
+            <li><strong>P1 · 已完成：</strong><code>12³</code>、3 cameras、<code>6×6</code> detector；2,729 参数；K=24 backward、全模型 seed、内存、调用账本、route/fresh 扫描与独立 validation 已过。</li>
+            <li><strong>P2 · 正在实现：</strong>先冻结 final loss/H1/normalization、五训练臂与 checkpoint/resume，再只生成 24 fit + 6 early；B 使用同 train pose family 的独立 geometry seeds。</li>
+            <li><strong>P3 · 一次打开 route：</strong>24 route cases；development-A / OOD-B；field mean ≥5%、三 seed 各 ≥2%、bootstrap 下界 &gt;0、7/8 正簇、harm ≤5%、worst ≥-5%。</li>
+            <li><strong>P4 · 公开物理桥：</strong>STEMPO 检查动态 3D，MILD DNS 造 physics-derived synthetic BOST，TU Graz HBOS 检查真实图像前端。</li>
+            <li><strong>P5 · OERF：</strong>拿到相机标定、flow-off repeats、matrix-free <code>A/Aᵀ</code>、固定 rig/session split 后，保持所有 gate 不变迁移。</li>
+          </ol>
+          <div class="formula wrap-formula">L1 route gate: field ≥5%, each seed ≥2%, H1 ≥3%, A-measured/A-clean/B-clean ≤1.05, 7/8 positive clusters, harm ≤5%, worst ≥-5%</div>
+          <p><strong>最关键的论文对手：</strong>NeRIF、Neural Deflection Field、Neural Refractive Index Primitives、GRU-BOST、经典 TV/Tikhonov BOST、DeepONet/FNO、MoDL/LPD、Learning-to-Warm-Start 与 NOWS。只有同预算、同 geometry split、同端到端成本共同过门，才谈潜在贡献。</p>
+          <div class="actions"><a class="button" href="https://doi.org/10.1063/5.0250899">NeRIF</a><a class="button" href="https://doi.org/10.1063/5.0241191">NeDF</a><a class="button" href="https://arxiv.org/abs/2605.11454">Neural Primitives</a><a class="button" href="https://www.jmlr.org/papers/v25/23-1174.html">L2WS</a><a class="button" href="https://arxiv.org/abs/2511.02481">NOWS</a></div>
+        </div>
+      </div>
+      <figure style="margin-top:14px;"><img src="demo_t16_operator/results/lgwo_a24_exact_direction_oracle_opened_v1/diagnostic_v2.png" width="2448" height="1512" loading="eager" decoding="async" alt="LGWO-A24 O1 论文式四联图，比较 exact-null truth、exact-row truth 和 full-truth 方向在两个固定半径下的逐 case field、H1、线性残差比和最坏 case" /><figcaption>柱形为 6 个已打开 synthetic cases、3 个 geometry clusters 的描述性均值，圆点展示全部 case，残差使用线性坐标；虚线是筛查阈值。clean target 与 measured target 共用离散 A。全部方向都使用三维真值，exact-null 还依赖 evaluator-only dense SVD；越线表示 truth oracle 存在表示 headroom，不表示模型或算法通过。eta 未选择，且冻结前已查看一个 case 的多个 eta。</figcaption></figure>
+      <div class="evidence-grid" style="margin-top:14px;">
+        <article class="evidence-card" data-state="done"><span class="chip blue">表示门已过</span><h3>exact-null 6/6 正收益</h3><p><code>eta=0.05/0.10</code> 的 mean field gain 为 +6.978%/+13.722%，worst 为 +3.741%/+7.262%；只授权设计小 pilot。</p></article>
+        <article class="evidence-card" data-state="done"><span class="chip blue">方向对照完成</span><h3>row-only 未显示 field 收益</h3><p>exact-row direction 改善 measured residual，却没有 field/H1 gain；这是 norm-matched 描述，不是一般因果定理。下一网络需诊断 approximate-null alignment。</p></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">数据阶梯</span><h3>CT 不冒充 BOST</h3><p>STEMPO 只证明动态 tomography；MILD DNS 只能称 physics-derived synthetic BOST；TU Graz 只证明真实 BOS 图像前端；三层都不能代替 OERF 三维真值。</p></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">L1 已预注册</span><h3>逐 geometry-cluster 尾部优先</h3><p>三 families 与三 seeds 先在 cluster 内聚合；50,000 次 cluster bootstrap，7/8 正簇，另报 B residual、harm、worst、fallback、时间与峰值内存。</p></article>
+      </div>
+    </section>
+    <section id="gct-kmix-o1" style="margin-top:20px; scroll-margin-top:18px;">
+      <div class="chips"><span class="chip coral">GCT-KMix O1 · FIELD HEADROOM NO-GO</span><span class="chip blue">16³ · 18 CASES / 6 GEOMETRY CLUSTERS</span><span class="chip gold">UNCONSTRAINED GLOBAL ORACLE</span><span class="chip coral">LEARNER NOT AUTHORIZED</span><span class="chip blue">NO REAL / FRESH CLAIM</span></div>
+      <h2 style="margin-top:10px;">连“知道答案后随便混”都不够好：停止零初值 selector，把算力转向真正能带入先验的信息源</h2>
+      <p>七个冻结 checkpoint 为 <code>k={1,2,3,4,6,8,12}</code>。原问题要求单纯形权重并保护每条 ray 的 k4 残差包络；两次 tail-safe Clarabel 运行都因至少一个 <code>AlmostSolved</code>、gap 或 projection closure 未过合同而保持 fail-closed。独立证书没有把它们冒充成功，而只使用 18/18 均为 <code>Solved</code> 的 unconstrained truth oracle：<strong>unconstrained simplex 是 tail-safe simplex 的可行域超集</strong>，删除全部 ray 约束只会扩大可行域，所以它给出的 gain 是任何 tail-safe 混合都不可能超过的乐观上界。</p>
+      <div class="real-metric-grid metric-grid">
+        <div class="metric failed-state"><b>2.3334%</b><span>development mean field-gain 乐观上界；9 cases / 3 geometry clusters</span></div>
+        <div class="metric failed-state"><b>1.9649%</b><span>public exploratory OOD mean field-gain 乐观上界；9 cases / 3 clusters</span></div>
+        <div class="metric"><b>5.0000%</b><span>结果前冻结的两个 split 共同 field 门；超集上界已低于它</span></div>
+        <div class="metric"><b>7.25e-11</b><span>unconstrained oracle 最大 relative primal-dual gap；18/18 <code>Solved</code></span></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>为什么这个负结果能帮我们提速</h3>
+          <ol>
+            <li><strong>不训练零初值 mixer：</strong>模型再聪明也只能在已冻结的 row-space/Krylov 轨迹里选权重，表示上限先天不足。</li>
+            <li><strong>不篡改失败包：</strong>attempt 1 与 SOC scaling 后的 attempt 2 都保留 <code>FAIL_CLOSED_SOLVER_OR_CONTRACT_FAILURE</code>；上界证书是单独的逻辑判决。</li>
+            <li><strong>下一步换信息，不换名字：</strong>固定已有 learned field 作 warm start，支付初始 projection 与相同总预算；只有它保留稳定 headroom，才做 matrix-free row-removal / near-null correction。</li>
+            <li><strong>真实边界不变：</strong>JACRU 是连续解析梯度对体素离散 inverse 的 synthetic 机制屏；18 cases 只有 6 个 geometry clusters，不能冒充 18 个独立 rig。</li>
+          </ol>
+          <div class="alert critical"><strong>准确判决</strong><span>可以说“当前 16³ zero-start checkpoint 凸包不可能通过预注册 field-headroom 门，所以 learner 不获授权”。不能说 tail-safe solver 已成功、算子学习普遍无效、真实 OERF 重建失败、跨 rig 泛化已验证，或已经优于 DeepONet/FNO/FFNO/NeRIF/TDBOST。</span></div>
+          <div class="actions" style="margin-top:13px;">
+            <a class="button primary" href="document_reader.html?doc=demo_t16_operator%2Fresults%2Fgct_kmix_zero_start_upper_bound_certificate_v1%2FREADME.md">读上界证书</a>
+            <a class="button" href="demo_t16_operator/results/gct_kmix_zero_start_upper_bound_certificate_v1/certificate.json">机器证书 JSON</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fgct_kmix_dominating_upper_bound_protocol_2026-07-20.md">读数学证明</a>
+            <a class="button" href="site_tools/validate_gct_kmix_dominating_upper_bound.py">独立 validator</a>
+            <a class="button" href="demo_t16_operator/results/gct_kmix_oracle_ceiling_v1_attempt1_fail_closed/summary.json">Attempt 1</a>
+            <a class="button" href="demo_t16_operator/results/gct_kmix_oracle_ceiling_v1_attempt2_scaled_fail_closed/summary.json">Attempt 2</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=140-gct-kmix知道答案后随便混也不够好">讲人话日志 140</a>
+          </div>
+        </div>
+        <figure>
+          <img src="demo_t16_operator/results/gct_kmix_oracle_ceiling_v1_attempt2_scaled_fail_closed/diagnostic.png" width="2790" height="864" loading="eager" decoding="async" alt="GCT-KMix O1 三联图，依次比较每个公开 case 的 field relative-L2、相对 tail-safe KSelect 的 gain 与 truth-oracle checkpoint 权重" />
+          <figcaption>左：k4、k12、KSelect 与 KMix 的逐 case field 误差；中：tail-safe 近似 gain 及 5% 预注册线，只作诊断；右：truth-oracle 权重。正式 NO-GO 只使用另行认证的 unconstrained 超集上界，不依赖两个 AlmostSolved tail-safe case。</figcaption>
+        </figure>
+      </div>
+    </section>
     <section id="resolution-transfer" style="margin-top:20px; scroll-margin-top:18px;">
       <div class="chips"><span class="chip coral">E68 · 16³ SCORE PRE-REGISTERED NO-GO</span><span class="chip gold">N = 1 ROTATION BLOCK</span><span class="chip blue">ROTATION HOLDOUT · NOT CAMERA HOLDOUT</span><span class="chip blue">3,847,050 REAL RAYS</span><span class="chip gold">NO FIELD TRUTH</span></div>
       <h2 style="margin-top:10px;">冻结的 32³+CGLS4 support 优势在 rotation-40 完全反转：先隔离网格与求解轨迹，再谈神经算子</h2>
@@ -293,6 +1763,207 @@
         <figure>
           <img src="demo_t16_operator/results/psu_rotation40_multiresolution_diagnosis_public_v1/diagnostic.png" width="2700" height="1800" loading="eager" decoding="async" alt="PSU rotation-40 多分辨率机制诊断四联图，比较五条网格与场路径、固定 alpha 曲线和三台相机的 correction cosine" />
           <figcaption>左上：五个固定网格/场对照；右上：不选优的 alpha 路径；左下：camera 2 与 camera 3/4 修正方向冲突；右下：机器状态与禁止外推边界。</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section id="nested-stopping-result" style="margin-top:20px; scroll-margin-top:18px;">
+      <div class="chips"><span class="chip coral">E72 · FORMAL NO-GO</span><span class="chip blue">6 UNIQUE FITS</span><span class="chip blue">48 PRIVATE CHECKPOINTS</span><span class="chip gold">122 A / 86 Aᵀ</span><span class="chip coral">NO FIELD TRUTH</span></div>
+      <h2 style="margin-top:10px;">inner 选出的早停在第三个 rotation 伤害 view 5：嵌套停止不能作为当前算法贡献</h2>
+      <p>每个 outer rotation 的 checkpoint 只由另外两个 rotation 互相验证选出，选择提交后才做 outer join。只有 outer 50° 让 16³ 从 <code>k=4</code> 提前到 <code>k=3</code>、32³ 提前到 <code>k=2</code>；两者都未通过预先声明的逐 camera/tail no-harm 门。这个负结果把问题定位为<strong>“几何条件改变时，平均重投影改善不保护单相机尾部”</strong>，而不是可发布的通用 early-stopping 规则。</p>
+      <div class="real-metric-grid metric-grid">
+        <div class="metric failed-state"><b>2 / 2 NO-GO</b><span>16³ 与 32³ 都未同时通过 mean-improvement 和全部 no-harm 门</span></div>
+        <div class="metric"><b>[4,4,3,2,4,4]</b><span>outer 0/50/90 下两个网格的密封 checkpoint；只有 50° 选早</span></div>
+        <div class="metric"><b>6 / 48</b><span>6 条唯一 CGLS fit，8 个快照/轨迹，合计 48 个私有 float64 场</span></div>
+        <div class="metric"><b>15 / 15</b><span>数值、隔离、调用、内存与隐私门通过；失败是研究判决，不是运行故障</span></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>outer 50° 的失败签名</h3>
+          <div class="table-scroll-hint" aria-hidden="true">表格可左右滑动</div>
+          <div class="result-table-wrap">
+            <table class="result-table">
+              <thead><tr><th>grid / selected</th><th>三折 mean macro<br><code>k4 - selected</code></th><th>outer 50° group p95</th><th>view 5 L2</th><th>view 5 p95</th><th>判决</th></tr></thead>
+              <tbody>
+                <tr><td>16³ / <code>k=3</code></td><td class="positive">+0.000417966</td><td class="negative">+0.0398%</td><td class="negative">+1.6893%</td><td class="negative">+2.1896%</td><td class="negative">NO-GO</td></tr>
+                <tr><td>32³ / <code>k=2</code></td><td class="negative">-0.002103342</td><td class="negative">+1.1220%</td><td class="negative">+3.0282%</td><td class="negative">+3.8310%</td><td class="negative">NO-GO</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>16³ 是最具迷惑性的情形：三折平均 macro 微弱改善，但 outer 50° 的 view 5 和 tail 受伤。32³ 则连平均 macro 也退化。因此任何新模型都不得只报 pooled/mean，必须保留 rotation × camera × tail 的完整表。</p>
+          <div class="alert critical"><strong>证据边界</strong><span>这是一个真实 PSU 流场的 post-hoc programmatically withheld cross-fit 再分析。E71 outer 在 E72 设计前已存在，所以不能称为人类未见 final test；又因为没有 field truth、独立重复和新 flow，不能声称三维场精度、统计显著性、跨流态泛化或算法优越。</span></div>
+          <h3 style="margin-top:16px;">从负结果长出的 E73 路线</h3>
+          <ol>
+            <li><strong>E73-0 强经典对照：</strong>在新 flow family 上先完成 H1/Tikhonov、TV/primal-dual、真 pyramid BOST 和有独立噪声尺度的 discrepancy stopping。</li>
+            <li><strong>E73-A GroupTail-CGLS：</strong>用 rotation/camera/tail 组的 worst-risk/CVaR 选停，与 fixed <code>k=4</code> 和强经典解同门比较。</li>
+            <li><strong>E73-B Geo-Calibrated Tail Envelope：</strong>只用部署时可见的 pose、ray coverage、aperture、早期 residual 和 support/null-space 摘要预测风险上界；证明不了就拒答并回退。</li>
+            <li><strong>E73-C 证书约束神经 correction：</strong>只学经典 coarse field 的受限修正，经 physical forward/data consistency 与 camera-tail certificate 后才允许输出。</li>
+          </ol>
+          <div class="actions" style="margin-top:13px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_nested_rotation_stopping_result_2026-07-19.md">读 E72 完整结果</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fpsu_nested_rotation_stopping_manuscript_addendum_2026-07-19.md">论文方法/结果附录</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fpsu_nested_rotation_stopping_protocol_2026-07-19.md">读冻结协议</a>
+            <a class="button" href="demo_t16_operator/results/psu_nested_rotation_stopping_inner_public_v1/sealed_selection.json">密封 selection</a>
+            <a class="button" href="demo_t16_operator/results/psu_nested_rotation_stopping_outer_public_v1/summary.json">outer 机器 summary</a>
+            <a class="button" href="site_tools/validate_psu_nested_rotation_stopping_public.py">独立 validator</a>
+            <a class="button" href="docs/psu_nested_rotation_stopping_validation_report_2026-07-19.json">验证报告 JSON</a>
+            <a class="button" href="assets/figures/psu_nested_rotation_stopping_result.svg">可缩放四联图</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=127-内层选早了第三个角度的一台相机还是受伤e72-老实失败">讲人话日志 127</a>
+          </div>
+        </div>
+        <figure>
+          <img src="assets/figures/psu_nested_rotation_stopping_result.png" width="2904" height="1936" loading="eager" decoding="async" alt="E72 嵌套 rotation stopping 四联图，展示 inner 风险曲线、密封 checkpoint 矩阵、outer macro 改善以及 view 5 与尾部指标的退化" />
+          <figcaption>A：只有 outer 50° 通过 inner 安全筛查而选早；B：密封选择矩阵；C：16³ 的平均改善不代表 no-harm；D：outer 50° 的 view 5 和 tail 破坏筛查。白色背景图只由公开聚合指标重画，不包含私有射线或三维场。</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section id="e73-jgtce" style="margin-top:20px; scroll-margin-top:18px;">
+      <div class="chips"><span class="chip blue">E73-B · FAIL-CLOSED RUNNER</span><span class="chip blue">156 E73 CONTRACT TESTS</span><span class="chip blue">24-METRIC FIXTURE SCORER</span><span class="chip blue">FULL-PATH AUDIT · 0 OBS OPEN</span><span class="chip gold">EXTERNAL UNIT ANCHOR</span><span class="chip gold">TRANSACTIONAL ORPHAN QUARANTINE</span><span class="chip gold">DATA FOUNDATION · FIXTURE PASS</span><span class="chip gold">PRIVATE RUN NOT STARTED</span><span class="chip gold">CANDIDATE AUTH OFF</span><span class="chip coral">PHASE-0 PREFLIGHT NO-GO</span><span class="chip coral">NO PERFORMANCE CLAIM</span></div>
+      <h2 style="margin-top:10px;">不让平均改善掩盖一台相机：一次给所有候选与所有尾部指标算联合上界</h2>
+      <div class="alert"><strong>工程里程碑，不是算法突破</strong><span>fixture scorer 现已把 7 次 forward、9 个 view slot、24 个 metric 和 <code>candidate-k4</code> harm 符号写成可攻击测试的代码；orphan 与 Pages 证据链也继续 fail closed。这只证明以后更难靠改口径或漏算成本伪造胜利；真实 private score、fresh rig/session 和任何新方法优越性仍为 0。</span></div>
+      <p>JGTCE 是 E72 负结果长出的 fail-closed 选择层。它把每个候选相对 <code>cgls_k4</code> 的<strong>加性伤害</strong>同时按 macro、worst、group p95 和九个 view slot 的 L2/p95 校准。geometry-only adapter 现在强制可信 manifest digest，并让每个 geometry 文件通过 <code>O_NOFOLLOW</code> FD 只打开一次，在同一个 FD 上校验和 mmap；对真实 10,628,822-ray cache 走完 constructor、329 个 chunks、matrix-free forward 与 adjoint 后，host hook 的 <code>observations_uv.npy</code> 打开数仍为 0。data-foundation runner 已在微型 fixture 内由 <code>y=A(x_proxy)</code> 和同一条 CGLS 的 <code>k0..k4</code>、<code>Aᵀr4</code> 内生构造 29 维 feature；新 scorer 再对 <code>k1/k2/k3/k4/k6/k8/k12</code> 各做一次 forward，给出固定 24-metric 和六组 <code>candidate-k4</code> harm。fixture bundle 只能进入 owner-only 目录，不可覆盖。私有 unit manifest 另行绑定 run/unit、冻结 phantom 行、配置与 cache source，重复 unit 换名也拒绝。claim 先写 <code>PREPARING_UNPUBLISHED</code>；逐字节证明未发布的 residue 进入 <code>.orphan-quarantine</code>，先在 <code>&lt;entry&gt;.preparing</code> 内密封 recovery record，同目录原子改名发布后才移动 run/claim。completion 也由 <code>isolation_complete.json.preparing</code> 重读后原子发布；空 stage、半写文件和目标父目录已同步的崩溃点都有回归。未完成事务会阻断其他 unit；source/destination both 或 neither、已有 finalization 但缺 anchor、旧版隔离记录仍须人工审计。通用 duck-typed 路径只能得到 fixture 状态，私有路径必须读取内部 attestation 并使用精确 adapter/operator。真实 16-unit 尚未运行，private metric/harm integration 仍为 0，candidate authorization 继续关闭。</p>
+      <div class="real-metric-grid metric-grid">
+        <div class="metric"><b>6 static + 1 deploy</b><span>模型/尺度/证书/策略与单次 deployment 分离哈希，部署不能顺手改 calibration 根</span></div>
+        <div class="metric"><b>29 features</b><span>producer + independent witness 已冻结；只最后 6 个 residual 随 phantom 变化，不能叫 geometry learning</span></div>
+        <div class="metric"><b>7 A → 7 × 24</b><span>fixture 已逐 checkpoint 实算；六个 candidate 相对 k4 生成 harm，private score 未打开</span></div>
+        <div class="metric pending-state"><b>321 A + 209 Aᵀ</b><span>16-unit schema pilot 的冻结逻辑成本；尚未运行，也不是性能结果</span></div>
+      </div>
+      <div class="pipeline" aria-label="E73 联合尾部证书流程">
+        <div><b>1 · Static root</b><span>冻结 predictor、scale、support、certificate、policy 与源码哈希</span></div>
+        <div><b>2 · Deployment</b><span>单独绑定 source manifest 与声明物理单元，不许携带 prediction/truth</span></div>
+        <div><b>3 · Internal infer</b><span>runner 按固定 affine/ridge 公式自己计算 predicted harm</span></div>
+        <div><b>4 · Joint gate</b><span>action × metric 联合上界、support、rank 与身份全部重验</span></div>
+        <div><b>5 · Data foundation</b><span>同轨迹 residual 内生 feature；fixture 通过，真实 private unit 未启动</span></div>
+        <div><b>6 · Fixture scorer</b><span>7 次 forward、24 指标、candidate-k4 harm 与调用账本已闭合</span></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>它真正能保证到哪里</h3>
+          <div class="formula wrap-formula">P{support 通过 且所选候选违反联合上界} ≤ alpha，在 calibration/test 独立单位可交换且所有合同预先冻结时成立。</div>
+          <ul>
+            <li>允许在冻结动作集合中后选动作，因为校准事件已同时覆盖全部 action × metric。</li>
+            <li>不允许 calibration 后新增 checkpoint、删掉失败相机、改尺度或放宽 no-harm 容差。</li>
+            <li>严格改善按 <code>upper harm &lt; -minimum improvement</code> 判定，不能相对正容忍值偷换概念。</li>
+            <li>相机、view、ray、pixel 只能是一个 flow 内部的被保护维度，不能冒充独立样本。</li>
+            <li>support pass 不等于条件覆盖；axis-aligned box 还可能接受训练中未出现的特征角点。</li>
+            <li>预测与尺度数组使用不可变 <code>bytes</code> 底层并绑定数值 SHA-256；runner 现在会亲自加载固定 JSON 模型并生成预测。</li>
+            <li>静态 bundle 与 deployment 分开哈希；CLI 不接任意路径、不允许覆盖，一次运行只持有一个 private-root descriptor，并用声明物理单元消费 ledger 拒绝重复使用。</li>
+            <li>runner 把唯一 fallback 字面钉死为 <code>cgls_k4</code>；即使恶意 policy 连同 manifest 一起重算哈希，也不能把任意动作改名成回退。</li>
+            <li>真实 cache 的 host-level open audit 已绑定可信 manifest，并实际覆盖 constructor、全部 chunks、forward 与 adjoint；五类 geometry 各只打开一次并沿同一 FD 校验/mmap，observation open count 为 0。</li>
+            <li>第 22 个零基特征已精确命名为 <code>global_valid_aperture_sample_fraction</code>；独立 witness 只证明 feature/input/公式内部一致。新增 fixture data runner 已把 sufficient statistics 绑定到同一 CGLS，但真实 private unit 仍未执行。</li>
+            <li>通用 duck-typed store 明确只能得到 <code>FIXTURE_ONLY</code>；生产路径不接 caller manifest digest，只读 Git 忽略的 private attestation，并绑定干净 commit、runner、operator、adapter、phantom、producer 与 witness。</li>
+            <li>checkpoint payload map 不可变；private finalizer 不接收 fallback bytes，只把保存的 <code>k4</code> 原样写成 fallback，重开所有成员做 checksum/全字节比较，并最后发布 <code>finalization.json</code>。</li>
+            <li>每个 checkpoint 的 <code>L2/max-abs</code>、相对残差和 <code>alpha/beta</code> 递推都会对回 solver history；正系数也不能任意改。</li>
+            <li>finalizer 发布前逐成员对回原始密封 bytes；根目录外部原子 unit claim 与 final anchor 会拒绝已有 unit 互相重复、合法重标和保范数 checkpoint + checksum 联动篡改。</li>
+            <li>claim 状态固定为 <code>PREPARING_UNPUBLISHED</code>；orphan 隔离采用 prepared/complete 双不可变记录，逐成员哈希、源/目标互斥状态与每次 rename 的双父目录 fsync 均复核。未完成事务先恢复闭合，不能为其他 unit 开新 run；finalization-without-anchor 不自动恢复。</li>
+            <li>output root 仅沿 no-follow 父链创建最后一级；父链须预先存在，符号链接目标侧不会产生目录。</li>
+            <li><strong>信任边界：</strong>当前要求可信本地 Python 进程，模块 capability 不是密码学权限；同进程恶意代码抵抗与数字签名均明确为 false。</li>
+            <li><strong>仍未闭合：</strong>fixture scorer 与 private finalizer 的同进程集成、生产 metric/harm bundle、post-commit private preflight、真实 16-unit 执行、同一物理 flow 被恶意改名和受控签名归档。</li>
+            <li>当前只保证一个新的可交换单位；连续部署没有 anytime 或多未来单位保证。</li>
+          </ul>
+          <div class="alert critical"><strong>两套 runner 和 scorer，候选权限仍关闭</strong><span>development selector runner 仍接 caller-precomputed feature；Phase-0 data-foundation runner 已内生 feature 和 fallback bytes；fixture scorer 已计算 24 指标和 harm，但不接 private unit，也没有选择权。这是主动关闭权限，不是模型已经安全，也不是算法胜出。</span></div>
+          <div class="actions" style="margin-top:13px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fgeometry_conditioned_nullspace_safe_operator_roadmap_2026-07-19.md">新主线：几何 + 近零空间 + 可拒答</a>
+            <a class="button primary" href="document_reader.html?doc=docs%2Fe73_formal_runner_and_phase0_preflight_2026-07-19.md">先读 runner 与 Phase-0 审计</a>
+            <a class="button primary" href="document_reader.html?doc=docs%2Fe73_geometry_feature_boundary_2026-07-19.md">geometry + feature 新边界</a>
+            <a class="button primary" href="document_reader.html?doc=docs%2Fe73_phase0_data_foundation_2026-07-19.md">Phase-0 数据基础层</a>
+            <a class="button primary" href="document_reader.html?doc=docs%2Fe73_phase0_fixture_metric_scorer_2026-07-19.md">24 指标 fixture scorer</a>
+            <a class="button" href="docs/e73_geometry_only_real_cache_open_audit_2026-07-19.json">真实 cache open audit JSON</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fe73_joint_geometry_tail_certificate_protocol_2026-07-19.md">证书协议与样本量表</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fe73_joint_geometry_tail_certificate_independent_audit_2026-07-19.md">独立攻击复审</a>
+            <a class="button" href="demo_t16_operator/joint_geometry_tail_certificate.py">证书核心源码</a>
+            <a class="button" href="demo_t16_operator/e73_joint_geometry_tail_runner.py">私有工件 runner</a>
+            <a class="button" href="demo_t16_operator/configs/e73_joint_geometry_tail_certificate_draft_v1.json">机器合同 JSON</a>
+            <a class="button" href="demo_t16_operator/configs/e73_phase0_schema_pilot_v1.json">16-unit Phase-0 合同</a>
+            <a class="button" href="demo_t16_operator/test_e73_joint_geometry_tail_runner.py">runner 攻击测试</a>
+            <a class="button" href="site_tools/e73_geometry_only_cache.py">geometry-only adapter</a>
+            <a class="button" href="site_tools/audit_e73_geometry_only_cache.py">host open audit</a>
+            <a class="button" href="site_tools/e73_phase0_features.py">29 维 producer</a>
+            <a class="button" href="site_tools/verify_e73_phase0_feature_artifact.py">独立 feature witness</a>
+            <a class="button" href="site_tools/e73_phase0_data_runner.py">data-foundation runner</a>
+            <a class="button" href="site_tools/e73_phase0_metric_scorer.py">fixture metric scorer</a>
+            <a class="button" href="site_tools/test_e73_phase0_data_runner.py">故障注入测试</a>
+            <a class="button" href="site_tools/test_e73_phase0_metric_scorer.py">scorer 攻击测试</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=129-模型自己算预测了但不可信-feature-仍然不能接管">讲人话日志 129</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=130-回退也不能由配置随便起名第二次安全复审又拦下一次假安全">安全复审日志 130</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=131-这次真的没有偷看-observation先把-feature-的物理含义钉准">数据边界日志 131</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=132-文件名没看到-observation还不够把审计从门口走到算子里面">独立复审日志 132</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=133-同一条-cgls-里长出-feature回退文件也必须真的是保存的-k4">数据链日志 133</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=134-校验和能一起重算所以还要把数组历史和运行身份互相钉住">身份与语义门日志 134</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=135-发布包还没上线隐私扫描先找到了-8-处-cache-指纹">发布隐私日志 135</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=136-断电恢复和发布安全也要-fail-closed但这仍然不是算法突破">崩溃恢复与突破门 136</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=137-半搬迁不能算隔离完成发布包也不能沿一条后来被换掉的路径写">隔离事务与发布竞态 137</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=138-半文件不能当记录整树扫描也不能当发布封印">两阶段发布与整树封印 138</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=139-先把怎样算输赢写成代码再谈让模型上场">scorer 讲人话日志 139</a>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>论文路线不是“conformal 包一下就结束”</h3>
+          <ol>
+            <li><strong>数据基础层 fixture 已通过：</strong>一条 CGLS 保存八个 checkpoint，内部构造 29 维 feature，精确调用序列与失败注入均通过；这不是 private/real 执行。</li>
+            <li><strong>文件级 fallback 门已实现：</strong>调用方不能提交 fallback bytes；finalizer 从密封 <code>k4</code> 单源写盘，重开全成员并拒绝覆盖。</li>
+            <li><strong>fixture scorer 已通过：</strong>7 次 forward、9 个 view slot、24 个 metric、6 组 <code>candidate-k4</code> harm 和 owner-only 互斥发布均有回归。</li>
+            <li><strong>仍关着三道启动门：</strong>private scorer/finalizer 同进程集成、post-commit 不计分 preflight、显式人工启动授权。</li>
+            <li><strong>再做 16³ schema pilot：</strong>八个代码真实支持 family 各两个 seed，只测接口、成本、泄漏和强制回退。</li>
+            <li><strong>通过后做 64-unit development：</strong>ridge、constant、浅树 predictor 同门比较，family-aware 留出。</li>
+            <li><strong>补强经典重建：</strong>H1/Tikhonov、TV/Huber、discrepancy 与忠实 Pyramid BOST。</li>
+            <li><strong>拿真实独立单位：</strong>至少 19 个 calibration units 才有 95% 有限阈值，另需 fit 与 prospective audit。</li>
+            <li><strong>最后接神经 correction：</strong>NeRIF/FNO/MgNO 只学经典场上的受限增量，仍需同一 joint certificate。</li>
+          </ol>
+          <div class="alert critical"><strong>当前论文门仍关闭</strong><span>Phase-0 尚未启动，predictor 训练、calibration 与新 flow 分数仍为 0。<code>max + conformal + fallback</code> 本身不足以证明创新；必须在多个独立真实 flow/session 上得到非平凡接管率、保护每个 view-tail，并公平胜过 H1/TV/Pyramid BOST。没有 field truth 时只能声称 image-space consistency，不能声称真实三维精度。</span></div>
+          <h3 style="margin-top:16px;">最相关一级来源</h3>
+          <ol>
+            <li><a href="https://pubs.aip.org/aip/pof/article/37/1/017143/3331552/Neural-refractive-index-field-Unlocking-the">NeRIF</a>：师兄的连续神经场 BOST 主线。</li>
+            <li><a href="https://link.springer.com/article/10.1007/s00348-025-04153-3">Pyramid BOST</a>：必须忠实复现的多尺度强基线。</li>
+            <li><a href="https://link.springer.com/article/10.1007/s00211-025-01469-4">CG early stopping</a>：区分 prediction 与 reconstruction risk。</li>
+            <li><a href="https://research.google/pubs/conformal-risk-control/">Conformal Risk Control</a> 与 <a href="https://arxiv.org/abs/2110.01052">Learn then Test</a>：相邻风险校准框架，不是当前核心可直接继承的定理。</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+    <section id="support-loro-result" style="margin-top:20px; scroll-margin-top:18px;">
+      <div class="chips"><span class="chip blue">E71 · FORMAL LORO COMPLETE</span><span class="chip coral">FIXED k=4 SCREEN FAIL</span><span class="chip blue">48 CGLS CHECKPOINT FIELDS</span><span class="chip gold">6 / 6 SEMI-CONVERGENCE</span><span class="chip coral">NO FIELD TRUTH</span></div>
+      <h2 style="margin-top:10px;">更细网格没有形成跨角度安全增益，但六条轨迹共同暴露了真正值得做的 early-stopping 问题</h2>
+      <p>三折分别整组留出 rotation 0°、50°、90°，16³ 与 32³ 都从零场跑同一组 <code>k=0,1,2,3,4,6,8,12</code>。固定 <code>k=4</code> 的 equal-rotation mean camera-macro improvement <code>16³ - 32³</code> 为 <strong>-0.008178</strong>，且 pooled、逐 camera、worst-camera、group p95 与逐 camera p95 的全折 no-harm 门均未通过。更稳定的新信号是：六个 fold-grid 单元从 <code>k=4</code> 到 <code>k=12</code> 都让训练误差下降、留出至少一项关键指标上升。</p>
+      <div class="real-metric-grid metric-grid">
+        <div class="metric failed-state"><b>-0.008178</b><span>固定 k=4 的三折等权 camera-macro 改善量 <code>16³ - 32³</code>；预设门为 +0.01</span></div>
+        <div class="metric failed-state"><b>0 / 6</b><span>固定 k=4 安全门通过数；不是每折、每 camera、每个 tail 都 no-harm</span></div>
+        <div class="metric"><b>6 / 6</b><span>半收敛 screen：训练继续改善，同时 held-out pooled/macro/worst/p95 至少一项恶化</span></div>
+        <div class="metric"><b>2,884.9 s</b><span>Mac 正式墙钟；最大 RSS 9.22 GB，全部数值、隔离、调用与成本门通过</span></div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <h3>三折 k=4 判决</h3>
+          <div class="result-table-wrap">
+            <table class="result-table">
+              <thead><tr><th>held-out rotation</th><th>pooled 32-16</th><th>macro 16-32</th><th>p95 32/16</th><th>最窄结论</th></tr></thead>
+              <tbody>
+                <tr><td>0°</td><td>+0.004861</td><td>-0.003613</td><td>1.011288</td><td>pooled/macro 冲突，camera 门失败</td></tr>
+                <tr><td>50°</td><td>+0.012289</td><td>-0.017657</td><td>1.016034</td><td>macro、worst、p95 均退化</td></tr>
+                <tr><td>90°</td><td>-0.005293</td><td>-0.003264</td><td>1.002664</td><td>pooled 改善仍未保护 camera 2/tail</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3 style="margin-top:16px;">E72 已回答：nested stopping 在两个网格都是 NO-GO</h3>
+          <ol>
+            <li>6 条单 rotation fit 和 48 个 checkpoint 已完成，inner/outer 隔离与调用帐本通过。</li>
+            <li>密封选择为 <code>[4,4,3,2,4,4]</code>；只有 outer 50° 的两个网格选早。</li>
+            <li>16³ 虽有微弱 mean macro 改善，但 group p95 和 view 5 L2/p95 受损；32³ 的 mean 和 tail 同时受损。</li>
+            <li>因此 E72 只作为 camera-tail 几何外推的反例，不作为算法主贡献。</li>
+            <li>下一步必须使用新 flow 与 H1/TV/pyramid 强基线，再测 geometry-conditioned tail certificate 和可拒答 correction。</li>
+          </ol>
+          <div class="alert critical"><strong>当前不能声称</strong><span>没有 field truth，三个 rotation blocks 仍是同一个物理流场而非独立重复；不能说 16³ 的三维场更准、32³ 普遍过拟合、orthogonal complement 普遍有害，或 nested stopping 已经成功。没有神经算子训练、跨流态泛化或论文优越性结论。</span></div>
+          <div class="actions" style="margin-top:13px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fpsu_support_rotation_loro_result_2026-07-19.md">读完整结果与 E72 路线</a>
+            <a class="button" href="#nested-stopping-result">看 E72 正式判决</a>
+            <a class="button" href="demo_t16_operator/results/psu_support_rotation_loro_public_v1/summary.json">机器 summary</a>
+            <a class="button" href="site_tools/validate_psu_support_rotation_loro_public.py">独立 validator</a>
+            <a class="button" href="assets/figures/psu_support_rotation_loro_result.svg">可缩放论文图</a>
+            <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=126-三折考试跑完了更细没有稳稳赢但我终于看见了真正的问题">讲人话日志 126</a>
+          </div>
+        </div>
+        <figure>
+          <img src="assets/figures/psu_support_rotation_loro_result.png" width="2904" height="1936" loading="eager" decoding="async" alt="support rotation LORO 四联图，展示 16 立方与 32 立方留出轨迹、九个相机的固定 k=4 分辨率差，以及六个单元训练改善而留出恶化的半收敛" />
+          <figcaption>上排：16³/32³ 的三条 held-out camera-macro 轨迹；左下：固定 k=4 的九个 camera 改善量，红色表示 32³ 更差；右下：六个单元从 k=4 到 k=12 的训练/留出反转。它是同一物理场的 observable-transfer 诊断，不是三维真值误差或统计置信区间。</figcaption>
         </figure>
       </div>
     </section>
@@ -2448,6 +4119,7 @@ PYTHONPATH=. .venv/bin/python site_tools/validate_psu_s16_analytic_renderer_smok
           <p><strong>我们还没拿到 OERF 最小真实 case，也尚未运行 N2 真实重建算法。</strong>下面的 N1 只是独立 synthetic mechanism surrogate，不改变七门合同。第一步仍是向实验室确认七类必要信息；七项齐全后才允许预注册并使用非 audit 组内数据。技术上，这套清单已经落成 JSON schema、空白 intake、语义验证器和脱敏检查结果，真实数据状态仍为 <code>N2_WAITING_FOR_LAB_INPUT</code>。</p>
         </div>
         <div class="actions">
+          <a class="button primary" href="advisor_interface_intake.html">打开师兄回复工作台</a>
           <a class="button primary" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=100-n2-第一步-把-等师兄给数据-改成七个机器可检查的门">先看本科生解释：第100节</a>
           <a class="button" href="#n2-psu-rehearsal">PSU 接口演习</a>
           <a class="button" href="document_reader.html?doc=docs%2Fpsu_n2_public_rehearsal_2026-07-18.md">读完整演习报告</a>
@@ -3878,7 +5550,10 @@ VD0-B 也已完成。我从 MATLAB find 索引恢复真实 detector row/column�
   </main>
 
   <footer>
-    <p>版本 2026.07.19-E70-SUPPORT-LORO-PREFLIGHT。最新真实增量只闭合 support LORO 的输入身份与双网格 cache：官方源程序顺序和九个连续 bundle block 共同绑定 camera 2/3/4 × rotation 0/50/90，16³/32³ 私有 cache 的共同物理 ray 数组哈希一致且全部声明哈希已验证。当前没有 LORO 分数、field truth、统计泛化、算法优越性或论文性能主张。E69 仍保持机制未分离；L2-D0 仍作为真实 callable 接线的历史机制证据保留，公开 registry 仍无生产 trust anchor。研究结论以仓库 report、JSON 和 checksum 为准；页面只做可读映射。受限论文、VPN 内容、组内数据、逐射线索引、私有 cache、授权 token、私钥、checkpoint 与原始重建体不进入 GitHub Pages。</p>
+    <p><strong>版本 2026.07.21-R2D1-EDGE-BUDGET-NO-GO。</strong>R2-D0 首次 42 行预跑因冻结 H1 分母漂移与归因/伴随/front/held-out 门缺失被明确作废；另行披露并冻结的 R2-D1 才比较 6 个已见 PSU synthetic case、3 种 H1/edge 预算与 4 个 rho，共 78 条独立 <code>20F/20Aᵀ</code> 路径。最佳可选行相对 matched 纯数据控制有 <code>+0.0676% field / +0.3959% gradient</code>，但相对 H1-20 仍为 <code>-0.4335% / -0.1233%</code>，residual ratio 为 <code>1.0378</code>，故关闭“替换 H1 末步”架构。独立 validator 复算 561 项并保持 NO-GO，但 runner 漏绑一个 helper，只能写 <code>PASS_WITH_POST_RUN_DEPENDENCY_CLOSURE</code>，不能写 contemporaneous manifest 完整。这里仍是 inverse-crime 型弱重建机制诊断，不是真实 BOST、fresh 泛化、新算法、论文成功或突破；下一候选保留完整 H1-20，只在已付费 Krylov 子空间中做零额外物理调用的固定重优化。</p>
+    <p><strong>版本 2026.07.21-R2B0D-CERTIFIED-VOXEL-MAJORIZER。</strong>公开 PSU QMC8 <code>32³</code> 的 10 个确定性缺失视角模式上，逐体素严格证书 <code>q=Cᵀ(C1)</code> 的 <code>max(q)</code> 相对冻结 power-40 estimate 为 4.570–6.841×，比上轮 composed 证书再收紧 1.112–1.698×；建立证书为 0F/0Aᵀ，独立 validator 重算 333 项并返回 <code>VALID</code>。同时，support 内仅 54.2%–68.6% 的体素具有正 q，这只证明当前 256 rays/view、QMC8、straight-ray 离散合同的数据耦合稀疏，不是真实流场或组内几何结论。本轮是可验证数值基础设施进展，不是算法、重建、真实 BOST、泛化或论文突破；下一门是证明 TV/Huber 的 <code>q_G</code> 及 <code>q_total</code> 组合 metric，然后才能做同预算重建对照。</p>
+    <p><strong>版本 2026.07.20-R2A-H1-VALID-SYNTHETIC-LOCKBOX。</strong>R2-A 首次打开 336 cases、84 clusters、672 条同预算 solver paths 和 3,360 条 checkpoint rows；经典 H1 在 IID 上的 mean field/gradient gain 为 3.641%/7.871%，family-OOD 为 4.079%/8.114%，joint-OOD 为 3.763%/7.819%，四分区最差 case 双终点均为正。独立 validator 重算 43,932 项并返回 <code>VALID</code>。这是重要证据里程碑，不是新算法；H1 现在是 TV/Huber、hybrid 和有界学习控制器必须在同预算、尾部和 active/held-out 门下击败的强基线。实验仍是公开 PSU 几何+解析反应形态 synthetic lockbox；新算法、DeepONet/FNO/NeRIF/TDBOST 优越性、真实 BOST、未见实验 rig、论文成功和突破均为 0。受限论文、VPN 内容、组内数据、原始测量、私有 cache、token、私钥和重建体不进入可发布包。</p>
+    <p>版本 2026.07.20-GCT-KMIX-UPPER-BOUND。最新 synthetic 路线判决是：零初值 GCT-KMix 的 unconstrained 全局 oracle 在 development/OOD 的 mean field-gain 乐观上界为 2.3334%/1.9649%，均低于冻结 5%，所以 field-headroom NO-GO、learner 不获授权；两个 tail-safe attempt 仍保持 solver/contract fail-closed，突破监测仍为“尚无算法突破”。最新真实重建判决仍是 E72 嵌套停止 NO-GO；E73 已有的真实数据卫生证据仍是：私下绑定可信 manifest 后，真实 10,628,822-ray cache 的 constructor、329 个 chunks、forward 与 adjoint 审计中 observation open count 为 0，五类 geometry 各只打开一次并沿同一 <code>O_NOFOLLOW</code> FD 校验和 mmap。fixture-only 24-metric scorer 先绑定同一 operator 实例、真值、观测、全部 checkpoint 和冻结分母，并在首次评分 forward 前完成所有结构检查；从同一条 <code>y=A(x_proxy)</code> + CGLS 轨迹取出 <code>k1/k2/k3/k4/k6/k8/k12</code>，精确增加 7 次 forward，保留 9 个 view slot，生成 24 个有限 metric 和六组 <code>candidate-k4</code> harm，并只能互斥发布到 owner-only fixture 目录。真实 private unit、private metric/harm integration、16-unit score、预测器训练、新 flow、真实独立 calibration、field truth、算法优越性和论文性能主张全部仍为 0。研究结论以仓库 protocol、config、tests、report 与 checksum 为准；页面只做可读映射。受限论文、VPN 内容、组内数据、逐射线索引、私有 cache、授权 token、私钥、checkpoint 与原始重建体不进入可发布包。</p>
   </footer>
   <script>
     (() => {

@@ -1,0 +1,505 @@
+{
+  "schema_version": "oerf-temporal-qcal-tangent-lab-1.1",
+  "experiment_seed_namespace": "oerf-temporal-qcal-tangent-lab-1.0",
+  "evidence_class": "POSTOPEN_SYNTHETIC_TEMPORAL_TANGENT_DIAGNOSTIC_ONLY",
+  "status": "POSTOPEN_TEMPORAL_TANGENT_NO_GO",
+  "provenance": {
+    "source_sha256": "d57b3ea537172da5fc8d4600e2f27fb3ebed1b898fbfdd8d0933dc83b4dd2db1",
+    "configuration_sha256": "ab3a4cd1020da0f29e33cc90b7e9cf7fa911af0fe9c58d8c98dc1d30c6b288e0",
+    "protocol_sha256": "a0e4063279a8c00252184cbda77c91efa1080f0c585c2f160e075a2ffbf85b8b",
+    "antecedent_v1_preserved": "learning_labs/results/temporal_qcal_tangent_v1",
+    "v2_classification": "POSTOPEN_CORRECTIVE_DIAGNOSTIC_AFTER_V1"
+  },
+  "configuration": {
+    "seed": 20260721,
+    "grid_shape": [
+      8,
+      8,
+      8
+    ],
+    "detector_shape": [
+      4,
+      4
+    ],
+    "detector_half_width": 0.62,
+    "samples_per_ray": 16,
+    "base_seeds": [
+      709,
+      811,
+      907
+    ],
+    "phantom_families": [
+      "smooth_plume",
+      "wrinkled_density_interface",
+      "shock_expansion_pair"
+    ],
+    "frame_count": 6,
+    "fit_session_count": 4,
+    "pca_ranks": [
+      4,
+      8,
+      16
+    ],
+    "structural_rank": 2,
+    "q_trial_count": 3,
+    "q_norm": 0.04,
+    "observation_noise_fraction": 0.002,
+    "noise_multipliers": [
+      0.0,
+      0.0078125,
+      0.015625,
+      0.03125,
+      0.0625,
+      0.125,
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0
+    ],
+    "reconstruction_ridge_alpha": 0.002,
+    "nuisance_ridge_alpha": 1e-08,
+    "transport_displacement_per_frame": [
+      0.16,
+      0.08,
+      -0.05
+    ],
+    "velocity_mismatch_scale": 1.1,
+    "birth_strength": 0.12,
+    "fd_steps": [
+      0.1,
+      0.05,
+      0.025,
+      0.0125,
+      0.00625,
+      0.003125,
+      0.0015625,
+      0.00078125,
+      0.000390625
+    ],
+    "fd_relative_tolerance": 0.005,
+    "profile_rcond": 1e-09,
+    "dense_chunk_size": 32,
+    "residual_sigma_gate": 2.0,
+    "confidence_level": 0.95,
+    "nis_two_sided_alpha": 0.01,
+    "confidence_radius_fraction_of_qref": 0.25,
+    "local_parameter_radius": 0.1
+  },
+  "pose_modes": [
+    {
+      "name": "yaw",
+      "pose_field": "azimuth_degrees",
+      "camera_pattern": [
+        1.0,
+        -0.8,
+        0.6,
+        -1.0,
+        0.7,
+        -0.5
+      ],
+      "physical_unit": "degree",
+      "rms_per_dimensionless_unit": 0.7895146188218007
+    },
+    {
+      "name": "pitch",
+      "pose_field": "elevation_degrees",
+      "camera_pattern": [
+        0.45,
+        -0.55,
+        -0.7,
+        0.6,
+        -0.35,
+        0.75
+      ],
+      "physical_unit": "degree",
+      "rms_per_dimensionless_unit": 0.5830951894845301
+    },
+    {
+      "name": "roll",
+      "pose_field": "roll_degrees",
+      "camera_pattern": [
+        0.35,
+        -0.5,
+        0.65,
+        -0.25,
+        0.55,
+        -0.75
+      ],
+      "physical_unit": "degree",
+      "rms_per_dimensionless_unit": 0.5358015801892837
+    },
+    {
+      "name": "shift_u",
+      "pose_field": "shift_u",
+      "camera_pattern": [
+        0.008,
+        -0.006,
+        0.004,
+        -0.008,
+        0.006,
+        -0.004
+      ],
+      "physical_unit": "domain_unit",
+      "rms_per_dimensionless_unit": 0.00621825270205921
+    },
+    {
+      "name": "shift_v",
+      "pose_field": "shift_v",
+      "camera_pattern": [
+        -0.005,
+        0.007,
+        -0.006,
+        0.004,
+        -0.007,
+        0.005
+      ],
+      "physical_unit": "domain_unit",
+      "rms_per_dimensionless_unit": 0.005773502691896258
+    }
+  ],
+  "experiment_contract": {
+    "forward_family": "same voxel operator for nominal, perturbed, nuisance, and evaluator paths",
+    "fit_audit_separation": "PCA bases use independent fit-session seeds; q scenes use disjoint base seeds",
+    "temporal_interpretation": "zero-boundary trilinear translation plus optional shared birth proxy",
+    "geometry_estimator": "local variable projection at reported geometry",
+    "teacher_geometry_used_for_decisions": false,
+    "real_oerf_data_used": false,
+    "restricted_or_vpn_material_used": false
+  },
+  "gates": {
+    "numerical": {
+      "passed": true,
+      "maximum_fd_relative_change": 0.004607751501380867,
+      "maximum_projector_orthogonality_defect": 3.752999573600916e-15,
+      "maximum_nuisance_residual_orthogonality_defect": 2.484350938745495e-15,
+      "maximum_profile_symmetry_defect": 0.0,
+      "minimum_profile_eigenvalue_relative_to_raw": 1.3390529509445919e-31
+    },
+    "structural_controls": {
+      "passed": true,
+      "zero_control_count": 15,
+      "known_target_count": 3
+    },
+    "exact_transport_conditional_signal": {
+      "passed": false,
+      "q_relative_l2": {
+        "minimum": 3.4708243426344016,
+        "median": 9.407650490000087,
+        "maximum": 18.131798768177227
+      },
+      "corrected_dof_normalized_rms": {
+        "minimum": 0.966815781405359,
+        "median": 1.002488611973179,
+        "maximum": 1.0315624839248783
+      },
+      "uncertainty_authorized_count": 0
+    },
+    "mismatch_fail_closed": {
+      "passed": true,
+      "trial_count": 27,
+      "false_accept_count": 0,
+      "authorized_mismatch_count": 0
+    },
+    "shared_birth_research_signal": {
+      "passed": false,
+      "meaning": "model-class follow-up signal only; not an algorithm or reacting-flow result"
+    }
+  },
+  "fit_basis_diagnostics": [
+    {
+      "base_seed": 709,
+      "family": "smooth_plume",
+      "fit_true_matrix_rank": 16,
+      "fit_pilot_matrix_rank": 24,
+      "fit_pilot_relative_l2": 0.4463334346647129
+    },
+    {
+      "base_seed": 811,
+      "family": "wrinkled_density_interface",
+      "fit_true_matrix_rank": 16,
+      "fit_pilot_matrix_rank": 24,
+      "fit_pilot_relative_l2": 0.5668323860269239
+    },
+    {
+      "base_seed": 907,
+      "family": "shock_expansion_pair",
+      "fit_true_matrix_rank": 16,
+      "fit_pilot_matrix_rank": 24,
+      "fit_pilot_relative_l2": 0.5714927021150694
+    }
+  ],
+  "exact_transport_snr_map": [
+    {
+      "noise_multiplier": 0.0,
+      "q_relative_l2": {
+        "minimum": 0.0034382420858298885,
+        "median": 0.021526567486268505,
+        "maximum": 0.054873806752415356
+      },
+      "teacher_q_relative_l2": {
+        "minimum": 0.00030869851899112416,
+        "median": 0.0014464803393402729,
+        "maximum": 0.013833256333406084
+      },
+      "teacher_crlb_relative_rms": {
+        "minimum": 0.0,
+        "median": 0.0,
+        "maximum": 0.0
+      },
+      "authorized_count": 0,
+      "false_accept_count": 0
+    },
+    {
+      "noise_multiplier": 0.0078125,
+      "q_relative_l2": {
+        "minimum": 0.04732635301890654,
+        "median": 0.08954407929332167,
+        "maximum": 0.18236688603895224
+      },
+      "teacher_q_relative_l2": {
+        "minimum": 0.03789926232575284,
+        "median": 0.08467757345659092,
+        "maximum": 0.17265141390656846
+      },
+      "teacher_crlb_relative_rms": {
+        "minimum": 0.07201286511255281,
+        "median": 0.08631374766399438,
+        "maximum": 0.09798017155233918
+      },
+      "authorized_count": 7,
+      "false_accept_count": 0
+    },
+    {
+      "noise_multiplier": 0.015625,
+      "q_relative_l2": {
+        "minimum": 0.07858818871796586,
+        "median": 0.17418098064446005,
+        "maximum": 0.3416261685150634
+      },
+      "teacher_q_relative_l2": {
+        "minimum": 0.07413970789341384,
+        "median": 0.16701870248154457,
+        "maximum": 0.34428250001936095
+      },
+      "teacher_crlb_relative_rms": {
+        "minimum": 0.14402573022510562,
+        "median": 0.17262749532798877,
+        "maximum": 0.19596034310467836
+      },
+      "authorized_count": 0,
+      "false_accept_count": 0
+    },
+    {
+      "noise_multiplier": 0.03125,
+      "q_relative_l2": {
+        "minimum": 0.14093475692102167,
+        "median": 0.3541933848799818,
+        "maximum": 0.6824613119249036
+      },
+      "teacher_q_relative_l2": {
+        "minimum": 0.1469866540174681,
+        "median": 0.33170786019038545,
+        "maximum": 0.687546256382243
+      },
+      "teacher_crlb_relative_rms": {
+        "minimum": 0.28805146045021124,
+        "median": 0.34525499065597753,
+        "maximum": 0.3919206862093567
+      },
+      "authorized_count": 0,
+      "false_accept_count": 0
+    },
+    {
+      "noise_multiplier": 0.0625,
+      "q_relative_l2": {
+        "minimum": 0.2570908196604435,
+        "median": 0.6979072171864138,
+        "maximum": 1.3656702896473116
+      },
+      "teacher_q_relative_l2": {
+        "minimum": 0.2928696294993822,
+        "median": 0.6610897105981739,
+        "maximum": 1.374074565286334
+      },
+      "teacher_crlb_relative_rms": {
+        "minimum": 0.5761029209004225,
+        "median": 0.6905099813119551,
+        "maximum": 0.7838413724187134
+      },
+      "authorized_count": 0,
+      "false_accept_count": 0
+    },
+    {
+      "noise_multiplier": 0.125,
+      "q_relative_l2": {
+        "minimum": 0.45093686699311,
+        "median": 1.3708383862106726,
+        "maximum": 2.734147124409814
+      },
+      "teacher_q_relative_l2": {
+        "minimum": 0.5847314247099433,
+        "median": 1.3198552007230597,
+        "maximum": 2.7471315822188713
+      },
+      "teacher_crlb_relative_rms": {
+        "minimum": 1.152205841800845,
+        "median": 1.3810199626239101,
+        "maximum": 1.5676827448374269
+      },
+      "authorized_count": 0,
+      "false_accept_count": 0
+    },
+    {
+      "noise_multiplier": 0.25,
+      "q_relative_l2": {
+        "minimum": 0.7054493067456898,
+        "median": 2.7124495497019456,
+        "maximum": 5.447077382073429
+      },
+      "teacher_q_relative_l2": {
+        "minimum": 1.1685032334667027,
+        "median": 2.6373870811417035,
+        "maximum": 5.493245815901408
+      },
+      "teacher_crlb_relative_rms": {
+        "minimum": 2.30441168360169,
+        "median": 2.7620399252478203,
+        "maximum": 3.1353654896748537
+      },
+      "authorized_count": 0,
+      "false_accept_count": 0
+    },
+    {
+      "noise_multiplier": 0.5,
+      "q_relative_l2": {
+        "minimum": 1.2004942049853176,
+        "median": 5.0226448636055645,
+        "maximum": 10.537867003082512
+      },
+      "teacher_q_relative_l2": {
+        "minimum": 2.3360710303387924,
+        "median": 5.272451293455498,
+        "maximum": 10.985474383238005
+      },
+      "teacher_crlb_relative_rms": {
+        "minimum": 4.60882336720338,
+        "median": 5.5240798504956405,
+        "maximum": 6.2707309793497075
+      },
+      "authorized_count": 0,
+      "false_accept_count": 0
+    },
+    {
+      "noise_multiplier": 1.0,
+      "q_relative_l2": {
+        "minimum": 3.4708243426344016,
+        "median": 9.407650490000087,
+        "maximum": 18.131798768177227
+      },
+      "teacher_q_relative_l2": {
+        "minimum": 4.671218730819622,
+        "median": 10.542579944170175,
+        "maximum": 21.96993156792203
+      },
+      "teacher_crlb_relative_rms": {
+        "minimum": 9.21764673440676,
+        "median": 11.048159700991281,
+        "maximum": 12.541461958699415
+      },
+      "authorized_count": 0,
+      "false_accept_count": 0
+    },
+    {
+      "noise_multiplier": 2.0,
+      "q_relative_l2": {
+        "minimum": 9.868606421281171,
+        "median": 13.924922269395964,
+        "maximum": 28.278893788571953
+      },
+      "teacher_q_relative_l2": {
+        "minimum": 9.341520189355707,
+        "median": 21.082837358729833,
+        "maximum": 43.93884596228966
+      },
+      "teacher_crlb_relative_rms": {
+        "minimum": 18.43529346881352,
+        "median": 22.096319401982562,
+        "maximum": 25.08292391739883
+      },
+      "authorized_count": 0,
+      "false_accept_count": 0
+    },
+    {
+      "noise_multiplier": 4.0,
+      "q_relative_l2": {
+        "minimum": 13.38019333703664,
+        "median": 18.948534987452863,
+        "maximum": 38.793993265680584
+      },
+      "teacher_q_relative_l2": {
+        "minimum": 18.682126136258496,
+        "median": 42.163352244437164,
+        "maximum": 87.87667476353442
+      },
+      "teacher_crlb_relative_rms": {
+        "minimum": 36.87058693762704,
+        "median": 44.192638803965124,
+        "maximum": 50.16584783479766
+      },
+      "authorized_count": 0,
+      "false_accept_count": 0
+    },
+    {
+      "noise_multiplier": 8.0,
+      "q_relative_l2": {
+        "minimum": 14.56854907052346,
+        "median": 21.6534427572308,
+        "maximum": 38.207004014807445
+      },
+      "teacher_q_relative_l2": {
+        "minimum": 37.36333954523584,
+        "median": 84.32438204414669,
+        "maximum": 175.7523323722738
+      },
+      "teacher_crlb_relative_rms": {
+        "minimum": 73.74117387525408,
+        "median": 88.38527760793025,
+        "maximum": 100.33169566959532
+      },
+      "authorized_count": 0,
+      "false_accept_count": 0
+    }
+  ],
+  "counts": {
+    "rigs": 3,
+    "frames_per_scene": 6,
+    "model_rows": 42,
+    "q_trials": 621,
+    "structural_rows": 21,
+    "fd_rows": 15,
+    "dense_voxel_forward_calls": 4512
+  },
+  "claim_authorization": {
+    "conditional_synthetic_temporal_tangent_signal": false,
+    "new_algorithm": false,
+    "real_bost_calibration": false,
+    "real_3d_or_4d_reconstruction": false,
+    "operator_learning_success": false,
+    "cross_rig_generalization": false,
+    "paper_success": false,
+    "breakthrough": false
+  },
+  "required_next_gate": [
+    "He Yuanzhe confirms real callable, geometry JVP/VJP, and field representation",
+    "real timestamps, shared-geometry scope, transport mismatch, birth/extinction, and baselines are frozen",
+    "a fresh multi-rig estimator audit adds field, held-out-view, temporal, and cost endpoints"
+  ],
+  "environment": {
+    "python": "3.11.5",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": "lgwo-a24-r2e0-invalid-attempt-1.0",
+  "status": "INVALID_R2E0_V2_RUNTIME_REOPTIMIZER_TRANSFER_FAILURE_NO_RESULT",
+  "experiment_id": "lgwo_a24_r2e0_cached_krylov_diagnosis_v2",
+  "attempt_utc": "2026-07-20T20:20:16Z",
+  "source_git_head": "05b0063647d74a5d29cd2da9db5b8ac40d058489",
+  "config_relative_path": "demo_t16_operator/configs/lgwo_a24_r2e0_cached_krylov_diagnosis_v2.json",
+  "config_sha256": "PRIVATE_CACHE_MANIFEST_SHA256_REDACTED",
+  "geometry_input_bundle_sha256": "PRIVATE_CACHE_MANIFEST_SHA256_REDACTED",
+  "formal_run_exit_code": 1,
+  "output_file_count_before_this_manifest": 0,
+  "failure_stage": "first reused case, first fixed-Huber reduced reoptimization",
+  "exception_type": "TypeError",
+  "exception_message": "Cannot convert a MPS Tensor to float64 dtype as the MPS framework does not support float64",
+  "diagnosed_root_cause": "The v2 repair covered the reduced least-squares solve but not all CPU-float64 workspace entries in the Huber reoptimizer. A v3 repair must centralize every cross-device conversion and add an end-to-end MPS reoptimizer regression test.",
+  "result_valid": false,
+  "rerun_same_config_authorized": false,
+  "algorithm_evidence_produced": false,
+  "claim_boundary": {
+    "algorithm_success": false,
+    "reconstruction_success": false,
+    "generalization_success": false,
+    "paper_success": false,
+    "breakthrough": false
+  }
+}

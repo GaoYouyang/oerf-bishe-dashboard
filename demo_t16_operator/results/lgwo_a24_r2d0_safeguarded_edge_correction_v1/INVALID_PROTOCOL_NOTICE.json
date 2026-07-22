@@ -1,0 +1,26 @@
+{
+  "schema_version": "lgwo-a24-r2d0-invalid-protocol-notice-1.0",
+  "status": "INVALID_PROTOCOL_DRIFT_NO_SCIENTIFIC_DECISION",
+  "issued_date": "2026-07-21",
+  "source_git_head": "2a38c0c",
+  "report_sha256": "c93e24ed4aa62dc866b3f098c2eb6f89cccab17f1091b28eec2839d267e53cab",
+  "independent_validation_sha256": "28a57ca98570bed793c878fb14ebd8a6e1bc05c7ecb506067dd618bc27efbb79",
+  "config_sha256": "2c49bf9c117b87174c1e8da4359802de878e1e515ecbbddbc4ca35f0db6395e8",
+  "invalidating_findings": [
+    "The R2-D0 config used denominator_floor=1e-20 while the frozen H1 lockbox uses 1e-16, so h1_20 is not the exact declared frozen baseline contract.",
+    "The diagnostic gate did not require an edge candidate to beat the rho=0 pure-data correction, so edge-specific attribution was not identifiable.",
+    "The diagnostic gate recorded but did not reject excessive adjoint-identity defect.",
+    "The diagnostic gate omitted front-F1 and held-out-clean safeguards required by the H1 comparison contract."
+  ],
+  "allowed_use": "debugging and amendment provenance only",
+  "forbidden_interpretations": [
+    "valid R2-D0 no-go",
+    "algorithm success",
+    "algorithm failure",
+    "fresh validation",
+    "real BOST reconstruction",
+    "generalization",
+    "paper evidence"
+  ],
+  "next_action": "Freeze a separately versioned R2-D1 contract before rerunning any trajectory; do not edit this v1 config or overwrite its artifacts."
+}

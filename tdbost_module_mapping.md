@@ -15,7 +15,7 @@
 | 正式全文 | ACM 标注 OA / CC BY 4.0；HTML 与 19 页 eReader 已核可读。raw PDF 未本地缓存；正式方法/结果摘要集中在 `tdbost_reproducibility_audit.html` |
 | 公开代码入口 | `https://github.com/Hyz617/TDBOST` |
 | 仓库许可 | 临时 clone 未见 `LICENSE` 文件；README 里的 “open-source” 不能当作可复制许可 |
-| 2026-07-10 运行健康 | main tree `3393ca7`，59 blobs / 2,287,454 bytes；`cuda:3`、Linux x86-64 projection `.so`、`/home/hyz/...` import-time 路径和冲突 requirements 阻止直接跨机运行；fuel test 18 路径全部重叠 train |
+| 2026-07-10 运行健康 | main tree `3393ca7`，59 blobs / 2,287,454 bytes；`cuda:3`、Linux x86-64 projection `.so`、`/home/PUBLIC_USER_REDACTED/...` import-time 路径和冲突 requirements 阻止直接跨机运行；fuel test 18 路径全部重叠 train |
 | 正文/代码版本疑点 | 正文 40/40/40 vs 默认 R=30/F=20；Appendix 3x128 decoder vs config width 200；正文 held-out test view vs fuel path overlap。须由何远哲解释，不自行拼成一个配置 |
 | 数据边界 | 仓库有小样例数据与 `sample_deflection.png`，但 README 仍说明 spray case 原始数据需从 Google Drive 下载 |
 | 本科策略 | 只读结构、配置、数据接口和指标设计；自己写最小 M3B/M3C toy，不复刻完整 TOG / TDBOST |

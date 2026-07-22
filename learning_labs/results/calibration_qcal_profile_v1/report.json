@@ -1,0 +1,379 @@
+{
+  "schema_version": "oerf-calibration-qcal-profile-lab-1.0",
+  "status": "POSTOPEN_QCAL_PROFILE_DATA_ONLY_NO_GO",
+  "evidence_class": "POSTOPEN_SYNTHETIC_QCAL_PROFILE_DIAGNOSTIC_ONLY",
+  "purpose": "separate_raw_geometry_sensitivity_from_data_only_and_prior_conditioned_profile_information",
+  "timeline": {
+    "designed_after_calibration_v2_and_reliability_v1_were_opened": true,
+    "six_rigs_are_development_not_fresh": true,
+    "result_is_mechanism_diagnostic_only": true
+  },
+  "config": {
+    "seed": 20260721,
+    "grid_shape": [
+      10,
+      10,
+      10
+    ],
+    "detector_shape": [
+      5,
+      5
+    ],
+    "detector_half_width": 0.62,
+    "samples_per_ray": 20,
+    "base_seeds": [
+      101,
+      211,
+      307,
+      401,
+      503,
+      607
+    ],
+    "phantom_families": [
+      "smooth_plume",
+      "wrinkled_density_interface",
+      "shock_expansion_pair"
+    ],
+    "observation_noise_fraction": 0.012,
+    "reference_ridge_alpha": 0.002,
+    "ridge_alpha_sweep": [
+      1e-06,
+      0.0001,
+      0.002,
+      0.01,
+      1.0
+    ],
+    "camera_subset_size": 3,
+    "fd_steps": [
+      0.1,
+      0.05,
+      0.025,
+      0.0125,
+      0.00625,
+      0.003125,
+      0.0015625,
+      0.00078125,
+      0.000390625
+    ],
+    "fd_relative_tolerance": 0.005,
+    "profile_rcond": 1e-10,
+    "dense_chunk_size": 25
+  },
+  "pose_modes": [
+    {
+      "name": "yaw",
+      "pose_field": "azimuth_degrees",
+      "camera_pattern": [
+        1.0,
+        -0.8,
+        0.6,
+        -1.0,
+        0.7,
+        -0.5
+      ],
+      "physical_unit": "degree",
+      "rms_per_dimensionless_unit": 0.7895146188218007
+    },
+    {
+      "name": "pitch",
+      "pose_field": "elevation_degrees",
+      "camera_pattern": [
+        0.45,
+        -0.55,
+        -0.7,
+        0.6,
+        -0.35,
+        0.75
+      ],
+      "physical_unit": "degree",
+      "rms_per_dimensionless_unit": 0.5830951894845301
+    },
+    {
+      "name": "roll",
+      "pose_field": "roll_degrees",
+      "camera_pattern": [
+        0.35,
+        -0.5,
+        0.65,
+        -0.25,
+        0.55,
+        -0.75
+      ],
+      "physical_unit": "degree",
+      "rms_per_dimensionless_unit": 0.5358015801892837
+    },
+    {
+      "name": "shift_u",
+      "pose_field": "shift_u",
+      "camera_pattern": [
+        0.008,
+        -0.006,
+        0.004,
+        -0.008,
+        0.006,
+        -0.004
+      ],
+      "physical_unit": "domain_unit",
+      "rms_per_dimensionless_unit": 0.00621825270205921
+    },
+    {
+      "name": "shift_v",
+      "pose_field": "shift_v",
+      "camera_pattern": [
+        -0.005,
+        0.007,
+        -0.006,
+        0.004,
+        -0.007,
+        0.005
+      ],
+      "physical_unit": "domain_unit",
+      "rms_per_dimensionless_unit": 0.005773502691896258
+    }
+  ],
+  "design": {
+    "rig_count": 6,
+    "independent_field_frames_per_rig": 3,
+    "camera_count": 6,
+    "camera_subset_size": 3,
+    "camera_subset_count": 20,
+    "geometry_parameter_count": 5,
+    "field_operator_shape": [
+      300,
+      1000
+    ],
+    "field_nuisance_is_independent_across_frames": true,
+    "all_cameras_within_a_frame_are_profiled_jointly": true,
+    "field_teacher_uses_same_voxel_forward_family": true,
+    "continuous_renderer_used_only_for_noisy_pilot_observations": true,
+    "all_camera_pilot_used_before_future_subset_selection": true,
+    "candidate_subset_reconstructed_from_subset_only": false,
+    "valid_selection_interpretation": "all_camera_pilot_assisted_future_camera_subset_design"
+  },
+  "numerical_gate": {
+    "maximum_fd_relative_change": 0.004982022181220107,
+    "minimum_fd_cancellation_ratio": 268725772.8986767,
+    "maximum_dual_svd_relative_difference": 4.2122739212961556e-13,
+    "maximum_data_symmetry_relative_defect": 0.0,
+    "minimum_data_eigenvalue_relative_to_raw": 1.4936891239947352e-32,
+    "minimum_regularized_eigenvalue_relative_to_raw": 9.260197227647078e-08,
+    "minimum_raw_minus_profile_eigenvalue_relative_to_raw": 0.0008587204620927972,
+    "minimum_estimated_raw_rank": 5,
+    "minimum_estimated_regularized_profile_rank": 5,
+    "minimum_teacher_raw_rank": 5,
+    "minimum_teacher_regularized_profile_rank": 5,
+    "passed": true
+  },
+  "data_only_identifiability_gate": {
+    "maximum_estimated_trace_retention": 7.619535820340416e-30,
+    "maximum_teacher_trace_retention": 7.495769532847442e-30,
+    "minimum_estimated_trace_retention": 6.830561290849489e-30,
+    "minimum_teacher_trace_retention": 6.73541203923103e-30,
+    "maximum_estimated_rank": 0,
+    "maximum_teacher_rank": 0,
+    "minimum_estimated_rank": 0,
+    "minimum_teacher_rank": 0,
+    "maximum_estimated_max_eigenvalue_retention": 7.74395263876073e-30,
+    "maximum_teacher_max_eigenvalue_retention": 7.24130734432327e-30,
+    "minimum_estimated_max_eigenvalue_retention": 6.201500453099557e-30,
+    "minimum_teacher_max_eigenvalue_retention": 6.168353254026714e-30,
+    "trace_retention_threshold": 1e-10,
+    "required_full_rank": 5,
+    "any_identifiable_direction": false,
+    "fully_identifiable": false,
+    "passed": false
+  },
+  "reference_alpha_postopen_ranking_signal": {
+    "minimum_estimated_profile_spearman": 0.9097744360902256,
+    "median_estimated_profile_d_efficiency": 0.9896906506577912,
+    "minimum_estimated_profile_d_efficiency": 0.9224971260493701,
+    "thresholds": {
+      "minimum_spearman": 0.75,
+      "median_d_efficiency": 0.9,
+      "minimum_d_efficiency": 0.75
+    },
+    "passed": true
+  },
+  "alpha_sensitivity": {
+    "distinct_selected_subset_count_by_rig": {
+      "101": 2,
+      "211": 3,
+      "307": 2,
+      "401": 2,
+      "503": 2,
+      "607": 2
+    },
+    "regularized_trace_retention_by_alpha": {
+      "1e-06": {
+        "estimated": {
+          "mean": 6.736172265538877e-05,
+          "median": 5.707376220732463e-05,
+          "minimum": 3.615752980332332e-05,
+          "maximum": 0.0001454629310999139
+        },
+        "teacher": {
+          "mean": 7.383951436666177e-05,
+          "median": 5.469498643113204e-05,
+          "minimum": 4.345537595205364e-05,
+          "maximum": 0.00015098515786696526
+        }
+      },
+      "0.0001": {
+        "estimated": {
+          "mean": 0.006007927294359128,
+          "median": 0.005329852823545728,
+          "minimum": 0.003467541977634598,
+          "maximum": 0.012237653136295936
+        },
+        "teacher": {
+          "mean": 0.006493480968356637,
+          "median": 0.005151663075698828,
+          "minimum": 0.004118961078287083,
+          "maximum": 0.012454658283466065
+        }
+      },
+      "0.002": {
+        "estimated": {
+          "mean": 0.0606861890707723,
+          "median": 0.056837470481732155,
+          "minimum": 0.045828205716516225,
+          "maximum": 0.09436934496711386
+        },
+        "teacher": {
+          "mean": 0.0635787091662998,
+          "median": 0.06063003688909333,
+          "minimum": 0.048348932583822786,
+          "maximum": 0.09422842242281297
+        }
+      },
+      "0.01": {
+        "estimated": {
+          "mean": 0.14297068404777277,
+          "median": 0.1362397925766473,
+          "minimum": 0.12169157409149496,
+          "maximum": 0.18549335173566506
+        },
+        "teacher": {
+          "mean": 0.14597731341929407,
+          "median": 0.14623809380962233,
+          "minimum": 0.12460466608179499,
+          "maximum": 0.1824007517588379
+        }
+      },
+      "1.0": {
+        "estimated": {
+          "mean": 0.5494949855384047,
+          "median": 0.5444645850072023,
+          "minimum": 0.5322706730768094,
+          "maximum": 0.576192940321422
+        },
+        "teacher": {
+          "mean": 0.5333083669330055,
+          "median": 0.5326158699794203,
+          "minimum": 0.5226952805896056,
+          "maximum": 0.5412913768931135
+        }
+      }
+    }
+  },
+  "reference_alpha_metrics": {
+    "estimated_profile_spearman": {
+      "mean": 0.956390977443609,
+      "median": 0.9744360902255639,
+      "minimum": 0.9097744360902256,
+      "maximum": 0.9864661654135337
+    },
+    "estimated_raw_spearman": {
+      "mean": -0.20050125313283207,
+      "median": -0.18721804511278195,
+      "minimum": -0.2781954887218045,
+      "maximum": -0.13834586466165413
+    },
+    "teacher_raw_spearman": {
+      "mean": -0.12205513784461151,
+      "median": -0.12030075187969924,
+      "minimum": -0.3233082706766917,
+      "maximum": 0.09924812030075188
+    },
+    "estimated_profile_d_efficiency": {
+      "mean": 0.9744956707522615,
+      "median": 0.9896906506577912,
+      "minimum": 0.9224971260493701,
+      "maximum": 1.0
+    },
+    "estimated_raw_d_efficiency": {
+      "mean": 0.34086411510604364,
+      "median": 0.23496880563400907,
+      "minimum": 0.1653874004562302,
+      "maximum": 0.9206101823252398
+    },
+    "teacher_raw_d_efficiency": {
+      "mean": 0.8455240683943833,
+      "median": 0.966924311437195,
+      "minimum": 0.27081490874908554,
+      "maximum": 1.0
+    },
+    "azimuth_spread_d_efficiency": {
+      "mean": 0.09820740345739915,
+      "median": 0.09900552840175894,
+      "minimum": 0.08216873200598179,
+      "maximum": 0.1178696019213851
+    },
+    "estimated_vs_teacher_jacobian_relative_l2": {
+      "mean": 0.8180154521056756,
+      "median": 0.8052964415151347,
+      "minimum": 0.7817720368899089,
+      "maximum": 0.8721215409478905
+    }
+  },
+  "compute_accounting": {
+    "dense_operator_builds": 6,
+    "dense_operator_forward_calls": 240,
+    "estimated_geometry_forward_calls": 540,
+    "teacher_geometry_forward_calls": 540,
+    "analytic_clean_render_calls": 18,
+    "ridge_reconstructions": 18,
+    "camera_subset_evaluations": 600,
+    "neural_training_performed": false,
+    "gpu_used": false,
+    "wall_time_measured": false,
+    "peak_memory_measured": false
+  },
+  "claim_boundary": {
+    "fresh_evidence_claimed": false,
+    "real_bost_data_used": false,
+    "experimental_geometry_used": false,
+    "data_only_qcal_success_claimed": false,
+    "global_identifiability_claimed": false,
+    "automatic_calibration_success_claimed": false,
+    "same_frame_three_camera_deployment_claimed": false,
+    "strict_continuous_model_fisher_claimed": false,
+    "new_algorithm_success_claimed": false,
+    "cross_rig_generalization_claimed": false,
+    "neural_operator_trained": false,
+    "paper_success_claimed": false,
+    "breakthrough_claimed": false
+  },
+  "next_valid_gate": {
+    "advisor_geometry_jvp_vjp_contract_required": true,
+    "real_field_representation_and_prior_required": true,
+    "independent_calibration_or_sentinel_data_required": true,
+    "real_noise_covariance_required": true,
+    "sealed_rig_or_session_split_required": true,
+    "subset_only_reconstruction_required_for_same_frame_deployment": true
+  },
+  "artifact_counts": {
+    "rig_rows": 6,
+    "alpha_rows": 30,
+    "subset_rows": 600,
+    "fd_rows": 180
+  },
+  "reproducibility": {
+    "python_version": "3.11.5",
+    "numpy_version": "2.4.6",
+    "torch_version": "2.13.0",
+    "matplotlib_version": "3.11.0",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "source_file_sha256": "9a0894463623ae7331628f6ab02e4fee4ff9277ab9a630e95eff20c4e57c091b"
+  }
+}

@@ -1,0 +1,763 @@
+{
+  "schema_version": "oerf-calibration-mismatch-lab-1.0",
+  "audit_revision": "post-independent-audit-1",
+  "status": "MECHANISM_SCREEN_COMPLETE_NO_ALGORITHM_OR_REAL_DATA_CLAIM",
+  "evidence_class": "SYNTHETIC_3D_BOST_POSE_MISMATCH_MECHANISM_ONLY",
+  "purpose": "test_truth_free_loco_selection_of_one_known_pose_error_mode",
+  "config": {
+    "seed": 20260721,
+    "grid_shape": [
+      10,
+      10,
+      10
+    ],
+    "detector_shape": [
+      5,
+      5
+    ],
+    "detector_half_width": 0.62,
+    "samples_per_ray": 20,
+    "base_seeds": [
+      101,
+      211,
+      307,
+      401,
+      503,
+      607
+    ],
+    "phantom_families": [
+      "smooth_plume",
+      "wrinkled_density_interface",
+      "shock_expansion_pair"
+    ],
+    "mismatch_severities": [
+      0.0,
+      0.5,
+      1.0,
+      2.0
+    ],
+    "correction_candidates": [
+      -0.5,
+      0.0,
+      0.5,
+      1.0,
+      1.5,
+      2.0,
+      2.5
+    ],
+    "observation_noise_fraction": 0.012,
+    "ridge_relative_strength": 0.002,
+    "loco_lcb_multiplier": 2.015,
+    "dense_chunk_size": 100
+  },
+  "source_contracts": {
+    "analytic_phantom_schema": "analytic-bost-phantom-1.0",
+    "analytic_renderer_schema": "analytic-gradient-fixed-denominator-bost-1.0",
+    "voxel_inverse_operator_schema": "psu-b0-reconstruction-interface-1.0",
+    "inverse_crime_barrier": "continuous_analytic_gradient_measurements_vs_voxel_fd_trilinear_inverse"
+  },
+  "fair_comparison": {
+    "same_observation_for_all_methods": true,
+    "same_tikhonov_solver_for_all_methods": true,
+    "same_regularization_within_case": true,
+    "deployment_selection_records_contain_volume_truth": false,
+    "deployment_selection_records_contain_clean_observation": false,
+    "evaluator_metrics_are_attached_after_per_field_selection": true,
+    "multiframe_selector_receives_sanitized_deployment_records": true,
+    "loco_selection_reads_noisy_heldout_camera_measurements": true,
+    "loco_lcb_is_truth_free": true,
+    "loco_lcb_multiplier": 2.015,
+    "loco_lcb_multiplier_role": "one_sided_t5_style_heuristic_not_a_formal_coverage_claim",
+    "loco_lcb_camera_block_count": 6,
+    "loco_lcb_fallback": "reported_geometry_when_no_candidate_has_positive_paired_camera_improvement_lcb",
+    "multiframe_camera_block_lcb_pooling": "average_three_fields_within_each_camera_then_compute_heuristic_lcb_across_six_camera_blocks",
+    "multiframe_camera_block_lcb_statistical_unit": "camera_block_not_session_or_rig",
+    "multiframe_camera_block_lcb_requires_shared_calibration_across_fields": true,
+    "multiframe_fields_are_synthetic_morphology_proxies_not_independent_experiments": true,
+    "six_base_rigs_are_not_used_as_lcb_replicates": true,
+    "half_step_comparator": "fixed_0.5_multiplier_applied_after_naive_loco_selection",
+    "half_step_is_post_naive_damping_not_independent_selection": true,
+    "truth_selected_candidate_is_evaluator_only": true,
+    "truth_selected_candidate_is_finite_grid_oracle_not_theoretical_ceiling": true,
+    "exact_geometry_teacher_reads_true_geometry": true,
+    "favorable_prior_known_error_direction": true,
+    "favorable_prior_known_error_sign": true,
+    "unknown_quantity": "one_scalar_error_amplitude"
+  },
+  "compute_accounting": {
+    "dense_operator_build_count": 114,
+    "logical_forward_calls_for_dense_materialization": 1140,
+    "camera_fold_score_row_count": 3024,
+    "training_performed": false,
+    "gpu_used": false
+  },
+  "regimes": {
+    "0.0": {
+      "case_count": 18,
+      "methods": {
+        "reported_geometry": {
+          "field_relative_l2_mean": 0.6308531859111297,
+          "field_relative_l2_median": 0.6383866293011327,
+          "field_relative_l2_worst": 0.7845751678397818
+        },
+        "loco_selected_geometry": {
+          "field_relative_l2_mean": 0.6330701463325396,
+          "field_relative_l2_median": 0.6411213638348587,
+          "field_relative_l2_worst": 0.7845751678397818
+        },
+        "half_step_loco_geometry": {
+          "field_relative_l2_mean": 0.6315515408867173,
+          "field_relative_l2_median": 0.639781002299078,
+          "field_relative_l2_worst": 0.7845751678397818
+        },
+        "loco_lcb_safe_geometry": {
+          "field_relative_l2_mean": 0.6308531859111297,
+          "field_relative_l2_median": 0.6383866293011327,
+          "field_relative_l2_worst": 0.7845751678397818
+        },
+        "multiframe_camera_block_lcb_geometry": {
+          "field_relative_l2_mean": 0.6308531859111297,
+          "field_relative_l2_median": 0.6383866293011327,
+          "field_relative_l2_worst": 0.7845751678397818
+        },
+        "exact_geometry_teacher": {
+          "field_relative_l2_mean": 0.6308531859111297,
+          "field_relative_l2_median": 0.6383866293011327,
+          "field_relative_l2_worst": 0.7845751678397818
+        },
+        "truth_selected_candidate_ceiling": {
+          "field_relative_l2_mean": 0.6292393332660624,
+          "field_relative_l2_median": 0.6352830037696755,
+          "field_relative_l2_worst": 0.7798276581078607
+        }
+      },
+      "loco_vs_reported": {
+        "field_gain_percent_mean": -0.3500331749679711,
+        "field_gain_percent_median": 0.0,
+        "field_gain_percent_worst": -1.7086999444912867,
+        "case_improvement_fraction": 0.0,
+        "correction_absolute_error_mean": 0.1388888888888889,
+        "selected_corrections": [
+          0.0,
+          0.5,
+          0.5,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -0.5,
+          -0.5,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.5,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "loco_lcb_safe_vs_reported": {
+        "field_gain_percent_mean": 0.0,
+        "field_gain_percent_median": 0.0,
+        "field_gain_percent_worst": 0.0,
+        "case_improvement_fraction": 0.0,
+        "case_nonworse_fraction": 1.0,
+        "fallback_fraction": 1.0,
+        "correction_absolute_error_mean": 0.0,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half_step_loco_vs_reported": {
+        "field_gain_percent_mean": -0.11014017767182335,
+        "field_gain_percent_median": 0.0,
+        "field_gain_percent_worst": -0.5555090436220073,
+        "case_improvement_fraction": 0.0,
+        "case_nonworse_fraction": 0.7222222222222222,
+        "selected_corrections": [
+          0.0,
+          0.25,
+          0.25,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          -0.25,
+          -0.25,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.25,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "multiframe_camera_block_lcb_vs_reported": {
+        "field_gain_percent_mean": 0.0,
+        "field_gain_percent_median": 0.0,
+        "field_gain_percent_worst": 0.0,
+        "case_improvement_fraction": 0.0,
+        "case_nonworse_fraction": 1.0,
+        "fallback_fraction": 1.0,
+        "correction_absolute_error_mean": 0.0,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "geometry_mismatch": {
+        "operator_relative_frobenius_mismatch_mean": 0.0,
+        "detector_origin_rms_domain_units_mean": 0.0,
+        "ray_direction_angle_mean_degrees": 3.0999258961495085e-07,
+        "ray_direction_angle_max_degrees": 1.2074182697257333e-06
+      }
+    },
+    "0.5": {
+      "case_count": 18,
+      "methods": {
+        "reported_geometry": {
+          "field_relative_l2_mean": 0.6455486928874653,
+          "field_relative_l2_median": 0.64667837683805,
+          "field_relative_l2_worst": 0.7987777069362686
+        },
+        "loco_selected_geometry": {
+          "field_relative_l2_mean": 0.6330896997111636,
+          "field_relative_l2_median": 0.6411295246743225,
+          "field_relative_l2_worst": 0.7846067069871324
+        },
+        "half_step_loco_geometry": {
+          "field_relative_l2_mean": 0.6363119592351686,
+          "field_relative_l2_median": 0.6442532290127299,
+          "field_relative_l2_worst": 0.7904123545025628
+        },
+        "loco_lcb_safe_geometry": {
+          "field_relative_l2_mean": 0.6451628113389952,
+          "field_relative_l2_median": 0.64667837683805,
+          "field_relative_l2_worst": 0.7987777069362686
+        },
+        "multiframe_camera_block_lcb_geometry": {
+          "field_relative_l2_mean": 0.6455486928874653,
+          "field_relative_l2_median": 0.64667837683805,
+          "field_relative_l2_worst": 0.7987777069362686
+        },
+        "exact_geometry_teacher": {
+          "field_relative_l2_mean": 0.6308717235081489,
+          "field_relative_l2_median": 0.6383942987143436,
+          "field_relative_l2_worst": 0.7846067069871324
+        },
+        "truth_selected_candidate_ceiling": {
+          "field_relative_l2_mean": 0.6292579091480611,
+          "field_relative_l2_median": 0.6352970082755085,
+          "field_relative_l2_worst": 0.7798556654894467
+        }
+      },
+      "loco_vs_reported": {
+        "field_gain_percent_mean": 1.9278765713381765,
+        "field_gain_percent_median": 1.9637309921021242,
+        "field_gain_percent_worst": -0.7827283528837649,
+        "case_improvement_fraction": 0.7222222222222222,
+        "correction_absolute_error_mean": 0.1388888888888889,
+        "selected_corrections": [
+          0.5,
+          1.0,
+          1.0,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.0,
+          0.0,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          1.0,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "loco_lcb_safe_vs_reported": {
+        "field_gain_percent_mean": 0.06066203998420382,
+        "field_gain_percent_median": 0.0,
+        "field_gain_percent_worst": 0.0,
+        "case_improvement_fraction": 0.05555555555555555,
+        "case_nonworse_fraction": 1.0,
+        "fallback_fraction": 0.9444444444444444,
+        "correction_absolute_error_mean": 0.4722222222222222,
+        "selected_corrections": [
+          0.0,
+          0.5,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half_step_loco_vs_reported": {
+        "field_gain_percent_mean": 1.4375296066959586,
+        "field_gain_percent_median": 1.2643121948740623,
+        "field_gain_percent_worst": 0.0,
+        "case_improvement_fraction": 0.8888888888888888,
+        "case_nonworse_fraction": 1.0,
+        "selected_corrections": [
+          0.25,
+          0.5,
+          0.5,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.0,
+          0.0,
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          0.5,
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ]
+      },
+      "multiframe_camera_block_lcb_vs_reported": {
+        "field_gain_percent_mean": 0.0,
+        "field_gain_percent_median": 0.0,
+        "field_gain_percent_worst": 0.0,
+        "case_improvement_fraction": 0.0,
+        "case_nonworse_fraction": 1.0,
+        "fallback_fraction": 1.0,
+        "correction_absolute_error_mean": 0.5,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "geometry_mismatch": {
+        "operator_relative_frobenius_mismatch_mean": 0.057136797451556066,
+        "detector_origin_rms_domain_units_mean": 0.0036845438175874302,
+        "ray_direction_angle_mean_degrees": 0.48465854222133253,
+        "ray_direction_angle_max_degrees": 0.5824870155661436
+      }
+    },
+    "1.0": {
+      "case_count": 18,
+      "methods": {
+        "reported_geometry": {
+          "field_relative_l2_mean": 0.6714332649734787,
+          "field_relative_l2_median": 0.6613328052761451,
+          "field_relative_l2_worst": 0.8234614426900347
+        },
+        "loco_selected_geometry": {
+          "field_relative_l2_mean": 0.6331116721259636,
+          "field_relative_l2_median": 0.6411381380986494,
+          "field_relative_l2_worst": 0.7846302444032682
+        },
+        "half_step_loco_geometry": {
+          "field_relative_l2_mean": 0.645325272194725,
+          "field_relative_l2_median": 0.6497651705646728,
+          "field_relative_l2_worst": 0.7988060095038071
+        },
+        "loco_lcb_safe_geometry": {
+          "field_relative_l2_mean": 0.657950713677498,
+          "field_relative_l2_median": 0.6613328052761451,
+          "field_relative_l2_worst": 0.8234614426900347
+        },
+        "multiframe_camera_block_lcb_geometry": {
+          "field_relative_l2_mean": 0.665597612642362,
+          "field_relative_l2_median": 0.6596636207601904,
+          "field_relative_l2_worst": 0.8234614426900347
+        },
+        "exact_geometry_teacher": {
+          "field_relative_l2_mean": 0.6308916881806101,
+          "field_relative_l2_median": 0.6384001971900704,
+          "field_relative_l2_worst": 0.7846302444032682
+        },
+        "truth_selected_candidate_ceiling": {
+          "field_relative_l2_mean": 0.6292779671511407,
+          "field_relative_l2_median": 0.6353079758150644,
+          "field_relative_l2_worst": 0.7798765693276055
+        }
+      },
+      "loco_vs_reported": {
+        "field_gain_percent_mean": 5.657229011585091,
+        "field_gain_percent_median": 4.9077084962076984,
+        "field_gain_percent_worst": 0.7331920056094826,
+        "case_improvement_fraction": 1.0,
+        "correction_absolute_error_mean": 0.1388888888888889,
+        "selected_corrections": [
+          1.0,
+          1.5,
+          1.5,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.5,
+          0.5,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.5,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "loco_lcb_safe_vs_reported": {
+        "field_gain_percent_mean": 1.9255025090841242,
+        "field_gain_percent_median": 0.0,
+        "field_gain_percent_worst": 0.0,
+        "case_improvement_fraction": 0.2777777777777778,
+        "case_nonworse_fraction": 1.0,
+        "fallback_fraction": 0.7222222222222222,
+        "correction_absolute_error_mean": 0.8055555555555556,
+        "selected_corrections": [
+          0.0,
+          1.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.5,
+          0.0,
+          0.0,
+          0.5,
+          0.0,
+          0.0,
+          0.5,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half_step_loco_vs_reported": {
+        "field_gain_percent_mean": 3.8731152510822673,
+        "field_gain_percent_median": 3.401193155232688,
+        "field_gain_percent_worst": 0.5679639890232945,
+        "case_improvement_fraction": 1.0,
+        "case_nonworse_fraction": 1.0,
+        "selected_corrections": [
+          0.5,
+          0.75,
+          0.75,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.25,
+          0.25,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.75,
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "multiframe_camera_block_lcb_vs_reported": {
+        "field_gain_percent_mean": 0.8549486319923681,
+        "field_gain_percent_median": 0.0,
+        "field_gain_percent_worst": 0.0,
+        "case_improvement_fraction": 0.16666666666666666,
+        "case_nonworse_fraction": 1.0,
+        "fallback_fraction": 0.8333333333333334,
+        "correction_absolute_error_mean": 0.9166666666666666,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.5,
+          0.5,
+          0.5,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "geometry_mismatch": {
+        "operator_relative_frobenius_mismatch_mean": 0.113278075539218,
+        "detector_origin_rms_domain_units_mean": 0.007368804061404003,
+        "ray_direction_angle_mean_degrees": 0.9693610663181721,
+        "ray_direction_angle_max_degrees": 1.1650875704418535
+      }
+    },
+    "2.0": {
+      "case_count": 18,
+      "methods": {
+        "reported_geometry": {
+          "field_relative_l2_mean": 0.7325537480515905,
+          "field_relative_l2_median": 0.7071930653124315,
+          "field_relative_l2_worst": 0.8935033413537071
+        },
+        "loco_selected_geometry": {
+          "field_relative_l2_mean": 0.6331508582742406,
+          "field_relative_l2_median": 0.6411497986855461,
+          "field_relative_l2_worst": 0.7846692737265226
+        },
+        "half_step_loco_geometry": {
+          "field_relative_l2_mean": 0.6708738040135577,
+          "field_relative_l2_median": 0.6649322818193334,
+          "field_relative_l2_worst": 0.8235207335138993
+        },
+        "loco_lcb_safe_geometry": {
+          "field_relative_l2_mean": 0.6724878718397683,
+          "field_relative_l2_median": 0.68250011066228,
+          "field_relative_l2_worst": 0.8770815777554284
+        },
+        "multiframe_camera_block_lcb_geometry": {
+          "field_relative_l2_mean": 0.6597124377635645,
+          "field_relative_l2_median": 0.6532060951293361,
+          "field_relative_l2_worst": 0.8770815777554284
+        },
+        "exact_geometry_teacher": {
+          "field_relative_l2_mean": 0.6309264323641923,
+          "field_relative_l2_median": 0.6384098642896157,
+          "field_relative_l2_worst": 0.7846692737265226
+        },
+        "truth_selected_candidate_ceiling": {
+          "field_relative_l2_mean": 0.6293127989368417,
+          "field_relative_l2_median": 0.6353201472038745,
+          "field_relative_l2_worst": 0.7799112357782527
+        }
+      },
+      "loco_vs_reported": {
+        "field_gain_percent_mean": 13.26878097427391,
+        "field_gain_percent_median": 10.321975563403946,
+        "field_gain_percent_worst": 4.243235706136702,
+        "case_improvement_fraction": 1.0,
+        "correction_absolute_error_mean": 0.1388888888888889,
+        "selected_corrections": [
+          2.0,
+          2.5,
+          2.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0
+        ]
+      },
+      "loco_lcb_safe_vs_reported": {
+        "field_gain_percent_mean": 7.761161982482026,
+        "field_gain_percent_median": 1.7433741519935895,
+        "field_gain_percent_worst": 0.0,
+        "case_improvement_fraction": 0.5,
+        "case_nonworse_fraction": 1.0,
+        "fallback_fraction": 0.5,
+        "correction_absolute_error_mean": 1.25,
+        "selected_corrections": [
+          0.5,
+          2.5,
+          0.0,
+          2.0,
+          0.0,
+          0.0,
+          2.0,
+          0.0,
+          0.0,
+          2.0,
+          1.5,
+          1.0,
+          2.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "half_step_loco_vs_reported": {
+        "field_gain_percent_mean": 8.286500748917874,
+        "field_gain_percent_median": 8.41002249984615,
+        "field_gain_percent_worst": 3.071644440970892,
+        "case_improvement_fraction": 1.0,
+        "case_nonworse_fraction": 1.0,
+        "selected_corrections": [
+          1.0,
+          1.25,
+          1.25,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.75,
+          0.75,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.25,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "multiframe_camera_block_lcb_vs_reported": {
+        "field_gain_percent_mean": 9.57664108776107,
+        "field_gain_percent_median": 7.210934631883486,
+        "field_gain_percent_worst": 0.0,
+        "case_improvement_fraction": 0.8333333333333334,
+        "case_nonworse_fraction": 1.0,
+        "fallback_fraction": 0.16666666666666666,
+        "correction_absolute_error_mean": 0.6666666666666666,
+        "selected_corrections": [
+          1.0,
+          1.0,
+          1.0,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          2.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "geometry_mismatch": {
+        "operator_relative_frobenius_mismatch_mean": 0.2228740597346303,
+        "detector_origin_rms_domain_units_mean": 0.01473623917647257,
+        "ray_direction_angle_mean_degrees": 1.9388696933970067,
+        "ray_direction_angle_max_degrees": 2.330582278919581
+      }
+    }
+  },
+  "mechanism_gate": {
+    "minimum_shifted_mean_gain_percent": 0.0,
+    "minimum_shifted_case_improvement_fraction": 0.0,
+    "worst_shifted_case_gain_percent": 0.0,
+    "zero_mismatch_mean_gain_percent": 0.0,
+    "evaluated_method": "multiframe_camera_block_lcb_geometry",
+    "thresholds": {
+      "minimum_shifted_mean_gain_percent": 5.0,
+      "minimum_shifted_case_improvement_fraction": 0.75,
+      "worst_shifted_case_gain_percent": -5.0,
+      "zero_mismatch_mean_gain_percent": -5.0
+    },
+    "passed": false
+  },
+  "claim_boundary": {
+    "real_data_used": false,
+    "experimental_geometry_used": false,
+    "cfd_truth_used": false,
+    "full_se3_self_calibration_solved": false,
+    "unknown_error_direction_handled": false,
+    "neural_operator_trained": false,
+    "new_algorithm_claimed": false,
+    "deeponet_or_fno_beaten": false,
+    "generalization_claimed": false,
+    "paper_success_claimed": false,
+    "breakthrough_claimed": false
+  },
+  "reproducibility": {
+    "python_version": "3.11.5",
+    "numpy_version": "2.4.6",
+    "torch_version": "2.13.0",
+    "matplotlib_version": "3.11.0",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "source_file_sha256": "84691a69d40659c59ea417915d1500120dcfd9bea5a476bb0f7c5904b20e2bd2"
+  }
+}
