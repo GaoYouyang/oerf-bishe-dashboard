@@ -317,6 +317,7 @@
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_preprocessing_proxy_evidence_2026-07-23.md">低分辨率代理证据</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_optical_contract_g0_2026-07-23.md">G0 光学合同</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_tier_a_straight_evidence_2026-07-23.md">Tier-A 算子证据</a>
       <a class="button" href="#senior">复制下一条师兄消息</a>
       <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
     </div>
@@ -328,7 +329,7 @@
     </div>
     <div class="alert success">
       <strong>方向锁定与数据门通过都不是算法突破</strong>
-      <span>PoolFire 首条 train trajectory 已通过 <code>6,428,997,975 bytes</code>、完整 SHA/CRC、full-resolution rho 与 READY；公开 CFD raw bridge 的 129,280,000 个 rho 值范围为 <code>0.188983–1.179350</code>。等距 <code>(2,2,2)</code> 候选也已生成并审计，但三帧代理仍损失约四分之一梯度 RMS，因此当前是 <code>G0-SMOKE GO / G0-PHYSICS HOLD</code>，不是 BOST、重建或 warm-start 成功。</span>
+      <span>PoolFire 首条 train trajectory 已通过 <code>6,428,997,975 bytes</code>、完整 SHA/CRC、full-resolution rho 与 READY；公开 CFD raw bridge 的 129,280,000 个 rho 值范围为 <code>0.188983–1.179350</code>。等距 <code>(2,2,2)</code> 候选已审计；节点场 Tier-A straight forward/adjoint 也已 <code>14/14</code> 通过，但 cell-centre 适配、相机、曲光线与像素语义仍未闭合，因此当前仍是 <code>G0-SMOKE GO / G0-PHYSICS HOLD</code>，不是 BOST、重建或 warm-start 成功。</span>
     </div>
   </header>
 
@@ -387,13 +388,25 @@
       <div class="section-head">
         <div>
           <div class="eyebrow">最新可验证增量</div>
-          <h2>低分辨率候选已做出来，但训练仍被物理门拦住</h2>
-          <p>守恒只说明离散块平均没有凭空改变全域总和；BOST 关心的是折射率梯度沿光路的积分。两件事必须分开验收。</p>
+          <h2>第一层代码门通过，但训练仍被物理门拦住</h2>
+          <p>Tier-A 已证明最小 straight-LOS forward/adjoint 的符号、尺度和离散转置；它没有接 PoolFire，也没有相机、曲光线或像素映射。代码自洽和物理可信必须分开验收。</p>
         </div>
         <div class="actions">
-          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_preprocessing_proxy_evidence_2026-07-23.md">读数值证据</a>
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_g0_tier_a_straight_evidence_2026-07-23.md">读 Tier-A 证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_preprocessing_proxy_evidence_2026-07-23.md">读降采样证据</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_optical_contract_g0_2026-07-23.md">读光学合同</a>
         </div>
+      </div>
+      <div class="alert success">
+        <strong>PASS 只属于 code smoke</strong>
+        <span>常数 gauge、三轴线性符号/尺度、metre/mm 重参数化、60 个随机与角点脉冲 dot cases、JVP/VJP 步长扫描和独立解析收敛共 <code>14/14</code> 通过；收敛阶为 <code>2.04 / 2.11 / 2.08</code>，最大归一化 adjoint mismatch 为 <code>2.03×10⁻¹⁷</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <img src="../assets/poolfire_g0_tier_a_straight_v0.png" alt="Tier-A 直线折射率前向与伴随算子的解析剖面、网格收敛和有限差分步长证据" />
+        <figcaption>解析 node-field smoke：左为数值/解析偏折剖面，中为二阶网格收敛，右为 JVP/VJP 步长扫描。图中不含 PoolFire、相机、曲光线、重建或 warm start。</figcaption>
+      </figure>
+      <div class="section-head" style="margin-top:20px;">
+        <div><div class="eyebrow">仍未闭合</div><h3>PoolFire 是 cell-centred，当前算子是 node-field</h3><p>这不是一个可以靠 reshape 略过的小差异。必须先建立并比较 cell-centre conservative LOS 与显式 cell-to-node 两条适配路线，再决定哪条进入生成端或反演端。</p></div>
       </div>
       <div class="check-grid">
         <article class="panel">
@@ -423,7 +436,7 @@
       </figure>
       <div class="alert critical" style="margin-top:13px;">
         <strong>C0 尚未获准训练</strong>
-        先补齐 11 条 train 的无泄漏统计、单位与 domain 解释、<code>rho → Δn</code> 合同、常数/线性场解析 smoke，以及 high-fidelity 生成 forward 与 coarse 反演 forward 的表示误差门。
+        先补齐 11 条 train 的无泄漏统计、单位与 domain 解释、<code>rho → Δn</code> 合同、cell-centre/node 适配、任意相机射线与 curved/straight 门，以及 high-fidelity 生成 forward 与不同离散反演 forward 的表示误差门。
       </div>
     </section>
 

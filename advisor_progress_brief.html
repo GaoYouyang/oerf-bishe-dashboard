@@ -265,17 +265,19 @@
       <button id="screenshotToggle" class="button primary" type="button">进入截图模式</button>
       <button class="button secondary copy-button" type="button" data-copy="followupText">复制给师兄的确认消息</button>
       <a class="button" href="operator-learning/#g0-evidence">看最新 G0 证据</a>
+      <a class="button" href="document_reader.html?doc=docs%2Fpoolfire_g0_tier_a_straight_evidence_2026-07-23.md">看 Tier-A 算子证据</a>
       <a class="button" href="#script">看三分钟讲稿</a>
     </div>
     <div class="status-strip">
       <div class="metric"><b>C 已锁定</b><span>学习 warm start + 固定物理迭代精修</span></div>
       <div class="metric"><b>数据桥已过</b><span>首条 PoolFire rho + 等距低分辨率候选</span></div>
-      <div class="metric caution"><b>G0 物理 HOLD</b><span>梯度代理损失显著，单位与光学合同未闭合</span></div>
+      <div class="metric"><b>Tier-A 代码 PASS</b><span>14/14；forward/adjoint 解析与转置 smoke</span></div>
+      <div class="metric caution"><b>G0 物理 HOLD</b><span>cell-centre、相机、曲光线与单位未闭合</span></div>
       <div class="metric caution"><b>待老师确认</b><span>把研究问题、基线和两周任务向蔡老师汇报</span></div>
     </div>
     <div class="alert success">
       <strong>当前最重要的进展是及时拦住了一次错误训练</strong>
-      等距候选仍损失约四分之一梯度 RMS，固定空气 K 也不能代表反应流组分效应；因此尚未证明任何模型更快、更准或能泛化。下一道门是老师确认选题，师兄确认光学/重建接口。
+      等距候选仍损失约四分之一梯度 RMS，固定空气 K 也不能代表反应流组分效应。最小 straight forward/adjoint 的 14 项代码 smoke 已通过，但它是 node-field，不能静默接入 cell-centred PoolFire；因此尚未证明任何模型更快、更准或能泛化。下一道门是老师确认选题，师兄确认光学/重建接口。
     </div>
   </header>
 
@@ -300,13 +302,14 @@
             <li>已冻结双账原则：部署可见停止规则是主表；有真值时另画 oracle time-to-target，只估计加速上限。</li>
             <li>PoolFire 首轨迹已通过完整 size/SHA、ZIP CRC、full-resolution rho checksums 与 READY 门；101 帧全部 rho finite 且为正，抽取器在两套 Python 环境通过 20 项测试。</li>
             <li>已生成 `40×40×100` 等距块平均候选并做三帧梯度/LOS 代理审计；结果显示仍损失约四分之一梯度 RMS，因此明确保持 `G0-PHYSICS HOLD`，没有提前训练 C0。</li>
+            <li>已实现最小轴对齐 `Δn → 偏折角` forward/adjoint；三轴线性解析、单位缩放、60 个随机/边界 dot cases、JVP/VJP 步长扫描和二阶收敛共 14/14 通过，但证据等级仅为 code smoke。</li>
           </ol>
         </article>
         <article class="panel missing">
           <h3>我还没有做到什么</h3>
           <ol>
             <li>尚未向蔡老师正式确认题目，也未冻结组内认可的经典重建基线和精度阈值。</li>
-            <li>公开 PoolFire 首轨迹已通过完整 SHA/CRC 与 rho 数据门，但 rho/time/组分单位、坐标降序与 domain 尺度冲突、reference、组分相关 Gladstone-Dale、BOS 工具输出语义和重建入口仍需确认。</li>
+            <li>公开 PoolFire 首轨迹已通过完整 SHA/CRC 与 rho 数据门，但 rho/time/组分单位、坐标降序与 domain 尺度冲突、reference、组分相关 Gladstone-Dale、cell-centre/node 适配、BOS 工具输出语义和重建入口仍需确认。</li>
             <li>没有证明任何自有算法优于 NeRIF、DeepONet、FNO/FFNO 或组内基线。</li>
           </ol>
         </article>
@@ -343,11 +346,11 @@
         </article>
         <article class="timeline-step">
           <b>45–90 秒 · 我做了什么</b>
-          <p>我已完成首条 PoolFire rho 数据桥，并生成 `40×40×100` 等距候选；三帧代理发现它仍损失约四分之一梯度 RMS，所以没有贸然进入模型训练。</p>
+          <p>我已完成首条 PoolFire rho 数据桥和等距候选；降采样代理发现明显梯度损失。最小直线 forward/adjoint 的 14 项解析、单位、边界与转置 smoke 已通过，但明确没有接入 PoolFire 或相机。</p>
         </article>
         <article class="timeline-step">
           <b>90–150 秒 · 我卡在哪里</b>
-          <p>目前还缺单位、组分相关折射率合同与输出语义确认、组内认可的 forward/adjoint 和经典基线，以及“同精度”具体阈值。</p>
+          <p>目前还缺 cell-centre/node 适配、单位、组分相关折射率、相机/曲光线与输出语义确认、组内认可的 solver 接口和“同精度”具体阈值。</p>
         </article>
         <article class="timeline-step">
           <b>150–180 秒 · 请老师确认</b>
@@ -451,9 +454,9 @@
           </thead>
           <tbody>
             <tr><td>第 1–3 天 · 数据桥</td><td>读取一个 PoolFire 轨迹，全分辨率核对 rho、坐标方向、domain 尺度、时间和单位，再冻结环境 reference/gauge</td><td>rho 全场统计、`40×40×100` 等距候选、梯度/LOS 代理与 shape/单位合同</td><td>数据完整性已过；物理单位、domain、Kmix 与 reference 未过，C0 保持 HOLD</td></tr>
-            <tr><td>第 4–7 天 · BOS 与基线</td><td>用缩小网格生成观测，跑 zero、A<sup>T</sup>y 与 PCGLS/CGLS</td><td>forward replay、误差曲线、调用与时间账本</td><td>重复运行一致，终点阈值可达到</td></tr>
-            <tr><td>第 8–12 天 · C0</td><td>训练小型 Adjoint-Residual FNO 生成初值，接同一物理迭代器</td><td>deployable-stop 主表、oracle-headroom 辅表与失败样例</td><td>独立轨迹终点等价，且部署主账总成本下降</td></tr>
-            <tr><td>第 13–14 天 · 决策</td><td>复核尾部、视角/噪声变化和特征成本</td><td>继续、修改或停止的证据表</td><td>只有公平成本 Pareto 有余量才升级 C1/C2</td></tr>
+            <tr><td>第 4–7 天 · G0 forward</td><td>在已通过的 node-field Tier-A 之上，补 cell-centre 适配、任意相机射线、straight/curved 与像素语义</td><td>独立解析/曲光线 replay、表示误差和接口合同</td><td>不能通过就继续 HOLD，不生成训练标签</td></tr>
+            <tr><td>第 8–11 天 · 强基线</td><td>在获准的缩小网格上跑 zero、A<sup>T</sup>y、CGLS/PCGLS 与 direct operator</td><td>终点误差、调用、时间、内存和尾部账本</td><td>重复运行一致，并显示 warm-start 可争取的真实 headroom</td></tr>
+            <tr><td>第 12–14 天 · C0 决策</td><td>只有前两门通过才训练小型 Adjoint-Residual warm start</td><td>deployable-stop 主表、oracle-headroom 辅表与失败样例</td><td>独立轨迹终点等价且部署主账成本下降，才继续 C1/C2</td></tr>
           </tbody>
         </table>
       </div>
@@ -473,7 +476,7 @@
 
 比较分两张账：主表用 validation 冻结、部署可见的停止规则，检查终点等价和总成本；PoolFire 有真值时另画 oracle time-to-target，只估计 headroom。线性 forward 统计 A/A^T，曲光线非线性 forward 另统计 forward/JVP/VJP。
 
-我已经把首条 PoolFire rho 数据桥和 `40×40×100` 等距候选做出来了，但三帧代理仍损失约四分之一梯度 RMS，所以目前没有把它当作可靠 BOST 标签，也没有开始 C0。
+我已经把首条 PoolFire rho 数据桥和 `40×40×100` 等距候选做出来了，但三帧代理仍损失约四分之一梯度 RMS。最小轴对齐 straight `Δn→偏折角` forward/adjoint 已完成三轴线性解析、单位缩放、60 个随机/边界 dot cases、JVP/VJP 步长扫描和二阶收敛，14/14 通过；不过它是 node-field code smoke，PoolFire 是 cell-centred，还没有相机、曲光线和像素映射，所以没有开始 C0。
 
 下一步想先锁物理接口：组里最终重建 n、Δn、rho 还是 Δrho；Gladstone-Dale 用固定空气还是组分相关、波长和 reference 怎样定义；程序输出是偏折角、背景端点、传感器长度还是像素位移；正式 forward 是 straight 还是 curved；是否另有背景渲染/光流；以及匹配的 A/A^T 或 JVP/VJP、经典 solver 和停止条件。这样理解和顺序对不对？</textarea>
         <div class="actions" style="margin-top:9px;">
@@ -487,7 +490,7 @@
 
 具体问题是：从多视角 BOS 观测和几何生成三维扰动场初值，再用固定的物理迭代算法精修；在终点误差等价的条件下，比较是否能减少 forward/adjoint 调用和端到端时间。算子学习不替代物理求解器，只负责提供更好的初值。环境 reference/gauge、停止规则和等价区间都会在 validation 阶段冻结。
 
-第一阶段使用公开 PoolFire 三维反应流 CFD 数据和师兄提供的 BOS 工具。首条 rho 数据桥已完成；低分辨率代理审计发现仍有显著梯度损失，因此下一步先确认 Δn/Gladstone-Dale、单位、straight/curved ray 与重建接口，再建立 zero、反投影、PCGLS/CGLS 与 FNO/DeepONet warm-start 的公平基线。部署可见停止规则作为主结果，有真值的 oracle time-to-target 只作为加速上限。当前没有算法突破，希望先确认该问题和物理合同是否适合作为毕设主线。</textarea>
+第一阶段使用公开 PoolFire 三维反应流 CFD 数据和师兄提供的 BOS 工具。首条 rho 数据桥已完成；低分辨率代理审计发现仍有显著梯度损失。最小轴对齐 straight forward/adjoint 已通过 14 项代码 smoke，但它是 node-field，尚未连接 cell-centred PoolFire、相机、曲光线或像素位移。因此下一步先确认 Δn/Gladstone-Dale、单位、cell-centre 适配、straight/curved ray 与重建接口，再建立 zero、反投影、PCGLS/CGLS 与 FNO/DeepONet warm-start 的公平基线。部署可见停止规则作为主结果，有真值的 oracle time-to-target 只作为加速上限。当前没有算法突破，希望先确认该问题和物理合同是否适合作为毕设主线。</textarea>
         <div class="actions" style="margin-top:9px;">
           <button class="button primary copy-button" type="button" data-copy="formalText">复制这段</button>
         </div>

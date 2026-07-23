@@ -1,0 +1,443 @@
+{
+  "schema_version": "poolfire-g0-tier-a-straight-smoke-1.0",
+  "decision": "PASS_TIER_A_STRAIGHT_CODE_SMOKE_ONLY",
+  "evidence_level": "TIER_A_STRAIGHT_RAY_CODE_SMOKE_ONLY",
+  "physics_gate": "G0_PHYSICS_HOLD",
+  "training_authorized": false,
+  "operator_contract": {
+    "evidence_level": "TIER_A_STRAIGHT_RAY_CODE_SMOKE_ONLY",
+    "field_variable": "delta_n",
+    "field_unit": "dimensionless",
+    "field_location": "cartesian_nodes_not_poolfire_cell_centers",
+    "array_order": "x_y_z",
+    "observation_variable": "transverse_small_angle_deflection",
+    "observation_unit": "radian_dimensionless_small_angle",
+    "grid_semantics": "uniform_ascending_cartesian_nodes",
+    "los_axis": "x",
+    "los_direction": "positive_axis_only_camera_orientation_not_modelled",
+    "los_quadrature": "composite_trapezoid_on_nodes",
+    "transverse_derivative": "second_order_centered_with_second_order_one_sided_boundaries",
+    "transverse_components": [
+      "y",
+      "z"
+    ],
+    "adjoint_inner_product": "unweighted_euclidean_array_inner_product",
+    "n_ref": 1.00027,
+    "camera_modelled": false,
+    "curved_rays_modelled": false,
+    "pixel_mapping_modelled": false,
+    "composition_modelled": false,
+    "poolfire_cell_center_adapter_authorized": false,
+    "training_authorized": false
+  },
+  "thresholds": {
+    "constant_max_abs_radian": 2e-16,
+    "linear_max_relative_scale_error": 5e-12,
+    "gauge_max_abs_radian": 5e-16,
+    "linearity_relative_l2": 5e-13,
+    "unit_reparameterization_relative_l2": 5e-13,
+    "n_ref_inverse_scaling_relative_l2": 5e-13,
+    "adjoint_max_normalized_dot_mismatch": 5e-13,
+    "adjoint_constant_null_max_normalized": 5e-13,
+    "jvp_best_relative_l2": 5e-09,
+    "vjp_best_relative_directional_error": 5e-09,
+    "minimum_observed_convergence_order": 1.8,
+    "los_weight_sum_relative_error": 5e-15
+  },
+  "metrics": {
+    "constant_max_abs_radian": 5.105213824674064e-19,
+    "linear_max_relative_scale_error": 2.3884677808256115e-15,
+    "linear_sign_match": true,
+    "gauge_max_abs_radian": 6.505213034913027e-19,
+    "linearity_relative_l2": 2.0187503507133716e-16,
+    "unit_reparameterization_relative_l2": 1.4848553756732222e-16,
+    "n_ref_inverse_scaling_relative_l2": 9.647105329508311e-17,
+    "adjoint_max_normalized_dot_mismatch": 2.028743118601061e-17,
+    "adjoint_constant_null_max_normalized": 2.893420524773612e-17,
+    "jvp_best_relative_l2": 1.1905625869800467e-14,
+    "vjp_best_relative_directional_error": 2.741732346693853e-15,
+    "minimum_observed_convergence_order": 2.0357614765046605,
+    "los_weight_sum_relative_error": 0.0
+  },
+  "checks": {
+    "constant_max_abs_radian": true,
+    "linear_max_relative_scale_error": true,
+    "gauge_max_abs_radian": true,
+    "linearity_relative_l2": true,
+    "unit_reparameterization_relative_l2": true,
+    "n_ref_inverse_scaling_relative_l2": true,
+    "adjoint_max_normalized_dot_mismatch": true,
+    "adjoint_constant_null_max_normalized": true,
+    "jvp_best_relative_l2": true,
+    "vjp_best_relative_directional_error": true,
+    "los_weight_sum_relative_error": true,
+    "minimum_observed_convergence_order": true,
+    "linear_sign_match": true,
+    "all_metrics_finite": true
+  },
+  "linear_contract": {
+    "slopes_per_m": {
+      "x": 0.0002,
+      "y": 0.0007,
+      "z": -0.0004
+    },
+    "views": [
+      {
+        "los_axis": "x",
+        "transverse_axes": [
+          "y",
+          "z"
+        ],
+        "expected_components_radian": [
+          8.397732612194707e-05,
+          -4.7987043498255473e-05
+        ],
+        "measured_mean_components_radian": [
+          8.39773261219471e-05,
+          -4.798704349825546e-05
+        ],
+        "relative_l2": 1.2622377502486927e-15,
+        "sign_match": true
+      },
+      {
+        "los_axis": "y",
+        "transverse_axes": [
+          "x",
+          "z"
+        ],
+        "expected_components_radian": [
+          1.599568116608516e-05,
+          -3.199136233217032e-05
+        ],
+        "measured_mean_components_radian": [
+          1.5995681166085148e-05,
+          -3.19913623321703e-05
+        ],
+        "relative_l2": 2.3884677808256115e-15,
+        "sign_match": true
+      },
+      {
+        "los_axis": "z",
+        "transverse_axes": [
+          "x",
+          "y"
+        ],
+        "expected_components_radian": [
+          2.3993521749127737e-05,
+          8.397732612194707e-05
+        ],
+        "measured_mean_components_radian": [
+          2.3993521749127716e-05,
+          8.397732612194709e-05
+        ],
+        "relative_l2": 1.0722132868316269e-15,
+        "sign_match": true
+      }
+    ]
+  },
+  "adjoint_contract": {
+    "inner_product": "unweighted_euclidean_array_inner_product",
+    "random_seeds_per_axis": 20,
+    "los_axes": 3,
+    "boundary_corner_impulses_per_axis": 8,
+    "total_dot_cases": 60
+  },
+  "finite_difference_sweep": [
+    {
+      "step": 0.01,
+      "jvp_relative_l2": 1.1905625869800467e-14,
+      "vjp_relative_directional_error": 2.741732346693853e-15
+    },
+    {
+      "step": 0.001,
+      "jvp_relative_l2": 1.423808538346319e-13,
+      "vjp_relative_directional_error": 7.751625089288984e-14
+    },
+    {
+      "step": 0.0001,
+      "jvp_relative_l2": 1.042654223186374e-12,
+      "vjp_relative_directional_error": 2.963563418380023e-13
+    },
+    {
+      "step": 1e-05,
+      "jvp_relative_l2": 1.1568683675274106e-11,
+      "vjp_relative_directional_error": 9.673704088518951e-12
+    },
+    {
+      "step": 1e-06,
+      "jvp_relative_l2": 1.5230240849055326e-10,
+      "vjp_relative_directional_error": 3.0188691438702617e-10
+    },
+    {
+      "step": 1e-07,
+      "jvp_relative_l2": 1.1761367497057553e-09,
+      "vjp_relative_directional_error": 2.6890938273696775e-09
+    }
+  ],
+  "unit_contract": {
+    "declared_coordinate_unit": "metre",
+    "metre_to_millimetre_reparameterization_checked": true,
+    "delta_n_unit": "dimensionless",
+    "output_unit": "radian_dimensionless_small_angle",
+    "n_ref_inverse_scaling_checked": true
+  },
+  "convergence": [
+    {
+      "grid_size": 9,
+      "transverse_spacing_m": 0.015,
+      "relative_l2": 0.12892701411259277
+    },
+    {
+      "grid_size": 17,
+      "transverse_spacing_m": 0.0075,
+      "relative_l2": 0.03144261487546988
+    },
+    {
+      "grid_size": 33,
+      "transverse_spacing_m": 0.0037500000000000033,
+      "relative_l2": 0.007299735593690823
+    },
+    {
+      "grid_size": 65,
+      "transverse_spacing_m": 0.0018750000000000017,
+      "relative_l2": 0.0017252746019615125
+    }
+  ],
+  "observed_orders": [
+    2.0357614765046605,
+    2.106805088359723,
+    2.0810182029938527
+  ],
+  "profile": {
+    "grid_size": 33,
+    "y_m": [
+      -0.04,
+      -0.0375,
+      -0.035,
+      -0.0325,
+      -0.03,
+      -0.0275,
+      -0.025,
+      -0.0225,
+      -0.02,
+      -0.0175,
+      -0.015,
+      -0.0125,
+      -0.010000000000000002,
+      -0.0075,
+      -0.0049999999999999975,
+      -0.0025000000000000022,
+      0.0,
+      0.0025000000000000022,
+      0.0049999999999999975,
+      0.0075,
+      0.010000000000000002,
+      0.012499999999999997,
+      0.015,
+      0.0175,
+      0.019999999999999997,
+      0.0225,
+      0.025,
+      0.027500000000000004,
+      0.030000000000000006,
+      0.032499999999999994,
+      0.034999999999999996,
+      0.0375,
+      0.04
+    ],
+    "y_numeric_radian": [
+      0.0007633353823896485,
+      0.0007345538605986098,
+      0.0006919346067828376,
+      0.0006227246940697999,
+      0.0005295838205916905,
+      0.0004160913378822708,
+      0.000286608698404746,
+      0.00014611184737953683,
+      4.031834591577094e-21,
+      -0.00014611184737953686,
+      -0.0002866086984047457,
+      -0.0004160913378822706,
+      -0.000529583820591691,
+      -0.0006227246940698003,
+      -0.0006919346067828373,
+      -0.0007345538605986094,
+      -0.0007489446214941302,
+      -0.00073455386059861,
+      -0.0006919346067828369,
+      -0.0006227246940697997,
+      -0.0005295838205916902,
+      -0.00041609133788227066,
+      -0.0002866086984047463,
+      -0.00014611184737953718,
+      -5.699688498479725e-19,
+      0.0001461118473795372,
+      0.00028660869840474646,
+      0.00041609133788227164,
+      0.0005295838205916888,
+      0.0006227246940697974,
+      0.0006919346067828387,
+      0.0007345538605986108,
+      0.0007633353823896477
+    ],
+    "y_analytic_radian": [
+      0.0007537787166080663,
+      0.0007392950699304295,
+      0.000696400728316818,
+      0.000626744097260019,
+      0.0005330020420276565,
+      0.00041877701723116013,
+      0.00028845862651532715,
+      0.00014705493255197144,
+      4.615563462797341e-20,
+      -0.0001470549325519715,
+      -0.0002884586265153271,
+      -0.0004187770172311599,
+      -0.0005330020420276565,
+      -0.0006267440972600191,
+      -0.000696400728316818,
+      -0.0007392950699304295,
+      -0.0007537787166080663,
+      -0.0007392950699304293,
+      -0.000696400728316818,
+      -0.0006267440972600191,
+      -0.0005330020420276566,
+      -0.0004187770172311607,
+      -0.00028845862651532753,
+      -0.00014705493255197185,
+      -1.3846690388392022e-19,
+      0.00014705493255197158,
+      0.0002884586265153273,
+      0.0004187770172311604,
+      0.0005330020420276569,
+      0.0006267440972600187,
+      0.0006964007283168178,
+      0.0007392950699304293,
+      0.0007537787166080663
+    ],
+    "z_m": [
+      -0.06,
+      -0.056249999999999994,
+      -0.0525,
+      -0.04875,
+      -0.045,
+      -0.041249999999999995,
+      -0.0375,
+      -0.03375,
+      -0.03,
+      -0.026249999999999996,
+      -0.0225,
+      -0.018750000000000003,
+      -0.015,
+      -0.011249999999999996,
+      -0.0075,
+      -0.0037500000000000033,
+      0.0,
+      0.0037500000000000033,
+      0.007500000000000007,
+      0.011249999999999996,
+      0.015,
+      0.018750000000000003,
+      0.022499999999999992,
+      0.026249999999999996,
+      0.03,
+      0.03375,
+      0.037500000000000006,
+      0.041249999999999995,
+      0.045,
+      0.04875,
+      0.05249999999999999,
+      0.056249999999999994,
+      0.06
+    ],
+    "z_numeric_radian": [
+      -5.905692649903132e-07,
+      -6.0879936408140405e-05,
+      -0.00011942029100197743,
+      -0.00017337139078427952,
+      -0.00022065992524653773,
+      -0.00025946862252908303,
+      -0.0002883060861595158,
+      -0.00030606410858275427,
+      -0.00031206025895588713,
+      -0.00030606410858275427,
+      -0.00028830608615951567,
+      -0.0002594686225290832,
+      -0.00022065992524653805,
+      -0.00017337139078427952,
+      -0.00011942029100197746,
+      -6.08799364081404e-05,
+      -1.0726927863121865e-21,
+      6.08799364081405e-05,
+      0.00011942029100197731,
+      0.00017337139078427925,
+      0.000220659925246538,
+      0.00025946862252908287,
+      0.00028830608615951567,
+      0.00030606410858275454,
+      0.00031206025895588724,
+      0.0003060641085827546,
+      0.0002883060861595156,
+      0.0002594686225290828,
+      0.00022065992524653797,
+      0.00017337139078427952,
+      0.00011942029100197746,
+      6.087993640814049e-05,
+      5.905692649906651e-07
+    ],
+    "z_analytic_radian": [
+      -0.0,
+      -6.127288856332153e-05,
+      -0.0001201910943813863,
+      -0.00017449042384631668,
+      -0.00022208418417819022,
+      -0.00026114337385834123,
+      -0.00029016697013200746,
+      -0.00030803961247101224,
+      -0.00031407446525336097,
+      -0.00030803961247101224,
+      -0.00029016697013200746,
+      -0.0002611433738583413,
+      -0.00022208418417819025,
+      -0.0001744904238463167,
+      -0.00012019109438138633,
+      -6.127288856332159e-05,
+      -3.846302885664451e-20,
+      6.12728885633215e-05,
+      0.00012019109438138639,
+      0.00017449042384631662,
+      0.00022208418417819022,
+      0.00026114337385834123,
+      0.0002901669701320074,
+      0.00030803961247101224,
+      0.00031407446525336097,
+      0.00030803961247101224,
+      0.00029016697013200746,
+      0.0002611433738583413,
+      0.00022208418417819027,
+      0.0001744904238463167,
+      0.00012019109438138648,
+      6.127288856332163e-05,
+      7.692605771328902e-20
+    ]
+  },
+  "source_files": [
+    {
+      "path": "learning_labs/poolfire_g0_straight_operator.py",
+      "sha256": "76e63c4fbe0f07f8c4604c2ede534b9cdbf1033e1111a75542d6acf45d7f2e3a"
+    },
+    {
+      "path": "site_tools/run_poolfire_g0_tier_a_smoke.py",
+      "sha256": "68f8c739fb2d4332ee5eac9a9278f74bfcf11f191aea86b25fce2a06e8e178a8"
+    }
+  ],
+  "claim_boundaries": [
+    "No PoolFire field is used in this analytic smoke.",
+    "No camera, pixel mapping, background rendering, or optical flow is modelled.",
+    "No curved ray or composition-dependent refractivity is modelled.",
+    "The operator accepts Cartesian node fields; PoolFire rho is cell-centred and has no authorized adapter yet.",
+    "Constant-field zero deflection is a declared-domain gauge test, not a finite refractive block experiment.",
+    "Passing authorizes code-level straight forward/adjoint reuse only.",
+    "Passing does not authorize C0 training or any reconstruction, speed, or generalization claim."
+  ]
+}
