@@ -5334,3 +5334,28 @@ tiny `4^3` 显式矩阵也再次提醒：native 单视角 rank `15`、nullity `4
 完整公式、两种场语义、前缘分辨率扫描、SVD 与复现命令见 [PoolFire cell-centred 接口判别证据](poolfire_g0_cell_center_evidence_2026-07-23.md)。
 
 **突破监测：这是关键数值发现，不是算法突破。新增的是一条被机器证据否掉的 cell-to-node truth 路线，以及更可信的 interior 基线候选；PoolFire 单位、`rho -> Delta n`、相机、独立 forward、经典重建、C0 warm start、同精度提速、泛化和论文结论仍为 0。**
+
+## 202. 参考正演终于不再偷偷等于 inverse，但还不是 PoolFire 光学真值
+
+上一节确定 projection-first interior 可以做第一版 inverse 基线候选，但如果拿它自己生成观测，再用它自己重建，网络和经典 solver 都会面对一个过分干净的封闭世界。这种情况下即使 warm start 明显更快，也可能只是学会了同一个离散矩阵，而不是学到真实 BOST 问题。
+
+这轮新增了一条故意不提供 `adjoint()` 的参考正演。它接受任意 orthographic 或 pinhole 相机，用单位射线和每条射线自己的正交 `u/v/t` 基，在 metre 坐标中做 forward half-ray AABB clipping，然后直接对连续 `grad(Delta n)` 做复合 Gauss-Legendre 积分。输出只叫两分量 small-angle deflection，同时保存 hit mask、`s_in/s_out`、路径长度、分段数和梯度调用账。像素倍率、背景板、曲线光线、组分折射率和光流都没有偷偷塞进去。
+
+独立红队要求不能只测几条直线。现在 63 条斜视角线性场、289 条二次场和 289 条余弦场都与各自闭式答案对上，relative-L2 分别为 `1.54e-16 / 2.08e-16 / 1.64e-15`。斜视角 Gaussian 的二点 Gauss-Legendre 在渐近区观测阶为 `3.83 / 3.94`，最细步长相对十二点参考误差为 `2.60e-11`。把全部坐标和相机放大 `7.3` 倍、同时正确缩放梯度后，偏折变化只有 `5.47e-16`，说明射线参数确实是物理弧长，不是随意的 near/far 数字。
+
+更关键的是，两条路线在同一个连续解析场上做了显式非同构比较：
+
+| 网格 | inverse vs independent reference |
+|---:|---:|
+| `9^3` | `7.927%` |
+| `17^3` | `2.261%` |
+| `33^3` | `0.603%` |
+| `65^3` | `0.156%` |
+
+误差约二阶下降，说明它们在有限网格上不是同一个数值映射，但会收敛到同一个连续问题。参考模块的 AST 依赖审计也确认，对 node/cell inverse 模块及其导数矩阵的 import 数是 `0`。这比“给同一矩阵加点 Gaussian noise”更接近真正的 inverse-crime 控制。
+
+不过当前 continuous gradient 仍来自解析 manufactured field，不是 PoolFire，也不是曲线光线生成器。`PASS_ARBITRARY_RAY_REFERENCE_CODE_GATE_ONLY` 只允许我们继续接师兄确认后的相机与 CFD 语义；`G0_PHYSICS_HOLD` 和 `training_authorized=false` 没有改变。下一步可以搭 Zero/BP/CGLS/PCGLS/Direct Operator 的统一接口和合成解析测试，但正式 C0 训练仍要等 `rho/T/Yk -> Delta n`、domain edges、相机和 solver 输出语义闭合。
+
+完整公式、图、解析 oracle 和复现命令见 [任意视角参考正演证据](poolfire_g0_reference_forward_evidence_2026-07-23.md)。
+
+**突破监测：没有算法突破。新增的是一条与 inverse primitive 零依赖、能处理任意直线视角并通过 641 条解析斜射线检查的参考正演代码门，以及有限网格非同构、连续极限一致的证据。PoolFire 光学真值、曲线光线、经典三维重建、C0 warm start、同精度提速、泛化和论文结论仍为 0。**

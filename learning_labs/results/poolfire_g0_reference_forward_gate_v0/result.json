@@ -1,0 +1,239 @@
+{
+  "checks": {
+    "all_oblique_test_rays_hit_volume": true,
+    "coordinate_scale_invariance_pass": true,
+    "inverse_discrepancy_converges": true,
+    "inverse_discrepancy_finest_error_pass": true,
+    "inverse_forward_is_numerically_nonidentical_at_finite_resolution": true,
+    "oblique_cosine_289_ray_oracle_pass": true,
+    "oblique_linear_max_abs_pass": true,
+    "oblique_linear_relative_l2_pass": true,
+    "oblique_quadratic_289_ray_oracle_pass": true,
+    "quadrature_asymptotic_order_pass": true,
+    "quadrature_error_strictly_decreases": true,
+    "quadrature_finest_error_pass": true,
+    "reference_module_has_zero_inverse_primitive_imports": true,
+    "scale_linearity_pass": true,
+    "training_remains_closed": true
+  },
+  "coordinate_scale_invariance_case": {
+    "coordinate_scale_factor": 7.3,
+    "original_ray_manifest_sha256": "bf30567715b5cfcc7c71b4ecab82c5e01bc4d5273fbe52fa43c69acdad61792c",
+    "path_length_scale_relative_l2": 1.7818789985355303e-16,
+    "relative_l2": 5.465332871155251e-16,
+    "scaled_ray_manifest_sha256": "cd7a9cb1171ace6a1795379adda850271dff34776f8a18547da1414055298eb9",
+    "valid_ray_count": 63
+  },
+  "decision": "PASS_ARBITRARY_RAY_REFERENCE_CODE_GATE_ONLY",
+  "domain_bounds_xyz_m": [
+    [
+      0.0,
+      0.12
+    ],
+    [
+      -0.04,
+      0.04
+    ],
+    [
+      -0.06,
+      0.06
+    ]
+  ],
+  "evidence_level": "TIER_A_ARBITRARY_RAY_REFERENCE_CODE_GATE_ONLY",
+  "inverse_crime_separation_case": {
+    "coarsest_relative_l2": 0.07927457104147105,
+    "finest_relative_l2": 0.0015566066028521025,
+    "finite_resolution_nonidentity_demonstrated": true,
+    "inverse_route": "cell_sample_plus_midpoint_los_projection_then_centered_detector_derivative",
+    "minimum_observed_order": 1.9724018787621627,
+    "reference_field_manifest": {
+      "function": "_smooth_field_and_gradient",
+      "representation": "continuous_analytic_callable",
+      "shared_inverse_derivative_matrix": false,
+      "shared_inverse_grid": false,
+      "shared_inverse_los_quadrature": false
+    },
+    "rows": [
+      {
+        "cell_spacing_min_m": 0.00888888888888889,
+        "cells_per_axis": 9,
+        "inverse_observation_shape": [
+          2,
+          7,
+          7
+        ],
+        "observed_order": null,
+        "reference_gradient_evaluation_count": 42336,
+        "reference_ray_count": 49,
+        "relative_l2": 0.07927457104147105,
+        "same_discrete_matrix_shared": false
+      },
+      {
+        "cell_spacing_min_m": 0.004705882352941171,
+        "cells_per_axis": 17,
+        "inverse_observation_shape": [
+          2,
+          15,
+          15
+        ],
+        "observed_order": 1.9724018787621627,
+        "reference_gradient_evaluation_count": 369000,
+        "reference_ray_count": 225,
+        "relative_l2": 0.02261225398455691,
+        "same_discrete_matrix_shared": false
+      },
+      {
+        "cell_spacing_min_m": 0.002424242424242426,
+        "cells_per_axis": 33,
+        "inverse_observation_shape": [
+          2,
+          31,
+          31
+        ],
+        "observed_order": 1.992433816544987,
+        "reference_gradient_evaluation_count": 3044448,
+        "reference_ray_count": 961,
+        "relative_l2": 0.006031056133702338,
+        "same_discrete_matrix_shared": false
+      },
+      {
+        "cell_spacing_min_m": 0.0012307692307692297,
+        "cells_per_axis": 65,
+        "inverse_observation_shape": [
+          2,
+          63,
+          63
+        ],
+        "observed_order": 1.9980151754587314,
+        "reference_gradient_evaluation_count": 24798312,
+        "reference_ray_count": 3969,
+        "relative_l2": 0.0015566066028521025,
+        "same_discrete_matrix_shared": false
+      }
+    ],
+    "truth_route": "continuous_analytic_gradient_plus_arbitrary_ray_composite_gauss_legendre"
+  },
+  "mainline_question": "Can an arbitrary-camera straight-ray reference forward be verified independently from the discrete inverse operator?",
+  "n_ref_smoke_value": 1.00027,
+  "next_required_inputs": [
+    "PoolFire field semantics: point sample or finite-volume cell average.",
+    "PoolFire coordinate units and exact domain edges.",
+    "rho/T/Yk-to-delta_n law and reference state.",
+    "Per-view camera intrinsics, extrinsics, distortion, detector ROI, and axis convention.",
+    "Solver observation semantics and matched-accuracy stopping rule."
+  ],
+  "non_authorizations": [
+    "No PoolFire point-sample or finite-volume semantics are confirmed.",
+    "No PoolFire coordinate units or physical domain edges are confirmed.",
+    "No density, temperature, or species-to-delta_n law is validated.",
+    "No calibrated camera intrinsics, extrinsics, distortion, ROI, or pixel map is used.",
+    "No curved-ray, background texture, optical-flow, PSF, or sensor model is used.",
+    "The continuous analytic gradient is a numerical reference, not CFD or BOST data.",
+    "No CGLS, PCGLS, Direct Operator, or C0 warm-start comparison is run.",
+    "No reconstruction, speedup, generalization, breakthrough, or paper success is claimed."
+  ],
+  "oblique_cosine_case": {
+    "gradient_evaluation_count": 146864,
+    "max_abs": 4.336808689942018e-19,
+    "ray_count": 289,
+    "ray_manifest_sha256": "c1aa33ef95ee6f63378be08cf1e4d3f2975fe34630b0d6ab672b9a3d96061b9a",
+    "relative_l2": 1.6405143793926742e-15,
+    "valid_ray_count": 289
+  },
+  "oblique_linear_case": {
+    "gradient_evaluation_count": 5120,
+    "max_abs": 6.776263578034403e-21,
+    "path_length_max_m": 0.13340764508582542,
+    "path_length_min_m": 0.12142360825352164,
+    "ray_count": 63,
+    "ray_manifest_sha256": "bf30567715b5cfcc7c71b4ecab82c5e01bc4d5273fbe52fa43c69acdad61792c",
+    "relative_l2": 1.541842110842291e-16,
+    "valid_ray_count": 63
+  },
+  "oblique_quadratic_case": {
+    "gradient_evaluation_count": 15156,
+    "max_abs": 5.421010862427522e-20,
+    "ray_count": 289,
+    "ray_manifest_sha256": "c1aa33ef95ee6f63378be08cf1e4d3f2975fe34630b0d6ab672b9a3d96061b9a",
+    "relative_l2": 2.0819119339512808e-16,
+    "valid_ray_count": 289
+  },
+  "physics_gate": "G0_PHYSICS_HOLD",
+  "quadrature_convergence_case": {
+    "asymptotic_minimum_observed_order": 3.8313433298440627,
+    "minimum_observed_order": 3.3487629794937592,
+    "ray_count": 63,
+    "ray_manifest_sha256": "bf30567715b5cfcc7c71b4ecab82c5e01bc4d5273fbe52fa43c69acdad61792c",
+    "reference": {
+      "gradient_evaluation_count": 477744,
+      "max_step_m": 0.0002,
+      "quadrature_order": 12
+    },
+    "rows": [
+      {
+        "gradient_evaluation_count": 1390,
+        "max_step_m": 0.012,
+        "observed_order": null,
+        "quadrature_order": 2,
+        "relative_l2": 5.7935632270840815e-08
+      },
+      {
+        "gradient_evaluation_count": 2714,
+        "max_step_m": 0.006,
+        "observed_order": 3.3487629794937592,
+        "quadrature_order": 2,
+        "relative_l2": 5.686795953629607e-09
+      },
+      {
+        "gradient_evaluation_count": 5366,
+        "max_step_m": 0.003,
+        "observed_order": 3.8313433298440627,
+        "quadrature_order": 2,
+        "relative_l2": 3.9950146823674143e-10
+      },
+      {
+        "gradient_evaluation_count": 10674,
+        "max_step_m": 0.0015,
+        "observed_order": 3.9392793769466348,
+        "quadrature_order": 2,
+        "relative_l2": 2.6042167385763186e-11
+      }
+    ],
+    "scale_factor": 3.7,
+    "scale_linearity_relative_l2": 1.4461820459914647e-16,
+    "valid_ray_count": 63
+  },
+  "reference_dependency_audit": {
+    "forbidden_inverse_import_count": 0,
+    "forbidden_inverse_imports": [],
+    "imports": [
+      "__future__",
+      "dataclasses",
+      "math",
+      "numpy",
+      "typing"
+    ],
+    "module": "learning_labs.poolfire_g0_reference_forward"
+  },
+  "route_disposition": "ADVANCE_REFERENCE_STRAIGHT_RAY_TO_CONFIRMED_CAMERA_AND_CFD_SEMANTICS",
+  "schema_version": "poolfire-g0-reference-forward-gate-1.0",
+  "source_hashes": {
+    "operator_sha256": "675a00cfe787d6c9b1702f7bf6635174e813ea392716d55fdfaad2d83bb43785",
+    "runner_sha256": "76a0915981940e2b81c71db0122542df9048627ff1f05572fdedcbde224222bb"
+  },
+  "thresholds": {
+    "coordinate_scale_invariance_relative_l2": 2e-13,
+    "cosine_oblique_relative_l2": 2e-11,
+    "inverse_discrepancy_coarsest_min_relative_l2": 0.001,
+    "inverse_discrepancy_finest_max_relative_l2": 0.005,
+    "inverse_discrepancy_minimum_order": 1.8,
+    "linear_oblique_max_abs": 2e-16,
+    "linear_oblique_relative_l2": 2e-13,
+    "quadratic_oblique_relative_l2": 2e-13,
+    "quadrature_asymptotic_minimum_order": 3.7,
+    "quadrature_finest_relative_l2": 2e-08,
+    "quadrature_strictly_decreasing": true,
+    "scale_linearity_relative_l2": 2e-13
+  },
+  "training_authorized": false
+}

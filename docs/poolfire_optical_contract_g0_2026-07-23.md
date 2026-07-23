@@ -133,10 +133,14 @@ Tier A 可以启动，但结果只能写成 smoke/debug。
 - 轴对齐、节点网格的 `Δn → 偏折角` straight-LOS forward/adjoint 已完成；
 - 常数、三轴线性、单位重参数化、60 个随机/边界 dot cases、JVP/VJP 步长扫描和独立解析收敛共 `14/14` 通过；
 - 判定仅为 `PASS_TIER_A_STRAIGHT_CODE_SMOKE_ONLY`；
-- PoolFire 是 cell-centred 数据，尚未获准直接接入该 node-field 算子；
-- 任意相机射线、curved ray、像素映射和真实 callable 仍未完成。
+- PoolFire 是 cell-centred 数据；cell-to-node truth 路线已因隐藏 LOS 重加权、额外低通和边界降阶被否掉，projection-first interior 只作 inverse 基线候选；
+- 不导入 inverse primitive 的任意 orthographic/pinhole straight-ray reference 已通过 641 条解析斜射线、求积收敛、尺度不变性与有限网格非同构代码门；
+- 该 reference 仍使用 manufactured continuous gradient；真实 PoolFire 场语义、相机标定、curved ray、像素映射和组内 callable 尚未完成。
 
 完整数值和限制见 [Tier-A 直线 forward/adjoint 证据](poolfire_g0_tier_a_straight_evidence_2026-07-23.md)。
+
+任意视角 reference 的几何、解析 oracle 和 inverse-crime 分离边界见
+[任意视角参考正演证据](poolfire_g0_reference_forward_evidence_2026-07-23.md)。
 
 ### Tier B：物理可信 synthetic BOST
 

@@ -320,6 +320,7 @@
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_optical_contract_g0_2026-07-23.md">G0 光学合同</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_tier_a_straight_evidence_2026-07-23.md">Tier-A 算子证据</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_cell_center_evidence_2026-07-23.md">Cell-centred 判别证据</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_reference_forward_evidence_2026-07-23.md">任意射线参考正演</a>
       <a class="button" href="#senior">复制下一条师兄消息</a>
       <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
     </div>
@@ -331,7 +332,7 @@
     </div>
     <div class="alert success">
       <strong>方向锁定与数据门通过都不是算法突破</strong>
-      <span>PoolFire 首条 train trajectory 已通过 <code>6,428,997,975 bytes</code>、完整 SHA/CRC、full-resolution rho 与 READY，覆盖 <code>129,280,000</code> 个 rho 值；节点场 Tier-A straight forward/adjoint 已 <code>14/14</code> 通过。最新 cell-centred 判别门又否掉了会暗中重加权和低通的 cell-to-node truth 路线，暂定 projection-first interior 为经典基线候选；但数据语义、相机、曲光线与像素映射仍未闭合，因此当前仍是 <code>G0-SMOKE GO / G0-PHYSICS HOLD</code>，不是 BOST、重建或 warm-start 成功。</span>
+      <span>PoolFire 首条 train trajectory 已通过完整 SHA/CRC 与 full-resolution rho 数据门；cell-to-node truth 路线已因隐藏重加权和低通被否掉。最新任意视角 straight-ray 参考器又通过线性、二次、余弦解析场、求积收敛、坐标尺度不变性和 inverse 零依赖门；但它仍使用 manufactured field，数据语义、折射率、真实相机、曲光线与像素映射尚未闭合。因此当前仍是 <code>G0-SMOKE GO / G0-PHYSICS HOLD</code>，不是 BOST、重建或 warm-start 成功。</span>
     </div>
   </header>
 
@@ -367,7 +368,7 @@
       </div>
       <div class="phase-rail" aria-label="C 路线端到端管线">
         <div><b>1 · 可观测扰动场</b><span>PoolFire `Δrho/Δn`，reference 先冻结</span></div>
-        <div><b>2 · 光学观测</b><span>九视角偏折/路径，单位与渲染待确认</span></div>
+        <div><b>2 · 光学观测</b><span>任意 straight-ray 参考器已过代码门，真实标定待确认</span></div>
         <div><b>3 · 便宜伴随残差</b><span>线性 `A^T y`；非线性 `J^T r`</span></div>
         <div><b>4 · Warm Start</b><span>小型算子输出三维 `x0`</span></div>
         <div><b>5 · 物理细化</b><span>固定 CGLS/PCGLS 或组内 solver</span></div>
@@ -382,7 +383,7 @@
       </div>
       <div class="alert" style="margin-top:13px;">
         <strong>现在的真实阻塞不是“不会 CFD”</strong>
-        <span>师兄已明确无需从零跑三维 CFD；公开 PoolFire 首轨迹的数据完整性门已经通过。下一门是坐标降序与 domain 尺度冲突、rho/time 单位、reference，以及 notebook 中 `refractive_index_field`、比例常数、`XYdeflection` 和组内 forward/adjoint 的语义。</span>
+        <span>师兄已明确无需从零跑三维 CFD；公开 PoolFire 首轨迹的数据完整性门和任意 straight-ray 几何代码门已经通过。下一门是坐标降序与 domain 尺度冲突、rho/time 单位、reference、真实相机标定，以及 notebook 中 `refractive_index_field`、比例常数、`XYdeflection` 和组内 forward/adjoint 的语义。</span>
       </div>
     </section>
 
@@ -390,19 +391,53 @@
       <div class="section-head">
         <div>
           <div class="eyebrow">最新可验证增量</div>
-          <h2>Cell-centred 接口已判别：一条自然适配路线被否掉</h2>
-          <p>三条候选都能通过精确 adjoint dot test，但解析场证明 cell-to-node composite 会改变 LOS 权重、额外低通并降低边界阶数。当前把 projection-first interior 作为第一版经典基线候选，训练仍保持关闭。</p>
+          <h2>任意视角参考正演代码门通过：与 inverse 实现已分离</h2>
+          <p>参考器使用连续 <code>∇Δn</code>、单位射线、逐 ray 横向基、AABB clipping 与复合 Gauss-Legendre；它不导入 inverse primitive，也故意不暴露 adjoint。现在可以继续接确认后的相机和 CFD 语义，但训练仍保持关闭。</p>
         </div>
         <div class="actions">
-          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_g0_cell_center_evidence_2026-07-23.md">读 Cell-centred 证据</a>
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_g0_reference_forward_evidence_2026-07-23.md">读参考正演证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_cell_center_evidence_2026-07-23.md">读前置 Cell-centred 证据</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_tier_a_straight_evidence_2026-07-23.md">读前置 Tier-A 证据</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_preprocessing_proxy_evidence_2026-07-23.md">读降采样证据</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_optical_contract_g0_2026-07-23.md">读光学合同</a>
         </div>
       </div>
       <div class="alert success">
-        <strong>关键数值发现，不是算法突破</strong>
-        <span>在精确 cell-average 解析场上，native 与 interior 最低收敛阶为 <code>1.947 / 1.972</code>；cell-to-node 只有 <code>1.734</code>。它在最细平滑场误差高 <code>3.664×</code>，在约 <code>8.79 cells</code> 厚的已解析前缘上高 <code>2.642×</code>，因此退出 truth forward。</span>
+        <strong>关键基础设施进展，不是算法突破</strong>
+        <span>63 条线性、289 条二次和 289 条余弦斜射线均与闭式 oracle 对齐；GL(2) 渐近观测阶为 <code>3.83 / 3.94</code>。连续参考与 projection-first inverse 在 <code>9³ → 65³</code> 上的差从 <code>7.927%</code> 降至 <code>0.156%</code>，约二阶收敛；参考模块对 inverse primitive 的 import 数为 <code>0</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <img src="../assets/poolfire_g0_reference_forward_gate_v0.png" alt="任意视角 straight-ray 参考正演的相机切盒、求积收敛、inverse 非同构和证据边界" />
+        <figcaption>左上展示物理 metre 坐标中的斜射线切盒，右上是求积收敛，左下证明有限网格 reference 与 inverse 不同但趋向同一连续极限；右下明确区分代码门与物理/训练门。</figcaption>
+      </figure>
+      <div class="check-grid" style="margin-top:14px;">
+        <article class="panel">
+          <div class="chips"><span class="chip blue">已验证</span><span class="chip">任意 straight ray</span></div>
+          <h3 style="margin-top:10px;">相机 frame 与体积裁剪</h3>
+          <p>orthographic/pinhole 都先归一化射线；每条 ray 保存右手正交 <code>u/v/t</code>，并显式输出 hit mask、<code>s_in/s_out</code> 与物理路径长度。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip blue">641 rays</span><span class="chip">闭式 oracle</span></div>
+          <h3 style="margin-top:10px;">线性、二次与余弦场</h3>
+          <p>三类解析场相对误差为 <code>1.54e-16 / 2.08e-16 / 1.64e-15</code>；坐标整体放大 <code>7.3×</code> 后偏折保持不变。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip">独立 generator</span><span class="chip coral">无 adjoint</span></div>
+          <h3 style="margin-top:10px;">不与 inverse 共用矩阵</h3>
+          <p>reference 直接积分连续梯度；inverse 仍是 cell sample + midpoint LOS + detector 差分。AST 审计确认共享 inverse import 为零。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip gold">仍然 HOLD</span><span class="chip">不是 PoolFire truth</span></div>
+          <h3 style="margin-top:10px;">当前只过几何代码门</h3>
+          <p>manufactured field 不等于 CFD；真实单位、<code>rho/T/Yk → Δn</code>、相机、像素映射、curved ray 和图像形成仍未闭合。</p>
+        </article>
+      </div>
+      <div class="section-head" style="margin-top:20px;">
+        <div><div class="eyebrow">前置离散门</div><h3>Cell-centred 接口判别仍是 inverse 基线依据</h3><p>三条候选都能通过精确 adjoint dot test，但解析场证明 cell-to-node composite 会改变 LOS 权重、额外低通并降低边界阶数；projection-first interior 继续作为第一版 inverse 基线候选。</p></div>
+      </div>
+      <div class="alert">
+        <strong>被否掉的路线不再回来</strong>
+        <span>在精确 cell-average 解析场上，cell-to-node 在最细平滑场误差高 <code>3.664×</code>，在已解析前缘上高 <code>2.642×</code>，因此只保留为离散敏感性对照。</span>
       </div>
       <figure style="margin-top:14px;">
         <img src="../assets/poolfire_g0_cell_center_gate_v0.png" alt="三种 cell-centred BOST 接口路线的解析收敛、前缘分辨率、LOS 权重和单视角零空间比较" />
@@ -431,7 +466,7 @@
         </article>
       </div>
       <div class="section-head" style="margin-top:20px;">
-        <div><div class="eyebrow">下一道物理门</div><h3>先确认场语义和相机，再建立强基线</h3><p>数值路线已经判别，但仍需师兄确认 PoolFire 是点采样还是 finite-volume cell average、坐标/时间单位、<code>rho/T/Yk → Δn</code>、相机 LOS、detector ROI 与组内 solver 接口。</p></div>
+        <div><div class="eyebrow">下一道物理门</div><h3>把参考器接到确认后的场语义与真实相机</h3><p>几何代码路线已经判别，但仍需师兄确认 PoolFire 是点采样还是 finite-volume cell average、坐标/时间单位、<code>rho/T/Yk → Δn</code>、相机内外参与 detector ROI、curved/straight 判据及组内 solver 接口。</p></div>
       </div>
       <div class="check-grid">
         <article class="panel">
@@ -452,7 +487,7 @@
         <article class="panel">
           <div class="chips"><span class="chip coral">G0-PHYSICS HOLD</span><span class="chip">下一门</span></div>
           <h3 style="margin-top:10px;">模型先输出 <code>Δn₀</code></h3>
-          <p>固定空气 <code>K</code> 只可做 smoke。正式链还缺组分相关 <code>Kmix(λ,Y)</code>、reference、单位、背景端点/像素语义、straight/curved 判据和独立反演 forward。</p>
+          <p>固定空气 <code>K</code> 只可做 smoke。正式链还缺组分相关 <code>Kmix(λ,Y)</code>、reference、单位、背景端点/像素语义和 straight/curved 判据；当前 independent reference 只过解析场代码门。</p>
         </article>
       </div>
       <figure style="margin-top:14px;">
@@ -461,7 +496,7 @@
       </figure>
       <div class="alert critical" style="margin-top:13px;">
         <strong>C0 尚未获准训练</strong>
-        先补齐 11 条 train 的无泄漏统计、单位与 domain 解释、point-sample/cell-average 语义、<code>rho → Δn</code> 合同、任意相机射线与 curved/straight 门，以及 high-fidelity 生成 forward 与不同离散反演 forward 的表示误差门。
+        先补齐 11 条 train 的无泄漏统计、单位与 domain 解释、point-sample/cell-average 语义、<code>rho → Δn</code> 合同、真实相机与 curved/straight 门，并把当前解析 reference 扩展成独立高分辨率 CFD forward；随后才建立强基线与 C0。
       </div>
     </section>
 
@@ -666,7 +701,7 @@
       }
       function mainlineResourceIds() {
         const ids = new Set(guide.weeks.flatMap(week => week.resources));
-        ['poolfire-tier-a-straight', 'poolfire-cell-center-gate', 'bost-grauer-2018'].forEach(id => ids.add(id));
+        ['poolfire-tier-a-straight', 'poolfire-cell-center-gate', 'poolfire-reference-forward-gate', 'bost-grauer-2018'].forEach(id => ids.add(id));
         return ids;
       }
       function allResources() {
@@ -731,7 +766,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄，C 路线已锁定：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\nPoolFire 首轨迹的数据完整性门已经通过。我又把 cell-centred 场接 straight BOST 的三种离散做了对照：native 和 projection-first interior 保持近二阶；常见的 cell-to-node 接法虽然能通过 adjoint dot test，但会把 LOS 权重改成 [1.25,0.75,1,…,0.75,1.25]h，并额外低通。它在最细平滑场误差高 3.66 倍，在已解析前缘上高 2.64 倍，所以我已把它从 truth forward 中否掉。当前先用 projection-first interior 建 Zero/BP/CGLS/PCGLS 基线，网络仍未训练。\n\n评价分两张账：主表使用 validation 冻结、部署可见的停止规则，报告终点等价、物理调用、端到端时间、内存和 p90/worst；有真值的 PoolFire 另画 oracle time-to-target，只估计 headroom，不冒充在线停止。\n\n下一步需要你确认：\n1. CFD 数组是中心点采样还是 finite-volume cell average，坐标单位和真实 domain edges 是什么；\n2. refractive_index_field 应返回 rho、n 还是 n-1，reference/gauge 怎样定义；\n3. level=2.2/3200 和 2.48/10000 的物理量和单位；\n4. XYdeflection 的单位、正负号和最终背景 warping/渲染步骤；\n5. 组内重建 baseline、匹配 forward/adjoint 和允许裁 detector 边界一格的 ROI。\n\n这些确认后，我先做独立 high-fidelity forward 与不同离散 inverse，再建立强基线和 C0，不会在真实结果出来前说算法成功。`;
+        document.getElementById('briefText').value = `师兄，C 路线已锁定：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\nPoolFire 首轨迹的数据完整性门已经通过。cell-centred 三种离散中，常见 cell-to-node 接法虽能通过 adjoint dot test，却会暗中重加权和低通，已退出 truth forward；projection-first interior 暂作 inverse 基线候选。\n\n我又单独实现了不导入 inverse primitive 的任意视角 straight-ray reference：单位射线、逐 ray 横向基、AABB clipping、连续 grad(Delta n) 和复合 Gauss-Legendre。线性/二次/余弦共 641 条斜射线与闭式答案对齐；连续 reference 与 coarse inverse 在 9^3 到 65^3 上的差从 7.927% 降到 0.156%，约二阶收敛。这个 PASS 只证明几何代码和离散分离，仍不是 PoolFire optical truth，网络也还没训练。\n\n评价分两张账：主表使用 validation 冻结、部署可见的停止规则，报告终点等价、物理调用、端到端时间、内存和 p90/worst；有真值的 PoolFire 另画 oracle time-to-target，只估计 headroom，不冒充在线停止。\n\n下一步需要你确认：\n1. CFD 数组是中心点采样还是 finite-volume cell average，坐标单位和真实 domain edges 是什么；\n2. refractive_index_field 应返回 rho、n 还是 n-1，reference/gauge 怎样定义；\n3. level=2.2/3200 和 2.48/10000 的物理量和单位；\n4. XYdeflection 的单位、正负号和最终背景 warping/渲染步骤；\n5. 每个视角的相机内外参、畸变、detector ROI，以及组内重建 baseline、forward/adjoint 和停止规则。\n\n这些确认后，我把 reference 接到独立高分辨率 CFD 表示，再建立 Zero/BP/CGLS/PCGLS/Direct Operator 和 C0，不会在真实结果出来前说算法成功。`;
       }
 
       function bindProfile() {

@@ -213,11 +213,11 @@ control physical-call subtotal:                       24F + 24A^T
 
 ### 第 1 周：冻结可运行数据合同
 
-1. 下载一个 PoolFire train trajectory，不先下载全部 98 GB。
-2. 低内存检查 NPZ 成员、shape、dtype、单位、时间轴和 NaN/Inf。
+1. 已下载并验证一个 PoolFire train trajectory，不先下载全部 98 GB。
+2. 已完成 NPZ/NPY、完整 SHA/CRC、full-resolution rho 与全部 101 帧 finite/正值检查；单位和时间语义仍待确认。
 3. 让师兄确认 `rho_ref -> Δn` 的波长/常数、reference/gauge、BOST observable 与当前基线求解器。
-4. 原始 rho 桥保留 `80 x 80 x 200`；另用冻结的抗混叠/体积平均算子生成 `32^3` 或 `40 x 40 x 64` 训练副本。
-5. 做 adjoint dot test，确认 \(A^\top\) 与 \(A\) 配对。
+4. 原始 rho 桥保留 `80 x 80 x 200`；已生成 `40 x 40 x 100` 等距块平均候选，但梯度/LOS 代理仍显示约四分之一结构损失，尚未授权训练。
+5. 已完成轴对齐 inverse 的 adjoint/解析门，并否掉不合适的 cell-to-node truth；已完成与 inverse primitive 零依赖的任意视角 straight-ray reference 代码门。下一步是接入确认后的场语义、真实相机与 curved/straight 判据。
 
 ### 第 2 周：只跑 C0 最小闭环
 
@@ -281,7 +281,7 @@ control physical-call subtotal:                       24F + 24A^T
 ## 11. 当前证据边界
 
 - 已确认：师兄选择 C；研究问题和比较原则可冻结。
-- 已有：PoolFire 首轨迹真实 NPY header、通过 20 项定向测试的 full-resolution rho extractor、旧合成 BOST forward/adjoint 与 CGLS/PCGLS 试验、warm-start 负结果和调用记账框架。
-- 尚未完成：坐标/单位冲突、\(\rho\to n\) 常数、真实 BOST forward 对齐、C0 训练、matched-accuracy 结果。
-- 因而当前允许表述：**方向已锁定，最小实验已设计。**
+- 已有：PoolFire 首轨迹完整 SHA/CRC 与 full-resolution rho 桥；cell-centred inverse 判别；任意视角 straight-ray reference 的 641 条解析斜射线、求积收敛、尺度不变性、inverse primitive 零依赖和有限网格非同构证据；旧 CGLS/PCGLS 与调用记账框架。
+- 尚未完成：坐标/单位冲突、\(\rho/T/Y_k\to\Delta n\)、真实相机/像素语义、curved-ray 对齐、独立高分辨率 CFD reference、C0 训练和 matched-accuracy 结果。
+- 因而当前允许表述：**方向已锁定，公开数据桥与 straight-ray 几何代码门已通过，物理和训练仍 HOLD。**
 - 当前禁止表述：**算法已创新、速度已提升、优于 FNO/DeepONet、可泛化、可投稿。**
