@@ -169,6 +169,7 @@
       border-radius: var(--radius);
       background: rgba(255,255,255,.96);
       box-shadow: var(--shadow);
+      overflow-wrap: anywhere;
     }
     .check-item label, .gate-card label {
       display: grid;
@@ -318,6 +319,7 @@
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_preprocessing_proxy_evidence_2026-07-23.md">低分辨率代理证据</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_optical_contract_g0_2026-07-23.md">G0 光学合同</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_tier_a_straight_evidence_2026-07-23.md">Tier-A 算子证据</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_cell_center_evidence_2026-07-23.md">Cell-centred 判别证据</a>
       <a class="button" href="#senior">复制下一条师兄消息</a>
       <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
     </div>
@@ -329,7 +331,7 @@
     </div>
     <div class="alert success">
       <strong>方向锁定与数据门通过都不是算法突破</strong>
-      <span>PoolFire 首条 train trajectory 已通过 <code>6,428,997,975 bytes</code>、完整 SHA/CRC、full-resolution rho 与 READY；公开 CFD raw bridge 的 129,280,000 个 rho 值范围为 <code>0.188983–1.179350</code>。等距 <code>(2,2,2)</code> 候选已审计；节点场 Tier-A straight forward/adjoint 也已 <code>14/14</code> 通过，但 cell-centre 适配、相机、曲光线与像素语义仍未闭合，因此当前仍是 <code>G0-SMOKE GO / G0-PHYSICS HOLD</code>，不是 BOST、重建或 warm-start 成功。</span>
+      <span>PoolFire 首条 train trajectory 已通过 <code>6,428,997,975 bytes</code>、完整 SHA/CRC、full-resolution rho 与 READY，覆盖 <code>129,280,000</code> 个 rho 值；节点场 Tier-A straight forward/adjoint 已 <code>14/14</code> 通过。最新 cell-centred 判别门又否掉了会暗中重加权和低通的 cell-to-node truth 路线，暂定 projection-first interior 为经典基线候选；但数据语义、相机、曲光线与像素映射仍未闭合，因此当前仍是 <code>G0-SMOKE GO / G0-PHYSICS HOLD</code>，不是 BOST、重建或 warm-start 成功。</span>
     </div>
   </header>
 
@@ -388,25 +390,48 @@
       <div class="section-head">
         <div>
           <div class="eyebrow">最新可验证增量</div>
-          <h2>第一层代码门通过，但训练仍被物理门拦住</h2>
-          <p>Tier-A 已证明最小 straight-LOS forward/adjoint 的符号、尺度和离散转置；它没有接 PoolFire，也没有相机、曲光线或像素映射。代码自洽和物理可信必须分开验收。</p>
+          <h2>Cell-centred 接口已判别：一条自然适配路线被否掉</h2>
+          <p>三条候选都能通过精确 adjoint dot test，但解析场证明 cell-to-node composite 会改变 LOS 权重、额外低通并降低边界阶数。当前把 projection-first interior 作为第一版经典基线候选，训练仍保持关闭。</p>
         </div>
         <div class="actions">
-          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_g0_tier_a_straight_evidence_2026-07-23.md">读 Tier-A 证据</a>
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_g0_cell_center_evidence_2026-07-23.md">读 Cell-centred 证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_tier_a_straight_evidence_2026-07-23.md">读前置 Tier-A 证据</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_preprocessing_proxy_evidence_2026-07-23.md">读降采样证据</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_optical_contract_g0_2026-07-23.md">读光学合同</a>
         </div>
       </div>
       <div class="alert success">
-        <strong>PASS 只属于 code smoke</strong>
-        <span>常数 gauge、三轴线性符号/尺度、metre/mm 重参数化、60 个随机与角点脉冲 dot cases、JVP/VJP 步长扫描和独立解析收敛共 <code>14/14</code> 通过；收敛阶为 <code>2.04 / 2.11 / 2.08</code>，最大归一化 adjoint mismatch 为 <code>2.03×10⁻¹⁷</code>。</span>
+        <strong>关键数值发现，不是算法突破</strong>
+        <span>在精确 cell-average 解析场上，native 与 interior 最低收敛阶为 <code>1.947 / 1.972</code>；cell-to-node 只有 <code>1.734</code>。它在最细平滑场误差高 <code>3.664×</code>，在约 <code>8.79 cells</code> 厚的已解析前缘上高 <code>2.642×</code>，因此退出 truth forward。</span>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_g0_tier_a_straight_v0.png" alt="Tier-A 直线折射率前向与伴随算子的解析剖面、网格收敛和有限差分步长证据" />
-        <figcaption>解析 node-field smoke：左为数值/解析偏折剖面，中为二阶网格收敛，右为 JVP/VJP 步长扫描。图中不含 PoolFire、相机、曲光线、重建或 warm start。</figcaption>
+        <img src="../assets/poolfire_g0_cell_center_gate_v0.png" alt="三种 cell-centred BOST 接口路线的解析收敛、前缘分辨率、LOS 权重和单视角零空间比较" />
+        <figcaption>左上比较精确 cell-average 平滑场收敛，右上显示前缘分辨率门，左下揭示 cell-to-node 的 <code>1.25/0.75</code> LOS 重加权，右下说明 exact adjoint 并没有消除单视角大零空间。</figcaption>
       </figure>
+      <div class="check-grid" style="margin-top:14px;">
+        <article class="panel">
+          <div class="chips"><span class="chip blue">保留</span><span class="chip">完整 detector</span></div>
+          <h3 style="margin-top:10px;">Native cell-centred</h3>
+          <p>midpoint LOS 与二阶 cell-centred 差分保持近二阶；继续作为完整视场对照，但边界单边差分和噪声放大仍需独立审计。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip coral">否决 truth</span><span class="chip">敏感性对照</span></div>
+          <h3 style="margin-top:10px;">Cell-to-node composite</h3>
+          <p>虽有机器精度 transpose，却把 LOS 权重改为 <code>[1.25,0.75,1,…,0.75,1.25]h</code>，内部再叠加 <code>[0.25,0.5,0.25]</code> 低通。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip">首选基线候选</span><span class="chip blue">不虚构边界</span></div>
+          <h3 style="margin-top:10px;">Projection-first interior</h3>
+          <p>先沿 LOS 积分，再只在 detector 内部中心差分，统一裁四周各一格。下一步用它建立 Zero/BP/CGLS/PCGLS。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip gold">Fail closed</span><span class="chip">分辨率门</span></div>
+          <h3 style="margin-top:10px;">薄前缘不能靠网络“猜真值”</h3>
+          <p>前缘只有约 <code>1.10 cells</code> 厚时，native relative-L2 仍为 <code>35.05%</code>；这类样本强制标记 unresolved，不能作为精度成功。</p>
+        </article>
+      </div>
       <div class="section-head" style="margin-top:20px;">
-        <div><div class="eyebrow">仍未闭合</div><h3>PoolFire 是 cell-centred，当前算子是 node-field</h3><p>这不是一个可以靠 reshape 略过的小差异。必须先建立并比较 cell-centre conservative LOS 与显式 cell-to-node 两条适配路线，再决定哪条进入生成端或反演端。</p></div>
+        <div><div class="eyebrow">下一道物理门</div><h3>先确认场语义和相机，再建立强基线</h3><p>数值路线已经判别，但仍需师兄确认 PoolFire 是点采样还是 finite-volume cell average、坐标/时间单位、<code>rho/T/Yk → Δn</code>、相机 LOS、detector ROI 与组内 solver 接口。</p></div>
       </div>
       <div class="check-grid">
         <article class="panel">
@@ -436,7 +461,7 @@
       </figure>
       <div class="alert critical" style="margin-top:13px;">
         <strong>C0 尚未获准训练</strong>
-        先补齐 11 条 train 的无泄漏统计、单位与 domain 解释、<code>rho → Δn</code> 合同、cell-centre/node 适配、任意相机射线与 curved/straight 门，以及 high-fidelity 生成 forward 与不同离散反演 forward 的表示误差门。
+        先补齐 11 条 train 的无泄漏统计、单位与 domain 解释、point-sample/cell-average 语义、<code>rho → Δn</code> 合同、任意相机射线与 curved/straight 门，以及 high-fidelity 生成 forward 与不同离散反演 forward 的表示误差门。
       </div>
     </section>
 
@@ -464,7 +489,7 @@
 
     <section id="resources" class="band">
       <div class="section-head">
-        <div><div class="eyebrow">角色化资源</div><h2>不整本硬啃，每份资料只提取一个能力</h2><p>官方教程、原始论文和本项目执行包统一指定“读什么”和“交什么”。</p></div>
+        <div><div class="eyebrow">C 主线角色化资源</div><h2>不整本硬啃，每份资料只提取一个能力</h2><p>这里只显示 16 周 C 路线直接使用的教程、论文和执行包；旧支线材料留在历史档案，不进入当前学习队列。</p></div>
       </div>
       <div class="filters">
         <div class="field"><label for="resourceSearch">搜索</label><input id="resourceSearch" type="search" placeholder="FNO / SVD / BOST / UQ" /></div>
@@ -476,7 +501,7 @@
     </section>
 
     <section id="research" class="band">
-      <div class="section-head"><div><div class="eyebrow">算法决策</div><h2>C 已锁定，只在 warm-start 内部选择实现</h2><p>下方排名是实施顺序。C0 先回答是否存在加速空间，C1/C2 才争取论文创新；4D、相机布局和旧导数证书全部降为远期或辅助支线。</p></div></div>
+      <div class="section-head"><div><div class="eyebrow">算法决策</div><h2>C 已锁定，只在 warm-start 内部选择实现</h2><p>下方排名是实施顺序：强基线先行，C0 先回答是否存在加速空间，只有出现跨轨迹、跨工况和几何变化的稳定 headroom 才升级 C1/C2。</p></div></div>
       <div class="alert success"><strong>师兄认可的主张形式</strong><span>“相同重建精度下，速度提升最显著。”因此所有模型选择都服从 matched-accuracy time-to-target，而不是只看网络输出的平均 relative-L2。</span></div>
       <div id="trackGrid" class="track-grid" style="margin-top:14px;"></div>
     </section>
@@ -639,10 +664,16 @@
           output: r.why, verified: r.access
         }));
       }
+      function mainlineResourceIds() {
+        const ids = new Set(guide.weeks.flatMap(week => week.resources));
+        ['poolfire-tier-a-straight', 'poolfire-cell-center-gate', 'bost-grauer-2018'].forEach(id => ids.add(id));
+        return ids;
+      }
       function allResources() {
+        const allowed = mainlineResourceIds();
         const map = new Map();
-        normalizedLibraryResources().forEach(r => map.set(r.id, r));
-        guide.resources.forEach(r => map.set(r.id, r));
+        normalizedLibraryResources().filter(r => allowed.has(r.id)).forEach(r => map.set(r.id, r));
+        guide.resources.filter(r => allowed.has(r.id)).forEach(r => map.set(r.id, r));
         return Array.from(map.values());
       }
       function initializeResourceFilters() {
@@ -700,7 +731,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄，C 路线我已经锁定：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n我会先把 PoolFire 绝对密度转成按已知环境/边界冻结的 Δrho 或 Δn，避免不可观常数偏置。若先做冻结直线/线性重建，网络从一次 A^T y 和相机几何输出三维初值；若实际使用曲光线非线性 forward，则改用参考态 J^T[y-F(x_ref)]，再接同一套物理求解器。\n\n评价分两张账：主表使用 validation 冻结、部署可见的停止规则，报告终点等价、物理调用、端到端时间、内存和 p90/worst；有真值的 PoolFire 另画 oracle time-to-target，只估计 headroom，不冒充在线停止。你给的 BOS 工具已在本机私有备份，但目前只确认到偏折/光线路径输出。\n\n还需要确认：\n1. refractive_index_field 应返回 rho、n 还是 n-1，reference/gauge 怎样定义；\n2. level=2.2/3200 和 2.48/10000 的物理量和单位；\n3. XYdeflection 的单位与正负号；\n4. 是否另有最终背景 warping/渲染步骤；\n5. 组内重建 baseline 与匹配 forward/adjoint 的入口。\n\n这些确认后，我先做低分辨率 C0 闭环，不从零跑 CFD，也不会在真实结果出来前说算法已经成功。`;
+        document.getElementById('briefText').value = `师兄，C 路线已锁定：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\nPoolFire 首轨迹的数据完整性门已经通过。我又把 cell-centred 场接 straight BOST 的三种离散做了对照：native 和 projection-first interior 保持近二阶；常见的 cell-to-node 接法虽然能通过 adjoint dot test，但会把 LOS 权重改成 [1.25,0.75,1,…,0.75,1.25]h，并额外低通。它在最细平滑场误差高 3.66 倍，在已解析前缘上高 2.64 倍，所以我已把它从 truth forward 中否掉。当前先用 projection-first interior 建 Zero/BP/CGLS/PCGLS 基线，网络仍未训练。\n\n评价分两张账：主表使用 validation 冻结、部署可见的停止规则，报告终点等价、物理调用、端到端时间、内存和 p90/worst；有真值的 PoolFire 另画 oracle time-to-target，只估计 headroom，不冒充在线停止。\n\n下一步需要你确认：\n1. CFD 数组是中心点采样还是 finite-volume cell average，坐标单位和真实 domain edges 是什么；\n2. refractive_index_field 应返回 rho、n 还是 n-1，reference/gauge 怎样定义；\n3. level=2.2/3200 和 2.48/10000 的物理量和单位；\n4. XYdeflection 的单位、正负号和最终背景 warping/渲染步骤；\n5. 组内重建 baseline、匹配 forward/adjoint 和允许裁 detector 边界一格的 ROI。\n\n这些确认后，我先做独立 high-fidelity forward 与不同离散 inverse，再建立强基线和 C0，不会在真实结果出来前说算法成功。`;
       }
 
       function bindProfile() {

@@ -1,5 +1,5 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.23-c-warmstart-tier-a",
+  version: "2026.07.23-c-warmstart-cell-center",
   updated: "2026-07-23",
   foundationChecks: [
     {
@@ -311,9 +311,9 @@ window.OPERATOR_LEARNING_GUIDE = {
     {
       id: "W8", phase: "真实数据桥", week: "第 8 周", title: "PoolFire 与师兄 BOS 工具接口审计", hours: "12-16h", depends: ["W2", "W4", "W7"],
       learn: ["CFD 数据中 rho/T/组分的含义", "数组 axis order、spacing、units 与 trajectory split", "组分相关 Gladstone-Dale 与 rho_ref→Δn", "BOS 的常数 gauge", "straight/curved ray、相机标定与偏折单位", "守恒与 LOS 梯度保真的区别"],
-      build: ["低内存读取 PoolFire metadata 与真实 trajectory header", "流式保存 full-resolution rho 并检查全部 101 帧 finite/正值/统计，不使用可疑 YAML", "核对坐标降序、domain 尺度、单位与 cell center/edge", "用 `(2,2,2)` 块平均建立 `40×40×100` 等距候选并保留 `(2,2,4)` 审计对照", "计算 full/coarse 梯度 RMS 与正交 LOS 梯度积分代理", "整理师兄 notebook 的输入、输出、常数、相机与保存格式", "用常数场和线性梯度场做 Tier-A BOS smoke", "冻结 Δn reference、axis、coordinate 和 output manifest"],
-      pass: ["不加载 9.31 GB 解压 payload 也能说明 member、shape、dtype、order 与 split", "trajectory 与 metadata 的预期 SHA、ZIP CRC、rho checksums 和 READY 全通过", "full-resolution rho 全部 finite 且严格为正", "低分辨率候选通过离散和、坐标同步重排与 exact block-mean 门", "坐标方向与物理尺度冲突已解决", "常数场偏折接近零且线性场方向正确", "reference/gauge 不读取 test truth 且对所有基线相同", "师兄确认 rho/n/n-1、两个比例常数和 XYdeflection 单位", "私有 notebook 不进入 GitHub"],
-      resources: ["c-route-lock", "poolfire-rho-bridge", "poolfire-preprocessing-proxy", "poolfire-optical-g0", "poolfire-data", "nerif-paper", "he-data-contract", "pytorch-autograd"],
+      build: ["低内存读取 PoolFire metadata 与真实 trajectory header", "流式保存 full-resolution rho 并检查全部 101 帧 finite/正值/统计，不使用可疑 YAML", "核对坐标降序、domain 尺度、单位与 cell center/edge", "用 `(2,2,2)` 块平均建立 `40×40×100` 等距候选并保留 `(2,2,4)` 审计对照", "计算 full/coarse 梯度 RMS 与正交 LOS 梯度积分代理", "整理师兄 notebook 的输入、输出、常数、相机与保存格式", "用常数场和线性梯度场做 Tier-A BOS smoke", "比较 native cell-centred、cell-to-node 与 projection-first interior 的解析误差、伴随、边界和前缘分辨率", "冻结 Δn reference、axis、coordinate 和 output manifest"],
+      pass: ["不加载 9.31 GB 解压 payload 也能说明 member、shape、dtype、order 与 split", "trajectory 与 metadata 的预期 SHA、ZIP CRC、rho checksums 和 READY 全通过", "full-resolution rho 全部 finite 且严格为正", "低分辨率候选通过离散和、坐标同步重排与 exact block-mean 门", "cell-to-node 的隐藏 LOS 重加权/低通被检出并退出 truth forward", "projection-first interior 仅作为待独立 forward 验证的经典基线候选", "坐标方向与物理尺度冲突已解决", "常数场偏折接近零且线性场方向正确", "reference/gauge 不读取 test truth 且对所有基线相同", "师兄确认 rho/n/n-1、两个比例常数和 XYdeflection 单位", "私有 notebook 不进入 GitHub"],
+      resources: ["c-route-lock", "poolfire-rho-bridge", "poolfire-preprocessing-proxy", "poolfire-optical-g0", "poolfire-tier-a-straight", "poolfire-cell-center-gate", "poolfire-data", "nerif-paper", "he-data-contract", "pytorch-autograd"],
       paper: "这一周只建立可信 forward 数据链；模拟器能跑不等于生成的数据已经物理正确。"
     },
     {
@@ -441,6 +441,7 @@ window.OPERATOR_LEARNING_GUIDE = {
     {id:"poolfire-preprocessing-proxy",stage:"data",level:"必做",type:"可复现负证据",title:"PoolFire 低分辨率梯度与 LOS 代理门",url:"../document_reader.html?doc=docs%2Fpoolfire_preprocessing_proxy_evidence_2026-07-23.md",local:"",read:"先区分离散和等价、梯度 RMS 与 LOS 代理，再比较 `(2,2,2)` 和 `(2,2,4)` 的三帧结果。",output:"不看页面解释为什么等距候选仍未获准 C0，以及为什么 LOS proxy 不能写成 BOST error。",verified:"`40×40×100` 候选 READY；两套 Python 各 10 项定向测试；梯度/LOS proxy 可复现；C0 保持 HOLD"},
     {id:"poolfire-optical-g0",stage:"bost",level:"必做",type:"物理合同",title:"PoolFire → BOST G0 光学合同",url:"../document_reader.html?doc=docs%2Fpoolfire_optical_contract_g0_2026-07-23.md",local:"",read:"读懂 `n-1=ρKmix(λ,Y)`、`ρ∇Kmix`、Δn reference、偏折角到像素和 straight/curved 判据。",output:"手推 `∇n` 两项，画出 Tier A/Tier B forward，并把 12 个问题发给师兄。",verified:"G0-SMOKE GO / G0-PHYSICS HOLD；推荐模型输出 Δn0；一级来源链接已核验"},
     {id:"poolfire-tier-a-straight",stage:"bost",level:"必做",type:"代码与伴随门",title:"Tier-A Δn straight forward/adjoint",url:"../document_reader.html?doc=docs%2Fpoolfire_g0_tier_a_straight_evidence_2026-07-23.md",local:"",read:"先读 node-field、[x,y,z]、metre/radian、trapezoid 与 Euclidean adjoint 合同，再核对三轴线性、60 个 dot cases、JVP/VJP 步长扫描和二阶收敛。",output:"不用代码复述为什么 14/14 PASS 仍不能直接接 PoolFire cell-centred rho，也不能授权 C0 训练。",verified:"PASS_TIER_A_STRAIGHT_CODE_SMOKE_ONLY；14/14 checks；最低收敛阶 2.04；G0-PHYSICS HOLD；training_authorized=false"},
+    {id:"poolfire-cell-center-gate",stage:"bost",level:"必做",type:"离散判别与负证据",title:"PoolFire cell-centred 接口判别门",url:"../document_reader.html?doc=docs%2Fpoolfire_g0_cell_center_evidence_2026-07-23.md",local:"",read:"对照 native、cell-to-node 与 projection-first interior 的矩阵顺序、精确转置、LOS 权重、横向低通、平滑收敛和 tanh 前缘分辨率。",output:"手推 cell-to-node 的 `[1.25,0.75,1,…,0.75,1.25]h` 等效 LOS 权重，并解释为什么 dot-test PASS 仍不能让它成为 truth forward。",verified:"PASS_CELL_CENTER_ROUTE_DISCRIMINATION_CODE_GATE_ONLY；cell-to-node finest smooth error 3.664x、resolved-front error 2.642x native；training_authorized=false"},
     {id:"l2ws-paper",stage:"warm-start",level:"核心",type:"理论与训练目标",title:"Learning to Warm-Start Fixed-Point Optimization Algorithms",url:"https://jmlr.org/papers/v25/23-1174.html",local:"",read:"对比 fixed-point residual loss 与 solution-distance loss，理解网络如何为后续固定迭代负责。",output:"写出它的训练目标、下游迭代接口和泛化假设，并标出哪些假设不适用于 BOST 非线性逆问题。",verified:"JMLR 25(166), 2024；官方全文、PDF 与代码链接可用"},
     {id:"inverse-acoustic-warmstart",stage:"warm-start",level:"核心",type:"邻近逆问题",title:"A Neural Network Warm-Start Approach for Inverse Acoustic Scattering",url:"https://arxiv.org/abs/2212.08736",local:"",read:"重点看学习初值如何接传统反演、有限孔径/噪声测试，以及训练样本复杂度限制。",output:"列出声学逆散射与 BOST 的三点共同结构和三点不可直接迁移之处。",verified:"JCP 490, 112341 (2023)；arXiv 开放全文"},
     {id:"nows-paper",stage:"warm-start",level:"核心",type:"邻近工作",title:"NOWS: Neural Operator Warm Starts for Accelerating Iterative Solvers",url:"https://arxiv.org/abs/2511.02481",local:"",read:"提取 neural operator 初值、Krylov solver、iteration/runtime 口径与稳定性边界。",output:"列出 NOWS 与 BOST 逆问题的四个差异，避免把 warm start 本身误写为创新。",verified:"arXiv v4，2026-05-07 更新"},
@@ -459,9 +460,6 @@ window.OPERATOR_LEARNING_GUIDE = {
     },
     {
       id:"strong-baselines", rank:4, title:"强基线与公平成本账本", badge:"不是创新，但不可跳过", risk:"低", novelty:"无；作用是防止把弱基线、额外调用或较差终点包装成加速", data:"与主实验完全共用数据、forward、split、归一化和阈值", hardware:"本机即可先跑小场；完整 wall time 必须在同一设备、同一进程协议下测", question:"C0/C1/C2 是否同时胜过 Zero-CGLS、BP-CGLS、fixed-SPD PCGLS 和 direct FNO/DeepONet？", contribution:"冻结 calls、wall、memory、field/gradient、measurement、p50/p90/worst 与未达标率。", next:"先复用仓库 CGLS/PCGLS 与 fixed-warm shell，删掉旧 13F+13A^T 特征链。", stop:"若最强经典初始化达到相同或更好的前沿，论文主张应降级为负结果或工程复现。"
-    },
-    {
-      id:"temporal-upgrade", rank:5, title:"Rig-Amortized / Temporal Warm Start", badge:"远期 4D 升级", risk:"高", novelty:"同一 rig 或相邻时刻共享 operator-only basis 与上一帧状态，贴近 TDBOST 的连续高速重建需求", data:"需要静态 C 路线通过，再加入合法时序 trajectory；不得随机拆相邻帧", hardware:"basis setup 与 break-even 帧数必须单列；全时序训练可能需要 GPU", question:"一次 rig setup 或前一帧信息能否在不损伤瞬态火焰前缘的情况下进一步降低每帧成本？", contribution:"将单帧 C 路线自然扩展到连续采集，并给出 setup amortization 与 rig mismatch fallback。", next:"只在 C0/C1 通过 PoolFire trajectory OOD 和组内静态样例后启动。", stop:"静态 warm start 不成立、无连续时序数据或时间先验抹平瞬态结构时停止。"
     }
   ],
   paperGates: [
@@ -475,6 +473,7 @@ window.OPERATOR_LEARNING_GUIDE = {
     {id:"G7",title:"可复现与展示",evidence:"公开代码不含私有工具；环境、config、checksum、图表脚本、三维切片/等值面和成本表可一键重跑。",stop:"必须依赖师兄路径或手工 notebook 操作才能复现。"}
   ],
   seniorQuestions: [
+    "PoolFire/组内 CFD 数组是中心点采样还是 finite-volume cell average？三个坐标的单位和真实 domain edges 是什么？",
     "notebook 的 refractive_index_field 应返回密度 rho、折射率 n，还是 n-1？",
     "level=2.2/3200 和 SprayFlame 分支的 2.48/10000 分别是什么常数、单位或缩放？",
     "保存的 XYdeflection 是 pixel、归一化相机坐标、偏折角还是物理长度？正负号怎样定义？",
