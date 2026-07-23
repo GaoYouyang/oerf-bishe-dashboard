@@ -295,9 +295,9 @@ window.OPERATOR_LEARNING_GUIDE = {
     {
       id: "W8", phase: "真实数据桥", week: "第 8 周", title: "PoolFire 与师兄 BOS 工具接口审计", hours: "12-16h", depends: ["W2", "W4", "W7"],
       learn: ["CFD 数据中 rho/T/组分的含义", "数组 axis order、spacing、units 与 trajectory split", "Gladstone-Dale 与 rho_ref→Δn", "BOS 的常数 gauge", "相机内外参、ray near/far 与偏折单位"],
-      build: ["低内存读取 PoolFire metadata 和一个 trajectory header", "整理师兄 notebook 的输入、输出、常数、相机与保存格式", "用常数场和线性梯度场做低分辨率 BOS smoke", "冻结 Δrho/Δn reference、axis、coordinate 和 output manifest"],
-      pass: ["不加载全 6GB 也能说明数组成员和 shape", "常数场偏折接近零且线性场方向正确", "reference/gauge 不读取 test truth 且对所有基线相同", "师兄确认 rho/n/n-1、两个比例常数和 XYdeflection 单位", "私有 notebook 不进入 GitHub"],
-      resources: ["c-route-lock", "poolfire-data", "nerif-paper", "he-data-contract", "pytorch-autograd"],
+      build: ["低内存读取 PoolFire metadata 与真实 trajectory header", "流式保存 full-resolution rho 并检查全部 101 帧 finite/正值/统计，不使用可疑 YAML", "核对坐标降序、domain 尺度、单位与 cell center/edge", "用冻结的抗混叠/体积平均算子另建低分辨率副本", "整理师兄 notebook 的输入、输出、常数、相机与保存格式", "用常数场和线性梯度场做低分辨率 BOS smoke", "冻结 Δrho/Δn reference、axis、coordinate 和 output manifest"],
+      pass: ["不加载 9.31 GB 解压 payload 也能说明 member、shape、dtype、order 与 split", "trajectory 与 metadata 的预期 SHA、ZIP CRC、rho checksums 和 READY 全通过", "full-resolution rho 全部 finite 且严格为正", "坐标方向与物理尺度冲突已解决", "常数场偏折接近零且线性场方向正确", "reference/gauge 不读取 test truth 且对所有基线相同", "师兄确认 rho/n/n-1、两个比例常数和 XYdeflection 单位", "私有 notebook 不进入 GitHub"],
+      resources: ["c-route-lock", "poolfire-rho-bridge", "poolfire-data", "nerif-paper", "he-data-contract", "pytorch-autograd"],
       paper: "这一周只建立可信 forward 数据链；模拟器能跑不等于生成的数据已经物理正确。"
     },
     {
@@ -325,10 +325,10 @@ window.OPERATOR_LEARNING_GUIDE = {
       paper: "这是当前最值得争取的机制贡献：BOST 可观测子空间约束，而不是换一个更大的神经网络。"
     },
     {
-      id: "W12", phase: "独立迁移", week: "第 12 周", title: "未见 PoolFire 工况与独立 BOST 样例", hours: "12-20h", depends: ["W8", "W10"],
-      learn: ["trajectory/family/geometry OOD", "synthetic optical bias", "zero-shot、few-shot 与 per-instance refinement", "保留相机评价"],
-      build: ["封存未见功率/尺寸 trajectory", "扫描 view/noise/geometry shift", "读取一份公开或组内最小 BOST 样例", "在不重训时先画重投影与失败 case"],
-      pass: ["相邻帧和同工况不跨 split", "不用 test truth 调阈值或停止步", "独立 forward/domain 的结果单独标注", "失败个例与健康检查完整"],
+      id: "W12", phase: "独立迁移", week: "第 12 周", title: "PoolFire 组合留出与独立 BOST 样例", hours: "12-20h", depends: ["W8", "W10"],
+      learn: ["combination holdout 与真正参数 OOD 的区别", "trajectory/geometry/noise shift", "synthetic optical bias", "zero-shot、few-shot 与 per-instance refinement", "保留相机评价"],
+      build: ["封存功率-尺寸组合留出 trajectory，不冒充未见参数 OOD", "扫描 view/noise/geometry shift", "若主张参数 OOD，另建超出训练取值范围的工况", "读取一份公开或组内最小 BOST 样例", "在不重训时先画重投影与失败 case"],
+      pass: ["相邻帧和同工况不跨 split", "统计单位是 trajectory，时间帧只做块 bootstrap", "不用 test truth 调阈值或停止步", "独立 forward/domain 的结果单独标注", "失败个例与健康检查完整"],
       resources: ["poolfire-data", "open-bos-dataset", "nerif-paper", "public-data-transfer", "he-data-contract"],
       paper: "PoolFire 仍是 digital-twin/synthetic BOST；独立光学链是进入可投稿证据的必要升级。"
     },
@@ -421,11 +421,12 @@ window.OPERATOR_LEARNING_GUIDE = {
     {id:"n3-field-adjoint",stage:"current",level:"必做",type:"封存的后续设计",title:"Field JVP/VJP 到 6+2 view 三维重建接口",url:"../document_reader.html?doc=docs%2Fn2_pvgr_field_jvp_vjp_reconstruction_interface_design_2026-07-18.md",local:"",read:"重点读四个现有模块的 detach 审计、冻结 row layout、tensor-only forward、dot/FD 双门和 held-out view 边界。",output:"基于 D4b 失败写出必须先闭合的 topology-certified renderer 门，再标出 decoder 与 6+2 重建仍锁定。",verified:"D4 tiny valid；D4b fail closed；decoder chain 与三维重建未授权"},
     {id:"n3-recovery-disclosure",stage:"audit",level:"进阶",type:"研究诚信",title:"N3 KeyError 盲态分析恢复披露",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n3_blind_analysis_recovery_2026-07-18.md",local:"",read:"理解为什么 96 格完成后仍不能直接改字段继续汇总，以及 opaque Merkle 封存如何限制事后自由度。",output:"写出允许修改的唯一 query schema 映射和所有禁止修改项。",verified:"恢复协议先提交；checkpoint payload 未解析；96 格未重算"},
     {id:"c-route-lock",stage:"warm-start",level:"必做",type:"项目合同",title:"PoolFire BOST Warm Start 路线锁定",url:"../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md",local:"",read:"读清问题定义、C0/C1/C2、matched-accuracy、调用账本、停止条件和师兄待确认项。",output:"不看页面写出输入、输出、求解器、主指标和五个失败条件。",verified:"师兄已选择 C；算法与真实证据尚未验证"},
+    {id:"poolfire-rho-bridge",stage:"data",level:"必做",type:"真实文件结构审计",title:"PoolFire rho 流式数据桥",url:"../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md",local:"",read:"核对 trajectory/metadata SHA、ZIP64 member、NPY shape/dtype/order、full-resolution rho、READY 门和坐标冲突。",output:"解释为什么 6.43 GB 压缩包对应 9.31 GB payload、为什么原始桥不能直接 stride 抽点，以及为什么当前仍不能转换 Δn。",verified:"完整 source size/SHA、ZIP CRC、(101,80,80,200) rho、checksums 与 READY 已通过；20 项定向测试在两套 Python 环境通过；单位/光学链仍待闭合"},
     {id:"l2ws-paper",stage:"warm-start",level:"核心",type:"理论与训练目标",title:"Learning to Warm-Start Fixed-Point Optimization Algorithms",url:"https://jmlr.org/papers/v25/23-1174.html",local:"",read:"对比 fixed-point residual loss 与 solution-distance loss，理解网络如何为后续固定迭代负责。",output:"写出它的训练目标、下游迭代接口和泛化假设，并标出哪些假设不适用于 BOST 非线性逆问题。",verified:"JMLR 25(166), 2024；官方全文、PDF 与代码链接可用"},
     {id:"inverse-acoustic-warmstart",stage:"warm-start",level:"核心",type:"邻近逆问题",title:"A Neural Network Warm-Start Approach for Inverse Acoustic Scattering",url:"https://arxiv.org/abs/2212.08736",local:"",read:"重点看学习初值如何接传统反演、有限孔径/噪声测试，以及训练样本复杂度限制。",output:"列出声学逆散射与 BOST 的三点共同结构和三点不可直接迁移之处。",verified:"JCP 490, 112341 (2023)；arXiv 开放全文"},
     {id:"nows-paper",stage:"warm-start",level:"核心",type:"邻近工作",title:"NOWS: Neural Operator Warm Starts for Accelerating Iterative Solvers",url:"https://arxiv.org/abs/2511.02481",local:"",read:"提取 neural operator 初值、Krylov solver、iteration/runtime 口径与稳定性边界。",output:"列出 NOWS 与 BOST 逆问题的四个差异，避免把 warm start 本身误写为创新。",verified:"arXiv v4，2026-05-07 更新"},
     {id:"super-fidelity-paper",stage:"warm-start",level:"核心",type:"邻近工作",title:"Neural operator-based super-fidelity warm starts",url:"https://arxiv.org/abs/2312.11842",local:"",read:"重点看学习初值而非替换求解器、跨离散化与端到端成本。",output:"解释 steady forward PDE 结论为何不能直接迁移到 BOST 逆问题。",verified:"arXiv v2，2025-02-27 更新"},
-    {id:"poolfire-data",stage:"data",level:"必做",type:"公开高保真 CFD",title:"REALM PoolFire",url:"https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main",local:"",read:"只先检查 metadata 与单条 trajectory；确认 rho、shape、time、units、NaN/Inf 和 split。",output:"一个不加载全数组的 header report + 一张 trajectory-level split 表。",verified:"REALM 官方 Hugging Face 数据仓库；不是现成 BOST 数据"}
+    {id:"poolfire-data",stage:"data",level:"必做",type:"公开高保真 CFD",title:"REALM PoolFire",url:"https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main",local:"",read:"只先检查 metadata 与单条 trajectory；确认 rho、shape、time、units、NaN/Inf 和 split。",output:"一个不加载全数组的 header report + 一张 trajectory-level split 表。",verified:"REALM 官方 Hugging Face 数据仓库；首轨迹头为 (101,9,80,80,200) float64，但它不是现成 BOST 数据"}
   ],
   researchTracks: [
     {

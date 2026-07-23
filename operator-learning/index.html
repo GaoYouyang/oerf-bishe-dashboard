@@ -313,6 +313,7 @@
     <p class="lead">唯一主问题：让神经算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少 forward/adjoint 调用和端到端时间。PoolFire 提供高保真 CFD 场；师兄给的 BOS 工具初审可输出多视角偏折与光线路径，但物理单位和最终图像渲染仍待确认。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
       <a class="button" href="#senior">复制下一条师兄消息</a>
       <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
     </div>
@@ -324,7 +325,7 @@
     </div>
     <div class="alert success">
       <strong>方向锁定是里程碑，不是算法突破</strong>
-      <span>已取得一份九视角 BOS 偏折/光线路径工具并在本机私有保存；它尚未通过单位、常数和最终背景渲染确认。PoolFire 首轨迹也未接入，当前没有 warm-start 加速结果。旧 D4b、PCGLS、FNO/DeepONet 结果只作为数值审计和强基线资产。</span>
+      <span>PoolFire 首条 train trajectory 已通过 `6,428,997,975 bytes`、公开 SHA、ZIP CRC、full-resolution rho checksums 和 READY 门；101 帧共 129,280,000 个 rho 值全部 finite 且为正，范围 `0.188983–1.179350`。这只是公开 CFD raw bridge；单位、reference、BOS 观测和 warm-start 加速仍全部未确认。</span>
     </div>
   </header>
 
@@ -365,7 +366,7 @@
         <div><b>4 · Warm Start</b><span>小型算子输出三维 `x0`</span></div>
         <div><b>5 · 物理细化</b><span>固定 CGLS/PCGLS 或组内 solver</span></div>
         <div><b>6 · 双账计时</b><span>deployable 主表 + oracle headroom</span></div>
-        <div><b>7 · 独立迁移</b><span>未见工况与组内真实样例</span></div>
+        <div><b>7 · 独立迁移</b><span>组合留出、几何 shift 与独立光学样例</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
         <article class="panel"><div class="chips"><span class="chip">C0 · 首先实现</span><span class="chip blue">低风险</span></div><h3 style="margin-top:10px;">Adjoint-Residual Warm Start</h3><p>线性阶段输入一次 `A^T y`；曲光线非线性阶段改用参考态 `J^T[y-F(x_ref)]`。小型 3D U-Net/FNO 只输出 `x0`，再接完全相同的物理迭代。</p></article>
@@ -375,7 +376,7 @@
       </div>
       <div class="alert" style="margin-top:13px;">
         <strong>现在的真实阻塞不是“不会 CFD”</strong>
-        <span>师兄已明确无需从零跑三维 CFD；应使用 PoolFire 等现成数据。当前只需确认 notebook 中 `refractive_index_field` 的语义、两个比例常数、`XYdeflection` 单位，以及组内重建 forward/adjoint 的入口。</span>
+        <span>师兄已明确无需从零跑三维 CFD；公开 PoolFire 首轨迹的数据完整性门已经通过。下一门是坐标降序与 domain 尺度冲突、rho/time 单位、reference，以及 notebook 中 `refractive_index_field`、比例常数、`XYdeflection` 和组内 forward/adjoint 的语义。</span>
       </div>
     </section>
 

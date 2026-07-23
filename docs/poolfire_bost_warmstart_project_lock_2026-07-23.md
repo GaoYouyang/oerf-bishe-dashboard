@@ -49,13 +49,16 @@ x_{k+1} = \mathcal{S}(x_k; F_g, J_g, J_g^\top, y).
 - 轨迹：15
 - 公开仓库体量约 98 GB
 
-本机已下载元数据，但发现需要先审计的差异：
+本机已下载元数据，并从首条 train trajectory 的连续压缩前缀确认：
 
-- REALM 网站和仓库旧配置写 21 个时间步；
-- 已下载的 `data.npz` 中 `times.shape == (101,)`；
-- 已下载的统计 YAML 数值可疑，不能直接用于归一化。
+- ZIP64 member 是 deflate 压缩的 `data.npy`；
+- NPY header 为 shape `(101, 9, 80, 80, 200)`、C-order、little-endian `float64`；
+- 解压后的数值 payload 为 `9,308,160,000 bytes`；
+- metadata 中 `times.shape == (101,)`，`rho` 是 channel 5；
+- metadata SHA-256 已冻结；三个坐标轴均降序，数值跨度约 `1.2 x 1.2 x 3.0`，与 README 的 `3 x 3 x 3 m³` 描述冲突；
+- REALM 仓库旧配置仍写 21 个时间步，两份统计 YAML 互相矛盾，不能直接用于归一化。
 
-因此，打开首个真实轨迹前只允许声称“元数据已获取”。必须先检查轨迹数组的 key、shape、dtype、时间轴、单位和缺失值，再冻结 loader。
+首条 train trajectory 已完成 `6,428,997,975 bytes` 与公开 SHA 的双重校验，并通过 ZIP CRC、full-resolution rho、派生 checksums 和 `READY.json`。101 帧共 `129,280,000` 个 rho 值全部 finite 且严格为正；float32 复核得到 min/max/mean/std 为 `0.188983 / 1.179350 / 1.160875 / 0.060581`。这只冻结了公开 CFD raw bridge；坐标尺度冲突、单位、reference 和光学链仍未闭合。详细证据见 [PoolFire rho 数据桥](poolfire_rho_bridge_evidence_2026-07-23.md)。
 
 ### 3.2 从 CFD 到 BOST 训练对
 
@@ -67,9 +70,11 @@ x_{k+1} = \mathcal{S}(x_k; F_g, J_g, J_g^\top, y).
 4. 在线性阶段计算 \(b=A_g^\top y\)；非线性阶段计算参考状态的伴随残差 \(b=J_g^\top[y-F_g(x_{\rm ref})]\)；
 5. 训练 \(G_\theta(b,g)\to x_0\)；
 6. 用固定 CGLS/PCGLS/PDHG 或组内求解器从 \(x_0\) 继续；
-7. 在未见 trajectory、火源功率/尺寸和几何上做 matched-accuracy 计时。
+7. 在完整留出 trajectory、功率-尺寸组合留出和几何扰动上做 matched-accuracy 计时。
 
 必须按完整 trajectory 或物理工况切分，禁止随机帧切分。相邻帧高度相关，随机帧会把同一火焰演化泄漏到训练与测试。
+
+PoolFire 自带两个 test case 的功率值和尺寸值都曾分别出现在训练集，因此它们只能称 **combination holdout**，不能称未见功率或未见尺度 OOD。若论文要主张真正的参数外推，必须另建超出训练取值范围的 CFD/实验工况。合成观测与反演也不能使用完全相同的离散 forward：至少要用高分辨率或扰动光学参数生成观测，再用独立较粗算子重建，避免 inverse crime。
 
 ### 3.3 重建变量与 gauge
 
@@ -185,7 +190,7 @@ control physical-call subtotal:                       24F + 24A^T
 - 部署可用停止规则下，终点误差通过等价门，且 median 与 p90 的物理调用都减少；
 - 端到端 wall time 有稳定正收益，而不是只省迭代、网络更慢；
 - 终点场误差、重投影和坏尾部不恶化；
-- 对未见功率/尺寸或未见几何至少有一个 OOD 门。
+- 对 combination holdout、几何/噪声 shift 至少有一个压力门；若称参数 OOD，必须另有超出训练取值范围的数据。
 
 ### 高质量论文候选门
 
@@ -211,7 +216,7 @@ control physical-call subtotal:                       24F + 24A^T
 1. 下载一个 PoolFire train trajectory，不先下载全部 98 GB。
 2. 低内存检查 NPZ 成员、shape、dtype、单位、时间轴和 NaN/Inf。
 3. 让师兄确认 `rho_ref -> Δn` 的波长/常数、reference/gauge、BOST observable 与当前基线求解器。
-4. 用降采样 `32^3` 或 `40 x 40 x 64` 扰动场生成第一个多视角 toy。
+4. 原始 rho 桥保留 `80 x 80 x 200`；另用冻结的抗混叠/体积平均算子生成 `32^3` 或 `40 x 40 x 64` 训练副本。
 5. 做 adjoint dot test，确认 \(A^\top\) 与 \(A\) 配对。
 
 ### 第 2 周：只跑 C0 最小闭环
@@ -276,7 +281,7 @@ control physical-call subtotal:                       24F + 24A^T
 ## 11. 当前证据边界
 
 - 已确认：师兄选择 C；研究问题和比较原则可冻结。
-- 已有：合成 BOST forward/adjoint、CGLS/PCGLS 强基线、旧 warm-start 负结果和调用记账框架。
-- 尚未完成：PoolFire 首轨迹下载与数组审计、\(\rho\to n\) 常数、真实 BOST forward 对齐、C0 训练、matched-accuracy 结果。
+- 已有：PoolFire 首轨迹真实 NPY header、通过 20 项定向测试的 full-resolution rho extractor、旧合成 BOST forward/adjoint 与 CGLS/PCGLS 试验、warm-start 负结果和调用记账框架。
+- 尚未完成：坐标/单位冲突、\(\rho\to n\) 常数、真实 BOST forward 对齐、C0 训练、matched-accuracy 结果。
 - 因而当前允许表述：**方向已锁定，最小实验已设计。**
 - 当前禁止表述：**算法已创新、速度已提升、优于 FNO/DeepONet、可泛化、可投稿。**
