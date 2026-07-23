@@ -1,5 +1,5 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.23-c-warmstart-reference-forward",
+  version: "2026.07.23-c-warmstart-baseline-contract",
   updated: "2026-07-23",
   foundationChecks: [
     {
@@ -319,9 +319,9 @@ window.OPERATOR_LEARNING_GUIDE = {
     {
       id: "W9", phase: "成本基线", week: "第 9 周", title: "Zero/BP/PCGLS 与同精度计时器", hours: "12-18h", depends: ["W1", "W3", "W8"],
       learn: ["CGLS/CGNE recurrence", "非零初值为什么多一次 warm projection", "部署可见停止与 oracle time-to-target 的区别", "wall time warm-up、同步和内存测量"],
-      build: ["验证 A/A^T dot test", "复用 fixed-warm CGLS shell", "跑 Zero-CGLS、A^T y-CGLS、fixed-SPD PCGLS", "分别输出 deployable-stop 主账与 oracle-headroom 辅账"],
-      pass: ["零初值 K 步调用账与公式一致", "非零初值额外 forward 明确记账", "部署停止规则与等价区间只由 validation 冻结", "test truth 只事后画 headroom，不能控制主账停止"],
-      resources: ["c-route-lock", "fair-budget-audit", "v3k-d-controls", "v3k-f-stopping", "discrepancy-hanke"],
+      build: ["复现已通过的统一 baseline contract gate", "把相同接口接到确认后的独立 CFD/BOST pair", "跑 Zero-CGLS、归一化 BP-CGLS、fixed-SPD PCGLS 与 Direct-only", "分别输出 deployable-stop 主账与 oracle-headroom 辅账"],
+      pass: ["代码门保持 14 tests PASS，one-shot cache 运行后归零，且伪造 cache/跨 wrapper gauge/隐藏 operator call/时变 preconditioner fail closed", "零初值 K 步调用账与公式一致", "非零初值额外 forward 明确记账", "部署停止规则与等价区间只由 validation 冻结", "test truth 只事后画 headroom，不能控制主账停止"],
+      resources: ["c-route-lock", "poolfire-c-baseline-contract", "fair-budget-audit", "v3k-d-controls", "v3k-f-stopping", "discrepancy-hanke"],
       paper: "没有这一周，任何“快了多少”都可能只是隐藏特征成本或更差终点。"
     },
     {
@@ -443,6 +443,7 @@ window.OPERATOR_LEARNING_GUIDE = {
     {id:"poolfire-tier-a-straight",stage:"bost",level:"必做",type:"代码与伴随门",title:"Tier-A Δn straight forward/adjoint",url:"../document_reader.html?doc=docs%2Fpoolfire_g0_tier_a_straight_evidence_2026-07-23.md",local:"",read:"先读 node-field、[x,y,z]、metre/radian、trapezoid 与 Euclidean adjoint 合同，再核对三轴线性、60 个 dot cases、JVP/VJP 步长扫描和二阶收敛。",output:"不用代码复述为什么 14/14 PASS 仍不能直接接 PoolFire cell-centred rho，也不能授权 C0 训练。",verified:"PASS_TIER_A_STRAIGHT_CODE_SMOKE_ONLY；14/14 checks；最低收敛阶 2.04；G0-PHYSICS HOLD；training_authorized=false"},
     {id:"poolfire-cell-center-gate",stage:"bost",level:"必做",type:"离散判别与负证据",title:"PoolFire cell-centred 接口判别门",url:"../document_reader.html?doc=docs%2Fpoolfire_g0_cell_center_evidence_2026-07-23.md",local:"",read:"对照 native、cell-to-node 与 projection-first interior 的矩阵顺序、精确转置、LOS 权重、横向低通、平滑收敛和 tanh 前缘分辨率。",output:"手推 cell-to-node 的 `[1.25,0.75,1,…,0.75,1.25]h` 等效 LOS 权重，并解释为什么 dot-test PASS 仍不能让它成为 truth forward。",verified:"PASS_CELL_CENTER_ROUTE_DISCRIMINATION_CODE_GATE_ONLY；cell-to-node finest smooth error 3.664x、resolved-front error 2.642x native；training_authorized=false"},
     {id:"poolfire-reference-forward-gate",stage:"bost",level:"必做",type:"独立生成正演代码门",title:"任意视角 straight-ray reference forward",url:"../document_reader.html?doc=docs%2Fpoolfire_g0_reference_forward_evidence_2026-07-23.md",local:"",read:"读懂单位射线、每 ray 横向基、AABB clipping、复合 Gauss-Legendre、解析 oracle、坐标尺度不变性和 inverse primitive 零依赖。",output:"不看页面写出为什么 reference 不暴露 adjoint、为什么有限网格差异要同时伴随连续极限收敛，以及为什么这个 PASS 仍不允许 PoolFire/C0 训练。",verified:"PASS_ARBITRARY_RAY_REFERENCE_CODE_GATE_ONLY；641 条解析斜射线；GL 渐近阶 3.83/3.94；inverse 差 7.927%→0.156% 且约二阶收敛；G0-PHYSICS HOLD"},
+    {id:"poolfire-c-baseline-contract",stage:"warm-start",level:"必做",type:"公平求解与成本代码门",title:"C 路线统一强基线与逐 checkpoint 成本合同",url:"../document_reader.html?doc=docs%2Fpoolfire_c_baseline_contract_evidence_2026-07-23.md",local:"",read:"先核对 truth-free solver signature、Zero/BP/Direct 的准备成本、operator-issued projection cache、固定 SPD 限制、显式 gauge 和逐 checkpoint A/A^T 账本，再读 model-mismatch 下 correction 正负作用翻转。",output:"手算三种 arm 在 K=1/24 的完整 A/A^T 成本，并解释为什么 toy ridge 的两条曲线不能写成神经算子泛化或提速。",verified:"PASS_BASELINE_AND_COST_CONTRACT_ONLY；13 tests；dot max 5.60e-15；forged cache/hidden operator call/time-varying preconditioner fail closed；training_authorized=false"},
     {id:"l2ws-paper",stage:"warm-start",level:"核心",type:"理论与训练目标",title:"Learning to Warm-Start Fixed-Point Optimization Algorithms",url:"https://jmlr.org/papers/v25/23-1174.html",local:"",read:"对比 fixed-point residual loss 与 solution-distance loss，理解网络如何为后续固定迭代负责。",output:"写出它的训练目标、下游迭代接口和泛化假设，并标出哪些假设不适用于 BOST 非线性逆问题。",verified:"JMLR 25(166), 2024；官方全文、PDF 与代码链接可用"},
     {id:"inverse-acoustic-warmstart",stage:"warm-start",level:"核心",type:"邻近逆问题",title:"A Neural Network Warm-Start Approach for Inverse Acoustic Scattering",url:"https://arxiv.org/abs/2212.08736",local:"",read:"重点看学习初值如何接传统反演、有限孔径/噪声测试，以及训练样本复杂度限制。",output:"列出声学逆散射与 BOST 的三点共同结构和三点不可直接迁移之处。",verified:"JCP 490, 112341 (2023)；arXiv 开放全文"},
     {id:"nows-paper",stage:"warm-start",level:"核心",type:"邻近工作",title:"NOWS: Neural Operator Warm Starts for Accelerating Iterative Solvers",url:"https://arxiv.org/abs/2511.02481",local:"",read:"提取 neural operator 初值、Krylov solver、iteration/runtime 口径与稳定性边界。",output:"列出 NOWS 与 BOST 逆问题的四个差异，避免把 warm start 本身误写为创新。",verified:"arXiv v4，2026-05-07 更新"},

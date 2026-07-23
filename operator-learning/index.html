@@ -321,6 +321,7 @@
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_tier_a_straight_evidence_2026-07-23.md">Tier-A 算子证据</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_cell_center_evidence_2026-07-23.md">Cell-centred 判别证据</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_reference_forward_evidence_2026-07-23.md">任意射线参考正演</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_baseline_contract_evidence_2026-07-23.md">统一强基线与成本合同</a>
       <a class="button" href="#senior">复制下一条师兄消息</a>
       <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
     </div>
@@ -332,7 +333,7 @@
     </div>
     <div class="alert success">
       <strong>方向锁定与数据门通过都不是算法突破</strong>
-      <span>PoolFire 首条 train trajectory 已通过完整 SHA/CRC 与 full-resolution rho 数据门；cell-to-node truth 路线已因隐藏重加权和低通被否掉。最新任意视角 straight-ray 参考器又通过线性、二次、余弦解析场、求积收敛、坐标尺度不变性和 inverse 零依赖门；但它仍使用 manufactured field，数据语义、折射率、真实相机、曲光线与像素映射尚未闭合。因此当前仍是 <code>G0-SMOKE GO / G0-PHYSICS HOLD</code>，不是 BOST、重建或 warm-start 成功。</span>
+      <span>PoolFire 数据桥、cell-centred 离散判别和独立 straight-ray reference 都已过各自代码门。最新统一基线又冻结了 truth-blind Zero/BP/CGLS/固定 SPD-PCGLS/Direct-Warm 接口与逐 checkpoint <code>A/A^T</code> 账本，并修掉伪造 projection cache、时变预条件器和默认 gauge 漏洞。但当前两组曲线仍是 manufactured analytic modes；因此仍为 <code>G0-SMOKE GO / G0-PHYSICS HOLD</code>，不是 BOST、真实重建、提速或算法成功。</span>
     </div>
   </header>
 
@@ -379,7 +380,7 @@
         <article class="panel"><div class="chips"><span class="chip">C0 · 首先实现</span><span class="chip blue">低风险</span></div><h3 style="margin-top:10px;">Adjoint-Residual Warm Start</h3><p>线性阶段输入一次 `A^T y`；曲光线非线性阶段改用参考态 `J^T[y-F(x_ref)]`。小型 3D U-Net/FNO 只输出 `x0`，再接完全相同的物理迭代。</p></article>
         <article class="panel"><div class="chips"><span class="chip">C1 · 机制创新</span><span class="chip gold">中风险</span></div><h3 style="margin-top:10px;">Observable Krylov Warm Start</h3><p>把初值限制在便宜、可观测的 Krylov 字典中，网络只预测系数或空间门控。每个额外字典向量都必须计入 `A/A^T` 成本。</p></article>
         <article class="panel"><div class="chips"><span class="chip">C2 · 论文升级</span><span class="chip coral">高风险</span></div><h3 style="margin-top:10px;">Correctable Frontier Training</h3><p>不只训练单步场误差，而是训练经过 1/2/4 次物理细化后的误差，让模型输出“最容易被求解器纠正”的初值。</p></article>
-        <article class="panel"><div class="chips"><span class="chip blue">强基线</span><span class="chip coral">不能省略</span></div><h3 style="margin-top:10px;">Zero / BP / PCGLS / Direct Operator</h3><p>零初值、反投影初值、最强经典预条件器和不细化的 FNO/DeepONet 共用同一数据、终止精度、硬件与计时器。</p></article>
+        <article class="panel"><div class="chips"><span class="chip blue">强基线代码门已过</span><span class="chip coral">真实门未过</span></div><h3 style="margin-top:10px;">Zero / BP / PCGLS / Direct Operator</h3><p>统一 truth-blind 接口与逐 checkpoint 调用账本已实现；下一步把不变的规则接到真实/公开 CFD 与冻结相机，不把 toy ridge 曲线写成算法优势。</p></article>
       </div>
       <div class="alert" style="margin-top:13px;">
         <strong>现在的真实阻塞不是“不会 CFD”</strong>
@@ -391,47 +392,58 @@
       <div class="section-head">
         <div>
           <div class="eyebrow">最新可验证增量</div>
-          <h2>任意视角参考正演代码门通过：与 inverse 实现已分离</h2>
-          <p>参考器使用连续 <code>∇Δn</code>、单位射线、逐 ray 横向基、AABB clipping 与复合 Gauss-Legendre；它不导入 inverse primitive，也故意不暴露 adjoint。现在可以继续接确认后的相机和 CFD 语义，但训练仍保持关闭。</p>
+          <h2>统一强基线与逐 checkpoint 成本门通过</h2>
+          <p>Zero、归一化 BP、CGLS、固定对角 SPD-PCGLS 与 observation-only Direct/Warm 现在共用 truth-blind 接口。每个保存点都报告完整多视角 <code>A/A^T</code>、推理与墙钟；truth 只在冻结输出后做 post-hoc 评价。</p>
         </div>
         <div class="actions">
-          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_g0_reference_forward_evidence_2026-07-23.md">读参考正演证据</a>
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_baseline_contract_evidence_2026-07-23.md">读统一基线证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_reference_forward_evidence_2026-07-23.md">读前置参考正演</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_cell_center_evidence_2026-07-23.md">读前置 Cell-centred 证据</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_tier_a_straight_evidence_2026-07-23.md">读前置 Tier-A 证据</a>
-          <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_preprocessing_proxy_evidence_2026-07-23.md">读降采样证据</a>
-          <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_optical_contract_g0_2026-07-23.md">读光学合同</a>
         </div>
       </div>
       <div class="alert success">
-        <strong>关键基础设施进展，不是算法突破</strong>
-        <span>63 条线性、289 条二次和 289 条余弦斜射线均与闭式 oracle 对齐；GL(2) 渐近观测阶为 <code>3.83 / 3.94</code>。连续参考与 projection-first inverse 在 <code>9³ → 65³</code> 上的差从 <code>7.927%</code> 降至 <code>0.156%</code>，约二阶收敛；参考模块对 inverse primitive 的 import 数为 <code>0</code>。</span>
+        <strong>不是算法突破，但现在终于能公平比赛</strong>
+        <span>三视角 stacked adjoint dot test 最大相对差 <code>5.60e-15</code>；常数场零空间范数 <code>4.83e-15</code>；显式 identity-PCGLS 与 CGLS 逐点完全一致。projection cache 已改成 one-shot consume，伪造/错配 cache、伪造/跨 wrapper gauge、任意时变 preconditioner 和未经证明的默认去均值均已 fail closed。</span>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_g0_reference_forward_gate_v0.png" alt="任意视角 straight-ray 参考正演的相机切盒、求积收敛、inverse 非同构和证据边界" />
-        <figcaption>左上展示物理 metre 坐标中的斜射线切盒，右上是求积收敛，左下证明有限网格 reference 与 inverse 不同但趋向同一连续极限；右下明确区分代码门与物理/训练门。</figcaption>
+        <img src="../assets/poolfire_c_baseline_contract_gate_v0.png" alt="两种制造数据 case 下 Zero、归一化 BP 与 ridge Direct warm 加 CGLS 的逐物理调用误差和残差比较" />
+        <figcaption>上排横轴不是“网络迭代数”，而是累计完整 <code>A+A^T</code> 调用；下左只画部署可见的数据残差，下右固定本门能证明与不能证明的边界。</figcaption>
       </figure>
       <div class="check-grid" style="margin-top:14px;">
         <article class="panel">
-          <div class="chips"><span class="chip blue">已验证</span><span class="chip">任意 straight ray</span></div>
-          <h3 style="margin-top:10px;">相机 frame 与体积裁剪</h3>
-          <p>orthographic/pinhole 都先归一化射线；每条 ray 保存右手正交 <code>u/v/t</code>，并显式输出 hit mask、<code>s_in/s_out</code> 与物理路径长度。</p>
+          <div class="chips"><span class="chip blue">Zero</span><span class="chip">精确 K/K</span></div>
+          <h3 style="margin-top:10px;">强经典起点不藏调用</h3>
+          <p>Zero 到第 <code>K</code> 步严格使用 <code>K A + K A^T</code>；归一化 BP 先支付 <code>1 A + 1 A^T</code>。token 只含 opaque ID，field 指纹与投影留在当前算子的私有注册表；scale 和求解器消费后旧 token 立即失效。</p>
         </article>
         <article class="panel">
-          <div class="chips"><span class="chip blue">641 rays</span><span class="chip">闭式 oracle</span></div>
-          <h3 style="margin-top:10px;">线性、二次与余弦场</h3>
-          <p>三类解析场相对误差为 <code>1.54e-16 / 2.08e-16 / 1.64e-15</code>；坐标整体放大 <code>7.3×</code> 后偏折保持不变。</p>
+          <div class="chips"><span class="chip blue">Direct/Warm</span><span class="chip gold">受控但自证</span></div>
+          <h3 style="margin-top:10px;">模型只接收 observation</h3>
+          <p>审计层负责传只读输入、计时和初始投影；Python closure 仍不能证明没捕获外部状态，所以当前只标 <code>CONTROLLED_INPUT_SELF_ATTESTED</code>。</p>
         </article>
         <article class="panel">
-          <div class="chips"><span class="chip">独立 generator</span><span class="chip coral">无 adjoint</span></div>
-          <h3 style="margin-top:10px;">不与 inverse 共用矩阵</h3>
-          <p>reference 直接积分连续梯度；inverse 仍是 cell sample + midpoint LOS + detector 差分。AST 审计确认共享 inverse import 为零。</p>
+          <div class="chips"><span class="chip coral">关键机制线索</span><span class="chip">待证伪</span></div>
+          <h3 style="margin-top:10px;">同一 correction 有时帮忙，有时伤害</h3>
+          <p>同族 case 的 direct-only error 近零，粗 inverse correction 反而拉坏；留出新模式时 correction 又改善。下一步研究部署可见的 correction budget，不凭 truth 选步数。</p>
         </article>
         <article class="panel">
-          <div class="chips"><span class="chip gold">仍然 HOLD</span><span class="chip">不是 PoolFire truth</span></div>
-          <h3 style="margin-top:10px;">当前只过几何代码门</h3>
-          <p>manufactured field 不等于 CFD；真实单位、<code>rho/T/Yk → Δn</code>、相机、像素映射、curved ray 和图像形成仍未闭合。</p>
+          <div class="chips"><span class="chip gold">仍然 HOLD</span><span class="chip">toy ridge</span></div>
+          <h3 style="margin-top:10px;">曲线不是论文结果</h3>
+          <p>64 个训练样本只覆盖有限解析模式，stress 仅留出一个 mode；没有新轨迹、新工况、新相机、真实 GPU 时间或峰值内存，不能写成泛化或提速。</p>
         </article>
       </div>
+      <div class="section-head" style="margin-top:20px;">
+        <div><div class="eyebrow">前置参考正演门</div><h3>reference 与 inverse 已分离，仍不是 PoolFire 光学真值</h3><p>连续 <code>∇Δn</code>、单位射线、逐 ray 横向基、AABB clipping 与复合 Gauss-Legendre 已通过解析门；它不导入 inverse primitive，也故意不暴露 adjoint。</p></div>
+        <div class="actions"><a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_reference_forward_evidence_2026-07-23.md">完整参考正演证据</a></div>
+      </div>
+      <div class="alert">
+        <strong>641 条解析斜射线与有限网格非同构</strong>
+        <span>线性、二次、余弦解析场相对误差为 <code>1.54e-16 / 2.08e-16 / 1.64e-15</code>；连续 reference 与 coarse inverse 在 <code>9³ → 65³</code> 上的差从 <code>7.927%</code> 降至 <code>0.156%</code>，约二阶收敛。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <img src="../assets/poolfire_g0_reference_forward_gate_v0.png" alt="任意视角 straight-ray 参考正演的相机切盒、求积收敛、inverse 非同构和证据边界" />
+        <figcaption>左上展示 metre 坐标中的斜射线切盒，右上是求积收敛，左下证明有限网格 reference 与 inverse 不同但趋向同一连续极限。</figcaption>
+      </figure>
       <div class="section-head" style="margin-top:20px;">
         <div><div class="eyebrow">前置离散门</div><h3>Cell-centred 接口判别仍是 inverse 基线依据</h3><p>三条候选都能通过精确 adjoint dot test，但解析场证明 cell-to-node composite 会改变 LOS 权重、额外低通并降低边界阶数；projection-first interior 继续作为第一版 inverse 基线候选。</p></div>
       </div>
@@ -457,7 +469,7 @@
         <article class="panel">
           <div class="chips"><span class="chip">首选基线候选</span><span class="chip blue">不虚构边界</span></div>
           <h3 style="margin-top:10px;">Projection-first interior</h3>
-          <p>先沿 LOS 积分，再只在 detector 内部中心差分，统一裁四周各一格。下一步用它建立 Zero/BP/CGLS/PCGLS。</p>
+          <p>先沿 LOS 积分，再只在 detector 内部中心差分，统一裁四周各一格。它已接入 Zero/BP/CGLS/PCGLS 代码门；真实物理合同闭合后复用同一账本。</p>
         </article>
         <article class="panel">
           <div class="chips"><span class="chip gold">Fail closed</span><span class="chip">分辨率门</span></div>
@@ -496,7 +508,7 @@
       </figure>
       <div class="alert critical" style="margin-top:13px;">
         <strong>C0 尚未获准训练</strong>
-        先补齐 11 条 train 的无泄漏统计、单位与 domain 解释、point-sample/cell-average 语义、<code>rho → Δn</code> 合同、真实相机与 curved/straight 门，并把当前解析 reference 扩展成独立高分辨率 CFD forward；随后才建立强基线与 C0。
+        统一强基线已经通过代码门，但正式 C0 仍需先补齐 11 条 train 的无泄漏统计、单位与 domain 解释、point-sample/cell-average 语义、<code>rho → Δn</code> 合同、真实相机与 curved/straight 门，并把解析 reference 接到独立高分辨率 CFD field/observation pair。
       </div>
     </section>
 
@@ -766,7 +778,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄，C 路线已锁定：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\nPoolFire 首轨迹的数据完整性门已经通过。cell-centred 三种离散中，常见 cell-to-node 接法虽能通过 adjoint dot test，却会暗中重加权和低通，已退出 truth forward；projection-first interior 暂作 inverse 基线候选。\n\n我又单独实现了不导入 inverse primitive 的任意视角 straight-ray reference：单位射线、逐 ray 横向基、AABB clipping、连续 grad(Delta n) 和复合 Gauss-Legendre。线性/二次/余弦共 641 条斜射线与闭式答案对齐；连续 reference 与 coarse inverse 在 9^3 到 65^3 上的差从 7.927% 降到 0.156%，约二阶收敛。这个 PASS 只证明几何代码和离散分离，仍不是 PoolFire optical truth，网络也还没训练。\n\n评价分两张账：主表使用 validation 冻结、部署可见的停止规则，报告终点等价、物理调用、端到端时间、内存和 p90/worst；有真值的 PoolFire 另画 oracle time-to-target，只估计 headroom，不冒充在线停止。\n\n下一步需要你确认：\n1. CFD 数组是中心点采样还是 finite-volume cell average，坐标单位和真实 domain edges 是什么；\n2. refractive_index_field 应返回 rho、n 还是 n-1，reference/gauge 怎样定义；\n3. level=2.2/3200 和 2.48/10000 的物理量和单位；\n4. XYdeflection 的单位、正负号和最终背景 warping/渲染步骤；\n5. 每个视角的相机内外参、畸变、detector ROI，以及组内重建 baseline、forward/adjoint 和停止规则。\n\n这些确认后，我把 reference 接到独立高分辨率 CFD 表示，再建立 Zero/BP/CGLS/PCGLS/Direct Operator 和 C0，不会在真实结果出来前说算法成功。`;
+        document.getElementById('briefText').value = `师兄，C 路线已锁定：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\nPoolFire 首轨迹数据门已过。cell-to-node truth 路线因隐藏 LOS 重加权和低通已退出；projection-first interior 暂作 inverse。独立 straight-ray reference 已通过 641 条解析斜射线、求积收敛和 inverse 零依赖门，但还不是 PoolFire optical truth。\n\n现在又完成了统一强基线：Zero、归一化 BP、CGLS、固定对角 SPD-PCGLS 和 observation-only Direct/Warm 共用 truth-blind 接口；每个 checkpoint 精确记录完整多视角 A/A^T、推理和墙钟。三视角 dot test 最大相对差 5.60e-15，定向测试 14 passed；projection cache 会 one-shot consume，伪造/跨 wrapper gauge、隐藏 audited-operator 调用、时变 preconditioner 和未经证明的默认去均值都会被拒绝。independent reference 也改为多项机器检查，不再手写 true。\n\n制造数据用独立连续参考生成观测，粗 inverse 反演。toy ridge 在同族 case 的 direct-only 场几乎命中后，CGLS correction 反而拉坏；留出新模式时 correction 又能改善。它只说明 model mismatch 下 correction 需要受控，不是神经算子优势、真实提速或算法突破。\n\n评价仍分两张账：主表用 validation 冻结、部署可见的停止规则，报告终点等价、物理调用、端到端时间、内存和 p90/worst；有真值时另画 oracle time-to-target，只估计 headroom。\n\n下一步需要你确认：\n1. CFD 数组是中心点采样还是 finite-volume cell average，坐标单位和真实 domain edges 是什么；\n2. refractive_index_field 应返回 rho、n 还是 n-1，reference/gauge 怎样定义；\n3. level=2.2/3200 和 2.48/10000 的物理量和单位；\n4. XYdeflection 的单位、正负号和最终背景 warping/渲染步骤；\n5. 每个视角的相机内外参、畸变、detector ROI，以及组内重建 baseline、forward/adjoint 和停止规则。\n\n这些确认后，我会保持账本不变，把 reference 接到独立高分辨率 CFD field/observation pair，再实现并证伪 C0，不会在真实结果出来前说算法成功。`;
       }
 
       function bindProfile() {

@@ -5359,3 +5359,49 @@ tiny `4^3` 显式矩阵也再次提醒：native 单视角 rank `15`、nullity `4
 完整公式、图、解析 oracle 和复现命令见 [任意视角参考正演证据](poolfire_g0_reference_forward_evidence_2026-07-23.md)。
 
 **突破监测：没有算法突破。新增的是一条与 inverse primitive 零依赖、能处理任意直线视角并通过 641 条解析斜射线检查的参考正演代码门，以及有限网格非同构、连续极限一致的证据。PoolFire 光学真值、曲线光线、经典三维重建、C0 warm start、同精度提速、泛化和论文结论仍为 0。**
+
+## 203. C 路线终于有了不会藏成本的统一比赛场
+
+这一轮没有切换方向，只完成师兄确认的 C 路线底座：让 observation-only
+Direct/Operator 初值进入同一个 CGLS/PCGLS refinement，再问它能不能以更少的完整
+`A/A^T` 调用达到 Zero 强基线的最终精度。
+
+最初版本很快通过了 7 个单元测试，但只读红队找到了几个会把论文结果做假的漏洞：
+裸 `cached_projection` 可以伪造零残差；任意 callable 不能被直接称作固定 SPD
+预条件器；外部已经算好的 field 可能隐藏 truth 或算子调用；默认去均值也会在
+`A=I` 这类均值可观测算子上制造零误差。我们没有带着这些漏洞跑“优势曲线”，而是
+逐项修掉：
+
+- projection cache 的 token 只保留 opaque ID；field SHA-256 与 projection 留在当前
+  operator 私有注册表，合法 token 后续被加属性也不能改变缓存内容；scale 和求解器
+  都执行 one-shot consume，批量运行后注册表必须归零；
+- PCGLS 只接受精确 `FixedDiagonalSPD` 类型，并在求解器内直接乘不可写 diagonal，
+  不允许子类覆盖成时变 callable；
+- Direct initializer 由审计层只传只读 observation 并计时，同时诚实标成
+  `CONTROLLED_INPUT_SELF_ATTESTED`，不冒充沙箱证明；
+- evaluator 默认不做 gauge；去均值必须带与同一 audited inverse 绑定、额外花费
+  `2 A` 的 opaque 数值证书，伪造或换 wrapper 都拒绝；
+- independent reference 由实现类型、模块、实例、无 adjoint 和不共享离散矩阵五类
+  机器检查共同判定，不接受结果脚本手写布尔值；
+- `1...24` 每一步都记录累计 `A/A^T`、推理和墙钟，稀疏点只用于画图，不用于判定
+  首次达标。
+
+最终定向测试为 `14 passed`。三视角 stacked inverse 的 12 个 dot cases 最大相对差
+为 `5.60e-15`，常数场输出范数 `4.83e-15`，显式 identity-PCGLS 和 CGLS 逐
+checkpoint 完全一致。
+
+制造数据没有复用 inverse：连续 Gaussian 梯度经独立 Gauss-Legendre ray integral
+生成观测，`9 x 9 x 11` 粗网格 projection-first operator 负责反演。reference 和
+inverse 对测试 truth 的投影本来就差 `15.09% / 19.37%`，因此这次明确包含 model
+mismatch。
+
+toy ridge Direct 在同族留出系数 case 上 direct-only field error 约 `8.39e-10`，
+但一次 coarse CGLS correction 就变成 `9.69e-2`；在留出新模式 case 上，它又会从
+`0.2179` 改善到约 `0.1901`。同一个 residual correction 有时伤害、有时帮助，说明
+后续真正值得证伪的不是“网络初值能不能好看”，而是能否仅根据部署可见证据限制
+correction budget，并在 forward mismatch 下 fail closed。
+
+完整账本、图和复现命令见
+[C 路线统一强基线与成本合同证据](poolfire_c_baseline_contract_evidence_2026-07-23.md)。
+
+**突破监测：没有算法突破。新增的是首个 truth-blind、逐 checkpoint 计费、能拒绝伪造 cache/时变预条件器的 C 路线统一求解底座，以及一条 model-mismatch 会改变 refinement 正负作用的可证伪线索。真实 PoolFire/BOST、神经算子、跨轨迹/工况/几何泛化、GPU 端到端提速、峰值内存和论文结论仍为 0。**
