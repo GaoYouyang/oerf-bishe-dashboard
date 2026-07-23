@@ -5405,3 +5405,51 @@ correction budget，并在 forward mismatch 下 fail closed。
 [C 路线统一强基线与成本合同证据](poolfire_c_baseline_contract_evidence_2026-07-23.md)。
 
 **突破监测：没有算法突破。新增的是首个 truth-blind、逐 checkpoint 计费、能拒绝伪造 cache/时变预条件器的 C 路线统一求解底座，以及一条 model-mismatch 会改变 refinement 正负作用的可证伪线索。真实 PoolFire/BOST、神经算子、跨轨迹/工况/几何泛化、GPU 端到端提速、峰值内存和论文结论仍为 0。**
+
+## 204. 第一条真实 PoolFire CFD 轨迹进入了 C 路线，但只能叫形态代理
+
+这轮不再用 Gaussian 场出题。经过完整 SHA-256 复核的公开 PoolFire
+`p=14kw_size=03` 轨迹实际进入了统一 warm-start/CGLS 账本。高分辨率
+`32 x 32 x 64` `rho` ROI 通过连续三线性梯度与 composite Gauss-Legendre
+生成三视角数值观测；inverse 只使用严格 `2 x 2 x 2` block mean 得到的
+`16 x 16 x 32` 场和另一个 projection-first 离散模块。
+
+runner 现在还把 trajectory、source/metadata SHA、四个 payload SHA、shape、dtype
+和时间点数量共同锁成 `realm-poolfire-p14kw-size03-rho-v1`。这不是只核对“某个
+checksums 文件存在”；任何身份字段变化都会在 pair generation 前拒绝。
+
+34 个使用帧被按时间顺序拆成四段：25 帧 train、2 帧 ridge selection、2 帧
+refinement-depth validation、5 帧 later-time evaluation。相邻角色之间至少空五帧，
+没有随机抽帧。最终 ridge 只用前两段共 27 帧拟合；固定 refinement depth 只在第三段
+选择，得到 `K=2`。
+
+把 `K=2` 应用到后期五帧时，平均 field relative-L2 为：
+
+- Zero：`0.60835`，成本 `2A + 2A^T`；
+- normalized BP：`0.51445`，成本 `3A + 3A^T`；
+- ridge Direct warm：`0.41486`，成本 `3A + 2A^T`。
+
+Direct warm 在五帧都优于 Zero 和 BP。更重要的是，它继续迭代到 `K=24` 后平均误差
+反而恶化到 `0.48620`，虽然 data residual 继续下降。这把 toy 门里的线索推进到了
+真实 CFD 形态：强 forward mismatch 下，coarse solver 会先修正初值，再逐渐把它拉向
+错误的 coarse data-consistent 解。
+
+这仍然不能写成算法胜利。full-resolution reference 与 coarse inverse 的平均投影失配
+高达 `35.011%`，粗网格只保留 `73.911%` 的 gradient RMS；`rho` 单位、cell 语义、
+`rho -> Delta n`、真实相机和 pixel displacement 都没有闭合。所有帧还来自同一条
+trajectory，而且五个 later-time frames 已在 v0 开发中被打开，只能算 exploratory，
+不能冒充 fresh confirmatory test。
+
+还有一个之前容易说过头的边界：solver callable 的参数中没有 truth，post-hoc scorer
+也和求解器分开；但 Direct initializer 仍在同一个 Python 进程中执行。因此当前只能标
+`CONTROLLED_INPUT_SELF_ATTESTED` 和
+`independent_noninterference_proven=false`。进入真正 fresh test 前，必须先把冻结
+initializer 放进只读模型参数与 observation 的独立进程。
+
+正式 runner、独立 validator 和相关测试分别得到
+`PASS_REAL_CFD_MORPHOLOGY_PROXY_CONTRACT_ONLY`、
+`PASS_INDEPENDENT_ARTIFACT_VALIDATION` 和 `39 passed`。完整数据合同、逐帧表、
+版本冲突与复现命令见
+[PoolFire 真实 CFD 形态代理与 Warm-Start 第一闭环](poolfire_cfd_morphology_proxy_evidence_2026-07-23.md)。
+
+**突破监测：没有算法突破。新增的是首条真实公开 CFD 轨迹上的四段隔离闭环、固定 `K=2` 的明确数值 headroom，以及“少量 correction 有益、过度 correction 有害”的主线机制证据。下一步先隔离 initializer，再用新增 trajectory 做 fresh confirmatory，并把研究重点放在 calibration-aware correction budget，而不是立刻把 ridge 换成更大的网络。**
