@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>C 路线：算子学习 Warm Start × 三维 BOST | Gao Youyang</title>
+  <meta name="description" content="以同精度下降低重建成本为目标的 BOST 三维重建神经算子 Warm Start 学习与实验主页。" />
+  <style>
+    :root {
+      --ink: #17252b;
+      --muted: #607178;
+      --line: #ccd7d4;
+      --bg: #f3f6f4;
+      --paper: #ffffff;
+      --teal: #146f66;
+      --teal-soft: #e7f3ef;
+      --blue: #315f93;
+      --blue-soft: #eaf1f8;
+      --gold: #8a651b;
+      --gold-soft: #f7f0dd;
+      --coral: #a34f43;
+      --coral-soft: #faece8;
+      --green: #39724f;
+      --shadow: 0 10px 28px rgba(24, 42, 47, .06);
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.66;
+      letter-spacing: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url("../assets/backgrounds/oerf-refractive-field.png") center / cover no-repeat;
+      opacity: .055;
+      pointer-events: none;
+    }
+    a { color: var(--blue); }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    code { font-family: "SFMono-Regular", Consolas, monospace; }
+    .skip-link {
+      position: absolute;
+      top: -60px;
+      left: 12px;
+      z-index: 10;
+      padding: 8px 12px;
+      color: #fff;
+      background: var(--ink);
+    }
+    .skip-link:focus { top: 10px; }
+    header, main, footer { width: min(1220px, calc(100vw - 36px)); margin: 0 auto; }
+    header { padding: 22px 0 24px; border-bottom: 1px solid var(--line); }
+    main { padding-bottom: 48px; }
+    footer { padding: 24px 0 38px; color: var(--muted); font-size: 12px; }
+    h1, h2, h3 { line-height: 1.22; letter-spacing: 0; }
+    h1 { margin: 18px 0 7px; font-size: 38px; }
+    h2 { margin: 0; font-size: 27px; }
+    h3 { margin: 0; font-size: 18px; }
+    p { margin: 7px 0; }
+    section.band { padding: 28px 0; border-bottom: 1px solid var(--line); }
+    .nav, .actions, .chips, .filters, .profile-grid, .section-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav a, .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--ink);
+      background: rgba(255,255,255,.96);
+      text-decoration: none;
+      font-weight: 740;
+    }
+    .button.primary { color: #fff; border-color: var(--teal); background: var(--teal); }
+    .button.danger { color: var(--coral); border-color: #dcb7af; background: #fff; }
+    .eyebrow { color: var(--teal); font-size: 12px; font-weight: 850; text-transform: uppercase; }
+    .lead { max-width: 980px; color: #42545c; font-size: 16px; }
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .metric {
+      min-height: 105px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.96);
+      box-shadow: var(--shadow);
+    }
+    .metric b { display: block; margin-bottom: 5px; color: var(--teal); font-size: 27px; }
+    .metric span { color: var(--muted); font-size: 12px; }
+    .alert {
+      margin-top: 16px;
+      padding: 16px 17px;
+      border: 1px solid #d9c187;
+      border-left: 5px solid var(--gold);
+      border-radius: var(--radius);
+      background: rgba(250,246,233,.97);
+    }
+    .alert.critical { border-color: #ddb8af; border-left-color: var(--coral); background: rgba(252,240,236,.97); }
+    .alert.success { border-color: #b9d4ce; border-left-color: var(--teal); background: rgba(238,247,244,.97); }
+    .alert strong { display: block; margin-bottom: 4px; }
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 15px;
+    }
+    .section-head p { max-width: 800px; color: var(--muted); }
+    .profile-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+    .panel, .recommendation {
+      min-width: 0;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.96);
+      box-shadow: var(--shadow);
+    }
+    .recommendation { border-top: 4px solid var(--teal); }
+    .profile-grid { align-items: flex-end; }
+    .field { min-width: 180px; flex: 1; }
+    .field label { display: block; margin-bottom: 4px; color: var(--muted); font-size: 12px; font-weight: 750; }
+    input[type="search"], select {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--ink);
+      background: #fff;
+    }
+    .recommendation .next-code { color: var(--teal); font-size: 13px; font-weight: 850; }
+    .recommendation h3 { margin: 4px 0 7px; font-size: 22px; }
+    .recommendation ul { margin: 8px 0 0; padding-left: 20px; }
+    .progress-line { height: 9px; overflow: hidden; border-radius: 5px; background: #dfe7e4; }
+    .progress-line span { display: block; height: 100%; width: 0; background: var(--teal); transition: width .2s ease; }
+    .check-grid, .concept-grid, .resource-grid, .track-grid, .gate-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 11px;
+    }
+    .check-item, .concept-card, .resource-card, .track-card, .gate-card {
+      min-width: 0;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.96);
+      box-shadow: var(--shadow);
+    }
+    .check-item label, .gate-card label {
+      display: grid;
+      grid-template-columns: 21px minmax(0,1fr);
+      gap: 9px;
+      align-items: start;
+      font-weight: 760;
+    }
+    .check-item input, .gate-card input, .week-done input { width: 18px; height: 18px; margin: 3px 0 0; accent-color: var(--teal); }
+    .check-item p, .gate-card p, .concept-card p, .resource-card p, .track-card p { color: #4c5e65; font-size: 13px; }
+    .check-item.completed, .gate-card.completed { border-color: #9ec8bd; background: rgba(239,248,245,.96); }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 25px;
+      padding: 3px 8px;
+      border: 1px solid #bcd7d1;
+      border-radius: 999px;
+      color: var(--teal);
+      background: var(--teal-soft);
+      font-size: 11px;
+      font-weight: 780;
+    }
+    .chip.blue { color: var(--blue); border-color: #c6d7e7; background: var(--blue-soft); }
+    .chip.gold { color: var(--gold); border-color: #dfcd9e; background: var(--gold-soft); }
+    .chip.coral { color: var(--coral); border-color: #e3c2b9; background: var(--coral-soft); }
+    .phase-rail {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0,1fr));
+      gap: 7px;
+      margin: 14px 0;
+    }
+    .phase-rail div { min-height: 70px; padding: 10px; border-top: 4px solid var(--teal); background: rgba(255,255,255,.93); }
+    .phase-rail b { display: block; font-size: 12px; }
+    .phase-rail span { color: var(--muted); font-size: 10px; }
+    .week-list { display: grid; gap: 10px; }
+    details.week {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.96);
+      box-shadow: var(--shadow);
+    }
+    details.week[open] { border-color: #a8c9c1; }
+    details.week.locked { opacity: .72; }
+    details.week.hidden { display: none; }
+    summary {
+      display: grid;
+      grid-template-columns: 90px minmax(0,1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 15px;
+      cursor: pointer;
+      list-style: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    .week-code { color: var(--teal); font-weight: 850; }
+    .week-title span { display: block; color: var(--muted); font-size: 11px; font-weight: 500; }
+    .week-body { padding: 0 15px 16px; border-top: 1px solid var(--line); }
+    .week-columns { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-top: 13px; }
+    .week-columns > div { min-width: 0; padding: 12px; background: #f6f9f8; }
+    .week-columns b { font-size: 12px; }
+    .week-columns ul { margin: 7px 0 0; padding-left: 18px; color: #4b5d64; font-size: 13px; }
+    .week-done { display: inline-grid; grid-template-columns: 20px auto; gap: 7px; align-items: center; font-weight: 780; }
+    .resource-card { display: flex; min-height: 250px; flex-direction: column; border-top: 4px solid var(--blue); }
+    .resource-card h3 { margin: 8px 0 5px; font-size: 16px; }
+    .resource-card .resource-body { flex: 1; }
+    .resource-card .actions { margin-top: 8px; }
+    .resource-card .button { min-height: 44px; padding: 7px 10px; font-size: 12px; }
+    .concept-card { border-left: 4px solid var(--gold); }
+    .formula { width: 100%; overflow-x: auto; padding: 9px 10px; color: #1f4b61; background: #edf5f8; font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; white-space: nowrap; }
+    .trap { padding: 8px 10px; color: #76423a; background: var(--coral-soft); font-size: 12px; }
+    .track-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .track-card { position: relative; display: flex; min-height: 355px; flex-direction: column; border-top: 4px solid var(--gold); }
+    .track-card.selected { border-color: #78aa9d; border-top-color: var(--teal); background: rgba(238,247,244,.98); }
+    .track-card h3 { margin: 8px 0 5px; }
+    .track-card .track-body { flex: 1; }
+    .track-card dl { margin: 8px 0; font-size: 12px; }
+    .track-card dt { margin-top: 7px; color: var(--muted); font-weight: 760; }
+    .track-card dd { margin: 2px 0 0; }
+    .track-card .button { width: 100%; margin-top: 9px; }
+    .gate-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    .gate-card { min-height: 230px; border-top: 4px solid var(--coral); }
+    .gate-card.completed { border-top-color: var(--green); }
+    .gate-card h3 { margin: 9px 0 6px; }
+    .paper-verdict { margin-bottom: 13px; padding: 15px; border-left: 5px solid var(--coral); background: rgba(252,240,236,.96); }
+    .paper-verdict.ready { border-left-color: var(--teal); background: rgba(238,247,244,.96); }
+    .figure-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 11px; }
+    figure { min-width: 0; margin: 0; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.96); }
+    figure img { display: block; width: 100%; height: auto; border-radius: 5px; }
+    figcaption { padding: 7px 3px 2px; color: var(--muted); font-size: 12px; }
+    .senior-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(320px,.8fr); gap: 12px; }
+    .question-list { margin: 0; padding-left: 22px; }
+    .question-list li { margin: 8px 0; }
+    textarea {
+      width: 100%;
+      min-height: 280px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--ink);
+      background: #fff;
+      font: 13px/1.6 "SFMono-Regular", Consolas, monospace;
+      resize: vertical;
+    }
+    .empty { padding: 16px; color: var(--muted); border: 1px dashed var(--line); border-radius: var(--radius); background: rgba(255,255,255,.9); }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @media (max-width: 1020px) {
+      .status-strip, .gate-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .track-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .phase-rail { grid-template-columns: repeat(4,minmax(0,1fr)); }
+      .profile-panel, .senior-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      header, main, footer { width: min(100% - 22px, 1220px); }
+      h1 { font-size: 31px; }
+      h2 { font-size: 23px; }
+      .status-strip, .check-grid, .concept-grid, .resource-grid, .track-grid, .gate-grid, .figure-grid, .week-columns { grid-template-columns: 1fr; }
+      .phase-rail { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      summary { grid-template-columns: 64px minmax(0,1fr); }
+      summary .week-done { grid-column: 1 / -1; }
+      .section-head { align-items: flex-start; flex-direction: column; }
+      .field { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主内容</a>
+  <header>
+    <nav class="nav" aria-label="主导航">
+      <a href="./" aria-current="page">C 路线主页</a>
+      <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
+      <a href="#latest-gate">算法与实验</a>
+      <a href="#path">16 周学习</a>
+      <a href="../learning_library/index.html">教材讲义库</a>
+      <a href="../paper_library/index.html">论文库</a>
+      <a href="../learning_log.html">学习日志</a>
+      <a href="../general_operator_research_lab.html">历史技术档案</a>
+      <a href="../index.html">研究总站</a>
+    </nav>
+    <div class="eyebrow">师兄已选 C · 2026-07-23</div>
+    <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
+    <p class="lead">唯一主问题：让神经算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少 forward/adjoint 调用和端到端时间。PoolFire 提供高保真 CFD 场；师兄给的 BOS 工具初审可输出多视角偏折与光线路径，但物理单位和最终图像渲染仍待确认。</p>
+    <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
+      <a class="button" href="#senior">复制下一条师兄消息</a>
+      <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
+    </div>
+    <div class="status-strip">
+      <div class="metric"><b id="foundationMetric">0 / 10</b><span>基础能力自检</span></div>
+      <div class="metric"><b id="weekMetric">0 / 16</b><span>学习与实验关卡</span></div>
+      <div class="metric"><b id="gateMetric">0 / 8</b><span>论文硬门槛</span></div>
+      <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
+    </div>
+    <div class="alert success">
+      <strong>方向锁定是里程碑，不是算法突破</strong>
+      <span>已取得一份九视角 BOS 偏折/光线路径工具并在本机私有保存；它尚未通过单位、常数和最终背景渲染确认。PoolFire 首轨迹也未接入，当前没有 warm-start 加速结果。旧 D4b、PCGLS、FNO/DeepONet 结果只作为数值审计和强基线资产。</span>
+    </div>
+  </header>
+
+  <main id="main">
+    <section id="today" class="band">
+      <div class="section-head">
+        <div><div class="eyebrow">当前任务</div><h2>今天先做什么</h2></div>
+        <div class="section-actions">
+          <button id="exportButton" class="button" type="button">导出进度</button>
+          <button id="importButton" class="button" type="button">导入进度</button>
+          <button id="resetButton" class="button danger" type="button">重置进度</button>
+          <input id="importFile" class="visually-hidden" type="file" accept="application/json" />
+        </div>
+      </div>
+      <div class="profile-panel">
+        <div class="panel">
+          <div class="profile-grid">
+            <div class="field"><label for="hours">每周可投入</label><select id="hours"><option value="6">6 小时</option><option value="10">10 小时</option><option value="15">15 小时</option><option value="20">20+ 小时</option></select></div>
+            <div class="field"><label for="mathLevel">数学基础</label><select id="mathLevel"><option value="low">SVD/伪逆不熟</option><option value="mid">会计算，不会用于反问题</option><option value="high">能独立做数值审计</option></select></div>
+            <div class="field"><label for="codeLevel">编程基础</label><select id="codeLevel"><option value="low">NumPy/PyTorch 不系统</option><option value="mid">能改现有训练代码</option><option value="high">能独立设计实验框架</option></select></div>
+            <div class="field"><label for="dataLevel">数据条件</label><select id="dataLevel"><option value="synthetic">只有合成数据</option><option value="open">可用开放 BOS 数据</option><option value="lab">可向组内申请样例</option></select></div>
+          </div>
+          <p class="lead" style="font-size:13px;margin-top:13px;">进度按“能不能独立产出证据”计算，不按仓库里已经有多少代码计算。</p>
+        </div>
+        <div id="recommendation" class="recommendation" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="latest-gate" class="band">
+      <div class="section-head">
+        <div><div class="eyebrow">冻结的研究合同</div><h2>网络只负责起跑，物理求解器负责到达终点</h2><p>主表使用 validation 冻结、部署可见的停止规则，再检查终点误差等价、线性 A/A^T 或非线性 forward/JVP/VJP 调用与总时间；有真值时另画 oracle time-to-target，只估计 headroom。两张账不能混写。</p></div>
+        <div class="actions"><a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">读实验合同</a><a class="button" href="../operator_fair_budget_dashboard.html">看旧同预算框架</a></div>
+      </div>
+      <div class="phase-rail" aria-label="C 路线端到端管线">
+        <div><b>1 · 可观测扰动场</b><span>PoolFire `Δrho/Δn`，reference 先冻结</span></div>
+        <div><b>2 · 光学观测</b><span>九视角偏折/路径，单位与渲染待确认</span></div>
+        <div><b>3 · 便宜伴随残差</b><span>线性 `A^T y`；非线性 `J^T r`</span></div>
+        <div><b>4 · Warm Start</b><span>小型算子输出三维 `x0`</span></div>
+        <div><b>5 · 物理细化</b><span>固定 CGLS/PCGLS 或组内 solver</span></div>
+        <div><b>6 · 双账计时</b><span>deployable 主表 + oracle headroom</span></div>
+        <div><b>7 · 独立迁移</b><span>未见工况与组内真实样例</span></div>
+      </div>
+      <div class="check-grid" style="margin-top:13px;">
+        <article class="panel"><div class="chips"><span class="chip">C0 · 首先实现</span><span class="chip blue">低风险</span></div><h3 style="margin-top:10px;">Adjoint-Residual Warm Start</h3><p>线性阶段输入一次 `A^T y`；曲光线非线性阶段改用参考态 `J^T[y-F(x_ref)]`。小型 3D U-Net/FNO 只输出 `x0`，再接完全相同的物理迭代。</p></article>
+        <article class="panel"><div class="chips"><span class="chip">C1 · 机制创新</span><span class="chip gold">中风险</span></div><h3 style="margin-top:10px;">Observable Krylov Warm Start</h3><p>把初值限制在便宜、可观测的 Krylov 字典中，网络只预测系数或空间门控。每个额外字典向量都必须计入 `A/A^T` 成本。</p></article>
+        <article class="panel"><div class="chips"><span class="chip">C2 · 论文升级</span><span class="chip coral">高风险</span></div><h3 style="margin-top:10px;">Correctable Frontier Training</h3><p>不只训练单步场误差，而是训练经过 1/2/4 次物理细化后的误差，让模型输出“最容易被求解器纠正”的初值。</p></article>
+        <article class="panel"><div class="chips"><span class="chip blue">强基线</span><span class="chip coral">不能省略</span></div><h3 style="margin-top:10px;">Zero / BP / PCGLS / Direct Operator</h3><p>零初值、反投影初值、最强经典预条件器和不细化的 FNO/DeepONet 共用同一数据、终止精度、硬件与计时器。</p></article>
+      </div>
+      <div class="alert" style="margin-top:13px;">
+        <strong>现在的真实阻塞不是“不会 CFD”</strong>
+        <span>师兄已明确无需从零跑三维 CFD；应使用 PoolFire 等现成数据。当前只需确认 notebook 中 `refractive_index_field` 的语义、两个比例常数、`XYdeflection` 单位，以及组内重建 forward/adjoint 的入口。</span>
+      </div>
+    </section>
+
+    <section id="readiness" class="band">
+      <div class="section-head"><div><div class="eyebrow">先修诊断</div><h2>只有拿出产物才算会</h2><p>勾选前先完成每项证据。“看过”不解锁下一阶段。</p></div><div style="min-width:220px;"><div class="progress-line"><span id="foundationBar"></span></div></div></div>
+      <div id="foundationGrid" class="check-grid"></div>
+    </section>
+
+    <section id="path" class="band">
+      <div class="section-head">
+        <div><div class="eyebrow">16 周 C 路线</div><h2>每周只交一个能被验收的产物</h2><p>基础薄弱时默认走 16 周；CFD 只学会读数据和判断物理合理性，不从零搭求解器。</p></div>
+        <div class="field" style="max-width:250px;"><label for="phaseFilter">显示阶段</label><select id="phaseFilter"><option value="all">全部阶段</option></select></div>
+      </div>
+      <div id="phaseRail" class="phase-rail"></div>
+      <div id="weekList" class="week-list"></div>
+    </section>
+
+    <section id="concepts" class="band">
+      <div class="section-head">
+        <div><div class="eyebrow">通俗概念桥</div><h2>先能讲明白，再去推公式</h2></div>
+        <div class="field" style="max-width:320px;"><label for="conceptSearch">搜索概念</label><input id="conceptSearch" type="search" placeholder="例如 warm start / CGLS / A^T / FNO" /></div>
+      </div>
+      <div id="conceptGrid" class="concept-grid"></div>
+    </section>
+
+    <section id="resources" class="band">
+      <div class="section-head">
+        <div><div class="eyebrow">角色化资源</div><h2>不整本硬啃，每份资料只提取一个能力</h2><p>官方教程、原始论文和本项目执行包统一指定“读什么”和“交什么”。</p></div>
+      </div>
+      <div class="filters">
+        <div class="field"><label for="resourceSearch">搜索</label><input id="resourceSearch" type="search" placeholder="FNO / SVD / BOST / UQ" /></div>
+        <div class="field"><label for="resourceStage">阶段</label><select id="resourceStage"><option value="all">全部</option></select></div>
+        <div class="field"><label for="resourceLevel">难度</label><select id="resourceLevel"><option value="all">全部</option></select></div>
+      </div>
+      <div id="resourceGrid" class="resource-grid" style="margin-top:13px;"></div>
+      <div id="resourceEmpty" class="empty" style="display:none;">没有匹配资源。</div>
+    </section>
+
+    <section id="research" class="band">
+      <div class="section-head"><div><div class="eyebrow">算法决策</div><h2>C 已锁定，只在 warm-start 内部选择实现</h2><p>下方排名是实施顺序。C0 先回答是否存在加速空间，C1/C2 才争取论文创新；4D、相机布局和旧导数证书全部降为远期或辅助支线。</p></div></div>
+      <div class="alert success"><strong>师兄认可的主张形式</strong><span>“相同重建精度下，速度提升最显著。”因此所有模型选择都服从 matched-accuracy time-to-target，而不是只看网络输出的平均 relative-L2。</span></div>
+      <div id="trackGrid" class="track-grid" style="margin-top:14px;"></div>
+    </section>
+
+    <section id="paper" class="band">
+      <div class="section-head"><div><div class="eyebrow">发论文门槛</div><h2>模型有结果不等于已经可投</h2><p>硬门槛未过时，页面会保留“本科成果”和“论文升级”的边界。</p></div></div>
+      <div id="paperVerdict" class="paper-verdict"></div>
+      <div id="gateGrid" class="gate-grid"></div>
+    </section>
+
+    <section class="band">
+      <div class="section-head"><div><div class="eyebrow">物理与模型图</div><h2>阅读时始终回到这两条链</h2></div></div>
+      <div class="figure-grid">
+        <figure><img src="../figures/bost_physical_chain.png" alt="BOST 从流场物理量到背景位移和三维重建的链条" /><figcaption>每个数据通道、loss 和指标都应能在这条物理链上定位。</figcaption></figure>
+        <figure><img src="../figures/nerif_pipeline.png" alt="NeRIF 神经折射率场与 BOST 前向验证流程" /><figcaption>算子学习负责跨样本快速起点，NeRIF 负责单场连续表示和物理细化。</figcaption></figure>
+      </div>
+    </section>
+
+    <section id="senior" class="band">
+      <div class="section-head"><div><div class="eyebrow">师兄对齐</div><h2>方向不用再问，只确认物理语义和代码入口</h2></div></div>
+      <div class="senior-grid">
+        <div class="panel"><ol id="questionList" class="question-list"></ol></div>
+        <div class="panel">
+          <label for="briefText" style="font-weight:760;">当前进展摘要</label>
+          <textarea id="briefText" readonly></textarea>
+          <div class="actions"><button id="copyBrief" class="button primary" type="button">复制师兄消息</button><a class="button" href="../advisor_progress_brief.html">先看三分钟汇报</a><a class="button" href="../he_review_portal.html">打开完整审核入口</a></div>
+          <p id="copyStatus" aria-live="polite" style="color:var(--muted);font-size:12px;"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>路线版本 <span id="versionText"></span>。论文与教程链接优先指向作者、出版社、PMLR、OpenReview、官方文档或本站已审计条目；其他模态的结果不直接当作 BOST 证据。</p>
+  </footer>
+
+  <script src="../learning_library/resources.js"></script>
+  <script src="./curriculum.js"></script>
+  <script>
+    (() => {
+      const guide = window.OPERATOR_LEARNING_GUIDE;
+      const storageKey = 'oerf-operator-learning-progress-v1';
+      const defaults = {
+        foundations: {}, weeks: {}, gates: {},
+        profile: { hours: '10', math: 'low', code: 'low', data: 'synthetic' },
+        selectedTrack: 'warmstart-c0'
+      };
+      let state = loadState();
+
+      function loadState() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(storageKey) || '{}');
+          return {
+            foundations: parsed.foundations || {},
+            weeks: parsed.weeks || {},
+            gates: parsed.gates || {},
+            profile: { ...defaults.profile, ...(parsed.profile || {}) },
+            selectedTrack: guide.researchTracks.some(track => track.id === parsed.selectedTrack)
+              ? parsed.selectedTrack
+              : defaults.selectedTrack
+          };
+        } catch (_error) { return JSON.parse(JSON.stringify(defaults)); }
+      }
+      function saveState() { localStorage.setItem(storageKey, JSON.stringify(state)); renderSummary(); renderRecommendation(); renderWeeks(); renderTracks(); renderGates(); renderBrief(); }
+      function checkedCount(map, items) { return items.filter(item => map[item.id]).length; }
+      function unique(values) { return Array.from(new Set(values.filter(Boolean))); }
+      function escapeHtml(value) { return String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+
+      function renderSummary() {
+        const f = checkedCount(state.foundations, guide.foundationChecks);
+        const w = checkedCount(state.weeks, guide.weeks);
+        const g = checkedCount(state.gates, guide.paperGates);
+        const total = guide.foundationChecks.length + guide.weeks.length + guide.paperGates.length;
+        const overall = Math.round((f + w + g) * 100 / total);
+        document.getElementById('foundationMetric').textContent = `${f} / ${guide.foundationChecks.length}`;
+        document.getElementById('weekMetric').textContent = `${w} / ${guide.weeks.length}`;
+        document.getElementById('gateMetric').textContent = `${g} / ${guide.paperGates.length}`;
+        document.getElementById('overallMetric').textContent = `${overall}%`;
+        document.getElementById('foundationBar').style.width = `${Math.round(f * 100 / guide.foundationChecks.length)}%`;
+      }
+
+      function nextUnlockedWeek() {
+        return guide.weeks.find(week => !state.weeks[week.id] && week.depends.every(dep => state.weeks[dep])) || guide.weeks.find(week => !state.weeks[week.id]) || guide.weeks[guide.weeks.length - 1];
+      }
+      function renderRecommendation() {
+        const next = nextUnlockedWeek();
+        const fCount = checkedCount(state.foundations, guide.foundationChecks);
+        const pace = Number(state.profile.hours) <= 6 ? '建议把每个关卡拆成两周' : Number(state.profile.hours) >= 15 ? '可将阅读与代码并行，但不跳过验收' : '按一周一关执行';
+        const warning = fCount < 4 ? '先不要调 QC-SNCO、GINO 或 4D 模型。' : '仍以当前关卡的数值产物为唯一主任务。';
+        document.getElementById('recommendation').innerHTML = `
+          <div class="next-code">当前建议 · ${escapeHtml(next.id)}</div>
+          <h3>${escapeHtml(next.title)}</h3>
+          <p>${escapeHtml(pace)}。${escapeHtml(warning)}</p>
+          <ul><li>${escapeHtml(next.build[0])}</li><li>${escapeHtml(next.pass[0])}</li></ul>
+          <div class="chips" style="margin-top:10px;"><span class="chip">${escapeHtml(next.phase)}</span><span class="chip blue">${escapeHtml(next.hours)}</span><span class="chip gold">先修 ${next.depends.length ? next.depends.join(' + ') : '无'}</span></div>`;
+      }
+
+      function renderFoundations() {
+        const grid = document.getElementById('foundationGrid');
+        grid.innerHTML = guide.foundationChecks.map(item => `
+          <article class="check-item ${state.foundations[item.id] ? 'completed' : ''}">
+            <label><input type="checkbox" data-foundation="${item.id}" ${state.foundations[item.id] ? 'checked' : ''} /><span>${escapeHtml(item.label)}</span></label>
+            <div class="chips" style="margin-top:8px;"><span class="chip">${escapeHtml(item.domain)}</span><span class="chip blue">对应 ${escapeHtml(item.week)}</span></div>
+            <p><strong>证据：</strong>${escapeHtml(item.evidence)}</p>
+          </article>`).join('');
+        grid.querySelectorAll('[data-foundation]').forEach(input => input.addEventListener('change', event => { state.foundations[event.target.dataset.foundation] = event.target.checked; saveState(); renderFoundations(); }));
+      }
+
+      function initializePhaseFilter() {
+        const select = document.getElementById('phaseFilter');
+        unique(guide.weeks.map(w => w.phase)).forEach(phase => select.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(phase)}">${escapeHtml(phase)}</option>`));
+        select.addEventListener('change', renderWeeks);
+        const phases = unique(guide.weeks.map(w => w.phase));
+        document.getElementById('phaseRail').innerHTML = phases.map(phase => {
+          const weeks = guide.weeks.filter(w => w.phase === phase);
+          return `<div><b>${escapeHtml(phase)}</b><span>${weeks.map(w => w.id).join(' · ')}</span></div>`;
+        }).join('');
+      }
+
+      function renderWeeks() {
+        const filter = document.getElementById('phaseFilter').value;
+        const current = nextUnlockedWeek().id;
+        const list = document.getElementById('weekList');
+        list.innerHTML = guide.weeks.map(week => {
+          const lockedBy = week.depends.filter(dep => !state.weeks[dep]);
+          const locked = lockedBy.length > 0;
+          const hidden = filter !== 'all' && filter !== week.phase;
+          const complete = !!state.weeks[week.id];
+          return `<details class="week ${locked ? 'locked' : ''} ${hidden ? 'hidden' : ''}" ${week.id === current && !hidden ? 'open' : ''}>
+            <summary>
+              <div class="week-code">${escapeHtml(week.id)}</div>
+              <div class="week-title"><strong>${escapeHtml(week.title)}</strong><span>${escapeHtml(week.phase)} · ${escapeHtml(week.week)} · ${escapeHtml(week.hours)}${locked ? ` · 待完成 ${lockedBy.join(' + ')}` : ''}</span></div>
+              <label class="week-done" onclick="event.stopPropagation()"><input type="checkbox" data-week="${week.id}" ${complete ? 'checked' : ''} ${locked && !complete ? 'disabled' : ''} /><span>${complete ? '已验收' : '验收通过'}</span></label>
+            </summary>
+            <div class="week-body">
+              <div class="week-columns">
+                <div><b>先学</b><ul>${week.learn.map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul></div>
+                <div><b>必做产物</b><ul>${week.build.map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul></div>
+                <div><b>进入下一关的门槛</b><ul>${week.pass.map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul></div>
+              </div>
+              <p style="font-size:13px;"><strong>论文连接：</strong>${escapeHtml(week.paper)}</p>
+              <div class="chips">${week.resources.map(id => `<span class="chip blue">${escapeHtml(id)}</span>`).join('')}</div>
+            </div>
+          </details>`;
+        }).join('');
+        list.querySelectorAll('[data-week]').forEach(input => input.addEventListener('change', event => { state.weeks[event.target.dataset.week] = event.target.checked; saveState(); }));
+      }
+
+      function renderConcepts() {
+        const q = document.getElementById('conceptSearch').value.trim().toLowerCase();
+        const matched = guide.concepts.filter(item => Object.values(item).join(' ').toLowerCase().includes(q));
+        document.getElementById('conceptGrid').innerHTML = matched.map(item => `
+          <article class="concept-card"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.plain)}</p><div class="formula">${escapeHtml(item.formula)}</div><p><strong>BOST 对应：</strong>${escapeHtml(item.bost)}</p><div class="trap"><strong>常见误区：</strong>${escapeHtml(item.trap)}</div></article>`).join('') || '<div class="empty">没有匹配概念。</div>';
+      }
+
+      function normalizedLibraryResources() {
+        return (window.OERF_LEARNING_RESOURCES || []).map(r => ({
+          id: r.id, stage: r.module, level: r.priority, type: r.type, title: r.title,
+          url: r.landing_url || r.pdf_url || '', local: r.local_pdf || '', read: r.read,
+          output: r.why, verified: r.access
+        }));
+      }
+      function allResources() {
+        const map = new Map();
+        normalizedLibraryResources().forEach(r => map.set(r.id, r));
+        guide.resources.forEach(r => map.set(r.id, r));
+        return Array.from(map.values());
+      }
+      function initializeResourceFilters() {
+        const resources = allResources();
+        const stage = document.getElementById('resourceStage');
+        const level = document.getElementById('resourceLevel');
+        unique(resources.map(r => r.stage)).sort().forEach(value => stage.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`));
+        unique(resources.map(r => r.level)).sort().forEach(value => level.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`));
+        ['resourceSearch','resourceStage','resourceLevel'].forEach(id => document.getElementById(id).addEventListener(id === 'resourceSearch' ? 'input' : 'change', renderResources));
+      }
+      function renderResources() {
+        const q = document.getElementById('resourceSearch').value.trim().toLowerCase();
+        const stage = document.getElementById('resourceStage').value;
+        const level = document.getElementById('resourceLevel').value;
+        const matched = allResources().filter(r => stage === 'all' || r.stage === stage).filter(r => level === 'all' || r.level === level).filter(r => Object.values(r).join(' ').toLowerCase().includes(q));
+        document.getElementById('resourceGrid').innerHTML = matched.map(r => `
+          <article class="resource-card">
+            <div class="chips"><span class="chip">${escapeHtml(r.stage)}</span><span class="chip blue">${escapeHtml(r.level)}</span><span class="chip gold">${escapeHtml(r.type)}</span></div>
+            <h3>${escapeHtml(r.title)}</h3>
+            <div class="resource-body"><p><strong>只读：</strong>${escapeHtml(r.read)}</p><p><strong>必交：</strong>${escapeHtml(r.output)}</p><p><strong>来源：</strong>${escapeHtml(r.verified)}</p></div>
+            <div class="actions">${r.url ? `<a class="button" href="${escapeHtml(r.url)}" ${/^https?:/.test(r.url) ? 'target="_blank" rel="noreferrer"' : ''}>打开主入口</a>` : ''}${r.local ? `<a class="button" href="${escapeHtml(r.local)}">本站导读</a>` : ''}</div>
+          </article>`).join('');
+        document.getElementById('resourceEmpty').style.display = matched.length ? 'none' : 'block';
+      }
+
+      function renderTracks() {
+        const grid = document.getElementById('trackGrid');
+        grid.innerHTML = [...guide.researchTracks].sort((a,b) => a.rank - b.rank).map(track => `
+          <article class="track-card ${state.selectedTrack === track.id ? 'selected' : ''}">
+            <div class="chips"><span class="chip">#${track.rank}</span><span class="chip gold">${escapeHtml(track.badge)}</span><span class="chip coral">风险 ${escapeHtml(track.risk)}</span></div>
+            <h3>${escapeHtml(track.title)}</h3>
+            <div class="track-body"><p><strong>核心问题：</strong>${escapeHtml(track.question)}</p><dl><dt>可能贡献</dt><dd>${escapeHtml(track.contribution)}</dd><dt>数据</dt><dd>${escapeHtml(track.data)}</dd><dt>硬件</dt><dd>${escapeHtml(track.hardware)}</dd><dt>下一步</dt><dd>${escapeHtml(track.next)}</dd><dt>停止条件</dt><dd>${escapeHtml(track.stop)}</dd></dl></div>
+            <button class="button ${state.selectedTrack === track.id ? 'primary' : ''}" type="button" data-track="${track.id}">${state.selectedTrack === track.id ? '当前选中' : '设为我的主线'}</button>
+          </article>`).join('');
+        grid.querySelectorAll('[data-track]').forEach(button => button.addEventListener('click', event => { state.selectedTrack = event.currentTarget.dataset.track; saveState(); }));
+      }
+
+      function renderGates() {
+        const count = checkedCount(state.gates, guide.paperGates);
+        const hasCore = ['G0','G1','G2','G3','G4','G5','G6'].every(id => state.gates[id]);
+        const verdict = document.getElementById('paperVerdict');
+        verdict.className = `paper-verdict ${count === guide.paperGates.length && hasCore ? 'ready' : ''}`;
+        if (count <= 3) verdict.innerHTML = '<strong>当前级别：学习/基线构建。</strong> 不使用“新算法已验证”表述。';
+        else if (count <= 5 || !hasCore) verdict.innerHTML = '<strong>当前级别：本科毕设可执行。</strong> 可完成完整 benchmark、负结果和三维展示，暂不承诺投稿。';
+        else if (count < guide.paperGates.length) verdict.innerHTML = '<strong>当前级别：论文升级候选。</strong> 请师兄对真实数据、主指标和创新边界做一次红队审核。';
+        else verdict.innerHTML = '<strong>当前级别：可申请正式投稿评估。</strong> 这表示证据包完整，不代表期刊录用或创新性已被确认。';
+        const grid = document.getElementById('gateGrid');
+        grid.innerHTML = guide.paperGates.map(gate => `<article class="gate-card ${state.gates[gate.id] ? 'completed' : ''}"><label><input type="checkbox" data-gate="${gate.id}" ${state.gates[gate.id] ? 'checked' : ''} /><span>${gate.id} · ${escapeHtml(gate.title)}</span></label><h3>需要的证据</h3><p>${escapeHtml(gate.evidence)}</p><div class="trap"><strong>未过关：</strong>${escapeHtml(gate.stop)}</div></article>`).join('');
+        grid.querySelectorAll('[data-gate]').forEach(input => input.addEventListener('change', event => { state.gates[event.target.dataset.gate] = event.target.checked; saveState(); }));
+      }
+
+      function renderQuestions() { document.getElementById('questionList').innerHTML = guide.seniorQuestions.map(q => `<li>${escapeHtml(q)}</li>`).join(''); }
+      function renderBrief() {
+        const next = nextUnlockedWeek();
+        const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
+        const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
+        const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
+        document.getElementById('briefText').value = `师兄，C 路线我已经锁定：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n我会先把 PoolFire 绝对密度转成按已知环境/边界冻结的 Δrho 或 Δn，避免不可观常数偏置。若先做冻结直线/线性重建，网络从一次 A^T y 和相机几何输出三维初值；若实际使用曲光线非线性 forward，则改用参考态 J^T[y-F(x_ref)]，再接同一套物理求解器。\n\n评价分两张账：主表使用 validation 冻结、部署可见的停止规则，报告终点等价、物理调用、端到端时间、内存和 p90/worst；有真值的 PoolFire 另画 oracle time-to-target，只估计 headroom，不冒充在线停止。你给的 BOS 工具已在本机私有备份，但目前只确认到偏折/光线路径输出。\n\n还需要确认：\n1. refractive_index_field 应返回 rho、n 还是 n-1，reference/gauge 怎样定义；\n2. level=2.2/3200 和 2.48/10000 的物理量和单位；\n3. XYdeflection 的单位与正负号；\n4. 是否另有最终背景 warping/渲染步骤；\n5. 组内重建 baseline 与匹配 forward/adjoint 的入口。\n\n这些确认后，我先做低分辨率 C0 闭环，不从零跑 CFD，也不会在真实结果出来前说算法已经成功。`;
+      }
+
+      function bindProfile() {
+        ['hours','mathLevel','codeLevel','dataLevel'].forEach(id => {
+          const key = id === 'mathLevel' ? 'math' : id === 'codeLevel' ? 'code' : id === 'dataLevel' ? 'data' : id;
+          const element = document.getElementById(id);
+          element.value = state.profile[key];
+          element.addEventListener('change', () => { state.profile[key] = element.value; saveState(); });
+        });
+      }
+      function exportProgress() {
+        const payload = { exportedAt: new Date().toISOString(), guideVersion: guide.version, state };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `oerf-operator-learning-progress-${new Date().toISOString().slice(0,10)}.json`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+      function importProgress(file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const parsed = JSON.parse(reader.result);
+            const imported = parsed.state || parsed;
+            state = {
+              foundations: imported.foundations || {},
+              weeks: imported.weeks || {},
+              gates: imported.gates || {},
+              profile: {...defaults.profile, ...(imported.profile || {})},
+              selectedTrack: guide.researchTracks.some(track => track.id === imported.selectedTrack)
+                ? imported.selectedTrack
+                : 'warmstart-c0'
+            };
+            localStorage.setItem(storageKey, JSON.stringify(state));
+            location.reload();
+          } catch (_error) { alert('进度文件无法解析。'); }
+        };
+        reader.readAsText(file);
+      }
+
+      document.getElementById('conceptSearch').addEventListener('input', renderConcepts);
+      document.getElementById('exportButton').addEventListener('click', exportProgress);
+      document.getElementById('importButton').addEventListener('click', () => document.getElementById('importFile').click());
+      document.getElementById('importFile').addEventListener('change', event => { if (event.target.files[0]) importProgress(event.target.files[0]); });
+      document.getElementById('resetButton').addEventListener('click', () => { if (confirm('只重置这个浏览器中的学习进度，是否继续？')) { localStorage.removeItem(storageKey); location.reload(); } });
+      document.getElementById('copyBrief').addEventListener('click', async () => {
+        const text = document.getElementById('briefText').value;
+        try { await navigator.clipboard.writeText(text); document.getElementById('copyStatus').textContent = '已复制。'; }
+        catch (_error) { document.getElementById('briefText').select(); document.execCommand('copy'); document.getElementById('copyStatus').textContent = '已复制。'; }
+      });
+
+      bindProfile();
+      initializePhaseFilter();
+      initializeResourceFilters();
+      renderSummary();
+      renderRecommendation();
+      renderFoundations();
+      renderWeeks();
+      renderConcepts();
+      renderResources();
+      renderTracks();
+      renderGates();
+      renderQuestions();
+      renderBrief();
+      document.getElementById('versionText').textContent = `${guide.version} · 更新 ${guide.updated}`;
+    })();
+  </script>
+  <script src="../site_link_router.js" data-site-root="../"></script>
+</body>
+</html>

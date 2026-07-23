@@ -1,0 +1,31 @@
+{
+  "schema": "n2-pvgr-n1-variational-development-1.0",
+  "candidate_id": "N2-PVGR-N1",
+  "candidate_name": "shared-state first-order trajectory defect correction",
+  "status": "development_only_no_audit_authorization",
+  "source_config": "demo_t16_operator/configs/n2_pvgr_n0_trifidelity_development_v1.json",
+  "residual_convergence_audit": "demo_t16_operator/results/n2_pvgr_residual_convergence_audit_v1/result.json",
+  "matched_execution_step_count": 128,
+  "reference_step_count": 256,
+  "timing_stress_multiplier": 1.0,
+  "timing": {
+    "warmup_repeats": 2,
+    "measured_repeats": 20,
+    "interleave_seed": 74001
+  },
+  "development_screens": {
+    "maximum_matched_residual_prediction_relative_l2": 0.1,
+    "maximum_corrected_residual_variance_ratio": 0.5,
+    "minimum_per_ray_risk_spearman": 0.5,
+    "minimum_valid_ray_fraction": 1.0,
+    "maximum_candidate_p90_to_full_high_p10_wall_time_ratio": 0.25,
+    "maximum_candidate_to_high_reference_relative_l2": 0.002,
+    "maximum_candidate_reference_error_to_high_execution_reference_error_ratio": 1.1
+  },
+  "reserved_audit_families_not_opened": [
+    "oblique_compression_sheet",
+    "shock_expansion_pair"
+  ],
+  "hard_conclusion_if_all_development_screens_pass": "DEVELOPMENT_SIGNAL_ONLY_AUDIT_NOT_AUTHORIZED",
+  "hard_conclusion_otherwise": "DEVELOPMENT_ONLY_NO_AUDIT_AUTHORIZATION"
+}

@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stereo PIV-BOST Bridge | OERF BOST</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f6;
+      --panel: #ffffff;
+      --ink: #1d2328;
+      --muted: #64727d;
+      --line: #d8e0df;
+      --teal: #16756f;
+      --blue: #315f93;
+      --gold: #9a6718;
+      --red: #a6483c;
+      --soft: #eef7f4;
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    header, main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px clamp(18px, 4vw, 46px);
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f2f8f6);
+    }
+    h1 { margin: 16px 0 10px; font-size: clamp(30px, 4vw, 52px); line-height: 1.08; }
+    h2 { margin: 34px 0 12px; font-size: 26px; }
+    h3 { margin: 20px 0 8px; font-size: 18px; }
+    p { margin: 8px 0; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { background: #eef2f3; padding: 2px 5px; border-radius: 5px; }
+    ul, ol { padding-left: 22px; }
+    li { margin: 6px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 11px 12px;
+    }
+    th { background: #edf5f2; color: #24433f; font-size: 13px; }
+    td { font-size: 14px; }
+    .nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .button, .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .tag { background: var(--soft); color: var(--teal); border-color: #cde2dc; }
+    .lead { max-width: 980px; color: var(--muted); font-size: 17px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 16px;
+    }
+    .card strong { color: var(--teal); }
+    .note {
+      border-left: 4px solid var(--teal);
+      background: #fff;
+      padding: 12px 14px;
+      margin: 16px 0;
+    }
+    .metric {
+      font-size: 34px;
+      color: var(--teal);
+      font-weight: 800;
+      display: block;
+      line-height: 1;
+    }
+    .warn { color: var(--red); font-weight: 700; }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <a class="button" href="./index.html">返回总工作台</a>
+      <a class="button" href="./he_review_portal.html">师兄 5 分钟审核入口</a>
+      <a class="button" href="document_reader.html?doc=he_paper_deep_dive.md">何远哲论文深挖</a>
+      <a class="button" href="./paper_library/index.html">打开论文库</a>
+    </div>
+    <h1>Stereo PIV-BOST 桥梁</h1>
+    <p class="lead">这页专门处理何远哲主线里最容易被低估的一条升级线：2025 simultaneous PIV-BOST 已经说明折射率场会污染速度测量；2026 stereo-velocity PIV-BOST 又把问题推进到三维/立体速度测量和湍流燃烧场。对本科毕设来说，它不是第一阶段主线，而是一个很强的 B 路线：有真实同步数据就做补偿和不确定度报告；没有数据就做合成 stereo-PIV 畸变 toy 与文献决策表。</p>
+    <div class="grid">
+      <div class="card"><span class="metric">2</span><p>何远哲相关 PIV-BOST 正式论文：2025 planar velocity compensation，2026 stereo-velocity compensation。</p></div>
+      <div class="card"><span class="metric">3</span><p>补偿层级：raw image dewarping、calibration/disparity correction、velocity-vector correction。</p></div>
+      <div class="card"><span class="metric">1</span><p>本科可控目标：先做误差传播和数据质量报告，不承诺复现完整 stereo PIV-BOST 系统。</p></div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>总判断</h2>
+      <div class="note">
+        <p><strong>最真实的建议：</strong>如果何远哲师兄愿意给同步 PIV-BOST 或 stereo-PIV-BOST 的一小段样例数据，你的题目可以从纯 NeRIF 升级成“折射率场辅助的速度测量误差补偿与质量评估”。如果没有真实数据，不要硬写成 PIV-BOST 复现；把它降级成 synthetic PIV image / stereo calibration distortion toy，加上文献和接口清单，仍然很贴组内需求。</p>
+      </div>
+      <p>这条线的价值在于：BOST/NeRIF 不只是把密度、温度或折射率场可视化，还可以服务速度测量。也就是说，它把“看见流场隐藏属性”推进到“修正另一个诊断方法的系统误差”。这比泛泛说 AI for flow visualization 更像 OERF 和何远哲方向的真实问题。</p>
+    </section>
+
+    <section>
+      <h2>两篇主线论文怎么连</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>论文</th>
+            <th>已经说明什么</th>
+            <th>对本科题目的意义</th>
+            <th>公开访问边界</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Instantaneous refractive index compensation on the velocity measurement using simultaneous PIV-BOST</strong><br />Experiments in Fluids, 2025, DOI <code>10.1007/s00348-025-04093-y</code></td>
+            <td>同步 PIV 与 BOST，利用一拖九内窥 BOST 重构 Bunsen 火焰三维折射率场，再补偿低速 PIV 中央平面的速度测量畸变；Springer 摘要报告速度误差量级约为百分之几。</td>
+            <td>这是 B 路线核心：如果有数据，做 image/vector correction 与误差统计；如果没有数据，做 synthetic PIV-BOST toy。</td>
+            <td><a href="https://link.springer.com/article/10.1007/s00348-025-04093-y">Springer 入口</a>；本仓库不缓存 PDF，避免把 TDM/访问受限 PDF 当开放 PDF 传播。</td>
+          </tr>
+          <tr>
+            <td><strong>Instantaneous refractive index compensation on stereo-velocity measurement in turbulent combustion</strong><br />Proceedings of the Combustion Institute, 2026, DOI <code>10.1016/j.proci.2026.106175</code></td>
+            <td>把折射率补偿推进到 stereo-velocity measurement 和 turbulent combustion，说明真实实验痛点不只在二维速度。</td>
+            <td>这是 B+ 路线，不建议本科第一阶段完整复现；更适合做 stereo calibration / disparity / uncertainty 的接口和降级 demo。</td>
+            <td><a href="https://www.sciencedirect.com/science/article/pii/S1540748926001732">ScienceDirect 入口</a>；Crossref 仅暴露 Elsevier TDM 链接，本仓库只放 DOI/出版社入口。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>2025 PIV-BOST 摘要里已经能确认的关键线索</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>实验系统</h3>
+          <ul>
+            <li>BOST 侧使用一拖九内窥方案观察 Bunsen 火焰周围区域。</li>
+            <li>PIV 侧是低速 PIV，并且测量平面位于 BOST 体积中央平面。</li>
+            <li>同步由脉冲发生器/延迟发生器控制，这说明时间对齐是数据接口的一部分。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>算法链路</h3>
+          <ul>
+            <li>神经网络重构三维折射率场，并由折射率梯度估计 PIV 平面上的像素偏移。</li>
+            <li>本科可先拆成“折射率场 -> 位移场 -> PIV 误差”的三段 toy，不必一开始复现完整实验。</li>
+            <li>最重要的可视化不是漂亮三维图，而是补偿前后速度误差和 residual map。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>数据边界</h3>
+          <ul>
+            <li>Springer 页面显示为订阅预览，公开站不缓存 PDF。</li>
+            <li>公开摘要层面没有给出可下载数据集，因此真实数据仍需问何远哲师兄。</li>
+            <li>如果只能读摘要，仍能先做 synthetic PIV-BOST 降级 demo 和数据请求清单。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>补偿到底发生在哪一层</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>层级</th>
+            <th>你要问清楚什么</th>
+            <th>可做 demo</th>
+            <th>风险</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>raw image layer</strong></td>
+            <td>BOST 重构出的折射率/位移场是否用于先把粒子图像去畸变，再做 PIV 互相关？</td>
+            <td>合成粒子图像加已知位移扰动；比较去畸变前后的 OpenPIV/Farneback/RAFT-PIV 误差。</td>
+            <td>需要知道相机成像、背景位移和粒子图像位移之间的对应关系，不能只凭速度场后处理。</td>
+          </tr>
+          <tr>
+            <td><strong>calibration / disparity layer</strong></td>
+            <td>stereo-PIV 的双相机标定、disparity map、窗口折射和三维映射是否一起受折射率场影响？</td>
+            <td>用简化双相机几何加非参数 disparity correction toy，报告三维速度分量误差。</td>
+            <td>这层最贴 2026 stereo 论文，但没有真实标定文件时只能做概念 demo。</td>
+          </tr>
+          <tr>
+            <td><strong>velocity-vector layer</strong></td>
+            <td>补偿是否直接作用在最终速度矢量，还是只用于估计误差条和置信度？</td>
+            <td>沿用当前 M3A toy：观测速度、折射扰动、BOST-style correction、residual error map。</td>
+            <td>容易被质疑物理链条太粗，因此要明确这是本科保底，不是论文级 PIV-BOST 复现。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>本科可执行路线</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>A 路线：有真实同步数据</h3>
+          <ul>
+            <li>整理 manifest：PIV images、BOST images、calibration、mask、velocity field、refractive-index field、单位。</li>
+            <li>复现最小补偿链：before / after velocity error、confidence、bad-vector ratio、空间分布图。</li>
+            <li>写作定位：折射率场辅助速度测量误差控制。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>B 路线：只有普通 PIV 或合成数据</h3>
+          <ul>
+            <li>生成 synthetic PIV image pair，叠加由折射率梯度引起的图像位移扰动。</li>
+            <li>比较 OpenPIV、Farneback、RAFT-PIV 或基础互相关在补偿前后的误差。</li>
+            <li>写作定位：PIV-BOST 的图像层/速度层误差传播预研。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>C 路线：只有论文，没有数据</h3>
+          <ul>
+            <li>做 PIV-BOST / stereo-PIV-BOST 文献决策表。</li>
+            <li>完成接口清单和 synthetic toy，不声称验证真实实验。</li>
+            <li>把 B 路线作为 NeRIF 主线的应用展望。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>支撑文献怎么读</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>文献</th>
+            <th>抽取重点</th>
+            <th>接到哪一章</th>
+            <th>入口</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Particle image velocimetry in refractive index fields of combustion flows</strong>, 2019</td>
+            <td>非均匀折射率场如何造成 PIV 粒子位置和速度误差。</td>
+            <td>第 2 章动机；第 4 章误差传播。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fpiv_refractive_index_fields_vanselow_2019_springer_oa.pdf">本地 PDF</a> / <a href="https://doi.org/10.1007/s00348-019-2795-1">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Stereoscopic particle image velocimetry in inhomogeneous refractive index fields of combustion flows</strong>, 2021</td>
+            <td>stereo-PIV 与折射率场的关系，支撑 2026 stereo PIV-BOST 的前史。</td>
+            <td>第 2 章相关工作；第 5 章 B+ 展望。</td>
+            <td><a href="https://opg.optica.org/ao/abstract.cfm?uri=ao-60-28-8716">Optica 入口</a></td>
+          </tr>
+          <tr>
+            <td><strong>A novel method for correction of temporally- and spatially-variant optical distortion in planar PIV</strong>, 2016</td>
+            <td>时空变化光学畸变如何在 PIV 图像层被校正。</td>
+            <td>M3A 的 image-layer correction baseline。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fpiv_optical_distortion_correction_zha_2016_iop.pdf">本地 PDF</a> / <a href="https://doi.org/10.1088/0957-0233/27/8/085201">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Calibration correction of arbitrary optical distortions by non-parametric 3D disparity field</strong>, 2021</td>
+            <td>任意光学畸变、3D disparity field、planar/volumetric PIV/LPT 标定修正。</td>
+            <td>stereo-PIV-BOST 的 calibration/disparity layer。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fcalibration_correction_optical_distortions_3d_disparity_amaral_2021_ispiv.pdf">本地 PDF</a> / <a href="https://doi.org/10.18409/ispiv.v1i1.116">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Neural optical flow for planar and stereo PIV</strong>, 2025</td>
+            <td>光流/深度学习方法如何替代或辅助 PIV 位移估计。</td>
+            <td>图像层 benchmark；不要替代折射率场重构。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fneural_optical_flow_piv_masker_2025_springer_oa.pdf">本地 PDF</a> / <a href="https://doi.org/10.1007/s00348-025-04058-1">DOI</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>最该问何远哲师兄</h2>
+      <ol>
+        <li>2025 PIV-BOST 和 2026 stereo PIV-BOST 这两条里，哪一条更可能给本科生一小段样例数据？</li>
+        <li>补偿发生在 raw image、calibration/disparity、correlation 还是 final velocity-vector 层？</li>
+        <li>是否可以给一组最小文件：PIV 原图、BOST 原图、标定、mask、速度场、折射率场或位移场？</li>
+        <li>如果不能给真实数据，师兄是否认可 synthetic PIV image + refractive distortion toy 作为 B 路线预研？</li>
+        <li>毕业论文中哪些图可以公开展示，哪些只能在组内汇报？</li>
+        <li>最终评价指标更关心 RMSE、bad-vector ratio、uncertainty、速度分量误差，还是火焰/湍流结构保持？</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>7 天行动包</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>天数</th>
+            <th>交付物</th>
+            <th>验收标准</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Day 1</td>
+            <td>读 2025 PIV-BOST、2026 stereo PIV-BOST 摘要/方法/图表，写一页补偿层级表。</td>
+            <td>能向师兄复述：我理解补偿不等于简单 velocity smoothing。</td>
+          </tr>
+          <tr>
+            <td>Day 2-3</td>
+            <td>把当前 M3A toy 改成 synthetic particle image pair 输入，而不只是速度场输入。</td>
+            <td>输出 before/after particle displacement error 和 velocity error。</td>
+          </tr>
+          <tr>
+            <td>Day 4</td>
+            <td>加入一个最小 stereo geometry toy 或 calibration/disparity note。</td>
+            <td>哪怕不完整，也能解释 stereo 比 planar 多出的风险层。</td>
+          </tr>
+          <tr>
+            <td>Day 5</td>
+            <td>写数据请求清单：原图、标定、mask、单位、权限、可公开图。</td>
+            <td>师兄看了可以直接回复“有/没有/以后给”。</td>
+          </tr>
+          <tr>
+            <td>Day 6-7</td>
+            <td>整理一页图：NeRIF 主线、PIV-BOST 应用线、4D BOST 高阶线、M3C 质量控制线。</td>
+            <td>开题时能说明为什么先稳做 NeRIF/M3C，而不是直接承诺完整 stereo PIV-BOST。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

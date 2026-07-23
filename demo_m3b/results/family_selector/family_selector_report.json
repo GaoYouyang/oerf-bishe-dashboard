@@ -1,0 +1,2020 @@
+{
+  "experiment": "M3B family-generalized observable rank selection",
+  "design": {
+    "families": [
+      "blobs_sheet",
+      "vortex_ring",
+      "expanding_shell",
+      "jet_filaments"
+    ],
+    "dynamics": [
+      "smooth",
+      "chirp",
+      "transient"
+    ],
+    "noise_levels": [
+      0.0,
+      0.07,
+      0.14,
+      0.28
+    ],
+    "view_counts": [
+      3,
+      5,
+      7
+    ],
+    "ranks": [
+      1,
+      2,
+      3,
+      5,
+      8,
+      12,
+      18
+    ],
+    "seed_count": 6,
+    "environment_cells_without_seed": 144,
+    "observation_cells": 864,
+    "candidate_rows": 6048,
+    "selector_rows": 6048,
+    "evaluation_protocol": "nested lambda tuning inside leave-one-phantom-family-out outer folds"
+  },
+  "rebuild_modes": [
+    "full_simulation",
+    "resume_missing_cells",
+    "reuse_raw_analysis"
+  ],
+  "runtime_scope": "Wall time is printed by each command but excluded from the deterministic report because resume and reuse-raw cover different work.",
+  "selector_summary": {
+    "fixed_rank3": {
+      "selector": "fixed_rank3",
+      "cell_count": 864,
+      "mean_regret_pct": 1.560603049643429,
+      "seed_clustered_ci95_pct": 0.005824348854679874,
+      "median_regret_pct": 0.8747949463907647,
+      "p95_regret_pct": 5.634558258559475,
+      "max_regret_pct": 7.673561418130428,
+      "exact_oracle_rank_rate": 0.13425925925925927,
+      "within_one_pct_oracle_rate": 0.5381944444444444,
+      "mean_field_improvement_vs_rank3_pct": 0.0,
+      "field_better_than_rank3_rate": 0.0,
+      "mean_field_improvement_vs_full_pct": 0.2337134172129873
+    },
+    "train_fixed_rank": {
+      "selector": "train_fixed_rank",
+      "cell_count": 864,
+      "mean_regret_pct": 0.8647336145915309,
+      "seed_clustered_ci95_pct": 0.016909504577505643,
+      "median_regret_pct": 0.245462179200888,
+      "p95_regret_pct": 5.87756652213683,
+      "max_regret_pct": 8.148598410154548,
+      "exact_oracle_rank_rate": 0.21064814814814814,
+      "within_one_pct_oracle_rate": 0.7708333333333334,
+      "mean_field_improvement_vs_rank3_pct": 0.6580886198309961,
+      "field_better_than_rank3_rate": 0.75,
+      "mean_field_improvement_vs_full_pct": 0.9702889823571027
+    },
+    "energy95": {
+      "selector": "energy95",
+      "cell_count": 864,
+      "mean_regret_pct": 1.4844273882153516,
+      "seed_clustered_ci95_pct": 0.030557912204300527,
+      "median_regret_pct": 0.2344861710998541,
+      "p95_regret_pct": 10.593275982956566,
+      "max_regret_pct": 16.55014306025076,
+      "exact_oracle_rank_rate": 0.2199074074074074,
+      "within_one_pct_oracle_rate": 0.6655092592592593,
+      "mean_field_improvement_vs_rank3_pct": 0.03320922194013294,
+      "field_better_than_rank3_rate": 0.5960648148148148,
+      "mean_field_improvement_vs_full_pct": 0.41619136529568124
+    },
+    "support_min": {
+      "selector": "support_min",
+      "cell_count": 864,
+      "mean_regret_pct": 0.7699247004563461,
+      "seed_clustered_ci95_pct": 0.0071233791756106285,
+      "median_regret_pct": 0.19444527405087408,
+      "p95_regret_pct": 3.6687396293983725,
+      "max_regret_pct": 7.163831335186579,
+      "exact_oracle_rank_rate": 0.24074074074074073,
+      "within_one_pct_oracle_rate": 0.7835648148148148,
+      "mean_field_improvement_vs_rank3_pct": 0.7477849187400616,
+      "field_better_than_rank3_rate": 0.6168981481481481,
+      "mean_field_improvement_vs_full_pct": 1.0342010895977982
+    },
+    "heldout_min": {
+      "selector": "heldout_min",
+      "cell_count": 864,
+      "mean_regret_pct": 2.4226932090755495,
+      "seed_clustered_ci95_pct": 0.04634082399163972,
+      "median_regret_pct": 1.5810285961463375,
+      "p95_regret_pct": 9.466752322864684,
+      "max_regret_pct": 10.293266485185057,
+      "exact_oracle_rank_rate": 0.2835648148148148,
+      "within_one_pct_oracle_rate": 0.47337962962962965,
+      "mean_field_improvement_vs_rank3_pct": -0.880177756528523,
+      "field_better_than_rank3_rate": 0.41782407407407407,
+      "mean_field_improvement_vs_full_pct": -0.616650230312603
+    },
+    "lofo_ridge_no_holdout": {
+      "selector": "lofo_ridge_no_holdout",
+      "cell_count": 864,
+      "mean_regret_pct": 0.2521194599434465,
+      "seed_clustered_ci95_pct": 0.014050211962862604,
+      "median_regret_pct": 0.055399112314136786,
+      "p95_regret_pct": 1.267365721707318,
+      "max_regret_pct": 2.5770787895426315,
+      "exact_oracle_rank_rate": 0.3761574074074074,
+      "within_one_pct_oracle_rate": 0.9236111111111112,
+      "mean_field_improvement_vs_rank3_pct": 1.2593173436335687,
+      "field_better_than_rank3_rate": 0.7777777777777778,
+      "mean_field_improvement_vs_full_pct": 1.5343449822504354
+    },
+    "lofo_ridge_with_holdout": {
+      "selector": "lofo_ridge_with_holdout",
+      "cell_count": 864,
+      "mean_regret_pct": 0.21000309539017648,
+      "seed_clustered_ci95_pct": 0.013573611629596909,
+      "median_regret_pct": 0.021786051631626262,
+      "p95_regret_pct": 1.0544185123806036,
+      "max_regret_pct": 2.843016225784716,
+      "exact_oracle_rank_rate": 0.3854166666666667,
+      "within_one_pct_oracle_rate": 0.9444444444444444,
+      "mean_field_improvement_vs_rank3_pct": 1.3008402206605991,
+      "field_better_than_rank3_rate": 0.7893518518518519,
+      "mean_field_improvement_vs_full_pct": 1.5763328238474477
+    }
+  },
+  "family_summary": [
+    {
+      "selector": "fixed_rank3",
+      "family": "blobs_sheet",
+      "cell_count": 216,
+      "mean_regret_pct": 0.6336145348710617,
+      "p95_regret_pct": 2.2315539888224496,
+      "within_one_pct_oracle_rate": 0.7083333333333334,
+      "mean_field_improvement_vs_rank3_pct": 0.0
+    },
+    {
+      "selector": "fixed_rank3",
+      "family": "vortex_ring",
+      "cell_count": 216,
+      "mean_regret_pct": 2.8553035329492356,
+      "p95_regret_pct": 7.113227430627591,
+      "within_one_pct_oracle_rate": 0.3055555555555556,
+      "mean_field_improvement_vs_rank3_pct": 0.0
+    },
+    {
+      "selector": "fixed_rank3",
+      "family": "expanding_shell",
+      "cell_count": 216,
+      "mean_regret_pct": 1.4476175235308462,
+      "p95_regret_pct": 5.199234783321257,
+      "within_one_pct_oracle_rate": 0.5833333333333334,
+      "mean_field_improvement_vs_rank3_pct": 0.0
+    },
+    {
+      "selector": "fixed_rank3",
+      "family": "jet_filaments",
+      "cell_count": 216,
+      "mean_regret_pct": 1.3058766072225727,
+      "p95_regret_pct": 5.086935081287066,
+      "within_one_pct_oracle_rate": 0.5555555555555556,
+      "mean_field_improvement_vs_rank3_pct": 0.0
+    },
+    {
+      "selector": "train_fixed_rank",
+      "family": "blobs_sheet",
+      "cell_count": 216,
+      "mean_regret_pct": 2.200846892286814,
+      "p95_regret_pct": 7.183369332324169,
+      "within_one_pct_oracle_rate": 0.5,
+      "mean_field_improvement_vs_rank3_pct": -1.567318118639614
+    },
+    {
+      "selector": "train_fixed_rank",
+      "family": "vortex_ring",
+      "cell_count": 216,
+      "mean_regret_pct": 0.6377370804638466,
+      "p95_regret_pct": 2.7449770295671216,
+      "within_one_pct_oracle_rate": 0.75,
+      "mean_field_improvement_vs_rank3_pct": 2.127158775924422
+    },
+    {
+      "selector": "train_fixed_rank",
+      "family": "expanding_shell",
+      "cell_count": 216,
+      "mean_regret_pct": 0.3177561429271127,
+      "p95_regret_pct": 1.800498480454103,
+      "within_one_pct_oracle_rate": 0.9166666666666666,
+      "mean_field_improvement_vs_rank3_pct": 1.0963459546445509
+    },
+    {
+      "selector": "train_fixed_rank",
+      "family": "jet_filaments",
+      "cell_count": 216,
+      "mean_regret_pct": 0.30259434268834984,
+      "p95_regret_pct": 1.812926796043693,
+      "within_one_pct_oracle_rate": 0.9166666666666666,
+      "mean_field_improvement_vs_rank3_pct": 0.976167867394625
+    },
+    {
+      "selector": "energy95",
+      "family": "blobs_sheet",
+      "cell_count": 216,
+      "mean_regret_pct": 4.160009676348991,
+      "p95_regret_pct": 15.386734819841472,
+      "within_one_pct_oracle_rate": 0.3611111111111111,
+      "mean_field_improvement_vs_rank3_pct": -3.51890686565068
+    },
+    {
+      "selector": "energy95",
+      "family": "vortex_ring",
+      "cell_count": 216,
+      "mean_regret_pct": 0.4706909389656977,
+      "p95_regret_pct": 2.291346293614669,
+      "within_one_pct_oracle_rate": 0.7962962962962963,
+      "mean_field_improvement_vs_rank3_pct": 2.275054396120316
+    },
+    {
+      "selector": "energy95",
+      "family": "expanding_shell",
+      "cell_count": 216,
+      "mean_regret_pct": 0.5166046884861069,
+      "p95_regret_pct": 2.096892451393493,
+      "within_one_pct_oracle_rate": 0.75,
+      "mean_field_improvement_vs_rank3_pct": 0.8913226910697849
+    },
+    {
+      "selector": "energy95",
+      "family": "jet_filaments",
+      "cell_count": 216,
+      "mean_regret_pct": 0.7904042490606102,
+      "p95_regret_pct": 4.366841293645505,
+      "within_one_pct_oracle_rate": 0.7546296296296297,
+      "mean_field_improvement_vs_rank3_pct": 0.4853666662211104
+    },
+    {
+      "selector": "support_min",
+      "family": "blobs_sheet",
+      "cell_count": 216,
+      "mean_regret_pct": 0.0990118049637226,
+      "p95_regret_pct": 0.42775049008187865,
+      "within_one_pct_oracle_rate": 0.9861111111111112,
+      "mean_field_improvement_vs_rank3_pct": 0.5268090851019852
+    },
+    {
+      "selector": "support_min",
+      "family": "vortex_ring",
+      "cell_count": 216,
+      "mean_regret_pct": 0.7745796162664887,
+      "p95_regret_pct": 4.098264174984733,
+      "within_one_pct_oracle_rate": 0.75,
+      "mean_field_improvement_vs_rank3_pct": 1.9785741952875013
+    },
+    {
+      "selector": "support_min",
+      "family": "expanding_shell",
+      "cell_count": 216,
+      "mean_regret_pct": 0.9075871407776175,
+      "p95_regret_pct": 3.4027978072301903,
+      "within_one_pct_oracle_rate": 0.75,
+      "mean_field_improvement_vs_rank3_pct": 0.5047532258663757
+    },
+    {
+      "selector": "support_min",
+      "family": "jet_filaments",
+      "cell_count": 216,
+      "mean_regret_pct": 1.298520239817555,
+      "p95_regret_pct": 6.756720267753675,
+      "within_one_pct_oracle_rate": 0.6481481481481481,
+      "mean_field_improvement_vs_rank3_pct": -0.01899683129561578
+    },
+    {
+      "selector": "heldout_min",
+      "family": "blobs_sheet",
+      "cell_count": 216,
+      "mean_regret_pct": 0.27905132444179764,
+      "p95_regret_pct": 2.0977543392069147,
+      "within_one_pct_oracle_rate": 0.8796296296296297,
+      "mean_field_improvement_vs_rank3_pct": 0.34733986628652
+    },
+    {
+      "selector": "heldout_min",
+      "family": "vortex_ring",
+      "cell_count": 216,
+      "mean_regret_pct": 4.011264828339471,
+      "p95_regret_pct": 9.717221692051748,
+      "within_one_pct_oracle_rate": 0.3333333333333333,
+      "mean_field_improvement_vs_rank3_pct": -1.1972154140547526
+    },
+    {
+      "selector": "heldout_min",
+      "family": "expanding_shell",
+      "cell_count": 216,
+      "mean_regret_pct": 3.0756802529009404,
+      "p95_regret_pct": 6.227883684024052,
+      "within_one_pct_oracle_rate": 0.004629629629629629,
+      "mean_field_improvement_vs_rank3_pct": -1.6316416304528818
+    },
+    {
+      "selector": "heldout_min",
+      "family": "jet_filaments",
+      "cell_count": 216,
+      "mean_regret_pct": 2.3247764306199876,
+      "p95_regret_pct": 9.997129709532063,
+      "within_one_pct_oracle_rate": 0.6759259259259259,
+      "mean_field_improvement_vs_rank3_pct": -1.0391938478929783
+    },
+    {
+      "selector": "lofo_ridge_no_holdout",
+      "family": "blobs_sheet",
+      "cell_count": 216,
+      "mean_regret_pct": 0.5120490959159179,
+      "p95_regret_pct": 2.1140645171733143,
+      "within_one_pct_oracle_rate": 0.7129629629629629,
+      "mean_field_improvement_vs_rank3_pct": 0.11667956399626885
+    },
+    {
+      "selector": "lofo_ridge_no_holdout",
+      "family": "vortex_ring",
+      "cell_count": 216,
+      "mean_regret_pct": 0.17585299923842587,
+      "p95_regret_pct": 0.6081544318166554,
+      "within_one_pct_oracle_rate": 1.0,
+      "mean_field_improvement_vs_rank3_pct": 2.565320719952143
+    },
+    {
+      "selector": "lofo_ridge_no_holdout",
+      "family": "expanding_shell",
+      "cell_count": 216,
+      "mean_regret_pct": 0.12309057509846022,
+      "p95_regret_pct": 0.5614688840985601,
+      "within_one_pct_oracle_rate": 1.0,
+      "mean_field_improvement_vs_rank3_pct": 1.2813358994468589
+    },
+    {
+      "selector": "lofo_ridge_no_holdout",
+      "family": "jet_filaments",
+      "cell_count": 216,
+      "mean_regret_pct": 0.19748516952098202,
+      "p95_regret_pct": 0.8272556619023475,
+      "within_one_pct_oracle_rate": 0.9814814814814815,
+      "mean_field_improvement_vs_rank3_pct": 1.0739331911390038
+    },
+    {
+      "selector": "lofo_ridge_with_holdout",
+      "family": "blobs_sheet",
+      "cell_count": 216,
+      "mean_regret_pct": 0.3606864176126522,
+      "p95_regret_pct": 1.8214957442974038,
+      "within_one_pct_oracle_rate": 0.8009259259259259,
+      "mean_field_improvement_vs_rank3_pct": 0.2669796101892189
+    },
+    {
+      "selector": "lofo_ridge_with_holdout",
+      "family": "vortex_ring",
+      "cell_count": 216,
+      "mean_regret_pct": 0.15350270225745724,
+      "p95_regret_pct": 0.5866887965601254,
+      "within_one_pct_oracle_rate": 1.0,
+      "mean_field_improvement_vs_rank3_pct": 2.586145339087796
+    },
+    {
+      "selector": "lofo_ridge_with_holdout",
+      "family": "expanding_shell",
+      "cell_count": 216,
+      "mean_regret_pct": 0.11407504134370049,
+      "p95_regret_pct": 0.45732404613744704,
+      "within_one_pct_oracle_rate": 1.0,
+      "mean_field_improvement_vs_rank3_pct": 1.2902944693448575
+    },
+    {
+      "selector": "lofo_ridge_with_holdout",
+      "family": "jet_filaments",
+      "cell_count": 216,
+      "mean_regret_pct": 0.21174822034689586,
+      "p95_regret_pct": 0.8379151189641327,
+      "within_one_pct_oracle_rate": 0.9768518518518519,
+      "mean_field_improvement_vs_rank3_pct": 1.0599414640205236
+    }
+  ],
+  "feature_ablation_summary": {
+    "capacity_spectrum": {
+      "selector": "capacity_spectrum",
+      "cell_count": 864,
+      "mean_regret_pct": 0.7892574827947274,
+      "seed_clustered_ci95_pct": 0.021907801887032848,
+      "median_regret_pct": 0.16382254033847446,
+      "p95_regret_pct": 5.87756652213683,
+      "max_regret_pct": 11.733335772633957,
+      "exact_oracle_rank_rate": 0.2847222222222222,
+      "within_one_pct_oracle_rate": 0.8055555555555556,
+      "mean_field_improvement_vs_rank3_pct": 0.7294507529274155,
+      "field_better_than_rank3_rate": 0.7222222222222222,
+      "mean_field_improvement_vs_full_pct": 1.0476554146307664
+    },
+    "support": {
+      "selector": "support",
+      "cell_count": 864,
+      "mean_regret_pct": 0.6140426701944486,
+      "seed_clustered_ci95_pct": 0.026509159480034423,
+      "median_regret_pct": 0.17970966989030435,
+      "p95_regret_pct": 2.7622381037880865,
+      "max_regret_pct": 7.778097932282108,
+      "exact_oracle_rank_rate": 0.24074074074074073,
+      "within_one_pct_oracle_rate": 0.7835648148148148,
+      "mean_field_improvement_vs_rank3_pct": 0.9039164430899871,
+      "field_better_than_rank3_rate": 0.7094907407407407,
+      "mean_field_improvement_vs_full_pct": 1.2002551611508072
+    },
+    "temporal": {
+      "selector": "temporal",
+      "cell_count": 864,
+      "mean_regret_pct": 0.6680373722113031,
+      "seed_clustered_ci95_pct": 0.03752320639861088,
+      "median_regret_pct": 0.18754747395909416,
+      "p95_regret_pct": 2.9642778128451925,
+      "max_regret_pct": 8.148598410154548,
+      "exact_oracle_rank_rate": 0.23032407407407407,
+      "within_one_pct_oracle_rate": 0.7962962962962963,
+      "mean_field_improvement_vs_rank3_pct": 0.8538843970003867,
+      "field_better_than_rank3_rate": 0.7511574074074074,
+      "mean_field_improvement_vs_full_pct": 1.146421664491671
+    },
+    "no_holdout": {
+      "selector": "no_holdout",
+      "cell_count": 864,
+      "mean_regret_pct": 0.2521194599434465,
+      "seed_clustered_ci95_pct": 0.014050211962862604,
+      "median_regret_pct": 0.055399112314136786,
+      "p95_regret_pct": 1.267365721707318,
+      "max_regret_pct": 2.5770787895426315,
+      "exact_oracle_rank_rate": 0.3761574074074074,
+      "within_one_pct_oracle_rate": 0.9236111111111112,
+      "mean_field_improvement_vs_rank3_pct": 1.2593173436335687,
+      "field_better_than_rank3_rate": 0.7777777777777778,
+      "mean_field_improvement_vs_full_pct": 1.5343449822504354
+    },
+    "with_holdout": {
+      "selector": "with_holdout",
+      "cell_count": 864,
+      "mean_regret_pct": 0.21000309539017648,
+      "seed_clustered_ci95_pct": 0.013573611629596909,
+      "median_regret_pct": 0.021786051631626262,
+      "p95_regret_pct": 1.0544185123806036,
+      "max_regret_pct": 2.843016225784716,
+      "exact_oracle_rank_rate": 0.3854166666666667,
+      "within_one_pct_oracle_rate": 0.9444444444444444,
+      "mean_field_improvement_vs_rank3_pct": 1.3008402206605991,
+      "field_better_than_rank3_rate": 0.7893518518518519,
+      "mean_field_improvement_vs_full_pct": 1.5763328238474477
+    }
+  },
+  "feature_ablation_rows": 4320,
+  "oracle_rank_counts": {
+    "2": 77,
+    "3": 116,
+    "5": 230,
+    "8": 245,
+    "12": 124,
+    "18": 72
+  },
+  "oracle_rank_counts_by_family": {
+    "blobs_sheet": {
+      "2": 77,
+      "3": 43,
+      "5": 72,
+      "8": 24
+    },
+    "vortex_ring": {
+      "5": 46,
+      "8": 52,
+      "12": 76,
+      "18": 42
+    },
+    "expanding_shell": {
+      "3": 49,
+      "5": 53,
+      "8": 90,
+      "12": 18,
+      "18": 6
+    },
+    "jet_filaments": {
+      "3": 24,
+      "5": 59,
+      "8": 79,
+      "12": 30,
+      "18": 24
+    }
+  },
+  "observable_correlations": {
+    "heldout_residual_vs_field_error_ratio_pearson": 0.0371340994695537,
+    "support_residual_vs_field_error_ratio_pearson": 0.2658963911282576,
+    "heldout_within_cell": {
+      "mean_within_cell_pearson": 0.22835880282630125,
+      "median_within_cell_pearson": 0.8180875016388405,
+      "pairwise_rank_order_accuracy": 0.6495811287477954,
+      "comparable_rank_pairs": 18144
+    },
+    "support_within_cell": {
+      "mean_within_cell_pearson": 0.901464633058405,
+      "median_within_cell_pearson": 0.9786548233435534,
+      "pairwise_rank_order_accuracy": 0.7957451499118166,
+      "comparable_rank_pairs": 18144
+    }
+  },
+  "model_selection_audit": {
+    "blobs_sheet": {
+      "heldout_family": "blobs_sheet",
+      "training_families": [
+        "vortex_ring",
+        "expanding_shell",
+        "jet_filaments"
+      ],
+      "training_candidate_rows": 4536,
+      "capacity_spectrum": {
+        "selected_lambda": 10.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.39928980818621057,
+          "0.01": 0.39678366379191554,
+          "0.1": 0.39678185832461815,
+          "1.0": 0.42554691165539144,
+          "10.0": 0.3728253336359941,
+          "100.0": 0.5651540267936904
+        },
+        "feature_count": 10
+      },
+      "support": {
+        "selected_lambda": 10.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.3531657496154685,
+          "0.01": 0.3531657496154685,
+          "0.1": 0.3276438376327547,
+          "1.0": 0.2884666386149099,
+          "10.0": 0.27081909202923576,
+          "100.0": 0.3545056724299515
+        },
+        "feature_count": 7
+      },
+      "temporal": {
+        "selected_lambda": 10.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.32261378202740476,
+          "0.01": 0.32261378202740476,
+          "0.1": 0.3151384241348274,
+          "1.0": 0.2754120762474174,
+          "10.0": 0.24557642233491894,
+          "100.0": 0.3520119184220761
+        },
+        "feature_count": 10
+      },
+      "no_holdout": {
+        "selected_lambda": 10.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.2428587910639839,
+          "0.01": 0.2405213340289134,
+          "0.1": 0.22807263018478774,
+          "1.0": 0.17428543716054815,
+          "10.0": 0.16286477122223036,
+          "100.0": 0.23727311202292442
+        },
+        "feature_count": 15
+      },
+      "with_holdout": {
+        "selected_lambda": 10.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.23924509133143368,
+          "0.01": 0.23779512373677414,
+          "0.1": 0.21620435190731171,
+          "1.0": 0.17143013626476655,
+          "10.0": 0.16275430378176525,
+          "100.0": 0.2433474477153984
+        },
+        "feature_count": 17
+      }
+    },
+    "vortex_ring": {
+      "heldout_family": "vortex_ring",
+      "training_families": [
+        "blobs_sheet",
+        "expanding_shell",
+        "jet_filaments"
+      ],
+      "training_candidate_rows": 4536,
+      "capacity_spectrum": {
+        "selected_lambda": 1.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.7317011425926885,
+          "0.01": 0.7319267962033109,
+          "0.1": 0.7172909095386393,
+          "1.0": 0.6768683389503152,
+          "10.0": 0.790737143593148,
+          "100.0": 1.2515708483727277
+        },
+        "feature_count": 10
+      },
+      "support": {
+        "selected_lambda": 0.1,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.4995902714391452,
+          "0.01": 0.4995902714391452,
+          "0.1": 0.4982982970581343,
+          "1.0": 0.5058866998119115,
+          "10.0": 0.5371912913724491,
+          "100.0": 0.9328704267257953
+        },
+        "feature_count": 7
+      },
+      "temporal": {
+        "selected_lambda": 1.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.6796530008447385,
+          "0.01": 0.6796530008447385,
+          "0.1": 0.663093995469026,
+          "1.0": 0.6478537726425934,
+          "10.0": 0.6877380372180409,
+          "100.0": 1.0406197396897705
+        },
+        "feature_count": 10
+      },
+      "no_holdout": {
+        "selected_lambda": 100.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.4683542482939831,
+          "0.01": 0.47164333794506835,
+          "0.1": 0.491296298744019,
+          "1.0": 0.5800101870684911,
+          "10.0": 0.4736383693080078,
+          "100.0": 0.3015095472268113
+        },
+        "feature_count": 15
+      },
+      "with_holdout": {
+        "selected_lambda": 100.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.4700422089387896,
+          "0.01": 0.4696386521156079,
+          "0.1": 0.4778271320306564,
+          "1.0": 0.558090681991341,
+          "10.0": 0.4672284817751104,
+          "100.0": 0.25753556028416297
+        },
+        "feature_count": 17
+      }
+    },
+    "expanding_shell": {
+      "heldout_family": "expanding_shell",
+      "training_families": [
+        "blobs_sheet",
+        "vortex_ring",
+        "jet_filaments"
+      ],
+      "training_candidate_rows": 4536,
+      "capacity_spectrum": {
+        "selected_lambda": 10.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 1.088352186483643,
+          "0.01": 1.088352186483643,
+          "0.1": 1.0557738339827991,
+          "1.0": 0.9703213183194275,
+          "10.0": 0.8888012658444011,
+          "100.0": 1.2364977392284973
+        },
+        "feature_count": 10
+      },
+      "support": {
+        "selected_lambda": 10.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.599254691292701,
+          "0.01": 0.599254691292701,
+          "0.1": 0.5990638542385406,
+          "1.0": 0.6069072971731831,
+          "10.0": 0.5667190210063675,
+          "100.0": 0.7167728001803589
+        },
+        "feature_count": 7
+      },
+      "temporal": {
+        "selected_lambda": 1.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.6303711720904742,
+          "0.01": 0.6303711720904742,
+          "0.1": 0.6368039313663753,
+          "1.0": 0.6080039474382785,
+          "10.0": 0.7908513267314693,
+          "100.0": 1.2538597312933815
+        },
+        "feature_count": 10
+      },
+      "no_holdout": {
+        "selected_lambda": 100.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.44570025156508214,
+          "0.01": 0.4454547901109814,
+          "0.1": 0.46937196950562315,
+          "1.0": 0.4758806945253275,
+          "10.0": 0.36169268777914004,
+          "100.0": 0.22165850311529744
+        },
+        "feature_count": 15
+      },
+      "with_holdout": {
+        "selected_lambda": 100.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.38009558426143236,
+          "0.01": 0.38009558426143236,
+          "0.1": 0.38755991956948416,
+          "1.0": 0.38506277872566635,
+          "10.0": 0.2894574512065275,
+          "100.0": 0.2115271073425111
+        },
+        "feature_count": 17
+      }
+    },
+    "jet_filaments": {
+      "heldout_family": "jet_filaments",
+      "training_families": [
+        "blobs_sheet",
+        "vortex_ring",
+        "expanding_shell"
+      ],
+      "training_candidate_rows": 4536,
+      "capacity_spectrum": {
+        "selected_lambda": 10.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 1.0553183709746707,
+          "0.01": 1.0553184394776738,
+          "0.1": 1.0541283944723114,
+          "1.0": 1.049556911216601,
+          "10.0": 1.0352097038570087,
+          "100.0": 1.3257420123683623
+        },
+        "feature_count": 10
+      },
+      "support": {
+        "selected_lambda": 100.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 1.073644697910815,
+          "0.01": 1.073644697910815,
+          "0.1": 1.06648579969653,
+          "1.0": 1.0460020119358797,
+          "10.0": 0.9578444454501372,
+          "100.0": 0.9066751508993672
+        },
+        "feature_count": 7
+      },
+      "temporal": {
+        "selected_lambda": 0.0001,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 1.0634475984585423,
+          "0.01": 1.064783687928125,
+          "0.1": 1.0639315036973536,
+          "1.0": 1.0732721178938478,
+          "10.0": 1.094530131108563,
+          "100.0": 1.2981323005358645
+        },
+        "feature_count": 10
+      },
+      "no_holdout": {
+        "selected_lambda": 10.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.7781636262990248,
+          "0.01": 0.7781636262990248,
+          "0.1": 0.7421989236428165,
+          "1.0": 0.5493501933743213,
+          "10.0": 0.3021076436746965,
+          "100.0": 0.5957568578732841
+        },
+        "feature_count": 15
+      },
+      "with_holdout": {
+        "selected_lambda": 10.0,
+        "inner_lofo_mean_regret_by_lambda": {
+          "0.0001": 0.7214233537550675,
+          "0.01": 0.7168702799122538,
+          "0.1": 0.6750616181698478,
+          "1.0": 0.46916111474610456,
+          "10.0": 0.2849121034176887,
+          "100.0": 0.5546330102920196
+        },
+        "feature_count": 17
+      }
+    }
+  },
+  "models": {
+    "capacity_spectrum": {
+      "blobs_sheet": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "spectral_energy",
+          "spectral_tail",
+          "spectral_gap",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy",
+          "rank_x_spectral_tail"
+        ],
+        "lambda": 10.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.7963634505333621,
+          0.3613048179148334,
+          0.08293454570812543,
+          1.1278997883980382,
+          0.5555555555555872,
+          0.4386276954881267,
+          0.0637587309710479
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.22130281580904412,
+          0.27036156904812936,
+          0.06907545378681598,
+          0.19090161726013674,
+          0.18144368465060104,
+          0.37022158728627697,
+          0.0374463927566381
+        ],
+        "y_mean": 0.014762271474263504,
+        "coefficients": [
+          0.019757798000563744,
+          -0.029923931422662257,
+          -0.025954069075376392,
+          -0.030458442761808088,
+          -4.631699897817859e-05,
+          -0.0021349616538818223,
+          -0.016906757716597557,
+          0.012807683701270065,
+          0.03760074224101614,
+          -0.005421877904419068
+        ]
+      },
+      "vortex_ring": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "spectral_energy",
+          "spectral_tail",
+          "spectral_gap",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy",
+          "rank_x_spectral_tail"
+        ],
+        "lambda": 1.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.8230429068793257,
+          0.33051233313505424,
+          0.09517690970339374,
+          1.1021505566671415,
+          0.5555555555555872,
+          0.4286141053705549,
+          0.05855218100834036
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.20421345236614213,
+          0.2602281513716328,
+          0.09070249914120257,
+          0.24112627535703543,
+          0.18144368465060104,
+          0.3698030766545814,
+          0.04013745795681959
+        ],
+        "y_mean": 0.004712603506342215,
+        "coefficients": [
+          0.19694199070541749,
+          -0.12687972808564718,
+          -0.13327482016027486,
+          0.019915712748765944,
+          0.0448949528491794,
+          -0.009786127738349387,
+          -0.03540967883897817,
+          0.010525862412080502,
+          0.059729302603594464,
+          -0.012850197266205196
+        ]
+      },
+      "expanding_shell": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "spectral_energy",
+          "spectral_tail",
+          "spectral_gap",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy",
+          "rank_x_spectral_tail"
+        ],
+        "lambda": 10.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.819281719442324,
+          0.3344644889267131,
+          0.093729649964858,
+          1.1156888454006169,
+          0.5555555555555872,
+          0.43387899543357167,
+          0.05984380911150411
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.21069459472835217,
+          0.26239623893010783,
+          0.09189102006959715,
+          0.24027973597339702,
+          0.18144368465060104,
+          0.37372473309797366,
+          0.04090195481078359
+        ],
+        "y_mean": 0.008329668353086666,
+        "coefficients": [
+          0.01488701676601063,
+          -0.04032096153307373,
+          -0.023329095279460855,
+          -0.022455920998662476,
+          0.02668334955961247,
+          -0.005516704502484544,
+          -0.042500574052649676,
+          0.01210212036641319,
+          0.06904163188179185,
+          -0.007220796395387601
+        ]
+      },
+      "jet_filaments": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "spectral_energy",
+          "spectral_tail",
+          "spectral_gap",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy",
+          "rank_x_spectral_tail"
+        ],
+        "lambda": 10.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.8052800428515027,
+          0.35004781977598387,
+          0.08885664130724219,
+          1.1418510953773915,
+          0.5555555555555872,
+          0.44405320375787777,
+          0.06269446552358042
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.2163737470860018,
+          0.26867541945361784,
+          0.07906266837417089,
+          0.22073305789851402,
+          0.18144368465060104,
+          0.378601305339621,
+          0.0409931231110938
+        ],
+        "y_mean": 0.007854147951986464,
+        "coefficients": [
+          0.022388124358537043,
+          -0.042713414249141005,
+          -0.029337969400910487,
+          -0.020670375970898058,
+          0.02210362347497585,
+          -0.0036653372216981215,
+          -0.03666947101530616,
+          0.012313274537722043,
+          0.06683827351947275,
+          -0.006091258648888151
+        ]
+      }
+    },
+    "support": {
+      "blobs_sheet": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "log_support_residual",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy"
+        ],
+        "lambda": 10.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          -0.4909486971193041,
+          1.1278997883980382,
+          0.5555555555555872,
+          0.4386276954881267
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.11417180402342139,
+          0.19090161726013674,
+          0.18144368465060104,
+          0.37022158728627697
+        ],
+        "y_mean": 0.014762271474263504,
+        "coefficients": [
+          0.06576157463647367,
+          -0.02768596762892205,
+          -0.08183407599819509,
+          0.008785309846753277,
+          -0.015005653266012622,
+          0.015165132773947541,
+          0.027658185523194725
+        ]
+      },
+      "vortex_ring": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "log_support_residual",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy"
+        ],
+        "lambda": 0.1,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          -0.6224736834014905,
+          1.1021505566671415,
+          0.5555555555555872,
+          0.4286141053705549
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.23350512791560887,
+          0.24112627535703543,
+          0.18144368465060104,
+          0.3698030766545814
+        ],
+        "y_mean": 0.004712603506342215,
+        "coefficients": [
+          0.2252850504802149,
+          -0.12426997176330436,
+          -0.17077301855212246,
+          0.011180939377615443,
+          -0.033559245788756936,
+          0.014202333854024841,
+          0.05206885473786974
+        ]
+      },
+      "expanding_shell": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "log_support_residual",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy"
+        ],
+        "lambda": 10.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          -0.6340315151738231,
+          1.1156888454006169,
+          0.5555555555555872,
+          0.43387899543357167
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.226811271296813,
+          0.24027973597339702,
+          0.18144368465060104,
+          0.37372473309797366
+        ],
+        "y_mean": 0.008329668353086666,
+        "coefficients": [
+          0.0888110147728087,
+          -0.04618469444226513,
+          -0.10666550921578448,
+          0.01789995849752481,
+          -0.03386054537723333,
+          0.01775630584320271,
+          0.04999739330282465
+        ]
+      },
+      "jet_filaments": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "log_support_residual",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy"
+        ],
+        "lambda": 100.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          -0.5888451701249091,
+          1.1418510953773915,
+          0.5555555555555872,
+          0.44405320375787777
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.24677050367049128,
+          0.22073305789851402,
+          0.18144368465060104,
+          0.378601305339621
+        ],
+        "y_mean": 0.007854147951986464,
+        "coefficients": [
+          0.0041557734278942285,
+          0.005551626372761399,
+          -0.049375004268936165,
+          0.01724695377360911,
+          -0.02588671342691449,
+          0.017113292032124427,
+          0.029304822264314457
+        ]
+      }
+    },
+    "temporal": {
+      "blobs_sheet": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "temporal_gradient_ratio",
+          "temporal_curvature_ratio",
+          "mass_curvature",
+          "negative_fraction",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy"
+        ],
+        "lambda": 10.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.7371791999827495,
+          0.57116105196718,
+          0.6675916351674476,
+          0.5230251353370562,
+          1.1278997883980382,
+          0.5555555555555872,
+          0.4386276954881267
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.2251018472737943,
+          0.30229464696502373,
+          0.45407097340341135,
+          0.032112217327274234,
+          0.19090161726013674,
+          0.18144368465060104,
+          0.37022158728627697
+        ],
+        "y_mean": 0.014762271474263504,
+        "coefficients": [
+          0.033784420391470366,
+          -0.013852779457460582,
+          -0.09103477687166096,
+          -0.01958142348904896,
+          0.04242601445627145,
+          0.0011321759214957998,
+          0.0032710361808498717,
+          -0.010770532084837556,
+          0.012720714181033418,
+          0.028026622573765543
+        ]
+      },
+      "vortex_ring": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "temporal_gradient_ratio",
+          "temporal_curvature_ratio",
+          "mass_curvature",
+          "negative_fraction",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy"
+        ],
+        "lambda": 1.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.7535604451587757,
+          0.5860977441173341,
+          0.6284819501352075,
+          0.5365620794106654,
+          1.1021505566671415,
+          0.5555555555555872,
+          0.4286141053705549
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.22350684834439666,
+          0.3095155161403408,
+          0.47048399982377254,
+          0.03614208268063072,
+          0.24112627535703543,
+          0.18144368465060104,
+          0.3698030766545814
+        ],
+        "y_mean": 0.004712603506342215,
+        "coefficients": [
+          0.18546029663046806,
+          -0.10420303123000718,
+          -0.16385882088264436,
+          -0.007409500870633714,
+          0.017798604701432345,
+          -0.007159029197643699,
+          0.007880685485500123,
+          -0.02573161187298533,
+          0.0061452430079071306,
+          0.055212821140569336
+        ]
+      },
+      "expanding_shell": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "temporal_gradient_ratio",
+          "temporal_curvature_ratio",
+          "mass_curvature",
+          "negative_fraction",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy"
+        ],
+        "lambda": 1.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.7735521186298508,
+          0.6044356659229995,
+          0.9147708960562322,
+          0.532855152181043,
+          1.1156888454006169,
+          0.5555555555555872,
+          0.43387899543357167
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.20106972688117097,
+          0.2955389941117206,
+          0.4133829695680362,
+          0.038502446663247,
+          0.24027973597339702,
+          0.18144368465060104,
+          0.37372473309797366
+        ],
+        "y_mean": 0.008329668353086666,
+        "coefficients": [
+          0.2251654996911034,
+          -0.11425004946470836,
+          -0.19079280973482898,
+          0.002538375657841407,
+          0.009630060476110206,
+          0.005692565611662222,
+          -0.00045431164190224435,
+          -0.027975240117113224,
+          0.01259607056626572,
+          0.044812201652628565
+        ]
+      },
+      "jet_filaments": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "temporal_gradient_ratio",
+          "temporal_curvature_ratio",
+          "mass_curvature",
+          "negative_fraction",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy"
+        ],
+        "lambda": 0.0001,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.7415170019525182,
+          0.5830253368587816,
+          0.7098214149580022,
+          0.5175126699878314,
+          1.1418510953773915,
+          0.5555555555555872,
+          0.44405320375787777
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.22950725118966964,
+          0.30895325054523926,
+          0.5274150623927616,
+          0.03263568552880692,
+          0.22073305789851402,
+          0.18144368465060104,
+          0.378601305339621
+        ],
+        "y_mean": 0.007854147951986464,
+        "coefficients": [
+          0.18120727075502138,
+          -0.09226771042101096,
+          -0.16671900264694806,
+          0.002011513449505289,
+          0.01566304672843814,
+          0.0005596686827283231,
+          -0.009109438720691313,
+          -0.023984654614568026,
+          0.016937192918253526,
+          0.0401900068144022
+        ]
+      }
+    },
+    "no_holdout": {
+      "blobs_sheet": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "spectral_energy",
+          "spectral_tail",
+          "spectral_gap",
+          "log_support_residual",
+          "temporal_gradient_ratio",
+          "temporal_curvature_ratio",
+          "mass_curvature",
+          "negative_fraction",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy",
+          "rank_x_spectral_tail"
+        ],
+        "lambda": 10.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.7963634505333621,
+          0.3613048179148334,
+          0.08293454570812543,
+          -0.4909486971193041,
+          0.7371791999827495,
+          0.57116105196718,
+          0.6675916351674476,
+          0.5230251353370562,
+          1.1278997883980382,
+          0.5555555555555872,
+          0.4386276954881267,
+          0.0637587309710479
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.22130281580904412,
+          0.27036156904812936,
+          0.06907545378681598,
+          0.11417180402342139,
+          0.2251018472737943,
+          0.30229464696502373,
+          0.45407097340341135,
+          0.032112217327274234,
+          0.19090161726013674,
+          0.18144368465060104,
+          0.37022158728627697,
+          0.0374463927566381
+        ],
+        "y_mean": 0.014762271474263504,
+        "coefficients": [
+          -0.0008054872416526942,
+          -0.013791254368040217,
+          -0.017967326428596973,
+          0.005725616215186513,
+          0.013567194919074078,
+          -0.00362320360992111,
+          0.05499994362723553,
+          0.023694613735843115,
+          0.014892205199407857,
+          0.009924884722933302,
+          0.023315031351969953,
+          -0.015640936862813183,
+          0.025864245421266675,
+          0.0162787071097963,
+          -0.006304873893569134
+        ]
+      },
+      "vortex_ring": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "spectral_energy",
+          "spectral_tail",
+          "spectral_gap",
+          "log_support_residual",
+          "temporal_gradient_ratio",
+          "temporal_curvature_ratio",
+          "mass_curvature",
+          "negative_fraction",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy",
+          "rank_x_spectral_tail"
+        ],
+        "lambda": 100.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.8230429068793257,
+          0.33051233313505424,
+          0.09517690970339374,
+          -0.6224736834014905,
+          0.7535604451587757,
+          0.5860977441173341,
+          0.6284819501352075,
+          0.5365620794106654,
+          1.1021505566671415,
+          0.5555555555555872,
+          0.4286141053705549,
+          0.05855218100834036
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.20421345236614213,
+          0.2602281513716328,
+          0.09070249914120257,
+          0.23350512791560887,
+          0.22350684834439666,
+          0.3095155161403408,
+          0.47048399982377254,
+          0.03614208268063072,
+          0.24112627535703543,
+          0.18144368465060104,
+          0.3698030766545814,
+          0.04013745795681959
+        ],
+        "y_mean": 0.004712603506342215,
+        "coefficients": [
+          -0.0047148236558522735,
+          -0.004347615140203703,
+          -0.028964936889157692,
+          -0.020841880305321546,
+          0.018703956467445406,
+          -0.00600599732364246,
+          0.014777897021636262,
+          0.025510793462132773,
+          0.010819677425883445,
+          -0.005292641947476732,
+          0.012891321380344186,
+          -0.01966044604591779,
+          0.01010072926931403,
+          0.028128141858216677,
+          -0.004322107131773954
+        ]
+      },
+      "expanding_shell": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "spectral_energy",
+          "spectral_tail",
+          "spectral_gap",
+          "log_support_residual",
+          "temporal_gradient_ratio",
+          "temporal_curvature_ratio",
+          "mass_curvature",
+          "negative_fraction",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy",
+          "rank_x_spectral_tail"
+        ],
+        "lambda": 100.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.819281719442324,
+          0.3344644889267131,
+          0.093729649964858,
+          -0.6340315151738231,
+          0.7735521186298508,
+          0.6044356659229995,
+          0.9147708960562322,
+          0.532855152181043,
+          1.1156888454006169,
+          0.5555555555555872,
+          0.43387899543357167,
+          0.05984380911150411
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.21069459472835217,
+          0.26239623893010783,
+          0.09189102006959715,
+          0.226811271296813,
+          0.20106972688117097,
+          0.2955389941117206,
+          0.4133829695680362,
+          0.038502446663247,
+          0.24027973597339702,
+          0.18144368465060104,
+          0.37372473309797366,
+          0.04090195481078359
+        ],
+        "y_mean": 0.008329668353086666,
+        "coefficients": [
+          -0.004329550167517791,
+          -0.0035051377331297043,
+          -0.02608997634681515,
+          -0.025079300934247595,
+          0.020973959723798268,
+          -0.005631793874142224,
+          0.017812714166267077,
+          0.03207199174024943,
+          0.0034280662484263043,
+          0.0008874058345431956,
+          0.00965559594751328,
+          -0.02289654051258422,
+          0.01501032884826793,
+          0.02671762455600203,
+          -0.005214783640013066
+        ]
+      },
+      "jet_filaments": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "spectral_energy",
+          "spectral_tail",
+          "spectral_gap",
+          "log_support_residual",
+          "temporal_gradient_ratio",
+          "temporal_curvature_ratio",
+          "mass_curvature",
+          "negative_fraction",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy",
+          "rank_x_spectral_tail"
+        ],
+        "lambda": 10.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.8052800428515027,
+          0.35004781977598387,
+          0.08885664130724219,
+          -0.5888451701249091,
+          0.7415170019525182,
+          0.5830253368587816,
+          0.7098214149580022,
+          0.5175126699878314,
+          1.1418510953773915,
+          0.5555555555555872,
+          0.44405320375787777,
+          0.06269446552358042
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.2163737470860018,
+          0.26867541945361784,
+          0.07906266837417089,
+          0.24677050367049128,
+          0.22950725118966964,
+          0.30895325054523926,
+          0.5274150623927616,
+          0.03263568552880692,
+          0.22073305789851402,
+          0.18144368465060104,
+          0.378601305339621,
+          0.0409931231110938
+        ],
+        "y_mean": 0.007854147951986464,
+        "coefficients": [
+          0.02787308625336086,
+          -0.02230297682365799,
+          -0.054893020807425655,
+          -0.016180697942485247,
+          0.02752374080835823,
+          -0.005055612123265463,
+          0.04097484340824256,
+          0.06173235398158638,
+          -0.015783127982291992,
+          0.005587323555001113,
+          0.02948309163490844,
+          -0.022476866870300462,
+          0.010575663485664646,
+          0.03896695515469277,
+          -0.004945083218622889
+        ]
+      }
+    },
+    "with_holdout": {
+      "blobs_sheet": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "spectral_energy",
+          "spectral_tail",
+          "spectral_gap",
+          "log_support_residual",
+          "temporal_gradient_ratio",
+          "temporal_curvature_ratio",
+          "mass_curvature",
+          "negative_fraction",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy",
+          "rank_x_spectral_tail",
+          "log_heldout_residual",
+          "log_heldout_support_ratio"
+        ],
+        "lambda": 10.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.7963634505333621,
+          0.3613048179148334,
+          0.08293454570812543,
+          -0.4909486971193041,
+          0.7371791999827495,
+          0.57116105196718,
+          0.6675916351674476,
+          0.5230251353370562,
+          1.1278997883980382,
+          0.5555555555555872,
+          0.4386276954881267,
+          0.0637587309710479,
+          -0.1955844232515923,
+          0.2953642738677119
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.22130281580904412,
+          0.27036156904812936,
+          0.06907545378681598,
+          0.11417180402342139,
+          0.2251018472737943,
+          0.30229464696502373,
+          0.45407097340341135,
+          0.032112217327274234,
+          0.19090161726013674,
+          0.18144368465060104,
+          0.37022158728627697,
+          0.0374463927566381,
+          0.18877136192831512,
+          0.1740178991850768
+        ],
+        "y_mean": 0.014762271474263504,
+        "coefficients": [
+          -0.0019121274005188275,
+          -0.013428880521342581,
+          -0.01768983844255566,
+          0.0042976344975752916,
+          0.01629698839834427,
+          -0.0035014561268702804,
+          0.04480451437105728,
+          0.021451835418508675,
+          0.016378008211144556,
+          0.009302459207312779,
+          0.023908340610772155,
+          -0.01610480370945613,
+          0.037647683052086864,
+          0.01762452873902785,
+          -0.006295062143145156,
+          0.021496025598525162,
+          -0.006077410489516213
+        ]
+      },
+      "vortex_ring": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "spectral_energy",
+          "spectral_tail",
+          "spectral_gap",
+          "log_support_residual",
+          "temporal_gradient_ratio",
+          "temporal_curvature_ratio",
+          "mass_curvature",
+          "negative_fraction",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy",
+          "rank_x_spectral_tail",
+          "log_heldout_residual",
+          "log_heldout_support_ratio"
+        ],
+        "lambda": 100.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.8230429068793257,
+          0.33051233313505424,
+          0.09517690970339374,
+          -0.6224736834014905,
+          0.7535604451587757,
+          0.5860977441173341,
+          0.6284819501352075,
+          0.5365620794106654,
+          1.1021505566671415,
+          0.5555555555555872,
+          0.4286141053705549,
+          0.05855218100834036,
+          -0.49678253145243334,
+          0.1256911519490555
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.20421345236614213,
+          0.2602281513716328,
+          0.09070249914120257,
+          0.23350512791560887,
+          0.22350684834439666,
+          0.3095155161403408,
+          0.47048399982377254,
+          0.03614208268063072,
+          0.24112627535703543,
+          0.18144368465060104,
+          0.3698030766545814,
+          0.04013745795681959,
+          0.4794171948110312,
+          0.2904906210982519
+        ],
+        "y_mean": 0.004712603506342215,
+        "coefficients": [
+          -0.00452093619498303,
+          -0.004376792531338737,
+          -0.026837194248678822,
+          -0.016542672800860417,
+          0.01935401694763239,
+          -0.0060960270141223365,
+          0.027080761254709033,
+          0.030198486332868053,
+          0.00843816766417456,
+          -0.007858210946138387,
+          0.019862751011555494,
+          -0.01768200440519336,
+          0.005561136288326663,
+          0.02735866201422639,
+          -0.003621571009011492,
+          0.003098497715877349,
+          -0.016654663477503627
+        ]
+      },
+      "expanding_shell": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "spectral_energy",
+          "spectral_tail",
+          "spectral_gap",
+          "log_support_residual",
+          "temporal_gradient_ratio",
+          "temporal_curvature_ratio",
+          "mass_curvature",
+          "negative_fraction",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy",
+          "rank_x_spectral_tail",
+          "log_heldout_residual",
+          "log_heldout_support_ratio"
+        ],
+        "lambda": 100.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.819281719442324,
+          0.3344644889267131,
+          0.093729649964858,
+          -0.6340315151738231,
+          0.7735521186298508,
+          0.6044356659229995,
+          0.9147708960562322,
+          0.532855152181043,
+          1.1156888454006169,
+          0.5555555555555872,
+          0.43387899543357167,
+          0.05984380911150411,
+          -0.4919206790683402,
+          0.14211083610548392
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.21069459472835217,
+          0.26239623893010783,
+          0.09189102006959715,
+          0.226811271296813,
+          0.20106972688117097,
+          0.2955389941117206,
+          0.4133829695680362,
+          0.038502446663247,
+          0.24027973597339702,
+          0.18144368465060104,
+          0.37372473309797366,
+          0.04090195481078359,
+          0.4834630940161387,
+          0.3020570845028036
+        ],
+        "y_mean": 0.008329668353086666,
+        "coefficients": [
+          -0.0042751192148827825,
+          -0.003528434305429556,
+          -0.02508069977522219,
+          -0.02320774401050472,
+          0.021207430873950803,
+          -0.005529059509344018,
+          0.021399552069525266,
+          0.03358778686935535,
+          0.002908617809684858,
+          1.9812982650149082e-05,
+          0.011577329194817312,
+          -0.022050186075646853,
+          0.01385471403536115,
+          0.026190450204479587,
+          -0.005050633409260731,
+          0.004695265675768079,
+          -0.008553588284434647
+        ]
+      },
+      "jet_filaments": {
+        "features": [
+          "rank_fraction",
+          "rank_fraction_squared",
+          "log_rank",
+          "spectral_energy",
+          "spectral_tail",
+          "spectral_gap",
+          "log_support_residual",
+          "temporal_gradient_ratio",
+          "temporal_curvature_ratio",
+          "mass_curvature",
+          "negative_fraction",
+          "observation_temporal_noise_proxy",
+          "view_fraction",
+          "rank_x_noise_proxy",
+          "rank_x_spectral_tail",
+          "log_heldout_residual",
+          "log_heldout_support_ratio"
+        ],
+        "lambda": 10.0,
+        "x_mean": [
+          0.3888888888888973,
+          0.2517636684303401,
+          1.8109180305057488,
+          0.8052800428515027,
+          0.35004781977598387,
+          0.08885664130724219,
+          -0.5888451701249091,
+          0.7415170019525182,
+          0.5830253368587816,
+          0.7098214149580022,
+          0.5175126699878314,
+          1.1418510953773915,
+          0.5555555555555872,
+          0.44405320375787777,
+          0.06269446552358042,
+          -0.4684496864230278,
+          0.12039548370187875
+        ],
+        "x_std": [
+          0.31706324373711375,
+          0.3380071812087366,
+          0.75025035679755,
+          0.2163737470860018,
+          0.26867541945361784,
+          0.07906266837417089,
+          0.24677050367049128,
+          0.22950725118966964,
+          0.30895325054523926,
+          0.5274150623927616,
+          0.03263568552880692,
+          0.22073305789851402,
+          0.18144368465060104,
+          0.378601305339621,
+          0.0409931231110938,
+          0.4853652219251964,
+          0.2731822031259824
+        ],
+        "y_mean": 0.007854147951986464,
+        "coefficients": [
+          0.02858028635021234,
+          -0.023396034856271966,
+          -0.05197478119444763,
+          -0.013635643237901654,
+          0.031725097757546054,
+          -0.005025890028220227,
+          0.03981603822629685,
+          0.06619232764490209,
+          -0.018247745499279235,
+          0.005363161237578841,
+          0.03049679867685231,
+          -0.021896604405205373,
+          0.010051468834266787,
+          0.038600761316291594,
+          -0.005782005923286024,
+          0.013175676349859717,
+          -0.012557218927437525
+        ]
+      }
+    }
+  },
+  "key_findings": {
+    "lowest_mean_regret_selector": "lofo_ridge_with_holdout",
+    "lowest_mean_regret_pct": 0.21000309539017648,
+    "fixed_rank3_mean_regret_pct": 1.560603049643429,
+    "fixed_rank3_p95_regret_pct": 5.634558258559475,
+    "lofo_no_holdout_mean_regret_pct": 0.2521194599434465,
+    "lofo_with_holdout_mean_regret_pct": 0.21000309539017648,
+    "heldout_feature_delta_mean_regret_pct": 0.04211636455327,
+    "lofo_with_holdout_mean_field_improvement_vs_rank3_pct": 1.3008402206605991,
+    "lofo_with_holdout_better_than_rank3_rate": 0.7893518518518519,
+    "best_feature_set": "with_holdout",
+    "best_feature_set_mean_regret_pct": 0.21000309539017648
+  },
+  "claims_boundary": [
+    "All phantom families are synthetic morphology stress tests, not calibrated OERF flows.",
+    "Leave-one-family-out evaluation tests synthetic morphology transfer, not real-domain generalization.",
+    "A held-out selector assumes an extra measured camera view that is excluded from reconstruction.",
+    "Field L2 and oracle rank are used only for offline evaluation and never enter observable selector features at test time."
+  ]
+}

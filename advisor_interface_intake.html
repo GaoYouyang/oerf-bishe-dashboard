@@ -1,0 +1,847 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OERF 真实接口回复工作台</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172426;
+      --muted: #607074;
+      --paper: #f7f8f6;
+      --panel: rgba(255, 255, 255, 0.94);
+      --line: #cfd8d5;
+      --teal: #176b67;
+      --teal-soft: #e4f1ee;
+      --gold: #8b6a19;
+      --gold-soft: #f6efd9;
+      --coral: #a34f42;
+      --coral-soft: #f7e8e4;
+      --blue: #345e83;
+      --blue-soft: #e7eef5;
+      --shadow: 0 8px 24px rgba(29, 55, 53, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url("assets/backgrounds/oerf-refractive-field.png") center / cover no-repeat;
+      opacity: 0.055;
+      pointer-events: none;
+    }
+
+    a { color: var(--teal); }
+
+    code {
+      padding: 0.08rem 0.28rem;
+      border-radius: 4px;
+      background: #edf2f0;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      overflow-wrap: anywhere;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 58px;
+      padding: 10px max(18px, calc((100vw - 1160px) / 2));
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 248, 246, 0.96);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      font-weight: 760;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 14px;
+      font-size: 0.9rem;
+    }
+
+    .nav-links a { text-decoration: none; }
+
+    main {
+      width: min(1160px, calc(100% - 28px));
+      margin: 24px auto 64px;
+    }
+
+    .hero {
+      padding: 28px 0 24px;
+      border-top: 4px solid var(--gold);
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 760px;
+      margin-bottom: 12px;
+      font-size: 2rem;
+      line-height: 1.25;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: 1.35rem;
+      line-height: 1.35;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 1.02rem;
+      line-height: 1.4;
+    }
+
+    .lede {
+      max-width: 880px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .chips, .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chips { margin-bottom: 14px; }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 720;
+      text-transform: uppercase;
+    }
+
+    .chip.teal { color: var(--teal); background: var(--teal-soft); border-color: #bad5cf; }
+    .chip.coral { color: var(--coral); background: var(--coral-soft); border-color: #e5c1ba; }
+    .chip.gold { color: var(--gold); background: var(--gold-soft); border-color: #dfcf9f; }
+
+    .progress-shell {
+      width: min(680px, 100%);
+      height: 12px;
+      margin: 18px 0 8px;
+      overflow: hidden;
+      border: 1px solid #b8c7c3;
+      border-radius: 6px;
+      background: #e6ece9;
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: var(--teal);
+      transition: width 160ms ease;
+    }
+
+    .progress-label { color: var(--muted); font-size: 0.9rem; }
+
+    .alert {
+      margin-top: 16px;
+      padding: 13px 15px;
+      border: 1px solid #e0c1ba;
+      border-left: 4px solid var(--coral);
+      border-radius: 6px;
+      background: var(--coral-soft);
+    }
+
+    .section-band {
+      padding: 26px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 14px;
+    }
+
+    .section-head p {
+      max-width: 620px;
+      margin-bottom: 0;
+      color: var(--muted);
+    }
+
+    .evidence-grid, .question-grid, .route-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .evidence-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .question-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .route-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .evidence, .question, .route-item {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .evidence p, .route-item p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .question {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .question.wide { grid-column: 1 / -1; }
+
+    .question-number {
+      color: var(--gold);
+      font-size: 0.78rem;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    label { font-weight: 680; }
+
+    .hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    select, textarea, input[type="text"] {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 10px;
+      border: 1px solid #afbfbb;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 94px;
+      resize: vertical;
+    }
+
+    select:focus, textarea:focus, input[type="text"]:focus, button:focus-visible, a:focus-visible {
+      outline: 3px solid rgba(23, 107, 103, 0.24);
+      outline-offset: 2px;
+    }
+
+    .checks {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 12px;
+    }
+
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      color: var(--ink);
+      font-size: 0.9rem;
+      font-weight: 520;
+    }
+
+    .check input { margin-top: 5px; }
+
+    .route-panel {
+      padding: 20px;
+      border: 1px solid #adcac4;
+      border-top: 4px solid var(--teal);
+      border-radius: 8px;
+      background: var(--teal-soft);
+    }
+
+    .route-status {
+      margin-bottom: 8px;
+      color: var(--teal);
+      font-weight: 780;
+    }
+
+    button, .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 8px 13px;
+      border: 1px solid #9fb4af;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 680;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    button.primary, .button.primary {
+      border-color: var(--teal);
+      background: var(--teal);
+      color: #fff;
+    }
+
+    button.danger { color: var(--coral); border-color: #d4aaa2; }
+
+    .save-state {
+      min-height: 24px;
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    footer {
+      padding: 24px 0 6px;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    @media (max-width: 820px) {
+      .topbar, .section-head { align-items: flex-start; flex-direction: column; }
+      .nav-links { justify-content: flex-start; }
+      .evidence-grid, .question-grid, .route-grid { grid-template-columns: 1fr; }
+      .question.wide { grid-column: auto; }
+      .checks { grid-template-columns: 1fr; }
+      h1 { font-size: 1.65rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="general_operator_research_lab.html">OERF / 真实接口确认</a>
+    <nav class="nav-links" aria-label="页面导航">
+      <a href="#evidence">一级来源</a>
+      <a href="#intake">记录回复</a>
+      <a href="#route">路线分流</a>
+      <a href="#export">本地导出</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="chips">
+        <span class="chip teal">LOCAL-ONLY</span>
+        <span class="chip gold" id="progressChip">0 / 9 ANSWERED</span>
+        <span class="chip coral">NO SCIENTIFIC CLAIM</span>
+      </div>
+      <h1>先把师兄的回答记清，再决定该写哪一种算法</h1>
+      <p class="lede">这不是问卷服务器，也不替师兄作答。它把一次口头沟通整理成九项最小事实，并根据事实显示第一条可证伪实验。所有内容只留在当前浏览器；未导出的草稿不会进入仓库。</p>
+      <div class="progress-shell" aria-label="回答进度"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="progress-label" id="progressLabel">尚未记录回答，研究路线保持 WAITING。</div>
+      <div class="alert"><strong>当前边界：</strong>公开 PSU 与 synthetic 协议不能替代实验室 callable、标定、真实噪声和数据 split。即使九项全部填写，也只得到一份沟通记录，不自动授权训练、打开 audit、上传私有文件或声称算法成功。</div>
+    </section>
+
+    <section class="section-band" id="evidence">
+      <div class="section-head">
+        <div><h2>为什么要问这九项</h2><p>问题来自何远哲相关论文的明确实验结构与尚未闭合的接口语义，不是从通用 AI 模板拼出来的。</p></div>
+      </div>
+      <div class="evidence-grid">
+        <article class="evidence">
+          <h3>NeRIF：先分清表示与 forward</h3>
+          <p>论文使用九路投影、实验中八路重建加一路留出，位移由 DeepFlow 得到；反演沿标定 ray 反向采样，而数值数据生成附录使用 RK4 ray tracing。论文把 nonlinear ray tracing 作为后续可集成能力，因此真实代码的路径层级必须向师兄确认。</p>
+        </article>
+        <article class="evidence">
+          <h3>PIV-BOST：误差发生在真实测量链</h3>
+          <p>同步 PIV-BOST 把三维折射率场用于补偿反应场中的瞬时 PIV 折射误差，并报告小火焰约 ±2% 的速度误差量级。它提示我们不能只优化 3D field L2，还要问同步、像面、梯度与最终物理量误差。</p>
+        </article>
+        <article class="evidence">
+          <h3>4D 路线：先确认序列独立单位</h3>
+          <p>只有师兄确认连续高速序列、时间同步、session/rig 划分和可比较基线后，才进入张量分解或时序算子。逐帧随机拆分不能证明跨工况泛化，单帧数据也不能被包装成 4D 问题。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-band" id="intake">
+      <div class="section-head">
+        <div><h2>师兄回复记录</h2><p>未知就保留“待确认”。路线分流宁可停在 WAITING，也不会用默认值补出实验室事实。</p></div>
+      </div>
+      <div class="question-grid">
+        <section class="question">
+          <span class="question-number">问题 1 / 主痛点</span>
+          <label for="primaryProblem">师兄最希望优先解决什么？</label>
+          <select id="primaryProblem" data-answer>
+            <option value="unknown">待确认</option>
+            <option value="derivative_stability">JVP/VJP 或导数不稳定</option>
+            <option value="ray_bending">straight/curved forward 失配</option>
+            <option value="finite_aperture">有限孔径或景深模糊</option>
+            <option value="calibration_drift">标定误差或跨 session 漂移</option>
+            <option value="displacement_extraction">背景位移提取误差</option>
+            <option value="limited_view">有限视角与病态重建</option>
+            <option value="compute_cost">同精度下降低算子调用和时间</option>
+            <option value="temporal_4d">高速 4D 时空重建</option>
+            <option value="other">其他，写在补充说明</option>
+          </select>
+        </section>
+
+        <section class="question">
+          <span class="question-number">问题 2 / 场参数化</span>
+          <label for="parameterization">真实优化变量是什么？</label>
+          <select id="parameterization" data-answer>
+            <option value="unknown">待确认</option>
+            <option value="voxel_field">直接三维 voxel/grid 场</option>
+            <option value="implicit_field">坐标到折射率的隐式场</option>
+            <option value="decoder_parameters">decoder 参数到三维场</option>
+            <option value="field_and_gradient_heads">折射率与梯度多头表示</option>
+            <option value="multiple">组内同时保留多条路径</option>
+          </select>
+        </section>
+
+        <section class="question">
+          <span class="question-number">问题 3 / Callable</span>
+          <label for="operatorInterface">当前可以实际调用什么？</label>
+          <select id="operatorInterface" data-answer>
+            <option value="unknown">待确认</option>
+            <option value="linear_forward_adjoint">线性 A 与 Aᵀ</option>
+            <option value="forward_jvp_vjp">非线性 forward + JVP + VJP</option>
+            <option value="autograd_forward">可微 forward，可由 autograd 求导</option>
+            <option value="forward_only">只有 forward</option>
+            <option value="precomputed_outputs">只有预计算输出，暂无 callable</option>
+            <option value="none">目前没有可交付接口</option>
+          </select>
+        </section>
+
+        <section class="question">
+          <span class="question-number">问题 4 / 路径语义</span>
+          <label for="pathSemantics">straight、curved、direct residual 在哪层形成？</label>
+          <select id="pathSemantics" data-answer>
+            <option value="unknown">待确认</option>
+            <option value="native_direct">存在 ray/sample 层原生 direct residual</option>
+            <option value="separate_curved_straight">只有独立 curved 与 straight callable</option>
+            <option value="detector_subtraction">最后两张 detector map 相减</option>
+            <option value="straight_only">当前只有 straight/thin-ray</option>
+            <option value="curved_only">当前只有 nonlinear curved ray</option>
+            <option value="not_applicable">该项目不涉及两条路径</option>
+          </select>
+        </section>
+
+        <section class="question">
+          <span class="question-number">问题 5 / 离散分支</span>
+          <label for="branching">forward 是否有 hard branch？</label>
+          <select id="branching" data-answer>
+            <option value="unknown">待确认</option>
+            <option value="none_known">当前无已知 hard branch</option>
+            <option value="termination_mask">ray termination / hard mask</option>
+            <option value="adaptive_sampling">自适应采样或 occupancy pruning</option>
+            <option value="both">termination/mask 与 adaptive sampling 都有</option>
+            <option value="other">其他离散分支</option>
+          </select>
+          <p class="hint">这决定有限差分、JVP/VJP 和局部线性化能否跨分支解释。</p>
+        </section>
+
+        <section class="question">
+          <span class="question-number">问题 6 / 独立单位</span>
+          <label for="splitUnit">论文数据应按什么单位留出？</label>
+          <select id="splitUnit" data-answer>
+            <option value="unknown">待确认</option>
+            <option value="session">session</option>
+            <option value="run">run / 工况</option>
+            <option value="rig_geometry">rig / geometry / calibration</option>
+            <option value="sensor_view">sensor / view</option>
+            <option value="time_block">连续时间块</option>
+            <option value="insufficient">数据太少，暂不能形成独立 split</option>
+          </select>
+        </section>
+
+        <section class="question wide">
+          <span class="question-number">问题 7 / 可提供资料</span>
+          <label>最小匿名例子能包含哪些内容？</label>
+          <div class="checks" id="dataChecks">
+            <label class="check"><input type="checkbox" value="callable_entry" /> callable 入口或 wrapper 位置</label>
+            <label class="check"><input type="checkbox" value="tiny_geometry" /> 最小 rays / geometry / calibration</label>
+            <label class="check"><input type="checkbox" value="anonymous_x0" /> 匿名 x0 或最小合法场</label>
+            <label class="check"><input type="checkbox" value="raw_images" /> reference / flow-on raw images</label>
+            <label class="check"><input type="checkbox" value="displacement_confidence" /> displacement / mask / confidence</label>
+            <label class="check"><input type="checkbox" value="multiple_calibrations" /> 多 session 或多标定版本</label>
+            <label class="check"><input type="checkbox" value="paired_aperture" /> 成对 f-number / focus 条件</label>
+            <label class="check"><input type="checkbox" value="curved_reference" /> curved/high-fidelity forward</label>
+            <label class="check"><input type="checkbox" value="time_sequence" /> 连续高速序列与同步信息</label>
+            <label class="check"><input type="checkbox" value="field_truth" /> CFD / phantom / 其他 3D reference</label>
+          </div>
+        </section>
+
+        <section class="question wide">
+          <span class="question-number">问题 8 / 基线与终点</span>
+          <label for="baselineMetric">组内必须比较的强基线、主指标与硬件环境是什么？</label>
+          <textarea id="baselineMetric" data-answer placeholder="例如：NeRIF 现有版本；held-out view reprojection；field/gradient error；A/Aᵀ 调用；RTX 4090 + PyTorch/CUDA；不得只报网络推理时间。"></textarea>
+        </section>
+
+        <section class="question wide">
+          <span class="question-number">问题 9 / 权限边界</span>
+          <label>师兄明确允许哪些用途？</label>
+          <div class="checks" id="permissionChecks">
+            <label class="check"><input type="checkbox" value="local_storage" /> 私有本机保存</label>
+            <label class="check"><input type="checkbox" value="local_training" /> 非 audit 数据训练</label>
+            <label class="check"><input type="checkbox" value="group_meeting" /> 组会展示脱敏图</label>
+            <label class="check"><input type="checkbox" value="thesis_text" /> 写入毕设正文</label>
+            <label class="check"><input type="checkbox" value="thesis_figures" /> 写入毕设图表</label>
+            <label class="check"><input type="checkbox" value="public_metadata" /> 公开元数据或汇总指标</label>
+          </div>
+          <label for="permissionNotes">禁止事项与补充说明</label>
+          <textarea id="permissionNotes" data-answer placeholder="默认：源码、权重、几何、标定、raw images、私有 trace 不离开实验室或私有本机。请只记录师兄明确确认的边界。"></textarea>
+        </section>
+      </div>
+    </section>
+
+    <section class="section-band" id="route">
+      <div class="section-head">
+        <div><h2>证据驱动路线分流</h2><p>这里只推荐“第一条能失败的实验”，不会根据选择框自动命名新算法。</p></div>
+      </div>
+      <div class="route-panel" aria-live="polite">
+        <div class="route-status" id="routeStatus">WAITING_FOR_ADVISOR_REPLY</div>
+        <h2 id="routeTitle">先补齐真实主痛点与 callable</h2>
+        <div class="route-grid">
+          <div class="route-item"><h3>为什么</h3><p id="routeWhy">目前没有足够事实区分 forward mismatch、inverse 病态、位移误差和纯计算成本。</p></div>
+          <div class="route-item"><h3>第一实验</h3><p id="routeExperiment">先用现有沟通单取得最小匿名 callable，不启动网络训练。</p></div>
+          <div class="route-item"><h3>必须比较</h3><p id="routeBaseline">组内当前实现、简单经典基线和同预算调用账本。</p></div>
+          <div class="route-item"><h3>立即停止</h3><p id="routeStop">接口语义未知、没有独立 split、权限未确认或导数检查失败。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-band" id="export">
+      <div class="section-head">
+        <div><h2>本地保存与交接</h2><p>导出的 JSON 是沟通草稿，不是七门数据合同。把它交回本项目后，再人工映射到空白 intake 并运行 validator。</p></div>
+      </div>
+      <div class="actions">
+        <button class="primary" id="saveButton" type="button">保存到本浏览器</button>
+        <button id="exportButton" type="button">导出回复 JSON</button>
+        <button id="copyButton" type="button">复制微信简版问题</button>
+        <button class="danger" id="clearButton" type="button">清空本地草稿</button>
+        <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">完整沟通单</a>
+        <a class="button" href="data_templates/oerf_n2_lab_intake.placeholder.json">七门 intake 模板</a>
+        <a class="button" href="document_reader.html?doc=docs%2Foerf_n2_physical_mismatch_data_contract_2026-07-18.md">真实数据合同解释</a>
+      </div>
+      <p class="save-state" id="saveState" aria-live="polite"></p>
+    </section>
+
+    <section class="section-band">
+      <h2>本页使用的一级来源</h2>
+      <ol class="source-list">
+        <li>He et al., <a href="https://arxiv.org/html/2409.14722v2">Neural refractive index field</a>：九视角、8+1 留出、标定 ray、DeepFlow、RK4 数值生成及 nonlinear ray tracing 扩展边界。</li>
+        <li>Zheng et al., <a href="https://link.springer.com/article/10.1007/s00348-025-04093-y">Instantaneous refractive index compensation using simultaneous PIV-BOST</a>：同步反应场测量、折射速度误差补偿和 re-projection 验证。</li>
+        <li>OERF Lab, <a href="https://laserdiagnostics.github.io/oerf-lab-website/">official research map</a>：BOS 三维折射率场、计算成像与 AI-driven multidimensional reconstruction 属于组内公开主线。</li>
+      </ol>
+    </section>
+
+    <footer>状态：<code>ADVISOR_REPLY_DRAFT_ONLY</code> · 不上传 · 不训练 · 不打开 audit · 不产生论文结论</footer>
+  </main>
+
+  <noscript>本页需要 JavaScript 才能保存本地草稿和计算路线分流；沟通单与 JSON 模板仍可直接打开。</noscript>
+  <script>
+    (() => {
+      "use strict";
+
+      const storageKey = "oerf_advisor_reply_draft_v1";
+      const selectIds = [
+        "primaryProblem",
+        "parameterization",
+        "operatorInterface",
+        "pathSemantics",
+        "branching",
+        "splitUnit"
+      ];
+      const textIds = ["baselineMetric", "permissionNotes"];
+      const answerElements = [...document.querySelectorAll("[data-answer]")];
+      const dataInputs = [...document.querySelectorAll("#dataChecks input[type='checkbox']")];
+      const permissionInputs = [...document.querySelectorAll("#permissionChecks input[type='checkbox']")];
+
+      const getChecked = (inputs) => inputs.filter((item) => item.checked).map((item) => item.value);
+
+      const collect = () => {
+        const answers = {};
+        selectIds.forEach((id) => { answers[id] = document.getElementById(id).value; });
+        textIds.forEach((id) => { answers[id] = document.getElementById(id).value.trim(); });
+        answers.availableData = getChecked(dataInputs);
+        answers.permissions = getChecked(permissionInputs);
+        return answers;
+      };
+
+      const answeredCount = (answers) => {
+        const checks = [
+          answers.primaryProblem !== "unknown",
+          answers.parameterization !== "unknown",
+          answers.operatorInterface !== "unknown",
+          answers.pathSemantics !== "unknown",
+          answers.branching !== "unknown",
+          answers.splitUnit !== "unknown",
+          answers.availableData.length > 0,
+          answers.baselineMetric.length > 0,
+          answers.permissions.length > 0 || answers.permissionNotes.length > 0
+        ];
+        return checks.filter(Boolean).length;
+      };
+
+      const has = (answers, value) => answers.availableData.includes(value);
+      const hasDerivative = (answers) => ["linear_forward_adjoint", "forward_jvp_vjp", "autograd_forward"].includes(answers.operatorInterface);
+
+      const chooseRoute = (answers) => {
+        const commonStop = "接口语义不清、权限未确认、没有独立 split，或伴随/有限差分检查失败。";
+        if (answers.primaryProblem === "unknown" || answers.operatorInterface === "unknown") {
+          return {
+            status: "WAITING_FOR_ADVISOR_REPLY",
+            title: "先补齐真实主痛点与 callable",
+            why: "目前没有足够事实区分 forward mismatch、inverse 病态、位移误差和纯计算成本。",
+            experiment: "取得最小匿名 callable、一个 x0 和简化 geometry，只做 describe、shape、units 与成本检查。",
+            baseline: "组内当前实现与空白接口检查。",
+            stop: commonStop
+          };
+        }
+
+        if (answers.primaryProblem === "derivative_stability") {
+          return {
+            status: hasDerivative(answers) ? "ROUTE_DERIVATIVE_AUDIT_READY" : "ROUTE_DERIVATIVE_NEEDS_INTERFACE",
+            title: "先做 objective-consistent JVP/VJP 与 branch map",
+            why: "导数不稳定会让任何 unrolling、neural operator 或 learned direction 的梯度证据失效。",
+            experiment: hasDerivative(answers) ? "在 4–16 rays 上做多尺度 finite difference、adjoint dot test 与 hard-branch 邻域扫描。" : "当前只有 forward 或预计算输出，先确认 autograd、finite difference 或轻量 JVP/VJP wrapper 是否可行。",
+            baseline: "autograd、central difference、complex-step（若算子允许）与同一 objective 的 VJP。",
+            stop: "误差不随步长形成收敛区间，或 perturbation 跨 termination/mask 分支。"
+          };
+        }
+
+        if (answers.primaryProblem === "ray_bending") {
+          const paired = ["native_direct", "separate_curved_straight", "detector_subtraction"].includes(answers.pathSemantics);
+          return {
+            status: paired && hasDerivative(answers) ? "ROUTE_PAIRED_RAY_MISMATCH_READY" : "ROUTE_PAIRED_RAY_MISMATCH_NEEDS_PAIR",
+            title: "审计 straight-to-curved discrepancy，再决定是否学习校正算子",
+            why: "NeRIF 数值生成与反演路径的 fidelity 需要分账；末端 detector subtraction 不能冒充原生 residual。",
+            experiment: paired ? "同一 x、geometry、采样和单位下配对 straight/curved output、JVP/VJP 与 held-out residual envelope。" : "先取得成对 straight/curved callable 或明确当前只有哪一条路径。",
+            baseline: "straight、full curved、简单阻尼/插值、Picard 与确定性回退。",
+            stop: "没有成对高保真路径，或两条路径不共享相同几何/采样合同。"
+          };
+        }
+
+        if (answers.primaryProblem === "finite_aperture") {
+          const paired = has(answers, "paired_aperture") && has(answers, "tiny_geometry");
+          return {
+            status: paired ? "ROUTE_FINITE_APERTURE_READY" : "ROUTE_FINITE_APERTURE_NEEDS_PAIRED_OPTICS",
+            title: "先做 pinhole/cone 成对 forward 与前沿偏差",
+            why: "有限孔径改变每个像素接收的 ray bundle，不能靠普通网络结构消融证明。",
+            experiment: paired ? "冻结同一 rig 的成对 f-number/focus，比较 thin-ray 与 cone-ray 的 held-out reprojection 和前沿宽度。" : "先确认是否存在成对 f-number/focus、pupil/PSF 和高保真 cone forward。",
+            baseline: "pinhole-straight、cone-straight、pinhole-curved、cone-curved。",
+            stop: "只有单一未知孔径，或不同相机条件不能形成受控配对。"
+          };
+        }
+
+        if (answers.primaryProblem === "calibration_drift") {
+          return {
+            status: has(answers, "multiple_calibrations") ? "ROUTE_CALIBRATION_DRIFT_READY" : "ROUTE_CALIBRATION_DRIFT_NEEDS_SESSIONS",
+            title: "先量化跨 session 标定漂移，再考虑 robust operator",
+            why: "同一错误标定下的重投影自洽不能证明三维场正确。",
+            experiment: "旧标定重建、新 session/view 验证；拆分内参、外参和 global-frame 敏感性。",
+            baseline: "冻结标定、joint refinement、扰动敏感性与经典 Tikhonov/CGLS。",
+            stop: "只有人为扰动，没有独立标定版本或时间分离 session。"
+          };
+        }
+
+        if (answers.primaryProblem === "displacement_extraction") {
+          const raw = has(answers, "raw_images") && has(answers, "displacement_confidence");
+          return {
+            status: raw ? "ROUTE_DISPLACEMENT_CHAIN_READY" : "ROUTE_DISPLACEMENT_CHAIN_NEEDS_RAW_PAIR",
+            title: "先做 raw-image / displacement 双域不确定度审计",
+            why: "BOST 的观测来自背景位移估计；位移算法误差不能全部归给三维网络。",
+            experiment: raw ? "冻结两种位移方法、mask/confidence 与同一 inverse，比较 held-out raw/displacement consistency。" : "先取得 reference/flow-on raw pair、位移、mask 和 confidence。",
+            baseline: "组内 DeepFlow、相关法/optical flow 与相同三维 inverse。",
+            stop: "只有一张处理后位移图，或无法复算位移前端。"
+          };
+        }
+
+        if (answers.primaryProblem === "limited_view") {
+          return {
+            status: hasDerivative(answers) ? "ROUTE_LIMITED_VIEW_BASELINE_READY" : "ROUTE_LIMITED_VIEW_NEEDS_OPERATOR",
+            title: "先冻结有限视角强基线，再测可观察方向学习",
+            why: "有限视角首先是病态逆问题；直接比较 DeepONet/FNO 容易把弱基线当创新。",
+            experiment: "按 view/rig 留出，画 CGLS/TV/NeRIF 的 field-gradient-reprojection Pareto 与尾部。",
+            baseline: "CGLS/LSQR、Tikhonov、TV/Huber、NeRIF、简单 warm-start。",
+            stop: "没有 held-out view/rig，或算子调用与停止规则不匹配。"
+          };
+        }
+
+        if (answers.primaryProblem === "compute_cost") {
+          return {
+            status: hasDerivative(answers) ? "ROUTE_BUDGET_PRESERVING_OPERATOR_READY" : "ROUTE_COST_NEEDS_COUNTERS",
+            title: "做同精度 Pareto，再筛 learnable direction/operator",
+            why: "只报网络推理时间会隐藏 forward、JVP/VJP、setup、ray samples 与失败重试。",
+            experiment: "冻结目标精度，比较质量–A/Aᵀ 调用–ray samples–wall–显存的 Pareto。",
+            baseline: "经典 Krylov/PDHG、简单阻尼/插值、warm-start、DeepONet/FNO/FFNO 同端到端预算。",
+            stop: "无法记录动态调用和 sample counter，或候选只在均值上略快但尾部伤害。"
+          };
+        }
+
+        if (answers.primaryProblem === "temporal_4d") {
+          const temporal = has(answers, "time_sequence") && ["session", "run", "time_block"].includes(answers.splitUnit);
+          return {
+            status: temporal ? "ROUTE_4D_SEQUENCE_READY" : "ROUTE_4D_NEEDS_SEQUENCE_CONTRACT",
+            title: "先建序列泄漏基线，再比较低秩张量与时序算子",
+            why: "4D 优势必须来自跨时间的可复用结构，不能来自逐帧随机拆分。",
+            experiment: temporal ? "按 session/run/time block 留出，比较逐帧 NeRIF、低秩张量和轻量时序预测的误差–延迟–内存。" : "先确认连续高速序列、同步、丢帧、时间单位和独立 session。",
+            baseline: "逐帧独立重建、线性插值、低秩/Tucker/CP、轻量时序 operator。",
+            stop: "只有单帧或同一短序列随机拆分，或没有时间同步元数据。"
+          };
+        }
+
+        return {
+          status: "ROUTE_NEEDS_MANUAL_REVIEW",
+          title: "保留为人工审阅问题，不自动生成算法",
+          why: "师兄选择的主痛点不在当前八个预注册分支内。",
+          experiment: "把补充说明交给师兄确认，再定义最小可证伪对照。",
+          baseline: "至少包含组内当前实现和一个简单经典对照。",
+          stop: commonStop
+        };
+      };
+
+      const updateView = () => {
+        const answers = collect();
+        const count = answeredCount(answers);
+        const route = chooseRoute(answers);
+        document.getElementById("progressBar").style.width = `${(count / 9) * 100}%`;
+        document.getElementById("progressChip").textContent = `${count} / 9 ANSWERED`;
+        document.getElementById("progressLabel").textContent = count === 9
+          ? "九项已有记录；仍需人工核对后映射到七门数据合同。"
+          : `已记录 ${count} 项；还有 ${9 - count} 项保持待确认。`;
+        document.getElementById("routeStatus").textContent = route.status;
+        document.getElementById("routeTitle").textContent = route.title;
+        document.getElementById("routeWhy").textContent = route.why;
+        document.getElementById("routeExperiment").textContent = route.experiment;
+        document.getElementById("routeBaseline").textContent = route.baseline;
+        document.getElementById("routeStop").textContent = route.stop;
+        return { answers, route };
+      };
+
+      const restore = () => {
+        const raw = localStorage.getItem(storageKey);
+        if (!raw) return;
+        try {
+          const saved = JSON.parse(raw);
+          selectIds.forEach((id) => {
+            if (typeof saved.answers?.[id] === "string") document.getElementById(id).value = saved.answers[id];
+          });
+          textIds.forEach((id) => {
+            if (typeof saved.answers?.[id] === "string") document.getElementById(id).value = saved.answers[id];
+          });
+          const data = new Set(saved.answers?.availableData || []);
+          const permissions = new Set(saved.answers?.permissions || []);
+          dataInputs.forEach((item) => { item.checked = data.has(item.value); });
+          permissionInputs.forEach((item) => { item.checked = permissions.has(item.value); });
+          document.getElementById("saveState").textContent = "已恢复本浏览器中的本地草稿。";
+        } catch (_error) {
+          document.getElementById("saveState").textContent = "本地草稿格式无法读取，未自动覆盖当前表单。";
+        }
+      };
+
+      const buildDraft = () => {
+        const current = updateView();
+        return {
+          schema_version: "oerf-advisor-reply-draft-1.0",
+          record_kind: "ADVISOR_REPLY_DRAFT",
+          saved_at_local: new Date().toISOString(),
+          answers: current.answers,
+          route_preview: current.route,
+          claim_boundary: {
+            advisor_facts_verified: false,
+            real_callable_validated: false,
+            dataset_contract_passed: false,
+            training_authorized: false,
+            audit_open_authorized: false,
+            algorithm_success_claimed: false,
+            real_bost_improvement_claimed: false,
+            generalization_claimed: false,
+            paper_success_claimed: false
+          }
+        };
+      };
+
+      const save = () => {
+        localStorage.setItem(storageKey, JSON.stringify(buildDraft()));
+        document.getElementById("saveState").textContent = "草稿已保存到当前浏览器；没有发送到网络或写入 Git。";
+      };
+
+      const exportDraft = () => {
+        const blob = new Blob([`${JSON.stringify(buildDraft(), null, 2)}\n`], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "oerf_advisor_reply_draft.json";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        document.getElementById("saveState").textContent = "已导出本地 JSON；它仍只是待人工核对的沟通草稿。";
+      };
+
+      const copyPrompt = async () => {
+        const message = "师兄好，我想先确认真实 BOST 接口再决定算法。能否帮我确认：当前最主要痛点；优化变量是三维场还是 decoder 参数；可调用的是 A/A^T、forward+JVP/VJP 还是只有 forward；straight/curved/direct residual 在哪层形成；是否有 termination、hard mask 或自适应采样；最小匿名 callable、x0、geometry 和数据字段；独立 split 应按 session/run/rig/view 哪个单位；必须比较的组内基线和主指标；以及本机保存、训练、组会、毕设和公开边界。wrapper 和整理工作我来做，私有源码与 raw data 默认不上传 Git。";
+        try {
+          await navigator.clipboard.writeText(message);
+          document.getElementById("saveState").textContent = "微信简版问题已复制。";
+        } catch (_error) {
+          document.getElementById("saveState").textContent = "浏览器未允许剪贴板写入，请打开完整沟通单。";
+        }
+      };
+
+      const clear = () => {
+        localStorage.removeItem(storageKey);
+        selectIds.forEach((id) => { document.getElementById(id).value = "unknown"; });
+        textIds.forEach((id) => { document.getElementById(id).value = ""; });
+        [...dataInputs, ...permissionInputs].forEach((item) => { item.checked = false; });
+        updateView();
+        document.getElementById("saveState").textContent = "当前浏览器中的工作台草稿已清空。";
+      };
+
+      answerElements.forEach((element) => element.addEventListener("input", updateView));
+      [...dataInputs, ...permissionInputs].forEach((element) => element.addEventListener("change", updateView));
+      document.getElementById("saveButton").addEventListener("click", save);
+      document.getElementById("exportButton").addEventListener("click", exportDraft);
+      document.getElementById("copyButton").addEventListener("click", copyPrompt);
+      document.getElementById("clearButton").addEventListener("click", clear);
+
+      restore();
+      updateView();
+    })();
+  </script>
+</body>
+</html>

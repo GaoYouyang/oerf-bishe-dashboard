@@ -1,0 +1,128 @@
+{
+  "config": {
+    "calibration": {
+      "base_seeds": [
+        1277,
+        1289,
+        1301,
+        1319
+      ],
+      "split": "train"
+    },
+    "claim_boundary": {
+      "includes_finite_aperture_or_ray_bending": false,
+      "includes_optical_flow_or_calibration_error": false,
+      "is_complete_camera_forward_model_error": false,
+      "is_confirmatory_or_final": false,
+      "is_real_bost_evidence": false,
+      "may_only_establish_synthetic_representation_mismatch_headroom": true,
+      "opens_ood_fresh_or_final": false
+    },
+    "decision_gates": {
+      "n1_5_b_field_gain_minimum": 0.05,
+      "n1_5_b_h1_gain_minimum": 0.03,
+      "required_before_n1_5_b": true,
+      "visible_case_harm_over_simple_baseline_threshold": 0.01,
+      "visible_case_harm_rate_maximum": 0.0,
+      "visible_each_family_gain_over_frozen_simple_baseline_minimum": 0.0,
+      "visible_mean_gain_over_frozen_simple_baseline_minimum": 0.1,
+      "visible_worst_geometry_gain_over_frozen_simple_baseline_minimum": -0.02
+    },
+    "development": {
+      "base_seeds": [
+        2101,
+        2113,
+        2129,
+        2141,
+        2153,
+        2161
+      ],
+      "split": "development"
+    },
+    "evidence_level": "E1_SYNTHETIC_REPRESENTATION_MISMATCH_GEOMETRY_TRANSFER_SCREEN",
+    "families": [
+      "smooth_no_interface",
+      "single_interface"
+    ],
+    "fit": {
+      "base_seeds": [
+        1101,
+        1117,
+        1129,
+        1151,
+        1163,
+        1181,
+        1193,
+        1201,
+        1213,
+        1229,
+        1237,
+        1259
+      ],
+      "split": "train"
+    },
+    "frozen_date": "2026-07-18",
+    "may_construct_or_evaluate_ood": false,
+    "pca_oracle": {
+      "available_to_deployable_predictor": false,
+      "participates_in_gate": false,
+      "ranks": [
+        0,
+        1,
+        2,
+        4,
+        8,
+        16
+      ],
+      "uses_fresh_exact_mismatch": true
+    },
+    "ridge": {
+      "alphas": [
+        1e-08,
+        1e-06,
+        0.0001,
+        0.01,
+        1.0,
+        100.0
+      ],
+      "feature_sets": [
+        "geometry_only",
+        "geometry_observation",
+        "geometry_signal",
+        "curvature_visible"
+      ],
+      "selection_metric": "mean_geometry_cluster_gain_vs_zero",
+      "selection_split": "calibration"
+    },
+    "schema_version": "jacru-n1-5-approximation-error-headroom-development-1.0",
+    "sensor_model": {
+      "enable_camera_bias": false,
+      "enable_noise": false,
+      "purpose": "isolate continuous-renderer versus voxel-FD/trilinear representation mismatch"
+    },
+    "source_t0_config": "demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json",
+    "status": "DEVELOPMENT_ONLY_OPENED_NOT_CONFIRMATORY",
+    "warm_start": {
+      "adjoint_calls": 12,
+      "forward_calls": 12,
+      "iterations": 12,
+      "solver": "zero_start_cgls",
+      "visible_projection_forward_calls": 1
+    }
+  },
+  "exact_cli": "site_tools/run_jacru_n1_5_approximation_error_headroom.py --output-dir demo_t16_operator/results/jacru_n1_5_approximation_error_headroom_development_full1",
+  "git_commit_at_start": "890c31e21124cafabf8024836065ede9d26f4345",
+  "numpy": "2.4.6",
+  "platform": "macOS-26.5.2-arm64-arm-64bit",
+  "python": "3.11.5 (v3.11.5:cce6ba91b3, Aug 24 2023, 10:50:31) [Clang 13.0.0 (clang-1300.0.29.30)]",
+  "schema": "jacru-n1-5-approximation-error-provenance-1.0",
+  "source_sha256": {
+    "demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json": "e4e0dbb3cc3e573e5c7ed025bae50b3eb6d66ffdd511772b30fa222ce791a5fd",
+    "demo_t16_operator/configs/jacru_n1_5_approximation_error_headroom_development_v1.json": "62bb7e3950c869f90c508475234c763d8b9aca17df1e5d7955ac0e2275799fbd",
+    "demo_t16_operator/interface_baselines.py": "bd3c9bdbaf0dffdb3e3425e989150c221bd08cd0590493eeb7571f337bba6068",
+    "demo_t16_operator/jacru_n1_5_approximation_error.py": "cbcd5dea35c3995bbf044af1079661dfc89a8a222ef97e70ae45a65269e9c73d",
+    "demo_t16_operator/jacru_synthetic_fixture.py": "9317b2bee9e18553635a32f841e9917cc4a981285d7abf6bc051b933e0c0f68b",
+    "site_tools/run_jacru_n1_5_approximation_error_headroom.py": "2f599d626d54e06c54af3f7831af79965024295970acc7c9f802916a04f08fb7"
+  },
+  "torch": "2.13.0"
+}

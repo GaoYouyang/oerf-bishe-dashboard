@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neural Field Encoding Bridge | OERF BOST</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f6;
+      --panel: #ffffff;
+      --ink: #1d2328;
+      --muted: #64727d;
+      --line: #d8e0df;
+      --teal: #16756f;
+      --blue: #315f93;
+      --gold: #9a6718;
+      --red: #a6483c;
+      --soft: #eef7f4;
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    header, main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px clamp(18px, 4vw, 46px);
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f0f7f5);
+    }
+    h1 {
+      margin: 16px 0 10px;
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: 1.08;
+    }
+    h2 { margin: 34px 0 12px; font-size: 26px; }
+    h3 { margin: 20px 0 8px; font-size: 18px; }
+    p { margin: 8px 0; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .button, .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .tag { background: var(--soft); color: var(--teal); border-color: #cde2dc; }
+    .lead {
+      max-width: 940px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 16px;
+    }
+    .card strong { color: var(--teal); }
+    .note {
+      border-left: 4px solid var(--teal);
+      background: #fff;
+      padding: 12px 14px;
+      margin: 16px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 11px 12px;
+    }
+    th {
+      background: #edf5f2;
+      color: #24433f;
+      font-size: 13px;
+    }
+    td { font-size: 14px; }
+    code {
+      background: #eef2f3;
+      padding: 2px 5px;
+      border-radius: 5px;
+    }
+    ul, ol { padding-left: 22px; }
+    li { margin: 6px 0; }
+    .metric {
+      font-size: 34px;
+      color: var(--teal);
+      font-weight: 800;
+      display: block;
+      line-height: 1;
+    }
+    .warn { color: var(--red); font-weight: 700; }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <a class="button" href="./index.html">返回总工作台</a>
+      <a class="button" href="./paper_library/index.html">打开论文库</a>
+      <a class="button" href="./pdf_cache_audit.html">PDF 审计</a>
+      <a class="button" href="document_reader.html?doc=paper_to_demo_map.md">论文到 demo 映射</a>
+    </div>
+    <h1>Neural Field / Encoding 到 NeRIF 的桥梁</h1>
+    <p class="lead">这页专门解释 Fourier Features、SIREN、NeRF、Instant-NGP、DeepSDF、Occupancy Networks 和 Neural Fields survey 为什么值得读，以及它们如何服务何远哲方向的 NeRIF / NRIP / NIRT / 4D BOST。核心结论很简单：它们是表示法和编码基础，不是 BOST baseline。</p>
+    <div class="grid">
+      <div class="card"><span class="metric">7</span><p>新增开放 PDF，均已缓存到论文库。</p></div>
+      <div class="card"><span class="metric">3</span><p>建议抽取的实验变量：encoding、capacity、view/noise robustness。</p></div>
+      <div class="card"><span class="metric">1</span><p>主线仍是 BOST 折射率场，不转成通用 NeRF/3D vision。</p></div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>总判断</h2>
+      <div class="note">
+        <p><strong>给师兄看的说法：</strong>我补这些文献不是想把题目改成 NeRF，而是为了把 NeRIF 里的 coordinate neural field、positional/Fourier encoding、hash encoding、连续场和导数监督讲清楚。真正的观测模型、物理量和评价仍然围绕 BOST 的折射率场、位移场和重投影残差。</p>
+      </div>
+      <p>NeRIF 的困难不只是“用网络拟合三维函数”，而是用很少视角、带噪声的 BOS 位移观测去恢复一个有强梯度、局部高频、物理约束和投影一致性的折射率场。这里的 neural field 文献解决的是表示能力和优化偏置问题。</p>
+    </section>
+
+    <section>
+      <h2>七篇怎么读</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>论文</th>
+            <th>该抽什么</th>
+            <th>接到 NeRIF / NRIP 的位置</th>
+            <th>本地入口</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Fourier Features</strong><br />NeurIPS 2020 / arXiv 2006.10739</td>
+            <td>普通 MLP 的 spectral bias、Fourier feature mapping 如何让低维坐标学高频函数。</td>
+            <td>解释为什么折射率场的局部强梯度、火焰边界和小尺度结构不能只靠 plain MLP。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Ffourier_features_tancik_2020_arxiv.pdf">本地 PDF</a> / <a href="https://proceedings.neurips.cc/paper/2020/hash/55053683268957697aa39fba6f231c68-Abstract.html">官方页</a></td>
+          </tr>
+          <tr>
+            <td><strong>SIREN</strong><br />NeurIPS 2020 / arXiv 2006.09661</td>
+            <td>周期激活、连续信号、导数保真、初始化。</td>
+            <td>帮助理解从场值到梯度、偏折和 projection loss 的可微监督；适合对照 NeDF/NRIP 的梯度和偏折场表示。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fsiren_sitzmann_2020_arxiv.pdf">本地 PDF</a> / <a href="https://proceedings.neurips.cc/paper/2020/hash/53c04118df112c13a8c34b38343b9c10-Abstract.html">官方页</a></td>
+          </tr>
+          <tr>
+            <td><strong>NeRF</strong><br />ECCV 2020, DOI 10.1007/978-3-030-58452-8_24</td>
+            <td>coordinate MLP、positional encoding、ray integration、多视角监督。</td>
+            <td>用于区分 NeRF-style radiance rendering 与 BOST refractive-index tomography：一个是颜色/密度渲染，一个是折射率/偏折/位移一致性。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fnerf_mildenhall_2020_arxiv.pdf">本地 PDF</a> / <a href="https://doi.org/10.1007/978-3-030-58452-8_24">DOI</a></td>
+          </tr>
+          <tr>
+            <td><strong>Instant-NGP</strong><br />ACM TOG 2022, DOI 10.1145/3528223.3530127</td>
+            <td>multiresolution hash grid、速度、显存、高频细节。</td>
+            <td>NRIP 已明确用 hash encoding；这篇是解释 hash encoding 为什么能加速和增强高频表达的根文献。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Finstant_ngp_muller_2022_arxiv.pdf">本地 PDF</a> / <a href="https://dl.acm.org/doi/10.1145/3528223.3530127">ACM</a></td>
+          </tr>
+          <tr>
+            <td><strong>DeepSDF</strong><br />CVPR 2019, DOI 10.1109/CVPR.2019.00025</td>
+            <td>连续标量场、坐标到值的隐式函数、离散体素外的表示方式。</td>
+            <td>只借“连续标量场”的思想，帮助把 <code>n(x,y,z)</code> 当作连续函数；不要借 shape reconstruction 结论。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fdeepsdf_park_2019_arxiv.pdf">本地 PDF</a> / <a href="https://openaccess.thecvf.com/content_CVPR_2019/html/Park_DeepSDF_Learning_Continuous_Signed_Distance_Functions_for_Shape_Representation_CVPR_2019_paper.html">CVF</a></td>
+          </tr>
+          <tr>
+            <td><strong>Occupancy Networks</strong><br />CVPR 2019 / arXiv 1812.03828</td>
+            <td>function-space 3D reconstruction、连续坐标采样、体素/网格替代。</td>
+            <td>作为 optional 背景，说明 neural field 是一类函数空间表示；不需要精读所有 shape 实验。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Foccupancy_networks_mescheder_2019_arxiv.pdf">本地 PDF</a> / <a href="https://openaccess.thecvf.com/content_CVPR_2019/html/Mescheder_Occupancy_Networks_Learning_3D_Reconstruction_in_Function_Space_CVPR_2019_paper.html">CVF</a></td>
+          </tr>
+          <tr>
+            <td><strong>Neural Fields Survey</strong><br />Computer Graphics Forum 2022, DOI 10.1111/cgf.14505</td>
+            <td>术语总览：coordinate networks、encodings、signals、rendering、physics extensions。</td>
+            <td>用于写 related work 的总框架：NeRIF / NeDF / NRIP / NIRT 都可放在 neural-field inverse problem 下面，但物理观测不同。</td>
+            <td><a href="./asset_viewer.html?asset=paper_library%2Fpdfs%2Fneural_fields_xie_2021_arxiv.pdf">本地 PDF</a> / <a href="https://doi.org/10.1111/cgf.14505">DOI</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>概念映射</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>未知量</h3>
+          <p>NeRF 常把 scene 表示成 radiance/density；DeepSDF 表示 signed distance；NeRIF/NRIP 要表示的是折射率场或折射率相关 primitive。写论文时要把 unknown variable 写清楚。</p>
+        </div>
+        <div class="card">
+          <h3>观测量</h3>
+          <p>NeRF 用图像颜色监督；BOST 用背景图案位移、偏折或重投影残差监督。两者都沿光线积分，但 measurement equation 完全不同。</p>
+        </div>
+        <div class="card">
+          <h3>编码</h3>
+          <p>Fourier/SIREN/hash grid 解决的是坐标网络表达高频和训练速度的问题。它们可以进入 ablation，但不能替代 BOS forward model。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>可以变成的本科实验</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>实验</th>
+            <th>最小做法</th>
+            <th>能回答的问题</th>
+            <th>风险边界</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Encoding ablation</strong></td>
+            <td>在现有 M1/M2 synthetic BOST toy 上比较 plain MLP、Fourier features、SIREN-style activation、hash/grid-like features。</td>
+            <td>少视角、噪声和高梯度 phantom 下，哪种表示更稳，是否减少 oversmoothing。</td>
+            <td>hash/grid-like toy 可以轻量模拟，不必复现完整 Instant-NGP CUDA 实现。</td>
+          </tr>
+          <tr>
+            <td><strong>Capacity scan</strong></td>
+            <td>固定 forward model，扫描层数、宽度、频率带宽、正则化权重。</td>
+            <td>NeRIF 的性能瓶颈是网络容量、视角数、噪声，还是 forward-model mismatch。</td>
+            <td>synthetic 结论不能直接当真实火焰结论，需要真实数据或师兄认可。</td>
+          </tr>
+          <tr>
+            <td><strong>Derivative loss 对照</strong></td>
+            <td>比较只拟合场值、拟合梯度、拟合投影/偏折残差，观察边界 artifact。</td>
+            <td>NeRIF/NeDF/NRIP 到底是在恢复 <code>n</code>、<code>grad n</code>，还是只保证 image displacement 一致。</td>
+            <td>需要把物理单位和离散差分写清楚，否则容易变成纯图像损失。</td>
+          </tr>
+          <tr>
+            <td><strong>Runtime / memory report</strong></td>
+            <td>对同一个 phantom 记录训练时间、显存、重投影误差、PSNR/SSIM 或 L2。</td>
+            <td>如果师兄关心 4D 或高速重构，encoding 的速度收益是否值得。</td>
+            <td>本科阶段先报本机/单 GPU 情况，不夸大到实验室高速系统。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>阅读顺序</h2>
+      <ol>
+        <li>先读 NeRIF 正文和 appendix，圈出它的输入、输出、loss、编码和评价指标。</li>
+        <li>读 Fourier Features，只抽 spectral bias 和 positional encoding 的核心图。</li>
+        <li>读 SIREN，只抽导数监督和连续信号表示。</li>
+        <li>读 Instant-NGP，只抽 hash encoding 的速度/显存/高频细节权衡。</li>
+        <li>回到 NRIP，看它为什么选 hash encoding、mask 和 primitive 表示。</li>
+        <li>最后用 Neural Fields survey 统一术语，DeepSDF/Occupancy Networks 只作 optional 背景。</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>下次问何远哲</h2>
+      <ul>
+        <li>NeRIF 组内 baseline 是否允许我做 encoding ablation，还是应先完整复现论文设置？</li>
+        <li>真实数据里最痛的是少视角、噪声、高梯度 oversmoothing、训练慢，还是几何/标定误差？</li>
+        <li>如果只做本科题，师兄更希望看到 plain MLP vs Fourier/hash 的小实验，还是先要 data loader 和重投影验证？</li>
+        <li>NRIP/NeDF 是否需要正式写进 related work，还是只作为会前讨论的外部竞品？</li>
+        <li>4D BOST 如果关注速度，是否允许把 hash/grid encoding 作为未来加速方向写在展望里？</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>写作边界</h2>
+      <p class="warn">不要写成：NeRF 可以直接解决 BOST。</p>
+      <p>更准确的写法是：NeRF、SIREN、Fourier Features 和 Instant-NGP 共同说明了 coordinate neural fields 的表达和编码机制；NeRIF 的贡献在于把这种表示放入 BOST 折射率场的物理 forward model、稀疏视角约束和重投影验证中。</p>
+      <p>本页最后更新：2026-07-08。新增 PDF 均为 arXiv / CVF / 官方可读入口；正式引用以 DOI、proceedings 或出版社页面为准。</p>
+    </section>
+  </main>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

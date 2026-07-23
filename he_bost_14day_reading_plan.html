@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>14 天 He/BOST 精读执行包 | OERF 毕设导航</title>
+  <style>
+    :root {
+      --bg:#f7faf9;
+      --panel:#fff;
+      --ink:#1f2933;
+      --muted:#61717d;
+      --line:#d8e1df;
+      --green:#16756f;
+      --blue:#315f93;
+      --amber:#9a6818;
+      --red:#9e4338;
+      --soft-green:#e8f3f0;
+      --soft-blue:#eaf0f7;
+      --soft-amber:#f8f0dc;
+      --soft-red:#f8ece9;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg, rgba(22,117,111,.11), transparent 340px), var(--bg);
+      line-height:1.68;
+      letter-spacing:0;
+    }
+    header, main, footer { width:min(1180px, calc(100vw - 36px)); margin:0 auto; }
+    header { padding:34px 0 18px; }
+    h1 { margin:14px 0 10px; font-size:clamp(30px,4vw,48px); line-height:1.1; }
+    h2 { margin:30px 0 12px; font-size:24px; }
+    h3 { margin:0 0 8px; font-size:18px; }
+    p { margin:0 0 12px; color:var(--muted); }
+    a { color:var(--blue); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    code { background:#edf2f1; padding:1px 5px; border-radius:5px; }
+    .button-row { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0; }
+    .button {
+      display:inline-flex;
+      align-items:center;
+      min-height:38px;
+      padding:8px 12px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:#fff;
+      color:var(--ink);
+      font-weight:700;
+    }
+    .button.primary { background:var(--green); border-color:var(--green); color:#fff; }
+    .grid { display:grid; gap:12px; }
+    .grid.two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .grid.three { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .grid.four { grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .notice, .card {
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:var(--panel);
+      padding:16px;
+      margin:14px 0;
+    }
+    .notice { border-left:5px solid var(--green); background:linear-gradient(90deg,var(--soft-green),#fff 76%); }
+    .warning { border-left-color:var(--amber); background:linear-gradient(90deg,var(--soft-amber),#fff 76%); }
+    .risk { border-left-color:var(--red); background:linear-gradient(90deg,var(--soft-red),#fff 76%); }
+    .metric b { display:block; color:var(--green); font-size:28px; line-height:1.1; }
+    .metric span { color:var(--muted); font-size:13px; }
+    table {
+      width:100%;
+      border-collapse:collapse;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:8px;
+      overflow:hidden;
+    }
+    th,td {
+      padding:11px 12px;
+      border-bottom:1px solid var(--line);
+      text-align:left;
+      vertical-align:top;
+      font-size:14px;
+    }
+    th { background:#eef5f2; color:#2f3b41; }
+    tr:last-child td { border-bottom:0; }
+    .tag {
+      display:inline-flex;
+      padding:3px 8px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      border:1px solid var(--line);
+      white-space:nowrap;
+      margin:0 5px 5px 0;
+    }
+    .core { background:var(--soft-green); color:var(--green); border-color:#cce4dc; }
+    .base { background:var(--soft-blue); color:var(--blue); border-color:#d5e2f2; }
+    .upgrade { background:var(--soft-amber); color:var(--amber); border-color:#ead5ac; }
+    .stop { background:var(--soft-red); color:var(--red); border-color:#edc8c0; }
+    ul, ol { margin:8px 0 0; padding-left:22px; color:var(--muted); }
+    li { margin-bottom:7px; }
+    .phase {
+      border-top:5px solid var(--green);
+      min-height:210px;
+    }
+    .phase small { display:block; color:var(--muted); margin-bottom:7px; }
+    .deliverable {
+      background:#f7fbfa;
+      border:1px solid #dce8e5;
+      border-radius:8px;
+      padding:10px;
+      color:#405058;
+      font-size:13px;
+      margin-top:9px;
+    }
+    footer { margin:34px auto; color:var(--muted); font-size:12px; }
+    @media (max-width:920px) {
+      .grid.two, .grid.three, .grid.four { grid-template-columns:1fr; }
+      table { display:block; overflow-x:auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="button" href="./index.html">返回主导航</a>
+    <h1>14 天 He/BOST 精读执行包</h1>
+    <p>目标很具体：两周内从“看过论文题目”推进到“能向何远哲师兄讲清楚自己的主线、baseline、demo、数据请求和风险边界”。这不是泛读计划，而是每天都要留下公式、图、代码或问题的开工包。最后更新：2026-07-10。</p>
+    <div class="button-row">
+      <a class="button primary" href="./he_bost_citation_spine.html">He/BOST 引用脊柱</a>
+      <a class="button" href="./topic_execution_playbook.html">选题执行手册</a>
+      <a class="button" href="./agent_for_science_bost_bridge.html">Agent 辅助 BOST</a>
+      <a class="button" href="./he_review_portal.html">师兄 5 分钟审核入口</a>
+      <a class="button" href="./first_month_experiment_board.html">第一月实验执行板</a>
+      <a class="button" href="./paper_library/index.html">公开论文库 561 篇</a>
+      <a class="button" href="./nrip_reproducibility_audit.html">NRIP 可复现性审计</a>
+      <a class="button" href="./tdbost_reproducibility_audit.html">TDBOST / 4D BOST 审计</a>
+      <a class="button" href="./xmu_vpn_private_library_protocol.html">VPN/私有库边界</a>
+      <a class="button" href="./learning_log.html">学习日志模板</a>
+    </div>
+    <div class="grid four">
+      <div class="card metric"><b>14</b><span>每天一项可交付，不靠“我今天读了很多”自我安慰。</span></div>
+      <div class="card metric"><b>A</b><span>主线锁定 NeRIF/BOST 鲁棒性，PIV/4D 作为升级接口。</span></div>
+      <div class="card metric"><b>4</b><span>固定产物：公式、图表、demo、师兄问题。</span></div>
+      <div class="card metric"><b>0</b><span>公开站点不上传 WebVPN/订阅 PDF，本机私有库单独管理。</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice">
+      <h3>两周后的合格状态</h3>
+      <p>你应该能用 5 分钟解释：BOS/BOST 观测链条是什么，为什么 NeRIF 用神经隐式折射率场替代体素，传统 baseline 应该怎么设，PIV-BOST 的补偿可能发生在哪一层，4D BOST 为什么要低秩/张量分解，以及你第一月能交付什么。能讲到这个程度，再去找师兄就不是“求方向”，而是在给师兄一个可裁剪的项目方案。</p>
+    </section>
+
+    <h2>固定日输出</h2>
+    <div class="grid four">
+      <article class="card">
+        <h3>1 个公式</h3>
+        <p>写出变量含义和近似条件，例如 <code>rho -> n -> deflection -> displacement</code> 或重投影误差。</p>
+      </article>
+      <article class="card">
+        <h3>1 张图/表</h3>
+        <p>可以是论文图复刻、变量链图、baseline 对比表、数据字段表或失败样本图。</p>
+      </article>
+      <article class="card">
+        <h3>1 个动作</h3>
+        <p>小 demo、伪代码、参数矩阵、下载/入库、或一段 notebook，不要求每天都很大。</p>
+      </article>
+      <article class="card">
+        <h3>1 个问题</h3>
+        <p>问题要能让师兄作判断，例如 baseline、数据字段、补偿层级、公开边界或第一月交付。</p>
+      </article>
+    </div>
+
+    <h2>四阶段节奏</h2>
+    <div class="grid four">
+      <article class="card phase">
+        <small>Day 1-3</small>
+        <h3>物理观测链</h3>
+        <p>BOS sensitivity、折射率/密度/温度、背景位移、实验误差预算。</p>
+        <div class="deliverable">产物：一张 <code>temperature/density -> refractive index -> displacement -> BOST</code> 链条图。</div>
+      </article>
+      <article class="card phase">
+        <small>Day 4-6</small>
+        <h3>传统 baseline</h3>
+        <p>Radon/SART toy、UBOST、Direct BOST-RBF，把体素/RBF/MLP 的差别写清楚。</p>
+        <div class="deliverable">产物：2D Radon/SART notebook + 传统 baseline 对照表。</div>
+      </article>
+      <article class="card phase">
+        <small>Day 7-11</small>
+        <h3>NeRIF 与邻居</h3>
+        <p>NeRIF formulation、loss、few-view/noise/mask；对照 NeDF、NRIP、neural-field encoding。</p>
+        <div class="deliverable">产物：NeRIF-style 最小伪代码和 view/noise/encoding 消融矩阵。</div>
+      </article>
+      <article class="card phase">
+        <small>Day 12-14</small>
+        <h3>PIV/4D/会前包</h3>
+        <p>PIV-BOST 补偿层级、4D BOST 低秩时序子问题、最后合成给师兄的 one-page proposal。</p>
+        <div class="deliverable">产物：3 张候选路线图 + 8 个要问师兄的问题。</div>
+      </article>
+    </div>
+
+    <h2>每日执行表</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>读什么</th>
+          <th>必须抽出什么</th>
+          <th>当天产物</th>
+          <th>问师兄的问题</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag base">1</span></td>
+          <td>Raffel BOS review；Goldhahn &amp; Seume 2007 sensitivity/accuracy/resolution。<br><a href="https://doi.org/10.1007/s00348-015-1927-5">Raffel DOI</a> / <a href="https://doi.org/10.1007/s00348-007-0331-1">Goldhahn DOI</a></td>
+          <td>BOS 基本链条：背景图案、偏折角、像素位移、空间分辨率、灵敏度。</td>
+          <td>画一张变量链图；写清 <code>n</code>、<code>rho</code>、deflection、displacement 的关系。</td>
+          <td>师兄实验里最影响位移质量的是背景、焦距、窗口大小、mask 还是标定？</td>
+        </tr>
+        <tr>
+          <td><span class="tag base">2</span></td>
+          <td>BOS error / refractive-index fluctuation 对 PIV 的影响；PIV operating rules / uncertainty 基础。</td>
+          <td>误差层级：raw image、correlation/displacement、calibration、velocity vector。</td>
+          <td>列一张 PIV-BOST 误差传播表，先不碰完整 stereo-PIV。</td>
+          <td>PIV-BOST 补偿主要改哪一层？原始图像、互相关、标定/disparity，还是速度矢量？</td>
+        </tr>
+        <tr>
+          <td><span class="tag base">3</span></td>
+          <td>Open BOS / NASA TBOS / 传统 BOST 工程论文，配合本地 Open BOS manifest。</td>
+          <td>多视角数据字段：reference/deformed images、camera/view、mask、calibration、reconstruction。</td>
+          <td>整理一份真实 BOST 数据 manifest 草案，字段按“拿到数据后一周能跑”为标准。</td>
+          <td>如果给九视角 BOST 样例，最小文件包需要哪些：REF/DEF、mask、camera matrix、参考重构？</td>
+        </tr>
+        <tr>
+          <td><span class="tag base">4</span></td>
+          <td>Kak &amp; Slaney / scikit-image Radon/SART；传统 tomography 最小实现。</td>
+          <td>投影、反投影、迭代重建、正则化、重投影误差。</td>
+          <td>做一个 2D phantom Radon/SART toy，输出 view-count vs error 曲线。</td>
+          <td>本科 baseline 最低应包含 SART/Landweber/TV 中哪一个？</td>
+        </tr>
+        <tr>
+          <td><span class="tag base">5</span></td>
+          <td>UBOST: Fast and robust volumetric refractive index measurement by unified BOST。<br><a href="https://doi.org/10.1007/s00348-020-2912-1">10.1007/s00348-020-2912-1</a></td>
+          <td>它作为强传统 baseline 的 forward model、robustness language、实验评价方式。</td>
+          <td>写一页 UBOST 精读卡：它强在哪里，NeRIF 不能只赢一个弱 toy。</td>
+          <td>组内更认可 UBOST、SIRT/Landweber，还是已有代码作为 baseline？</td>
+        </tr>
+        <tr>
+          <td><span class="tag base">6</span></td>
+          <td>Direct BOST using radial basis functions。<br><a href="https://doi.org/10.1364/OE.459872">10.1364/OE.459872</a></td>
+          <td>连续表示前史：RBF 参数化、直接重构、连续场和平滑先验。</td>
+          <td>做一张 voxel / RBF / MLP neural field 对照表。</td>
+          <td>如果不能复现 UBOST，RBF/direct BOST 是否能作为论文中的方法邻居而非实验 baseline？</td>
+        </tr>
+        <tr>
+          <td><span class="tag core">7</span></td>
+          <td>NeRIF 正文 formulation。<br><a href="https://doi.org/10.1063/5.0250899">PoF DOI</a> / <a href="https://arxiv.org/abs/2409.14722">arXiv</a></td>
+          <td>坐标输入、network 输出、折射率场、loss、projection/displacement consistency。</td>
+          <td>写 NeRIF-style 最小伪代码，不求完整复现，只要变量流正确。</td>
+          <td>NeRIF 里最应该本科复现的是 loss、network、少视角实验，还是真实数据接口？</td>
+        </tr>
+        <tr>
+          <td><span class="tag core">8</span></td>
+          <td>NeRIF experiments: numerical validation、real flame、noise/view/mask 相关结果。</td>
+          <td>评价指标：L2/SSIM/CC、重投影误差、切片图、视角数、噪声水平、模型容量。</td>
+          <td>列出 M0/M1/M2 实验矩阵：view count、noise、encoding、hidden width、mask。</td>
+          <td>真实组内结果更看重重构场误差、重投影误差、火焰物理解释，还是速度补偿效果？</td>
+        </tr>
+        <tr>
+          <td><span class="tag core">9</span></td>
+          <td>NeRIF reproduction plan + neural fields basics: Fourier features / SIREN / NeRF / Instant-NGP。</td>
+          <td>encoding 为什么重要；高频场、平滑性、过拟合、regularization。</td>
+          <td>做一个 2D/3D coordinate MLP 拟合 phantom 的最小 demo 计划。</td>
+          <td>师兄是否允许用 simplified NeRIF-style demo，而不复刻论文全部工程细节？</td>
+        </tr>
+        <tr>
+          <td><span class="tag core">10</span></td>
+          <td>NeDF / neural deflection fields。<br><a href="https://doi.org/10.1063/5.0241191">PoF DOI</a> / <a href="https://arxiv.org/abs/2409.19971">arXiv</a></td>
+          <td>NeDF 和 NeRIF 表示对象不同：deflection/gradient 相关场 vs refractive-index field。</td>
+          <td>写一张 NeRIF vs NeDF 表：primitive、loss、输入、输出、适合数据和局限。</td>
+          <td>师兄希望我把 NeDF 写成对照竞品，还是只放 related work？</td>
+        </tr>
+        <tr>
+          <td><span class="tag core">11</span></td>
+          <td>NRIP: Neural Refractive Index Primitives。<br><a href="https://doi.org/10.1016/j.combustflame.2026.115082">DOI</a> / <a href="https://arxiv.org/abs/2605.11454">arXiv</a></td>
+          <td>hash-like encoding、3D mask、automatic/discrete gradient loss、真实 flame BOS 评价。</td>
+          <td>把 NeRIF 的可做消融扩展到 encoding / mask / gradient loss 三类。</td>
+          <td>NeRIF 方向是否需要引入 NRIP 的 mask/gradient-loss 思路做本科创新点？</td>
+        </tr>
+        <tr>
+          <td><span class="tag upgrade">12</span></td>
+          <td>Simultaneous PIV-BOST 2025。<br><a href="https://doi.org/10.1007/s00348-025-04093-y">10.1007/s00348-025-04093-y</a></td>
+          <td>折射率场如何服务速度测量补偿；摘要/图/方法里看补偿位置和评价指标。</td>
+          <td>准备一个 synthetic particle image distortion toy 的任务书，作为无真实数据时的 B 路线降级。</td>
+          <td>能否给同步 PIV-BOST 的最小样例？如果不能，图像层 synthetic toy 是否对组里有用？</td>
+        </tr>
+        <tr>
+          <td><span class="tag upgrade">13</span></td>
+          <td>Tensor Decomposition-Based 4D BOST。<br><a href="https://dl.acm.org/doi/full/10.1145/3809488">ACM 正式全文</a> · <a href="./tdbost_reproducibility_audit.html">结构化精读</a></td>
+          <td>4D 的核心不是“多跑几帧”，而是 MM plane-pairs、低秩时序共享、DC/forward correction、频谱保真和混合精度共同作用。</td>
+          <td>读 Figure/Table/Appendix 后做 M3B 计划：rank-noise-view-frame-bias scan；单独抄出正文的 L2 定义、100G0 DC 消融和 13.08 GB 显存表。</td>
+          <td>4D BOST 拆给本科生时，最有价值的是 rank scan、forward-model bias、数据健康报告还是 temporal/frequency metric？正文与公开 config 的版本差异应如何解释？</td>
+        </tr>
+        <tr>
+          <td><span class="tag core">14</span></td>
+          <td>回看引用脊柱、精读卡、选题矩阵、师兄审核入口。</td>
+          <td>把所有内容压成 1 页 proposal：题目、动机、数据、方法、baseline、指标、风险、请求。</td>
+          <td>输出“给何远哲师兄的 8 个问题”和 3 张路线图：A 主线、B 升级、C 挑战。</td>
+          <td>请师兄二选一/三选一：A 先毕业、B 接数据、C 做 4D 子问题，第一月交付是什么？</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>三条路线的 14 天后决策</h2>
+    <div class="grid three">
+      <article class="card">
+        <h3>A: NeRIF/BOST 鲁棒性</h3>
+        <p><span class="tag core">默认锁定</span></p>
+        <p>如果 14 天后你能跑通 phantom + baseline + simplified coordinate MLP，就把毕设题目写成“少视角 BOST 的神经隐式折射率场重构与鲁棒性分析”。</p>
+      </article>
+      <article class="card">
+        <h3>B: PIV-BOST 补偿接口</h3>
+        <p><span class="tag upgrade">有数据再升</span></p>
+        <p>如果师兄给同步数据或明确需要图像层/速度层工具，就把 B 作为第二阶段；否则只保留 synthetic particle-image toy，不承诺完整 PIV-BOST。</p>
+      </article>
+      <article class="card">
+        <h3>C: 4D BOST 子模块</h3>
+        <p><span class="tag upgrade">挑战但要收缩</span></p>
+        <p>如果师兄明确希望你接 4D，就只做 low-rank / temporal metric / report 子问题，不说“完整复现 TOG”。</p>
+      </article>
+    </div>
+
+    <h2>不要做的事</h2>
+    <section class="notice risk">
+      <ul>
+        <li>不要把两周计划写成“读完所有论文”。真正要交付的是公式、图、demo 和可问的问题。</li>
+        <li>不要等真实数据来了再开始。合成数据闭环是本科毕设的保险。</li>
+        <li>不要把 WebVPN 下载的出版社 PDF 放进公开 GitHub Pages 或公开跳转页；本机 `private_library/` 只服务个人学习。</li>
+        <li>不要一开始承诺完整 PIV-BOST、完整 stereo-PIV 或完整 4D BOST。先做可裁剪的子模块。</li>
+      </ul>
+    </section>
+
+    <h2>会前最小材料包</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>材料</th>
+          <th>内容</th>
+          <th>对应页面</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1 页 proposal</td>
+          <td>题目、动机、方法、数据、baseline、指标、风险和第一月交付。</td>
+          <td><a href="./he_review_portal.html">师兄 5 分钟审核入口</a></td>
+        </tr>
+        <tr>
+          <td>第一月实验板</td>
+          <td>M0-M3C 的脚本、图表、指标、论文话术和师兄问题。</td>
+          <td><a href="./first_month_experiment_board.html">first_month_experiment_board.html</a></td>
+        </tr>
+        <tr>
+          <td>引用脊柱</td>
+          <td>BOS sensitivity -> UBOST/RBF -> NeRIF -> NeDF/NRIP -> PIV-BOST -> 4D BOST。</td>
+          <td><a href="./he_bost_citation_spine.html">He/BOST 引用脊柱</a></td>
+        </tr>
+        <tr>
+          <td>数据请求清单</td>
+          <td>九视角 BOST、PIV-BOST、4D BOST 或 Open BOS benchmark 的最小字段。</td>
+          <td><a href="document_reader.html?doc=data_request_checklist.md">data_request_checklist.md</a></td>
+        </tr>
+        <tr>
+          <td>学习日志</td>
+          <td>每天记录问题、尝试、结果、下一步；公开日志只写可公开内容。</td>
+          <td><a href="./learning_log.html">学习日志模板</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <section class="notice warning">
+      <h3>PDF 与私有库操作建议</h3>
+      <p>如果你白天通过 XMU WebVPN 下载了 Springer/ACM/AIP/Elsevier 的受限全文，把文件放进本机 <code>private_library/inbox/</code>，或保留在系统下载目录后让我扫描匹配。同步工具会把能确认 DOI/题名的文件复制到 <code>private_library/pdfs/</code> 并更新本地私有索引；公开站点只更新“已读/待读/出版社入口/精读目标”，不发布 PDF 本体。</p>
+    </section>
+  </main>
+
+  <footer>
+    Source anchors: official DOI/arXiv/publisher pages for Raffel BOS review, Goldhahn &amp; Seume BOS sensitivity, UBOST, Direct BOST-RBF, NeRIF, NeDF, NRIP, PIV-BOST and ACM 4D BOST full text; local paper-library audit status on 2026-07-10.
+  </footer>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

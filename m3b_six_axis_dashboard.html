@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>M3B 六轴实验 | 4D BOST 低秩时序边界</title>
+  <link rel="icon" href="data:," />
+  <style>
+    :root {
+      --bg: #f5f8f7;
+      --paper: #ffffff;
+      --ink: #1d2a30;
+      --muted: #5f7078;
+      --line: #d4dfdc;
+      --green: #176f65;
+      --blue: #336b98;
+      --amber: #996516;
+      --red: #97483e;
+      --soft-green: #e9f4f0;
+      --soft-blue: #edf4fa;
+      --soft-amber: #faf1dc;
+      --soft-red: #f8ebe8;
+      --shadow: 0 12px 30px rgba(26, 47, 51, .07);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(245,248,247,.98), rgba(245,248,247,.88)),
+        url("./assets/backgrounds/oerf-refractive-field.png") right -160px top 20px / min(900px, 90vw) auto no-repeat fixed,
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+    header, main, footer { width: min(1180px, calc(100vw - 36px)); margin: 0 auto; }
+    header { padding: 28px 0 22px; }
+    h1 { margin: 18px 0 10px; max-width: 940px; font-size: 44px; line-height: 1.1; }
+    h2 { margin: 38px 0 12px; font-size: 25px; line-height: 1.25; }
+    h3 { margin: 0 0 7px; font-size: 17px; line-height: 1.32; }
+    p { margin: 0 0 11px; color: var(--muted); }
+    ul, ol { margin: 7px 0 0; padding-left: 22px; color: var(--muted); }
+    li { margin-bottom: 7px; }
+    .topbar, .button-row, .tag-row, .axis-tabs { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .button, .axis-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.96);
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .button.primary, .axis-button.active { color: #fff; background: var(--green); border-color: var(--green); }
+    .button:hover, .axis-button:hover { border-color: var(--green); text-decoration: none; }
+    .lead { max-width: 940px; color: #40545c; font-size: 17px; }
+    .metrics, .grid { display: grid; gap: 12px; }
+    .metrics { grid-template-columns: repeat(4, minmax(0,1fr)); margin-top: 22px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .metric, .card, .notice, .figure-card, .axis-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.96);
+      box-shadow: var(--shadow);
+    }
+    .metric { min-width: 0; padding: 14px; }
+    .metric b { display: block; color: var(--green); font-size: 28px; line-height: 1.08; overflow-wrap: anywhere; }
+    .metric span { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; font-weight: 780; }
+    .card { min-width: 0; padding: 16px; }
+    .notice { padding: 17px; border-left: 5px solid var(--green); background: rgba(233,244,240,.96); box-shadow: none; }
+    .notice.warning { border-left-color: var(--amber); background: rgba(250,241,220,.96); }
+    .notice.danger { border-left-color: var(--red); background: rgba(248,235,232,.96); }
+    .tag {
+      display: inline-flex;
+      min-height: 27px;
+      align-items: center;
+      padding: 3px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+    .tag.green { color: var(--green); background: var(--soft-green); border-color: #c6dfd7; }
+    .tag.blue { color: var(--blue); background: var(--soft-blue); border-color: #d2e0ed; }
+    .tag.amber { color: var(--amber); background: var(--soft-amber); border-color: #ead5aa; }
+    .tag.red { color: var(--red); background: var(--soft-red); border-color: #ebc8c1; }
+    table { width: 100%; border-collapse: collapse; border: 1px solid var(--line); background: rgba(255,255,255,.97); }
+    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 14px; }
+    th { color: #30434a; background: #edf5f2; }
+    tr:last-child td { border-bottom: 0; }
+    .axis-panel { padding: 17px; }
+    .axis-tabs { margin: 12px 0 16px; }
+    .axis-button { flex: 0 1 auto; min-width: 90px; }
+    .axis-readout { display: grid; grid-template-columns: 1.25fr repeat(3, minmax(0,1fr)); gap: 10px; }
+    .axis-copy, .axis-stat { min-width: 0; padding: 13px; border: 1px solid var(--line); border-radius: 8px; background: #fbfcfc; }
+    .axis-copy h3 { color: var(--green); font-size: 19px; }
+    .axis-stat b { display: block; color: var(--green); font-size: 24px; line-height: 1.1; overflow-wrap: anywhere; }
+    .axis-stat span { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .axis-action { min-height: 58px; margin-top: 12px; padding: 11px 12px; border-left: 4px solid var(--amber); background: var(--soft-amber); color: #5d5030; font-size: 13px; }
+    .figure-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 12px; }
+    .figure-card { min-width: 0; margin: 0; overflow: hidden; }
+    .figure-card img { display: block; width: 100%; height: auto; background: #fff; }
+    .figure-card figcaption { padding: 12px 14px 14px; color: var(--muted); font-size: 13px; }
+    .figure-card figcaption strong { color: var(--ink); }
+    .finding { position: relative; padding-left: 44px; }
+    .finding b {
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      width: 23px;
+      height: 23px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--green);
+      font-size: 11px;
+    }
+    footer { padding: 30px 0 42px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 940px) {
+      .metrics, .grid.three { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .axis-readout { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .figure-grid { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+    @media (max-width: 620px) {
+      h1 { font-size: 32px; }
+      .metrics, .grid.two, .grid.three, .axis-readout { grid-template-columns: 1fr; }
+      .topbar .button { flex: 1 1 150px; }
+      .axis-button { flex: 1 1 100px; }
+      .button-row .button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <a class="button" href="./index.html">返回主导航</a>
+      <a class="button primary" href="./tdbost_reproducibility_audit.html">TDBOST / 4D BOST 审计</a>
+      <a class="button primary" href="./m3b_interaction_dashboard.html">打开交叉验证</a>
+      <a class="button" href="./m3b_family_selector_dashboard.html">跨形态 Selector</a>
+      <a class="button" href="./first_month_experiment_board.html">第一月实验板</a>
+      <a class="button" href="./he_review_portal.html">师兄审核入口</a>
+    </div>
+    <h1>M3B 六轴实验：低秩何时有效，何时说谎</h1>
+    <p class="lead">把单次 rank 演示升级为 8 个配对随机种子的单因素实验：rank、位移噪声、帧数、视角数、系统偏差与动力学。它回答的不是“低秩一定更好”，而是在哪些条件下去抖收益可信，哪些物理量会被平滑掩盖。</p>
+    <div class="metrics">
+      <div class="metric"><b>448</b><span>方法级原始结果行：224 组 framewise / low-rank 配对。</span></div>
+      <div class="metric"><b>8 seeds</b><span>每个条件使用相同噪声种子的 paired design。</span></div>
+      <div class="metric"><b>rank 3</b><span>多种子全局 relative L2 的当前最优 rank。</span></div>
+      <div class="metric"><b>40.7 s</b><span>24×24×10、默认 18 帧的完整本地 sweep。</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice">
+      <h3>最重要的结果</h3>
+      <p>默认条件下，rank 3 让全局 norm-ratio L2 改善 <strong>3.90%</strong>、论文式 squared L2 改善 <strong>7.65%</strong>、时间一阶/二阶误差改善 <strong>44.68% / 73.19%</strong>、held-out deflection 改善 <strong>9.23%</strong>。但 mass trace RMSE 反而恶化 <strong>0.94%</strong>：低秩明显会去抖，却不保证积分量、幅值和系统误差正确。</p>
+    </section>
+
+    <section class="notice" style="margin-top:14px;">
+      <h3>本页是筛查层，交叉验证层已经完成</h3>
+      <p>六轴 OFAT 用来发现值得继续追的变量；<a href="./m3b_interaction_dashboard.html">rank × noise × views × dynamics 交叉实验</a>进一步覆盖 80 个环境、8 个配对种子和 3,200 组配对比较。随后完成的<a href="./m3b_family_selector_dashboard.html">跨形态无真值 selector</a>又扩展到 864 个观测格、4 个 morphology family 和 full-rank 拒绝平滑，证明固定 rank 的主要风险来自 morphology mismatch，并把无 held-out mean regret 压到 0.252%。</p>
+      <div class="button-row"><a class="button primary" href="./m3b_interaction_dashboard.html">查看交叉实验</a><a class="button" href="./m3b_family_selector_dashboard.html">查看跨形态 Selector</a><a class="button" href="./document_reader.html?doc=m3b_family_selector_brief.md">最新师兄 brief</a></div>
+    </section>
+
+    <h2>实验设计</h2>
+    <table>
+      <thead><tr><th>轴</th><th>水平</th><th>固定条件</th><th>主要回答</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Rank</strong></td><td>1 / 2 / 3 / 5 / 8 / 12</td><td>5 views、18 frames、noise 0.14</td><td>容量、去噪、运动和重投影如何冲突。</td></tr>
+        <tr><td><strong>Noise</strong></td><td>0 / 0.07 / 0.14 / 0.28 / 0.42</td><td>rank 3</td><td>低秩从哪个噪声区间开始真正有益。</td></tr>
+        <tr><td><strong>Frames</strong></td><td>8 / 12 / 18 / 30</td><td>rank 3、同一完整运动周期</td><td>时间采样增多时去抖收益怎样变化。</td></tr>
+        <tr><td><strong>Views</strong></td><td>3 / 5 / 7 / 9</td><td>rank 3、独立 held-out angle</td><td>时序低秩能否稳定未参与重构的投影视角。</td></tr>
+        <tr><td><strong>Bias</strong></td><td>none / 2° geometry / scale / flow drift / 1-frame lag</td><td>noise 0.14</td><td>随机去噪是否会被误读成系统误差校正。</td></tr>
+        <tr><td><strong>Dynamics</strong></td><td>smooth / fast / chirp / transient</td><td>rank 3</td><td>快速、变频和突发结构会否被过度平滑。</td></tr>
+      </tbody>
+    </table>
+    <p class="tag-row"><span class="tag amber">OFAT 单因素扫描</span><span class="tag red">不是完整六维全因子</span><span class="tag blue">95% CI = 1.96·s/√8</span><span class="tag green">同 seed 配对比较</span></p>
+
+    <h2>交互轴判读</h2>
+    <section class="axis-panel">
+      <p>点击一个实验轴，查看最强证据、失败边界和下一步动作。</p>
+      <div class="axis-tabs" role="group" aria-label="选择实验轴">
+        <button class="axis-button active" type="button" data-axis="rank">Rank</button>
+        <button class="axis-button" type="button" data-axis="noise">Noise</button>
+        <button class="axis-button" type="button" data-axis="frames">Frames</button>
+        <button class="axis-button" type="button" data-axis="views">Views</button>
+        <button class="axis-button" type="button" data-axis="bias">Bias</button>
+        <button class="axis-button" type="button" data-axis="dynamics">Dynamics</button>
+      </div>
+      <div class="axis-readout" aria-live="polite">
+        <div class="axis-copy"><h3 id="axis-title">Rank：3 是当前折中点</h3><p id="axis-summary">rank 1 过度压缩，rank 12 接近逐帧噪声；rank 3 同时给出最低全局 L2 和较好的 held-out 误差。</p></div>
+        <div class="axis-stat"><b id="axis-primary">0.3551</b><span id="axis-primary-label">rank 3 global relative L2</span></div>
+        <div class="axis-stat"><b id="axis-secondary">+3.90%</b><span id="axis-secondary-label">相对 framewise 的场误差改善</span></div>
+        <div class="axis-stat"><b id="axis-tertiary">+9.23%</b><span id="axis-tertiary-label">held-out deflection 改善</span></div>
+      </div>
+      <div class="axis-action" id="axis-action">下一步：让何远哲确认组内更看重 field、reprojection、frequency 还是守恒/积分量，再决定 rank 选择规则。</div>
+    </section>
+
+    <h2>三张核心图</h2>
+    <div class="figure-grid">
+      <figure class="figure-card">
+        <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Fm3b_six_axis_overview.png"><img src="./demo_m3b/results/m3b_six_axis_overview.png" alt="M3B six-axis OFAT overview with confidence intervals" /></a>
+        <figcaption><strong>六轴总览。</strong> 无噪声时 rank 3 使场 L2 轻微恶化 0.56%；噪声升高后收益迅速增大。视角收益不单调，因此本轮只提供交互假设；二维/多变量结论请以已完成的交叉实验页为准。</figcaption>
+      </figure>
+      <figure class="figure-card">
+        <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Fm3b_rank_seed_stability.png"><img src="./demo_m3b/results/m3b_rank_seed_stability.png" alt="M3B rank stability across eight paired random seeds" /></a>
+        <figcaption><strong>Rank 稳定性。</strong> rank 3 的全局 L2 最低；rank 2-5 的 held-out 差距很小。rank 不应只由一项指标或一张漂亮切片决定。</figcaption>
+      </figure>
+      <figure class="figure-card">
+        <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Fm3b_bias_dynamics_diagnostic.png"><img src="./demo_m3b/results/m3b_bias_dynamics_diagnostic.png" alt="M3B systematic bias and dynamics energy diagnostic" /></a>
+        <figcaption><strong>失败签名。</strong> sync lag 的绝对场误差仍最高；低秩只略降误差。transient 的 dynamics-energy ratio 从噪声膨胀的 1.452 降到 0.898，说明去噪同时压掉约 10% 动态能量。</figcaption>
+      </figure>
+    </div>
+
+    <h2>默认 rank 3：逐指标对账</h2>
+    <table>
+      <thead><tr><th>指标</th><th>Framewise</th><th>Rank 3</th><th>配对变化</th><th>研究含义</th></tr></thead>
+      <tbody>
+        <tr><td>Global relative L2</td><td>0.3696</td><td><strong>0.3551</strong></td><td>+3.90%</td><td>整体场误差小幅、稳定下降。</td></tr>
+        <tr><td>Paper-style squared L2</td><td>0.1366</td><td><strong>0.1261</strong></td><td>+7.65%</td><td>与 TOG Eq. 24 同类定义，但仍不是同一数据/方法，不能横向比数值。</td></tr>
+        <tr><td>Temporal-gradient error</td><td>1.2967</td><td><strong>0.7172</strong></td><td>+44.68%</td><td>去除逐帧随机抖动是最强收益。</td></tr>
+        <tr><td>Temporal-curvature error</td><td>3.3357</td><td><strong>0.8938</strong></td><td>+73.19%</td><td>二阶时间抖动被显著压制。</td></tr>
+        <tr><td>Dynamics-energy ratio</td><td>1.4679</td><td><strong>0.9230</strong></td><td>更接近 1</td><td>framewise 被噪声放大；rank 3 略微过度平滑。</td></tr>
+        <tr><td>Centroid RMSE</td><td>0.06935</td><td><strong>0.06734</strong></td><td>+2.90%</td><td>运动追踪只小幅改善，不足以证明系统偏差已消失。</td></tr>
+        <tr><td>Mass-trace RMSE</td><td><strong>0.15707</strong></td><td>0.15854</td><td><span class="tag red">-0.94%</span></td><td>积分量变差，是“平滑但未必物理正确”的直接证据。</td></tr>
+        <tr><td>Held-out deflection L2</td><td>0.2941</td><td><strong>0.2669</strong></td><td>+9.23%</td><td>对未参与重构的角度有一定泛化收益。</td></tr>
+      </tbody>
+    </table>
+
+    <h2>六条可以写进预研报告的判断</h2>
+    <div class="grid three">
+      <article class="card finding"><b>1</b><h3>低秩有噪声门槛</h3><p>noise=0 时 L2 恶化 0.56%；0.07 后才转正，0.42 时改善 19.39%。它是 denoiser，不是免费精度。</p></article>
+      <article class="card finding"><b>2</b><h3>更多帧增强时序收益</h3><p>时间梯度改善从 8 帧的 14.58% 增至 30 帧的 62.84%；但仍需固定真实采样率后验证。</p></article>
+      <article class="card finding"><b>3</b><h3>视角收益不单调</h3><p>held-out 改善为 3/5/7/9 views = 3.95/9.23/8.25/7.41%。这提示 rank×view 交互，而不是“5 视角最好”。</p></article>
+      <article class="card finding"><b>4</b><h3>系统偏差仍然存在</h3><p>sync lag 的场误差 0.3941→0.3789，仍是五种 bias 中最差。去抖无法替代同步和几何校正。</p></article>
+      <article class="card finding"><b>5</b><h3>快动态收益下降</h3><p>smooth 的时间梯度改善 44.68%，fast/chirp 只有 20.06%/21.06%。固定 rank 对更复杂动力学更吃力。</p></article>
+      <article class="card finding"><b>6</b><h3>瞬态会被压低</h3><p>transient 的 low-rank 动力学能量比为 0.898。它比噪声膨胀结果更接近 1，但仍损失约一成真实变化。</p></article>
+    </div>
+
+    <h2>找何远哲时最值得问的 6 个问题</h2>
+    <div class="grid two">
+      <article class="card"><h3>评价口径</h3><ol><li>组里 rank 选择更看 field L2、test-view PSNR、频谱、积分量还是事件保真？</li><li>论文中的 squared L2 是否也是组内默认口径，是否需要同时报告 norm-ratio L2？</li><li>真实火焰是否存在需要严格保留的质量、热释放或频率积分量？</li></ol></article>
+          <article class="card"><h3>真实数据接口</h3><ol start="4"><li>最常见系统误差是 geometry、sync、DeepFlow drift 还是 view gain？</li><li>能否给 10-20 帧、5-9 视角的小样例做同一份 health report？</li><li>rank×noise×views×dynamics 已完成后，下一阶段更该做 bias magnitude / sampling rate，还是先接真实数据验证 failure signature？</li></ol></article>
+    </div>
+
+    <section class="notice danger">
+      <h3>边界</h3>
+      <p>本页是 24×24×10 小体积、单因素、简化直线投影的 synthetic screening experiment。bias 注入是可解释故障签名，不是 OERF 相机/光纤束的标定模型；置信区间只覆盖 8 个噪声种子。后续页面已经补上 rank/noise/views/dynamics 联动、四类 synthetic morphology 和无真值 selector，但仍未补真实几何、bias magnitude、sampling rate、曝光模糊与真实数据；三页都不能支持“已复现 TDBOST”。</p>
+    </section>
+
+    <h2>可复现入口</h2>
+    <div class="button-row">
+      <a class="button primary" href="./document_reader.html?doc=demo_m3b%2Frun_m3b_six_axis_sweep.py">六轴脚本</a>
+      <a class="button primary" href="./m3b_interaction_dashboard.html">交叉实验页</a>
+      <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Fsix_axis_report.json">结论 JSON</a>
+      <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Fsix_axis_summary.csv">统计摘要 CSV</a>
+      <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Fsix_axis_paired_improvements.csv">配对改善 CSV</a>
+      <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Fsix_axis_raw.csv">448 行原始结果</a>
+      <a class="button" href="./document_reader.html?doc=demo_m3b%2FREADME.md">M3B README</a>
+    </div>
+  </main>
+
+  <footer>运行日期：2026-07-10。全部数值来自本地可重复脚本与 8 个配对随机种子；图中误差条为 mean ± 95% CI。该实验独立实现，不复制无 LICENSE 的 TDBOST 代码。</footer>
+
+  <script>
+    const axisData = {
+      rank: {
+        title: "Rank：3 是当前折中点",
+        summary: "rank 1 过度压缩，rank 12 接近逐帧噪声；rank 3 同时给出最低全局 L2 和较好的 held-out 误差。",
+        primary: "0.3551", primaryLabel: "rank 3 global relative L2",
+        secondary: "+3.90%", secondaryLabel: "相对 framewise 的场误差改善",
+        tertiary: "+9.23%", tertiaryLabel: "held-out deflection 改善",
+        action: "交叉实验已确认 rank 3 是 regret 最低的固定默认值；下一步让何远哲确认 field、reprojection、frequency 与守恒/积分量的任务权重。"
+      },
+      noise: {
+        title: "Noise：无噪声时低秩反而伤精度",
+        summary: "noise=0 时 rank 3 的场 L2 恶化 0.56%；噪声升高后收益持续增加，证明低秩的主要角色是时序去噪。",
+        primary: "-0.56%", primaryLabel: "noise 0 的场误差变化",
+        secondary: "+3.90%", secondaryLabel: "noise 0.14 的场误差改善",
+        tertiary: "+19.39%", tertiaryLabel: "noise 0.42 的场误差改善",
+        action: "下一步：用真实位移场的噪声统计标定 noise multiplier，而不是继续用任意数字扫图。"
+      },
+      frames: {
+        title: "Frames：更多时间样本给低秩更多可用结构",
+        summary: "时间梯度误差改善随 8/12/18/30 帧从 14.58% 升到 62.84%，但这个 toy 固定完整运动周期，尚未覆盖真实曝光和采样率。",
+        primary: "+14.58%", primaryLabel: "8 frames temporal-gradient 改善",
+        secondary: "+44.68%", secondaryLabel: "18 frames temporal-gradient 改善",
+        tertiary: "+62.84%", tertiaryLabel: "30 frames temporal-gradient 改善",
+        action: "下一步：固定物理时间窗，同时分别扫 frame count、sampling rate 和 exposure blur。"
+      },
+      views: {
+        title: "Views：held-out 收益不是单调函数",
+        summary: "5 views 的 paired improvement 最大，但 7/9 views 并没有继续上升；这可能来自 baseline、rank 和噪声的交互。",
+        primary: "+3.95%", primaryLabel: "3 views held-out 改善",
+        secondary: "+9.23%", secondaryLabel: "5 views held-out 改善",
+        tertiary: "+7.41%", tertiaryLabel: "9 views held-out 改善",
+        action: "rank×noise×views×dynamics 交叉热图已完成；下一步用真实几何与位移 residual 检验该 operating map 能否迁移。"
+      },
+      bias: {
+        title: "Bias：低秩只能略降误差，不能校正来源",
+        summary: "所有 bias 下场误差都只改善约 3-4%；sync lag 的绝对误差仍最高，证明平滑无法替代同步、几何和位移校正。",
+        primary: "0.3941", primaryLabel: "sync lag framewise field L2",
+        secondary: "0.3789", secondaryLabel: "sync lag rank 3 field L2",
+        tertiary: "+3.86%", tertiaryLabel: "只是一点 denoising 收益",
+        action: "下一步：让真实 residual signature 决定 bias 分类；优先实现 geometry/sync/flow health report。"
+      },
+      dynamics: {
+        title: "Dynamics：去噪和过度平滑同时发生",
+        summary: "smooth 下时间梯度改善 44.68%，fast/chirp 只有约 20%；transient 的能量比降到 0.898，暴露事件损失。",
+        primary: "0.923", primaryLabel: "smooth low-rank energy ratio",
+        secondary: "0.935", secondaryLabel: "fast low-rank energy ratio",
+        tertiary: "0.898", tertiaryLabel: "transient low-rank energy ratio",
+        action: "交叉实验已量化四类 dynamics 的 temporal-gradient 收益；下一步加入 frequency peak error、event amplitude retention 和 low-rank+sparse residual。"
+      }
+    };
+
+    function renderAxis(key) {
+      const item = axisData[key];
+      document.querySelectorAll(".axis-button").forEach((button) => {
+        const active = button.dataset.axis === key;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      document.getElementById("axis-title").textContent = item.title;
+      document.getElementById("axis-summary").textContent = item.summary;
+      document.getElementById("axis-primary").textContent = item.primary;
+      document.getElementById("axis-primary-label").textContent = item.primaryLabel;
+      document.getElementById("axis-secondary").textContent = item.secondary;
+      document.getElementById("axis-secondary-label").textContent = item.secondaryLabel;
+      document.getElementById("axis-tertiary").textContent = item.tertiary;
+      document.getElementById("axis-tertiary-label").textContent = item.tertiaryLabel;
+      document.getElementById("axis-action").textContent = item.action;
+    }
+
+    document.querySelectorAll(".axis-button").forEach((button) => {
+      button.addEventListener("click", () => renderAxis(button.dataset.axis));
+    });
+    renderAxis("rank");
+  </script>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

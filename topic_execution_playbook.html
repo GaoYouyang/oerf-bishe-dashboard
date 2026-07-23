@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>毕设选题执行手册 | OERF 毕设导航</title>
+  <style>
+    :root {
+      --bg: #f7faf9;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #62717c;
+      --line: #d8e1df;
+      --teal: #16756f;
+      --blue: #315f93;
+      --gold: #9a6a00;
+      --red: #a34335;
+      --soft-teal: #e8f3f0;
+      --soft-blue: #eaf0f7;
+      --soft-gold: #f8f0dc;
+      --soft-red: #f8ece9;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, rgba(22, 117, 111, 0.12), transparent 340px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    header, main, footer {
+      width: min(1220px, calc(100vw - 36px));
+      margin: 0 auto;
+    }
+    header { padding: 34px 0 18px; }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(32px, 4.8vw, 58px);
+      line-height: 1.06;
+    }
+    h2 { margin: 34px 0 12px; font-size: 25px; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .button-row, .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+    }
+    .button, .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 750;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .button.primary { background: var(--teal); border-color: var(--teal); color: #fff; }
+    .tag { min-height: 28px; border-radius: 999px; font-size: 12px; }
+    .tag.core { background: var(--soft-teal); color: var(--teal); border-color: #c8e4de; }
+    .tag.blue { background: var(--soft-blue); color: var(--blue); border-color: #d3dfed; }
+    .tag.gold { background: var(--soft-gold); color: var(--gold); border-color: #e8d3a5; }
+    .tag.red { background: var(--soft-red); color: var(--red); border-color: #edc8c0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card, .notice {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+    }
+    .notice { border-left: 5px solid var(--teal); background: linear-gradient(90deg, var(--soft-teal), #fff 72%); }
+    .notice.warning { border-left-color: var(--gold); background: linear-gradient(90deg, var(--soft-gold), #fff 72%); }
+    .notice.danger { border-left-color: var(--red); background: linear-gradient(90deg, var(--soft-red), #fff 72%); }
+    .metric b {
+      display: block;
+      color: var(--teal);
+      font-size: 30px;
+      line-height: 1.05;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 12px 0 18px;
+    }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+    th { background: #edf5f2; color: #2f3b41; }
+    tr:last-child td { border-bottom: 0; }
+    ul, ol { margin: 8px 0 0; padding-left: 22px; color: var(--muted); }
+    li { margin-bottom: 7px; }
+    footer {
+      color: var(--muted);
+      font-size: 12px;
+      padding: 28px 0 34px;
+    }
+    @media (max-width: 900px) {
+      .grid, .grid.two { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="button-row">
+      <a class="button" href="./index.html">返回主工作台</a>
+      <a class="button primary" href="./he_review_portal.html">师兄 5 分钟审核入口</a>
+      <a class="button" href="./he_yuanzhe_sync_dashboard.html">何远哲同步主线</a>
+      <a class="button" href="./thesis_pathway_matrix.html">选题路线矩阵</a>
+      <a class="button" href="./learning_library/index.html">教材/讲义库</a>
+      <a class="button" href="./paper_library/index.html">论文库 478 篇</a>
+    </div>
+    <h1>毕设选题执行手册</h1>
+    <p>把 OERF / 何远哲 / BOST-NeRIF 调研结果压成可执行项目包：选题优先级、最小毕业版本、数据需求、代码需求、两周起步、三个月预研、补课路径和师兄沟通话术。最后更新：2026-07-09。</p>
+    <div class="grid">
+      <div class="card metric"><b>A</b><span>首选：NeRIF/BOST 鲁棒性主线。</span></div>
+      <div class="card metric"><b>A+F</b><span>最稳组合：重构闭环 + 位移/数据质量控制。</span></div>
+      <div class="card metric"><b>B/C</b><span>数据明确后升级：PIV-BOST 或 4D BOST 子问题。</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice">
+      <h3>一句话定题建议</h3>
+      <p>毕业设计题目优先定为 <strong>“面向少视角背景纹影层析的神经隐式折射率场重构与鲁棒性分析”</strong>。第一月先做 synthetic BOST + 传统 baseline + 简化 NeRIF；如果何远哲师兄给真实 BOST/PIV-BOST/4D 数据，再把同一套 pipeline 升级成真实数据接口、位移质量报告、PIV 误差补偿或 4D 低秩时序子模块。</p>
+    </section>
+
+    <h2>选题漏斗</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>师兄反馈</th>
+          <th>应选路线</th>
+          <th>题目表述</th>
+          <th>第一月交付</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>师兄说先贴 NeRIF/BOST，真实数据晚点再给。</td>
+          <td><span class="tag core">A</span></td>
+          <td>少视角 BOST 的神经隐式折射率场重构与鲁棒性分析。</td>
+          <td>合成 phantom、forward projection、传统 baseline、coordinate MLP、view/noise/capacity 曲线。</td>
+        </tr>
+        <tr>
+          <td>师兄说真实图像质量、位移场和坏视角更痛。</td>
+          <td><span class="tag core">A+F</span></td>
+          <td>面向 BOST/NeRIF 的重构鲁棒性与输入位移质量控制。</td>
+          <td>reference/deformed background 质量报告、位移置信度、bad-region mask、重投影误差。</td>
+        </tr>
+        <tr>
+          <td>师兄愿意给 PIV-BOST 同步样例。</td>
+          <td><span class="tag blue">B</span></td>
+          <td>基于 BOST 折射率场的 PIV 速度测量折射误差补偿与误差传播分析。</td>
+          <td>OpenPIV / synthetic particle pair baseline，补偿前后速度误差图，raw/correlation/vector 三层接口。</td>
+        </tr>
+        <tr>
+          <td>师兄明确希望接 4D BOST，但不要求完整复现。</td>
+          <td><span class="tag gold">C</span></td>
+          <td>四维背景纹影层析中的低秩时序先验与重构一致性评价。</td>
+          <td>动态 phantom、逐帧 baseline、rank/noise/frame-count 扫描、temporal consistency 指标。</td>
+        </tr>
+        <tr>
+          <td>师兄说组里最缺可复现实验管理和自动出图。</td>
+          <td><span class="tag blue">D/G</span></td>
+          <td>面向 OERF BOST/NeRIF 数据的参数扫描、质量控制与自动报告工具。</td>
+          <td>manifest、实验 registry、图表生成、失败样本索引、HTML report。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>A 路线执行包</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>最小毕业版本</h3>
+        <ul>
+          <li>自建 3D 折射率 phantom：Gaussian blob、jet-like plume、flame-like shell 至少三类。</li>
+          <li>生成 5/7/9/13 视角 BOS-like displacement 或 line-integral projection。</li>
+          <li>传统 baseline 至少包含 FBP/SART/LSQR/TV 中一种；写清它只是数学对照，不等同真实 BOST 全物理模型。</li>
+          <li>简化 NeRIF：coordinate MLP 或 Fourier-feature MLP，输入坐标输出折射率/密度标量。</li>
+          <li>扫 view count、noise、mask、field capacity、positional encoding，并输出固定格式图表。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>论文贡献写法</h3>
+        <ul>
+          <li>不是声称提出新大模型，而是给 OERF/He 主线做可复现 baseline 和鲁棒性图谱。</li>
+          <li>回答“什么时候神经隐式场比体素/正则化 baseline 更稳，什么时候不值得用”。</li>
+          <li>把 synthetic -> open BOS dataset -> OERF 样例数据的迁移接口设计清楚。</li>
+          <li>把失败案例写出来：坏视角、mask 错、几何误差、噪声过大、网络容量不足。</li>
+        </ul>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>模块</th>
+          <th>必须文件/代码</th>
+          <th>验收图</th>
+          <th>对应文献</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Forward model</td>
+          <td><code>phantom.py</code>、<code>project_bos.py</code>、view geometry JSON。</td>
+          <td>phantom 切片、每视角 displacement/projection、重投影检查。</td>
+          <td>Raffel BOS、UBOST、NeRIF、Open BOS dataset。</td>
+        </tr>
+        <tr>
+          <td>Traditional baseline</td>
+          <td>SART/LSQR/TV wrapper、统一输入输出、运行日志。</td>
+          <td>baseline reconstruction、误差切片、runtime 表。</td>
+          <td>ART/SART、Kak & Slaney、TV-min CT、ASTRA/scikit-image。</td>
+        </tr>
+        <tr>
+          <td>NeRIF-style MLP</td>
+          <td>coordinate sampler、MLP、projection loss、regularization、checkpoint。</td>
+          <td>训练曲线、重构切片、view/noise/capacity 曲线。</td>
+          <td>NeRIF、NeDF、NRIP、Fourier Features、SIREN、NIRT。</td>
+        </tr>
+        <tr>
+          <td>Quality report</td>
+          <td>manifest validator、mask/ROI checker、bad-view score、HTML export。</td>
+          <td>输入健康报告、重投影残差热图、失败样本图库。</td>
+          <td>BOS uncertainty、depth-of-field model、wavefront aberration、BOST system-error bridge。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>B/C/F 升级规则</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>B：PIV-BOST</h3>
+        <p>只有在拿到 PIV 图像对、PIV 参数或速度场时升级。若只有最终速度场，就做 velocity-field error propagation；若有 raw particle image，才做 image-layer dewarping。</p>
+        <div class="tag-row">
+          <span class="tag blue">OpenPIV</span>
+          <span class="tag blue">particle image</span>
+          <span class="tag blue">velocity error</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>C：4D BOST</h3>
+        <p>只拆低秩时序、rank scan、temporal consistency、可视化和数据清洗。不要承诺本科完整复现 ACM TOG 4D BOST。</p>
+        <div class="tag-row">
+          <span class="tag gold">rank scan</span>
+          <span class="tag gold">dynamic phantom</span>
+          <span class="tag gold">temporal metric</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>F：位移质量控制</h3>
+        <p>无论 A/B/C 哪条线，F 都能作为工具副线：位移估计、光流 benchmark、bad-region mask 和输入健康报告会直接提高真实数据可用性。</p>
+        <div class="tag-row">
+          <span class="tag core">Farneback</span>
+          <span class="tag core">OpenPIV</span>
+          <span class="tag core">confidence</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>两周开工清单</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>天数</th>
+          <th>学习</th>
+          <th>代码/图表</th>
+          <th>留下给师兄的问题</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Day 1-2</td>
+          <td>BOS/BOST 观测链：折射率、Gladstone-Dale、背景位移、视角几何。</td>
+          <td>画出 “RI field -> deflection -> displacement -> reconstruction” 链条图。</td>
+          <td>组内真实数据中 displacement 是怎么得到的？DaVis、OpenPIV、光流还是自写算法？</td>
+        </tr>
+        <tr>
+          <td>Day 3-4</td>
+          <td>反问题 baseline：Radon/FBP/SART/LSQR/TV。</td>
+          <td>做 2D/3D phantom + sparse projection baseline。</td>
+          <td>何远哲论文或组内 baseline 里，传统方法到底是哪一种？</td>
+        </tr>
+        <tr>
+          <td>Day 5-7</td>
+          <td>NeRIF/NeDF/NRIP：坐标网络、projection loss、encoding、mask。</td>
+          <td>最小 coordinate MLP 训练闭环，先不追论文级性能。</td>
+          <td>组内更关心 L2/SSIM/CC/PSNR，还是重投影误差和物理一致性？</td>
+        </tr>
+        <tr>
+          <td>Day 8-10</td>
+          <td>位移估计/PIV 基础：PIVlab/OpenPIV、Farneback、RAFT-PIV。</td>
+          <td>做 synthetic particle pair 或 speckle background displacement benchmark。</td>
+          <td>PIV-BOST 补偿应该放在 raw image、correlation/displacement，还是 velocity vector 层？</td>
+        </tr>
+        <tr>
+          <td>Day 11-14</td>
+          <td>4D/时序：low-rank、DMD、tensor factorization、temporal smoothness。</td>
+          <td>阅读现有六轴/交叉结果，复核 operating map、regret 和 field/mass trade-off。</td>
+          <td>交叉实验之后，4D BOST 最适合本科继续做无真值 rank selector、bias/sampling 阈值、数据清洗还是时序指标？</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>补课路径</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>模块</th>
+          <th>先学到什么程度</th>
+          <th>最优资料入口</th>
+          <th>和毕设的连接</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>流体力学</td>
+          <td>连续介质、欧拉/拉格朗日、NS 方程物理项、涡量、层流/湍流直觉。</td>
+          <td><a href="./learning_library/index.html">教材/讲义库</a>中的 MIT OCW / Kundu / Panton 路线。</td>
+          <td>知道折射率/密度场为什么有空间结构，读懂 jet/plume/flame 的图。</td>
+        </tr>
+        <tr>
+          <td>光学诊断</td>
+          <td>折射、成像、针孔/薄透镜、景深、光线偏折、BOS/schlieren/shadowgraph 差异。</td>
+          <td>BOS review、Raffel 2015、NASA BOS review、BOST system-error bridge。</td>
+          <td>把 “图像位移” 和 “折射率梯度/密度场” 连起来。</td>
+        </tr>
+        <tr>
+          <td>反问题/层析</td>
+          <td>forward operator、ill-posedness、regularization、SART/LSQR/TV、validation。</td>
+          <td>Kak & Slaney、scikit-image Radon、classical tomography baseline bridge。</td>
+          <td>写清传统 baseline 和 NeRIF 的区别，不把网络当黑盒。</td>
+        </tr>
+        <tr>
+          <td>神经场/科学机器学习</td>
+          <td>coordinate MLP、Fourier features、SIREN、hash/grid encoding、physics/data loss。</td>
+          <td>NeRIF、NeDF、NRIP、Fourier Features、SIREN、Neural Fields survey。</td>
+          <td>实现简化 NeRIF，并设计 encoding/capacity 消融。</td>
+        </tr>
+        <tr>
+          <td>PIV/图像位移</td>
+          <td>cross-correlation、window size、overlap、validation、光流、速度误差。</td>
+          <td>PIVlab、OpenPIV、Farneback、RAFT-PIV、PIV optical distortion correction。</td>
+          <td>支撑 B/F 路线，把 BOST 位移质量接到速度误差。</td>
+        </tr>
+        <tr>
+          <td>工程复现</td>
+          <td>manifest、配置管理、日志、指标表、图表脚本、HTML report。</td>
+          <td>first-month board、code/data reuse dashboard、learning log 模板。</td>
+          <td>让毕设不止有想法，而是每周有可运行产物。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>数据请求模板</h2>
+    <section class="notice warning">
+      <h3>向师兄要数据时不要笼统说“给点数据”</h3>
+      <p>更好的说法是：我想先接一份最小样例，验证 loader、几何、mask、位移和重投影检查是否正确；不需要完整数据，也不需要公开权限。</p>
+    </section>
+    <div class="grid two">
+      <div class="card">
+        <h3>BOST/NeRIF 最小样例</h3>
+        <ul>
+          <li>每个视角的 reference / deformed background 或已提取 displacement field。</li>
+          <li>view geometry：相机位置、视线方向、像素尺寸、背景距离、放大率或等效几何参数。</li>
+          <li>mask/ROI、单位说明、坐标系定义、flow-off/flow-on 对应关系。</li>
+          <li>一张参考切片、旧 baseline 结果或重投影误差口径。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>PIV-BOST / 4D 升级样例</h3>
+        <ul>
+          <li>PIV：raw image pair、dt、pixel-to-mm、window/overlap、已有 velocity field。</li>
+          <li>BOST：同步帧编号、折射率/梯度/位移场、PIV 平面位置。</li>
+          <li>4D：3-10 帧小片段、帧率、view order、同步信息、已有 rank/重构参数。</li>
+          <li>权限：哪些图可以写进本科论文，哪些只能组内汇报。</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>放弃与降级规则</h2>
+    <ul>
+      <li>如果必须完整搭实验台才能开始，降级为 synthetic/open data + 数据接口工具。</li>
+      <li>如果真实 PIV-BOST 只有最终速度场，没有 raw image，不承诺 image-layer dewarping。</li>
+      <li>如果 4D BOST 代码/数据不可用，不承诺完整复现，只做低秩时序 toy 和指标工具。</li>
+      <li>如果某条 OERF 方向很强但不接 He/BOST 数据，例如计算光谱仪、等离子体、金属颗粒机理，就放到背景或备选，不抢主线。</li>
+      <li>如果外部论文 PDF 只能通过 WebVPN/订阅拿到，只进入本机私有库，公开网页保留 DOI/出版社入口。</li>
+    </ul>
+
+    <h2>会前 90 秒说法</h2>
+    <section class="notice">
+      <p>师兄好，我想把毕设尽量贴近您的 BOST/NeRIF/PIV-BOST/4D BOST 方向。我的首选是先做少视角 BOST 的神经隐式折射率场重构与鲁棒性分析：用合成数据完成传统 baseline 和 NeRIF-style 最小闭环，扫视角数、噪声、mask、网络容量和重投影误差。如果您方便给一小份真实 BOST 或 PIV-BOST 样例，我会把同一套流程接到真实数据上，优先做数据 loader、位移质量报告、baseline 对比和可视化。4D BOST 我暂时不承诺完整复现，只想拆一个低秩时序或参数扫描子问题。您觉得这条主线是否贴合组里需求？第一月我交付哪三张图最有用？</p>
+    </section>
+  </main>
+
+  <footer>
+    公开页面只放开放 PDF、DOI、出版社入口和本人分析；WebVPN/订阅 PDF 只进入本机私有库。
+  </footer>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

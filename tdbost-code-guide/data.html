@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="TDBOST fuel 与 spray 数据目录、JSON 字段、NumPy 位移数组和相机光线关系。" />
+  <title>TDBOST 数据说明 | OERF 毕设导航</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主内容</a>
+  <header class="page-width">
+    <nav class="top-nav" aria-label="页面导航">
+      <a href="../index.html">OERF 研究总站</a>
+      <a href="../operator-learning/">算子学习主页</a>
+      <a href="./">TDBOST 代码导读</a>
+      <a href="./data.html" aria-current="page">数据说明</a>
+      <a href="./audit.html">运行审计</a>
+      <a class="nav-source" href="https://github.com/Hyz617/TDBOST" target="_blank" rel="noreferrer">师兄原仓库</a>
+    </nav>
+  </header>
+
+  <main id="main" class="article">
+    <div class="eyebrow">Data Contract</div>
+    <h1>一条 BOS 训练数据到底是什么？</h1>
+    <p class="lead">代码不会直接把一张普通 RGB 图片交给模型。它把背景点、相机位姿、时间和二维偏移整理成一条条带物理意义的光线样本。</p>
+
+    <section class="article-card">
+      <h2>公开目录中能看见什么</h2>
+      <table class="article-table">
+        <thead><tr><th>数据集</th><th>训练帧元数据</th><th>测试帧元数据</th><th>完整 datatensor 数组</th></tr></thead>
+        <tbody>
+          <tr><td>fuel</td><td>180</td><td>18</td><td>未随公开快照提供</td></tr>
+          <tr><td>spray</td><td>162</td><td>18</td><td>未随公开快照提供</td></tr>
+        </tbody>
+      </table>
+      <p><code>sample_deflection.png</code> 是位移场示例图，不能替代训练时读取的 NumPy 数组。</p>
+    </section>
+
+    <section class="article-card">
+      <h2>JSON 中的一帧</h2>
+      <pre><code>{
+  "file_path": "./train/datatensor_170.npy",
+  "rotation": 8,
+  "time": 0.5,
+  "transform_matrix": [[...], [...], [...], [...]]
+}</code></pre>
+      <ul>
+        <li><code>file_path</code>：该帧的 NumPy 数组路径。</li>
+        <li><code>rotation</code>：相机或观察角度编号。</li>
+        <li><code>time</code>：归一化时间。</li>
+        <li><code>transform_matrix</code>：4×4 相机位姿矩阵。</li>
+      </ul>
+    </section>
+
+    <section class="article-card">
+      <h2>NumPy 每一行怎样被解释</h2>
+      <table class="article-table">
+        <thead><tr><th>列</th><th>代码中的角色</th><th>需要向师兄确认</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>背景点横坐标</td><td>像素单位、坐标原点</td></tr>
+          <tr><td>1</td><td>背景点纵坐标</td><td>正方向、坐标原点</td></tr>
+          <tr><td>2</td><td>第一位移通道</td><td>是否为 u/x 位移及其单位</td></tr>
+          <tr><td>3</td><td>第二位移通道</td><td>是否为 v/y 位移及其单位</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="article-card">
+      <h2>从像素到训练样本</h2>
+      <div class="flow-list">
+        <div class="flow-row"><span class="flow-number">1</span><div><h3>像素 + 相机内参</h3><p>像素减去主点，再除以焦距，得到相机坐标系中的观察方向。</p></div></div>
+        <div class="flow-row"><span class="flow-number">2</span><div><h3>相机外参</h3><p>用 4×4 位姿矩阵把方向和相机中心变到世界坐标。</p></div></div>
+        <div class="flow-row"><span class="flow-number">3</span><div><h3>拼成训练输入</h3><p><code>rays = [origin_x, origin_y, origin_z, direction_x, direction_y, direction_z]</code>。</p></div></div>
+        <div class="flow-row"><span class="flow-number">4</span><div><h3>附上监督信息</h3><p>同一行的后两列作为真实 u/v 位移，再附上 time 和 w2c。</p></div></div>
+      </div>
+      <div class="notice">
+        <strong>变量名提醒</strong>
+        代码中的 <code>all_rgbs</code> 沿用了 NeRF 风格命名，但在这条 BOS 仿真主线中实际保存的是二维偏移，不是普通 RGB 颜色。
+      </div>
+      <p><a class="button primary" href="./?file=dataloader%2FBOS_dataset.py">打开 BOSDataset 中文导读</a></p>
+    </section>
+  </main>
+
+  <footer class="page-width">
+    <p>数据单位、坐标正方向、相机标定来源和 datatensor 列定义应以作者说明为准。</p>
+  </footer>
+</body>
+</html>

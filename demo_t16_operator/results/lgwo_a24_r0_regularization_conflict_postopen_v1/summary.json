@@ -1,0 +1,593 @@
+{
+  "claim_boundary": {
+    "algorithm_superiority": false,
+    "breakthrough": false,
+    "experimental_oerf_measurement_used": false,
+    "experimental_volumetric_truth_used": false,
+    "learned_stopping_model_trained": false,
+    "new_regularized_algorithm_implemented": false,
+    "new_solver_run": false,
+    "postopen_descriptive_analysis": true,
+    "real_bost_generalization": false
+  },
+  "discrepancy_selector_summary": [
+    {
+      "case_count": 24,
+      "mean_field_gain_vs_k24_percent": -0.009722427266445814,
+      "mean_heldout_b_residual_ratio_vs_k24": 1.0006710504622662,
+      "mean_selected_iteration": 23.75,
+      "selected_iteration_iqr": 0.0,
+      "split": "test_iid",
+      "unique_selected_iteration_count": 2
+    },
+    {
+      "case_count": 24,
+      "mean_field_gain_vs_k24_percent": -0.004910717026069769,
+      "mean_heldout_b_residual_ratio_vs_k24": 1.0002802981900736,
+      "mean_selected_iteration": 23.875,
+      "selected_iteration_iqr": 0.0,
+      "split": "test_family_ood",
+      "unique_selected_iteration_count": 2
+    },
+    {
+      "case_count": 24,
+      "mean_field_gain_vs_k24_percent": -0.35338274975893286,
+      "mean_heldout_b_residual_ratio_vs_k24": 1.0146325840983934,
+      "mean_selected_iteration": 16.333333333333332,
+      "selected_iteration_iqr": 4.0,
+      "split": "test_noise_ood",
+      "unique_selected_iteration_count": 10
+    },
+    {
+      "case_count": 24,
+      "mean_field_gain_vs_k24_percent": -0.004766199118640195,
+      "mean_heldout_b_residual_ratio_vs_k24": 1.0003490359378842,
+      "mean_selected_iteration": 23.75,
+      "selected_iteration_iqr": 0.0,
+      "split": "test_geometry_ood",
+      "unique_selected_iteration_count": 2
+    },
+    {
+      "case_count": 24,
+      "mean_field_gain_vs_k24_percent": -0.3249816861196845,
+      "mean_heldout_b_residual_ratio_vs_k24": 1.0128086946318564,
+      "mean_selected_iteration": 16.75,
+      "selected_iteration_iqr": 2.25,
+      "split": "test_joint_ood",
+      "unique_selected_iteration_count": 9
+    },
+    {
+      "case_count": 24,
+      "mean_field_gain_vs_k24_percent": -0.02412364541280552,
+      "mean_heldout_b_residual_ratio_vs_k24": 1.001113130969875,
+      "mean_selected_iteration": 23.375,
+      "selected_iteration_iqr": 1.0,
+      "split": "test_exact_operator_control",
+      "unique_selected_iteration_count": 4
+    }
+  ],
+  "evidence_scope": "POSTOPEN_RECOMPUTATION_FROM_SEALED_PUBLIC_PSU_GEOMETRY_WITH_DETERMINISTIC_ANALYTIC_REACTION_FIELDS_AND_SYNTHETIC_NOISE",
+  "interpretation": {
+    "closed_route": "Do not train an instance-specific early-stopping network on the current 24-step trajectory: the primary truth-field oracle selects k=24 for every case and offers no useful stopping labels.",
+    "metric_warning": "Front top-10 F1 is not interchangeable with gradient relative-L2; front localization can improve while global gradient error worsens.",
+    "next_testable_route": "Compare explicit H1/Sobolev, TV or edge-aware superiorization, and a safeguarded hybrid path under the same A/A^T budget before learning any controller.",
+    "sharpened_mechanism": "The same primary paths improve field relative-L2 while worsening gradient relative-L2. Every mean checkpoint remains Pareto-efficient for those two metrics, so the next candidate must alter the path or regularizer rather than merely choose an existing checkpoint."
+  },
+  "primary_path_conflict_gate": {
+    "test_family_ood": {
+      "all_24_cases_gradient_nondecreasing": true,
+      "all_24_mean_checkpoints_are_field_gradient_pareto": true,
+      "mean_field_best_is_k24": true,
+      "mean_gradient_best_is_k1": true
+    },
+    "test_iid": {
+      "all_24_cases_gradient_nondecreasing": true,
+      "all_24_mean_checkpoints_are_field_gradient_pareto": true,
+      "mean_field_best_is_k24": true,
+      "mean_gradient_best_is_k1": true
+    }
+  },
+  "primary_path_conflict_gate_pass": true,
+  "schema_version": "lgwo-a24-r0-regularization-conflict-postopen-1.0",
+  "source_package": {
+    "checkpoints_per_case": 24,
+    "input_file_sha256": {
+      "aggregate.csv": "d3c6322d2ef9528a2f1b7c18efa8e11a7146ac5b3439a85bf90beed31b3559d2",
+      "summary.json": "e7251f268f1fcd7ea740d4c9560f27edca00da3958e247fe3046516e07c053df",
+      "trajectory_rows.csv": "27c3adfff328db566b948acfb257c1930473f2593209965e6df8779fc7eb9713"
+    },
+    "input_manifest_sha256": "1d5f5389edb367683d629c802bb6be3bd758963a5fbc4f351f1bb226fed10ac5",
+    "trajectory_cases": 168,
+    "trajectory_rows": 4032
+  },
+  "split_summary": [
+    {
+      "bootstrap_mean_field_improvement_k1_to_k24_95_interval_percent": [
+        6.222608817396488,
+        7.139121786498607
+      ],
+      "bootstrap_mean_gradient_degradation_k1_to_k24_95_interval_percent": [
+        27.675391171186668,
+        31.642140500057693
+      ],
+      "case_count": 24,
+      "field_k24_better_than_k1_case_count": 24,
+      "field_nonincreasing_full_path_case_count": 24,
+      "gradient_k1_better_than_k24_case_count": 24,
+      "gradient_nondecreasing_full_path_case_count": 24,
+      "mean_curve_field_best_iteration": 24,
+      "mean_curve_front_f1_best_iteration": 23,
+      "mean_curve_gradient_best_iteration": 1,
+      "mean_field_gradient_pareto_iterations": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "mean_paired_field_improvement_k1_to_k24_percent": 6.693830918674102,
+      "mean_paired_front_f1_improvement_k1_to_k24_percent": 10.9918814545042,
+      "mean_paired_gradient_degradation_k1_to_k24_percent": 29.58784226030525,
+      "per_case_field_oracle_iteration_counts": {
+        "24": 24
+      },
+      "per_case_front_f1_oracle_iteration_counts": {
+        "1": 1,
+        "2": 3,
+        "3": 2,
+        "8": 2,
+        "13": 1,
+        "15": 1,
+        "19": 2,
+        "20": 1,
+        "22": 3,
+        "23": 5,
+        "24": 3
+      },
+      "per_case_gradient_oracle_iteration_counts": {
+        "1": 24
+      },
+      "split": "validation"
+    },
+    {
+      "bootstrap_mean_field_improvement_k1_to_k24_95_interval_percent": [
+        5.930217975199936,
+        6.895858944058921
+      ],
+      "bootstrap_mean_gradient_degradation_k1_to_k24_95_interval_percent": [
+        29.34491284173834,
+        32.6418672670972
+      ],
+      "case_count": 24,
+      "field_k24_better_than_k1_case_count": 24,
+      "field_nonincreasing_full_path_case_count": 24,
+      "gradient_k1_better_than_k24_case_count": 24,
+      "gradient_nondecreasing_full_path_case_count": 24,
+      "mean_curve_field_best_iteration": 24,
+      "mean_curve_front_f1_best_iteration": 22,
+      "mean_curve_gradient_best_iteration": 1,
+      "mean_field_gradient_pareto_iterations": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "mean_paired_field_improvement_k1_to_k24_percent": 6.405110018605204,
+      "mean_paired_front_f1_improvement_k1_to_k24_percent": 14.844271047688943,
+      "mean_paired_gradient_degradation_k1_to_k24_percent": 30.961176005293385,
+      "per_case_field_oracle_iteration_counts": {
+        "24": 24
+      },
+      "per_case_front_f1_oracle_iteration_counts": {
+        "1": 2,
+        "2": 3,
+        "5": 2,
+        "6": 1,
+        "7": 1,
+        "9": 1,
+        "12": 1,
+        "18": 1,
+        "21": 2,
+        "22": 3,
+        "23": 2,
+        "24": 5
+      },
+      "per_case_gradient_oracle_iteration_counts": {
+        "1": 24
+      },
+      "split": "test_iid"
+    },
+    {
+      "bootstrap_mean_field_improvement_k1_to_k24_95_interval_percent": [
+        6.480545868679976,
+        7.613808430106824
+      ],
+      "bootstrap_mean_gradient_degradation_k1_to_k24_95_interval_percent": [
+        20.55686242755601,
+        26.916926916850503
+      ],
+      "case_count": 24,
+      "field_k24_better_than_k1_case_count": 24,
+      "field_nonincreasing_full_path_case_count": 24,
+      "gradient_k1_better_than_k24_case_count": 24,
+      "gradient_nondecreasing_full_path_case_count": 24,
+      "mean_curve_field_best_iteration": 24,
+      "mean_curve_front_f1_best_iteration": 24,
+      "mean_curve_gradient_best_iteration": 1,
+      "mean_field_gradient_pareto_iterations": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "mean_paired_field_improvement_k1_to_k24_percent": 7.06524671052044,
+      "mean_paired_front_f1_improvement_k1_to_k24_percent": 13.821810174748732,
+      "mean_paired_gradient_degradation_k1_to_k24_percent": 23.802857900523595,
+      "per_case_field_oracle_iteration_counts": {
+        "24": 24
+      },
+      "per_case_front_f1_oracle_iteration_counts": {
+        "1": 1,
+        "2": 1,
+        "9": 2,
+        "16": 1,
+        "17": 1,
+        "18": 1,
+        "19": 4,
+        "21": 2,
+        "22": 2,
+        "23": 2,
+        "24": 7
+      },
+      "per_case_gradient_oracle_iteration_counts": {
+        "1": 24
+      },
+      "split": "test_family_ood"
+    },
+    {
+      "bootstrap_mean_field_improvement_k1_to_k24_95_interval_percent": [
+        6.05212458035365,
+        6.735941590030268
+      ],
+      "bootstrap_mean_gradient_degradation_k1_to_k24_95_interval_percent": [
+        28.63820451526508,
+        33.698682521080116
+      ],
+      "case_count": 24,
+      "field_k24_better_than_k1_case_count": 24,
+      "field_nonincreasing_full_path_case_count": 20,
+      "gradient_k1_better_than_k24_case_count": 24,
+      "gradient_nondecreasing_full_path_case_count": 24,
+      "mean_curve_field_best_iteration": 24,
+      "mean_curve_front_f1_best_iteration": 16,
+      "mean_curve_gradient_best_iteration": 1,
+      "mean_field_gradient_pareto_iterations": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "mean_paired_field_improvement_k1_to_k24_percent": 6.406701408808369,
+      "mean_paired_front_f1_improvement_k1_to_k24_percent": 9.774940339764862,
+      "mean_paired_gradient_degradation_k1_to_k24_percent": 31.1582220491467,
+      "per_case_field_oracle_iteration_counts": {
+        "21": 2,
+        "22": 2,
+        "24": 20
+      },
+      "per_case_front_f1_oracle_iteration_counts": {
+        "1": 2,
+        "2": 2,
+        "3": 2,
+        "4": 1,
+        "6": 1,
+        "7": 1,
+        "8": 3,
+        "13": 1,
+        "14": 1,
+        "15": 2,
+        "16": 1,
+        "17": 1,
+        "18": 2,
+        "20": 1,
+        "21": 1,
+        "23": 1,
+        "24": 1
+      },
+      "per_case_gradient_oracle_iteration_counts": {
+        "1": 24
+      },
+      "split": "test_noise_ood"
+    },
+    {
+      "bootstrap_mean_field_improvement_k1_to_k24_95_interval_percent": [
+        4.828872138769871,
+        5.864897819298081
+      ],
+      "bootstrap_mean_gradient_degradation_k1_to_k24_95_interval_percent": [
+        24.802731052658817,
+        29.797938801278733
+      ],
+      "case_count": 24,
+      "field_k24_better_than_k1_case_count": 24,
+      "field_nonincreasing_full_path_case_count": 24,
+      "gradient_k1_better_than_k24_case_count": 24,
+      "gradient_nondecreasing_full_path_case_count": 24,
+      "mean_curve_field_best_iteration": 24,
+      "mean_curve_front_f1_best_iteration": 17,
+      "mean_curve_gradient_best_iteration": 1,
+      "mean_field_gradient_pareto_iterations": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "mean_paired_field_improvement_k1_to_k24_percent": 5.3292161226277335,
+      "mean_paired_front_f1_improvement_k1_to_k24_percent": 8.864024347605547,
+      "mean_paired_gradient_degradation_k1_to_k24_percent": 27.205250018479692,
+      "per_case_field_oracle_iteration_counts": {
+        "24": 24
+      },
+      "per_case_front_f1_oracle_iteration_counts": {
+        "1": 7,
+        "2": 3,
+        "3": 2,
+        "4": 1,
+        "5": 1,
+        "7": 1,
+        "14": 1,
+        "17": 1,
+        "19": 1,
+        "23": 4,
+        "24": 2
+      },
+      "per_case_gradient_oracle_iteration_counts": {
+        "1": 24
+      },
+      "split": "test_geometry_ood"
+    },
+    {
+      "bootstrap_mean_field_improvement_k1_to_k24_95_interval_percent": [
+        5.2859238799070765,
+        6.242920750196582
+      ],
+      "bootstrap_mean_gradient_degradation_k1_to_k24_95_interval_percent": [
+        22.520304916922836,
+        28.77719433951714
+      ],
+      "case_count": 24,
+      "field_k24_better_than_k1_case_count": 24,
+      "field_nonincreasing_full_path_case_count": 24,
+      "gradient_k1_better_than_k24_case_count": 24,
+      "gradient_nondecreasing_full_path_case_count": 24,
+      "mean_curve_field_best_iteration": 24,
+      "mean_curve_front_f1_best_iteration": 16,
+      "mean_curve_gradient_best_iteration": 1,
+      "mean_field_gradient_pareto_iterations": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "mean_paired_field_improvement_k1_to_k24_percent": 5.786752434828514,
+      "mean_paired_front_f1_improvement_k1_to_k24_percent": 10.339821145637712,
+      "mean_paired_gradient_degradation_k1_to_k24_percent": 25.54130379476023,
+      "per_case_field_oracle_iteration_counts": {
+        "24": 24
+      },
+      "per_case_front_f1_oracle_iteration_counts": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "6": 1,
+        "10": 1,
+        "12": 1,
+        "15": 1,
+        "16": 3,
+        "17": 3,
+        "18": 2,
+        "19": 1,
+        "20": 3,
+        "21": 3,
+        "23": 1,
+        "24": 1
+      },
+      "per_case_gradient_oracle_iteration_counts": {
+        "1": 24
+      },
+      "split": "test_joint_ood"
+    },
+    {
+      "bootstrap_mean_field_improvement_k1_to_k24_95_interval_percent": [
+        6.092985650590668,
+        7.002905477885402
+      ],
+      "bootstrap_mean_gradient_degradation_k1_to_k24_95_interval_percent": [
+        25.955372048535235,
+        30.962094123644707
+      ],
+      "case_count": 24,
+      "field_k24_better_than_k1_case_count": 24,
+      "field_nonincreasing_full_path_case_count": 24,
+      "gradient_k1_better_than_k24_case_count": 24,
+      "gradient_nondecreasing_full_path_case_count": 24,
+      "mean_curve_field_best_iteration": 24,
+      "mean_curve_front_f1_best_iteration": 24,
+      "mean_curve_gradient_best_iteration": 1,
+      "mean_field_gradient_pareto_iterations": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "mean_paired_field_improvement_k1_to_k24_percent": 6.546010277405863,
+      "mean_paired_front_f1_improvement_k1_to_k24_percent": 10.639160799495205,
+      "mean_paired_gradient_degradation_k1_to_k24_percent": 28.440031273594645,
+      "per_case_field_oracle_iteration_counts": {
+        "24": 24
+      },
+      "per_case_front_f1_oracle_iteration_counts": {
+        "2": 4,
+        "3": 3,
+        "4": 1,
+        "5": 1,
+        "6": 2,
+        "7": 1,
+        "12": 1,
+        "13": 1,
+        "15": 1,
+        "16": 1,
+        "17": 2,
+        "18": 1,
+        "19": 1,
+        "20": 2,
+        "23": 1,
+        "24": 1
+      },
+      "per_case_gradient_oracle_iteration_counts": {
+        "1": 24
+      },
+      "split": "test_exact_operator_control"
+    }
+  ],
+  "status": "VALID_POSTOPEN_SYNTHETIC_FIELD_GRADIENT_PATH_CONFLICT"
+}

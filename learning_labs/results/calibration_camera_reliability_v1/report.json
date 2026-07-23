@@ -1,0 +1,917 @@
+{
+  "schema_version": "oerf-calibration-camera-reliability-screen-1.0",
+  "status": "POSTOPEN_CAMERA_RELIABILITY_WEIGHT_REPLAY_NO_GO",
+  "evidence_class": "OPENED_SYNTHETIC_LEDGER_LORO_CAMERA_RELIABILITY_ONLY",
+  "purpose": "postopen_test_of_bounded_camera_consensus_weights_for_calibration_fallback_power",
+  "timeline": {
+    "designed_after_v2_results_were_opened": true,
+    "leave_one_rig_out_is_not_fresh_or_external_validation": true,
+    "result_is_development_replay_only": true
+  },
+  "input_contract": {
+    "input_directory": "learning_labs/results/calibration_mismatch_v2",
+    "deployment_stage_input_hashes": {
+      "camera_fold_scores.csv": "171aac3079509adac91f41652ad32a12ef21d185ca3d2801cfe8949fa1c8efda",
+      "checksums.sha256": "36cdd582986079ef96dd1276d1fb930ed4025a94fa33738b4c7d922af92624b6"
+    },
+    "evaluator_stage_input_hashes": {
+      "report.json": "1e9c210d0f4c919cec677ec25f8818e61f890898417d6672f015a8b628c5e554",
+      "case_metrics.csv": "d49c3a0b3d6f3b0e0b7494df16191ee32438dadd6c73a037085eb318376b94cf",
+      "candidate_curves.csv": "fc178d3eb00dc6758292cc41c32b7cc616edf3db51dda18e874351d256ffddee",
+      "camera_fold_scores.csv": "171aac3079509adac91f41652ad32a12ef21d185ca3d2801cfe8949fa1c8efda",
+      "calibration_mismatch_lab.png": "267a50836d85756c6420d067000822f5af2a9f5f7f484afbc3cfddf0149a2d4f",
+      "checksums.sha256": "36cdd582986079ef96dd1276d1fb930ed4025a94fa33738b4c7d922af92624b6"
+    },
+    "input_status": "MECHANISM_SCREEN_COMPLETE_NO_ALGORITHM_OR_REAL_DATA_CLAIM",
+    "input_evidence_class": "SYNTHETIC_3D_BOST_POSE_MISMATCH_MECHANISM_ONLY",
+    "camera_fold_row_count": 3024,
+    "field_truth_loaded_after_decisions": true,
+    "deployment_object_carries_input_report": false,
+    "deployment_stage_opens_report_json": false,
+    "deployment_stage_opens_evaluator_csv": false,
+    "selector_reads_candidate_curves_csv": false,
+    "selector_reads_case_metrics_csv": false
+  },
+  "design": {
+    "rig_count": 6,
+    "morphology_proxy_count_per_rig": 3,
+    "camera_block_count": 6,
+    "severity_count": 4,
+    "candidate_count": 7,
+    "outer_split": "leave_one_synthetic_rig_out_for_loro_weights",
+    "loro_training_rig_count": 5,
+    "loro_weight_features": "camera_improvement_vs_median_of_other_camera_improvements",
+    "weight_bounds_before_sum_normalization": [
+      0.5,
+      2.0
+    ],
+    "weight_ratio_upper_bound": 4.0,
+    "heuristic_lcb_multiplier": 2.015,
+    "regularization_is_inherited_from_v2_and_varies_slightly_by_severity": true
+  },
+  "statistical_boundary": {
+    "camera_folds_are_correlated": true,
+    "camera_folds_are_not_independent_samples": true,
+    "selection_and_gate_reuse_same_camera_scores": true,
+    "weighted_lcb_has_formal_coverage": false,
+    "camera_or_morphology_counts_must_not_inflate_rig_n": true,
+    "independent_rig_or_session_count": 6,
+    "no_confidence_interval_or_significance_claim": true
+  },
+  "deployment_visibility": {
+    "target_field_truth": false,
+    "target_clean_observation": false,
+    "target_true_geometry": false,
+    "target_mismatch_severity_as_model_feature": false,
+    "target_residual_amplitude_as_model_feature": false,
+    "target_evaluator_gain": false,
+    "noisy_camera_loco_score_surface": true,
+    "candidate_labels": true,
+    "frozen_weights_from_other_five_rigs_for_loro": true
+  },
+  "policies": [
+    "uniform_heuristic_lcb",
+    "target_local_range_heuristic_lcb",
+    "target_local_slope_heuristic_lcb",
+    "target_local_curvature_heuristic_lcb",
+    "target_local_inverse_nominal_heuristic_lcb",
+    "robust_median_uniform_gate",
+    "loro_sign_agreement_heuristic_lcb",
+    "loro_consensus_correlation_heuristic_lcb"
+  ],
+  "uniform_reproduction": {
+    "source_unique_rig_severity_decisions": 24,
+    "replay_unique_rig_severity_decisions": 24,
+    "mismatch_count": 0,
+    "exact_match": true
+  },
+  "decision_equivalence_with_uniform_fraction": {
+    "target_local_range_heuristic_lcb": 0.7916666666666666,
+    "target_local_slope_heuristic_lcb": 0.625,
+    "target_local_curvature_heuristic_lcb": 0.5833333333333334,
+    "target_local_inverse_nominal_heuristic_lcb": 0.625,
+    "robust_median_uniform_gate": 1.0,
+    "loro_sign_agreement_heuristic_lcb": 0.5,
+    "loro_consensus_correlation_heuristic_lcb": 0.5833333333333334
+  },
+  "mean_primary_camera_weights": {
+    "0": 0.17709639787400433,
+    "1": 0.19485697232779628,
+    "2": 0.08885468130649123,
+    "3": 0.16587458345515785,
+    "4": 0.17886610989125573,
+    "5": 0.19445125514529463
+  },
+  "summaries": {
+    "uniform_heuristic_lcb": {
+      "0.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 5.999999999999999,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "0.5": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 5.999999999999999,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "1.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.8549486319923681,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.16666666666666666,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.8549486319923681,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.16666666666666666,
+        "fallback_fraction": 0.8333333333333334,
+        "mean_effective_camera_count": 5.999999999999999,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.5,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "2.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 9.57664108776107,
+        "median_field_gain_percent": 7.210934631883486,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.8333333333333334,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 9.57664108776107,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.8333333333333334,
+        "fallback_fraction": 0.16666666666666666,
+        "mean_effective_camera_count": 5.999999999999999,
+        "selected_corrections": [
+          1.0,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      }
+    },
+    "target_local_range_heuristic_lcb": {
+      "0.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 5.082580101606243,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "0.5": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 5.017808301515758,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "1.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 5.31063985389925,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": -0.8549486319923681
+      },
+      "2.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 10.326211738077985,
+        "median_field_gain_percent": 8.963400237444336,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.8333333333333334,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 10.326211738077985,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.8333333333333334,
+        "fallback_fraction": 0.16666666666666666,
+        "mean_effective_camera_count": 5.068798367376719,
+        "selected_corrections": [
+          2.5,
+          2.0,
+          2.0,
+          2.0,
+          2.5,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.7495706503169153
+      }
+    },
+    "target_local_slope_heuristic_lcb": {
+      "0.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 4.9276720699360945,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "0.5": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 5.056237486956806,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "1.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 3.38038175670738,
+        "median_field_gain_percent": 2.275611777542289,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.6666666666666666,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 3.3803817567073793,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.6666666666666666,
+        "fallback_fraction": 0.3333333333333333,
+        "mean_effective_camera_count": 5.106349955776392,
+        "selected_corrections": [
+          1.0,
+          0.5,
+          0.0,
+          1.0,
+          1.5,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 2.525433124715012
+      },
+      "2.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 12.757849038017055,
+        "median_field_gain_percent": 9.512930063146761,
+        "worst_field_gain_percent": 4.243235706136702,
+        "field_improvement_fraction": 1.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 12.757849038017056,
+        "worst_rig_gain_percent": 6.86155872629169,
+        "rig_improvement_fraction": 1.0,
+        "fallback_fraction": 0.0,
+        "mean_effective_camera_count": 4.98307568012116,
+        "selected_corrections": [
+          2.5,
+          2.0,
+          2.0,
+          2.0,
+          2.5,
+          1.5
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 3.1812079502559847
+      }
+    },
+    "target_local_curvature_heuristic_lcb": {
+      "0.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 4.876298160054458,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "0.5": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.4756955817367292,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.3333333333333333,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.4756955817367292,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.3333333333333333,
+        "fallback_fraction": 0.6666666666666666,
+        "mean_effective_camera_count": 4.927829682713722,
+        "selected_corrections": [
+          0.5,
+          0.0,
+          0.0,
+          0.0,
+          0.5,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.4756955817367292
+      },
+      "1.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 4.047493118697895,
+        "median_field_gain_percent": 3.3595797678699393,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.8333333333333334,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 4.047493118697894,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.8333333333333334,
+        "fallback_fraction": 0.16666666666666666,
+        "mean_effective_camera_count": 4.918449630006092,
+        "selected_corrections": [
+          1.0,
+          0.5,
+          0.5,
+          1.0,
+          1.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 3.1925444867055273
+      },
+      "2.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 10.347371211689628,
+        "median_field_gain_percent": 9.181051291633082,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.8333333333333334,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 10.347371211689628,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.8333333333333334,
+        "fallback_fraction": 0.16666666666666666,
+        "mean_effective_camera_count": 5.143310758917405,
+        "selected_corrections": [
+          2.5,
+          0.0,
+          1.5,
+          2.0,
+          2.0,
+          1.5
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.7707301239285584
+      }
+    },
+    "target_local_inverse_nominal_heuristic_lcb": {
+      "0.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 5.160374038959911,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "0.5": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.4756955817367292,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.3333333333333333,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.4756955817367292,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.3333333333333333,
+        "fallback_fraction": 0.6666666666666666,
+        "mean_effective_camera_count": 5.343283833381453,
+        "selected_corrections": [
+          0.5,
+          0.0,
+          0.0,
+          0.0,
+          0.5,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.4756955817367292
+      },
+      "1.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 3.7253477715888557,
+        "median_field_gain_percent": 2.7038239025238497,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.8333333333333334,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 3.7253477715888557,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.8333333333333334,
+        "fallback_fraction": 0.16666666666666666,
+        "mean_effective_camera_count": 5.530342168200389,
+        "selected_corrections": [
+          1.5,
+          0.5,
+          0.5,
+          1.0,
+          1.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 2.8703991395964876
+      },
+      "2.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 10.21133192126743,
+        "median_field_gain_percent": 8.524369446923359,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.8333333333333334,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 10.211331921267428,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.8333333333333334,
+        "fallback_fraction": 0.16666666666666666,
+        "mean_effective_camera_count": 5.683253248536713,
+        "selected_corrections": [
+          2.5,
+          2.0,
+          1.5,
+          2.0,
+          2.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.6346908335063599
+      }
+    },
+    "robust_median_uniform_gate": {
+      "0.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 5.999999999999999,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "0.5": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 5.999999999999999,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "1.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.8549486319923681,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.16666666666666666,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.8549486319923681,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.16666666666666666,
+        "fallback_fraction": 0.8333333333333334,
+        "mean_effective_camera_count": 5.999999999999999,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.5,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "2.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 9.57664108776107,
+        "median_field_gain_percent": 7.210934631883486,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.8333333333333334,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 9.57664108776107,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.8333333333333334,
+        "fallback_fraction": 0.16666666666666666,
+        "mean_effective_camera_count": 5.999999999999999,
+        "selected_corrections": [
+          1.0,
+          1.5,
+          1.5,
+          2.0,
+          2.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      }
+    },
+    "loro_sign_agreement_heuristic_lcb": {
+      "0.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 5.7436010942753795,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "0.5": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.4756955817367292,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.3333333333333333,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.4756955817367292,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.3333333333333333,
+        "fallback_fraction": 0.6666666666666666,
+        "mean_effective_camera_count": 5.7436010942753795,
+        "selected_corrections": [
+          0.5,
+          0.0,
+          0.0,
+          0.0,
+          0.5,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.4756955817367292
+      },
+      "1.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 4.047493118697895,
+        "median_field_gain_percent": 3.3595797678699393,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.8333333333333334,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 4.047493118697894,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.8333333333333334,
+        "fallback_fraction": 0.16666666666666666,
+        "mean_effective_camera_count": 5.7436010942753795,
+        "selected_corrections": [
+          1.0,
+          0.5,
+          0.5,
+          1.0,
+          1.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 3.1925444867055273
+      },
+      "2.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 11.19532074886692,
+        "median_field_gain_percent": 8.963400237444336,
+        "worst_field_gain_percent": 2.6081995392356165,
+        "field_improvement_fraction": 1.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 11.19532074886692,
+        "worst_rig_gain_percent": 5.214654064733602,
+        "rig_improvement_fraction": 1.0,
+        "fallback_fraction": 0.0,
+        "mean_effective_camera_count": 5.7436010942753795,
+        "selected_corrections": [
+          2.5,
+          2.0,
+          2.0,
+          2.0,
+          2.5,
+          0.5
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 1.6186796611058494
+      }
+    },
+    "loro_consensus_correlation_heuristic_lcb": {
+      "0.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 5.7185309820159524,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "0.5": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 0.0,
+        "median_field_gain_percent": 0.0,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 0.0,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.0,
+        "fallback_fraction": 1.0,
+        "mean_effective_camera_count": 5.7185309820159524,
+        "selected_corrections": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 0.0
+      },
+      "1.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 4.047493118697895,
+        "median_field_gain_percent": 3.3595797678699393,
+        "worst_field_gain_percent": 0.0,
+        "field_improvement_fraction": 0.8333333333333334,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 4.047493118697894,
+        "worst_rig_gain_percent": 0.0,
+        "rig_improvement_fraction": 0.8333333333333334,
+        "fallback_fraction": 0.16666666666666666,
+        "mean_effective_camera_count": 5.7185309820159524,
+        "selected_corrections": [
+          1.0,
+          0.5,
+          0.5,
+          1.0,
+          1.0,
+          0.0
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 3.1925444867055273
+      },
+      "2.0": {
+        "case_count": 18,
+        "rig_count": 6,
+        "mean_field_gain_percent": 11.19532074886692,
+        "median_field_gain_percent": 8.963400237444336,
+        "worst_field_gain_percent": 2.6081995392356165,
+        "field_improvement_fraction": 1.0,
+        "field_nonworse_fraction": 1.0,
+        "mean_rig_gain_percent": 11.19532074886692,
+        "worst_rig_gain_percent": 5.214654064733602,
+        "rig_improvement_fraction": 1.0,
+        "fallback_fraction": 0.0,
+        "mean_effective_camera_count": 5.7185309820159524,
+        "selected_corrections": [
+          2.5,
+          2.0,
+          2.0,
+          2.0,
+          2.5,
+          0.5
+        ],
+        "mean_gain_delta_vs_uniform_percentage_points": 1.6186796611058494
+      }
+    }
+  },
+  "mechanism_gate": {
+    "evaluated_policy": "loro_consensus_correlation_heuristic_lcb",
+    "thresholds": {
+      "minimum_shifted_mean_field_gain_percent": 5.0,
+      "minimum_shifted_field_improvement_fraction": 0.75,
+      "worst_shifted_field_gain_percent": -5.0,
+      "zero_mismatch_mean_field_gain_percent": -5.0
+    },
+    "minimum_shifted_mean_field_gain_percent": 0.0,
+    "minimum_shifted_field_improvement_fraction": 0.0,
+    "worst_shifted_field_gain_percent": 0.0,
+    "zero_mismatch_mean_field_gain_percent": 0.0,
+    "passed": false
+  },
+  "compute_accounting": {
+    "new_forward_calls": 0,
+    "new_adjoint_calls": 0,
+    "new_reconstructions": 0,
+    "unique_input_camera_score_rows": 3024,
+    "uniform_online_selection_score_value_reads": 3024,
+    "primary_offline_loro_fit_score_value_reads": 15120,
+    "primary_online_selection_score_value_reads": 3024,
+    "primary_total_score_value_reads": 18144,
+    "same_online_physical_operator_and_reconstruction_budget": true,
+    "same_end_to_end_compute_budget": false,
+    "offline_fit_wall_time_measured": false,
+    "peak_memory_measured": false,
+    "primary_stored_float64_weight_count_per_target_rig": 6,
+    "gradient_training_performed": false,
+    "gpu_used": false,
+    "closed_form_scalar_weights_per_fold": 6
+  },
+  "claim_boundary": {
+    "fresh_evidence_claimed": false,
+    "real_bost_data_used": false,
+    "experimental_geometry_used": false,
+    "formal_safety_claimed": false,
+    "cross_rig_generalization_claimed": false,
+    "new_algorithm_success_claimed": false,
+    "neural_operator_trained": false,
+    "deeponet_or_fno_beaten": false,
+    "paper_success_claimed": false,
+    "breakthrough_claimed": false
+  },
+  "next_valid_gate": {
+    "minimum_independent_audit_rigs": 30,
+    "independent_select_and_sentinel_camera_frames_required": true,
+    "continuous_off_grid_pose_errors_required": true,
+    "unknown_error_directions_required": true,
+    "advisor_callable_and_geometry_contract_required": true
+  },
+  "reproducibility": {
+    "python_version": "3.11.5",
+    "numpy_version": "2.4.6",
+    "matplotlib_version": "3.11.0",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "source_file_sha256": "9b10dec3270e4a78507826ff5164bdbfb3ac88e4b0bdf4216613acc6cef59e3f"
+  }
+}

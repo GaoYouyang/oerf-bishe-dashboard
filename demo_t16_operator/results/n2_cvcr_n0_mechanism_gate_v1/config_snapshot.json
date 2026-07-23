@@ -1,0 +1,130 @@
+{
+  "schema": "n2-cvcr-n0-synthetic-mechanism-preregistration-1",
+  "evidence_label": "synthetic_operator_integration_mechanism_only_not_formal_n2",
+  "claim_ceiling": "This test can only establish synthetic cost-versus-error evidence for a prescribed weak-deflection finite-aperture operator. It cannot establish experimental, OERF, real-field, reconstruction, learned-operator, generalization, novelty, or publication success.",
+  "seed": 20260718,
+  "grid_size": 4,
+  "depth": 3,
+  "budgets": [
+    16,
+    32,
+    64
+  ],
+  "primary_budget": 32,
+  "replicates": 32,
+  "control_variate": {
+    "basis": "quadratic",
+    "basis_dimension": 6,
+    "folds": 2,
+    "ridge": 1e-08,
+    "residual_correction_required": true,
+    "iid_only": true
+  },
+  "reference_quadrature": {
+    "coarse_radial_order": 12,
+    "coarse_angular_order": 48,
+    "fine_radial_order": 16,
+    "fine_angular_order": 64,
+    "maximum_relative_difference": 0.003
+  },
+  "action_probes": {
+    "count": 6,
+    "seed_offset": 91000
+  },
+  "methods": [
+    "iid_mc",
+    "antithetic_mc",
+    "scrambled_sobol",
+    "sunflower_qmc",
+    "product_quadrature",
+    "cf_quadratic_cv"
+  ],
+  "product_quadrature": {
+    "16": [
+      2,
+      8
+    ],
+    "32": [
+      4,
+      8
+    ],
+    "64": [
+      4,
+      16
+    ]
+  },
+  "rigs": [
+    {
+      "id": "development_small_aperture",
+      "role": "development",
+      "angles_degrees": [
+        5.0,
+        61.0,
+        127.0
+      ],
+      "aperture_radius": 0.08,
+      "path_samples": 8,
+      "cone_u": 0.055,
+      "cone_z": 0.035,
+      "bend": 0.015
+    },
+    {
+      "id": "development_medium_aperture",
+      "role": "development",
+      "angles_degrees": [
+        17.0,
+        73.0,
+        139.0
+      ],
+      "aperture_radius": 0.15,
+      "path_samples": 8,
+      "cone_u": 0.08,
+      "cone_z": 0.06,
+      "bend": 0.04
+    },
+    {
+      "id": "audit_large_aperture",
+      "role": "audit",
+      "angles_degrees": [
+        11.0,
+        83.0,
+        151.0
+      ],
+      "aperture_radius": 0.22,
+      "path_samples": 8,
+      "cone_u": 0.11,
+      "cone_z": 0.08,
+      "bend": 0.07
+    },
+    {
+      "id": "audit_boundary_crossing",
+      "role": "audit",
+      "angles_degrees": [
+        29.0,
+        97.0,
+        163.0
+      ],
+      "aperture_radius": 0.28,
+      "path_samples": 8,
+      "cone_u": 0.13,
+      "cone_z": 0.1,
+      "bend": 0.09
+    }
+  ],
+  "gates": {
+    "minimum_pooled_operator_rmse_improvement_over_best_baseline": 0.1,
+    "minimum_each_audit_rig_operator_rmse_improvement_over_best_baseline": 0.03,
+    "maximum_paired_harm_fraction_vs_iid": 0.25,
+    "maximum_bias_to_rmse_standard_error_ratio": 2.5,
+    "maximum_normal_action_error_ratio_to_best_baseline": 1.0,
+    "maximum_internal_adjoint_relative_error": 1e-12
+  },
+  "stop_rules": [
+    "Do not tune the basis, ridge, folds, rigs, primary budget, or gates after opening the results.",
+    "Do not train a learner unless every primary mechanism gate passes.",
+    "Do not call a deterministic polynomial surrogate unbiased without the held-out residual correction.",
+    "Do not compare this forward-integration mechanism directly with DeepONet, FNO, NeRIF, or a 3-D reconstruction method.",
+    "Do not call approximately 8000 frustum integration points approximately 8000 pupil samples.",
+    "Do not convert synthetic operator RMSE into a real-field or OERF claim."
+  ]
+}

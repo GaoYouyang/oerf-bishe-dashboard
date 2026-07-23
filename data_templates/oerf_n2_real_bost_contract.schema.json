@@ -1,0 +1,379 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaoyouyang.github.io/oerf-bishe-dashboard/data_templates/oerf_n2_real_bost_contract.schema.json",
+  "title": "OERF N2 real BOST physical-mismatch contract",
+  "description": "Portable metadata contract for real BOST reconstruction experiments. Schema validity is necessary but not sufficient; semantic authorization gates are enforced separately.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "identity",
+    "provenance",
+    "field_domain",
+    "sensors",
+    "views",
+    "forward_model",
+    "operator_audit",
+    "physical_mismatch",
+    "split_contract",
+    "endpoints",
+    "permissions",
+    "claim_boundary"
+  ],
+  "properties": {
+    "schema_version": {"const": "oerf-n2-real-bost-contract-1.0"},
+    "record_kind": {
+      "enum": ["LAB_INTAKE_PLACEHOLDER", "DATASET_RECORD", "CONTRACT_TEST_FIXTURE"]
+    },
+    "identity": {"$ref": "#/$defs/identity"},
+    "provenance": {"$ref": "#/$defs/provenance"},
+    "field_domain": {"$ref": "#/$defs/fieldDomain"},
+    "sensors": {"type": "array", "items": {"$ref": "#/$defs/sensor"}},
+    "views": {"type": "array", "items": {"$ref": "#/$defs/view"}},
+    "forward_model": {"$ref": "#/$defs/forwardModel"},
+    "operator_audit": {"$ref": "#/$defs/operatorAudit"},
+    "physical_mismatch": {"$ref": "#/$defs/physicalMismatch"},
+    "split_contract": {"$ref": "#/$defs/splitContract"},
+    "endpoints": {"$ref": "#/$defs/endpoints"},
+    "permissions": {"$ref": "#/$defs/permissions"},
+    "claim_boundary": {"$ref": "#/$defs/claimBoundary"}
+  },
+  "$defs": {
+    "nonemptyString": {"type": "string", "minLength": 1},
+    "nullablePath": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "minLength": 1}
+      ],
+      "description": "Path relative to the private dataset root. Absolute paths and parent traversal are rejected by the semantic validator."
+    },
+    "nullableNumber": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "number"}
+      ]
+    },
+    "nullableDateTime": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "format": "date-time"}
+      ]
+    },
+    "nullableSha256": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      ]
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dataset_id", "case_id", "data_origin", "run_id", "session_id",
+        "condition_id", "geometry_id", "independent_unit",
+        "field_is_time_resolved", "acquisition_time_utc"
+      ],
+      "properties": {
+        "dataset_id": {"$ref": "#/$defs/nonemptyString"},
+        "case_id": {"$ref": "#/$defs/nonemptyString"},
+        "data_origin": {"enum": ["lab_real", "public_real", "synthetic_contract_test", "unknown"]},
+        "run_id": {"$ref": "#/$defs/nonemptyString"},
+        "session_id": {"$ref": "#/$defs/nonemptyString"},
+        "condition_id": {"$ref": "#/$defs/nonemptyString"},
+        "geometry_id": {"$ref": "#/$defs/nonemptyString"},
+        "independent_unit": {"enum": ["run", "session", "condition", "geometry", "unknown"]},
+        "field_is_time_resolved": {"type": "boolean"},
+        "acquisition_time_utc": {"$ref": "#/$defs/nullableDateTime"}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_class", "manifest_path", "manifest_digest_sha256",
+        "manifest_entry_count", "source_evidence_path", "verified_at_utc"
+      ],
+      "properties": {
+        "evidence_class": {"enum": ["lab_handoff", "open_dataset_manifest", "synthetic_fixture", "unknown"]},
+        "manifest_path": {"$ref": "#/$defs/nullablePath"},
+        "manifest_digest_sha256": {"$ref": "#/$defs/nullableSha256"},
+        "manifest_entry_count": {"type": "integer", "minimum": 0},
+        "source_evidence_path": {"$ref": "#/$defs/nullablePath"},
+        "verified_at_utc": {"$ref": "#/$defs/nullableDateTime"}
+      }
+    },
+    "fieldDomain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parameterization", "units", "axis_order", "grid_shape",
+        "bounds_m", "support_path", "truth_available", "truth_path",
+        "truth_provenance"
+      ],
+      "properties": {
+        "parameterization": {"enum": ["refractive_index", "density", "temperature", "normalized_scalar", "unknown"]},
+        "units": {"enum": ["dimensionless", "kg_m-3", "K", "normalized", "unknown"]},
+        "axis_order": {"enum": ["xyz", "zyx", "unknown"]},
+        "grid_shape": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "array", "prefixItems": [{"type": "integer", "minimum": 2}, {"type": "integer", "minimum": 2}, {"type": "integer", "minimum": 2}], "minItems": 3, "maxItems": 3}
+          ]
+        },
+        "bounds_m": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "array", "items": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}, "minItems": 3, "maxItems": 3}
+          ]
+        },
+        "support_path": {"$ref": "#/$defs/nullablePath"},
+        "truth_available": {"type": "boolean"},
+        "truth_path": {"$ref": "#/$defs/nullablePath"},
+        "truth_provenance": {"enum": ["independent_measurement", "validated_cfd", "analytic", "none", "unknown"]}
+      }
+    },
+    "sensor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sensor_id", "optical_channel_id", "image_shape", "pixel_pitch_m", "focal_length_m",
+        "f_number", "intrinsics_path", "extrinsics_path", "ray_bundle_path",
+        "distortion_model", "calibration_id", "calibration_version",
+        "calibration_reprojection_rmse_px"
+      ],
+      "properties": {
+        "sensor_id": {"$ref": "#/$defs/nonemptyString"},
+        "optical_channel_id": {"$ref": "#/$defs/nonemptyString"},
+        "image_shape": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "array", "prefixItems": [{"type": "integer", "minimum": 2}, {"type": "integer", "minimum": 2}], "minItems": 2, "maxItems": 2}
+          ]
+        },
+        "pixel_pitch_m": {"oneOf": [{"type": "null"}, {"type": "number", "exclusiveMinimum": 0}]},
+        "focal_length_m": {"oneOf": [{"type": "null"}, {"type": "number", "exclusiveMinimum": 0}]},
+        "f_number": {"oneOf": [{"type": "null"}, {"type": "number", "exclusiveMinimum": 0}]},
+        "intrinsics_path": {"$ref": "#/$defs/nullablePath"},
+        "extrinsics_path": {"$ref": "#/$defs/nullablePath"},
+        "ray_bundle_path": {"$ref": "#/$defs/nullablePath"},
+        "distortion_model": {"enum": ["none", "brown_conrady", "fisheye", "calibrated_lookup", "unknown"]},
+        "calibration_id": {"$ref": "#/$defs/nonemptyString"},
+        "calibration_version": {"$ref": "#/$defs/nonemptyString"},
+        "calibration_reprojection_rmse_px": {"oneOf": [{"type": "null"}, {"type": "number", "minimum": 0}]}
+      }
+    },
+    "view": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "view_id", "sensor_id", "role", "run_id", "session_id",
+        "condition_id", "geometry_id", "reference_path", "flow_on_path",
+        "displacement_path", "mask_path", "confidence_path", "timestamps_path",
+        "observation_units", "component_order", "displacement_method",
+        "background_pattern_id"
+      ],
+      "properties": {
+        "view_id": {"$ref": "#/$defs/nonemptyString"},
+        "sensor_id": {"$ref": "#/$defs/nonemptyString"},
+        "role": {"enum": ["reconstruction", "validation", "audit_locked"]},
+        "run_id": {"$ref": "#/$defs/nonemptyString"},
+        "session_id": {"$ref": "#/$defs/nonemptyString"},
+        "condition_id": {"$ref": "#/$defs/nonemptyString"},
+        "geometry_id": {"$ref": "#/$defs/nonemptyString"},
+        "reference_path": {"$ref": "#/$defs/nullablePath"},
+        "flow_on_path": {"$ref": "#/$defs/nullablePath"},
+        "displacement_path": {"$ref": "#/$defs/nullablePath"},
+        "mask_path": {"$ref": "#/$defs/nullablePath"},
+        "confidence_path": {"$ref": "#/$defs/nullablePath"},
+        "timestamps_path": {"$ref": "#/$defs/nullablePath"},
+        "observation_units": {"enum": ["pixel_displacement", "metric_deflection", "radian", "phase", "unknown"]},
+        "component_order": {"enum": ["uv", "vu", "xy", "yx", "unknown"]},
+        "displacement_method": {"$ref": "#/$defs/nonemptyString"},
+        "background_pattern_id": {"$ref": "#/$defs/nonemptyString"}
+      }
+    },
+    "forwardModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "regime", "interface", "implementation_id", "deterministic",
+        "aperture_model", "ray_bending", "optical_flow_inside_forward",
+        "normalization_id", "can_apply_forward", "can_apply_adjoint",
+        "can_jvp", "can_vjp", "can_export_tiny_matrix", "row_layout_documented"
+      ],
+      "properties": {
+        "regime": {"enum": ["straight_thin_ray", "cone_ray", "curved_ray", "unknown"]},
+        "interface": {"enum": ["explicit_matrix", "forward_adjoint", "jvp_vjp", "reprojection_only", "none"]},
+        "implementation_id": {"$ref": "#/$defs/nonemptyString"},
+        "deterministic": {"type": "boolean"},
+        "aperture_model": {"enum": ["pinhole", "cone_multi_ray", "measured_psf", "unknown"]},
+        "ray_bending": {"type": ["boolean", "null"]},
+        "optical_flow_inside_forward": {"type": ["boolean", "null"]},
+        "normalization_id": {"$ref": "#/$defs/nonemptyString"},
+        "can_apply_forward": {"type": "boolean"},
+        "can_apply_adjoint": {"type": "boolean"},
+        "can_jvp": {"type": "boolean"},
+        "can_vjp": {"type": "boolean"},
+        "can_export_tiny_matrix": {"type": "boolean"},
+        "row_layout_documented": {"type": "boolean"}
+      }
+    },
+    "auditMeasurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "relative_error"],
+      "properties": {
+        "required": {"type": "boolean"},
+        "relative_error": {"oneOf": [{"type": "null"}, {"type": "number", "minimum": 0}]}
+      }
+    },
+    "operatorAudit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dot_product", "finite_difference", "unit_scale_passed", "support_mask_passed"],
+      "properties": {
+        "dot_product": {"$ref": "#/$defs/auditMeasurement"},
+        "finite_difference": {"$ref": "#/$defs/auditMeasurement"},
+        "unit_scale_passed": {"type": ["boolean", "null"]},
+        "support_mask_passed": {"type": ["boolean", "null"]}
+      }
+    },
+    "conditionEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "condition_id", "session_id", "geometry_id", "sensor_id", "f_number",
+        "flow_off_repeat_count", "flow_off_manifest_path", "background_pattern_ids"
+      ],
+      "properties": {
+        "condition_id": {"$ref": "#/$defs/nonemptyString"},
+        "session_id": {"$ref": "#/$defs/nonemptyString"},
+        "geometry_id": {"$ref": "#/$defs/nonemptyString"},
+        "sensor_id": {"$ref": "#/$defs/nonemptyString"},
+        "f_number": {"oneOf": [{"type": "null"}, {"type": "number", "exclusiveMinimum": 0}]},
+        "flow_off_repeat_count": {"type": "integer", "minimum": 0},
+        "flow_off_manifest_path": {"$ref": "#/$defs/nullablePath"},
+        "background_pattern_ids": {"type": "array", "items": {"$ref": "#/$defs/nonemptyString"}, "uniqueItems": true}
+      }
+    },
+    "physicalMismatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "secondary", "frozen_before_audit", "evidence"],
+      "properties": {
+        "primary": {"enum": ["finite_aperture", "ray_bending", "calibration_drift", "displacement_extraction", "discretization", "combined_predeclared", "unknown"]},
+        "secondary": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "frozen_before_audit": {"type": "boolean"},
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "f_number_levels", "calibration_versions", "displacement_methods",
+            "discretization_levels", "condition_evidence", "independent_background_pattern_ids",
+            "aperture_pairing_policy", "repeated_session_ids", "paired_condition_ids",
+            "high_fidelity_forward_available", "notes"
+          ],
+          "properties": {
+            "f_number_levels": {"type": "array", "items": {"type": "number", "exclusiveMinimum": 0}, "uniqueItems": true},
+            "calibration_versions": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+            "displacement_methods": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+            "discretization_levels": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+            "condition_evidence": {"type": "array", "items": {"$ref": "#/$defs/conditionEvidence"}},
+            "independent_background_pattern_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+            "aperture_pairing_policy": {"enum": ["same_optical_channel_same_geometry", "not_applicable", "unknown"]},
+            "repeated_session_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+            "paired_condition_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+            "high_fidelity_forward_available": {"type": "boolean"},
+            "notes": {"type": "string"}
+          }
+        }
+      }
+    },
+    "splitContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "split_unit", "training_unit_ids", "tuning_unit_ids",
+        "validation_unit_ids", "audit_unit_ids", "audit_locked",
+        "audit_opened", "frozen_at_utc", "split_digest_sha256",
+        "random_frame_split_permitted"
+      ],
+      "properties": {
+        "split_unit": {"enum": ["view", "sensor", "run", "session", "condition", "geometry", "unknown"]},
+        "training_unit_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "tuning_unit_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "validation_unit_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "audit_unit_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "audit_locked": {"type": "boolean"},
+        "audit_opened": {"type": "boolean"},
+        "frozen_at_utc": {"$ref": "#/$defs/nullableDateTime"},
+        "split_digest_sha256": {"$ref": "#/$defs/nullableSha256"},
+        "random_frame_split_permitted": {"type": "boolean"}
+      }
+    },
+    "endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "direction", "truth_required"],
+      "properties": {
+        "name": {"enum": ["field_relative_l2", "field_h1", "interface_assd", "interface_hd95", "heldout_reprojection_relative_l2", "piv_velocity_error", "temporal_stability", "unknown"]},
+        "direction": {"enum": ["lower_is_better", "higher_is_better"]},
+        "truth_required": {"type": "boolean"}
+      }
+    },
+    "endpoints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "secondary", "heldout_mask_policy", "external_reference_path", "external_reference_provenance", "cost_ledger"],
+      "properties": {
+        "primary": {"$ref": "#/$defs/endpoint"},
+        "secondary": {"type": "array", "items": {"$ref": "#/$defs/endpoint"}},
+        "heldout_mask_policy": {"enum": ["fixed_before_reconstruction", "not_applicable", "unknown"]},
+        "external_reference_path": {"$ref": "#/$defs/nullablePath"},
+        "external_reference_provenance": {"enum": ["independent_measurement", "validated_cfd", "analytic", "none", "unknown"]},
+        "cost_ledger": {
+          "type": "array",
+          "items": {"enum": ["forward_calls", "adjoint_calls", "jvp_calls", "vjp_calls", "ray_samples", "wall_time", "peak_memory"]},
+          "uniqueItems": true
+        }
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "local_storage", "local_training", "group_meeting", "thesis_text",
+        "thesis_figures", "public_metadata", "public_derived_metrics",
+        "public_raw_data", "redistribution_basis"
+      ],
+      "properties": {
+        "local_storage": {"type": "boolean"},
+        "local_training": {"type": "boolean"},
+        "group_meeting": {"type": "boolean"},
+        "thesis_text": {"type": "boolean"},
+        "thesis_figures": {"type": "boolean"},
+        "public_metadata": {"type": "boolean"},
+        "public_derived_metrics": {"type": "boolean"},
+        "public_raw_data": {"type": "boolean"},
+        "redistribution_basis": {"enum": ["open_license", "written_permission", "none", "unknown"]}
+      }
+    },
+    "claimBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "real_field_truth_claim_allowed", "heldout_reprojection_is_unique_3d_truth",
+        "audit_may_select_model", "audit_may_select_stopping",
+        "synthetic_and_experimental_metrics_kept_separate"
+      ],
+      "properties": {
+        "real_field_truth_claim_allowed": {"type": "boolean"},
+        "heldout_reprojection_is_unique_3d_truth": {"type": "boolean"},
+        "audit_may_select_model": {"type": "boolean"},
+        "audit_may_select_stopping": {"type": "boolean"},
+        "synthetic_and_experimental_metrics_kept_separate": {"type": "boolean"}
+      }
+    }
+  }
+}

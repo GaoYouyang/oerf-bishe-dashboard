@@ -1,0 +1,107 @@
+{
+  "schema": "n2-pvgr-n5-d2-extreme-refinement-preregistered-1.0",
+  "candidate_id": "N2-PVGR-N5-D2-H8192-TAIL4",
+  "status": "preregistered_post_d1_selected_tail_probe_no_algorithm_authorization",
+  "parent_d1_config": "demo_t16_operator/configs/n2_pvgr_n5_d1_paired_residual_preregistered_v1.json",
+  "parent_d1_attestation": "demo_t16_operator/configs/n2_pvgr_n5_d1_paired_residual_preregistration_attestation_v1.json",
+  "parent_d1_result": "demo_t16_operator/results/n2_pvgr_n5_d1_paired_residual_v1/result.json",
+  "parent_d1_levels": "demo_t16_operator/results/n2_pvgr_n5_d1_paired_residual_v1/levels.json",
+  "parent_d1_manifest": "demo_t16_operator/results/n2_pvgr_n5_d1_paired_residual_v1/manifest.json",
+  "parent_d1_validation": "demo_t16_operator/results/n2_pvgr_n5_d1_paired_residual_v1/validation_report.json",
+  "source_config": "demo_t16_operator/configs/n2_pvgr_n0_trifidelity_development_v1.json",
+  "pre_registration_attestation": "demo_t16_operator/configs/n2_pvgr_n5_d2_extreme_refinement_attestation_v1.json",
+  "formal_output": "demo_t16_operator/results/n2_pvgr_n5_d2_extreme_refinement_v1",
+  "device": "cpu",
+  "dtype": "float64",
+  "population_count": 256,
+  "parent_step_count": 2048,
+  "new_step_counts": [
+    4096,
+    8192
+  ],
+  "selected_cells": [
+    "smooth-s1871-orientation_58-narrow__stress_1",
+    "smooth-s1871-orientation_58-wide__stress_1",
+    "smooth-s1871-orientation_58-narrow__stress_3",
+    "smooth-s1871-orientation_58-wide__stress_3"
+  ],
+  "reference_method": "paired_neumaier",
+  "monitor_methods": [
+    "raw_separate_subtraction",
+    "paired_naive",
+    "paired_pairwise",
+    "paired_neumaier",
+    "separate_neumaier_subtraction"
+  ],
+  "selection_contract": {
+    "selection_is_post_n4_and_post_d1_not_an_independent_test": true,
+    "selected_pair_ids": [
+      "p04",
+      "p05"
+    ],
+    "selected_physical_cell_count": 4,
+    "rule": "reuse_exactly_the_four_D1_cells_without_reselection"
+  },
+  "gates": {
+    "maximum_h4096_to_h8192_reference_relative_l2": 0.000625,
+    "maximum_adjacent_contraction_ratio": 0.5,
+    "maximum_h8192_raw_paired_fraction_of_final_refinement": 0.01,
+    "minimum_finite_ray_fraction": 1.0,
+    "minimum_domain_margin": 0.0,
+    "minimum_stencil_margin": 0.0,
+    "maximum_direction_norm_error": 1e-12
+  },
+  "decision_contract": {
+    "resolved_requires_every_gate_on_all_four_selected_cells": true,
+    "final_adjacent_gate_is_half_the_original_N4_1_0_00125_gate": true,
+    "contraction_gate_reuses_the_original_N4_maximum_0_5": true,
+    "richardson_and_geometric_tail_values_are_indicators_not_proofs": true,
+    "D2_does_not_reselect_cells_or_change_D1": true,
+    "D2_does_not_authorize_field_JVP_VJP_or_neural_training": true
+  },
+  "claim_authorizations": {
+    "fresh_reference": false,
+    "field_jvp_vjp": false,
+    "three_dimensional_reconstruction": false,
+    "neural_operator_training": false,
+    "neural_operator_superiority": false,
+    "real_data": false,
+    "generalization": false,
+    "paper_claim": false
+  },
+  "known_limitations": [
+    "post_N4_and_post_D1_selected_probe",
+    "only_four_smooth_s1871_cells",
+    "same_synthetic_field_and_geometry_generator_as_N4",
+    "no_experimental_noise_units",
+    "observed_contraction_does_not_prove_future_geometric_contraction",
+    "H8192_is_not_a_population_wide_or_fresh_reference",
+    "no_field_JVP_VJP_reconstruction_or_neural_training"
+  ],
+  "stopping_rules": [
+    "Do not change cells, levels, methods or gates after attestation.",
+    "If the D1 bundle, parent H2048 arrays or protocol hashes drift, stop without a D2 result.",
+    "If any selected cell misses a gate, report NOT_RESOLVED and do not average it away.",
+    "Do not call Richardson or geometric tail indicators rigorous error bounds.",
+    "A resolved D2 may only open a separately preregistered 32-cell adaptive-reference reconciliation.",
+    "Never open reconstruction, neural training, real-data, generalization or paper claims from D2."
+  ],
+  "attested_files": {
+    "config": "demo_t16_operator/configs/n2_pvgr_n5_d2_extreme_refinement_preregistered_v1.json",
+    "runner": "demo_t16_operator/run_n2_pvgr_n5_d2_extreme_refinement.py",
+    "runner_test": "demo_t16_operator/test_run_n2_pvgr_n5_d2_extreme_refinement.py",
+    "protocol": "docs/n2_pvgr_n5_d2_extreme_refinement_preregistration_2026-07-18.md",
+    "attestation_builder": "site_tools/create_n2_pvgr_n5_d2_extreme_refinement_attestation.py",
+    "result_validator": "site_tools/validate_n2_pvgr_n5_d2_extreme_refinement.py",
+    "parent_d1_config": "demo_t16_operator/configs/n2_pvgr_n5_d1_paired_residual_preregistered_v1.json",
+    "parent_d1_attestation": "demo_t16_operator/configs/n2_pvgr_n5_d1_paired_residual_preregistration_attestation_v1.json",
+    "parent_d1_result": "demo_t16_operator/results/n2_pvgr_n5_d1_paired_residual_v1/result.json",
+    "parent_d1_levels": "demo_t16_operator/results/n2_pvgr_n5_d1_paired_residual_v1/levels.json",
+    "parent_d1_manifest": "demo_t16_operator/results/n2_pvgr_n5_d1_paired_residual_v1/manifest.json",
+    "parent_d1_validation": "demo_t16_operator/results/n2_pvgr_n5_d1_paired_residual_v1/validation_report.json",
+    "paired_kernel": "demo_t16_operator/cancellation_aware_residual.py",
+    "paired_kernel_test": "demo_t16_operator/test_cancellation_aware_residual.py",
+    "source_config": "demo_t16_operator/configs/n2_pvgr_n0_trifidelity_development_v1.json",
+    "field_dependent_ray": "demo_t16_operator/field_dependent_ray.py"
+  }
+}

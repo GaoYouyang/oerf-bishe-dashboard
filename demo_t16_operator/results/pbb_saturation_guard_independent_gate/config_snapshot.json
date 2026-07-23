@@ -1,0 +1,166 @@
+{
+  "evidence_label": "pbb_saturation_guard_first_open_independent_gate",
+  "model_family": "projected_bb_base",
+  "grid_size": 8,
+  "depth": 5,
+  "train_view_angles_degrees": [
+    4,
+    29,
+    54,
+    83,
+    113,
+    143,
+    168
+  ],
+  "counts": {
+    "train": 80,
+    "validation": 20,
+    "independent_select": 28,
+    "independent_lock": 40
+  },
+  "families": {
+    "train": [
+      "gaussian",
+      "flame"
+    ],
+    "validation": [
+      "gaussian",
+      "flame"
+    ],
+    "independent_select": [
+      "expanding_kernel",
+      "jet_shear",
+      "shock_cell",
+      "interacting_fronts"
+    ],
+    "independent_lock": [
+      "interacting_fronts",
+      "jet_shear",
+      "shock_cell",
+      "expanding_kernel"
+    ]
+  },
+  "relative_noise": {
+    "train": [
+      0.015,
+      0.03,
+      0.055
+    ],
+    "validation": [
+      0.025,
+      0.05
+    ],
+    "independent_select": [
+      0.045,
+      0.085,
+      0.125
+    ],
+    "independent_lock": [
+      0.06,
+      0.11,
+      0.16
+    ]
+  },
+  "active_views": {
+    "train": [
+      4,
+      5,
+      6
+    ],
+    "validation": [
+      4,
+      5
+    ],
+    "independent_select": [
+      3,
+      4,
+      5
+    ],
+    "independent_lock": [
+      3,
+      4
+    ]
+  },
+  "camera_noise_factors": [
+    0.61,
+    0.86,
+    1.04,
+    1.3,
+    1.79,
+    0.72,
+    1.5
+  ],
+  "independent_rigs": {
+    "independent_select": {
+      "angles_degrees": [
+        10,
+        38,
+        67,
+        96,
+        126,
+        155,
+        178
+      ],
+      "path_samples": 23,
+      "cone_u": 0.09,
+      "cone_z": 0.07,
+      "bend": 0.044,
+      "correlation_fraction": 0.4,
+      "signal_fraction": 0.18,
+      "gain_drift_std": 0.01
+    },
+    "independent_lock": {
+      "angles_degrees": [
+        18,
+        46,
+        75,
+        105,
+        135,
+        164,
+        179
+      ],
+      "path_samples": 26,
+      "cone_u": 0.14,
+      "cone_z": 0.105,
+      "bend": 0.066,
+      "correlation_fraction": 0.5,
+      "signal_fraction": 0.24,
+      "gain_drift_std": 0.016
+    }
+  },
+  "model": {
+    "stages": 4,
+    "correction_width": 12,
+    "maximum_correction_ratio": 0.65,
+    "certificate_safety": 0.95,
+    "certificate_temperature": 8.0,
+    "bb_normalized_step_min": 0.2,
+    "bb_normalized_step_max": 1.8,
+    "use_saturation_gate": true
+  },
+  "training": {
+    "seeds": [
+      111,
+      112,
+      113
+    ],
+    "epochs": 120,
+    "learning_rate": 0.0015,
+    "weight_decay": 1e-06,
+    "gradient_loss_weight": 0.08,
+    "validation_every": 5
+  },
+  "numerical_baselines": {
+    "bb_normalized_step_min": 0.2,
+    "bb_normalized_step_max": 1.8
+  },
+  "data_seed": 2026073501,
+  "power_iterations": 30,
+  "lipschitz_safety_factor": 1.1,
+  "claim_gate": {
+    "minimum_mean_gain_percent": 2.0,
+    "minimum_p10_gain_percent": 0.0,
+    "maximum_harm_rate_over_1_percent": 0.05,
+    "maximum_certificate_violation_rate": 0.0
+  }
+}

@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>T16 算子学习 × 三维重建证据总页</title>
+  <link rel="icon" href="data:," />
+  <style>
+    :root {
+      --ink: #1e292f;
+      --muted: #607078;
+      --line: #d3dedd;
+      --paper: rgba(255,255,255,.96);
+      --bg: #f2f6f4;
+      --green: #176b5d;
+      --green-soft: #e8f3ef;
+      --blue: #2b6198;
+      --blue-soft: #edf3fa;
+      --gold: #896415;
+      --gold-soft: #f7f0df;
+      --rust: #9b4937;
+      --rust-soft: #faece7;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.67;
+      letter-spacing: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url("./assets/backgrounds/oerf-refractive-field.png") center / cover no-repeat;
+      opacity: .07;
+      pointer-events: none;
+    }
+    a { color: var(--blue); }
+    code, pre { font-family: "SFMono-Regular", Consolas, monospace; }
+    header, main, footer { width: min(1220px, calc(100vw - 36px)); margin: 0 auto; }
+    header { padding: 26px 0 30px; border-bottom: 1px solid var(--line); }
+    main { padding: 8px 0 40px; }
+    footer { padding: 24px 0 40px; color: var(--muted); font-size: 12px; }
+    h1, h2, h3 { line-height: 1.22; letter-spacing: 0; }
+    h1 { max-width: 1050px; margin: 18px 0 10px; font-size: 43px; }
+    h2 { margin: 0 0 10px; font-size: 28px; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    p { margin: 8px 0; }
+    section { padding: 28px 0; border-bottom: 1px solid var(--line); }
+    .lead { max-width: 1010px; color: #45565e; font-size: 17px; }
+    .topbar, .button-row, .pill-row, .segmented {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .button, .segment {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--ink);
+      background: var(--paper);
+      text-decoration: none;
+      font: inherit;
+      font-weight: 760;
+      cursor: pointer;
+    }
+    .button.primary, .segment.active { color: #fff; background: var(--green); border-color: var(--green); }
+    .metrics { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 10px; margin-top: 21px; }
+    .metric { min-height: 112px; padding: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+    .metric b { display: block; margin-bottom: 5px; color: var(--green); font-size: 26px; }
+    .metric span { color: var(--muted); font-size: 12px; }
+    .notice { padding: 18px; border: 1px solid #b9d5cd; border-left: 5px solid var(--green); border-radius: 8px; background: rgba(237,247,243,.97); }
+    .notice.warning { border-color: #ddc58f; border-left-color: var(--gold); background: rgba(250,245,232,.97); }
+    .notice.danger { border-color: #dfb8ae; border-left-color: var(--rust); background: rgba(252,240,236,.97); }
+    .pill { display: inline-flex; min-height: 26px; align-items: center; padding: 4px 8px; border: 1px solid #bed6cf; border-radius: 999px; color: var(--green); background: var(--green-soft); font-size: 12px; font-weight: 760; }
+    .pill.blue { color: var(--blue); border-color: #c7d7ea; background: var(--blue-soft); }
+    .pill.gold { color: var(--gold); border-color: #decda4; background: var(--gold-soft); }
+    .pill.rust { color: var(--rust); border-color: #e2c1b9; background: var(--rust-soft); }
+    .grid { display: grid; gap: 12px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .card { min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+    .card p, .card li { color: #4a5a62; }
+    .evidence-line { display: grid; grid-template-columns: 160px 150px 1fr 180px; gap: 0; border: 1px solid var(--line); border-bottom: 0; background: var(--paper); }
+    .evidence-line:last-child { border-bottom: 1px solid var(--line); }
+    .evidence-line > div { min-width: 0; padding: 13px; border-right: 1px solid var(--line); }
+    .evidence-line > div:last-child { border-right: 0; }
+    .evidence-line.head { color: #34464d; background: #eaf2ef; font-size: 13px; font-weight: 800; }
+    .status-good { color: var(--green); font-weight: 800; }
+    .status-mixed { color: var(--gold); font-weight: 800; }
+    .status-stop { color: var(--rust); font-weight: 800; }
+    .pipeline { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 8px; margin-top: 14px; }
+    .pipe { min-height: 156px; padding: 13px; border: 1px solid var(--line); border-top: 4px solid var(--green); border-radius: 8px; background: var(--paper); }
+    .pipe:nth-child(2), .pipe:nth-child(6) { border-top-color: var(--blue); }
+    .pipe:nth-child(3), .pipe:nth-child(7) { border-top-color: var(--gold); }
+    .pipe:nth-child(4) { border-top-color: var(--rust); }
+    .pipe b { display: block; margin-bottom: 7px; }
+    .pipe span { color: var(--muted); font-size: 12px; }
+    .equation { margin: 14px 0; padding: 16px; overflow-x: auto; border: 1px solid #c5d7dd; border-radius: 8px; color: #173a49; background: #f2f8fa; white-space: pre; font-size: 14px; }
+    .figure-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-top: 14px; }
+    figure { min-width: 0; margin: 0; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+    figure.wide { grid-column: 1 / -1; }
+    figure img { display: block; width: 100%; height: auto; border-radius: 5px; }
+    figcaption { padding: 8px 3px 2px; color: var(--muted); font-size: 12px; }
+    .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+    table { width: 100%; min-width: 820px; border-collapse: collapse; }
+    th, td { padding: 12px 13px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #34464d; background: #eaf2ef; font-size: 13px; }
+    td { color: #46575f; font-size: 14px; }
+    tr:last-child td { border-bottom: 0; }
+    .tab-panel { display: none; margin-top: 14px; }
+    .tab-panel.active { display: block; }
+    .search-row { display: grid; grid-template-columns: 1fr 210px; gap: 9px; margin: 14px 0; }
+    input, select { width: 100%; min-height: 42px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: var(--paper); font: inherit; }
+    .paper-list { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 11px; }
+    .paper { min-width: 0; padding: 15px; border: 1px solid var(--line); border-left: 4px solid var(--green); border-radius: 8px; background: var(--paper); }
+    .paper[data-kind="geometry"] { border-left-color: var(--blue); }
+    .paper[data-kind="reliability"] { border-left-color: var(--gold); }
+    .paper[data-kind="local"] { border-left-color: var(--rust); }
+    .paper b, .paper a { font-weight: 780; }
+    .paper p { color: #4b5b63; font-size: 13px; }
+    .paper small { color: var(--muted); }
+    .paper[hidden] { display: none; }
+    .gate { display: grid; grid-template-columns: 70px 1fr 150px; gap: 12px; align-items: start; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .gate:last-child { border-bottom: 0; }
+    .gate .number { color: var(--green); font-size: 25px; font-weight: 850; }
+    .gate .owner { color: var(--muted); font-size: 12px; text-align: right; }
+    .hidden-count { color: var(--muted); font-size: 13px; }
+    ol, ul { padding-left: 21px; }
+    @media (max-width: 1050px) {
+      .metrics { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .pipeline { grid-template-columns: repeat(4, minmax(0,1fr)); }
+      .evidence-line { grid-template-columns: 140px 130px 1fr; }
+      .evidence-line > div:last-child { grid-column: 1 / -1; border-top: 1px solid var(--line); text-align: left; }
+    }
+    @media (max-width: 760px) {
+      header, main, footer { width: min(100% - 22px, 1220px); }
+      h1 { font-size: 32px; }
+      h2 { font-size: 24px; }
+      .metrics, .grid.two, .grid.three, .figure-grid, .paper-list, .search-row { grid-template-columns: 1fr; }
+      .pipeline { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .evidence-line { grid-template-columns: 1fr; }
+      .evidence-line > div { border-right: 0; border-bottom: 1px solid var(--line); }
+      .evidence-line > div:last-child { grid-column: auto; border-bottom: 0; }
+      .evidence-line.head { display: none; }
+      .gate { grid-template-columns: 48px 1fr; }
+      .gate .owner { grid-column: 2; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <a class="button" href="./index.html#topics">返回选题库</a>
+      <a class="button primary" href="./topic_deep_dive.html?id=T16">T16 完整档案</a>
+      <a class="button" href="./operator_learning_bost_bridge.html">执行页</a>
+      <a class="button" href="./operator_3d_innovation_lab.html">文献实验室</a>
+      <a class="button" href="./operator-learning/">独立学习主页</a>
+      <a class="button primary" href="./general_operator_research_lab.html#n1-6-result">N1.6 最新判决</a>
+      <a class="button primary" href="./projected_bb_noise_gate_lab.html">v3k-E 噪声停止门</a>
+      <a class="button primary" href="./ridge_fno_nerif_roadmap.html">v3a 执行主页</a>
+      <a class="button primary" href="./own_algorithm_lab.html">v3b 自有算法</a>
+      <a class="button primary" href="./strong_numerical_controls_lab.html">v3k-D 强数值基线</a>
+      <a class="button" href="./he_review_portal.html">师兄审核入口</a>
+      <a class="button" href="./document_reader.html?doc=t16_geometry_nullspace_review_brief.md">一页审核材料</a>
+    </div>
+    <h1>算子学习 × 三维重建：几何、零空间与验证相机假设审计</h1>
+    <p class="lead">把“用 FNO 做三维重建”推进成可证伪证据链。最新 v3k-E 已在同一 128-call 预算下完成 BB1、BB2 与 alternating projected BB；平均加速成立，但 validation 尾部和 noise-OOD 门禁失败。研究主线因此转向 noise-aware iterative stopping，learned scalar 与 fresh confirmation 继续关闭。</p>
+    <div class="metrics">
+      <div class="metric"><b>86,823</b><span>独立 Residual/Absolute 双专家参数量。</span></div>
+      <div class="metric"><b>59.46%</b><span>support-fit 剩余误差中位于 support nullspace 的平均能量。</span></div>
+      <div class="metric"><b>0 / 3</b><span>K=4/6/8 同重建预算门槛通过数。</span></div>
+      <div class="metric"><b>88</b><span>独立测试体场；3 个 model seeds 不当作额外独立样本。</span></div>
+      <div class="metric"><b>2.26e-9</b><span>query-calibrated correction 最大 support leakage。</span></div>
+      <div class="metric"><b>1,728</b><span>M3B 几何迁移 observation cells。</span></div>
+      <div class="metric"><b>0.138640</b><span>v3k-E validation 上 wide alternating PBB 的场均相对 L2。</span></div>
+      <div class="metric"><b>128 = 128</b><span>PBB 与 fixed Landweber 的 A+Aᵀ 调用预算完全相同。</span></div>
+      <div class="metric"><b>37.5%</b><span>validation fields 中 PBB 退化超过 1% 的比例。</span></div>
+      <div class="metric"><b>-11.56%</b><span>noise-OOD 上 PBB 相对 fixed Landweber 的字段配对均值。</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="notice danger">
+        <div class="pill-row"><span class="pill blue">2026-07-18 最新增量</span><span class="pill rust">N1.6 POSTOPEN NO-GO</span><span class="pill gold">N1.7 KRYLOV REPRESENTATION NEXT</span></div>
+        <h2 style="margin-top:10px;">完整 mismatch oracle 有 +8.62% 空间，但固定低秩基和预测器都没有过门</h2>
+        <p>N1.6 在 <code>0f4ac73</code> 预提交后一次性打开 6 个 geometry clusters：可部署候选严格为 <strong>25F/24Aᵀ、零高阶调用</strong>，field <strong>+3.54%</strong>、H1 <strong>+8.24%</strong>、worst <strong>+0.17%</strong>；但相对 component damping 为 <strong>-0.18%</strong>，takeover 只有 <strong>50%</strong>。exact mismatch oracle 的 +8.62% 说明物理校正仍有 headroom；rank-4 oracle 只剩 +4.99%、raw predictor 的伴随残差反而恶化 25.36%，因此下一步转为当前 <code>A/Aᵀ</code> 生成的 per-geometry Krylov basis，先测表示上限再训练。</p>
+        <div class="button-row"><a class="button primary" href="./general_operator_research_lab.html#n1-6-result">打开聚焦研究台</a><a class="button" href="./document_reader.html?doc=docs%2Fjacru_n1_6_adjoint_low_rank_no_go_2026-07-18.md">完整判决与 N1.7</a><a class="button" href="./document_reader.html?doc=docs%2Fjacru_n1_6_advisor_review_brief_2026-07-18.md">发给师兄的一页</a><a class="button" href="./demo_t16_operator/results/jacru_n1_6_adjoint_low_rank_development_full1/summary.json">机器摘要</a></div>
+      </div>
+    </section>
+    <section>
+      <div class="notice danger" style="margin-bottom:13px;">
+        <div class="pill-row"><span class="pill blue">最新可复核增量</span><span class="pill">v3k-E</span><span class="pill rust">NOISE GATE FAILED</span><span class="pill gold">LEARNED STOP BLOCKED</span></div>
+        <h2 style="margin-top:10px;">PBB 已吃到同预算加速；现在必须解决半收敛</h2>
+        <p>validation-only 选择的 FNO-start alternating PBB 在同样 <strong>64A + 64Aᵀ</strong> 下，把绝对 field L2 从 fixed Landweber 的 <strong>0.147083</strong> 降到 <strong>0.138640</strong>；按字段配对平均 gain 为 <strong>+1.401%</strong>。但 validation 有 <strong>37.5%</strong> fields 伤害超过 1%，noise-OOD 平均 <strong>-11.561%</strong>，而 family/joint OOD 为 +14.832%/+12.285%。data objective 基本继续下降，所以核心不是优化不够快，而是缺少部署可用的噪声停止规则。</p>
+        <div class="button-row"><a class="button primary" href="./projected_bb_noise_gate_lab.html">打开 v3k-E 学习实验室</a><a class="button" href="./document_reader.html?doc=v3k_e_projected_bb_review_brief.md">师兄一页 brief</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_e_projected_bb_gate%2Fv3k_e_projected_bb_dashboard.json">机器报告</a></div>
+      </div>
+      <div class="notice" style="margin-bottom:13px;">
+        <div class="pill-row"><span class="pill blue">后续证据已完成</span><span class="pill">v3b</span></div>
+        <h2 style="margin-top:10px;">当前主线已切换为开发自有算法并公平击败 FNO/DeepONet</h2>
+        <p>本页保留 v1-v2d 的假设淘汰过程。v3a 建立 ridge-FNO 强基线；v3b 又完成同输入 U-Net/FNO/DeepONet/自有 ray-set benchmark。自有候选在 K=4/6/8 平均均为正，但只有 K=6 通过开发门槛。请从自有算法竞技场继续，不要把历史 0/3 或一次小正均值误读成最终结论。</p>
+        <div class="button-row"><a class="button primary" href="./own_algorithm_lab.html">打开自有算法竞技场</a><a class="button" href="./document_reader.html?doc=own_algorithm_review_brief.md">给师兄的 v3b brief</a><a class="button" href="./ridge_fno_nerif_roadmap.html">基础与 NeRIF 路线</a></div>
+      </div>
+      <div class="notice danger">
+        <div class="pill-row"><span class="pill rust">当前路径停止</span><span class="pill blue">PILOT ONLY</span><span class="pill gold">training-mask mismatch</span></div>
+        <h2 style="margin-top:10px;">直接使用新增视角，明显强于标定当前 learned-null direction</h2>
+        <p><strong>v2d 判决：</strong>fixed query 下，<code>S∪Q direct</code> 相对 S-only 提升约 <code>15.25% / 10.51% / 12.69%</code>，learned correction 只有 <code>1.12% / 1.37% / 1.18%</code>；相对 direct 分别为 <code>-20.17% / -13.07% / -15.11%</code>。旧 checkpoint 的训练 mask 未匹配新协议，且 88 fields 已参与开发，所以这是“当前路径失败”的 exploratory audit，不是所有修正算法的最终否定。</p>
+      </div>
+      <div class="button-row" style="margin-top:13px;">
+        <a class="button primary" href="./operator_fair_budget_dashboard.html">打开 v2d 同预算判决</a>
+        <a class="button" href="./document_reader.html?doc=fair_camera_budget_review_brief.md">打开师兄 brief</a>
+        <a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fquery_calibrated_nullspace%2Fquery_calibrated_report.json">机器可读报告</a>
+        <a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_query_calibrated_nullspace.py">正式脚本</a>
+      </div>
+    </section>
+
+    <section id="evidence">
+      <div class="pill-row"><span class="pill">证据阶梯</span><span class="pill rust">负结果保留</span></div>
+      <h2 style="margin-top:10px;">每一步都改变了下一步，而不是只加模型</h2>
+      <div class="evidence-line head"><div>阶段</div><div>结果</div><div>研究判断</div><div>状态</div></div>
+      <div class="evidence-line"><div><strong>共享 dual v1</strong><br /><small>43,485 params</small></div><div>router ≈ 0.5</div><div>两个输出有互补，但共享过强使 query router 无法区分。</div><div class="status-stop">停止放大自由 router</div></div>
+      <div class="evidence-line"><div><strong>独立 dual v2a</strong><br /><small>86,823 params</small></div><div>support-fit regret -1.364%</div><div>分支差异提高约 59%；闭式融合在 79.17% 单元达到或优于最佳端点。</div><div class="status-good">保留为强基线</div></div>
+      <div class="evidence-line"><div><strong>oracle null audit</strong><br /><small>88 fields × 3 seeds</small></div><div>+38.626%</div><div>结构性 headroom 很大，但方向来自 field truth；seed 重复不算额外物理样本。</div><div class="status-mixed">上界，不可部署</div></div>
+      <div class="evidence-line"><div><strong>learned null v2b</strong><br /><small>13,105 params</small></div><div>-0.126%</div><div>硬投影稳定训练并守住支撑观测，但没有学到可靠方向。</div><div class="status-stop">保留负对照</div></div>
+      <div class="evidence-line"><div><strong>query-calibrated v2c</strong><br /><small>adaptive candidate view</small></div><div>+0.746%</div><div>在 88 个独立测试体场的当前 synthetic forward 中有微弱正均值，但选角、拟合与验收还未完全分离。</div><div class="status-mixed">暂停，先补致命对照</div></div>
+      <div class="evidence-line"><div><strong>controlled-budget v2d</strong><br /><small>Q_fit 80° / Q_audit 60°</small></div><div>0 / 3 pass</div><div>19,008 行方法结果、20,000 次分层 bootstrap；direct 明显更强，K=6 max-gap 仅均值接近且高伤害。</div><div class="status-stop">停止当前 checkpoint 路径</div></div>
+      <div class="evidence-line"><div><strong>matched direct v3a</strong><br /><small>96 fields × 3 seeds</small></div><div>ridge-FNO 3 / 3 pass</div><div>相对 ridge 平均改善 21.54% / 19.68% / 16.91%；FBP-lift FNO 三预算均退化。</div><div class="status-good">进入 NeRIF warm-start</div></div>
+      <div class="evidence-line"><div><strong>ray-set v3b</strong><br /><small>同输入、同训练预算</small></div><div>1 / 3 pass</div><div>自有候选只在 K=6 过门；K=4/8 与 thin-front 暴露不稳定，不能据小均值宣称胜出。</div><div class="status-mixed">保留机制线索</div></div>
+      <div class="evidence-line"><div><strong>geometry v3j-kB</strong><br /><small>global → voxel ray-set</small></div><div>pairing 有害</div><div>局部 ray values 有用，但正确角度配对不如 shuffled-pairing；停止 attention 扩参。</div><div class="status-stop">转伴随残差</div></div>
+      <div class="evidence-line"><div><strong>adjoint v3k-C</strong><br /><small>40 validation fields</small></div><div>+44.60%</div><div>geometry-normalized projected Landweber 成为新强基线；它是数值控制，不是创新模型。</div><div class="status-good">必须击败</div></div>
+      <div class="evidence-line"><div><strong>strong controls v3k-D</strong><br /><small>0 / 128 / 193 calls</small></div><div>0.247739 → 0.147083 → 0.143855</div><div>逐场二次步长只比固定步多 1.24%，noise-OOD 反向；先补 projected BB，再开 learned scalar。</div><div class="status-mixed">学习模型仍阻断</div></div>
+      <div class="evidence-line"><div><strong>projected BB v3k-E</strong><br /><small>180 val cells / 128 calls</small></div><div>0.147083 → 0.138640</div><div>同预算 alternating PBB 均值加速成立；37.5% validation tail、noise-OOD -11.56%，转 whitened discrepancy 与 residual-whiteness stopping。</div><div class="status-stop">噪声停止门失败</div></div>
+    </section>
+
+    <section id="model">
+      <div class="pill-row"><span class="pill">候选模型</span><span class="pill blue">range/null decomposition</span></div>
+      <h2 style="margin-top:10px;">QC-SNCO 的归档结构：用于解释失败，不再默认升级</h2>
+      <div class="pipeline">
+        <div class="pipe"><b>01 位移与几何</b><span>多视角 BOS displacement、ray/camera geometry、mask 与置信度。</span></div>
+        <div class="pipe"><b>02 物理提升</b><span>伴随反投影或固定预算迭代重建，生成可解释粗场。</span></div>
+        <div class="pipe"><b>03 独立专家</b><span>Residual 专家修正 lift；Absolute 专家在 lift 受损时重建。</span></div>
+        <div class="pipe"><b>04 support-fit</b><span>只用支撑相机，闭式求两专家连线上的最小残差解。</span></div>
+        <div class="pipe"><b>05 null direction</b><span>FNO 预测修正并投影到 declared support nullspace。</span></div>
+        <div class="pipe"><b>06 query alpha</b><span>当前按样本在多个候选角中选敏感视角；正式实验必须拆成预先固定 Q_fit 与独立 Q_audit。</span></div>
+        <div class="pipe"><b>07 NeRIF 精化</b><span>可选：用快速算子结果初始化连续场，比较总时间和失败率。</span></div>
+      </div>
+      <div class="equation">A_S d_N ≈ 0
+alpha_Q = clip( &lt;A_Q d_N, y_Q - A_Q x_S&gt; / ||A_Q d_N||², 0, 1 )
+x_hat = x_S + alpha_Q d_N</div>
+      <div class="notice warning">
+        <h3>原创性边界</h3>
+        <p>variable projection、null-space learning、short-solver + learned correction、query validation 都有各自前例。潜在贡献只能来自它们在 BOST 物理、相机分工、跨几何审计和 NeRIF 接口中的新组合与实证；正式命名前还要继续做相似方法检索。</p>
+      </div>
+    </section>
+
+    <section id="results">
+      <div class="pill-row"><span class="pill">v2c 正式结果</span><span class="pill blue">3 seeds</span><span class="pill gold">5 domains</span></div>
+      <h2 style="margin-top:10px;">adaptive query 在当前 closure 中给出微弱正均值</h2>
+      <div class="figure-grid">
+        <figure class="wide">
+          <img src="./demo_t16_operator/results/query_calibrated_nullspace/t16_query_calibrated_improvement.png" alt="Field improvement from query-calibrated nullspace methods across five domains" />
+          <figcaption>全量 learned null 在 IID、view、joint OOD 退化；单 query 和 all-query line search 在五域均值都转为正。柱高是相对每个样本 support-fit 的平均改善。</figcaption>
+        </figure>
+        <figure>
+          <img src="./demo_t16_operator/results/query_calibrated_nullspace/t16_query_calibrated_field_heatmap.png" alt="Field errors for support-fit and query-calibrated methods" />
+          <figcaption>绝对 field relative L2 仍显示 family OOD 约 0.69，不能被不足 1% 的相对收益掩盖。</figcaption>
+        </figure>
+        <figure>
+          <img src="./demo_t16_operator/results/query_calibrated_nullspace/t16_query_calibrated_alpha.png" alt="Distributions of calibrated correction amplitude" />
+          <figcaption>幅度经常落在 0 或 1，说明修正方向质量仍粗糙；field-oracle 与 query alpha 的差距是下一步学习问题。</figcaption>
+        </figure>
+      </div>
+      <div class="table-wrap" style="margin-top:14px;">
+        <table>
+          <thead><tr><th>方法</th><th>总体 field improvement</th><th>优于 base</th><th>p10</th><th>可部署输入</th><th>判断</th></tr></thead>
+          <tbody>
+            <tr><td>full learned null</td><td>-0.126%</td><td>60.98%</td><td>-4.955%</td><td>无额外视角</td><td>均值负且尾部风险大。</td></tr>
+            <tr><td>one-query accept/reject</td><td>+0.677%</td><td>44.32%</td><td>-0.023%</td><td>1 query view</td><td>简单、尾部稳，但大量样本回退 base。</td></tr>
+            <tr><td><strong>one-query line search</strong></td><td><strong>+0.746%</strong></td><td>52.65%</td><td>-0.338%</td><td>逐样本从候选角选 1 view</td><td>adaptive pilot；不是固定一台相机的部署结论。</td></tr>
+            <tr><td>all-query line search</td><td>+0.956%</td><td>65.53%</td><td>0.000%</td><td>全部保留视角</td><td>更强，但额外观测成本更高。</td></tr>
+            <tr><td>field-oracle alpha</td><td>+1.212%</td><td>81.82%</td><td>0.000%</td><td>3D truth</td><td>只用于审计 learned direction。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="geometry">
+      <div class="pill-row"><span class="pill">M3B 几何迁移</span><span class="pill blue">nested LOGO</span><span class="pill rust">UQ fallback warning</span></div>
+      <h2 style="margin-top:10px;">几何不是唯一风险，fallback 也必须单独验</h2>
+      <p>六类角度布局上的无泄漏 leave-one-geometry-out selector 把固定 rank 3 的 mean/p95 regret `1.918% / 5.519%` 降到 `0.273% / 1.196%`，但 morphology、dynamics、noise 比 geometry 更主导失败。combined UQ 近乎失效；prediction std 能筛高风险，却不能证明 full-rank fallback 安全。</p>
+      <div class="figure-grid">
+        <figure>
+          <img src="./demo_m3b/results/geometry_uq/m3b_geometry_selector_regret.png" alt="Leave-one-geometry-out selector regret" />
+          <figcaption>无 held-out camera 的 LOGO selector 已足够强；额外 held-out 并没有稳定降低 regret。</figcaption>
+        </figure>
+        <figure>
+          <img src="./demo_m3b/results/geometry_uq/m3b_geometry_failure_concentration.png" alt="Failure concentration across morphology dynamics and noise" />
+          <figcaption>高风险主要集中在 blobs、chirp 与高噪声组合，而非单一相机布局。</figcaption>
+        </figure>
+        <figure class="wide">
+          <img src="./demo_m3b/results/geometry_uq/m3b_geometry_risk_coverage.png" alt="Risk coverage curves for geometry-transfer uncertainty scores" />
+          <figcaption>prediction std 有筛查价值；combined score 不可靠。T16 必须把 reject、support-fit fallback、query camera 分开做系统风险审计。</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="review-tabs">
+      <div class="segmented" role="tablist" aria-label="审核视图">
+        <button class="segment active" type="button" data-tab="gates" aria-selected="true">投稿门槛</button>
+        <button class="segment" type="button" data-tab="questions" aria-selected="false">师兄决策</button>
+        <button class="segment" type="button" data-tab="scope" aria-selected="false">停止条件</button>
+      </div>
+      <div class="tab-panel active" data-panel="gates">
+        <div class="gate"><div class="number">01</div><div><strong>同总相机预算</strong><p>在固定 K 个视角下比较 S-only、S∪Q 直接 SIRT/TV/NeRIF/support-fit 与 S+Q correction；否则只能说多一个测量有用。</p></div><div class="owner">首要红队对照</div></div>
+        <div class="gate"><div class="number">02</div><div><strong>Q_fit / Q_audit 隔离</strong><p>选角和 alpha 拟合只使用 Q_fit；最终 held-out reprojection 使用从未参与选择和拟合的 Q_audit。</p></div><div class="owner">数据契约</div></div>
+        <div class="gate"><div class="number">03</div><div><strong>固定与 adaptive query</strong><p>预先固定一台相机、随机选角、最大角度间隔、当前 energy policy 分开报告，并计入同步与标定成本。</p></div><div class="owner">query VOI</div></div>
+        <div class="gate"><div class="number">04</div><div><strong>独立 forward/geometry</strong><p>训练与验收不共用同一线性矩阵；加入 cone rays、有限光圈、标定误差、曲光线或至少独立高分辨率 forward。</p></div><div class="owner">消除 inverse crime</div></div>
+        <div class="gate"><div class="number">05</div><div><strong>强基线与方向上界</strong><p>加 non-learning query-null update、random/PCA/branch-difference/learned/truth direction，以及等参数单宽 FNO 和 independent ensemble。</p></div><div class="owner">机制消融</div></div>
+        <div class="gate"><div class="number">06</div><div><strong>真实无真值验收</strong><p>开放/OERF 数据、重复实验、独立 audit camera、边界/积分量、PIV 补偿效果至少组成两条独立证据。</p></div><div class="owner">论文级验证</div></div>
+      </div>
+      <div class="tab-panel" data-panel="questions">
+        <div class="grid two">
+          <div class="card"><h3>任务定义</h3><ol><li>“算子学习”是位移到三维折射率，还是三维/四维场演化？</li><li>真实最重要输出是 refractive index、density、front location 还是 PIV correction？</li></ol></div>
+          <div class="card"><h3>相机分工</h3><ol><li>在相同总相机数下，是否允许分出 Q_fit 和独立 Q_audit？</li><li>预先固定的 query 位置应由哪个实验决定？</li></ol></div>
+          <div class="card"><h3>最小数据包</h3><ol><li>能否提供 displacement、geometry、mask、标定和 baseline reconstruction？</li><li>哪些文件可公开，哪些只能本地？</li></ol></div>
+          <div class="card"><h3>验收偏好</h3><ol><li>师兄更看重 field error、held-out reprojection、速度还是失败率？</li><li>本科主线是否必须含真实样例？</li></ol></div>
+        </div>
+      </div>
+      <div class="tab-panel" data-panel="scope">
+        <div class="notice danger"><h3>不满足就降级，不靠调参拖延</h3><ul><li>query residual 不能稳定预测改进：保留 support-fit，把 learned null 降为负结果。</li><li>等参数单模型追平：贡献转向 query-calibrated physics correction，不写 dual-expert superiority。</li><li>真实几何下 null projector 过贵：改局部线性化、Krylov projection 或 soft constrained correction。</li><li>operator warm-start 不降低 NeRIF 总耗时/失败率：不列主贡献。</li><li>family OOD 继续约 0.69：先解决薄前缘数据/局部高频表示，不用小幅相对收益遮盖。</li></ul></div>
+      </div>
+    </section>
+
+    <section id="literature">
+      <div class="pill-row"><span class="pill">扩展文献模块</span><span class="pill blue">组件依据</span><span class="pill gold">迁移边界</span></div>
+      <h2 style="margin-top:10px;">文献只回答“哪个组件有依据”</h2>
+      <div class="search-row">
+        <input id="paperSearch" type="search" placeholder="检索题名、组件或提取任务" aria-label="检索参考文献" />
+        <select id="paperKind" aria-label="选择文献组件">
+          <option value="all">全部组件</option>
+          <option value="geometry">可变传感与几何</option>
+          <option value="null">反演与零空间</option>
+          <option value="local">局部高频与薄前缘</option>
+          <option value="reliability">校准与拒答</option>
+        </select>
+      </div>
+      <p class="hidden-count" id="paperCount">显示 19 篇</p>
+      <div class="paper-list" id="paperList">
+        <article class="paper" data-kind="geometry"><small>可变传感</small><h3><a href="https://arxiv.org/abs/2205.11404">Variable-Input Deep Operator Networks</a></h3><p>提取随机数量/位置传感器、permutation invariance；用于相机数与位置跨样本变化。不能把 PDE sensor 直接等同 BOS ray。</p></article>
+        <article class="paper" data-kind="geometry"><small>几何 transformer</small><h3><a href="https://proceedings.mlr.press/v202/hao23c.html">GNOT</a></h3><p>提取 irregular mesh、multiple inputs 与 geometric gating；只有固定 latent lift 失效后才值得增加复杂度。</p></article>
+        <article class="paper" data-kind="geometry"><small>operator-INR 桥</small><h3><a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/df54302388bbc145aacaa1a54a4a5933-Abstract-Conference.html">CORAL</a></h3><p>coordinate neural fields 处理任意采样与几何；服务 operator 到 NeRIF 的连续 query 接口。</p></article>
+        <article class="paper" data-kind="geometry"><small>任意点谱变换</small><h3><a href="https://proceedings.mlr.press/v235/lingsch24a.html">Beyond Regular Grids</a></h3><p>直接 spectral transform 处理非等距点；可作为 GINO 之外的几何消融，不是本科第一版默认。</p></article>
+        <article class="paper" data-kind="geometry"><small>latent query</small><h3><a href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/39f6d5c2e310a5a629dcfc4d517aa0d1-Abstract-Conference.html">Latent Neural Operator</a></h3><p>Physics-Cross-Attention 把几何点映射到 latent，再任意位置解码；适合大规模不规则 query。</p></article>
+        <article class="paper" data-kind="geometry"><small>operator-INR</small><h3><a href="https://proceedings.mlr.press/v235/pal24a.html">Implicit Representations via Operator Learning</a></h3><p>从函数空间重写 INR；用于解释 operator prior 与 per-instance neural field 的连接，不直接提供 BOST forward。</p></article>
+        <article class="paper" data-kind="null"><small>数学核心</small><h3><a href="https://arxiv.org/abs/1806.06137">Deep Null Space Learning</a></h3><p>提取 `Id-A⁺A` 修正与 data-consistency 恒等式；真实 BOST 下要审计 nonlinear/changing geometry。</p></article>
+        <article class="paper" data-kind="null"><small>自监督 range/null</small><h3><a href="https://doi.org/10.1109/TPAMI.2024.3359087">Siamese Cooperative Learning</a></h3><p>range/null 双网络与 incomplete measurements；最贴近 support-fit + null correction 的学习分解。</p></article>
+        <article class="paper" data-kind="null"><small>粗解 + 修正</small><h3><a href="https://arxiv.org/abs/2507.18875">Neural Correction Operator</a></h3><p>有限步 L-BFGS reconstruction + learned correction；为 physics lift 后修正提供直接邻域先例，EIT 结果不可迁移。</p></article>
+        <article class="paper" data-kind="null"><small>显式一致性</small><h3><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6760673/">MoDL</a></h3><p>学习先验与数值 data-consistency 交替；提醒不要让自由网络隐式承担全部 forward physics。</p></article>
+        <article class="paper" data-kind="null"><small>谱步长来源</small><h3><a href="https://doi.org/10.1093/imanum/8.1.141">Barzilai–Borwein two-point steps</a></h3><p>BB1/BB2 是无约束两点谱步长基线，不是 BOST 新算法；v3k-E 用它审计固定步是否过于保守。</p></article>
+        <article class="paper" data-kind="null"><small>投影优化强对照</small><h3><a href="https://doi.org/10.1137/S1052623497330963">Nonmonotone Spectral Projected Gradient</a></h3><p>SPG 的理论与数值结果包含 GLL 非单调线搜索；不能把其收敛结论转移给无 line-search 的 clipped PBB，下一轮需完整记 trial A calls。</p></article>
+        <article class="paper" data-kind="reliability"><small>含噪迭代停止</small><h3><a href="https://doi.org/10.1137/1.9781611974942.ch13">Hanke: The Discrepancy Principle</a></h3><p>解释 noisy Landweber 必须早停；BOST 版本要把 white-noise norm 推进到 pixel/ray confidence 与 covariance-aware residual。</p></article>
+        <article class="paper" data-kind="local"><small>全局 + 局部</small><h3><a href="https://arxiv.org/abs/2402.16845">Localized Integral and Differential Kernels</a></h3><p>针对 FNO 过平滑加入局部 integral/differential kernels；只在 thin-front 失败被独立确认后升级。</p></article>
+        <article class="paper" data-kind="local"><small>极少视角高频</small><h3><a href="https://openreview.net/forum?id=2wAZjAtK16">DuFal</a></h3><p>global/local frequency 双路 sparse CBCT；可借高频融合结构，但 X-ray attenuation 与 BOS deflection 不同。</p></article>
+        <article class="paper" data-kind="reliability"><small>函数级 conformal</small><h3><a href="https://openreview.net/forum?id=cGpegxy12T">Calibrated UQ for Operator Learning</a></h3><p>risk-controlling quantile operator 与 finite-sample functional calibration；需要独立 calibration set。</p></article>
+        <article class="paper" data-kind="reliability"><small>DeepONet 区间</small><h3><a href="https://arxiv.org/abs/2402.15406">Conformalized-DeepONet</a></h3><p>split conformal prediction intervals；用于最终 uncertainty band，不替代 BOST failure mechanism。</p></article>
+        <article class="paper" data-kind="reliability"><small>拒答</small><h3><a href="https://proceedings.mlr.press/v97/geifman19a.html">SelectiveNet</a></h3><p>风险-覆盖与 reject option 的基础；M3B 已证明一个 fallback 好不好必须独立验证。</p></article>
+        <article class="paper" data-kind="local"><small>守恒结构</small><h3><a href="https://proceedings.mlr.press/v235/liu24p.html">ClawNO</a></h3><p>自动满足 conservation laws；只有后续输出速度/演化场且物理方程明确时再用，折射率场不能随意套 divergence-free。</p></article>
+      </div>
+      <div class="button-row" style="margin-top:14px;">
+        <a class="button primary" href="./document_reader.html?doc=operator_3d_reconstruction_literature_atlas.md">完整文献图谱</a>
+        <a class="button" href="./paper_library/index.html?q=neural%20operator">论文库检索</a>
+        <a class="button" href="./document_reader.html?doc=operator_3d_source_audit_2026_07_10.md">来源审计</a>
+      </div>
+    </section>
+
+    <section id="artifacts">
+      <div class="pill-row"><span class="pill">复现资产</span><span class="pill blue">checksummed</span></div>
+      <h2 style="margin-top:10px;">代码、结果与审核材料</h2>
+      <div class="grid three">
+        <div class="card"><h3>T16 v2a-v2c</h3><p>独立专家、oracle null audit、matched free/null corrector、query-calibrated line search。</p><a href="./document_reader.html?doc=demo_t16_operator%2FREADME.md">代码工作台</a></div>
+        <div class="card"><h3>M3B geometry/UQ</h3><p>六几何 nested LOGO、风险覆盖、失败集中度与 checksum validator。</p><a href="./document_reader.html?doc=demo_m3b%2FREADME.md">M3B 工作台</a></div>
+        <div class="card"><h3>师兄审核包</h3><p>一句话题目、证据边界、八个关键问题与投稿级缺口。</p><a href="./document_reader.html?doc=t16_geometry_nullspace_review_brief.md">打开 brief</a></div>
+        <div class="card"><h3>v3k-E PBB 与噪声停止门</h3><p>13 个公式测试、180 个 validation cells、6,720 行样本指标、跨域尾部与同预算调用审计。</p><a href="./projected_bb_noise_gate_lab.html">打开学习实验室</a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Gao Youyang · OERF 毕业设计前期研究 · 2026-07-15。所有数值均绑定当前 synthetic development 配置；真实 OERF 表现与 fresh blind confirmation 待验证。</footer>
+
+  <script>
+    document.querySelectorAll('[data-tab]').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('[data-tab]').forEach((item) => {
+          const active = item === button;
+          item.classList.toggle('active', active);
+          item.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        document.querySelectorAll('[data-panel]').forEach((panel) => {
+          panel.classList.toggle('active', panel.dataset.panel === button.dataset.tab);
+        });
+      });
+    });
+
+    const paperSearch = document.getElementById('paperSearch');
+    const paperKind = document.getElementById('paperKind');
+    const paperCount = document.getElementById('paperCount');
+    const papers = Array.from(document.querySelectorAll('#paperList .paper'));
+    const filterPapers = () => {
+      const query = paperSearch.value.trim().toLowerCase();
+      const kind = paperKind.value;
+      let shown = 0;
+      papers.forEach((paper) => {
+        const visible = (kind === 'all' || paper.dataset.kind === kind)
+          && (!query || paper.textContent.toLowerCase().includes(query));
+        paper.hidden = !visible;
+        shown += visible ? 1 : 0;
+      });
+      paperCount.textContent = `显示 ${shown} 篇`;
+    };
+    paperSearch.addEventListener('input', filterPapers);
+    paperKind.addEventListener('change', filterPapers);
+  </script>
+</body>
+</html>

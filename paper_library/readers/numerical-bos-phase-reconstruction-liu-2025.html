@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Numerical Background-Oriented Schlieren for Phase Reconstruction and Its Potential Applications · 术语导读</title>
+  <style>
+    :root { --bg:#f7f8f6; --panel:#fff; --ink:#1d2328; --muted:#65717a; --line:#d9e0df; --green:#16756f; --blue:#315f93; --amber:#9a6a00; --soft:#eef6f3; --shadow:0 16px 36px rgba(30,45,55,.08); }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif; color:var(--ink); background:linear-gradient(90deg,rgba(247,248,246,.94),rgba(247,248,246,.76)),url("../../assets/backgrounds/oerf-refractive-field.png") right -150px top 18px / min(920px,92vw) auto no-repeat fixed,var(--bg); line-height:1.62; letter-spacing:0; }
+    header, main { padding:28px clamp(18px,4vw,58px); }
+    header { border-bottom:1px solid var(--line); background:linear-gradient(180deg,#fff,#edf6f3); }
+    h1 { margin:14px 0 10px; max-width:1100px; font-size:clamp(28px,4vw,48px); line-height:1.12; letter-spacing:0; }
+    h2 { margin:26px 0 12px; font-size:24px; }
+    p { margin:6px 0; }
+    .muted, .en { color:var(--muted); }
+    .buttons, .chips, .focus-grid, .page-links, .term-actions, .mini-terms { display:flex; flex-wrap:wrap; gap:8px; }
+    .button, .page-links a, .term-actions a { display:inline-flex; align-items:center; min-height:34px; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); text-decoration:none; font-weight:700; }
+    .button.primary { background:var(--green); border-color:var(--green); color:#fff; }
+    .summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:18px 0; }
+    .summary div, .focus-term, .term-row, .note { border:1px solid var(--line); border-radius:8px; background:var(--panel); box-shadow:var(--shadow); }
+    .summary div { padding:14px 16px; }
+    .summary b { display:block; font-size:28px; line-height:1; color:var(--green); }
+    .note { padding:14px 16px; color:var(--muted); box-shadow:none; }
+    .chips span { border-radius:999px; padding:5px 9px; background:#eaf0f7; color:var(--blue); font-size:12px; font-weight:700; }
+    .guide-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:12px 0 20px; }
+    .guide-card, .topic-card { border:1px solid var(--line); border-radius:8px; background:rgba(255,255,255,.94); padding:13px; min-width:0; }
+    .guide-card { border-left:4px solid var(--green); }
+    .guide-card b { display:block; color:var(--green); font-size:13px; margin-bottom:5px; }
+    .guide-card p, .topic-card p { margin:0; color:#43545c; font-size:13px; line-height:1.55; }
+    .topic-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:12px 0 20px; }
+    .topic-card span { display:inline-flex; border-radius:999px; padding:4px 8px; background:var(--soft); color:var(--green); font-size:12px; font-weight:800; }
+    .topic-card h3 { margin:8px 0 5px; font-size:16px; line-height:1.3; }
+    .topic-card a { display:inline-flex; align-items:center; min-height:30px; margin-top:8px; padding:5px 8px; border:1px solid var(--line); border-radius:7px; background:#fff; color:var(--blue); text-decoration:none; font-size:12px; font-weight:800; }
+    .focus-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .focus-term { padding:15px; }
+    .term-title, .term-name { color:var(--green); font-weight:800; text-decoration:none; }
+    .term-title span { display:block; color:var(--muted); font-weight:600; font-size:13px; }
+    .term-actions { margin-top:8px; }
+    .term-actions a { min-height:28px; padding:4px 7px; color:var(--blue); font-size:12px; }
+    .page-map { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .page-card { border:1px solid var(--line); border-radius:8px; background:#fff; padding:12px; }
+    .page-title { display:inline-flex; margin-bottom:6px; color:var(--green); font-size:18px; font-weight:900; text-decoration:none; }
+    .page-card small { display:block; color:var(--muted); }
+    .mini-term { display:inline-flex; align-items:center; gap:5px; border-radius:999px; padding:4px 7px; background:#f6efe2; border:1px solid #ead7b5; color:var(--amber); font-size:12px; font-weight:700; text-decoration:none; }
+    .mini-term span { color:#6f5b2b; font-weight:700; }
+    .toolbar { display:grid; grid-template-columns:minmax(240px,1fr) 190px; gap:10px; margin:16px 0; }
+    input, select { min-height:42px; border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:#fff; font:inherit; }
+    .term-list { display:grid; gap:12px; }
+    .term-row { display:grid; grid-template-columns:minmax(0,1fr) 240px; gap:14px; padding:15px; }
+    .term-row p { margin:4px 0; }
+    .term-side { display:flex; flex-direction:column; align-items:flex-start; gap:7px; }
+    .term-side span { border-radius:999px; padding:4px 8px; background:var(--soft); color:var(--green); font-size:12px; font-weight:700; }
+    .term-side b { font-size:24px; color:var(--amber); }
+    .page-links a { min-height:28px; padding:4px 7px; font-size:12px; color:var(--blue); }
+    .more { color:var(--muted); font-size:12px; padding:4px 0; }
+    footer { margin-top:28px; color:var(--muted); font-size:12px; }
+    @media (max-width:1080px) { .guide-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .topic-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:900px) { .summary, .focus-grid, .term-row, .toolbar, .page-map, .guide-grid, .topic-grid { grid-template-columns:1fr; } body { background-attachment:scroll; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="buttons">
+      <a class="button" href="../index.html">Back to paper library</a>
+      <a class="button" href="../term_index.html">PDF term index</a>
+      <a class="button" href="../../index.html#glossary">Glossary</a>
+      <a class="button" href="../paper_detail.html?id=numerical-bos-phase-reconstruction-liu-2025">Paper detail</a>
+    </div>
+    <h1>Numerical Background-Oriented Schlieren for Phase Reconstruction and Its Potential Applications</h1>
+    <p class="muted">Shiwei Liu, Yichong Ren, Haiping Mei, Zhiwei Tao, Shuran Ye, Xiaoxuan Ma, Ruizhong Rao</p>
+    <p class="muted">Photonics · 2025</p>
+    <div class="buttons">
+      <a class="button primary" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf" target="_blank" rel="noreferrer">Open PDF</a>
+      <a class="button" href="https://mdpi-res.com/d_attachment/photonics/photonics-12-00626/article_deploy/photonics-12-00626.pdf" target="_blank" rel="noreferrer">Online PDF</a>
+      <a class="button" href="https://www.mdpi.com/2304-6732/12/7/626" target="_blank" rel="noreferrer">Publisher / source</a>
+    </div>
+    <div class="summary">
+      <div><b>18</b><span>matched terms</span></div>
+      <div><b>187</b><span>term hits</span></div>
+      <div><b>7</b><span>categories</span></div>
+      <div><b>support</b><span>BOS displacement</span></div>
+    </div>
+    <div class="chips"><span>BOST 主线 · 4</span><span>反问题/层析 · 4</span><span>实验/数据 · 4</span><span>流体/燃烧 · 3</span><span>PIV/速度场 · 1</span><span>光学诊断 · 1</span><span>数学基础 · 1</span></div>
+  </header>
+  <main>
+    <section class="note">
+      <p><b>阅读定位：</b>用 ray tracing + optical flow + conjugate gradient 做 numerical BOS phase-screen reconstruction，适合作为 NeRIF/BOST forward-model 和位移/相位反演 sanity check。</p>
+      <p><b>精读时提取：</b>ray tracing forward model、optical flow displacement extraction、phase reconstruction、JHTDB turbulent fields、shock-wave degradation limits。</p>
+      <p><b>边界说明：</b>本页只保存术语命中、解释和页码跳转，不复制论文正文。点击页码会回到原 PDF 的对应页。</p>
+    </section>
+    <h2>读这篇的路线</h2>
+    <section class="guide-grid">
+            <article class="guide-card">
+              <b>定位角色</b>
+              <p>BOS 位移估计与前处理：重点看图像位移、置信度、噪声和下游重构误差传播。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>抓方法图</b>
+              <p>优先找 optical setup、forward model、reconstruction pipeline、evaluation table，不先陷入所有推导。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>抽可复现变量</b>
+              <p>记录输入数据、几何参数、噪声/视角设置、baseline、loss/regularization 和评价指标。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>查术语页码</b>
+              <p>用本页的术语卡片跳到 PDF 对应页，建立自己的概念索引。</p>
+            </article>
+
+            <article class="guide-card">
+              <b>转成毕设问题</b>
+              <p>把这篇文献写成一个可执行问题：我能复现哪一段、比较什么、问师兄要什么数据。</p>
+            </article>
+            </section>
+    <h2>关联毕设选题</h2>
+    <section class="topic-grid">
+            <article class="topic-card">
+              <span>T1</span>
+              <h3>NeRIF/BOST 鲁棒性</h3>
+              <p>由标题、分组或关键词匹配；用于判断这篇文献可服务的选题模块。</p>
+              <a href="../../topic_deep_dive.html?id=T1">打开选题详情</a>
+            </article>
+
+            <article class="topic-card">
+              <span>T5</span>
+              <h3>BOS 位移 benchmark</h3>
+              <p>由标题、分组或关键词匹配；用于判断这篇文献可服务的选题模块。</p>
+              <a href="../../topic_deep_dive.html?id=T5">打开选题详情</a>
+            </article>
+            </section>
+    <h2>先看这几个术语</h2>
+    <section class="focus-grid">
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影 <span>Background-Oriented Schlieren, BOS</span></a>
+              <p>用已知背景图案作为参考尺。流场中的折射率梯度会让光线发生微小偏折，最终表现为背景图像的像素位移。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=13" target="_blank" rel="noreferrer">p.13</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=15" target="_blank" rel="noreferrer">p.15</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=17" target="_blank" rel="noreferrer">p.17</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=18" target="_blank" rel="noreferrer">p.18</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=19" target="_blank" rel="noreferrer">p.19</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=20" target="_blank" rel="noreferrer">p.20</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=21" target="_blank" rel="noreferrer">p.21</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1">跨论文反查</a>
+                <a href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场 <span>Refractive index field, n(x,y,z)</span></a>
+              <p>空间中每一点的折射率分布，决定光线在流场中如何弯折。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=13" target="_blank" rel="noreferrer">p.13</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=15" target="_blank" rel="noreferrer">p.15</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=17" target="_blank" rel="noreferrer">p.17</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=18" target="_blank" rel="noreferrer">p.18</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=19" target="_blank" rel="noreferrer">p.19</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=20" target="_blank" rel="noreferrer">p.20</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA">跨论文反查</a>
+                <a href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流 <span>Optical flow</span></a>
+              <p>估计两帧图像间每个像素的运动或位移，是 BOS 位移估计的重要方法之一。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=17" target="_blank" rel="noreferrer">p.17</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=18" target="_blank" rel="noreferrer">p.18</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=19" target="_blank" rel="noreferrer">p.19</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=20" target="_blank" rel="noreferrer">p.20</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%85%89%E6%B5%81">跨论文反查</a>
+                <a href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场 <span>Density field, rho(x,y,z)</span></a>
+              <p>单位体积质量分布，是可压缩流、热羽流、火焰和喷流诊断中的核心物理量。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=12" target="_blank" rel="noreferrer">p.12</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%AF%86%E5%BA%A6%E5%9C%BA">跨论文反查</a>
+                <a href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场 <span>Background displacement field</span></a>
+              <p>流场存在前后背景图案在图像上的像素偏移，通常有水平和竖直两个分量。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=15" target="_blank" rel="noreferrer">p.15</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=17" target="_blank" rel="noreferrer">p.17</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=18" target="_blank" rel="noreferrer">p.18</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA">跨论文反查</a>
+                <a href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度 <span>Refractive index gradient, grad n</span></a>
+              <p>折射率空间变化率，是造成光线偏折和背景图像位移的核心原因。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=18" target="_blank" rel="noreferrer">p.18</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6">跨论文反查</a>
+                <a href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型 <span>Forward model</span></a>
+              <p>给定三维物理场和相机几何，计算理论上应该观测到什么图像位移、投影或信号。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=19" target="_blank" rel="noreferrer">p.19</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B">跨论文反查</a>
+                <a href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+
+            <article class="focus-term">
+              <a class="term-title" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题 <span>Inverse problem</span></a>
+              <p>从观测反推未知物理场。BOST 从多视角位移反推三维折射率/密度，就是典型反问题。</p>
+              <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=18" target="_blank" rel="noreferrer">p.18</a></div>
+              <div class="term-actions">
+                <a href="../term_index.html?q=%E5%8F%8D%E9%97%AE%E9%A2%98">跨论文反查</a>
+                <a href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">术语解释</a>
+              </div>
+            </article>
+            </section>
+    <h2>按页术语地图</h2>
+    <section class="note">
+      <p><b>使用方式：</b>先点 p.页码打开原 PDF，再看这一页命中的概念。这个区域相当于“读论文导航”，不是论文正文重排。</p>
+    </section>
+    <section class="page-map">
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=1" target="_blank" rel="noreferrer">p.1</a>
+                <small>9 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=2" target="_blank" rel="noreferrer">p.2</a>
+                <small>17 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>10x</span></a><a class="mini-term" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E5%9B%BE%E6%A1%88#glossary" target="_blank" rel="noreferrer">背景图案<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E5%B0%84%E6%B5%81#glossary" target="_blank" rel="noreferrer">射流<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=3" target="_blank" rel="noreferrer">p.3</a>
+                <small>13 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97#glossary" target="_blank" rel="noreferrer">实验日志<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%B8%A9%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">温度场<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E5%9B%BE%E6%A1%88#glossary" target="_blank" rel="noreferrer">背景图案<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=4" target="_blank" rel="noreferrer">p.4</a>
+                <small>11 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>3x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=5" target="_blank" rel="noreferrer">p.5</a>
+                <small>3 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E5%9B%BE%E6%A1%88#glossary" target="_blank" rel="noreferrer">背景图案<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=6" target="_blank" rel="noreferrer">p.6</a>
+                <small>6 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>4x</span></a><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=7" target="_blank" rel="noreferrer">p.7</a>
+                <small>12 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流<span>6x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>4x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>2x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=8" target="_blank" rel="noreferrer">p.8</a>
+                <small>10 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>4x</span></a><a class="mini-term" href="../../index.html?term=Poisson%20%E7%A7%AF%E5%88%86#glossary" target="_blank" rel="noreferrer">Poisson 积分<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=9" target="_blank" rel="noreferrer">p.9</a>
+                <small>20 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>7x</span></a><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>5x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>4x</span></a><a class="mini-term" href="../../index.html?term=%E6%B8%A9%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">温度场<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%9D%A1%E4%BB%B6%E6%95%B0#glossary" target="_blank" rel="noreferrer">条件数<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%A0%87%E5%AE%9A%E8%AF%AF%E5%B7%AE#glossary" target="_blank" rel="noreferrer">标定误差<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=10" target="_blank" rel="noreferrer">p.10</a>
+                <small>6 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=11" target="_blank" rel="noreferrer">p.11</a>
+                <small>2 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>2x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=12" target="_blank" rel="noreferrer">p.12</a>
+                <small>12 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场<span>4x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>2x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=13" target="_blank" rel="noreferrer">p.13</a>
+                <small>6 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>4x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>2x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=15" target="_blank" rel="noreferrer">p.15</a>
+                <small>6 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=16" target="_blank" rel="noreferrer">p.16</a>
+                <small>7 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E7%97%85%E6%80%81%E6%80%A7#glossary" target="_blank" rel="noreferrer">病态性<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=17" target="_blank" rel="noreferrer">p.17</a>
+                <small>9 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%9D%A1%E4%BB%B6%E6%95%B0#glossary" target="_blank" rel="noreferrer">条件数<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E7%9C%9F%E5%AE%9E%E6%95%B0%E6%8D%AE%E6%8E%A5%E5%8F%A3#glossary" target="_blank" rel="noreferrer">真实数据接口<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=18" target="_blank" rel="noreferrer">p.18</a>
+                <small>11 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>3x</span></a><a class="mini-term" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=19" target="_blank" rel="noreferrer">p.19</a>
+                <small>10 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>6x</span></a><a class="mini-term" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流<span>2x</span></a><a class="mini-term" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=20" target="_blank" rel="noreferrer">p.20</a>
+                <small>15 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>11x</span></a><a class="mini-term" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E5%B0%84%E6%B5%81#glossary" target="_blank" rel="noreferrer">射流<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场<span>1x</span></a><a class="mini-term" href="../../index.html?term=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F#glossary" target="_blank" rel="noreferrer">粒子图像测速<span>1x</span></a></div>
+              </article>
+
+              <article class="page-card">
+                <a class="page-title" href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=21" target="_blank" rel="noreferrer">p.21</a>
+                <small>2 term hits</small>
+                <div class="mini-terms"><a class="mini-term" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影<span>2x</span></a></div>
+              </article>
+            </section>
+    <h2>全术语检索</h2>
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="搜索术语、英文名、类别、解释，例如 BOST / density / PINN" />
+      <select id="category">
+        <option value="all">All categories</option>
+        <option value="BOST 主线">BOST 主线</option><option value="PIV/速度场">PIV/速度场</option><option value="光学诊断">光学诊断</option><option value="反问题/层析">反问题/层析</option><option value="实验/数据">实验/数据</option><option value="数学基础">数学基础</option><option value="流体/燃烧">流体/燃烧</option>
+      </select>
+    </div>
+    <section id="terms" class="term-list">
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;背景纹影&quot;, &quot;en&quot;: &quot;Background-Oriented Schlieren, BOS&quot;, &quot;category&quot;: &quot;BOST 主线&quot;, &quot;explain&quot;: &quot;用已知背景图案作为参考尺。流场中的折射率梯度会让光线发生微小偏折，最终表现为背景图像的像素位移。&quot;, &quot;use&quot;: &quot;这是 BOST、PIV-BOST 和很多系统误差分析的入口。算法通常先处理 BOS 图像位移，再进入三维反演或速度补偿。&quot;, &quot;pitfall&quot;: &quot;BOS 直接测到的是图像位移或偏折效应，不是速度场、温度场或密度场本身。&quot;, &quot;keywords&quot;: &quot;BOS; background displacement; optical flow BOS; density gradient visualization&quot;, &quot;count&quot;: 65, &quot;pages&quot;: [1, 2, 3, 4, 5, 7, 9, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21], &quot;page_hits&quot;: [{&quot;page&quot;: 1, &quot;count&quot;: 5}, {&quot;page&quot;: 2, &quot;count&quot;: 10}, {&quot;page&quot;: 3, &quot;count&quot;: 2}, {&quot;page&quot;: 4, &quot;count&quot;: 3}, {&quot;page&quot;: 5, &quot;count&quot;: 2}, {&quot;page&quot;: 7, &quot;count&quot;: 2}, {&quot;page&quot;: 9, &quot;count&quot;: 4}, {&quot;page&quot;: 11, &quot;count&quot;: 2}, {&quot;page&quot;: 12, &quot;count&quot;: 3}, {&quot;page&quot;: 13, &quot;count&quot;: 4}, {&quot;page&quot;: 15, &quot;count&quot;: 3}, {&quot;page&quot;: 16, &quot;count&quot;: 2}, {&quot;page&quot;: 17, &quot;count&quot;: 1}, {&quot;page&quot;: 18, &quot;count&quot;: 3}, {&quot;page&quot;: 19, &quot;count&quot;: 6}, {&quot;page&quot;: 20, &quot;count&quot;: 11}, {&quot;page&quot;: 21, &quot;count&quot;: 2}], &quot;page_count&quot;: 17}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">背景纹影</a>
+                <p class="en">Background-Oriented Schlieren, BOS</p>
+                <p>用已知背景图案作为参考尺。流场中的折射率梯度会让光线发生微小偏折，最终表现为背景图像的像素位移。</p>
+                <p><b>读这篇时看什么：</b>这是 BOST、PIV-BOST 和很多系统误差分析的入口。算法通常先处理 BOS 图像位移，再进入三维反演或速度补偿。</p>
+                <p><b>易混点：</b>BOS 直接测到的是图像位移或偏折效应，不是速度场、温度场或密度场本身。</p>
+              </div>
+              <div class="term-side">
+                <span>BOST 主线</span>
+                <b>65 hits</b>
+                <small>17 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=5" target="_blank" rel="noreferrer">p.5</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=11" target="_blank" rel="noreferrer">p.11</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=13" target="_blank" rel="noreferrer">p.13</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=15" target="_blank" rel="noreferrer">p.15</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=17" target="_blank" rel="noreferrer">p.17</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=18" target="_blank" rel="noreferrer">p.18</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=19" target="_blank" rel="noreferrer">p.19</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=20" target="_blank" rel="noreferrer">p.20</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=21" target="_blank" rel="noreferrer">p.21</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1">跨论文反查</a>
+                  <a href="../../index.html?term=%E8%83%8C%E6%99%AF%E7%BA%B9%E5%BD%B1#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;折射率场&quot;, &quot;en&quot;: &quot;Refractive index field, n(x,y,z)&quot;, &quot;category&quot;: &quot;BOST 主线&quot;, &quot;explain&quot;: &quot;空间中每一点的折射率分布，决定光线在流场中如何弯折。&quot;, &quot;use&quot;: &quot;NeRIF 最直接的输出对象通常就是折射率场；后续可通过 Gladstone-Dale 关系换算密度。&quot;, &quot;pitfall&quot;: &quot;折射率变化很小，数值尺度容易被忽略；画图时常显示 n-1 或归一化扰动。&quot;, &quot;keywords&quot;: &quot;refractive index field; optical path; gas refractivity; refractive-index perturbation&quot;, &quot;count&quot;: 45, &quot;pages&quot;: [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 15, 16, 17, 18, 19, 20], &quot;page_hits&quot;: [{&quot;page&quot;: 1, &quot;count&quot;: 1}, {&quot;page&quot;: 2, &quot;count&quot;: 2}, {&quot;page&quot;: 3, &quot;count&quot;: 5}, {&quot;page&quot;: 4, &quot;count&quot;: 5}, {&quot;page&quot;: 6, &quot;count&quot;: 4}, {&quot;page&quot;: 7, &quot;count&quot;: 4}, {&quot;page&quot;: 8, &quot;count&quot;: 4}, {&quot;page&quot;: 9, &quot;count&quot;: 7}, {&quot;page&quot;: 10, &quot;count&quot;: 2}, {&quot;page&quot;: 12, &quot;count&quot;: 2}, {&quot;page&quot;: 13, &quot;count&quot;: 2}, {&quot;page&quot;: 15, &quot;count&quot;: 1}, {&quot;page&quot;: 16, &quot;count&quot;: 2}, {&quot;page&quot;: 17, &quot;count&quot;: 1}, {&quot;page&quot;: 18, &quot;count&quot;: 1}, {&quot;page&quot;: 19, &quot;count&quot;: 1}, {&quot;page&quot;: 20, &quot;count&quot;: 1}], &quot;page_count&quot;: 17}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">折射率场</a>
+                <p class="en">Refractive index field, n(x,y,z)</p>
+                <p>空间中每一点的折射率分布，决定光线在流场中如何弯折。</p>
+                <p><b>读这篇时看什么：</b>NeRIF 最直接的输出对象通常就是折射率场；后续可通过 Gladstone-Dale 关系换算密度。</p>
+                <p><b>易混点：</b>折射率变化很小，数值尺度容易被忽略；画图时常显示 n-1 或归一化扰动。</p>
+              </div>
+              <div class="term-side">
+                <span>BOST 主线</span>
+                <b>45 hits</b>
+                <small>17 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=13" target="_blank" rel="noreferrer">p.13</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=15" target="_blank" rel="noreferrer">p.15</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=17" target="_blank" rel="noreferrer">p.17</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=18" target="_blank" rel="noreferrer">p.18</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=19" target="_blank" rel="noreferrer">p.19</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=20" target="_blank" rel="noreferrer">p.20</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;光流&quot;, &quot;en&quot;: &quot;Optical flow&quot;, &quot;category&quot;: &quot;光学诊断&quot;, &quot;explain&quot;: &quot;估计两帧图像间每个像素的运动或位移，是 BOS 位移估计的重要方法之一。&quot;, &quot;use&quot;: &quot;你可以做 BOS 位移估计 benchmark，比较传统相关法、Horn-Schunck、Lucas-Kanade 和现代光流。&quot;, &quot;pitfall&quot;: &quot;光流估计的是图像亮度模式运动，不等于物理粒子速度；BOS 中还需和折射模型连接。&quot;, &quot;keywords&quot;: &quot;optical flow; Horn-Schunck; Lucas-Kanade; BOS displacement estimation&quot;, &quot;count&quot;: 21, &quot;pages&quot;: [1, 2, 7, 8, 17, 18, 19, 20], &quot;page_hits&quot;: [{&quot;page&quot;: 1, &quot;count&quot;: 3}, {&quot;page&quot;: 2, &quot;count&quot;: 2}, {&quot;page&quot;: 7, &quot;count&quot;: 6}, {&quot;page&quot;: 8, &quot;count&quot;: 2}, {&quot;page&quot;: 17, &quot;count&quot;: 2}, {&quot;page&quot;: 18, &quot;count&quot;: 3}, {&quot;page&quot;: 19, &quot;count&quot;: 2}, {&quot;page&quot;: 20, &quot;count&quot;: 1}], &quot;page_count&quot;: 8}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">光流</a>
+                <p class="en">Optical flow</p>
+                <p>估计两帧图像间每个像素的运动或位移，是 BOS 位移估计的重要方法之一。</p>
+                <p><b>读这篇时看什么：</b>你可以做 BOS 位移估计 benchmark，比较传统相关法、Horn-Schunck、Lucas-Kanade 和现代光流。</p>
+                <p><b>易混点：</b>光流估计的是图像亮度模式运动，不等于物理粒子速度；BOS 中还需和折射模型连接。</p>
+              </div>
+              <div class="term-side">
+                <span>光学诊断</span>
+                <b>21 hits</b>
+                <small>8 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=1" target="_blank" rel="noreferrer">p.1</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=7" target="_blank" rel="noreferrer">p.7</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=17" target="_blank" rel="noreferrer">p.17</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=18" target="_blank" rel="noreferrer">p.18</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=19" target="_blank" rel="noreferrer">p.19</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=20" target="_blank" rel="noreferrer">p.20</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%85%89%E6%B5%81">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%85%89%E6%B5%81#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;密度场&quot;, &quot;en&quot;: &quot;Density field, rho(x,y,z)&quot;, &quot;category&quot;: &quot;流体/燃烧&quot;, &quot;explain&quot;: &quot;单位体积质量分布，是可压缩流、热羽流、火焰和喷流诊断中的核心物理量。&quot;, &quot;use&quot;: &quot;BOST 重建折射率后常把它转成密度，再进一步解释温度、压力或流动结构。&quot;, &quot;pitfall&quot;: &quot;密度不是温度；需要状态方程、压力假设和组分信息才能进一步换算。&quot;, &quot;keywords&quot;: &quot;density field; gas density measurement; volumetric density; compressible flow&quot;, &quot;count&quot;: 12, &quot;pages&quot;: [3, 6, 9, 10, 12], &quot;page_hits&quot;: [{&quot;page&quot;: 3, &quot;count&quot;: 1}, {&quot;page&quot;: 6, &quot;count&quot;: 1}, {&quot;page&quot;: 9, &quot;count&quot;: 5}, {&quot;page&quot;: 10, &quot;count&quot;: 1}, {&quot;page&quot;: 12, &quot;count&quot;: 4}], &quot;page_count&quot;: 5}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">密度场</a>
+                <p class="en">Density field, rho(x,y,z)</p>
+                <p>单位体积质量分布，是可压缩流、热羽流、火焰和喷流诊断中的核心物理量。</p>
+                <p><b>读这篇时看什么：</b>BOST 重建折射率后常把它转成密度，再进一步解释温度、压力或流动结构。</p>
+                <p><b>易混点：</b>密度不是温度；需要状态方程、压力假设和组分信息才能进一步换算。</p>
+              </div>
+              <div class="term-side">
+                <span>流体/燃烧</span>
+                <b>12 hits</b>
+                <small>5 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=12" target="_blank" rel="noreferrer">p.12</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%AF%86%E5%BA%A6%E5%9C%BA">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%AF%86%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;背景位移场&quot;, &quot;en&quot;: &quot;Background displacement field&quot;, &quot;category&quot;: &quot;BOST 主线&quot;, &quot;explain&quot;: &quot;流场存在前后背景图案在图像上的像素偏移，通常有水平和竖直两个分量。&quot;, &quot;use&quot;: &quot;这是 BOS 测量的直接数据，也是 BOST forward model 和 reprojection error 的主要比较对象。&quot;, &quot;pitfall&quot;: &quot;位移场不是速度场；不要把 u/v 像素位移和流体速度 u/v 混用。&quot;, &quot;keywords&quot;: &quot;image displacement; BOS displacement field; pixel shift; deflection measurement&quot;, &quot;count&quot;: 9, &quot;pages&quot;: [8, 10, 15, 16, 17, 18], &quot;page_hits&quot;: [{&quot;page&quot;: 8, &quot;count&quot;: 1}, {&quot;page&quot;: 10, &quot;count&quot;: 1}, {&quot;page&quot;: 15, &quot;count&quot;: 2}, {&quot;page&quot;: 16, &quot;count&quot;: 1}, {&quot;page&quot;: 17, &quot;count&quot;: 3}, {&quot;page&quot;: 18, &quot;count&quot;: 1}], &quot;page_count&quot;: 6}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">背景位移场</a>
+                <p class="en">Background displacement field</p>
+                <p>流场存在前后背景图案在图像上的像素偏移，通常有水平和竖直两个分量。</p>
+                <p><b>读这篇时看什么：</b>这是 BOS 测量的直接数据，也是 BOST forward model 和 reprojection error 的主要比较对象。</p>
+                <p><b>易混点：</b>位移场不是速度场；不要把 u/v 像素位移和流体速度 u/v 混用。</p>
+              </div>
+              <div class="term-side">
+                <span>BOST 主线</span>
+                <b>9 hits</b>
+                <small>6 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=15" target="_blank" rel="noreferrer">p.15</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=17" target="_blank" rel="noreferrer">p.17</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=18" target="_blank" rel="noreferrer">p.18</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA">跨论文反查</a>
+                  <a href="../../index.html?term=%E8%83%8C%E6%99%AF%E4%BD%8D%E7%A7%BB%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;折射率梯度&quot;, &quot;en&quot;: &quot;Refractive index gradient, grad n&quot;, &quot;category&quot;: &quot;BOST 主线&quot;, &quot;explain&quot;: &quot;折射率空间变化率，是造成光线偏折和背景图像位移的核心原因。&quot;, &quot;use&quot;: &quot;很多 BOS 公式从折射率梯度的路径积分出发；PIV-BOST 补偿也依赖它解释像素偏移。&quot;, &quot;pitfall&quot;: &quot;从梯度恢复标量场需要积分或约束，噪声会带来漂移和边界问题。&quot;, &quot;keywords&quot;: &quot;refractive index gradient; ray deflection; gradient integration; Poisson integration&quot;, &quot;count&quot;: 8, &quot;pages&quot;: [3, 6, 8, 12, 16, 18], &quot;page_hits&quot;: [{&quot;page&quot;: 3, &quot;count&quot;: 1}, {&quot;page&quot;: 6, &quot;count&quot;: 1}, {&quot;page&quot;: 8, &quot;count&quot;: 1}, {&quot;page&quot;: 12, &quot;count&quot;: 3}, {&quot;page&quot;: 16, &quot;count&quot;: 1}, {&quot;page&quot;: 18, &quot;count&quot;: 1}], &quot;page_count&quot;: 6}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">折射率梯度</a>
+                <p class="en">Refractive index gradient, grad n</p>
+                <p>折射率空间变化率，是造成光线偏折和背景图像位移的核心原因。</p>
+                <p><b>读这篇时看什么：</b>很多 BOS 公式从折射率梯度的路径积分出发；PIV-BOST 补偿也依赖它解释像素偏移。</p>
+                <p><b>易混点：</b>从梯度恢复标量场需要积分或约束，噪声会带来漂移和边界问题。</p>
+              </div>
+              <div class="term-side">
+                <span>BOST 主线</span>
+                <b>8 hits</b>
+                <small>6 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=6" target="_blank" rel="noreferrer">p.6</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=8" target="_blank" rel="noreferrer">p.8</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=12" target="_blank" rel="noreferrer">p.12</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=16" target="_blank" rel="noreferrer">p.16</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=18" target="_blank" rel="noreferrer">p.18</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%8A%98%E5%B0%84%E7%8E%87%E6%A2%AF%E5%BA%A6#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;前向模型&quot;, &quot;en&quot;: &quot;Forward model&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;给定三维物理场和相机几何，计算理论上应该观测到什么图像位移、投影或信号。&quot;, &quot;use&quot;: &quot;你做合成数据和 NeRIF 训练时，前向模型是最重要的代码模块。&quot;, &quot;pitfall&quot;: &quot;前向模型过于简化会让 demo 好看但无法迁移真实数据；需要明确小角度、直线光线或 ray tracing 假设。&quot;, &quot;keywords&quot;: &quot;forward model; differentiable projection; ray tracing; BOS simulation&quot;, &quot;count&quot;: 4, &quot;pages&quot;: [4, 19], &quot;page_hits&quot;: [{&quot;page&quot;: 4, &quot;count&quot;: 3}, {&quot;page&quot;: 19, &quot;count&quot;: 1}], &quot;page_count&quot;: 2}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">前向模型</a>
+                <p class="en">Forward model</p>
+                <p>给定三维物理场和相机几何，计算理论上应该观测到什么图像位移、投影或信号。</p>
+                <p><b>读这篇时看什么：</b>你做合成数据和 NeRIF 训练时，前向模型是最重要的代码模块。</p>
+                <p><b>易混点：</b>前向模型过于简化会让 demo 好看但无法迁移真实数据；需要明确小角度、直线光线或 ray tracing 假设。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>4 hits</b>
+                <small>2 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=4" target="_blank" rel="noreferrer">p.4</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=19" target="_blank" rel="noreferrer">p.19</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%89%8D%E5%90%91%E6%A8%A1%E5%9E%8B#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;反问题&quot;, &quot;en&quot;: &quot;Inverse problem&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;从观测反推未知物理场。BOST 从多视角位移反推三维折射率/密度，就是典型反问题。&quot;, &quot;use&quot;: &quot;开题报告要把你的项目放在“光学诊断 + 反问题 + 神经表示”这个框架里。&quot;, &quot;pitfall&quot;: &quot;反问题通常病态，不能只靠训练 loss 下降说明结果可靠。&quot;, &quot;keywords&quot;: &quot;inverse problem; inverse modeling; optical inverse problem; computational imaging&quot;, &quot;count&quot;: 4, &quot;pages&quot;: [10, 18], &quot;page_hits&quot;: [{&quot;page&quot;: 10, &quot;count&quot;: 2}, {&quot;page&quot;: 18, &quot;count&quot;: 2}], &quot;page_count&quot;: 2}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">反问题</a>
+                <p class="en">Inverse problem</p>
+                <p>从观测反推未知物理场。BOST 从多视角位移反推三维折射率/密度，就是典型反问题。</p>
+                <p><b>读这篇时看什么：</b>开题报告要把你的项目放在“光学诊断 + 反问题 + 神经表示”这个框架里。</p>
+                <p><b>易混点：</b>反问题通常病态，不能只靠训练 loss 下降说明结果可靠。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>4 hits</b>
+                <small>2 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=10" target="_blank" rel="noreferrer">p.10</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=18" target="_blank" rel="noreferrer">p.18</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%8F%8D%E9%97%AE%E9%A2%98">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%8F%8D%E9%97%AE%E9%A2%98#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;背景图案&quot;, &quot;en&quot;: &quot;Background pattern&quot;, &quot;category&quot;: &quot;实验/数据&quot;, &quot;explain&quot;: &quot;BOS 中用于测量图像位移的纹理背景，可以是随机点、棋盘、投影图案或自然复杂背景。&quot;, &quot;use&quot;: &quot;位移估计精度与背景纹理强相关；做低成本 BOS demo 时这是第一批要设计的东西。&quot;, &quot;pitfall&quot;: &quot;图案太稀、太规则或对比度不足都会让相关/光流估计失效。&quot;, &quot;keywords&quot;: &quot;background pattern; random dot pattern; projected pattern; BOS texture&quot;, &quot;count&quot;: 4, &quot;pages&quot;: [2, 3, 5], &quot;page_hits&quot;: [{&quot;page&quot;: 2, &quot;count&quot;: 2}, {&quot;page&quot;: 3, &quot;count&quot;: 1}, {&quot;page&quot;: 5, &quot;count&quot;: 1}], &quot;page_count&quot;: 3}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E8%83%8C%E6%99%AF%E5%9B%BE%E6%A1%88#glossary" target="_blank" rel="noreferrer">背景图案</a>
+                <p class="en">Background pattern</p>
+                <p>BOS 中用于测量图像位移的纹理背景，可以是随机点、棋盘、投影图案或自然复杂背景。</p>
+                <p><b>读这篇时看什么：</b>位移估计精度与背景纹理强相关；做低成本 BOS demo 时这是第一批要设计的东西。</p>
+                <p><b>易混点：</b>图案太稀、太规则或对比度不足都会让相关/光流估计失效。</p>
+              </div>
+              <div class="term-side">
+                <span>实验/数据</span>
+                <b>4 hits</b>
+                <small>3 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=5" target="_blank" rel="noreferrer">p.5</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E8%83%8C%E6%99%AF%E5%9B%BE%E6%A1%88">跨论文反查</a>
+                  <a href="../../index.html?term=%E8%83%8C%E6%99%AF%E5%9B%BE%E6%A1%88#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;温度场&quot;, &quot;en&quot;: &quot;Temperature field, T(x,y,z)&quot;, &quot;category&quot;: &quot;流体/燃烧&quot;, &quot;explain&quot;: &quot;空间温度分布，火焰、热羽流和反应流诊断中非常重要。&quot;, &quot;use&quot;: &quot;BOST 可以在一定假设下由密度推温度；PLIF、TAS、LII 等则可能直接或间接提供温度信息。&quot;, &quot;pitfall&quot;: &quot;从 BOST 推温度需要压力和组分假设，不能把折射率图直接称作温度图。&quot;, &quot;keywords&quot;: &quot;temperature field; gas thermometry; density temperature conversion; flame temperature&quot;, &quot;count&quot;: 3, &quot;pages&quot;: [3, 9], &quot;page_hits&quot;: [{&quot;page&quot;: 3, &quot;count&quot;: 1}, {&quot;page&quot;: 9, &quot;count&quot;: 2}], &quot;page_count&quot;: 2}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%B8%A9%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">温度场</a>
+                <p class="en">Temperature field, T(x,y,z)</p>
+                <p>空间温度分布，火焰、热羽流和反应流诊断中非常重要。</p>
+                <p><b>读这篇时看什么：</b>BOST 可以在一定假设下由密度推温度；PLIF、TAS、LII 等则可能直接或间接提供温度信息。</p>
+                <p><b>易混点：</b>从 BOST 推温度需要压力和组分假设，不能把折射率图直接称作温度图。</p>
+              </div>
+              <div class="term-side">
+                <span>流体/燃烧</span>
+                <b>3 hits</b>
+                <small>2 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=3" target="_blank" rel="noreferrer">p.3</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=9" target="_blank" rel="noreferrer">p.9</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%B8%A9%E5%BA%A6%E5%9C%BA">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%B8%A9%E5%BA%A6%E5%9C%BA#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;Poisson 积分&quot;, &quot;en&quot;: &quot;Poisson integration&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;从梯度场恢复标量场时常见的数学步骤，可通过求解 Poisson 方程实现。&quot;, &quot;use&quot;: &quot;BOS 位移、折射率梯度和标量折射率/密度之间的桥常会涉及它。&quot;, &quot;pitfall&quot;: &quot;边界条件会显著影响结果；梯度噪声也会在积分中积累。&quot;, &quot;keywords&quot;: &quot;Poisson integration; gradient integration; Poisson constrained PINN; displacement integration&quot;, &quot;count&quot;: 2, &quot;pages&quot;: [8], &quot;page_hits&quot;: [{&quot;page&quot;: 8, &quot;count&quot;: 2}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=Poisson%20%E7%A7%AF%E5%88%86#glossary" target="_blank" rel="noreferrer">Poisson 积分</a>
+                <p class="en">Poisson integration</p>
+                <p>从梯度场恢复标量场时常见的数学步骤，可通过求解 Poisson 方程实现。</p>
+                <p><b>读这篇时看什么：</b>BOS 位移、折射率梯度和标量折射率/密度之间的桥常会涉及它。</p>
+                <p><b>易混点：</b>边界条件会显著影响结果；梯度噪声也会在积分中积累。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>2 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=8" target="_blank" rel="noreferrer">p.8</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=Poisson%20%E7%A7%AF%E5%88%86">跨论文反查</a>
+                  <a href="../../index.html?term=Poisson%20%E7%A7%AF%E5%88%86#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;实验日志&quot;, &quot;en&quot;: &quot;Experiment log&quot;, &quot;category&quot;: &quot;实验/数据&quot;, &quot;explain&quot;: &quot;记录每次数据、代码版本、参数、结果图和失败原因的结构化日志。&quot;, &quot;use&quot;: &quot;你后续想做学习日志网页，这个概念要提前嵌入：每周能复现自己的结果。&quot;, &quot;pitfall&quot;: &quot;没有日志，参数扫描越多越乱，最后很难写论文方法和结果。&quot;, &quot;keywords&quot;: &quot;experiment log; reproducibility; configuration; result tracking; research diary&quot;, &quot;count&quot;: 2, &quot;pages&quot;: [3], &quot;page_hits&quot;: [{&quot;page&quot;: 3, &quot;count&quot;: 2}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97#glossary" target="_blank" rel="noreferrer">实验日志</a>
+                <p class="en">Experiment log</p>
+                <p>记录每次数据、代码版本、参数、结果图和失败原因的结构化日志。</p>
+                <p><b>读这篇时看什么：</b>你后续想做学习日志网页，这个概念要提前嵌入：每周能复现自己的结果。</p>
+                <p><b>易混点：</b>没有日志，参数扫描越多越乱，最后很难写论文方法和结果。</p>
+              </div>
+              <div class="term-side">
+                <span>实验/数据</span>
+                <b>2 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=3" target="_blank" rel="noreferrer">p.3</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%AE%9E%E9%AA%8C%E6%97%A5%E5%BF%97#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;射流&quot;, &quot;en&quot;: &quot;Jet flow&quot;, &quot;category&quot;: &quot;流体/燃烧&quot;, &quot;explain&quot;: &quot;流体从孔口或喷嘴喷出形成的流动，是 BOS/BOST、PIV 和湍流实验常见测试对象。&quot;, &quot;use&quot;: &quot;热射流、氦气射流、超声速射流都适合作为公开数据或合成 phantom 的物理参照。&quot;, &quot;pitfall&quot;: &quot;低速热羽流、欠膨胀射流、超声速射流的物理尺度和可压缩性完全不同。&quot;, &quot;keywords&quot;: &quot;jet flow; heated jet; helium jet; supersonic jet; density field&quot;, &quot;count&quot;: 2, &quot;pages&quot;: [2, 20], &quot;page_hits&quot;: [{&quot;page&quot;: 2, &quot;count&quot;: 1}, {&quot;page&quot;: 20, &quot;count&quot;: 1}], &quot;page_count&quot;: 2}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E5%B0%84%E6%B5%81#glossary" target="_blank" rel="noreferrer">射流</a>
+                <p class="en">Jet flow</p>
+                <p>流体从孔口或喷嘴喷出形成的流动，是 BOS/BOST、PIV 和湍流实验常见测试对象。</p>
+                <p><b>读这篇时看什么：</b>热射流、氦气射流、超声速射流都适合作为公开数据或合成 phantom 的物理参照。</p>
+                <p><b>易混点：</b>低速热羽流、欠膨胀射流、超声速射流的物理尺度和可压缩性完全不同。</p>
+              </div>
+              <div class="term-side">
+                <span>流体/燃烧</span>
+                <b>2 hits</b>
+                <small>2 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=2" target="_blank" rel="noreferrer">p.2</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=20" target="_blank" rel="noreferrer">p.20</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E5%B0%84%E6%B5%81">跨论文反查</a>
+                  <a href="../../index.html?term=%E5%B0%84%E6%B5%81#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;条件数&quot;, &quot;en&quot;: &quot;Condition number&quot;, &quot;category&quot;: &quot;数学基础&quot;, &quot;explain&quot;: &quot;常用最大非零奇异值与最小非零奇异值之比衡量反演对观测扰动的敏感程度。比值越大，微小噪声越可能被放大。&quot;, &quot;use&quot;: &quot;比较不同相机布局、视角数和标定扰动下的线性化 BOST forward 健康度。&quot;, &quot;pitfall&quot;: &quot;条件数只描述局部线性与所选范数；正则化、非线性 ray bending 和先验会改变实际误差。&quot;, &quot;keywords&quot;: &quot;condition number; ill-conditioned; noise amplification; singular spectrum; camera geometry&quot;, &quot;count&quot;: 2, &quot;pages&quot;: [9, 17], &quot;page_hits&quot;: [{&quot;page&quot;: 9, &quot;count&quot;: 1}, {&quot;page&quot;: 17, &quot;count&quot;: 1}], &quot;page_count&quot;: 2}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%9D%A1%E4%BB%B6%E6%95%B0#glossary" target="_blank" rel="noreferrer">条件数</a>
+                <p class="en">Condition number</p>
+                <p>常用最大非零奇异值与最小非零奇异值之比衡量反演对观测扰动的敏感程度。比值越大，微小噪声越可能被放大。</p>
+                <p><b>读这篇时看什么：</b>比较不同相机布局、视角数和标定扰动下的线性化 BOST forward 健康度。</p>
+                <p><b>易混点：</b>条件数只描述局部线性与所选范数；正则化、非线性 ray bending 和先验会改变实际误差。</p>
+              </div>
+              <div class="term-side">
+                <span>数学基础</span>
+                <b>2 hits</b>
+                <small>2 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=9" target="_blank" rel="noreferrer">p.9</a><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=17" target="_blank" rel="noreferrer">p.17</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%9D%A1%E4%BB%B6%E6%95%B0">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%9D%A1%E4%BB%B6%E6%95%B0#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;标定误差&quot;, &quot;en&quot;: &quot;Calibration error&quot;, &quot;category&quot;: &quot;实验/数据&quot;, &quot;explain&quot;: &quot;相机参数、背景位置、尺度转换或同步信息的误差。&quot;, &quot;use&quot;: &quot;这是你可以做成可毕业小题的方向：分析标定扰动对 BOST/NeRIF 结果的影响。&quot;, &quot;pitfall&quot;: &quot;真实系统误差往往比网络结构差异更致命，答辩时要主动承认和量化。&quot;, &quot;keywords&quot;: &quot;calibration error; geometric uncertainty; sensitivity analysis; camera perturbation&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [9], &quot;page_hits&quot;: [{&quot;page&quot;: 9, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E6%A0%87%E5%AE%9A%E8%AF%AF%E5%B7%AE#glossary" target="_blank" rel="noreferrer">标定误差</a>
+                <p class="en">Calibration error</p>
+                <p>相机参数、背景位置、尺度转换或同步信息的误差。</p>
+                <p><b>读这篇时看什么：</b>这是你可以做成可毕业小题的方向：分析标定扰动对 BOST/NeRIF 结果的影响。</p>
+                <p><b>易混点：</b>真实系统误差往往比网络结构差异更致命，答辩时要主动承认和量化。</p>
+              </div>
+              <div class="term-side">
+                <span>实验/数据</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=9" target="_blank" rel="noreferrer">p.9</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E6%A0%87%E5%AE%9A%E8%AF%AF%E5%B7%AE">跨论文反查</a>
+                  <a href="../../index.html?term=%E6%A0%87%E5%AE%9A%E8%AF%AF%E5%B7%AE#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;病态性&quot;, &quot;en&quot;: &quot;Ill-posedness&quot;, &quot;category&quot;: &quot;反问题/层析&quot;, &quot;explain&quot;: &quot;解可能不存在、不唯一，或者对噪声极端敏感，这是少视角层析的核心困难。&quot;, &quot;use&quot;: &quot;你的鲁棒性分析、少视角扫描和正则化设计都可以围绕病态性展开。&quot;, &quot;pitfall&quot;: &quot;不要把“网络能输出一张图”误当成“问题已经有唯一正确解”。&quot;, &quot;keywords&quot;: &quot;ill-posed inverse problem; instability; non-uniqueness; sparse-view tomography&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [16], &quot;page_hits&quot;: [{&quot;page&quot;: 16, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E7%97%85%E6%80%81%E6%80%A7#glossary" target="_blank" rel="noreferrer">病态性</a>
+                <p class="en">Ill-posedness</p>
+                <p>解可能不存在、不唯一，或者对噪声极端敏感，这是少视角层析的核心困难。</p>
+                <p><b>读这篇时看什么：</b>你的鲁棒性分析、少视角扫描和正则化设计都可以围绕病态性展开。</p>
+                <p><b>易混点：</b>不要把“网络能输出一张图”误当成“问题已经有唯一正确解”。</p>
+              </div>
+              <div class="term-side">
+                <span>反问题/层析</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=16" target="_blank" rel="noreferrer">p.16</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E7%97%85%E6%80%81%E6%80%A7">跨论文反查</a>
+                  <a href="../../index.html?term=%E7%97%85%E6%80%81%E6%80%A7#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;真实数据接口&quot;, &quot;en&quot;: &quot;Real-data interface&quot;, &quot;category&quot;: &quot;实验/数据&quot;, &quot;explain&quot;: &quot;把组内真实图像、标定、视角、mask、单位和元数据整理成算法可读格式。&quot;, &quot;use&quot;: &quot;如果师兄给数据，你最先要交付的不是大模型，而是能稳定读取、检查、可视化和记录的数据接口。&quot;, &quot;pitfall&quot;: &quot;真实数据没有统一接口时，后续所有算法实验都会变成手工修文件。&quot;, &quot;keywords&quot;: &quot;data interface; metadata; calibration file; mask; reproducible pipeline&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [17], &quot;page_hits&quot;: [{&quot;page&quot;: 17, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E7%9C%9F%E5%AE%9E%E6%95%B0%E6%8D%AE%E6%8E%A5%E5%8F%A3#glossary" target="_blank" rel="noreferrer">真实数据接口</a>
+                <p class="en">Real-data interface</p>
+                <p>把组内真实图像、标定、视角、mask、单位和元数据整理成算法可读格式。</p>
+                <p><b>读这篇时看什么：</b>如果师兄给数据，你最先要交付的不是大模型，而是能稳定读取、检查、可视化和记录的数据接口。</p>
+                <p><b>易混点：</b>真实数据没有统一接口时，后续所有算法实验都会变成手工修文件。</p>
+              </div>
+              <div class="term-side">
+                <span>实验/数据</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=17" target="_blank" rel="noreferrer">p.17</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E7%9C%9F%E5%AE%9E%E6%95%B0%E6%8D%AE%E6%8E%A5%E5%8F%A3">跨论文反查</a>
+                  <a href="../../index.html?term=%E7%9C%9F%E5%AE%9E%E6%95%B0%E6%8D%AE%E6%8E%A5%E5%8F%A3#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="term-row" data-text="{&quot;zh&quot;: &quot;粒子图像测速&quot;, &quot;en&quot;: &quot;Particle Image Velocimetry, PIV&quot;, &quot;category&quot;: &quot;PIV/速度场&quot;, &quot;explain&quot;: &quot;通过连续图像中示踪粒子位移估计速度场，是实验流体力学常用速度测量方法。&quot;, &quot;use&quot;: &quot;PIV-BOST 的核心是用 BOST 折射率场补偿 PIV 测量中的折射误差。&quot;, &quot;pitfall&quot;: &quot;PIV 的像素位移经过时间间隔和尺度换算才是速度；与 BOS 背景位移不是同一个量。&quot;, &quot;keywords&quot;: &quot;PIV; particle image velocimetry; velocity measurement; tracer particles&quot;, &quot;count&quot;: 1, &quot;pages&quot;: [20], &quot;page_hits&quot;: [{&quot;page&quot;: 20, &quot;count&quot;: 1}], &quot;page_count&quot;: 1}">
+              <div>
+                <a class="term-name" href="../../index.html?term=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F#glossary" target="_blank" rel="noreferrer">粒子图像测速</a>
+                <p class="en">Particle Image Velocimetry, PIV</p>
+                <p>通过连续图像中示踪粒子位移估计速度场，是实验流体力学常用速度测量方法。</p>
+                <p><b>读这篇时看什么：</b>PIV-BOST 的核心是用 BOST 折射率场补偿 PIV 测量中的折射误差。</p>
+                <p><b>易混点：</b>PIV 的像素位移经过时间间隔和尺度换算才是速度；与 BOS 背景位移不是同一个量。</p>
+              </div>
+              <div class="term-side">
+                <span>PIV/速度场</span>
+                <b>1 hits</b>
+                <small>1 pages</small>
+                <div class="page-links"><a href="../../asset_viewer.html?asset=paper_library%2Fpdfs%2Fnumerical_bos_phase_reconstruction_liu_2025_mdpi.pdf#page=20" target="_blank" rel="noreferrer">p.20</a></div>
+                <div class="term-actions">
+                  <a href="../term_index.html?q=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F">跨论文反查</a>
+                  <a href="../../index.html?term=%E7%B2%92%E5%AD%90%E5%9B%BE%E5%83%8F%E6%B5%8B%E9%80%9F#glossary" target="_blank" rel="noreferrer">术语解释</a>
+                </div>
+              </div>
+            </article>
+            </section>
+    <footer>Generated from open cached PDFs with pypdf. Private/WebVPN PDFs are excluded from public reader pages.</footer>
+  </main>
+  <script>
+    const search = document.getElementById('search');
+    const category = document.getElementById('category');
+    const rows = Array.from(document.querySelectorAll('.term-row'));
+    function apply() {
+      const q = search.value.trim().toLowerCase();
+      const parts = q.split(/\s+/).filter(Boolean);
+      rows.forEach((row) => {
+        const data = JSON.parse(row.dataset.text);
+        const text = row.innerText.toLowerCase();
+        const okQ = !parts.length || parts.every((part) => text.includes(part));
+        const okC = category.value === 'all' || data.category === category.value;
+        row.style.display = okQ && okC ? '' : 'none';
+      });
+    }
+    const params = new URLSearchParams(location.search);
+    const initial = params.get('q') || params.get('term') || '';
+    if (initial) search.value = initial;
+    search.addEventListener('input', apply);
+    category.addEventListener('change', apply);
+    apply();
+  </script>
+  <script src="../../site_link_router.js" data-site-root="../../"></script>
+</body>
+</html>

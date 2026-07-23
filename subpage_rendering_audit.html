@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>子页面渲染覆盖 | OERF 毕设导航</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f8f6;
+      --paper: #ffffff;
+      --ink: #203038;
+      --muted: #60717a;
+      --line: #d7e2df;
+      --green: #16756f;
+      --blue: #315f93;
+      --gold: #9a6818;
+      --red: #9d4438;
+      --soft: #eaf4f1;
+      --blue-soft: #eef4fb;
+      --gold-soft: #f8f0dc;
+      --shadow: 0 18px 44px rgba(28, 55, 50, .08);
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(245, 248, 246, .94), rgba(245, 248, 246, .74)),
+        url("./assets/backgrounds/oerf-refractive-field.png") right -120px top 18px / min(920px, 92vw) auto no-repeat fixed,
+        linear-gradient(180deg, rgba(22, 117, 111, .10), transparent 380px),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .shell {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 24px 0 64px;
+    }
+    .topbar,
+    .actions,
+    .pill-row,
+    .resource-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .topbar {
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .92);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 850;
+      text-decoration: none;
+      box-shadow: 0 8px 18px rgba(28, 55, 50, .04);
+    }
+    .button.primary {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+    .button:hover { text-decoration: none; border-color: var(--green); }
+    .hero,
+    .panel,
+    .check-card,
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .93);
+      box-shadow: var(--shadow);
+    }
+    .hero {
+      padding: clamp(18px, 3vw, 30px);
+      border-left: 4px solid var(--green);
+      margin-bottom: 16px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--soft);
+      border: 1px solid #c7ded9;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+    h1 {
+      margin: 0;
+      max-width: 940px;
+      font-size: clamp(30px, 4.4vw, 52px);
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+    .intro {
+      max-width: 900px;
+      margin: 13px 0 0;
+      color: #40525b;
+      font-size: 16px;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .metric {
+      box-shadow: none;
+      background: #fbfdfc;
+      padding: 12px;
+      min-height: 92px;
+    }
+    .metric b {
+      display: block;
+      color: var(--green);
+      font-size: 26px;
+      line-height: 1.05;
+    }
+    .metric span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .panel {
+      padding: 18px;
+      margin-top: 16px;
+    }
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      line-height: 1.25;
+    }
+    .panel > p {
+      margin: 0 0 12px;
+      color: var(--muted);
+    }
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+      gap: 10px;
+    }
+    .check-card {
+      padding: 14px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      box-shadow: none;
+      background: #fbfdfc;
+    }
+    .check-card h3 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+    .check-card p {
+      margin: 0;
+      color: #46575f;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      min-height: 26px;
+      padding: 3px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f7faf8;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .pill.green { background: var(--soft); color: var(--green); border-color: #c7ded9; }
+    .pill.blue { background: var(--blue-soft); color: var(--blue); border-color: #d2dfed; }
+    .pill.gold { background: var(--gold-soft); color: var(--gold); border-color: #ead5ac; }
+    .pill.red { background: #fff0ed; color: var(--red); border-color: #ecc8c1; }
+    .resource-actions { margin-top: auto; }
+    .resource-actions .button {
+      min-height: 32px;
+      padding: 6px 9px;
+      font-size: 12px;
+    }
+    .route {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: step;
+    }
+    .route li {
+      position: relative;
+      min-height: 44px;
+      padding: 10px 12px 10px 48px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfdfc;
+      color: #40525b;
+      overflow-wrap: anywhere;
+    }
+    .route li::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 12px;
+      top: 10px;
+      width: 25px;
+      height: 25px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--green);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .note {
+      border-left: 4px solid var(--gold);
+      background: var(--gold-soft);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 12px 14px;
+      color: #55453b;
+    }
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    @media (max-width: 840px) {
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .topbar { display: block; }
+      .actions { margin-top: 10px; }
+    }
+    @media (max-width: 620px) {
+      .shell { width: min(100% - 24px, 1180px); padding-top: 16px; }
+      .metrics { grid-template-columns: 1fr; }
+      body { background-attachment: scroll; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="actions">
+        <a class="button primary" href="./index.html">返回总导航</a>
+        <a class="button" href="./paper_library/index.html">论文库</a>
+        <a class="button" href="./topic_deep_dive.html?id=T1">选题详情</a>
+      </div>
+      <div class="actions">
+        <a class="button" href="./pdf_cache_audit.html">PDF 审计</a>
+        <a class="button" href="./xmu_vpn_private_library_protocol.html">私有库边界</a>
+      </div>
+    </div>
+
+    <header class="hero">
+      <div class="eyebrow">Subpage rendering audit</div>
+      <h1>子页面渲染覆盖</h1>
+      <p class="intro">这个页面专门用来检查“从主站继续点进去”的体验：站内 Markdown、JSON、CSV、BibTeX、代码、图片、公开 PDF、论文详情、术语导读和选题详情都会进入带导航、目录、搜索、资源卡或上下文的阅读页面。</p>
+      <div class="metrics" aria-label="覆盖统计">
+        <div class="metric"><b>227</b><span>公开 HTML 页面均已接入路由</span></div>
+        <div class="metric"><b>192</b><span>单篇 PDF 术语导读页</span></div>
+        <div class="metric"><b>90</b><span>站内文档/数据/代码入口</span></div>
+        <div class="metric"><b>214</b><span>公开 PDF/图像等资源入口</span></div>
+      </div>
+    </header>
+
+    <section class="panel">
+      <h2>代表性入口</h2>
+      <p>下面每一张卡片都对应一种常见链接类型。实际页面里遇到同类链接时，会使用同一套路由规则。</p>
+      <div class="check-grid">
+        <article class="check-card">
+          <span class="pill green">Markdown</span>
+          <h3>何远哲论文深挖文档</h3>
+          <p>应显示为带目录、摘要、统计卡、链接摘要和页内搜索的阅读页。</p>
+          <div class="resource-actions"><a class="button" href="document_reader.html?doc=he_paper_deep_dive.md">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill blue">JSON</span>
+          <h3>论文库元数据</h3>
+          <p>应显示字段预览和 Raw JSON，不是浏览器直接展开一长串文本。</p>
+          <div class="resource-actions"><a class="button" href="document_reader.html?doc=paper_library%2Fpapers.json">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill blue">CSV</span>
+          <h3>M0 指标表</h3>
+          <p>应显示为可横向滚动的数据表，并保留列名和行数。</p>
+          <div class="resource-actions"><a class="button" href="document_reader.html?doc=demo_m0%2Fresults%2Fmetrics.csv">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill gold">Image</span>
+          <h3>NeRIF pipeline 图</h3>
+          <p>应进入资源查看器，保留原图比例和上下文入口。</p>
+          <div class="resource-actions"><a class="button" href="asset_viewer.html?asset=figures%2Fnerif_pipeline.png&title=NeRIF%20pipeline">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill gold">PDF</span>
+          <h3>MHz-rate BOST supplement</h3>
+          <p>应进入公开 PDF 包装页，并显示论文上下文、详情页、术语导读和页码术语。</p>
+          <div class="resource-actions"><a class="button" href="asset_viewer.html?asset=paper_library%2Fpdfs%2Fmegahertz_bost_gomez_2022_figshare_supplement.pdf#page=2">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill green">Paper detail</span>
+          <h3>论文详情页</h3>
+          <p>应显示为什么收录、阅读路径、可转化任务、关联选题和同组文献。</p>
+          <div class="resource-actions"><a class="button" href="paper_library/paper_detail.html?id=megahertz-bost-gomez-2022-supplement">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill green">Term reader</span>
+          <h3>单篇术语导读</h3>
+          <p>应显示术语命中、页码跳转、跨论文反查和术语解释入口。</p>
+          <div class="resource-actions"><a class="button" href="paper_library/readers/megahertz-bost-gomez-2022-supplement.html">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill blue">Research audit</span>
+          <h3>NRIP 可复现性子页</h3>
+          <p>应显示来源证据、方法链、仓库边界、消融矩阵、软硬件判断和师兄问题，而不是一段纯文本。</p>
+          <div class="resource-actions"><a class="button" href="nrip_reproducibility_audit.html">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill blue">4D experiment</span>
+          <h3>TDBOST / 4D BOST 审计页</h3>
+          <p>应显示 ACM 正式全文提炼、方法/实验/显存表、paper-vs-code 对账、三张 M3B 图、交互 rank 读数、指标定义警告、六轴实验结论和师兄问题。</p>
+          <div class="resource-actions"><a class="button" href="tdbost_reproducibility_audit.html">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill gold">Multi-seed data</span>
+          <h3>M3B 六轴实验结果页</h3>
+          <p>应显示 8 个配对种子、448 条方法记录、六轴交互判读、三张统计图、失败边界和可渲染 CSV/JSON。</p>
+          <div class="resource-actions"><a class="button" href="m3b_six_axis_dashboard.html">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill gold">Crossed experiment</span>
+          <h3>M3B 多变量交叉验证页</h3>
+          <p>应显示 80 个环境、8 个配对种子、rank regret、noise×views operating map、四张统计图、解释边界和可渲染 CSV/JSON。</p>
+          <div class="resource-actions"><a class="button" href="m3b_interaction_dashboard.html">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill gold">Nested LOFO selector</span>
+          <h3>M3B 跨形态无真值容量选择页</h3>
+          <p>应显示 4 morphology、864 个观测格、6,048 个候选、full-rank 拒绝平滑、六张统计图、特征消融、外层 family exclusion、失败格和 validator 入口。</p>
+          <div class="resource-actions"><a class="button" href="m3b_family_selector_dashboard.html">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill green">Neural operator</span>
+          <h3>T16 算子学习专项页</h3>
+          <p>应显示 BOST inverse-operator 定义、Residual FNO/DeepONet/Temporal 三路线交互、12 周计划、文献脊柱、OERF 前史和师兄问题。</p>
+          <div class="resource-actions"><a class="button" href="operator_learning_bost_bridge.html">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill green">Innovation lab</span>
+          <h3>算子学习 × 三维重建创新实验室</h3>
+          <p>应显示 gate/dual/range-null 历史证据、query-calibrated v2c 图表、support-fit 闭式基线、router collapse、QC-SNCO 架构、可筛选 54 篇文献、实验矩阵和移动端单列布局。</p>
+          <div class="resource-actions"><a class="button" href="operator_3d_innovation_lab.html">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill green">Topic</span>
+          <h3>T1 选题详情</h3>
+          <p>应显示研究摘要、通俗物理解释、执行路径、软硬件、知识基础、文献和高相关资源。</p>
+          <div class="resource-actions"><a class="button" href="topic_deep_dive.html?id=T1">打开检查</a></div>
+        </article>
+        <article class="check-card">
+          <span class="pill blue">Learning</span>
+          <h3>教材/讲义库</h3>
+          <p>应显示补课路径资源，而不是散落的教材链接。</p>
+          <div class="resource-actions"><a class="button" href="learning_library/index.html">打开检查</a></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>路由规则</h2>
+      <ol class="route">
+        <li>站内 Markdown、JSON、CSV、BibTeX、代码和配置文件默认进入 <strong>document_reader.html</strong>，并显示目录、统计卡、链接摘要和搜索。</li>
+        <li>站内公开 PDF 和图片默认进入 <strong>asset_viewer.html</strong>；如果 PDF 属于论文库，会自动显示论文上下文、术语导读和论文详情入口。</li>
+        <li>论文库每个已缓存公开 PDF 都有一个单篇术语导读页；从术语页点击页码会回到 PDF 包装页对应页。</li>
+        <li>选题详情、论文详情、学习库、审计页和桥梁页都是专题页面；全站路由会给普通文本链接加轻量类型标识，帮助判断“点进去是什么”。</li>
+        <li>外部 DOI、出版社、GitHub、YouTube/B 站和数据 supplement 不能由本站重渲染，但会被标注为外部来源并保留官方跳转。</li>
+      </ol>
+    </section>
+
+    <section class="panel">
+      <h2>边界</h2>
+      <p class="note">公开 GitHub Pages 不放学校 VPN-only 或订阅全文 PDF。私有库、临时下载和 WebVPN 路径会被路由器排除；本页只检查可公开分享的站内资源。</p>
+    </section>
+
+    <footer>最近一次本地静态覆盖检查：227 个公开 HTML 页面均包含全站链接路由脚本；本页用于快速人工点检代表性入口。</footer>
+  </div>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+{
+  "audit_feature_sha256_before_target_label_access": "4334fa95bc6e8f2a316a3b2bf8eb9a1782f2ded3e31e08919a9a7c64f9739f71",
+  "checkpoint_hashes": {
+    "3101": "0d15e7c2d7d526fc6010499e45aa17533d0e25985e97ee94de919e1c9b580006",
+    "3102": "52b7ddc8f8dd74e3397d93b0e63254c8fd97c15317c4942869d38cd5c823851b",
+    "3103": "9c44320596da42348634bc76b2f43c1d43cc7c95b928bbce3cb21dd8747ec0e7"
+  },
+  "chronology": {
+    "reserved_audit_features_hashed_before_original_target_label_access": true,
+    "reserved_view_excluded_from_reconstruction": true,
+    "rule_selected": false,
+    "same_opened_v5p_fields": true,
+    "threshold_sweep_performed": false
+  },
+  "claim_ceiling": "No sign rule, gate, design lock, experimental, OERF, or publication superiority claim is authorized.",
+  "correlations": {
+    "cell_spearman": 0.6738906088751291,
+    "field_spearman": 0.5477228476557174,
+    "per_rig": [
+      {
+        "field_spearman": 0.6059460961378162,
+        "rig_id": "fresh-budget-rig-a"
+      },
+      {
+        "field_spearman": 0.62367324256738,
+        "rig_id": "fresh-budget-rig-b"
+      },
+      {
+        "field_spearman": 0.83123089747152,
+        "rig_id": "fresh-budget-rig-c"
+      },
+      {
+        "field_spearman": 0.01600444567935538,
+        "rig_id": "fresh-budget-rig-d"
+      },
+      {
+        "field_spearman": 0.5546540705751598,
+        "rig_id": "fresh-budget-rig-e"
+      },
+      {
+        "field_spearman": 0.275187552097805,
+        "rig_id": "fresh-budget-rig-f"
+      }
+    ]
+  },
+  "decision": "RESERVED_VIEW_RELIABILITY_NO_GO_POSTOPEN",
+  "evidence_label": "post_open_same_field_reserved_view_diagnosis",
+  "next_boundary": "Archive sign-rule reliability on these data. Ask whether a reserved camera is operationally available; otherwise pivot to forward-model mismatch, covariance, or 4D temporal priors.",
+  "reasons": [
+    "The reserved-positive rule improves aggregate gain but only 12/18 cells are positive.",
+    "Its selected-field target harm fraction is 33.7%, worse than the in-sample source-positive rule.",
+    "The conjunction lowers coverage without materially lowering selected-field harm.",
+    "One rig has near-zero reserved-to-target rank association, so the mechanism is not uniformly transferable."
+  ],
+  "reproduced_prediction_sha256": "ce1975dc57675cf997de1f01b64aeea3b6a0419f1ab1745d5c89abee23f3236e",
+  "rules": {
+    "reserved_positive": {
+      "field_coverage": 0.4861111111111111,
+      "gated_cell_mean_gain_vs_pbb9": 0.013527770840065666,
+      "gated_positive_cell_fraction": 0.6666666666666666,
+      "gated_ratio_of_cluster_means_gain_vs_pbb9": 0.03405252643294454,
+      "gated_worst_cell_degradation": 0.009863720981094337,
+      "selected_field_mean_target_gain": 0.025437909556817663,
+      "selected_field_target_harm_fraction": 0.33714285714285713
+    },
+    "source_and_reserved_positive": {
+      "field_coverage": 0.2111111111111111,
+      "gated_cell_mean_gain_vs_pbb9": 0.00682681518310284,
+      "gated_positive_cell_fraction": 0.5555555555555556,
+      "gated_ratio_of_cluster_means_gain_vs_pbb9": 0.014363354891014368,
+      "gated_worst_cell_degradation": 0.006204291136700846,
+      "selected_field_mean_target_gain": 0.03003586714549758,
+      "selected_field_target_harm_fraction": 0.21052631578947367
+    },
+    "source_or_reserved_positive": {
+      "field_coverage": 0.5555555555555556,
+      "gated_cell_mean_gain_vs_pbb9": 0.014918550721614712,
+      "gated_positive_cell_fraction": 0.6666666666666666,
+      "gated_ratio_of_cluster_means_gain_vs_pbb9": 0.03512353763014697,
+      "gated_worst_cell_degradation": 0.009863720981094337,
+      "selected_field_mean_target_gain": 0.02462034632224567,
+      "selected_field_target_harm_fraction": 0.33
+    },
+    "source_positive": {
+      "field_coverage": 0.28055555555555556,
+      "gated_cell_mean_gain_vs_pbb9": 0.008217595064651861,
+      "gated_positive_cell_fraction": 0.5555555555555556,
+      "gated_ratio_of_cluster_means_gain_vs_pbb9": 0.015434366088216689,
+      "gated_worst_cell_degradation": 0.006204291136700846,
+      "selected_field_mean_target_gain": 0.027278821733305526,
+      "selected_field_target_harm_fraction": 0.22772277227722773
+    }
+  },
+  "sample_accounting": {
+    "families": 3,
+    "fields": 360,
+    "reserved_views_per_field": 1,
+    "rigs": 6,
+    "target_views_per_field": 2
+  },
+  "schema": "v5r-reserved-view-reliability-diagnosis-1",
+  "source_provenance": {
+    "determinism_boundary": "V5R must reproduce the frozen V5P prediction hash before reading the original target labels.",
+    "direct_dependency_sha256": {
+      "configs/v5h_gc_rio_development.json": "098b46c0554e2b716b88f9a83edf039b34fdbb902c6d231508f7a360a74d4eff",
+      "configs/v5p_fresh_budget_gate.json": "8cc020ce3663477c575802d1927e17270115bea64608bcad646fcb134b799036",
+      "gc_rio/data.py": "f43ec8bce1a038bdbfb34d6c8ab588c3bf96d42322075d4a7acb5bcc14f2c756",
+      "gc_rio/protocol.py": "0d9b79e5feedb6cf432cb6ed89cc63c3d712291189a19d6c41fcdbcdc072c206",
+      "gc_rio/shared_field_model.py": "047c152c9166b614b823279eed222913b4184e29522e3849aeef4182502f9b9c",
+      "gc_rio/training.py": "a318cf3dde5f4d04d7a6e01e5d3be31cedab367a36865926ca27b2abc9578e6a",
+      "release_provenance.py": "9cd946a3811b99e4e8e5bc4f6dae8c7439ed147010d9e0f5acd49044363e9cfe",
+      "results/v5k_shared_field_development/report.json": "1fda7f90b1164ea80e9b8453a20763fbf2d3aacfe424435e7958a0f533cc77df",
+      "results/v5k_shared_field_work/sf_rio_adjoint_only/3101/best.pt": "0d15e7c2d7d526fc6010499e45aa17533d0e25985e97ee94de919e1c9b580006",
+      "results/v5k_shared_field_work/sf_rio_adjoint_only/3102/best.pt": "52b7ddc8f8dd74e3397d93b0e63254c8fd97c15317c4942869d38cd5c823851b",
+      "results/v5k_shared_field_work/sf_rio_adjoint_only/3103/best.pt": "9c44320596da42348634bc76b2f43c1d43cc7c95b928bbce3cb21dd8747ec0e7",
+      "results/v5p_fresh_budget_gate/report.json": "10649df70d0743cbbb8dfe35a431046f484a260400484d9b67144ea141705e67",
+      "run_v5h_gc_rio_development.py": "21f0f7dc6f3f7d52d5a40c115bee2a1ad568a5193ab943935ad64c4e8e57b220",
+      "run_v5n_strong_classical_baselines.py": "a22dda9d725afcd479d49775da76c89b3f8f8a8f8a93a8999af84cad1dea4629",
+      "run_v5o_prior_anchored_frontier.py": "74bb1582ab9bb0600518bf17ef70fceba95322058058e1478a194f3ed808fd06",
+      "run_v5p_fresh_budget_gate.py": "7d740702e9ba9497e33b78d4e5a38acbeaa2c246d9758b1b91d262fbb12a595c",
+      "run_v5q_postopen_topology_diagnosis.py": "21cd1e4d8e541b5334b1d2ccc3c500478c10a770d5ea7b94646d73ae82ba84f3",
+      "run_v5r_reserved_view_reliability_diagnosis.py": "a691610be50a8782fd9ab5eb1ce60c2851154492c80e154bc094c88f42a221ef"
+    },
+    "runtime_environment": {
+      "device": "cpu",
+      "machine": "arm64",
+      "numpy_version": "2.4.6",
+      "operating_system": "Darwin",
+      "operating_system_release": "25.5.0",
+      "python_implementation": "CPython",
+      "python_version": "3.11.5",
+      "torch_version": "2.13.0",
+      "word_size": "64"
+    }
+  },
+  "v5p_prediction_sha256": "ce1975dc57675cf997de1f01b64aeea3b6a0419f1ab1745d5c89abee23f3236e"
+}

@@ -1,0 +1,108 @@
+{
+  "schema_version": "psu-primary-source-fact-audit-1.0",
+  "status": "PRIMARY_SOURCE_FACTS_VERIFIED_CLAIM_LIMITS_ATTACHED",
+  "verified_at_utc": "2026-07-18T00:00:00Z",
+  "source": {
+    "title": "Open-Source BOS Tomography Dataset of High-Speed Flow Over a Flight Body",
+    "arxiv_id": "2508.17120v2",
+    "arxiv_url": "https://arxiv.org/html/2508.17120",
+    "doi": "10.26208/1VE2-5C19",
+    "license": "CC BY 4.0"
+  },
+  "facts": {
+    "acquisition": {
+      "camera_count": 7,
+      "sensor_shape_wh": [
+        2560,
+        2160
+      ],
+      "pixel_pitch_m": 0.0000065,
+      "test_count": 10,
+      "rotation_degrees": [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90
+      ],
+      "reported_flow_off_frames_per_test": 2000,
+      "reported_flow_on_frames_per_test": 2000,
+      "frame_rate_hz": 10,
+      "exposure_s": 0.000015
+    },
+    "optics": {
+      "lens_groups": [
+        {
+          "camera_count": 2,
+          "focal_length_m": 0.105,
+          "f_number": 32
+        },
+        {
+          "camera_count": 1,
+          "focal_length_m": 0.085,
+          "f_number": 22
+        },
+        {
+          "camera_count": 4,
+          "focal_length_m": 0.2,
+          "f_number": 32
+        }
+      ],
+      "estimated_object_plane_circle_of_confusion_m": 0.00095,
+      "clean_same_channel_same_geometry_f_number_pair_reported": false
+    },
+    "calibration": {
+      "camera_reprojection_rmse_px": 0.46,
+      "background_reprojection_rmse_px": 0.49,
+      "camera_reprojection_rmse_std_px": 0.22,
+      "background_reprojection_rmse_std_px": 0.25,
+      "target_pose_count": 13
+    },
+    "deflection": {
+      "selected_method": "Horn-Schunck optical flow with local normalization",
+      "local_normalization_window_px": 16,
+      "gaussian_smoothing_sigma_px": 1,
+      "compared_methods": [
+        "Horn-Schunck",
+        "cross-correlation",
+        "wavelet optical flow"
+      ],
+      "mask_classes": [
+        "model",
+        "ambient",
+        "active"
+      ]
+    },
+    "nirt_forward": {
+      "operator": "cone-ray",
+      "reported_coefficient_of_variation": 0.085,
+      "reported_points_per_pixel": 8000,
+      "data_batch_pixels": 500
+    },
+    "published_reconstruction_grid": {
+      "shape_xyz": [
+        400,
+        350,
+        350
+      ],
+      "volume_extent_m_xyz": [
+        0.15,
+        0.13,
+        0.13
+      ],
+      "voxel_side_m": 0.000375
+    }
+  },
+  "claim_limits": [
+    "The paper reports 2000 acquired flow-off and flow-on frames per test, but the tracked public archive inventory does not expose them as independent per-condition temporal frames.",
+    "The f/22 and f/32 settings are confounded with lens focal length and camera placement; they are not a same-channel same-geometry aperture pair.",
+    "Aggregate calibration RMSE does not bind every N2 sensor record to a calibration version or timestamp.",
+    "The reported cone-ray sampling cost motivates a variance or cost study, but does not demonstrate that a learned surrogate is accurate or faster.",
+    "Validation reprojection is image-space consistency and is not unique three-dimensional field truth."
+  ]
+}

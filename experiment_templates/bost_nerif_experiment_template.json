@@ -1,0 +1,94 @@
+{
+  "experiment": {
+    "id": "YYYYMMDD_bost_synthetic_m1_baseline_vs_nerif",
+    "description": "Sparse-view BOST synthetic reconstruction with baseline and NeRIF-style coordinate field.",
+    "seed": 20260706,
+    "owner": "Gao Youyang"
+  },
+  "dataset": {
+    "source": "synthetic",
+    "dataset_id": "synthetic_gaussian_flame_v1",
+    "modality": "BOST",
+    "volume_shape": [32, 64, 64],
+    "axis_order": "z,y,x",
+    "spacing_mm": [1.0, 1.0, 1.0],
+    "field_quantity": "delta_n",
+    "field_unit": "dimensionless"
+  },
+  "geometry": {
+    "model": "parallel_projection_proxy",
+    "num_views": 9,
+    "view_angles_deg": "auto_uniform_0_180",
+    "image_shape": [64, 64],
+    "displacement_unit": "pixel"
+  },
+  "forward": {
+    "approximation": "integrated_refractive_index_gradient",
+    "noise_std": 0.03,
+    "mask_mode": "none",
+    "save_clean_displacement": true
+  },
+  "baseline": {
+    "enabled": true,
+    "method": "tikhonov_or_landweber",
+    "lambda_reg": 0.01,
+    "iterations": 200,
+    "learning_rate": 0.1
+  },
+  "nerif": {
+    "enabled": true,
+    "coordinate_encoding": "fourier",
+    "num_frequencies": 8,
+    "hidden_layers": 4,
+    "hidden_width": 128,
+    "activation": "sine_or_relu",
+    "output_quantity": "delta_n",
+    "losses": {
+      "displacement": 1.0,
+      "gradient_smoothness": 0.01,
+      "boundary": 0.0
+    },
+    "training": {
+      "steps": 5000,
+      "batch_rays": 4096,
+      "learning_rate": 0.0005,
+      "checkpoint_every": 500
+    }
+  },
+  "metrics": {
+    "required": [
+      "relative_l2",
+      "rmse",
+      "correlation_coefficient",
+      "reprojection_rmse",
+      "runtime_seconds"
+    ],
+    "optional": [
+      "ssim",
+      "psnr",
+      "leave_one_view_out_reprojection",
+      "memory_mb"
+    ]
+  },
+  "outputs": {
+    "root": "experiments/YYYYMMDD_bost_synthetic_m1_baseline_vs_nerif",
+    "save_arrays": true,
+    "save_figures": true,
+    "save_metrics_csv": true,
+    "save_resolved_config": true,
+    "figures": [
+      "phantom_slice.png",
+      "displacement_views.png",
+      "baseline_vs_nerif.png",
+      "error_map.png",
+      "reprojection_error.png",
+      "loss_curve.png"
+    ]
+  },
+  "permissions": {
+    "contains_oerf_internal_data": false,
+    "can_share_in_undergraduate_thesis": true,
+    "can_share_publicly": true,
+    "notes": "Switch these flags before using real OERF data."
+  }
+}

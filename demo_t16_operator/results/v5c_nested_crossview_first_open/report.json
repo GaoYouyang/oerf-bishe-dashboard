@@ -1,0 +1,158 @@
+{
+  "claim_status": "V5C_M0_NEW_GENERATOR_FAMILY_PRECOMMITTED_FIRST_OPEN_NOT_CONFIRMATORY",
+  "claim_boundary": "precommitted new-generator-family first open on an 8x8x5 prescribed linear weak-deflection surrogate; same two Stage-0-audited rigs and new jet_shear/shock_cell fields, seeds and noise levels; the new families participate in current inner selection, so only cameras are held out; no separate audit process, real BOS, nonlinear ray tracing, CFD, NeRIF/TDBOST, FNO/FFNO or DeepONet",
+  "scientific_question": "Can inner-only cross-view selection of aperture and dimensionless ridge, followed by sample-excluded per-camera and two-way outer transfer gates, retain aperture recovery while reducing the held-out audit-camera tail failure seen in v5b M1?",
+  "preopen_git_commit": "0d7de51dd8ccd165256352825042e8d9a7c814d9",
+  "data_separation": {
+    "inner_views_select_radius_and_kappa": true,
+    "outer_views_used_only_after_inner_selection": true,
+    "outer_cameras_scored_separately": true,
+    "audit_not_used_for_sample_routing": true,
+    "audit_used_for_post_open_scientific_verdict": true,
+    "all_sample_routes_constructed_before_truth_and_audit_evaluation": true,
+    "audit_view_opened_in_same_process_after_decisions": true,
+    "audit_escrowed_in_separate_process": false,
+    "direct_truth_fields_and_true_radius_used_for_routing": false,
+    "family_labels_used_for_routing": false,
+    "metadata_radius_is_truth_derived_synthetic_proxy": true,
+    "new_generator_families_relative_to_v5b_m1": [
+      "jet_shear",
+      "shock_cell"
+    ],
+    "family_holdout_against_current_inner_selection": false,
+    "camera_holdout_against_current_inner_selection": true,
+    "noise_sigma_scaled_from_clean_inner_truth": true,
+    "noise_whitening_is_oracle_nominal_not_experimental_calibration": true,
+    "support_mask_uses_generator_matched_reaction_support": true,
+    "same_rigs_as_stage0_and_v5b_m1": true,
+    "confirmatory_lock_constructed": false
+  },
+  "forward_model_gate": {
+    "report": "results/v5b_forward_model_convergence/report.json",
+    "report_sha256": "bb9f55f6bba9c80c11a647d07f569960a067fbaade9625671c42541e370943cd",
+    "operator_sha256": "faaa771fe3b72084d87fd2ce08e3702978acd93a673ba5f355e28fddfec63020",
+    "safe_settings_used": [
+      {
+        "path_samples": 35,
+        "aperture_samples": 41
+      }
+    ],
+    "gate_claim_status": "DETERMINISTIC_MECHANISM_AUDIT_NOT_A_CONFIRMATORY_LOCK",
+    "gate_is_deterministic_numerical_only": true
+  },
+  "summary": {
+    "nominal_sample_rows": 48,
+    "paired_radius_blocks": 6,
+    "field_rig_bundles": 16,
+    "independent_rigs": 2,
+    "independence_boundary": {
+      "radius_blocks_reuse_fields_and_paired_noise_within_rig": true,
+      "views_are_repeated_measurements_not_independent_units": true,
+      "nominal_rows_are_not_iid_samples": true
+    },
+    "families": [
+      "jet_shear",
+      "shock_cell"
+    ],
+    "support_audit": {
+      "active_voxels": 96,
+      "total_voxels": 320,
+      "threshold": 0.05
+    },
+    "calibration": {
+      "nearest_bank_match_rate": 0.5,
+      "mean_aperture_absolute_error": 0.024999999999999998,
+      "fixed_ridge_nearest_bank_match_rate": 0.8333333333333334,
+      "clean_truth_field_match_rate": 1.0,
+      "noisy_truth_field_match_rate": 1.0,
+      "operator_matrix_match_rate": 1.0
+    },
+    "selection": {
+      "mean_camera_deletion_radius_stability_fraction": 0.375,
+      "mean_camera_deletion_kappa_stability_fraction": 1.0,
+      "full_block_descriptive_gate_pass_rate": 0.0,
+      "sample_excluded_block_gate_pass_rate": 0.0,
+      "selected_kappas": [
+        0.001,
+        0.001,
+        0.001,
+        0.001,
+        0.001,
+        0.001
+      ],
+      "asymmetric_candidate_cv_advantage_is_gate": false
+    },
+    "decision_construction": {
+      "in_memory_routing_sha256_before_truth_field_and_audit_evaluation": "bbb6204e749575a2f458353992e31e9a4f75fa91b49e5cd156b19f358f22afea",
+      "routing_commit_excluded_report_fields": [
+        "block_id",
+        "family",
+        "true_aperture_radius"
+      ],
+      "all_decisions_constructed_before_truth_and_audit_evaluation": true,
+      "same_process_not_cryptographic_escrow": true
+    },
+    "two_way_outer_transfer": {
+      "directions": {
+        "outer_0_gate_to_outer_1_evaluation": {
+          "nominal_row_coverage": 0.0,
+          "accepted_count": 0,
+          "accepted_heldout_mean_improvement_percent": null,
+          "accepted_heldout_p10_improvement_percent": null,
+          "accepted_heldout_harm_rate_below_minus_1_percent": null,
+          "minimum_accepted_block_mean_improvement_percent": null
+        },
+        "outer_1_gate_to_outer_0_evaluation": {
+          "nominal_row_coverage": 0.0,
+          "accepted_count": 0,
+          "accepted_heldout_mean_improvement_percent": null,
+          "accepted_heldout_p10_improvement_percent": null,
+          "accepted_heldout_harm_rate_below_minus_1_percent": null,
+          "minimum_accepted_block_mean_improvement_percent": null
+        }
+      },
+      "fixed_two_views_not_iid_and_not_a_risk_bound": true,
+      "both_directions_required_for_final_acceptance": true
+    },
+    "selective_safety": {
+      "nominal_row_coverage": 0.0,
+      "accepted_count": 0,
+      "accepted_mean_field_gain_percent": null,
+      "accepted_p10_field_gain_percent": null,
+      "accepted_field_harm_rate_over_1_percent": null,
+      "mean_selected_audit_change_percent": 0.0,
+      "accepted_audit_increase_rate": null,
+      "maximum_accepted_audit_increase_percent": null
+    },
+    "outer_audit_diagnostic": {
+      "pearson_min_outer_improvement_vs_raw_audit_change": 0.49844510277132204,
+      "uses_audit_for_sample_routing": false,
+      "audit_used_for_post_open_scientific_verdict": true,
+      "descriptive_only_not_a_calibrated_risk_bound": true,
+      "two_outer_views_cannot_support_arbitrary_view_safety": true
+    },
+    "pilot_gates": {
+      "nearest_bank_match_rate": false,
+      "coverage": false,
+      "accepted_mean_field_gain": false,
+      "accepted_p10_field_gain": false,
+      "accepted_field_harm": false,
+      "accepted_audit_increase": false,
+      "mean_selected_audit_change": true,
+      "outer_0_gate_to_outer_1_evaluation": false,
+      "outer_1_gate_to_outer_0_evaluation": false
+    },
+    "overall_pilot_pass": false
+  },
+  "source_hashes": {
+    "runner": "ecf640afb326e52a9a3c85b77dd924faa0a0ac81e0986be71ad2a8e1fd7fbf78",
+    "nested_crossview": "970ed0fa9931fe40644d59a961363e36d0e4d287c097d63aafcc378bbca7e8f7",
+    "profile_module": "02bc093eaa4f9edcd81f30da5d9c7794d930b1e113c8f956b3a31dc3556f088a",
+    "data_builder": "7c1eb4ddbbea8a2fc4b9b4ecfa034be36e8b4d05c3e6df9c53eec3f780973fb5",
+    "finite_aperture_operator": "faaa771fe3b72084d87fd2ce08e3702978acd93a673ba5f355e28fddfec63020",
+    "reaction_generator": "7f466261ad69f1d3e90caf69a36cef8d63e1093a72d4b08ef2df4218b9433563",
+    "frozen_protocol": "38f09e16ad1e750d94f4f730eeb7574ffc5010d582b3cb588d07062924caf360",
+    "config": "734e8bbae5c350279b061569fe56bc4a8e71cbdc3c3d25db9a8a559ef23a6da9",
+    "forward_model_gate_report": "bb9f55f6bba9c80c11a647d07f569960a067fbaade9625671c42541e370943cd"
+  }
+}

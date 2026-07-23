@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaoyouyang.github.io/oerf-bishe-dashboard/data_templates/n5_d5_l2c_trust_anchor_registry.schema.json",
+  "title": "N5-D5-L2-C verifier trust-anchor registry",
+  "description": "A version-controlled registry of independently approved trust-policy digests. The caller cannot supply or replace this registry through the production verifier API.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "registry_id",
+    "production_trust_anchor_enrolled",
+    "active_policy_pins",
+    "claim_authorizations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "n5-d5-l2c-trust-anchor-registry-1.0"
+    },
+    "record_kind": {
+      "const": "VERIFIER_CONTROLLED_TRUST_ANCHOR_REGISTRY"
+    },
+    "registry_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{5,79}$"
+    },
+    "production_trust_anchor_enrolled": {
+      "type": "boolean"
+    },
+    "active_policy_pins": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "$ref": "#/$defs/policyPin"
+      }
+    },
+    "claim_authorizations": {
+      "$ref": "#/$defs/claimAuthorizations"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "production_trust_anchor_enrolled": { "const": false }
+        },
+        "required": ["production_trust_anchor_enrolled"]
+      },
+      "then": {
+        "properties": {
+          "active_policy_pins": { "maxItems": 0 }
+        }
+      },
+      "else": {
+        "properties": {
+          "active_policy_pins": { "minItems": 1 }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "policyPin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_id",
+        "policy_epoch",
+        "policy_sha256",
+        "predicate_type",
+        "required_signature_roles",
+        "enrollment_review_sha256"
+      ],
+      "properties": {
+        "policy_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]{5,79}$"
+        },
+        "policy_epoch": { "type": "integer", "minimum": 1 },
+        "policy_sha256": { "$ref": "#/$defs/sha256" },
+        "predicate_type": {
+          "const": "https://gaoyouyang.github.io/oerf-bishe-dashboard/attestations/n5-d5-l2c-external-witness/v1"
+        },
+        "required_signature_roles": {
+          "const": ["host_capability_witness", "run_cost_observer"]
+        },
+        "enrollment_review_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "claimAuthorizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "real_bost_interface",
+        "physical_forward_correctness",
+        "derivative_correctness",
+        "reconstruction",
+        "algorithm_superiority",
+        "generalization",
+        "publication"
+      ],
+      "properties": {
+        "real_bost_interface": { "const": false },
+        "physical_forward_correctness": { "const": false },
+        "derivative_correctness": { "const": false },
+        "reconstruction": { "const": false },
+        "algorithm_superiority": { "const": false },
+        "generalization": { "const": false },
+        "publication": { "const": false }
+      }
+    }
+  }
+}

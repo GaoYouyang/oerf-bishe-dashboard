@@ -1,0 +1,104 @@
+{
+  "experiment": "t16_v3i_balanced_variable_geometry_dataset_v1",
+  "scientific_status": "VARIABLE_GEOMETRY_DATASET_GATE_PASS_FUNCTIONAL_TRAINING_NOT_RUN",
+  "dataset_gate_pass": true,
+  "sample_count": 328,
+  "unique_source_count": 328,
+  "unique_geometry_count": 28,
+  "input_shape": [
+    328,
+    42,
+    8,
+    16,
+    16
+  ],
+  "input_channel_count": 42,
+  "split_audit": {
+    "train": {
+      "source_fields": 160,
+      "geometry_partition": "train",
+      "unique_geometries": 16,
+      "geometry_entropy_bits": 4.0,
+      "minimum_fields_per_geometry": 10,
+      "maximum_fields_per_geometry": 10
+    },
+    "val": {
+      "source_fields": 40,
+      "geometry_partition": "validation",
+      "unique_geometries": 4,
+      "geometry_entropy_bits": 2.0,
+      "minimum_fields_per_geometry": 10,
+      "maximum_fields_per_geometry": 10
+    },
+    "test_iid": {
+      "source_fields": 32,
+      "geometry_partition": "geometry_ood",
+      "unique_geometries": 4,
+      "geometry_entropy_bits": 2.0,
+      "minimum_fields_per_geometry": 8,
+      "maximum_fields_per_geometry": 8
+    },
+    "test_noise_ood": {
+      "source_fields": 32,
+      "geometry_partition": "geometry_ood",
+      "unique_geometries": 4,
+      "geometry_entropy_bits": 2.0,
+      "minimum_fields_per_geometry": 8,
+      "maximum_fields_per_geometry": 8
+    },
+    "test_family_ood": {
+      "source_fields": 32,
+      "geometry_partition": "stress",
+      "unique_geometries": 4,
+      "geometry_entropy_bits": 2.0,
+      "minimum_fields_per_geometry": 8,
+      "maximum_fields_per_geometry": 8
+    },
+    "test_joint_ood": {
+      "source_fields": 32,
+      "geometry_partition": "stress",
+      "unique_geometries": 4,
+      "geometry_entropy_bits": 2.0,
+      "minimum_fields_per_geometry": 8,
+      "maximum_fields_per_geometry": 8
+    }
+  },
+  "gate_checks": {
+    "one_geometry_per_source": true,
+    "all_28_geometries_present": true,
+    "within_split_assignment_exactly_balanced": true,
+    "shared_full_view_noise_exact": true,
+    "audit_camera_mask_excluded": true,
+    "audit_camera_input_channels_zero": true,
+    "train_validation_geometries_disjoint": true,
+    "inputs_and_targets_finite": true,
+    "input_channel_contract_42": true
+  },
+  "private_dataset": {
+    "public": false,
+    "relative_path_recorded_publicly": true,
+    "sha256": "9931abb14b38381c652d32f8a664b40fed36ee30e3c840c5ccda2835aab2540a",
+    "compressed_bytes": 21282395
+  },
+  "next_decision": {
+    "functional_pilot_authorized": true,
+    "controls": [
+      "locked_fno",
+      "static",
+      "k_cardinality",
+      "shuffled_geometry",
+      "correct_geometry"
+    ],
+    "seeds": 3,
+    "superiority_training_authorized": false,
+    "blind_final_opened": false
+  },
+  "claims_boundary": {
+    "dataset_development_only": true,
+    "functional_training_completed": false,
+    "superiority_tested": false,
+    "blind_final_opened": false,
+    "real_bost_geometry_present": false,
+    "private_dataset_npz_public": false
+  }
+}

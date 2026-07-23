@@ -1,0 +1,350 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaoyouyang.github.io/oerf-bishe-dashboard/data_templates/n5_d5_l2b_describe_authorization.schema.json",
+  "title": "N5-D5-L2-B one-time private describe authorization",
+  "description": "A local one-time intent for exactly two external describe requests. It never authorizes forward, JVP, VJP, reconstruction, training, or a scientific claim.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "authorization_id",
+    "one_time_nonce",
+    "human_approved",
+    "foundation_report",
+    "replay_plan",
+    "describe_entrypoint",
+    "expected_descriptor",
+    "output_directory",
+    "scope",
+    "limits",
+    "claim_authorizations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "n5-d5-l2b-describe-authorization-1.0"
+    },
+    "record_kind": {
+      "const": "PRIVATE_DESCRIBE_ONLY_ONE_TIME_AUTHORIZATION"
+    },
+    "authorization_id": {
+      "$ref": "#/$defs/pseudonym"
+    },
+    "one_time_nonce": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "human_approved": {
+      "const": true
+    },
+    "foundation_report": {
+      "$ref": "#/$defs/fileReference"
+    },
+    "replay_plan": {
+      "$ref": "#/$defs/fileReference"
+    },
+    "describe_entrypoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inventory_relative_path",
+        "interpreter",
+        "standard_library_only",
+        "arguments"
+      ],
+      "properties": {
+        "inventory_relative_path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "interpreter": {
+          "const": "/usr/bin/python3"
+        },
+        "standard_library_only": {
+          "const": true
+        },
+        "arguments": {
+          "type": "array",
+          "maxItems": 0
+        }
+      }
+    },
+    "expected_descriptor": {
+      "$ref": "#/$defs/describeDescriptor"
+    },
+    "output_directory": {
+      "$ref": "#/$defs/relativePath"
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operations",
+        "external_request_count",
+        "auto_chain_primary",
+        "internal_operation_absence_claimed"
+      ],
+      "properties": {
+        "operations": {
+          "const": [
+            "describe"
+          ]
+        },
+        "external_request_count": {
+          "const": 2
+        },
+        "auto_chain_primary": {
+          "const": false
+        },
+        "internal_operation_absence_claimed": {
+          "const": false
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wall_timeout_seconds",
+        "cpu_seconds",
+        "stdout_bytes",
+        "stderr_bytes",
+        "open_files",
+        "processes"
+      ],
+      "properties": {
+        "wall_timeout_seconds": {
+          "type": "number",
+          "minimum": 0.25,
+          "maximum": 30
+        },
+        "cpu_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30
+        },
+        "stdout_bytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 1048576
+        },
+        "stderr_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65536
+        },
+        "open_files": {
+          "type": "integer",
+          "minimum": 8,
+          "maximum": 64
+        },
+        "processes": {
+          "const": 1
+        }
+      }
+    },
+    "claim_authorizations": {
+      "$ref": "#/$defs/claimAuthorizations"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pseudonym": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{5,79}$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "not": {
+        "pattern": "(^/|(^|/)\\.\\.(/|$)|^file:)"
+      }
+    },
+    "fileReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relative_path",
+        "sha256"
+      ],
+      "properties": {
+        "relative_path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "describeDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "adapter_id",
+        "adapter_version",
+        "implementation_sha256",
+        "context_id",
+        "capability_profile",
+        "claim_boundary"
+      ],
+      "properties": {
+        "schema": {
+          "const": "n5-d5-describe-descriptor-1.0"
+        },
+        "adapter_id": {
+          "$ref": "#/$defs/pseudonym"
+        },
+        "adapter_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "implementation_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "context_id": {
+          "$ref": "#/$defs/pseudonym"
+        },
+        "capability_profile": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/dualCapabilityProfile"
+            },
+            {
+              "$ref": "#/$defs/tripleCapabilityProfile"
+            }
+          ]
+        },
+        "claim_boundary": {
+          "$ref": "#/$defs/descriptorClaimBoundary"
+        }
+      }
+    },
+    "dualCapabilityProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path_roles",
+        "native_direct_residual",
+        "forward_supported",
+        "jvp_supported",
+        "vjp_supported"
+      ],
+      "properties": {
+        "path_roles": {
+          "const": [
+            "curved",
+            "straight"
+          ]
+        },
+        "native_direct_residual": {
+          "const": false
+        },
+        "forward_supported": {
+          "const": true
+        },
+        "jvp_supported": {
+          "const": true
+        },
+        "vjp_supported": {
+          "const": true
+        }
+      }
+    },
+    "tripleCapabilityProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path_roles",
+        "native_direct_residual",
+        "forward_supported",
+        "jvp_supported",
+        "vjp_supported"
+      ],
+      "properties": {
+        "path_roles": {
+          "const": [
+            "curved",
+            "straight",
+            "direct_residual"
+          ]
+        },
+        "native_direct_residual": {
+          "const": true
+        },
+        "forward_supported": {
+          "const": true
+        },
+        "jvp_supported": {
+          "const": true
+        },
+        "vjp_supported": {
+          "const": true
+        }
+      }
+    },
+    "descriptorClaimBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "external_describe_requests_only",
+        "internal_operation_absence_proven",
+        "real_bost_authorized",
+        "physical_correctness_authorized"
+      ],
+      "properties": {
+        "external_describe_requests_only": {
+          "const": true
+        },
+        "internal_operation_absence_proven": {
+          "const": false
+        },
+        "real_bost_authorized": {
+          "const": false
+        },
+        "physical_correctness_authorized": {
+          "const": false
+        }
+      }
+    },
+    "claimAuthorizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "real_bost_interface",
+        "physical_forward_correctness",
+        "derivative_correctness",
+        "reconstruction",
+        "algorithm_superiority",
+        "generalization",
+        "publication"
+      ],
+      "properties": {
+        "real_bost_interface": {
+          "const": false
+        },
+        "physical_forward_correctness": {
+          "const": false
+        },
+        "derivative_correctness": {
+          "const": false
+        },
+        "reconstruction": {
+          "const": false
+        },
+        "algorithm_superiority": {
+          "const": false
+        },
+        "generalization": {
+          "const": false
+        },
+        "publication": {
+          "const": false
+        }
+      }
+    }
+  }
+}

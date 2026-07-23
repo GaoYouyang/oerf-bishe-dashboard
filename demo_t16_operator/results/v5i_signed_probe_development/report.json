@@ -1,0 +1,255 @@
+{
+  "architecture": {
+    "explicit_target_physics_decoder": true,
+    "fno_or_camera_token_attention": false,
+    "name": "Signed-probe GC-RIO v1",
+    "signed_target_row_space_probes": true,
+    "source_adjoint_and_fisher_statistics": true,
+    "target_fisher_query": true,
+    "target_observation_at_inference": false,
+    "target_operator_at_inference": true
+  },
+  "candidate": "signed_probe",
+  "claim_ceiling": "No OERF or experimental superiority claim is allowed from this configuration.",
+  "dataset": {
+    "design_lock_rows_constructed": 0,
+    "families": {
+      "design_lock": [],
+      "train": [
+        "expanding_kernel",
+        "interacting_fronts"
+      ],
+      "validation": [
+        "jet_shear",
+        "shock_cell"
+      ]
+    },
+    "non_oracle_noise_estimator": "paired flow-off difference MAD",
+    "rigs": {
+      "design_lock": [],
+      "train": [
+        "train-rig-a",
+        "train-rig-b",
+        "train-rig-c",
+        "train-rig-d"
+      ],
+      "validation": [
+        "validation-rig-a",
+        "validation-rig-b"
+      ]
+    },
+    "synthetic_generator_only": true,
+    "train_rows": 160,
+    "validation_rows": 80
+  },
+  "decision": {
+    "candidate_methods": {
+      "correct": "sp_gc_rio_correct_target_geometry",
+      "no_target": "sp_gc_rio_no_target_geometry",
+      "shuffled": "sp_gc_rio_shuffled_target_geometry"
+    },
+    "cells": [
+      {
+        "analytic_dc": 2.8164531226980336,
+        "family": "jet_shear",
+        "relative_gain_vs_strongest_baseline": -0.03071804154125335,
+        "rig_id": "validation-rig-a",
+        "row_count": 20,
+        "sp_gc_rio_correct_target_geometry": 2.7977513719294405,
+        "sp_gc_rio_no_target_geometry": 2.80418519510561,
+        "sp_gc_rio_shuffled_target_geometry": 2.8123187407062473,
+        "strongest_baseline_method": "zero_correction",
+        "zero_correction": 2.714371204510893
+      },
+      {
+        "analytic_dc": 3.2038724821863185,
+        "family": "shock_cell",
+        "relative_gain_vs_strongest_baseline": -0.04316701324389105,
+        "rig_id": "validation-rig-a",
+        "row_count": 20,
+        "sp_gc_rio_correct_target_geometry": 3.1637337628337514,
+        "sp_gc_rio_no_target_geometry": 3.1579545886537552,
+        "sp_gc_rio_shuffled_target_geometry": 3.1936016293041427,
+        "strongest_baseline_method": "zero_correction",
+        "zero_correction": 3.0328161480064693
+      },
+      {
+        "analytic_dc": 3.5426023779972384,
+        "family": "jet_shear",
+        "relative_gain_vs_strongest_baseline": -0.05661491903495741,
+        "rig_id": "validation-rig-b",
+        "row_count": 20,
+        "sp_gc_rio_correct_target_geometry": 3.532968820497961,
+        "sp_gc_rio_no_target_geometry": 3.526749761489507,
+        "sp_gc_rio_shuffled_target_geometry": 3.529973201952869,
+        "strongest_baseline_method": "zero_correction",
+        "zero_correction": 3.343667363437138
+      },
+      {
+        "analytic_dc": 5.179038813236046,
+        "family": "shock_cell",
+        "relative_gain_vs_strongest_baseline": -0.04028658869691082,
+        "rig_id": "validation-rig-b",
+        "row_count": 20,
+        "sp_gc_rio_correct_target_geometry": 5.156897630641398,
+        "sp_gc_rio_no_target_geometry": 5.156006315578287,
+        "sp_gc_rio_shuffled_target_geometry": 5.159076272975215,
+        "strongest_baseline_method": "zero_correction",
+        "zero_correction": 4.957189380958047
+      }
+    ],
+    "claim_ceiling": "No OERF or experimental superiority claim is allowed from this configuration.",
+    "development_only": true,
+    "label": "NO_DESIGN_LOCK_OPEN",
+    "overall_cell_mean_relative_gain": -0.04269664062925316,
+    "positive_rig_family_fraction": 0.0,
+    "thresholds": {
+      "checkpoint_selection_split": "validation",
+      "design_lock_forbidden_before_freeze": true,
+      "maximum_cluster_degradation": 0.05,
+      "minimum_positive_rig_family_fraction": 0.75,
+      "minimum_relative_gain": 0.1,
+      "primary_metric": "cluster_mean_whitened_target_residual_rmse",
+      "truth_field_forbidden_for_training_and_selection": true
+    },
+    "worst_cell_degradation": 0.05661491903495741
+  },
+  "environment": {
+    "device": "cpu",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "python": "3.11.5",
+    "torch": "2.13.0",
+    "torch_threads": 4
+  },
+  "evidence_label": "synthetic_mechanism_development_only",
+  "freeze_manifest_sha256": "46b2c9c501e35de98d71fa0591d98b4338ad1276393023e09fc54360d2fb18f1",
+  "limitations": [
+    "Synthetic weak-deflection forward model only; this is not an OERF experiment.",
+    "Development validation is reused for checkpoint selection, so it is not confirmatory evidence.",
+    "Two design-lock rigs remain unopened and are insufficient for a publication-level rig claim.",
+    "DeepONet, FNO/FFNO, NIO-style and learned iterative baselines are not yet in this v0 gate."
+  ],
+  "method_summary": [
+    {
+      "mean_whitened_target_residual_rmse": 3.1245801356078777,
+      "median_whitened_target_residual_rmse": 2.579140425637747,
+      "method": "zero_correction",
+      "scored_rows_including_seeds": 160,
+      "split": "train"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.512011024228136,
+      "median_whitened_target_residual_rmse": 2.956501668981148,
+      "method": "zero_correction",
+      "scored_rows_including_seeds": 80,
+      "split": "validation"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.2065175294124786,
+      "median_whitened_target_residual_rmse": 2.6424228624192168,
+      "method": "analytic_dc",
+      "scored_rows_including_seeds": 160,
+      "split": "train"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.6854916990294084,
+      "median_whitened_target_residual_rmse": 3.1133988284143856,
+      "method": "analytic_dc",
+      "scored_rows_including_seeds": 80,
+      "split": "validation"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.167483775041439,
+      "median_whitened_target_residual_rmse": 2.6349597376665788,
+      "method": "sp_gc_rio_no_target_geometry",
+      "scored_rows_including_seeds": 480,
+      "split": "train"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.6612239652067897,
+      "median_whitened_target_residual_rmse": 3.098470735023785,
+      "method": "sp_gc_rio_no_target_geometry",
+      "scored_rows_including_seeds": 240,
+      "split": "validation"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.159824320487802,
+      "median_whitened_target_residual_rmse": 2.6180621862070605,
+      "method": "sp_gc_rio_correct_target_geometry",
+      "scored_rows_including_seeds": 480,
+      "split": "train"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.6628378964756374,
+      "median_whitened_target_residual_rmse": 3.1352380860207765,
+      "method": "sp_gc_rio_correct_target_geometry",
+      "scored_rows_including_seeds": 240,
+      "split": "validation"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.2016289205710344,
+      "median_whitened_target_residual_rmse": 2.637969517521038,
+      "method": "sp_gc_rio_shuffled_target_geometry",
+      "scored_rows_including_seeds": 480,
+      "split": "train"
+    },
+    {
+      "mean_whitened_target_residual_rmse": 3.673742461234619,
+      "median_whitened_target_residual_rmse": 3.1097810447116188,
+      "method": "sp_gc_rio_shuffled_target_geometry",
+      "scored_rows_including_seeds": 240,
+      "split": "validation"
+    }
+  ],
+  "schema": "v5h-gc-rio-development-report-1",
+  "training_records": [
+    {
+      "best_epoch": 18,
+      "best_validation_metric": 3.662041593431588,
+      "checkpoint_public": false,
+      "checkpoint_sha256": "f0a38f4891c4e19d32c6c33f66d0b4a05985493b9a05ce2a7c9bf80245c71388",
+      "method": "sp_gc_rio_no_target_geometry",
+      "model_seed": 3101
+    },
+    {
+      "best_epoch": 42,
+      "best_validation_metric": 3.657986818400405,
+      "checkpoint_public": false,
+      "checkpoint_sha256": "3a749b4226591fde5442a2c276453f160dfae3ba2cf4184fc04fb48cf6a6b5f0",
+      "method": "sp_gc_rio_no_target_geometry",
+      "model_seed": 3102
+    },
+    {
+      "best_epoch": 23,
+      "best_validation_metric": 3.663643483788377,
+      "checkpoint_public": false,
+      "checkpoint_sha256": "5ea2d11c6524406b2d3315d6029a3ef84e6be8816f4386bbce054aed62def37a",
+      "method": "sp_gc_rio_no_target_geometry",
+      "model_seed": 3103
+    },
+    {
+      "best_epoch": 13,
+      "best_validation_metric": 3.664646884762635,
+      "checkpoint_public": false,
+      "checkpoint_sha256": "b13f1bae5523c6be872a43caffa09aaa381e236893dc2d478896ceb067aee79d",
+      "method": "sp_gc_rio_correct_target_geometry",
+      "model_seed": 3101
+    },
+    {
+      "best_epoch": 17,
+      "best_validation_metric": 3.659168805109094,
+      "checkpoint_public": false,
+      "checkpoint_sha256": "eff6ff301e37fb646481eaacd65700d5cbc07024aee1bbe85cc179fef384aca7",
+      "method": "sp_gc_rio_correct_target_geometry",
+      "model_seed": 3102
+    },
+    {
+      "best_epoch": 11,
+      "best_validation_metric": 3.664697999555184,
+      "checkpoint_public": false,
+      "checkpoint_sha256": "c2448bad6961545e075e1668ba5c60d29b5939845d8a8e72e26befe2a3dd69d0",
+      "method": "sp_gc_rio_correct_target_geometry",
+      "model_seed": 3103
+    }
+  ]
+}

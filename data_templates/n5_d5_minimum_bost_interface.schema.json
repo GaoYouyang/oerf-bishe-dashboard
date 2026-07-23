@@ -1,0 +1,618 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaoyouyang.github.io/oerf-bishe-dashboard/data_templates/n5_d5_minimum_bost_interface.schema.json",
+  "title": "N5-D5 minimum replayable BOST interface bundle",
+  "description": "A narrow callable-interface contract for derivative and path-semantics replay. It does not replace the full N2 dataset contract and never authorizes a reconstruction or algorithm claim.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "identity",
+    "adapter",
+    "field",
+    "observation",
+    "paths",
+    "probe_plan",
+    "state_contract",
+    "engineering_tolerances",
+    "cost_contract",
+    "privacy",
+    "status_precedence",
+    "claim_authorizations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "n5-d5-minimum-bost-interface-1.0"
+    },
+    "record_kind": {
+      "enum": [
+        "SYNTHETIC_REFERENCE_FIXTURE",
+        "LAB_ANONYMOUS_INTERFACE"
+      ]
+    },
+    "identity": {
+      "$ref": "#/$defs/identity"
+    },
+    "adapter": {
+      "$ref": "#/$defs/adapter"
+    },
+    "field": {
+      "$ref": "#/$defs/field"
+    },
+    "observation": {
+      "$ref": "#/$defs/observation"
+    },
+    "paths": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/path"
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "probe_plan": {
+      "$ref": "#/$defs/probePlan"
+    },
+    "state_contract": {
+      "$ref": "#/$defs/stateContract"
+    },
+    "engineering_tolerances": {
+      "$ref": "#/$defs/tolerances"
+    },
+    "cost_contract": {
+      "$ref": "#/$defs/costContract"
+    },
+    "privacy": {
+      "$ref": "#/$defs/privacy"
+    },
+    "status_precedence": {
+      "const": [
+        "NONFINITE",
+        "CONTRACT",
+        "PATH_ALIAS",
+        "COST",
+        "REPEATABILITY",
+        "BRANCH",
+        "STRUCTURE",
+        "FD",
+        "ADJOINT",
+        "LOW_SIGNAL_UNRESOLVED",
+        "PROTOCOL_OBLIGATIONS_MET"
+      ]
+    },
+    "claim_authorizations": {
+      "$ref": "#/$defs/claimAuthorizations"
+    }
+  },
+  "$defs": {
+    "nonemptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "not": {
+        "pattern": "(^/|(^|/)\\.\\.(/|$))"
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bundle_id",
+        "context_id",
+        "evidence_class",
+        "anonymized",
+        "contains_private_identifiers",
+        "real_lab_data_present"
+      ],
+      "properties": {
+        "bundle_id": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "context_id": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "evidence_class": {
+          "enum": [
+            "synthetic_protocol_fixture",
+            "private_lab_callable"
+          ]
+        },
+        "anonymized": {
+          "type": "boolean"
+        },
+        "contains_private_identifiers": {
+          "type": "boolean"
+        },
+        "real_lab_data_present": {
+          "type": "boolean"
+        }
+      }
+    },
+    "adapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transport",
+        "command",
+        "timeout_seconds",
+        "expected_adapter_id",
+        "expected_adapter_version",
+        "expected_implementation_sha256",
+        "source_review_status",
+        "deterministic_required",
+        "source_files"
+      ],
+      "properties": {
+        "transport": {
+          "const": "jsonl_subprocess_v1"
+        },
+        "command": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonemptyString"
+          },
+          "minItems": 2
+        },
+        "timeout_seconds": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 300
+        },
+        "expected_adapter_id": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "expected_adapter_version": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "expected_implementation_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "source_review_status": {
+          "enum": [
+            "committed_source_reviewed",
+            "private_source_reviewed",
+            "black_box_unverified"
+          ]
+        },
+        "deterministic_required": {
+          "type": "boolean"
+        },
+        "source_files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relativePath"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_dimension",
+        "parameterization",
+        "units",
+        "axis_order",
+        "dtype",
+        "base_input"
+      ],
+      "properties": {
+        "input_dimension": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "parameterization": {
+          "enum": [
+            "refractive_index_field",
+            "density_field",
+            "neural_field_parameters",
+            "anonymous_field_vector"
+          ]
+        },
+        "units": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "axis_order": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "dtype": {
+          "enum": [
+            "float64",
+            "float32"
+          ]
+        },
+        "base_input": {
+          "$ref": "#/$defs/vectorSource"
+        }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ray_count",
+        "components_per_ray",
+        "output_dimension",
+        "units",
+        "component_order",
+        "dtype"
+      ],
+      "properties": {
+        "ray_count": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 16
+        },
+        "components_per_ray": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2
+        },
+        "output_dimension": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 32
+        },
+        "units": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "component_order": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "dtype": {
+          "enum": [
+            "float64",
+            "float32"
+          ]
+        }
+      }
+    },
+    "vectorSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "seed",
+        "relative_path",
+        "sha256"
+      ],
+      "properties": {
+        "source": {
+          "enum": [
+            "seeded_gaussian",
+            "npy_relative"
+          ]
+        },
+        "seed": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "relative_path": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/relativePath"
+            }
+          ]
+        },
+        "sha256": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/sha256"
+            }
+          ]
+        }
+      }
+    },
+    "operationSupport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "forward",
+        "jvp",
+        "vjp"
+      ],
+      "properties": {
+        "forward": {
+          "const": true
+        },
+        "jvp": {
+          "const": true
+        },
+        "vjp": {
+          "const": true
+        }
+      }
+    },
+    "path": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "path_id",
+        "callable_id",
+        "semantic_digest_sha256",
+        "operation_support"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "curved",
+            "straight",
+            "direct_residual"
+          ]
+        },
+        "path_id": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "callable_id": {
+          "$ref": "#/$defs/nonemptyString"
+        },
+        "semantic_digest_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "operation_support": {
+          "$ref": "#/$defs/operationSupport"
+        }
+      }
+    },
+    "probePlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tangent_count",
+        "cotangent_count",
+        "tangent_seed",
+        "cotangent_seed",
+        "normalization",
+        "h_values",
+        "best_h_selection_is_forbidden",
+        "all_paths_must_be_probed",
+        "all_h_values_must_be_consumed",
+        "maximum_tangent_absolute_cosine"
+      ],
+      "properties": {
+        "tangent_count": {
+          "const": 2
+        },
+        "cotangent_count": {
+          "const": 1
+        },
+        "tangent_seed": {
+          "type": "integer"
+        },
+        "cotangent_seed": {
+          "type": "integer"
+        },
+        "normalization": {
+          "const": "unit_l2"
+        },
+        "h_values": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "minItems": 3,
+          "uniqueItems": true
+        },
+        "best_h_selection_is_forbidden": {
+          "const": true
+        },
+        "all_paths_must_be_probed": {
+          "const": true
+        },
+        "all_h_values_must_be_consumed": {
+          "const": true
+        },
+        "maximum_tangent_absolute_cosine": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        }
+      }
+    },
+    "stateContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actual_forward_returns_states",
+        "branch_state_source",
+        "diagnostic_state_source",
+        "branch_fields",
+        "diagnostic_fields",
+        "wrapper_labels_forbidden"
+      ],
+      "properties": {
+        "actual_forward_returns_states": {
+          "const": true
+        },
+        "branch_state_source": {
+          "enum": [
+            "source_instrumented_control_flow",
+            "private_source_reviewed_control_flow",
+            "wrapper_label_unverified"
+          ]
+        },
+        "diagnostic_state_source": {
+          "const": "post_forward_diagnostic"
+        },
+        "branch_fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonemptyString"
+          },
+          "minItems": 3,
+          "uniqueItems": true
+        },
+        "diagnostic_fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonemptyString"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "wrapper_labels_forbidden": {
+          "const": true
+        }
+      }
+    },
+    "tolerances": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repeatability_absolute_max",
+        "structure_relative_max",
+        "finite_difference_relative_max",
+        "adjoint_normwise_max",
+        "minimum_bilinear_signal_to_action"
+      ],
+      "properties": {
+        "repeatability_absolute_max": {
+          "type": "number",
+          "minimum": 0
+        },
+        "structure_relative_max": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "finite_difference_relative_max": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "adjoint_normwise_max": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "minimum_bilinear_signal_to_action": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        }
+      }
+    },
+    "costContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "describe_calls",
+        "forward_api_calls",
+        "jvp_api_calls",
+        "vjp_api_calls",
+        "all_calls_must_be_reported",
+        "ledger_must_be_cumulative",
+        "cost_attestation",
+        "maximum_stderr_bytes"
+      ],
+      "properties": {
+        "describe_calls": {
+          "const": 2
+        },
+        "forward_api_calls": {
+          "const": 42
+        },
+        "jvp_api_calls": {
+          "const": 6
+        },
+        "vjp_api_calls": {
+          "const": 3
+        },
+        "all_calls_must_be_reported": {
+          "const": true
+        },
+        "ledger_must_be_cumulative": {
+          "const": true
+        },
+        "cost_attestation": {
+          "enum": [
+            "source_instrumented_committed",
+            "source_instrumented_private_reviewed",
+            "black_box_self_reported"
+          ]
+        },
+        "maximum_stderr_bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_trace_publication_permitted",
+        "public_summary_permitted",
+        "private_adapter_required_for_lab",
+        "public_identifiers_forbidden"
+      ],
+      "properties": {
+        "raw_trace_publication_permitted": {
+          "type": "boolean"
+        },
+        "public_summary_permitted": {
+          "type": "boolean"
+        },
+        "private_adapter_required_for_lab": {
+          "const": true
+        },
+        "public_identifiers_forbidden": {
+          "const": true
+        }
+      }
+    },
+    "claimAuthorizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "real_bost_interface",
+        "physical_forward_correctness",
+        "derivative_correctness",
+        "reconstruction",
+        "algorithm_superiority",
+        "generalization",
+        "publication"
+      ],
+      "properties": {
+        "real_bost_interface": {
+          "const": false
+        },
+        "physical_forward_correctness": {
+          "const": false
+        },
+        "derivative_correctness": {
+          "const": false
+        },
+        "reconstruction": {
+          "const": false
+        },
+        "algorithm_superiority": {
+          "const": false
+        },
+        "generalization": {
+          "const": false
+        },
+        "publication": {
+          "const": false
+        }
+      }
+    }
+  }
+}

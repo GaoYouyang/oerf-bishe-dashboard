@@ -1,0 +1,112 @@
+{
+  "bootstrap_replicates": 2000,
+  "calibration_population_count": 512,
+  "candidate_id": "N2-ADRC-N1",
+  "development_cases": [
+    {
+      "id": "smooth_gradient_only",
+      "phantom_family": "smooth_plume",
+      "phantom_seed": 1729,
+      "rig": {
+        "aperture_radius": 0.035,
+        "bend": 0.0,
+        "cone_u": 0.04,
+        "cone_z": 0.03,
+        "detector_u": 0.05,
+        "detector_z": -0.04,
+        "path_half_length": 0.72,
+        "view_angle_degrees": 22.0
+      }
+    },
+    {
+      "id": "wrinkled_gradient_only",
+      "phantom_family": "wrinkled_density_interface",
+      "phantom_seed": 2718,
+      "rig": {
+        "aperture_radius": 0.075,
+        "bend": 0.0,
+        "cone_u": 0.07,
+        "cone_z": 0.05,
+        "detector_u": -0.07,
+        "detector_z": 0.06,
+        "path_half_length": 0.72,
+        "view_angle_degrees": 58.0
+      }
+    },
+    {
+      "id": "smooth_coupled_bend",
+      "phantom_family": "smooth_plume",
+      "phantom_seed": 1729,
+      "rig": {
+        "aperture_radius": 0.075,
+        "bend": 0.02,
+        "cone_u": 0.07,
+        "cone_z": 0.05,
+        "detector_u": 0.05,
+        "detector_z": -0.04,
+        "path_half_length": 0.72,
+        "view_angle_degrees": 22.0
+      }
+    },
+    {
+      "id": "wrinkled_coupled_bend",
+      "phantom_family": "wrinkled_density_interface",
+      "phantom_seed": 2718,
+      "rig": {
+        "aperture_radius": 0.075,
+        "bend": 0.02,
+        "cone_u": 0.07,
+        "cone_z": 0.05,
+        "detector_u": -0.07,
+        "detector_z": 0.06,
+        "path_half_length": 0.72,
+        "view_angle_degrees": 58.0
+      }
+    }
+  ],
+  "development_promotion_screens": {
+    "maximum_fixed_state_jvp_relative_error": 1e-06,
+    "maximum_fixed_state_vjp_dot_relative_error": 1e-10,
+    "maximum_reference_half_to_full_relative_l2": 0.001,
+    "minimum_cases_passing_efficiency_screen": 2,
+    "minimum_conservative_timing_efficiency_gain": 1.0,
+    "minimum_empirical_gain_bootstrap_lower_95": 1.0,
+    "minimum_empirical_mse_gain": 1.1,
+    "minimum_predicted_measured_cost_gain": 1.1
+  },
+  "device": "cpu",
+  "difference_step": 0.0125,
+  "dtype": "float64",
+  "estimator_replicates": 1024,
+  "fixed_state_derivative_check": {
+    "low_count": 32,
+    "residual_count": 16
+  },
+  "grid_shape_zyx": [
+    17,
+    17,
+    17
+  ],
+  "hard_conclusion": "DEVELOPMENT_ONLY_NO_AUDIT_AUTHORIZATION",
+  "matched_cost_high_equivalent_samples": 64,
+  "reference_population_count": 2048,
+  "reserved_audit_families_not_opened": [
+    "oblique_compression_sheet",
+    "shock_expansion_pair"
+  ],
+  "schema": "n2-adrc-n1-development-pilot-1.0",
+  "scope_contract": "mechanism_surrogate_not_nerif_not_nrip_not_experimental_bost",
+  "seed_roles": {
+    "bootstrap_base": 44001,
+    "calibration_state_base": 41001,
+    "direction_base": 45001,
+    "reference_state_base": 42001,
+    "resampling_base": 43001
+  },
+  "status": "development_only_no_audit_authorization",
+  "target_contract": "finite_scrambled_sobol_population_mean_of_the_prescribed_high_renderer",
+  "timing": {
+    "measured_repeats": 31,
+    "warmup_repeats": 5
+  }
+}

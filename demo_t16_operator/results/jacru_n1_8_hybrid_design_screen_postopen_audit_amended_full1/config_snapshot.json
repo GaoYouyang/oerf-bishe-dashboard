@@ -1,0 +1,137 @@
+{
+  "basis": {
+    "dependence_tolerance": 1e-10,
+    "evaluated_case_truth_is_forbidden": true,
+    "maximum_accepted_rank": 6,
+    "maximum_orthonormality_defect": 1e-10,
+    "minimum_accepted_rank": 2,
+    "normal_operator": "A_P_At",
+    "orthonormalization": "ordered_two_pass_modified_gram_schmidt"
+  },
+  "budget": {
+    "basis_probe_adjoint_calls": 2,
+    "basis_probe_forward_calls": 2,
+    "candidate_refine_iterations": 10,
+    "component_damping_refine_iterations": 12,
+    "deployable_total_low_adjoint_calls": 24,
+    "deployable_total_low_forward_calls": 25,
+    "low_reference_cgls_iterations": 24,
+    "low_reference_final_projection_forward_calls": 1,
+    "warm_cgls_iterations": 12,
+    "warm_projection_forward_calls": 1
+  },
+  "candidate_basis_kinds": [
+    "krylov4_total",
+    "fit_pca2_krylov6_total",
+    "camera_block6_total",
+    "pose_fourier_krylov6_total",
+    "detector_moment_krylov6_total"
+  ],
+  "candidate_schedules": {
+    "camera_block6_total": {
+      "basis_setup_adjoint_calls": 0,
+      "basis_setup_forward_calls": 0,
+      "refine_iterations": 12,
+      "required_rank": 6
+    },
+    "detector_moment_krylov6_total": {
+      "basis_setup_adjoint_calls": 2,
+      "basis_setup_forward_calls": 2,
+      "refine_iterations": 10,
+      "required_rank": 6
+    },
+    "fit_pca2_krylov6_total": {
+      "basis_setup_adjoint_calls": 2,
+      "basis_setup_forward_calls": 2,
+      "refine_iterations": 10,
+      "required_rank": 6
+    },
+    "krylov4_total": {
+      "basis_setup_adjoint_calls": 2,
+      "basis_setup_forward_calls": 2,
+      "refine_iterations": 10,
+      "required_rank": 4
+    },
+    "pose_fourier_krylov6_total": {
+      "basis_setup_adjoint_calls": 2,
+      "basis_setup_forward_calls": 2,
+      "refine_iterations": 10,
+      "required_rank": 6
+    }
+  },
+  "claim_boundary": {
+    "independent_unit": "base_seed_geometry_cluster",
+    "is_real_bost_evidence": false,
+    "may_change_n1_7_verdict": false,
+    "may_claim_algorithm_gain": false,
+    "may_claim_confirmed_gain": false,
+    "may_only_select_one_hypothesis_for_new_split_preregistration": true,
+    "may_train_a_learner": false,
+    "opens_new_geometry": false,
+    "opens_ood_fresh_or_final": false,
+    "paired_families_are_not_independent_samples": true,
+    "uses_only_already_opened_development": true
+  },
+  "design_freeze_document": "docs/jacru_n1_8_hybrid_design_freeze_2026-07-18.md",
+  "design_selection_gate": {
+    "case_field_harm_over_one_percent_rate_vs_component_damping_maximum": 0.0,
+    "case_field_harm_over_one_percent_rate_vs_low_maximum": 0.0,
+    "each_family_mean_field_gain_over_component_damping_strictly_positive": true,
+    "extra_headroom_retention_definition": "sum(E_damping-E_candidate)/sum(E_damping-E_exact)",
+    "extra_headroom_retention_over_component_damping_minimum": 0.6,
+    "forward_correction_role_adjoint_gain_minimum": 0.5,
+    "mean_exact_oracle_field_gain_retention_minimum": 0.7,
+    "mean_field_gain_over_component_damping_minimum": 0.01,
+    "mean_field_gain_over_frozen_n1_7_minimum": 0.005,
+    "mean_field_gain_over_low_cgls24_minimum": 0.05,
+    "mean_h1_gain_over_low_cgls24_minimum": 0.03,
+    "required_high_order_adjoint_calls": 0,
+    "required_high_order_forward_calls": 0,
+    "required_low_adjoint_calls": 24,
+    "required_low_forward_calls": 25,
+    "solver_aware_role_adjoint_gain_minimum": 0.0,
+    "worst_case_field_gain_over_low_cgls24_minimum": 0.0,
+    "worst_geometry_field_gain_over_low_cgls24_minimum": 0.0
+  },
+  "evaluated_partitions": [
+    "development"
+  ],
+  "evidence_level": "E1_SYNTHETIC_OPENED_DEVELOPMENT_HYPOTHESIS_DESIGN_ONLY",
+  "fit_mode_policy": {
+    "centered_pca_rank": 2,
+    "fit_partition": "fit",
+    "include_fit_mean_in_basis": false,
+    "target": "exact_mismatch_minus_component_damping"
+  },
+  "frozen_date": "2026-07-18",
+  "oracle_screen": {
+    "adjoint_l2": 0.0001,
+    "finite_k_truth_search_enabled": false,
+    "high_order_teacher_beta": 0.75
+  },
+  "schema_version": "jacru-n1-8-hybrid-design-screen-1.0",
+  "selection_rule": {
+    "eligible_candidate_role": "measurement_projection_oracle",
+    "if_no_candidate_passes": "NO_N1_8_CONFIRMATION_AUTHORIZATION",
+    "rank_by": "mean_field_gain_over_low_cgls24",
+    "tie_breakers": [
+      "higher_extra_headroom_retention",
+      "higher_adjoint_gain",
+      "lower_basis_rank",
+      "candidate_id"
+    ]
+  },
+  "source_n1_5_a_config": "demo_t16_operator/configs/jacru_n1_5_approximation_error_headroom_development_v1.json",
+  "source_n1_7_frozen_result": "demo_t16_operator/results/jacru_n1_7_geometry_krylov_postopen_full1",
+  "source_n1_7_radius_audit": "demo_t16_operator/results/jacru_n1_7_radius_4x_posthoc_audit_full1",
+  "source_t0_config": "demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json",
+  "status": "POSTOPEN_DESIGN_SCREEN_NO_NEW_GEOMETRY",
+  "total_correction_trust_region": {
+    "applies_to_entire_correction": true,
+    "damping_norm_cap_multiplier": 2.0,
+    "damping_norm_floor_multiplier": 1.0,
+    "formula": "min(2.0*norm_d, max(1.0*norm_d, 16.0*norm_r))",
+    "uses_exact_target": false,
+    "warm_residual_norm_multiplier": 16.0
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "experiment": "t16_v3k_c_adjoint_landweber_zero_learning_gate_v1",
+  "selection_split": "val",
+  "selection_metric": "source_field_mean_rel_l2_after_layout_collapse",
+  "selection_tie_break": "fewer_iterations_then_smaller_step_fraction",
+  "grid": {
+    "methods": [
+      "standard",
+      "jacobi"
+    ],
+    "step_fractions": [
+      0.25,
+      0.5,
+      0.75,
+      1.0,
+      1.25,
+      1.5,
+      1.75,
+      1.9
+    ],
+    "iteration_counts": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64
+    ]
+  },
+  "selected": {
+    "standard": {
+      "selection_split": "val",
+      "method": "standard",
+      "step_fraction": 1.9,
+      "iterations": 64,
+      "independent_field_count": 40,
+      "layout_rows": 160,
+      "source_field_mean_rel_l2": 0.14708340000308337,
+      "source_field_median_rel_l2": 0.09937622272141042
+    },
+    "jacobi": {
+      "selection_split": "val",
+      "method": "jacobi",
+      "step_fraction": 1.9,
+      "iterations": 64,
+      "independent_field_count": 40,
+      "layout_rows": 160,
+      "source_field_mean_rel_l2": 0.14785076687879029,
+      "source_field_median_rel_l2": 0.09893722907133468
+    }
+  },
+  "independent_selection_fields": 40,
+  "selection_layout_rows": 160,
+  "selection_sample_seed_sha256": "b85d25f36f83eccb727193bf2423464381351e928820dc4b9e118aaf55887260",
+  "selection_geometry_sha256": "72cb6c4fce9be8f14aba144a2698709187c6954d7ef7da02934595bbce139310",
+  "audit_camera_used_for_selection": false,
+  "audit_or_reprojection_metrics_computed_by_selection_function": false,
+  "test_field_or_metric_rows_present_at_commit": false
+}

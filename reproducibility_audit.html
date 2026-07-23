@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NeRIF / PIV-BOST / 4D BOST 主线可复现性审计</title>
+  <style>
+    :root {
+      --bg: #f7faf9;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #607080;
+      --line: #d9e2e4;
+      --green: #147b68;
+      --blue: #2866b1;
+      --amber: #9a6a00;
+      --red: #aa3f31;
+      --soft-green: #e9f6f1;
+      --soft-blue: #edf4ff;
+      --soft-amber: #f8f0dc;
+      --soft-red: #faeeeb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef8f5, transparent 330px), var(--bg);
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    header, main {
+      width: min(1180px, calc(100vw - 36px));
+      margin: 0 auto;
+    }
+    header { padding: 34px 0 20px; }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(30px, 4.5vw, 52px);
+      line-height: 1.08;
+    }
+    h2 { margin: 34px 0 12px; font-size: 24px; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .button.primary { background: var(--green); border-color: var(--green); color: #fff; }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .metric, .note, .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+    }
+    .metric b { display: block; font-size: 28px; color: var(--green); line-height: 1.1; margin-bottom: 6px; }
+    .metric span { color: var(--muted); font-size: 13px; }
+    .note { border-left: 5px solid var(--green); background: linear-gradient(90deg, var(--soft-green), #fff 72%); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 11px 12px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+    th { background: #eef5f2; color: #2f3b41; }
+    tr:last-child td { border-bottom: 0; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      margin: 0 4px 4px 0;
+    }
+    .ok { background: var(--soft-green); color: var(--green); border-color: #cce4dc; }
+    .link { background: var(--soft-blue); color: var(--blue); border-color: #d2e0f1; }
+    .wait { background: var(--soft-amber); color: var(--amber); border-color: #ead7b5; }
+    .risk { background: var(--soft-red); color: var(--red); border-color: #edc8c0; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    ul { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+    li { margin-bottom: 7px; }
+    code { background: #eef3f2; border-radius: 4px; padding: 1px 4px; }
+    footer { color: var(--muted); font-size: 12px; margin: 34px 0; }
+    @media (max-width: 900px) {
+      .summary, .grid { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="button" href="./index.html">返回主导航</a>
+    <h1>主线可复现性审计</h1>
+    <p>用途：把 NeRIF、PIV-BOST、4D BOST、公开数据和可用代码分开看清楚。这里的目标不是“证明哪个方向一定能复现”，而是给你和何远哲师兄一个诚实的起点：哪些材料可以公开读，哪些必须等组内数据/许可，哪些能先做成本科可交付 demo。</p>
+    <div class="button-row">
+      <a class="button primary" href="./paper_library/index.html">打开论文库</a>
+      <a class="button" href="./tdbost_reproducibility_audit.html">TDBOST 专项精读</a>
+      <a class="button" href="./pdf_cache_audit.html">PDF 缓存边界</a>
+      <a class="button" href="document_reader.html?doc=open_data_code_benchmark_map.md">公开数据/代码路线图</a>
+      <a class="button" href="document_reader.html?doc=data_request_checklist.md">向师兄要数据清单</a>
+    </div>
+    <div class="summary">
+      <div class="metric"><b>NeRIF</b><span>论文/PDF 已足够，公开代码/数据仍需确认</span></div>
+      <div class="metric"><b>PIV-BOST</b><span>题目很贴组内需求，但数据依赖最高</span></div>
+      <div class="metric"><b>4D BOST</b><span>最新最亮，但本科应拆成低秩时序子问题</span></div>
+      <div class="metric"><b>Open BOS</b><span>公开 benchmark 保底，适合先做 loader 和指标</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="note">
+      <h3>总判断</h3>
+      <p>最稳路线仍是“少视角 BOST 的神经隐式折射率场重构与鲁棒性分析”。NeRIF 是主轴，PIV-BOST 是有真实同步数据时的强应用升级，4D BOST 是低秩时序/数据质量报告的高阶拆分。公开数据和开源代码只负责让你在没有组内数据前也能跑通 pipeline，不替代 OERF 火焰实验结论。</p>
+    </section>
+
+    <h2>核心材料状态</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>主线</th>
+          <th>官方论文入口</th>
+          <th>PDF / 代码 / 数据状态</th>
+          <th>本科可做动作</th>
+          <th>必须问何远哲</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>NeRIF</strong><br />神经隐式折射率场</td>
+          <td><a href="https://pubs.aip.org/aip/pof/article/37/1/017143/3331552/Neural-refractive-index-field-Unlocking-the" target="_blank" rel="noreferrer">AIP Physics of Fluids</a><br /><a href="https://arxiv.org/abs/2409.14722" target="_blank" rel="noreferrer">arXiv 2409.14722</a></td>
+          <td><span class="tag ok">arXiv PDF 已缓存</span><span class="tag wait">本轮公开检索未找到稳定作者代码入口</span><span class="tag wait">公开实验数据未找到</span></td>
+          <td>先做 M0/M1/M2：2D phantom、3D stack、噪声/少视角/容量扫描；指标用重投影误差、切片 RMSE、边界误差和运行时间。</td>
+          <td>能否给九视角样例、baseline 切片、mask/ROI、真实视角几何、单位转换和可展示范围。</td>
+        </tr>
+        <tr>
+          <td><strong>PIV-BOST</strong><br />折射率场补偿速度测量</td>
+          <td><a href="https://link.springer.com/article/10.1007/s00348-025-04093-y" target="_blank" rel="noreferrer">Experiments in Fluids DOI</a><br /><a href="https://crossmark.crossref.org/dialog/?doi=10.1007%2Fs00348-025-04093-y" target="_blank" rel="noreferrer">Crossmark 元数据</a></td>
+          <td><span class="tag link">出版社入口</span><span class="tag wait">未缓存 PDF</span><span class="tag wait">Springer PDF 请求返回 HTML challenge</span><span class="tag wait">公开同步 PIV-BOST 数据未找到</span></td>
+          <td>先做 M3A toy：合成粒子图像或 OpenPIV 输出速度场，加入简化折射偏移，再比较 image-layer / vector-layer compensation。</td>
+          <td>组内补偿发生在哪一层：原始图像、互相关位移、还是速度矢量场；是否能给同步 PIV 图像和 BOST 折射率场。</td>
+        </tr>
+        <tr>
+          <td><strong>4D BOST</strong><br />张量分解 X-Y-Z-T 重构</td>
+          <td><a href="https://dl.acm.org/doi/full/10.1145/3809488" target="_blank" rel="noreferrer">ACM HTML 全文</a><br /><a href="https://dl.acm.org/doi/epdf/10.1145/3809488" target="_blank" rel="noreferrer">官方 eReader（19 页）</a><br /><a href="./tdbost_reproducibility_audit.html">本地结构化精读</a><br /><a href="https://github.com/Hyz617/TDBOST" target="_blank" rel="noreferrer">Hyz617/TDBOST</a></td>
+          <td><span class="tag ok">ACM OA / CC BY 4.0</span><span class="tag ok">HTML / eReader 已核可读</span><span class="tag risk">raw PDF 未本地缓存</span><span class="tag wait">TDBOST 无 LICENSE，只作结构参考</span></td>
+          <td>先做 M3B low-rank toy：rank、帧数、噪声、view count、bias 和 temporal consistency 扫描；正文与公开 config/split 差异单列，不承诺复现完整 TOG。</td>
+          <td>TDBOST 是否可作为公开参考；哪些配置/数据/模块能讨论；真实 4D 数据是否能给一小段。</td>
+        </tr>
+        <tr>
+          <td><strong>Open BOS Dataset</strong><br />公开 benchmark 保底</td>
+          <td><a href="https://arxiv.org/abs/2508.17120" target="_blank" rel="noreferrer">arXiv 2508.17120</a><br /><a href="https://doi.org/10.26208/1VE2-5C19" target="_blank" rel="noreferrer">Data/code DOI</a></td>
+          <td><span class="tag ok">论文 PDF 已缓存</span><span class="tag link">数据约 51.66 GB，只放 manifest</span><span class="tag ok">70-view 清单已生成</span></td>
+          <td>做 loader、5/7/9-view 子采样、view-quality report、重投影指标和公开图表；只当 pipeline benchmark。</td>
+          <td>师兄是否认可用高速飞行体 BOS 作为无组内数据时的预演；迁移到 OERF 火焰时哪些字段必须替换。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>公开代码与许可边界</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>资源</th>
+          <th>当前结论</th>
+          <th>怎么用</th>
+          <th>不要怎么用</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="https://github.com/Hyz617/TDBOST" target="_blank" rel="noreferrer">Hyz617/TDBOST</a></td>
+          <td><span class="tag wait">结构参考</span> 本地已核 README、configs、TDmodel、dataloader、render、run.py 等入口；未见 LICENSE。</td>
+          <td>学习工程组织、配置层、张量模型分块、数据加载和可视化输出。</td>
+          <td>不要直接复制代码到公开仓库；不要把 README 的 open-source 描述当作法律许可。</td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/lalitkrajendran/photon" target="_blank" rel="noreferrer">photon</a> / PIV-BOS synthetic image generation</td>
+          <td><span class="tag ok">GPL-3.0</span> 适合读代码和生成合成 BOS/PIV 图像，但依赖较重。</td>
+          <td>把 ray tracing、density/refractive-index gradient、synthetic image pair 和误差分析拆成简化 Python demo。</td>
+          <td>不要一开始完整移植 CUDA/C++ 依赖；不要把合成图当真实 OERF 火焰结论。</td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/OpenPIV/openpiv-python" target="_blank" rel="noreferrer">OpenPIV Python</a> / <a href="https://github.com/OpenPIV/bos" target="_blank" rel="noreferrer">OpenPIV BOS</a></td>
+          <td><span class="tag ok">练手工具链</span> 适合图像互相关、矢量场后处理和 BOS 位移估计入门。</td>
+          <td>服务 PIV-BOST 的 image-pair benchmark，先跑传统 baseline，再谈神经光流或补偿。</td>
+          <td>不要把 OpenPIV 说成能直接完成 NeRIF 或 3D BOST tomography。</td>
+        </tr>
+        <tr>
+          <td>PIV 折射误差 / 光学畸变校正文献组</td>
+          <td><span class="tag ok">3 篇开放 PDF 已缓存</span> 包括 PIV in inhomogeneous refractive-index fields、PIV optical distortion correction 和 PIVlab/OpenPIV 支撑文献。</td>
+          <td>用于把 M3A 从“速度场 toy”推进到 image-layer dewarping、ray tracing back-projection、互相关位移和 vector-field correction 的对照实验。</td>
+          <td>它们只能证明公开前史和工程接口，不等于已经验证了组内 simultaneous PIV-BOST 实验。</td>
+        </tr>
+        <tr>
+          <td>Neural implicit tomography / NIRT 方法邻居</td>
+          <td><span class="tag ok">IOP open PDF 已缓存</span> Kelly and Thurow 2024 提供 coordinate neural representation tomography for flow diagnostics。</td>
+          <td>用于比较 NeRIF 与更通用的 neural implicit tomography：投影监督、field representation、传统 tomography baseline 和 sparse-view 行为。</td>
+          <td>不要把它写成 BOST 专用方法；它是 related work 和实现 sanity check。</td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/tub-rip/event_based_bos" target="_blank" rel="noreferrer">event_based_bos</a></td>
+          <td><span class="tag link">旁支启发</span> 官方 TPAMI 代码/数据路线；与蔡组 event-triggered BOS 旁支相互呼应。</td>
+          <td>学习 event/frame 数据结构、HDF5、config、optical-flow 评估和高时间分辨可视化叙事。</td>
+          <td>除非组里明确要事件相机，不建议把它变成本科主线。</td>
+        </tr>
+        <tr>
+          <td><a href="https://pubs.aip.org/aip/pof/article/36/12/127143/3324892/Neural-deflection-field-for-sparse-view" target="_blank" rel="noreferrer">NeDF</a> + <a href="https://aip.figshare.com/articles/dataset/Supplement_Number_1/27606522" target="_blank" rel="noreferrer">AIP Figshare supplement</a></td>
+          <td><span class="tag ok">正式 DOI + CC BY supplement</span> NeDF 是 NeRIF 的外部竞品；补充材料含 metrics、training hyperparameters 和 network structures。</td>
+          <td>用于做 NeRIF vs NeDF/NRIP 表示方式对照表，提取指标定义和训练参数，不必完整复现全部实验。</td>
+          <td>不要把 NeDF 改成主线；它是评审问“外部 neural BOS 方法有哪些”时的对照材料。</td>
+        </tr>
+        <tr>
+          <td><a href="https://imaging.cms.caltech.edu/rtnf/" target="_blank" rel="noreferrer">Single View Refractive Index Tomography with Neural Fields</a> / <a href="https://github.com/brandonyzhao/rtnf" target="_blank" rel="noreferrer">brandonyzhao/rtnf</a></td>
+          <td><span class="tag ok">arXiv PDF + supplement 已缓存</span><span class="tag ok">MIT code</span> CVPR 2024 方法邻居，处理 neural field 中的折射率层析和 curved-ray tracing。</td>
+          <td>只借 forward model、single-view ambiguity、source prior 和代码组织，帮助检查 NeRIF toy 里的光线模型假设。</td>
+          <td>不要写成 BOST baseline、不要替代 OERF/何远哲主线；它没有提供火焰 BOST 多视角实验结论。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>三档毕业设计落地方案</h2>
+    <div class="grid">
+      <section class="panel">
+        <h3>A 档：最稳开题</h3>
+        <p><strong>题目：</strong>面向少视角 BOST 的神经隐式折射率场重构与鲁棒性分析。</p>
+        <ul>
+          <li>依赖：NeRIF 论文、synthetic phantom、Open BOS manifest。</li>
+          <li>交付：M0/M1/M2 + 自动图表 + 参数扫描表。</li>
+          <li>风险：真实火焰数据未到时只能做公开 benchmark 和 toy，需要在报告里诚实标注。</li>
+        </ul>
+      </section>
+      <section class="panel">
+        <h3>B 档：组内数据增强</h3>
+        <p><strong>题目：</strong>基于真实 BOST 样例的 NeRIF 重构质量控制与参数选择。</p>
+        <ul>
+          <li>依赖：九视角样例、mask、view geometry、baseline 或参考切片。</li>
+          <li>交付：data loader、bad-view report、重投影验证、resolution/noise/mask ablation。</li>
+          <li>风险：数据公开边界和单位/标定字段必须提前问清。</li>
+        </ul>
+      </section>
+      <section class="panel">
+        <h3>C 档：应用升级</h3>
+        <p><strong>题目：</strong>基于 BOST 折射率场的 PIV 速度测量误差补偿预研。</p>
+        <ul>
+          <li>依赖：同步 PIV-BOST 数据，或合成粒子图像 + 简化折射场。</li>
+          <li>交付：raw image / displacement / velocity 三层补偿对照。</li>
+          <li>风险：没有同步数据时不能声称验证了真实 PIV-BOST。</li>
+        </ul>
+      </section>
+      <section class="panel">
+        <h3>D 档：高阶探索</h3>
+        <p><strong>题目：</strong>四维 BOST 的低秩时序先验与可视化评估。</p>
+        <ul>
+          <li>依赖：4D BOST 正文、TDBOST 结构参考、M3B low-rank toy。</li>
+          <li>交付：rank-memory-time 表、temporal consistency、frame-count ablation。</li>
+          <li>风险：完整 TOG 复现不适合本科承诺，只能拆子模块。</li>
+        </ul>
+      </section>
+    </div>
+
+    <h2>下次见师兄的最短问题清单</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>问题</th>
+          <th>如果答案是“能”</th>
+          <th>如果答案是“不能/暂时不能”</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>能否给一小份九视角 BOST 样例？</td>
+          <td>走 B 档，重点做真实数据接口和质量控制。</td>
+          <td>走 A 档，用 synthetic + Open BOS 保底。</td>
+        </tr>
+        <tr>
+          <td>本科论文更需要算法复现、数据处理，还是实验辅助工具？</td>
+          <td>按师兄需求重排 M0-M3 优先级。</td>
+          <td>默认做可迁移 pipeline，不绑定某个未确认数据源。</td>
+        </tr>
+        <tr>
+          <td>PIV-BOST 是否有同步图像/速度场可以给？</td>
+          <td>把 M3A 升级成正式应用线。</td>
+          <td>PIV-BOST 只保留为第二阶段或展望。</td>
+        </tr>
+        <tr>
+          <td>TDBOST 代码和数据是否允许本科项目参考？</td>
+          <td>只借结构和配置思想，仍保留自己的轻量实现。</td>
+          <td>4D BOST 降级为低秩时序 toy 和读论文报告。</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <footer>
+    Last updated: 2026-07-07. 公开检索结论会随作者代码、出版社开放状态和组内数据边界变化而更新。
+  </footer>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

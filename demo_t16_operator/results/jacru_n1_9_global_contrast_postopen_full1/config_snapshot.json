@@ -1,0 +1,178 @@
+{
+  "basis": {
+    "camera_contrast": "three_camera_helmert_unit_l2",
+    "camera_contrast_rows": [
+      [
+        0.7071067811865475,
+        -0.7071067811865475,
+        0.0
+      ],
+      [
+        0.4082482904638631,
+        0.4082482904638631,
+        -0.8164965809277261
+      ]
+    ],
+    "damping_contrast_vector_order": [
+      "damping",
+      "warm_residual",
+      "camera_contrast_1_damping",
+      "camera_contrast_2_damping",
+      "normal_damping",
+      "normal_warm_residual"
+    ],
+    "dependence_tolerance": 1e-10,
+    "evaluated_case_truth_is_forbidden": true,
+    "maximum_accepted_rank": 6,
+    "maximum_orthonormality_defect": 1e-10,
+    "minimum_accepted_rank": 6,
+    "normal_operator": "A_P_At",
+    "orthonormalization": "ordered_two_pass_modified_gram_schmidt",
+    "residual_contrast_vector_order": [
+      "damping",
+      "warm_residual",
+      "camera_contrast_1_warm_residual",
+      "camera_contrast_2_warm_residual",
+      "normal_damping",
+      "normal_warm_residual"
+    ]
+  },
+  "budget": {
+    "basis_probe_adjoint_calls": 2,
+    "basis_probe_forward_calls": 2,
+    "candidate_refine_iterations": 10,
+    "component_damping_refine_iterations": 12,
+    "deployable_total_low_adjoint_calls": 24,
+    "deployable_total_low_forward_calls": 25,
+    "low_reference_cgls_iterations": 24,
+    "low_reference_final_projection_forward_calls": 1,
+    "warm_cgls_iterations": 12,
+    "warm_projection_forward_calls": 1
+  },
+  "candidate_basis_kinds": [
+    "residual_contrast_global_k6_total",
+    "damping_contrast_global_k6_total"
+  ],
+  "candidate_schedules": {
+    "damping_contrast_global_k6_total": {
+      "basis_setup_adjoint_calls": 2,
+      "basis_setup_forward_calls": 2,
+      "refine_iterations": 10,
+      "required_rank": 6
+    },
+    "residual_contrast_global_k6_total": {
+      "basis_setup_adjoint_calls": 2,
+      "basis_setup_forward_calls": 2,
+      "refine_iterations": 10,
+      "required_rank": 6
+    }
+  },
+  "claim_boundary": {
+    "close_rank6_camera_global_k_branch_if_both_fail": true,
+    "independent_unit": "base_seed_geometry_cluster",
+    "is_real_bost_evidence": false,
+    "may_change_n1_7_verdict": false,
+    "may_change_n1_8_verdict": false,
+    "may_claim_algorithm_gain": false,
+    "may_claim_confirmed_gain": false,
+    "may_only_select_one_hypothesis_for_new_split_preregistration": true,
+    "may_train_a_learner": false,
+    "opens_new_geometry": false,
+    "opens_ood_fresh_or_final": false,
+    "paired_families_are_not_independent_samples": true,
+    "uses_only_already_opened_development": true
+  },
+  "design_freeze_document": "docs/jacru_n1_9_global_contrast_freeze_2026-07-18.md",
+  "design_selection_gate": {
+    "case_field_harm_over_one_percent_rate_vs_component_damping_maximum": 0.0,
+    "case_field_harm_over_one_percent_rate_vs_low_maximum": 0.0,
+    "each_family_mean_field_gain_over_component_damping_strictly_positive": true,
+    "extra_headroom_retention_definition": "sum(E_damping-E_candidate)/sum(E_damping-E_exact)",
+    "extra_headroom_retention_over_component_damping_minimum": 0.6,
+    "forward_correction_role_adjoint_gain_minimum": 0.5,
+    "mean_exact_oracle_field_gain_retention_minimum": 0.7,
+    "mean_field_gain_over_component_damping_minimum": 0.01,
+    "mean_field_gain_over_frozen_n1_7_minimum": 0.005,
+    "mean_field_gain_over_low_cgls24_minimum": 0.05,
+    "mean_h1_gain_over_low_cgls24_minimum": 0.03,
+    "required_high_order_adjoint_calls": 0,
+    "required_high_order_forward_calls": 0,
+    "required_low_adjoint_calls": 24,
+    "required_low_forward_calls": 25,
+    "solver_aware_role_adjoint_gain_minimum": 0.0,
+    "worst_case_field_gain_over_low_cgls24_minimum": 0.0,
+    "worst_geometry_field_gain_over_low_cgls24_minimum": 0.0
+  },
+  "evaluated_partitions": [
+    "development"
+  ],
+  "evidence_level": "E1_SYNTHETIC_OPENED_DEVELOPMENT_HYPOTHESIS_DESIGN_ONLY",
+  "frozen_date": "2026-07-18",
+  "numerical_applicability": {
+    "schur_gate": "NOT_APPLICABLE_NO_COVARIANCE_OR_MAJORIZER",
+    "schur_violation_must_not_be_reported_as_zero": true
+  },
+  "operational_cost_gate": {
+    "excluded_timing": "evaluator_oracle_coefficient_projection",
+    "included_timing": "shared_warm_plus_basis_setup_plus_refinement",
+    "median_ratio_maximum": 1.25,
+    "metric": "paired_oracle_excluded_solver_path_seconds_ratio",
+    "p90_ratio_maximum": 1.5,
+    "reference_candidate_id": "component_damping",
+    "timing_device": "current_local_machine",
+    "timing_is_deployable_method_end_to_end_claim": false,
+    "timing_is_portable_hardware_claim": false
+  },
+  "oracle_screen": {
+    "adjoint_l2": 0.0001,
+    "finite_k_truth_search_enabled": false,
+    "high_order_teacher_beta": 0.75
+  },
+  "schema_version": "jacru-n1-9-global-contrast-screen-1.0",
+  "selection_rule": {
+    "eligible_projection_oracle": "measurement",
+    "eligible_representation_roles": [
+      "SOLVER_AWARE_REPRESENTATION_ELIGIBLE",
+      "FORWARD_CORRECTION_REPRESENTATION_ELIGIBLE"
+    ],
+    "if_no_candidate_passes": "CLOSE_RANK6_CAMERA_GLOBAL_K_BRANCH",
+    "rank_by": "mean_field_gain_over_low_cgls24",
+    "tie_breakers": [
+      "higher_extra_headroom_retention",
+      "higher_adjoint_gain",
+      "candidate_id"
+    ]
+  },
+  "source_integrity": {
+    "source_n1_5_a_config_sha256": "62bb7e3950c869f90c508475234c763d8b9aca17df1e5d7955ac0e2275799fbd",
+    "source_n1_5_runner_sha256": "2f599d626d54e06c54af3f7831af79965024295970acc7c9f802916a04f08fb7",
+    "source_n1_5_teacher_sha256": "a54820b7581c681e4cf9bcd8bef58a8e6c52f9b5ab37544be32daa3824fa82c8",
+    "source_n1_6_runner_sha256": "23c2c1c6b0605e753bc5ff86e48e28c65997ecc5993547be901b5aac3ae32baa",
+    "source_n1_7_manifest_sha256": "da2f45fbf90d3032be4b7e1c35a69141c792bc36d8dfa011b1698dd24c0cfd5d",
+    "source_n1_7_model_sha256": "1a429d76db5efa6753b217376cd4a474317cec8205504847e83a76136590deeb",
+    "source_n1_7_runner_sha256": "62bd2579c7a85e581d019aa70d180903a0818f781aecb30f5527aa7b0454de5e",
+    "source_n1_7_summary_sha256": "a7e9d215e284483d6bbf46679b282f69ea675882ccc71b251df2c2e7d8de517d",
+    "source_n1_8_config_sha256": "0fd04734508ae0872131fec47ce973db905277d9bd4d10781bd66adf2f8be267",
+    "source_n1_8_manifest_sha256": "96342be524e9a70f25799ff40ad26542ee61d12cefbd98ea7729f1d4d46ffbb9",
+    "source_n1_8_model_sha256": "822b0a6bfcdc4847dcff03b81b1e614d5e0300d44cb74c2961fb4b0f20c644a3",
+    "source_n1_8_runner_sha256": "17da03a6aed3f2126dcebbff48d1f04abeade4948e9c9ebc07e9358afbb412cf",
+    "source_n1_8_summary_sha256": "91faf1d38f02e5076594d261bb5e85a9666861d4b3e22ee98d6015ac02ba5da2",
+    "source_streaming_operator_sha256": "c7ee2b2439e8a02302718e39f902041a19ae5b64dbea9504bfaae90953b8184e",
+    "source_synthetic_fixture_sha256": "9317b2bee9e18553635a32f841e9917cc4a981285d7abf6bc051b933e0c0f68b",
+    "source_t0_config_sha256": "e4e0dbb3cc3e573e5c7ed025bae50b3eb6d66ffdd511772b30fa222ce791a5fd"
+  },
+  "source_n1_5_a_config": "demo_t16_operator/configs/jacru_n1_5_approximation_error_headroom_development_v1.json",
+  "source_n1_7_frozen_result": "demo_t16_operator/results/jacru_n1_7_geometry_krylov_postopen_full1",
+  "source_n1_8_config": "demo_t16_operator/configs/jacru_n1_8_hybrid_design_screen_postopen_v1.json",
+  "source_n1_8_result": "demo_t16_operator/results/jacru_n1_8_hybrid_design_screen_postopen_audit_amended_full1",
+  "source_t0_config": "demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json",
+  "status": "POSTOPEN_DESIGN_SCREEN_NO_NEW_GEOMETRY",
+  "total_correction_trust_region": {
+    "applies_to_entire_correction": true,
+    "damping_norm_cap_multiplier": 2.0,
+    "damping_norm_floor_multiplier": 1.0,
+    "formula": "min(2.0*norm_d, max(1.0*norm_d, 16.0*norm_r))",
+    "uses_exact_target": false,
+    "warm_residual_norm_multiplier": 16.0
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "status": "completed_independent_support_fit_oracle_headroom",
+  "experiment": "t16_independent_dual_support_v2a",
+  "sample_seed_cells": 264,
+  "optimization_seeds": [
+    20260710,
+    20260711,
+    20260712
+  ],
+  "split_mean_field_improvement_pct": {
+    "test_iid": 23.58021045330612,
+    "test_view_ood": 51.217816494558924,
+    "test_noise_ood": 28.113878050360665,
+    "test_joint_ood": 50.09667223933089,
+    "test_family_ood": 42.83313952829252
+  },
+  "key_findings": {
+    "mean_field_improvement_pct": 38.626373502045226,
+    "minimum_split_mean_field_improvement_pct": 23.58021045330612,
+    "mean_error_energy_in_support_nullspace": 0.5945874841638165,
+    "maximum_support_projection_change": 5.509621018691326e-16,
+    "all_sample_seed_cells_improved": true
+  },
+  "decision": "Train a bounded support-nullspace neural correction only if headroom survives every split and seed.",
+  "claims_boundary": [
+    "The correction uses synthetic field truth and is an oracle upper bound, not an inference method.",
+    "Independent experts double operator capacity and still require matched-capacity controls.",
+    "The projector uses the linear synthetic support operator, not OERF ray geometry.",
+    "Headroom does not imply that query-supervised learning will recover the null component."
+  ]
+}

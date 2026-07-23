@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OERF / BOST 补课教材与讲义库</title>
+  <style>
+    :root {
+      --bg: #f7f8f6;
+      --panel: #ffffff;
+      --ink: #1d2328;
+      --muted: #65717a;
+      --line: #d9e0df;
+      --teal: #16756f;
+      --blue: #315f93;
+      --gold: #a46a14;
+      --red: #aa3f31;
+      --soft-teal: #e8f3f0;
+      --soft-blue: #eaf0f7;
+      --soft-gold: #f6efe2;
+      --soft-red: #f8ece9;
+      --shadow: 0 16px 38px rgba(30, 45, 55, 0.08);
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.62;
+    }
+    header {
+      padding: 30px clamp(18px, 4vw, 56px);
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #edf6f3);
+    }
+    main { padding: 22px clamp(18px, 4vw, 56px) 60px; }
+    h1 { margin: 12px 0 10px; font-size: clamp(30px, 4vw, 52px); line-height: 1.08; letter-spacing: 0; }
+    h2, h3, p { margin-top: 0; }
+    header p { max-width: 980px; color: var(--muted); }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 700;
+      background: #fff;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .summary div,
+    .notice,
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+    .summary div { padding: 14px 16px; }
+    .summary b { display: block; color: var(--teal); font-size: 30px; line-height: 1; }
+    .summary span { color: var(--muted); font-size: 13px; }
+    .notice { padding: 14px 16px; color: var(--muted); margin-bottom: 14px; }
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) 210px 160px;
+      gap: 10px;
+      margin: 16px 0;
+    }
+    input, select {
+      width: 100%;
+      min-height: 42px;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .card { padding: 16px; display: grid; gap: 10px; border-left: 4px solid var(--teal); }
+    .card h3 { margin: 0; font-size: 19px; line-height: 1.35; }
+    .meta { display: flex; flex-wrap: wrap; gap: 7px; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #edf1ef;
+      color: #334148;
+      border: 1px solid #dbe3e0;
+    }
+    .tag.must { background: var(--soft-teal); color: var(--teal); border-color: #c5dfd9; }
+    .tag.support { background: var(--soft-blue); color: var(--blue); border-color: #cfdced; }
+    .tag.optional { background: var(--soft-gold); color: var(--gold); border-color: #ead7b5; }
+    .tag.private { background: var(--soft-red); color: var(--red); border-color: #edc8c0; }
+    .kv { display: grid; gap: 8px; }
+    .kv div {
+      display: grid;
+      grid-template-columns: 86px minmax(0, 1fr);
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .kv strong { color: var(--ink); }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .empty {
+      display: none;
+      padding: 18px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: var(--panel);
+    }
+    footer { margin-top: 24px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 860px) {
+      .summary, .toolbar, .grid { grid-template-columns: 1fr; }
+      .kv div { grid-template-columns: 1fr; gap: 2px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="button" href="../index.html">返回总导航</a>
+    <h1>补课教材与讲义库</h1>
+    <p>这页把你读懂 OERF / 何远哲 / BOST-NeRIF 所需的基础材料集中起来。公开网页只放开放课程、开放教材、作者公开页和官方文档；商业教材或学校订阅资料只标注阅读建议，全文进入本地私有库。</p>
+    <div class="summary">
+      <div><b id="totalCount">0</b><span>resources</span></div>
+      <div><b id="mustCount">0</b><span>must-read / first pass</span></div>
+      <div><b id="openCount">0</b><span>open official routes</span></div>
+      <div><b id="privateCount">0</b><span>private/library only</span></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="notice">推荐顺序：流体变量和守恒方程 -> 燃烧/反应流直觉 -> 光学成像/BOS 实验 -> 反问题和层析 -> PIV 位移/速度 -> PyTorch 坐标网络 -> NeRIF/BOST 核心论文。</div>
+    <div class="notice">本页不是让你“把书读完”，而是给每个阶段指定能直接服务毕设的阅读切片。每读一份资料，都要产出一张图、一个公式链条或一个 demo 结果。</div>
+
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="搜索模块、书名、关键词，例如 流体 / Kak / PyTorch / PIV / 商业教材" />
+      <select id="moduleFilter" aria-label="按模块筛选">
+        <option value="all">全部模块</option>
+      </select>
+      <select id="priorityFilter" aria-label="按优先级筛选">
+        <option value="all">全部优先级</option>
+        <option value="must">must</option>
+        <option value="support">support</option>
+        <option value="optional">optional</option>
+      </select>
+    </div>
+
+    <section id="resourceGrid" class="grid"></section>
+    <div id="empty" class="empty">没有匹配到资料。可以换一个关键词，或选择“全部模块”。</div>
+
+    <footer>Last updated: 2026-07-09. Public/open material only; subscription PDFs stay local/private.</footer>
+  </main>
+
+  <script src="./resources.js"></script>
+  <script>
+    const resources = window.OERF_LEARNING_RESOURCES || [];
+    const search = document.getElementById('search');
+    const moduleFilter = document.getElementById('moduleFilter');
+    const priorityFilter = document.getElementById('priorityFilter');
+    const grid = document.getElementById('resourceGrid');
+    const empty = document.getElementById('empty');
+
+    function init() {
+      const modules = Array.from(new Set(resources.map(r => r.module))).sort();
+      modules.forEach(module => {
+        const option = document.createElement('option');
+        option.value = module;
+        option.textContent = module;
+        moduleFilter.appendChild(option);
+      });
+      document.getElementById('totalCount').textContent = resources.length;
+      document.getElementById('mustCount').textContent = resources.filter(r => r.priority === 'must').length;
+      document.getElementById('openCount').textContent = resources.filter(r => !/商业|私有/.test(r.type + r.access)).length;
+      document.getElementById('privateCount').textContent = resources.filter(r => /商业|私有/.test(r.type + r.access)).length;
+      render();
+    }
+
+    function priorityLabel(priority) {
+      if (priority === 'must') return 'must';
+      if (priority === 'support') return 'support';
+      return 'optional';
+    }
+
+    function render() {
+      const q = search.value.trim().toLowerCase();
+      const terms = q.split(/\s+/).filter(Boolean);
+      const module = moduleFilter.value;
+      const priority = priorityFilter.value;
+      const matched = resources
+        .filter(r => module === 'all' || r.module === module)
+        .filter(r => priority === 'all' || r.priority === priority)
+        .filter(r => {
+          if (!terms.length) return true;
+          const haystack = Object.values(r).join(' ').toLowerCase();
+          return terms.every(term => haystack.includes(term));
+        });
+
+      grid.innerHTML = '';
+      matched.forEach(r => {
+        const privateLike = /商业|私有/.test(r.type + r.access);
+        const article = document.createElement('article');
+        article.className = 'card';
+        article.innerHTML = `
+          <div class="meta">
+            <span class="tag ${priorityLabel(r.priority)}">${r.priority}</span>
+            <span class="tag support">${r.module}</span>
+            <span class="tag ${privateLike ? 'private' : 'must'}">${r.type}</span>
+          </div>
+          <h3>${r.title}</h3>
+          <div class="kv">
+            <div><strong>状态</strong><span>${r.access}</span></div>
+            <div><strong>为什么读</strong><span>${r.why}</span></div>
+            <div><strong>只读什么</strong><span>${r.read}</span></div>
+            <div><strong>缓存边界</strong><span>${r.cache_policy}</span></div>
+          </div>
+          <div class="actions">
+            ${r.landing_url ? `<a class="button" href="${r.landing_url}" target="_blank" rel="noreferrer">官方入口</a>` : ''}
+            ${r.pdf_url ? `<a class="button" href="${r.pdf_url}" target="_blank" rel="noreferrer">PDF / 下载入口</a>` : ''}
+            ${r.local_pdf ? `<a class="button" href="${r.local_pdf}" target="_blank" rel="noreferrer">本地 PDF</a>` : ''}
+          </div>
+        `;
+        grid.appendChild(article);
+      });
+      empty.style.display = matched.length ? 'none' : 'block';
+    }
+
+    search.addEventListener('input', render);
+    moduleFilter.addEventListener('change', render);
+    priorityFilter.addEventListener('change', render);
+    init();
+  </script>
+  <script src="../site_link_router.js" data-site-root="../"></script>
+</body>
+</html>

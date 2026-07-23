@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>M3B 交互实验 | 4D BOST rank 选择与物理代价</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f7f5;
+      --panel: #ffffff;
+      --ink: #1f292d;
+      --muted: #617077;
+      --line: #d8e1de;
+      --green: #196e63;
+      --green-soft: #eaf5f1;
+      --blue: #315f8d;
+      --blue-soft: #edf3f9;
+      --amber: #97601c;
+      --amber-soft: #fbf3e4;
+      --red: #a24d41;
+      --red-soft: #fbefec;
+      --radius: 8px;
+      --shadow: 0 8px 24px rgba(31, 55, 50, 0.07);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url("./assets/backgrounds/oerf-refractive-field.png") center 12% / cover no-repeat;
+      opacity: 0.055;
+      pointer-events: none;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header, main, footer { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    header { padding: 24px 0 30px; border-bottom: 1px solid var(--line); }
+    main { padding: 6px 0 36px; }
+    footer { padding: 22px 0 34px; color: var(--muted); font-size: 12px; }
+    h1 { margin: 15px 0 10px; max-width: 960px; font-size: clamp(32px, 4.5vw, 50px); line-height: 1.08; }
+    h2 { margin: 0 0 10px; font-size: 25px; line-height: 1.25; }
+    h3 { margin: 0 0 7px; font-size: 17px; line-height: 1.3; }
+    p { margin: 7px 0; }
+    code { padding: 1px 5px; border-radius: 4px; background: #edf1ef; color: #38464b; overflow-wrap: anywhere; }
+    .nav, .button-row, .tag-row, .segmented {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .button, .segment {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .button:hover, .segment:hover { border-color: #9eb7b1; text-decoration: none; }
+    .button.primary, .segment.active { background: var(--green); border-color: var(--green); color: #fff; }
+    .eyebrow { color: var(--green); font-size: 12px; font-weight: 900; text-transform: uppercase; }
+    .lead { max-width: 980px; color: #46575e; font-size: 16px; }
+    .metrics, .grid, .figure-grid { display: grid; gap: 12px; }
+    .metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 18px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .metric, .card, .figure-card, .readout, .notice {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: var(--shadow);
+    }
+    .metric { min-height: 106px; padding: 14px; }
+    .metric b { display: block; color: var(--green); font-size: 27px; line-height: 1.05; }
+    .metric span { display: block; margin-top: 7px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    section { padding: 25px 0; border-bottom: 1px solid var(--line); }
+    .notice { padding: 15px 17px; border-left: 4px solid var(--green); }
+    .notice.warning { border-left-color: var(--amber); background: var(--amber-soft); }
+    .notice.danger { border-left-color: var(--red); background: var(--red-soft); }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 3px 8px;
+      border: 1px solid #c9d9d5;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .tag.blue { color: var(--blue); background: var(--blue-soft); border-color: #d0ddea; }
+    .tag.amber { color: var(--amber); background: var(--amber-soft); border-color: #ead3a9; }
+    .tag.red { color: var(--red); background: var(--red-soft); border-color: #e8c9c2; }
+    .segmented { margin: 12px 0; }
+    .readout { display: grid; grid-template-columns: 1.45fr 1fr; gap: 16px; padding: 18px; }
+    .readout-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .readout-stat { padding: 10px; border: 1px solid var(--line); border-radius: 6px; background: #f8faf9; }
+    .readout-stat b { display: block; color: var(--green); font-size: 21px; }
+    .readout-stat span { display: block; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .card { padding: 15px; box-shadow: none; }
+    .finding b.number { display: inline-grid; place-items: center; width: 28px; height: 28px; margin-bottom: 8px; border-radius: 50%; background: var(--green); color: #fff; }
+    .figure-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .figure-card { margin: 0; padding: 10px; box-shadow: none; }
+    .figure-card img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 5px; background: #fff; }
+    .figure-card figcaption { margin-top: 8px; color: #46575e; font-size: 13px; }
+    .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+    table { width: 100%; border-collapse: collapse; min-width: 790px; }
+    th, td { padding: 10px 11px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #edf4f1; color: #294641; font-size: 12px; }
+    td { font-size: 13px; }
+    tbody tr:last-child td { border-bottom: 0; }
+    ul, ol { margin: 8px 0; padding-left: 21px; }
+    li { margin: 5px 0; }
+    @media (max-width: 900px) {
+      .metrics, .grid.three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .readout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 680px) {
+      header, main, footer { width: min(100% - 22px, 1180px); }
+      .metrics, .grid.two, .grid.three, .figure-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 32px; }
+      .button, .segment { max-width: 100%; overflow-wrap: anywhere; }
+      body::before { background-attachment: scroll; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav" aria-label="M3B 交互实验导航">
+      <a class="button" href="./index.html">返回总导航</a>
+      <a class="button" href="./m3b_six_axis_dashboard.html">六轴 OFAT 筛查</a>
+      <a class="button primary" href="./m3b_family_selector_dashboard.html">跨形态 Selector</a>
+      <a class="button" href="./tdbost_reproducibility_audit.html">TDBOST 审计</a>
+      <a class="button" href="./he_review_portal.html">师兄审核入口</a>
+      <a class="button" href="./operator_learning_bost_bridge.html">T16 神经算子</a>
+      <a class="button" href="./document_reader.html?doc=m3b_interaction_brief.md">本轮 brief</a>
+    </nav>
+    <div class="eyebrow">M3B crossed evidence · 2026-07-10</div>
+    <h1>4D BOST 低秩交互实验：rank 3 为什么稳，又在哪里失效</h1>
+    <p class="lead">上一轮六轴 OFAT 找到 noise、views 和 dynamics 线索；这一轮把它们真正交叉起来，检验固定 rank 是否经得住变量联动。结论不是“rank 3 每格最优”，而是“在这个 synthetic design 里，它是 regret 最低的固定默认值，同时仍存在明确负收益区和物理量代价”。</p>
+    <div class="metrics" aria-label="实验规模">
+      <div class="metric"><b>5×5×4×4</b><span>rank × noise × views × dynamics 平衡交叉设计。</span></div>
+      <div class="metric"><b>8 seeds</b><span>每格同 seed 配对；Student-t 95% CI，t(7)=2.365。</span></div>
+      <div class="metric"><b>3,840</b><span>640 framewise + 3,200 low-rank 方法记录。</span></div>
+      <div class="metric"><b>80 cells</b><span>不含 seed 的环境单元，用于 rank 选择与 regret 审计。</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="notice warning">
+        <h3>下一轮已经完成：从单 phantom oracle 走到跨形态无真值 selector</h3>
+        <p>本页提出的 held-out / singular-spectrum / physical-trace selector 已在新的 <a href="./m3b_family_selector_dashboard.html">M3B 跨形态实验</a>中实现并做 nested leave-one-phantom-family-out 评价。新设计覆盖 4 morphology × 3 dynamics × 4 noise × 3 views × 6 seeds，共 864 个观测格；固定 rank 3 mean regret 为 1.561%，无 held-out 多特征 selector 为 0.252%，加入 held-out 为 0.210%。直接最小化 held-out residual 反而恶化到 2.423%，因此本页的“下一步”现已升级为 leave-one-geometry-out、UQ/拒答和真实数据验证。</p>
+        <div class="button-row" style="margin-top:12px;"><a class="button primary" href="./m3b_family_selector_dashboard.html">打开新结果与六张图</a><a class="button" href="./document_reader.html?doc=m3b_family_selector_brief.md">给师兄的一页审核 brief</a></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="notice">
+        <h3>当前研究判断</h3>
+        <p><strong>rank 3 是稳健默认值，不是普适最优值。</strong> 它只在 80 个环境中逐格最优 20 次，但全局平均 field L2 最低；相对逐格 oracle best 的平均 regret 为 0.79%，95 分位为 2.21%，均为五个固定 rank 中最低。真实部署不能用 ground truth 选 rank，下一步必须把选择规则转成 held-out view、奇异值能量或物理 trace 等可观测指标。</p>
+      </div>
+      <div class="tag-row" style="margin-top:12px;">
+        <span class="tag">完整 crossed design</span>
+        <span class="tag blue">paired seed</span>
+        <span class="tag amber">rank regret</span>
+        <span class="tag red">不是 TDBOST 复现</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>切换证据视角</h2>
+      <p>四种视角分别回答“固定 rank 是否稳”“何时有正收益”“时序收益是否依赖动力学”“场误差变好是否仍物理可信”。</p>
+      <div class="segmented" role="group" aria-label="选择 M3B 交互证据">
+        <button class="segment active" type="button" data-evidence="rank" aria-pressed="true">Rank 稳定性</button>
+        <button class="segment" type="button" data-evidence="operating" aria-pressed="false">Noise × Views</button>
+        <button class="segment" type="button" data-evidence="dynamics" aria-pressed="false">Dynamics</button>
+        <button class="segment" type="button" data-evidence="physics" aria-pressed="false">物理代价</button>
+      </div>
+      <div class="readout">
+        <div>
+          <h3 id="evidence-title">Rank 3：最小 regret 的固定默认值</h3>
+          <p id="evidence-summary">逐格最优 rank 分散在 2/3/5/8；rank 3 并不统治每个单元，却同时最小化平均和尾部 regret，说明它适合作为 synthetic baseline 默认值。</p>
+          <p id="evidence-action"><strong>状态：</strong>无真值 selector 已在跨形态页面完成；下一步是 geometry transfer、UQ/拒答与真实数据。</p>
+        </div>
+        <div class="readout-stats">
+          <div class="readout-stat"><b id="evidence-primary">0.79%</b><span id="evidence-primary-label">rank 3 mean regret</span></div>
+          <div class="readout-stat"><b id="evidence-secondary">2.21%</b><span id="evidence-secondary-label">rank 3 p95 regret</span></div>
+          <div class="readout-stat"><b id="evidence-tertiary">20 / 80</b><span id="evidence-tertiary-label">逐格最优次数</span></div>
+          <div class="readout-stat"><b id="evidence-quaternary">0.3691</b><span id="evidence-quaternary-label">global mean field L2</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>四张核心图</h2>
+      <div class="figure-grid">
+        <figure class="figure-card">
+          <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Fm3b_interaction_heatmaps.png"><img src="./demo_m3b/results/m3b_interaction_heatmaps.png" alt="M3B rank noise views dynamics interaction heatmaps" /></a>
+          <figcaption><strong>交互边际热图。</strong> rank×noise 对 field、rank×views 对 held-out、rank×dynamics 对 temporal-gradient 的收益方向明显不同；rank 1 在低噪和较多视角下会严重伤害 held-out 投影。</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Fm3b_rank3_operating_map.png"><img src="./demo_m3b/results/m3b_rank3_operating_map.png" alt="M3B rank 3 noise by views operating map" /></a>
+          <figcaption><strong>rank 3 operating map。</strong> 3-view 欠定场在无噪声时 field 仍略有收益，但 5-9 views 会变差；mass trace 的转正门槛又比 field/held-out 更高。</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Fm3b_rank_selection_stability.png"><img src="./demo_m3b/results/m3b_rank_selection_stability.png" alt="M3B cell-wise best rank and fixed-rank regret" /></a>
+          <figcaption><strong>rank 选择稳定性。</strong> 无噪声且视角充分时倾向高 rank，高噪声时倾向 rank 2-3；rank 3 的平均与尾部 regret 同时最低。</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Fm3b_interaction_tradeoffs.png"><img src="./demo_m3b/results/m3b_interaction_tradeoffs.png" alt="M3B field mass trace and heldout tradeoff scatter" /></a>
+          <figcaption><strong>物理代价散点。</strong> field 与 held-out 大体同向，但 field 与 mass trace 经常分叉；平滑后的场更接近真值，并不自动保证积分量更可信。</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>固定 rank 的 regret 对账</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Rank</th><th>逐格最优次数</th><th>Mean regret</th><th>Median</th><th>P95</th><th>Max</th><th>处理建议</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>0 / 80</td><td>14.10%</td><td>12.95%</td><td>27.29%</td><td>27.90%</td><td>过度压缩，只适合作故意失败 baseline。</td></tr>
+            <tr><td>2</td><td>27 / 80</td><td>2.25%</td><td>1.60%</td><td>6.28%</td><td>6.97%</td><td>3 views 或高噪声常更优，但尾部风险高于 rank 3。</td></tr>
+            <tr><td><strong>3</strong></td><td>20 / 80</td><td><strong>0.79%</strong></td><td>0.49%</td><td><strong>2.21%</strong></td><td><strong>2.52%</strong></td><td>当前最稳固定默认值；不是每格 oracle。</td></tr>
+            <tr><td>5</td><td>24 / 80</td><td>1.81%</td><td><strong>0.43%</strong></td><td>6.94%</td><td>7.64%</td><td>低噪、5-9 views 常好，但高噪尾部代价增大。</td></tr>
+            <tr><td>8</td><td>9 / 80</td><td>4.10%</td><td>1.39%</td><td>13.70%</td><td>14.58%</td><td>无噪声且视角充分时有用，去噪能力不足。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>六条可以写进预研报告的新判断</h2>
+      <div class="grid three">
+        <article class="card finding"><b class="number">1</b><h3>最优 rank 随 noise 与 views 翻转</h3><p>noise=0 的 16 个环境中 9 个选 rank 8；noise=0.28 时 12/16 选 rank 3；noise=0.42 时 11/16 选 rank 2。固定 rank 只能是折中。</p></article>
+        <article class="card finding"><b class="number">2</b><h3>3 views 是独立工作区</h3><p>所有 20 个 3-view 环境都由 rank 2 取得最低 field L2。严重欠定时需要更强压缩，不应照搬 5-9 views 的 rank。</p></article>
+        <article class="card finding"><b class="number">3</b><h3>rank 3 有 19 个负收益环境</h3><p>Student-t 区间下 61/80 个 field 正收益、19/80 个负收益、0 个跨零；负收益集中在无噪声及低噪的 5-9 views。</p></article>
+        <article class="card finding"><b class="number">4</b><h3>动态复杂度削弱时间收益</h3><p>rank 3 的 temporal-gradient 边际改善：smooth 36.6%、fast 19.9%、chirp 20.5%、transient 33.9%。去抖收益依赖动力学频谱。</p></article>
+        <article class="card finding"><b class="number">5</b><h3>field 好不等于 mass 好</h3><p>116/400 个环境×rank 单元出现 field 正收益但 mass-trace 负收益；对 rank 3，是 37/61 个 field 正收益单元。</p></article>
+        <article class="card finding"><b class="number">6</b><h3>部署选择不能偷看真值</h3><p>本页 oracle best 使用 ground-truth field L2，只用于估计 regret。真实数据必须改用 held-out view、奇异谱、事件幅值和积分量联合选择。</p></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>rank 3 的 noise × views 门槛</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>视角数</th><th>Field 转正</th><th>Held-out 转正</th><th>Mass trace 转正</th><th>解释</th></tr></thead>
+          <tbody>
+            <tr><td>3 views</td><td>noise=0 即略正</td><td>noise≈0.07</td><td><span class="tag red">本扫描未转正</span></td><td>强欠定使场平滑有利，但积分量持续受损。</td></tr>
+            <tr><td>5 views</td><td>noise≈0.07</td><td>noise≈0.07 附近</td><td>noise≈0.28</td><td>默认工作区；不同指标给出不同门槛。</td></tr>
+            <tr><td>7 views</td><td>noise≈0.14</td><td>noise≈0.14</td><td>noise≈0.28</td><td>低噪下高 rank 更合适，噪声升高才需要 rank 3。</td></tr>
+            <tr><td>9 views</td><td>noise≈0.14</td><td>noise≈0.14</td><td>noise≈0.28</td><td>充分视角下过早压缩会同时伤 field、test view 和 mass。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>找何远哲时应直接问的 8 个问题</h2>
+      <div class="grid two">
+        <article class="card">
+          <h3>选择规则与物理量</h3>
+          <ol>
+            <li>真实 TDBOST/4D BOST 如何选 rank/representation capacity，是否有 held-out view 或 validation frame？</li>
+            <li>组里更认可 field/test-view/frequency，还是 mass、温度积分、热释放等守恒或积分量？</li>
+            <li>能否从位移 residual 标定本页 noise multiplier，而不是继续使用任意合成噪声？</li>
+            <li>真实瞬态最不能损失的是峰值、发生时刻、频率还是空间位置？</li>
+          </ol>
+        </article>
+        <article class="card">
+          <h3>数据与下一轮</h3>
+          <ol start="5">
+            <li>能否给 18-30 帧、5/7/9 views 的小片段和一组 withheld/test view？</li>
+            <li>真实数据是否有可追踪的 centroid、integrated density/temperature 或同步外部测量？</li>
+            <li>下一轮优先做 bias magnitude、sampling rate/exposure blur，还是 synthetic-to-real failure signature？</li>
+            <li>本科论文是否可以把“自适应 rank 选择”作为 4D BOST 子问题，而不承诺复现完整 TDBOST？</li>
+          </ol>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="notice warning">
+        <h3>这批证据怎样进入 T16</h3>
+        <p>M3B 证明的是“先验的收益随 view/noise/dynamics 工作域变化”，因此 T16 的训练与测试应按完整 condition cell 切分，并保留 field、held-out 与积分量反例。T16 三种子消融出现同构证据：Residual FNO 在 IID/noise OOD 更好，而 Absolute FNO 在 3-view/joint OOD 更好。18-run gate 筛查否定简单单标量门控，新的 3-seed dual v1 则证明 support-view 闭式融合能稳定改变先验权重，而 query router 依然塌缩。下一步把 operating-map 思路转成“support physics 锚点 + 受限学习修正 + 可识别度/UQ”，而不是继续雕刻一个 alpha，也不是把 temporal rank 3 误当 FNO modes。</p>
+        <p>静态 gate 跑稳后，M3B 才作为 temporal operator 的 fixed-rank baseline：framewise hybrid FNO、framewise FNO + rank-3 projection、short-window temporal residual operator 三者公平比较。</p>
+        <div class="button-row" style="margin-top:12px;"><a class="button primary" href="./operator_3d_innovation_lab.html">打开算子 × 三维创新实验室</a><a class="button" href="./document_reader.html?doc=t16_reliability_gate_review_brief.md">T16 reliability 筛查</a><a class="button" href="./document_reader.html?doc=operator_learning_bost_experiment_spec.md">查看 condition OOD 规格</a></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="notice danger">
+        <h3>不能越过的解释边界</h3>
+        <p>本页仍是 24×24×10、18 帧、单一 phantom 族、简化直线投影与 temporal SVD 的 clean-room toy。8 个 seed 只代表观测噪声，不是 8 个独立火焰工况；全局 affine alignment 和 oracle best rank 都使用真值，只适合审计方法上限与 regret。跨 morphology 和无真值 selector 已由新页面补上，但 bias、frame count、sampling rate、曝光模糊和真实相机几何仍未进入交叉设计。</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>可复现入口</h2>
+      <div class="button-row">
+        <a class="button primary" href="./document_reader.html?doc=demo_m3b%2Frun_m3b_interaction_sweep.py">交互实验脚本</a>
+        <a class="button" href="./m3b_family_selector_dashboard.html">跨形态 Selector 结果</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Finteraction_report.json">结论 JSON</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Finteraction_cell_summary.csv">400 格统计摘要</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Finteraction_rank_selection.csv">80 格 rank 选择</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Finteraction_paired.csv">3,200 配对结果</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Finteraction_raw.csv">3,840 方法记录</a>
+        <a class="button" href="./document_reader.html?doc=demo_m3b%2FREADME.md">M3B README</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>运行日期：2026-07-10。正式结果来自 8 个配对噪声 seed；区间使用 Student-t 95% CI。脚本与图表为独立 clean-room 实现，不复制无 LICENSE 的 TDBOST 代码。</footer>
+
+  <script>
+    const evidenceData = {
+      rank: {
+        title: "Rank 3：最小 regret 的固定默认值",
+        summary: "逐格最优 rank 分散在 2/3/5/8；rank 3 并不统治每个单元，却同时最小化平均和尾部 regret，说明它适合作为 synthetic baseline 默认值。",
+        action: "无真值 selector 已完成；下一步做 leave-one-geometry-out、UQ/拒答与真实数据。",
+        stats: ["0.79%", "rank 3 mean regret", "2.21%", "rank 3 p95 regret", "20 / 80", "逐格最优次数", "0.3691", "global mean field L2"]
+      },
+      operating: {
+        title: "Noise × Views：rank 3 的收益门槛会移动",
+        summary: "无噪声时 3 views 的 field 略有收益，但 5-9 views 变差；noise=0.14 后所有 view count 的 field 与 held-out 转正，mass 多数要到 0.28 才转正。",
+        action: "用真实 displacement residual 标定横轴，并把当前 selector 接到真实 geometry 与 test view。",
+        stats: ["19 / 80", "rank 3 field 负收益格", "61 / 80", "rank 3 field 正收益格", "0.14", "7/9-view field 转正附近", "0.28", "多数 mass trace 转正附近"]
+      },
+      dynamics: {
+        title: "Dynamics：快动态与 chirp 的时间收益约减半",
+        summary: "rank 3 对 smooth/transient 的 temporal-gradient 改善约 34-37%，对 fast/chirp 只有约 20%；同一个 rank 对不同频谱并不等价。",
+        action: "把频率峰值、事件幅值和 low-rank+sparse residual 加入 selector 风险与拒答条件。",
+        stats: ["36.6%", "smooth temporal gain", "19.9%", "fast temporal gain", "20.5%", "chirp temporal gain", "33.9%", "transient temporal gain"]
+      },
+      physics: {
+        title: "物理代价：field 好转经常伴随 mass trace 变差",
+        summary: "400 个环境×rank 单元中有 116 个落入 field 正收益、mass 负收益象限；rank 3 的这一比例在 field 正收益格中达到 60.7%。",
+        action: "让师兄指定必须保真的积分量或事件量，并将其加入容量选择、UQ 和停止条件。",
+        stats: ["116 / 400", "field 好、mass 差", "29.0%", "全部单元占比", "37 / 61", "rank 3 正 field 中 mass 差", "60.7%", "rank 3 条件比例"]
+      }
+    };
+
+    function renderEvidence(key) {
+      const item = evidenceData[key];
+      document.querySelectorAll(".segment").forEach((button) => {
+        const active = button.dataset.evidence === key;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      document.getElementById("evidence-title").textContent = item.title;
+      document.getElementById("evidence-summary").textContent = item.summary;
+      document.getElementById("evidence-action").innerHTML = `<strong>下一步：</strong>${item.action}`;
+      const ids = ["primary", "secondary", "tertiary", "quaternary"];
+      ids.forEach((id, index) => {
+        document.getElementById(`evidence-${id}`).textContent = item.stats[index * 2];
+        document.getElementById(`evidence-${id}-label`).textContent = item.stats[index * 2 + 1];
+      });
+    }
+
+    document.querySelectorAll(".segment").forEach((button) => {
+      button.addEventListener("click", () => renderEvidence(button.dataset.evidence));
+    });
+    renderEvidence("rank");
+  </script>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

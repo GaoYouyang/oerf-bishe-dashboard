@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TDBOST / 4D BOST 可复现性审计 | OERF 毕设导航</title>
+  <link rel="icon" href="data:," />
+  <style>
+    :root {
+      --bg: #f5f8f7;
+      --paper: #ffffff;
+      --ink: #1c2a31;
+      --muted: #60717a;
+      --line: #d5dfdd;
+      --green: #167568;
+      --blue: #2d6397;
+      --amber: #95660d;
+      --red: #98463c;
+      --soft-green: #eaf4f1;
+      --soft-blue: #edf4fa;
+      --soft-amber: #f8f0dc;
+      --soft-red: #f8ebe8;
+      --shadow: 0 14px 34px rgba(30, 47, 54, .07);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(245,248,247,.97), rgba(245,248,247,.82)),
+        url("./assets/backgrounds/oerf-refractive-field.png") right -140px top 10px / min(940px,94vw) auto no-repeat fixed,
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+    header, main, footer { width: min(1180px, calc(100vw - 36px)); margin: 0 auto; }
+    header { padding: 28px 0 24px; }
+    h1 { margin: 18px 0 10px; max-width: 980px; font-size: clamp(34px, 5vw, 58px); line-height: 1.08; }
+    h2 { margin: 40px 0 13px; font-size: 25px; line-height: 1.22; }
+    h3 { margin: 0 0 7px; font-size: 17px; line-height: 1.32; }
+    p { margin: 0 0 11px; color: var(--muted); }
+    ul, ol { margin: 7px 0 0; padding-left: 22px; color: var(--muted); }
+    li { margin-bottom: 7px; }
+    .topbar, .button-row, .tag-row, .rank-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .button, .rank-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.95);
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .button.primary, .rank-button.active { background: var(--green); border-color: var(--green); color: #fff; }
+    .button:hover, .rank-button:hover { text-decoration: none; border-color: var(--green); }
+    .lead { max-width: 940px; font-size: 17px; color: #40545d; }
+    .metrics, .grid { display: grid; gap: 12px; }
+    .metrics { grid-template-columns: repeat(4, minmax(0,1fr)); margin-top: 22px; }
+    .metric, .card, .notice, .figure-card, .rank-panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.95);
+      box-shadow: var(--shadow);
+    }
+    .metric { padding: 14px; }
+    .metric b { display: block; color: var(--green); font-size: 28px; line-height: 1.05; overflow-wrap: anywhere; }
+    .metric span { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; font-weight: 750; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .card { padding: 16px; min-width: 0; }
+    .notice { padding: 17px; border-left: 5px solid var(--green); background: rgba(234,244,241,.95); box-shadow: none; }
+    .notice.warning { border-left-color: var(--amber); background: rgba(248,240,220,.95); }
+    .notice.danger { border-left-color: var(--red); background: rgba(248,235,232,.95); }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 3px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+    }
+    .tag.green { color: var(--green); background: var(--soft-green); border-color: #c7dfd8; }
+    .tag.blue { color: var(--blue); background: var(--soft-blue); border-color: #d2e0ed; }
+    .tag.amber { color: var(--amber); background: var(--soft-amber); border-color: #ead5a8; }
+    .tag.red { color: var(--red); background: var(--soft-red); border-color: #ecc7c0; }
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0,1fr));
+      gap: 8px;
+      margin: 14px 0;
+    }
+    .pipe-step {
+      position: relative;
+      min-height: 132px;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.95);
+    }
+    .pipe-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -10px;
+      top: 43%;
+      z-index: 2;
+      padding: 0 2px;
+      color: var(--green);
+      background: var(--bg);
+      font-weight: 900;
+    }
+    .pipe-step b { display: block; margin-bottom: 5px; color: var(--green); }
+    .pipe-step span { display: block; color: var(--muted); font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; border: 1px solid var(--line); background: rgba(255,255,255,.96); }
+    th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 14px; }
+    th { background: #edf5f2; color: #30434b; }
+    tr:last-child td { border-bottom: 0; }
+    .figure-grid { display: grid; grid-template-columns: 1.45fr 1fr; gap: 12px; }
+    .figure-card { min-width: 0; overflow: hidden; }
+    .figure-card img { display: block; width: 100%; height: auto; background: #fff; }
+    .figure-card figcaption { padding: 12px 14px 14px; color: var(--muted); font-size: 13px; }
+    .figure-card figcaption strong { color: var(--ink); }
+    .rank-panel { padding: 17px; }
+    .rank-controls { margin: 12px 0 16px; }
+    .rank-button { min-width: 48px; }
+    .rank-readout { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
+    .rank-stat { padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: #fbfcfc; }
+    .rank-stat b { display: block; color: var(--green); font-size: 25px; line-height: 1.1; }
+    .rank-stat span { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; font-weight: 800; }
+    .bar { height: 7px; margin-top: 9px; border-radius: 999px; background: #e6ecea; overflow: hidden; }
+    .bar i { display: block; height: 100%; width: 0; background: var(--green); transition: width .2s ease; }
+    .rank-note { min-height: 58px; margin-top: 13px; padding: 11px 12px; border-left: 4px solid var(--amber); background: var(--soft-amber); color: #5e512f; font-size: 13px; }
+    .step-list { counter-reset: step; display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+    .step-list li { position: relative; min-height: 48px; padding: 11px 12px 11px 50px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.95); }
+    .step-list li::before { counter-increment: step; content: counter(step); position: absolute; left: 12px; top: 11px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--green); color: #fff; font-size: 12px; font-weight: 900; }
+    footer { padding: 30px 0 42px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 940px) {
+      .metrics, .grid.two, .grid.three { grid-template-columns: 1fr 1fr; }
+      .pipeline { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .pipe-step:not(:last-child)::after { display: none; }
+      .figure-grid { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+    @media (max-width: 620px) {
+      .metrics, .grid.two, .grid.three, .pipeline, .rank-readout { grid-template-columns: 1fr; }
+      h1 { font-size: 34px; }
+      .button { width: 100%; }
+      .topbar .button { width: auto; flex: 1 1 150px; }
+      .rank-button { flex: 1 1 44px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <a class="button" href="./index.html">返回主导航</a>
+      <a class="button primary" href="./he_bost_citation_spine.html">He / BOST 引用脊柱</a>
+      <a class="button" href="./m3b_six_axis_dashboard.html">M3B 六轴实验</a>
+      <a class="button" href="./m3b_interaction_dashboard.html">M3B 交叉验证</a>
+      <a class="button" href="./m3b_family_selector_dashboard.html">M3B 跨形态 Selector</a>
+      <a class="button" href="./document_reader.html?doc=tdbost_decision_bridge.md">4D BOST 决策桥梁</a>
+      <a class="button" href="./document_reader.html?doc=tdbost_module_mapping.md">模块映射原表</a>
+    </div>
+    <h1>TDBOST / 4D BOST 可复现性审计</h1>
+    <p class="lead">把何远哲 2026 ACM TOG 主线从“完整复现一篇很大的论文”收缩成本科真正能交付的子问题：低秩时序先验、可观测 rank 选择、数据接口、时序评价和 forward-model 偏差。页面同时连接本地 M3B 单次结果、8 种子六轴筛查、80 环境交叉实验，以及 864 观测格的跨形态无真值 selector，明确哪些改善可信、哪些结论还不能下。</p>
+    <div class="metrics">
+      <div class="metric"><b>45(5), 1-19</b><span>ACM Transactions on Graphics 正式卷期页码</span></div>
+      <div class="metric"><b>3 组</b><span>XY-ZT / XZ-YT / YZ-XT 时空 plane-pair 骨架</span></div>
+      <div class="metric"><b>864 cells</b><span>跨 4 morphology 的 nested-LOFO rank selector</span></div>
+      <div class="metric"><b>+44.7%</b><span>默认条件下 temporal-gradient error 的配对改善</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice">
+      <h3>结论先行</h3>
+      <p><strong>4D BOST 很贴何远哲，但不宜作为本科第一阶段的整篇复现任务。</strong>当前最有价值的做法是保留 NeRIF / BOST 鲁棒性为主线，把 4D BOST 降成一个可验证子题：在统一 synthetic 3D+T phantom 和观测模型下，测清 rank、噪声、帧数、视角与系统偏差的作用；师兄确认真实数据和代码边界后，再决定是否接组内实现。</p>
+    </section>
+
+    <h2>一手证据与访问边界</h2>
+    <div class="grid three">
+      <article class="card">
+        <h3>正式论文</h3>
+        <p><a href="https://doi.org/10.1145/3809488">DOI 10.1145/3809488</a>；ACM TOG 45(5), 1-19。正式引用用 DOI/ACM 入口。</p>
+        <div class="tag-row"><span class="tag green">正式元数据已核</span><span class="tag blue">He 主线</span></div>
+      </article>
+      <article class="card">
+        <h3>公开代码线索</h3>
+        <p><a href="https://github.com/Hyz617/TDBOST">Hyz617/TDBOST</a> 包含 configs、TDmodel、dataloader、render、projection 和 run loop 结构。</p>
+        <div class="tag-row"><span class="tag amber">只读结构</span><span class="tag red">根目录无 LICENSE</span></div>
+      </article>
+      <article class="card">
+        <h3>全文状态</h3>
+        <p>ACM 标注 Open access / CC BY 4.0；官方 <a href="https://dl.acm.org/doi/epdf/10.1145/3809488">eReader</a> 已核可读 19 页、29.4 MB。原始 PDF 命令行仍受 Cloudflare/CDN 会话限制，故暂不缓存。</p>
+        <div class="tag-row"><span class="tag green">HTML / eReader 可读</span><span class="tag blue">CC BY 4.0</span></div>
+      </article>
+    </div>
+
+    <h2>仓库健康检查：为什么不能直接一键跑</h2>
+    <table>
+      <thead><tr><th>检查项</th><th>2026-07-10 官方 GitHub 取证</th><th>实际影响</th><th>本科安全处理</th></tr></thead>
+      <tbody>
+        <tr><td><strong>快照与体量</strong></td><td>main tree <code>3393ca7</code>；59 个 blob，共 2,287,454 bytes；最新提交 2026-04-04；无 release。</td><td>这是小型研究快照，不是带版本发布和兼容性保证的软件包。</td><td>记录 commit；只抽接口与实验变量。</td></tr>
+        <tr><td><strong>许可</strong></td><td>GitHub API <code>license: null</code>，根目录无 LICENSE；README 的 “fully open-source” 不是许可证。</td><td>公开可访问不等于允许复制、修改或再发布代码和数据。</td><td>clean-room 自写；需要代码级复用时先问何远哲/作者。</td></tr>
+        <tr><td><strong>平台绑定</strong></td><td><code>run.py</code> 在 CUDA 可用时硬编码 <code>cuda:3</code>；仓库带 1,065,192-byte 的 Linux x86-64 <code>proj...so</code>。</td><td>单卡机器可能报 invalid device ordinal；Mac/Windows 不能直接加载该投影扩展。</td><td>第一阶段不用扩展；自写小型投影 sanity model。NVIDIA 环境由师兄给版本。</td></tr>
+        <tr><td><strong>本机绝对路径</strong></td><td><code>All_util/trainer.py</code> 在 import 阶段读取 <code>/home/PUBLIC_USER_REDACTED/Project/Data/.../jetflameinterpolated_data_10ms.mat</code>，后部还有多处同类路径。</td><td>其他机器即使装完依赖，也会在训练前因缺少作者目录而失败。</td><td>不要原地修补无许可代码；把“外部数据必须参数化”写进自己的 loader 规范。</td></tr>
+        <tr><td><strong>依赖清单</strong></td><td><code>pyDOE==0.3.8</code> 与 <code>0.9.8</code> 同时出现；同时固定 contrib/full/headless 三套 OpenCV，并写有 <code>skimage==0.0</code>。</td><td><code>pip install -r requirements.txt</code> 不是可信的一键环境；可能出现版本冲突、包覆盖或安装失败。</td><td>不在主环境试装；先让师兄确认已知可用 lockfile / container。</td></tr>
+        <tr><td><strong>默认规模</strong></td><td>83³ -> 200³ voxel、20 time grids、density components 30/30/30、batch 2048、<code>nSamples=1,000,000</code>、<code>n_iters=20,000</code>；另有 30k/25k/10k 三阶段字段。</td><td>配置里存在多套 iteration 语义，且默认规模不是 Mac toy；运行前必须确认实际控制流和显存。</td><td>自己的 baseline 从 32³/64³、8-20 帧和显式预算开始。</td></tr>
+        <tr><td><strong>样例 split</strong></td><td>fuel train 为 180 个 9-view x 20-time 路径，fuel test 的 18 条路径全部与 train 重叠；spray 为 162 train + 18 test，路径不重叠。</td><td>fuel test 不能被写成独立 held-out 泛化结果；不同 case 的 split 语义并不一致。</td><td>manifest audit 先查 path overlap、view/time coverage，再定义 held-out。</td></tr>
+      </tbody>
+    </table>
+
+    <section class="notice">
+      <h3>六轴多种子实验已经完成</h3>
+      <p>新的 <a href="./m3b_six_axis_dashboard.html">M3B 六轴实验页</a>包含 448 条方法结果、8 个配对噪声种子、95% CI、rank/noise/frame/view/bias/dynamics 六轴判读和全部 CSV/JSON。默认 rank 3 的全局 L2 改善 3.90%、论文式 squared L2 改善 7.65%、时间一阶误差改善 44.68%、held-out deflection 改善 9.23%；但 mass trace 恶化 0.94%，无噪声场 L2 也恶化 0.56%。第一轮结论因此从“低秩有效”升级为“低秩只在有噪声、且评价目标允许平滑时有效”。</p>
+      <div class="button-row"><a class="button primary" href="./m3b_six_axis_dashboard.html">打开六轴交互结果</a><a class="button" href="./document_reader.html?doc=demo_m3b%2Fresults%2Fsix_axis_report.json">查看结构化报告</a></div>
+    </section>
+
+    <section class="notice">
+      <h3>多变量交叉验证也已经完成</h3>
+      <p><a href="./m3b_interaction_dashboard.html">M3B 交叉实验页</a>覆盖 rank×noise×views×dynamics 的 80 个环境、8 个配对种子、3,840 条方法记录和 3,200 组配对比较。逐格最优 rank 2/3/5/8 分别出现 27/20/24/9 次；rank 3 虽只在 20 格逐格最优，却以 0.79% mean regret、2.21% p95 regret 成为最稳固定默认值。它仍在 19/80 个环境产生 field 负收益，且 116/400 个环境×rank 单元出现 field 改善、mass trace 恶化。</p>
+      <div class="button-row"><a class="button primary" href="./m3b_interaction_dashboard.html">打开交叉验证与四张图</a><a class="button" href="./document_reader.html?doc=m3b_interaction_brief.md">打开一页沟通 brief</a></div>
+    </section>
+
+    <section class="notice">
+      <h3>跨形态无真值 rank selector 已完成</h3>
+      <p><a href="./m3b_family_selector_dashboard.html">M3B 跨形态 Selector 页</a>覆盖 4 morphology × 3 dynamics × 4 noise × 3 views × 6 seeds，包含 864 个观测格、6,048 个 rank 候选和 full-rank 拒绝平滑。外层整类留出 phantom，测试时禁止使用 family、noise label、field truth 或 oracle rank。固定 rank 3 的 mean/p95 regret 为 1.561%/5.635%；组合可观测特征在无 held-out camera 时为 0.252%/1.267%，加入 held-out 后为 0.210%/1.054%。直接最小化 held-out residual 反而达到 2.423%/9.467%，说明 test-view consistency 不能单独代表 field quality。</p>
+      <div class="button-row"><a class="button primary" href="./m3b_family_selector_dashboard.html">打开六张图与模型草案</a><a class="button" href="./document_reader.html?doc=m3b_family_selector_brief.md">打开最新一页审核 brief</a><a class="button" href="./document_reader.html?doc=demo_m3b%2Fvalidate_family_selector_results.py">查看结果验证器</a></div>
+    </section>
+
+    <section class="notice danger">
+      <h3>复现判断</h3>
+      <p>当前公开仓库更适合回答“模块怎样组织、默认量级多大、哪里会出错”，不适合直接成为你的主代码。独立 M3B 已从单次 toy 走到六轴、交叉工作域和跨形态无真值 selector；下一步不应继续扩大 synthetic pooled mean，而应由师兄选择 leave-one-geometry-out、bias/sync/exposure blur、UQ/拒答或一小段真实数据 failure-signature 验证。</p>
+    </section>
+
+    <h2>论文方法骨架</h2>
+    <p>ACM 正式 HTML 全文已经核验：方法把折射率/密度流场组织成 <code>X-Y-Z-T</code> 四维对象，采用 MM matrix-matrix 分解的三组空间-时间 plane pairs，经轻量 MLP 解码为折射率差；forward model 同时计算光线偏折角与路径位移，并用独立 DC 网络迭代修正强折射下的非线性光路。</p>
+    <div class="pipeline" aria-label="4D BOST method skeleton">
+      <div class="pipe-step"><b>1 多视角时序观测</b><span>reference/deformed backgrounds、view、frame、mask、calibration 与 deflection。</span></div>
+      <div class="pipe-step"><b>2 X-Y-Z-T 场</b><span>目标不是独立重建每一帧，而是恢复一个连续或紧凑的四维物理场。</span></div>
+      <div class="pipe-step"><b>3 MM plane pairs</b><span>XY-ZT、XZ-YT、YZ-XT factor 逐元素相乘并线性投影到 F 维特征。</span></div>
+      <div class="pipe-step"><b>4 轻量解码</b><span>坐标/特征频率编码后进入 3×128 Swish MLP，输出标量折射率残差。</span></div>
+      <div class="pipe-step"><b>5 投影与 DC</b><span>随机分层采样、中心差分梯度、偏折+路径位移双积分，并由 6×200 DC MLP 校正。</span></div>
+      <div class="pipe-step"><b>6 时空评价</b><span>场 L2/SSIM、test-view reprojection、主频、速度、显存与消融。</span></div>
+    </div>
+
+    <h2>正式全文精读：方法与训练参数</h2>
+    <table>
+      <thead><tr><th>模块</th><th>正文可核参数</th><th>对本科实现的意义</th></tr></thead>
+      <tbody>
+        <tr><td><strong>四维表示</strong></td><td>MM 分解：<code>XY-ZT</code>、<code>XZ-YT</code>、<code>YZ-XT</code>；Hadamard product 后映射至 F 维特征。</td><td>真正该对照的是 MM/CP、R、F、memory 与 time，不是只写“用了低秩”。</td></tr>
+        <tr><td><strong>折射率解码</strong></td><td>3 个隐藏层、每层 128、Swish；频率编码层级 L=3；单标量输出折射率残差。</td><td>可做小型 3×64 / 3×128 clean-room decoder，但不能直接搬公开代码。</td></tr>
+        <tr><td><strong>Forward model</strong></td><td>随机分层 ray sampling；折射率梯度用中心差分；偏折角与路径位移双积分，后者可用 cumulative sum 并行。</td><td>直线 ray toy 必须标明降级；held-out reprojection 应使用同一物理定义。</td></tr>
+        <tr><td><strong>观测与损失</strong></td><td>DeepFlow 从图像提取 u/v displacement；loss = displacement MSE + regularization + boundary condition。TV+L1 权重 <code>1e-4</code>，边界权重 <code>1.0</code>。</td><td>绝对折射率尺度依赖边界条件；只优化位移残差并不自动确定常数项。</td></tr>
+        <tr><td><strong>DC 网络</strong></td><td>输入 ray origin、direction、time、depth；6 层×200、3 输出；<code>Nc=6000</code> 后启用，与主场模块交替两轮。</td><td>把 DC 单独做 ablation；不要把它和低秩 factor 的收益混在一起。</td></tr>
+        <tr><td><strong>优化</strong></td><td>数值实验 60³ coarse-to-fine，在 3k/6k iteration 上采样到 200³，约 10k 收敛；前向 FP32、反传 FP16。</td><td>本科先复制 coarse-to-fine 实验逻辑，不复制 200³ 训练规模。</td></tr>
+      </tbody>
+    </table>
+
+    <h2>正式全文精读：数据、结果与显存</h2>
+    <div class="grid two">
+      <article class="card">
+        <h3>数值验证</h3>
+        <p>Fuel Injection 与 Spray Combustion；9 个等角视角、每幅 200×200、50 mm 立方 VOI、Gaussian noise，并扫 <code>G0 / 10G0 / 100G0</code>。计算平台为 64-core Xeon、512 GB RAM、RTX 4090。</p>
+      </article>
+      <article class="card">
+        <h3>火焰实验</h3>
+        <p>Photron AX100 mini + 九输入单输出 fiber bundle；1 kHz、100 μs、1024×1024。联合重建 500 帧，test-view 平均 PSNR 约 27 dB；20k iterations 用时 80 min，约 9.6 s/frame，10k 时约 4 s/frame。</p>
+      </article>
+    </div>
+    <table>
+      <thead><tr><th>强折射尺度</th><th>NeRIF L2 / SSIM</th><th>Ours no DC L2 / SSIM</th><th>Ours full L2 / SSIM</th><th>读法</th></tr></thead>
+      <tbody>
+        <tr><td><code>G0</code></td><td>0.0032 / 0.9985</td><td>0.0032 / 0.9986</td><td><strong>0.0018 / 0.9992</strong></td><td>弱折射时各神经表示已很强，DC 增益较小。</td></tr>
+        <tr><td><code>10G0</code></td><td>0.0041 / 0.9977</td><td>0.0042 / 0.9975</td><td><strong>0.0035 / 0.9983</strong></td><td>中等折射开始看到完整 forward model 的收益。</td></tr>
+        <tr><td><code>100G0</code></td><td>0.0190 / 0.9632</td><td>0.0107 / 0.9866</td><td><strong>0.0064 / 0.9948</strong></td><td>强折射下 DC 是主增益来源之一，不能只归功于 tensor。</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <thead><tr><th>方法 / 配置</th><th>正文报告的 peak GPU memory</th><th>本科判断</th></tr></thead>
+      <tbody>
+        <tr><td>Adjoint 200³</td><td>13.90 GB</td><td>显式体素随分辨率立方增长。</td></tr>
+        <tr><td>NeRIF, batch 2048</td><td>22.35 GB</td><td>隐式网络不存体素，但反传 activation 很重。</td></tr>
+        <tr><td>CP, mixed precision</td><td>23.97 GB</td><td>为达到质量需要更高 rank；不是“有张量就一定省”。</td></tr>
+        <tr><td>MM hybrid, FP32</td><td>23.89 GB</td><td>不使用 mixed precision 时优势并不明显。</td></tr>
+        <tr><td><strong>MM hybrid, mixed precision</strong></td><td><strong>13.08 GB</strong></td><td>显存优势来自表示与精度策略共同作用。</td></tr>
+      </tbody>
+    </table>
+
+    <section class="notice warning">
+      <h3>指标定义不能直接混用</h3>
+      <p>论文 Eq. 24 的 “L2 error” 是平方范数比 <code>||error||² / ||GT||²</code>；本地 M3B 的 <code>mean_rel_l2</code> 是逐帧非平方范数比 <code>||error|| / ||GT||</code>。两者只能比较趋势，不能把 0.3471 与论文 Table 4 的 0.0018 放在同一数轴上。</p>
+    </section>
+
+    <h2>正文与公开代码配置对账</h2>
+    <table>
+      <thead><tr><th>项目</th><th>正式正文</th><th>公开仓库默认</th><th>需要确认</th></tr></thead>
+      <tbody>
+        <tr><td>Tensor components</td><td>4.4 写 40/40/40；6.3.3 又写 <code>R=30, F=20</code> 是默认最佳折中。</td><td><code>density_n_comp=[30,30,30]</code>，<code>density_dim=20</code>。</td><td>R=40 是特定主实验、旧配置还是文字差异？</td></tr>
+        <tr><td>Decoder width</td><td>Appendix A：3 hidden layers × 128，Swish。</td><td><code>density_n_layers=3</code>，<code>density_featureC=200</code>。</td><td>公开 config 是否对应最终论文实验？</td></tr>
+        <tr><td>Iterations</td><td>数值实验约 10k；500-frame 实验用 20k，10k 已有可用结果。</td><td><code>n_iters=20,000</code>，另有 30k/25k/10k 三阶段字段。</td><td>哪些字段真正控制最终训练 loop？</td></tr>
+        <tr><td>Evaluation split</td><td>正文强调 test view 未参与重建。</td><td>fuel test 的 18 个 file paths 全部与 train 重叠；spray 162/18 才 disjoint。</td><td>fuel JSON 是可视化子集还是应视作 held-out？</td></tr>
+      </tbody>
+    </table>
+
+    <section class="notice warning">
+      <h3>不要把“低秩”理解成自动正确</h3>
+      <p>低秩先验能压随机抖动，也可能抹掉真实瞬态；更重要的是，它通常不能修正相机几何、同步、位移估计或 ray model 带来的系统误差。rank 选择必须是多目标判断，而不是只找最平滑的曲线。</p>
+    </section>
+
+    <h2>本地 M3B：已经做到哪一步</h2>
+    <div class="figure-grid">
+      <figure class="figure-card">
+        <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Fm3b_4d_summary.png"><img src="./demo_m3b/results/m3b_4d_summary.png" alt="M3B 4D BOST low-rank reconstruction summary" /></a>
+        <figcaption><strong>场切片与误差。</strong> rank 3 将平均相对 L2 从 0.3657 降到 0.3471，改善约 5.1%。它是 sanity check，不是 TOG 方法复现。</figcaption>
+      </figure>
+      <figure class="figure-card">
+        <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Fm3b_temporal_trace.png"><img src="./demo_m3b/results/m3b_temporal_trace.png" alt="M3B temporal centroid trace" /></a>
+        <figcaption><strong>轨迹偏差。</strong> low-rank 与 framewise 曲线都比 ground truth 整体偏移；说明去抖没有修掉共同 forward-model bias。</figcaption>
+      </figure>
+      <figure class="figure-card">
+        <a href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Fm3b_rank_scan.png"><img src="./demo_m3b/results/m3b_rank_scan.png" alt="M3B rank trade-off curves" /></a>
+        <figcaption><strong>rank 多目标权衡。</strong> rank 3 的 L2 最低；rank 1 最平滑、轨迹 RMSE 最小，却明显过度压缩场细节。不存在一个指标决定全部。</figcaption>
+      </figure>
+      <article class="rank-panel">
+        <h3>交互式 rank 读数</h3>
+        <p>点击 rank，观察三个指标如何相互冲突。数值来自 2026-07-10 重跑的 <a href="./document_reader.html?doc=demo_m3b/results/rank_metrics.csv">rank_metrics.csv</a>。</p>
+        <div class="rank-controls" role="group" aria-label="选择 rank">
+          <button class="rank-button" type="button" data-rank="1">1</button>
+          <button class="rank-button" type="button" data-rank="2">2</button>
+          <button class="rank-button active" type="button" data-rank="3">3</button>
+          <button class="rank-button" type="button" data-rank="5">5</button>
+          <button class="rank-button" type="button" data-rank="8">8</button>
+          <button class="rank-button" type="button" data-rank="12">12</button>
+        </div>
+        <div class="rank-readout" aria-live="polite">
+          <div class="rank-stat"><b id="rank-l2">0.3471</b><span>mean relative L2，越低越好</span><div class="bar"><i id="rank-l2-bar"></i></div></div>
+          <div class="rank-stat"><b id="rank-smooth">0.1767</b><span>temporal smoothness 指标，越低越平滑</span><div class="bar"><i id="rank-smooth-bar"></i></div></div>
+          <div class="rank-stat"><b id="rank-centroid">0.03811</b><span>centroid trajectory RMSE，越低越好</span><div class="bar"><i id="rank-centroid-bar"></i></div></div>
+        </div>
+        <div class="rank-note" id="rank-note">rank 3 给出最低 mean L2，是当前 accuracy 主导的折中点；它不是所有指标的同时最优。</div>
+      </article>
+    </div>
+
+    <h2>当前数字该怎么解释</h2>
+    <table>
+      <thead><tr><th>观察</th><th>可下的结论</th><th>不能下的结论</th><th>下一步验证</th></tr></thead>
+      <tbody>
+        <tr><td><strong>L2 下降约 5.1%</strong></td><td>当前单次 synthetic 设置下，跨帧低秩约束有助于总体场误差。</td><td>不能说明 TDBOST 或真实 BOST 一定提升 5.1%。</td><td>多种子/多噪声/多视角已补；下一步换 phantom 族并接真实数据。</td></tr>
+        <tr><td><strong>平滑度下降约 36.6%</strong></td><td>低秩处理显著抑制逐帧抖动。</td><td>更平滑不等于更符合真实动力学。</td><td>fast/chirp/transient 已补；下一步测频率峰值、事件幅值与 sparse residual。</td></tr>
+        <tr><td><strong>轨迹 RMSE 只改善约 5.1%</strong></td><td>时序去噪对运动追踪略有帮助。</td><td>不能声称系统偏差已解决；图上共同偏移仍很明显。</td><td>bias 类型已筛查；下一步扫 bias magnitude、真实 calibration perturbation。</td></tr>
+        <tr><td><strong>rank 1 最平滑</strong></td><td>强压缩能获得稳定曲线。</td><td>不能据此选 rank 1；它的 mean L2 反而最差。</td><td>用 Pareto front 或任务权重选择，不用单指标冠军。</td></tr>
+      </tbody>
+    </table>
+
+    <h2>TDBOST 模块怎样安全转成你的工作</h2>
+    <table>
+      <thead><tr><th>公开结构</th><th>可学习</th><th>你的 clean-room 产物</th><th>边界</th></tr></thead>
+      <tbody>
+        <tr><td><code>configs/config.py</code></td><td>rank、分辨率、学习率、路径集中管理。</td><td>自写 YAML/dataclass，保存 seed、views、frames、noise、bias 和 metrics。</td><td>不复制无 LICENSE 配置代码。</td></tr>
+        <tr><td><code>TDmodel/CPmodel.py</code> / <code>MMmodel.py</code></td><td>不同低秩 factor 家族与公共模型接口。</td><td>先做 SVD/CP/Tucker 风格小 toy；报告 rank-error-time-memory。</td><td>不声称等价复现论文 plane-pair 网络。</td></tr>
+        <tr><td><code>dataloader/BOS_dataset.py</code></td><td>view/frame/deflection 的组织方式。</td><td>统一 manifest：case、view、frame、mask、calibration、deflection、units。</td><td>字段需由何远哲确认真实接口。</td></tr>
+        <tr><td><code>ray_utils.py</code> / projection extension</td><td>forward model 是性能与系统误差核心。</td><td>清晰 Python/PyTorch sanity model + geometry perturbation tests。</td><td>不搬编译扩展，不把简化 parallel ray 当真实相机。</td></tr>
+        <tr><td><code>render/</code> / metrics</td><td>固定评价和可视化接口。</td><td>slice montage、rank scan、reprojection、trajectory、DMD/频率与失败案例报告。</td><td>这是最适合本科留下的组内工具。</td></tr>
+      </tbody>
+    </table>
+
+    <h2>第二轮交互实验结果与剩余缺口</h2>
+    <table>
+      <thead><tr><th>交互项</th><th>当前状态</th><th>已经得到什么</th><th>下一步</th></tr></thead>
+      <tbody>
+        <tr><td>Rank × noise × views</td><td><strong>已完成</strong></td><td>3 views 全部选 rank 2；高噪声偏向 rank 2-3；rank 3 是 regret 最低的固定默认值。</td><td>把 oracle rank 转成 held-out/奇异谱/物理 trace 的无真值 selector。</td></tr>
+        <tr><td>Dynamics × rank</td><td><strong>已完成第一版</strong></td><td>rank 3 的 temporal-gradient 改善在 smooth/fast/chirp/transient 为 36.6%/19.9%/20.5%/33.9%。</td><td>补 frequency peak、event amplitude 与 low-rank+sparse residual。</td></tr>
+        <tr><td>Frames × sampling rate</td><td>未完成</td><td>OFAT frame sweep 只固定完整运动周期，不能分离帧数、Δt 和曝光。</td><td>固定物理窗与固定 Δt 两组，加入 exposure blur。</td></tr>
+        <tr><td>Bias magnitude</td><td>未完成</td><td>已区分 geometry/sync/scale/flow drift 类型，但没有失效阈值。</td><td>扫描 geometry 0-4°、lag 0-2 frame、drift 0-2×。</td></tr>
+        <tr><td>Synthetic → real</td><td>等待数据</td><td>当前 8 seeds 是观测噪声，不是独立火焰工况。</td><td>接 10-20 frames、5-9 views 小样例，生成 data-health/temporal report。</td></tr>
+      </tbody>
+    </table>
+
+    <h2>四周可交付路线</h2>
+    <ol class="step-list">
+      <li><strong>Week 1 已完成：实验系统。</strong> rank/noise/frame/view/seed、held-out projection、论文平方 L2 和全序列统一对齐均已配置化。</li>
+      <li><strong>Week 2 已完成：随机误差。</strong> 8 种子配对实验、均值/标准差/95% CI 和 448 行原始结果已生成。</li>
+      <li><strong>Week 3 已完成：交叉工作域。</strong> rank×noise×views×dynamics 的 80 环境实验、固定-rank regret 与 field/mass trade-off 已生成。</li>
+      <li><strong>Week 4 待师兄决策。</strong> 无真值 rank selector 已完成；用<a href="./m3b_family_selector_dashboard.html">跨形态结果</a>和<a href="./document_reader.html?doc=m3b_family_selector_brief.md">最新一页 brief</a>请何远哲决定：做 leave-one-geometry-out、UQ/拒答、bias/sampling 阈值、M3C data-health tool，还是接真实 4D 数据。</li>
+    </ol>
+
+    <h2>最值得问何远哲的 8 个问题</h2>
+    <div class="grid two">
+      <article class="card"><h3>数据与接口</h3><ol><li>最小 4D 样例能否给 raw images、deflection、geometry、mask 和 reference reconstruction？</li><li>NeRIF 与 4D BOST 是否共享 view/frame/calibration 前处理接口？</li><li>真实数据最常见的是缺帧、坏视角、同步误差，还是 optical-flow drift？</li><li>组里是否需要一个自动 data-health / temporal report？</li></ol></article>
+      <article class="card"><h3>方法与评价</h3><ol start="5"><li>本科更值得做 rank scan、temporal metrics、runtime/memory，还是 forward-model bias？</li><li>论文中的 plane-pair factors 与公开 TDBOST 仓库是否同源；允许参考到什么层级？</li><li>4D 结果除了逐帧误差和重投影，还看轨迹、主频、DMD mode 或 event preservation 吗？</li><li>有 NVIDIA 环境和推荐配置吗；第一月是否应继续用小体积 clean-room toy？</li></ol></article>
+    </div>
+
+    <section class="notice danger">
+      <h3>我的真实建议</h3>
+      <p>把 4D BOST 定位成你的<strong>挑战线和组内对齐线</strong>，不要取代 NeRIF / BOST 鲁棒性底盘。现在已经不只是“有一个 toy”：六轴与交叉实验明确显示低秩收益随 noise/views/dynamics 改变，跨形态 selector 又证明 morphology 会把最优容量推到 full rank，并已把 oracle rank 转成测试时不看 field truth 的规则。下一步最有研究味的工作是做 geometry/真实数据迁移、UQ/拒答和系统偏差，而不是继续盲目扩大 synthetic 网络。</p>
+    </section>
+
+    <h2>来源与可执行入口</h2>
+    <div class="button-row">
+      <a class="button primary" href="https://doi.org/10.1145/3809488">ACM TOG DOI</a>
+      <a class="button" href="https://dl.acm.org/doi/10.1145/3809488">ACM 正式页</a>
+      <a class="button" href="https://dl.acm.org/doi/full/10.1145/3809488">ACM HTML 全文</a>
+      <a class="button" href="https://dl.acm.org/doi/epdf/10.1145/3809488">ACM eReader（19 页）</a>
+      <a class="button" href="https://dl.acm.org/doi/suppl/10.1145/3809488/suppl_file/tog-25-0039-File003.mp4">官方 4D 动态补充视频</a>
+      <a class="button" href="https://github.com/Hyz617/TDBOST">TDBOST GitHub</a>
+      <a class="button" href="./m3b_six_axis_dashboard.html">M3B 六轴实验页</a>
+      <a class="button" href="./m3b_interaction_dashboard.html">M3B 交叉验证页</a>
+      <a class="button" href="./document_reader.html?doc=m3b_interaction_brief.md">交叉实验 brief</a>
+      <a class="button" href="./document_reader.html?doc=demo_m3b/README.md">M3B README</a>
+      <a class="button" href="./document_reader.html?doc=demo_m3b/results/six_axis_summary.csv">六轴汇总 CSV</a>
+      <a class="button" href="./asset_viewer.html?asset=demo_m3b%2Fresults%2Fm3b_rank_scan.png">打开 rank 图</a>
+      <a class="button" href="./code_data_reuse_dashboard.html">代码与数据边界</a>
+    </div>
+  </main>
+
+  <footer>核验与重跑日期：2026-07-10。正式元数据、方法、表格和消融数字来自 ACM 官方 HTML 全文 / eReader 与 Crossref；ACM 标注 Open access、CC BY 4.0，但 raw PDF 的无会话命令行请求仍返回 403，因此本轮只提供可读 eReader，不冒充本地缓存。公开 TDBOST 仓库无根 LICENSE，只做结构阅读。本页 M3B 数字来自本地确定性脚本重跑，不代表 TOG 正文复现结果。</footer>
+
+  <script>
+    const rankData = {
+      1: { l2: 0.3848119862, smooth: 0.1010459470, centroid: 0.03679855, note: "rank 1 最平滑、轨迹 RMSE 最低，但 mean L2 最差：典型的过度压缩，不能只凭稳定选它。" },
+      2: { l2: 0.3501065104, smooth: 0.1476908840, centroid: 0.03813605, note: "rank 2 已取得明显 L2 改善，时序仍较平滑；可作为低容量对照。" },
+      3: { l2: 0.3471374632, smooth: 0.1766934332, centroid: 0.03811445, note: "rank 3 给出最低 mean L2，是当前 accuracy 主导的折中点；它不是所有指标的同时最优。" },
+      5: { l2: 0.3514856582, smooth: 0.1964304734, centroid: 0.03859428, note: "rank 5 开始保留更多变化，但 L2 和轨迹误差都反弹，说明额外容量也开始保留噪声。" },
+      8: { l2: 0.3565440964, smooth: 0.2222621661, centroid: 0.03905238, note: "rank 8 更接近逐帧结果，去抖收益继续减弱；需要结合显存和速度判断是否值得。" },
+      12: { l2: 0.3612145764, smooth: 0.2518766267, centroid: 0.03955937, note: "rank 12 已接近高容量逐帧行为，三项指标都没有胜出；它适合作为低秩收益消失的边界。" }
+    };
+
+    function scale(value, min, max) {
+      return `${Math.max(8, Math.min(100, ((value - min) / (max - min)) * 92 + 8))}%`;
+    }
+
+    function renderRank(rank) {
+      const item = rankData[rank];
+      document.querySelectorAll(".rank-button").forEach((button) => {
+        const active = Number(button.dataset.rank) === Number(rank);
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      document.getElementById("rank-l2").textContent = item.l2.toFixed(4);
+      document.getElementById("rank-smooth").textContent = item.smooth.toFixed(4);
+      document.getElementById("rank-centroid").textContent = item.centroid.toFixed(5);
+      document.getElementById("rank-l2-bar").style.width = scale(item.l2, 0.345, 0.386);
+      document.getElementById("rank-smooth-bar").style.width = scale(item.smooth, 0.10, 0.252);
+      document.getElementById("rank-centroid-bar").style.width = scale(item.centroid, 0.0367, 0.0396);
+      document.getElementById("rank-note").textContent = item.note;
+    }
+
+    document.querySelectorAll(".rank-button").forEach((button) => {
+      button.addEventListener("click", () => renderRank(Number(button.dataset.rank)));
+    });
+    renderRank(3);
+  </script>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

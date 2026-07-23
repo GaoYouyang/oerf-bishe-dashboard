@@ -1,0 +1,133 @@
+{
+  "budget": {
+    "corrected_warm_cgls_iterations": 12,
+    "deployable_total_low_adjoint_calls": 24,
+    "deployable_total_low_forward_calls": 25,
+    "low_reference_cgls_iterations": 24,
+    "low_reference_final_projection_forward_calls": 1,
+    "visible_low_projection_forward_calls": 1,
+    "warm_cgls_iterations": 12
+  },
+  "calibration_selection": {
+    "maximum_case_harm_over_one_percent_rate_vs_component_damping": 0.0,
+    "minimum_mean_field_gain_over_component_damping": 0.0,
+    "minimum_takeover_rate": 0.75,
+    "minimum_worst_case_field_gain_over_component_damping": -0.01,
+    "primary_metric": "mean_field_gain_over_component_damping",
+    "tie_breakers": [
+      "evaluator_mean_adjoint_residual_gain_over_component_damping",
+      "lower_rank",
+      "fewer_features",
+      "larger_ridge_alpha"
+    ]
+  },
+  "claim_boundary": {
+    "independent_unit": "base_seed_geometry_cluster",
+    "is_complete_camera_model_error": false,
+    "is_postopen_exploratory": true,
+    "is_real_bost_evidence": false,
+    "may_claim_confirmed_algorithm_gain": false,
+    "may_select_one_future_confirmation_hypothesis": true,
+    "opens_ood_fresh_or_final": false,
+    "paired_families_are_not_independent_rigs": true
+  },
+  "deployment_contract": {
+    "correction_parameterization": "measurement_basis_then_current_low_adjoint",
+    "forbidden_inputs": [
+      "truth_volume",
+      "fresh_exact_mismatch",
+      "phantom_family_label",
+      "confirmation_target",
+      "high_order_forward_output"
+    ],
+    "high_order_adjoint_calls": 0,
+    "high_order_forward_calls": 0,
+    "independent_learned_adjoint": false,
+    "inputs": [
+      "geometry_metadata",
+      "measured_observation",
+      "low_cgls_warm_field",
+      "low_cgls_warm_projection"
+    ]
+  },
+  "evaluated_partitions": [
+    "calibration",
+    "development"
+  ],
+  "evidence_level": "E1_SYNTHETIC_ADJOINT_WEIGHTED_LOW_RANK_SCREEN",
+  "fail_closed_envelope": {
+    "coefficient_abs_multiplier": 1.25,
+    "coefficient_abs_quantile": 1.0,
+    "fallback": "component_damping",
+    "feature_max_abs_z_multiplier": 1.25,
+    "feature_max_abs_z_quantile": 1.0,
+    "residual_rms_multiplier": 1.25,
+    "residual_rms_quantile": 1.0
+  },
+  "frozen_date": "2026-07-18",
+  "future_confirmation_gates": {
+    "case_field_harm_over_one_percent_rate_maximum": 0.0,
+    "case_field_harm_over_one_percent_rate_vs_component_damping_maximum": 0.0,
+    "evaluator_mean_adjoint_residual_gain_over_component_damping_minimum": 0.1,
+    "mean_field_gain_over_component_damping_minimum": 0.005,
+    "mean_field_gain_over_high_order_teacher_b0p75_minimum": 0.0,
+    "mean_field_gain_over_low_cgls24_minimum": 0.05,
+    "mean_h1_gain_over_low_cgls24_minimum": 0.03,
+    "minimum_takeover_rate": 0.75,
+    "required_high_order_adjoint_calls": 0,
+    "required_high_order_forward_calls": 0,
+    "worst_case_field_gain_over_low_cgls24_minimum": -0.01
+  },
+  "may_construct_or_evaluate_ood": false,
+  "model_grid": {
+    "adjoint_target_l2": [
+      1e-08,
+      0.0001,
+      0.01
+    ],
+    "anchor": "component_damping",
+    "basis_fit_split": "fit",
+    "basis_ranks": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "coefficient_target": "minimum_current_low_adjoint_residual",
+    "feature_sets": [
+      "summary",
+      "camera",
+      "camera_geometry"
+    ],
+    "residual_shrinkages": [
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "ridge_alphas": [
+      0.01,
+      1.0,
+      100.0
+    ],
+    "selection_split": "calibration"
+  },
+  "preregistration_document": "docs/jacru_n1_6_adjoint_low_rank_prereg_2026-07-18.md",
+  "schema_version": "jacru-n1-6-adjoint-low-rank-development-1.0",
+  "source_n1_5_a_config": "demo_t16_operator/configs/jacru_n1_5_approximation_error_headroom_development_v1.json",
+  "source_n1_5_confirmation": "demo_t16_operator/results/jacru_n1_5_high_order_teacher_confirmation_once",
+  "source_t0_config": "demo_t16_operator/configs/jacru_m2_learned_residual_t0_v1.json",
+  "status": "POSTOPEN_DEVELOPMENT_HYPOTHESIS_GENERATION_ONLY",
+  "strong_controls": {
+    "high_order_teacher_is_deployment_candidate": false,
+    "include_adjoint_low_rank_oracle": true,
+    "include_exact_mismatch_oracle": true,
+    "include_high_order_teacher_interpolations": [
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "include_measurement_l2_low_rank_oracle": true
+  }
+}

@@ -1,0 +1,2099 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OERF 文档阅读器</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7f4;
+      --paper: #ffffff;
+      --ink: #1d252b;
+      --muted: #62717a;
+      --line: #d8e1df;
+      --teal: #16756f;
+      --blue: #315f93;
+      --gold: #9a6a12;
+      --red: #a74735;
+      --soft: #eaf4f1;
+      --soft-blue: #eef4fb;
+      --shadow: 0 18px 42px rgba(32, 48, 56, 0.08);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(245, 247, 244, 0.88), rgba(245, 247, 244, 0.72)),
+        url("./assets/backgrounds/oerf-refractive-field.png") right -130px top 18px / min(940px, 92vw) auto no-repeat fixed,
+        linear-gradient(180deg, rgba(22, 117, 111, 0.08), transparent 360px),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      letter-spacing: 0;
+      line-height: 1.7;
+    }
+
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .shell {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 24px 0 64px;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .crumbs,
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      font-weight: 750;
+      font-size: 13px;
+      text-decoration: none;
+      box-shadow: 0 8px 20px rgba(32, 48, 56, 0.04);
+    }
+
+    .button.primary {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+    }
+
+    .button:hover { text-decoration: none; border-color: var(--teal); }
+
+    .hero {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3vw, 28px);
+      margin-bottom: 16px;
+    }
+
+    .doc-intro {
+      max-width: 900px;
+      min-width: 0;
+      margin: 14px 0 0;
+      color: #42545c;
+      font-size: 16px;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .doc-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .doc-stats div {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfdfc;
+      padding: 12px;
+      min-width: 0;
+      min-height: 86px;
+    }
+
+    .doc-stats b {
+      display: block;
+      color: var(--teal);
+      font-size: clamp(21px, 4vw, 24px);
+      line-height: 1.05;
+      overflow-wrap: anywhere;
+    }
+
+    .doc-stats span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .context-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      align-items: center;
+      margin-top: 16px;
+    }
+
+    .context-nav a,
+    .context-nav span {
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+      min-height: 30px;
+      padding: 5px 8px;
+      border: 1px solid #d5e1de;
+      border-radius: 7px;
+      background: #f8fbfa;
+      color: #334850;
+      font-size: 12px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .context-nav a {
+      color: var(--blue);
+      background: #f4f8fb;
+    }
+
+    .context-nav a:hover {
+      border-color: var(--teal);
+      text-decoration: none;
+    }
+
+    .reader-toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 10px 26px rgba(32, 48, 56, 0.05);
+      padding: 10px;
+      margin-bottom: 16px;
+    }
+
+    .reader-toolbar input {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      color: var(--ink);
+      padding: 9px 12px;
+      font: inherit;
+      min-width: 0;
+    }
+
+    .search-status {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .reader-brief {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr 1.1fr;
+      gap: 10px;
+      margin: 0 0 16px;
+    }
+
+    .brief-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 10px 24px rgba(32, 48, 56, 0.05);
+      padding: 13px 14px;
+      min-width: 0;
+    }
+
+    .brief-card.featured {
+      border-left: 4px solid var(--teal);
+      background: linear-gradient(180deg, #fbfefd, #ffffff);
+    }
+
+    .brief-card b {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--teal);
+      font-size: 13px;
+    }
+
+    .brief-card p {
+      margin: 0;
+      color: #43545c;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .link-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .link-cloud a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 100%;
+      padding: 4px 7px;
+      border: 1px solid #d5e1de;
+      border-radius: 999px;
+      background: #f6faf8;
+      color: #315f93;
+      font-size: 12px;
+      font-weight: 750;
+      overflow-wrap: anywhere;
+    }
+
+    .link-cloud a:hover { text-decoration: none; border-color: var(--teal); }
+
+    .link-cloud a::after,
+    .resource-list a::after {
+      content: attr(data-kind);
+      flex: 0 0 auto;
+      padding: 1px 5px;
+      border-radius: 999px;
+      background: #eef4fb;
+      color: #315f93;
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .doc-map {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr 1fr;
+      gap: 10px;
+      margin: 0 0 20px;
+      padding: 12px;
+      border: 1px solid #cbded9;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, #f8fcfa, #ffffff);
+      box-shadow: 0 10px 24px rgba(32, 48, 56, 0.05);
+    }
+
+    .map-card {
+      min-width: 0;
+      border: 1px solid #dbe7e4;
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 12px;
+    }
+
+    .map-card:first-child {
+      border-left: 4px solid var(--teal);
+    }
+
+    .map-card b {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--teal);
+      font-size: 13px;
+    }
+
+    .section-chips,
+    .action-list,
+    .resource-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .section-chips a,
+    .resource-list a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 100%;
+      min-height: 30px;
+      padding: 5px 8px;
+      border: 1px solid #d5e1de;
+      border-radius: 7px;
+      background: #f7faf8;
+      color: #315f93;
+      font-size: 12px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .section-chips a:hover,
+    .resource-list a:hover {
+      border-color: var(--teal);
+      text-decoration: none;
+    }
+
+    .action-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .action-list li {
+      margin: 0;
+      padding: 7px 8px;
+      border-left: 3px solid var(--gold);
+      border-radius: 0 7px 7px 0;
+      background: #fbf7ec;
+      color: #4a4240;
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .reader .doc-map + .lead {
+      margin-top: 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--teal);
+      border: 1px solid #c7ded9;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.12;
+      max-width: 960px;
+      overflow-wrap: anywhere;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #f2f5f3;
+      border: 1px solid var(--line);
+      font-weight: 700;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .reader {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3vw, 30px);
+      overflow: hidden;
+      font-size: 16px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 12px 28px rgba(32, 48, 56, 0.06);
+      padding: 14px;
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+    }
+
+    .toc h2 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .toc-note {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .toc a {
+      display: block;
+      padding: 7px 8px;
+      border-radius: 6px;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .toc a:hover {
+      background: var(--soft);
+      text-decoration: none;
+    }
+
+    .reader h1,
+    .reader h2,
+    .reader h3,
+    .reader h4 {
+      margin: 1.15em 0 0.45em;
+      line-height: 1.25;
+      letter-spacing: 0;
+      scroll-margin-top: 20px;
+    }
+
+    .reader h1 { font-size: 30px; }
+    .reader h2 {
+      font-size: 24px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+    .reader h3 { font-size: 20px; }
+    .reader h4 { font-size: 16px; color: var(--teal); }
+
+    .reader p {
+      margin: 0.72em 0;
+      color: #2f3d43;
+      overflow-wrap: anywhere;
+    }
+
+    .reader ul,
+    .reader ol {
+      margin: 0.65em 0 1em;
+      padding-left: 1.25em;
+    }
+
+    .reader li {
+      margin: 0.32em 0;
+      overflow-wrap: anywhere;
+    }
+
+    .reader blockquote {
+      margin: 1em 0;
+      border-left: 4px solid var(--teal);
+      background: #f3f8f6;
+      padding: 10px 14px;
+      color: #31464b;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .reader .lead {
+      margin: 0 0 18px;
+      padding: 14px 16px;
+      border: 1px solid #cbded9;
+      border-left: 4px solid var(--teal);
+      border-radius: var(--radius);
+      background: #f4faf8;
+      color: #31464b;
+      font-size: 16px;
+    }
+
+    .reader a {
+      font-weight: 700;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    .reader a.reader-link {
+      border-bottom: 1px solid rgba(49, 95, 147, 0.24);
+    }
+
+    .reader .inline-source-link {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .reader .task-item {
+      list-style: none;
+      margin-left: -0.25em;
+    }
+
+    .task-box {
+      display: inline-grid;
+      place-items: center;
+      width: 17px;
+      height: 17px;
+      margin-right: 7px;
+      border: 1px solid #b9c8c4;
+      border-radius: 4px;
+      background: #fff;
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 900;
+      vertical-align: -2px;
+    }
+
+    .plain-text {
+      display: grid;
+      gap: 10px;
+    }
+
+    .plain-text p,
+    .plain-text ul,
+    .plain-text ol {
+      margin: 0;
+    }
+
+    .plain-text .plain-line {
+      border: 1px solid #dce7e4;
+      border-radius: var(--radius);
+      background: #fbfdfc;
+      padding: 11px 13px;
+    }
+
+    .plain-divider {
+      height: 1px;
+      margin: 8px 0;
+      background: var(--line);
+    }
+
+    .reader hr {
+      border: 0;
+      border-top: 1px solid var(--line);
+      margin: 24px 0;
+    }
+
+    .reader .doc-section {
+      margin-top: 26px;
+      padding-top: 8px;
+      border-top: 1px solid var(--line);
+    }
+
+    .reader .doc-section > h2:first-child {
+      margin-top: 0;
+      border-top: 0;
+    }
+
+    .reader mark {
+      border-radius: 4px;
+      background: #ffe08a;
+      color: #302512;
+      padding: 0 2px;
+    }
+
+    .reader code {
+      border: 1px solid #dbe4e2;
+      border-radius: 6px;
+      background: #f4f7f6;
+      padding: 0.12em 0.35em;
+      font-size: 0.92em;
+      color: #24333a;
+      overflow-wrap: anywhere;
+    }
+
+    .reader pre {
+      margin: 1em 0;
+      padding: 14px;
+      border: 1px solid #dbe4e2;
+      border-radius: var(--radius);
+      background: #f8faf9;
+      color: #1f2d35;
+      overflow: auto;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .reader pre code {
+      display: block;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: inherit;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .reader .math-block {
+      margin: 1em 0;
+      padding: 13px 16px;
+      border-left: 4px solid var(--blue);
+      background: #eef4f8;
+      color: #1f4b61;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.93em;
+      line-height: 1.65;
+      text-align: center;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    .reader .math-block.math-rendered {
+      font-family: inherit;
+      font-size: 1em;
+      white-space: normal;
+    }
+
+    .reader .math-block mjx-container {
+      min-width: max-content;
+      margin: 0 !important;
+    }
+
+    .reader .inline-math {
+      color: #1f4b61;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.93em;
+    }
+
+    .reader .inline-math.math-rendered {
+      font-family: inherit;
+      font-size: 1em;
+    }
+
+    .reader .inline-math mjx-container {
+      margin: 0 0.08em !important;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      margin: 1em 0;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 10px 11px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+    }
+
+    th {
+      background: #eef4f2;
+      color: #2d3a40;
+      font-weight: 800;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .kv-table {
+      min-width: 0;
+    }
+
+    .kv-table th {
+      width: 220px;
+      color: var(--teal);
+    }
+
+    .kv-table pre {
+      margin: 0;
+      max-height: 260px;
+    }
+
+    .data-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0 0 16px;
+    }
+
+    .data-summary div {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfdfc;
+      padding: 12px;
+    }
+
+    .data-summary b {
+      display: block;
+      color: var(--teal);
+      font-size: 24px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .bib-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      margin: 14px 0 22px;
+    }
+
+    .bib-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfdfc;
+      padding: 13px;
+      min-width: 0;
+    }
+
+    .bib-card h3 {
+      margin: 7px 0;
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    .bib-card p {
+      margin: 5px 0;
+      font-size: 13px;
+      color: #3d4d54;
+    }
+
+    .bib-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .mini-button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 8px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .mini-button:hover { text-decoration: none; border-color: var(--teal); }
+
+    .code-note {
+      margin: 0 0 12px;
+      border: 1px solid #d9e4e1;
+      border-left: 4px solid var(--blue);
+      border-radius: var(--radius);
+      background: #f5f9fc;
+      padding: 11px 13px;
+      color: #3d4f59;
+      font-size: 13px;
+    }
+
+    .code-view {
+      width: 100%;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fcfdfc;
+    }
+
+    .line-table {
+      min-width: 0;
+      width: 100%;
+      border-collapse: collapse;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .line-table td {
+      border-bottom: 1px solid #eef2f1;
+      padding: 0;
+      vertical-align: top;
+    }
+
+    .line-table tr:last-child td { border-bottom: 0; }
+
+    .line-no {
+      width: 54px;
+      padding: 3px 9px !important;
+      text-align: right;
+      color: #7a8b92;
+      background: #f2f6f5;
+      border-right: 1px solid var(--line);
+      user-select: none;
+    }
+
+    .line-code {
+      padding: 3px 10px !important;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      color: #23313a;
+    }
+
+    .muted { color: var(--muted); }
+
+    .error {
+      border: 1px solid #efc8c0;
+      border-radius: var(--radius);
+      background: #fff4f1;
+      color: var(--red);
+      padding: 14px;
+    }
+
+    .empty-toc {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .toc { position: static; max-height: none; }
+      .doc-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .reader-brief { grid-template-columns: 1fr; }
+      .doc-map { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100% - 24px, 1180px);
+        padding-top: 14px;
+      }
+      .top { display: block; }
+      .actions { margin-top: 10px; }
+      .data-summary { grid-template-columns: 1fr; }
+      .doc-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .reader-toolbar { grid-template-columns: 1fr; }
+      table { min-width: 620px; }
+      .button { width: auto; }
+      .search-status { white-space: normal; }
+      .context-nav a,
+      .context-nav span,
+      .pill {
+        font-size: 11px;
+      }
+    }
+  </style>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["\\(", "\\)"]],
+        displayMath: [["\\[", "\\]"]]
+      },
+      options: {
+        skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+      },
+      startup: { typeset: false }
+    };
+  </script>
+  <script
+    defer
+    src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js"
+    onload="window.dispatchEvent(new Event('reader-math-ready'))"
+  ></script>
+</head>
+<body>
+  <div class="shell">
+    <div class="top">
+      <div class="crumbs">
+        <a class="button primary" href="./index.html">返回导航</a>
+        <a class="button" href="./paper_library/index.html">论文库</a>
+      </div>
+      <div class="actions">
+        <a class="button" id="rawLink" href="#">打开原始文件</a>
+      </div>
+    </div>
+
+    <header class="hero">
+      <div class="eyebrow" id="kind">Document</div>
+      <h1 id="title">正在加载文档</h1>
+      <p class="doc-intro" id="intro">读取后会自动提取摘要、章节和表格信息。</p>
+      <div class="meta" id="meta"></div>
+      <div class="doc-stats" id="docStats" aria-label="文档统计"></div>
+      <div class="context-nav" id="contextNav" aria-label="文档上下文"></div>
+    </header>
+
+    <section class="reader-toolbar" aria-label="文档内搜索">
+      <input id="docSearch" type="search" placeholder="在这个子页面里搜索：BOST、误差、数据、师兄..." />
+      <span class="search-status" id="searchStatus">输入关键词后高亮匹配</span>
+    </section>
+
+    <section class="reader-brief" id="readerBrief" aria-label="阅读提示">
+      <div class="brief-card"><b>阅读提示</b><p>读取文档后会按文件类型生成更适合浏览的视图。</p></div>
+      <div class="brief-card"><b>使用方式</b><p>先看摘要和目录，再用搜索定位关键词。</p></div>
+      <div class="brief-card"><b>链接摘要</b><p>文档里的站内文本链接会继续进入阅读器。</p></div>
+    </section>
+
+    <div class="layout">
+      <article class="reader" id="content">
+        <p class="muted">Loading...</p>
+      </article>
+      <aside class="toc" id="toc">
+        <h2>目录</h2>
+        <div class="empty-toc">读取文档后自动生成。</div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const doc = params.get("doc") || "";
+    const anchor = params.get("anchor") || "";
+    const rawLink = document.getElementById("rawLink");
+    const titleEl = document.getElementById("title");
+    const kindEl = document.getElementById("kind");
+    const metaEl = document.getElementById("meta");
+    const introEl = document.getElementById("intro");
+    const docStatsEl = document.getElementById("docStats");
+    const contextNavEl = document.getElementById("contextNav");
+    const readerBriefEl = document.getElementById("readerBrief");
+    const contentEl = document.getElementById("content");
+    const tocEl = document.getElementById("toc");
+    const docSearch = document.getElementById("docSearch");
+    const searchStatus = document.getElementById("searchStatus");
+    let renderedCacheHtml = "";
+    let mathTypesetSerial = 0;
+    let mathReadyListenerInstalled = false;
+
+    const textExtensions = new Set(["md", "markdown", "txt", "bib", "py", "js", "ts", "jsx", "tsx", "css", "html", "xml", "yaml", "yml", "toml", "sha256"]);
+    const dataExtensions = new Set(["json", "csv", "tsv"]);
+    const readerExtensions = new Set([...textExtensions, ...dataExtensions]);
+    const assetExtensions = new Set(["pdf", "png", "jpg", "jpeg", "gif", "svg", "webp"]);
+    const imageExtensions = new Set(["png", "jpg", "jpeg", "gif", "svg", "webp"]);
+    const blockedPrefixes = ["private_library/", "tmp_downloads/", ".git/", "_public_pages_export/"];
+    const pathLikeExtensions = new Set([...readerExtensions, ...assetExtensions]);
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function prettyPath(path) {
+      return path.replace(/^\.?\//, "");
+    }
+
+    function stripMarkdown(value) {
+      return String(value || "")
+        .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+        .replace(/`([^`]+)`/g, "$1")
+        .replace(/\*\*([^*]+)\*\*/g, "$1")
+        .replace(/\*([^*]+)\*/g, "$1")
+        .replace(/^#+\s*/gm, "")
+        .replace(/^\s*[-*]\s+/gm, "")
+        .replace(/^\s*\d+\.\s+/gm, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function trimIntro(value, max = 220) {
+      const clean = stripMarkdown(value);
+      if (clean.length <= max) return clean;
+      return `${clean.slice(0, max - 1)}...`;
+    }
+
+    function extName(path) {
+      const clean = path.split("?")[0].split("#")[0];
+      const idx = clean.lastIndexOf(".");
+      return idx >= 0 ? clean.slice(idx + 1).toLowerCase() : "";
+    }
+
+    function validateDocPath(path) {
+      if (!path || path.includes("\\") || path.startsWith("/") || path.includes("://")) return false;
+      if (path.split("/").some((part) => part === ".." || part === "")) return false;
+      return !isBlockedInternalPath(path);
+    }
+
+    function resolveDocUrl(path) {
+      return new URL(path, location.href).href;
+    }
+
+    function normalizeRelativeTarget(target) {
+      if (!target || target.startsWith("#") || /^[a-z][a-z0-9+.-]*:/i.test(target)) {
+        return { external: true, href: target };
+      }
+      const baseParts = doc.split("/");
+      baseParts.pop();
+      const combined = [...baseParts, target.split("#")[0]].join("/");
+      const parts = [];
+      combined.split("/").forEach((part) => {
+        if (!part || part === ".") return;
+        if (part === "..") parts.pop();
+        else parts.push(part);
+      });
+      const hash = target.includes("#") ? target.slice(target.indexOf("#") + 1) : "";
+      const normalized = parts.join("/");
+      const ext = extName(normalized);
+      return { external: false, normalized, hash, ext };
+    }
+
+    function isBlockedInternalPath(path) {
+      const clean = String(path || "").replace(/^\.?\//, "");
+      return blockedPrefixes.some((prefix) => clean.startsWith(prefix));
+    }
+
+    function resolveRelativeDoc(target) {
+      const resolved = normalizeRelativeTarget(target);
+      if (resolved.external) return resolved.href;
+      const { normalized, hash, ext } = resolved;
+      if (isBlockedInternalPath(normalized)) {
+        return normalized + (hash ? `#${hash}` : "");
+      }
+      if (readerExtensions.has(ext)) {
+        return `document_reader.html?doc=${encodeURIComponent(normalized)}${hash ? `&anchor=${encodeURIComponent(hash)}` : ""}`;
+      }
+      if (assetExtensions.has(ext)) {
+        return `asset_viewer.html?asset=${encodeURIComponent(normalized)}${hash ? `#${hash}` : ""}`;
+      }
+      return normalized + (hash ? `#${hash}` : "");
+    }
+
+    function isExternalHref(href) {
+      return /^(https?:|doi:|mailto:|tel:)/i.test(String(href || ""));
+    }
+
+    function linkKind(href) {
+      const lower = String(href || "").toLowerCase();
+      if (lower.includes("paper_detail.html")) return "论文";
+      if (lower.includes("term_index.html") || lower.includes("/readers/")) return "术语";
+      if (lower.includes("document_reader.html")) return "文档";
+      if (lower.includes("asset_viewer.html")) {
+        if (lower.includes(".pdf")) return "PDF";
+        if (/\.(png|jpe?g|gif|svg|webp)(?:[?#]|$)/.test(lower)) return "图像";
+        return "资源";
+      }
+      if (/^https?:\/\/doi\.org\//.test(lower) || /^doi:10\./.test(lower)) return "DOI";
+      if (/^https?:\/\//.test(lower)) {
+        if (/\.pdf(?:[?#]|$)/.test(lower)) return "外部 PDF";
+        return "外部";
+      }
+      if (/\.html(?:[?#]|$)/.test(lower)) return "子页";
+      if (/\.(md|markdown|json|csv|tsv|bib|txt|py|js|ts|css|xml|ya?ml|toml)(?:[?#]|$)/.test(lower)) return "文档";
+      if (/\.pdf(?:[?#]|$)/.test(lower)) return "PDF";
+      if (/\.(png|jpe?g|gif|svg|webp)(?:[?#]|$)/.test(lower)) return "图像";
+      return "链接";
+    }
+
+    function linkMarkup(label, href, className = "") {
+      const kind = linkKind(href);
+      const external = isExternalHref(href);
+      const classes = ["reader-link", className].filter(Boolean).join(" ");
+      return `<a class="${escapeHtml(classes)}" data-kind="${escapeHtml(kind)}" title="打开${escapeHtml(kind)}：${escapeHtml(stripMarkdown(label))}" href="${escapeHtml(href)}"${external ? ' target="_blank" rel="noreferrer"' : ""}>${label}</a>`;
+    }
+
+    function resolveEmbeddedImage(target) {
+      const resolved = normalizeRelativeTarget(target);
+      if (resolved.external) return { src: resolved.href, href: resolved.href };
+      const { normalized, hash, ext } = resolved;
+      const src = normalized + (hash ? `#${hash}` : "");
+      const href = imageExtensions.has(ext)
+        ? `asset_viewer.html?asset=${encodeURIComponent(normalized)}${hash ? `#${hash}` : ""}`
+        : src;
+      return { src, href };
+    }
+
+    function slugify(text) {
+      return String(text)
+        .trim()
+        .toLowerCase()
+        .replace(/<[^>]+>/g, "")
+        .replace(/[^\p{L}\p{N}]+/gu, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 80) || "section";
+    }
+
+    function anchorCompatibilityKey(value) {
+      return String(value).normalize("NFKC").toLowerCase().replaceAll("-", "");
+    }
+
+    function resolveAnchorTarget(requestedAnchor) {
+      const exact = document.getElementById(requestedAnchor);
+      if (exact) return exact;
+      const key = anchorCompatibilityKey(requestedAnchor);
+      const candidates = Array.from(
+        contentEl.querySelectorAll("h1[id], h2[id], h3[id], h4[id]")
+      ).filter((heading) => anchorCompatibilityKey(heading.id) === key);
+      return candidates.length === 1 ? candidates[0] : null;
+    }
+
+    function autoLinkBareUrls(htmlText) {
+      return htmlText.replace(/(^|[\s([{])((?:https?:\/\/|doi:10\.)[^\s<>"'\x60]+)/gi, (_, prefix, rawUrl) => {
+        let clean = rawUrl;
+        let trailing = "";
+        while (/[\x60.,;:!?，。；：！？)\]]$/.test(clean)) {
+          trailing = clean.slice(-1) + trailing;
+          clean = clean.slice(0, -1);
+        }
+        const href = /^doi:/i.test(clean) ? `https://doi.org/${clean.slice(4)}` : clean;
+        return `${prefix}${linkMarkup(escapeHtml(clean), href, "inline-source-link")}${escapeHtml(trailing)}`;
+      });
+    }
+
+    function inlineMarkdown(text) {
+      const codeTokens = [];
+      const protectedText = String(text).replace(/`([^`]+)`/g, (_, code) => {
+        const token = `@@CODETOKEN_${codeTokens.length}@@`;
+        codeTokens.push(code);
+        return token;
+      });
+      let out = escapeHtml(protectedText);
+      out = out.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, href) => {
+        const resolved = resolveEmbeddedImage(href.trim());
+        return `<a href="${escapeHtml(resolved.href)}"><img src="${escapeHtml(resolved.src)}" alt="${escapeHtml(alt)}" style="max-width:100%;border:1px solid var(--line);border-radius:8px;" /></a>`;
+      });
+      out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, href) => {
+        const resolved = resolveRelativeDoc(href.trim());
+        return linkMarkup(label, resolved);
+      });
+      out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      out = out.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+      out = out.replace(/\\\((.+?)\\\)/g, '<span class="inline-math">\\($1\\)</span>');
+      out = out.replace(/(^|[^\\$])\$(?!\$)([^$\n]+?)\$(?!\$)/g, '$1<span class="inline-math">\\($2\\)</span>');
+      out = autoLinkBareUrls(out);
+      out = out.replace(/@@CODETOKEN_(\d+)@@/g, (_, index) => `<code>${escapeHtml(codeTokens[Number(index)] || "")}</code>`);
+      return out;
+    }
+
+    function renderDataCell(value) {
+      return autoLinkBareUrls(escapeHtml(value == null ? "" : value));
+    }
+
+    function listItemMarkdown(text) {
+      const task = String(text || "").match(/^\[(x|X| )\]\s+(.+)$/);
+      if (!task) return inlineMarkdown(text);
+      const checked = task[1].toLowerCase() === "x";
+      return `<span class="task-box" aria-hidden="true">${checked ? "✓" : ""}</span>${inlineMarkdown(task[2])}`;
+    }
+
+    function isTableBlock(lines, index) {
+      return index + 1 < lines.length && /^\s*\|.*\|\s*$/.test(lines[index]) && /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(lines[index + 1]);
+    }
+
+    function splitTableRow(line) {
+      return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map((cell) => cell.trim());
+    }
+
+    function renderMarkdown(markdown) {
+      const lines = markdown.replace(/\r\n/g, "\n").split("\n");
+      const html = [];
+      const headings = [];
+      let paragraph = [];
+      let list = null;
+      let inCode = false;
+      let codeLang = "";
+      let codeLines = [];
+
+      function flushParagraph() {
+        if (!paragraph.length) return;
+        html.push(`<p>${inlineMarkdown(paragraph.join(" "))}</p>`);
+        paragraph = [];
+      }
+
+      function closeList() {
+        if (!list) return;
+        html.push(`</${list}>`);
+        list = null;
+      }
+
+      for (let i = 0; i < lines.length; i += 1) {
+        const line = lines[i];
+        const fence = line.match(/^```(.*)$/);
+        if (fence) {
+          if (inCode) {
+            html.push(`<pre><code${codeLang ? ` data-lang="${escapeHtml(codeLang)}"` : ""}>${escapeHtml(codeLines.join("\n"))}</code></pre>`);
+            inCode = false;
+            codeLang = "";
+            codeLines = [];
+          } else {
+            flushParagraph();
+            closeList();
+            inCode = true;
+            codeLang = fence[1].trim();
+          }
+          continue;
+        }
+        if (inCode) {
+          codeLines.push(line);
+          continue;
+        }
+
+        if (!line.trim()) {
+          flushParagraph();
+          closeList();
+          continue;
+        }
+
+        if (line.trim() === "\\[") {
+          let closingIndex = i + 1;
+          while (closingIndex < lines.length && lines[closingIndex].trim() !== "\\]") closingIndex += 1;
+          if (closingIndex >= lines.length) {
+            paragraph.push(line);
+            continue;
+          }
+          flushParagraph();
+          closeList();
+          const mathLines = lines.slice(i + 1, closingIndex);
+          i = closingIndex;
+          html.push(`<div class="math-block" role="math">\\[${escapeHtml(mathLines.join("\n"))}\\]</div>`);
+          continue;
+        }
+
+        if (isTableBlock(lines, i)) {
+          flushParagraph();
+          closeList();
+          const header = splitTableRow(lines[i]);
+          i += 2;
+          const rows = [];
+          while (i < lines.length && /^\s*\|.*\|\s*$/.test(lines[i])) {
+            rows.push(splitTableRow(lines[i]));
+            i += 1;
+          }
+          i -= 1;
+          html.push("<div class=\"table-wrap\"><table><thead><tr>");
+          header.forEach((cell) => html.push(`<th>${inlineMarkdown(cell)}</th>`));
+          html.push("</tr></thead><tbody>");
+          rows.forEach((row) => {
+            html.push("<tr>");
+            header.forEach((_, idx) => html.push(`<td>${inlineMarkdown(row[idx] || "")}</td>`));
+            html.push("</tr>");
+          });
+          html.push("</tbody></table></div>");
+          continue;
+        }
+
+        const heading = line.match(/^(#{1,4})\s+(.+)$/);
+        if (heading) {
+          flushParagraph();
+          closeList();
+          const level = heading[1].length;
+          const raw = heading[2].trim();
+          let id = slugify(raw);
+          let suffix = 2;
+          while (headings.some((h) => h.id === id)) {
+            id = `${slugify(raw)}-${suffix}`;
+            suffix += 1;
+          }
+          headings.push({ level, id, text: raw });
+          html.push(`<h${level} id="${id}">${inlineMarkdown(raw)}</h${level}>`);
+          continue;
+        }
+
+        const quote = line.match(/^>\s?(.*)$/);
+        if (quote) {
+          flushParagraph();
+          closeList();
+          html.push(`<blockquote>${inlineMarkdown(quote[1])}</blockquote>`);
+          continue;
+        }
+
+        const unordered = line.match(/^\s*[-*]\s+(.+)$/);
+        const ordered = line.match(/^\s*\d+\.\s+(.+)$/);
+        if (unordered || ordered) {
+          flushParagraph();
+          const nextType = unordered ? "ul" : "ol";
+          if (list && list !== nextType) closeList();
+          if (!list) {
+            list = nextType;
+            html.push(`<${list}>`);
+          }
+          html.push(`<li${/^\[(x|X| )\]\s+/.test((unordered || ordered)[1]) ? ' class="task-item"' : ""}>${listItemMarkdown((unordered || ordered)[1])}</li>`);
+          continue;
+        }
+
+        const hr = line.match(/^\s*(-{3,}|\*{3,})\s*$/);
+        if (hr) {
+          flushParagraph();
+          closeList();
+          html.push("<hr />");
+          continue;
+        }
+
+        paragraph.push(line.trim());
+      }
+
+      if (inCode) {
+        html.push(`<pre><code>${escapeHtml(codeLines.join("\n"))}</code></pre>`);
+      }
+      flushParagraph();
+      closeList();
+      return { html: html.join("\n"), headings };
+    }
+
+    function renderPlainText(text) {
+      const lines = text.replace(/\r\n/g, "\n").split("\n");
+      const html = [];
+      let paragraph = [];
+      let list = null;
+
+      function flushParagraph() {
+        if (!paragraph.length) return;
+        html.push(`<p class="plain-line">${inlineMarkdown(paragraph.join(" "))}</p>`);
+        paragraph = [];
+      }
+
+      function closeList() {
+        if (!list) return;
+        html.push(`</${list}>`);
+        list = null;
+      }
+
+      lines.forEach((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          flushParagraph();
+          closeList();
+          return;
+        }
+        if (/^[-=]{3,}$/.test(trimmed)) {
+          flushParagraph();
+          closeList();
+          html.push('<div class="plain-divider"></div>');
+          return;
+        }
+        const unordered = trimmed.match(/^[-*]\s+(.+)$/);
+        const ordered = trimmed.match(/^\d+\.\s+(.+)$/);
+        if (unordered || ordered) {
+          flushParagraph();
+          const nextType = unordered ? "ul" : "ol";
+          if (list && list !== nextType) closeList();
+          if (!list) {
+            list = nextType;
+            html.push(`<${list}>`);
+          }
+          html.push(`<li>${listItemMarkdown((unordered || ordered)[1])}</li>`);
+          return;
+        }
+        closeList();
+        paragraph.push(trimmed);
+      });
+
+      flushParagraph();
+      closeList();
+      return {
+        html: `<div class="plain-text">${html.join("\n")}</div>`,
+        headings: []
+      };
+    }
+
+    function estimateReadingUnits(text) {
+      const chinese = (text.match(/[\u3400-\u9fff]/g) || []).length;
+      const latin = (text.replace(/[\u3400-\u9fff]/g, " ").match(/[A-Za-z0-9][A-Za-z0-9+./_-]*/g) || []).length;
+      return chinese + latin;
+    }
+
+    function summarizeDocument(text, ext, rendered) {
+      const tableCount = ext === "md" || ext === "markdown"
+        ? (text.match(/^\s*\|.*\|\s*$/gm) || []).length
+        : 0;
+      const bibCount = ext === "bib" ? (text.match(/^@\w+\s*\{/gm) || []).length : 0;
+      const linkCount = (text.match(/\[[^\]]+\]\([^)]+\)|https?:\/\/\S+/g) || []).length;
+      const rows = ext === "csv" || ext === "tsv" ? Math.max(0, parseCsv(text, ext === "tsv" ? "\t" : ",").length - 1) : 0;
+      const units = estimateReadingUnits(text);
+      return {
+        units,
+        headings: rendered.headings.length,
+        tables: ext === "csv" || ext === "tsv" ? rows : (ext === "bib" ? bibCount : tableCount),
+        links: linkCount
+      };
+    }
+
+    function renderStats(stats, ext) {
+      const unitLabel = ext === "json" ? "字符/配置量" : "阅读量级";
+      const tableLabel = ext === "csv" || ext === "tsv" ? "数据行" : (ext === "bib" ? "引用条目" : "表格线索");
+      docStatsEl.innerHTML = [
+        `<div><b>${stats.units.toLocaleString()}</b><span>${unitLabel}</span></div>`,
+        `<div><b>${stats.headings}</b><span>章节标题</span></div>`,
+        `<div><b>${stats.tables}</b><span>${tableLabel}</span></div>`,
+        `<div><b>${stats.links}</b><span>可跳转链接</span></div>`
+      ].join("");
+    }
+
+    function uniqueLinks(links) {
+      const seen = new Set();
+      return links.filter((link) => {
+        const key = `${link.href}|${link.label}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    function contextLinksFor(path) {
+      const links = [
+        { label: "总导航", href: "./index.html" },
+        { label: "论文库", href: "./paper_library/index.html" }
+      ];
+      if (path.startsWith("paper_library/")) {
+        links.push({ label: "PDF 缓存审计", href: "./pdf_cache_audit.html" });
+        links.push({ label: "PDF 术语索引", href: "./paper_library/term_index.html" });
+      }
+      if (/^demo_m\d/.test(path) || path.startsWith("experiment_templates/") || path.startsWith("data_templates/")) {
+        links.push({ label: "第一月实验板", href: "./first_month_experiment_board.html" });
+        links.push({ label: "可复现审计", href: "./reproducibility_audit.html" });
+      }
+      if (/source_audit|coverage|gap_scan|pdf_gap|references\.bib|paper_to_demo|core_paper/.test(path)) {
+        links.push({ label: "覆盖度状态", href: "./document_reader.html?doc=research_coverage_status.md" });
+        links.push({ label: "来源审计", href: "./document_reader.html?doc=source_audit.md" });
+      }
+      if (/he_|nerif|bost|tdbost|piv|displacement|topic|thesis|opening|advisor|proposal/.test(path)) {
+        links.push({ label: "何远哲同步线", href: "./he_yuanzhe_sync_dashboard.html" });
+        links.push({ label: "选题详情档案", href: "./topic_deep_dive.html" });
+      }
+      if (/foundation|bootcamp|learning|reading_log/.test(path)) {
+        links.push({ label: "学习日志", href: "./learning_log.html" });
+        links.push({ label: "教材资料库", href: "./learning_library/index.html" });
+      }
+      return uniqueLinks(links);
+    }
+
+    function renderContextNav(path, ext) {
+      const segments = prettyPath(path).split("/");
+      const folder = segments.length > 1 ? segments.slice(0, -1).join("/") : "site root";
+      const links = contextLinksFor(path);
+      contextNavEl.innerHTML = [
+        `<span>所在目录：${escapeHtml(folder)}</span>`,
+        `<span>类型：${escapeHtml((ext || "file").toUpperCase())}</span>`,
+        ...links.map((link) => `<a href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>`)
+      ].join("");
+    }
+
+    function extractDocLinks(text, limit = 8) {
+      const links = [];
+      const seen = new Set();
+      function addLink(label, href) {
+        const cleanLabel = stripMarkdown(label).slice(0, 54) || href;
+        const key = `${cleanLabel}|${href}`;
+        if (seen.has(key) || links.length >= limit) return;
+        links.push({ label: cleanLabel, href });
+        seen.add(key);
+      }
+      const mdLink = /\[([^\]]+)\]\(([^)]+)\)/g;
+      let match;
+      while ((match = mdLink.exec(text))) {
+        const href = resolveRelativeDoc(match[2].trim());
+        addLink(match[1], href);
+        if (links.length >= limit) return links;
+      }
+      const urlLink = /https?:\/\/[^\s)\x60]+/g;
+      while ((match = urlLink.exec(text))) {
+        const href = match[0].replace(/[\x60}>\]).,;，。；]+$/, "");
+        const label = href.replace(/^https?:\/\//, "").slice(0, 42);
+        addLink(label, href);
+        if (links.length >= limit) return links;
+      }
+      const filePath = /(^|[\s([{"'`，。；：、])((?:\.\/)?(?:[A-Za-z0-9_.-]+\/)*[A-Za-z0-9_.-]+\.(?:md|markdown|json|csv|tsv|bib|txt|py|js|ts|jsx|tsx|css|xml|ya?ml|toml|pdf|png|jpe?g|gif|svg|webp))(#[A-Za-z0-9_.-]+)?/g;
+      while ((match = filePath.exec(text))) {
+        const target = `${match[2]}${match[3] || ""}`;
+        const resolved = normalizeRelativeTarget(target);
+        if (resolved.external || !pathLikeExtensions.has(resolved.ext) || isBlockedInternalPath(resolved.normalized)) continue;
+        addLink(match[2], resolveRelativeDoc(target));
+        if (links.length >= limit) return links;
+      }
+      return links;
+    }
+
+    function guideForExtension(ext) {
+      if (ext === "md" || ext === "markdown") {
+        return {
+          mode: "Markdown 已转成章节化阅读页，适合直接给师兄看。",
+          action: "建议先扫右侧目录，再搜索“风险、数据、指标、师兄、demo”。"
+        };
+      }
+      if (ext === "csv" || ext === "tsv") {
+        return {
+          mode: "表格已转成网页数据表，保留列名、行数和前 200 行预览。",
+          action: "适合核对实验指标、manifest 字段和 limited-view 方案。"
+        };
+      }
+      if (ext === "json") {
+        return {
+          mode: "JSON 已转成字段预览和原始数据两层视图。",
+          action: "先看字段表确认结构，再到 Raw JSON 精查具体值。"
+        };
+      }
+      if (ext === "bib") {
+        return {
+          mode: "BibTeX 已转成引用卡片，可直接按题名、作者、DOI 检索。",
+          action: "写开题报告时仍以 DOI/出版社页为最终核验来源。"
+        };
+      }
+      if (ext === "txt") {
+        return {
+          mode: "普通文本已排成段落化阅读页，裸 URL 会自动变成可点击来源。",
+          action: "先扫摘要和相关入口，再用搜索框定位具体关键词。"
+        };
+      }
+      if (["py", "js", "ts", "jsx", "tsx", "css", "html", "yaml", "yml", "toml", "xml"].includes(ext)) {
+        return {
+          mode: "源码/文本已转成带行号的阅读页，不会再裸开纯文本。",
+          action: "用搜索定位函数名、参数、输出文件或需要修改的位置。"
+        };
+      }
+      return {
+        mode: "站内文件已放入统一阅读版式。",
+        action: "用目录、统计卡和页内搜索快速定位。"
+      };
+    }
+
+    function renderReaderBrief(text, ext, stats) {
+      const guide = guideForExtension(ext);
+      const links = extractDocLinks(text);
+      const linkHtml = links.length
+        ? `<div class="link-cloud">${links.map((link) => {
+          return linkMarkup(escapeHtml(link.label), link.href);
+        }).join("")}</div>`
+        : "<p>这份文件没有明显的外部或站内文本链接。</p>";
+      readerBriefEl.innerHTML = [
+        `<div class="brief-card featured"><b>阅读模式</b><p>${escapeHtml(guide.mode)}</p></div>`,
+        `<div class="brief-card"><b>建议用法</b><p>${escapeHtml(guide.action)} 当前约 ${stats.units.toLocaleString()} 阅读量级。</p></div>`,
+        `<div class="brief-card"><b>链接摘要</b>${linkHtml}</div>`
+      ].join("");
+    }
+
+    function extractActionLines(text, limit = 6) {
+      const keywords = /(建议|需要|必须|优先|风险|问题|问师兄|师兄|数据|指标|交付|demo|baseline|PDF|DOI|路线|下一步|确认|注意)/i;
+      const seen = new Set();
+      const lines = text.replace(/\r\n/g, "\n").split("\n");
+      const items = [];
+      for (const line of lines) {
+        const clean = stripMarkdown(line)
+          .replace(/^\|+|\|+$/g, "")
+          .replace(/\s*\|\s*/g, " / ")
+          .trim();
+        if (clean.length < 18 || clean.length > 180 || !keywords.test(clean)) continue;
+        const normalized = clean.toLowerCase();
+        if (seen.has(normalized)) continue;
+        seen.add(normalized);
+        items.push(clean);
+        if (items.length >= limit) break;
+      }
+      return items;
+    }
+
+    function buildDocMap(text, ext, rendered) {
+      const headings = (rendered.headings || []).filter((h) => h.level <= 3).slice(0, 9);
+      const links = extractDocLinks(text, 7);
+      const actions = extractActionLines(text, 6);
+      if (!headings.length && !links.length && !actions.length && !["json", "csv", "tsv", "bib"].includes(ext)) return "";
+
+      const headingHtml = headings.length
+        ? `<div class="section-chips">${headings.map((h) => `<a href="#${h.id}">${escapeHtml(h.text)}</a>`).join("")}</div>`
+        : "<p class=\"muted\">这页没有显式章节，直接用搜索框定位关键词会更快。</p>";
+      const actionHtml = actions.length
+        ? `<ol class="action-list">${actions.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol>`
+        : `<p class="muted">${["json", "csv", "tsv"].includes(ext) ? "先看字段和表格预览，再检查原始数据区。" : "这页没有明显行动句，按目录顺读即可。"}</p>`;
+      const linkHtml = links.length
+        ? `<div class="resource-list">${links.map((link) => {
+          return linkMarkup(escapeHtml(link.label), link.href);
+        }).join("")}</div>`
+        : "<p class=\"muted\">没有检测到可跳转资源；右上角仍可打开原始文件。</p>";
+
+      const modeLabel = {
+        md: "章节导读",
+        markdown: "章节导读",
+        json: "数据导读",
+        csv: "表格导读",
+        tsv: "表格导读",
+        bib: "引用导读"
+      }[ext] || "阅读导读";
+      return `<section class="doc-map" aria-label="${modeLabel}">
+        <div class="map-card"><b>${modeLabel} · 本页先看</b>${headingHtml}</div>
+        <div class="map-card"><b>可执行线索</b>${actionHtml}</div>
+        <div class="map-card"><b>相关入口</b>${linkHtml}</div>
+      </section>`;
+    }
+
+    function inferIntro(text, ext) {
+      if (ext === "json") return "这个子页面把 JSON 数据转成预览表、键值摘要和原始数据区，方便检查字段，不需要直接读压缩文本。";
+      if (ext === "csv" || ext === "tsv") return "这个子页面把表格数据渲染成可横向滚动的网页表，便于核对列名、行数和关键记录。";
+      if (ext === "bib") return "这个子页面用于查看 BibTeX / 引文记录。正式写论文时仍建议回到 DOI、出版社页或论文库条目核验。";
+      if (ext !== "md" && ext !== "markdown") return "这个子页面把站内文本文件放入统一阅读版式，方便分享和回看。";
+      const lines = text.replace(/\r\n/g, "\n").split("\n");
+      let buffer = [];
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith("#") || /^[-*]{3,}$/.test(trimmed)) {
+          if (buffer.length) break;
+          continue;
+        }
+        if (/^\|.*\|$/.test(trimmed)) continue;
+        buffer.push(trimmed);
+        if (buffer.join(" ").length > 160) break;
+      }
+      return trimIntro(buffer.join(" "), 240) || "这份站内文档已经通过统一阅读器渲染，右侧目录和页内搜索可以帮助快速定位。";
+    }
+
+    function decorateContent() {
+      const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
+      const first = contentEl.firstElementChild;
+      if (first && first.tagName === "H1" && normalize(first.textContent) === normalize(titleEl.textContent)) {
+        first.remove();
+      }
+      const firstParagraph = [...contentEl.children].find((el) => el.tagName === "P");
+      if (firstParagraph && normalize(firstParagraph.textContent).length > 40) {
+        firstParagraph.classList.add("lead");
+      }
+      const h2s = [...contentEl.querySelectorAll(":scope > h2")];
+      h2s.forEach((h2) => {
+        const section = document.createElement("section");
+        section.className = "doc-section";
+        contentEl.insertBefore(section, h2);
+        let node = h2;
+        while (node && !(node !== h2 && node.nodeType === 1 && node.tagName === "H2")) {
+          const next = node.nextSibling;
+          section.appendChild(node);
+          node = next;
+        }
+      });
+    }
+
+    function escapeRegExp(value) {
+      return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function clearTypesetMath() {
+      mathTypesetSerial += 1;
+      if (!window.MathJax || typeof window.MathJax.typesetClear !== "function") return;
+      try {
+        window.MathJax.typesetClear([contentEl]);
+      } catch (_) {
+        // The raw TeX fallback remains readable if MathJax state was already discarded.
+      }
+    }
+
+    function typesetMath() {
+      const serial = ++mathTypesetSerial;
+      const run = () => {
+        if (serial !== mathTypesetSerial) return;
+        if (!window.MathJax || typeof window.MathJax.typesetPromise !== "function") return;
+        window.MathJax.typesetPromise([contentEl]).then(() => {
+          if (serial !== mathTypesetSerial) return;
+          contentEl.querySelectorAll(".math-block, .inline-math").forEach((node) => node.classList.add("math-rendered"));
+        }).catch(() => {
+          // Keep the delimited TeX visible when the optional renderer cannot parse a formula.
+        });
+      };
+      if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+        run();
+      } else if (!mathReadyListenerInstalled) {
+        mathReadyListenerInstalled = true;
+        window.addEventListener("reader-math-ready", () => {
+          mathReadyListenerInstalled = false;
+          typesetMath();
+        }, { once: true });
+      }
+    }
+
+    function applySearch() {
+      const term = docSearch.value.trim();
+      clearTypesetMath();
+      contentEl.innerHTML = renderedCacheHtml;
+      if (!term) {
+        searchStatus.textContent = "输入关键词后高亮匹配";
+        typesetMath();
+        return;
+      }
+      if (term.length < 2 && !/[\u3400-\u9fff]/.test(term)) {
+        searchStatus.textContent = "关键词稍微长一点会更准";
+        typesetMath();
+        return;
+      }
+      const matcher = new RegExp(escapeRegExp(term), "gi");
+      const walker = document.createTreeWalker(contentEl, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+          if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          const parent = node.parentElement;
+          if (parent && parent.closest("code, pre, script, style, .math-block, .inline-math")) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      });
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+      let count = 0;
+      nodes.forEach((node) => {
+        const text = node.nodeValue;
+        matcher.lastIndex = 0;
+        if (!matcher.test(text)) return;
+        matcher.lastIndex = 0;
+        const fragment = document.createDocumentFragment();
+        let last = 0;
+        let match;
+        while ((match = matcher.exec(text))) {
+          if (match.index > last) fragment.appendChild(document.createTextNode(text.slice(last, match.index)));
+          const mark = document.createElement("mark");
+          mark.textContent = match[0];
+          fragment.appendChild(mark);
+          count += 1;
+          last = match.index + match[0].length;
+        }
+        if (last < text.length) fragment.appendChild(document.createTextNode(text.slice(last)));
+        node.parentNode.replaceChild(fragment, node);
+      });
+      searchStatus.textContent = count ? `已高亮 ${count} 处匹配` : "没有匹配到这个词";
+      const firstMark = contentEl.querySelector("mark");
+      if (firstMark) firstMark.scrollIntoView({ block: "center" });
+      typesetMath();
+    }
+
+    function renderCode(text, ext) {
+      const lines = text.replace(/\r\n/g, "\n").split("\n");
+      const renderedLines = lines.map((line, index) => [
+        "<tr>",
+        `<td class="line-no">${index + 1}</td>`,
+        `<td class="line-code">${autoLinkBareUrls(escapeHtml(line)) || " "}</td>`,
+        "</tr>"
+      ].join("")).join("");
+      return {
+        html: [
+          `<div class="code-note">这是 ${escapeHtml(ext || "text").toUpperCase()} 文件的网页阅读版：保留原始内容、增加行号和页内搜索；需要复制完整文件时再打开右上角“原始文件”。</div>`,
+          `<div class="code-view"><table class="line-table" aria-label="source code"><tbody>${renderedLines}</tbody></table></div>`
+        ].join(""),
+        headings: []
+      };
+    }
+
+    function cleanBibValue(value) {
+      let out = String(value || "").trim().replace(/,\s*$/, "").trim();
+      if ((out.startsWith("{") && out.endsWith("}")) || (out.startsWith('"') && out.endsWith('"'))) {
+        out = out.slice(1, -1);
+      }
+      return out.replace(/[{}]/g, "").replace(/\s+/g, " ").trim();
+    }
+
+    function splitBibEntries(text) {
+      const entries = [];
+      let start = -1;
+      let depth = 0;
+      let quoted = false;
+      for (let i = 0; i < text.length; i += 1) {
+        const ch = text[i];
+        if (ch === "@" && depth === 0) start = i;
+        if (start < 0) continue;
+        if (ch === '"' && text[i - 1] !== "\\") quoted = !quoted;
+        if (!quoted && ch === "{") depth += 1;
+        if (!quoted && ch === "}") {
+          depth -= 1;
+          if (depth === 0) {
+            entries.push(text.slice(start, i + 1));
+            start = -1;
+          }
+        }
+      }
+      return entries;
+    }
+
+    function parseBibFields(body) {
+      const segments = [];
+      let current = "";
+      let depth = 0;
+      let quoted = false;
+      for (let i = 0; i < body.length; i += 1) {
+        const ch = body[i];
+        if (ch === '"' && body[i - 1] !== "\\") quoted = !quoted;
+        if (!quoted && ch === "{") depth += 1;
+        if (!quoted && ch === "}") depth -= 1;
+        if (ch === "," && depth === 0 && !quoted) {
+          if (current.trim()) segments.push(current.trim());
+          current = "";
+        } else {
+          current += ch;
+        }
+      }
+      if (current.trim()) segments.push(current.trim());
+      const fields = {};
+      segments.forEach((segment) => {
+        const found = segment.match(/^([A-Za-z][\w-]*)\s*=\s*([\s\S]+)$/);
+        if (found) fields[found[1].toLowerCase()] = cleanBibValue(found[2]);
+      });
+      return fields;
+    }
+
+    function renderBib(text) {
+      const rawEntries = splitBibEntries(text);
+      const entries = rawEntries.map((entry, index) => {
+        const head = entry.match(/^@(\w+)\s*\{\s*([^,]+),/);
+        if (!head) return null;
+        const body = entry.slice(head[0].length, -1);
+        return {
+          type: head[1],
+          key: head[2],
+          fields: parseBibFields(body),
+          index
+        };
+      }).filter(Boolean);
+      const cards = entries.map((entry) => {
+        const f = entry.fields;
+        const title = f.title || entry.key;
+        const venue = f.journal || f.booktitle || f.publisher || f.school || "";
+        const authors = f.author || f.editor || "";
+        const doi = f.doi || "";
+        const url = f.url || (doi ? `https://doi.org/${doi}` : "");
+        const actionLinks = [
+          doi ? `<a class="mini-button" href="https://doi.org/${escapeHtml(doi)}" target="_blank" rel="noreferrer">DOI</a>` : "",
+          url ? `<a class="mini-button" href="${escapeHtml(url)}" target="_blank" rel="noreferrer">URL</a>` : ""
+        ].join("");
+        return `<article class="bib-card">
+          <span class="pill">${escapeHtml(entry.type)}</span>
+          <span class="pill">${escapeHtml(entry.key)}</span>
+          <h3>${escapeHtml(title)}</h3>
+          <p>${escapeHtml(authors)}</p>
+          <p><strong>${escapeHtml(venue || "未标注来源")}</strong>${f.year ? ` · ${escapeHtml(f.year)}` : ""}</p>
+          ${doi ? `<p><strong>DOI:</strong> ${escapeHtml(doi)}</p>` : ""}
+          <div class="bib-actions">${actionLinks || '<span class="mini-button">no DOI/URL</span>'}</div>
+        </article>`;
+      }).join("");
+      return {
+        html: [
+          '<div class="data-summary">',
+          `<div><b>${entries.length}</b><span>BibTeX entries</span></div>`,
+          `<div><b>${new Set(entries.map((entry) => entry.type)).size}</b><span>entry types</span></div>`,
+          `<div><b>${entries.filter((entry) => entry.fields.doi).length}</b><span>with DOI</span></div>`,
+          "</div>",
+          '<h2 id="bibtex-entries">BibTeX Entries</h2>',
+          `<div class="bib-grid">${cards}</div>`,
+          '<h2 id="raw-bibtex">Raw BibTeX</h2>',
+          renderCode(text, "bib").html
+        ].join(""),
+        headings: [
+          { level: 2, id: "bibtex-entries", text: "BibTeX Entries" },
+          { level: 2, id: "raw-bibtex", text: "Raw BibTeX" }
+        ]
+      };
+    }
+
+    function parseCsv(text, delimiter) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let quoted = false;
+      for (let i = 0; i < text.length; i += 1) {
+        const ch = text[i];
+        const next = text[i + 1];
+        if (quoted) {
+          if (ch === '"' && next === '"') {
+            cell += '"';
+            i += 1;
+          } else if (ch === '"') {
+            quoted = false;
+          } else {
+            cell += ch;
+          }
+        } else if (ch === '"') {
+          quoted = true;
+        } else if (ch === delimiter) {
+          row.push(cell);
+          cell = "";
+        } else if (ch === "\n") {
+          row.push(cell);
+          rows.push(row);
+          row = [];
+          cell = "";
+        } else if (ch !== "\r") {
+          cell += ch;
+        }
+      }
+      if (cell || row.length) {
+        row.push(cell);
+        rows.push(row);
+      }
+      return rows.filter((r) => r.some((c) => c.trim()));
+    }
+
+    function renderCsv(text, ext) {
+      const delimiter = ext === "tsv" ? "\t" : ",";
+      const rows = parseCsv(text, delimiter);
+      const header = rows[0] || [];
+      const body = rows.slice(1);
+      const previewRows = body.slice(0, 200);
+      const table = [
+        '<div class="data-summary">',
+        `<div><b>${rows.length ? rows.length - 1 : 0}</b><span>data rows</span></div>`,
+        `<div><b>${header.length}</b><span>columns</span></div>`,
+        `<div><b>${previewRows.length}</b><span>rows shown</span></div>`,
+        "</div>",
+        '<div class="table-wrap"><table><thead><tr>',
+        ...header.map((h) => `<th>${escapeHtml(h)}</th>`),
+        "</tr></thead><tbody>",
+        ...previewRows.flatMap((row) => [
+          "<tr>",
+          ...header.map((_, idx) => `<td>${renderDataCell(row[idx] || "")}</td>`),
+          "</tr>"
+        ]),
+        "</tbody></table></div>"
+      ].join("");
+      return { html: table, headings: [] };
+    }
+
+    function flattenObject(obj, prefix = "", out = {}) {
+      Object.entries(obj || {}).forEach(([key, value]) => {
+        const name = prefix ? `${prefix}.${key}` : key;
+        if (value && typeof value === "object" && !Array.isArray(value)) flattenObject(value, name, out);
+        else out[name] = Array.isArray(value) ? JSON.stringify(value) : value;
+      });
+      return out;
+    }
+
+    function renderJson(text) {
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (error) {
+        return renderCode(text, "json");
+      }
+      const isArray = Array.isArray(data);
+      if (!isArray && data && typeof data === "object") {
+        const entries = Object.entries(data);
+        const summary = [
+          '<div class="data-summary">',
+          `<div><b>${entries.length}</b><span>top-level keys</span></div>`,
+          `<div><b>${text.length.toLocaleString()}</b><span>characters</span></div>`,
+          `<div><b>1</b><span>source object</span></div>`,
+          "</div>"
+        ].join("");
+        const rows = entries.map(([key, value]) => {
+          const rendered = value && typeof value === "object"
+            ? `<pre><code data-lang="json">${escapeHtml(JSON.stringify(value, null, 2))}</code></pre>`
+            : renderDataCell(value == null ? "" : value);
+          return `<tr><th>${escapeHtml(key)}</th><td>${rendered}</td></tr>`;
+        }).join("");
+        return {
+          html: `${summary}<div class="table-wrap"><table class="kv-table"><tbody>${rows}</tbody></table></div><h2 id="raw-json">Raw JSON</h2><pre><code data-lang="json">${escapeHtml(JSON.stringify(data, null, 2))}</code></pre>`,
+          headings: [{ level: 2, id: "raw-json", text: "Raw JSON" }]
+        };
+      }
+      const rows = isArray ? data : Object.entries(data).map(([key, value]) => ({ key, value }));
+      const flatRows = rows.map((row) => row && typeof row === "object" && !Array.isArray(row) ? flattenObject(row) : { value: row });
+      const columns = [...new Set(flatRows.flatMap((row) => Object.keys(row)))].slice(0, 12);
+      const preview = flatRows.slice(0, 120);
+      const table = columns.length ? [
+        '<div class="table-wrap"><table><thead><tr>',
+        ...columns.map((h) => `<th>${escapeHtml(h)}</th>`),
+        "</tr></thead><tbody>",
+        ...preview.flatMap((row) => [
+          "<tr>",
+          ...columns.map((col) => `<td>${renderDataCell(row[col] == null ? "" : row[col])}</td>`),
+          "</tr>"
+        ]),
+        "</tbody></table></div>"
+      ].join("") : "";
+      const summary = [
+        '<div class="data-summary">',
+        `<div><b>${isArray ? data.length : Object.keys(data || {}).length}</b><span>${isArray ? "items" : "top-level keys"}</span></div>`,
+        `<div><b>${columns.length}</b><span>preview columns</span></div>`,
+        `<div><b>${preview.length}</b><span>rows shown</span></div>`,
+        "</div>"
+      ].join("");
+      return {
+        html: `${summary}${table}<h2 id="raw-json">Raw JSON</h2><pre><code data-lang="json">${escapeHtml(JSON.stringify(data, null, 2))}</code></pre>`,
+        headings: [{ level: 2, id: "raw-json", text: "Raw JSON" }]
+      };
+    }
+
+    function buildToc(headings) {
+      const usable = headings.filter((h) => h.level <= 3);
+      if (!usable.length) {
+        tocEl.innerHTML = '<h2>目录</h2><div class="empty-toc">这个文件没有 Markdown 标题，右侧只保留阅读视图。</div>';
+        return;
+      }
+      const note = usable.length > 60
+        ? `<p class="toc-note">长文档共 ${usable.length} 个标题；优先用上方搜索框定位关键词，再跳目录。</p>`
+        : `<p class="toc-note">共 ${usable.length} 个标题，点击可跳到对应章节。</p>`;
+      tocEl.innerHTML = '<h2>目录</h2>' + note + usable.map((h) => {
+        const pad = (h.level - 1) * 12;
+        return `<a href="#${h.id}" style="padding-left:${8 + pad}px">${escapeHtml(h.text)}</a>`;
+      }).join("");
+    }
+
+    function inferTitle(path, text, ext) {
+      if (ext === "md" || ext === "markdown") {
+        const firstHeading = text.match(/^#\s+(.+)$/m);
+        if (firstHeading) return firstHeading[1].trim();
+      }
+      return prettyPath(path).split("/").pop();
+    }
+
+    async function load() {
+      if (!validateDocPath(doc)) {
+        titleEl.textContent = "文档路径无效";
+        contentEl.innerHTML = '<div class="error">链接没有指定可读取的站内文档。</div>';
+        rawLink.removeAttribute("href");
+        return;
+      }
+      const ext = extName(doc);
+      rawLink.href = resolveDocUrl(doc);
+      kindEl.textContent = ext ? ext.toUpperCase() : "Document";
+      metaEl.innerHTML = `<span class="pill">${escapeHtml(prettyPath(doc))}</span>`;
+      const response = await fetch(resolveDocUrl(doc), { cache: "no-store" });
+      if (!response.ok) {
+        titleEl.textContent = "没有找到这个文件";
+        contentEl.innerHTML = `<div class="error">读取失败：HTTP ${response.status}。如果这是公开网页，可能是该文件没有进入公开导出。</div>`;
+        return;
+      }
+      const text = await response.text();
+      titleEl.textContent = inferTitle(doc, text, ext);
+      document.title = `${titleEl.textContent} | OERF 文档阅读器`;
+      introEl.textContent = inferIntro(text, ext);
+      metaEl.innerHTML = [
+        `<span class="pill">${escapeHtml(prettyPath(doc))}</span>`,
+        `<span class="pill">${escapeHtml(ext || "file")}</span>`,
+        `<span class="pill">${text.length.toLocaleString()} characters</span>`
+      ].join("");
+      renderContextNav(doc, ext);
+      let rendered;
+      if (ext === "md" || ext === "markdown") rendered = renderMarkdown(text);
+      else if (ext === "json") rendered = renderJson(text);
+      else if (ext === "csv" || ext === "tsv") rendered = renderCsv(text, ext);
+      else if (ext === "bib") rendered = renderBib(text);
+      else if (ext === "txt") rendered = renderPlainText(text);
+      else if (textExtensions.has(ext) || dataExtensions.has(ext)) rendered = renderCode(text, ext);
+      else rendered = renderCode(text, ext || "text");
+      contentEl.innerHTML = rendered.html;
+      decorateContent();
+      const docMapHtml = buildDocMap(text, ext, rendered);
+      if (docMapHtml) contentEl.insertAdjacentHTML("afterbegin", docMapHtml);
+      renderedCacheHtml = contentEl.innerHTML;
+      const stats = summarizeDocument(text, ext, rendered);
+      renderStats(stats, ext);
+      renderReaderBrief(text, ext, stats);
+      buildToc(rendered.headings);
+      applySearch();
+      if (anchor) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const target = resolveAnchorTarget(anchor);
+            if (target) target.scrollIntoView({ block: "start" });
+          });
+        });
+      }
+    }
+
+    load().catch((error) => {
+      titleEl.textContent = "读取失败";
+      contentEl.innerHTML = `<div class="error">${escapeHtml(error.message || error)}</div>`;
+    });
+
+    docSearch.addEventListener("input", applySearch);
+  </script>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

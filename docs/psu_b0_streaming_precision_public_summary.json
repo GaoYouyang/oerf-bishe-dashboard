@@ -1,0 +1,71 @@
+{
+  "schema_version": "psu-b0-streaming-precision-public-summary-1.0",
+  "status": "FULL_SCALE_FLOAT32_NO_GO_FLOAT64_PASS",
+  "evidence_scope": "REAL_PSU_10628822_SUPPORT_RAYS_QMC16_16_CUBED_STREAMED_FORWARD_ADJOINT_PRECISION_SCREEN_NO_DEVELOPMENT_NO_FINAL_AUDIT",
+  "configuration": {
+    "ray_count": 10628822,
+    "chunk_count_per_logical_call": 329,
+    "finite_aperture_sample_count": 16,
+    "grid_shape_zyx": [
+      16,
+      16,
+      16
+    ],
+    "device": "cpu",
+    "measurement_selection": "all_corrected_active_support_rows"
+  },
+  "screens": [
+    {
+      "id": "float32_observation_dual",
+      "dtype": "float32",
+      "dual": "real_support_observation_vector",
+      "relative_inner_product_defect": 0.0008493172936141491,
+      "frozen_threshold": 0.00002,
+      "pass": false,
+      "forward_adjoint_pair_wall_seconds": 48.28691983403405,
+      "interpretation": "NO_GO; structured dual and full-scale accumulation cannot satisfy the preregistered criterion"
+    },
+    {
+      "id": "float32_random_dual",
+      "dtype": "float32",
+      "dual": "deterministic_random_vector",
+      "relative_inner_product_defect_with_float64_scalar_reduction": 0.000020408736408702455,
+      "norm_product_defect": 6.0691582600032494e-9,
+      "inner_cosine_scale": 0.0005947608062021232,
+      "frozen_threshold": 0.00002,
+      "pass": false,
+      "forward_adjoint_pair_wall_seconds": 47.583385748958215,
+      "interpretation": "Near-threshold but still NO_GO; the threshold was not relaxed"
+    },
+    {
+      "id": "float64_random_dual_authoritative",
+      "dtype": "float64",
+      "dual": "deterministic_random_vector",
+      "relative_inner_product_defect": 3.4578550695234943e-15,
+      "norm_product_defect": 7.635583916509925e-19,
+      "frozen_threshold": 1e-11,
+      "pass": true,
+      "forward_adjoint_pair_wall_seconds": 53.4314367499901,
+      "interpretation": "Authoritative full-scale precision for the low-resolution classical inverse"
+    }
+  ],
+  "decision": {
+    "authoritative_baseline_dtype": "float64",
+    "float32_full_scale_cgls_is_authoritative": false,
+    "threshold_relaxed_after_failure": false,
+    "mixed_precision_compensated_adjoint_is_a_future_candidate": true,
+    "server_required_for_float64_16_cubed": false
+  },
+  "claim_boundary": {
+    "precision_pass_is_reconstruction_accuracy": false,
+    "precision_pass_is_algorithm_superiority": false,
+    "development_rotation_40_opened": false,
+    "final_audit_opened": false
+  },
+  "public_export_policy": {
+    "contains_local_paths": false,
+    "contains_measurement_values": false,
+    "contains_reconstruction_voxels": false,
+    "contains_private_hashes": false
+  }
+}

@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent for Science 辅助 BOST Pipeline | OERF 毕设导航</title>
+  <style>
+    :root {
+      --bg: #f7faf9;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #62717c;
+      --line: #d8e1df;
+      --teal: #16756f;
+      --blue: #315f93;
+      --gold: #9a6a00;
+      --red: #a34335;
+      --soft-teal: #e8f3f0;
+      --soft-blue: #eaf0f7;
+      --soft-gold: #f8f0dc;
+      --soft-red: #f8ece9;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, rgba(49, 95, 147, 0.12), transparent 340px), var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    header, main, footer {
+      width: min(1180px, calc(100vw - 36px));
+      margin: 0 auto;
+    }
+    header { padding: 34px 0 18px; }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(31px, 4.5vw, 56px);
+      line-height: 1.07;
+    }
+    h2 { margin: 34px 0 12px; font-size: 25px; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .button-row, .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+    }
+    .button, .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 750;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .button.primary { background: var(--teal); border-color: var(--teal); color: #fff; }
+    .tag { min-height: 28px; border-radius: 999px; font-size: 12px; }
+    .tag.core { background: var(--soft-teal); color: var(--teal); border-color: #c8e4de; }
+    .tag.blue { background: var(--soft-blue); color: var(--blue); border-color: #d3dfed; }
+    .tag.gold { background: var(--soft-gold); color: var(--gold); border-color: #e8d3a5; }
+    .tag.red { background: var(--soft-red); color: var(--red); border-color: #edc8c0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card, .notice {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+    }
+    .notice { border-left: 5px solid var(--teal); background: linear-gradient(90deg, var(--soft-teal), #fff 72%); }
+    .notice.warning { border-left-color: var(--gold); background: linear-gradient(90deg, var(--soft-gold), #fff 72%); }
+    .notice.danger { border-left-color: var(--red); background: linear-gradient(90deg, var(--soft-red), #fff 72%); }
+    .metric b {
+      display: block;
+      color: var(--teal);
+      font-size: 30px;
+      line-height: 1.05;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 12px 0 18px;
+    }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+    th { background: #edf5f2; color: #2f3b41; }
+    tr:last-child td { border-bottom: 0; }
+    ul, ol { margin: 8px 0 0; padding-left: 22px; color: var(--muted); }
+    li { margin-bottom: 7px; }
+    footer {
+      color: var(--muted);
+      font-size: 12px;
+      padding: 28px 0 34px;
+    }
+    @media (max-width: 900px) {
+      .grid, .grid.two { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="button-row">
+      <a class="button" href="./index.html">返回总工作台</a>
+      <a class="button" href="./topic_execution_playbook.html">选题执行手册</a>
+      <a class="button" href="./paper_library/index.html">论文库</a>
+      <a class="button" href="./index.html#glossary">术语索引</a>
+    </div>
+    <h1>Agent for Science 辅助 BOST Pipeline</h1>
+    <p>蔡老师主页把 Agent for Science 列为研究方向之一，但你的毕业设计不应把它做成脱离物理诊断的泛自动化。最稳的落点是：让智能体服务何远哲主线，辅助 BOST/NeRIF/PIV-BOST 的文献整理、参数扫描、质量控制、图表生成和学习日志。</p>
+    <div class="grid">
+      <div class="card metric"><b>G</b><span>路线定位：辅助层，不替代 A/B/C/F 主线。</span></div>
+      <div class="card metric"><b>5</b><span>新增 Agent / 自驱动实验室支撑文献。</span></div>
+      <div class="card metric"><b>3</b><span>arXiv PDF 已缓存并生成术语导读。</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice">
+      <h2>总判断</h2>
+      <p><strong>可以做：</strong>把 Agent for Science 做成 BOST 研究工作流助手，帮你自动排参数、跑 M0-M3 demo、检查重投影误差、整理结果表、生成学习日志和师兄沟通材料。</p>
+      <p><strong>不建议做：</strong>把毕设题目改成“全自动科研智能体”本身。这样会离 OERF 光学诊断和何远哲 BOST/NeRIF 主线太远，且本科阶段很难证明科学有效性。</p>
+    </section>
+
+    <section>
+      <h2>和主线的关系</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>主线任务</th>
+            <th>Agent 可以帮什么</th>
+            <th>必须由物理/算法验证的部分</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>A: NeRIF / 折射率场重构</strong></td>
+            <td>自动生成不同视角数、编码方式、loss 权重、网络容量的实验配置；汇总 L2 / SSIM / 重投影误差曲线。</td>
+            <td>forward model、折射率场定义、单位换算、reprojection error 和 baseline 对比。</td>
+          </tr>
+          <tr>
+            <td><strong>B: PIV-BOST 补偿</strong></td>
+            <td>组织 synthetic particle image pair、OpenPIV/PIVlab 输出、折射畸变前后误差表；标记失败案例。</td>
+            <td>PIV 图像层/位移层/速度层三层接口，速度误差定义，真实同步数据权限。</td>
+          </tr>
+          <tr>
+            <td><strong>C: 4D BOST / 时序低秩</strong></td>
+            <td>批量跑 rank、frame count、noise level、temporal smoothness；自动生成 rank-error-time 图。</td>
+            <td>时序一致性指标、低秩假设边界、动态 phantom 或真实高速数据解释。</td>
+          </tr>
+          <tr>
+            <td><strong>F: BOS 位移质量控制</strong></td>
+            <td>对背景图案、光流/互相关、置信图、mask 和异常视角做自动健康报告。</td>
+            <td>位移不是速度；BOS displacement 与折射率/密度反演之间必须保持物理链条。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>本科可执行版本</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>最小毕业版</h3>
+          <ul>
+            <li>固定 M0/M1/M2 或 M3A 一个 demo。</li>
+            <li>写一个配置扫描器，自动改 view count、noise、loss weight、network size。</li>
+            <li>每次运行保存 `config.json`、指标表、关键图和失败原因。</li>
+            <li>生成一页 HTML/Markdown report，供你写学习日志和找师兄讨论。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>升级版</h3>
+          <ul>
+            <li>加入 active learning / closed-loop：根据上一轮误差挑下一组参数。</li>
+            <li>加入 input health report：检查图像对、mask、位移场、视角缺失和异常值。</li>
+            <li>加入论文阅读助手：从本地公开 PDF 的术语页码索引生成精读清单。</li>
+            <li>加入会前报告：自动整理“这周结果、失败点、下周需要师兄给的数据”。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="notice warning">
+      <h2>安全边界</h2>
+      <p>Agent 可以读公开论文库、公开 PDF、你自己的 demo 输出和学习日志。WebVPN/订阅 PDF、账号密码、私有下载目录和未公开组内数据不能进入公开 GitHub Pages，也不能让 agent 自动上传。</p>
+      <p>Agent 生成的任何科学结论都必须至少经过三层检查：数据来源是否可信、指标是否覆盖目标、图像/重投影是否能解释原始观测。</p>
+    </section>
+
+    <section>
+      <h2>支撑文献怎么读</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>文献</th>
+            <th>读它拿什么</th>
+            <th>在本项目里的位置</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="./paper_library/readers/llm-science-survey-eger-2025.html">Transforming Science with LLMs</a></td>
+            <td>科研生命周期：检索、实验、内容生成、图表、评价和诚信风险。</td>
+            <td>给 Agent 支撑线总览，适合先读。</td>
+          </tr>
+          <tr>
+            <td><a href="./paper_library/readers/ai-scientist-lu-2024.html">The AI Scientist</a></td>
+            <td>自动想题、写代码、跑实验、写论文和自动评审的完整 pipeline。</td>
+            <td>作为反面边界：本科不要承诺全自动发现，只借自动化框架。</td>
+          </tr>
+          <tr>
+            <td><a href="./paper_library/readers/scienceagentbench-chen-2024.html">ScienceAgentBench</a></td>
+            <td>科学 agent 的评测、失败模式和数据驱动任务边界。</td>
+            <td>写“agent 输出不能直接当科学结论”的依据。</td>
+          </tr>
+          <tr>
+            <td><a href="https://www.nature.com/articles/s41467-025-59231-1" target="_blank" rel="noreferrer">Science acceleration and accessibility with self-driving labs</a></td>
+            <td>闭环实验、自驱动平台、自动化与可及性。</td>
+            <td>把 BOST 参数扫描写成 self-driving / closed-loop workflow 的背景。</td>
+          </tr>
+          <tr>
+            <td><a href="https://www.nature.com/articles/s41586-023-06792-0" target="_blank" rel="noreferrer">Autonomous chemical research with large language models</a></td>
+            <td>LLM 调用工具、规划实验、安全边界。</td>
+            <td>借 tool-use 语言，不迁移化学实验结论。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>可以问何远哲的问题</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>问题</th>
+            <th>为什么问</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>如果我做 Agent 辅助层，师兄更希望它服务 NeRIF 参数扫描、PIV-BOST 数据检查，还是 4D BOST rank/frame-count 扫描？</td>
+            <td>防止做出看起来好玩但对组内工作没用的工具。</td>
+          </tr>
+          <tr>
+            <td>组内 BOST/PIV-BOST 数据是否已有固定目录结构、命名规则、mask 和 calibration 文件？</td>
+            <td>Agent 最适合先做数据接口和健康报告。</td>
+          </tr>
+          <tr>
+            <td>师兄会不会接受“自动生成周报 + 参数扫描报告”作为毕业设计附加成果？</td>
+            <td>确认它是加分项还是偏题项。</td>
+          </tr>
+          <tr>
+            <td>哪些指标是组内最在意的：reprojection error、density/temperature error、PIV velocity error、runtime，还是稳定性？</td>
+            <td>闭环优化必须有正确目标函数。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    Agent for Science is scoped here as a BOST/NeRIF workflow assistant, not as a replacement for optical diagnostics, inverse modeling, or experimental validation.
+  </footer>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

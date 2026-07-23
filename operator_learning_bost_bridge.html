@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>T16 BOST 神经算子三维重建</title>
+  <link rel="icon" href="data:," />
+  <style>
+    :root {
+      --ink: #1f2a30;
+      --muted: #627078;
+      --line: #d4dedd;
+      --paper: #ffffff;
+      --bg: #f3f7f5;
+      --green: #176b5d;
+      --green-soft: #e9f4f0;
+      --blue: #285f9d;
+      --blue-soft: #edf3fb;
+      --gold: #8a6412;
+      --gold-soft: #f7f0df;
+      --rust: #9b4936;
+      --rust-soft: #faece7;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url("./assets/backgrounds/oerf-refractive-field.png") center / cover no-repeat;
+      opacity: .075;
+      pointer-events: none;
+    }
+    a { color: var(--blue); }
+    code, pre { font-family: "SFMono-Regular", Consolas, monospace; }
+    header, main, footer { width: min(1180px, calc(100vw - 36px)); margin: 0 auto; }
+    header { padding: 28px 0 30px; border-bottom: 1px solid var(--line); }
+    main { padding: 8px 0 38px; }
+    footer { padding: 26px 0 40px; color: var(--muted); font-size: 12px; }
+    h1, h2, h3 { line-height: 1.22; letter-spacing: 0; }
+    h1 { max-width: 1000px; margin: 18px 0 10px; font-size: 44px; }
+    h2 { margin: 0 0 10px; font-size: 28px; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    p { margin: 8px 0; }
+    .lead { max-width: 1000px; color: #45545c; font-size: 17px; }
+    .topbar, .button-row, .segmented, .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .button, .segment {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 8px 12px;
+      color: var(--ink);
+      background: rgba(255,255,255,.94);
+      text-decoration: none;
+      font: inherit;
+      font-weight: 750;
+      cursor: pointer;
+    }
+    .button.primary, .segment.active { color: #fff; background: var(--green); border-color: var(--green); }
+    .metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
+    .metric {
+      min-height: 116px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.95);
+    }
+    .metric b { display: block; margin-bottom: 5px; color: var(--green); font-size: 28px; }
+    .metric span { color: var(--muted); font-size: 13px; }
+    section { padding: 28px 0; border-bottom: 1px solid var(--line); }
+    .notice {
+      padding: 17px 18px;
+      border: 1px solid #b7d5cc;
+      border-left: 5px solid var(--green);
+      border-radius: 8px;
+      background: rgba(237,247,243,.96);
+    }
+    .notice.warning { border-color: #dfc58c; border-left-color: var(--gold); background: rgba(250,245,232,.97); }
+    .notice.danger { border-color: #e0b7ab; border-left-color: var(--rust); background: rgba(252,240,236,.97); }
+    .grid { display: grid; gap: 13px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.96);
+    }
+    .card p, .card li { color: #4b5a62; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 4px 8px;
+      border: 1px solid #bed6cf;
+      border-radius: 999px;
+      color: var(--green);
+      background: var(--green-soft);
+      font-size: 12px;
+      font-weight: 750;
+    }
+    .pill.blue { color: var(--blue); border-color: #c5d5ea; background: var(--blue-soft); }
+    .pill.gold { color: var(--gold); border-color: #dfcc9f; background: var(--gold-soft); }
+    .pill.rust { color: var(--rust); border-color: #e3c1b8; background: var(--rust-soft); }
+    .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.97); }
+    table { width: 100%; min-width: 760px; border-collapse: collapse; }
+    th, td { padding: 12px 13px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #34444b; background: #edf4f1; font-size: 13px; }
+    td { color: #46565e; font-size: 14px; }
+    tr:last-child td { border-bottom: 0; }
+    .equation {
+      margin: 14px 0;
+      padding: 16px;
+      overflow-x: auto;
+      border: 1px solid #c3d5dc;
+      border-radius: 8px;
+      color: #173849;
+      background: #f3f8fa;
+      font-size: 14px;
+      white-space: pre;
+    }
+    .pipeline { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+    .pipe-step {
+      position: relative;
+      min-height: 150px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--green);
+      border-radius: 8px;
+      background: rgba(255,255,255,.96);
+    }
+    .pipe-step:nth-child(2) { border-top-color: var(--blue); }
+    .pipe-step:nth-child(3) { border-top-color: var(--gold); }
+    .pipe-step:nth-child(4) { border-top-color: var(--rust); }
+    .pipe-step:nth-child(5) { border-top-color: #58736a; }
+    .pipe-step b { display: block; margin-bottom: 8px; }
+    .pipe-step span { color: var(--muted); font-size: 13px; }
+    .model-readout {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+      margin-top: 13px;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.97);
+    }
+    .model-readout ul { margin: 8px 0 0; padding-left: 20px; }
+    .model-facts { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px; }
+    .fact { padding: 11px; border: 1px solid var(--line); border-radius: 7px; background: #f7faf9; }
+    .fact b { display: block; color: var(--green); }
+    .fact span { color: var(--muted); font-size: 12px; }
+    .roadmap { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
+    .phase { padding: 14px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.96); }
+    .phase b { display: block; color: var(--blue); }
+    .phase span { color: var(--muted); font-size: 13px; }
+    .paper-card { display: grid; grid-template-columns: 130px 1fr; gap: 13px; }
+    .paper-label { align-self: start; color: var(--green); font-size: 12px; font-weight: 800; }
+    .paper-card a { font-weight: 750; }
+    .paper-card p { margin: 5px 0 0; font-size: 13px; }
+    .result-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+    .result-cell { min-width: 0; padding: 13px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.97); }
+    .result-cell b { display: block; color: var(--green); font-size: 22px; }
+    .result-cell span { color: var(--muted); font-size: 12px; }
+    .figure-gallery { display: grid; grid-template-columns: 1.35fr .65fr; gap: 12px; margin-top: 14px; }
+    figure.chart { min-width: 0; margin: 0; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.97); }
+    figure.chart img { display: block; width: 100%; height: auto; border-radius: 5px; }
+    figure.chart figcaption { padding: 9px 3px 2px; color: var(--muted); font-size: 12px; }
+    ol, ul { padding-left: 21px; }
+    @media (max-width: 980px) {
+      .metrics, .pipeline, .roadmap, .result-strip { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid.three { grid-template-columns: 1fr; }
+      .figure-gallery { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      header, main, footer { width: min(100% - 22px, 1180px); }
+      h1 { font-size: 32px; }
+      h2 { font-size: 24px; }
+      .metrics, .grid.two, .pipeline, .roadmap, .model-readout, .result-strip { grid-template-columns: 1fr; }
+      .metric { min-height: 0; }
+      .paper-card { grid-template-columns: 1fr; }
+      .model-facts { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <a class="button" href="./index.html#topics">返回选题库</a>
+      <a class="button primary" href="./topic_deep_dive.html?id=T16">打开 T16 档案</a>
+      <a class="button" href="./operator_nullspace_evidence_dashboard.html">几何 / 零空间证据总页</a>
+      <a class="button" href="./operator_3d_innovation_lab.html">创新模型与文献实验室</a>
+      <a class="button primary" href="./ridge_fno_nerif_roadmap.html">v3a 执行主页</a>
+      <a class="button primary" href="./own_algorithm_lab.html">v3b 自有算法竞技场</a>
+      <a class="button" href="./he_yuanzhe_sync_dashboard.html">何远哲同步线</a>
+      <a class="button" href="./paper_library/index.html?q=neural%20operator">神经算子论文</a>
+      <a class="button" href="./document_reader.html?doc=t16_operator_smoke_review_brief.md">师兄审核 brief</a>
+      <a class="button" href="./document_reader.html?doc=t16_operator_ablation_review_brief.md">三种子消融 brief</a>
+      <a class="button" href="./document_reader.html?doc=demo_t16_operator%2FREADME.md">代码工作台</a>
+      <a class="button" href="./document_reader.html?doc=t16_operator_learning_path.md">学习路径</a>
+      <a class="button primary" href="./operator-learning/">从零学习主页</a>
+      <a class="button" href="./m3b_six_axis_dashboard.html">M3B 六轴实验</a>
+      <a class="button" href="./m3b_interaction_dashboard.html">M3B 交叉工作域</a>
+      <a class="button" href="./m3b_family_selector_dashboard.html">M3B 容量 Selector</a>
+    </div>
+    <h1>T16 BOST 神经算子三维重建</h1>
+    <p class="lead">把师兄提出的“三维重建”和“算子学习”合成一个可检验的本科课题：学习从多视角 BOS 位移到三维折射率场的跨样本逆算子，同时保留 BOST forward projection 作为物理约束与验收工具。</p>
+    <div class="metrics">
+      <div class="metric"><b>168</b><span>已生成并分层验收的三维 paired samples。</span></div>
+      <div class="metric"><b>43,363</b><span>Residual 3D FNO 参数量，约为 U-Net 的一半。</span></div>
+      <div class="metric"><b>30 runs</b><span>gate、共享/独立双专家与 matched free/null corrector 训练。</span></div>
+      <div class="metric"><b>5 domains</b><span>IID、view/noise/joint/family OOD 分开报告。</span></div>
+      <div class="metric"><b>54 papers</b><span>OERF、几何、零空间、修正算子、局部高频、校准与流场主线图谱。</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="notice">
+        <h3>当前最推荐的题目表述</h3>
+        <p><strong>面向少视角背景纹影层析的强数值底座残差神经算子与 NeRIF 快速物理精化。</strong></p>
+        <p>v2d 已在 controlled inference 层淘汰 QC-SNCO checkpoint；v3a 按 controlled masks 重训后，ridge-FNO 在 K=4/6/8 三个预算均通过开发门槛，而 FBP-lift FNO 三预算均退化。现阶段只推进 ridge-FNO warm-start NeRIF、独立 forward 和真实 geometry，不继续堆 null corrector。</p>
+      </div>
+      <div class="button-row" style="margin-top:12px;"><a class="button primary" href="./ridge_fno_nerif_roadmap.html">打开 v3a 执行主页</a><a class="button" href="./operator_fair_budget_dashboard.html">v2d 同预算判决</a><a class="button" href="./operator_nullspace_evidence_dashboard.html">完整证据链</a><a class="button" href="./document_reader.html?doc=ridge_fno_nerif_review_brief.md">打开师兄审核材料</a></div>
+    </section>
+
+    <section id="nullspace-results">
+      <div class="pill-row"><span class="pill">v2a-v2c 已审计</span><span class="pill blue">88 independent fields</span><span class="pill rust">adaptive pilot / red-team hold</span></div>
+      <h2 style="margin-top:10px;">独立专家、零空间负结果与 adaptive-query pilot</h2>
+      <p>独立 Residual/Absolute 专家把分支平均差异从约 0.119 提高到 0.190，support-fit 在 79.17% 样本-种子单元达到或优于最佳端点。truth-oracle 审计显示独立 support-fit 仍有 38.626% 平均零空间 headroom；但匹配参数的 learned null corrector 总体 field improvement 为 -0.126%，说明“约束正确”并不等于“方向学对”。</p>
+      <div class="result-strip">
+        <div class="result-cell"><b>38.626%</b><span>truth-oracle<br />null headroom</span></div>
+        <div class="result-cell"><b>-0.126%</b><span>full learned null<br />field improvement</span></div>
+        <div class="result-cell"><b>+0.746%</b><span>one-query line search<br />field improvement</span></div>
+        <div class="result-cell"><b>88</b><span>independent<br />test fields</span></div>
+        <div class="result-cell"><b>2.26e-9</b><span>maximum support<br />projection leakage</span></div>
+      </div>
+      <div class="figure-gallery" style="margin-top:14px;">
+        <figure class="chart">
+          <img src="./demo_t16_operator/results/query_calibrated_nullspace/t16_query_calibrated_improvement.png" alt="Query-calibrated support-nullspace field improvement" />
+          <figcaption>按样本从多个候选角选 query 后闭式标定幅度，得到微弱正均值；这不是固定一台相机的结论。</figcaption>
+        </figure>
+        <figure class="chart">
+          <img src="./demo_t16_operator/results/support_nullspace_corrector/t16_support_nullspace_improvement.png" alt="Matched free and nullspace correction improvements" />
+          <figcaption>free corrector 可失稳；hard null projection 稳定但平均不胜 support-fit。这个负结果是 v2c 的起点。</figcaption>
+        </figure>
+      </div>
+      <div class="notice warning" style="margin-top:14px;">
+        <h3>当前论文判断</h3>
+        <p>QC-SNCO 当前 checkpoint 已触发停止条件。fixed learned correction 相对 <code>S∪Q direct</code> 在 K=4/6/8 分别为 -20.17%/-13.07%/-15.11%；训练 mask 匹配与独立 forward 仍未完成，因此只把它写成受控 pilot 的路径失败。</p>
+      </div>
+      <div class="button-row" style="margin-top:14px;"><a class="button primary" href="./operator_nullspace_evidence_dashboard.html">打开完整证据链</a><a class="button" href="./document_reader.html?doc=t16_geometry_nullspace_review_brief.md">师兄审核 brief</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fquery_calibrated_nullspace%2Fquery_calibrated_report.json">v2c JSON</a></div>
+    </section>
+
+    <section id="gate-results">
+      <div class="pill-row"><span class="pill">最新可靠性实验</span><span class="pill blue">18 training runs</span><span class="pill rust">negative result retained</span></div>
+      <h2 style="margin-top:10px;">简单 gate 没有解决工况翻转</h2>
+      <p>固定同一批 168 个三维样本和三个优化种子，比较 Residual/Absolute、固定 view gate、metadata gate、可观测 residual 通道与 observable gate。固定 gate 在 3-view 把 lift 权重降到 0.6，反而令 view OOD field 从 0.488 升到 0.518；metadata gate 的五域 field oracle regret 只从 3.10% 变为 3.08%，held-out regret 从 1.65% 增到 2.00%。</p>
+      <div class="figure-gallery">
+        <figure class="chart">
+          <img src="./demo_t16_operator/results/reliability_gates/t16_gate_field_heatmap.png" alt="Reliability gate field errors across five domains" />
+          <figcaption>六种可靠性对照的五域 field error。没有一个单标量 gate 同时替代 Residual/Absolute 的条件选择。</figcaption>
+        </figure>
+        <figure class="chart">
+          <img src="./demo_t16_operator/results/reliability_gates/t16_gate_oracle_regret.png" alt="Reliability models compared with residual absolute oracle" />
+          <figcaption>事后 oracle regret。oracle 使用真值，只能做 synthetic audit，不能用于真实部署。</figcaption>
+        </figure>
+      </div>
+      <div class="notice warning" style="margin-top:14px;">
+        <h3>因此模型升级为真正的双专家</h3>
+        <p>physics-lift 重投影 residual 在 IID 约 0.398、view/joint OOD 约 0.846/0.850，诊断性强；但把它平铺为 3D 常数通道会伤害训练。下一版把它留在低维 router，并让 Residual/Absolute 各自拥有 decoder；路由监督来自 withheld camera，而不是 field truth。</p>
+      </div>
+      <div class="button-row" style="margin-top:14px;"><a class="button primary" href="./operator_3d_innovation_lab.html#gate-evidence">打开完整图表与模型推导</a><a class="button" href="./document_reader.html?doc=t16_reliability_gate_review_brief.md">师兄审核简报</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Freliability_gates%2Fgate_report.json">机器可读报告</a></div>
+    </section>
+
+    <section id="dual-results">
+      <div class="pill-row"><span class="pill">双分支 v1 已完成</span><span class="pill blue">3 optimization seeds</span><span class="pill gold">physics anchor found</span></div>
+      <h2 style="margin-top:10px;">双分支有互补，但神经 router 没有学会路由</h2>
+      <p>共享双输出 FNO 在 view-dropout 后同时生成 Residual 与 Absolute 场。0.5 等权融合的 IID field 从两端点的 0.2629/0.2612 降到 0.2577，证明两输出可以互补；但 query-trained router 在五域的权重都约为 0.50，field 端点选择准确率只有 40.5%。</p>
+      <div class="result-strip">
+        <div class="result-cell"><b>0.2571</b><span>support-fit<br />IID field</span></div>
+        <div class="result-cell"><b>0.014%</b><span>support-fit<br />five-domain field regret</span></div>
+        <div class="result-cell"><b>75.8%</b><span>达到/优于<br />最佳端点单元</span></div>
+        <div class="result-cell"><b>0.695</b><span>support advantage<br />vs field advantage Spearman</span></div>
+        <div class="result-cell"><b>-0.228</b><span>query-router weight<br />vs field advantage Pearson</span></div>
+      </div>
+      <div class="figure-gallery" style="margin-top:14px;">
+        <figure class="chart">
+          <img src="./demo_t16_operator/results/dual_branch_query/t16_dual_field_heatmap.png" alt="Dual branch and support-fit field errors across five domains" />
+          <figcaption>support-fit 在五域均不差于等权，但 family 绝对误差仍约 0.69，不能被融合技巧掩盖。</figcaption>
+        </figure>
+        <figure class="chart">
+          <img src="./demo_t16_operator/results/dual_branch_query/t16_dual_router_weights.png" alt="Support-fit and query-trained routing weights" />
+          <figcaption>闭式权重会随工况改变；神经 router 近似等权，因此不能宣称 query-view routing 已成功。</figcaption>
+        </figure>
+      </div>
+      <div class="notice warning" style="margin-top:14px;">
+        <h3>这条推论已经进入 v2a-v2c 实验和红队审计</h3>
+        <p>独立专家、exact null、matched learned null、adaptive v2c 与 controlled-budget v2d 均已完成并归档为机制证据；v3a 又完成 training-mask-matched direct baselines。当前只保留 ridge-FNO 候选，并转入 locked final fields、独立 forward 与 NeRIF warm-start。</p>
+      </div>
+      <div class="button-row" style="margin-top:14px;"><a class="button primary" href="./operator_3d_innovation_lab.html#dual-evidence">打开完整证据与 v2 模型</a><a class="button" href="./document_reader.html?doc=t16_reliability_gate_review_brief.md">师兄审核简报</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fdual_branch_query%2Fdual_report.json">机器可读报告</a></div>
+    </section>
+
+    <section id="ablation-results">
+      <div class="pill-row"><span class="pill">最新因果消融</span><span class="pill blue">3 optimization seeds</span><span class="pill gold">causal controls</span></div>
+      <h2 style="margin-top:10px;">Residual、物理损失与容量：收益到底来自哪里</h2>
+      <p>同一批 168 个三维样本固定不变，每个模型用三个独立优化种子训练。误差条是三种子均值的 Student-t 95% 区间，只衡量优化稳定性，不是假装拥有大量独立实验工况。absolute-output FNO 仍接收同一 physics lift，只拿掉输出端 residual skip；它不是 raw projection-to-volume 模型。</p>
+      <div class="result-strip">
+        <div class="result-cell"><b>0.2187</b><span>Residual FNO<br />IID field mean</span></div>
+        <div class="result-cell"><b>0.2367</b><span>Absolute FNO<br />IID field mean</span></div>
+        <div class="result-cell"><b>0.2375</b><span>No-reprojection FNO<br />IID field mean</span></div>
+        <div class="result-cell"><b>0.3000</b><span>49,111-param U-Net<br />IID field mean</span></div>
+        <div class="result-cell"><b>30 / 30</b><span>五域 field + held-out 中，Residual FNO 对 matched U-Net 的 seed-cell 胜场</span></div>
+      </div>
+      <div class="figure-gallery">
+        <figure class="chart">
+          <img src="./demo_t16_operator/results/ablations/t16_ablation_iid.png" alt="T16 three-seed IID causal ablation" />
+          <figcaption>IID 场与 held-out 投影。Residual FNO 均值最低；no-reprojection 与 matched U-Net 的种子波动更大。</figcaption>
+        </figure>
+        <div class="grid">
+          <figure class="chart">
+            <img src="./demo_t16_operator/results/ablations/t16_ablation_ood_heatmap.png" alt="T16 field error heatmap across five domains and four neural controls" />
+            <figcaption>五个测试域的 field mean。Residual FNO 对 matched U-Net 的优势跨域保持，但 residual 与 absolute 在少视角条件发生翻转。</figcaption>
+          </figure>
+          <figure class="chart">
+            <img src="./demo_t16_operator/results/ablations/t16_ablation_causal_deltas.png" alt="T16 causal ablation deltas against residual FNO" />
+            <figcaption>相对 Residual FNO 的配对种子差。负值表示 challenger 更好；Absolute FNO 只在 view/joint OOD 稳定转负。</figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-top:14px;">
+        <table>
+          <thead><tr><th>对照</th><th>观察证据</th><th>能支持的判断</th><th>不能越界的地方</th></tr></thead>
+          <tbody>
+            <tr><td>43,363-param Residual FNO vs 49,111-param U-Net</td><td>Residual FNO 在 15/15 field 与 15/15 held-out seed-domain 汇总单元更低；这些汇总不是 15 份独立物理数据。</td><td>当前数据/预算下 spectral mixing 值得继续。</td><td>不等于任意 FNO 普遍优于 CNN。</td></tr>
+            <tr><td>with vs without reprojection loss</td><td>带物理损失在五域 field mean 均更低，15 个 field 单元中 13 个更好。</td><td>保留 differentiable BOST consistency，并继续扫权重。</td><td>三种子区间仍宽，不能写“统计显著”。</td></tr>
+            <tr><td>residual vs absolute output</td><td>Residual 在 IID/noise 三种子全胜；Absolute 在 view/joint 三种子全胜。</td><td>固定 skip 存在工况依赖，值得做 reliability gate / dual head。</td><td>Absolute 仍使用 lift input，不是 direct raw operator。</td></tr>
+            <tr><td>family OOD</td><td>Residual 0.667、Absolute 0.670，均明显失败。</td><td>优先补 phantom/真实流态分布与 NeRIF refinement。</td><td>不能用架构小改动声称跨流态泛化。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="notice warning" style="margin-top:14px;">
+        <h3>由反例导出的下一模型，而不是拍脑袋加模型</h3>
+        <p>固定 residual skip 会把 physics lift 原样带进输出；当观测缺失时，absolute branch 可能更稳。后续 dual v1 已证明“从零学 alpha”会塌缩，而 support-view 闭式最小二乘权重更有效。因此下一步不再是自由 gate，而是以物理权重为锚点学受限修正/零空间残差。这同时回应 M3B：先验强度必须随 views/noise/dynamics 工作域变化。</p>
+      </div>
+      <div class="button-row" style="margin-top:14px;">
+        <a class="button primary" href="./document_reader.html?doc=t16_operator_ablation_review_brief.md">打开三种子审核 brief</a>
+        <a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_ablations.py">消融源码</a>
+        <a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fablations%2Fablation_report.json">完整 JSON</a>
+        <a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fablations%2Fablation_summary.csv">跨种子摘要</a>
+        <a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fablations%2Fablation_paired_deltas.csv">配对差值</a>
+      </div>
+    </section>
+
+    <section id="smoke-results">
+      <div class="pill-row"><span class="pill">已运行</span><span class="pill blue">可重复</span><span class="pill gold">synthetic closure</span></div>
+      <h2 style="margin-top:10px;">单次运行基线（第一 checkpoint）</h2>
+      <p>已在本机用 PyTorch 2.13 与官方 NeuralOperator 2.0 跑通完整代码：同一个 BOST forward matrix 负责生成观测与重投影约束；64 train、16 val 和 88 个测试样本严格按工况/phantom family 分层。所有模型只使用一组在训练集拟合并锁定的全局标定，不做逐样本真值对齐。</p>
+      <div class="result-strip">
+        <div class="result-cell"><b>0.4573</b><span>physics lift<br />IID field rel. L2</span></div>
+        <div class="result-cell"><b>0.2706</b><span>3D U-Net<br />IID field rel. L2</span></div>
+        <div class="result-cell"><b>0.2321</b><span>Residual 3D FNO<br />IID field rel. L2</span></div>
+        <div class="result-cell"><b>18 / 20</b><span>IID 样本中 FNO field error 优于 U-Net</span></div>
+        <div class="result-cell"><b>byte-identical</b><span>固定 seed 两轮 sample metrics 完全一致</span></div>
+      </div>
+      <div class="figure-gallery">
+        <figure class="chart">
+          <img src="./demo_t16_operator/results/t16_split_metrics.png" alt="T16 field and held-out reprojection metrics across five test domains" />
+          <figcaption>均值与 95% CI。FNO 在五类测试的 field mean 都低于 U-Net；少视角 held-out 排名出现分叉。</figcaption>
+        </figure>
+        <div class="grid">
+          <figure class="chart">
+            <img src="./demo_t16_operator/results/t16_training_curves.png" alt="T16 U-Net and FNO training curves" />
+            <figcaption>FNO 在约第 15 epoch 后超过 U-Net；10 epoch 的早停判断会给出相反排序。</figcaption>
+          </figure>
+          <figure class="chart">
+            <img src="./demo_t16_operator/results/t16_accuracy_cost.png" alt="T16 neural model accuracy and CPU inference cost" />
+            <figcaption>本次 CPU checkpoint 中 FNO 约 43k 参数、U-Net 约 87k；physics lift 的生成时间未计入神经前向计时。</figcaption>
+          </figure>
+        </div>
+      </div>
+      <figure class="chart" style="margin-top:12px;">
+        <img src="./demo_t16_operator/results/t16_reconstruction_panel.png" alt="Thin-front family OOD reconstruction comparison" />
+        <figcaption>完整保留的 thin-front family OOD 中心切片；前四幅使用同一色标。FNO 虽比 U-Net 略好，field error 仍为 0.6789，远不能叫跨结构泛化成功。</figcaption>
+      </figure>
+      <div class="table-wrap" style="margin-top:14px;">
+        <table>
+          <thead><tr><th>测试域</th><th>Physics lift</th><th>3D U-Net</th><th>Residual FNO</th><th>当前判断</th></tr></thead>
+          <tbody>
+            <tr><td>IID field</td><td>0.4573</td><td>0.2706</td><td><strong>0.2321</strong></td><td>小型 closure 中 FNO 有效。</td></tr>
+            <tr><td>3-view OOD field</td><td>0.7705</td><td>0.5824</td><td><strong>0.5081</strong></td><td>场误差改善，但绝对误差仍大。</td></tr>
+            <tr><td>3-view OOD held-out</td><td>0.6822</td><td>0.5466</td><td><strong>0.5420</strong></td><td>改善仅 0.0046；配对 95% CI 跨零。</td></tr>
+            <tr><td>Noise OOD field</td><td>0.4789</td><td>0.3054</td><td><strong>0.2666</strong></td><td>合成噪声偏移较稳。</td></tr>
+            <tr><td>Family OOD field</td><td>0.7949</td><td>0.7069</td><td><strong>0.6789</strong></td><td>三者都失败，不能外推真实火焰。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="notice danger" style="margin-top:14px;">
+        <h3>最值得师兄审核的反例</h3>
+        <p>三视角和 joint OOD 中，FNO 的 field error 明显优于 U-Net，但 held-out 均值只改善 0.0046 与 0.0024，配对 95% 区间都跨零；joint OOD 还有 7/16 个样本出现 field 更好、held-out 反而更差。这说明 spectral prior 可以让 synthetic truth 上的体场更接近，却不保证真实无真值场景可用的 data-consistency 指标同步变好。下一步应优先做 data-consistency layer、geometry-aware input 或 operator-initialized NeRIF，而不是只增加 modes/width。</p>
+      </div>
+      <div class="button-row" style="margin-top:14px;">
+        <a class="button primary" href="./document_reader.html?doc=t16_operator_smoke_review_brief.md">打开师兄审核 brief</a>
+        <a class="button" href="./document_reader.html?doc=demo_t16_operator%2FREADME.md">代码与复跑说明</a>
+        <a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_benchmark.py">运行入口源码</a>
+        <a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Frun_report.json">机器可读报告</a>
+        <a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fsample_metrics.csv">逐样本指标</a>
+      </div>
+    </section>
+
+    <section>
+      <div class="notice warning">
+        <h3>M3B 已经给 T16 提供了什么</h3>
+        <p>M3B 交叉实验先在 80 个 synthetic 环境中证明先验收益会随 noise、views 和 dynamics 联动；新的<a href="./m3b_family_selector_dashboard.html">跨形态 selector</a>又扩展到 864 个观测格，证明 morphology 会把 oracle rank 从 2 推到 full rank。固定 rank 3 mean/p95 regret 为 1.561%/5.635%；组合 support/spectrum/temporal 特征在无 held-out camera 时为 0.252%/1.267%，加入 held-out 为 0.210%/1.054%。T16 因此不能只报告全数据平均 L2，也不能把 held-out residual 直接当 field quality；必须分层 condition/family/geometry，并保留 full-rank/NeRIF 回退。</p>
+        <p><strong>边界：</strong>M3B 的 rank 是 temporal SVD rank，不是 FNO Fourier modes、latent width 或 neural-operator rank。它为 T16 提供的是实验设计、失败案例和未来 temporal-operator baseline，不能直接决定静态 3D FNO 的超参数。</p>
+        <div class="button-row" style="margin-top:12px;"><a class="button primary" href="./m3b_family_selector_dashboard.html">查看 864 格容量证据</a><a class="button" href="./m3b_interaction_dashboard.html">上一轮 80 环境交叉</a><a class="button" href="./document_reader.html?doc=m3b_family_selector_brief.md">最新一页 brief</a></div>
+      </div>
+      <div class="grid three" style="margin-top:12px;">
+        <article class="card"><span class="pill gold">数据</span><h3>按 condition cell 切分</h3><p>训练只覆盖预声明的 view/noise 组合；3/9 views 和噪声极端值保留为整格 OOD，不能随机拆散后再叫跨工况泛化。M3B 噪声乘子不是实验单位，真实数据需用 displacement residual 重标定。</p></article>
+        <article class="card"><span class="pill blue">评价</span><h3>保留反例指标</h3><p>除 field L2 外，必须报告 held-out view、gradient/边界和至少一个 centroid、mass 或等价积分量，防止“更平滑”冒充“更物理”。</p></article>
+        <article class="card"><span class="pill rust">4D 扩展</span><h3>固定 rank 不是终点</h3><p>只有静态 T16 跑稳后，temporal operator 才与 framewise、固定-rank SVD 和无真值 selector 公平比较。</p></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>先把三个概念分开</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>范式</th><th>模型学什么</th><th>新样本如何处理</th><th>放进你的毕设</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Neural field / NeRIF</strong></td><td>用坐标网络表示一个具体三维场。</td><td>通常对每个新观测重新优化网络权重。</td><td>物理主线和高精度 per-instance baseline。</td></tr>
+            <tr><td><strong>普通 CNN/U-Net</strong></td><td>固定离散网格之间的有限维映射。</td><td>一次前向推理，但常绑定训练分辨率和布局。</td><td>必须做的公平数据驱动 baseline。</td></tr>
+            <tr><td><strong>Neural operator</strong></td><td>函数空间之间的映射，例如观测场到三维物理场。</td><td>一组共享参数处理训练分布内的新实例。</td><td>T16 主模型，重点检验跨 phantom/view/noise/resolution 泛化。</td></tr>
+            <tr><td><strong>PINN/PINO</strong></td><td>PINN 多为单实例解函数；PINO 学一族问题的解算子并加入物理约束。</td><td>取决于是否预训练 operator 和是否 test-time optimization。</td><td>第一阶段只加 BOST forward loss，不急着加入 Navier-Stokes。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>推荐起点：physics lift + reliability-aware FNO</h2>
+      <pre class="equation">z0 = A_g* d  or  fixed-budget SIRT(d, g)
+alpha = gate(view coverage, geometry, residual statistics)
+n_hat = alpha * z0 + FNO_theta([z0, sampling_density, valid_mask, metadata])
+d_hat = A_g(n_hat)
+
+L = lambda_field L_field + lambda_grad L_grad
+  + lambda_proj L_reprojection + lambda_bc L_boundary</pre>
+      <div class="pipeline" aria-label="T16 recommended pipeline">
+        <div class="pipe-step"><b>1 多视角观测</b><span>displacement、view geometry、mask、noise/view metadata。</span></div>
+        <div class="pipe-step"><b>2 物理提升</b><span>用 adjoint/backprojection 或固定预算 SIRT 生成规则三维输入。</span></div>
+        <div class="pipe-step"><b>3 Hybrid FNO</b><span>在可信工况学残差，在受损 lift 工况降低 skip 或切换 absolute branch。</span></div>
+        <div class="pipe-step"><b>4 Forward 验证</b><span>把预测场投回 train/held-out views，避免只看漂亮切片。</span></div>
+        <div class="pipe-step"><b>5 泛化审计</b><span>unseen family、view、noise、mask、resolution 与系统偏差。</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>三条模型路线</h2>
+      <p>切换路线查看最适合的输入、研究问题和停止条件。</p>
+      <div class="segmented" role="group" aria-label="选择算子学习路线">
+        <button class="segment active" type="button" data-model="residual" aria-pressed="true">Hybrid FNO</button>
+        <button class="segment" type="button" data-model="deeponet" aria-pressed="false">DeepONet</button>
+        <button class="segment" type="button" data-model="temporal" aria-pressed="false">Temporal operator</button>
+      </div>
+      <div class="model-readout" id="model-readout">
+        <div>
+          <h3 id="model-title">Reliability-aware FNO：由消融反例导出的下一模型</h3>
+          <p id="model-summary">规则三维 physics lift 解决观测布局；gate 根据 view/geometry/residual 调节 skip，FNO 同时具备残差修正和绝对场分支。</p>
+          <ul id="model-actions"><li>先在当前 8×16×16 闭环验证 gate。</li><li>同时报告 IID 与 3-view winner map。</li><li>通过后再升 24³/32³。</li></ul>
+        </div>
+        <div class="model-facts">
+          <div class="fact"><b id="model-input">3D lifted volume</b><span>推荐输入</span></div>
+          <div class="fact"><b id="model-output">3D residual field</b><span>推荐输出</span></div>
+          <div class="fact"><b id="model-risk">中等</b><span>执行风险</span></div>
+          <div class="fact"><b id="model-question">泛化是否真实</b><span>核心科学问题</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>真正应该努力的六个方向</h2>
+      <div class="grid three">
+        <article class="card"><span class="pill">1 数学</span><h3>从函数拟合到算子映射</h3><p>能写清输入函数空间、输出函数空间、传感器采样、query coordinate 和 discretization invariance。先读 JMLR 总论，不必一开始证明定理。</p></article>
+        <article class="card"><span class="pill blue">2 模型</span><h3>设计 BOST-specific lifting</h3><p>FNO 不是直接吞任意视角列表。最有研究价值的设计是 geometry-aware adjoint/SIRT lift、采样密度和有效 mask channel。</p></article>
+        <article class="card"><span class="pill gold">3 数据</span><h3>构造跨工况 paired dataset</h3><p>训练/测试按 phantom family、视角、噪声和分辨率隔离；参考 M3B 把完整 condition cell 留作 OOD，而不是只随机拆 seed。数据分布设计比多堆两层网络更决定论文可信度。</p></article>
+        <article class="card"><span class="pill rust">4 物理</span><h3>用 forward model 约束</h3><p>优先使用 BOST reprojection、boundary 和 gradient loss。没有速度/压力边界条件时，不要为了“物理”强行上 Navier-Stokes。</p></article>
+        <article class="card"><span class="pill blue">5 评价</span><h3>检验跨分辨率与 OOD</h3><p>FNO 的 resolution transfer 是待验证假设，不是免费属性。必须与 U-Net、插值和传统重建公平比较。</p></article>
+        <article class="card"><span class="pill">6 工程</span><h3>控制 3D 显存与吞吐</h3><p>从 2D 和 24^3 起步，记录 batch、modes、width、显存、训练/推理时间。超过预算时使用 TFNO、patch 或 3D-stack 降级。</p></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>实验矩阵与论文图</h2>
+      <div class="grid two">
+        <article class="card">
+          <h3>必须做的 baseline</h3>
+          <ol>
+            <li>Landweber/SIRT 或 M1 固定预算重建。</li>
+            <li>3D CNN/U-Net，验证是否真需要 operator inductive bias。</li>
+            <li>Residual FNO without reprojection loss。</li>
+            <li>Direct FNO vs physics-lift residual FNO。</li>
+            <li>小规模 NeRIF-style per-instance optimization。</li>
+            <li>若进入 4D：framewise、M3B 固定-rank SVD 与无真值 rank selector；不把 temporal rank 当 FNO modes。</li>
+          </ol>
+        </article>
+        <article class="card">
+          <h3>八张结果图</h3>
+          <ol>
+            <li>模型与 BOST 物理链。</li>
+            <li>多方法三维切片。</li>
+            <li>view × noise 分层增益热图与失败格计数。</li>
+            <li>unseen phantom family。</li>
+            <li>resolution transfer。</li>
+            <li>field vs held-out reprojection，并标记积分量变差象限。</li>
+            <li>模型/loss ablation。</li>
+            <li>accuracy-speed-memory Pareto。</li>
+          </ol>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>12 周推进</h2>
+      <div class="roadmap">
+        <div class="phase"><b>Checkpoint 已完成</b><span>168-sample 3D closure、physics lift、U-Net/FNO、五类 split、held-out physics 与复跑一致性。</span></div>
+        <div class="phase"><b>因果消融已完成</b><span>三种子 residual/absolute、with/without reprojection、匹配参数 U-Net；发现 view-domain 翻转。</span></div>
+        <div class="phase"><b>W4-W7 Gate、几何与尺度</b><span>reliability gate、train-size、独立 24³/32³ 数据、组内 ray/geometry 接口；显存不足才进入 TFNO。</span></div>
+        <div class="phase"><b>W8-W12 只扩一条</b><span>operator-initialized NeRIF 或 temporal operator 二选一，由师兄的数据和目标决定。</span></div>
+      </div>
+      <div class="button-row" style="margin-top:12px;">
+        <a class="button primary" href="./document_reader.html?doc=operator_learning_bost_experiment_spec.md">打开完整实验规格</a>
+        <a class="button" href="./document_reader.html?doc=t16_operator_ablation_review_brief.md">最新师兄审核问题</a>
+        <a class="button" href="./document_reader.html?doc=t16_operator_learning_path.md">代码学习路径</a>
+        <a class="button" href="./first_month_experiment_board.html">第一月实验板</a>
+        <a class="button" href="./m3b_family_selector_dashboard.html">M3B 容量控制证据</a>
+      </div>
+    </section>
+
+    <section>
+      <h2>核心阅读脊柱</h2>
+      <div class="grid two">
+        <article class="card paper-card"><div class="paper-label">先懂定义</div><div><h3><a href="https://www.jmlr.org/papers/v24/21-1524.html">Neural Operator, JMLR 2023</a></h3><p>读函数空间、discretization invariance、FNO/GNO/low-rank operator 分类。它是概念总地图。</p></div></article>
+        <article class="card paper-card"><div class="paper-label">两种根架构</div><div><h3><a href="https://doi.org/10.1038/s42256-021-00302-5">DeepONet</a> + <a href="https://iclr.cc/virtual/2021/poster/3281">FNO</a></h3><p>分别抽 branch/trunk 与 Fourier kernel；重点比较传感器布局、输出坐标、规则网格和分辨率迁移。</p></div></article>
+        <article class="card paper-card"><div class="paper-label">逆问题</div><div><h3><a href="https://openreview.net/forum?id=S4fEjmWg4X">Neural Inverse Operators, ICML 2023</a></h3><p>解释 operator-to-function inverse map，最适合支撑“BOST 观测算子到折射率函数”的题目表述。</p></div></article>
+        <article class="card paper-card"><div class="paper-label">物理约束</div><div><h3><a href="https://openreview.net/forum?id=dtYnHcmQKeM">PINO, ICLR 2022</a></h3><p>学习 data loss 与 physics loss 如何联合。T16 先把 physics 定义成 BOST forward projection。</p></div></article>
+        <article class="card paper-card"><div class="paper-label">直接方法邻居</div><div><h3><a href="https://doi.org/10.1016/j.ijthermalsci.2023.108619">RecFNO, IJTS 2024</a></h3><p>稀疏观测到完整流/热场、三种 sparse embedding、resolution transfer，最接近本科主模型。</p></div></article>
+        <article class="card paper-card"><div class="paper-label">实验流体邻居</div><div><h3><a href="https://doi.org/10.1016/j.jcp.2025.114148">Sparse flow reconstruction, JCP 2025</a></h3><p>包含 Schlieren 和 3D turbulent jet 数据，提醒你 operator learning 必须面对稀疏、噪声、传感器缺失和真实测量。</p></div></article>
+        <article class="card paper-card"><div class="paper-label">少 paired truth</div><div><h3><a href="https://openreview.net/forum?id=0FxnSZJPmh">PI-DION, ICLR 2025</a></h3><p>只有观测和可信 forward model、缺少三维标签时的进阶参考；第一版不能直接照搬其 PDE 稳定性假设。</p></div></article>
+        <article class="card paper-card"><div class="paper-label">不规则几何</div><div><h3><a href="https://jmlr.org/papers/v24/23-0064.html">Geo-FNO</a> + <a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/70518ea42831f02afc3a2828993935ad-Abstract-Conference.html">GINO</a></h3><p>只有当真实相机/ray geometry 无法可靠提升到规则网格时再读；否则会给本科主线平添变量。</p></div></article>
+        <article class="card paper-card"><div class="paper-label">三维显存</div><div><h3><a href="https://research.nvidia.com/labs/lpr/publication/kossaifi2023multi/">MG-TFNO, TMLR 2024</a></h3><p>当 24³/32³ 已证明有价值、显存成为主要瓶颈后，再考虑 tensorization 与 multi-grid decomposition。</p></div></article>
+        <article class="card paper-card"><div class="paper-label">BOST 网络前史</div><div><h3><a href="https://doi.org/10.1364/OE.505992">GRU-BOST, Optics Express 2023</a></h3><p>直接的 BOST 神经重建邻居；提取输入投影序列、3D ray matrix、实验验收和推理时间，不把 GRU 自动等同 4D operator。</p></div></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>分层学习入口</h2>
+      <p>顺序按你的任务编排，不按模型流行度编排。先完成“会验收逆问题”，再升级架构。</p>
+      <div class="grid two">
+        <article class="card"><span class="pill">代码主入口</span><h3><a href="https://neuraloperator.github.io/dev/">NeuralOperator 2.0 官方文档</a></h3><p>先跑官方 Darcy FNO，再读 N-D FNO API、Lp/H1 loss、grid embedding 和 TFNO。当前 T16 已用同一官方包完成 3D forward/train。</p><div class="button-row"><a class="button" href="https://neuraloperator.github.io/dev/auto_examples/models/plot_FNO_darcy.html">FNO tutorial</a><a class="button" href="https://neuraloperator.github.io/dev/modules/generated/neuralop.models.FNO.html">3D FNO API</a></div></article>
+        <article class="card"><span class="pill blue">系统课程</span><h3><a href="https://camlab.ethz.ch/teaching/deep-learning-in-scientific-computing-2023.html">ETH Deep Learning in Scientific Computing</a></h3><p>官方页面同时提供 operator learning、DeepONet、FNO/CNO 的 lecture、slides 与 tutorial code；优先看 Introduction to Operator Learning、Deep Operator Networks、Neural Operators、FNO/CNO 四讲。</p></article>
+        <article class="card"><span class="pill gold">中文辅助</span><h3><a href="https://www.bilibili.com/video/BV15ioiY5EJp/">MathWorks 中国：PINN / FNO / PINO</a></h3><p>来源为 MathWorks 中国官方账号，适合先建立中文术语和总体图景；它使用 MATLAB 演示，不能替代本项目的 PyTorch/NeuralOperator 代码练习。</p></article>
+        <article class="card"><span class="pill rust">本项目路径</span><h3>从 shape 到 failure audit</h3><p>已经把向量微积分、逆问题、PyTorch 3D、FNO/DeepONet、物理一致性和 OERF 对接拆成五级过关产物。</p><div class="button-row"><a class="button primary" href="./document_reader.html?doc=t16_operator_learning_path.md">打开 12 周学习路径</a><a class="button" href="./document_reader.html?doc=operator_learning_bost_experiment_spec.md">实验规格</a></div></article>
+      </div>
+      <div class="notice warning" style="margin-top:14px;">
+        <h3>视频使用规则</h3>
+        <p>先用视频建立结构，再回到论文公式和本地代码逐项核对。每看完一讲必须留下一个可运行 notebook/script、一张 shape/loss 图和一个失败解释；只看完播放列表不算学习产出。</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>接回蔡组研究谱系</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>OERF/Cai 论文</th><th>已经做了什么</th><th>T16 可继承什么</th><th>不能夸成什么</th></tr></thead>
+          <tbody>
+            <tr><td><a href="https://doi.org/10.1016/j.jqsrt.2018.07.011">NTAS CNN, 2018</a></td><td>从有限投影/sinogram 快速预测温度与浓度。</td><td>paired data、projection-to-field、速度与噪声评估。</td><td>它不是 DeepONet/FNO 神经算子。</td></tr>
+            <tr><td><a href="https://doi.org/10.1017/jfm.2019.545">3D flame evolution, 2019</a></td><td>从历史二维投影快速预测三维火焰演化。</td><td>时序输入、三维输出、在线推理和课题组需求语言。</td><td>它不是 T16 的 BOST inverse operator。</td></tr>
+            <tr><td><a href="https://doi.org/10.1016/j.ast.2020.106123">Limited-projection VT, 2020</a></td><td>少投影三维火焰重构与 ART 对照。</td><td>最接近 OERF 内部 projection-to-volume 前史。</td><td>CTC emission physics 不等于 BOST deflection physics。</td></tr>
+            <tr><td><a href="https://doi.org/10.1364/JOSAB.398009">kHz 3D flame, 2020</a></td><td>低速 2D 记录到高帧率 3D 序列。</td><td>时序超分辨和硬件/计算成本共同优化。</td><td>不能直接当作 FNO 或 4D BOST baseline。</td></tr>
+            <tr><td><a href="https://doi.org/10.1063/5.0250899">NeRIF, 2025</a></td><td>用连续坐标场和 BOST forward loss 重建折射率。</td><td>给 T16 提供物理量、forward operator、边界和评价。</td><td>Neural field 不等于 neural operator。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>找何远哲时必须问清</h2>
+      <div class="grid two">
+        <article class="card">
+          <h3>任务定义</h3>
+          <ol>
+            <li>算子学习指 projection-to-volume，还是 3D/4D evolution？</li>
+            <li>输入是 raw image、displacement、projection，还是传统重建初值？</li>
+            <li>输出是 refractive index、density、temperature、emission，还是 velocity correction？</li>
+            <li>组里已有哪种 paired dataset，能否用于本科论文？</li>
+          </ol>
+        </article>
+        <article class="card">
+          <h3>模型与验收</h3>
+          <ol start="5">
+            <li>更希望 FNO、DeepONet、operator transformer，还是可靠 baseline？</li>
+            <li>是否接受 adjoint/SIRT lift + residual FNO？</li>
+            <li>最看 field error、test-view、速度、显存还是跨工况泛化？</li>
+            <li>算子输出是否应作为 NeRIF/TDBOST 初值？</li>
+          </ol>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="notice danger">
+        <h3>真实建议</h3>
+        <p>算子学习“相对容易”的是模型原型，不是可信的三维成果。真正的工作量在批量 paired data、显存、训练/测试分布和物理验收。最值得做的不是再发明一个名字，而是证明 <strong>physics lift、operator architecture 和 reprojection loss 各自在哪些视角/噪声/分辨率条件下有用或失败</strong>。</p>
+      </div>
+      <div class="button-row" style="margin-top:14px;">
+        <a class="button primary" href="./topic_deep_dive.html?id=T16">打开 T16 完整档案</a>
+        <a class="button" href="./paper_library/index.html?q=Neural%20operator%20DeepONet%20FNO%20inverse">筛选算子论文</a>
+        <a class="button" href="./document_reader.html?doc=demo_t16_operator%2FREADME.md">复跑模型</a>
+        <a class="button" href="./document_reader.html?doc=t16_operator_learning_path.md">学习路径</a>
+        <a class="button" href="https://neuraloperator.github.io/dev/user_guide/index.html">NeuralOperator 官方教程</a>
+        <a class="button" href="https://deepxde.readthedocs.io/en/latest/demos/operator.html">DeepXDE operator demos</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>来源与运行核验日期：2026-07-10。算子根论文使用 Nature Machine Intelligence、ICLR/OpenReview、JMLR、NeurIPS、TMLR 与正式 DOI；OERF 关联论文使用 Cambridge、Elsevier、Optica 与 AIP 正式入口。页面数值来自仓库内可复跑 synthetic checkpoint，不冒充 NeRIF/TDBOST 复现或 OERF 实验结果。</footer>
+
+  <script>
+    const modelData = {
+      residual: {
+        title: "Reliability-aware FNO：由消融反例导出的下一模型",
+        summary: "规则三维 physics lift 解决观测布局；gate 根据 view/geometry/residual 调节 skip，FNO 同时具备残差修正和绝对场分支。Residual/Absolute 的少视角翻转让这个升级有了可反驳动机。",
+        actions: ["先在当前 8×16×16 闭环验证 fixed/learned gate。", "同时报告 IID 与 3-view winner map。", "通过后再升 24^3/32^3。"],
+        input: "3D lifted volume",
+        output: "gated 3D field",
+        risk: "中等",
+        question: "gate 能否统一工作域"
+      },
+      deeponet: {
+        title: "DeepONet：最纯粹的 measurement-to-query operator",
+        summary: "branch 编码多视角观测，trunk 编码查询坐标，输出连续 n(x,y,z)。它适合任意查询分辨率，但标准 branch 往往绑定固定传感器数量和顺序。",
+        actions: ["先固定 5 views。", "加入 view mask 后再测缺失视角。", "与 coordinate MLP/NeRIF 明确区分。"],
+        input: "view sensors + geometry",
+        output: "n(x,y,z) queries",
+        risk: "中高",
+        question: "可变视角编码"
+      },
+      temporal: {
+        title: "Temporal operator：连接 4D BOST 的挑战线",
+        summary: "学习 projection history 或三维初值序列到未来/完整四维场的映射，可接蔡组 JFM 2019 与 TDBOST。数据量、时序泄漏和事件过度平滑风险最高。",
+        actions: ["静态 T16 跑通后再做。", "严格按时间和工况划分。", "报告频谱、事件保真和长期漂移。"],
+        input: "history fields/projections",
+        output: "3D/4D trajectory",
+        risk: "高",
+        question: "动态事件保真"
+      }
+    };
+
+    function renderModel(key) {
+      const item = modelData[key];
+      document.querySelectorAll(".segment").forEach((button) => {
+        const active = button.dataset.model === key;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      document.getElementById("model-title").textContent = item.title;
+      document.getElementById("model-summary").textContent = item.summary;
+      document.getElementById("model-actions").innerHTML = item.actions.map((value) => `<li>${value}</li>`).join("");
+      document.getElementById("model-input").textContent = item.input;
+      document.getElementById("model-output").textContent = item.output;
+      document.getElementById("model-risk").textContent = item.risk;
+      document.getElementById("model-question").textContent = item.question;
+    }
+
+    document.querySelectorAll(".segment").forEach((button) => {
+      button.addEventListener("click", () => renderModel(button.dataset.model));
+    });
+    renderModel("residual");
+  </script>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

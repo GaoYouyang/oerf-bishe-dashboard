@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>第一月实验执行板 | OERF 毕设导航</title>
+  <style>
+    :root {
+      --bg:#f7faf9;
+      --panel:#fff;
+      --ink:#1f2933;
+      --muted:#61717d;
+      --line:#d8e1df;
+      --green:#16756f;
+      --blue:#315f93;
+      --amber:#9a6818;
+      --red:#9e4338;
+      --soft-green:#e8f3f0;
+      --soft-blue:#eaf0f7;
+      --soft-amber:#f8f0dc;
+      --soft-red:#f8ece9;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg, rgba(49,95,147,.10), transparent 340px), var(--bg);
+      line-height:1.68;
+      letter-spacing:0;
+    }
+    header, main, footer { width:min(1220px, calc(100vw - 36px)); margin:0 auto; }
+    header { padding:34px 0 18px; }
+    h1 { margin:14px 0 10px; font-size:clamp(30px,4vw,48px); line-height:1.1; }
+    h2 { margin:30px 0 12px; font-size:24px; }
+    h3 { margin:0 0 8px; font-size:18px; }
+    p { margin:0 0 12px; color:var(--muted); }
+    a { color:var(--blue); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    code, pre { background:#edf2f1; border-radius:6px; }
+    code { padding:1px 5px; }
+    pre { margin:8px 0 0; padding:10px 12px; overflow:auto; color:#334148; }
+    .button-row { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0; }
+    .button {
+      display:inline-flex;
+      align-items:center;
+      min-height:38px;
+      padding:8px 12px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:#fff;
+      color:var(--ink);
+      font-weight:700;
+    }
+    .button.primary { background:var(--blue); border-color:var(--blue); color:#fff; }
+    .grid { display:grid; gap:12px; }
+    .grid.two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .grid.three { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .grid.four { grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .notice, .card {
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:var(--panel);
+      padding:16px;
+      margin:14px 0;
+    }
+    .notice { border-left:5px solid var(--blue); background:linear-gradient(90deg,var(--soft-blue),#fff 76%); }
+    .green { border-left-color:var(--green); background:linear-gradient(90deg,var(--soft-green),#fff 76%); }
+    .warning { border-left-color:var(--amber); background:linear-gradient(90deg,var(--soft-amber),#fff 76%); }
+    .risk { border-left-color:var(--red); background:linear-gradient(90deg,var(--soft-red),#fff 76%); }
+    .metric b { display:block; color:var(--blue); font-size:28px; line-height:1.1; }
+    .metric span { color:var(--muted); font-size:13px; }
+    table {
+      width:100%;
+      border-collapse:collapse;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:8px;
+      overflow:hidden;
+    }
+    th,td {
+      padding:11px 12px;
+      border-bottom:1px solid var(--line);
+      text-align:left;
+      vertical-align:top;
+      font-size:14px;
+    }
+    th { background:#edf4f8; color:#2f3b41; }
+    tr:last-child td { border-bottom:0; }
+    .tag {
+      display:inline-flex;
+      padding:3px 8px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      border:1px solid var(--line);
+      white-space:nowrap;
+      margin:0 5px 5px 0;
+    }
+    .core { background:var(--soft-green); color:var(--green); border-color:#cce4dc; }
+    .base { background:var(--soft-blue); color:var(--blue); border-color:#d5e2f2; }
+    .upgrade { background:var(--soft-amber); color:var(--amber); border-color:#ead5ac; }
+    .stop { background:var(--soft-red); color:var(--red); border-color:#edc8c0; }
+    ul, ol { margin:8px 0 0; padding-left:22px; color:var(--muted); }
+    li { margin-bottom:7px; }
+    .week { border-top:5px solid var(--blue); min-height:250px; }
+    .deliverable {
+      background:#f7fbfa;
+      border:1px solid #dce8e5;
+      border-radius:8px;
+      padding:10px;
+      color:#405058;
+      font-size:13px;
+      margin-top:9px;
+    }
+    footer { margin:34px auto; color:var(--muted); font-size:12px; }
+    @media (max-width:940px) {
+      .grid.two, .grid.three, .grid.four { grid-template-columns:1fr; }
+      table { display:block; overflow-x:auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="button" href="./index.html">返回主导航</a>
+    <h1>第一月实验执行板</h1>
+    <p>这页回答“读完 14 天之后，第一月到底做什么”。目标是把 M0-M3C 从零散 demo 变成可汇报的实验体系：每周有脚本、图、指标、论文话术和需要何远哲师兄确认的问题。最后更新：2026-07-10。</p>
+    <div class="button-row">
+      <a class="button primary" href="./he_bost_14day_reading_plan.html">14 天精读执行包</a>
+      <a class="button" href="document_reader.html?doc=paper_to_demo_map.md">论文到 demo 映射</a>
+      <a class="button" href="document_reader.html?doc=experiment_matrix_and_figure_plan.md">实验矩阵与图表计划</a>
+      <a class="button" href="document_reader.html?doc=data_request_checklist.md">数据请求清单</a>
+      <a class="button" href="./m3b_six_axis_dashboard.html">M3B 六轴结果</a>
+      <a class="button" href="./m3b_interaction_dashboard.html">M3B 交叉验证</a>
+      <a class="button" href="./m3b_family_selector_dashboard.html">M3B 跨形态 Selector</a>
+      <a class="button" href="./operator_learning_bost_bridge.html">T16 算子学习</a>
+      <a class="button" href="./operator_3d_innovation_lab.html">算子 × 三维创新实验室</a>
+      <a class="button" href="document_reader.html?doc=t16_reliability_gate_review_brief.md">T16 最新审核 brief</a>
+      <a class="button" href="./he_review_portal.html">师兄审核入口</a>
+    </div>
+    <div class="grid four">
+      <div class="card metric"><b>M0-M2</b><span>主线保底：BOST/NeRIF-style synthetic 闭环与鲁棒性。</span></div>
+      <div class="card metric"><b>M3A</b><span>PIV-BOST 升级：图像/速度误差补偿 toy。</span></div>
+      <div class="card metric"><b>M3B</b><span>4D BOST 升级：六轴、80 环境交叉及 864 格跨形态 selector 均已完成。</span></div>
+      <div class="card metric"><b>T16</b><span>当前主线：checkpoint、三种子消融、18-run gate 和 3-seed dual v1 已完成。</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice green">
+      <h3>第一月总目标</h3>
+      <p>工作重心已经转到师兄提出的“三维重建 + 算子学习”。T16 的 checkpoint、三种子消融、18-run reliability 筛查和 3-seed dual v1 均已完成；M3B 又完成 864 格跨形态无真值容量选择，证明 support/spectrum/temporal 多特征能把固定 rank 3 的 mean regret 从 1.561% 降到 0.252%。第一月剩余任务改为：让师兄审核 inverse/evolution、support/query 和 temporal capacity-control 是否对齐，随后只补独立专家、物理锚定修正、leave-one-geometry-out 与组内 geometry/data 接口。NeRIF 作为 forward physics 与 refinement。</p>
+    </section>
+
+    <h2>四周节奏</h2>
+    <div class="grid four">
+      <article class="card week">
+        <h3>第 1 周：审核当前 checkpoint</h3>
+        <p>把已完成的 168-sample FNO/U-Net/lift 证据拿给师兄，先锁定任务定义。</p>
+        <ul>
+          <li>展示 IID、view/noise/joint/family OOD 与 95% CI。</li>
+          <li>重点解释三视角 field/held-out 分叉和 family OOD 失败。</li>
+          <li>确认输入、输出物理量、geometry、数据权限与无真值指标。</li>
+        </ul>
+        <div class="deliverable">交付：审核 brief + 4 张图 + 7 个决策问题。</div>
+      </article>
+      <article class="card week">
+        <h3>第 2 周：因果消融（已完成）</h3>
+        <p>三个优化种子已经把 output parameterization、BOST loss 与参数量因素拆开。</p>
+        <ul>
+          <li>Residual/absolute 在 IID 与 3-view OOD 发生稳定翻转。</li>
+          <li>带 reprojection 的五域均值方向更好，但三种子区间仍宽。</li>
+          <li>43k Residual FNO 在 30/30 seed-domain 指标单元优于 49k U-Net。</li>
+        </ul>
+        <div class="deliverable">已交付：4 组 ablation + paired seed CI + 3 张图 + 审核 brief。</div>
+      </article>
+      <article class="card week">
+        <h3>第 3 周：简单 gate 筛查（已完成）</h3>
+        <p>六种 FNO 对照验证单标量 physics-lift gate 能否吸收少视角翻转；答案是否定的。</p>
+        <ul>
+          <li>固定 gate 在 view/joint OOD 明显变差。</li>
+          <li>metadata gate 的 field oracle regret 只从 3.10% 变为 3.08%。</li>
+          <li>observed residual 有诊断性，但平铺 3D 通道使训练退化。</li>
+        </ul>
+        <div class="deliverable">已交付：18 runs + 4 张图 + oracle regret + 可复跑脚本。</div>
+      </article>
+      <article class="card week">
+        <h3>第 4 周：双分支 v1 已完成，v2 开始</h3>
+        <p>已实现共享双输出、view dropout、support/query 和 query router；并保留了 router collapse。现在转向 support-consistent v2。</p>
+        <ul>
+          <li>补独立/低共享专家与等容量 ensemble，防止把容量写成路由收益。</li>
+          <li>以 support-fit `w_S` 为必须击败基线，只学受限 `delta_w` 或 nullspace residual。</li>
+          <li>加入 identifiability 与 risk-coverage；无法超过 support-fit 就停止 neural routing。</li>
+          <li>独立高分辨率与真实 geometry 接口随后进入第二月。</li>
+        </ul>
+        <div class="deliverable">已交付 dual v1、闭式强基线和塌缩证据；待交付独立专家 + anchored/nullspace 消融。</div>
+      </article>
+    </div>
+
+    <h2>Demo 看板</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>模块</th>
+          <th>当前命令/材料</th>
+          <th>第一月成功标准</th>
+          <th>可写成的论文结论</th>
+          <th>要问师兄</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag base">M0</span><strong>2D BOST toy</strong></td>
+          <td><code>python3 demo_m0/run_m0_2d_bost.py</code><br><a href="document_reader.html?doc=demo_m0%2FREADME.md">README</a></td>
+          <td>能从合成折射率场生成 BOS-like deflection，并比较 baseline 与 coordinate-field。</td>
+          <td>最小闭环已跑通，但低视角失败不能删，要作为 sparse-view 病态性的证据。</td>
+          <td>真实 BOST 的 forward model 是否能先用 straight-ray 小角度近似？</td>
+        </tr>
+        <tr>
+          <td><span class="tag base">M1</span><strong>3D stack BOST</strong></td>
+          <td><code>python3 demo_m1/run_m1_3d_stack_bost.py</code><br><a href="document_reader.html?doc=demo_m1%2FREADME.md">README</a></td>
+          <td>输出 volume summary、view-count curve 和 metrics CSV。</td>
+          <td>坐标先验在少视角下有帮助，但视角充分时传统 baseline 可能更稳。</td>
+          <td>OERF 真实数据的限制更像少视角、噪声、mask、坏视角还是几何误差？</td>
+        </tr>
+        <tr>
+          <td><span class="tag core">M2</span><strong>鲁棒性扫描</strong></td>
+          <td><code>python3 demo_m2/run_m2_robustness_scan.py</code><br><a href="document_reader.html?doc=demo_m2%2FREADME.md">README</a></td>
+          <td>至少完成 view x noise heatmap、capacity scan、winner map。</td>
+          <td>隐式先验的收益边界依赖 view/noise/capacity，不是“神经网络总赢”。</td>
+          <td>师兄希望本科主实验扫描哪几个变量：view count、noise、mask、encoding 还是 capacity？</td>
+        </tr>
+        <tr>
+          <td><span class="tag core">E4</span><strong>NeRIF-style forward loss</strong></td>
+          <td><a href="document_reader.html?doc=paper_to_demo_map.md">paper_to_demo_map.md</a><br><a href="./neural_field_encoding_bridge.html">encoding bridge</a></td>
+          <td>完成最小坐标 MLP forward-loss 设计；有 GPU 再跑小规模版本。</td>
+          <td>比 post-FBP regularizer 更贴近 NeRIF，但第一月不承诺完整复现。</td>
+          <td>是否允许 simplified NeRIF-style 实验作为本科主线，而不复刻全部论文工程？</td>
+        </tr>
+        <tr>
+          <td><span class="tag upgrade">M3A</span><strong>PIV-BOST compensation toy</strong></td>
+          <td><code>python3 demo_m3a/run_m3a_piv_bost_compensation.py</code><br><a href="document_reader.html?doc=demo_m3a%2FREADME.md">README</a></td>
+          <td>输出补偿前后 velocity RMSE / p95 error / error profile。</td>
+          <td>BOST-style 折射补偿可以降低速度层误差，但真实升级要明确补偿层级。</td>
+          <td>PIV-BOST 补偿发生在 raw image、correlation/displacement、calibration/disparity，还是 velocity vector？</td>
+        </tr>
+        <tr>
+          <td><span class="tag upgrade">M3B</span><strong>4D observable capacity selector</strong></td>
+          <td><code>python3 demo_m3b/run_m3b_family_selector.py</code><br><a href="./m3b_six_axis_dashboard.html">六轴</a> · <a href="./m3b_interaction_dashboard.html">交叉</a> · <a href="./m3b_family_selector_dashboard.html">跨形态 Selector</a> · <a href="document_reader.html?doc=demo_m3b%2FREADME.md">README</a></td>
+          <td>已输出 864 个观测格、6,048 个候选和选择决策、4,320 条特征消融决策、六张图、nested-LOFO 模型审计与独立 validator。</td>
+          <td>morphology 决定最优容量；组合可观测特征有效，held-out residual 不能单独代表 field quality。</td>
+          <td>下一轮应优先做 leave-one-geometry-out、UQ/拒答、bias/sync/exposure blur，还是接真实 4D 数据？</td>
+        </tr>
+        <tr>
+          <td><span class="tag upgrade">M3C</span><strong>真实数据质量控制</strong></td>
+          <td><a href="./bost_system_error_bridge.html">系统误差桥梁</a><br><a href="document_reader.html?doc=data_request_checklist.md">数据请求清单</a></td>
+          <td>完成 manifest 模板、view health report 字段、reprojection check 计划。</td>
+          <td>本科生对课题组的实际价值可能是把真实数据接口、坏视角和报告工具做稳。</td>
+          <td>如果只能给一小份数据，师兄最希望我先检查哪个字段或哪张图？</td>
+        </tr>
+        <tr>
+          <td><span class="tag upgrade">T16</span><strong>BOST inverse operator</strong></td>
+          <td><a href="./operator_3d_innovation_lab.html">创新实验室</a><br><a href="document_reader.html?doc=demo_t16_operator%2FREADME.md">代码/结果</a><br><a href="document_reader.html?doc=t16_reliability_gate_review_brief.md">最新审核 brief</a></td>
+          <td>168-sample baseline、gate、共享/独立 dual、exact null、matched corrector 与 query-calibrated v2c 已完成；下一步是真实 geometry、等容量 controls 与 query-camera VOI。</td>
+          <td>FNO 主干有优势，但简单 gate 未统一少视角翻转，family OOD 仍失败。</td>
+          <td>能否留 query camera？真实 geometry/input/无真值验收，以及是否用 operator 初始化 NeRIF？</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>第一月论文图表清单</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>优先级</th>
+          <th>图/表</th>
+          <th>来源文件</th>
+          <th>支持的论文章节</th>
+          <th>检查口径</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag core">P0</span></td>
+          <td>M0 2D summary + view curve</td>
+          <td><code>demo_m0/results/</code></td>
+          <td>第 4 章：最小 BOST 闭环</td>
+          <td>图上必须标明 synthetic、straight-ray、not full NeRIF。</td>
+        </tr>
+        <tr>
+          <td><span class="tag core">P0</span></td>
+          <td>M1 volume summary + view-count curve</td>
+          <td><code>demo_m1/results/</code></td>
+          <td>第 4 章：三维 sparse-view 边界</td>
+          <td>要写出 3/5 views 帮助、7+ views 不一定胜出的诚实结论。</td>
+        </tr>
+        <tr>
+          <td><span class="tag core">P0</span></td>
+          <td>M2 noise-view heatmap + capacity scan</td>
+          <td><code>demo_m2/results/</code></td>
+          <td>第 4 章：鲁棒性和消融</td>
+          <td>不要只展示赢的图；失败/边界是论文可信度。</td>
+        </tr>
+        <tr>
+          <td><span class="tag upgrade">P1</span></td>
+          <td>M3A compensation summary</td>
+          <td><code>demo_m3a/results/</code></td>
+          <td>第 5 章：PIV-BOST 升级</td>
+          <td>必须写明当前是 velocity-field toy，不是真实 PIV image correlation。</td>
+        </tr>
+        <tr>
+          <td><span class="tag upgrade">P1</span></td>
+          <td>M3B six-axis screening + crossed operating/regret maps</td>
+          <td><code>demo_m3b/results/</code></td>
+          <td>第 5 章：4D BOST 子问题</td>
+          <td>必须写明 OFAT 与 crossed synthetic toy 只解释当前 phantom 的条件性收益，不等价于 TOG tensor decomposition 或真实泛化。</td>
+        </tr>
+        <tr>
+          <td><span class="tag base">P1</span></td>
+          <td>数据 manifest / view health 字段表</td>
+          <td><code>data_request_checklist.md</code></td>
+          <td>第 5 章：真实数据迁移</td>
+          <td>字段要具体到文件、单位、权限和能否公开。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>实验登记模板</h2>
+    <section class="notice">
+      <p>每次跑实验后，至少登记这些字段。后面写论文时，它们会变成方法章节、图注和失败分析，不用靠记忆补账。</p>
+      <pre>experiment_id, date, dataset, method, view_count, noise_level,
+main_metric, best_figure, claim_supported, failure_or_boundary, next_action</pre>
+    </section>
+
+    <h2>第一月会前检查</h2>
+    <div class="grid two">
+      <article class="card">
+        <h3>拿去给师兄看的 3 张图</h3>
+        <ul>
+          <li>T16 五 split field / held-out 柱状图：展示结果和置信区间。</li>
+          <li>T16 thin-front OOD 切片：主动展示跨 family 仍失败。</li>
+          <li>T16 训练曲线与模型链：解释 FNO 为什么在后期才超过 U-Net，以及 measurement -> lift -> residual -> forward validation。</li>
+          <li>manifest 字段表：说明你知道要什么数据，不是笼统要“给点数据”。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3>必须让师兄裁剪的 4 件事</h3>
+        <ul>
+          <li>T16 是 inverse operator 还是 evolution operator？</li>
+          <li>真实数据最小包能给什么？</li>
+          <li>baseline 应按组内代码、UBOST、SART/TV，还是 NeRIF 论文设置？</li>
+          <li>哪些图、数据、结论可以写进本科论文或公开页面？</li>
+        </ul>
+      </article>
+    </div>
+
+    <section class="notice warning">
+      <h3>降级规则</h3>
+      <p>如果一个月内拿不到真实数据，不代表项目失败。保底路线是 A 主线：synthetic BOST + traditional baseline + NeRIF-style coordinate representation + view/noise/capacity scan + open-data manifest dry run。B/C/F 是升级，不是毕业生存条件。</p>
+    </section>
+  </main>
+
+  <footer>
+    This board is based on local demo READMEs, `paper_to_demo_map.md`, `experiment_matrix_and_figure_plan.md`, and the He/BOST reading plan audited on 2026-07-09.
+  </footer>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+{
+  "schema_version": "n5-d5-private-replay-plan-1.0",
+  "record_kind": "PRIVATE_LAB_REPLAY_FOUNDATION_PLAN",
+  "plan_id": "replace_private_plan_id",
+  "l1_report": {
+    "relative_path": "private_library/n5_d5_control/REPLACE_ME/l1-readiness.json",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "private_bundle": {
+    "root": "private_library/n5_d5_bundles/REPLACE_ME",
+    "closed_world_required": true,
+    "inventory": [
+      {
+        "relative_path": "private_library/n5_d5_bundles/REPLACE_ME/config.json",
+        "role": "config",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "bytes": 1
+      },
+      {
+        "relative_path": "private_library/n5_d5_bundles/REPLACE_ME/adapter.py",
+        "role": "adapter_source",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "bytes": 1
+      },
+      {
+        "relative_path": "private_library/n5_d5_bundles/REPLACE_ME/base.npy",
+        "role": "base_input",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "bytes": 1
+      },
+      {
+        "relative_path": "private_library/n5_d5_bundles/REPLACE_ME/environment-lock.json",
+        "role": "environment_lock",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "bytes": 1
+      },
+      {
+        "relative_path": "private_library/n5_d5_bundles/REPLACE_ME/physical-contract.json",
+        "role": "physical_contract",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "bytes": 1
+      }
+    ]
+  },
+  "capability_profile": {
+    "direct_residual_supported": false,
+    "direct_residual_semantics": "unavailable",
+    "arbitrary_runtime_directions_supported": true,
+    "precomputed_probe_arrays_are_sufficient": false,
+    "backend_dtype_preserved_and_reported": true,
+    "dynamic_ray_sample_ledger_required": true,
+    "fixed_zero_ray_sample_ledger_forbidden": true
+  },
+  "authorization_budget": {
+    "describe_only_requests": 2,
+    "primary_requests": 36,
+    "validator_base_replay_requests": 36,
+    "validator_private_probe_requests": 32,
+    "total_requests": 106,
+    "separate_authorization_tokens_required": true
+  },
+  "output_policy": {
+    "result_directory": "private_library/n5_d5_runs/REPLACE_ME/run-001",
+    "expected_payload_files": [
+      "requests.jsonl",
+      "responses.jsonl",
+      "metrics.json",
+      "finite_difference_rows.csv",
+      "result.json",
+      "private_diagnostic.png",
+      "process_attestation.json",
+      "challenge_reveal.json"
+    ],
+    "closed_world_required": true,
+    "refuse_overwrite": true,
+    "raw_trace_publication_permitted": false,
+    "public_summary_write_permitted": false
+  },
+  "challenge_policy": {
+    "entropy_source": "os_csprng",
+    "entropy_bytes": 32,
+    "generated_after_attestation": true,
+    "persisted_before_adapter_launch": false,
+    "reveal_location": "private_result_after_adapter_exit",
+    "validator_extra_tangent_count": 2,
+    "validator_extra_cotangent_count": 2,
+    "private_h_intervals": [
+      [0.000008, 0.00002],
+      [0.00008, 0.0002],
+      [0.0008, 0.002]
+    ]
+  },
+  "process_policy": {
+    "inherit_environment": false,
+    "allowed_environment_variables": [
+      "HOME",
+      "LANG",
+      "LC_ALL",
+      "PATH",
+      "PYTHONHASHSEED",
+      "PYTHONNOUSERSITE",
+      "PYTHONDONTWRITEBYTECODE",
+      "TMPDIR"
+    ],
+    "python_hash_seed": "0",
+    "python_no_user_site": true,
+    "python_no_bytecode": true,
+    "temporary_home_under_private_root": true,
+    "network_isolation_required": true,
+    "network_isolation_backend": "not_configured",
+    "independent_cost_instrumentation": "not_configured"
+  },
+  "physical_review": {
+    "tolerances_reviewed": false,
+    "reviewer_pseudonym": null,
+    "review_digest_sha256": null
+  },
+  "claim_authorizations": {
+    "real_bost_interface": false,
+    "physical_forward_correctness": false,
+    "derivative_correctness": false,
+    "reconstruction": false,
+    "algorithm_superiority": false,
+    "generalization": false,
+    "publication": false
+  }
+}

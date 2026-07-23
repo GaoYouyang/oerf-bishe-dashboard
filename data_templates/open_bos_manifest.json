@@ -1,0 +1,170 @@
+{
+  "dataset_id": "open_bos_flight_body_2026",
+  "modality": "BOS/TBOS",
+  "source": {
+    "paper_title": "Open-source BOS tomography dataset of high-speed flow over a flight body",
+    "doi": "10.1007/s00348-026-04189-z",
+    "arxiv": "https://arxiv.org/abs/2508.17120",
+    "data_commons_readme": "https://www.datacommons.psu.edu/download/engineering/molnar-et-al-open-source-bos-tomography-dataset-of-high-speed-flow-over-a-flight-body-2025/000-readme-zip-file-content.txt",
+    "data_commons_directory": "https://www.datacommons.psu.edu/download/engineering/molnar-et-al-open-source-bos-tomography-dataset-of-high-speed-flow-over-a-flight-body-2025/",
+    "local_zip_content_index": "data_templates/open_bos_zip_file_content.txt"
+  },
+  "purpose": "Public benchmark for data loader, view subsampling, deflection/reconstruction visualization, metrics, and report generation before OERF internal data is available.",
+  "expected_public_structure": {
+    "batch": "Batch or processing scripts listed in the Data Commons README.",
+    "cad": "Flight-body geometry files such as STL/STEP listed in the Data Commons README.",
+    "cal_data": "Calibration data by angle/view.",
+    "raw_or_images": "Reference and flow-on image pairs if downloaded from the full archive.",
+    "masks": "View masks or valid reconstruction regions if present in the archive.",
+    "deflections": "Deflection estimates if present in the archive.",
+    "reconstructions": "NIRT or reference reconstruction outputs if present in the archive.",
+    "verified_zip_count": 12,
+    "verified_total_bytes": 51664057334,
+    "verified_total_gib": 48.115902891382575,
+    "verified_file_entries_in_index": 1838,
+    "verified_angles_deg": [
+      120,
+      130,
+      140,
+      150,
+      160,
+      170,
+      180,
+      190,
+      200,
+      210,
+      220,
+      230,
+      240
+    ],
+    "verified_cameras": [
+      "cam_01",
+      "cam_02",
+      "cam_03",
+      "cam_04",
+      "cam_05",
+      "cam_06",
+      "cam_07"
+    ],
+    "verified_top_level_dirs": [
+      "batch",
+      "cad",
+      "cal_data",
+      "cal_pkg",
+      "data",
+      "def_data",
+      "pyscripts",
+      "results",
+      "scripts",
+      "tools"
+    ],
+    "verified_calibration_angle_camera_pairs": 91,
+    "verified_flow_rotation_groups": [
+      "ROT_000",
+      "ROT_010",
+      "ROT_020",
+      "ROT_030",
+      "ROT_040",
+      "ROT_050",
+      "ROT_060",
+      "ROT_070",
+      "ROT_080",
+      "ROT_090"
+    ],
+    "verified_flow_ref_def_views": 70,
+    "verified_index_summary_json": "data_templates/open_bos_index_summary.json",
+    "verified_view_manifest_csv": "data_templates/open_bos_view_manifest.csv",
+    "verified_view_plan_md": "data_templates/open_bos_view_plan.md",
+    "verified_view_grid_svg": "figures/open_bos_view_grid.svg"
+  },
+  "local_paths": {
+    "root": "data/open_bos/open_bos_flight_body_2026",
+    "archive": "data/open_bos/raw_archive",
+    "calibration": "data/open_bos/open_bos_flight_body_2026/cal_data",
+    "images": "data/open_bos/open_bos_flight_body_2026/images",
+    "masks": "data/open_bos/open_bos_flight_body_2026/masks",
+    "deflections": "data/open_bos/open_bos_flight_body_2026/deflections",
+    "reconstructions": "data/open_bos/open_bos_flight_body_2026/reconstructions"
+  },
+  "view_plan": {
+    "reported_total_views": 70,
+    "subsets_for_bishe": [
+      5,
+      7,
+      9,
+      13,
+      21,
+      70
+    ],
+    "selection_rule": "Start with evenly spaced subsets; record exact view ids in each experiment config.",
+    "verified_flow_view_interpretation": "10 ROT groups x 7 cameras = 70 REF/DEF image-pair views; calibration files separately span 13 Angle_* folders x 7 cameras.",
+    "generated_manifest_csv": "data_templates/open_bos_view_manifest.csv",
+    "generated_summary_json": "data_templates/open_bos_index_summary.json",
+    "generated_subset_plans_json": "data_templates/open_bos_subset_plans.json",
+    "generated_subset_plans_md": "data_templates/open_bos_subset_plans.md",
+    "subset_presets_generated": [
+      5,
+      7,
+      9,
+      13,
+      21,
+      70
+    ]
+  },
+  "fields_to_extract": {
+    "views": "10 ROT groups x 7 cameras = 70 REF/DEF image-pair views; calibration files separately span 13 Angle_* folders x 7 cameras, and ROT-to-Angle mapping must be confirmed from scripts/paper before reconstruction",
+    "image_shape": "to_be_read_from downloaded REF_IMGS/DEF_IMGS files",
+    "displacement_unit": "to_be_confirmed_from DEF_PROC / results metadata",
+    "coordinate_system": "to_be_confirmed_from CAD/calibration files",
+    "volume_bounds": "to_be_confirmed_from NIRT/reconstruction scripts",
+    "reference_reconstruction": "to_be_confirmed_from results/R076 and reconstruction files",
+    "view_manifest": "data_templates/open_bos_view_manifest.csv lists 70 view rows with REF/DEF image paths, CC/HSOF/WOF/mask paths, and calibration mapping caveat"
+  },
+  "metrics": [
+    "reprojection_rmse",
+    "relative_l2_if_reference_available",
+    "correlation_coefficient_if_reference_available",
+    "view_subset_sensitivity",
+    "runtime_seconds",
+    "report_completeness"
+  ],
+  "migration_to_oerf": {
+    "reusable": [
+      "manifest structure",
+      "view subsampling code",
+      "metrics and report generation",
+      "mask/deflection visualization",
+      "baseline-vs-neural-field comparison scaffold"
+    ],
+    "must_replace_for_oerf": [
+      "view geometry",
+      "physical field interpretation",
+      "Gladstone-Dale constants and unit conversion",
+      "permission flags",
+      "reference reconstruction and paper-display boundaries"
+    ]
+  },
+  "permissions": {
+    "contains_oerf_internal_data": false,
+    "can_share_in_undergraduate_thesis": true,
+    "can_share_publicly": true,
+    "notes": "Check the dataset license and citation requirements before redistribution; cite the DOI in reports."
+  },
+  "download_policy": {
+    "do_not_commit_full_dataset_to_repo": true,
+    "cache_only_index_file_in_repo": true,
+    "full_dataset_size_note": "12 zip files, 51.66 GB decimal / 48.12 GiB binary as of 2026-07-07 check",
+    "minimal_first_download": [
+      "000-readme-zip-file-content.txt",
+      "one selected zip if disk space allows"
+    ],
+    "generated_lightweight_artifacts": [
+      "data_templates/open_bos_index_summary.json",
+      "data_templates/open_bos_view_manifest.csv",
+      "data_templates/open_bos_view_plan.md",
+      "figures/open_bos_view_grid.svg",
+      "data_templates/open_bos_subset_plans.json",
+      "data_templates/open_bos_subset_plans.md"
+    ]
+  }
+}

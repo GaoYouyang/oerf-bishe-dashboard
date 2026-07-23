@@ -1,0 +1,149 @@
+{
+  "schema_version": "lgwo-a24-r2c-diagonal-pdhg-development-result-1.0",
+  "status": "VALID_DEVELOPMENT_ONLY_NO_GO_DIAGONAL_PDHG",
+  "evidence_scope": "DEVELOPMENT_ONLY_PUBLIC_PSU_QMC8_GEOMETRY_WITH_ANALYTIC_REACTION_MORPHOLOGY_PROXIES",
+  "source_commit": "dffed03afd3b149ea1411ee9da958627e98d9c6f",
+  "source_hashes": {
+    "demo_t16_operator/configs/lgwo_a24_r2c_diagonal_pdhg_development_v1.json": "1a5cc1e8da7fe8fc9317315bce9c2359defa4dc6e96f95a878942d2bd6d4380e",
+    "demo_t16_operator/interface_baselines.py": "e632d92c6ca532ed5280fd65fe319c5fc9709e821f27e1e049412b44db08e652",
+    "demo_t16_operator/psu_b0_primal_dual.py": "bd0c40715ed05d92d8bfd0877a846fad4a2768a5f68621a8369af4421f9c3237",
+    "demo_t16_operator/psu_b0_reaction_phantoms.py": "486d92e480a5207e60bf5f89a50dad435b6db0e65ad09ac1fff4431873753345",
+    "demo_t16_operator/psu_b0_streaming_operator.py": "d6d7f9e1e224f9214702172a1942d5e29b7ce0c3bb51faf5d68cb3b7b1398fe6",
+    "site_tools/run_lgwo_a24_r2c_diagonal_pdhg_development.py": "5fb651e640c3b57de98f46d3bae9018683140012c5e1fd278bba1071c30dce93",
+    "site_tools/run_psu_b0_real_interface_audit.py": "d7f5f8c9b3576750590a6f5d0e3a479b30f8299d5b35644f6dd658fd13d10aae"
+  },
+  "config_sha256": "1a5cc1e8da7fe8fc9317315bce9c2359defa4dc6e96f95a878942d2bd6d4380e",
+  "runtime": {
+    "device": "mps",
+    "torch_version": "2.13.0",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "wall_seconds": 3.3916135829640552,
+    "maximum_resident_set_bytes": 452378624,
+    "warmup_forward_calls": 1,
+    "warmup_adjoint_calls": 1
+  },
+  "geometry": {
+    "public_support_view_count": 9,
+    "rays_per_view": 256,
+    "grid_shape": [
+      32,
+      32,
+      32
+    ],
+    "spacing_xyz": [
+      0.007096773944795132,
+      0.007096773944795132,
+      0.007096773944795132
+    ],
+    "finite_aperture_sample_count": 8,
+    "raw_geometry_not_copied_to_result": true
+  },
+  "counts": {
+    "cases": 6,
+    "objectives": 2,
+    "methods": 2,
+    "metric_rows": 24,
+    "setup_rows": 12,
+    "solve_forward_calls_total": 480,
+    "solve_adjoint_calls_total": 480,
+    "evaluator_forward_calls_total": 24
+  },
+  "aggregates": [
+    {
+      "objective_id": "data_only",
+      "case_count": 6,
+      "mean_field_gain_percent": -95.20232453957958,
+      "median_field_gain_percent": -82.92209422311946,
+      "worst_field_gain_percent": -167.36662079906608,
+      "field_harm_rate": 1.0,
+      "mean_gradient_gain_percent": -338.59484484180336,
+      "median_gradient_gain_percent": -277.7437577916761,
+      "worst_gradient_gain_percent": -553.0702217684064,
+      "gradient_harm_rate": 1.0,
+      "mean_weighted_residual_ratio": 0.4722865418119173,
+      "worst_weighted_residual_ratio": 0.5379698690196494,
+      "mean_solve_wall_ratio": 0.9363138780404703,
+      "development_checks": {
+        "mean_field_gain": false,
+        "mean_gradient_gain": false,
+        "worst_field_gain": false,
+        "worst_gradient_gain": false,
+        "mean_weighted_residual": true,
+        "equal_solve_calls": true
+      },
+      "development_gate_passed": false
+    },
+    {
+      "objective_id": "huber_gradient_1e-3",
+      "case_count": 6,
+      "mean_field_gain_percent": 0.14693661894531707,
+      "median_field_gain_percent": 0.14079622944500755,
+      "worst_field_gain_percent": 0.07016867185699753,
+      "field_harm_rate": 0.0,
+      "mean_gradient_gain_percent": -0.8203266307748015,
+      "median_gradient_gain_percent": -0.8909921244716452,
+      "worst_gradient_gain_percent": -1.3191561675813885,
+      "gradient_harm_rate": 1.0,
+      "mean_weighted_residual_ratio": 0.9693109136578411,
+      "worst_weighted_residual_ratio": 0.978091201776256,
+      "mean_solve_wall_ratio": 1.0276908308359392,
+      "development_checks": {
+        "mean_field_gain": true,
+        "mean_gradient_gain": false,
+        "worst_field_gain": true,
+        "worst_gradient_gain": true,
+        "mean_weighted_residual": true,
+        "equal_solve_calls": true
+      },
+      "development_gate_passed": false
+    }
+  ],
+  "diagnosis": {
+    "data_only_q_a_zero_coverage_observed": true,
+    "q_g_fills_all_supported_coordinates_in_regularized_branch": true,
+    "regularized_development_gate_passed": false,
+    "interpretation": "A passing regularized gate is only a bounded mechanism signal for later validation. A failure is a no-go for this fixed metric/solver configuration, not a theorem against diagonal preconditioning."
+  },
+  "claim_boundary": {
+    "algorithm_success": false,
+    "new_algorithm": false,
+    "neural_operator": false,
+    "real_bost_reconstruction": false,
+    "experimental_field_truth": false,
+    "unseen_rig_generalization": false,
+    "beats_deeponet_fno_nerif_or_tdbost": false,
+    "paper_success": false,
+    "breakthrough": false
+  },
+  "hard_conclusions": {
+    "algorithm_success": false,
+    "new_algorithm": false,
+    "real_reconstruction": false,
+    "generalization": false,
+    "paper_success": false,
+    "breakthrough": false
+  },
+  "files": {
+    "rows.csv": {
+      "sha256": "1a1054d419bd84574ba1dc163156cc4faead4450357e5a21633736f6e1564a75"
+    },
+    "setup_rows.csv": {
+      "sha256": "0e648abfa0a6319d929b54277efe49543825453135cf5953536ee2bc08458d17"
+    },
+    "histories.json": {
+      "sha256": "9d202710ff9d4b81b5137a8718d9c12af7da869ba54a64ff885193746a981177"
+    },
+    "metric_maps.npz": {
+      "sha256": "238de6234eb56004efb5c9409c13fb35fdf66b3e9423d8af44f495294e07fdc2"
+    },
+    "representative_fields.npz": {
+      "sha256": "3a3ceb3486ecf2bb1ecce0467f02f1585ded5df7e14c7dd0e6216cc95d860dca"
+    },
+    "diagonal_pdhg_diagnostic.png": {
+      "sha256": "9cb36bf24b751f2918374473dc33361a1e14bf8b7175450ba83e6e358a2014ef"
+    },
+    "representative_reconstruction.png": {
+      "sha256": "79db14ce3b90ee070a23dbf7a74c1f9ee42b134820f2cef78f19cf77a3facd33"
+    }
+  }
+}

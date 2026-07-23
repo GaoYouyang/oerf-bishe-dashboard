@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="OERF BOST 算子学习与三维重构的强数值基线、学习路径和下一算法门槛。" />
+  <title>强数值基线到新算法 | OERF 毕设</title>
+  <link rel="icon" href="data:," />
+  <style>
+    :root { --ink:#17282d; --muted:#5d6f75; --line:#ccd8d5; --bg:#f3f6f4; --paper:#fff; --teal:#126e64; --teal-soft:#e7f3ef; --blue:#315f93; --blue-soft:#eaf1f8; --gold:#876416; --gold-soft:#f7f0dc; --coral:#a14b3d; --coral-soft:#faece8; --shadow:0 8px 24px rgba(25,48,54,.065); --radius:8px; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:var(--bg); font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; line-height:1.68; letter-spacing:0; }
+    body::before { content:""; position:fixed; inset:0; z-index:-1; background:url("./assets/backgrounds/oerf-refractive-field.png") center/cover no-repeat; opacity:.06; pointer-events:none; }
+    a { color:var(--blue); overflow-wrap:anywhere; }
+    button,input,select { font:inherit; }
+    button { cursor:pointer; }
+    code { padding:1px 4px; border-radius:4px; background:#e8efed; font-family:"SFMono-Regular",Consolas,monospace; white-space:normal; }
+    header,main,footer { width:min(1220px,calc(100vw - 36px)); margin:0 auto; }
+    header { padding:22px 0 28px; border-bottom:1px solid var(--line); }
+    main { padding-bottom:45px; }
+    footer { padding:23px 0 38px; color:var(--muted); font-size:12px; }
+    nav,.actions,.chips { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+    nav a,.button { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:8px 12px; border:1px solid var(--line); border-radius:7px; color:var(--ink); background:rgba(255,255,255,.97); text-decoration:none; font-weight:760; }
+    .button.primary { color:#fff; border-color:var(--teal); background:var(--teal); }
+    .eyebrow { margin-top:17px; color:var(--teal); font-size:12px; font-weight:850; text-transform:uppercase; }
+    h1,h2,h3 { line-height:1.22; letter-spacing:0; }
+    h1 { max-width:980px; margin:8px 0; font-size:40px; }
+    h2 { margin:0 0 8px; font-size:27px; }
+    h3 { margin:0 0 6px; font-size:18px; }
+    p { margin:7px 0; }
+    .lead { max-width:1000px; color:#41555c; font-size:16px; }
+    section.band { padding:28px 0; border-bottom:1px solid var(--line); }
+    .metrics { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:18px; }
+    .metric { min-height:108px; padding:14px; border:1px solid var(--line); border-radius:var(--radius); background:rgba(255,255,255,.97); box-shadow:var(--shadow); }
+    .metric b { display:block; margin-bottom:4px; color:var(--teal); font-size:25px; }
+    .metric span { color:var(--muted); font-size:12px; }
+    .verdict { margin-top:15px; padding:16px 17px; border:1px solid #b7d2cc; border-left:5px solid var(--teal); border-radius:var(--radius); background:rgba(237,247,244,.98); }
+    .verdict.warning { border-color:#ddc68f; border-left-color:var(--gold); background:rgba(250,246,233,.98); }
+    .verdict.stop { border-color:#ddb9b0; border-left-color:var(--coral); background:rgba(252,240,236,.98); }
+    .verdict strong { display:block; margin-bottom:4px; }
+    .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:14px; }
+    .section-head p { max-width:840px; color:var(--muted); }
+    .chip { display:inline-flex; min-height:27px; align-items:center; padding:3px 8px; border-radius:999px; color:var(--teal); background:var(--teal-soft); font-size:11px; font-weight:800; }
+    .chip.blue { color:var(--blue); background:var(--blue-soft); }
+    .chip.gold { color:var(--gold); background:var(--gold-soft); }
+    .chip.coral { color:var(--coral); background:var(--coral-soft); }
+    .frontier { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:rgba(255,255,255,.97); box-shadow:var(--shadow); }
+    .frontier article { min-height:195px; padding:17px; border-right:1px solid var(--line); }
+    .frontier article:last-child { border-right:0; }
+    .frontier .budget { color:var(--teal); font-size:30px; font-weight:850; }
+    .frontier small,.status-line { color:var(--muted); font-size:12px; }
+    .status-line { overflow-wrap:anywhere; }
+    .table-tools { display:grid; grid-template-columns:minmax(220px,1fr) 220px; gap:9px; margin-bottom:10px; }
+    input[type="search"],select { width:100%; min-height:44px; padding:9px 11px; border:1px solid var(--line); border-radius:7px; color:var(--ink); background:#fff; }
+    .table-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:#fff; box-shadow:var(--shadow); }
+    table { width:100%; min-width:900px; border-collapse:collapse; }
+    th,td { padding:11px 12px; border-bottom:1px solid #e0e7e5; text-align:left; vertical-align:top; font-size:13px; }
+    th { color:#3b5056; background:#eaf1ef; }
+    tr:last-child td { border-bottom:0; }
+    tr[data-champion="true"] { background:#edf7f3; }
+    tr[hidden] { display:none; }
+    .good { color:var(--teal); font-weight:820; }
+    .caution { color:var(--gold); font-weight:820; }
+    .grid-two,.grid-three,.task-grid,.source-grid { display:grid; gap:11px; }
+    .grid-two,.task-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .grid-three { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .source-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .panel,.task,.source { min-width:0; padding:15px; border:1px solid var(--line); border-radius:var(--radius); background:rgba(255,255,255,.97); box-shadow:var(--shadow); }
+    .panel p,.task p,.source p { color:#485c63; font-size:13px; }
+    .formula { overflow-x:auto; padding:14px; color:#dcebea; background:#1b3035; font-family:"SFMono-Regular",Consolas,monospace; white-space:nowrap; }
+    figure { margin:0; padding:10px; border:1px solid var(--line); border-radius:var(--radius); background:#fff; box-shadow:var(--shadow); }
+    figure img { display:block; width:100%; height:auto; }
+    figcaption { padding:8px 3px 2px; color:var(--muted); font-size:12px; }
+    .task { border-left:4px solid var(--blue); }
+    .task label { display:grid; grid-template-columns:21px minmax(0,1fr); gap:9px; font-weight:780; }
+    .task input { width:18px; height:18px; margin:3px 0 0; accent-color:var(--teal); }
+    .task.done { border-color:#9bc6bb; border-left-color:var(--teal); background:#f0f8f5; }
+    details { border:1px solid var(--line); border-radius:var(--radius); background:rgba(255,255,255,.97); }
+    details + details { margin-top:9px; }
+    summary { padding:14px 15px; cursor:pointer; font-weight:800; }
+    details > div { padding:0 15px 15px; border-top:1px solid var(--line); }
+    textarea { width:100%; min-height:270px; padding:12px; border:1px solid var(--line); border-radius:7px; color:var(--ink); background:#fff; font:13px/1.65 "SFMono-Regular",Consolas,monospace; resize:vertical; }
+    @media (max-width:1000px) { .metrics { grid-template-columns:repeat(3,minmax(0,1fr)); } .source-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:720px) { header,main,footer { width:min(100% - 22px,1220px); } h1 { font-size:31px; } h2 { font-size:23px; } .metrics,.frontier,.grid-two,.grid-three,.task-grid,.source-grid,.table-tools { grid-template-columns:1fr; } .frontier article { border-right:0; border-bottom:1px solid var(--line); } .frontier article:last-child { border-bottom:0; } .section-head { align-items:flex-start; flex-direction:column; } nav a { flex:1 1 45%; } }
+  </style>
+</head>
+<body>
+  <header>
+    <nav aria-label="主导航">
+      <a href="./operator-learning/">学习主页</a><a href="./own_algorithm_lab.html">自有算法竞技场</a><a href="./operator_nullspace_evidence_dashboard.html">证据总页</a><a href="./he_review_portal.html">师兄审核入口</a><a href="./paper_library/?q=Barzilai%20Borwein">论文库</a><a href="./index.html">研究总站</a>
+    </nav>
+    <div class="eyebrow">T16 v3k-D · strong numerical controls</div>
+    <h1>从强数值基线，走到真正值得训练的新算法</h1>
+    <p class="lead">这里不把“误差更低”自动写成创新。先用同一验证协议比较 FNO/ridge 双起点、逐几何步长、全局步长、投影前二次闭式步长和谱区查表；再按算子调用数、尾部伤害和 fresh lock 决定是否允许训练条件化模型。</p>
+    <div class="metrics">
+      <div class="metric"><b>0.143855</b><span>验证绝对精度冠军：FNO + 二次步长后投影。</span></div><div class="metric"><b>45.53%</b><span>精度冠军相对 feasible FNO 的场级平均收益。</span></div><div class="metric"><b>128 → 193</b><span>逐几何 Landweber 与二次候选的 A+Aᵀ 调用数。</span></div><div class="metric"><b>1.59%</b><span>验证真值 oracle 相对单一冠军的平均可选规则空间。</span></div><div class="metric"><b>BLOCKED</b><span>BB 与 fresh locked confirmation 未完成，不训练 learned scalar。</span></div>
+    </div>
+    <div class="verdict warning"><strong>当前判决：二次候选是绝对精度冠军，不是同预算冠军，也不是新算法。</strong><span>它相对 128-call 的逐几何 Landweber 平均再改善 1.244%，但使用 193 次 A/Aᵀ 调用，并在 17.5% validation fields 上出现超过 1% 的相对伤害。下一步先补 projected BB1/BB2；只有条件化规则在相同调用预算下击败全部确定性对手，才讨论论文模型。</span></div>
+  </header>
+  <main>
+    <section class="band" id="frontier">
+      <div class="section-head"><div><div class="eyebrow">先看预算前沿</div><h2>三个预算点，三个诚实结论</h2><p>横轴只计重建过程的 A 与 Aᵀ；FNO 推理、ridge 线性求解和评估 forward 在独立账本中列出。</p></div></div>
+      <div class="frontier">
+        <article><div class="budget">0 calls</div><h3>Feasible FNO</h3><p>验证 field L2 <strong>0.247739</strong>。它包含冻结 FNO 与同一个非负硬支撑投影。</p><small>网络初始化成本另计；这是所有 FNO 修正规则的共同起点。</small></article>
+        <article><div class="budget">128 calls</div><h3>Geometry Landweber</h3><p>验证 field L2 <strong>0.147083</strong>。每轮 1 次 A + 1 次 Aᵀ，共 64 轮。</p><small>当前同预算强基线；lookup 选回同一参数，没有额外收益。</small></article>
+        <article><div class="budget">193 calls</div><h3>Quadratic + projection</h3><p>验证 field L2 <strong>0.143855</strong>。缓存实现每轮额外计算 A·gradient。</p><small>精度更低，但预算更高；闭式只对投影前直线精确。</small></article>
+      </div>
+      <div class="actions" style="margin-top:13px;"><a class="button primary" href="./document_reader.html?doc=v3k_d_strong_numerical_controls_brief.md">打开师兄版 brief</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_d_strong_numerical_controls%2Fv3k_d_operator_call_ledger.csv">算子调用账本</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_d_strong_numerical_controls%2Fv3k_d_selection_commit.json">验证选择承诺</a></div>
+    </section>
+    <section class="band" id="methods">
+      <div class="section-head"><div><div class="eyebrow">方法对照</div><h2>不要只盯着冠军</h2><p>搜索或按起点筛选。误差来自 40 个 validation fields，每场先折叠 4 个布局。</p></div></div>
+      <div class="table-tools"><input id="methodSearch" type="search" placeholder="搜索方法、角色或风险" aria-label="搜索方法" /><select id="startFilter" aria-label="筛选初始化"><option value="all">全部起点</option><option value="fno">FNO 起点</option><option value="ridge">Ridge 起点</option><option value="control">原始对照</option></select></div>
+      <div class="table-wrap"><table><thead><tr><th>方法</th><th>起点</th><th>validation field L2</th><th>A + Aᵀ</th><th>角色</th><th>当前判断</th></tr></thead><tbody id="methodBody">
+        <tr data-start="control"><td>Locked FNO raw</td><td>FNO</td><td>0.257826</td><td>0</td><td>未投影网络对照</td><td>分离免费投影收益。</td></tr>
+        <tr data-start="fno"><td>Feasible FNO</td><td>FNO</td><td>0.247739</td><td>0</td><td>共同 warm start</td><td>0-call 前沿。</td></tr>
+        <tr data-start="control"><td>Ridge raw</td><td>λ=0.01</td><td>0.579540</td><td>0</td><td>无软窗 Tikhonov</td><td>与硬投影版分开。</td></tr>
+        <tr data-start="ridge"><td>Feasible ridge</td><td>λ=1e-6</td><td>0.378348</td><td>0</td><td>第二 warm start</td><td>验证单独选 λ。</td></tr>
+        <tr data-start="fno"><td>Geometry Landweber</td><td>FNO</td><td>0.147083</td><td>128</td><td>逐布局 β/Lm</td><td class="good">128-call 前沿</td></tr>
+        <tr data-start="fno"><td>Global Landweber</td><td>FNO</td><td>0.148836</td><td>128</td><td>统一 β/Lglobal</td><td>强对照。</td></tr>
+        <tr data-start="fno"><td>Spectral lookup</td><td>FNO</td><td>0.147083</td><td>128</td><td>低/高谱区查表</td><td class="caution">选回同一参数。</td></tr>
+        <tr data-start="ridge"><td>Geometry Landweber</td><td>ridge</td><td>0.147581</td><td>128</td><td>双起点归因</td><td>长迭代削弱起点差异。</td></tr>
+        <tr data-start="ridge"><td>Global Landweber</td><td>ridge</td><td>0.149248</td><td>128</td><td>双起点全局步长</td><td>低于逐几何版本。</td></tr>
+        <tr data-start="ridge"><td>Spectral lookup</td><td>ridge</td><td>0.147581</td><td>128</td><td>查表反事实</td><td>同样退化为 geometry baseline。</td></tr>
+        <tr data-start="fno" data-champion="true"><td><strong>Quadratic + projection</strong></td><td>FNO</td><td><strong>0.143855</strong></td><td>193</td><td>投影前闭式步长</td><td class="good">绝对冠军，非同预算胜利。</td></tr>
+        <tr data-start="ridge"><td>Quadratic + projection</td><td>ridge</td><td>0.144231</td><td>193</td><td>双起点二次规则</td><td>与 FNO 版本差异 CI 跨 0。</td></tr>
+      </tbody></table></div>
+    </section>
+    <section class="band" id="meaning">
+      <div class="section-head"><div><div class="eyebrow">物理与数学桥</div><h2>你需要能亲口讲明白的三件事</h2></div></div>
+      <div class="grid-three">
+        <article class="panel"><span class="chip">伴随残差</span><h3 style="margin-top:9px;">为什么方向有物理意义</h3><div class="formula">r(x) = Aᵀ M (y - Ax)</div><p>把观测差沿同一个离散光路搬回体场。它降低声明的数据项，不保证真实三维误差必然下降。</p></article>
+        <article class="panel"><span class="chip blue">谱归一化</span><h3 style="margin-top:9px;">为什么布局不能共用裸步长</h3><div class="formula">x+ = P_C[x + (β/Lm) r(x)]</div><p><code>Lm=||M_m A||²</code> 表示布局最陡方向曲率，逐布局归一化避免某些相机组合过冲。</p></article>
+        <article class="panel"><span class="chip gold">措辞边界</span><h3 style="margin-top:9px;">“精确”为什么要加限定</h3><div class="formula">α* = ||r||² / ||M A r||²</div><p>这个 α 只在未投影二次直线上精确；随后 <code>P_C</code> 改变路径，应写“投影前二次闭式候选”。</p></article>
+      </div>
+      <figure style="margin-top:13px;"><img src="./demo_t16_operator/results/v3k_d_strong_numerical_controls/t16_v3k_d_strong_numerical_controls.png" alt="v3k-D 强数值对照结果" /><figcaption>验证绝对误差、误差与调用预算、精度冠军跨五个开发域的收益、二次候选步长审计。现有 test 域已被前序实验查看，只能作 development audit。</figcaption></figure>
+    </section>
+    <section class="band" id="decision">
+      <div class="section-head"><div><div class="eyebrow">研究决策</div><h2>有条件化信号，但仍不准训练网络</h2></div></div>
+      <div class="grid-two">
+        <div class="verdict" style="margin:0;"><strong>值得继续查：条件化信号不是零</strong><span>validation truth oracle 逐场选规则，平均还可比单一冠军改善 1.5866%；67.5% 的场由非冠军规则最好。它只是不可部署上界。</span></div>
+        <div class="verdict stop" style="margin:0;"><strong>现在停止：粗查表没有分区价值</strong><span>按 28 个 operator spectral constants 的最大间隙分低/高区，两区都选回 <code>β=1.9,T=64</code>。先检验 BB1/BB2，再考虑 MLP。</span></div>
+      </div>
+      <div class="grid-three" style="margin-top:12px;">
+        <article class="panel"><h3>尾部仍未解决</h3><p>最差 noise-OOD 布局平均 +19.64%，但 9.375% 场伤害超过 1%，最差单场 -16.94%。未来目标应优先降低尾部。</p></article>
+        <article class="panel"><h3>双起点结论</h3><p>64 轮后 FNO/ridge 二次版本很接近，FNO 对 ridge 的验证优势 0.744%，CI 跨 0。初始化价值应在短预算评估。</p></article>
+        <article class="panel"><h3>真实 BOST 缺口</h3><p>当前是 depth-separable linear toy，并使用已知 synthetic hard support。真实 NeRIF/BOST 仍需 F/VJP、标定误差与新 cases。</p></article>
+      </div>
+    </section>
+    <section class="band" id="next">
+      <div class="section-head"><div><div class="eyebrow">下一算法前置实验</div><h2>Projected BB 是下一道门，不是投稿模型</h2><p>BB 用相邻迭代与梯度差估计局部曲率，只增加向量运算，不额外调用 A/Aᵀ。若它解释了收益，MLP 就没有必要。</p></div></div>
+      <div class="grid-two">
+        <article class="panel"><span class="chip blue">BB1</span><h3 style="margin-top:9px;">近似逆 Hessian 标量</h3><div class="formula">s=xk-x(k-1); y=gk-g(k-1); αBB1=(sᵀs)/(sᵀy)</div><p>加入正分母检查、谱界裁剪、回退步长与同一硬投影。</p></article>
+        <article class="panel"><span class="chip gold">BB2</span><h3 style="margin-top:9px;">近似 Hessian 标量</h3><div class="formula">αBB2=(sᵀy)/(yᵀy); α=clip(αBB,αmin,αmax)</div><p>BB1、BB2、交替 BB 与回退必须预先定义；不能看 test 后挑版本。</p></article>
+      </div>
+      <div class="verdict warning"><strong>公平合同</strong><span>同一起点、同一硬投影、相同 A/Aᵀ 调用预算；只在 validation 选择 BB 变体、clip 与 stopping；fresh lock 前不声称 superiority。</span></div>
+    </section>
+    <section class="band" id="study">
+      <div class="section-head"><div><div class="eyebrow">七天保姆式路线</div><h2>一周后，你应该能自己写 BB</h2><p>每项都要求可检查产物，勾选状态只存在当前浏览器。</p></div><span id="taskCount" class="status-line">0 / 8 完成</span></div>
+      <div class="task-grid" id="taskGrid">
+        <article class="task"><label><input type="checkbox" data-task="derive-gradient" /><span>Day 1：手推数据项梯度</span></label><p>从 <code>1/2||M(Ax-y)||²</code> 推到 <code>AᵀM(Ax-y)</code>，写清符号。</p><small>产物：一页公式笔记。</small></article>
+        <article class="task"><label><input type="checkbox" data-task="toy-adjoint" /><span>Day 1：做 4×6 伴随检查</span></label><p>随机矩阵验证内积恒等式与中心差分，不调用仓库 helper。</p><small>产物：独立脚本。</small></article>
+        <article class="task"><label><input type="checkbox" data-task="reproduce-v3kd" /><span>Day 2：复跑 v3k-D</span></label><p>运行 19 tests、runner、validator、checksum，从 474 行 screen 找 winner。</p><small>产物：复现实验记录。</small></article>
+        <article class="task"><label><input type="checkbox" data-task="plot-frontier" /><span>Day 2：重画预算前沿</span></label><p>从 CSV 重画 0/128/193 calls，解释 absolute 与 matched-call champion。</p><small>产物：图 + 100 字结论。</small></article>
+        <article class="task"><label><input type="checkbox" data-task="derive-bb" /><span>Day 3：推 BB1/BB2</span></label><p>从 secant equation <code>Hs≈y</code> 理解两个标量近似，不背公式。</p><small>产物：推导与分母失败例。</small></article>
+        <article class="task"><label><input type="checkbox" data-task="implement-bb" /><span>Day 4-5：实现 projected BB</span></label><p>加入 clip、fallback、objective audit、相同投影和调用账本。</p><small>产物：单测 + validation screen。</small></article>
+        <article class="task"><label><input type="checkbox" data-task="tail-audit" /><span>Day 6：专查最差布局</span></label><p>对 <code>g_011011101</code> 画 per-field gain，定位伤害场特征。</p><small>产物：尾部失败卡。</small></article>
+        <article class="task"><label><input type="checkbox" data-task="senior-review" /><span>Day 7：给何师兄审核</span></label><p>只问任务定义、真实 F/VJP、support、数据接口与 fresh lock。</p><small>产物：书面修改意见。</small></article>
+      </div>
+    </section>
+    <section class="band" id="reading">
+      <div class="section-head"><div><div class="eyebrow">四篇角色化阅读</div><h2>每篇只抽取一个能力</h2></div></div>
+      <div class="source-grid">
+        <article class="source"><span class="chip">起点</span><h3 style="margin-top:9px;"><a href="https://doi.org/10.2307/2372313">Landweber 1951</a></h3><p>读迭代式与步长条件；解释早停为何是正则化。</p></article>
+        <article class="source"><span class="chip blue">约束</span><h3 style="margin-top:9px;"><a href="https://doi.org/10.1088/0266-5611/13/2/016">Piana &amp; Bertero 1997</a></h3><p>读 projected Landweber；分清每步投影与最后投影。</p></article>
+        <article class="source"><span class="chip gold">二点步长</span><h3 style="margin-top:9px;"><a href="https://doi.org/10.1093/imanum/8.1.141">Barzilai &amp; Borwein 1988</a></h3><p>读 secant 近似；解释为什么不增加 A/Aᵀ 调用。</p></article>
+        <article class="source"><span class="chip coral">边界</span><h3 style="margin-top:9px;"><a href="https://doi.org/10.1007/s10107-009-0267-8">Yuan 2010</a></h3><p>读二次 exact line search；说明投影后为何不能照搬。</p></article>
+      </div>
+    </section>
+    <section class="band" id="gate">
+      <div class="section-head"><div><div class="eyebrow">训练许可门</div><h2>满足这些条件，才写 learned scalar</h2></div></div>
+      <div class="grid-two"><div>
+        <details open><summary>G1：确定性对手齐全</summary><div><p>geometry/global/quadratic/lookup/ridge 已完成；还缺 projected BB1/BB2 与同预算 stopping curve。</p></div></details>
+        <details><summary>G2：特征全部可部署</summary><div><p>只允许 residual、下降率、operator/mask/geometry、iteration 与实测 confidence；禁止 field error、Q_audit 和 domain label。</p></div></details>
+        <details><summary>G3：fresh lock 已封存</summary><div><p>新 fields/layouts/noise 与分析脚本训练前哈希封存。现有四域只能开发。</p></div></details>
+      </div><div>
+        <details open><summary>G4：匹配调用预算后仍有收益</summary><div><p>相对同调用最强 baseline：mean gain ≥1%，95% field-cluster CI 下界 &gt;0，positive fields ≥90%。</p></div></details>
+        <details><summary>G5：尾部与审计相机不恶化</summary><div><p>&gt;1% harm rate ≤5%，最差单场不低于 -10%；各域 field/Q_audit 平均伤害不低于 -0.25%。</p></div></details>
+        <details><summary>G6：不过门就停止</summary><div><p>若 scalar 不能胜 BB 与二次规则，保留“强数值基线与条件化失败边界”，不堆 voxel/set/attention。</p></div></details>
+      </div></div>
+    </section>
+    <section class="band" id="senior">
+      <div class="section-head"><div><div class="eyebrow">给何师兄审核</div><h2>可以直接发的说明</h2></div><button id="copyBrief" class="button primary" type="button">复制说明</button></div>
+      <textarea id="briefText" readonly></textarea><p id="copyStatus" class="status-line" aria-live="polite"></p>
+    </section>
+    <section class="band" id="artifacts">
+      <div class="section-head"><div><div class="eyebrow">可复现资产</div><h2>每个结论都有可点击证据</h2></div></div>
+      <div class="actions"><a class="button primary" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_d_strong_numerical_controls%2Fv3k_d_strong_controls_dashboard.json">机器可读总表</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Frun_v3k_d_strong_numerical_controls.py">正式 runner</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fvalidate_v3k_d_strong_controls_results.py">独立 validator</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Ftest_v3k_d_numerical_controls.py">工程测试</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_d_strong_numerical_controls%2Fv3k_d_pairwise_summary.csv">135 条成对比较</a><a class="button" href="./document_reader.html?doc=demo_t16_operator%2Fresults%2Fv3k_d_strong_numerical_controls%2Fv3k_d_quadratic_step_audit.csv">二次步长审计</a></div>
+      <p id="liveStatus" class="status-line">页面内置冻结结果；GitHub Pages 会再校验 dashboard JSON。</p>
+    </section>
+  </main>
+  <footer>Gao Youyang · OERF 算子学习 × 三维重构 · v3k-D synthetic development。Landweber、ridge、二次步长、spectral lookup 与 BB 都是数值基线，不是项目创新。</footer>
+  <script>
+    (() => {
+      const search=document.getElementById('methodSearch'); const filter=document.getElementById('startFilter'); const rows=Array.from(document.querySelectorAll('#methodBody tr'));
+      const updateTable=()=>{const q=search.value.trim().toLowerCase(); const start=filter.value; rows.forEach(row=>{row.hidden=!((start==='all'||row.dataset.start===start)&&(!q||row.textContent.toLowerCase().includes(q)));});}; search.addEventListener('input',updateTable); filter.addEventListener('change',updateTable);
+      const storageKey='oerf-v3kd-study-v1'; let state={}; try{state=JSON.parse(localStorage.getItem(storageKey)||'{}');}catch(_error){state={};}
+      const tasks=Array.from(document.querySelectorAll('[data-task]')); const renderTasks=()=>{let done=0; tasks.forEach(input=>{input.checked=Boolean(state[input.dataset.task]); input.closest('.task').classList.toggle('done',input.checked); done+=input.checked?1:0;}); document.getElementById('taskCount').textContent=`${done} / ${tasks.length} 完成`;};
+      tasks.forEach(input=>input.addEventListener('change',()=>{state[input.dataset.task]=input.checked; localStorage.setItem(storageKey,JSON.stringify(state)); renderTasks();})); renderTasks();
+      const brief=[
+        '师兄好，我把 v3k-C 后承诺的强数值对手补完了一轮：同一 hard-support 投影下，validation-only 比较了 FNO/ridge 双起点、逐几何 Landweber、统一全局步长、投影前二次闭式步长和两区 spectral lookup，并单列 A/A^T 调用成本。',
+        '',
+        '当前 validation 绝对精度冠军是 FNO 起点的 quadratic-step-then-projection：field L2=0.143855，相对 feasible FNO 平均改善 45.53%。但它需要 129 A + 64 A^T；128-call 前沿仍是 geometry-normalized Landweber，field L2=0.147083。quadratic 相对它只改善 1.244% [0.528%, 1.958%]，且 17.5% validation fields 的相对伤害超过 1%，所以我没有把它写成同预算 superiority。',
+        '',
+        '按 operator spectral constants 分低/高区的 validation lookup，两区都选回 beta=1.9,T=64，说明粗查表没有条件化价值。validation truth oracle 在逐场选择规则时仍有 1.5866% 平均 headroom，67.5% 场的最好规则不是单一冠军，因此可能值得继续研究可部署特征能否预测步长/停止，但我先阻止训练 MLP。',
+        '',
+        '下一步准备先补 projected BB1/BB2、clip/fallback 和 matched-call stopping curve；只有它们不能解释这部分 headroom，才做一个输出有界步长的小模型。还想请你确认：',
+        '1. 组内真实 BOST forward 是否已有可用 VJP/adjoint，还是需要我从 ray model 自己实现？',
+        '2. 真实数据中 hard support 是否可用；若不可用，应换成什么约束？',
+        '3. 你更希望我优先优化短预算 time-to-target，还是 64-step 最终精度与最差布局尾部？',
+        '4. 能否预留一组全新 fields/layouts/noise realizations 作为 fresh lock？'
+      ].join('\n'); document.getElementById('briefText').value=brief;
+      document.getElementById('copyBrief').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(brief); document.getElementById('copyStatus').textContent='已复制师兄说明。';}catch(_error){document.getElementById('briefText').select(); document.execCommand('copy'); document.getElementById('copyStatus').textContent='已复制师兄说明。';}});
+      fetch('./demo_t16_operator/results/v3k_d_strong_numerical_controls/v3k_d_strong_controls_dashboard.json',{cache:'no-store'}).then(response=>{if(!response.ok)throw new Error(`HTTP ${response.status}`);return response.json();}).then(data=>{const expected='STRONG_NUMERICAL_CONTROLS_COMPLETE_BB_AND_FRESH_LOCK_STILL_REQUIRED';const decision=data.next_decision||{};if(data.scientific_status!==expected||data.champion_method!=='fno_quadratic'||decision.learned_scalar_development_training_authorized!==false||decision.learned_scalar_confirmatory_training_authorized!==false)throw new Error('冻结结果或训练许可与页面版本不一致');document.getElementById('liveStatus').textContent=`在线 JSON 校验通过：${data.scientific_status}；learned scalar 仍未授权。`;}).catch(error=>{document.getElementById('liveStatus').textContent=`使用页面内置冻结结果；动态 JSON 未读取：${error.message}`;});
+    })();
+  </script>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

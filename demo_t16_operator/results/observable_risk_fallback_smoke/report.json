@@ -1,0 +1,250 @@
+{
+  "schema_version": "observable-risk-fallback-smoke-report-1.4",
+  "interface_schema_version": "observable-risk-fallback-interface-1.4",
+  "status": "DEVELOPMENT_ONLY_SYNTHETIC_RCCF_INTERFACE_GATE",
+  "evidence_scope": "SYNTHETIC_FOUR_SPLIT_RCCF_CPU_MICRO_SMOKE_ONLY",
+  "split_contract": {
+    "split_unit": "COMPLETE_RIG",
+    "random_ray_or_pixel_split_used": false,
+    "roles_are_disjoint": true,
+    "role_rig_ids": {
+      "train": [
+        "train-00",
+        "train-01",
+        "train-02",
+        "train-03",
+        "train-04",
+        "train-05",
+        "train-06",
+        "train-07"
+      ],
+      "model_selection": [
+        "model-00",
+        "model-01",
+        "model-02",
+        "model-03",
+        "model-04",
+        "model-05"
+      ],
+      "risk_calibration": [
+        "risk-00",
+        "risk-01",
+        "risk-02",
+        "risk-03",
+        "risk-04",
+        "risk-05",
+        "risk-06",
+        "risk-07",
+        "risk-08",
+        "risk-09",
+        "risk-10",
+        "risk-11"
+      ],
+      "fresh_geometry_ood": [
+        "fresh-00",
+        "fresh-01",
+        "fresh-02",
+        "fresh-03",
+        "fresh-04",
+        "fresh-05",
+        "fresh-06",
+        "fresh-07"
+      ]
+    }
+  },
+  "mathematical_contract": {
+    "operator_decomposition": "A=sum_l C_l",
+    "actual_solver_operator_decomposition_audited": true,
+    "partition_majorizer": "M_P=sum_G abs(sum_l_in_G C_l)",
+    "deterministic_certificate": "M_P >= abs(A) entrywise; Schur audit required for every rig and candidate",
+    "statistical_risk_does_not_replace_certificate": true
+  },
+  "model_selection_contract": {
+    "train_role": "GENERATE_FINITE_RULE_CANDIDATES_AND_OFFLINE_HARM_LABELS",
+    "model_selection_role": "SELECT_MODEL_FEATURE_AND_RULE_ONLY",
+    "risk_calibration_role": "FREEZE_ACCEPTANCE_THRESHOLD_AND_RISK_BOUND_ONLY",
+    "fresh_role": "ONE_PASS_OBSERVABLE_SELECTION_THEN_OFFLINE_EVALUATION",
+    "model": {
+      "model_class": "DEPTH_ONE_OBSERVABLE_GEOMETRY_RISK_RULE",
+      "feature_index": 3,
+      "feature_name": "shear",
+      "threshold": 0.08182306134889988,
+      "left_partition": "paired_local",
+      "right_partition": "paired_cross",
+      "left_risk_score": 0.4,
+      "right_risk_score": 0.14285714285714285,
+      "train_mean_field_score": 0.4439609454097255,
+      "model_selection_objective": -0.07587535287932975,
+      "model_selection_failure_rate": 0.0,
+      "train_candidate_count": 672,
+      "model_selection_finalist_count": 16,
+      "feature_schema_sha256": "f7de29f1a8d934d13ad64629896bf80a3541a6eb38e8d4f678262593051804a0",
+      "support_source": "TRAIN_PLUS_MODEL_SELECTION_FEATURE_ENVELOPE",
+      "support_minimums": [
+        -0.7784802759141383,
+        -0.7702265472792986,
+        0.680731350849659,
+        -0.3569816346028803,
+        0.8132706348462941,
+        0.7189117505622492
+      ],
+      "support_maximums": [
+        0.5670380818120954,
+        0.5399279296544692,
+        0.9652792726127883,
+        0.3591311834216403,
+        1.1950284527761506,
+        0.9524446973462392
+      ],
+      "joint_harm_endpoints": [
+        "field_relative_l2",
+        "normalized_residual_l2"
+      ],
+      "truth_used_offline_for_harm_labels": true,
+      "fresh_truth_used_for_selection": false
+    },
+    "joint_harm_endpoints": [
+      "field_relative_l2",
+      "normalized_residual_l2"
+    ],
+    "front_endpoint_role": "REQUIRED_AT_SPATIAL_TOMOGRAPHY_STAGE_NOT_DEFINED_ON_TINY_VECTOR_SMOKE"
+  },
+  "risk_calibration": {
+    "method": "ONE_SIDED_CLOPPER_PEARSON",
+    "confidence_alpha": 0.025,
+    "coverage_confidence_alpha": 0.025,
+    "multiplicity_correction": "BONFERRONI_FROZEN_FINITE_GRID",
+    "threshold_candidate_count": 3,
+    "threshold_grid": [
+      -1.0,
+      0.14285714285714285,
+      0.4
+    ],
+    "rule_contract_sha256": "18d26da02bbd191cd14fed7f4b9e22350b6707736212134d80cf6b51a947526a",
+    "policy_contract_sha256": "0bc5726ce2292d7d30d7bf36e69e51907cf8609c92b99c9fa6619a281ab5be0c",
+    "independently_expected_policy_contract_sha256": "0bc5726ce2292d7d30d7bf36e69e51907cf8609c92b99c9fa6619a281ab5be0c",
+    "joint_harm_endpoints": [
+      "field_relative_l2",
+      "normalized_residual_l2"
+    ],
+    "harm_tolerances": {
+      "field_relative_l2": 0.02,
+      "normalized_residual_l2": 0.02
+    },
+    "corrected_risk_alpha": 0.008333333333333333,
+    "corrected_coverage_alpha": 0.008333333333333333,
+    "maximum_risk_upper": 0.5,
+    "minimum_takeover_coverage": 0.25,
+    "simultaneous_family_confidence_lower_bound": 0.95,
+    "acceptance_threshold": 0.4,
+    "accepted_count": 1,
+    "failure_count": 0,
+    "risk_upper_bound": 0.9916666666666667,
+    "takeover_coverage": 0.08333333333333333,
+    "takeover_coverage_lower_bound": 0.0006971110443230177,
+    "authorized_takeover_coverage": 0.0,
+    "authorized_takeover_coverage_lower_bound": 0.0,
+    "development_gate_passed": false
+  },
+  "observable_only_contract": {
+    "feature_names": [
+      "regime",
+      "angle",
+      "aperture",
+      "shear",
+      "frequency",
+      "cancellation"
+    ],
+    "feature_schema_sha256": "f7de29f1a8d934d13ad64629896bf80a3541a6eb38e8d4f678262593051804a0",
+    "support_gate": "TRAIN_PLUS_MODEL_SELECTION_AXIS_ALIGNED_FEATURE_ENVELOPE",
+    "fresh_selector_input_type": "DeploymentGeometry",
+    "uses_truth": false,
+    "uses_target": false,
+    "uses_primitives": false,
+    "uses_signed_matrix": false,
+    "uses_exact_abs_operator": false,
+    "uses_solver_trajectory": false,
+    "fallback_partition": "paired_cross",
+    "forbidden_oracle": "all_in_one_exact"
+  },
+  "validation_contract": {
+    "deterministic_full_replay": true,
+    "independent_scipy_cp_and_conditional_aggregation_cross_check": true,
+    "independent_solver_implementation": false
+  },
+  "aggregate": {
+    "calibration_count": 12,
+    "calibration_accepted_count": 1,
+    "calibration_failure_count": 0,
+    "calibration_failure_fraction": 0.0,
+    "calibration_risk_upper_bound": 0.9916666666666667,
+    "calibration_takeover_coverage": 0.08333333333333333,
+    "calibration_takeover_coverage_lower_bound": 0.0006971110443230177,
+    "calibration_authorized_takeover_coverage": 0.0,
+    "calibration_authorized_takeover_coverage_lower_bound": 0.0,
+    "fresh_count": 8,
+    "fresh_takeover_count": 0,
+    "fresh_takeover_coverage": 0.0,
+    "fresh_fallback_rate": 1.0,
+    "fresh_harm_count": 0,
+    "fresh_policy_harm_rate": 0.0,
+    "fresh_selection_conditional_harm_rate": null,
+    "fresh_worst_takeover_field_harm": null,
+    "fresh_worst_takeover_residual_harm": null,
+    "fresh_mean_selected_field_relative_l2": 0.6723414185014979,
+    "fresh_mean_fallback_field_relative_l2": 0.6723414185014979,
+    "partition_audit_count": 136,
+    "partition_audit_violation_count": 0,
+    "operator_decomposition_mismatch_count": 0
+  },
+  "gates": {
+    "synthetic_micro_interface_gate_passed": false,
+    "future_paper_gate_passed": false,
+    "future_paper_gate_failure_reasons": [
+      "MICRO_SAMPLE_COUNTS_BELOW_FUTURE_PAPER_FLOORS",
+      "REAL_BOST_SIGNED_PRIMITIVE_INTERFACE_NOT_VALIDATED",
+      "INDEPENDENT_REAL_GEOMETRY_CLUSTERS_NOT_EVALUATED",
+      "MEASURED_COST_PARETO_NOT_EVALUATED"
+    ],
+    "research_claim_authorized": false,
+    "real_bost_claim_authorized": false,
+    "generalization_claim_authorized": false,
+    "paper_superiority_claim_authorized": false
+  },
+  "claim_boundary": {
+    "deeponet_fno_nerif_superiority_claimed": false,
+    "generalization_claimed": false,
+    "paper_superiority_claimed": false,
+    "real_bost_claimed": false,
+    "synthetic_interface_success_claimed": false
+  },
+  "limitations": [
+    "This is a small synthetic interface gate, not a validated BOST forward model.",
+    "Offline train, model-selection, calibration, and evaluation stages use synthetic truth; fresh selection does not.",
+    "Clopper-Pearson calibration uses too few rigs for a paper claim.",
+    "The tiny vector smoke has no defensible spatial front metric; front harm becomes mandatory at the spatial tomography stage.",
+    "Context and sampling-manifest mismatch gates require the real BOST interface and are not authorized by this toy.",
+    "The validator independently recomputes CP bounds and conditional aggregates, but shares the synthetic solver implementation.",
+    "Wall time is descriptive and noncomparative.",
+    "No DeepONet, FNO, NeRIF, real-data, generalization, or superiority claim is authorized."
+  ],
+  "provenance": {
+    "source_commit": "92f7c36048fd73fd5ae8f99f24cd13a56cb27eec",
+    "source_worktree_dirty": false,
+    "config_sha256": "cf9f58617de0b6f9645579ee32fe4adf8fa02cf4426e47ded555e45021d29e6d",
+    "source_sha256": {
+      "v3_algorithm_source": "2ca8075679c43c5db349b76f8fb17be29b6d7f447cd8616d9a218880a5f3cdcc",
+      "rccf_algorithm_source": "0062f8252c7fa7a365d4536230e672cb8de959ac44db67f26bb2da5359b57e72",
+      "runner_source": "340abca3f1c8ff3dcea3c8f28bbf2f232d7a14a3ef2bfef8897f766a75b07894",
+      "validator_source": "f92cca645e44e7b58089615140d4ce65d49ca87c0a7d2a138ebae76d32b34a08",
+      "config_source": "b2a8170010a50d36d2ac171b34e1ff842c4ddd1244ca5f44758de2864f861da1"
+    },
+    "geometry_manifest_sha256": "42ae1976387b35c79e5092e4400bcffeed426c62a4b6f1793b2c757f8fbf0ba1"
+  },
+  "runtime": {
+    "wall_time_seconds": 0.09504300000844523,
+    "wall_time_role": "MEASURED_SINGLE_RUN_DESCRIPTIVE_NONCOMPARATIVE",
+    "device": "cpu",
+    "dtype": "torch.float64"
+  }
+}

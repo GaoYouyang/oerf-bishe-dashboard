@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>学习日志模板 | OERF 毕设导航</title>
+  <style>
+    :root {
+      --bg: #f7faf9;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #607080;
+      --line: #d9e2e4;
+      --green: #147b68;
+      --blue: #2866b1;
+      --soft-green: #eaf6f2;
+      --soft-blue: #edf4ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef8f5, transparent 320px), var(--bg);
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    header, main {
+      width: min(1160px, calc(100vw - 36px));
+      margin: 0 auto;
+    }
+    header { padding: 34px 0 18px; }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h1 {
+      margin: 14px 0 10px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.08;
+    }
+    h2 { margin: 30px 0 12px; font-size: 24px; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    .button-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .button.primary { background: var(--green); border-color: var(--green); color: #fff; }
+    .grid { display: grid; gap: 12px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card, .notice {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+    }
+    .notice { border-left: 5px solid var(--green); background: linear-gradient(90deg, var(--soft-green), #fff 72%); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+    th { background: #eef5f2; color: #2f3b41; }
+    tr:last-child td { border-bottom: 0; }
+    ul { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+    li { margin-bottom: 7px; }
+    code { background: #edf3f1; padding: 2px 5px; border-radius: 5px; }
+    footer { color: var(--muted); font-size: 12px; margin: 34px 0; }
+    @media (max-width: 840px) {
+      .grid.two { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="button" href="./index.html">返回主导航</a>
+    <h1>学习日志模板</h1>
+    <p>后续可以把学习历程也做成网页：记录读了什么、卡在哪里、如何解决、产生了什么 demo、下一步问师兄什么。最后更新：2026-07-09。</p>
+    <div class="button-row">
+      <a class="button primary" href="./thesis_pathway_matrix.html">选题路线矩阵</a>
+      <a class="button" href="./he_bost_14day_reading_plan.html">14 天 He/BOST 精读执行包</a>
+      <a class="button" href="document_reader.html?doc=undergrad_foundation_bootcamp.md">12 周基础训练营</a>
+      <a class="button" href="document_reader.html?doc=reading_log_template.md">Markdown 精读模板</a>
+      <a class="button" href="./xmu_vpn_private_library_protocol.html">VPN 与私有论文库边界</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice">
+      <h3>这个页面未来怎么用</h3>
+      <p>每天不需要写长文，只要留下“问题、尝试、结果、下一步”。毕业论文最怕到最后想不起实验为什么这么做；这个日志就是给未来的你留下证据链。</p>
+    </section>
+
+    <h2>每日日志格式</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>字段</th>
+          <th>写法</th>
+          <th>例子</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>今天目标</td>
+          <td>一句话，不超过 30 字。</td>
+          <td>跑通 2D BOS forward projection toy。</td>
+        </tr>
+        <tr>
+          <td>读了什么</td>
+          <td>论文/教材章节/代码链接，写页码或小节。</td>
+          <td>NeRIF arXiv Section 3；Raffel BOS review 的 displacement 部分。</td>
+        </tr>
+        <tr>
+          <td>卡住什么</td>
+          <td>写具体错误或概念，不写“我不会”。</td>
+          <td>不知道 deflection angle 和 image displacement 的比例如何标定。</td>
+        </tr>
+        <tr>
+          <td>怎么解决</td>
+          <td>写一个可复用结论或命令/公式/图。</td>
+          <td>先用 pinhole 小角度近似做 toy，真实比例留给标定参数。</td>
+        </tr>
+        <tr>
+          <td>产物</td>
+          <td>脚本、图、表格、笔记、问题清单。</td>
+          <td><code>demo_m0/figures/projection_error_noise_scan.png</code></td>
+        </tr>
+        <tr>
+          <td>明天动作</td>
+          <td>只写 1-3 个可以执行的下一步。</td>
+          <td>加入 SART baseline；问师兄 mask 是否进入 loss。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>周报结构</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>每周固定四张图</h3>
+        <ul>
+          <li>数据或 phantom 图。</li>
+          <li>重构结果图。</li>
+          <li>误差/指标曲线。</li>
+          <li>失败样本或不确定性图。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>每周固定四个问题</h3>
+        <ul>
+          <li>这一周最确定的结论是什么？</li>
+          <li>最不确定的假设是什么？</li>
+          <li>哪个问题需要问何远哲？</li>
+          <li>下周最小可交付是什么？</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>长期学习轨迹</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>月份</th>
+          <th>主任务</th>
+          <th>日志重点</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>第 1 月</td>
+          <td>流体/光学/BOST/反问题基础和 M0-M1 demo。</td>
+          <td>把概念误区写清楚，尤其是折射率、密度、位移、投影和重构的关系。</td>
+        </tr>
+        <tr>
+          <td>第 2 月</td>
+          <td>NeRIF 简化版、baseline、view/noise 扫描。</td>
+          <td>记录每个 loss、encoding、正则项为什么加，以及失败时图像是什么样。</td>
+        </tr>
+        <tr>
+          <td>第 3 月</td>
+          <td>真实数据接口或 PIV/4D 子模块选择。</td>
+          <td>记录和师兄确认过的边界、数据字段、评价指标和公开限制。</td>
+        </tr>
+        <tr>
+          <td>第 4-9 月</td>
+          <td>毕业论文主实验、消融、图表和写作。</td>
+          <td>每次实验都留下 config、commit、图和一句结论，避免最后补账。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>公开与私有分区</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>可以公开写进日志</h3>
+        <ul>
+          <li>公开论文的读书心得。</li>
+          <li>自己实现的合成 demo、代码和图。</li>
+          <li>基础概念问题和解决过程。</li>
+          <li>不含组内数据的实验参数扫描。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>只放本地私有日志</h3>
+        <ul>
+          <li>学校 VPN 下载的受限 PDF 内容页码截图。</li>
+          <li>组内未公开实验图、标定、代码和数据字段。</li>
+          <li>师兄明确说不要公开的结论。</li>
+          <li>任何账号、密码、内部链接或权限信息。</li>
+        </ul>
+      </div>
+    </div>
+
+    <footer>
+      这个页面目前是模板。等你开始系统学习后，可以把每周总结整理成新的公开日志页，私有细节留在本地。
+    </footer>
+  </main>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

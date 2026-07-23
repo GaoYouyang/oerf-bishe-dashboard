@@ -1,0 +1,166 @@
+{
+  "schema_version": "n5-d5-minimum-bost-interface-dual-2.0",
+  "record_kind": "LAB_ANONYMOUS_INTERFACE_DUAL_PATH",
+  "protocol_variant": "dual_path_no_native_direct_v2",
+  "native_direct_residual_supported": false,
+  "identity": {
+    "bundle_id": "REPLACE_WITH_PSEUDONYM",
+    "context_id": "REPLACE_WITH_PSEUDONYM",
+    "evidence_class": "private_lab_callable",
+    "anonymized": true,
+    "contains_private_identifiers": false,
+    "real_lab_data_present": true
+  },
+  "adapter": {
+    "transport": "jsonl_subprocess_v1",
+    "command": [
+      "{python}",
+      "private_library/n5_d5_adapter_dual_v2.py"
+    ],
+    "timeout_seconds": 120,
+    "expected_adapter_id": "REPLACE_ME",
+    "expected_adapter_version": "REPLACE_ME",
+    "expected_implementation_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "source_review_status": "private_source_reviewed",
+    "deterministic_required": true,
+    "source_files": [
+      "private_library/n5_d5_adapter_dual_v2.py"
+    ]
+  },
+  "field": {
+    "input_dimension": 2,
+    "parameterization": "refractive_index_field",
+    "units": "REPLACE_ME",
+    "axis_order": "REPLACE_ME",
+    "dtype": "float64",
+    "base_input": {
+      "source": "npy_relative",
+      "seed": null,
+      "relative_path": "private_library/n5_d5_base_input_dual_v2.npy",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  },
+  "observation": {
+    "ray_count": 4,
+    "components_per_ray": 2,
+    "output_dimension": 8,
+    "units": "REPLACE_ME",
+    "component_order": "REPLACE_ME",
+    "dtype": "float64"
+  },
+  "paths": [
+    {
+      "role": "curved",
+      "path_id": "REPLACE_ME_CURVED",
+      "callable_id": "REPLACE_ME_CURVED",
+      "semantic_digest_sha256": "0000000000000000000000000000000000000000000000000000000000000011",
+      "operation_support": {
+        "forward": true,
+        "jvp": true,
+        "vjp": true
+      }
+    },
+    {
+      "role": "straight",
+      "path_id": "REPLACE_ME_STRAIGHT",
+      "callable_id": "REPLACE_ME_STRAIGHT",
+      "semantic_digest_sha256": "0000000000000000000000000000000000000000000000000000000000000012",
+      "operation_support": {
+        "forward": true,
+        "jvp": true,
+        "vjp": true
+      }
+    }
+  ],
+  "probe_plan": {
+    "tangent_count": 2,
+    "cotangent_count": 1,
+    "tangent_seed": 2026071901,
+    "cotangent_seed": 2026071902,
+    "normalization": "unit_l2",
+    "h_values": [
+      0.00001,
+      0.0001,
+      0.001
+    ],
+    "best_h_selection_is_forbidden": true,
+    "all_paths_must_be_probed": true,
+    "all_h_values_must_be_consumed": true,
+    "maximum_tangent_absolute_cosine": 0.95
+  },
+  "state_contract": {
+    "actual_forward_returns_states": true,
+    "branch_state_source": "private_source_reviewed_control_flow",
+    "diagnostic_state_source": "post_forward_diagnostic",
+    "branch_fields": [
+      "control_flow_id",
+      "active_ray_count",
+      "sample_count",
+      "termination_digest"
+    ],
+    "diagnostic_fields": [
+      "minimum_domain_margin",
+      "minimum_stencil_margin"
+    ],
+    "wrapper_labels_forbidden": true
+  },
+  "engineering_tolerances": {
+    "repeatability_absolute_max": 0.0,
+    "structure_relative_max": 1e-8,
+    "finite_difference_relative_max": 0.0001,
+    "adjoint_normwise_max": 1e-8,
+    "minimum_bilinear_signal_to_action": 1e-5
+  },
+  "cost_contract": {
+    "describe_calls": 2,
+    "forward_api_calls": 28,
+    "jvp_api_calls": 4,
+    "vjp_api_calls": 2,
+    "primary_total_requests": 36,
+    "all_calls_must_be_reported": true,
+    "ledger_must_be_cumulative": true,
+    "cost_attestation": "source_instrumented_private_reviewed",
+    "maximum_stderr_bytes": 0
+  },
+  "residual_contract": {
+    "native_direct_residual": false,
+    "endpoint_output_subtraction_forbidden": true,
+    "derived_residual_output_permitted": false,
+    "residual_evidence_scope": "two_endpoint_callables_only"
+  },
+  "callable_contract": {
+    "runtime_direction_mode": "arbitrary_runtime_x_v_q",
+    "precomputed_probe_arrays_are_sufficient": false,
+    "same_discrete_backend_required": true,
+    "branch_state_returned": true,
+    "diagnostic_state_returned": true
+  },
+  "privacy": {
+    "raw_trace_publication_permitted": false,
+    "public_summary_permitted": false,
+    "private_adapter_required_for_lab": true,
+    "public_identifiers_forbidden": true
+  },
+  "status_precedence": [
+    "NONFINITE",
+    "CONTRACT",
+    "PATH_ALIAS",
+    "COST",
+    "REPEATABILITY",
+    "BRANCH",
+    "STRUCTURE",
+    "FD",
+    "ADJOINT",
+    "LOW_SIGNAL_UNRESOLVED",
+    "PROTOCOL_OBLIGATIONS_MET"
+  ],
+  "claim_authorizations": {
+    "real_bost_interface": false,
+    "physical_forward_correctness": false,
+    "derivative_correctness": false,
+    "reconstruction": false,
+    "algorithm_superiority": false,
+    "generalization": false,
+    "publication": false
+  }
+}

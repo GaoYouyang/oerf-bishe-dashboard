@@ -1,0 +1,169 @@
+{
+  "claim_authorization": {
+    "better_than_deeponet_fno_nerif_or_nirp": false,
+    "breakthrough": false,
+    "cross_field_generalization": false,
+    "cross_geometry_generalization": false,
+    "mps_training": true,
+    "new_algorithm": false,
+    "oerf_data": false,
+    "paper_success": false,
+    "real_bost": false,
+    "reconstruction_success": false,
+    "single_public_phantom_optimization_smoke": true
+  },
+  "environment": {
+    "mps_available": true,
+    "numpy": "2.4.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "python": "3.11.5",
+    "torch": "2.13.0"
+  },
+  "evidence_level": "E1_PUBLIC_SINGLE_PHANTOM_IMPLEMENTATION_DIAGNOSTIC_ONLY",
+  "gates": {
+    "external_commit_gate_passed": true,
+    "external_worktree_gate_passed": true,
+    "primary_cpu_and_public_gate_passed": true,
+    "protocol_lock_passed": true,
+    "secondary_mps_gate_passed": true
+  },
+  "known_limits": [
+    "One public Phantom field is a value-parity check, not an independent generalisation test.",
+    "Synthetic derivatives verify implementation mechanics, not physical model adequacy.",
+    "The public replay uses the released CGLS-TV field and opened train-view geometry only.",
+    "No network, reconstruction optimisation, experimental OERF data, or baseline comparison is executed here.",
+    "A pass authorizes only a tightly labelled single-phantom optimisation smoke test."
+  ],
+  "next_authorized_action": "Run a matched-budget single-public-phantom optimisation smoke test with classical and neural parameterisations.",
+  "protocol": {
+    "all_thresholds": {
+      "cpu_float64_maximum_affine_integral_absolute_error": 1e-11,
+      "cpu_float64_maximum_finite_difference_relative_error": 5e-08,
+      "cpu_float64_maximum_jvp_exact_direction_relative_error": 1e-11,
+      "cpu_float64_maximum_jvp_vjp_bilinear_relative_error": 1e-11,
+      "cpu_float64_maximum_linearity_relative_error": 1e-12,
+      "cpu_float64_maximum_outside_gradient_absolute_value": 1e-14,
+      "cpu_float64_maximum_value_absolute_error": 1e-10,
+      "cpu_float64_maximum_value_relative_l2": 1e-11,
+      "mps_float32_maximum_finite_difference_relative_error": 0.005,
+      "mps_float32_maximum_jvp_exact_direction_relative_error": 0.0001,
+      "mps_float32_maximum_jvp_vjp_bilinear_relative_error": 0.0001,
+      "mps_float32_maximum_outside_gradient_absolute_value": 1e-06,
+      "mps_float32_maximum_value_absolute_error": 5e-05,
+      "mps_float32_maximum_value_relative_l2": 5e-05,
+      "public_replay_maximum_value_absolute_error": 1e-09,
+      "public_replay_maximum_value_relative_l2": 1e-10
+    },
+    "frozen_at_utc": "2026-07-22T21:05:02Z",
+    "protocol_id": "open_nir_bos_d0_5_torch_forward_v0_preregistered",
+    "protocol_sha256": "80df1e5943e7664c6619487e02852a219625d83184d444b87adad163d51d71b3",
+    "threshold_relaxation_after_execution_allowed": false
+  },
+  "public_phantom_value_replay": {
+    "details": {
+      "external_assets_exported": false,
+      "field": "released_cgls_tv",
+      "field_preparation": {
+        "ambient_refractive_index": 1.0000726913636364,
+        "ambient_temperature_kelvin": 1100.0,
+        "emulation_is_not_claimed_bit_exact": true,
+        "half_resolution_shape": [
+          200,
+          294,
+          200
+        ],
+        "matlab_imresize3_emulation": "scipy_ndimage_zoom_order_3_then_center_crop",
+        "normalization_abs_min_relative_refractive_index": 4.3272972106933594e-05,
+        "source_ground_truth_shape": [
+          400,
+          588,
+          400
+        ],
+        "support_fraction": 0.4620317816734314,
+        "target_shape": [
+          140,
+          294,
+          140
+        ],
+        "truth_max": 2.9311294555664062,
+        "truth_min": -1.0
+      },
+      "field_shape": [
+        140,
+        294,
+        140
+      ],
+      "outside_aabb_policy": "zero",
+      "quadrature_steps": 128,
+      "rays_per_view": 64,
+      "selection_hashes": [
+        "d38ba1005f50065a9ef925c797c09bd282bbf6aefe1385252c1c4ecded2755c3",
+        "f2a6bdba2dcc9cc8df9a14fdc3bb9bfb8c9ae49fe18186f152f3dbac1e949a0e",
+        "a50fa867766f344ef1cdb530eebd3afcc743fe274d0b2d79b716fe50ae009bd3",
+        "385b07926a81989978aaf8bc593fc2a61c1bcdd51719f5c9c0dee69d20cfca13",
+        "ef1307986b42061819c3926072de1ef57b5f3438a76a9ec7a579b664d8b6b51c",
+        "5bc67d835f196dece19d83407b367a723d076d9f9f7de20dbbba78b8a866a400",
+        "c414ebe875e1bcba444aba432eaa04736985c630de62ac6d5b8071125a66eb9c",
+        "f9aff9dc4aec8c3cf50c4543faa95af10191aa2f7b88718f07d5fc5ed6c5e612",
+        "1c271caa18e3b22d37ec013ff4554739cd2b318369dc3d0c3814e295f05f775d",
+        "808adbb23c25374b84d3b76f1899408e4eab6c47a27079203c50ac7edabfad7a",
+        "ca660fdba8d116e5c5700489e6930a4d3fc14f805ab140bb4ce3cec8b70ae522",
+        "a306b3280d1980efce0ec31626dac3a6e257667e7758641d8b7a06065046ef3d"
+      ],
+      "total_rays": 768,
+      "valid_rays": 754,
+      "views": 12
+    },
+    "gradient_graph_constructed": false,
+    "metrics": {
+      "maximum_absolute_error": 7.105427357601002e-15,
+      "relative_l2": 3.058502776252164e-16
+    }
+  },
+  "research_question": "Does a clean-room differentiable PyTorch thin-ray operator reproduce the frozen NumPy/SciPy value replay and expose numerically trustworthy field derivatives?",
+  "runtime": {
+    "machine_specific_speed_claim_authorized": false,
+    "wall_seconds": 14.118475917028263
+  },
+  "schema_version": "oerf-open-nir-bos-d0-5-torch-forward-gate-1.0",
+  "secondary_mps_float32": {
+    "available": true,
+    "error": null,
+    "metrics": {
+      "affine_integral_maximum_absolute_error": 3.5762786865234375e-07,
+      "finite_difference_relative_error": 0.00018589563918663292,
+      "jvp_exact_direction_relative_error": 0.0,
+      "jvp_vjp_bilinear_relative_error": 4.978959964319074e-07,
+      "linearity_relative_error": 1.5374811428255566e-07,
+      "outside_gradient_maximum_absolute_value": 0.0,
+      "outside_output_maximum_absolute_value": 0.0,
+      "value_maximum_absolute_error": 2.384185791015625e-07,
+      "value_relative_l2": 9.156637619082325e-08
+    },
+    "mps_training_authorized": true
+  },
+  "source_release": {
+    "commit": "a385cce83d88df24ed05dccfd6fde20e124f5604",
+    "commit_matches_expected": true,
+    "external_code_executed": false,
+    "external_code_or_data_copied_into_this_repository": false,
+    "paper_url": "https://arxiv.org/html/2605.11454",
+    "url": "https://github.com/Weihu22/Neural-Implicit-Reconstruction-for-BOS",
+    "working_tree_clean": true
+  },
+  "status": "D0_5_DIFFERENTIABLE_FORWARD_PASS_IMPLEMENTATION_ONLY",
+  "synthetic_cpu_float64": {
+    "all_required_metrics_passed": true,
+    "metrics": {
+      "affine_integral_maximum_absolute_error": 4.440892098500626e-16,
+      "finite_difference_relative_error": 2.4533217600782625e-10,
+      "jvp_exact_direction_relative_error": 0.0,
+      "jvp_vjp_bilinear_relative_error": 1.9707326671457516e-15,
+      "linearity_relative_error": 1.0941197803594572e-16,
+      "outside_gradient_maximum_absolute_value": 0.0,
+      "outside_output_maximum_absolute_value": 0.0,
+      "value_maximum_absolute_error": 1.3322676295501878e-15,
+      "value_relative_l2": 4.582185217340375e-16
+    }
+  }
+}

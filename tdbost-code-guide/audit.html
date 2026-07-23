@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="TDBOST 公开代码运行边界、复现阻塞点和主训练路径疑点。" />
+  <title>TDBOST 运行审计 | OERF 毕设导航</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主内容</a>
+  <header class="page-width">
+    <nav class="top-nav" aria-label="页面导航">
+      <a href="../index.html">OERF 研究总站</a>
+      <a href="../operator-learning/">算子学习主页</a>
+      <a href="./">TDBOST 代码导读</a>
+      <a href="./data.html">数据说明</a>
+      <a href="./audit.html" aria-current="page">运行审计</a>
+      <a class="nav-source" href="https://github.com/Hyz617/TDBOST" target="_blank" rel="noreferrer">师兄原仓库</a>
+    </nav>
+  </header>
+
+  <main id="main" class="article">
+    <div class="eyebrow">Reproducibility Boundary</div>
+    <h1>为什么不能克隆后就直接训练？</h1>
+    <p class="lead">科研代码公开不等于当前电脑已经具备数据、环境、二进制和作者服务器路径。下面把“阅读没有问题”和“已经复现成功”严格分开。</p>
+
+    <div class="notice critical">
+      <strong>当前判断：注释版适合阅读，但公开快照尚未形成 Mac 上的完整可运行包。</strong>
+      中文注释没有修复任何问题；23 个 Python/PYI 文件去除注释后与师兄原版执行语法树一致。
+    </div>
+
+    <section class="article-card">
+      <h2>已确认的直接阻塞点</h2>
+      <table class="article-table">
+        <thead><tr><th>位置</th><th>现象</th><th>实际影响</th></tr></thead>
+        <tbody>
+          <tr><td><code>All_util/trainer.py</code> 顶部</td><td>import 时立即读取 <code>/home/PUBLIC_USER_REDACTED/Project/Data/...</code></td><td>离开师兄服务器后，可能还没进入 main() 就因绝对路径报错。</td></tr>
+          <tr><td><code>proj.cpython-311-x86_64-linux-gnu.so</code></td><td>Linux x86-64 ELF 二进制</td><td>macOS 不能直接加载，且真实 proj 实现不是可读 Python。</td></tr>
+          <tr><td><code>transforms_*_s.json</code></td><td>引用 <code>train/datatensor_*.npy</code></td><td>完整 NumPy 位移数组未随公开快照提供。</td></tr>
+          <tr><td><code>run.py</code></td><td>CUDA 可用时固定选择 <code>cuda:3</code></td><td>要求第 4 块可见 NVIDIA GPU；单卡机器会设备编号越界。</td></tr>
+          <tr><td><code>requirements.txt</code></td><td>同时固定两个 pyDOE 版本，并列出多个 OpenCV 包</td><td>直接安装可能产生版本冲突。</td></tr>
+          <tr><td>上游根目录</td><td>获取时没有 LICENSE 文件</td><td>公开可读不自动说明复制、修改和再发布许可。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="article-card">
+      <h2>主训练路径需要作者确认的行为</h2>
+      <div class="flow-list">
+        <div class="flow-row"><span class="flow-number">1</span><div><h3>活跃优化器与学习率衰减对象不一致</h3><p>实际 step 的是 <code>optimizergapp</code>，学习率衰减和上采样后重建的却是 <code>optimizerrho</code>。需要确认当前公开快照是否遗漏了同步更新。</p></div></div>
+        <div class="flow-row"><span class="flow-number">2</span><div><h3>随机采样数表达式没有写回变量</h3><p><code>N_samples + torch.randint(...)</code> 只计算新值，没有赋值，因此不会改变 N_samples。</p></div></div>
+        <div class="flow-row"><span class="flow-number">3</span><div><h3>位移校正分支被乘以零</h3><p><code>dp = self.app_regressor(...) * 0</code> 会让该输出和对应梯度为零。需要确认这是消融设置还是调试遗留。</p></div></div>
+        <div class="flow-row"><span class="flow-number">4</span><div><h3>一个光线方向函数重复使用 x 列</h3><p><code>get_ray_directions()</code> 中 i 和 j 都取 <code>point[...,0]</code>。常见写法的 j 会取第 2 列，但必须结合作者的数据坐标约定确认。</p></div></div>
+        <div class="flow-row"><span class="flow-number">5</span><div><h3>PDE 联合训练分支可能引用未建立变量</h3><p>modelU 不为 None 时只建立 optimizerrho，后续仍调用 optimizergapp。默认主线不触发，但进阶分支可能报错。</p></div></div>
+      </div>
+    </section>
+
+    <section class="article-card">
+      <h2>建议的复现顺序</h2>
+      <ol>
+        <li>向师兄确认论文对应版本、数据字段、相机坐标、物理单位、许可证和标准训练命令。</li>
+        <li>把服务器绝对路径移出 import 顶层，先做到所有模块可以安全 import。</li>
+        <li>建立与作者一致的 CUDA 环境，用极小伪数据跑 1 batch / 1 iteration。</li>
+        <li>记录活跃优化器中每组参数的学习率、梯度和更新量。</li>
+        <li>再接完整数据、检查点与论文指标；代码能跑不等于结果正确。</li>
+      </ol>
+      <p><a class="button primary" href="./?file=All_util%2Ftrainer.py">打开 Trainer 中文导读</a></p>
+    </section>
+  </main>
+
+  <footer class="page-width">
+    <p>本页是静态代码审计，不替代作者说明、实际运行验证或法律意见。</p>
+  </footer>
+</body>
+</html>

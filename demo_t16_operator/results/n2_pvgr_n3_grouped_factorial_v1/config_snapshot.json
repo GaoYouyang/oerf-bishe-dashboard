@@ -1,0 +1,182 @@
+{
+  "schema": "n2-pvgr-n3-grouped-factorial-preregistered-1.0",
+  "candidate_id": "N2-PVGR-N3-GF96",
+  "status": "preregistered_development_only_no_audit_authorization",
+  "parent_mechanism_result": "demo_t16_operator/results/n2_pvgr_n2_operator_consistent_bridge_v1/result.json",
+  "parent_mechanism_commit": "87e770a90eb344900f550a0b0d8ef73f75763a25",
+  "source_config": "demo_t16_operator/configs/n2_pvgr_n0_trifidelity_development_v1.json",
+  "pre_registration_attestation": "demo_t16_operator/configs/n2_pvgr_n3_grouped_factorial_preregistration_attestation_v1.json",
+  "formal_output": "demo_t16_operator/results/n2_pvgr_n3_grouped_factorial_v1",
+  "formal_work_output": "demo_t16_operator/results/n2_pvgr_n3_grouped_factorial_v1_work",
+  "device": "cpu",
+  "dtype": "float64",
+  "population_count": 256,
+  "execution_step_count": 128,
+  "reference_step_count": 256,
+  "reference_sentinel_step_count": 512,
+  "picard_sweep_counts": [
+    1,
+    2
+  ],
+  "teacher_scope": "all_96_physical_cells",
+  "reference_sentinel_scope": "all_96_physical_cells",
+  "resume_policy": "only_hash_validated_cell_checkpoints_from_the_same_preregistration",
+  "factorial": {
+    "field_families": [
+      {
+        "id": "smooth",
+        "phantom_family": "smooth_plume",
+        "field_seeds": [
+          1729,
+          1871,
+          1987,
+          2131
+        ]
+      },
+      {
+        "id": "wrinkled",
+        "phantom_family": "wrinkled_density_interface",
+        "field_seeds": [
+          2718,
+          2851,
+          3001,
+          3163
+        ]
+      }
+    ],
+    "rig_orientation_packages": [
+      {
+        "id": "orientation_22",
+        "view_angle_degrees": 22.0,
+        "detector_u": 0.05,
+        "detector_z": -0.04,
+        "path_half_length": 0.62,
+        "bend": 0.0
+      },
+      {
+        "id": "orientation_58",
+        "view_angle_degrees": 58.0,
+        "detector_u": -0.07,
+        "detector_z": 0.06,
+        "path_half_length": 0.62,
+        "bend": 0.0
+      }
+    ],
+    "aperture_packages": [
+      {
+        "id": "narrow",
+        "aperture_radius": 0.035,
+        "cone_u": 0.04,
+        "cone_z": 0.03
+      },
+      {
+        "id": "wide",
+        "aperture_radius": 0.075,
+        "cone_u": 0.07,
+        "cone_z": 0.05
+      }
+    ],
+    "dimensionless_stress_scale_multipliers": [
+      1,
+      3,
+      10
+    ],
+    "expected_field_unit_count": 8,
+    "expected_base_case_count": 32,
+    "expected_physical_cell_count": 96,
+    "field_unit_definition": "phantom_family_x_field_seed",
+    "ray_is_not_an_independent_repeat": true,
+    "common_sobol_prefix_by_field_unit": true
+  },
+  "timing": {
+    "stress_multiplier": 1.0,
+    "warmup_repeats": 2,
+    "measured_repeats": 20,
+    "interleave_seed": 91427,
+    "package_scope": "four_orientation_x_aperture_packages_on_fixed_smooth_seed_1729"
+  },
+  "development_screens": {
+    "maximum_teacher_output_relative_l2": 2e-10,
+    "maximum_teacher_position_tangent_relative_l2": 2e-10,
+    "maximum_teacher_direction_tangent_relative_l2": 2e-10,
+    "maximum_base_output_relative_l2": 2e-10,
+    "maximum_matched_residual_prediction_relative_l2": 0.02,
+    "maximum_corrected_residual_variance_ratio": 0.01,
+    "minimum_per_ray_risk_spearman": 0.99,
+    "minimum_valid_ray_fraction": 1.0,
+    "maximum_candidate_to_high_reference_relative_l2": 0.002,
+    "minimum_scoreable_global_reference_relative_l2": 1e-12,
+    "minimum_scoreable_q95_reference_error": 1e-12,
+    "maximum_unscoreable_candidate_q95_reference_error": 1e-12,
+    "maximum_candidate_reference_error_to_high_execution_reference_error_ratio": 1.1,
+    "maximum_candidate_q95_reference_error_to_high_execution_q95_ratio": 1.1,
+    "maximum_high256_to_high512_output_relative_l2": 0.0001,
+    "maximum_matched_residual_256_to_512_relative_l2": 0.01,
+    "maximum_candidate_p90_to_high128_p10_wall_time_ratio": 0.25,
+    "maximum_candidate_to_high128_logical_point_query_ratio": 0.45,
+    "maximum_false_safe_cell_count": 0
+  },
+  "grouped_decision": {
+    "bootstrap_seed": 44519,
+    "bootstrap_replicates": 20000,
+    "confidence_level": 0.95,
+    "field_unit_aggregation": "geometric_mean_for_matched_error_and_worst_for_no_harm_tail",
+    "picard_forward_dominance": {
+      "eligible_methods": [
+        "picard_1",
+        "picard_2"
+      ],
+      "minimum_field_units_with_lower_geometric_mean_matched_error": 8,
+      "maximum_upper_confidence_bound_of_grouped_geometric_mean_matched_ratio": 0.75,
+      "maximum_worst_condition_matched_ratio_vs_ocbh": 0.95,
+      "maximum_worst_condition_global_no_harm_ratio_vs_ocbh": 1.01,
+      "maximum_worst_condition_q95_no_harm_ratio_vs_ocbh": 1.01,
+      "minimum_field_unit_valid_fraction_difference_vs_ocbh": 0.0,
+      "maximum_package_wall_p90_ratio_vs_ocbh": 0.9,
+      "maximum_logical_point_query_ratio_vs_ocbh": 1.0
+    }
+  },
+  "reserved_audit_families_not_opened": [
+    "oblique_compression_sheet",
+    "shock_expansion_pair"
+  ],
+  "claim_authorizations": {
+    "reserved_audit": false,
+    "real_data": false,
+    "three_dimensional_reconstruction": false,
+    "neural_operator_superiority": false,
+    "paper_claim": false
+  },
+  "known_unimplemented_integrity_gates": [
+    "ray_crossing_or_caustic_certificate",
+    "discontinuous_cell_topology_certificate",
+    "peak_rss_by_method",
+    "host_scalar_synchronization_count",
+    "independent_process_evaluator_isolation"
+  ],
+  "stopping_rules": [
+    "If Picard-1 or Picard-2 meets every preregistered field-unit, tail, validity, wall-time, and query dominance gate, close OCBH as a deployed forward candidate.",
+    "If OCBH fails any inherited per-cell primary, teacher, sentinel, timing, or query gate, do not promote it beyond mechanism evidence.",
+    "Do not start a neural residual model unless a residual target exceeds both the numerical sentinel and the future experimental noise floor.",
+    "Do not open either reserved family in this development run.",
+    "Do not rewrite thresholds after viewing any formal 96-cell result; create a new versioned protocol instead."
+  ],
+  "attested_files": {
+    "config": "demo_t16_operator/configs/n2_pvgr_n3_grouped_factorial_preregistered_v1.json",
+    "runner": "demo_t16_operator/run_n2_pvgr_n3_grouped_factorial.py",
+    "runner_test": "demo_t16_operator/test_run_n2_pvgr_n3_grouped_factorial.py",
+    "protocol": "docs/n2_pvgr_n3_96cell_preregistration_2026-07-18.md",
+    "field_jvp_vjp_design": "docs/n2_pvgr_field_jvp_vjp_reconstruction_interface_design_2026-07-18.md",
+    "attestation_builder": "site_tools/create_n2_pvgr_n3_preregistration_attestation.py",
+    "bridge_runner": "demo_t16_operator/run_n2_pvgr_n2_operator_consistent_bridge.py",
+    "source_config": "demo_t16_operator/configs/n2_pvgr_n0_trifidelity_development_v1.json",
+    "n1_context_builder": "demo_t16_operator/run_n2_pvgr_n1_variational_development.py",
+    "analytic_phantoms": "demo_t16_operator/analytic_bost_phantoms.py",
+    "discrete_jvp_teacher": "demo_t16_operator/discrete_rk4_jvp_predictor.py",
+    "operator_consistent_predictor": "demo_t16_operator/operator_consistent_homotopy_predictor.py",
+    "picard_baseline": "demo_t16_operator/picard_curved_ray_baseline.py",
+    "continuous_affine_predictor": "demo_t16_operator/trajectory_variational_predictor.py",
+    "straight_state": "demo_t16_operator/shared_straight_state.py",
+    "curved_high": "demo_t16_operator/field_dependent_ray.py"
+  }
+}

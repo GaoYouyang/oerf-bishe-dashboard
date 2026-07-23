@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>公开站体积与 PDF 缓存策略 | OERF 毕设导航</title>
+  <style>
+    :root {
+      --bg: #f6faf8;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #607080;
+      --line: #d9e2e4;
+      --green: #147b68;
+      --blue: #2866b1;
+      --amber: #9a6a00;
+      --red: #aa3f31;
+      --soft-green: #eaf6f2;
+      --soft-blue: #edf4ff;
+      --soft-amber: #f8f0dc;
+      --soft-red: #faeeeb;
+      --shadow: 0 16px 38px rgba(30, 45, 55, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(246, 250, 248, 0.94), rgba(246, 250, 248, 0.76)),
+        url("./assets/backgrounds/oerf-refractive-field.png") right -150px top 20px / min(940px, 92vw) auto no-repeat fixed,
+        linear-gradient(180deg, rgba(20, 123, 104, 0.08), transparent 360px),
+        var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      line-height: 1.68;
+      letter-spacing: 0;
+    }
+    header, main {
+      width: min(1180px, calc(100vw - 36px));
+      margin: 0 auto;
+      min-width: 0;
+    }
+    header { padding: 32px 0 18px; }
+    a { color: var(--blue); text-decoration: none; overflow-wrap: anywhere; }
+    a:hover { text-decoration: underline; }
+    h1 {
+      margin: 14px 0 10px;
+      max-width: 980px;
+      font-size: clamp(30px, 4vw, 50px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+    h2 { margin: 30px 0 12px; font-size: 24px; }
+    h3 { margin: 0 0 8px; font-size: 18px; }
+    p { margin: 0 0 12px; color: var(--muted); }
+    code { white-space: normal; overflow-wrap: anywhere; }
+    .button-row, .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 750;
+      box-shadow: 0 8px 20px rgba(32, 48, 56, 0.04);
+    }
+    .button.primary { background: var(--green); border-color: var(--green); color: #fff; }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+    .metric, .card, .notice {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      min-width: 0;
+    }
+    .metric b { display: block; color: var(--green); font-size: 32px; line-height: 1; margin-bottom: 6px; }
+    .metric span { color: var(--muted); font-size: 13px; }
+    .notice { border-left: 5px solid var(--green); box-shadow: none; background: linear-gradient(90deg, var(--soft-green), #fff 76%); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .ok { color: var(--green); background: var(--soft-green); border-color: #cce4dc; }
+    .warn { color: var(--amber); background: var(--soft-amber); border-color: #ead7b5; }
+    .risk { color: var(--red); background: var(--soft-red); border-color: #edc8c0; }
+    .info { color: var(--blue); background: var(--soft-blue); border-color: #d2e0f1; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+    th { background: #eef5f2; color: #2f3b41; }
+    tr:last-child td { border-bottom: 0; }
+    ol, ul { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+    li { margin-bottom: 7px; }
+    footer { margin: 34px 0; color: var(--muted); font-size: 12px; }
+    @media (max-width: 860px) {
+      .metrics, .grid { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+    @media (max-width: 640px) {
+      header, main { width: min(100vw - 24px, 1180px); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="button-row">
+      <a class="button primary" href="./index.html">返回主导航</a>
+      <a class="button" href="./paper_library/index.html">论文库</a>
+      <a class="button" href="./pdf_cache_audit.html">PDF 缓存审计</a>
+      <a class="button" href="./xmu_vpn_private_library_protocol.html">私有库边界</a>
+    </div>
+    <h1>公开站体积与 PDF 缓存策略</h1>
+    <p>这页给后续继续扩充 OERF / BOST / NeRIF 资料库立边界：网页可以继续长大，但 GitHub Pages 不应该变成一个无限 PDF 仓库。最后更新：2026-07-10。</p>
+    <div class="metrics">
+      <div class="metric"><b>1.2G</b><span>当前公开导出包 `_public_pages_export`</span></div>
+      <div class="metric"><b>1.2G</b><span>公开 PDF 缓存目录 `paper_library/pdfs`</span></div>
+      <div class="metric"><b>192</b><span>当前公开缓存 PDF 数</span></div>
+      <div class="metric"><b>561</b><span>当前论文/阅读入口数</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="notice">
+      <h3>当前判断</h3>
+      <p>公开站已经超过 1 GB 量级，GitHub Pages 仍能部署，但每次 artifact 上传和 Git 传输都会变慢。后续优先增加 DOI、出版社页、arXiv、机构库和阅读建议；只有“小型、明确开放、对主线明显有用”的 PDF 才继续缓存。最新 2.6 MB 的 OERF 4D-LII Figshare supplement 属于 P0 small：CC BY 4.0、与蔡组最新 4D diagnostics 直接相关，因此保留；NRIP 的 2.57 GB 无 LICENSE 代码仓库只放链接和结构审计，不镜像。</p>
+    </section>
+
+    <h2>缓存决策规则</h2>
+    <div class="grid">
+      <article class="card">
+        <h3><span class="tag ok">可以缓存</span></h3>
+        <ul>
+          <li>arXiv、NASA/NTRS、OSTI/DOE、HAL、Zenodo/Figshare/DataCite 明确开放文件。</li>
+          <li>出版社页面或 Crossref 明确标 CC BY / CC BY 4.0，且下载端点返回真实 PDF。</li>
+          <li>与 He/NeRIF/PIV-BOST/4D BOST 主线强相关，或能支撑本科 demo 的核心 baseline。</li>
+          <li>文件体积通常小于 15 MB；超过 15 MB 必须有很强主线理由。</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3><span class="tag risk">不要缓存</span></h3>
+        <ul>
+          <li>学校 WebVPN、图书馆订阅、Springer/ACM/Elsevier/AIP 受控 PDF。</li>
+          <li>Crossref 只给 TDM license，或下载端点返回验证页、HTML 壳、403、CAPTCHA。</li>
+          <li>文件超过 30 MB 且只是旁支背景，优先保留 DOI/官方入口。</li>
+          <li>许可不清的 GitHub 代码、数据集压缩包、补充材料全量包。</li>
+        </ul>
+      </article>
+    </div>
+
+    <h2>体积分级</h2>
+    <table>
+      <thead>
+        <tr><th>等级</th><th>阈值</th><th>处理方式</th><th>例子</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag ok">P0 small</span></td>
+          <td>0-5 MB</td>
+          <td>明确开放且相关即可缓存；生成封面和术语页。</td>
+          <td>arXiv 小论文、EPJ/MDPI 小 PDF、方法说明型论文。</td>
+        </tr>
+        <tr>
+          <td><span class="tag info">P1 medium</span></td>
+          <td>5-15 MB</td>
+          <td>只缓存主线或高价值 benchmark；旁支只放入口。</td>
+          <td>NeRIF、Open BOS 方法邻居、关键光流/PIV baseline。</td>
+        </tr>
+        <tr>
+          <td><span class="tag warn">P2 large</span></td>
+          <td>15-30 MB</td>
+          <td>需要写明为什么进公开站；优先考虑只放 DOI/机构入口。</td>
+          <td>大型 NASA 报告、长篇综述、4D 表示法长论文。</td>
+        </tr>
+        <tr>
+          <td><span class="tag risk">P3 huge</span></td>
+          <td>30 MB 以上</td>
+          <td>原则上不再新增公开缓存，除非它是不可替代主线资料。</td>
+          <td>AOPIV-Net 67 MB、TBOS supersonic jets 62 MB、NASA BOS review 36 MB。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>当前最大公开 PDF</h2>
+    <table>
+      <thead>
+        <tr><th>文件</th><th>大小</th><th>后续策略</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>aopiv_net_distortion_correction_gao_2024_mdpi.pdf</code></td><td>67 MB</td><td>保留现状；不再以此标准新增大 PDF。</td></tr>
+        <tr><td><code>tbos_supersonic_jets_jia_2024_mdpi.pdf</code></td><td>62 MB</td><td>保留现状；后续类似大型 MDPI PDF 需更严格审查。</td></tr>
+        <tr><td><code>bos_25_years_review_nasa_2025.pdf</code></td><td>36 MB</td><td>NASA 综述价值高，保留；但大型综述以后优先链接。</td></tr>
+        <tr><td><code>nrip_lu_2026_arxiv2605.11454.pdf</code></td><td>34 MB</td><td>NeRIF 外部方法邻居，保留；同类大型 neural-field PDF 不再默认缓存。</td></tr>
+        <tr><td><code>tomobos-11x11-transonic-weisberger-2020.pdf</code></td><td>28 MB</td><td>NASA TomoBOS 工程能力参考，保留。</td></tr>
+        <tr><td><code>tracer_velocimetry_refractive_error_li_2022_arxiv.pdf</code></td><td>27 MB</td><td>PIV-BOST 折射率补偿动机很强，作为大文件例外保留。</td></tr>
+        <tr><td><code>high_speed_safs_velocimetry_lax_2024_mdpi.pdf</code></td><td>17 MB</td><td>CC BY 4.0 且直接补 high-speed SAFS / velocimetry 光路约束，作为 P2 large 例外保留。</td></tr>
+        <tr><td><code>OSTI 2431938 / Coded Optical Imaging full-book PDF</code></td><td>56 MB</td><td>本轮按策略只放入口，不缓存到公开站；plenoptic BOS 相关的小型 OSTI PDF 已缓存。</td></tr>
+        <tr><td><code>arXiv 2504.05433 knife-edge-free colour schlieren</code></td><td>24 MB</td><td>已核为真实 PDF，但属于低成本 schlieren 支撑项，按策略只放在线入口，不缓存。</td></tr>
+      </tbody>
+    </table>
+
+    <h2>推荐发布结构</h2>
+    <ol>
+      <li>公开 GitHub Pages：HTML、图、demo 结果、小型开放 PDF、术语索引、阅读卡。</li>
+      <li>本地私有库：WebVPN/订阅 PDF、许可不清的全文、未确认下载、组内数据。</li>
+      <li>外部跳转：出版社 DOI、arXiv、机构库、DataCite/Zenodo/Figshare、官方代码仓库。</li>
+      <li>后续如果公开包继续逼近部署上限，改成 GitHub Actions 发布过滤包，而不是把完整工作仓库直接作为 Pages artifact。</li>
+    </ol>
+
+    <footer>这页是发布策略，不是版权法律意见。正式分享给师兄时，以“公开页面只放开放材料和入口，受限全文只在本机学习”为底线。</footer>
+  </main>
+  <script src="./site_link_router.js" data-site-root="./"></script>
+</body>
+</html>

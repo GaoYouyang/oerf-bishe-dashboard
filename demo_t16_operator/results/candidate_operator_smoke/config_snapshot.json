@@ -1,0 +1,52 @@
+{
+  "name": "t16_covariance_geometry_unrolled_smoke_v1",
+  "seed": 20262001,
+  "grid_size": 8,
+  "depth": 4,
+  "candidate_views": 12,
+  "train_fields": 96,
+  "validation_fields": 24,
+  "test_fields_per_domain": 32,
+  "train_families": [
+    "gaussian",
+    "flame"
+  ],
+  "train_active_views": [
+    5,
+    6,
+    7,
+    8
+  ],
+  "train_noise_levels": [
+    0.02,
+    0.05
+  ],
+  "test_domains": [
+    "iid",
+    "noise_ood",
+    "family_ood",
+    "layout_ood",
+    "joint_ood"
+  ],
+  "model": {
+    "iterations": 4,
+    "context_features": 16,
+    "hidden_features": 40,
+    "initial_step": 0.15,
+    "correction_scale": 0.2
+  },
+  "training": {
+    "epochs": 80,
+    "batch_size": 12,
+    "learning_rate": 0.0015,
+    "weight_decay": 1e-05,
+    "gradient_clip": 1.0
+  },
+  "claims_boundary": {
+    "mechanism_smoke_only": true,
+    "straight_ray_slice_model": true,
+    "real_bost_data": false,
+    "strong_neural_baselines_in_this_smoke": false,
+    "superiority_claim_allowed": false
+  }
+}

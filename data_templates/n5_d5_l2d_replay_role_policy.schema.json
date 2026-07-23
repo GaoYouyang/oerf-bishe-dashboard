@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaoyouyang.github.io/oerf-bishe-dashboard/data_templates/n5_d5_l2d_replay_role_policy.schema.json",
+  "title": "N5-D5-L2-D replay-ledger and role-evidence policy",
+  "description": "A registry-pinned policy for one sequencer and two checkpoint monitors. Distinct keys and declared operator domains remain evidence, not proof of operational independence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_kind",
+    "policy_id",
+    "policy_epoch",
+    "valid_from_utc",
+    "valid_until_utc",
+    "expected_predicate_type",
+    "ledger_namespace",
+    "log_id",
+    "log_epoch",
+    "required_signature_roles",
+    "signature_threshold",
+    "max_witnessed_prefix_entries",
+    "max_bundle_lifetime_seconds",
+    "max_checkpoint_age_seconds",
+    "max_merge_delay_seconds",
+    "floor_checkpoint",
+    "trusted_keys",
+    "claim_authorizations"
+  ],
+  "properties": {
+    "schema_version": { "const": "n5-d5-l2d-replay-role-policy-1.0" },
+    "record_kind": { "const": "OUT_OF_BAND_PINNED_REPLAY_AND_ROLE_POLICY" },
+    "policy_id": { "$ref": "#/$defs/pseudonym" },
+    "policy_epoch": { "type": "integer", "minimum": 1 },
+    "valid_from_utc": { "$ref": "#/$defs/utcTimestamp" },
+    "valid_until_utc": { "$ref": "#/$defs/utcTimestamp" },
+    "expected_predicate_type": {
+      "const": "https://gaoyouyang.github.io/oerf-bishe-dashboard/attestations/n5-d5-l2d-replay-role/v1"
+    },
+    "ledger_namespace": { "$ref": "#/$defs/pseudonym" },
+    "log_id": { "$ref": "#/$defs/pseudonym" },
+    "log_epoch": { "type": "integer", "minimum": 1 },
+    "required_signature_roles": {
+      "const": ["acceptance_sequencer", "checkpoint_monitor_a", "checkpoint_monitor_b"]
+    },
+    "signature_threshold": { "const": 3 },
+    "max_witnessed_prefix_entries": { "type": "integer", "minimum": 1, "maximum": 512 },
+    "max_bundle_lifetime_seconds": { "type": "integer", "minimum": 1, "maximum": 900 },
+    "max_checkpoint_age_seconds": { "type": "integer", "minimum": 1, "maximum": 900 },
+    "max_merge_delay_seconds": { "type": "integer", "minimum": 1, "maximum": 600 },
+    "floor_checkpoint": { "$ref": "#/$defs/checkpoint" },
+    "trusted_keys": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/trustedKey" }
+    },
+    "claim_authorizations": { "$ref": "#/$defs/claimAuthorizations" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "pseudonym": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{5,79}$" },
+    "utcTimestamp": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tree_size", "root_sha256"],
+      "properties": {
+        "tree_size": { "type": "integer", "minimum": 0 },
+        "root_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "trustedKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key_id",
+        "role",
+        "algorithm",
+        "public_key_base64",
+        "operator_domain_id",
+        "service_identity_uri",
+        "credential_issuer_uri"
+      ],
+      "properties": {
+        "key_id": { "$ref": "#/$defs/pseudonym" },
+        "role": {
+          "enum": ["acceptance_sequencer", "checkpoint_monitor_a", "checkpoint_monitor_b"]
+        },
+        "algorithm": { "const": "ed25519" },
+        "public_key_base64": { "type": "string", "pattern": "^[A-Za-z0-9+/]{43}=$" },
+        "operator_domain_id": { "$ref": "#/$defs/pseudonym" },
+        "service_identity_uri": { "type": "string", "format": "uri", "maxLength": 300 },
+        "credential_issuer_uri": { "type": "string", "format": "uri", "maxLength": 300 }
+      }
+    },
+    "claimAuthorizations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "real_bost_interface",
+        "physical_forward_correctness",
+        "derivative_correctness",
+        "reconstruction",
+        "algorithm_superiority",
+        "generalization",
+        "publication"
+      ],
+      "properties": {
+        "real_bost_interface": { "const": false },
+        "physical_forward_correctness": { "const": false },
+        "derivative_correctness": { "const": false },
+        "reconstruction": { "const": false },
+        "algorithm_superiority": { "const": false },
+        "generalization": { "const": false },
+        "publication": { "const": false }
+      }
+    }
+  }
+}

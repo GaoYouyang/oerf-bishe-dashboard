@@ -1,0 +1,103 @@
+{
+  "schema_version": "oerf-open-nir-bos-m0-public-mps-authorization-overlay-1.0",
+  "status": "M0_PUBLIC_MPS_VOXEL_SMOKE_AUTHORIZED",
+  "created_at_utc": "2026-07-22T22:20:00Z",
+  "supersession": {
+    "supersedes": "docs/open_nir_bos_d0_5_training_authorization_overlay.json claim_authorization.mps_single_public_phantom_smoke",
+    "previous_value": false,
+    "new_value": true,
+    "reason": "The frozen public-field M0 gate passed all 25 CPU64/CPU32/MPS value, field-gradient, repeatability, directional-derivative, invalid-ray, finiteness, and sampled-memory checks. Authorization remains limited to the exact opened Phantom batch and voxel-field gradient path."
+  },
+  "bound_artifacts": {
+    "protocol_relative_path": "learning_labs/open_nir_bos_m0_public_mps_protocol.json",
+    "protocol_sha256": "43fef428307f7c9932615b69110bc0932d6ddfc4aa7dafd1ded21f24c5555ea8",
+    "v0_summary_relative_path": "learning_labs/results/open_nir_bos_m0_public_mps_v0/summary.json",
+    "v0_summary_sha256": "f2a73f2f180a9c6aa6ccea6378c15f1a013c7e91fd3cbf0fdf91ea960195a793",
+    "v1_summary_relative_path": "learning_labs/results/open_nir_bos_m0_public_mps_v1/summary.json",
+    "v1_summary_sha256": "0a3adf572ed0b62f95ecd60a7a3ad3e429955f1e61e6f44eb0b3d603a0084d56",
+    "v2_summary_relative_path": "learning_labs/results/open_nir_bos_m0_public_mps_v2/summary.json",
+    "v2_summary_sha256": "4e896522145c7baac57e875ccb91f33b417ce6251907f3ef052335a78e6b59be",
+    "validation_relative_path": "learning_labs/results/open_nir_bos_m0_public_mps_v2_validation/validation.json",
+    "validation_sha256": "5e74a565d74fb8acd9c0607c83954d30cb52f007bc4a9c69ec2697774d03ec57"
+  },
+  "source_binding": {
+    "v2_execution_commit": "c8f35a1701a931127ecc5421d8330a48fc3e7a8b",
+    "v2_execution_tree": "d4ed96035a7dee11b19be82c99a79e269dd94b55",
+    "validator_commit": "6b69700834d99c084729d62e29e771aed1a73a86",
+    "validator_sha256": "fb6003964ff121fbac59d1ec5b186c42ee0580ec4f6480b6792e2f0ce27af2db",
+    "repository_visibility": "PRIVATE"
+  },
+  "exact_result_file_sets": {
+    "learning_labs/results/open_nir_bos_m0_public_mps_v0": [
+      "README.md",
+      "checksums.sha256",
+      "summary.json"
+    ],
+    "learning_labs/results/open_nir_bos_m0_public_mps_v1": [
+      "README.md",
+      "checksums.sha256",
+      "summary.json"
+    ],
+    "learning_labs/results/open_nir_bos_m0_public_mps_v2": [
+      "README.md",
+      "checksums.sha256",
+      "m0_public_mps_gate.png",
+      "metrics.csv",
+      "summary.json"
+    ],
+    "learning_labs/results/open_nir_bos_m0_public_mps_v2_validation": [
+      "README.md",
+      "checksums.sha256",
+      "validation.json"
+    ]
+  },
+  "required_gates": {
+    "protocol_locked_before_first_execution": true,
+    "first_two_execution_errors_preserved": true,
+    "cpu64_anchor_passed": true,
+    "cpu32_mps32_value_and_gradient_bridge_passed": true,
+    "mps_three_run_repeatability_passed": true,
+    "public_field_directional_derivative_passed": true,
+    "public_field_invalid_ray_zero_output_and_gradient_passed": true,
+    "sampled_memory_delta_passed": true,
+    "all_25_preregistered_gates_passed": true,
+    "package_consistency_152_of_152_passed": true
+  },
+  "authorized_scope": {
+    "dataset": "one opened public Phantom",
+    "selection": "the frozen 12 views x 8 rays selection recorded by 12 selection hashes",
+    "geometry": "fixed straight rays and fixed ROI only",
+    "quadrature_steps": 128,
+    "ray_chunk_size": 24,
+    "representation": "voxel field only",
+    "device": "Apple MPS float32",
+    "purpose": "short optimizer and failure-mode smoke testing",
+    "maximum_claim": "implementation compatibility on the frozen batch"
+  },
+  "claim_authorization": {
+    "mps_single_public_phantom_voxel_smoke": true,
+    "mps_arbitrary_batch": false,
+    "mps_fourier_mlp_or_bounded_residual": false,
+    "ten_step_memory_stability": false,
+    "full_training": false,
+    "new_algorithm": false,
+    "reconstruction_success": false,
+    "operator_learning": false,
+    "cross_field_generalization": false,
+    "cross_geometry_generalization": false,
+    "real_bost": false,
+    "oerf_data": false,
+    "better_than_deeponet_fno_nerif_or_nirp": false,
+    "paper_success": false,
+    "breakthrough": false
+  },
+  "known_limits": [
+    "The gate uses one opened field and one frozen 96-ray batch.",
+    "The three MPS repetitions run in one process.",
+    "Memory evidence is four synchronized samples rather than a continuous peak trace.",
+    "Saved evidence contains summaries rather than full prediction and gradient tensors.",
+    "CPU64 arrays are converted to CPU float32 before the saved cross-device comparison.",
+    "No optimizer step, neural-parameter gradient, curved ray, camera gradient, or real OERF sample is tested."
+  ],
+  "next_authorized_action": "Run a short voxel-only MPS optimizer smoke on the exact frozen 96-ray batch. In parallel, freeze the CPU64 D0.6 S0_VOXEL/S1_FOURIER/S2_BOUNDED_RESIDUAL matched-budget protocol. B1/B2 MPS requires a separate parameter-gradient and ten-step memory gate."
+}

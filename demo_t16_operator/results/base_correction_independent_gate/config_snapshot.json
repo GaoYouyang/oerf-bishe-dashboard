@@ -1,0 +1,162 @@
+{
+  "evidence_label": "first_open_independent_generator_gate",
+  "grid_size": 8,
+  "depth": 5,
+  "train_view_angles_degrees": [
+    0,
+    24,
+    49,
+    78,
+    108,
+    138,
+    164
+  ],
+  "counts": {
+    "train": 72,
+    "validation": 18,
+    "independent_select": 24,
+    "independent_lock": 32
+  },
+  "families": {
+    "train": [
+      "gaussian",
+      "flame"
+    ],
+    "validation": [
+      "gaussian",
+      "flame"
+    ],
+    "independent_select": [
+      "expanding_kernel",
+      "jet_shear",
+      "shock_cell"
+    ],
+    "independent_lock": [
+      "interacting_fronts",
+      "shock_cell",
+      "jet_shear",
+      "expanding_kernel"
+    ]
+  },
+  "relative_noise": {
+    "train": [
+      0.015,
+      0.03,
+      0.055
+    ],
+    "validation": [
+      0.025,
+      0.05
+    ],
+    "independent_select": [
+      0.04,
+      0.08,
+      0.12
+    ],
+    "independent_lock": [
+      0.05,
+      0.1,
+      0.15
+    ]
+  },
+  "active_views": {
+    "train": [
+      4,
+      5,
+      6
+    ],
+    "validation": [
+      4,
+      5
+    ],
+    "independent_select": [
+      3,
+      4,
+      5
+    ],
+    "independent_lock": [
+      3,
+      4
+    ]
+  },
+  "camera_noise_factors": [
+    0.62,
+    0.84,
+    1.0,
+    1.32,
+    1.76,
+    0.73,
+    1.48
+  ],
+  "independent_rigs": {
+    "independent_select": {
+      "angles_degrees": [
+        6,
+        34,
+        63,
+        91,
+        121,
+        151,
+        174
+      ],
+      "path_samples": 22,
+      "cone_u": 0.075,
+      "cone_z": 0.055,
+      "bend": 0.035,
+      "correlation_fraction": 0.35,
+      "signal_fraction": 0.15,
+      "gain_drift_std": 0.008
+    },
+    "independent_lock": {
+      "angles_degrees": [
+        11,
+        39,
+        68,
+        98,
+        128,
+        157,
+        178
+      ],
+      "path_samples": 24,
+      "cone_u": 0.11,
+      "cone_z": 0.085,
+      "bend": 0.052,
+      "correlation_fraction": 0.45,
+      "signal_fraction": 0.2,
+      "gain_drift_std": 0.012
+    }
+  },
+  "model": {
+    "stages": 4,
+    "correction_width": 10,
+    "maximum_correction_ratio": 0.8,
+    "certificate_safety": 0.85,
+    "certificate_temperature": 8.0,
+    "minimum_certificate_improvement": 0.0
+  },
+  "training": {
+    "seeds": [
+      91,
+      92,
+      93
+    ],
+    "epochs": 100,
+    "learning_rate": 0.002,
+    "weight_decay": 1e-06,
+    "gradient_loss_weight": 0.08,
+    "validation_every": 5
+  },
+  "numerical_baselines": {
+    "bb_normalized_step_min": 0.2,
+    "bb_normalized_step_max": 1.8
+  },
+  "data_seed": 2026071501,
+  "power_iterations": 28,
+  "lipschitz_safety_factor": 1.1,
+  "claim_gate": {
+    "minimum_mean_gain_percent": 2.0,
+    "minimum_p10_gain_percent": 0.0,
+    "maximum_harm_rate_over_1_percent": 0.05,
+    "maximum_certificate_violation_rate": 0.0
+  }
+}

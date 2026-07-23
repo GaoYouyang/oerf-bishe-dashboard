@@ -1,0 +1,144 @@
+{
+  "checks": {
+    "all_70_views_covered_exactly_once": true,
+    "development_is_complete_rotation_40_run": true,
+    "final_audit_forbidden_from_selection_and_stopping": true,
+    "primary_audit_has_six_unseen_rotation_blocks": true,
+    "primary_audit_uses_support_camera_ids": true,
+    "released_9_view_support_reproduced": true
+  },
+  "claim_boundary": {
+    "algorithm_superiority": "LOCKED_UNTIL_SINGLE_FINAL_AUDIT",
+    "experimental_superiority_without_flowoff_repeatability": false,
+    "field_l2_available": false,
+    "held_out_reprojection_is_unique_3d_truth": false,
+    "pixel_bootstrap_permitted": false
+  },
+  "dataset": {
+    "camera_count": 7,
+    "doi": "10.26208/1VE2-5C19",
+    "independent_experimental_unit": "MODEL_ROTATION_RUN_BLOCK",
+    "name": "Open-source BOS tomography dataset of high-speed flow over a flight body",
+    "paper": "https://arxiv.org/abs/2508.17120",
+    "pixel_independence_assumption": false,
+    "rotation_run_count": 10,
+    "view_count": 70
+  },
+  "partition": [
+    {
+      "access_stage": "OPEN",
+      "camera_ids": [
+        2,
+        3,
+        4
+      ],
+      "id": "support_reconstruction",
+      "role": "Only views permitted in reconstruction, optimization, forward-model fitting, regularization selection on support residuals, and checkpoint updates.",
+      "rotation_degrees": [
+        0,
+        50,
+        90
+      ],
+      "view_count": 9
+    },
+    {
+      "access_stage": "OPEN_AFTER_RECONSTRUCTION_INTERFACE_FREEZE",
+      "camera_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "id": "development_rotation_40",
+      "role": "The only external views permitted for model-family choice, stopping-rule choice, calibration of practical margins, or rejection before final audit.",
+      "rotation_degrees": [
+        40
+      ],
+      "view_count": 7
+    },
+    {
+      "access_stage": "SEALED_UNTIL_SINGLE_FINAL_OPEN",
+      "camera_ids": [
+        2,
+        3,
+        4
+      ],
+      "id": "audit_rotation_same_cameras",
+      "role": "Primary final audit: independent rotation runs using the same physical camera ids as the nine-view support set.",
+      "rotation_degrees": [
+        10,
+        20,
+        30,
+        60,
+        70,
+        80
+      ],
+      "view_count": 18
+    },
+    {
+      "access_stage": "SEALED_UNTIL_SINGLE_FINAL_OPEN",
+      "camera_ids": [
+        1,
+        5,
+        6,
+        7
+      ],
+      "id": "audit_camera_same_runs",
+      "role": "Secondary camera-layout audit on the three rotation runs used by reconstruction, using cameras excluded from support.",
+      "rotation_degrees": [
+        0,
+        50,
+        90
+      ],
+      "view_count": 12
+    },
+    {
+      "access_stage": "SEALED_UNTIL_SINGLE_FINAL_OPEN",
+      "camera_ids": [
+        1,
+        5,
+        6,
+        7
+      ],
+      "id": "audit_joint_camera_rotation",
+      "role": "Stress audit with both unseen rotations and cameras excluded from support.",
+      "rotation_degrees": [
+        10,
+        20,
+        30,
+        60,
+        70,
+        80
+      ],
+      "view_count": 24
+    }
+  ],
+  "primary_endpoint": {
+    "aggregation": "Pool cameras 2, 3, and 4 within each rotation, then treat the six unseen rotations as six paired experimental blocks.",
+    "comparison": "candidate versus frozen B0 fixed-domain reference",
+    "direction": "LOWER_IS_BETTER",
+    "formula": "sqrt(sum_active((u_hat-u)^2+(v_hat-v)^2)) / sqrt(sum_active(u^2+v^2))",
+    "name": "rotation_block_active_vector_relative_l2"
+  },
+  "reporting_rules": [
+    "Report every audit view and every independent rotation block; no pooled-only result.",
+    "Do not bootstrap pixels as independent experiments.",
+    "No field-L2 claim is allowed because the experimental dataset has no independent 3D density truth.",
+    "A lower held-out residual establishes image-space consistency, not unique recovery of the true 3D field.",
+    "Qualitative shock images cannot override a failed primary or tail gate.",
+    "B1 axis, vertex, and angle may not be selected using the parameter-sensitivity audit."
+  ],
+  "schema_version": "psu-heldout-camera-protocol-public-summary-1.0",
+  "status": "PSU_70_VIEW_PARTITION_VALIDATED_AUDIT_PAYLOAD_SEALED",
+  "success_gate": {
+    "ambient_gate": "Pooled ambient predicted-deflection RMS may not increase versus B0.",
+    "calibration_gate": "The primary sign gate must remain satisfied under the frozen calibration perturbation audit. If calibration covariance or repeat target data are unavailable, experimental superiority remains locked.",
+    "claim_if_flowoff_repeats_missing": "REPROJECTION_DIAGNOSTIC_ONLY_NO_PRACTICAL_SIGNIFICANCE_OR_EXPERIMENTAL_SUPERIORITY",
+    "practical_significance_gate": "The median active-vector RMSE reduction across the six rotation blocks must exceed the flow-off repeatability floor estimated on development data with the same averaging and masking procedure.",
+    "primary_sign_gate": "The candidate must lower the primary endpoint in all six audit_rotation_same_cameras rotation blocks. Under a predeclared one-sided exact sign test this corresponds to p = 1/64 = 0.015625.",
+    "tail_gate": "The candidate may not worsen active vector-error p95 by more than the development-estimated repeatability floor in any primary audit rotation block."
+  }
+}
