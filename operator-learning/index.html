@@ -302,17 +302,16 @@
       <a href="./" aria-current="page">C 路线主页</a>
       <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
       <a href="#latest-gate">算法与实验</a>
+      <a href="#trajectory-gate">多轨迹协议</a>
       <a href="#g0-evidence">真实 CFD 代理</a>
       <a href="#path">16 周学习</a>
       <a href="../learning_library/index.html">教材讲义库</a>
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
-      <a href="../general_operator_research_lab.html">历史技术档案</a>
-      <a href="../index.html">研究总站</a>
     </nav>
     <div class="eyebrow">师兄已选 C · 2026-07-23</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让可学习算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少完整多视角 forward/adjoint 调用和端到端时间。第一条真实 PoolFire CFD 密度轨迹已进入独立高分辨率代理前向与粗网格 CGLS 闭环；它仍不是 calibrated BOST，下一步只做新增轨迹、最小神经 warm start 与可校准 correction budget。</p>
+    <p class="lead">唯一主问题：让可学习算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少完整多视角 forward/adjoint 调用和端到端时间。第一条真实 PoolFire CFD 密度轨迹已进入独立高分辨率代理前向与粗网格 CGLS 闭环；官方 11 train / 2 validation / 2 untouched test 的完整轨迹协议现已冻结，下一步只做新增轨迹 classical control、最小神经 warm start 与可校准 correction budget。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
@@ -323,7 +322,8 @@
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_reference_forward_evidence_2026-07-23.md">任意射线参考正演</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_baseline_contract_evidence_2026-07-23.md">统一强基线与成本合同</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_cfd_morphology_proxy_evidence_2026-07-23.md">真实 CFD 第一闭环</a>
-      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_isolated_initializer_evidence_2026-07-23.md">独立进程成本门</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_isolated_initializer_evidence_2026-07-23.md">独立进程成本门</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_trajectory_protocol_evidence_2026-07-23.md">11/2/2 多轨迹协议</a>
       <a class="button" href="#senior">复制下一条师兄消息</a>
       <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
     </div>
@@ -334,8 +334,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert success">
-      <strong>最新进展：独立进程成本门已过；算法突破仍为 false</strong>
-      <span>7 次 ridge initializer 已改为只收冻结模型与 observation 的 fresh-exec worker，完整编码、启动、回传和核验时间均计入账本，数值仍为 Direct <code>0.4149</code>、Zero <code>0.6083</code>、BP <code>0.5145</code>（固定 <code>K=2</code>）。但 fresh-exec 平均约 <code>75 ms</code>，在当前小 CPU 代理上没有 wall-time 加速；单轨迹、已打开后期帧和未闭合 BOST 物理仍使 <code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新进展：多轨迹协议已过；首条新增 train trajectory 正在接入</strong>
+      <span>官方 metadata 与 15 条 trajectory 的路径、字节数、SHA 和 11/2/2 角色已由机器协议固定；test 下载必须显式封存且当前工具拒绝解压。<code>p=33kw_size=01</code> 已进入可续传下载/提取队列，但 receipt 与 READY 尚未出现，所以它还不算接入成功，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -367,7 +367,7 @@
     <section id="latest-gate" class="band">
       <div class="section-head">
         <div><div class="eyebrow">冻结的研究合同</div><h2>网络只负责起跑，物理求解器负责到达终点</h2><p>主表使用 validation 冻结、部署可见的停止规则，再检查终点误差等价、线性 A/A^T 或非线性 forward/JVP/VJP 调用与总时间；有真值时另画 oracle time-to-target，只估计 headroom。两张账不能混写。</p></div>
-        <div class="actions"><a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">读实验合同</a><a class="button" href="../operator_fair_budget_dashboard.html">看旧同预算框架</a></div>
+        <div class="actions"><a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">读实验合同</a><a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_trajectory_protocol_evidence_2026-07-23.md">读多轨迹协议</a></div>
       </div>
       <div class="phase-rail" aria-label="C 路线端到端管线">
         <div><b>1 · 可观测扰动场</b><span>PoolFire `Δrho/Δn`，reference 先冻结</span></div>
@@ -376,17 +376,57 @@
         <div><b>4 · Warm Start</b><span>小型算子输出三维 `x0`</span></div>
         <div><b>5 · 物理细化</b><span>固定 CGLS/PCGLS 或组内 solver</span></div>
         <div><b>6 · 双账计时</b><span>deployable 主表 + oracle headroom</span></div>
-        <div><b>7 · 独立迁移</b><span>组合留出、几何 shift 与独立光学样例</span></div>
+        <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
         <article class="panel"><div class="chips"><span class="chip">C0 · 首先实现</span><span class="chip blue">低风险</span></div><h3 style="margin-top:10px;">Adjoint-Residual Warm Start</h3><p>线性阶段输入一次 `A^T y`；曲光线非线性阶段改用参考态 `J^T[y-F(x_ref)]`。小型 3D U-Net/FNO 只输出 `x0`，再接完全相同的物理迭代。</p></article>
         <article class="panel"><div class="chips"><span class="chip">C1 · 机制创新</span><span class="chip gold">中风险</span></div><h3 style="margin-top:10px;">Observable Krylov Warm Start</h3><p>把初值限制在便宜、可观测的 Krylov 字典中，网络只预测系数或空间门控。每个额外字典向量都必须计入 `A/A^T` 成本。</p></article>
         <article class="panel"><div class="chips"><span class="chip">C2 · 论文升级</span><span class="chip coral">高风险</span></div><h3 style="margin-top:10px;">Correctable Frontier Training</h3><p>不只训练单步场误差，而是训练经过 1/2/4 次物理细化后的误差，让模型输出“最容易被求解器纠正”的初值。</p></article>
-        <article class="panel"><div class="chips"><span class="chip blue">真实 CFD 代理门已过</span><span class="chip blue">fresh exec 已过</span></div><h3 style="margin-top:10px;">Zero / BP / Direct-Warm / CGLS</h3><p>固定 <code>K=2</code> 下，Direct 为 <code>3A+2A^T</code>、平均 field-L2 <code>0.4149</code>。initializer 已用固定数据协议隔离，并支付完整推理成本；下一步只换新增 trajectory 做预注册 fresh confirmatory，不再调这五帧。</p></article>
+        <article class="panel"><div class="chips"><span class="chip blue">真实 CFD 代理门已过</span><span class="chip blue">11/2/2 已冻结</span></div><h3 style="margin-top:10px;">Zero / BP / Direct-Warm / CGLS</h3><p>固定 <code>K=2</code> 下，Direct 为 <code>3A+2A^T</code>、平均 field-L2 <code>0.4149</code>。下一步在新增完整 trajectory 上先复现 Zero、BP、CGLS/PCGLS 与 dual ridge，不再调已打开的五帧，也不提前扩大网络。</p></article>
       </div>
       <div class="alert" style="margin-top:13px;">
-        <strong>现在的主线阻塞：没有 fresh trajectory，也没有物理 BOST 合同</strong>
-        <span>执行隔离已不再是阻塞。下一门只做新增不同 PoolFire trajectory，按 trajectory 冻结 fit / selection / stopping-validation / untouched-test，再比较 ridge 与最小神经 warm start；同时等待组内确认 <code>rho → Delta n</code>、相机、pixel displacement 与 forward/adjoint 语义。当前五个 later-time frames 永久保留为 development。</span>
+        <strong>现在的唯一执行门：把新增 trajectory 变成完整、可审计的 classical-control 结果</strong>
+        <span>数据身份和角色已经冻结。先等待新增 train/validation 的 SHA、full-resolution <code>rho</code>、READY 与统一 proxy observation 完成，再跑 Zero、BP、CGLS/PCGLS 和 dual ridge。只有未参与拟合的完整 trajectory 仍显示 headroom，才训练最小 FNO/UNO/3D U-Net；当前五个 later-time frames 永久保留为 development。</span>
+      </div>
+    </section>
+
+    <section id="trajectory-gate" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">当前唯一数据门</div>
+          <h2>11 train / 2 validation / 2 untouched test</h2>
+          <p>角色按完整 trajectory 固定，不按随机时间帧分配。两条 test 只封存身份，在模型、预处理、correction budget、停止规则、指标、种子和报告模板全部冻结前不解压。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_trajectory_protocol_evidence_2026-07-23.md">读协议与接入状态</a>
+          <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">核对官方数据</a>
+        </div>
+      </div>
+      <div class="check-grid">
+        <article class="panel">
+          <div class="chips"><span class="chip blue">11 train</span><span class="chip">完整轨迹</span></div>
+          <h3 style="margin-top:10px;">只用于拟合与训练内交叉验证</h3>
+          <p><code>p=14kw_size=03</code> 的旧五帧永久是 development。新 pilot 顺序先接 <code>p=33kw_size=01</code>、<code>p=45kw_size=05</code>、<code>p=58kw_size=03</code>。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip gold">2 validation</span><span class="chip">职责分开</span></div>
+          <h3 style="margin-top:10px;">模型选择不和停止规则混用</h3>
+          <p><code>p=14kw_size=01</code> 选择模型/正则；<code>p=22kw_size=01</code> 冻结 correction budget、停止规则和 matched-accuracy tolerance。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip coral">2 test</span><span class="chip">未解压</span></div>
+          <h3 style="margin-top:10px;">只允许一次 confirmatory 打开</h3>
+          <p><code>p=22kw_size=05</code> 与 <code>p=58kw_size=01</code> 是已见功率/尺寸值的新组合，不能写成 unseen-power、unseen-size 或 geometry OOD。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip blue">acquisition in progress</span><span class="chip">不算科学结果</span></div>
+          <h3 style="margin-top:10px;">首条新增轨迹正在下载</h3>
+          <p><code>p=33kw_size=01</code> 的官方对象为 <code>6,522,109,719 bytes</code>。工具支持断点续传，只有字节数、SHA、ZIP/NPY、全分辨率 <code>rho</code> 和 READY 全过才改为接入成功。</p>
+        </article>
+      </div>
+      <div class="alert" style="margin-top:13px;">
+        <strong>这一步解决的是“证据能不能信”，不是“算法赢没赢”</strong>
+        <span>当前正式状态只有 <code>PASS_FROZEN_POOLFIRE_TRAJECTORY_PROTOCOL</code>。没有新增 trajectory 指标、没有神经网络训练、没有泛化或速度结论；下一张有科学意义的表必须是逐 trajectory 的 field/gradient p50、p90、worst、harm rate、<code>A/A^T</code> 和端到端成本。</span>
       </div>
     </section>
 
@@ -654,7 +694,7 @@
         const next = nextUnlockedWeek();
         const fCount = checkedCount(state.foundations, guide.foundationChecks);
         const pace = Number(state.profile.hours) <= 6 ? '建议把每个关卡拆成两周' : Number(state.profile.hours) >= 15 ? '可将阅读与代码并行，但不跳过验收' : '按一周一关执行';
-        const warning = fCount < 4 ? '先不要调 QC-SNCO、GINO 或 4D 模型。' : '仍以当前关卡的数值产物为唯一主任务。';
+        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : '仍以多轨迹 classical control 和 matched-accuracy 成本证据为唯一主任务。';
         document.getElementById('recommendation').innerHTML = `
           <div class="next-code">当前建议 · ${escapeHtml(next.id)}</div>
           <h3>${escapeHtml(next.title)}</h3>
@@ -795,7 +835,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄，C 路线已锁定：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n我已把公开 PoolFire p=14 kW、size=03 的 rho 轨迹锁到固定 source/payload SHA、shape 和时间轴。高分辨率 32×32×64 连续梯度射线积分独立生成观测，粗网格 16×16×32 projection-first inverse 负责重建；两端不是同一个离散矩阵。训练、ridge 选择、步数选择、后期评价分四段并保留至少 5 帧 purge。\n\n同一 CGLS 细化下，validation 冻结 K=2。后期五帧平均 field-L2：Zero 0.60835（2A+2A^T）、normalized BP 0.51445（3A+3A^T）、Direct-Warm 0.41486（3A+2A^T）。Direct 跑到 K=24 反而恶化为 0.48620，而 data residual 继续下降；这说明 forward mismatch 下存在过度 correction，下一创新点应是 calibration-aware correction budget。\n\nDirect initializer 已改为 7 次 fresh-exec data-only worker，只接收冻结模型与 observation；完整 request 编码、进程启动、response 解码和核验时间已计费，A/A^T ledger 没有隐藏调用。当前平均推理约 75 ms、child RSS 最坏约 44.2 MiB，所以在这个小 CPU 代理上没有 wall-time 加速。父进程仍构造 request，evaluation-truth 与全文件系统 noninterference 都没有被冒充为已证明。\n\n目前只能写真实 CFD morphology proxy。五个后期帧已经在 v0 开发中打开，不是 fresh test；只有一条 trajectory；rho→Delta n、相机和 pixel displacement 未闭合，algorithm_breakthrough=false。\n\n下一步不再扩建执行隔离，也不再调这五帧：加入至少 3–5 条不同 PoolFire trajectory，预先冻结 train/validation/untouched-test；先复现 ridge headroom，再在同一 pair、同一精度目标和同一成本账上比较最小 FNO/UNO/DeepONet warm start，并测试 calibration-aware correction budget。\n\n现在最需要你确认的是：\n1. 后续可否先用多条公开 PoolFire trajectory 做方法筛选；\n2. 组内最终希望重建 rho、n、n-1 还是 Delta n，reference/gauge 如何定义；\n3. 真正迁移时的相机内外参、detector ROI、forward/adjoint 和现用 baseline/停止规则。\n\n在跨 trajectory 的 fixed-rule p50/p90/worst、A/A^T、wall time 和 memory 全部稳定前，我不会把开发信号写成算法成功。`;
+        document.getElementById('briefText').value = `师兄，C 路线已锁定：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n我已把公开 PoolFire p=14 kW、size=03 的 rho 轨迹锁到固定 source/payload SHA、shape 和时间轴。高分辨率 32×32×64 连续梯度射线积分独立生成观测，粗网格 16×16×32 projection-first inverse 负责重建；两端不是同一个离散矩阵。训练、ridge 选择、步数选择、后期评价分四段并保留至少 5 帧 purge。\n\n官方 15 条 PoolFire trajectory 现已按完整轨迹冻结为 11 train / 2 validation / 2 untouched test。p=14kw_size=01 只做模型选择，p=22kw_size=01 只冻结 correction budget 与停止规则；p=22kw_size=05、p=58kw_size=01 在模型、指标和报告模板固定前不解压。它们是已见功率/尺寸值的新组合，不写成 unseen-power 或 unseen-size OOD。\n\n同一 CGLS 细化下，validation 冻结 K=2。后期五帧平均 field-L2：Zero 0.60835（2A+2A^T）、normalized BP 0.51445（3A+3A^T）、Direct-Warm 0.41486（3A+2A^T）。Direct 跑到 K=24 反而恶化为 0.48620，而 data residual 继续下降；这说明 forward mismatch 下存在过度 correction，下一创新点应是 calibration-aware correction budget。\n\nDirect initializer 已改为 7 次 fresh-exec data-only worker，只接收冻结模型与 observation；完整 request 编码、进程启动、response 解码和核验时间已计费，A/A^T ledger 没有隐藏调用。当前平均推理约 75 ms、child RSS 最坏约 44.2 MiB，所以在这个小 CPU 代理上没有 wall-time 加速。\n\n目前只能写真实 CFD morphology proxy。旧五个后期帧永久是 development，不是 fresh test；rho→Delta n、相机和 pixel displacement 尚未闭合，algorithm_breakthrough=false。\n\n当前 p=33kw_size=01 已进入可续传下载/提取队列。接下来先在新增完整 trajectory 上跑 Zero、BP、CGLS/PCGLS 和 dual ridge classical control；只有未参与拟合的轨迹仍有稳定 headroom，才比较最小 FNO/UNO/3D U-Net，并测试 calibration-aware correction budget。\n\n下一次需要组内确认的是：\n1. 最终希望重建 rho、n、n-1 还是 Delta n，reference/gauge 如何定义；\n2. 真正迁移时的相机内外参、detector ROI、forward/adjoint 和现用 baseline/停止规则；\n3. 哪个最小组内样例可在公开 PoolFire 方法筛选完成后承担迁移检查。\n\n在跨 trajectory 的 fixed-rule p50/p90/worst、A/A^T、wall time 和 memory 全部稳定前，我不会把开发信号写成算法成功。`;
       }
 
       function bindProfile() {

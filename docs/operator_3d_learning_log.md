@@ -5505,3 +5505,36 @@ generation、solver 与 worker 合并后的全流程峰值。
 [PoolFire C 路线独立进程 Warm-Start 成本门](poolfire_c_isolated_initializer_evidence_2026-07-23.md)。
 
 **突破监测：没有算法突破。新增的是主线结果第一次经过 data-only fresh-exec 推理、完整序列化计时、child RSS 与负向变异审计；同时得到一个必须公开的负结果：当前小代理算子上调用数有 headroom，但 wall time 没有加速。下一步不再扩建隔离基础设施，只进入新增 PoolFire trajectory 的预注册 fresh 比较。**
+
+## 206. 不再随机切帧：官方 15 条 PoolFire 轨迹已经固定角色
+
+师兄确认的 C 路线没有变化：让算子学习给三维反演一个更好的初值，并在最终精度
+相同的条件下降低完整 `A/A^T` 调用和端到端成本。这轮没有去碰旧算法分支，也没有
+急着训练 FNO；先把决定结果是否可信的数据边界做实。
+
+官方 PoolFire 一共有 15 条完整轨迹。现在机器协议固定为 11 train、2 validation、
+2 untouched test。`p=14kw_size=01` 只负责模型/正则选择，
+`p=22kw_size=01` 只负责 correction budget 与停止规则，两条 test
+`p=22kw_size=05`、`p=58kw_size=01` 在模型、阈值、种子、指标和报告模板全部冻结前
+不解压。此前已经看过的 `p=14kw_size=03` 后期五帧永久保留为 development，不能
+以后换个名字当 fresh test。
+
+真实 `data.npz` 首次跑验证时抓到一个摘要级错误：官方变量标签不是简写 `rho`、
+`T`，而是 `rho.npy`、`T.npy`。修正后，元数据 SHA、11/2/2 组成员、九个变量顺序、
+`80 x 80 x 200` 网格和 101 个时间标签全部通过。这说明“先让机器核对原始对象”
+比把人工笔记当真更可靠。
+
+新 acquisition 工具会断点续传 6.4–6.7 GB 轨迹，先检查精确字节数与 SHA，再流式
+提取 full-resolution `rho`；READY 完成后默认删除大原始缓存。test 必须显式
+`--seal-test-only`，文件名写成 `*.sealed.npz`，并且工具无条件拒绝 test
+`--extract`。这只是工具级 fail closed，不冒充操作系统级不可读保险箱。
+
+第一条新增训练轨迹 `p=33kw_size=01` 已进入独立下载/提取队列。公网吞吐开始时约
+`0.9 MB/s`，所以预计下载本身约两小时；在 receipt 与 READY 出现前，它只能标为
+acquisition in progress，不能算轨迹接入成功。
+
+完整表、声明边界和复现命令见
+[PoolFire 多轨迹协议与首条新增数据接入](poolfire_trajectory_protocol_evidence_2026-07-23.md)。
+协议、acquisition 和 extractor 的定向测试当前为 `26 passed`。
+
+**突破监测：没有算法突破。新增的是后续所有模型都必须遵守的完整 trajectory 级 11/2/2 协议、测试集锁门和可续传数据桥。下一道科学门是新增轨迹上的 Zero/BP/CGLS/PCGLS/dual-ridge classical control；只有未参与拟合的完整轨迹仍显示 headroom，才启动最小神经算子。**
