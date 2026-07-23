@@ -1,0 +1,101 @@
+{
+  "schema_version": "oerf-open-nir-bos-d0-5-training-authorization-overlay-1.0",
+  "status": "D0_5_IMPLEMENTATION_PASS_SINGLE_PHANTOM_SMOKE_AUTHORIZED",
+  "created_at_utc": "2026-07-22T21:22:32Z",
+  "supersession": {
+    "supersedes": [
+      "docs/open_nir_bos_d0_forward_identity_v1_audit_overlay.json current action",
+      "learning_labs/results/open_nir_bos_d0_5_torch_forward_v1/summary.json claim_authorization.mps_training",
+      "learning_labs/results/open_nir_bos_d0_5_torch_forward_v1/summary.json secondary_mps_float32.mps_training_authorized"
+    ],
+    "superseded_decision": {
+      "training_authorized": false,
+      "d0_5_required": true
+    },
+    "reason": "The preregistered D0.5 CPU and public-value gates passed. Apple MPS passed the synthetic compatibility matrix after a preserved implementation-only v0 error, but no public-field MPS backward pass has yet run. The evidence-package validator passed 88 of 88 consistency and heterogeneous replay checks but is not an independent implementation.",
+    "general_training_authorized": false,
+    "single_public_phantom_optimization_smoke_authorized": true,
+    "synthetic_mps_compatibility_passed": true,
+    "mps_single_public_phantom_smoke_authorized": false
+  },
+  "bound_artifacts": {
+    "parent_overlay_relative_path": "docs/open_nir_bos_d0_forward_identity_v1_audit_overlay.json",
+    "parent_overlay_sha256": "bf28cdbf49ba3934b3fa01e471a7f800ca9e8de85ae38bd347d29002245e8d60",
+    "frozen_protocol_relative_path": "learning_labs/open_nir_bos_d0_5_torch_forward_protocol.json",
+    "frozen_protocol_sha256": "80df1e5943e7664c6619487e02852a219625d83184d444b87adad163d51d71b3",
+    "result_summary_relative_path": "learning_labs/results/open_nir_bos_d0_5_torch_forward_v1/summary.json",
+    "result_summary_sha256": "b68647929fdad1a4941d6af29e505f3ead419489787a2fb372ca75a6a5b3e109",
+    "validation_relative_path": "learning_labs/results/open_nir_bos_d0_5_torch_forward_v1_validation/validation.json",
+    "validation_sha256": "768a5805c25341bdaf44b9649dbb3b90d5e3699a359511ab8106e97ed9d75603"
+  },
+  "local_source_binding": {
+    "evidence_source_commit": "4ec192fdd80d4ef7a666c54c4147df31140f559f",
+    "evidence_source_tree": "08a758bd77d17fe5fb1820f4a7cc4737059aa318",
+    "repository_visibility_at_binding": "PRIVATE",
+    "files": {
+      "learning_labs/open_nir_bos_d0_5_torch_forward.py": "fc0571f3c7c387f2f01d2e893141c92560c45fb0e46f4fb89e88564e57191e16",
+      "learning_labs/run_open_nir_bos_d0_5_torch_gate.py": "74579ac67672d723026f79701597808adb1f30a4594c5766ec995bcc8b2c7dcc",
+      "learning_labs/validate_open_nir_bos_d0_5_torch_gate.py": "91a78b02782ed825d53b7766289795603438526a3b7b0e9bbd78d182dea4371d",
+      "learning_labs/test_open_nir_bos_d0_5_torch_forward.py": "d3a37afb3961d6f57f53cbee4d89196d46fcd2d8e71bb5fa7384b9c970edcb13",
+      "learning_labs/test_validate_open_nir_bos_d0_5_torch_gate.py": "0609f7711c05469204fe5c55781ec5d31ecddd2cdf7231fd76f4ea0c37c139d9"
+    }
+  },
+  "exact_result_file_sets": {
+    "learning_labs/results/open_nir_bos_d0_5_torch_forward_v0": [
+      "README.md",
+      "checksums.sha256",
+      "comparison_statistics.csv",
+      "d0_5_gate.png",
+      "metrics.csv",
+      "summary.json"
+    ],
+    "learning_labs/results/open_nir_bos_d0_5_torch_forward_v1": [
+      "README.md",
+      "checksums.sha256",
+      "comparison_statistics.csv",
+      "d0_5_gate.png",
+      "metrics.csv",
+      "summary.json"
+    ],
+    "learning_labs/results/open_nir_bos_d0_5_torch_forward_v1_validation": [
+      "README.md",
+      "checksums.sha256",
+      "validation.json"
+    ]
+  },
+  "required_gates": {
+    "protocol_lock_passed": true,
+    "external_commit_gate_passed": true,
+    "external_worktree_gate_passed": true,
+    "primary_cpu_and_public_gate_passed": true,
+    "secondary_mps_gate_passed": true,
+    "evidence_package_validation_all_checks_passed": true
+  },
+  "authorized_scope": {
+    "dataset": "one opened public Phantom field only",
+    "purpose": "optimization and failure-mode smoke testing",
+    "device_scope": "CPU float64 only until a public-field MPS forward/backward mini-batch gate passes",
+    "candidate_roles": [
+      "low_resolution_voxel_control",
+      "fourier_mlp_baseline",
+      "fourier_base_plus_bounded_residual_candidate"
+    ],
+    "ground_truth_policy": "score only; do not tune hyperparameters against ground truth",
+    "budget_policy": "freeze one primary resource budget and report A/A^T calls, steps, wall time, parameters, and memory separately"
+  },
+  "claim_authorization": {
+    "single_public_phantom_optimization_smoke": true,
+    "synthetic_mps_compatibility": true,
+    "mps_single_public_phantom_smoke": false,
+    "new_algorithm": false,
+    "real_bost": false,
+    "oerf_data": false,
+    "reconstruction_success": false,
+    "cross_field_generalization": false,
+    "cross_geometry_generalization": false,
+    "better_than_deeponet_fno_nerif_or_nirp": false,
+    "paper_success": false,
+    "breakthrough": false
+  },
+  "next_authorized_action": "Freeze a public-field MPS mini-batch forward/backward gate and, in parallel if useful, execute CPU-only matched-budget B0 voxel versus B1 Fourier MLP versus B2 bounded-residual optimization smoke on the same opened public Phantom; preserve every failed arm and make no generalization claim."
+}

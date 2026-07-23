@@ -1,0 +1,393 @@
+{
+  "claim_authorization": {
+    "better_than_deeponet_fno_nerif_or_nirp": false,
+    "breakthrough": false,
+    "cross_field_generalization": false,
+    "cross_geometry_generalization": false,
+    "fourier_mlp_or_bounded_residual_mps_smoke": false,
+    "full_training": false,
+    "mps_single_public_phantom_optimization_smoke": true,
+    "new_algorithm": false,
+    "oerf_data": false,
+    "operator_learning": false,
+    "paper_success": false,
+    "purpose": "implementation and optimizer failure-mode smoke testing only",
+    "real_bost": false,
+    "reconstruction_success": false,
+    "scope": "one opened public Phantom, the frozen tested batch size, fixed straight rays, and voxel-field gradients only"
+  },
+  "cpu32_invalid_probe": {
+    "device": "cpu",
+    "dtype": "float32",
+    "gradient_maximum_absolute_value": 0.0,
+    "gradient_nonfinite_count": 0,
+    "output_maximum_absolute_value": 0.0,
+    "output_nonfinite_count": 0,
+    "ray_count": 3,
+    "valid_ray_count": 0
+  },
+  "cpu_float32": {
+    "backward_seconds": 0.18649899994488806,
+    "device": "cpu",
+    "directional_derivative": null,
+    "dtype": "float32",
+    "forward_seconds": 0.018292459077201784,
+    "gradient_l2_norm": 0.2827613562728924,
+    "gradient_maximum_absolute_value": 0.015047909691929817,
+    "gradient_nonfinite_count": 0,
+    "gradient_nonzero_count": 161265,
+    "gradient_zero_indicator": 0,
+    "loss_nonfinite_count": 0,
+    "prediction_nonfinite_count": 0,
+    "valid_ray_mse": 0.1407066136598587,
+    "valid_rays": 96
+  },
+  "cpu_float64_anchor": {
+    "backward_seconds": 0.34892337501514703,
+    "device": "cpu",
+    "directional_derivative": null,
+    "dtype": "float64",
+    "forward_seconds": 0.031862542033195496,
+    "gradient_l2_norm": 0.28276096061923156,
+    "gradient_maximum_absolute_value": 0.015048340894281864,
+    "gradient_nonfinite_count": 0,
+    "gradient_nonzero_count": 161265,
+    "gradient_zero_indicator": 0,
+    "loss_nonfinite_count": 0,
+    "prediction_nonfinite_count": 0,
+    "valid_ray_mse": 0.14070701816161846,
+    "valid_rays": 96
+  },
+  "cross_device_comparisons": {
+    "cpu32_cpu64_field_gradient_relative_l2": 0.00010833242656911397,
+    "cpu32_cpu64_prediction_relative_l2": 1.1079217781448998e-05,
+    "cpu32_cpu64_valid_ray_mse_relative_error": 2.874780270658877e-06,
+    "cpu32_mps32_field_gradient_relative_l2": 4.916141849415822e-07,
+    "cpu32_mps32_prediction_relative_l2": 9.599387166079232e-08,
+    "cpu32_mps32_valid_ray_mse_relative_error": 1.0590233982747661e-07,
+    "field_gradient_cosine_defect": 5.867009322813033e-09,
+    "gradient_nonfinite_count": 0.0,
+    "gradient_zero_indicator": 0.0,
+    "invalid_probe_gradient_absolute_value": 0.0,
+    "invalid_probe_output_absolute_value": 0.0,
+    "loss_nonfinite_count": 0.0,
+    "mps32_cpu64_field_gradient_relative_l2": 0.00010828796382340615,
+    "mps32_cpu64_prediction_relative_l2": 1.1063665163508997e-05,
+    "mps32_cpu64_valid_ray_mse_relative_error": 2.7688782240620834e-06,
+    "mps_directional_derivative_relative_error": 2.757326602954136e-05,
+    "mps_repeat_gradient_relative_l2": 9.92303747717136e-10,
+    "mps_repeat_prediction_relative_l2": 0.0,
+    "normalized_field_gradient_absolute_error": 0.00017378352922041933,
+    "normalized_prediction_absolute_error": 1.1812207637833623e-05,
+    "post_cleanup_mps_current_allocation_delta_bytes": 0.0,
+    "prediction_nonfinite_count": 0.0,
+    "sampled_mps_driver_allocation_delta_bytes": 1090813952.0,
+    "valid_mask_mismatch_count": 0.0,
+    "worst_view_prediction_relative_l2": 3.595210072271969e-05
+  },
+  "environment": {
+    "machine": "arm64",
+    "mps_available": true,
+    "mps_built": true,
+    "mps_recommended_max_memory_bytes": 26800603136,
+    "numpy": "2.4.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "python": "3.11.5",
+    "pytorch_enable_mps_fallback": "0",
+    "torch": "2.13.0"
+  },
+  "evidence_level": "PUBLIC_SINGLE_FIELD_DEVICE_BRIDGE_ONLY",
+  "gates": {
+    "all_required_passed": true,
+    "passed_count": 25,
+    "required_count": 25
+  },
+  "input_manifest": [
+    {
+      "relative_path": "transforms_train.json",
+      "role": "train_manifest",
+      "sha256": "a1a8e3217190ae46b794cc7165ad63739e6f94dc0c72bce31522633c74e84462"
+    },
+    {
+      "relative_path": "flowcglsTV.mat",
+      "role": "flow_cgls_tv",
+      "sha256": "ca7b81fb02ee8c7517ae9620ff5d9df81efe1fee65c097f2ddc23510f768c181"
+    },
+    {
+      "relative_path": "3Dmask.mat",
+      "role": "support_mask",
+      "sha256": "df2577057a0ff9b3c850499d3c3b4b19c15cca32fcef08cf2c0da772b473b8ff"
+    },
+    {
+      "relative_path": "../n_GroundTruth.mat",
+      "role": "ground_truth",
+      "sha256": "82fa416b8c1fb9f6833d8419dd49e1a86ba4eaf984021082203f31d5e3cce286"
+    },
+    {
+      "relative_path": "../mask2D.mat",
+      "role": "mask_2d",
+      "sha256": "c480edf8011330994e416698e689a9c8e43cc4ee2b37b05da7faf62a5c8066b7"
+    },
+    {
+      "relative_path": "train/img0001.png",
+      "role": "observation_view_01",
+      "sha256": "0a467024e3bd25a6831f8124b1cfebdfe678378953da48f56a7e61454b7c1f6b"
+    },
+    {
+      "relative_path": "train/img0002.png",
+      "role": "observation_view_02",
+      "sha256": "671063c93113159ed305885243623cec4ae7fc90826ffbb75fa7d6037a6163dd"
+    },
+    {
+      "relative_path": "train/img0003.png",
+      "role": "observation_view_03",
+      "sha256": "fcfc8c177dc75ad8a90e832382ad42821aa98ba19149695bbd7cbd3ee857a5ca"
+    },
+    {
+      "relative_path": "train/img0004.png",
+      "role": "observation_view_04",
+      "sha256": "56ebe2b74ba93559e728cfc900c754ff750eb9479ab00980d3c5c2feb8057dd1"
+    },
+    {
+      "relative_path": "train/img0005.png",
+      "role": "observation_view_05",
+      "sha256": "351aa3c9f4134ca88c4c242f0f11eefc585e4333c3341c851da8601e5169a4bc"
+    },
+    {
+      "relative_path": "train/img0006.png",
+      "role": "observation_view_06",
+      "sha256": "ee04f905e1910548e34d39961f1cf6093499208128cd53d345f4538b10f51dac"
+    },
+    {
+      "relative_path": "train/img0007.png",
+      "role": "observation_view_07",
+      "sha256": "2fac399c3de8489e449783b2acdb22176e019ef74adbd61c3a77d3957a821aea"
+    },
+    {
+      "relative_path": "train/img0008.png",
+      "role": "observation_view_08",
+      "sha256": "f6a3b294a3d5dd47ab71e34b306d92b14cecdf8b290ed6159606bbaf1c307c04"
+    },
+    {
+      "relative_path": "train/img0009.png",
+      "role": "observation_view_09",
+      "sha256": "33d933680fb9ba83d18b2230e298e7f34b99afa0b731703491b4d75940e8efc7"
+    },
+    {
+      "relative_path": "train/img0010.png",
+      "role": "observation_view_10",
+      "sha256": "43259080f979965619306598f3a30c8d546530a86080969bad043d4eac081f22"
+    },
+    {
+      "relative_path": "train/img0011.png",
+      "role": "observation_view_11",
+      "sha256": "4ba1ab81eb013654d1b9dc40bcc6df35a8ab4b55375e478577ac37f931625bc0"
+    },
+    {
+      "relative_path": "train/img0012.png",
+      "role": "observation_view_12",
+      "sha256": "cfff11c3dfd3193f5574aea98db792c45e0b096d0e70d5eb3772ab71fc9f924f"
+    }
+  ],
+  "known_limits": [
+    "One opened public Phantom is one independent field, not an operator-learning dataset.",
+    "Only fixed straight rays and voxel-field gradients are tested.",
+    "The released field and observations are an implementation bridge, not OERF data.",
+    "Sampled MPS memory values are not a continuous peak-memory trace.",
+    "CPU32-MPS32 agreement does not establish physical-model correctness.",
+    "MPS authorization is limited to the tested voxel-field batch; neural-parameter gradients require a separate gate."
+  ],
+  "local_source_binding": {
+    "commit": "c8f35a1701a931127ecc5421d8330a48fc3e7a8b",
+    "files": {
+      "learning_labs/open_nir_bos_d0_5_torch_forward.py": "fc0571f3c7c387f2f01d2e893141c92560c45fb0e46f4fb89e88564e57191e16",
+      "learning_labs/open_nir_bos_m0_public_mps_protocol.json": "43fef428307f7c9932615b69110bc0932d6ddfc4aa7dafd1ded21f24c5555ea8",
+      "learning_labs/open_nir_bos_m0_public_mps_protocol.sha256": "a815d90474a8661e386377dee2a17a7b54723ceb27ba03f75eb042defcce70e4",
+      "learning_labs/run_open_nir_bos_m0_public_mps_gate.py": "fb796a0571080e05f65acc1402e47c466d2fbb009bb26c1577026b414c183b66",
+      "learning_labs/test_run_open_nir_bos_m0_public_mps_gate.py": "fa36d5454728a94a78bd2ee57207fce6f266bcbbb52020a726dac35d036460d5"
+    },
+    "tracked_worktree_clean_before_execution": true,
+    "tree": "d4ed96035a7dee11b19be82c99a79e269dd94b55"
+  },
+  "mps32_invalid_probe": {
+    "device": "mps",
+    "dtype": "float32",
+    "gradient_maximum_absolute_value": 0.0,
+    "gradient_nonfinite_count": 0,
+    "output_maximum_absolute_value": 0.0,
+    "output_nonfinite_count": 0,
+    "ray_count": 3,
+    "valid_ray_count": 0
+  },
+  "mps_float32_repetitions": [
+    {
+      "backward_seconds": 0.12016779102850705,
+      "device": "mps",
+      "directional_derivative": {
+        "central_step": 0.001,
+        "finite_difference": -0.05161016806960106,
+        "gradient_inner_product": -0.051608745008707047,
+        "relative_error": 2.757326602954136e-05
+      },
+      "dtype": "float32",
+      "forward_seconds": 0.1383670000359416,
+      "gradient_l2_norm": 0.2827613676413909,
+      "gradient_maximum_absolute_value": 0.015047908760607243,
+      "gradient_nonfinite_count": 0,
+      "gradient_nonzero_count": 161265,
+      "gradient_zero_indicator": 0,
+      "loss_nonfinite_count": 0,
+      "prediction_nonfinite_count": 0,
+      "valid_ray_mse": 0.1407066285610199,
+      "valid_rays": 96
+    },
+    {
+      "backward_seconds": 0.11330937501043081,
+      "device": "mps",
+      "directional_derivative": null,
+      "dtype": "float32",
+      "forward_seconds": 0.032804999966174364,
+      "gradient_l2_norm": 0.28276136764328125,
+      "gradient_maximum_absolute_value": 0.015047908760607243,
+      "gradient_nonfinite_count": 0,
+      "gradient_nonzero_count": 161265,
+      "gradient_zero_indicator": 0,
+      "loss_nonfinite_count": 0,
+      "prediction_nonfinite_count": 0,
+      "valid_ray_mse": 0.1407066285610199,
+      "valid_rays": 96
+    },
+    {
+      "backward_seconds": 0.11761025001760572,
+      "device": "mps",
+      "directional_derivative": null,
+      "dtype": "float32",
+      "forward_seconds": 0.031540083000436425,
+      "gradient_l2_norm": 0.28276136764280263,
+      "gradient_maximum_absolute_value": 0.015047908760607243,
+      "gradient_nonfinite_count": 0,
+      "gradient_nonzero_count": 161265,
+      "gradient_zero_indicator": 0,
+      "loss_nonfinite_count": 0,
+      "prediction_nonfinite_count": 0,
+      "valid_ray_mse": 0.1407066285610199,
+      "valid_rays": 96
+    }
+  ],
+  "mps_memory_samples_by_repetition": [
+    [
+      {
+        "current_allocated_bytes": 0,
+        "driver_allocated_bytes": 458752,
+        "label": "baseline_after_empty_cache"
+      },
+      {
+        "current_allocated_bytes": 28554496,
+        "driver_allocated_bytes": 1091272704,
+        "label": "after_forward"
+      },
+      {
+        "current_allocated_bytes": 46106624,
+        "driver_allocated_bytes": 1091272704,
+        "label": "after_backward"
+      },
+      {
+        "current_allocated_bytes": 0,
+        "driver_allocated_bytes": 737280,
+        "label": "after_cleanup"
+      }
+    ],
+    [
+      {
+        "current_allocated_bytes": 0,
+        "driver_allocated_bytes": 737280,
+        "label": "baseline_after_empty_cache"
+      },
+      {
+        "current_allocated_bytes": 28554496,
+        "driver_allocated_bytes": 1091272704,
+        "label": "after_forward"
+      },
+      {
+        "current_allocated_bytes": 46106624,
+        "driver_allocated_bytes": 1091272704,
+        "label": "after_backward"
+      },
+      {
+        "current_allocated_bytes": 0,
+        "driver_allocated_bytes": 737280,
+        "label": "after_cleanup"
+      }
+    ],
+    [
+      {
+        "current_allocated_bytes": 0,
+        "driver_allocated_bytes": 737280,
+        "label": "baseline_after_empty_cache"
+      },
+      {
+        "current_allocated_bytes": 28554496,
+        "driver_allocated_bytes": 1091272704,
+        "label": "after_forward"
+      },
+      {
+        "current_allocated_bytes": 46106624,
+        "driver_allocated_bytes": 1091272704,
+        "label": "after_backward"
+      },
+      {
+        "current_allocated_bytes": 0,
+        "driver_allocated_bytes": 737280,
+        "label": "after_cleanup"
+      }
+    ]
+  ],
+  "next_authorized_action": "Freeze a matched-budget single-Phantom CPU B0 voxel, B1 Fourier-MLP, and B2 bounded-residual optimization smoke. MPS is authorized only for the tested voxel-field batch until B1/B2 parameter-gradient and ten-step memory gates pass. Keep CPU64 as the numerical audit reference and do not call the smoke operator learning.",
+  "protocol": {
+    "relative_path": "learning_labs/open_nir_bos_m0_public_mps_protocol.json",
+    "sha256": "43fef428307f7c9932615b69110bc0932d6ddfc4aa7dafd1ded21f24c5555ea8",
+    "status": "FROZEN_BEFORE_M0_PUBLIC_MPS_EXECUTION"
+  },
+  "public_minibatch": {
+    "external_assets_exported": false,
+    "field": "released_cgls_tv",
+    "field_sha256": "ca7b81fb02ee8c7517ae9620ff5d9df81efe1fee65c097f2ddc23510f768c181",
+    "field_shape": [
+      140,
+      294,
+      140
+    ],
+    "quadrature_steps": 128,
+    "ray_chunk_size": 24,
+    "rays_per_view": 8,
+    "selection_hashes": [
+      "ee86429d46a2b8fae981614de802aac25b51e69c0a44196382d568026aa2e7ce",
+      "da1c36e45af8c4a833500a40ad3d362752643bdf46159be88305d41e20d33d1f",
+      "c836f5f9d97acde642e790c7ef835f0c9a615b56616b98c834a9a36aa1e5e49f",
+      "1bff197f47cbf91d1382987ae7a04acda3eb390724535f518ce9f02e4ee2e8dc",
+      "9c980b7e5583a49dbb9f3db84230f4404a9cce0a5797d6260e59f06a4c55cd5e",
+      "28e3628f31ce359d0150b8b3f0a57d0c74cb1791af5f1b667d30a71b7866c10d",
+      "a5cb37747e49e6b2d0cc482f44aa2f40c97243cd0540318ef26c34674a89dece",
+      "ce901f65f8640b9506719b8186067a0b106ae077700ac1dad0e0a9f9ebc82dcd",
+      "a7fb7624cc95cca4d7ec2123845e05af236d27ee7f2c066453817d9b683697fc",
+      "7027ebbd7ae65d06ab179ecdcc4b5e2b76630e44d5289fe3ea0a0b2f7b9668a3",
+      "7251e303c8ef1737ceadd492b8593f98414dde9024bdb52ee679143ca83bfaaf",
+      "651929199249f26385edbe4acbbae23a93796c455ba421ddde6422c40a6b8d8b"
+    ],
+    "total_rays": 96,
+    "views": 12
+  },
+  "research_question": "Can the D0.5 fixed-ray voxel-field forward produce finite and numerically consistent public-Phantom values and field gradients on Apple MPS float32 relative to a CPU float32 reference?",
+  "runtime": {
+    "machine_specific_speed_claim_authorized": false,
+    "wall_seconds": 11.660869749961421
+  },
+  "schema_version": "oerf-open-nir-bos-m0-public-mps-result-1.0",
+  "source_release": {
+    "commit": "a385cce83d88df24ed05dccfd6fde20e124f5604",
+    "external_assets_exported": false,
+    "repository": "https://github.com/Weihu22/Neural-Implicit-Reconstruction-for-BOS",
+    "root_license_present": false
+  },
+  "status": "M0_PUBLIC_MPS_FORWARD_BACKWARD_PASS_IMPLEMENTATION_ONLY"
+}

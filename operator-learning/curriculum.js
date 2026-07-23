@@ -1,6 +1,6 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.19-n5-d4b-forensics",
-  updated: "2026-07-19",
+  version: "2026.07.23-c-warmstart-locked",
+  updated: "2026-07-23",
   foundationChecks: [
     {
       id: "python-array",
@@ -33,8 +33,8 @@ window.OPERATOR_LEARNING_GUIDE = {
     {
       id: "fluid-chain",
       domain: "流体力学",
-      label: "我能把 T、ρ、n、位移和重建场连成物理链",
-      evidence: "不看资料画出 T → ρ → n → 光线偏折 → 背景位移图。",
+      label: "我能把 T、ρ、参考态、Δn、位移和重建场连成物理链",
+      evidence: "不看资料画出 T → ρ → ρ_ref → Δn → 光线偏折 → 背景位移，并解释为什么绝对常数偏置不可观。",
       week: "W2"
     },
     {
@@ -55,7 +55,7 @@ window.OPERATOR_LEARNING_GUIDE = {
       id: "operator-definition",
       domain: "算子学习",
       label: "我能说清函数到函数的映射与普通回归的区别",
-      evidence: "写出 BOST 中 y → n(x,y,z) 的输入、输出、几何元数据和离散化。",
+      evidence: "写出 BOST 中 y → Δn(x,y,z) 的输入、输出、reference/gauge、几何元数据和离散化。",
       week: "W5"
     },
     {
@@ -78,8 +78,8 @@ window.OPERATOR_LEARNING_GUIDE = {
       id: "operator",
       title: "算子不是更大的神经网络",
       plain: "普通回归常学向量到向量；神经算子要学一整族输入函数到输出函数的映射。",
-      formula: "G: y(s) → n(x,y,z)",
-      bost: "BOST 的多视角位移/投影是输入函数，三维折射率场是输出函数。",
+      formula: "G: y(s) → Δn(x,y,z)",
+      bost: "BOST 的多视角位移/投影是输入函数，相对已知背景的三维折射率扰动是输出函数。",
       trap: "固定 24³ 网格上训练一个 CNN，不会因为名字叫 FNO 就自动具有分辨率泛化。"
     },
     {
@@ -97,6 +97,14 @@ window.OPERATOR_LEARNING_GUIDE = {
       formula: "x̂ = argmin ||A_g x-y||² + λR(x)",
       bost: "传统正则化、NeRIF 隐式表示和神经算子都在不同方式中注入先验。",
       trap: "网络不会消除不可观测性，只会根据训练分布选一类解。"
+    },
+    {
+      id: "gauge",
+      title: "BOS 看得到梯度，看不到任意常数",
+      plain: "给整个折射率场加同一个常数，偏折可能不变；所以必须先定义环境参考值或统一的边界/零均值条件。",
+      formula: "x = Δn = n-n_ref",
+      bost: "环境值、flow-off 或已知边界应在 validation 前冻结，并以同样方式提供给经典基线与学习器。",
+      trap: "若只让网络从工况标签猜背景均值，再用绝对场 L2 比较，它会得到观测本身不支持的不公平优势。"
     },
     {
       id: "svd-null",
@@ -285,67 +293,67 @@ window.OPERATOR_LEARNING_GUIDE = {
       paper: "没有这一周的物理/数值基线，后面的网络改进没有可归因性。"
     },
     {
-      id: "W8", phase: "BOST 算子", week: "第 8 周", title: "参考解、相消残差与 field-adjoint 前门", hours: "14-18h", depends: ["W3", "W4", "W7"],
-      learn: ["RK4 步长加密与经验收缩阶", "两个近似量相减的小分母问题", "JVP/VJP dot test 与 normwise backward error", "support level set、simple root 与 transversality"],
-      build: ["复算 D1/D2/D3 的参考解证据链", "复核 D4 与 D4b 的 map/topology 差异", "从取证 JSON 手算 p14 的 14,466.67× signal ratio", "任选 3 个 flips 还原 group/step/stage/ray/offset", "画 exact-bit gate 与 simple-root gate 的差异图", "向师兄确认真实 renderer 是否含 hard mask/occupancy/termination"],
-      pass: ["能解释为什么精确 contraction 仍不能救回 D4b", "能区分 protocol support-set 与 forward hard branch", "能从 21 位表解释 stable h 与 changed h 的证据边界", "能写出一页不看 fresh 结果的 D4c 指标草案"],
-      resources: ["n4-evaluator-audit", "n5-reference-plan", "n5-d3-reference-pack", "n5-d4-field-derivative", "n5-d4b-population-derivative", "n5-d4b-postopen-forensics", "n3-field-adjoint", "adjoint-nonlinear-ray", "he-data-contract"],
-      paper: "先证明训练标签与梯度值得相信；如果 H-P1 低于实验噪声，停止 residual operator 比硬做网络更正确。"
+      id: "W8", phase: "真实数据桥", week: "第 8 周", title: "PoolFire 与师兄 BOS 工具接口审计", hours: "12-16h", depends: ["W2", "W4", "W7"],
+      learn: ["CFD 数据中 rho/T/组分的含义", "数组 axis order、spacing、units 与 trajectory split", "Gladstone-Dale 与 rho_ref→Δn", "BOS 的常数 gauge", "相机内外参、ray near/far 与偏折单位"],
+      build: ["低内存读取 PoolFire metadata 和一个 trajectory header", "整理师兄 notebook 的输入、输出、常数、相机与保存格式", "用常数场和线性梯度场做低分辨率 BOS smoke", "冻结 Δrho/Δn reference、axis、coordinate 和 output manifest"],
+      pass: ["不加载全 6GB 也能说明数组成员和 shape", "常数场偏折接近零且线性场方向正确", "reference/gauge 不读取 test truth 且对所有基线相同", "师兄确认 rho/n/n-1、两个比例常数和 XYdeflection 单位", "私有 notebook 不进入 GitHub"],
+      resources: ["c-route-lock", "poolfire-data", "nerif-paper", "he-data-contract", "pytorch-autograd"],
+      paper: "这一周只建立可信 forward 数据链；模拟器能跑不等于生成的数据已经物理正确。"
     },
     {
-      id: "W9", phase: "机制创新", week: "第 9 周", title: "mixed-scale 伴随与 transversality 证书", hours: "14-18h", depends: ["W1", "W8"],
-      learn: ["dot-product conditioning 与 backward error", "level set 与隐函数定理", "simple/grazing roots", "interval Newton/Bernstein certificate 与 fail-closed"],
-      build: ["在新 development cells 生成高/低 dot-signal directions", "并列实现 dot-relative、normwise 与 mixed absolute-relative 指标", "实现 exact-bit/simple-root/cell-frustum 三路消融", "冻结拒答原因、阈值来源和 fresh manifest"],
-      pass: ["阈值不是照 p14 调出", "能构造 root birth/death/grazing 的反例", "simple-root certificate 不把危险事件放行", "fresh 开封前代码/config/test/hash 全冻结"],
-      resources: ["n5-d4b-postopen-forensics", "n3-field-adjoint", "adjoint-nonlinear-ray", "n5-d4b-population-derivative"],
-      paper: "这周只形成可被 fresh 数据否决的证书候选；不训练 DeepONet/FNO，也不把 post-open 21 flips 写成算法成功。"
+      id: "W9", phase: "成本基线", week: "第 9 周", title: "Zero/BP/PCGLS 与同精度计时器", hours: "12-18h", depends: ["W1", "W3", "W8"],
+      learn: ["CGLS/CGNE recurrence", "非零初值为什么多一次 warm projection", "部署可见停止与 oracle time-to-target 的区别", "wall time warm-up、同步和内存测量"],
+      build: ["验证 A/A^T dot test", "复用 fixed-warm CGLS shell", "跑 Zero-CGLS、A^T y-CGLS、fixed-SPD PCGLS", "分别输出 deployable-stop 主账与 oracle-headroom 辅账"],
+      pass: ["零初值 K 步调用账与公式一致", "非零初值额外 forward 明确记账", "部署停止规则与等价区间只由 validation 冻结", "test truth 只事后画 headroom，不能控制主账停止"],
+      resources: ["c-route-lock", "fair-budget-audit", "v3k-d-controls", "v3k-f-stopping", "discrepancy-hanke"],
+      paper: "没有这一周，任何“快了多少”都可能只是隐藏特征成本或更差终点。"
     },
     {
-      id: "W10", phase: "机制创新", week: "第 10 周", title: "query-camera 标定与信息价值", hours: "14-18h", depends: ["W9"],
-      learn: ["reserved query 与数据泄漏边界", "一维 closed-form line search", "sensor selection/value of information"],
-      build: ["先做 S-only / S+Q correction / S∪Q direct reconstruction 同总相机预算对照", "分开固定 query、随机 query 和逐样本 adaptive query", "另留 Q_audit，再扫 angle、noise、sync error 与 0/1/2/all-query 收益-成本"],
-      pass: ["Q_fit 不进入初始重建或最终 Q_audit 验收", "同总相机数下击败直接重建强基线", "报告每个 split、p10/CVaR/harm rate 和真实相机成本"],
-      resources: ["fair-budget-audit", "qc-red-team", "t16-evidence", "selectivenet", "operator-uq"],
-      paper: "受控推理审计已触发当前 QC-SNCO checkpoint 的停止条件；训练 mask 匹配并锁定新测试集前不恢复。"
+      id: "W10", phase: "C0 最小算法", week: "第 10 周", title: "Adjoint-Residual Warm Start", hours: "14-20h", depends: ["W5", "W9"],
+      learn: ["A^T y 为什么是模糊但物理可解释的起点", "非线性曲光线时的 J^T residual", "residual learning 与 direct field prediction", "FNO/3D U-Net 容量匹配", "field 与 measurement 双损失"],
+      build: ["线性阶段训练 A^T y + coordinates/geometry → x0；非线性阶段改用参考态 J^T residual", "比较 residual FNO、matched 3D U-Net 与 direct operator", "接同一个物理 refinement", "画 per-case error-call 与 error-time 曲线"],
+      pass: ["不使用 truth/SVD/family label 作为部署输入", "模型只消耗一次共享 A^T y 或参考态 J^T residual", "deployable 主账与 oracle headroom 分开报告 median/p90", "若没有 headroom 则不扩大模型"],
+      resources: ["l2ws-paper", "inverse-acoustic-warmstart", "nows-paper", "super-fidelity-paper", "fno-paper", "v3e-compute-accounting", "v3f-deeponet-fno"],
+      paper: "C0 主要验证研究假设；它可以成为完整毕设，但单独未必足够构成高质量论文创新。"
     },
     {
-      id: "W11", phase: "几何泛化", week: "第 11 周", title: "可变相机布局与不规则观测", hours: "14-20h", depends: ["W8"],
-      learn: ["fixed-grid FNO 的几何限制", "预白化与可变 ray-set", "data-consistent unrolling 与 correction", "leave-one-geometry-out 外层验证"],
-      build: ["复跑 v3k-F 并解释 semi-convergence", "复核 CG-PDNO 的 zero-trust=fallback", "把 recurrent path 改为共享 physics base + 单次 correction", "与同总调用 SPG/PBB/CGLS 比较"],
-      pass: ["source-field harm>1% 不高于 5%", "mean 与 p10 同时改善", "额外 forward 完整记账", "fresh lock 前不读新域", "不把同生成器 smoke 称为 BOST superiority"],
-      resources: ["cg-pdno-research", "v3k-f-stopping", "v3h-geometry-gate", "v3i-variable-dataset", "v3j-functional-negative", "v3k-counterfactual", "v3k-b-ray-set", "v3k-c-adjoint", "v3k-d-controls", "v3k-e-pbb", "bb1988", "spg2000", "discrepancy-hanke", "gino-paper", "vidon-paper", "nio-paper"],
-      paper: "CG-PDNO 三种子 development-fresh test 平均 +21.77%、最大种子 harm 0%；但同生成器 inverse crime 未解决。noise-only trust 在新模型上无增量，下一门为 Base-Correction 结构、独立 generator 和真实 held-out view。"
+      id: "W11", phase: "C1 机制创新", week: "第 11 周", title: "Observable Krylov / Rig-Amortized Warm Start", hours: "14-20h", depends: ["W9", "W10"],
+      learn: ["Krylov 子空间与谱滤波", "Lanczos/randomized basis", "可观测方向与近零空间", "一次性 setup 和多帧摊销"],
+      build: ["实现 q0=A^T y 与 q1=A^T A q0 的小字典", "网络只预测有界系数或空间门控", "比较单向量/双向量/no-geometry 消融", "给 rig basis 报 setup、break-even frames 与 mismatch fallback"],
+      pass: ["basis 不接触 test truth", "每个额外 A/A^T 调用进入成本账", "measurement residual 和坏尾部不劣于 C0", "简单 BP/PCGLS 已解释收益时主动停止"],
+      resources: ["c-route-lock", "nows-paper", "v3k-c-adjoint", "v3k-d-controls", "nio-paper"],
+      paper: "这是当前最值得争取的机制贡献：BOST 可观测子空间约束，而不是换一个更大的神经网络。"
     },
     {
-      id: "W12", phase: "真实迁移", week: "第 12 周", title: "真实 BOST 接口与 sim-to-real 诊断", hours: "12-20h", depends: ["W7", "W10"],
-      learn: ["calibration/mask/units 数据契约", "synthetic bias 与 domain shift", "zero-shot、few-shot 与 per-instance refinement"],
-      build: ["读取一份真实或开放 BOST 样例", "在不训练时先画观测/重投影残差", "对比 direct、few-shot 和 operator→NeRIF refinement"],
-      pass: ["每个物理量单位可追溯", "不用真实 test 调超参数", "报告失败个例与数据健康检查"],
-      resources: ["open-bos-dataset", "nerif-paper", "t16-evidence", "public-data-transfer", "he-data-contract"],
-      paper: "这是从精致 synthetic demo 进入可投稿证据的必经关口。"
+      id: "W12", phase: "独立迁移", week: "第 12 周", title: "未见 PoolFire 工况与独立 BOST 样例", hours: "12-20h", depends: ["W8", "W10"],
+      learn: ["trajectory/family/geometry OOD", "synthetic optical bias", "zero-shot、few-shot 与 per-instance refinement", "保留相机评价"],
+      build: ["封存未见功率/尺寸 trajectory", "扫描 view/noise/geometry shift", "读取一份公开或组内最小 BOST 样例", "在不重训时先画重投影与失败 case"],
+      pass: ["相邻帧和同工况不跨 split", "不用 test truth 调阈值或停止步", "独立 forward/domain 的结果单独标注", "失败个例与健康检查完整"],
+      resources: ["poolfire-data", "open-bos-dataset", "nerif-paper", "public-data-transfer", "he-data-contract"],
+      paper: "PoolFire 仍是 digital-twin/synthetic BOST；独立光学链是进入可投稿证据的必要升级。"
     },
     {
-      id: "W13", phase: "可靠性", week: "第 13 周", title: "校准、拒答与风险-覆盖", hours: "10-14h", depends: ["W8", "W12"],
-      learn: ["calibration split", "conformal coverage 与分布假设", "selective prediction/risk-coverage"],
-      build: ["将 uncertainty 与真实误差做排序对照", "画 risk-coverage 曲线", "验证 fallback 是否真正降低系统误差"],
-      pass: ["calibration/test 数据不混用", "同时报 Spearman/AUC/coverage 与失败样本", "UQ 失败时不宣称可部署拒答"],
-      resources: ["operator-uq", "conformal-deeponet", "selectivenet"],
-      paper: "UQ 是完整系统贡献，不是为了再添一张热力图。"
+      id: "W13", phase: "可靠性", week: "第 13 周", title: "Fail-closed fallback 与成本风险", hours: "10-14h", depends: ["W10", "W12"],
+      learn: ["部署可见 confidence proxy", "calibration/test 边界", "risk-coverage", "warm start 失败时回退经典初值"],
+      build: ["用 initial measurement residual/geometry/noise proxy 排序失败", "画 risk-coverage 与 cost-coverage", "比较 always-warm、gated-warm、always-classical", "验证 fallback 是否降低最坏伤害"],
+      pass: ["gate 不读取 field truth", "calibration/test 不混用", "p90/worst/harm 与节省成本同时报告", "proxy 失效时明确关闭部署主张"],
+      resources: ["operator-uq", "conformal-deeponet", "selectivenet", "v3k-f-stopping"],
+      paper: "可靠性贡献必须减少真实失败，不能只增加一张置信度热力图。"
     },
     {
-      id: "W14", phase: "论文工程", week: "第 14 周", title: "强基线、消融与统计封口", hours: "14-18h", depends: ["W10", "W12"],
-      learn: ["matched capacity/compute", "multi-fidelity screen 与 survivor bias", "paired statistics 与 effect size", "ablation 与 mechanism claim 的一对一关系"],
-      build: ["传统/SIRT/NeRIF/U-Net/FNO/NIO-style 对照表", "复算 v3g 短程与长程排名翻转", "预注册主指标、超参数预算与停止准则", "生成八张核心论文图和 checksum"],
-      pass: ["每个创新点都有直接消融", "筛选成本与最终训练成本分开报告", "超参数预算公平", "结论不超出数据分布和统计单元"],
-      resources: ["nio-paper", "neural-correction", "v3g-deeponet-capacity", "t16-readme"],
-      paper: "从‘有个新模型’转为‘有一条可反驳的机制证据链’。"
+      id: "W14", phase: "论文工程", week: "第 14 周", title: "C2 trajectory loss、强基线与统计封口", hours: "14-20h", depends: ["W10", "W11", "W12"],
+      learn: ["短程 unroll 与 stop-gradient", "matched capacity/compute", "paired statistics 与 effect size", "机制消融"],
+      build: ["仅在 C0/C1 有 headroom 时比较 field-only、field+measurement、1/2/4-step loss", "冻结 Zero/BP/PCGLS/direct FNO/DeepONet 主表", "生成 calls-time-error 前沿、三维切片、等值面和失败图", "保存 config/checksum"],
+      pass: ["C2 未用更多测试信息或隐藏调用", "每个创新点有一对一消融", "筛选与最终训练成本分开", "统计单位是 trajectory/工况而非 voxel"],
+      resources: ["nows-paper", "super-fidelity-paper", "nio-paper", "v3g-deeponet-capacity", "t16-readme"],
+      paper: "只有 C0/C1 的稳定 headroom 存在，C2 才是合理升级；否则不靠复杂化挽救负结果。"
     },
     {
       id: "W15", phase: "投稿决策", week: "第 15-16 周", title: "可展示系统、论文包与师兄审核", hours: "16-24h", depends: ["W14"],
       learn: ["论文叙事与证据等级", "可复现包和许可边界", "投稿、降级和停止决策"],
-      build: ["三维切片/等值面/观测重投影互动展示", "paper figures + tables + appendix + code README", "一页师兄审核材料和十分钟演示"],
-      pass: ["新环境一条命令跑通主表", "页面不暗示合成结果已代表真实流场", "师兄对任务定义、数据和主指标明确签字/回复"],
-      resources: ["t16-evidence", "t16-readme", "paper-library-core"],
+      build: ["三维切片/等值面/重投影与 time-to-target 互动展示", "paper figures + tables + appendix + code README", "一页师兄/蔡老师审核材料和十分钟演示", "公开包剔除私有 notebook、路径和组内数据"],
+      pass: ["新环境一条命令跑通主表", "页面不暗示 PoolFire 等于真实实验", "师兄确认 forward、同精度和成本口径", "所有私有资产保持本机边界"],
+      resources: ["c-route-lock", "t16-evidence", "t16-readme", "paper-library-core"],
       paper: "只有全部硬门槛通过才冲论文；否则稳定收束为完整本科毕设。"
     }
   ],
@@ -411,64 +419,51 @@ window.OPERATOR_LEARNING_GUIDE = {
     {id:"n5-d4b-population-derivative",stage:"current",level:"必做",type:"正式总体导数审计",title:"N5-D4b 32-cell derivative census FAIL-CLOSED",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_population_field_derivative_result_audit_2026-07-19.md",local:"../demo_t16_operator/results/n2_pvgr_n5_d4b_population_field_derivative_v1/summary.md",read:"先看 32 cells/16 pairs/5 field units 的非独立账本，再定位 p14 两个 residual dot failures 与六个 h=0.01 support-topology failures。",output:"画一张 map failure 与 topology failure 分开的因果图，并说明为什么 post-open contraction 或 stable-radius 诊断不能救回 D4b。",verified:"结果前协议 cba4f28；254/256 maps、128/128 structures、58/64 topology；independent validator valid；机器判决 FAIL-CLOSED；全部授权 false"},
     {id:"n5-d4b-postopen-forensics",stage:"current",level:"必做",type:"只读失败取证与下一算法设计",title:"N5-D4b low-signal / support-set post-open forensics",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n5_d4b_postopen_forensics_2026-07-19.md",local:"../demo_t16_operator/results/n2_pvgr_n5_d4b_postopen_forensics_v1/summary.md",read:"先核对七种 contraction 为何都不过门，再看 14,466.67× residual signal suppression、21 个逐位 flips 和 topology-changed/stable FD 分布。",output:"手算一个 p14 normwise defect，任选三个 flips 还原索引，并写出 mixed-scale 与 simple-root 两个互相独立的 fresh protocol 草案。",verified:"saved arrays only；90 signature replays；21 flips；all frozen hashes reproduced；7 tests；historical D4b unchanged；no authorization"},
     {id:"n3-field-adjoint",stage:"current",level:"必做",type:"封存的后续设计",title:"Field JVP/VJP 到 6+2 view 三维重建接口",url:"../document_reader.html?doc=docs%2Fn2_pvgr_field_jvp_vjp_reconstruction_interface_design_2026-07-18.md",local:"",read:"重点读四个现有模块的 detach 审计、冻结 row layout、tensor-only forward、dot/FD 双门和 held-out view 边界。",output:"基于 D4b 失败写出必须先闭合的 topology-certified renderer 门，再标出 decoder 与 6+2 重建仍锁定。",verified:"D4 tiny valid；D4b fail closed；decoder chain 与三维重建未授权"},
-    {id:"n3-recovery-disclosure",stage:"audit",level:"进阶",type:"研究诚信",title:"N3 KeyError 盲态分析恢复披露",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n3_blind_analysis_recovery_2026-07-18.md",local:"",read:"理解为什么 96 格完成后仍不能直接改字段继续汇总，以及 opaque Merkle 封存如何限制事后自由度。",output:"写出允许修改的唯一 query schema 映射和所有禁止修改项。",verified:"恢复协议先提交；checkpoint payload 未解析；96 格未重算"}
+    {id:"n3-recovery-disclosure",stage:"audit",level:"进阶",type:"研究诚信",title:"N3 KeyError 盲态分析恢复披露",url:"../document_reader.html?doc=docs%2Fn2_pvgr_n3_blind_analysis_recovery_2026-07-18.md",local:"",read:"理解为什么 96 格完成后仍不能直接改字段继续汇总，以及 opaque Merkle 封存如何限制事后自由度。",output:"写出允许修改的唯一 query schema 映射和所有禁止修改项。",verified:"恢复协议先提交；checkpoint payload 未解析；96 格未重算"},
+    {id:"c-route-lock",stage:"warm-start",level:"必做",type:"项目合同",title:"PoolFire BOST Warm Start 路线锁定",url:"../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md",local:"",read:"读清问题定义、C0/C1/C2、matched-accuracy、调用账本、停止条件和师兄待确认项。",output:"不看页面写出输入、输出、求解器、主指标和五个失败条件。",verified:"师兄已选择 C；算法与真实证据尚未验证"},
+    {id:"l2ws-paper",stage:"warm-start",level:"核心",type:"理论与训练目标",title:"Learning to Warm-Start Fixed-Point Optimization Algorithms",url:"https://jmlr.org/papers/v25/23-1174.html",local:"",read:"对比 fixed-point residual loss 与 solution-distance loss，理解网络如何为后续固定迭代负责。",output:"写出它的训练目标、下游迭代接口和泛化假设，并标出哪些假设不适用于 BOST 非线性逆问题。",verified:"JMLR 25(166), 2024；官方全文、PDF 与代码链接可用"},
+    {id:"inverse-acoustic-warmstart",stage:"warm-start",level:"核心",type:"邻近逆问题",title:"A Neural Network Warm-Start Approach for Inverse Acoustic Scattering",url:"https://arxiv.org/abs/2212.08736",local:"",read:"重点看学习初值如何接传统反演、有限孔径/噪声测试，以及训练样本复杂度限制。",output:"列出声学逆散射与 BOST 的三点共同结构和三点不可直接迁移之处。",verified:"JCP 490, 112341 (2023)；arXiv 开放全文"},
+    {id:"nows-paper",stage:"warm-start",level:"核心",type:"邻近工作",title:"NOWS: Neural Operator Warm Starts for Accelerating Iterative Solvers",url:"https://arxiv.org/abs/2511.02481",local:"",read:"提取 neural operator 初值、Krylov solver、iteration/runtime 口径与稳定性边界。",output:"列出 NOWS 与 BOST 逆问题的四个差异，避免把 warm start 本身误写为创新。",verified:"arXiv v4，2026-05-07 更新"},
+    {id:"super-fidelity-paper",stage:"warm-start",level:"核心",type:"邻近工作",title:"Neural operator-based super-fidelity warm starts",url:"https://arxiv.org/abs/2312.11842",local:"",read:"重点看学习初值而非替换求解器、跨离散化与端到端成本。",output:"解释 steady forward PDE 结论为何不能直接迁移到 BOST 逆问题。",verified:"arXiv v2，2025-02-27 更新"},
+    {id:"poolfire-data",stage:"data",level:"必做",type:"公开高保真 CFD",title:"REALM PoolFire",url:"https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main",local:"",read:"只先检查 metadata 与单条 trajectory；确认 rho、shape、time、units、NaN/Inf 和 split。",output:"一个不加载全数组的 header report + 一张 trajectory-level split 表。",verified:"REALM 官方 Hugging Face 数据仓库；不是现成 BOST 数据"}
   ],
   researchTracks: [
     {
-      id:"pvgr-residual", rank:1, title:"Certified residual BOST operator", badge:"当前主线：mixed-scale adjoint + transversality-aware support", risk:"高", novelty:"把 curved-ray residual 的低信号 backward-error 证书、移动 support 等值面的 simple-root/transversality 证书、Picard residual 与 fail-closed fallback 放进同一可证伪合同；创新不来自把 FNO 换名，也不允许拿 post-open p14 反调阈值", data:"已有 N3 96 条件、D3 32×256×2 mixed reference、D4 tiny pass、D4b 完整 32-cell fail-closed census，以及精确 contraction/21-bit 取证；仍缺独立 D4c development/fresh population、真实 mask 语义、decoder chain、8-view reconstruction、独立 generator 和 OERF flow-off noise", hardware:"D4b 在本机 CPU 用 333.070 秒完成 12,558,336 queries、峰值约 475.3 MiB；本轮 90 signature replay 与精确 contraction 约 7 秒，D4c 小规模证书仍可本机；32³-64³ 多模型多种子以后再评估 GPU", question:"能否用 mixed-scale backward-error 区分 residual 低信号与真实 adjoint inconsistency，并用 simple-root certificate 允许平滑 crossing 位移、同时拒绝 root birth/death/grazing 和危险几何事件？", contribution:"D4b 暴露局部失败；取证排除最终求和顺序、量化 14,466.67× signal suppression，并把 21 个 support-set flips 定位到 ray/stage/offset。候选贡献收缩为两类可验证导数证书 + inverse closure + small operator + fallback。", next:"独立 D4c development→冻结 mixed-scale/simple-root 规则→fresh derivative audit→decoder-chain dot/FD→6+2 view reconstruction→真实 noise units→同预算 DeepONet/FNO/FFNO。", stop:"若师兄 renderer 无 active mask 且 support 证书对 FD/optimizer 无预测价值，则停止 topology 主贡献；若 mixed-scale 规则不能 fresh 闭合、decoder 任一 context 失败、H-P1 低于实验噪声或同预算尾部不优于 P1，则停止 residual operator。"
+      id:"warmstart-c0", rank:1, title:"C0 · Adjoint-Residual Warm Start", badge:"唯一主线的最小闭环", risk:"低-中", novelty:"创新性不是模型名字，而是 BOST 的 geometry-conditioned initialization、物理 refinement 与严格 matched-accuracy 成本证据", data:"PoolFire Δrho/Δn 使用 validation 前冻结的 reference/gauge，并按完整 trajectory/工况切分；BOS 工具输出语义确认后生成多视角观测；后续增加独立公开或组内样例", hardware:"先在 Mac 上做 16³-32³、低分辨率像素与少视角 smoke；确认 headroom 后再决定是否租 GPU", question:"一次 A^T y 或参考态 J^T residual 加几何输入生成的 x0，能否在部署可见停止规则下保持终点等价并减少物理调用和总时间？", contribution:"把 direct operator 变成可被经典求解器纠正的低成本起点，并分开报告 deployable 主账、oracle headroom、p90 与 harm rate。", next:"单条 PoolFire 轨迹审计→reference/gauge 与 BOS 常数/线性场验证→Zero/BP/PCGLS→小型 residual FNO/3D U-Net warm start。", stop:"网络推理与特征成本超过所省迭代、终点精度变差、p90/harm 变坏或 trajectory OOD 收益消失时停止。"
     },
     {
-      id:"correction", rank:2, title:"v3k-F 预白化停止与强数值侧门", badge:"确定性辅线；learned stop 继续关闭", risk:"中", novelty:"它主要是强基线和可部署停止问题，不单独宣称新算子", data:"v3k-F 仍是 development synthetic audit；真实 camera covariance 与 fresh blind 暂缺", hardware:"本机维护 discrepancy/SPG/call frontier，不为 learned stop 扩网络", question:"部署可得 covariance/noise proxy 能否稳定控制 semi-convergence，为残差算子提供不可逃避的强数值对手？", contribution:"discrepancy 对 noise OOD 相对 fixed Landweber 平均 +7.10%，但仍有 12.5% harm；平均改善不足以放行 learned stop。", next:"真实 flow-off covariance→pooled/worst-camera discrepancy→fresh lock→只作强数值基线。", stop:"确定性方法已解释全部 headroom 时，不训练 stopping network。"
+      id:"warmstart-c1", rank:2, title:"C1 · Observable Krylov Warm Start", badge:"优先机制创新", risk:"中", novelty:"把网络输出限制在由 A^T y 与少量 operator-only Krylov/basis 向量构成的可观测子空间，并显式报告 setup 与摊销成本", data:"与 C0 相同；basis 只可由 operator/训练集构造，不能看 test truth", hardware:"小 basis 可在本机；每增加一个 A/A^T 都必须证明能省回更多 refinement calls", question:"可观测子空间约束能否降低 learned x0 的重投影异常和坏尾部，同时保留加速？", contribution:"给 warm start 加入可解释、可审计的物理子空间约束；可扩展为 rig-amortized basis。", next:"先比较 q0=A^T y、q1=A^T A q0 的一/二向量版本，再决定 Lanczos 或近零空间 basis。", stop:"basis 构造成本无法摊销、简单 BP/PCGLS 已解释全部收益，或约束后不再加速时停止。"
     },
     {
-      id:"baseline", rank:3, title:"240-epoch FNO + 有界 DeepONet baseline audit", badge:"epoch / cost / DeepONet budget 已锁", risk:"低-中", novelty:"低，但决定全部创新结论是否可信", data:"同一 K=6 validation protocol；策略和 checkpoint 冻结后才读取 dev2/Q_audit", hardware:"v3e：FNO 14.72M FLOPs-v1、1.49ms 推理、8.54ms 完整训练步；v3g 72-run DeepONet screen 本机 153.69s", question:"候选能否在 epoch、wall time、FLOPs 与内存多轴上形成稳定 Pareto 优势，而不是只赢一个弱 endpoint？", contribution:"validation 冠军、plateaued control、五架构成本 schema、DeepONet rank/pool/LR 有界审计、provenance hashes 与尾部/OOD 边界。", next:"冻结 rank-48 DeepONet control；停止规则稳定后补 operator warm-start 的 time-to-target。", stop:"不再用参数量或无限延长 baseline 阻塞写代码；top-3 DeepONet 补充只有师兄明确要求才一次性预注册，不能看 dev2 后扩表。"
+      id:"warmstart-c2", rank:3, title:"C2 · Correctable Frontier Training", badge:"论文升级候选", risk:"高", novelty:"训练目标直接包含固定 1/2/4 步物理 refinement 后的误差，使网络学习最容易被求解器纠正的初值，而不只是单步最像真值", data:"只有 C0/C1 在未见 trajectory 上显示稳定 headroom 后才启动", hardware:"截断反传或 stop-gradient 小场开发；全 3D unroll 可能需要 GPU", question:"最小单步 field loss 的 x0，是否不如固定短程 refinement 后误差最小的 x0？", contribution:"连接 neural operator、iterative inverse solver 和成本-精度前沿，形成可一对一消融的机制主张。", next:"比较 field-only、field+measurement、1/2/4-step trajectory loss；所有物理调用进入账本。", stop:"训练显存/成本失控、收益仅来自更多训练预算、或 C0/C1 没有基础 headroom 时不启动。"
     },
     {
-      id:"sensor-design", rank:4, title:"BOST camera layout × inverse operator co-design", badge:"中期候选；依赖真实安装约束", risk:"中-高", novelty:"高，依赖真实安装约束", data:"多套可行相机布局、遮挡/标定/同步成本与真实或高保真 forward", hardware:"8-24 GB GPU；主要成本在实验几何与批量 forward", question:"在固定安装成本下，哪些视角布局能同时降低平均误差和最坏体场风险？", contribution:"block-camera VOI、风险约束布局、operator 与实验设计协同。", next:"先比较 uniform/max-gap/QR-Fisher/learned policy；K=6 max-gap 仅作假设来源，不作正结果。", stop:"布局收益在独立 geometry/真实装置消失，或安装成本不可接受时停止。"
+      id:"strong-baselines", rank:4, title:"强基线与公平成本账本", badge:"不是创新，但不可跳过", risk:"低", novelty:"无；作用是防止把弱基线、额外调用或较差终点包装成加速", data:"与主实验完全共用数据、forward、split、归一化和阈值", hardware:"本机即可先跑小场；完整 wall time 必须在同一设备、同一进程协议下测", question:"C0/C1/C2 是否同时胜过 Zero-CGLS、BP-CGLS、fixed-SPD PCGLS 和 direct FNO/DeepONet？", contribution:"冻结 calls、wall、memory、field/gradient、measurement、p50/p90/worst 与未达标率。", next:"先复用仓库 CGLS/PCGLS 与 fixed-warm shell，删掉旧 13F+13A^T 特征链。", stop:"若最强经典初始化达到相同或更好的前沿，论文主张应降级为负结果或工程复现。"
     },
     {
-      id:"cgpdno", rank:5, title:"历史支线：Base-Correction CG-PDNO", badge:"3-seed 工程信号；不再是当前主线", risk:"中高", novelty:"可能来自 variable ray geometry + calibrated covariance + 共享物理 fallback；但证据仍在 straight-ray analytic phantom", data:"已有 disjoint geometry pools 和 3 seeds，仍缺独立 generator、OpenBOST 与 OERF", hardware:"本机已完成 8³-32³ smoke；当前不继续扩模", question:"共享预白化物理 base 上的一次 correction 能否在 sparse-view BOST 同调用前沿不伤尾部？", contribution:"development-fresh test 平均 +21.77%、最大种子 harm 0%，但 joint-OOD 前驱灾难与 noise-only trust 负结果关闭了成功表述。", next:"仅作为 residual-operator 的历史对照和结构警告，不与 N3 curved-ray 证据混写。", stop:"除非 N3 residual target 与真实数据合同支持同一结构，否则不恢复扩展。"
-    },
-    {
-      id:"qcsnco", rank:7, title:"Query-Calibrated Support-Null Correction Operator", badge:"停止当前 checkpoint；保留负结果", risk:"高", novelty:"组件邻近既有方法，且当前 direction 质量不足", data:"若恢复，需训练 mask 匹配、锁定新 fields、真实 cone-ray 与独立采集", hardware:"8-24 GB GPU；另需 Q_audit 仪器", question:"null consistency 为什么不能保证三维 field correctness？", contribution:"当前最可信贡献是机制性负结果与相机信息价值边界。", next:"不调新架构；只在 direct/warm-start 主线稳定后，决定是否做一次训练匹配复核。", stop:"v2d 在 K=4/6/8 的同预算门槛 0/3 通过，已触发停止条件。"
-    },
-    {
-      id:"geometry", rank:8, title:"可变相机/光线几何神经算子", badge:"高风险升级", risk:"高", novelty:"高，但容易过度建模", data:"至少多套布局，必须 outer leave-one-geometry-out", hardware:"16-48 GB GPU；point/ray encoder 成本高", question:"固定网格 FNO 的失败是否主要来自观测几何变化？", contribution:"将 camera/ray metadata 与 inverse operator 显式联系，支持可变传感器。", next:"先用 metadata-FNO/padding+mask 建立强对照，再决定 GINO/VIDON/GNOT。", stop:"显式 metadata 基线已解决外推，或组内布局实际固定时停止。"
-    },
-    {
-      id:"warmstart", rank:6, title:"Own operator warm-start NeRIF", badge:"baseline、geometry、v3d 三闸门后进入", risk:"中-高", novelty:"中-高", data:"需 NeRIF forward/loss、统一 stop rule 与至少少量真实样例", hardware:"本机 MPS 先做小场 timing；升尺度后再评 GPU", question:"通过 v3d 开发门槛的初值能否比 random/ridge/plateau FNO/DeepONet 更快达到相同 NeRIF 独立审计质量？", contribution:"把强数值反演、BOST acquisition-conditioned prior 与 per-instance continuous field 变成公平级联。", next:"只在 acquisition-conditioned 分支稳定胜 F-Adapter 与 geometry controls 后比较 random/ridge/FNO/DeepONet/own/oracle 六种初始化。", stop:"端到端总时间改善不足 30%、最终 Q_audit 变差或尾部伤害增加时不作主贡献。"
-    },
-    {
-      id:"4d", rank:9, title:"3D inverse operator → 4D evolution/correction", badge:"远期扩展", risk:"很高", novelty:"高", data:"需同步高速多视角时序数据", hardware:"24-80 GB GPU 或明确低秩/分块设计", question:"低秩时空先验能否在不损伤瞬态前缘的情况下减少 4D BOST 的样本与计算量？", contribution:"与 He 的 TDBOST 时空线直接对齐。", next:"只在静态 3D 模型、几何接口和真实数据都过关后开始。", stop:"静态 3D 尚不稳定，或没有同步时序数据时不启动。"
+      id:"temporal-upgrade", rank:5, title:"Rig-Amortized / Temporal Warm Start", badge:"远期 4D 升级", risk:"高", novelty:"同一 rig 或相邻时刻共享 operator-only basis 与上一帧状态，贴近 TDBOST 的连续高速重建需求", data:"需要静态 C 路线通过，再加入合法时序 trajectory；不得随机拆相邻帧", hardware:"basis setup 与 break-even 帧数必须单列；全时序训练可能需要 GPU", question:"一次 rig setup 或前一帧信息能否在不损伤瞬态火焰前缘的情况下进一步降低每帧成本？", contribution:"将单帧 C 路线自然扩展到连续采集，并给出 setup amortization 与 rig mismatch fallback。", next:"只在 C0/C1 通过 PoolFire trajectory OOD 和组内静态样例后启动。", stop:"静态 warm start 不成立、无连续时序数据或时间先验抹平瞬态结构时停止。"
     }
   ],
   paperGates: [
-    {id:"G0",title:"任务锁定",evidence:"输入、输出、support/query 角色、主指标和相机成本经师兄确认。",stop:"任务仍在 3D inverse 与 4D evolution 之间摇摆。"},
-    {id:"G1",title:"数据无泄漏",evidence:"phantom/family/view/noise/geometry 的 manifest 和 outer split 在训练前固定。",stop:"调参见到外层 geometry 或真实 test。"},
-    {id:"G2",title:"强基线公平",evidence:"传统正则化、physics lift/SIRT、matched U-Net/CNO/FNO、NeRIF；迭代精化另含 fixed Landweber、quadratic、PBB、全调用记账 SPG 与固定/自适应 stop。",stop:"新法只和弱 endpoint、单一 optimizer protocol、更多 A/A^T 调用或 oracle stop 对照。"},
-    {id:"G3",title:"机制被消融",evidence:"support-fit、null projection、query calibration 和 geometry encoder 各有一对一消融。",stop:"只有整体模型对比，不知道改善来自哪里。"},
-    {id:"G4",title:"独立泛化",evidence:"至少包含 family OOD、view/noise joint OOD 和 leave-one-geometry-out。",stop:"只报 IID 或随机切分。"},
-    {id:"G5",title:"真实/高保真证据",evidence:"至少一个与训练生成器独立的公开或组内数据包。",stop:"所有结论都在同一 synthetic generator 内循环。"},
-    {id:"G6",title:"统计单元正确",evidence:"多种子、逐样本 paired delta、置信区间/效应量和预定停止规则。",stop:"把 voxel 当独立样本或只报最好 seed。"},
-    {id:"G7",title:"可复现与展示",evidence:"环境、config、checkpoint 边界、checksums、图表脚本、三维展示和许可清单完整。",stop:"只在原机器/原 notebook 中手工跑通。"}
+    {id:"G0",title:"C 任务与物理语义锁定",evidence:"师兄确认目标为 warm start 加速，并确认 Δrho/Δn reference/gauge、偏折单位、forward/adjoint 和组内基线。",stop:"只确定 C 名称，但重建变量、不可观常数或同精度口径仍靠猜。"},
+    {id:"G1",title:"PoolFire 无泄漏",evidence:"按完整 trajectory、火源功率/尺寸和 rig 划分；相邻帧、噪声副本和同场视角不跨 split。",stop:"随机帧切分，或用 test truth 构造 reference/归一化。"},
+    {id:"G2",title:"强基线与调用公平",evidence:"Zero/BP/PCGLS、direct FNO/DeepONet 与 candidate 共用 forward、阈值和硬件；A^T y、warm projection、basis setup、搬运和网络推理均记账。",stop:"只省 solver iterations，但隐藏特征、setup 或推理成本。"},
+    {id:"G3",title:"Matched-accuracy 双账主门",evidence:"主表使用 validation 冻结、部署可见的停止规则，检查终点误差等价并报 calls/wall/memory/p90；有真值时另报 oracle time-to-target headroom。",stop:"用 test truth 控制主表停止、把 oracle headroom 冒充在线耗时，或拿更差终点换速度。"},
+    {id:"G4",title:"机制一对一消融",evidence:"BP、residual network、geometry、observable/Krylov constraint、trajectory loss 和 fallback 分别消融。",stop:"只有一个大模型，无法解释加速来自哪里。"},
+    {id:"G5",title:"独立迁移",evidence:"至少未见 PoolFire trajectory/工况，并增加与训练 forward 独立的公开或组内 BOST 样例。",stop:"所有结果只在同一 generator 的 IID 帧上成立。"},
+    {id:"G6",title:"统计与坏尾部",evidence:"至少三种子、逐 trajectory paired delta、置信区间、p90/worst/harm rate 和预定停止规则。",stop:"把 voxel/ray/frame 当独立样本或只报最好 seed。"},
+    {id:"G7",title:"可复现与展示",evidence:"公开代码不含私有工具；环境、config、checksum、图表脚本、三维切片/等值面和成本表可一键重跑。",stop:"必须依赖师兄路径或手工 notebook 操作才能复现。"}
   ],
   seniorQuestions: [
-    "组内 displacement 的单位是 pixel、归一化 detector coordinate 还是物理长度；forward observable 对应 exit angle、path-integrated deflection 还是最终 pixel displacement？",
-    "同一 rig / flow-off 是否有 20 次左右 repeats，可否提供 per-pixel/ray mask、confidence 或 optical-flow covariance 来冻结实验噪声底？",
-    "D2 的 narrow-aperture selected tail 已到 H8192 且观测阶约 2.2-2.5；组内会把这种数值尾差与真实光圈、pixel displacement 和 flow-off noise 怎样对齐？",
-    "组内所说的算子学习，是 projection-to-volume inverse operator，还是 3D/4D field evolution operator？",
-    "能否给一份可脱敏的 displacement + camera geometry + mask/confidence + baseline reconstruction 最小数据包？",
-    "哪些相机必须参与重建，是否允许保留 1-2 个 query cameras 只做标定/验证？",
-    "相机数量、位姿和光线几何是否会在样本之间变化？",
-    "是否认可把 v3f rank-48 DeepONet 冻结为毕设 control；投稿前是否还需要一次性 top-3 long-horizon 补充？",
-    "师兄最看重 field error、held-out reprojection、front location、速度还是失败率？",
-    "是否有 NeRIF/TDBOST 可调用的 forward F(x) 与匹配 Jacobian-adjoint/VJP？真实 support 是否部署可得？",
-    "真实 NeRIF/BOST renderer 是否有随网络参数变化的 hard mask、occupancy pruning、ray termination 或 threshold branch？support threshold 会改变 forward 值，还是只用于 ROI/可视化/证书？",
-    "D4b 的 p14 精确 contraction 仍不过门且 component/residual signal ratio 为 14,466.67；能否用组内 F/Jv/Jᵀq 小例子逐段对账？NeRIF/TDBOST 的 decoder 是 voxel、MLP 还是 tensor decomposition？",
-    "能否提供一个匿名最小导数 case：相机参数、1 个 field checkpoint、4 条 rays、forward output、loss cotangent、期望 Jv/Jᵀq 与单位？",
-    "真实 displacement 是否提供 pixel/ray confidence、noise level 或 covariance proxy，能否只用 calibration split 估计？",
-    "能否按独立 experiment case/geometry 封存一套从未查看的 blind fields？",
-    "真实实验中多一台 query camera 的同步、标定和布置成本是多少？",
-    "哪些数据、图和代码可公开，哪些只能留在组内？"
+    "notebook 的 refractive_index_field 应返回密度 rho、折射率 n，还是 n-1？",
+    "level=2.2/3200 和 SprayFlame 分支的 2.48/10000 分别是什么常数、单位或缩放？",
+    "保存的 XYdeflection 是 pixel、归一化相机坐标、偏折角还是物理长度？正负号怎样定义？",
+    "这份 notebook 生成的是偏折坐标；最终 BOS 点图是否还有单独的 background warping/渲染脚本？",
+    "组里当前要加速的重建基线具体是哪一个，入口脚本或函数是什么？",
+    "组内是否已有与该 simulator 匹配的 forward/adjoint/VJP；若没有，认可先从线性化 A/A^T + CGLS 做 C0 吗？",
+    "“同精度”主要按三维 field error、measurement/reprojection、保留相机还是下游 PIV 补偿判断？",
+    "PoolFire 直接使用 REALM 公开版本，还是组里已有预处理版本、固定 split 或更适合的 CFD 数据？",
+    "相机内外参、九视角角度、near/far、体场范围和 ray steps 哪些必须沿用，哪些可作为开发近似？",
+    "哪些组内工具、代码、输出图和参数可公开，哪些只能留在本机私有目录？"
   ]
 };

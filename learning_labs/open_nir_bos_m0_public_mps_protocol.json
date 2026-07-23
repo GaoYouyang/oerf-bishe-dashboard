@@ -1,0 +1,167 @@
+{
+  "schema_version": "oerf-open-nir-bos-m0-public-mps-gate-1.0",
+  "status": "FROZEN_BEFORE_M0_PUBLIC_MPS_EXECUTION",
+  "created_at_utc": "2026-07-22T21:52:00Z",
+  "research_question": "Can the D0.5 fixed-ray voxel-field forward produce finite and numerically consistent public-Phantom values and field gradients on Apple MPS float32 relative to a CPU float32 reference?",
+  "source_release": {
+    "repository": "https://github.com/Weihu22/Neural-Implicit-Reconstruction-for-BOS",
+    "commit": "a385cce83d88df24ed05dccfd6fde20e124f5604",
+    "dataset_relative_path": "PYTHON/NIR-BOS/data/Phantom 1/140x294x140",
+    "field": "released_cgls_tv",
+    "root_license_present": false,
+    "raw_external_assets_may_be_exported": false
+  },
+  "local_dependency": {
+    "d0_5_forward_relative_path": "learning_labs/open_nir_bos_d0_5_torch_forward.py",
+    "d0_5_forward_sha256": "fc0571f3c7c387f2f01d2e893141c92560c45fb0e46f4fb89e88564e57191e16",
+    "required_d0_5_status": "D0_5_DIFFERENTIABLE_FORWARD_PASS_IMPLEMENTATION_ONLY",
+    "required_authorization_overlay": "docs/open_nir_bos_d0_5_training_authorization_overlay.json"
+  },
+  "public_minibatch": {
+    "seed": 2026072301,
+    "views": 12,
+    "rays_per_view": 8,
+    "total_rays": 96,
+    "quadrature_steps": 128,
+    "ray_chunk_size": 24,
+    "roi_half_size": [
+      0.9524,
+      2.0,
+      0.95274
+    ],
+    "outside_aabb_policy": "zero",
+    "observation_scale": 0.00054421,
+    "loss": "mean_squared_error_over_aabb_valid_rays_only",
+    "field_dtype": "float32",
+    "ray_dtype": "float32",
+    "cpu_reference_device": "cpu",
+    "candidate_device": "mps"
+  },
+  "cpu64_anchor": {
+    "required": true,
+    "same_field_rays_observations_and_loss": true,
+    "purpose": "prevent two float32 backends from jointly drifting away from the D0.5 CPU64 numerical anchor"
+  },
+  "public_field_invalid_ray_probe": {
+    "origins": [
+      [2.2, 0.0, -2.0],
+      [0.0, 2.4, -2.0],
+      [2.1, 2.3, 0.0]
+    ],
+    "directions": [
+      [0.0, 0.0, 1.0],
+      [0.0, 0.0, 1.0],
+      [1.0, 0.0, 0.0]
+    ],
+    "required_devices": [
+      "cpu_float32",
+      "mps_float32"
+    ],
+    "maximum_output_absolute_value": 0.0,
+    "maximum_field_gradient_absolute_value": 0.0
+  },
+  "public_field_directional_derivative": {
+    "required_device": "mps_float32",
+    "tangent": "released_field_minus_its_global_mean",
+    "central_step": 0.001,
+    "loss": "same_valid_ray_mse_as_primary_gate"
+  },
+  "mps_repeatability": {
+    "independent_forward_backward_repetitions": 3,
+    "same_process": true,
+    "empty_cache_before_each_repetition": true
+  },
+  "required_comparisons": [
+    "valid_mask_mismatch_count",
+    "cpu32_mps32_prediction_relative_l2",
+    "cpu32_cpu64_prediction_relative_l2",
+    "mps32_cpu64_prediction_relative_l2",
+    "normalized_prediction_absolute_error",
+    "worst_view_prediction_relative_l2",
+    "cpu32_mps32_valid_ray_mse_relative_error",
+    "cpu32_cpu64_valid_ray_mse_relative_error",
+    "mps32_cpu64_valid_ray_mse_relative_error",
+    "cpu32_mps32_field_gradient_relative_l2",
+    "cpu32_cpu64_field_gradient_relative_l2",
+    "mps32_cpu64_field_gradient_relative_l2",
+    "field_gradient_cosine_defect",
+    "normalized_field_gradient_absolute_error",
+    "mps_directional_derivative_relative_error",
+    "mps_repeat_prediction_relative_l2",
+    "mps_repeat_gradient_relative_l2",
+    "invalid_probe_output_absolute_value",
+    "invalid_probe_gradient_absolute_value",
+    "prediction_nonfinite_count",
+    "loss_nonfinite_count",
+    "gradient_nonfinite_count",
+    "gradient_zero_indicator",
+    "sampled_mps_driver_allocation_delta_bytes",
+    "post_cleanup_mps_current_allocation_delta_bytes"
+  ],
+  "thresholds": {
+    "maximum_valid_mask_mismatch_count": 0,
+    "maximum_cpu32_mps32_prediction_relative_l2": 0.00005,
+    "maximum_cpu32_cpu64_prediction_relative_l2": 0.00005,
+    "maximum_mps32_cpu64_prediction_relative_l2": 0.00005,
+    "maximum_normalized_prediction_absolute_error": 0.0002,
+    "maximum_worst_view_prediction_relative_l2": 0.0002,
+    "maximum_cpu32_mps32_valid_ray_mse_relative_error": 0.0001,
+    "maximum_cpu32_cpu64_valid_ray_mse_relative_error": 0.0001,
+    "maximum_mps32_cpu64_valid_ray_mse_relative_error": 0.0001,
+    "maximum_cpu32_mps32_field_gradient_relative_l2": 0.0005,
+    "maximum_cpu32_cpu64_field_gradient_relative_l2": 0.001,
+    "maximum_mps32_cpu64_field_gradient_relative_l2": 0.001,
+    "maximum_field_gradient_cosine_defect": 0.0001,
+    "maximum_normalized_field_gradient_absolute_error": 0.002,
+    "maximum_mps_directional_derivative_relative_error": 0.005,
+    "maximum_mps_repeat_prediction_relative_l2": 0.000001,
+    "maximum_mps_repeat_gradient_relative_l2": 0.00001,
+    "maximum_invalid_probe_output_absolute_value": 0.0,
+    "maximum_invalid_probe_gradient_absolute_value": 0.0,
+    "maximum_nonfinite_prediction_count": 0,
+    "maximum_nonfinite_loss_count": 0,
+    "maximum_nonfinite_gradient_count": 0,
+    "maximum_zero_gradient_indicator": 0,
+    "maximum_sampled_mps_driver_allocation_delta_bytes": 2147483648,
+    "maximum_post_cleanup_mps_current_allocation_delta_bytes": 67108864
+  },
+  "memory_evidence": {
+    "measurements": [
+      "baseline_after_empty_cache",
+      "after_forward",
+      "after_backward",
+      "after_cleanup"
+    ],
+    "sampled_values_are_not_a_true_peak_trace": true,
+    "all_memory_thresholds_are_relative_to_the_repetition_baseline": true,
+    "pytorch_enable_mps_fallback": "0",
+    "machine_specific_speed_claim_authorized": false
+  },
+  "failure_policy": {
+    "output_directory_must_not_exist": true,
+    "tracked_source_tree_must_be_clean": true,
+    "mps_unavailable_is_no_go": true,
+    "execution_error_bundle_must_be_preserved": true,
+    "threshold_miss_is_no_go": true,
+    "thresholds_may_not_be_relaxed_after_execution": true
+  },
+  "authorization_if_all_required_gates_pass": {
+    "mps_single_public_phantom_optimization_smoke": true,
+    "scope": "one opened public Phantom, the frozen tested batch size, fixed straight rays, and voxel-field gradients only",
+    "purpose": "implementation and optimizer failure-mode smoke testing only",
+    "fourier_mlp_or_bounded_residual_mps_smoke": false,
+    "full_training": false,
+    "new_algorithm": false,
+    "reconstruction_success": false,
+    "operator_learning": false,
+    "cross_field_generalization": false,
+    "cross_geometry_generalization": false,
+    "real_bost": false,
+    "oerf_data": false,
+    "better_than_deeponet_fno_nerif_or_nirp": false,
+    "paper_success": false,
+    "breakthrough": false
+  },
+  "next_if_pass": "Freeze a matched-budget single-Phantom CPU B0 voxel, B1 Fourier-MLP, and B2 bounded-residual optimization smoke. MPS is authorized only for the tested voxel-field batch until B1/B2 parameter-gradient and ten-step memory gates pass. Keep CPU64 as the numerical audit reference and do not call the smoke operator learning.",
+  "next_if_no_go": "Preserve the first result, localize the device or numerical failure on the same frozen subset, and do not authorize public-Phantom MPS optimization."
+}

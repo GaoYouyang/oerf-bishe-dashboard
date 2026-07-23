@@ -1,0 +1,47 @@
+{
+  "schema_version": "oerf-open-nir-bos-d0-forward-identity-protocol-1.0",
+  "protocol_id": "open_nir_bos_d0_forward_identity_v1_postopen_repair",
+  "status": "FROZEN_POSTOPEN_REPAIR_BEFORE_V1_EXECUTION",
+  "parent_v0": {
+    "status": "D0_FORWARD_IDENTITY_NO_GO_FIX_GEOMETRY_OR_UNITS",
+    "summary_sha256": "d7eacb7f7795a6e4aadbe2d153cbd39e90b92da88a26d472a0deba402cf2440c",
+    "failed_gates": [
+      "valid_ray_gate_passed",
+      "quadrature_gate_passed"
+    ]
+  },
+  "repair_rationale": {
+    "outside_aabb_policy": "A ray that does not intersect the declared reconstruction ROI has exactly zero field contribution instead of being dropped from the denominator.",
+    "quadrature_policy": "The post-open convergence diagnosis found 128-to-256 relative differences below 1 percent, so v1 freezes 256 as primary and 128 as comparator.",
+    "not_a_threshold_relaxation": true,
+    "same_opened_samples": true,
+    "fresh_or_generalization_evidence": false
+  },
+  "seed": 20260723,
+  "rays_per_view": 512,
+  "primary_quadrature_steps": 256,
+  "comparison_quadrature_steps": 128,
+  "outside_aabb_policy": "zero",
+  "thresholds": {
+    "minimum_valid_ray_fraction": 0.99,
+    "maximum_outside_to_inside_observation_rms_ratio": 0.01,
+    "minimum_camera_center_alignment_cosine": 0.99,
+    "maximum_quadrature_refinement_relative_difference": 0.02,
+    "minimum_released_cgls_mean_component_correlation": 0.75,
+    "maximum_released_cgls_scaled_relative_l2": 0.7,
+    "maximum_direct_to_best_orientation_correlation_gap": 0.05,
+    "minimum_truth_minus_cgls_scaled_error_gap_for_diagnostic": 0.05
+  },
+  "highest_possible_label": "D0_FORWARD_IDENTITY_PASS_IMPLEMENTATION_DIAGNOSTIC_ONLY",
+  "claim_authorization_if_all_gates_pass": {
+    "d0_matched_budget_overfit_smoke": true,
+    "new_algorithm": false,
+    "real_bost": false,
+    "oerf_data": false,
+    "cross_field_generalization": false,
+    "cross_geometry_generalization": false,
+    "better_than_nerif_or_nirp": false,
+    "paper_success": false,
+    "breakthrough": false
+  }
+}

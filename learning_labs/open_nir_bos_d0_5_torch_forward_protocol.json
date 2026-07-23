@@ -1,0 +1,97 @@
+{
+  "schema_version": "oerf-open-nir-bos-d0-5-torch-forward-protocol-1.0",
+  "protocol_id": "open_nir_bos_d0_5_torch_forward_v0_preregistered",
+  "status": "FROZEN_BEFORE_D0_5_EXECUTION",
+  "frozen_at_utc": "2026-07-22T21:05:02Z",
+  "parent_evidence": {
+    "d0_protocol_id": "open_nir_bos_d0_forward_identity_v1_postopen_repair",
+    "d0_status": "D0_FORWARD_IDENTITY_PASS_IMPLEMENTATION_DIAGNOSTIC_ONLY",
+    "audit_overlay_required": true,
+    "training_authorized_before_this_gate": false,
+    "d0_5_required": true
+  },
+  "research_question": "Does a clean-room differentiable PyTorch thin-ray operator reproduce the frozen NumPy/SciPy value replay and expose numerically trustworthy field derivatives?",
+  "primary_device": "cpu",
+  "primary_dtype": "float64",
+  "secondary_device": "mps_if_available",
+  "secondary_dtype": "float32",
+  "seed": 20260723,
+  "synthetic_matrix": {
+    "field_shape": [
+      7,
+      6,
+      5
+    ],
+    "roi_half_size": [
+      1.0,
+      1.2,
+      0.8
+    ],
+    "quadrature_steps": 37,
+    "cases": [
+      "affine_field_exact_integral",
+      "smooth_random_field_scipy_parity",
+      "parallel_axis_and_outside_aabb",
+      "boundary_extension",
+      "field_linearity",
+      "finite_difference_directional_derivative",
+      "jvp_exact_direction",
+      "jvp_vjp_bilinear_identity",
+      "outside_aabb_zero_gradient"
+    ]
+  },
+  "public_replay_matrix": {
+    "release_commit": "a385cce83d88df24ed05dccfd6fde20e124f5604",
+    "field": "released_cgls_tv",
+    "rays_per_view": 64,
+    "views": 12,
+    "quadrature_steps": 128,
+    "outside_aabb_policy": "zero",
+    "raw_external_assets_may_be_exported": false,
+    "gradient_graph_required": false
+  },
+  "thresholds": {
+    "cpu_float64_maximum_value_relative_l2": 1e-11,
+    "cpu_float64_maximum_value_absolute_error": 1e-10,
+    "cpu_float64_maximum_affine_integral_absolute_error": 1e-11,
+    "cpu_float64_maximum_linearity_relative_error": 1e-12,
+    "cpu_float64_maximum_finite_difference_relative_error": 5e-8,
+    "cpu_float64_maximum_jvp_exact_direction_relative_error": 1e-11,
+    "cpu_float64_maximum_jvp_vjp_bilinear_relative_error": 1e-11,
+    "cpu_float64_maximum_outside_gradient_absolute_value": 1e-14,
+    "public_replay_maximum_value_relative_l2": 1e-10,
+    "public_replay_maximum_value_absolute_error": 1e-9,
+    "mps_float32_maximum_value_relative_l2": 5e-5,
+    "mps_float32_maximum_value_absolute_error": 5e-5,
+    "mps_float32_maximum_finite_difference_relative_error": 5e-3,
+    "mps_float32_maximum_jvp_exact_direction_relative_error": 1e-4,
+    "mps_float32_maximum_jvp_vjp_bilinear_relative_error": 1e-4,
+    "mps_float32_maximum_outside_gradient_absolute_value": 1e-6
+  },
+  "finite_difference": {
+    "cpu_central_step": 1e-6,
+    "mps_central_step": 0.001,
+    "direction_is_fixed_before_execution": true
+  },
+  "decision_rule": {
+    "cpu_gate_required": true,
+    "public_value_replay_required": true,
+    "mps_gate_required_for_mps_training_only": true,
+    "threshold_relaxation_after_execution_allowed": false,
+    "failed_metrics_must_remain_visible": true
+  },
+  "highest_possible_label": "D0_5_DIFFERENTIABLE_FORWARD_PASS_IMPLEMENTATION_ONLY",
+  "claim_authorization_if_cpu_and_public_gates_pass": {
+    "single_public_phantom_optimization_smoke": true,
+    "mps_training": "only_if_secondary_mps_gate_passes",
+    "new_algorithm": false,
+    "real_bost": false,
+    "oerf_data": false,
+    "reconstruction_success": false,
+    "cross_field_generalization": false,
+    "cross_geometry_generalization": false,
+    "better_than_deeponet_fno_nerif_or_nirp": false,
+    "paper_success": false,
+    "breakthrough": false
+  }
+}

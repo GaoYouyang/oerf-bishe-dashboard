@@ -1,0 +1,318 @@
+{
+  "schema_version": "oerf-open-nir-bos-d0-6-matched-budget-protocol-1.1",
+  "protocol_id": "D0.6_SINGLE_FIELD_MATCHED_BUDGET_SMOKE",
+  "status": "FROZEN_POSTAUDIT_REPAIR_BEFORE_RUNNER_AND_EXECUTION",
+  "created_at_utc": "2026-07-23T00:20:00Z",
+  "research_question": "On one already-opened public Phantom, under the same straight-ray forward, deterministic split, and primary RQWU budget, which of S0_VOXEL, S1_FOURIER, and S2_BOUNDED_RESIDUAL is worth carrying into fresh multi-field and geometry-shift tests?",
+  "maximum_evidence_if_passed": "parameterization screening on one already-opened public Phantom",
+  "design_document": "docs/open_nir_bos_d0_6_matched_budget_design_2026-07-23.md",
+  "input_identity": {
+    "relative_path": "learning_labs/open_nir_bos_d0_6_input_identity.json",
+    "sha256": "df7806ab6193876ea1e4b4c3186324dd01d48e7f22291cecbc91f26b4b857688",
+    "lock_relative_path": "learning_labs/open_nir_bos_d0_6_input_identity.sha256"
+  },
+  "postaudit_repair": {
+    "parent_commit": "01ce64d",
+    "performed_before_any_training": true,
+    "repairs": [
+      "add four 1920-ray step-4 fit-union forwards to LR screen and budget",
+      "require exact S1/S2 LR-trial and 80-step trajectory plus optimizer-state identity",
+      "make arm validity independent across S0/S1/S2",
+      "strengthen S1 fallback with field secondary and audit-tail non-harm gates",
+      "require strict protocol semantics and mutation tests",
+      "name RQWU a matched projection-work budget",
+      "apply the same analytic boundary envelope to S0/S1/S2"
+    ]
+  },
+  "execution_authorization": {
+    "split_broker_implementation": false,
+    "runner_implementation": false,
+    "mechanical_dry_run": false,
+    "formal_training": false,
+    "reason": "Freeze constants and input identity first. A committed split broker, runner, source hashes, mount-isolation tests, and a non-result mechanical dry-run are still required before formal execution."
+  },
+  "environment": {
+    "device": "cpu",
+    "dtype": "float64",
+    "required_launcher": ".venv/bin/python",
+    "required_python_prefix_relative": ".venv",
+    "required_architecture": "arm64",
+    "validated_numpy_version": "2.4.6",
+    "validated_scipy_version": "1.17.1",
+    "validated_torch_version": "2.13.0",
+    "system_python_forbidden_reason": "system Python resolves an x86_64 SciPy extension on this arm64 Mac",
+    "deterministic_algorithms_required": true,
+    "mps_neural_parameter_training_authorized": false,
+    "technical_seeds": [20260731, 20260732, 20260733]
+  },
+  "data": {
+    "views": 12,
+    "selected_rays_per_view": 512,
+    "split_per_view": {"fit": 400, "dev": 56, "audit": 56},
+    "totals": {"selected": 6144, "fit": 4800, "dev": 672, "audit": 672},
+    "raw_external_images_readable_only_by_split_broker": true,
+    "trainer_receives_only_sealed_fit_dev_shards": true,
+    "audit_shard_unmounted_until_all_nine_checkpoints_and_manifests_are_sealed": true,
+    "shared_split_across_all_arms_and_seeds": true,
+    "fit_batch": {"views": 12, "rays_per_view": 40, "total_rays": 480},
+    "fixed_batches_per_cycle": 10,
+    "training_cycles": 11,
+    "training_updates": 110,
+    "shuffle": false,
+    "replacement": false
+  },
+  "physics": {
+    "field_shape_xyz": [27, 53, 27],
+    "roi_half_size_xyz": [0.9524, 2.0, 0.95274],
+    "coordinate_and_component_order": "XYZ",
+    "camera_pose_translation_scale": 0.00054421,
+    "geometry": "fixed straight rays",
+    "outside_aabb_policy": "exact zero output and exact zero field gradient",
+    "field_gradient": "D0.5 second-order boundary and centered interior finite differences",
+    "sampling": "trilinear at midpoint quadrature locations",
+    "primary_quadrature_steps": 128,
+    "postseal_quadrature_diagnostic_steps": 256,
+    "loss": "mean squared error over all XYZ components of AABB-valid rays only",
+    "global_scale_fit": false,
+    "bias_fit": false,
+    "sign_fit": false,
+    "axis_permutation_fit": false,
+    "regularization": "none"
+  },
+  "common_boundary_envelope": {
+    "normalized_cell_center_coordinate": "xi_i = x_i / (h_i * (1 - 1/N_i))",
+    "formula": "product_i cos(pi * xi_i / 2)^2",
+    "outer_six_cell_center_planes_exact_zero": true,
+    "all_arms_return_same_27x53x27_grid_before_forward": true
+  },
+  "arms": {
+    "S0_VOXEL": {
+      "free_shape_xyz": [25, 51, 25],
+      "trainable_parameters": 31875,
+      "initial_field": "exact zero",
+      "outer_planes": "fixed zero",
+      "field_formula": "common envelope * raw zero-bordered voxel grid",
+      "uses_common_boundary_envelope": true
+    },
+    "S1_FOURIER": {
+      "encoding_dimension": 39,
+      "encoding": "xyz plus sin/cos(2^k*pi*xi_axis) for k=0..5 and three axes",
+      "network_widths": [39, 96, 96, 96, 96, 1],
+      "hidden_activation": "SiLU",
+      "trainable_parameters": 31873,
+      "hidden_weight_initialization": "Xavier uniform gain 1.0",
+      "hidden_bias_initialization": "zero",
+      "output_head_initialization": "all 97 parameters zero",
+      "initial_field": "exact zero"
+    },
+    "S2_BOUNDED_RESIDUAL": {
+      "shared_trunk_and_base_with_S1": true,
+      "residual_head_parameters": 97,
+      "trainable_parameters": 31970,
+      "steps_1_to_80": "residual forced off; train trunk and base only",
+      "residual_head_steps_1_to_80": "requires_grad false and excluded from optimizer",
+      "step_80_seal": "hash trunk and base; compute q=P95(abs(envelope*base)) on full common grid",
+      "rho_formula": "0.25 * max(q, 0.001)",
+      "steps_81_to_110": "discard base optimizer; create step-zero residual-only Adam; freeze trunk and base; train residual head only",
+      "field_formula": "envelope * (base + rho * tanh(residual))",
+      "residual_head_initialization": "all 97 parameters zero",
+      "residual_disabled_exact_fallback_to_base": true,
+      "S1_S2_step_0_and_step_80_prefix_hash_identity_required": true,
+      "S1_S2_each_LR_trial_identity_required": true,
+      "S1_S2_each_of_first_80_steps_identity_fields": [
+        "selected LR",
+        "batch SHA",
+        "loss float64 hex",
+        "trunk/base gradient L2",
+        "trunk/base gradient max",
+        "updated trunk/base parameter SHA256",
+        "Adam optimizer-state SHA256"
+      ]
+    }
+  },
+  "parameter_matching": {
+    "minimum": 31873,
+    "maximum": 31970,
+    "maximum_pairwise_difference": 97,
+    "maximum_pairwise_relative_difference_using_minimum_denominator": 0.0030433282088287894
+  },
+  "optimizer": {
+    "name": "Adam",
+    "betas": [0.9, 0.99],
+    "eps": 1e-12,
+    "weight_decay": 0.0,
+    "gradient_clipping": false,
+    "early_stopping": false,
+    "best_dev_checkpoint_selection": false,
+    "restart_after_nonfinite_or_failure": false
+  },
+  "learning_rate_screen": {
+    "candidates_in_test_order": [0.01, 0.003, 0.001, 0.0003],
+    "updates_per_candidate": 4,
+    "fit_batches": [0, 1, 2, 3],
+    "step4_fit_union_forward_rays_per_candidate": 1920,
+    "dev_forward_rays_per_candidate": 672,
+    "eligible_if": "all finite AND the step-4 checkpoint MSE on the 1920-ray union of fit batches 0..3 is below the zero-field MSE on those same rays AND full dev MSE does not exceed zero-field dev MSE",
+    "four_training_losses_from_different_checkpoints_must_not_replace_step4_fit_union_forward": true,
+    "selection": "minimum eligible dev MSE; candidates within 1.005 times the minimum are tied and the smaller numeric LR wins",
+    "no_eligible_status": "D0_6_NO_ELIGIBLE_LR",
+    "reset_model_and_optimizer_before_every_candidate_and_formal_run": true,
+    "S1_S2_same_seed_lr_must_match": true
+  },
+  "primary_budget": {
+    "unit": "RQWU_matched_projection_work",
+    "definition": "quadrature_steps * (forward_ray_count + vjp_ray_count)",
+    "lr_screen": {
+      "forward_calls": 24,
+      "vjp_calls": 16,
+      "forward_rays": 18048,
+      "vjp_rays": 7680
+    },
+    "formal_training": {
+      "forward_calls": 110,
+      "vjp_calls": 110,
+      "forward_rays": 52800,
+      "vjp_rays": 52800
+    },
+    "total_per_arm_seed": {
+      "forward_calls": 134,
+      "vjp_calls": 126,
+      "forward_rays": 70848,
+      "vjp_rays": 60480,
+      "ray_evaluations": 131328,
+      "primary_rqwu": 16809984
+    },
+    "final_scoring_outside_primary_budget_but_separately_accounted": true,
+    "also_report": [
+      "total and phase-trainable parameters",
+      "forward and VJP calls",
+      "wall clock",
+      "peak process RSS",
+      "clipping count",
+      "nonfinite count",
+      "rerun count",
+      "all postseal scoring RQWU"
+    ]
+  },
+  "roles": {
+    "SPLIT_BROKER": "the only preseal process allowed to read the 14 allowlisted manifest/mask2D/observation files; its mount excludes GT/CGLS/3D support; writes disjoint sealed fit, dev, and audit shards plus hashes; exits before TRAINER starts",
+    "TRAINER": "may mount only sealed fit and dev shards plus split manifest; may not mount raw external images, audit shard, ground truth, CGLS-TV, 3D support, or derivatives",
+    "AUDITOR": "starts only after all nine checkpoints, LRs, structures, source hashes, and manifests are sealed; may read audit observations; may not change checkpoints",
+    "GT_SCORER": "starts only after AUDITOR output is sealed; may read ground truth, CGLS-TV, and 3D support; may not feed any result back into training",
+    "firewall_breach_status": "D0_6_GT_FIREWALL_BREACH_INVALID_RUN"
+  },
+  "postseal_metrics": {
+    "primary": "field relative-L2 with no scale, bias, sign, alignment, or axis fit",
+    "secondary": [
+      "physical-gradient relative-L2",
+      "top-10-percent gradient-front symmetric Chamfer",
+      "top-10-percent gradient-front symmetric Hausdorff95",
+      "fit dev audit reprojection relative-L2",
+      "12-view audit errors with median linear-p90 worst value and worst view id",
+      "S2 bounded-correction p90 max and p90 ratio to base",
+      "128-to-256 audit prediction relative drift",
+      "parameters calls RQWU wall time memory clipping nonfinite failures"
+    ],
+    "front_voxel_count": 3864,
+    "front_tie_order": "(-gradient_magnitude, x_index, y_index, z_index)",
+    "view_p90": "numpy quantile 0.9 method linear",
+    "CGLS_TV": "postseal external anchor only; excluded from S0/S1/S2 decision"
+  },
+  "decision_gates": {
+    "G0_VALIDITY": {
+      "arm_valid_computed_independently_for": ["S0_VOXEL", "S1_FOURIER", "S2_BOUNDED_RESIDUAL"],
+      "three_seeds_required_for_any_arm_used_in_a_comparison": true,
+      "S0_invalid_stops_all_later_gates": true,
+      "S2_invalid_routes_to_G3": true,
+      "S1_invalid_routes_G3_to_S0": true,
+      "invalid_on": [
+        "input or source identity mismatch",
+        "no eligible LR",
+        "budget overrun",
+        "nonfinite value",
+        "role access violation",
+        "split broker shard or mount-isolation failure",
+        "missing checkpoint",
+        "rerun overwrite",
+        "outside-AABB zero failure",
+        "S1/S2 prefix identity failure"
+      ]
+    },
+    "G1_S0_SOLVABILITY": {
+      "metric": "median over seeds of 1 - fit_MSE_step110 / fit_MSE_zero",
+      "minimum": 0.20,
+      "failure_status": "D0_6_FORWARD_SCALE_OR_GRADIENT_DIAGNOSIS_REQUIRED"
+    },
+    "G2_S2_VS_S1": {
+      "all_conditions_required": true,
+      "median_paired_field_ratio_maximum": 0.95,
+      "at_least_one_of_gradient_chamfer_hausdorff95_median_ratio_maximum": 0.98,
+      "remaining_secondary_median_ratio_maximum": 1.0,
+      "audit_median_median_paired_ratio_maximum": 1.02,
+      "audit_p90_median_paired_ratio_maximum": 1.02,
+      "audit_worst_median_paired_ratio_maximum": 1.05,
+      "minimum_strictly_improving_field_seeds": 2,
+      "maximum_each_seed_field_ratio": 1.05,
+      "pass_status": "D0_6_S2_SCREEN_GO_SINGLE_OPENED_FIELD",
+      "fail_status": "D0_6_S2_NO_GO_SINGLE_OPENED_FIELD"
+    },
+    "G3_S1_OR_S0_FALLBACK_AFTER_S2_NO_GO": {
+      "S1_must_be_valid": true,
+      "median_paired_field_ratio_vs_S0_maximum": 1.0,
+      "maximum_each_seed_field_ratio_vs_S0": 1.05,
+      "gradient_chamfer_hausdorff95_each_median_ratio_vs_S0_maximum": 1.02,
+      "audit_median_median_paired_ratio_vs_S0_maximum": 1.02,
+      "audit_p90_median_paired_ratio_vs_S0_maximum": 1.02,
+      "audit_worst_median_paired_ratio_vs_S0_maximum": 1.05,
+      "all_non_harm_conditions_required_to_select_S1": true,
+      "select_S1_status": "D0_6_SELECT_S1_AFTER_S2_NO_GO",
+      "otherwise_select_S0_status": "D0_6_SELECT_S0_B1_HARM_OR_INVALID"
+    }
+  },
+  "failure_states": [
+    "D0_6_INPUT_IDENTITY_MISMATCH_NO_RUN",
+    "D0_6_SPLIT_BROKER_ISOLATION_FAILURE",
+    "D0_6_NO_ELIGIBLE_LR",
+    "D0_6_B1_B2_PREFIX_IDENTITY_FAILURE",
+    "D0_6_GT_FIREWALL_BREACH_INVALID_RUN",
+    "D0_6_FORWARD_SCALE_OR_GRADIENT_DIAGNOSIS_REQUIRED",
+    "D0_6_S2_NO_GO_SINGLE_OPENED_FIELD",
+    "D0_6_RUNTIME_OR_BUDGET_INVALID"
+  ],
+  "required_output_files": [
+    "protocol.json",
+    "input_manifest.json",
+    "split_manifest.json",
+    "broker_manifest.json",
+    "private_shard_manifest.json",
+    "environment.json",
+    "budget_ledger.csv",
+    "lr_trials.csv",
+    "training_trace.csv",
+    "checkpoint_manifest.json",
+    "reprojection_metrics.csv",
+    "field_metrics_postopen.csv",
+    "front_metrics_postopen.csv",
+    "per_view_audit.csv",
+    "decision.json",
+    "summary.json",
+    "checksums.sha256",
+    "README.md"
+  ],
+  "claim_authorization": {
+    "single_opened_field_parameterization_screen": false,
+    "operator_learning": false,
+    "new_algorithm": false,
+    "reconstruction_success": false,
+    "real_bost": false,
+    "oerf_data": false,
+    "cross_field_generalization": false,
+    "cross_geometry_generalization": false,
+    "robustness_to_noise_or_calibration_shift": false,
+    "better_than_deeponet_fno_nerif_or_nirp": false,
+    "production_readiness": false,
+    "paper_success": false,
+    "breakthrough": false
+  },
+  "next_authorized_action": "Implement and commit a fail-closed split broker, unmounted audit/GT role guards, runner, arithmetic tests, parameter-gradient tests, and a no-result mechanical dry-run. Formal D0.6 execution remains closed."
+}

@@ -4929,3 +4929,279 @@ MGRS Stage A 失败后，这一轮没有继续堆 renderer，而是先把经典�
 完整数字、混淆矩阵、新候选输入和师兄五问见 [总场正则 NO-GO 与能量门线索](gcs_total_field_regularization_result_2026-07-22.md)。
 
 **突破监测：没有突破。新增的是 54 次总场经典对照 NO-GO、对“平滑不等于真实”的直接反例，以及一个只能进入扩样验证的事后能量门假设。可部署 gate、新算法、真实 BOST、算子学习优越、跨 rig 泛化、论文成功和突破仍为 0。**
+
+## 180. 零误放为什么还是失败：它只敢接一道题
+
+上一节的能量门只在 3 个物理单元上看过，所以这次真正扩到了 12 个新 phantom。每个 phantom 都经历两档噪声和三种相机/ray 压力，共 72 个条件单元；每个单元又跑两个网络重复，共 144 条路径。两个网络 seed 只是重复测量，不能装成两个新火焰。
+
+还有一个很重要的分母问题。144 条路径里只有 74 条被原修正器准入，70 条回退。我们没有把回退路径从统计中删掉。如果只看“算法愿意出手”的时候，一个非常保守的算法很容易看起来漂亮；真实系统却必须为所有帧负责。
+
+真值评分后，72 个单元只有 7 个是 field 和 H1 都足够变好，40 个在灰区，25 个明显有害。简单 L2 非增门确实留住了 7/7 个好修正，但也放进了 14 个不好修正。H1/Huber 更严，只留住 1/7，还是放错 1 个。所以“能量降了”仍然不是“离真值近了”。
+
+低容量 ridge gate 的数字最容易骗人：`1 TP / 0 FP / 6 FN`，precision 是 100%。但它在 72 道题里只敢答 1 道，其余全部交白卷。我们只观察了 1 个被接受的 phantom group，就算它没出错，零事件的单侧 95% 风险上界仍是 0.95。讲人话：下一次出错的真实概率仍可能很高，我们只是样本太少。
+
+我本来还希望一个完全分开的 holdout camera 能当审判。结果也不行：有些三维场真的变好时，这个 holdout 投影反而变差；有些投影变好，三维场却进了近零空间。一张新 X 光片不能唯一确定一个三维人体，同样，一个新 BOST 投影也不是三维场真值。
+
+两次完整 MPS 运行比较了 40,937 个数，最大差是 0。这个结果很有价值：它说明我们不是因为偶然 seed 才得到 NO-GO。但它只是“失败可重放”，不是“算法成功”。
+
+下一步不再扫能量阈值。我们要问每个相机分别在说什么：拿掉某一个相机后，重建修正方向会不会突然翻转？是六个视角一起支持它，还是一个坏 camera 拉着所有人跑？这就是下一个 working hypothesis：View-Influence Selective Residual Operator。先用不训练的 exact leave-one-view 基线看信息是否存在，没信号就停；有信号才进 JVP/VJP 近似、ridge 和小 set encoder。
+
+完整表格、重放散列和师兄六问见 [同 family 能量对齐 NO-GO](gcs_energy_alignment_same_family_result_2026-07-23.md)，文献边界见 [Observable gate 一级来源](observable_gate_primary_sources_2026-07-23.md)。
+
+**突破监测：没有突破。新增的是 12 个独立 phantom、72 个条件单元、144 条完整路径和两次数值一致重放支持的 energy-gate NO-GO，以及一个需要先做信息上界的逐视角影响候选。新算法、真实 BOST/PIV-BOST、算子学习优越、跨形态/跨 rig 泛化、论文成功和突破仍为 0。**
+
+## 181. 为什么先花 28 道题检查尺子，而不是直接跑 912 道题
+
+逐视角影响的直觉很简单：六台相机一起训练出一个修正，把其中一台拿走重新训练，如果三维修正突然反向，那一台相机可能在独自拉动近零空间。可真正做起来不能只把一列 residual 临时遮住，因为训练最优点也会跟着变。exact leave-one-view 要把 base 和 residual 都用相同 seed 从头重训。
+
+完整账单是 144 条全视角重放，再加 768 条去单相机重训，共 912 条 base+residual 拟合。直接跑有两个风险：相机 ray block 切错，或者所谓 full replay 已经和上一轮不一致。那样两小时计算只是在很认真地测一把弯尺子。
+
+所以先做 28 路径 pilot：两个已经打开的 phantom、两档噪声、nominal six-view、一个网络重复。4 条 full 用来对冻结结果，24 条 LOO 用来检查切视角和 feature。pilot 不接真值标签，不算 AUC，不挑算法。它只回答代码能不能稳定执行。
+
+逐视角 feature 也只看网络自己：修正变化多大、方向余弦、沿原方向投影、norm ratio。full correction 是零就直接拒答。真值必须等 observable CSV 落盘后才能连接，避免算法一边做 feature 一边偷看答案。
+
+如果 pilot 过关，才允许运行 912 路径的已开数据机制面板。完整面板仍不是论文结果；它只决定要不要申请一批新 calibration phantom。若 grouped AUC 没过预写门，exact LOO 支线关闭，不训练 set encoder。
+
+完整公式、成本和 V0--V5 顺序见 [逐视角影响可执行协议](gcs_view_influence_mechanism_protocol_2026-07-23.md)。
+
+**突破监测：没有突破。新增的是逐视角切片/特征代码、协议验证器和 28 路径 pilot runner；它们尚未运行，逐视角信息是否存在仍未知。**
+
+## 182. 第一次 pilot 真的拦住了错误，第二次才开始算
+
+第一次启动在训练前就停了：我把 correction 评估网格写到 `half_width=1.0`，现有边界窗函数要求严格小于 1。没有放宽旧函数，而是把协议改到 0.95，并把“网格必须严格在边界内”加入 validator。这个失败说明 28 路径检查不是装饰。
+
+修复并重新提交后，pilot 跑了 240.77 秒。4 条 full replay 和冻结源的最大 observable difference 是 0，24 条 exact LOO 全完成，四组 influence feature 全部有限，状态是 `VIEW_INFLUENCE_PILOT_INVARIANTS_PASS_NOT_A_MECHANISM_RESULT`。
+
+还有一个不需要真值就能看到的结构：24 次去视角重训里 18 次 residual admitted，6 次回退；删 90°/120° 时各只有 2/4 次 admitted。这个现象不能写成物理发现，但 full panel 应显式记录 LOO admission fraction，不能让零 correction 悄悄混在 cosine 里。
+
+完整面板也必须回答“逐视角特征比旧能量特征多了什么”。所以在任何真值 join 前，协议新增固定三路对照：source observable、view influence only、source + view influence；组合 grouped AUC 必须至少比 source control 高 0.05。否则即使组合 AUC 好看，也可能只是重复上一轮的旧信号。
+
+**突破监测：没有突破。pilot 只授权实现和运行完整 post-open 信息面板；mechanism signal、新 calibration、fresh audit、Stage B、新算法与论文结论仍未授权。**
+
+## 183. AUC 都有 0.91 了，为什么还是失败
+
+912 次拟合已经全部完成：144 条全视角重放，768 条去单视角重训。144 条 full replay 与上一轮冻结观测的最大差是 0，所以这次没有拿一个已经漂移的模型当尺子。
+
+结果第一眼很容易被误读。source 能量/投影特征的 AUC 是 0.9626，逐视角特征自己是 0.7297，两者合起来仍有 0.9099。如果只问“0.91 高不高”，似乎已经可以写一个网络。但我们在看结果前问的问题是：“新特征有没有比旧特征多带来至少 0.05 AUC？”真实答案是 `-0.05275`，不仅没增加，反而降低了。
+
+讲人话：旧学生单独做 455 道正负排序题，做对了 438 道；加上新同学的意见后，只做对 414 道。新同学不是完全不会，但他提供的信息和旧答案重复、不稳定，或在小样本下互相干扰。我们不能在看完答案后才选几句有用的话重新考试，因为协议已经写明不允许事后特征选择和 threshold tuning。
+
+另一个问题是 coverage。144 条网络路径里只有 74 条能得到完整特征；合并两个网络重复后，72 个条件只有 27 个完全可观测。combined 在 `p>=0.8` 时确实是 1 TP / 0 FP，但它只敢接受 72 道题中的 1 道，漏掉 6/7 个好修正。这不是广泛安全，而是近乎全拒绝。
+
+运行末尾还出了一个工程事故。fail-closed 行没有 LOO feature 列，可观测行有；旧 CSV writer 用第一行字段当全部表头，遇到后面的新列就报错。好消息是 144 条 JSONL 已经全部落盘。恢复器把拟合函数替换成“一调就报错”，只做汇总；恢复前后记录 SHA-256 完全相同，新拟合数是 0。独立 validator 又用显式正负样本对重算 AUC，16 项检查全部通过。
+
+所以这条支线在 V1 停下。不做 JVP/VJP 近似，不训练 set encoder，不为了赚回已花的两小时而继续调参。下一步应当把师兄的真实 callable、geometry、curved/straight residual 层级和真实物理 endpoint 拿到手，再决定算子是学 warm start、preconditioner、bounded correction 还是 uncertainty。
+
+完整数字、恢复证据、风险表和下一步三件事见 [逐视角影响 912-path 正式判决](gcs_view_influence_panel_result_2026-07-23.md)。
+
+**突破监测：没有突破。新增的是一个 912-fit、独立 pairwise 复算支持的严格 NO-GO：逐视角影响对已开 synthetic 有部分信息，但无增量价值，支线关闭。新算法、真实 BOST/PIV-BOST、算子学习优越、跨 rig 泛化、论文成功和突破仍为 0。**
+
+## 184. 先把一条光线接对，才有资格训练网络
+
+这一轮没有先写 Fourier MLP，也没有先拿 FNO 跑排行榜。我们先问一个更朴素的问题：如果把作者公开 Phantom 1 的真实三维折射率场放进我们自己写的直线光线积分器，能不能重放由 detector `u/v` 经 `uvtoeps` 转换后的三分量 XYZ projection？
+
+第一版 v0 诚实失败了。6,144 条 ray 中只有 6,021 条穿过声明的 ROI，相交率 97.998%，没有过原先 99% 的门；发布 CGLS-TV 场从 64 个积分点加到 128 个积分点时，输出还变化 5.260%，也没有过 2% 的数值收敛门。单元测试还抓到平行 ray 碰 AABB 时的判断错误。于是 v0 状态固定为 `D0_FORWARD_IDENTITY_NO_GO_FIX_GEOMETRY_OR_UNITS`，不能因为后来修好了就删除。
+
+看过 v0 后，我们只做定位。未穿过 ROI 的 123 条 ray 仍有观测，但 RMS 只有穿过 ray 的 `0.003834`；它们更像“经过零场区域的合法 ray”，不该从总分母删除。另一方面，128 到 256 积分点的变化已经降到 `0.009622`。所以 v1 在运行前写死两条修复：ROI 外预测为零但保留在 6,144 条分母中；主积分改成 256 点，128 点只作收敛检查。这叫 post-open repair，不叫 fresh test。
+
+v1 的 7 个机器门全部为真，验证器完成了 281 项检查。它从充分统计量独立重算全局指标并核对哈希；相机对齐、ROI 外 RMS 和 quadrature 原始量来自运行摘要，验证器只重算是否过阈值，没有重新读取外部体数据追光。ground truth 重放的三分量平均 Pearson 是 `0.988137`，一个全局尺度后的 relative-L2 是 `0.146214`；发布 CGLS-TV 分别是 `0.980959` 和 `0.203872`。
+
+这里最容易误读的是“PASS”。独立审计指出，冻结协议没有给 ground-truth Pearson/L2 设置门，所以 0.988/0.146 是 post-open 描述，不是触发 PASS 的条件；v0 也只有初始开发合同，不能叫预注册。机器状态保留，但人工结论必须更窄。
+
+审计还指出更实际的问题：当前 forward 是 NumPy `gradient` + SciPy `map_coordinates`，没有 autograd、伴随、JVP/VJP 或梯度一致性测试。也就是说，它能做值重放，不能直接接网络训练。下一步先做 D0.5：Torch/JAX 值一致性、有限差分方向导数、伴随或 JVP/VJP 点积测试。新 GT 门只能在独立 phantom 上冻结，不能看完这一个 phantom 再补线。
+
+这里还有一个机器可读的坑：旧 summary 已经落盘，里面仍写“下一步做 overfit smoke”。我们没有改历史 JSON，而是新增审计覆盖层，把当前有效决定写成 `training_authorized=false` 和 `d0_5_required=true`。以后脚本或人读取这轮结果，必须先看覆盖层，不能只摘旧 summary 的一句话。
+
+还有一个负结果值得保留。ground truth 的重放误差比发布 CGLS-TV 低 `0.057658`，所以“CGLS-TV 通过反演吸收了有限孔径/光流失配，反而更贴观测”这个想法没有得到支持。14.6% 的余差可能来自有限孔径、图像扭曲与光流、离散化、单 ray 近似或 resize 差异，但本轮没有能力判定是哪一个。
+
+D0.5 通过后才允许优化烟测：发布 CGLS-TV 只作固定锚点；低分辨率 voxel、Fourier MLP 和 B2 base + 有界 residual 使用同一值语义。正式排序只能预先选择一个 primary resource budget，并完整报告 steps、ray calls、wall、参数和内存；不能假装这些预算可以同时严格匹配。它仍只用于发现优化和失败模式，只有一个 phantom，不能写优越或泛化。
+
+完整表格、六个师兄接口问题和复现入口见 [公开 Phantom 1 值重放诊断报告](open_nir_bos_d0_forward_identity_result_2026-07-23.md)。
+
+**突破监测：没有突破。新增的是一个先失败、再按冻结语义修复的 D0 值重放诊断，以及独立审计发现的 GT 冻结门和可微实现缺口；新算法、训练、真实重建、优越性、泛化与论文成功仍为 0。**
+
+## 185. 尺子终于可以反向传播，但还没有开始解题
+
+上一轮 D0 的 NumPy/SciPy forward 能重放值，却不能把梯度传给网络。这一轮先把 D0.5 的 CPU64、MPS32、有限差分、JVP/VJP 和 ROI 外零梯度阈值写进 JSON，协议 SHA-256 固定为 `80df1e59...d71b3`，然后才第一次运行。
+
+核心实现没有搬作者 CUDA 代码。它显式写了 `2h/N` 的 cell-centred 网格、`np.gradient(edge_order=2)` 的边界公式、三线性 border 插值、ray--AABB 和 midpoint quadrature。这样做比调用一个黑盒 `grid_sample` 麻烦，但 XYZ 轴序、边界和无效 ray 的每一步都能和 SciPy 对照。
+
+CPU64 的合成场值误差是 `4.58e-16`，有限差分/JVP 是 `2.45e-10`，JVP/VJP 对偶缺陷是 `1.97e-15`。公开 Phantom 用 12 个视角、768 条固定 ray、128 个积分点复跑发布 CGLS-TV 场，Torch/SciPy relative-L2 是 `3.06e-16`。这些数字的含义是“两把数值尺子一致”，不是“重建误差只有 1e-16”。
+
+第一次 MPS v0 没有假装成功。审计统计器在 Apple GPU 上直接请求 float64，后端报错；错误结果目录保留。修复为先搬到 CPU 再转 float64 后，v1 的 MPS 值误差 `9.16e-8`、有限差分/JVP `1.86e-4`、对偶缺陷 `4.98e-7`，都过了事前阈值。14 个本地测试通过，证据包复核器又重跑公开射线、不同形状随机场和 autograd gradcheck，88/88 通过。它直接导入被审 forward，所以这是包一致性与异构复跑，不是第二套独立实现。
+
+这张绿灯只授权一件很窄的事：先在 CPU64 上比较同一个公开 Phantom 的 low-resolution voxel、Fourier MLP 和 Fourier base + bounded residual matched-budget 优化烟测。MPS 当前只是小型合成兼容性 PASS；公开场 mini-batch 前向、反向、有限性和内存门没过以前，不授权 MPS Phantom 训练。它也不授权 FNO/DeepONet 排行榜，因为这里只有一个独立三维函数；不授权 geometry 或 curved-ray 梯度，因为当前导数只对固定 rays、改变 voxel field 成立。
+
+审计还留下三个要正面写出的口子：正式 benchmark 前应补完整 6,144 rays 与逐视角尾部；CPU32 需要单独选择有限差分步长，不能照搬 CPU64 的 `1e-6`；Fourier MLP 参数梯度还要在 B1 用多个方向复查。完整数字和下一组三臂设计见 [D0.5 可微前向门禁结果](open_nir_bos_d0_5_torch_forward_result_2026-07-23.md)。
+
+**突破监测：没有突破。新增的是一个 CPU 主门通过、MPS 合成兼容门通过的可微薄射线实现、保留的第一次 MPS 失败、公开值重放和 88 项包一致性/异构复跑。训练、三维重建、算子泛化、真实 OERF、算法优越和论文成功仍为 0。**
+
+## 186. 小尺子换成了公开大体场，但仍只准做一次短烟测
+
+D0.5 在很小的合成场上证明 Apple MPS 能反向传播，却没有回答 `140 x 294 x 140` 的公开体场会不会爆内存、三线性 gather 的反向累加会不会漂、以及公开观测形成的 loss 能不能给出与 CPU 一致的三维场梯度。M0 就只补这道设备桥，不训练网络，也不调学习率。
+
+正式运行前先冻结 12 个视角、每视角 8 条射线、128 点 midpoint quadrature、chunk 24、三条无效射线、三次完整 MPS 重复和 25 个数值门。协议 SHA-256 是 `43fef428...55ea8`，事前 commit 是 `6ea5ba7`。第一次 v0 在方向导数的审计标量转换处报错；修一次后，v1 又在主 loss 的同类转换处报错。两个失败包都保留，并且都没有打开任何训练授权。第二次修复只是把审计转换统一成“先搬到 CPU，再升到 float64”，没有改协议、射线、阈值或物理 forward。
+
+v2 才完成正式判决，25/25 通过。CPU32 与 MPS32 的 prediction relative-L2 是 `9.60e-8`，MPS32 与 CPU64 的 field-gradient relative-L2 是 `1.08e-4`，MPS 方向导数误差是 `2.76e-5`。三次完整重复的 prediction 最大漂移为 `0`，gradient 最大漂移为 `9.92e-10`；三条无效射线的输出和场梯度都严格为零。四个同步采样点看到的最大 driver allocation 增量约 `1.016 GiB`，占事前 2 GiB 门的 `50.8%`，清理后 current allocation 增量为零。这里的内存证据不是连续 profiler 峰值，不能扩写成“长训练内存稳定”。
+
+保存包又通过 152/152 项一致性检查：协议和源码绑定、v0/v1/v2 精确文件集、25 行阈值表、12 个射线选择哈希、17 个公开输入哈希和越权 claim 都被复核。验证器没有实现第二套物理 forward，也没有重跑 MPS；结果包没有保存 576 万体素的完整梯度，所以这仍是包一致性审计，不是独立物理复现。
+
+现在唯一新增的机器授权是 `mps_single_public_phantom_voxel_smoke=true`：只能对同一个 opened Phantom、同一组冻结 96 条射线、固定 straight rays、ROI、128 点积分和 chunk 24 做很短的 voxel-field optimizer/failure-mode smoke。任意 batch、Fourier MLP、bounded residual、10 步内存稳定、完整训练、三维重建、operator learning、跨 field/geometry 泛化、真实 OERF、优于 DeepONet/FNO/NeRIF/NIRP、论文成功和突破仍全部为 false。
+
+下一步分两条线：MPS M0.1 只做这 96 条射线上的短程 voxel 优化并用 CPU 复核 checkpoint；CPU D0.6 则事前冻结 `S0_VOXEL / S1_FOURIER / S2_BOUNDED_RESIDUAL` 的 matched-budget 筛选。B1/B2 要进入 MPS，必须另过神经参数多方向梯度和连续 optimizer-step 内存门。完整数字见 [M0 公开大体场 MPS 门报告](open_nir_bos_m0_public_mps_result_2026-07-23.md)。
+
+**突破监测：没有突破。新增的是公开大体场上 CPU64/CPU32/MPS32 的值与 voxel-field 梯度桥、两个保留的工程失败和 152 项保存包审计；优化收敛、重建、神经参数梯度、算子学习、泛化和论文成功仍为 0。**
+
+## 187. 三个模型还没开跑，先把它们关进同一间考场
+
+M0 过门后，最容易犯的错误是立刻训练 Fourier MLP，然后拿一个看起来更小的误差说“神经表示更好”。D0.6 先把三条 arm 的考场锁死：`S0_VOXEL` 有 31,875 个参数，`S1_FOURIER` 有 31,873 个，`S2_BOUNDED_RESIDUAL` 有 31,970 个，最大差只有 97，也就是 0.3043%。它们都必须先输出同一个 `27 x 53 x 27` 栅格，再走同一个 128 点直线 ray forward，不能给神经场额外连续采样优势。
+
+公开 Phantom 的 12 x 512 条射线继续复用，但每个视角用确定性 hash 分成 400 fit、56 dev 和 56 audit。这里发现并堵住了一个泄漏口：如果 TRAINER 能打开整张公开观测图，它理论上就能读到 audit 像素。因此现在由独立 `SPLIT_BROKER` 一次性读取 manifest、二维 mask 和 12 张图，写出互不重叠且带哈希的 fit/dev/audit 私有 shard 后退出；TRAINER 只能挂载 fit/dev，九个 checkpoint 封存后 AUDITOR 才能挂载 audit。`n_GroundTruth.mat`、`flowcglsTV.mat` 和 `3Dmask.mat` 仍只能由最后的 GT scorer 打开。14 个 broker 输入、3 个 postseal 体数据、12 组 selection/split hash 和 10 个固定 batch hash 已经单独冻结。
+
+公平账本不再只数“训练步数”。每个 arm/seed 都有 4 个学习率候选、4 步短筛选、4 次完整 dev forward 和 110 次正式更新，合计 130 次 forward、126 次 VJP、123,648 次 ray evaluation；乘 128 个积分点后，主预算严格为 `15,826,944 RQWU`。最终 fit/dev/audit、GT、CGLS-TV anchor 和 256 点积分诊断都另计成本，不能假装免费。
+
+`S2` 也不能暗中多学：前 80 步残差分支关闭，必须和同 seed 的 `S1` 共享逐字节相同的 trunk/base 初值与轨迹；第 80 步才冻结 base，用 `rho = 0.25 * max(P95(|e*base|), 1e-3)` 固定残差幅度，最后 30 步只训练 97 参数 residual head。prefix hash 不同就直接失败，不解释模型效果。
+
+机器协议 SHA-256 已冻结为 `1ef2aa6f...8b50d8`，输入身份 SHA-256 是 `495c8f5e...ffff8e`。预提交机械验证已经检查 132 项，其中 129 项通过；三个预期失败分别是协议、输入身份和验证器源码还没有进入当前 Git HEAD。这是预期的先锁设计状态；把三者和测试提交后，才允许重跑 preflight。runner、dry-run 和正式训练授权此刻仍全部为 false。
+
+完整门包括 S0 至少把零场 fit MSE 降低 20%；S2 相对 S1 的 field 中位配对改善至少 5%，gradient/front 至少一项改善 2% 且其余不退化，audit median/p90/worst 分别守 2%/2%/5%，至少两个 seed 同向且任何 seed 不得伤害超过 5%。任何一条没过都记录 NO-GO，再按事前规则回退 S1 或 S0。
+
+**突破监测：没有突破。新增的是一个真正可证伪、参数与 RQWU 都对齐、GT 与 audit 分角色隔离的单场筛选协议；模型尚未训练，三维重建、算子学习、跨场/跨几何泛化、真实 OERF、算法优越和论文成功仍为 0。**
+
+## 188. 审计真的抓到了漏账，所以先修考场，不急着开跑
+
+上一节记录的是第一版冻结状态，不是最终绿灯。独立审计发现，LR 规则明明要求在 step 4 checkpoint 上用四个 fit batch 的 1,920 条射线统一复评，旧预算却只算了四次训练 forward 和完整 dev forward。四个训练 loss 来自四个不同 checkpoint，不能拿平均值冒充 step-4 fit-union loss；如果直接训练，账面和真实工作量就不一致。第一版 commit `01ce64d` 继续保留，没有覆盖，也没有产生任何训练结果。
+
+v1.1 把每个 LR 候选额外的一次 1,920-ray forward 写进协议。每个 `arm x seed` 因此改为 134 次 forward、126 次 VJP、131,328 次 ray evaluation，128 点积分对应 `16,809,984 RQWU`。这个量准确叫 matched projection-work budget，不是端到端 FLOPs；未来仍要单列参数计算、wall time、RSS 和 postseal 评分成本。
+
+公平性也补了三道锁。第一，三条 arm 都乘同一个解析边界 envelope，不再让 S0 和 S1/S2 带不同边界先验。第二，S1/S2 不只比较 step 0/80 哈希，而是绑定每个 LR trial 和前 80 步的 batch、loss、梯度、参数与 Adam state；第 81 步给残差头新建 step-0 optimizer。第三，G0 逐 arm 判有效，G3 只有 field、gradient/front 和 audit median/p90/worst 全部不伤害时才回退选 S1。
+
+audit 泄漏也从一句话变成四角色合同：broker 才能看 14 个原始公开输入，trainer 只收 fit/dev shard，九个 checkpoint 封存后 auditor 才看 audit，最后 GT scorer 才看真值、CGLS-TV 和三维 support。不过这仍只是合同，真实进程挂载隔离和负向测试还没实现，所以不能开训练。
+
+修复版协议 SHA 是 `28025859...270dd`，输入身份 SHA 是 `df7806ab...57688`，提交为 `f721eca`。提交前预检 133/136，唯一三项失败恰好是协议、身份和验证器还没进入 HEAD；提交后同一验证器 136/136 通过，并绑定三者源码哈希与外部公开 release `a385cce...f5604`。七个定向测试和 mutation tests 也全部通过。
+
+这次最有价值的结果不是一个更低的 loss，而是避免用错误预算跑出一个看似公平的模型比较。下一步先实现 fail-closed split broker、runner、参数梯度和 budget tests，再做不产出科学结论的 dry-run。正式训练授权仍为 false。
+
+**突破监测：没有突破。新增的是训练前被抓住并修复的预算漏洞，以及 136/136 的设计/输入/语义预检；split broker、runner、训练、三维重建、算子学习、泛化、真实 OERF、算法优势和论文成功仍为 0。**
+
+## 189. 数字全绿也不能直接上线：隐私门又挡住了一次
+
+第一次 136/136 保存包在本地逻辑上是有效的，但 Pages 过滤构建拒绝发布。原因不是算法或协议，而是 `validator_uses_project_venv` 的 detail 直接保存了本机 `.venv` 的绝对路径，其中带有 `/Users/...` 用户目录。它没有密码，也不是外部数据，但仍属于不该出现在公开证据里的本机身份信息。
+
+这次没有放宽 Pages 规则，也没有手工删掉 validation 的一行后假装原包可发布。v1 整包移到私有隔离区保留；验证器改为只输出相对标识 `.venv`，如果环境不符则输出固定的 `OUTSIDE_REQUIRED_PROJECT_VENV`，不回显真实路径。这个修复提交为 `1f0136c`，没有改变协议 SHA `28025859...270dd`、输入 SHA `df7806ab...57688`、136 个检查、预算、拆分或任何判决门。
+
+重新生成的 publish-safe v2 仍是 136/136，validation SHA 为 `9693b18c...2450c`，三项 source-binding 与验证器 SHA 都指向 `1f0136c`。全文搜索确认不含 `/Users/`、用户名、VPN 账号、密码或本地绝对路径。接下来 Pages 构建必须从包含 v2 的干净 HEAD 重做，manifest commit 对不上就不得部署。
+
+**突破监测：没有突破。新增的是一次被保留的发布隐私失败和一个可公开的 136/136 v2；训练、重建、算子学习、泛化、真实 OERF、算法优势和论文成功仍为 0。**
+
+## 190. 门真的锁上了，但模型一行都还没训练
+
+上一轮只是把“TRAINER 不能看 audit 和真值”写进协议。这一轮第一次把这句话变成真实进程限制。split broker 分两个角色：stage 只能读取冻结的 transforms、mask 和 12 张观测图，共 14 个文件；seal 只能读 stage 生成的最小 capability tree，整个外部 release 对它都是禁止读取的。两个角色也都不能联网。
+
+第一次真实 stage 没有过。原因不是输入 hash，而是 Seatbelt 规则太严：连路径元数据也被禁止，worker 在做 canonical path 时就收到系统拒绝。这个失败发生在任何 shard 创建之前。我们没有关掉沙箱，而是把权限改细：目录和文件元数据可以读，文件内容仍默认拒绝，只为 14 个精确路径开放。随后又加了真实网络负向探针，只有文件和网络两种阻断都成立，worker 才能启动。
+
+成功的 v2 从同一个公开 Phantom 生成 4,800 条 fit、672 条 dev 和 672 条 audit。每个条目带 view id、flat pixel id、三分量 observation、ray origin/direction 和相机中心对齐量。三组身份没有交集，并集严格等于冻结的 6,144 条 rays。audit NPZ 与 fit/dev 物理分开，三个文件都只在本机 `private_library`，网页只公开 count 和 hash。
+
+为了检查“同样的数据是不是每次真的写成同样的字节”，seal 又独立跑了一次。fit、dev、audit 三个 SHA-256 分别稳定为 `bced0252...4c895`、`e8ecfd3a...3520d` 和 `506583d6...524b`，全部 byte-identical。文件先 fsync，目录再 fsync，最后一次原子 rename；目标目录存在就失败，不能覆盖第一次不利结果。
+
+公开验证器把源码 commit、协议、输入身份、私有 manifests、两次 shard hash、Seatbelt 负测、断网和 claim closure 重新串起来，43/43 通过。这里的 PASS 只属于 broker：optimizer steps 是 0，checkpoint 是 0，field/reprojection metric 都没有计算。
+
+**突破监测：没有突破。新增的是一个真实、可重复、会在越权时停止的数据隔离层；模型、runner、三维重建、算子学习、泛化、算法优势和论文成功仍为 0。**
+
+## 191. 审计又拦住了“马上训练”：两个词没定义清楚
+
+broker 通过以后，最诱人的动作是直接开三条 arm。但独立审计在 runner 开写前又找到两个会改变判决的歧义。
+
+第一个是 quantile。旧协议明确 view p90 用 NumPy `linear`，却没有说 `q=P95(|e*base|)`、S2 correction p90 和 front Hausdorff95 用哪种插值。样本数量有限时，`linear`、`nearest` 或 Torch 默认实现会给出不同的 rho 和门槛值。现在统一冻结为 `numpy.quantile(..., method="linear")`，输入必须有限，结果用 float64 hex 保存。
+
+第二个是“九个 checkpoint”。旧文字要求九个 checkpoint 都封存后才开 audit，但 G0 又允许某个 arm 无效后 fallback。失败的 arm 可能没有 checkpoint，这两条规则同时满足不了。现在改成九个不可变 terminal receipts：每个 arm × seed 要么有 `SEALED_CHECKPOINT`，要么有 `SEALED_FAILURE_TOMBSTONE`。失败 tombstone 保存失败码、最后事件、下一个预期事件、账本前缀和源码/协议 hash；一旦封存，不能后来用重跑 checkpoint 替换。
+
+runner 还额外冻结了 CPU 单线程、ray chunk 64、Adam 的 `foreach/fused/amsgrad` 等实现 flags、S2 residual 使用 selected LR、第 81 步必须新建空 Adam，以及每个成功 arm/seed 恰好 260 个预算事件。S1/S2 必须是两个真实模型和两个真实 optimizer 锁步运行，不能只跑一次后复制一份漂亮 trace。
+
+17 项定向与 mutation 测试已经通过，但这只证明新 overlay 自洽。下一步才是实现三种参数化、AuditedD05Projector、expected-event ledger、step-81 receipt 和失败注入 dry-run。正式训练继续为 false。
+
+**突破监测：没有突破。新增的是在训练前消除 quantile 和失败开封矛盾，并把 runner 的可证伪规则锁死；算法效果仍完全未知。**
+
+## 192. 审计说门还有缝，所以重锁一次
+
+上一节说 broker 43/43，但独立审计没有被这个数字说服。它发现了两个真问题：隐藏 worker 可以不经过 Seatbelt launcher 直接调用，而且 `close_fds=True` 不会关闭 fd 0。如果有人先打开禁止文件，再把它当作 stdin 交给 worker，旧代码仍可读到内容。
+
+这不能反推上一次已经偷读了 GT，但它说明“只能读 14 个文件”的声明超过了当时的证据。我们没有把审计意见改成一句小字，而是暂停部署，保留旧 attestation，然后修底层机制。
+
+现在 worker 必须亲自试读一个获准文件和一个禁止 GT 文件，并亲自试网络。只有禁止读取和网络都返回系统权限拒绝时才能继续。launcher 把 stdin 固定为 `/dev/null`；worker 在读任何数据前盘点 fd 3 以上的描述符，发现一个就失败。把禁止文件当 stdin 的原始反例现在会在入口被拦住。
+
+审计还找到了三个工程缝隙。目录级 `os.replace` 会替换一个已有空目录，所以改成 macOS `renamex_np(RENAME_EXCL)`；private verifier 以前会忽略额外子目录，现在要求完整节点集精确相等；输入路径以前只拒绝最后一层 symlink，现在每个中间组件都要检查。
+
+修复提交是 `0705adbe`，13 个定向测试通过。然后没有复用旧目录，而是建立新 v3 stage，再独立 seal 两次。fit/dev/audit 仍是 4,800/672/672，三个 shard 的 hash 与两次间都逐字节相同。新证据记录 stdin 为 `/dev/null`、额外继承 FD 为 0，而 optimizer 步数仍为 0。
+
+这次最重要的进步不是“PASS 数从 43 变成 53”，而是允许独立审计推翻我们自己的过强结论，再用可复现反例修机制。这比多一个漂亮数字更接近可发表研究的做法。
+
+**突破监测：没有突破。新增的是一次被保留的证据失效、两个 blocker 和五个 major finding 的修复、以及新 v3 确定性 seal；runner、训练、三维重建、算子学习、泛化和论文结果仍为 0。**
+
+## 193. 开跑之前，先证明不会换模型、换光线或重复更新
+
+上一节 broker 已经把 fit/dev/audit 拆开，但还缺一条从模型到梯度再到 optimizer 的可追责链。如果只有一个可调用的 forward，运行时仍可能换了参数对象、改了学习率、把同一次梯度更新两次，或者保留相机/像素编号却替换真实射线坐标。
+
+现在三个参数化都必须通过同一个 `AuditedD05Projector`。VJP 完成时会绑定真正参与反传的参数名、对象和事件学习率；Adam 不能换一组同名对象，也不能临时改 LR。optimizer 已经改参数、但 `OPTIMIZER_COMMIT` 落盘失败时，该 run 会永久中毒；第二次调用不能再更新一次。
+
+射线也不再只锁 view/pixel ID。batch contract 现在同时锁 origins、directions、view IDs 和 flat pixel IDs 的数值内容哈希。回归测试专门伪造了“编号不变、光线起点改变”的 batch，注册表必须拒绝。但 broker 还没给正式 batch 签发这个 content hash，所以正式注册表当前会主动 fail closed，这是正确行为。
+
+定向测试是 `64 passed`。随后新建 v3：S0/S1/S2 各 3 个 seed，共 9 个独立子进程，每个只跑一对真实 D0.5 `FORWARD/VJP/Adam`，也就是 2/260 个事件。9/9 终止票据和 terminal package 复核通过，但终态故意是 `FAILED_SEALED`，audit unlock 仍为 false。独立证据验证器又复核 11 个源文件、9 个正式日程族、2 个复合批次和 v3 保存包，`failure_count=0`。
+
+这次 PASS 只说明一对机械链能干净地完成并干净地停止。正式 260-event trainer、4 个 LR 筛选、S1/S2 的 80 步 lockstep、S2 的 step-81 optimizer 重建、checkpoint 内容审计和科学评分都还没有。下一步不是把 2 事件粗暴扩成 260，而是先让何远哲师兄确认真实 callable、straight/curved residual 层级、JVP/VJP、坐标/单位、标定版本和认可的强基线。
+
+完整证据、五个入门概念和师兄问题见 [D0.6 runner v3 机械验证报告](open_nir_bos_d0_6_runner_v3_result_2026-07-23.md)。
+
+**突破监测：没有突破。新增的是参数、学习率、射线几何、VJP、optimizer 更新和失败票据的可证伪机械链；算法效果、重建、泛化和论文结果仍完全未知。**
+
+## 194. terminal 端点终于不再只看序号
+
+上一节的 v3 已经能证明“一对 forward/VJP/Adam 事件跑完并封存”，但第三轮独立审计问了一个很尖锐的问题：terminal 说自己停在第 5 个事件，系统到底只检查了数字 `5`，还是知道第 5 个事件应该是什么？
+
+旧 v7 的答案还不够好。它会检查 sequence 连续，却可能接受一个序号正确、内容荒唐的伪事件，例如把训练 step 写成 `999`。如果最后一页账本能这样伪造，那么“下一个事件是什么”也可能来自另一条学习率分支。另一个小问题是 batch identity 缺字段时会漏出原始 `KeyError`，而不是给出稳定、可审计的合同错误。
+
+v9 给 9 个 `arm x seed`、每个 4 条学习率分支、每分支 260 个事件建立了精确索引。索引不只保存序号，还保存事件类型、阶段、step、batch、学习率和事件哈希。terminal 的最后事件与下一事件必须逐字段命中同一条分支，不能把一个 LR 的末尾接到另一个 LR 的开头。坏 identity、越过 260 的序号、任意 checkpoint LR、缺失或被改写的 manifest 都会稳定失败。
+
+独立复查随后又找出三个实现缝隙：写状态前没有每次重读 manifest；checkpoint LR 只要求大于零，没有要求属于冻结四候选；超出 260 的 sequence 会泄漏 `IndexError`。三处都修完后重新复查，定向问题全部关闭。v8 其实已经补上核心端点绑定，但 manifest 被改时命令行仍打印 traceback，而不是规范的 `FAIL` JSON，所以 v8 保留为历史，重新生成 v9。
+
+当前机器证据是 `103 passed`、16 个合同字段、9/9 个合成 worker、每个 2/260 个事件，终态仍是 `FAILED_SEALED`。这句话容易被误读，所以拆开说：
+
+- `FAILED_SEALED` 不是模型效果失败，而是本轮故意不创建 checkpoint、不开放 audit，并把“尚未训练”封存成不可冒充成功的终态。
+- “端点属于冻结 schedule”不等于“前面 1 到 N 的全部日志都由 state 层独立重放”。当前 prefix hash 仍来自 worker receipt；完整 journal snapshot 与逐事件重放是下一道门。
+- Python 内的私有属性和 capability 是防误用的正确性保护，不是安全沙箱，也没有外部签名、跨进程锁或第三方透明日志。
+- 合成射线内容已经绑定；正式实验射线还缺 broker 签发的 geometry content hash，所以真实 batch 会主动拒绝 seal。
+
+现在最值钱的下一步不是盲目把 2 个事件扩成 260 个，而是拿到何远哲师兄的 tiny 真实 callable：确认 straight/curved forward 的层级、JVP/VJP、坐标单位、几何标定、当前强基线和最痛的物理失配。拿到这些后，先在真实 fixture 上重做一对事件，再补可重放 journal、四 LR reset、S1/S2 前 80 步 lockstep、S2 step-81 optimizer 重建和 checkpoint 内容审计。
+
+完整审计演化、证据上限和需要问师兄的问题见 [D0.6 runner v9 机械验证报告](open_nir_bos_d0_6_runner_v9_result_2026-07-23.md)。
+
+**突破监测：没有突破。新增的是 terminal 端点与冻结日程逐字段绑定，以及审计发现后修复的三处状态机缝隙；formal trainer、重建指标、算法优势、算子泛化、真实 OERF 和论文结果仍为 0。**
+
+## 195. 师兄终于替我们砍掉三条岔路：只做 C，但 C 还没有跑出结果
+
+前面做了很多反问题、导数和证据门，是为了防止把一个漂亮的网络输出误写成三维重建成功。但一直有个更大的问题没解决：本科毕设到底应该主攻有限视角、forward 失配、4D 时序，还是计算成本？这次何远哲师兄直接选择了 C：
+
+> 算子学习做 warm start，在最终精度相同的前提下降低 BOST 三维重建成本。
+
+这句话把项目变得具体了。网络不再负责“一步替代物理重建”，而是根据多视角 BOS 观测和几何给出一个更好的三维初值。后面仍接同一个 CGLS/PCGLS 或组内认可的物理迭代器。我们真正比较的是在终点误差等价时需要多少次 forward/adjoint、多少 wall time 和多少内存，而不是只比较网络单次输出的 relative-L2。
+
+师兄还纠正了一个会浪费几个月的误区：不用从头学习并运行完整三维 CFD。网格、燃烧模型、边界条件、收敛与算力可能让一个可信算例就耗掉数月。当前应使用现成公开 CFD 轨迹，例如 PoolFire，把其中的三维密度场当作数字真值；我们只补够用的数据常识，包括 `rho`、坐标轴、spacing、时间、单位、裁剪、插值和物理范围。
+
+独立审计随后补上了一个容易被忽略的物理坑：BOS 主要看折射率梯度，对整个场加一个常数往往不会改变偏折。以后不直接把绝对 `rho/n` 当重建目标，而是先用实验可得的环境、flow-off 或已知边界冻结 reference，重建 `Δrho/Δn`。若没有物理 reference，就让所有方法共享同一个零均值或边界 gauge，并报告梯度指标。绝不能只让网络从功率/工况标签猜背景均值，再用绝对场 L2 获得经典方法不可能得到的优势。
+
+师兄给的本地 BOS 模拟工具已经做了私有原件/工作副本备份，没有进入 Git。接口初审显示，它会从三维场和九视角相机生成参考光线、偏折量与曲线路径；它更像“从 CFD 场生成 BOS 偏折观测”，还不能自动等同于完整的点阵图渲染和可用于反演的 forward/adjoint。当前必须请师兄确认四件事：
+
+1. 折射率场函数应返回密度、折射率还是折射率增量；
+2. 空间步长和两个比例常数的物理意义与单位；
+3. 保存偏折量是像素、归一化坐标还是偏折角；
+4. 最终 BOS 渲染、forward、adjoint 和经典重建基线是否另有代码。
+
+公开 PoolFire 试验轨迹已经用可断点续传的后台任务下载，目标文件约 6.43 GB，完成后还要同时通过精确文件大小和 SHA-256，才允许进入读取与转换。低内存检查器已经能在不把 6 GB 数组全部装进内存的情况下读取 NPZ 元数据和数组头，并且默认只在报告中保存文件名，不回显本机绝对路径。REALM 原任务是“用当前 CFD 场预测未来 CFD 场”，我们的任务则是“用 CFD 密度场生成 BOS 观测，再从观测重建三维场”，两者不能混写。
+
+第一版算法也被刻意压小。C0 暂定为 Adjoint-Residual Warm Start：冻结直线/线性阶段只复用一次反投影 `A^T y`，把它连同坐标或几何输入小型 FNO/3D U-Net，输出三维初值，再接固定物理迭代器；若正式链路使用随场弯曲的非线性光线，则必须改用参考态 `J^T[y-F(x_ref)]`，并统计 forward/JVP/VJP。旧方案曾为每个样本额外消耗 13 次 forward 和 13 次 adjoint 来造特征，特征成本已经可能吃掉全部加速收益，所以不再沿用。
+
+强基线顺序冻结为 zero、`A^T y`、PCGLS/CGLS、简单阻尼或插值，以及容量匹配的 FNO/DeepONet 初值。评价必须拆成两张账：部署主表只能用 validation 冻结的迭代数、measurement discrepancy 或保留相机等可见量停止，再事后检查终点是否等价；PoolFire 有真值时可以另外画“第一次达到 field 阈值”的 oracle time-to-target，但它只估计 headroom，不能冒充在线停止。两张账都报告 median、p90、worst 与 harm rate。只有 C0 在未见 PoolFire 轨迹上既不损最终精度、又稳定降低部署主账总成本，才升级到 C1 的可观测 Krylov 子空间或 C2 的短程迭代轨迹损失。
+
+学习主页和三分钟汇报页也已经从“四选一”改成唯一 C 路线。桌面与 375 像素移动端都做了真实渲染检查，没有横向溢出或控制台错误；复制给师兄和蔡老师的两段文字也可直接使用。JMLR 的 fixed-point warm start、NOWS、super-fidelity 和逆声散射 warm start 被加入第 10 周核心阅读，用来提醒我们：**warm start 本身已经不是创新点，BOST 物理、几何条件化、可观测子空间、严格成本账本和独立迁移证据才可能形成贡献。**
+
+**突破监测：没有算法突破。真正新增的是师兄锁定 C、公开数据与私有模拟工具的数据链、可恢复下载、低内存检查器、唯一 C 学习路线和两周最小闭环。速度提升、优于 FNO/DeepONet、跨工况泛化、真实 OERF 与论文成功仍全部未证明。**

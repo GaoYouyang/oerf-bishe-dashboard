@@ -65,6 +65,7 @@
     .metric-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
     .real-metric-grid { grid-template-columns:repeat(4,minmax(0,1fr)); margin:14px 0; }
     .diagnostic-metric-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:14px 0; }
+    .diagnostic-metric-grid.four-up { grid-template-columns:repeat(4,minmax(0,1fr)); }
     .metric { min-height:112px; padding:14px; }
     .metric b { display:block; margin-bottom:4px; color:var(--teal); font-size:28px; }
     .metric span { color:var(--muted); font-size:12px; }
@@ -103,6 +104,7 @@
     .failed-state b { color:var(--coral); }
     .table-scroll-hint { display:none; margin:8px 2px -4px; color:var(--muted); font-size:12px; font-weight:760; }
     .pipeline { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; margin:14px 0; }
+    .pipeline.four-step { grid-template-columns:repeat(4,minmax(0,1fr)); }
     .pipeline div { position:relative; min-height:112px; padding:12px; border-top:4px solid var(--teal); background:rgba(255,255,255,.94); }
     .pipeline div:not(:last-child)::after { content:"→"; position:absolute; right:-10px; top:37px; z-index:2; color:var(--blue); font-size:20px; font-weight:900; }
     .pipeline b { display:block; margin-bottom:4px; font-size:12px; }
@@ -153,8 +155,12 @@
       .section-head > .actions { width:100%; max-width:none; justify-content:flex-start; }
       .candidate-grid,.source-grid,.data-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .diagnostic-metric-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .diagnostic-metric-grid.four-up { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .pipeline { grid-template-columns:repeat(3,minmax(0,1fr)); }
       .pipeline div:nth-child(3)::after { display:none; }
+      .pipeline.four-step { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .pipeline.four-step div:nth-child(2)::after { display:none; }
+      .pipeline.four-step div:nth-child(3)::after { display:block; }
       .week-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .real-metric-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
     }
@@ -165,8 +171,12 @@
       .nav a { flex:0 0 auto; }
       .metric-grid,.real-metric-grid,.evidence-grid,.candidate-grid,.source-grid,.data-grid,.week-grid,.library-strip { grid-template-columns:1fr; }
       .diagnostic-metric-grid { grid-template-columns:1fr; }
+      .diagnostic-metric-grid.four-up { grid-template-columns:1fr; }
       .pipeline { grid-template-columns:1fr; }
+      .pipeline.four-step { grid-template-columns:1fr; }
       .pipeline div::after { display:none; }
+      .pipeline.four-step div::after { display:none; }
+      .pipeline.four-step div:nth-child(3)::after { display:none; }
       .filter-field { min-width:100%; }
       .table-scroll-hint { display:block; }
       .result-table-wrap { box-shadow:inset -14px 0 16px -18px rgba(23,37,43,.75); }
@@ -178,6 +188,7 @@
   <header>
     <nav class="nav" aria-label="主导航">
       <a href="operator-learning/">学习主页</a>
+      <a href="advisor_progress_brief.html">C 路线汇报</a>
       <a href="#gcs-gradient-aliasing">梯度混叠与 MGRS</a>
       <a href="#resolution-transfer">最新真实 NO-GO</a>
       <a href="#n5-d5">N5-D5 接口桥</a>
@@ -209,6 +220,8 @@
       <a href="#temporal-qcal-profile-inference"><code>q_cal</code> 联合推断路线</a>
       <a href="#rig-session-calibration">rig/session 校准与漂移门</a>
       <a href="#open-nir-bos-readiness">公开 NIR-BOS 复现门</a>
+      <a href="#open-nir-bos-forward-identity">可微 forward / D0.6</a>
+      <a href="#open-nir-bos-d0-6-runner">D0.6 v9 精确端点封存</a>
       <a href="#gct-kmix-o1">GCT-KMix 上界判决</a>
       <a href="#breakthrough-watch">突破监测</a>
       <a href="#support-loro-result">LORO 正式结果</a>
@@ -242,13 +255,13 @@
     </nav>
     <div class="eyebrow">OERF / He Yuanzhe 同步主线 · 研究决策台</div>
     <h1>三维 BOST 算子学习与自有算法研究台</h1>
-    <p class="lead">当前主线进一步收窄到何远哲师兄 NeRIF 邻近的一个具体问题：<strong>神经折射率场的连续导数，与训练时有限差分/有限采样 renderer 是否表达同一个三维场</strong>。clean-room 审计、MGRS、residual-only 正则和总场正则已连续完成四层证伪：投影更好、残差更小或总场更平滑，都不会自动变成真实三维误差更小。Stage B 仍保持密封。当前新候选是可拒答的 <strong>Observable Energy-Alignment Gate</strong>：不再改重建网络，而是用部署可见的能量、renderer margin、噪声与 geometry 决定修正是否值得接受。</p>
+    <p class="lead">当前主线进一步收窄到何远哲师兄 NeRIF 邻近的一个具体问题：<strong>怎样从多个 BOST 相机的观测中判断一个神经三维修正方向是真改善，还是躲进投影近零空间</strong>。连续/离散审计、MGRS、残差正则、总场正则、同 family 能量门和 exact leave-one-view 已形成六层证伪：投影更好、场更平滑、标量能量下降，甚至逐视角影响有部分排序信息，都不会自动变成三维场更真。912 条 exact LOO 面板已完成；组合特征相对 source control 的 grouped AUC 下降 <code>0.05275</code>，因此 View-Influence 支线按预写协议关闭，Stage B 继续密封。<strong>当前下一门不是再挖 synthetic 特征，而是与师兄锁定真实 callable、geometry、数据切分和物理 endpoint</strong>。</p>
     <div id="breakthrough-watch" class="alert critical" style="margin-top:18px; scroll-margin-top:18px;">
       <strong>突破监测 · 当前没有算法突破</strong>
-      <span>新增 54 次总场 L2/H1/Huber 对照，8/8 候选仍全部 NO-GO。最好总场 H1 的 field 中位差为 <code>-0.001565</code>，比最佳 residual-only 只多 <code>0.000083</code>；即使候选总场 H1 能量下降 0.73%，truth-H1 仍恶化 <code>+0.001434</code>。事后能量门只生成扩样假设：L2 非增保留 18/18 改善但错放 5 条有害路径，Huber 非增错放 0 但漏掉 8/18 改善。四个 oblique/shock 留出单元没有运行；新算法、真实 OERF、泛化、论文成功和突破仍为 0。</span>
+      <span>最新的 912-fit exact leave-one-view 信息上界已完成：144 full + 768 LOO，full replay 最大观测差为 0。144 条网络路径中 74 条可观测，两个网络重复合并后只有 27/72 个条件完整可观测。source / view-only / combined grouped OOF AUC 为 <code>0.9626 / 0.7297 / 0.9099</code>；combined 相对 source 的增量是 <code>-0.05275</code>，未达冻结的 <code>+0.05</code> 门。独立 pairwise validator 对 455 个正负样本对复算，16 项检查全部通过。该支线已关闭，当前没有算法突破；新算法、真实 OERF、跨 rig 泛化、论文成功和突破仍为 0。</span>
     </div>
     <section id="gcs-gradient-aliasing" style="margin-top:20px; scroll-margin-top:18px;">
-      <div class="chips"><span class="chip blue">连续/离散机制 · 7/7</span><span class="chip coral">MGRS · NO-GO</span><span class="chip coral">RESIDUAL PRIOR · 0/6</span><span class="chip coral">TOTAL-FIELD PRIOR · 0/8</span><span class="chip gold">ENERGY GATE · POSTOPEN HYPOTHESIS</span><span class="chip gold">STAGE B · 未打开</span><span class="chip coral">NO REAL / PAPER / BREAKTHROUGH CLAIM</span></div>
+      <div class="chips"><span class="chip blue">连续/离散机制 · 7/7</span><span class="chip coral">MGRS · NO-GO</span><span class="chip coral">RESIDUAL PRIOR · 0/6</span><span class="chip coral">TOTAL-FIELD PRIOR · 0/8</span><span class="chip coral">ENERGY GATE · 0/8</span><span class="chip coral">VIEW INFLUENCE · NO-GO</span><span class="chip blue">912 / 912 FITS</span><span class="chip blue">INDEPENDENT AUDIT · VALID</span><span class="chip coral">INCREMENTAL AUC · -0.05275</span><span class="chip gold">NEXT · REAL DATA CONTRACT</span><span class="chip gold">STAGE B · 未打开</span><span class="chip coral">NO REAL / PAPER / BREAKTHROUGH CLAIM</span></div>
       <div class="section-head" style="margin-top:10px;">
         <div>
           <h2>为什么离散投影看起来更好，三维场反而可能更错</h2>
@@ -269,8 +282,17 @@
         <div class="metric failed-state"><b>28 / 28 vs 14 / 28</b><span>获准路径中 dense-AD 改善数，与同时 field/H1 改善数</span></div>
         <div class="metric failed-state"><b>0 / 8</b><span>总场 L2/H1/Huber 候选通过 field、truth-H1 与双对照门的数量</span></div>
         <div class="metric failed-state"><b>-0.001565</b><span>最好总场 H1 field 中位差；相对最佳 residual-only 只多 0.000083</span></div>
-        <div class="metric"><b>18 / 18 + 5 harm</b><span>事后 L2 非增门保留的改善与仍错放的有害路径</span></div>
-        <div class="metric"><b>10 / 18 + 0 harm</b><span>事后 Huber 非增门保留的改善与错放；尚未留出验证</span></div>
+        <div class="metric failed-state"><b>7 / 40 / 25</b><span>72 个同 family 条件的 beneficial / neutral / harmful；按 phantom 整组统计</span></div>
+        <div class="metric failed-state"><b>7 TP / 14 FP</b><span>总场 L2 非增门；敏感度 1.0 仍无法阻止错误修正</span></div>
+        <div class="metric failed-state"><b>1 TP / 0 FP / 6 FN</b><span>grouped ridge 在 p&gt;=0.8 时近乎全拒绝，不构成安全成功</span></div>
+        <div class="metric failed-state"><b>0.95</b><span>只接受 1 个 phantom group 且零误放时，风险单侧 95% 上界</span></div>
+        <div class="metric"><b>40,937 · max 0</b><span>两次完整 MPS 重放逐数比较；证明失败可重放，不证明算法有效</span></div>
+        <div class="metric"><b>912 / 912</b><span>144 full replay + 768 exact leave-one-view 拟合全部落盘</span></div>
+        <div class="metric failed-state"><b>74 / 144 · 27 / 72</b><span>可观测网络路径与两重复都可观测的条件；其余 fail-closed</span></div>
+        <div class="metric"><b>0.9626 / 0.7297</b><span>source observable control / view-influence-only grouped OOF AUC</span></div>
+        <div class="metric failed-state"><b>0.9099 · -0.05275</b><span>combined AUC 与相对 source 增量；冻结门要求至少 +0.05</span></div>
+        <div class="metric failed-state"><b>438 → 414 / 455</b><span>独立 pairwise AUC 复算：加入 view 特征后正确排序少 24 对</span></div>
+        <div class="metric"><b>16 / 16 VALID</b><span>分母、哈希、真值隔离、AUC、Stage B 和禁止主张独立复核</span></div>
       </div>
 
       <div class="pipeline" aria-label="BOST 梯度混叠与候选算法路径">
@@ -281,7 +303,8 @@
         <div><b>5 · MGRS 护栏</b><span>零残差起步；四 renderer 同意才准入，否则精确退回低频基座。</span></div>
         <div><b>6 · 残差正则对照</b><span>42 次 L2+H1/Huber 拟合；投影保住，field/H1 全门 0/6。</span></div>
         <div><b>7 · 总场正则对照</b><span>54 次 L2/H1/Huber 拟合；“更平滑”仍不等于“更真”，全门 0/8。</span></div>
-        <div><b>8 · 下一门</b><span>扩展同 family 开发面板，按 seed/geometry 留一验证能量对齐拒答门。</span></div>
+        <div><b>8 · 能量门证伪</b><span>12 phantom、72 条件、八种固定门全部未过 candidate-signal 合同。</span></div>
+        <div><b>9 · 逐视角影响</b><span>912 路径完成；view 特征无增量价值，支线关闭，不进入 JVP/VJP 或 set encoder。</span></div>
       </div>
 
       <div class="result-table-wrap">
@@ -302,24 +325,29 @@
         <figure><div class="wide-figure-frame"><img src="learning_labs/results/gcs_mgrs_stage_gate_v1/mgrs_stage_gate.png" alt="MGRS 两候选在 Stage A 的场误差与连续投影误差变化" width="2816" height="1803" loading="eager" decoding="async" /></div><figcaption>Stage A 预览：负数表示候选优于低频基座。完整 PDF 保留 Stage B 密封面板；四个留出单元没有运行。</figcaption></figure>
         <figure><div class="wide-figure-frame"><img src="learning_labs/results/gcs_regularized_residual_stage_a_v1/regularization_screen.png" alt="L2 H1 与 L2 Huber 残差正则在已开 Stage A 上的 field H1 与 dense AD 对照" width="2948" height="1892" loading="lazy" decoding="async" /></div><figcaption>经典正则对照：每个点是一个 family-noise 单元的两 seed 中位数。dense-AD 几乎不变，field/H1 却不同步；Stage B 保持密封。</figcaption></figure>
         <figure><div class="wide-figure-frame"><img src="learning_labs/results/gcs_total_field_regularization_stage_a_v1/total_field_screen.png" alt="总场 L2 H1 与 Huber 在已开 Stage A 上的 field truth H1 dense AD 和能量变化对照" width="3564" height="2156" loading="lazy" decoding="async" /></div><figcaption>总场对照：左下显示最强 H1 确实降低了候选场自身能量，右上却显示 truth-H1 仍恶化。这是“平滑不等于真实”的直接反例。</figcaption></figure>
+        <figure><div class="wide-figure-frame"><img src="learning_labs/results/gcs_energy_alignment_mechanism_v1/energy_alignment_mechanism.png" alt="同 family 能量对齐门在十二个 phantom 和三种 rig 下的混淆矩阵与机制分析" width="3344" height="2310" loading="lazy" decoding="async" /></div><figcaption>同 family 扩样结论：L2 门有召回但误放严重，严格门和 ridge 通过近乎全拒绝换取表面 precision；改善只来自 3/12 个 phantom。两次全量运行数值完全一致。</figcaption></figure>
+        <figure><div class="wide-figure-frame"><img src="learning_labs/results/gcs_view_influence_analysis_v0/view_influence_information_audit.png" alt="Exact leave-one-view 逐视角影响面板的三路 AUC、cluster bootstrap、risk coverage 与 held-out ranking 审计" width="3368" height="2313" loading="lazy" decoding="async" /></div><figcaption>逐视角正式判决：view-only 存在部分信息，但合并后 grouped AUC 从 0.9626 降到 0.9099；高 precision 只覆盖 1/72 条件。该图是 post-open synthetic NO-GO，不是算法或真实 BOST 结果。</figcaption></figure>
       </div>
 
-      <div class="alert critical"><strong>最重要的研究判断</strong><span>同相机投影损失无法区分近零空间方向；residual-only 范数不控制与基场误差的交叉项；总场平滑先验又会把真实 wrinkled/shock 高频当成噪声。下一步不是更大的 reconstruction network，而是增加能预测“这个修正方向是好是坏”的独立观测与可拒答门。</span></div>
+      <div class="alert critical"><strong>最重要的研究判断</strong><span>同相机投影损失、场平滑先验、标量能量和 exact 逐视角影响都已经在当前 post-open synthetic 条件下走到预写停止门。逐视角特征不是完全无信息，但它不比已有 observable control 多提供可用信息，不值得再用 JVP/VJP 近似或更大网络追赶。下一步必须引入新证据轴：真实 callable 与 geometry，以及 known-field、PIV velocity compensation 或独立输运/守恒 residual 等真实物理终点。</span></div>
 
       <div class="source-grid" style="margin-top:14px;">
         <article class="source-card"><div class="body"><span class="chip blue">何远哲直接主线</span><h3>NeRIF</h3><p><strong>读：</strong>神经场怎样同时表示折射率和梯度，AD/数值微分一致性、随机 ray sampling、九视角数值验证与实验 fiber bundle 各承担什么证据。</p><p><strong>边界：</strong>它已经包含 AD/ND consistency；不能把“混合两个导数”当新意。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2409.14722v2">开放全文</a><a class="button" href="https://doi.org/10.1063/5.0250899">期刊 DOI</a></div></article>
         <article class="source-card"><div class="body"><span class="chip coral">最新强碰撞</span><h3>Neural Refractive Index Primitives</h3><p><strong>读：</strong>Fourier/hash、automatic/discrete/hybrid gradient、jitter、mask 与 hierarchical sampling。</p><p><strong>边界：</strong>论文已报告 Fourier + AD 放大梯度噪声，固定 hybrid、换 hash、加 jitter 均不足以作为独立创新。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/html/2605.11454">2026 开放全文</a><a class="button" href="https://github.com/Weihu22/Neural-Implicit-Reconstruction-for-BOS">作者代码</a></div></article>
         <article class="source-card"><div class="body"><span class="chip gold">理论与相邻方法</span><h3>ReNO + mip-NeRF</h3><p><strong>读：</strong>ReNO 的 operator aliasing 与 representation equivalence；mip-NeRF 的 sampling footprint 与积分位置编码。</p><p><strong>提取：</strong>新意必须落在 BOST 梯度投影、可观察门和真实 optical footprint，而不是泛称“首次抗混叠”。</p></div><div class="actions"><a class="button primary" href="https://arxiv.org/abs/2305.19913">ReNO</a><a class="button" href="https://arxiv.org/abs/2103.13415">mip-NeRF</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip blue">拒答基线</span><h3>SelectiveNet</h3><p><strong>读：</strong>covered domain 上的 selective risk 与 risk-coverage trade-off。</p><p><strong>边界：</strong><code>1/1</code> accepted 的 precision 不能脱离 coverage 报告；通用分类结果不自动变成 BOST 安全门。</p></div><div class="actions"><a class="button primary" href="https://proceedings.mlr.press/v97/geifman19a.html">PMLR 正式页</a></div></article>
+        <article class="source-card"><div class="body"><span class="chip blue">风险校准边界</span><h3>Conformal Risk Control</h3><p><strong>读：</strong>预定义单调 loss、独立 calibration 和期望风险控制。</p><p><strong>边界：</strong>当前 12-group 开发面板没有独立 final audit，零事件上界为 0.95，不能借用 conformal 名字。</p></div><div class="actions"><a class="button primary" href="https://proceedings.iclr.cc/paper_files/paper/2024/hash/f3549ef9b5ff520a7e41ff3cc306ab2b-Abstract-Conference.html">ICLR 正式页</a></div></article>
       </div>
 
       <div class="evidence-grid" style="margin-top:14px;">
         <article class="evidence-card" data-state="passed"><span class="chip blue">现在先学</span><h3>七天基础路径</h3><p>Day 1 手推 sinc 传递函数；Day 2 用 PyTorch 对照 AD/FD；Day 3 画 BOST forward；Day 4 复现连续审计；Day 5 用 SVD 理解零空间；Day 6 对读两篇神经折射率场；Day 7 写带回退和独立 split 的算法卡。</p><a href="document_reader.html?doc=docs%2Fgcs_gradient_aliasing_learning_route_2026-07-22.md">打开逐日验收</a></article>
-        <article class="evidence-card" data-state="next"><span class="chip gold">下一算法门</span><h3>Observable Energy-Alignment Gate</h3><p>先在 smooth/wrinkled 同 family 内扩 phantom seed、噪声、角度缺失和 ray sampling，比较 L2/Huber 固定非增门与低容量可拒答 gate。必须按 seed/geometry 分组留一，不确定精确回退；Stage B 仍不打开。</p><a href="document_reader.html?doc=docs%2Fgcs_total_field_regularization_result_2026-07-22.md">看混淆矩阵与扩样协议</a></article>
-        <article class="evidence-card" data-state="next"><span class="chip gold">请师兄确认</span><h3>真实 renderer 与主终点</h3><p>需要确认 AD/ND 的真实用法与步长、ray sampling 密度、held-out camera、straight/curved/finite-aperture 层级，以及最终应优化 field、temperature、displacement 还是 PIV velocity compensation。</p><a href="document_reader.html?doc=docs%2Fgcs_mgrs_stage_gate_result_2026-07-22.md&amp;anchor=6-%E9%9C%80%E8%A6%81%E4%BD%95%E8%BF%9C%E5%93%B2%E5%B8%88%E5%85%84%E7%A1%AE%E8%AE%A4%E7%9A%84%E4%BA%94%E4%B8%AA%E9%97%AE%E9%A2%98">复制五问</a></article>
-        <article class="evidence-card" data-state="failed"><span class="chip coral">严格禁止</span><h3>当前不能写进摘要的句子</h3><p>不能说已发明安全能量 gate、优于 NeRIF/FNO、解决真实 BOST、证明跨形态/跨分辨率泛化或完成论文。当前只有机制 PASS、三轮算法/经典对照 NO-GO 和一个事后扩样假设。</p><a href="document_reader.html?doc=learning_labs%2Fresults%2Fgcs_total_field_energy_gate_diagnostic_v1%2Fdiagnostic.json">查看最新机器可读边界</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">最新正式判决</span><h3>同 family 能量门 NO-GO</h3><p>八种 fixed/learned gate 全部未达到预写 candidate-signal 合同。标量能量和单个留出投影不足以自动判断三维修正方向；Stage B 继续密封。</p><a href="document_reader.html?doc=docs%2Fgcs_energy_alignment_same_family_result_2026-07-23.md">读完整协议与表格</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">最新正式判决</span><h3>Exact View-Influence 增量 NO-GO</h3><p>912/912 拟合完成，view-only AUC 为 0.7297，但 combined 比 source control 低 0.05275。V1 支线关闭，不进入 JVP/VJP influence 或 set encoder。</p><a href="document_reader.html?doc=docs%2Fgcs_view_influence_panel_result_2026-07-23.md">读 912-path 正式报告</a></article>
+        <article class="evidence-card" data-state="next"><span class="chip gold">请师兄确认</span><h3>真实 callable、geometry 与物理终点</h3><p>需要确认 curved/straight forward、逐 camera residual、JVP/VJP、标定与数据 split，以及最终应对 known field、PIV velocity compensation 还是独立输运/守恒 residual 负责。</p><a href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">打开师兄首次确认稿</a></article>
+        <article class="evidence-card" data-state="failed"><span class="chip coral">严格禁止</span><h3>当前不能写进摘要的句子</h3><p>不能说已发明安全 gate、逐视角算子有效、优于 NeRIF/DeepONet/FNO、解决真实 BOST/PIV-BOST、证明跨形态或跨 rig 泛化、完成论文或取得突破。</p><a href="document_reader.html?doc=learning_labs%2Fresults%2Fgcs_view_influence_panel_v0_run1%2Fsummary.json">查看最新机器判决</a></article>
       </div>
 
-      <div class="actions" style="margin-top:14px;"><a class="button primary" href="document_reader.html?doc=docs%2Fgcs_total_field_regularization_result_2026-07-22.md">总场 NO-GO + 能量门</a><a class="button" href="document_reader.html?doc=learning_labs%2Fresults%2Fgcs_total_field_regularization_stage_a_v1%2Fsummary.json">总场 JSON</a><a class="button" href="document_reader.html?doc=learning_labs%2Fresults%2Fgcs_total_field_energy_gate_diagnostic_v1%2Fdiagnostic.json">能量门 JSON</a><a class="button" href="learning_labs/results/gcs_total_field_regularization_stage_a_v1/unit_rows.csv">总场逐单元 CSV</a><a class="button" href="asset_viewer.html?asset=learning_labs%2Fresults%2Fgcs_total_field_regularization_stage_a_v1%2Ftotal_field_screen.pdf">总场图 PDF</a><a class="button" href="document_reader.html?doc=docs%2Fgcs_regularized_residual_stage_a_result_2026-07-22.md">残差 NO-GO 报告</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=179-%E6%80%BB%E5%9C%BA%E8%83%BD%E9%87%8F%E4%B9%9F%E4%B8%8D%E6%98%AF%E7%9C%9F%E5%80%BC-%E4%BD%86%E5%AE%83%E5%8F%AF%E8%83%BD%E5%B8%AE%E6%88%91%E4%BB%AC%E6%8B%92%E7%BB%9D%E5%9D%8F%E4%BF%AE%E6%AD%A3">讲人话日志</a></div>
+      <div class="actions" style="margin-top:14px;"><a class="button primary" href="document_reader.html?doc=docs%2Fgcs_view_influence_panel_result_2026-07-23.md">912-path 最新 NO-GO</a><a class="button" href="document_reader.html?doc=learning_labs%2Fresults%2Fgcs_view_influence_panel_v0_run1%2Fsummary.json">机器判决 JSON</a><a class="button" href="document_reader.html?doc=learning_labs%2Fresults%2Fgcs_view_influence_independent_validation_v0%2Fvalidation.json">独立验证 16/16</a><a class="button" href="learning_labs/results/gcs_view_influence_panel_v0_run1/information_predictions.csv">216 条 OOF 预测</a><a class="button" href="asset_viewer.html?asset=learning_labs%2Fresults%2Fgcs_view_influence_analysis_v0%2Fview_influence_information_audit.pdf">正式图 PDF</a><a class="button" href="document_reader.html?doc=learning_labs%2Fresults%2Fgcs_view_influence_panel_v0_run1%2Frecovery_provenance.json">恢复哈希证据</a><a class="button" href="document_reader.html?doc=docs%2Fgcs_view_influence_mechanism_protocol_2026-07-23.md">结果前协议</a><a class="button" href="document_reader.html?doc=docs%2Fgcs_energy_alignment_same_family_result_2026-07-23.md">上一轮 energy NO-GO</a><a class="button" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">师兄接口确认稿</a><a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=183-auc-%E9%83%BD%E6%9C%89-091-%E4%BA%86%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E6%98%AF%E5%A4%B1%E8%B4%A5">讲人话日志</a></div>
     </section>
     <section id="m2-9-fixed-warm" style="margin-top:20px; scroll-margin-top:18px;">
       <div class="chips"><span class="chip coral">M2.9 · DEVELOPMENT NO-GO</span><span class="chip blue">12 HASH-FROZEN CHECKPOINTS</span><span class="chip blue">6 DEV / 18 OPENED OOD CASES</span><span class="chip gold">k = 0..10 · 3 CLASSICAL CONTROLS + CGNE</span><span class="chip coral">NO FRESH / REAL / BREAKTHROUGH CLAIM</span></div>
@@ -1551,6 +1579,308 @@
           </details>
         </div>
         <!-- end public NIR-BOS release readiness audit -->
+        <!-- public NIR-BOS clean-room forward identity -->
+        <div id="open-nir-bos-forward-identity" class="panel" style="margin-top:12px; border-top:4px solid var(--gold); scroll-margin-top:18px;">
+          <div class="chips"><span class="chip coral">D0 V0 NO-GO PRESERVED</span><span class="chip blue">D0.5 CPU + PUBLIC VALUE PASS</span><span class="chip gold">MPS SYNTHETIC COMPATIBILITY PASS</span><span class="chip blue">M0 PUBLIC FIELD PASS</span><span class="chip gold">D0.6 DESIGN 136 / 136</span><span class="chip blue">D0.6 BROKER 53 / 53</span><span class="chip blue">RUNNER PRIMITIVES DRY-RUN PASS</span></div>
+          <h3 style="margin-top:8px;">公开 Phantom 的值与场梯度链已接通；D0.6 机械链通过一对事件验证，但正式训练仍关闭</h3>
+          <p>我们没有运行或复制作者 CUDA 代码。D0 先独立实现 16-bit PNG、相机 ray、ray--AABB、三维折射率梯度和 midpoint quadrature；v0 正式失败，冻结修复后 v1 通过值重放。D0.5 再用 clean-room PyTorch 显式复刻同一数值语义，并在看到结果前锁定 CPU64、MPS32、有限差分、JVP/VJP 与 ROI 外零梯度门。</p>
+          <div class="alert success"><strong><code>D0_5_DIFFERENTIABLE_<wbr>FORWARD_PASS_<wbr>IMPLEMENTATION_ONLY</code></strong><span>CPU 主门与公开 768-ray 值重放通过；MPS 只通过小型合成兼容矩阵。证据包一致性与异构复跑 88 / 88，但它共享被审实现，不是第二套独立物理复现。</span></div>
+          <div class="diagnostic-metric-grid four-up" style="margin-top:10px;">
+            <div class="metric"><b>6,144 / 6,144</b><span>12 views x 512 rays；ROI 外 ray 预测为零但仍留在总分母</span></div>
+            <div class="metric"><b>0.98814</b><span>GT 对公开 XYZ projection 的 post-open 平均 Pearson；不是冻结门</span></div>
+            <div class="metric"><b>0.14621</b><span>GT 经一个全局诊断尺度后的 relative-L2；不是 PASS 条件</span></div>
+            <div class="metric"><b>281 checks</b><span>独立重算充分统计与哈希；几何原始量未由验证器重新追光</span></div>
+          </div>
+          <div class="two-col" style="margin-top:12px; align-items:start;">
+            <figure style="margin:0;"><a href="learning_labs/results/open_nir_bos_d0_forward_identity_v1/forward_identity_audit.png" aria-label="打开公开 Phantom clean-room 正向算子审计图"><img src="learning_labs/results/open_nir_bos_d0_forward_identity_v1/forward_identity_audit.png" width="2736" height="1872" loading="lazy" decoding="async" alt="公开 Phantom clean-room 正向算子审计：ground truth、support-masked ground truth、发布 CGLS-TV 的逐视角相关和相对误差，以及几何与积分门" /></a><figcaption>这张图检查的是公开观测能否被同一个 clean-room 算子重放。它不是重建结果图，也不是新模型排行榜。</figcaption></figure>
+            <div>
+              <h3>v0 失败以后只改了可检验语义</h3>
+              <ol>
+                <li><strong>保留失败：</strong>v0 相交率 <code>0.97998</code>，CGLS 64 -> 128 差 <code>0.05260</code>，正式 NO-GO 不删除。</li>
+                <li><strong>冻结修复：</strong>ROI 外 ray 作为零场贡献；主积分 256 点，用 128 点比较，仍守 2% 门。</li>
+                <li><strong>v1 结果：</strong>128 -> 256 差 <code>0.00962</code>；ROI 外/内观测 RMS 比 <code>0.003834</code>；最小相机对齐 cosine <code>0.99441</code>。</li>
+                <li><strong>负结论：</strong>GT 的缩放误差比发布 CGLS-TV 低 <code>0.05766</code>，不支持“CGLS 吸收成像失配后更贴观测”的猜想。</li>
+              </ol>
+              <div class="alert info" style="margin-bottom:0;"><strong>突破监测：否</strong><span>新增的是值重放诊断和两个明确缺口，不是算法、训练、重建或论文突破。</span></div>
+            </div>
+          </div>
+          <div class="result-table-wrap" tabindex="0" aria-label="公开 Phantom 三种场的正向重放指标，窄屏可左右滑动" style="margin-top:12px;"><table>
+            <thead><tr><th>重放场</th><th>mean Pearson</th><th>全局尺度</th><th>scaled relative-L2</th><th>能说明什么</th></tr></thead>
+            <tbody>
+              <tr><td>ground truth</td><td class="positive">0.9881369</td><td>0.9489756</td><td class="positive">0.1462135</td><td>直线 ray 接线有强相关，但仍有成像链余差</td></tr>
+              <tr><td>support-masked GT</td><td>0.9881394</td><td>0.9484864</td><td>0.1461789</td><td>support mask 几乎不改变本轮全局结论</td></tr>
+              <tr><td>released CGLS-TV</td><td>0.9809594</td><td>1.0043039</td><td>0.2038715</td><td>可作发布基线，但没有优于 GT 重放</td></tr>
+            </tbody>
+          </table></div>
+          <div class="two-col" style="margin-top:12px; align-items:start;">
+            <figure style="margin:0;"><a href="learning_labs/results/open_nir_bos_d0_5_torch_forward_v1/d0_5_gate.png" aria-label="打开 D0.5 可微薄射线门禁图"><img src="learning_labs/results/open_nir_bos_d0_5_torch_forward_v1/d0_5_gate.png" width="2520" height="1260" loading="lazy" decoding="async" alt="D0.5 可微薄射线门禁：CPU 主门、公开 Phantom 值重放和 Apple MPS 兼容门相对冻结阈值的比值" /></a><figcaption>虚线是冻结阈值。所有柱均在阈值左侧；这是实现门，不是模型排行榜。</figcaption></figure>
+            <div>
+              <h3>D0.5 的绿灯具体是什么</h3>
+              <div class="diagnostic-metric-grid four-up" style="margin-top:8px;">
+                <div class="metric"><b>3.06e-16</b><span>公开 CGLS-TV 场 768-ray Torch/SciPy relative-L2</span></div>
+                <div class="metric"><b>2.45e-10</b><span>CPU64 中心有限差分 vs JVP relative error</span></div>
+                <div class="metric"><b>4.98e-7</b><span>MPS32 JVP/VJP 对偶缺陷；冻结上限 1e-4</span></div>
+                <div class="metric"><b>88 / 88</b><span>包一致性、阈值、公开复跑、异构探针和 gradcheck</span></div>
+              </div>
+              <ol>
+                <li><strong>第一次错误保留：</strong>MPS v0 因错误的 device/dtype 转换失败，没有覆盖。</li>
+                <li><strong>修复不改门：</strong>先搬到 CPU 再升到 float64 做审计统计；协议哈希仍是 <code>80df1e59...d71b3</code>。</li>
+                <li><strong>固定 geometry：</strong>当前 autograd 只对 voxel field；不宣称相机、AABB 分支或曲光线轨迹可微。</li>
+                <li><strong>单 field：</strong>768 条 ray 仍来自同一个 Phantom，不能训练或证明 operator generalization。</li>
+                <li><strong>源码绑定：</strong>覆盖层绑定私有 commit <code>4ec192f</code>、五个核心源码哈希与三个结果目录的精确文件集合；Python 源不进入 Pages。</li>
+              </ol>
+            </div>
+          </div>
+          <div class="alert success"><strong>D0.5 当时的机器授权（已被下方 M0 局部覆盖）：<code>single_public_phantom_optimization_smoke=true</code></strong><span>当时只允许 CPU64 用同一 opened Phantom 检查优化与失败模式；历史覆盖层中的 <code>mps_single_public_phantom_smoke=false</code> 保持不改，不能单独作为当前决定。<code>new_algorithm=false</code>、<code>reconstruction_success=false</code>、<code>generalization=false</code>、<code>paper_success=false</code>、<code>breakthrough=false</code>。</span></div>
+          <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--line);">
+            <div class="chips"><span class="chip blue">M0 PUBLIC FIELD PASS</span><span class="chip gold">25 / 25 PREREGISTERED</span><span class="chip blue">152 PACKAGE CHECKS</span><span class="chip coral">NO ALGORITHM CLAIM</span></div>
+            <h3 style="margin-top:8px;">公开大体场 MPS 反向桥已过门，但只授权 voxel 小烟测</h3>
+            <p>M0 把 D0.5 的小型合成兼容检查推进到作者公开的 <code>140 x 294 x 140</code> CGLS-TV 场：12 个视角、每视角 8 条冻结射线，在 CPU64、CPU32 和 MPS32 上比较同一个预测、loss 与整个三维场的梯度。协议 SHA-256 <code>43fef428...55ea8</code> 在第一次执行前已锁定。</p>
+            <div class="alert success"><strong><code>M0_PUBLIC_MPS_FORWARD_<wbr>BACKWARD_PASS_<wbr>IMPLEMENTATION_ONLY</code></strong><span>25 / 25 事前门通过；只证明同一公开 Phantom、同一冻结 96-ray batch、固定直线几何和 voxel-field 参数化的实现兼容。不是优化收敛、三维重建、神经参数梯度或算子学习结果。</span></div>
+            <div class="diagnostic-metric-grid four-up" style="margin-top:10px;">
+              <div class="metric"><b>96 frozen rays</b><span>12 views x 8；身份由 12 个 selection hash 锁定</span></div>
+              <div class="metric"><b>1.08e-4</b><span>MPS32 vs CPU64 field-gradient relative-L2；门为 1e-3</span></div>
+              <div class="metric"><b>2.76e-5</b><span>MPS 中心差分方向导数误差；门为 5e-3</span></div>
+              <div class="metric"><b>1.016 GiB</b><span>四点 sampled driver delta；约占 2 GiB 门的 50.8%</span></div>
+            </div>
+            <div class="two-col" style="margin-top:12px; align-items:start;">
+              <figure style="margin:0;"><a href="learning_labs/results/open_nir_bos_m0_public_mps_v2/m0_public_mps_gate.png" aria-label="打开公开大体场 MPS 前向反向门图"><img src="learning_labs/results/open_nir_bos_m0_public_mps_v2/m0_public_mps_gate.png" width="2520" height="1260" loading="lazy" decoding="async" alt="公开 Phantom M0：CPU64、CPU32 与 MPS32 的预测、场梯度、方向导数、重复性和采样内存门" /></a><figcaption>柱高表示实测值相对事前阈值。它是设备与梯度路径的实现门，不是模型排行榜或重建结果。</figcaption></figure>
+              <div>
+                <h3>两次工程失败也属于证据</h3>
+                <ol>
+                  <li><strong>v0：</strong>方向导数统计直接把 MPS 标量升为 CPU float64，执行停止，授权保持 false。</li>
+                  <li><strong>v1：</strong>第一次修复漏掉主 loss 的同类转换，再次停止；失败包继续保留。</li>
+                  <li><strong>v2：</strong>统一为先搬 CPU、再升 float64；协议、射线、阈值和物理 forward 没有改变。</li>
+                  <li><strong>重复性：</strong>三次完整 MPS prediction 漂移为 0，field-gradient 最大漂移 <code>9.92e-10</code>。</li>
+                  <li><strong>无效射线：</strong>三条冻结 invalid rays 在 CPU32/MPS32 都给出严格零输出和零场梯度。</li>
+                </ol>
+              </div>
+            </div>
+            <div class="alert info"><strong>当前有效授权：<code>mps_single_public_phantom_voxel_smoke=true</code></strong><span>只允许同一 opened Phantom、同一冻结 96 条射线、straight rays、固定 ROI、128 点积分和 chunk 24 的短程 voxel optimizer/failure-mode smoke。<code>mps_fourier_mlp_or_bounded_residual=false</code>、<code>full_training=false</code>、<code>new_algorithm=false</code>、<code>reconstruction_success=false</code>、<code>operator_learning=false</code>、<code>generalization=false</code>、<code>paper_success=false</code>、<code>breakthrough=false</code>。</span></div>
+            <div class="pipeline four-step" aria-label="M0 之后的公开 Phantom 参数化筛选路线">
+              <div><b>M0 · 已完成</b><span>公开大体场值、场梯度、方向导数、重复性和采样内存门。</span></div>
+              <div><b>M0.1 · 下一设备门</b><span>只在冻结 96 rays 上做短程 voxel 优化，并用 CPU 复核 checkpoint。</span></div>
+              <div><b>D0.6 · CPU 预注册</b><span>同预算比较 S0 voxel、S1 Fourier、S2 bounded residual 的失败模式。</span></div>
+              <div><b>B1/B2 · 另行授权</b><span>神经参数多方向梯度与连续 optimizer-step 内存门通过后才能进 MPS。</span></div>
+            </div>
+            <div class="alert warning"><strong>152 / 152 不是第二套物理复现</strong><span>验证器复核协议、哈希、精确文件集、25 行阈值和公开输入身份，但没有重跑 MPS，也无法从保存包独立重算 576 万体素的完整梯度。内存是四个同步采样点，不是真实峰值轨迹。</span></div>
+            <div class="actions" style="margin-top:12px;">
+              <a class="button primary" href="document_reader.html?doc=docs%2Fopen_nir_bos_m0_public_mps_result_2026-07-23.md">读 M0 完整结果</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_m0_public_mps_v2/summary.json">v2 机器摘要</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_m0_public_mps_v2/metrics.csv">25 项事前门</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_m0_public_mps_v2_validation/validation.json">152 项包审计</a>
+              <a class="button" href="docs/open_nir_bos_m0_public_mps_authorization_overlay.json">当前授权覆盖层</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_m0_public_mps_v0/summary.json">保留的 v0 错误</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_m0_public_mps_v1/summary.json">保留的 v1 错误</a>
+              <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=186-小尺子换成了公开大体场但仍只准做一次短烟测">讲人话日志 186</a>
+            </div>
+            <div class="alert info" style="margin-bottom:0;"><strong>突破监测：否</strong><span>新增的是公开大体场的设备/梯度实现门和可追溯失败，不是算法、训练、重建、泛化或论文突破。</span></div>
+          </div>
+          <div id="open-nir-bos-d0-6-preflight" style="margin-top:16px; padding-top:16px; border-top:1px solid var(--line); scroll-margin-top:18px;">
+            <div class="chips"><span class="chip gold">D0.6 POST-AUDIT REPAIR</span><span class="chip blue">136 / 136 PREFLIGHT</span><span class="chip coral">TRAINING CLOSED</span><span class="chip coral">NO ALGORITHM CLAIM</span></div>
+            <h3 style="margin-top:8px;">三种参数化已经放进同一考场；审计先抓到漏账，再允许继续施工</h3>
+            <p>本轮没有训练。第一版协议要求在每个 LR 候选的第 4 步 checkpoint 上统一复评 1,920 条 fit 射线，却漏算了这四次 forward。独立审计在任何 optimizer 正式执行前抓到该 blocker；旧版保留在 commit <code>01ce64d</code>，修复版 commit <code>f721eca</code> 重新冻结预算、S1/S2 轨迹身份、G0/G3 路由、共同边界包络和四角色数据隔离合同。</p>
+            <div class="alert warning"><strong>第一次 136 / 136 保存包没有上线</strong><span>Pages 隐私门发现它记录了本机 <code>.venv</code> 的绝对用户路径并 fail-closed。v1 已移入私有隔离区；v2 只把环境详情改成相对标识 <code>.venv</code>，协议、预算、拆分、门槛和 136 / 136 判决均未改变。可公开验证绑定 commit <code>1f0136c</code>。</span></div>
+            <div class="diagnostic-metric-grid four-up" style="margin-top:10px;">
+              <div class="metric"><b>31,873-31,970</b><span>S0/S1/S2 参数范围；最大差 97，即 0.3043%</span></div>
+              <div class="metric"><b>131,328</b><span>每 arm/seed 的 forward + VJP ray evaluations</span></div>
+              <div class="metric"><b>16,809,984</b><span>128 点积分后的 matched projection-work RQWU</span></div>
+              <div class="metric"><b>136 / 136</b><span>提交后 source-bound 设计、身份、拆分、预算与语义预检</span></div>
+            </div>
+            <div class="two-col" style="margin-top:12px; align-items:start;">
+              <div>
+                <h3>三条 arm 的公平约束</h3>
+                <ol>
+                  <li><strong>共同输出：</strong>都先生成 <code>27 x 53 x 27</code> 栅格，乘同一个解析边界 envelope，再走同一 128 点 straight-ray forward。</li>
+                  <li><strong>共同数据：</strong>12 x 512 rays；每视角固定拆成 400 fit、56 dev、56 audit，10 个 batch SHA 全部冻结。</li>
+                  <li><strong>S1/S2 前缀：</strong>每个 LR trial 和正式前 80 步都绑定 batch、loss、梯度、参数与 Adam-state SHA。</li>
+                  <li><strong>S2 后段：</strong>第 81 步丢弃 base optimizer，新建 residual-only step-0 Adam，只训练 97 参数有界残差头。</li>
+                </ol>
+              </div>
+              <div>
+                <h3>为什么还不能训练</h3>
+                <ol>
+                  <li><strong>broker 后续已经审计修复：</strong>本段记录冻结协议时的状态；下方 v2 证据补了 worker 内部负测、stdin/FD 封闭、断网与 deterministic private seal。</li>
+                  <li><strong>runner primitives 已实现：</strong>下方 v9 已有三模型、可审投影、事件 ledger、VJP/Adam 绑定、精确 schedule endpoint 索引和 failure tombstone；但每个 worker 仍只跑了第一对事件。</li>
+                  <li><strong>formal trainer 未实现：</strong>完整 260-event loop、4 个 LR 筛选、S1/S2 80 步 lockstep、S2 step-81 optimizer 重建和 checkpoint 内容审计仍为 0。</li>
+                  <li><strong>正式 geometry 还缺签名：</strong>当前身份 metadata 没有 broker 签发的 ray-content hash，正式 batch registry 会主动拒绝 seal。</li>
+                  <li><strong>单 opened field：</strong>即使未来 S2 过门，也只准进入 fresh 多场/跨几何验证，不构成算子泛化。</li>
+                </ol>
+              </div>
+            </div>
+            <div class="pipeline four-step" aria-label="D0.6 从冻结协议到正式筛选的门控路线">
+              <div><b>v1.0 · 已保留</b><span>第一版 commit 01ce64d；审计发现 LR fit-union forward 漏账。</span></div>
+              <div><b>v1.1 · 136 / 136</b><span>修预算与语义；publish-safe v2 又移除本机绝对路径。</span></div>
+              <div><b>broker · 审计后完成</b><span>14-file capability、worker 内部负测、stdin/FD 封闭、atomic seal 与 byte-identical repeat。</span></div>
+              <div><b>runner v9 · 窄机械门通过</b><span>9 个 worker 各完成 2/260 事件；terminal 端点精确属于冻结 schedule，full-prefix replay 与训练授权仍关闭。</span></div>
+            </div>
+            <div class="alert warning"><strong><code>frozen_design_consistent=true</code> 不是模型成功</strong><span>原 v1.1 协议的执行 flags 仍保持历史 false；新 execution overlay 只把 <code>split_broker_implementation=true</code> 和 <code>broker_data_plane_mechanical_run=true</code> 打开。<code>runner_implemented=false</code>、<code>formal_training_authorized=false</code>、<code>training_executed=false</code>，其余科学主张仍全部关闭。</span></div>
+            <div class="actions" style="margin-top:12px;">
+              <a class="button primary" href="document_reader.html?doc=docs%2Fopen_nir_bos_d0_6_preflight_result_2026-07-23.md">读 D0.6 预检结果</a>
+              <a class="button" href="document_reader.html?doc=docs%2Fopen_nir_bos_d0_6_matched_budget_design_2026-07-23.md">读完整冻结设计</a>
+              <a class="button" href="learning_labs/open_nir_bos_d0_6_matched_budget_protocol.json">v1.1 机器协议</a>
+              <a class="button" href="learning_labs/open_nir_bos_d0_6_input_identity.json">输入与拆分身份</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_6_protocol_preflight_v2/validation.json">136 项机器预检 v2</a>
+              <a class="button" href="docs/open_nir_bos_d0_6_preflight_authorization_overlay.json">当前执行边界</a>
+              <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=188-审计真的抓到了漏账所以先修考场不急着开跑">讲人话日志 188</a>
+            </div>
+            <div class="alert info" style="margin-bottom:0;"><strong>突破监测：否</strong><span>这次真实增量是训练前抓住预算漏洞并完成 136 / 136 设计预检；没有 checkpoint、重建指标、算法优势或论文结果。</span></div>
+          </div>
+          <div id="open-nir-bos-d0-6-broker" style="margin-top:16px; padding-top:16px; border-top:1px solid var(--line); scroll-margin-top:18px;">
+            <div class="chips"><span class="chip blue">AUDIT-REPAIRED PASS</span><span class="chip blue">53 / 53 VALIDATION</span><span class="chip gold">BYTE-IDENTICAL REPEAT</span><span class="chip coral">FORMAL TRAINER CLOSED</span><span class="chip coral">NO BREAKTHROUGH</span></div>
+            <h3 style="margin-top:8px;">审计找到了门缝；修复后用新证据重新封存</h3>
+            <p>审计前版本的拆分结果确定，但 worker 可直接自报 PASS，而且禁止文件可能从 stdin 继承，所以旧的 OS 隔离声明不再作为当前证据。commit <code>0705adbe</code> 让官方 Seatbelt worker 在自身进程内实测获准读取、禁止 GT 读取和断网，并把 stdin 固定为 <code>/dev/null</code>、盘点额外 FD 为 0。新 broker-seal v3 确定性生成 fit/dev/audit 私有 shard，但仍未启动 optimizer、读 GT 或计算重建指标。</p>
+            <div class="diagnostic-metric-grid four-up" style="margin-top:10px;">
+              <div class="metric"><b>14</b><span>官方 stage worker 在 release root 内允许的冻结内容输入；不代表父进程整个文件系统只可读 14 项</span></div>
+              <div class="metric"><b>4,800 / 672 / 672</b><span>fit / dev / audit rays；身份交集为 0，并集严格为 6,144</span></div>
+              <div class="metric"><b>53 / 53</b><span>worker 内部探针、FD、no-replace、私有 seal、repeat、runner 语义与 claim closure</span></div>
+              <div class="metric"><b>0</b><span>optimizer steps、checkpoint、field metric、reprojection metric</span></div>
+            </div>
+            <div class="two-col" style="margin-top:12px; align-items:start;">
+              <div>
+                <h3>这次真正完成了什么</h3>
+                <ol>
+                  <li><strong>最小能力树：</strong>逐文件 SHA 后只复制 14 个获准输入；中间/最终 symlink、hardlink、路径逃逸和额外节点都 fail-closed。</li>
+                  <li><strong>worker 内部阻断：</strong>获准读取、禁止 GT/release 读取与网络负测都在 worker 自身执行；直调 worker 或把禁止文件塞入 stdin 都会失败。</li>
+                  <li><strong>原子封存：</strong>文件和目录先 <code>fsync</code>，再用 <code>renamex_np(RENAME_EXCL)</code> 发布；已有空/非空目录都不得覆盖。</li>
+                  <li><strong>真实重复：</strong>第二次独立 seal 的 fit/dev/audit NPZ 与第一次逐字节相同。</li>
+                </ol>
+              </div>
+              <div>
+                <h3>它还不能证明什么</h3>
+                <ol>
+                  <li><strong>不是完整 mount namespace：</strong>当前证明的是受控 worker 对指定数据根和网络的 OS 拒绝，不是管理员不可访问。</li>
+                  <li><strong>不是 fresh blind：</strong>这个 Phantom 已公开且已开封，不能证明研究者本人没见过数据。</li>
+                  <li><strong>formal runner 还没写完：</strong>模型、AuditedD05Projector、260-event ledger 原语和失败 tombstone 已有；完整 trainer loop、checkpoint 内容审计与正式 ray-content 签名仍未实现。</li>
+                  <li><strong>没有模型结果：</strong>三个 shard 的私有值没有上线，也没有任何 loss、重建或排行榜。</li>
+                </ol>
+              </div>
+            </div>
+            <div class="table-wrap" style="margin-top:12px;">
+              <table>
+                <thead><tr><th>sealed split</th><th>rays</th><th>canonical SHA-256</th><th>repeat</th><th>公开策略</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>fit</strong></td><td>4,800</td><td><code>bced0252...4c895</code></td><td>byte-identical</td><td>只公开 hash；NPZ 留本机</td></tr>
+                  <tr><td><strong>dev</strong></td><td>672</td><td><code>e8ecfd3a...3520d</code></td><td>byte-identical</td><td>只公开 hash；NPZ 留本机</td></tr>
+                  <tr><td><strong>audit</strong></td><td>672</td><td><code>506583d6...524b</code></td><td>byte-identical</td><td>TRAINER 不可见；NPZ 留本机</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="alert warning"><strong>两次失败历史都保留</strong><span>第一次真实 stage 因路径元数据也被禁止而 fail-closed；后来的独立审计又推翻了“worker 已严格锁住”的过强声明。旧 attestation 保留为审计前历史，commit <code>0705adbe</code> 修复直调和 stdin/FD 绕过后，用全新 v3 目录重做两次 seal。</span></div>
+            <div class="pipeline four-step" aria-label="D0.6 broker 到训练的真实门控路线">
+              <div><b>Broker · 审计后完成</b><span>worker 内部 read/network 负测、stdin/FD 封闭、RENAME_EXCL 与 strict-root verifier。</span></div>
+              <div><b>Semantics · 已冻结</b><span>所有 P90/P95 用 linear；九个 terminal receipts 可为 checkpoint 或 failure tombstone。</span></div>
+              <div><b>Runner v9 · 三轮审计后封存</b><span>三模型、可审投影、model/Adam 连续性、合成 geometry 与 schedule endpoint 精确绑定已通过一对事件验证。</span></div>
+              <div><b>训练 · 仍关闭</b><span>真实接口合同、正式 ray-content hash、260-event trainer 和 checkpoint audit 到位后才讨论筛选。</span></div>
+            </div>
+            <div class="two-col" style="margin-top:12px; align-items:start;">
+              <div class="alert info" style="margin:0;"><strong>统一 quantile</strong><span><code>q=P95(|e*base|)</code>、correction p90、Hausdorff95 和 view p90 全部固定为 <code>numpy.quantile(..., method="linear")</code>，结果以 float64 hex 封存。</span></div>
+              <div class="alert info" style="margin:0;"><strong>九个 terminal receipts</strong><span>每个 arm × seed 必须封存 checkpoint 或 failure tombstone。只有九份都存在且所有 trainer 已退出，AUDITOR 才能开 audit。</span></div>
+            </div>
+            <div class="actions" style="margin-top:12px;">
+              <a class="button primary" href="document_reader.html?doc=docs%2Fopen_nir_bos_d0_6_broker_result_v2_2026-07-23.md">读审计修复报告 v2</a>
+              <a class="button" href="docs/open_nir_bos_d0_6_broker_attestation_v2_2026-07-23.json">公开 attestation v2</a>
+              <a class="button" href="learning_labs/open_nir_bos_d0_6_execution_semantics_overlay.json">runner 语义 overlay</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_6_broker_validation_v2/validation.json">53 项机器验证</a>
+              <a class="button" href="#open-nir-bos-d0-6-preflight">回看 136 项设计预检</a>
+              <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=192-审计说门还有缝所以重锁一次">讲人话日志 192</a>
+            </div>
+            <div class="alert info" style="margin-bottom:0;"><strong>突破监测：否</strong><span>真实进展是 broker 数据平面、OS 路径/网络阻断、重复封存和 runner 语义修复；不是三维重建、算法优势、算子学习、跨场泛化或论文突破。</span></div>
+          </div>
+          <div id="open-nir-bos-d0-6-runner" style="margin-top:16px; padding-top:16px; border-top:1px solid var(--line); scroll-margin-top:18px;">
+            <div class="chips"><span class="chip blue">V9 RUNNER PRIMITIVES DRY-RUN PASS</span><span class="chip blue">103 TESTS</span><span class="chip blue">16 CONTRACT FIELDS</span><span class="chip gold">9 / 9 SYNTHETIC WORKERS</span><span class="chip coral">2 / 260 EVENTS ONLY</span><span class="chip coral">FAILED_SEALED</span></div>
+            <h3 style="margin-top:8px;">先证明一对机械事件的状态和日程端点可复核；模型效果仍完全未知</h3>
+            <p>v3-v7 先后暴露旧梯度、model/Adam 连续性、合同字段、日志集合和 lifecycle barrier 缺口。第三轮审计又发现 terminal 只绑序号，<code>step=999</code> 等伪事件仍可封存。v9 将 9 个 arm/seed、4 个 LR 分支、每分支 260 个事件建成冻结索引；last/next endpoint 必须逐字段命中，且不得跨 LR 分支。这仍只是 endpoint membership，不是完整 journal prefix 的独立重放证明。</p>
+            <div class="alert success"><strong><code>RUNNER_PRIMITIVES_<wbr>V9_DRY_RUN_PASS_<wbr>ENDPOINT_BOUND_<wbr>FORMAL_TRAINER_<wbr>UNIMPLEMENTED</code></strong><span>3 arms x 3 seeds 的 9 个独立子进程各完成一对 D0.5 <code>FORWARD/VJP/Adam</code>。终端包、schedule manifest 和保存包复核通过，但终态故意保持 <code>FAILED_SEALED</code>，audit unlock 为 false，没有 checkpoint、重建指标或模型排序。</span></div>
+            <div class="diagnostic-metric-grid four-up" style="margin-top:10px;">
+              <div class="metric"><b>103 passed</b><span>D0.5、runner、state；含 endpoint 逐字段篡改、跨 LR、manifest 与 Adam 双写失败负测</span></div>
+              <div class="metric"><b>9 x 2 events</b><span>每个 worker 只做第一对事件；完整正式日程是每个 260</span></div>
+              <div class="metric"><b>11 + 9 + 2 + 16</b><span>复核源文件、正式日程族、复合批次与合同字段，failure_count=0</span></div>
+              <div class="metric failed-state"><b>0 scientific scores</b><span>formal training、audit、GT、checkpoint、reconstruction 和 generalization 全为 false</span></div>
+            </div>
+            <div class="two-col" style="margin-top:12px; align-items:start;">
+              <div>
+                <h3>初学者先学懂六件事</h3>
+                <ol>
+                  <li><strong>Forward / VJP / Adam：</strong>预测、反传和参数更新是三个不同生命周期，调用与成本都要分别记账。</li>
+                  <li><strong>同预算比较：</strong>参数量相近还不够，正式结果还要对齐 ray、积分点、A/Aᵀ 调用、wall time 与内存。</li>
+                  <li><strong>身份不等于几何：</strong>view/pixel ID 之外，还要冻结 rays 的 origin、direction、单位和标定版本。</li>
+                  <li><strong>Endpoint 不是 history：</strong>最后/下一事件命中冻结 schedule，不等于 1…N 全部事件已由 state 层重放。</li>
+                  <li><strong>失败封存：</strong><code>FAILED_SEALED</code> 表示失败可复核且 audit 未泄漏，不表示模型失败或成功。</li>
+                  <li><strong>证据分级：</strong>软件机械门通过以后，才有资格谈 field、front、逐 rig 尾部和强基线。</li>
+                </ol>
+              </div>
+              <div>
+                <h3>还缺的三道门</h3>
+                <ol>
+                  <li><strong>真实接口：</strong>师兄确认 callable、straight/curved 层级、JVP/VJP、坐标单位与主要痛点。</li>
+                  <li><strong>正式执行：</strong>broker 签发 ray-content hash；封存可重放 journal snapshot；实现 260 事件 trainer、LR 筛选、lockstep 与 checkpoint audit。</li>
+                  <li><strong>科学评价：</strong>多独立场/跨 geometry、CGLS/H1/TV 与 neural-operator 强基线、逐 rig/session 尾部和独立复核。</li>
+                </ol>
+                <div class="alert warning" style="margin-bottom:0;"><strong>当前正确动作</strong><span>先拿 tiny 真实 callable fixture 和 geometry 合同做一对事件机械测试；不要把 2/260 直接扩写成训练胜利。</span></div>
+              </div>
+            </div>
+            <div class="pipeline four-step" aria-label="D0.6 runner 从机械链到科学结果的真实路线">
+              <div><b>v9 · 已完成</b><span>模型/Adam state、梯度、合成 ray content、worker journal 与 terminal endpoint 的一对事件验证。</span></div>
+              <div><b>接口门 · 等师兄确认</b><span>真实 callable、geometry、straight/curved residual、JVP/VJP 和强基线。</span></div>
+              <div><b>formal trainer · 未实现</b><span>每 arm/seed 260 事件、四 LR、S1/S2 lockstep、S2 step-81 和 checkpoint audit。</span></div>
+              <div><b>科学门 · 未授权</b><span>field/front、逐 rig 尾部、跨场/跨几何与端到端成本都必须另取证。</span></div>
+            </div>
+            <div class="actions" style="margin-top:12px;">
+              <a class="button primary" href="document_reader.html?doc=docs%2Fopen_nir_bos_d0_6_runner_v9_result_2026-07-23.md">读 v9 审计演化与师兄问题</a>
+              <a class="button" href="learning_labs/open_nir_bos_d0_6_runner_evidence_contract.json">证据边界合同</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_6_runner_evidence_v5/verification.json">现场证据验证（非 clean-room）</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_6_synthetic_dry_run_v9/synthetic-no-result-v9/synthetic_dry_run_verification.json">v9 保存包复核</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_6_synthetic_dry_run_v9/synthetic-no-result-v9/terminals/terminal_bundle_manifest.json">九票终端汇总</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_6_synthetic_dry_run_v9/synthetic-no-result-v9/schedule_event_manifest.json">9 组精确 schedule endpoint 索引</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_6_synthetic_dry_run_v9/synthetic-no-result-v9/state/000_CREATED.json">状态 0 · created</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_6_synthetic_dry_run_v9/synthetic-no-result-v9/state/001_SOURCE_LOCKED.json">状态 1 · source locked</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_6_synthetic_dry_run_v9/synthetic-no-result-v9/state/002_BROKER_SEALED.json">状态 2 · broker sealed</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_6_synthetic_dry_run_v9/synthetic-no-result-v9/state/003_FAILED_SEALED.json">状态 3 · failed sealed</a>
+              <a class="button" href="document_reader.html?doc=docs%2Fn5_d5_advisor_first_contact_2026-07-19.md">师兄真实接口确认单</a>
+              <a class="button" href="document_reader.html?doc=he_yuanzhe_minimum_data_contract.md">最小数据合同</a>
+              <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=194-terminal-端点终于不再只看序号">讲人话日志 194</a>
+            </div>
+            <div class="alert warning" style="margin-bottom:10px;"><strong>证据边界</strong><span>当前 validator 是磁盘重放、哈希与字段复算，并复跑 pytest/Ruff；它复用 runtime journal/terminal 审计实现，不是 clean-room 独立语义实现。Python capability 不是 sandbox；terminal state 只证 endpoint membership，尚未重放完整 prefix。公开页只放去 PID 白名单，完整 worker 包留在私有源码仓库。</span></div>
+            <div class="alert info" style="margin-bottom:0;"><strong>突破监测：否</strong><span>真实增量是旧结论可被推翻、合同逐字段可复核的运行机械链；formal trainer、重建、算法优势、算子泛化与论文结果仍为 0。</span></div>
+          </div>
+          <details class="archive-details">
+            <summary>D0.5 当时的路线规划（M0 已完成，留作历史）</summary>
+            <div class="pipeline four-step" aria-label="D0.5 之后单公开 Phantom 优化烟测历史路线" style="margin:0 14px 14px;">
+              <div><b>D0.5 · CPU 已完成</b><span>值一致性、FD、JVP/VJP 与 ROI 外零梯度；MPS 仅合成兼容。</span></div>
+              <div><b>M0 + B0</b><span>当时计划先补公开场 MPS 小批门；M0 现已完成，B0 尚未正式运行。</span></div>
+              <div><b>B1 · Fourier MLP</b><span>先做参数梯度多方向检查，再比较同一 primary budget。</span></div>
+              <div><b>B2 · bounded residual</b><span>Fourier base + 有界修正；失败必须精确回退 B1。</span></div>
+            </div>
+          </details>
+          <div class="alert warning"><strong>下一轮仍不是 FNO / DeepONet 排行榜</strong><span>独立审计要求正式 benchmark 前再补完整 6,144 rays、逐视角尾部和 CPU32--CPU64--MPS32 桥接。更关键的是当前只有一个独立三维函数；多 field/session 与何师兄真实 callable 到位前不得写 superiority 或泛化。</span></div>
+          <div class="actions" style="margin-top:12px;">
+            <a class="button primary" href="document_reader.html?doc=docs%2Fopen_nir_bos_d0_5_torch_forward_result_2026-07-23.md">读 D0.5 完整结果与下一组三臂</a>
+            <a class="button" href="learning_labs/results/open_nir_bos_d0_5_torch_forward_v1/summary.json">D0.5 v1 机器摘要</a>
+            <a class="button" href="learning_labs/results/open_nir_bos_d0_5_torch_forward_v1_validation/validation.json">88 项包一致性与异构复跑</a>
+            <a class="button" href="docs/open_nir_bos_d0_5_training_authorization_overlay.json">机器授权覆盖层</a>
+            <a class="button" href="learning_labs/results/open_nir_bos_d0_5_torch_forward_v0/summary.json">保留的 MPS v0 错误</a>
+            <a class="button" href="document_reader.html?doc=docs%2Fopen_nir_bos_d0_forward_identity_result_2026-07-23.md">回看 D0 值重放</a>
+          </div>
+          <details class="archive-details">
+            <summary>展开 D0.5 协议、代码、统计、D0 历史与一级来源</summary>
+            <div class="actions" style="padding:0 14px 14px;">
+              <a class="button" href="learning_labs/open_nir_bos_d0_5_torch_forward_protocol.json">D0.5 冻结协议</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_5_torch_forward_v1/metrics.csv">16 项冻结门</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_5_torch_forward_v1/comparison_statistics.csv">D0.5 聚合统计</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_5_torch_forward_v1/checksums.sha256">D0.5 结果 SHA-256</a>
+              <a class="button" href="document_reader.html?doc=docs%2Fopen_nir_bos_d0_forward_identity_repair_protocol_2026-07-23.md">v0 -> v1 修复协议</a>
+              <a class="button" href="learning_labs/open_nir_bos_d0_forward_identity_v1_protocol.json">v1 冻结机器合同</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_forward_identity_v1/sufficient_statistics.csv">充分统计量</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_forward_identity_v1/input_manifest.csv">18 项输入哈希</a>
+              <a class="button" href="learning_labs/results/open_nir_bos_d0_forward_identity_v1/checksums.sha256">结果 SHA-256</a>
+              <a class="button" href="document_reader.html?doc=docs%2Foperator_3d_learning_log.md&amp;anchor=185-尺子终于可以反向传播但还没有开始解题">讲人话日志 185</a>
+              <a class="button" href="https://arxiv.org/html/2605.11454">一级来源论文</a>
+              <a class="button" href="https://github.com/Weihu22/Neural-Implicit-Reconstruction-for-BOS">作者仓库</a>
+            </div>
+          </details>
+        </div>
+        <!-- end public NIR-BOS clean-room forward identity -->
         <div class="two-col" style="margin-top:12px;">
           <div>
             <div class="alert info" style="margin-top:0;"><strong>论文稿回答什么</strong><span>LGWO-A24 是否在完全相同的 <code>24F/24Aᵀ</code> 外壳、相同数据和相同端到端成本下，优于 CGLS、简单阻尼/插值、learned warm-start、DCDM/FCG-NO-style 对照与直接 DeepONet/FNO/iFNO；任何优势还必须在未见 rig 尾部、A/B consistency、wall time 与内存上成立。</span></div>

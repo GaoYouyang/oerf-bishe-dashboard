@@ -1,0 +1,219 @@
+{
+  "schema_version": "oerf-open-nir-bos-d0-6-execution-semantics-overlay-1.0",
+  "status": "FROZEN_POST_BROKER_BEFORE_RUNNER_IMPLEMENTATION",
+  "created_at_utc": "2026-07-23T08:30:00Z",
+  "protocol_id": "D0.6_SINGLE_FIELD_MATCHED_BUDGET_SMOKE",
+  "parent_protocol": {
+    "relative_path": "learning_labs/open_nir_bos_d0_6_matched_budget_protocol.json",
+    "sha256": "28025859be3177bccebddc4741b3e574181a8a9416eb8bf5fb8a0915532270dd"
+  },
+  "input_identity": {
+    "relative_path": "learning_labs/open_nir_bos_d0_6_input_identity.json",
+    "sha256": "df7806ab6193876ea1e4b4c3186324dd01d48e7f22291cecbc91f26b4b857688"
+  },
+  "broker_evidence": {
+    "implementation_commit": "0705adbe5102de13401dc797ad5a16c288951950",
+    "source_relative_path": "learning_labs/open_nir_bos_d0_6_split_broker.py",
+    "source_sha256": "e3e292a22e10c931adfee3a4d665bd1c787ef0add0d8d6502f69ff823589c860",
+    "test_relative_path": "learning_labs/test_open_nir_bos_d0_6_split_broker.py",
+    "test_sha256": "c4ad1f555f67c128bbae5ae25f6d9b82a2a0360b43de7b0b1a910ae54fffbe94",
+    "public_attestation_relative_path": "docs/open_nir_bos_d0_6_broker_attestation_v2_2026-07-23.json",
+    "public_attestation_sha256": "f4cd6e305c6c56e5897be7b6c8a97749b5a7fd9cef8475961e26df1d77560d00",
+    "broker_implementation_complete": true,
+    "broker_data_plane_mechanical_run_complete": true,
+    "runner_complete": false,
+    "full_mechanical_dry_run_complete": false
+  },
+  "deterministic_runtime": {
+    "device": "cpu",
+    "dtype": "float64",
+    "architecture": "arm64",
+    "python_launcher": ".venv/bin/python",
+    "torch_deterministic_algorithms": true,
+    "torch_num_threads": 1,
+    "torch_num_interop_threads": 1,
+    "environment_threads": {
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "data_loader_workers": 0,
+    "ray_chunk_size": 64,
+    "logical_call_count_independent_of_ray_chunking": true,
+    "network_access": "denied",
+    "restart_after_failure": false,
+    "overwrite_existing_run_directory": false
+  },
+  "adam_implementation": {
+    "class": "torch.optim.Adam",
+    "betas": [0.9, 0.99],
+    "eps": 1e-12,
+    "weight_decay": 0.0,
+    "amsgrad": false,
+    "foreach": false,
+    "maximize": false,
+    "capturable": false,
+    "differentiable": false,
+    "fused": false,
+    "decoupled_weight_decay": false,
+    "gradient_clipping": false,
+    "residual_optimizer_learning_rate": "the selected arm-and-seed learning rate",
+    "optimizer_state_hashing": "canonical logical parameter names; sorted keys; little-endian tensor bytes; scalar step serialized as integer",
+    "optimizer_state_must_be_empty_before_first_update": true
+  },
+  "quantile_semantics": {
+    "implementation": "numpy.quantile",
+    "method": "linear",
+    "finite_values_required": true,
+    "s2_q_probability": 0.95,
+    "s2_correction_p90_probability": 0.9,
+    "front_hausdorff95_probability": 0.95,
+    "per_view_p90_probability": 0.9,
+    "all_probabilities_use_the_same_linear_method": true,
+    "quantile_values_serialized_as_float64_hex": true
+  },
+  "field_and_boundary_semantics": {
+    "field_shape_xyz": [27, 53, 27],
+    "field_storage_order": "C order with logical axes XYZ",
+    "coordinate_grid": "float64 cell centers generated independently on each axis",
+    "common_boundary_envelope": "product_i cos(pi*xi_i/2)^2",
+    "outer_six_planes_explicitly_assigned_positive_zero_after_envelope": true,
+    "all_arms_return_the_same_grid_before_projection": true,
+    "outside_aabb_prediction_positive_zero": true,
+    "outside_aabb_parameter_gradient_positive_zero": true
+  },
+  "s1_s2_prefix_semantics": {
+    "separate_models_required": true,
+    "separate_adam_instances_required": true,
+    "copying_one_execution_trace_to_the_other_is_forbidden": true,
+    "lockstep_lr_trial_updates": 4,
+    "lockstep_formal_updates": 80,
+    "identity_checked_after_every_update": true,
+    "identity_fields": [
+      "selected learning rate",
+      "batch SHA256",
+      "loss float64 hex",
+      "each trunk/base gradient tensor SHA256",
+      "trunk/base gradient L2 float64 hex",
+      "trunk/base gradient maximum float64 hex",
+      "updated trunk/base parameter SHA256",
+      "canonical Adam state SHA256"
+    ],
+    "residual_head_steps_1_to_80": "not called; requires_grad false; absent from optimizer",
+    "step_80_q": "numpy.quantile(abs(envelope*base), 0.95, method='linear')",
+    "rho": "0.25 * max(q, 0.001), sealed once as float64 hex",
+    "step_81_transition": [
+      "seal and release the old base optimizer reference",
+      "set trunk/base requires_grad false and clear every legacy grad to None",
+      "create a new residual-only Adam with exactly 97 parameters",
+      "assert the new Adam state is empty and its logical step is zero",
+      "assert trunk/base SHA remains equal to the step-80 receipt after step 81",
+      "assert residual Adam logical step equals one after step 81"
+    ]
+  },
+  "budget_ledger_semantics": {
+    "projector_entrypoint": "AuditedD05Projector only",
+    "bypass_of_audited_projector": "invalid run",
+    "precomputed_expected_event_schedule_required": true,
+    "event_identity_fields": [
+      "arm",
+      "seed",
+      "phase",
+      "learning_rate_candidate",
+      "step",
+      "batch_sha256",
+      "split",
+      "operation",
+      "ray_count",
+      "quadrature_steps"
+    ],
+    "events_per_successful_arm_seed": 260,
+    "forward_calls_per_successful_arm_seed": 134,
+    "vjp_calls_per_successful_arm_seed": 126,
+    "forward_rays_per_successful_arm_seed": 70848,
+    "vjp_rays_per_successful_arm_seed": 60480,
+    "ray_evaluations_per_successful_arm_seed": 131328,
+    "rqwu_per_successful_arm_seed": 16809984,
+    "zero_field_mse_uses_observation_values_without_a_projector_call": true,
+    "postseal_scoring_uses_a_separate_ledger": true
+  },
+  "terminal_receipt_semantics": {
+    "required_terminal_receipts": 9,
+    "cartesian_product": {
+      "arms": ["S0_VOXEL", "S1_FOURIER", "S2_BOUNDED_RESIDUAL"],
+      "seeds": [20260731, 20260732, 20260733]
+    },
+    "allowed_terminal_types": ["SEALED_CHECKPOINT", "SEALED_FAILURE_TOMBSTONE"],
+    "failure_tombstone_required_fields": [
+      "arm",
+      "seed",
+      "failure_status",
+      "last_completed_event",
+      "expected_next_event",
+      "budget_ledger_prefix_sha256",
+      "source_and_contract_hashes",
+      "exception_type",
+      "redacted_traceback_sha256"
+    ],
+    "unrun_after_global_stop_uses_failure_tombstone": true,
+    "unrun_status": "D0_6_NOT_RUN_DUE_TO_PRIOR_GLOBAL_STOP",
+    "auditor_unlock_requires_all_nine_terminal_receipts": true,
+    "auditor_unlock_requires_all_trainer_processes_exited": true,
+    "auditor_unlock_requires_terminal_bundle_checksum_sealed": true,
+    "failure_tombstone_cannot_be_replaced_by_a_later_checkpoint": true,
+    "rerun_requires_a_new_run_id_and_preserves_the_first_failure": true
+  },
+  "state_machine": {
+    "states": [
+      "CREATED",
+      "SOURCE_LOCKED",
+      "BROKER_SEALED",
+      "TRAINING_TERMINALS_SEALED",
+      "AUDIT_SEALED",
+      "GT_SCORED",
+      "DECIDED",
+      "PACKAGE_SEALED"
+    ],
+    "failure_state": "FAILED_SEALED",
+    "monotone_single_transition": true,
+    "run_directory_created_exclusively_before_first_operation": true,
+    "every_transition_fsynced_and_hash_chained": true,
+    "resume_from_failed_sealed_directory": false
+  },
+  "role_isolation_semantics": {
+    "broker_stage": "The official Seatbelt worker permits release-root file-content reads for exactly fourteen frozen paths, verifies the allowlisted read and forbidden GT read inside the worker, denies network, uses /dev/null stdin, and rejects extra inherited descriptors",
+    "broker_seal": "The official Seatbelt worker denies all external-release file-content reads, verifies that denial inside the worker, denies network, uses /dev/null stdin, and rejects extra inherited descriptors",
+    "trainer": "must expose only fit/dev/split manifest, deny the entire external release and all known capability/private roots except exact trainer files, deny network, and close inherited file descriptors",
+    "auditor": "must expose audit only after nine terminal receipts and cannot write checkpoints",
+    "gt_scorer": "must expose GT/CGLS/support only after audit seal and cannot write training configuration or checkpoints",
+    "native_macos_full_mount_namespace_proven": false,
+    "same_uid_general_filesystem_isolation_proven": false,
+    "formal_execution_requires_additional_role-launcher_negative_tests": true
+  },
+  "execution_authorization": {
+    "split_broker_implementation": true,
+    "broker_data_plane_mechanical_run": true,
+    "runner_implementation": false,
+    "runner_synthetic_mechanical_dry_run": false,
+    "formal_training": false,
+    "reason": "The audited broker data plane is repeatable after independent blocker repair, but the audited projector, models, ledger, terminal receipts, trainer role launcher, and full synthetic dry-run do not yet exist."
+  },
+  "claim_authorization": {
+    "broker_implementation_evidence": true,
+    "single_opened_field_parameterization_screen": false,
+    "operator_learning": false,
+    "new_algorithm": false,
+    "reconstruction_success": false,
+    "real_bost": false,
+    "oerf_data": false,
+    "cross_field_generalization": false,
+    "cross_geometry_generalization": false,
+    "robustness_to_noise_or_calibration_shift": false,
+    "better_than_deeponet_fno_nerif_or_nirp": false,
+    "paper_success": false,
+    "breakthrough": false
+  },
+  "next_authorized_action": "Implement and test the models, AuditedD05Projector, exact event ledger, terminal receipts, and trainer Seatbelt launcher; then run a synthetic no-result mechanical dry-run."
+}
