@@ -322,7 +322,8 @@
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_cell_center_evidence_2026-07-23.md">Cell-centred 判别证据</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_reference_forward_evidence_2026-07-23.md">任意射线参考正演</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_baseline_contract_evidence_2026-07-23.md">统一强基线与成本合同</a>
-      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_cfd_morphology_proxy_evidence_2026-07-23.md">真实 CFD 第一闭环</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_cfd_morphology_proxy_evidence_2026-07-23.md">真实 CFD 第一闭环</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_isolated_initializer_evidence_2026-07-23.md">独立进程成本门</a>
       <a class="button" href="#senior">复制下一条师兄消息</a>
       <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
     </div>
@@ -333,8 +334,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert success">
-      <strong>最新进展：真实 CFD 进入闭环；算法突破仍为 false</strong>
-      <span>一条校验过的 PoolFire <code>rho</code> 轨迹已按 train / ridge-selection / refinement-validation / later-time 四段隔离。validation 固定 <code>K=2</code> 后，后期五帧的 Direct-Warm 平均 field-L2 为 <code>0.4149</code>，Zero 为 <code>0.6083</code>，BP 为 <code>0.5145</code>。但它们仍来自同一 trajectory，五个后期帧也已在 v0 开发中打开，initializer 也尚未进程隔离；因此只能叫真实 CFD 形态代理与机制线索，不是 fresh 泛化、calibrated BOST 或论文成功。</span>
+      <strong>最新进展：独立进程成本门已过；算法突破仍为 false</strong>
+      <span>7 次 ridge initializer 已改为只收冻结模型与 observation 的 fresh-exec worker，完整编码、启动、回传和核验时间均计入账本，数值仍为 Direct <code>0.4149</code>、Zero <code>0.6083</code>、BP <code>0.5145</code>（固定 <code>K=2</code>）。但 fresh-exec 平均约 <code>75 ms</code>，在当前小 CPU 代理上没有 wall-time 加速；单轨迹、已打开后期帧和未闭合 BOST 物理仍使 <code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -381,11 +382,11 @@
         <article class="panel"><div class="chips"><span class="chip">C0 · 首先实现</span><span class="chip blue">低风险</span></div><h3 style="margin-top:10px;">Adjoint-Residual Warm Start</h3><p>线性阶段输入一次 `A^T y`；曲光线非线性阶段改用参考态 `J^T[y-F(x_ref)]`。小型 3D U-Net/FNO 只输出 `x0`，再接完全相同的物理迭代。</p></article>
         <article class="panel"><div class="chips"><span class="chip">C1 · 机制创新</span><span class="chip gold">中风险</span></div><h3 style="margin-top:10px;">Observable Krylov Warm Start</h3><p>把初值限制在便宜、可观测的 Krylov 字典中，网络只预测系数或空间门控。每个额外字典向量都必须计入 `A/A^T` 成本。</p></article>
         <article class="panel"><div class="chips"><span class="chip">C2 · 论文升级</span><span class="chip coral">高风险</span></div><h3 style="margin-top:10px;">Correctable Frontier Training</h3><p>不只训练单步场误差，而是训练经过 1/2/4 次物理细化后的误差，让模型输出“最容易被求解器纠正”的初值。</p></article>
-        <article class="panel"><div class="chips"><span class="chip blue">真实 CFD 代理门已过</span><span class="chip coral">物理门未过</span></div><h3 style="margin-top:10px;">Zero / BP / Direct-Warm / CGLS</h3><p>公开 PoolFire 数值已进入同一求解器与调用账本，并出现固定 <code>K=2</code> 的 headroom。solver callable 不接 truth；Direct initializer 仍只是同进程 <code>CONTROLLED_INPUT_SELF_ATTESTED</code>，必须先隔离进程，再换新增 trajectory 做 fresh confirmatory。</p></article>
+        <article class="panel"><div class="chips"><span class="chip blue">真实 CFD 代理门已过</span><span class="chip blue">fresh exec 已过</span></div><h3 style="margin-top:10px;">Zero / BP / Direct-Warm / CGLS</h3><p>固定 <code>K=2</code> 下，Direct 为 <code>3A+2A^T</code>、平均 field-L2 <code>0.4149</code>。initializer 已用固定数据协议隔离，并支付完整推理成本；下一步只换新增 trajectory 做预注册 fresh confirmatory，不再调这五帧。</p></article>
       </div>
       <div class="alert" style="margin-top:13px;">
-        <strong>现在的主线阻塞：initializer 未隔离、没有 fresh trajectory 与物理 BOST 合同</strong>
-        <span>单轨迹开发闭环已经足够证明代码能跑，也揭示了过度 correction 会伤害 warm field。下一门不是继续在同五帧调参，而是先让 initializer 只在独立进程读取冻结模型与 observation，再新增不同 PoolFire trajectory、冻结真正未打开的 test；随后确认 <code>rho → Delta n</code>、相机、pixel displacement 与组内 forward/adjoint 语义。</span>
+        <strong>现在的主线阻塞：没有 fresh trajectory，也没有物理 BOST 合同</strong>
+        <span>执行隔离已不再是阻塞。下一门只做新增不同 PoolFire trajectory，按 trajectory 冻结 fit / selection / stopping-validation / untouched-test，再比较 ridge 与最小神经 warm start；同时等待组内确认 <code>rho → Delta n</code>、相机、pixel displacement 与 forward/adjoint 语义。当前五个 later-time frames 永久保留为 development。</span>
       </div>
     </section>
 
@@ -393,11 +394,12 @@
       <div class="section-head">
         <div>
           <div class="eyebrow">最新可验证增量</div>
-          <h2>真实 PoolFire CFD 形态代理完成第一条 Warm-Start 闭环</h2>
-          <p>高分辨率 <code>32×32×64</code> CFD <code>rho</code> 用独立连续梯度射线积分出题，粗网格 <code>16×16×32</code> inverse 答题。四段时间角色和固定 <code>K=2</code> 阻断了最直接的随机帧泄漏；truth 只在冻结输出后做 post-hoc 评价，但 initializer 的非干扰目前仍是同进程自证。</p>
+          <h2>真实 CFD Warm Start 已进入独立进程与完整成本账本</h2>
+          <p>高分辨率 <code>32×32×64</code> CFD <code>rho</code> 用独立连续梯度射线积分出题，粗网格 <code>16×16×32</code> inverse 答题。v1 用 7 个 fresh-exec worker 复现固定 <code>K=2</code> 的数值，每次只收冻结模型和 observation；但父进程仍负责构造 request，所以 evaluation-truth 与全文件系统 noninterference 继续标为未证明。</p>
         </div>
         <div class="actions">
-          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_cfd_morphology_proxy_evidence_2026-07-23.md">读真实 CFD 闭环证据</a>
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_isolated_initializer_evidence_2026-07-23.md">读 v1 独立进程证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_cfd_morphology_proxy_evidence_2026-07-23.md">读 v0 数值闭环</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_baseline_contract_evidence_2026-07-23.md">读统一基线证据</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_reference_forward_evidence_2026-07-23.md">读前置参考正演</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_g0_cell_center_evidence_2026-07-23.md">读前置 Cell-centred 证据</a>
@@ -409,8 +411,8 @@
         <span>后期五帧上，Direct-Warm 在固定 <code>K=2</code> 的平均 field-L2 为 <code>0.41486</code>；跑到 <code>K=24</code> 后恶化为 <code>0.48620</code>，即使 data residual 仍继续下降。高分辨率 reference 与 coarse inverse 的平均失配为 <code>35.011%</code>，所以主线创新应转向 calibration-aware correction budget，而不是无条件加深网络或迭代。</span>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_cfd_morphology_proxy_gate_v0.png" alt="真实 PoolFire CFD 高分辨率形态、粗网格 truth、Zero 重建、ridge Direct 初值和后期五帧调用成本曲线" />
-        <figcaption>图中第一次出现真实公开 CFD 数值；它仍只代表 density-gradient morphology proxy。横轴是累计完整三视角 <code>A+A^T</code> 调用，不是网络层数或隐藏迭代。</figcaption>
+        <img src="../assets/poolfire_cfd_morphology_proxy_gate_v1.png" alt="真实 PoolFire CFD 形态代理、固定两步 warm-start 结果、完整物理调用曲线与独立进程成本边界" />
+        <figcaption>v1 数值与 v0 一致，并新增 fresh-exec wall time 与 child RSS。横轴是累计完整三视角 <code>A+A^T</code> 调用；worker 内存不是全流程内存，当前也没有 wall-time 加速。</figcaption>
       </figure>
       <div class="check-grid" style="margin-top:14px;">
         <article class="panel">
@@ -426,7 +428,12 @@
         <article class="panel">
           <div class="chips"><span class="chip coral">当前最强信号</span><span class="chip">K=2</span></div>
           <h3 style="margin-top:10px;">Direct-Warm 在五帧都领先</h3>
-          <p>固定深度平均 field-L2：Direct <code>0.4149</code>、BP <code>0.5145</code>、Zero <code>0.6083</code>。Direct 成本为 <code>3A+2A^T</code>，但仍只是同轨迹 exploratory headroom。</p>
+          <p>固定深度平均 field-L2：Direct <code>0.4149</code>、BP <code>0.5145</code>、Zero <code>0.6083</code>。在冻结 target 下，Direct 首次达标平均用 <code>3</code> 次完整调用，Zero 用 <code>4</code> 次；仍只是同轨迹 exploratory headroom。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip blue">执行门已过</span><span class="chip gold">约 75 ms</span></div>
+          <h3 style="margin-top:10px;">隔离成本没有被藏掉</h3>
+          <p>request 约 <code>2.32 MB</code>，7 次 fresh-exec 平均 <code>75.37 ms</code>、最坏 <code>83.05 ms</code>，child RSS 最坏 <code>44.20 MiB</code>。当前小算子上 Direct wall time 更慢，不能写成速度成功。</p>
         </article>
         <article class="panel">
           <div class="chips"><span class="chip gold">仍然 HOLD</span><span class="chip">fresh test = 0</span></div>
@@ -435,7 +442,7 @@
         </article>
       </div>
       <div class="section-head" style="margin-top:20px;">
-        <div><div class="eyebrow">前置统一求解门</div><h3>求解器输入隔离与逐 checkpoint 成本合同仍然冻结</h3><p>真实 CFD 闭环没有改写 Zero、BP、Direct-Warm 与 CGLS 的调用规则。solver API 不接 truth，projection cache、gauge certificate、固定 SPD 与 post-hoc evaluator 的边界继续沿用；Direct 的独立进程隔离尚未完成。</p></div>
+        <div><div class="eyebrow">前置统一求解门</div><h3>独立推理与逐 checkpoint 成本合同已经闭合</h3><p>真实 CFD 闭环没有改写 Zero、BP、Direct-Warm 与 CGLS 的调用规则。solver API 不接 truth，projection cache、gauge certificate、固定 SPD 与 post-hoc evaluator 的边界继续沿用；Direct 的 fresh-exec inference 时间和 child RSS 已进入正式账本。</p></div>
         <div class="actions"><a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_baseline_contract_evidence_2026-07-23.md">完整统一基线证据</a></div>
       </div>
       <figure style="margin-top:14px;">
@@ -788,7 +795,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄，C 路线已锁定：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n我已把公开 PoolFire p=14 kW、size=03 的 rho 轨迹锁到固定 source/payload SHA、shape 和时间轴。高分辨率 32×32×64 连续梯度射线积分独立生成观测，粗网格 16×16×32 projection-first inverse 负责重建；两端不是同一个离散矩阵。训练、ridge 选择、步数选择、后期评价分四段并保留至少 5 帧 purge。\n\n同一 CGLS 细化下，validation 冻结 K=2。后期五帧平均 field-L2：Zero 0.60835（2A+2A^T）、normalized BP 0.51445（3A+3A^T）、Direct-Warm 0.41486（3A+2A^T）。Direct 跑到 K=24 反而恶化为 0.48620，而 data residual 继续下降；这说明 forward mismatch 下存在过度 correction，下一创新点应是 calibration-aware correction budget。\n\n目前只能写真实 CFD morphology proxy。五个后期帧已经在 v0 开发中打开，不是 fresh test；只有一条 trajectory；rho→Delta n、相机和 pixel displacement 未闭合。solver callable 不接 truth，但 Direct initializer 仍在同一 Python 进程，当前等级只是 CONTROLLED_INPUT_SELF_ATTESTED，不是独立非干扰证明，algorithm_breakthrough=false。\n\n下一步按顺序做：先把冻结 initializer 放进只接收 model parameters + observation 的独立进程；再加入至少 3–5 条不同 PoolFire trajectory，预先冻结 train/validation/fresh-test；然后在同一 pair、同一精度目标和同一成本账上比较 ridge、最小 FNO/UNO/DeepONet warm start。\n\n现在最需要你确认的是：\n1. 后续可否先用多条公开 PoolFire trajectory 做方法筛选；\n2. 组内最终希望重建 rho、n、n-1 还是 Delta n，reference/gauge 如何定义；\n3. 真正迁移时的相机内外参、detector ROI、forward/adjoint 和现用 baseline/停止规则。\n\n在跨 trajectory 的 fixed-rule p50/p90/worst、A/A^T、wall time 和 memory 全部稳定前，我不会把开发信号写成算法成功。`;
+        document.getElementById('briefText').value = `师兄，C 路线已锁定：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n我已把公开 PoolFire p=14 kW、size=03 的 rho 轨迹锁到固定 source/payload SHA、shape 和时间轴。高分辨率 32×32×64 连续梯度射线积分独立生成观测，粗网格 16×16×32 projection-first inverse 负责重建；两端不是同一个离散矩阵。训练、ridge 选择、步数选择、后期评价分四段并保留至少 5 帧 purge。\n\n同一 CGLS 细化下，validation 冻结 K=2。后期五帧平均 field-L2：Zero 0.60835（2A+2A^T）、normalized BP 0.51445（3A+3A^T）、Direct-Warm 0.41486（3A+2A^T）。Direct 跑到 K=24 反而恶化为 0.48620，而 data residual 继续下降；这说明 forward mismatch 下存在过度 correction，下一创新点应是 calibration-aware correction budget。\n\nDirect initializer 已改为 7 次 fresh-exec data-only worker，只接收冻结模型与 observation；完整 request 编码、进程启动、response 解码和核验时间已计费，A/A^T ledger 没有隐藏调用。当前平均推理约 75 ms、child RSS 最坏约 44.2 MiB，所以在这个小 CPU 代理上没有 wall-time 加速。父进程仍构造 request，evaluation-truth 与全文件系统 noninterference 都没有被冒充为已证明。\n\n目前只能写真实 CFD morphology proxy。五个后期帧已经在 v0 开发中打开，不是 fresh test；只有一条 trajectory；rho→Delta n、相机和 pixel displacement 未闭合，algorithm_breakthrough=false。\n\n下一步不再扩建执行隔离，也不再调这五帧：加入至少 3–5 条不同 PoolFire trajectory，预先冻结 train/validation/untouched-test；先复现 ridge headroom，再在同一 pair、同一精度目标和同一成本账上比较最小 FNO/UNO/DeepONet warm start，并测试 calibration-aware correction budget。\n\n现在最需要你确认的是：\n1. 后续可否先用多条公开 PoolFire trajectory 做方法筛选；\n2. 组内最终希望重建 rho、n、n-1 还是 Delta n，reference/gauge 如何定义；\n3. 真正迁移时的相机内外参、detector ROI、forward/adjoint 和现用 baseline/停止规则。\n\n在跨 trajectory 的 fixed-rule p50/p90/worst、A/A^T、wall time 和 memory 全部稳定前，我不会把开发信号写成算法成功。`;
       }
 
       function bindProfile() {

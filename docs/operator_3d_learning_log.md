@@ -5453,3 +5453,55 @@ initializer 放进只读模型参数与 observation 的独立进程。
 [PoolFire 真实 CFD 形态代理与 Warm-Start 第一闭环](poolfire_cfd_morphology_proxy_evidence_2026-07-23.md)。
 
 **突破监测：没有算法突破。新增的是首条真实公开 CFD 轨迹上的四段隔离闭环、固定 `K=2` 的明确数值 headroom，以及“少量 correction 有益、过度 correction 有害”的主线机制证据。下一步先隔离 initializer，再用新增 trajectory 做 fresh confirmatory，并把研究重点放在 calibration-aware correction budget，而不是立刻把 ridge 换成更大的网络。**
+
+## 205. initializer 已经搬进独立进程，但小算子上没有 wall-time 加速
+
+上一节最后一个软件阻塞是 Direct initializer 与 truth、inverse 和 evaluator 仍共享
+Python 进程。这轮没有换模型、没有重新调后期五帧，只把 evaluation inference 改成
+固定数据协议的 fresh-exec worker，并把完整开销写进原来的求解账本。
+
+父进程只把冻结 dual-ridge 的四组数组、metadata 和一帧 observation 编码到 stdin。
+worker 用 `python -I -B` 启动，request schema 不接受 truth、inverse、projection
+cache 或 Python callable。macOS Seatbelt 每次都实际探测并拒绝声明 CFD bundle 的
+读取、canary 读写和网络访问；除 stdin/stdout/stderr 外没有继承文件描述符。worker
+源码 SHA 也绑定到冻结常量，executor 创建后再替换文件会 fail closed。
+
+第一轮红队指出五个会夸大结果的问题：输入 noninterference 证明过头、请求与回包
+序列化漏计时、RSS 在 response 生成前采样、worker hash 循环自证、重复 ZIP member
+与无限 stdout 未 fail closed。修复后，计时从 request 编码前开始，到 stdout 有界
+读取、NPZ 解码、dtype/shape/model/output SHA 和 receipt 全部核验后结束；child
+退出时由父进程用 `wait4` 读取 max RSS。第二轮红队只剩 worker hash 的 TOCTOU，
+改为运行时也传固定 hash 后关闭。对应负向测试会拒绝 worker 替换、伪造模型、
+重复 member、超限 stdout、伪装 whole-pipeline RSS 和虚假 truth noninterference。
+
+正式 v1 共运行 7 个 fresh worker：2 个 refinement-validation、5 个 evaluation。
+固定 `K=2` 的数值与 v0 一致：
+
+- Zero：`0.60835`，`2A + 2A^T`；
+- normalized BP：`0.51445`，`3A + 3A^T`；
+- ridge Direct：`0.41486`，`3A + 2A^T`。
+
+冻结 target 为 `0.64945` 时，Direct 首次达标平均支付 3 次完整 `A/A^T`，Zero 为
+4 次，BP 为 6 次。它是调用数 headroom，但 target 较宽松，不能代替新增 trajectory
+的 matched-accuracy 主表。
+
+成本上的负结果同样重要。每次 request 约 `2.32 MB`，fresh-exec 平均约 `75 ms`，
+child max RSS 最坏约 `44.2 MiB`。当前 `16 x 16 x 32` CPU inverse 极便宜，Zero
+两步平均不到 `1 ms`，所以 Direct 的端到端 wall time 明显更慢。只有真实 BOST
+forward/JVP/VJP 足够昂贵时，少一次或更多物理调用才可能赚回推理成本；现在不能写
+速度成功。
+
+还有两条边界不能抹掉。父进程在 post-hoc scorer 打开 truth 前构造 request，但没有
+独立外部证明 observation 本身完全不依赖 truth，所以
+`evaluation_truth_noninterference_proven=false`。Seatbelt 只拒绝声明的 bundle 根，
+不是整个文件系统的无数据副本证明，所以
+`filesystem_wide_noninterference_proven=false`。child RSS 也不是训练、pair
+generation、solver 与 worker 合并后的全流程峰值。
+
+正式状态为
+`PASS_REAL_CFD_MORPHOLOGY_PROXY_WITH_ISOLATED_INITIALIZER_CONTRACT_ONLY`，
+独立 validator 为 `PASS_INDEPENDENT_ISOLATED_ARTIFACT_VALIDATION`。完整协议、成本表、
+图和复现命令见
+[PoolFire C 路线独立进程 Warm-Start 成本门](poolfire_c_isolated_initializer_evidence_2026-07-23.md)。
+
+**突破监测：没有算法突破。新增的是主线结果第一次经过 data-only fresh-exec 推理、完整序列化计时、child RSS 与负向变异审计；同时得到一个必须公开的负结果：当前小代理算子上调用数有 headroom，但 wall time 没有加速。下一步不再扩建隔离基础设施，只进入新增 PoolFire trajectory 的预注册 fresh 比较。**
