@@ -301,6 +301,7 @@
       <a href="./" aria-current="page">C 路线主页</a>
       <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
       <a href="#latest-gate">算法与实验</a>
+      <a href="#g0-evidence">G0 物理门</a>
       <a href="#path">16 周学习</a>
       <a href="../learning_library/index.html">教材讲义库</a>
       <a href="../paper_library/index.html">论文库</a>
@@ -314,6 +315,8 @@
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_preprocessing_proxy_evidence_2026-07-23.md">低分辨率代理证据</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_optical_contract_g0_2026-07-23.md">G0 光学合同</a>
       <a class="button" href="#senior">复制下一条师兄消息</a>
       <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
     </div>
@@ -324,8 +327,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert success">
-      <strong>方向锁定是里程碑，不是算法突破</strong>
-      <span>PoolFire 首条 train trajectory 已通过 `6,428,997,975 bytes`、公开 SHA、ZIP CRC、full-resolution rho checksums 和 READY 门；101 帧共 129,280,000 个 rho 值全部 finite 且为正，范围 `0.188983–1.179350`。这只是公开 CFD raw bridge；单位、reference、BOS 观测和 warm-start 加速仍全部未确认。</span>
+      <strong>方向锁定与数据门通过都不是算法突破</strong>
+      <span>PoolFire 首条 train trajectory 已通过 `6,428,997,975 bytes`、完整 SHA/CRC、full-resolution rho 与 READY；公开 CFD raw bridge 的 129,280,000 个 rho 值范围为 `0.188983–1.179350`。等距 `(2,2,2)` 候选也已生成并审计，但三帧代理仍损失约四分之一梯度 RMS，因此当前是 `G0-SMOKE GO / G0-PHYSICS HOLD`，不是 BOST、重建或 warm-start 成功。</span>
     </div>
   </header>
 
@@ -377,6 +380,50 @@
       <div class="alert" style="margin-top:13px;">
         <strong>现在的真实阻塞不是“不会 CFD”</strong>
         <span>师兄已明确无需从零跑三维 CFD；公开 PoolFire 首轨迹的数据完整性门已经通过。下一门是坐标降序与 domain 尺度冲突、rho/time 单位、reference，以及 notebook 中 `refractive_index_field`、比例常数、`XYdeflection` 和组内 forward/adjoint 的语义。</span>
+      </div>
+    </section>
+
+    <section id="g0-evidence" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">最新可验证增量</div>
+          <h2>低分辨率候选已做出来，但训练仍被物理门拦住</h2>
+          <p>守恒只说明离散块平均没有凭空改变全域总和；BOST 关心的是折射率梯度沿光路的积分。两件事必须分开验收。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_preprocessing_proxy_evidence_2026-07-23.md">读数值证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_optical_contract_g0_2026-07-23.md">读光学合同</a>
+        </div>
+      </div>
+      <div class="check-grid">
+        <article class="panel">
+          <div class="chips"><span class="chip blue">已验证</span><span class="chip">数据候选</span></div>
+          <h3 style="margin-top:10px;">`40×40×100` 等距主候选</h3>
+          <p>`(2,2,2)` float64 块平均、float32 存储；坐标和场同步改为升序。三帧逐点重算与候选完全一致，离散和误差 `2.34×10⁻¹⁰`。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip coral">关键负证据</span><span class="chip">不是 BOST</span></div>
+          <h3 style="margin-top:10px;">梯度与 LOS 代理仍明显变化</h3>
+          <p>帧 0/50/100 仅保留 `74.45%–75.44%` 的梯度 RMS；正交 LOS 梯度积分代理的最大 relative L2 为 `25.06%–26.57%`。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip gold">实现已纠偏</span><span class="chip">审计支线</span></div>
+          <h3 style="margin-top:10px;">`(2,2,4)` 不再作默认</h3>
+          <p>各向异性候选只保留 `69.22%–70.67%` 梯度 RMS，LOS 代理差升到 `30.43%–35.36%`；它只保留为敏感性对照。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip coral">G0-PHYSICS HOLD</span><span class="chip">下一门</span></div>
+          <h3 style="margin-top:10px;">模型先输出 `Δn₀`</h3>
+          <p>固定空气 `K` 只可做 smoke。正式链还缺组分相关 `Kmix(λ,Y)`、reference、单位、背景端点/像素语义、straight/curved 判据和独立反演 forward。</p>
+        </article>
+      </div>
+      <figure style="margin-top:14px;">
+        <img src="../assets/poolfire_preprocessing_proxy_v0.png" alt="PoolFire 两种块平均候选的梯度 RMS 保留率和正交 LOS 代理差比较" />
+        <figcaption>这是 rho-gradient 的三帧正交直线代理，不含相机透视、曲光线、折射率常数、背景渲染或光流；图中差异不能写成真实 BOST 误差。</figcaption>
+      </figure>
+      <div class="alert critical" style="margin-top:13px;">
+        <strong>C0 尚未获准训练</strong>
+        先补齐 11 条 train 的无泄漏统计、单位与 domain 解释、`rho → Δn` 合同、常数/线性场解析 smoke，以及 high-fidelity 生成 forward 与 coarse 反演 forward 的表示误差门。
       </div>
     </section>
 

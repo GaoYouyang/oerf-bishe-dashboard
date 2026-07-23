@@ -5251,3 +5251,28 @@ full-resolution 输出是 `(101,80,80,200)` 的 float32 rho，共 `129,280,000` 
 时间轴是 30 到 32 的 101 个点，步长约 0.02，但单位仍未知。x/y 轴从 `0.5925` 降到 `-0.5925`，z 轴从 `2.9925` 降到 `0.0075`，三个 spacing 都约为 `-0.015`。它与 README 的 `3 x 3 x 3 m³` 仍有冲突，所以现在只能说“公开 CFD raw bridge 完成”，不能说“物理 BOST 数据完成”。下一步必须冻结坐标语义、rho/time 单位、参考态、Gladstone-Dale 条件与独立光学 forward。
 
 **突破监测：这是数据工程门的真实通过，不是算法突破。新增的可靠事实是完整 source SHA/CRC、129,280,000 个 rho 的全量有限性/正值、四文件 checksum 和 READY 均通过。BOST 观测、forward/adjoint、经典三维重建、C0 warm start、matched-accuracy 加速、组内迁移和论文结论仍为 0。**
+
+## 199. 守恒不等于看得清：红队把 `(2,2,4)` 从主方案撤了下来
+
+full-resolution rho 通过后，第一版低分辨率草稿采用 `(2,2,4)` 块平均，得到 `40×40×50`。它确实把均匀网格离散和保留到 `1.90×10^-10` 的相对误差，但独立审计指出：原网格三个方向的数值 spacing 都约为 `0.015`，这一选择会人为制造 `0.03×0.03×0.06` 的各向异性网格，额外抹平竖直火焰前缘。
+
+因此实现当场改为默认 `(2,2,2)`，得到 `101×40×40×100`、约 64.64 MB 的等距候选。三个降序坐标轴和 rho 沿相同维度一起反序，输出轴全部升序；帧 0/50/100 又从 full-resolution rho 独立重算，和候选逐点完全一致。脚本也不再把离散和等价写成“质量守恒”：rho 单位和 cell-center 语义没有权威证明，所以只能称 uniform-grid discrete integral。
+
+这仍不足以放行训练。新增代理审计分别在 full/coarse grid 上求二阶有限差分梯度，再沿 x/y/z 积分横向 rho 梯度，并把 full-resolution detector plane 限制到 coarse plane。它不是相机标定后的 BOST，只用来检查“守恒是否掩盖了光学相关结构损失”。三帧结果是：
+
+| 候选 | 梯度 RMS 保留 | 正交 LOS 代理最大 relative-L2 |
+|---|---:|---:|
+| `(2,2,2)` | `74.45%–75.44%` | `25.06%–26.57%` |
+| `(2,2,4)` | `69.22%–70.67%` | `30.43%–35.36%` |
+
+所以 `(2,2,2)` 只是当前最小主候选，`(2,2,4)` 降为审计对照，C0 继续关闭。派生器和代理审计器在两套 Python 环境各通过 10 项定向测试；结果 JSON、图和完整边界已进入 [PoolFire 低分辨率代理证据](poolfire_preprocessing_proxy_evidence_2026-07-23.md)。
+
+一级来源审计又锁定了 G0 的另一半：反应流不能默认 `n-1=K_air rho`。更完整的稀薄气体混合式是 `n-1=rho K_mix(lambda,Y)`，因此 `grad n = K_mix grad rho + rho grad K_mix`。PoolFire 四个组分通道的质量/摩尔/分密度语义和缺失物种闭合尚未确认，固定常数会删掉组分梯度项。当前判决于是拆成：
+
+- `G0-SMOKE = GO`：固定且明确标注的空气 K 可用于常数场、线性场、符号和步长调试；
+- `G0-PHYSICS = HOLD`：单位、组分、波长、reference、背景端点/像素语义、straight/curved 和独立反演 forward 未闭合前，不生成论文训练标签；
+- warm-start 模型优先输出 `Delta n_0`，而不是直接预测绝对 rho。
+
+完整公式、Tier-A/Tier-B forward 和可直接发给师兄的十二个接口问题见 [PoolFire G0 光学合同](poolfire_optical_contract_g0_2026-07-23.md)。
+
+**突破监测：没有算法突破。新增的是一次改变默认实现的红队否决、首个可复现等距低分辨率候选、首个梯度/LOS 代理负证据和 `G0-SMOKE GO / G0-PHYSICS HOLD` 光学合同。可靠 BOST 观测、经典重建、C0 warm start、同精度提速、跨轨迹泛化和论文结论仍为 0。**

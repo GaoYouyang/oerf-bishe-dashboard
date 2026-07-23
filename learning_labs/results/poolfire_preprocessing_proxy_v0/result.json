@@ -1,0 +1,78 @@
+{
+  "schema_version": "oerf-poolfire-preprocessing-proxy-result-1.0",
+  "status": "complete",
+  "decision": "CONTRACT_DESIGNED / NOT_AUTHORIZED_FOR_C0_TRAINING",
+  "evidence_level": "PUBLIC_CFD_PREPROCESSING_PROXY_ONLY",
+  "trajectory": "p=14kw_size=03",
+  "split": "train",
+  "source_manifest_sha256": "a427121c4cf48bdf2b537c3cfc32538d3024b018694c80a1251eef284ba7f739",
+  "frames": [
+    0,
+    50,
+    100
+  ],
+  "proxy_definition": "straight orthographic line-of-sight integral of transverse rho gradients after detector-plane block restriction",
+  "candidates": [
+    {
+      "name": "isotropic_blockmean_2x2x2",
+      "block_factors": [
+        2,
+        2,
+        2
+      ],
+      "output_shape": [
+        101,
+        40,
+        40,
+        100
+      ],
+      "candidate_manifest_sha256": "ca9d07f11cc00aaf5d282dbbcbd5ff53fd4aebafd4ccc2b7c4ec4996b2e3b489",
+      "discrete_integral_relative_error": 2.338559983238574e-10,
+      "gradient_rms_retention": [
+        0.7543628830659911,
+        0.7445073655081218,
+        0.7472471989224988
+      ],
+      "orthographic_los_proxy_max_relative_l2": [
+        0.2505810444273941,
+        0.26574502014627316,
+        0.2542875476753307
+      ],
+      "decision": "PRIMARY_PREPROCESSING_CANDIDATE_ONLY"
+    },
+    {
+      "name": "anisotropic_blockmean_2x2x4",
+      "block_factors": [
+        2,
+        2,
+        4
+      ],
+      "output_shape": [
+        101,
+        40,
+        40,
+        50
+      ],
+      "candidate_manifest_sha256": "210d13b542b9c88ff7b7052e679ed1d3bd0de93cf98d70a93c98e37626d6eb42",
+      "discrete_integral_relative_error": 1.901408107752847e-10,
+      "gradient_rms_retention": [
+        0.7066520799841128,
+        0.7032218377444119,
+        0.6921757506802708
+      ],
+      "orthographic_los_proxy_max_relative_l2": [
+        0.3043196813343096,
+        0.31407473907820266,
+        0.3536487396449452
+      ],
+      "decision": "AUDIT_ONLY_REJECT_AS_DEFAULT"
+    }
+  ],
+  "not_claimed": [
+    "rho or coordinate units are confirmed",
+    "the proxy is a calibrated BOS or BOST forward model",
+    "either candidate preserves all BOS observables",
+    "either candidate is authorized for C0 training",
+    "any reconstruction or warm-start acceleration exists"
+  ]
+}
