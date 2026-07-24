@@ -153,13 +153,20 @@ manifest/READY 双绑定、四文件 checksum、`(101,80,80,200)` float32 `rho`
 `test_truth_opened=false` 全部成立。当前新增正式状态提升为
 `PASS_SECOND_ADDITIONAL_TRAIN_TRAJECTORY_READY`。
 
-第三条 train `p=58kw_size=03` 已按相同流程串行获取；它完成前仍只写
-acquisition in progress。
+第三条 train `p=58kw_size=03` 也已完成相同全链复核。它在
+`6,428,472,735 / 6,611,053,939 bytes` 处连续五次连接超时后 fail closed，
+随后从同一字节恢复；最终协议/source、manifest/READY、四文件 checksum、
+`(101,80,80,200)` float32 `rho` 有限且严格为正、时间/坐标和原始缓存清理
+全部成立。当前正式状态为
+`PASS_THIRD_ADDITIONAL_TRAIN_TRAJECTORY_READY`。
+
+第一条 validation `p=14kw_size=01` 已按串行队列启动；它只允许用于模型和
+正则选择。完成前只写 acquisition in progress。
 
 ## 后续判决顺序
 
 1. 已完成首条新增 train trajectory 的 SHA、ZIP/NPY、full-resolution `rho` 和 READY；
-2. 继续接入至少一条新增 train 与两条 validation trajectory；
+2. 继续接入两条职责分开的 validation trajectory；
 3. 固定每条轨迹的抽帧规则、reference、normalization 和 proxy observation generator；
 4. 先跑 Zero、normalized BP、CGLS/PCGLS、dual ridge；
 5. 若 ridge 在未参与拟合的完整 trajectory 上仍有稳定 headroom，再训练最小
@@ -174,7 +181,7 @@ acquisition in progress。
 - 官方 11/2/2 trajectory identity 与用途已冻结；
 - 本机官方 metadata 与协议一致；
 - 下载支持续传、字节数与 SHA 校验；
-- 两条新增 train trajectory 已通过 receipt、bundle checksums 与 READY 复核；
+- 三条新增 train trajectory 已通过 receipt、bundle checksums 与 READY 复核；
 - 当前工具拒绝 test extraction；
 - 后续同精度成本比较有固定输入和账本边界。
 

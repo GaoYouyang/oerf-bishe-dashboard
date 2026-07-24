@@ -5587,3 +5587,23 @@ ZIP/NPY 流式检查和 full-resolution `rho` 提取。
 correction budget 与停止规则，避免在训练轨迹上边看结果边改规则。
 
 **突破监测：没有算法突破。真实进展是第二条跨工况训练轨迹完成全链数据接入，断点恢复也经受了一次真实 SSL 故障；下一门仍是第三条 train 与两条 validation。**
+
+## 209. 三条训练 pilot 闭合，第一条 validation 启动
+
+`p=58kw_size=03` 下载到 `6,428,472,735 / 6,611,053,939 bytes` 后连续五次
+无法连接 Hugging Face。下载器按约定 fail closed，partial 没有缩小。恢复任务
+从同一字节继续，只补齐剩余约 183 MB，没有重下前面的 6 GB。
+
+完成后重新做了独立 14 项复核：协议 hash、官方 source 字节数/SHA、manifest
+hash、checksums 文件 hash、四文件 checksum、`rho` shape/dtype、有限性、
+严格正值、坐标 shape、101 个时间点、READY、原始缓存删除和
+`test_truth_opened=false` 全部通过。`rho` 为 `(101,80,80,200)` float32，
+范围约 `0.19206` 到 `1.17954`。正式状态为
+`PASS_THIRD_ADDITIONAL_TRAIN_TRAJECTORY_READY`。
+
+这意味着三条新增 train pilot 的数据门闭合，但还不能训练并挑选论文模型。
+第一条 validation `p=14kw_size=01` 已启动，只允许决定模型与正则；第二条
+`p=22kw_size=01` 只允许冻结 correction budget 和停止规则。两条职责不能
+混用，也不能把 untouched test 提前拿来救结果。
+
+**突破监测：没有算法突破。真实增量是三条 train pilot 全部通过独立数据链复核；下一有效门是两条 validation READY 后冻结跨轨迹实验合同。**
