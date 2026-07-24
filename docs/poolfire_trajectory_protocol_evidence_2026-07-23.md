@@ -122,19 +122,36 @@ python site_tools/acquire_poolfire_trajectory.py \
 工具执行：
 
 1. 先验证 15 轨迹协议；
-2. 用 `curl --continue-at -` 下载到隐藏 `.part`；
+2. 用 Python 外层重试逐次启动 `curl --http1.1 --continue-at -`，每次都按当前
+   `.part` 长度续传；
 3. 检查精确字节数与 SHA-256；
 4. 仅对 train/validation 调用 bounded-memory `rho` extractor；
 5. `rho.npy`、coords、times、manifest、checksums 和 READY 全部提交后才算完成；
 6. 默认删除 6.4–6.7 GB 原始缓存，只保留约 493 MB 的 `rho` bundle 与 receipt。
 
-首条新增 train trajectory `p=33kw_size=01` 已进入下载/提取队列。下载中只可写
-“acquisition in progress”，在 receipt 与 READY 出现前不能写“轨迹接入成功”。
+最初实现使用了单个 `curl --retry` 进程。真实网络发生 HTTP/2
+`CANCEL/SSL_ERROR_SYSCALL` 后，curl 的进程内重试把已增长的 `.part` 从头改写，
+因此该实现已撤回。当前版本关闭 curl 内部 retry，强制 HTTP/1.1，并在每次外层重试
+前后检查文件长度单调不减；连续五次无进度或文件缩小会 fail closed。
+
+首条新增 train trajectory `p=33kw_size=01` 已完成。独立复核同时满足：
+
+- receipt 中的协议 SHA、官方精确字节数和 source SHA 与冻结协议一致；
+- manifest source SHA 与 receipt 一致；
+- `rho.npy`、coords、times、manifest 四个 checksum 全部通过；
+- READY 重新绑定 manifest 与 checksums；
+- full-resolution `rho` 为 `(101,80,80,200)` float32，全部有限且严格为正；
+- 原始 6.52 GB archive 和 partial 已删除，只保留派生 bundle 与 receipt；
+- `test_truth_opened=false`。
+
+因此当前新增正式状态为
+`PASS_FIRST_ADDITIONAL_TRAIN_TRAJECTORY_READY`。第二条 train
+`p=45kw_size=05` 按相同流程串行获取；它完成前仍只写 acquisition in progress。
 
 ## 后续判决顺序
 
-1. 完成首条新增 train trajectory 的 SHA、ZIP/NPY、full-resolution `rho` 和 READY；
-2. 接入至少三条新增 train 与两条 validation trajectory；
+1. 已完成首条新增 train trajectory 的 SHA、ZIP/NPY、full-resolution `rho` 和 READY；
+2. 继续接入至少两条新增 train 与两条 validation trajectory；
 3. 固定每条轨迹的抽帧规则、reference、normalization 和 proxy observation generator；
 4. 先跑 Zero、normalized BP、CGLS/PCGLS、dual ridge；
 5. 若 ridge 在未参与拟合的完整 trajectory 上仍有稳定 headroom，再训练最小
@@ -149,12 +166,14 @@ python site_tools/acquire_poolfire_trajectory.py \
 - 官方 11/2/2 trajectory identity 与用途已冻结；
 - 本机官方 metadata 与协议一致；
 - 下载支持续传、字节数与 SHA 校验；
+- 首条新增 train trajectory 已通过 receipt、bundle checksums 与 READY 复核；
 - 当前工具拒绝 test extraction；
 - 后续同精度成本比较有固定输入和账本边界。
 
 禁止：
 
-- 新增 trajectory 已接入成功；
+- 至少三条新增 train 与两条 validation 已全部接入；
+- 跨 trajectory classical control 已完成；
 - 神经算子已训练或优于 ridge/FNO/DeepONet；
 - cross-trajectory 泛化已证明；
 - unseen-power、unseen-size 或 geometry OOD 已证明；
@@ -174,7 +193,8 @@ python -m pytest -q \
   site_tools/test_extract_poolfire_rho.py
 ```
 
-当前定向结果为 `26 passed`。协议验证返回：
+当前定向结果为 `29 passed`。其中还单独覆盖“curl 零退出但文件短于冻结字节数”
+不能提前成功。协议验证返回：
 
 ```text
 PASS_FROZEN_POOLFIRE_TRAJECTORY_PROTOCOL

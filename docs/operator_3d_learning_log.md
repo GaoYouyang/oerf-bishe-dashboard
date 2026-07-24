@@ -5529,12 +5529,43 @@ generation、solver 与 worker 合并后的全流程峰值。
 `--seal-test-only`，文件名写成 `*.sealed.npz`，并且工具无条件拒绝 test
 `--extract`。这只是工具级 fail closed，不冒充操作系统级不可读保险箱。
 
-第一条新增训练轨迹 `p=33kw_size=01` 已进入独立下载/提取队列。公网吞吐开始时约
-`0.9 MB/s`，所以预计下载本身约两小时；在 receipt 与 READY 出现前，它只能标为
-acquisition in progress，不能算轨迹接入成功。
+第一条新增训练轨迹 `p=33kw_size=01` 已进入独立下载/提取队列。第一版直接使用
+单个 `curl --retry` 进程，真实网络发生 HTTP/2 CANCEL 和 SSL 中断后，curl 内部
+retry 会把已增长的 `.part` 从头改写，约 1 GB 进度因此没有保住。这个实现已停用，
+不能把“命令还活着”误报成稳定续传。
+
+修复版改为 Python 外层重试：每次重新读取当前 `.part` 长度，再启动一个新的
+`curl --http1.1 --continue-at -`；前后大小必须单调不减，连续五次无字节进展或文件
+缩小立即 fail closed。保留下来的 partial 会从现有长度继续。在 receipt 与 READY
+出现前，它仍只能标为 acquisition in progress，不能算轨迹接入成功。
 
 完整表、声明边界和复现命令见
 [PoolFire 多轨迹协议与首条新增数据接入](poolfire_trajectory_protocol_evidence_2026-07-23.md)。
-协议、acquisition 和 extractor 的定向测试当前为 `26 passed`。
+协议、acquisition 和 extractor 的定向测试当前为 `29 passed`。即使 curl
+返回零退出码，partial 没有达到协议冻结字节数也不能提前视为下载完成。
 
 **突破监测：没有算法突破。新增的是后续所有模型都必须遵守的完整 trajectory 级 11/2/2 协议、测试集锁门和可续传数据桥。下一道科学门是新增轨迹上的 Zero/BP/CGLS/PCGLS/dual-ridge classical control；只有未参与拟合的完整轨迹仍显示 headroom，才启动最小神经算子。**
+
+## 207. 第一条新增完整轨迹真的接入了，不再停在“下载中”
+
+`p=33kw_size=01` 现已完成，而不是继续卡在页面上的 acquisition in progress。
+原始公开 archive 为 `6,522,109,719 bytes`；外层 HTTP/1.1 续传完成后，工具先核对
+官方字节数和 SHA，再流式检查 ZIP/NPY 并提取 full-resolution `rho`。最终 bundle
+是 `(101,80,80,200)` float32，101 个时间标签从 30 到 32；所有 `rho` 都有限且
+严格为正。
+
+完成后又做了一次独立复核：receipt 的协议/source 身份、manifest、READY 绑定和
+`rho.npy`、coords、times、manifest 四个 checksum 全部一致。原始 6.52 GB 文件和
+partial 已删除，只保留约 517 MB 的 `rho` bundle、receipt 与下载日志。正式状态是
+`PASS_FIRST_ADDITIONAL_TRAIN_TRAJECTORY_READY`。
+
+为什么页面看起来很久没动：一条 trajectory 不只是下载 6.5 GB，还要顺序读取原始
+九通道大数组、验证完整流、抽出 `rho`、写 checksum，公开页面又没有在后台每秒同步
+本机私有队列。此前页面停在“下载中”是状态更新滞后，不是算法一直原地训练。
+
+现在串行进入第二条 train `p=45kw_size=05`，后面依次是
+`p=58kw_size=03` 和两条 validation。只有至少三条新增 train 与两条 validation
+完成后，才冻结统一 observation generator 并开始逐 trajectory 的
+Zero/BP/CGLS/PCGLS/dual-ridge 表；提前训练 FNO 只会把数据偶然性学进去。
+
+**突破监测：没有算法突破。真实增量是第一条额外完整训练轨迹通过身份、内容、数组和 READY 全链验证。下一步是完成其余 train/validation 接入，而不是重复单轨迹数值。**

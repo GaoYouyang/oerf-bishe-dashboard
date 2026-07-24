@@ -339,8 +339,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert success">
-      <strong>最新进展：多轨迹协议已过；首条新增 train trajectory 正在接入</strong>
-      <span>官方 metadata 与 15 条 trajectory 的路径、字节数、SHA 和 11/2/2 角色已由机器协议固定；test 下载必须显式封存且当前工具拒绝解压。<code>p=33kw_size=01</code> 已进入可续传下载/提取队列，但 receipt 与 READY 尚未出现，所以它还不算接入成功，<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新进展：首条新增 train trajectory 已完整接入；第二条串行获取中</strong>
+      <span>协议状态 <code>PASS_FROZEN_POOLFIRE_TRAJECTORY_PROTOCOL</code>；<code>p=33kw_size=01</code> 已通过官方字节数/SHA、ZIP/NPY、全分辨率 <code>rho</code>、checksums、receipt 与 READY 复核，原始 6.52 GB 缓存已删除。现在串行获取 <code>p=45kw_size=05</code>；这只是数据门前进，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -424,14 +424,14 @@
           <p><code>p=22kw_size=05</code> 与 <code>p=58kw_size=01</code> 是已见功率/尺寸值的新组合，不能写成 unseen-power、unseen-size 或 geometry OOD。</p>
         </article>
         <article class="panel">
-          <div class="chips"><span class="chip blue">acquisition in progress</span><span class="chip">不算科学结果</span></div>
-          <h3 style="margin-top:10px;">首条新增轨迹正在下载</h3>
-          <p><code>p=33kw_size=01</code> 的官方对象为 <code>6,522,109,719 bytes</code>。工具支持断点续传，只有字节数、SHA、ZIP/NPY、全分辨率 <code>rho</code> 和 READY 全过才改为接入成功。</p>
+          <div class="chips"><span class="chip blue">1 / 3 train pilot READY</span><span class="chip">不算科学结果</span></div>
+          <h3 style="margin-top:10px;">首条完成，第二条串行获取</h3>
+          <p><code>p=33kw_size=01</code> 的 <code>(101,80,80,200)</code> float32 <code>rho</code> 全部有限且严格为正，四个 bundle 文件 checksum 全过；<code>p=45kw_size=05</code> 接着进入同一可续传校验流程。</p>
         </article>
       </div>
       <div class="alert" style="margin-top:13px;">
         <strong>这一步解决的是“证据能不能信”，不是“算法赢没赢”</strong>
-        <span>当前正式状态只有 <code>PASS_FROZEN_POOLFIRE_TRAJECTORY_PROTOCOL</code>。没有新增 trajectory 指标、没有神经网络训练、没有泛化或速度结论；下一张有科学意义的表必须是逐 trajectory 的 field/gradient p50、p90、worst、harm rate、<code>A/A^T</code> 和端到端成本。</span>
+        <span>当前正式状态新增 <code>PASS_FIRST_ADDITIONAL_TRAIN_TRAJECTORY_READY</code>，证明一条公开训练轨迹完整接入，不证明算法。现在仍没有跨 trajectory 指标、神经网络训练、泛化或速度结论；下一张有科学意义的表必须是逐 trajectory 的 field/gradient p50、p90、worst、harm rate、<code>A/A^T</code> 和端到端成本。</span>
       </div>
     </section>
 
@@ -840,7 +840,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄，C 路线已锁定：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n我已把公开 PoolFire p=14 kW、size=03 的 rho 轨迹锁到固定 source/payload SHA、shape 和时间轴。高分辨率 32×32×64 连续梯度射线积分独立生成观测，粗网格 16×16×32 projection-first inverse 负责重建；两端不是同一个离散矩阵。训练、ridge 选择、步数选择、后期评价分四段并保留至少 5 帧 purge。\n\n官方 15 条 PoolFire trajectory 现已按完整轨迹冻结为 11 train / 2 validation / 2 untouched test。p=14kw_size=01 只做模型选择，p=22kw_size=01 只冻结 correction budget 与停止规则；p=22kw_size=05、p=58kw_size=01 在模型、指标和报告模板固定前不解压。它们是已见功率/尺寸值的新组合，不写成 unseen-power 或 unseen-size OOD。\n\n同一 CGLS 细化下，validation 冻结 K=2。后期五帧平均 field-L2：Zero 0.60835（2A+2A^T）、normalized BP 0.51445（3A+3A^T）、Direct-Warm 0.41486（3A+2A^T）。Direct 跑到 K=24 反而恶化为 0.48620，而 data residual 继续下降；这说明 forward mismatch 下存在过度 correction，下一创新点应是 calibration-aware correction budget。\n\nDirect initializer 已改为 7 次 fresh-exec data-only worker，只接收冻结模型与 observation；完整 request 编码、进程启动、response 解码和核验时间已计费，A/A^T ledger 没有隐藏调用。当前平均推理约 75 ms、child RSS 最坏约 44.2 MiB，所以在这个小 CPU 代理上没有 wall-time 加速。\n\n目前只能写真实 CFD morphology proxy。旧五个后期帧永久是 development，不是 fresh test；rho→Delta n、相机和 pixel displacement 尚未闭合，algorithm_breakthrough=false。\n\n当前 p=33kw_size=01 已进入可续传下载/提取队列。接下来先在新增完整 trajectory 上跑 Zero、BP、CGLS/PCGLS 和 dual ridge classical control；只有未参与拟合的轨迹仍有稳定 headroom，才比较最小 FNO/UNO/3D U-Net，并测试 calibration-aware correction budget。\n\n下一次需要组内确认的是：\n1. 最终希望重建 rho、n、n-1 还是 Delta n，reference/gauge 如何定义；\n2. 真正迁移时的相机内外参、detector ROI、forward/adjoint 和现用 baseline/停止规则；\n3. 哪个最小组内样例可在公开 PoolFire 方法筛选完成后承担迁移检查。\n\n在跨 trajectory 的 fixed-rule p50/p90/worst、A/A^T、wall time 和 memory 全部稳定前，我不会把开发信号写成算法成功。`;
+        document.getElementById('briefText').value = `师兄，C 路线已锁定：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n我已把公开 PoolFire p=14 kW、size=03 的 rho 轨迹锁到固定 source/payload SHA、shape 和时间轴。高分辨率 32×32×64 连续梯度射线积分独立生成观测，粗网格 16×16×32 projection-first inverse 负责重建；两端不是同一个离散矩阵。训练、ridge 选择、步数选择、后期评价分四段并保留至少 5 帧 purge。\n\n官方 15 条 PoolFire trajectory 现已按完整轨迹冻结为 11 train / 2 validation / 2 untouched test。p=14kw_size=01 只做模型选择，p=22kw_size=01 只冻结 correction budget 与停止规则；p=22kw_size=05、p=58kw_size=01 在模型、指标和报告模板固定前不解压。它们是已见功率/尺寸值的新组合，不写成 unseen-power 或 unseen-size OOD。\n\n第一条新增训练轨迹 p=33kw_size=01 已通过官方字节数/SHA、ZIP/NPY、full-resolution rho、checksums、receipt 和 READY 复核；rho shape 为 (101,80,80,200)，全部有限且严格为正，原始大缓存已删除。第二条 p=45kw_size=05 正按同一协议串行获取。这只证明数据接入，不是算法结果。\n\n同一 CGLS 细化下，validation 冻结 K=2。后期五帧平均 field-L2：Zero 0.60835（2A+2A^T）、normalized BP 0.51445（3A+3A^T）、Direct-Warm 0.41486（3A+2A^T）。Direct 跑到 K=24 反而恶化为 0.48620，而 data residual 继续下降；这说明 forward mismatch 下存在过度 correction，下一创新点应是 calibration-aware correction budget。\n\nDirect initializer 已改为 7 次 fresh-exec data-only worker，只接收冻结模型与 observation；完整 request 编码、进程启动、response 解码和核验时间已计费，A/A^T ledger 没有隐藏调用。当前平均推理约 75 ms、child RSS 最坏约 44.2 MiB，所以在这个小 CPU 代理上没有 wall-time 加速。\n\n目前只能写真实 CFD morphology proxy。旧五个后期帧永久是 development，不是 fresh test；rho→Delta n、相机和 pixel displacement 尚未闭合，algorithm_breakthrough=false。\n\n接下来先完成至少 3 条新增 train 和 2 条 validation，再冻结统一 proxy observation，并跑 Zero、BP、CGLS/PCGLS 和 dual ridge classical control；只有未参与拟合的完整 trajectory 仍有稳定 headroom，才比较最小 FNO/UNO/3D U-Net，并测试 calibration-aware correction budget。\n\n下一次需要组内确认的是：\n1. 最终希望重建 rho、n、n-1 还是 Delta n，reference/gauge 如何定义；\n2. 真正迁移时的相机内外参、detector ROI、forward/adjoint 和现用 baseline/停止规则；\n3. 哪个最小组内样例可在公开 PoolFire 方法筛选完成后承担迁移检查。\n\n在跨 trajectory 的 fixed-rule p50/p90/worst、A/A^T、wall time 和 memory 全部稳定前，我不会把开发信号写成算法成功。`;
       }
 
       function bindProfile() {
