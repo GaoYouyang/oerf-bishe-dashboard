@@ -160,13 +160,18 @@ manifest/READY 双绑定、四文件 checksum、`(101,80,80,200)` float32 `rho`
 全部成立。当前正式状态为
 `PASS_THIRD_ADDITIONAL_TRAIN_TRAJECTORY_READY`。
 
-第一条 validation `p=14kw_size=01` 已按串行队列启动；它只允许用于模型和
-正则选择。完成前只写 acquisition in progress。
+第一条 validation `p=14kw_size=01` 已完成相同全链复核：协议/source、
+manifest/READY、四文件 checksum、`(101,80,80,200)` float32 `rho` 有限且
+严格为正、时间/坐标和原始缓存清理全部成立，独立 14 项检查全过。正式状态为
+`PASS_FIRST_VALIDATION_TRAJECTORY_READY`。它仍只允许用于模型和正则选择。
+
+第二条 validation `p=22kw_size=01` 已按串行队列启动；它只允许用于冻结
+correction budget 和停止规则。完成前只写 acquisition in progress。
 
 ## 后续判决顺序
 
 1. 已完成首条新增 train trajectory 的 SHA、ZIP/NPY、full-resolution `rho` 和 READY；
-2. 继续接入两条职责分开的 validation trajectory；
+2. 继续接入第二条停止规则 validation trajectory；
 3. 固定每条轨迹的抽帧规则、reference、normalization 和 proxy observation generator；
 4. 先跑 Zero、normalized BP、CGLS/PCGLS、dual ridge；
 5. 若 ridge 在未参与拟合的完整 trajectory 上仍有稳定 headroom，再训练最小
@@ -182,6 +187,7 @@ manifest/READY 双绑定、四文件 checksum、`(101,80,80,200)` float32 `rho`
 - 本机官方 metadata 与协议一致；
 - 下载支持续传、字节数与 SHA 校验；
 - 三条新增 train trajectory 已通过 receipt、bundle checksums 与 READY 复核；
+- 第一条模型选择 validation 已通过相同复核；
 - 当前工具拒绝 test extraction；
 - 后续同精度成本比较有固定输入和账本边界。
 
