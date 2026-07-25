@@ -6017,3 +6017,74 @@ decoder，而不是把 RMS 包装成创新。
 
 **突破监测：仍没有算法突破。这是一条可信的机制性负结果；没有部署模型、调用减少、
 wall-time、内存、泛化或真实 BOST 证据。**
+
+## 225. 输运确实存在，但原始 BP 不能稳定告诉我们该往哪里平移
+
+v5.1 之后最自然的猜想是：固定全局 PCA 之所以 rank 很高，可能是在为同一团结构的
+空间移动反复付费。因此这一轮没有训练网络，而是先冻结一个两阶段机制门。
+
+第一阶段只看部署时拿得到的 observation。六条已开放轨迹各 101 帧，每帧只做一次
+`BP=A^T y`，总账是 `0 A + 606 A^T`。BP 的平方被当作 energy，用来计算三维质心、
+协方差、fit-only canonical center 和 half-away-from-zero 整数 shift。这个阶段的
+API 没有 target、teacher 或 truth 参数，p14 也不能反过来修改 canonical center。
+独立验证器没有调用正式 runner，重新生成 606 个 BP 和全部统计，逐数组最大绝对差
+都是 0。
+
+第二阶段才在私有评估中生成固定四步零初值 CGLS teacher，共
+`2424 A + 2424 A^T`。teacher 的全局 q10-q90 最大质心跨度是 `2.596` 个体素，
+64.52% 帧的 oracle 整数 shift 非零，所以“结构位置会变”这个物理前提成立。
+问题出在 raw BP proxy：
+
+| 轨迹 | 质心 L∞ p90（体素） | 整数 shift 完全一致 | 误差不超过 1 体素 |
+|---|---:|---:|---:|
+| p14 模型验证 | `0.304` | `70.30%` | `100%` |
+| p14-s05 | `0.962` | `31.68%` | `99.01%` |
+| p22-s03 | `0.359` | `85.15%` | `100%` |
+| p33-s01 | `0.516` | `37.62%` | `100%` |
+| p45-s05 | `1.847` | `14.85%` | `63.37%` |
+| p58-s03 | `0.628` | `57.43%` | `100%` |
+
+冻结门要求每条轨迹都满足 p50≤0.5、p90≤1、worst≤2、exact shift≥75%、
+within-one≥95%，不能用 pooled mean 抹掉坏工况。`p=45kw_size=05` 的
+p50/p90/worst 是 `1.181/1.847/2.108`，所以正式状态是
+`FAIL_T0_BP_INTEGER_TRANSLATION_PROXY`。其他多条轨迹也没有通过 exact-shift 门。
+
+这个失败不是随机乱跳。p45 三轴质心相关仍约为 `0.793/0.841/0.848`，说明 raw BP
+大致跟随 teacher 运动，却有强工况相关的系统偏差。更像的物理解释是几何灵敏度：
+`A^T y` 在射线覆盖更密或 `diag(A^T A)` 更大的位置天然更亮，能量质心因而不一定
+等于待重建场的位置。
+
+协议在 T0 失败后立即停止，SVD、aligned basis 和 T1 都没有运行。没有 target-oracle
+shift 救场，没有训练 3D U-Net/FNO/UNO/DeepONet，也没有打开 p22 stopping
+validation 或两条 test。
+
+独立 Stage-2 validator 不导入正式 runner、transport stage、transport audit 或
+alignment helper。它重新读取冻结 observation、重建几何并生成 606 个 K4 teacher，
+六类 teacher 数组的最大绝对差全部为 0；独立调用账同样是
+`2424 A + 2424 A^T`。验证前后 Stage-2 文件集合与字节身份不变，T1 主数组和
+SVD/basis 输出计数都是 0。正式独立状态为
+`PASS_INDEPENDENT_VALIDATION_OF_FAIL_T0_POOLFIRE_C_BP_TRANSPORT_STAGE2_V6`。
+
+本轮定向 v6、聚焦页与图表共 `113 passed`；完整 PoolFire 相关回归
+`293 passed`；Pages builder `68 passed`；当前工作树公开链接审计
+`47368` 项、`missing=0`。这些数字只说明实现和公开证据链闭合，不是算法性能。
+
+下一条候选不是自由拟合的校正网络，而是固定几何 Jacobi 均衡：
+
+```text
+BP_raw = A^T y
+BP_equalized = D^{-1} BP_raw
+D ≈ diag(A^T A)
+```
+
+它仍只花一次完整 `A^T`，在线多出来的是逐体素乘法。下一协议必须在结果前冻结
+floor、归一化、全部逐轨迹门和独立复算；只有 equalized BP 在所有轨迹上可靠定位，
+才重新授权整数对齐 T1。若它也失败，再考虑 fit-only、observation-visible 的轻量
+校准映射，仍不直接训练大网络。
+
+**讲人话：**火焰结构真的在移动，但普通反投影像一张亮度不均的地图：它能看出大致
+往哪边走，却会被相机几何“照亮”的区域拉偏。现在先把地图亮度校平，再判断能不能
+用它导航；不能导航就停止这条 shifted-POD 路线。
+
+**突破监测：没有算法突破。新增的是一条经过 fail-closed 机制门的可信负结果，它
+排除了 raw-BP 单一全局整数平移，不排除几何均衡 BP、条件基底或全场解码器。**

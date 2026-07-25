@@ -317,7 +317,7 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 2026-07-23</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让可学习算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少完整多视角 forward/adjoint 调用和端到端时间。五条开放 PoolFire 轨迹的四臂 classical 表已经完成；它暴露了 K=24 半收敛、现有 ridge 虽可少调用却不能稳定跨轨迹或缩短 wall time。v4 证明单纯扩两条 fit 不够；v5.1 又证明把固定全局子空间扩到稳定 rank 504 虽把 p14 p90 降到 0.14882，仍远未达到 0.05，RMS 幅值归一化也没有实质优势。下一步转向 deployment-visible 输运对齐、条件基底或 full-field decoder，而不是继续堆 PCA rank。</p>
+    <p class="lead">唯一主问题：让可学习算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少完整多视角 forward/adjoint 调用和端到端时间。五条开放 PoolFire 轨迹的四臂 classical 表已经完成；v4/v5.1 已排除“只扩 fit”与“继续堆固定全局 PCA rank”。v6 又确认三维结构存在约 2.596 体素的输运，但原始 <code>BP=A^T y</code> 的质心带有强工况偏差，不能直接驱动统一整数平移。协议已在 SVD 前停止；下一步先测固定几何灵敏度均衡 <code>D^{-1}A^T y</code>，仍不训练神经网络。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
@@ -343,8 +343,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert">
-      <strong>最新进展：v5.1 独立复核完成，固定全局子空间可信失败</strong>
-      <span>父数据协议仍为 <code>PASS_FROZEN_POOLFIRE_TRAJECTORY_PROTOCOL</code>。v5.1 先修复了 K4 齐次性、target-oracle、稳定数值 rank、RMS 定义和 passer-first 选择。独立 validator 重算 <code>606</code> 个 K4 teacher、<code>1010</code> 个缩放 K4、20 个 projector 与全部决策，结论一致：rank 256→504 把 p90 从 <code>0.218051</code> 降到 <code>0.148823</code>，但仍未达到 <code>0.05</code>；RMS 只比 best raw 好 <code>0.1009%</code>，未过冻结的 2% material-win 门。它只排除四种固定全局子空间，不排除对齐、conditional basis 或 full-field CNN。p22 stopping validation 和 test 均未用于挽救结果，<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新进展：v6 T0 fail-closed，输运存在但 raw BP 定位不可靠</strong>
+      <span>父数据协议仍为 <code>PASS_FROZEN_POOLFIRE_TRAJECTORY_PROTOCOL</code>。Stage 1 只看 observation，六条轨迹共形成 <code>606</code> 个 BP，总账 <code>0 A + 606 A^T</code>；Stage 2 才生成 <code>606</code> 个 K4 teacher，总账 <code>2424 A + 2424 A^T</code>。独立 validator 从冻结 observation 重算全部 teacher、质心、shift 与 T0，六类数组最大绝对差均为 <code>0</code>。teacher 最大 q10-q90 质心跨度为 <code>2.596</code> 体素，说明移动真实存在；但 <code>p=45kw_size=05</code> 的 BP-target 质心 p50/p90/worst 为 <code>1.181 / 1.847 / 2.108</code> 体素，整数 shift 完全一致率仅 <code>14.85%</code>。正式状态为 <code>FAIL_T0_BP_INTEGER_TRANSLATION_PROXY</code>，T1/SVD 未运行，p22 stopping validation 与 test 未打开，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -394,10 +394,11 @@
         <article class="panel"><div class="chips"><span class="chip blue">四臂 classical 已完成</span><span class="chip coral">神经门仍关闭</span></div><h3 style="margin-top:10px;">Zero / BP / exact-diag PCGLS / dual ridge</h3><p>五条轨迹、505 帧已完整跑完。K24 参照被半收敛否掉；ridge K2 的调用信号没有通过 p14 与 wall-time 门。v2/v3 又定位到 fit coverage 不足，所以现在不把线性层盲目换成大网络。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 within-one 也只有 <code>63.37%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
       </div>
       <div class="alert" style="margin-top:13px;">
-        <strong>现在的唯一执行门：先证明 BP 可见的输运/形态坐标值得进入模型</strong>
-        <span>固定四步零初值 CGLS 一般非线性，但在本次 505 帧的 <code>0.5×/2×</code> 探针上表现为精确一阶齐次且 breakdown path 无变化；这仍没有让 RMS 幅值拆分显著胜过 raw。下一门先用一次 <code>BP=A^T y</code> 的 energy centroid/covariance 检查跨工况位置与形状偏移，再做 zero-fill 整数 shift 的 aligned-basis 对照。shift 必须来自 BP，不能来自未知 K4 target；只有 alignment 真有 headroom，才比较 conditional basis 或小型 full-field 3D CNN。</span>
+        <strong>现在的唯一执行门：用固定几何灵敏度消除 raw BP 的系统定位偏差</strong>
+        <span>raw BP 质心门已经失败，不能绕过它运行 target-oracle aligned SVD。下一候选只允许固定 <code>D^{-1}A^T y</code>，其中 <code>D≈diag(A^T A)</code> 来自冻结几何；每帧仍是一次完整 <code>A^T</code>，额外只有逐体素乘法。先按同一六轨迹 T0 门独立复算；全部过门才重新授权 zero-fill 整数对齐 T1。若仍失败，再研究 fit-only、observation-visible 的轻量校准，不直接跳到 3D U-Net、FNO、UNO 或 DeepONet。</span>
       </div>
     </section>
 
@@ -437,7 +438,7 @@
       </div>
       <div class="alert" style="margin-top:13px;">
         <strong>突破监测：没有算法突破；五条轨迹的 classical 表已经完成</strong>
-        <span><code>PASS_TWO_VALIDATION_TRAJECTORIES_READY</code>、<code>PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT</code> 和 <code>PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT</code> 继续作为冻结前置证据。v4 与 v5.1 均已通过独立重算；完整 PoolFire + 聚焦页回归 <code>243 passed</code>。最新可信科学状态是 <code>FAIL_DEVELOPMENT_ABSOLUTE_OUTPUT_HEADROOM</code>：rank 扩展有机制 headroom，但四种固定全局子空间都没过绝对门。这不能写成泛化、速度或神经算子成功。</span>
+        <span><code>PASS_TWO_VALIDATION_TRAJECTORIES_READY</code>、<code>PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT</code> 和 <code>PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT</code> 继续作为冻结前置证据。v4、v5.1 与 v6 均按独立复算门推进。最新科学状态是 <code>FAIL_T0_BP_INTEGER_TRANSLATION_PROXY</code>：固定全局表示失败后，raw BP 单一整数平移也未通过逐轨迹定位门。这不能写成泛化、速度或神经算子成功。</span>
       </div>
       <div class="section-head" style="margin-top:20px;">
         <div>
@@ -485,6 +486,22 @@
       <figure style="margin-top:14px;">
         <img src="../assets/poolfire_c_homogeneous_representation_audit_v5_1.png" alt="PoolFire C 路线 v5.1 四种固定全局表示在 rank 256 到 504 上的 p14 K4 target oracle 投影误差，以及 best raw、best RMS 与绝对门比较" />
         <figcaption>rank 256→504 是主要改善来源；RMS 只比 best raw 好 0.1009%，未过 2% material-win 门。最佳 p90 0.148823 仍高于 0.05；这是可信负证据，不是算法突破。</figcaption>
+      </figure>
+      <div class="section-head" style="margin-top:22px;">
+        <div>
+          <div class="eyebrow">v6 输运定位门 · deployment-visible mechanism audit</div>
+          <h3>结构真的移动，但 raw BP 不能稳定给出统一整数 shift</h3>
+          <p>左图比较 raw BP 与 K4 teacher 的质心误差，右图比较整数 shift 的 exact 与 within-one 比例。红色背景标出最明显的 p45-s05 系统偏差。T0 失败后代码在 SVD 前返回，因此没有 aligned basis、条件基底或神经模型数字。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_transport_alignment_reading_route_2026-07-25.md">读 v6 结果与下一假设</a>
+          <a class="button" href="../learning_labs/results/poolfire_c_bp_transport_alignment_v6/public_summary.json">打开脱敏结果 JSON</a>
+          <a class="button" href="../learning_labs/results/poolfire_c_bp_transport_alignment_v6/independent_validation.json">打开独立复算摘要</a>
+        </div>
+      </div>
+      <figure style="margin-top:14px;">
+        <img src="../assets/poolfire_c_bp_transport_alignment_v6.png" alt="PoolFire C 路线 v6 六条轨迹的 raw BP 质心误差、整数 shift 一致率与冻结阈值" />
+        <figcaption>teacher 最大 q10-q90 质心跨度 2.596 体素，说明输运存在；p45-s05 质心 p90 为 1.847 体素、exact shift 仅 14.85%。这是 raw-BP 统一平移的可信负结果，不是算法突破。</figcaption>
       </figure>
     </section>
 
@@ -752,7 +769,7 @@
         const next = nextUnlockedWeek();
         const fCount = checkedCount(state.foundations, guide.foundationChecks);
         const pace = Number(state.profile.hours) <= 6 ? '建议把每个关卡拆成两周' : Number(state.profile.hours) >= 15 ? '可将阅读与代码并行，但不跳过验收' : '按一周一关执行';
-        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v5.1 已排除四种固定全局输出子空间；当前只做 BP 可见的输运/形态对齐审计。对齐没有事前冻结的 headroom，就不训练 3D U-Net、FNO、UNO 或 DeepONet。';
+        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v6 已确认输运存在，但 raw BP 质心带有工况偏差，统一整数平移 T0 失败。当前只测固定几何灵敏度均衡 D^{-1}A^T y；它不过同一逐轨迹门，就不运行 aligned SVD，也不训练 3D U-Net、FNO、UNO 或 DeepONet。';
         document.getElementById('recommendation').innerHTML = `
           <div class="next-code">当前建议 · ${escapeHtml(next.id)}</div>
           <h3>${escapeHtml(next.title)}</h3>
@@ -893,7 +910,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄，C 路线不变：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n公开 PoolFire 已按完整 trajectory 冻结为 11 train / 2 validation / 2 untouched test。三条 fit pilot、p14 模型选择 validation 和 p22 停止规则 validation 均已接入；两条 test 仍未下载或打开。五条开放轨迹共 505 帧，共用独立 32×32×64 reference、16×16×32 projection-first inverse 和冻结三视角几何。\n\n我已完成四臂 classical 表：Zero-CGLS、normalized BP-CGLS、exact geometry-diagonal PCGLS、train-only dual-ridge + CGLS，并按 field、gradient、observation、harm、A/A^T 和 wall 计账。\n\n最重要的发现是半收敛：开放 p22 上 Zero-CGLS K=4 的 field p90 为 0.68190、gradient p90 为 0.97990；跑到 K=24 后分别恶化为 1.02633 和 2.28542，但 observation residual 仍从 0.34810 降到 0.30430。因此 K24 不适合作为稳定的“高精度终点”，但这不是 CGLS 普遍发散的证明。\n\n结果打开后的诊断里，dual-ridge K2 相对 Zero K4 用 5 次而不是 8 次完整调用，理论调用计数少 37.5%；但三条轨迹参与过拟合、p14 参与超参数选择、p22 参与 K2 选择，所以独立开放评估轨迹实际为 0。p14 joint pass 只有 56.44%，且五条轨迹 wall time 全部更慢。这个信号不能写成跨工况加速。\n\nv2 低秩线性摊销器和 v3 rank≤256 PCA 门均失败。随后按冻结协议只新增 p=14kw_size=05、p=22kw_size=03 两条 clean fit。v4 把 p14 rank-256 K4-target PCA p90 从 0.253138 降到 0.218051，相对改善 13.8608%，没有达到事前冻结的 20% / 0.202510 门，因此正式 FAIL。独立 validator 已从六条官方 rho 逐帧重放 606 次 forward，重算 606 个 K4 teacher 和 fit-only PCA，得到相同结论。\n\nv5.1 在结果前修复了 K4 齐次性表述、target-oracle 边界、稳定数值 rank、RMS 定义和 passer-first 规则。独立 validator 又重算 606 个 K4 teacher、1010 个缩放 K4 和 20 个 projector。rank 256→504 把 p14 p90 降到 0.148823，但仍高于冻结的 0.05；RMS 齐次表示只比 best raw 好 0.1009%，未过 2% material-win 门。因此科学状态仍是 FAIL_DEVELOPMENT_ABSOLUTE_OUTPUT_HEADROOM，它只排除四种固定全局子空间，不是可部署模型。\n\n所以我没有继续拿剩余 fit，也没有开始大模型训练。下一步只用部署时可见的 BP=A^T y 计算 energy centroid/covariance，以 zero-fill shift 检查位置/形态对齐能否显著降低 p14 的 target-oracle containment error。shift 不能看未知 K4 target；只有这道冻结对齐门有明确 headroom，才进入 conditional basis 或小型 full-field 3D CNN。\n\n当前仍只能写公开 CFD straight-ray morphology proxy，不是真实 BOST；rho→Delta n、相机和 pixel displacement 尚未闭合，algorithm_breakthrough=false。\n\n后续需要组里确认的仍是：\n1. 真正希望重建 rho、n、n-1 还是 Delta n，reference/gauge 怎么定义；\n2. 相机内外参、detector ROI、forward/adjoint、现用 baseline 和停止规则；\n3. 公开方法筛选完成后，哪份最小组内 BOST 样例可做迁移检查。\n\n我会先把公开代理上的 BP 可见输运对齐和 matched-accuracy 成本门做扎实，再申请组内数据。`;
+        document.getElementById('briefText').value = `师兄，C 路线不变：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n公开 PoolFire 已按完整 trajectory 冻结为 11 train / 2 validation / 2 untouched test。两条 test 仍未下载或打开。六条当前机制审计轨迹共 606 帧，共用 16×16×32 inverse 与冻结三视角几何。\n\n四臂 classical 表已经完成，并暴露半收敛：更低 observation residual 不保证更低 field/gradient error。v4 只扩两条 fit 的改善为 13.8608%，未过 20% 门；v5.1 把固定全局表示扩到稳定 rank 504 后，p14 target-oracle p90 仍为 0.148823，高于 0.05，RMS 额外改善只有 0.1009%。这些结果都没有授权神经训练。\n\n最新 v6 检查了输运对齐。Stage 1 只看 observation：六条轨迹各 101 帧，每帧一次 BP=A^T y，总账 0A+606A^T。独立 validator 重新生成全部 BP、质心、协方差、fit-only canonical center 与整数 shift，逐数组最大差为 0。Stage 2 再生成 606 个 K4 teacher，总账 2424A+2424A^T。\n\nteacher 的最大 q10-q90 质心跨度是 2.596 体素，64.52% 帧的 oracle shift 非零，说明结构确实移动。但 raw BP 的定位存在工况偏差：p45-s05 的质心 p50/p90/worst 是 1.181/1.847/2.108 体素，整数 shift 完全一致率只有 14.85%，误差不超过一体素的比例也只有 63.37%。因此正式状态是 FAIL_T0_BP_INTEGER_TRANSLATION_PROXY。\n\n协议在 T0 失败后于 SVD 前停止，没有运行 aligned basis/T1，没有打开 p22 stopping validation 或 test，也没有训练 3D U-Net、FNO、UNO 或 DeepONet。这个结果排除的是 raw-BP 单一全局整数平移，不排除几何均衡 BP、条件基底或全场 decoder。\n\n下一步只测固定几何 Jacobi 均衡 BP_equalized=D^{-1}A^T y，其中 D≈diag(A^T A)。每帧仍只需一次完整 A^T，额外是逐体素乘法。它必须在同一六条轨迹逐条通过冻结定位门，才重新授权 zero-fill 对齐 T1；失败就转向 fit-only、observation-visible 的轻量校准，仍不直接上大网络。\n\n当前仍只是公开 CFD straight-ray morphology proxy，不是真实 BOST；rho→Delta n、相机和 pixel displacement 尚未闭合，algorithm_breakthrough=false。\n\n后续需要组里确认：\n1. 真正希望重建 rho、n、n-1 还是 Delta n，reference/gauge 怎么定义；\n2. 相机内外参、detector ROI、forward/adjoint、现用 baseline 和停止规则；\n3. 公开方法筛选完成后，哪份最小组内 BOST 样例可做迁移检查。`;
       }
 
       function bindProfile() {

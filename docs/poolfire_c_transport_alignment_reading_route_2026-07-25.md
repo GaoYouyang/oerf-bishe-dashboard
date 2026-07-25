@@ -10,9 +10,11 @@ transport-dominated model reduction 的经典困难相似：一个局部结构�
 这只是一个待验证类比，不等于 PoolFire 失败已经被证明来自平移。下一步必须先在
 当前代理上测结构位置、尺度和形状，而不是直接套 shifted POD 或训练大网络。
 
-**当前状态：T0 假设设计，不授权神经训练。** 在线坐标只能来自 observation 或
-`BP=A^T y`，不能用 K4 target 决定 shift；所有 zero-fill 越界都要单列
-cropped energy，不能把丢掉难重建区域当成表示改善。
+**当前状态：T0 已按冻结协议失败；不授权 T1，也不授权神经训练。** 在线坐标只能来自
+observation 或 `BP=A^T y`，不能用 K4 target 决定 shift；所有 zero-fill 越界都要
+单列 cropped energy，不能把丢掉难重建区域当成表示改善。真实计算已经确认
+K4 teacher 的位置在时间与工况间发生移动，但原始 BP 的质心存在明显工况相关偏差，
+因此还没有资格驱动统一的整数平移。
 
 ## 五篇最相关的一级来源
 
@@ -108,6 +110,34 @@ A2803-A2836, 2020，官方页 https://doi.org/10.1137/19M1257275 。
 这里不能用 target centroid 决定在线 shift；它只能回答 BP centroid 有没有资格成为
 可部署 proxy。
 
+### T0 已得到什么结果
+
+Stage 1 只读六条轨迹的 observation，每帧恰好形成一次 `BP=A^T y`，总账为
+`0 A + 606 A^T`。独立验证器重新生成全部 BP、质心、协方差、fit-only canonical
+center 和整数 shift，逐数组最大绝对差均为 0。
+
+Stage 2 再用同一冻结 observation 生成 606 个 K4 teacher，总账为
+`2424 A + 2424 A^T`。T0 的主要结果是：
+
+| 轨迹 | BP-target 质心 L∞ p50 / p90 / worst（体素） | 整数 shift 完全一致 | 误差不超过 1 体素 |
+|---|---:|---:|---:|
+| `p=14kw_size=01` | 0.185 / 0.304 / 0.361 | 70.30% | 100% |
+| `p=14kw_size=05` | 0.793 / 0.962 / 1.126 | 31.68% | 99.01% |
+| `p=22kw_size=03` | 0.224 / 0.359 / 0.453 | 85.15% | 100% |
+| `p=33kw_size=01` | 0.320 / 0.516 / 0.651 | 37.62% | 100% |
+| `p=45kw_size=05` | 1.181 / 1.847 / 2.108 | 14.85% | 63.37% |
+| `p=58kw_size=03` | 0.371 / 0.628 / 0.753 | 57.43% | 100% |
+
+K4 teacher 的全局 q10-q90 最大质心跨度为 2.596 体素，非零 oracle shift 帧占
+64.52%，所以“结构会移动”成立。可是冻结协议要求每条轨迹的 BP proxy 都过门，
+`p=45kw_size=05` 明显失败，其他多条轨迹的 exact-shift fraction 也未达 75%。
+因此正式状态是 `FAIL_T0_BP_INTEGER_TRANSLATION_PROXY`。
+
+这个结果不是“没有输运”，而是“原始反投影不能稳定定位输运”。尤其值得注意的是，
+`p=45kw_size=05` 的三个质心分量相关系数仍约为 0.793、0.841、0.848，说明 BP
+大致跟随移动，却带有显著系统偏差。协议在 SVD 之前停止，T1 没有运行；没有
+aligned-basis 数字、神经模型、调用减少或速度结论。
+
 ### Gate T1：BP 可见的整数平移能否降低 oracle containment rank
 
 在结果前冻结：
@@ -121,11 +151,12 @@ A2803-A2836, 2020，官方页 https://doi.org/10.1137/19M1257275 。
 - validation 先按 BP shift 对齐，oracle 投影后再逆 shift；
 - 与 raw-origin 同 rank、公平 decoder bytes 比较。
 
-若 p90/worst 没有实质改善，说明单一平移不是主因，停止继续雕刻 shifted-POD。
+由于 T0 已失败，T1 当前不运行。不能绕过这个失败，用 target-oracle shift 生成一张
+更好看的 aligned-POD 曲线。
 
 ### Gate T2：条件基底还是 full-field decoder
 
-只有 T1 有信号才比较：
+只有后续新的、结果前冻结的 deployment-visible 定位机制先通过独立门，才比较：
 
 - `single aligned basis`；
 - `BP-feature selected mixture-of-subspaces`；
@@ -137,14 +168,18 @@ development sanity check；p22 stopping validation 与两条 test 继续封存�
 
 ## 对毕业设计算法的启发
 
-当前可保留的算法假设是：
+原始 BP 质心假设已被否掉；当前可保留的更窄算法假设是：
 
-> 用一次物理 adjoint 得到 BP，并从 BP 提取部署可见的输运/形态坐标；在该坐标下选择
-> 或移动一个轻量局部表示，再由同一 CGLS/PCGLS 做少量纠正。只有 matched-accuracy
-> 等价且完整 A/A^T、wall、memory 和 harm 都改善时，才称 warm-start 加速。
+> 用一次物理 adjoint 得到 BP 后，先用固定、只依赖几何的
+> `D^{-1} A^T y` 灵敏度均衡，消除不同体素被射线覆盖程度不同带来的位置偏差；只有
+> 均衡后的部署可见质心在全部轨迹过门，才允许移动轻量局部表示，再由同一
+> CGLS/PCGLS 做少量纠正。
 
-它比“再做一个 FNO”更贴合当前失败机制，也更贴近三维 BOST 的 physics-computation
-接口。但目前它只是研究假设，不是创新成果。
+这里的 `D` 来自固定几何的 `diag(A^T A)`，在线额外成本只是逐点乘法，仍保持每帧
+一次 `A^T`。这比事后拟合一个自由 affine correction 更容易解释，也直接针对
+`p=45kw_size=05` 的“相关但有系统偏差”。但它目前只是下一条待预注册假设，不是
+创新成果。如果均衡 BP 仍失败，再考虑 fit-only、observation-visible 的校准映射；
+仍不能直接跳到 FNO。
 
 ## 初学者最小练习
 
@@ -155,3 +190,5 @@ development sanity check；p22 stopping validation 与两条 test 继续封存�
 4. 写出 `BP=A^T y` 的调用成本，并解释为什么 target centroid 不能部署。
 5. 区分三件事：target 能被子空间表示、observation 能预测 coefficient、warm start
    经 refinement 后真的更快。
+6. 解释 `diag(A^T A)` 为什么描述几何灵敏度，并比较 raw BP 与
+   `D^{-1}A^T y` 在不增加完整 forward 调用时的在线成本。
