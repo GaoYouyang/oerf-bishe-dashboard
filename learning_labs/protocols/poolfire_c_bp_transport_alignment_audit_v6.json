@@ -1,0 +1,238 @@
+{
+  "schema_version": "oerf-poolfire-c-bp-transport-alignment-audit-6.0",
+  "status": "FROZEN_BEFORE_V6_RESULTS",
+  "purpose": "test whether one deployment-visible backprojection supplies a useful transport coordinate before any conditional basis or neural decoder is trained",
+  "parents": {
+    "poolfire_c_cross_trajectory_experiment_v1_sha256": "bb536f8b0f25a4ced47263798b7d5cdb0efa94308d3796a6ced6e7c37fd1d76b",
+    "poolfire_c_geometry_pcgls_v1_sha256": "e3e6da3408855f4934f6d64747d6511e2e78a0adc6d20500ea73f860ea0e66d6",
+    "poolfire_c_homogeneous_representation_audit_v5_1_sha256": "060c23899df18033381e508b972db5790b3438ef169f046311d3b3168b912de5",
+    "poolfire_c_homogeneous_representation_public_summary_v5_1_sha256": "00812c32547284595d6531c359b47aba6026a5c395147cf07360b1da6133deb8",
+    "poolfire_c_homogeneous_representation_independent_validation_v5_1_sha256": "fc1814c386676b945ed2808840d2afed768ebcfac44bb279d88eb10e8edfe6b5"
+  },
+  "evidence_design": {
+    "evidence_level": "ADAPTIVE_OPEN_P14_MECHANISM_DIAGNOSIS_ONLY",
+    "fit_trajectories": [
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03",
+      "p=14kw_size=05",
+      "p=22kw_size=03"
+    ],
+    "development_validation_trajectory": "p=14kw_size=01",
+    "stopping_validation_opened": false,
+    "untouched_test_opened": false,
+    "pair_truth_arrays_interpreted": false,
+    "additional_data_acquisition_authorized": false,
+    "neural_training_authorized": false,
+    "p14_may_not_be_reused_as_independent_evidence": true
+  },
+  "field_and_operator_contract": {
+    "field_shape_xyz": [
+      16,
+      16,
+      32
+    ],
+    "observation_component_count": 2072,
+    "frame_count_per_trajectory": 101,
+    "operator": "frozen_three_view_StackedLinearOperator",
+    "backprojection": "raw_A_transpose_y",
+    "backprojection_forward_calls_per_frame": 0,
+    "backprojection_adjoint_calls_per_frame": 1,
+    "backprojection_normalization": "none",
+    "teacher": "zero_initialized_CGLS_K4",
+    "teacher_generated_from_observation_only": true,
+    "teacher_uses_gauge_truth_array": false,
+    "teacher_forward_calls_per_frame": 4,
+    "teacher_adjoint_calls_per_frame": 4,
+    "teacher_cost_is_oracle_diagnostic_not_deployment_cost": true,
+    "denominator_floor": 1e-30
+  },
+  "stage_isolation": {
+    "stage_1_observation_only": "load_only_allowed_observations_build_raw_BP_moments_and_integer_shifts_then_atomically_freeze_feature_bundle",
+    "stage_1_may_open_or_hash_gauge_truth_array": false,
+    "stage_1_observation_ingress_recomputes_only_observations_payload_identity": true,
+    "stage_2_teacher_audit": "load_the_frozen_feature_bundle_then_generate_K4_teachers_from_the_same_observations",
+    "stage_2_may_recompute_or_modify_shifts": false,
+    "feature_bundle_identity_is_a_stage_2_parent": true,
+    "target_poisoning_must_not_change_any_shift": true
+  },
+  "statistical_contract": {
+    "scientific_unit": "complete_trajectory",
+    "each_trajectory_has_equal_decision_weight": true,
+    "frames_are_not_independent_replicates": true,
+    "p50": "numpy_median",
+    "p90": "numpy_quantile_q0.9_method_higher",
+    "q10_to_q90_transport_span": "numpy_quantile_q0.1_and_q0.9_method_linear",
+    "worst": "maximum_over_all_frames_in_the_trajectory",
+    "pearson_constant_series_absolute_standard_deviation_threshold": 1e-12,
+    "constant_series_correlation_is_reported_as_null_not_zero": true,
+    "no_frame_exclusion_or_outlier_removal": true
+  },
+  "moment_contract": {
+    "coordinate_system": "voxel_index_xyz",
+    "coordinate_axes": [
+      "x_index_0_through_15",
+      "y_index_0_through_15",
+      "z_index_0_through_31"
+    ],
+    "weight": "field_squared",
+    "energy_formula": "sum(field_squared)",
+    "energy_floor": 1e-30,
+    "centroid_formula": "sum(field_squared_times_coordinate)/sum(field_squared)",
+    "covariance_formula": "sum(field_squared_times_outer(coordinate_minus_centroid))/sum(field_squared)",
+    "nonfinite_or_floor_hit_fails_closed": true,
+    "covariance_is_diagnostic_only": true,
+    "no_alternative_weight_or_coordinate_candidate": true
+  },
+  "canonical_alignment_contract": {
+    "canonical_center_source": "componentwise_numpy_median_of_the_five_per_trajectory_framewise_BP_centroid_medians",
+    "validation_may_not_update_canonical_center": true,
+    "shift_source": "canonical_center_minus_current_frame_backprojection_centroid",
+    "integer_rounding": "round_half_away_from_zero_using_sign_times_floor_abs_plus_0_5",
+    "axis_order": "xyz",
+    "shift_semantics": "output_index_equals_input_index_plus_integer_shift",
+    "boundary": "zero_fill",
+    "periodic_wrap": false,
+    "interpolation": "none",
+    "shift_clipping": "none",
+    "inverse_shift": "same_zero_fill_operator_with_negated_integer_shift",
+    "target_or_teacher_centroid_may_choose_online_shift": false
+  },
+  "t0_backprojection_proxy_gate": {
+    "trajectories": "all_five_fit_plus_p14_development_validation",
+    "unit_of_reporting": "complete_trajectory",
+    "pooled_frame_pass_is_sufficient": false,
+    "teacher_centroid_use": "post_hoc_proxy_audit_only",
+    "transport_existence": {
+      "target_centroid_global_q10_to_q90_span_minimum_voxels_on_at_least_one_axis": 2.0,
+      "target_oracle_integer_shift_nonzero_fraction_minimum": 0.2,
+      "both_conditions_required": true
+    },
+    "metrics": {
+      "centroid_l_infinity_error_voxels": [
+        "p50",
+        "p90_higher",
+        "worst"
+      ],
+      "centroid_euclidean_error_voxels": [
+        "p50",
+        "p90_higher",
+        "worst"
+      ],
+      "rounded_shift_l_infinity_error_voxels": [
+        "p50",
+        "p90_higher",
+        "worst"
+      ],
+      "rounded_shift_exact_match_fraction": true,
+      "rounded_shift_within_one_voxel_fraction": true,
+      "rounded_shift_greater_than_two_voxels_count": true,
+      "centroid_component_pearson_correlation": "report_only_with_constant_series_flag",
+      "covariance_relative_frobenius_error": "report_only"
+    },
+    "pass_requires_every_trajectory": {
+      "centroid_l_infinity_error_p50_maximum_voxels": 0.5,
+      "centroid_l_infinity_error_p90_higher_maximum_voxels": 1.0,
+      "centroid_l_infinity_error_worst_maximum_voxels": 2.0,
+      "rounded_shift_exact_match_fraction_minimum": 0.75,
+      "rounded_shift_within_one_voxel_fraction_minimum": 0.95,
+      "rounded_shift_greater_than_two_voxels_count_maximum": 0
+    },
+    "failure_action": "do_not_run_t1_and_stop_single_translation_alignment"
+  },
+  "t1_aligned_subspace_gate": {
+    "runs_only_if_t0_passes": true,
+    "fit_basis_uses_fit_trajectories_only": true,
+    "development_validation": "p=14kw_size=01_only",
+    "oracle_target_projection": true,
+    "observation_to_coefficient_learnability_tested": false,
+    "representations": [
+      "raw_origin",
+      "bp_integer_zero_fill_aligned_origin"
+    ],
+    "candidate_ranks_for_diagnostic_curve": [
+      256,
+      320,
+      384,
+      448,
+      504
+    ],
+    "primary_decision_rank": 256,
+    "rank_selection_from_p14": false,
+    "same_basis_vector_count_at_each_rank": true,
+    "same_basis_float64_bytes_at_each_rank": true,
+    "alignment_metadata_bytes_reported_separately": true,
+    "stable_rank_gate": {
+      "fit_only": true,
+      "machine_relative_tolerance": "max(matrix_rows,matrix_columns)*float64_epsilon",
+      "minimum_sigma_rank_over_sigma_1": 1e-8,
+      "minimum_sigma_rank_over_sigma_rank_plus_1": 1.001,
+      "last_available_singular_value_has_infinite_boundary_gap": true,
+      "candidate_rank_must_not_exceed_stable_rank": true
+    },
+    "raw_rank256_reproduction": {
+      "p90_higher": 0.19651585431077337,
+      "worst": 0.21712076403673367,
+      "absolute_tolerance": 1e-12,
+      "relative_tolerance": 1e-12
+    },
+    "primary_metrics": {
+      "relative_l2": "norm(reconstruction_in_original_coordinates_minus_K4_teacher)_2/max(norm(K4_teacher)_2,1e-30)",
+      "p90": "numpy_quantile_q0.9_method_higher",
+      "material_harm": "aligned_minus_raw_greater_than_max_0_005_or_0_05_times_raw",
+      "severe_harm": "aligned_minus_raw_greater_than_max_0_01_or_0_10_times_raw"
+    },
+    "cropped_energy": {
+      "backprojection_forward_shift_loss_fraction": "1_minus_shifted_BP_energy_over_original_BP_energy",
+      "teacher_forward_shift_loss_fraction": "1_minus_shifted_teacher_energy_over_original_teacher_energy",
+      "reconstruction_inverse_shift_loss_fraction": "1_minus_inverse_shifted_reconstruction_energy_over_aligned_reconstruction_energy",
+      "negative_values_from_roundoff_clipped_to_zero_only": true
+    },
+    "pass_requires_all": {
+      "aligned_rank256_is_numerically_stable": true,
+      "minimum_relative_p50_reduction_vs_raw_rank256": 0.15,
+      "minimum_relative_p90_reduction_vs_raw_rank256": 0.2,
+      "minimum_relative_worst_reduction_vs_raw_rank256": 0.1,
+      "material_harm_fraction_maximum": 0.05,
+      "severe_harm_count_maximum": 0,
+      "backprojection_forward_shift_cropped_energy_p90_higher_maximum": 0.0025,
+      "backprojection_forward_shift_cropped_energy_worst_maximum": 0.01,
+      "teacher_forward_shift_cropped_energy_p90_higher_maximum": 0.0025,
+      "teacher_forward_shift_cropped_energy_worst_maximum": 0.01,
+      "reconstruction_inverse_shift_cropped_energy_p90_higher_maximum": 0.0025,
+      "reconstruction_inverse_shift_cropped_energy_worst_maximum": 0.01
+    },
+    "absolute_headroom_report_only": {
+      "p90_higher_maximum": 0.05,
+      "worst_maximum": 0.1,
+      "passing_is_still_not_a_deployable_model": true
+    },
+    "passing_action": "authorize_only_a_new_preregistered_BP_feature_conditional_basis_or_mixture_protocol",
+    "failure_action": "stop_single_translation_alignment_and_do_not_train_a_neural_model"
+  },
+  "selection_and_antip_hacking": {
+    "one_weight_definition": "field_squared",
+    "one_canonical_center_definition": "fit_BP_componentwise_median",
+    "one_rounding_rule": "half_away_from_zero",
+    "one_boundary_rule": "zero_fill",
+    "one_primary_rank": 256,
+    "no_axis_subset_selection": true,
+    "no_shift_scale_or_clip_sweep": true,
+    "no_post_result_threshold_change": true,
+    "no_candidate_rescue_using_p22_or_test": true,
+    "independent_validator_must_recompute_BP_K4_moments_shifts_projectors_and_decisions": true
+  },
+  "cost_and_claim_boundaries": {
+    "alignment_feature_cost_per_deployment": "one_full_A_transpose_call_for_BP_plus_CPU_moments_and_integer_shift",
+    "this_audit_measures_final_refinement_cost": false,
+    "deployable_observation_to_field_model": false,
+    "A_or_AT_call_reduction": false,
+    "wall_time_speedup": false,
+    "memory_reduction": false,
+    "confirmatory_generalization": false,
+    "algorithm_breakthrough": false,
+    "neural_model_trained": false,
+    "real_bost": false,
+    "paper_success": false
+  }
+}
