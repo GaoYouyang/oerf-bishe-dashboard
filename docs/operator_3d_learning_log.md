@@ -5205,3 +5205,815 @@ v9 给 9 个 `arm x seed`、每个 4 条学习率分支、每分支 260 个事�
 学习主页和三分钟汇报页也已经从“四选一”改成唯一 C 路线。桌面与 375 像素移动端都做了真实渲染检查，没有横向溢出或控制台错误；复制给师兄和蔡老师的两段文字也可直接使用。JMLR 的 fixed-point warm start、NOWS、super-fidelity 和逆声散射 warm start 被加入第 10 周核心阅读，用来提醒我们：**warm start 本身已经不是创新点，BOST 物理、几何条件化、可观测子空间、严格成本账本和独立迁移证据才可能形成贡献。**
 
 **突破监测：没有算法突破。真正新增的是师兄锁定 C、公开数据与私有模拟工具的数据链、可恢复下载、低内存检查器、唯一 C 学习路线和两周最小闭环。速度提升、优于 FNO/DeepONet、跨工况泛化、真实 OERF 与论文成功仍全部未证明。**
+
+## 196. 6.43 GB 压缩包其实会展开到 9.31 GB，所以先修数据桥
+
+师兄说“网上找点数据就行”，并不代表下载一个 NPZ 后直接 `np.load` 就完成了数据准备。PoolFire 首条 train trajectory 的公开压缩文件约 6.43 GB；从已经验证连续性的下载前缀读取 ZIP local header，再从 deflate 流起点解出 NPY header，得到真实数组：
+
+```text
+member = data.npy
+shape = (101, 9, 80, 80, 200)
+dtype = float64
+order = C
+numeric payload = 9,308,160,000 bytes
+```
+
+metadata 同时确认 101 个时间点、9 个变量和 11/2/2 条 train/val/test trajectory，`rho` 是 channel 5。旧 case YAML 仍写 21 个时间步，而数据目录里的另一份 101-step YAML 又给九个变量几乎相同的异常大统计量，所以两份都不能直接拿来归一化。
+
+本机虽然有 32 GiB 内存，但当时可用内存只有约 6 GiB。即使强行加载 9.31 GB 数组成功，类型转换、网络输入、物理算子和求解器工作区也会继续复制数据。因此新增流式 extractor：先核对完整 archive SHA，再按 `(time, channel)` 顺序解压；每次只保留一个三维场，只把 rho 写入 float32 memmap。默认 stride `(2,2,4)` 会产生 `(101,40,40,50)` 的 rho bundle，数值 payload 约 32.32 MB。
+
+这个 extractor 默认拒绝 test trajectory，检查 metadata split、shape、dtype、C-order 和唯一 `data.npy`，读到 member EOF 触发 ZIP CRC，再写出 rho、coords、times、manifest 和 checksums。目标目录只有所有步骤成功后才原子出现；SHA mismatch、shape mismatch 或旧输出存在都会停止。两套 Python 环境合计 13 项定向测试通过。
+
+后台 watcher 也已启动，但它只等下载状态变为 `complete`。下载脚本必须先同时通过精确文件大小和公开 SHA-256；失败状态不会绕过。rho bundle 的 manifest 会明确写“绝对 CFD 密度、reference/gauge 尚未应用、单位未确认”。因此下一步仍是核对 rho 数值与单位，向师兄确认 `rho/n/n-1/Δn`、比例常数和偏折单位，再做常数场/线性场 smoke 与 adjoint dot test。
+
+网页发布也完成了结构修复。当前 GitHub 方案不支持从私有仓库更新 Pages，因此私有源仓与公开静态发布仓已经拆开：公开仓只有经过 fail-closed 构建器过滤的单提交静态产物，没有源码历史、私有工具、PDF、VPN 内容或本机路径；原分享 URL 保持不变。公开页面与本地产物逐文件 SHA 一致。
+
+**突破监测：没有算法突破。新增的是首个真实 PoolFire 数组头、9.31 GB 内存风险的定量确认、13 项通过的流式 rho 数据桥，以及源码私有/网页公开的可持续发布结构。完整 archive SHA/CRC、rho 数值、BOS forward、重建、warm-start 提速、泛化和论文成功仍未证明。**
+
+## 197. 独立审计把数据桥退回重修：不让“能解压”冒充“物理数据已合格”
+
+上一版数据桥通过了 13 项测试，但两名独立审计者仍找到了会制造假证据的问题。最严重的是：脚本先按路径计算 SHA，随后又按同一路径重新打开；如果文件恰好在两步之间被替换，manifest 可能记录旧哈希、实际却读取新内容。metadata 也只记录了文件名，没有把具体版本的 SHA 绑定到输出。损坏 ZIP 在某些读取位置还可能抛出原始 traceback，把本机路径写进日志。
+
+这轮没有把审计意见记成“以后再修”。提取器改为只打开一次 trajectory，用同一个文件描述符完成前置 SHA、ZIP/NPY 读取和末尾 SHA 复验；metadata 必须给出预期 SHA，并从已哈希的同一份字节解析。ZIP CRC、float32 overflow、Fortran-order、路径替换、并发输出、metadata mismatch 和错误路径脱敏都新增了反例测试。输出目录采用独占创建，`READY.json` 最后提交；存在目录或没有 READY 都不得被后续任务读取。
+
+物理审计又指出一个更隐蔽的问题：BOS 依赖密度梯度，直接用 stride `(2,2,4)` 抽点会改变火焰前沿强度。如果合成观测和反演都沿用这个失真版本，仍可能得到自洽但没有现实意义的漂亮结果。因此原始桥改为保存完整 `(101,80,80,200)` float32 rho，数值 payload 约 517.12 MB；低分辨率副本以后必须由单独冻结的抗混叠或体积平均算子生成。提取时会检查全部 101 帧、全部 full-resolution rho，而不是只检查最终抽中的点。
+
+测试现在在两套 Python 环境均为 20/20。审计还确认 metadata 坐标三个轴均降序，数值跨度约 `1.2 x 1.2 x 3.0`，与 README 的 `3 x 3 x 3 m³` 描述冲突；两个 PoolFire test case 也只是功率与尺寸的组合留出，不能写成“未见功率 OOD”或“未见尺度 OOD”。这些都进入了下一道 G0 门：单位、轴方向、cell center/edge、参考态、光学参数和独立 forward 必须冻结后，才允许生成训练对。
+
+**突破监测：没有算法突破。新增的是一轮真正改变实现的红队审计、20 项通过的输入完整性与发布门、full-resolution rho 合同，以及对坐标冲突、组合留出和 inverse crime 的明确限制。完整 archive SHA/CRC、真实 rho 统计、可靠 BOST 观测、C0 训练、同精度提速、组内迁移和论文结论仍为 0。**
+
+## 198. 第一条公开 PoolFire 轨迹终于过了完整数据门
+
+下载最终到达公开声明的 `6,428,997,975 bytes`，独立复算 SHA-256 得到 `6080ddcc...81383c`，与公开值逐字一致。脚本随后用同一个已经哈希的文件描述符完成 ZIP/NPY 全量读取和末尾复验；`data.npy` 的 CRC、metadata SHA、派生数组 checksums 与 `READY.json` 全部通过。下载与抽取的后台任务随后停止，避免 keepalive 在成功后继续重复校验 6.43 GB 文件。
+
+full-resolution 输出是 `(101,80,80,200)` 的 float32 rho，共 `129,280,000` 个值。独立 mmap 扫描没有直接相信 manifest，而是重新检查全部体素：finite 与正值比例都是 100%，min/max/mean/std 分别为 `0.1889829934 / 1.1793500185 / 1.1608747931 / 0.0605809878`。每帧均值只在 `1.1604899379–1.1611630479` 之间变化；这说明背景占据了大多数体积，也提醒后续不能只报全场 relative-L2，否则“输出接近常数背景”可能得到虚假的好分数。
+
+时间轴是 30 到 32 的 101 个点，步长约 0.02，但单位仍未知。x/y 轴从 `0.5925` 降到 `-0.5925`，z 轴从 `2.9925` 降到 `0.0075`，三个 spacing 都约为 `-0.015`。它与 README 的 `3 x 3 x 3 m³` 仍有冲突，所以现在只能说“公开 CFD raw bridge 完成”，不能说“物理 BOST 数据完成”。下一步必须冻结坐标语义、rho/time 单位、参考态、Gladstone-Dale 条件与独立光学 forward。
+
+**突破监测：这是数据工程门的真实通过，不是算法突破。新增的可靠事实是完整 source SHA/CRC、129,280,000 个 rho 的全量有限性/正值、四文件 checksum 和 READY 均通过。BOST 观测、forward/adjoint、经典三维重建、C0 warm start、matched-accuracy 加速、组内迁移和论文结论仍为 0。**
+
+## 199. 守恒不等于看得清：红队把 `(2,2,4)` 从主方案撤了下来
+
+full-resolution rho 通过后，第一版低分辨率草稿采用 `(2,2,4)` 块平均，得到 `40×40×50`。它确实把均匀网格离散和保留到 `1.90×10^-10` 的相对误差，但独立审计指出：原网格三个方向的数值 spacing 都约为 `0.015`，这一选择会人为制造 `0.03×0.03×0.06` 的各向异性网格，额外抹平竖直火焰前缘。
+
+因此实现当场改为默认 `(2,2,2)`，得到 `101×40×40×100`、约 64.64 MB 的等距候选。三个降序坐标轴和 rho 沿相同维度一起反序，输出轴全部升序；帧 0/50/100 又从 full-resolution rho 独立重算，和候选逐点完全一致。脚本也不再把离散和等价写成“质量守恒”：rho 单位和 cell-center 语义没有权威证明，所以只能称 uniform-grid discrete integral。
+
+这仍不足以放行训练。新增代理审计分别在 full/coarse grid 上求二阶有限差分梯度，再沿 x/y/z 积分横向 rho 梯度，并把 full-resolution detector plane 限制到 coarse plane。它不是相机标定后的 BOST，只用来检查“守恒是否掩盖了光学相关结构损失”。三帧结果是：
+
+| 候选 | 梯度 RMS 保留 | 正交 LOS 代理最大 relative-L2 |
+|---|---:|---:|
+| `(2,2,2)` | `74.45%–75.44%` | `25.06%–26.57%` |
+| `(2,2,4)` | `69.22%–70.67%` | `30.43%–35.36%` |
+
+所以 `(2,2,2)` 只是当前最小主候选，`(2,2,4)` 降为审计对照，C0 继续关闭。派生器和代理审计器在两套 Python 环境各通过 10 项定向测试；结果 JSON、图和完整边界已进入 [PoolFire 低分辨率代理证据](poolfire_preprocessing_proxy_evidence_2026-07-23.md)。
+
+一级来源审计又锁定了 G0 的另一半：反应流不能默认 `n-1=K_air rho`。更完整的稀薄气体混合式是 `n-1=rho K_mix(lambda,Y)`，因此 `grad n = K_mix grad rho + rho grad K_mix`。PoolFire 四个组分通道的质量/摩尔/分密度语义和缺失物种闭合尚未确认，固定常数会删掉组分梯度项。当前判决于是拆成：
+
+- `G0-SMOKE = GO`：固定且明确标注的空气 K 可用于常数场、线性场、符号和步长调试；
+- `G0-PHYSICS = HOLD`：单位、组分、波长、reference、背景端点/像素语义、straight/curved 和独立反演 forward 未闭合前，不生成论文训练标签；
+- warm-start 模型优先输出 `Delta n_0`，而不是直接预测绝对 rho。
+
+完整公式、Tier-A/Tier-B forward 和可直接发给师兄的十二个接口问题见 [PoolFire G0 光学合同](poolfire_optical_contract_g0_2026-07-23.md)。
+
+**突破监测：没有算法突破。新增的是一次改变默认实现的红队否决、首个可复现等距低分辨率候选、首个梯度/LOS 代理负证据和 `G0-SMOKE GO / G0-PHYSICS HOLD` 光学合同。可靠 BOST 观测、经典重建、C0 warm start、同精度提速、跨轨迹泛化和论文结论仍为 0。**
+
+## 200. 第一层 forward/adjoint 终于能过，但它还碰不到 PoolFire
+
+这轮没有训练网络。先把最小问题缩到不能再缩：假设已经有一个节点上的三维 `Delta n` 场，光线沿 x、y 或 z 正方向直线穿过，程序能不能正确算出两个横向偏折角，并且给出真正对应的离散 adjoint？
+
+新算子把容易混淆的东西都写死了：
+
+- 数组顺序是 `[x,y,z]`；
+- 坐标和积分权重用 metre；
+- `Delta n` 无量纲，输出只叫 small-angle deflection，语义记作 rad；
+- LOS 用节点 trapezoid，横向梯度内部二阶中心、边界二阶单边；
+- adjoint 是普通 Euclidean 数组内积下的精确转置；
+- 不包含相机、像素、背景距离、曲光线、Gladstone-Dale、渲染或光流。
+
+红队特别提醒：错误的 A 和同样错误的 A^T 也能一起通过 dot test。所以验收没有只做一次随机内积，而是同时做了：
+
+1. 非零常数场，检查 gauge；
+2. 三个 LOS 轴的线性场，独立解析符号和尺度；
+3. metre 改写成 millimetre 后的一致重参数化；
+4. 三轴共 60 个 dot cases，其中每轴包含 8 个角点脉冲；
+5. JVP/VJP 从 `10^-2` 到 `10^-7` 的中心差分步长扫描；
+6. 连续正弦解析场在 9/17/33/65 网格上的收敛。
+
+14 项机器门全部通过。最坏三轴线性尺度 relative-L2 是 `2.39e-15`；60 个 dot cases 最大归一化差是 `2.03e-17`；JVP/VJP 最佳差分别为 `1.19e-14` 和 `2.74e-15`；网格收敛阶是 `2.04 / 2.11 / 2.08`。这说明声明的节点离散在 float64 下按预期工作。
+
+但这一轮同时发现了新的接口阻塞：PoolFire 的 rho 是 cell-centred block mean，本算子接收 node field。两者不能靠 reshape 或默认插值直接连接。下一步要把 cell-centre conservative LOS 与显式 cell-to-node 两条路线并排实现，在独立解析场上比较边界、偏折和 adjoint，再进入任意相机与 curved/straight 门。
+
+完整结果、图和可复现命令见 [Tier-A 直线 forward/adjoint 证据](poolfire_g0_tier_a_straight_evidence_2026-07-23.md)。
+
+**突破监测：没有算法突破。新增的是首个带单位、边界、三轴解析、60 个 adjoint cases 和二阶收敛的 `PASS_TIER_A_STRAIGHT_CODE_SMOKE_ONLY`。G0-PHYSICS 仍为 HOLD，training_authorized=false；PoolFire 光学模型、真实 BOST、经典三维重建、C0 warm start、同精度提速、泛化和论文结论仍为 0。**
+
+## 201. 一个“很自然”的 cell-to-node 接法被解析证据否掉了
+
+上一节留下的接口问题是：PoolFire 是 cell-centred，Tier-A 是 node-field。最顺手的做法看起来是先把 cells 平均/外推到 nodes，调用已经通过的 node operator，再把 detector nodes 平均回 cells。这轮把它和原生 cell-centred、projection-first interior 两条路线一起写成了显式线性算子，并给每一级都配了精确 Euclidean transpose。
+
+三条路线都能通过线性、单位、三轴尺度和 adjoint dot test。但把 cell-to-node composite matrix 真正展开后，问题出现了：LOS 等效权重变成
+
+```text
+[1.25, 0.75, 1, ..., 1, 0.75, 1.25] * h
+```
+
+总和仍是 `Nh`，所以只检查积分长度完全看不出来。横向非导数方向又暗中加入 `[0.25,0.50,0.25]` 低通，第一格导数退化成 `(f1-f0)/h`。这说明错误或不合适的 forward 与它自己的精确 transpose 可以一起通过点积测试。
+
+为了不依赖同源实现，新增了点采样与精确 cell-average 两套 manufactured solutions。平滑 cell-average 场从 `9^3` 收敛到 `65^3`：native 最低阶 `1.947`、projection-first interior 最低阶 `1.972`，cell-to-node 只有 `1.734`；最细网格上 cell-to-node relative-L2 为 `0.006130`，是 native `0.001673` 的 `3.664` 倍。
+
+火焰前缘代理用 `tanh` 控制厚度。在 `33^3` 网格、10%-90% 厚度约 `8.79 cells` 的 resolved case，native / interior 误差约为 `1.445%`，cell-to-node 是 `3.817%`，高 `2.642` 倍。前缘只有约 `1.10 cells` 厚时，native 误差仍为 `35.05%`，所以被强制标为 unresolved，不得拿来证明网络“恢复了真实细节”。
+
+当前处置因此很明确：
+
+- native cell-centred 进入独立 forward 验证，但继续审计完整边界；
+- cell-to-node 退出 truth forward，只保留为离散敏感性反例；
+- projection-first interior 暂作第一版 Zero/BP/CGLS/PCGLS 基线候选，统一裁 detector 四周各一格，不虚构边界外场值。
+
+tiny `4^3` 显式矩阵也再次提醒：native 单视角 rank `15`、nullity `49`；interior rank `8`、nullity `56`。精确 adjoint 不等于可辨识，更不等于三维重建成功。
+
+完整公式、两种场语义、前缘分辨率扫描、SVD 与复现命令见 [PoolFire cell-centred 接口判别证据](poolfire_g0_cell_center_evidence_2026-07-23.md)。
+
+**突破监测：这是关键数值发现，不是算法突破。新增的是一条被机器证据否掉的 cell-to-node truth 路线，以及更可信的 interior 基线候选；PoolFire 单位、`rho -> Delta n`、相机、独立 forward、经典重建、C0 warm start、同精度提速、泛化和论文结论仍为 0。**
+
+## 202. 参考正演终于不再偷偷等于 inverse，但还不是 PoolFire 光学真值
+
+上一节确定 projection-first interior 可以做第一版 inverse 基线候选，但如果拿它自己生成观测，再用它自己重建，网络和经典 solver 都会面对一个过分干净的封闭世界。这种情况下即使 warm start 明显更快，也可能只是学会了同一个离散矩阵，而不是学到真实 BOST 问题。
+
+这轮新增了一条故意不提供 `adjoint()` 的参考正演。它接受任意 orthographic 或 pinhole 相机，用单位射线和每条射线自己的正交 `u/v/t` 基，在 metre 坐标中做 forward half-ray AABB clipping，然后直接对连续 `grad(Delta n)` 做复合 Gauss-Legendre 积分。输出只叫两分量 small-angle deflection，同时保存 hit mask、`s_in/s_out`、路径长度、分段数和梯度调用账。像素倍率、背景板、曲线光线、组分折射率和光流都没有偷偷塞进去。
+
+独立红队要求不能只测几条直线。现在 63 条斜视角线性场、289 条二次场和 289 条余弦场都与各自闭式答案对上，relative-L2 分别为 `1.54e-16 / 2.08e-16 / 1.64e-15`。斜视角 Gaussian 的二点 Gauss-Legendre 在渐近区观测阶为 `3.83 / 3.94`，最细步长相对十二点参考误差为 `2.60e-11`。把全部坐标和相机放大 `7.3` 倍、同时正确缩放梯度后，偏折变化只有 `5.47e-16`，说明射线参数确实是物理弧长，不是随意的 near/far 数字。
+
+更关键的是，两条路线在同一个连续解析场上做了显式非同构比较：
+
+| 网格 | inverse vs independent reference |
+|---:|---:|
+| `9^3` | `7.927%` |
+| `17^3` | `2.261%` |
+| `33^3` | `0.603%` |
+| `65^3` | `0.156%` |
+
+误差约二阶下降，说明它们在有限网格上不是同一个数值映射，但会收敛到同一个连续问题。参考模块的 AST 依赖审计也确认，对 node/cell inverse 模块及其导数矩阵的 import 数是 `0`。这比“给同一矩阵加点 Gaussian noise”更接近真正的 inverse-crime 控制。
+
+不过当前 continuous gradient 仍来自解析 manufactured field，不是 PoolFire，也不是曲线光线生成器。`PASS_ARBITRARY_RAY_REFERENCE_CODE_GATE_ONLY` 只允许我们继续接师兄确认后的相机与 CFD 语义；`G0_PHYSICS_HOLD` 和 `training_authorized=false` 没有改变。下一步可以搭 Zero/BP/CGLS/PCGLS/Direct Operator 的统一接口和合成解析测试，但正式 C0 训练仍要等 `rho/T/Yk -> Delta n`、domain edges、相机和 solver 输出语义闭合。
+
+完整公式、图、解析 oracle 和复现命令见 [任意视角参考正演证据](poolfire_g0_reference_forward_evidence_2026-07-23.md)。
+
+**突破监测：没有算法突破。新增的是一条与 inverse primitive 零依赖、能处理任意直线视角并通过 641 条解析斜射线检查的参考正演代码门，以及有限网格非同构、连续极限一致的证据。PoolFire 光学真值、曲线光线、经典三维重建、C0 warm start、同精度提速、泛化和论文结论仍为 0。**
+
+## 203. C 路线终于有了不会藏成本的统一比赛场
+
+这一轮没有切换方向，只完成师兄确认的 C 路线底座：让 observation-only
+Direct/Operator 初值进入同一个 CGLS/PCGLS refinement，再问它能不能以更少的完整
+`A/A^T` 调用达到 Zero 强基线的最终精度。
+
+最初版本很快通过了 7 个单元测试，但只读红队找到了几个会把论文结果做假的漏洞：
+裸 `cached_projection` 可以伪造零残差；任意 callable 不能被直接称作固定 SPD
+预条件器；外部已经算好的 field 可能隐藏 truth 或算子调用；默认去均值也会在
+`A=I` 这类均值可观测算子上制造零误差。我们没有带着这些漏洞跑“优势曲线”，而是
+逐项修掉：
+
+- projection cache 的 token 只保留 opaque ID；field SHA-256 与 projection 留在当前
+  operator 私有注册表，合法 token 后续被加属性也不能改变缓存内容；scale 和求解器
+  都执行 one-shot consume，批量运行后注册表必须归零；
+- PCGLS 只接受精确 `FixedDiagonalSPD` 类型，并在求解器内直接乘不可写 diagonal，
+  不允许子类覆盖成时变 callable；
+- Direct initializer 由审计层只传只读 observation 并计时，同时诚实标成
+  `CONTROLLED_INPUT_SELF_ATTESTED`，不冒充沙箱证明；
+- evaluator 默认不做 gauge；去均值必须带与同一 audited inverse 绑定、额外花费
+  `2 A` 的 opaque 数值证书，伪造或换 wrapper 都拒绝；
+- independent reference 由实现类型、模块、实例、无 adjoint 和不共享离散矩阵五类
+  机器检查共同判定，不接受结果脚本手写布尔值；
+- `1...24` 每一步都记录累计 `A/A^T`、推理和墙钟，稀疏点只用于画图，不用于判定
+  首次达标。
+
+最终定向测试为 `14 passed`。三视角 stacked inverse 的 12 个 dot cases 最大相对差
+为 `5.60e-15`，常数场输出范数 `4.83e-15`，显式 identity-PCGLS 和 CGLS 逐
+checkpoint 完全一致。
+
+制造数据没有复用 inverse：连续 Gaussian 梯度经独立 Gauss-Legendre ray integral
+生成观测，`9 x 9 x 11` 粗网格 projection-first operator 负责反演。reference 和
+inverse 对测试 truth 的投影本来就差 `15.09% / 19.37%`，因此这次明确包含 model
+mismatch。
+
+toy ridge Direct 在同族留出系数 case 上 direct-only field error 约 `8.39e-10`，
+但一次 coarse CGLS correction 就变成 `9.69e-2`；在留出新模式 case 上，它又会从
+`0.2179` 改善到约 `0.1901`。同一个 residual correction 有时伤害、有时帮助，说明
+后续真正值得证伪的不是“网络初值能不能好看”，而是能否仅根据部署可见证据限制
+correction budget，并在 forward mismatch 下 fail closed。
+
+完整账本、图和复现命令见
+[C 路线统一强基线与成本合同证据](poolfire_c_baseline_contract_evidence_2026-07-23.md)。
+
+**突破监测：没有算法突破。新增的是首个 truth-blind、逐 checkpoint 计费、能拒绝伪造 cache/时变预条件器的 C 路线统一求解底座，以及一条 model-mismatch 会改变 refinement 正负作用的可证伪线索。真实 PoolFire/BOST、神经算子、跨轨迹/工况/几何泛化、GPU 端到端提速、峰值内存和论文结论仍为 0。**
+
+## 204. 第一条真实 PoolFire CFD 轨迹进入了 C 路线，但只能叫形态代理
+
+这轮不再用 Gaussian 场出题。经过完整 SHA-256 复核的公开 PoolFire
+`p=14kw_size=03` 轨迹实际进入了统一 warm-start/CGLS 账本。高分辨率
+`32 x 32 x 64` `rho` ROI 通过连续三线性梯度与 composite Gauss-Legendre
+生成三视角数值观测；inverse 只使用严格 `2 x 2 x 2` block mean 得到的
+`16 x 16 x 32` 场和另一个 projection-first 离散模块。
+
+runner 现在还把 trajectory、source/metadata SHA、四个 payload SHA、shape、dtype
+和时间点数量共同锁成 `realm-poolfire-p14kw-size03-rho-v1`。这不是只核对“某个
+checksums 文件存在”；任何身份字段变化都会在 pair generation 前拒绝。
+
+34 个使用帧被按时间顺序拆成四段：25 帧 train、2 帧 ridge selection、2 帧
+refinement-depth validation、5 帧 later-time evaluation。相邻角色之间至少空五帧，
+没有随机抽帧。最终 ridge 只用前两段共 27 帧拟合；固定 refinement depth 只在第三段
+选择，得到 `K=2`。
+
+把 `K=2` 应用到后期五帧时，平均 field relative-L2 为：
+
+- Zero：`0.60835`，成本 `2A + 2A^T`；
+- normalized BP：`0.51445`，成本 `3A + 3A^T`；
+- ridge Direct warm：`0.41486`，成本 `3A + 2A^T`。
+
+Direct warm 在五帧都优于 Zero 和 BP。更重要的是，它继续迭代到 `K=24` 后平均误差
+反而恶化到 `0.48620`，虽然 data residual 继续下降。这把 toy 门里的线索推进到了
+真实 CFD 形态：强 forward mismatch 下，coarse solver 会先修正初值，再逐渐把它拉向
+错误的 coarse data-consistent 解。
+
+这仍然不能写成算法胜利。full-resolution reference 与 coarse inverse 的平均投影失配
+高达 `35.011%`，粗网格只保留 `73.911%` 的 gradient RMS；`rho` 单位、cell 语义、
+`rho -> Delta n`、真实相机和 pixel displacement 都没有闭合。所有帧还来自同一条
+trajectory，而且五个 later-time frames 已在 v0 开发中被打开，只能算 exploratory，
+不能冒充 fresh confirmatory test。
+
+还有一个之前容易说过头的边界：solver callable 的参数中没有 truth，post-hoc scorer
+也和求解器分开；但 Direct initializer 仍在同一个 Python 进程中执行。因此当前只能标
+`CONTROLLED_INPUT_SELF_ATTESTED` 和
+`independent_noninterference_proven=false`。进入真正 fresh test 前，必须先把冻结
+initializer 放进只读模型参数与 observation 的独立进程。
+
+正式 runner、独立 validator 和相关测试分别得到
+`PASS_REAL_CFD_MORPHOLOGY_PROXY_CONTRACT_ONLY`、
+`PASS_INDEPENDENT_ARTIFACT_VALIDATION` 和 `39 passed`。完整数据合同、逐帧表、
+版本冲突与复现命令见
+[PoolFire 真实 CFD 形态代理与 Warm-Start 第一闭环](poolfire_cfd_morphology_proxy_evidence_2026-07-23.md)。
+
+**突破监测：没有算法突破。新增的是首条真实公开 CFD 轨迹上的四段隔离闭环、固定 `K=2` 的明确数值 headroom，以及“少量 correction 有益、过度 correction 有害”的主线机制证据。下一步先隔离 initializer，再用新增 trajectory 做 fresh confirmatory，并把研究重点放在 calibration-aware correction budget，而不是立刻把 ridge 换成更大的网络。**
+
+## 205. initializer 已经搬进独立进程，但小算子上没有 wall-time 加速
+
+上一节最后一个软件阻塞是 Direct initializer 与 truth、inverse 和 evaluator 仍共享
+Python 进程。这轮没有换模型、没有重新调后期五帧，只把 evaluation inference 改成
+固定数据协议的 fresh-exec worker，并把完整开销写进原来的求解账本。
+
+父进程只把冻结 dual-ridge 的四组数组、metadata 和一帧 observation 编码到 stdin。
+worker 用 `python -I -B` 启动，request schema 不接受 truth、inverse、projection
+cache 或 Python callable。macOS Seatbelt 每次都实际探测并拒绝声明 CFD bundle 的
+读取、canary 读写和网络访问；除 stdin/stdout/stderr 外没有继承文件描述符。worker
+源码 SHA 也绑定到冻结常量，executor 创建后再替换文件会 fail closed。
+
+第一轮红队指出五个会夸大结果的问题：输入 noninterference 证明过头、请求与回包
+序列化漏计时、RSS 在 response 生成前采样、worker hash 循环自证、重复 ZIP member
+与无限 stdout 未 fail closed。修复后，计时从 request 编码前开始，到 stdout 有界
+读取、NPZ 解码、dtype/shape/model/output SHA 和 receipt 全部核验后结束；child
+退出时由父进程用 `wait4` 读取 max RSS。第二轮红队只剩 worker hash 的 TOCTOU，
+改为运行时也传固定 hash 后关闭。对应负向测试会拒绝 worker 替换、伪造模型、
+重复 member、超限 stdout、伪装 whole-pipeline RSS 和虚假 truth noninterference。
+
+正式 v1 共运行 7 个 fresh worker：2 个 refinement-validation、5 个 evaluation。
+固定 `K=2` 的数值与 v0 一致：
+
+- Zero：`0.60835`，`2A + 2A^T`；
+- normalized BP：`0.51445`，`3A + 3A^T`；
+- ridge Direct：`0.41486`，`3A + 2A^T`。
+
+冻结 target 为 `0.64945` 时，Direct 首次达标平均支付 3 次完整 `A/A^T`，Zero 为
+4 次，BP 为 6 次。它是调用数 headroom，但 target 较宽松，不能代替新增 trajectory
+的 matched-accuracy 主表。
+
+成本上的负结果同样重要。每次 request 约 `2.32 MB`，fresh-exec 平均约 `75 ms`，
+child max RSS 最坏约 `44.2 MiB`。当前 `16 x 16 x 32` CPU inverse 极便宜，Zero
+两步平均不到 `1 ms`，所以 Direct 的端到端 wall time 明显更慢。只有真实 BOST
+forward/JVP/VJP 足够昂贵时，少一次或更多物理调用才可能赚回推理成本；现在不能写
+速度成功。
+
+还有两条边界不能抹掉。父进程在 post-hoc scorer 打开 truth 前构造 request，但没有
+独立外部证明 observation 本身完全不依赖 truth，所以
+`evaluation_truth_noninterference_proven=false`。Seatbelt 只拒绝声明的 bundle 根，
+不是整个文件系统的无数据副本证明，所以
+`filesystem_wide_noninterference_proven=false`。child RSS 也不是训练、pair
+generation、solver 与 worker 合并后的全流程峰值。
+
+正式状态为
+`PASS_REAL_CFD_MORPHOLOGY_PROXY_WITH_ISOLATED_INITIALIZER_CONTRACT_ONLY`，
+独立 validator 为 `PASS_INDEPENDENT_ISOLATED_ARTIFACT_VALIDATION`。完整协议、成本表、
+图和复现命令见
+[PoolFire C 路线独立进程 Warm-Start 成本门](poolfire_c_isolated_initializer_evidence_2026-07-23.md)。
+
+**突破监测：没有算法突破。新增的是主线结果第一次经过 data-only fresh-exec 推理、完整序列化计时、child RSS 与负向变异审计；同时得到一个必须公开的负结果：当前小代理算子上调用数有 headroom，但 wall time 没有加速。下一步不再扩建隔离基础设施，只进入新增 PoolFire trajectory 的预注册 fresh 比较。**
+
+## 206. 不再随机切帧：官方 15 条 PoolFire 轨迹已经固定角色
+
+师兄确认的 C 路线没有变化：让算子学习给三维反演一个更好的初值，并在最终精度
+相同的条件下降低完整 `A/A^T` 调用和端到端成本。这轮没有去碰旧算法分支，也没有
+急着训练 FNO；先把决定结果是否可信的数据边界做实。
+
+官方 PoolFire 一共有 15 条完整轨迹。现在机器协议固定为 11 train、2 validation、
+2 untouched test。`p=14kw_size=01` 只负责模型/正则选择，
+`p=22kw_size=01` 只负责 correction budget 与停止规则，两条 test
+`p=22kw_size=05`、`p=58kw_size=01` 在模型、阈值、种子、指标和报告模板全部冻结前
+不解压。此前已经看过的 `p=14kw_size=03` 后期五帧永久保留为 development，不能
+以后换个名字当 fresh test。
+
+真实 `data.npz` 首次跑验证时抓到一个摘要级错误：官方变量标签不是简写 `rho`、
+`T`，而是 `rho.npy`、`T.npy`。修正后，元数据 SHA、11/2/2 组成员、九个变量顺序、
+`80 x 80 x 200` 网格和 101 个时间标签全部通过。这说明“先让机器核对原始对象”
+比把人工笔记当真更可靠。
+
+新 acquisition 工具会断点续传 6.4–6.7 GB 轨迹，先检查精确字节数与 SHA，再流式
+提取 full-resolution `rho`；READY 完成后默认删除大原始缓存。test 必须显式
+`--seal-test-only`，文件名写成 `*.sealed.npz`，并且工具无条件拒绝 test
+`--extract`。这只是工具级 fail closed，不冒充操作系统级不可读保险箱。
+
+第一条新增训练轨迹 `p=33kw_size=01` 已进入独立下载/提取队列。第一版直接使用
+单个 `curl --retry` 进程，真实网络发生 HTTP/2 CANCEL 和 SSL 中断后，curl 内部
+retry 会把已增长的 `.part` 从头改写，约 1 GB 进度因此没有保住。这个实现已停用，
+不能把“命令还活着”误报成稳定续传。
+
+修复版改为 Python 外层重试：每次重新读取当前 `.part` 长度，再启动一个新的
+`curl --http1.1 --continue-at -`；前后大小必须单调不减，连续五次无字节进展或文件
+缩小立即 fail closed。保留下来的 partial 会从现有长度继续。在 receipt 与 READY
+出现前，它仍只能标为 acquisition in progress，不能算轨迹接入成功。
+
+完整表、声明边界和复现命令见
+[PoolFire 多轨迹协议与首条新增数据接入](poolfire_trajectory_protocol_evidence_2026-07-23.md)。
+协议、acquisition 和 extractor 的定向测试当前为 `29 passed`。即使 curl
+返回零退出码，partial 没有达到协议冻结字节数也不能提前视为下载完成。
+
+**突破监测：没有算法突破。新增的是后续所有模型都必须遵守的完整 trajectory 级 11/2/2 协议、测试集锁门和可续传数据桥。下一道科学门是新增轨迹上的 Zero/BP/CGLS/PCGLS/dual-ridge classical control；只有未参与拟合的完整轨迹仍显示 headroom，才启动最小神经算子。**
+
+## 207. 第一条新增完整轨迹真的接入了，不再停在“下载中”
+
+`p=33kw_size=01` 现已完成，而不是继续卡在页面上的 acquisition in progress。
+原始公开 archive 为 `6,522,109,719 bytes`；外层 HTTP/1.1 续传完成后，工具先核对
+官方字节数和 SHA，再流式检查 ZIP/NPY 并提取 full-resolution `rho`。最终 bundle
+是 `(101,80,80,200)` float32，101 个时间标签从 30 到 32；所有 `rho` 都有限且
+严格为正。
+
+完成后又做了一次独立复核：receipt 的协议/source 身份、manifest、READY 绑定和
+`rho.npy`、coords、times、manifest 四个 checksum 全部一致。原始 6.52 GB 文件和
+partial 已删除，只保留约 517 MB 的 `rho` bundle、receipt 与下载日志。正式状态是
+`PASS_FIRST_ADDITIONAL_TRAIN_TRAJECTORY_READY`。
+
+为什么页面看起来很久没动：一条 trajectory 不只是下载 6.5 GB，还要顺序读取原始
+九通道大数组、验证完整流、抽出 `rho`、写 checksum，公开页面又没有在后台每秒同步
+本机私有队列。此前页面停在“下载中”是状态更新滞后，不是算法一直原地训练。
+
+现在串行进入第二条 train `p=45kw_size=05`，后面依次是
+`p=58kw_size=03` 和两条 validation。只有至少三条新增 train 与两条 validation
+完成后，才冻结统一 observation generator 并开始逐 trajectory 的
+Zero/BP/CGLS/PCGLS/dual-ridge 表；提前训练 FNO 只会把数据偶然性学进去。
+
+**突破监测：没有算法突破。真实增量是第一条额外完整训练轨迹通过身份、内容、数组和 READY 全链验证。下一步是完成其余 train/validation 接入，而不是重复单轨迹数值。**
+
+## 208. 第二条新增训练轨迹完成，第三条开始
+
+`p=45kw_size=05` 在下载到约 2.52 GB 时曾连续五次遇到 Hugging Face SSL
+连接失败。下载器按约定停止并保留 partial；恢复后从同一字节继续，没有把已下载
+内容重写。最终官方 `6,634,789,365 bytes` 对象通过字节数与 SHA，随后完成
+ZIP/NPY 流式检查和 full-resolution `rho` 提取。
+
+独立复核再次检查协议/source 身份、manifest、READY、四文件 checksum、坐标、
+时间和数组内容。得到 `(101,80,80,200)` float32 `rho`，全部有限且严格为正；
+原始 archive 与 partial 已删除，`test_truth_opened=false`。正式状态提升为
+`PASS_SECOND_ADDITIONAL_TRAIN_TRAJECTORY_READY`。
+
+第三条 train `p=58kw_size=03` 已按同一串行流程启动。三条 train 完成后仍不会
+立即宣布“可以训练论文模型”：还需要两条职责分开的 validation，才能冻结模型选择、
+correction budget 与停止规则，避免在训练轨迹上边看结果边改规则。
+
+**突破监测：没有算法突破。真实进展是第二条跨工况训练轨迹完成全链数据接入，断点恢复也经受了一次真实 SSL 故障；下一门仍是第三条 train 与两条 validation。**
+
+## 209. 三条训练 pilot 闭合，第一条 validation 启动
+
+`p=58kw_size=03` 下载到 `6,428,472,735 / 6,611,053,939 bytes` 后连续五次
+无法连接 Hugging Face。下载器按约定 fail closed，partial 没有缩小。恢复任务
+从同一字节继续，只补齐剩余约 183 MB，没有重下前面的 6 GB。
+
+完成后重新做了独立 14 项复核：协议 hash、官方 source 字节数/SHA、manifest
+hash、checksums 文件 hash、四文件 checksum、`rho` shape/dtype、有限性、
+严格正值、坐标 shape、101 个时间点、READY、原始缓存删除和
+`test_truth_opened=false` 全部通过。`rho` 为 `(101,80,80,200)` float32，
+范围约 `0.19206` 到 `1.17954`。正式状态为
+`PASS_THIRD_ADDITIONAL_TRAIN_TRAJECTORY_READY`。
+
+这意味着三条新增 train pilot 的数据门闭合，但还不能训练并挑选论文模型。
+第一条 validation `p=14kw_size=01` 已启动，只允许决定模型与正则；第二条
+`p=22kw_size=01` 只允许冻结 correction budget 和停止规则。两条职责不能
+混用，也不能把 untouched test 提前拿来救结果。
+
+**突破监测：没有算法突破。真实增量是三条 train pilot 全部通过独立数据链复核；下一有效门是两条 validation READY 后冻结跨轨迹实验合同。**
+
+## 210. 第一条 validation READY，第二条启动
+
+模型选择 validation `p=14kw_size=01` 已完成下载、官方 source 校验、
+full-resolution `rho` 提取和原始缓存清理。随后重新计算四文件 checksum，并做
+独立 14 项复核：协议/source/manifest/READY 绑定、shape、dtype、有限性、
+严格正值、坐标、时间轴、缓存删除和 test 未打开全部通过。
+
+`rho` 为 `(101,80,80,200)` float32，范围约 `0.18310` 到 `1.18569`。
+正式状态为 `PASS_FIRST_VALIDATION_TRAJECTORY_READY`。这条轨迹只允许
+模型与正则选择，不能用来决定 correction budget 或停止规则。
+
+第二条 validation `p=22kw_size=01` 已启动，并且 partial 正常增长。它的唯一
+职责是冻结 correction budget 与停止规则。两条 validation 都 READY 后，下一步
+不是立刻看 test，而是先把抽帧、reference、normalization、proxy observation、
+经典基线、matched-accuracy tolerance、指标和成本账冻结成跨轨迹实验合同。
+
+**突破监测：没有算法突破。真实增量是第一条职责受限的 validation 完成独立复核；下一门是第二条 validation 与跨轨迹实验合同。**
+
+## 211. 第二条 validation READY，跨轨迹规则在看结果前锁死
+
+停止规则 validation `p=22kw_size=01` 已完成公开 source 下载、SHA/字节数、
+ZIP/NPY 流式检查、full-resolution `rho` 提取和原始缓存清理。四文件 checksum
+和独立 14 项复核全部通过；`rho` 为 `(101,80,80,200)` float32，范围约
+`0.18372` 到 `1.19238`，所有值有限且严格为正，test 仍未打开。
+
+现在五条开放数据是 `3 / 3 train pilot + 2 / 2 validation READY`。这仍只是
+数据完整性，不是重建或算法结果。为避免进入“先看曲线再改规则”的循环，本轮没有
+直接开 FNO，也没有生成跨轨迹结果，而是先冻结
+`poolfire_c_cross_trajectory_experiment_v1.json`。
+
+合同把三条 fit pilot、p14 模型选择、p22 固定 correction budget 和两条 untouched
+test 分开。它使用全部 101 帧但明确 frame 不是独立样本；固定 ROI、32×32×64
+独立 reference、16×16×32 inverse、gauge 和 exact block mean；normalization 与
+最终 ridge 权重只能使用 fit trajectories，validation refit 被禁止。经典门先比较
+Zero、normalized BP、真正固定几何对角 PCGLS 和 dual ridge。
+
+同精度不再只看一个 field 数字，而要同时通过 field、gradient 和 observation
+residual；再报告逐轨迹 p50/p90/worst、harm、完整 A/A^T、端到端 wall 和 fresh
+process whole-arm peak RSS。两条 test 必须由一个联合冻结包同时授权，不能看完
+第一条后改模型再开第二条。
+
+合同 validator 和 13 个 fail-closed 测试均通过，状态为
+`PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT`。独立审计还指出旧
+`fit_calibrated_dual_ridge()` 会把 calibration 拼回最终拟合，因此正式 runner
+必须另写 train-only final fit，不能直接复用旧单轨迹流程。
+
+**突破监测：没有算法突破。真实增量是等待阶段结束、五条开放轨迹完整、跨轨迹评分与防泄漏规则事前冻结。下一门是统一 pair generator 和四个 classical arms；只有 ridge 在两条 validation 的职责链上仍有稳定 headroom，才准训练最小 3D U-Net/FNO。**
+
+## 212. 正式 runner 的两个隐蔽泄漏点先被拆掉
+
+代码审计发现，旧 `VerifiedPoolFireRhoBundle` 把 manifest split 写死成
+`train`，所以它会拒绝合法 validation；旧 `fit_calibrated_dual_ridge()`
+选完 lambda 后又用 `train + calibration` 重拟合，若直接套到 p14，就会让
+validation 进入最终权重。
+
+loader 现在新增显式 `expected_trajectory` 与 `expected_split` 绑定，只接受
+train/val；即使调用者主动请求 `expected_split=test` 也会 fail closed。旧 p14s03
+流程仍默认 train，原有结果合同不变。
+
+跨轨迹 ridge 另写为 `select_train_only_standardized_dual_ridge()`：observation
+featurewise mean/std、field mean/global RMS 和最终 dual weights 全部只来自 fit
+samples；p14 只从七个冻结 multiplier 中选择 lambda。选择顺序是 p90
+(`higher` quantile)、worst、median，完全平手时取更强正则。最终
+`fit_sample_count` 不会随 validation 样本数增加。
+
+validation loader、投毒/身份错配/test 拒绝、train-only normalization、确定性
+hash、平手规则和合同 validator 合计 `28 passed`。这只证明正式 runner 的两个
+基础接口不再沿用已知泄漏路径，尚未生成任何跨轨迹 observation、重建或成本结果。
+
+**突破监测：没有算法突破。下一门仍是流式 pair generator、geometry-only PCGLS 与四臂 classical 表；不能把 28 个代码测试写成 ridge 已经更准或更快。**
+
+## 213. 五条轨迹 505 帧统一出题完成，发现工况依赖的模型失配
+
+正式 pair generator 只接受合同注册的三条 fit 和两条 validation，CLI 没有
+`--test` 或 `--allow-test`。每条输出 101 个三视角 observation、gauge-centered
+`16×16×32` truth、时间标签和逐帧失配审计；full-resolution field 不复制进 pair
+库。写入采用临时目录，全部 payload checksum 完成后才原子生成 READY。
+
+五条轨迹共 505 帧已全部生成，并由另一个 validator 逐条检查 contract/role/split、
+shape/dtype、finite、非零范数、逐帧 zero-mean gauge、frame order、payload SHA 和
+READY。五条共享一个 geometry binding，test pair 数仍为 0。
+
+输入审计出现一个真实但不是算法的信号：独立 reference 与 coarse inverse truth
+projection 的相对失配，逐轨迹 p50 为：
+
+- p33s01：`51.0%`，p90 `53.9%`，worst `55.7%`；
+- p45s05：`39.6%`，p90 `44.5%`，worst `45.7%`；
+- p58s03：`34.0%`，p90 `37.0%`，worst `39.5%`；
+- p14s01 validation：`47.5%`，p90 `49.5%`，worst `52.5%`；
+- p22s01 validation：`47.5%`，p90 `52.3%`，worst `53.9%`。
+
+几何完全相同，差别来自流场形态与有限网格近似对梯度的不同响应。这给论文主线一个
+更具体的困难：warm start 不仅要在一个误差水平上快，还要在 `34%–56%` 的
+condition-dependent model mismatch 下不伤害尾部。因此 p22 的 fixed-K/harm
+门不是形式主义，而是决定方法能否迁移的核心。
+
+公开网页只放聚合图和无路径 summary；私有 pair、派生 hashes 和本机位置均未上传。
+
+**突破监测：没有算法突破。新增的是首个 5 trajectory / 505 frame / one-geometry 的统一输入闭环，以及工况依赖模型失配证据。下一门是 geometry-only PCGLS、train-only ridge 选择和四臂 matched-accuracy 表。**
+
+## 214. 四臂经典表完成：先发现 K=24 这个“参考答案”本身错了
+
+五条开放轨迹、505 帧都跑完了 Zero-CGLS、normalized BP-CGLS、真正的
+geometry-diagonal PCGLS 和 train-only dual-ridge warm start。PCGLS 的对角项
+不是随机估出来的，而是从 LOS 权重、差分矩阵和 detector selection 精确得到
+`diag(A^T A)`；K=0 初值和每个 checkpoint 的完整 `A/A^T` 也进入同一本账。
+
+结果先否掉了原计划中的一个关键假设：在 `p=22kw_size=01` 上，Zero-CGLS
+从 K=4 继续跑到 K=24 时，observation residual p90 从 `0.34810` 降到
+`0.30430`，但 field p90 从 `0.68190` 恶化到 `1.02633`，gradient p90
+从 `0.97990` 恶化到 `2.28542`。也就是说，求解器更会“解释观测”了，却离真实
+三维场更远。这就是含模型失配逆问题里的半收敛。
+
+按原先预注册的 K24 参照，所有候选都只能选到 K=8 左右，没有 warm-start
+调用优势。结果打开后，用更合理但只能算 post-hoc 的 Zero K4 作诊断参照，
+dual-ridge K2 在 p22 用 5 次完整调用达到 97.03% joint pass，而 Zero K4
+要 8 次，调用数少 37.5%。可它在 p14 只通过 56.44% 帧，且五条轨迹上
+wall time 全部更慢；约 25 MB 的 ridge 推理开销吃掉了少跑两步的收益。
+
+**讲人话：**原来的终点像是“把同一道题反复改到卷面更工整，却把答案改错了”。
+我们发现了这个坑，也看见少跑两步可能省调用，但现在还不能说算法成功，因为换到
+p14 就失守，而且真实时间没有变快。
+
+**突破监测：没有算法突破。新增的是完整跨轨迹经典表、精确几何 PCGLS 和一个必须写进论文的方法学发现：K24 在模型失配下严重半收敛，不能继续当高精度参照。**
+
+## 215. v2 线性摊销器失败：它连 p14 的 K4 teacher 都学不住
+
+既然 Zero K4 比 K24 更像合理的物理终点，我设计了 v2：只从 observation
+预测 Zero-CGLS K4 field，相当于把四步物理求解摊销进一个低秩线性算子。它用
+三条 fit trajectory 的 303 帧拟合，只在 p14 选择正则和 rank；由于设计来自已经
+打开的 v1 结果，它明确标为 adaptive development。
+
+结果是 `FAIL_NO_RANK_MATCHES_P14_CGLS_K4_AT_ZERO_DEPTH`。即使 rank 256，
+field、gradient、observation 三项 pass fraction 仍全是 0，harm 为 92.08%。
+失败后运行器没有打开 p22，更没有碰 test。
+
+**讲人话：**不是把矩阵做得更大就能把四步 CGLS 直接背下来。三条训练轨迹和 p14
+长得差得太远，线性模型在训练条件外几乎不会做这道题。
+
+**突破监测：没有算法突破。v2 是有用的负结果：当前数据覆盖下，直接用低秩线性算子摊销 K4 不可行。**
+
+## 216. v3 PCA 先替神经网络踩刹车：真正瓶颈是跨轨迹覆盖
+
+我没有立刻把线性层换成 FNO，而是先做了一个更便宜的表示 headroom 审计。若三条
+fit trajectory 连一个 256 维 PCA 子空间都不能覆盖 p14，那么更大的网络很可能只是
+把训练轨迹记得更牢。
+
+rank 256 已解释 fit observation 的 99.8668% 能量、fit K4 field 的 99.9711%
+能量；但在 p14 上，observation PCA p90 重建误差仍为 `0.51684`，K4 field PCA
+p90 仍为 `0.25314`。没有一个 rank 达到预设的 output p90 `<=0.05`、worst
+`<=0.10` 门，状态是 `FAIL_LATENT_OUTPUT_PCA_HEADROOM`。这轮只读 fit 和 p14，
+p22/test 都没打开。
+
+**讲人话：**训练集内部看起来几乎“什么都解释了”，一换完整工况就解释不了。这不是
+模型层数的问题，是训练样本覆盖的问题。现在直接训练 FNO，容易得到漂亮训练曲线和
+难看的真实迁移。
+
+**突破监测：没有算法突破。新增的是在烧神经网络训练时间前就定位出的 representation coverage failure。**
+
+## 217. v4 只扩两条邻近工况，再决定要不要继续下载
+
+下一步没有无边界扩大数据集。v4 先冻结一个分阶段门：只接
+`p=14kw_size=05` 和 `p=22kw_size=03`，重新生成完全相同的 independent proxy
+pair、K4 teacher 和 PCA audit。只有 rank-256 p90 表征误差相对下降至少 20%，
+才继续接剩余五条 clean fit trajectory；没有改善就停止下载，重审输入表示和目标。
+
+第一条 `p=14kw_size=05` 已在项目外私有队列中单实例断点下载。它完成后仍要过
+官方字节数/SHA、ZIP/NPY、full-resolution rho、finite/positive、manifest、
+checksums、READY 和缓存清理，不能把 partial 或下载进程写成数据接入成功。
+
+正式 test 继续封存，p14/p22 的 validation 职责不变。当前 Mac 已有可用的 PyTorch
+MPS 环境，但覆盖门没有改善前不会训练 3D U-Net/FNO/UNO。
+
+**讲人话：**现在不是缺一张更强显卡，而是先确认“增加两种相邻火焰工况，能不能让模型真正见过更完整的变化”。这个问题没答对，换服务器只会更快地过拟合。
+
+**突破监测：没有算法突破。当前唯一有效门是两条新增 clean-fit 轨迹能否显著修复 p14/p22 的表征覆盖；通过后才进入最小神经算子。**
+
+## 218. 独立审计后重算：结论没变，但证据链更干净了
+
+两名独立审计代理分别检查了方法学和代码。它们没有发现 P0 级错误，但抓到五个
+会污染成本或证据边界的问题：旧 v2 在 rank gate 失败前提前载入 p22；已有 arm
+缓存只按文件存在判断，未严格核对协议、pair、模型与全部 checkpoint；外部返回
+全零初值时漏记一次必要的前向投影；PCGLS 几何对角的 setup 没有进入单次使用与
+摊销 wall 账；PCA 私有包混放了 basis 和 fit/validation 样本。
+
+这些问题现在全部按 fail-closed 修正：
+
+- v2 只先读取三条 fit 与 p14，rank gate 通过后才有权读取 p22；
+- 缓存必须同时绑定 experiment、geometry、pair READY、trajectory role、ridge
+  model 和 8 个完整 checkpoint，否则拒绝聚合；
+- 只有求解器内部可信的 `initializer=None` 可以省略初始前向，外部初值即使数值
+  恰好全零也要支付一次 `A`；
+- PCGLS 同时报告 setup、单次全轨迹 wall 和 101 帧摊销 setup，不再只展示迭代段；
+- v3/v4 的私有 NPZ 只保留 fit-only basis/statistics，不保留任何 fit 或 validation
+  样本，并且强制写到仓库外。
+
+审计后的 targeted suite 为 `73 passed`。严格缓存验证接受了五条既有 arm 结果；
+v1 重新聚合后仍是开放代理 development。v2 重跑仍为
+`FAIL_NO_RANK_MATCHES_P14_CGLS_K4_AT_ZERO_DEPTH`，并明确
+`stopping_validation_opened_by_v2=false`；v3 重跑仍为
+`FAIL_LATENT_OUTPUT_PCA_HEADROOM`。rank-256 的 p14 K4-target PCA p90 仍是
+`0.253138`，所以 v4 的 20% 改善门仍冻结为 `<=0.202510`。
+
+**讲人话：**这轮没有把失败结果“修成成功”。它做的是把计账漏洞和验证集读取顺序
+收紧后再算一遍，确认当前真正的困难仍然是训练工况覆盖不足。
+
+**突破监测：没有算法突破。真实增量是审计后的 v1→v2→v3 证据链可重复，p22/test
+没有被拿来救模型；下一门仍是两条 clean-fit 轨迹的 p14-only coverage 复查。**
+
+## 219. v4 再收紧：20% 门只决定要不要继续拿数据
+
+第二轮独立审计发现，原 v4 代码虽然不读取 p22 的数组，却会在统一几何检查时顺手
+读取 p22 pair manifest；新增 pair 也没有强制要求“目录名、请求轨迹、官方 source、
+父协议、几何、manifest 和 READY”全部一致。这样不会立刻改变 PCA 数值，却会让
+“p22 完全没有参与此次决策”和“两个新增工况确实是两个不同 source”说得不够硬。
+
+现在这两个问题已按 fail-closed 修复：
+
+- v4 的允许名单只有 3 条既有 fit、2 条 first-batch clean fit 和 p14 模型选择
+  validation；p22 停止验证连 manifest 都不读取；
+- 新增 pair 必须绑定官方 PoolFire trajectory protocol、source SHA、统一 geometry、
+  请求轨迹、目录名、manifest、checksums 与 READY，复制或换名会被拒绝；
+- v4 只解释 observation 并由 observation 生成 K4 teacher，不解释任何 pair
+  `gauge_truth.npy`；truth 文件仍受 checksum 保护；
+- 私有 PCA basis、五条 fit pair 的身份绑定、协议绑定和公开 summary 先在临时目录
+  完整写好，再原子生成 READY；已有结果只有全部 hash 一致才可复用；
+- 私有续跑队列使用唯一锁和独立 run log，不会重复启动同一下载或并发覆盖结果。
+
+31 个定向测试和完整 PoolFire 回归 `200 passed`。已有 3 条 fit 与 p14 pair 还在
+真实私有文件上通过了 observation-only 身份复核。第一条新增数据 p14s05 仍在单实例
+断点获取中；partial 不是 READY，也不是算法结果。
+
+更重要的方法学修正是：即使 v4 的 rank-256 p90 从 `0.253138` 降到
+`<=0.202510`，它也只说明固定线性子空间覆盖有至少 20% 改善，只授权继续接剩余
+clean-fit trajectories。全部 clean-fit 完成后，必须按完整 trajectory 做
+leave-one-trajectory-out，比较 rank 256 与可用最大 rank；绝对门仍保留
+p90 `<=0.05`、worst `<=0.10`。
+
+只有这道完整覆盖门通过，才训练一个预注册的小型 BP-conditioned 3D U-Net
+sentinel。至少 80% 的留出轨迹要达到 joint pass `>=90%`、harm `<=5%`、
+固定 `K<=2`，总调用严格少于 Zero K4 的 8 次，轨迹等权 wall-time 中位数不变慢，
+并测 fresh-process 全流程 peak RSS。sentinel 通过后，才允许公平比较 FNO、UNO
+和 DeepONet。
+
+**讲人话：**20% 门只是在问“再拿数据有没有用”，不是在问“神经网络赢没赢”。
+先证明训练工况覆盖得住，再用一个很小的模型试水；小模型都过不了，就不烧大模型。
+
+**突破监测：没有算法突破。真实增量是 v4 的角色隔离、轨迹身份和原子结果证据链
+闭合，并把神经训练授权从一次 PCA 相对改善后移到完整轨迹留一与 sentinel 门。**
+
+## 220. v4 缓存再加一道锁：代码变了，旧结果必须失效
+
+独立代码复审又发现一个容易被忽略的问题：v4 旧缓存虽然绑定了数据、协议、几何和
+pair，却没有绑定“到底是哪一版代码算出来的”。如果以后修改 K4 teacher、CGLS/PCGLS、
+几何构造或 validator，旧目录仍可能被当成当前结果复用。
+
+现在私有 manifest 会逐文件绑定 v4 runner、K4 teacher、classical geometry、
+pair validator、CGLS/PCGLS、cross-trajectory geometry、warm model、CFD proxy
+和两份 straight-ray operator 的 SHA，同时绑定 Python 与 NumPy 版本；READY
+再绑定这份实现指纹。任一数值路径文件或运行时版本变化，旧结果都会 fail closed，
+必须重新计算，不能悄悄沿用。
+
+现场还发现一个早于唯一锁修改时间启动的旧续跑器。它已被单独终止，正在增长的
+p14s05 下载器没有被打断；后续只允许带原子锁、唯一 run log 和状态文件的新队列
+接管。实现指纹修复后的定向测试为 `31 passed`，完整 PoolFire 回归为
+`200 passed`。
+
+**讲人话：**同一个数据，用不同版本的算法算，不能假装是同一次实验。现在每个 v4
+结果都带着一张“代码身份证”；代码哪怕改一处，旧结果就不能蒙混过关。
+
+**突破监测：没有算法突破。这里修复的是可重复性和缓存可信度；科学门仍是
+p14s05/p22s03 接入后运行 p14-only v4 coverage gate。**
+
+## 221. v4 不再自己给自己发合格证
+
+实现指纹闭合后还剩一个方法学问题：v4 runner 会写私有结果，也会在同一模块里检查
+既有缓存。即使单元测试通过，这仍不算真正独立的结果复核。
+
+现在新增了一个不导入 v4 runner 的独立 validator。它会重新完成以下检查：
+
+- 只枚举 3 条既有 fit、2 条 first-batch clean fit 和 p14 模型选择轨迹；
+  p22 stopping validation 不在允许名单；
+- 对六条 pair 重新运行 observation-only validator，核对官方 source、父协议、
+  geometry、manifest、checksums 与 READY，不解释 truth 数组；
+- 回到六条官方 full-resolution `rho` bundle，逐帧重放 606 次独立 forward，要求每个
+  observation 与 pair 内保存值逐元素完全相同；
+- 用底层 PCGLS 原语重算 606 个 K4 teacher，再只用五条 fit 轨迹重拟合 PCA，逐 rank
+  重算 p50/p90/worst、能量、20% 改善和 PASS/FAIL，不能只信 runner 写出的数值；
+- 重新核对私有 manifest、READY、协议绑定和十一个数值路径文件的实现指纹；
+- 打开私有 NPZ 时只允许七个 basis/statistics 数组，并检查 shape、float64、
+  finite、正 observation scale 和非负 singular values；若混入 fit/validation
+  样本立即失败；
+- 再次确认 `neural_training_authorized=false`、`test_truth_opened=false`、
+  `algorithm_breakthrough=false`。
+
+独立审计曾抓到四个 P1：结果行仍可能自证、pair 可能作内部自洽的跨轨迹拼接、
+implementation binding 漏了直接 forward 依赖，以及旧队列的 pair 预检曾为
+shape/finite 检查解释过 truth 数组。前三项已由 full source replay、独立 K4/PCA
+重算和依赖闭包修复；最后一项不能抹去历史，因此只能诚实记录：旧预检碰过 truth，
+但 v4 的 K4/PCA 判决没有使用 truth。新队列已显式传入
+`--skip-truth-array-inspection`，且只有独立验证报告与 public status 一致才写
+`VERIFIED_COMPLETE`。完整 PoolFire 回归为 `208 passed`。
+
+**讲人话：**以前是“做题的人顺便批自己的卷子”；现在换了一套没有调用原做题程序的
+批卷逻辑，重新算关键答案。两边都一致，结果才进入下一步。
+
+**突破监测：没有算法突破。新增的是更强的独立结果复核。**
+
+## 222. 首批覆盖扩充真实改善 13.86%，但冻结的 20% 门没有通过
+
+`p=14kw_size=05` 和 `p=22kw_size=03` 已完成 clean-fit 接入。修正后的 runner
+生成新结果后，独立 validator 从官方 `rho` 重放全部 606 帧 forward、重算 606 个
+K4 teacher 和 fit-only PCA，得到同一个判决：
+
+| 项目 | 冻结基线 / 门槛 | 实际结果 |
+|---|---:|---:|
+| rank-256 p14 K4-target PCA p90 | 基线 `0.253138` | `0.218051` |
+| 相对下降 | 至少 `20%` | `13.8608%` |
+| 最大允许 p90 | `0.202510` | 未达到 |
+| 是否继续拿剩余 clean-fit | 只有 PASS 才允许 | `false` |
+| 是否授权神经训练 | 本门本来就不授权 | `false` |
+
+这不是“完全没进展”：两条新 fit 轨迹确实让 p90 降了约 `0.0351`。但事前冻结的是
+20%，实际只到 13.86%，所以必须判 FAIL，不能临时降低标准。rank 256 时 fit K4
+target 已解释 `99.6543%` 能量，p14 output p90 仍为 `0.218051`；observation p90
+更高达 `0.469397`。这更像是跨工况表示/对齐问题，而不是简单增加同类样本后就会
+自动消失的欠采样。
+
+**讲人话：**新加的两本题库让答案更接近了，但仍没有接近到事前规定的合格线。
+继续盲目下载更多同类题目不划算。下一步要检查“答案表示方法”本身：K4 是固定
+线性算子作用于 observation，当前带均值 PCA 可能把幅值和形状混在一起，也可能受
+rank 256 上限约束。先比较更高 rank、过原点子空间以及只使用 observation 可见幅值
+的齐次归一化，仍只做开发诊断，不碰 p22 stopping validation 与两条 test。
+
+**突破监测：没有算法突破。可信的新事实是首批覆盖扩充只改善 13.86%，正式
+v4 状态为 `FAIL_FIRST_BATCH_MATERIAL_P14_COVERAGE_IMPROVEMENT`。**
+
+## 223. 第一版 v5 被协议审计主动降级，没有把漂亮数字直接发布
+
+在 v4 失败后，第一版 v5 比较了 rank 256–504、带均值/过原点以及 observation-RMS
+齐次表示。runner 一度得到 rank-504 p90 `0.148823`。但独立协议审计随后发现六个
+P1，最关键的是：
+
+- 固定四步、零初值 CGLS 一般不是线性映射；只有在 breakdown 分支不变且有限精度
+  可忽略时，才对整体标量缩放呈一阶齐次；
+- validation target 在子空间里的投影系数来自完整 K4 target，是 oracle containment
+  检查，不是 observation→coefficient 的部署模型；
+- rank 504 需要 fit-only 奇异值、稳定数值秩和边界谱隙门，不能只因理论最大 rank
+  是 504 就直接接受；
+- RMS 必须绑定 raw `observations.npy` 的全部 2072 分量、固定顺序、等权、无 mask、
+  无标准化，floor 命中必须为 0；
+- 必须先排除数值不稳定行，再同时检查 p90/worst；“齐次表示获胜”还要预先规定
+  相对 best raw 的最小改善和 no-harm 条件；
+- 失败最多排除这四种固定全局子空间，不能顺手排除 nonlinear decoder、
+  conditional basis、mixture-of-subspaces 或 full-field CNN。
+
+因此第一版 v5 私有结果和图被移入 provisional 归档，公开候选目录删除。它不能作为
+机制结论、模型结论或论文结果。
+
+**讲人话：**不是数字看起来变小就收下。先问“这个小数字是不是依赖一个部署时拿不到
+的 oracle 投影”“最后几维是不是数值噪声”。答案没闭合，就把结果降级重做。
+
+**突破监测：没有算法突破。这里的进展是审计在发布前成功阻止了过度解释。**
+
+## 224. v5.1 把齐次性、稳定 rank 和 oracle 边界补齐
+
+v5.1 在任何新结果前单独提交冻结，新增：
+
+1. 对全部 505 个 fit frame 分别计算 `K4(0.5y)`、`K4(2y)`，与
+   `0.5 K4(y)`、`2 K4(y)` 比较，并要求四步 breakdown flags 完全一致；
+2. rank 必须同时通过 `sigma_r/sigma_1 >= 1e-8`、fit-only stable rank 和边界谱隙
+   `>=1.001`；
+3. 明写 `oracle_target_projection=true`、`deployable model=false`；
+4. centered 候选把 mean field 的存储量计入 decoder bytes；
+5. homogeneous 只有相对 best raw 的 p90 至少改善 2%，且 worst 不变坏，才算
+   material win。
+
+runner 完成后，独立 validator 不导入 v5.1 runner 或 representation helper，重新
+计算 606 个 K4 teacher、1010 个缩放 K4、20 个 projector、稳定 rank、passer-first
+选择和 homogeneous 2% + no-harm 门，得到完全一致的结果：
+
+| 检查 | runner 结果 |
+|---|---:|
+| 505 帧 × 2 个 scale 的最大齐次误差 | `0` |
+| breakdown path mismatch | `0` |
+| stable eligible rows | `20/20` |
+| v4 raw-centered rank-256 p90 | `0.218051` |
+| raw-origin rank-256 p90 | `0.196516` |
+| best raw-origin rank-504 p90 | `0.148973` |
+| best RMS-origin rank-504 p90 | `0.148823` |
+| RMS 相对 best raw 改善 | `0.1009%`，低于冻结的 `2%` |
+| 最佳 p90 / worst | `0.148823 / 0.165473` |
+| 绝对门 | `p90<=0.05` 且 `worst<=0.10`，FAIL |
+
+这说明 provisional 信号主要来自 rank 256→504 和去掉仿射均值：仅在 rank 256
+改成过原点就降低约 `9.88%`，扩到 rank 504 后比 v4 降约 `31.68%`；RMS 幅值拆分
+几乎没有额外贡献。即使如此，固定全局子空间离绝对门仍有大距离。
+
+**讲人话：**我们排除了“只要除以一个强度就解决跨工况”的简单故事。现有困难更像
+空间形态、位置或条件依赖的基底变化。下一步若独立复核通过，应优先检查对齐、
+conditional basis / mixture-of-subspaces 或不受固定 PCA 输出瓶颈限制的 full-field
+decoder，而不是把 RMS 包装成创新。
+
+独立状态为
+`PASS_INDEPENDENT_POOLFIRE_C_HOMOGENEOUS_REPRESENTATION_V5_1_VALIDATION`，
+科学状态仍是 `FAIL_DEVELOPMENT_ABSOLUTE_OUTPUT_HEADROOM`。
+
+**突破监测：仍没有算法突破。这是一条可信的机制性负结果；没有部署模型、调用减少、
+wall-time、内存、泛化或真实 BOST 证据。**

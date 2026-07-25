@@ -1,0 +1,290 @@
+{
+  "schema_version": "oerf-poolfire-trajectory-protocol-1.0",
+  "status": "frozen_before_multitrajectory_modeling",
+  "research_mainline": "public PoolFire CFD -> independently generated multi-view density-gradient proxy observations -> observation-only warm start -> identical CGLS/PCGLS refinement -> matched final accuracy with fewer full A/A^T calls and lower end-to-end cost",
+  "dataset": {
+    "name": "REALM PoolFire",
+    "repository_url": "https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main",
+    "tree_api_url": "https://huggingface.co/api/datasets/realm-bench/realm-bench-PoolFire/tree/main?recursive=true&expand=false",
+    "metadata_path": "data/data.npz",
+    "metadata_size_bytes": 62539,
+    "metadata_sha256": "8ecb161c1de3b038a8e46d35320a85f28054e4b3d7f785afe09fd000a3060738",
+    "metadata_variable_labels": [
+      "CH4.npy",
+      "CO2.npy",
+      "H2O.npy",
+      "O2.npy",
+      "T.npy",
+      "rho.npy",
+      "Ux.npy",
+      "Uy.npy",
+      "Uz.npy"
+    ],
+    "variable_semantics": [
+      "CH4",
+      "CO2",
+      "H2O",
+      "O2",
+      "T",
+      "rho",
+      "Ux",
+      "Uy",
+      "Uz"
+    ],
+    "spatial_size": [
+      80,
+      80,
+      200
+    ],
+    "time_count": 101,
+    "time_start": 30.0,
+    "time_end": 32.0
+  },
+  "role_contract": {
+    "unit_of_split": "complete_trajectory",
+    "random_frame_role_assignment": false,
+    "train_count": 11,
+    "validation_count": 2,
+    "test_count": 2,
+    "model_selection_validation": "p=14kw_size=01",
+    "stopping_rule_validation": "p=22kw_size=01",
+    "untouched_confirmatory_test": [
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ],
+    "test_truth_state": "identity_sealed_not_extracted",
+    "test_open_gate": "all model weights, preprocessing, optical geometry, correction budgets, stopping rules, matched-accuracy tolerances, baselines, metrics, seeds, exclusion rules and report templates must be frozen first"
+  },
+  "deployment_contract": {
+    "initializer_inputs_allowed": [
+      "proxy observation b",
+      "frozen acquisition geometry",
+      "training-set normalization constants",
+      "deployable observation-space diagnostics"
+    ],
+    "initializer_inputs_forbidden": [
+      "evaluation rho truth",
+      "evaluation field error",
+      "oracle iteration count",
+      "test-set calibration statistics",
+      "future frames"
+    ],
+    "refinement_contract": "every initializer is followed by the same frozen CGLS/PCGLS implementation, precision, stopping rule and accounting code",
+    "primary_cost_units": [
+      "full A calls",
+      "full A^T calls",
+      "end-to-end wall time including preprocessing and initializer inference",
+      "peak memory with measurement scope stated"
+    ],
+    "matched_accuracy_rule": "cost comparisons are admissible only at a preregistered final field relative-L2 tolerance and must also report gradient error and per-trajectory tails"
+  },
+  "development_exception": {
+    "trajectory": "p=14kw_size=03",
+    "artifact": "learning_labs/results/poolfire_cfd_morphology_proxy_gate_v1/result.json",
+    "status": "single_trajectory_development_only",
+    "frozen_frame_roles": {
+      "ridge_fit": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18,
+        20,
+        22,
+        24,
+        26,
+        28,
+        30,
+        32,
+        34,
+        36,
+        38,
+        40,
+        42,
+        44,
+        46,
+        48
+      ],
+      "ridge_selection_calibration": [
+        55,
+        60
+      ],
+      "refinement_depth_validation": [
+        67,
+        74
+      ],
+      "development_evaluation": [
+        80,
+        85,
+        90,
+        95,
+        100
+      ]
+    },
+    "may_not_be_relabelled_as": [
+      "trajectory generalization",
+      "cross-power generalization",
+      "cross-size generalization",
+      "test-set evidence"
+    ]
+  },
+  "claim_boundaries": {
+    "held_out_combinations_within_observed_power_and_size_values_only": true,
+    "unseen_power_ood": false,
+    "unseen_size_ood": false,
+    "geometry_ood": false,
+    "real_bost": false,
+    "experimental_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  },
+  "pilot_acquisition_order": [
+    "p=33kw_size=01",
+    "p=45kw_size=05",
+    "p=58kw_size=03",
+    "p=14kw_size=01",
+    "p=22kw_size=01"
+  ],
+  "trajectories": [
+    {
+      "id": "p=14kw_size=03",
+      "split": "train",
+      "role": "fit_candidate",
+      "path": "data/train/p=14kw_size=03.npz",
+      "size_bytes": 6428997975,
+      "sha256": "6080ddcc595f38296bff5bfabbad098c2c48cf402ca68bee112a16875781383c",
+      "allow_extraction_before_test_open": true
+    },
+    {
+      "id": "p=14kw_size=05",
+      "split": "train",
+      "role": "fit_candidate",
+      "path": "data/train/p=14kw_size=05.npz",
+      "size_bytes": 6444444594,
+      "sha256": "0649efa0f409e0663238478939b1e9ef27ccd638b66f57197a515ee201ed756e",
+      "allow_extraction_before_test_open": true
+    },
+    {
+      "id": "p=22kw_size=03",
+      "split": "train",
+      "role": "fit_candidate",
+      "path": "data/train/p=22kw_size=03.npz",
+      "size_bytes": 6493540098,
+      "sha256": "6aa7471127abbcec63da52e72dbb4881808f2c8ce15d1e4dd87da16362012df8",
+      "allow_extraction_before_test_open": true
+    },
+    {
+      "id": "p=33kw_size=01",
+      "split": "train",
+      "role": "fit_candidate",
+      "path": "data/train/p=33kw_size=01.npz",
+      "size_bytes": 6522109719,
+      "sha256": "c95f0ab8547d1b3aa53e3fefd46977718287cc380bda162f3bc6b372da6f5171",
+      "allow_extraction_before_test_open": true
+    },
+    {
+      "id": "p=33kw_size=03",
+      "split": "train",
+      "role": "fit_candidate",
+      "path": "data/train/p=33kw_size=03.npz",
+      "size_bytes": 6552714278,
+      "sha256": "d83934d2df7dbd8e8c2060622fc6970ab092aea7c5584db4fe8d2901b7ff656b",
+      "allow_extraction_before_test_open": true
+    },
+    {
+      "id": "p=33kw_size=05",
+      "split": "train",
+      "role": "fit_candidate",
+      "path": "data/train/p=33kw_size=05.npz",
+      "size_bytes": 6551886534,
+      "sha256": "8092b5cba8351bf890dd532b3d412c3692d296e6229db7bd675bf754dacca685",
+      "allow_extraction_before_test_open": true
+    },
+    {
+      "id": "p=45kw_size=01",
+      "split": "train",
+      "role": "fit_candidate",
+      "path": "data/train/p=45kw_size=01.npz",
+      "size_bytes": 6574517561,
+      "sha256": "6d082241ba618cc886c5b56a96eea61f89fa9033c2ebcaeee86713108b8688fc",
+      "allow_extraction_before_test_open": true
+    },
+    {
+      "id": "p=45kw_size=03",
+      "split": "train",
+      "role": "fit_candidate",
+      "path": "data/train/p=45kw_size=03.npz",
+      "size_bytes": 6569542593,
+      "sha256": "15f3a2109663eab8f39989b6c4ebab25b01edf7e0455a058e25735f952a16964",
+      "allow_extraction_before_test_open": true
+    },
+    {
+      "id": "p=45kw_size=05",
+      "split": "train",
+      "role": "fit_candidate",
+      "path": "data/train/p=45kw_size=05.npz",
+      "size_bytes": 6634789365,
+      "sha256": "aaefe2e5e1d5b262bf485e5c3cceae144c6bba601cd754841dc1382cf31acc25",
+      "allow_extraction_before_test_open": true
+    },
+    {
+      "id": "p=58kw_size=03",
+      "split": "train",
+      "role": "fit_candidate",
+      "path": "data/train/p=58kw_size=03.npz",
+      "size_bytes": 6611053939,
+      "sha256": "b76ed4c0daf72f947c54c5b9e7037b6e7a178d5ac3eb1d8ccf88c5af6c3fce6f",
+      "allow_extraction_before_test_open": true
+    },
+    {
+      "id": "p=58kw_size=05",
+      "split": "train",
+      "role": "fit_candidate",
+      "path": "data/train/p=58kw_size=05.npz",
+      "size_bytes": 6683576403,
+      "sha256": "222bd8252908202ca83e96543563c0ff7b13774992744dc6a371d275f04aba61",
+      "allow_extraction_before_test_open": true
+    },
+    {
+      "id": "p=14kw_size=01",
+      "split": "val",
+      "role": "model_selection_validation",
+      "path": "data/val/p=14kw_size=01.npz",
+      "size_bytes": 6454260996,
+      "sha256": "1307dabb54385f114a77e36421a920087d9441ba86375fe39002c3ada49e876d",
+      "allow_extraction_before_test_open": true
+    },
+    {
+      "id": "p=22kw_size=01",
+      "split": "val",
+      "role": "stopping_rule_validation",
+      "path": "data/val/p=22kw_size=01.npz",
+      "size_bytes": 6471884294,
+      "sha256": "9f1355759ec96c63107508b28d8922199cab30e1159d536750da3c8d0a2aa2e9",
+      "allow_extraction_before_test_open": true
+    },
+    {
+      "id": "p=22kw_size=05",
+      "split": "test",
+      "role": "untouched_confirmatory",
+      "path": "data/test/p=22kw_size=05.npz",
+      "size_bytes": 6500858534,
+      "sha256": "f89af69c84f6a79048053432e964e4bfa6836c4634e790d971c2d3bcbb42b75f",
+      "allow_extraction_before_test_open": false
+    },
+    {
+      "id": "p=58kw_size=01",
+      "split": "test",
+      "role": "untouched_confirmatory",
+      "path": "data/test/p=58kw_size=01.npz",
+      "size_bytes": 6591701796,
+      "sha256": "695c50319dd5aa0b783f305760792e35a103766e60759b8406bc5421d66ced14",
+      "allow_extraction_before_test_open": false
+    }
+  ]
+}

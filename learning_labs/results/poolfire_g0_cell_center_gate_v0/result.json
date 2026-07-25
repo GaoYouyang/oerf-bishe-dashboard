@@ -1,0 +1,736 @@
+{
+  "schema_version": "poolfire-g0-cell-center-route-gate-1.0",
+  "decision": "PASS_CELL_CENTER_ROUTE_DISCRIMINATION_CODE_GATE_ONLY",
+  "evidence_level": "TIER_A_CELL_CENTER_BRIDGE_CODE_GATE_ONLY",
+  "physics_gate": "G0_PHYSICS_HOLD",
+  "training_authorized": false,
+  "mainline_question": "Which cell-centred discretization is sufficiently auditable to support strong inverse baselines before C0 warm-start training?",
+  "checks": {
+    "all_routes_pass_linear_adjoint_unit_code_contracts": true,
+    "projection_first_equals_native_interior": true,
+    "cell_to_node_los_reweighting_detected": true,
+    "cell_to_node_extra_low_pass_detected": true,
+    "cell_to_node_first_order_boundary_detected": true,
+    "native_cell_average_smooth_order_pass": true,
+    "projection_interior_cell_average_smooth_order_pass": true,
+    "cell_to_node_rejected_by_error_ratio": true,
+    "resolved_front_native_pass": true,
+    "resolved_front_projection_interior_pass": true,
+    "underresolved_front_warning_triggered": true,
+    "training_remains_closed": true
+  },
+  "thresholds": {
+    "constant_max_abs": 3e-16,
+    "linear_max_relative_l2": 1e-11,
+    "adjoint_max_normalized_dot_mismatch": 5e-13,
+    "unit_reparameterization_relative_l2": 5e-13,
+    "n_ref_inverse_scaling_relative_l2": 5e-13,
+    "los_weight_sum_relative_error": 5e-15,
+    "projection_native_interior_relative_l2": 5e-13,
+    "smooth_minimum_order_truth_candidate": 1.8,
+    "resolved_front_relative_l2_truth_candidate": 0.02,
+    "cell_to_node_error_ratio_rejection": 2.0,
+    "underresolved_front_relative_l2_warning": 0.2
+  },
+  "structural_metrics": {
+    "native_cell_center": {
+      "constant_max_abs": 7.990506385729523e-19,
+      "linear_max_relative_l2": 2.433004718176225e-15,
+      "linear_sign_match": true,
+      "adjoint_max_normalized_dot_mismatch": 2.8305163291952667e-17,
+      "adjoint_dot_cases": 36,
+      "unit_reparameterization_relative_l2": 2.47171957066693e-16,
+      "n_ref_inverse_scaling_relative_l2": 9.81278609695787e-17,
+      "los_weight_sum_relative_error": 0.0
+    },
+    "cell_to_node": {
+      "constant_max_abs": 1.0026342237845879e-18,
+      "linear_max_relative_l2": 1.088378183255419e-15,
+      "linear_sign_match": true,
+      "adjoint_max_normalized_dot_mismatch": 2.858496872345957e-17,
+      "adjoint_dot_cases": 36,
+      "unit_reparameterization_relative_l2": 1.6561830636408647e-16,
+      "n_ref_inverse_scaling_relative_l2": 1.161967391809877e-16,
+      "los_weight_sum_relative_error": 1.1564823173178715e-16
+    },
+    "projection_first_interior": {
+      "constant_max_abs": 1.0366426074841691e-19,
+      "linear_max_relative_l2": 3.72873220602776e-15,
+      "linear_sign_match": true,
+      "adjoint_max_normalized_dot_mismatch": 2.87141355438381e-17,
+      "adjoint_dot_cases": 36,
+      "unit_reparameterization_relative_l2": 3.0128917158482113e-16,
+      "n_ref_inverse_scaling_relative_l2": 9.496534457035864e-17,
+      "los_weight_sum_relative_error": 0.0
+    },
+    "projection_native_interior_relative_l2": 1.6929938521203368e-16,
+    "cell_to_node_diagnostics": {
+      "effective_los_weights_over_h": [
+        1.25,
+        0.75,
+        1.0000000000000002,
+        1.0000000000000002,
+        1.0000000000000002,
+        1.0000000000000002,
+        1.0000000000000002,
+        0.75,
+        1.2500000000000002
+      ],
+      "max_abs_midpoint_weight_departure": 0.2500000000000002,
+      "interior_smoother_stencil": [
+        0.25,
+        0.5,
+        0.25
+      ],
+      "boundary_smoother_stencil": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "first_derivative_row_times_h": [
+        -0.9999999999999998,
+        0.9999999999999999,
+        0.0
+      ],
+      "expected_effective_los_pattern_detected": true
+    }
+  },
+  "analytic_evidence": {
+    "smooth_periodic": {
+      "point_sample": {
+        "native_cell_center": [
+          {
+            "cells_per_axis": 9,
+            "relative_l2": 0.0946388851192558,
+            "relative_linf": 0.10110915808187476,
+            "observed_order_from_previous": null
+          },
+          {
+            "cells_per_axis": 17,
+            "relative_l2": 0.027434884339964587,
+            "relative_linf": 0.040382744091427746,
+            "observed_order_from_previous": 1.9469732005506584
+          },
+          {
+            "cells_per_axis": 33,
+            "relative_l2": 0.00685290129257299,
+            "relative_linf": 0.011714192444721265,
+            "observed_order_from_previous": 2.0912940431912523
+          },
+          {
+            "cells_per_axis": 65,
+            "relative_l2": 0.0016727661197139631,
+            "relative_linf": 0.003089973953769378,
+            "observed_order_from_previous": 2.0803004960033293
+          }
+        ],
+        "cell_to_node": [
+          {
+            "cells_per_axis": 9,
+            "relative_l2": 0.20418720311392108,
+            "relative_linf": 0.18544342438843753,
+            "observed_order_from_previous": null
+          },
+          {
+            "cells_per_axis": 17,
+            "relative_l2": 0.06525706939508803,
+            "relative_linf": 0.07321668053273828,
+            "observed_order_from_previous": 1.7935896221907204
+          },
+          {
+            "cells_per_axis": 33,
+            "relative_l2": 0.019854654008026783,
+            "relative_linf": 0.03913752875129769,
+            "observed_order_from_previous": 1.7939187676095478
+          },
+          {
+            "cells_per_axis": 65,
+            "relative_l2": 0.006129622093804666,
+            "relative_linf": 0.02006848077571312,
+            "observed_order_from_previous": 1.7337963129412433
+          }
+        ],
+        "projection_first_interior": [
+          {
+            "cells_per_axis": 9,
+            "relative_l2": 0.07927457104147109,
+            "relative_linf": 0.07927457104147134,
+            "observed_order_from_previous": null
+          },
+          {
+            "cells_per_axis": 17,
+            "relative_l2": 0.022612253984556945,
+            "relative_linf": 0.02261225398455676,
+            "observed_order_from_previous": 1.9724018787621656
+          },
+          {
+            "cells_per_axis": 33,
+            "relative_l2": 0.006031056133702363,
+            "relative_linf": 0.006031056133703438,
+            "observed_order_from_previous": 1.9924338165449773
+          },
+          {
+            "cells_per_axis": 65,
+            "relative_l2": 0.0015566066028521294,
+            "relative_linf": 0.0015566066028542371,
+            "observed_order_from_previous": 1.9980151754587165
+          }
+        ]
+      },
+      "cell_average": {
+        "native_cell_center": [
+          {
+            "cells_per_axis": 9,
+            "relative_l2": 0.09463888511925551,
+            "relative_linf": 0.10110915808187389,
+            "observed_order_from_previous": null
+          },
+          {
+            "cells_per_axis": 17,
+            "relative_l2": 0.027434884339965732,
+            "relative_linf": 0.04038274409143257,
+            "observed_order_from_previous": 1.946973200550588
+          },
+          {
+            "cells_per_axis": 33,
+            "relative_l2": 0.006852901292572242,
+            "relative_linf": 0.011714192444713212,
+            "observed_order_from_previous": 2.0912940431914797
+          },
+          {
+            "cells_per_axis": 65,
+            "relative_l2": 0.0016727661197153492,
+            "relative_linf": 0.0030899739537881095,
+            "observed_order_from_previous": 2.0803004960019464
+          }
+        ],
+        "cell_to_node": [
+          {
+            "cells_per_axis": 9,
+            "relative_l2": 0.20425406307920274,
+            "relative_linf": 0.1855174398029437,
+            "observed_order_from_previous": null
+          },
+          {
+            "cells_per_axis": 17,
+            "relative_l2": 0.06526048430081595,
+            "relative_linf": 0.07321601644415156,
+            "observed_order_from_previous": 1.7940221175104343
+          },
+          {
+            "cells_per_axis": 33,
+            "relative_l2": 0.01985477388581071,
+            "relative_linf": 0.03913751579056221,
+            "observed_order_from_previous": 1.7939885570495029
+          },
+          {
+            "cells_per_axis": 65,
+            "relative_l2": 0.006129625582458617,
+            "relative_linf": 0.020068480551192265,
+            "observed_order_from_previous": 1.733804380158283
+          }
+        ],
+        "projection_first_interior": [
+          {
+            "cells_per_axis": 9,
+            "relative_l2": 0.07927457104147116,
+            "relative_linf": 0.0792745710414721,
+            "observed_order_from_previous": null
+          },
+          {
+            "cells_per_axis": 17,
+            "relative_l2": 0.022612253984557077,
+            "relative_linf": 0.02261225398455496,
+            "observed_order_from_previous": 1.9724018787621578
+          },
+          {
+            "cells_per_axis": 33,
+            "relative_l2": 0.006031056133702239,
+            "relative_linf": 0.006031056133701353,
+            "observed_order_from_previous": 1.9924338165450173
+          },
+          {
+            "cells_per_axis": 65,
+            "relative_l2": 0.0015566066028524475,
+            "relative_linf": 0.0015566066028490097,
+            "observed_order_from_previous": 1.9980151754583846
+          }
+        ]
+      }
+    },
+    "tanh_front_fixed_width_m": {
+      "width_m": 0.006,
+      "results": {
+        "point_sample": {
+          "native_cell_center": [
+            {
+              "cells_per_axis": 9,
+              "relative_l2": 0.24453596205760783,
+              "relative_linf": 0.26341485932020925,
+              "observed_order_from_previous": null
+            },
+            {
+              "cells_per_axis": 17,
+              "relative_l2": 0.10938391630588531,
+              "relative_linf": 0.13622336350477326,
+              "observed_order_from_previous": 1.2649571225326346
+            },
+            {
+              "cells_per_axis": 33,
+              "relative_l2": 0.03327026389992881,
+              "relative_linf": 0.049804784831869675,
+              "observed_order_from_previous": 1.7943769273993586
+            },
+            {
+              "cells_per_axis": 65,
+              "relative_l2": 0.008847872298263847,
+              "relative_linf": 0.013470317001126025,
+              "observed_order_from_previous": 1.9538673215303652
+            }
+          ],
+          "cell_to_node": [
+            {
+              "cells_per_axis": 9,
+              "relative_l2": 0.4333858955764919,
+              "relative_linf": 0.486106344208849,
+              "observed_order_from_previous": null
+            },
+            {
+              "cells_per_axis": 17,
+              "relative_l2": 0.22380590649303245,
+              "relative_linf": 0.2827315510263381,
+              "observed_order_from_previous": 1.0390896696994043
+            },
+            {
+              "cells_per_axis": 33,
+              "relative_l2": 0.07875142175582266,
+              "relative_linf": 0.11844753738644948,
+              "observed_order_from_previous": 1.574690127496123
+            },
+            {
+              "cells_per_axis": 65,
+              "relative_l2": 0.022349844689737143,
+              "relative_linf": 0.03496873844571267,
+              "observed_order_from_previous": 1.8579652759825942
+            }
+          ],
+          "projection_first_interior": [
+            {
+              "cells_per_axis": 9,
+              "relative_l2": 0.24708381602342372,
+              "relative_linf": 0.26341485932020925,
+              "observed_order_from_previous": null
+            },
+            {
+              "cells_per_axis": 17,
+              "relative_l2": 0.11119859971899496,
+              "relative_linf": 0.13622336350477326,
+              "observed_order_from_previous": 1.2553835345697433
+            },
+            {
+              "cells_per_axis": 33,
+              "relative_l2": 0.03358614696838022,
+              "relative_linf": 0.04980478483186995,
+              "observed_order_from_previous": 1.8049367362359394
+            },
+            {
+              "cells_per_axis": 65,
+              "relative_l2": 0.008891212505855553,
+              "relative_linf": 0.013470317001126025,
+              "observed_order_from_previous": 1.9605989716666334
+            }
+          ]
+        },
+        "cell_average": {
+          "native_cell_center": [
+            {
+              "cells_per_axis": 9,
+              "relative_l2": 0.21979148653313385,
+              "relative_linf": 0.23966025978324787,
+              "observed_order_from_previous": null
+            },
+            {
+              "cells_per_axis": 17,
+              "relative_l2": 0.10142403927297719,
+              "relative_linf": 0.12582307345178878,
+              "observed_order_from_previous": 1.2160107412935328
+            },
+            {
+              "cells_per_axis": 33,
+              "relative_l2": 0.03229683471018452,
+              "relative_linf": 0.04806885385239263,
+              "observed_order_from_previous": 1.7252387822519395
+            },
+            {
+              "cells_per_axis": 65,
+              "relative_l2": 0.008776447249624437,
+              "relative_linf": 0.013338370320343282,
+              "observed_order_from_previous": 1.9220188009053936
+            }
+          ],
+          "cell_to_node": [
+            {
+              "cells_per_axis": 9,
+              "relative_l2": 0.40863974148602183,
+              "relative_linf": 0.4589641372137523,
+              "observed_order_from_previous": null
+            },
+            {
+              "cells_per_axis": 17,
+              "relative_l2": 0.2114859702517996,
+              "relative_linf": 0.26831037400691365,
+              "observed_order_from_previous": 1.035671245958304
+            },
+            {
+              "cells_per_axis": 33,
+              "relative_l2": 0.07682155178652189,
+              "relative_linf": 0.11522595865935462,
+              "observed_order_from_previous": 1.5267334045609013
+            },
+            {
+              "cells_per_axis": 65,
+              "relative_l2": 0.022183646040186418,
+              "relative_linf": 0.03466593569241308,
+              "observed_order_from_previous": 1.8323750585991225
+            }
+          ],
+          "projection_first_interior": [
+            {
+              "cells_per_axis": 9,
+              "relative_l2": 0.22116042112719483,
+              "relative_linf": 0.23966025978324787,
+              "observed_order_from_previous": null
+            },
+            {
+              "cells_per_axis": 17,
+              "relative_l2": 0.10304275521932595,
+              "relative_linf": 0.12582307345178848,
+              "observed_order_from_previous": 1.2008770662170392
+            },
+            {
+              "cells_per_axis": 33,
+              "relative_l2": 0.03260123213610013,
+              "relative_linf": 0.04806885385239277,
+              "observed_order_from_previous": 1.7349675119516856
+            },
+            {
+              "cells_per_axis": 65,
+              "relative_l2": 0.008819372194258166,
+              "relative_linf": 0.013338370320343282,
+              "observed_order_from_previous": 1.9286598776912314
+            }
+          ]
+        }
+      }
+    },
+    "tanh_front_resolution_sweep": {
+      "grid_cells_per_axis": 33,
+      "results": {
+        "point_sample": {
+          "native_cell_center": [
+            {
+              "tanh_width_cells": 0.5,
+              "approx_10_90_thickness_cells": 1.0986122885,
+              "relative_l2": 0.45775212836257256,
+              "relative_linf": 0.41092064242199544,
+              "resolution_label": "UNRESOLVED_DO_NOT_USE_AS_SUCCESS"
+            },
+            {
+              "tanh_width_cells": 1.0,
+              "approx_10_90_thickness_cells": 2.197224577,
+              "relative_l2": 0.18178422399917188,
+              "relative_linf": 0.21361507947433964,
+              "resolution_label": "UNRESOLVED_DO_NOT_USE_AS_SUCCESS"
+            },
+            {
+              "tanh_width_cells": 2.0,
+              "approx_10_90_thickness_cells": 4.394449154,
+              "relative_l2": 0.050363904829901725,
+              "relative_linf": 0.07300013459142664,
+              "resolution_label": "MARGINAL"
+            },
+            {
+              "tanh_width_cells": 4.0,
+              "approx_10_90_thickness_cells": 8.788898308,
+              "relative_l2": 0.01458231364646552,
+              "relative_linf": 0.020118619843768594,
+              "resolution_label": "RESOLVED_ANALYTIC_CASE"
+            },
+            {
+              "tanh_width_cells": 8.0,
+              "approx_10_90_thickness_cells": 17.577796616,
+              "relative_l2": 0.009620292184123636,
+              "relative_linf": 0.009695172611176568,
+              "resolution_label": "RESOLVED_ANALYTIC_CASE"
+            }
+          ],
+          "cell_to_node": [
+            {
+              "tanh_width_cells": 0.5,
+              "approx_10_90_thickness_cells": 1.0986122885,
+              "relative_l2": 0.5788272386222456,
+              "relative_linf": 0.5547200774521224,
+              "resolution_label": "UNRESOLVED_DO_NOT_USE_AS_SUCCESS"
+            },
+            {
+              "tanh_width_cells": 1.0,
+              "approx_10_90_thickness_cells": 2.197224577,
+              "relative_l2": 0.31057907044984107,
+              "relative_linf": 0.3594443688235571,
+              "resolution_label": "UNRESOLVED_DO_NOT_USE_AS_SUCCESS"
+            },
+            {
+              "tanh_width_cells": 2.0,
+              "approx_10_90_thickness_cells": 4.394449154,
+              "relative_l2": 0.11252077244459455,
+              "relative_linf": 0.16105924879452532,
+              "resolution_label": "MARGINAL"
+            },
+            {
+              "tanh_width_cells": 4.0,
+              "approx_10_90_thickness_cells": 8.788898308,
+              "relative_l2": 0.03847794397641602,
+              "relative_linf": 0.05711096374250005,
+              "resolution_label": "RESOLVED_ANALYTIC_CASE"
+            },
+            {
+              "tanh_width_cells": 8.0,
+              "approx_10_90_thickness_cells": 17.577796616,
+              "relative_l2": 0.02617020894907123,
+              "relative_linf": 0.023856366522724704,
+              "resolution_label": "RESOLVED_ANALYTIC_CASE"
+            }
+          ],
+          "projection_first_interior": [
+            {
+              "tanh_width_cells": 0.5,
+              "approx_10_90_thickness_cells": 1.0986122885,
+              "relative_l2": 0.45914307820237527,
+              "relative_linf": 0.41092064242199533,
+              "resolution_label": "UNRESOLVED_DO_NOT_USE_AS_SUCCESS"
+            },
+            {
+              "tanh_width_cells": 1.0,
+              "approx_10_90_thickness_cells": 2.197224577,
+              "relative_l2": 0.18280800916530074,
+              "relative_linf": 0.21361507947433975,
+              "resolution_label": "UNRESOLVED_DO_NOT_USE_AS_SUCCESS"
+            },
+            {
+              "tanh_width_cells": 2.0,
+              "approx_10_90_thickness_cells": 4.394449154,
+              "relative_l2": 0.050822764153369004,
+              "relative_linf": 0.07300013459142664,
+              "resolution_label": "MARGINAL"
+            },
+            {
+              "tanh_width_cells": 4.0,
+              "approx_10_90_thickness_cells": 8.788898308,
+              "relative_l2": 0.014593751621999718,
+              "relative_linf": 0.020118619843768705,
+              "resolution_label": "RESOLVED_ANALYTIC_CASE"
+            },
+            {
+              "tanh_width_cells": 8.0,
+              "approx_10_90_thickness_cells": 17.577796616,
+              "relative_l2": 0.009315246836705064,
+              "relative_linf": 0.009621407596226034,
+              "resolution_label": "RESOLVED_ANALYTIC_CASE"
+            }
+          ]
+        },
+        "cell_average": {
+          "native_cell_center": [
+            {
+              "tanh_width_cells": 0.5,
+              "approx_10_90_thickness_cells": 1.0986122885,
+              "relative_l2": 0.3505335624463899,
+              "relative_linf": 0.3386270816777838,
+              "resolution_label": "UNRESOLVED_DO_NOT_USE_AS_SUCCESS"
+            },
+            {
+              "tanh_width_cells": 1.0,
+              "approx_10_90_thickness_cells": 2.197224577,
+              "relative_l2": 0.15680951433579166,
+              "relative_linf": 0.18758791399616956,
+              "resolution_label": "UNRESOLVED_DO_NOT_USE_AS_SUCCESS"
+            },
+            {
+              "tanh_width_cells": 2.0,
+              "approx_10_90_thickness_cells": 4.394449154,
+              "relative_l2": 0.04812878635271649,
+              "relative_linf": 0.06938379563236977,
+              "resolution_label": "MARGINAL"
+            },
+            {
+              "tanh_width_cells": 4.0,
+              "approx_10_90_thickness_cells": 8.788898308,
+              "relative_l2": 0.014448882430487362,
+              "relative_linf": 0.019823589293922417,
+              "resolution_label": "RESOLVED_ANALYTIC_CASE"
+            },
+            {
+              "tanh_width_cells": 8.0,
+              "approx_10_90_thickness_cells": 17.577796616,
+              "relative_l2": 0.009582650212720437,
+              "relative_linf": 0.009661255186021765,
+              "resolution_label": "RESOLVED_ANALYTIC_CASE"
+            }
+          ],
+          "cell_to_node": [
+            {
+              "tanh_width_cells": 0.5,
+              "approx_10_90_thickness_cells": 1.0986122885,
+              "relative_l2": 0.49330497735376994,
+              "relative_linf": 0.49384344715309747,
+              "resolution_label": "UNRESOLVED_DO_NOT_USE_AS_SUCCESS"
+            },
+            {
+              "tanh_width_cells": 1.0,
+              "approx_10_90_thickness_cells": 2.197224577,
+              "relative_l2": 0.28204219274912024,
+              "relative_linf": 0.3308859972825875,
+              "resolution_label": "UNRESOLVED_DO_NOT_USE_AS_SUCCESS"
+            },
+            {
+              "tanh_width_cells": 2.0,
+              "approx_10_90_thickness_cells": 4.394449154,
+              "relative_l2": 0.10846735292992787,
+              "relative_linf": 0.15505325858641947,
+              "resolution_label": "MARGINAL"
+            },
+            {
+              "tanh_width_cells": 4.0,
+              "approx_10_90_thickness_cells": 8.788898308,
+              "relative_l2": 0.03817094906146814,
+              "relative_linf": 0.05643993355298703,
+              "resolution_label": "RESOLVED_ANALYTIC_CASE"
+            },
+            {
+              "tanh_width_cells": 8.0,
+              "approx_10_90_thickness_cells": 17.577796616,
+              "relative_l2": 0.026080167282482563,
+              "relative_linf": 0.02377477514466252,
+              "resolution_label": "RESOLVED_ANALYTIC_CASE"
+            }
+          ],
+          "projection_first_interior": [
+            {
+              "tanh_width_cells": 0.5,
+              "approx_10_90_thickness_cells": 1.0986122885,
+              "relative_l2": 0.351827446000097,
+              "relative_linf": 0.33862708167778377,
+              "resolution_label": "UNRESOLVED_DO_NOT_USE_AS_SUCCESS"
+            },
+            {
+              "tanh_width_cells": 1.0,
+              "approx_10_90_thickness_cells": 2.197224577,
+              "relative_l2": 0.15773681649253252,
+              "relative_linf": 0.18758791399616942,
+              "resolution_label": "UNRESOLVED_DO_NOT_USE_AS_SUCCESS"
+            },
+            {
+              "tanh_width_cells": 2.0,
+              "approx_10_90_thickness_cells": 4.394449154,
+              "relative_l2": 0.04856816429883488,
+              "relative_linf": 0.06938379563236954,
+              "resolution_label": "MARGINAL"
+            },
+            {
+              "tanh_width_cells": 4.0,
+              "approx_10_90_thickness_cells": 8.788898308,
+              "relative_l2": 0.014456955697070756,
+              "relative_linf": 0.019823589293922306,
+              "resolution_label": "RESOLVED_ANALYTIC_CASE"
+            },
+            {
+              "tanh_width_cells": 8.0,
+              "approx_10_90_thickness_cells": 17.577796616,
+              "relative_l2": 0.009277232632461633,
+              "relative_linf": 0.009587568788974543,
+              "resolution_label": "RESOLVED_ANALYTIC_CASE"
+            }
+          ]
+        }
+      }
+    },
+    "cell_average_summary": {
+      "native_minimum_smooth_order": 1.946973200550588,
+      "cell_to_node_minimum_smooth_order": 1.733804380158283,
+      "projection_interior_minimum_smooth_order": 1.9724018787621578,
+      "native_finest_smooth_relative_l2": 0.0016727661197153492,
+      "cell_to_node_finest_smooth_relative_l2": 0.006129625582458617,
+      "projection_interior_finest_smooth_relative_l2": 0.0015566066028524475,
+      "cell_to_node_to_native_finest_error_ratio": 3.6643649761998294,
+      "resolved_front_width_cells": 4.0,
+      "resolved_front_approx_10_90_thickness_cells": 8.788898308,
+      "native_resolved_front_relative_l2": 0.014448882430487362,
+      "cell_to_node_resolved_front_relative_l2": 0.03817094906146814,
+      "projection_interior_resolved_front_relative_l2": 0.014456955697070756,
+      "cell_to_node_to_native_resolved_front_error_ratio": 2.6417924877654797,
+      "native_underresolved_half_width_cell_relative_l2": 0.3505335624463899
+    }
+  },
+  "tiny_single_view_svd": {
+    "native_cell_center": {
+      "matrix_shape": [
+        32,
+        64
+      ],
+      "rank": 15,
+      "nullity": 49,
+      "largest_singular_value": 10.528286236865322,
+      "smallest_nonzero_singular_value": 1.3691136372821335,
+      "condition_on_nonzero_spectrum": 7.689855648334146,
+      "single_view_large_nullspace_confirmed": true
+    },
+    "cell_to_node": {
+      "matrix_shape": [
+        32,
+        64
+      ],
+      "rank": 15,
+      "nullity": 49,
+      "largest_singular_value": 5.20543679231677,
+      "smallest_nonzero_singular_value": 0.8878836180700328,
+      "condition_on_nonzero_spectrum": 5.86274674560578,
+      "single_view_large_nullspace_confirmed": true
+    },
+    "projection_first_interior": {
+      "matrix_shape": [
+        8,
+        64
+      ],
+      "rank": 8,
+      "nullity": 56,
+      "largest_singular_value": 2.280296948351541,
+      "smallest_nonzero_singular_value": 1.1387437149670983,
+      "condition_on_nonzero_spectrum": 2.002467208714672,
+      "single_view_large_nullspace_confirmed": true
+    }
+  },
+  "route_dispositions": {
+    "native_cell_center": "ADVANCE_TO_INDEPENDENT_FORWARD_VALIDATION_WITH_BOUNDARY_AUDIT",
+    "cell_to_node": "REJECT_AS_TRUTH_FORWARD_KEEP_AS_DISCRETIZATION_SENSITIVITY_ONLY",
+    "projection_first_interior": "PREFERRED_FIRST_STRONG_BASELINE_CANDIDATE_PENDING_DATA_SEMANTICS"
+  },
+  "non_authorizations": [
+    "No PoolFire unit or cell-average metadata has been confirmed.",
+    "No density/temperature/species-to-delta_n law is validated.",
+    "No camera direction, pixel mapping, magnification, or calibration is modelled.",
+    "No independent high-fidelity synthetic-data forward exists yet.",
+    "No CGLS, PCGLS, Direct Operator, or C0 warm-start comparison was run.",
+    "No real reconstruction, generalization, speedup, or paper success is claimed."
+  ],
+  "questions_for_he_yuanzhe": [
+    "Are PoolFire arrays point samples or finite-volume cell averages?",
+    "What are the coordinate units and exact physical domain edges?",
+    "Which variables determine refractive index and with which constants?",
+    "Which camera LOS directions, detector crop, and pixel mapping should be used?",
+    "Should the inverse compare only a trusted interior ROI or retain calibrated boundaries?"
+  ],
+  "source_hashes": {
+    "operator_sha256": "0100c426940833d6d980e44db76082d87834b7536c97eecb6425cd9a11257969",
+    "runner_sha256": "e6d77cb1bc9d2954588c9a8608ff103641bdd47d6a00dec4b8de2a8674cf65b6"
+  }
+}

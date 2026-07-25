@@ -1,0 +1,78 @@
+{
+  "schema_version": "oerf-poolfire-c-fit-coverage-expansion-4.0",
+  "status": "FROZEN_AFTER_PCA_COVERAGE_FAILURE_BEFORE_ADDITIONAL_ACQUISITION",
+  "parents": {
+    "poolfire_trajectory_protocol_v1_sha256": "c9ec3de5396b59c9fe75510fa5fcc9e3d3bcee6ea772ff4e42aa3115a5ee702b",
+    "poolfire_c_cross_trajectory_experiment_v1_sha256": "bb536f8b0f25a4ced47263798b7d5cdb0efa94308d3796a6ced6e7c37fd1d76b",
+    "latent_pca_headroom_v3_protocol_sha256": "60ac15935400c5c372e1f5724f84b3e84da5df5b191866da12c4b663084780ab",
+    "pca_headroom_failure_summary_sha256": "e7b7c382be447f7ed561226f6cf36604773b0d8bc9573bc78ddff9f834cdc594"
+  },
+  "audit_revision": {
+    "revision": "4.1",
+    "reason": "independent audit removed p22 stopping validation from every acquisition and coverage decision",
+    "results_generated_before_revision": false,
+    "additional_pair_generated_before_revision": false
+  },
+  "diagnosis": {
+    "fit_trajectory_count": 3,
+    "p14_output_pca_rank256_p90_relative_l2": 0.2531381001042902,
+    "p14_input_pca_rank256_p90_relative_l2": 0.5168358577069807,
+    "interpretation": "three fit trajectories do not span the p14 validation condition well enough for a small latent operator",
+    "larger_model_before_coverage_expansion_allowed": false
+  },
+  "existing_clean_fit": [
+    "p=33kw_size=01",
+    "p=45kw_size=05",
+    "p=58kw_size=03"
+  ],
+  "permanent_development_only": [
+    "p=14kw_size=03"
+  ],
+  "additional_clean_fit_acquisition_order": [
+    "p=14kw_size=05",
+    "p=22kw_size=03",
+    "p=33kw_size=03",
+    "p=33kw_size=05",
+    "p=45kw_size=01",
+    "p=45kw_size=03",
+    "p=58kw_size=05"
+  ],
+  "staged_gate": {
+    "first_batch": [
+      "p=14kw_size=05",
+      "p=22kw_size=03"
+    ],
+    "after_first_batch": "regenerate independent proxy pairs and rerun the unchanged PCA headroom audit on p14 model-selection validation only",
+    "continue_remaining_downloads_only_if": "p14 model-selection representation headroom materially improves; p22 stopping validation is not used for acquisition or coverage decisions",
+    "material_improvement": {
+      "primary_metric": "p14 rank256 K4-target PCA reconstruction relative-L2 p90_higher",
+      "baseline": 0.2531381001042902,
+      "minimum_relative_reduction": 0.2,
+      "maximum_passing_value": 0.20251048008343216,
+      "input_PCA_p90_is_diagnostic_not_a_gate": true
+    },
+    "raw_archives_deleted_after_verified_extraction": true
+  },
+  "locked_roles": {
+    "model_selection_validation": "p=14kw_size=01",
+    "stopping_and_correction_validation": "p=22kw_size=01",
+    "p22_allowed_in_v4_acquisition_decision": false,
+    "untouched_confirmatory_test": [
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ],
+    "test_download_allowed": false,
+    "test_extraction_allowed": false,
+    "test_truth_opened": false
+  },
+  "claim_boundaries": {
+    "data_acquisition_is_algorithm_evidence": false,
+    "neural_model_trained": false,
+    "algorithm_breakthrough": false,
+    "confirmatory_generalization": false,
+    "wall_time_speedup": false,
+    "memory_reduction": false,
+    "real_bost": false,
+    "paper_success": false
+  }
+}

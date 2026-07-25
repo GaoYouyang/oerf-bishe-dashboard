@@ -1,0 +1,110 @@
+{
+  "schema_version": "oerf-poolfire-c-homogeneous-representation-audit-5.0",
+  "status": "FROZEN_AFTER_TRUSTED_V4_FAILURE_BEFORE_REPRESENTATION_RESULTS",
+  "parents": {
+    "poolfire_c_cross_trajectory_experiment_v1_sha256": "bb536f8b0f25a4ced47263798b7d5cdb0efa94308d3796a6ced6e7c37fd1d76b",
+    "poolfire_c_fit_coverage_expansion_v4_protocol_sha256": "c934c61b3629f97c52078361bc1d0caa5f58b887024f2e6fc866d3de46a58767",
+    "poolfire_c_fit_coverage_expansion_v4_summary_sha256": "b54e3cbf42e6cdcbde1fe2596f64215e78c21d1fb4a7e165c5b8c62ce48ae2fa",
+    "poolfire_c_fit_coverage_expansion_v4_independent_validation_sha256": "5985c0aa794b01f98edb18c8acac27203c225cae271e26935ac36080c7910c8e"
+  },
+  "evidence_design": {
+    "purpose": "diagnose whether the trusted v4 coverage failure is driven by rank truncation, an affine mean, or observation-visible amplitude and shape coupling",
+    "adaptive_open_validation_development": true,
+    "fit_trajectories_only_for_basis": [
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03",
+      "p=14kw_size=05",
+      "p=22kw_size=03"
+    ],
+    "model_selection_trajectory_only_for_diagnosis": "p=14kw_size=01",
+    "stopping_validation_opened_by_this_audit": false,
+    "untouched_test_opened": false,
+    "additional_data_acquisition_authorized": false,
+    "neural_training_authorized": false
+  },
+  "fixed_target": {
+    "field": "zero_cgls_k4",
+    "mapping_property": "fixed_geometry_linear_homogeneous_in_observation",
+    "generated_from_truth": false,
+    "fit_frame_count": 505,
+    "development_validation_frame_count": 101
+  },
+  "candidate_representations": [
+    {
+      "id": "raw_centered",
+      "field_preprocessing": "fit_only_mean_centered",
+      "subspace": "affine"
+    },
+    {
+      "id": "raw_origin",
+      "field_preprocessing": "none",
+      "subspace": "linear_through_origin"
+    },
+    {
+      "id": "observation_rms_homogeneous_centered",
+      "deployment_visible_scale": "sqrt(mean(observation_squared))",
+      "scale_floor": 1e-12,
+      "field_preprocessing": "divide_by_deployment_visible_scale_then_fit_only_mean_center",
+      "reconstruction": "multiply_by_same_deployment_visible_scale",
+      "subspace": "scale_equivariant_affine_shape"
+    },
+    {
+      "id": "observation_rms_homogeneous_origin",
+      "deployment_visible_scale": "sqrt(mean(observation_squared))",
+      "scale_floor": 1e-12,
+      "field_preprocessing": "divide_by_deployment_visible_scale",
+      "reconstruction": "multiply_by_same_deployment_visible_scale",
+      "subspace": "scale_equivariant_linear_shape_through_origin"
+    }
+  ],
+  "candidate_ranks": [
+    256,
+    320,
+    384,
+    448,
+    504
+  ],
+  "metrics": {
+    "primary": "p14 K4-target reconstruction relative-L2 p90_higher",
+    "secondary": "p14 K4-target reconstruction relative-L2 worst",
+    "also_report": [
+      "p50",
+      "fit_energy_fraction",
+      "fit_and_validation_observation_rms_p50_p90_worst",
+      "field_norm_to_observation_rms_ratio_p50_p90_worst"
+    ],
+    "selection_order": [
+      "minimum_p90_higher",
+      "minimum_worst",
+      "minimum_rank",
+      "candidate_order"
+    ],
+    "v3_absolute_headroom_reference": {
+      "p90_higher_maximum": 0.05,
+      "worst_maximum": 0.1,
+      "passing_does_not_establish_learnability": true
+    },
+    "v4_raw_rank256_reference": {
+      "p90_higher": 0.21805119192446124,
+      "diagnostic_twenty_percent_improvement_value": 0.174440953539569
+    }
+  },
+  "decision": {
+    "this_is_mechanism_diagnosis_not_confirmatory_evaluation": true,
+    "no_candidate_passing_absolute_headroom": "stop output-bottleneck neural models and inspect geometry or full-field architectures",
+    "candidate_passing_absolute_headroom": "freeze a new trajectory-level confirmatory design before any neural model",
+    "higher_rank_only_wins": "do not describe rank truncation as an algorithmic innovation",
+    "homogeneous_representation_wins": "treat scale equivariance as a candidate design principle requiring independent trajectory confirmation",
+    "p14_may_not_be_reused_as_independent_evidence": true
+  },
+  "claim_boundaries": {
+    "algorithm_breakthrough": false,
+    "neural_model_trained": false,
+    "confirmatory_generalization": false,
+    "wall_time_speedup": false,
+    "memory_reduction": false,
+    "real_bost": false,
+    "paper_success": false
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "schema_version": "oerf-poolfire-c-geometry-pcgls-1.0",
+  "status": "FROZEN_BEFORE_CLASSICAL_ARM_RESULTS",
+  "parent_experiment": {
+    "path": "learning_labs/protocols/poolfire_c_cross_trajectory_experiment_v1.json",
+    "sha256": "bb536f8b0f25a4ced47263798b7d5cdb0efa94308d3796a6ced6e7c37fd1d76b"
+  },
+  "operator": {
+    "type": "StackedLinearOperator",
+    "views": 3,
+    "per_view_type": "ProjectionFirstInteriorStraightRayOperator",
+    "field_shape": [
+      16,
+      16,
+      32
+    ],
+    "observation_size": 2072,
+    "normal_diagonal": "exact_sum_of_per_view_squared_column_norms",
+    "normal_diagonal_implementation": "analytic_separable_los_derivative_selection_factors",
+    "operator_probes_for_setup": 0
+  },
+  "preconditioner": {
+    "family": "fixed_geometry_only_jacobi",
+    "applied_map": "median_positive_diag_A_transpose_A / max(diag_A_transpose_A, absolute_floor)",
+    "relative_floor": 0.000001,
+    "absolute_floor": "relative_floor_times_maximum_positive_diag_A_transpose_A",
+    "normalization": "median_positive_diag_A_transpose_A",
+    "fixed_across_trajectories_frames_and_iterations": true,
+    "observation_access": false,
+    "truth_access": false,
+    "identity_may_be_reported_as_geometry_preconditioned": false
+  },
+  "verification": {
+    "small_grid_explicit_basis_column_norm_test_required": true,
+    "three_view_sum_test_required": true,
+    "strictly_positive_applied_diagonal_required": true,
+    "nonidentity_required_on_frozen_geometry": true,
+    "finite_values_required": true
+  },
+  "cost_accounting": {
+    "analytic_setup_wall_time_reported_separately": true,
+    "preconditioner_parameter_bytes_reported": true,
+    "single_use_cost_includes_full_setup": true,
+    "amortized_cost_divisor": "number_of_deployments_using_the_same_frozen_geometry",
+    "full_A_calls_for_setup": 0,
+    "full_AT_calls_for_setup": 0
+  },
+  "claim_boundaries": {
+    "algorithm_breakthrough": false,
+    "wall_time_speedup": false,
+    "memory_reduction": false,
+    "real_bost": false,
+    "generalization": false,
+    "paper_success": false
+  }
+}

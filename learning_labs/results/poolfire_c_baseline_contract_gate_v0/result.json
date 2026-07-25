@@ -1,0 +1,1520 @@
+{
+  "schema": "poolfire-c-baseline-contract-gate-result-1.0",
+  "baseline_contract_schema": "poolfire-c-warm-start-baselines-1.0",
+  "status": "PASS_BASELINE_AND_COST_CONTRACT_ONLY",
+  "evidence_level": "TIER_A_SOLVER_AND_ACCOUNTING_CODE_GATE_ONLY",
+  "route": "C_operator_or_direct_initializer_then_truth_blind_PCGLS_refinement",
+  "seed": 20260723,
+  "checkpoints": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24
+  ],
+  "inverse_dot_test": {
+    "cases": 12,
+    "maximum_relative_error": 5.601235633530672e-15,
+    "pass_threshold": 2e-12,
+    "passed": true
+  },
+  "reference_forward": {
+    "generator": "continuous analytic Gaussian gradients plus composite Gauss-Legendre integration on independent axis ray bundles",
+    "quadrature_order": 8,
+    "max_step_m": 0.004074074074074075,
+    "shares_inverse_discretization": false,
+    "independence_checks": {
+      "reference_exact_type": true,
+      "inverse_views_exact_type": true,
+      "different_implementation_modules": true,
+      "reference_exposes_no_adjoint": true,
+      "reference_declares_no_shared_inverse_matrix": true,
+      "different_runtime_instances": true
+    }
+  },
+  "inverse_operator": {
+    "route": "three_view_projection_first_interior_straight_ray",
+    "field_shape": [
+      9,
+      9,
+      11
+    ],
+    "observation_shape": [
+      350
+    ],
+    "views_per_full_operator_call": 3,
+    "constant_field_nullspace_absolute_norm": 4.828463173494087e-15,
+    "constant_field_nullspace_relative_to_probe": 1.0827792749108e-16,
+    "gauge_certificate_tolerance": 1e-12,
+    "gauge_certificate_setup_forward_calls": 2,
+    "gauge_certificate_setup_adjoint_calls": 0,
+    "gauge_strategy": "remove_global_mean_numerically_verified_constant_nullspace"
+  },
+  "direct_operator_training": {
+    "model": "linear_ridge_direct_operator",
+    "training_samples": 64,
+    "training_basis_modes": 10,
+    "training_truth_access": true,
+    "test_truth_access": false,
+    "ridge_absolute": 2.45079154995902e-14,
+    "fit_seconds": 0.03758483298588544,
+    "weight_shape": [
+      350,
+      891
+    ],
+    "weight_bytes": 2494800,
+    "claim_boundary": "disjoint synthetic coefficient samples over the same finite analytic mode family; not neural-operator generalization",
+    "mean_inference_seconds_two_cases": 8.222903124988079e-05
+  },
+  "cases": [
+    {
+      "case": "same_family_heldout_coefficients",
+      "truth_shape": [
+        9,
+        9,
+        11
+      ],
+      "observation_size": 350,
+      "reference_vs_inverse_truth_projection_relative_l2": 0.15091054256467012,
+      "direct_only_field_relative_l2_posthoc": 8.390543800490917e-10,
+      "target_definition": "zero-start CGLS field relative-L2 at 24 iterations, post-hoc only",
+      "target_relative_l2": 0.3658578682975644,
+      "identity_pcgls_vs_cgls_max_abs_field_difference": 0.0,
+      "zero": {
+        "initializer": "Zero",
+        "initializer_audit_status": "INTERNAL_CONSTANT_PROVENANCE",
+        "initializer_provenance": "constant_zero_no_observation_access",
+        "preconditioner": "identity",
+        "gauge_strategy": "remove_global_mean_numerically_verified_constant_nullspace",
+        "rows": [
+          {
+            "iteration": 1,
+            "field_relative_l2_posthoc": 0.7117445894962139,
+            "data_residual_norm_deployable": 0.0016616194712556918,
+            "total_forward_calls": 1,
+            "total_adjoint_calls": 1,
+            "elapsed_end_to_end_seconds": 0.0010766249615699053
+          },
+          {
+            "iteration": 2,
+            "field_relative_l2_posthoc": 0.576780312060548,
+            "data_residual_norm_deployable": 0.0009805262910819587,
+            "total_forward_calls": 2,
+            "total_adjoint_calls": 2,
+            "elapsed_end_to_end_seconds": 0.005661082919687033
+          },
+          {
+            "iteration": 3,
+            "field_relative_l2_posthoc": 0.49809414248869155,
+            "data_residual_norm_deployable": 0.0006552248717600788,
+            "total_forward_calls": 3,
+            "total_adjoint_calls": 3,
+            "elapsed_end_to_end_seconds": 0.006881749955937266
+          },
+          {
+            "iteration": 4,
+            "field_relative_l2_posthoc": 0.4475787876626681,
+            "data_residual_norm_deployable": 0.0004514833040119381,
+            "total_forward_calls": 4,
+            "total_adjoint_calls": 4,
+            "elapsed_end_to_end_seconds": 0.00781320792157203
+          },
+          {
+            "iteration": 5,
+            "field_relative_l2_posthoc": 0.41920931354140173,
+            "data_residual_norm_deployable": 0.0003274749433848269,
+            "total_forward_calls": 5,
+            "total_adjoint_calls": 5,
+            "elapsed_end_to_end_seconds": 0.008420791942626238
+          },
+          {
+            "iteration": 6,
+            "field_relative_l2_posthoc": 0.39744315238080274,
+            "data_residual_norm_deployable": 0.00024010861345772025,
+            "total_forward_calls": 6,
+            "total_adjoint_calls": 6,
+            "elapsed_end_to_end_seconds": 0.009539707913063467
+          },
+          {
+            "iteration": 7,
+            "field_relative_l2_posthoc": 0.38601035311621473,
+            "data_residual_norm_deployable": 0.00019631400097002436,
+            "total_forward_calls": 7,
+            "total_adjoint_calls": 7,
+            "elapsed_end_to_end_seconds": 0.01690591697115451
+          },
+          {
+            "iteration": 8,
+            "field_relative_l2_posthoc": 0.3784233176264866,
+            "data_residual_norm_deployable": 0.00016587175726365854,
+            "total_forward_calls": 8,
+            "total_adjoint_calls": 8,
+            "elapsed_end_to_end_seconds": 0.01720008288975805
+          },
+          {
+            "iteration": 9,
+            "field_relative_l2_posthoc": 0.3733812120125247,
+            "data_residual_norm_deployable": 0.00014569576511581613,
+            "total_forward_calls": 9,
+            "total_adjoint_calls": 9,
+            "elapsed_end_to_end_seconds": 0.017417082912288606
+          },
+          {
+            "iteration": 10,
+            "field_relative_l2_posthoc": 0.3694490162684959,
+            "data_residual_norm_deployable": 0.00012860363284653828,
+            "total_forward_calls": 10,
+            "total_adjoint_calls": 10,
+            "elapsed_end_to_end_seconds": 0.017850207979790866
+          },
+          {
+            "iteration": 11,
+            "field_relative_l2_posthoc": 0.36761010711709247,
+            "data_residual_norm_deployable": 0.00011818440881290809,
+            "total_forward_calls": 11,
+            "total_adjoint_calls": 11,
+            "elapsed_end_to_end_seconds": 0.024545791908167303
+          },
+          {
+            "iteration": 12,
+            "field_relative_l2_posthoc": 0.3663284506405475,
+            "data_residual_norm_deployable": 0.0001102886948654157,
+            "total_forward_calls": 12,
+            "total_adjoint_calls": 12,
+            "elapsed_end_to_end_seconds": 0.02476349996868521
+          },
+          {
+            "iteration": 13,
+            "field_relative_l2_posthoc": 0.3660971391361635,
+            "data_residual_norm_deployable": 0.00010666211209591004,
+            "total_forward_calls": 13,
+            "total_adjoint_calls": 13,
+            "elapsed_end_to_end_seconds": 0.02496441698167473
+          },
+          {
+            "iteration": 14,
+            "field_relative_l2_posthoc": 0.3659957302057781,
+            "data_residual_norm_deployable": 0.00010513732707901262,
+            "total_forward_calls": 14,
+            "total_adjoint_calls": 14,
+            "elapsed_end_to_end_seconds": 0.025166791980154812
+          },
+          {
+            "iteration": 15,
+            "field_relative_l2_posthoc": 0.3659388335388923,
+            "data_residual_norm_deployable": 0.00010405608507311042,
+            "total_forward_calls": 15,
+            "total_adjoint_calls": 15,
+            "elapsed_end_to_end_seconds": 0.025365957990288734
+          },
+          {
+            "iteration": 16,
+            "field_relative_l2_posthoc": 0.36596081624567045,
+            "data_residual_norm_deployable": 0.00010361476542470397,
+            "total_forward_calls": 16,
+            "total_adjoint_calls": 16,
+            "elapsed_end_to_end_seconds": 0.02556187496520579
+          },
+          {
+            "iteration": 17,
+            "field_relative_l2_posthoc": 0.36595059332544566,
+            "data_residual_norm_deployable": 0.00010332926535073634,
+            "total_forward_calls": 17,
+            "total_adjoint_calls": 17,
+            "elapsed_end_to_end_seconds": 0.026113249943591654
+          },
+          {
+            "iteration": 18,
+            "field_relative_l2_posthoc": 0.36593146536237486,
+            "data_residual_norm_deployable": 0.00010316018504680371,
+            "total_forward_calls": 18,
+            "total_adjoint_calls": 18,
+            "elapsed_end_to_end_seconds": 0.030395624926313758
+          },
+          {
+            "iteration": 19,
+            "field_relative_l2_posthoc": 0.36593431465572346,
+            "data_residual_norm_deployable": 0.00010306777221444578,
+            "total_forward_calls": 19,
+            "total_adjoint_calls": 19,
+            "elapsed_end_to_end_seconds": 0.032530208001844585
+          },
+          {
+            "iteration": 20,
+            "field_relative_l2_posthoc": 0.3659129580159878,
+            "data_residual_norm_deployable": 0.00010301108062059734,
+            "total_forward_calls": 20,
+            "total_adjoint_calls": 20,
+            "elapsed_end_to_end_seconds": 0.032757499953731894
+          },
+          {
+            "iteration": 21,
+            "field_relative_l2_posthoc": 0.3658818094496641,
+            "data_residual_norm_deployable": 0.00010297837621816517,
+            "total_forward_calls": 21,
+            "total_adjoint_calls": 21,
+            "elapsed_end_to_end_seconds": 0.03295949997846037
+          },
+          {
+            "iteration": 22,
+            "field_relative_l2_posthoc": 0.3658664481198766,
+            "data_residual_norm_deployable": 0.00010296147526247605,
+            "total_forward_calls": 22,
+            "total_adjoint_calls": 22,
+            "elapsed_end_to_end_seconds": 0.033155999961309135
+          },
+          {
+            "iteration": 23,
+            "field_relative_l2_posthoc": 0.3658586776155046,
+            "data_residual_norm_deployable": 0.00010295182656836051,
+            "total_forward_calls": 23,
+            "total_adjoint_calls": 23,
+            "elapsed_end_to_end_seconds": 0.0333619168959558
+          },
+          {
+            "iteration": 24,
+            "field_relative_l2_posthoc": 0.3658578682975644,
+            "data_residual_norm_deployable": 0.00010294760614238726,
+            "total_forward_calls": 24,
+            "total_adjoint_calls": 24,
+            "elapsed_end_to_end_seconds": 0.03356283297762275
+          }
+        ],
+        "final_cost": {
+          "initializer_name": "Zero",
+          "preparation_forward_calls": 0,
+          "preparation_adjoint_calls": 0,
+          "initial_projection_forward_calls": 0,
+          "refinement_forward_calls": 24,
+          "refinement_adjoint_calls": 24,
+          "total_forward_calls": 24,
+          "total_adjoint_calls": 24,
+          "inference_calls": 0,
+          "inference_seconds": 0.0,
+          "initializer_preparation_total_seconds": 0.0,
+          "operator_forward_seconds": 0.01305570884142071,
+          "operator_adjoint_seconds": 0.01701258379034698,
+          "solver_overhead_seconds": 0.003496957360766828,
+          "end_to_end_seconds": 0.03356524999253452,
+          "preconditioner_applications": 24,
+          "reported_initializer_peak_memory_bytes": null,
+          "solver_state_bytes_lower_bound": 34112,
+          "measured_end_to_end_peak_memory_available": false
+        },
+        "matched_target": {
+          "target_relative_l2": 0.36585786829793027,
+          "first_target_iteration": 24,
+          "first_target_total_forward_calls": 24,
+          "first_target_total_adjoint_calls": 24,
+          "first_target_end_to_end_seconds": 0.03356283297762275
+        }
+      },
+      "normalized_bp": {
+        "initializer": "Normalized BP",
+        "initializer_audit_status": "INTERNAL_OBSERVATION_ONLY_OPERATOR_ACCOUNTED",
+        "initializer_provenance": "alpha_times_A_transpose_y_with_observable_line_search",
+        "preconditioner": "identity",
+        "gauge_strategy": "remove_global_mean_numerically_verified_constant_nullspace",
+        "rows": [
+          {
+            "iteration": 1,
+            "field_relative_l2_posthoc": 0.5874767675959031,
+            "data_residual_norm_deployable": 0.0010946732400275829,
+            "total_forward_calls": 2,
+            "total_adjoint_calls": 2,
+            "elapsed_end_to_end_seconds": 0.007184290909208357
+          },
+          {
+            "iteration": 2,
+            "field_relative_l2_posthoc": 0.5007946183290929,
+            "data_residual_norm_deployable": 0.0006567256280748836,
+            "total_forward_calls": 3,
+            "total_adjoint_calls": 3,
+            "elapsed_end_to_end_seconds": 0.007711457903496921
+          },
+          {
+            "iteration": 3,
+            "field_relative_l2_posthoc": 0.45857984537777696,
+            "data_residual_norm_deployable": 0.00047768475586775226,
+            "total_forward_calls": 4,
+            "total_adjoint_calls": 4,
+            "elapsed_end_to_end_seconds": 0.00792554090730846
+          },
+          {
+            "iteration": 4,
+            "field_relative_l2_posthoc": 0.41895050402797424,
+            "data_residual_norm_deployable": 0.0003284346633720117,
+            "total_forward_calls": 5,
+            "total_adjoint_calls": 5,
+            "elapsed_end_to_end_seconds": 0.008128374931402504
+          },
+          {
+            "iteration": 5,
+            "field_relative_l2_posthoc": 0.396843896538529,
+            "data_residual_norm_deployable": 0.0002456416416630592,
+            "total_forward_calls": 6,
+            "total_adjoint_calls": 6,
+            "elapsed_end_to_end_seconds": 0.00832649995572865
+          },
+          {
+            "iteration": 6,
+            "field_relative_l2_posthoc": 0.3877994602026294,
+            "data_residual_norm_deployable": 0.0001990006276964765,
+            "total_forward_calls": 7,
+            "total_adjoint_calls": 7,
+            "elapsed_end_to_end_seconds": 0.008523249998688698
+          },
+          {
+            "iteration": 7,
+            "field_relative_l2_posthoc": 0.37925531982643007,
+            "data_residual_norm_deployable": 0.00016723720750820304,
+            "total_forward_calls": 8,
+            "total_adjoint_calls": 8,
+            "elapsed_end_to_end_seconds": 0.011087958002462983
+          },
+          {
+            "iteration": 8,
+            "field_relative_l2_posthoc": 0.3732723011578108,
+            "data_residual_norm_deployable": 0.00014694429321000828,
+            "total_forward_calls": 9,
+            "total_adjoint_calls": 9,
+            "elapsed_end_to_end_seconds": 0.011617374955676496
+          },
+          {
+            "iteration": 9,
+            "field_relative_l2_posthoc": 0.36925457396186284,
+            "data_residual_norm_deployable": 0.00012896901929173145,
+            "total_forward_calls": 10,
+            "total_adjoint_calls": 10,
+            "elapsed_end_to_end_seconds": 0.012164790998212993
+          },
+          {
+            "iteration": 10,
+            "field_relative_l2_posthoc": 0.36798546473692006,
+            "data_residual_norm_deployable": 0.00011877403887514824,
+            "total_forward_calls": 11,
+            "total_adjoint_calls": 11,
+            "elapsed_end_to_end_seconds": 0.012713374919258058
+          },
+          {
+            "iteration": 11,
+            "field_relative_l2_posthoc": 0.36630353258265075,
+            "data_residual_norm_deployable": 0.00011029630797050622,
+            "total_forward_calls": 12,
+            "total_adjoint_calls": 12,
+            "elapsed_end_to_end_seconds": 0.013254290912300348
+          },
+          {
+            "iteration": 12,
+            "field_relative_l2_posthoc": 0.3660147518059187,
+            "data_residual_norm_deployable": 0.00010674500614226716,
+            "total_forward_calls": 13,
+            "total_adjoint_calls": 13,
+            "elapsed_end_to_end_seconds": 0.01392095792107284
+          },
+          {
+            "iteration": 13,
+            "field_relative_l2_posthoc": 0.3660215834033276,
+            "data_residual_norm_deployable": 0.00010514480865685691,
+            "total_forward_calls": 14,
+            "total_adjoint_calls": 14,
+            "elapsed_end_to_end_seconds": 0.014493374968878925
+          },
+          {
+            "iteration": 14,
+            "field_relative_l2_posthoc": 0.36599692342240553,
+            "data_residual_norm_deployable": 0.00010409651610661137,
+            "total_forward_calls": 15,
+            "total_adjoint_calls": 15,
+            "elapsed_end_to_end_seconds": 0.014715374913066626
+          },
+          {
+            "iteration": 15,
+            "field_relative_l2_posthoc": 0.3659396349590911,
+            "data_residual_norm_deployable": 0.00010362062682728927,
+            "total_forward_calls": 16,
+            "total_adjoint_calls": 16,
+            "elapsed_end_to_end_seconds": 0.014942375011742115
+          },
+          {
+            "iteration": 16,
+            "field_relative_l2_posthoc": 0.36592763310802157,
+            "data_residual_norm_deployable": 0.00010333584615135196,
+            "total_forward_calls": 17,
+            "total_adjoint_calls": 17,
+            "elapsed_end_to_end_seconds": 0.015143540920689702
+          },
+          {
+            "iteration": 17,
+            "field_relative_l2_posthoc": 0.3659524558334003,
+            "data_residual_norm_deployable": 0.0001031658506343374,
+            "total_forward_calls": 18,
+            "total_adjoint_calls": 18,
+            "elapsed_end_to_end_seconds": 0.01534345792606473
+          },
+          {
+            "iteration": 18,
+            "field_relative_l2_posthoc": 0.36592866989262657,
+            "data_residual_norm_deployable": 0.00010306822068522226,
+            "total_forward_calls": 19,
+            "total_adjoint_calls": 19,
+            "elapsed_end_to_end_seconds": 0.015541290980763733
+          },
+          {
+            "iteration": 19,
+            "field_relative_l2_posthoc": 0.36590460867402164,
+            "data_residual_norm_deployable": 0.00010301207155306684,
+            "total_forward_calls": 20,
+            "total_adjoint_calls": 20,
+            "elapsed_end_to_end_seconds": 0.01574041589628905
+          },
+          {
+            "iteration": 20,
+            "field_relative_l2_posthoc": 0.3658936133571897,
+            "data_residual_norm_deployable": 0.00010297983314820164,
+            "total_forward_calls": 21,
+            "total_adjoint_calls": 21,
+            "elapsed_end_to_end_seconds": 0.01593791600316763
+          },
+          {
+            "iteration": 21,
+            "field_relative_l2_posthoc": 0.3658683807135077,
+            "data_residual_norm_deployable": 0.00010296152585338768,
+            "total_forward_calls": 22,
+            "total_adjoint_calls": 22,
+            "elapsed_end_to_end_seconds": 0.016138415900059044
+          },
+          {
+            "iteration": 22,
+            "field_relative_l2_posthoc": 0.3658525271451664,
+            "data_residual_norm_deployable": 0.00010295254288955129,
+            "total_forward_calls": 23,
+            "total_adjoint_calls": 23,
+            "elapsed_end_to_end_seconds": 0.016337790992110968
+          },
+          {
+            "iteration": 23,
+            "field_relative_l2_posthoc": 0.3658569583803336,
+            "data_residual_norm_deployable": 0.00010294762289933651,
+            "total_forward_calls": 24,
+            "total_adjoint_calls": 24,
+            "elapsed_end_to_end_seconds": 0.01653191598597914
+          },
+          {
+            "iteration": 24,
+            "field_relative_l2_posthoc": 0.36586278361697294,
+            "data_residual_norm_deployable": 0.00010294418934311457,
+            "total_forward_calls": 25,
+            "total_adjoint_calls": 25,
+            "elapsed_end_to_end_seconds": 0.01672758290078491
+          }
+        ],
+        "final_cost": {
+          "initializer_name": "Normalized BP",
+          "preparation_forward_calls": 1,
+          "preparation_adjoint_calls": 1,
+          "initial_projection_forward_calls": 0,
+          "refinement_forward_calls": 24,
+          "refinement_adjoint_calls": 24,
+          "total_forward_calls": 25,
+          "total_adjoint_calls": 25,
+          "inference_calls": 0,
+          "inference_seconds": 0.0,
+          "initializer_preparation_total_seconds": 0.0002763329539448023,
+          "operator_forward_seconds": 0.010115873883478343,
+          "operator_adjoint_seconds": 0.005973706836812198,
+          "solver_overhead_seconds": 0.0005695433355867863,
+          "end_to_end_seconds": 0.016730041010305285,
+          "preconditioner_applications": 24,
+          "reported_initializer_peak_memory_bytes": null,
+          "solver_state_bytes_lower_bound": 34112,
+          "measured_end_to_end_peak_memory_available": false
+        },
+        "matched_target": {
+          "target_relative_l2": 0.36585786829793027,
+          "first_target_iteration": 22,
+          "first_target_total_forward_calls": 23,
+          "first_target_total_adjoint_calls": 23,
+          "first_target_end_to_end_seconds": 0.016337790992110968
+        }
+      },
+      "direct_warm": {
+        "initializer": "Disjoint-sample ridge Direct",
+        "initializer_audit_status": "CONTROLLED_INPUT_SELF_ATTESTED",
+        "initializer_provenance": "observation_only_ridge_map_fit_on_disjoint_synthetic_coefficients",
+        "preconditioner": "identity",
+        "gauge_strategy": "remove_global_mean_numerically_verified_constant_nullspace",
+        "rows": [
+          {
+            "iteration": 1,
+            "field_relative_l2_posthoc": 0.09693556074853737,
+            "data_residual_norm_deployable": 0.00019826069811038953,
+            "total_forward_calls": 2,
+            "total_adjoint_calls": 1,
+            "elapsed_end_to_end_seconds": 0.0004264580784365535
+          },
+          {
+            "iteration": 2,
+            "field_relative_l2_posthoc": 0.10792566657241578,
+            "data_residual_norm_deployable": 0.0001349591959152633,
+            "total_forward_calls": 3,
+            "total_adjoint_calls": 2,
+            "elapsed_end_to_end_seconds": 0.000692916102707386
+          },
+          {
+            "iteration": 3,
+            "field_relative_l2_posthoc": 0.11237252647358527,
+            "data_residual_norm_deployable": 0.00011595148103167795,
+            "total_forward_calls": 4,
+            "total_adjoint_calls": 3,
+            "elapsed_end_to_end_seconds": 0.0012085410999134183
+          },
+          {
+            "iteration": 4,
+            "field_relative_l2_posthoc": 0.1145262054897707,
+            "data_residual_norm_deployable": 0.000109370739997595,
+            "total_forward_calls": 5,
+            "total_adjoint_calls": 4,
+            "elapsed_end_to_end_seconds": 0.0017489161109551787
+          },
+          {
+            "iteration": 5,
+            "field_relative_l2_posthoc": 0.1161467048774138,
+            "data_residual_norm_deployable": 0.00010585647113822656,
+            "total_forward_calls": 6,
+            "total_adjoint_calls": 5,
+            "elapsed_end_to_end_seconds": 0.002272874116897583
+          },
+          {
+            "iteration": 6,
+            "field_relative_l2_posthoc": 0.11719470444299716,
+            "data_residual_norm_deployable": 0.00010422205115336637,
+            "total_forward_calls": 7,
+            "total_adjoint_calls": 6,
+            "elapsed_end_to_end_seconds": 0.004148624138906598
+          },
+          {
+            "iteration": 7,
+            "field_relative_l2_posthoc": 0.11771002475435294,
+            "data_residual_norm_deployable": 0.00010360211597851259,
+            "total_forward_calls": 8,
+            "total_adjoint_calls": 7,
+            "elapsed_end_to_end_seconds": 0.0047612490598112345
+          },
+          {
+            "iteration": 8,
+            "field_relative_l2_posthoc": 0.11800412120675505,
+            "data_residual_norm_deployable": 0.0001033113268760488,
+            "total_forward_calls": 9,
+            "total_adjoint_calls": 8,
+            "elapsed_end_to_end_seconds": 0.005356083041988313
+          },
+          {
+            "iteration": 9,
+            "field_relative_l2_posthoc": 0.11818057432290163,
+            "data_residual_norm_deployable": 0.00010316388011838827,
+            "total_forward_calls": 10,
+            "total_adjoint_calls": 9,
+            "elapsed_end_to_end_seconds": 0.005981333088129759
+          },
+          {
+            "iteration": 10,
+            "field_relative_l2_posthoc": 0.11829198012723476,
+            "data_residual_norm_deployable": 0.00010308448316580433,
+            "total_forward_calls": 11,
+            "total_adjoint_calls": 10,
+            "elapsed_end_to_end_seconds": 0.0062377491267398
+          },
+          {
+            "iteration": 11,
+            "field_relative_l2_posthoc": 0.11838292942406313,
+            "data_residual_norm_deployable": 0.0001030295263594773,
+            "total_forward_calls": 12,
+            "total_adjoint_calls": 11,
+            "elapsed_end_to_end_seconds": 0.006477374117821455
+          },
+          {
+            "iteration": 12,
+            "field_relative_l2_posthoc": 0.11844059004889941,
+            "data_residual_norm_deployable": 0.00010299978942323003,
+            "total_forward_calls": 13,
+            "total_adjoint_calls": 12,
+            "elapsed_end_to_end_seconds": 0.0066759990295395255
+          },
+          {
+            "iteration": 13,
+            "field_relative_l2_posthoc": 0.11848010219851163,
+            "data_residual_norm_deployable": 0.00010298209051648775,
+            "total_forward_calls": 14,
+            "total_adjoint_calls": 13,
+            "elapsed_end_to_end_seconds": 0.006871374091133475
+          },
+          {
+            "iteration": 14,
+            "field_relative_l2_posthoc": 0.11851396798419372,
+            "data_residual_norm_deployable": 0.0001029687778789573,
+            "total_forward_calls": 15,
+            "total_adjoint_calls": 14,
+            "elapsed_end_to_end_seconds": 0.007064166129566729
+          },
+          {
+            "iteration": 15,
+            "field_relative_l2_posthoc": 0.11854828238576313,
+            "data_residual_norm_deployable": 0.00010295705803838196,
+            "total_forward_calls": 16,
+            "total_adjoint_calls": 15,
+            "elapsed_end_to_end_seconds": 0.007258291123434901
+          },
+          {
+            "iteration": 16,
+            "field_relative_l2_posthoc": 0.11857004584223188,
+            "data_residual_norm_deployable": 0.00010295052867921582,
+            "total_forward_calls": 17,
+            "total_adjoint_calls": 16,
+            "elapsed_end_to_end_seconds": 0.007451958139427006
+          },
+          {
+            "iteration": 17,
+            "field_relative_l2_posthoc": 0.11858729810321879,
+            "data_residual_norm_deployable": 0.00010294589353353615,
+            "total_forward_calls": 18,
+            "total_adjoint_calls": 17,
+            "elapsed_end_to_end_seconds": 0.0076435410883277655
+          },
+          {
+            "iteration": 18,
+            "field_relative_l2_posthoc": 0.11860271024059132,
+            "data_residual_norm_deployable": 0.00010294219631380288,
+            "total_forward_calls": 19,
+            "total_adjoint_calls": 18,
+            "elapsed_end_to_end_seconds": 0.007840083097107708
+          },
+          {
+            "iteration": 19,
+            "field_relative_l2_posthoc": 0.11861073512643312,
+            "data_residual_norm_deployable": 0.00010294044815371546,
+            "total_forward_calls": 20,
+            "total_adjoint_calls": 19,
+            "elapsed_end_to_end_seconds": 0.008033583057112992
+          },
+          {
+            "iteration": 20,
+            "field_relative_l2_posthoc": 0.11861796188157556,
+            "data_residual_norm_deployable": 0.00010293900520663827,
+            "total_forward_calls": 21,
+            "total_adjoint_calls": 20,
+            "elapsed_end_to_end_seconds": 0.008225583122111857
+          },
+          {
+            "iteration": 21,
+            "field_relative_l2_posthoc": 0.11862175986914507,
+            "data_residual_norm_deployable": 0.00010293830453296458,
+            "total_forward_calls": 22,
+            "total_adjoint_calls": 21,
+            "elapsed_end_to_end_seconds": 0.008418833138421178
+          },
+          {
+            "iteration": 22,
+            "field_relative_l2_posthoc": 0.11862473251033147,
+            "data_residual_norm_deployable": 0.00010293779115808477,
+            "total_forward_calls": 23,
+            "total_adjoint_calls": 22,
+            "elapsed_end_to_end_seconds": 0.0090830831322819
+          },
+          {
+            "iteration": 23,
+            "field_relative_l2_posthoc": 0.11862635061949153,
+            "data_residual_norm_deployable": 0.00010293752761451258,
+            "total_forward_calls": 24,
+            "total_adjoint_calls": 23,
+            "elapsed_end_to_end_seconds": 0.009599208133295178
+          },
+          {
+            "iteration": 24,
+            "field_relative_l2_posthoc": 0.11862801354294565,
+            "data_residual_norm_deployable": 0.000102937271897115,
+            "total_forward_calls": 25,
+            "total_adjoint_calls": 24,
+            "elapsed_end_to_end_seconds": 0.01012158312369138
+          }
+        ],
+        "final_cost": {
+          "initializer_name": "Disjoint-sample ridge Direct",
+          "preparation_forward_calls": 0,
+          "preparation_adjoint_calls": 0,
+          "initial_projection_forward_calls": 1,
+          "refinement_forward_calls": 24,
+          "refinement_adjoint_calls": 24,
+          "total_forward_calls": 25,
+          "total_adjoint_calls": 24,
+          "inference_calls": 1,
+          "inference_seconds": 4.333304241299629e-05,
+          "initializer_preparation_total_seconds": 4.333304241299629e-05,
+          "operator_forward_seconds": 0.0042091659270226955,
+          "operator_adjoint_seconds": 0.005309916567057371,
+          "solver_overhead_seconds": 0.000564917572773993,
+          "end_to_end_seconds": 0.010127333109267056,
+          "preconditioner_applications": 24,
+          "reported_initializer_peak_memory_bytes": null,
+          "solver_state_bytes_lower_bound": 34112,
+          "measured_end_to_end_peak_memory_available": false
+        },
+        "matched_target": {
+          "target_relative_l2": 0.36585786829793027,
+          "first_target_iteration": 1,
+          "first_target_total_forward_calls": 2,
+          "first_target_total_adjoint_calls": 1,
+          "first_target_end_to_end_seconds": 0.0004264580784365535
+        }
+      }
+    },
+    {
+      "case": "heldout_mode_stress",
+      "truth_shape": [
+        9,
+        9,
+        11
+      ],
+      "observation_size": 350,
+      "reference_vs_inverse_truth_projection_relative_l2": 0.19370166500626693,
+      "direct_only_field_relative_l2_posthoc": 0.21786998107705904,
+      "target_definition": "zero-start CGLS field relative-L2 at 24 iterations, post-hoc only",
+      "target_relative_l2": 0.3011074174176707,
+      "identity_pcgls_vs_cgls_max_abs_field_difference": 0.0,
+      "zero": {
+        "initializer": "Zero",
+        "initializer_audit_status": "INTERNAL_CONSTANT_PROVENANCE",
+        "initializer_provenance": "constant_zero_no_observation_access",
+        "preconditioner": "identity",
+        "gauge_strategy": "remove_global_mean_numerically_verified_constant_nullspace",
+        "rows": [
+          {
+            "iteration": 1,
+            "field_relative_l2_posthoc": 0.8278774004544643,
+            "data_residual_norm_deployable": 0.001529768401429795,
+            "total_forward_calls": 1,
+            "total_adjoint_calls": 1,
+            "elapsed_end_to_end_seconds": 0.00033466704189777374
+          },
+          {
+            "iteration": 2,
+            "field_relative_l2_posthoc": 0.6944815067501754,
+            "data_residual_norm_deployable": 0.0010420722500824552,
+            "total_forward_calls": 2,
+            "total_adjoint_calls": 2,
+            "elapsed_end_to_end_seconds": 0.0005352500593289733
+          },
+          {
+            "iteration": 3,
+            "field_relative_l2_posthoc": 0.6086455904478787,
+            "data_residual_norm_deployable": 0.0008014882961499117,
+            "total_forward_calls": 3,
+            "total_adjoint_calls": 3,
+            "elapsed_end_to_end_seconds": 0.0007420000620186329
+          },
+          {
+            "iteration": 4,
+            "field_relative_l2_posthoc": 0.5333224091881631,
+            "data_residual_norm_deployable": 0.0006293436443460132,
+            "total_forward_calls": 4,
+            "total_adjoint_calls": 4,
+            "elapsed_end_to_end_seconds": 0.0009373750071972609
+          },
+          {
+            "iteration": 5,
+            "field_relative_l2_posthoc": 0.4701514333043876,
+            "data_residual_norm_deployable": 0.0005127636222863096,
+            "total_forward_calls": 5,
+            "total_adjoint_calls": 5,
+            "elapsed_end_to_end_seconds": 0.0011297500459477305
+          },
+          {
+            "iteration": 6,
+            "field_relative_l2_posthoc": 0.39808332072838837,
+            "data_residual_norm_deployable": 0.00038876860893572097,
+            "total_forward_calls": 6,
+            "total_adjoint_calls": 6,
+            "elapsed_end_to_end_seconds": 0.001322625088505447
+          },
+          {
+            "iteration": 7,
+            "field_relative_l2_posthoc": 0.35483220515776,
+            "data_residual_norm_deployable": 0.0002886965069419605,
+            "total_forward_calls": 7,
+            "total_adjoint_calls": 7,
+            "elapsed_end_to_end_seconds": 0.0015156250447034836
+          },
+          {
+            "iteration": 8,
+            "field_relative_l2_posthoc": 0.3348199977916194,
+            "data_residual_norm_deployable": 0.00022732810142006392,
+            "total_forward_calls": 8,
+            "total_adjoint_calls": 8,
+            "elapsed_end_to_end_seconds": 0.002284542075358331
+          },
+          {
+            "iteration": 9,
+            "field_relative_l2_posthoc": 0.32219706277355437,
+            "data_residual_norm_deployable": 0.00018223554195467116,
+            "total_forward_calls": 9,
+            "total_adjoint_calls": 9,
+            "elapsed_end_to_end_seconds": 0.002566542010754347
+          },
+          {
+            "iteration": 10,
+            "field_relative_l2_posthoc": 0.31474420980070367,
+            "data_residual_norm_deployable": 0.00015407598859830689,
+            "total_forward_calls": 10,
+            "total_adjoint_calls": 10,
+            "elapsed_end_to_end_seconds": 0.0028263330459594727
+          },
+          {
+            "iteration": 11,
+            "field_relative_l2_posthoc": 0.30977355092058945,
+            "data_residual_norm_deployable": 0.00013492668963379633,
+            "total_forward_calls": 11,
+            "total_adjoint_calls": 11,
+            "elapsed_end_to_end_seconds": 0.0030402500415220857
+          },
+          {
+            "iteration": 12,
+            "field_relative_l2_posthoc": 0.3066277317683916,
+            "data_residual_norm_deployable": 0.00012206693837483773,
+            "total_forward_calls": 12,
+            "total_adjoint_calls": 12,
+            "elapsed_end_to_end_seconds": 0.0033271670108661056
+          },
+          {
+            "iteration": 13,
+            "field_relative_l2_posthoc": 0.3044633968665787,
+            "data_residual_norm_deployable": 0.00011508894209420735,
+            "total_forward_calls": 13,
+            "total_adjoint_calls": 13,
+            "elapsed_end_to_end_seconds": 0.003856167080812156
+          },
+          {
+            "iteration": 14,
+            "field_relative_l2_posthoc": 0.30313986136607335,
+            "data_residual_norm_deployable": 0.0001111765330426585,
+            "total_forward_calls": 14,
+            "total_adjoint_calls": 14,
+            "elapsed_end_to_end_seconds": 0.004375417018309236
+          },
+          {
+            "iteration": 15,
+            "field_relative_l2_posthoc": 0.30230865632263904,
+            "data_residual_norm_deployable": 0.00010854035381310476,
+            "total_forward_calls": 15,
+            "total_adjoint_calls": 15,
+            "elapsed_end_to_end_seconds": 0.004932167008519173
+          },
+          {
+            "iteration": 16,
+            "field_relative_l2_posthoc": 0.301885397032204,
+            "data_residual_norm_deployable": 0.00010701900496988418,
+            "total_forward_calls": 16,
+            "total_adjoint_calls": 16,
+            "elapsed_end_to_end_seconds": 0.005412416998296976
+          },
+          {
+            "iteration": 17,
+            "field_relative_l2_posthoc": 0.3016004055417127,
+            "data_residual_norm_deployable": 0.00010604759687210402,
+            "total_forward_calls": 17,
+            "total_adjoint_calls": 17,
+            "elapsed_end_to_end_seconds": 0.00594312499742955
+          },
+          {
+            "iteration": 18,
+            "field_relative_l2_posthoc": 0.30140427613222187,
+            "data_residual_norm_deployable": 0.00010545519245781619,
+            "total_forward_calls": 18,
+            "total_adjoint_calls": 18,
+            "elapsed_end_to_end_seconds": 0.00645791704300791
+          },
+          {
+            "iteration": 19,
+            "field_relative_l2_posthoc": 0.30130386299090905,
+            "data_residual_norm_deployable": 0.00010491961777422009,
+            "total_forward_calls": 19,
+            "total_adjoint_calls": 19,
+            "elapsed_end_to_end_seconds": 0.006967458059079945
+          },
+          {
+            "iteration": 20,
+            "field_relative_l2_posthoc": 0.30130477393384913,
+            "data_residual_norm_deployable": 0.0001047054984008642,
+            "total_forward_calls": 20,
+            "total_adjoint_calls": 20,
+            "elapsed_end_to_end_seconds": 0.007476208033040166
+          },
+          {
+            "iteration": 21,
+            "field_relative_l2_posthoc": 0.30128356674048556,
+            "data_residual_norm_deployable": 0.00010454489349040428,
+            "total_forward_calls": 21,
+            "total_adjoint_calls": 21,
+            "elapsed_end_to_end_seconds": 0.007997000007890165
+          },
+          {
+            "iteration": 22,
+            "field_relative_l2_posthoc": 0.3012089546804741,
+            "data_residual_norm_deployable": 0.00010441863680536482,
+            "total_forward_calls": 22,
+            "total_adjoint_calls": 22,
+            "elapsed_end_to_end_seconds": 0.008530375082045794
+          },
+          {
+            "iteration": 23,
+            "field_relative_l2_posthoc": 0.30114622754633436,
+            "data_residual_norm_deployable": 0.00010430465779573486,
+            "total_forward_calls": 23,
+            "total_adjoint_calls": 23,
+            "elapsed_end_to_end_seconds": 0.009100958006456494
+          },
+          {
+            "iteration": 24,
+            "field_relative_l2_posthoc": 0.3011074174176707,
+            "data_residual_norm_deployable": 0.0001042190697550621,
+            "total_forward_calls": 24,
+            "total_adjoint_calls": 24,
+            "elapsed_end_to_end_seconds": 0.009611917077563703
+          }
+        ],
+        "final_cost": {
+          "initializer_name": "Zero",
+          "preparation_forward_calls": 0,
+          "preparation_adjoint_calls": 0,
+          "initial_projection_forward_calls": 0,
+          "refinement_forward_calls": 24,
+          "refinement_adjoint_calls": 24,
+          "total_forward_calls": 24,
+          "total_adjoint_calls": 24,
+          "inference_calls": 0,
+          "inference_seconds": 0.0,
+          "initializer_preparation_total_seconds": 0.0,
+          "operator_forward_seconds": 0.00421966623980552,
+          "operator_adjoint_seconds": 0.004786164732649922,
+          "solver_overhead_seconds": 0.0006117110606282949,
+          "end_to_end_seconds": 0.009617542033083737,
+          "preconditioner_applications": 24,
+          "reported_initializer_peak_memory_bytes": null,
+          "solver_state_bytes_lower_bound": 34112,
+          "measured_end_to_end_peak_memory_available": false
+        },
+        "matched_target": {
+          "target_relative_l2": 0.30110741741797187,
+          "first_target_iteration": 24,
+          "first_target_total_forward_calls": 24,
+          "first_target_total_adjoint_calls": 24,
+          "first_target_end_to_end_seconds": 0.009611917077563703
+        }
+      },
+      "normalized_bp": {
+        "initializer": "Normalized BP",
+        "initializer_audit_status": "INTERNAL_OBSERVATION_ONLY_OPERATOR_ACCOUNTED",
+        "initializer_provenance": "alpha_times_A_transpose_y_with_observable_line_search",
+        "preconditioner": "identity",
+        "gauge_strategy": "remove_global_mean_numerically_verified_constant_nullspace",
+        "rows": [
+          {
+            "iteration": 1,
+            "field_relative_l2_posthoc": 0.7275343804493775,
+            "data_residual_norm_deployable": 0.001166345122137146,
+            "total_forward_calls": 2,
+            "total_adjoint_calls": 2,
+            "elapsed_end_to_end_seconds": 0.001136082923039794
+          },
+          {
+            "iteration": 2,
+            "field_relative_l2_posthoc": 0.6062977148925048,
+            "data_residual_norm_deployable": 0.0008032703060553587,
+            "total_forward_calls": 3,
+            "total_adjoint_calls": 3,
+            "elapsed_end_to_end_seconds": 0.0013487079413607717
+          },
+          {
+            "iteration": 3,
+            "field_relative_l2_posthoc": 0.5536411295891437,
+            "data_residual_norm_deployable": 0.0006600935002587578,
+            "total_forward_calls": 4,
+            "total_adjoint_calls": 4,
+            "elapsed_end_to_end_seconds": 0.0015525829512625933
+          },
+          {
+            "iteration": 4,
+            "field_relative_l2_posthoc": 0.4708610813590313,
+            "data_residual_norm_deployable": 0.0005152612510247875,
+            "total_forward_calls": 5,
+            "total_adjoint_calls": 5,
+            "elapsed_end_to_end_seconds": 0.001750707975588739
+          },
+          {
+            "iteration": 5,
+            "field_relative_l2_posthoc": 0.41000940541175146,
+            "data_residual_norm_deployable": 0.0004123038988014498,
+            "total_forward_calls": 6,
+            "total_adjoint_calls": 6,
+            "elapsed_end_to_end_seconds": 0.0019469578983262181
+          },
+          {
+            "iteration": 6,
+            "field_relative_l2_posthoc": 0.35506079411511404,
+            "data_residual_norm_deployable": 0.0002888026097851831,
+            "total_forward_calls": 7,
+            "total_adjoint_calls": 7,
+            "elapsed_end_to_end_seconds": 0.0021440829150378704
+          },
+          {
+            "iteration": 7,
+            "field_relative_l2_posthoc": 0.33720503627833126,
+            "data_residual_norm_deployable": 0.00023362646476789403,
+            "total_forward_calls": 8,
+            "total_adjoint_calls": 8,
+            "elapsed_end_to_end_seconds": 0.002341541927307844
+          },
+          {
+            "iteration": 8,
+            "field_relative_l2_posthoc": 0.32223213628675323,
+            "data_residual_norm_deployable": 0.0001825675697580597,
+            "total_forward_calls": 9,
+            "total_adjoint_calls": 9,
+            "elapsed_end_to_end_seconds": 0.0025368749629706144
+          },
+          {
+            "iteration": 9,
+            "field_relative_l2_posthoc": 0.3151765369048756,
+            "data_residual_norm_deployable": 0.00015576802937459139,
+            "total_forward_calls": 10,
+            "total_adjoint_calls": 10,
+            "elapsed_end_to_end_seconds": 0.0027322079986333847
+          },
+          {
+            "iteration": 10,
+            "field_relative_l2_posthoc": 0.3097620440203715,
+            "data_residual_norm_deployable": 0.00013506281954765096,
+            "total_forward_calls": 11,
+            "total_adjoint_calls": 11,
+            "elapsed_end_to_end_seconds": 0.004948916961438954
+          },
+          {
+            "iteration": 11,
+            "field_relative_l2_posthoc": 0.30684372534574067,
+            "data_residual_norm_deployable": 0.00012274783519045324,
+            "total_forward_calls": 12,
+            "total_adjoint_calls": 12,
+            "elapsed_end_to_end_seconds": 0.005470374948345125
+          },
+          {
+            "iteration": 12,
+            "field_relative_l2_posthoc": 0.30446618211519394,
+            "data_residual_norm_deployable": 0.00011509187910037522,
+            "total_forward_calls": 13,
+            "total_adjoint_calls": 13,
+            "elapsed_end_to_end_seconds": 0.006044707959517837
+          },
+          {
+            "iteration": 13,
+            "field_relative_l2_posthoc": 0.30319994090052965,
+            "data_residual_norm_deployable": 0.00011135658486075874,
+            "total_forward_calls": 14,
+            "total_adjoint_calls": 14,
+            "elapsed_end_to_end_seconds": 0.006600207998417318
+          },
+          {
+            "iteration": 14,
+            "field_relative_l2_posthoc": 0.3023086970809065,
+            "data_residual_norm_deployable": 0.00010854380140993694,
+            "total_forward_calls": 15,
+            "total_adjoint_calls": 15,
+            "elapsed_end_to_end_seconds": 0.0072977079544216394
+          },
+          {
+            "iteration": 15,
+            "field_relative_l2_posthoc": 0.30189972228981105,
+            "data_residual_norm_deployable": 0.0001070687664126461,
+            "total_forward_calls": 16,
+            "total_adjoint_calls": 16,
+            "elapsed_end_to_end_seconds": 0.007506374968215823
+          },
+          {
+            "iteration": 16,
+            "field_relative_l2_posthoc": 0.3016006602055457,
+            "data_residual_norm_deployable": 0.00010605216144197884,
+            "total_forward_calls": 17,
+            "total_adjoint_calls": 17,
+            "elapsed_end_to_end_seconds": 0.007711124955676496
+          },
+          {
+            "iteration": 17,
+            "field_relative_l2_posthoc": 0.30141251612338366,
+            "data_residual_norm_deployable": 0.00010547562510539554,
+            "total_forward_calls": 18,
+            "total_adjoint_calls": 18,
+            "elapsed_end_to_end_seconds": 0.008619332918897271
+          },
+          {
+            "iteration": 18,
+            "field_relative_l2_posthoc": 0.3013047414923268,
+            "data_residual_norm_deployable": 0.00010492104437185833,
+            "total_forward_calls": 19,
+            "total_adjoint_calls": 19,
+            "elapsed_end_to_end_seconds": 0.008877416956238449
+          },
+          {
+            "iteration": 19,
+            "field_relative_l2_posthoc": 0.301303223874277,
+            "data_residual_norm_deployable": 0.0001047091047974711,
+            "total_forward_calls": 20,
+            "total_adjoint_calls": 20,
+            "elapsed_end_to_end_seconds": 0.00951045798137784
+          },
+          {
+            "iteration": 20,
+            "field_relative_l2_posthoc": 0.30128189784117415,
+            "data_residual_norm_deployable": 0.00010454729931436693,
+            "total_forward_calls": 21,
+            "total_adjoint_calls": 21,
+            "elapsed_end_to_end_seconds": 0.010057624895125628
+          },
+          {
+            "iteration": 21,
+            "field_relative_l2_posthoc": 0.3012129907274169,
+            "data_residual_norm_deployable": 0.0001044207900209731,
+            "total_forward_calls": 22,
+            "total_adjoint_calls": 22,
+            "elapsed_end_to_end_seconds": 0.010607582982629538
+          },
+          {
+            "iteration": 22,
+            "field_relative_l2_posthoc": 0.3011490985690953,
+            "data_residual_norm_deployable": 0.00010430614990094712,
+            "total_forward_calls": 23,
+            "total_adjoint_calls": 23,
+            "elapsed_end_to_end_seconds": 0.011244582943618298
+          },
+          {
+            "iteration": 23,
+            "field_relative_l2_posthoc": 0.301105953808964,
+            "data_residual_norm_deployable": 0.0001042204907888734,
+            "total_forward_calls": 24,
+            "total_adjoint_calls": 24,
+            "elapsed_end_to_end_seconds": 0.012293166946619749
+          },
+          {
+            "iteration": 24,
+            "field_relative_l2_posthoc": 0.30109116685566817,
+            "data_residual_norm_deployable": 0.00010416362016308762,
+            "total_forward_calls": 25,
+            "total_adjoint_calls": 25,
+            "elapsed_end_to_end_seconds": 0.012808416970074177
+          }
+        ],
+        "final_cost": {
+          "initializer_name": "Normalized BP",
+          "preparation_forward_calls": 1,
+          "preparation_adjoint_calls": 1,
+          "initial_projection_forward_calls": 0,
+          "refinement_forward_calls": 24,
+          "refinement_adjoint_calls": 24,
+          "total_forward_calls": 25,
+          "total_adjoint_calls": 25,
+          "inference_calls": 0,
+          "inference_seconds": 0.0,
+          "initializer_preparation_total_seconds": 0.0006957079749554396,
+          "operator_forward_seconds": 0.006453999667428434,
+          "operator_adjoint_seconds": 0.005680083646439016,
+          "solver_overhead_seconds": 0.0005755836609750986,
+          "end_to_end_seconds": 0.012814291985705495,
+          "preconditioner_applications": 24,
+          "reported_initializer_peak_memory_bytes": null,
+          "solver_state_bytes_lower_bound": 34112,
+          "measured_end_to_end_peak_memory_available": false
+        },
+        "matched_target": {
+          "target_relative_l2": 0.30110741741797187,
+          "first_target_iteration": 23,
+          "first_target_total_forward_calls": 24,
+          "first_target_total_adjoint_calls": 24,
+          "first_target_end_to_end_seconds": 0.012293166946619749
+        }
+      },
+      "direct_warm": {
+        "initializer": "Disjoint-sample ridge Direct",
+        "initializer_audit_status": "CONTROLLED_INPUT_SELF_ATTESTED",
+        "initializer_provenance": "observation_only_ridge_map_fit_on_disjoint_synthetic_coefficients",
+        "preconditioner": "identity",
+        "gauge_strategy": "remove_global_mean_numerically_verified_constant_nullspace",
+        "rows": [
+          {
+            "iteration": 1,
+            "field_relative_l2_posthoc": 0.19011862065561858,
+            "data_residual_norm_deployable": 0.0004399708686963673,
+            "total_forward_calls": 2,
+            "total_adjoint_calls": 1,
+            "elapsed_end_to_end_seconds": 0.0008849580772221088
+          },
+          {
+            "iteration": 2,
+            "field_relative_l2_posthoc": 0.1813560340461089,
+            "data_residual_norm_deployable": 0.0002794689558542324,
+            "total_forward_calls": 3,
+            "total_adjoint_calls": 2,
+            "elapsed_end_to_end_seconds": 0.0014047500444576144
+          },
+          {
+            "iteration": 3,
+            "field_relative_l2_posthoc": 0.17597098089596194,
+            "data_residual_norm_deployable": 0.00020259897876482655,
+            "total_forward_calls": 4,
+            "total_adjoint_calls": 3,
+            "elapsed_end_to_end_seconds": 0.0019316670950502157
+          },
+          {
+            "iteration": 4,
+            "field_relative_l2_posthoc": 0.1734191658510454,
+            "data_residual_norm_deployable": 0.00015658749581139077,
+            "total_forward_calls": 5,
+            "total_adjoint_calls": 4,
+            "elapsed_end_to_end_seconds": 0.002475125133059919
+          },
+          {
+            "iteration": 5,
+            "field_relative_l2_posthoc": 0.17218150869547197,
+            "data_residual_norm_deployable": 0.00013103600352270316,
+            "total_forward_calls": 6,
+            "total_adjoint_calls": 5,
+            "elapsed_end_to_end_seconds": 0.0031528330873697996
+          },
+          {
+            "iteration": 6,
+            "field_relative_l2_posthoc": 0.17051792024682388,
+            "data_residual_norm_deployable": 0.00011926852763394596,
+            "total_forward_calls": 7,
+            "total_adjoint_calls": 6,
+            "elapsed_end_to_end_seconds": 0.0037250000750645995
+          },
+          {
+            "iteration": 7,
+            "field_relative_l2_posthoc": 0.1707125838313965,
+            "data_residual_norm_deployable": 0.0001134835653580779,
+            "total_forward_calls": 8,
+            "total_adjoint_calls": 7,
+            "elapsed_end_to_end_seconds": 0.004043583059683442
+          },
+          {
+            "iteration": 8,
+            "field_relative_l2_posthoc": 0.17139193765357463,
+            "data_residual_norm_deployable": 0.00010981588098657718,
+            "total_forward_calls": 9,
+            "total_adjoint_calls": 8,
+            "elapsed_end_to_end_seconds": 0.004244542098604143
+          },
+          {
+            "iteration": 9,
+            "field_relative_l2_posthoc": 0.1719369220500747,
+            "data_residual_norm_deployable": 0.00010735900753231822,
+            "total_forward_calls": 10,
+            "total_adjoint_calls": 9,
+            "elapsed_end_to_end_seconds": 0.004472583066672087
+          },
+          {
+            "iteration": 10,
+            "field_relative_l2_posthoc": 0.17267251603516323,
+            "data_residual_norm_deployable": 0.00010594647590622927,
+            "total_forward_calls": 11,
+            "total_adjoint_calls": 10,
+            "elapsed_end_to_end_seconds": 0.004667917033657432
+          },
+          {
+            "iteration": 11,
+            "field_relative_l2_posthoc": 0.17314207500402357,
+            "data_residual_norm_deployable": 0.0001050910638712811,
+            "total_forward_calls": 12,
+            "total_adjoint_calls": 11,
+            "elapsed_end_to_end_seconds": 0.00485995807684958
+          },
+          {
+            "iteration": 12,
+            "field_relative_l2_posthoc": 0.17340946307051303,
+            "data_residual_norm_deployable": 0.00010463505471445727,
+            "total_forward_calls": 13,
+            "total_adjoint_calls": 12,
+            "elapsed_end_to_end_seconds": 0.005052000051364303
+          },
+          {
+            "iteration": 13,
+            "field_relative_l2_posthoc": 0.17355552898064577,
+            "data_residual_norm_deployable": 0.00010439352166369342,
+            "total_forward_calls": 14,
+            "total_adjoint_calls": 13,
+            "elapsed_end_to_end_seconds": 0.005243958090431988
+          },
+          {
+            "iteration": 14,
+            "field_relative_l2_posthoc": 0.17362046065656875,
+            "data_residual_norm_deployable": 0.00010425985052099839,
+            "total_forward_calls": 15,
+            "total_adjoint_calls": 14,
+            "elapsed_end_to_end_seconds": 0.005435000057332218
+          },
+          {
+            "iteration": 15,
+            "field_relative_l2_posthoc": 0.1736121255872656,
+            "data_residual_norm_deployable": 0.00010418394690665365,
+            "total_forward_calls": 16,
+            "total_adjoint_calls": 15,
+            "elapsed_end_to_end_seconds": 0.0056252500507980585
+          },
+          {
+            "iteration": 16,
+            "field_relative_l2_posthoc": 0.1735956912373815,
+            "data_residual_norm_deployable": 0.00010414317127239302,
+            "total_forward_calls": 17,
+            "total_adjoint_calls": 16,
+            "elapsed_end_to_end_seconds": 0.005814625066705048
+          },
+          {
+            "iteration": 17,
+            "field_relative_l2_posthoc": 0.1735929150963258,
+            "data_residual_norm_deployable": 0.00010412018912476918,
+            "total_forward_calls": 18,
+            "total_adjoint_calls": 17,
+            "elapsed_end_to_end_seconds": 0.0060061251278966665
+          },
+          {
+            "iteration": 18,
+            "field_relative_l2_posthoc": 0.17355269971156728,
+            "data_residual_norm_deployable": 0.00010410702465861987,
+            "total_forward_calls": 19,
+            "total_adjoint_calls": 18,
+            "elapsed_end_to_end_seconds": 0.006340625113807619
+          },
+          {
+            "iteration": 19,
+            "field_relative_l2_posthoc": 0.17354331781075957,
+            "data_residual_norm_deployable": 0.00010410023958736539,
+            "total_forward_calls": 20,
+            "total_adjoint_calls": 19,
+            "elapsed_end_to_end_seconds": 0.006908833049237728
+          },
+          {
+            "iteration": 20,
+            "field_relative_l2_posthoc": 0.17353953173189293,
+            "data_residual_norm_deployable": 0.0001040959466802757,
+            "total_forward_calls": 21,
+            "total_adjoint_calls": 20,
+            "elapsed_end_to_end_seconds": 0.007431625039316714
+          },
+          {
+            "iteration": 21,
+            "field_relative_l2_posthoc": 0.17353184124593307,
+            "data_residual_norm_deployable": 0.00010409320416939078,
+            "total_forward_calls": 22,
+            "total_adjoint_calls": 21,
+            "elapsed_end_to_end_seconds": 0.007940125069580972
+          },
+          {
+            "iteration": 22,
+            "field_relative_l2_posthoc": 0.17353304458574487,
+            "data_residual_norm_deployable": 0.0001040916336694525,
+            "total_forward_calls": 23,
+            "total_adjoint_calls": 22,
+            "elapsed_end_to_end_seconds": 0.008468750049360096
+          },
+          {
+            "iteration": 23,
+            "field_relative_l2_posthoc": 0.1735357454664818,
+            "data_residual_norm_deployable": 0.00010409075763599143,
+            "total_forward_calls": 24,
+            "total_adjoint_calls": 23,
+            "elapsed_end_to_end_seconds": 0.008987708133645356
+          },
+          {
+            "iteration": 24,
+            "field_relative_l2_posthoc": 0.17353377819522423,
+            "data_residual_norm_deployable": 0.00010409022667600364,
+            "total_forward_calls": 25,
+            "total_adjoint_calls": 24,
+            "elapsed_end_to_end_seconds": 0.009564333129674196
+          }
+        ],
+        "final_cost": {
+          "initializer_name": "Disjoint-sample ridge Direct",
+          "preparation_forward_calls": 0,
+          "preparation_adjoint_calls": 0,
+          "initial_projection_forward_calls": 1,
+          "refinement_forward_calls": 24,
+          "refinement_adjoint_calls": 24,
+          "total_forward_calls": 25,
+          "total_adjoint_calls": 24,
+          "inference_calls": 1,
+          "inference_seconds": 0.00011704210191965103,
+          "initializer_preparation_total_seconds": 0.00011704210191965103,
+          "operator_forward_seconds": 0.004485666984692216,
+          "operator_adjoint_seconds": 0.004280249122530222,
+          "solver_overhead_seconds": 0.0006872918456792831,
+          "end_to_end_seconds": 0.009570250054821372,
+          "preconditioner_applications": 24,
+          "reported_initializer_peak_memory_bytes": null,
+          "solver_state_bytes_lower_bound": 34112,
+          "measured_end_to_end_peak_memory_available": false
+        },
+        "matched_target": {
+          "target_relative_l2": 0.30110741741797187,
+          "first_target_iteration": 1,
+          "first_target_total_forward_calls": 2,
+          "first_target_total_adjoint_calls": 1,
+          "first_target_end_to_end_seconds": 0.0008849580772221088
+        }
+      }
+    }
+  ],
+  "gate_checks": {
+    "stacked_adjoint_dot_test": true,
+    "constant_nullspace_certificate": true,
+    "identity_pcgls_equivalence": true,
+    "checkpoint_call_ledger": true,
+    "initializer_audit_labels": true,
+    "one_shot_projection_cache_empty": true,
+    "independent_reference": true,
+    "identity_pcgls_equivalence_threshold": 1e-12
+  },
+  "decision": {
+    "solver_contract_passed": true,
+    "cost_accounting_passed": true,
+    "independent_reference_used": true,
+    "warm_start_headroom_is_algorithm_evidence": false,
+    "poolfire_physics_closed": false,
+    "training_authorized": false,
+    "algorithm_breakthrough": false,
+    "next_gate": "confirm PoolFire field semantics/units/refractivity/cameras, then rerun the unchanged ledger on real independent CFD pairs"
+  },
+  "claim_boundary": [
+    "The direct map is ridge regression, not DeepONet/FNO/FFNO.",
+    "The two cases are analytic manufactured fields, not PoolFire CFD.",
+    "The stress case holds out one mode, not a physical geometry.",
+    "All field errors are post-hoc and never control solver execution.",
+    "Timing is local NumPy micro-runtime; peak end-to-end memory is unavailable.",
+    "No real reconstruction, speedup, generalization, or paper claim is made."
+  ]
+}

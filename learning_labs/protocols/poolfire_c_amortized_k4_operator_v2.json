@@ -1,0 +1,102 @@
+{
+  "schema_version": "oerf-poolfire-c-amortized-k4-operator-2.0",
+  "status": "FROZEN_AFTER_OPEN_V1_DIAGNOSIS_BEFORE_V2_MODEL_RESULTS",
+  "evidence_design": {
+    "preregistered_confirmatory_experiment": false,
+    "adaptive_open_validation_development": true,
+    "reason": "v1 exposed severe K24 semiconvergence failure before any untouched test was opened",
+    "untouched_test_remains_jointly_sealed": true
+  },
+  "parents": {
+    "experiment_v1_sha256": "bb536f8b0f25a4ced47263798b7d5cdb0efa94308d3796a6ced6e7c37fd1d76b",
+    "geometry_pcgls_v1_sha256": "e3e6da3408855f4934f6d64747d6511e2e78a0adc6d20500ea73f860ea0e66d6",
+    "open_classical_v1_summary_sha256": "05e244bfdf2c9f447ad77321d5fd6e02006cf2917117d5dba4f73f6c99464c0f"
+  },
+  "classical_reference": {
+    "arm": "zero_cgls",
+    "depth": 4,
+    "selection_source": "p=22kw_size=01 stopping_and_correction_validation",
+    "selection_was_post_hoc_to_v1": true,
+    "selection_rule": "minimum field relative-L2 p90(higher), then field worst, gradient p90, observation p90, calls",
+    "full_A_calls": 4,
+    "full_AT_calls": 4
+  },
+  "amortized_target": {
+    "name": "zero_cgls_k4_field",
+    "generated_from": "observation_and_frozen_inverse_operator_only",
+    "truth_used_to_generate_target": false,
+    "fit_trajectories": [
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "model_selection_trajectory": "p=14kw_size=01",
+    "stopping_validation_trajectory": "p=22kw_size=01"
+  },
+  "model": {
+    "family": "train_only_standardized_dual_ridge_then_compact_svd",
+    "observation_only_at_deployment": true,
+    "lambda_candidates": [
+      1e-10,
+      1e-08,
+      1e-06,
+      0.0001,
+      0.01,
+      1.0,
+      100.0
+    ],
+    "lambda_selection": "p14 minimum K4-target field p90(higher), then worst, median, larger lambda",
+    "rank_candidates": [
+      4,
+      8,
+      16,
+      32,
+      64,
+      96,
+      128,
+      192,
+      256
+    ],
+    "rank_selection": "smallest parameter_bytes satisfying all three matched-accuracy metrics on at least 90 percent of p14 frames with harm at most 5 percent",
+    "validation_refit_forbidden": true
+  },
+  "refinement": {
+    "candidate_depths_after_warm_start": [
+      0,
+      1,
+      2,
+      4
+    ],
+    "selection_source": "p=22kw_size=01 only",
+    "selection_order": [
+      "minimum_total_full_A_plus_full_AT_calls",
+      "minimum_end_to_end_wall_time",
+      "minimum_refinement_depth"
+    ]
+  },
+  "matched_accuracy": {
+    "reference": "zero_cgls_k4_same_frame",
+    "field_tolerance": "max(0.01, 0.05 * reference_error)",
+    "gradient_tolerance": "max(0.015, 0.05 * reference_error)",
+    "observation_tolerance": "max(0.005, 0.10 * reference_error)",
+    "minimum_joint_pass_fraction": 0.9,
+    "maximum_harm_fraction": 0.05,
+    "truth_based_deployment_stopping_forbidden": true
+  },
+  "cost_accounting": {
+    "initializer_projection_full_A_counted": true,
+    "model_inference_wall_counted": true,
+    "model_parameter_bytes_counted": true,
+    "fresh_process_single_frame_peak_rss_required_after_depth_selection": true,
+    "training_and_factorization_reported_separately": true
+  },
+  "claim_boundaries": {
+    "algorithm_breakthrough": false,
+    "confirmatory_generalization": false,
+    "wall_time_speedup": false,
+    "memory_reduction": false,
+    "neural_operator_superiority": false,
+    "real_bost": false,
+    "paper_success": false
+  }
+}
