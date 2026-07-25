@@ -1,0 +1,323 @@
+{
+  "schema_version": "oerf-poolfire-c-cross-trajectory-experiment-1.0",
+  "status": "frozen_before_cross_trajectory_pair_generation",
+  "research_question": "Can an observation-only warm initializer reach the same frozen field-and-gradient accuracy as classical starts with fewer complete multi-view A/A^T calls and lower deployment cost?",
+  "parent_protocol": {
+    "path": "learning_labs/protocols/poolfire_trajectory_protocol_v1.json",
+    "schema_version": "oerf-poolfire-trajectory-protocol-1.0",
+    "sha256": "c9ec3de5396b59c9fe75510fa5fcc9e3d3bcee6ea772ff4e42aa3115a5ee702b",
+    "test_truth_state": "identity_sealed_not_extracted"
+  },
+  "trajectory_roles": {
+    "fit": [
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "model_selection_validation": [
+      "p=14kw_size=01"
+    ],
+    "stopping_and_correction_validation": [
+      "p=22kw_size=01"
+    ],
+    "untouched_confirmatory_test": [
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ],
+    "permanent_development_only": [
+      "p=14kw_size=03"
+    ],
+    "unit_of_generalization": "complete_trajectory",
+    "random_frame_role_assignment": false,
+    "validation_may_update_model_weights": false,
+    "model_selection_validation_state": "ready_not_used_for_cross_trajectory_selection",
+    "stopping_validation_state": "ready_not_used_for_cross_trajectory_selection",
+    "validation_burn_rule": "if a validation trajectory informs any upstream decision outside its assigned role, that trajectory is burned and may not retain its validation label",
+    "test_truth_opened": false
+  },
+  "frame_contract": {
+    "indices": {
+      "start": 0,
+      "stop_inclusive": 100,
+      "step": 1
+    },
+    "expected_frames_per_trajectory": 101,
+    "stored_order_only": true,
+    "frames_are_independent_replicates": false,
+    "aggregation_order": [
+      "compute paired frame metrics inside each complete trajectory",
+      "report per-trajectory p50, p90, worst and harm",
+      "aggregate trajectories with equal trajectory weight"
+    ],
+    "future_frame_input_forbidden": true
+  },
+  "field_contract": {
+    "source_variable": "rho",
+    "source_units": "unresolved",
+    "point_or_cell_semantics": "unresolved",
+    "roi_index_slices_xyz": [
+      [
+        24,
+        56
+      ],
+      [
+        24,
+        56
+      ],
+      [
+        0,
+        64
+      ]
+    ],
+    "reference_shape_xyz": [
+      32,
+      32,
+      64
+    ],
+    "inverse_shape_xyz": [
+      16,
+      16,
+      32
+    ],
+    "coarsening": "exact_2x2x2_block_mean",
+    "gauge": "remove_each_frame_spatial_mean",
+    "absolute_density_reconstruction_claim_allowed": false
+  },
+  "proxy_forward_contract": {
+    "reference_class": "CompositeGaussLegendreReferenceForward",
+    "inverse_class": "ProjectionFirstInteriorStraightRayOperator",
+    "views": [
+      "x",
+      "y",
+      "z"
+    ],
+    "view_count": 3,
+    "reference_quadrature_order": 4,
+    "reference_max_step": "0.5_times_minimum_reference_grid_spacing",
+    "reference_refractive_index": 1.0,
+    "reference_has_adjoint": false,
+    "reference_and_inverse_share_matrix": false,
+    "reference_and_inverse_share_module_instance": false,
+    "physical_angle_or_pixel_units_closed": false,
+    "inverse_dot_test_relative_tolerance": 2e-12,
+    "inverse_constant_nullspace_tolerance": 1e-12
+  },
+  "preprocessing_contract": {
+    "fit_statistics_sources": [
+      "fit trajectories only"
+    ],
+    "observation_transform": "featurewise_train_mean_and_std",
+    "observation_std_floor": 1e-08,
+    "field_transform": "per_frame_gauge_then_train_field_mean_and_global_rms",
+    "field_rms_floor": 1e-08,
+    "model_selection_validation_statistics_forbidden": true,
+    "stopping_validation_statistics_forbidden": true,
+    "test_statistics_forbidden": true,
+    "final_refit_on_fit_plus_validation_forbidden": true
+  },
+  "pair_bundle_contract": {
+    "schema_version": "oerf-poolfire-c-cross-trajectory-pairs-1.0",
+    "one_bundle_per_complete_trajectory": true,
+    "frame_count": 101,
+    "frame_order": "stored_indices_0_through_100",
+    "observation_array": {
+      "filename": "observations.npy",
+      "shape": [
+        101,
+        2072
+      ],
+      "dtype": "float64"
+    },
+    "truth_array": {
+      "filename": "gauge_truth.npy",
+      "shape": [
+        101,
+        16,
+        16,
+        32
+      ],
+      "dtype": "float64",
+      "gauge": "per_frame_spatial_mean_zero"
+    },
+    "time_array": {
+      "filename": "times.npy",
+      "shape": [
+        101
+      ],
+      "dtype": "float64"
+    },
+    "frame_metrics_filename": "frame_metrics.json",
+    "high_resolution_field_persisted": false,
+    "atomic_ready_required": true,
+    "checksums_required_before_ready": true,
+    "geometry_audit_seed": 240725,
+    "test_trajectory_generation_allowed": false
+  },
+  "classical_arms": [
+    {
+      "id": "zero_cgls",
+      "initializer": "zero",
+      "refiner": "same_frozen_cgls"
+    },
+    {
+      "id": "normalized_bp_cgls",
+      "initializer": "normalized_backprojection",
+      "refiner": "same_frozen_cgls"
+    },
+    {
+      "id": "zero_pcgls_geometry_diag",
+      "initializer": "zero",
+      "refiner": "same_frozen_pcgls",
+      "preconditioner": "fixed_geometry_only_sensitivity_diagonal"
+    },
+    {
+      "id": "dual_ridge_cgls",
+      "initializer": "observation_only_dual_ridge",
+      "refiner": "same_frozen_cgls"
+    }
+  ],
+  "ridge_contract": {
+    "candidate_lambda_multipliers": [
+      1e-10,
+      1e-08,
+      1e-06,
+      0.0001,
+      0.01,
+      1.0,
+      100.0
+    ],
+    "candidate_selection_data": "model_selection_validation_only",
+    "candidate_selection_objective_order": [
+      "field_relative_l2_p90",
+      "field_relative_l2_worst",
+      "field_relative_l2_median"
+    ],
+    "p90_quantile_method": "higher",
+    "candidate_tie_break": "larger_lambda_multiplier",
+    "final_weight_fit_data": "fit_trajectories_only",
+    "refit_with_validation_forbidden": true
+  },
+  "refinement_and_stopping_contract": {
+    "candidate_refinement_depths": [
+      0,
+      1,
+      2,
+      4,
+      8,
+      12,
+      16,
+      24
+    ],
+    "reference_arm": "zero_cgls",
+    "reference_depth": 24,
+    "field_tolerance_per_frame": "max(0.01, 0.05 * zero_cgls_k24_field_relative_l2)",
+    "gradient_tolerance_per_frame": "max(0.015, 0.05 * zero_cgls_k24_gradient_relative_l2)",
+    "observation_tolerance_per_frame": "max(0.005, 0.10 * zero_cgls_k24_observation_residual_relative_l2)",
+    "matched_accuracy_requires_field_gradient_and_observation": true,
+    "minimum_joint_pass_fraction": 0.9,
+    "maximum_harm_fraction": 0.05,
+    "harm_rule": "candidate_error_exceeds_reference_error_by_more_than_2_times_metric_tolerance",
+    "selection_data": "stopping_and_correction_validation_only",
+    "selection_order": [
+      "minimum_total_full_A_plus_full_AT_calls",
+      "minimum_end_to_end_wall_time",
+      "minimum_refinement_depth"
+    ],
+    "fixed_depth_per_arm_after_validation": true,
+    "truth_based_stopping_at_deployment_forbidden": true
+  },
+  "cost_accounting": {
+    "full_A_definition": "all_three_frozen_views_once",
+    "full_AT_definition": "all_three_frozen_view_adjoints_once",
+    "include_initializer_projection_cost": true,
+    "include_preprocessing_cost": true,
+    "include_inference_cost": true,
+    "include_refinement_cost": true,
+    "include_preconditioner_setup_cost": true,
+    "report_setup_or_fit_cost_separately": true,
+    "report_single_use_and_amortized_setup_scenarios_separately": true,
+    "deployment_wall_interval": "observation_input_available_to_final_field_available",
+    "memory_measurement": "fresh_process_whole_arm_peak_rss",
+    "identity_pcgls_may_be_reported_as_geometry_preconditioned": false
+  },
+  "metrics_and_reporting": {
+    "primary_metrics": [
+      "gauge_centered_field_relative_l2",
+      "gradient_relative_l2",
+      "total_full_A_calls",
+      "total_full_AT_calls"
+    ],
+    "secondary_metrics": [
+      "observation_residual_relative_l2",
+      "end_to_end_wall_time",
+      "fresh_process_whole_arm_peak_rss"
+    ],
+    "paired_reporting_levels": [
+      "per_frame",
+      "per_trajectory_p50_p90_worst",
+      "equal_weight_trajectory_summary"
+    ],
+    "harm_must_be_reported": true,
+    "all_preregistered_arms_must_be_reported": true,
+    "frame_count_may_not_be_used_as_independent_sample_size": true
+  },
+  "neural_entry_gate": {
+    "allowed_before_classical_gate": false,
+    "entry_condition": "dual_ridge retains stable matched-accuracy cost headroom on both validation trajectories",
+    "future_shortlist": [
+      "backprojection_conditioned_3d_unet",
+      "backprojection_conditioned_3d_fno"
+    ],
+    "required_input_channels": [
+      "normalized_A^T_b",
+      "fixed_geometry_sensitivity"
+    ],
+    "backprojection_cost_must_be_counted": true,
+    "architecture_and_training_protocol_must_be_frozen_before_training": true
+  },
+  "test_release_gate": {
+    "release_file_exists": false,
+    "release_filename": "TEST_RELEASE.json",
+    "opened_receipt_exists": false,
+    "required_bindings": [
+      "model_or_weight_sha256",
+      "preprocessing_sha256",
+      "normalization_constants_sha256",
+      "frame_manifest_sha256",
+      "reference_and_gauge_sha256",
+      "proxy_forward_sha256",
+      "inverse_geometry_sha256",
+      "solver_sha256",
+      "fixed_refinement_depth_per_arm",
+      "matched_accuracy_tolerances",
+      "matched_accuracy_tolerances_sha256",
+      "metrics",
+      "all_candidate_arms",
+      "candidate_registry_sha256",
+      "seeds",
+      "exclusion_rules",
+      "report_template_sha256"
+    ],
+    "release_scope": "joint_two_trajectory_atomic_freeze",
+    "authorized_trajectories": [
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ],
+    "exclusive_opened_receipt_before_test_read": true,
+    "method_or_report_change_between_test_streams_forbidden": true,
+    "test_based_selection_forbidden": true,
+    "test_retry_after_result_forbidden": true
+  },
+  "claim_boundaries": {
+    "algorithm_breakthrough": false,
+    "real_bost": false,
+    "rho_to_refractive_index_closed": false,
+    "camera_calibration_closed": false,
+    "cross_trajectory_confirmatory_generalization": false,
+    "unseen_power_ood": false,
+    "unseen_size_ood": false,
+    "wall_time_speedup": false,
+    "memory_reduction": false,
+    "paper_success": false
+  }
+}

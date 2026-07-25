@@ -165,16 +165,33 @@ manifest/READY、四文件 checksum、`(101,80,80,200)` float32 `rho` 有限且
 严格为正、时间/坐标和原始缓存清理全部成立，独立 14 项检查全过。正式状态为
 `PASS_FIRST_VALIDATION_TRAJECTORY_READY`。它仍只允许用于模型和正则选择。
 
-第二条 validation `p=22kw_size=01` 已按串行队列启动；它只允许用于冻结
-correction budget 和停止规则。完成前只写 acquisition in progress。
+第二条 validation `p=22kw_size=01` 也已完成相同全链复核：协议/source、
+manifest/READY、四文件 checksum、`(101,80,80,200)` float32 `rho` 有限且
+严格为正、时间/坐标、原始缓存清理和 `test_truth_opened=false` 全部成立，
+独立 14 项检查全过。正式状态为
+`PASS_TWO_VALIDATION_TRAJECTORIES_READY`。它仍只允许用于冻结 correction
+budget、固定迭代深度和回退规则。
+
+两条 validation READY 后，跨轨迹实验合同已经在生成跨轨迹结果前冻结。它固定
+三条 fit pilot、两条 validation 的单向决策链、全部 101 帧、reference/inverse、
+gauge、train-only normalization、Zero/BP/PCGLS/dual-ridge、field + gradient +
+observation matched accuracy、harm、完整 `A/A^T` 成本和两条 test 的联合一次性
+release。机器状态为
+`PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT`。
+
+合同冻结后，五条开放轨迹已经生成共 505 帧统一 proxy pair，并逐 bundle 通过
+独立 checksums、READY、shape/dtype、finite、zero-mean gauge 和角色复核。五条
+使用同一个冻结几何；高分辨率原场未复制进 pair bundle，test pair 仍为 0。
+聚合输入状态为 `PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT`。这只说明 classical
+runner 的输入已准备好，不说明任何重建算法获胜。
 
 ## 后续判决顺序
 
-1. 已完成首条新增 train trajectory 的 SHA、ZIP/NPY、full-resolution `rho` 和 READY；
-2. 继续接入第二条停止规则 validation trajectory；
-3. 固定每条轨迹的抽帧规则、reference、normalization 和 proxy observation generator；
-4. 先跑 Zero、normalized BP、CGLS/PCGLS、dual ridge；
-5. 若 ridge 在未参与拟合的完整 trajectory 上仍有稳定 headroom，再训练最小
+1. 五条开放轨迹和跨轨迹实验合同已经冻结；
+2. 实现统一 pair generator，并保存 frame/reference/normalization manifest；
+3. 实现 train-only dual ridge，禁止把 model-selection validation 拼回最终权重；
+4. 先跑 Zero、normalized BP、真正几何对角 PCGLS、dual ridge；
+5. 若 ridge 在两条 validation 的单向决策链上仍有稳定 headroom，再训练最小
    FNO/UNO/3D U-Net；
 6. 若经典 warm start 已解释全部收益，停止扩大网络；
 7. test 只在模型、预算、阈值和报告模板全部冻结后打开一次。
@@ -187,13 +204,13 @@ correction budget 和停止规则。完成前只写 acquisition in progress。
 - 本机官方 metadata 与协议一致；
 - 下载支持续传、字节数与 SHA 校验；
 - 三条新增 train trajectory 已通过 receipt、bundle checksums 与 READY 复核；
-- 第一条模型选择 validation 已通过相同复核；
+- 两条职责分开的 validation 已通过相同复核；
+- 跨轨迹题目、角色、评分、成本和联合 test release 已事前机器冻结；
 - 当前工具拒绝 test extraction；
 - 后续同精度成本比较有固定输入和账本边界。
 
 禁止：
 
-- 至少三条新增 train 与两条 validation 已全部接入；
 - 跨 trajectory classical control 已完成；
 - 神经算子已训练或优于 ridge/FNO/DeepONet；
 - cross-trajectory 泛化已证明；

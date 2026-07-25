@@ -5625,3 +5625,85 @@ full-resolution `rho` 提取和原始缓存清理。随后重新计算四文件 
 经典基线、matched-accuracy tolerance、指标和成本账冻结成跨轨迹实验合同。
 
 **突破监测：没有算法突破。真实增量是第一条职责受限的 validation 完成独立复核；下一门是第二条 validation 与跨轨迹实验合同。**
+
+## 211. 第二条 validation READY，跨轨迹规则在看结果前锁死
+
+停止规则 validation `p=22kw_size=01` 已完成公开 source 下载、SHA/字节数、
+ZIP/NPY 流式检查、full-resolution `rho` 提取和原始缓存清理。四文件 checksum
+和独立 14 项复核全部通过；`rho` 为 `(101,80,80,200)` float32，范围约
+`0.18372` 到 `1.19238`，所有值有限且严格为正，test 仍未打开。
+
+现在五条开放数据是 `3 / 3 train pilot + 2 / 2 validation READY`。这仍只是
+数据完整性，不是重建或算法结果。为避免进入“先看曲线再改规则”的循环，本轮没有
+直接开 FNO，也没有生成跨轨迹结果，而是先冻结
+`poolfire_c_cross_trajectory_experiment_v1.json`。
+
+合同把三条 fit pilot、p14 模型选择、p22 固定 correction budget 和两条 untouched
+test 分开。它使用全部 101 帧但明确 frame 不是独立样本；固定 ROI、32×32×64
+独立 reference、16×16×32 inverse、gauge 和 exact block mean；normalization 与
+最终 ridge 权重只能使用 fit trajectories，validation refit 被禁止。经典门先比较
+Zero、normalized BP、真正固定几何对角 PCGLS 和 dual ridge。
+
+同精度不再只看一个 field 数字，而要同时通过 field、gradient 和 observation
+residual；再报告逐轨迹 p50/p90/worst、harm、完整 A/A^T、端到端 wall 和 fresh
+process whole-arm peak RSS。两条 test 必须由一个联合冻结包同时授权，不能看完
+第一条后改模型再开第二条。
+
+合同 validator 和 13 个 fail-closed 测试均通过，状态为
+`PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT`。独立审计还指出旧
+`fit_calibrated_dual_ridge()` 会把 calibration 拼回最终拟合，因此正式 runner
+必须另写 train-only final fit，不能直接复用旧单轨迹流程。
+
+**突破监测：没有算法突破。真实增量是等待阶段结束、五条开放轨迹完整、跨轨迹评分与防泄漏规则事前冻结。下一门是统一 pair generator 和四个 classical arms；只有 ridge 在两条 validation 的职责链上仍有稳定 headroom，才准训练最小 3D U-Net/FNO。**
+
+## 212. 正式 runner 的两个隐蔽泄漏点先被拆掉
+
+代码审计发现，旧 `VerifiedPoolFireRhoBundle` 把 manifest split 写死成
+`train`，所以它会拒绝合法 validation；旧 `fit_calibrated_dual_ridge()`
+选完 lambda 后又用 `train + calibration` 重拟合，若直接套到 p14，就会让
+validation 进入最终权重。
+
+loader 现在新增显式 `expected_trajectory` 与 `expected_split` 绑定，只接受
+train/val；即使调用者主动请求 `expected_split=test` 也会 fail closed。旧 p14s03
+流程仍默认 train，原有结果合同不变。
+
+跨轨迹 ridge 另写为 `select_train_only_standardized_dual_ridge()`：observation
+featurewise mean/std、field mean/global RMS 和最终 dual weights 全部只来自 fit
+samples；p14 只从七个冻结 multiplier 中选择 lambda。选择顺序是 p90
+(`higher` quantile)、worst、median，完全平手时取更强正则。最终
+`fit_sample_count` 不会随 validation 样本数增加。
+
+validation loader、投毒/身份错配/test 拒绝、train-only normalization、确定性
+hash、平手规则和合同 validator 合计 `28 passed`。这只证明正式 runner 的两个
+基础接口不再沿用已知泄漏路径，尚未生成任何跨轨迹 observation、重建或成本结果。
+
+**突破监测：没有算法突破。下一门仍是流式 pair generator、geometry-only PCGLS 与四臂 classical 表；不能把 28 个代码测试写成 ridge 已经更准或更快。**
+
+## 213. 五条轨迹 505 帧统一出题完成，发现工况依赖的模型失配
+
+正式 pair generator 只接受合同注册的三条 fit 和两条 validation，CLI 没有
+`--test` 或 `--allow-test`。每条输出 101 个三视角 observation、gauge-centered
+`16×16×32` truth、时间标签和逐帧失配审计；full-resolution field 不复制进 pair
+库。写入采用临时目录，全部 payload checksum 完成后才原子生成 READY。
+
+五条轨迹共 505 帧已全部生成，并由另一个 validator 逐条检查 contract/role/split、
+shape/dtype、finite、非零范数、逐帧 zero-mean gauge、frame order、payload SHA 和
+READY。五条共享一个 geometry binding，test pair 数仍为 0。
+
+输入审计出现一个真实但不是算法的信号：独立 reference 与 coarse inverse truth
+projection 的相对失配，逐轨迹 p50 为：
+
+- p33s01：`51.0%`，p90 `53.9%`，worst `55.7%`；
+- p45s05：`39.6%`，p90 `44.5%`，worst `45.7%`；
+- p58s03：`34.0%`，p90 `37.0%`，worst `39.5%`；
+- p14s01 validation：`47.5%`，p90 `49.5%`，worst `52.5%`；
+- p22s01 validation：`47.5%`，p90 `52.3%`，worst `53.9%`。
+
+几何完全相同，差别来自流场形态与有限网格近似对梯度的不同响应。这给论文主线一个
+更具体的困难：warm start 不仅要在一个误差水平上快，还要在 `34%–56%` 的
+condition-dependent model mismatch 下不伤害尾部。因此 p22 的 fixed-K/harm
+门不是形式主义，而是决定方法能否迁移的核心。
+
+公开网页只放聚合图和无路径 summary；私有 pair、派生 hashes 和本机位置均未上传。
+
+**突破监测：没有算法突破。新增的是首个 5 trajectory / 505 frame / one-geometry 的统一输入闭环，以及工况依赖模型失配证据。下一门是 geometry-only PCGLS、train-only ridge 选择和四臂 matched-accuracy 表。**

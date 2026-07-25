@@ -316,7 +316,7 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 2026-07-23</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让可学习算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少完整多视角 forward/adjoint 调用和端到端时间。第一条真实 PoolFire CFD 密度轨迹已进入独立高分辨率代理前向与粗网格 CGLS 闭环；官方 11 train / 2 validation / 2 untouched test 的完整轨迹协议现已冻结，下一步只做新增轨迹 classical control、最小神经 warm start 与可校准 correction budget。</p>
+    <p class="lead">唯一主问题：让可学习算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少完整多视角 forward/adjoint 调用和端到端时间。三条 PoolFire train pilot 与两条职责分开的 validation 已完整接入；官方 11 train / 2 validation / 2 untouched test 的角色协议和跨轨迹实验合同均已冻结，下一步只做 classical control，经典门成立后才允许最小神经 warm start。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
@@ -329,6 +329,7 @@
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_cfd_morphology_proxy_evidence_2026-07-23.md">真实 CFD 第一闭环</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_isolated_initializer_evidence_2026-07-23.md">独立进程成本门</a>
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_trajectory_protocol_evidence_2026-07-23.md">11/2/2 多轨迹协议</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_cross_trajectory_experiment_contract_2026-07-25.md">跨轨迹实验合同</a>
       <a class="button" href="#senior">复制下一条师兄消息</a>
       <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
     </div>
@@ -339,8 +340,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert success">
-      <strong>最新进展：三条 train 与第一条 validation 已完整接入；第二条 validation 获取中</strong>
-      <span>协议状态 <code>PASS_FROZEN_POOLFIRE_TRAJECTORY_PROTOCOL</code>；三条 train 继续保持 READY，模型选择 validation <code>p=14kw_size=01</code> 也已通过官方字节数/SHA、ZIP/NPY、全分辨率 <code>rho</code>、checksums、receipt 与 READY 独立复核。现在串行获取停止规则 validation <code>p=22kw_size=01</code>；test 仍未打开，<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新进展：3 / 3 train pilot 与 2 / 2 validation READY；跨轨迹合同已冻结</strong>
+      <span>父协议仍为 <code>PASS_FROZEN_POOLFIRE_TRAJECTORY_PROTOCOL</code>。<code>p=22kw_size=01</code> 已通过与前四条相同的官方字节数/SHA、ZIP/NPY、全分辨率 <code>rho</code>、checksums、receipt、READY 与独立 14 项复核。新状态为 <code>PASS_TWO_VALIDATION_TRAJECTORIES_READY</code> 和 <code>PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT</code>；strict validation loader 与 train-only standardized ridge 代码门也已通过。test 仍未打开，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -372,7 +373,7 @@
     <section id="latest-gate" class="band">
       <div class="section-head">
         <div><div class="eyebrow">冻结的研究合同</div><h2>网络只负责起跑，物理求解器负责到达终点</h2><p>主表使用 validation 冻结、部署可见的停止规则，再检查终点误差等价、线性 A/A^T 或非线性 forward/JVP/VJP 调用与总时间；有真值时另画 oracle time-to-target，只估计 headroom。两张账不能混写。</p></div>
-        <div class="actions"><a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">读实验合同</a><a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_trajectory_protocol_evidence_2026-07-23.md">读多轨迹协议</a></div>
+        <div class="actions"><a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_cross_trajectory_experiment_contract_2026-07-25.md">读跨轨迹合同</a><a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_trajectory_protocol_evidence_2026-07-23.md">读多轨迹协议</a></div>
       </div>
       <div class="phase-rail" aria-label="C 路线端到端管线">
         <div><b>1 · 可观测扰动场</b><span>PoolFire `Δrho/Δn`，reference 先冻结</span></div>
@@ -391,7 +392,7 @@
       </div>
       <div class="alert" style="margin-top:13px;">
         <strong>现在的唯一执行门：把新增 trajectory 变成完整、可审计的 classical-control 结果</strong>
-        <span>数据身份和角色已经冻结。先等待新增 train/validation 的 SHA、full-resolution <code>rho</code>、READY 与统一 proxy observation 完成，再跑 Zero、BP、CGLS/PCGLS 和 dual ridge。只有未参与拟合的完整 trajectory 仍显示 headroom，才训练最小 FNO/UNO/3D U-Net；当前五个 later-time frames 永久保留为 development。</span>
+        <span>五条开放轨迹的数据门已经闭合，抽帧、reference、gauge、normalization、matched tolerance、harm、成本账与联合 test release 也已冻结。strict validation loader 与 train-only ridge 已实现；现在写统一 pair generator，再跑 Zero、BP、真正几何对角 PCGLS 和 dual ridge。只有两条 validation 的单向决策链仍显示 headroom，才训练最小 3D U-Net/FNO；当前 test 和旧五个 later-time frames 都不参与调参。</span>
       </div>
     </section>
 
@@ -424,15 +425,33 @@
           <p><code>p=22kw_size=05</code> 与 <code>p=58kw_size=01</code> 是已见功率/尺寸值的新组合，不能写成 unseen-power、unseen-size 或 geometry OOD。</p>
         </article>
         <article class="panel">
-          <div class="chips"><span class="chip blue">3 / 3 train pilot READY</span><span class="chip blue">1 / 2 validation READY</span><span class="chip">不算算法结果</span></div>
-          <h3 style="margin-top:10px;">模型选择 validation READY，停止规则 validation 获取中</h3>
-          <p><code>p=14kw_size=01</code> 的 <code>(101,80,80,200)</code> float32 <code>rho</code> 有限且严格为正，独立 14 项检查全过；它只允许模型/正则选择。<code>p=22kw_size=01</code> 只允许冻结 correction budget 与停止规则，不能混用职责。</p>
+          <div class="chips"><span class="chip blue">3 / 3 train pilot READY</span><span class="chip blue">2 / 2 validation READY</span><span class="chip">不算算法结果</span></div>
+          <h3 style="margin-top:10px;">两条 validation 数据完整，职责仍严格隔离</h3>
+          <p><code>p=14kw_size=01</code> 只允许模型/正则选择；<code>p=22kw_size=01</code> 只允许冻结 correction budget、固定 K 与回退。两者的 <code>(101,80,80,200)</code> float32 <code>rho</code> 均通过独立 14 项检查，但 validation 不进入最终模型权重。</p>
         </article>
       </div>
       <div class="alert" style="margin-top:13px;">
-        <strong>这一步解决的是“证据能不能信”，不是“算法赢没赢”</strong>
-        <span>当前正式状态已到 <code>PASS_FIRST_VALIDATION_TRAJECTORY_READY</code>，证明三条 train 和第一条 validation 的数据链可用，不证明算法。第二条 validation 尚未 READY，因此现在仍不能冻结 correction budget/停止规则，也没有可接受的跨 trajectory 泛化或速度结论；下一张有科学意义的表必须是逐 trajectory 的 field/gradient p50、p90、worst、harm rate、<code>A/A^T</code> 和端到端成本。</span>
+        <strong>突破监测：没有算法突破，但实验已从“等数据”进入“正式跑基线”</strong>
+        <span><code>PASS_TWO_VALIDATION_TRAJECTORIES_READY</code> 只证明五条开放轨迹的数据链可用；<code>PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT</code> 只证明规则已事前冻结。下一张有科学意义的表必须逐 trajectory 报 field、gradient、observation residual、p50、p90、worst、harm、<code>A/A^T</code>、wall 与全流程内存；在这张表出现前仍无泛化或速度结论。</span>
       </div>
+      <div class="section-head" style="margin-top:20px;">
+        <div>
+          <div class="eyebrow">首个跨轨迹输入审计 · 不是算法结果</div>
+          <h3>505 帧统一 pair 已闭合，模型失配随工况明显变化</h3>
+          <p>五条开放轨迹都用同一 ROI、同一三视角几何、同一独立高分辨率 reference 和同一粗网格 inverse。每条 101 帧都已原子写入项目外私有 pair bundle，并通过独立 checksum/READY/gauge validator；高分辨率原场不复制进 pair 库，test 仍未打开。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_cross_trajectory_experiment_contract_2026-07-25.md">读评分与防泄漏规则</a>
+        </div>
+      </div>
+      <div class="alert success">
+        <strong><code>PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT</code></strong>
+        <span>reference-vs-inverse 投影失配的逐轨迹 p50 为 <code>34.0%–51.0%</code>，worst 为 <code>39.5%–55.7%</code>。几何完全相同而失配仍随工况变化，说明 fixed-K warm start 必须接受跨轨迹伤害审计；它不证明 ridge、FNO 或我们的模型更优。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <img src="../assets/poolfire_c_cross_trajectory_pair_audit_v1.png" alt="五条开放 PoolFire 轨迹上独立参考正演与粗网格 inverse 投影失配的 p50、p90 和 worst 审计" />
+        <figcaption>方块、圆点、三角分别是 p50、p90、worst。五条轨迹共享一个冻结几何、共 505 帧；图中只有输入模型失配，没有重建、速度或神经算法结果。</figcaption>
+      </figure>
     </section>
 
     <section id="g0-evidence" class="band">
