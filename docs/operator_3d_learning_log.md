@@ -5707,3 +5707,112 @@ condition-dependent model mismatch 下不伤害尾部。因此 p22 的 fixed-K/h
 公开网页只放聚合图和无路径 summary；私有 pair、派生 hashes 和本机位置均未上传。
 
 **突破监测：没有算法突破。新增的是首个 5 trajectory / 505 frame / one-geometry 的统一输入闭环，以及工况依赖模型失配证据。下一门是 geometry-only PCGLS、train-only ridge 选择和四臂 matched-accuracy 表。**
+
+## 214. 四臂经典表完成：先发现 K=24 这个“参考答案”本身错了
+
+五条开放轨迹、505 帧都跑完了 Zero-CGLS、normalized BP-CGLS、真正的
+geometry-diagonal PCGLS 和 train-only dual-ridge warm start。PCGLS 的对角项
+不是随机估出来的，而是从 LOS 权重、差分矩阵和 detector selection 精确得到
+`diag(A^T A)`；K=0 初值和每个 checkpoint 的完整 `A/A^T` 也进入同一本账。
+
+结果先否掉了原计划中的一个关键假设：在 `p=22kw_size=01` 上，Zero-CGLS
+从 K=4 继续跑到 K=24 时，observation residual p90 从 `0.34810` 降到
+`0.30430`，但 field p90 从 `0.68190` 恶化到 `1.02633`，gradient p90
+从 `0.97990` 恶化到 `2.28542`。也就是说，求解器更会“解释观测”了，却离真实
+三维场更远。这就是含模型失配逆问题里的半收敛。
+
+按原先预注册的 K24 参照，所有候选都只能选到 K=8 左右，没有 warm-start
+调用优势。结果打开后，用更合理但只能算 post-hoc 的 Zero K4 作诊断参照，
+dual-ridge K2 在 p22 用 5 次完整调用达到 97.03% joint pass，而 Zero K4
+要 8 次，调用数少 37.5%。可它在 p14 只通过 56.44% 帧，且五条轨迹上
+wall time 全部更慢；约 25 MB 的 ridge 推理开销吃掉了少跑两步的收益。
+
+**讲人话：**原来的终点像是“把同一道题反复改到卷面更工整，却把答案改错了”。
+我们发现了这个坑，也看见少跑两步可能省调用，但现在还不能说算法成功，因为换到
+p14 就失守，而且真实时间没有变快。
+
+**突破监测：没有算法突破。新增的是完整跨轨迹经典表、精确几何 PCGLS 和一个必须写进论文的方法学发现：K24 在模型失配下严重半收敛，不能继续当高精度参照。**
+
+## 215. v2 线性摊销器失败：它连 p14 的 K4 teacher 都学不住
+
+既然 Zero K4 比 K24 更像合理的物理终点，我设计了 v2：只从 observation
+预测 Zero-CGLS K4 field，相当于把四步物理求解摊销进一个低秩线性算子。它用
+三条 fit trajectory 的 303 帧拟合，只在 p14 选择正则和 rank；由于设计来自已经
+打开的 v1 结果，它明确标为 adaptive development。
+
+结果是 `FAIL_NO_RANK_MATCHES_P14_CGLS_K4_AT_ZERO_DEPTH`。即使 rank 256，
+field、gradient、observation 三项 pass fraction 仍全是 0，harm 为 92.08%。
+失败后运行器没有打开 p22，更没有碰 test。
+
+**讲人话：**不是把矩阵做得更大就能把四步 CGLS 直接背下来。三条训练轨迹和 p14
+长得差得太远，线性模型在训练条件外几乎不会做这道题。
+
+**突破监测：没有算法突破。v2 是有用的负结果：当前数据覆盖下，直接用低秩线性算子摊销 K4 不可行。**
+
+## 216. v3 PCA 先替神经网络踩刹车：真正瓶颈是跨轨迹覆盖
+
+我没有立刻把线性层换成 FNO，而是先做了一个更便宜的表示 headroom 审计。若三条
+fit trajectory 连一个 256 维 PCA 子空间都不能覆盖 p14，那么更大的网络很可能只是
+把训练轨迹记得更牢。
+
+rank 256 已解释 fit observation 的 99.8668% 能量、fit K4 field 的 99.9711%
+能量；但在 p14 上，observation PCA p90 重建误差仍为 `0.51684`，K4 field PCA
+p90 仍为 `0.25314`。没有一个 rank 达到预设的 output p90 `<=0.05`、worst
+`<=0.10` 门，状态是 `FAIL_LATENT_OUTPUT_PCA_HEADROOM`。这轮只读 fit 和 p14，
+p22/test 都没打开。
+
+**讲人话：**训练集内部看起来几乎“什么都解释了”，一换完整工况就解释不了。这不是
+模型层数的问题，是训练样本覆盖的问题。现在直接训练 FNO，容易得到漂亮训练曲线和
+难看的真实迁移。
+
+**突破监测：没有算法突破。新增的是在烧神经网络训练时间前就定位出的 representation coverage failure。**
+
+## 217. v4 只扩两条邻近工况，再决定要不要继续下载
+
+下一步没有无边界扩大数据集。v4 先冻结一个分阶段门：只接
+`p=14kw_size=05` 和 `p=22kw_size=03`，重新生成完全相同的 independent proxy
+pair、K4 teacher 和 PCA audit。只有 rank-256 p90 表征误差相对下降至少 20%，
+才继续接剩余五条 clean fit trajectory；没有改善就停止下载，重审输入表示和目标。
+
+第一条 `p=14kw_size=05` 已在项目外私有队列中单实例断点下载。它完成后仍要过
+官方字节数/SHA、ZIP/NPY、full-resolution rho、finite/positive、manifest、
+checksums、READY 和缓存清理，不能把 partial 或下载进程写成数据接入成功。
+
+正式 test 继续封存，p14/p22 的 validation 职责不变。当前 Mac 已有可用的 PyTorch
+MPS 环境，但覆盖门没有改善前不会训练 3D U-Net/FNO/UNO。
+
+**讲人话：**现在不是缺一张更强显卡，而是先确认“增加两种相邻火焰工况，能不能让模型真正见过更完整的变化”。这个问题没答对，换服务器只会更快地过拟合。
+
+**突破监测：没有算法突破。当前唯一有效门是两条新增 clean-fit 轨迹能否显著修复 p14/p22 的表征覆盖；通过后才进入最小神经算子。**
+
+## 218. 独立审计后重算：结论没变，但证据链更干净了
+
+两名独立审计代理分别检查了方法学和代码。它们没有发现 P0 级错误，但抓到五个
+会污染成本或证据边界的问题：旧 v2 在 rank gate 失败前提前载入 p22；已有 arm
+缓存只按文件存在判断，未严格核对协议、pair、模型与全部 checkpoint；外部返回
+全零初值时漏记一次必要的前向投影；PCGLS 几何对角的 setup 没有进入单次使用与
+摊销 wall 账；PCA 私有包混放了 basis 和 fit/validation 样本。
+
+这些问题现在全部按 fail-closed 修正：
+
+- v2 只先读取三条 fit 与 p14，rank gate 通过后才有权读取 p22；
+- 缓存必须同时绑定 experiment、geometry、pair READY、trajectory role、ridge
+  model 和 8 个完整 checkpoint，否则拒绝聚合；
+- 只有求解器内部可信的 `initializer=None` 可以省略初始前向，外部初值即使数值
+  恰好全零也要支付一次 `A`；
+- PCGLS 同时报告 setup、单次全轨迹 wall 和 101 帧摊销 setup，不再只展示迭代段；
+- v3/v4 的私有 NPZ 只保留 fit-only basis/statistics，不保留任何 fit 或 validation
+  样本，并且强制写到仓库外。
+
+审计后的 targeted suite 为 `73 passed`。严格缓存验证接受了五条既有 arm 结果；
+v1 重新聚合后仍是开放代理 development。v2 重跑仍为
+`FAIL_NO_RANK_MATCHES_P14_CGLS_K4_AT_ZERO_DEPTH`，并明确
+`stopping_validation_opened_by_v2=false`；v3 重跑仍为
+`FAIL_LATENT_OUTPUT_PCA_HEADROOM`。rank-256 的 p14 K4-target PCA p90 仍是
+`0.253138`，所以 v4 的 20% 改善门仍冻结为 `<=0.202510`。
+
+**讲人话：**这轮没有把失败结果“修成成功”。它做的是把计账漏洞和验证集读取顺序
+收紧后再算一遍，确认当前真正的困难仍然是训练工况覆盖不足。
+
+**突破监测：没有算法突破。真实增量是审计后的 v1→v2→v3 证据链可重复，p22/test
+没有被拿来救模型；下一门仍是两条 clean-fit 轨迹的 p14-only coverage 复查。**
