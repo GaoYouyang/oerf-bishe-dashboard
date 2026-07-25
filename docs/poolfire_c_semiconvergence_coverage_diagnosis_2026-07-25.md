@@ -160,10 +160,13 @@ teacher；不能调用 p22/test 救结果，也不能把线性 PCA 失败写成�
 - 新增 pair 同时绑定请求目录、官方 trajectory/source SHA、父协议、统一几何、
   manifest/checksums/READY，两个 first-batch source 与 pair 身份必须互不相同；
 - v4 只解释 observation，不解释 pair truth 数组；私有结果原子生成并可独立复核。
+- 私有结果还逐文件绑定 runner、K4 teacher、CGLS/PCGLS、几何、validator 和
+  straight-ray 数值路径的 SHA，并绑定 Python/NumPy 版本；实现变化时旧缓存拒绝复用。
 
 审计后重跑仍得到相同的科学结论：v2 与 v3 两道门均失败，p22/test 没有被用来
 挽救失败模型。第一轮定向回归为 `73 passed`；第二轮 v4 身份/隔离修复后，
-完整 PoolFire 回归为 `198 passed`。这些只是代码和证据链通过，不是算法成功。
+实现指纹修复后的完整 PoolFire 回归为 `200 passed`。这些只是代码和证据链通过，
+不是算法成功。
 
 ## 8. 初学者怎么理解
 

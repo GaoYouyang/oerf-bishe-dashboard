@@ -5836,7 +5836,7 @@ v1 重新聚合后仍是开放代理 development。v2 重跑仍为
   完整写好，再原子生成 READY；已有结果只有全部 hash 一致才可复用；
 - 私有续跑队列使用唯一锁和独立 run log，不会重复启动同一下载或并发覆盖结果。
 
-31 个定向测试和完整 PoolFire 回归 `198 passed`。已有 3 条 fit 与 p14 pair 还在
+31 个定向测试和完整 PoolFire 回归 `200 passed`。已有 3 条 fit 与 p14 pair 还在
 真实私有文件上通过了 observation-only 身份复核。第一条新增数据 p14s05 仍在单实例
 断点获取中；partial 不是 READY，也不是算法结果。
 
@@ -5857,3 +5857,26 @@ sentinel。至少 80% 的留出轨迹要达到 joint pass `>=90%`、harm `<=5%`�
 
 **突破监测：没有算法突破。真实增量是 v4 的角色隔离、轨迹身份和原子结果证据链
 闭合，并把神经训练授权从一次 PCA 相对改善后移到完整轨迹留一与 sentinel 门。**
+
+## 220. v4 缓存再加一道锁：代码变了，旧结果必须失效
+
+独立代码复审又发现一个容易被忽略的问题：v4 旧缓存虽然绑定了数据、协议、几何和
+pair，却没有绑定“到底是哪一版代码算出来的”。如果以后修改 K4 teacher、CGLS/PCGLS、
+几何构造或 validator，旧目录仍可能被当成当前结果复用。
+
+现在私有 manifest 会逐文件绑定 v4 runner、K4 teacher、classical geometry、
+pair validator、CGLS/PCGLS、cross-trajectory geometry、warm model、CFD proxy
+和两份 straight-ray operator 的 SHA，同时绑定 Python 与 NumPy 版本；READY
+再绑定这份实现指纹。任一数值路径文件或运行时版本变化，旧结果都会 fail closed，
+必须重新计算，不能悄悄沿用。
+
+现场还发现一个早于唯一锁修改时间启动的旧续跑器。它已被单独终止，正在增长的
+p14s05 下载器没有被打断；后续只允许带原子锁、唯一 run log 和状态文件的新队列
+接管。实现指纹修复后的定向测试为 `31 passed`，完整 PoolFire 回归为
+`200 passed`。
+
+**讲人话：**同一个数据，用不同版本的算法算，不能假装是同一次实验。现在每个 v4
+结果都带着一张“代码身份证”；代码哪怕改一处，旧结果就不能蒙混过关。
+
+**突破监测：没有算法突破。这里修复的是可重复性和缓存可信度；科学门仍是
+p14s05/p22s03 接入后运行 p14-only v4 coverage gate。**
