@@ -390,10 +390,11 @@
         <article class="panel"><div class="chips"><span class="chip">C1 · 机制创新</span><span class="chip gold">中风险</span></div><h3 style="margin-top:10px;">Observable Krylov Warm Start</h3><p>把初值限制在便宜、可观测的 Krylov 字典中，网络只预测系数或空间门控。每个额外字典向量都必须计入 `A/A^T` 成本。</p></article>
         <article class="panel"><div class="chips"><span class="chip">C2 · 论文升级</span><span class="chip coral">高风险</span></div><h3 style="margin-top:10px;">Correctable Frontier Training</h3><p>不只训练单步场误差，而是训练经过 1/2/4 次物理细化后的误差，让模型输出“最容易被求解器纠正”的初值。</p></article>
         <article class="panel"><div class="chips"><span class="chip blue">四臂 classical 已完成</span><span class="chip coral">神经门仍关闭</span></div><h3 style="margin-top:10px;">Zero / BP / exact-diag PCGLS / dual ridge</h3><p>五条轨迹、505 帧已完整跑完。K24 参照被半收敛否掉；ridge K2 的调用信号没有通过 p14 与 wall-time 门。v2/v3 又定位到 fit coverage 不足，所以现在不把线性层盲目换成大网络。</p></article>
+        <article class="panel"><div class="chips"><span class="chip gold">v4 只放行数据</span><span class="chip coral">不放行神经训练</span></div><h3 style="margin-top:10px;">20% 覆盖改善 ≠ 模型成功</h3><p>v4 通过只允许继续接剩余 clean-fit trajectories。全部接入后还要做完整轨迹留一覆盖审计；再通过，才训练一个小型 BP-conditioned 3D U-Net sentinel。sentinel 过不了，就不启动 FNO/UNO/DeepONet 搜索。</p></article>
       </div>
       <div class="alert" style="margin-top:13px;">
         <strong>现在的唯一执行门：先证明新增 clean-fit 工况能修复跨轨迹表示覆盖</strong>
-        <span>v3 在 rank 256 下已解释训练集 K4 field 的 <code>99.9711%</code> 能量，但 p14 field-PCA p90 误差仍有 <code>0.25314</code>，说明“训练内解释率高”不等于“新轨迹可表示”。v4 先只增加 p14s05 与 p22s03，再只在 p14 模型/表示选择 validation 上原样重跑 pair/K4/PCA 门；至少相对改善 20% 才继续其余数据并训练最小 3D U-Net/FNO/UNO。p22 不参与 acquisition 决策，test 和旧五个 later-time frames 都不参与调参。</span>
+        <span>v3 在 rank 256 下已解释训练集 K4 field 的 <code>99.9711%</code> 能量，但 p14 field-PCA p90 误差仍有 <code>0.25314</code>，说明“训练内解释率高”不等于“新轨迹可表示”。v4 先只增加 p14s05 与 p22s03，再只在 p14 模型/表示选择 validation 上原样重跑 pair/K4/PCA 门；至少相对改善 20% 才继续其余 clean-fit 数据。这个相对门不授权神经训练；之后还要通过 trajectory-level 留一覆盖门和单个 3D U-Net sentinel。p22 连 manifest 都不参与此次 acquisition 决策，test 与旧五个 later-time frames 也不参与调参。</span>
       </div>
     </section>
 
@@ -433,7 +434,7 @@
       </div>
       <div class="alert" style="margin-top:13px;">
         <strong>突破监测：没有算法突破；五条轨迹的 classical 表已经完成</strong>
-        <span><code>PASS_TWO_VALIDATION_TRAJECTORIES_READY</code>、<code>PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT</code> 和 <code>PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT</code> 继续作为冻结前置证据。最新真实增量是发现 K24 半收敛、ridge K2 的调用数信号未通过 p14/wall 门，以及三条 fit trajectory 的表示覆盖不足。它们把下一步从“直接训练 FNO”改成“先补 clean-fit coverage”；不能写成泛化、速度或神经算子成功。</span>
+        <span><code>PASS_TWO_VALIDATION_TRAJECTORIES_READY</code>、<code>PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT</code> 和 <code>PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT</code> 继续作为冻结前置证据。最新工程增量是 v4 的角色隔离、官方 source、统一几何、目录/manifest/READY 身份与原子私有结果已闭合，完整 PoolFire 回归 <code>198 passed</code>；最新科学事实仍是 K24 半收敛、ridge K2 未过 p14/wall 门和 fit coverage 不足。它们都不能写成泛化、速度或神经算子成功。</span>
       </div>
       <div class="section-head" style="margin-top:20px;">
         <div>
@@ -604,7 +605,7 @@
       </figure>
       <div class="alert critical" style="margin-top:13px;">
         <strong>最小神经 C0 仍未获准训练，但阻塞原因已经更具体</strong>
-        数据与经典求解门已经完成，当前阻塞不是“没有代码”，而是三条 fit trajectory 对 p14 的 representation coverage 明显不足。先用两条新增 clean-fit 工况检验覆盖能否改善；通过后才能训练最小模型。真实论文迁移仍需补单位与 domain、point-sample/cell-average、<code>rho → Δn</code>、相机与 curved/straight 合同。
+        数据与经典求解门已经完成，当前阻塞不是“没有代码”，而是三条 fit trajectory 对 p14 的 representation coverage 明显不足。先用两条新增 clean-fit 工况判断是否值得补齐训练覆盖；通过后先做完整轨迹留一审计，再只训练一个小型 3D U-Net sentinel。真实论文迁移仍需补单位与 domain、point-sample/cell-average、<code>rho → Δn</code>、相机与 curved/straight 合同。
       </div>
     </section>
 
@@ -733,7 +734,7 @@
         const next = nextUnlockedWeek();
         const fCount = checkedCount(state.foundations, guide.foundationChecks);
         const pace = Number(state.profile.hours) <= 6 ? '建议把每个关卡拆成两周' : Number(state.profile.hours) >= 15 ? '可将阅读与代码并行，但不跳过验收' : '按一周一关执行';
-        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : '当前只做 clean-fit coverage 扩充与不变 PCA 门；通过后才训练最小神经算子。';
+        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : '当前只做 clean-fit coverage 扩充与不变 PCA 门；通过只放行剩余数据，完整轨迹留一门后才训练一个 3D U-Net sentinel。';
         document.getElementById('recommendation').innerHTML = `
           <div class="next-code">当前建议 · ${escapeHtml(next.id)}</div>
           <h3>${escapeHtml(next.title)}</h3>
@@ -874,7 +875,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄，C 路线不变：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n公开 PoolFire 已按完整 trajectory 冻结为 11 train / 2 validation / 2 untouched test。三条 fit pilot、p14 模型选择 validation 和 p22 停止规则 validation 均已接入；两条 test 仍未下载或打开。五条开放轨迹共 505 帧，共用独立 32×32×64 reference、16×16×32 projection-first inverse 和冻结三视角几何。\n\n我已完成四臂 classical 表：Zero-CGLS、normalized BP-CGLS、exact geometry-diagonal PCGLS、train-only dual-ridge + CGLS，并按 field、gradient、observation、harm、A/A^T 和 wall 计账。\n\n最重要的发现是半收敛：开放 p22 上 Zero-CGLS K=4 的 field p90 为 0.68190、gradient p90 为 0.97990；跑到 K=24 后分别恶化为 1.02633 和 2.28542，但 observation residual 仍从 0.34810 降到 0.30430。因此 K24 不适合作为稳定的“高精度终点”，但这不是 CGLS 普遍发散的证明。\n\n结果打开后的诊断里，dual-ridge K2 相对 Zero K4 用 5 次而不是 8 次完整调用，理论调用计数少 37.5%；但三条轨迹参与过拟合、p14 参与超参数选择、p22 参与 K2 选择，所以独立开放评估轨迹实际为 0。p14 joint pass 只有 56.44%，且五条轨迹 wall time 全部更慢。这个信号不能写成跨工况加速。\n\n我又做了两个更便宜的否证。v2 用低秩线性算子摊销 K4 teacher，在 p14 三个指标 pass fraction 都是 0；v3 PCA 在 rank 256 已解释训练集 K4 field 99.9711% 能量，但 p14 field 表征 p90 误差仍是 0.25314。它只证明当前三轨迹、rank≤256 的线性子空间覆盖不了 p14 K4 代理目标，不排除更高 rank 或非线性模型。\n\n下一步只扩两条 clean fit：p=14kw_size=05、p=22kw_size=03，然后只在 p14 模型/表示选择 validation 上用完全相同的 pair/K4/PCA 门复查。rank-256 p90 误差至少相对下降 20% 才继续其余数据并训练最小 3D U-Net/FNO/UNO；p22 不参与 acquisition 决策，避免污染停止规则职责。\n\n当前仍只能写公开 CFD straight-ray morphology proxy，不是真实 BOST；rho→Delta n、相机和 pixel displacement 尚未闭合，algorithm_breakthrough=false。\n\n后续需要组里确认的仍是：\n1. 真正希望重建 rho、n、n-1 还是 Delta n，reference/gauge 怎么定义；\n2. 相机内外参、detector ROI、forward/adjoint、现用 baseline 和停止规则；\n3. 公开方法筛选完成后，哪份最小组内 BOST 样例可做迁移检查。\n\n我会先把公开代理上的跨轨迹覆盖和 matched-accuracy 成本门做扎实，再申请组内数据。`;
+        document.getElementById('briefText').value = `师兄，C 路线不变：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n公开 PoolFire 已按完整 trajectory 冻结为 11 train / 2 validation / 2 untouched test。三条 fit pilot、p14 模型选择 validation 和 p22 停止规则 validation 均已接入；两条 test 仍未下载或打开。五条开放轨迹共 505 帧，共用独立 32×32×64 reference、16×16×32 projection-first inverse 和冻结三视角几何。\n\n我已完成四臂 classical 表：Zero-CGLS、normalized BP-CGLS、exact geometry-diagonal PCGLS、train-only dual-ridge + CGLS，并按 field、gradient、observation、harm、A/A^T 和 wall 计账。\n\n最重要的发现是半收敛：开放 p22 上 Zero-CGLS K=4 的 field p90 为 0.68190、gradient p90 为 0.97990；跑到 K=24 后分别恶化为 1.02633 和 2.28542，但 observation residual 仍从 0.34810 降到 0.30430。因此 K24 不适合作为稳定的“高精度终点”，但这不是 CGLS 普遍发散的证明。\n\n结果打开后的诊断里，dual-ridge K2 相对 Zero K4 用 5 次而不是 8 次完整调用，理论调用计数少 37.5%；但三条轨迹参与过拟合、p14 参与超参数选择、p22 参与 K2 选择，所以独立开放评估轨迹实际为 0。p14 joint pass 只有 56.44%，且五条轨迹 wall time 全部更慢。这个信号不能写成跨工况加速。\n\n我又做了两个更便宜的否证。v2 用低秩线性算子摊销 K4 teacher，在 p14 三个指标 pass fraction 都是 0；v3 PCA 在 rank 256 已解释训练集 K4 field 99.9711% 能量，但 p14 field 表征 p90 误差仍是 0.25314。它只证明当前三轨迹、rank≤256 的线性子空间覆盖不了 p14 K4 代理目标，不排除更高 rank 或非线性模型。\n\n下一步只扩两条 clean fit：p=14kw_size=05、p=22kw_size=03，然后只在 p14 模型/表示选择 validation 上用完全相同的 pair/K4/PCA 门复查。rank-256 p90 误差至少相对下降 20% 只允许继续接剩余 clean-fit 数据，不直接授权训练网络。全部接入后先做完整 trajectory 留一覆盖门；再通过，才训练一个小型 BP-conditioned 3D U-Net sentinel。sentinel 通过后才比较 FNO、UNO 和 DeepONet。p22 连 manifest 都不参与 acquisition 决策，避免污染停止规则职责。\n\n当前仍只能写公开 CFD straight-ray morphology proxy，不是真实 BOST；rho→Delta n、相机和 pixel displacement 尚未闭合，algorithm_breakthrough=false。\n\n后续需要组里确认的仍是：\n1. 真正希望重建 rho、n、n-1 还是 Delta n，reference/gauge 怎么定义；\n2. 相机内外参、detector ROI、forward/adjoint、现用 baseline 和停止规则；\n3. 公开方法筛选完成后，哪份最小组内 BOST 样例可做迁移检查。\n\n我会先把公开代理上的跨轨迹覆盖和 matched-accuracy 成本门做扎实，再申请组内数据。`;
       }
 
       function bindProfile() {

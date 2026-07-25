@@ -100,12 +100,30 @@ v4 在任何新增数据下载前冻结：
 1. 先接入 `p=14kw_size=05`；
 2. 再接入 `p=22kw_size=03`；
 3. 只在 p14 模型/表示选择 validation 上，用完全相同的 independent proxy、K4 teacher 和 PCA gate 重跑；
-4. 只有 rank-256 p90 表征误差相对下降至少 20%，才继续接入其余五条 clean fit trajectory；
+4. 只有 rank-256 p90 表征误差相对下降至少 20%，才继续接入其余五条 clean fit trajectory；这道门不授权神经训练；
 5. p22 停止规则 validation 不参与 acquisition 或 coverage 决策，避免职责污染；
 6. 若没有实质改善，停止盲目扩数据，转而重审输入表示、几何条件和目标定义；
-7. 在覆盖门通过前不训练大模型。
+7. 在完整 clean-fit 的 trajectory-level 留一覆盖门通过前，不训练任何论文候选网络。
 
 `p=14kw_size=03` 永久只作 development。`p=14kw_size=01` 和 `p=22kw_size=01` 的 validation 职责不变；两条 test 继续封存。
+
+### 20% 门通过以后仍要过什么
+
+v4 的相对改善门只回答“首批新增工况是否值得继续扩充”，不能回答
+observation→field 是否可学。若通过，先完成剩余 clean-fit 接入，再按完整 trajectory
+做 leave-one-trajectory-out：每个 fold 的 normalization、PCA、模型权重和 early
+stopping 只能来自 fold-train trajectories，并同时报告 rank 256 与可用最大 rank。
+原 v3 的绝对 output 门仍保留为 p90 `<=0.05`、worst `<=0.10`。
+
+只有完整覆盖仍成立，才允许训练一个小型 BP-conditioned 3D U-Net sentinel，而不是
+同时搜索四种架构。sentinel 至少要在 80% 的留出 fit trajectories 上达到 joint
+matched-accuracy pass `>=90%`、harm `<=5%`、固定 `K<=2`；BP、推理、residual
+检查和回退全部计入后，总调用必须少于 Zero K4 的 8 次，轨迹等权 wall-time
+中位数不能变慢，并测 fresh-process whole-pipeline peak RSS。通过后才比较 FNO、
+UNO 和 DeepONet。
+
+若 20% 门失败，只能停止同类数据扩充并检查 rank 上限、输入表示、几何与 K4
+teacher；不能调用 p22/test 救结果，也不能把线性 PCA 失败写成“非线性模型必败”。
 
 ## 6. 下一代算法的可投稿假设
 
@@ -113,7 +131,7 @@ v4 在任何新增数据下载前冻结：
 
 > 一个只读取部署可见 observation、显式感知 geometry/model-mismatch、以半收敛安全区为目标的轻量 warm operator，能否在不同 PoolFire trajectory 上给出可纠正初值，并以 fail-closed 回退稳定减少物理调用和端到端时间？
 
-它至少需要以下一对一消融：
+它最终至少需要以下一对一消融；当前首先只允许做一个 3D U-Net sentinel：
 
 - Zero / BP / exact-diagonal PCGLS；
 - dual ridge；
@@ -131,16 +149,21 @@ v4 在任何新增数据下载前冻结：
 37.5% 不是计算加速；303/101 是帧数而不是独立统计样本量；测试只能称“身份预先指定、
 真值未开启”，不能称盲法测试。v4 已按审计意见删除 p22 对 acquisition 决策的授权。
 
-代码审计还要求重算成本与读取边界。修正后：
+代码审计还要求重算成本与读取边界。两轮修正后：
 
 - 外部 warm initializer 即使恰好输出全零，也必须支付一次初始 `A`；
 - 既有 arm 缓存必须完整绑定协议、pair、角色、模型和全部 8 个 checkpoint；
 - PCGLS 的 geometry-diagonal setup 同时进入单次使用与逐帧摊销 wall 账；
 - v2 在 p14 rank gate 失败前不再读取 p22；
 - 私有 PCA 包只保留 fit-only basis/statistics，旧的样本混合包已删除。
+- v4 的显式允许名单排除 p22，连其 pair manifest 都不读取；
+- 新增 pair 同时绑定请求目录、官方 trajectory/source SHA、父协议、统一几何、
+  manifest/checksums/READY，两个 first-batch source 与 pair 身份必须互不相同；
+- v4 只解释 observation，不解释 pair truth 数组；私有结果原子生成并可独立复核。
 
 审计后重跑仍得到相同的科学结论：v2 与 v3 两道门均失败，p22/test 没有被用来
-挽救失败模型。定向回归测试为 `73 passed`；这只是代码和证据链通过，不是算法成功。
+挽救失败模型。第一轮定向回归为 `73 passed`；第二轮 v4 身份/隔离修复后，
+完整 PoolFire 回归为 `198 passed`。这些只是代码和证据链通过，不是算法成功。
 
 ## 8. 初学者怎么理解
 

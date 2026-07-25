@@ -5816,3 +5816,44 @@ v1 重新聚合后仍是开放代理 development。v2 重跑仍为
 
 **突破监测：没有算法突破。真实增量是审计后的 v1→v2→v3 证据链可重复，p22/test
 没有被拿来救模型；下一门仍是两条 clean-fit 轨迹的 p14-only coverage 复查。**
+
+## 219. v4 再收紧：20% 门只决定要不要继续拿数据
+
+第二轮独立审计发现，原 v4 代码虽然不读取 p22 的数组，却会在统一几何检查时顺手
+读取 p22 pair manifest；新增 pair 也没有强制要求“目录名、请求轨迹、官方 source、
+父协议、几何、manifest 和 READY”全部一致。这样不会立刻改变 PCA 数值，却会让
+“p22 完全没有参与此次决策”和“两个新增工况确实是两个不同 source”说得不够硬。
+
+现在这两个问题已按 fail-closed 修复：
+
+- v4 的允许名单只有 3 条既有 fit、2 条 first-batch clean fit 和 p14 模型选择
+  validation；p22 停止验证连 manifest 都不读取；
+- 新增 pair 必须绑定官方 PoolFire trajectory protocol、source SHA、统一 geometry、
+  请求轨迹、目录名、manifest、checksums 与 READY，复制或换名会被拒绝；
+- v4 只解释 observation 并由 observation 生成 K4 teacher，不解释任何 pair
+  `gauge_truth.npy`；truth 文件仍受 checksum 保护；
+- 私有 PCA basis、五条 fit pair 的身份绑定、协议绑定和公开 summary 先在临时目录
+  完整写好，再原子生成 READY；已有结果只有全部 hash 一致才可复用；
+- 私有续跑队列使用唯一锁和独立 run log，不会重复启动同一下载或并发覆盖结果。
+
+31 个定向测试和完整 PoolFire 回归 `198 passed`。已有 3 条 fit 与 p14 pair 还在
+真实私有文件上通过了 observation-only 身份复核。第一条新增数据 p14s05 仍在单实例
+断点获取中；partial 不是 READY，也不是算法结果。
+
+更重要的方法学修正是：即使 v4 的 rank-256 p90 从 `0.253138` 降到
+`<=0.202510`，它也只说明固定线性子空间覆盖有至少 20% 改善，只授权继续接剩余
+clean-fit trajectories。全部 clean-fit 完成后，必须按完整 trajectory 做
+leave-one-trajectory-out，比较 rank 256 与可用最大 rank；绝对门仍保留
+p90 `<=0.05`、worst `<=0.10`。
+
+只有这道完整覆盖门通过，才训练一个预注册的小型 BP-conditioned 3D U-Net
+sentinel。至少 80% 的留出轨迹要达到 joint pass `>=90%`、harm `<=5%`、
+固定 `K<=2`，总调用严格少于 Zero K4 的 8 次，轨迹等权 wall-time 中位数不变慢，
+并测 fresh-process 全流程 peak RSS。sentinel 通过后，才允许公平比较 FNO、UNO
+和 DeepONet。
+
+**讲人话：**20% 门只是在问“再拿数据有没有用”，不是在问“神经网络赢没赢”。
+先证明训练工况覆盖得住，再用一个很小的模型试水；小模型都过不了，就不烧大模型。
+
+**突破监测：没有算法突破。真实增量是 v4 的角色隔离、轨迹身份和原子结果证据链
+闭合，并把神经训练授权从一次 PCA 相对改善后移到完整轨迹留一与 sentinel 门。**
