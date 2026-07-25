@@ -5880,3 +5880,140 @@ p14s05 下载器没有被打断；后续只允许带原子锁、唯一 run log �
 
 **突破监测：没有算法突破。这里修复的是可重复性和缓存可信度；科学门仍是
 p14s05/p22s03 接入后运行 p14-only v4 coverage gate。**
+
+## 221. v4 不再自己给自己发合格证
+
+实现指纹闭合后还剩一个方法学问题：v4 runner 会写私有结果，也会在同一模块里检查
+既有缓存。即使单元测试通过，这仍不算真正独立的结果复核。
+
+现在新增了一个不导入 v4 runner 的独立 validator。它会重新完成以下检查：
+
+- 只枚举 3 条既有 fit、2 条 first-batch clean fit 和 p14 模型选择轨迹；
+  p22 stopping validation 不在允许名单；
+- 对六条 pair 重新运行 observation-only validator，核对官方 source、父协议、
+  geometry、manifest、checksums 与 READY，不解释 truth 数组；
+- 回到六条官方 full-resolution `rho` bundle，逐帧重放 606 次独立 forward，要求每个
+  observation 与 pair 内保存值逐元素完全相同；
+- 用底层 PCGLS 原语重算 606 个 K4 teacher，再只用五条 fit 轨迹重拟合 PCA，逐 rank
+  重算 p50/p90/worst、能量、20% 改善和 PASS/FAIL，不能只信 runner 写出的数值；
+- 重新核对私有 manifest、READY、协议绑定和十一个数值路径文件的实现指纹；
+- 打开私有 NPZ 时只允许七个 basis/statistics 数组，并检查 shape、float64、
+  finite、正 observation scale 和非负 singular values；若混入 fit/validation
+  样本立即失败；
+- 再次确认 `neural_training_authorized=false`、`test_truth_opened=false`、
+  `algorithm_breakthrough=false`。
+
+独立审计曾抓到四个 P1：结果行仍可能自证、pair 可能作内部自洽的跨轨迹拼接、
+implementation binding 漏了直接 forward 依赖，以及旧队列的 pair 预检曾为
+shape/finite 检查解释过 truth 数组。前三项已由 full source replay、独立 K4/PCA
+重算和依赖闭包修复；最后一项不能抹去历史，因此只能诚实记录：旧预检碰过 truth，
+但 v4 的 K4/PCA 判决没有使用 truth。新队列已显式传入
+`--skip-truth-array-inspection`，且只有独立验证报告与 public status 一致才写
+`VERIFIED_COMPLETE`。完整 PoolFire 回归为 `208 passed`。
+
+**讲人话：**以前是“做题的人顺便批自己的卷子”；现在换了一套没有调用原做题程序的
+批卷逻辑，重新算关键答案。两边都一致，结果才进入下一步。
+
+**突破监测：没有算法突破。新增的是更强的独立结果复核。**
+
+## 222. 首批覆盖扩充真实改善 13.86%，但冻结的 20% 门没有通过
+
+`p=14kw_size=05` 和 `p=22kw_size=03` 已完成 clean-fit 接入。修正后的 runner
+生成新结果后，独立 validator 从官方 `rho` 重放全部 606 帧 forward、重算 606 个
+K4 teacher 和 fit-only PCA，得到同一个判决：
+
+| 项目 | 冻结基线 / 门槛 | 实际结果 |
+|---|---:|---:|
+| rank-256 p14 K4-target PCA p90 | 基线 `0.253138` | `0.218051` |
+| 相对下降 | 至少 `20%` | `13.8608%` |
+| 最大允许 p90 | `0.202510` | 未达到 |
+| 是否继续拿剩余 clean-fit | 只有 PASS 才允许 | `false` |
+| 是否授权神经训练 | 本门本来就不授权 | `false` |
+
+这不是“完全没进展”：两条新 fit 轨迹确实让 p90 降了约 `0.0351`。但事前冻结的是
+20%，实际只到 13.86%，所以必须判 FAIL，不能临时降低标准。rank 256 时 fit K4
+target 已解释 `99.6543%` 能量，p14 output p90 仍为 `0.218051`；observation p90
+更高达 `0.469397`。这更像是跨工况表示/对齐问题，而不是简单增加同类样本后就会
+自动消失的欠采样。
+
+**讲人话：**新加的两本题库让答案更接近了，但仍没有接近到事前规定的合格线。
+继续盲目下载更多同类题目不划算。下一步要检查“答案表示方法”本身：K4 是固定
+线性算子作用于 observation，当前带均值 PCA 可能把幅值和形状混在一起，也可能受
+rank 256 上限约束。先比较更高 rank、过原点子空间以及只使用 observation 可见幅值
+的齐次归一化，仍只做开发诊断，不碰 p22 stopping validation 与两条 test。
+
+**突破监测：没有算法突破。可信的新事实是首批覆盖扩充只改善 13.86%，正式
+v4 状态为 `FAIL_FIRST_BATCH_MATERIAL_P14_COVERAGE_IMPROVEMENT`。**
+
+## 223. 第一版 v5 被协议审计主动降级，没有把漂亮数字直接发布
+
+在 v4 失败后，第一版 v5 比较了 rank 256–504、带均值/过原点以及 observation-RMS
+齐次表示。runner 一度得到 rank-504 p90 `0.148823`。但独立协议审计随后发现六个
+P1，最关键的是：
+
+- 固定四步、零初值 CGLS 一般不是线性映射；只有在 breakdown 分支不变且有限精度
+  可忽略时，才对整体标量缩放呈一阶齐次；
+- validation target 在子空间里的投影系数来自完整 K4 target，是 oracle containment
+  检查，不是 observation→coefficient 的部署模型；
+- rank 504 需要 fit-only 奇异值、稳定数值秩和边界谱隙门，不能只因理论最大 rank
+  是 504 就直接接受；
+- RMS 必须绑定 raw `observations.npy` 的全部 2072 分量、固定顺序、等权、无 mask、
+  无标准化，floor 命中必须为 0；
+- 必须先排除数值不稳定行，再同时检查 p90/worst；“齐次表示获胜”还要预先规定
+  相对 best raw 的最小改善和 no-harm 条件；
+- 失败最多排除这四种固定全局子空间，不能顺手排除 nonlinear decoder、
+  conditional basis、mixture-of-subspaces 或 full-field CNN。
+
+因此第一版 v5 私有结果和图被移入 provisional 归档，公开候选目录删除。它不能作为
+机制结论、模型结论或论文结果。
+
+**讲人话：**不是数字看起来变小就收下。先问“这个小数字是不是依赖一个部署时拿不到
+的 oracle 投影”“最后几维是不是数值噪声”。答案没闭合，就把结果降级重做。
+
+**突破监测：没有算法突破。这里的进展是审计在发布前成功阻止了过度解释。**
+
+## 224. v5.1 把齐次性、稳定 rank 和 oracle 边界补齐
+
+v5.1 在任何新结果前单独提交冻结，新增：
+
+1. 对全部 505 个 fit frame 分别计算 `K4(0.5y)`、`K4(2y)`，与
+   `0.5 K4(y)`、`2 K4(y)` 比较，并要求四步 breakdown flags 完全一致；
+2. rank 必须同时通过 `sigma_r/sigma_1 >= 1e-8`、fit-only stable rank 和边界谱隙
+   `>=1.001`；
+3. 明写 `oracle_target_projection=true`、`deployable model=false`；
+4. centered 候选把 mean field 的存储量计入 decoder bytes；
+5. homogeneous 只有相对 best raw 的 p90 至少改善 2%，且 worst 不变坏，才算
+   material win。
+
+runner 完成后，独立 validator 不导入 v5.1 runner 或 representation helper，重新
+计算 606 个 K4 teacher、1010 个缩放 K4、20 个 projector、稳定 rank、passer-first
+选择和 homogeneous 2% + no-harm 门，得到完全一致的结果：
+
+| 检查 | runner 结果 |
+|---|---:|
+| 505 帧 × 2 个 scale 的最大齐次误差 | `0` |
+| breakdown path mismatch | `0` |
+| stable eligible rows | `20/20` |
+| v4 raw-centered rank-256 p90 | `0.218051` |
+| raw-origin rank-256 p90 | `0.196516` |
+| best raw-origin rank-504 p90 | `0.148973` |
+| best RMS-origin rank-504 p90 | `0.148823` |
+| RMS 相对 best raw 改善 | `0.1009%`，低于冻结的 `2%` |
+| 最佳 p90 / worst | `0.148823 / 0.165473` |
+| 绝对门 | `p90<=0.05` 且 `worst<=0.10`，FAIL |
+
+这说明 provisional 信号主要来自 rank 256→504 和去掉仿射均值：仅在 rank 256
+改成过原点就降低约 `9.88%`，扩到 rank 504 后比 v4 降约 `31.68%`；RMS 幅值拆分
+几乎没有额外贡献。即使如此，固定全局子空间离绝对门仍有大距离。
+
+**讲人话：**我们排除了“只要除以一个强度就解决跨工况”的简单故事。现有困难更像
+空间形态、位置或条件依赖的基底变化。下一步若独立复核通过，应优先检查对齐、
+conditional basis / mixture-of-subspaces 或不受固定 PCA 输出瓶颈限制的 full-field
+decoder，而不是把 RMS 包装成创新。
+
+独立状态为
+`PASS_INDEPENDENT_POOLFIRE_C_HOMOGENEOUS_REPRESENTATION_V5_1_VALIDATION`，
+科学状态仍是 `FAIL_DEVELOPMENT_ABSOLUTE_OUTPUT_HEADROOM`。
+
+**突破监测：仍没有算法突破。这是一条可信的机制性负结果；没有部署模型、调用减少、
+wall-time、内存、泛化或真实 BOST 证据。**

@@ -93,7 +93,7 @@ trajectory 形成的线性 PCA 子空间、rank 不超过 256”没有覆盖 p14
 它没有排除更高 rank、非线性表示或其他架构。此时直接训练 FNO/UNO/3D U-Net
 仍有较高的记忆训练轨迹风险。
 
-## 5. 当前唯一科学门：分阶段扩充 fit 覆盖
+## 5. 分阶段扩充 fit 覆盖：门已运行并失败
 
 v4 在任何新增数据下载前冻结：
 
@@ -122,8 +122,23 @@ matched-accuracy pass `>=90%`、harm `<=5%`、固定 `K<=2`；BP、推理、resi
 中位数不能变慢，并测 fresh-process whole-pipeline peak RSS。通过后才比较 FNO、
 UNO 和 DeepONet。
 
-若 20% 门失败，只能停止同类数据扩充并检查 rank 上限、输入表示、几何与 K4
-teacher；不能调用 p22/test 救结果，也不能把线性 PCA 失败写成“非线性模型必败”。
+### v4 实际结果
+
+`p=14kw_size=05` 与 `p=22kw_size=03` clean-fit 接入后，rank-256 p14 K4-target
+PCA p90 从 `0.2531381001` 降到 `0.2180511919`，相对改善 `13.8608%`。冻结门要求
+至少改善 20%，即 p90 不高于 `0.2025104801`，所以正式状态是
+`FAIL_FIRST_BATCH_MATERIAL_P14_COVERAGE_IMPROVEMENT`。
+
+rank 256 时 fit output 能量解释率已为 `99.6543%`，但 p14 output p90 仍为
+`0.218051`；p14 observation p90 为 `0.469397`。因此目前停止剩余同类 clean-fit
+接入，也不授权大模型训练。下一步只允许在已经开发化的 p14 上审查：
+
+1. rank 256 上限是否人为截断了有效方向；
+2. K4 的线性齐次性是否与当前带均值的仿射 PCA 不匹配；
+3. 用部署可见 observation 范数拆分“幅值”和“形状”能否降低跨工况误差；
+4. 固定几何下的 view/block scaling 是否导致输入表示失配。
+
+这轮不能调用 p22/test 救结果，也不能把线性 PCA 失败写成“非线性模型必败”。
 
 ## 6. 下一代算法的可投稿假设
 
@@ -162,14 +177,55 @@ teacher；不能调用 p22/test 救结果，也不能把线性 PCA 失败写成�
 - v4 只解释 observation，不解释 pair truth 数组；私有结果原子生成并可独立复核。
 - 私有结果还逐文件绑定 runner、K4 teacher、CGLS/PCGLS、几何、validator 和
   straight-ray 数值路径的 SHA，并绑定 Python/NumPy 版本；实现变化时旧缓存拒绝复用。
+- runner 完成后还必须通过一个不导入 runner 的独立结果 validator；它从六条官方
+  `rho` bundle 逐帧重放 606 次 forward，重算 606 个 K4 teacher、fit-only PCA、
+  全部 rank 指标和 20% 数学判决；独立验证失败或状态不一致时，队列不得写
+  `VERIFIED_COMPLETE`。
+- 审计前旧队列曾为 shape/finite 预检解释 first-batch truth 数组；这不进入 v4
+  K4/PCA 判决，但历史上不能再声称“从未打开”。修正后的验证路径明确不解释 truth。
 
-审计后重跑仍得到相同的科学结论：v2 与 v3 两道门均失败，p22/test 没有被用来
-挽救失败模型。第一轮定向回归为 `73 passed`；第二轮 v4 身份/隔离修复后，
-实现指纹修复后的完整 PoolFire 回归为 `200 passed`。这些只是代码和证据链通过，
-不是算法成功。
+审计后重跑得到可信 v4 结果：606 帧 source-forward、606 个 K4 teacher 和
+fit-only PCA 独立重算一致；13.86% 改善没有达到 20% 门，p22/test 没有被用来挽救
+失败模型。加入 v5.1 独立重算后，完整 PoolFire 与聚焦页回归为 `243 passed`。这些只是代码和证据链通过，不是
+算法成功。
 
 ## 8. 初学者怎么理解
 
 把 CGLS 想成用观测不断修正三维答案。开始几步会补回真正看得见的大结构；继续跑太久，它会开始追逐 forward mismatch 和难以可靠恢复的细节。Warm start 的目标不是替代求解器，而是把起点放进“少走几步仍能到好答案”的区域。
 
-这轮最重要的诚实结论是：我们找到了正确的困难，但还没有找到稳定战胜它的算法。下一步扩充训练覆盖，是为了判断这个困难能否被一个通用模型学习，而不是为了用更多数据掩盖失败。
+这轮最重要的诚实结论是：我们找到了正确的困难，但还没有找到稳定战胜它的算法。
+首批训练覆盖扩充有改善但没有过门，因此下一步不再盲目加同类数据，而是检查
+表示是否尊重 K4 映射的线性齐次结构，以及 rank、幅值/形状分解和 view scaling
+到底哪一项限制了跨工况表示。
+
+## 9. v5.1：rank 有 headroom，但固定全局子空间仍不够
+
+第一版 v5 因协议审计发现 K4 线性表述、oracle projection、稳定 rank、RMS 定义和
+选择规则不闭合而被降级，不发布其结果。修订后的 v5.1 在结果前冻结，并明确：
+
+- 固定四步零初值 CGLS 一般非线性，只在 breakdown 分支不变时检查一阶齐次；
+- validation 系数由 K4 target oracle 投影得到，只测子空间 containment；
+- raw observation 的全部 2072 分量等权计算 RMS，floor 命中必须为 0；
+- rank 同时通过 fit-only `sigma_r/sigma_1`、stable rank 与边界谱隙；
+- p90 `<=0.05` 与 worst `<=0.10` 必须同时通过；
+- homogeneous 必须比 best raw 至少好 2% 且 worst 不变坏，才能称 material win。
+
+runner 对全部 505 个 fit frame 的 `0.5×/2×` 探针得到最大齐次误差 0、
+breakdown mismatch 0；20 个候选行均通过数值稳定门。独立 validator 随后重新计算
+606 个 K4 teacher、1010 个缩放 K4、20 个 projector、稳定 rank、passer-first
+选择和 homogeneous 2% + no-harm 门，得到同一结果：
+
+| 表示 | rank | p14 p90 | p14 worst |
+|---|---:|---:|---:|
+| raw centered | 256 | 0.218051 | 0.251191 |
+| raw origin | 256 | 0.196516 | 0.217121 |
+| raw origin | 504 | 0.148973 | 0.165437 |
+| observation-RMS origin | 504 | 0.148823 | 0.165473 |
+
+rank 扩展与过原点表示带来明显 headroom，但 RMS 只比 best raw 好 `0.1009%`，
+没有达到 2% material-win 门；所有候选仍未通过绝对 headroom。独立状态为
+`PASS_INDEPENDENT_POOLFIRE_C_HOMOGENEOUS_REPRESENTATION_V5_1_VALIDATION`，
+科学状态为 `FAIL_DEVELOPMENT_ABSOLUTE_OUTPUT_HEADROOM`。这只能排除四个固定全局
+输出子空间，不能排除 nonlinear decoder、
+conditional basis、mixture-of-subspaces 或 full-field CNN，更不能声称有可部署
+warm start。
