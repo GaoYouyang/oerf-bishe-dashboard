@@ -1,0 +1,136 @@
+{
+  "schema_version": "oerf-poolfire-c-full-field-source-operator-audit-9.2",
+  "status": "FROZEN_BEFORE_INDEPENDENT_SOURCE_OPERATOR_RESULT",
+  "purpose": "Independently close the observation-to-raw-BP-to-equalized-BP-to-K4-teacher lineage and the six-request nested Cross14 fit batch before any outer prediction or score is opened.",
+  "parents": {
+    "poolfire_c_full_field_selection_clarification_v9_1_sha256": "c5dd3873554528ef65a4676e90a2ba13a05d03a000e0c41e34ed6afe3015ed19",
+    "poolfire_c_full_field_low_capacity_audit_v9_sha256": "27a63c79d0270ce650de6ca3e891a51316b739bede4e754d4e800d62977baec8",
+    "poolfire_c_bp_transport_alignment_audit_v6_sha256": "c5f8289cc08c60f65518623e63643a433c80fc784e83efc65f1a8933ead43c61",
+    "poolfire_c_geometry_equalized_bp_audit_v7_sha256": "c934a4f36909a50eb30d08bf4117217a29ae7c2ff590d926ab200e10724a1f80",
+    "poolfire_c_geometry_equalized_bp_v7_1_addendum_sha256": "e6c7e694fdf584217ac6aed03a486f42c1c96a34850c23c7ff46840dea3e7d5c",
+    "poolfire_c_cross_trajectory_experiment_v1_sha256": "bb536f8b0f25a4ced47263798b7d5cdb0efa94308d3796a6ced6e7c37fd1d76b"
+  },
+  "trajectory_contract": {
+    "source_axis_order": [
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03",
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=14kw_size=01"
+    ],
+    "fit_trajectory_ids": [
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03",
+      "p=14kw_size=05",
+      "p=22kw_size=03"
+    ],
+    "development_validation_trajectory_id": "p=14kw_size=01",
+    "outer_batch_rows": [
+      "outer-00",
+      "outer-01",
+      "outer-02",
+      "outer-03",
+      "outer-04"
+    ],
+    "development_batch_row": "development-p14",
+    "frame_count_per_trajectory": 101,
+    "field_shape_xyz": [
+      16,
+      16,
+      32
+    ],
+    "observation_component_count": 2072
+  },
+  "independence_contract": {
+    "validator_must_not_import": [
+      "learning_labs.poolfire_c_full_field_formal_fit",
+      "learning_labs.poolfire_c_full_field_selection",
+      "site_tools.run_poolfire_c_full_field_formal_fit_worker_v9",
+      "site_tools.prepare_poolfire_c_full_field_formal_fit_requests_v9",
+      "site_tools.run_poolfire_c_bp_transport_stage1_v6",
+      "site_tools.run_poolfire_c_bp_transport_stage2_v6",
+      "site_tools.run_poolfire_c_geometry_equalized_bp_v7",
+      "learning_labs.poolfire_c_geometry_equalized_bp",
+      "learning_labs.poolfire_c_transport_stage1",
+      "learning_labs.poolfire_c_transport_stage2"
+    ],
+    "allowed_low_level_primitives": [
+      "ProjectionFirstInteriorStraightRayOperator",
+      "StackedLinearOperator",
+      "load_poolfire_observations_only",
+      "pcgls_checkpoint_trajectory",
+      "numpy"
+    ],
+    "raw_BP_recomputed_from_observation_and_geometry": true,
+    "raw_BP_expected_calls_per_frame": {
+      "A": 0,
+      "AT": 1
+    },
+    "geometry_rebuilt_from_frozen_public_coordinates": true,
+    "geometry_dot_test_required": true,
+    "constant_field_nullspace_test_required": true,
+    "diag_AT_A_recomputed_analytically": true,
+    "equalizer_recomputed_without_target_or_teacher": true,
+    "K4_teacher_recomputed_from_zero_start_observation_only": true,
+    "K4_expected_calls_per_frame": {
+      "A": 4,
+      "AT": 4
+    },
+    "source_arrays_compared_elementwise": true,
+    "source_files_snapshotted_before_and_after": true,
+    "request_payloads_compared_to_independent_source_slices": true,
+    "nested_folds_lambdas_scalers_Gram_coefficients_and_final_models_recomputed": true,
+    "formal_selector_worker_and_output_validator_imported": false
+  },
+  "batch_promotion_gate": {
+    "required_rows": [
+      "outer-00",
+      "outer-01",
+      "outer-02",
+      "outer-03",
+      "outer-04",
+      "development-p14"
+    ],
+    "all_rows_unique": true,
+    "all_five_outer_heldouts_covered_once": true,
+    "development_row_reported_separately": true,
+    "lambda_grid": [
+      1e-06,
+      0.0001,
+      0.01,
+      1.0,
+      100.0
+    ],
+    "selection_uncertainty_unit": "complete_trajectory",
+    "selection_rule": "largest_lambda_with_mean_at_most_minimum_mean_plus_standard_error_at_minimizing_lambda",
+    "standard_error_definition": "sample_standard_deviation_ddof_1_divided_by_sqrt_complete_trajectory_count",
+    "exact_tie_rule": "largest_lambda",
+    "all_six_models_must_match_independent_refit": true,
+    "partial_batch_must_fail_closed": true
+  },
+  "forbidden_access": {
+    "gauge_truth": true,
+    "legacy_p22_stopping_validation": true,
+    "fresh_v9_holdout": true,
+    "untouched_test": true,
+    "outer_or_p14_evaluation_arrays_during_fit": true,
+    "network": true
+  },
+  "release_logic": {
+    "pass_status": "PASS_INDEPENDENT_SOURCE_OPERATOR_AND_NESTED_FIT_BATCH_V9_2",
+    "failure_status": "FAIL_CLOSED_INDEPENDENT_SOURCE_OPERATOR_AND_NESTED_FIT_BATCH_V9_2",
+    "pass_authorizes_outer_protocol_freeze_only": true,
+    "pass_does_not_authorize_outer_scoring": true,
+    "pass_does_not_authorize_neural_training": true,
+    "pass_does_not_prove_matched_accuracy": true,
+    "pass_does_not_prove_A_or_AT_reduction": true,
+    "pass_does_not_prove_wall_time_speedup": true,
+    "pass_does_not_prove_memory_reduction": true,
+    "pass_does_not_prove_generalization": true,
+    "algorithm_breakthrough": false,
+    "real_BOST": false,
+    "paper_success": false
+  }
+}

@@ -1,0 +1,278 @@
+{
+  "schema_version": "oerf-poolfire-c-full-field-outer-evaluation-clarification-9.4.1",
+  "status": "FROZEN_BEFORE_ANY_OUTER_PREDICTION_OR_SCORE",
+  "purpose": "remove v9.4 schema and accounting ambiguities before any formal outer prediction, score, private truth access, or result-dependent choice",
+  "parents": {
+    "v9_4_protocol_path": "learning_labs/protocols/poolfire_c_full_field_outer_evaluation_v9_4.json",
+    "v9_4_protocol_sha256": "c7a80b8adbad0eda8b228e4c13bfbf2713f6c07874ca88fc170f1b42d661913a",
+    "v9_4_report_template_path": "learning_labs/protocols/poolfire_c_full_field_outer_report_template_v9_4.json",
+    "v9_4_report_template_sha256": "bb373dba01fe1e85312c0de28b8745d5f25c0d2dc40e73af3582f2dd986caf03",
+    "v9_4_1_report_template_path": "learning_labs/protocols/poolfire_c_full_field_outer_report_template_v9_4_1.json",
+    "v9_4_1_report_template_sha256": "153995290666b2a5ec0e453e7fb38fbb64b9ee7de24ba12eb4990ce63dcbdd7e"
+  },
+  "precedence": {
+    "v9_4_scientific_rows_arms_metrics_thresholds_and_claim_boundaries_remain_frozen": true,
+    "v9_4_1_replaces_only_ambiguous_schema_names_shape_enforcement_release_barrier_and_cost_accounting_definitions": true,
+    "on_conflict_v9_4_1_clarification_controls": true,
+    "v9_4_files_are_not_overwritten": true,
+    "post_result_change_forbidden": true
+  },
+  "no_result_access_attestation": {
+    "outer_prediction_opened_while_freezing_v9_4_1": false,
+    "outer_score_opened_while_freezing_v9_4_1": false,
+    "private_truth_opened_while_freezing_v9_4_1": false,
+    "fresh_holdout_opened": false,
+    "untouched_test_opened": false,
+    "result_dependent_field_or_threshold_change": false
+  },
+  "formal_shape_enforcement": {
+    "scientific_unit": "complete_trajectory",
+    "frame_count_per_trajectory": 101,
+    "observation_shape_per_trajectory": [
+      101,
+      2072
+    ],
+    "field_shape_per_trajectory": [
+      101,
+      16,
+      16,
+      32
+    ],
+    "dtype": "float64",
+    "formal_entry_points_must_require_exact_shapes": true,
+    "broadcasting_reshape_padding_truncation_or_frame_subsampling_forbidden": true,
+    "small_synthetic_shapes_allowed_only_in_nonformal_static_or_unit_tests": true,
+    "frames_are_not_independent_replicates": true,
+    "pooled_606_frames_may_not_pass_any_gate": true
+  },
+  "evaluation_cardinality": {
+    "outer_row_count": 5,
+    "separate_p14_veto_row_count": 1,
+    "total_row_count": 6,
+    "arm_count": 11,
+    "prediction_count_per_row": 11,
+    "total_prediction_count": 66,
+    "required_row_ids_in_order": [
+      "outer-00",
+      "outer-01",
+      "outer-02",
+      "outer-03",
+      "outer-04",
+      "development-p14"
+    ],
+    "required_arm_ids_in_order": [
+      "cross14_cgls_k2",
+      "zero_cgls_k3",
+      "zero_cgls_k4",
+      "zero_pcgls_geometry_k3",
+      "normalized_bp_cgls_k2",
+      "dual_ridge_cgls_k2",
+      "raw_bp_identity",
+      "equalized_bp_identity",
+      "raw_bp_observable_line_search",
+      "equalized_bp_observable_line_search",
+      "dct44_residual_cgls_k2"
+    ]
+  },
+  "global_prediction_barrier": {
+    "all_66_predictions_must_exist_before_score_release": true,
+    "each_prediction_is_atomically_published_non_overwriting": true,
+    "exact_six_by_eleven_membership_required": true,
+    "every_prediction_checksum_must_be_bound_into_one_batch_seal": true,
+    "batch_seal_is_atomically_published_non_overwriting": true,
+    "partial_row_or_partial_arm_scoring_forbidden": true,
+    "teacher_or_truth_access_before_batch_seal_forbidden": true,
+    "score_request_creation_before_batch_seal_forbidden": true,
+    "score_release_token": {
+      "schema_version": "oerf-poolfire-c-full-field-score-release-token-9.4.1",
+      "issued_only_from_verified_batch_seal": true,
+      "binds_protocol_sha256": true,
+      "binds_report_template_sha256": true,
+      "binds_exact_66_prediction_checksums": true,
+      "binds_exact_row_and_arm_order": true,
+      "single_use": true,
+      "required_by_every_formal_score_entry_point": true,
+      "missing_invalid_replayed_or_mismatched_token_is_fail_closed": true
+    }
+  },
+  "fresh_exec_runtime_and_memory": {
+    "fresh_exec_repetitions_per_arm_per_row": 5,
+    "each_repetition_is_a_new_process": true,
+    "same_five_repetitions_produce_wall_and_peak_RSS_receipts": true,
+    "child_lifetime_starts_before_protocol_release_model_geometry_and_observation_load": true,
+    "child_lifetime_ends_after_minimal_numeric_output_serialization": true,
+    "wall_seconds_measured_over_entire_child_lifetime": true,
+    "peak_RSS_bytes_measured_by_parent_wait4_over_entire_child_lifetime": true,
+    "score_truth_metrics_plotting_and_public_report_assembly_excluded": true,
+    "trajectory_wall_summary": "median_of_five_fresh_exec_repetitions",
+    "fresh_process_peak_RSS_summary": "p90_numpy_quantile_method_higher_of_five_fresh_exec_repetitions",
+    "thread_environment": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "deterministic_row_specific_cyclic_arm_order_required": true,
+    "machine_load_power_state_thermal_state_runtime_and_thread_environment_recorded_without_post_result_exclusion": true
+  },
+  "resource_accounting": {
+    "full_operator_calls": {
+      "full_A_calls_per_frame": "count_each_complete_frozen_forward_operator_application_once",
+      "full_AT_calls_per_frame": "count_each_complete_frozen_adjoint_operator_application_once",
+      "partial_or_cached_equivalents_must_not_be_hidden": true
+    },
+    "trainable_parameters": {
+      "trainable_parameter_count": "number_of_numeric_scalar_values_estimated_from_training_trajectory_payloads",
+      "trainable_parameter_bytes": "serialized_bytes_of_only_those_trainable_numeric_scalar_values_at_frozen_dtype",
+      "fixed_geometry_bases_equalizers_preconditioners_and_metadata_excluded": true
+    },
+    "resident_numeric_artifact": {
+      "resident_numeric_artifact_bytes": "deduplicated_total_bytes_of_all_numeric_arrays_that_must_reside_in_the_child_process_for_inference_after_load",
+      "includes": [
+        "trainable_coefficients",
+        "normalization_arrays",
+        "basis_arrays",
+        "fixed_geometry_arrays",
+        "equalizer_arrays",
+        "preconditioner_arrays",
+        "cached_numeric_projection_arrays_required_by_the_arm"
+      ],
+      "excludes": [
+        "Python_interpreter_and_shared_libraries",
+        "protocol_release_and_JSON_metadata_bytes",
+        "prediction_output_bytes",
+        "score_truth_and_teacher_arrays"
+      ],
+      "shared_numeric_array_counted_once_per_process": true
+    },
+    "peak_memory": {
+      "fresh_process_peak_RSS_p90_bytes": "parent_wait4_peak_RSS_over_the_entire_child_lifetime_summarized_by_higher_p90_across_five_fresh_exec_repetitions",
+      "resident_numeric_artifact_bytes_may_not_substitute_for_peak_RSS": true
+    },
+    "multiply_adds": {
+      "field_name": "non_A_AT_inference_multiply_adds_per_complete_trajectory",
+      "includes": [
+        "input_standardization",
+        "learned_or_fixed_dense_maps",
+        "basis_analysis_and_synthesis",
+        "DCT_analysis_and_synthesis",
+        "equalizer_multiplication",
+        "preconditioner_multiplication",
+        "initializer_combination",
+        "non_operator_refinement_vector_algebra"
+      ],
+      "excludes": [
+        "full_A_operator_internal_multiply_adds",
+        "full_AT_operator_internal_multiply_adds",
+        "file_IO",
+        "JSON_parsing",
+        "score_truth_metrics",
+        "plotting"
+      ],
+      "full_A_and_full_AT_are_reported_separately": true,
+      "one_multiply_followed_by_one_add_counts_as_one_multiply_add": true
+    }
+  },
+  "dct44_scale_invariant_train_only_lambda": {
+    "applies_to_arm_id": "dct44_residual_cgls_k2",
+    "input_quantity": "44_frozen_DCT_mode_coefficients_of_the_training_only_equalized_BP_residual_input",
+    "trajectory_balancing": "first_mean_squared_coefficient_over_frames_within_each_training_trajectory_then_equal_weight_mean_over_training_trajectories_and_44_modes",
+    "train_only_scale_squared_symbol": "S2_train",
+    "train_only_scale_squared_formula": "mean_over_44_modes(mean_over_training_trajectories(mean_over_101_frames(c_input_squared)))",
+    "dimensionless_lambda_grid_is_frozen_before_outer_prediction": true,
+    "effective_lambda_formula": "lambda_effective=lambda_dimensionless*S2_train",
+    "S2_train_must_be_computed_from_outer_row_training_trajectories_only": true,
+    "evaluation_trajectory_p14_payload_teacher_truth_or_score_may_not_affect_S2_train_or_lambda_selection": true,
+    "if_S2_train_is_exactly_zero_return_exact_zero_DCT_residual_model_without_division": true,
+    "no_absolute_physical_unit_floor_or_clip_is_allowed": true,
+    "required_invariance": "multiplying_all_training_inputs_and_targets_by_any_positive_global_scalar_must_leave_selected_dimensionless_lambda_and_dimensionless_gains_unchanged_up_to_frozen_numeric_tolerance",
+    "modewise_standardization_is_not_claimed_by_this_minimal_clarification": true
+  },
+  "report_schema_contract": {
+    "failure_field_name_everywhere": "gate_failures",
+    "forbidden_failure_field_names": [
+      "all_gate_failures"
+    ],
+    "required_per_arm_per_trajectory_fields": [
+      "row_id",
+      "trajectory_id",
+      "arm_id",
+      "field_p50",
+      "field_p90_higher",
+      "field_worst",
+      "gradient_p50",
+      "gradient_p90_higher",
+      "gradient_worst",
+      "observation_p50",
+      "observation_p90_higher",
+      "observation_worst",
+      "boundary_field_p90_higher",
+      "interior_field_p90_higher",
+      "joint_matched_fraction",
+      "joint_harm_fraction",
+      "field_harm_fraction",
+      "gradient_harm_fraction",
+      "observation_harm_fraction",
+      "severe_harm_count",
+      "full_A_calls_per_frame",
+      "full_AT_calls_per_frame",
+      "fresh_exec_repetitions",
+      "trajectory_wall_median_seconds",
+      "fresh_process_peak_RSS_p90_bytes",
+      "trainable_parameter_count",
+      "trainable_parameter_bytes",
+      "resident_numeric_artifact_bytes",
+      "non_A_AT_inference_multiply_adds_per_complete_trajectory",
+      "setup_seconds",
+      "gate_pass",
+      "gate_failures"
+    ],
+    "required_outer_equal_weight_summary_fields": [
+      "arm_id",
+      "trajectory_count",
+      "five_trajectory_mean",
+      "five_trajectory_median",
+      "five_trajectory_p90_higher_equals_worst",
+      "five_trajectory_worst",
+      "gate_pass",
+      "gate_failures"
+    ],
+    "forbidden_ambiguous_outer_summary_fields": [
+      "mean",
+      "median",
+      "p90_higher_equals_worst",
+      "worst"
+    ],
+    "five_trajectory_p90_higher_equals_worst_and_must_be_labeled_as_such": true,
+    "p14_schema_name": "p14_separate_veto_schema",
+    "p14_reported_separately_and_never_pooled_into_outer_summary": true,
+    "public_report_may_include_score_release_verification_boolean_but_not_token_secret": true
+  },
+  "p14_separate_veto": {
+    "row_id": "development-p14",
+    "trajectory_id": "p=14kw_size=01",
+    "role": "seen_adaptive_development_validation_veto",
+    "included_in_five_trajectory_outer_summary": false,
+    "mandatory_veto": true,
+    "all_11_arms_and_all_formal_metrics_costs_and_resource_fields_required": true,
+    "failed_p14_veto_fails_development_gate": true,
+    "passed_p14_veto_does_not_convert_outer_crossfit_into_independent_confirmation": true,
+    "passed_p14_veto_does_not_authorize_fresh_holdout_or_untouched_test_access": true
+  },
+  "claim_boundaries": {
+    "adaptive_open_proxy_development": true,
+    "outer_crossfit_is_independent_confirmatory_generalization": false,
+    "real_BOST": false,
+    "deployable_full_field_initializer": false,
+    "A_or_AT_call_reduction": false,
+    "wall_time_speedup": false,
+    "memory_reduction": false,
+    "GEOK_Warm_implemented": false,
+    "neural_operator_trained": false,
+    "neural_operator_advantage": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "fresh_v9_holdout_opened": false,
+    "untouched_test_opened": false
+  }
+}

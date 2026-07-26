@@ -1,0 +1,120 @@
+{
+  "schema_version": "oerf-poolfire-c-full-field-runtime-split-audit-9.3",
+  "status": "FROZEN_BEFORE_RUNTIME_SPLIT_AUDIT_RESULTS",
+  "purpose": "Close the v9 source-to-request and request-to-model lineage with two runtime-bound independent roles after the monolithic v9.2 audit correctly failed closed across incompatible numerical runtimes.",
+  "parent_v9_2_audit": {
+    "path": "learning_labs/protocols/poolfire_c_full_field_source_operator_audit_v9_2.json",
+    "sha256": "f2885720927c35893f596c67ddd32b3877390a5bdabbb537cc7c23881b26864d"
+  },
+  "failure_classification": {
+    "class": "EVIDENCE_RUNTIME_COMPOSITION_FAILURE",
+    "source_semantics_failed": false,
+    "formal_nested_fit_failed": false,
+    "outer_prediction_or_score_opened": false,
+    "scientific_result_available": false,
+    "reason": "The frozen source artifacts and formal fits were created under different Python and NumPy runtimes. Exact source recomputation and exact nested refit must therefore be performed by separate runtime-bound roles rather than weakened with a post-hoc tolerance."
+  },
+  "source_role": {
+    "runtime": {
+      "python": "3.13.9",
+      "numpy": "2.3.5"
+    },
+    "must_recompute": [
+      "three-view straight-ray geometry",
+      "geometry dot-product and constant-nullspace audits",
+      "raw backprojection A_transpose_y for all six open trajectories",
+      "analytic diag_A_transpose_A sensitivity and fixed equalizer",
+      "equalized backprojection",
+      "zero-start CGLS K4 teacher"
+    ],
+    "must_compare_exactly": [
+      "stored source arrays",
+      "independently gauge-centered formal request payloads"
+    ],
+    "call_ledger": {
+      "raw_backprojection_per_frame": {
+        "A": 0,
+        "AT": 1
+      },
+      "K4_teacher_per_frame": {
+        "A": 4,
+        "AT": 4
+      }
+    },
+    "receipt_must_bind": [
+      "protocol digest",
+      "clean detached validator commit",
+      "runtime fingerprint",
+      "source tree snapshot digest",
+      "formal request tree snapshot digest",
+      "source-to-request identity result"
+    ],
+    "may_read_formal_fit_outputs": false,
+    "may_run_nested_fit": false
+  },
+  "fit_role": {
+    "runtime": {
+      "python": "3.11.5",
+      "numpy": "2.4.6"
+    },
+    "must_require_source_receipt": true,
+    "must_rebind_current_request_tree_to_source_receipt": true,
+    "must_validate": [
+      "six-row batch membership and role separation",
+      "five outer heldouts covered exactly once",
+      "development p14 model reported separately",
+      "request payload consistency across overlapping rows",
+      "fold-local scalers",
+      "complete trajectory-balanced inner losses",
+      "complete frozen lambda grid",
+      "one-standard-error selection",
+      "final 14-parameter ridge models",
+      "formal output containers and receipts"
+    ],
+    "must_compare_exactly": [
+      "all nested selections",
+      "all final model coefficients and scalers"
+    ],
+    "receipt_must_bind": [
+      "source receipt digest",
+      "protocol digest",
+      "clean detached validator commit",
+      "runtime fingerprint",
+      "formal request and output tree snapshot digest",
+      "six independent nested refits"
+    ],
+    "may_recompute_source_operator": false,
+    "may_read_outer_or_p14_evaluation_arrays": false
+  },
+  "composition_gate": {
+    "source_receipt_status": "PASS_RUNTIME_BOUND_SOURCE_TO_REQUEST_V9_3",
+    "fit_receipt_status": "PASS_RUNTIME_BOUND_SOURCE_AND_NESTED_FIT_BATCH_V9_3",
+    "both_roles_must_use_identical_validator_commit": true,
+    "request_tree_digest_must_match_across_roles": true,
+    "partial_or_stale_receipt_must_fail_closed": true,
+    "numerical_tolerance_added_after_observing_results": false,
+    "pass_authorizes_outer_protocol_freeze_only": true,
+    "pass_authorizes_outer_scoring": false
+  },
+  "forbidden_access": {
+    "gauge_truth": true,
+    "legacy_p22_stopping_validation": true,
+    "fresh_v9_holdout": true,
+    "untouched_test": true,
+    "outer_or_p14_evaluation_arrays_during_fit": true,
+    "network": true
+  },
+  "claim_boundaries": {
+    "formal_v9_scientific_gate_implemented": false,
+    "outer_prediction_or_score_completed": false,
+    "neural_training_authorized": false,
+    "matched_accuracy_proven": false,
+    "A_or_AT_call_reduction_proven": false,
+    "wall_time_speedup_proven": false,
+    "memory_reduction_proven": false,
+    "generalization_proven": false,
+    "real_BOST": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

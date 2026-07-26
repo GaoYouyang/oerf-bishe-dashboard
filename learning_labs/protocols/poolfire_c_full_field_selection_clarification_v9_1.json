@@ -1,0 +1,104 @@
+{
+  "schema_version": "oerf-poolfire-c-full-field-selection-clarification-9.1",
+  "status": "FROZEN_BEFORE_FORMAL_V9_SELECTION_OR_SCIENTIFIC_RESULTS",
+  "purpose": "resolve selection-scale, parent-protocol, incomplete-grid, tie, and outer-summary semantics before any formal Cross14 trajectory fold is run",
+  "parent_v9_protocol": {
+    "path": "learning_labs/protocols/poolfire_c_full_field_low_capacity_audit_v9.json",
+    "sha256": "27a63c79d0270ce650de6ca3e891a51316b739bede4e754d4e800d62977baec8"
+  },
+  "supersession": {
+    "superseded_parent_fields": [
+      "any earlier ridge lambda grid",
+      "any earlier validation field p90 median or worst lambda selector",
+      "any frame-level or pooled-frame regularization selector"
+    ],
+    "authoritative_v9_lambda_grid_in_order": [
+      1e-06,
+      0.0001,
+      0.01,
+      1.0,
+      100.0
+    ],
+    "authoritative_v9_selection_metric": "inner-heldout complete-trajectory mean scaled residual voxel MSE",
+    "authoritative_v9_selection_rule": "largest lambda whose equal-trajectory mean is no greater than the minimum mean plus the trajectory standard error at the minimizing lambda",
+    "older_parent_protocols_remain_authoritative_only_for": [
+      "public PoolFire trajectory identities",
+      "pair preparation",
+      "proxy geometry",
+      "observation and gauge-truth construction"
+    ]
+  },
+  "nested_membership": {
+    "fit_trajectories_in_order": [
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03",
+      "p=14kw_size=05",
+      "p=22kw_size=03"
+    ],
+    "outer_fold_count": 5,
+    "outer_training_trajectory_count": 4,
+    "outer_heldout_trajectory_is_absent_from_inner_selector_arguments": true,
+    "inner_fold_count_per_outer_fold": 4,
+    "inner_training_trajectory_count": 3,
+    "development_model_inner_fold_count": 5,
+    "development_model_inner_training_trajectory_count": 4,
+    "development_validation_trajectory": "p=14kw_size=01",
+    "development_validation_is_reported_separately_from_outer_crossfit": true,
+    "frame_count_per_complete_trajectory": 101,
+    "frame_subsampling_or_exclusion": false
+  },
+  "fold_local_scale_semantics": {
+    "raw_rms": "computed from inner-training trajectories only",
+    "equalized_rms": "computed from inner-training trajectories only",
+    "residual_rms": "computed from inner-training trajectories only",
+    "inner_loss": "mean square of prediction minus K4 teacher divided by that inner-fold training residual RMS",
+    "inner_loss_interpretation": "dimensionless fold-local standardized selection utility only",
+    "inner_loss_is_not_a_scientific_effect_size": true,
+    "inner_loss_may_not_be_reported_as_cross-trajectory field accuracy": true,
+    "each_fold_residual_rms_must_be_bound_and_reported_privately": true,
+    "outer_scientific_metrics_use_the_frozen_unscaled_field_gradient_and_observation_definitions": true
+  },
+  "one_standard_error_semantics": {
+    "uncertainty_unit": "complete_trajectory",
+    "mean": "arithmetic mean across complete inner-heldout trajectories",
+    "standard_error": "sample standard deviation with ddof 1 divided by square root of the number of complete inner trajectories",
+    "minimum_mean_exact_tie_break": "largest lambda",
+    "near_ties_are_not_rounded_or_coalesced": true,
+    "eligibility_threshold": "minimum mean plus standard error at the exact minimizing lambda",
+    "eligible_lambda_tie_break": "largest lambda",
+    "boundary_selection_action": "report the frozen-grid boundary without expanding or rerunning the grid"
+  },
+  "invalid_or_incomplete_selection": {
+    "missing_inner_fold": "fail the complete outer selection",
+    "missing_lambda": "fail the complete outer selection",
+    "duplicate_trajectory_or_lambda": "fail the complete outer selection",
+    "wrong_trajectory_order_or_membership": "fail the complete outer selection",
+    "wrong_frame_count_shape_dtype_contiguity_or_nonfinite_array": "fail the complete outer selection",
+    "nonfinite_or_negative_fold_loss": "fail the complete outer selection",
+    "partial_lambda_grid_selection": false,
+    "silent_fold_or_frame_skipping": false
+  },
+  "outer_reporting": {
+    "each_outer_trajectory_reported_individually": true,
+    "equal_weight_outer_summaries": [
+      "mean",
+      "median",
+      "p90_higher",
+      "worst"
+    ],
+    "p14_development_veto_excluded_from_outer_summary": true,
+    "fresh_holdout_excluded_from_outer_summary": true,
+    "pooled_505_or_606_frame_summary_cannot_pass_a_gate": true
+  },
+  "access_and_decision_boundaries": {
+    "outer_teacher_truth_or_metrics_may_select_lambda": false,
+    "p14_teacher_truth_or_metrics_may_select_lambda_or_model_family": false,
+    "fresh_holdout_may_select_lambda_or_model_family": false,
+    "test_payload_accessed": false,
+    "fresh_v9_holdout_accessed": false,
+    "neural_training_authorized": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

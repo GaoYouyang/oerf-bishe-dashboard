@@ -6194,8 +6194,517 @@ observation/BP 到完整 `16×16×32` warm field 的低容量空间映射，按�
 
 新门直接看 full-field、gradient、observation、逐轨迹 harm 和同一 CGLS/PCGLS
 refinement 后的 matched accuracy。FNO、UNO、DeepONet 仍在 sentinel 之后；p22
-stopping validation 和两条 untouched test 继续关闭。
+在 v8 本轮没有读取，但它早期已用于 classical depth/半收敛诊断，因此不能再算
+fresh stopping validation；两条 untouched test 继续关闭。
 
 **突破监测：没有算法突破。** 这次新增的是可信的路线淘汰证据和更直接的下一实验
 问题。`neural_training_authorized=false`，`algorithm_breakthrough=false`，
 `paper_success=false`。
+
+## 228. v9 先锁问题再写模型：Cross14 完整三维 residual warm start
+
+v8 失败后，这一轮没有马上训练 3D U-Net。我们先把“完整三维初值”到底指什么、和谁
+比、怎样才算有用写成机器协议，并让两名独立审计代理专门找漏洞。
+
+第一轮科学审计指出，原先暂定的 8 参数二阶差分模型虽然很小，但把正负方向响应绑在
+了一起，也没有一个足够清楚的强正则回退。最终主候选改成两通道、每通道 7 个十字
+邻域位置的 residual ridge：
+
+```text
+q = G(A^T y)
+e = G(W q)
+target = (CGLS_K4(0,y) - e) / sr
+x0 = G(e + sr * Ctheta(q/sq, e/se))
+```
+
+`Ctheta` 只有 `2×7=14` 个 float64 权重，没有 bias。七个位置是
+`center, -x, +x, -y, +y, -z, +z`；权重跨全部体素和帧共享。`sq/se/sr` 只能由
+当前 fold 的训练轨迹计算。`lambda` 趋于无穷时，修正项归零，严格退回 equalized
+BP。这样模型如果学不到跨工况规律，会回到一个明确的基线，而不是产生任意平均场。
+
+五条 fit 仍做 nested leave-one-complete-trajectory-out；p14 只是已经见过的
+mandatory veto。主候选固定做 K2 refinement，完整调用账是：
+
+| 阶段 | A | A^T |
+|---|---:|---:|
+| raw/equalized BP | 0 | 1 |
+| 非零初值 residual | 1 | 0 |
+| 两步 CGLS | 2 | 2 |
+| 总计 | 3 | 3 |
+
+所以 Cross14-K2 是 6 次完整调用，Zero-K4 是 8 次；但 Zero-K3 同样只有 6 次，
+因此 Cross14 还必须逐轨迹在 field/gradient p90 上不差于 Zero-K3，并至少一项改善
+2%。此外还冻结了 raw/equalized identity、两种 observable line search、44 参数
+DCT low-mode residual、dual ridge、geometry-PCGLS 和 normalized-BP 对照。不能
+看完结果后把某个 control 改名为主算法。
+
+审计还抓到一个更重要的证据历史错误：`p=22kw_size=01` 在 v8 没有读取，不代表它
+从未被读取。早期 classical runner 已用它做 depth 和半收敛诊断，所以它不能再叫
+fresh stopping validation。v9 明确禁止再用 p22 选择模型、K、阈值或救失败结果。
+
+我们在只看官方 metadata 的条件下预指定 `p=45kw_size=03` 为一次性 proxy holdout。
+当前项目受管的 `private_data/PoolFire` 和 `private_results` 范围内，对
+`45kw_size=03/p45s03` 的名称与文本审计均为零命中，没有 receipt、raw/partial、
+derived rho、pair 或数字结果。但是这只能支持“项目受管范围内、实现前选定的 fresh
+proxy holdout”，不能证明整台机器历史上绝对没有手工下载或删除过副本，也不能称
+密码学盲测、untouched test、unseen-power 或 unseen-size。
+
+为此新增了单独的 metadata-only selection receipt，并继续禁止获取 p45-s03。
+只有 development 模型、scaler、lambda、exact K2、solver、指标、阈值、controls、
+runtime harness 和报告模板全部锁定，才允许再写一个一次性 no-replace release
+receipt。
+
+协议与实现顺序也不再靠一句布尔声明：
+
+- 协议提交：`10415cf`；
+- holdout selection 提交：`db0dbba`；
+- validator 实现提交：`78ae519`；
+- validator 用真实 `git merge-base --is-ancestor` 检查协议提交是当前实现提交的
+  严格祖先，并从历史提交重新读取协议核对 SHA；
+- canonical bytes 和递归 key/type schema 同时冻结；
+- duplicate key、NaN/Infinity、extra/missing、parent 改写、历史 p22 洗白、
+  fresh holdout 提前打开、truth 泄漏、inverse crime、容量偷增、DCT cutoff 搜索、
+  lambda 扩网格、调用漏账、pooled-frame 伪重复和突破声明抢跑都会 fail closed。
+
+定向测试现在是 `21 passed`，无需额外 `PYTHONPATH`；CLI 状态为
+`PASS_FROZEN_POOLFIRE_C_FULL_FIELD_LOW_CAPACITY_PROTOCOL_V9`。这只证明协议和
+证据顺序可执行，不是模型、重建、速度或内存结果。
+
+**讲人话：**这轮不是“又写了一堆规则”，而是终于把下一次试验变成一个很难自欺的
+问题：14 个局部权重能不能让同样 6 次物理调用比 Zero-K3 更准，并达到 Zero-K4 的
+终点？如果不能，就停；如果能，还要过 wall、RSS 和一次未打开工况，才有资格训练
+第一个小型 3D U-Net。
+
+**突破监测：没有算法突破。** 当前只允许进入不读取 p45-s03 的 core/unit-test 和
+fit/deployment/score 三进程实现。`fresh_v9_holdout_opened=false`，
+`neural_training_authorized=false`，`algorithm_breakthrough=false`。
+
+## 229. Cross14 的“零件”写完并审过了，但还没有开始报性能分数
+
+v9 协议冻结后，这一轮只实现不需要读取轨迹的数值核心。现在已有一个明确的
+`Cross14`：输入 raw BP 和 geometry-equalized BP，每个通道只取当前体素与六个相邻
+体素，总共学习 14 个共享权重。它输出完整 `16×16×32` 初值，再接固定两步 CGLS。
+
+代码没有把 606 帧全部摊成一个巨大的设计矩阵，而是逐帧累计一个 `14×14` Gram
+矩阵。每条训练轨迹先单独求均方，再做轨迹等权平均，避免“帧数多的轨迹多投票”。
+正式模型只有五个事前冻结的 lambda；canonical JSON 和 digest 会拒绝改权重、加字段、
+NaN 或非规范文件。
+
+边界测试专门核对了 `center, ±x, ±y, ±z` 在三个轴上的 reflect 规则，结果与独立
+`numpy.pad(mode="reflect")` 全数组一致。还检查了常数场、gauge、正比例齐次、退化
+Gram、EVD 与直接法、充分统计量目标、模型序列化和强正则回退。
+
+独立审计抓到一个值得修的口子：最初 runner 虽然不再接受任意函数，却仍能收到一个
+手工拼出的 equalizer 对象。现在 runner 会重新计算冻结的
+`median / max(sensitivity, floor)` 公式并核对 geometry-only 报告，伪造 multiplier、
+floor 或 truth-access 标记都会拒绝。不过“这个 sensitivity 是否真的来自本次正式
+operator”还必须由下一层 geometry digest 和 manifest 证明，不能只靠 Python 对象
+类型。
+
+完整调用账也被代码断言：
+
+| 阶段 | A | A^T |
+|---|---:|---:|
+| raw/equalized BP | 0 | 1 |
+| 非零初值 residual | 1 | 0 |
+| CGLS K2 | 2 | 2 |
+| 总计 | 3 | 3 |
+
+核心单测 `31 passed`；与 baseline、v9 protocol validator 联合是 `69 passed`；
+Ruff、编译和 diff 检查通过。实现提交为 `fc97cd7`。独立审计没有 P0，允许的正式
+状态只有：
+
+`PASS_NO_DATA_CROSS14_CORE_CODE_GATE_ONLY`
+
+**讲人话：**我们把发动机零件尺寸、装配方式和油耗表上的计算规则都验了一遍，但车
+还没上赛道。下一步要把 fit、deployment、score 拆成互相看不到不该看数据的进程，
+再在完整轨迹上和同成本 Zero-K3、目标终点 Zero-K4 公平比赛。
+
+本轮没有读取任何 PoolFire trajectory、`p45-s03`、历史 p22 或两条 test。还没有
+跨轨迹精度、wall、RSS 或算法优势。当前：
+
+```text
+equalizer_provenance_bound=false
+process_truth_free_proven=false
+independent_noninterference_proven=false
+trajectory_split_proven=false
+neural_training_authorized=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+## 230. 同一个审计脚本为什么先失败，拆成两个运行时后才真正可信
+
+正式五个 outer fit 和一个 p14 development fit 已经完成，但我们没有马上看它们在
+heldout 轨迹上表现怎样。先要证明两件事：训练数组真的是由冻结物理代理生成的，六个
+模型也真的是由这些数组按 nested LOTO 和 one-SE 规则拟合的。
+
+第一版 v9.2 想在一个进程里同时逐位证明两件事，结果正确地 fail closed。进一步取证
+发现，旧 source artifact 是 Python 3.13.9 / NumPy 2.3.5 生成，正式 fit 是
+Python 3.11.5 / NumPy 2.4.6 生成。旧运行时能够让 606 个 K4 teacher 与保存结果逐位
+相同，新运行时能够让六个 ridge model 与保存结果逐位相同；交换运行时会出现最后几位
+浮点差异。
+
+这里最容易犯的错，是看见差异只有 `1e-15` 左右，就临时加一个 tolerance 让测试绿。
+我们没有这样做。提交 `9764ce3` 先冻结双运行时协议，明确两个角色各自能看什么、能做
+什么、两份 receipt 怎样绑定；之后提交 `fddb40b` 才实现 validator。
+
+Source role 的正式结果是：
+
+```text
+PASS_RUNTIME_BOUND_SOURCE_TO_REQUEST_V9_3
+```
+
+它重算六条轨迹 606 帧的 raw BP、sensitivity、multiplier、equalized BP 和 K4
+teacher，五类最大绝对差都是 `0.0`。调用账也是 `0A+606A^T` 与
+`2424A+2424A^T`。它没有读取 fit outputs，也没有运行 nested fit。
+
+Fit role 的正式结果是：
+
+```text
+PASS_RUNTIME_BOUND_SOURCE_AND_NESTED_FIT_BATCH_V9_3
+```
+
+它先确认 Source receipt 仍绑定当前未变化的 request tree，再独立重算六个模型。
+五个 outer heldout 恰好各覆盖一次，p14 单独报告；六行都选择 `lambda=1e-4`，全部
+selection 和最终 14 参数模型逐元素一致。26 项测试还会拒绝错误运行时、过期 receipt、
+软链接、错误 commit、伪造 PASS 和抢跑 breakthrough。
+
+**讲人话：**以前我们只知道“厨房交出了六盘菜”。现在分别由食材检验员证明原料来自
+正确供应链，再由另一个厨师按同一菜谱重做六盘且完全一致。我们仍然没有让评委打分，
+所以不知道菜好不好吃；但至少不再怀疑端上来的东西是不是换了原料或改了配方。
+
+这次是**证据链突破**，不是算法突破。它只授权下一步在看任何 outer 数字前冻结评分
+协议。当前仍是：
+
+```text
+outer_scoring_authorized=false
+matched_accuracy_proven=false
+wall_time_speedup=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+## 231. “独一无二”不能靠改名字：Cross14 降级为哨兵，GEOK-Warm 才是方法假设
+
+这一轮把我们的优化目标重新写成固定顺序：
+
+1. 先让最终 field、gradient、observation 精度逐轨迹等价；
+2. 再比较完整 `A/A^T`；
+3. 然后实测 fresh-process wall；
+4. 最后看 whole-pipeline peak RSS；
+5. 任一坏轨迹的 harm 不能被平均值遮住。
+
+这也澄清了 Cross14 的身份。它只有 14 个局部共享权重，很适合检查“自由局部三维
+residual 有没有跨轨迹 headroom”，也适合当可解释 control。但 BOST 神经重建、
+learned warm start、neural operator + Krylov、对角 sensitivity equalization 都有
+明确先例，所以 Cross14 不能撑起“新算法”。
+
+更关键的物理问题是零空间。任意 3D CNN/FNO 输出的初值可能包含
+`Null(A)` 分量。后续 CGLS 的修正位于 `Range(A^T)`，无法消除这部分错误；网络图像
+可能看起来平滑、measurement residual 也可能不错，但不可观测幻觉会一直留在最终场。
+
+因此新的论文级假设暂命名为 GEOK-Warm：
+
+```text
+q0 = P A^T y
+e0 = P D^-1 q0
+q1 = P A^T A q0
+(c0,c1) = G_theta(deployment-visible summaries)
+h = c0 q0 + c1 q1
+```
+
+`e0` 只提供 geometry sensitivity 条件；真正的 warm field `h` 被限制在
+`K2(A^T A,A^T y)`，因此位于 `Range(A^T)`。再用 `A h` 做解析 measurement-residual
+尺度校准，最后交给不变的 CGLS/PCGLS。网络不直接吐最终重建，也不在每次迭代中替代
+真实 forward。
+
+它仍不能保证成功。我们只能说：在已经核对的 NeRIF、NeDF、Neural Refractive Index
+Primitives、JMLR learned warm starts、NOWS、FCG-NO、2026 年 6 月的 Spectrally
+Safe Neural Operator Warm-Starts 和七项高风险专利中，尚未找到与“BOST
+geometry-equalized observable + 可观测 Krylov 受限初值 + 未修改 solver +
+matched-accuracy 成本门 + deployment-visible fallback”完整同构的单项。每个组成
+部分都有近邻，所以独特性来自完整结构、理论命题和真实效果，不来自名字。最新近邻
+也说明“solver-safe warm start”不能再泛称原创；我们必须证明的是 BOST 中
+`Null(A)` 不可纠正风险与 `Range(A^T)` 受限初值的特定机制。
+
+**讲人话：**不能保证全世界从来没人有过相似念头。能保证的是，我们不会把别人做过
+的零件重新命名；我们会逐项写清来源，把初值限制在物理可纠正空间，并用最强近邻和
+真实成本去打。如果最后赢了，差异清楚、证据完整；如果没赢，也会留下一个可信、可
+复现、真正属于自己的负结果。
+
+下一步仍按顺序：
+
+1. 结果前冻结 Cross14 outer prediction/score 与全部强 controls；
+2. 先看自由局部 residual 是否有 headroom；
+3. 有 headroom 才单独冻结 GEOK-Warm，不用大模型救失败；
+4. 通过完整 trajectory、fresh holdout、wall/RSS 后，再申请真实 BOST 迁移；
+5. 投稿前重跑文献/专利 claim chart，并询问师兄组内是否有未发表近邻。
+
+当前：
+
+```text
+Cross14 = sentinel
+GEOK-Warm = unvalidated method hypothesis
+global_uniqueness_proven = false
+defensible_novelty_space_identified = true
+algorithm_breakthrough = false
+```
+
+下一门是绑定 protocol、代码提交、trajectory 角色、geometry/equalizer、solver、
+runtime 和报告模板的三进程 manifest。五条 outer LOTO 与 p14 veto 全部过门前，
+继续不获取 `p45-s03`。
+
+## 232. 补记：三个目录角色分家了，但审计禁止我们把它叫成正式实验
+
+上一节说 Cross14 的数值零件已经写完，缺的是证据角色。这一轮把流程真正拆成了三个
+独立命令：
+
+1. `fit` 只收到训练轨迹的 raw/equalized BP 和 K4 teacher；
+2. `deployment` 只收到冻结模型、heldout observation 和冻结 geometry；
+3. `score` 必须等 initializer 与 K2 candidate 原子发布完成，才收到 teacher/truth
+   做离线评价。
+
+可以把它理解成考试：出题人先把复习材料交给训练进程；考生进考场时只拿题目和已经
+封好的模型；交卷且封存以后，阅卷进程才拿到标准答案。这样比在一个 Python 脚本里
+写一句“这里不读取 truth”更可信。
+
+每个请求目录都有精确白名单。多一个 `.DS_Store`、truth 文件、目录、软链接或硬链接，
+都会在运行前失败。请求还绑定了外层 digest、全部关键源码、Python/NumPy/BLAS、
+trajectory 角色、geometry 坐标、从同一个 operator 重建的 equalizer、模型 payload
+和上一阶段 READY/checksum。输出先写临时目录，逐文件 fsync，最后原子发布且拒绝覆盖。
+
+这次的数值核对不是“又跑了一遍同一个函数”。validator 没有导入正式 Cross14、
+三角色 worker、baseline CGLS 或评分 helper，而是重新写 14 维特征、Gram/EVD ridge、
+geometry/equalizer、K2 和三种 metric。合成 fixture 上 fit、deployment、score 的
+逐数组最大绝对差都是 `0.0`。但它仍复用了正式 straight-ray operator primitive，
+所以准确说法是“上层数值路径独立重写”，不是完整 operator 独立验证。
+
+更重要的是，后实现审计没有因为测试全绿就放行。它抓到三个 P0：
+
+1. 原 worker 接受调用者手选 lambda，甚至只给一条 fit 轨迹，也可能写出 formal PASS，
+   绕过协议冻结的 inner LOTO 和 one-standard-error rule；
+2. fit 的三个数组只有字节 SHA，没有 trajectory-axis、pair registry、geometry 和
+   teacher generation 的语义凭据；
+3. score 没有证明它看到的 observation 与 deployment 相同，也没有证明 teacher 是
+   由同一 observation/geometry 的 Zero-K4 产生。
+
+我们没有把这些问题改名成“残余风险”后继续跑数。当前 worker 已被严格降级为
+synthetic-only：即使请求 101 帧 formal run 也会失败。deployment receipt 新增
+observation SHA；score 必须逐字节匹配，并重新运行同一 observation/geometry 下的
+Zero-K4 与外部 teacher 核对；truth、teacher、candidate、initializer 都必须满足
+`1e-12` gauge 门。claim 字段也改为与冻结协议逐字一致。
+
+部署主账仍是每帧 `3A+3A^T`。score 旁账现在是 `6A+4A^T`：其中 `4A+4A^T` 用于
+同源 K4 复算，另外 `2A` 投影 candidate 和 teacher；这不能混进部署成本。gradient
+metric 使用真实网格间距的三个方向 forward difference 拼接。
+
+新增负向测试会拒绝 formal 101 帧、部署后 observation 换包、伪造 teacher 和非零
+gauge truth。源码提交为 `12ea0d5`；三角色定向测试现在是 `19 passed`，联合回归
+`112 passed`。修复后的第二轮只读复审结论是当前 synthetic-only 声明范围内
+`P0=0 / P1=0`。
+
+**讲人话：**我们先搭了三个房间，但审计发现“谁决定参赛模型”和“标准答案从哪来”
+还没有正式门禁。因此现在宁可锁死正式模式，也不拿两帧合成演示冒充比赛。下一步先
+写外层裁判：机器固定五个 outer fold、每个 inner LOTO、全部 lambda、one-SE、训练
+数组来源和 clean commit；然后才跑五条 101 帧、p14 veto、强基线、wall 与整流程 RSS。
+
+当前严格状态：
+
+```text
+PASS_SYNTHETIC_V9_THREE_ROLE_CODE_GATE_ONLY
+PASS_SYNTHETIC_V9_THREE_ROLE_NUMERICAL_RECOMPUTATION_WITH_SHARED_OPERATOR_PRIMITIVE_ONLY
+formal_v9_scientific_gate_implemented=false
+formal_101_frame_run_completed=false
+independent_full_protocol_validation_proven=false
+development_LOTO_completed=false
+wall_time_speedup=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+## 233. 作品身份再次收紧：网络必须先打赢“解析二维投影”
+
+这一轮没有为了“独一无二”再造一个更花哨的模型名，而是把作品压缩成六项不可拆开的
+指纹：BOST 特定逆问题、只读部署可见量、受限初值、同一物理求解器收尾、可见量决定
+回退，以及 trajectory 尾部和完整成本共同裁决。
+
+新核对的近邻让边界更严格了：
+
+- Deep Null Space Learning 和 Deep Decomposition Learning 已经讨论神经网络如何利用
+  range/null-space 并保持数据一致；
+- Bayes Meets Krylov 已经用先验和右预条件器改变 CGLS 的 Krylov 子空间；
+- Neural Preconditioning via Krylov Subspace Geometry 已经用主角度损失和可微
+  FGMRES 训练神经预条件器。
+
+所以“用了零空间”“用了 Krylov 几何”“网络帮助 CGLS”都不能算我们的原创点。
+
+更关键的是，GEOK 暂定的 `q0,q1` 本来就是一个二维 Krylov basis。只用观测 `y`
+就可以在这个二维空间里做 exact projected least-squares，解析求出 measurement
+residual 最优系数。若神经网络连这个几乎零参数的 control 都打不过，它只是在更复杂地
+重新发明 CGLS。
+
+未来 GEOK 的预注册因此必须增加：
+
+```text
+exact 1D line search
+exact 2D Krylov/Galerkin projection
+zero-start call-matched CGLS
+fit-only fixed coefficients
+observation-conditioned coefficients
+```
+
+只有最后一项在相同调用预算下改善最终 field/gradient、p90/worst 与 harm，同时真实
+wall/RSS 不更差，才能说明它学到的是观测条件化的场先验。
+
+工程上，本轮还补了两块“以后不能偷账”的地基：
+
+1. 提交 `98b2f94` 分开记录 trainable 参数、常驻数值工件、非 `A/A^T` MAC 与完整
+   算子调用，11 个 outer arms 都有显式公式；
+2. 提交 `a06070c` 实现每个 row-arm 五次全新 PID 的 wall/wait4 RSS harness，但正式
+   入口继续 fail-closed，直到可信 prediction release 真正绑定 worker 与 66 个输出。
+
+联合检查分别为 `108 passed` 与 `56 passed`。这些只提高成本证据可信度，不说明方法
+更准或更快。
+
+**讲人话：**现在不是给作品贴“原创”标签，而是主动找一个最省、最聪明的经典对手来
+打。连它都能赢，而且每一笔物理调用和内存都算清，作品的独立性才站得住。
+
+当前：
+
+```text
+global_uniqueness_proven=false
+defensible_method_fingerprint_frozen=true
+exact_2d_krylov_control_required=true
+formal_outer_runtime_authorized=false
+algorithm_breakthrough=false
+```
+
+## 234. “独特”不是没人用过这些零件，而是整套组合经得住最强反例
+
+又完成了一轮只查公开一级来源的近邻审计。结论比“我们很新”更有用，也更严格：
+
+- 神经网络给迭代器初值，别人做过；
+- 神经算子帮助 CG/GMRES，别人做过；
+- 神经网络重建 BOST，别人做过；
+- BOST 里 coarse-to-fine、低分辨率结果给高分辨率 CGLS 当初值，也已经有
+  Pyramid-BOST。
+
+所以不能把 `Cross14`、`FNO + CGLS` 或“learned warm start”本身写成创新。真正值得
+保留的研究命题只有这一整套组合：
+
+```text
+BOST-specific frozen geometry
++ deployment-visible observation/BP only
++ one-shot observable-Krylov constrained initializer
++ unchanged CGLS/PCGLS final solver
++ matched field/gradient/observation endpoint
++ complete A/A^T, wall and RSS accounting
++ truth-free acceptance/fallback
+```
+
+截至 2026-07-26 核对的 20 项核心公开近邻中，没有发现一项把这些条件全部同时做到。
+这叫“限定检索范围内未发现同构组合”，不叫“全球首创已经证明”。专利、学位论文、
+未索引稿件和组内未公开方案仍需继续核对。
+
+这轮新增了六个最危险的阅读入口：Pyramid-BOST、UBOST、Direct-RBF BOST、Hybrid
+refinement、HINTS 和 NeurKItt。它们也变成正式 controls：
+
+```text
+pyramid-style coarse initialization
+RBF / reduced basis
+classical deflation
+exact 2D Krylov / Galerkin projection
+call-matched zero-start CGLS
+learned subspace / neural warm-start control
+```
+
+**讲人话：**我们不靠给常见零件换名字来“确保独一无二”。我们先主动找到所有最像的
+工作，再把最便宜、最强的办法都放到同一赛道。若 GEOK-Warm 仍能在未见完整轨迹上保持
+同样终点精度、降低物理调用、真实 wall 和内存，而且拒绝坏样本时不偷看真值，这套作品
+才会有清晰、难混淆的个人指纹。
+
+当前边界：
+
+```text
+public_near_neighbor_core_set=20
+no_exact_full_combination_found_within_reviewed_sources=true
+global_uniqueness_proven=false
+group_unpublished_ip_checked=false
+formal_outer_result_opened=false
+algorithm_breakthrough=false
+```
+
+## 235. 红队否掉“看起来新但不省调用”的旧方案，主候选改成 DualRange-K1
+
+这轮先做了一件比继续堆模型更重要的事：重新把旧 GEOK v0 的每一次完整正演和伴随
+都算了一遍。
+
+```text
+q0=A^T y                    0A + 1A^T
+q1=A^T A q0                1A + 1A^T
+line search 的 A h          1A + 0A^T
+CGLS K2                    2A + 2A^T
+总计                        4A + 4A^T
+```
+
+这与 Zero-CGLS K4 完全相同。也就是说，旧方案也许能改变初值表示，却没有完成师兄要求
+的“同精度下降低重建成本”。它现在被明确降级为失败候选，不再靠一个好听的名字留在
+主线上。
+
+修订后的最小候选叫 DualRange-K1。网络不直接猜三维场，只输出与观测同形状的
+`z_theta(y)`：
+
+```text
+h = A^T z_theta(y)
+x0 = alpha h
+then unchanged CGLS K1
+```
+
+`alpha` 用只看观测的解析线搜索求，区间包含 0。这样有三条硬性质：
+
+1. `x0` 天然属于 `Range(A^T)`；
+2. 初始 measurement residual 不会比零初值更坏；
+3. 接受分支完整账严格是 `2A+2A^T`，相对 Zero-K4 理论减少 50%。
+
+代码与原 baseline 联合测试为 `22 passed`。随后又在冻结的 `16×16×32` 三维场、
+2072 维三视角几何上做了不读 rho、不读真值的随机观测烟测：
+
+```text
+alpha=0.061941614953514523
+initial_residual_ratio=0.80221651960594
+initializer_field_mean=9.215718466126788e-19
+total_calls=2A+2AT
+```
+
+**讲人话：**现在至少不是“在纸上省调用”。同一个正式几何接口已经真的跑通，而且账
+对得上。但它还没有学到任何东西，也没有打开 outer 性能结果，所以不能说算法成功。
+
+近邻审计也补到了 25 项一级来源。学习反投影、sinogram filter、learned warm start、
+neural operator + Krylov 和 BOST 神经重建都有人做过。当前可能形成个人作品指纹的，
+只能是下面这整套东西一起成立：
+
+```text
+BOST-specific observation-space proposal
++ by-construction Range(A^T) lift
++ pre-A^T deployment-visible risk gate
++ unchanged CGLS K1
++ field/gradient/observation non-inferiority
++ complete A/A^T, wall, RSS and tail-harm evidence
++ real BOST transfer
+```
+
+下一步不是马上训练大模型，而是结果前冻结 DualRange-K1 的 outer contract，并把
+`z=y` normalized BP、exact 1D/2D Galerkin、dual ridge、call-matched CGLS 和 learned
+backprojection 全部放进同一张赛表。
+
+当前边界：
+
+```text
+old_geok_v0_call_reduction_claim=rejected
+dual_range_k1_mechanism_gate=passed
+formal_outer_performance_opened=false
+field_or_gradient_no_harm_proven=false
+global_uniqueness_proven=false
+algorithm_breakthrough=false
+```
