@@ -6816,3 +6816,61 @@ outer_performance_opened=false
 global_uniqueness_proven=false
 algorithm_breakthrough=false
 ```
+
+## 237. 最小 G_theta 已冻结，但独立审计把正式训练挡在正确的位置
+
+这轮没有训练网络，也没有打开 outer 分数。先把最小候选写成了不能随结果变的结构：
+
+```text
+2072 维三视角 observation
+-> 固定 4x4 DCT，96 个系数
+-> 3 个视角能量 + 1 个投影能量
+-> 100 -> 32 -> 32 -> 96 MLP
+-> 有界 DCT residual
+-> z_theta(y)
+```
+
+奇对称化会让输出 bias 永远相消，所以把它删掉了。最终是 7,360 个 float64 参数，
+占 58,880 bytes。模型保证 `G(0)=0`、实数缩放齐次和
+`||G(y)-y|| <= 0.5||y||`，但这些都不是精度或速度结果。
+
+为了避免把 DCT/RMS 的收益误写成神经收益，又实现了三种同表示对照：
+
+```text
+clipped identity DualRange      0 参数
+diagonal DCT dual filter       96 参数
+full linear DCT dual map     9216 参数
+```
+
+它们和 MLP 使用同一 RMS、DCT、修正上限、`A^T`、alpha 与 CGLS K1。训练损失也改为
+在同一个 K1 之后比较 K4 teacher，并按完整 trajectory 计算 mean + worst-11 tail；
+不能随机拆帧。
+
+更关键的是，独立代码审计找到两个必须先修的 P0：
+
+1. 旧 Python callback 可以绕过 `AuditedLinearOperator`，偷偷多调用底层 `A^T`；
+2. 旧通用 solver 在 denominator breakdown 时会设 `alpha=0` 后继续，不符合 v10
+   的 fail-closed 规则。
+
+我把两者都做成了可重复的负面测试。第一个反例里真实底层是 `1A+2A^T`，wrapper
+却只记 `1A+1A^T`；第二个执行门因此也不能靠一句“使用同一 CGLS”带过。identity
+DualRange 与旧 normalized BP 的命名混淆也被反例纠正：当 `A=0.5I` 时，旧 BP
+scale 为 4，而 DualRange alpha 被截到 2。
+
+当前定向联合检查：
+
+```text
+61 passed
+minimal_model_inference_implemented=true
+matched_linear_control_inference_implemented=true
+strict_v10_solver_implemented=false
+callback_free_proposal_receipt_implemented=false
+model_training_authorized=false
+outer_performance_opened=false
+algorithm_breakthrough=false
+```
+
+**讲人话：**模型的样子终于定清楚了，但现在最重要的不是立刻让 Mac 开始训练，而是
+先保证模型不能偷用物理算子、每次 `A/A^T` 都真的记得住、所有 arm 遇到数值 breakdown
+时用同一种规则停。下一轮先写 strict solver 和“数值 proposal + 一次性收据”，再做
+隔离 worker；这比跑出一个账不可信的好数字更接近论文。

@@ -1,0 +1,519 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-spectral-model-contract-10.1",
+  "status": "FROZEN_MINIMAL_G_THETA_ARCHITECTURE_AND_MATCHED_CONTROL_INFERENCE_BEFORE_TRAINING_PREDICTION_OR_SCORE",
+  "frozen_at_utc": "2026-07-26T14:57:42Z",
+  "purpose": "Freeze one low-capacity observation-space nonlinear proposal model, two architecture-matched linear controls, and their fit-only rules before any model fitting, outer prediction, score, fresh holdout, or test access.",
+  "parents": [
+    {
+      "path": "learning_labs/protocols/poolfire_c_dual_range_outer_contract_v10.json",
+      "sha256": "882364ee37a2665904b7538f1b8cec81fce6b587c258c5d277ab159f23b9048c",
+      "role": "objective_arm_registry_cost_and_evidence_contract"
+    },
+    {
+      "path": "learning_labs/protocols/poolfire_c_full_field_outer_evaluation_v9_4.json",
+      "sha256": "c7a80b8adbad0eda8b228e4c13bfbf2713f6c07874ca88fc170f1b42d661913a",
+      "role": "exact_six_row_trajectory_roles"
+    },
+    {
+      "path": "learning_labs/protocols/poolfire_c_full_field_source_operator_audit_v9_2.json",
+      "sha256": "f2885720927c35893f596c67ddd32b3877390a5bdabbb537cc7c23881b26864d",
+      "role": "frozen_geometry_and_straight_ray_operator_identity"
+    },
+    {
+      "path": "learning_labs/poolfire_c_dual_range_warm.py",
+      "sha256": "c6d48f459b58651b1f52d330370a892f7d7df167a0dcc4ae6ad5e95e50e5f441",
+      "role": "range_lift_line_search_and_unchanged_cgls_k1_mechanism"
+    },
+    {
+      "path": "learning_labs/poolfire_c_baselines.py",
+      "sha256": "518d5040032879b2cd7bc638404fcf9a11b5f1e7b085f2ae54086d84fbba86e9",
+      "role": "audited_operator_and_cgls_pcgls_reference"
+    },
+    {
+      "path": "learning_labs/poolfire_c_full_field_outer_scoring_v9_4.py",
+      "sha256": "5253583622a6eb74211110b6c8503def9cfdc6d1fc7ef4d39fbdc4d08b0bceb8",
+      "role": "field_gradient_observation_metric_formulas"
+    },
+    {
+      "path": "learning_labs/poolfire_c_dual_spectral_model_v10_1.py",
+      "sha256": "8866062b5af013f7c68795b42ed30af0c7096f504e35a39398a845c86c2f1b29",
+      "role": "architecture_and_numpy_inference_implementation"
+    },
+    {
+      "path": "learning_labs/poolfire_c_dual_spectral_controls_v10_1.py",
+      "sha256": "76fdaa961421ee2cd738c7cbe2e823b775f7b611dee10482625de88b642c09d1",
+      "role": "architecture_matched_linear_and_identity_control_inference"
+    }
+  ],
+  "no_result_access_attestation": {
+    "model_training_run_before_freeze": false,
+    "trained_checkpoint_exists_before_freeze": false,
+    "outer_prediction_opened": false,
+    "outer_score_opened": false,
+    "fresh_holdout_obtained_or_opened": false,
+    "untouched_test_obtained_or_opened": false,
+    "architecture_or_constants_selected_from_evaluation_results": false,
+    "contract_contains_performance_values": false
+  },
+  "model_identity": {
+    "model_id": "homogeneous_odd_dct4_dual_residual_mlp_w32",
+    "role": "primary_G_theta_for_dual_range_ungated_and_preAT_gated_arms",
+    "input": "one_deployment_observation_y",
+    "output": "one_observation_space_proposal_z_theta_with_shape_2072",
+    "physical_operator_calls_inside_model": 0,
+    "teacher_or_truth_access_at_inference": false,
+    "network_access_at_inference": false,
+    "unrestricted_filesystem_access_at_inference": false,
+    "not_an_FNO_UNO_DeepONet_or_direct_field_model": true
+  },
+  "observation_contract": {
+    "dtype": "float64",
+    "component_count": 2072,
+    "view_order": [
+      "los_x",
+      "los_y",
+      "los_z"
+    ],
+    "view_rows": [
+      {
+        "view": "los_x",
+        "slice": [
+          0,
+          840
+        ],
+        "shape_component_height_width": [
+          2,
+          14,
+          30
+        ]
+      },
+      {
+        "view": "los_y",
+        "slice": [
+          840,
+          1680
+        ],
+        "shape_component_height_width": [
+          2,
+          14,
+          30
+        ]
+      },
+      {
+        "view": "los_z",
+        "slice": [
+          1680,
+          2072
+        ],
+        "shape_component_height_width": [
+          2,
+          14,
+          14
+        ]
+      }
+    ],
+    "non_float64_nonfinite_complex_boolean_or_wrong_shape_input": "fail_closed_without_implicit_dtype_conversion",
+    "one_frame_is_the_inference_and_gate_decision_unit": true
+  },
+  "fixed_spectral_basis": {
+    "basis": "block_diagonal_orthonormal_DCT_II",
+    "basis_is_trainable": false,
+    "basis_is_generated_from_declared_view_shapes": true,
+    "spatial_modes_per_axis_per_component_per_view": 4,
+    "component_count_per_view": 2,
+    "coefficient_count_per_view": 32,
+    "total_coefficient_count": 96,
+    "column_order": "view_then_component_then_height_mode_then_width_mode",
+    "basis_shape": [
+      2072,
+      96
+    ],
+    "orthonormality_requirement": "B_transpose_B_equals_I_with_rtol_2e-14_and_atol_2e-14",
+    "basis_bytes_are_not_a_trainable_checkpoint_asset": true
+  },
+  "deployment_feature_contract": {
+    "global_rms": "l2_norm_y_divided_by_sqrt_2072",
+    "zero_observation_action": "return_exact_zero_proposal",
+    "normalized_observation": "y_divided_by_global_rms",
+    "spectral_coefficients": "c_equals_B_transpose_times_normalized_y",
+    "unit_spectral_coefficients": "c_divided_by_l2_norm_c_when_nonzero",
+    "view_energy_fractions": "three_sum_square_view_divided_by_sum_square_all",
+    "projected_energy_fraction": "l2_norm_c_squared_divided_by_l2_norm_normalized_y_squared",
+    "feature_order": [
+      "96_unit_spectral_coefficients",
+      "los_x_energy_fraction",
+      "los_y_energy_fraction",
+      "los_z_energy_fraction",
+      "projected_energy_fraction"
+    ],
+    "feature_count": 100,
+    "all_features_are_observation_visible": true,
+    "trajectory_identity_power_size_time_index_and_role_are_forbidden_features": true,
+    "operator_projection_residual_teacher_truth_and_score_are_forbidden_features": true
+  },
+  "network_contract": {
+    "network": "three_layer_fully_connected_MLP",
+    "layer_shapes_in_order": [
+      [
+        100,
+        32
+      ],
+      [
+        32,
+        32
+      ],
+      [
+        32,
+        96
+      ]
+    ],
+    "hidden_activation": "SiLU_with_sigmoid_argument_clipped_to_minus60_plus60",
+    "hidden_width": 32,
+    "hidden_biases_only": true,
+    "output_bias": false,
+    "dropout_batchnorm_layernorm_attention_and_convolution": false,
+    "parameter_arrays_in_order": [
+      {
+        "name": "w1",
+        "shape": [
+          32,
+          100
+        ]
+      },
+      {
+        "name": "b1",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "w2",
+        "shape": [
+          32,
+          32
+        ]
+      },
+      {
+        "name": "b2",
+        "shape": [
+          32
+        ]
+      },
+      {
+        "name": "w3",
+        "shape": [
+          96,
+          32
+        ]
+      }
+    ],
+    "parameter_dtype": "little_endian_float64",
+    "parameter_count_exact": 7360,
+    "parameter_bytes_exact": 58880,
+    "parameter_count_cap": 7360,
+    "odd_symmetrized_logits": "half_phi_unit_c_energy_minus_half_phi_minus_unit_c_same_energy",
+    "spectral_residual": "0.5_times_l2_norm_c_divided_by_sqrt_96_times_tanh_odd_logits",
+    "proposal": "z_equals_y_plus_global_rms_times_B_times_spectral_residual",
+    "residual_fraction_cap": 0.5,
+    "identity_skip_is_mandatory": true
+  },
+  "structural_guarantees_to_verify_before_training": {
+    "zero_maps_to_zero": true,
+    "all_real_scalar_homogeneity": "G_a_y_equals_a_G_y_up_to_floating_point_roundoff",
+    "odd_sign_equivariance": "G_minus_y_equals_minus_G_y_up_to_floating_point_roundoff",
+    "normalized_correction_l2_not_above_half_spectral_l2": true,
+    "proposal_correction_l2_not_above_half_observation_l2": true,
+    "proposal_shape_is_exactly_2072": true,
+    "proposal_is_finite_or_inference_fails": true,
+    "zero_parameters_reduce_exactly_to_identity_z_equals_y": true,
+    "identity_control_semantics": "zero_parameter_model_plus_clipped_alpha_DualRange_plus_CGLS_K1",
+    "not_equivalent_to_legacy_unclipped_normalized_backprojection_in_general": true,
+    "these_do_not_prove_field_gradient_or_final_noninferiority": true
+  },
+  "six_model_training_rows_in_order": [
+    {
+      "row_id": "outer-00",
+      "row_index": 0,
+      "evaluation_trajectory_id": "p=33kw_size=01",
+      "fit_trajectory_ids": [
+        "p=45kw_size=05",
+        "p=58kw_size=03",
+        "p=14kw_size=05",
+        "p=22kw_size=03"
+      ]
+    },
+    {
+      "row_id": "outer-01",
+      "row_index": 1,
+      "evaluation_trajectory_id": "p=45kw_size=05",
+      "fit_trajectory_ids": [
+        "p=33kw_size=01",
+        "p=58kw_size=03",
+        "p=14kw_size=05",
+        "p=22kw_size=03"
+      ]
+    },
+    {
+      "row_id": "outer-02",
+      "row_index": 2,
+      "evaluation_trajectory_id": "p=58kw_size=03",
+      "fit_trajectory_ids": [
+        "p=33kw_size=01",
+        "p=45kw_size=05",
+        "p=14kw_size=05",
+        "p=22kw_size=03"
+      ]
+    },
+    {
+      "row_id": "outer-03",
+      "row_index": 3,
+      "evaluation_trajectory_id": "p=14kw_size=05",
+      "fit_trajectory_ids": [
+        "p=33kw_size=01",
+        "p=45kw_size=05",
+        "p=58kw_size=03",
+        "p=22kw_size=03"
+      ]
+    },
+    {
+      "row_id": "outer-04",
+      "row_index": 4,
+      "evaluation_trajectory_id": "p=22kw_size=03",
+      "fit_trajectory_ids": [
+        "p=33kw_size=01",
+        "p=45kw_size=05",
+        "p=58kw_size=03",
+        "p=14kw_size=05"
+      ]
+    },
+    {
+      "row_id": "development-p14",
+      "row_index": 5,
+      "evaluation_trajectory_id": "p=14kw_size=01",
+      "fit_trajectory_ids": [
+        "p=33kw_size=01",
+        "p=45kw_size=05",
+        "p=58kw_size=03",
+        "p=14kw_size=05",
+        "p=22kw_size=03"
+      ]
+    }
+  ],
+  "fit_only_target_and_loss_contract": {
+    "target_per_fit_frame": "frozen_zero_start_CGLS_K4_teacher_from_same_observation_and_geometry",
+    "candidate_per_fit_frame": "DualRange_proposal_range_lift_clipped_alpha_then_unchanged_CGLS_K1",
+    "loss_is_computed_after_unchanged_CGLS_K1": true,
+    "field_deficiency_d_f": "relative_l2_of_gauge_centered_candidate_K1_to_gauge_centered_K4_teacher",
+    "gradient_deficiency_d_g": "relative_l2_of_coordinate_aware_forward_differences_candidate_K1_to_K4_teacher",
+    "observation_deficiency_d_o": "relative_l2_of_A_candidate_K1_to_A_K4_teacher",
+    "relative_l2_denominator_floor": 1e-30,
+    "per_frame_deficiency_q": "maximum_of_d_f_d_g_d_o",
+    "tail_frame_count": 11,
+    "trajectory_loss": "mean_all_101_q_plus_mean_largest_11_q",
+    "row_training_loss": "equal_mean_complete_fit_trajectory_losses",
+    "pooled_frame_weighting": false,
+    "field_truth_is_not_the_training_target": true,
+    "evaluation_truth_or_teacher_is_forbidden": true,
+    "fit_teacher_generation_cost_is_reported_separately_from_inference_cost": true
+  },
+  "required_architecture_matched_controls": {
+    "shared_preprocessing_and_physics": [
+      "same_per_frame_global_RMS",
+      "same_fixed_orthonormal_4x4_DCT_basis_B",
+      "same_half_observation_L2_radial_correction_cap",
+      "same_exact_A_transpose_range_lift",
+      "same_clipped_alpha_in_0_2",
+      "same_unchanged_CGLS_K1"
+    ],
+    "fixed_dual_filter_cgls_k1": {
+      "spectral_map": "delta_c_equals_diagonal_g_times_c",
+      "fit_parameters": 96,
+      "fit_only": true,
+      "optimization_target": "same_after_K1_complete_trajectory_tail_loss_as_nonlinear_candidate",
+      "closed_form_solution_claimed": false,
+      "activation": "none",
+      "v10_arm_id": "fixed_dual_filter_cgls_k1"
+    },
+    "dual_ridge_cgls_k1": {
+      "spectral_map": "delta_c_equals_full_W_96_by_96_times_c",
+      "fit_parameters": 9216,
+      "optimization_target": "same_after_K1_complete_trajectory_tail_loss_as_nonlinear_candidate",
+      "fixed_weight_decay": 0.0001,
+      "closed_form_ridge_solution_claimed": false,
+      "activation": "none",
+      "v10_arm_id": "dual_ridge_cgls_k1"
+    },
+    "identity_control": {
+      "spectral_map": "delta_c_equals_zero",
+      "canonical_semantics": "clipped_identity_DualRange_plus_CGLS_K1",
+      "not_legacy_unclipped_normalized_backprojection": true,
+      "v10_arm_id": "normalized_bp_cgls_k1"
+    },
+    "nonlinearity_value_claim_requires_beating_both_linear_controls_on_every_required_row": true,
+    "DCT_or_RMS_representation_gain_may_not_be_labelled_neural_gain": true
+  },
+  "optimizer_contract": {
+    "framework": "PyTorch",
+    "device": "CPU_only",
+    "numeric_dtype": "float64",
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "epsilon": 1e-08,
+    "weight_decay": 0.0001,
+    "amsgrad": false,
+    "gradient_l2_norm_clip": 1.0,
+    "maximum_epochs": 120,
+    "checkpoint_epochs": [
+      20,
+      40,
+      60,
+      80,
+      100,
+      120
+    ],
+    "early_stopping_inside_one_run": false,
+    "data_augmentation": false,
+    "mixed_precision": false,
+    "parameter_initialization": "Xavier_uniform_fan_in_fan_out_w1_w2_w3_and_exact_zero_b1_b2",
+    "root_seed": 2026072601,
+    "inner_seed_formula": "root_seed_plus_100_times_row_index_plus_inner_fold_index",
+    "final_seed_formula": "root_seed_plus_100_times_row_index_plus_99",
+    "trajectory_frame_permutation": "sort_frame_indices_by_SHA256_of_run_seed_epoch_trajectory_id_frame_index",
+    "synchronized_frame_slots_per_optimizer_step": "one_frame_from_each_declared_fit_trajectory",
+    "outer_row_slot_count": 4,
+    "development_p14_slot_count": 5,
+    "optimizer_steps_per_epoch": 101,
+    "each_epoch_uses_every_frame_of_every_fit_trajectory_exactly_once": true,
+    "loss_is_equal_weight_over_trajectories_inside_every_step": true
+  },
+  "fit_only_nested_selection_contract": {
+    "architecture_and_optimizer_hyperparameters_are_not_searched": true,
+    "inner_split": "leave_one_complete_fit_trajectory_out",
+    "inner_fold_order": "fit_trajectory_ids_in_declared_order",
+    "candidate_checkpoint_epochs": [
+      20,
+      40,
+      60,
+      80,
+      100,
+      120
+    ],
+    "inner_validation_value": "equal_weight_mean_complete_trajectory_teacher_composite_loss",
+    "mean_and_sample_standard_error_are_computed_across_inner_trajectory_folds": true,
+    "selected_epoch": "earliest_epoch_with_mean_not_above_best_mean_plus_standard_error_at_best_epoch",
+    "ties": "earliest_epoch",
+    "final_model_refit": "fresh_initialization_on_all_declared_fit_trajectories_for_selected_epoch",
+    "outer_evaluation_trajectory_is_never_loaded_by_fit_or_selection_process": true,
+    "p22_stopping_validation_fresh_holdout_and_tests_are_never_loaded": true,
+    "architecture_checkpoint_grid_loss_weights_or_seed_may_not_change_after_any_outer_prediction": true
+  },
+  "checkpoint_and_manifest_contract": {
+    "one_checkpoint_per_six_model_training_row": true,
+    "checkpoint_numeric_members_exactly": [
+      "w1",
+      "b1",
+      "w2",
+      "b2",
+      "w3"
+    ],
+    "numeric_member_dtype": "little_endian_float64",
+    "numeric_member_shapes_inherit_network_contract": true,
+    "checkpoint_is_non_overwriting_and_content_addressed": true,
+    "manifest_must_bind": [
+      "this_model_contract_sha256",
+      "v10_outer_contract_sha256",
+      "model_implementation_sha256",
+      "training_implementation_sha256",
+      "differentiable_operator_implementation_sha256",
+      "environment_receipt_sha256",
+      "row_id_and_row_index",
+      "exact_fit_trajectory_ids_in_order",
+      "excluded_evaluation_trajectory_id",
+      "all_inner_fold_losses_at_all_checkpoint_epochs",
+      "selected_epoch_and_one_standard_error_inputs",
+      "root_inner_and_final_seeds",
+      "optimizer_constants",
+      "parameter_member_checksums",
+      "complete_checkpoint_checksum",
+      "fit_input_receipts_without_private_hash_publication",
+      "training_wall_time_and_peak_RSS"
+    ],
+    "model_manifest_may_not_contain_evaluation_metrics": true,
+    "six_manifest_sha256_values_must_enter_the_v10_global_prediction_barrier": true
+  },
+  "implementation_and_environment_gate": {
+    "numpy_inference_implementation_present": true,
+    "training_implementation_present": false,
+    "differentiable_straight_ray_A_and_AT_implementation_present": false,
+    "checkpoint_writer_and_loader_present": false,
+    "independent_checkpoint_validator_present": false,
+    "capability_isolated_fit_worker_present": false,
+    "strict_v10_fail_closed_CGLS_solver_present": false,
+    "verified_proposal_artifact_and_receipt_present": false,
+    "callback_free_physics_worker_present": false,
+    "capability_isolated_inference_and_physics_sibling_topology_present": false,
+    "formal_runner_accepts_python_model_callback": false,
+    "formal_environment_receipt_present": false,
+    "required_operator_equivalence_before_training": {
+      "same_frozen_geometry": true,
+      "random_field_forward_max_absolute_difference_maximum": 5e-12,
+      "random_observation_adjoint_max_absolute_difference_maximum": 5e-12,
+      "adjoint_inner_product_relative_error_maximum": 5e-12,
+      "at_least_16_fixed_random_probes": true
+    },
+    "environment_receipt_must_bind": [
+      "macOS_version",
+      "machine_architecture",
+      "Python_version",
+      "NumPy_version",
+      "PyTorch_version",
+      "BLAS_backend",
+      "thread_limits",
+      "CPU_only_device_assertion",
+      "training_code_sha256",
+      "operator_code_sha256"
+    ],
+    "missing_or_changed_environment_or_implementation_receipt": "training_forbidden"
+  },
+  "authorization": {
+    "architecture_implementation_and_synthetic_unit_tests_authorized": true,
+    "classical_control_implementation_authorized": true,
+    "model_training_authorized": false,
+    "outer_prediction_authorized": false,
+    "outer_score_authorized": false,
+    "fresh_holdout_authorized": false,
+    "test_authorized": false,
+    "larger_model_search_authorized": false
+  },
+  "failure_actions": {
+    "structural_invariant_failure": "reject_this_model_implementation_before_training",
+    "differentiable_operator_equivalence_failure": "reject_training_implementation",
+    "hidden_operator_call_or_callback_capability_failure": "reject_formal_runner_and_keep_all_prediction_gates_closed",
+    "strict_solver_breakdown_semantics_failure": "reject_formal_control_and_model_runs",
+    "inner_selection_or_manifest_failure": "reject_affected_model_and_do_not_predict",
+    "parameter_count_or_member_drift": "new_protocol_version_required_before_any_training",
+    "same_budget_classical_control_dominates_on_any_required_outer_row": "record_negative_result_and_do_not_scale_model",
+    "v10_compatibility_harm_wall_or_RSS_failure": "record_negative_result_and_keep_fresh_and_test_closed"
+  },
+  "claim_boundaries": {
+    "architecture_frozen": true,
+    "inference_prototype_implemented": true,
+    "formal_callback_free_mechanism_implemented": false,
+    "training_completed": false,
+    "trained_checkpoint_validated": false,
+    "outer_performance_opened": false,
+    "field_or_gradient_noninferiority_proven": false,
+    "operator_call_reduction_empirically_accepted": false,
+    "wall_time_speedup_proven": false,
+    "memory_no_harm_proven": false,
+    "fresh_holdout_generalization_proven": false,
+    "real_BOST_transfer_completed": false,
+    "global_uniqueness_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_result": false
+  }
+}
