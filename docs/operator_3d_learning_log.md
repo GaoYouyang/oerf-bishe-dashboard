@@ -6934,3 +6934,78 @@ algorithm_breakthrough=false
 
 下一步只做 callback-free proposal artifact 与一次性 receipt，再接 sibling
 inference/physics worker；训练授权继续关闭。
+
+## 239. 数值 proposal 已能一次性接入 CGLS K1，但还没有独立 worker
+
+这一轮仍没有训练网络，也没有打开 outer、fresh 或 test。完成的是 v10.2 数据交接
+代码门：物理路径不再接收 Python 模型 callback，只接收一个固定字节格式的
+observation-space proposal。
+
+讲人话，它现在像一张只能验一次的数值快递单：
+
+```text
+y 的摘要 + 模型/几何/预处理摘要
+-> 2072 个 float64 的 z
+-> broker 验单并烧掉 request
+-> 物理端烧掉 verified token
+-> A^T z、A(A^T z)、可观测 alpha
+-> 烧掉 initializer authorization
+-> strict CGLS K1
+```
+
+request、verified token 和 initializer authorization 都是第一次尝试即消费；无效后
+不能换一个 payload 重试。header 增减字段、尾随字节、错误 shape/dtype、`NaN/Inf`、
+model/geometry/observation 替换、并发双消费和复制状态字符串都会拒绝。
+
+第一次独立红队抓到一个真 P1：当时虽然 solver 不收普通伪造 initializer，但代码仍有
+一个内部 issuer，调用者可以先手工做 `1A+1A^T`，再配一个假的 artifact SHA 取得授权。
+现在这个 issuer 已删除。broker 消费、`A^T z`、`A h`、line search、cache 和授权签发
+被合并到 strict operator 的单一入口，不能再把自制 `InitializerPreparation` 塞进去。
+
+复审又找到一个 PCGLS 的孤立 cache 旁路。主方法本来就冻结为 CGLS K1，所以最终把
+verified authorization 在消费前锁死为：
+
+```text
+require_identity = true
+checkpoints = (1,)
+```
+
+误送 PCGLS 或 K2 会先拒绝但不烧授权，随后仍能走正确 CGLS K1。observation 错配或
+授权后额外调用 operator 则会烧授权并清掉 cache。
+
+当前成功路径的 strict-wrapper 代码账确实是：
+
+```text
+range lift + alpha   1A + 1A^T
+CGLS K1              1A + 1A^T
+total                2A + 2A^T
+```
+
+可复现测试：
+
+```text
+artifact focused=54 passed
+artifact + strict focused=80 passed
+v10.2 joint=141 passed
+tracked PoolFire C suite=775 passed
+final same-process red team=P0=0 / P1=0 / P2=0
+```
+
+但这仍不是“算法加速成功”。当前制品只验证字节和绑定，不能证明实际 worker 没读
+truth、没偷调底层 operator；wall/RSS 也还没有由隔离父进程测出来。因此必须继续写：
+
+```text
+worker_authenticity_proven=false
+capability_isolated_worker_proven=false
+formal_callback_free_physics_worker_implemented=false
+formal_accepted_branch_call_reduction_proven=false
+model_training_authorized=false
+outer_performance_opened=false
+algorithm_breakthrough=false
+```
+
+完整证据页：
+`docs/poolfire_c_dual_proposal_artifact_code_gate_v10_2_2026-07-27.md`。
+
+下一步只做 sibling `execve` inference / physics worker、父进程 wall / process-tree RSS
+测量和 pre-`A^T` accept/fallback；前置门不通过就不训练。
