@@ -7009,3 +7009,61 @@ algorithm_breakthrough=false
 
 下一步只做 sibling `execve` inference / physics worker、父进程 wall / process-tree RSS
 测量和 pre-`A^T` accept/fallback；前置门不通过就不训练。
+
+## 240. 三个模型都真的训练了，但 96 个低频修正模态仍装不下 K4
+
+这一轮把“先判断算法值不值得，再扩建正式 worker”真正执行完了。p14 结果打开前先
+冻结 v10.3 / v10.3.1：五条 fit 轨迹做完整 trajectory 内层留一，逐 slot 对轨迹
+等权，checkpoint 只看完整轨迹 mean-all + worst-11，Diagonal 和 Full linear 从零
+初始化，唯一 teacher 是此前封存的 Zero-CGLS K4。
+
+先跑的便宜控制已经说明两对调用很难补回第四步信息：
+
+```text
+Zero K4: field/gradient/observation p90 = 0.6332 / 1.2180 / 0.3330
+Zero K3:                                  0.6329 / 1.0661 / 0.3713
+Zero K2:                                  0.6911 / 0.9503 / 0.4383
+```
+
+Exact 2D projected LS 与 Zero K2 的逐帧三指标最大差约 `2.6e-15`。它解析地求两个
+系数，但没有制造新的 Krylov 信息。
+
+三种 observation-only proposal 都按冻结配置在 Mac CPU float64 上完成：
+
+| 模型 | 参数 | 选中 epoch | field p90 | gradient p90 | observation p90 |
+|---|---:|---:|---:|---:|---:|
+| Diagonal DCT | 96 | 20 | 0.6435 | 0.8595 | 0.4385 |
+| Full linear DCT | 9,216 | 20 | 0.6389 | 0.8607 | 0.4389 |
+| Odd DCT-MLP | 7,360 | 20 | 0.6736 | 0.8677 | 0.4534 |
+
+Diagonal 和 Full linear 的 field/gradient harm 都是 0，但 observation harm 是
+101/101。MLP 更差，field harm 为 10.89%，observation harm 仍是 100%；相对更好
+的线性控制，field/gradient 所谓改善分别为 -5.43% / -0.96%，没有通过 2% 的冻结
+非线性门。
+
+三个 checkpoint 又由不导入正式 runner/torch operator/scoring helper 的 NumPy
+validator 重做 proposal、DCT、radial cap、`A/A^T`、alpha、CGLS K1 和全部指标。
+三种模型最大逐指标差均约 `1e-14`，封存输入未改变。
+
+**讲人话：**这不是“神经网络没跑起来”。三个模型都跑完了，而且全线性模型已经比
+对角模型多两个数量级参数。它们共同保留原 observation，只允许在 96 个低频 DCT
+模态里做最多 50% 的修正。field 和 gradient 能变好，observation 却一起停在 K2
+附近，说明应该先怀疑输出表示和修正半径，而不是继续把 MLP 加宽。
+
+所以正式状态是：
+
+```text
+FAIL_NO_DUALRANGE_V10_3_MODEL_PASSES_DEVELOPMENT_COMPATIBILITY
+formal_outer_evaluation_authorized=false
+fresh_holdout_opened=false
+untouched_test_opened=false
+algorithm_breakthrough=false
+```
+
+下一步不建 sibling worker，也不打开 p45-s03。先另行冻结一个 post-open 表示上限
+诊断：逐帧求当前 96 模态/50% cap 内的 oracle proposal，并分解 K4 所需 dual
+correction 的模态内外能量。oracle 也失败就关闭 `B_96`，转向预注册的多分辨率
+detector-graph / spectral residual；oracle 通过才查 fit 目标与优化。
+
+完整图表和证据见
+`docs/poolfire_c_dual_development_screen_v10_3_result_2026-07-27.md`。

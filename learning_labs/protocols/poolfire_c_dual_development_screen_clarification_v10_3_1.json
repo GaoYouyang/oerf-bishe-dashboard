@@ -1,0 +1,109 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-development-screen-clarification-10.3.1",
+  "status": "FROZEN_RESULT_INDEPENDENT_TRAINING_AND_EXACT_2D_CLARIFICATION",
+  "frozen_at_utc": "2026-07-26T18:47:24Z",
+  "purpose": "Resolve three execution ambiguities found by an independent pre-result feasibility audit without changing the model, data roles, optimizer constants, metric gates, or claim boundaries.",
+  "parent": {
+    "path": "learning_labs/protocols/poolfire_c_dual_development_screen_contract_v10_3.json",
+    "sha256": "cccedd24e6a32ae7087a9d3d409790835def7ac4fa6c67dc599013459fd85d15"
+  },
+  "no_result_access_attestation": {
+    "development_p14_metrics_read_before_clarification": false,
+    "development_p14_predictions_generated_before_clarification": false,
+    "v10_1_model_or_linear_control_fit_before_clarification": false,
+    "fresh_holdout_opened": false,
+    "untouched_test_opened": false,
+    "clarification_selected_from_candidate_performance": false
+  },
+  "clarifications": {
+    "optimizer_step_loss": {
+      "unit": "one_synchronized_frame_slot_with_one_frame_from_each_current_fit_trajectory",
+      "per_trajectory_value": "q_equals_maximum_of_d_f_d_g_d_o_for_that_slot",
+      "optimizer_step_value": "equal_mean_of_current_fit_trajectory_q_values",
+      "optimizer_steps_per_epoch": 101,
+      "frame_order": "inherit_the_frozen_SHA256_permutation_from_v10_1",
+      "top_11_tail_is_not_backpropagated_inside_a_slot": true
+    },
+    "checkpoint_selection_loss": {
+      "unit": "one_complete_inner_heldout_trajectory_evaluated_at_a_frozen_checkpoint",
+      "value": "mean_all_101_q_plus_mean_largest_11_q",
+      "checkpoint_epochs": [
+        20,
+        40,
+        60,
+        80,
+        100,
+        120
+      ],
+      "one_standard_error_rule": "inherit_exactly_from_v10_1",
+      "reason": "A complete-trajectory tail statistic cannot be the exact current-model gradient across 101 parameter-changing optimizer steps."
+    },
+    "linear_control_initialization": {
+      "fixed_96_parameter_diagonal_DCT_filter": "all_gains_exactly_zero",
+      "full_9216_parameter_DCT_ridge": "all_matrix_entries_exactly_zero",
+      "initial_proposal": "exact_identity_z_equals_y",
+      "initialization_is_not_searched": true
+    },
+    "exact_two_dimensional_projected_ls": {
+      "canonical_arm_id": "exact_two_dimensional_projected_ls",
+      "v10_3_label_exact_2D_projected_LS_cgls_k1_is_replaced": true,
+      "basis": [
+        "q0_equals_A_transpose_y",
+        "q1_equals_A_transpose_A_q0"
+      ],
+      "coefficient_rule": "minimum_norm_solution_of_minimize_norm_y_minus_c0_Aq0_minus_c1_Aq1",
+      "additional_CGLS_refinement_iterations": 0,
+      "complete_operator_ledger_per_frame": {
+        "A": 2,
+        "A_transpose": 2
+      },
+      "rank_deficiency": "use_the_exact_lower_rank_minimum_norm_solution_without_jitter"
+    },
+    "authoritative_fit_teacher": {
+      "logical_source": "development_p14_v9_formal_fit_request_teacher_k4",
+      "trajectory_order": [
+        "p=33kw_size=01",
+        "p=45kw_size=05",
+        "p=58kw_size=03",
+        "p=14kw_size=05",
+        "p=22kw_size=03"
+      ],
+      "shape": [
+        5,
+        101,
+        16,
+        16,
+        32
+      ],
+      "dtype": "float64",
+      "alternate_numerically_equivalent_teacher_may_not_be_mixed": true,
+      "private_content_hash_remains_untracked": true
+    }
+  },
+  "unchanged_from_v10_1_and_v10_3": [
+    "fit_and_development_trajectory_roles",
+    "DCT_basis_and_model_architecture",
+    "AdamW_constants_and_seed_formulas",
+    "field_gradient_observation_deficiency_formulas",
+    "development_compatibility_and_harm_gates",
+    "fresh_and_test_closure",
+    "larger_model_search_prohibition"
+  ],
+  "authorization": {
+    "run_S0_and_S1_after_binding_this_clarification": true,
+    "fit_S2_and_S3_once_after_S1": true,
+    "build_formal_worker_before_development_go_gate": false,
+    "open_fresh_holdout": false,
+    "open_untouched_test": false,
+    "search_larger_models_or_hyperparameters": false
+  },
+  "claim_boundaries": {
+    "ambiguities_closed_for_development_execution": true,
+    "development_result_exists": false,
+    "formal_outer_evaluation_authorized": false,
+    "fresh_holdout_generalization_proven": false,
+    "real_BOST_transfer_completed": false,
+    "algorithm_breakthrough": false,
+    "paper_result": false
+  }
+}
