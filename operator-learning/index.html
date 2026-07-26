@@ -330,7 +330,7 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 当前证据 2026-07-27</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。当前已冻结 7,360 参数的 observation-space DCT-MLP 及两个表示匹配线性对照；v10.2 已把数值 proposal、三层一次性令牌和 strict CGLS K1 接成 callback-free 的同进程代码路径。正式 sibling worker、父进程 wall/RSS、训练与 outer performance 仍关闭。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。v10.3 已完成便宜控制、96 参数对角、9,216 参数全线性和 7,360 参数 DCT-MLP 的真实训练与独立复算；三种模型均未通过已见 p14 开发兼容性门。当前停止正式 worker 与 outer，先测“96 个低频修正模态”本身的 oracle 表示上限。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
@@ -358,9 +358,12 @@
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_spectral_model_and_control_freeze_v10_1_2026-07-26.md">v10.1 最小模型与执行阻断</a>
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_strict_solver_code_gate_v10_1_2026-07-26.md">v10.1 strict solver 代码门</a>
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_proposal_artifact_code_gate_v10_2_2026-07-27.md">v10.2 proposal 制品代码门</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_development_screen_v10_3_result_2026-07-27.md">v10.3 三模型开发结果</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_range_outer_contract_v10.json">v10 机器合同</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_spectral_model_contract_v10_1.json">v10.1 模型合同</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_proposal_artifact_contract_v10_2.json">v10.2 制品合同</a>
+      <a class="button" href="../learning_labs/protocols/poolfire_c_dual_development_screen_contract_v10_3.json">v10.3 价值筛选合同</a>
+      <a class="button" href="../learning_labs/protocols/poolfire_c_dual_development_screen_clarification_v10_3_1.json">v10.3.1 训练语义澄清</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_range_outer_contract_freeze_receipt_v10.json">v10 冻结凭据</a>
       <a class="button" href="#senior">复制下一条师兄消息</a>
       <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
@@ -372,8 +375,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert critical">
-      <strong>v10.2 数值制品与一次性 CGLS K1 路径通过复审；算法突破仍为 false</strong>
-      <span>固定格式只含 canonical header 与 2072 个 float64，不传 Python callback；request、verified proposal 和 initializer authorization 均一次性消费。独立红队发现并修复 direct issuer 绕过及 PCGLS cache 旁路后，artifact 定向 <code>54 passed</code>、artifact + strict <code>80 passed</code>、v10.2 联合 <code>141 passed</code>、跟踪范围 PoolFire C <code>775 passed</code>，最终同进程复审为 <code>P0=0 / P1=0 / P2=0</code>。成功路径 strict-wrapper 代码账为 <code>2A+2A^T</code>，但正式 sibling worker、父进程 wall/RSS、完整管线调用减少、训练和 outer 数字仍不存在。</span>
+      <strong>v10.3 三种模型全部未过开发否决门；停止扩建 worker</strong>
+      <span>Diagonal / Full linear / DCT-MLP 的 field p90 分别为 <code>0.6435 / 0.6389 / 0.6736</code>，observation p90 为 <code>0.4385 / 0.4389 / 0.4534</code>，而 Zero-K4 reference 是 <code>0.6332 / 0.3330</code>。三个模型 observation harm 都是 <code>100%</code>；MLP 还产生 <code>10.89%</code> field harm。独立 NumPy 复算最大逐指标差约 <code>1e-14</code>。正式 outer、fresh、test、wall/RSS 与真实 BOST 均未打开，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -393,8 +396,11 @@
           <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_spectral_model_and_control_freeze_v10_1_2026-07-26.md">读 v10.1 模型与审计</a>
           <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_strict_solver_code_gate_v10_1_2026-07-26.md">读 strict solver 代码门</a>
           <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_proposal_artifact_code_gate_v10_2_2026-07-27.md">读 v10.2 制品代码门</a>
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_development_screen_v10_3_result_2026-07-27.md">读 v10.3 三模型结果</a>
           <a class="button" href="../learning_labs/protocols/poolfire_c_dual_range_outer_contract_v10.json">打开机器合同</a>
           <a class="button" href="../learning_labs/protocols/poolfire_c_dual_proposal_artifact_contract_v10_2.json">打开 v10.2 制品合同</a>
+          <a class="button" href="../learning_labs/protocols/poolfire_c_dual_development_screen_contract_v10_3.json">打开 v10.3 筛选合同</a>
+          <a class="button" href="../docs/poolfire_c_dual_development_screen_v10_3_public_summary.json">打开公开聚合</a>
           <a class="button" href="../learning_labs/protocols/poolfire_c_dual_range_outer_report_template_v10.json">打开空报告模板</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_v9_3_runtime_split_audit_2026-07-26.md">读最新证据</a>
         </div>
@@ -449,11 +455,11 @@
       </div>
       <div class="alert success" style="margin-top:14px;">
         <strong>v10 已冻结：目标和独特性口径不能再随结果改变</strong>
-        <span>主参考固定为 Zero-CGLS K4 的 <code>4A+4A^T</code>，DualRange-K1 接受分支固定为 <code>2A+2A^T</code>；公开 proxy 的 wall 目标固定为五轨迹等权中位数至少下降 10%，任一行不得慢超过 5%，RSS 先过无害门。v10 使用 17 arms、6 行轨迹和 102 个原子 predictions，同时报告 ungated 候选与 gated policy；14 项合同篡改测试与 117 项联合页面/机制检查通过。它尚未授权训练、outer prediction 或 score；pre-<code>A^T</code> gate 与能力隔离也尚未实现。</span>
+        <span>主参考固定为 Zero-CGLS K4 的 <code>4A+4A^T</code>，DualRange-K1 接受分支固定为 <code>2A+2A^T</code>；公开 proxy 的 wall 目标固定为五轨迹等权中位数至少下降 10%，任一行不得慢超过 5%，RSS 先过无害门。v10.3 只放行了已见 p14 的价值筛选：三种模型均未通过 compatibility，因此没有进入 17-arm outer prediction、正式 score、fresh worker 或 wall/RSS。</span>
       </div>
       <div class="alert critical" style="margin-top:14px;">
-        <strong>v10.2 执行边界：同进程 callback 已移除，正式能力隔离仍未证明</strong>
-        <span>数值 proposal 制品、burn-on-attempt request/token、range lift、可观测 alpha、projection cache 与 strict CGLS K1 已连成单一代码路径；verified authorization 不能送入 PCGLS 或其他 depth。这里的 <code>2A+2A^T</code> 只是 strict-wrapper 成功路径代码账，不能冒充完整推理加速。只有 sibling <code>execve</code>、父进程 wall/process-tree RSS 和 pre-<code>A^T</code> gate 通过后，才重新评估训练授权。</span>
+        <strong>v10.3 价值判决：先停 worker，查表示上限</strong>
+        <span>三种参数量相差近百倍的模型都把 observation p90 卡在约 <code>0.44</code>，共同结构是 <code>z=y+B_96 delta(y)</code>。下一门只做 post-open oracle 表示诊断：判断 96 个低频修正模态与 50% cap 是否理论上装得下 K4 所需 dual correction。oracle 失败就关闭当前表示；oracle 通过才查 fit 目标与优化。这个诊断不授权 fresh、test 或性能声明。</span>
       </div>
       <div class="alert" style="margin-top:14px;">
         <strong>原创性放行条件</strong>
@@ -501,7 +507,7 @@
       </div>
       <div class="check-grid" style="margin-top:13px;">
         <article class="panel"><div class="chips"><span class="chip">C0 · 首先实现</span><span class="chip blue">低风险</span></div><h3 style="margin-top:10px;">Adjoint-Residual Warm Start</h3><p>线性阶段输入一次 `A^T y`；曲光线非线性阶段改用参考态 `J^T[y-F(x_ref)]`。小型 3D U-Net/FNO 只输出 `x0`，再接完全相同的物理迭代。</p></article>
-        <article class="panel"><div class="chips"><span class="chip">C1 · 修订主候选</span><span class="chip gold">中风险</span></div><h3 style="margin-top:10px;">DualRange-K1</h3><p>网络在观测空间输出 <code>z_theta</code>，再由一次 <code>A^T</code> 提升为 range-restricted 三维初值，缓存一次 <code>A x0</code> 后做 CGLS K1。数值 proposal receipt 与 strict-wrapper 内 <code>2A+2A^T</code> 代码账已经接通；隔离 worker、父进程成本与 outer 结果未接通前，仍不能写成调用减少或加速成功。</p></article>
+        <article class="panel"><div class="chips"><span class="chip">C1 · 修订主候选</span><span class="chip coral">v10.3 当前表示 FAIL</span></div><h3 style="margin-top:10px;">DualRange-K1</h3><p>网络在观测空间输出 <code>z_theta</code>，再由一次 <code>A^T</code> 提升为 range-restricted 三维初值，缓存一次 <code>A x0</code> 后做 CGLS K1。数学与 <code>2A+2A^T</code> 账仍成立，但当前 96 模态 Diagonal / Full / MLP 均未过 p14 compatibility；先测 oracle 表示上限，不建正式 worker。</p></article>
         <article class="panel"><div class="chips"><span class="chip">C2 · 论文升级</span><span class="chip coral">高风险</span></div><h3 style="margin-top:10px;">Correctable Frontier Training</h3><p>不只训练单步场误差，而是训练经过 1/2/4 次物理细化后的误差，让模型输出“最容易被求解器纠正”的初值。</p></article>
         <article class="panel"><div class="chips"><span class="chip blue">四臂 classical 已完成</span><span class="chip coral">神经门仍关闭</span></div><h3 style="margin-top:10px;">Zero / BP / exact-diag PCGLS / dual ridge</h3><p>五条轨迹、505 帧已完整跑完。K24 参照被半收敛否掉；ridge K2 的调用信号没有通过 p14 与 wall-time 门。v2/v3 又定位到 fit coverage 不足，所以现在不把线性层盲目换成大网络。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
@@ -509,9 +515,15 @@
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
       </div>
       <div class="alert success" style="margin-top:13px;">
-        <strong>最新执行门：v10.2 数值交接与 strict CGLS K1 已接通，正式 worker 仍未放行</strong>
-        <span><code>G_theta</code> 仍固定为 7,360 参数 DCT-MLP；proposal artifact、三层一次性消费、range lift、可观测 alpha 与 K1 完整代码账通过红队。下一步只做 sibling <code>execve</code> inference/physics worker、父进程 wall/process-tree RSS、pre-<code>A^T</code> accept/fallback 与同能力 controls；尚不训练或打开性能数字。<code>p45-s03</code> 与两条 test 继续封存。</span>
+        <strong>最新执行门：v10.3 结束模型筛选，下一步只查 B96 表示上限</strong>
+        <span>三种模型都选中 epoch 20 并完成独立 NumPy 复算；没有一个达到开发兼容性。当前不再增加参数或 seed，也不实现 sibling worker。下一步只分解 K4 dual correction 在 96 模态内外的能量，并求 cap 内逐帧 oracle。<code>p45-s03</code> 与两条 test 继续封存。</span>
       </div>
+      <figure style="margin-top:14px;">
+        <a href="../assets/poolfire_c_dual_development_screen_v10_3.png" target="_blank" rel="noreferrer">
+          <img src="../assets/poolfire_c_dual_development_screen_v10_3.png" alt="PoolFire C 路线 v10.3 在已见 p14 开发轨迹上比较 Zero K2/K3/K4、Identity DualRange、Diagonal、Full linear 与 DCT-MLP 的三类 p90、harm 和完整算子调用" />
+        </a>
+        <figcaption>三种拟合模型的 gradient 都优于 Zero-K4，但 observation p90 均高约 32% 至 36%，且 observation harm 为 100%。图中 wall/RSS 不是正式值；fresh、test 和真实 BOST 均未打开。点击查看原尺寸。</figcaption>
+      </figure>
       <div class="alert" style="margin-top:13px;">
         <strong>strict solver 完成的是可信迭代语义，不是论文性能</strong>
         <span>正常问题与冻结 reference 逐 checkpoint 等价；退化、非有限值、错误 dtype/shape、篡改 SPD 和外部 NumPy 异常策略均 fail closed。完整准备账与 solver 账已连通，但 <code>capability_isolated_worker_proven=false</code>、<code>outer_evaluation_authorized=false</code>、<code>algorithm_breakthrough=false</code>。</span>
@@ -691,8 +703,8 @@
         </article>
       </div>
       <div class="alert success" style="margin-top:13px;">
-        <strong>当前判决：v10.2 同进程数值交接代码门完成；能力隔离与性能门仍关闭</strong>
-        <span>v10 已固定 Zero-K4 参考、17-arm/102-output roster、逐轨迹 compatibility/harm、完整调用/wall/RSS、p14 veto 和失败动作；v10.1 固定最小 <code>G_theta</code> 与线性 controls，v10.2 删除正式路径的 Python callback 并锁死 exact CGLS K1。完成 sibling worker、pre-<code>A^T</code> gate、父进程成本账和全局 barrier 前不得训练或打开 outer 数字；<code>algorithm_breakthrough=false</code>。</span>
+        <strong>当前判决：v10.3 的 B96 模型族在 p14 开发门失败</strong>
+        <span>v10 已固定 Zero-K4 参考、17-arm roster 与逐轨迹 compatibility/harm；v10.1/v10.2 固定模型和可信数值路径，v10.3 完成三种真实 fit-only 训练。由于三者 observation harm 都是 100%，outer worker、pre-<code>A^T</code> gate、fresh cost 和 score 均不再推进。下一步先回答表示是否装得下，不允许通过换大模型挽救；<code>algorithm_breakthrough=false</code>。</span>
       </div>
     </section>
 
@@ -960,7 +972,7 @@
         const next = nextUnlockedWeek();
         const fCount = checkedCount(state.foundations, guide.foundationChecks);
         const pace = Number(state.profile.hours) <= 6 ? '建议把每个关卡拆成两周' : Number(state.profile.hours) >= 15 ? '可将阅读与代码并行，但不跳过验收' : '按一周一关执行';
-        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v10.2 已把 7,360 参数 DCT-MLP 的数值 proposal 格式、三层一次性令牌、range lift 和 strict CGLS K1 代码账接通，并修复独立红队发现的 issuer 绕过与 PCGLS cache 旁路。下一步只做 sibling execve worker、父进程 wall/process-tree RSS、pre-A^T gate 和同能力 controls；尚未授权训练或打开 outer 数字。algorithm_breakthrough 仍为 false，p45-s03 与两条 test 继续封存。';
+        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v10.3 的 Diagonal、Full linear 和 DCT-MLP 都已真实训练并独立复算，但三者 observation harm 均为 100%，没有通过已见 p14 开发兼容性门。停止扩大网络和正式 worker；下一步只做 96 个低频修正模态与 50% cap 的 oracle 表示上限诊断。algorithm_breakthrough 仍为 false，p45-s03 与两条 test 继续封存。';
         document.getElementById('recommendation').innerHTML = `
           <div class="next-code">当前建议 · ${escapeHtml(next.id)}</div>
           <h3>${escapeHtml(next.title)}</h3>
@@ -1108,9 +1120,9 @@
 已勾选证据门：${passed}
 最近未通过：${pending}
 
-v10 已固定 Zero-CGLS K4 的 4A+4A^T 参考、DualRange-K1 接受分支的 2A+2A^T 目标、17 arms、6 条完整轨迹、102 个原子 predictions，以及逐轨迹非劣、harm、wall 和 RSS 门。v10.1 又把最小 G_theta 固定为 2072 维观测上的 4x4 DCT + 100→32→32→96 MLP，共 7,360 个 float64 参数；96 参数 diagonal filter 和 9,216 参数 full linear map 必须同场比较。训练损失在同一 CGLS K1 后按完整 trajectory 比较 K4 teacher，并加入 worst-11 tail。
+v10 已固定 Zero-CGLS K4 的 4A+4A^T 参考与 DualRange-K1 的 2A+2A^T 目标。v10.3 已按完整 trajectory nested selection 真实训练 96 参数 diagonal、9,216 参数 full linear 和 7,360 参数 DCT-MLP，三者都选中 epoch 20，并由独立 NumPy 实现复算到约 1e-14。
 
-独立代码审计发现两个正式执行阻断：旧同进程 Python callback 可以绕过 AuditedLinearOperator 多调用底层 A^T；旧通用 solver 的 denominator breakdown 也不符合 v10 fail-closed 规则。因此数学目标保留，但旧实现不能生成正式结果。下一步先做 strict-v10 solver、数值 proposal + 一次性 receipt、推理/物理 sibling worker 和 control fit。当前没有训练、outer score 或算法突破，p45-s03 与两条 test 继续封存。
+三者都没有通过已见 p14 开发兼容性：field p90 为 0.6435 / 0.6389 / 0.6736，observation p90 为 0.4385 / 0.4389 / 0.4534，而 Zero-K4 reference 是 0.6332 / 0.3330；三者 observation harm 都是 100%，MLP 还有 10.89% field harm。现在停止扩建 worker 和换大网络，下一步先做当前 96 个低频修正模态与 50% cap 的 oracle 表示上限诊断。p45-s03 与两条 test 继续封存，algorithm_breakthrough=false。
 
 截至 2026-07-26 的公开一级来源检索没有发现完全同构的整套方法，但 learned warm start、learned backprojection、neural operator + Krylov、WB-IPM 和 Learned ReSeSOp 都是强近邻；当前只主张组合级差异，不主张全球唯一。还需要确认组内是否已有未发表的 observation-space filter / warm start / 专利，以及真实流程中 A、A^T、光流、ray tracing 哪部分最贵。`;
       }
