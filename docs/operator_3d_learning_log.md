@@ -6278,3 +6278,61 @@ receipt。
 **突破监测：没有算法突破。** 当前只允许进入不读取 p45-s03 的 core/unit-test 和
 fit/deployment/score 三进程实现。`fresh_v9_holdout_opened=false`，
 `neural_training_authorized=false`，`algorithm_breakthrough=false`。
+
+## 229. Cross14 的“零件”写完并审过了，但还没有开始报性能分数
+
+v9 协议冻结后，这一轮只实现不需要读取轨迹的数值核心。现在已有一个明确的
+`Cross14`：输入 raw BP 和 geometry-equalized BP，每个通道只取当前体素与六个相邻
+体素，总共学习 14 个共享权重。它输出完整 `16×16×32` 初值，再接固定两步 CGLS。
+
+代码没有把 606 帧全部摊成一个巨大的设计矩阵，而是逐帧累计一个 `14×14` Gram
+矩阵。每条训练轨迹先单独求均方，再做轨迹等权平均，避免“帧数多的轨迹多投票”。
+正式模型只有五个事前冻结的 lambda；canonical JSON 和 digest 会拒绝改权重、加字段、
+NaN 或非规范文件。
+
+边界测试专门核对了 `center, ±x, ±y, ±z` 在三个轴上的 reflect 规则，结果与独立
+`numpy.pad(mode="reflect")` 全数组一致。还检查了常数场、gauge、正比例齐次、退化
+Gram、EVD 与直接法、充分统计量目标、模型序列化和强正则回退。
+
+独立审计抓到一个值得修的口子：最初 runner 虽然不再接受任意函数，却仍能收到一个
+手工拼出的 equalizer 对象。现在 runner 会重新计算冻结的
+`median / max(sensitivity, floor)` 公式并核对 geometry-only 报告，伪造 multiplier、
+floor 或 truth-access 标记都会拒绝。不过“这个 sensitivity 是否真的来自本次正式
+operator”还必须由下一层 geometry digest 和 manifest 证明，不能只靠 Python 对象
+类型。
+
+完整调用账也被代码断言：
+
+| 阶段 | A | A^T |
+|---|---:|---:|
+| raw/equalized BP | 0 | 1 |
+| 非零初值 residual | 1 | 0 |
+| CGLS K2 | 2 | 2 |
+| 总计 | 3 | 3 |
+
+核心单测 `31 passed`；与 baseline、v9 protocol validator 联合是 `69 passed`；
+Ruff、编译和 diff 检查通过。实现提交为 `fc97cd7`。独立审计没有 P0，允许的正式
+状态只有：
+
+`PASS_NO_DATA_CROSS14_CORE_CODE_GATE_ONLY`
+
+**讲人话：**我们把发动机零件尺寸、装配方式和油耗表上的计算规则都验了一遍，但车
+还没上赛道。下一步要把 fit、deployment、score 拆成互相看不到不该看数据的进程，
+再在完整轨迹上和同成本 Zero-K3、目标终点 Zero-K4 公平比赛。
+
+本轮没有读取任何 PoolFire trajectory、`p45-s03`、历史 p22 或两条 test。还没有
+跨轨迹精度、wall、RSS 或算法优势。当前：
+
+```text
+equalizer_provenance_bound=false
+process_truth_free_proven=false
+independent_noninterference_proven=false
+trajectory_split_proven=false
+neural_training_authorized=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+下一门是绑定 protocol、代码提交、trajectory 角色、geometry/equalizer、solver、
+runtime 和报告模板的三进程 manifest。五条 outer LOTO 与 p14 veto 全部过门前，
+继续不获取 `p45-s03`。
