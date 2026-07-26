@@ -6708,3 +6708,111 @@ field_or_gradient_no_harm_proven=false
 global_uniqueness_proven=false
 algorithm_breakthrough=false
 ```
+
+## 236. 把“我要做得独一无二”改写成不能随结果变的 v10 合同
+
+这一轮没有训练网络，也没有偷看 outer 分数。先把真正的优化目标锁死：
+
+```text
+先逐轨迹满足 field / gradient / observation 单侧非劣
+-> 再看 p50 / p90 / worst / harm
+-> 再把完整 A/A^T 从 4+4 降到 2+2
+-> 再要求五轨迹等权 wall 中位数至少快 10%
+-> 再检查整流程 peak RSS
+-> 最后才进入真实 BOST
+```
+
+机器合同是
+`learning_labs/protocols/poolfire_c_dual_range_outer_contract_v10.json`。它继承 v9.4
+的六行完整轨迹、三类误差和开发容差，也继承 v9.4.1 的全局 prediction barrier、
+fresh-exec wall/RSS 与资源账；但把主方法改成 DualRange-K1，并锁定 17 个正式 arms。
+
+最重要的同预算对照包括：
+
+```text
+Zero-CGLS K2
+z=y 的 normalized-BP + CGLS K1
+exact 2D projected least-squares / Galerkin
+fit-only fixed dual filter
+dual ridge + CGLS K1
+不受 Range(A^T) 约束的 direct-field model + CGLS K1
+```
+
+如果 DualRange 只比 Zero-K4 便宜，却打不过这些同样 `2A+2A^T` 的简单方法，就不能说
+网络学到了有用的 BOST 先验，也不允许靠换大 FNO/UNO/DeepONet 救场。
+
+这轮又补查了六个很危险的近邻：
+
+- JMLR 2024 *Learning to Warm-Start Fixed-Point Optimization Algorithms*；
+- 2026 *Pretrain Finite Element Method*；
+- 2025/2026 *MD-PNOP*；
+- 2026 *Convolutional neural network-driven preconditioners for conjugate
+  gradients*；
+- 2025 *A Warm-basis Method for Bridging Learning and Iteration*（WB-IPM）；
+- 2025 *Learned ReSeSOp for solving inverse problems with inexact forward
+  operator*。
+
+它们进一步说明，learned warm start、神经初值后接经典 solver、保持最终物理解和
+学习 Krylov 加速都不是我们的单点创新。WB-IPM 是目前最危险的结构近邻：它已经让
+网络生成 warm basis，再进入增强 Golub-Kahan/Krylov 投影。我们的观测域 proposal、
+精确 `A^T` 提升、原样 CGLS K1 和 pre-`A^T` 回退仍是差异，但在 outer 与真实 BOST
+证据通过前还不能叫贡献。现在只保留七件套的组合级作品指纹：
+
+```text
+BOST-specific dual proposal
++ Range(A^T) lift
++ pre-A^T gate
++ unchanged CGLS K1
++ three-metric trajectory non-inferiority
++ full call/wall/RSS/tail accounting
++ real-BOST transfer
+```
+
+**讲人话：**我不能替全世界、专利库和组内未发表工作担保“绝对没有第二个人想到”。
+能做的是把作品的七个维度同时做实，让它即便每个零件都能找到近邻，完整方法仍有清楚、
+可防御、很难混淆的个人指纹。如果未来找到完整撞题，合同要求改题或停止首创主张，而
+不是装作没看见。
+
+v10 现在明确不授权训练。下一步只允许先冻结一个最小 `G_theta` 架构、参数上限、
+fit-only nested trajectory 选择、K1 后损失、种子/checkpoint 和全局 prediction
+barrier；完成后才允许生成性能输出。
+
+独立实验红队随后发现第一稿验证器仍可能被篡改阈值、篡改 control 调用数、把 truth
+塞进 gate 白名单，而且旧 v9.4.1 的 66-output roster 与新方法不相容。已经按这个
+反例把 v10 改成：
+
+```text
+17 arms x 6 rows = 102 atomic predictions
+ungated DualRange + gated policy 必须同时报告
+direct-field K1 与 PCGLS K2 进入最强同价或更便宜 control 集
+逐帧 A/A^T receipt
+17 次 fresh exec 循环平衡 arm 顺序
+固定 contract SHA + freeze receipt + report template
+```
+
+验证器现在会拒绝非劣门改成 0、wall 门改成永远通过、Zero-K2 写成 999 次调用、gate
+允许 `field_truth`、训练前置条件被清空、负调用伪装成总和 `2+2`，以及删除 WB-IPM
+碰撞边界。第二轮复审又补上 freeze receipt 的精确 identity/authorization/claim
+校验，并锁住 score-token bindings、failure actions、fresh guard 和 wall 生命周期。
+v10 合同篡改定向检查为 `14 passed`，联合页面/机制/Pages builder 为 `117 passed`。
+仍未关闭的是未来执行实现：pre-`A^T` gate、模型/gate 的 `execve`
+能力隔离、全部 controls、正式 runner/validator 和 102-output batch seal。
+
+当前边界：
+
+```text
+optimization_objective_frozen=true
+combination_level_fingerprint_frozen=true
+reviewed_primary_source_count_minimum=31
+closest_structural_collision=WB-IPM
+formal_arm_count=17
+formal_prediction_count=102
+accepted_branch_target=2A+2AT
+reference=Zero-CGLS-K4@4A+4AT
+pre_AT_gate_implemented=false
+formal_capability_isolation_proven=false
+model_training_authorized=false
+outer_performance_opened=false
+global_uniqueness_proven=false
+algorithm_breakthrough=false
+```
