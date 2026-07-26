@@ -280,7 +280,7 @@
       resize: vertical;
     }
     .empty { padding: 16px; color: var(--muted); border: 1px dashed var(--line); border-radius: var(--radius); background: rgba(255,255,255,.9); }
-    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); clip-path: inset(50%); white-space: nowrap; border: 0; }
     @media (max-width: 1020px) {
       .status-strip, .gate-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .track-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
@@ -294,8 +294,13 @@
       .status-strip, .check-grid, .concept-grid, .resource-grid, .track-grid, .gate-grid, .figure-grid, .week-columns { grid-template-columns: 1fr; }
       .phase-rail { grid-template-columns: repeat(2,minmax(0,1fr)); }
       summary { grid-template-columns: 64px minmax(0,1fr); }
+      summary > *, .week-title { min-width: 0; }
+      .week-title, .week-title strong { overflow-wrap: anywhere; word-break: break-word; }
       summary .week-done { grid-column: 1 / -1; }
       .section-head { align-items: flex-start; flex-direction: column; }
+      .section-head > * { width: 100%; min-width: 0 !important; max-width: 100%; }
+      .section-actions, .actions { max-width: 100%; flex-wrap: wrap; }
+      .formula { white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
       .field { min-width: 100%; }
     }
   </style>
