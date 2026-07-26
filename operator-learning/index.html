@@ -318,7 +318,7 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 当前证据 2026-07-26</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让可学习算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少完整多视角 forward/adjoint 调用和端到端时间。五条开放 PoolFire 轨迹的四臂 classical 表已经完成；v4/v5.1 已排除“只扩 fit”与“继续堆固定全局 PCA rank”。v6 证明 raw <code>BP=A^T y</code> 存在工况相关定位偏差，v7.1 证明固定 <code>D^{-1}A^T y</code> 仍不能跨工况定位。v8 再用 8 个部署可见特征、15 个参数和严格 trajectory-level nested LOTO 检验低容量质心校准：独立 outer-crossfit 只通过 2/5，已见开发验证通过 1/1，合计 3/6 但正式 FAIL。因此 shifted-POD 质心代理路线已经停止，下一步转向结果前预注册的 observation/BP→完整 <code>16×16×32</code> warm field 低容量空间映射。</p>
+    <p class="lead">唯一主问题：让可学习算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少完整多视角 forward/adjoint 调用和端到端时间。v6 至 v8 已依次否掉 raw BP 质心、固定几何均衡质心和 15 参数质心校准，shifted-POD 路线停止。v9 现在已经在任何数字结果之前冻结：主候选是只读 raw/equalized BP 的 14 参数 residual cross-convolution，直接输出完整 <code>16×16×32</code> warm field，再固定做两步 CGLS；候选完整账为 <code>3A+3A^T</code>，Zero-K4 参照为 <code>4A+4A^T</code>。当前只是可审查协议，尚无算法结果。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
@@ -335,6 +335,7 @@
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_semiconvergence_coverage_diagnosis_2026-07-25.md">半收敛与覆盖诊断</a>
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_transport_alignment_reading_route_2026-07-25.md">输运对齐阅读路线</a>
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_observation_centroid_calibration_v8_result_2026-07-26.md">v8 质心校准结果</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_full_field_low_capacity_protocol_v9_2026-07-26.md">v9 完整三维初值协议</a>
       <a class="button" href="#senior">复制下一条师兄消息</a>
       <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
     </div>
@@ -345,8 +346,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert">
-      <strong>最新进展：v8 低容量质心校准正式 FAIL，shifted-POD 路线停止</strong>
-      <span>父数据协议仍为 <code>PASS_FROZEN_POOLFIRE_TRAJECTORY_PROTOCOL</code>。v8 使用 8 个部署可见特征、15 个 float64 参数和 trajectory-level nested LOTO；独立 outer-crossfit 为 2/5 PASS，已见开发验证为 1/1 PASS，合计 3/6 但正式 FAIL。<code>p45-s05</code> 虽有材料性改善，p90 仍为 <code>1.219</code>、exact 仅 <code>18.81%</code>；<code>p58-s03</code> 的连续质心略好但 exact 低于 equalized control；<code>p14-s05</code> 则几乎退回 raw BP 并触发 harm。独立 validator 重算 43/43 个数组，最大绝对差为 <code>0.0</code>。正式状态为 <code>FAIL_T0_OBSERVATION_CENTROID_CALIBRATION_PROXY</code>。p22 stopping validation、两条 untouched test 与神经训练均未打开，<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新进展：v9 已先冻结协议，尚未运行数字实验</strong>
+      <span>协议状态为 <code>PASS_FROZEN_POOLFIRE_C_FULL_FIELD_LOW_CAPACITY_PROTOCOL_V9</code>。主候选固定为 14 参数 Cross14 residual ridge，强正则极限退回 equalized BP；同场列出 raw/equalized identity、可观测线搜索、44 参数 DCT 低模、dual ridge、Zero-K3、Zero-K4、PCGLS 和 normalized-BP 强对照。独立审计还纠正了证据账：<code>p22-s01</code> 早期已用于 classical 深度诊断，不能再叫 fresh stopping validation；新的单次 holdout 预指定为尚未获取的 <code>p45-s03</code>。两条 untouched test 与神经训练仍关闭，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -399,8 +400,8 @@
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
       </div>
       <div class="alert" style="margin-top:13px;">
-        <strong>现在的唯一执行门：预注册 observation/BP→完整三维场的低容量 warm initializer</strong>
-        <span>v8 已按事前规则否掉“先校准质心、再做整数平移”的 shifted-POD 入口，因此不再调质心特征、<code>lambda</code>、shift 阈值或 Jacobi 变体。下一协议必须直接预测完整 <code>16×16×32</code> K4 warm field 或 residual，先公平比较 identity BP、geometry-equalized BP、局部 separable 3D convolution/ridge 和低模频域 transfer。只有这些低容量空间基线在完整 trajectory 上显示稳定 headroom，才允许预注册一个小型 BP-conditioned 3D U-Net sentinel；FNO、UNO、DeepONet 继续排在其后。</span>
+        <strong>现在的唯一执行门：实现已冻结的 v9 Cross14 完整三维初值</strong>
+        <span>主模型学习 <code>K4 teacher - equalized BP</code>，使用 raw/equalized BP 两通道各 7 个十字邻域权重，共 14 个参数；fold-train-only RMS、五条 fit nested LOTO、p14 mandatory veto、固定 K2 refinement 和全部强对照都已锁定。只要任一完整轨迹、同成本 Zero-K3、wall 或 RSS 门失败，就停止 v9；不能临时扩 <code>lambda</code>、换 DCT cutoff、改 K、用历史 p22 或 test 救结果。只有 development 和一次性 <code>p45-s03</code> holdout 都通过，才允许另行预注册一个小型 BP-conditioned 3D U-Net sentinel。</span>
       </div>
     </section>
 
@@ -408,8 +409,8 @@
       <div class="section-head">
         <div>
           <div class="eyebrow">当前唯一数据门</div>
-          <h2>11 train / 2 validation / 2 untouched test</h2>
-          <p>角色按完整 trajectory 固定，不按随机时间帧分配。两条 test 只封存身份，在模型、预处理、correction budget、停止规则、指标、种子和报告模板全部冻结前不解压。</p>
+          <h2>五条 fit + 两条已烧掉 development + 一个 fresh holdout + 两条 test</h2>
+          <p>角色按完整 trajectory 固定，不按随机时间帧分配。早期公开协议的 11/2/2 文件划分仍保留，但统计角色已按真实访问历史纠正：p14 与 p22 都不能再冒充新鲜验证；两条 test 继续封存。</p>
         </div>
         <div class="actions">
           <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_trajectory_protocol_evidence_2026-07-23.md">读协议与接入状态</a>
@@ -423,9 +424,9 @@
           <p><code>p=14kw_size=03</code> 的旧五帧永久是 development。新 pilot 顺序先接 <code>p=33kw_size=01</code>、<code>p=45kw_size=05</code>、<code>p=58kw_size=03</code>。</p>
         </article>
         <article class="panel">
-          <div class="chips"><span class="chip gold">2 validation</span><span class="chip">职责分开</span></div>
-          <h3 style="margin-top:10px;">模型选择不和停止规则混用</h3>
-          <p><code>p=14kw_size=01</code> 选择模型/正则；<code>p=22kw_size=01</code> 冻结 correction budget、停止规则和 matched-accuracy tolerance。</p>
+          <div class="chips"><span class="chip gold">2 historical development</span><span class="chip coral">不再 fresh</span></div>
+          <h3 style="margin-top:10px;">p14 与 p22 的历史用途必须如实记账</h3>
+          <p><code>p=14kw_size=01</code> 已多次参与表示/正则开发，只能作 mandatory veto；<code>p=22kw_size=01</code> 早期已用于 depth 与半收敛诊断，v9 禁止再用它选择或验证停止规则。</p>
         </article>
         <article class="panel">
           <div class="chips"><span class="chip coral">2 test</span><span class="chip">未解压</span></div>
@@ -433,14 +434,14 @@
           <p><code>p=22kw_size=05</code> 与 <code>p=58kw_size=01</code> 是已见功率/尺寸值的新组合，不能写成 unseen-power、unseen-size 或 geometry OOD。</p>
         </article>
         <article class="panel">
-          <div class="chips"><span class="chip blue">3 / 3 train pilot READY</span><span class="chip blue">2 / 2 validation READY</span><span class="chip">不算算法结果</span></div>
-          <h3 style="margin-top:10px;">两条 validation 数据完整，职责仍严格隔离</h3>
-          <p><code>p=14kw_size=01</code> 只允许模型/正则选择；<code>p=22kw_size=01</code> 只允许冻结 correction budget、固定 K 与回退。两者的 <code>(101,80,80,200)</code> float32 <code>rho</code> 均通过独立 14 项检查，但 validation 不进入最终模型权重。</p>
+          <div class="chips"><span class="chip blue">5 fit READY</span><span class="chip gold">fresh holdout 未获取</span><span class="chip">不算算法结果</span></div>
+          <h3 style="margin-top:10px;">p45-s03 只允许锁模后一次打开</h3>
+          <p><code>p=45kw_size=03</code> 在只看 metadata 时被预指定为 v9 fresh proxy holdout；当前 payload 尚未获取、解压、统计或可视化。它必须等模型、lambda、K2、指标、runtime harness 和报告模板全部 hash 绑定后才释放，且失败后不能换轨迹。</p>
         </article>
       </div>
       <div class="alert" style="margin-top:13px;">
-        <strong>突破监测：没有算法突破；五条轨迹的 classical 表已经完成</strong>
-        <span><code>PASS_TWO_VALIDATION_TRAJECTORIES_READY</code>、<code>PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT</code> 和 <code>PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT</code> 继续作为冻结前置证据。v4 至 v8 都按独立复算门推进。最新科学状态是 <code>FAIL_T0_OBSERVATION_CENTROID_CALIBRATION_PROXY</code>：raw BP、固定几何均衡和低容量 observation-visible 质心校准都没有形成跨轨迹可靠定位器，shifted-POD 入口因此停止。这不能写成泛化、速度或神经算子成功。</span>
+        <strong>突破监测：没有算法突破；v9 目前只有结果前协议</strong>
+        <span><code>PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT</code> 与 v6-v8 独立负证据继续作为前置材料。新增的 <code>PASS_FROZEN_POOLFIRE_C_FULL_FIELD_LOW_CAPACITY_PROTOCOL_V9</code> 只证明候选、对照、数据角色、调用账和失败动作已经锁定，不是校准、重建、速度或泛化结果。正式数字实验尚未运行。</span>
       </div>
       <div class="section-head" style="margin-top:20px;">
         <div>
@@ -539,6 +540,44 @@
         </a>
         <figcaption>点击图可查看原尺寸。p45 有改善但仍未过门；p58 的连续误差略降、整数 exact 却受损；p14-s05 高覆盖仍失败。独立 validator 复算 43/43 个数组且最大差为 0.0。该负结果终止 shifted-POD 质心代理路线，不代表三维场、速度、内存、泛化或论文成功。</figcaption>
       </figure>
+      <div id="full-field-v9-gate" class="section-head" style="margin-top:22px;">
+        <div>
+          <div class="eyebrow">v9 完整三维初值门 · 结果前冻结</div>
+          <h3>Cross14 只学 equalized BP 到 K4 的局部残差</h3>
+          <p>主候选读取 raw/equalized BP 两个通道，各用 <code>center, ±x, ±y, ±z</code> 七个共享权重，共 14 个参数。它不看时间、工况标签、heldout teacher 或 truth；强正则极限严格退回 equalized BP。预测后固定做两步 CGLS，完整账为 <code>3A+3A^T=6</code>，必须同时对照同成本 Zero-K3 和 8 调用的 Zero-K4。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_full_field_low_capacity_protocol_v9_2026-07-26.md">读 v9 讲人话协议</a>
+          <a class="button" href="../learning_labs/protocols/poolfire_c_full_field_low_capacity_audit_v9.json">打开机器协议</a>
+          <a class="button" href="../learning_labs/protocols/poolfire_c_v9_fresh_holdout_selection_receipt.json">打开 holdout 选择凭据</a>
+        </div>
+      </div>
+      <div class="check-grid">
+        <article class="panel">
+          <div class="chips"><span class="chip blue">14 参数</span><span class="chip">Residual</span></div>
+          <h3 style="margin-top:10px;">小到能解释，也小到会诚实失败</h3>
+          <p><code>x0=G(e+s_r Cθ(q/s_q,e/s_e))</code>，其中 <code>q=G(A^T y)</code>、<code>e=G(Wq)</code>、target 是 <code>(K4-e)/s_r</code>。三个 RMS 都只能来自当前 fold 的训练轨迹。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip gold">强对照</span><span class="chip">不事后挑模型</span></div>
+          <h3 style="margin-top:10px;">Identity、line search、DCT、dual ridge 全部同场</h3>
+          <p>44 参数 DCT 低模只作冻结 control，cutoff 不可改；dual ridge 是更高容量的线性上限。同场还报告 raw/equalized identity、两种可观测线搜索、PCGLS、normalized BP 和 Zero-K3/K4。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip coral">p22 已烧掉</span><span class="chip gold">p45-s03 未获取</span></div>
+          <h3 style="margin-top:10px;">把真实访问历史写进证据账</h3>
+          <p><code>p22-s01</code> 早期已用于 depth/半收敛诊断，v9 不再使用。<code>p45-s03</code> 只在项目受管数据与结果范围内具有“锁模前零 payload 痕迹”证据；这不是全文件系统的密码学盲测证明，也不是 untouched test。</p>
+        </article>
+        <article class="panel">
+          <div class="chips"><span class="chip blue">协议校验 PASS</span><span class="chip coral">算法结果未运行</span></div>
+          <h3 style="margin-top:10px;">Git 顺序和 21 个反例已经可执行</h3>
+          <p>协议 commit <code>10415cf</code> 是 validator commit <code>78ae519</code> 的严格祖先。校验器会拒绝 duplicate/NaN、schema 漂移、parent 改写、truth 泄漏、fresh holdout 提前打开、调用漏账和突破声明抢跑。</p>
+        </article>
+      </div>
+      <div class="alert" style="margin-top:13px;">
+        <strong>当前判决：可进入无数据 core/unit-test 实现，不可读取 p45-s03</strong>
+        <span>下一增量是实现 cross-shift、fold-train-only RMS、14 参数 Gram ridge、正比例齐次、<code>lambda→∞</code> 回退和 exact-K2 调用测试；随后再搭 fit/deployment/score 三进程。只有这些实现、controls、runtime harness 和报告模板全部锁定，才讨论一次性 holdout release。当前 <code>algorithm_breakthrough=false</code>。</span>
+      </div>
     </section>
 
     <section id="g0-evidence" class="band">
@@ -805,7 +844,7 @@
         const next = nextUnlockedWeek();
         const fCount = checkedCount(state.foundations, guide.foundationChecks);
         const pace = Number(state.profile.hours) <= 6 ? '建议把每个关卡拆成两周' : Number(state.profile.hours) >= 15 ? '可将阅读与代码并行，但不跳过验收' : '按一周一关执行';
-        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v8 已确认 8 特征、15 参数的低容量质心校准只通过 3/6 条轨迹，shifted-POD 定位路线已经停止。下一步只预注册 observation/BP 到完整 16×16×32 warm field 的低容量空间映射；先过完整轨迹 headroom 门，再决定是否训练一个小型 3D U-Net sentinel，FNO、UNO、DeepONet 继续等待。';
+        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v9 已冻结 14 参数 Cross14 residual ridge：只看 raw/equalized BP，预测完整 16×16×32 warm field，再固定做 K2 refinement。当前先实现 cross-shift、fold-train RMS、Gram ridge、三进程隔离和 exact-K2 成本测试；p45-s03 holdout、两条 test、3D U-Net、FNO、UNO、DeepONet 全部继续等待。';
         document.getElementById('recommendation').innerHTML = `
           <div class="next-code">当前建议 · ${escapeHtml(next.id)}</div>
           <h3>${escapeHtml(next.title)}</h3>
@@ -946,7 +985,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄，C 路线不变：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n公开 PoolFire 已按完整 trajectory 冻结为 11 train / 2 validation / 2 untouched test。两条 test 仍未下载或打开。六条机制审计轨迹共 606 帧，共用 16×16×32 inverse 与冻结三视角几何。\n\nv6 证明 raw BP 有工况相关定位偏差；v7.1 证明固定几何均衡 BP_equalized=D^{-1}A^T y 只能局部改善。v8 又用 8 个部署可见特征和 15 个参数做 trajectory-level nested LOTO 质心校准，独立复算 43/43 个数组、最大差 0.0，但最终只通过 3/6 条轨迹。p45-s05 的 p90 虽降到 1.219，exact 仍只有 18.81%；p58-s03 的连续误差略好但整数 exact 受损；p14-s05 几乎退回 raw BP 并触发 harm。正式状态是 FAIL_T0_OBSERVATION_CENTROID_CALIBRATION_PROXY。\n\n按结果前规则，shifted-POD 质心代理路线已经停止，不再调质心特征、lambda、shift 阈值或 Jacobi 变体。p22 stopping validation、两条 test 和神经训练都没有打开。\n\n下一步另行预注册 observation/BP→完整 16×16×32 warm field 的低容量空间映射，先比较 identity/equalized BP、局部 separable 3D convolution/ridge 和低模频域 transfer。只有完整轨迹仍显示稳定 full-field headroom，才训练一个小型 BP-conditioned 3D U-Net sentinel；FNO、UNO、DeepONet 暂不启动。\n\n当前仍只是公开 CFD straight-ray morphology proxy，不是真实 BOST；rho→Delta n、相机和 pixel displacement 尚未闭合，algorithm_breakthrough=false。\n\n后续需要组里确认：\n1. 真正希望重建 rho、n、n-1 还是 Delta n，reference/gauge 怎么定义；\n2. 相机内外参、detector ROI、forward/adjoint、现用 baseline 和停止规则；\n3. 公开方法筛选完成后，哪份最小组内 BOST 样例可做迁移检查。`;
+        document.getElementById('briefText').value = `师兄，C 路线不变：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\nv6-v8 已依次否掉 raw BP 质心、固定几何均衡质心和 15 参数 observation-visible 质心校准，shifted-POD 路线停止。v8 的 outer-crossfit 只通过 2/5，已见 p14 development 通过 1/1；正式状态是 FAIL_T0_OBSERVATION_CENTROID_CALIBRATION_PROXY。\n\n下一步 v9 已在任何结果前冻结：主候选是两通道 14 参数 Cross14 residual ridge。输入 q=G(A^T y) 和 e=G(Wq)，target 是 K4 teacher-e，预测完整 16×16×32 x0 后固定做两步 CGLS。完整账是 3A+3A^T=6 次，对照 Zero-K4 的 4A+4A^T=8 次，并且必须同场比较同成本 Zero-K3、PCGLS、normalized BP、两种 observable line search、44 参数 DCT low-mode 和 dual ridge。\n\n证据角色已按历史纠正：p14 只能作 mandatory development veto；p22-s01 早期已经用于 depth/半收敛诊断，不能再当 fresh stopping validation。新的项目受管 fresh proxy holdout 预指定为尚未获取的 p45-s03，但这不是全文件系统盲测证明，也不是 untouched test。它必须等模型、lambda、K2、solver、指标、runtime harness 和报告模板全部锁定后才允许一次打开。两条 test 仍未打开。\n\n协议 commit 10415cf 严格早于 validator commit 78ae519；当前 21 个反例测试会拒绝 schema 漂移、truth 泄漏、holdout 提前打开、调用漏账和突破声明抢跑。现在只有协议/证据链 PASS，数字算法尚未运行，algorithm_breakthrough=false。\n\n当前仍只是公开 CFD straight-ray morphology proxy，不是真实 BOST；rho→Delta n、相机和 pixel displacement 尚未闭合。\n\n后续需要组里确认：\n1. 真正希望重建 rho、n、n-1 还是 Delta n，reference/gauge 怎么定义；\n2. 相机内外参、detector ROI、forward/adjoint、现用 baseline 和停止规则；\n3. 公开方法过门后，哪份最小组内 BOST 样例可做迁移检查。`;
       }
 
       function bindProfile() {

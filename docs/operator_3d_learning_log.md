@@ -6194,8 +6194,87 @@ observation/BP 到完整 `16×16×32` warm field 的低容量空间映射，按�
 
 新门直接看 full-field、gradient、observation、逐轨迹 harm 和同一 CGLS/PCGLS
 refinement 后的 matched accuracy。FNO、UNO、DeepONet 仍在 sentinel 之后；p22
-stopping validation 和两条 untouched test 继续关闭。
+在 v8 本轮没有读取，但它早期已用于 classical depth/半收敛诊断，因此不能再算
+fresh stopping validation；两条 untouched test 继续关闭。
 
 **突破监测：没有算法突破。** 这次新增的是可信的路线淘汰证据和更直接的下一实验
 问题。`neural_training_authorized=false`，`algorithm_breakthrough=false`，
 `paper_success=false`。
+
+## 228. v9 先锁问题再写模型：Cross14 完整三维 residual warm start
+
+v8 失败后，这一轮没有马上训练 3D U-Net。我们先把“完整三维初值”到底指什么、和谁
+比、怎样才算有用写成机器协议，并让两名独立审计代理专门找漏洞。
+
+第一轮科学审计指出，原先暂定的 8 参数二阶差分模型虽然很小，但把正负方向响应绑在
+了一起，也没有一个足够清楚的强正则回退。最终主候选改成两通道、每通道 7 个十字
+邻域位置的 residual ridge：
+
+```text
+q = G(A^T y)
+e = G(W q)
+target = (CGLS_K4(0,y) - e) / sr
+x0 = G(e + sr * Ctheta(q/sq, e/se))
+```
+
+`Ctheta` 只有 `2×7=14` 个 float64 权重，没有 bias。七个位置是
+`center, -x, +x, -y, +y, -z, +z`；权重跨全部体素和帧共享。`sq/se/sr` 只能由
+当前 fold 的训练轨迹计算。`lambda` 趋于无穷时，修正项归零，严格退回 equalized
+BP。这样模型如果学不到跨工况规律，会回到一个明确的基线，而不是产生任意平均场。
+
+五条 fit 仍做 nested leave-one-complete-trajectory-out；p14 只是已经见过的
+mandatory veto。主候选固定做 K2 refinement，完整调用账是：
+
+| 阶段 | A | A^T |
+|---|---:|---:|
+| raw/equalized BP | 0 | 1 |
+| 非零初值 residual | 1 | 0 |
+| 两步 CGLS | 2 | 2 |
+| 总计 | 3 | 3 |
+
+所以 Cross14-K2 是 6 次完整调用，Zero-K4 是 8 次；但 Zero-K3 同样只有 6 次，
+因此 Cross14 还必须逐轨迹在 field/gradient p90 上不差于 Zero-K3，并至少一项改善
+2%。此外还冻结了 raw/equalized identity、两种 observable line search、44 参数
+DCT low-mode residual、dual ridge、geometry-PCGLS 和 normalized-BP 对照。不能
+看完结果后把某个 control 改名为主算法。
+
+审计还抓到一个更重要的证据历史错误：`p=22kw_size=01` 在 v8 没有读取，不代表它
+从未被读取。早期 classical runner 已用它做 depth 和半收敛诊断，所以它不能再叫
+fresh stopping validation。v9 明确禁止再用 p22 选择模型、K、阈值或救失败结果。
+
+我们在只看官方 metadata 的条件下预指定 `p=45kw_size=03` 为一次性 proxy holdout。
+当前项目受管的 `private_data/PoolFire` 和 `private_results` 范围内，对
+`45kw_size=03/p45s03` 的名称与文本审计均为零命中，没有 receipt、raw/partial、
+derived rho、pair 或数字结果。但是这只能支持“项目受管范围内、实现前选定的 fresh
+proxy holdout”，不能证明整台机器历史上绝对没有手工下载或删除过副本，也不能称
+密码学盲测、untouched test、unseen-power 或 unseen-size。
+
+为此新增了单独的 metadata-only selection receipt，并继续禁止获取 p45-s03。
+只有 development 模型、scaler、lambda、exact K2、solver、指标、阈值、controls、
+runtime harness 和报告模板全部锁定，才允许再写一个一次性 no-replace release
+receipt。
+
+协议与实现顺序也不再靠一句布尔声明：
+
+- 协议提交：`10415cf`；
+- holdout selection 提交：`db0dbba`；
+- validator 实现提交：`78ae519`；
+- validator 用真实 `git merge-base --is-ancestor` 检查协议提交是当前实现提交的
+  严格祖先，并从历史提交重新读取协议核对 SHA；
+- canonical bytes 和递归 key/type schema 同时冻结；
+- duplicate key、NaN/Infinity、extra/missing、parent 改写、历史 p22 洗白、
+  fresh holdout 提前打开、truth 泄漏、inverse crime、容量偷增、DCT cutoff 搜索、
+  lambda 扩网格、调用漏账、pooled-frame 伪重复和突破声明抢跑都会 fail closed。
+
+定向测试现在是 `21 passed`，无需额外 `PYTHONPATH`；CLI 状态为
+`PASS_FROZEN_POOLFIRE_C_FULL_FIELD_LOW_CAPACITY_PROTOCOL_V9`。这只证明协议和
+证据顺序可执行，不是模型、重建、速度或内存结果。
+
+**讲人话：**这轮不是“又写了一堆规则”，而是终于把下一次试验变成一个很难自欺的
+问题：14 个局部权重能不能让同样 6 次物理调用比 Zero-K3 更准，并达到 Zero-K4 的
+终点？如果不能，就停；如果能，还要过 wall、RSS 和一次未打开工况，才有资格训练
+第一个小型 3D U-Net。
+
+**突破监测：没有算法突破。** 当前只允许进入不读取 p45-s03 的 core/unit-test 和
+fit/deployment/score 三进程实现。`fresh_v9_holdout_opened=false`，
+`neural_training_authorized=false`，`algorithm_breakthrough=false`。
