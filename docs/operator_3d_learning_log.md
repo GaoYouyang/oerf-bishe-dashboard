@@ -6634,3 +6634,77 @@ group_unpublished_ip_checked=false
 formal_outer_result_opened=false
 algorithm_breakthrough=false
 ```
+
+## 235. 红队否掉“看起来新但不省调用”的旧方案，主候选改成 DualRange-K1
+
+这轮先做了一件比继续堆模型更重要的事：重新把旧 GEOK v0 的每一次完整正演和伴随
+都算了一遍。
+
+```text
+q0=A^T y                    0A + 1A^T
+q1=A^T A q0                1A + 1A^T
+line search 的 A h          1A + 0A^T
+CGLS K2                    2A + 2A^T
+总计                        4A + 4A^T
+```
+
+这与 Zero-CGLS K4 完全相同。也就是说，旧方案也许能改变初值表示，却没有完成师兄要求
+的“同精度下降低重建成本”。它现在被明确降级为失败候选，不再靠一个好听的名字留在
+主线上。
+
+修订后的最小候选叫 DualRange-K1。网络不直接猜三维场，只输出与观测同形状的
+`z_theta(y)`：
+
+```text
+h = A^T z_theta(y)
+x0 = alpha h
+then unchanged CGLS K1
+```
+
+`alpha` 用只看观测的解析线搜索求，区间包含 0。这样有三条硬性质：
+
+1. `x0` 天然属于 `Range(A^T)`；
+2. 初始 measurement residual 不会比零初值更坏；
+3. 接受分支完整账严格是 `2A+2A^T`，相对 Zero-K4 理论减少 50%。
+
+代码与原 baseline 联合测试为 `22 passed`。随后又在冻结的 `16×16×32` 三维场、
+2072 维三视角几何上做了不读 rho、不读真值的随机观测烟测：
+
+```text
+alpha=0.061941614953514523
+initial_residual_ratio=0.80221651960594
+initializer_field_mean=9.215718466126788e-19
+total_calls=2A+2AT
+```
+
+**讲人话：**现在至少不是“在纸上省调用”。同一个正式几何接口已经真的跑通，而且账
+对得上。但它还没有学到任何东西，也没有打开 outer 性能结果，所以不能说算法成功。
+
+近邻审计也补到了 25 项一级来源。学习反投影、sinogram filter、learned warm start、
+neural operator + Krylov 和 BOST 神经重建都有人做过。当前可能形成个人作品指纹的，
+只能是下面这整套东西一起成立：
+
+```text
+BOST-specific observation-space proposal
++ by-construction Range(A^T) lift
++ pre-A^T deployment-visible risk gate
++ unchanged CGLS K1
++ field/gradient/observation non-inferiority
++ complete A/A^T, wall, RSS and tail-harm evidence
++ real BOST transfer
+```
+
+下一步不是马上训练大模型，而是结果前冻结 DualRange-K1 的 outer contract，并把
+`z=y` normalized BP、exact 1D/2D Galerkin、dual ridge、call-matched CGLS 和 learned
+backprojection 全部放进同一张赛表。
+
+当前边界：
+
+```text
+old_geok_v0_call_reduction_claim=rejected
+dual_range_k1_mechanism_gate=passed
+formal_outer_performance_opened=false
+field_or_gradient_no_harm_proven=false
+global_uniqueness_proven=false
+algorithm_breakthrough=false
+```
