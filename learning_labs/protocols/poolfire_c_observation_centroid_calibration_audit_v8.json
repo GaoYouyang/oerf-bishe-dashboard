@@ -1,0 +1,276 @@
+{
+  "schema_version": "oerf-poolfire-c-observation-centroid-calibration-audit-8.0",
+  "status": "FROZEN_BEFORE_V8_RESULTS",
+  "purpose": "test one low-capacity fit-only map from deployment-visible raw and geometry-equalized BP moments to a corrected teacher-centroid proxy before any aligned basis or neural initializer is authorized",
+  "parents": {
+    "poolfire_c_bp_transport_alignment_audit_v6_sha256": "c5f8289cc08c60f65518623e63643a433c80fc784e83efc65f1a8933ead43c61",
+    "poolfire_c_geometry_equalized_bp_audit_v7_sha256": "c934a4f36909a50eb30d08bf4117217a29ae7c2ff590d926ab200e10724a1f80",
+    "poolfire_c_geometry_equalized_bp_v7_1_addendum_sha256": "e6c7e694fdf584217ac6aed03a486f42c1c96a34850c23c7ff46840dea3e7d5c",
+    "poolfire_c_geometry_equalized_bp_v7_1_public_summary_sha256": "6351ba98c9e9840184283132a8fec4db3d5b8f69897a939f0b76f3f9e2659b5b",
+    "poolfire_c_geometry_equalized_bp_v7_1_independent_validation_sha256": "87214ece09ee24ad57826ab1b2630ca18246fd5665a95f7197d9b6439c70f460",
+    "accepted_v6_status": "FAIL_T0_BP_INTEGER_TRANSLATION_PROXY",
+    "accepted_v7_1_status": "FAIL_T0_GEOMETRY_EQUALIZED_BP_PROXY",
+    "accepted_v7_1_independent_status": "PASS_INDEPENDENT_VALIDATION_OF_FAIL_T0_GEOMETRY_EQUALIZED_BP_PROXY"
+  },
+  "evidence_design": {
+    "evidence_level": "ADAPTIVE_OPEN_P14_LOW_CAPACITY_MECHANISM_DIAGNOSIS_ONLY",
+    "fit_trajectories_in_order": [
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03",
+      "p=14kw_size=05",
+      "p=22kw_size=03"
+    ],
+    "development_validation_trajectory": "p=14kw_size=01",
+    "fit_evaluation": "nested_leave_one_complete_trajectory_out",
+    "development_validation_evaluation": "one_model_fit_on_all_five_fit_trajectories_after_lambda_selection_by_five_fold_leave_one_trajectory_out",
+    "scientific_unit": "complete_trajectory",
+    "frames_are_not_independent_replicates": true,
+    "each_trajectory_has_equal_selection_and_decision_weight": true,
+    "frame_count_per_trajectory": 101,
+    "p14_has_already_been_seen_in_prior_mechanism_development": true,
+    "p14_may_not_be_called_independent_or_confirmatory": true,
+    "stopping_validation_trajectory": "p=22kw_size=01",
+    "stopping_validation_opened": false,
+    "untouched_test_trajectories": [
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ],
+    "untouched_test_opened": false,
+    "neural_training_authorized": false,
+    "aligned_basis_or_t1_authorized": false,
+    "additional_fit_acquisition_authorized": false
+  },
+  "input_and_target_contract": {
+    "field_shape_xyz": [
+      16,
+      16,
+      32
+    ],
+    "half_extent_xyz": [
+      7.5,
+      7.5,
+      15.5
+    ],
+    "midpoint_xyz": [
+      7.5,
+      7.5,
+      15.5
+    ],
+    "raw_BP": "accepted_v6_BP_raw=A_transpose_y",
+    "equalized_BP": "accepted_v7_1_fixed_geometry_BP_eq=D_inverse_A_transpose_y",
+    "raw_and_equalized_moments": "field_squared_energy_and_centroid_in_voxel_index_xyz",
+    "observation_view_slices": [
+      {
+        "view": "x",
+        "start": 0,
+        "stop": 840,
+        "component_count": 840
+      },
+      {
+        "view": "y",
+        "start": 840,
+        "stop": 1680,
+        "component_count": 840
+      },
+      {
+        "view": "z",
+        "start": 1680,
+        "stop": 2072,
+        "component_count": 392
+      }
+    ],
+    "view_energy": "sum_of_squared_observation_components_inside_each_frozen_view_slice_divided_by_that_view_component_count",
+    "teacher_centroid": "accepted_v6_zero_initialized_CGLS_K4_teacher_centroid",
+    "teacher_role": "fit_target_and_post_prediction_scoring_only",
+    "teacher_is_never_an_online_feature": true,
+    "pair_truth_or_rho_arrays_interpreted": false,
+    "trajectory_id_power_size_time_index_or_frame_index_as_feature": false,
+    "absolute_BP_energy_as_feature": false,
+    "reason_absolute_energy_is_excluded": "preserve invariance to one global positive observation-amplitude rescaling",
+    "missing_nonfinite_or_nonpositive_energy_fails_closed": true,
+    "no_frame_exclusion_or_outlier_removal": true
+  },
+  "feature_contract": {
+    "candidate_count": 1,
+    "feature_count": 8,
+    "feature_order": [
+      "raw_centroid_centered_scaled_x",
+      "raw_centroid_centered_scaled_y",
+      "raw_centroid_centered_scaled_z",
+      "equalized_minus_raw_centroid_scaled_x",
+      "equalized_minus_raw_centroid_scaled_y",
+      "equalized_minus_raw_centroid_scaled_z",
+      "log_unit_component_energy_x_over_z",
+      "log_unit_component_energy_y_over_z"
+    ],
+    "centroid_scaling": "(centroid-midpoint_xyz)/half_extent_xyz",
+    "centroid_difference_scaling": "(equalized_centroid-raw_centroid)/half_extent_xyz",
+    "view_balance_features": [
+      "natural_log((sum_square_y_x/840)/(sum_square_y_z/392))",
+      "natural_log((sum_square_y_y/840)/(sum_square_y_z/392))"
+    ],
+    "positive_global_observation_scale_invariant": true,
+    "uses_only_observation_one_existing_BP_and_fixed_geometry_pointwise_equalization": true,
+    "extra_full_A_calls_per_frame": 0,
+    "extra_full_AT_calls_per_frame": 0,
+    "feature_finite_check_before_any_fit": true,
+    "no_feature_subset_search": true,
+    "covariance_features_forbidden": true,
+    "no_polynomial_interactions": true,
+    "no_time_or_trajectory_metadata": true,
+    "no_target_derived_online_feature": true
+  },
+  "model_contract": {
+    "family": "axis_structured_multioutput_affine_residual_ridge",
+    "prediction": "for_axis_j_predicted_teacher_centroid_j=raw_centroid_j+half_extent_j*([1,u_j,d_j,q_xz,q_yz]@Theta_j)",
+    "target": "(teacher_centroid-raw_centroid)/half_extent_xyz",
+    "per_axis_design_order": [
+      "constant",
+      "raw_centroid_centered_scaled_same_axis",
+      "equalized_minus_raw_centroid_scaled_same_axis",
+      "log_unit_component_energy_x_over_z",
+      "log_unit_component_energy_y_over_z"
+    ],
+    "per_axis_design_width_including_constant": 5,
+    "coefficient_shape": [
+      3,
+      5
+    ],
+    "total_scalar_parameters": 15,
+    "coefficient_dtype": "float64",
+    "constant_column_is_penalized": true,
+    "lambda_to_infinity_limit": "predicted_teacher_centroid_equals_raw_centroid",
+    "standardization": "training_trajectories_only_per_axis_nonconstant_design_mean_and_population_standard_deviation",
+    "standard_deviation_floor": 1e-12,
+    "below_floor_feature_policy": "center_and_set_standardized_column_to_zero_without_removing_or_reordering_it",
+    "trajectory_balanced_loss": "each_training_trajectory_total_weight_is_one_over_number_of_training_trajectories_and_each_frame_splits_that_weight_equally",
+    "objective": "trajectory_equal_weighted_mean_squared_normalized_centroid_residual_over_all_three_axes_plus_one_shared_lambda_times_squared_frobenius_norm_of_all_three_Theta_rows_including_constants",
+    "solver": "float64_symmetric_eigendecomposition_with_nonnegative_eigenvalue_check",
+    "prediction_clipping": "none",
+    "out_of_field_centroid_prediction": "fail_that_complete_trajectory",
+    "fallback_gate": "none_in_v8",
+    "no_neural_network": true,
+    "shared_lambda_across_all_axes": true,
+    "cross_axis_centroid_or_equalization_terms_forbidden": true,
+    "no_axis_specific_model_family_selection": true
+  },
+  "regularization_selection": {
+    "lambda_grid_in_order": [
+      1e-08,
+      1e-07,
+      1e-06,
+      1e-05,
+      0.0001,
+      0.001,
+      0.01,
+      0.1,
+      1.0,
+      10.0,
+      100.0,
+      1000.0,
+      10000.0
+    ],
+    "fit_outer_evaluation": "for_each_fit_trajectory_hold_it_out_train_on_four_and_select_lambda_by_inner_leave_one_trajectory_out_over_only_those_four",
+    "development_validation_evaluation": "train_on_all_five_fit_and_select_lambda_by_leave_one_trajectory_out_over_only_the_five_fit",
+    "inner_fold_standardization_and_model_fit": "inner_training_trajectories_only",
+    "inner_validation_teacher_use": "compute_one_continuous_normalized_centroid_MSE_for_that_heldout_complete_trajectory_and_lambda_only",
+    "outer_heldout_teacher_access_during_lambda_selection_or_fit": false,
+    "selection_metric": "arithmetic_mean_of_equal_weight_inner_heldout_complete_trajectory_normalized_centroid_MSE_values",
+    "selection_standard_error": "sample_standard_deviation_ddof_1_of_inner_trajectory_MSE_values_divided_by_sqrt_number_of_inner_trajectories",
+    "one_standard_error_rule": "find_lambda_with_minimum_mean_MSE_then_choose_the_largest_lambda_whose_mean_MSE_is_at_most_that_minimum_plus_the_standard_error_at_the_minimizing_lambda",
+    "minimum_mean_tie_break": "largest_lambda",
+    "T0_exact_shift_p90_worst_and_harm_may_not_select_lambda": true,
+    "no_post_result_lambda_change": true,
+    "no_candidate_family_sweep": true
+  },
+  "alignment_and_scoring_contract": {
+    "primary_crossfit_center": "componentwise_median_of_per_trajectory_raw_BP_centroid_medians_using_only_the_training_trajectories_of_that_outer_or_inner_fold",
+    "p14_center": "componentwise_median_of_the_five_fit_trajectory_raw_BP_centroid_medians",
+    "candidate_shift": "round_half_away_from_zero(center-minus-predicted_teacher_centroid)",
+    "teacher_shift": "round_half_away_from_zero(same_center-minus-teacher_centroid)",
+    "raw_control_shift": "round_half_away_from_zero(same_center-minus-raw_BP_centroid)",
+    "equalized_control_shift": "round_half_away_from_zero(same_center-minus-equalized_BP_centroid)",
+    "full_fit_center_comparability_analysis": "secondary_report_only_for_the_five_crossfit_trajectories",
+    "boundary_if_future_t1_is_authorized": "zero_fill",
+    "periodic_wrap": false,
+    "interpolation": "none",
+    "p50": "numpy_median",
+    "p90": "numpy_quantile_q0.9_method_higher",
+    "worst": "maximum_over_all_101_frames_in_the_trajectory",
+    "pooled_frames_may_not_pass_a_trajectory": true
+  },
+  "t0_gate": {
+    "runs_on": "five_outer_crossfit_predictions_plus_one_p14_development_validation_prediction",
+    "pooled_frames_may_not_pass_a_trajectory": true,
+    "pass_requires_every_complete_trajectory": {
+      "centroid_l_infinity_error_p50_maximum_voxels": 0.5,
+      "centroid_l_infinity_error_p90_higher_maximum_voxels": 1.0,
+      "centroid_l_infinity_error_worst_maximum_voxels": 2.0,
+      "rounded_shift_exact_match_fraction_minimum": 0.75,
+      "rounded_shift_within_one_voxel_fraction_minimum": 0.95,
+      "rounded_shift_greater_than_two_voxels_count_maximum": 0
+    },
+    "paired_harm_against_best_raw_or_equalized_control_requires_every_trajectory": {
+      "candidate_centroid_linf_p90_maximum": "min(raw_p90,equalized_p90)+max(0.05,0.05*min(raw_p90,equalized_p90))",
+      "candidate_exact_match_fraction_minimum": "max(raw_exact,equalized_exact)-0.02",
+      "candidate_within_one_fraction_minimum": "max(raw_within_one,equalized_within_one)-0.02"
+    },
+    "raw_and_equalized_controls_are_both_reported_and_enter_harm_envelope": true,
+    "report_each_trajectory_view_balance_p10_p50_p90_and_fit_range_overlap": true,
+    "fit_in_sample_full_model_metrics_are_report_only": true,
+    "missing_fold_prediction_or_metric_fails_closed": true,
+    "pass_action": "authorize_only_a_separate_preregistered_zero_fill_aligned_containment_T1",
+    "failure_action": "stop_shifted_POD_localization_route_and_return_to_a_separately_preregistered_observation_to_full_field_initializer",
+    "no_t1_svd_or_field_decoder_in_v8": true
+  },
+  "cost_memory_and_runtime_contract": {
+    "deployment_full_A_calls_per_frame": 0,
+    "deployment_full_AT_calls_per_frame": 1,
+    "geometry_equalization_pointwise_multiplications_per_frame": 8192,
+    "view_energy_square_and_accumulate_components_per_frame": 2072,
+    "model_multiply_adds_per_frame_upper_bound": 15,
+    "stored_model_float64_parameter_bytes": 120,
+    "stored_feature_scaler_float64_parameter_bytes": 192,
+    "stored_feature_active_mask_bytes": 12,
+    "feature_vector_float64_bytes": 64,
+    "nested_ridge_solutions_for_five_outer_folds_and_one_final_p14_model": 331,
+    "must_measure_fresh_process_end_to_end_wall_seconds": true,
+    "must_measure_fresh_process_peak_RSS_bytes": true,
+    "whole_pipeline_peak_memory_claim_requires_observation_to_prediction_boundary_in_one_fresh_process": true,
+    "training_cost_is_reported_separately_from_deployment_cost": true,
+    "no_A_or_AT_call_reduction_claim_in_v8": true,
+    "no_wall_time_speedup_claim_in_v8": true,
+    "no_memory_reduction_claim_in_v8": true
+  },
+  "isolation_and_validation_contract": {
+    "protocol_commit_must_precede_implementation_commit": true,
+    "formal_runner_must_use_a_clean_detached_worktree_at_the_bound_implementation_commit": true,
+    "private_parent_and_implementation_seals_required_before_numeric_run": true,
+    "formal_fold_fit_process_may_receive_only_training_features_training_teacher_centroids_and_frozen_protocol": true,
+    "formal_fold_predict_process_may_receive_only_frozen_model_heldout_features_raw_centroids_and_frozen_protocol": true,
+    "outer_heldout_teacher_must_not_exist_in_fit_or_predict_process_inputs": true,
+    "scorer_reads_frozen_predictions_and_heldout_teacher_only_after_prediction_publication": true,
+    "independent_validator_must_not_import_the_formal_calibrator_runner_or_scoring_helper": true,
+    "independent_validator_recomputes_features_standardization_all_nested_folds_lambdas_coefficients_predictions_centers_shifts_metrics_harm_and_decision": true,
+    "independent_array_max_absolute_difference_required": 0.0,
+    "formal_result_files_may_not_change_during_independent_validation": true,
+    "private_paths_hashes_coefficients_scalers_predictions_and_teacher_arrays_may_not_enter_public_outputs": true,
+    "result_directory_is_atomic_and_non_overwriting": true,
+    "one_scientific_run_only": true
+  },
+  "claim_boundaries": {
+    "adaptive_mechanism_development": true,
+    "independent_confirmatory_generalization": false,
+    "real_BOST": false,
+    "deployable_full_field_initializer": false,
+    "A_or_AT_call_reduction": false,
+    "wall_time_speedup": false,
+    "memory_reduction": false,
+    "neural_operator_advantage": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "stopping_validation_opened": false,
+    "untouched_test_opened": false
+  }
+}

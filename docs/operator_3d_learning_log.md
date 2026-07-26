@@ -6130,3 +6130,72 @@ observation 到 full-field warm initializer。
 **突破监测：没有算法突破。** 新增的是一条可信机制负结果：几何灵敏度是问题的一
 部分，但固定 `D^{-1}` 不足以成为通用定位器。没有 A/A^T 减少、wall-time 加速、内存
 下降、真实 BOST、泛化或论文成功证据。
+
+## 227. 低容量质心校准只过 3/6：停止 shifted-POD，直接学习完整三维初值
+
+v7.1 之后，我们给“先定位、再平移”的思路最后一次低容量机会。v8 没有上大网络，
+而是只用部署时已经拿得到的 8 个数字：
+
+1. raw `BP=A^T y` 的三个归一化质心；
+2. equalized BP 相对 raw BP 的三个质心改变量；
+3. 三组视角能量中 x/z 与 y/z 的两个 log-ratio。
+
+模型按 x、y、z 三个轴分开，每轴只有 5 个系数，总计 15 个 float64 参数。五条 fit
+轨迹采用外层 leave-one-trajectory-out；每个外层内部仍按完整轨迹选择岭回归正则，
+没有把同一条轨迹的相邻帧拆到训练和验证两边。fit worker 只能收到训练特征与训练
+teacher，predict worker 只能收到冻结模型、heldout 特征和 heldout raw 质心；
+heldout teacher 要等预测原子发布后才允许用于评分。
+
+正式结果不是“平均有提升”，而是逐轨迹判决：
+
+| 轨迹 | candidate p90 | candidate exact | 判决 |
+|---|---:|---:|---|
+| p33-s01 | `0.310` | `98.02%` | PASS |
+| p45-s05 | `1.219` | `18.81%` | FAIL |
+| p58-s03 | `0.601` | `59.41%` | FAIL |
+| p14-s05 | `0.962` | `30.69%` | FAIL |
+| p22-s03 | `0.334` | `80.20%` | PASS |
+| p14-s01，已见开发验证 | `0.233` | `76.24%` | PASS |
+
+独立 outer-crossfit 实际只过 `2/5`；表中的 p14-s01 是已经看过的开发验证，贡献
+另外 `1/1`。所以合计虽是 3/6，正式状态仍是
+`FAIL_T0_OBSERVATION_CENTROID_CALIBRATION_PROXY`，不是“3 条成功、3 条再调一调”。
+三个失败还不是同一种原因：
+
+- p45 的 p90 和 exact 都有材料性改善，但离冻结门仍很远；
+- p58 的连续质心误差略降，整数 exact 却比 equalized control 更差；
+- p14-s05 的 8 特征训练范围覆盖率高达 `93.07%`，模型却几乎退回 raw BP，并触发
+  p90/exact harm。
+
+这也否掉了一个看似方便的事后解释：特征是否落在训练 min/max 内，不能直接当
+fallback。p33 的联合覆盖率是 `0%` 却通过，p14-s05 是 `93.07%` 却失败。覆盖率可以
+帮助理解分布差异，不能替代真实的逐轨迹场精度与伤害门。
+
+独立 validator 没有导入正式 calibrator、runner 或评分 helper，重新计算 8 个特征、
+331 次岭求解、6 个模型、6 条预测和全部判决。43/43 个正式数组的最大绝对差为
+`0.0`，验证前后正式结果树逐字节不变。runner 的 `1.288 s` 与约
+`69.9/39.8 MB` parent/child RSS 只是复用既有 observation、BP 和 teacher 后的校准
+审计成本，不是完整 observation→`A^T`→三维初值的端到端成本，不能写速度或内存成功。
+
+**讲人话：**我们试图只看火焰“中心往哪里走”，再把一个固定模板搬过去。但三维场
+不只有中心位置，还有形状、边界、局部梯度、多个团块和不同视角下的模糊。15 个参数
+可以修正部分系统偏差，却不能把这些被丢掉的信息变回来。继续围绕质心调特征和阈值，
+很可能只是在修一个不够用的代理目标。
+
+所以下一步不再估整数 shift，也不再做 shifted-POD。新的结果前协议要直接研究
+observation/BP 到完整 `16×16×32` warm field 的低容量空间映射，按顺序比较：
+
+1. identity BP；
+2. geometry-equalized BP；
+3. 局部 separable 3D convolution/ridge；
+4. 低模频域 transfer；
+5. 前四项在完整 trajectory 上确有 headroom 后，才训练一个小型 BP-conditioned
+   3D U-Net sentinel。
+
+新门直接看 full-field、gradient、observation、逐轨迹 harm 和同一 CGLS/PCGLS
+refinement 后的 matched accuracy。FNO、UNO、DeepONet 仍在 sentinel 之后；p22
+stopping validation 和两条 untouched test 继续关闭。
+
+**突破监测：没有算法突破。** 这次新增的是可信的路线淘汰证据和更直接的下一实验
+问题。`neural_training_authorized=false`，`algorithm_breakthrough=false`，
+`paper_success=false`。

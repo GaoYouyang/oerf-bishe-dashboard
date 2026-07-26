@@ -1,0 +1,68 @@
+{
+  "schema_version": "oerf-poolfire-c-geometry-equalized-bp-v7-1-addendum-1.0",
+  "status": "FROZEN_BEFORE_V7_1_RESULTS",
+  "purpose": "Repair one pre-observation coordinate canonicalization defect without changing the v7 scientific candidate or gate.",
+  "v7_failure_classification": {
+    "class": "IMPLEMENTATION_FAILURE_BEFORE_OBSERVATION_AUDIT",
+    "final_result_directory_created": false,
+    "scientific_t0_decision_available": false,
+    "geometry_equalized_bp_supported_or_refuted": false,
+    "v7_rerun_allowed": false
+  },
+  "only_authorized_change": {
+    "name": "restore_accepted_v6_coordinate_canonicalization",
+    "raw_coordinate_contract": {
+      "axis_count": 3,
+      "shape_xyz": [80, 80, 200],
+      "dtype": "float32",
+      "finite": true,
+      "strictly_descending": true,
+      "uniform_spacing_tolerance": "max(2e-7, positive_spacing * 2e-5)"
+    },
+    "canonicalization_in_exact_order": [
+      "extract the three separable raw coordinate vectors",
+      "verify every raw vector is finite, uniformly spaced, and strictly descending",
+      "reverse each raw vector",
+      "construct a float64 ascending vector from first endpoint plus canonical spacing times integer index",
+      "require maximum absolute correction no greater than 3e-7",
+      "crop x and y to [24:56] and z to [0:64]",
+      "pair-average adjacent coordinates to obtain the 16x16x32 coarse grid"
+    ],
+    "coordinate_correction_reference_maxima_xyz": [
+      5.432322058851469e-08,
+      5.432322058851469e-08,
+      1.7985289701982765e-07
+    ],
+    "rho_payload_may_be_opened_or_read_for_geometry": false,
+    "geometry_identity_must_match_all_six_sealed_open_trajectories": true
+  },
+  "scientific_contract_unchanged": {
+    "candidate": "BP_eq = w * BP_raw",
+    "sensitivity": "diag(A_transpose_A)",
+    "normalization": "median_positive",
+    "relative_floor": 1e-06,
+    "zero_sensitivity_policy": "multiplier_exactly_zero",
+    "trajectory_count": 6,
+    "frame_count": 606,
+    "raw_control": "accepted_v6_raw_BP",
+    "t0_thresholds": "identical_to_v7",
+    "cost_ledger": "identical_to_v7",
+    "failure_action": "identical_to_v7",
+    "result_rescue_or_threshold_change": false
+  },
+  "new_release_requirements": {
+    "new_clean_detached_implementation_commit": true,
+    "new_unique_parent_and_implementation_seals": true,
+    "old_v7_seals_may_be_modified_or_reused": false,
+    "single_v7_1_execution_after_sealing": true,
+    "independent_coordinate_and_equalizer_recomputation": true,
+    "exclusive_atomic_final_release": true
+  },
+  "claim_boundaries": {
+    "neural_training_authorized": false,
+    "algorithm_breakthrough": false,
+    "real_bost": false,
+    "confirmatory_generalization": false,
+    "paper_success": false
+  }
+}
