@@ -319,7 +319,7 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 当前证据 2026-07-26</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。当前已冻结 7,360 参数的 observation-space DCT-MLP 及两个表示匹配线性对照；独立审计同时发现旧 callback 可绕过调用账、旧 solver 的 breakdown 语义不符合 v10。正式训练与 outer performance 继续关闭，下一步先补 strict solver 和 callback-free proposal receipt。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。当前已冻结 7,360 参数的 observation-space DCT-MLP 及两个表示匹配线性对照；strict CGLS/PCGLS 代码门已完成最终独立复审，但正式 callback-free worker、训练与 outer performance 仍关闭。下一步只做数值 proposal artifact 与一次性 receipt。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
@@ -345,6 +345,7 @@
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_originality_red_team_and_dual_range_revision_2026-07-26.md">原创性红队与 DualRange 修订</a>
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_range_objective_and_uniqueness_contract_v10_2026-07-26.md">v10 目标与独特性合同</a>
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_spectral_model_and_control_freeze_v10_1_2026-07-26.md">v10.1 最小模型与执行阻断</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_strict_solver_code_gate_v10_1_2026-07-26.md">v10.1 strict solver 代码门</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_range_outer_contract_v10.json">v10 机器合同</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_spectral_model_contract_v10_1.json">v10.1 模型合同</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_range_outer_contract_freeze_receipt_v10.json">v10 冻结凭据</a>
@@ -358,8 +359,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert critical">
-      <strong>v10.1 架构已冻结，但正式调用账仍有两个 P0；算法突破为 false</strong>
-      <span>候选固定为 <code>100→32→32→96</code> 的齐次 DCT residual MLP，共 7,360 个 float64 参数；96 参数 diagonal filter 与 9,216 参数 full linear map 已实现为同表示对照。定向联合检查 <code>61 passed</code>，并复现旧 callback 的真实 <code>1A+2A^T</code>、wrapper 仅记 <code>1A+1A^T</code> 的绕账反例。正式 runner 必须改为数值 proposal + receipt，并使用 strict-v10 CGLS；当前没有训练、outer 数字或突破。</span>
+      <strong>v10.1 strict solver 代码门已通过最终复审；算法突破仍为 false</strong>
+      <span>候选仍固定为 <code>100→32→32→96</code> 的齐次 DCT residual MLP，共 7,360 个 float64 参数；新 strict wrapper 不公开 raw handle，初始化与迭代使用一条完整生命周期账，坏 denominator 在 field/residual 更新前失败。定向 <code>26 passed</code>、v10.1 联合 <code>99 passed</code>、PoolFire C 相关 <code>376 passed</code>，最终独立复审在 same-process code-gate 边界内为 <code>P0=0 / P1=0</code>。正式隔离 worker、2A+2A^T 执行、训练和 outer 数字仍不存在。</span>
     </div>
   </header>
 
@@ -377,6 +378,7 @@
           <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_originality_red_team_and_dual_range_revision_2026-07-26.md">读红队修订</a>
           <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_range_objective_and_uniqueness_contract_v10_2026-07-26.md">读 v10 独特性合同</a>
           <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_spectral_model_and_control_freeze_v10_1_2026-07-26.md">读 v10.1 模型与审计</a>
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_strict_solver_code_gate_v10_1_2026-07-26.md">读 strict solver 代码门</a>
           <a class="button" href="../learning_labs/protocols/poolfire_c_dual_range_outer_contract_v10.json">打开机器合同</a>
           <a class="button" href="../learning_labs/protocols/poolfire_c_dual_range_outer_report_template_v10.json">打开空报告模板</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_v9_3_runtime_split_audit_2026-07-26.md">读最新证据</a>
@@ -484,7 +486,7 @@
       </div>
       <div class="check-grid" style="margin-top:13px;">
         <article class="panel"><div class="chips"><span class="chip">C0 · 首先实现</span><span class="chip blue">低风险</span></div><h3 style="margin-top:10px;">Adjoint-Residual Warm Start</h3><p>线性阶段输入一次 `A^T y`；曲光线非线性阶段改用参考态 `J^T[y-F(x_ref)]`。小型 3D U-Net/FNO 只输出 `x0`，再接完全相同的物理迭代。</p></article>
-        <article class="panel"><div class="chips"><span class="chip">C1 · 修订主候选</span><span class="chip gold">中风险</span></div><h3 style="margin-top:10px;">DualRange-K1</h3><p>网络在观测空间输出 <code>z_theta</code>，再由一次 <code>A^T</code> 提升为 range-restricted 三维初值，缓存一次 <code>A x0</code> 后做 CGLS K1。接受分支严格为 <code>2A+2A^T</code>；外层结果不通过就停，不靠换大模型挽救。</p></article>
+        <article class="panel"><div class="chips"><span class="chip">C1 · 修订主候选</span><span class="chip gold">中风险</span></div><h3 style="margin-top:10px;">DualRange-K1</h3><p>网络在观测空间输出 <code>z_theta</code>，再由一次 <code>A^T</code> 提升为 range-restricted 三维初值，缓存一次 <code>A x0</code> 后做 CGLS K1。接受分支的冻结目标是 <code>2A+2A^T</code>；proposal receipt 与隔离 worker 未接通前不能写成已实现，外层结果不通过也不靠换大模型挽救。</p></article>
         <article class="panel"><div class="chips"><span class="chip">C2 · 论文升级</span><span class="chip coral">高风险</span></div><h3 style="margin-top:10px;">Correctable Frontier Training</h3><p>不只训练单步场误差，而是训练经过 1/2/4 次物理细化后的误差，让模型输出“最容易被求解器纠正”的初值。</p></article>
         <article class="panel"><div class="chips"><span class="chip blue">四臂 classical 已完成</span><span class="chip coral">神经门仍关闭</span></div><h3 style="margin-top:10px;">Zero / BP / exact-diag PCGLS / dual ridge</h3><p>五条轨迹、505 帧已完整跑完。K24 参照被半收敛否掉；ridge K2 的调用信号没有通过 p14 与 wall-time 门。v2/v3 又定位到 fit coverage 不足，所以现在不把线性层盲目换成大网络。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
@@ -493,7 +495,11 @@
       </div>
       <div class="alert success" style="margin-top:13px;">
         <strong>最新执行门：v10.1 最小模型与表示匹配 controls 已冻结，正式 worker 仍未放行</strong>
-        <span><code>G_theta</code> 固定为 7,360 参数 DCT-MLP；训练目标固定为同一 K1 后相对 K4 teacher 的 field/gradient/observation 最大 deficiency，并按完整 trajectory 加 worst-11 tail。独立审计已把 callback 绕账和 solver breakdown 变成可重复负证据。下一步只实现 strict solver、proposal receipt、隔离 worker 与 control fit；尚不训练或打开性能数字。<code>p45-s03</code> 与两条 test 继续封存。</span>
+        <span><code>G_theta</code> 固定为 7,360 参数 DCT-MLP；训练目标固定为同一 K1 后相对 K4 teacher 的 field/gradient/observation 最大 deficiency，并按完整 trajectory 加 worst-11 tail。strict solver 已完成 26 项定向测试和两轮独立审计；下一步只实现 callback-free proposal artifact、一次性 receipt、隔离 worker 与 control fit，尚不训练或打开性能数字。<code>p45-s03</code> 与两条 test 继续封存。</span>
+      </div>
+      <div class="alert" style="margin-top:13px;">
+        <strong>strict solver 完成的是可信迭代语义，不是论文性能</strong>
+        <span>正常问题与冻结 reference 逐 checkpoint 等价；退化、非有限值、错误 dtype/shape、篡改 SPD 和外部 NumPy 异常策略均 fail closed。完整准备账与 solver 账已连通，但 <code>capability_isolated_worker_proven=false</code>、<code>outer_evaluation_authorized=false</code>、<code>algorithm_breakthrough=false</code>。</span>
       </div>
     </section>
 

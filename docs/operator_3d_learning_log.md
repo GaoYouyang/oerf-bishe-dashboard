@@ -6874,3 +6874,63 @@ algorithm_breakthrough=false
 先保证模型不能偷用物理算子、每次 `A/A^T` 都真的记得住、所有 arm 遇到数值 breakdown
 时用同一种规则停。下一轮先写 strict solver 和“数值 proposal + 一次性收据”，再做
 隔离 worker；这比跑出一个账不可信的好数字更接近论文。
+
+## 238. strict solver 代码门通过，但 2A+2A^T 仍没有正式落地
+
+这一轮继续没有训练网络，也没有打开 outer、fresh 或 test。先把旧求解器不符合 v10
+的地方单独改成了一条新执行路径。
+
+旧 CGLS/PCGLS 遇到退化 denominator 时会把 `alpha=0` 后继续。新 strict 路径固定为：
+
+```text
+检查 gamma
+-> 调用 A p 并记账
+-> 检查 raw dtype / shape / finite
+-> 检查 denominator > 1e-30
+-> 在临时数组算 candidate field / residual
+-> 检查 finite
+-> 最后才提交状态
+```
+
+正常满秩问题上，新旧 CGLS/PCGLS 的 K1/K2/K4 逐 checkpoint 数值一致；零算子、秩
+退化、有限小分母、NaN/Inf、overflow、错误 dtype/shape 和被篡改 SPD 都会在错误更新
+前失败。
+
+第一次独立审计仍找到了五个 P1：初始化调用可能自报漏账、旧 wrapper 隐式转
+float64、SPD 数组可重新打开、异常分类太宽、失败回执里 residual 状态不够诚实。修完
+后第二次审计又发现公开 raw handle、回执没覆盖 preparation，以及外部 NumPy
+`over=raise` 会绕开统一回执。最终处理为：
+
+```text
+strict wrapper 改为组合，不公开 raw operator
+初始化与求解绑定同一 wrapper 完整生命周期
+raw output 在 cast 前检查
+PCGLS diagonal 入口重验并私有复制
+contract / execution / numerical breakdown 分型
+内部固定 np.errstate，再由 finite 门统一裁决
+失败回执绑定准备账、求解账、累计账和提交前后摘要
+成功回执绑定所有 checkpoint 摘要
+```
+
+最终独立复审在当前 same-process code-gate 边界内得到 `P0=0 / P1=0`：
+
+```text
+strict focused=26 passed
+v10.1 joint=99 passed
+all PoolFire C related regression=376 passed
+strict_v10_numerical_solver_code_gate_implemented=true
+capability_isolated_worker_proven=false
+outer_evaluation_authorized=false
+algorithm_breakthrough=false
+```
+
+**讲人话：**求解器现在不会在坏分母上偷偷走一步，准备阶段和迭代阶段的账也能连起来
+看。但网络还没有被关进一个拿不到 `A/A^T` 的独立进程，物理进程也还不能只靠一次性
+数值收据接收 proposal。所以“接受分支 2A+2A^T”目前仍是数学目标，不是已经跑通的
+正式事实。
+
+完整证据页：
+`docs/poolfire_c_dual_strict_solver_code_gate_v10_1_2026-07-26.md`。
+
+下一步只做 callback-free proposal artifact 与一次性 receipt，再接 sibling
+inference/physics worker；训练授权继续关闭。
