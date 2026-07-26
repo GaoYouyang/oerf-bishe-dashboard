@@ -318,7 +318,7 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 当前证据 2026-07-26</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让可学习算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少完整多视角 forward/adjoint 调用和端到端时间。v6 至 v8 已依次否掉 raw BP 质心、固定几何均衡质心和 15 参数质心校准，shifted-POD 路线停止。v9 已在任何数字结果之前冻结，并完成不读取轨迹的 Cross14 核心代码门：主候选只读 raw/equalized BP，用 14 参数 residual cross-convolution 输出完整 <code>16×16×32</code> warm field，再固定做两步 CGLS；候选完整账为 <code>3A+3A^T</code>，Zero-K4 参照为 <code>4A+4A^T</code>。现在只有协议与核心实现证据，尚无跨轨迹算法结果。</p>
+    <p class="lead">唯一主问题：让可学习算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少完整多视角 forward/adjoint 调用和端到端时间。v6 至 v8 已依次否掉 raw BP 质心、固定几何均衡质心和 15 参数质心校准，shifted-POD 路线停止。v9 已在任何数字结果之前冻结：14 参数 Cross14 输出完整 <code>16×16×32</code> warm field，再固定做两步 CGLS；候选完整账为 <code>3A+3A^T</code>，Zero-K4 参照为 <code>4A+4A^T</code>。数值核心和 fit/deployment/score 三角色合成代码门均已通过，但五条正式轨迹的 outer LOTO 尚未运行，因此仍无跨轨迹算法结果。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
@@ -337,6 +337,7 @@
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_observation_centroid_calibration_v8_result_2026-07-26.md">v8 质心校准结果</a>
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_full_field_low_capacity_protocol_v9_2026-07-26.md">v9 完整三维初值协议</a>
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_full_field_low_capacity_core_gate_v9_2026-07-26.md">v9 Cross14 核心代码门</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_v9_three_role_code_gate_2026-07-26.md">v9 三角色隔离代码门</a>
       <a class="button" href="#senior">复制下一条师兄消息</a>
       <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
     </div>
@@ -347,8 +348,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert">
-      <strong>最新进展：v9 Cross14 无数据核心代码门已通过</strong>
-      <span>协议状态为 <code>PASS_FROZEN_POOLFIRE_C_FULL_FIELD_LOW_CAPACITY_PROTOCOL_V9</code>，实现状态为 <code>PASS_NO_DATA_CROSS14_CORE_CODE_GATE_ONLY</code>。31 项核心测试与 69 项联合测试已验证 reflect 边界、轨迹等权 Gram ridge、canonical 模型、正比例齐次、equalizer 公式拒伪和 exact <code>3A+3A^T</code> 账本。下一门是 fit/deployment/score 三进程与 geometry/operator provenance 绑定；<code>p45-s03</code>、两条 untouched test 和神经训练仍关闭，<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新进展：v9 fit / deployment / score 三角色合成代码门已通过</strong>
+      <span>协议状态 <code>PASS_FROZEN_POOLFIRE_C_FULL_FIELD_LOW_CAPACITY_PROTOCOL_V9</code> 与核心状态 <code>PASS_NO_DATA_CROSS14_CORE_CODE_GATE_ONLY</code> 继续有效；新增提交 <code>12ea0d5</code> 的 <code>PASS_SYNTHETIC_V9_THREE_ROLE_CODE_GATE_ONLY</code>。fit、deployment、score 采用精确文件白名单、外层 request digest、geometry/equalizer/model provenance 和原子 READY；数值 validator 未导入正式核心或 worker，三阶段逐数组最大差均为 <code>0.0</code>，但仍共享 straight-ray operator primitive。19 项三角色测试与 112 项联合回归通过，修复后复审为 <code>P0=0 / P1=0</code>。下一门是实现正式 nested LOTO/one-SE 外层编排器，再做五条 101 帧 outer LOTO、p14 veto、强基线、wall 和整流程 RSS；<code>p45-s03</code>、两条 untouched test 和神经训练仍关闭，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -401,8 +402,8 @@
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
       </div>
       <div class="alert" style="margin-top:13px;">
-        <strong>现在的唯一执行门：冻结 fit/deployment/score 三进程与证据身份</strong>
-        <span>Cross14 数值核心已提交，但还要把 protocol、实现、trajectory 角色、geometry/equalizer、solver、runtime、模型和报告模板绑定到 fail-closed manifest。fit 只能看训练 BP 与 teacher；deployment 只能看冻结模型和 heldout observation；score 必须等 prediction 原子发布后才读 heldout teacher/truth。五条 outer LOTO、p14 veto、同成本 Zero-K3、wall 或 RSS 任一失败都停止 v9；通过前继续不获取 <code>p45-s03</code>。</span>
+        <strong>现在的唯一执行门：实现正式 nested LOTO 外层编排器</strong>
+        <span>fit/deployment/score 的目录角色、geometry/equalizer/model provenance、原子 READY 和数值重算已经在合成 fixture 上闭合；后实现审计同时证明它还不能承担 formal science。下一步必须由外层编排器冻结五个 outer fold、每 fold 的 inner complete-trajectory LOTO、完整 lambda 网格和 one-standard-error rule，并绑定训练数组的 trajectory/geometry/teacher provenance 与 clean detached commit。完成后才生成 101 帧正式请求、跑强对照、wall 和 whole-pipeline RSS；通过前继续不获取 <code>p45-s03</code>。</span>
       </div>
     </section>
 
@@ -441,8 +442,8 @@
         </article>
       </div>
       <div class="alert" style="margin-top:13px;">
-        <strong>突破监测：没有算法突破；v9 现有协议与无数据核心证据</strong>
-        <span><code>PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT</code> 与 v6-v8 独立负证据继续作为前置材料。<code>PASS_FROZEN_POOLFIRE_C_FULL_FIELD_LOW_CAPACITY_PROTOCOL_V9</code> 证明实验合同已锁定；<code>PASS_NO_DATA_CROSS14_CORE_CODE_GATE_ONLY</code> 只证明 Cross14 数值核心和调用账可执行。它们都不是跨轨迹校准、重建、速度、内存或泛化结果。</span>
+        <strong>突破监测：没有算法突破；v9 已到三角色合成代码门</strong>
+        <span><code>PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT</code> 与 v6-v8 独立负证据继续作为前置材料。v9 协议、Cross14 核心和三角色合成代码门只证明实验合同、数值路径、进程文件角色与调用账可执行；它们都不是跨轨迹校准、重建、速度、内存或泛化结果。</span>
       </div>
       <div class="section-head" style="margin-top:20px;">
         <div>
@@ -543,13 +544,14 @@
       </figure>
       <div id="full-field-v9-gate" class="section-head" style="margin-top:22px;">
         <div>
-          <div class="eyebrow">v9 完整三维初值门 · 协议冻结 + 无数据核心 PASS</div>
+          <div class="eyebrow">v9 完整三维初值门 · 协议 + 核心 + 三角色合成代码门 PASS</div>
           <h3>Cross14 只学 equalized BP 到 K4 的局部残差</h3>
-          <p>主候选读取 raw/equalized BP 两个通道，各用 <code>center, ±x, ±y, ±z</code> 七个共享权重，共 14 个参数。核心实现已验证 reflect 边界、轨迹等权 RMS/Gram、模型防篡改、正比例齐次和 exact-K2 账本；它仍没有接触正式轨迹。预测后固定做两步 CGLS，完整账为 <code>3A+3A^T=6</code>，必须同时对照同成本 Zero-K3 和 8 调用的 Zero-K4。</p>
+          <p>主候选读取 raw/equalized BP 两个通道，各用 <code>center, ±x, ±y, ±z</code> 七个共享权重，共 14 个参数。数值核心已验证 reflect 边界、轨迹等权 RMS/Gram、模型防篡改、正比例齐次和 exact-K2 账本；三角色 worker 又把训练、部署和评分的可见文件拆开。预测后固定做两步 CGLS，完整账为 <code>3A+3A^T=6</code>，必须同时对照同成本 Zero-K3 和 8 调用的 Zero-K4。</p>
         </div>
         <div class="actions">
           <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_full_field_low_capacity_protocol_v9_2026-07-26.md">读 v9 讲人话协议</a>
           <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_full_field_low_capacity_core_gate_v9_2026-07-26.md">读 Cross14 核心证据</a>
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_v9_three_role_code_gate_2026-07-26.md">读三角色隔离证据</a>
           <a class="button" href="../learning_labs/protocols/poolfire_c_full_field_low_capacity_audit_v9.json">打开机器协议</a>
           <a class="button" href="../learning_labs/protocols/poolfire_c_v9_fresh_holdout_selection_receipt.json">打开 holdout 选择凭据</a>
         </div>
@@ -571,14 +573,14 @@
           <p><code>p22-s01</code> 早期已用于 depth/半收敛诊断，v9 不再使用。<code>p45-s03</code> 只在项目受管数据与结果范围内具有“锁模前零 payload 痕迹”证据；这不是全文件系统的密码学盲测证明，也不是 untouched test。</p>
         </article>
         <article class="panel">
-          <div class="chips"><span class="chip blue">协议 PASS</span><span class="chip blue">Core PASS</span><span class="chip coral">算法结果未运行</span></div>
-          <h3 style="margin-top:10px;">代码门通过，数据门仍关闭</h3>
-          <p>协议 commit <code>10415cf</code> 早于核心 commit <code>fc97cd7</code>。核心 31 项、联合 69 项测试通过；runner 已拒绝任意 callable 与内部不一致的 equalizer，但正式 geometry/operator identity、进程级 truth 隔离和 trajectory split 仍待 manifest 证明。</p>
+          <div class="chips"><span class="chip blue">协议 PASS</span><span class="chip blue">Core PASS</span><span class="chip blue">三角色合成 PASS</span><span class="chip coral">算法结果未运行</span></div>
+          <h3 style="margin-top:10px;">角色门通过，正式轨迹门仍关闭</h3>
+          <p>fit 只看训练 BP/teacher，deployment 只看冻结模型、observation 和 geometry，score 等原子 prediction 后才读 truth。三角色 19 项、联合 112 项测试通过；数值重算三阶段最大差 <code>0.0</code>，但共享 straight-ray operator primitive。worker 已明确拒绝任何 formal scope；这仍只是 2 帧合成 fixture，不证明 nested LOTO、trajectory split、wall、RSS 或算法优势。</p>
         </article>
       </div>
       <div class="alert" style="margin-top:13px;">
-        <strong>当前判决：无数据核心已过门；下一步实现隔离 worker，不可读取 p45-s03</strong>
-        <span>正式状态为 <code>PASS_NO_DATA_CROSS14_CORE_CODE_GATE_ONLY</code>。下一增量是 fail-closed fit/deployment/score manifest、角色化文件 allowlist、geometry/equalizer/solver/runtime digest、原子 prediction 发布和不导入正式 helper 的独立 validator。五条 outer LOTO 与 p14 veto 全部通过前不生成 holdout release；当前 <code>algorithm_breakthrough=false</code>。</span>
+        <strong>当前判决：三角色合成代码门已过；下一步实现 formal LOTO orchestrator</strong>
+        <span>新增状态为 <code>PASS_SYNTHETIC_V9_THREE_ROLE_CODE_GATE_ONLY</code>，数值复算状态为 <code>PASS_SYNTHETIC_V9_THREE_ROLE_NUMERICAL_RECOMPUTATION_WITH_SHARED_OPERATOR_PRIMITIVE_ONLY</code>。下一增量先实现完整 nested LOTO、one-standard-error 选参、fit 数据语义 provenance 和 clean detached run，再生成五条 101 帧请求。全部通过前不生成 p45-s03 release；当前 <code>formal_v9_scientific_gate_implemented=false</code>、<code>formal_101_frame_run_completed=false</code>、<code>algorithm_breakthrough=false</code>。</span>
       </div>
     </section>
 
@@ -846,7 +848,7 @@
         const next = nextUnlockedWeek();
         const fCount = checkedCount(state.foundations, guide.foundationChecks);
         const pace = Number(state.profile.hours) <= 6 ? '建议把每个关卡拆成两周' : Number(state.profile.hours) >= 15 ? '可将阅读与代码并行，但不跳过验收' : '按一周一关执行';
-        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v9 的 14 参数 Cross14 无数据核心已经通过 31 项单测：只看 raw/equalized BP，预测完整 16×16×32 warm field，再固定做 K2 refinement。当前只实现 fit/deployment/score 三进程、geometry/operator provenance 绑定和独立 validator；p45-s03 holdout、两条 test、3D U-Net、FNO、UNO、DeepONet 全部继续等待。';
+        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v9 的 14 参数 Cross14 核心和 synthetic-only fit/deployment/score 代码门已经通过。当前先实现绑定 nested LOTO、one-SE、训练数组语义 provenance 与 clean commit 的 formal orchestrator，再运行五条 101 帧和强基线；p45-s03 holdout、两条 test、3D U-Net、FNO、UNO、DeepONet 全部继续等待。';
         document.getElementById('recommendation').innerHTML = `
           <div class="next-code">当前建议 · ${escapeHtml(next.id)}</div>
           <h3>${escapeHtml(next.title)}</h3>
@@ -987,7 +989,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄，C 路线不变：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\nv6-v8 已依次否掉 raw BP 质心、固定几何均衡质心和 15 参数 observation-visible 质心校准，shifted-POD 路线停止。v8 的 outer-crossfit 只通过 2/5，已见 p14 development 通过 1/1；正式状态是 FAIL_T0_OBSERVATION_CENTROID_CALIBRATION_PROXY。\n\nv9 已在任何结果前冻结：主候选是两通道 14 参数 Cross14 residual ridge。输入 q=G(A^T y) 和 e=G(Wq)，target 是 K4 teacher-e，预测完整 16×16×32 x0 后固定做两步 CGLS。完整账是 3A+3A^T=6 次，对照 Zero-K4 的 4A+4A^T=8 次，并且必须同场比较同成本 Zero-K3、PCGLS、normalized BP、两种 observable line search、44 参数 DCT low-mode 和 dual ridge。\n\n无数据核心已经提交为 fc97cd7：31 项核心测试、69 项联合测试通过，覆盖 reflect 边界、轨迹等权 Gram ridge、模型防篡改、正比例齐次、equalizer 公式拒伪和 exact 3A+3A^T 账本。正式状态只到 PASS_NO_DATA_CROSS14_CORE_CODE_GATE_ONLY；还没有跨轨迹精度、wall、RSS 或算法优势。\n\n证据角色已按历史纠正：p14 只能作 mandatory development veto；p22-s01 早期已经用于 depth/半收敛诊断，不能再当 fresh stopping validation。项目受管 fresh proxy holdout 预指定为尚未获取的 p45-s03，但这不是全文件系统盲测证明，也不是 untouched test。下一步先绑定 fit/deployment/score 三进程、geometry/equalizer、solver、runtime 和报告模板；五条 outer LOTO 与 p14 veto 全过前不允许打开 p45-s03。两条 test 仍未打开。\n\n现在只有协议和无数据核心代码门 PASS，数字算法尚未运行，algorithm_breakthrough=false。\n\n当前仍只是公开 CFD straight-ray morphology proxy，不是真实 BOST；rho→Delta n、相机和 pixel displacement 尚未闭合。\n\n后续需要组里确认：\n1. 真正希望重建 rho、n、n-1 还是 Delta n，reference/gauge 怎么定义；\n2. 相机内外参、detector ROI、forward/adjoint、现用 baseline 和停止规则；\n3. 公开方法过门后，哪份最小组内 BOST 样例可做迁移检查。`;
+        document.getElementById('briefText').value = `师兄，C 路线不变：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\nv6-v8 已依次否掉 raw BP 质心、固定几何均衡质心和 15 参数 observation-visible 质心校准，shifted-POD 路线停止。v8 的 outer-crossfit 只通过 2/5，已见 p14 development 通过 1/1；正式状态是 FAIL_T0_OBSERVATION_CENTROID_CALIBRATION_PROXY。\n\nv9 已在任何结果前冻结：主候选是两通道 14 参数 Cross14 residual ridge。输入 q=G(A^T y) 和 e=G(Wq)，target 是 K4 teacher-e，预测完整 16×16×32 x0 后固定做两步 CGLS。完整账是 3A+3A^T=6 次，对照 Zero-K4 的 4A+4A^T=8 次，并且必须同场比较同成本 Zero-K3、PCGLS、normalized BP、两种 observable line search、44 参数 DCT low-mode 和 dual ridge。\n\n无数据核心提交 fc97cd7 已通过 31 项核心测试。最新把流程拆成 fit/deployment/score 三个独立目录角色：fit 只看训练 BP 与 K4 teacher；deployment 只看冻结模型、heldout observation 和同源 geometry/equalizer；score 等 prediction 原子发布后才读 heldout teacher/truth。后实现审计曾发现 worker 可绕过 nested LOTO、score observation 未绑定和 claim 字段漂移；现已禁止所有 formal scope，绑定 deployment observation，score 复算同一 observation/geometry 的 Zero-K4，并拒绝非零 gauge。三角色 19 项、联合 112 项回归通过；数值 validator 重写 fit、K2 和三项指标，逐数组最大差为 0.0，但共享 straight-ray operator primitive，不能叫完整独立协议验证。正式状态只到 PASS_SYNTHETIC_V9_THREE_ROLE_CODE_GATE_ONLY；这是 2 帧合成代码门，还没有五条跨轨迹精度、wall、RSS 或算法优势。\n\n证据角色已按历史纠正：p14 只能作 mandatory development veto；p22-s01 早期已经用于 depth/半收敛诊断，不能再当 fresh stopping validation。项目受管 fresh proxy holdout 预指定为尚未获取的 p45-s03，但这不是全文件系统盲测证明，也不是 untouched test。下一步先实现绑定 outer/inner complete-trajectory LOTO、one-standard-error 选参、训练数据语义 provenance 和 clean detached commit 的外层编排器，再生成五条 101 帧请求、比较强基线并测 wall/RSS；全部过门前不允许打开 p45-s03。两条 test 仍未打开。\n\n现在只有协议、核心和三角色合成代码门 PASS，数字算法尚未运行，formal_v9_scientific_gate_implemented=false，algorithm_breakthrough=false。\n\n当前仍只是公开 CFD straight-ray morphology proxy，不是真实 BOST；rho→Delta n、相机和 pixel displacement 尚未闭合。\n\n后续需要组里确认：\n1. 真正希望重建 rho、n、n-1 还是 Delta n，reference/gauge 怎么定义；\n2. 相机内外参、detector ROI、forward/adjoint、现用 baseline 和停止规则；\n3. 公开方法过门后，哪份最小组内 BOST 样例可做迁移检查。`;
       }
 
       function bindProfile() {

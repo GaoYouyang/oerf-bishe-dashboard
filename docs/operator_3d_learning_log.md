@@ -6336,3 +6336,71 @@ paper_success=false
 下一门是绑定 protocol、代码提交、trajectory 角色、geometry/equalizer、solver、
 runtime 和报告模板的三进程 manifest。五条 outer LOTO 与 p14 veto 全部过门前，
 继续不获取 `p45-s03`。
+
+## 230. 三个目录角色分家了，但审计禁止我们把它叫成正式实验
+
+上一节说 Cross14 的数值零件已经写完，缺的是证据角色。这一轮把流程真正拆成了三个
+独立命令：
+
+1. `fit` 只收到训练轨迹的 raw/equalized BP 和 K4 teacher；
+2. `deployment` 只收到冻结模型、heldout observation 和冻结 geometry；
+3. `score` 必须等 initializer 与 K2 candidate 原子发布完成，才收到 teacher/truth
+   做离线评价。
+
+可以把它理解成考试：出题人先把复习材料交给训练进程；考生进考场时只拿题目和已经
+封好的模型；交卷且封存以后，阅卷进程才拿到标准答案。这样比在一个 Python 脚本里
+写一句“这里不读取 truth”更可信。
+
+每个请求目录都有精确白名单。多一个 `.DS_Store`、truth 文件、目录、软链接或硬链接，
+都会在运行前失败。请求还绑定了外层 digest、全部关键源码、Python/NumPy/BLAS、
+trajectory 角色、geometry 坐标、从同一个 operator 重建的 equalizer、模型 payload
+和上一阶段 READY/checksum。输出先写临时目录，逐文件 fsync，最后原子发布且拒绝覆盖。
+
+这次的数值核对不是“又跑了一遍同一个函数”。validator 没有导入正式 Cross14、
+三角色 worker、baseline CGLS 或评分 helper，而是重新写 14 维特征、Gram/EVD ridge、
+geometry/equalizer、K2 和三种 metric。合成 fixture 上 fit、deployment、score 的
+逐数组最大绝对差都是 `0.0`。但它仍复用了正式 straight-ray operator primitive，
+所以准确说法是“上层数值路径独立重写”，不是完整 operator 独立验证。
+
+更重要的是，后实现审计没有因为测试全绿就放行。它抓到三个 P0：
+
+1. 原 worker 接受调用者手选 lambda，甚至只给一条 fit 轨迹，也可能写出 formal PASS，
+   绕过协议冻结的 inner LOTO 和 one-standard-error rule；
+2. fit 的三个数组只有字节 SHA，没有 trajectory-axis、pair registry、geometry 和
+   teacher generation 的语义凭据；
+3. score 没有证明它看到的 observation 与 deployment 相同，也没有证明 teacher 是
+   由同一 observation/geometry 的 Zero-K4 产生。
+
+我们没有把这些问题改名成“残余风险”后继续跑数。当前 worker 已被严格降级为
+synthetic-only：即使请求 101 帧 formal run 也会失败。deployment receipt 新增
+observation SHA；score 必须逐字节匹配，并重新运行同一 observation/geometry 下的
+Zero-K4 与外部 teacher 核对；truth、teacher、candidate、initializer 都必须满足
+`1e-12` gauge 门。claim 字段也改为与冻结协议逐字一致。
+
+部署主账仍是每帧 `3A+3A^T`。score 旁账现在是 `6A+4A^T`：其中 `4A+4A^T` 用于
+同源 K4 复算，另外 `2A` 投影 candidate 和 teacher；这不能混进部署成本。gradient
+metric 使用真实网格间距的三个方向 forward difference 拼接。
+
+新增负向测试会拒绝 formal 101 帧、部署后 observation 换包、伪造 teacher 和非零
+gauge truth。源码提交为 `12ea0d5`；三角色定向测试现在是 `19 passed`，联合回归
+`112 passed`。修复后的第二轮只读复审结论是当前 synthetic-only 声明范围内
+`P0=0 / P1=0`。
+
+**讲人话：**我们先搭了三个房间，但审计发现“谁决定参赛模型”和“标准答案从哪来”
+还没有正式门禁。因此现在宁可锁死正式模式，也不拿两帧合成演示冒充比赛。下一步先
+写外层裁判：机器固定五个 outer fold、每个 inner LOTO、全部 lambda、one-SE、训练
+数组来源和 clean commit；然后才跑五条 101 帧、p14 veto、强基线、wall 与整流程 RSS。
+
+当前严格状态：
+
+```text
+PASS_SYNTHETIC_V9_THREE_ROLE_CODE_GATE_ONLY
+PASS_SYNTHETIC_V9_THREE_ROLE_NUMERICAL_RECOMPUTATION_WITH_SHARED_OPERATOR_PRIMITIVE_ONLY
+formal_v9_scientific_gate_implemented=false
+formal_101_frame_run_completed=false
+independent_full_protocol_validation_proven=false
+development_LOTO_completed=false
+wall_time_speedup=false
+algorithm_breakthrough=false
+paper_success=false
+```
