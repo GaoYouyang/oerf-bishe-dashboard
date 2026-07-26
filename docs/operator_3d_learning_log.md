@@ -6333,11 +6333,129 @@ algorithm_breakthrough=false
 paper_success=false
 ```
 
+## 230. 同一个审计脚本为什么先失败，拆成两个运行时后才真正可信
+
+正式五个 outer fit 和一个 p14 development fit 已经完成，但我们没有马上看它们在
+heldout 轨迹上表现怎样。先要证明两件事：训练数组真的是由冻结物理代理生成的，六个
+模型也真的是由这些数组按 nested LOTO 和 one-SE 规则拟合的。
+
+第一版 v9.2 想在一个进程里同时逐位证明两件事，结果正确地 fail closed。进一步取证
+发现，旧 source artifact 是 Python 3.13.9 / NumPy 2.3.5 生成，正式 fit 是
+Python 3.11.5 / NumPy 2.4.6 生成。旧运行时能够让 606 个 K4 teacher 与保存结果逐位
+相同，新运行时能够让六个 ridge model 与保存结果逐位相同；交换运行时会出现最后几位
+浮点差异。
+
+这里最容易犯的错，是看见差异只有 `1e-15` 左右，就临时加一个 tolerance 让测试绿。
+我们没有这样做。提交 `9764ce3` 先冻结双运行时协议，明确两个角色各自能看什么、能做
+什么、两份 receipt 怎样绑定；之后提交 `fddb40b` 才实现 validator。
+
+Source role 的正式结果是：
+
+```text
+PASS_RUNTIME_BOUND_SOURCE_TO_REQUEST_V9_3
+```
+
+它重算六条轨迹 606 帧的 raw BP、sensitivity、multiplier、equalized BP 和 K4
+teacher，五类最大绝对差都是 `0.0`。调用账也是 `0A+606A^T` 与
+`2424A+2424A^T`。它没有读取 fit outputs，也没有运行 nested fit。
+
+Fit role 的正式结果是：
+
+```text
+PASS_RUNTIME_BOUND_SOURCE_AND_NESTED_FIT_BATCH_V9_3
+```
+
+它先确认 Source receipt 仍绑定当前未变化的 request tree，再独立重算六个模型。
+五个 outer heldout 恰好各覆盖一次，p14 单独报告；六行都选择 `lambda=1e-4`，全部
+selection 和最终 14 参数模型逐元素一致。26 项测试还会拒绝错误运行时、过期 receipt、
+软链接、错误 commit、伪造 PASS 和抢跑 breakthrough。
+
+**讲人话：**以前我们只知道“厨房交出了六盘菜”。现在分别由食材检验员证明原料来自
+正确供应链，再由另一个厨师按同一菜谱重做六盘且完全一致。我们仍然没有让评委打分，
+所以不知道菜好不好吃；但至少不再怀疑端上来的东西是不是换了原料或改了配方。
+
+这次是**证据链突破**，不是算法突破。它只授权下一步在看任何 outer 数字前冻结评分
+协议。当前仍是：
+
+```text
+outer_scoring_authorized=false
+matched_accuracy_proven=false
+wall_time_speedup=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+## 231. “独一无二”不能靠改名字：Cross14 降级为哨兵，GEOK-Warm 才是方法假设
+
+这一轮把我们的优化目标重新写成固定顺序：
+
+1. 先让最终 field、gradient、observation 精度逐轨迹等价；
+2. 再比较完整 `A/A^T`；
+3. 然后实测 fresh-process wall；
+4. 最后看 whole-pipeline peak RSS；
+5. 任一坏轨迹的 harm 不能被平均值遮住。
+
+这也澄清了 Cross14 的身份。它只有 14 个局部共享权重，很适合检查“自由局部三维
+residual 有没有跨轨迹 headroom”，也适合当可解释 control。但 BOST 神经重建、
+learned warm start、neural operator + Krylov、对角 sensitivity equalization 都有
+明确先例，所以 Cross14 不能撑起“新算法”。
+
+更关键的物理问题是零空间。任意 3D CNN/FNO 输出的初值可能包含
+`Null(A)` 分量。后续 CGLS 的修正位于 `Range(A^T)`，无法消除这部分错误；网络图像
+可能看起来平滑、measurement residual 也可能不错，但不可观测幻觉会一直留在最终场。
+
+因此新的论文级假设暂命名为 GEOK-Warm：
+
+```text
+q0 = P A^T y
+e0 = P D^-1 q0
+q1 = P A^T A q0
+(c0,c1) = G_theta(deployment-visible summaries)
+h = c0 q0 + c1 q1
+```
+
+`e0` 只提供 geometry sensitivity 条件；真正的 warm field `h` 被限制在
+`K2(A^T A,A^T y)`，因此位于 `Range(A^T)`。再用 `A h` 做解析 measurement-residual
+尺度校准，最后交给不变的 CGLS/PCGLS。网络不直接吐最终重建，也不在每次迭代中替代
+真实 forward。
+
+它仍不能保证成功。我们只能说：在已经核对的 NeRIF、NeDF、Neural Refractive Index
+Primitives、JMLR learned warm starts、NOWS、FCG-NO、2026 年 6 月的 Spectrally
+Safe Neural Operator Warm-Starts 和七项高风险专利中，尚未找到与“BOST
+geometry-equalized observable + 可观测 Krylov 受限初值 + 未修改 solver +
+matched-accuracy 成本门 + deployment-visible fallback”完整同构的单项。每个组成
+部分都有近邻，所以独特性来自完整结构、理论命题和真实效果，不来自名字。最新近邻
+也说明“solver-safe warm start”不能再泛称原创；我们必须证明的是 BOST 中
+`Null(A)` 不可纠正风险与 `Range(A^T)` 受限初值的特定机制。
+
+**讲人话：**不能保证全世界从来没人有过相似念头。能保证的是，我们不会把别人做过
+的零件重新命名；我们会逐项写清来源，把初值限制在物理可纠正空间，并用最强近邻和
+真实成本去打。如果最后赢了，差异清楚、证据完整；如果没赢，也会留下一个可信、可
+复现、真正属于自己的负结果。
+
+下一步仍按顺序：
+
+1. 结果前冻结 Cross14 outer prediction/score 与全部强 controls；
+2. 先看自由局部 residual 是否有 headroom；
+3. 有 headroom 才单独冻结 GEOK-Warm，不用大模型救失败；
+4. 通过完整 trajectory、fresh holdout、wall/RSS 后，再申请真实 BOST 迁移；
+5. 投稿前重跑文献/专利 claim chart，并询问师兄组内是否有未发表近邻。
+
+当前：
+
+```text
+Cross14 = sentinel
+GEOK-Warm = unvalidated method hypothesis
+global_uniqueness_proven = false
+defensible_novelty_space_identified = true
+algorithm_breakthrough = false
+```
+
 下一门是绑定 protocol、代码提交、trajectory 角色、geometry/equalizer、solver、
 runtime 和报告模板的三进程 manifest。五条 outer LOTO 与 p14 veto 全部过门前，
 继续不获取 `p45-s03`。
 
-## 230. 三个目录角色分家了，但审计禁止我们把它叫成正式实验
+## 232. 补记：三个目录角色分家了，但审计禁止我们把它叫成正式实验
 
 上一节说 Cross14 的数值零件已经写完，缺的是证据角色。这一轮把流程真正拆成了三个
 独立命令：
