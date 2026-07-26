@@ -309,16 +309,16 @@
       <a href="#latest-gate">算法与实验</a>
       <a href="#trajectory-gate">多轨迹协议</a>
       <a href="#representation-gate">表示机制</a>
-      <a href="#transport-proxy-gate">输运门</a>
+      <a href="#transport-proxy-gate">输运与校准门</a>
       <a href="#g0-evidence">真实 CFD 代理</a>
       <a href="#path">16 周学习</a>
       <a href="../learning_library/index.html">教材讲义库</a>
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 2026-07-23</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-26</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让可学习算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少完整多视角 forward/adjoint 调用和端到端时间。五条开放 PoolFire 轨迹的四臂 classical 表已经完成；v4/v5.1 已排除“只扩 fit”与“继续堆固定全局 PCA rank”。v6 又确认三维结构存在约 2.596 体素的输运，但原始 <code>BP=A^T y</code> 的质心带有强工况偏差，不能直接驱动统一整数平移。协议已在 SVD 前停止；下一步先测固定几何灵敏度均衡 <code>D^{-1}A^T y</code>，仍不训练神经网络。</p>
+    <p class="lead">唯一主问题：让可学习算子给物理迭代一个更好的三维初值，在最终精度相同的前提下，减少完整多视角 forward/adjoint 调用和端到端时间。五条开放 PoolFire 轨迹的四臂 classical 表已经完成；v4/v5.1 已排除“只扩 fit”与“继续堆固定全局 PCA rank”。v6 证明 raw <code>BP=A^T y</code> 存在工况相关定位偏差，v7.1 证明固定 <code>D^{-1}A^T y</code> 仍不能跨工况定位。v8 再用 8 个部署可见特征、15 个参数和严格 trajectory-level nested LOTO 检验低容量质心校准：独立 outer-crossfit 只通过 2/5，已见开发验证通过 1/1，合计 3/6 但正式 FAIL。因此 shifted-POD 质心代理路线已经停止，下一步转向结果前预注册的 observation/BP→完整 <code>16×16×32</code> warm field 低容量空间映射。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
@@ -334,6 +334,7 @@
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_cross_trajectory_experiment_contract_2026-07-25.md">跨轨迹实验合同</a>
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_semiconvergence_coverage_diagnosis_2026-07-25.md">半收敛与覆盖诊断</a>
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_transport_alignment_reading_route_2026-07-25.md">输运对齐阅读路线</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_observation_centroid_calibration_v8_result_2026-07-26.md">v8 质心校准结果</a>
       <a class="button" href="#senior">复制下一条师兄消息</a>
       <a class="button" href="https://huggingface.co/datasets/realm-bench/realm-bench-PoolFire/tree/main" target="_blank" rel="noreferrer">PoolFire 数据</a>
     </div>
@@ -344,8 +345,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert">
-      <strong>最新进展：v6 T0 fail-closed，输运存在但 raw BP 定位不可靠</strong>
-      <span>父数据协议仍为 <code>PASS_FROZEN_POOLFIRE_TRAJECTORY_PROTOCOL</code>。Stage 1 只看 observation，六条轨迹共形成 <code>606</code> 个 BP，总账 <code>0 A + 606 A^T</code>；Stage 2 才生成 <code>606</code> 个 K4 teacher，总账 <code>2424 A + 2424 A^T</code>。独立 validator 从冻结 observation 重算全部 teacher、质心、shift 与 T0，六类数组最大绝对差均为 <code>0</code>。teacher 最大 q10-q90 质心跨度为 <code>2.596</code> 体素，说明移动真实存在；但 <code>p=45kw_size=05</code> 的 BP-target 质心 p50/p90/worst 为 <code>1.181 / 1.847 / 2.108</code> 体素，整数 shift 完全一致率仅 <code>14.85%</code>。正式状态为 <code>FAIL_T0_BP_INTEGER_TRANSLATION_PROXY</code>，T1/SVD 未运行，p22 stopping validation 与 test 未打开，<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新进展：v8 低容量质心校准正式 FAIL，shifted-POD 路线停止</strong>
+      <span>父数据协议仍为 <code>PASS_FROZEN_POOLFIRE_TRAJECTORY_PROTOCOL</code>。v8 使用 8 个部署可见特征、15 个 float64 参数和 trajectory-level nested LOTO；独立 outer-crossfit 为 2/5 PASS，已见开发验证为 1/1 PASS，合计 3/6 但正式 FAIL。<code>p45-s05</code> 虽有材料性改善，p90 仍为 <code>1.219</code>、exact 仅 <code>18.81%</code>；<code>p58-s03</code> 的连续质心略好但 exact 低于 equalized control；<code>p14-s05</code> 则几乎退回 raw BP 并触发 harm。独立 validator 重算 43/43 个数组，最大绝对差为 <code>0.0</code>。正式状态为 <code>FAIL_T0_OBSERVATION_CENTROID_CALIBRATION_PROXY</code>。p22 stopping validation、两条 untouched test 与神经训练均未打开，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -395,11 +396,11 @@
         <article class="panel"><div class="chips"><span class="chip blue">四臂 classical 已完成</span><span class="chip coral">神经门仍关闭</span></div><h3 style="margin-top:10px;">Zero / BP / exact-diag PCGLS / dual ridge</h3><p>五条轨迹、505 帧已完整跑完。K24 参照被半收敛否掉；ridge K2 的调用信号没有通过 p14 与 wall-time 门。v2/v3 又定位到 fit coverage 不足，所以现在不把线性层盲目换成大网络。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
-        <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 within-one 也只有 <code>63.37%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
       </div>
       <div class="alert" style="margin-top:13px;">
-        <strong>现在的唯一执行门：用固定几何灵敏度消除 raw BP 的系统定位偏差</strong>
-        <span>raw BP 质心门已经失败，不能绕过它运行 target-oracle aligned SVD。下一候选只允许固定 <code>D^{-1}A^T y</code>，其中 <code>D≈diag(A^T A)</code> 来自冻结几何；每帧仍是一次完整 <code>A^T</code>，额外只有逐体素乘法。先按同一六轨迹 T0 门独立复算；全部过门才重新授权 zero-fill 整数对齐 T1。若仍失败，再研究 fit-only、observation-visible 的轻量校准，不直接跳到 3D U-Net、FNO、UNO 或 DeepONet。</span>
+        <strong>现在的唯一执行门：预注册 observation/BP→完整三维场的低容量 warm initializer</strong>
+        <span>v8 已按事前规则否掉“先校准质心、再做整数平移”的 shifted-POD 入口，因此不再调质心特征、<code>lambda</code>、shift 阈值或 Jacobi 变体。下一协议必须直接预测完整 <code>16×16×32</code> K4 warm field 或 residual，先公平比较 identity BP、geometry-equalized BP、局部 separable 3D convolution/ridge 和低模频域 transfer。只有这些低容量空间基线在完整 trajectory 上显示稳定 headroom，才允许预注册一个小型 BP-conditioned 3D U-Net sentinel；FNO、UNO、DeepONet 继续排在其后。</span>
       </div>
     </section>
 
@@ -439,7 +440,7 @@
       </div>
       <div class="alert" style="margin-top:13px;">
         <strong>突破监测：没有算法突破；五条轨迹的 classical 表已经完成</strong>
-        <span><code>PASS_TWO_VALIDATION_TRAJECTORIES_READY</code>、<code>PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT</code> 和 <code>PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT</code> 继续作为冻结前置证据。v4、v5.1 与 v6 均按独立复算门推进。最新科学状态是 <code>FAIL_T0_BP_INTEGER_TRANSLATION_PROXY</code>：固定全局表示失败后，raw BP 单一整数平移也未通过逐轨迹定位门。这不能写成泛化、速度或神经算子成功。</span>
+        <span><code>PASS_TWO_VALIDATION_TRAJECTORIES_READY</code>、<code>PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT</code> 和 <code>PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT</code> 继续作为冻结前置证据。v4 至 v8 都按独立复算门推进。最新科学状态是 <code>FAIL_T0_OBSERVATION_CENTROID_CALIBRATION_PROXY</code>：raw BP、固定几何均衡和低容量 observation-visible 质心校准都没有形成跨轨迹可靠定位器，shifted-POD 入口因此停止。这不能写成泛化、速度或神经算子成功。</span>
       </div>
       <div class="section-head" style="margin-top:20px;">
         <div>
@@ -503,6 +504,40 @@
       <figure style="margin-top:14px;">
         <img src="../assets/poolfire_c_bp_transport_alignment_v6.png" alt="PoolFire C 路线 v6 六条轨迹的 raw BP 质心误差、整数 shift 一致率与冻结阈值" />
         <figcaption>teacher 最大 q10-q90 质心跨度 2.596 体素，说明输运存在；p45-s05 质心 p90 为 1.847 体素、exact shift 仅 14.85%。这是 raw-BP 统一平移的可信负结果，不是算法突破。</figcaption>
+      </figure>
+      <div id="geometry-equalized-bp-gate" class="section-head" style="margin-top:22px;">
+        <div>
+          <div class="eyebrow">v7.1 几何灵敏度均衡门 · sealed single run</div>
+          <h3>固定 D⁻¹ 修正了部分偏差，但五条轨迹的 exact shift 仍失败</h3>
+          <p>v7.1 只恢复了与 v6 一致的降序坐标规范化，候选仍是固定 <code>BP_eq=D⁻¹A^T y</code>。p45-s05 质心 p90 从 1.847 降到 1.286，p14-s05 exact 从 31.68% 升到 53.47%；但五条轨迹 exact 仍低于 75%，p22 p90 还出现材料性恶化。正式状态为 <code>FAIL_T0_GEOMETRY_EQUALIZED_BP_PROXY</code>，Jacobi 路线停止。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_geometry_equalized_bp_v7_1_result_2026-07-26.md">读 v7.1 结果与下一门</a>
+          <a class="button" href="../learning_labs/results/poolfire_c_geometry_equalized_bp_v7_1/public_summary.json">打开脱敏结果 JSON</a>
+          <a class="button" href="../learning_labs/results/poolfire_c_geometry_equalized_bp_v7_1/independent_validation.json">打开独立复算摘要</a>
+        </div>
+      </div>
+      <figure style="margin-top:14px;">
+        <img src="../assets/poolfire_c_geometry_equalized_bp_v7_1.png" alt="PoolFire C 路线 v7.1 六条轨迹 raw BP 与几何均衡 BP 的质心 p90 和整数 shift 完全一致率对照" />
+        <figcaption>均衡对 p45 和 p14-s05 有真实改善，但没有跨轨迹关闭定位缺口；p22 的 p90 harm 说明固定对角校正也会伤害原本较好的工况。独立复算逐数组差为 0；没有 T1、神经训练、test 打开或算法突破。</figcaption>
+      </figure>
+      <div id="observation-centroid-calibration-gate" class="section-head" style="margin-top:22px;">
+        <div>
+          <div class="eyebrow">v8 低容量质心校准门 · trajectory-level nested LOTO</div>
+          <h3>8 个部署可见特征仍不能把质心代理变成跨工况入口</h3>
+          <p>候选是每轴 5 个系数、总计 15 个参数的轴结构岭回归。它只看 raw/equalized BP 质心和视角能量平衡，不看 heldout teacher 或 truth；5 条 fit 轨迹做外层留一轨迹，内层仍按完整轨迹选正则。独立 outer-crossfit 是 2/5 PASS，另有 1/1 已见开发验证 PASS；合计 3/6 但正式状态仍为 <code>FAIL_T0_OBSERVATION_CENTROID_CALIBRATION_PROXY</code>。</p>
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_observation_centroid_calibration_v8_result_2026-07-26.md">读 v8 结果与失败机理</a>
+          <a class="button" href="../learning_labs/results/poolfire_c_observation_centroid_calibration_v8/public_summary.json">打开脱敏结果 JSON</a>
+          <a class="button" href="../learning_labs/results/poolfire_c_observation_centroid_calibration_v8/independent_validation.json">打开独立复算摘要</a>
+        </div>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../assets/poolfire_c_observation_centroid_calibration_v8.png" target="_blank" rel="noreferrer" aria-label="打开 v8 三联图原尺寸">
+          <img src="../assets/poolfire_c_observation_centroid_calibration_v8.png" alt="PoolFire C 路线 v8 六条轨迹的低容量质心校准 p90、整数 shift 完全一致率和特征训练范围覆盖率" />
+        </a>
+        <figcaption>点击图可查看原尺寸。p45 有改善但仍未过门；p58 的连续误差略降、整数 exact 却受损；p14-s05 高覆盖仍失败。独立 validator 复算 43/43 个数组且最大差为 0.0。该负结果终止 shifted-POD 质心代理路线，不代表三维场、速度、内存、泛化或论文成功。</figcaption>
       </figure>
     </section>
 
@@ -770,7 +805,7 @@
         const next = nextUnlockedWeek();
         const fCount = checkedCount(state.foundations, guide.foundationChecks);
         const pace = Number(state.profile.hours) <= 6 ? '建议把每个关卡拆成两周' : Number(state.profile.hours) >= 15 ? '可将阅读与代码并行，但不跳过验收' : '按一周一关执行';
-        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v6 已确认输运存在，但 raw BP 质心带有工况偏差，统一整数平移 T0 失败。当前只测固定几何灵敏度均衡 D^{-1}A^T y；它不过同一逐轨迹门，就不运行 aligned SVD，也不训练 3D U-Net、FNO、UNO 或 DeepONet。';
+        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v8 已确认 8 特征、15 参数的低容量质心校准只通过 3/6 条轨迹，shifted-POD 定位路线已经停止。下一步只预注册 observation/BP 到完整 16×16×32 warm field 的低容量空间映射；先过完整轨迹 headroom 门，再决定是否训练一个小型 3D U-Net sentinel，FNO、UNO、DeepONet 继续等待。';
         document.getElementById('recommendation').innerHTML = `
           <div class="next-code">当前建议 · ${escapeHtml(next.id)}</div>
           <h3>${escapeHtml(next.title)}</h3>
@@ -911,7 +946,7 @@
         const track = guide.researchTracks.find(t => t.id === state.selectedTrack) || guide.researchTracks[0];
         const passed = guide.paperGates.filter(g => state.gates[g.id]).map(g => g.id).join(', ') || '无';
         const pending = guide.paperGates.filter(g => !state.gates[g.id]).slice(0,3).map(g => `${g.id} ${g.title}`).join('、') || '无';
-        document.getElementById('briefText').value = `师兄，C 路线不变：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n公开 PoolFire 已按完整 trajectory 冻结为 11 train / 2 validation / 2 untouched test。两条 test 仍未下载或打开。六条当前机制审计轨迹共 606 帧，共用 16×16×32 inverse 与冻结三视角几何。\n\n四臂 classical 表已经完成，并暴露半收敛：更低 observation residual 不保证更低 field/gradient error。v4 只扩两条 fit 的改善为 13.8608%，未过 20% 门；v5.1 把固定全局表示扩到稳定 rank 504 后，p14 target-oracle p90 仍为 0.148823，高于 0.05，RMS 额外改善只有 0.1009%。这些结果都没有授权神经训练。\n\n最新 v6 检查了输运对齐。Stage 1 只看 observation：六条轨迹各 101 帧，每帧一次 BP=A^T y，总账 0A+606A^T。独立 validator 重新生成全部 BP、质心、协方差、fit-only canonical center 与整数 shift，逐数组最大差为 0。Stage 2 再生成 606 个 K4 teacher，总账 2424A+2424A^T。\n\nteacher 的最大 q10-q90 质心跨度是 2.596 体素，64.52% 帧的 oracle shift 非零，说明结构确实移动。但 raw BP 的定位存在工况偏差：p45-s05 的质心 p50/p90/worst 是 1.181/1.847/2.108 体素，整数 shift 完全一致率只有 14.85%，误差不超过一体素的比例也只有 63.37%。因此正式状态是 FAIL_T0_BP_INTEGER_TRANSLATION_PROXY。\n\n协议在 T0 失败后于 SVD 前停止，没有运行 aligned basis/T1，没有打开 p22 stopping validation 或 test，也没有训练 3D U-Net、FNO、UNO 或 DeepONet。这个结果排除的是 raw-BP 单一全局整数平移，不排除几何均衡 BP、条件基底或全场 decoder。\n\n下一步只测固定几何 Jacobi 均衡 BP_equalized=D^{-1}A^T y，其中 D≈diag(A^T A)。每帧仍只需一次完整 A^T，额外是逐体素乘法。它必须在同一六条轨迹逐条通过冻结定位门，才重新授权 zero-fill 对齐 T1；失败就转向 fit-only、observation-visible 的轻量校准，仍不直接上大网络。\n\n当前仍只是公开 CFD straight-ray morphology proxy，不是真实 BOST；rho→Delta n、相机和 pixel displacement 尚未闭合，algorithm_breakthrough=false。\n\n后续需要组里确认：\n1. 真正希望重建 rho、n、n-1 还是 Delta n，reference/gauge 怎么定义；\n2. 相机内外参、detector ROI、forward/adjoint、现用 baseline 和停止规则；\n3. 公开方法筛选完成后，哪份最小组内 BOST 样例可做迁移检查。`;
+        document.getElementById('briefText').value = `师兄，C 路线不变：算子学习 warm start，在最终精度相同的前提下降低三维 BOST 重建成本。\n\n当前实现顺序：${track.title}\n当前学习/实验关：${next.id} ${next.title}\n已勾选证据门：${passed}\n最近未通过：${pending}\n\n公开 PoolFire 已按完整 trajectory 冻结为 11 train / 2 validation / 2 untouched test。两条 test 仍未下载或打开。六条机制审计轨迹共 606 帧，共用 16×16×32 inverse 与冻结三视角几何。\n\nv6 证明 raw BP 有工况相关定位偏差；v7.1 证明固定几何均衡 BP_equalized=D^{-1}A^T y 只能局部改善。v8 又用 8 个部署可见特征和 15 个参数做 trajectory-level nested LOTO 质心校准，独立复算 43/43 个数组、最大差 0.0，但最终只通过 3/6 条轨迹。p45-s05 的 p90 虽降到 1.219，exact 仍只有 18.81%；p58-s03 的连续误差略好但整数 exact 受损；p14-s05 几乎退回 raw BP 并触发 harm。正式状态是 FAIL_T0_OBSERVATION_CENTROID_CALIBRATION_PROXY。\n\n按结果前规则，shifted-POD 质心代理路线已经停止，不再调质心特征、lambda、shift 阈值或 Jacobi 变体。p22 stopping validation、两条 test 和神经训练都没有打开。\n\n下一步另行预注册 observation/BP→完整 16×16×32 warm field 的低容量空间映射，先比较 identity/equalized BP、局部 separable 3D convolution/ridge 和低模频域 transfer。只有完整轨迹仍显示稳定 full-field headroom，才训练一个小型 BP-conditioned 3D U-Net sentinel；FNO、UNO、DeepONet 暂不启动。\n\n当前仍只是公开 CFD straight-ray morphology proxy，不是真实 BOST；rho→Delta n、相机和 pixel displacement 尚未闭合，algorithm_breakthrough=false。\n\n后续需要组里确认：\n1. 真正希望重建 rho、n、n-1 还是 Delta n，reference/gauge 怎么定义；\n2. 相机内外参、detector ROI、forward/adjoint、现用 baseline 和停止规则；\n3. 公开方法筛选完成后，哪份最小组内 BOST 样例可做迁移检查。`;
       }
 
       function bindProfile() {
