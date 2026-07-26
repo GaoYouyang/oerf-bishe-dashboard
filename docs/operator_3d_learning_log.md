@@ -6522,3 +6522,115 @@ wall_time_speedup=false
 algorithm_breakthrough=false
 paper_success=false
 ```
+
+## 233. 作品身份再次收紧：网络必须先打赢“解析二维投影”
+
+这一轮没有为了“独一无二”再造一个更花哨的模型名，而是把作品压缩成六项不可拆开的
+指纹：BOST 特定逆问题、只读部署可见量、受限初值、同一物理求解器收尾、可见量决定
+回退，以及 trajectory 尾部和完整成本共同裁决。
+
+新核对的近邻让边界更严格了：
+
+- Deep Null Space Learning 和 Deep Decomposition Learning 已经讨论神经网络如何利用
+  range/null-space 并保持数据一致；
+- Bayes Meets Krylov 已经用先验和右预条件器改变 CGLS 的 Krylov 子空间；
+- Neural Preconditioning via Krylov Subspace Geometry 已经用主角度损失和可微
+  FGMRES 训练神经预条件器。
+
+所以“用了零空间”“用了 Krylov 几何”“网络帮助 CGLS”都不能算我们的原创点。
+
+更关键的是，GEOK 暂定的 `q0,q1` 本来就是一个二维 Krylov basis。只用观测 `y`
+就可以在这个二维空间里做 exact projected least-squares，解析求出 measurement
+residual 最优系数。若神经网络连这个几乎零参数的 control 都打不过，它只是在更复杂地
+重新发明 CGLS。
+
+未来 GEOK 的预注册因此必须增加：
+
+```text
+exact 1D line search
+exact 2D Krylov/Galerkin projection
+zero-start call-matched CGLS
+fit-only fixed coefficients
+observation-conditioned coefficients
+```
+
+只有最后一项在相同调用预算下改善最终 field/gradient、p90/worst 与 harm，同时真实
+wall/RSS 不更差，才能说明它学到的是观测条件化的场先验。
+
+工程上，本轮还补了两块“以后不能偷账”的地基：
+
+1. 提交 `98b2f94` 分开记录 trainable 参数、常驻数值工件、非 `A/A^T` MAC 与完整
+   算子调用，11 个 outer arms 都有显式公式；
+2. 提交 `a06070c` 实现每个 row-arm 五次全新 PID 的 wall/wait4 RSS harness，但正式
+   入口继续 fail-closed，直到可信 prediction release 真正绑定 worker 与 66 个输出。
+
+联合检查分别为 `108 passed` 与 `56 passed`。这些只提高成本证据可信度，不说明方法
+更准或更快。
+
+**讲人话：**现在不是给作品贴“原创”标签，而是主动找一个最省、最聪明的经典对手来
+打。连它都能赢，而且每一笔物理调用和内存都算清，作品的独立性才站得住。
+
+当前：
+
+```text
+global_uniqueness_proven=false
+defensible_method_fingerprint_frozen=true
+exact_2d_krylov_control_required=true
+formal_outer_runtime_authorized=false
+algorithm_breakthrough=false
+```
+
+## 234. “独特”不是没人用过这些零件，而是整套组合经得住最强反例
+
+又完成了一轮只查公开一级来源的近邻审计。结论比“我们很新”更有用，也更严格：
+
+- 神经网络给迭代器初值，别人做过；
+- 神经算子帮助 CG/GMRES，别人做过；
+- 神经网络重建 BOST，别人做过；
+- BOST 里 coarse-to-fine、低分辨率结果给高分辨率 CGLS 当初值，也已经有
+  Pyramid-BOST。
+
+所以不能把 `Cross14`、`FNO + CGLS` 或“learned warm start”本身写成创新。真正值得
+保留的研究命题只有这一整套组合：
+
+```text
+BOST-specific frozen geometry
++ deployment-visible observation/BP only
++ one-shot observable-Krylov constrained initializer
++ unchanged CGLS/PCGLS final solver
++ matched field/gradient/observation endpoint
++ complete A/A^T, wall and RSS accounting
++ truth-free acceptance/fallback
+```
+
+截至 2026-07-26 核对的 20 项核心公开近邻中，没有发现一项把这些条件全部同时做到。
+这叫“限定检索范围内未发现同构组合”，不叫“全球首创已经证明”。专利、学位论文、
+未索引稿件和组内未公开方案仍需继续核对。
+
+这轮新增了六个最危险的阅读入口：Pyramid-BOST、UBOST、Direct-RBF BOST、Hybrid
+refinement、HINTS 和 NeurKItt。它们也变成正式 controls：
+
+```text
+pyramid-style coarse initialization
+RBF / reduced basis
+classical deflation
+exact 2D Krylov / Galerkin projection
+call-matched zero-start CGLS
+learned subspace / neural warm-start control
+```
+
+**讲人话：**我们不靠给常见零件换名字来“确保独一无二”。我们先主动找到所有最像的
+工作，再把最便宜、最强的办法都放到同一赛道。若 GEOK-Warm 仍能在未见完整轨迹上保持
+同样终点精度、降低物理调用、真实 wall 和内存，而且拒绝坏样本时不偷看真值，这套作品
+才会有清晰、难混淆的个人指纹。
+
+当前边界：
+
+```text
+public_near_neighbor_core_set=20
+no_exact_full_combination_found_within_reviewed_sources=true
+global_uniqueness_proven=false
+group_unpublished_ip_checked=false
+formal_outer_result_opened=false
+algorithm_breakthrough=false
+```
