@@ -1,0 +1,133 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-proposal-artifact-contract-10.2",
+  "status": "FROZEN_DATA_ONLY_PROPOSAL_ARTIFACT_AND_SINGLE_USE_VERIFICATION_BEFORE_TRAINING_OR_OUTER_PREDICTION",
+  "frozen_at_utc": "2026-07-26T17:29:16Z",
+  "purpose": "Replace the same-process Python model callback with one deterministic data-only observation-space proposal artifact, one burn-on-attempt request, and one burn-on-attempt verified proposal token before any physical A or A_transpose call.",
+  "parents": [
+    {
+      "path": "learning_labs/protocols/poolfire_c_dual_range_outer_contract_v10.json",
+      "sha256": "882364ee37a2665904b7538f1b8cec81fce6b587c258c5d277ab159f23b9048c",
+      "role": "objective_arms_cost_and_outer_evidence_contract"
+    },
+    {
+      "path": "learning_labs/protocols/poolfire_c_dual_spectral_model_contract_v10_1.json",
+      "sha256": "98c6f50fe11229eb3b6e1e7ade0856a4f6b3a158f8191fd26852ff3d4c21ca03",
+      "role": "frozen_observation_space_model_and_proposal_bound"
+    }
+  ],
+  "artifact_wire_format": {
+    "magic_ascii_line": "OERF_POOLFIRE_C_DUAL_PROPOSAL_V10_2",
+    "header_length": "unsigned_big_endian_32_bit_integer",
+    "header": "canonical_ASCII_JSON_sorted_keys_compact_separators_no_NaN_with_one_trailing_newline",
+    "payload": "exactly_2072_little_endian_float64_values_in_C_order",
+    "trailing_bytes": "forbidden",
+    "compression_pickle_npz_npy_and_object_deserialization": "forbidden",
+    "maximum_header_bytes": 8192,
+    "maximum_artifact_bytes": 32768
+  },
+  "header_exact_members": [
+    "schema_version",
+    "status",
+    "request_id",
+    "request_nonce",
+    "observation_sha256",
+    "proposal_sha256",
+    "proposal_shape",
+    "proposal_dtype",
+    "model_schema",
+    "model_sha256",
+    "model_manifest_sha256",
+    "preprocessing_contract_sha256",
+    "geometry_sha256",
+    "worker_source_sha256",
+    "physical_operator_calls_inside_worker",
+    "truth_accessed",
+    "role_accessed",
+    "score_accessed",
+    "python_callable_serialized",
+    "algorithm_breakthrough"
+  ],
+  "fixed_values": {
+    "schema_version": "oerf-poolfire-c-dual-proposal-artifact-10.2",
+    "status": "DATA_ONLY_UNVERIFIED_NUMERIC_PROPOSAL",
+    "model_schema": "oerf-poolfire-c-homogeneous-odd-dct-dual-mlp-10.1",
+    "proposal_shape": [
+      2072
+    ],
+    "proposal_dtype": "little_endian_float64",
+    "physical_operator_calls_inside_worker": 0,
+    "truth_accessed": false,
+    "role_accessed": false,
+    "score_accessed": false,
+    "python_callable_serialized": false,
+    "algorithm_breakthrough": false
+  },
+  "request_and_verification": {
+    "request_id": "32_lowercase_hex_characters",
+    "request_nonce": "64_lowercase_hex_characters",
+    "observation_binding": "sha256_of_shape_ascii_then_exact_float64_C_order_bytes",
+    "model_geometry_preprocessing_manifest_and_worker_source_sha256": "exact_64_lowercase_hex",
+    "request_consumption": "atomic_and_burned_on_first_verification_attempt_including_rejection",
+    "verified_token_consumption": "atomic_and_burned_on_first_physics_consumption_attempt_including_rejection",
+    "proposal_must_be_exact_real_finite_float64_shape_2072": true,
+    "proposal_correction_l2_over_observation_l2_maximum": 0.5,
+    "correction_bound_tolerance": "64_times_float64_machine_epsilon",
+    "zero_observation_requires_exact_zero_proposal": true,
+    "worker_reported_wall_or_memory_is_not_trusted": true,
+    "parent_measured_inference_wall_and_peak_RSS_are_bound_to_verified_receipt": true,
+    "request_or_token_replay": "fail_closed",
+    "metadata_payload_or_observation_substitution": "fail_closed"
+  },
+  "callback_free_physics_preparation": {
+    "input": "verified_proposal_token_plus_exact_observation_plus_strict_audited_operator",
+    "python_model_callback": "forbidden",
+    "operator_lifecycle_before_preparation": "exactly_0A_plus_0A_transpose",
+    "lift": "h_equals_A_transpose_z",
+    "projected_lift": "A_h_computed_once_and_cached",
+    "line_search": "alpha_equals_clip(real_inner_y_Ah_divided_by_inner_Ah_Ah,0,2)_with_zero_on_small_denominator",
+    "initializer": "x0_equals_alpha_h",
+    "preparation_cost": "1A_plus_1A_transpose",
+    "accepted_CGLS_K1_complete_cost_target": "2A_plus_2A_transpose",
+    "initial_measurement_residual_nonincrease": "must_be_verified_before_initializer_authorization",
+    "strict_solver_input": "opaque_operator_issued_single_use_initializer_authorization",
+    "plain_initializer_with_copied_status_string": "forbidden"
+  },
+  "required_negative_tests": [
+    "wrong_or_replayed_request",
+    "wrong_observation_model_manifest_preprocessing_geometry_or_worker_binding",
+    "altered_header_payload_or_digest",
+    "wrong_shape_dtype_length_or_trailing_bytes",
+    "nonfinite_or_over_bound_proposal",
+    "truth_role_score_or_callable_claim_drift",
+    "invalid_first_attempt_then_valid_retry",
+    "verified_token_replay_and_concurrent_double_consume",
+    "plain_initializer_status_forgery",
+    "initializer_authorization_replay",
+    "operator_with_prior_calls",
+    "incomplete_or_drifted_call_ledger"
+  ],
+  "authorization": {
+    "artifact_parser_writer_and_synthetic_tests_authorized": true,
+    "same_process_callback_free_physics_code_gate_authorized": true,
+    "capability_isolated_execve_worker_authorized": false,
+    "model_training_authorized": false,
+    "outer_prediction_authorized": false,
+    "outer_score_authorized": false,
+    "fresh_holdout_authorized": false,
+    "test_authorized": false
+  },
+  "claim_boundaries": {
+    "data_only_artifact_format_frozen": true,
+    "artifact_integrity_and_single_use_code_gate_targeted": true,
+    "same_process_Python_is_a_capability_boundary": false,
+    "worker_authenticity_proven": false,
+    "filesystem_noninterference_proven": false,
+    "formal_callback_free_physics_worker_implemented": false,
+    "formal_accepted_branch_call_reduction_proven": false,
+    "field_gradient_or_observation_noninferiority_proven": false,
+    "wall_time_speedup_proven": false,
+    "memory_no_harm_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_result": false
+  }
+}
