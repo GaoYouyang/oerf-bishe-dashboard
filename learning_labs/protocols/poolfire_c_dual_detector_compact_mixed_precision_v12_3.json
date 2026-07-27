@@ -1,0 +1,76 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-detector-compact-mixed-precision-12.3",
+  "status": "FROZEN_BEFORE_FIT_ONLY_EXECUTION",
+  "scientific_question": "Can float32 proposal-only inference preserve the frozen float64 inverse result while converting persistent wall headroom into a no-harm whole-worker RSS profile?",
+  "fit_only_trajectories": [
+    "p=14kw_size=05",
+    "p=22kw_size=03",
+    "p=33kw_size=01",
+    "p=45kw_size=05",
+    "p=58kw_size=03"
+  ],
+  "precision_boundary": {
+    "checkpoint_parameters_on_disk": "float64 frozen v12.1 fold checkpoint",
+    "proposal_network_input_weights_activations_output": "float32",
+    "proposal_transport_to_solver": "convert output to float64 immediately",
+    "exact_A_transpose_lift": "float64 unchanged",
+    "observable_alpha": "float64 unchanged",
+    "strict_CGLS_K1": "float64 unchanged",
+    "metrics_and_compatibility": "float64 unchanged"
+  },
+  "arms": [
+    "compact_w16d2_fp32_proposal_dual_k1",
+    "zero_cgls_k4"
+  ],
+  "execution": {
+    "session_count_per_arm_per_trajectory": 5,
+    "warmup_trajectory_passes_per_session": 1,
+    "measured_trajectory_passes_per_session": 17,
+    "frame_count_per_trajectory": 101,
+    "arm_order": "alternate by session within each trajectory",
+    "model_inference_batch_size": 16,
+    "torch_intraop_threads": 4,
+    "torch_interop_threads": 1,
+    "measured_interval": "proposal plus unchanged float64 solver; excludes process startup and one-time loading",
+    "peak_rss_scope": "whole persistent worker process"
+  },
+  "operator_calls_per_frame": {
+    "compact_w16d2_fp32_proposal_dual_k1": {
+      "A": 2,
+      "A_transpose": 2
+    },
+    "zero_cgls_k4": {
+      "A": 4,
+      "A_transpose": 4
+    }
+  },
+  "per_trajectory_gates": {
+    "joint_matched_fraction_minimum": 1.0,
+    "joint_harm_fraction_maximum": 0.0,
+    "severe_harm_count_maximum": 0,
+    "float32_vs_float64_proposal_relative_l2_p90_maximum": 0.00005,
+    "float32_vs_float64_field_relative_l2_p90_maximum": 0.00005,
+    "steady_state_wall_reduction_minimum_fraction": 0.1,
+    "maximum_paired_session_wall_harm_fraction": 0.05,
+    "whole_worker_peak_rss_ratio_maximum": 1.05
+  },
+  "global_gate": "all five fit trajectories must pass every per-trajectory gate; no mean-gain override",
+  "forbidden_adaptation": [
+    "training or changing checkpoint weights",
+    "selecting dtype, batch, architecture, alpha, solver, or thresholds from p45-s03",
+    "opening validation or untouched test",
+    "changing complete A/A^T accounting",
+    "relaxing any gate after results"
+  ],
+  "success_action": "only if all five fit trajectories pass, authorize one post-open development confirmation with the unique full-fit checkpoint on already burned p45-s03",
+  "failure_action": "freeze the mixed-precision or current-architecture resource tradeoff and do not open untouched test",
+  "claim_limits": {
+    "fresh": false,
+    "untouched_test": false,
+    "real_BOST": false,
+    "physical_same_accuracy": false,
+    "broad_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
