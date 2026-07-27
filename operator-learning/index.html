@@ -330,7 +330,7 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 当前证据 2026-07-27</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。v10.8.2 已证明完整 <code>K3 dual certificate</code> 作为 full-view 目标在五条 fit trajectory 上 <code>5/5</code> 通过，但 identity、六通道增益、全频 DCT diagonal ridge 与最近邻四个 observation-only 控制全部 <code>0/5</code>。第二实现对 25 行结果和全部参数复算差为 <code>0.0</code>。因此当前瓶颈不是 K1 外壳无解，而是普通线性/检索映射无法安全预测 dual；下一门只测试跨 detector、跨频率耦合的 full-view operator。<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。严格 v11.2 已完成一个 77,020 参数的奇对称多视角 detector CNN：五条完整 fit trajectory 的 leave-one-trajectory-out 均通过，505 帧 joint match 均为 <code>100%</code>、harm 均为 <code>0%</code>、severe harm 为 <code>0</code>；实测每帧 <code>2A+2A^T</code>，而 Zero-CGLS K4 为 <code>4A+4A^T</code>。独立 NumPy 重放最大科学数值差为 <code>2.22e-16</code>。这是重大 fit-only 阶段性进展，不是 fresh 泛化、墙钟加速、真实 BOST 或论文成功；<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
@@ -371,6 +371,14 @@
       <a class="button" href="../docs/poolfire_c_dual_full_view_controls_v10_8_public_summary.json">v10.8.2 脱敏结果</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_full_view_controls_contract_v10_8.json">v10.8 原始合同</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_full_view_controls_clarification_v10_8_2.json">v10.8.2 红队修订</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_full_linear_krr_v10_9_result_2026-07-27.md">v10.9 全线性 KRR 判决</a>
+      <a class="button" href="../docs/poolfire_c_dual_full_linear_krr_v10_9_public_summary.json">v10.9 脱敏五折结果</a>
+      <a class="button" href="../learning_labs/protocols/poolfire_c_dual_full_linear_krr_contract_v10_9.json">v10.9 冻结合同</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_detector_cnn_v11_result_2026-07-27.md">v11.2 严格五折结果</a>
+      <a class="button" href="../docs/poolfire_c_dual_detector_cnn_v11_public_summary.json">v11.2 脱敏结果</a>
+      <a class="button" href="../assets/poolfire_c_dual_detector_cnn_v11.png" target="_blank" rel="noreferrer">v11.2 结果图</a>
+      <a class="button" href="../learning_labs/protocols/poolfire_c_dual_detector_cnn_sentinel_contract_v11.json">v11 最小 CNN 合同</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_cgls_dual_homogeneity_note_v11_2026-07-27.md">Krylov 奇对称与非线性推导</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_range_outer_contract_v10.json">v10 机器合同</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_spectral_model_contract_v10_1.json">v10.1 模型合同</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_proposal_artifact_contract_v10_2.json">v10.2 制品合同</a>
@@ -386,9 +394,9 @@
       <div class="metric"><b id="gateMetric">0 / 8</b><span>论文硬门槛</span></div>
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
-    <div class="alert">
-      <strong>最新正式判决：Full-view 目标 5/5 可行，四个便宜预测控制 0/5</strong>
-      <span>v10.8.2 把完整 K3 dual certificate 作为非部署目标上限，经同一精确 <code>A^T → alpha → restarted K1</code> 后五条轨迹全部通过；identity/Zero-K2、六通道 gain、全频 DCT diagonal ridge 和最近邻都没有一条完整 trajectory 过门。最强 DCT 控制的 target p90 已降到 <code>0.1775–0.3342</code>，四条轨迹 observation harm 仍为 <code>85.15%–100%</code>，说明普通 target L2 不是 solver safety。fresh、test、wall/RSS 与真实 BOST 仍未打开。</span>
+    <div class="alert success">
+      <strong>重大阶段性进展：严格 v11.2 非线性 dual CNN 在 fit-only LOTO 达到 5/5</strong>
+      <span>每折只用四条 trajectory 训练并整条留出第五条，五行的 joint match 都是 <code>100%</code>，harm 都是 <code>0%</code>，severe frame 都是 <code>0</code>。候选用 <code>2A+2A^T</code> 达到 Zero-K4 的冻结兼容包络；独立 validator 对 505 帧重放的最大差为 <code>2.22e-16</code>。这推进了“结构化非线性 dual proposal 值得做”的科学判断，但五条数据都属于已打开 fit pool，fresh、wall/RSS、test 与真实 BOST 仍未打开。</span>
     </div>
   </header>
 
@@ -520,17 +528,23 @@
       </div>
       <div class="check-grid" style="margin-top:13px;">
         <article class="panel"><div class="chips"><span class="chip coral">C0 · v10.7 正式停止</span><span class="chip blue">1/5 通过</span></div><h3 style="margin-top:10px;">Selected-DCT96 Coefficient Distillation</h3><p>五折 oracle 可达性已在模型训练前失败：四条轨迹 observation harm 为 100%，所以不再生成 20 份训练标签，不跑 ridge/MLP，也不打开 fresh 或 test。这是有效负结果，不是待办事项。</p></article>
-        <article class="panel"><div class="chips"><span class="chip">C1 · 当前实现</span><span class="chip gold">针对覆盖瓶颈</span></div><h3 style="margin-top:10px;">Coverage-adaptive / Full-view DualRange-K1</h3><p>模型读取完整三视图 observation，输出 full-view detector dual correction 或 observation-conditioned basis coefficient；精确 <code>A^T</code>、observable alpha 与 strict K1 不变。训练目标直接看 K1 后物理误差，避免把不稳定 raw coefficient 当唯一标签。</p></article>
+        <article class="panel"><div class="chips"><span class="chip blue">C1 · fit-only 5/5</span><span class="chip gold">严格独立重放</span></div><h3 style="margin-top:10px;">Odd Multiview Detector CNN + DualRange-K1</h3><p>77,020 参数模型读取完整三视图 observation，输出 full-view detector dual proposal；精确 <code>A^T</code>、observable alpha 与 strict K1 不变。五条完整 trajectory 的 LOTO 均过冻结 compatibility 门，每帧实测 <code>2A+2A^T</code>。下一结论门是预先冻结 full-fit checkpoint 后的一次 fresh 轨迹验证，不通过前不放大模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip">C2 · 论文升级</span><span class="chip coral">高风险</span></div><h3 style="margin-top:10px;">Correctable Frontier Training</h3><p>不只训练单步场误差，而是训练经过 1/2/4 次物理细化后的误差，让模型输出“最容易被求解器纠正”的初值。</p></article>
-        <article class="panel"><div class="chips"><span class="chip blue">四臂 classical 已完成</span><span class="chip coral">神经门仍关闭</span></div><h3 style="margin-top:10px;">Zero / BP / exact-diag PCGLS / dual ridge</h3><p>五条轨迹、505 帧已完整跑完。K24 参照被半收敛否掉；ridge K2 的调用信号没有通过 p14 与 wall-time 门。v2/v3 又定位到 fit coverage 不足，所以现在不把线性层盲目换成大网络。</p></article>
+        <article class="panel"><div class="chips"><span class="chip blue">强 controls 已完成</span><span class="chip coral">fresh 门仍关闭</span></div><h3 style="margin-top:10px;">Zero / BP / PCGLS / ridge / full-linear KRR</h3><p>五条轨迹、505 帧的经典与线性对照已跑完。K24 参照被半收敛否掉，v10.9 full-linear KRR 为 <code>0/5</code>；v11.2 结构化非线性 CNN 首次达到 <code>5/5</code>。这只说明已测试配置中存在非线性 headroom，不等于所有线性方法都不可能。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
       </div>
-      <div class="alert" style="margin-top:13px;">
-        <strong>最新正式结果：v10.7 五轨迹可达性 FAIL，旧 C0 在训练前终止</strong>
-        <span>五个 truth-blind target 都先通过独立复算，再进入一次性 score。正式 scorer 与另写的逐帧四步 CGLS/三类指标复核最大差 <code>0.0</code>；最终仅 <code>1/5</code> 通过。p14 单点的 selected-rank96 headroom 不能再外推为跨工况表示成功；<code>p45-s03</code>、p22 stopping 与两条 test 继续封存。</span>
+      <div class="alert success" style="margin-top:13px;">
+        <strong>最新正式结果：v11.2 五条 fit LOTO 全通过，完整算子调用减半</strong>
+        <span>五个 checkpoint 在任何留出 truth 读取前全部冻结，之后只进行一次评分；独立 validator 重做网络推理、<code>A^T -> alpha -> K1</code> 和三类指标，最大科学差 <code>2.22e-16</code>。候选和 Zero-K4 并非每项误差都严格更小，但五条都进入预注册兼容包络且没有材料性 harm。<code>p45-s03</code> fresh、p22 stopping 与两条 test 继续封存，故 <code>algorithm_breakthrough=false</code>。</span>
       </div>
+      <figure style="margin-top:14px;">
+        <a href="../assets/poolfire_c_dual_detector_cnn_v11.png" target="_blank" rel="noreferrer" aria-label="打开 v11.2 严格五折结果图原尺寸">
+          <img src="../assets/poolfire_c_dual_detector_cnn_v11.png" alt="PoolFire C v11.2 五条完整 fit trajectory 的 dual certificate、K1 后缺口和相对 Zero-K4 的三指标 p90 差值" />
+        </a>
+        <figcaption>左图是每条完整留出轨迹的 dual certificate 与 K1 后 teacher deficiency；右图是候选相对 Zero-K4 的 p90 差值。五行 joint match 100%、harm 0%、severe 0；这仍是 fit-only proxy 证据，不是 fresh 泛化或真实 BOST 成功。</figcaption>
+      </figure>
       <div class="figure-grid" style="margin-top:14px;">
         <figure>
           <a href="../assets/poolfire_c_dual_representation_ceiling_v10_4_2.png" target="_blank" rel="noreferrer">
@@ -743,9 +757,13 @@
         <img src="../assets/poolfire_c_dual_full_view_controls_v10_8.png" alt="PoolFire C v10.8.2 full-view K3 dual 目标与四个 observation-only 控制的五轨迹判决" />
         <figcaption>左：完整 K3 dual 目标 5/5 通过，四个便宜控制均为 0/5；右：DCT diagonal 的 certificate L2 已明显下降，observation harm 仍在四条轨迹上大面积触发。</figcaption>
       </figure>
+      <figure class="figure-card" style="margin-top:13px;">
+        <img src="../assets/poolfire_c_dual_full_linear_krr_v10_9.png" alt="PoolFire C v10.9 冻结九点 full-linear KRR 五折负结果" />
+        <figcaption>左：自由跨坐标线性耦合的 held-out certificate p90 反而比 DCT diagonal 更差；右：每条轨迹都允许 outer oracle 选择 lambda，仍为 0/5。</figcaption>
+      </figure>
       <div class="alert" style="margin-top:13px;">
-        <strong>当前判决：外壳有解，diagonal/检索不够；下一门只测 full cross-view linear operator</strong>
-        <span>这轮把“表示有没有合格目标”和“普通 observation map 能否预测”分开了。下一实现允许 detector、频率和视图之间交叉耦合，先跑 trajectory-LOTO full linear ridge / reduced-rank operator；若它仍被 observation harm 拒绝，才授权一个最小 detector CNN，并把 loss 直接放在 K1 后的 field/gradient/observation non-harm。不会直接跳到 FNO/UNO/DeepONet。<code>algorithm_breakthrough=false</code>。</span>
+        <strong>当前执行：一个最小 detector CNN 正在五折训练，不做架构海选</strong>
+        <span>v11 只有 77,020 个参数，把三幅真实形状 detector view 打包为六通道 14×30 网格，用 dilation 1/2/4/1 获取多尺度感受野，并通过 RMS 归一化与 odd symmetrization 强制 <code>G(ay)=aG(y)</code>。loss 直接看 exact <code>A^T → alpha → K1</code> 后相对 K4 的 field/gradient/observation deficiency，certificate L2 仅占 0.1 辅助权重。固定 120 epoch、五条完整 trajectory LOTO，不按 outer 结果选 checkpoint。<code>algorithm_breakthrough=false</code>。</span>
       </div>
     </section>
 
@@ -883,8 +901,8 @@
         <figcaption>这是 rho-gradient 的三帧正交直线代理，不含相机透视、曲光线、折射率常数、背景渲染或光流；图中差异不能写成真实 BOST 误差。</figcaption>
       </figure>
       <div class="alert critical" style="margin-top:13px;">
-        <strong>最小神经 C0 仍未获准训练，但阻塞原因已经更具体</strong>
-        数据与经典求解门已经完成，当前阻塞不是“没有代码”，而是五条 fit trajectory 的 raw centered PCA 对 p14 仍缺少 representation coverage。首批扩充门已可信失败，因此停止剩余同类下载与大模型训练；先判断限制来自 rank 上限、仿射均值、幅值/形状耦合还是 view scaling。真实论文迁移仍需补单位与 domain、point-sample/cell-average、<code>rho → Δn</code>、相机与 curved/straight 合同。
+        <strong>代理算法已过 fit-only 门，真实物理链仍未闭合</strong>
+        v11.2 已证明当前 straight-ray 代理存在结构化非线性 warm-start headroom，但它仍使用简化 observation 与已打开 fit pool。真实论文迁移仍需补单位与 domain、point-sample/cell-average、<code>rho → Δn</code>、相机标定、噪声、背景位移提取和 curved/straight 合同；在这些条件闭合前，不能把 5/5 写成真实 BOST 成功。
       </div>
     </section>
 
@@ -1015,7 +1033,7 @@
         const next = nextUnlockedWeek();
         const fCount = checkedCount(state.foundations, guide.foundationChecks);
         const pace = Number(state.profile.hours) <= 6 ? '建议把每个关卡拆成两周' : Number(state.profile.hours) >= 15 ? '可将阅读与代码并行，但不跳过验收' : '按一周一关执行';
-        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v10.8.2 已把完整 K3 dual 目标与普通 prediction 分开：目标 5/5 通过，identity、六通道 gain、全频 DCT diagonal 和最近邻均 0/5；第二实现对 25 行结果和参数复算差 0.0。下一步只跑 full cross-view linear/reduced-rank operator，失败后才授权最小 detector CNN；algorithm_breakthrough=false，fresh 与 test 继续封存。';
+        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v10.9 已完成完整 cross-view/cross-frequency linear KRR：nested target、nested safety 和 outer lambda oracle 全部 0/5，独立复算最大差 4.44e-16。现在只运行一个 77,020 参数、直接优化 K1 后物理缺口的 detector CNN sentinel；不做架构海选，algorithm_breakthrough=false，fresh 与 test 继续封存。';
         document.getElementById('recommendation').innerHTML = `
           <div class="next-code">当前建议 · ${escapeHtml(next.id)}</div>
           <h3>${escapeHtml(next.title)}</h3>
@@ -1165,7 +1183,7 @@
 
 v10 已固定 Zero-CGLS K4 的 4A+4A^T 参考与 DualRange-K1 的 2A+2A^T 目标。v10.4.2 已通过独立复算：完整 K3 dual restart + K1 的 field / gradient / observation p90 是 0.6205 / 1.0923 / 0.3466，joint matched 100%、harm 0%；Zero-K4 是 0.6332 / 1.2180 / 0.3330。
 
-v10.8.2 已完成五条 fit trajectory 的 full-view dual 控制实验。完整 K3 dual certificate 经 exact A^T、observable alpha 与 restarted K1 后 5/5 通过原 compatibility 门；identity/Zero-K2、六通道 gain、全频 DCT diagonal ridge 和最近邻都为 0/5。DCT target p90 已到 0.1775–0.3342，四条轨迹 observation harm 仍达 85.15%–100%，说明 raw target L2 不是 solver safety。独立实现对 25 行数值与全部参数复算最大差 0.0。下一门只跑 full cross-view linear/reduced-rank operator，仍失败才授权最小 detector CNN；p45-s03、p22 stopping 与两条 test 继续封存，algorithm_breakthrough=false。
+v10.8.2 已证明完整 K3 dual 目标在五条 fit trajectory 上 5/5 可行，v10.9 full-linear KRR 三臂均为 0/5。严格 v11.2 随后完成 77,020 参数 odd multiview detector CNN 五折：五条完整留出 trajectory 均 PASS，joint match 100%、harm 0%、severe 0；候选实测每帧 2A+2A^T，Zero-K4 为 4A+4A^T。独立 NumPy 重放最大科学差 2.22e-16。它是 fit-only 强候选，不是 fresh 泛化或墙钟加速；p45-s03 fresh、p22 stopping 与两条 test 继续封存，algorithm_breakthrough=false。
 
 截至 2026-07-26 的公开一级来源检索没有发现完全同构的整套方法，但 learned warm start、learned backprojection、neural operator + Krylov、WB-IPM 和 Learned ReSeSOp 都是强近邻；当前只主张组合级差异，不主张全球唯一。还需要确认组内是否已有未发表的 observation-space filter / warm start / 专利，以及真实流程中 A、A^T、光流、ray tracing 哪部分最贵。`;
       }

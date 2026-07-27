@@ -7329,3 +7329,113 @@ algorithm_breakthrough=false
 
 完整结果见
 `docs/poolfire_c_dual_full_view_controls_v10_8_result_2026-07-27.md`。
+
+## 246. 全视角线性 KRR 也没过：自由度更多，跨工况反而更差
+
+v10.9 执行了 v10.8 留下的下一道门：不再让每个 DCT 频率各自缩放，而是允许完整
+2072 维输入和输出任意线性耦合。每个 outer fold 用另外四条 trajectory 拟合，
+内部再按完整 trajectory 留一选正则。同时保留一个可以偷看 outer 结果选 lambda 的
+非部署 oracle，用来区分“选择器选错”与“这个有限模型族本身没有 headroom”。
+
+结果三个臂全部 `0/5`：
+
+```text
+nested target-selected: 0/5
+nested safety-selected: 0/5
+outer lambda oracle:    0/5
+```
+
+最宽松 outer oracle 的 certificate p90 为 `0.4001–0.6084`，五条 joint match
+都是 `0%`；P14/P22/P45/P58 的 observation harm 分别为 `91.09% / 86.14% /
+100% / 100%`，P45 还有 15 个 severe frame。它甚至比 v10.8 更受约束的 DCT
+diagonal target p90 `0.1775–0.3342` 更差。讲人话：只有 505 帧时，让所有 detector
+坐标自由耦合并没有学到更通用的物理关系，反而丢掉了局部结构并跨工况过拟合。
+
+第二套 NumPy 实现重写了 CGLS certificate、kernel ridge、`A^T -> alpha -> K1`
+和三类指标；全部数值叶子最大差 `4.44e-16`。红队审计是 `P0=0 / P1=0`，没有发现
+LOTO 泄漏。准确结论只限于“冻结九点、无截距、RMS 归一化 full-linear KRR 失败”，
+不能夸成所有线性算子数学上不可能。
+
+这条负结果满足了最小非线性 sentinel 的授权门。现在正在本机训练一个 77,020 参数、
+奇对称、多视角 detector CNN；它仍输出 dual proposal，仍走 exact `A^T` 与原 K1，
+loss 直接看 K1 后 field / gradient / observation deficiency。五折跑完前仍然是：
+
+```text
+algorithm_breakthrough=false
+fresh_opened=false
+test_opened=false
+```
+
+完整结果见
+`docs/poolfire_c_dual_full_linear_krr_v10_9_result_2026-07-27.md`。
+
+## 247. 不是随便换 CNN：K3 dual 天生 odd-homogeneous，但不是线性的
+
+v10.9 失败后，我没有马上堆更大模型，而是先检查目标映射本身的对称性。CGLS 每一步
+的 `alpha` 和 `beta` 都是二次型比值：输入 observation 乘 `a` 时，分子分母同时
+乘 `a^2`，所以 K3 dual certificate 严格满足 `G(ay)=aG(y)`；但这些比值会随输入
+的谱方向变化，所以通常不满足可加性。
+
+冻结 PoolFire 算子上抽取 40 对 fit observation 后：
+
+```text
+scale homogeneity worst: 3.21e-16
+odd symmetry worst:      0
+non-additivity p50:      4.15%
+non-additivity p90:      6.77%
+non-additivity worst:    9.33%
+```
+
+这不是浮点噪声。它说明 full-linear KRR 与目标结构确实不完全匹配，也解释了 v11
+为什么同时使用 RMS normalize/denormalize、odd symmetrization 和非线性多尺度
+detector convolution。网络仍不能绕开物理算子：proposal 后必须 exact `A^T`，
+再走原 alpha 与 K1。
+
+完整推导见
+`docs/poolfire_c_cgls_dual_homogeneity_note_v11_2026-07-27.md`。这个推导是设计依据，
+不是算法突破；最终仍看五折和独立 checkpoint replay。
+
+## 248. 第一次 5/5：最小非线性 dual CNN 在 fit-only 五折过门
+
+这次不是“又写了一个网络”，而是真把 v10.9 留下的问题跑完了。
+
+v10.9 的全线性 KRR 已经允许 2072 维 detector 坐标任意耦合，连偷看 outer 结果选
+正则的 oracle 都是 `0/5`。随后我先证明 K3 dual target 对 observation 是奇对称、
+尺度齐次但通常不可加，再按这个结构做了一个 77,020 参数的多视角 detector CNN。
+它只输出 dual proposal，后面仍然必须经过精确 `A^T`、可观测 alpha 和原始 CGLS K1。
+
+正式 v11.2 每折只用四条完整 trajectory 训练，第五条 101 帧全部留出。五折结果是：
+
+```text
+P14-S05: PASS, joint match 100%, harm 0%, severe 0
+P22-S03: PASS, joint match 100%, harm 0%, severe 0
+P33-S01: PASS, joint match 100%, harm 0%, severe 0
+P45-S05: PASS, joint match 100%, harm 0%, severe 0
+P58-S03: PASS, joint match 100%, harm 0%, severe 0
+```
+
+候选每帧实测是 `2A + 2A^T`，Zero-CGLS K4 是 `4A + 4A^T`。505 帧总账为
+`1010 A + 1010 A^T`。独立 validator 重新做 NumPy 推理、物理链和全部指标，最大
+科学数值差只有 `2.22e-16`。
+
+**讲人话：**在这五条已经用于开发方向判断的公开代理轨迹里，网络用一半完整算子调用，
+到达了 K4 的兼容精度范围，而且没有一帧触发材料性伤害。这是目前最强的正面结果。
+它说明“保留 detector 局部结构的非线性 dual proposal”值得继续，旧的无结构线性路线
+可以停止。
+
+但我没有把它写成算法突破。v11.0 虽然也跑出 `5/5`，证据边界不够严；v11.1 在第三个
+checkpoint 后被红队中止；只有重跑的 v11.2 关闭了 checkpoint-before-truth、
+bytes-used 输入、坐标几何和独立源码绑定。更重要的是，这五条 trajectory 都属于
+已经打开过的 fit pool，不是真正 fresh；墙钟、整管线内存和真实 BOST 也没测。
+
+```text
+fit_only_strong_candidate=true
+fresh_generalization_proven=false
+wall_time_speedup=false
+whole_pipeline_rss_speedup=false
+real_bost=false
+algorithm_breakthrough=false
+```
+
+完整表格、为什么这样设计以及下一道 fresh 门见
+`docs/poolfire_c_dual_detector_cnn_v11_result_2026-07-27.md`。

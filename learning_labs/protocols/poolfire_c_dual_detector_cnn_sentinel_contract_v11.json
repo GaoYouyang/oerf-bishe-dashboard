@@ -1,0 +1,80 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-detector-cnn-sentinel-contract-11.2",
+  "frozen_at_utc": "2026-07-27T13:45:00Z",
+  "scientific_question": "After the independently validated v10.9 finite-grid full-linear KRR screen passed 0/5, can one small observation-only nonlinear detector model learn a dual proposal that survives the unchanged exact A^T, observable alpha, and CGLS K1 path on complete held-out trajectories?",
+  "data_roles": {
+    "fit_only_trajectories": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "evaluation": "five complete-trajectory leave-one-trajectory-out folds",
+    "forbidden": [
+      "p=14kw_size=01",
+      "p=22kw_size=01",
+      "p=45kw_size=03",
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ]
+  },
+  "model": {
+    "id": "odd_multiview_dilated_detector_resnet_w32_b4",
+    "parameter_count": 77020,
+    "input": "three frozen detector views packed as six centered 14x30 component channels",
+    "architecture": "width-32 input convolution, four residual blocks with dilation 1/2/4/1, global channel context, one output convolution, six learned skip gains",
+    "symmetry": "G(a y)=a G(y) for finite nonzero-RMS observations through per-frame RMS normalization and odd symmetrization",
+    "trajectory_metadata_input": false,
+    "physical_operator_inside_model": false
+  },
+  "training": {
+    "outer_train_trajectories_per_fold": 4,
+    "epochs": 120,
+    "batch_size": 32,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "gradient_clip_norm": 1.0,
+    "seed_root": 2026072711,
+    "shuffle": "deterministic epoch and outer-fold NumPy permutation",
+    "loss": "mean downstream teacher deficiency q after exact A^T, alpha, and K1 plus 0.1 times normalized K3-certificate relative-L2",
+    "teacher": "zero-start CGLS K4 field and its projection",
+    "checkpoint_selection": "none; use exactly epoch 120 in every fold"
+  },
+  "execution_protocol": {
+    "torch_threads": 4,
+    "torch_interop_threads": 1,
+    "deterministic_algorithms": true,
+    "geometry": "construct the frozen inverse from the p=33kw_size=01 calibration coordinates only; do not stat, hash, open, or load rho.npy or times.npy",
+    "input_binding": "read observations.npy exactly once to immutable bytes, hash those bytes, and parse the same bytes; report the exact six-file pre-truth roster",
+    "truth_barrier": "all five epoch-120 checkpoints and their digests must be atomically frozen before any gauge_truth.npy bytes are read",
+    "score_barrier": "no per-fold score is written to progress or report until all five checkpoints exist and truth access is authorized by the global checkpoint barrier",
+    "checkpoint_paths": "exactly fold_0.npz through fold_4.npz as regular non-symlink single-link files inside the run directory",
+    "source_binding": "clean Git commit plus SHA-256 closure of runner, model, operator, compatibility, geometry, and contract; independent validation separately binds itself and its numerical helper closure",
+    "deployment_ledger": "instrument every complete per-frame A and A^T application during the candidate A^T-alpha-CGLS-K1 path and independently recount it in NumPy"
+  },
+  "shared_downstream": {
+    "path": "CNN dual proposal -> exact A^T -> observable alpha in [0,2] -> unchanged CGLS K1",
+    "deployment_calls_per_frame": {
+      "A": 2,
+      "A_transpose": 2
+    },
+    "reference": "zero-start CGLS K4",
+    "compatibility_gate": "unchanged field, gradient, and observation envelope"
+  },
+  "decision": {
+    "sentinel_pass": "at least 4 of 5 held-out trajectories pass and every failed trajectory has zero severe-harm frames and at most 0.05 joint harm",
+    "strong_cross_trajectory_candidate": "all 5 held-out trajectories pass",
+    "failure": "otherwise stop architecture scaling and inspect loss, representation, and regime coverage",
+    "fresh_authorization": "a 5/5 fit-only pass is necessary but not sufficient; a separate frozen fresh release is still required"
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "fresh_trajectory_generalization": false,
+    "real_BOST": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_speedup": false,
+    "paper_success": false
+  }
+}
