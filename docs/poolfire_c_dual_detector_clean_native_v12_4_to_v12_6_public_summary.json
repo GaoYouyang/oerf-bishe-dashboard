@@ -1,0 +1,112 @@
+{
+  "schema_version": "oerf-poolfire-c-clean-native-deployment-summary-12.6",
+  "date": "2026-07-27",
+  "scope": "single already-open p=14kw_size=05 fit trajectory; post-open development only",
+  "candidate": "frozen compact-w16d2 dual proposal, exact A-transpose lift, observable alpha, strict CGLS K1",
+  "reference": "framework-free NumPy Zero-CGLS K4",
+  "frame_count": 101,
+  "measured_trajectory_passes_per_arm_per_variant": 85,
+  "gates": {
+    "wall_reduction_fraction_minimum": 0.1,
+    "whole_worker_peak_rss_ratio_maximum": 1.05,
+    "joint_matched_fraction_minimum": 1.0,
+    "joint_harm_fraction_maximum": 0.0,
+    "severe_harm_count_maximum": 0
+  },
+  "operator_calls_per_frame": {
+    "candidate": {
+      "A": 2,
+      "A_transpose": 2
+    },
+    "reference": {
+      "A": 4,
+      "A_transpose": 4
+    }
+  },
+  "variants": [
+    {
+      "id": "v12.4",
+      "source_commit": "81a1761",
+      "backend": "MLX GPU",
+      "batch_size": 101,
+      "candidate_total_median_seconds": 0.07400462497025728,
+      "reference_total_median_seconds": 0.13112458307296038,
+      "wall_reduction_fraction": 0.4356159368752417,
+      "candidate_peak_rss_p90_bytes": 214384640,
+      "reference_peak_rss_p90_bytes": 160382976,
+      "peak_rss_ratio": 1.336704464194504,
+      "proposal_parity_relative_l2_worst": 0.00004865732457977372,
+      "field_parity_relative_l2_worst": 0.000024562335093534493,
+      "joint_matched_fraction": 1.0,
+      "joint_harm_fraction": 0.0,
+      "severe_harm_count": 0,
+      "wall_passed": true,
+      "peak_rss_passed": false,
+      "independent_read_only_audit_passed": true,
+      "decision": "FAIL_CLEAN_BACKEND_PEAK_RSS"
+    },
+    {
+      "id": "v12.5",
+      "source_commit": "b7c6b36",
+      "backend": "native C batch 16",
+      "batch_size": 16,
+      "candidate_total_median_seconds": 0.10996108409017324,
+      "reference_total_median_seconds": 0.13006945815868676,
+      "wall_reduction_fraction": 0.15459720024343437,
+      "candidate_peak_rss_p90_bytes": 165249024,
+      "reference_peak_rss_p90_bytes": 153796608,
+      "peak_rss_ratio": 1.0744646852029403,
+      "proposal_parity_relative_l2_worst": 0.0000003186396783266092,
+      "field_parity_relative_l2_worst": 0.00000020397418919527365,
+      "joint_matched_fraction": 1.0,
+      "joint_harm_fraction": 0.0,
+      "severe_harm_count": 0,
+      "wall_passed": true,
+      "peak_rss_passed": false,
+      "independent_read_only_audit_passed": true,
+      "decision": "FAIL_NATIVE_BACKEND_PEAK_RSS"
+    },
+    {
+      "id": "v12.6",
+      "source_commit": "32e8af2",
+      "backend": "native C batch 8",
+      "batch_size": 8,
+      "candidate_total_median_seconds": 0.11093666707165539,
+      "reference_total_median_seconds": 0.1309369159862399,
+      "wall_reduction_fraction": 0.152747212380398,
+      "candidate_peak_rss_p90_bytes": 166379520,
+      "reference_peak_rss_p90_bytes": 146014208,
+      "peak_rss_ratio": 1.1394748653500897,
+      "proposal_parity_relative_l2_worst": 0.0000003186396783266092,
+      "field_parity_relative_l2_worst": 0.00000020397418919527365,
+      "joint_matched_fraction": 1.0,
+      "joint_harm_fraction": 0.0,
+      "severe_harm_count": 0,
+      "wall_passed": true,
+      "peak_rss_passed": false,
+      "independent_read_only_audit_passed": true,
+      "decision": "FAIL_NATIVE_BACKEND_PEAK_RSS"
+    }
+  ],
+  "posthoc_single_pass_rss_diagnostic": {
+    "formal_gate": false,
+    "purpose": "test whether the 17-pass persistent loop alone caused the native candidate RSS failure",
+    "fresh_process_sessions_per_arm": 5,
+    "warmup_passes": 1,
+    "measured_passes": 1,
+    "candidate_peak_rss_p90_bytes": 143147008,
+    "reference_peak_rss_p90_bytes": 127090688,
+    "peak_rss_ratio": 1.1263375016114476,
+    "interpretation": "the candidate still fails 1.05 with only one measured pass, so repeated-loop high-water accumulation is not the sole cause"
+  },
+  "final_decision": {
+    "status": "FAIL_CLEAN_RUNTIME_DEPLOYMENT_RESOURCE_GATE",
+    "remaining_fit_expansion_authorized": false,
+    "fresh_or_validation_or_test_opened": false,
+    "real_bost": false,
+    "physical_same_accuracy": false,
+    "broad_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

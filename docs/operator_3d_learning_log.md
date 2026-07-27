@@ -7643,3 +7643,67 @@ algorithm_breakthrough=false
 
 完整结果见
 `docs/poolfire_c_dual_detector_compact_mixed_precision_v12_3_result_2026-07-27.md`。
+
+## 253. 干净速度是真的，但“更快且不增内存”还没有成立
+
+上一轮发现 Zero-K4 被 Torch 污染后，这轮没有继续在旧口径上做文章，而是把
+Candidate 和 reference 拆成真正独立的新进程。每种实现仍然跑 5 个 session，
+每个 session 预热 1 条，再计时 17 条完整 101 帧轨迹；每臂一共 85 次。
+
+先试 MLX GPU：
+
+```text
+Candidate = 74.00 ms
+Zero-K4   = 131.12 ms
+wall 快 43.56%             PASS
+RSS ratio = 1.3367         FAIL
+```
+
+MLX 很快，但框架内存太高。于是我把同一个 10,548 参数网络写成最小原生 C 前向，
+不加载 Torch 或 MLX，网络输出后仍走完全相同的 float64 `A^T + alpha + K1`：
+
+```text
+native batch 16:
+Candidate = 109.96 ms
+Zero-K4   = 130.07 ms
+wall 快 15.46%             PASS
+RSS ratio = 1.0745         FAIL
+
+native batch 8:
+Candidate = 110.94 ms
+Zero-K4   = 130.94 ms
+wall 快 15.27%             PASS
+RSS ratio = 1.1395         FAIL
+```
+
+三轮全部是 101/101 joint match、0 harm、0 severe，调用账也一直是 Candidate
+`2A+2A^T` 对 Zero-K4 `4A+4A^T`。原生 C 与冻结 Torch 的 proposal / 最终场
+worst relative-L2 只有约 `3.19e-7 / 2.04e-7`，所以失败不是模型精度，也不是
+调用账造假。
+
+v12.5 和 v12.6 都由独立只读代理重新汇总 85 次计时、5 个 session、10 个 worker、
+逐帧 receipt、框架隔离和 RSS。v12.5 只差约 3.59 MiB 就到 1.05 门，但 5 个
+session 中仍有 4 个失败；v12.6 减小 batch 后 RSS 反而更差。因此不能继续在同一条
+已经看过结果的 p14 上试 batch 4、线程数或编译参数，直到碰巧过门。
+
+失败后又用 5 组全新进程做了“1 次预热 + 1 次测量”的 post-hoc 诊断。Candidate /
+Zero-K4 RSS p90 是 `143.15 / 127.09 MB`，ratio 仍为 `1.1263`。所以问题不只是
+17 次循环把 allocator 高水位越堆越高；Candidate 本身仍有结构性内存开销。这个诊断
+不参与正式判决，但排除了“把循环写得更漂亮就足够”的简单解释。
+
+**讲人话：**这个模型确实能用一次神经预测换掉两对昂贵的物理算子，所以常驻处理
+101 帧时稳定更快；但 Candidate 进程仍需要额外内存。我们现在有“调用减半”和
+“单条开发轨迹干净加速”的扎实证据，没有“同精度、更快、内存不增”的完整证据。
+
+正式判决：
+
+```text
+FAIL_CLEAN_RUNTIME_DEPLOYMENT_RESOURCE_GATE
+remaining_fit_expansion_authorized=false
+fresh_or_validation_or_test_opened=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整解释与统一图见
+`docs/poolfire_c_dual_detector_clean_native_v12_4_to_v12_6_result_2026-07-27.md`。
