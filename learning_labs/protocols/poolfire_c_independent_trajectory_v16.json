@@ -1,0 +1,116 @@
+{
+  "schema_version": "oerf-poolfire-c-independent-trajectory-16.0",
+  "frozen_at_utc": "2026-07-28T00:00:00Z",
+  "scientific_question": "Does the already frozen compact w16d2 observation-only dual proposal preserve the unchanged field, gradient, and observation compatibility envelope on one additional independently acquired public PoolFire trajectory while reducing the strict CGLS path from 4A+4A^T to 2A+2A^T per frame?",
+  "selection": {
+    "selected_trajectory": "p=33kw_size=03",
+    "official_split": "train",
+    "new_role": "single_independent_public_development_evaluation_only",
+    "selection_rule": "Use the first trajectory currently absent from the bounded project-managed data and pair roots after the first two entries in the acquisition order frozen by poolfire_c_fit_coverage_expansion_v4.json; this does not prove filesystem-wide historical nonaccess.",
+    "frozen_prior_order": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=03",
+      "p=33kw_size=05",
+      "p=45kw_size=01",
+      "p=45kw_size=03",
+      "p=58kw_size=05"
+    ],
+    "prior_order_entries_already_acquired_before_v16": [
+      "p=14kw_size=05",
+      "p=22kw_size=03"
+    ],
+    "selected_payload_absent_from_project_managed_data_and_pair_roots_when_contract_written": true,
+    "filesystem_wide_nonaccess_proven": false,
+    "result_may_change_model_architecture_weights_thresholds_or_stopping_rule": false,
+    "trajectory_may_be_relabelled_as_fit_after_scoring": false
+  },
+  "frozen_model": {
+    "id": "compact_odd_multiview_detector_w16d2",
+    "variant": "w16d2",
+    "parameter_count": 10548,
+    "seed": 2026077812,
+    "epoch": 120,
+    "fit_trajectory_ids": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "fit_frame_count": 505,
+    "training_or_retraining_after_v16_result": false
+  },
+  "arms": [
+    {
+      "arm_id": "compact_w16d2_dual_k1",
+      "path": "G_theta(y) -> exact A^T -> observable alpha in [0,2] -> unchanged strict CGLS K1",
+      "full_A_calls_per_frame": 2,
+      "full_AT_calls_per_frame": 2
+    },
+    {
+      "arm_id": "zero_cgls_k4",
+      "path": "zero initialization -> unchanged strict CGLS K4",
+      "full_A_calls_per_frame": 4,
+      "full_AT_calls_per_frame": 4
+    }
+  ],
+  "evaluation": {
+    "frame_count": 101,
+    "field_shape": [
+      16,
+      16,
+      32
+    ],
+    "observation_size": 2072,
+    "CPU_only": true,
+    "prediction_before_truth_score": true,
+    "single_score_open": true,
+    "stage_1_only": "compatibility and exact operator-call ledger",
+    "resource_profile_authorized_only_after_stage_1_pass": true
+  },
+  "compatibility": {
+    "field_tolerance_per_frame": "max(0.01,0.05*zero_K4_field_relative_l2)",
+    "gradient_tolerance_per_frame": "max(0.015,0.05*zero_K4_gradient_relative_l2)",
+    "observation_tolerance_per_frame": "max(0.005,0.10*zero_K4_observation_relative_l2)",
+    "joint_matched_fraction_minimum": 0.9,
+    "joint_harm_fraction_maximum": 0.05,
+    "per_metric_harm_fraction_maximum": 0.05,
+    "severe_harm_count_maximum": 0,
+    "physical_same_accuracy_claim": false
+  },
+  "decision_order": [
+    "both arms exactly match the frozen per-frame A/A^T ledgers",
+    "candidate passes the unchanged field, gradient, and observation compatibility envelope",
+    "joint and per-metric harm fractions are each at most 0.05 and severe-harm count is zero",
+    "only after all preceding gates pass may a separate frozen fresh-process wall and peak-RSS experiment run"
+  ],
+  "failure_actions": {
+    "source_release_checkpoint_or_pair_mismatch": "invalidate without a scientific conclusion",
+    "compatibility_or_harm_failure": "record one independent public development negative; do not retune on this trajectory and do not open untouched tests",
+    "operator_ledger_failure": "invalidate the run",
+    "stage_1_pass": "retain an accuracy-and-call result only; separately preregister resource measurement before claiming acceleration"
+  },
+  "forbidden_data": {
+    "stopping_validation": "p=22kw_size=01",
+    "untouched_confirmatory_test": [
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ],
+    "test_download_allowed": false,
+    "test_extraction_allowed": false,
+    "test_truth_opened": false
+  },
+  "claim_limits": {
+    "confirmatory_test": false,
+    "unseen_power_generalization": false,
+    "unseen_size_generalization": false,
+    "geometry_OOD": false,
+    "real_BOST": false,
+    "physical_same_accuracy": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_benefit": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

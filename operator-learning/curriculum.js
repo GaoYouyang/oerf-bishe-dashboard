@@ -1,8 +1,8 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.28-c-v15.1-no-shared-residual-mode",
-  previousVersion: "2026.07.28-c-v14-w8d2-capacity-fail",
-  previousBadge: "v14 w8d2 · strict 4/5 FAIL",
-  olderBadge: "v13 wall PASS · strict RSS FAIL",
+  version: "2026.07.28-c-v16.1-resource-gate-fail",
+  previousVersion: "2026.07.28-c-v15.1-no-shared-residual-mode",
+  previousBadge: "v15.1 residual · 0 shared mode",
+  olderBadge: "v14 w8d2 · strict 4/5 FAIL",
   updated: "2026-07-28",
   foundationChecks: [
     {
