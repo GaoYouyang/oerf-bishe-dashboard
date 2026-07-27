@@ -1,0 +1,84 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-full-linear-krr-contract-10.9",
+  "frozen_at_utc": "2026-07-27T10:00:00Z",
+  "scientific_question": "After the v10.8 full K3 detector-space target passed 5/5 and all diagonal, gain, and nearest controls failed 0/5, does a complete cross-view and cross-frequency linear map have trajectory-level headroom under the unchanged exact A^T, observable alpha, and CGLS K1 downstream path?",
+  "data_roles": {
+    "fit_only_trajectories": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "outer_evaluation": "leave one complete trajectory out",
+    "inner_selection": "leave one complete outer-train trajectory out",
+    "forbidden": [
+      "p=14kw_size=01",
+      "p=22kw_size=01",
+      "p=45kw_size=03",
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ]
+  },
+  "target": {
+    "id": "zero_start_cgls_k3_dual_certificate",
+    "normalization": "divide observation and certificate by per-frame observation RMS",
+    "full_view_target_viability": "frozen from independently validated v10.8.2; 5/5 fit trajectories"
+  },
+  "model_family": {
+    "id": "multi_output_linear_kernel_ridge",
+    "definition": "z_hat = q X^T (X X^T + lambda I)^-1 Z in normalized detector coordinates",
+    "cross_view_and_cross_frequency": true,
+    "nonlinear": false,
+    "ridge_relative_grid": [
+      0.0,
+      1e-12,
+      1e-10,
+      1e-08,
+      1e-06,
+      0.0001,
+      0.01,
+      1.0,
+      100.0
+    ],
+    "ridge_scale": "median numerically positive eigenvalue of X X^T divided by detector dimension",
+    "zero_ridge": "spectral Moore-Penrose pseudoinverse with a deterministic float64 tolerance"
+  },
+  "arms": [
+    {
+      "id": "full_linear_krr_target_selected",
+      "selection": "minimum equal-trajectory mean normalized-certificate relative-L2 on inner held-out trajectories"
+    },
+    {
+      "id": "full_linear_krr_safety_selected",
+      "selection": "lexicographic inner compatibility pass count, severe harm, joint harm, worst observation harm, joint match, target error"
+    },
+    {
+      "id": "full_linear_krr_outer_oracle",
+      "selection": "best compatibility key on the outer held-out trajectory; non-deployable family-headroom diagnostic"
+    }
+  ],
+  "shared_downstream": {
+    "path": "predicted dual -> exact A^T -> observable alpha in [0,2] -> unchanged CGLS K1",
+    "deployment_calls_per_frame": {
+      "A": 2,
+      "A_transpose": 2
+    },
+    "reference": "zero-start CGLS K4",
+    "compatibility_gate": "unchanged v10.8 field, gradient, and observation envelope"
+  },
+  "decision": {
+    "deployable_candidate": "either nested selector passes all five outer held-out trajectories",
+    "selection_failure": "neither nested selector passes all five but the non-deployable outer oracle does",
+    "family_failure": "the outer oracle itself fails at least one held-out trajectory",
+    "nonlinear_authorization": "a family failure may justify one minimal nonlinear detector model, but is not itself an algorithm result"
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "fresh_trajectory_generalization": false,
+    "real_BOST": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_speedup": false,
+    "paper_success": false
+  }
+}
