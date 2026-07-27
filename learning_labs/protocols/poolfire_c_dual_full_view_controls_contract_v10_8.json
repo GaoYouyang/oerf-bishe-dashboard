@@ -1,0 +1,107 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-full-view-controls-contract-10.8",
+  "frozen_at_utc": "2026-07-27T00:00:00Z",
+  "scientific_question": "Does replacing the failed fixed selected-rank96 bottleneck with the complete detector-space K3 dual certificate expose a cross-trajectory target that simple observation-only controls can approximate before any nonlinear model is trained?",
+  "data_roles": {
+    "fit_only_trajectories": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "trajectory_level_evaluation": "leave_one_trajectory_out",
+    "forbidden": [
+      "p=14kw_size=01",
+      "p=22kw_size=01",
+      "p=45kw_size=03",
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ]
+  },
+  "target": {
+    "id": "zero_start_cgls_k3_dual_certificate",
+    "definition": "The deterministic detector-space certificate z3 satisfying x_K3=A^T z3 for the frozen zero-start CGLS trajectory.",
+    "normalization": "divide both observation and z3 by the per-frame observation RMS",
+    "offline_target_cost_per_frame_without_audit": {
+      "A": 3,
+      "A_transpose": 4
+    },
+    "offline_target_plus_k4_reference_cost_per_frame_without_audit": {
+      "A": 4,
+      "A_transpose": 5
+    },
+    "runner_cost_per_frame_with_certificate_parity_audit": {
+      "A": 4,
+      "A_transpose": 9
+    },
+    "deployment_claim": false
+  },
+  "shared_downstream": {
+    "path": "proposal -> exact A^T lift -> observable alpha in [0,2] -> unchanged CGLS K1",
+    "accepted_branch_cost_per_frame": {
+      "A": 2,
+      "A_transpose": 2
+    },
+    "reference": "zero_start_cgls_k4",
+    "metrics": [
+      "field_relative_L2",
+      "gradient_relative_L2",
+      "observation_relative_L2",
+      "joint_matched_fraction",
+      "joint_harm_fraction",
+      "severe_harm_count"
+    ]
+  },
+  "arms": [
+    {
+      "id": "identity_dual_k1",
+      "fit_parameters": 0,
+      "definition": "z=y"
+    },
+    {
+      "id": "six_channel_gain_dual_k1",
+      "fit_parameters": 6,
+      "definition": "ordinary least-squares gain for each frozen detector view-component, fit on the four outer-train trajectories"
+    },
+    {
+      "id": "full_dct_diagonal_ridge_dual_k1",
+      "fit_parameters": 2072,
+      "definition": "one diagonal gain per complete detector DCT atom",
+      "ridge_relative_grid": [
+        0.0,
+        1e-08,
+        1e-06,
+        0.0001,
+        0.01,
+        1.0
+      ],
+      "selection": "inner leave-one-trajectory-out mean normalized-certificate relative-L2; ties choose the smaller ridge"
+    },
+    {
+      "id": "nearest_observation_dual_k1",
+      "fit_parameters": 0,
+      "stored_fit_examples": 404,
+      "definition": "copy the normalized z3 target of the maximum-cosine-similarity outer-train observation"
+    },
+    {
+      "id": "full_k3_certificate_oracle_k1",
+      "fit_parameters": 0,
+      "definition": "use the held-out z3 itself; non-deployable target-attainability control"
+    }
+  ],
+  "decision_order": [
+    "The full K3 certificate oracle must reproduce K4 and pass compatibility on all five fit trajectories, otherwise stop the full-view target route.",
+    "Report every simple arm on every held-out trajectory; no trajectory may be hidden by pooled averages.",
+    "A simple arm is a cross-trajectory candidate only if it passes the unchanged compatibility gate on all five held-out trajectories.",
+    "Failure of simple arms does not authorize a larger model by itself; it only separates representation attainability from simple observation-to-target predictability."
+  ],
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "fresh_trajectory_generalization": false,
+    "real_BOST": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_speedup": false,
+    "paper_success": false
+  }
+}

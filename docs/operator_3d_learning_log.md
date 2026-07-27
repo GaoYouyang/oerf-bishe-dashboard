@@ -7284,3 +7284,48 @@ algorithm_breakthrough=false
 `A^T`、observable alpha 和 strict K1，但取消已被证伪的固定 rank96 瓶颈，并把
 训练目标直接放在 K1 后的物理误差上。完整结果见
 `docs/poolfire_c_dual_coefficient_attainability_v10_7_result_2026-07-27.md`。
+
+## 245. full-view 目标真的存在，但普通线性图一条轨迹也没过
+
+v10.8 把 rank96 瓶颈整个拿掉，不先训练神经网络，而是问两个更基础的问题：
+
+1. 完整 detector-space `K3 dual certificate` 经 `A^T -> alpha -> restarted K1`
+   后，能不能在五条 fit trajectory 上达到 K4 的兼容精度？
+2. 如果能，最简单的 observation-only 映射能不能预测它？
+
+第一问的答案是 **能**：full-K3 oracle 五条全部通过，joint harm 和 severe harm
+都是零。第二问的答案是 **暂时不能**：
+
+```text
+Identity / Zero-K2 control: 0/5
+six channel gains:          0/5
+full DCT diagonal ridge:    0/5
+nearest observation:        0/5
+full K3 certificate oracle: 5/5
+```
+
+中间还抓到了一处自己的数学错误。首跑错误要求“从 `x_K3` restart 一步必须等于
+continued K4”；但 restart 会清空原 Krylov 共轭方向，两者不应相等。首跑因此作废，
+没有拿来改阈值。v10.8.1 删除这个错误等式，只保留原来的三类 compatibility 门；
+v10.8.2 又按独立红队把 `z=y` 明确降为 Zero-K2 控制、补齐私有输入与参数绑定，并
+更正离线最小调用账。第二套实现重算 25 行，数值和参数最大差都是 `0.0`。
+
+最有价值的失败来自完整 2072 频率 DCT diagonal ridge：certificate relative-L2
+p90 已经是 `0.1775–0.3342`，但四条轨迹 observation harm 仍达
+`85.15%–100%`。这说明 raw target L2 不区分经过 `A^T` 和 K1 后危险的方向。
+
+所以当前不是“网络已经成功”，而是把下一条模型的职责说清楚了：先跑允许跨 detector
+与跨频率耦合的 full-view linear/reduced-rank operator；它仍失败后，才训练一个最小
+detector CNN，而且 loss 必须直接约束 K1 后 observation non-harm 与
+field/gradient，而不是只拟合 certificate MSE。
+
+```text
+full_view_target_viable=true
+simple_cross_trajectory_candidate=false
+independent_recomputation_max_difference=0.0
+fresh_holdout_opened=false
+algorithm_breakthrough=false
+```
+
+完整结果见
+`docs/poolfire_c_dual_full_view_controls_v10_8_result_2026-07-27.md`。

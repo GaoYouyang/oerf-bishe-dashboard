@@ -330,7 +330,7 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 当前证据 2026-07-27</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。v10.7 已把 selected-rank96 的跨轨迹假设正式证伪：五条完整 fit trajectory 只有 <code>1/5</code> 通过，四条失败轨迹的 observation harm 均为 <code>100%</code>，总 severe harm 为 <code>90</code>。因此 96 维系数标签、ridge 与 MLP 蒸馏全部停止；当前转向 coverage-adaptive / full-view dual proposal，仍保留精确 <code>A^T</code>、observable alpha 与 strict K1。<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。v10.8.2 已证明完整 <code>K3 dual certificate</code> 作为 full-view 目标在五条 fit trajectory 上 <code>5/5</code> 通过，但 identity、六通道增益、全频 DCT diagonal ridge 与最近邻四个 observation-only 控制全部 <code>0/5</code>。第二实现对 25 行结果和全部参数复算差为 <code>0.0</code>。因此当前瓶颈不是 K1 外壳无解，而是普通线性/检索映射无法安全预测 dual；下一门只测试跨 detector、跨频率耦合的 full-view operator。<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
@@ -367,6 +367,10 @@
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_coefficient_attainability_v10_7_result_2026-07-27.md">v10.7 五轨迹可达性判决</a>
       <a class="button" href="../docs/poolfire_c_dual_coefficient_attainability_v10_7_public_summary.json">v10.7 脱敏五轨迹结果</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_coefficient_distillation_contract_v10_7.json">v10.7 冻结合同</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_full_view_controls_v10_8_result_2026-07-27.md">v10.8.2 Full-view 判决</a>
+      <a class="button" href="../docs/poolfire_c_dual_full_view_controls_v10_8_public_summary.json">v10.8.2 脱敏结果</a>
+      <a class="button" href="../learning_labs/protocols/poolfire_c_dual_full_view_controls_contract_v10_8.json">v10.8 原始合同</a>
+      <a class="button" href="../learning_labs/protocols/poolfire_c_dual_full_view_controls_clarification_v10_8_2.json">v10.8.2 红队修订</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_range_outer_contract_v10.json">v10 机器合同</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_spectral_model_contract_v10_1.json">v10.1 模型合同</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_proposal_artifact_contract_v10_2.json">v10.2 制品合同</a>
@@ -383,8 +387,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert">
-      <strong>最新正式判决：rank96 跨轨迹表示已被证伪，旧蒸馏路线停止</strong>
-      <span>v10.7 的五个 fold 都先封存 target、独立复算，再一次性读取 proxy truth。正式与另写的逐帧 CGLS/指标复核完全一致：只有 p33-s01 通过，其余四条 joint matched <code>0%</code>、joint harm <code>100%</code>。这不是网络训练失败，而是 fold-train rank96 basis 本身没有足够跨轨迹可达性；<code>T1_training_target_generation_authorized=false</code>，fresh、test、wall/RSS 与真实 BOST 仍未打开。</span>
+      <strong>最新正式判决：Full-view 目标 5/5 可行，四个便宜预测控制 0/5</strong>
+      <span>v10.8.2 把完整 K3 dual certificate 作为非部署目标上限，经同一精确 <code>A^T → alpha → restarted K1</code> 后五条轨迹全部通过；identity/Zero-K2、六通道 gain、全频 DCT diagonal ridge 和最近邻都没有一条完整 trajectory 过门。最强 DCT 控制的 target p90 已降到 <code>0.1775–0.3342</code>，四条轨迹 observation harm 仍为 <code>85.15%–100%</code>，说明普通 target L2 不是 solver safety。fresh、test、wall/RSS 与真实 BOST 仍未打开。</span>
     </div>
   </header>
 
@@ -735,9 +739,13 @@
         <img src="../assets/poolfire_c_dual_coefficient_attainability_v10_7.png" alt="PoolFire C v10.7 五条 fit trajectory 的 rank96 可达性结果与 rank96/rank384 held-out K3 correction 能量覆盖诊断" />
         <figcaption>左：正式 T0 只有 1/5 通过；右：结果后覆盖诊断显示 rank96 是明确瓶颈，rank384 仅为探索性容量信号，不是算法成功。</figcaption>
       </figure>
+      <figure class="figure-card" style="margin-top:13px;">
+        <img src="../assets/poolfire_c_dual_full_view_controls_v10_8.png" alt="PoolFire C v10.8.2 full-view K3 dual 目标与四个 observation-only 控制的五轨迹判决" />
+        <figcaption>左：完整 K3 dual 目标 5/5 通过，四个便宜控制均为 0/5；右：DCT diagonal 的 certificate L2 已明显下降，observation harm 仍在四条轨迹上大面积触发。</figcaption>
+      </figure>
       <div class="alert" style="margin-top:13px;">
-        <strong>当前判决：停止固定 rank96，转向 full-view / conditional dual proposal</strong>
-        <span>固定 rank96 的跨轨迹可达性已经失败，继续拟合相同 raw coefficient 只会浪费训练。下一实现直接读取完整三视图 observation，先比较 full-view 线性/卷积 control 与 coverage-adaptive basis，再经相同精确 <code>A^T → alpha → strict K1</code> 评分；任何模型仍须逐 trajectory 过 field/gradient/observation 与 harm 门。<code>algorithm_breakthrough=false</code>。</span>
+        <strong>当前判决：外壳有解，diagonal/检索不够；下一门只测 full cross-view linear operator</strong>
+        <span>这轮把“表示有没有合格目标”和“普通 observation map 能否预测”分开了。下一实现允许 detector、频率和视图之间交叉耦合，先跑 trajectory-LOTO full linear ridge / reduced-rank operator；若它仍被 observation harm 拒绝，才授权一个最小 detector CNN，并把 loss 直接放在 K1 后的 field/gradient/observation non-harm。不会直接跳到 FNO/UNO/DeepONet。<code>algorithm_breakthrough=false</code>。</span>
       </div>
     </section>
 
@@ -1007,7 +1015,7 @@
         const next = nextUnlockedWeek();
         const fCount = checkedCount(state.foundations, guide.foundationChecks);
         const pace = Number(state.profile.hours) <= 6 ? '建议把每个关卡拆成两周' : Number(state.profile.hours) >= 15 ? '可将阅读与代码并行，但不跳过验收' : '按一周一关执行';
-        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v10.7 五轨迹 oracle 可达性只有 1/5 通过，总 severe harm 90；正式 scorer 与独立 CGLS/指标复核差 0.0。固定 rank96 已停止，不再生成 coefficient label 或训练旧 MLP。当前只做 coverage-adaptive / full-view dual proposal，精确 A^T、observable alpha 与 strict K1 不变；algorithm_breakthrough=false，fresh 与 test 继续封存。';
+        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v10.8.2 已把完整 K3 dual 目标与普通 prediction 分开：目标 5/5 通过，identity、六通道 gain、全频 DCT diagonal 和最近邻均 0/5；第二实现对 25 行结果和参数复算差 0.0。下一步只跑 full cross-view linear/reduced-rank operator，失败后才授权最小 detector CNN；algorithm_breakthrough=false，fresh 与 test 继续封存。';
         document.getElementById('recommendation').innerHTML = `
           <div class="next-code">当前建议 · ${escapeHtml(next.id)}</div>
           <h3>${escapeHtml(next.title)}</h3>
@@ -1157,7 +1165,7 @@
 
 v10 已固定 Zero-CGLS K4 的 4A+4A^T 参考与 DualRange-K1 的 2A+2A^T 目标。v10.4.2 已通过独立复算：完整 K3 dual restart + K1 的 field / gradient / observation p90 是 0.6205 / 1.0923 / 0.3466，joint matched 100%、harm 0%；Zero-K4 是 0.6332 / 1.2180 / 0.3330。
 
-v10.7 已完成五条 fit trajectory 的 rank96 leave-one-trajectory-out oracle 可达性。五个 target 都在 truth-blind 状态封存并独立复算，全部完成后才一次性评分；正式 scorer 与另写的逐帧 CGLS/指标复核差 0.0。最终只有 p33-s01 通过，其余四条 joint matched 0%、harm 100%，总 severe harm 90。按冻结规则，rank96 coefficient label、ridge 与 MLP 蒸馏停止。当前转向 coverage-adaptive / full-view detector dual proposal，但仍保留 exact A^T、observable alpha、strict K1 和相同非劣成本门；p45-s03、p22 stopping 与两条 test 继续封存，algorithm_breakthrough=false。
+v10.8.2 已完成五条 fit trajectory 的 full-view dual 控制实验。完整 K3 dual certificate 经 exact A^T、observable alpha 与 restarted K1 后 5/5 通过原 compatibility 门；identity/Zero-K2、六通道 gain、全频 DCT diagonal ridge 和最近邻都为 0/5。DCT target p90 已到 0.1775–0.3342，四条轨迹 observation harm 仍达 85.15%–100%，说明 raw target L2 不是 solver safety。独立实现对 25 行数值与全部参数复算最大差 0.0。下一门只跑 full cross-view linear/reduced-rank operator，仍失败才授权最小 detector CNN；p45-s03、p22 stopping 与两条 test 继续封存，algorithm_breakthrough=false。
 
 截至 2026-07-26 的公开一级来源检索没有发现完全同构的整套方法，但 learned warm start、learned backprojection、neural operator + Krylov、WB-IPM 和 Learned ReSeSOp 都是强近邻；当前只主张组合级差异，不主张全球唯一。还需要确认组内是否已有未发表的 observation-space filter / warm start / 专利，以及真实流程中 A、A^T、光流、ray tracing 哪部分最贵。`;
       }

@@ -1,0 +1,40 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-full-view-controls-clarification-10.8.2",
+  "issued_after_independent_red_team": true,
+  "scientific_numbers_changed": false,
+  "fixes": [
+    {
+      "id": "identity_is_zero_k2",
+      "problem": "z=y followed by exact lift, alpha, and restarted K1 is the standard zero-start CGLS K2 trajectory in exact arithmetic.",
+      "action": "Keep identity_dual_k1 as a call-matched baseline but exclude it from target-prediction candidate success."
+    },
+    {
+      "id": "bind_reproducibility_payload",
+      "problem": "The aggregate JSON did not bind exact pair payloads or persist complete DCT gains and nearest-neighbour indices.",
+      "action": "Bind pair READY/manifest/observation/truth hashes and geometry identity; persist every fitted parameter and nearest-neighbour index; require an independently recomputed report."
+    },
+    {
+      "id": "correct_offline_minimum_call_ledger",
+      "problem": "The frozen v10.8 contract conservatively counted one unused final A^T for K3 and K4.",
+      "action": "Use 3A+3A^T for optimized K3 target generation and 4A+4A^T for the combined K3/K4 trajectory; preserve the raw runner's measured 4A+9A^T audit cost."
+    }
+  ],
+  "unchanged": [
+    "five trajectory LOTO roster",
+    "all observations and targets",
+    "all arm predictions",
+    "inner ridge selection",
+    "compatibility thresholds",
+    "harm thresholds",
+    "deployment 2A+2A^T accounting",
+    "fresh/validation/test sealing"
+  ],
+  "required_status": "PASS_INDEPENDENT_RECOMPUTATION_V10_8_2",
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "fresh_trajectory_generalization": false,
+    "real_BOST": false,
+    "speedup": false,
+    "paper_success": false
+  }
+}
