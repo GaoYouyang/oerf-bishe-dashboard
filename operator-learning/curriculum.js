@@ -1,5 +1,5 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.27-c-v11-2-fit-loto-pass",
+  version: "2026.07.27-c-v12-1-compact-resource-fail",
   updated: "2026-07-27",
   foundationChecks: [
     {
@@ -335,7 +335,7 @@ window.OPERATOR_LEARNING_GUIDE = {
     {
       id: "W11", phase: "C1 当前算法", week: "第 11 周", title: "Coverage-adaptive / Full-view DualRange-K1", hours: "16-24h", depends: ["W9", "W10"],
       learn: ["Range(A^T)、Null(A) 与 CGLS 可纠正性", "固定低秩覆盖与 observation-conditioned basis", "多视图 detector convolution / operator map", "observable-only alpha 与 pre-A^T abstention", "end-to-end K1 loss 与任意 coefficient label 的区别"],
-      build: ["v10.8.2 full-K3 目标 5/5 已复核", "v10.9 冻结九点 full-linear KRR 三臂 0/5 已复核", "77,020 参数 odd multiview detector CNN 的严格 v11.2 五折已完成", "输出 full-view dual 并用精确 A^T lift", "loss 直接约束 K1 后 observation non-harm 与 field/gradient", "固定 120 epoch 的五条完整 trajectory LOTO 已独立重放", "下一步只允许先冻结 full-fit checkpoint 和 fresh release，再打开一条 fresh trajectory"],
+      build: ["v10.8.2 full-K3 目标 5/5 已复核", "v10.9 冻结九点 full-linear KRR 三臂 0/5 已复核", "v11.2 的 77,020 参数模型五折 5/5，v11.3 一次性 fresh 101/101 但资源失败", "v12.1 将模型压到 10,548 参数且五折仍 5/5", "输出 full-view dual 并用精确 A^T lift", "post-open p45 仍 101/101、0 harm、调用减半", "17×2 冷进程 wall 只快 0.28%、RSS 高 19.69%，停止容量海选"],
       pass: ["full-K3 非部署上限五条均过原 compatibility 门", "输出经精确 A^T 后严格位于 Range(A^T)", "模型和 gate 不接触 fresh/test truth", "每个额外 A/A^T 与模型推理进入成本账", "逐轨迹 matched field/gradient/observation 与坏尾部不劣于同成本 control", "target L2 下降不能替代 downstream non-harm"],
       resources: ["c-route-lock", "poolfire-trajectory-protocol", "poolfire-c-objective-novelty", "nows-paper", "fcg-no-paper", "spectrally-safe-warmstart", "l2ws-paper", "nio-paper", "residual-error-correction-cao"],
       paper: "若成立，贡献是针对固定 rank96 覆盖失败的 BOST full-view/conditional dual proposal、精确 Range(A^T) lift 与可核算同精度成本前沿，不是换一个更大的神经网络。"
@@ -478,7 +478,7 @@ window.OPERATOR_LEARNING_GUIDE = {
       id:"warmstart-c0", rank:1, title:"C0 · rank96 可达性负结果", badge:"正式停止，不再训练", risk:"已关闭", novelty:"无算法成功主张；价值是先用五条完整 trajectory 证明固定 rank96 表示本身只有 1/5 可达，阻止继续拟合无效标签", data:"五条 fit target 已 truth-blind 封存并独立复算后评分；p45-s03 fresh、p22 stopping 与两条 untouched test 继续封存", hardware:"正式 T0 已在 Mac CPU 完成；不再生成 20 个训练标签，不再运行 ridge/MLP", question:"fold-train selected-rank96 basis 能否在 held-out fit trajectory 容纳兼容 K1 warm start？", contribution:"得到 1/5、observation harm 100% 和 severe harm 90 的可复现负结果，并把单点 p14 headroom 与跨轨迹可达性分开。", next:"该路线已结束；证据用于约束 C1 的 full-view/conditional 表示。", stop:"T1_training_target_generation_authorized=false；禁止换大 MLP 挽救相同固定表示。"
     },
     {
-      id:"warmstart-c1", rank:2, title:"C1 · Coverage-adaptive / Full-view DualRange-K1", badge:"v11.2 fit-only LOTO 5/5", risk:"中-高", novelty:"针对 v10.7 固定 rank96 覆盖失败与 v10.9 full-linear KRR 跨工况失败，让完整三视图 observation 通过奇对称多尺度 detector CNN 生成 full-view dual；精确 A^T lift、解析 alpha 和 strict K1 保持不变", data:"v11.2 五条完整 fit trajectory LOTO 均 PASS，joint match 100%、harm 0%、severe 0；p45-s03 fresh、p22 stopping 与 test 继续封存", hardware:"77,020 参数 v11.2 五折已在 32GB Mac CPU 完成；正式 wall/RSS 比较必须等 fresh release 后用独立进程测量", question:"fit-only 5/5 的结构化非线性 dual proposal，能否在一次冻结的 fresh trajectory 上继续保持 matched accuracy 与 2A+2A^T 调用优势？", contribution:"当前已形成 BOST 代理多视图 detector-space dual proposal、精确可纠正 lift、短程 Krylov 和严格兼容性证据的强候选；fresh、wall/RSS 与真实 BOST 未过前不称算法突破。", next:"先冻结唯一 full-fit checkpoint、预处理、几何、solver、阈值和报告模板，再一次性打开 p45-s03 fresh；不根据 fresh 结果返调模型。", stop:"任何 fresh 材料性 harm、调用优势被模型开销抵消、需要反复看 fresh 调参或真实 BOST 不迁移时停止。"
+      id:"warmstart-c1", rank:2, title:"C1 · Compact Full-view DualRange-K1", badge:"v12.1 compact 5/5 · resource FAIL", risk:"中-高", novelty:"让完整三视图 observation 通过奇对称紧凑 detector CNN 生成 full-view dual；精确 A^T lift、解析 alpha 和 strict K1 保持不变。当前参数从 77,020 压到 10,548。", data:"五条 fit trajectory LOTO 均 PASS；v11.3 的一次性 p45 fresh 与 v12.1 post-open profile 都是 101/101、0 harm、调用减半。p45 已烧掉，两条 untouched test 和真实 BOST 仍封存。", hardware:"10,548 参数 full-fit 在 32GB Mac CPU 耗时 112.22 秒；17×2 冷进程 wall 只快 0.28%，RSS 高 19.69%。", question:"调用减半在什么常驻部署、真实 A/A^T 成本和实验噪声下，才能转化为 wall/RSS 优势？", contribution:"已形成多视图 detector-space dual proposal、精确 Range(A^T) lift、短程 Krylov、五折与一次 fresh 的兼容性证据；资源优势和真实 BOST 尚未成立。", next:"停止容量海选；在不重复使用 p45 调权重的前提下，冻结常驻模型成本口径并取得组内真实 A/A^T 单次成本，再决定是否开 untouched test。", stop:"若常驻口径或真实算子仍无 wall/RSS 优势，或真实 BOST 出现材料性 harm，则将调用减半写成负结果边界而非速度突破。"
     },
     {
       id:"warmstart-c2", rank:3, title:"C2 · Correctable Frontier Training", badge:"论文升级候选", risk:"高", novelty:"训练目标直接包含固定 1/2/4 步物理 refinement 后的误差，使网络学习最容易被求解器纠正的初值，而不只是单步最像真值", data:"只有 C0/C1 在未见 trajectory 上显示稳定 headroom 后才启动", hardware:"截断反传或 stop-gradient 小场开发；全 3D unroll 可能需要 GPU", question:"最小单步 field loss 的 x0，是否不如固定短程 refinement 后误差最小的 x0？", contribution:"连接 neural operator、iterative inverse solver 和成本-精度前沿，形成可一对一消融的机制主张。", next:"比较 field-only、field+measurement、1/2/4-step trajectory loss；所有物理调用进入账本。", stop:"训练显存/成本失控、收益仅来自更多训练预算、或 C0/C1 没有基础 headroom 时不启动。"

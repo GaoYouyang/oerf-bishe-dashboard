@@ -7439,3 +7439,103 @@ algorithm_breakthrough=false
 
 完整表格、为什么这样设计以及下一道 fresh 门见
 `docs/poolfire_c_dual_detector_cnn_v11_result_2026-07-27.md`。
+
+## 249. fresh 不是全胜：精度和调用过了，wall / RSS 没过
+
+这次真正打开了锁模前选好的 `p45-s03`，而且没有只挑好看的部分汇报。
+
+唯一 full-fit checkpoint 先用五条 fit trajectory 的 505 帧 observation-only 输入
+训练，再由第二套实现独立复算。随后才冻结一次性 release、下载公开 PoolFire 文件、
+只生成 observations，并让 Candidate 与 Zero-K4 各跑 17 个全新进程。truth 在
+34 份输出、逐帧调用账和独立 replay 全部封口之后才打开一次。
+
+结果的正面部分很扎实：
+
+```text
+101/101 joint matched
+joint harm = 0
+field / gradient / observation harm = 0
+severe harm = 0
+Candidate = 2A + 2A^T / frame
+Zero-K4 = 4A + 4A^T / frame
+```
+
+但资源结果没有过：
+
+```text
+wall median: 1.1232 s vs 1.0562 s, 慢 6.35%
+peak RSS p90: 343.82 MB vs 293.47 MB, 高 17.16%
+```
+
+独立 score replay 的数值差为 0。正式判决因此是
+`PASS_FRESH_PROXY_ACCURACY_CALLS_RESOURCE_GATE_FAILED`，不是突破。
+
+继续拆时间后发现，101 帧 CNN proposal 约占 0.116 s，两对物理算子只比四对省约
+0.071 s。讲人话：网络确实少算了物理算子，但网络自己更贵，在这个便宜 straight-ray
+CPU proxy 上得不偿失。
+
+我没有回头用 fresh truth 调原模型，而是冻结一个 compact capacity ladder：
+先跑 10,548 参数的 `w16d2` 完整五折；只有 5/5 才测 runtime，失败才运行 33,336
+参数的 `w24d3`。两条 untouched test 继续封存。
+
+完整结果见
+`docs/poolfire_c_dual_detector_cnn_fresh_v11_3_result_2026-07-27.md`。
+
+## 250. 参数缩小 7.30 倍，为什么还是没有真正加速
+
+这轮没有继续加大网络，而是按事前容量阶梯只跑最小的 `w16d2`：
+
+```text
+77,020 params -> 10,548 params
+fit-only LOTO = 5/5
+每条 joint match = 100%
+每条 harm = 0
+每条 severe = 0
+```
+
+独立 validator 重新解析五个 checkpoint、重跑 505 帧物理链，最大科学差
+`4.44e-16`。因为第一档已经 5/5，33,336 参数的第二档没有运行。
+
+随后用五条 fit observation-only 输入训练唯一 full-fit checkpoint，耗时 112.22 秒；
+原 77,020 参数版本约 290.86 秒。第二套 checkpoint 解析与 solver/metric replay 的差
+为 `1.39e-17`。审计也纠正了措辞：模型类仍共享，所以状态写成
+`PASS_INDEPENDENT_METRIC_REPLAY_WITH_SHARED_MODEL_V12_1`，不能冒充完全独立实现。
+
+`p45-s03` 已经被 v11.3 烧掉，因此本轮明确只作 post-open development profile。
+17 个 Candidate 和 17 个 Zero-K4 冷进程结果是：
+
+```text
+joint matched = 101/101
+joint harm = 0
+Candidate = 2A + 2A^T / frame
+Zero-K4 = 4A + 4A^T / frame
+
+wall: 1.0814 s vs 1.0845 s，只快 0.28%（门槛 10%，FAIL）
+RSS p90: 353.71 MB vs 295.53 MB，高 19.69%（FAIL）
+```
+
+第一次 profile 在 34 个 worker 都跑完后，被只允许五条 fit 的 loader 拒绝，没有产生
+判决。修复后新 run 把每条外层 wall 原子写入 progress，再用专门 pair validator
+评分。第三套 validator 又独立核对 34 条 roster、3,434 条逐帧 receipt、全部统计和
+compatibility，数值差为 0。
+
+**讲人话：**网络变小是真的，训练变快也是真的，但这个 proxy 的物理算子太便宜，
+Python/Torch 冷启动、模型初始化、几何加载、序列化和激活内存占了大头。删参数不能
+自动消掉这些共同成本。batch 调小会省内存但增加 proposal 时间，batch 调大会略快但
+扩大激活内存。
+
+因此这不是算法突破。当前可守住的结论只有：
+
+```text
+compact_fit_loto_5_of_5=true
+postopen_p45_compatibility_101_of_101=true
+complete_operator_calls_reduced_50_percent=true
+cold_process_wall_speedup=false
+whole_worker_rss_benefit=false
+untouched_test_opened=false
+real_bost=false
+algorithm_breakthrough=false
+```
+
+完整表格和边界见
+`docs/poolfire_c_dual_detector_compact_v12_1_result_2026-07-27.md`。

@@ -1,0 +1,69 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-detector-compact-full-fit-profile-12.1",
+  "frozen_at_utc": "2026-07-27T14:21:00Z",
+  "parent_evidence": {
+    "capacity_contract": "learning_labs/protocols/poolfire_c_dual_detector_compact_screen_v12.json",
+    "selected_variant": "w16d2",
+    "fit_loto_decision": "PASS_STRONG_FIT_LOTO_DETECTOR_CNN_SENTINEL",
+    "fit_loto_pass_count": 5,
+    "independent_replay_required": true
+  },
+  "scientific_question": "Can the first predeclared compact capacity that preserves all five fit-only LOTO compatibility rows retain the exact dual-lift/K1 mechanism while reducing observation-only proposal cost enough to address the v11.3 wall and RSS failures?",
+  "data_roles": {
+    "full_fit_only": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "post_open_development_resource_profile": "p=45kw_size=03",
+    "post_open_profile_cannot_support_fresh_or_generalization_claims": true,
+    "stopping_validation_forbidden": "p=22kw_size=01",
+    "untouched_test_forbidden": [
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ]
+  },
+  "full_fit_model": {
+    "id": "compact_odd_multiview_detector_w16d2",
+    "variant": "w16d2",
+    "parameter_count": 10548,
+    "seed": 2026077812,
+    "epochs": 120,
+    "batch_size": 32,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "gradient_clip_norm": 1.0,
+    "loss": "inherit the v11.3 downstream teacher-deficiency plus 0.1 certificate loss without truth access",
+    "checkpoint_rule": "exactly epoch 120; one seed; no early stopping, ranking, ensemble, or result-dependent retraining",
+    "truth_access_during_training": false,
+    "trajectory_metadata_input": false
+  },
+  "post_open_resource_profile": {
+    "candidate_path": "G_theta(y) -> exact A^T -> observable alpha in [0,2] -> unchanged CGLS K1",
+    "reference_path": "zero initialization -> unchanged CGLS K4",
+    "candidate_calls_per_frame": "2A+2A^T",
+    "reference_calls_per_frame": "4A+4A^T",
+    "CPU_only": true,
+    "torch_threads": 4,
+    "torch_interop_threads": 1,
+    "fresh_execve_repetitions_per_arm": 17,
+    "arm_order": "alternate the leading arm by repetition index",
+    "wall_gate": "candidate outer-process median at least 10 percent below reference",
+    "RSS_gate": "candidate whole-worker peak RSS p90 no more than 1.05 times reference",
+    "accuracy_gate": "unchanged v11.3 per-frame compatibility and harm rules, reported only as post-open development evidence",
+    "failure_action": "record the failed resource or compatibility gate; do not enlarge the model or reinterpret p45-s03 as fresh"
+  },
+  "claim_limits": {
+    "fresh_proxy_generalization": false,
+    "untouched_test_generalization": false,
+    "real_BOST": false,
+    "physical_same_accuracy": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_benefit": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

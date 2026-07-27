@@ -1,0 +1,136 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-detector-cnn-full-fit-fresh-contract-11.3",
+  "frozen_at_utc": "2026-07-27T12:18:52Z",
+  "parent_evidence": {
+    "fit_loto_contract": "learning_labs/protocols/poolfire_c_dual_detector_cnn_sentinel_contract_v11.json",
+    "fit_loto_decision": "PASS_STRONG_FIT_LOTO_DETECTOR_CNN_SENTINEL",
+    "fit_loto_scope": "five previously opened fit trajectories only",
+    "fresh_selection_receipt": "learning_labs/protocols/poolfire_c_v9_fresh_holdout_selection_receipt.json"
+  },
+  "scientific_question": "Does the single detector-CNN selected before fresh access preserve the frozen field, gradient, and observation compatibility envelope on one project-managed fresh PoolFire proxy trajectory while using 2A+2A^T instead of Zero-CGLS-K4 4A+4A^T, and does that reduction translate into fresh-process wall-time without peak-RSS harm?",
+  "data_roles": {
+    "full_fit_only": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "fresh_proxy_holdout": "p=45kw_size=03",
+    "fresh_official_split": "train",
+    "fresh_claim": "project-managed fresh proxy holdout selected before v9 implementation",
+    "fresh_is_not": [
+      "untouched confirmatory test",
+      "unseen-power generalization",
+      "unseen-size generalization",
+      "geometry OOD",
+      "real BOST"
+    ],
+    "stopping_validation_forbidden": "p=22kw_size=01",
+    "untouched_test_forbidden": [
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ]
+  },
+  "full_fit_model": {
+    "id": "odd_multiview_dilated_detector_resnet_w32_b4",
+    "parameter_count": 77020,
+    "architecture_frozen_equal_to_v11_2": true,
+    "seed": 2026077711,
+    "epochs": 120,
+    "batch_size": 32,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "gradient_clip_norm": 1.0,
+    "loss": "mean downstream teacher deficiency q after exact A^T, observable alpha, and unchanged CGLS K1 plus 0.1 times normalized K3-certificate relative-L2",
+    "teacher": "fit-only zero-start CGLS K4 field and K3 dual certificate",
+    "checkpoint_rule": "exactly epoch 120; no early stopping, checkpoint ranking, ensemble, seed search, or result-dependent retraining",
+    "truth_access_during_training": false,
+    "trajectory_metadata_input": false
+  },
+  "fresh_release_prerequisites": {
+    "full_fit_checkpoint_exists": true,
+    "full_fit_independent_validation_passed": true,
+    "fresh_payload_pair_receipt_or_partial_does_not_exist_when_release_is_frozen": true,
+    "release_binds_checkpoint_contract_source_geometry_metrics_thresholds_worker_orchestrator_validator_and_report_schema": true,
+    "one_release_only": true,
+    "replacement_after_fresh_access": false
+  },
+  "fresh_arms": [
+    {
+      "arm_id": "detector_cnn_full_fit_dual_k1",
+      "path": "G_theta(y) -> exact A^T -> observable alpha in [0,2] -> unchanged CGLS K1",
+      "full_A_calls_per_frame": 2,
+      "full_AT_calls_per_frame": 2
+    },
+    {
+      "arm_id": "zero_cgls_k4",
+      "path": "zero initialization -> unchanged CGLS K4",
+      "full_A_calls_per_frame": 4,
+      "full_AT_calls_per_frame": 4
+    }
+  ],
+  "fresh_execution": {
+    "frame_count": 101,
+    "field_shape": [
+      16,
+      16,
+      32
+    ],
+    "observation_size": 2072,
+    "CPU_only": true,
+    "torch_threads": 4,
+    "torch_interop_threads": 1,
+    "fresh_execve_repetitions_per_arm": 17,
+    "arm_order": "alternate the leading arm by repetition index",
+    "child_lifetime": "before contract, checkpoint, geometry, and observation load through candidate field serialization",
+    "peak_memory_scope": "whole worker process; no child process is permitted",
+    "all_repetitions_must_produce_identical_field_sha256_per_arm": true,
+    "prediction_barrier": "both arms and all 34 worker receipts must be sealed before gauge_truth.npy is opened",
+    "single_score_open": true,
+    "fresh_result_may_update_model_or_threshold": false
+  },
+  "decision_order": [
+    "candidate passes the unchanged per-frame field/gradient/observation compatibility envelope",
+    "joint and per-metric harm fractions are each at most 0.05 and severe-harm count is zero",
+    "actual candidate ledger is exactly 2A+2A^T per frame and reference is exactly 4A+4A^T per frame",
+    "candidate fresh-process wall median is at least 10 percent below reference",
+    "candidate fresh-process peak-RSS p90 is no more than 1.05 times reference",
+    "real BOST transfer remains untested"
+  ],
+  "compatibility": {
+    "field_tolerance_per_frame": "max(0.01,0.05*zero_K4_field_relative_l2)",
+    "gradient_tolerance_per_frame": "max(0.015,0.05*zero_K4_gradient_relative_l2)",
+    "observation_tolerance_per_frame": "max(0.005,0.10*zero_K4_observation_relative_l2)",
+    "joint_matched_fraction_minimum": 0.9,
+    "joint_harm_fraction_maximum": 0.05,
+    "per_metric_harm_fraction_maximum": 0.05,
+    "severe_harm_count": 0,
+    "physical_same_accuracy_claim": false
+  },
+  "resource_gates": {
+    "wall_median_reduction_minimum": 0.1,
+    "peak_RSS_p90_ratio_maximum": 1.05,
+    "training_cost_reported_separately": true,
+    "operator_reduction_is_not_wall_or_memory_speedup": true
+  },
+  "failure_actions": {
+    "compatibility_or_harm_failure": "record a fresh negative result; do not retune on this trajectory and do not open untouched tests",
+    "ledger_failure": "invalidate the run",
+    "wall_failure": "retain the accuracy and call result but do not claim acceleration",
+    "RSS_failure": "do not claim a memory benefit",
+    "any_source_or_checkpoint_mismatch": "fail closed before fresh scoring",
+    "any_result_dependent_retraining": "invalidate the fresh claim"
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "fresh_proxy_generalization": false,
+    "real_BOST": false,
+    "physical_same_accuracy": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_benefit": false,
+    "global_uniqueness_proven": false,
+    "paper_success": false
+  }
+}
