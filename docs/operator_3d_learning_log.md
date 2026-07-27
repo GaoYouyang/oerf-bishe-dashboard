@@ -7148,3 +7148,40 @@ algorithm_breakthrough=false
 
 结果页：
 `docs/poolfire_c_dual_representation_ceiling_v10_4_2_result_2026-07-27.md`。
+
+## 242. selected 不是低秩捷径：10 次输给简单均匀 DCT
+
+这一轮先把 v10.5 的比较链补完整，再做了一个不读取 p14 truth 的五轨迹留一检查。
+比较很公平：selected 和 uniform 使用相同 rank、相同 `A^T`、相同 observable alpha
+和相同 strict CGLS K1，参考都只是 K4 teacher。
+
+结果没有迎合“自适应选择一定更聪明”的直觉：
+
+```text
+rank 96:  uniform 5/5 胜，selected 0/5
+rank 216: uniform 5/5 胜，selected 0/5
+rank 384: selected 5/5 胜，uniform 0/5
+```
+
+15 个“轨迹×秩”组合里，均匀控制赢 10 个。selected 的优势只在 rank 384 出现，
+而且幅度远小于它在 rank 96/216 上的劣势。讲人话：有限容量很小时，优先保留规则
+低频比“按 fit 能量挑频率”更稳；容量升到 384 后，fit 信息才开始带来一点帮助。
+所以后续保留两个 family，但不再把 selected 当低秩默认创新点。
+
+第一轮红队还抓到 token 复制重放、final writer 可绕过验证、validator 复用同一 DCT
+等问题。修复后：
+
+```text
+fixed-ledger token copy replay: rejected
+final validation/decision tamper: rejected
+validator DCT: independent SciPy implementation
+runtime identity: exact 16-file closure + coordinates-derived physics identity
+targeted suite: 66 passed
+second red team: P0=0 / P1=0 / P2=0
+```
+
+这里仍然不能写“算法成功”。fit-only 数字尚未在 clean committed HEAD 下生成正式
+不可覆盖 bundle；p14 Stage A 也没有运行，p22 stopping、fresh 和 test 都继续封存。
+当前下一步只有：提交审计过的闭包，生成私有 release，再执行一次正式 p14 12-arm
+矩阵。`same_UID_filesystem_wide_noninterference_proven=false`，
+`algorithm_breakthrough=false`。
