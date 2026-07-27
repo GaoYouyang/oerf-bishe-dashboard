@@ -7707,3 +7707,76 @@ paper_success=false
 
 完整解释与统一图见
 `docs/poolfire_c_dual_detector_clean_native_v12_4_to_v12_6_result_2026-07-27.md`。
+
+## 254. v13 把时间问题解决了，但 68 kB 也不能假装过门
+
+v12.5 的单次 fresh-process 诊断说明 Candidate 至少还要少约 9.70 MB，才可能达到
+`RSS ratio <= 1.05`。所以这轮没有再换 batch 或编译参数，而是把运行方式真正改成
+流式：
+
+- 观测转 FP32、RMS、正负奇对称和恢复尺度全部放进 C；
+- 四个原生线程常驻，每个线程处理完整样本；
+- 每个线程只留三份单样本 feature scratch，不留 full-batch feature；
+- 下一块 8 帧 proposal 与当前块的 `A^T + alpha + K1` 重叠；
+- Candidate 和 Zero-K4 都逐帧写 NPY，不把整条字段留在 RAM。
+
+先用临时随机权重把 15-worker 队列跑通。串行版是内存通过、wall 失败；Python
+预取版是 wall 通过、RSS 多约 0.53 MB；把协调线程下沉到 64 KiB C 线程后，仍差约
+0.51 MB。一次“卷积里现算 SiLU”的省内存尝试把 wall 拖慢到 0.41 s，立即丢弃。
+最后改成样本并行 scratch，同一份卷积算术不变，临时权重演练才同时过门。
+
+这些只是正式前工程排错，不算科学证据。锁定提交后，正式合成预检才加载冻结训练
+checkpoint；仍然只生成 seed 固定的 101×2072 合成观测，没有读任何 fit observation、
+field truth、fresh、validation 或 test。
+
+正式数值：
+
+```text
+proposal relative-L2 p90/worst = 1.381e-7 / 1.427e-7
+field relative-L2 p90/worst    = 7.668e-8 / 8.429e-8
+
+v13 Dual-K1 calls = 202A + 202A^T
+Zero-K4 calls     = 404A + 404A^T
+
+v13 wall median      = 0.065039 s
+Zero-K4 wall median  = 0.113459 s
+wall reduction       = 42.676% PASS
+
+v12.5 RSS p90        = 82,984,960 bytes
+v13 RSS p90          = 60,571,648 bytes
+Zero-K4 RSS p90      = 57,622,528 bytes
+v13 / Zero-K4        = 1.05117998 FAIL
+frozen cap           = 1.05000000
+excess               = 67,993.6 bytes
+```
+
+五个配对 session 里 v13 全部更快，最弱也快 39.36%；相对 v12.5，RSS 已少
+22.41 MB。可是预注册门不是“差不多”，多 68 kB 也仍然失败。没有重跑到运气好，
+没有把门改成 1.052，也没有打开 p14 或其他数据救结果。
+
+独立只读审计没有发现数据、算术或调用账错误，但指出一个必须讲清楚的 P1：validator
+用的是 `method="higher"`，5 个 session 时 p90 就等于最大值；协议正文没有显式写
+插值方法。事后算 linear-p90 会得到 ratio `1.048859`，但这不能用来改判。正确说法
+是“按冻结 validator 严格失败，RSS 接近阈值且统计稳健性有限”，不是“方法已被证明
+内存更差”。同样，42.68% 只覆盖预热后的 proposal + solver + 输出写入，不含启动、
+模型加载和 native context 创建。
+
+**讲人话：**我们证明了网络推理与物理迭代可以真正并行，调用减半可以转成 42.7%
+的 wall 优势；还把旧运行时的额外内存基本压掉了。但在同样流式的公平参考面前，
+Candidate 仍比允许值高一点点，所以完整的“同调用、更快、内存不增”主张还没成立。
+
+这条后端支线到此冻结。继续为 68 kB 调 allocator 不会让论文更有科学价值，下一轮
+只做能改变跨 trajectory compatibility、harm 或真实迁移结论的模型工作。
+
+```text
+FAIL_SYNTHETIC_PREFIT_FUSED_STREAMING_V13
+formal_wall_gate_passed=true
+formal_peak_RSS_gate_passed=false
+RSS_statistical_robustness_limited=true
+fit_execution_authorized=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整结果与图见
+`docs/poolfire_c_dual_detector_fused_streaming_v13_result_2026-07-28.md`。

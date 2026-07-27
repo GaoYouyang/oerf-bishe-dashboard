@@ -1,8 +1,8 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.27-c-v12-3-fit-wall-pass-rss-fail",
-  previousVersion: "2026.07.27-c-v12-2-persistent-wall-headroom",
-  previousBadge: "v12.2 常驻 wall PASS · RSS FAIL",
-  updated: "2026-07-27",
+  version: "2026.07.28-c-v13-fused-streaming-prefit-fail",
+  previousVersion: "2026.07.27-c-v12-6-clean-runtime-fail",
+  previousBadge: "v12.4-v12.6 clean wall PASS · RSS FAIL",
+  updated: "2026-07-28",
   foundationChecks: [
     {
       id: "python-array",
@@ -480,7 +480,7 @@ window.OPERATOR_LEARNING_GUIDE = {
       id:"warmstart-c0", rank:1, title:"C0 · rank96 可达性负结果", badge:"正式停止，不再训练", risk:"已关闭", novelty:"无算法成功主张；价值是先用五条完整 trajectory 证明固定 rank96 表示本身只有 1/5 可达，阻止继续拟合无效标签", data:"五条 fit target 已 truth-blind 封存并独立复算后评分；p45-s03 fresh、p22 stopping 与两条 untouched test 继续封存", hardware:"正式 T0 已在 Mac CPU 完成；不再生成 20 个训练标签，不再运行 ridge/MLP", question:"fold-train selected-rank96 basis 能否在 held-out fit trajectory 容纳兼容 K1 warm start？", contribution:"得到 1/5、observation harm 100% 和 severe harm 90 的可复现负结果，并把单点 p14 headroom 与跨轨迹可达性分开。", next:"该路线已结束；证据用于约束 C1 的 full-view/conditional 表示。", stop:"T1_training_target_generation_authorized=false；禁止换大 MLP 挽救相同固定表示。"
     },
     {
-      id:"warmstart-c1", rank:2, title:"C1 · Compact Full-view DualRange-K1", badge:"v12.4-v12.6 clean wall PASS · RSS FAIL", risk:"中-高", novelty:"让完整三视图 observation 通过奇对称紧凑 detector CNN 生成 full-view dual；精确 A^T lift、解析 alpha 和 strict K1 保持不变。当前参数从 77,020 压到 10,548。", data:"五条 fit trajectory LOTO 均 PASS；v11.3 的一次性 p45 fresh 达到 101/101、0 harm、调用减半。v12.4-v12.6 只复用一条已开放 p14 fit 做干净部署门，其余 fit、fresh、validation、两条 untouched test 和真实 BOST 均未打开。", hardware:"MLX GPU、原生 C batch16 和 batch8 的干净 wall 分别快 43.56%、15.46%、15.27%，但 whole-worker RSS ratio 为 1.3367、1.0745、1.1395，全部超过 1.05。", question:"调用减半与单轨迹 wall 机制已经成立；下一种可检验算法机制能否在重新冻结的跨轨迹验证中同时闭合 RSS，而不是继续在 p14 上调后端参数？", contribution:"已形成多视图 detector-space dual proposal、精确 Range(A^T) lift、短程 Krylov、五折、一次 fresh、跨 fit 工况 wall 机制和干净运行时负证据；完整资源优势与真实 BOST 尚未成立。", next:"停止同一模型的 FP32、batch、线程栈和编译参数微调；先把当前结果写成明确适用边界，再为改变表示或求解流程的新机制冻结独立跨轨迹合同。", stop:"若新机制仍不能在独立跨轨迹上同时通过 compatibility、wall 与 RSS，或真实 BOST 出现材料性 harm，则把算子调用与 wall headroom 写成条件性结果，不宣称完整部署突破。"
+      id:"warmstart-c1", rank:2, title:"C1 · Compact Full-view DualRange-K1", badge:"v13 steady-state wall PASS · strict RSS FAIL", risk:"中-高", novelty:"让完整三视图 observation 通过奇对称紧凑 detector CNN 生成 full-view dual；精确 A^T lift、解析 alpha 和 strict K1 保持不变。当前参数从 77,020 压到 10,548。", data:"五条 fit trajectory LOTO 均 PASS；v11.3 的一次性 p45 fresh 达到 101/101、0 harm、调用减半。v13 只使用冻结 checkpoint 和确定性合成观测做训练前资源门，没有读取新的 fit、fresh、validation、test 或真实 BOST 数据。", hardware:"v13 样本并行原生 C 流水线的稳态 measured wall 比公平流式 Zero-K4 快 42.68%，相对 v12.5 少 22.41 MB；但保守 higher-p90 whole-worker RSS ratio 为 1.05118，高于冻结 1.05 门约 68 kB。", question:"调用减半和稳态 wall 机制已成立，但严格 RSS 门仍失败；下一项工作必须改变跨 trajectory 科学判断，而不是继续围绕 68 kB 调 allocator、线程栈或 batch。", contribution:"已形成多视图 detector-space dual proposal、精确 Range(A^T) lift、短程 Krylov、五折、一次 fresh、融合流式运行时和严格资源负证据；完整冷启动资源优势与真实 BOST 尚未成立。", next:"冻结 v13 后端路线；只推进能改变跨 trajectory compatibility、harm、真实迁移或物理同精度判断的模型机制。", stop:"若新机制仍不能在独立跨轨迹上同时通过 compatibility、wall 与 RSS，或真实 BOST 出现材料性 harm，则把算子调用与稳态 wall headroom 写成条件性结果，不宣称完整部署突破。"
     },
     {
       id:"warmstart-c2", rank:3, title:"C2 · Correctable Frontier Training", badge:"论文升级候选", risk:"高", novelty:"训练目标直接包含固定 1/2/4 步物理 refinement 后的误差，使网络学习最容易被求解器纠正的初值，而不只是单步最像真值", data:"只有 C0/C1 在未见 trajectory 上显示稳定 headroom 后才启动", hardware:"截断反传或 stop-gradient 小场开发；全 3D unroll 可能需要 GPU", question:"最小单步 field loss 的 x0，是否不如固定短程 refinement 后误差最小的 x0？", contribution:"连接 neural operator、iterative inverse solver 和成本-精度前沿，形成可一对一消融的机制主张。", next:"比较 field-only、field+measurement、1/2/4-step trajectory loss；所有物理调用进入账本。", stop:"训练显存/成本失控、收益仅来自更多训练预算、或 C0/C1 没有基础 headroom 时不启动。"
