@@ -1,0 +1,43 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-detector-compact-screen-12.0",
+  "purpose": "test whether a predeclared compact capacity ladder preserves the five-trajectory fit-only compatibility result while reducing proposal inference cost",
+  "fit_only_trajectories": [
+    "p=14kw_size=05",
+    "p=22kw_size=03",
+    "p=33kw_size=01",
+    "p=45kw_size=05",
+    "p=58kw_size=03"
+  ],
+  "forbidden_for_training_or_selection": [
+    "p=14kw_size=01",
+    "p=22kw_size=01",
+    "p=45kw_size=03",
+    "p=22kw_size=05",
+    "p=58kw_size=01"
+  ],
+  "capacity_ladder": [
+    {
+      "variant": "w16d2",
+      "width": 16,
+      "dilations": [1, 2],
+      "parameter_count": 10548
+    },
+    {
+      "variant": "w24d3",
+      "width": 24,
+      "dilations": [1, 2, 4],
+      "parameter_count": 33336
+    }
+  ],
+  "execution_order": "run w16d2 first; stop if it passes 5/5; otherwise run w24d3 once",
+  "training_and_downstream": "inherit v11.2 epochs, optimizer, loss, fit-only LOTO barrier, exact A^T, observable alpha, and strict CGLS K1",
+  "selection": "choose the first 5/5 variant; no p45-s03 truth, stopping-validation truth, or untouched-test truth may select capacity",
+  "resource_followup": "only the selected 5/5 variant may receive a full-fit checkpoint and observation-only runtime profiling",
+  "claim_limits": {
+    "fresh_generalization": false,
+    "real_BOST": false,
+    "wall_speedup": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
