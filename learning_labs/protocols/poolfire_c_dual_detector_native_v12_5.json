@@ -1,0 +1,109 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-detector-native-backend-12.5",
+  "status": "FROZEN_BEFORE_P14_POSTOPEN_NATIVE_EXECUTION",
+  "scientific_question": "Can the frozen compact proposal use a minimal native C runtime to preserve the exact downstream inverse result while passing wall and whole-worker RSS gates against the framework-free Zero-K4 reference?",
+  "first_feasibility_trajectory": "p=14kw_size=05",
+  "trajectory_role": "already-open post-open development fit only; no fresh, validation, or test",
+  "adaptation_provenance": {
+    "trigger": "v12.4 passed compatibility, parity, isolation, and wall on p14 but failed whole-worker RSS because MLX added about 50 MB peak memory",
+    "permitted_change": "replace only the proposal execution backend; weights, architecture, precision boundary, exact lift, alpha, K1, reference, metrics, and gates remain unchanged",
+    "independent_confirmation": false
+  },
+  "backend_selection_before_native_fit_execution": {
+    "inputs": "deterministic synthetic 101x2072 float64 observations and frozen fold-0 checkpoint only",
+    "evaluated_native_batch_sizes": [
+      4,
+      8,
+      16,
+      32
+    ],
+    "selected_batch_size": 16,
+    "selection_reason": "Pareto choice: proposal median within about 2 percent of batch 32 while synthetic process peak RSS was about 20 MB lower",
+    "fit_observation_or_truth_used_for_native_batch_selection": false
+  },
+  "native_build": {
+    "source": "learning_labs/native/poolfire_compact_w16d2_v12_5.c",
+    "compiler": "Apple clang",
+    "flags": [
+      "-O3",
+      "-std=c11",
+      "-dynamiclib",
+      "-fPIC",
+      "-pthread",
+      "-mcpu=native",
+      "-Wall",
+      "-Wextra"
+    ],
+    "external_neural_runtime": false
+  },
+  "precision_boundary": {
+    "checkpoint_parameters_on_disk": "float64 frozen v12 fold-0 checkpoint",
+    "proposal_network_input_weights_activations_output": "float32 native CPU C kernel",
+    "proposal_transport_to_solver": "convert output to float64 immediately",
+    "exact_A_transpose_lift": "float64 unchanged",
+    "observable_alpha": "float64 unchanged",
+    "strict_CGLS_K1": "float64 unchanged",
+    "Zero_K4_reference": "framework-free NumPy float64 unchanged",
+    "metrics_and_compatibility": "float64 unchanged"
+  },
+  "arms": [
+    "compact_w16d2_native_c_dual_k1",
+    "zero_cgls_k4_clean_numpy"
+  ],
+  "execution": {
+    "session_count_per_arm": 5,
+    "warmup_trajectory_passes_per_session": 1,
+    "measured_trajectory_passes_per_session": 17,
+    "frame_count": 101,
+    "arm_order": "alternate by session",
+    "model_inference_batch_size": 16,
+    "measured_interval": "proposal plus unchanged float64 solver; excludes process startup and one-time loading",
+    "peak_rss_scope": "whole persistent worker process",
+    "both_runtimes_must_not_load": [
+      "torch",
+      "mlx"
+    ]
+  },
+  "operator_calls_per_frame": {
+    "compact_w16d2_native_c_dual_k1": {
+      "A": 2,
+      "A_transpose": 2
+    },
+    "zero_cgls_k4_clean_numpy": {
+      "A": 4,
+      "A_transpose": 4
+    }
+  },
+  "gates": {
+    "joint_matched_fraction_minimum": 1.0,
+    "joint_harm_fraction_maximum": 0.0,
+    "severe_harm_count_maximum": 0,
+    "native_vs_frozen_torch_proposal_relative_l2_p90_maximum": 0.00005,
+    "native_vs_frozen_torch_proposal_relative_l2_worst_maximum": 0.00005,
+    "native_vs_frozen_torch_field_relative_l2_p90_maximum": 0.00005,
+    "native_vs_frozen_torch_field_relative_l2_worst_maximum": 0.00005,
+    "steady_state_wall_reduction_minimum_fraction": 0.1,
+    "maximum_paired_session_wall_harm_fraction": 0.05,
+    "whole_worker_peak_rss_ratio_maximum": 1.05
+  },
+  "decision_rule": "all compatibility, parity, isolation, wall, paired-session, and whole-worker RSS gates must pass on p=14kw_size=05; there is no mean-gain override",
+  "success_action": "authorize the same frozen native backend on the remaining four already-open fit trajectories only",
+  "failure_action": "freeze the native backend result and stop backend engineering before any fresh, validation, or test access",
+  "forbidden_adaptation": [
+    "training or changing checkpoint weights",
+    "changing native batch size or compiler flags after fit execution",
+    "changing architecture, alpha, solver, reference, metrics, or thresholds",
+    "opening p45-s03, validation, or untouched test",
+    "changing complete A/A^T accounting",
+    "relaxing any gate after results"
+  ],
+  "claim_limits": {
+    "fresh": false,
+    "untouched_test": false,
+    "real_BOST": false,
+    "physical_same_accuracy": false,
+    "broad_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
