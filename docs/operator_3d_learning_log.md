@@ -7966,3 +7966,64 @@ algorithm_breakthrough=false
 
 完整结果见
 `docs/poolfire_c_independent_resource_v16_1_result_2026-07-28.md`。
+
+## 258. v17：单持久线程真的修好了内存，但还没有修好完整成本
+
+上一轮不是笼统地“性能不好”，而是三个可定位的问题：四份网络 scratch、四个持久
+工作线程、每批再临时创建一个协调线程。于是这次我没有改网络、checkpoint、物理算子
+或 CGLS，只改了运行时：
+
+```text
+旧实现：main + 4 persistent workers + per-batch coordinator
+v17：   main + 1 persistent proposal worker
+```
+
+`begin()` 只把下一批观测交给这个持久线程，主线程继续处理当前批的 `A^T`、`A` 和
+K1；`finish()` 等待结果，不再每批创建和回收线程。网络逐样本算术顺序不变，四份
+feature scratch 也降成一份。
+
+结果前把批大小 8、18×2 fresh process、第一次运行必须保留、同一 CPU/RSS/wall 门
+全部锁死。数值检查先确认它没有偷换算法：
+
+```text
+candidate vs v16 field rel-L2 p90/worst = 9.24e-8 / 1.04e-7
+reference vs v16 = 0 / 0
+candidate ledger = 202 A + 202 A^T
+reference ledger = 404 A + 404 A^T
+```
+
+资源结果比 v16.1 明显进了一步：
+
+```text
+wall median:
+  candidate = 0.2280 s
+  Zero-K4   = 0.2638 s
+  paired reduction = 11.06%        PASS
+  faster pairs = 16 / 18           PASS
+
+peak RSS p90 ratio = 0.99488        PASS
+
+CPU median ratio = 1.11277          FAIL
+first-pair wall harm = 236.82%      FAIL
+```
+
+也就是说，单持久线程把旧的 RSS ratio `1.05805` 真正修到了 `0.99488`，典型 wall
+也第一次和 RSS 同时过门；但网络推理仍让总 CPU 多 `11.28%`，第一次冷加载仍然远超
+5% no-harm 门。独立 validator 重算全部 36 条 fresh-process records 后给出的正式
+判决是：
+
+```text
+PASS_INDEPENDENT_RECOMPUTATION_V17
+FAIL_POST_OPEN_PERSISTENT_SERIAL_RESOURCE_GATE_V17
+algorithm_breakthrough=false
+```
+
+**讲人话：**这次不是白做。我们已经证明“内存高”主要是旧线程结构造成的，并把它
+修掉了；现在真正剩下的是网络本身多做的 CPU 计算，以及第一次加载模型和动态库的
+长尾。因此继续调线程、allocator 或 batch 已经不值。下一项值得验证的机制是只在
+观测发生重要变化的关键帧运行网络，其他帧复用或传输 dual proposal；但一级来源红队
+也提醒，关键帧、时间复用和 warm start 各自都不是新原语，必须胜过 previous-dual
+hold、运动传输与 Krylov recycling，才能形成论文贡献。
+
+完整结果见
+`docs/poolfire_c_persistent_serial_v17_result_2026-07-28.md`。
