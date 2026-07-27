@@ -1,0 +1,64 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-detector-w8d2-capacity-gate-14.0",
+  "scientific_question": "Can one predeclared 2912-parameter w8d2 detector preserve the five-trajectory fit-only compatibility result before any further resource profiling?",
+  "candidate": {
+    "variant": "w8d2",
+    "width": 8,
+    "dilations": [1, 2],
+    "parameter_count": 2912,
+    "packing": "inherit_v11_multiview_detector_packing",
+    "symmetry": "exact_odd_homogeneity_by_positive_negative_pair",
+    "global_context": "inherit_v12_multiplicative_pooled_context"
+  },
+  "fit_only_trajectories": [
+    "p=14kw_size=05",
+    "p=22kw_size=03",
+    "p=33kw_size=01",
+    "p=45kw_size=05",
+    "p=58kw_size=03"
+  ],
+  "forbidden_for_training_selection_or_rescue": [
+    "p=14kw_size=01",
+    "p=22kw_size=01",
+    "p=45kw_size=03",
+    "p=22kw_size=05",
+    "p=58kw_size=01"
+  ],
+  "training": {
+    "outer_split": "five_complete_trajectory_leave_one_out",
+    "root_seed": 2026072812,
+    "extra_seeds": 0,
+    "epochs": 120,
+    "batch_size": 32,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "loss": "mean_post_K1_teacher_deficiency_q_plus_0.1_mean_dual_certificate_relative_L2",
+    "checkpoint_barrier": "all_five_checkpoints_frozen_before_any_heldout_truth_read"
+  },
+  "downstream": {
+    "proposal_inputs": "deployment_visible_observation_only",
+    "lift": "exact_A_transpose",
+    "step": "observable_only_alpha",
+    "solver": "unchanged_strict_CGLS_K1",
+    "deployment_calls_per_frame": {
+      "A": 2,
+      "A_transpose": 2
+    }
+  },
+  "decision": {
+    "pass": "all five heldout trajectories pass the inherited field-gradient-observation compatibility envelope, with no severe harm, and independent checkpoint replay agrees",
+    "fail": "any one fold fails compatibility or independent replay",
+    "on_fail": "stop the pure capacity-compression route; do not add width candidates, seeds, epochs, or post-result rescue",
+    "on_pass": "permit exactly one full-fit checkpoint and a separately frozen synthetic resource gate using NumPy quantile method higher"
+  },
+  "execution_order": "run only w8d2 once; no capacity ladder",
+  "claim_limits": {
+    "fresh_trajectory_generalization": false,
+    "real_BOST": false,
+    "wall_speedup": false,
+    "memory_advantage": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
