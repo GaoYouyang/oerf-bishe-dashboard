@@ -7067,3 +7067,84 @@ detector-graph / spectral residual；oracle 通过才查 fit 目标与优化。
 
 完整图表和证据见
 `docs/poolfire_c_dual_development_screen_v10_3_result_2026-07-27.md`。
+
+## 241. 完整 K3 重启能过，但 96 个低频系数仍装不下
+
+v10.4.2 已经完整跑完并通过独立复算。先说最重要的：它没有发现算法突破，但把失败
+位置向前推进了一大步。
+
+在同一个已打开的 p14 开发轨迹上，保留完整 K3 dual certificate，再做一次未修改
+CGLS K1，三项冻结门全部通过：
+
+```text
+Full K3 restart:
+field / gradient / observation p90 = 0.6205 / 1.0923 / 0.3466
+joint matched = 100%
+joint harm = 0%
+
+Zero K4 reference:
+field / gradient / observation p90 = 0.6332 / 1.2180 / 0.3330
+```
+
+这说明 `2A+2A^T` 的 restart 外壳并非先天地没有能力。真正失败的是当前表示：
+
+```text
+best capped B96:
+field / gradient / observation p90 = 0.6663 / 0.8725 / 0.4601
+joint matched = 0%
+joint harm = 100%
+
+best uncapped B96:
+field / gradient / observation p90 = 0.6355 / 0.9072 / 0.4245
+joint matched = 0%
+joint harm = 100%
+```
+
+三个 capped、三个 uncapped 搜索各跑 800 步；独立 NumPy 方向导数检查全部通过。
+所以这次不能用“优化器没跑”轻易解释，但仍只能写“有限搜索没有找到 headroom”，
+不能写 B96 数学不可能。
+
+更直观的原因是，逐通道 `4x4`、总 rank 96 只保留 K3 dual correction 能量的：
+
+```text
+minimum = 37.11%
+p10    = 38.52%
+p50    = 42.12%
+```
+
+这里还纠正了一个统计命名问题：旧机器 summary 把 capture 的最大值放在名为
+`worst` 的字段里。capture 越高越好，真正的坏尾部应该是 minimum 和低侧 p10。
+修正后结论没有翻转，反而更清楚地说明 B96 覆盖不足。
+
+六个 view-channel 的中位能量份额约为：
+
+```text
+8.35%, 0.64%, 8.95%, 0.65%, 42.04%, 39.29%
+```
+
+因此下一步不是增加 MLP 参数，而是严格比较：
+
+1. fit-only 联合选择频率与通道计数；
+2. 同秩逐通道 `4x4 / 6x6 / 8x8`；
+3. rank `96 / 216 / 384`；
+4. projection support 与 teacher-oracle headroom 分开判决；
+5. rank 2072 必须完整复现 K3 restart 的 proposal、`A^T`、alpha、field、metrics
+   和 gate。
+
+红队第一次审查仍给出 `P0=0 / P1=6`，所以 v10.5 没有启动。已经先关闭两个漏洞：
+
+- 工具现在只接受协议中五条 fit 轨迹和固定 rank 梯；
+- 五条 fit 合并后的唯一 basis 可以原子、不可覆盖地 seal，p14 阶段不能悄悄换。
+
+当前还缺 fit-heldout 的同壳 teacher deficiency、完整 rank-2072 恒等控制、两阶段
+p14 truth 隔离、正式 runner 和独立 validator。它们没闭合前继续写：
+
+```text
+v10_5_execution_authorized=false
+fresh_holdout_opened=false
+untouched_test_opened=false
+algorithm_breakthrough=false
+```
+
+结果页：
+`docs/poolfire_c_dual_representation_ceiling_v10_4_2_result_2026-07-27.md`。

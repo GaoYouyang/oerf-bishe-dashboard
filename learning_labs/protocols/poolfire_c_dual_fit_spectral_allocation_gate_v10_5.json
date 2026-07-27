@@ -1,0 +1,470 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-fit-spectral-allocation-gate-10.5",
+  "status": "DRAFT_AWAITING_INDEPENDENT_P1_REAUDIT_AND_HEAD_BINDING",
+  "last_repaired_at_utc": "2026-07-27T05:15:19Z",
+  "research_mainline": "PoolFire observation-only dual proposal -> exact A^T lift -> observable alpha -> strict CGLS K1",
+  "scientific_question": "Does fit-selected detector-space DCT allocation or a larger finite detector rank preserve enough of the K3 dual restart information to recover the frozen p14 development compatibility envelope?",
+  "trigger": {
+    "source_commit": "f703bcf",
+    "independent_validation_status": "PASS_INDEPENDENT_RECOMPUTATION_V10_4_2",
+    "scientific_status": "POSTOPEN_DIAGNOSTIC_B96_SEARCH_NO_HEADROOM_FOUND_NOT_IMPOSSIBILITY_PROOF",
+    "algorithm_breakthrough": false,
+    "facts": {
+      "full_K3_dual_restart_control_passed": true,
+      "all_preregistered_cap0p5_B96_searches_passed": false,
+      "all_preregistered_uncapped_B96_searches_passed": false,
+      "best_uncapped_B96_observation_harm_fraction": 1.0,
+      "uniform_4x4_per_channel_B96_correction_energy_fraction_v10_4_2_legacy_summary": {
+        "p50": 0.4212395802861974,
+        "p90_higher": 0.47782960562377347,
+        "legacy_field_named_worst_but_actually_maximum": 0.49713751110509685,
+        "corrected_p10_lower": 0.3851866207039866,
+        "corrected_minimum": 0.3711023171121346
+      },
+      "uniform_14x14_per_channel_energy_fraction_v10_4_2_legacy_summary": {
+        "p50": 0.9937171420945873,
+        "p90_higher": 0.9948542005568113,
+        "legacy_field_named_worst_but_actually_maximum": 0.9960502506192325,
+        "corrected_p10_lower": 0.991836596459892,
+        "corrected_minimum": 0.9902453965213377
+      },
+      "channel_energy_p50": {
+        "view_0_channel_0": 0.0835092282961822,
+        "view_0_channel_1": 0.00635461420054724,
+        "view_1_channel_0": 0.0894548066783768,
+        "view_1_channel_1": 0.00654762229441497,
+        "view_2_channel_0": 0.42040118914043384,
+        "view_2_channel_1": 0.3928893468803303
+      }
+    },
+    "interpretation": "The unchanged K3 dual restart control passes, while the uniform low-frequency B96 family does not. The next finite falsification tests detector-space allocation and rank before changing the Krylov state interface.",
+    "not_proven": [
+      "B96_mathematical_impossibility",
+      "all_low_rank_basis_impossibility",
+      "DCT_optimality",
+      "rank_is_the_only_bottleneck",
+      "training_objective_correctness",
+      "global_optimizer_success",
+      "outer_generalization",
+      "real_BOST",
+      "wall_time_speedup"
+    ]
+  },
+  "audit_repair_record": {
+    "prior_audit": {
+      "P0_count": 0,
+      "P1_count": 6,
+      "P2_count": 2
+    },
+    "repairs": [
+      "disclose_fit_selection_p14_teacher_optimization_and_p14_truth_scoring_as_three_distinct access roles",
+      "label_the_rank_ladder_as_hypothesis_generated_after_opened_p14_v10_4_2",
+      "freeze_one_final_all_five_fit_basis_before_any_p14_candidate_generation",
+      "separate_projection_support_from_teacher_optimized_oracle_headroom",
+      "add_fit_heldout_downstream_teacher_deficiency_against_same_rank_uniform_controls",
+      "replace_channel_only_attribution_with_joint_frequency_and_channel_allocation_language",
+      "use_exact_same_rank_uniform_4x4_6x6_8x8_controls",
+      "define_full_rank_parity_for_proposal_lift_alpha_field_metrics_and_gate",
+      "replace_the_absolute_Krylov_prohibition_with_a_finite_rank_ladder_first_rule"
+    ],
+    "execution_authorized": false,
+    "freeze_condition": "Independent audit must report P0=0 and P1=0, then this protocol and all execution code must be committed in one clean HEAD before a private release is created."
+  },
+  "data_roles_and_access_order": {
+    "fit_only_trajectories": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "opened_post_selection_development_trajectory": "p=14kw_size=01",
+    "closed_stopping_validation": "p=22kw_size=01",
+    "closed_fresh_and_test": [
+      "p=45kw_size=03",
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ],
+    "fit_stage": {
+      "observations_read": true,
+      "K3_and_K4_teacher_fields_and_dual_certificates_read": true,
+      "ground_truth_read": false,
+      "purposes": [
+        "atom_scoring",
+        "leave_one_fit_trajectory_out_energy_capture",
+        "heldout_fit_downstream_teacher_deficiency"
+      ]
+    },
+    "p14_stage_A_before_truth": {
+      "basis_and_rank_ladder_already_sealed": true,
+      "p14_observation_read": true,
+      "p14_K3_and_K4_teacher_fields_and_dual_certificates_read": true,
+      "p14_truth_read": false,
+      "purposes": [
+        "deterministic_K3_dual_projection",
+        "three_start_teacher_optimized_uncapped_coefficient_search",
+        "candidate_field_generation",
+        "candidate_and_optimizer_sealing"
+      ]
+    },
+    "p14_stage_B_after_candidate_seal": {
+      "p14_truth_read": true,
+      "purpose": "apply_the_unchanged_v10_4_2_development_compatibility_gate_once",
+      "may_change_basis_rank_optimizer_or_candidate": false
+    },
+    "postopen_disclosure": {
+      "atom_ordering_is_fit_only": true,
+      "rank_ladder_hypothesis_generated_after_opened_p14_v10_4_2": true,
+      "p14_teacher_is_used_for_projection_and_oracle_candidates": true,
+      "p14_truth_is_used_only_after_candidate_seal": true,
+      "p14_is_unbiased_generalization_evidence": false,
+      "outer_or_test_claim_authorized": false
+    }
+  },
+  "frozen_geometry_and_solver": {
+    "field_shape": [
+      16,
+      16,
+      32
+    ],
+    "observation_size": 2072,
+    "view_shapes": [
+      [
+        2,
+        14,
+        30
+      ],
+      [
+        2,
+        14,
+        30
+      ],
+      [
+        2,
+        14,
+        14
+      ]
+    ],
+    "reference": "zero_start_CGLS_K4",
+    "candidate_shell": "dual_proposal_exact_A_transpose_lift_observable_alpha_strict_CGLS_K1",
+    "candidate_online_operator_ledger_if_a_future_model_predicts_coefficients": "2A+2A^T",
+    "this_gate_trains_a_deployable_model": false
+  },
+  "fit_only_DCT_selector": {
+    "per_frame_normalization": "divide_K3_dual_correction_by_observation_RMS",
+    "normalization_invariance_disclosure": "The subsequent per-frame coefficient-energy fraction divides by total energy, so any positive per-frame scalar including observation RMS cancels exactly from atom ranking. RMS normalization is retained only to keep later coefficient magnitudes in the candidate-shell convention and must not be credited with changing selected atoms.",
+    "transform": "complete_orthonormal_2D_DCT_per_view_and_channel",
+    "atom_score": "trajectory_equal_mean_of_per_frame_coefficient_squared_over_total_normalized_correction_energy",
+    "mandatory_atoms": "one_DC_atom_per_view_channel",
+    "remaining_atoms": "highest_fit_only_atom_score",
+    "tie_break": [
+      "higher_atom_score",
+      "lower_view_index",
+      "lower_channel_index",
+      "lower_frequency_y_plus_frequency_x",
+      "lower_frequency_y",
+      "lower_frequency_x"
+    ],
+    "selected_rank_sets_must_be_nested": true,
+    "p14_truth_or_teacher_used_for_atom_selection": false
+  },
+  "fit_only_allocation_audit_and_downstream_gate": {
+    "procedure": "five_leave_one_fit_trajectory_out_folds",
+    "selection": "select_each_rank_on_four_fit_trajectories",
+    "descriptive_energy_audit": {
+      "evaluation": "heldout_fit_K3_dual_correction_energy_capture",
+      "may_alone_authorize_a_scientific_conclusion": false,
+      "report": [
+        "per_fold_p50",
+        "per_fold_p10",
+        "per_fold_worst",
+        "selected_atom_Jaccard",
+        "per_view_channel_selected_count"
+      ]
+    },
+    "downstream_teacher_deficiency": {
+      "heldout_target": "heldout_fit_zero_start_CGLS_K4_teacher",
+      "candidate": "project_heldout_fit_K3_dual_correction_into_the_fold_selected_basis_then_apply_the_frozen_candidate_shell",
+      "same_rank_control": "uniform_per_channel_low_frequency_DCT_basis_then_apply_the_same_frozen_candidate_shell",
+      "truth_read": false,
+      "metrics_against_K4_teacher": [
+        "field_relative_L2",
+        "gradient_relative_L2",
+        "observation_relative_L2",
+        "q_teacher_max_of_three"
+      ],
+      "tails": [
+        "p50",
+        "p90_higher",
+        "worst"
+      ],
+      "report": [
+        "selected_minus_uniform_per_metric_and_tail",
+        "per_trajectory_rank_order",
+        "trajectory_equal_summary"
+      ],
+      "adaptive_path_dominated_definition": "For every rank and heldout trajectory, selected q_teacher p90 is not lower than same-rank uniform by more than 1e-12, and at least one selected q_teacher p90 is worse by more than 1e-6.",
+      "adaptive_path_dominated_action": "Disable fit-selected allocation candidates but continue the frozen uniform rank ladder."
+    },
+    "hard_checks": [
+      "selected_basis_is_orthonormal",
+      "selected_atom_count_equals_rank",
+      "all_six_mandatory_DC_atoms_are_present",
+      "selected_rank_sets_are_nested",
+      "heldout_energy_capture_is_finite_and_between_zero_and_one",
+      "heldout_energy_capture_is_nondecreasing_with_rank",
+      "downstream_teacher_deficiency_is_finite",
+      "same_rank_selected_and_uniform_candidates_use_identical_shell_and_operator_ledger"
+    ],
+    "failure_action": "Stop before p14 on any numerical role access monotonicity nesting or parity failure; selection instability is reported and cannot change the frozen ladder."
+  },
+  "final_fit_basis_seal": {
+    "when": "after_all_five_LOTO_folds_and_before_any_p14_candidate_generation",
+    "procedure": "recompute_one_equal_trajectory_atom_score_from_all_five_fit_trajectories_and_apply_the_identical_selector_and_tie_break",
+    "seal": [
+      "ordered_atom_table",
+      "all_five_trajectory_scores",
+      "final_equal_trajectory_score",
+      "selected_indices_at_each_rank",
+      "same_rank_uniform_indices",
+      "normalization_definition",
+      "geometry_identity",
+      "operator_and_solver_identity"
+    ],
+    "immutability": "Any change invalidates all p14 candidate outputs."
+  },
+  "execution_barrier": {
+    "stage_fit_and_p14_teacher": {
+      "may_read": [
+        "fit_observations",
+        "p14_observations",
+        "frozen_geometry_and_solver"
+      ],
+      "may_derive": [
+        "fit_K3_and_K4_fields_and_dual_certificates",
+        "p14_K3_and_K4_fields_and_dual_certificates",
+        "fit_basis_seal",
+        "all_p14_candidate_fields",
+        "all_optimizer_traces"
+      ],
+      "must_not_receive": [
+        "fit_ground_truth",
+        "p14_ground_truth",
+        "p22_stopping_validation",
+        "fresh_or_test"
+      ],
+      "completion": "atomically_seal_all_candidate_arrays_manifests_and_stage_input_hashes"
+    },
+    "stage_p14_truth_score": {
+      "starts_only_after": "independent_validation_of_the_candidate_seal_and_exclusive_single_use_score_token",
+      "may_read": [
+        "sealed_p14_candidate_fields",
+        "p14_ground_truth",
+        "frozen_v10_4_2_gate"
+      ],
+      "must_not_change": [
+        "basis",
+        "rank",
+        "candidate_field",
+        "optimizer",
+        "seed",
+        "threshold",
+        "metric",
+        "report_template"
+      ]
+    },
+    "failure_action": "Any role leak missing atomic seal reused score token or candidate mutation is INCONCLUSIVE and produces no scientific headroom status."
+  },
+  "candidate_ladder": {
+    "rank_ladder_hypothesis_generated_after_opened_p14_v10_4_2": true,
+    "ranks": [
+      96,
+      216,
+      384
+    ],
+    "same_rank_uniform_controls": {
+      "96": "4x4_low_frequency_atoms_per_each_of_six_view_channels",
+      "216": "6x6_low_frequency_atoms_per_each_of_six_view_channels",
+      "384": "8x8_low_frequency_atoms_per_each_of_six_view_channels"
+    },
+    "selected_basis_arms": [
+      "fit_selected_DCT_rank96",
+      "fit_selected_DCT_rank216",
+      "fit_selected_DCT_rank384"
+    ],
+    "identity_and_reference_controls": [
+      "complete_per_channel_DCT_rank2072_numerical_identity_control",
+      "full_K3_dual_restart_control",
+      "zero_CGLS_K4_reference"
+    ],
+    "per_low_rank_basis_arms": {
+      "applies_to": "all_three_fit_selected_and_all_three_same_rank_uniform_basis_families",
+      "deterministic_projection": {
+        "definition": "orthogonal_projection_of_the_p14_K3_dual_correction_into_the_sealed_basis",
+        "meaning_if_compatibility_passes": "direct_representation_support_on_opened_p14",
+        "deployable_prediction_proven": false
+      },
+      "teacher_optimized_oracle": {
+        "definition": "three_start_uncapped_per_frame_basis_coefficient_search_against_the_p14_K4_teacher_before_truth_is_read",
+        "meaning_if_compatibility_passes_while_projection_fails": "teacher_side_oracle_headroom_with_predictability_unknown",
+        "deployable_prediction_proven": false
+      }
+    },
+    "optimization": {
+      "starts": [
+        "zero_delta",
+        "projected_K3_delta",
+        "fixed_seed_quarter_reference_norm"
+      ],
+      "steps": 800,
+      "optimizer": "Adam",
+      "fixed_seed": 2026072706,
+      "initial_learning_rate": 0.03,
+      "final_learning_rate": 0.001,
+      "objective": "complete_trajectory_mean_q_plus_mean_largest_11_q",
+      "q": "max_of_K4_teacher_field_gradient_observation_relative_errors",
+      "global_optimality_proven": false,
+      "winner_tie_break": "lowest_final_objective_then_fixed_start_order_zero_projected_random",
+      "independent_directional_derivative_check": {
+        "directions_per_start": 2,
+        "fixed_seed": 2026072708,
+        "central_difference_relative_step": 1e-06,
+        "absolute_tolerance": 0.0001,
+        "relative_tolerance": 0.05
+      },
+      "stationarity": {
+        "report_projected_or_unconstrained_stationarity_norm": true,
+        "numerical_finiteness_required": true,
+        "threshold_for_claiming_convergence": null,
+        "convergence_claim_authorized": false
+      },
+      "consistency_gate": "The best teacher-optimized candidate must be finite and not worse in its frozen teacher objective than its deterministic projected_K3 start; otherwise the rank result is inconclusive."
+    }
+  },
+  "full_rank_identity_control": {
+    "rank": 2072,
+    "relative_tolerance": 5e-12,
+    "absolute_tolerance": 5e-12,
+    "must_match_full_K3_dual_restart_for": [
+      "dual_proposal",
+      "exact_A_transpose_lift",
+      "observable_alpha",
+      "final_field_after_strict_CGLS_K1",
+      "per_frame_field_relative_L2",
+      "per_frame_gradient_relative_L2",
+      "per_frame_observation_relative_L2",
+      "all_compatibility_gate_booleans"
+    ],
+    "failure_status": "INCONCLUSIVE_FULL_DCT_OR_SHELL_IDENTITY_ERROR"
+  },
+  "p14_compatibility_evaluation": {
+    "reuse_v10_4_2_gate_without_threshold_changes": true,
+    "metrics": [
+      "field_relative_L2",
+      "gradient_relative_L2",
+      "observation_relative_L2",
+      "joint_matched_fraction",
+      "metric_harm_fraction",
+      "joint_harm_fraction",
+      "severe_harm_count"
+    ],
+    "tails": [
+      "p50",
+      "p90_higher",
+      "worst"
+    ],
+    "separate_rank_results": [
+      "projection_compatibility_passed",
+      "teacher_oracle_compatibility_passed"
+    ],
+    "derived_summaries": [
+      "smallest_projection_passing_rank_or_none",
+      "smallest_teacher_oracle_passing_rank_or_none"
+    ],
+    "independent_recomputation_required": true,
+    "input_role_basis_candidate_and_result_seals_required": true,
+    "atomic_output_contract": {
+      "runner_status": "PENDING_INDEPENDENT_VALIDATION_V10_5",
+      "validator_only_final_status": true,
+      "same_directory_temporary_file": true,
+      "exclusive_no_overwrite_commit": true,
+      "fsync_file_and_parent_directory": true,
+      "single_use_score_token": true,
+      "result_schema_requires_complete_arm_matrix": true
+    }
+  },
+  "decision_axes": {
+    "hard_gate_precedence": [
+      {
+        "condition": "any_input_role_seal_score_token_full_rank_identity_independent_recomputation_optimizer_or_stationarity_gate_fails",
+        "decision": "POSTOPEN_P14_DEVELOPMENT_INCONCLUSIVE_V10_5_EXECUTION_OR_VALIDATION",
+        "action": "stop_without_scientific_headroom_claim_and_fix_only_the_identified_error"
+      },
+      {
+        "condition": "full_K3_dual_restart_control_no_longer_passes_the_unchanged_v10_4_2_gate",
+        "decision": "POSTOPEN_P14_DEVELOPMENT_INCONCLUSIVE_REFERENCE_CONTROL_DRIFT",
+        "action": "stop_and_reconcile_the_frozen_reference_before_interpreting_any_low_rank_arm"
+      }
+    ],
+    "projection_support_axis": {
+      "report": [
+        "smallest_fit_selected_projection_passing_rank_or_none",
+        "smallest_uniform_projection_passing_rank_or_none"
+      ],
+      "meaning": "A pass is direct detector representation support on opened p14 using its K3 correction; it is not observation-to-coefficient predictability or generalization."
+    },
+    "teacher_oracle_headroom_axis": {
+      "report": [
+        "smallest_fit_selected_teacher_oracle_passing_rank_or_none",
+        "smallest_uniform_teacher_oracle_passing_rank_or_none"
+      ],
+      "meaning": "An oracle-only pass is post-open teacher-side coefficient headroom with predictability unknown.",
+      "consistency": "If a deterministic projection passes but its same-basis teacher optimizer reports failure, mark the execution inconclusive instead of interpreting the contradiction."
+    },
+    "selected_vs_uniform_allocation_axis": {
+      "comparison_tolerance": {
+        "passing_rank_comparison_is_integer_exact": true,
+        "metric_difference_materiality_absolute": 1e-06,
+        "metric_difference_materiality_relative": 0.001,
+        "subthreshold_floating_difference_label": "NO_MATERIAL_SELECTED_UNIFORM_DIFFERENCE"
+      },
+      "lower_selected_passing_rank": "POSTOPEN_P14_DEVELOPMENT_FIT_SELECTED_JOINT_FREQUENCY_AND_CHANNEL_ALLOCATION_REDUCES_REQUIRED_DCT_RANK",
+      "same_first_passing_rank": "POSTOPEN_P14_DEVELOPMENT_NO_RANK_REDUCTION_FROM_FIT_SELECTED_ALLOCATION",
+      "lower_uniform_passing_rank": "POSTOPEN_P14_DEVELOPMENT_FIT_SELECTED_ALLOCATION_HURTS_REQUIRED_DCT_RANK",
+      "attribution_limit": "A difference jointly changes selected frequencies and per-channel counts and cannot be attributed to channel allocation alone."
+    },
+    "finite_ladder_failure": {
+      "condition": "all_selected_and_uniform_projection_and_teacher_oracle_arms_through_rank384_fail_while_full_rank_identity_and_K3_controls_pass",
+      "decision": "POSTOPEN_P14_DEVELOPMENT_NO_HEADROOM_FOUND_FOR_FROZEN_FINITE_DCT_RANK_LADDER_NOT_IMPOSSIBILITY_PROOF",
+      "action": "stop_DCT_decoder_training_and_pre_register_one_next_representation_or_state_oracle_under_a_fixed_cost_ceiling"
+    },
+    "next_action_if_any_low_rank_arm_passes": "First measure coefficient predictability and theoretical plus actual cost; do not authorize a neural model merely because a teacher-side representation arm passes."
+  },
+  "hard_stop_and_access_rules": [
+    "do_not_execute_while_protocol_or_execution_code_is_untracked_or_dirty",
+    "do_not_change_rank_ladder_after_this_postopen_protocol_is_frozen",
+    "do_not_select_atoms_with_p14_truth_or_teacher",
+    "do_not_read_p14_truth_before_all_candidates_and_optimizer_outputs_are_atomically_sealed",
+    "do_not_open_p22_stopping_validation",
+    "do_not_open_fresh_or_test",
+    "do_not_train_UNet_FNO_UNO_DeepONet",
+    "do_not_start_Krylov_state_before_the_finite_detector_rank_ladder_is_complete",
+    "if_the_finite_rank_ladder_fails_under_the_preregistered_cost_ceiling_a_Krylov_state_oracle_may_be_a_parallel_next_gate_only_after_a_new_protocol",
+    "do_not_claim_algorithm_breakthrough_or_paper_success"
+  ],
+  "claim_boundaries": {
+    "postopen_development_representation_gate": true,
+    "fit_selected_basis": true,
+    "rank_ladder_preregistered_before_v10_5_p14_execution": true,
+    "rank_ladder_generated_without_prior_p14_information": false,
+    "deployable_model": false,
+    "coefficient_predictability": false,
+    "outer_generalization": false,
+    "real_BOST": false,
+    "wall_time_speedup": false,
+    "global_optimality_proven": false,
+    "global_uniqueness_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_result": false
+  }
+}

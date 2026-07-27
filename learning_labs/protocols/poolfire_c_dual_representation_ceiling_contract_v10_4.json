@@ -1,0 +1,198 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-representation-ceiling-contract-10.4",
+  "status": "FROZEN_POSTOPEN_B96_REPRESENTATION_CEILING_BEFORE_DIAGNOSTIC_RUN",
+  "frozen_at_utc": "2026-07-27T04:15:00Z",
+  "scientific_question": "Did DualRange v10.3 fail because the fixed 96-mode proposal family cannot carry the missing K4 information, or because the fitted models failed to reach useful proposals that already exist inside that family?",
+  "scope": {
+    "trajectory_id": "p=14kw_size=01",
+    "trajectory_role": "already_opened_development_veto_only",
+    "frame_count": 101,
+    "field_shape": [
+      16,
+      16,
+      32
+    ],
+    "observation_size": 2072,
+    "physical_operator": "unchanged_three_view_straight_ray_PoolFire_proxy",
+    "reference": "zero_start_CGLS_K4_on_each_same_frame",
+    "candidate_shell": "exact_A_transpose_lift_observable_alpha_then_unmodified_CGLS_K1",
+    "fresh_holdout_access": false,
+    "p22_stopping_validation_access": false,
+    "untouched_test_access": false,
+    "real_BOST_access": false
+  },
+  "parents": [
+    {
+      "path": "learning_labs/protocols/poolfire_c_dual_development_screen_contract_v10_3.json",
+      "sha256": "cccedd24e6a32ae7087a9d3d409790835def7ac4fa6c67dc599013459fd85d15",
+      "role": "development_screen_roles_metrics_and_failure_boundary"
+    },
+    {
+      "path": "learning_labs/protocols/poolfire_c_dual_development_screen_clarification_v10_3_1.json",
+      "sha256": "ea67e70ad8cb3ba0be21e127faf3127609b2b044b84ba6ada7736ed738542694",
+      "role": "result_independent_training_and_exact_2D_clarification"
+    },
+    {
+      "path": "learning_labs/poolfire_c_dual_development_screen_v10_3.py",
+      "sha256": "4a92dee98b478c045fd22cd394e5f08313aee1029bf3caab6cab320887fc8bf7",
+      "role": "frozen_geometry_data_checks_metrics_and_zero_CGLS_reference"
+    },
+    {
+      "path": "learning_labs/poolfire_c_dual_torch_operator_v10_3.py",
+      "sha256": "f27f8858e797f9739f9d7fd3681afa8063b88efb450723093dfa239518475c44",
+      "role": "differentiable_A_A_transpose_and_DualRange_K1_shell"
+    },
+    {
+      "path": "learning_labs/poolfire_c_dual_torch_models_v10_3.py",
+      "sha256": "34394457bf76f06919845e65b36854fd946e358f88973b5388256b658c6b75e7",
+      "role": "teacher_deficiency_and_complete_trajectory_tail_definitions"
+    },
+    {
+      "path": "learning_labs/poolfire_c_dual_spectral_model_v10_1.py",
+      "sha256": "8866062b5af013f7c68795b42ed30af0c7096f504e35a39398a845c86c2f1b29",
+      "role": "fixed_three_view_B96_DCT_basis"
+    },
+    {
+      "path": "docs/poolfire_c_dual_development_screen_v10_3_result_2026-07-27.md",
+      "sha256": "ce0842d4576dec62df475c02126fb7dcbee00f0e326a3dd36cf03a8469b85ca2",
+      "role": "frozen_negative_result_and_next_question"
+    }
+  ],
+  "diagnostic_families": {
+    "deterministic_mechanism_controls": [
+      {
+        "arm_id": "zero_CGLS_K4_reference",
+        "purpose": "matched_accuracy_reference"
+      },
+      {
+        "arm_id": "zero_CGLS_K2_control",
+        "purpose": "observed_v10_3_plateau_control"
+      },
+      {
+        "arm_id": "restart_from_full_K3_dual_then_CGLS_K1",
+        "purpose": "test_the_restart_shell_without_a_B96_or_cap_bottleneck"
+      },
+      {
+        "arm_id": "B96_projection_of_K3_dual_correction_uncapped_then_CGLS_K1",
+        "purpose": "isolate_B96_bandwidth_from_the_50_percent_cap"
+      },
+      {
+        "arm_id": "B96_projection_of_K3_dual_correction_cap0p5_then_CGLS_K1",
+        "purpose": "deterministic_feasible_point_in_the_current_control_family"
+      }
+    ],
+    "best_found_truth_side_oracle": {
+      "arm_id": "best_found_per_frame_B96_radial_cap0p5_then_CGLS_K1",
+      "role": "postopen_mechanism_diagnostic_only",
+      "variables": "one_independent_96_vector_delta_per_development_frame",
+      "proposal": "z_equals_y_plus_global_RMS_times_B96_delta",
+      "constraint": "L2_norm_delta_at_most_0p5_times_L2_norm_B96_transpose_y_over_global_RMS",
+      "target": "minimize_per_frame_max_of_field_gradient_observation_relative_deficiency_to_same_frame_zero_CGLS_K4_teacher",
+      "initializations_in_order": [
+        "zero_delta",
+        "radially_capped_B96_projection_of_the_exact_K3_dual_correction",
+        "fixed_seed_isotropic_quarter_radius_delta"
+      ],
+      "random_seed": 2026072704,
+      "smooth_ball_parameterization": "delta_equals_radius_times_u_over_sqrt_1_plus_norm_u_squared",
+      "adam_steps": 400,
+      "adam_learning_rate_initial": 0.05,
+      "adam_learning_rate_schedule": "cosine_to_0p005",
+      "lbfgs_max_iterations": 120,
+      "lbfgs_history_size": 20,
+      "lbfgs_tolerance_grad": 1e-10,
+      "lbfgs_tolerance_change": 1e-12,
+      "winner_selection": "lowest_complete_trajectory_mean_plus_mean_largest_11_teacher_deficiency",
+      "no_model_fit_or_architecture_selection": true,
+      "not_a_deployable_algorithm": true,
+      "not_a_global_optimality_proof": true
+    }
+  },
+  "dual_certificate_and_bandwidth_audit": {
+    "certificate": "track_the_exact_measurement_space_dual_coefficients_whose_A_transpose_equals_each_zero_start_CGLS_K3_and_K4_field",
+    "required_parity": "maximum_absolute_A_transpose_certificate_minus_field_at_most_5e-12",
+    "correction_for_decomposition": "K3_dual_certificate_minus_raw_observation",
+    "nested_DCT_modes_per_axis": [
+      4,
+      6,
+      8,
+      12,
+      14
+    ],
+    "mode_14_note": "height_complete_but_not_full_width_for_the_two_14_by_30_views",
+    "full_block_DCT_endpoint": true,
+    "report": [
+      "captured_correction_energy_fraction_p50_p90_worst",
+      "required_correction_norm_over_raw_observation_norm_p50_p90_worst",
+      "required_correction_norm_over_B96_projection_of_observation_norm_p50_p90_worst",
+      "per_view_and_per_channel_correction_energy_fraction",
+      "K3_restart_alpha_and_metric_tails"
+    ]
+  },
+  "optimization_and_convergence_checks": {
+    "dtype": "CPU_float64",
+    "torch_threads": 4,
+    "trajectory_is_optimized_as_one_batch_but_each_frame_has_independent_variables": true,
+    "save_every_start_final_delta_and_metric_arrays_privately": true,
+    "required_for_conclusive_best_found_result": [
+      "all_three_initializations_finite",
+      "all_saved_deltas_respect_the_radial_cap_with_1e-12_relative_tolerance",
+      "best_start_final_objective_not_worse_than_its_initial_objective",
+      "best_found_result_not_worse_than_the_deterministic_capped_K3_projection_feasible_point",
+      "independent_NumPy_recomputation_matches_all_saved_field_gradient_observation_arrays_with_max_absolute_difference_at_most_5e-12",
+      "sealed_development_inputs_unchanged_before_and_after"
+    ],
+    "inconclusive_action": "STOP_AND_REPORT_OPTIMIZATION_OR_VALIDATION_INCONCLUSIVE_WITHOUT_CLOSING_B96"
+  },
+  "metric_and_decision_contract": {
+    "final_truth_metrics": [
+      "gauge_centered_field_relative_L2",
+      "coordinate_aware_gradient_relative_L2",
+      "observation_relative_L2"
+    ],
+    "compatibility_gate": "inherit_exactly_from_v10_3",
+    "teacher_deficiency_report": [
+      "p50",
+      "p90_higher",
+      "worst",
+      "complete_trajectory_mean_plus_mean_largest_11"
+    ],
+    "B96_has_usable_postopen_headroom": "the_best_found_cap0p5_oracle_passes_every_v10_3_development_compatibility_requirement",
+    "training_or_conditioning_is_primary_suspect": "B96_has_usable_postopen_headroom_and_at_least_one_fitted_v10_3_model_failed_the_same_gate",
+    "B96_engineering_no_go": "all_convergence_checks_pass_but_the_best_found_cap0p5_oracle_fails_v10_3_compatibility_and_the_uncapped_or_bandwidth_audits_identify_missing_cap_or_frequency_support",
+    "restart_shell_no_go": "the_full_K3_dual_restart_control_itself_fails_v10_3_compatibility",
+    "next_if_B96_no_go": "freeze_a_new_multiresolution_per_view_detector_graph_or_spectral_residual_proposal_before_any_training",
+    "next_if_B96_headroom": "audit_fit_target_conditioning_and_optimization_before_changing_representation",
+    "cannot_authorize": [
+      "formal_outer_worker",
+      "fresh_holdout_access",
+      "untouched_test_access",
+      "larger_neural_model",
+      "real_BOST_claim",
+      "generalization_claim",
+      "wall_time_speedup_claim",
+      "algorithm_breakthrough_or_paper_success_claim"
+    ]
+  },
+  "result_handling": {
+    "one_non_overwriting_private_result_directory": true,
+    "private_arrays_proposals_dual_certificates_and_input_hashes_remain_untracked": true,
+    "tracked_summary_contains_only_aggregate_metrics_public_method_identity_and_claim_boundaries": true,
+    "runner_and_independent_validator_must_not_share_metric_or_optimization_helpers": true,
+    "detached_execution_with_status_log_and_atomic_READY_required": true
+  },
+  "claim_boundaries": {
+    "postopen_mechanism_diagnostic": true,
+    "deployable_method": false,
+    "global_oracle_optimality_proven": false,
+    "formal_outer_evaluation_authorized": false,
+    "fresh_holdout_opened": false,
+    "untouched_test_opened": false,
+    "real_BOST_transfer_completed": false,
+    "generalization_proven": false,
+    "wall_time_speedup_proven": false,
+    "whole_pipeline_memory_no_harm_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_result": false
+  }
+}
