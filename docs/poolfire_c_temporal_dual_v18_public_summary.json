@@ -1,0 +1,59 @@
+{
+  "schema_version": "oerf-poolfire-c-temporal-dual-public-summary-18.0",
+  "date": "2026-07-28",
+  "decision": "FAIL_POST_OPEN_TEMPORAL_AMORTIZATION_GATE_V18",
+  "scientific_question": "Can a causal observation-visible keyframe gate and fit-only diagonal dual transport preserve the frozen reconstruction envelope while scheduling at least 20 percent fewer compact-CNN evaluations?",
+  "fit_only_loto": {
+    "trajectory_count": 5,
+    "all_compatibility_gates_passed": true,
+    "mean_scheduled_CNN_execution_fraction": 0.7445544554455446,
+    "important_boundary": "Two high-dynamics held-out trajectories scheduled the CNN on all 101 frames, so compatibility alone did not demonstrate useful amortization."
+  },
+  "consumed_p33_development_result": {
+    "frame_count": 101,
+    "event_gate_scheduled_CNN_frames": 94,
+    "event_gate_scheduled_CNN_execution_fraction": 0.9306930693069307,
+    "event_gate_scheduled_CNN_reduction_fraction": 0.06930693069306926,
+    "required_CNN_reduction_fraction": 0.2,
+    "selected_joint_matched_fraction": 1.0,
+    "selected_joint_harm_fraction": 0.0,
+    "selected_severe_harm_count": 0,
+    "selected_compatibility_passed": true,
+    "fixed_stride2_scheduled_CNN_frames": 51,
+    "fixed_stride2_joint_matched_fraction": 0.7128712871287128,
+    "fixed_stride2_joint_harm_fraction": 0.0,
+    "fixed_stride2_severe_harm_count": 0,
+    "fixed_stride2_compatibility_passed": false
+  },
+  "operator_ledger": {
+    "temporal_headroom_diagnostic": {
+      "A": 202,
+      "A_transpose": 202
+    },
+    "zero_CGLS_K4_reference": {
+      "A": 404,
+      "A_transpose": 404
+    },
+    "important_boundary": "v18 replaced proposal values after computing full proposals for counterfactual scoring; it did not yet execute fewer native CNN calls and did not reduce A or A-transpose beyond the parent Dual-K1 shell."
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_V18",
+    "fit_only_loto_max_abs_difference": 0.0,
+    "calibration_max_abs_difference": 0.0,
+    "p33_field_max_abs_difference": 0.0,
+    "p33_metric_max_abs_difference": 0.0,
+    "p33_reference_max_abs_difference": 0.0
+  },
+  "interpretation": "The fit-only gate protected accuracy by falling back to nearly full per-frame CNN execution on faster trajectories. On p33 it preserved accuracy but removed only 6.93 percent of scheduled CNN evaluations, while the aggressive 50 percent schedule failed the reconstruction envelope. This closes the current observation-change plus diagonal-transport route as a useful resource repair.",
+  "claim_limits": {
+    "actual_native_CNN_speedup_measured": false,
+    "wall_time_speedup": false,
+    "CPU_time_benefit": false,
+    "whole_pipeline_RSS_benefit": false,
+    "additional_A_or_A_transpose_reduction": false,
+    "independent_generalization": false,
+    "real_BOST": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

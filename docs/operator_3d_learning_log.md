@@ -8027,3 +8027,67 @@ hold、运动传输与 Krylov recycling，才能形成论文贡献。
 
 完整结果见
 `docs/poolfire_c_persistent_serial_v17_result_2026-07-28.md`。
+
+## 259. v18：时间复用守住了精度，却几乎没有真正复用
+
+v17 剩下的是 CNN 的 CPU 和冷启动，于是这一轮不再调线程，而是问一个更直接的
+问题：相邻帧能不能少跑几次 CNN？
+
+我先在五条 fit trajectory 上做 trajectory-level leave-one-out。门只看当前观测与
+上一关键帧观测；不触发 CNN 时，用 fit-only 对角增益把上一 dual proposal 搬到当前
+帧。每帧后面的 exact `A^T`、alpha 和 CGLS K1 都不变。
+
+五折表面上全过了 compatibility，但细看计划执行率：
+
+```text
+p14-s05: 51 / 101 CNN
+p22-s03: 72 / 101 CNN
+p33-s01: 51 / 101 CNN
+p45-s05: 101 / 101 CNN
+p58-s03: 101 / 101 CNN
+```
+
+后两条变化快的轨迹没有学会“安全复用”，而是每帧都回退到 full CNN。五折平均计划
+执行率为 74.46%，不能只写“五折精度通过”。
+
+把 fit-only 阈值原样拿到已经消费过的 p33，结果更清楚：
+
+```text
+event gate:
+  scheduled CNN = 94 / 101
+  planned reduction = 6.93%
+  required reduction = 20%
+  joint match = 100%
+  harm = 0
+
+fixed stride-2:
+  scheduled CNN = 51 / 101
+  joint match = 71.29%
+  compatibility = FAIL
+```
+
+所以温和门的精度来自“几乎总跑 CNN”，强制少跑又会失去精度。独立 validator
+重写 calibration、transport、CGLS 与统计后，五组最大差都是 0：
+
+```text
+PASS_INDEPENDENT_RECOMPUTATION_V18
+FAIL_POST_OPEN_TEMPORAL_AMORTIZATION_GATE_V18
+algorithm_breakthrough=false
+```
+
+还有一个必须说清的工程边界：为了同批比较多个反事实 control，v18 先生成了完整
+101 帧 proposal，再按 mask 替换非关键帧。因此 `94/101` 是计划执行数，不是 native
+入口已经少跑了 7 次；本轮也没有做 wall/CPU/RSS 计时。正式结果既然已经失败，就
+没有理由再扩建运行时。
+
+我还做了一个不升级证据等级的 previous-field recycling 探索。只在第一帧跑 CNN，
+以后每帧用缓存场做一次 `A/A^T` 校正，p33 joint match 只有约 0.99%；每两帧 reset
+一次可在 p33 达到 94.06%，但 held-out p58 只有 84.16%。也就是说，简单时间连续
+假设在当前 PoolFire 快变轨迹上不够稳，不能靠调一个阈值包装成泛化结果。
+
+**讲人话：**流场确实连续，但这批数据每 0.02 s 的变化并不“小”。我们的门为了不
+犯错，只好几乎每次都叫 CNN；强行省计算就会漏掉重要变化。这项负结果帮我们关掉了
+“上一帧直接搬过来”这条看起来便宜、实际上不稳的路。
+
+完整结果见
+`docs/poolfire_c_temporal_dual_v18_result_2026-07-28.md`。
