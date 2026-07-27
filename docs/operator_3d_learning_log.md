@@ -7780,3 +7780,57 @@ paper_success=false
 
 完整结果与图见
 `docs/poolfire_c_dual_detector_fused_streaming_v13_result_2026-07-28.md`。
+
+## 255. v14：2,912 参数不是免费午餐，P45 只差一帧仍然 FAIL
+
+v13 已把调用减半变成 42.68% 的稳态 wall 优势，但严格 RSS 门仍差约 68 kB。
+这轮没有继续调 allocator，而是只冻结一个更小候选 `w8d2`：
+
+```text
+width = 8
+dilations = (1, 2)
+parameters = 2,912
+epochs = 120
+extra seeds = 0
+```
+
+它比已经通过五折的 `w16d2` 少 72.39% 参数，但 packing、奇对称、全局 context、
+post-K1 loss、exact A^T、alpha 和 strict K1 都保持不变。
+
+五条完整 trajectory LOTO 真正跑完后：
+
+```text
+P14-S05  101/101 matched  PASS
+P22-S03  101/101 matched  PASS
+P33-S01  101/101 matched  PASS
+P45-S05   90/101 matched  FAIL
+P58-S03  101/101 matched  PASS
+```
+
+P45 的门要求至少 91/101，实际只有 90/101。11 个失败帧全部只是 observation
+超界，field failure=0、gradient failure=0、harm=0、severe=0；最坏 observation
+margin 只有 0.002712。讲人话：模型没有崩，只是压得太小以后，三个时间片段的
+测量一致性少了一点余量。
+
+同样 11 帧上，`w16d2` 全部仍在门内，最靠近门的 margin 也是 -0.003525。
+因此这是可重复的容量下界信号，不是把阈值画在哪里都一样。
+
+第二套 NumPy validator 重新加载五个 checkpoint，重算 505 帧
+`A^T -> alpha -> K1`、三类指标和 `1010A + 1010A^T` 调用账；最大科学数值差为
+`3.33e-16`。fresh、historical validation 和两条 test 都没有打开。
+
+红队还抓到一个容易误读的旧标签：继承 v11 的 report 把“4/5 且无 harm”叫
+`PASS_FIT_LOTO_DETECTOR_CNN_SENTINEL`。v14 的结果前合同只接受 5/5，所以这个旧
+标签不是权威结论。权威 gate 与最终独立验证都是：
+
+```text
+FAIL_INDEPENDENT_STRICT_W8D2_CAPACITY_GATE_V14
+full_fit_authorized=false
+synthetic_resource_gate_authorized=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+所以没有训练 full-fit、没有跑资源门，也没有追加 width/seed 救结果。当前结论是：
+`w16d2` 仍是最小的五轨迹 5/5 候选；继续纯粹删宽度已经越过稳健容量下限。完整结果
+见 `docs/poolfire_c_dual_detector_w8d2_v14_result_2026-07-28.md`。

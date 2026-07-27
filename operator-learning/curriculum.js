@@ -1,7 +1,8 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.28-c-v13-fused-streaming-prefit-fail",
-  previousVersion: "2026.07.27-c-v12-6-clean-runtime-fail",
-  previousBadge: "v12.4-v12.6 clean wall PASS · RSS FAIL",
+  version: "2026.07.28-c-v14-w8d2-capacity-fail",
+  previousVersion: "2026.07.28-c-v13-fused-streaming-prefit-fail",
+  previousBadge: "v13 wall PASS · strict RSS FAIL",
+  olderBadge: "v12.4-v12.6 clean wall PASS · RSS FAIL",
   updated: "2026-07-28",
   foundationChecks: [
     {

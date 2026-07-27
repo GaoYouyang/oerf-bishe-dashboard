@@ -1,0 +1,139 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-detector-w8d2-public-summary-14.0",
+  "status": "FAIL_INDEPENDENT_STRICT_W8D2_CAPACITY_GATE_V14",
+  "scientific_decision": "FAIL_W8D2_FIVE_TRAJECTORY_CAPACITY_HEADROOM",
+  "scope": "five already-open fit trajectories; complete-trajectory leave-one-out; PoolFire straight-ray proxy only",
+  "candidate": {
+    "id": "w8d2",
+    "width": 8,
+    "dilations": [1, 2],
+    "parameter_count": 2912,
+    "parameter_reduction_vs_w16d2_percent": 72.39287068638605,
+    "inputs": "deployment-visible observations only",
+    "downstream": "exact A-transpose lift, observable alpha, unchanged strict CGLS K1"
+  },
+  "training": {
+    "outer_folds": 5,
+    "epochs_per_fold": 120,
+    "extra_seeds": 0,
+    "all_checkpoints_frozen_before_any_heldout_truth_read": true,
+    "fresh_or_validation_or_test_opened": false
+  },
+  "evaluation": {
+    "trajectory_count": 5,
+    "frames_per_trajectory": 101,
+    "total_frames": 505,
+    "required_pass_count": 5,
+    "actual_pass_count": 4,
+    "deployment_operator_calls": {
+      "A": 1010,
+      "A_transpose": 1010,
+      "A_per_frame": 2,
+      "A_transpose_per_frame": 2
+    }
+  },
+  "rows": [
+    {
+      "trajectory_id": "p=14kw_size=05",
+      "compatibility_passed": true,
+      "joint_matched_fraction": 1.0,
+      "joint_harm_fraction": 0.0,
+      "severe_harm_count": 0,
+      "teacher_q_p90_higher": 0.11679703691271896
+    },
+    {
+      "trajectory_id": "p=22kw_size=03",
+      "compatibility_passed": true,
+      "joint_matched_fraction": 1.0,
+      "joint_harm_fraction": 0.0,
+      "severe_harm_count": 0,
+      "teacher_q_p90_higher": 0.11185545594472626
+    },
+    {
+      "trajectory_id": "p=33kw_size=01",
+      "compatibility_passed": true,
+      "joint_matched_fraction": 1.0,
+      "joint_harm_fraction": 0.0,
+      "severe_harm_count": 0,
+      "teacher_q_p90_higher": 0.13157746590416938
+    },
+    {
+      "trajectory_id": "p=45kw_size=05",
+      "compatibility_passed": false,
+      "joint_matched_fraction": 0.8910891089108911,
+      "joint_harm_fraction": 0.0,
+      "severe_harm_count": 0,
+      "teacher_q_p90_higher": 0.1585940801802881,
+      "gate_failures": [
+        "joint_matched_fraction_below_0.90"
+      ]
+    },
+    {
+      "trajectory_id": "p=58kw_size=03",
+      "compatibility_passed": true,
+      "joint_matched_fraction": 1.0,
+      "joint_harm_fraction": 0.0,
+      "severe_harm_count": 0,
+      "teacher_q_p90_higher": 0.1269696189308233
+    }
+  ],
+  "p45_failure_diagnostic": {
+    "matched_frames": 90,
+    "required_matched_frames": 91,
+    "unmatched_frames": 11,
+    "field_failure_frames": 0,
+    "gradient_failure_frames": 0,
+    "observation_failure_frames": 11,
+    "frame_indices": [5, 27, 28, 29, 30, 31, 32, 62, 63, 64, 65],
+    "w8d2_observation_margins": [
+      0.00011776983653316586,
+      0.0005374840629903122,
+      0.00103524184484316,
+      0.00002687302404497105,
+      0.0005218193588076292,
+      0.0002972876852216366,
+      0.0006892431277339406,
+      0.0009363358204643735,
+      0.0020560488535529275,
+      0.0027119885360973317,
+      0.0005756912961642491
+    ],
+    "w16d2_observation_margins_on_same_frames": [
+      -0.008493964326219738,
+      -0.009388136136188996,
+      -0.008516738536097024,
+      -0.008826631404204588,
+      -0.00790008712851803,
+      -0.007796560015383203,
+      -0.007116370258079541,
+      -0.003638667836334042,
+      -0.0035252348608897366,
+      -0.003581427327345288,
+      -0.004825399365770089
+    ],
+    "w8d2_positive_observation_margin_median": 0.0005756912961642491,
+    "w8d2_positive_observation_margin_worst": 0.0027119885360973317,
+    "w16d2_observation_margin_on_same_frames_median": -0.007796560015383203,
+    "w16d2_observation_margin_on_same_frames_worst": -0.0035252348608897366
+  },
+  "independent_validation": {
+    "checkpoint_replay_verified": true,
+    "maximum_scientific_numeric_difference": 3.3306690738754696e-16,
+    "global_checkpoint_before_truth_barrier_verified": true,
+    "score_visibility_barrier_verified": true
+  },
+  "decision_boundary": {
+    "authoritative_status": "FAIL_INDEPENDENT_STRICT_W8D2_CAPACITY_GATE_V14",
+    "inherited_four_of_five_pass_label_is_authoritative": false,
+    "full_fit_authorized": false,
+    "synthetic_resource_gate_authorized": false,
+    "larger_model_or_extra_seed_rescue_authorized": false
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "fresh_trajectory_generalization": false,
+    "real_BOST": false,
+    "wall_or_memory_advantage_for_w8d2": false
+  }
+}
