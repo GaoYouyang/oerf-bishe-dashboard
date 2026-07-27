@@ -7240,3 +7240,47 @@ algorithm_breakthrough=false
 
 完整脱敏表、解释与下一门见
 `docs/poolfire_c_dual_spectral_v10_5_p14_result_2026-07-27.md`。
+
+## 244. rank96 不是跨轨迹房间：五条只过一条，系数蒸馏停止
+
+v10.7 没有直接训练网络，而是先问一个更便宜也更关键的问题：每一折只用另外四条
+trajectory 选 rank96 basis，在第五条上允许 oracle 自己找最有利的系数，这个表示
+到底装不装得下合格 warm start？
+
+五折 target 都在读 proxy truth 前完成独立逐数组复算。全部封存后一次性评分：
+
+```text
+p14-s05: FAIL, joint matched 0%, harm 100%, severe 24
+p22-s03: FAIL, joint matched 0%, harm 100%, severe 21
+p33-s01: PASS, joint matched 100%, harm 0%, severe 0
+p45-s05: FAIL, joint matched 0%, harm 100%, severe 0
+p58-s03: FAIL, joint matched 0%, harm 100%, severe 45
+```
+
+正式判决是 `1/5`，远低于事前要求的 `4/5`，总 severe harm 为 `90`。我又完全重写
+了一遍逐帧四步 CGLS 和三类指标，没有调用正式 compatibility helper；复算结果逐项
+差 `0.0`，仍是 `1/5`。第一次独立脚本因为底层算子不接受 batch，在计算指标前就
+停止，没有产生可用数字。
+
+最扎眼的是四条失败轨迹的 observation harm 全是 `100%`。gradient 虽然都没有触发
+harm，但它不能抵消数据一致性和 field 的材料性伤害。因此不能再说“rank96 已经装得
+下，只差网络找系数”。p14 单点结论只对当时用全部 fit 选 basis 的开发条件成立。
+
+结果后做的覆盖诊断显示，五折 basis 的 Jaccard 中位为 `0.8286`、并集仅 `115`
+个 atom；失败不是 basis 每折乱跳。唯一通过的 p33 对 held-out K3 correction 的
+rank96 能量捕获 p50 为 `85.47%`，四条失败轨迹只有 `68.28%–78.86%`。探索性
+rank384 捕获升到 `88.22%–96.95%`，但这还不是 oracle 或模型成功。
+
+所以按冻结规则立即停止：
+
+```text
+T1_training_target_generation_authorized=false
+raw_rank96_coefficient_distillation_stopped=true
+larger_MLP_rescue_authorized=false
+algorithm_breakthrough=false
+```
+
+下一研究对象改为 coverage-adaptive / full-view detector dual proposal：保留精确
+`A^T`、observable alpha 和 strict K1，但取消已被证伪的固定 rank96 瓶颈，并把
+训练目标直接放在 K1 后的物理误差上。完整结果见
+`docs/poolfire_c_dual_coefficient_attainability_v10_7_result_2026-07-27.md`。

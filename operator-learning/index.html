@@ -330,7 +330,7 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 当前证据 2026-07-27</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。v10.5 正式独立评分已经把问题定位清楚：简单 projection 的 6 臂全部失败，但 fit-selected teacher-oracle 从 rank <code>96</code> 起通过，uniform oracle 则 3 臂全败。说明答案装得下，当前不会从 observation 找到正确系数。下一步只做 selected-rank96 oracle-coefficient distillation，<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。v10.7 已把 selected-rank96 的跨轨迹假设正式证伪：五条完整 fit trajectory 只有 <code>1/5</code> 通过，四条失败轨迹的 observation harm 均为 <code>100%</code>，总 severe harm 为 <code>90</code>。因此 96 维系数标签、ridge 与 MLP 蒸馏全部停止；当前转向 coverage-adaptive / full-view dual proposal，仍保留精确 <code>A^T</code>、observable alpha 与 strict K1。<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">打开完整 C 路线</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_rho_bridge_evidence_2026-07-23.md">PoolFire 数据桥证据</a>
@@ -364,6 +364,9 @@
       <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_spectral_v10_5_p14_result_2026-07-27.md">v10.5 正式 p14 判决</a>
       <a class="button" href="../docs/poolfire_c_dual_spectral_v10_5_p14_public_summary.json">v10.5 脱敏 12 臂</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_fit_spectral_allocation_gate_v10_5.json">v10.5 冻结协议</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_coefficient_attainability_v10_7_result_2026-07-27.md">v10.7 五轨迹可达性判决</a>
+      <a class="button" href="../docs/poolfire_c_dual_coefficient_attainability_v10_7_public_summary.json">v10.7 脱敏五轨迹结果</a>
+      <a class="button" href="../learning_labs/protocols/poolfire_c_dual_coefficient_distillation_contract_v10_7.json">v10.7 冻结合同</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_range_outer_contract_v10.json">v10 机器合同</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_spectral_model_contract_v10_1.json">v10.1 模型合同</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_proposal_artifact_contract_v10_2.json">v10.2 制品合同</a>
@@ -379,9 +382,9 @@
       <div class="metric"><b id="gateMetric">0 / 8</b><span>论文硬门槛</span></div>
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
-    <div class="alert success">
-      <strong>关键机制进展：selected rank96 有 oracle headroom，预测映射尚未解决</strong>
-      <span>一次性 p14 独立评分中，selected teacher-oracle 的 rank <code>96/216/384</code> 全部通过；rank96 的 joint matched 为 <code>93.07%</code>、joint harm <code>0%</code>、severe harm <code>0</code>。但 selected/uniform 的 6 个 projection 臂全部 joint matched <code>0%</code>，uniform oracle 也 3 臂全败。这证明表示空间存在答案，不证明 observation-only 模型能找到它；fresh、test、wall/RSS 与真实 BOST 均未打开，<code>algorithm_breakthrough=false</code>。</span>
+    <div class="alert">
+      <strong>最新正式判决：rank96 跨轨迹表示已被证伪，旧蒸馏路线停止</strong>
+      <span>v10.7 的五个 fold 都先封存 target、独立复算，再一次性读取 proxy truth。正式与另写的逐帧 CGLS/指标复核完全一致：只有 p33-s01 通过，其余四条 joint matched <code>0%</code>、joint harm <code>100%</code>。这不是网络训练失败，而是 fold-train rank96 basis 本身没有足够跨轨迹可达性；<code>T1_training_target_generation_authorized=false</code>，fresh、test、wall/RSS 与真实 BOST 仍未打开。</span>
     </div>
   </header>
 
@@ -463,9 +466,9 @@
         <strong>v10 已冻结：目标和独特性口径不能再随结果改变</strong>
         <span>主参考固定为 Zero-CGLS K4 的 <code>4A+4A^T</code>，DualRange-K1 接受分支固定为 <code>2A+2A^T</code>；公开 proxy 的 wall 目标固定为五轨迹等权中位数至少下降 10%，任一行不得慢超过 5%，RSS 先过无害门。v10.5 仍只是已见 p14 的 post-open mechanism diagnostic：它证明 selected-rank96 存在 oracle 解，没有进入可部署 prediction、fresh worker 或 wall/RSS。</span>
       </div>
-      <div class="alert success" style="margin-top:14px;">
-        <strong>v10.5 价值判决：表示通过 oracle 门，下一故障是系数可预测性</strong>
-        <span>完整 12 臂与独立 validator 已结束。projection support 在两个 family、三个 rank 上全部失败；teacher-oracle 只有 fit-selected family 通过，而且 rank96 已达到 <code>93.07%</code> joint matched、零 harm。后续不再围绕“rank 够不够”反复试验，而是在五条 fit 上严格做 selected-rank96 oracle coefficient 的轨迹留一预测；先打便宜控制，再决定是否训练一个最小模型。</span>
+      <div class="alert" style="margin-top:14px;">
+        <strong>v10.7 价值判决：p14 单点 headroom 没有跨轨迹成立</strong>
+        <span>五条 fit 的 leave-one-trajectory-out oracle 可达性只有 <code>1/5</code>，总 severe harm 为 <code>90</code>；独立重写 CGLS 与指标后的最大报告差为 <code>0.0</code>。结果后覆盖诊断显示五折 basis Jaccard 中位为 <code>0.8286</code>，唯一通过的 p33 rank96 捕获 p50 为 <code>85.47%</code>，四条失败轨迹只有 <code>68.28%–78.86%</code>。故障是固定低秩覆盖，不是“再加一层 MLP”能解决的问题。</span>
       </div>
       <div class="alert" style="margin-top:14px;">
         <strong>原创性放行条件</strong>
@@ -512,17 +515,17 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
-        <article class="panel"><div class="chips"><span class="chip">C0 · 现在实现</span><span class="chip blue">低风险</span></div><h3 style="margin-top:10px;">Selected-DCT96 Coefficient Distillation</h3><p>只用五条 fit trajectory 生成 selected-rank96 oracle coefficient target；按完整轨迹留一，先比较 ridge、全线性、时间持续性和旧同规模 MLP。held-out fit 过不了门就停止，不打开 fresh 或 test。</p></article>
-        <article class="panel"><div class="chips"><span class="chip">C1 · 修订主候选</span><span class="chip gold">v10.5 oracle headroom</span></div><h3 style="margin-top:10px;">DualRange-K1</h3><p>模型从 observation 预测 96 个 detector-space 系数，精确 <code>A^T</code> 提升为 range-restricted 三维初值，经 observable-only <code>alpha</code> 后做 strict CGLS K1。表示能力已过门；当前唯一未知是系数映射能否跨完整 trajectory 预测。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">C0 · v10.7 正式停止</span><span class="chip blue">1/5 通过</span></div><h3 style="margin-top:10px;">Selected-DCT96 Coefficient Distillation</h3><p>五折 oracle 可达性已在模型训练前失败：四条轨迹 observation harm 为 100%，所以不再生成 20 份训练标签，不跑 ridge/MLP，也不打开 fresh 或 test。这是有效负结果，不是待办事项。</p></article>
+        <article class="panel"><div class="chips"><span class="chip">C1 · 当前实现</span><span class="chip gold">针对覆盖瓶颈</span></div><h3 style="margin-top:10px;">Coverage-adaptive / Full-view DualRange-K1</h3><p>模型读取完整三视图 observation，输出 full-view detector dual correction 或 observation-conditioned basis coefficient；精确 <code>A^T</code>、observable alpha 与 strict K1 不变。训练目标直接看 K1 后物理误差，避免把不稳定 raw coefficient 当唯一标签。</p></article>
         <article class="panel"><div class="chips"><span class="chip">C2 · 论文升级</span><span class="chip coral">高风险</span></div><h3 style="margin-top:10px;">Correctable Frontier Training</h3><p>不只训练单步场误差，而是训练经过 1/2/4 次物理细化后的误差，让模型输出“最容易被求解器纠正”的初值。</p></article>
         <article class="panel"><div class="chips"><span class="chip blue">四臂 classical 已完成</span><span class="chip coral">神经门仍关闭</span></div><h3 style="margin-top:10px;">Zero / BP / exact-diag PCGLS / dual ridge</h3><p>五条轨迹、505 帧已完整跑完。K24 参照被半收敛否掉；ridge K2 的调用信号没有通过 p14 与 wall-time 门。v2/v3 又定位到 fit coverage 不足，所以现在不把线性层盲目换成大网络。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
       </div>
-      <div class="alert success" style="margin-top:13px;">
-        <strong>最新正式结果：12 臂评分与独立复算完成，瓶颈已从表示转到预测</strong>
-        <span>full-rank identity、K3 restart reference、输入角色、single-use token 和独立复算五类执行门全部通过，hard gate failure 为 0。selected oracle 在三个 rank 全过，最小 rank 为 96；projection 六臂和 uniform oracle 三臂全败。p14 已按一次性协议作为 post-open development 使用，不再机械重跑；<code>p45-s03</code>、p22 stopping 与两条 test 继续封存。</span>
+      <div class="alert" style="margin-top:13px;">
+        <strong>最新正式结果：v10.7 五轨迹可达性 FAIL，旧 C0 在训练前终止</strong>
+        <span>五个 truth-blind target 都先通过独立复算，再进入一次性 score。正式 scorer 与另写的逐帧四步 CGLS/三类指标复核最大差 <code>0.0</code>；最终仅 <code>1/5</code> 通过。p14 单点的 selected-rank96 headroom 不能再外推为跨工况表示成功；<code>p45-s03</code>、p22 stopping 与两条 test 继续封存。</span>
       </div>
       <div class="figure-grid" style="margin-top:14px;">
         <figure>
@@ -728,9 +731,13 @@
           <p>Source role 重算 606 帧的 <code>A^T y</code>、equalizer 和 K4 teacher，总账为 <code>0A+606A^T</code> 与 <code>2424A+2424A^T</code>；Fit role 重算六个完整 trajectory nested 模型。26 项定向测试验证错误运行时、过期 receipt、软链接和伪造 PASS 都会拒绝。现在只授权冻结 outer 协议，不证明 field/gradient/observation、wall、RSS 或算法优势。</p>
         </article>
       </div>
-      <div class="alert success" style="margin-top:13px;">
-        <strong>当前判决：保留 selected rank96，停止简单投影，进入系数蒸馏门</strong>
-        <span>fit-only 投影留一曾让 uniform 在低 rank 更好，但正式 p14 oracle 给出了更关键的反事实：uniform oracle 三个 rank 全败，selected oracle 三个 rank 全过。因此 selected basis 保留，projection 路线关闭。下一步只在 fit trajectory 内生成 oracle coefficient target，先做 ridge、全线性、时间持续性和旧同规模 MLP 的 nested 对照；fit-only gate 过不了就不碰 fresh。<code>algorithm_breakthrough=false</code>。</span>
+      <figure class="figure-card" style="margin-top:13px;">
+        <img src="../assets/poolfire_c_dual_coefficient_attainability_v10_7.png" alt="PoolFire C v10.7 五条 fit trajectory 的 rank96 可达性结果与 rank96/rank384 held-out K3 correction 能量覆盖诊断" />
+        <figcaption>左：正式 T0 只有 1/5 通过；右：结果后覆盖诊断显示 rank96 是明确瓶颈，rank384 仅为探索性容量信号，不是算法成功。</figcaption>
+      </figure>
+      <div class="alert" style="margin-top:13px;">
+        <strong>当前判决：停止固定 rank96，转向 full-view / conditional dual proposal</strong>
+        <span>固定 rank96 的跨轨迹可达性已经失败，继续拟合相同 raw coefficient 只会浪费训练。下一实现直接读取完整三视图 observation，先比较 full-view 线性/卷积 control 与 coverage-adaptive basis，再经相同精确 <code>A^T → alpha → strict K1</code> 评分；任何模型仍须逐 trajectory 过 field/gradient/observation 与 harm 门。<code>algorithm_breakthrough=false</code>。</span>
       </div>
     </section>
 
@@ -952,10 +959,11 @@
     (() => {
       const guide = window.OPERATOR_LEARNING_GUIDE;
       const storageKey = 'oerf-operator-learning-progress-v1';
+      const retiredTracks = new Set(['warmstart-c0']);
       const defaults = {
         foundations: {}, weeks: {}, gates: {},
         profile: { hours: '10', math: 'low', code: 'low', data: 'synthetic' },
-        selectedTrack: 'warmstart-c0'
+        selectedTrack: 'warmstart-c1'
       };
       let state = loadState();
 
@@ -967,7 +975,8 @@
             weeks: parsed.weeks || {},
             gates: parsed.gates || {},
             profile: { ...defaults.profile, ...(parsed.profile || {}) },
-            selectedTrack: guide.researchTracks.some(track => track.id === parsed.selectedTrack)
+            selectedTrack: !retiredTracks.has(parsed.selectedTrack)
+              && guide.researchTracks.some(track => track.id === parsed.selectedTrack)
               ? parsed.selectedTrack
               : defaults.selectedTrack
           };
@@ -998,7 +1007,7 @@
         const next = nextUnlockedWeek();
         const fCount = checkedCount(state.foundations, guide.foundationChecks);
         const pace = Number(state.profile.hours) <= 6 ? '建议把每个关卡拆成两周' : Number(state.profile.hours) >= 15 ? '可将阅读与代码并行，但不跳过验收' : '按一周一关执行';
-        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v10.5 正式独立评分已完成：projection 六臂全部失败，selected teacher-oracle 在 rank 96/216/384 全部通过，uniform oracle 三臂全败。表示空间从 rank96 起装得下答案，当前未知的是 observation 到 oracle coefficient 的映射。下一步只做 fit-only selected-rank96 coefficient distillation；algorithm_breakthrough=false，fresh 与 test 继续封存。';
+        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v10.7 五轨迹 oracle 可达性只有 1/5 通过，总 severe harm 90；正式 scorer 与独立 CGLS/指标复核差 0.0。固定 rank96 已停止，不再生成 coefficient label 或训练旧 MLP。当前只做 coverage-adaptive / full-view dual proposal，精确 A^T、observable alpha 与 strict K1 不变；algorithm_breakthrough=false，fresh 与 test 继续封存。';
         document.getElementById('recommendation').innerHTML = `
           <div class="next-code">当前建议 · ${escapeHtml(next.id)}</div>
           <h3>${escapeHtml(next.title)}</h3>
@@ -1148,7 +1157,7 @@
 
 v10 已固定 Zero-CGLS K4 的 4A+4A^T 参考与 DualRange-K1 的 2A+2A^T 目标。v10.4.2 已通过独立复算：完整 K3 dual restart + K1 的 field / gradient / observation p90 是 0.6205 / 1.0923 / 0.3466，joint matched 100%、harm 0%；Zero-K4 是 0.6332 / 1.2180 / 0.3330。
 
-v10.5 已完成一次 truth-blind Stage A 和一次性 p14 独立评分。projection 的 selected/uniform × rank96/216/384 六臂全部 joint matched 0%、harm 100%；selected teacher-oracle 三个 rank 全部通过，rank96 已有 joint matched 93.07%、harm 0%、severe 0，uniform oracle 三臂全败。结论不是“算法成功”，而是 selected rank96 表示装得下答案、observation→coefficient 仍未知。下一步只做五条 fit 的 selected-rank96 oracle-coefficient distillation 与轨迹留一便宜控制；p45-s03、p22 stopping 与两条 test 继续封存，algorithm_breakthrough=false。
+v10.7 已完成五条 fit trajectory 的 rank96 leave-one-trajectory-out oracle 可达性。五个 target 都在 truth-blind 状态封存并独立复算，全部完成后才一次性评分；正式 scorer 与另写的逐帧 CGLS/指标复核差 0.0。最终只有 p33-s01 通过，其余四条 joint matched 0%、harm 100%，总 severe harm 90。按冻结规则，rank96 coefficient label、ridge 与 MLP 蒸馏停止。当前转向 coverage-adaptive / full-view detector dual proposal，但仍保留 exact A^T、observable alpha、strict K1 和相同非劣成本门；p45-s03、p22 stopping 与两条 test 继续封存，algorithm_breakthrough=false。
 
 截至 2026-07-26 的公开一级来源检索没有发现完全同构的整套方法，但 learned warm start、learned backprojection、neural operator + Krylov、WB-IPM 和 Learned ReSeSOp 都是强近邻；当前只主张组合级差异，不主张全球唯一。还需要确认组内是否已有未发表的 observation-space filter / warm start / 专利，以及真实流程中 A、A^T、光流、ray tracing 哪部分最贵。`;
       }
