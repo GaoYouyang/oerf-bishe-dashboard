@@ -1,0 +1,127 @@
+{
+  "schema_version": "oerf-poolfire-c-temporal-dual-amortization-18.0",
+  "frozen_at_utc": "2026-07-28T12:45:00Z",
+  "parent_accuracy_decision": "PASS_SINGLE_INDEPENDENT_PUBLIC_DEVELOPMENT_ACCURACY_CALL_GATE_V16",
+  "parent_resource_decision": "FAIL_POST_OPEN_PERSISTENT_SERIAL_RESOURCE_GATE_V17",
+  "scientific_question": "Can a causal observation-visible keyframe gate and fit-only diagonal transport reuse the compact CNN dual proposal on the already consumed p=33kw_size=03 public development trajectory, preserve the frozen v16 field/gradient/observation envelope and 2A+2A^T solver ledger, and remove at least 20% of per-frame CNN executions before any new resource profile is authorized?",
+  "scope": {
+    "fit_trajectory_ids": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "fit_frame_count": 505,
+    "post_open_development_trajectory": "p=33kw_size=03",
+    "post_open_development_frame_count": 101,
+    "field_shape": [
+      16,
+      16,
+      32
+    ],
+    "observation_size": 2072,
+    "stopping_validation_used": false,
+    "fresh_trajectory_used": false,
+    "untouched_test_used": false,
+    "real_BOST": false
+  },
+  "fit_only_selection": {
+    "selection_role": "leave_one_fit_trajectory_out mechanism selection before p=33kw_size=03 temporal scoring",
+    "selected_policy": "event_diagonal_delta_q50_age2",
+    "selection_evidence_required": "all five held-out fit trajectories independently pass the unchanged v16 compatibility envelope, joint/per-metric harm limits, and zero severe harm",
+    "observation_change": "norm(y_t-y_last_key)/max(norm(y_last_key),1e-30)",
+    "threshold": "median of adjacent-frame relative observation changes from the calibration trajectories only",
+    "maximum_keyframe_age": 2,
+    "diagonal_transport": "z_t=z_key+diag_gain*(y_t-y_key)",
+    "diagonal_gain": "sum(delta_y*delta_z)/(sum(delta_y^2)+ridge) coordinatewise",
+    "ridge": "1e-3 times the median positive coordinate energy sum(delta_y^2)",
+    "full_proposal_target": "unchanged compact_odd_multiview_detector_w16d2 checkpoint",
+    "truth_or_final_metric_used_to_make_online_gate_decision": false
+  },
+  "frozen_p33_arms": [
+    {
+      "arm_id": "full_cnn_dual_k1",
+      "proposal": "run compact CNN on all 101 frames",
+      "role": "parent learned control"
+    },
+    {
+      "arm_id": "event_hold_dual_k1",
+      "proposal": "same causal gate; hold the latest exact CNN proposal",
+      "role": "simplest temporal control"
+    },
+    {
+      "arm_id": "event_scalar_delta_dual_k1",
+      "proposal": "same causal gate; fit-only scalar delta transport",
+      "role": "one-parameter temporal control"
+    },
+    {
+      "arm_id": "event_diagonal_delta_dual_k1",
+      "proposal": "same causal gate; selected fit-only diagonal delta transport",
+      "role": "selected candidate"
+    },
+    {
+      "arm_id": "fixed_stride2_diagonal_delta_dual_k1",
+      "proposal": "fixed even-frame CNN execution with the same diagonal transport",
+      "role": "gate-ablation control"
+    },
+    {
+      "arm_id": "zero_cgls_k4",
+      "proposal": "zero initialization",
+      "role": "unchanged reconstruction reference"
+    }
+  ],
+  "solver": {
+    "learned_and_temporal_arms": "proposal -> exact A^T -> observable alpha clipped to [0,2] -> unchanged strict CGLS K1",
+    "candidate_A_calls_per_frame": 2,
+    "candidate_A_transpose_calls_per_frame": 2,
+    "reference": "zero initialization -> unchanged strict CGLS K4",
+    "reference_A_calls_per_frame": 4,
+    "reference_A_transpose_calls_per_frame": 4
+  },
+  "accuracy_gates": {
+    "field_tolerance_per_frame": "max(0.01,0.05*zero_K4_field_relative_l2)",
+    "gradient_tolerance_per_frame": "max(0.015,0.05*zero_K4_gradient_relative_l2)",
+    "observation_tolerance_per_frame": "max(0.005,0.10*zero_K4_observation_relative_l2)",
+    "joint_matched_fraction_minimum": 0.9,
+    "joint_harm_fraction_maximum": 0.05,
+    "per_metric_harm_fraction_maximum": 0.05,
+    "severe_harm_count_maximum": 0
+  },
+  "amortization_gates": {
+    "selected_candidate_CNN_execution_fraction_maximum": 0.8,
+    "selected_candidate_CNN_execution_reduction_minimum": 0.2,
+    "selected_candidate_operator_ledger_exact": {
+      "A": 202,
+      "A_transpose": 202
+    },
+    "reference_operator_ledger_exact": {
+      "A": 404,
+      "A_transpose": 404
+    }
+  },
+  "added_value_diagnostic": {
+    "selected_diagonal_proposal_p90_relative_error_vs_full_must_be_no_worse_than_scalar": true,
+    "selected_diagonal_final_joint_match_must_be_no_worse_than_scalar_and_hold": true,
+    "selected_diagonal_final_harm_must_be_no_worse_than_scalar_and_hold": true,
+    "failure_does_not_erase_temporal_headroom_but_blocks_a_learned_transport_contribution": true
+  },
+  "decision_rule": "The temporal headroom gate passes only if the selected diagonal policy reproduces its all-five fit-only leave-one-trajectory-out pass, passes the unchanged p33 compatibility and harm gates, executes the CNN on at most 80% of p33 frames, and preserves the exact 202A+202A^T ledger. Learned diagonal added value is reported separately against hold and scalar controls. No wall, CPU, RSS, independent generalization, real BOST, or paper claim is authorized by this experiment.",
+  "failure_actions": {
+    "fit_only_loto_reproduction_failure": "invalidate v18 without reading p33 temporal scores",
+    "p33_accuracy_or_amortization_failure": "freeze a negative post-open temporal result and do not open fresh or test data",
+    "temporal_headroom_pass_but_added_value_failure": "retain simple temporal reuse headroom only and do not claim learned transport value",
+    "all_gates_pass": "freeze a separate native resource profile before any wall, CPU, or RSS claim"
+  },
+  "claim_limits": {
+    "confirmatory_test": false,
+    "independent_generalization": false,
+    "real_BOST": false,
+    "physical_same_accuracy": false,
+    "wall_time_speedup": false,
+    "CPU_time_benefit": false,
+    "whole_pipeline_RSS_benefit": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

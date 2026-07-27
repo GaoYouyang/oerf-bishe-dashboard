@@ -338,11 +338,11 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 当前证据 2026-07-28</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。v16 已在一条额外公开 development trajectory 上得到 <code>101/101</code> joint match、零 harm，并把完整调用从 <code>404A+404A^T</code> 降到 <code>202A+202A^T</code>。最新 v17 又把四工作线程和逐批临时线程改成一个持久 proposal 线程：典型 wall 快 <code>11.06%</code>、peak-RSS p90 ratio 降到 <code>0.99488</code>，两项首次同时过门；但 CPU 中位仍高 <code>11.28%</code>，第一次冷进程仍有 <code>236.82%</code> 配对 harm。资源问题被收窄但没有闭合，<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。v16 已把完整调用从 <code>404A+404A^T</code> 降到 <code>202A+202A^T</code>，v17 又修复了典型 wall 与 peak-RSS；最新 v18 转而检验相邻时刻能否少运行 compact CNN。因果门在 p33 上仍计划运行 <code>94/101</code> 帧，只减少 <code>6.93%</code>，没有达到冻结的 20% 门；固定隔帧虽降至 <code>51/101</code>，同精度命中率却只有 <code>71.29%</code>。独立复算通过，但这是计划调用数，不是原生入口实测加速，<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_persistent_serial_v17_result_2026-07-28.md">读 v17 严格判决</a>
-      <a class="button" href="../docs/poolfire_c_persistent_serial_v17_public_summary.json">打开脱敏结果</a>
-      <a class="button" href="../assets/poolfire_c_persistent_serial_v17.png" target="_blank" rel="noreferrer">查看 v17 结果图</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_temporal_dual_v18_result_2026-07-28.md">读 v18 严格判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_temporal_dual_v18_public_summary.json">打开脱敏结果</a>
+      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_temporal_dual_v18.png">查看 v18 结果图</a>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
@@ -428,6 +428,10 @@
       <a class="button" href="../docs/poolfire_c_persistent_serial_v17_public_summary.json">v17 脱敏结果</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_persistent_serial_resource_profile_v17.json">v17 结果前合同</a>
       <a class="button" href="../assets/poolfire_c_persistent_serial_v17.png" target="_blank" rel="noreferrer">v17 资源图</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_temporal_dual_v18_result_2026-07-28.md">v18 因果时间复用判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_temporal_dual_v18_public_summary.json">v18 脱敏结果</a>
+      <a class="button" href="../learning_labs/protocols/poolfire_c_temporal_dual_amortization_v18.json">v18 结果前合同</a>
+      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_temporal_dual_v18.png">v18 结果图</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_detector_compact_screen_v12.json">v12 compact 容量门</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_detector_cnn_sentinel_contract_v11.json">v11 最小 CNN 合同</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_cgls_dual_homogeneity_note_v11_2026-07-27.md">Krylov 奇对称与非线性推导</a>
@@ -448,8 +452,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert critical">
-      <strong>最新正式判决：v17 修复 RSS 与典型 wall，CPU 和冷启动仍失败</strong>
-      <span>单持久线程保持 v16 数值与 <code>202A+202A^T</code> 调用账，18 组配对中 16 组更快、wall 中位快 11.06%，peak-RSS p90 ratio 为 0.99488；但 CPU 中位 ratio 仍为 1.11277，第一次冷进程 harm 为 236.82%。正式状态 <code>FAIL_POST_OPEN_PERSISTENT_SERIAL_RESOURCE_GATE_V17</code>。这是一项机制修复，不是独立泛化、真实 BOST 或算法突破。</span>
+      <strong>最新正式判决：v18 时间复用守住精度，却没有足够资源余量</strong>
+      <span>fit-only 因果门在 p33 上保持 <code>101/101</code> joint match 与零 harm，但仍计划执行 <code>94/101</code> 次 CNN，只减少 <code>6.93%</code>；冻结最低门是 20%。固定 stride-2 计划执行 <code>51/101</code> 次，却只有 <code>71.29%</code> joint match。正式状态 <code>FAIL_POST_OPEN_TEMPORAL_AMORTIZATION_GATE_V18</code>。94/101 只是 counterfactual 调度账，不是原生入口实测调用或 wall/CPU/RSS 加速。</span>
     </div>
   </header>
 
@@ -584,6 +588,7 @@
         <article class="panel"><div class="chips"><span class="chip coral">C1 · v14 strict FAIL</span><span class="chip blue">4/5 · 0 harm</span></div><h3 style="margin-top:10px;">Compact Detector CNN + DualRange-K1</h3><p>正式状态 <code>FAIL_INDEPENDENT_STRICT_W8D2_CAPACITY_GATE_V14</code>。<code>w16d2</code> 的 10,548 参数仍是当前最小 5/5 候选；2,912 参数 <code>w8d2</code> 在 P45 只有 90/101 joint match，少一帧过门。11 个 miss 全是 observation-only；这把纯容量压缩的稳健下限定位在 2,912 与 10,548 参数之间，但没有产生新算法成功。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">C2 · v15.1 NEGATIVE</span><span class="chip blue">18 modes · 0 shared</span></div><h3 style="margin-top:10px;">Observation residual mechanism gate</h3><p>跨轨迹中频容量缺口不解释 P45 miss；P45 富集的低频模式又在其他工况反转。单一 residual correction 没有获得预注册授权，继续 proxy-only 架构救援正式停止。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">C3 · v17 PARTIAL REPAIR</span><span class="chip blue">RSS + typical wall PASS</span></div><h3 style="margin-top:10px;">Persistent-serial DualRange-K1 runtime</h3><p>单持久线程保持 101/101 compatibility 与 50% 调用减少，并首次同时通过典型 wall 和 peak-RSS 门；CPU 中位仍高 11.28%，第一次冷进程 harm 236.82%，所以完整资源门仍严格 FAIL。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">C4 · v18 NEGATIVE</span><span class="chip blue">94 / 101 scheduled</span></div><h3 style="margin-top:10px;">Causal temporal dual reuse</h3><p>部署可见观测变化可以触发关键帧，但 p33 为守住 101/101 精度仍需计划运行 94 次 CNN，只少 6.93%；固定隔帧省得更多却只剩 71.29% joint match。简单 previous-dual / diagonal delta 时间复用正式停止。</p></article>
         <article class="panel"><div class="chips"><span class="chip blue">强 controls 已完成</span><span class="chip gold">fresh 已烧掉一次</span></div><h3 style="margin-top:10px;">Zero / BP / PCGLS / ridge / full-linear KRR</h3><p>五条 fit、505 帧的经典与线性对照已跑完；v11.3 进一步用一条 fresh proxy 确认非线性 CNN 的兼容精度和调用减半，但也确认当前网络在便宜 straight-ray CPU proxy 上没有 wall / RSS 优势。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
@@ -621,7 +626,7 @@
       </figure>
       <div id="v17-resource" class="alert critical" style="margin-top:13px;">
         <strong>v17：单持久线程修好 RSS，剩余瓶颈收缩到 CPU 与冷加载</strong>
-        <span>网络、checkpoint、<code>A^T</code> lift、alpha 和 strict CGLS K1 全部不变，只删除四线程网络池与逐批临时线程。候选数值仍与 v16 正式场等价，wall 中位快 <code>11.06%</code>、16/18 配对更快、RSS p90 ratio <code>0.99488</code>；但 CPU ratio <code>1.11277</code>，第一次冷进程 harm <code>236.82%</code>。独立重算通过，完整判决仍为 FAIL。</span>
+        <span>网络、checkpoint、<code>A^T</code> lift、alpha 和 strict CGLS K1 全部不变，只删除四线程网络池与逐批临时线程。候选数值仍与 v16 正式场等价，wall 中位快 <code>11.06%</code>、16/18 配对更快、RSS p90 ratio <code>0.99488</code>；但 CPU ratio <code>1.11277</code>，第一次冷进程 harm <code>236.82%</code>。独立重算通过，历史正式判决为 <code>FAIL_POST_OPEN_PERSISTENT_SERIAL_RESOURCE_GATE_V17</code>。</span>
       </div>
       <figure style="margin-top:14px;">
         <a href="../assets/poolfire_c_persistent_serial_v17.png" target="_blank" rel="noreferrer" aria-label="打开 v17 单持久线程资源结果图原尺寸">
@@ -629,9 +634,19 @@
         </a>
         <figcaption>18×2 fresh process、无 warm-up、第一次运行保留。v17 修复了 v16.1 的 peak-RSS 失败，也通过典型 wall 门；CPU 和冷启动 no-harm 没过，所以不能写成稳定部署加速，algorithm_breakthrough=false。</figcaption>
       </figure>
+      <div id="v18-temporal" class="alert critical" style="margin-top:13px;">
+        <strong>v18：观测变化能做因果拒绝门，但简单时间复用没有形成资源突破</strong>
+        <span>五条 fit 的 trajectory-level LOTO 都守住 compatibility；到了 p33，fit-only 门仍计划运行 <code>94/101</code> 次 CNN，只省 <code>6.93%</code>。固定 stride-2 可降至 <code>51/101</code>，但 joint match 只有 <code>71.29%</code>。独立复算全部最大差为 0；runner 为公平比较先生成了全部 101 个 proposal，因此调度账不是原生调用实测，wall/CPU/RSS 也未运行。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_temporal_dual_v18.png" aria-label="打开 v18 因果时间复用结果图">
+          <img src="../assets/poolfire_c_temporal_dual_v18.png" alt="PoolFire C v18 五折计划 CNN 比例、p33 调度帧数与同精度命中率" />
+        </a>
+        <figcaption>Event gate 以接近全回退守住精度；Stride-2 证明强行提高复用率会越过精度边界。所有 temporal arms 仍是既有 <code>202A+202A^T</code>，没有新增算子减少、真实 CNN 加速、fresh 泛化或真实 BOST 结论，algorithm_breakthrough=false。</figcaption>
+      </figure>
       <details class="history-diagnostics" style="margin-top:12px;">
         <summary>保留 v12.2-v12.3 历史诊断</summary>
-        <p>v12.2 在已烧掉的 p45-s03 上测得 Candidate <code>112.46 ms</code>、Zero-K4 <code>128.74 ms</code>，稳态 wall 快 <code>12.64%</code>，但 RSS 高 <code>15.71%</code>，历史状态 <code>PASS_POSTOPEN_PERSISTENT_WALL_HEADROOM_RSS_FAILED</code>。v12.3 又在五条 fit 上得到 <code>12.62%-14.93%</code> wall 优势和形式上的 RSS 3/5；随后红队发现 reference 被 Torch 导入抬高，正式状态 <code>FAIL_FIT_ONLY_FP32_PROPOSAL_ALL_GATES</code>（clean RSS FAIL），p45 replay 未获授权。v12.4-v12.6 正是针对这一污染重新做的干净资源门，三种后端均为 whole-worker RSS FAIL，正式状态 <code>FAIL_CLEAN_RUNTIME_DEPLOYMENT_RESOURCE_GATE</code>；后端 batch/精度调参正式停止。v13 随后确认 proposal / field parity 和调用账通过，稳态 wall 快 <code>42.68%</code>，但 RSS ratio <code>1.05118</code> 仍以约 <code>68 kB</code> 超门，正式状态 <code>FAIL_SYNTHETIC_PREFIT_FUSED_STREAMING_V13</code>。</p>
+        <p>v12.1 把模型压到 10,548 参数后，cold wall 只快 <code>0.28%</code>。v12.2 在已烧掉的 p45-s03 上测得 Candidate <code>112.46 ms</code>、Zero-K4 <code>128.74 ms</code>，稳态 wall 快 <code>12.64%</code>，但 RSS 高 <code>15.71%</code>，历史状态 <code>PASS_POSTOPEN_PERSISTENT_WALL_HEADROOM_RSS_FAILED</code>。v12.3 又在五条 fit 上得到 <code>12.62%–14.93%</code> wall 优势和形式上的 RSS 3/5；随后红队发现 reference 被 Torch 导入抬高，正式状态 <code>FAIL_FIT_ONLY_FP32_PROPOSAL_ALL_GATES</code>（clean RSS FAIL），p45 replay 未获授权。v12.4-v12.6 正是针对这一污染重新做的干净资源门：MLX GPU、原生 C batch16 和 batch8 的 wall 分别快 <code>43.56%</code>、<code>15.46%</code>、<code>15.27%</code>，RSS ratio 分别为 <code>1.3367</code>、<code>1.0745</code>、<code>1.1395</code>，三种后端均为 whole-worker RSS FAIL，正式状态 <code>FAIL_CLEAN_RUNTIME_DEPLOYMENT_RESOURCE_GATE</code>；后端 batch/精度调参正式停止。v13 随后确认 proposal / field parity 和调用账通过，稳态 wall 快 <code>42.68%</code>，但 RSS ratio <code>1.05118</code> 仍以约 <code>68 kB</code> 超门，正式状态 <code>FAIL_SYNTHETIC_PREFIT_FUSED_STREAMING_V13</code>。</p>
         <div class="actions" style="margin-top:10px;">
           <a class="button" href="../assets/poolfire_c_dual_detector_compact_mixed_precision_v12_3.png" target="_blank" rel="noreferrer">打开 v12.3 历史图</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_detector_clean_native_v12_4_to_v12_6_result_2026-07-27.md">v12.4-v12.6 干净部署门</a>
@@ -706,8 +721,8 @@
         </article>
       </div>
       <div class="alert" style="margin-top:13px;">
-        <strong>突破监测：精度、调用、典型 wall 与 RSS 已分别过门，完整资源突破仍未成立</strong>
-        <span>v17 证明单持久线程可以把 peak-RSS ratio 从 1.05805 修到 0.99488，并保留 11.06% 典型 wall 优势；但 CPU 多 11.28%，第一次冷进程仍显著受损。下一项有科学价值的机制必须减少网络实际执行次数或消除真实冷加载成本，而不是继续调线程。两条 untouched test 与真实 BOST 继续封存，algorithm_breakthrough=false。</span>
+        <strong>突破监测：v18 已否定最简单的因果时间摊销，完整资源突破仍未成立</strong>
+        <span>观测变化与 proposal 变化相关，但在快变 p33 上必须计划运行 94/101 次 CNN 才守住同精度；固定隔帧则把 joint match 降到 71.29%。previous-field recycling 的探索也不能通过跨轨迹留一门。下一候选若继续利用时间信息，必须显式建模运动或拓扑变化，并打赢 previous-field、周期关键帧和 Krylov recycling；两条 untouched test 与真实 BOST 继续封存，algorithm_breakthrough=false。</span>
       </div>
       <div class="section-head" style="margin-top:22px;">
         <div>
@@ -1143,7 +1158,7 @@
         const next = nextUnlockedWeek();
         const fCount = checkedCount(state.foundations, guide.foundationChecks);
         const pace = Number(state.profile.hours) <= 6 ? '建议把每个关卡拆成两周' : Number(state.profile.hours) >= 15 ? '可将阅读与代码并行，但不跳过验收' : '按一周一关执行';
-        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v16 在额外公开 development trajectory 上得到 101/101 compatibility，并把完整 A/A^T 调用减半；v17 单持久线程进一步让典型 wall 快 11.06%、RSS p90 ratio 降到 0.99488，但 CPU 中位仍多 11.28%，第一次冷进程 harm 236.82%。完整资源门仍 FAIL，algorithm_breakthrough=false。';
+        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v18 的 observation-visible 因果门在 p33 上为守住 101/101 compatibility 仍计划运行 94/101 次 CNN，只减少 6.93%；固定 stride-2 虽降到 51/101，joint match 只有 71.29%。简单时间复用正式 FAIL，algorithm_breakthrough=false。';
         document.getElementById('recommendation').innerHTML = `
           <div class="next-code">当前建议 · ${escapeHtml(next.id)}</div>
           <h3>${escapeHtml(next.title)}</h3>
@@ -1293,7 +1308,7 @@
 
 v10 已固定 Zero-CGLS K4 的 4A+4A^T 参考与 DualRange-K1 的 2A+2A^T 目标。v10.4.2 已通过独立复算：完整 K3 dual restart + K1 的 field / gradient / observation p90 是 0.6205 / 1.0923 / 0.3466，joint matched 100%、harm 0%；Zero-K4 是 0.6332 / 1.2180 / 0.3330。
 
-v10.8.2 已证明完整 K3 dual 目标在五条 fit trajectory 上 5/5 可行，v10.9 full-linear KRR 三臂均为 0/5。严格 v11.2 随后完成 77,020 参数 odd multiview detector CNN 五折 5/5。v11.3 的锁模后 p45-s03 fresh proxy 达到 101/101 joint match、0 harm、调用减半，但 wall/RSS 失败。v12.1 将模型压到 10,548 参数后 cold wall 仍只快 0.28%；v12.3 在五条 fit 上确认 12.62%–14.93% 常驻 wall headroom，却暴露 reference 的 Torch 污染。v12.4-v12.6 随后用干净、臂隔离 worker 实测 MLX GPU、原生 C batch16 和 batch8：三者均保持 101/101 compatibility、0 harm、2A+2A^T 对 4A+4A^T，wall 快 43.56% / 15.46% / 15.27%，但 RSS ratio 1.3367 / 1.0745 / 1.1395 全部失败。v13 进一步实现样本并行 scratch、原生前瞻和逐帧输出；冻结 checkpoint 的 101 帧合成预检中，预热后的 proposal + solver + 输出写入区间快 42.68%，RSS 相对 v12.5 少 22.41 MB，但相对公平流式 reference 的 higher-p90 ratio 是 1.05118，仍以约 68 kB 失败。5 个 session 下 higher-p90 等于最大值，统计稳健性有限；这不改正式 FAIL，也不能扩写成完整冷启动加速或内存不可行。fit/fresh/validation/test 均未放行，algorithm_breakthrough=false。
+v10.8.2 已证明完整 K3 dual 目标在五条 fit trajectory 上 5/5 可行，v10.9 full-linear KRR 三臂均为 0/5。严格 v11.2 随后完成 77,020 参数 odd multiview detector CNN 五折 5/5。v11.3 的锁模后 p45-s03 fresh proxy 达到 101/101 joint match、0 harm、调用减半，但 wall/RSS 失败。v12.1-v17 最终把模型压到 10,548 参数，并在额外 p33 development 上保持 101/101、0 harm、调用减半；v17 的典型 wall 与 peak-RSS 过门，但 CPU 和首个冷进程失败。v18 改测 observation-visible 因果时间复用：p33 为守住同精度仍计划执行 94/101 次 CNN，只少 6.93%；固定 stride-2 只有 71.29% joint match。独立复算通过，但没有原生调用、wall、CPU 或 RSS 实测，简单时间复用正式停止。algorithm_breakthrough=false。
 
 截至 2026-07-26 的公开一级来源检索没有发现完全同构的整套方法，但 learned warm start、learned backprojection、neural operator + Krylov、WB-IPM 和 Learned ReSeSOp 都是强近邻；当前只主张组合级差异，不主张全球唯一。还需要确认组内是否已有未发表的 observation-space filter / warm start / 专利，以及真实流程中 A、A^T、光流、ray tracing 哪部分最贵。`;
       }
