@@ -1,5 +1,5 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.27-c-v10-7-full-view-pivot",
+  version: "2026.07.27-c-v10-8-2-full-view-target",
   updated: "2026-07-27",
   foundationChecks: [
     {
@@ -335,8 +335,8 @@ window.OPERATOR_LEARNING_GUIDE = {
     {
       id: "W11", phase: "C1 当前算法", week: "第 11 周", title: "Coverage-adaptive / Full-view DualRange-K1", hours: "16-24h", depends: ["W9", "W10"],
       learn: ["Range(A^T)、Null(A) 与 CGLS 可纠正性", "固定低秩覆盖与 observation-conditioned basis", "多视图 detector convolution / operator map", "observable-only alpha 与 pre-A^T abstention", "end-to-end K1 loss 与任意 coefficient label 的区别"],
-      build: ["先跑 full-view 线性/固定滤波 control 和 rank ladder", "实现读取完整三视图 observation 的最小 dual proposal", "输出 full-view correction 或 conditional coefficient 并用精确 A^T lift", "训练目标直接放在 K1 后 teacher/proxy 误差", "比较 fixed-rank96、full-view control、direct-field K1 与未修改 Zero-K4"],
-      pass: ["输出经精确 A^T 后严格位于 Range(A^T)", "basis、模型和 gate 不接触 fresh/test truth", "每个额外 A/A^T 与模型推理进入成本账", "逐轨迹 matched field/gradient/observation 与坏尾部不劣于同成本 control", "扩大容量必须由 held-out coverage 和物理结果偿还"],
+      build: ["复核 v10.8.2 full-K3 目标 5/5 与四个便宜控制 0/5", "先跑允许跨 detector/频率耦合的 full-view linear ridge 与 reduced-rank operator", "只有强线性控制仍失败才实现最小 detector CNN", "输出 full-view dual 并用精确 A^T lift", "loss 直接约束 K1 后 observation non-harm 与 field/gradient", "比较 Zero-K2、DCT diagonal、full linear、最小 CNN 与未修改 Zero-K4"],
+      pass: ["full-K3 非部署上限五条均过原 compatibility 门", "输出经精确 A^T 后严格位于 Range(A^T)", "模型和 gate 不接触 fresh/test truth", "每个额外 A/A^T 与模型推理进入成本账", "逐轨迹 matched field/gradient/observation 与坏尾部不劣于同成本 control", "target L2 下降不能替代 downstream non-harm"],
       resources: ["c-route-lock", "poolfire-trajectory-protocol", "poolfire-c-objective-novelty", "nows-paper", "fcg-no-paper", "spectrally-safe-warmstart", "l2ws-paper", "nio-paper", "residual-error-correction-cao"],
       paper: "若成立，贡献是针对固定 rank96 覆盖失败的 BOST full-view/conditional dual proposal、精确 Range(A^T) lift 与可核算同精度成本前沿，不是换一个更大的神经网络。"
     },
@@ -478,7 +478,7 @@ window.OPERATOR_LEARNING_GUIDE = {
       id:"warmstart-c0", rank:1, title:"C0 · rank96 可达性负结果", badge:"正式停止，不再训练", risk:"已关闭", novelty:"无算法成功主张；价值是先用五条完整 trajectory 证明固定 rank96 表示本身只有 1/5 可达，阻止继续拟合无效标签", data:"五条 fit target 已 truth-blind 封存并独立复算后评分；p45-s03 fresh、p22 stopping 与两条 untouched test 继续封存", hardware:"正式 T0 已在 Mac CPU 完成；不再生成 20 个训练标签，不再运行 ridge/MLP", question:"fold-train selected-rank96 basis 能否在 held-out fit trajectory 容纳兼容 K1 warm start？", contribution:"得到 1/5、observation harm 100% 和 severe harm 90 的可复现负结果，并把单点 p14 headroom 与跨轨迹可达性分开。", next:"该路线已结束；证据用于约束 C1 的 full-view/conditional 表示。", stop:"T1_training_target_generation_authorized=false；禁止换大 MLP 挽救相同固定表示。"
     },
     {
-      id:"warmstart-c1", rank:2, title:"C1 · Coverage-adaptive / Full-view DualRange-K1", badge:"当前唯一算法主线", risk:"中-高", novelty:"针对 v10.7 固定 rank96 覆盖失败，让完整三视图 observation 生成 full-view detector correction 或 conditional basis coefficient；精确 A^T lift、解析 alpha 和 strict K1 保持不变", data:"五条 fit 只用于表示/模型开发与完整轨迹留一；p45-s03 fresh、p22 stopping 与 test 继续封存", hardware:"先跑 full-view 线性/滤波 control 与小型 detector CNN；Mac 可做小模型，增加容量必须由 held-out 物理兼容与成本偿还", question:"取消固定 rank96 瓶颈后，deployment-visible full-view dual proposal 能否在 K1 后跨轨迹达到 K4 兼容精度？", contribution:"若成立，可形成 BOST 多视图 full-view dual proposal、精确可纠正 lift、短程 Krylov 与严格成本前沿的组合贡献。", next:"冻结 full-view/conditional 表示与强 control→先跑最小模型完整轨迹留一→只有通过才封存 predictor 申请 fresh。", stop:"便宜 control 等效、任何轨迹 harm、只靠更大容量、调用或 wall/RSS 无优势、需要反复看 fresh 调参时停止。"
+      id:"warmstart-c1", rank:2, title:"C1 · Coverage-adaptive / Full-view DualRange-K1", badge:"目标 5/5，简单映射 0/5", risk:"中-高", novelty:"针对 v10.7 固定 rank96 覆盖失败，让完整三视图 observation 生成 full-view detector correction 或 conditional basis coefficient；精确 A^T lift、解析 alpha 和 strict K1 保持不变", data:"v10.8.2 已在五条 fit 上证明 full-K3 目标 5/5，identity/六通道/DCT diagonal/最近邻均 0/5；p45-s03 fresh、p22 stopping 与 test 继续封存", hardware:"下一步先跑 full cross-view linear/reduced-rank operator；Mac 足够。只有强线性仍失败才训练最小 detector CNN", question:"能否预测对 A^T 与 K1 安全的 full-view dual，而不是只降低 raw certificate L2？", contribution:"若成立，可形成 BOST 多视图 full-view dual proposal、精确可纠正 lift、短程 Krylov 与严格成本前沿的组合贡献。", next:"full linear ridge/reduced-rank LOTO→若失败再做 operator-aware 最小 CNN→全部通过才申请 fresh。", stop:"任何轨迹 observation harm、只靠更大容量、调用或 wall/RSS 无优势、需要反复看 fresh 调参时停止。"
     },
     {
       id:"warmstart-c2", rank:3, title:"C2 · Correctable Frontier Training", badge:"论文升级候选", risk:"高", novelty:"训练目标直接包含固定 1/2/4 步物理 refinement 后的误差，使网络学习最容易被求解器纠正的初值，而不只是单步最像真值", data:"只有 C0/C1 在未见 trajectory 上显示稳定 headroom 后才启动", hardware:"截断反传或 stop-gradient 小场开发；全 3D unroll 可能需要 GPU", question:"最小单步 field loss 的 x0，是否不如固定短程 refinement 后误差最小的 x0？", contribution:"连接 neural operator、iterative inverse solver 和成本-精度前沿，形成可一对一消融的机制主张。", next:"比较 field-only、field+measurement、1/2/4-step trajectory loss；所有物理调用进入账本。", stop:"训练显存/成本失控、收益仅来自更多训练预算、或 C0/C1 没有基础 headroom 时不启动。"

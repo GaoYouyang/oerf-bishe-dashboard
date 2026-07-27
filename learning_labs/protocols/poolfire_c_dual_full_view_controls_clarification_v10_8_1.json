@@ -1,0 +1,45 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-full-view-controls-clarification-10.8.1",
+  "issued_after_run": "t0_4b8c6cd_20260727.json",
+  "raw_run_status": "INVALID_DECISION_LOGIC_KRYLOV_RESTART_IS_NOT_CONTINUATION",
+  "error": "The v10.8 contract and runner incorrectly required a restart from the exact K3 dual certificate followed by a fresh CGLS K1 step to reproduce the continued zero-start K4 field to 1e-10.",
+  "mathematical_reason": "Restarting CGLS at x_K3 resets the conjugate direction. Its first restarted search direction is A^T(y-Ax_K3), whereas the continued fourth CGLS direction also contains the previous conjugate direction. Equality to x_K4 is therefore not an invariant.",
+  "prior_evidence_conflict": "Frozen v10.4.2 already reported that the full K3 dual restart passes the compatibility envelope while differing numerically from continued K4.",
+  "correction": {
+    "full_view_target_viable": "all five full_k3_certificate_oracle_k1 rows pass the unchanged field/gradient/observation compatibility envelope with zero severe harm",
+    "teacher_field_relative_l2": "reported as a restart-versus-continuation diagnostic only and never used as a gate",
+    "unchanged": [
+      "five fit trajectories",
+      "all arm definitions and fitted parameters",
+      "inner trajectory-level ridge selection",
+      "field/gradient/observation tolerances",
+      "harm and severe-harm thresholds",
+      "A/A^T accounting",
+      "fresh/validation/test sealing"
+    ]
+  },
+  "cost_accounting_clarification": {
+    "optimized_zero_start_k3_target_only": {
+      "A": 3,
+      "A_transpose": 3
+    },
+    "optimized_zero_start_k4_reference_including_k3_certificate": {
+      "A": 4,
+      "A_transpose": 4
+    },
+    "raw_runner_actual_per_frame": {
+      "A": 4,
+      "A_transpose": 9
+    },
+    "reason_for_extra_runner_adjoint_calls": "The diagnostic runner checks A^T z_k parity at every iteration and also computes the unused next normal after the final checkpoint. These are offline audit calls, not deployment calls."
+  },
+  "claim_limits": {
+    "post_result_mathematical_correction": true,
+    "independent_recomputation_required": true,
+    "algorithm_breakthrough": false,
+    "fresh_trajectory_generalization": false,
+    "real_BOST": false,
+    "speedup": false,
+    "paper_success": false
+  }
+}
