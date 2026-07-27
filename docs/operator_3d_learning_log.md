@@ -7834,3 +7834,68 @@ paper_success=false
 所以没有训练 full-fit、没有跑资源门，也没有追加 width/seed 救结果。当前结论是：
 `w16d2` 仍是最小的五轨迹 5/5 候选；继续纯粹删宽度已经越过稳健容量下限。完整结果
 见 `docs/poolfire_c_dual_detector_w8d2_v14_result_2026-07-28.md`。
+
+## 256. v15.1：P45 的残差特征不是一个跨工况通用修补点
+
+v14 已经知道 `w8d2` 在 P45 少一帧过门，而且 11 个 miss 全部来自 observation。
+这轮没有立刻再造网络，而是先把最终 residual：
+
+```text
+r = A x_K1 - y
+```
+
+拆成三视角、六分量和 low/mid/high 共 18 个模式，比较冻结的 `w8d2` 与
+`w16d2`。五条 fit trajectory 共 505 帧，raw pair truth 没有请求；但为了绑定旧
+模型身份读取了 truth-derived 历史报告，所以不能夸成 filesystem-wide truth-free。
+
+第一次预运行被红队判无效：零能量并列也会拿到 top-3 票，跨轨迹一致和 top-3
+还可能来自不同轨迹，负结果状态甚至以 `PASS` 开头。源码、旧 checkpoint 和状态
+语义全部修完，协议升级到 v15.1 后才重新运行。
+
+权威结果把两个看起来相似的现象拆开了：
+
+```text
+view_1_component_1_mid:
+  5/5 轨迹 median 都变差
+  3 条同轨迹 support
+  0 strong reversal
+  但 P45 fail w8/w16 = 1.019
+  P45 fail/matched   = 0.940
+  -> 跨轨迹容量缺口，不解释 P45 miss
+
+view_1_component_0_low:
+  P45 fail w8/w16 = 1.322
+  P45 fail/matched = 1.526
+  P45 failure top-3 = true
+  但同轨迹 support 只有 1，P22 强反转
+  -> 能解释 P45，但不能跨工况复用
+```
+
+第三视角两个低频模式也分别在 P22 或 P58 反转，或者没过 P45 富集门。最终 18 个
+模式全部失败：
+
+```text
+VALIDATED_NEGATIVE_NO_SHARED_MODE_V15_1
+shared_mode_ids=[]
+single_correction_preregistration_authorized=false
+algorithm_breakthrough=false
+```
+
+独立 validator 从十个 checkpoint 重新生成两套 505 帧结果，重写 FFT 和 gate：
+
+```text
+maximum array difference   = 0
+maximum summary difference = 0
+maximum Parseval error     = 8.33e-17
+```
+
+红队复审为 `P0=0 / P1=0 / P2=1`，当前定向测试 `8 passed`。剩余 P2 是未来还可
+增加更多 seal/anchor mutation 回归测试，不改变本轮负判。
+
+**讲人话：**小模型确实有一个比较普遍的中频短板，但 P45 真正出问题的是另一个
+低频特征；这个特征到了别的工况甚至方向相反。此时训练“通用修补器”很可能只是把
+P45 特例背下来。我们因此停止 proxy-only 架构救援，保留 `w16d2`，下一项论文级
+证据必须来自独立轨迹或真实 BOST 迁移，而不是继续在这五条数据上调网络。
+
+完整结果见
+`docs/poolfire_c_observation_residual_v15_1_result_2026-07-28.md`。
