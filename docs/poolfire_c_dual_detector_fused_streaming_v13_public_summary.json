@@ -1,0 +1,83 @@
+{
+  "schema_version": "oerf-poolfire-c-fused-streaming-public-summary-13.0",
+  "date": "2026-07-28",
+  "status": "FAIL_SYNTHETIC_PREFIT_FUSED_STREAMING_V13",
+  "scope": "deterministic synthetic pre-fit mechanism gate with the frozen trained proposal checkpoint; no fit, fresh, validation, or test trajectory data opened",
+  "frame_count": 101,
+  "sessions_per_arm": 5,
+  "operator_calls": {
+    "v13_fused_streaming_dual_k1": {
+      "A": 202,
+      "A_transpose": 202
+    },
+    "streaming_zero_cgls_k4": {
+      "A": 404,
+      "A_transpose": 404
+    }
+  },
+  "numerical_parity": {
+    "proposal_relative_l2_p90": 1.3807053248065553e-07,
+    "proposal_relative_l2_worst": 1.427080160247089e-07,
+    "field_relative_l2_p90": 7.667795378477183e-08,
+    "field_relative_l2_worst": 8.429262867847381e-08,
+    "gate_maximum": 5e-06,
+    "passed": true
+  },
+  "measured_wall_seconds": {
+    "scope": "warmup-complete proposal plus solver plus sequential output write; excludes process startup, checkpoint loading, and native context creation",
+    "v12_5_candidate_median": 0.1277550000231713,
+    "v13_candidate_median": 0.06503937509842217,
+    "streaming_reference_median": 0.11345879221335053,
+    "v13_reduction_vs_streaming_reference": 0.42675773441937737,
+    "minimum_reduction": 0.1,
+    "passed": true
+  },
+  "whole_worker_peak_rss_bytes": {
+    "quantile_method": "higher",
+    "session_count": 5,
+    "higher_p90_equals_observed_maximum": true,
+    "protocol_text_explicitly_named_quantile_method": false,
+    "v12_5_candidate_p90": 82984960,
+    "v13_candidate_p90": 60571648,
+    "streaming_reference_p90": 57622528,
+    "v13_reduction_vs_v12_5_bytes": 22413312,
+    "v13_to_streaming_reference_ratio": 1.0511799829400057,
+    "maximum_ratio": 1.05,
+    "excess_above_cap_bytes": 67993.59999999404,
+    "posthoc_linear_p90_ratio_not_used_for_decision": 1.048859370488016,
+    "statistical_robustness_limited": true,
+    "passed": false
+  },
+  "independent_read_only_audit": {
+    "P0": 0,
+    "P1": 3,
+    "P2": 3,
+    "formal_fail_confirmed": true,
+    "inconclusive_override": false,
+    "memory_impossibility_proven": false
+  },
+  "gate_results": {
+    "proposal_parity": true,
+    "field_parity": true,
+    "deterministic_repeat": true,
+    "operator_calls": true,
+    "candidate_peak_reduction": true,
+    "candidate_wall_reduction": true,
+    "paired_session_wall_harm": true,
+    "candidate_to_reference_peak_ratio": false
+  },
+  "claim_limits": {
+    "fit_execution_authorized": false,
+    "fit_opened": false,
+    "fresh_opened": false,
+    "validation_opened": false,
+    "test_opened": false,
+    "real_BOST": false,
+    "physical_same_accuracy": false,
+    "broad_generalization": false,
+    "cold_start_end_to_end_acceleration": false,
+    "memory_impossibility": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

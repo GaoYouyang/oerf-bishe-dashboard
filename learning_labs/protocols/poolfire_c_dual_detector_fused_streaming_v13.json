@@ -1,0 +1,123 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-detector-fused-streaming-13.1",
+  "status": "FROZEN_BEFORE_FORMAL_SYNTHETIC_PREFIT_EXECUTION",
+  "scientific_question": "Can a materially different fused streaming runtime remove the native proposal memory blocker while preserving the frozen dual-K1 mathematics and its complete operator-call advantage?",
+  "scope": "synthetic pre-fit mechanism gate only; no fit, fresh, validation, or test trajectory may be opened",
+  "motivation": {
+    "frozen_v12_5_single_pass_candidate_peak_rss_p90_bytes": 143147008,
+    "frozen_v12_5_single_pass_reference_peak_rss_p90_bytes": 127090688,
+    "frozen_peak_rss_ratio_gate": 1.05,
+    "minimum_candidate_specific_peak_reduction_bytes": 9701786,
+    "reason": "the minimum reduction is the exact shortfall between the frozen v12.5 single-pass candidate and 1.05 times its reference"
+  },
+  "permitted_mechanism_change": [
+    "move float64-to-float32 conversion, RMS normalization, odd positive-negative construction, odd recombination, and RMS rescaling into the native runtime",
+    "replace per-convolution pthread creation with one persistent four-worker pool using explicitly bounded stacks; each worker evaluates complete samples so layer synchronization is removed",
+    "allocate one reusable native workspace at construction with three one-sample feature scratch tensors per worker instead of three full-batch feature tensors",
+    "use one bounded look-ahead so the next eight-frame proposal chunk may run concurrently while the current eight-frame chunk is consumed by the unchanged exact A-transpose lift, observable alpha, and strict CGLS K1; no more than two proposal chunks may coexist",
+    "write candidate and reference fields incrementally to the same NPY-compatible sequential output contract without mapping the full trajectory"
+  ],
+  "preformal_engineering_dry_run": {
+    "scientific_evidence": false,
+    "checkpoint_used": "temporary deterministic random arrays with the correct tensor shapes; not the frozen trained checkpoint",
+    "data_used": "the protocol synthetic Gaussian observations only",
+    "purpose": "exercise all 15 worker processes and the independent validator before binding the formal execution",
+    "finding": "the serial chunk implementation passed numerical and memory plumbing but left proposal inference and Dual-K1 refinement non-overlapped, so it failed the unchanged wall gate",
+    "single_permitted_correction": "add one bounded proposal look-ahead and sample-parallel reusable scratch without changing weights, network arithmetic, solver, calls, metrics, thresholds, batch size, precision, or data; an infrastructure-only Python coordinator passed the wall plumbing but exceeded the RSS gate by about 0.53 MB, so the same look-ahead coordinator was moved into a 64 KiB native thread, and a failed on-demand-SiLU scratch attempt was discarded because it recomputed activations and failed the unchanged wall gate",
+    "result_used_to_change_scientific_gate": false
+  },
+  "frozen_mathematics": {
+    "checkpoint_parameters": "unchanged frozen compact-w16d2 fold-0 parameters",
+    "proposal_architecture": "unchanged compact-w16d2 odd multi-view detector",
+    "proposal_precision": "float32 native CPU",
+    "proposal_transport_to_solver": "float64",
+    "exact_A_transpose_lift": "unchanged",
+    "observable_alpha_interval": [
+      0.0,
+      2.0
+    ],
+    "candidate_solver": "unchanged strict CGLS K1",
+    "reference_solver": "unchanged Zero-CGLS K4",
+    "candidate_calls_per_frame": {
+      "A": 2,
+      "A_transpose": 2
+    },
+    "reference_calls_per_frame": {
+      "A": 4,
+      "A_transpose": 4
+    }
+  },
+  "synthetic_input": {
+    "frame_count": 101,
+    "observation_shape": [
+      101,
+      2072
+    ],
+    "observation_dtype": "float64",
+    "seed": 130013,
+    "distribution": "standard normal",
+    "high_resolution_coordinate_lengths": [
+      32,
+      32,
+      64
+    ],
+    "coordinate_domain": [
+      0.0,
+      1.0
+    ],
+    "model_frame_batch_size": 8,
+    "fit_or_truth_data_used": false
+  },
+  "formal_execution": {
+    "fresh_process_sessions_per_arm": 5,
+    "warmup_trajectory_passes_per_session": 1,
+    "measured_trajectory_passes_per_session": 1,
+    "arm_order": "rotating v12.5 candidate, v13 candidate, v13 streaming Zero-K4 reference",
+    "peak_rss_scope": "whole worker process",
+    "wall_scope": "proposal plus solver and incremental output write; excludes process startup, one-time checkpoint loading, and one-time native context creation",
+    "frameworks_forbidden_in_measured_workers": [
+      "torch",
+      "mlx"
+    ]
+  },
+  "gates": {
+    "v13_vs_v12_5_proposal_relative_l2_p90_maximum": 0.000005,
+    "v13_vs_v12_5_proposal_relative_l2_worst_maximum": 0.000005,
+    "v13_vs_v12_5_field_relative_l2_p90_maximum": 0.000005,
+    "v13_vs_v12_5_field_relative_l2_worst_maximum": 0.000005,
+    "candidate_calls_exact": {
+      "A": 202,
+      "A_transpose": 202
+    },
+    "reference_calls_exact": {
+      "A": 404,
+      "A_transpose": 404
+    },
+    "candidate_peak_rss_reduction_vs_v12_5_minimum_bytes": 9701786,
+    "v13_candidate_to_v13_streaming_reference_peak_rss_ratio_maximum": 1.05,
+    "v13_candidate_wall_reduction_vs_v13_streaming_reference_minimum_fraction": 0.1,
+    "v13_candidate_session_wall_harm_maximum_fraction": 0.05,
+    "deterministic_repeat_required": true,
+    "independent_recomputation_required": true
+  },
+  "decision_rule": "every numerical, call-ledger, determinism, wall, and RSS gate must pass; there is no mean-gain override",
+  "success_action": "authorize one separately frozen, already-open p14 feasibility run of this exact runtime; do not authorize fresh, validation, test, or a paper claim",
+  "failure_action": "freeze the negative synthetic result and stop the fused native runtime route before any fit access",
+  "forbidden_adaptation_after_execution": [
+    "changing batch size, model weights, architecture, compiler flags, solver, alpha, reference, metrics, or thresholds",
+    "using synthetic results to tune a second v13 implementation",
+    "opening fit, fresh, validation, or test data to rescue a failed pre-fit gate",
+    "claiming real BOST, physical same accuracy, generalization, algorithm breakthrough, or paper success"
+  ],
+  "claim_limits": {
+    "fit_opened": false,
+    "fresh_opened": false,
+    "validation_opened": false,
+    "test_opened": false,
+    "real_BOST": false,
+    "physical_same_accuracy": false,
+    "broad_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
