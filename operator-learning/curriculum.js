@@ -1,6 +1,6 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.26-c-v9-4-1-geok-novelty-v3",
-  updated: "2026-07-26",
+  version: "2026.07.27-c-v10-5-selected-dct96",
+  updated: "2026-07-27",
   foundationChecks: [
     {
       id: "python-array",
@@ -325,20 +325,20 @@ window.OPERATOR_LEARNING_GUIDE = {
       paper: "没有这一周，任何“快了多少”都可能只是隐藏特征成本或更差终点。"
     },
     {
-      id: "W10", phase: "C0 最小算法", week: "第 10 周", title: "Adjoint-Residual Warm Start", hours: "14-20h", depends: ["W5", "W9"],
-      learn: ["A^T y 为什么是模糊但物理可解释的起点", "非线性曲光线时的 J^T residual", "residual learning 与 direct field prediction", "FNO/3D U-Net 容量匹配", "calibration-aware correction budget", "field 与 measurement 双损失"],
-      build: ["先下载新增 PoolFire trajectories 并冻结 fresh test", "线性阶段训练 observation 或 A^T y + coordinates/geometry → x0", "比较最小 FNO/UNO、matched 3D U-Net 与 dual ridge", "用独立 validation 只选择一个固定 correction depth 或 fail-closed gate", "接同一个物理 refinement并画 per-trajectory error-call 曲线"],
-      pass: ["不使用 truth/SVD/family label 作为部署输入", "模型只消耗预注册的 observation/lift 与几何", "correction budget 不读取 test truth", "deployable 主账与 oracle headroom 分开报告 trajectory-level median/p90/worst", "新增 trajectory 上没有 headroom则不扩大模型"],
+      id: "W10", phase: "C0 当前算法", week: "第 10 周", title: "Selected-DCT96 系数蒸馏", hours: "14-20h", depends: ["W5", "W9"],
+      learn: ["detector-space dual proposal 与 exact A^T lift", "projection support 与 teacher-oracle headroom 的区别", "轨迹级 nested leave-one-trajectory-out", "ridge、全线性、时间持续性和小 MLP 的公平比较", "系数误差与 K1 后物理误差为什么必须同时报告"],
+      build: ["只用五条 fit trajectory 生成 selected-rank96 oracle coefficient target", "每个 outer fold 只用 fold-train 决定 normalization、正则、模型和 early stopping", "先跑 ridge、全线性、时间持续性和旧同规模 MLP", "把 held-out coefficient 经同一 A^T→alpha→strict CGLS K1 链评分", "fit-only gate 通过后才封存一个 predictor"],
+      pass: ["fit/refit 不读取 p14、fresh 或 test truth", "basis、forward、alpha 与 strict K1 对所有 arm 完全相同", "统计单位是完整 trajectory，不把 505 帧当独立样本", "便宜 control 与 learned arm 同时报 coefficient error、field/gradient/observation 尾部和 harm", "fit-only 可预测性不过门就停止，不换大模型挽救"],
       resources: ["poolfire-trajectory-protocol", "poolfire-c-v9-3-runtime-audit", "poolfire-c-objective-novelty", "l2ws-paper", "inverse-acoustic-warmstart", "nows-paper", "fcg-no-paper", "spectrally-safe-warmstart", "super-fidelity-paper", "fno-paper", "deeponet-paper"],
-      paper: "C0 主要验证研究假设；它可以成为完整毕设，但单独未必足够构成高质量论文创新。"
+      paper: "这是当前唯一有效门：先证明 96 个 oracle 系数可以从 observation 跨轨迹预测，再谈可部署 warm start。"
     },
     {
-      id: "W11", phase: "C1 机制创新", week: "第 11 周", title: "GEOK-Warm：可观测 Krylov 受限初值", hours: "14-20h", depends: ["W9", "W10"],
-      learn: ["Range(A^T)、Null(A) 与 CGLS 可纠正性", "Krylov 子空间与谱滤波", "geometry sensitivity 只作条件输入", "解析 residual 尺度校准", "一次性 setup 和多帧摊销"],
-      build: ["实现 q0=P A^T y 与 q1=P A^T A q0 的双向量字典", "网络只预测有界全局系数，不直接输出自由三维场", "比较 Cross14、q0-only、q0+q1、no-equalizer 与无解析尺度校准消融", "给接受与 fallback 分支报完整调用、wall、RSS 和 break-even frames"],
-      pass: ["输出严格位于 Range(A^T) 或预注册可观测 Krylov 子空间", "basis 与 gate 不接触 test truth", "每个额外 A/A^T 调用进入成本账", "逐轨迹 matched field/gradient/observation 与坏尾部不劣于同成本 control", "简单 BP/PCGLS 已解释收益时主动停止"],
+      id: "W11", phase: "C1 机制创新", week: "第 11 周", title: "DualRange-K1：最小 observation→coefficient 模型", hours: "14-20h", depends: ["W9", "W10"],
+      learn: ["Range(A^T)、Null(A) 与 CGLS 可纠正性", "selected detector-DCT basis 与谱滤波", "observation-conditioned coefficient map", "observable-only alpha 与 pre-A^T abstention", "一次性 setup 和多帧摊销"],
+      build: ["只在 W10 便宜控制通过后实现一个最小非线性 coefficient model", "输出 96 个 detector-space 系数并用精确 A^T lift，不直接输出自由三维场", "比较 no-selection、uniform basis、no-alpha、no-gate 与 direct-field K1 消融", "给接受与 fallback 分支报完整调用、wall、RSS 和 break-even frames"],
+      pass: ["输出经精确 A^T 后严格位于 Range(A^T)", "basis、模型和 gate 不接触 fresh/test truth", "每个额外 A/A^T 与模型推理进入成本账", "逐轨迹 matched field/gradient/observation 与坏尾部不劣于同成本 control", "简单 ridge/线性模型已经解释收益时不扩大网络"],
       resources: ["c-route-lock", "poolfire-trajectory-protocol", "poolfire-c-objective-novelty", "nows-paper", "fcg-no-paper", "spectrally-safe-warmstart", "l2ws-paper", "nio-paper", "residual-error-correction-cao"],
-      paper: "这是当前最值得争取的机制贡献：BOST geometry-equalized 条件化、可观测 Krylov 约束和可核算的同精度成本前沿，而不是换一个更大的神经网络。"
+      paper: "若成立，贡献是 BOST detector-space coefficient proposal、精确 Range(A^T) lift 与可核算同精度成本前沿的组合，不是换一个更大的神经网络。"
     },
     {
       id: "W12", phase: "独立迁移", week: "第 12 周", title: "PoolFire 组合留出与独立 BOST 样例", hours: "12-20h", depends: ["W8", "W10"],
@@ -475,10 +475,10 @@ window.OPERATOR_LEARNING_GUIDE = {
   ],
   researchTracks: [
     {
-      id:"warmstart-c0", rank:1, title:"C0 · Cross14 Sentinel → GEOK-Warm", badge:"唯一主线的最小闭环", risk:"低-中", novelty:"Cross14 不承担创新；论文假设是 BOST geometry-equalized observable、可观测 Krylov 受限初值、解析 residual 尺度校准、未修改 solver 与严格 matched-accuracy 成本证据的完整组合", data:"PoolFire Δrho/Δn 使用 validation 前冻结的 reference/gauge，并按完整 trajectory/工况切分；五条开放轨迹 classical 表、v4-v8 机制门、v9.3 source→request→六模型独立审计均完成；p45-s03 与两条 untouched test 仍封存", hardware:"Cross14 只有 14 个 float64 权重，正式 source 与六个 nested fits 已在 Mac 上由双运行时独立复算。当前先冻结 outer prediction/score 和 whole-pipeline harness，再运行五条 101 帧强基线与 wall/RSS；只有存在稳定 headroom 才实现最小 GEOK-Warm，不用大模型救失败", question:"只用 observation、A^T y 与 geometry sensitivity，能否生成留在 Range(A^T) 的可纠正 x0，在终点等价时减少完整物理调用和总时间？", contribution:"把 learned warm start 从自由三维猜测改为 BOST geometry-conditioned observable-Krylov 初始化，并分开报告 deployable 主账、可证明结构、p90 与 harm rate。", next:"冻结 outer prediction/score、controls、matched-accuracy tolerance、调用/wall/RSS 和 p14 veto→运行 Cross14 sentinel outer LOTO→若有稳定 headroom，结果前冻结 GEOK-Warm q0/q1、解析尺度与同成本 fallback→最后才释放 p45-s03。", stop:"Cross14/controls 没有跨轨迹 headroom、GEOK 只重复 NOWS/FCG-NO/Spectrally Safe Warm Starts、任一方法依赖 heldout truth、matched-accuracy/harm/calls/wall/RSS 任一主门失败、终点或尾部变坏时停止。"
+      id:"warmstart-c0", rank:1, title:"C0 · Selected-DCT96 系数蒸馏", badge:"唯一主线的最小预测门", risk:"低-中", novelty:"rank96 或系数回归本身都不新；论文假设是 BOST fit-selected detector basis、observation-conditioned dual proposal、精确 Range(A^T) lift、observable-only alpha、未修改 strict CGLS K1 与 matched-accuracy 成本证据的完整组合", data:"五条 fit trajectory 只用于生成 oracle coefficient target 和轨迹留一；p14 已作为一次性 post-open development 机制诊断，p45-s03 fresh、p22 stopping 与两条 untouched test 继续封存", hardware:"ridge、全线性、时间持续性和旧同规模 MLP 都可在当前 Mac 上运行。先做 96 维系数可预测性，不训练 FNO/UNO/大 3D 网络；长任务只保留一个带日志和 receipt 的后台会话", question:"只看 deployment-visible observation，能否跨完整 trajectory 预测 fit-selected rank96 oracle coefficients，并经同一 A^T→alpha→strict K1 后通过最终兼容性门？", contribution:"把 teacher-oracle headroom 转成可证伪的 observation→coefficient 学习问题，并把系数误差、最终三类精度、harm、A/A^T、wall 与 RSS 放进同一条证据链。", next:"冻结 rank96 oracle-target 生成与 nested LOTO 协议→先跑 ridge、全线性、时间持续性和旧同规模 MLP→只有 held-out fit 过门才封存一个 predictor 做一次 post-open p14→再决定是否释放 fresh p45-s03。", stop:"任何 fold 泄漏 p14/fresh/test、便宜 control 已支配、held-out fit 兼容性或 harm 失败、模型只降低 coefficient MSE 却不能改善 K1 后结果时立即停止。"
     },
     {
-      id:"warmstart-c1", rank:2, title:"C1 · GEOK-Warm", badge:"优先机制创新", risk:"中", novelty:"把网络输出限制在由 q0=P A^T y 与 q1=P A^T A q0 构成的可观测 Krylov 子空间；geometry-equalized BP 只作条件输入，再用解析 alpha 校准 measurement residual", data:"与 C0 相同；basis、coefficient network 与 fallback 只可读取 observation/operator/训练集，不能看 heldout truth", hardware:"双向量最小版可在本机；每增加一个 A/A^T、网络或尺度步骤都必须证明能省回更多 refinement calls", question:"Range(A^T) 约束能否消除自由三维 warm field 的不可纠正零空间伤害，同时保持 matched-accuracy 加速？", contribution:"给 BOST warm start 加入可证明的可纠正性、geometry conditioning 和同成本安全分支；若结果成立，可与 NeRIF/NOWS/FCG-NO 清楚区分。", next:"先冻结 q0-only、q0+q1、Cross14、no-equalizer、no-alpha 与 fallback 消融，再决定是否需要 dual-space operator 或更高阶 Krylov。", stop:"basis 构造成本无法摊销、全局系数容量不足且无 headroom、简单 BP/PCGLS 已解释全部收益，或约束后不再加速时停止。"
+      id:"warmstart-c1", rank:2, title:"C1 · DualRange-K1 最小非线性预测器", badge:"通过 C0 后才启动", risk:"中", novelty:"只在便宜控制不足时，用最小 observation-conditioned 模型预测 selected detector coefficients；精确 A^T lift、解析 alpha 和 strict K1 保持不变", data:"与 C0 相同；basis、coefficient model、abstention 与 fallback 只可读取 observation/operator/fold-train，不能看 heldout truth", hardware:"96 维输出的最小 MLP 或小型 operator 可在本机先跑；每增加网络容量都必须用 trajectory-level 增益和完整推理成本偿还", question:"非线性 observation→coefficient 映射能否稳定补足 ridge/全线性控制遗漏的跨轨迹结构？", contribution:"若结果成立，可形成 BOST 特定 dual-space proposal、精确可纠正 lift 与 pre-A^T 回退的机制贡献；若只提高系数拟合而不改善 K1 后结果则不构成贡献。", next:"只训练一个预注册最小模型，与 ridge、全线性、时间持续性和 direct-field K1 做同预算消融；通过 post-open p14 后才申请 fresh。", stop:"便宜控制等效、任何轨迹 harm、调用或 wall/RSS 无优势、需要反复看 p14 调参时停止。"
     },
     {
       id:"warmstart-c2", rank:3, title:"C2 · Correctable Frontier Training", badge:"论文升级候选", risk:"高", novelty:"训练目标直接包含固定 1/2/4 步物理 refinement 后的误差，使网络学习最容易被求解器纠正的初值，而不只是单步最像真值", data:"只有 C0/C1 在未见 trajectory 上显示稳定 headroom 后才启动", hardware:"截断反传或 stop-gradient 小场开发；全 3D unroll 可能需要 GPU", question:"最小单步 field loss 的 x0，是否不如固定短程 refinement 后误差最小的 x0？", contribution:"连接 neural operator、iterative inverse solver 和成本-精度前沿，形成可一对一消融的机制主张。", next:"比较 field-only、field+measurement、1/2/4-step trajectory loss；所有物理调用进入账本。", stop:"训练显存/成本失控、收益仅来自更多训练预算、或 C0/C1 没有基础 headroom 时不启动。"

@@ -7185,3 +7185,58 @@ second red team: P0=0 / P1=0 / P2=0
 当前下一步只有：提交审计过的闭包，生成私有 release，再执行一次正式 p14 12-arm
 矩阵。`same_UID_filesystem_wide_noninterference_proven=false`，
 `algorithm_breakthrough=false`。
+
+## 243. rank 96 真的装得下，但我们还不会从照片里找到那 96 个系数
+
+v10.5 的正式 Stage A 和一次性 p14 独立评分已经完成。和前几轮最重要的区别是：
+这次没有再问“某个网络平均误差有没有变小”，而是把两个问题彻底拆开：
+
+```text
+projection support:
+直接把 K3 correction 投影进 basis，能不能过门？
+
+teacher-oracle headroom:
+如果允许在同一个 basis 里逐帧找最佳系数，是否存在能过门的答案？
+```
+
+12 臂全部由同一个 clean HEAD、同一几何和同一 K1 外壳生成，候选先封存；一次性
+score token 被消费后，独立 validator 才加载 p14 truth。五类执行门全通过，
+hard gate failure 为 0。
+
+结果很有方向性：
+
+```text
+projection selected 96/216/384: FAIL / FAIL / FAIL
+projection uniform  96/216/384: FAIL / FAIL / FAIL
+oracle selected     96/216/384: PASS / PASS / PASS
+oracle uniform      96/216/384: FAIL / FAIL / FAIL
+```
+
+selected rank96 oracle 的 joint matched 为 `93.07%`，joint harm 为 `0%`，
+severe harm 为 `0`；rank216/384 的 joint matched 都是 `100%`。反过来，简单
+projection 六臂的 joint matched 全为 `0%`、joint harm 全为 `100%`。
+
+**讲人话：**我们已经找到一个 96 维“房间”，答案确实在里面；旧方法失败，不是房间
+太小，而是它从照片出发走错了位置。uniform 低频房间即使让 oracle 自己找也没过门，
+说明 fit-selected basis 不是装饰。下一步不该继续无边界加 rank，也不该换一个更大
+网络碰运气，而是只研究一件事：怎样从 observation 预测 selected basis 里的 oracle
+系数。
+
+这也修正了 v10.3 的解释。v10.3 的 96 参数、9,216 参数和小 MLP 共同使用 uniform
+低频 `B96` 与 50% cap；现在不能把它们的失败外推成“任何 rank96 detector proposal
+都不行”。真正需要做的是 fit-only 的 oracle-coefficient distillation，并在完整
+trajectory 留一上先打赢 ridge、全线性和时间持续性控制。
+
+当前边界仍然很硬：
+
+```text
+teacher_oracle_headroom=true
+observation_to_coefficient_predictability=unknown
+learned_predictor_success=false
+fresh_holdout_opened=false
+test_opened=false
+algorithm_breakthrough=false
+```
+
+完整脱敏表、解释与下一门见
+`docs/poolfire_c_dual_spectral_v10_5_p14_result_2026-07-27.md`。
