@@ -1,5 +1,5 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.27-c-v10-5-selected-dct96",
+  version: "2026.07.27-c-v10-7-full-view-pivot",
   updated: "2026-07-27",
   foundationChecks: [
     {
@@ -325,20 +325,20 @@ window.OPERATOR_LEARNING_GUIDE = {
       paper: "没有这一周，任何“快了多少”都可能只是隐藏特征成本或更差终点。"
     },
     {
-      id: "W10", phase: "C0 当前算法", week: "第 10 周", title: "Selected-DCT96 系数蒸馏", hours: "14-20h", depends: ["W5", "W9"],
-      learn: ["detector-space dual proposal 与 exact A^T lift", "projection support 与 teacher-oracle headroom 的区别", "轨迹级 nested leave-one-trajectory-out", "ridge、全线性、时间持续性和小 MLP 的公平比较", "系数误差与 K1 后物理误差为什么必须同时报告"],
-      build: ["只用五条 fit trajectory 生成 selected-rank96 oracle coefficient target", "每个 outer fold 只用 fold-train 决定 normalization、正则、模型和 early stopping", "先跑 ridge、全线性、时间持续性和旧同规模 MLP", "把 held-out coefficient 经同一 A^T→alpha→strict CGLS K1 链评分", "fit-only gate 通过后才封存一个 predictor"],
-      pass: ["fit/refit 不读取 p14、fresh 或 test truth", "basis、forward、alpha 与 strict K1 对所有 arm 完全相同", "统计单位是完整 trajectory，不把 505 帧当独立样本", "便宜 control 与 learned arm 同时报 coefficient error、field/gradient/observation 尾部和 harm", "fit-only 可预测性不过门就停止，不换大模型挽救"],
+      id: "W10", phase: "C0 负结果", week: "第 10 周", title: "rank96 跨轨迹可达性与停止门", hours: "8-12h", depends: ["W5", "W9"],
+      learn: ["detector-space dual proposal 与 exact A^T lift", "单点 oracle headroom 与跨 trajectory 可达性的区别", "轨迹级 leave-one-trajectory-out", "representation failure 与 predictor failure 的先后关系", "为什么 observation harm 不能被 gradient 改善抵消"],
+      build: ["复核五个 truth-blind rank96 target 的独立验证", "逐 trajectory 重算 field/gradient/observation compatibility", "另写四步 CGLS 与指标做数值复核", "比较 fold basis overlap 与 held-out K3 correction energy capture", "按 1/5 正式判决停止 T1 标签与旧模型"],
+      pass: ["五个 target 在 truth 前均通过独立复算", "正式 scorer 与独立 CGLS/指标最大差 0.0", "统计单位是完整 trajectory，不把 505 帧当独立样本", "公开结果明确只有 1/5 通过、severe harm 90", "T1_training_target_generation_authorized=false 且不换大模型挽救"],
       resources: ["poolfire-trajectory-protocol", "poolfire-c-v9-3-runtime-audit", "poolfire-c-objective-novelty", "l2ws-paper", "inverse-acoustic-warmstart", "nows-paper", "fcg-no-paper", "spectrally-safe-warmstart", "super-fidelity-paper", "fno-paper", "deeponet-paper"],
-      paper: "这是当前唯一有效门：先证明 96 个 oracle 系数可以从 observation 跨轨迹预测，再谈可部署 warm start。"
+      paper: "这是有效负结果：rank96 在 predictor 训练前就缺少跨轨迹可达性，因此 raw coefficient distillation 必须停止。"
     },
     {
-      id: "W11", phase: "C1 机制创新", week: "第 11 周", title: "DualRange-K1：最小 observation→coefficient 模型", hours: "14-20h", depends: ["W9", "W10"],
-      learn: ["Range(A^T)、Null(A) 与 CGLS 可纠正性", "selected detector-DCT basis 与谱滤波", "observation-conditioned coefficient map", "observable-only alpha 与 pre-A^T abstention", "一次性 setup 和多帧摊销"],
-      build: ["只在 W10 便宜控制通过后实现一个最小非线性 coefficient model", "输出 96 个 detector-space 系数并用精确 A^T lift，不直接输出自由三维场", "比较 no-selection、uniform basis、no-alpha、no-gate 与 direct-field K1 消融", "给接受与 fallback 分支报完整调用、wall、RSS 和 break-even frames"],
-      pass: ["输出经精确 A^T 后严格位于 Range(A^T)", "basis、模型和 gate 不接触 fresh/test truth", "每个额外 A/A^T 与模型推理进入成本账", "逐轨迹 matched field/gradient/observation 与坏尾部不劣于同成本 control", "简单 ridge/线性模型已经解释收益时不扩大网络"],
+      id: "W11", phase: "C1 当前算法", week: "第 11 周", title: "Coverage-adaptive / Full-view DualRange-K1", hours: "16-24h", depends: ["W9", "W10"],
+      learn: ["Range(A^T)、Null(A) 与 CGLS 可纠正性", "固定低秩覆盖与 observation-conditioned basis", "多视图 detector convolution / operator map", "observable-only alpha 与 pre-A^T abstention", "end-to-end K1 loss 与任意 coefficient label 的区别"],
+      build: ["先跑 full-view 线性/固定滤波 control 和 rank ladder", "实现读取完整三视图 observation 的最小 dual proposal", "输出 full-view correction 或 conditional coefficient 并用精确 A^T lift", "训练目标直接放在 K1 后 teacher/proxy 误差", "比较 fixed-rank96、full-view control、direct-field K1 与未修改 Zero-K4"],
+      pass: ["输出经精确 A^T 后严格位于 Range(A^T)", "basis、模型和 gate 不接触 fresh/test truth", "每个额外 A/A^T 与模型推理进入成本账", "逐轨迹 matched field/gradient/observation 与坏尾部不劣于同成本 control", "扩大容量必须由 held-out coverage 和物理结果偿还"],
       resources: ["c-route-lock", "poolfire-trajectory-protocol", "poolfire-c-objective-novelty", "nows-paper", "fcg-no-paper", "spectrally-safe-warmstart", "l2ws-paper", "nio-paper", "residual-error-correction-cao"],
-      paper: "若成立，贡献是 BOST detector-space coefficient proposal、精确 Range(A^T) lift 与可核算同精度成本前沿的组合，不是换一个更大的神经网络。"
+      paper: "若成立，贡献是针对固定 rank96 覆盖失败的 BOST full-view/conditional dual proposal、精确 Range(A^T) lift 与可核算同精度成本前沿，不是换一个更大的神经网络。"
     },
     {
       id: "W12", phase: "独立迁移", week: "第 12 周", title: "PoolFire 组合留出与独立 BOST 样例", hours: "12-20h", depends: ["W8", "W10"],
@@ -475,10 +475,10 @@ window.OPERATOR_LEARNING_GUIDE = {
   ],
   researchTracks: [
     {
-      id:"warmstart-c0", rank:1, title:"C0 · Selected-DCT96 系数蒸馏", badge:"唯一主线的最小预测门", risk:"低-中", novelty:"rank96 或系数回归本身都不新；论文假设是 BOST fit-selected detector basis、observation-conditioned dual proposal、精确 Range(A^T) lift、observable-only alpha、未修改 strict CGLS K1 与 matched-accuracy 成本证据的完整组合", data:"五条 fit trajectory 只用于生成 oracle coefficient target 和轨迹留一；p14 已作为一次性 post-open development 机制诊断，p45-s03 fresh、p22 stopping 与两条 untouched test 继续封存", hardware:"ridge、全线性、时间持续性和旧同规模 MLP 都可在当前 Mac 上运行。先做 96 维系数可预测性，不训练 FNO/UNO/大 3D 网络；长任务只保留一个带日志和 receipt 的后台会话", question:"只看 deployment-visible observation，能否跨完整 trajectory 预测 fit-selected rank96 oracle coefficients，并经同一 A^T→alpha→strict K1 后通过最终兼容性门？", contribution:"把 teacher-oracle headroom 转成可证伪的 observation→coefficient 学习问题，并把系数误差、最终三类精度、harm、A/A^T、wall 与 RSS 放进同一条证据链。", next:"冻结 rank96 oracle-target 生成与 nested LOTO 协议→先跑 ridge、全线性、时间持续性和旧同规模 MLP→只有 held-out fit 过门才封存一个 predictor 做一次 post-open p14→再决定是否释放 fresh p45-s03。", stop:"任何 fold 泄漏 p14/fresh/test、便宜 control 已支配、held-out fit 兼容性或 harm 失败、模型只降低 coefficient MSE 却不能改善 K1 后结果时立即停止。"
+      id:"warmstart-c0", rank:1, title:"C0 · rank96 可达性负结果", badge:"正式停止，不再训练", risk:"已关闭", novelty:"无算法成功主张；价值是先用五条完整 trajectory 证明固定 rank96 表示本身只有 1/5 可达，阻止继续拟合无效标签", data:"五条 fit target 已 truth-blind 封存并独立复算后评分；p45-s03 fresh、p22 stopping 与两条 untouched test 继续封存", hardware:"正式 T0 已在 Mac CPU 完成；不再生成 20 个训练标签，不再运行 ridge/MLP", question:"fold-train selected-rank96 basis 能否在 held-out fit trajectory 容纳兼容 K1 warm start？", contribution:"得到 1/5、observation harm 100% 和 severe harm 90 的可复现负结果，并把单点 p14 headroom 与跨轨迹可达性分开。", next:"该路线已结束；证据用于约束 C1 的 full-view/conditional 表示。", stop:"T1_training_target_generation_authorized=false；禁止换大 MLP 挽救相同固定表示。"
     },
     {
-      id:"warmstart-c1", rank:2, title:"C1 · DualRange-K1 最小非线性预测器", badge:"通过 C0 后才启动", risk:"中", novelty:"只在便宜控制不足时，用最小 observation-conditioned 模型预测 selected detector coefficients；精确 A^T lift、解析 alpha 和 strict K1 保持不变", data:"与 C0 相同；basis、coefficient model、abstention 与 fallback 只可读取 observation/operator/fold-train，不能看 heldout truth", hardware:"96 维输出的最小 MLP 或小型 operator 可在本机先跑；每增加网络容量都必须用 trajectory-level 增益和完整推理成本偿还", question:"非线性 observation→coefficient 映射能否稳定补足 ridge/全线性控制遗漏的跨轨迹结构？", contribution:"若结果成立，可形成 BOST 特定 dual-space proposal、精确可纠正 lift 与 pre-A^T 回退的机制贡献；若只提高系数拟合而不改善 K1 后结果则不构成贡献。", next:"只训练一个预注册最小模型，与 ridge、全线性、时间持续性和 direct-field K1 做同预算消融；通过 post-open p14 后才申请 fresh。", stop:"便宜控制等效、任何轨迹 harm、调用或 wall/RSS 无优势、需要反复看 p14 调参时停止。"
+      id:"warmstart-c1", rank:2, title:"C1 · Coverage-adaptive / Full-view DualRange-K1", badge:"当前唯一算法主线", risk:"中-高", novelty:"针对 v10.7 固定 rank96 覆盖失败，让完整三视图 observation 生成 full-view detector correction 或 conditional basis coefficient；精确 A^T lift、解析 alpha 和 strict K1 保持不变", data:"五条 fit 只用于表示/模型开发与完整轨迹留一；p45-s03 fresh、p22 stopping 与 test 继续封存", hardware:"先跑 full-view 线性/滤波 control 与小型 detector CNN；Mac 可做小模型，增加容量必须由 held-out 物理兼容与成本偿还", question:"取消固定 rank96 瓶颈后，deployment-visible full-view dual proposal 能否在 K1 后跨轨迹达到 K4 兼容精度？", contribution:"若成立，可形成 BOST 多视图 full-view dual proposal、精确可纠正 lift、短程 Krylov 与严格成本前沿的组合贡献。", next:"冻结 full-view/conditional 表示与强 control→先跑最小模型完整轨迹留一→只有通过才封存 predictor 申请 fresh。", stop:"便宜 control 等效、任何轨迹 harm、只靠更大容量、调用或 wall/RSS 无优势、需要反复看 fresh 调参时停止。"
     },
     {
       id:"warmstart-c2", rank:3, title:"C2 · Correctable Frontier Training", badge:"论文升级候选", risk:"高", novelty:"训练目标直接包含固定 1/2/4 步物理 refinement 后的误差，使网络学习最容易被求解器纠正的初值，而不只是单步最像真值", data:"只有 C0/C1 在未见 trajectory 上显示稳定 headroom 后才启动", hardware:"截断反传或 stop-gradient 小场开发；全 3D unroll 可能需要 GPU", question:"最小单步 field loss 的 x0，是否不如固定短程 refinement 后误差最小的 x0？", contribution:"连接 neural operator、iterative inverse solver 和成本-精度前沿，形成可一对一消融的机制主张。", next:"比较 field-only、field+measurement、1/2/4-step trajectory loss；所有物理调用进入账本。", stop:"训练显存/成本失控、收益仅来自更多训练预算、或 C0/C1 没有基础 headroom 时不启动。"

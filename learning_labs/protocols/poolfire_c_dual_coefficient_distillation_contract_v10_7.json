@@ -1,0 +1,430 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-coefficient-distillation-contract-10.7",
+  "status": "FROZEN_BEFORE_ANY_V10_7_ORACLE_TARGET_GENERATION_OR_MODEL_FIT",
+  "frozen_at_utc": "2026-07-27T08:19:33Z",
+  "research_mainline": "PoolFire observation-only dual proposal -> exact A^T lift -> observable-only alpha -> unchanged strict CGLS K1",
+  "scientific_question": "Can deployment-visible observations predict the fit-selected rank-96 teacher-oracle coefficients across complete held-out PoolFire trajectories, and do those predictions preserve the frozen proxy field, gradient, and observation compatibility envelope after the unchanged K1 shell?",
+  "trigger_evidence": {
+    "v10_5_status": "PASS_SEALED_P14_MECHANISM_DIAGNOSIS_NO_DEPLOYMENT_CLAIM",
+    "v10_5_independent_validation": "PASS_INDEPENDENT_RECOMPUTATION_V10_5",
+    "selected_teacher_oracle_passing_ranks": [
+      96,
+      216,
+      384
+    ],
+    "selected_rank96_p14_joint_matched_fraction": 0.9306930693069307,
+    "selected_rank96_p14_joint_harm_fraction": 0.0,
+    "all_projection_arms_passed": false,
+    "all_uniform_oracle_arms_passed": false,
+    "interpretation": "A fit-selected rank-96 subspace contains a compatible solution on opened development p14, but the observation-to-coefficient map remains unproved.",
+    "not_proven": [
+      "coefficient_predictability",
+      "fit_trajectory_generalization",
+      "fresh_trajectory_generalization",
+      "real_BOST",
+      "wall_time_speedup",
+      "memory_advantage",
+      "algorithm_breakthrough"
+    ]
+  },
+  "data_roles": {
+    "fit_only_trajectory_order": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "fit_bundle_arrays": {
+      "observations": {
+        "shape": [
+          101,
+          2072
+        ],
+        "dtype": "float64",
+        "deployment_visible": true
+      },
+      "gauge_truth": {
+        "shape": [
+          101,
+          16,
+          16,
+          32
+        ],
+        "dtype": "float64",
+        "gauge": "per_frame_spatial_mean_zero",
+        "deployment_visible": false,
+        "use": "scoring_only_after_outer_prediction_seal",
+        "evidence_boundary": "public_CFD_density_gradient_straight_ray_proxy_truth_not_real_BOST"
+      }
+    },
+    "opened_development_p14": {
+      "trajectory": "p=14kw_size=01",
+      "read_in_v10_7": false
+    },
+    "sealed_stopping_validation": {
+      "trajectory": "p=22kw_size=01",
+      "read_in_v10_7": false
+    },
+    "sealed_fresh_and_test": [
+      "p=45kw_size=03",
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ],
+    "forbidden_model_inputs": [
+      "trajectory_id",
+      "power_label",
+      "pool_size_label",
+      "K3_or_K4_field",
+      "K3_or_K4_dual_certificate",
+      "gauge_truth",
+      "oracle_coefficient",
+      "future_observation",
+      "p14_or_p22_or_fresh_or_test_data"
+    ]
+  },
+  "frozen_geometry_and_shell": {
+    "field_shape": [
+      16,
+      16,
+      32
+    ],
+    "observation_size": 2072,
+    "view_shapes": [
+      [
+        2,
+        14,
+        30
+      ],
+      [
+        2,
+        14,
+        30
+      ],
+      [
+        2,
+        14,
+        14
+      ]
+    ],
+    "reference": "zero_start_CGLS_K4",
+    "candidate": "predicted_rank96_dual_proposal_then_exact_A_transpose_lift_then_observable_only_alpha_then_unchanged_strict_CGLS_K1",
+    "alpha_max": 2.0,
+    "reference_operator_ledger_per_frame": {
+      "A": 4,
+      "A_transpose": 4
+    },
+    "candidate_operator_ledger_per_frame": {
+      "A": 2,
+      "A_transpose": 2
+    },
+    "theoretical_complete_operator_pair_reduction_if_candidate_is_accepted": 0.5,
+    "cost_claim_before_fresh_process_measurement": "theoretical_operator_ledger_only"
+  },
+  "outer_evaluation": {
+    "unit": "complete_trajectory",
+    "procedure": "five_leave_one_fit_trajectory_out_folds",
+    "fold_order_matches_fit_only_trajectory_order": true,
+    "per_fold_basis": {
+      "rank": 96,
+      "selected_using": "K3_dual_correction_atom_scores_from_the_other_four_outer_train_trajectories_only",
+      "transform": "complete_orthonormal_2D_DCT_per_view_and_channel",
+      "mandatory_atoms": "one_DC_atom_per_view_channel",
+      "tie_break": "reuse_v10_5_exact_order",
+      "heldout_observation_or_teacher_or_truth_used": false,
+      "all_five_fit_final_basis_reused": false
+    },
+    "outer_train_roles": [
+      "select_fold_basis",
+      "generate_oracle_training_targets",
+      "fit_feature_and_target_normalization",
+      "nested_model_and_hyperparameter_selection",
+      "final_outer_fold_fit"
+    ],
+    "outer_heldout_access_order": [
+      "read_observation_only",
+      "seal_all_model_predictions_and_call_ledgers",
+      "independently_validate_prediction_seal",
+      "open_heldout_oracle_target_and_K4_teacher_for_coefficient_and_teacher_deficiency_scoring",
+      "open_heldout_gauge_truth_for_proxy_field_gradient_observation_scoring"
+    ],
+    "frame_level_random_split_allowed": false,
+    "outer_heldout_may_change_model_or_basis": false
+  },
+  "oracle_target": {
+    "definition": "Frame-local coefficients in the outer-fold-selected rank-96 detector DCT basis, optimized before proxy truth is read so that each frame independently minimizes deficiency to its zero-start CGLS K4 teacher.",
+    "proposal_parameterization": "z = y + RMS(y) * B_fold * c",
+    "teacher": "zero_start_CGLS_K4",
+    "objective": "mean_of_frame_local_q_only_as_a_vectorized_sum_of_independent_frame_objectives",
+    "q": "per_frame_maximum_of_teacher_field_gradient_and_observation_relative_L2",
+    "frame_local_or_trajectory_coupled": "frame_local; no top-k, temporal, or cross-frame term is allowed in target generation",
+    "starts": [
+      "zero_coefficients",
+      "projected_K3_coefficients",
+      "fixed_seed_quarter_projected_norm_random"
+    ],
+    "per_frame_fallback": "the_unmodified_projected_K3_coefficient_row_is_a_fourth_candidate_and_may_win_if_all_optimized_rows_are_worse",
+    "winner": "lowest_final_q_per_frame_then_fixed_order_zero_projected_optimized_random_unmodified_projected_fallback",
+    "optimizer": "CPU_float64_Adam_with_v10_5_cosine_learning_rate",
+    "gradient_clipping": "independent_per_frame_row_norm_cap_10; global_cross_frame_gradient_clipping_is_forbidden",
+    "steps": 800,
+    "initial_learning_rate": 0.03,
+    "final_learning_rate": 0.001,
+    "seed_rule": "2026072706_plus_1000_times_100_outer_fold_plus_trajectory_index_plus_rank96",
+    "directional_derivative_checks": 2,
+    "label_stability_report": [
+      "per_start_final_q_tails",
+      "per_frame_winner_source_fraction",
+      "selected_vs_unmodified_projected_q_delta_tails",
+      "selected_gradient_norm_tails",
+      "two_fixed_direction_finite_difference_checks"
+    ],
+    "global_optimality_proven": false,
+    "staged_generation": {
+      "T0_attainability": "For each outer fold, generate only the separately sealed outer-heldout oracle target under the basis selected by the other four trajectories. Score proxy truth only after all five heldout targets are sealed and independently validated.",
+      "T1_training_targets": "Generate the remaining four outer-train oracle targets per fold only if the T0 target-validity gate passes.",
+      "reason": "Avoid twenty expensive oracle optimizations when fold-specific rank96 itself lacks cross-trajectory attainability."
+    },
+    "required_arrays_per_outer_fold_after_T1": [
+      "basis_indices",
+      "four_outer_train_oracle_coefficient_arrays",
+      "one_separately_sealed_outer_heldout_oracle_coefficient_array",
+      "projected_K3_coefficient_control_arrays",
+      "optimizer_objective_stationarity_and_directional_check_reports"
+    ],
+    "target_validity_gate": {
+      "candidate": "oracle_coefficients_through_the_frozen_K1_shell",
+      "reference": "zero_start_CGLS_K4",
+      "proxy_truth_read_only_after_target_seal": true,
+      "minimum_heldout_trajectories_passing_compatibility": 4,
+      "maximum_heldout_trajectory_severe_harm_count": 0,
+      "per_trajectory_gate": "unchanged_compatibility_envelope_with_joint_and_each_metric_harm_at_most_0p05",
+      "failure_action": "Stop coefficient model fitting because the fold-specific rank96 target family itself lacks sufficient fit-trajectory attainability."
+    }
+  },
+  "deployment_visible_features": {
+    "per_frame_RMS": "L2_norm_y_div_sqrt_2072",
+    "normalized_observation": "y_div_positive_RMS",
+    "selected_coefficients": "B_fold_transpose_times_normalized_observation_96_values",
+    "invariants": [
+      "view_0_energy_fraction",
+      "view_1_energy_fraction",
+      "view_2_energy_fraction",
+      "selected_basis_energy_fraction"
+    ],
+    "instantaneous_feature_size": 100,
+    "causal_temporal_feature": "concatenate_current_100_features_current_minus_previous_100_features_and_normalized_frame_index",
+    "causal_temporal_feature_size": 201,
+    "first_frame_difference": "all_zeros",
+    "feature_normalization": "outer_or_inner_train_trajectory_only_mean_and_positive_standard_deviation",
+    "target_normalization": "outer_or_inner_train_trajectory_only_mean_and_positive_standard_deviation",
+    "homogeneity": "Features and target coefficients are defined after positive observation RMS normalization; models must be sign-odd in the 96 signed spectral inputs when the architecture supports that constraint."
+  },
+  "model_and_control_matrix": {
+    "nondeployable_diagnostics": [
+      {
+        "id": "projected_K3_coefficients",
+        "purpose": "reuse_v10_5_projection_failure_control",
+        "may_win_deployable_gate": false
+      },
+      {
+        "id": "previous_true_oracle_coefficient",
+        "purpose": "temporal_smoothness_ceiling_only",
+        "may_win_deployable_gate": false
+      },
+      {
+        "id": "trajectory_shuffled_oracle_label",
+        "purpose": "negative_control_for_spurious_frame_level_fit",
+        "may_win_deployable_gate": false
+      }
+    ],
+    "deployment_valid_controls": [
+      {
+        "id": "zero_coefficients",
+        "parameter_count": 0
+      },
+      {
+        "id": "outer_train_global_mean_coefficients",
+        "parameter_count": 96
+      },
+      {
+        "id": "outer_train_frame_index_mean_coefficients",
+        "parameter_count": 9696,
+        "disclosure": "Uses the known normalized frame index and is a synchronized-CFD control, not a generic real-experiment assumption."
+      },
+      {
+        "id": "diagonal_linear",
+        "input": "corresponding_96_selected_observation_coefficients",
+        "parameter_count": 192,
+        "regularization_grid": [
+          0.0,
+          1e-08,
+          1e-06,
+          0.0001,
+          0.01,
+          1.0,
+          100.0
+        ]
+      },
+      {
+        "id": "ordinary_full_linear",
+        "input": "instantaneous_100_features",
+        "parameter_count": 9696,
+        "solver": "SVD_pseudoinverse_relative_cutoff_1e-12"
+      },
+      {
+        "id": "ridge_full_linear",
+        "input": "instantaneous_100_features",
+        "parameter_count": 9696,
+        "regularization_grid": [
+          1e-08,
+          1e-06,
+          0.0001,
+          0.01,
+          1.0,
+          100.0
+        ]
+      },
+      {
+        "id": "causal_temporal_ridge",
+        "input": "causal_temporal_201_features",
+        "parameter_count": 19392,
+        "regularization_grid": [
+          1e-08,
+          1e-06,
+          0.0001,
+          0.01,
+          1.0,
+          100.0
+        ]
+      },
+      {
+        "id": "homogeneous_odd_MLP_w32",
+        "input": "instantaneous_100_features",
+        "hidden_layers": [
+          32,
+          32
+        ],
+        "output_size": 96,
+        "output_bias": false,
+        "parameter_count": 7360,
+        "seeds": [
+          2026072711,
+          2026072712,
+          2026072713
+        ],
+        "checkpoint_epochs": [
+          20,
+          40,
+          60,
+          80,
+          100,
+          120
+        ],
+        "optimizer": "AdamW_lr_0p001_weight_decay_0p0001"
+      }
+    ],
+    "large_3D_UNet_FNO_UNO_DeepONet_authorized": false
+  },
+  "nested_selection": {
+    "scope": "inside_each_outer_fold_four_train_trajectories_only",
+    "procedure": "four_inner_leave_one_trajectory_out_folds_with_the_outer_fold_basis_held_fixed",
+    "disclosure": "The outer-fold basis uses all four outer-train trajectories. Inner folds tune only model hyperparameters under that already fixed outer representation. Unbiased evidence comes only from the untouched outer heldout trajectory.",
+    "selection_metric": "complete_trajectory_tail_loss_of_q_against_K4_teacher_after_exact_A_transpose_observable_alpha_and_strict_CGLS_K1",
+    "aggregation": "trajectory_equal_mean",
+    "tie_break": [
+      "lowest_inner_mean_loss",
+      "lower_parameter_count",
+      "stronger_regularization",
+      "earlier_epoch",
+      "lower_seed"
+    ],
+    "normalization_refit_inside_each_inner_fold": true,
+    "outer_heldout_used_for_selection": false
+  },
+  "outer_metrics": {
+    "coefficient_descriptive_metrics": [
+      "relative_L2",
+      "RMSE_after_train_only_scale",
+      "cosine_similarity",
+      "per_coefficient_R2_reported_without_frame_iid_confidence_claim"
+    ],
+    "teacher_metrics": [
+      "field_relative_L2_to_K4",
+      "gradient_relative_L2_to_K4",
+      "observation_relative_L2_to_K4",
+      "q_max_of_three"
+    ],
+    "proxy_truth_metrics": [
+      "field_relative_L2",
+      "gradient_relative_L2",
+      "observation_relative_L2"
+    ],
+    "tails": [
+      "p50",
+      "p90_higher",
+      "worst"
+    ],
+    "compatibility_envelope_against_zero_CGLS_K4": {
+      "field_tolerance_per_frame": "max_0p01_or_5_percent_of_reference_field_error",
+      "gradient_tolerance_per_frame": "max_0p015_or_5_percent_of_reference_gradient_error",
+      "observation_tolerance_per_frame": "max_0p005_or_10_percent_of_reference_observation_error",
+      "trajectory_joint_matched_fraction_minimum": 0.9,
+      "trajectory_joint_harm_fraction_maximum": 0.05,
+      "each_metric_harm_fraction_maximum": 0.05,
+      "severe_harm_count_maximum": 0
+    },
+    "reporting_unit": "per_trajectory_first_then_trajectory_equal_summary",
+    "frame_iid_error_bars_allowed": false
+  },
+  "decision_rule": {
+    "hard_gate_precedence": [
+      "target_bundle_independent_validation",
+      "oracle_target_attainability",
+      "outer_prediction_seal_and_independent_recomputation",
+      "proxy_compatibility_and_harm",
+      "cheap_control_dominance",
+      "operator_ledger",
+      "later_fresh_process_wall_and_RSS"
+    ],
+    "fit_only_predictability_headroom_requires": {
+      "minimum_outer_heldout_trajectories_passing_compatibility": 4,
+      "maximum_joint_harm_fraction_on_any_outer_heldout_trajectory": 0.1,
+      "maximum_severe_harm_count_on_any_outer_heldout_trajectory": 0,
+      "not_Pareto_dominated_by_a_deployment_valid_control_with_no_more_parameters": true
+    },
+    "threshold_disclosure": "T0 oracle attainability uses the unchanged strict 0.05 per-trajectory harm gate. The later T1 predictor family requires at least four strict passes and also caps the one allowed failed trajectory at 0.10 joint harm; these are distinct gates.",
+    "if_only_a_linear_control_passes": "Record linear predictability headroom and prefer the linear model; do not claim neural novelty.",
+    "if_MLP_passes_but_a_no_larger_control_matches_it": "Record no nonlinear advantage and prefer the cheaper control.",
+    "if_MLP_is_the_only_nondominated_passing_model": "Authorize one sealed post-open p14 predictor check; do not open fresh or test yet.",
+    "if_no_deployment_valid_model_passes": "Record FAIL_FIT_LOTO_COEFFICIENT_PREDICTABILITY and stop this rank96 distillation route before larger neural models.",
+    "if_coefficient_error_improves_but_downstream_gate_fails": "Treat coefficient MSE as scientifically insufficient and stop.",
+    "algorithm_breakthrough_after_this_fit_only_gate": false
+  },
+  "execution_and_validation": {
+    "one_background_run_at_a_time": true,
+    "target_generation_and_model_scoring_are_separate_capabilities": true,
+    "outer_heldout_target_and_truth_are_not_available_to_model_fit_process": true,
+    "atomic_no_overwrite_outputs": true,
+    "runner_writes_pending_status_only": true,
+    "independent_validator_recomputes_basis_features_target_objective_predictions_metrics_and_decision": true,
+    "source_input_environment_geometry_and_operator_identity_bound": true,
+    "progress_log_and_receipt_required": true,
+    "offline_operator_accounting": "Target generation, independent validation, and truth scoring each record actual complete per-frame A and A^T calls separately; none is deployment cost.",
+    "peak_RSS_scope_for_future_model": "fresh_whole_pipeline_process_tree",
+    "do_not_reuse_or_mutate_v10_5_p14_outputs": true
+  },
+  "claim_boundaries": {
+    "fit_only_proxy_coefficient_predictability": false,
+    "deployable_model": false,
+    "fresh_trajectory_generalization": false,
+    "real_BOST": false,
+    "physical_calibration_closed": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_peak_RSS_advantage": false,
+    "SOTA": false,
+    "global_uniqueness_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_result": false
+  }
+}
