@@ -1,0 +1,188 @@
+{
+  "schema_version": "oerf-poolfire-c-observation-residual-diagnostic-15.1",
+  "purpose": "Posthoc mechanism diagnosis of the frozen w8d2 capacity failure against the frozen w16d2 control without requesting raw pair truth bytes.",
+  "data_roles": {
+    "allowed_fit_trajectories": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "forbidden": [
+      "p=14kw_size=01",
+      "p=22kw_size=01",
+      "p=45kw_size=03",
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ],
+    "raw_pair_truth_access": false,
+    "prior_truth_derived_reports_read": true,
+    "filesystem_wide_truth_nonaccess_proven": false,
+    "p45_frozen_v14_observation_failure_frames_zero_based": [
+      5,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      62,
+      63,
+      64,
+      65
+    ]
+  },
+  "models": {
+    "candidate": {
+      "id": "w8d2",
+      "parameter_count": 2912,
+      "role": "frozen_failed_capacity_candidate"
+    },
+    "control": {
+      "id": "w16d2",
+      "parameter_count": 10548,
+      "role": "frozen_smallest_five_of_five_candidate"
+    },
+    "inference": "observation_only_proposal_then_exact_A_transpose_then_observable_alpha_then_unchanged_strict_CGLS_K1"
+  },
+  "decomposition": {
+    "views": [
+      {
+        "id": "view_0",
+        "components": 2,
+        "height": 14,
+        "width": 30
+      },
+      {
+        "id": "view_1",
+        "components": 2,
+        "height": 14,
+        "width": 30
+      },
+      {
+        "id": "view_2",
+        "components": 2,
+        "height": 14,
+        "width": 14
+      }
+    ],
+    "transform": "full_2d_fft_norm_ortho",
+    "normalized_radius": "sqrt((fy/0.5)^2+(fx/0.5)^2)/sqrt(2)",
+    "bands": {
+      "low": "[0,1/3)",
+      "mid": "[1/3,2/3)",
+      "high": "[2/3,infinity)"
+    },
+    "mode_energy": "sum_abs_fft_residual_squared_divided_by_total_frame_observation_energy",
+    "mode_count": 18,
+    "parseval_max_absolute_tolerance": 1e-12
+  },
+  "shared_mode_gate": {
+    "trajectory_consistency": "median_delta_energy_gt_0_and_positive_frame_fraction_ge_0.60",
+    "supporting_trajectory": "trajectory_consistency_and_strictly_positive_top_k_positive_excess",
+    "minimum_supporting_trajectories": 3,
+    "strong_reversal": "median_delta_energy_lt_0_and_positive_frame_fraction_le_0.40",
+    "maximum_strong_reversal_trajectories": 0,
+    "top_k_positive_excess_modes_per_trajectory": 3,
+    "zero_positive_excess_modes_are_never_top_k": true,
+    "p45_failure_requirements": {
+      "median_delta_energy_gt_0": true,
+      "top_k_positive_excess_mode": true,
+      "median_w8_to_w16_mode_energy_ratio_ge": 1.25,
+      "median_w8_failure_to_matched_mode_energy_ratio_ge": 1.25
+    },
+    "multiple_shared_mode_selection": "descending_supporting_trajectory_count_then_descending_median_positive_excess_share_then_lexicographic_mode_id"
+  },
+  "historical_public_score_anchors": {
+    "w8d2": {
+      "source_commit": "405d40ab2b0b3c5d1c3f458a18deb67ebb2aa9b4",
+      "parameter_count": 2912,
+      "pass_count": 4,
+      "observation_tail_by_trajectory": {
+        "p=14kw_size=05": {
+          "p50": 0.27269753258014096,
+          "p90_higher": 0.29390233399020066,
+          "worst": 0.3097087215700419
+        },
+        "p=22kw_size=03": {
+          "p50": 0.2439212969642199,
+          "p90_higher": 0.2635995536373167,
+          "worst": 0.27156774032275505
+        },
+        "p=33kw_size=01": {
+          "p50": 0.35040719040502377,
+          "p90_higher": 0.37321444525715836,
+          "worst": 0.37893114187260923
+        },
+        "p=45kw_size=05": {
+          "p50": 0.2943911531597479,
+          "p90_higher": 0.3214168049887793,
+          "worst": 0.34697553382645585
+        },
+        "p=58kw_size=03": {
+          "p50": 0.2525569091406163,
+          "p90_higher": 0.28378981817633714,
+          "worst": 0.30014042446026973
+        }
+      }
+    },
+    "w16d2": {
+      "source_commit": "64db2275f288b592f97381ca91fac3262197f1e9",
+      "parameter_count": 10548,
+      "pass_count": 5,
+      "observation_tail_by_trajectory": {
+        "p=14kw_size=05": {
+          "p50": 0.2689473719030658,
+          "p90_higher": 0.2908164101460467,
+          "worst": 0.3074967269749642
+        },
+        "p=22kw_size=03": {
+          "p50": 0.24238292738933256,
+          "p90_higher": 0.2632308505066425,
+          "worst": 0.27111482364416034
+        },
+        "p=33kw_size=01": {
+          "p50": 0.3477832440519907,
+          "p90_higher": 0.3691453029983373,
+          "worst": 0.3762645836244831
+        },
+        "p=45kw_size=05": {
+          "p50": 0.2877817558224584,
+          "p90_higher": 0.3143142686529815,
+          "worst": 0.3410415731851016
+        },
+        "p=58kw_size=03": {
+          "p50": 0.25252270078390704,
+          "p90_higher": 0.2812956467041396,
+          "worst": 0.29893414940846647
+        }
+      }
+    }
+  },
+  "decision": {
+    "on_shared_mode": "authorize preregistration of one minimal observation-consistency-aware correction or abstention mechanism; do not authorize architecture search",
+    "on_no_shared_mode": "stop proxy architecture rescue and retain w16d2 as the smallest current five-of-five development candidate",
+    "future_mechanism_must_account_for_residual_availability_and_any_extra_A": true
+  },
+  "forbidden_actions": [
+    "parameter fitting",
+    "checkpoint modification",
+    "extra seeds",
+    "capacity ladder",
+    "threshold tuning after results",
+    "truth-derived online features",
+    "fresh validation or test access",
+    "algorithm or paper success claim"
+  ],
+  "claim_limits": {
+    "posthoc_mechanism_diagnostic": true,
+    "raw_pair_truth_bytes_requested": false,
+    "truth_derived_prior_summaries_read": true,
+    "filesystem_wide_truth_nonaccess_proven": false,
+    "algorithm_breakthrough": false,
+    "fresh_trajectory_generalization": false,
+    "real_BOST": false,
+    "paper_success": false
+  }
+}

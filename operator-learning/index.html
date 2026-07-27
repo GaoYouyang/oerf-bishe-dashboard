@@ -239,6 +239,10 @@
       display: flex;
       font-weight: 800;
     }
+    details.history-diagnostics > summary {
+      display: flex;
+      font-weight: 800;
+    }
     summary::-webkit-details-marker { display: none; }
     .week-code { color: var(--teal); font-weight: 850; }
     .week-title span { display: block; color: var(--muted); font-size: 11px; font-weight: 500; }
@@ -334,11 +338,11 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 当前证据 2026-07-28</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。最新 v14 只运行一个 2,912 参数 <code>w8d2</code> 候选，并完成五条 fit trajectory 的严格留一评估。它通过 4/5；唯一失败的 P45 只有 <code>90/101</code> 帧 joint match，而冻结门至少要求 <code>91/101</code>，11 个失败帧全部是 observation-only，harm 与 severe 均为 0。独立回放最大差 <code>3.33e-16</code>，正式结论仍是 FAIL，不授权 full-fit、资源门、fresh、validation 或 test，<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在预注册的 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和峰值内存。最新 v15.1 把 v14 的 11 个 P45 observation-only miss 拆成三视角、六分量、低中高频共 18 个 residual mode，并在五条 fit trajectory、505 帧上比较冻结的 <code>w8d2</code> 与 <code>w16d2</code>。独立复算逐数组差为 0，但没有模式同时满足跨轨迹同向 support、零强反转和 P45 两项 1.25 倍富集门。因此不授权单模式 correction、abstention 或架构搜索；<code>w16d2</code> 仍是当前最小 5/5 开发候选，<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_dual_detector_w8d2_v14_result_2026-07-28.md">读 v14 严格判决</a>
-      <a class="button" href="../docs/poolfire_c_dual_detector_w8d2_v14_public_summary.json">打开脱敏结果</a>
-      <a class="button" href="../assets/poolfire_c_dual_detector_w8d2_v14.png" target="_blank" rel="noreferrer">查看容量边界图</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_observation_residual_v15_1_result_2026-07-28.md">读 v15.1 机制判决</a>
+      <a class="button" href="../docs/poolfire_c_observation_residual_v15_1_public_summary.json">打开脱敏结果</a>
+      <a class="button" href="../assets/poolfire_c_observation_residual_v15_1.png" target="_blank" rel="noreferrer">查看残差机制图</a>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
@@ -410,6 +414,11 @@
       <a class="button" href="../docs/poolfire_c_dual_detector_w8d2_v14_public_summary.json">v14 脱敏结果</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_detector_w8d2_capacity_gate_v14.json">v14 结果前合同</a>
       <a class="button" href="../assets/poolfire_c_dual_detector_w8d2_v14.png" target="_blank" rel="noreferrer">v14 容量边界图</a>
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_observation_residual_v15_1_result_2026-07-28.md">v15.1 残差机制判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_observation_residual_v15_1_independent_audit_2026-07-28.md">v15.1 独立审计</a>
+      <a class="button" href="../docs/poolfire_c_observation_residual_v15_1_public_summary.json">v15.1 脱敏结果</a>
+      <a class="button" href="../learning_labs/protocols/poolfire_c_observation_residual_diagnostic_v15.json">v15.1 结果前合同</a>
+      <a class="button" href="../assets/poolfire_c_observation_residual_v15_1.png" target="_blank" rel="noreferrer">v15.1 残差机制图</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_detector_compact_screen_v12.json">v12 compact 容量门</a>
       <a class="button" href="../learning_labs/protocols/poolfire_c_dual_detector_cnn_sentinel_contract_v11.json">v11 最小 CNN 合同</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_cgls_dual_homogeneity_note_v11_2026-07-27.md">Krylov 奇对称与非线性推导</a>
@@ -430,8 +439,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert critical">
-      <strong>最新正式判决：w8d2 五轨迹 4/5，纯容量压缩到此停止</strong>
-      <span>五个 checkpoint 均在任何 held-out truth 读取前冻结；505 帧独立 NumPy replay 最大差 <code>3.33e-16</code>。P14/P22/P33/P58 都是 101/101，P45 只有 90/101，低于至少 91/101 的门。11 个 miss 全部来自 observation consistency，field/gradient failure、harm、severe 都为 0。正式状态 <code>FAIL_INDEPENDENT_STRICT_W8D2_CAPACITY_GATE_V14</code>；旧继承报告中的 4/5 PASS 标签不具 v14 权威性。</span>
+      <strong>最新正式判决：P45 残差特征不是跨轨迹共享模式，停止 proxy-only 架构救援</strong>
+      <span><code>view_1_component_1_mid</code> 在五条轨迹都同向变差，却不富集于 P45 失败；真正富集的 <code>view_1_component_0_low</code> 在 P22 强反转且只有一条同轨迹 support。18 个模式全部被结果前 gate 否决，独立复算数组与摘要差均为 0，状态 <code>VALIDATED_NEGATIVE_NO_SHARED_MODE_V15_1</code>。不训练 correction，不打开 fresh、validation 或 test。</span>
     </div>
   </header>
 
@@ -563,8 +572,8 @@
       </div>
       <div class="check-grid" style="margin-top:13px;">
         <article class="panel"><div class="chips"><span class="chip coral">C0 · v10.7 正式停止</span><span class="chip blue">1/5 通过</span></div><h3 style="margin-top:10px;">Selected-DCT96 Coefficient Distillation</h3><p>五折 oracle 可达性已在模型训练前失败：四条轨迹 observation harm 为 100%，所以不再生成 20 份训练标签，不跑 ridge/MLP，也不打开 fresh 或 test。这是有效负结果，不是待办事项。</p></article>
-        <article class="panel"><div class="chips"><span class="chip coral">C1 · v14 strict FAIL</span><span class="chip blue">4/5 · 0 harm</span></div><h3 style="margin-top:10px;">Compact Detector CNN + DualRange-K1</h3><p><code>w16d2</code> 的 10,548 参数仍是当前最小 5/5 候选；2,912 参数 <code>w8d2</code> 在 P45 只有 90/101 joint match，少一帧过门。11 个 miss 全是 observation-only；这把纯容量压缩的稳健下限定位在 2,912 与 10,548 参数之间，但没有产生新算法成功。</p></article>
-        <article class="panel"><div class="chips"><span class="chip">C2 · 论文升级</span><span class="chip coral">高风险</span></div><h3 style="margin-top:10px;">Correctable Frontier Training</h3><p>不只训练单步场误差，而是训练经过 1/2/4 次物理细化后的误差，让模型输出“最容易被求解器纠正”的初值。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">C1 · v14 strict FAIL</span><span class="chip blue">4/5 · 0 harm</span></div><h3 style="margin-top:10px;">Compact Detector CNN + DualRange-K1</h3><p>正式状态 <code>FAIL_INDEPENDENT_STRICT_W8D2_CAPACITY_GATE_V14</code>。<code>w16d2</code> 的 10,548 参数仍是当前最小 5/5 候选；2,912 参数 <code>w8d2</code> 在 P45 只有 90/101 joint match，少一帧过门。11 个 miss 全是 observation-only；这把纯容量压缩的稳健下限定位在 2,912 与 10,548 参数之间，但没有产生新算法成功。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">C2 · v15.1 NEGATIVE</span><span class="chip blue">18 modes · 0 shared</span></div><h3 style="margin-top:10px;">Observation residual mechanism gate</h3><p>跨轨迹中频容量缺口不解释 P45 miss；P45 富集的低频模式又在其他工况反转。单一 residual correction 没有获得预注册授权，继续 proxy-only 架构救援正式停止。</p></article>
         <article class="panel"><div class="chips"><span class="chip blue">强 controls 已完成</span><span class="chip gold">fresh 已烧掉一次</span></div><h3 style="margin-top:10px;">Zero / BP / PCGLS / ridge / full-linear KRR</h3><p>五条 fit、505 帧的经典与线性对照已跑完；v11.3 进一步用一条 fresh proxy 确认非线性 CNN 的兼容精度和调用减半，但也确认当前网络在便宜 straight-ray CPU proxy 上没有 wall / RSS 优势。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
@@ -580,7 +589,17 @@
         </a>
         <figcaption>五条完整 fit-trajectory LOTO、505 帧。P45 有 90/101 joint match，11 个 miss 全为 observation-only；其余四条均 101/101，全部轨迹 harm=0、severe=0。严格结论仍是 FAIL，不授权 full-fit 或资源门。</figcaption>
       </figure>
-      <details style="margin-top:12px;">
+      <div id="v15-1-residual" class="alert critical" style="margin-top:13px;">
+        <strong>v15.1：跨工况缺口与 P45 特异失败不是同一个模式</strong>
+        <span>第二视角第二分量的中频残差在 5/5 轨迹同向变差，但 P45 失败帧 <code>w8/w16=1.019</code>、fail/matched=<code>0.940</code>，不解释失败。第二视角第一分量的低频残差在 P45 达到 <code>1.322 / 1.526</code> 两项富集，却在 P22 强反转、只有 1 条同轨迹 support。因此没有共享模式，也没有训练通用修补器的证据。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../assets/poolfire_c_observation_residual_v15_1.png" target="_blank" rel="noreferrer" aria-label="打开 v15.1 五轨迹观测残差机制图原尺寸">
+          <img src="../assets/poolfire_c_observation_residual_v15_1.png" alt="PoolFire C v15.1 的跨轨迹 residual support、P45 富集比和五轨迹频带能量矩阵" />
+        </a>
+        <figcaption>共享模式必须在至少三条相同轨迹同时获得一致性与 top-3 票、没有强反转，并通过 P45 两项 1.25 富集门。没有模式通过；独立复算数组与摘要最大差均为 0，algorithm_breakthrough=false。</figcaption>
+      </figure>
+      <details class="history-diagnostics" style="margin-top:12px;">
         <summary>保留 v12.2-v12.3 历史诊断</summary>
         <p>v12.2 在已烧掉的 p45-s03 上测得 Candidate <code>112.46 ms</code>、Zero-K4 <code>128.74 ms</code>，稳态 wall 快 <code>12.64%</code>，但 RSS 高 <code>15.71%</code>，历史状态 <code>PASS_POSTOPEN_PERSISTENT_WALL_HEADROOM_RSS_FAILED</code>。v12.3 又在五条 fit 上得到 <code>12.62%-14.93%</code> wall 优势和形式上的 RSS 3/5；随后红队发现 reference 被 Torch 导入抬高，正式状态 <code>FAIL_FIT_ONLY_FP32_PROPOSAL_ALL_GATES</code>（clean RSS FAIL），p45 replay 未获授权。v12.4-v12.6 正是针对这一污染重新做的干净资源门，三种后端均为 whole-worker RSS FAIL，正式状态 <code>FAIL_CLEAN_RUNTIME_DEPLOYMENT_RESOURCE_GATE</code>；后端 batch/精度调参正式停止。v13 随后确认 proposal / field parity 和调用账通过，稳态 wall 快 <code>42.68%</code>，但 RSS ratio <code>1.05118</code> 仍以约 <code>68 kB</code> 超门，正式状态 <code>FAIL_SYNTHETIC_PREFIT_FUSED_STREAMING_V13</code>。</p>
         <div class="actions" style="margin-top:10px;">
@@ -657,8 +676,8 @@
         </article>
       </div>
       <div class="alert" style="margin-top:13px;">
-        <strong>突破监测：容量下界被定位，整体算法仍未突破</strong>
-        <span>v13 已证明调用减半可转化为稳态 wall 优势；v14 又证明把同一结构压到 2,912 参数会在 P45 observation consistency 上失去五轨迹 5/5。这是可复现的设计边界，不是算法突破。full-fit、资源门、fresh、两条 untouched test 和真实 BOST 均未放行。</span>
+        <strong>突破监测：失效机制进一步收窄，整体算法仍未突破</strong>
+        <span>v13 证明调用减半可转成稳态 wall 优势，v14 定位了容量下界，v15.1 又排除了“一个共享频带修补所有工况”的解释。这个负结果阻止继续围绕 P45 特例调网络；full-fit、新 correction、fresh、两条 untouched test 和真实 BOST 均未放行。</span>
       </div>
       <div class="section-head" style="margin-top:22px;">
         <div>
@@ -1094,7 +1113,7 @@
         const next = nextUnlockedWeek();
         const fCount = checkedCount(state.foundations, guide.foundationChecks);
         const pace = Number(state.profile.hours) <= 6 ? '建议把每个关卡拆成两周' : Number(state.profile.hours) >= 15 ? '可将阅读与代码并行，但不跳过验收' : '按一周一关执行';
-        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v14 已完成唯一 w8d2 候选的五轨迹 LOTO：2,912 参数比 w16d2 少 72.39%，但 P45 只有 90/101 joint match，少一帧过门；11 个 miss 全为 observation-only，harm 与 severe 为 0。独立回放最大差 3.33e-16，正式 4/5 FAIL，不授权 full-fit 或资源门。';
+        const warning = fCount < 4 ? '先补当前关卡所需基础，不提前训练大模型。' : 'v15.1 已把 v14 的 P45 observation-only miss 分解为 18 个 residual mode：跨轨迹中频缺口不解释 P45，P45 富集的低频模式又在其他轨迹反转。独立复算数组与摘要差均为 0，正式状态 VALIDATED_NEGATIVE_NO_SHARED_MODE_V15_1，不授权 correction、架构搜索或新数据打开。';
         document.getElementById('recommendation').innerHTML = `
           <div class="next-code">当前建议 · ${escapeHtml(next.id)}</div>
           <h3>${escapeHtml(next.title)}</h3>
