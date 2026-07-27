@@ -1,0 +1,63 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-detector-compact-persistent-profile-12.2",
+  "status": "FROZEN_BEFORE_PERSISTENT_PROFILE",
+  "trajectory": "p=45kw_size=03",
+  "trajectory_role": "burned post-open development proxy; not fresh",
+  "scientific_question": "Does the previously observed 50% reduction in complete A/A^T calls become a steady-state wall-time advantage when Python, Torch, geometry, observation, and checkpoint loading are amortized?",
+  "arms": [
+    "compact_w16d2_dual_k1",
+    "zero_cgls_k4"
+  ],
+  "execution": {
+    "session_count_per_arm": 5,
+    "warmup_trajectory_passes_per_session": 1,
+    "measured_trajectory_passes_per_session": 17,
+    "frame_count_per_trajectory": 101,
+    "arm_order": "alternate by session; candidate first for even sessions and reference first for odd sessions",
+    "model_inference_batch_size": 16,
+    "torch_intraop_threads": 4,
+    "torch_interop_threads": 1,
+    "model_geometry_observation_loads_per_worker": 1,
+    "measured_interval": "proposal plus unchanged solver only; excludes process startup and one-time data/model/geometry loading",
+    "peak_rss_scope": "whole persistent worker process after warmup and all measured passes"
+  },
+  "operator_calls_per_frame": {
+    "compact_w16d2_dual_k1": {
+      "A": 2,
+      "A_transpose": 2
+    },
+    "zero_cgls_k4": {
+      "A": 4,
+      "A_transpose": 4
+    }
+  },
+  "primary_gates": {
+    "compatibility": "reuse the frozen field, gradient, and observation one-sided envelope with zero material harm",
+    "overall_steady_state_wall_reduction_minimum_fraction": 0.1,
+    "maximum_paired_session_wall_harm_fraction": 0.05,
+    "whole_worker_peak_rss_ratio_maximum": 1.05
+  },
+  "forbidden_adaptation": [
+    "model weights",
+    "network width or depth",
+    "batch size",
+    "alpha rule",
+    "strict CGLS K1",
+    "compatibility thresholds",
+    "wall or RSS thresholds"
+  ],
+  "failure_actions": {
+    "wall_gate_failed": "freeze the conclusion that the current cheap straight-ray proxy does not convert call reduction into deployment speed; do not open untouched test",
+    "wall_passed_rss_failed": "report deployment-mode-dependent wall headroom only; do not claim an overall resource breakthrough",
+    "compatibility_failed": "stop the compact persistent route without architecture rescue on this burned trajectory"
+  },
+  "claim_limits": {
+    "fresh": false,
+    "untouched_test": false,
+    "real_BOST": false,
+    "physical_same_accuracy": false,
+    "broad_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

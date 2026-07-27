@@ -7539,3 +7539,60 @@ algorithm_breakthrough=false
 
 完整表格和边界见
 `docs/poolfire_c_dual_detector_compact_v12_1_result_2026-07-27.md`。
+
+## 251. 调用减半不是假的，关键在程序是不是常驻
+
+v12.1 的冷进程对比只快 0.28%，但每次都要重新启动 Python、导入 Torch、加载模型、
+几何和 observation。这轮不改模型、不改 batch、不改阈值，只把程序保持在内存里：
+
+```text
+5 个独立 session / arm
+每个 session 先预热 1 条完整轨迹
+随后计时 17 条 101 帧完整轨迹
+每个 arm 共 85 个 measured pass
+```
+
+结果通过独立 validator 重算：
+
+```text
+Candidate = 112.46 ms / 101 frames
+Zero-K4   = 128.74 ms / 101 frames
+steady-state wall 快 12.64%（PASS）
+
+Candidate RSS p90 = 398.13 MB
+Zero-K4 RSS p90   = 344.06 MB
+RSS 高 15.71%（FAIL）
+```
+
+为什么能快？Candidate 的 112.46 ms 可以拆成：
+
+```text
+compact model proposal = 49.06 ms
+2A + 2A^T solver       = 63.11 ms
+```
+
+Zero-K4 的 `4A + 4A^T` solver 是 128.74 ms。少掉两对算子省约 65.63 ms，
+足够覆盖 49.06 ms 的模型推理，还剩约 16.28 ms 净收益。五个 session 全部更快，
+最弱一组也快 9.63%。
+
+**讲人话：**之前“调用减半却没加速”不是调用账造假，而是每次启动程序都花掉太多
+固定成本。连续处理很多帧时，这些固定成本只付一次，算法计算本身确实出现了速度
+余量。
+
+但现在仍不能叫突破：
+
+- p45 已烧掉，只是 development，不是第二次 fresh；
+- wall 只在常驻内核口径通过，冷启动没有通过；
+- RSS 仍高 15.71%；
+- 两条 untouched test 和真实 BOST 都没打开。
+
+所以正式状态是：
+
+```text
+PASS_POSTOPEN_PERSISTENT_WALL_HEADROOM_RSS_FAILED
+persistent_kernel_wall_headroom=true
+algorithm_breakthrough=false
+```
+
+完整结果见
+`docs/poolfire_c_dual_detector_compact_persistent_v12_2_result_2026-07-27.md`。
