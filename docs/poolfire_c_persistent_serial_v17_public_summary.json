@@ -1,0 +1,65 @@
+{
+  "schema_version": "oerf-poolfire-c-persistent-serial-public-summary-17",
+  "date": "2026-07-28",
+  "trajectory": "p=33kw_size=03",
+  "trajectory_role": "already_consumed_post_open_public_development",
+  "mechanism": {
+    "candidate": "one persistent proposal worker -> exact A^T lift -> observable alpha -> unchanged strict CGLS K1",
+    "reference": "zero initialization -> unchanged strict CGLS K4",
+    "candidate_max_concurrent_threads": 2,
+    "reference_max_concurrent_threads": 1,
+    "candidate_operator_ledger": {
+      "A": 202,
+      "A_transpose": 202
+    },
+    "reference_operator_ledger": {
+      "A": 404,
+      "A_transpose": 404
+    }
+  },
+  "execution": {
+    "fresh_process_repetitions_per_arm": 18,
+    "warmup_passes": 0,
+    "first_pair_included": true,
+    "native_compile_excluded": true,
+    "whole_worker_wait4_accounting": true
+  },
+  "numerical_equivalence_to_v16": {
+    "candidate_field_relative_l2_p90_higher": 9.237028979624725e-08,
+    "candidate_field_relative_l2_worst": 1.0436254997935482e-07,
+    "reference_field_relative_l2_p90_higher": 0.0,
+    "reference_field_relative_l2_worst": 0.0,
+    "passed": true
+  },
+  "resource_metrics": {
+    "candidate_wall_median_seconds": 0.22799929208122194,
+    "reference_wall_median_seconds": 0.2638181250076741,
+    "paired_wall_reduction_median": 0.11058561898234276,
+    "paired_faster_fraction": 0.8888888888888888,
+    "worst_paired_wall_harm": 2.368229279180348,
+    "first_candidate_wall_seconds": 0.9059079999569803,
+    "first_reference_wall_seconds": 0.26895674993284047,
+    "peak_rss_p90_ratio": 0.9948824343015215,
+    "total_cpu_time_median_ratio": 1.11277310857678
+  },
+  "gate_pass": {
+    "numerical_equivalence": true,
+    "operator_ledger": true,
+    "wall_median": true,
+    "faster_fraction": true,
+    "peak_rss": true,
+    "cpu_time": false,
+    "paired_wall_no_harm": false
+  },
+  "decision": "FAIL_POST_OPEN_PERSISTENT_SERIAL_RESOURCE_GATE_V17",
+  "independent_recomputation": "PASS_INDEPENDENT_RECOMPUTATION_V17",
+  "interpretation": "The one-worker runtime repaired the previous peak-RSS failure and crossed the typical wall-time gate, while preserving the exact algorithmic path. It still failed because median child CPU time remained 11.28 percent above the reference and the first candidate process was 236.82 percent slower than its pair.",
+  "claim_limits": {
+    "independent_generalization": false,
+    "real_bost": false,
+    "physical_same_accuracy": false,
+    "equal_core_speedup": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

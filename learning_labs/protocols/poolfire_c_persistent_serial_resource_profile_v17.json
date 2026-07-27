@@ -1,0 +1,90 @@
+{
+  "schema_version": "oerf-poolfire-c-persistent-serial-resource-profile-17",
+  "frozen_at_utc": "2026-07-28T09:20:00Z",
+  "parent_accuracy_decision": "PASS_SINGLE_INDEPENDENT_PUBLIC_DEVELOPMENT_ACCURACY_CALL_GATE_V16",
+  "parent_resource_decision": "FAIL_INDEPENDENT_PUBLIC_DEVELOPMENT_RESOURCE_GATE_V16_1",
+  "scientific_question": "On the already consumed p=33kw_size=03 public development trajectory, can replacing the four-worker plus per-chunk coordinator runtime with exactly one persistent proposal worker preserve the frozen Dual-K1 numerical result and 2A+2A^T ledger while repairing the v16.1 fresh-process wall, CPU-time, and peak-RSS failures against Zero-CGLS K4?",
+  "scope": {
+    "trajectory": "p=33kw_size=03",
+    "role": "post_open_runtime_mechanism_diagnostic",
+    "frame_count": 101,
+    "observation_shape": [
+      101,
+      2072
+    ],
+    "field_shape": [
+      101,
+      16,
+      16,
+      32
+    ],
+    "truth_or_truth_metrics_used": false,
+    "new_data_opened": false,
+    "result_dependent_model_training_allowed": false,
+    "independent_generalization_claim_allowed": false
+  },
+  "frozen_mechanism": {
+    "model": "unchanged compact_odd_multiview_detector_w16d2 checkpoint from v16",
+    "network_sample_arithmetic": "unchanged float32 sample kernel and odd-pair unpacking from v13",
+    "frame_batch_size": 8,
+    "proposal_runtime": "one persistent native proposal worker; no internal network worker pool; no per-chunk pthread_create or pthread_join",
+    "candidate_max_concurrent_threads": 2,
+    "reference_max_concurrent_threads": 1,
+    "candidate_solver": "exact A^T lift -> observable alpha in [0,2] -> unchanged strict CGLS K1",
+    "reference_solver": "zero initialization -> unchanged strict CGLS K4",
+    "candidate_A_calls_per_frame": 2,
+    "candidate_A_transpose_calls_per_frame": 2,
+    "reference_A_calls_per_frame": 4,
+    "reference_A_transpose_calls_per_frame": 4,
+    "parameter_or_threshold_selection_on_p33_s03": false
+  },
+  "execution": {
+    "CPU_only": true,
+    "fresh_execve_repetitions_per_arm": 18,
+    "arm_order": "alternate the leading arm by repetition index so each arm leads exactly nine repetitions",
+    "warmup_passes": 0,
+    "measured_passes": 1,
+    "external_wall_scope": "parent timer immediately before subprocess execve through child exit; includes Python startup, imports, observation load, geometry construction, checkpoint and native-context load for the candidate, solver execution, fsync field output, report serialization, and process teardown",
+    "external_wall_excludes": "one-time native library compilation performed before all worker repetitions",
+    "peak_RSS_scope": "whole worker process from parent os.wait4 child rusage after process exit",
+    "CPU_time_scope": "child user plus system CPU seconds from the same parent os.wait4 record",
+    "first_repetition_included": true,
+    "post_hoc_warm_only_override_allowed": false,
+    "equal_core_speedup_claim": false
+  },
+  "numerical_gates": {
+    "candidate_vs_v16_formal_relative_l2_p90_higher_maximum": 0.000005,
+    "candidate_vs_v16_formal_relative_l2_worst_maximum": 0.000005,
+    "reference_vs_v16_formal_relative_l2_p90_higher_maximum": 2e-13,
+    "reference_vs_v16_formal_relative_l2_worst_maximum": 2e-13,
+    "candidate_repeat_field_sha256_count_exact": 1,
+    "reference_repeat_field_sha256_count_exact": 1,
+    "candidate_total_A_calls_exact": 202,
+    "candidate_total_A_transpose_calls_exact": 202,
+    "reference_total_A_calls_exact": 404,
+    "reference_total_A_transpose_calls_exact": 404
+  },
+  "resource_gates": {
+    "quantile_method": "higher",
+    "paired_candidate_wall_reduction_median_minimum": 0.1,
+    "paired_candidate_faster_fraction_minimum": 0.8,
+    "candidate_paired_repetition_wall_harm_maximum": 0.05,
+    "candidate_to_reference_peak_RSS_p90_higher_ratio_maximum": 1.05,
+    "candidate_to_reference_total_CPU_time_median_ratio_maximum": 1.05
+  },
+  "decision_rule": "Numerical equivalence, deterministic repeats, exact operator ledgers, paired wall median reduction, paired faster fraction, paired wall no-harm, peak-RSS ratio, and child total-CPU-time ratio must all pass. No average-gain override, first-run deletion, threshold change, alternate thread count, or alternate batch size is allowed after execution.",
+  "failure_actions": {
+    "numerical_or_ledger_failure": "invalidate v17 and retain v16/v16.1 unchanged",
+    "wall_cpu_or_rss_failure": "freeze the negative runtime result and stop tuning this runtime on p=33kw_size=03",
+    "all_gates_pass": "record a post-open implementation repair only; do not claim independent generalization, real BOST, or paper success"
+  },
+  "claim_limits": {
+    "confirmatory_test": false,
+    "broad_generalization": false,
+    "real_BOST": false,
+    "physical_same_accuracy": false,
+    "independent_resource_validation": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
