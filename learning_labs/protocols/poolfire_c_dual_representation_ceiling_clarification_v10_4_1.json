@@ -1,0 +1,131 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-representation-ceiling-clarification-10.4.1",
+  "status": "FROZEN_P1_AUDIT_REPAIR_BEFORE_RESTART",
+  "frozen_at_utc": "2026-07-27T04:20:00Z",
+  "parent": {
+    "path": "learning_labs/protocols/poolfire_c_dual_representation_ceiling_contract_v10_4.json",
+    "sha256": "8d1dcf5868a3abb74b7e42d311cb6a53ce1070bb9479af2fc1c2eefe31cf2d37"
+  },
+  "audit_trigger": {
+    "audited_source_commit": "70897dc",
+    "P0_count": 0,
+    "P1_count": 6,
+    "aborted_run_id": "ceiling_70897dc",
+    "aborted_run_scientifically_valid": false,
+    "repairs_required_before_restart": [
+      "freeze_private_input_and_execution_identity",
+      "defer_conclusion_until_independent_validation",
+      "treat_any_passing_cap0p5_candidate_as_family_headroom",
+      "do_not_infer_B96_bandwidth_failure_from_one_projection",
+      "optimize_the_closed_ball_without_boundary_shrinkage",
+      "bind_runner_validator_tests_and_environment"
+    ]
+  },
+  "private_execution_release": {
+    "required": true,
+    "tracked": false,
+    "must_be_created_before_restart": true,
+    "must_bind": [
+      "trajectory_id_and_development_role",
+      "observations_gauge_truth_and_manifest_sha256",
+      "pair_manifest_declared_trajectory_and_shapes",
+      "runner_validator_tests_contract_and_clarification_sha256",
+      "exact_source_commit",
+      "Python_NumPy_Torch_versions_and_arm64_CPU"
+    ],
+    "runner_and_validator_must_verify_the_same_release": true,
+    "unbound_source_commit_is_forbidden": true,
+    "private_hashes_must_not_enter_tracked_outputs": true
+  },
+  "optimization_supersession": {
+    "reason": "The v10.4 smooth open-ball map shrank exact boundary starts and cannot support a closed-ball diagnostic.",
+    "v10_4_smooth_ball_parameterization_authorized": false,
+    "v10_4_LBFGS_stage_authorized": false,
+    "replacement": "direct_delta_projected_Adam_on_the_exact_closed_ball",
+    "project_after_every_update": true,
+    "preserve_exact_boundary_initialization_at_step_zero": true,
+    "steps": 800,
+    "learning_rate_initial": 0.03,
+    "learning_rate_final": 0.001,
+    "schedule": "cosine",
+    "gradient_clip_norm": 10.0,
+    "initializations_in_order": [
+      "zero_delta",
+      "exact_radially_capped_B96_projection_of_K3_dual_correction",
+      "fixed_seed_isotropic_quarter_radius_delta"
+    ],
+    "random_seed": 2026072704,
+    "stationarity_report": {
+      "closed_ball": "projected_gradient_mapping_with_step_1e-3",
+      "uncapped": "ordinary_gradient_norm",
+      "report_per_frame": [
+        "p50",
+        "p90_higher",
+        "worst"
+      ],
+      "global_optimality_proven": false
+    },
+    "negative_interpretation": "A failed search means only that the preregistered search found no compatible proposal. It does not prove that all B96 proposals fail."
+  },
+  "additional_uncapped_search": {
+    "arm_id": "best_found_uncapped_B96_then_CGLS_K1",
+    "purpose": "Separate the radial cap from B96 support without treating one projected K3 proposal as an oracle.",
+    "variables": "one_independent_unconstrained_96_vector_per_frame",
+    "proposal": "z_equals_y_plus_global_RMS_times_B96_delta",
+    "objective": "same_K4_teacher_deficiency_as_the_cap0p5_search",
+    "optimizer": "same_800_step_Adam_without_projection",
+    "initializations_in_order": [
+      "zero_delta",
+      "uncapped_B96_projection_of_K3_dual_correction",
+      "fixed_seed_isotropic_quarter_of_the_original_cap0p5_radius"
+    ],
+    "not_a_global_oracle": true,
+    "not_deployable": true
+  },
+  "revised_decision_semantics": {
+    "runner_status_before_validation": "PENDING_INDEPENDENT_VALIDATION_V10_4_1",
+    "runner_may_write_candidate_interpretation": true,
+    "runner_may_write_final_PASS_or_FAIL": false,
+    "validator_must_recompute": [
+      "every_saved_metric_array",
+      "every_start_initial_and_final_objective",
+      "cap_feasibility",
+      "projected_or_ordinary_gradient_stationarity_arrays",
+      "all_compatibility_reports",
+      "candidate_interpretation"
+    ],
+    "final_status_written_only_by_validator": true,
+    "cap0p5_family_headroom": "true_if_either_the_deterministic_capped_K3_projection_or_the_best_found_cap0p5_search_passes_the_v10_3_compatibility_gate",
+    "uncapped_search_headroom": "true_if_either_the_deterministic_uncapped_K3_projection_or_the_best_found_uncapped_search_passes_the_v10_3_compatibility_gate",
+    "cap_bottleneck_evidence": "uncapped_search_headroom_true_and_cap0p5_family_headroom_false",
+    "B96_search_no_headroom_found": "full_K3_restart_passes_but_uncapped_search_headroom_false",
+    "B96_bandwidth_impossibility_proven": false,
+    "DCT_energy_is_descriptive_only": true,
+    "DCT_energy_has_no_PASS_FAIL_threshold": true
+  },
+  "test_additions_required": [
+    "exact_boundary_delta_is_preserved_before_the_first_update",
+    "all_status_boolean_combinations_include_capped_true_best_false",
+    "self_consistent_but_wrong_trajectory_release_is_rejected",
+    "modified_result_JSON_is_rejected_by_independent_recomputation",
+    "unbound_or_code_hash_mismatched_release_is_rejected"
+  ],
+  "authorization": {
+    "restart_after_all_repairs_and_tests_pass": true,
+    "formal_outer_worker": false,
+    "fresh_holdout": false,
+    "p22_stopping_validation": false,
+    "untouched_test": false,
+    "larger_model": false
+  },
+  "claim_boundaries": {
+    "postopen_mechanism_diagnostic": true,
+    "representation_impossibility_proven": false,
+    "deployable_algorithm": false,
+    "real_BOST": false,
+    "generalization": false,
+    "wall_time_speedup": false,
+    "algorithm_breakthrough": false,
+    "paper_result": false
+  }
+}
