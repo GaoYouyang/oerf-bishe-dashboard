@@ -1,0 +1,133 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-detector-compact-mixed-precision-public-summary-12.3",
+  "trajectory_role": "five already-open fit trajectories; no validation, p45-s03 replay, or untouched test",
+  "model": {
+    "id": "compact_odd_multiview_detector_w16d2",
+    "parameter_count": 10548,
+    "proposal_precision": "float32",
+    "exact_lift_alpha_k1_and_metrics_precision": "float64"
+  },
+  "execution": {
+    "fit_trajectory_count": 5,
+    "session_count_per_arm_per_trajectory": 5,
+    "warmup_trajectory_passes_per_session": 1,
+    "measured_trajectory_passes_per_session": 17,
+    "measured_trajectory_passes_per_arm_per_trajectory": 85,
+    "measured_trajectory_passes_per_arm_total": 425,
+    "frames_per_trajectory": 101,
+    "model_inference_batch_size": 16,
+    "timing_scope": "persistent proposal plus unchanged float64 solver; process startup and one-time loading excluded"
+  },
+  "operator_calls_per_frame": {
+    "candidate": {
+      "A": 2,
+      "A_transpose": 2
+    },
+    "zero_cgls_k4": {
+      "A": 4,
+      "A_transpose": 4
+    }
+  },
+  "precision_and_compatibility": {
+    "all_trajectories_joint_matched_fraction": 1.0,
+    "all_trajectories_joint_harm_fraction": 0.0,
+    "all_trajectories_severe_harm_count": 0,
+    "maximum_float32_vs_float64_proposal_relative_l2_worst": 2.907175400389717e-07,
+    "maximum_float32_vs_float64_field_relative_l2_worst": 1.749330020231031e-07,
+    "frozen_parity_gate": 0.00005,
+    "maximum_independent_scientific_numeric_difference": 0.0,
+    "maximum_independent_candidate_field_replay_difference": 0.0,
+    "maximum_independent_reference_field_replay_difference": 0.0
+  },
+  "per_trajectory": [
+    {
+      "trajectory": "p=14kw_size=05",
+      "wall_reduction_fraction": 0.14015203900166195,
+      "maximum_paired_session_wall_harm_fraction": -0.13137854466467025,
+      "candidate_seconds_per_101_frames": 0.11025991616770625,
+      "reference_seconds_per_101_frames": 0.1282318748999387,
+      "candidate_peak_rss_p90_bytes": 410664960,
+      "reference_peak_rss_p90_bytes": 408928256,
+      "peak_rss_ratio": 1.004246965022637,
+      "wall_passed": true,
+      "peak_rss_passed_under_shared_torch_import": true,
+      "formal_row_decision": "PASS_FP32_FIT_ALL_GATES"
+    },
+    {
+      "trajectory": "p=22kw_size=03",
+      "wall_reduction_fraction": 0.1301588415774081,
+      "maximum_paired_session_wall_harm_fraction": -0.10721587762654161,
+      "candidate_seconds_per_101_frames": 0.11060845805332065,
+      "reference_seconds_per_101_frames": 0.1271593749988824,
+      "candidate_peak_rss_p90_bytes": 414367744,
+      "reference_peak_rss_p90_bytes": 397164544,
+      "peak_rss_ratio": 1.0433150447588795,
+      "wall_passed": true,
+      "peak_rss_passed_under_shared_torch_import": true,
+      "formal_row_decision": "PASS_FP32_FIT_ALL_GATES"
+    },
+    {
+      "trajectory": "p=33kw_size=01",
+      "wall_reduction_fraction": 0.12615338239963625,
+      "maximum_paired_session_wall_harm_fraction": -0.1034370287283195,
+      "candidate_seconds_per_101_frames": 0.11035091686062515,
+      "reference_seconds_per_101_frames": 0.12628179206512868,
+      "candidate_peak_rss_p90_bytes": 415956992,
+      "reference_peak_rss_p90_bytes": 388907008,
+      "peak_rss_ratio": 1.069553861060791,
+      "wall_passed": true,
+      "peak_rss_passed_under_shared_torch_import": false,
+      "formal_row_decision": "FAIL_FP32_FIT_PEAK_RSS"
+    },
+    {
+      "trajectory": "p=45kw_size=05",
+      "wall_reduction_fraction": 0.13971060285938286,
+      "maximum_paired_session_wall_harm_fraction": -0.11184934277673697,
+      "candidate_seconds_per_101_frames": 0.11022558296099305,
+      "reference_seconds_per_101_frames": 0.12812616699375212,
+      "candidate_peak_rss_p90_bytes": 412942336,
+      "reference_peak_rss_p90_bytes": 402407424,
+      "peak_rss_ratio": 1.0261797158096169,
+      "wall_passed": true,
+      "peak_rss_passed_under_shared_torch_import": true,
+      "formal_row_decision": "PASS_FP32_FIT_ALL_GATES"
+    },
+    {
+      "trajectory": "p=58kw_size=03",
+      "wall_reduction_fraction": 0.14929433013723548,
+      "maximum_paired_session_wall_harm_fraction": -0.13714713268031709,
+      "candidate_seconds_per_101_frames": 0.10857070796191692,
+      "reference_seconds_per_101_frames": 0.12762429099529982,
+      "candidate_peak_rss_p90_bytes": 416301056,
+      "reference_peak_rss_p90_bytes": 390250496,
+      "peak_rss_ratio": 1.0667534321340106,
+      "wall_passed": true,
+      "peak_rss_passed_under_shared_torch_import": false,
+      "formal_row_decision": "FAIL_FP32_FIT_PEAK_RSS"
+    }
+  ],
+  "formal_decision": {
+    "status": "FAIL_FIT_ONLY_FP32_PROPOSAL_ALL_GATES",
+    "row_pass_count_before_red_team_downgrade": 3,
+    "required_pass_count": 5,
+    "postopen_p45_development_confirmation_authorized": false
+  },
+  "red_team_audit": {
+    "P0_count": 0,
+    "P1_count": 3,
+    "rss_baseline_issue": "the Zero-K4 worker imported Torch and candidate modules, which inflates the reference RSS and favors the candidate; row-level RSS passes are not accepted as clean deployment evidence",
+    "parity_protocol_issue": "the frozen gate constrained p90 but not worst; the observed worst values were nevertheless far below the gate, so this weakness did not change this run",
+    "data_role_issue": "float32 was motivated after the burned p45 resource result; v12.3 is post-open development, not independent confirmation",
+    "robust_inference": "the all-five gate failed even under a candidate-favorable RSS baseline, so correcting the reference baseline cannot turn this run into a pass"
+  },
+  "claim_limits": {
+    "clean_whole_pipeline_rss_advantage": false,
+    "fresh_generalization": false,
+    "untouched_test_generalization": false,
+    "real_bost": false,
+    "physical_same_accuracy": false,
+    "broad_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

@@ -7596,3 +7596,50 @@ algorithm_breakthrough=false
 
 完整结果见
 `docs/poolfire_c_dual_detector_compact_persistent_v12_2_result_2026-07-27.md`。
+
+## 252. FP32 不是内存解法：五条都更快，RSS 仍只有 3/5
+
+v12.2 已经证明常驻进程里模型成本小于省下的两对算子成本，但 RSS 高 15.71%。
+这轮没有重训，也没有改 exact `A^T`、alpha 或 K1，只把 proposal 网络改为 FP32，
+网络输出立即转回 float64。
+
+结果是五条已经开放的 fit trajectory 各跑 5 个 session、每个 session 预热 1 条再
+计时 17 条；每个臂合计 425 条完整 101 帧 pass：
+
+```text
+五条 joint match = 100%
+五条 harm = 0
+五条 wall reduction = 12.62% - 14.93%（全部通过）
+
+RSS ratio:
+p14 1.0042 PASS
+p22 1.0433 PASS
+p33 1.0696 FAIL
+p45 1.0262 PASS
+p58 1.0668 FAIL
+```
+
+FP32 与原 FP64 的 proposal worst 相对差只有 `2.91e-7`，最终场 worst 只有
+`1.75e-7`，所以失败不是精度问题。独立 validator 自己重写 K1、K4、兼容性和资源
+统计，candidate/reference 场与全部科学数字最大差都是 0。
+
+红队随后发现一个必须公开的 P1：Zero-K4 worker 也提前导入了 Torch，因此 reference
+RSS 被抬高，口径反而偏袒 Candidate。即使这样仍有两条超过 1.05，所以全局失败只会
+更稳，不可能因为修正基线变成成功。另两个 P1 是 parity 合同只冻结 p90，以及 FP32
+本来就是受已烧掉 p45 资源结果启发的 post-open development；实际 worst 远低于门，
+且本轮没有运行 p45 replay。
+
+所以没有临时放宽门槛，也没有拿 3/5 写成功：
+
+```text
+FAIL_FIT_ONLY_FP32_PROPOSAL_ALL_GATES
+postopen_p45_replay_authorized=false
+algorithm_breakthrough=false
+```
+
+讲人话：FP32 保住了精度和 13%-15% 常驻速度优势，但不能稳定消掉运行时内存。下一
+个有效实验必须让 Zero-K4 真正走无 Torch 的纯物理基线，并让候选使用轻量推理后端；
+继续围绕同一污染口径微调 batch 或精度没有论文价值。
+
+完整结果见
+`docs/poolfire_c_dual_detector_compact_mixed_precision_v12_3_result_2026-07-27.md`。
