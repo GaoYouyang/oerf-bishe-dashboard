@@ -1,0 +1,94 @@
+{
+    "schema_version": "oerf-poolfire-c-independent-resource-profile-16.1",
+    "frozen_at_utc": "2026-07-28T04:45:00Z",
+    "parent_accuracy_decision": "PASS_SINGLE_INDEPENDENT_PUBLIC_DEVELOPMENT_ACCURACY_CALL_GATE_V16",
+    "parent_independent_validation": "PASS_INDEPENDENT_RECOMPUTATION_V16",
+    "scientific_question": "On the already consumed p=33kw_size=03 public development trajectory, does a numerically equivalent fused native implementation translate the frozen w16d2 Dual-K1 2A+2A^T path into at least 10 percent lower fresh-process end-to-end wall time without more than 5 percent whole-worker peak-RSS harm relative to Zero-CGLS K4 4A+4A^T?",
+    "scope": {
+        "trajectory": "p=33kw_size=03",
+        "role": "post_accuracy_single_independent_public_development_resource_profile",
+        "frame_count": 101,
+        "observation_shape": [101, 2072],
+        "field_shape": [101, 16, 16, 32],
+        "truth_or_truth_metrics_used": false,
+        "new_data_opened": false,
+        "result_dependent_retraining_allowed": false
+    },
+    "single_run_control": {
+        "canonical_parent_chain_receipt": "PARENT_VALIDATION_BOUND_V16_1.json beside the parent v16 release",
+        "canonical_resource_release": "RESOURCE_RELEASE_V16_1.json beside the parent v16 release",
+        "canonical_run_open_receipt": "RESOURCE_RUN_OPENED_V16_1.json beside the parent v16 release",
+        "canonical_output_directory": "independent_resource_v16_1 beside the parent v16 release",
+        "second_batch_allowed": false,
+        "interrupted_batch_may_be_replaced": false,
+        "one_time_batch_proven": false,
+        "deletion_or_rollback_resistance_proven": false,
+        "boundary": "O_EXCL and canonical paths prevent an accidental or policy-compliant second batch, but a privileged local actor could delete all receipts and rerun; the final claim must not describe cryptographic one-time acceptance."
+    },
+    "frozen_arms": [
+        {
+            "arm_id": "v16_1_fused_native_w16d2_dual_k1",
+            "path": "native G_theta(y) -> exact A^T -> observable alpha in [0,2] -> unchanged strict CGLS K1 -> streaming field write",
+            "A_calls_per_frame": 2,
+            "A_transpose_calls_per_frame": 2
+        },
+        {
+            "arm_id": "v16_1_streaming_zero_cgls_k4",
+            "path": "zero initialization -> unchanged strict CGLS K4 -> streaming field write",
+            "A_calls_per_frame": 4,
+            "A_transpose_calls_per_frame": 4
+        }
+    ],
+    "execution": {
+        "CPU_only": true,
+        "fresh_execve_repetitions_per_arm": 18,
+        "arm_order": "alternate the leading arm by repetition index so each arm leads exactly nine repetitions",
+        "warmup_passes": 0,
+        "measured_passes": 1,
+        "external_wall_scope": "parent timer immediately before subprocess execve through child exit; includes Python startup, imports, observation load, geometry construction, checkpoint and native-context load for the candidate, solver execution, fsync field output, report serialization, and process teardown",
+        "external_wall_excludes": "one-time native library compilation performed before all worker repetitions",
+        "peak_RSS_scope": "whole worker process from parent os.wait4 child rusage after process exit; no worker child process is permitted",
+        "CPU_time_scope": "child user plus system CPU seconds from the same parent os.wait4 record",
+        "thread_disclosure": "candidate uses one main thread, four persistent native proposal workers, and at most one asynchronous coordinator; reference uses one main thread",
+        "equal_core_speedup_claim": false,
+        "deterministic_repeat_required": true,
+        "native_candidate_must_match_frozen_v16_formal_candidate": true,
+        "streaming_reference_must_match_frozen_v16_formal_reference": true
+    },
+    "numerical_gates": {
+        "candidate_vs_formal_relative_l2_p90_higher_maximum": 0.000005,
+        "candidate_vs_formal_relative_l2_worst_maximum": 0.000005,
+        "reference_vs_formal_relative_l2_p90_higher_maximum": 0.0000000000002,
+        "reference_vs_formal_relative_l2_worst_maximum": 0.0000000000002,
+        "candidate_total_A_calls_exact": 202,
+        "candidate_total_A_transpose_calls_exact": 202,
+        "reference_total_A_calls_exact": 404,
+        "reference_total_A_transpose_calls_exact": 404
+    },
+    "resource_gates": {
+        "quantile_method": "higher",
+        "paired_candidate_wall_reduction_median_minimum": 0.1,
+        "paired_candidate_faster_fraction_minimum": 0.8,
+        "candidate_paired_repetition_wall_harm_maximum": 0.05,
+        "candidate_to_reference_peak_RSS_p90_higher_ratio_maximum": 1.05,
+        "candidate_to_reference_total_CPU_time_median_ratio_maximum": 1.05
+    },
+    "decision_rule": "Numerical equivalence, deterministic repeats, exact operator ledgers, paired wall median reduction, paired faster fraction, paired wall no-harm, peak-RSS ratio, and child total-CPU-time ratio must all pass. No average-gain override and no threshold change after execution are allowed.",
+    "failure_actions": {
+        "source_input_or_numerical_mismatch": "invalidate the resource profile without changing the v16 accuracy-and-call result",
+        "wall_failure": "retain the v16 accuracy-and-call result but do not claim end-to-end acceleration",
+        "RSS_failure": "retain the v16 accuracy-and-call result but do not claim whole-pipeline memory no-harm",
+        "CPU_time_failure": "retain any elapsed-wall observation as an implementation result but do not claim compute-cost no-harm",
+        "any_resource_failure": "freeze the result and do not tune the runtime on this consumed trajectory"
+    },
+    "claim_limits": {
+        "confirmatory_test": false,
+        "broad_generalization": false,
+        "real_BOST": false,
+        "physical_same_accuracy": false,
+        "equal_core_speedup": false,
+        "one_time_batch_proven": false,
+        "algorithm_breakthrough": false,
+        "paper_success": false
+    }
+}

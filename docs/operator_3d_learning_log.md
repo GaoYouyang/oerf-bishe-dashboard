@@ -7899,3 +7899,70 @@ P45 特例背下来。我们因此停止 proxy-only 架构救援，保留 `w16d2
 
 完整结果见
 `docs/poolfire_c_observation_residual_v15_1_result_2026-07-28.md`。
+
+## 257. v16/v16.1：调用真的减半了，但当前实现还不是低成本加速
+
+这次终于不再在五条 fit trajectory 里循环解释模型，而是拿一条此前未参与拟合的
+公开 PoolFire development trajectory 做完整 101 帧评分。冻结的 `w16d2 Dual-K1`
+先过了最重要的精度与伤害门：
+
+```text
+joint match = 101 / 101
+joint harm = 0
+candidate = 202 A + 202 A^T
+Zero-K4   = 404 A + 404 A^T
+```
+
+这说明 warm start 的核心作用不是假的：在这条额外公开轨迹上，它用一半完整算子对
+到达了冻结 compatibility envelope。native streaming 实现相对正式 candidate 的
+field relative-L2 p90/worst 只有 `9.24e-8 / 1.04e-7`，reference 则逐值一致。
+
+但我随后把最容易夸大的地方单独做成 v16.1 资源门。两个 arm 各跑 18 个 fresh
+process，交替先后、不做 warmup，parent 在 child 退出后用 `wait4` 记录 wall、RSS
+和 CPU。结果出现了一个很清楚的分裂：
+
+```text
+典型 wall:
+  candidate median = 0.201 s
+  Zero-K4 median   = 0.258 s
+  paired median reduction = 22.02%
+  candidate faster = 16 / 18
+
+稳定性:
+  first candidate = 1.165 s
+  paired reference = 0.259 s
+  worst harm = 350.30%
+  allowed = 5%
+
+CPU:
+  paired ratio median = 1.231
+  -> candidate 多用 23.13% 总 CPU
+
+RSS:
+  p90 ratio = 1.0581
+  allowed = 1.05
+```
+
+所以典型 wall 变快是真的，但它依赖更多并发 CPU，而且第一次加载 checkpoint、
+native library 和 context 时出现了很重的冷启动。candidate peak RSS 也仍略高。
+三门全部失败：
+
+```text
+FAIL_INDEPENDENT_PUBLIC_DEVELOPMENT_RESOURCE_GATE_V16_1
+wall_gate_passed=false
+peak_RSS_gate_passed=false
+CPU_time_gate_passed=false
+algorithm_breakthrough=false
+```
+
+独立审计复核了 36 条 records、36 份 worker report、`36×101` 条逐帧 receipt 和
+全部配对统计，结论 `P0=0 / P1=0`。即使事后忽略第一个冷启动，CPU 与 RSS 仍然
+失败，所以不能把它解释成“只有一个倒霉异常值”。
+
+**讲人话：**我们现在确实有一辆少踩两次油门也能到终点的车，但发动时更费劲，
+运行时还调用了更多工人，占的空间也略大。它证明了算法调用数方向有价值，却还没
+证明部署成本更低。下一版必须在新的轨迹结果产生前先冻结更轻的运行机制，同时压低
+冷启动、CPU 和 RSS；不能回到这条已经看过结果的数据上调到过门。
+
+完整结果见
+`docs/poolfire_c_independent_resource_v16_1_result_2026-07-28.md`。
