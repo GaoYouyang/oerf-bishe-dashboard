@@ -1,0 +1,249 @@
+{
+  "schema_version": "oerf-poolfire-c-observable-external-public-summary-24.0",
+  "date": "2026-07-28",
+  "status": "PASS_THREE_TRAJECTORY_EXTERNAL_PROXY_REPLICATION_V24",
+  "final_decision": "PASS_EXTERNAL_PROXY_REPLICATION",
+  "result_type": "external public CFD proxy replication",
+  "method": {
+    "name": "Observable Reduced Residual Warm K1",
+    "fit_trajectory_count": 5,
+    "deployment_rank": 199,
+    "ridge_relative_lambda": 0.01,
+    "online_mechanism": "51 exact compact-dual proposals on even frames plus observation-residual reduced reconstruction on 50 odd frames, followed by unchanged strict CGLS K1",
+    "offline_setup_ledger": {
+      "A": 200,
+      "A_transpose": 200,
+      "total": 400
+    },
+    "primary_online_ledger_per_101_frame_sequence": {
+      "A": 202,
+      "A_transpose": 152,
+      "total": 354
+    },
+    "full_parent_online_ledger_per_101_frame_sequence": {
+      "A": 202,
+      "A_transpose": 202,
+      "total": 404
+    },
+    "zero_cgls_k4_online_ledger_per_101_frame_sequence": {
+      "A": 404,
+      "A_transpose": 404,
+      "total": 808
+    },
+    "online_call_reduction_vs_full_parent_fraction": 0.12376237623762376,
+    "online_adjoint_call_reduction_vs_full_parent_fraction": 0.24752475247524752,
+    "online_call_reduction_vs_zero_k4_fraction": 0.5618811881188119,
+    "offline_setup_break_even_vs_full_parent": {
+      "sequence_count": 8,
+      "frame_count": 808,
+      "assumption": "A and A_transpose have equal unit cost; package reuse is valid"
+    }
+  },
+  "experimental_design": {
+    "holdout_count": 3,
+    "frames_per_trajectory": 101,
+    "skipped_frames_per_trajectory": 50,
+    "fresh_process_repetitions_per_arm_per_trajectory": 101,
+    "holdout_role": "posthoc frozen public PoolFire train-split trajectories absent from the managed project roots at release",
+    "new_power_size_combinations": true,
+    "unseen_power": false,
+    "unseen_size": false,
+    "geometry_ood": false,
+    "official_confirmatory_test": false,
+    "independent_external_dataset": false
+  },
+  "trajectories": [
+    {
+      "trajectory": "p=33kw_size=05",
+      "accuracy_gate_passed": true,
+      "resource_gate_passed": true,
+      "all_frame_joint_matched_fraction": 1.0,
+      "skipped_frame_joint_matched_fraction": 1.0,
+      "joint_harm_fraction": 0.0,
+      "severe_harm_count": 0,
+      "primary_p90": {
+        "field_relative_l2": 0.6779425012090398,
+        "gradient_relative_l2": 1.0253292665617395,
+        "observation_relative_l2": 0.32380446669063323
+      },
+      "zero_k4_p90": {
+        "field_relative_l2": 0.6771188529688413,
+        "gradient_relative_l2": 1.0455699668628964,
+        "observation_relative_l2": 0.32051439378186025
+      },
+      "fresh_process_wall_reduction_fraction": 0.13480129762007143,
+      "paired_wall_median_reduction_fraction": 0.136969593,
+      "paired_wall_bootstrap_95_interval_fraction": [
+        0.131047172,
+        0.140864083
+      ],
+      "primary_faster_pair_count": 99,
+      "paired_repetition_count": 101,
+      "wall_reduction_by_order_percent": {
+        "primary_first": 13.5148,
+        "primary_second": 13.8255
+      },
+      "peak_rss_p90_ratio_primary_over_parent": 1.0160945734225895,
+      "temporal_delta_relative_l2": {
+        "p50": 0.254766,
+        "p90": 0.282227
+      },
+      "temporal_cosine_p10": 0.960096
+    },
+    {
+      "trajectory": "p=45kw_size=01",
+      "accuracy_gate_passed": true,
+      "resource_gate_passed": true,
+      "all_frame_joint_matched_fraction": 1.0,
+      "skipped_frame_joint_matched_fraction": 1.0,
+      "joint_harm_fraction": 0.0,
+      "severe_harm_count": 0,
+      "primary_p90": {
+        "field_relative_l2": 0.7082734001389046,
+        "gradient_relative_l2": 1.4713105200704752,
+        "observation_relative_l2": 0.3789072084054161
+      },
+      "zero_k4_p90": {
+        "field_relative_l2": 0.708872043758893,
+        "gradient_relative_l2": 1.4987510752048727,
+        "observation_relative_l2": 0.38000936045480715
+      },
+      "fresh_process_wall_reduction_fraction": 0.1180644468863371,
+      "paired_wall_median_reduction_fraction": 0.118345738,
+      "paired_wall_bootstrap_95_interval_fraction": [
+        0.110450889,
+        0.133066013
+      ],
+      "primary_faster_pair_count": 93,
+      "paired_repetition_count": 101,
+      "wall_reduction_by_order_percent": {
+        "primary_first": 12.3777,
+        "primary_second": 11.5193
+      },
+      "peak_rss_p90_ratio_primary_over_parent": 1.0123051681706317,
+      "temporal_delta_relative_l2": {
+        "p50": 0.169739,
+        "p90": 0.205956
+      },
+      "temporal_cosine_p10": 0.979265
+    },
+    {
+      "trajectory": "p=58kw_size=05",
+      "accuracy_gate_passed": true,
+      "resource_gate_passed": true,
+      "all_frame_joint_matched_fraction": 0.9801980198019802,
+      "skipped_frame_joint_matched_fraction": 0.96,
+      "joint_harm_fraction": 0.0,
+      "severe_harm_count": 0,
+      "primary_p90": {
+        "field_relative_l2": 0.7301865542301028,
+        "gradient_relative_l2": 1.0033342107137433,
+        "observation_relative_l2": 0.3587241336136044
+      },
+      "zero_k4_p90": {
+        "field_relative_l2": 0.7312342280912083,
+        "gradient_relative_l2": 1.0262637215029649,
+        "observation_relative_l2": 0.34677477303204485
+      },
+      "fresh_process_wall_reduction_fraction": 0.1279951844177355,
+      "paired_wall_median_reduction_fraction": 0.135248066,
+      "paired_wall_bootstrap_95_interval_fraction": [
+        0.119436021,
+        0.145073124
+      ],
+      "primary_faster_pair_count": 91,
+      "paired_repetition_count": 101,
+      "wall_reduction_by_order_percent": {
+        "primary_first": 12.9715,
+        "primary_second": 13.5248
+      },
+      "peak_rss_p90_ratio_primary_over_parent": 1.0198494182067077,
+      "temporal_delta_relative_l2": {
+        "p50": 0.309578,
+        "p90": 0.337967
+      },
+      "temporal_cosine_p10": 0.943384,
+      "mild_observation_only_misses": [
+        {
+          "frame": 77,
+          "candidate_observation_relative_l2": 0.2867273542,
+          "reference_observation_relative_l2": 0.2598923185,
+          "match_tolerance": 0.02598923185,
+          "excess_over_match_limit": 0.00084580386
+        },
+        {
+          "frame": 79,
+          "candidate_observation_relative_l2": 0.3014812021,
+          "reference_observation_relative_l2": 0.2699672877,
+          "match_tolerance": 0.02699672877,
+          "excess_over_match_limit": 0.0045171856
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "all_three_scored": true,
+    "all_three_accuracy_gates_passed": true,
+    "all_three_resource_gates_passed": true,
+    "all_three_independent_validations_passed": true,
+    "one_failure_averaged_away": false,
+    "trajectory_equal_weight_wall_reduction_median_fraction": 0.1279951844177355,
+    "trajectory_equal_weight_wall_reduction_mean_fraction": 0.126953643,
+    "peak_rss_p90_ratio_median": 1.0160945734225895,
+    "peak_rss_p90_ratio_worst": 1.0198494182067077,
+    "memory_reduction_observed": false,
+    "memory_no_harm_gate_passed": true
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_EXTERNAL_HOLDOUT_RECOMPUTATION_V24",
+    "formal_package_method": "direct thin SVD plus measurement-space SVD ridge",
+    "independent_package_method": "sample-space symmetric eigendecomposition plus normal-equation ridge",
+    "candidate_max_absolute_difference": {
+      "p=33kw_size=05": 2.0261570199409107e-15,
+      "p=45kw_size=01": 1.489338649361181e-15,
+      "p=58kw_size=05": 2.192690473634684e-15
+    },
+    "metric_max_absolute_difference": {
+      "p=33kw_size=05": 2.220446049250313e-16,
+      "p=45kw_size=01": 2.220446049250313e-16,
+      "p=58kw_size=05": 1.1102230246251565e-16
+    },
+    "benchmark_statistic_max_absolute_difference": {
+      "p=33kw_size=05": 0.0,
+      "p=45kw_size=01": 0.0,
+      "p=58kw_size=05": 0.0
+    },
+    "reference_max_absolute_difference": {
+      "p=33kw_size=05": 0.0,
+      "p=45kw_size=01": 0.0,
+      "p=58kw_size=05": 0.0
+    },
+    "pair_bindings_unchanged": true,
+    "complete_result_tree_unchanged": true
+  },
+  "novelty_boundary": {
+    "primary_source_items_reviewed_at_least": 31,
+    "fully_isomorphic_public_method_found": false,
+    "global_uniqueness_proven": false,
+    "component_level_novelty": false,
+    "bounded_claim": "Within the dated public-source review, no public method was found that simultaneously combines a BOST-conditioned reduced measurement-space proposal, exact A-transpose lift, observable-only scalar, unchanged strict CGLS K1, and matched field-gradient-observation per-operator cost accounting.",
+    "closest_method_families": [
+      "warm-basis iterative projection",
+      "learned warm starts",
+      "neural-Krylov and learned preconditioning",
+      "learned inverse-problem refinement",
+      "NeRIF and neural BOST reconstruction"
+    ]
+  },
+  "scientific_judgement": {
+    "important_proxy_replication_milestone": true,
+    "algorithm_breakthrough": false,
+    "official_confirmatory_test": false,
+    "valid_untouched_official_test_count": 0,
+    "real_bost": false,
+    "physical_same_accuracy_proven": false,
+    "global_generalization_proven": false,
+    "paper_success": false,
+    "next_scientific_gate": "migration to group real BOST data with repeated measurements, calibration uncertainty, noise, and the group forward-reconstruction stack"
+  }
+}

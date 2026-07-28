@@ -8210,3 +8210,135 @@ p45/p58，说明训练目标错了；若仍失败，才转向工况条件化或�
 
 完整结果见
 `docs/poolfire_c_temporal_lift_v20_result_2026-07-28.md`。
+
+## 262. v21：把系数目标换到观测空间，p45/p58 仍然没有过门
+
+v20 留下了一个必须先回答的小问题：共享线性 lift span 失败，到底是 span
+不够，还是 lift-L2 这个系数目标与最终观测不一致？
+
+这一轮没有换 keyframe、basis、rank、solver 或评分门。每条留出 trajectory
+仍有 51 个 exact keyframes 和 50 个 skipped frames，span 仍只由另外四条
+trajectory 构成。唯一变化是 oracle 系数从三维 lift 投影改为：
+
+```text
+argmin_c ||A(h_base + Uc) - A h_exact||_2
+```
+
+为了公平，同批还逐 rank 重放了 v20 lift-L2 control。独立验证重新计算候选、
+最终场和所有指标，得到：
+
+```text
+PASS_INDEPENDENT_RECOMPUTATION_V21
+candidate max difference = 4.496403249731884e-14
+metric max difference = 3.219646771412954e-15
+sealed inputs unchanged = true
+```
+
+固定 primary centered family、rank 192 的 skipped-only joint match 是：
+
+```text
+trajectory   A-space   paired lift-L2   required
+p14-s05       100%          100%           90%
+p22-s03       100%          100%           90%
+p33-s01       100%          100%           90%
+p45-s05        66%           66%           90%
+p58-s03        70%           72%           90%
+```
+
+p14、p22、p33 存在通过的数值 rank；p45 的最佳结果仍是 66%，p58 的最佳
+结果仍是配对 lift-L2 的 72%。p45/p58 的 joint harm 都是 0，所以不是算法
+崩溃，而是大量帧离严格非劣门差一点。没有任何公共数值 rank 能让五条轨迹
+逐条通过，正式判决为：
+
+```text
+FAIL_PREREGISTERED_A_SPACE_LIFT_RANKS_V21
+algorithm_breakthrough=false
+```
+
+**讲人话：**我们给了 oracle 一个更懂相机观测的目标，但它在四条轨迹上没有
+改变，在 p58 还从 72% 变成 70%。这说明 v20 的问题不只是“loss 写错了”；
+当前跨工况共享的一套线性变化方向，确实装不下 p45/p58 的时间演化。
+
+本轮为了算 A-space oracle 额外用了 2500 次 `A`，这是诊断成本。它不能被藏进
+未来的 `202A+152A^T` 反事实部署账，也不能写成 native CNN skip、wall 或内存
+加速。fresh、untouched test、真实 BOST 和端到端泛化都没有打开。
+
+现在应当停止的，是同一个全局线性 span 上继续堆 rank、换相似 loss 或直接加大
+FNO/GRU。没有被否定的，是结果前冻结的工况条件化/局部字典、非线性或
+history-aware 表示，以及更保守的跳帧预算与 deployment-visible fallback。
+这些是下一轮可检验假设，不是 v21 已经证明的优势。
+
+完整结果见
+`docs/poolfire_c_temporal_lift_measurement_v21_result_2026-07-28.md`。
+
+## 263. v24：三条公开 CFD 外部代理复现通过
+
+这次没有继续在已经打开的轨迹上调模型。我先把方法、rank、ridge、K1、兼容门、
+成本账和三条轨迹顺序一起冻结，再去获取三条此前不在项目数据根目录的公开
+PoolFire trajectory：
+
+```text
+p=33kw_size=05
+p=45kw_size=01
+p=58kw_size=05
+```
+
+它们是新的功率/尺寸组合，但功率值和尺寸值都在 fit 数据出现过，所以不能叫
+unseen-power、unseen-size 或 geometry OOD。三条全部完成预测后才统一评分，
+并且规定一条失败就整体失败，不能靠平均值冲过去。
+
+固定 Reduced Warm K1 的在线成本是：
+
+```text
+Primary:    202A + 152A^T = 354
+Full parent:202A + 202A^T = 404
+Zero-K4:    404A + 404A^T = 808
+```
+
+正式结果：
+
+```text
+trajectory   all match   skipped match   harm   wall reduction
+p33-s05       101/101        50/50          0       13.48%
+p45-s01       101/101        50/50          0       11.81%
+p58-s05        99/101        48/50          0       12.80%
+```
+
+p58 的两处 miss 只在 observation 指标，frame 77 和 79 超出严格 match 线
+`0.000846 / 0.004517`；field 与 gradient 仍匹配，也没有越过 harm 线。
+把它们公开保留下来，是为了不让“3/3 通过”把最靠近失败的位置藏掉。
+
+不同数值路径重新生成 package、候选、K1、Zero-K4、指标和 benchmark：
+
+```text
+candidate max difference <= 2.20e-15
+metric max difference <= 2.22e-16
+benchmark statistic difference = 0
+PASS_INDEPENDENT_EXTERNAL_HOLDOUT_RECOMPUTATION_V24
+PASS_EXTERNAL_PROXY_REPLICATION
+```
+
+**讲人话：**我们现在不再只有“在开发数据上看起来快”。一个固定的方法换到三条
+新组合的公开 CFD 轨迹后，精度门没有塌，三条都少算 50 次精确 `A^T`，而且实测
+wall 都快了 10% 以上。这个信号比 v23 扎实得多。
+
+但它仍不是算法突破。有效 official untouched test 是 0，数据仍来自同一个
+PoolFire 数据集和同一个 straight-ray proxy，真实相机、标定误差、flow-off
+重复测量和组内 forward 都没有进入。rank-199 package 还有
+`200A+200A^T=400` 的离线成本；按等成本要复用 8 条 101 帧序列才摊平，不能藏。
+
+下一步不再无边界增加同类 CFD 工况。真正能改变论文结论的是把冻结方法接到组内
+真实 BOST，用重复采集与标定不确定度定义“同精度”，再量完整 A/A^T、端到端
+wall 和全流程内存。
+
+当前判决：
+
+```text
+important_proxy_replication_milestone=true
+algorithm_breakthrough=false
+real_BOST=false
+paper_success=false
+```
+
+完整结果见
+`docs/poolfire_c_observable_external_v24_result_2026-07-28.md`。

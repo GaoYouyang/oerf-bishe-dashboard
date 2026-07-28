@@ -1,0 +1,135 @@
+{
+  "schema_version": "oerf-poolfire-c-observable-external-holdout-24.0",
+  "status": "FROZEN_BEFORE_ANY_EXTERNAL_HOLDOUT_PAYLOAD_ACCESS",
+  "frozen_date": "2026-07-28",
+  "scientific_question": "Does the already fixed Observable Reduced Residual Warm K1 mechanism preserve the unchanged field, gradient, and observation compatibility envelope while reducing complete A/A^T calls and fresh-process wall time on three additional public PoolFire trajectories that were absent from all project-managed data and result roots when this protocol was committed?",
+  "method_lock": {
+    "method_name": "Observable Reduced Residual Warm K1",
+    "fit_trajectory_ids": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "fit_trajectory_count": 5,
+    "fit_frame_count": 505,
+    "compact_parent_frame_budget": 51,
+    "skipped_frame_count": 50,
+    "deployment_rank": 199,
+    "ridge_relative_lambda": 0.01,
+    "online_primary_ledger": {
+      "A": 202,
+      "A_transpose": 152
+    },
+    "online_full_parent_ledger": {
+      "A": 202,
+      "A_transpose": 202
+    },
+    "online_zero_k4_ledger": {
+      "A": 404,
+      "A_transpose": 404
+    },
+    "model_package_solver_threshold_or_metric_change_after_first_holdout": false,
+    "result_dependent_retraining_allowed": false,
+    "result_dependent_trajectory_reordering_allowed": false
+  },
+  "external_holdout_order": [
+    {
+      "trajectory": "p=33kw_size=05",
+      "official_split": "train",
+      "official_role": "fit_candidate",
+      "new_role": "external_proxy_holdout_1",
+      "expected_size_bytes": 6551886534,
+      "expected_source_sha256": "8092b5cba8351bf890dd532b3d412c3692d296e6229db7bd675bf754dacca685"
+    },
+    {
+      "trajectory": "p=45kw_size=01",
+      "official_split": "train",
+      "official_role": "fit_candidate",
+      "new_role": "external_proxy_holdout_2",
+      "expected_size_bytes": 6574517561,
+      "expected_source_sha256": "6d082241ba618cc886c5b56a96eea61f89fa9033c2ebcaeee86713108b8688fc"
+    },
+    {
+      "trajectory": "p=58kw_size=05",
+      "official_split": "train",
+      "official_role": "fit_candidate",
+      "new_role": "external_proxy_holdout_3",
+      "expected_size_bytes": 6683576403,
+      "expected_source_sha256": "222bd8252908202ca83e96543563c0ff7b13774992744dc6a371d275f04aba61"
+    }
+  ],
+  "selection_rule": {
+    "basis": "Use every remaining full trajectory that was absent from project-managed raw, derived, pair, and result roots and had not previously been selected as development, fit, validation, fresh, or official test evidence.",
+    "known_exclusions": [
+      "p=14kw_size=03",
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=33kw_size=03",
+      "p=45kw_size=03",
+      "p=45kw_size=05",
+      "p=58kw_size=03",
+      "p=14kw_size=01",
+      "p=22kw_size=01",
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ],
+    "managed_root_nonaccess_required_before_release": true,
+    "filesystem_wide_historical_nonaccess_proven": false,
+    "all_three_must_be_scored_regardless_of_earlier_outcomes": true
+  },
+  "execution_order": [
+    "validate immutable release root, child release, source closure, assets, Python, NumPy, platform, and BLAS/LAPACK identity before any download",
+    "write an exclusive acquisition-open receipt before the first network byte",
+    "download, verify official byte count and SHA256, extract rho, validate READY, and delete the raw archive",
+    "prepare one proxy pair and bind READY plus every payload checksum",
+    "finish acquisition and pair validation for all three trajectories before prediction",
+    "load observations only, generate all three primary, full-parent, and Zero-K4 fields, and atomically seal every prediction",
+    "run all three 101-run alternating fresh-process benchmarks and write one global prediction barrier before loading any gauge truth",
+    "after the global barrier, load all three gauge truths in frozen order and write all rows plus one aggregate report",
+    "independently rebuild the reduced package, all three candidates and references, recompute metrics and resource statistics, and verify every pair plus the complete result tree"
+  ],
+  "compatibility": {
+    "field_tolerance_per_frame": "max(0.01, 0.05 * zero_K4_field_relative_l2)",
+    "gradient_tolerance_per_frame": "max(0.015, 0.05 * zero_K4_gradient_relative_l2)",
+    "observation_tolerance_per_frame": "max(0.005, 0.10 * zero_K4_observation_relative_l2)",
+    "all_frame_joint_matched_fraction_minimum": 0.9,
+    "skipped_frame_joint_matched_fraction_minimum": 0.9,
+    "joint_harm_fraction_maximum": 0.05,
+    "per_metric_harm_fraction_maximum": 0.05,
+    "severe_harm_count_maximum": 0
+  },
+  "resource_gate": {
+    "fresh_process_repetitions_per_arm": 101,
+    "alternating_order": true,
+    "external_wall_median_reduction_minimum": 0.1,
+    "direct_child_peak_rss_p90_ratio_maximum": 1.05,
+    "whole_pipeline_process_tree_rss_claim": false
+  },
+  "aggregate_decision": {
+    "all_three_accuracy_gates_must_pass": true,
+    "all_three_resource_gates_must_pass": true,
+    "all_three_independent_validations_must_pass": true,
+    "one_failure_cannot_be_averaged_away": true,
+    "no_second_score_or_same_trajectory_rerun_after_execution_failure": true
+  },
+  "invalid_official_test_disclosure": {
+    "p=22kw_size=05": "INVALID before original formal prediction and score; later post-open diagnostic only",
+    "p=58kw_size=01": "INVALID at first native proposal because observations[::2] was non-contiguous; later post-open diagnostic only",
+    "valid_untouched_official_test_count": 0
+  },
+  "claim_limits": {
+    "official_confirmatory_test": false,
+    "posthoc_external_public_proxy_holdout": true,
+    "unseen_power_generalization": false,
+    "unseen_size_generalization": false,
+    "geometry_ood": false,
+    "real_bost": false,
+    "physical_same_accuracy": false,
+    "global_uniqueness": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

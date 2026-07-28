@@ -1,0 +1,130 @@
+{
+  "schema_version": "oerf-poolfire-c-observable-reduced-warm-23.1",
+  "status": "FROZEN_RECOVERY_AFTER_INVALID_FIRST_EXECUTION_BEFORE_REMAINING_TEST",
+  "scientific_question": "Can a fit-only observation-space reduced residual solve replace the parent dual CNN on every odd frame, preserve the frozen field/gradient/observation compatibility envelope after strict CGLS K1, and reduce complete A/A-transpose calls plus end-to-end wall time without material peak-RSS growth?",
+  "scope": {
+    "fit_trajectory_ids": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "post_open_development_trajectory": "p=45kw_size=03",
+    "legacy_validation_excluded_from_confirmatory_claim": "p=22kw_size=01",
+    "legacy_validation_reason": "opened in earlier classical development",
+    "first_confirmatory_test": "p=22kw_size=05",
+    "first_confirmatory_test_status": "INVALID_EXECUTION_BEFORE_PAIR_GENERATION_DUE_TEST_BUNDLE_READER_REJECTION",
+    "first_confirmatory_test_scientific_result_available": false,
+    "first_confirmatory_test_may_not_be_reused_as_confirmation": true,
+    "remaining_confirmatory_test": "p=58kw_size=01",
+    "unit_of_generalization": "complete trajectory",
+    "frames_are_not_independent_replicates": true,
+    "real_BOST": false,
+    "rho_units_closed": false,
+    "camera_calibration_closed": false
+  },
+  "frozen_algorithm": {
+    "name": "Observable Reduced Residual Warm K1",
+    "keyframes": "even frames 0,2,...,100 use the frozen parent dual CNN",
+    "skipped_frames": "odd frames 1,3,...,99 use no parent CNN evaluation",
+    "fit_innovation": "parent dual proposal at odd frame minus preceding even frame",
+    "fit_weighting": "equal total centered innovation energy per complete fit trajectory",
+    "dual_effective_rank": 249,
+    "deployment_rank": 199,
+    "ridge_relative_lambda": 0.01,
+    "mean_source": "fit trajectories only",
+    "basis_source": "fit trajectories only",
+    "online_input": "current observation, preceding even-frame observation-space proposal and its exact A-transpose lift/projection, fixed fit-only package, frozen geometry",
+    "online_residual": "r = y_odd - A h_even - A mean_lift",
+    "coefficient_rule": "c = argmin ||M c - r||_2^2 + lambda ||c||_2^2, with M=A B and the closed-form map stored offline",
+    "odd_lift": "h_odd = h_even + mean_lift + B c",
+    "refinement": "unchanged strict CGLS K1 with observable-only alpha in [0,2]",
+    "future_observations_forbidden": true,
+    "truth_or_reference_online_forbidden": true,
+    "test_statistics_for_fit_or_selection_forbidden": true
+  },
+  "fixed_cost_accounting": {
+    "primary_per_101_frame_trajectory": {
+      "A": 202,
+      "A_transpose": 152,
+      "parent_CNN_frames": 51
+    },
+    "full_parent_control_per_101_frame_trajectory": {
+      "A": 202,
+      "A_transpose": 202,
+      "parent_CNN_frames": 101
+    },
+    "offline_package_setup": {
+      "A": 200,
+      "A_transpose": 200,
+      "excluded_from_single_trajectory_online_ledger_but_reported": true
+    },
+    "complete_A_reduction_fraction": 0.0,
+    "complete_A_transpose_reduction_fraction": 0.24752475247524752,
+    "total_A_plus_A_transpose_reduction_fraction": 0.12376237623762376
+  },
+  "frozen_accuracy_gate": {
+    "reference": "zero-initialized CGLS K4",
+    "metrics": [
+      "gauge-fixed field relative L2",
+      "gradient relative L2",
+      "observation relative L2"
+    ],
+    "evaluation_masks": [
+      "all 101 frames",
+      "50 skipped odd frames"
+    ],
+    "joint_matched_fraction_minimum": 0.9,
+    "joint_harm_fraction_maximum": 0.05,
+    "per_metric_harm_fraction_maximum": 0.05,
+    "severe_harm_count_maximum": 0,
+    "field_tolerance": "max(0.01, 0.05 * reference error)",
+    "gradient_tolerance": "max(0.015, 0.05 * reference error)",
+    "observation_tolerance": "max(0.005, 0.10 * reference error)"
+  },
+  "frozen_resource_gate": {
+    "fresh_process_repetitions_per_arm": 101,
+    "order": "alternating primary-parent and parent-primary",
+    "numeric_threads_per_library": 1,
+    "external_wall_statistic": "ratio of arm-wise medians",
+    "external_wall_ratio_primary_over_parent_maximum": 0.9,
+    "peak_RSS_statistic": "ratio of arm-wise higher p90",
+    "peak_RSS_scope": "parent os.wait4 child ru_maxrss; worker receives only observations.npy and spawns no subprocesses",
+    "peak_RSS_ratio_primary_over_parent_maximum": 1.05,
+    "python_startup_model_load_package_load_included": true,
+    "deterministic_field_hash_required_within_each_arm": true
+  },
+  "development_evidence_before_freeze": {
+    "five_trajectory_LOTO_common_gate_passed": true,
+    "burned_p45_s03_all_and_skipped_joint_match": 1.0,
+    "burned_p45_s03_harm_fraction": 0.0,
+    "burned_p45_s03_first_17_run_wall_gate_passed": false,
+    "burned_p45_s03_first_17_run_wall_reduction_fraction": 0.090593,
+    "burned_p45_s03_post_hoc_101_run_wall_reduction_fraction": 0.1287122057928688,
+    "burned_p45_s03_post_hoc_101_run_self_RSS_p90_ratio": 1.0258950049525966,
+    "post_hoc_101_run_is_technical_replication_not_confirmatory_pass": true,
+    "physical_tangent_uniqueness_survived_observable_solve": false,
+    "interpretation": "the defensible mechanism is the observation-only reduced residual solve; physical tangent enrichment is not uniquely necessary"
+  },
+  "confirmatory_decision": {
+    "invalid_first_test": "p=22kw_size=05 was opened by the v23.0 release but the pair builder stopped before frame access because the legacy verified bundle class prohibited test split; it is excluded from all confirmatory claims",
+    "pass_remaining_test": "the frozen remaining p=58kw_size=01 trajectory passes both accuracy masks, exact online ledger, deterministic output, wall gate and RSS gate, and an independent validator reproduces package action, predictions, metrics, ledgers and benchmark statistics",
+    "fail": "any accuracy, ledger, determinism, wall or RSS gate fails",
+    "invalid": "the source, package, checkpoint, geometry, release, raw test identity or report template differs from the frozen bindings",
+    "no_retry_after_remaining_test_result": true,
+    "algorithm_model_metric_or_threshold_change_after_invalid_first_execution": false,
+    "only_execution_compatibility_fix_allowed_before_remaining_test": true
+  },
+  "claim_limits": {
+    "post_open_development_algorithm_candidate": true,
+    "algorithm_breakthrough": false,
+    "first_confirmatory_test_invalid": true,
+    "remaining_confirmatory_test_passed": false,
+    "real_BOST": false,
+    "unseen_power_OOD": false,
+    "unseen_size_OOD": false,
+    "global_uniqueness_proven": false,
+    "paper_success": false
+  }
+}
