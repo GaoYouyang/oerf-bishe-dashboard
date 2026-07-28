@@ -8999,3 +8999,73 @@ paper_success=false
 
 完整结果见
 `docs/blastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md`。
+
+## 273. v41：拆开四个 Krylov 增量逐帧调权，仍然 0 / 4
+
+v40.2 已经证明“原 correction 只乘一个更大的数”修不好。于是这轮没有马上训练
+大网络，而是做更便宜、也更能改变判断的机制实验：把 straight-ray CGLS 的四步
+correction 拆成四个 increments，让每个 BLASTNet 开封快照单独用 observation
+residual 选择四个权重。
+
+每帧跑 3 个固定起点的有界 L-BFGS-B，权重范围是 `[-2, 3]`。优化器不读取
+truth；truth 只在权重选完后评分。结果：
+
+```text
+snapshot  field/K4  gradient/K4  observation/K4
+1         0.976484  1.016197     1.019140
+2         0.977307  1.031789     1.019967
+3         0.974200  1.027001     1.004856
+4         0.977260  1.014603     1.056837
+```
+
+四帧 field 都进一步改善，但四帧 gradient 都过不了冻结的 1.01 线，三帧
+observation 也过不了，最后仍是 `0 / 4`。跨帧中位数也显示同一冲突：
+
+```text
+                         field       gradient    observation
+four-direction         0.955901     0.989316     0.310794
+Direct-K4              0.979420     0.971054     0.301608
+```
+
+独立程序重新构造四步 basis、重跑 12 个优化起点、重建候选场并重算完整门：
+
+```text
+PASS_INDEPENDENT_RECOMPUTATION_KRYLOV_INCREMENT_SPAN_V41
+maximum metric difference       = 3.58e-15
+maximum optimizer weight diff   = 0
+maximum candidate field diff    = 0
+```
+
+所有最终被选中的最佳起点都报告收敛，但 S3 有一个未被选中的起点失败，因此不能
+把它升级为“四方向空间已被数学证明不够”。最精确的说法是：
+
+```text
+NO_PASSING_CANDIDATE_FOUND_UNDER_OBSERVATION_OBJECTIVE
+```
+
+还有一个重要成本纠正：`4A + 4A^T` 只表示构造 straight basis 的成本。逐帧
+L-BFGS-B 总共用了 `1425` 次 curved forward，所以 v41 是后验机理诊断，不是
+可部署算法，更不是加速结果。
+
+近邻文献审计又排除了“四个可学习 Krylov 权重就是创新”的表述。RAM 已有
+Krylov Subspace Module，CASSI 已有复杂光学 forward 下的 CG unrolling，
+FCG-NO、DCDM 和 NeurKItt 也都覆盖了神经方法辅助 Krylov 求解。我们仍可检验的
+窄差异只能是 BOST 的 straight-to-curved cross-fidelity correction、固定昂贵
+调用预算和 observable fail-closed 回退。
+
+**讲人话：**四个旋钮比一个旋钮灵活，但这次仍没把三项指标一起调回合格区。
+下一步先做 truth-aware constrained oracle：如果 oracle 在同一四方向空间里都找
+不到合格点，就关闭这条 basis；只有 oracle 能通过，才值得训练 observation-only
+系数网络。
+
+```text
+post_open=true
+new_external_generalization_evidence=false
+same_cost_or_speed_claim_authorized=false
+real_BOST=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整结果见
+`docs/blastnet_h2air_phi05_krylov_increment_span_v41_result_2026-07-29.md`。

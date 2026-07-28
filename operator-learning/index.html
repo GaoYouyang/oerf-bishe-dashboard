@@ -331,6 +331,7 @@
       <a href="#representation-gate">表示机制</a>
       <a href="#transport-proxy-gate">输运与校准门</a>
       <a href="#g0-evidence">真实 CFD 代理</a>
+      <a href="blastnet-external-v40.html#krylov-v41">v41 四方向诊断</a>
       <a href="blastnet-external-v40.html">v40.2 BLASTNet 外部门</a>
       <a href="sarc-k3-m4-v37.html">v39.1 SARC-K3-M4</a>
       <a href="direct-field-k1-v29.html">v29 Direct-Field K1</a>
@@ -345,23 +346,27 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-29 · v40.2</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-29 · v41</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v39.1 的 SARC-K3-M4 在已打开 PoolFire 上同时保住精度与资源优势；v40.2 将冻结模型零适配迁移到 BLASTNet 预混 H2-air DNS，四帧均优于 Zero、field 也均优于 Direct-K4，但 gradient / observation 没有同时守住 1.01 倍兼容门，正式结果为 <code>0 / 4 FAIL</code>。独立程序重走 16 次 curved forward 得到同一判决；开封后幅度扫描证明问题不只是 correction 太小，而是原修正方向不足。因此当前 <code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v39.1 的 SARC-K3-M4 在已打开 PoolFire 上同时保住精度与资源优势；v40.2 在 BLASTNet 预混 H2-air DNS 的零适配外部门为 <code>0 / 4 FAIL</code>。v41 又把 straight-ray CGLS correction 拆成四个 increments，逐帧用 observation residual 调权；field 继续改善，但 gradient 四帧越线、observation 三帧越线，仍是 <code>0 / 4</code>。独立程序重建 basis、重跑优化并得到同一结果。正式搜索用了 1425 次 curved forward，所以它只是开封后机制诊断，不是加速算法。当前 <code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="blastnet-external-v40.html">打开 v40.2 外部负结果</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md">读完整执行与判决</a>
-      <a class="button" href="../docs/blastnet_h2air_phi05_sarc_external_v40_public_summary.json">打开 v40.2 脱敏结果</a>
+      <a class="button primary" href="blastnet-external-v40.html#krylov-v41">打开 v41 四方向诊断</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_krylov_increment_span_v41_result_2026-07-29.md">读 v41 完整执行</a>
+      <a class="button" href="../docs/blastnet_h2air_phi05_krylov_increment_span_v41_public_summary.json">打开 v41 脱敏结果</a>
+      <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert critical" style="margin-top:12px;">
-      <strong>最新科学增量：第一次跨出 PoolFire，正式外部精度门 0 / 4</strong>
-      <span>BLASTNet H2-air 的四个目标时刻都降低了 Zero 的三项误差，但相对 Direct-K4 的 observation ratio 为 <code>1.0393 / 1.0377 / 1.0215 / 1.0654</code>，没有一帧同时过三门。后验最优幅度为 1.2-1.4 倍，调幅后仍 0 / 4，说明下一版必须改变 correction 方向而非只放大。<a href="blastnet-external-v40.html">打开外部检验专页</a>。</span>
+      <strong>最新科学增量：四个 Krylov 方向分别调权，仍没有找到通过候选</strong>
+      <span>v41 的四帧 field / Direct-K4 为 <code>0.9742-0.9773</code>，但 gradient / Direct-K4 为 <code>1.0146-1.0318</code>，observation 最差达到 <code>1.0568</code>，最后仍 0 / 4。下一步先做 truth-aware constrained oracle，判定是 basis 不够还是 observation selector 不够；在此之前不训练更大网络。<a href="blastnet-external-v40.html#krylov-v41">打开 v41 证据</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="blastnet-external-v40.html">v40.2 BLASTNet 外部门</a>
+      <a class="button primary" href="blastnet-external-v40.html#krylov-v41">v41 四方向机制诊断</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_krylov_increment_span_v41_result_2026-07-29.md">v41 完整判决</a>
+      <a class="button" href="../docs/blastnet_h2air_phi05_krylov_increment_span_v41_public_summary.json">v41 脱敏结果</a>
+      <a class="button" href="blastnet-external-v40.html">v40.2 BLASTNet 外部门</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md">v40.2 完整负结果</a>
       <a class="button" href="../docs/blastnet_h2air_phi05_sarc_external_v40_public_summary.json">v40.2 脱敏结果</a>
       <a class="button primary" href="sarc-k3-m4-v37.html">v39.1 SARC-K3-M4</a>
@@ -501,8 +506,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert critical">
-      <strong>最新开发判决：v40.2 外部精度 FAIL，下一路线转向多方向、尺度感知修正</strong>
-      <span>v39.1 仍是 PoolFire 内部关键正结果；v40.2 则证明它不能零适配平移到 BLASTNet H2-air。外部门失败后资源实验按协议停止，后验诊断又排除了“只调一个全局 correction 增益”这一修复方式。当前没有外部同精度、真实 BOST 或算法突破。</span>
+      <strong>最新开发判决：v41 四方向 observation 调权仍 0 / 4，暂不授权训练系数网络</strong>
+      <span>v39.1 仍是 PoolFire 内部关键正结果；v40.2 证明它不能零适配平移到 BLASTNet H2-air；v41 又证明逐帧 observation 最优的四个 Krylov 权重仍未守住 gradient / observation 门。下一有效门是 constrained oracle existence，不是扩大网络。当前没有外部同精度、真实 BOST 或算法突破。</span>
     </div>
   </header>
 
@@ -633,6 +638,7 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v41 仍 0 / 4</span><span class="chip blue">basis / optimizer 独立复算</span></div><h3 style="margin-top:10px;">Observation-weighted four-Krylov span</h3><p>把四步 straight CGLS correction 拆开逐帧调权，field / Direct-K4 降到 0.9742-0.9773，但 gradient 四帧越线、observation 三帧越线。正式搜索用了 1425 次 curved forward，因此只能说明“没有找到通过点”，不是部署或速度结果；下一门是 constrained oracle existence。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v40.2 外部 FAIL</span><span class="chip blue">独立复算 PASS</span></div><h3 style="margin-top:10px;">BLASTNet H2-air zero-adaptation gate</h3><p>冻结 SARC-K3-M4 第一次进入不同数据族。四帧三项均优于 Zero，field 均优于 Direct-K4，但 observation ratio 为 1.0215-1.0654，最终 0/4 通过 matched-accuracy。后验 alpha 扫描显示最优幅度 1.2-1.4，仍无法同时修复 gradient 与 observation；单标量增益路线关闭。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">最新 · v39.1 关键正结果</span><span class="chip blue">迁移/调用/wall/RSS PASS</span></div><h3 style="margin-top:10px;">SARC-K3-M4 low-fidelity defect correction</h3><p>Learned Direct 初值接曲线 GN-CGLS K3，再用恰好四步 straight CGLS 修正曲线 residual，并由一个曲线 forward fail-closed 验证。v38.1 在两条额外 post-open 轨迹保住三项精度；v39.1 的 72 个 fresh child 给出 wall / Zero 中位 0.744260、wall / Direct-K4 中位 0.825418，原始系统回执和 summary 均独立复核。没有 untouched PoolFire 或真实 BOST。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">最新 · v29 阶段性关键进展</span><span class="chip blue">精度/调用 PASS · 资源 FAIL</span></div><h3 style="margin-top:10px;">Direct-Field Temporal CNN + CGLS K1</h3><p>五次 LOTO 重训的三项 p90 全部优于 Zero-K3；p14 开放验证 100 帧三项 harm 为 0，且由另一套程序独立复算。truth-free 部署将完整调用从 600 降到 401，但 CPU/MPS wall 与 RSS 均失败，所以当前是可复现算法信号，不是部署加速或正式突破。</p></article>
@@ -650,6 +656,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="v41-krylov-span" class="alert critical" style="margin-top:13px;">
+        <strong>v41：四个 Krylov increments 的 observation 最优调权仍 0 / 4</strong>
+        <span>四帧最终选中的最佳起点均报告收敛，独立复算的权重与候选场差为 0；但 gradient / Direct-K4 为 <code>1.0146-1.0318</code>，聚合 gradient 与 observation 也都差于 Direct-K4。一个未选起点未收敛，所以当前只说“未找到通过候选”，不说数学不可能。<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_krylov_increment_span_v41.png" aria-label="打开 v41 四方向 Krylov 诊断图">
+          <img src="../assets/blastnet_h2air_phi05_krylov_increment_span_v41.png" alt="BLASTNet 开封数据上四个 Krylov 增量调权后的逐帧精度比、权重和聚合误差" />
+        </a>
+        <figcaption>v41 是开封后机制实验。4A+4A<sup>T</sup> 只是 basis 成本；完整搜索用了 1425 次 curved forward，不能写成加速。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="blastnet-external-v40.html#krylov-v41">打开 v41 证据</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_krylov_increment_span_v41_result_2026-07-29.md">读 v41 完整诊断</a>
+        <a class="button" href="../docs/blastnet_h2air_phi05_krylov_increment_span_v41_public_summary.json">打开 v41 机器摘要</a>
       </div>
       <div id="v40-blastnet-external" class="alert critical" style="margin-top:13px;">
         <strong>v40.2：BLASTNet H2-air 外部精度门 0 / 4，独立复算确认</strong>
