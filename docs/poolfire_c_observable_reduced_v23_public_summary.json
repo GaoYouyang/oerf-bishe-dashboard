@@ -1,0 +1,93 @@
+{
+  "schema_version": "oerf-poolfire-c-observable-reduced-public-summary-23.1",
+  "date": "2026-07-28",
+  "method": {
+    "name": "Observable Reduced Residual Warm K1",
+    "fit_trajectory_count": 5,
+    "deployment_rank": 199,
+    "ridge_relative_lambda": 0.01,
+    "online_mechanism": "51 even-frame compact dual proposals plus observation-residual reduced reconstruction for 50 odd frames, followed by unchanged strict CGLS K1",
+    "offline_setup_ledger": {
+      "A": 200,
+      "A_transpose": 200
+    },
+    "primary_online_ledger": {
+      "A": 202,
+      "A_transpose": 152
+    },
+    "full_parent_online_ledger": {
+      "A": 202,
+      "A_transpose": 202
+    },
+    "zero_cgls_k4_online_ledger": {
+      "A": 404,
+      "A_transpose": 404
+    },
+    "operator_call_reduction_vs_full_parent_fraction": 0.12376237623762376,
+    "operator_call_reduction_vs_zero_k4_fraction": 0.5618811881188119
+  },
+  "p58_postopen_supporting_diagnostic": {
+    "trajectory": "p=58kw_size=01",
+    "frame_count": 101,
+    "skipped_frame_count": 50,
+    "scientific_role": "invalid confirmatory execution, post-open supporting diagnostic only",
+    "compatibility_passed_all_frames": true,
+    "compatibility_passed_skipped_frames": true,
+    "joint_matched_fraction_all_frames": 1.0,
+    "joint_matched_fraction_skipped_frames": 1.0,
+    "joint_harm_fraction_all_frames": 0.0,
+    "joint_harm_fraction_skipped_frames": 0.0,
+    "severe_harm_count": 0,
+    "primary_p90_higher": {
+      "field_relative_l2": 0.7088152771900564,
+      "gradient_relative_l2": 1.415498050646831,
+      "observation_relative_l2": 0.3656097645183936
+    },
+    "zero_k4_p90_higher": {
+      "field_relative_l2": 0.7055578219304508,
+      "gradient_relative_l2": 1.4233063114881943,
+      "observation_relative_l2": 0.3660286646455078
+    },
+    "fresh_process_repetitions_per_arm": 101,
+    "primary_external_wall_median_seconds": 0.22638799995183945,
+    "full_parent_external_wall_median_seconds": 0.2537933748681098,
+    "external_wall_reduction_fraction": 0.10798301937752419,
+    "primary_child_peak_rss_p90_bytes": 120094720,
+    "full_parent_child_peak_rss_p90_bytes": 117850112,
+    "peak_rss_p90_ratio_primary_over_parent": 1.0190462950090367,
+    "independent_candidate_max_absolute_difference": 1.6306400674181987e-15,
+    "independent_metric_max_absolute_difference": 4.440892098500626e-16,
+    "independent_benchmark_statistic_max_absolute_difference": 0.0
+  },
+  "p22_postopen_resource_replication": {
+    "trajectory": "p=22kw_size=05",
+    "scientific_role": "invalid first confirmatory execution, post-open resource diagnostic only",
+    "fresh_process_repetitions_per_arm": 101,
+    "primary_external_wall_median_seconds": 0.19817270804196596,
+    "full_parent_external_wall_median_seconds": 0.23386049992404878,
+    "external_wall_reduction_fraction": 0.15260290597887716,
+    "peak_rss_p90_ratio_primary_over_parent": 1.0248833592534992
+  },
+  "confirmatory_failures": [
+    {
+      "trajectory": "p=22kw_size=05",
+      "classification": "INVALID",
+      "reason": "legacy test-bundle reader rejected the test split before the original pair-generation path completed"
+    },
+    {
+      "trajectory": "p=58kw_size=01",
+      "classification": "INVALID",
+      "reason": "formal runner passed a non-contiguous observations[::2] view to a C-contiguous-only native wrapper and stopped before writing any prediction"
+    }
+  ],
+  "scientific_judgement": {
+    "mechanism_signal": "promising on two post-open public CFD proxy diagnostics",
+    "valid_untouched_confirmatory_trajectory_count": 0,
+    "confirmatory_valid": false,
+    "real_bost": false,
+    "physical_same_accuracy_proven": false,
+    "global_generalization_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

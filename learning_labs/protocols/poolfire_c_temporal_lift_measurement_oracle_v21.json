@@ -1,0 +1,176 @@
+{
+  "schema_version": "oerf-poolfire-c-temporal-lift-measurement-oracle-21.0",
+  "frozen_at_utc": "2026-07-28T02:28:46Z",
+  "parent_decision": "FAIL_PREREGISTERED_LIFT_SUBSPACE_RANKS_V20",
+  "scientific_question": "Keeping the v20 trajectory-held-out lift span, keyframes, parent CNN, solver, rank grid, and compatibility gates fixed, can oracle coefficients chosen by projected-lift A-space error rather than lift-L2 error make one common numeric rank pass all five trajectories?",
+  "scope": {
+    "trajectory_ids": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "trajectory_role": "post-open fit-only leave-one-trajectory-out representation transfer diagnostic under one parent CNN trained on all five trajectories",
+    "frame_count_per_trajectory": 101,
+    "field_shape": [
+      16,
+      16,
+      32
+    ],
+    "observation_size": 2072,
+    "parent_CNN_training_excluded_held_out_trajectory": false,
+    "end_to_end_cross_trajectory_generalization": false,
+    "post_open_development": true,
+    "fresh_trajectory_used": false,
+    "stopping_validation_used": false,
+    "untouched_test_used": false,
+    "real_BOST": false
+  },
+  "time_contract": {
+    "times_file_required": true,
+    "dtype": "float64",
+    "shape": [
+      101
+    ],
+    "strictly_increasing": true,
+    "expected_start_seconds": 30.0,
+    "expected_stop_seconds": 32.0,
+    "expected_step_seconds": 0.02,
+    "cross_trajectory_times_bitwise_equal": true,
+    "innovation_definition": "one-step even-to-odd lift difference; all trajectories share the same physical time step"
+  },
+  "fixed_schedule": {
+    "keyframes": "frames 0,2,...,100",
+    "skipped_frames": "frames 1,3,...,99",
+    "counterfactual_parent_CNN_count": 51,
+    "actual_oracle_parent_CNN_count": 101,
+    "native_skip_executed": false
+  },
+  "innovation_contract": {
+    "exact_lift": "h_t = A^T z_t from the frozen parent CNN proposal",
+    "fit_rows_per_trajectory": 50,
+    "fit_rows_per_fold": 200,
+    "held_out_rows_per_fold": 50,
+    "held_out_used_for_basis_mean_weight_or_rank": false,
+    "held_out_true_lift_innovation_use": "oracle A-space coefficient target only; never an online input",
+    "coefficient_objective": "for each skipped frame, minimize ||A(mean + U_r c - exact_lift_innovation)||_2 with a minimum-norm least-squares solution",
+    "formal_solver": "direct float64 SVD least squares on the projected basis with rcond=eps_float64*max(2072,192)",
+    "independent_solver": "QR of the projected basis followed by SVD of the triangular factor at the same frozen relative cutoff",
+    "coefficient_solution_is_deployable": false,
+    "primary_family": {
+      "id": "trajectory_balanced_centered_lift",
+      "mean": "equal mean of the four fit-trajectory innovation means",
+      "row_weight": "sqrt(50) divided by each fit trajectory's centered Frobenius norm",
+      "held_out_scaling": "none"
+    },
+    "sensitivity_family": {
+      "id": "raw_uncentered_lift",
+      "mean": "zero",
+      "row_weight": "one",
+      "held_out_scaling": "none",
+      "cannot_rescue_primary_for_training_authorization": true
+    },
+    "rank_grid": [
+      0,
+      16,
+      32,
+      64,
+      96,
+      128,
+      160,
+      192,
+      "effective_full"
+    ],
+    "global_rank_rule": "one family and one common numeric rank from 0,16,32,64,96,128,160,192 must pass all five held-out trajectories; per-trajectory best-rank composition is forbidden; effective_full is span sensitivity only and cannot produce a PASS because its resolved dimension may differ by fold",
+    "numerical_rank_tolerance": "eps_float64 * max(200,8192) * largest_singular_value",
+    "rank_spectral_gap_min_fraction_of_largest": 1e-10,
+    "rank_boundary_rule": "a numeric rank greater than zero and below effective rank is eligible only when (s_r-s_{r+1})/s_1 is at least 1e-10 in every held-out fold; rank zero is eligible and effective_full remains sensitivity-only",
+    "rank_zero_meaning": {
+      "raw_uncentered_lift": "hold previous exact keyframe lift",
+      "trajectory_balanced_centered_lift": "add the fit-only equal-trajectory mean innovation"
+    },
+    "range_proof": "every nonzero basis vector is formed from A^T innovation rows; their mean, span, and previous exact lift remain in Range(A^T)"
+  },
+  "mandatory_sanity_controls": [
+    "the v21 private execution release binds the independently validated v20 execution release, report, independent validation, ready receipt, candidate array, Stage 1 metadata, and Stage 1 seal by SHA-256",
+    "v20 lift-L2 decision must independently validate as FAIL_PREREGISTERED_LIFT_SUBSPACE_RANKS_V20",
+    "the primary lift-L2 coefficient control is recomputed in the same sealed run at every frozen rank and must match the sealed v20 candidate array within max-absolute 1e-10",
+    "if any common numeric rank of the reproduced lift-L2 controls passes all trajectories, v21 is INVALID rather than evidence of coefficient-objective mismatch",
+    "rank-zero A-space and lift-L2 candidates are bitwise identical",
+    "for every skipped frame and rank, the A-space oracle projected residual must not exceed the paired lift-L2 control residual by more than 1e-10",
+    "normal-equation relative stationarity must be computed per skipped frame, reported as p50/p90/worst, and have worst at most 1e-10 for every nonzero A-space solve",
+    "Full-CNN Dual-K1 must pass all-frame and skipped-only gates on all five trajectories",
+    "held-out self full span must reconstruct its 50 lift innovations within relative-L2 1e-10",
+    "all-five pooled full span must reconstruct each included trajectory within relative-L2 1e-10",
+    "rank-zero raw family equals exact hold",
+    "rank-zero centered family equals fit-only mean innovation",
+    "v18 diagonal-delta and causal linear extrapolation remain reported controls",
+    "Zero-CGLS K4 remains the unchanged reconstruction reference"
+  ],
+  "execution_order": {
+    "stage_1": "validate the frozen v20 parent artifact chain; load observations and times but do not read gauge-truth file bytes; generate all 101 parent proposals and exact lifts; fit the unchanged v20 fold bases; project each basis and held-out exact innovation through A; solve every frozen-rank A-space oracle; require paired lift-L2 candidates to reproduce the sealed v20 candidates; atomically seal candidate skipped-frame lifts",
+    "stage_1_independent_preflight": "before any gauge-truth file-byte read, a separate process must independently validate the frozen v20 parent chain, reproduce the fit basis through QR plus small SVD, reproduce A-space coefficients through QR plus triangular-factor SVD, compare paired lift-L2 controls to the sealed v20 candidates, then compare candidate lifts, diagnostics, rank eligibility, ledgers, and sealed bytes",
+    "stage_2": "only after the Stage 1 independent receipt exists, validate gauge-truth release hashes, open gauge truth, run the fixed solver, and score all candidates",
+    "independent_validation": "recompute Stage 1 without importing the formal v21 scientific helper, then independently recompute the unchanged K1 solver and all field, gradient, and observation metrics; compare predictions rather than signed basis vectors"
+  },
+  "independent_numeric_tolerances": {
+    "candidate_lift_max_absolute_difference": 1e-08,
+    "reported_metric_max_absolute_difference": 1e-08,
+    "input_bytes_must_be_unchanged": true
+  },
+  "solver_and_cost": {
+    "exact_keyframe": "parent proposal z -> exact h=A^T z -> observable alpha -> strict CGLS K1",
+    "skipped_frame_counterfactual": "h_hat=h_previous+mean+U c -> observable alpha -> strict CGLS K1",
+    "candidate_A_calls_per_trajectory": 202,
+    "candidate_A_transpose_calls_per_trajectory": 152,
+    "full_CNN_Dual_K1_A_calls_per_trajectory": 202,
+    "full_CNN_Dual_K1_A_transpose_calls_per_trajectory": 202,
+    "Zero_K4_A_calls_per_trajectory": 404,
+    "Zero_K4_A_transpose_calls_per_trajectory": 404,
+    "new_v21_operator_claim_if_deployable": "no additional A reduction beyond v16; 50 further A^T calls are counterfactually removed",
+    "oracle_diagnostic_actual_cost": "all 101 parent proposals and exact lifts are generated and the coefficient oracle additionally uses 2500 A calls over five folds; these calls are excluded from deployment accounting and make v21 non-resource-eligible",
+    "measurement_oracle_A_calls_all_folds": 2500,
+    "measurement_oracle_A_transpose_calls_all_folds": 0,
+    "evaluation_projection_calls": "reported separately and excluded from deployment ledger"
+  },
+  "accuracy_gates": {
+    "source": "unchanged v16-v20 compatibility envelope",
+    "joint_matched_fraction_minimum": 0.9,
+    "joint_harm_fraction_maximum": 0.05,
+    "per_metric_harm_fraction_maximum": 0.05,
+    "severe_harm_count_maximum": 0,
+    "all_frame_gate_required": true,
+    "skipped_only_gate_required": true,
+    "skipped_only_frame_count": 50,
+    "aggregation": "every trajectory independently; pooled-frame rescue forbidden"
+  },
+  "decision_order": [
+    "If time, parent Full-CNN Dual-K1, self-span, pooled-span, source identity, frozen v20 parent chain, paired v20 lift-L2 candidate identity/failure reproduction, or independent recomputation sanity fails, return INVALID_PARENT_OR_SANITY_V21.",
+    "If one primary-family common numeric rank passes both gates on every trajectory, return PASS_PRIMARY_A_SPACE_HEADROOM_NOT_DEPLOYABLE_V21. Together with v20 FAIL, this is evidence that the coefficient objective was mismatched, not a deployable algorithm result.",
+    "If no primary numeric rank passes but one sensitivity-family common numeric rank passes all trajectories, return PASS_SENSITIVITY_A_SPACE_REQUIRES_NEW_FREEZE_V21; it cannot authorize predictor training.",
+    "Otherwise return FAIL_PREREGISTERED_A_SPACE_LIFT_RANKS_V21. Together with v20 FAIL, this says the two frozen global linear coefficient objectives do not provide common-rank headroom; it does not close conditioned, local, nonlinear, history-aware, or direct final-metric models."
+  ],
+  "compactness_interpretation": {
+    "rank_at_most_96": "compact representation headroom",
+    "rank_128_to_192": "high-rank headroom with material basis memory and multiplication cost",
+    "effective_full_only": "span headroom without a compact representation claim",
+    "basis_bytes_and_multiply_adds_must_be_reported": true
+  },
+  "claim_limits": {
+    "truth_capability_isolation_proven": false,
+    "measurement_oracle_is_non_deployable": true,
+    "measurement_oracle_cost_excluded_from_deployment": true,
+    "deployable_coefficient_predictor": false,
+    "native_CNN_execution_reduction": false,
+    "measured_A_transpose_reduction": false,
+    "wall_time_speedup": false,
+    "CPU_time_benefit": false,
+    "whole_pipeline_RSS_benefit": false,
+    "end_to_end_cross_trajectory_generalization": false,
+    "real_BOST": false,
+    "physical_same_accuracy": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

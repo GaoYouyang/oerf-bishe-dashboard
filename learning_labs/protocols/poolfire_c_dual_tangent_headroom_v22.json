@@ -1,0 +1,67 @@
+{
+  "schema_version": "oerf-poolfire-c-dual-tangent-headroom-22.0",
+  "status": "FROZEN_AFTER_SCRATCH_DISCOVERY_BEFORE_FORMAL_CONFIRMATION",
+  "scientific_question": "Does adding physically structured detector translation and dilation tangent directions to the frozen v20 effective-full lift span restore the five-trajectory development compatibility envelope, while same-capacity shuffled and single-generator controls fail?",
+  "scope": {
+    "classification": "post-open LOTO oracle representation confirmation",
+    "fit_trajectory_ids": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "held_out_rule": "for each fold, dual mean, dual PCA basis, and all tangent rows use only the other four trajectories",
+    "parent_model_boundary": "the frozen parent CNN was previously fit on all five trajectories; this experiment is not end-to-end cross-trajectory generalization",
+    "truth_boundary": "held-out exact lifts choose oracle row-span coefficients and are unavailable at deployment",
+    "fresh_trajectory_opened": false,
+    "stopping_validation_opened": false,
+    "test_truth_opened": false
+  },
+  "frozen_representation": {
+    "keyframes": "even frames 0,2,...,100; skipped frames 1,3,...,99",
+    "base": "trajectory-balanced centered PCA of proposal dual innovations from four fit trajectories; all 199 effective directions are lifted offline through exact A-transpose",
+    "tangent_source_rank": 16,
+    "views": [
+      [2, 14, 30],
+      [2, 14, 30],
+      [2, 14, 14]
+    ],
+    "translation": "fixed centered horizontal and vertical detector derivatives, computed independently inside each native view",
+    "dilation": "x times horizontal derivative plus y times vertical derivative with coordinates linearly spaced from -1 to 1 in each native view",
+    "offline_lift": "every tangent dual row is transformed through exact A-transpose and normalised before evaluation",
+    "coefficient_objective": "held-out lift-L2 row-span oracle, used only to determine representation headroom",
+    "online_claim": "none; no observable coefficient predictor exists in v22"
+  },
+  "formal_arms": [
+    "base_effective_full_control_k1",
+    "physical_translation_dilation_rank16_oracle_k1",
+    "shuffled_translation_dilation_rank16_control_k1",
+    "physical_translation_only_rank16_control_k1",
+    "physical_dilation_only_rank16_control_k1"
+  ],
+  "control_contract": {
+    "base_identity": "the base candidate must reproduce the independently validated v20 primary effective-full candidate within max absolute difference 1e-10",
+    "shuffled_capacity": "the shuffled arm uses the same tangent rows, per-row norms, row count, and effective rank as the physical arm, but a fixed per-view spatial permutation destroys detector locality",
+    "single_generator_controls": "translation-only and dilation-only test whether the joint result is a genuine combination rather than one generator alone",
+    "same_solver": "all arms use the same strict CGLS K1 refinement and the same Zero-CGLS K4 reference",
+    "same_metrics": "unchanged field, gradient, observation, joint match, harm, p50, p90, and worst compatibility contract"
+  },
+  "decision": {
+    "pass": "physical joint arm passes all-frame and skipped-frame compatibility on all five trajectories; base, shuffled, translation-only, and dilation-only each fail globally; physical and shuffled row count and effective rank match; base reproduces v20",
+    "inconclusive": "physical passes but a capacity or single-generator control also passes globally",
+    "fail": "physical joint arm fails any held-out trajectory",
+    "invalid": "v20 base identity, source/data binding, or physical/shuffled capacity matching fails"
+  },
+  "claim_limits": {
+    "mechanism_headroom_candidate": true,
+    "deployable_algorithm": false,
+    "algorithm_breakthrough": false,
+    "fresh_generalization": false,
+    "real_BOST": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_benefit": false,
+    "paper_success": false
+  },
+  "next_gate_if_pass": "freeze and train an observation-only coefficient predictor inside the physical tangent span; the oracle result alone cannot open fresh, stopping-validation, or test trajectories"
+}

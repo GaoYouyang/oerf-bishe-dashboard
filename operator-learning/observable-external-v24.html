@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>v24 三轨迹外部代理复现 | OERF C 路线</title>
+  <meta name="description" content="Observable Reduced Warm K1 在三条公开 PoolFire CFD 外部代理轨迹上的精度、完整算子调用、wall、RSS、独立复算与真实 BOST 边界。" />
+  <style>
+    :root {
+      --ink: #17252b;
+      --muted: #607178;
+      --line: #cad6d3;
+      --paper: #ffffff;
+      --bg: #f3f6f4;
+      --teal: #146f66;
+      --teal-soft: #e8f3ef;
+      --blue: #315f93;
+      --blue-soft: #eaf1f8;
+      --coral: #a34f43;
+      --coral-soft: #faece8;
+      --gold: #8a651b;
+      --gold-soft: #f8f1df;
+      --radius: 8px;
+      --shadow: 0 9px 24px rgba(27, 47, 51, .06);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url("../assets/backgrounds/oerf-refractive-field.png") center / cover no-repeat;
+      opacity: .05;
+      pointer-events: none;
+    }
+    a { color: var(--blue); }
+    code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhere; }
+    header, main, footer { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; }
+    header { padding: 20px 0 24px; border-bottom: 1px solid var(--line); }
+    main { padding-bottom: 48px; }
+    footer { padding: 22px 0 36px; color: var(--muted); font-size: 12px; }
+    h1, h2, h3 { line-height: 1.24; letter-spacing: 0; }
+    h1 { margin: 16px 0 8px; font-size: clamp(30px, 5vw, 46px); }
+    h2 { margin: 0; font-size: 27px; }
+    h3 { margin: 0 0 6px; font-size: 18px; }
+    p { margin: 7px 0; }
+    .nav, .actions, .chips {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav a, .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--ink);
+      background: rgba(255,255,255,.96);
+      text-decoration: none;
+      font-weight: 750;
+      text-align: center;
+    }
+    .button.primary { color: #fff; border-color: var(--teal); background: var(--teal); }
+    .eyebrow { color: var(--teal); font-size: 12px; font-weight: 850; text-transform: uppercase; }
+    .lead { max-width: 960px; color: #43555c; font-size: 16px; }
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 18px 0 0;
+    }
+    .metric {
+      min-width: 0;
+      min-height: 108px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.96);
+      box-shadow: var(--shadow);
+    }
+    .metric b { display: block; margin-bottom: 5px; color: var(--teal); font-size: 27px; }
+    .metric.danger b { color: var(--coral); }
+    .metric span { color: var(--muted); font-size: 12px; }
+    section { padding: 28px 0; border-bottom: 1px solid var(--line); }
+    .section-head { margin-bottom: 14px; }
+    .section-head p { max-width: 900px; color: var(--muted); }
+    .alert {
+      padding: 15px 17px;
+      border: 1px solid #d9c187;
+      border-left: 5px solid var(--gold);
+      border-radius: var(--radius);
+      background: rgba(250,246,233,.97);
+    }
+    .alert.success { border-color: #b9d4ce; border-left-color: var(--teal); background: rgba(238,247,244,.97); }
+    .alert.critical { border-color: #ddb8af; border-left-color: var(--coral); background: rgba(252,240,236,.97); }
+    .alert strong { display: block; margin-bottom: 4px; }
+    .alert strong, .alert span { overflow-wrap: anywhere; word-break: break-word; }
+    .figure {
+      margin: 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.97);
+      box-shadow: var(--shadow);
+    }
+    .figure img { display: block; width: 100%; height: auto; }
+    .figure figcaption { padding: 7px 5px 2px; color: var(--muted); font-size: 12px; }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .flow article, .audit-grid article, .source-grid article {
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.96);
+    }
+    .flow b { display: block; color: var(--teal); font-size: 13px; }
+    .flow span { display: block; margin-top: 4px; color: #4f6168; font-size: 12px; }
+    .audit-grid, .source-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .audit-grid article.pass { border-top: 4px solid var(--teal); }
+    .audit-grid article.fail { border-top: 4px solid var(--coral); }
+    .source-grid article { border-top: 3px solid var(--blue); }
+    .source-grid a { font-weight: 760; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); }
+    table { width: 100%; min-width: 760px; border-collapse: collapse; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid #e0e7e5; text-align: left; }
+    th { color: #40535a; background: #eef3f1; font-size: 12px; }
+    td { font-size: 13px; }
+    tr:last-child td { border-bottom: 0; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 25px;
+      padding: 3px 8px;
+      border: 1px solid #bdd6d0;
+      border-radius: 999px;
+      color: var(--teal);
+      background: var(--teal-soft);
+      font-size: 11px;
+      font-weight: 780;
+    }
+    .chip.coral { color: var(--coral); border-color: #e2c0b7; background: var(--coral-soft); }
+    .chip.blue { color: var(--blue); border-color: #c6d6e5; background: var(--blue-soft); }
+    .formula {
+      padding: 13px 15px;
+      border-left: 4px solid var(--blue);
+      background: rgba(235,242,248,.92);
+      overflow-wrap: anywhere;
+    }
+    @media (max-width: 840px) {
+      .status-grid, .audit-grid, .source-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .flow { grid-template-columns: 1fr; }
+      h1 { font-size: 32px; }
+    }
+    @media (max-width: 540px) {
+      header, main, footer { width: min(100% - 22px, 1180px); }
+      .status-grid, .audit-grid, .source-grid { grid-template-columns: 1fr; }
+      .nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .nav a { width: auto; min-width: 0; padding-inline: 8px; }
+      .button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav" aria-label="页面导航">
+      <a href="./">返回 C 路线主页</a>
+      <a href="#verdict">判决</a>
+      <a href="#accuracy">精度</a>
+      <a href="#cost">成本</a>
+      <a href="#audit">复算</a>
+      <a href="#novelty">原创性边界</a>
+      <a href="#next-gate">真实 BOST 门</a>
+    </nav>
+    <div class="eyebrow">v24 · 三条公开 CFD 外部代理 · 2026-07-28</div>
+    <h1>Observable Reduced Warm K1 外部代理复现</h1>
+    <p class="lead">冻结方法在三条此前不在项目数据根目录中的 PoolFire 公开轨迹上逐条通过精度与资源门：在同一 strict CGLS K1 下省 50 次精确伴随，fresh-process wall 稳定降低 11.81%–13.48%。这是重要的代理复现里程碑，不是算法突破或真实 BOST 论文结论。</p>
+    <div class="actions" style="margin-top:14px">
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_observable_external_v24_result_2026-07-28.md">读完整中文判决</a>
+      <a class="button" href="../docs/poolfire_c_observable_external_v24_public_summary.json">打开脱敏 JSON</a>
+      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_observable_external_v24_result.png">单独查看结果图</a>
+    </div>
+    <div class="status-grid" aria-label="核心状态">
+      <div class="metric"><b>3 / 3</b><span>外部 proxy 轨迹逐条通过 accuracy 与 resource gate</span></div>
+      <div class="metric"><b>12.80%</b><span>轨迹等权 fresh-process wall 降幅中位数</span></div>
+      <div class="metric"><b>354</b><span>101 帧在线 A+A^T；父模型 404，Zero-K4 808</span></div>
+      <div class="metric danger"><b>0</b><span>有效 official untouched test；真实 BOST 仍未打开</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section id="verdict">
+      <div class="section-head">
+        <div class="eyebrow">严格判决</div>
+        <h2>代理层复现通过，算法突破仍为否</h2>
+        <p>“通过”限定在公开 PoolFire straight-ray CFD proxy 和冻结的兼容包络内；三条新功率/尺寸组合不能升级成 unseen-power、unseen-size、geometry OOD 或独立实验数据。</p>
+      </div>
+      <div class="alert success">
+        <strong>重要里程碑：PASS_EXTERNAL_PROXY_REPLICATION</strong>
+        <span>三条轨迹都完成 101 帧预测、逐条通过精度与资源门，并被不同数值路径独立复算。没有一条失败被平均值藏掉。</span>
+      </div>
+      <div class="alert critical" style="margin-top:10px">
+        <strong>突破边界：algorithm_breakthrough=false</strong>
+        <span>official confirmatory test 为 0，real_BOST=false，physical_same_accuracy_proven=false，global_generalization_proven=false，paper_success=false。</span>
+      </div>
+      <figure class="figure" style="margin-top:14px">
+        <img src="../assets/poolfire_c_observable_external_v24_result.png" alt="三条公开 CFD 外部代理的 p90 精度比例、wall 与 RSS、完整算子调用和科学判断" />
+        <figcaption>第一排比较同一 Zero-K4 精度包络和 fresh-process 资源；第二排公开完整在线调用账及不能越过的科学边界。</figcaption>
+      </figure>
+    </section>
+
+    <section id="accuracy">
+      <div class="section-head">
+        <div class="eyebrow">逐轨迹精度</div>
+        <h2>三条都过门，但 p58 留下两处轻微失配</h2>
+        <p>harm 和 severe harm 在三条轨迹上均为 0。match 是更严格的逐帧非劣判据，因此 p58 的两帧仍必须单独公开。</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>轨迹</th><th>all-frame match</th><th>skipped match</th><th>field p90 比</th><th>gradient p90 比</th><th>observation p90 比</th><th>harm</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>p33-s05</td><td>101/101</td><td>50/50</td><td>1.0012</td><td>0.9806</td><td>1.0103</td><td>0</td></tr>
+            <tr><td>p45-s01</td><td>101/101</td><td>50/50</td><td>0.9992</td><td>0.9817</td><td>0.9971</td><td>0</td></tr>
+            <tr><td>p58-s05</td><td>99/101</td><td>48/50</td><td>0.9986</td><td>0.9777</td><td>1.0345</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert" style="margin-top:12px">
+        <strong>p58 的 frame 77 与 79：observation-only mild miss</strong>
+        <span>它们超出冻结 match 线仅 0.000846 和 0.004517；field、gradient 仍匹配，也没有越过 harm 线。这解释了为什么 p58 是 98.02% match 但整条 accuracy gate 仍通过。</span>
+      </div>
+      <div class="table-wrap" style="margin-top:12px">
+        <table>
+          <thead><tr><th>帧</th><th>Reduced observation</th><th>Zero-K4</th><th>冻结容差</th><th>超出 match 线</th></tr></thead>
+          <tbody>
+            <tr><td>77</td><td>0.286727</td><td>0.259892</td><td>0.025989</td><td>0.000846</td></tr>
+            <tr><td>79</td><td>0.301481</td><td>0.269967</td><td>0.026997</td><td>0.004517</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="method">
+      <div class="section-head">
+        <div class="eyebrow">固定方法</div>
+        <h2>50 个奇数帧用 observation residual 代替完整 proposal</h2>
+        <p>模型、rank、ridge、alpha、K1 和评分门都没有在打开外部轨迹后修改。</p>
+      </div>
+      <div class="flow" aria-label="算法流程">
+        <article><b>1 · Even observation</b><span>51 个偶数帧运行 compact dual proposal。</span></article>
+        <article><b>2 · Exact range lift</b><span>精确执行 A^T，将 dual 提升到三维可纠正空间。</span></article>
+        <article><b>3 · Odd residual</b><span>50 个奇数帧只看部署可见 observation residual。</span></article>
+        <article><b>4 · Reduced package</b><span>在 fit-only rank-199 包中恢复 warm lift，不调用新 A^T。</span></article>
+        <article><b>5 · Strict K1</b><span>偶数与奇数帧都进入同一未修改 CGLS K1。</span></article>
+      </div>
+      <p class="formula"><code>x_even = K1(y_even, A^T G_theta(y_even)); x_odd = K1(y_odd, h_even + mean_h + U C(y_odd - A h_even - mean_y))</code></p>
+    </section>
+
+    <section id="cost">
+      <div class="section-head">
+        <div class="eyebrow">完整成本</div>
+        <h2>在线少 50 次 A^T；离线包要单独摊销</h2>
+        <p>只报 solver iteration 会掩盖 proposal、lift 和 package setup，所以这里把在线与离线分开。</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>101 帧在线方法</th><th>A</th><th>A^T</th><th>总调用</th><th>相对父模型</th></tr></thead>
+          <tbody>
+            <tr><td>Observable Reduced Warm K1</td><td>202</td><td>152</td><td>354</td><td>少 12.38%</td></tr>
+            <tr><td>Full-parent Warm K1</td><td>202</td><td>202</td><td>404</td><td>基准</td></tr>
+            <tr><td>Zero-CGLS K4</td><td>404</td><td>404</td><td>808</td><td>多 100%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="audit-grid" style="margin-top:12px">
+        <article class="pass">
+          <h3>wall 信号稳定</h3>
+          <p>三条 fresh-process 降幅为 13.48% / 11.81% / 12.80%；paired bootstrap 下界均高于 10%，primary 分别在 99 / 93 / 91 次配对中更快。</p>
+        </article>
+        <article class="fail">
+          <h3>内存只是 no-harm</h3>
+          <p>RSS p90 ratio 为 1.0161 / 1.0123 / 1.0198，全部低于 1.05，但没有内存下降。不能把 no-harm 写成 memory saving。</p>
+        </article>
+      </div>
+      <div class="alert" style="margin-top:12px">
+        <strong>离线 setup：200A + 200A^T</strong>
+        <span>按 A 与 A^T 等成本计算，需复用 8 条 101 帧序列、共 808 帧才相对父模型摊平。真实 BOST 上必须重新测 I/O、图像处理和组内 forward，不能照搬这个盈亏点。</span>
+      </div>
+    </section>
+
+    <section id="audit">
+      <div class="section-head">
+        <div class="eyebrow">独立复算</div>
+        <h2>不同分解路径得到相同候选和判决</h2>
+        <p>正式实现用 thin SVD 与 measurement-space SVD ridge；复核实现改用 sample-space eigendecomposition、field QR 与正规方程 ridge。</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>复核项</th><th>p33-s05</th><th>p45-s01</th><th>p58-s05</th></tr></thead>
+          <tbody>
+            <tr><td>candidate 最大差</td><td>2.03e-15</td><td>1.49e-15</td><td>2.19e-15</td></tr>
+            <tr><td>metric 最大差</td><td>2.22e-16</td><td>2.22e-16</td><td>1.11e-16</td></tr>
+            <tr><td>reference 最大差</td><td>0</td><td>0</td><td>0</td></tr>
+            <tr><td>benchmark 最大差</td><td>0</td><td>0</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert success" style="margin-top:12px">
+        <strong>PASS_INDEPENDENT_EXTERNAL_HOLDOUT_RECOMPUTATION_V24</strong>
+        <span>三条 pair 绑定与完整结果树在复核前后未变化；独立验证没有把正式分解结果当作答案再次读取。</span>
+      </div>
+    </section>
+
+    <section id="novelty">
+      <div class="section-head">
+        <div class="eyebrow">原创性边界</div>
+        <h2>组合差异可防守，组件级“首创”不可防守</h2>
+        <p>一级来源核查没有发现与完整组合完全同构的方法，但 warm start、learned Krylov、迭代修正、NeRIF 和 BOST coarse-to-fine 都已有强近邻。</p>
+      </div>
+      <div class="source-grid">
+        <article>
+          <h3>WB-IPM</h3>
+          <p>学习 warm basis，再进入投影/Krylov refinement，是当前最危险的结构近邻。</p>
+          <a href="https://arxiv.org/html/2510.05926" target="_blank" rel="noreferrer">查看一级预印本</a>
+        </article>
+        <article>
+          <h3>Learning to Warm-Start</h3>
+          <p>把网络训练目标与后续固定迭代联系起来，阻断“learned warm start 本身是创新”的主张。</p>
+          <a href="https://www.jmlr.org/papers/v25/23-1174.html" target="_blank" rel="noreferrer">查看 JMLR 官方页</a>
+        </article>
+        <article>
+          <h3>Learned ReSeSOp</h3>
+          <p>学习型修正与不精确 forward 的结合，是 inverse refinement 的直接近邻。</p>
+          <a href="https://arxiv.org/abs/2410.23061" target="_blank" rel="noreferrer">查看一级预印本</a>
+        </article>
+        <article>
+          <h3>NeRIF 与 Pyramid-BOST</h3>
+          <p>分别覆盖神经隐式 BOST 重建和 coarse-to-fine 初始化，限定 BOST 侧可声称的贡献。</p>
+          <a href="https://pubs.aip.org/aip/pof/article/37/1/017143/3331552/Neural-refractive-index-field-Unlocking-the" target="_blank" rel="noreferrer">NeRIF 官方页</a>
+          <span> · </span>
+          <a href="https://link.springer.com/article/10.1007/s00348-025-04153-3" target="_blank" rel="noreferrer">Pyramid-BOST 官方页</a>
+        </article>
+      </div>
+      <p class="formula">当前可防守表述：<strong>面向 BOST 的 observation-conditioned reduced measurement-space proposal，经精确 A^T range lift、observable-only scalar 和未修改 strict CGLS K1，在 field / gradient / observation 同精度包络下按完整算子成本验证。</strong></p>
+      <div class="alert critical">
+        <strong>不能写成 first、全球唯一或 SOTA</strong>
+        <span>截至 2026-07-28 的公开来源未发现完全同构方案，不等于 global_uniqueness_proven；组内未发表工作、专利与实现仍需何远哲师兄核对。</span>
+      </div>
+    </section>
+
+    <section id="next-gate">
+      <div class="section-head">
+        <div class="eyebrow">下一科学门</div>
+        <h2>停止追加同类 CFD，转入组内真实 BOST 迁移</h2>
+        <p>再加一条相同 proxy 不会显著提高论文等级。真正能改变结论的是相机、标定、噪声和重复实验。</p>
+      </div>
+      <div class="audit-grid">
+        <article class="pass">
+          <h3>已经具备</h3>
+          <p>固定方法、Zero-K4 与父模型、三指标包络、完整 A/A^T 账、fresh-process wall、RSS no-harm、三轨迹复现和独立数值复算。</p>
+        </article>
+        <article class="fail">
+          <h3>尚缺的决定性证据</h3>
+          <p>组内背景图/流动图或位移场、相机内外参与 ROI、flow-off 重复测量、标定不确定度、真实 forward/adjoint、组内基线和端到端 wall/RSS。</p>
+        </article>
+      </div>
+      <div class="alert" style="margin-top:12px">
+        <strong>论文升级条件</strong>
+        <span>用重复测量与标定误差定义真实“同精度”，冻结迁移规则后一次性比较 Reduced K1、完整父模型和组内基线。只有真实 BOST 仍逐实验过 field/gradient/observation 或可观测替代门，并保留 wall 优势，才重新评估 algorithm_breakthrough。</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>Gao Youyang · OERF 三维 BOST 算子学习 C 路线 · public CFD proxy evidence only</footer>
+</body>
+</html>
