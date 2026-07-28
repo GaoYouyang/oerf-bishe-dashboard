@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>v27 曲折光线资源实测 | OERF C 路线</title>
+  <meta name="description" content="Observable Reduced Warm K1 在三条 PoolFire external-to-fit 轨迹、两个曲折光线压力档上的 fresh-process wall、CPU、RSS 与独立复算证据。" />
+  <style>
+    :root {
+      --ink: #17252b;
+      --muted: #607178;
+      --line: #cbd7d4;
+      --paper: #fff;
+      --bg: #f3f6f4;
+      --teal: #146f66;
+      --teal-soft: #e8f3ef;
+      --blue: #315f93;
+      --blue-soft: #eaf1f8;
+      --coral: #a34f43;
+      --coral-soft: #faece8;
+      --gold: #8a651b;
+      --gold-soft: #f8f1df;
+      --shadow: 0 9px 24px rgba(27,47,51,.06);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url("../assets/backgrounds/oerf-refractive-field.png") center / cover no-repeat;
+      opacity: .05;
+      pointer-events: none;
+    }
+    a { color: var(--blue); }
+    code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhere; }
+    header, main, footer { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; }
+    header { padding: 20px 0 24px; border-bottom: 1px solid var(--line); }
+    main { padding-bottom: 48px; }
+    footer { padding: 22px 0 36px; color: var(--muted); font-size: 12px; }
+    h1, h2, h3 { line-height: 1.25; letter-spacing: 0; }
+    h1 { margin: 16px 0 8px; font-size: clamp(30px, 5vw, 46px); }
+    h2 { margin: 0; font-size: 27px; }
+    h3 { margin: 0 0 6px; font-size: 18px; }
+    p { margin: 7px 0; }
+    .nav, .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .nav a, .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--ink);
+      background: rgba(255,255,255,.96);
+      text-decoration: none;
+      font-weight: 750;
+      text-align: center;
+    }
+    .button.primary { color: #fff; border-color: var(--teal); background: var(--teal); }
+    .eyebrow { color: var(--teal); font-size: 12px; font-weight: 850; text-transform: uppercase; }
+    .lead { max-width: 1020px; color: #43555c; font-size: 16px; }
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 18px 0 0;
+    }
+    .metric {
+      min-width: 0;
+      min-height: 108px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.96);
+      box-shadow: var(--shadow);
+    }
+    .metric b { display: block; margin-bottom: 6px; color: var(--teal); font-size: 25px; }
+    .metric.warn b { color: var(--gold); }
+    .metric.danger b { color: var(--coral); }
+    .metric span { color: var(--muted); font-size: 13px; }
+    section { padding: 34px 0; border-bottom: 1px solid var(--line); }
+    .section-head { max-width: 940px; margin-bottom: 16px; }
+    .section-head p { color: var(--muted); }
+    .alert {
+      display: grid;
+      grid-template-columns: minmax(220px, .34fr) 1fr;
+      gap: 14px;
+      padding: 14px;
+      border: 1px solid #d8c795;
+      border-radius: 8px;
+      background: var(--gold-soft);
+    }
+    .alert.success { border-color: #b7d5ca; background: var(--teal-soft); }
+    .alert.fail { border-color: #e2b9b1; background: var(--coral-soft); }
+    .alert strong, .alert span { min-width: 0; overflow-wrap: anywhere; }
+    .flow, .boundary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .flow article, .boundary-grid article {
+      min-width: 0;
+      padding: 14px;
+      border-left: 3px solid var(--blue);
+      background: rgba(255,255,255,.8);
+    }
+    .flow span, .boundary-grid p { color: var(--muted); font-size: 13px; }
+    .figure {
+      margin: 14px 0 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+    .figure img { display: block; width: 100%; height: auto; }
+    figcaption { padding: 8px 4px 2px; color: var(--muted); font-size: 12px; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--paper); }
+    table { width: 100%; min-width: 940px; border-collapse: collapse; }
+    th, td { padding: 10px 11px; border-bottom: 1px solid #e1e8e6; text-align: left; white-space: nowrap; }
+    th { color: #42555c; background: #f6f8f7; font-size: 12px; }
+    td { font-size: 13px; }
+    .pass-text { color: var(--teal); font-weight: 850; }
+    .fail-text { color: var(--coral); font-weight: 850; }
+    .warn-text { color: var(--gold); font-weight: 850; }
+    @media (max-width: 900px) {
+      .status-grid, .flow, .boundary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .alert { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 580px) {
+      header, main, footer { width: min(100% - 22px, 1180px); }
+      h1 { font-size: 31px; }
+      h2 { font-size: 23px; }
+      .status-grid, .flow, .boundary-grid { grid-template-columns: 1fr; }
+      .nav a, .button { flex: 1 1 100%; }
+      section { padding: 28px 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav" aria-label="页面导航">
+      <a href="./">返回 C 路线主页</a>
+      <a href="#verdict">最终判决</a>
+      <a href="#design">实验设计</a>
+      <a href="#pairs">六个单元</a>
+      <a href="#boundary">证据边界</a>
+    </nav>
+    <div class="eyebrow">v27 · curved proxy resource remeasurement · 2026-07-28</div>
+    <h1>曲折光线下的重建资源实测</h1>
+    <p id="lead" class="lead">正在读取经过独立验证的脱敏结果。</p>
+    <div class="actions" style="margin-top:14px">
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_external_curved_resource_v27_result_2026-07-28.md">读完整中文判决</a>
+      <a class="button" href="../docs/poolfire_c_external_curved_resource_v27_public_summary.json">打开脱敏 JSON</a>
+      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_external_curved_resource_v27.png">单独查看结果图</a>
+    </div>
+    <div class="status-grid" aria-label="核心状态">
+      <div class="metric" id="statusMetric"><b>读取中</b><span>只有独立 validator 才能发布最终状态</span></div>
+      <div class="metric"><b>1944</b><span>1836 次正式测量 + 108 次 warmup；每次都是 fresh process</span></div>
+      <div class="metric"><b>354</b><span>主方法 202A+152Aᵀ；父模型 404，Zero-K4 808</span></div>
+      <div class="metric danger"><b>3</b><span>独立轨迹单位；两个 beta 共用轨迹，不能写成 6 个独立样本</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section id="verdict">
+      <div class="section-head">
+        <div class="eyebrow">独立验证后的终态</div>
+        <h2>调用数减少，是否真的换来 wall-time 收益</h2>
+        <p>v26.3 已经回答固定方法在两个离散曲折光线压力档上是否保持场精度兼容；v27 只回答资源问题，不重复打开 truth，也不改模型或阈值。</p>
+      </div>
+      <div id="verdictAlert" class="alert">
+        <strong>等待脱敏结果</strong>
+        <span>结果 JSON 未加载前，本页不展示推断性结论。</span>
+      </div>
+      <figure class="figure">
+        <img src="../assets/poolfire_c_external_curved_resource_v27.png" alt="六个轨迹曲率单元上的 wall、CPU 与直接子进程 RSS 配对结果" />
+        <figcaption>误差线是冻结的 circular moving-block bootstrap 单侧 95% 上界。RSS 只测 direct child ru_maxrss，不代表整棵进程树或完整实验链路。</figcaption>
+      </figure>
+    </section>
+
+    <section id="design">
+      <div class="section-head">
+        <div class="eyebrow">为什么这样测</div>
+        <h2>同一 observation、同一机器、同一三臂顺序块</h2>
+        <p>每个轨迹-beta 单元运行 102 个配对 triad；三种方法的六种顺序各出现 17 次。配对比值抵消大部分机器慢漂移，长度 5 的 circular moving-block bootstrap 保留短程相关。</p>
+      </div>
+      <div class="flow">
+        <article><h3>Primary</h3><span>Observable Reduced Warm K1，202A+152Aᵀ=354。</span></article>
+        <article><h3>Parent</h3><span>完整 proposal 的 Warm K1，202A+202Aᵀ=404。</span></article>
+        <article><h3>Reference</h3><span>零初值 CGLS K4，404A+404Aᵀ=808。</span></article>
+        <article><h3>正式门</h3><span>wall 中位数至少降 10%，同时守住 wall 尾部、CPU 与 direct-child RSS。</span></article>
+      </div>
+    </section>
+
+    <section id="pairs">
+      <div class="section-head">
+        <div class="eyebrow">逐单元，不允许均值补救</div>
+        <h2>三条轨迹 × 两个 beta × 两个 comparator</h2>
+        <p>任何单元被便宜对照支配、置信上界过宽或出现运行污染，都不能用其他单元的平均收益覆盖。</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>轨迹 / beta</th><th>对照</th><th>wall 中位降幅</th><th>95% 保守降幅</th>
+              <th>wall p90 比</th><th>更快比例</th><th>RSS p90 / UCB</th><th>CPU 中位 / UCB</th><th>判决</th>
+            </tr>
+          </thead>
+          <tbody id="pairRows"><tr><td colspan="9">正在读取独立验证结果。</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="boundary">
+      <div class="section-head">
+        <div class="eyebrow">这轮能说什么，不能说什么</div>
+        <h2>资源实测比调用数更接近部署，但仍不是最终真实 BOST</h2>
+      </div>
+      <div class="boundary-grid">
+        <article><h3>可以检查</h3><p>同一 Mac、同一公开 PoolFire 数据集、两档 curved proxy 下的 fresh-process reconstruction-worker wall、CPU、direct-child RSS。</p></article>
+        <article><h3>不能外推</h3><p>不能写成跨硬件速度、整条实验链路速度、整棵进程树内存或连续 beta 鲁棒性。</p></article>
+        <article><h3>仍需组内数据</h3><p>真实相机标定、噪声、重复测量与物理同精度容差尚未进入，因此 real BOST=false。</p></article>
+        <article><h3>论文状态</h3><p>即使本轮 PASS，也只是一块 post-open public CFD proxy 资源证据；algorithm_breakthrough 与 paper_success 仍为 false。</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>OERF 毕设 C 路线 · v27 脱敏页只消费 VALIDATED_READY 之后生成的公开 JSON。</footer>
+
+  <script>
+    const summaryUrl = "../docs/poolfire_c_external_curved_resource_v27_public_summary.json";
+    const statusNames = {
+      PASS_EXTERNAL_CURVED_RECONSTRUCTION_RESOURCE_V27: "PASS",
+      FAIL_EXTERNAL_CURVED_RECONSTRUCTION_RESOURCE_V27: "FAIL_TARGET",
+      INCONCLUSIVE_RUNTIME_PRECISION_V27: "INCONCLUSIVE_PRECISION",
+      INCONCLUSIVE_RUNTIME_CONTAMINATION_V27: "INCONCLUSIVE_CONTAMINATION"
+    };
+    const comparatorNames = { parent: "Full Parent K1", zero_k4: "Zero CGLS K4" };
+    const pct = value => `${(100 * value).toFixed(1)}%`;
+    const ratio = value => Number(value).toFixed(3);
+    const statusClass = status => status.startsWith("PASS") ? "pass-text" : (status.startsWith("FAIL") ? "fail-text" : "warn-text");
+
+    function render(summary) {
+      const status = summary.status;
+      const label = statusNames[status] || status;
+      const passed = status.startsWith("PASS");
+      const failed = status.startsWith("FAIL");
+      const metric = document.getElementById("statusMetric");
+      metric.className = `metric ${failed ? "danger" : (passed ? "" : "warn")}`;
+      metric.innerHTML = `<b>${label}</b><span>validator 已重算全部场、调用账、收据与统计；最大统计差为 0</span>`;
+      const alert = document.getElementById("verdictAlert");
+      alert.className = `alert ${passed ? "success" : (failed ? "fail" : "")}`;
+      const verdictText = passed
+        ? "六个轨迹-beta 单元相对两个 comparator 全部通过配对 wall、CPU、RSS 与污染门。"
+        : (failed
+          ? "至少一个单元未达到冻结的配对资源目标；不能把调用数减少写成稳定速度收益。"
+          : "点估计没有被直接判负，但统计精度或运行污染不足以支持正向资源结论。");
+      alert.innerHTML = `<strong>${status}</strong><span>${verdictText}</span>`;
+      document.getElementById("lead").textContent =
+        `${verdictText} 本轮有 3 条独立轨迹、6 个 trajectory-beta 单元和 1944 个 fresh process；仍是同一公开 CFD 数据集上的 post-open proxy。`;
+      const rows = [];
+      for (const cell of summary.pairs) {
+        for (const key of ["parent", "zero_k4"]) {
+          const item = cell.comparisons[key];
+          const conservative = 1 - item.paired_wall_median_ratio_one_sided_95_upper;
+          rows.push(`<tr>
+            <td>${cell.trajectory}<br>beta=${cell.beta}</td>
+            <td>${comparatorNames[key]}</td>
+            <td>${pct(item.paired_wall_median_reduction)}</td>
+            <td>${pct(conservative)}</td>
+            <td>${ratio(item.paired_wall_ratio_p90)}</td>
+            <td>${pct(item.primary_faster_fraction)}</td>
+            <td>${ratio(item.paired_peak_RSS_ratio_p90)} / ${ratio(item.paired_peak_RSS_ratio_p90_one_sided_95_upper)}</td>
+            <td>${ratio(item.paired_child_CPU_median_ratio)} / ${ratio(item.paired_child_CPU_median_ratio_one_sided_95_upper)}</td>
+            <td class="${statusClass(item.decision_status)}">${statusNames[item.decision_status] || item.decision_status}</td>
+          </tr>`);
+        }
+      }
+      document.getElementById("pairRows").innerHTML = rows.join("");
+    }
+
+    fetch(summaryUrl, { cache: "no-store" })
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      })
+      .then(render)
+      .catch(error => {
+        document.getElementById("lead").textContent = "独立验证后的公开结果尚未生成，本页不提前展示 provisional 数值。";
+        document.getElementById("verdictAlert").innerHTML = `<strong>PUBLIC SUMMARY NOT READY</strong><span>${String(error)}</span>`;
+      });
+  </script>
+</body>
+</html>

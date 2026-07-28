@@ -8506,3 +8506,56 @@ paper_success=false
 
 完整结果见
 `docs/poolfire_c_external_curved_v26_result_2026-07-28.md`。
+
+## 266. v27：调用减少没有自动变成稳定部署加速
+
+v26.3 已经确认固定 Reduced Warm K1 在三条 external-to-fit 轨迹、两个有效
+曲折压力档上保持重建兼容。v27 没有重训或改阈值，只问一个资源问题：
+
+> `354` 次完整调用相对 Full Parent 的 `404` 和 Zero-K4 的 `808`，是否真的
+> 换成 wall、CPU 与内存收益？
+
+我们没有只跑几次取最好值。每个 `trajectory × beta` 单元执行 102 个配对
+triad，三臂六种顺序各 17 次，并保留 6 个 warmup triad。三条独立轨迹、两个
+beta 共运行：
+
+```text
+1836 次正式 fresh process
+ 108 次 warmup
+1944 次 fresh process
+3888 份 worker + parent 回执
+```
+
+独立 validator 从回执重算全部场、调用账、配对统计和 50000 次 circular
+moving-block bootstrap，最大统计差为 0：
+
+```text
+PASS_INDEPENDENT_RECOMPUTATION_EXTERNAL_CURVED_RESOURCE_V27
+```
+
+相对 Full Parent，六个单元的 wall 中位都快 `10.33%-11.16%`，CPU 中位 ratio
+为 `0.8859-0.8951`。这证明少算 50 次 `A^T` 的时间机制是真实的，不只是调用账
+好看。
+
+但是相对最重要的 Zero-K4，wall 中位只快 `2.19%-2.89%`，保守 95% 降幅只有
+`1.40%-2.45%`，远低于 10% 门；RSS p90 又高 `10.99%-12.69%`。相对父方法的
+RSS p90 也高 `6.86%-11.03%`。六个单元全部失败，正式判决是：
+
+```text
+FAIL_EXTERNAL_CURVED_RECONSTRUCTION_RESOURCE_V27
+algorithm_breakthrough=false
+```
+
+**讲人话：**方法确实少算、也能重建，但这台 Mac 上的 `16x16x32` 线性 proxy
+算子太便宜。模型/package、几何、Python fresh-process 和内存开销吃掉了绝大
+多数调用优势。它相对完整父模型快约 10%，相对不用模型的 Zero-K4 却只快约
+2%-3%，而且更占内存，所以不能写成稳定部署加速。
+
+这个负结果直接停止两件低价值工作：不再靠增加重复次数挽救点估计，也不再在同一
+fresh worker 上用更大网络堆性能。下一次真正能改变论文判断的门，必须把冻结方法
+接到昂贵的 nonlinear curved forward/JVP/VJP 或组内真实 BOST；同时保留 fresh
+与模型常驻两种口径。若昂贵物理算子下仍不能超过 Zero-K4，就关闭“速度贡献”
+主张，而不是继续包装调用数。
+
+完整结果见
+`docs/poolfire_c_external_curved_resource_v27_result_2026-07-28.md`。

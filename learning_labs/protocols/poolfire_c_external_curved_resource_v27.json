@@ -1,0 +1,163 @@
+{
+  "schema_version": "oerf-poolfire-c-external-curved-resource-27.0",
+  "status": "FROZEN_BEFORE_EXTERNAL_CURVED_RESOURCE_RESULTS",
+  "date": "2026-07-28",
+  "scientific_question": "After v26.3 established accuracy compatibility on external-to-fit curved observations, does the unchanged Observable Reduced Warm K1 convert its lower exact A/A^T ledger into stable fresh-process reconstruction-worker wall-time savings without peak-RSS or CPU-time harm against both Full Parent Warm K1 and Zero-CGLS K4?",
+  "predecessor_evidence": {
+    "v24_status": "PASS_EXTERNAL_PROXY_REPLICATION",
+    "v24_role": "straight_forward_external_to_fit_accuracy_and_resource_evidence",
+    "v24_source_commit": "5e5080d95f153b463cd2a0ef6a0c2557b3d2e570",
+    "v24_release_root_sha256": "d4bf789b8a429fe3a91961fde63bf2c464ec7c5fc83b9ca7f2c37b6a521e73ca",
+    "v26_3_status": "COMPLETE_DISCRETE_BETA_EXTERNAL_CURVED_STRESS_V26_3",
+    "v26_3_independent_status": "PASS_INDEPENDENT_FULL_ARM_RECOMPUTATION_EXTERNAL_CURVED_RAY_STRESS_V26_3",
+    "v26_3_source_commit": "efdd9764572303283e844c88ee4eccf26b223756",
+    "v26_3_result_directory_identity": "run_efdd976_v26_3",
+    "v26_3_report_sha256": "e97955257616756003912a7fbe31fd4e8ee727486bbc0e2f8c292a80e30b7f4d",
+    "v26_3_independent_validation_sha256": "5b75318709532bf3d1759f79ae9959bf11ff30f122c291f0820a942f6d53cd58",
+    "v26_3_resource_remeasurement_performed": false
+  },
+  "scope": {
+    "trajectory_ids": [
+      "p=33kw_size=05",
+      "p=45kw_size=01",
+      "p=58kw_size=05"
+    ],
+    "discrete_beta_values": [
+      0.001,
+      0.002
+    ],
+    "frames_per_trajectory": 101,
+    "observation_shape": [
+      101,
+      2072
+    ],
+    "field_shape": [
+      101,
+      16,
+      16,
+      32
+    ],
+    "trajectory_role": "post_open_external_to_fit_curved_forward_resource_remeasurement",
+    "same_public_poolfire_dataset": true,
+    "official_confirmatory_test": false,
+    "truth_or_truth_metrics_loaded_by_resource_worker": false,
+    "curved_forward_generation_in_timed_scope": false,
+    "result_dependent_retraining_or_threshold_change_allowed": false
+  },
+  "frozen_arms": [
+    {
+      "name": "observable_reduced_warm_k1",
+      "worker_name": "primary",
+      "A_per_101_frames": 202,
+      "A_transpose_per_101_frames": 152,
+      "total_calls": 354
+    },
+    {
+      "name": "full_parent_warm_k1",
+      "worker_name": "parent",
+      "A_per_101_frames": 202,
+      "A_transpose_per_101_frames": 202,
+      "total_calls": 404
+    },
+    {
+      "name": "zero_cgls_k4_reference",
+      "worker_name": "zero_k4",
+      "A_per_101_frames": 404,
+      "A_transpose_per_101_frames": 404,
+      "total_calls": 808
+    }
+  ],
+  "accuracy_binding": {
+    "source": "sealed v26.3 report plus independent full-arm recomputation",
+    "required_robust_beta_values": [
+      0.001,
+      0.002
+    ],
+    "all_three_trajectories_must_have_primary_compatibility": true,
+    "trajectory_beta_observation_sha_mapping_is_fixed_by_v26_3": true,
+    "geometry_checkpoint_parameter_library_and_package_sha_are_fixed_by_v24_release": true,
+    "fresh_worker_field_hash_must_be_deterministic_per_arm_and_pair": true,
+    "fresh_worker_field_hash_must_equal_the_pre_timing_observation_only_cell_manifest": true,
+    "independent_validator_recomputes_each_arm_field_hash_from_observation_only_inputs": true,
+    "new_truth_scoring_in_resource_run": false
+  },
+  "execution": {
+    "CPU_only": true,
+    "fresh_execve_repetitions_per_arm_and_pair": 102,
+    "measured_fresh_worker_process_count": 1836,
+    "measured_arm_order": "all six permutations of primary, parent, zero_k4 repeated exactly 17 times and deterministically shuffled by SHA-256 sort keys",
+    "measured_order_seed": "oerf-v27-order-20260728",
+    "measured_order_schedule_sha256": "1986cc4c3b9f171162491d8288bfe08bd2cd3b935e36c4244c5548b3d68ceacc",
+    "warmup_triads": 6,
+    "warmup_fresh_worker_process_count": 108,
+    "total_fresh_worker_process_count": 1944,
+    "parent_wait4_measurement_receipt_count": 1944,
+    "warmup_order": "each of the six arm permutations exactly once before measured repetitions; recorded as cold/cache diagnostic but excluded from resource gates",
+    "measured_passes_per_fresh_worker": 1,
+    "first_repetition_included": true,
+    "thread_environment": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "external_wall_scope": "parent timer immediately before subprocess execve through child exit; includes Python startup, imports, observation load, geometry construction, required model/package load, solver execution, receipt fsync, and process teardown",
+    "peak_RSS_scope": "direct reconstruction worker child-process ru_maxrss returned by parent os.wait4; descendants, if any, are not included, and their absence is not dynamically proven",
+    "CPU_time_scope": "child user plus system CPU seconds from the same parent os.wait4 record",
+    "excluded_common_offline_scope": "curved observation generation, rho loading, eikonal integration, fit-time model/package construction, and one-time native library compilation",
+    "post_hoc_warm_only_or_outlier_deletion_allowed": false
+  },
+  "resource_gates": {
+    "quantile_method": "higher",
+    "paired_statistic": "within-triad log(primary/comparator) ratio",
+    "bootstrap_method": "circular moving-block bootstrap over chronological measured triads",
+    "moving_block_bootstrap_block_length": 5,
+    "moving_block_bootstrap_draws": 50000,
+    "moving_block_bootstrap_seed": "SHA256(trajectory|beta|comparator|metric|oerf-v27-mbb)",
+    "per_pair_paired_wall_median_ratio_point_maximum": 0.9,
+    "per_pair_paired_wall_median_ratio_one_sided_95_upper_maximum": 0.9,
+    "per_pair_primary_faster_fraction_vs_each_comparator_minimum": 0.8,
+    "per_pair_worst_paired_wall_harm_vs_each_comparator_maximum": 0.25,
+    "per_pair_paired_wall_ratio_p90_maximum": 1.05,
+    "per_pair_each_order_position_wall_reduction_vs_each_comparator_minimum": 0.05,
+    "per_pair_paired_peak_RSS_ratio_p90_point_maximum": 1.05,
+    "per_pair_paired_peak_RSS_ratio_p90_one_sided_95_upper_maximum": 1.05,
+    "per_pair_paired_peak_RSS_ratio_worst_maximum": 1.1,
+    "per_pair_paired_child_CPU_median_ratio_point_maximum": 1.0,
+    "per_pair_paired_child_CPU_median_ratio_one_sided_95_upper_maximum": 1.0,
+    "per_pair_paired_child_CPU_ratio_p90_one_sided_95_upper_maximum": 1.05,
+    "all_six_trajectory_beta_pairs_must_pass": true,
+    "pooled_average_override_allowed": false
+  },
+  "decision": {
+    "runner_pending_status": "PENDING_INDEPENDENT_VALIDATION_V27",
+    "pass_status": "PASS_EXTERNAL_CURVED_RECONSTRUCTION_RESOURCE_V27",
+    "target_failure_status": "FAIL_EXTERNAL_CURVED_RECONSTRUCTION_RESOURCE_V27",
+    "precision_inconclusive_status": "INCONCLUSIVE_RUNTIME_PRECISION_V27",
+    "contamination_inconclusive_status": "INCONCLUSIVE_RUNTIME_CONTAMINATION_V27",
+    "identity_or_validation_failure_status": "INCONCLUSIVE_EXECUTION_V27",
+    "runner_failure_evidence_file": "INCONCLUSIVE_EXECUTION.json",
+    "validator_failure_evidence_file": "INCONCLUSIVE_VALIDATION.json",
+    "status_priority": "FAIL_EXTERNAL_CURVED_RECONSTRUCTION_RESOURCE_V27 > INCONCLUSIVE_RUNTIME_CONTAMINATION_V27 > INCONCLUSIVE_RUNTIME_PRECISION_V27 > PASS_EXTERNAL_CURVED_RECONSTRUCTION_RESOURCE_V27",
+    "pass_interpretation": "post-open public CFD proxy evidence that the fixed reduced warm initializer preserves reconstruction-worker wall and RSS economics under two curved-forward stress levels on three external-to-fit combinations",
+    "target_failure_interpretation": "at least one frozen paired point target failed; the call-count reduction did not produce the required reconstruction-worker resource effect under the frozen curved-forward stress contract",
+    "precision_inconclusive_interpretation": "paired point targets passed but at least one one-sided moving-block confidence bound was too wide to establish the frozen effect",
+    "contamination_inconclusive_interpretation": "paired point targets passed but at least one single-run wall or RSS guard detected runtime contamination; this status conservatively takes priority over precision inconclusive when both occur",
+    "no_refit_or_runtime_tuning_after_result": true
+  },
+  "claim_boundaries": {
+    "independent_scientific_units": 3,
+    "runtime_repetitions_are_not_independent_flow_samples": true,
+    "beta_cells_share_underlying_trajectories": true,
+    "algorithm_breakthrough": false,
+    "real_bost": false,
+    "physical_same_accuracy_proven": false,
+    "official_untouched_test": false,
+    "cross_dataset_generalization_proven": false,
+    "whole_experimental_pipeline_resource_advantage_proven": false,
+    "worker_subprocess_absence_dynamically_proven": false,
+    "whole_process_tree_peak_memory_measured": false,
+    "paper_success": false
+  }
+}
