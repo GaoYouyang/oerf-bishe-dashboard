@@ -8342,3 +8342,68 @@ paper_success=false
 
 完整结果见
 `docs/poolfire_c_observable_external_v24_result_2026-07-28.md`。
+
+## 264. v25：曲折光线物理压力没有击穿固定 Warm K1
+
+v24 仍有一个很大的解释漏洞：训练、观测和反演都使用直线射线，方法可能只是
+吃到了 forward 完全一致的便宜。为直接检验这个漏洞，我没有重训模型，也没有
+调整兼容门，而是把观测正演换成场依赖 eikonal 曲折光线：
+
+```text
+dr/ds=t
+dt/ds=(I-tt^T)grad(n)/n
+n=1+beta*(rho-mean(rho))
+```
+
+师兄提供的 BOS notebook 只用于确认物理方程与真实工作流背景；正式代码完全
+重新实现，私有工具、路径和数据没有进入公开仓库。
+
+协议在结果前固定三条 post-open fit-morphology 轨迹、每条 101 帧、五个 beta、
+192 步正式积分、96 步收敛对照和八个方法。最高 `beta=0.002` 时，曲率相对
+线性极限的 observation p90 变化为：
+
+```text
+p14-s05   3.113%   convergence worst 0.080%
+p33-s01  14.188%   convergence worst 0.372%
+p58-s03   5.705%   convergence worst 0.187%
+```
+
+p33 的最坏观测变化达到 17.707%，所以这不是接近零的装饰性扰动；三条 96/192
+步差又都低于冻结的 0.5% 数值门。
+
+最高曲率档上的共同结果：
+
+```text
+Normalized BP          202 calls  FAIL
+Zero CGLS K1           202 calls  FAIL
+Reduced Warm K1        354 calls  PASS
+Full parent Warm K1    404 calls  PASS
+Zero CGLS K2           404 calls  FAIL
+Geometry PCGLS K2      404 calls  FAIL
+Zero CGLS K3           606 calls  FAIL
+Zero CGLS K4           808 calls  PASS
+```
+
+主方法三条全 101 帧和奇数 50 帧都是 100% joint match、0 harm。独立判决器
+重新计算 `3×5×8=120` 个方法判决、调用账、最便宜兼容臂、严格支配关系和最高
+通过 beta，状态为：
+
+```text
+PASS_INDEPENDENT_DECISION_RECOMPUTATION_CURVED_RAY_STRESS_V25
+PASS_CONTROLLED_CURVED_RAY_PROXY_STRESS_V25
+```
+
+**讲人话：**这次确实排除了一个重要失败解释：warm start 的优势没有在光路从
+直线改成场依赖曲线后立刻消失，而且 p33 的 forward mismatch 已经很明显。
+不过 beta 仍是 synthetic 强度，没有真实 `rho->n`、相机、背景图、位移提取、
+噪声与重复测量；三条轨迹也都是已打开的同一 PoolFire 数据集。因此这是积极的
+物理鲁棒性增量，不是算法突破。
+
+```text
+algorithm_breakthrough=false
+real_BOST=false
+paper_success=false
+```
+
+完整结果见
+`docs/poolfire_c_curved_ray_v25_result_2026-07-28.md`。
