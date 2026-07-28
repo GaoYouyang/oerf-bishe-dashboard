@@ -8158,3 +8158,55 @@ frames 全部过门，才训练 observation-only 系数预测器；否则当前 
 
 完整结果见
 `docs/poolfire_c_motion_state_v19_result_2026-07-28.md`。
+
+## 261. v20：共享线性 lift 子空间在高功率工况仍过不了门
+
+v19 证明小范围平移不够以后，我没有直接训练 GRU/FNO，而是先让一个更强的
+非部署 oracle 试：把完整 CNN proposal 做精确 `A^T` lift，再用另外四条
+trajectory 的 lift innovation 学共享低秩子空间。留出轨迹的系数可以直接看见
+真实 lift innovation；如果这种“答案可见”系数都失败，观测网络只会更难。
+
+这次先修完两个会让证据作废的问题再正式跑：Stage 1 不能在 seal 前哈希读取
+truth 文件，Stage 2 必须重新只读加载封存候选。独立预检改用
+QR + small SVD，不复制 formal SVD；rank 边界还要过谱隙门。
+
+Stage 1 独立结果：
+
+```text
+candidate max difference = 4.4964e-14
+span max difference = 1.2669e-15
+rank-zero controls = exact
+truth bytes read before receipt = false
+```
+
+正式五折结果的 skipped-only joint match：
+
+```text
+trajectory   smallest passing rank   rank-192 joint
+p14-s05               0                  100%
+p22-s03              32                  100%
+p33-s01               0                  100%
+p45-s05              none                 66%
+p58-s03              none                 72%
+required                                   90%
+```
+
+p45 和 p58 随 rank 增加在改善，但 `192` 与各 fold 的完整有效 span 都没有
+过门。它们的 harm 和 severe harm 都是 0，所以不是重建崩溃，而是很多跳过帧
+以小幅偏差越过严格非劣阈值。独立全量复算的 metric 最大差为
+`1.2669e-15`，正式判决：
+
+```text
+PASS_INDEPENDENT_RECOMPUTATION_V20
+FAIL_PREREGISTERED_LIFT_SUBSPACE_RANKS_V20
+algorithm_breakthrough=false
+```
+
+**讲人话：**低功率和部分中功率工况很好压缩，但 p45/p58 的时间变化不在其他
+四条轨迹学到的共享线性方向里。继续把 rank 从 192 调到 193 没意义。不过这次
+oracle 用的是 lift-L2 系数，v19 已证明 L2 小不等于最终重建过门。因此下一次不先
+换大网络，而是在同一 span 内按 `A h` 的观测空间误差选 oracle 系数：若能修复
+p45/p58，说明训练目标错了；若仍失败，才转向工况条件化或非线性表示。
+
+完整结果见
+`docs/poolfire_c_temporal_lift_v20_result_2026-07-28.md`。

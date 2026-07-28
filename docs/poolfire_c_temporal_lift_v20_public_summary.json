@@ -1,0 +1,111 @@
+{
+  "schema_version": "oerf-poolfire-c-temporal-lift-public-summary-20.0",
+  "date": "2026-07-28",
+  "decision": "FAIL_PREREGISTERED_LIFT_SUBSPACE_RANKS_V20",
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_V20",
+    "candidate_lift_max_absolute_difference": 4.496403249731884e-14,
+    "reported_metric_max_absolute_difference": 1.2669483033874564e-15,
+    "sealed_inputs_unchanged": true
+  },
+  "scope": {
+    "fit_trajectory_count": 5,
+    "frames_per_trajectory": 101,
+    "exact_keyframes_per_trajectory": 51,
+    "skipped_frames_per_trajectory": 50,
+    "parent_CNN_training_excluded_held_out_trajectory": false,
+    "fresh_trajectory_used": false,
+    "stopping_validation_used": false,
+    "test_truth_used": false,
+    "real_BOST": false
+  },
+  "representation": {
+    "primary_family": "trajectory-balanced centered A-transpose-lift innovations",
+    "sensitivity_family": "raw uncentered A-transpose-lift innovations",
+    "common_numeric_rank_grid": [
+      0,
+      16,
+      32,
+      64,
+      96,
+      128,
+      160,
+      192
+    ],
+    "effective_full_role": "span sensitivity only; cannot produce a global-rank PASS",
+    "oracle_coefficients_deployable": false
+  },
+  "counterfactual_cost_boundary": {
+    "temporal_lift_candidate": {
+      "A": 202,
+      "A_transpose": 152
+    },
+    "full_CNN_Dual_K1": {
+      "A": 202,
+      "A_transpose": 202
+    },
+    "Zero_CGLS_K4": {
+      "A": 404,
+      "A_transpose": 404
+    },
+    "actual_oracle_generated_all_101_exact_lifts": true,
+    "measured_A_transpose_reduction": false,
+    "native_CNN_skip_executed": false
+  },
+  "trajectory_results": [
+    {
+      "trajectory": "p=14kw_size=05",
+      "smallest_primary_passing_rank": 0,
+      "rank_192_skipped_joint_match": 1.0,
+      "rank_192_skipped_harm": 0.0,
+      "rank_192_lift_innovation_p90": 0.7946580849612308
+    },
+    {
+      "trajectory": "p=22kw_size=03",
+      "smallest_primary_passing_rank": 32,
+      "rank_192_skipped_joint_match": 1.0,
+      "rank_192_skipped_harm": 0.0,
+      "rank_192_lift_innovation_p90": 0.7526792480447002
+    },
+    {
+      "trajectory": "p=33kw_size=01",
+      "smallest_primary_passing_rank": 0,
+      "rank_192_skipped_joint_match": 1.0,
+      "rank_192_skipped_harm": 0.0,
+      "rank_192_lift_innovation_p90": 0.7483886064777344
+    },
+    {
+      "trajectory": "p=45kw_size=05",
+      "smallest_primary_passing_rank": null,
+      "rank_192_skipped_joint_match": 0.66,
+      "rank_192_skipped_harm": 0.0,
+      "rank_192_lift_innovation_p90": 0.8499476681849589
+    },
+    {
+      "trajectory": "p=58kw_size=03",
+      "smallest_primary_passing_rank": null,
+      "rank_192_skipped_joint_match": 0.72,
+      "rank_192_skipped_harm": 0.0,
+      "rank_192_lift_innovation_p90": 0.7781764335895623
+    }
+  ],
+  "interpretation": {
+    "shared_linear_lift_subspace_transfers_to_all_regimes": false,
+    "failure_is_catastrophic_harm": false,
+    "failure_pattern": "p45 and p58 plateau below the 90 percent skipped-frame joint-match gate despite zero joint harm at rank 192",
+    "lift_L2_is_a_sufficient_coefficient_objective": false,
+    "nonlinear_or_conditional_models_proven_impossible": false,
+    "next_scientific_gate": "within the same frozen lift span, select oracle coefficients by projected-lift A-space error before changing the representation family"
+  },
+  "claim_limits": {
+    "deployable_coefficient_predictor": false,
+    "native_CNN_speedup": false,
+    "measured_A_transpose_reduction": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_benefit": false,
+    "independent_end_to_end_generalization": false,
+    "real_BOST": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
