@@ -1,0 +1,151 @@
+{
+  "claim_boundary": {
+    "algorithm_breakthrough": false,
+    "broad_combustion_generalization": false,
+    "external_proxy_accuracy_gate_pass": false,
+    "paper_success": false,
+    "post_open_mechanism_diagnostic": true,
+    "real_bost": false,
+    "resource_gate_run": false,
+    "zero_adaptation_external_evaluation": true
+  },
+  "dataset": {
+    "dataset_id": "blastnet/premixed-flame-slot-burner-dns-h2air-phi05",
+    "density_variable": "RHO_kgm-3",
+    "grid": [
+      651,
+      401,
+      201
+    ],
+    "official_dataset_page": "https://blastnet.github.io/premixed_slot_flame_h2air",
+    "official_metadata": "https://blastnet.github.io/assets/json/quentin2024/premixed-flame-slot-burner-dns-h2air-phi05-info.json",
+    "snapshot_times_seconds": [
+      0.0,
+      0.002,
+      0.004,
+      0.006,
+      0.008
+    ],
+    "source_files_re_downloaded_and_byte_identical": 8,
+    "source_files_required": 8
+  },
+  "formal_external_accuracy": {
+    "all_candidates_accepted_by_observable_rule": true,
+    "all_candidates_beat_zero_on_all_three_metrics": true,
+    "all_candidates_not_pareto_dominated_by_direct_k3": true,
+    "all_snapshots_pass": false,
+    "gate": "Each SARC field, gradient and observation relative-L2 must be <= 1.01 times Direct-K4, while also beating Zero and avoiding Direct-K3 Pareto domination.",
+    "independent_curved_forward_calls": 16,
+    "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_EXTERNAL_BLASTNET_SARC_V40_2",
+    "maximum_independent_metric_absolute_difference": 8.881784197001252e-16,
+    "maximum_independent_observation_receipt_absolute_difference": 2.220446049250313e-16,
+    "rows": [
+      {
+        "ratios_to_direct_k4": {
+          "field_relative_l2": 0.9822582881394997,
+          "gradient_relative_l2": 1.0030592051865281,
+          "observation_relative_l2": 1.0393170875945004
+        },
+        "snapshot_id": 1,
+        "time_seconds": 0.002
+      },
+      {
+        "ratios_to_direct_k4": {
+          "field_relative_l2": 0.9815879201704895,
+          "gradient_relative_l2": 1.0152164138313973,
+          "observation_relative_l2": 1.037702947737792
+        },
+        "snapshot_id": 2,
+        "time_seconds": 0.004
+      },
+      {
+        "ratios_to_direct_k4": {
+          "field_relative_l2": 0.9793532685138764,
+          "gradient_relative_l2": 1.0112655305898717,
+          "observation_relative_l2": 1.0215233670457504
+        },
+        "snapshot_id": 3,
+        "time_seconds": 0.006
+      },
+      {
+        "ratios_to_direct_k4": {
+          "field_relative_l2": 0.9806368560342152,
+          "gradient_relative_l2": 1.0050873735778167,
+          "observation_relative_l2": 1.0654183017287293
+        },
+        "snapshot_id": 4,
+        "time_seconds": 0.008
+      }
+    ],
+    "scientific_status": "FAIL_EXTERNAL_BLASTNET_ACCURACY_GATE_SARC_K3_M4_V40_2",
+    "snapshot_pass_count": 0,
+    "snapshot_total": 4,
+    "trajectory_equal_medians": {
+      "direct_k4": {
+        "field_relative_l2": 0.9794195169776052,
+        "gradient_relative_l2": 0.9710539008956895,
+        "observation_relative_l2": 0.30160802347794957
+      },
+      "sarc_k3_m4": {
+        "field_relative_l2": 0.9604287558191589,
+        "gradient_relative_l2": 0.9753422945260428,
+        "observation_relative_l2": 0.31461956387691786
+      },
+      "zero": {
+        "field_relative_l2": 0.9999982343514702,
+        "gradient_relative_l2": 1.0000393717252454,
+        "observation_relative_l2": 0.4316157040423359
+      }
+    }
+  },
+  "method": {
+    "name": "SARC-K3-M4",
+    "online_rule": "Frozen learned Direct initializer, curved GN-CGLS K3, four-step straight residual correction, and one curved-forward observable acceptance.",
+    "training_or_tuning_on_blastnet_before_scoring": false
+  },
+  "post_open_mechanism_diagnostic": {
+    "alpha_domain": [
+      0.0,
+      2.0
+    ],
+    "all_grid_best_pass": false,
+    "best_observable_alpha": [
+      1.4,
+      1.4,
+      1.4,
+      1.2
+    ],
+    "diagnosis": "POST_OPEN_CORRECTION_SPAN_INSUFFICIENT_FOR_OBSERVATION_GATE",
+    "grid_best_ratios_to_direct_k4": [
+      {
+        "field_relative_l2": 0.9761219687716539,
+        "gradient_relative_l2": 1.014763158934101,
+        "observation_relative_l2": 1.0180494957108102,
+        "snapshot_id": 1
+      },
+      {
+        "field_relative_l2": 0.9749585496662201,
+        "gradient_relative_l2": 1.0312661887030123,
+        "observation_relative_l2": 1.0198946182309758,
+        "snapshot_id": 2
+      },
+      {
+        "field_relative_l2": 0.9723558140785172,
+        "gradient_relative_l2": 1.027848878145042,
+        "observation_relative_l2": 1.00223156709215,
+        "snapshot_id": 3
+      },
+      {
+        "field_relative_l2": 0.9771702445684399,
+        "gradient_relative_l2": 1.0099886913098262,
+        "observation_relative_l2": 1.0568760433381297,
+        "snapshot_id": 4
+      }
+    ],
+    "new_external_generalization_evidence": false,
+    "scope": "Post-open one-dimensional scan along the already scored SARC correction direction; it diagnoses failure but cannot repair or re-score the external gate."
+  },
+  "published_on": "2026-07-29",
+  "schema_version": "oerf-blastnet-h2air-phi05-sarc-external-public-summary-40.2",
+  "status": "FINAL_VALIDATED_NEGATIVE_EXTERNAL_ACCURACY_V40_2"
+}

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="SARC-K3-M4 v37-v39.1 在 PoolFire 曲线 BOST 代理逆问题上的精度迁移、原始系统资源复验、独立验证与证据边界。" />
-  <title>SARC-K3-M4 v37-v39.1 | OERF C 路线</title>
+  <meta name="description" content="SARC-K3-M4 v37-v39.1 的 PoolFire 正结果，以及 v40.2 在 BLASTNet H2-air DNS 上的外部失败边界。" />
+  <title>SARC-K3-M4 v37-v40.2 | OERF C 路线</title>
   <style>
     :root {
       --ink: #17211d;
@@ -326,23 +326,26 @@
     <a href="#resource">资源</a>
     <a href="#pareto">Pareto</a>
     <a href="#boundary">边界</a>
+    <a href="blastnet-external-v40.html">v40.2 外部门</a>
   </nav>
 
   <main>
     <header>
-      <div class="eyebrow">PoolFire curved-ray proxy · v35-v39.1</div>
+      <div class="eyebrow">PoolFire positive result · BLASTNet external boundary · v35-v40.2</div>
       <h1>SARC-K3-M4：用低保真缺陷修正，替掉一次昂贵曲线重线性化</h1>
       <p class="lead">
-        Learned Direct 初值先进入未修改的曲线 GN-CGLS K3；剩余曲线观测残差由冻结直线算子做恰好四步 CGLS 修正，再用一次高保真曲线 forward 决定接受或回退。v38.1 在两条额外但已历史打开的轨迹上保住三项精度；v39.1 再用 72 份 macOS 原始计时回执确认相对 Zero-K4 与 Direct-K4 的端到端资源优势。
+        Learned Direct 初值先进入未修改的曲线 GN-CGLS K3；剩余曲线观测残差由冻结直线算子做恰好四步 CGLS 修正，再用一次高保真曲线 forward 决定接受或回退。v38.1 在两条额外但已历史打开的轨迹上保住三项精度；v39.1 再用 72 份 macOS 原始计时回执确认资源优势。v40.2 将冻结方法零适配迁到 BLASTNet H2-air DNS，正式外部精度门 0 / 4，证明该正结果不能直接外推。
       </p>
       <div class="chips">
         <span class="chip ok">v38.1 · 2 / 2 迁移 PASS</span>
         <span class="chip ok">v39.1 · 原始 wall/RSS PASS</span>
         <span class="chip open">关键正结果</span>
+        <span class="chip hold">v40.2 · 外部门 0 / 4</span>
         <span class="chip hold">无 untouched PoolFire</span>
         <span class="chip hold">algorithm_breakthrough=false</span>
       </div>
       <div class="actions">
+        <a class="button primary" href="blastnet-external-v40.html">打开 v40.2 外部失败</a>
         <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_postopen_v39_1_result_2026-07-29.md">阅读 v38-v39.1 完整判决</a>
         <a class="button" href="../docs/poolfire_c_sarc_postopen_v39_1_public_summary.json">打开脱敏机器摘要</a>
         <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sarc_postopen_v39_1.png">查看迁移与资源图</a>
@@ -353,6 +356,10 @@
         <div class="metric"><strong>0.74426</strong><span>轨迹等权 wall / Zero-K4</span></div>
         <div class="metric"><strong>0.82542</strong><span>轨迹等权 wall / Direct-K4</span></div>
         <div class="metric"><strong>1.01523</strong><span>相对 Direct-K4 最差 RSS 比</span></div>
+      </div>
+      <div class="alert hold" style="margin-top:16px;">
+        <strong>最新边界：</strong>
+        PoolFire 上的 v39.1 资源正结果仍成立；但 BLASTNet H2-air 的四帧外部检验均未同时通过 field / gradient / observation 兼容门。开封后最优幅度扫描仍为 0 / 4，说明不能只放大 correction，<code>algorithm_breakthrough=false</code>。
       </div>
     </header>
 
@@ -611,7 +618,7 @@
     </section>
 
     <footer>
-      脱敏公开页不包含原始 PoolFire 数据、私有场、checkpoint、路径、运行 seal 或哈希。最新证据：v39.1，2026-07-29。
+      脱敏公开页不包含原始 PoolFire/BLASTNet 数据、私有场、checkpoint、路径、运行 seal 或哈希。最新证据：v40.2，2026-07-29。
     </footer>
   </main>
 </body>
