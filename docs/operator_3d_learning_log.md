@@ -8091,3 +8091,70 @@ algorithm_breakthrough=false
 
 完整结果见
 `docs/poolfire_c_temporal_dual_v18_result_2026-07-28.md`。
+
+## 260. v19：我让“答案可见的运动诊断”先试，平移路线仍然失败
+
+v18 失败后，一个自然解释是：上一帧不能直接 hold，但如果先估计流动位移，再把
+dual proposal 平移到当前帧，也许能复用。为了不先花几天训练 optical-flow 网络，
+这一轮先问更便宜、更有判别力的问题：
+
+> 即使诊断器能看见当前完整 proposal，它能否用每个 view 的小范围整数平移与缩放，
+> 从上一关键帧恢复当前 proposal，并守住最终重建精度？
+
+如果这个“答案可见”的固定家族自己都失败，就没有理由立刻训练一个只能看观测的
+更难模型。
+
+正式运行前，独立审计指出了四个问题：执行对象没有完整绑定、51 个精确关键帧会
+稀释 50 个跳过帧、oracle 被误记成 51 次 CNN、以及“上界”措辞过强。我先全部
+修复，再冻结 private execution release。正式表同时检查全部 101 帧和仅 50 个
+skipped frames；oracle 正确记为 101 次 CNN，只是非部署 diagnostic。
+
+最关键的 skipped-only joint match：
+
+```text
+trajectory   observation motion   proposal-visible diagnostic
+p14-s05             100%                    100%
+p22-s03              70%                     74%
+p33-s01             100%                    100%
+p45-s05              40%                     40%
+p58-s03              16%                     14%
+required              90%                     90%
+```
+
+p22、p45、p58 三条都失败。更关键的是，proposal-visible diagnostic 在 p14、
+p22、p33、p45 的 50 个跳过帧中从未选择非零位移，p58 也只有 2%。也就是说，
+即使直接看当前 proposal，最佳 proposal-L2 参数也主要是幅值缩放，不是平移。
+
+还有一个反直觉结果：2072 维 diagonal delta 的 proposal p90 比 motion hold
+低很多，但 p22、p45、p58 的最终 skipped joint match 仍只有 58%、40%、8%。
+因此“dual MSE 变小”与“最终 field / gradient / observation 非劣”不是一回事。
+下一模型不能只优化 proposal MSE。
+
+独立 validator 没有导入正式 motion/temporal helper，重新实现所有 transport、
+exact `A^T`、alpha、CGLS K1、Zero-K4 与双重精度门。最大差为：
+
+```text
+1.1102230246251565e-16
+```
+
+最终状态：
+
+```text
+PASS_INDEPENDENT_RECOMPUTATION_V19
+PASS_FINAL_EVIDENCE_SEAL_V19
+FAIL_BOUNDED_PER_VIEW_PROPOSAL_L2_WARP_DIAGNOSTIC_V19
+algorithm_breakthrough=false
+```
+
+**讲人话：**这次我们真的让“知道当前答案的裁判”先试了一遍。它在三个工况上仍然
+搬不准，说明这里不是把上一帧左右挪两格就能解决。反应、扩散、热膨胀、视线积分和
+火焰形态变化都可能改变 dual；观测里看起来像移动，也不一定对应 dual 在移动。
+
+这次没有算法突破，但得到了一条扎实的停止结论：不再调位移半径、缩放、阈值，也不
+直接训练 optical-flow/FNO/GRU。下一步先做 dual innovation 的低维子空间
+diagnostic。只有 oracle 低秩系数能在五条 held-out trajectory 的 50 个 skipped
+frames 全部过门，才训练 observation-only 系数预测器；否则当前 proxy 上的 50%
+时间摊销路线停止。
+
+完整结果见
+`docs/poolfire_c_motion_state_v19_result_2026-07-28.md`。

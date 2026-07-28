@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.28-c-v18-temporal-amortization-negative",
-  previousVersion: "2026.07.28-c-v17-persistent-serial-partial-repair",
-  previousBadge: "v17 resource · wall/RSS PASS, CPU/cold FAIL",
-  olderBadge: "v16.1 resource · wall headroom, CPU/RSS FAIL",
+  version: "2026.07.28-c-v19-motion-state-negative",
+  previousVersion: "2026.07.28-c-v18-temporal-amortization-negative",
+  previousBadge: "v18 temporal · accurate fallback, insufficient reuse",
+  olderBadge: "v17 resource · wall/RSS PASS, CPU/cold FAIL",
   historyReleases: [
+    {
+      version: "2026.07.28-c-v18-temporal-amortization-negative",
+      previousVersion: "2026.07.28-c-v17-persistent-serial-partial-repair",
+      badge: "v18 temporal · accurate fallback, insufficient reuse"
+    },
     {
       version: "2026.07.28-c-v17-persistent-serial-partial-repair",
       previousVersion: "2026.07.28-c-v16.1-resource-gate-fail",

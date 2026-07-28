@@ -1,0 +1,201 @@
+{
+  "schema_version": "oerf-poolfire-c-motion-state-oracle-ceiling-19.0",
+  "frozen_at_utc": "2026-07-27T23:27:15Z",
+  "parent_decision": "FAIL_POST_OPEN_TEMPORAL_AMORTIZATION_GATE_V18",
+  "scientific_question": "Under one fixed even-frame keyframe budget, can bounded zero-fill per-view shift-scale transport preserve the frozen v16 field/gradient/observation compatibility envelope on every fit trajectory, and does a nondeployable proposal-visible diagnostic show that this exact transport family has enough headroom to justify a later causal native-skip implementation?",
+  "scope": {
+    "trajectory_ids": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "trajectory_role": "fit-only leave-one-trajectory-out mechanism diagnostic",
+    "frame_count_per_trajectory": 101,
+    "field_shape": [
+      16,
+      16,
+      32
+    ],
+    "observation_size": 2072,
+    "parent_CNN_training_excluded_held_out_trajectory": false,
+    "stopping_validation_used": false,
+    "post_open_p33_used": false,
+    "fresh_trajectory_used": false,
+    "untouched_test_used": false,
+    "real_BOST": false
+  },
+  "fixed_schedule": {
+    "keyframes": "frames 0,2,...,100",
+    "scheduled_CNN_count": 51,
+    "scheduled_CNN_fraction": 0.504950495049505,
+    "scheduled_CNN_reduction": 0.49504950495049505,
+    "native_skip_executed": false,
+    "resource_interpretation": "counterfactual mechanism ceiling only; all 101 parent proposals are generated before scoring"
+  },
+  "execution_release": {
+    "required_before_results": true,
+    "private_and_not_published": true,
+    "must_bind": [
+      "actual clean source commit",
+      "protocol SHA-256",
+      "runner, validator, mechanism, and test SHA-256",
+      "geometry, checkpoint, parameter, and native library SHA-256",
+      "READY, checksums, manifest, observations, and gauge truth SHA-256 for all five trajectories"
+    ],
+    "runner_must_reject_uncommitted_tracked_changes": true,
+    "runner_must_verify_raw_array_dtype_before_conversion": true
+  },
+  "motion_contract": {
+    "views": [
+      {
+        "shape": [
+          2,
+          14,
+          30
+        ],
+        "flat_slice": [
+          0,
+          840
+        ]
+      },
+      {
+        "shape": [
+          2,
+          14,
+          30
+        ],
+        "flat_slice": [
+          840,
+          1680
+        ]
+      },
+      {
+        "shape": [
+          2,
+          14,
+          14
+        ],
+        "flat_slice": [
+          1680,
+          2072
+        ]
+      }
+    ],
+    "estimator": "independent exhaustive integer translation per native detector view",
+    "translation_radius_pixels": 2,
+    "warp_boundary": "zero fill; cyclic wrap is forbidden",
+    "view_scale": "least-squares scalar clipped to [0.25,4.0]",
+    "tie_break": "minimum residual, then minimum L1 shift, then minimum absolute dy, then minimum absolute dx, then encoded signed shift",
+    "observation_motion_source": "current and latest-keyframe observations only",
+    "oracle_motion_source": "current and latest-keyframe full CNN proposals; diagnostic only",
+    "residual_correction": "six frozen native detector-channel scalar gains",
+    "residual_correction_fit": "other four trajectories only in each outer fold",
+    "ridge": "1e-3 times median positive coordinate energy",
+    "truth_used_for_motion_or_online_decision": false
+  },
+  "arms": [
+    {
+      "arm_id": "full_cnn_dual_k1",
+      "proposal": "full parent proposal on every frame",
+      "role": "parent learned control"
+    },
+    {
+      "arm_id": "fixed_hold_dual_k1",
+      "proposal": "hold latest exact keyframe proposal",
+      "role": "no-motion temporal control"
+    },
+    {
+      "arm_id": "fixed_diagonal_delta_dual_k1",
+      "proposal": "v18 fit-only 2072-coordinate observation delta correction",
+      "role": "strong no-motion learned control"
+    },
+    {
+      "arm_id": "fixed_linear_dual_k1",
+      "proposal": "causal linear extrapolation from the latest two exact keyframes",
+      "role": "zero-parameter temporal trend control"
+    },
+    {
+      "arm_id": "observation_motion_hold_dual_k1",
+      "proposal": "warp latest exact keyframe proposal using observation-visible motion",
+      "role": "primary deployable-motion mechanism diagnostic"
+    },
+    {
+      "arm_id": "observation_motion_channel_delta_dual_k1",
+      "proposal": "observation-visible motion warp plus fit-only six-channel aligned residual correction",
+      "role": "motion residual-correction diagnostic"
+    },
+    {
+      "arm_id": "oracle_proposal_motion_hold_dual_k1",
+      "proposal": "warp latest exact keyframe proposal using motion estimated from the unavailable current full proposal",
+      "role": "nondeployable bounded per-view proposal-L2 shift-scale diagnostic; not a mathematical upper bound on final reconstruction",
+      "required_full_CNN_proposal_count": 101,
+      "eligible_for_resource_savings_comparison": false
+    },
+    {
+      "arm_id": "zero_cgls_k4",
+      "proposal": "zero initialization",
+      "role": "unchanged reconstruction reference"
+    }
+  ],
+  "solver": {
+    "learned_and_temporal_arms": "proposal -> exact A^T -> observable alpha clipped to [0,2] -> unchanged strict CGLS K1",
+    "candidate_A_calls_per_trajectory": 202,
+    "candidate_A_transpose_calls_per_trajectory": 202,
+    "reference": "zero initialization -> unchanged strict CGLS K4",
+    "reference_A_calls_per_trajectory": 404,
+    "reference_A_transpose_calls_per_trajectory": 404
+  },
+  "accuracy_gates": {
+    "field_tolerance_per_frame": "max(0.01,0.05*zero_K4_field_relative_l2)",
+    "gradient_tolerance_per_frame": "max(0.015,0.05*zero_K4_gradient_relative_l2)",
+    "observation_tolerance_per_frame": "max(0.005,0.10*zero_K4_observation_relative_l2)",
+    "joint_matched_fraction_minimum": 0.9,
+    "joint_harm_fraction_maximum": 0.05,
+    "per_metric_harm_fraction_maximum": 0.05,
+    "severe_harm_count_maximum": 0,
+    "aggregation": "every trajectory must pass independently; pooled-frame rescue is forbidden",
+    "all_frame_gate_required": true,
+    "skipped_only_gate_required": true,
+    "skipped_only_frame_count": 50,
+    "skipped_only_thresholds": "the same joint matched, joint harm, per-metric harm, and severe-harm limits are applied again to the 50 non-keyframes",
+    "proposal_tail_for_method_comparison": "p90 over the 50 skipped frames only"
+  },
+  "motion_added_value_gate": {
+    "primary_arm": "observation_motion_hold_dual_k1",
+    "deployable_controls": [
+      "fixed_hold_dual_k1",
+      "fixed_diagonal_delta_dual_k1",
+      "fixed_linear_dual_k1"
+    ],
+    "proposal_requirement": "trajectory-equal median of skipped-only per-trajectory proposal p90 must be at least 5% lower than the best control median",
+    "best_control_selection": "choose one control arm with the lowest trajectory-equal median skipped-only proposal p90; use that same arm for every final compatibility comparison",
+    "final_no_harm_requirement": "on every trajectory, skipped-only joint matched fraction may be at most 0.01 below the selected best control and skipped-only joint harm fraction may be at most 0.01 above that same control; severe harm remains zero",
+    "channel_delta_role": "reported diagnostic only; it cannot rescue a failed primary arm"
+  },
+  "predeclared_decision_order": [
+    "If the oracle proposal-motion hold arm fails all-frame or skipped-only compatibility on any trajectory, return FAIL_BOUNDED_PER_VIEW_PROPOSAL_L2_WARP_DIAGNOSTIC_V19 and reject only this exact per-view integer shift plus scalar family under the frozen proposal-L2 selector.",
+    "If the oracle passes every trajectory but observation-motion hold fails any trajectory, return FAIL_OBSERVATION_MOTION_IDENTIFIABILITY_V19.",
+    "If observation-motion hold passes every trajectory but is not better than fixed hold, diagonal delta, or linear extrapolation in proposal p90 and final compatibility tails, return PASS_SIMPLE_TEMPORAL_HEADROOM_NO_MOTION_VALUE_V19.",
+    "Only if observation-motion hold passes every trajectory and adds value over all deployable controls may a separate nested event gate and native causal worker be authorized."
+  ],
+  "failure_actions": {
+    "oracle_diagnostic_failure": "stop this exact bounded per-view integer shift plus scalar family; do not claim mathematical impossibility of other transport models and do not open p33, fresh, validation, or test data",
+    "observation_identifiability_failure": "record that the shell exists but deployment-visible observations do not identify it under this contract",
+    "control_dominance": "retain only the winning simple temporal control and do not claim motion-model value",
+    "motion_headroom_pass": "freeze a separate nested causal gate and true native-skip runtime protocol before any resource claim"
+  },
+  "claim_limits": {
+    "native_CNN_execution_reduction": false,
+    "wall_time_speedup": false,
+    "CPU_time_benefit": false,
+    "whole_pipeline_RSS_benefit": false,
+    "A_or_A_transpose_reduction_from_motion": false,
+    "end_to_end_cross_trajectory_generalization": false,
+    "real_BOST": false,
+    "physical_same_accuracy": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
