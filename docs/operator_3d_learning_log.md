@@ -8407,3 +8407,102 @@ paper_success=false
 
 完整结果见
 `docs/poolfire_c_curved_ray_v25_result_2026-07-28.md`。
+
+## 265. v26.3：外部组合和曲折 forward 同时出现，固定 Warm K1 仍通过
+
+v25 的正结果还有一个缺口：使用的三条轨迹已经参与过 fit-morphology 开发。
+这次没有再训练模型，而是把 v24 的三条 external-to-fit 组合直接接到同一套
+field-dependent eikonal 曲折光线 forward：
+
+```text
+p33-s05
+p45-s01
+p58-s05
+```
+
+实验并没有一次就放行。v26.1 因“曲率压力帧”和“兼容性评分帧”未绑定，在 truth
+解码前停止。v26.2 跑完后没有查看结果值，独立审计又指出两点：不能把离散 beta
+写得像连续区间，且 96/192 收敛不能只抽最高曲率的 5 帧。v26.3 因此冻结为：
+
+- 每个离散 beta 独立判断；
+- robustness 与 cost dominance 分开；
+- 曲率差至少 1% 的每一帧都必须做 96/192 对照；
+- 每条轨迹至少 10 个非平凡帧，才允许形成压力结论；
+- 三条轨迹一条不过就不能报告该 beta；
+- 不重训、不换 rank、不调门。
+
+低 beta 的真实情况是：
+
+```text
+beta       p33 nontrivial   p45   p58   all-three stress gate
+0.0001          0            0     0             NO
+0.0005          0           92     2             NO
+0.001          69          101    91             YES
+0.002         101          101   101             YES
+```
+
+所以 `0.0001`、`0.0005` 不是算法失败，而是压力太弱，不能拿来制造“全 beta
+通过”。真正可报告的离散档只有 `0.001`、`0.002`，两档都通过 robustness 与
+economic dominance。
+
+最高档的 observation 曲率差与数值收敛：
+
+```text
+trajectory   curvature p90   curvature worst   96/192 worst
+p33-s05          3.215%          3.718%            0.143%
+p45-s01         12.335%         16.360%            0.450%
+p58-s05          4.494%          5.234%            0.186%
+```
+
+p45 的压力不是小扰动；三条最坏收敛差都低于 0.5%，曲率 p90 至少是数值差的
+22 倍。
+
+最高档的重建结果：
+
+```text
+trajectory   all match   odd match   nontrivial match   harm
+p33-s05       101/101      50/50          101/101          0
+p45-s01       101/101      50/50          101/101          0
+p58-s05        99/101      48/50           99/101          0
+```
+
+p58 是最薄弱边界，不应写成完美 100%；但三套集合都仍在冻结兼容包络内。八方法
+共同判决保持：
+
+```text
+Normalized BP          202 calls  FAIL
+Zero CGLS K1           202 calls  FAIL
+Reduced Warm K1        354 calls  PASS
+Full parent Warm K1    404 calls  PASS
+Zero CGLS K2           404 calls  FAIL
+Geometry PCGLS K2      404 calls  FAIL
+Zero CGLS K3           606 calls  FAIL
+Zero CGLS K4           808 calls  PASS
+```
+
+独立 validator 从原始 rho 重算了 `1515` 个 192-step 正式 observation、`749`
+个 96-step 对照和 `120` 个方法判决。正式 observation、收敛值的最大差都是
+`0`：
+
+```text
+PASS_INDEPENDENT_FULL_ARM_RECOMPUTATION_EXTERNAL_CURVED_RAY_STRESS_V26_3
+PASS_EXTERNAL_TO_FIT_CURVED_RAY_STRESS_V26_3
+```
+
+**讲人话：**现在可以有理有据地说，固定 warm initializer 的 proxy 优势没有在
+“新功率/尺寸组合 + 曲折光线 forward mismatch”同时出现时消失。这个证据比
+v25 强，而且结果不是通过平均值或近零扰动凑出来的。
+
+但这仍是同一个 PoolFire 数据集上的 post-open physics stress。没有真实
+`rho->n`、相机、背景图、位移提取、噪声、标定误差、official test，也没有在
+v26 重测 wall/RSS。因此正式边界仍是：
+
+```text
+important_reproducible_physics_robustness_increment=true
+algorithm_breakthrough=false
+real_BOST=false
+paper_success=false
+```
+
+完整结果见
+`docs/poolfire_c_external_curved_v26_result_2026-07-28.md`。
