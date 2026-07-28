@@ -331,6 +331,7 @@
       <a href="#representation-gate">表示机制</a>
       <a href="#transport-proxy-gate">输运与校准门</a>
       <a href="#g0-evidence">真实 CFD 代理</a>
+      <a href="curved-ray-stress-v25.html">v25 曲折光线压力</a>
       <a href="observable-external-v24.html">v24 三轨迹复现</a>
       <a href="observable-reduced-v23.html">v23 支持性结果</a>
       <a href="#path">16 周学习</a>
@@ -340,20 +341,23 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 当前证据 2026-07-28</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code> 和端到端时间。v24 已把冻结的 Observable Reduced Warm K1 原样放到三条此前不在项目数据根目录的公开 PoolFire 轨迹上：3/3 逐条通过精度与资源门，101 帧在线账为 <code>202A+152A^T</code>，相对完整父模型少 50 次精确伴随；fresh-process wall 降幅为 <code>13.48% / 11.81% / 12.80%</code>。这是重要公开 CFD 代理复现，不是官方盲测或真实 BOST，<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code> 和端到端时间。v25 没有重训 v24 的 Observable Reduced Warm K1，而是把观测正演替换为场依赖 eikonal 曲折光线：三条 PoolFire 轨迹、五个冻结曲率档全部逐条通过，最高档 p33 的 observation 改变 p90 已达 14.19%，主方法仍以 <code>202A+152A^T=354</code> 成为最便宜兼容臂。它排除了“优势只存在于完全共享直线 forward”的一种解释，但仍不是相机标定后的真实 BOST，<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="observable-external-v24.html">打开 v24 三轨迹结果页</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_observable_external_v24_result_2026-07-28.md">读 v24 严格判决</a>
-      <a class="button" href="../docs/poolfire_c_observable_external_v24_public_summary.json">打开 v24 脱敏结果</a>
-      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_observable_external_v24_result.png">查看 v24 结果图</a>
+      <a class="button primary" href="curved-ray-stress-v25.html">打开 v25 曲折光线结果页</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_curved_ray_v25_result_2026-07-28.md">读 v25 严格判决</a>
+      <a class="button" href="../docs/poolfire_c_curved_ray_v25_public_summary.json">打开 v25 脱敏结果</a>
+      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_curved_ray_v25_result.png">查看 v25 结果图</a>
     </div>
     <div class="alert success" style="margin-top:12px;">
-      <strong>重要里程碑：三条公开 CFD 外部代理复现通过</strong>
-      <span>p33-s05 与 p45-s01 为 101/101 joint match，p58-s05 为 99/101；三条 harm 都是 0，wall 均快 10% 以上，且不同数值路径完整复算。两处 p58 轻微 observation miss、400 次离线 setup 和有效官方盲测数 0 均已公开；<a href="observable-external-v24.html">打开专页查看逐轨迹证据与真实 BOST 下一道门</a>。</span>
+      <strong>最新科学增量：固定 Warm K1 通过曲折光线物理压力测试</strong>
+      <span>三条轨迹在最高曲率档均为 101/101 joint match、0 harm；便宜的 BP/K1/K2/PCGLS/K3 对照未共同通过，354 次主方法是最便宜兼容臂。独立判决器复算 120 个判决；<a href="curved-ray-stress-v25.html">打开专页查看非线性压力大小、数值收敛、八方法对照和未跨过的真实 BOST 门</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="curved-ray-stress-v25.html">v25 曲折光线物理压力</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_curved_ray_v25_result_2026-07-28.md">v25 严格判决</a>
+      <a class="button" href="../docs/poolfire_c_curved_ray_v25_public_summary.json">v25 脱敏结果</a>
       <a class="button primary" href="observable-external-v24.html">v24 三轨迹外部代理复现</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_observable_external_v24_result_2026-07-28.md">v24 严格判决</a>
       <a class="button" href="../docs/poolfire_c_observable_external_v24_public_summary.json">v24 脱敏结果</a>
@@ -473,8 +477,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert success">
-      <strong>最新正式判决：v24 三条公开 CFD 外部代理复现通过</strong>
-      <span>冻结 Reduced Warm K1 在 p33-s05、p45-s01、p58-s05 上逐条通过 accuracy/resource gate；all-frame joint match 为 100% / 100% / 98.02%，三条 harm=0，轨迹等权 wall 降幅中位数 12.80%。正式状态 <code>PASS_EXTERNAL_PROXY_REPLICATION</code>；它仍不是 official confirmatory test、真实 BOST、全球泛化或论文成功，<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新正式判决：v25 受控曲折光线 proxy 压力通过</strong>
+      <span>冻结 Reduced Warm K1 在 p14-s05、p33-s01、p58-s03 的五个曲率档上逐条通过；最高档三条都是 100% joint match、0 harm，p33 observation 改变 p90 为 14.19%，96/192 步差最坏 0.372%。正式状态 <code>PASS_CONTROLLED_CURVED_RAY_PROXY_STRESS_V25</code>；它仍不是物理 beta 标定、official test、真实 BOST 或论文成功，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 

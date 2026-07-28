@@ -1,0 +1,150 @@
+{
+  "schema_version": "oerf-poolfire-c-curved-ray-stress-25.0",
+  "status": "FROZEN_BEFORE_FORMAL_CURVED_OBSERVATION_GENERATION",
+  "date": "2026-07-28",
+  "scientific_question": "Does the frozen Observable Reduced Warm K1 retain its accuracy-call advantage when the independent forward is changed from straight rays to a controlled field-dependent eikonal curved-ray surrogate?",
+  "trajectory_roles": {
+    "role": "post_open_fit_morphology_physics_stress_only",
+    "trajectory_ids": [
+      "p=14kw_size=05",
+      "p=33kw_size=01",
+      "p=58kw_size=03"
+    ],
+    "frames_per_trajectory": 101,
+    "cross_trajectory_generalization_claim": false,
+    "official_confirmatory_test": false
+  },
+  "forward_lock": {
+    "equation": "dr_ds=t; dt_ds=(I-ttT)grad(n)/n",
+    "refractive_index_parameterization": "n=1+beta*(rho_ROI-spatial_mean_rho_ROI)",
+    "reported_observation": "final_angular_change_divided_by_beta",
+    "beta_zero_definition": "fixed_step_midpoint_straight_limit",
+    "beta_ladder": [
+      0.0,
+      0.0001,
+      0.0005,
+      0.001,
+      0.002
+    ],
+    "formal_integration_steps": 192,
+    "convergence_comparison_steps": 96,
+    "convergence_frame_indices": [
+      0,
+      50,
+      100
+    ],
+    "convergence_relative_l2_maximum": 0.005,
+    "beta_zero_original_observation_relative_l2_maximum": 0.005,
+    "full_resolution_roi_shape": [
+      32,
+      32,
+      64
+    ],
+    "inverse_field_shape": [
+      16,
+      16,
+      32
+    ],
+    "observation_shape": [
+      2072
+    ],
+    "camera_calibrated": false,
+    "background_image_rendered": false,
+    "optical_flow_modelled": false,
+    "rho_to_refractive_index_closed": false,
+    "private_simulator_code_included": false
+  },
+  "frozen_method": {
+    "name": "Observable Reduced Residual Warm K1",
+    "fit_trajectory_count": 5,
+    "deployment_rank": 199,
+    "ridge_relative_lambda": 0.01,
+    "primary_online_ledger_per_101_frames": {
+      "A": 202,
+      "A_transpose": 152
+    },
+    "full_parent_online_ledger_per_101_frames": {
+      "A": 202,
+      "A_transpose": 202
+    }
+  },
+  "mandatory_arms": [
+    {
+      "name": "normalized_bp",
+      "A": 101,
+      "A_transpose": 101
+    },
+    {
+      "name": "zero_cgls_k1",
+      "A": 101,
+      "A_transpose": 101
+    },
+    {
+      "name": "observable_reduced_warm_k1",
+      "A": 202,
+      "A_transpose": 152
+    },
+    {
+      "name": "full_parent_warm_k1",
+      "A": 202,
+      "A_transpose": 202
+    },
+    {
+      "name": "zero_cgls_k2",
+      "A": 202,
+      "A_transpose": 202
+    },
+    {
+      "name": "geometry_pcgls_k2",
+      "A": 202,
+      "A_transpose": 202
+    },
+    {
+      "name": "zero_cgls_k3",
+      "A": 303,
+      "A_transpose": 303
+    },
+    {
+      "name": "zero_cgls_k4_reference",
+      "A": 404,
+      "A_transpose": 404
+    }
+  ],
+  "accuracy_contract": {
+    "reference_arm": "zero_cgls_k4_reference",
+    "metrics": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "straight_inverse_observation_relative_l2"
+    ],
+    "evaluation_sets": [
+      "all_101_frames",
+      "50_odd_reduced_frames"
+    ],
+    "compatibility_envelope": "frozen_v16_field_gradient_observation_envelope",
+    "joint_matched_fraction_minimum": 0.9,
+    "joint_harm_fraction_maximum": 0.05,
+    "per_metric_harm_fraction_maximum": 0.05,
+    "severe_harm_count_maximum": 0
+  },
+  "decision": {
+    "numerical_gate_precedes_scientific_scoring": true,
+    "all_three_trajectories_must_pass_each_reported_beta": true,
+    "report_highest_beta_with_all_trajectory_primary_pass": true,
+    "report_cheapest_compatible_arm_per_trajectory_and_beta": true,
+    "primary_is_dominated_if_any_strictly_cheaper_arm_passes_both_evaluation_sets": true,
+    "wall_and_memory_not_remeasured_in_this_physics_stress": true,
+    "v24_resource_result_may_not_be_upgraded": true,
+    "failure_action": "record_negative_boundary_and_do_not_tune_on_the_same_stress_rows"
+  },
+  "claim_boundaries": {
+    "post_open_development_diagnostic": true,
+    "independent_external_dataset": false,
+    "official_untouched_test": false,
+    "real_bost": false,
+    "physical_same_accuracy_proven": false,
+    "cross_trajectory_generalization_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>v25 曲折光线压力测试 | OERF C 路线</title>
+  <meta name="description" content="Observable Reduced Warm K1 在三条 PoolFire CFD 轨迹和五个曲率强度下的 eikonal 曲折光线压力测试、八方法成本对照、独立判决复算与真实 BOST 边界。" />
+  <style>
+    :root {
+      --ink: #17252b;
+      --muted: #607178;
+      --line: #cad6d3;
+      --paper: #fff;
+      --bg: #f3f6f4;
+      --teal: #146f66;
+      --teal-soft: #e8f3ef;
+      --blue: #315f93;
+      --blue-soft: #eaf1f8;
+      --coral: #a34f43;
+      --coral-soft: #faece8;
+      --gold: #8a651b;
+      --gold-soft: #f8f1df;
+      --radius: 8px;
+      --shadow: 0 9px 24px rgba(27,47,51,.06);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url("../assets/backgrounds/oerf-refractive-field.png") center / cover no-repeat;
+      opacity: .05;
+      pointer-events: none;
+    }
+    a { color: var(--blue); }
+    code { font-family: "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhere; }
+    header, main, footer { width: min(1180px, calc(100vw - 32px)); margin: 0 auto; }
+    header { padding: 20px 0 24px; border-bottom: 1px solid var(--line); }
+    main { padding-bottom: 48px; }
+    footer { padding: 22px 0 36px; color: var(--muted); font-size: 12px; }
+    h1, h2, h3 { line-height: 1.24; letter-spacing: 0; }
+    h1 { margin: 16px 0 8px; font-size: clamp(30px, 5vw, 46px); }
+    h2 { margin: 0; font-size: 27px; }
+    h3 { margin: 0 0 6px; font-size: 18px; }
+    p { margin: 7px 0; }
+    .nav, .actions, .chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .nav a, .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: var(--ink);
+      background: rgba(255,255,255,.96);
+      text-decoration: none;
+      font-weight: 750;
+      text-align: center;
+    }
+    .button.primary { color: #fff; border-color: var(--teal); background: var(--teal); }
+    .eyebrow { color: var(--teal); font-size: 12px; font-weight: 850; text-transform: uppercase; }
+    .lead { max-width: 980px; color: #43555c; font-size: 16px; }
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 18px 0 0;
+    }
+    .metric {
+      min-width: 0;
+      min-height: 108px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.96);
+      box-shadow: var(--shadow);
+    }
+    .metric b { display: block; margin-bottom: 5px; color: var(--teal); font-size: 27px; }
+    .metric.danger b { color: var(--coral); }
+    .metric span { color: var(--muted); font-size: 12px; }
+    section { padding: 28px 0; border-bottom: 1px solid var(--line); }
+    .section-head { margin-bottom: 14px; }
+    .section-head p { max-width: 940px; color: var(--muted); }
+    .alert {
+      padding: 15px 17px;
+      border: 1px solid #d9c187;
+      border-left: 5px solid var(--gold);
+      border-radius: var(--radius);
+      background: rgba(250,246,233,.97);
+    }
+    .alert.success { border-color: #b9d4ce; border-left-color: var(--teal); background: rgba(238,247,244,.97); }
+    .alert.critical { border-color: #ddb8af; border-left-color: var(--coral); background: rgba(252,240,236,.97); }
+    .alert strong { display: block; margin-bottom: 4px; }
+    .figure {
+      margin: 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.97);
+      box-shadow: var(--shadow);
+    }
+    .figure img { display: block; width: 100%; height: auto; }
+    .figure figcaption { padding: 7px 5px 2px; color: var(--muted); font-size: 12px; }
+    .flow, .audit-grid, .source-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .flow { grid-template-columns: repeat(5, minmax(0,1fr)); }
+    .audit-grid, .source-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .flow article, .audit-grid article, .source-grid article {
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.96);
+    }
+    .flow b { display: block; color: var(--teal); font-size: 13px; }
+    .flow span { display: block; margin-top: 4px; color: #4f6168; font-size: 12px; }
+    .audit-grid article.pass { border-top: 4px solid var(--teal); }
+    .audit-grid article.fail { border-top: 4px solid var(--coral); }
+    .source-grid article { border-top: 3px solid var(--blue); }
+    .source-grid a { font-weight: 760; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); }
+    table { width: 100%; min-width: 760px; border-collapse: collapse; }
+    th, td { padding: 11px 12px; border-bottom: 1px solid #e0e7e5; text-align: left; }
+    th { color: #40535a; background: #eef3f1; font-size: 12px; }
+    td { font-size: 13px; }
+    tr:last-child td { border-bottom: 0; }
+    .formula { padding: 13px 15px; border-left: 4px solid var(--blue); background: rgba(235,242,248,.92); }
+    .pass-text { color: var(--teal); font-weight: 800; }
+    .fail-text { color: var(--coral); font-weight: 800; }
+    @media (max-width: 840px) {
+      .status-grid, .audit-grid, .source-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .flow { grid-template-columns: 1fr; }
+      h1 { font-size: 32px; }
+    }
+    @media (max-width: 540px) {
+      header, main, footer { width: min(100% - 22px, 1180px); }
+      .status-grid, .audit-grid, .source-grid { grid-template-columns: 1fr; }
+      .nav { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .nav a { min-width: 0; padding-inline: 8px; }
+      .button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav" aria-label="页面导航">
+      <a href="./">返回 C 路线主页</a>
+      <a href="#verdict">判决</a>
+      <a href="#physics">物理压力</a>
+      <a href="#methods">八方法对照</a>
+      <a href="#audit">独立复算</a>
+      <a href="#boundary">证据边界</a>
+      <a href="#sources">一级来源</a>
+    </nav>
+    <div class="eyebrow">v25 · 受控 eikonal 曲折光线 · 2026-07-28</div>
+    <h1>Warm Start 曲折光线物理压力测试</h1>
+    <p class="lead">冻结的 Observable Reduced Warm K1 没有重训，也没有改门槛。在三条 PoolFire 轨迹、五个预注册曲率强度下，它始终是通过 field / gradient / observation 兼容门的最便宜方法。最高档中 p33 的 observation p90 已相对线性极限改变 14.19%，因此这不是无效小扰动；但它仍是 synthetic physics proxy，不是相机标定后的真实 BOST。</p>
+    <div class="actions" style="margin-top:14px">
+      <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_curved_ray_v25_result_2026-07-28.md">读完整中文判决</a>
+      <a class="button" href="../docs/poolfire_c_curved_ray_v25_public_summary.json">打开脱敏 JSON</a>
+      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_curved_ray_v25_result.png">单独查看结果图</a>
+    </div>
+    <div class="status-grid" aria-label="核心状态">
+      <div class="metric"><b>3 / 3</b><span>最高曲率档逐轨迹通过，且没有被严格更便宜方法支配</span></div>
+      <div class="metric"><b>14.19%</b><span>p33 最高曲率档 observation 改变 p90</span></div>
+      <div class="metric"><b>354</b><span>101 帧 A+A^T；父模型 404，Zero-K4 808</span></div>
+      <div class="metric danger"><b>0</b><span>official confirmatory test；algorithm breakthrough 仍为否</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section id="verdict">
+      <div class="section-head">
+        <div class="eyebrow">严格判决</div>
+        <h2>受控物理鲁棒性通过，突破性结论未成立</h2>
+        <p>本轮回答的是“直线 forward 改成场依赖曲折光线后，固定 warm start 会不会立即失效”。答案是没有失效。它不回答真实相机、位移提取、标定误差和噪声下是否仍然成功。</p>
+      </div>
+      <div class="alert success">
+        <strong>PASS_CONTROLLED_CURVED_RAY_PROXY_STRESS_V25</strong>
+        <span>三条轨迹 × 五个 beta × 八个方法全部完成；主方法在五档上都逐轨迹通过并保持最便宜兼容方法。</span>
+      </div>
+      <div class="alert critical" style="margin-top:10px">
+        <strong>algorithm_breakthrough=false</strong>
+        <span>post-open fit-morphology diagnostic=true，official test=0，real_BOST=false，physical_same_accuracy_proven=false，paper_success=false。</span>
+      </div>
+      <figure class="figure" style="margin-top:14px">
+        <img src="../assets/poolfire_c_curved_ray_v25_result.png" alt="三条 PoolFire 轨迹的曲率观测变化、数值收敛、八方法调用与科学边界" />
+        <figcaption>左上证明压力不是零；右上证明 96/192 步差小于冻结门；左下比较八方法的完整调用与共同判决；右下给出不能越过的主张边界。</figcaption>
+      </figure>
+    </section>
+
+    <section id="physics">
+      <div class="section-head">
+        <div class="eyebrow">物理与数值</div>
+        <h2>用场依赖 eikonal 光路替换直线观测</h2>
+        <p>这一步来自师兄 BOS 模拟工具所使用的物理思想，但代码为重新实现，不包含私有 notebook。三轴 detector geometry 保持不变，只改变生成 observation 的正演。</p>
+      </div>
+      <p class="formula"><code>dr/ds=t; dt/ds=(I-ttᵀ)grad(n)/n; n=1+beta(rho-mean(rho))</code></p>
+      <div class="flow" style="margin-top:12px">
+        <article><b>1 · Public CFD rho</b><span>三条 PoolFire 轨迹，每条 101 帧。</span></article>
+        <article><b>2 · High-res field</b><span>32×32×64 ROI 上做 trilinear scalar/gradient 查询。</span></article>
+        <article><b>3 · Curved rays</b><span>显式 midpoint 积分方向与位置，逐步保持单位方向。</span></article>
+        <article><b>4 · Same inverse</b><span>仍用固定 16×16×32 直线逆算子，形成 forward mismatch。</span></article>
+        <article><b>5 · Same gates</b><span>同一 K1/K2/K3/K4、兼容包络与完整调用账。</span></article>
+      </div>
+      <div class="table-wrap" style="margin-top:14px">
+        <table>
+          <thead><tr><th>轨迹</th><th>曲率差 p50</th><th>曲率差 p90</th><th>曲率差 worst</th><th>96/192 步 worst</th></tr></thead>
+          <tbody>
+            <tr><td>p14-s05</td><td>2.253%</td><td>3.113%</td><td>5.307%</td><td>0.080%</td></tr>
+            <tr><td>p33-s01</td><td>10.428%</td><td>14.188%</td><td>17.707%</td><td>0.372%</td></tr>
+            <tr><td>p58-s03</td><td>3.758%</td><td>5.705%</td><td>8.257%</td><td>0.187%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert" style="margin-top:12px">
+        <strong>重要限制：beta 不是实验标定量</strong>
+        <span>它是控制非线性强度的 synthetic 参数。没有气体组分、波长与 Gladstone-Dale 常数，就不能把最大位移或 beta 数值解释成某台真实相机中的物理强度。</span>
+      </div>
+    </section>
+
+    <section id="methods">
+      <div class="section-head">
+        <div class="eyebrow">方法与调用</div>
+        <h2>便宜经典对照失败，354 次主方法是最便宜兼容臂</h2>
+        <p>表中“通过”要求全 101 帧和奇数 50 帧两套集合同时满足单侧非劣、harm 与 severe-harm 门。结果按三条轨迹取交集，不用平均值遮住失败。</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>方法</th><th>A</th><th>Aᵀ</th><th>总调用</th><th>三条最高 beta 共同判决</th></tr></thead>
+          <tbody>
+            <tr><td>Normalized BP</td><td>101</td><td>101</td><td>202</td><td class="fail-text">FAIL</td></tr>
+            <tr><td>Zero CGLS K1</td><td>101</td><td>101</td><td>202</td><td class="fail-text">FAIL</td></tr>
+            <tr><td><strong>Observable Reduced Warm K1</strong></td><td>202</td><td>152</td><td><strong>354</strong></td><td class="pass-text">PASS</td></tr>
+            <tr><td>Full parent Warm K1</td><td>202</td><td>202</td><td>404</td><td class="pass-text">PASS</td></tr>
+            <tr><td>Zero CGLS K2</td><td>202</td><td>202</td><td>404</td><td class="fail-text">FAIL</td></tr>
+            <tr><td>Geometry PCGLS K2</td><td>202</td><td>202</td><td>404</td><td class="fail-text">FAIL</td></tr>
+            <tr><td>Zero CGLS K3</td><td>303</td><td>303</td><td>606</td><td class="fail-text">FAIL</td></tr>
+            <tr><td>Zero CGLS K4 reference</td><td>404</td><td>404</td><td>808</td><td class="pass-text">PASS</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-wrap" style="margin-top:14px">
+        <table>
+          <thead><tr><th>轨迹</th><th>all-frame match</th><th>all-frame harm</th><th>field p90 比</th><th>gradient p90 比</th><th>observation p90 比</th></tr></thead>
+          <tbody>
+            <tr><td>p14-s05</td><td>101/101</td><td>0</td><td>1.0006</td><td>1.0044</td><td>0.9952</td></tr>
+            <tr><td>p33-s01</td><td>101/101</td><td>0</td><td>1.0013</td><td>1.0020</td><td>0.9929</td></tr>
+            <tr><td>p58-s03</td><td>101/101</td><td>0</td><td>1.0028</td><td>1.0023</td><td>0.9985</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="color:var(--muted);font-size:13px">p90 比为 Reduced Warm K1 / Zero-K4。小于 1 表示更低，大于 1 仍需落在冻结兼容包络内；它不是“每个指标都更准”的声明。</p>
+    </section>
+
+    <section id="audit">
+      <div class="section-head">
+        <div class="eyebrow">独立核验</div>
+        <h2>120 个判决重新计算，不接受 runner 自报</h2>
+        <p>独立判决器不导入正式 runner，重新核对协议身份、数值门、两套帧集、调用账、兼容臂、严格支配关系和最高通过 beta。</p>
+      </div>
+      <div class="audit-grid">
+        <article class="pass"><h3>判决复算通过</h3><p><code>PASS_INDEPENDENT_DECISION_RECOMPUTATION_CURVED_RAY_STRESS_V25</code></p><p>3×5×8=120 个 arm decision 全部一致。</p></article>
+        <article class="pass"><h3>forward 回归通过</h3><p>常场零偏折、仿射场独立积分参考、小 beta 极限、步长收敛和越界 fail-closed 均有测试。</p></article>
+        <article class="pass"><h3>数值门通过</h3><p>三条轨迹 96/192 步最坏差为 0.080% / 0.372% / 0.187%，均低于 0.5%。</p></article>
+        <article class="fail"><h3>发现并固定数值陷阱</h3><p>detector ray 若恰落在 cell-centred trilinear 导数不连续结点，小 beta 极限会不稳；正式 block-mean detector geometry 与回归测试已避开该人工对齐。</p></article>
+      </div>
+    </section>
+
+    <section id="boundary">
+      <div class="section-head">
+        <div class="eyebrow">成功与失败</div>
+        <h2>排除了一种失败解释，尚未跨过真实实验门</h2>
+        <p>积极结果的独特价值在于：它把固定 warm start 放到不同于逆算子的场依赖光路上，证明优势并非立刻依赖“训练和测试完全共享直线 forward”。但当前还不能回答真实成像链。</p>
+      </div>
+      <div class="audit-grid">
+        <article class="pass"><h3>确实成功</h3><p>不重训、不调门，三条轨迹、五档压力全过；更便宜基线未过；数值与判决可复核。</p></article>
+        <article class="fail"><h3>没有证明</h3><p>真实 rho-to-n、相机内外参、背景渲染、位移提取、噪声、重复测量、盲测、curved-forward wall/RSS。</p></article>
+      </div>
+      <div class="alert critical" style="margin-top:14px">
+        <strong>突破性进展判定：否</strong>
+        <span>这是一项有价值的正向科学增量，不是论文完成。决定性下一门是组内真实 BOST：用重复测量和标定不确定度定义同精度，再原样量三种方法的完整调用、wall 与全流程 RSS。</span>
+      </div>
+    </section>
+
+    <section id="sources">
+      <div class="section-head">
+        <div class="eyebrow">一级来源</div>
+        <h2>为什么必须检查非线性光路</h2>
+        <p>最新 BOS 误差分析把 thin phase object、均匀边界折射率、近轴和偏折垂直光轴四类假设放进同一框架；NeDF 与 NeRIF 则把非线性 ray tracing、稀疏视角和神经场直接接到 TBOS 重建。</p>
+      </div>
+      <div class="source-grid">
+        <article><a href="https://arxiv.org/abs/2607.15567" target="_blank" rel="noreferrer">Unified Deflection Estimation and Error Analysis for BOS</a><p>统一 2D/3D 偏折估计假设，并以高保真非线性 ray tracing 作误差 ground truth。</p></article>
+        <article><a href="https://arxiv.org/abs/2409.19971" target="_blank" rel="noreferrer">Neural Deflection Fields for Sparse-View TBOS</a><p>稀疏视角 TBOS 的 neural deflection field，并使用高保真 nonlinear ray tracing 构造合成观测。</p></article>
+        <article><a href="https://arxiv.org/abs/2409.14722" target="_blank" rel="noreferrer">Neural Refractive Index Field</a><p>何远哲与 OERF 直接相关的神经折射率场重建主线。</p></article>
+        <article><a href="observable-external-v24.html">v24 三轨迹外部代理复现</a><p>本轮方法与资源优势的前置证据；v25 不重新测 wall/RSS，也不升级 v24 的资源主张。</p></article>
+      </div>
+    </section>
+  </main>
+  <footer>OERF C 路线研究台 · v25 controlled curved-ray stress · 公开页仅含脱敏汇总，不含私有工具、原始数据或模型参数。</footer>
+</body>
+</html>
