@@ -331,6 +331,7 @@
       <a href="#representation-gate">表示机制</a>
       <a href="#transport-proxy-gate">输运与校准门</a>
       <a href="#g0-evidence">真实 CFD 代理</a>
+      <a href="external-curved-resource-v27.html">v27 资源实测</a>
       <a href="external-curved-stress-v26.html">v26.3 外部曲折压力</a>
       <a href="curved-ray-stress-v25.html">v25 曲折光线压力</a>
       <a href="observable-external-v24.html">v24 三轨迹复现</a>
@@ -342,20 +343,23 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 当前证据 2026-07-28</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code> 和端到端时间。v26.3 把 v24 的三条 external-to-fit PoolFire 组合改用场依赖 eikonal 曲折光线生成 observation：不重训、不调门，真正达到压力强度的离散 <code>beta=0.001</code>、<code>0.002</code> 均逐轨迹通过，最高档 p45 的 observation 改变 p90 为 12.34%、worst 为 16.36%，主方法仍以 <code>202A+152A^T=354</code> 成为最便宜兼容臂。1515 个正式观测、749 个数值对照和 120 个方法判决已独立全量复算；但它仍是同一公开 CFD 数据集上的 post-open proxy，不是真实 BOST，<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和内存。v26.3 已证明固定方法在三条 external-to-fit PoolFire 组合与两个有效曲折压力档上保持兼容；v27 随后运行 1944 个 fresh process 检查资源。主方法相对 Full Parent 的 wall 中位快 10.33%-11.16%，但相对 Zero-K4 只快 2.19%-2.89%，六个单元的 direct-child RSS p90 又全部增加，因此正式判决为 <code>FAIL_EXTERNAL_CURVED_RECONSTRUCTION_RESOURCE_V27</code>。调用减少是真实的，稳定部署加速尚未成立，<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="external-curved-stress-v26.html">打开 v26.3 外部曲折结果页</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_external_curved_v26_result_2026-07-28.md">读 v26.3 严格判决</a>
-      <a class="button" href="../docs/poolfire_c_external_curved_v26_public_summary.json">打开 v26.3 脱敏结果</a>
-      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_external_curved_v26_result.png">查看 v26.3 结果图</a>
+      <a class="button primary" href="external-curved-resource-v27.html">打开 v27 资源实测页</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_external_curved_resource_v27_result_2026-07-28.md">读 v27 严格判决</a>
+      <a class="button" href="../docs/poolfire_c_external_curved_resource_v27_public_summary.json">打开 v27 脱敏结果</a>
+      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_external_curved_resource_v27.png">查看 v27 结果图</a>
     </div>
-    <div class="alert success" style="margin-top:12px;">
-      <strong>最新科学增量：外部组合与曲折 forward 同时出现，固定 Warm K1 仍通过</strong>
-      <span>两个有效离散压力档均在三条 external-to-fit 组合上逐轨迹通过；最高档 p33/p45/p58 的曲率差 p90 分别为 3.21% / 12.34% / 4.49%。p58 保留 99/101 joint match、0 harm 的薄弱边界；便宜对照未共同通过。<a href="external-curved-stress-v26.html">打开专页查看压力强度门、全非平凡帧收敛、八方法对照和突破性判定</a>。</span>
+    <div class="alert critical" style="margin-top:12px;">
+      <strong>最新科学增量：v27 把“少调用”与“真加速”分开，正式资源门失败</strong>
+      <span>独立 validator 对 3888 份 worker/parent 回执重算得到最大统计差 0。相对父方法约 10% 的 wall 收益可信，但相对不用模型的 Zero-K4 只有约 2%-3%，并且所有单元 RSS 越门。<a href="external-curved-resource-v27.html">打开专页查看六个单元、两类对照和每一道失败门</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="external-curved-resource-v27.html">v27 外部曲折资源实测</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_external_curved_resource_v27_result_2026-07-28.md">v27 严格判决</a>
+      <a class="button" href="../docs/poolfire_c_external_curved_resource_v27_public_summary.json">v27 脱敏结果</a>
       <a class="button primary" href="external-curved-stress-v26.html">v26.3 外部组合曲折压力</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_external_curved_v26_result_2026-07-28.md">v26.3 严格判决</a>
       <a class="button" href="../docs/poolfire_c_external_curved_v26_public_summary.json">v26.3 脱敏结果</a>
@@ -480,9 +484,9 @@
       <div class="metric"><b id="gateMetric">0 / 8</b><span>论文硬门槛</span></div>
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
-    <div class="alert success">
-      <strong>最新正式判决：v26.3 external-to-fit 曲折光线压力通过</strong>
-      <span>冻结 Reduced Warm K1 在 p33-s05、p45-s01、p58-s05 的离散 beta=0.001、0.002 上逐轨迹通过；最高档 p45 observation 改变 p90 为 12.34%，全非平凡帧 96/192 步差最坏 0.450%。正式状态 <code>PASS_EXTERNAL_TO_FIT_CURVED_RAY_STRESS_V26_3</code>；它仍不是连续 beta、物理标定、official test、真实 BOST、wall/RSS 或论文成功，<code>algorithm_breakthrough=false</code>。</span>
+    <div class="alert critical">
+      <strong>最新正式判决：v27 资源目标失败，停止把调用减少等同于部署加速</strong>
+      <span>冻结方法的精度与曲折压力证据仍保留；新增资源证据显示相对 Full Parent wall 快 10.33%-11.16%，但相对 Zero-K4 只快 2.19%-2.89%，RSS p90 在六个单元全部超过 1.05。正式状态 <code>FAIL_EXTERNAL_CURVED_RECONSTRUCTION_RESOURCE_V27</code>；独立复算最大差为 0，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -613,6 +617,7 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v27 FAIL</span><span class="chip blue">1944 fresh process</span></div><h3 style="margin-top:10px;">External curved resource gate</h3><p>精度兼容和调用减少继续成立；相对 Full Parent 的 wall 中位快 10.33%-11.16%，但相对 Zero-K4 只快 2.19%-2.89%，六个单元的 direct-child RSS p90 全部增加 6.86%-12.69%。当前廉价 proxy 下没有稳定部署资源优势。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">C0 · v10.7 正式停止</span><span class="chip blue">1/5 通过</span></div><h3 style="margin-top:10px;">Selected-DCT96 Coefficient Distillation</h3><p>五折 oracle 可达性已在模型训练前失败：四条轨迹 observation harm 为 100%，所以不再生成 20 份训练标签，不跑 ridge/MLP，也不打开 fresh 或 test。这是有效负结果，不是待办事项。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">C1 · v14 strict FAIL</span><span class="chip blue">4/5 · 0 harm</span></div><h3 style="margin-top:10px;">Compact Detector CNN + DualRange-K1</h3><p>正式状态 <code>FAIL_INDEPENDENT_STRICT_W8D2_CAPACITY_GATE_V14</code>。<code>w16d2</code> 的 10,548 参数仍是当前最小 5/5 候选；2,912 参数 <code>w8d2</code> 在 P45 只有 90/101 joint match，少一帧过门。11 个 miss 全是 observation-only；这把纯容量压缩的稳健下限定位在 2,912 与 10,548 参数之间，但没有产生新算法成功。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">C2 · v15.1 NEGATIVE</span><span class="chip blue">18 modes · 0 shared</span></div><h3 style="margin-top:10px;">Observation residual mechanism gate</h3><p>跨轨迹中频容量缺口不解释 P45 miss；P45 富集的低频模式又在其他工况反转。单一 residual correction 没有获得预注册授权，继续 proxy-only 架构救援正式停止。</p></article>
@@ -625,6 +630,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="v27-resource" class="alert critical" style="margin-top:13px;">
+        <strong>v27：相对父方法的时间机制成立，但最强便宜对照和内存门否定部署主张</strong>
+        <span>六个 trajectory-beta 单元均由 102 个配对 triad、六种顺序均衡和 circular moving-block bootstrap 判决。Primary 相对 Full Parent wall 中位快 <code>10.33%-11.16%</code>，但相对 Zero-K4 仅快 <code>2.19%-2.89%</code>；RSS p90 ratio 分别为 <code>1.0686-1.1103</code> 与 <code>1.1099-1.1269</code>。独立重算最大差 0，失败不是执行事故。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_external_curved_resource_v27.png" aria-label="打开 v27 外部曲折资源实测图">
+          <img src="../assets/poolfire_c_external_curved_resource_v27.png" alt="PoolFire C v27 六个曲折代理单元相对 Full Parent 和 Zero-K4 的 wall、尾部、RSS 与 CPU 配对结果" />
+        </a>
+        <figcaption>A：只有相对父方法的 wall 点估计约过 10%；B：相对 Zero-K4 的慢尾部没有优势；C：所有 direct-child RSS p90 均越过 1.05；D：CPU 有下降但不足以形成完整资源通过。algorithm_breakthrough=false。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="external-curved-resource-v27.html">打开 v27 专页</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_external_curved_resource_v27_result_2026-07-28.md">读 v27 讲人话判决</a>
+        <a class="button" href="../docs/poolfire_c_external_curved_resource_v27_public_summary.json">打开 v27 机器摘要</a>
       </div>
       <div class="alert critical" style="margin-top:13px;">
         <strong>v14：参数少 72.39%，P45 observation consistency 先失守</strong>
