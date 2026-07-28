@@ -331,6 +331,7 @@
       <a href="#representation-gate">表示机制</a>
       <a href="#transport-proxy-gate">输运与校准门</a>
       <a href="#g0-evidence">真实 CFD 代理</a>
+      <a href="blastnet-external-v40.html">v40.2 BLASTNet 外部门</a>
       <a href="sarc-k3-m4-v37.html">v39.1 SARC-K3-M4</a>
       <a href="direct-field-k1-v29.html">v29 Direct-Field K1</a>
       <a href="differentiable-curved-matched-v28.html">v28 可微曲线逆问题</a>
@@ -344,22 +345,25 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 v39.1 · 2026-07-29</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-29 · v40.2</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。SARC-K3-M4 已把 learned Direct 初值、曲线 GN-CGLS K3、固定四步直线缺陷修正和一次曲线安全验证连成闭环。v38.1 在两条额外但已历史打开的轨迹上保住精度；v39.1 用 72 个 fresh child 和 72 份 macOS 原始计时回执复验资源：wall / Zero-K4 中位 <code>0.744260</code>，wall / Direct-K4 中位 <code>0.825418</code>，最差 RSS / Direct-K4 <code>1.015228</code>。独立程序重解析与重算通过；但 all official PoolFire test streams historically opened，真实 BOST 也未运行，故 <code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v39.1 的 SARC-K3-M4 在已打开 PoolFire 上同时保住精度与资源优势；v40.2 将冻结模型零适配迁移到 BLASTNet 预混 H2-air DNS，四帧均优于 Zero、field 也均优于 Direct-K4，但 gradient / observation 没有同时守住 1.01 倍兼容门，正式结果为 <code>0 / 4 FAIL</code>。独立程序重走 16 次 curved forward 得到同一判决；开封后幅度扫描证明问题不只是 correction 太小，而是原修正方向不足。因此当前 <code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="sarc-k3-m4-v37.html">打开 v39.1 SARC-K3-M4 结果</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_postopen_v39_1_result_2026-07-29.md">读 v38-v39.1 完整判决</a>
-      <a class="button" href="../docs/poolfire_c_sarc_postopen_v39_1_public_summary.json">打开 v39.1 脱敏结果</a>
-      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sarc_postopen_v39_1.png">查看迁移与资源图</a>
+      <a class="button primary" href="blastnet-external-v40.html">打开 v40.2 外部负结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md">读完整执行与判决</a>
+      <a class="button" href="../docs/blastnet_h2air_phi05_sarc_external_v40_public_summary.json">打开 v40.2 脱敏结果</a>
+      <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
-    <div class="alert success" style="margin-top:12px;">
-      <strong>最新科学增量：两条额外轨迹的数值迁移与原始系统资源复验同时通过</strong>
-      <span>v38.1 的 P22-S05、P58-S01 都通过冻结精度兼容；v39.1 的 72 个 fresh child 保留 72 份原始 macOS time receipt，并在四臂顺序完全平衡后得到 wall / Zero 中位 <code>0.744260</code>、wall / Direct-K4 中位 <code>0.825418</code>。正式与独立 summary 最大差为 0。<a href="sarc-k3-m4-v37.html">打开专页查看结果、修复链和证据边界</a>。</span>
+    <div class="alert critical" style="margin-top:12px;">
+      <strong>最新科学增量：第一次跨出 PoolFire，正式外部精度门 0 / 4</strong>
+      <span>BLASTNet H2-air 的四个目标时刻都降低了 Zero 的三项误差，但相对 Direct-K4 的 observation ratio 为 <code>1.0393 / 1.0377 / 1.0215 / 1.0654</code>，没有一帧同时过三门。后验最优幅度为 1.2-1.4 倍，调幅后仍 0 / 4，说明下一版必须改变 correction 方向而非只放大。<a href="blastnet-external-v40.html">打开外部检验专页</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="blastnet-external-v40.html">v40.2 BLASTNet 外部门</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md">v40.2 完整负结果</a>
+      <a class="button" href="../docs/blastnet_h2air_phi05_sarc_external_v40_public_summary.json">v40.2 脱敏结果</a>
       <a class="button primary" href="sarc-k3-m4-v37.html">v39.1 SARC-K3-M4</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_postopen_v39_1_result_2026-07-29.md">v38-v39.1 完整判决</a>
       <a class="button" href="../docs/poolfire_c_sarc_postopen_v39_1_public_summary.json">v39.1 脱敏结果</a>
@@ -496,9 +500,9 @@
       <div class="metric"><b id="gateMetric">0 / 8</b><span>论文硬门槛</span></div>
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
-    <div class="alert success">
-      <strong>最新开发判决：v39.1 迁移与原始系统资源复验 PASS，正式突破 HOLD</strong>
-      <span>SARC-K3-M4 已在两条额外 post-open 轨迹保住精度，并用 72 份原始 macOS wall/RSS 回执复验相对 Zero-K4 与 Direct-K4 的资源优势。它是当前关键正结果；但所有官方 PoolFire 流都已被历史打开，也没有组内真实 BOST，因此仍为 <code>algorithm_breakthrough=false</code>。</span>
+    <div class="alert critical">
+      <strong>最新开发判决：v40.2 外部精度 FAIL，下一路线转向多方向、尺度感知修正</strong>
+      <span>v39.1 仍是 PoolFire 内部关键正结果；v40.2 则证明它不能零适配平移到 BLASTNet H2-air。外部门失败后资源实验按协议停止，后验诊断又排除了“只调一个全局 correction 增益”这一修复方式。当前没有外部同精度、真实 BOST 或算法突破。</span>
     </div>
   </header>
 
@@ -629,6 +633,7 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v40.2 外部 FAIL</span><span class="chip blue">独立复算 PASS</span></div><h3 style="margin-top:10px;">BLASTNet H2-air zero-adaptation gate</h3><p>冻结 SARC-K3-M4 第一次进入不同数据族。四帧三项均优于 Zero，field 均优于 Direct-K4，但 observation ratio 为 1.0215-1.0654，最终 0/4 通过 matched-accuracy。后验 alpha 扫描显示最优幅度 1.2-1.4，仍无法同时修复 gradient 与 observation；单标量增益路线关闭。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">最新 · v39.1 关键正结果</span><span class="chip blue">迁移/调用/wall/RSS PASS</span></div><h3 style="margin-top:10px;">SARC-K3-M4 low-fidelity defect correction</h3><p>Learned Direct 初值接曲线 GN-CGLS K3，再用恰好四步 straight CGLS 修正曲线 residual，并由一个曲线 forward fail-closed 验证。v38.1 在两条额外 post-open 轨迹保住三项精度；v39.1 的 72 个 fresh child 给出 wall / Zero 中位 0.744260、wall / Direct-K4 中位 0.825418，原始系统回执和 summary 均独立复核。没有 untouched PoolFire 或真实 BOST。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">最新 · v29 阶段性关键进展</span><span class="chip blue">精度/调用 PASS · 资源 FAIL</span></div><h3 style="margin-top:10px;">Direct-Field Temporal CNN + CGLS K1</h3><p>五次 LOTO 重训的三项 p90 全部优于 Zero-K3；p14 开放验证 100 帧三项 harm 为 0，且由另一套程序独立复算。truth-free 部署将完整调用从 600 降到 401，但 CPU/MPS wall 与 RSS 均失败，所以当前是可复现算法信号，不是部署加速或正式突破。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v28 审计 HOLD</span><span class="chip blue">Zero PASS / Parent FAIL</span></div><h3 style="margin-top:10px;">Differentiable Curved Matched Budget</h3><p>随当前场改变路径的 <code>F/JVP/VJP</code> 已进入 Gauss-Newton-CGLS。Reduced 1×3 相对 Zero 2×2 的 21 次单帧执行守住三项终点，调用从 21 降到 13；但相对 Full Parent 的 gradient error 在 7/7 个样本上更差，1×4 追加诊断仍未修复，原 PASS 已撤回。</p></article>
@@ -646,9 +651,24 @@
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
       </div>
+      <div id="v40-blastnet-external" class="alert critical" style="margin-top:13px;">
+        <strong>v40.2：BLASTNet H2-air 外部精度门 0 / 4，独立复算确认</strong>
+        <span>冻结模型没有在 BLASTNet 上训练或调参。四帧都优于 Zero，但没有一帧同时达到 Direct-K4 的 field / gradient / observation 兼容门；独立程序重走 16 次 curved forward 后最大指标差仅 <code>8.88e-16</code>。后验扫描进一步证明单纯放大 correction 不能修好，因此资源门未运行，<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_sarc_external_v40.png" aria-label="打开 v40.2 BLASTNet 外部检验图">
+          <img src="../assets/blastnet_h2air_phi05_sarc_external_v40.png" alt="BLASTNet H2-air 外部检验的逐帧精度比、中位误差与后验幅度诊断" />
+        </a>
+        <figcaption>外部门 4/4 失败；右图是开封后机理诊断，只能解释失败，不能回写外部分数。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="blastnet-external-v40.html">打开 v40.2 专页</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md">读完整负结果</a>
+        <a class="button" href="../docs/blastnet_h2air_phi05_sarc_external_v40_public_summary.json">打开 v40.2 机器摘要</a>
+      </div>
       <div id="v37-sarc-k3-m4" class="alert success" style="margin-top:13px;">
         <strong>v37-v39.1：低保真缺陷修正的精度迁移与资源优势都经独立复验</strong>
-        <span>v37 在 12 条已开放轨迹建立方法候选；v38.1 再在 P22-S05、P58-S01 保住三项兼容；v39.1 用 72 个 fresh child、72 份原始系统计时回执和完全平衡执行顺序确认 wall / Zero 中位 <code>0.744260</code>、wall / Direct-K4 中位 <code>0.825418</code>、最差 RSS / Direct-K4 <code>1.015228</code>。因为全部官方 PoolFire test streams 已被历史打开，正式状态仍为 <code>algorithm_breakthrough=false</code>。</span>
+        <span>v37 在 12 条已开放轨迹建立方法候选；v38.1 再在 P22-S05、P58-S01 保住三项兼容；v39.1 用 72 个 fresh child、72 份原始系统计时回执和完全平衡执行顺序确认 wall / Zero 中位 <code>0.744260</code>、wall / Direct-K4 中位 <code>0.825418</code>、最差 RSS / Direct-K4 <code>1.015228</code>。因为 <code>all official PoolFire test streams historically opened</code>，正式状态仍为 <code>algorithm_breakthrough=false</code>。</span>
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sarc_postopen_v39_1.png" aria-label="打开 v38-v39.1 SARC-K3-M4 结果图">

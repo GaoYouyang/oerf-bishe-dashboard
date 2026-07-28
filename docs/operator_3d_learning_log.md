@@ -8931,3 +8931,71 @@ paper_success=false
 
 完整结果见
 `docs/poolfire_c_sarc_postopen_v39_1_result_2026-07-29.md`。
+
+## 272. v40.2：第一次跨出 PoolFire，外部精度门 0 / 4
+
+v39.1 以后，继续在 PoolFire 上跑更多帧已经不能回答泛化。于是这轮没有改模型，
+而是把冻结的 SARC-K3-M4 零适配放到 BLASTNet 的预混 H2-air 槽式燃烧器 DNS。
+它是另一套燃烧物理与数据族，官方网格为 `651 x 401 x 201`，提供五个时刻的
+`RHO_kgm-3`。
+
+为了先排除“下错数据”，三份坐标和五份密度文件从公开发布端重新获取一次，
+8 / 8 与第一份副本逐字节一致。随后按结果前冻结的裁剪、粗网格、
+straight/curved forward、checkpoint 和 1.01 倍精度门，一次运行四个目标时刻。
+
+正式结果是：
+
+```text
+snapshot  field/K4  gradient/K4  observation/K4
+1         0.982258  1.003059     1.039317
+2         0.981588  1.015216     1.037703
+3         0.979353  1.011266     1.021523
+4         0.980637  1.005087     1.065418
+```
+
+四帧的 SARC 三项都优于 Zero，也都没有被 Direct-K3 Pareto 支配；但 0 / 4 同时
+通过相对 Direct-K4 的 field、gradient、observation 门。正式状态是：
+
+```text
+FAIL_EXTERNAL_BLASTNET_ACCURACY_GATE_SARC_K3_M4_V40_2
+```
+
+独立 validator 没有导入正式 runner 的指标或判门函数，重新跑了 16 次 curved
+forward。最大指标差 `8.88e-16`，最大 observation receipt 差 `2.22e-16`，
+封存场与 prediction barrier 都没变。因此失败不是汇总脚本造成的。
+
+精度失败后，资源门按协议没有运行。否则得到的只是“不等精度情况下更快”，与师兄
+确定的“同精度下降低重建成本”无关。
+
+外部门已经开封后，又做了一次只用于解释的幅度扫描。沿原 correction 方向，
+四帧的 observation 最优 alpha 分别是：
+
+```text
+1.4, 1.4, 1.4, 1.2
+```
+
+原 correction 的确偏弱，但调到最优幅度后仍是 0 / 4 同时过三门；三帧
+observation 仍失败，四帧 gradient 都越界。也就是说，不是把修正乘大就能解决，
+原 correction 的一维方向本身不够。
+
+**讲人话：**这次算法没有成功，但我们真正淘汰了两个错误想法：
+
+1. PoolFire 上的 SARC 可以不适配直接搬到另一类燃烧场；
+2. 外部失败只需要学一个更大的全局 correction 增益。
+
+下一版只有在另一个开发数据上学习“多个修正方向 + 物理尺度/残差频谱条件”才有
+继续计算的意义。BLASTNet `phi=0.5` 已经开封，只能用于机理开发，不能再充当
+正式外部测试。
+
+```text
+external_zero_adaptation_executed=true
+external_accuracy_gate_pass=false
+post_open_amplitude_only_repair=false
+resource_gate_run=false
+real_BOST=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整结果见
+`docs/blastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md`。

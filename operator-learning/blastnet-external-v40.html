@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="SARC-K3-M4 v40.2 在 BLASTNet 预混 H2-air DNS 上的冻结外部精度检验、独立复算与失败机理诊断。" />
+  <title>BLASTNet 外部检验 v40.2 | OERF C 路线</title>
+  <style>
+    :root {
+      --ink: #17211d;
+      --muted: #5b6963;
+      --line: #cbd5d1;
+      --paper: #f3f6f4;
+      --white: #fff;
+      --teal: #18786f;
+      --teal-soft: #e4f3ed;
+      --blue: #3f6f9d;
+      --blue-soft: #e9f0f7;
+      --coral: #b95239;
+      --coral-soft: #fff0e9;
+      --gold: #8a6418;
+      --gold-soft: #f8f0d8;
+      --radius: 6px;
+      --shadow: 0 8px 24px rgba(23, 33, 29, .07);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.66;
+      letter-spacing: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url("../assets/backgrounds/oerf-refractive-field.png") center / cover no-repeat;
+      opacity: .035;
+      pointer-events: none;
+    }
+    a { color: inherit; }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      min-height: 54px;
+      padding: 8px max(18px, calc((100vw - 1180px) / 2));
+      overflow-x: auto;
+      border-bottom: 1px solid rgba(203, 213, 209, .95);
+      background: rgba(243, 246, 244, .96);
+      backdrop-filter: blur(12px);
+      white-space: nowrap;
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    nav a:first-child {
+      margin-right: auto;
+      color: var(--ink);
+      font-weight: 820;
+    }
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    header {
+      min-height: min(610px, calc(100vh - 110px));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 46px 0 30px;
+      border-bottom: 1px solid var(--line);
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 1000px;
+      margin-bottom: 15px;
+      font-size: 48px;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin-bottom: 16px;
+      font-size: 29px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin-bottom: 8px;
+      font-size: 18px;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+    p { margin-bottom: 9px; }
+    code {
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: #e9eeeb;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: .92em;
+      overflow-wrap: anywhere;
+    }
+    .eyebrow {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+    .lead {
+      max-width: 1000px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+    .chips, .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 3px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--white);
+      color: #35413c;
+      font-size: 12px;
+      font-weight: 760;
+    }
+    .chip.ok { border-color: #9dc8b7; background: var(--teal-soft); color: #155c47; }
+    .chip.info { border-color: #a8bdd3; background: var(--blue-soft); color: #315a82; }
+    .chip.warn { border-color: #dbc68d; background: var(--gold-soft); color: #745414; }
+    .chip.fail { border-color: #dfaf9f; background: var(--coral-soft); color: #93422f; }
+    .actions { margin-top: 19px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--white);
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 740;
+    }
+    .button.primary {
+      border-color: var(--teal);
+      background: var(--teal);
+      color: #fff;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .metric {
+      min-height: 104px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.9);
+      box-shadow: var(--shadow);
+    }
+    .metric strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--teal);
+      font-size: 27px;
+      line-height: 1.1;
+    }
+    .metric.fail strong { color: var(--coral); }
+    .metric span { color: var(--muted); font-size: 13px; }
+    section {
+      padding: 38px 0;
+      border-bottom: 1px solid var(--line);
+      scroll-margin-top: 70px;
+    }
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr);
+      gap: 30px;
+      align-items: end;
+      margin-bottom: 20px;
+    }
+    .section-head p { color: var(--muted); }
+    .alert {
+      padding: 14px 16px;
+      border-left: 4px solid var(--teal);
+      background: var(--teal-soft);
+    }
+    .alert.info {
+      border-left-color: var(--blue);
+      background: var(--blue-soft);
+    }
+    .alert.warn {
+      border-left-color: var(--gold);
+      background: var(--gold-soft);
+    }
+    .alert.fail {
+      border-left-color: var(--coral);
+      background: var(--coral-soft);
+    }
+    .grid-2, .grid-3 {
+      display: grid;
+      gap: 12px;
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .panel {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+    }
+    .panel p:last-child { margin-bottom: 0; }
+    .figure {
+      margin: 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+    .figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    figcaption {
+      padding: 8px 4px 1px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+    }
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      background: #e9eeeb;
+      color: #35413c;
+      font-size: 12px;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .num { font-variant-numeric: tabular-nums; text-align: right; }
+    .pass { color: #15644e; font-weight: 760; }
+    .fail-text { color: var(--coral); font-weight: 760; }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .step {
+      min-height: 140px;
+      padding: 15px;
+      border-top: 3px solid var(--teal);
+      background: var(--white);
+    }
+    .step p { margin: 7px 0 0; color: var(--muted); font-size: 13px; }
+    footer {
+      padding: 28px 0 44px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    @media (max-width: 860px) {
+      h1 { font-size: 38px; }
+      .metrics, .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .section-head, .grid-2 { grid-template-columns: 1fr; gap: 12px; }
+      .flow { grid-template-columns: 1fr; }
+      .step { min-height: 0; }
+    }
+    @media (max-width: 520px) {
+      main { width: min(100% - 22px, 1180px); }
+      header { min-height: auto; padding-top: 34px; }
+      h1 { font-size: 31px; }
+      h2 { font-size: 24px; }
+      .metrics { grid-template-columns: 1fr; }
+      .metric { min-height: 0; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">OERF · C 路线</a>
+    <a href="#verdict">判决</a>
+    <a href="#evidence">证据</a>
+    <a href="#diagnosis">机理</a>
+    <a href="#meaning">意义</a>
+    <a href="#boundary">边界</a>
+  </nav>
+
+  <main>
+    <header>
+      <div class="eyebrow">BLASTNet H2-air DNS · frozen external gate · v40.2</div>
+      <h1>第一次跨出 PoolFire，SARC-K3-M4 外部精度门 0 / 4</h1>
+      <p class="lead">
+        冻结模型没有在 BLASTNet 上训练或调参。四个目标时刻都优于 Zero，场误差也都低于 Direct-K4；但 gradient 与 observation 没能同时守住冻结的 1.01 倍兼容门。独立程序重新执行 16 次 curved forward 后给出同一负判决。
+      </p>
+      <div class="chips">
+        <span class="chip fail">正式外部精度 FAIL</span>
+        <span class="chip ok">8 / 8 源文件二次下载一致</span>
+        <span class="chip ok">独立 curved replay PASS</span>
+        <span class="chip warn">资源门未授权</span>
+        <span class="chip fail">algorithm_breakthrough=false</span>
+      </div>
+      <div class="actions">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md">阅读完整负结果</a>
+        <a class="button" href="../docs/blastnet_h2air_phi05_sarc_external_v40_public_summary.json">打开脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_sarc_external_v40.png">查看结果图</a>
+        <a class="button" href="sarc-k3-m4-v37.html">回看 PoolFire 正结果</a>
+      </div>
+      <div class="metrics">
+        <div class="metric fail"><strong>0 / 4</strong><span>同时通过三指标门的目标快照</span></div>
+        <div class="metric"><strong>4 / 4</strong><span>三项均优于 Zero</span></div>
+        <div class="metric"><strong>16</strong><span>独立 curved forward 重放</span></div>
+        <div class="metric fail"><strong>0</strong><span>精度失败后获准的资源实验</span></div>
+      </div>
+    </header>
+
+    <section id="verdict">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Formal verdict</div>
+          <h2>不是完全崩溃，但没有达到“同精度”</h2>
+        </div>
+        <p>冻结门要求每一帧的 field、gradient、observation 都不超过 Direct-K4 的 1.01 倍，同时优于 Zero 且不被 Direct-K3 支配。</p>
+      </div>
+      <div class="alert fail">
+        <strong>正式结论：</strong>
+        四帧均接受了 SARC 修正，也都在三项误差上击败 Zero；但 0 / 4 同时通过 Direct-K4 兼容门，所以不能继续声称跨数据族的同精度降成本。
+      </div>
+      <figure class="figure" style="margin-top:18px;">
+        <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_sarc_external_v40.png">
+          <img src="../assets/blastnet_h2air_phi05_sarc_external_v40.png" alt="BLASTNet H2-air 外部检验的逐帧精度比、中位误差与后验幅度诊断" />
+        </a>
+        <figcaption>左：冻结外部门，虚线为 1.01；中：三种方法的中位绝对误差；右：开封后的幅度扫描。资源门在精度失败后按协议停止。</figcaption>
+      </figure>
+      <div class="table-wrap" style="margin-top:15px;">
+        <table>
+          <thead>
+            <tr><th>目标时刻</th><th class="num">field / K4</th><th class="num">gradient / K4</th><th class="num">observation / K4</th><th>判决</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>0.002 s</td><td class="num pass">0.982258</td><td class="num pass">1.003059</td><td class="num fail-text">1.039317</td><td class="fail-text">FAIL</td></tr>
+            <tr><td>0.004 s</td><td class="num pass">0.981588</td><td class="num fail-text">1.015216</td><td class="num fail-text">1.037703</td><td class="fail-text">FAIL</td></tr>
+            <tr><td>0.006 s</td><td class="num pass">0.979353</td><td class="num fail-text">1.011266</td><td class="num fail-text">1.021523</td><td class="fail-text">FAIL</td></tr>
+            <tr><td>0.008 s</td><td class="num pass">0.980637</td><td class="num pass">1.005087</td><td class="num fail-text">1.065418</td><td class="fail-text">FAIL</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="evidence">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Evidence chain</div>
+          <h2>FAIL 经过了数据源和数值两层复核</h2>
+        </div>
+        <p>这里的严谨性不是为了把失败说得更复杂，而是排除“下错数据、漏文件、汇总写错、正式程序自证”这些更廉价的解释。</p>
+      </div>
+      <div class="flow">
+        <div class="step"><strong>01 · 官方身份</strong><p>固定 BLASTNet 数据集 ID、网格、五个时刻和密度变量。</p></div>
+        <div class="step"><strong>02 · 二次来源</strong><p>三份网格与五份密度文件重新下载，8 / 8 逐字节一致。</p></div>
+        <div class="step"><strong>03 · 冻结代理</strong><p>结果前固定裁剪、粗网格、straight/curved forward 与阈值。</p></div>
+        <div class="step"><strong>04 · 先预测后开真值</strong><p>先原子封存全部方法预测，再一次性打开评分。</p></div>
+        <div class="step"><strong>05 · 独立重放</strong><p>不导入正式判门逻辑，重走 16 次 curved forward 和全部指标。</p></div>
+      </div>
+      <div class="grid-3" style="margin-top:15px;">
+        <div class="panel"><h3>8 / 8</h3><p>公开源文件第二次获取与首份副本一致。</p></div>
+        <div class="panel"><h3>8.88e-16</h3><p>独立复算与正式指标的最大绝对差。</p></div>
+        <div class="panel"><h3>2.22e-16</h3><p>独立 observation receipt 的最大数值差。</p></div>
+      </div>
+      <div class="alert info" style="margin-top:15px;">
+        <strong>物理边界：</strong>
+        这是从公开 DNS 密度场构造的 straight/curved BOST proxy，不是实验相机的真实 BOST。数据来自预混 H2-air 槽式燃烧器，网格为 651 x 401 x 201，五个时刻从 0 到 0.008 s。
+      </div>
+    </section>
+
+    <section id="diagnosis">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Post-open diagnosis</div>
+          <h2>乘大 correction 也修不好</h2>
+        </div>
+        <p>外部门判完之后，BLASTNet phi=0.5 已经是开发数据。后验扫描只用于找失败原因，不能回写正式分数，也不能再称外部泛化。</p>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <h3>幅度确实偏小</h3>
+          <p>沿冻结 correction 方向扫描 <code>alpha in [0, 2]</code>，四帧的 observation 最优 alpha 为 <code>1.4, 1.4, 1.4, 1.2</code>。原始 alpha=1 没走够。</p>
+        </div>
+        <div class="panel">
+          <h3 class="fail-text">但方向仍不够</h3>
+          <p>调到 observation 最优幅度后仍是 0 / 4 同时过三门；三帧 observation 仍失败，四帧 gradient 都越过兼容界。</p>
+        </div>
+      </div>
+      <div class="alert warn" style="margin-top:15px;">
+        <strong>机理判决：</strong>
+        <code>POST_OPEN_CORRECTION_SPAN_INSUFFICIENT_FOR_OBSERVATION_GATE</code>。下一版不能只学习一个增益，而要改变可用修正方向，并让方向感知物理尺度、密度梯度频谱和部署可见残差。
+      </div>
+    </section>
+
+    <section id="meaning">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">What changed</div>
+          <h2>这次负结果真正淘汰了什么</h2>
+        </div>
+        <p>最有价值的不是继续给旧模型加层，而是把错误假设从候选集中删掉。</p>
+      </div>
+      <div class="grid-3">
+        <div class="panel">
+          <h3>已淘汰：零适配平移</h3>
+          <p>PoolFire 上的 SARC 不能原封不动迁到这个 H2-air DNS，并继续满足同精度门。</p>
+        </div>
+        <div class="panel">
+          <h3>已淘汰：单标量修复</h3>
+          <p>沿同一个 correction 方向做最优调幅，仍无法消除 gradient/observation 冲突。</p>
+        </div>
+        <div class="panel">
+          <h3>保留：多方向尺度校准</h3>
+          <p>下一候选必须从 observation 中选择多个低保真修正方向，并以另一个开发工况训练。</p>
+        </div>
+      </div>
+      <div class="alert" style="margin-top:15px;">
+        当前最窄、最有信息量的算法问题已经变成：能否用部署可见的残差频谱和视角不平衡，组合多个 correction basis，在不读取 truth 的前提下同时守住 field、gradient 与 observation？这比继续扩大同一 SARC 网络更值得计算。
+      </div>
+    </section>
+
+    <section id="boundary">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Claim boundary</div>
+          <h2>没有突破，只有可信的失败边界</h2>
+        </div>
+        <p>负结果只有在不夸大时才有研究价值。这里没有真实 BOST、没有外部同精度、没有资源加速结论，也没有论文成功。</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>命题</th><th>当前状态</th><th>理由</th></tr></thead>
+          <tbody>
+            <tr><td>外部数据零适配</td><td class="pass">已真实执行</td><td>冻结 SARC 在四个目标时刻一次评分</td></tr>
+            <tr><td>外部 matched-accuracy</td><td class="fail-text">FAIL</td><td>0 / 4 同时通过三指标门</td></tr>
+            <tr><td>资源加速</td><td>未运行</td><td>精度失败后按协议无资格测速</td></tr>
+            <tr><td>真实 BOST</td><td>未证明</td><td>当前仍是由 DNS 密度构造的代理 forward</td></tr>
+            <tr><td>广泛燃烧场泛化</td><td>未证明</td><td>只有一个外部数据集且结果为负</td></tr>
+            <tr><td>算法突破</td><td class="fail-text">false</td><td>正式性能门没有通过</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md">读完整执行与结论</a>
+        <a class="button" href="https://blastnet.github.io/premixed_slot_flame_h2air">BLASTNet 官方数据页</a>
+        <a class="button" href="https://doi.org/10.1017/dce.2025.1">数据对应论文</a>
+      </div>
+    </section>
+
+    <footer>
+      脱敏公开页不包含原始 DNS、私有场、模型参数、执行路径、release 或哈希。最新证据：v40.2，2026-07-29。
+    </footer>
+  </main>
+</body>
+</html>

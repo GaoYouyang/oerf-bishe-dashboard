@@ -1,0 +1,237 @@
+{
+  "schema_version": "oerf-blastnet-h2air-phi05-sarc-external-protocol-40.1",
+  "status": "FROZEN_AFTER_FILE_LISTING_CLARIFICATION_BEFORE_ANY_BLASTNET_GRID_OR_DENSITY_PAYLOAD_ACCESS",
+  "frozen_date": "2026-07-29",
+  "scientific_question": "Does the already frozen PoolFire SARC-K3-M4 reconstruction mechanism transfer without retraining, adaptation, threshold changes, or truth-dependent cropping to a physically different public hydrogen-air flame DNS while retaining Direct-K4-level proxy reconstruction accuracy at lower nonlinear-operator cost?",
+  "public_source": {
+    "dataset_id": "blastnet/premixed-flame-slot-burner-dns-h2air-phi05",
+    "title": "Premixed Flames H2 Air DNS (phi = 0.5)",
+    "kaggle_dataset_id": 6461451,
+    "kaggle_version": 1,
+    "kaggle_last_updated": "2025-01-11T01:12:55.697Z",
+    "kaggle_total_bytes": 15741394550,
+    "license": "CC BY-NC-SA 4.0",
+    "is_public": true,
+    "official_landing_page": "https://blastnet.github.io/premixed_slot_flame_h2air",
+    "official_info_json": "https://blastnet.github.io/assets/json/quentin2024/premixed-flame-slot-burner-dns-h2air-phi05-info.json",
+    "official_info_json_sha256": "f85134fc74ccd0ed2323089490b36a86693d2a50c7dc41dc7c7234667cb72083",
+    "official_download_script": "https://blastnet.github.io/assets/bash/sub/premixed_flame-h2air.sh",
+    "official_download_script_sha256": "cca7474718c02d65df1e650ce10e3aff9cb3aea4607ef821d5d89d7da8cdf858",
+    "official_tutorial_repository": "https://github.com/blastnet/kaggle_tutorials",
+    "official_tutorial_commit_observed_before_freeze": "1618a463475a82f49674f6fd2614672b173f80e5",
+    "paper_doi": "https://doi.org/10.1017/dce.2025.1",
+    "equivalence_ratio": 0.5,
+    "grid_shape_nxyz": [
+      651,
+      401,
+      201
+    ],
+    "snapshot_count": 5,
+    "snapshot_ids": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "snapshot_times_seconds": [
+      0.0,
+      0.002,
+      0.004,
+      0.006,
+      0.008
+    ],
+    "required_variable": "RHO_kgm-3",
+    "required_grid_files": [
+      "grid/X_m.dat",
+      "grid/Y_m.dat",
+      "grid/Z_m.dat"
+    ],
+    "required_grid_file_sizes_bytes": [
+      2604,
+      1604,
+      804
+    ],
+    "required_density_files": [
+      "data/RHO_kgm-3_id000.dat",
+      "data/RHO_kgm-3_id001.dat",
+      "data/RHO_kgm-3_id002.dat",
+      "data/RHO_kgm-3_id003.dat",
+      "data/RHO_kgm-3_id004.dat"
+    ],
+    "required_density_file_size_bytes_each": 209885004,
+    "binary_contract": {
+      "dtype": "little-endian float32",
+      "density_reshape_order": "C",
+      "density_reshape_shape": [
+        651,
+        401,
+        201
+      ],
+      "grid_vector_lengths": [
+        651,
+        401,
+        201
+      ],
+      "basis": "BLASTNet standards require little-endian float32; the official Kaggle v1 file listing shows one-dimensional X/Y/Z vectors and full density files, while the official tutorials reshape fields directly as (Nx, Ny, Nz)."
+    }
+  },
+  "payload_access_boundary": {
+    "official_web_page_info_json_download_script_kaggle_metadata_and_tutorial_source_accessed_before_freeze": true,
+    "official_kaggle_file_listing_accessed_after_v40p0_before_v40p1": true,
+    "v40p1_change_limited_to_correcting_grid_payload_shape_from_generic_tutorial_assumption_to_dataset_specific_file_listing": true,
+    "grid_payload_accessed_before_freeze": false,
+    "density_payload_accessed_before_freeze": false,
+    "derived_density_statistics_or_images_accessed_before_freeze": false,
+    "result_dependent_protocol_change_allowed": false,
+    "all_payloads_must_remain_outside_repository": true,
+    "all_payloads_must_remain_unpublished": true
+  },
+  "frozen_method": {
+    "name": "SARC-K3-M4",
+    "expanded_name": "frozen learned Direct initializer plus curved GN-CGLS K3 plus exactly four straight CGLS residual-correction steps and one curved-forward observable acceptance check",
+    "poolfire_training_or_development_reopened": false,
+    "blastnet_training_allowed": false,
+    "blastnet_finetuning_allowed": false,
+    "blastnet_calibration_or_model_selection_allowed": false,
+    "blastnet_result_dependent_fallback_allowed": false,
+    "online_inputs": [
+      "current proxy observation y",
+      "previous proxy observation y_prev",
+      "known target-grid coordinates",
+      "frozen straight inverse geometry",
+      "frozen curved-ray operator"
+    ],
+    "truth_used_by_online_rule": false,
+    "candidate_straight_ledger": {
+      "A": 6,
+      "A_transpose": 7
+    },
+    "candidate_nonlinear_ledger": {
+      "F": 7,
+      "JVP": 3,
+      "VJP": 4
+    },
+    "candidate_nonlinear_logical_calls": 14,
+    "direct_k3_nonlinear_logical_calls": 13,
+    "direct_k4_nonlinear_logical_calls": 15,
+    "zero_reference_nonlinear_logical_calls": 21,
+    "straight_iteration_count": 4,
+    "curved_beta": 0.002,
+    "curved_integration_steps": 96,
+    "cached_prediction_solver_required": true
+  },
+  "frozen_preprocessing": {
+    "source_axes": "read X_m.dat, Y_m.dat and Z_m.dat as little-endian float32 one-dimensional vectors of lengths Nx, Ny and Nz, then require each vector to be finite and strictly monotone",
+    "source_field": "read every RHO_kgm-3 snapshot as little-endian float32 and reshape directly to (Nx, Ny, Nz)",
+    "axis_orientation": "if one source coordinate vector is strictly decreasing, reverse that vector and the matching field axis; any non-monotone or non-separable grid is a hard failure",
+    "target_high_shape": [
+      32,
+      32,
+      64
+    ],
+    "target_coordinates": "for each physical axis, use 32, 32 and 64 equally spaced coordinates respectively, including the full verified source-coordinate minimum and maximum",
+    "spatial_selection": "full physical domain only",
+    "truth_dependent_crop_or_registration": false,
+    "manual_roi_selection": false,
+    "interpolation": "deterministic float64 trilinear interpolation in physical coordinates with bounds_error=true and no extrapolation",
+    "target_coarse_shape": [
+      16,
+      16,
+      32
+    ],
+    "coarsening": "non-overlapping 2x2x2 block mean",
+    "truth_gauge": "subtract the per-snapshot spatial mean after coarse coarsening",
+    "observation_forward": "the same independent high-resolution density-gradient straight-ray reference forward used by the PoolFire C route, rebuilt on the target coordinates",
+    "inverse_geometry": "the same three-view 16x16x32 straight inverse construction, rebuilt only from the target coordinates",
+    "normalization_or_amplitude_fit_on_blastnet": false
+  },
+  "evaluation_set": {
+    "context_snapshot": 0,
+    "scored_target_snapshots": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "scored_target_count": 4,
+    "previous_observation_rule": "for scored target i use snapshot i-1 as y_prev and snapshot i as y",
+    "all_scored_targets_must_be_reported": true,
+    "snapshot_exclusion_after_payload_access_allowed": false,
+    "result_dependent_reordering_allowed": false,
+    "single_dataset_single_configuration": true
+  },
+  "controls": {
+    "Direct_K3": {
+      "role": "uncorrected lower-cost learned base",
+      "nonlinear_logical_calls": 13
+    },
+    "SARC_K3_M4": {
+      "role": "frozen candidate",
+      "nonlinear_logical_calls": 14
+    },
+    "Direct_K4": {
+      "role": "nearest higher-cost learned curved-refinement control",
+      "nonlinear_logical_calls": 15
+    },
+    "Zero": {
+      "role": "frozen zero-start curved reference",
+      "nonlinear_logical_calls": 21
+    }
+  },
+  "accuracy_gate": {
+    "per_scored_snapshot_candidate_field_gradient_observation_each_le_1p01_times_direct_k4": true,
+    "per_scored_snapshot_candidate_field_gradient_observation_each_le_zero": true,
+    "per_scored_snapshot_candidate_observation_not_worse_than_direct_k3_by_online_acceptance": true,
+    "per_scored_snapshot_candidate_not_pareto_dominated_by_direct_k3": true,
+    "aggregate_candidate_field_gradient_observation_medians_each_le_direct_k4": true,
+    "all_four_scored_targets_must_pass": true,
+    "one_failure_cannot_be_averaged_away": true,
+    "relative_noninferiority_factor": 1.01,
+    "metrics": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "observation_relative_l2"
+    ],
+    "no_post_result_model_preprocessing_iteration_beta_tolerance_or_gate_change": true
+  },
+  "resource_gate_if_accuracy_passes": {
+    "fresh_child_process_per_arm": true,
+    "arms": [
+      "SARC_K3_M4",
+      "Direct_K3",
+      "Direct_K4",
+      "Zero"
+    ],
+    "warmups_per_arm": 1,
+    "measured_repetitions_per_arm": 8,
+    "balanced_execution_order": true,
+    "raw_system_time_receipts_required": true,
+    "independent_receipt_reparse_required": true,
+    "candidate_over_direct_k4_external_wall_median_ratio_at_most": 0.9,
+    "candidate_over_zero_external_wall_median_ratio_at_most": 0.9,
+    "candidate_over_direct_k4_max_rss_ratio_at_most": 1.05,
+    "candidate_over_zero_max_rss_ratio_at_most": 1.05,
+    "candidate_over_direct_k3_wall_advantage_required": false
+  },
+  "decision": {
+    "accuracy_and_resource_pass": "positive cross-dataset proxy transfer evidence for this single hydrogen-air DNS configuration; still not real BOST, broad combustion generalization, or paper success",
+    "accuracy_fails": "freeze the negative transfer result and diagnose representation or physical-scale mismatch without retraining on this dataset",
+    "accuracy_passes_resource_fails": "freeze numerical transfer as positive and deployment efficiency as negative",
+    "payload_or_independent_validation_fails": "mark the run inconclusive and repair only the identified acquisition or implementation fault without changing the scientific gate"
+  },
+  "claim_limits": {
+    "external_public_dataset": true,
+    "different_combustion_configuration_from_poolfire": true,
+    "hydrogen_air_dns": true,
+    "fresh_method_level_dataset_before_density_payload": true,
+    "official_confirmatory_test": false,
+    "broad_combustion_generalization": false,
+    "unseen_equivalence_ratio_generalization": false,
+    "real_bost": false,
+    "camera_noise_or_calibration_validated": false,
+    "physical_same_accuracy": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
