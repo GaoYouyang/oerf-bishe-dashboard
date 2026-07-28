@@ -1,0 +1,106 @@
+{
+  "schema_version": "oerf-poolfire-c-straight-adjoint-residual-correction-protocol-33.0",
+  "status": "FROZEN_BEFORE_STRAIGHT_ADJOINT_RESIDUAL_RESULTS",
+  "scientific_question": "Can a cheap straight-Jacobian residual correction emulate the fifth curved Krylov step closely enough to keep Direct K5 accuracy while using only one extra expensive curved forward?",
+  "candidate": {
+    "name": "SARC-K4",
+    "expanded_name": "Straight-Adjoint Residual Correction after Direct K4",
+    "base": "pre-existing Direct-Field+K1 followed by unmodified curved GN-CGLS K4",
+    "deployment_visible_inputs": [
+      "measured observation y",
+      "cached final curved prediction F_curved(x4)",
+      "known frozen straight inverse geometry"
+    ],
+    "residual": "r4 = y-F_curved(x4)",
+    "coarse_direction": "d_c = A_straight^T r4",
+    "high_direction": "mean-zero trilinear prolongation of d_c",
+    "step": "max(dot(r4,A_straight d_c)/dot(A_straight d_c,A_straight d_c),0)",
+    "proposal": "x_sarc = x4 + step*high_direction",
+    "verification": "evaluate one F_curved(x_sarc); accept only when its observable residual does not exceed x4, otherwise return x4",
+    "truth_used_by_online_rule": false,
+    "additional_straight_ledger": {
+      "A": 1,
+      "A_transpose": 1
+    },
+    "additional_nonlinear_ledger": {
+      "F": 1,
+      "JVP": 0,
+      "VJP": 0
+    },
+    "total_nonlinear_ledger": {
+      "F": 7,
+      "JVP": 4,
+      "VJP": 5
+    },
+    "total_nonlinear_logical_calls": 16
+  },
+  "controls": {
+    "Direct_K4": {
+      "nonlinear_logical_calls": 15
+    },
+    "Observable_Amplitude_K4_v32": {
+      "nonlinear_logical_calls": 16,
+      "frozen_result_role": "negative scalar control"
+    },
+    "Direct_K5": {
+      "nonlinear_logical_calls": 17
+    },
+    "Full_Parent": {
+      "nonlinear_logical_calls": 13
+    },
+    "Zero": {
+      "nonlinear_logical_calls": 21
+    }
+  },
+  "trajectory_order": [
+    "p=14kw_size=01",
+    "p=14kw_size=05",
+    "p=22kw_size=01",
+    "p=22kw_size=03",
+    "p=33kw_size=01",
+    "p=45kw_size=05",
+    "p=58kw_size=03",
+    "p=33kw_size=03",
+    "p=33kw_size=05",
+    "p=45kw_size=01",
+    "p=45kw_size=03",
+    "p=58kw_size=05"
+  ],
+  "fixed_parent_contract": {
+    "frame": 49,
+    "beta": 0.002,
+    "inverse_steps": 96,
+    "generator_steps": 192,
+    "coarse_field_shape": [
+      16,
+      16,
+      32
+    ],
+    "high_field_shape": [
+      32,
+      32,
+      64
+    ],
+    "observation_size": 2072
+  },
+  "accuracy_success_gate": {
+    "candidate_field_gradient_observation_each_le_Full_Parent_on_every_trajectory": true,
+    "candidate_field_gradient_observation_each_le_Zero_on_every_trajectory": true,
+    "candidate_observation_residual_never_exceeds_Direct_K4_by_construction": true,
+    "no_post_result_step_clip_or_tolerance_change": true
+  },
+  "next_action": {
+    "all_accuracy_gates_pass": "freeze and run fresh plus persistent resource benchmarks; then train a small residual operator only if it can improve SARC at the same expensive-call budget",
+    "any_accuracy_gate_fails": "freeze the negative result; use the Direct K5 minus K4 update as a supervised target for a residual operator rather than tuning this scalar step after results"
+  },
+  "evidence_boundary": {
+    "all_trajectories_already_opened": true,
+    "post_open_mechanism_development": true,
+    "fresh_scientific_validation": false,
+    "untouched_test_opened": false,
+    "real_bost": false,
+    "generalization_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

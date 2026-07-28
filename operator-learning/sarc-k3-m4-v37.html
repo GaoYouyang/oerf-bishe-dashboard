@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="SARC-K3-M4 在 PoolFire 曲线 BOST 代理逆问题上的精度、fresh-process 时间、内存、独立验证与 Pareto 边界。" />
+  <title>SARC-K3-M4 v37 | OERF C 路线</title>
+  <style>
+    :root {
+      --ink: #17211d;
+      --muted: #5b6963;
+      --line: #cbd5d1;
+      --paper: #f3f6f4;
+      --white: #fff;
+      --teal: #18786f;
+      --teal-soft: #e4f3ed;
+      --blue: #3f6f9d;
+      --blue-soft: #e9f0f7;
+      --coral: #b95239;
+      --coral-soft: #fff0e9;
+      --gold: #8a6418;
+      --gold-soft: #f8f0d8;
+      --radius: 6px;
+      --shadow: 0 8px 24px rgba(23, 33, 29, .07);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.66;
+      letter-spacing: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url("../assets/backgrounds/oerf-refractive-field.png") center / cover no-repeat;
+      opacity: .035;
+      pointer-events: none;
+    }
+    a { color: inherit; }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      min-height: 54px;
+      padding: 8px max(18px, calc((100vw - 1180px) / 2));
+      overflow-x: auto;
+      border-bottom: 1px solid rgba(203, 213, 209, .95);
+      background: rgba(243, 246, 244, .96);
+      backdrop-filter: blur(12px);
+      white-space: nowrap;
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    nav a:first-child {
+      margin-right: auto;
+      color: var(--ink);
+      font-weight: 820;
+    }
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    header {
+      min-height: min(690px, calc(100vh - 54px));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 46px 0 30px;
+      border-bottom: 1px solid var(--line);
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 980px;
+      margin-bottom: 15px;
+      font-size: 48px;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin-bottom: 16px;
+      font-size: 29px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin-bottom: 8px;
+      font-size: 18px;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+    p { margin-bottom: 9px; }
+    code {
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: #e9eeeb;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: .92em;
+      overflow-wrap: anywhere;
+    }
+    .eyebrow {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+    .lead {
+      max-width: 980px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+    .chips, .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 3px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--white);
+      color: #35413c;
+      font-size: 12px;
+      font-weight: 760;
+    }
+    .chip.ok { border-color: #9dc8b7; background: var(--teal-soft); color: #155c47; }
+    .chip.open { border-color: #dbc68d; background: var(--gold-soft); color: #745414; }
+    .chip.hold { border-color: #dfaf9f; background: var(--coral-soft); color: #93422f; }
+    .actions { margin-top: 19px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: var(--white);
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 740;
+    }
+    .button.primary {
+      border-color: var(--teal);
+      background: var(--teal);
+      color: #fff;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .metric {
+      min-height: 104px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.9);
+      box-shadow: var(--shadow);
+    }
+    .metric strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--teal);
+      font-size: 27px;
+      line-height: 1.1;
+    }
+    .metric span { color: var(--muted); font-size: 13px; }
+    section {
+      padding: 38px 0;
+      border-bottom: 1px solid var(--line);
+      scroll-margin-top: 70px;
+    }
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr);
+      gap: 30px;
+      align-items: end;
+      margin-bottom: 20px;
+    }
+    .section-head p { color: var(--muted); }
+    .alert {
+      padding: 14px 16px;
+      border-left: 4px solid var(--teal);
+      background: var(--teal-soft);
+    }
+    .alert.warn {
+      border-left-color: var(--gold);
+      background: var(--gold-soft);
+    }
+    .alert.hold {
+      border-left-color: var(--coral);
+      background: var(--coral-soft);
+    }
+    .figure {
+      margin: 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+    .figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .figure figcaption {
+      padding: 10px 4px 2px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .step {
+      position: relative;
+      min-height: 142px;
+      padding: 15px;
+      border-top: 3px solid var(--blue);
+      background: rgba(255,255,255,.72);
+    }
+    .step strong {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--blue);
+      font-size: 13px;
+    }
+    .step p { color: var(--muted); font-size: 14px; }
+    .grid-2, .grid-3 {
+      display: grid;
+      gap: 14px;
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .panel {
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.8);
+    }
+    .panel p, .panel li { color: var(--muted); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      background: var(--white);
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px 11px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #e9eeeb; font-size: 12px; }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .pass { color: #14634c; font-weight: 800; }
+    .fail { color: #9b3d2d; font-weight: 800; }
+    ul { margin: 7px 0 0; padding-left: 20px; }
+    .reference-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .reference-list a {
+      display: block;
+      min-height: 78px;
+      padding: 13px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.75);
+      text-decoration: none;
+    }
+    .reference-list a:hover { border-color: var(--teal); }
+    .reference-list strong { display: block; margin-bottom: 3px; }
+    .reference-list span { color: var(--muted); font-size: 13px; }
+    footer {
+      padding: 30px 0 50px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    @media (max-width: 900px) {
+      h1 { font-size: 38px; }
+      header { min-height: auto; }
+      .metrics, .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 680px) {
+      main { width: min(100% - 22px, 1180px); }
+      h1 { font-size: 32px; }
+      h2 { font-size: 25px; }
+      .section-head, .metrics, .flow, .grid-2, .reference-list {
+        grid-template-columns: 1fr;
+      }
+      .metric { min-height: 88px; }
+      .table-wrap { overflow-x: auto; }
+      table { min-width: 690px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">OERF · C 路线</a>
+    <a href="#result">结果</a>
+    <a href="#method">算法</a>
+    <a href="#accuracy">精度</a>
+    <a href="#resource">资源</a>
+    <a href="#pareto">Pareto</a>
+    <a href="#boundary">边界</a>
+  </nav>
+
+  <main>
+    <header>
+      <div class="eyebrow">PoolFire curved-ray proxy · v35-v37</div>
+      <h1>SARC-K3-M4：用低保真缺陷修正，替掉一次昂贵曲线重线性化</h1>
+      <p class="lead">
+        Learned Direct 初值先进入未修改的曲线 GN-CGLS K3；剩余曲线观测残差由冻结直线算子做恰好四步 CGLS 修正，再用一次高保真曲线 forward 决定接受或回退。12 条已开放轨迹的三项精度、fresh external wall 与 RSS 同时过门。
+      </p>
+      <div class="chips">
+        <span class="chip ok">12 / 12 精度 PASS</span>
+        <span class="chip ok">fresh wall PASS</span>
+        <span class="chip ok">RSS PASS</span>
+        <span class="chip open">突破候选</span>
+        <span class="chip hold">algorithm_breakthrough=false</span>
+      </div>
+      <div class="actions">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_k3_m4_v37_result_2026-07-29.md">阅读完整判决</a>
+        <a class="button" href="../docs/poolfire_c_sarc_k3_m4_v37_public_summary.json">打开脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sarc_k3_m4_v37.png">查看完整结果图</a>
+      </div>
+      <div class="metrics">
+        <div class="metric"><strong>14 vs 21</strong><span>昂贵 nonlinear F/JVP/VJP 逻辑调用</span></div>
+        <div class="metric"><strong>0.74583</strong><span>轨迹等权 fresh external wall 中位比</span></div>
+        <div class="metric"><strong>0.75433</strong><span>12 条轨迹中最差 wall 比</span></div>
+        <div class="metric"><strong>1.02358</strong><span>12 条轨迹中最差 RSS 比</span></div>
+      </div>
+    </header>
+
+    <section id="result">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Verdict</div>
+          <h2>这次不是调用账上的“纸面加速”</h2>
+        </div>
+        <p>v34 的旧 SARC-K4 只差 0.25 个百分点却仍被判 FAIL；v37 没有重跑碰运气，而是用更少的曲线调用与更完整的低保真修正把 wall 比降到 0.75 左右。</p>
+      </div>
+      <div class="alert">
+        <strong>关键正结果：</strong>
+        12 条已开放 PoolFire 轨迹上，候选逐条同时不劣于 Full Parent 与 Zero；144 个 fresh child 测量中，冻结的 wall/RSS 三道门全部通过，并由不导入正式 runner 的程序独立复算。
+      </div>
+      <figure class="figure" style="margin-top:18px;">
+        <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sarc_k3_m4_v37.png">
+          <img src="../assets/poolfire_c_sarc_k3_m4_v37.png" alt="SARC-K3-M4 一步与四步修正、fresh wall 比及精度成本 Pareto 图" />
+        </a>
+        <figcaption>上：一步修正的 5 条失败与四步修正的 12 条通过。中：v34 与 v37 的 fresh wall 比。下：五个强对照的精度-昂贵调用 Pareto 位置。</figcaption>
+      </figure>
+    </section>
+
+    <section id="method">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Method</div>
+          <h2>算法到底做了什么</h2>
+        </div>
+        <p>低保真算子只负责给缺陷方向，高保真曲线 forward 保留最终否决权；在线规则不访问 truth、控制误差或轨迹标签。</p>
+      </div>
+      <div class="flow">
+        <div class="step"><strong>01 · Learned initializer</strong><p>相邻观测与冻结几何进入 Direct 3D CNN，给出初始三维场。</p></div>
+        <div class="step"><strong>02 · Curved GN-CGLS K3</strong><p>在随当前场变化的曲线光路算子上做一次外层、三个 Krylov 内步。</p></div>
+        <div class="step"><strong>03 · Curved residual</strong><p>计算部署可见的 <code>r3 = y - Fcurved(x3)</code>。</p></div>
+        <div class="step"><strong>04 · Straight CGLS M4</strong><p>冻结直线算子从零开始做恰好四步，得到低保真缺陷修正。</p></div>
+        <div class="step"><strong>05 · Fail-closed check</strong><p>只多做一次曲线 <code>F</code>；残差不降就回退到 K3 场。</p></div>
+      </div>
+      <div class="grid-2" style="margin-top:15px;">
+        <div class="panel">
+          <h3>为什么 M1 失败</h3>
+          <p>一次直线反投影只给近似最陡下降方向。它足以降低大部分观测残差，却无法稳定补齐不同工况中的低频三维缺陷。</p>
+          <p class="fail">5 / 12 observation 劣于 Full Parent，最差 ratio = 1.041992。</p>
+        </div>
+        <div class="panel">
+          <h3>为什么 M4 成功</h3>
+          <p>四步固定 CGLS 在同一个低保真 Krylov 子空间里求解更完整的残差子问题；它不是复制下一步曲线 Krylov，而是提供不同的便宜缺陷方向。</p>
+          <p class="pass">12 / 12 三项同时通过 Full Parent 与 Zero。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="accuracy">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Accuracy</div>
+          <h2>逐轨迹兼容，不用均值藏失败</h2>
+        </div>
+        <p>所有比值都以误差为分子，低于 1 表示候选更好。成功门要求每一条轨迹、每一个指标都通过。</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>相对 Full Parent</th><th>中位比值</th><th>p90</th><th>最差比值</th><th>判决</th></tr></thead>
+          <tbody>
+            <tr><td>field relative-L2</td><td class="num">0.823264</td><td class="num">0.880547</td><td class="num">0.895933</td><td class="pass">PASS</td></tr>
+            <tr><td>gradient relative-L2</td><td class="num">0.903305</td><td class="num">0.929228</td><td class="num">0.952248</td><td class="pass">PASS</td></tr>
+            <tr><td>observation relative-L2</td><td class="num">0.832347</td><td class="num">0.958255</td><td class="num">0.975982</td><td class="pass">PASS</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert warn" style="margin-top:15px;">
+        这些是 <strong>post-open development</strong> 结果。它们证明方法机制在已开放轨迹上成立，不等于 untouched 泛化。
+      </div>
+    </section>
+
+    <section id="resource">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Fresh resources</div>
+          <h2>外部计时与子进程内存都过冻结门</h2>
+        </div>
+        <p>每个 arm 都由新的子进程执行；单线程、DNNL cache=0、配对交替顺序。warmup 完整核验但不进入统计。</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>指标</th><th>实际比值</th><th>冻结门</th><th>余量</th><th>判决</th></tr></thead>
+          <tbody>
+            <tr><td>轨迹等权 external wall 中位</td><td class="num">0.745827</td><td class="num">≤ 0.90</td><td class="num">15.42 个百分点</td><td class="pass">PASS</td></tr>
+            <tr><td>最差轨迹 external wall</td><td class="num">0.754330</td><td class="num">≤ 0.95</td><td class="num">19.57 个百分点</td><td class="pass">PASS</td></tr>
+            <tr><td>轨迹等权 max RSS 中位</td><td class="num">1.006705</td><td class="num">报告</td><td class="num">+0.67%</td><td>报告</td></tr>
+            <tr><td>最差轨迹 max RSS</td><td class="num">1.023578</td><td class="num">≤ 1.05</td><td class="num">2.64 个百分点</td><td class="pass">PASS</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-3" style="margin-top:15px;">
+        <div class="panel"><h3>144</h3><p>24 warmup + 120 measured；144 份回执与 144 个场文件全部存在。</p></div>
+        <div class="panel"><h3>0.0</h3><p>独立复算报告 summary 与正式报告的最大数值差。</p></div>
+        <div class="panel"><h3>有限证明</h3><p>原 runner 未保留 PID 与 time stderr，因此不能事后证明 144 个唯一 OS PID 或二次计时。</p></div>
+      </div>
+    </section>
+
+    <section id="pareto">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Pareto audit</div>
+          <h2>诚实回答“是不是最好”</h2>
+        </div>
+        <p>SARC-K3-M4 不是一条无条件支配曲线。它用比 Full Parent 多一次的 nonlinear call，换来三项精度稳定提升。</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>方法</th><th>nonlinear calls</th><th>field 中位比</th><th>gradient 中位比</th><th>observation 中位比</th><th>位置</th></tr></thead>
+          <tbody>
+            <tr><td>Full Parent</td><td class="num">13</td><td class="num">1.0000</td><td class="num">1.0000</td><td class="num">1.0000</td><td>更便宜，较不准</td></tr>
+            <tr><td><strong>SARC-K3-M4</strong></td><td class="num"><strong>14</strong></td><td class="num"><strong>0.8233</strong></td><td class="num"><strong>0.9033</strong></td><td class="num"><strong>0.8323</strong></td><td class="pass">当前 Pareto 候选</td></tr>
+            <tr><td>SARC-K4</td><td class="num">16</td><td class="num">0.8231</td><td class="num">0.9033</td><td class="num">0.8121</td><td>略准，昂贵两次</td></tr>
+            <tr><td>Direct-K5</td><td class="num">17</td><td class="num">0.8231</td><td class="num">0.9032</td><td class="num">0.6930</td><td>observation 更准，昂贵三次</td></tr>
+            <tr><td>Zero</td><td class="num">21</td><td class="num">1.9255</td><td class="num">1.1931</td><td class="num">3.9895</td><td>被候选支配</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert hold" style="margin-top:15px;">
+        禁止写“全局最快”或“支配所有现有方法”。当前可写：在这组已开放曲线 BOST proxy 上，SARC-K3-M4 形成了一个新的精度-昂贵算子-fresh wall Pareto 工作点。
+      </div>
+    </section>
+
+    <section id="audit">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Independent audit</div>
+          <h2>验证器也允许失败</h2>
+        </div>
+        <p>独立程序不导入正式 benchmark、worker 或 solver。前两版都拒绝了结果；只有明确修复验证器错误并新增回归测试后，第三版才通过。</p>
+      </div>
+      <div class="grid-3">
+        <div class="panel"><h3>v1 · FAIL</h3><p>把 v36 的嵌套 straight ledger 误当成扁平字典。修复为精确检查 learned / residual / total 三层账。</p></div>
+        <div class="panel"><h3>v2 · FAIL</h3><p>对 fresh 中间 residual history 使用了不合理的 1e-9 容差。科学场与资源门未变。</p></div>
+        <div class="panel"><h3>v3 · PASS</h3><p>144 回执、144 场、输入、顺序、调用账、字段等价和资源算术全部独立通过。</p></div>
+      </div>
+    </section>
+
+    <section id="related">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Related work</div>
+          <h2>创新点能说到哪里</h2>
+        </div>
+        <p>神经初值、残差修正、多保真模型和 BOST refinement 都有先例。当前可辩护的是组合与审计方式，不是单个组件全球首次。</p>
+      </div>
+      <div class="reference-list">
+        <a href="https://arxiv.org/abs/2212.08736" target="_blank" rel="noopener"><strong>Neural-network warm start</strong><span>逆散射中的学习初值 + Gauss-Newton 直接近邻。</span></a>
+        <a href="https://arxiv.org/abs/2210.03008" target="_blank" rel="noopener"><strong>Residual-based error correction</strong><span>用物理残差方程修正 neural operator 代理误差。</span></a>
+        <a href="https://arxiv.org/abs/2410.23061" target="_blank" rel="noopener"><strong>Learned ReSeSOp</strong><span>不精确前向算子下的学习迭代修正与数据一致性。</span></a>
+        <a href="https://arxiv.org/abs/2409.14722" target="_blank" rel="noopener"><strong>NeRIF</strong><span>何远哲师兄的 neural implicit BOST 三维重建主线。</span></a>
+        <a href="https://doi.org/10.1063/5.0190778" target="_blank" rel="noopener"><strong>Hybrid BOST refinement</strong><span>BOST 重建后 refinement 的最直接领域近邻。</span></a>
+        <a href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_k3_m4_v37_result_2026-07-29.md"><strong>完整近邻边界</strong><span>为什么不能写 first、全球唯一或 SOTA。</span></a>
+      </div>
+    </section>
+
+    <section id="boundary">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Evidence boundary</div>
+          <h2>突破等级：候选，不是正式突破</h2>
+        </div>
+        <p>当前结果已经足以成为论文核心方法候选；但所有科学轨迹均已在开发期打开，真实多相机 BOST 也尚未运行。</p>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <h3 class="pass">已经成立</h3>
+          <ul>
+            <li>12 / 12 已开放轨迹三项精度门</li>
+            <li>独立场与指标复算</li>
+            <li>昂贵调用 21 → 14</li>
+            <li>144 fresh child wall / RSS 门</li>
+            <li>独立资源算术与字段审计</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3 class="fail">仍未成立</h3>
+          <ul>
+            <li>untouched PoolFire test 泛化</li>
+            <li>真实相机噪声与标定误差鲁棒性</li>
+            <li>组内真实曲线 BOST 数据迁移</li>
+            <li>跨机器资源优势</li>
+            <li>全球唯一、SOTA 或论文录用</li>
+          </ul>
+        </div>
+      </div>
+      <div class="alert hold" style="margin-top:15px;">
+        <strong>当前标签：</strong>
+        <code>key_positive_result=true</code>，
+        <code>breakthrough_candidate=true</code>，
+        <code>algorithm_breakthrough=false</code>，
+        <code>paper_success=false</code>。
+      </div>
+    </section>
+
+    <footer>
+      脱敏公开页不包含原始 PoolFire 数据、私有场、checkpoint、路径、运行 seal 或哈希。最后更新：2026-07-29。
+    </footer>
+  </main>
+</body>
+</html>

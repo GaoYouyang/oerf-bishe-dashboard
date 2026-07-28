@@ -1,0 +1,81 @@
+{
+  "schema_version": "oerf-poolfire-c-sarc-resource-protocol-34.0",
+  "status": "FROZEN_BEFORE_SARC_FRESH_RESOURCE_RESULTS",
+  "scientific_question": "Does the 12-trajectory-compatible SARC-K4 candidate convert its 16-versus-21 expensive-call advantage into stable fresh-process wall and RSS gains over Zero?",
+  "candidate": {
+    "name": "SARC-K4",
+    "accuracy_parent": "PASS_POST_OPEN_SARC_K4_COMPATIBILITY_V33",
+    "learned_setup_straight_ledger": {
+      "A": 2,
+      "A_transpose": 3
+    },
+    "residual_correction_straight_ledger": {
+      "A": 1,
+      "A_transpose": 1
+    },
+    "total_straight_ledger": {
+      "A": 3,
+      "A_transpose": 4
+    },
+    "nonlinear_ledger": {
+      "F": 7,
+      "JVP": 4,
+      "VJP": 5
+    },
+    "nonlinear_logical_calls": 16,
+    "truth_available_to_worker": false
+  },
+  "baseline": {
+    "name": "Zero",
+    "nonlinear_ledger": {
+      "F": 11,
+      "JVP": 4,
+      "VJP": 6
+    },
+    "nonlinear_logical_calls": 21,
+    "truth_available_to_worker": false
+  },
+  "trajectory_order": [
+    "p=14kw_size=01",
+    "p=14kw_size=05",
+    "p=22kw_size=01",
+    "p=22kw_size=03",
+    "p=33kw_size=01",
+    "p=45kw_size=05",
+    "p=58kw_size=03",
+    "p=33kw_size=03",
+    "p=33kw_size=05",
+    "p=45kw_size=01",
+    "p=45kw_size=03",
+    "p=58kw_size=05"
+  ],
+  "fixed_runtime": {
+    "fresh_process_per_arm": true,
+    "warmups_per_arm_and_trajectory": 1,
+    "measured_repetitions_per_arm_and_trajectory": 5,
+    "thread_count": 1,
+    "dnnl_primitive_cache_capacity": 0,
+    "paired_order_alternates": true,
+    "field_numeric_equivalence_required": true
+  },
+  "resource_success_gate": {
+    "trajectory_equal_median_external_wall_ratio_le": 0.9,
+    "every_trajectory_external_wall_ratio_le": 0.95,
+    "every_trajectory_maximum_rss_ratio_le": 1.05,
+    "thresholds_unchanged_from_v30_7_1": true
+  },
+  "next_action": {
+    "all_resource_gates_pass": "independently validate all receipts, then run a separately frozen multi-frame persistent benchmark before any untouched test",
+    "any_resource_gate_fails": "freeze the negative fresh-process result and test only the predeclared persistent multi-frame deployment regime; do not relax thresholds"
+  },
+  "evidence_boundary": {
+    "all_trajectories_already_opened": true,
+    "resource_measurement_not_scientific_generalization": true,
+    "fresh_scientific_validation": false,
+    "untouched_test_opened": false,
+    "real_bost": false,
+    "generalization_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "schema_version": "oerf-poolfire-c-sarc-multistep-resource-protocol-37.0",
+  "status": "FROZEN_RESOURCE_GATE_AWAITING_INDEPENDENT_V36_PASS",
+  "scientific_question": "After independent validation of v36, does SARC-K3-M4 convert its 14-versus-21 nonlinear-call advantage into stable fresh-process wall and RSS gains over Zero while reproducing the frozen fields?",
+  "formal_run_authorization": {
+    "required_v36_report_schema": "oerf-poolfire-c-sarc-multistep-accuracy-36.0",
+    "required_v36_report_status": "PASS_POST_OPEN_SARC_K3_M4_COMPATIBILITY_V36",
+    "required_independent_validation_schema": "oerf-poolfire-c-sarc-multistep-accuracy-independent-validation-36.0",
+    "required_independent_validation_status": "PASS_INDEPENDENT_VALIDATION_SARC_K3_M4_V36",
+    "formal_run_authorized_only_after_both_pass": true,
+    "benchmark_must_fail_closed_before_output_creation": true,
+    "protocol_creation_does_not_authorize_or_run_the_benchmark": true
+  },
+  "candidate": {
+    "name": "SARC-K3-M4",
+    "accuracy_parent": "PASS_POST_OPEN_SARC_K3_M4_COMPATIBILITY_V36",
+    "deployment_loader": "checkpoint.pt plus READY.json only",
+    "historical_v29_metric_report_read_forbidden": true,
+    "worker_input_arrays": [
+      "observations",
+      "coordinate_x",
+      "coordinate_y",
+      "coordinate_z"
+    ],
+    "truth_or_control_metrics_available_to_worker": false,
+    "learned_setup_straight_ledger": {
+      "A": 2,
+      "A_transpose": 3
+    },
+    "residual_correction": "exactly four zero-start straight-ray CGLS steps on the curved K3 residual",
+    "residual_correction_straight_ledger": {
+      "A": 4,
+      "A_transpose": 4
+    },
+    "total_straight_ledger": {
+      "A": 6,
+      "A_transpose": 7
+    },
+    "curved_solver": "cached-prediction GN-CGLS outer1 inner3",
+    "curved_safety_check": "exactly one additional curved F; accept only when observable residual does not increase",
+    "nonlinear_ledger": {
+      "F": 7,
+      "JVP": 3,
+      "VJP": 4
+    },
+    "nonlinear_logical_calls": 14
+  },
+  "baseline": {
+    "name": "Zero",
+    "curved_solver": "zero-start GN-CGLS outer2 inner2",
+    "nonlinear_ledger": {
+      "F": 11,
+      "JVP": 4,
+      "VJP": 6
+    },
+    "nonlinear_logical_calls": 21,
+    "truth_or_control_metrics_available_to_worker": false
+  },
+  "field_equivalence": {
+    "SARC-K3-M4": "v36 independently validated sealed candidate field",
+    "Zero": "frozen parent Zero field",
+    "required_after_each_fresh_child_exit": true
+  },
+  "trajectory_order": [
+    "p=14kw_size=01",
+    "p=14kw_size=05",
+    "p=22kw_size=01",
+    "p=22kw_size=03",
+    "p=33kw_size=01",
+    "p=45kw_size=05",
+    "p=58kw_size=03",
+    "p=33kw_size=03",
+    "p=33kw_size=05",
+    "p=45kw_size=01",
+    "p=45kw_size=03",
+    "p=58kw_size=05"
+  ],
+  "fixed_runtime": {
+    "fresh_process_per_arm": true,
+    "warmups_per_arm_and_trajectory": 1,
+    "measured_repetitions_per_arm_and_trajectory": 5,
+    "thread_count": 1,
+    "dnnl_primitive_cache_capacity": 0,
+    "paired_order_alternates": true,
+    "macos_external_wall_seconds": true,
+    "macos_child_maximum_rss": true,
+    "tracked_source_clean_required": true,
+    "field_numeric_equivalence_required": true
+  },
+  "resource_success_gate": {
+    "trajectory_equal_median_external_wall_ratio_le": 0.9,
+    "every_trajectory_external_wall_ratio_le": 0.95,
+    "every_trajectory_maximum_rss_ratio_le": 1.05,
+    "thresholds_unchanged_from_v30_7_1": true
+  },
+  "next_action": {
+    "v36_independent_validation_not_passed": "do not create a v37 formal result directory and do not launch any worker",
+    "all_resource_gates_pass": "independently validate all fresh receipts and field equivalence before any broader claim",
+    "any_resource_gate_fails": "freeze the negative resource result without relaxing thresholds or changing repetitions"
+  },
+  "evidence_boundary": {
+    "resource_only": true,
+    "fresh_scientific_validation": false,
+    "untouched_test_opened": false,
+    "real_bost": false,
+    "generalization_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="PoolFire v28 可微曲线逆问题的 Zero 对照信号、Full Parent 保真失败、审计修正与证据边界。" />
+  <title>v28 可微曲线逆问题审计 | OERF C 路线</title>
+  <style>
+    :root {
+      --ink: #17211d;
+      --muted: #5f6d67;
+      --line: #ccd5d1;
+      --paper: #f4f7f5;
+      --white: #ffffff;
+      --teal: #20756f;
+      --blue: #3973a5;
+      --coral: #c45d3f;
+      --charcoal: #35413c;
+      --ok-bg: #e5f3ed;
+      --warn-bg: #fff1e8;
+      --radius: 6px;
+      --shadow: 0 8px 24px rgba(23, 33, 29, 0.08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(32, 117, 111, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 115, 165, 0.04) 1px, transparent 1px),
+        var(--paper);
+      background-size: 34px 34px;
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      line-height: 1.65;
+    }
+    a { color: inherit; }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 54px;
+      padding: 8px max(18px, calc((100vw - 1180px) / 2));
+      border-bottom: 1px solid rgba(204, 213, 209, 0.9);
+      background: rgba(244, 247, 245, 0.94);
+      backdrop-filter: blur(12px);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    nav a:first-child {
+      margin-right: auto;
+      color: var(--ink);
+      font-weight: 750;
+    }
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    header {
+      padding: 54px 0 32px;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 900px;
+      margin-bottom: 14px;
+      font-size: clamp(34px, 5vw, 62px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin-bottom: 18px;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin-bottom: 8px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+    .lead {
+      max-width: 940px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+    .chips, .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      align-items: center;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 3px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--charcoal);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .chip.ok { border-color: #9dc8b7; background: var(--ok-bg); color: #155c47; }
+    .chip.warn { border-color: #e5b79e; background: var(--warn-bg); color: #94422e; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 750;
+    }
+    .button.primary { border-color: var(--teal); background: var(--teal); color: white; }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 26px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+    .metric {
+      min-height: 116px;
+      padding: 20px;
+      border-right: 1px solid var(--line);
+    }
+    .metric:last-child { border-right: 0; }
+    .metric b {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 30px;
+      line-height: 1.1;
+    }
+    .metric span { color: var(--muted); font-size: 13px; }
+    section {
+      padding: 42px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .section-intro {
+      max-width: 900px;
+      color: var(--muted);
+    }
+    .figure {
+      margin: 22px 0 0;
+      padding: 12px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+    .figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    figcaption {
+      padding: 10px 4px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+    .flow article {
+      min-height: 150px;
+      padding: 18px;
+      border-right: 1px solid var(--line);
+    }
+    .flow article:last-child { border-right: 0; }
+    .flow strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--teal);
+      font-size: 13px;
+    }
+    .flow p, .grid p { margin-bottom: 0; color: var(--muted); font-size: 14px; }
+    code {
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: #e9eeeb;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.92em;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+    table {
+      width: 100%;
+      min-width: 880px;
+      border-collapse: collapse;
+      font-variant-numeric: tabular-nums;
+    }
+    th, td {
+      padding: 12px 13px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      font-size: 13px;
+    }
+    th { background: #edf2ef; color: var(--charcoal); }
+    th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+    tbody tr:last-child td { border-bottom: 0; }
+    .pass { color: #17634d; font-weight: 800; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+    .grid article {
+      min-height: 176px;
+      padding: 20px;
+      background: var(--white);
+    }
+    .alert {
+      padding: 18px 20px;
+      border-left: 4px solid var(--coral);
+      background: var(--warn-bg);
+    }
+    .alert strong { display: block; margin-bottom: 5px; }
+    footer {
+      padding: 30px 0 46px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    @media (max-width: 840px) {
+      h1 { font-size: 40px; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric:nth-child(2) { border-right: 0; }
+      .metric:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .flow { grid-template-columns: 1fr; }
+      .flow article { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+      .flow article:last-child { border-bottom: 0; }
+      .grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      main { width: min(100% - 22px, 1180px); }
+      header { padding-top: 36px; }
+      h1 { font-size: 34px; }
+      .lead { font-size: 16px; }
+      .metrics { grid-template-columns: 1fr; }
+      .metric { border-right: 0; border-bottom: 1px solid var(--line); }
+      .metric:last-child { border-bottom: 0; }
+      .metric:nth-child(2) { border-bottom: 1px solid var(--line); }
+      section { padding: 34px 0; }
+    }
+  </style>
+</head>
+<body>
+  <nav aria-label="研究导航">
+    <a href="./">OERF 算子学习主线</a>
+    <a href="#result">结果</a>
+    <a href="#method">方法</a>
+    <a href="#trajectories">逐轨迹</a>
+    <a href="#boundary">边界</a>
+    <a href="../index.html">总导航</a>
+  </nav>
+
+  <main>
+    <header>
+      <div class="eyebrow">v28 · audit correction · 2026-07-28</div>
+      <h1>相对 Zero 有信号，Full Parent 保真门未通过</h1>
+      <p class="lead">
+        固定的 Observable Reduced Warm 不再接廉价直线矩阵，而是进入随当前三维场改变光线路径的
+        <code>F(x) / J(x)v / J(x)^*w</code>。7 个轨迹标签的 frame 49、3 种执行顺序共
+        21 次执行都胜过 Zero，但 Reduced 的 gradient error 在 7/7 个样本上弱于 Full Parent。
+        独立审计后，正式状态由 PASS 降为 HOLD。
+      </p>
+      <div class="chips">
+        <span class="chip warn">正式状态 HOLD</span>
+        <span class="chip">21 / 21 仅通过 Zero 门</span>
+        <span class="chip warn">7 / 7 Parent gradient harm</span>
+        <span class="chip">38.10% fewer nonlinear calls</span>
+        <span class="chip warn">algorithm_breakthrough=false</span>
+      </div>
+      <div class="actions" style="margin-top:18px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_differentiable_curved_matched_v28_result_2026-07-28.md">读完整中文判决</a>
+        <a class="button" href="../docs/poolfire_c_differentiable_curved_matched_v28_public_summary.json">打开脱敏 JSON</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_differentiable_curved_matched_v28.png">单独查看结果图</a>
+      </div>
+
+      <div class="metrics" aria-label="v28 核心结果">
+        <div class="metric"><b>7 × 3</b><span>7 个轨迹标签单帧，3 种 arm 顺序</span></div>
+        <div class="metric"><b>21 → 13</b><span>每次重建的 F + JVP + VJP 逻辑调用</span></div>
+        <div class="metric"><b>7 / 7</b><span>相对 Full Parent 的 gradient harm</span></div>
+        <div class="metric"><b>0 / 7</b><span>1×4 追加诊断通过 Parent 三项门</span></div>
+      </div>
+    </header>
+
+    <section id="result">
+      <h2>Zero 门逐条通过，Parent 门逐条失败</h2>
+      <p class="section-intro">
+        每条轨迹都要求 candidate final 同时满足 field、gradient、observation 三项
+        relative-L2 不高于自己的 Zero reference；这项门 21/21 通过。但更强的 Full Parent
+        对照没有进入原主门，独立审计发现 Reduced 的 gradient error 在 7/7 个样本上更高。
+        下图已经按审计结论标为 HOLD。
+      </p>
+      <figure class="figure">
+        <img src="../assets/poolfire_c_differentiable_curved_matched_v28.png" alt="v28 七条 PoolFire 轨迹的 matched accuracy、wall 降幅、非线性调用账与证据边界" />
+        <figcaption>
+          误差条不是统计置信区间，而是同一轨迹三种 arm 执行顺序的最小值到最大值；wall 仍是同进程开发诊断，尚未完成 fresh-process 与进程树 RSS。
+        </figcaption>
+      </figure>
+    </section>
+
+    <section id="method">
+      <h2>实际执行链</h2>
+      <div class="flow">
+        <article><strong>01 · 公开 CFD</strong><h3>高分辨率 rho 场</h3><p>读取已开放 PoolFire 轨迹的 frame 49，ROI 为 <code>32×32×64</code>，逐帧去常数规约。</p></article>
+        <article><strong>02 · 独立生成</strong><h3>曲线光路观测</h3><p>NumPy v25 使用 192 个积分步，光线随当前真值场梯度弯曲，生成 2072 维观测。</p></article>
+        <article><strong>03 · 可学习初值</strong><h3>Reduced Warm</h3><p>部署可见 observation 经固定 proposal、精确 lift 和低秩 residual recovery，得到粗场后上采样。</p></article>
+        <article><strong>04 · 非线性求解</strong><h3>Exact-program JVP/VJP</h3><p>PyTorch 逆模型用 96 个积分步；每次 outer 在当前场重新计算 <code>F/J/J(x)^*</code>。</p></article>
+        <article><strong>05 · 审计门</strong><h3>Zero + Parent controls</h3><p>Reduced <code>1×3</code> 通过 Zero <code>2×2</code> 门，却未保持 Full Parent <code>1×3</code> 的 gradient 品质。</p></article>
+      </div>
+    </section>
+
+    <section id="trajectories">
+      <h2>七个轨迹标签下的单帧样本</h2>
+      <p class="section-intro">
+        三项比值为 Reduced Warm 1×3 / Zero 2×2；Parent gradient 列是
+        Reduced - Full Parent，正数表示 Reduced 更差。不能把 proxy 误差比解释成真实实验绝对精度。
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>样本</th><th>角色</th><th>field / Zero</th><th>gradient / Zero</th><th>observation / Zero</th>
+              <th>gradient - Parent</th><th>wall 中位降幅</th><th>判决</th>
+            </tr>
+          </thead>
+          <tbody id="trajectoryRows">
+            <tr><td colspan="8" style="text-align:left;">读取脱敏结果中…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="boundary">
+      <h2>为什么正式状态是 HOLD</h2>
+      <div class="grid">
+        <article><h3>成立的部分</h3><p>场依赖曲线 forward 已进入逆问题；相对 Zero 的三项门 21/21 通过；调用从 21 降到 13；同进程 wall 都下降。</p></article>
+        <article><h3>失败的部分</h3><p>Reduced 相对 Full Parent 在 7/7 个样本上有 gradient harm；加深到 1×4 后仍为 7/7，说明不是内层迭代不足。</p></article>
+        <article><h3>证据缺口</h3><p>外部模型/几何/数据身份未完整绑定，指标仅独立聚合而非独立复算；也没有 fresh/RSS、sealed external 或真实 BOST。</p></article>
+      </div>
+      <div class="alert" style="margin-top:18px;">
+        <strong>原 PASS 已撤回。显著阶段性进展：是。突破性进展：否。</strong>
+        <span>最初 1×2 在 p45-s05 失败；1×3 胜过 Zero 后，独立审计又发现 Parent 门与复算缺口。追加 1×4 诊断仍是 0/7 通过 Parent 三项门，因此停止堆 Krylov 步，转向 Direct-Field 强基线和近零空间信息恢复。</span>
+      </div>
+      <div class="grid" style="margin-top:18px;">
+        <article><h3>曲线光路不是新点</h3><p><a href="https://openaccess.thecvf.com/content/CVPR2024/html/Zhao_Single_View_Refractive_Index_Tomography_with_Neural_Fields_CVPR_2024_paper.html">CVPR 2024 RIT neural fields</a> 已用可微曲线追迹重建折射率场。</p></article>
+        <article><h3>learned warm start 不是新点</h3><p><a href="https://doi.org/10.1016/j.jcp.2023.112341">JCP 2023 inverse scattering</a> 已让网络预测未知量，再交给 Gauss-Newton 精修。</p></article>
+        <article><h3>必须击败的基线</h3><p>同参数量的 Direct-Field 网络从相同 observation/geometry 直接输出 field，再接同一 GN-CGLS；否则不能证明 dual + <code>J(x)^*</code> lift 有独立价值。</p></article>
+      </div>
+    </section>
+
+    <footer>OERF 毕设 C 路线 · 本页只发布脱敏聚合指标，不包含原始 CFD、模型参数、私有路径或受限材料。</footer>
+  </main>
+
+  <script>
+    const summaryUrl = "../docs/poolfire_c_differentiable_curved_matched_v28_public_summary.json";
+    const pct = value => `${(100 * value).toFixed(2)}%`;
+    const ratio = value => Number(value).toFixed(4);
+    const roleNames = {
+      fit: "fit",
+      fit_coverage_expansion: "fit expansion",
+      model_selection_validation: "model-selection val",
+      stopping_and_correction_validation: "stopping val"
+    };
+
+    fetch(summaryUrl)
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      })
+      .then(summary => {
+        const body = document.getElementById("trajectoryRows");
+        body.innerHTML = summary.trajectory_rows.map(row => `
+          <tr>
+            <td>${row.trajectory.replace("p=", "p").replace("kw_size=", "-s")}</td>
+            <td>${roleNames[row.role] || row.role}</td>
+            <td>${ratio(row.metric_ratios.field_relative_l2)}</td>
+            <td>${ratio(row.metric_ratios.gradient_relative_l2)}</td>
+            <td>${ratio(row.metric_ratios.observation_relative_l2)}</td>
+            <td>${Number(row.metric_differences_vs_full_parent.gradient_relative_l2).toFixed(6)}</td>
+            <td>${pct(row.wall_reduction_median_fraction)}</td>
+            <td style="color:#94422e;font-weight:800;">ZERO PASS / PARENT HOLD</td>
+          </tr>
+        `).join("");
+      })
+      .catch(error => {
+        document.getElementById("trajectoryRows").innerHTML =
+          `<tr><td colspan="8" style="text-align:left;color:#94422e;">结果载入失败：${error.message}</td></tr>`;
+      });
+  </script>
+</body>
+</html>
