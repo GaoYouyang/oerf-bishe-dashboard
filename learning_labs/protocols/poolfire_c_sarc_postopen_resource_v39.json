@@ -1,0 +1,127 @@
+{
+  "schema_version": "oerf-poolfire-c-sarc-postopen-resource-protocol-39.1",
+  "status": "FROZEN_BEFORE_POST_OPEN_TRANSFER_RESOURCE_REPLICATION_V39_1",
+  "scientific_question": "On the two already-open PoolFire transfer trajectories, does sealed SARC-K3-M4 convert one fewer nonlinear call than Direct-K4 and seven fewer nonlinear calls than Zero into a stable fresh-process wall advantage without a material RSS penalty?",
+  "formal_run_authorization": {
+    "required_v38_report_schema": "oerf-poolfire-c-sarc-postopen-transfer-38.1",
+    "required_v38_report_status": "PASS_POST_OPEN_SARC_K3_M4_TRANSFER_V38_1",
+    "required_independent_validation_schema": "oerf-poolfire-c-sarc-postopen-transfer-validation-38.1",
+    "required_independent_validation_status": "PASS_INDEPENDENT_VALIDATION_SARC_POSTOPEN_TRANSFER_V38_1",
+    "required_forensic_audit_schema": "oerf-poolfire-c-sarc-postopen-transfer-forensic-audit-38.2",
+    "required_forensic_audit_status": "PASS_FORENSIC_RECOMPUTATION_OF_SEALED_V38_1",
+    "formal_run_authorized_only_after_all_three_pass": true,
+    "benchmark_must_fail_closed_before_output_creation": true,
+    "private_asset_release_must_bind_source_and_runtime_assets": true,
+    "protocol_creation_does_not_authorize_or_run_the_benchmark": true
+  },
+  "trajectory_order": [
+    "p=22kw_size=05",
+    "p=58kw_size=01"
+  ],
+  "candidate": {
+    "name": "SARC-K3-M4",
+    "historical_v29_metric_report_read_forbidden": true,
+    "worker_input_arrays": [
+      "observations",
+      "coordinate_x",
+      "coordinate_y",
+      "coordinate_z"
+    ],
+    "learned_setup_straight_ledger": {
+      "A": 2,
+      "A_transpose": 3
+    },
+    "residual_correction_straight_ledger": {
+      "A": 4,
+      "A_transpose": 4
+    },
+    "total_straight_ledger": {
+      "A": 6,
+      "A_transpose": 7
+    },
+    "nonlinear_ledger": {
+      "F": 7,
+      "JVP": 3,
+      "VJP": 4
+    },
+    "nonlinear_logical_calls": 14
+  },
+  "controls": {
+    "Direct_K3": {
+      "total_straight_ledger": {
+        "A": 2,
+        "A_transpose": 3
+      },
+      "nonlinear_ledger": {
+        "F": 6,
+        "JVP": 3,
+        "VJP": 4
+      },
+      "nonlinear_logical_calls": 13,
+      "role": "lower-cost overhead control"
+    },
+    "Direct_K4": {
+      "total_straight_ledger": {
+        "A": 2,
+        "A_transpose": 3
+      },
+      "nonlinear_ledger": {
+        "F": 6,
+        "JVP": 4,
+        "VJP": 5
+      },
+      "nonlinear_logical_calls": 15,
+      "role": "nearest matched-accuracy higher-nonlinear-cost control"
+    }
+  },
+  "baseline": {
+    "name": "Zero",
+    "nonlinear_ledger": {
+      "F": 11,
+      "JVP": 4,
+      "VJP": 6
+    },
+    "nonlinear_logical_calls": 21
+  },
+  "fixed_runtime": {
+    "fresh_process_per_arm": true,
+    "warmups_per_arm_and_trajectory": 1,
+    "measured_repetitions_per_arm_and_trajectory": 8,
+    "thread_count": 1,
+    "dnnl_primitive_cache_capacity": 0,
+    "four_arm_cyclic_order": true,
+    "macos_external_wall_seconds": true,
+    "macos_child_maximum_rss": true,
+    "macos_time_writes_one_raw_receipt_per_child": true,
+    "raw_time_receipts_are_independently_reparsed": true,
+    "each_measured_arm_occupies_each_order_position_twice": true,
+    "checkpoint_and_calibration_assets_bound_by_private_release": true,
+    "tracked_source_clean_required": true,
+    "field_numeric_equivalence_required": true
+  },
+  "resource_success_gate": {
+    "trajectory_equal_median_candidate_over_Direct_K4_wall_ratio_le": 0.95,
+    "every_trajectory_candidate_over_Direct_K4_wall_ratio_le": 1.0,
+    "every_trajectory_candidate_over_Direct_K4_rss_ratio_le": 1.05,
+    "trajectory_equal_median_external_wall_ratio_le": 0.9,
+    "every_trajectory_external_wall_ratio_le": 0.95,
+    "every_trajectory_maximum_rss_ratio_le": 1.05,
+    "zero_thresholds_unchanged_from_v37": true
+  },
+  "interpretation": {
+    "Direct_K4_gate_passes": "post-open evidence that one nonlinear call saved becomes a measurable runtime gain on this proxy",
+    "Zero_gate_passes": "post-open replication of the previously observed large resource advantage",
+    "Direct_K3_is_not_a_success_gate": "its purpose is to quantify the extra runtime paid for the M4 correction",
+    "any_gate_fails": "freeze a negative resource result without changing repetitions, thresholds, or arm definitions"
+  },
+  "evidence_boundary": {
+    "resource_only": true,
+    "historical_test_streams_already_open": true,
+    "fresh_process_measurement_not_fresh_scientific_data": true,
+    "untouched_test": false,
+    "real_bost": false,
+    "generalization_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

@@ -8857,3 +8857,77 @@ paper_success=false
 
 完整结果见
 `docs/poolfire_c_sarc_k3_m4_v37_result_2026-07-29.md`。
+
+## 271. v38-v39.1：两条额外轨迹保住精度，并用系统原始回执补齐资源证据
+
+v37 之后没有继续堆网络，而是直接追两个会改变论文判断的问题：方法能不能迁到
+另外两条轨迹，以及资源优势是不是 runner 自己报出来的“自证”。
+
+先做 v38.1。候选结构和所有门都不改，只在两条未参与 v35-v37 方法开发的轨迹上
+运行。两条都通过相对 Full Parent 与 Zero 的 field、gradient、observation 门：
+
+```text
+P22-S05 candidate = 0.377172 / 0.750618 / 0.010339
+P58-S01 candidate = 0.394918 / 0.694652 / 0.029653
+```
+
+相对 Direct-K4，P22 的三项比值是
+`0.999344 / 0.999342 / 0.968067`；P58 是
+`1.003505 / 1.003326 / 0.952726`。也就是说，P58 的 field/gradient 略差约
+0.35%/0.33%，但 observation 好约 4.73%。它是兼容的精度-成本折中，不是所有
+指标无条件支配。
+
+独立程序重建场后通过；v38.2 又从封存数组重新算了 16 组指标，数值信号仍在。
+但所有官方 PoolFire test stream 在历史流程中都已经打开，v38 只能叫
+post-open method transfer，不能叫 fresh generalization。
+
+随后发现 v39 第一版有一个真正的证据缺口：它丢掉了 `/usr/bin/time -l` 的原始
+stderr，独立 validator 只能复核 runner 已声明的 wall/RSS。这个结果没有被硬说
+成论文证据，而是重写为 v39.1：
+
+```text
+2 trajectories x 4 arms x (1 warmup + 8 measured)
+= 72 fresh child processes
+```
+
+每个 child 都单独保留原始 macOS wall/RSS 回执；每个 arm 在四个顺序位置各出现
+两次。正式资源结果：
+
+```text
+trajectory-equal median wall / Zero       0.744260
+worst trajectory wall / Zero              0.745148
+trajectory-equal median wall / Direct-K4  0.825418
+worst trajectory wall / Direct-K4         0.827567
+worst RSS / Zero                           1.012848
+worst RSS / Direct-K4                      1.015228
+```
+
+72 份 worker receipt、72 个场和 72 份原始 time receipt 又由不导入正式
+benchmark/worker/solver 的程序独立重算：
+
+```text
+PASS_INDEPENDENT_VALIDATION_SARC_POSTOPEN_RESOURCE_V39_1
+maximum field absolute difference = 3.793420197406583e-08
+maximum summary numeric difference = 0.0
+```
+
+**讲人话：**现在可以有根据地说，在这两条额外但已历史打开的 PoolFire 轨迹上，
+SARC-K3-M4 不仅保住精度，而且相对 Zero-K4 快约 25.6%，相对 Direct-K4 快约
+17.5%，内存增加不超过冻结容差。相对 Direct-K3 它反而平均慢约 1.8%，所以绝对
+不能写成“全局最快”。
+
+这是真实的关键正结果，但突破标签仍不变：
+
+```text
+key_positive_result=true
+post_open_transfer_proven=true
+fresh_process_resource_replication_proven=true
+all_official_poolfire_test_streams_historically_opened=true
+generalization_proven=false
+real_BOST=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整结果见
+`docs/poolfire_c_sarc_postopen_v39_1_result_2026-07-29.md`。

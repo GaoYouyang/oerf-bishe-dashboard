@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="SARC-K3-M4 在 PoolFire 曲线 BOST 代理逆问题上的精度、fresh-process 时间、内存、独立验证与 Pareto 边界。" />
-  <title>SARC-K3-M4 v37 | OERF C 路线</title>
+  <meta name="description" content="SARC-K3-M4 v37-v39.1 在 PoolFire 曲线 BOST 代理逆问题上的精度迁移、原始系统资源复验、独立验证与证据边界。" />
+  <title>SARC-K3-M4 v37-v39.1 | OERF C 路线</title>
   <style>
     :root {
       --ink: #17211d;
@@ -320,6 +320,7 @@
   <nav>
     <a href="index.html">OERF · C 路线</a>
     <a href="#result">结果</a>
+    <a href="#replication">迁移复验</a>
     <a href="#method">算法</a>
     <a href="#accuracy">精度</a>
     <a href="#resource">资源</a>
@@ -329,28 +330,29 @@
 
   <main>
     <header>
-      <div class="eyebrow">PoolFire curved-ray proxy · v35-v37</div>
+      <div class="eyebrow">PoolFire curved-ray proxy · v35-v39.1</div>
       <h1>SARC-K3-M4：用低保真缺陷修正，替掉一次昂贵曲线重线性化</h1>
       <p class="lead">
-        Learned Direct 初值先进入未修改的曲线 GN-CGLS K3；剩余曲线观测残差由冻结直线算子做恰好四步 CGLS 修正，再用一次高保真曲线 forward 决定接受或回退。12 条已开放轨迹的三项精度、fresh external wall 与 RSS 同时过门。
+        Learned Direct 初值先进入未修改的曲线 GN-CGLS K3；剩余曲线观测残差由冻结直线算子做恰好四步 CGLS 修正，再用一次高保真曲线 forward 决定接受或回退。v38.1 在两条额外但已历史打开的轨迹上保住三项精度；v39.1 再用 72 份 macOS 原始计时回执确认相对 Zero-K4 与 Direct-K4 的端到端资源优势。
       </p>
       <div class="chips">
-        <span class="chip ok">12 / 12 精度 PASS</span>
-        <span class="chip ok">fresh wall PASS</span>
-        <span class="chip ok">RSS PASS</span>
-        <span class="chip open">突破候选</span>
+        <span class="chip ok">v38.1 · 2 / 2 迁移 PASS</span>
+        <span class="chip ok">v39.1 · 原始 wall/RSS PASS</span>
+        <span class="chip open">关键正结果</span>
+        <span class="chip hold">无 untouched PoolFire</span>
         <span class="chip hold">algorithm_breakthrough=false</span>
       </div>
       <div class="actions">
-        <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_k3_m4_v37_result_2026-07-29.md">阅读完整判决</a>
-        <a class="button" href="../docs/poolfire_c_sarc_k3_m4_v37_public_summary.json">打开脱敏机器摘要</a>
-        <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sarc_k3_m4_v37.png">查看完整结果图</a>
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_postopen_v39_1_result_2026-07-29.md">阅读 v38-v39.1 完整判决</a>
+        <a class="button" href="../docs/poolfire_c_sarc_postopen_v39_1_public_summary.json">打开脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sarc_postopen_v39_1.png">查看迁移与资源图</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_k3_m4_v37_result_2026-07-29.md">回看 v37 起点</a>
       </div>
       <div class="metrics">
-        <div class="metric"><strong>14 vs 21</strong><span>昂贵 nonlinear F/JVP/VJP 逻辑调用</span></div>
-        <div class="metric"><strong>0.74583</strong><span>轨迹等权 fresh external wall 中位比</span></div>
-        <div class="metric"><strong>0.75433</strong><span>12 条轨迹中最差 wall 比</span></div>
-        <div class="metric"><strong>1.02358</strong><span>12 条轨迹中最差 RSS 比</span></div>
+        <div class="metric"><strong>2 / 2</strong><span>额外 post-open 轨迹精度兼容</span></div>
+        <div class="metric"><strong>0.74426</strong><span>轨迹等权 wall / Zero-K4</span></div>
+        <div class="metric"><strong>0.82542</strong><span>轨迹等权 wall / Direct-K4</span></div>
+        <div class="metric"><strong>1.01523</strong><span>相对 Direct-K4 最差 RSS 比</span></div>
       </div>
     </header>
 
@@ -364,7 +366,7 @@
       </div>
       <div class="alert">
         <strong>关键正结果：</strong>
-        12 条已开放 PoolFire 轨迹上，候选逐条同时不劣于 Full Parent 与 Zero；144 个 fresh child 测量中，冻结的 wall/RSS 三道门全部通过，并由不导入正式 runner 的程序独立复算。
+        v37 的 12 条开发轨迹精度与资源门成立后，v38-v39.1 又在两条额外轨迹上复现数值兼容和端到端资源优势；修正版资源实验直接保留 72 份操作系统原始 wall/RSS 回执，并由不导入正式 runner 的程序独立复算。
       </div>
       <figure class="figure" style="margin-top:18px;">
         <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sarc_k3_m4_v37.png">
@@ -372,6 +374,58 @@
         </a>
         <figcaption>上：一步修正的 5 条失败与四步修正的 12 条通过。中：v34 与 v37 的 fresh wall 比。下：五个强对照的精度-昂贵调用 Pareto 位置。</figcaption>
       </figure>
+    </section>
+
+    <section id="replication">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">v38-v39.1 · corrected replication</div>
+          <h2>精度迁移和资源复验都成立，但数据不是 fresh</h2>
+        </div>
+        <p>这一步没有换模型或放宽门槛。它专门回答两件事：方法能否迁到另外两个工况，以及 wall/RSS 是否能由操作系统原始回执独立复核。</p>
+      </div>
+      <figure class="figure">
+        <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sarc_postopen_v39_1.png">
+          <img src="../assets/poolfire_c_sarc_postopen_v39_1.png" alt="SARC-K3-M4 v38-v39.1 精度迁移、fresh-process wall 和 peak RSS 三联图" />
+        </a>
+        <figcaption>左：候选相对 Direct-K4 的三项误差；中：相对 Zero-K4、Direct-K4、Direct-K3 的 fresh-process wall；右：相对 Zero-K4 与 Direct-K4 的峰值 RSS。两条轨迹均已被历史流程打开。</figcaption>
+      </figure>
+      <div class="grid-2" style="margin-top:15px;">
+        <div class="panel">
+          <h3>v38.1 · 数值迁移</h3>
+          <p>P22-S05 与 P58-S01 都通过相对 Full Parent 与 Zero 的 field / gradient / observation 兼容门，也没有被 Direct-K3 在成本感知 Pareto 意义上支配。</p>
+          <p class="pass">P22 candidate：0.377172 / 0.750618 / 0.010339</p>
+          <p class="pass">P58 candidate：0.394918 / 0.694652 / 0.029653</p>
+        </div>
+        <div class="panel">
+          <h3>v39.1 · 资源复验</h3>
+          <p><code>2 trajectories x 4 arms x (1 warmup + 8 measured) = 72</code> 个新进程；每个 arm 在四个顺序位置各出现两次。</p>
+          <p class="pass">wall / Zero：中位 0.744260，最差 0.745148</p>
+          <p class="pass">wall / Direct-K4：中位 0.825418，最差 0.827567</p>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-top:15px;">
+        <table>
+          <thead><tr><th>轨迹</th><th>SARC wall</th><th>Zero-K4</th><th>Direct-K3</th><th>Direct-K4</th><th>SARC / Zero</th><th>SARC / Direct-K4</th></tr></thead>
+          <tbody>
+            <tr><td>P22-S05</td><td class="num">7.295 s</td><td class="num">9.790 s</td><td class="num">7.245 s</td><td class="num">8.815 s</td><td class="num pass">0.745148</td><td class="num pass">0.827567</td></tr>
+            <tr><td>P58-S01</td><td class="num">7.430 s</td><td class="num">9.995 s</td><td class="num">7.220 s</td><td class="num">9.025 s</td><td class="num pass">0.743372</td><td class="num pass">0.823269</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-3" style="margin-top:15px;">
+        <div class="panel"><h3>72 + 72 + 72</h3><p>worker receipts、场文件和原始 macOS time receipts 全部存在并被独立重读。</p></div>
+        <div class="panel"><h3>3.79e-8</h3><p>独立场重建的最大绝对差；正式与独立 summary 最大数值差为 0。</p></div>
+        <div class="panel"><h3 class="fail">Direct-K3 更快</h3><p>候选相对 Direct-K3 的轨迹等权 wall 比为 1.017994，因此不能写“全局最快”。</p></div>
+      </div>
+      <div class="alert warn" style="margin-top:15px;">
+        <strong>最重要的边界：</strong>
+        <code>all official PoolFire test streams historically opened</code>。v38-v39.1 是 post-open 方法迁移与 fresh-process 资源证据，不是 untouched 泛化。
+      </div>
+      <div class="actions" style="margin-top:15px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_postopen_v39_1_result_2026-07-29.md">读完整判决与失败边界</a>
+        <a class="button" href="../docs/poolfire_c_sarc_postopen_v39_1_public_summary.json">查看脱敏 JSON</a>
+      </div>
     </section>
 
     <section id="method">
@@ -430,7 +484,7 @@
       <div class="section-head">
         <div>
           <div class="eyebrow">Fresh resources</div>
-          <h2>外部计时与子进程内存都过冻结门</h2>
+          <h2>v37 首次过门；v39.1 补齐原始系统回执</h2>
         </div>
         <p>每个 arm 都由新的子进程执行；单线程、DNNL cache=0、配对交替顺序。warmup 完整核验但不进入统计。</p>
       </div>
@@ -449,6 +503,9 @@
         <div class="panel"><h3>144</h3><p>24 warmup + 120 measured；144 份回执与 144 个场文件全部存在。</p></div>
         <div class="panel"><h3>0.0</h3><p>独立复算报告 summary 与正式报告的最大数值差。</p></div>
         <div class="panel"><h3>有限证明</h3><p>原 runner 未保留 PID 与 time stderr，因此不能事后证明 144 个唯一 OS PID 或二次计时。</p></div>
+      </div>
+      <div class="alert" style="margin-top:15px;">
+        v37 的“未保留 time stderr”限制没有被忽略：v39.1 已用两条额外轨迹、四个强对照和 72 份原始 macOS time receipt 重新执行；原始回执、顺序平衡、场输出与汇总均被独立程序复核。
       </div>
     </section>
 
@@ -505,8 +562,9 @@
         <a href="https://arxiv.org/abs/2210.03008" target="_blank" rel="noopener"><strong>Residual-based error correction</strong><span>用物理残差方程修正 neural operator 代理误差。</span></a>
         <a href="https://arxiv.org/abs/2410.23061" target="_blank" rel="noopener"><strong>Learned ReSeSOp</strong><span>不精确前向算子下的学习迭代修正与数据一致性。</span></a>
         <a href="https://arxiv.org/abs/2409.14722" target="_blank" rel="noopener"><strong>NeRIF</strong><span>何远哲师兄的 neural implicit BOST 三维重建主线。</span></a>
+        <a href="https://arxiv.org/abs/2605.11454" target="_blank" rel="noopener"><strong>Neural Refractive Index Primitives</strong><span>真实火焰 BOS 的逐场神经隐式优化近邻；与跨场 amortized warm initializer 不同。</span></a>
         <a href="https://doi.org/10.1063/5.0190778" target="_blank" rel="noopener"><strong>Hybrid BOST refinement</strong><span>BOST 重建后 refinement 的最直接领域近邻。</span></a>
-        <a href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_k3_m4_v37_result_2026-07-29.md"><strong>完整近邻边界</strong><span>为什么不能写 first、全球唯一或 SOTA。</span></a>
+        <a href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_postopen_v39_1_result_2026-07-29.md"><strong>完整结果与边界</strong><span>为什么当前只能写 post-open transfer，不可写泛化、first 或 SOTA。</span></a>
       </div>
     </section>
 
@@ -514,25 +572,27 @@
       <div class="section-head">
         <div>
           <div class="eyebrow">Evidence boundary</div>
-          <h2>突破等级：候选，不是正式突破</h2>
+          <h2>突破等级：关键正结果，不是正式突破</h2>
         </div>
-        <p>当前结果已经足以成为论文核心方法候选；但所有科学轨迹均已在开发期打开，真实多相机 BOST 也尚未运行。</p>
+        <p>当前结果已经足以成为论文核心方法候选；但 all official PoolFire test streams historically opened，真实多相机 BOST 也尚未运行。</p>
       </div>
       <div class="grid-2">
         <div class="panel">
           <h3 class="pass">已经成立</h3>
           <ul>
             <li>12 / 12 已开放轨迹三项精度门</li>
+            <li>2 / 2 额外轨迹 post-open 迁移</li>
             <li>独立场与指标复算</li>
             <li>昂贵调用 21 → 14</li>
-            <li>144 fresh child wall / RSS 门</li>
-            <li>独立资源算术与字段审计</li>
+            <li>72 份原始 macOS wall / RSS 回执</li>
+            <li>独立重解析、字段与资源算术审计</li>
           </ul>
         </div>
         <div class="panel">
           <h3 class="fail">仍未成立</h3>
           <ul>
-            <li>untouched PoolFire test 泛化</li>
+            <li>untouched PoolFire test 泛化：已无可用官方流</li>
+            <li>跨数据集真正未见密度场</li>
             <li>真实相机噪声与标定误差鲁棒性</li>
             <li>组内真实曲线 BOST 数据迁移</li>
             <li>跨机器资源优势</li>
@@ -543,14 +603,15 @@
       <div class="alert hold" style="margin-top:15px;">
         <strong>当前标签：</strong>
         <code>key_positive_result=true</code>，
-        <code>breakthrough_candidate=true</code>，
+        <code>post_open_transfer_proven=true</code>，
+        <code>fresh_process_resource_replication_proven=true</code>，
         <code>algorithm_breakthrough=false</code>，
         <code>paper_success=false</code>。
       </div>
     </section>
 
     <footer>
-      脱敏公开页不包含原始 PoolFire 数据、私有场、checkpoint、路径、运行 seal 或哈希。最后更新：2026-07-29。
+      脱敏公开页不包含原始 PoolFire 数据、私有场、checkpoint、路径、运行 seal 或哈希。最新证据：v39.1，2026-07-29。
     </footer>
   </main>
 </body>
