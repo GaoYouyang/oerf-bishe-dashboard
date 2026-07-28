@@ -331,6 +331,7 @@
       <a href="#representation-gate">表示机制</a>
       <a href="#transport-proxy-gate">输运与校准门</a>
       <a href="#g0-evidence">真实 CFD 代理</a>
+      <a href="external-curved-stress-v26.html">v26.3 外部曲折压力</a>
       <a href="curved-ray-stress-v25.html">v25 曲折光线压力</a>
       <a href="observable-external-v24.html">v24 三轨迹复现</a>
       <a href="observable-reduced-v23.html">v23 支持性结果</a>
@@ -341,20 +342,23 @@
     </nav>
     <div class="eyebrow">师兄已选 C · 当前证据 2026-07-28</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code> 和端到端时间。v25 没有重训 v24 的 Observable Reduced Warm K1，而是把观测正演替换为场依赖 eikonal 曲折光线：三条 PoolFire 轨迹、五个冻结曲率档全部逐条通过，最高档 p33 的 observation 改变 p90 已达 14.19%，主方法仍以 <code>202A+152A^T=354</code> 成为最便宜兼容臂。它排除了“优势只存在于完全共享直线 forward”的一种解释，但仍不是相机标定后的真实 BOST，<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code> 和端到端时间。v26.3 把 v24 的三条 external-to-fit PoolFire 组合改用场依赖 eikonal 曲折光线生成 observation：不重训、不调门，真正达到压力强度的离散 <code>beta=0.001</code>、<code>0.002</code> 均逐轨迹通过，最高档 p45 的 observation 改变 p90 为 12.34%、worst 为 16.36%，主方法仍以 <code>202A+152A^T=354</code> 成为最便宜兼容臂。1515 个正式观测、749 个数值对照和 120 个方法判决已独立全量复算；但它仍是同一公开 CFD 数据集上的 post-open proxy，不是真实 BOST，<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="curved-ray-stress-v25.html">打开 v25 曲折光线结果页</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_curved_ray_v25_result_2026-07-28.md">读 v25 严格判决</a>
-      <a class="button" href="../docs/poolfire_c_curved_ray_v25_public_summary.json">打开 v25 脱敏结果</a>
-      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_curved_ray_v25_result.png">查看 v25 结果图</a>
+      <a class="button primary" href="external-curved-stress-v26.html">打开 v26.3 外部曲折结果页</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_external_curved_v26_result_2026-07-28.md">读 v26.3 严格判决</a>
+      <a class="button" href="../docs/poolfire_c_external_curved_v26_public_summary.json">打开 v26.3 脱敏结果</a>
+      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_external_curved_v26_result.png">查看 v26.3 结果图</a>
     </div>
     <div class="alert success" style="margin-top:12px;">
-      <strong>最新科学增量：固定 Warm K1 通过曲折光线物理压力测试</strong>
-      <span>三条轨迹在最高曲率档均为 101/101 joint match、0 harm；便宜的 BP/K1/K2/PCGLS/K3 对照未共同通过，354 次主方法是最便宜兼容臂。独立判决器复算 120 个判决；<a href="curved-ray-stress-v25.html">打开专页查看非线性压力大小、数值收敛、八方法对照和未跨过的真实 BOST 门</a>。</span>
+      <strong>最新科学增量：外部组合与曲折 forward 同时出现，固定 Warm K1 仍通过</strong>
+      <span>两个有效离散压力档均在三条 external-to-fit 组合上逐轨迹通过；最高档 p33/p45/p58 的曲率差 p90 分别为 3.21% / 12.34% / 4.49%。p58 保留 99/101 joint match、0 harm 的薄弱边界；便宜对照未共同通过。<a href="external-curved-stress-v26.html">打开专页查看压力强度门、全非平凡帧收敛、八方法对照和突破性判定</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="external-curved-stress-v26.html">v26.3 外部组合曲折压力</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_external_curved_v26_result_2026-07-28.md">v26.3 严格判决</a>
+      <a class="button" href="../docs/poolfire_c_external_curved_v26_public_summary.json">v26.3 脱敏结果</a>
       <a class="button primary" href="curved-ray-stress-v25.html">v25 曲折光线物理压力</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_curved_ray_v25_result_2026-07-28.md">v25 严格判决</a>
       <a class="button" href="../docs/poolfire_c_curved_ray_v25_public_summary.json">v25 脱敏结果</a>
@@ -477,8 +481,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert success">
-      <strong>最新正式判决：v25 受控曲折光线 proxy 压力通过</strong>
-      <span>冻结 Reduced Warm K1 在 p14-s05、p33-s01、p58-s03 的五个曲率档上逐条通过；最高档三条都是 100% joint match、0 harm，p33 observation 改变 p90 为 14.19%，96/192 步差最坏 0.372%。正式状态 <code>PASS_CONTROLLED_CURVED_RAY_PROXY_STRESS_V25</code>；它仍不是物理 beta 标定、official test、真实 BOST 或论文成功，<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新正式判决：v26.3 external-to-fit 曲折光线压力通过</strong>
+      <span>冻结 Reduced Warm K1 在 p33-s05、p45-s01、p58-s05 的离散 beta=0.001、0.002 上逐轨迹通过；最高档 p45 observation 改变 p90 为 12.34%，全非平凡帧 96/192 步差最坏 0.450%。正式状态 <code>PASS_EXTERNAL_TO_FIT_CURVED_RAY_STRESS_V26_3</code>；它仍不是连续 beta、物理标定、official test、真实 BOST、wall/RSS 或论文成功，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 

@@ -1,0 +1,696 @@
+{
+  "claim_boundaries": {
+    "algorithm_breakthrough": false,
+    "external_to_fit_trajectory_combinations": true,
+    "independent_external_dataset": false,
+    "official_confirmatory_test": false,
+    "paper_success": false,
+    "physical_same_accuracy_proven": false,
+    "post_open_physics_stress": true,
+    "real_bost": false,
+    "resource_remeasurement_performed": false,
+    "same_public_poolfire_dataset": true
+  },
+  "date": "2026-07-28",
+  "decision": {
+    "continuous_beta_interval_claim": false,
+    "discrete_primary_economic_advantage_pass_betas": [
+      0.001,
+      0.002
+    ],
+    "discrete_primary_robustness_pass_betas": [
+      0.001,
+      0.002
+    ],
+    "independent_arm_decisions_recomputed": 120,
+    "independent_comparison_observations_recomputed": 749,
+    "independent_formal_observations_recomputed": 1515,
+    "lower_beta_nonreport_reason": "the three trajectories did not all satisfy the frozen minimum of ten frames with curvature difference at least one percent",
+    "maximum_independent_forward_difference": 0.0
+  },
+  "forward": {
+    "all_curvature_ge_1_percent_frames_checked_at_96_and_192": true,
+    "background_image_rendered": false,
+    "beta_ladder": [
+      0.0,
+      0.0001,
+      0.0005,
+      0.001,
+      0.002
+    ],
+    "camera_calibrated": false,
+    "comparison_integration_steps": 96,
+    "equation": "dr/ds=t; dt/ds=(I-ttT)grad(n)/n",
+    "formal_integration_steps": 192,
+    "kind": "field_dependent_eikonal_curved_ray_proxy",
+    "optical_flow_modelled": false,
+    "refractive_index_parameterization": "n=1+beta*(rho_ROI-spatial_mean_rho_ROI)",
+    "rho_to_refractive_index_closed": false
+  },
+  "interpretation": {
+    "not_proven": [
+      "a continuous beta robustness interval",
+      "physical beta calibration",
+      "camera, background image and displacement extraction",
+      "noise and calibration uncertainty robustness",
+      "an independent external dataset or official untouched test",
+      "real BOST generalization",
+      "new wall-time or whole-pipeline memory speedup",
+      "algorithm breakthrough or paper-level success"
+    ],
+    "positive_result": "Without retraining or threshold selection, the frozen warm initializer survives a non-trivial curved-forward mismatch on all three v24 external-to-fit trajectory combinations at the two discrete stress levels that satisfy the frozen stress-strength gate.",
+    "weakest_boundary": "p=58kw_size=05 retains 99/101 all-frame and 48/50 odd-frame joint matches with zero harm; this is compatible but not perfect framewise equality."
+  },
+  "method": {
+    "full_parent_online_ledger_per_101_frames": {
+      "A": 202,
+      "A_transpose": 202,
+      "total": 404
+    },
+    "name": "Observable Reduced Residual Warm K1",
+    "primary_online_ledger_per_101_frames": {
+      "A": 202,
+      "A_transpose": 152,
+      "total": 354
+    },
+    "retrained_or_refit": false,
+    "zero_k4_online_ledger_per_101_frames": {
+      "A": 404,
+      "A_transpose": 404,
+      "total": 808
+    }
+  },
+  "schema_version": "oerf-poolfire-c-external-curved-ray-public-summary-26.3",
+  "scientific_question": {
+    "economics": "At each compatible discrete beta, is the primary still not dominated by a strictly cheaper tested arm?",
+    "robustness": "At each frozen discrete beta, does the unchanged Observable Reduced Warm K1 remain compatible with straight-inverse Zero-K4 on three external-to-fit PoolFire combinations?"
+  },
+  "source_links": [
+    {
+      "role": "Nonlinear ray tracing and the hierarchy of BOS deflection assumptions.",
+      "title": "Unified Deflection Estimation and Error Analysis for Background-Oriented Schlieren",
+      "url": "https://arxiv.org/abs/2607.15567"
+    },
+    {
+      "role": "Sparse-view TBOS with nonlinear ray-traced synthetic observations.",
+      "title": "Neural Deflection Fields for Sparse-View Tomographic Background-Oriented Schlieren",
+      "url": "https://arxiv.org/abs/2409.19971"
+    },
+    {
+      "role": "Direct OERF and He Yuanzhe research context.",
+      "title": "Neural refractive index field: Unlocking the Potential of Background-oriented Schlieren Tomography",
+      "url": "https://arxiv.org/abs/2409.14722"
+    }
+  ],
+  "status": "PASS_EXTERNAL_TO_FIT_CURVED_RAY_STRESS_V26_3",
+  "trajectories": [
+    {
+      "highest_beta_arms": [
+        {
+          "A": 101,
+          "A_transpose": 101,
+          "name": "normalized_bp",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 202
+        },
+        {
+          "A": 101,
+          "A_transpose": 101,
+          "name": "zero_cgls_k1",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 202
+        },
+        {
+          "A": 202,
+          "A_transpose": 152,
+          "name": "observable_reduced_warm_k1",
+          "passed_required_evaluation_sets": true,
+          "total_calls": 354
+        },
+        {
+          "A": 202,
+          "A_transpose": 202,
+          "name": "full_parent_warm_k1",
+          "passed_required_evaluation_sets": true,
+          "total_calls": 404
+        },
+        {
+          "A": 202,
+          "A_transpose": 202,
+          "name": "geometry_pcgls_k2",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 404
+        },
+        {
+          "A": 202,
+          "A_transpose": 202,
+          "name": "zero_cgls_k2",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 404
+        },
+        {
+          "A": 303,
+          "A_transpose": 303,
+          "name": "zero_cgls_k3",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 606
+        },
+        {
+          "A": 404,
+          "A_transpose": 404,
+          "name": "zero_cgls_k4_reference",
+          "passed_required_evaluation_sets": true,
+          "total_calls": 808
+        }
+      ],
+      "reportable_beta_rows": [
+        {
+          "all_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 1.0,
+            "primary_to_reference_p90_ratio": {
+              "field": 1.0005292067494265,
+              "gradient": 0.9830796903592318,
+              "observation": 1.0124277428646222
+            },
+            "severe_harm_count": 0
+          },
+          "beta": 0.001,
+          "curvature_difference_relative_l2": {
+            "p50": 0.0110496555619416,
+            "p90_higher": 0.014115791010592977,
+            "worst": 0.016424223261333904
+          },
+          "curvature_to_numerical_convergence_ratio": 41.25381256479377,
+          "integration_96_vs_192_relative_l2": {
+            "p50": 0.00025704421202070655,
+            "p90_higher": 0.00029964334387805325,
+            "worst": 0.00034216936891402544
+          },
+          "nontrivial_curvature_frame_count": 69,
+          "nontrivial_curvature_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 1.0,
+            "primary_to_reference_p90_ratio": {
+              "field": 0.9971391788053099,
+              "gradient": 0.9948058666618811,
+              "observation": 1.0163689682545973
+            },
+            "severe_harm_count": 0
+          },
+          "odd_reduced_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 1.0,
+            "primary_to_reference_p90_ratio": {
+              "field": 1.0008465052276694,
+              "gradient": 0.9861492086186319,
+              "observation": 1.0220192400783483
+            },
+            "severe_harm_count": 0
+          }
+        },
+        {
+          "all_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 1.0,
+            "primary_to_reference_p90_ratio": {
+              "field": 1.0001913709023347,
+              "gradient": 0.9867081697595633,
+              "observation": 1.0128377551126322
+            },
+            "severe_harm_count": 0
+          },
+          "beta": 0.002,
+          "curvature_difference_relative_l2": {
+            "p50": 0.024703350273229667,
+            "p90_higher": 0.03214887136130069,
+            "worst": 0.03718152727949344
+          },
+          "curvature_to_numerical_convergence_ratio": 22.411977106720286,
+          "integration_96_vs_192_relative_l2": {
+            "p50": 0.000566360280602806,
+            "p90_higher": 0.0009288839923732225,
+            "worst": 0.0014344504819104413
+          },
+          "nontrivial_curvature_frame_count": 101,
+          "nontrivial_curvature_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 1.0,
+            "primary_to_reference_p90_ratio": {
+              "field": 1.0001913709023347,
+              "gradient": 0.9867081697595633,
+              "observation": 1.0128377551126322
+            },
+            "severe_harm_count": 0
+          },
+          "odd_reduced_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 1.0,
+            "primary_to_reference_p90_ratio": {
+              "field": 1.0005298149530641,
+              "gradient": 0.9859676376486237,
+              "observation": 1.0229855039755658
+            },
+            "severe_harm_count": 0
+          }
+        }
+      ],
+      "stress_by_beta": [
+        {
+          "beta": 0.0,
+          "curvature_p90_relative_l2": 0.0,
+          "curvature_worst_relative_l2": 0.0,
+          "nontrivial_curvature_frame_count": 0,
+          "stress_gate_available": false
+        },
+        {
+          "beta": 0.0001,
+          "curvature_p90_relative_l2": 0.0014064091934159653,
+          "curvature_worst_relative_l2": 0.0016394511560774115,
+          "nontrivial_curvature_frame_count": 0,
+          "stress_gate_available": false
+        },
+        {
+          "beta": 0.0005,
+          "curvature_p90_relative_l2": 0.007043368397597751,
+          "curvature_worst_relative_l2": 0.008203712898181212,
+          "nontrivial_curvature_frame_count": 0,
+          "stress_gate_available": false
+        },
+        {
+          "beta": 0.001,
+          "curvature_p90_relative_l2": 0.014115791010592977,
+          "curvature_worst_relative_l2": 0.016424223261333904,
+          "nontrivial_curvature_frame_count": 69,
+          "stress_gate_available": true
+        },
+        {
+          "beta": 0.002,
+          "curvature_p90_relative_l2": 0.03214887136130069,
+          "curvature_worst_relative_l2": 0.03718152727949344,
+          "nontrivial_curvature_frame_count": 101,
+          "stress_gate_available": true
+        }
+      ],
+      "trajectory": "p=33kw_size=05"
+    },
+    {
+      "highest_beta_arms": [
+        {
+          "A": 101,
+          "A_transpose": 101,
+          "name": "normalized_bp",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 202
+        },
+        {
+          "A": 101,
+          "A_transpose": 101,
+          "name": "zero_cgls_k1",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 202
+        },
+        {
+          "A": 202,
+          "A_transpose": 152,
+          "name": "observable_reduced_warm_k1",
+          "passed_required_evaluation_sets": true,
+          "total_calls": 354
+        },
+        {
+          "A": 202,
+          "A_transpose": 202,
+          "name": "full_parent_warm_k1",
+          "passed_required_evaluation_sets": true,
+          "total_calls": 404
+        },
+        {
+          "A": 202,
+          "A_transpose": 202,
+          "name": "geometry_pcgls_k2",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 404
+        },
+        {
+          "A": 202,
+          "A_transpose": 202,
+          "name": "zero_cgls_k2",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 404
+        },
+        {
+          "A": 303,
+          "A_transpose": 303,
+          "name": "zero_cgls_k3",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 606
+        },
+        {
+          "A": 404,
+          "A_transpose": 404,
+          "name": "zero_cgls_k4_reference",
+          "passed_required_evaluation_sets": true,
+          "total_calls": 808
+        }
+      ],
+      "reportable_beta_rows": [
+        {
+          "all_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 1.0,
+            "primary_to_reference_p90_ratio": {
+              "field": 0.9992750652413784,
+              "gradient": 0.9922026336579028,
+              "observation": 0.9991634077135008
+            },
+            "severe_harm_count": 0
+          },
+          "beta": 0.001,
+          "curvature_difference_relative_l2": {
+            "p50": 0.04755233122967607,
+            "p90_higher": 0.06721975378296936,
+            "worst": 0.08091240472596459
+          },
+          "curvature_to_numerical_convergence_ratio": 24.20091749281467,
+          "integration_96_vs_192_relative_l2": {
+            "p50": 0.0010602133780222825,
+            "p90_higher": 0.0018879201603584478,
+            "worst": 0.0027775704703314292
+          },
+          "nontrivial_curvature_frame_count": 101,
+          "nontrivial_curvature_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 1.0,
+            "primary_to_reference_p90_ratio": {
+              "field": 0.9992750652413784,
+              "gradient": 0.9922026336579028,
+              "observation": 0.9991634077135008
+            },
+            "severe_harm_count": 0
+          },
+          "odd_reduced_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 1.0,
+            "primary_to_reference_p90_ratio": {
+              "field": 1.0083658047255601,
+              "gradient": 1.0087680282286293,
+              "observation": 1.0016307251714138
+            },
+            "severe_harm_count": 0
+          }
+        },
+        {
+          "all_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 1.0,
+            "primary_to_reference_p90_ratio": {
+              "field": 1.000643276528725,
+              "gradient": 0.9930471033153667,
+              "observation": 1.001086996794844
+            },
+            "severe_harm_count": 0
+          },
+          "beta": 0.002,
+          "curvature_difference_relative_l2": {
+            "p50": 0.09707900253411514,
+            "p90_higher": 0.12335236480137461,
+            "worst": 0.16360167081514224
+          },
+          "curvature_to_numerical_convergence_ratio": 27.438118397504457,
+          "integration_96_vs_192_relative_l2": {
+            "p50": 0.0019154379408574391,
+            "p90_higher": 0.0029368205823370724,
+            "worst": 0.004495656845499789
+          },
+          "nontrivial_curvature_frame_count": 101,
+          "nontrivial_curvature_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 1.0,
+            "primary_to_reference_p90_ratio": {
+              "field": 1.000643276528725,
+              "gradient": 0.9930471033153667,
+              "observation": 1.001086996794844
+            },
+            "severe_harm_count": 0
+          },
+          "odd_reduced_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 1.0,
+            "primary_to_reference_p90_ratio": {
+              "field": 1.0082189241748116,
+              "gradient": 1.012796983532003,
+              "observation": 0.9958615730009339
+            },
+            "severe_harm_count": 0
+          }
+        }
+      ],
+      "stress_by_beta": [
+        {
+          "beta": 0.0,
+          "curvature_p90_relative_l2": 0.0,
+          "curvature_worst_relative_l2": 0.0,
+          "nontrivial_curvature_frame_count": 0,
+          "stress_gate_available": false
+        },
+        {
+          "beta": 0.0001,
+          "curvature_p90_relative_l2": 0.003863241970247228,
+          "curvature_worst_relative_l2": 0.004419388251084164,
+          "nontrivial_curvature_frame_count": 0,
+          "stress_gate_available": false
+        },
+        {
+          "beta": 0.0005,
+          "curvature_p90_relative_l2": 0.01909368828319133,
+          "curvature_worst_relative_l2": 0.021911559090881164,
+          "nontrivial_curvature_frame_count": 92,
+          "stress_gate_available": true
+        },
+        {
+          "beta": 0.001,
+          "curvature_p90_relative_l2": 0.06721975378296936,
+          "curvature_worst_relative_l2": 0.08091240472596459,
+          "nontrivial_curvature_frame_count": 101,
+          "stress_gate_available": true
+        },
+        {
+          "beta": 0.002,
+          "curvature_p90_relative_l2": 0.12335236480137461,
+          "curvature_worst_relative_l2": 0.16360167081514224,
+          "nontrivial_curvature_frame_count": 101,
+          "stress_gate_available": true
+        }
+      ],
+      "trajectory": "p=45kw_size=01"
+    },
+    {
+      "highest_beta_arms": [
+        {
+          "A": 101,
+          "A_transpose": 101,
+          "name": "normalized_bp",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 202
+        },
+        {
+          "A": 101,
+          "A_transpose": 101,
+          "name": "zero_cgls_k1",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 202
+        },
+        {
+          "A": 202,
+          "A_transpose": 152,
+          "name": "observable_reduced_warm_k1",
+          "passed_required_evaluation_sets": true,
+          "total_calls": 354
+        },
+        {
+          "A": 202,
+          "A_transpose": 202,
+          "name": "full_parent_warm_k1",
+          "passed_required_evaluation_sets": true,
+          "total_calls": 404
+        },
+        {
+          "A": 202,
+          "A_transpose": 202,
+          "name": "geometry_pcgls_k2",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 404
+        },
+        {
+          "A": 202,
+          "A_transpose": 202,
+          "name": "zero_cgls_k2",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 404
+        },
+        {
+          "A": 303,
+          "A_transpose": 303,
+          "name": "zero_cgls_k3",
+          "passed_required_evaluation_sets": false,
+          "total_calls": 606
+        },
+        {
+          "A": 404,
+          "A_transpose": 404,
+          "name": "zero_cgls_k4_reference",
+          "passed_required_evaluation_sets": true,
+          "total_calls": 808
+        }
+      ],
+      "reportable_beta_rows": [
+        {
+          "all_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 0.9801980198019802,
+            "primary_to_reference_p90_ratio": {
+              "field": 0.9988942965554127,
+              "gradient": 0.9769623920620625,
+              "observation": 1.033127633756976
+            },
+            "severe_harm_count": 0
+          },
+          "beta": 0.001,
+          "curvature_difference_relative_l2": {
+            "p50": 0.013087924385945955,
+            "p90_higher": 0.01748948104722588,
+            "worst": 0.023511579598263197
+          },
+          "curvature_to_numerical_convergence_ratio": 31.26012812169837,
+          "integration_96_vs_192_relative_l2": {
+            "p50": 0.0003800987905505934,
+            "p90_higher": 0.00045071407557854045,
+            "worst": 0.0005594820654329319
+          },
+          "nontrivial_curvature_frame_count": 91,
+          "nontrivial_curvature_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 0.978021978021978,
+            "primary_to_reference_p90_ratio": {
+              "field": 0.9963773517613008,
+              "gradient": 0.9755554686152683,
+              "observation": 1.0327287464909463
+            },
+            "severe_harm_count": 0
+          },
+          "odd_reduced_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 0.96,
+            "primary_to_reference_p90_ratio": {
+              "field": 0.9963773517613008,
+              "gradient": 0.9679203815342446,
+              "observation": 1.0757764142839668
+            },
+            "severe_harm_count": 0
+          }
+        },
+        {
+          "all_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 0.9801980198019802,
+            "primary_to_reference_p90_ratio": {
+              "field": 0.9982034703948047,
+              "gradient": 0.9731934662372704,
+              "observation": 1.0333096693628434
+            },
+            "severe_harm_count": 0
+          },
+          "beta": 0.002,
+          "curvature_difference_relative_l2": {
+            "p50": 0.03180755083562453,
+            "p90_higher": 0.04493858436627055,
+            "worst": 0.05233935744950798
+          },
+          "curvature_to_numerical_convergence_ratio": 24.10733957093526,
+          "integration_96_vs_192_relative_l2": {
+            "p50": 0.0007294857387066115,
+            "p90_higher": 0.0012053914688186789,
+            "worst": 0.0018641038441442226
+          },
+          "nontrivial_curvature_frame_count": 101,
+          "nontrivial_curvature_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 0.9801980198019802,
+            "primary_to_reference_p90_ratio": {
+              "field": 0.9982034703948047,
+              "gradient": 0.9731934662372704,
+              "observation": 1.0333096693628434
+            },
+            "severe_harm_count": 0
+          },
+          "odd_reduced_frames": {
+            "compatibility_passed": true,
+            "joint_harm_fraction": 0.0,
+            "joint_matched_fraction": 0.96,
+            "primary_to_reference_p90_ratio": {
+              "field": 0.9960761719037154,
+              "gradient": 0.9712985866870455,
+              "observation": 1.073490929752933
+            },
+            "severe_harm_count": 0
+          }
+        }
+      ],
+      "stress_by_beta": [
+        {
+          "beta": 0.0,
+          "curvature_p90_relative_l2": 0.0,
+          "curvature_worst_relative_l2": 0.0,
+          "nontrivial_curvature_frame_count": 0,
+          "stress_gate_available": false
+        },
+        {
+          "beta": 0.0001,
+          "curvature_p90_relative_l2": 0.0017399239746574932,
+          "curvature_worst_relative_l2": 0.0020824775076661215,
+          "nontrivial_curvature_frame_count": 0,
+          "stress_gate_available": false
+        },
+        {
+          "beta": 0.0005,
+          "curvature_p90_relative_l2": 0.008697915009927205,
+          "curvature_worst_relative_l2": 0.010419682692111614,
+          "nontrivial_curvature_frame_count": 2,
+          "stress_gate_available": false
+        },
+        {
+          "beta": 0.001,
+          "curvature_p90_relative_l2": 0.01748948104722588,
+          "curvature_worst_relative_l2": 0.023511579598263197,
+          "nontrivial_curvature_frame_count": 91,
+          "stress_gate_available": true
+        },
+        {
+          "beta": 0.002,
+          "curvature_p90_relative_l2": 0.04493858436627055,
+          "curvature_worst_relative_l2": 0.05233935744950798,
+          "nontrivial_curvature_frame_count": 101,
+          "stress_gate_available": true
+        }
+      ],
+      "trajectory": "p=58kw_size=05"
+    }
+  ]
+}
