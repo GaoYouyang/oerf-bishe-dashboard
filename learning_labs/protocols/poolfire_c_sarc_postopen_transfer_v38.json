@@ -1,0 +1,146 @@
+{
+  "schema_version": "oerf-poolfire-c-sarc-postopen-transfer-protocol-38.1",
+  "status": "FROZEN_AFTER_CALIBRATION_ROLE_FIX_BEFORE_POST_OPEN_TRANSFER_RESULTS",
+  "scientific_question": "Does the already frozen SARC-K3-M4 method transfer without modification to the two official PoolFire trajectories that were opened by the earlier v23 workflow but were never used by SARC v35-v37?",
+  "candidate": {
+    "name": "SARC-K3-M4",
+    "expanded_name": "Straight-Adjoint Residual Correction after learned Direct plus curved GN-CGLS K3 with exactly four straight CGLS correction steps",
+    "base": "frozen truth-free Direct learned initializer followed by cached-prediction curved GN-CGLS outer1 inner3",
+    "deployment_visible_inputs": [
+      "measured observation y",
+      "previous observation y_prev",
+      "known frozen straight inverse geometry",
+      "known frozen curved-ray operator"
+    ],
+    "residual": "r3 = y-F_curved(x3)",
+    "straight_subproblem": "from u0=0, perform exactly four CGLS steps on min_u ||r3-A_straight u||_2 without early stopping or trajectory-dependent choices",
+    "straight_iteration_count": 4,
+    "proposal": "x_proposed = frozen_gauge(x3 + prolongate(u4))",
+    "verification": "evaluate exactly one curved F at x_proposed; accept only when its observable residual does not exceed x3, otherwise return x3",
+    "truth_used_by_online_rule": false,
+    "trajectory_label_used_by_online_rule": false,
+    "control_metric_used_by_online_rule": false,
+    "adaptive_iteration_count": false,
+    "adaptive_step_schedule": false,
+    "learned_setup_straight_ledger": {
+      "A": 2,
+      "A_transpose": 3
+    },
+    "residual_correction_straight_ledger": {
+      "A": 4,
+      "A_transpose": 4
+    },
+    "total_straight_ledger": {
+      "A": 6,
+      "A_transpose": 7
+    },
+    "candidate_nonlinear_ledger": {
+      "F": 7,
+      "JVP": 3,
+      "VJP": 4
+    },
+    "candidate_nonlinear_logical_calls": 14,
+    "zero_nonlinear_logical_calls": 21,
+    "cached_prediction_solver_required": true
+  },
+  "controls": {
+    "Direct_K3": {
+      "nonlinear_logical_calls": 13,
+      "role": "exact uncorrected base ablation for SARC-K3-M4"
+    },
+    "Full_Parent": {
+      "nonlinear_logical_calls": 13,
+      "role": "strict per-trajectory compatibility reference"
+    },
+    "SARC_K4": {
+      "nonlinear_logical_calls": 16,
+      "role": "same learned initializer with curved GN-CGLS K4 and one frozen straight-adjoint correction"
+    },
+    "SARC_K3_M1": {
+      "nonlinear_logical_calls": 14,
+      "role": "failed one-step straight correction ablation frozen by v35"
+    },
+    "Direct_K4": {
+      "nonlinear_logical_calls": 15,
+      "role": "nearest higher-cost direct curved refinement"
+    },
+    "Direct_K5": {
+      "nonlinear_logical_calls": 17,
+      "role": "same learned initializer with curved GN-CGLS K5"
+    },
+    "Zero": {
+      "nonlinear_logical_calls": 21,
+      "role": "strict per-trajectory zero-start reference"
+    }
+  },
+  "trajectory_order": [
+    "p=22kw_size=05",
+    "p=58kw_size=01"
+  ],
+  "historical_data_state": {
+    "both_streams_have_preexisting_opened_receipts": true,
+    "p22_previous_formal_execution_failed_before_pair_generation": true,
+    "p22_later_post_open_resource_diagnostic_exists": true,
+    "p58_previous_formal_execution_failed_before_prediction": true,
+    "p58_later_post_open_supporting_diagnostic_exists": true,
+    "neither_trajectory_was_used_by_sarc_v35_v36_or_v37": true,
+    "untouched_test_claim_allowed": false,
+    "fresh_data_claim_allowed": false,
+    "filesystem_wide_noninterference_proven": false,
+    "allowed_claim": "post-open method-fresh transfer only"
+  },
+  "fixed_parent_contract": {
+    "frame": 49,
+    "beta": 0.002,
+    "inverse_steps": 96,
+    "generator_steps": 192,
+    "coarse_field_shape": [
+      16,
+      16,
+      32
+    ],
+    "high_field_shape": [
+      32,
+      32,
+      64
+    ],
+    "observation_size": 2072
+  },
+  "accuracy_success_gate": {
+    "candidate_field_gradient_observation_each_le_Full_Parent_on_every_trajectory": true,
+    "candidate_field_gradient_observation_each_le_Zero_on_every_trajectory": true,
+    "candidate_observation_residual_never_exceeds_direct_k3_by_construction": true,
+    "controls_reported_SARC_K4_Direct_K5_Full_Parent_Zero": true,
+    "controls_reported_Direct_K3_SARC_K3_M1_Direct_K4": true,
+    "both_trajectories_must_pass": true,
+    "candidate_not_pareto_dominated_by_Direct_K3_on_any_trajectory": true,
+    "no_post_result_iteration_step_tolerance_model_or_gate_change": true
+  },
+  "resource_success_gate_if_accuracy_passes": {
+    "same_worker_and_accounting_contract_as_v37": true,
+    "trajectory_equal_external_wall_median_ratio_at_most": 0.9,
+    "every_trajectory_external_wall_ratio_at_most": 0.95,
+    "every_trajectory_max_rss_ratio_at_most": 1.05
+  },
+  "execution_boundary": {
+    "protocol_frozen_before_v38_parent_or_candidate_result": true,
+    "source_commit_and_private_assets_bound_by_private_release": true,
+    "stage_one_reads_observations_and_coordinates_only": true,
+    "stage_one_seals_both_candidate_and_ablation_fields_and_receipts": true,
+    "stage_two_truth_and_control_metrics_blocked_until_global_stage_one_barrier": true,
+    "truth_used_only_after_truth_free_candidate_is_sealed": true,
+    "single_run_no_retry_after_result": true,
+    "historical_test_streams_already_open": true,
+    "untouched_test_opened": false,
+    "fresh_scientific_validation": false,
+    "real_bost": false,
+    "generalization_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  },
+  "decision": {
+    "both_accuracy_gates_pass": "independently reconstruct both fields, recompute all metrics and ledgers, then run the frozen v37-style fresh resource comparison",
+    "any_accuracy_gate_fails": "freeze the negative post-open transfer result and do not change M, model, threshold or gate",
+    "accuracy_and_resource_pass": "upgrade only to positive post-open algorithm-transfer evidence; new public trajectories or real BOST remain required for fresh generalization"
+  }
+}
