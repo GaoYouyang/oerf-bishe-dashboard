@@ -1,0 +1,110 @@
+{
+  "schema_version": "oerf-poolfire-c-geometry-gated-external-confirmation-30.8",
+  "status": "FROZEN_BEFORE_EXTERNAL_CONFIRMATION_RESULTS",
+  "frozen_on": "2026-07-28",
+  "scientific_question": "Does the fit-selected geometry gate remain non-inferior to the full-parent warm reconstruction on PoolFire combinations that did not fit or select the v30 Direct/spectral gate?",
+  "candidate": {
+    "name": "geometry-gated observation-only warm start",
+    "direct_model": "frozen 10524-parameter DirectFieldTemporalCNN",
+    "spectral_hybrid": "x_raw + Gaussian_sigma_1p5(x_k1 - x_raw)",
+    "fit_only_gate": {
+      "known_size_01": "direct_k4",
+      "known_size_03": "spectral_hybrid_k4",
+      "known_size_05": "spectral_hybrid_k4"
+    },
+    "deployment_inputs": [
+      "two consecutive curved-proxy observations",
+      "frozen straight inverse geometry",
+      "known burner size"
+    ],
+    "truth_available_to_initializer_or_gate": false,
+    "nonlinear_refinement": {
+      "algorithm": "unmodified GN-CGLS",
+      "outer_steps": 1,
+      "inner_steps": 4,
+      "logical_ledger": {
+        "F": 6,
+        "JVP": 4,
+        "VJP": 5
+      },
+      "logical_calls": 15
+    }
+  },
+  "fit_or_selection_trajectories": [
+    "p=14kw_size=05",
+    "p=22kw_size=03",
+    "p=33kw_size=01",
+    "p=45kw_size=05",
+    "p=58kw_size=03"
+  ],
+  "previously_opened_validation_trajectories": [
+    "p=14kw_size=01",
+    "p=22kw_size=01"
+  ],
+  "external_confirmation_trajectories": [
+    "p=33kw_size=03",
+    "p=33kw_size=05",
+    "p=45kw_size=01",
+    "p=45kw_size=03",
+    "p=58kw_size=05"
+  ],
+  "external_role_boundary": {
+    "not_used_to_fit_direct_model": true,
+    "not_used_to_select_spectral_sigma": true,
+    "not_used_to_select_size_gate": true,
+    "p45_size03_was_opened_by_an_earlier_method_family": true,
+    "fresh_or_untouched_claim_allowed": false,
+    "unseen_power_or_unseen_size_claim_allowed": false
+  },
+  "fixed_physics_and_numerics": {
+    "current_frame": 49,
+    "previous_frame": 48,
+    "curved_observation_beta": 0.002,
+    "independent_generator_steps": 192,
+    "inverse_steps": 96,
+    "field_shape": [
+      32,
+      32,
+      64
+    ],
+    "gauge": "subtract volume mean",
+    "metrics": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "observation_relative_l2"
+    ]
+  },
+  "required_controls": {
+    "zero": {
+      "outer_steps": 2,
+      "inner_steps": 2,
+      "logical_calls": 21
+    },
+    "full_parent_warm": {
+      "outer_steps": 1,
+      "inner_steps": 3,
+      "logical_calls": 13
+    },
+    "direct_k4": true,
+    "direct_k5": true,
+    "spectral_hybrid_k4": true
+  },
+  "success_gate": {
+    "every_external_trajectory_all_three_metrics_le_full_parent": true,
+    "every_external_trajectory_all_three_metrics_le_zero": true,
+    "geometry_gate_logical_calls_lt_zero": true,
+    "all_five_trajectories_must_be_reported": true,
+    "no_post_result_method_or_threshold_change": true
+  },
+  "failure_action": "Record the failed trajectory and metric. Do not change the gate, sigma, model, frame, beta, solver depth, or exclusion rule to rescue v30.8.",
+  "evidence_boundary": {
+    "public_poolfire_curved_proxy_only": true,
+    "single_frame_pair_per_trajectory": true,
+    "noise_or_calibration_shift_tested": false,
+    "real_bost_tested": false,
+    "untouched_test_opened": false,
+    "generalization_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

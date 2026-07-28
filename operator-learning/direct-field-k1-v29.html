@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="PoolFire Direct-Field Warm Start v29 的五折结果、p14 独立复算、真实算子调用账、资源失败与论文证据边界。" />
+  <title>Direct-Field Warm Start v29 | OERF C 路线</title>
+  <style>
+    :root {
+      --ink: #17211d;
+      --muted: #5b6963;
+      --line: #cbd5d1;
+      --paper: #f3f6f4;
+      --white: #ffffff;
+      --teal: #20756f;
+      --teal-soft: #e5f3ed;
+      --blue: #3973a5;
+      --blue-soft: #eaf1f7;
+      --coral: #bd5b42;
+      --coral-soft: #fff0e9;
+      --gold: #8a651b;
+      --gold-soft: #f8f0db;
+      --charcoal: #35413c;
+      --radius: 6px;
+      --shadow: 0 8px 24px rgba(23, 33, 29, 0.07);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url("../assets/backgrounds/oerf-refractive-field.png") center / cover no-repeat;
+      opacity: .035;
+      pointer-events: none;
+    }
+    a { color: inherit; }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 54px;
+      padding: 8px max(18px, calc((100vw - 1180px) / 2));
+      border-bottom: 1px solid rgba(203, 213, 209, .95);
+      background: rgba(243, 246, 244, .96);
+      backdrop-filter: blur(12px);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    nav a:first-child {
+      margin-right: auto;
+      color: var(--ink);
+      font-weight: 800;
+    }
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    header {
+      padding: 48px 0 30px;
+      border-bottom: 1px solid var(--line);
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 970px;
+      margin-bottom: 14px;
+      font-size: 48px;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin-bottom: 16px;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin-bottom: 8px;
+      font-size: 18px;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+    p { margin-bottom: 9px; }
+    code {
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: #e9eeeb;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: .92em;
+      overflow-wrap: anywhere;
+    }
+    .eyebrow {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+    .lead {
+      max-width: 980px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+    .chips, .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 27px;
+      padding: 3px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--charcoal);
+      font-size: 12px;
+      font-weight: 750;
+    }
+    .chip.ok { border-color: #9dc8b7; background: var(--teal-soft); color: #155c47; }
+    .chip.fail { border-color: #dfaf9f; background: var(--coral-soft); color: #93422f; }
+    .chip.open { border-color: #dbc68d; background: var(--gold-soft); color: #745414; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 8px 13px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 760;
+    }
+    .button.primary { border-color: var(--teal); background: var(--teal); color: #fff; }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 24px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+    .metric {
+      min-height: 118px;
+      padding: 19px;
+      border-right: 1px solid var(--line);
+    }
+    .metric:last-child { border-right: 0; }
+    .metric b {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--teal);
+      font-size: 29px;
+      line-height: 1.12;
+    }
+    .metric.fail b { color: var(--coral); }
+    .metric span { color: var(--muted); font-size: 13px; }
+    section {
+      padding: 40px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .section-intro {
+      max-width: 930px;
+      color: var(--muted);
+    }
+    .figure {
+      margin: 18px 0 0;
+      padding: 11px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+    .figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    figcaption {
+      padding: 9px 4px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      border: 1px solid var(--line);
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+    .flow article {
+      min-height: 168px;
+      padding: 18px;
+      border-right: 1px solid var(--line);
+    }
+    .flow article:last-child { border-right: 0; }
+    .flow strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--teal);
+      font-size: 13px;
+    }
+    .flow p { margin-bottom: 0; color: var(--muted); font-size: 14px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+    .grid article {
+      min-height: 176px;
+      padding: 19px;
+      background: var(--white);
+    }
+    .grid p { color: var(--muted); font-size: 14px; }
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+    table {
+      width: 100%;
+      min-width: 920px;
+      border-collapse: collapse;
+      font-variant-numeric: tabular-nums;
+    }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: right;
+      font-size: 13px;
+    }
+    th { background: #eaf0ed; color: var(--charcoal); }
+    th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr.opened { background: #fbf7ea; }
+    .pass { color: #17634d; font-weight: 800; }
+    .fail { color: #a34832; font-weight: 800; }
+    .alert {
+      padding: 18px 20px;
+      border-left: 4px solid var(--gold);
+      background: var(--gold-soft);
+    }
+    .alert.success { border-left-color: var(--teal); background: var(--teal-soft); }
+    .alert.fail { border-left-color: var(--coral); background: var(--coral-soft); }
+    .alert strong { display: block; margin-bottom: 5px; }
+    .verdict {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .verdict article {
+      min-height: 184px;
+      padding: 19px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+    .verdict ul { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+    footer {
+      padding: 28px 0 44px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    @media (max-width: 880px) {
+      h1 { font-size: 38px; }
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric:nth-child(2) { border-right: 0; }
+      .metric:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .flow { grid-template-columns: 1fr; }
+      .flow article { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+      .flow article:last-child { border-bottom: 0; }
+      .grid { grid-template-columns: 1fr; }
+      .verdict { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      main { width: min(100% - 22px, 1180px); }
+      header { padding-top: 32px; }
+      h1 { font-size: 31px; }
+      .metrics { grid-template-columns: 1fr; }
+      .metric { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+      .metric:last-child { border-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+  <nav aria-label="页面导航">
+    <a href="index.html">C 路线学习与研究主页</a>
+    <a href="#method">方法</a>
+    <a href="#loto">五折结果</a>
+    <a href="#opened">p14 验证</a>
+    <a href="#cost">成本与失败</a>
+    <a href="#verdict">科学判决</a>
+    <a href="differentiable-curved-matched-v28.html">v28 曲线对照</a>
+  </nav>
+
+  <main>
+    <header>
+      <div class="eyebrow">PoolFire straight-ray proxy · v29.3</div>
+      <h1>Direct-Field Warm Start：精度与调用数通过，资源门失败</h1>
+      <p class="lead">因果三维 CNN 从相邻两帧 geometry-equalized BP 直接生成场初值，经过观测标量校正后接未修改 CGLS K1。五折与一个已打开验证轨迹都出现稳定精度信号，实际完整算子调用减少 33.17%；但当前 Mac 上 wall 和 RSS 均未加速。</p>
+      <div class="chips">
+        <span class="chip ok">阶段性关键进展</span>
+        <span class="chip ok">独立复算通过</span>
+        <span class="chip fail">algorithm_breakthrough=false</span>
+        <span class="chip open">straight-ray proxy only</span>
+      </div>
+      <div class="actions" style="margin-top:16px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_direct_field_v29_result_2026-07-28.md">阅读完整判决</a>
+        <a class="button" href="../docs/poolfire_c_direct_field_v29_public_summary.json">打开脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_direct_field_v29.png">查看结果图</a>
+      </div>
+
+      <div class="metrics">
+        <div class="metric"><b>5 / 5</b><span>LOTO 轨迹三项 p90 全部优于 Zero-K3</span></div>
+        <div class="metric"><b>0 / 100</b><span>p14 的 field / gradient / observation harm</span></div>
+        <div class="metric"><b>33.17%</b><span>实际完整 A/A<sup>T</sup> 调用减少</span></div>
+        <div class="metric fail"><b>FAIL</b><span>当前 CPU / MPS wall 与 peak RSS 资源门</span></div>
+      </div>
+    </header>
+
+    <section aria-labelledby="overview-title">
+      <h2 id="overview-title">一张图看完整结果</h2>
+      <p class="section-intro">上半部分是精度和真实调用账，下半部分把失败的资源结果与仍未完成的证据门放在同一视野。p14-s01 带星号，因为它此前已被旧实验打开，不能冒充 untouched validation。</p>
+      <figure class="figure">
+        <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_direct_field_v29.png">
+          <img src="../assets/poolfire_c_direct_field_v29.png" alt="Direct-Field v29 五折与 p14 的 p90 比值、真实算子调用数、CPU 资源比值和证据判决" />
+        </a>
+        <figcaption>误差比小于 1 表示 Direct-K1 更好；资源比大于 1 表示 Direct-K1 更慢或更占内存。图中没有真实 BOST、fresh test 或正式算法突破。</figcaption>
+      </figure>
+    </section>
+
+    <section id="method" aria-labelledby="method-title">
+      <h2 id="method-title">算法实际执行路径</h2>
+      <p class="section-intro">这不是把真值塞进初值。部署只读取 101 帧观测、冻结几何、fit-only 标量和 checkpoint；输出对应后 100 个因果帧对。</p>
+      <div class="flow">
+        <article><strong>01 · 两帧观测</strong><h3>因果输入</h3><p>当前帧和上一帧 observation。没有未来帧，没有部署真值。</p></article>
+        <article><strong>02 · 精确 A<sup>T</sup></strong><h3>均衡 BP</h3><p>固定 geometry equalizer 修正 voxel sensitivity，得到相邻两帧三维代理。</p></article>
+        <article><strong>03 · 10,524 参数</strong><h3>3D CNN</h3><p>物理 base、相邻 BP 与 support 共同生成有界的 direct-field proposal。</p></article>
+        <article><strong>04 · Observation-only</strong><h3>标量校正</h3><p>用当前观测对 proposal 做一维最小二乘缩放，不访问三维真值。</p></article>
+        <article><strong>05 · Strict K1</strong><h3>未修改 CGLS</h3><p>从该初值执行一次标准 arbitrary-start CGLS，产生最终三维场。</p></article>
+      </div>
+    </section>
+
+    <section id="loto" aria-labelledby="loto-title">
+      <h2 id="loto-title">五次独立重训的跨轨迹结果</h2>
+      <p class="section-intro">每一行对应一次重新训练：held-out 轨迹不参与固定 alpha、correction cap 或网络拟合。表内是 Direct-K1 / Zero-K3 的 p90 比值，小于 1 表示改善。</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Held-out</th><th>角色</th><th>Field ratio</th><th>Gradient ratio</th><th>Observation ratio</th><th>逐帧 harm F/G/O</th><th>判决</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>p14-s05</td><td>LOTO development</td><td>0.718</td><td>0.783</td><td>0.896</td><td>0 / 0 / 0</td><td class="pass">PASS</td></tr>
+            <tr><td>p22-s03</td><td>LOTO development</td><td>0.793</td><td>0.789</td><td>0.886</td><td>0 / 0 / 0</td><td class="pass">PASS</td></tr>
+            <tr><td>p33-s01</td><td>LOTO development</td><td>0.866</td><td>0.919</td><td>0.977</td><td>0 / 0 / 0</td><td class="pass">PASS</td></tr>
+            <tr><td>p45-s05</td><td>LOTO development</td><td>0.818</td><td>0.902</td><td>0.961</td><td>0 / 0 / 12</td><td class="pass">p90 PASS</td></tr>
+            <tr><td>p58-s03</td><td>LOTO development</td><td>0.839</td><td>0.818</td><td>0.908</td><td>0 / 0 / 0</td><td class="pass">PASS</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid" style="margin-top:14px;">
+        <article><h3>Field p90</h3><p><code>0.679131 → 0.572526</code><br />聚合相对下降 15.70%。</p></article>
+        <article><h3>Gradient p90</h3><p><code>0.916389 → 0.806682</code><br />聚合相对下降 11.97%。</p></article>
+        <article><h3>Observation p90</h3><p><code>0.380479 → 0.370540</code><br />聚合相对下降 2.61%，改善最小。</p></article>
+      </div>
+    </section>
+
+    <section id="opened" aria-labelledby="opened-title">
+      <h2 id="opened-title">p14 开放验证与独立复算</h2>
+      <p class="section-intro">最终模型只在五条 fit 轨迹训练，保存 checkpoint 后才读取 p14-s01。但该轨迹过去已被其他实验打开，所以这里只能证明当前 runner 没有把它放进训练，不能证明整个研究过程对它完全盲。</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>p14-s01</th><th>Direct-K1 p90</th><th>Zero-K3 p90</th><th>相对下降</th><th>Harm 帧</th></tr>
+          </thead>
+          <tbody>
+            <tr class="opened"><td>Field</td><td>0.484033</td><td>0.633080</td><td class="pass">23.54%</td><td>0 / 100</td></tr>
+            <tr class="opened"><td>Gradient</td><td>0.703886</td><td>0.835100</td><td class="pass">15.71%</td><td>0 / 100</td></tr>
+            <tr class="opened"><td>Observation</td><td>0.353301</td><td>0.371543</td><td class="pass">4.91%</td><td>0 / 100</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="alert success" style="margin-top:14px;">
+        <strong>独立复算通过</strong>
+        独立程序重新计算五条 fit 的 alpha/cap，重载 checkpoint，并重写 deployment、Zero-CGLS 和三类指标。最大指标差为 <code>9.54×10⁻⁹</code>，三项判决、逐帧 harm 和算子回执完全一致。
+      </div>
+    </section>
+
+    <section id="cost" aria-labelledby="cost-title">
+      <h2 id="cost-title">调用数成功，当前部署资源失败</h2>
+      <p class="section-intro">调用账只描述部署 reconstruction，不包含训练和离线指标计算。它是实际执行回执，但不能替代 wall time 与 peak RSS。</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Arm / 100 帧对</th><th>A</th><th>A<sup>T</sup></th><th>完整调用</th><th>相对 Zero-K3</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Direct-Field K1</td><td>200</td><td>201</td><td>401</td><td class="pass">-33.17%</td></tr>
+            <tr><td>Zero-CGLS K3</td><td>300</td><td>300</td><td>600</td><td>baseline</td></tr>
+            <tr><td>Zero-CGLS K4</td><td>400</td><td>400</td><td>800</td><td>+33.33%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid" style="margin-top:14px;">
+        <article><h3>CPU compute wall</h3><p class="fail">2.59-2.91x slower</p><p>当前小矩阵算子远比 CNN 和张量转换便宜。</p></article>
+        <article><h3>Fresh-process wall</h3><p class="fail">1.26-1.38x slower</p><p>进程、import 和模型加载进一步稀释调用优势。</p></article>
+        <article><h3>Peak RSS</h3><p class="fail">1.28-1.34x higher</p><p>stream1 已消除 2.4 GB 大 batch，但仍没有内存优势。</p></article>
+      </div>
+      <div class="alert fail" style="margin-top:14px;">
+        <strong>不能写成端到端加速</strong>
+        MPS batch 也没有通过。当前测量估计，单次物理算子至少要贵约 5.8 倍才可能达到 wall parity，贵约 8.3 倍才可能达到 10% speedup；非线性曲线算子是否足够昂贵必须实际执行，不能推测成成功。
+      </div>
+    </section>
+
+    <section aria-labelledby="baseline-title">
+      <h2 id="baseline-title">为什么主比较是 Zero-K3</h2>
+      <p class="section-intro">这不是临时换弱基线。当前逆问题继续迭代会进一步拟合观测，却放大不可观测方向；K3 是冻结的平衡早停点。</p>
+      <div class="grid">
+        <article><h3>Zero-K3</h3><p>五折聚合 p90：field <code>0.6791</code>，gradient <code>0.9164</code>，observation <code>0.3805</code>。</p></article>
+        <article><h3>Zero-K4</h3><p>observation 改善到 <code>0.3430</code>，但 gradient 恶化到 <code>0.9615</code>，出现过拟合观测的迹象。</p></article>
+        <article><h3>允许的主张</h3><p>Direct-K1 优于冻结的 early-stopped Zero-K3 三项平衡基线；不允许写成全面击败 CGLS 或 Zero-K4。</p></article>
+      </div>
+    </section>
+
+    <section id="verdict" aria-labelledby="verdict-title">
+      <h2 id="verdict-title">科学判决</h2>
+      <div class="verdict">
+        <article>
+          <div class="chips"><span class="chip ok">已成立</span></div>
+          <h3 style="margin-top:11px;">阶段性关键进展</h3>
+          <ul>
+            <li>五折跨轨迹三项 p90 稳定通过</li>
+            <li>p14 开放验证三项逐帧 harm 为 0</li>
+            <li>独立复算最大差 9.54×10⁻⁹</li>
+            <li>实际完整算子调用减少 33.17%</li>
+          </ul>
+        </article>
+        <article>
+          <div class="chips"><span class="chip fail">尚未成立</span></div>
+          <h3 style="margin-top:11px;">正式算法突破</h3>
+          <ul>
+            <li>没有 untouched/fresh trajectory</li>
+            <li>当前 wall 与 RSS 明确失败</li>
+            <li>v29 尚未进入 nonlinear curved inverse</li>
+            <li>没有真实 BOST、噪声和标定不确定度</li>
+          </ul>
+        </article>
+      </div>
+      <div class="alert" style="margin-top:14px;">
+        <strong>下一项能改变论文判断的实验</strong>
+        把同一 Direct-Field proposal 接入随当前三维场变化的 <code>F(x) / J(x)v / J(x)<sup>T</sup>w</code>，与 Zero 和 Full Parent 做 matched field / gradient / observation、fresh wall 和 whole-pipeline RSS。只有昂贵物理下仍成立，调用优势才可能转化成论文级速度贡献。
+      </div>
+    </section>
+
+    <footer>
+      本页仅发布脱敏汇总和可复现源码入口，不发布 checkpoint、原始轨迹、私有路径、私有哈希或组内材料。正式状态：<code>algorithm_breakthrough=false</code>。
+    </footer>
+  </main>
+</body>
+</html>

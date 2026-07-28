@@ -331,6 +331,9 @@
       <a href="#representation-gate">表示机制</a>
       <a href="#transport-proxy-gate">输运与校准门</a>
       <a href="#g0-evidence">真实 CFD 代理</a>
+      <a href="sarc-k3-m4-v37.html">v37 SARC-K3-M4</a>
+      <a href="direct-field-k1-v29.html">v29 Direct-Field K1</a>
+      <a href="differentiable-curved-matched-v28.html">v28 可微曲线逆问题</a>
       <a href="external-curved-resource-v27.html">v27 资源实测</a>
       <a href="external-curved-stress-v26.html">v26.3 外部曲折压力</a>
       <a href="curved-ray-stress-v25.html">v25 曲折光线压力</a>
@@ -341,22 +344,31 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-28</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-29</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 单侧非劣门成立后，稳定减少完整多视角 <code>A/A^T</code>、端到端时间和内存。v26.3 已证明固定方法在三条 external-to-fit PoolFire 组合与两个有效曲折压力档上保持兼容；v27 随后运行 1944 个 fresh process 检查资源。主方法相对 Full Parent 的 wall 中位快 10.33%-11.16%，但相对 Zero-K4 只快 2.19%-2.89%，六个单元的 direct-child RSS p90 又全部增加，因此正式判决为 <code>FAIL_EXTERNAL_CURVED_RECONSTRUCTION_RESOURCE_V27</code>。调用减少是真实的，稳定部署加速尚未成立，<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。最新 SARC-K3-M4 已把 learned Direct 初值、曲线 GN-CGLS K3、固定四步直线缺陷修正和一次曲线安全验证连成闭环：12 / 12 已开放轨迹三项同时不劣于 Full Parent 与 Zero，昂贵 nonlinear call 从 <code>21</code> 降到 <code>14</code>，fresh external wall 中位比为 <code>0.745827</code>，最差 RSS 比为 <code>1.023578</code>。精度与资源均独立复算通过，但 untouched test 与真实 BOST 尚未运行，故 <code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="external-curved-resource-v27.html">打开 v27 资源实测页</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_external_curved_resource_v27_result_2026-07-28.md">读 v27 严格判决</a>
-      <a class="button" href="../docs/poolfire_c_external_curved_resource_v27_public_summary.json">打开 v27 脱敏结果</a>
-      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_external_curved_resource_v27.png">查看 v27 结果图</a>
+      <a class="button primary" href="sarc-k3-m4-v37.html">打开 v37 SARC-K3-M4 结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_k3_m4_v37_result_2026-07-29.md">读 v37 完整判决</a>
+      <a class="button" href="../docs/poolfire_c_sarc_k3_m4_v37_public_summary.json">打开 v37 脱敏结果</a>
+      <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sarc_k3_m4_v37.png">查看 v37 结果图</a>
     </div>
-    <div class="alert critical" style="margin-top:12px;">
-      <strong>最新科学增量：v27 把“少调用”与“真加速”分开，正式资源门失败</strong>
-      <span>独立 validator 对 3888 份 worker/parent 回执重算得到最大统计差 0。相对父方法约 10% 的 wall 收益可信，但相对不用模型的 Zero-K4 只有约 2%-3%，并且所有单元 RSS 越门。<a href="external-curved-resource-v27.html">打开专页查看六个单元、两类对照和每一道失败门</a>。</span>
+    <div class="alert success" style="margin-top:12px;">
+      <strong>最新科学增量：已开放精度门与 fresh wall/RSS 门同时通过</strong>
+      <span>SARC-K3-M1 的一步修正先在 5 条轨迹上失败；固定四步低保真 CGLS 后，SARC-K3-M4 在 12 / 12 轨迹上逐条通过三项 Full Parent/Zero 兼容。144 个 fresh child 测量的轨迹等权 wall 中位比 <code>0.745827</code>，最差 wall <code>0.754330</code>、最差 RSS <code>1.023578</code>，三道冻结门全过。<a href="sarc-k3-m4-v37.html">打开专页查看方法、独立验证与 Pareto 边界</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="sarc-k3-m4-v37.html">v37 SARC-K3-M4</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_k3_m4_v37_result_2026-07-29.md">v37 完整判决</a>
+      <a class="button" href="../docs/poolfire_c_sarc_k3_m4_v37_public_summary.json">v37 脱敏结果</a>
+      <a class="button primary" href="direct-field-k1-v29.html">v29 Direct-Field K1</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_direct_field_v29_result_2026-07-28.md">v29 完整判决</a>
+      <a class="button" href="../docs/poolfire_c_direct_field_v29_public_summary.json">v29 脱敏结果</a>
+      <a class="button primary" href="differentiable-curved-matched-v28.html">v28 可微曲线 matched budget</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_differentiable_curved_matched_v28_result_2026-07-28.md">v28 严格判决</a>
+      <a class="button" href="../docs/poolfire_c_differentiable_curved_matched_v28_public_summary.json">v28 脱敏结果</a>
       <a class="button primary" href="external-curved-resource-v27.html">v27 外部曲折资源实测</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_external_curved_resource_v27_result_2026-07-28.md">v27 严格判决</a>
       <a class="button" href="../docs/poolfire_c_external_curved_resource_v27_public_summary.json">v27 脱敏结果</a>
@@ -484,9 +496,9 @@
       <div class="metric"><b id="gateMetric">0 / 8</b><span>论文硬门槛</span></div>
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
-    <div class="alert critical">
-      <strong>最新正式判决：v27 资源目标失败，停止把调用减少等同于部署加速</strong>
-      <span>冻结方法的精度与曲折压力证据仍保留；新增资源证据显示相对 Full Parent wall 快 10.33%-11.16%，但相对 Zero-K4 只快 2.19%-2.89%，RSS p90 在六个单元全部超过 1.05。正式状态 <code>FAIL_EXTERNAL_CURVED_RECONSTRUCTION_RESOURCE_V27</code>；独立复算最大差为 0，<code>algorithm_breakthrough=false</code>。</span>
+    <div class="alert success">
+      <strong>最新开发判决：v37 精度、昂贵调用与 fresh 资源 PASS，正式突破 HOLD</strong>
+      <span>SARC-K3-M4 已接入 nonlinear curved inverse，12 条已开放轨迹三项精度与 144 个 fresh child 的 wall/RSS 均通过独立审计。它是当前关键正结果与突破候选；但尚未一次性打开 untouched test，也没有组内真实 BOST，因此仍为 <code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -617,6 +629,9 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
+        <article class="panel"><div class="chips"><span class="chip gold">最新 · v37 突破候选</span><span class="chip blue">精度/调用/wall/RSS PASS</span></div><h3 style="margin-top:10px;">SARC-K3-M4 low-fidelity defect correction</h3><p>Learned Direct 初值接曲线 GN-CGLS K3，再用恰好四步 straight CGLS 修正曲线 residual，并由一个曲线 forward fail-closed 验证。12 / 12 已开放轨迹三项同时不劣于 Full Parent 和 Zero；nonlinear call 21→14，fresh wall 中位比 0.745827，最差 RSS 比 1.023578。独立复算全部通过，但 untouched/真实 BOST 尚未完成。</p></article>
+        <article class="panel"><div class="chips"><span class="chip gold">最新 · v29 阶段性关键进展</span><span class="chip blue">精度/调用 PASS · 资源 FAIL</span></div><h3 style="margin-top:10px;">Direct-Field Temporal CNN + CGLS K1</h3><p>五次 LOTO 重训的三项 p90 全部优于 Zero-K3；p14 开放验证 100 帧三项 harm 为 0，且由另一套程序独立复算。truth-free 部署将完整调用从 600 降到 401，但 CPU/MPS wall 与 RSS 均失败，所以当前是可复现算法信号，不是部署加速或正式突破。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v28 审计 HOLD</span><span class="chip blue">Zero PASS / Parent FAIL</span></div><h3 style="margin-top:10px;">Differentiable Curved Matched Budget</h3><p>随当前场改变路径的 <code>F/JVP/VJP</code> 已进入 Gauss-Newton-CGLS。Reduced 1×3 相对 Zero 2×2 的 21 次单帧执行守住三项终点，调用从 21 降到 13；但相对 Full Parent 的 gradient error 在 7/7 个样本上更差，1×4 追加诊断仍未修复，原 PASS 已撤回。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v27 FAIL</span><span class="chip blue">1944 fresh process</span></div><h3 style="margin-top:10px;">External curved resource gate</h3><p>精度兼容和调用减少继续成立；相对 Full Parent 的 wall 中位快 10.33%-11.16%，但相对 Zero-K4 只快 2.19%-2.89%，六个单元的 direct-child RSS p90 全部增加 6.86%-12.69%。当前廉价 proxy 下没有稳定部署资源优势。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">C0 · v10.7 正式停止</span><span class="chip blue">1/5 通过</span></div><h3 style="margin-top:10px;">Selected-DCT96 Coefficient Distillation</h3><p>五折 oracle 可达性已在模型训练前失败：四条轨迹 observation harm 为 100%，所以不再生成 20 份训练标签，不跑 ridge/MLP，也不打开 fresh 或 test。这是有效负结果，不是待办事项。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">C1 · v14 strict FAIL</span><span class="chip blue">4/5 · 0 harm</span></div><h3 style="margin-top:10px;">Compact Detector CNN + DualRange-K1</h3><p>正式状态 <code>FAIL_INDEPENDENT_STRICT_W8D2_CAPACITY_GATE_V14</code>。<code>w16d2</code> 的 10,548 参数仍是当前最小 5/5 候选；2,912 参数 <code>w8d2</code> 在 P45 只有 90/101 joint match，少一帧过门。11 个 miss 全是 observation-only；这把纯容量压缩的稳健下限定位在 2,912 与 10,548 参数之间，但没有产生新算法成功。</p></article>
@@ -630,6 +645,51 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="v37-sarc-k3-m4" class="alert success" style="margin-top:13px;">
+        <strong>v37：低保真缺陷修正把 33.3% 昂贵调用减少兑现为 fresh wall 优势</strong>
+        <span>一步修正 v35 先在 5 / 12 条轨迹上失败；固定四步 SARC-K3-M4 随后在 12 / 12 条已开放轨迹上逐条通过 field / gradient / observation 的 Full Parent 与 Zero 门。nonlinear 账为 <code>14</code> 对 Zero 的 <code>21</code>；144 个 fresh child 的 wall 中位比 <code>0.745827</code>，最差 wall <code>0.754330</code>、最差 RSS <code>1.023578</code>。独立 validator 逐项复算通过。由于 untouched test 与真实 BOST 未完成，正式状态仍为 <code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sarc_k3_m4_v37.png" aria-label="打开 v37 SARC-K3-M4 结果图">
+          <img src="../assets/poolfire_c_sarc_k3_m4_v37.png" alt="SARC-K3-M4 一步与四步精度、fresh wall 及 Pareto 结果" />
+        </a>
+        <figcaption>上：M1 失败与 M4 通过；中：v34 与 v37 fresh wall；下：Full Parent、SARC-K3-M4、SARC-K4、Direct-K5 与 Zero 的精度-昂贵调用 Pareto 位置。所有科学轨迹均已为开发打开。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="sarc-k3-m4-v37.html">打开 v37 专页</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_sarc_k3_m4_v37_result_2026-07-29.md">读 v37 完整判决</a>
+        <a class="button" href="../docs/poolfire_c_sarc_k3_m4_v37_public_summary.json">打开 v37 机器摘要</a>
+      </div>
+      <div id="v29-direct-field" class="alert success" style="margin-top:13px;">
+        <strong>v29：五折与 p14 精度信号成立，真实调用减少，当前资源门失败</strong>
+        <span>10,524 参数因果三维 CNN 使用相邻两帧 geometry-equalized BP 直接生成 field proposal，经过 observation-only scalar 后接 strict CGLS K1。五个 LOTO fold 共 500 帧三项 p90 全部优于 Zero-K3；p14-s01 的 field / gradient / observation p90 为 <code>0.484033 / 0.703886 / 0.353301</code>，相对 Zero-K3 分别下降 <code>23.54% / 15.71% / 4.91%</code>，三项 harm 均为 0。独立复算最大差 <code>9.54×10^-9</code>，调用回执为 <code>401</code> 对 <code>600</code>；但 CPU compute wall 和 peak RSS 都显著更差，正式状态仍为 <code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_direct_field_v29.png" aria-label="打开 v29 Direct-Field 结果图">
+          <img src="../assets/poolfire_c_direct_field_v29.png" alt="PoolFire Direct-Field v29 的六条轨迹精度比、真实调用数、CPU 资源失败与证据判决" />
+        </a>
+        <figcaption>误差比低于 1 为改善；Direct-K1 每 100 帧对执行 401 次完整 A/A^T，对照 Zero-K3 为 600 次。当前 Mac 的 wall/RSS 比均高于 1，因此少算还没有转化成端到端加速。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="direct-field-k1-v29.html">打开 v29 专页</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_direct_field_v29_result_2026-07-28.md">读 v29 完整判决</a>
+        <a class="button" href="../docs/poolfire_c_direct_field_v29_public_summary.json">打开 v29 机器摘要</a>
+      </div>
+      <div id="v28-curved-matched" class="alert critical" style="margin-top:13px;">
+        <strong>v28：Zero 对照信号成立，Full Parent 与复算门 HOLD</strong>
+        <span>7 个轨迹标签 frame 49、3 种 arm 顺序共 21 次执行相对 Zero 均满足三项 matched accuracy，调用账仍是 <code>13</code> 对 <code>21</code>；但 Reduced 的 gradient error 相对 Full Parent 在 7/7 个样本上更差。将 Reduced 加深到 <code>1×4</code> 后 observation 7/7 更好，gradient 仍 7/7 更差，说明近零空间结构损失不能靠更多 inner steps 修复。独立科学复算和完整输入绑定尚未完成。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_differentiable_curved_matched_v28.png" aria-label="打开 v28 可微曲线 matched-budget 结果图">
+          <img src="../assets/poolfire_c_differentiable_curved_matched_v28.png" alt="PoolFire C v28 七条轨迹的 matched accuracy、wall 降幅、非线性调用账与证据边界" />
+        </a>
+        <figcaption>A：相对 Zero 的三项比低于 1；B/C：同进程 wall 与调用 headroom；D：Full Parent gradient harm 为 7/7，完整输入绑定和独立科学复算未完成。正式状态 HOLD，algorithm_breakthrough=false。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="differentiable-curved-matched-v28.html">打开 v28 专页</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_differentiable_curved_matched_v28_result_2026-07-28.md">读 v28 讲人话判决</a>
+        <a class="button" href="../docs/poolfire_c_differentiable_curved_matched_v28_public_summary.json">打开 v28 机器摘要</a>
       </div>
       <div id="v27-resource" class="alert critical" style="margin-top:13px;">
         <strong>v27：相对父方法的时间机制成立，但最强便宜对照和内存门否定部署主张</strong>

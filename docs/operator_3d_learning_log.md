@@ -8559,3 +8559,301 @@ fresh worker 上用更大网络堆性能。下一次真正能改变论文判断�
 
 完整结果见
 `docs/poolfire_c_external_curved_resource_v27_result_2026-07-28.md`。
+
+## 267. v28：真正进入曲线光路非线性逆问题，首次看到稳定 matched-budget headroom
+
+v27 的负结果把问题说得很清楚：在 `16x16x32` 的廉价直线矩阵代理里，即使少算
+一半以上 `A/A^T`，模型和进程固定开销也可能把 wall 优势吃掉。因此这轮没有继续
+优化同一个小矩阵 worker，而是把昂贵物理本身放进逆问题。
+
+我实现了一个 PyTorch 可微版本的 v25 曲线光路前向：
+
+```text
+current 3D field x
+  -> curved ray integration F(x)
+  -> exact-program J(x)v
+  -> exact-program J(x)^T w
+  -> matrix-free Gauss-Newton-CGLS
+```
+
+它先通过独立 NumPy forward 一致性、JVP 中心差分、VJP 内积恒等式、非线性残差
+下降和三线性重采样测试。PoolFire 观测由 192 步 NumPy 生成器产生，逆模型只用
+96 步 PyTorch 程序，因此不是把完全相同的离散代码互相验证。
+
+第一次预算是：
+
+```text
+Zero:          2 outer x 2 inner
+Reduced Warm:  1 outer x 2 inner
+```
+
+这里出现了一个必须保留的失败：7 条轨迹里有 6 条能少一次 outer，但 p45-s05 的
+observation residual 还没有达到 Zero 两次 outer 的终点。更重要的是，旧 runner
+曾把“同样跑到最后也能达到”宽松标成 PASS。这个标签被修正为只有严格少一次
+outer 才通过。
+
+没有换大模型。只把候选在同一次线性化内的 CGLS 内步从 2 增到 3：
+
+```text
+Zero:          2 outer x 2 inner = 11F + 4JVP + 6VJP = 21
+Reduced Warm:  1 outer x 3 inner =  6F + 3JVP + 4VJP = 13
+```
+
+这相当于用一个便宜 inner Krylov step 换掉一次昂贵的 ray retracing 和 Jacobian
+重线性化。p45-s05 的 observation residual 从 `0.04465` 降到 `0.02004`，越过
+Zero 的 `0.02903`，field 和 gradient 也继续优于 Zero。
+
+随后从干净源码提交运行了 7 条已开放轨迹、3 种 arm 顺序，共 21 次 matched-budget
+执行。独立聚合器不相信 runner 的总标签，逐文件检查源码绑定、轨迹角色、预算、
+调用账和三项不等式。结果是：
+
+```text
+21 / 21 三项 matched accuracy PASS
+非线性逻辑调用 21 -> 13，减少 38.10%
+21 / 21 wall 都下降至少 15%
+最差单次 wall 降幅 24.17%
+逐轨迹三顺序 wall 中位降幅 28.33%-31.16%
+```
+
+7 条轨迹的 Reduced / Zero 终点比范围：
+
+```text
+field       0.4496 - 0.6716
+gradient    0.8203 - 0.9079
+observation 0.0845 - 0.6902
+```
+
+**讲人话：**这次少算的不再是一个便宜小矩阵，而是随当前三维场变化的曲线光路
+forward 和 Jacobian。固定 warm initializer 让求解器从更接近真值的区域出发，
+所以一次重线性化加三个内部 Krylov 步，就超过零初值两次重线性化的终点；而且这个
+信号在 7 条轨迹和三种执行顺序中没有消失。
+
+但仍然必须把边界写在结果旁边：
+
+```text
+post_open_development_only=true
+fresh_process_repetition_gate_completed=false
+whole_pipeline_peak_rss_gate_completed=false
+external_holdout_used=false
+real_BOST=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+所以当前判断是：
+
+```text
+显著阶段性进展 = true
+突破性进展 = false
+```
+
+独立近邻审计还指出一个必须补的强基线：让相同规模网络直接从 observation 输出
+field 初值，再接同一个未修改 GN-CGLS。只有 dual proposal + 物理 lift 能在相同
+训练预算和终点门下优于这个 Direct-Field WS-GN-CGLS，才能证明贡献不只是“学习
+初值有效”。
+
+完整结果见
+`docs/poolfire_c_differentiable_curved_matched_v28_result_2026-07-28.md`。
+
+## 268. v28 独立审计：原 PASS 撤回，问题不是 Krylov 步数不够
+
+上一节记录的是 v28 首轮聚合时看到的 Reduced-vs-Zero 信号。随后独立代码审计
+发现，那个 PASS 的范围写大了，必须立刻降级。
+
+审计确认核心自动微分本身没有明显错误：生产尺寸只读检查中，JVP 有限差分相对
+误差约 `1.45e-7`，VJP 内积误差约 `3.51e-16`。21 个结果也确实完整，Reduced
+相对 Zero 的三项终点和 `13` 对 `21` 调用账没有算错。
+
+真正的问题有三项：
+
+1. 外部模型、几何、数据和 frame payload 没有被完整绑定。
+2. validator 只独立聚合 runner 写出的标量，没有从重建场独立复算科学指标。
+3. 原主门忽略了 Full Parent；Reduced 的 gradient error 在 7/7 个单帧样本上
+   都比 Full Parent 更高，差值范围为 `+0.000531` 到 `+0.022493`。
+
+因此正式状态从：
+
+```text
+PASS_POST_OPEN_DEVELOPMENT_CURVED_MATCHED_BUDGET_V28
+```
+
+降为：
+
+```text
+HOLD_FULL_PARENT_AND_RECOMPUTATION_GATES_V28
+algorithm_breakthrough=false
+```
+
+我没有停在审计文字上，而是实际运行了最直接的反证实验：把 Reduced 从
+`1 outer x 3 inner` 加深到 `1 outer x 4 inner`，在同一 7 个已开放样本上与
+原冻结的 Full Parent `1x3` 比较。
+
+结果：
+
+```text
+observation 优于 Parent：7 / 7
+gradient 劣于 Parent：7 / 7
+三项同时不劣于 Parent：0 / 7
+```
+
+p33-s01 的 gradient 差值只从 `+0.022493` 变成 `+0.022371`，但 observation
+差值已经改善到 `-0.007724`。讲人话：更多 Krylov 步继续把“看得见的观测残差”
+压低了，却几乎没有找回 reduced representation 丢掉的“观测近零空间三维结构”。
+
+所以现在停止用更多 inner steps 挽救 Reduced。下一项真正有科学价值的实现是同
+训练预算的 `Direct-Field WS-GN-CGLS`：网络从相同 observation / geometry
+直接输出 field 初值，再接同一个未修改 GN-CGLS。它将检验收益究竟来自一般的
+learned warm start，还是来自我们想主张的 dual/reduced + physical lift 结构。
+
+## 269. v29：Direct-Field 真实训练后五折通过，但“少算”还没有变成“更快”
+
+这轮没有继续给 v28 的 reduced 表示打补丁，而是把独立审计要求的强对照真正做了
+出来：一个 10,524 参数的因果三维 CNN，输入相邻两帧 geometry-equalized BP 和
+固定物理 base，直接输出三维场初值；随后只做观测可计算的标量校正，再接完全未改的
+CGLS K1。
+
+最初的 p33 pilot 说明，Direct proposal 在 field 和 gradient 上已经有明显
+headroom，但 observation 还没有达到 Zero-K4。继续堆 observation loss、K3 teacher
+或低频 residual basis 都没有形成严格 K4 三项通过。这里没有挑好看的结果写成功，
+而是回头检查 baseline 本身：Zero-K4 虽然继续压低 observation，却开始明显恶化
+gradient；Zero-K3 才是这组 proxy 上更平衡的 early-stopped 解。
+
+因此冻结比较对象为 Zero-K3，并实际重训五个 leave-one-trajectory-out fold。每个
+fold 的 held-out trajectory 都不参与 alpha、cap 或网络训练。五折 500 帧的聚合
+p90 为：
+
+```text
+                   Direct K1    Zero K3    relative reduction
+field              0.572526     0.679131       15.70%
+gradient           0.806682     0.916389       11.97%
+observation        0.370540     0.380479        2.61%
+```
+
+五条轨迹的三项 p90 全部通过。p45-s05 仍有 12/100 帧 observation harm，所以不能
+写成每一帧都支配；其余四折三项逐帧 harm 都是 0。
+
+随后在五条 fit 上训练一个最终 checkpoint，再一次性评分已经打开但不参加本次训练的
+p14-s01。p14 的三项 p90 为：
+
+```text
+field        0.484033 vs 0.633080
+gradient     0.703886 vs 0.835100
+observation  0.353301 vs 0.371543
+harm         0 / 100 on all three metrics
+```
+
+为了避免 runner 自己验证自己，又写了另一条独立程序：它不导入正式 runner 的数据
+准备、deployment、Zero-CGLS 或 metric 函数，重新计算五条 fit 的 alpha/cap，
+重载 checkpoint，再重做 p14 的 100 帧输出和指标。最大指标差只有
+`9.54e-9`，调用账和判决完全一致：
+
+```text
+PASS_INDEPENDENT_RECOMPUTATION_OPENED_VALIDATION_V29_3
+```
+
+truth-free 部署代码的实际回执是：
+
+```text
+Direct K1 = 200A + 201A^T = 401 complete calls
+Zero K3   = 300A + 300A^T = 600 complete calls
+reduction = 33.17%
+```
+
+这次调用优势是真执行，不是公式估算。但 fresh-process benchmark 给出了必须正视的
+负结果：CPU compute wall 慢 `2.59-2.91x`，fresh wall 慢 `1.26-1.38x`，
+peak RSS 高 `1.28-1.34x`；MPS 也没有通过。当前直线 `16x16x32` NumPy 算子太
+便宜，CNN 和张量转换的固定开销更大。
+
+**讲人话：**现在终于有一条候选方法，能在五折和一个开放验证轨迹上用约三分之二
+的完整算子调用，得到比 Zero-K3 更好的场、梯度和观测精度。这是实际算法进展。
+但在当前 Mac 的廉价直线代理上它反而更慢、更占内存，所以还不是“加速算法突破”。
+
+正式边界：
+
+```text
+stage_level_key_progress=true
+algorithm_breakthrough=false
+untouched_or_fresh_validation=false
+curved_inverse_evaluated_for_v29=false
+real_BOST=false
+wall_or_rss_advantage_proven=false
+paper_success=false
+```
+
+完整结果见
+`docs/poolfire_c_direct_field_v29_result_2026-07-28.md`。
+
+## 270. v35-v37：一步修正失败，四步低保真缺陷修正同时通过精度与 fresh 资源门
+
+这轮没有继续扩大网络，也没有绕开 Full Parent。真正的问题是：能不能少做一次
+昂贵曲线重线性化，同时把缺掉的三维结构补回来。
+
+先跑了最便宜的 SARC-K3-M1：
+
+```text
+learned Direct -> curved GN-CGLS K3
+-> 1 次 straight-adjoint residual correction
+-> 1 次 curved F safety
+```
+
+它在 12/12 轨迹上优于 Zero，但有 5 条 observation 仍劣于 Full Parent，最差
+ratio 为 `1.041992`。正式与独立判决都是失败。这证明“随便加一个反投影”不够。
+
+随后冻结 SARC-K3-M4。差别只在 residual subproblem 固定做恰好 4 步 straight
+CGLS；不看 truth、不按轨迹调步数。结果是 12/12 轨迹的 field、gradient 和
+observation 全部同时不劣于 Full Parent 与 Zero：
+
+```text
+worst ratio vs Full Parent
+field        0.895933
+gradient     0.952248
+observation  0.975982
+```
+
+非线性账从 Zero 的 `21` 降到 `14`，理论减少 `33.33%`；straight 总账是
+`6A+7A^T`。另一条程序独立重建 12 个场，field 最大差为 0，曲线 prediction 最大
+差 `3.55e-15`，判决一致。
+
+随后不是停在调用账，而是执行了 144 个 fresh child：
+
+```text
+12 trajectories x 2 arms x (1 warmup + 5 measured)
+```
+
+资源门结果：
+
+```text
+trajectory-equal median external wall ratio  0.745827
+worst trajectory external wall ratio         0.754330
+trajectory-equal median RSS ratio             1.006705
+worst trajectory RSS ratio                    1.023578
+```
+
+三个冻结门全部通过。独立 validator 又逐项检查 144 receipts、144 fields、顺序、
+输入、调用账和资源算术，最终状态：
+
+```text
+PASS_INDEPENDENT_VALIDATION_SARC_K3_M4_RESOURCE_V37
+```
+
+独立 validator 自己前两次 fail-closed：一次误读 v36 嵌套 ledger，一次对 fresh
+中间 residual history 使用过严 `1e-9` 容差。两个失败回执都保留；修复只针对
+validator 结构和浮点比较，资源门与算法结果没有改。
+
+**讲人话：**这次候选不只是少算了 33.3% 的昂贵物理调用，而且本机 12 条轨迹的
+fresh external wall 全部实测下降约 24.6%-27.7%，RSS 最差只增加约 2.36%。
+这是目前最强的算法证据。
+
+但 Full Parent 只用 13 次 nonlinear call，而候选用 14 次；候选更准但略贵。因此
+它是新的 Pareto 工作点，不是对所有方法的无条件支配。并且 12 条科学轨迹都已为
+开发打开，untouched test 和真实 BOST 仍未运行：
+
+```text
+key_positive_result=true
+breakthrough_candidate=true
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整结果见
+`docs/poolfire_c_sarc_k3_m4_v37_result_2026-07-29.md`。

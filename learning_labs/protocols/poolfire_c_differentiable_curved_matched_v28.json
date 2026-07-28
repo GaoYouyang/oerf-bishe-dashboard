@@ -1,0 +1,93 @@
+{
+  "schema_version": "oerf-poolfire-c-differentiable-curved-matched-28.0",
+  "status": "POST_OPEN_DEVELOPMENT_CONTRACT",
+  "scientific_question": "Does the frozen observable reduced warm field reach the same field, gradient, and observation accuracy as a zero-start nonlinear curved inverse while using fewer nonlinear program evaluations?",
+  "data": {
+    "source": "public PoolFire CFD density trajectories already opened before this contract",
+    "trajectory_ids": [
+      "p=14kw_size=01",
+      "p=14kw_size=05",
+      "p=22kw_size=01",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "frame_index": 49,
+    "independent_trajectory_units": 7,
+    "untouched_external_holdouts_used": false,
+    "untouched_test_used": false
+  },
+  "forward_inverse": {
+    "generator": "independent NumPy v25 curved ray forward",
+    "generator_integration_steps": 192,
+    "inverse": "PyTorch exact-program JVP/VJP Gauss-Newton CGLS",
+    "inverse_integration_steps": 96,
+    "beta": 0.002,
+    "field_shape": [
+      32,
+      32,
+      64
+    ],
+    "observation_size": 2072,
+    "line_search": "observation-only fixed scales 1, 0.5, 0.25, 0.125, 0"
+  },
+  "arms": {
+    "zero": {
+      "outer_steps": 2,
+      "inner_steps": 2
+    },
+    "full_parent_warm": {
+      "outer_steps": 1,
+      "inner_steps": 3
+    },
+    "observable_reduced_warm": {
+      "outer_steps": 1,
+      "inner_steps": 3
+    }
+  },
+  "primary_gate": {
+    "unit": "trajectory",
+    "candidate": "observable_reduced_warm",
+    "comparator": "zero",
+    "required_metrics": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "observation_relative_l2"
+    ],
+    "rule": "candidate final metric <= comparator final metric for every metric and every trajectory",
+    "logical_nonlinear_calls_must_be_strictly_lower": true,
+    "pooled_average_cannot_rescue_a_failed_trajectory": true
+  },
+  "runtime_diagnostic": {
+    "arm_orders": [
+      [
+        "zero",
+        "full_parent_warm",
+        "observable_reduced_warm"
+      ],
+      [
+        "observable_reduced_warm",
+        "zero",
+        "full_parent_warm"
+      ],
+      [
+        "full_parent_warm",
+        "observable_reduced_warm",
+        "zero"
+      ]
+    ],
+    "warm_setup_included": true,
+    "wall_is_development_evidence_only": true,
+    "fresh_process_repetition_gate_completed": false,
+    "whole_pipeline_peak_rss_gate_completed": false
+  },
+  "claim_boundaries": {
+    "real_bost": false,
+    "camera_calibrated": false,
+    "rho_to_refractive_index_closed": false,
+    "external_generalization_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
