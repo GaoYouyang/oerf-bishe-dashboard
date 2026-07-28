@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.28-c-v19-motion-state-negative",
-  previousVersion: "2026.07.28-c-v18-temporal-amortization-negative",
-  previousBadge: "v18 temporal · accurate fallback, insufficient reuse",
-  olderBadge: "v17 resource · wall/RSS PASS, CPU/cold FAIL",
+  version: "2026.07.28-c-v20-temporal-lift-negative",
+  previousVersion: "2026.07.28-c-v19-motion-state-negative",
+  previousBadge: "v19 motion · bounded shift-scale FAIL",
+  olderBadge: "v18 temporal · accurate fallback, insufficient reuse",
   historyReleases: [
+    {
+      version: "2026.07.28-c-v19-motion-state-negative",
+      previousVersion: "2026.07.28-c-v18-temporal-amortization-negative",
+      badge: "v19 motion · bounded shift-scale FAIL"
+    },
     {
       version: "2026.07.28-c-v18-temporal-amortization-negative",
       previousVersion: "2026.07.28-c-v17-persistent-serial-partial-repair",
