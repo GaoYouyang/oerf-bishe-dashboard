@@ -1,0 +1,144 @@
+{
+  "schema_version": "oerf-blastnet-h2air-phi05-krylov-span-public-41.0",
+  "status": "VALIDATED_POST_OPEN_NO_PASSING_CANDIDATE_V41",
+  "date": "2026-07-29",
+  "question": "Can per-instance observation-only weights over the four frozen straight-ray CGLS increments repair the v40.2 BLASTNet failure?",
+  "dataset_role": {
+    "dataset": "BLASTNet premixed H2-air slot-burner DNS, phi=0.5",
+    "role": "post-open mechanism development only",
+    "new_external_generalization_evidence": false
+  },
+  "method": {
+    "base": "Direct-K3",
+    "basis": "four straight-ray CGLS increments generated from the curved observation residual",
+    "weight_selection": "three-start bounded L-BFGS-B per snapshot",
+    "optimizer_reads_truth": false,
+    "weight_box": [
+      -2.0,
+      3.0
+    ],
+    "straight_basis_cost_per_snapshot": {
+      "A": 4,
+      "A_transpose": 4
+    },
+    "straight_basis_cost_is_complete_method_cost": false
+  },
+  "result": {
+    "snapshot_total": 4,
+    "snapshot_pass_count": 0,
+    "frozen_v40_gate_pass": false,
+    "all_selected_best_candidates_converged": true,
+    "all_optimizer_starts_converged": false,
+    "formal_scientific_diagnosis": "POST_OPEN_FOUR_INCREMENT_SPAN_SEARCH_INCONCLUSIVE",
+    "validated_interpretation": "NO_PASSING_CANDIDATE_FOUND_UNDER_OBSERVATION_OBJECTIVE",
+    "aggregate_candidate_medians": {
+      "field_relative_l2": 0.9559005994043349,
+      "gradient_relative_l2": 0.9893159982433637,
+      "observation_relative_l2": 0.3107936479536355
+    },
+    "aggregate_direct_k4_medians": {
+      "field_relative_l2": 0.9794195169776052,
+      "gradient_relative_l2": 0.9710539008956895,
+      "observation_relative_l2": 0.3016080234779497
+    },
+    "rows": [
+      {
+        "snapshot_id": 1,
+        "best_weights": [
+          1.5064483828346473,
+          1.5417310107814735,
+          1.2077599764087001,
+          1.3577398651216512
+        ],
+        "ratios_to_direct_k4": {
+          "field_relative_l2": 0.9764839045731265,
+          "gradient_relative_l2": 1.0161971272581813,
+          "observation_relative_l2": 1.019139643588164
+        },
+        "pass": false
+      },
+      {
+        "snapshot_id": 2,
+        "best_weights": [
+          1.5262456336361596,
+          1.476523294920384,
+          1.1900687639773275,
+          1.1346546208167985
+        ],
+        "ratios_to_direct_k4": {
+          "field_relative_l2": 0.9773069225268499,
+          "gradient_relative_l2": 1.0317886975996529,
+          "observation_relative_l2": 1.0199671682302758
+        },
+        "pass": false
+      },
+      {
+        "snapshot_id": 3,
+        "best_weights": [
+          1.5774910824610138,
+          1.4755624938906122,
+          1.1202225579136036,
+          1.2258619282130236
+        ],
+        "ratios_to_direct_k4": {
+          "field_relative_l2": 0.974199745206978,
+          "gradient_relative_l2": 1.0270008478508235,
+          "observation_relative_l2": 1.0048561442125212
+        },
+        "pass": false
+      },
+      {
+        "snapshot_id": 4,
+        "best_weights": [
+          1.3176738562499977,
+          1.439980749809153,
+          1.2788478406715216,
+          1.0144143937891674
+        ],
+        "ratios_to_direct_k4": {
+          "field_relative_l2": 0.9772601399704359,
+          "gradient_relative_l2": 1.0146030962806352,
+          "observation_relative_l2": 1.0568370840530823
+        },
+        "pass": false
+      }
+    ]
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_KRYLOV_INCREMENT_SPAN_V41",
+    "maximum_metric_absolute_difference": 3.58046925441613e-15,
+    "maximum_optimizer_weight_absolute_difference": 0.0,
+    "maximum_candidate_field_absolute_difference": 0.0,
+    "increment_basis_independently_reconstructed": true,
+    "optimizer_independently_replayed": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "cost_boundary": {
+    "formal_diagnostic_curved_forward_calls": 1425,
+    "same_cost_or_speed_claim_authorized": false,
+    "resource_gate_authorized": false
+  },
+  "novelty_boundary": {
+    "learnable_krylov_mixing_is_novel": false,
+    "closest_structural_neighbor": "Reconstruct Anything Model, Krylov Subspace Module",
+    "remaining_testable_gap": "BOST-specific cross-fidelity straight-to-curved correction with a fixed expensive-operator budget and observable fail-closed fallback"
+  },
+  "next_scientific_gate": "Run a truth-aware constrained oracle feasibility test inside the same four-direction span. Only if a feasible all-metric point exists is a learned observation-only coefficient predictor scientifically justified.",
+  "claim_boundary": {
+    "deployable_algorithm": false,
+    "matched_accuracy": false,
+    "speedup": false,
+    "broad_generalization": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  },
+  "primary_sources": [
+    "https://blastnet.github.io/premixed_slot_flame_h2air",
+    "https://doi.org/10.1017/dce.2025.1",
+    "https://arxiv.org/abs/2503.08915",
+    "https://arxiv.org/abs/2607.20138",
+    "https://proceedings.mlr.press/v235/rudikov24a.html",
+    "https://proceedings.mlr.press/v202/kaneda23a.html"
+  ]
+}
