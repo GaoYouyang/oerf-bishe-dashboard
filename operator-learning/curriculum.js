@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.29-c-v52-finite-six-space-negative",
-  previousVersion: "2026.07.29-c-v51-second-residual-adjoint",
-  previousBadge: "v51 sixth direction · observation repaired, gradient FAIL",
-  olderBadge: "v50 fixed five-space roster · 0 / 2,304",
+  version: "2026.07.30-c-v53-continuous-oracle-cell-switch",
+  previousVersion: "2026.07.29-c-v52-finite-six-space-negative",
+  previousBadge: "v52 finite six-space roster · 0 / 2,312",
+  olderBadge: "v51 sixth direction · observation repaired, gradient FAIL",
   historyReleases: [
+    {
+      version: "2026.07.29-c-v52-finite-six-space-negative",
+      previousVersion: "2026.07.29-c-v51-second-residual-adjoint",
+      badge: "v52 finite six-space roster · 0 / 2,312"
+    },
     {
       version: "2026.07.29-c-v51-second-residual-adjoint",
       previousVersion: "2026.07.29-c-v50-fixed-roster-negative",
@@ -44,7 +49,7 @@ window.OPERATOR_LEARNING_GUIDE = {
       badge: "v16.1 resource · wall headroom, CPU/RSS FAIL"
     }
   ],
-  updated: "2026-07-29",
+  updated: "2026-07-30",
   foundationChecks: [
     {
       id: "python-array",

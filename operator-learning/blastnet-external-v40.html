@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="SARC-K3-M4 v40.2 在 BLASTNet 预混 H2-air DNS 上的冻结外部精度检验，以及 v41-v52 从固定 Krylov span 到六维真值可行候选表的机理诊断。" />
-  <title>BLASTNet 外部检验 v40.2 × 六维候选表 v52 | OERF C 路线</title>
+  <meta name="description" content="SARC-K3-M4 v40.2 在 BLASTNet 预混 H2-air DNS 上的冻结外部精度检验，以及 v41-v53 从固定 Krylov span、六维连续 oracle 到 fixed-step 体素切换的机理诊断。" />
+  <title>BLASTNet 外部检验 v40.2 × 连续六维诊断 v53 | OERF C 路线</title>
   <style>
     :root {
       --ink: #17211d;
@@ -312,6 +312,7 @@
     <a href="#verdict">判决</a>
     <a href="#evidence">证据</a>
     <a href="#diagnosis">机理</a>
+    <a href="#continuous-six-space-v53">v53 连续六维诊断</a>
     <a href="#six-space-v52">v52 六维候选表</a>
     <a href="#second-residual-adjoint-v51">v51 第二残差伴随</a>
     <a href="#curved-v44">v44 curved-adjoint</a>
@@ -336,11 +337,14 @@
         <span class="chip fail">v44 新方向有效但完整门仍 0 / 4</span>
         <span class="chip fail">v51 第六方向增秩但梯度仍 FAIL</span>
         <span class="chip fail">v52 六维冻结表 0 / 2,312</span>
+        <span class="chip fail">v53 连续 oracle 无结论</span>
+        <span class="chip warn">fixed-step cell switch 已定位</span>
         <span class="chip warn">资源门未授权</span>
         <span class="chip fail">algorithm_breakthrough=false</span>
       </div>
       <div class="actions">
         <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md">阅读完整负结果</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_continuous_oracle_v53_result_2026-07-30.md">阅读 v53 连续 oracle 判决</a>
         <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_truth_feasible_roster_v52_result_2026-07-29.md">阅读 v52 六维候选表判决</a>
         <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_second_residual_adjoint_v51_result_2026-07-29.md">阅读 v51 第二残差伴随诊断</a>
         <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_curved_adjoint_v44_result_2026-07-29.md">阅读 v44 curved-adjoint 诊断</a>
@@ -602,6 +606,63 @@
         </div>
       </div>
 
+      <div id="continuous-six-space-v53" style="scroll-margin-top:70px; padding-top:30px;">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">v53 · independently replayed continuous oracle + post-open numerical diagnosis</div>
+            <h2>连续 oracle 仍无结论；一个 midpoint 揭示 smooth KKT 的失效边界</h2>
+          </div>
+          <p>正式部分只回答冻结六方向连续搜索是否找到完整门 witness；导数自由搜索和 cell-switch 检查是开封后机制诊断，用来决定是否值得继续给旧优化器追加预算。</p>
+        </div>
+        <div class="grid-3">
+          <div class="panel">
+            <h3 class="fail-text">正式 oracle · 0 pass</h3>
+            <p>12 个起点共执行 <code>3,088 F + 3,070 reverse-equivalent</code>。独立程序完整重放，但 11 个起点耗尽预算，唯一 SciPy success 也未过 KKT，不能形成 bounded negative。</p>
+          </div>
+          <div class="panel">
+            <h3>导数自由复核 · 仍无 witness</h3>
+            <p>Powell 12 起点执行 <code>2,973</code> 次 exact F，最佳 observation / Direct-K4 为 <code>1.033484</code>；固定 seed Sobol 的 434 个可行 exact F 最佳为 <code>1.107221</code>。</p>
+          </div>
+          <div class="panel">
+            <h3 class="fail-text">一个 cell switch 足以破坏导数</h3>
+            <p>N=96 终点的 <code>198,912</code> 个采样位置中，仅一个正向 midpoint 跨体素边界，却产生约 <code>4.07e-5</code> 单侧 objective 跳变。</p>
+          </div>
+        </div>
+        <div class="alert fail" style="margin-top:15px;">
+          <strong>正式状态：</strong>
+          <code>INCONCLUSIVE_CONTINUOUS_SIX_SPACE_ORACLE_S2_V53</code>。最佳正式 field / gradient / observation 比为 <code>0.982639 / 1.010000 / 1.033843</code>；0 个完整门 witness，但所有终点不足以支持“连续六维无解”。
+        </div>
+        <figure class="figure" style="margin-top:18px;">
+          <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_six_space_continuous_oracle_v53.png">
+            <img src="../assets/blastnet_h2air_phi05_six_space_continuous_oracle_v53.png" alt="BLASTNet H2-air S2 上 v53 连续六维 oracle、Powell 与 Sobol 搜索及 fixed-step 体素边界切换诊断" />
+          </a>
+          <figcaption>A：正式 oracle、Powell 与 Sobol 都没有通过完整门；B/C：N=96 的单个 one-sided cell switch 使中心差分偏离 AD，而换积分步数只会移动切换面；D：大量 exact F 仍没有正见证。</figcaption>
+        </figure>
+        <div class="table-wrap" style="margin-top:15px;">
+          <table>
+            <thead><tr><th>检查</th><th class="num">计算量</th><th class="num">最佳 observation / K4</th><th>可支持的结论</th></tr></thead>
+            <tbody>
+              <tr><td>正式连续 oracle</td><td class="num">3,088 F</td><td class="num fail-text">1.033843</td><td>独立重放通过，但结论无定论</td></tr>
+              <tr><td>Powell 12 起点</td><td class="num">2,973 F</td><td class="num fail-text">1.033484</td><td>没有正见证；不证明不存在</td></tr>
+              <tr><td>Sobol 球面探测</td><td class="num">434 feasible F</td><td class="num fail-text">1.107221</td><td>固定样本内没有正见证</td></tr>
+              <tr><td>N=96 双侧诊断</td><td class="num">576 value/grad calls</td><td class="num">1 cell switch</td><td>当前 forward 是 piecewise smooth</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert warn" style="margin-top:15px;">
+          <strong>策略已经改变：</strong>
+          停止继续训练六系数 selector，也停止给同一 smooth optimizer 无边界加预算。下一假设必须改用更有表达力、只看部署可见 observation 的 dual proposal，经精确 A<sup>T</sup>、可观测 alpha 与未修改 CGLS K1 验收。
+        </div>
+        <div class="alert info" style="margin-top:15px;">
+          cell-switch 检查是开封后的非正式机制诊断，尚未由第三套实现独立验证。这里没有 matched-accuracy、外部泛化、真实 BOST、wall/RSS 加速或论文成功；<code>algorithm_breakthrough=false</code>。
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_continuous_oracle_v53_result_2026-07-30.md">读 v53 完整判决</a>
+          <a class="button" href="../docs/blastnet_h2air_phi05_six_space_continuous_oracle_v53_public_summary.json">打开 v53 脱敏摘要</a>
+          <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_six_space_continuous_oracle_v53.png">查看 v53 总图</a>
+        </div>
+      </div>
+
       <div id="six-space-v52" style="scroll-margin-top:70px; padding-top:30px;">
         <div class="section-head">
           <div>
@@ -851,7 +912,7 @@
         </div>
       </div>
       <div class="alert" style="margin-top:15px;">
-        当前最窄、最有信息量的结论是：v52 在冻结六方向的 2,312 个 field/gradient 真值可行请求中得到 0 个完整门 witness；最佳 gradient 已到 <code>1.010000</code>，observation 仍为 <code>1.038412</code>。因此停止训练六系数 selector，只保留一次连续约束 oracle；它若仍失败，就改变表示本身。
+        当前最窄、最有信息量的结论是：v53 的正式连续 oracle、Powell 与 Sobol 都没有找到六方向完整门 witness；同时 fixed-step cell switch 说明 smooth KKT 不能单独裁决这个表示。旧六方向继续加预算的边际价值已经很低，下一实验直接改变表示本身。
       </div>
     </section>
 
@@ -879,8 +940,9 @@
             <tr><td>v50 固定候选表</td><td class="fail-text">固定表负结果</td><td>2,304 个唯一候选全量独立精确重算，0 个完整门 witness；五维路线没有被关闭</td></tr>
             <tr><td>v51 第二残差伴随增广</td><td class="fail-text">有界负结果</td><td>方向新增秩且 observation 过门，但 gradient / K4 为 1.030041；完整门仍失败</td></tr>
             <tr><td>v52 六维真值可行候选表</td><td class="fail-text">固定表负结果</td><td>2,312 个请求由两套实现各自精确评分，0 个完整门 witness；不证明连续六维无解</td></tr>
+            <tr><td>v53 六维连续 oracle</td><td class="fail-text">INCONCLUSIVE</td><td>12 起点、3,088 F 独立重放；0 witness，但终点与非光滑边界不足以支持不存在性结论</td></tr>
             <tr><td>固定四方向 selector</td><td class="fail-text">不授权训练</td><td>oracle 仍未找到完整门候选</td></tr>
-            <tr><td>六系数预测器</td><td class="fail-text">不授权训练</td><td>v52 冻结真值可行候选表为 0 / 2,312，当前没有合格学习标签</td></tr>
+            <tr><td>六系数预测器</td><td class="fail-text">路线关闭</td><td>v52 固定表与 v53 连续搜索均无 witness；下一假设改用新的 observation-only dual 表示</td></tr>
             <tr><td>资源加速</td><td>未运行</td><td>精度失败后按协议无资格测速</td></tr>
             <tr><td>真实 BOST</td><td>未证明</td><td>当前仍是由 DNS 密度构造的代理 forward</td></tr>
             <tr><td>广泛燃烧场泛化</td><td>未证明</td><td>只有一个外部数据集且结果为负</td></tr>
@@ -896,7 +958,7 @@
     </section>
 
     <footer>
-      脱敏公开页不包含原始 DNS、私有场、模型参数、候选权重、执行路径、release 或哈希。最新证据：v52 六维真值可行候选表为 0 / 2,312，最佳 field / gradient / observation 比为 0.985041 / 1.010000 / 1.038412；连续六维无解未证明；algorithm_breakthrough=false。
+      脱敏公开页不包含原始 DNS、私有场、模型参数、候选权重、执行路径、release 或哈希。最新证据：v53 正式连续 oracle 经独立重放仍为 INCONCLUSIVE；Powell 最佳 field / gradient / observation 比为 0.982228 / 1.010000 / 1.033484，fixed-step cell switch 已定位但连续六维无解未证明；algorithm_breakthrough=false。
     </footer>
   </main>
   <script>
