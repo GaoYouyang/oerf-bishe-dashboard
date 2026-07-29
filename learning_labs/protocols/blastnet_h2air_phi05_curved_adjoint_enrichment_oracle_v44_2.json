@@ -1,0 +1,284 @@
+{
+  "schema_version": "oerf-blastnet-h2air-phi05-curved-adjoint-enrichment-oracle-44.2",
+  "status": "FROZEN_AFTER_V44_1_FIREWALL_INVALIDATION_BEFORE_V44_2_RESULT",
+  "protocol_history": {
+    "initial_protocol_commit": "1be0c97",
+    "initial_protocol_executed": false,
+    "initial_protocol_superseded_before_result": true,
+    "red_team_blockers": [
+      "fine-grid adjoint projection could exploit degrees of freedom invisible to coarse field and gradient scoring",
+      "a v43 truth-aware start and truth-constrained QCQP would confound candidate generation"
+    ],
+    "revision_did_not_read_v44_results": true,
+    "v44_1_formal_execution_status": "INVALIDATED_BEFORE_INDEPENDENT_SUCCESS",
+    "v44_1_invalidation_reasons": [
+      "Stage A parsed a full prediction barrier containing forbidden Direct-K4, Zero and SARC metric metadata",
+      "Stage A parsed a full checksum roster containing a truth-payload name and digest",
+      "the formal execution binding omitted hashes for shared scientific source modules"
+    ],
+    "v44_1_numeric_result_is_not_evidence": true,
+    "v44_2_changes_only_input_firewall_and_execution_binding": true,
+    "v44_2_scientific_constants_changed_from_v44_1": false
+  },
+  "scientific_question": "Does one coarse-resolvable curved-adjoint direction, generated only from deployed observations, add mechanism headroom beyond a paired four-direction search?",
+  "scope": {
+    "dataset": "BLASTNet premixed H2-air DNS, phi=0.5",
+    "snapshot_ids": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "post_open": true,
+    "new_external_evidence": false,
+    "online_deployable_as_run": false,
+    "resource_gate_authorized": false
+  },
+  "prior_evidence_role": {
+    "v43_is_scientific_motivation_only": true,
+    "stage_a_must_not_read_v41_v42_or_v43_reports_or_selected_weights": true,
+    "v43_result_required_for_claim_context_but_not_candidate_generation": "validated bounded negative for the fixed four-direction truth-aware oracle"
+  },
+  "stage_a_release_contract": {
+    "schema_version": "oerf-blastnet-h2air-phi05-v44-stage-a-release-44.2",
+    "status": "PASS_PRIVATE_ALLOWED_INPUT_ONLY_STAGE_A_RELEASE_V44_2",
+    "release_must_be_created_after_protocol_freeze_and_before_v44_2_result": true,
+    "allowed_pair_payloads": [
+      "observations.npy",
+      "coordinate_x.npy",
+      "coordinate_y.npy",
+      "coordinate_z.npy",
+      "coarse_coordinate_x.npy",
+      "coarse_coordinate_y.npy",
+      "coarse_coordinate_z.npy"
+    ],
+    "allowed_v40_payload_template": "fields/snapshot_{1,2,3,4}_direct_k3.npy",
+    "release_must_bind_each_allowed_file_sha256_shape_and_dtype": true,
+    "release_must_bind_protocol_sha256": true,
+    "release_must_bind_generator_sha256": true,
+    "forbidden_preseal_containers": [
+      "READY.json",
+      "manifest.json",
+      "checksums.sha256",
+      "PREDICTION_BARRIER.json"
+    ],
+    "forbidden_preseal_payloads": [
+      "gauge_truth.npy",
+      "any Direct-K4 field",
+      "any Zero field",
+      "any SARC field",
+      "any field, gradient or observation metric other than the deployed observation vector itself"
+    ],
+    "runner_must_validate_only_release_and_listed_allowed_files_before_stage_a_seal": true,
+    "full_reference_containers_may_be_read_only_after_stage_a_seal": true
+  },
+  "stage_a_truth_free_candidate_generation": {
+    "allowed_inputs": [
+      "observations",
+      "frozen Direct-K3 fields",
+      "high and coarse coordinates",
+      "frozen straight inverse geometry",
+      "frozen curved forward and derivative operator"
+    ],
+    "forbidden_inputs": [
+      "density truth",
+      "field or gradient metrics",
+      "Direct-K4 metrics",
+      "Zero metrics",
+      "v41, v42 or v43 selected weights",
+      "v41, v42 or v43 reports"
+    ],
+    "start_for_both_arms": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "five_direction_start_appends_zero": true,
+    "observation_inner_product": "ordinary Euclidean inner product over the frozen 2072-vector without whitening or per-view reweighting",
+    "truth_constraints_in_search": false,
+    "arms": [
+      "paired four unchanged straight-CGLS directions",
+      "the same four directions plus one coarse-resolvable curved-adjoint enrichment"
+    ],
+    "candidate_selection": "the final accepted trust-region center, starting from zero and accepting only exact curved-objective decreases with the frozen ratio rule",
+    "preseal_metadata_firewall": "do not parse, hash or otherwise read full READY, manifest, checksum or prediction-barrier containers; validate only the frozen private allowed-input release and the files listed in that release",
+    "stage_a_outputs_must_be_atomically_sealed_before_truth_load": true,
+    "stage_a_seal_must_bind_candidate_fields_weights_traces_and_ledgers": true,
+    "stage_a_seal_must_bind_complete_formal_source_closure": true
+  },
+  "coarse_resolvable_curved_adjoint_enrichment": {
+    "linearization_field": "frozen Direct-K3 field",
+    "visible_residual": "y minus exact curved prediction at Direct-K3",
+    "raw_high_resolution_descent": "exact J_curved(Direct-K3)^T times visible_residual divided by max(||y||^2, 1e-30)",
+    "high_gauge": "subtract the unweighted fine-grid mean",
+    "prolongation": "the exact frozen trilinear map P from 16x16x32 coarse corrections to 32x32x64 high corrections",
+    "restriction": "the exact Euclidean adjoint P^T of that same prolongation, obtained by reverse-mode differentiation through the identical trilinear interpolation and linear-extrapolation program",
+    "prolongation_adjoint_identity": "for fixed deterministic probes require <P c, h> and <c, P^T h> to agree",
+    "physical_l2_adjoint_scale": "both grids are uniform and coarse cell volume is eight times high cell volume, so the physical-L2 adjoint is (1/8) P^T",
+    "physical_l2_scale_action": "the common 1/8 factor is omitted before fixed direction renormalization because it cannot change the normalized direction; no unnormalized physical-gradient magnitude claim is allowed",
+    "coarse_raw_direction": "subtract the unweighted coarse-grid mean from P^T times the gauged high-resolution adjoint",
+    "coarse_projection_inner_product": "ordinary Euclidean; the current coarse grid has constant cell volume so this equals physical-L2 up to one common positive factor",
+    "coarse_straight_span": "the four unchanged gauged 16x16x32 CGLS increments",
+    "projection_solver": "float64 thin singular-value decomposition",
+    "relative_singular_value_cutoff": 1e-12,
+    "retained_singular_value_rule": "retain sigma_i only when sigma_i > 1e-12 times sigma_max",
+    "required_straight_span_rank": 4,
+    "positive_increment_norm_rule": "each norm must exceed 1e-14 times the maximum of the four norms",
+    "all_four_increment_norms_must_be_positive": true,
+    "coarse_orthogonal_component": "(I minus the retained coarse-span projector) times the coarse raw direction, followed by coarse gauge",
+    "orthogonal_energy_fraction_definition": "squared coarse-L2 norm of the orthogonal component divided by squared coarse-L2 norm of the coarse raw direction",
+    "minimum_orthogonal_energy_fraction": 1e-06,
+    "maximum_absolute_coarse_span_cosine": 1e-10,
+    "high_direction": "prolong the coarse orthogonal component with P and subtract the fine-grid mean",
+    "normalization": "scale the high direction to the median positive high-resolution L2 norm of P applied to the four original coarse increments",
+    "sign": "positive coefficient must have positive inner product with the raw high adjoint and therefore be the local curved-observation descent sign",
+    "direction_is_generated_once_at_direct_k3": true,
+    "adaptive_regeneration_inside_trust_region": false,
+    "truth_used_in_direction_construction": false,
+    "degenerate_direction_rule": "orthogonal energy below 1e-6 is a valid bounded negative for this raw enrichment, not an implementation failure"
+  },
+  "representation": {
+    "base_field": "frozen Direct-K3 field",
+    "four_direction_control": "four unchanged prolonged straight-ray CGLS increments",
+    "five_direction_candidate": "the same four directions plus the normalized coarse-resolvable curved-adjoint direction",
+    "four_direction_dimension": 4,
+    "five_direction_dimension": 5,
+    "weight_box_for_every_dimension": [
+      -2.0,
+      3.0
+    ],
+    "original_four_directions_are_not_renormalized": true,
+    "straight_operator_ledger_per_snapshot": {
+      "A": 4,
+      "A_transpose": 4
+    }
+  },
+  "paired_observation_only_trust_region": {
+    "same_algorithm_for_both_arms": true,
+    "local_model": "exact curved center prediction plus one exact JVP per direction",
+    "inner_solver": "scipy.optimize.lsq_linear",
+    "inner_method": "bvls",
+    "inner_tolerance": 1e-12,
+    "inner_maximum_iterations": 500,
+    "inner_problem": "box-and-L-infinity-trust-region bounded affine observation least squares without truth constraints",
+    "norm": "L-infinity",
+    "initial_radius": 0.5,
+    "minimum_radius": 0.015625,
+    "maximum_radius": 1.0,
+    "maximum_outer_iterations": 8,
+    "acceptance_ratio": 0.1,
+    "expansion_ratio": 0.75,
+    "boundary_step_fraction_for_expansion": 0.8,
+    "shrink_factor": 0.5,
+    "expansion_factor": 2.0,
+    "minimum_predicted_decrease": 1e-12,
+    "minimum_actual_decrease": 0.0,
+    "candidate_is_exactly_rescored_with_the_curved_forward": true,
+    "extra_restarts_are_forbidden": true
+  },
+  "stage_b_post_seal_scoring": {
+    "truth_may_be_loaded_only_after_stage_a_seal": true,
+    "stage_a_seal_must_be_unchanged_after_scoring": true,
+    "per_snapshot_complete_gate": [
+      "field, gradient, and observation are each at most 1.01 times Direct-K4",
+      "field, gradient, and observation are each no worse than Zero",
+      "observation is no worse than Direct-K3 plus 1e-12",
+      "candidate is not Pareto dominated by Direct-K3"
+    ],
+    "aggregate_gate": "median field, gradient, and observation are each no worse than the corresponding Direct-K4 median",
+    "fragile_margin": "a witness with minimum margin below 1e-3 to any 1.01 Direct-K4 gate is fragile",
+    "paired_control_requirement": "the four-direction control must fail the complete gate under the same search algorithm, start, box and outer-iteration cap",
+    "fifth_direction_attribution_ablation": "set the selected five-direction candidate's fifth coefficient exactly to zero, rescore exactly, and require at least one previously passing key gate to fail",
+    "all_four_snapshots_required": true
+  },
+  "logical_ledgers_per_snapshot": {
+    "shared_straight_basis": {
+      "A": 4,
+      "A_transpose": 4
+    },
+    "five_direction_preparation": {
+      "F": 1,
+      "JVP": 0,
+      "VJP": 1
+    },
+    "four_direction_arm_maximum": {
+      "F": 9,
+      "JVP": 32,
+      "VJP": 0
+    },
+    "five_direction_arm_maximum_excluding_preparation": {
+      "F": 9,
+      "JVP": 40,
+      "VJP": 0
+    },
+    "five_direction_method_maximum_including_preparation": {
+      "F": 10,
+      "JVP": 40,
+      "VJP": 1
+    },
+    "audit_costs_must_be_reported_separately": true,
+    "vjp_internal_primal_work_is_not_free_for_future_wall_or_rss_claims": true
+  },
+  "formal_audits": {
+    "curved_adjoint_identity_probe": "unit-L2 deterministic standard-normal fine-grid probe with unweighted mean removed, NumPy seed 4401",
+    "curved_adjoint_identity_relative_error": "abs(<J probe, residual> - <probe, raw adjoint>)/max(abs(left), abs(right), 1e-30)",
+    "maximum_curved_adjoint_identity_relative_error": 1e-08,
+    "prolongation_adjoint_coarse_probe_seed": 4402,
+    "prolongation_adjoint_high_probe_seed": 4403,
+    "maximum_prolongation_adjoint_identity_relative_error": 1e-12,
+    "formal_audit_ledger_per_snapshot": {
+      "F": 0,
+      "JVP": 1,
+      "VJP": 0
+    }
+  },
+  "independent_validation": {
+    "must_not_import_any_v42_v43_or_v44_runner_or_validator": true,
+    "must_reconstruct_four_straight_increments_and_exact_prolongation_adjoint_direction": true,
+    "must_recompute_projection_rank_orthogonality_normalization_sign_and_both_adjoint_identities": true,
+    "must_replay_both_truth_free_trust_region_arms_and_stage_a_seal": true,
+    "must_load_truth_only_after_its_own_replayed_stage_a_candidates_are_fixed": true,
+    "must_recompute_complete_gate_paired_control_and_fifth_coefficient_ablation": true,
+    "must_compare_saved_fields_weights_traces_and_all_call_ledgers": true,
+    "finite_difference_direction": "the normalized fifth direction at Direct-K3",
+    "finite_difference_coefficient_steps": [
+      0.0001,
+      3e-05,
+      1e-05
+    ],
+    "finite_difference_maximum_relative_jvp_error": 0.0001,
+    "finite_difference_audit_ledger_per_snapshot": {
+      "F": 6,
+      "JVP": 1,
+      "VJP": 0
+    },
+    "validator_must_maintain_an_event_trace_independent_of_operator_snapshot": true,
+    "shared_frozen_physics_kernels_must_be_disclosed": true,
+    "validator_must_validate_private_stage_a_release_without_reading_forbidden_containers": true,
+    "validator_must_bind_its_complete_source_closure": true
+  },
+  "decision_rule": {
+    "robust_mechanism_headroom": "all four five-direction candidates and the aggregate gate pass with minimum 1.01 margin at least 1e-3, the paired four-direction control fails, the fifth-coefficient-zero ablation loses at least one key gate, and independent replay agrees",
+    "fragile_headroom": "the attribution conditions hold and the complete gate passes, but the minimum 1.01 margin is below 1e-3",
+    "bounded_negative": "the valid paired execution finds no attributable complete-gate advantage for the single coarse-resolvable raw curved-adjoint direction",
+    "degenerate_new_direction": "orthogonal energy below 1e-6 is a valid bounded negative",
+    "inconclusive": "stage ordering, seal, basis, prolongation adjoint, VJP, projection, identities, JVP, inner solve, finite checks, exact rescoring, budget, field replay or independent agreement fails"
+  },
+  "scientific_action": {
+    "robust_mechanism_headroom": "authorize only a separately preregistered observation-visible approximation study for the fifth direction; do not claim deployment, speed or generalization",
+    "fragile_headroom": "diagnose margins before any learning",
+    "bounded_negative": "stop the single raw coarse-resolvable adjoint direction and test a preregistered preconditioned or multi-direction curved Krylov enrichment",
+    "inconclusive": "repair only the identified numerical or validation failure"
+  },
+  "claim_boundaries": {
+    "candidate_generation_truth_noninterference_proven": false,
+    "mathematical_nonexistence_proven": false,
+    "online_learned_direction_success": false,
+    "same_cost_or_speed_claim_authorized": false,
+    "external_generalization_proven": false,
+    "real_bost_proven": false,
+    "paper_success": false,
+    "algorithm_breakthrough": false
+  }
+}
