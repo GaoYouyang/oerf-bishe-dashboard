@@ -9412,7 +9412,7 @@ paper_success=false
 完整结果见
 `docs/blastnet_h2air_phi05_second_residual_adjoint_v51_result_2026-07-29.md`。
 
-## 281. v52：六个方向不是“再搜密一点就行”，冻结表 0 / 2,312
+## 281. v52：冻结六维有限候选表 0 / 2,312
 
 v51 留下了一个必须回答的问题：第六方向已经新增了秩，为什么完整门还失败？可能是
 observation-only selector 选错了系数，也可能是固定六方向空间本身没有合格点。
@@ -9453,8 +9453,9 @@ best minimum gate margin          -0.028412
 observation 仍差 2.84 个百分点。v51 原始 S6 能把 observation 压进门内，是因为
 gradient 退到了 1.030041；一旦要求 field/gradient 安全，observation 又回到门外。
 
-这不是“连续六维无解”的证明，但已经足以停止训练六系数 selector：我们没有一批
-合格标签，继续堆 FNO/DeepONet/MLP 只会学习一个未证实可达的目标。
+这不是“连续六维无解”的证明。在连续约束 oracle 完成前，先暂停训练六系数
+selector：目前没有一批合格标签，继续堆 FNO/DeepONet/MLP 只会学习一个尚未
+证实可达的目标。
 
 下一项只保留一次六维连续约束 oracle，用精确 curved VJP、固定多起点和独立请求
 轨迹重放检查是否存在很窄的可行口袋。若仍失败，正式停止 residual-only 六方向，
