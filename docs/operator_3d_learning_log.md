@@ -9196,3 +9196,108 @@ paper_success=false
 
 完整结果见
 `docs/blastnet_h2air_phi05_curved_adjoint_v44_result_2026-07-29.md`。
+
+## 276. v45：把新方向磨平，还是没有得到可学目标
+
+v44 最明显的问题是 gradient 变差，所以先试最便宜的解释：也许 curved-adjoint
+方向高频太强，只要做固定 Sobolev 平滑就能保住细节。
+
+这一轮没有训练网络，只比较 `lambda=0.25/1/4/16`、raw、四方向和
+straight-continuation controls。结果不论用固定 lambda、只看 observation 选 lambda，
+还是事后让 truth-oracle 在整个 family 中挑答案，四个快照都没有完整通过点。
+
+逐帧最佳 fixed-Sobolev 的最差指标比为：
+
+```text
+S1  1.0155
+S2  1.0302
+S3  1.0252
+S4  1.0427
+```
+
+**讲人话：**把同一条路磨得更平滑，并没有把它变成安全路线。v45 是 scratch
+diagnostic，没有独立重放，所以它只负责关闭“立刻正式化 Sobolev family”这一步，
+不能写成普遍的平滑方法无效。
+
+```text
+formal_v45_authorized=false
+algorithm_breakthrough=false
+```
+
+## 277. v46：整体调幅也没有网格见证
+
+接着检验第二个便宜解释：方向本身也许没错，只是整条 correction 走多或走少了。
+冻结 v44 场后扫描
+
+```text
+x(alpha) = Direct-K3 + alpha * (x_v44 - Direct-K3)
+alpha = 0, 0.025, ..., 2
+```
+
+四帧各 81 点，总账 `332 F + 0 JVP + 0 VJP`。逐帧最小 minimax ratio 与 alpha 为：
+
+```text
+S1  1.014653  alpha=0.975
+S2  1.020830  alpha=0.825
+S3  1.011276  alpha=0.725
+S4  1.042263  alpha=0.975
+```
+
+四帧都没有 passing grid point，也没有固定 alpha 同时过四帧。独立程序重新构场和
+重跑 curved forward，最大 metric / ratio 差为 `3.33e-15 / 2.33e-15`。
+
+这里必须守住一句边界：81 点网格没有 witness，不等于连续 alpha 域无解。v46 只关闭
+“用这个冻结网格设计幅度 selector”，不能写成数学不可能。
+
+```text
+amplitude_only_selector_authorized=false
+continuous_path_impossibility_proven=false
+algorithm_breakthrough=false
+```
+
+## 278. v47：五个旋钮分别调，gradient 与 observation 仍在打架
+
+v46 失败后，不再把五个分量绑成同一个 alpha。v47 保留四个 straight-CGLS 增量和
+一个 curved-adjoint 方向，让五个权重独立变化；field 和 gradient 必须满足冻结真值
+约束，objective 只减精确 curved observation residual。
+
+两个起点分别是 v43 可行四维点加 `w5=0`，以及从零点径向收缩到可行域的 v44 权重。
+每起点最多 8 次 JVP trust-region 外循环。实际精确评分 48 个候选：
+
+```text
+snapshot  candidates  passes  field/K4  gradient/K4  observation/K4
+S1        12          0       0.978542  1.010000     1.016493
+S2         7          0       0.983386  1.010000     1.045775
+S3        17          0       0.979858  1.010000     1.011126
+S4        12          0       0.978027  1.010000     1.043375
+```
+
+账本是 `16 A + 16 A^T + 52 F + 310 JVP + 0 VJP`。独立重算器不导入 v47 runner，
+重新构五个方向、全部候选场、curved prediction、三指标与调用账：
+
+```text
+PASS_INDEPENDENT_RECOMPUTATION_POST_OPEN_FIVE_DIRECTION_CONSTRAINED_V47
+metric 最大差       3.33e-15
+ratio 最大差        2.33e-15
+joint metric 最大差 1.11e-15
+```
+
+最有价值的现象不是“又 0/4”，而是四个最优点都把 gradient 推到允许的 `1.01`
+边界，observation 仍超标。field 已有余量，所以当前局部冲突明确落在 gradient 与
+curved-observation 之间。
+
+**讲人话：**现在没有理由训练五系数网络，因为我们还没有证明这五个旋钮能调出合格
+答案。但两个相关起点和 7-17 个候选也不足以宣布整个五维空间无解。下一步只花一笔
+封顶预算做确定性五维全局反例搜索；若任一快照仍失败，工程上关闭五系数路线，再新增
+一个真正改变 span 的二阶 curved Krylov 方向。
+
+```text
+five_coefficient_learning_target_authorized=false
+global_five_space_impossibility_proven=false
+formal_algorithm_authorized=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整结果见
+`docs/blastnet_h2air_phi05_curved_followups_v47_result_2026-07-29.md`。
