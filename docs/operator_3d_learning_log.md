@@ -9534,3 +9534,157 @@ algorithm_breakthrough=false
 
 完整结果见
 `docs/blastnet_h2air_phi05_six_space_continuous_oracle_v53_result_2026-07-30.md`。
+
+## 283. v54-v55：旧 dual CNN 有一点跨数据族信号，但还达不到同精度少调用
+
+v53 决定停止旧六方向后，我没有立刻训练一个更大的网络。先补了一个更便宜、也更
+能改变路线判断的控制：把 PoolFire 五条 fit 轨迹上已经训练完成的 `w16d2`
+detector CNN 原封不动放到 BLASTNet H2-air 上，权重、输入排布、`A^T` lift 和
+observable alpha 全部不改。
+
+v54 每帧只用 `2A+2A^T`，与 Zero-K2 同成本。四个时刻的中位数是：
+
+```text
+                    field      gradient    observation
+w16d2 Dual-K1      0.963449    0.976921    0.800665
+Zero-K2            0.948967    1.020615    0.754943
+Zero-K4            0.887832    1.128520    0.554804
+```
+
+它比 Zero-K2 的 gradient 好 4.28%，但 field 差 1.53%、observation 差 6.06%。
+所以模型不是完全没有迁移，它更像带来了一点高频正则化，却没有给出更好的完整解。
+
+根据这个 trade-off，v55 只允许增加一件事：把同一 CGLS recurrence 再走一步，
+总成本变为 `3A+3A^T`，与 Zero-K3 同成本。结果：
+
+```text
+                    field      gradient    observation
+w16d2 Dual-K2      0.908949    1.111039    0.645687
+Zero-K3            0.912750    1.093312    0.653189
+Zero-K4            0.887832    1.128520    0.554804
+```
+
+相对同成本 Zero-K3，field 和 observation 分别改善约 0.42% 与 1.15%，但
+gradient 恶化约 1.62%。相对 Zero-K4，field 仍差约 2.38%，observation 仍差约
+16.38%。四个目标时刻都没有同时进入 Zero-K4 的 1.01 三指标 envelope。
+
+runner 之外的另一套实现重新装载 checkpoint、重算网络、CGLS、三指标和全部调用账；
+v54 与 v55 的最大指标差都为 0。因此当前可信判决是：
+
+```text
+measurable_cross_domain_signal=true
+matched_accuracy_call_reduction=false
+larger_same_family_cnn_authorized=false
+fresh_external_generalization=false
+algorithm_breakthrough=false
+```
+
+**讲人话：**这次不是“一无所获”。旧模型确实比同成本迭代在两项上略好，说明
+warm-start 思路没有完全断；但它在第三项上还债，而且追不上多一步 CGLS。现在最
+合理的动作不是把 CNN 做大，而是换坐标：先让冻结几何 `A` 产生 measurement-range
+basis，再训练一个只有数百参数的小 dual gate。这个实验若失败，就能把问题明确
+归因到低秩 measurement-range 表示，而不是继续猜网络容量。
+
+完整结果见
+`docs/blastnet_h2air_phi05_w16d2_transfer_controls_v55_result_2026-07-30.md`。
+
+## 2026-07-30：v56-v58 找到第一条“精确 + 少调用 + fresh 加速 + 内存不伤”的路线
+
+这次先没有继续堆网络。v56 问了一个更基础的问题：能不能把测量空间压成一个小的
+全局 basis，再在那个 basis 里跑？答案是否定的。rank 64 只覆盖约 `15.29%` 的
+几何能量，随机可实现观测投影回去的残差中位数高达 `0.920678`。这条低秩路线当场
+停止，没有拿它继续训练。
+
+随后换了一个不丢信息的表示。固定线性几何下令 `B=A A^T`，把 zero-start CGLS
+K4 改写成 detector-space conjugate-residual 递推，四步后只做一次 `A^T`。它不是
+近似：另一套独立程序重新构造几何和 CSR、重新跑五条轨迹全部 `505` 帧，最大 field
+差 `4.34e-16`、最大 residual 差 `1.44e-15`。
+
+真正意外的是当前几何的 `B` 只有 `2.58%` 非零。CSR 内存从 `32.75 MiB` 降到
+`1.27 MiB`，少 `96.11%`。于是每帧的昂贵调用可以从
+
+```text
+4 A + 4 A^T
+```
+
+改成
+
+```text
+4 sparse B + 1 A^T
+```
+
+为了确认这不是 Python 同进程计时幻觉，又完整运行了
+`5 trajectories × 2 arms × 17 repeats = 170` 个新进程。最终轨迹等权端到端
+wall ratio 为 `0.824652`，即典型快约 `17.5%`；RSS p90 ratio 为 `1.000865`，
+基本不变。五条轨迹各自的 wall 中位数都改善。
+
+**讲人话：**今天确实有可喜可贺的进展。这是目前少数把“结果相同、物理调用更少、
+程序真的更快、内存没明显变坏”同时做实的一条路线。但它现在仍是固定几何 classical
+control，不是神经网络创新；离线黑盒构造 `B` 的完整调用 break-even 约 592 帧，
+本次 505 帧还没越过；也没有换相机几何、真实 BOST 或曲折光线。因此我把它标成
+“重大代理机理正结果”，不写顶刊突破：
+
+```text
+major_proxy_mechanism_result=true
+external_geometry_replay=false
+real_BOST=false
+operator_learning_result=false
+global_novelty_proven=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+下一步不再回到无边界 CNN 海选。先用 BLASTNet 的不同几何从头构造新的 `B`，检查
+稀疏性、机器精度等价和 fresh 加速是否一起保住。若它成立，再把 exact sparse B
+作为物理核心，只学习几何变化、曲折光线或模型失配引起的小修正。
+
+完整结果见
+`docs/poolfire_c_sparse_detector_replay_v58_result_2026-07-30.md`。
+
+## 2026-07-30：v59 外部坐标代数保住了，五帧部署资源没有保住
+
+这次没有复用 PoolFire 的 `B` 或稀疏位置，而是从 BLASTNet H2-air 外部坐标重新
+构造 `A`、`B=A A^T` 和 CSR。外部坐标的尺度和长宽比明显不同，但仍是同样的三轴
+投影拓扑。
+
+独立程序没有导入正式 replay core，重新构造全部矩阵并重算 5 个 observation。最大
+field / residual 相对差为 `4.30e-15 / 6.03e-15`，CSR indices 与 indptr 完全
+一致，非零比例仍为 `2.5782%`。这说明坐标尺度和长宽比变化没有破坏代数重放。
+
+但正式资源门严格失败：
+
+```text
+17 repeats × 2 arms = 34 fresh processes
+core compute ratio       0.809684
+outer wall ratio         1.023894
+peak RSS p90 ratio       1.153122
+```
+
+**讲人话：**真正算那五帧时，稀疏重放快约 19%；可是加载稀疏 `B` 的固定成本比
+五帧节省的计算还多，内存也多用了约 15%。所以程序从启动到结束反而慢约 2.4%。
+这不是“差一点通过”，而是 wall 和 RSS 两道冻结门都失败。
+
+中间还抓到一个很重要的数学命名问题。子代理建议把 detector-space 递推改叫
+CGNE，但重新手推并用随机矩阵逐步对照后发现，原来的 CR 才是对的：CR lift 与
+CGLS 最大差 `3.0e-16`，标准 CGNE 与同一 CGLS 迭代差 `0.379`。因此撤回了错误
+改名，并在文档中明确两套系数不同。
+
+当前真实边界是：
+
+```text
+external_coordinate_algebra_transfer=true
+fresh_resource_transfer=false
+arbitrary_camera_geometry_transfer=false
+operator_learning_result=false
+real_BOST=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+下一步只做两件直接改变论文判断的事：先冻结 batch-length 摊销曲线，确定短序列
+到长序列的真实资源转折；再换真正不同的视角拓扑，检查稀疏结构是不是三轴代理的
+特例。exact sparse `B` 若继续成立，才把它作为固定物理核心，只学习几何变化或
+曲折光线的小修正。
+
+完整结果见
+`docs/blastnet_sparse_detector_replay_v59_result_2026-07-30.md`。

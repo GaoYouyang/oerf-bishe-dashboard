@@ -1,0 +1,69 @@
+{
+  "schema_version": "oerf-blastnet-h2air-phi05-w16d2-dual-k2-protocol-55.0",
+  "status": "FROZEN_AFTER_V54_FAILURE_BEFORE_DUAL_K2_INFERENCE_V55",
+  "scientific_question": "Does one additional unchanged CGLS step convert the frozen w16d2 gradient-preserving signal into a field/observation-compatible warm start at 3A+3A-transpose, versus Zero-K3 at equal cost and Zero-K4 at matched accuracy?",
+  "evidence_role": "post-open adaptive mechanism follow-up",
+  "adaptation_rationale": {
+    "v54_status": "FAIL_POSTOPEN_W16D2_TRANSFER_HEADROOM_V54",
+    "v54_observed_tradeoff": "candidate gradient median improved over Zero-K2 while field and observation medians worsened",
+    "only_new_degree_of_freedom": "continue the existing CGLS recurrence for exactly one additional step",
+    "model_weights_or_inputs_changed": false
+  },
+  "inputs": {
+    "proxy_bundle_schema": "oerf-blastnet-h2air-phi05-proxy-bundle-40.2",
+    "target_snapshot_ids": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "truth_already_opened_before_protocol": true
+  },
+  "arms": {
+    "w16d2_dual_k2": {
+      "model_id": "compact_odd_multiview_detector_w16d2",
+      "parameter_count": 10548,
+      "blastnet_adaptation": "none",
+      "complete_operator_calls_per_snapshot": {
+        "A": 3,
+        "A_transpose": 3
+      }
+    },
+    "zero_cgls_k3": {
+      "role": "same-cost classical control",
+      "complete_operator_calls_per_snapshot": {
+        "A": 3,
+        "A_transpose": 3
+      }
+    },
+    "zero_cgls_k4": {
+      "role": "matched-accuracy reference",
+      "complete_operator_calls_per_snapshot": {
+        "A": 4,
+        "A_transpose": 4
+      }
+    }
+  },
+  "metrics": [
+    "field_relative_l2",
+    "gradient_relative_l2",
+    "straight_observation_relative_l2"
+  ],
+  "decision_rule": {
+    "relative_noninferiority_factor": 1.01,
+    "candidate_must_be_within_factor_of_zero_k4_on_every_metric_and_target_snapshot": true,
+    "candidate_must_not_be_worse_than_zero_k3_median_on_any_metric": true,
+    "candidate_must_strictly_improve_zero_k3_median_on_at_least_two_metrics": true,
+    "pass_status": "PASS_POSTOPEN_W16D2_DUAL_K2_TRANSFER_HEADROOM_V55",
+    "fail_status": "FAIL_POSTOPEN_W16D2_DUAL_K2_TRANSFER_HEADROOM_V55"
+  },
+  "failure_action": "Stop increasing refinement depth for this frozen detector family and move to a geometry-range representation.",
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "fresh_external_generalization": false,
+    "real_BOST": false,
+    "paper_success": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_benefit": false
+  }
+}

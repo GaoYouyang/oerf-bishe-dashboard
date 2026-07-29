@@ -1,0 +1,86 @@
+{
+  "schema_version": "oerf-poolfire-c-geometry-range-linear-screen-protocol-56.0",
+  "status": "FROZEN_AFTER_V55_BEFORE_GEOMETRY_BASIS_OR_TRUTH_SCORING_V56",
+  "scientific_question": "Can a basis generated only from the frozen straight-ray geometry provide a lower-dimensional dual proposal that matches Zero-K4 after one CGLS refinement, without using trajectory data to construct the basis?",
+  "evidence_role": "fit-only representation screen",
+  "fit_trajectory_ids": [
+    "p=14kw_size=05",
+    "p=22kw_size=03",
+    "p=33kw_size=01",
+    "p=45kw_size=05",
+    "p=58kw_size=03"
+  ],
+  "validation_trajectories_opened_by_this_screen": [],
+  "geometry_basis": {
+    "source": "frozen three-view straight-ray A only",
+    "truth_or_observation_used_to_generate_basis": false,
+    "algorithm": "deterministic randomized SVD of A",
+    "seed": 2026073056,
+    "maximum_rank": 64,
+    "oversampling": 32,
+    "power_iterations": 4,
+    "candidate_ranks": [
+      8,
+      16,
+      32,
+      64
+    ],
+    "orthogonality_tolerance": 1e-10,
+    "relative_forward_residual_tolerance": 0.001
+  },
+  "linear_dual_filters": {
+    "projection": {
+      "gain": "one on every retained left singular vector"
+    },
+    "tikhonov_relative_lambdas": [
+      0.0001,
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ],
+    "tikhonov_gain": "(sigma_0_squared + lambda_sigma_0_squared) / (sigma_i_squared + lambda_sigma_0_squared)"
+  },
+  "candidate_chain": [
+    "z = U_r diag(g) U_r_transpose y",
+    "h = A_transpose z",
+    "alpha = clip(dot(y, A h) / dot(A h, A h), 0, 2)",
+    "one unchanged CGLS step from alpha h"
+  ],
+  "controls": {
+    "zero_cgls_k2": "same 2A+2A-transpose cost",
+    "zero_cgls_k4": "matched-accuracy reference"
+  },
+  "metrics": [
+    "field_relative_l2",
+    "gradient_relative_l2",
+    "observation_relative_l2"
+  ],
+  "selection_rule": {
+    "trajectory_weighting": "equal",
+    "primary": "maximum number of fit trajectories with at least 90 percent joint frame pass versus the 1.01 Zero-K4 envelope",
+    "tie_breakers": [
+      "lower worst trajectory harm",
+      "lower trajectory-equal median observation ratio",
+      "lower rank",
+      "larger lambda"
+    ],
+    "minimum_candidate_joint_pass_fraction_per_trajectory": 0.9,
+    "maximum_candidate_harm_fraction_per_trajectory": 0.05
+  },
+  "decision_rule": {
+    "pass_status": "PASS_FIT_ONLY_GEOMETRY_RANGE_LINEAR_HEADROOM_V56",
+    "fail_status": "FAIL_FIT_ONLY_GEOMETRY_RANGE_LINEAR_HEADROOM_V56",
+    "pass_requires_all_five_fit_trajectories_to_meet_selection_thresholds": true
+  },
+  "next_step_if_pass": "Freeze the selected geometry basis and test it once on p=14kw_size=01 model-selection validation before training any gate.",
+  "next_step_if_fail": "Run a truth-aware coefficient oracle inside the same frozen basis to distinguish linear-filter failure from basis failure; do not enlarge CNN or train FNO.",
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "external_generalization": false,
+    "real_BOST": false,
+    "paper_success": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_benefit": false
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "schema_version": "oerf-blastnet-h2air-phi05-w16d2-dual-control-protocol-54.0",
+  "status": "FROZEN_POSTOPEN_BEFORE_W16D2_INFERENCE_V54",
+  "scientific_question": "Does the frozen PoolFire w16d2 observation-space dual proposal retain enough zero-adaptation signal on the opened BLASTNet H2-air proxy to match zero-start CGLS K4 with the cost of two complete A/A-transpose pairs?",
+  "evidence_role": "post-open cross-domain mechanism control",
+  "inputs": {
+    "proxy_bundle_schema": "oerf-blastnet-h2air-phi05-proxy-bundle-40.2",
+    "observation_shape": [
+      5,
+      2072
+    ],
+    "truth_shape": [
+      5,
+      16,
+      16,
+      32
+    ],
+    "target_snapshot_ids": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "inverse_geometry_audit_seed": 380729,
+    "truth_already_opened_before_protocol": true
+  },
+  "frozen_candidate": {
+    "model_id": "compact_odd_multiview_detector_w16d2",
+    "parameter_count": 10548,
+    "training_domain": "five opened PoolFire fit trajectories",
+    "adaptation_on_blastnet": "none",
+    "inference_chain": [
+      "z = G_theta(y)",
+      "h = A_transpose z",
+      "alpha = clip(dot(y, A h) / dot(A h, A h), 0, 2)",
+      "r = y - alpha A h",
+      "n = A_transpose r",
+      "beta = dot(n, n) / dot(A n, A n)",
+      "x = alpha h + beta n"
+    ],
+    "per_snapshot_complete_operator_calls": {
+      "A": 2,
+      "A_transpose": 2
+    }
+  },
+  "controls": {
+    "zero_cgls_k2": {
+      "per_snapshot_complete_operator_calls": {
+        "A": 2,
+        "A_transpose": 2
+      },
+      "role": "same-cost classical control"
+    },
+    "zero_cgls_k4": {
+      "per_snapshot_complete_operator_calls": {
+        "A": 4,
+        "A_transpose": 4
+      },
+      "role": "matched-accuracy reference"
+    }
+  },
+  "metrics": [
+    "field_relative_l2",
+    "gradient_relative_l2",
+    "straight_observation_relative_l2"
+  ],
+  "decision_rule": {
+    "relative_noninferiority_factor": 1.01,
+    "candidate_must_be_within_factor_of_zero_k4_on_every_metric_and_target_snapshot": true,
+    "candidate_must_not_be_worse_than_zero_k2_median_on_any_metric": true,
+    "candidate_must_strictly_improve_zero_k2_median_on_at_least_two_metrics": true,
+    "pass_status": "PASS_POSTOPEN_W16D2_TRANSFER_HEADROOM_V54",
+    "fail_status": "FAIL_POSTOPEN_W16D2_TRANSFER_HEADROOM_V54"
+  },
+  "failure_action": "Do not scale the same detector-CNN family. Test a geometry-range representation or change the physical residual target before training a larger neural operator.",
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "fresh_external_generalization": false,
+    "real_BOST": false,
+    "paper_success": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_benefit": false,
+    "global_uniqueness": false
+  }
+}
