@@ -415,9 +415,9 @@
       <div class="section-head">
         <div>
           <div class="eyebrow">Post-open diagnosis</div>
-          <h2>乘大 correction 也修不好</h2>
+          <h2>单 curved-adjoint 的三种便宜修复都没过门</h2>
         </div>
-        <p>外部门判完之后，BLASTNet phi=0.5 已经是开发数据。后验扫描只用于找失败原因，不能回写正式分数，也不能再称外部泛化。</p>
+        <p>外部门判完之后，BLASTNet phi=0.5 已经是开发数据。后验机理实验只用于定位失败：固定平滑、整体调幅和五系数局部调权都不能回写正式分数，也不能再称外部泛化。</p>
       </div>
       <div class="grid-2">
         <div class="panel">
@@ -432,6 +432,63 @@
       <div class="alert warn" style="margin-top:15px;">
         <strong>机理判决：</strong>
         <code>POST_OPEN_CORRECTION_SPAN_INSUFFICIENT_FOR_OBSERVATION_GATE</code>。下一版不能只学习一个增益，而要改变可用修正方向，并让方向感知物理尺度、密度梯度频谱和部署可见残差。
+      </div>
+
+      <div id="curved-followups-v47" style="scroll-margin-top:70px; padding-top:30px;">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">v45-v47 · bounded mechanism chain</div>
+            <h2>平滑、整体调幅、五系数独立调权：完整门仍是 0 / 4</h2>
+          </div>
+          <p>三次实验依次排查频谱、整体步长和分量比例。门槛、四个已开封快照与 Direct-K4 对照保持不变，没有用放松阈值挽救结果。</p>
+        </div>
+        <div class="grid-3">
+          <div class="panel">
+            <h3 class="fail-text">v45 · fixed Sobolev</h3>
+            <p><code>lambda=0.25/1/4/16</code>、observation 选择和 truth-oracle family member 都是 0 / 4。该轮是 scratch 诊断，没有独立重放。</p>
+          </div>
+          <div class="panel">
+            <h3 class="fail-text">v46 · amplitude grid</h3>
+            <p><code>alpha=0..2</code> 共 81 点；四帧最佳最差指标比为 <code>1.0147/1.0208/1.0113/1.0423</code>。独立重算最大指标差 <code>3.33e-15</code>。</p>
+          </div>
+          <div class="panel">
+            <h3 class="fail-text">v47 · constrained five-space</h3>
+            <p>两个可行起点、48 个 exact candidates；四帧全部 0 个通过点。独立重算最大指标差 <code>3.33e-15</code>，但这仍不是五维全局无解证明。</p>
+          </div>
+        </div>
+        <div class="alert fail" style="margin-top:15px;">
+          <strong>当前科学判决：</strong>
+          不训练五系数预测器。v47 的最优点把 gradient 全部推到 <code>1.01</code> 边界，observation 仍为 <code>1.0165 / 1.0458 / 1.0111 / 1.0434</code>，说明局部矛盾是 gradient 与 curved-observation 的权衡。
+        </div>
+        <figure class="figure" style="margin-top:18px;">
+          <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_curved_followups_v47.png">
+            <img src="../assets/blastnet_h2air_phi05_curved_followups_v47.png" alt="BLASTNet 开封数据上 v45 固定 Sobolev、v46 幅度路径和 v47 五维受约束搜索的三指标门诊断" />
+          </a>
+          <figcaption>虚线为 1.01 兼容门。左上：固定 Sobolev 没有救活 raw v44；右上：幅度网格最佳点；左下：v47 最佳候选的 field、gradient、observation；右下：三种机制的逐帧最差指标比。</figcaption>
+        </figure>
+        <div class="table-wrap" style="margin-top:15px;">
+          <table>
+            <thead><tr><th>机制</th><th class="num">S1</th><th class="num">S2</th><th class="num">S3</th><th class="num">S4</th><th>证据边界</th></tr></thead>
+            <tbody>
+              <tr><td>v45 最佳固定 Sobolev</td><td class="num fail-text">1.0155</td><td class="num fail-text">1.0302</td><td class="num fail-text">1.0252</td><td class="num fail-text">1.0427</td><td>scratch family screen</td></tr>
+              <tr><td>v46 最佳幅度网格点</td><td class="num fail-text">1.0147</td><td class="num fail-text">1.0208</td><td class="num fail-text">1.0113</td><td class="num fail-text">1.0423</td><td>独立复算；仅网格有界</td></tr>
+              <tr><td>v47 五维受约束搜索</td><td class="num fail-text">1.0165</td><td class="num fail-text">1.0458</td><td class="num fail-text">1.0111</td><td class="num fail-text">1.0434</td><td>独立复算；两起点局部搜索</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert info" style="margin-top:15px;">
+          <strong>v47 机制账：</strong>
+          <code>16 A + 16 A^T + 52 F + 310 JVP + 0 VJP</code>。这是 truth-constrained post-open oracle 成本，不能写成部署加速。48 个候选的独立重算最大 ratio 差为 <code>2.33e-15</code>。
+        </div>
+        <div class="alert warn" style="margin-top:15px;">
+          <strong>下一道唯一有效门：</strong>
+          在增加第六方向前，只再做一次固定预算、确定性的五维全局反例搜索。若任一快照仍找不到 witness，工程上关闭五系数路线，再检验一个真正改变 span 的二阶 curved Gauss-Newton/Krylov 方向；仍不能写数学无解。
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_curved_followups_v47_result_2026-07-29.md">读 v45-v47 完整判决</a>
+          <a class="button" href="../docs/blastnet_h2air_phi05_curved_followups_v47_public_summary.json">打开 v45-v47 脱敏摘要</a>
+          <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_curved_followups_v47.png">查看总图</a>
+        </div>
       </div>
 
       <div id="curved-v44" style="scroll-margin-top:70px; padding-top:30px;">
@@ -484,8 +541,8 @@
           <code>96 F + 292 JVP + 4 VJP</code>。这是一项昂贵的开封后机理诊断，不是部署调用、wall 或 RSS 优势。
         </div>
         <div class="alert warn" style="margin-top:15px;">
-          <strong>由结果直接推出的决策：</strong>
-          不训练 raw 单 curved-adjoint 的近似器。下一项只比较固定的 gradient-aware / Sobolev 预条件方向与匹配 continuation controls；预条件方向先有 complete-gate headroom，才允许训练模型。
+          <strong>后续已执行：</strong>
+          v45 固定 Sobolev、v46 整体调幅和 v47 五系数受约束搜索都没有找到完整门候选；当前有效结论与下一门以上方 v45-v47 专区为准。
         </div>
         <div class="actions">
           <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_curved_adjoint_v44_result_2026-07-29.md">读 v44 完整诊断</a>
@@ -616,20 +673,20 @@
       </div>
       <div class="grid-3">
         <div class="panel">
-          <h3>已淘汰：零适配平移</h3>
-          <p>PoolFire 上的 SARC 不能原封不动迁到这个 H2-air DNS，并继续满足同精度门。</p>
+          <h3>已淘汰：固定平滑</h3>
+          <p>四个 Sobolev 强度和 observation-selected family member 都没有让任一快照过完整门。</p>
         </div>
         <div class="panel">
-          <h3>已淘汰：单标量修复</h3>
-          <p>沿同一个 correction 方向做最优调幅，仍无法消除 gradient/observation 冲突。</p>
+          <h3>已淘汰：幅度网格修复</h3>
+          <p>沿同一个 correction 方向扫描 81 个 alpha，四帧都没有 passing grid witness。</p>
         </div>
         <div class="panel">
-          <h3>已停止：raw 单方向学习</h3>
-          <p>v44 的 curved-adjoint 确实扩展旧 span，但四帧 gradient 全部失败。直接训练它的近似器没有目标可行性依据。</p>
+          <h3>当前不授权：五系数学习</h3>
+          <p>v47 两起点局部搜索共精确评分 48 个候选，四帧通过数仍全为 0。</p>
         </div>
       </div>
       <div class="alert" style="margin-top:15px;">
-        当前最窄、最有信息量的结论是：新方向必须同时携带 curved-observation 信息和 gradient 安全结构。v44 已证明“离开旧 span”本身不够；下一项只研究固定的 gradient-aware / Sobolev 预条件方向。
+        当前最窄、最有信息量的结论是：新方向必须打破 gradient 与 curved-observation 的局部冲突。先用一次固定预算全局反例搜索排除 v47 漏掉远处 witness；若仍失败，再增加一个真正独立的二阶 curved Krylov 方向。
       </div>
     </section>
 
@@ -650,8 +707,11 @@
             <tr><td>v41 四方向调权</td><td class="fail-text">未找到通过点</td><td>0 / 4；仅为开封后机制诊断</td></tr>
             <tr><td>v43 truth-aware oracle</td><td class="fail-text">有界负结果</td><td>0 / 4；独立重放最大差为 0，不是数学不可行性证明</td></tr>
             <tr><td>v44 单 curved-adjoint 富集</td><td class="fail-text">有界负结果</td><td>方向真实且有贡献，但 gradient 四帧全失守；完整门 0 / 4</td></tr>
+            <tr><td>v45 固定 Sobolev family</td><td class="fail-text">scratch 负结果</td><td>固定、observation-selected 与 truth-oracle family member 均 0 / 4</td></tr>
+            <tr><td>v46 幅度路径</td><td class="fail-text">网格有界负结果</td><td>81 点扫描 0 / 4；独立复算通过，不宣称连续域无解</td></tr>
+            <tr><td>v47 五维受约束搜索</td><td class="fail-text">局部有界负结果</td><td>48 个 exact candidates 全部失败；独立复算通过，不宣称五维全局无解</td></tr>
             <tr><td>固定四方向 selector</td><td class="fail-text">不授权训练</td><td>oracle 仍未找到完整门候选</td></tr>
-            <tr><td>raw curved-adjoint 近似器</td><td class="fail-text">不授权训练</td><td>先验目标本身没有完整门 headroom</td></tr>
+            <tr><td>五系数预测器</td><td class="fail-text">不授权训练</td><td>当前局部 oracle 没有完整门 headroom；先做一次封顶全局反例搜索</td></tr>
             <tr><td>资源加速</td><td>未运行</td><td>精度失败后按协议无资格测速</td></tr>
             <tr><td>真实 BOST</td><td>未证明</td><td>当前仍是由 DNS 密度构造的代理 forward</td></tr>
             <tr><td>广泛燃烧场泛化</td><td>未证明</td><td>只有一个外部数据集且结果为负</td></tr>
@@ -667,7 +727,7 @@
     </section>
 
     <footer>
-      脱敏公开页不包含原始 DNS、私有场、模型参数、执行路径、release 或哈希。最新证据：v44.3 validated bounded negative，2026-07-29；96 F + 292 JVP + 4 VJP；algorithm_breakthrough=false。
+      脱敏公开页不包含原始 DNS、私有场、模型参数、执行路径、release 或哈希。最新证据：v45-v47 bounded mechanism chain，2026-07-29；三种修复均 0 / 4；algorithm_breakthrough=false。
     </footer>
   </main>
 </body>
