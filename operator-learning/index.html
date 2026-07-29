@@ -303,6 +303,18 @@
     }
     @media (max-width: 720px) {
       header, main, footer { width: min(100% - 22px, 1220px); }
+      .nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        scroll-snap-type: x proximity;
+        scrollbar-width: thin;
+      }
+      .nav a {
+        flex: 0 0 auto;
+        min-height: 40px;
+        scroll-snap-align: start;
+      }
       h1 { font-size: 31px; }
       h2 { font-size: 23px; }
       .status-strip, .check-grid, .concept-grid, .resource-grid, .track-grid, .gate-grid, .figure-grid, .week-columns { grid-template-columns: 1fr; }
@@ -331,6 +343,7 @@
       <a href="#representation-gate">表示机制</a>
       <a href="#transport-proxy-gate">输运与校准门</a>
       <a href="#g0-evidence">真实 CFD 代理</a>
+      <a href="blastnet-external-v40.html#five-space-v50">v49-v50 五维判决</a>
       <a href="blastnet-external-v40.html#curved-followups-v47">v45-v47 curved 修复链</a>
       <a href="blastnet-external-v40.html#curved-v44">v44 curved-adjoint 起点</a>
       <a href="blastnet-external-v40.html#krylov-v43">v43 JVP 受约束诊断</a>
@@ -349,19 +362,19 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-29 · v47</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-29 · v50</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v44.3 已证明一个真实离开旧 span 的 curved-adjoint 方向仍会伤害 gradient；随后 v45 固定 Sobolev、v46 整体幅度网格和 v47 五系数受约束搜索依次排查频谱、步长和分量比例。三条修复在四个已开封快照上都是 <code>0 / 4</code>；v46/v47 已独立重算，v47 共精确评分 48 个候选。最优点把 gradient 推到 <code>1.01</code> 边界，observation 仍超标，所以五系数网络不授权训练。下一门只做一次封顶的五维全局反例搜索，不直接堆大模型，当前 <code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v49 的自适应 Powell 请求无法被独立稳定重放，因此严格记为无结论；纠正后的 v50 用目标函数无关的固定候选表，第二套实现对 2,304 个唯一候选逐一做精确 curved forward，完整门仍是 <code>0 / 2,304</code>。最佳候选把 gradient 推到 <code>1.01</code> 边界，observation 仍为 <code>1.045775</code>。这支持停止原五方向上的继续细搜，但五维路线没有被关闭。下一门构造第二条 curved Gauss-Newton Krylov 方向，真正改变 span；当前 <code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="blastnet-external-v40.html#curved-followups-v47">打开 v45-v47 机理链</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_curved_followups_v47_result_2026-07-29.md">读 v45-v47 完整判决</a>
-      <a class="button" href="../docs/blastnet_h2air_phi05_curved_followups_v47_public_summary.json">打开 v45-v47 脱敏结果</a>
+      <a class="button primary" href="blastnet-external-v40.html#five-space-v50">打开 v49-v50 判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_fixed_roster_v50_result_2026-07-29.md">读 v49-v50 完整判决</a>
+      <a class="button" href="../docs/blastnet_h2air_phi05_fixed_roster_v50_public_summary.json">打开 v50 脱敏结果</a>
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert critical" style="margin-top:12px;">
-      <strong>最新科学增量：三种便宜修复都失败，五系数网络停止授权</strong>
-      <span>v45 固定 Sobolev、v46 幅度路径和 v47 五维局部受约束搜索均为 0 / 4。v47 最优点的 field ratio 为 <code>0.9780-0.9834</code>，gradient 全贴到 <code>1.01</code>，observation 仍为 <code>1.0111-1.0458</code>；独立重算最大指标差 <code>3.33e-15</code>。这支持停止训练五系数预测器，但不证明五维空间数学无解。<a href="blastnet-external-v40.html#curved-followups-v47">打开 v45-v47 证据</a>。</span>
+      <strong>最新科学增量：v50 固定候选表 0 / 2,304，下一步改变 span</strong>
+      <span>v49 因独立重放失败而无结论；v50 的 2,304 个唯一候选已由第二套实现逐项精确重算。最佳 field / gradient / observation 比为 <code>0.983386 / 1.010000 / 1.045775</code>。这不是数学无解证明，五维路线没有被关闭；它说明继续扩大同类细搜价值低，下一实验新增第二条 curved Gauss-Newton Krylov 方向。<a href="blastnet-external-v40.html#five-space-v50">打开 v49-v50 证据</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
@@ -514,8 +527,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert critical">
-      <strong>最新开发判决：v45-v47 三种修复均 0 / 4，五系数学习不授权</strong>
-      <span>平滑、整体调幅和五维局部重调都没有同时守住 field / gradient / observation。v46/v47 已独立重算；下一项只允许一次固定预算五维全局反例搜索，失败后才转二阶 curved Krylov 新方向。没有外部同精度、真实 BOST 或算法突破，<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新开发判决：v50 固定候选表无 witness，停止同 span 细搜</strong>
+      <span>2,304 个唯一候选已独立精确重算，完整门通过数为 0；v49 的不可重放诊断没有被冒充负结果。下一项直接构造第二条 curved Gauss-Newton Krylov 方向。没有外部同精度、真实 BOST 或算法突破，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -646,7 +659,7 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
-        <article class="panel"><div class="chips"><span class="chip coral">最新 · v45-v47 有界负结果</span><span class="chip blue">v46/v47 独立复算 PASS</span></div><h3 style="margin-top:10px;">Curved-direction rescue chain</h3><p>固定 Sobolev、81 点幅度路径和两起点五维受约束搜索依次得到 0/4。v47 精确评分 48 个候选，最优点的 gradient 全贴到 1.01 边界，observation 仍为 1.0111-1.0458；五系数预测器停止授权，但不宣称五维全局无解。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v50 固定表负结果</span><span class="chip blue">2,304 个候选独立重算</span></div><h3 style="margin-top:10px;">Replayable five-space roster</h3><p>v49 因自适应局部请求不可稳定重放而无结论；v50 改用目标函数无关固定表，完整门 0/2,304。最佳 gradient/K4 为 1.01 时 observation/K4 仍为 1.045775。五维路线没有被关闭，但下一项改 span，不继续扩大同类搜索。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v44.3 有界负结果</span><span class="chip blue">Stage A/B 独立复算 PASS</span></div><h3 style="margin-top:10px;">Single coarse curved-adjoint enrichment</h3><p>第五方向来自 Direct-K3 的部署可见 curved residual VJP，与旧 span 最大余弦仅 2.95e-15，旧 span 外能量为 19.0%-31.4%。相对配对四方向控制，四帧 field 与 observation 都改善；但 gradient / K4 全为 1.0148-1.0312，完整门 0/4。正式账本 <code>96 F + 292 JVP + 4 VJP</code>，所以只保留为机理负结果。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v43 有界负结果</span><span class="chip blue">curved forward / JVP 独立重放</span></div><h3 style="margin-top:10px;">Truth-aware four-Krylov trust-region oracle</h3><p>v42 direct SLSQP 耗尽预算后，v43 用精确 JVP 构造局部 observation 模型并做 exact curved rescore。四帧 field ratio 为 0.9786-0.9844，但 observation ratio 仍为 1.0204-1.0576，0/4 过完整门；正式账本 <code>31 F + 112 JVP + 0 VJP</code>。固定四方向系数预测支线关闭，但不宣称数学不存在。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v40.2 外部 FAIL</span><span class="chip blue">独立复算 PASS</span></div><h3 style="margin-top:10px;">BLASTNet H2-air zero-adaptation gate</h3><p>冻结 SARC-K3-M4 第一次进入不同数据族。四帧三项均优于 Zero，field 均优于 Direct-K4，但 observation ratio 为 1.0215-1.0654，最终 0/4 通过 matched-accuracy。后验 alpha 扫描显示最优幅度 1.2-1.4，仍无法同时修复 gradient 与 observation；单标量增益路线关闭。</p></article>
@@ -667,20 +680,20 @@
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
       </div>
-      <div id="v47-curved-followups" class="alert critical" style="margin-top:13px;">
-        <strong>v45-v47：平滑、调幅和五系数局部重调全部 0 / 4</strong>
-        <span>v45 最佳 fixed-Sobolev 的逐帧最差指标比为 <code>1.0155 / 1.0302 / 1.0252 / 1.0427</code>；v46 幅度网格为 <code>1.0147 / 1.0208 / 1.0113 / 1.0423</code>；v47 五维搜索为 <code>1.0165 / 1.0458 / 1.0111 / 1.0434</code>。v47 48 个候选独立重算最大指标差 <code>3.33e-15</code>。当前只授权一次封顶的五维全局反例搜索，<code>algorithm_breakthrough=false</code>。</span>
+      <div id="v50-five-space" class="alert critical" style="margin-top:13px;">
+        <strong>v49-v50：拒绝不可重放结果，固定候选表为 0 / 2,304</strong>
+        <span>v49 只记无结论。v50 独立重建候选表并对 2,304 个唯一候选精确评分；最佳 field / gradient / observation 比为 <code>0.983386 / 1.010000 / 1.045775</code>。五维路线没有被关闭，下一项构造第二条 curved Gauss-Newton Krylov 方向，<code>algorithm_breakthrough=false</code>。</span>
       </div>
       <figure style="margin-top:14px;">
-        <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_curved_followups_v47.png" aria-label="打开 v45-v47 curved 修复链总图">
-          <img src="../assets/blastnet_h2air_phi05_curved_followups_v47.png" alt="BLASTNet 开封数据上固定 Sobolev、幅度路径和五维受约束搜索的三指标诊断" />
+        <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_fixed_roster_v50.png" aria-label="打开 v50 固定候选表总图">
+          <img src="../assets/blastnet_h2air_phi05_fixed_roster_v50.png" alt="BLASTNet 开封 S2 数据上 v50 固定候选表的三指标门与独立判决" />
         </a>
-        <figcaption>三种机制都没有越过 1.01 完整门。v47 的 field 已改善，但 gradient 与 observation 在边界上冲突；因此先做一次固定预算全局反例搜索，不直接训练五系数网络或跳到大模型。</figcaption>
+        <figcaption>2,304 个候选中，没有一个同时越过三项 1.01 完整门。gradient 与 observation 的冲突仍在，因此不训练五系数网络，转向真正改变 span 的第二条 curved Krylov 方向。</figcaption>
       </figure>
       <div class="actions" style="margin-top:11px;">
-        <a class="button primary" href="blastnet-external-v40.html#curved-followups-v47">打开 v45-v47 专项证据</a>
-        <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_curved_followups_v47_result_2026-07-29.md">读 v45-v47 完整判决</a>
-        <a class="button" href="../docs/blastnet_h2air_phi05_curved_followups_v47_public_summary.json">打开 v45-v47 机器摘要</a>
+        <a class="button primary" href="blastnet-external-v40.html#five-space-v50">打开 v49-v50 专项证据</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_fixed_roster_v50_result_2026-07-29.md">读 v49-v50 完整判决</a>
+        <a class="button" href="../docs/blastnet_h2air_phi05_fixed_roster_v50_public_summary.json">打开 v50 机器摘要</a>
       </div>
       <div id="v44-curved-adjoint" class="alert critical" style="margin-top:13px;">
         <strong>v44.3：新 curved-adjoint 方向真实有效，但 gradient 安全门 0 / 4</strong>

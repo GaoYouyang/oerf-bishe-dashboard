@@ -481,13 +481,65 @@
           <code>16 A + 16 A^T + 52 F + 310 JVP + 0 VJP</code>。这是 truth-constrained post-open oracle 成本，不能写成部署加速。48 个候选的独立重算最大 ratio 差为 <code>2.33e-15</code>。
         </div>
         <div class="alert warn" style="margin-top:15px;">
-          <strong>下一道唯一有效门：</strong>
-          在增加第六方向前，只再做一次固定预算、确定性的五维全局反例搜索。若任一快照仍找不到 witness，工程上关闭五系数路线，再检验一个真正改变 span 的二阶 curved Gauss-Newton/Krylov 方向；仍不能写数学无解。
+          <strong>后续状态：</strong>
+          这项封顶搜索已经由 v49-v50 执行。v49 因局部优化请求不可稳定重放而无结论；v50 的固定候选表经独立逐项重算后仍无 witness，但五维路线没有被关闭。下一项直接改变 span。
         </div>
         <div class="actions">
           <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_curved_followups_v47_result_2026-07-29.md">读 v45-v47 完整判决</a>
           <a class="button" href="../docs/blastnet_h2air_phi05_curved_followups_v47_public_summary.json">打开 v45-v47 脱敏摘要</a>
           <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_curved_followups_v47.png">查看总图</a>
+        </div>
+      </div>
+
+      <div id="five-space-v50" style="scroll-margin-top:70px; padding-top:30px;">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">v49-v50 · replayable fixed-roster decision</div>
+            <h2>2,304 个候选没有 witness；停止细搜，开始改变 span</h2>
+          </div>
+          <p>这是已经打开的 S2 快照上的机理诊断。它回答固定候选表里有没有合格点，不回答连续五维空间是否数学无解。</p>
+        </div>
+        <div class="grid-3">
+          <div class="panel">
+            <h3 class="fail-text">v49 · INCONCLUSIVE</h3>
+            <p>Powell 的请求序列会被小于 <code>1e-10</code> 的数值差异改变；独立 validator 在第 48 个局部请求拒绝重放。runner 的 0 pass 不进入科学结论。</p>
+          </div>
+          <div class="panel">
+            <h3>v50 · 独立重算 PASS</h3>
+            <p>相同 1,664 次全局搜索，局部阶段改为目标函数无关的固定表。2,308 个请求去重为 2,304 个候选，全部由第二套实现精确评分。</p>
+          </div>
+          <div class="panel">
+            <h3 class="fail-text">完整门 · 0 / 2,304</h3>
+            <p>最佳候选的 field / gradient / observation 比为 <code>0.983386 / 1.010000 / 1.045775</code>。gradient 已触边，observation 仍超标。</p>
+          </div>
+        </div>
+        <div class="alert fail" style="margin-top:15px;">
+          <strong>当前科学判决：</strong>
+          固定候选表中没有完整门 witness，五系数学习仍不授权；但五维路线没有被关闭，也没有数学不存在性证明。继续扩大同类搜索的价值低于增加一条真正 span 外方向。
+        </div>
+        <figure class="figure" style="margin-top:18px;">
+          <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_fixed_roster_v50.png">
+            <img src="../assets/blastnet_h2air_phi05_fixed_roster_v50.png" alt="BLASTNet H2-air S2 上 v50 固定候选表的 field、gradient、observation 门分布和独立判决" />
+          </a>
+          <figcaption>左上展示 2,304 个精确评分候选；右上是 observation ratio 的经验分布；左下显示真正阻塞全部候选的是 Direct-K4 的 1.01 完整门。图中不含私有场、权重或执行路径。</figcaption>
+        </figure>
+        <div class="table-wrap" style="margin-top:15px;">
+          <table>
+            <thead><tr><th>证据</th><th class="num">请求/候选</th><th class="num">通过</th><th>可支持的结论</th></tr></thead>
+            <tbody>
+              <tr><td>v49 自适应 Powell</td><td class="num">2,304 唯一候选</td><td class="num">不可用</td><td>独立请求重放失败，只能写无结论</td></tr>
+              <tr><td>v50 固定候选表</td><td class="num">2,308 / 2,304</td><td class="num fail-text">0</td><td>固定表负结果；独立逐项精确重算通过</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert info" style="margin-top:15px;">
+          <strong>为什么转向第二条 curved Gauss-Newton Krylov 方向：</strong>
+          最佳点把 gradient 用满到 <code>1.01</code>，observation 仍为 <code>1.045775</code>。下一实验先消去现有第五方向能解释的 residual，再对剩余 residual 做精确 VJP，并从现有五方向中正交化；这才会改变可达空间。
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_fixed_roster_v50_result_2026-07-29.md">读 v49-v50 完整判决</a>
+          <a class="button" href="../docs/blastnet_h2air_phi05_fixed_roster_v50_public_summary.json">打开 v50 脱敏摘要</a>
+          <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_fixed_roster_v50.png">查看 v50 总图</a>
         </div>
       </div>
 
@@ -686,7 +738,7 @@
         </div>
       </div>
       <div class="alert" style="margin-top:15px;">
-        当前最窄、最有信息量的结论是：新方向必须打破 gradient 与 curved-observation 的局部冲突。先用一次固定预算全局反例搜索排除 v47 漏掉远处 witness；若仍失败，再增加一个真正独立的二阶 curved Krylov 方向。
+        当前最窄、最有信息量的结论是：新方向必须打破 gradient 与 curved-observation 的冲突。v50 固定候选表已完成且没有 witness；下一项构造第二条 curved Gauss-Newton Krylov 方向并做匹配预算比较，不把它夸大成完整 Hessian 或二阶优化器。
       </div>
     </section>
 
@@ -710,8 +762,10 @@
             <tr><td>v45 固定 Sobolev family</td><td class="fail-text">scratch 负结果</td><td>固定、observation-selected 与 truth-oracle family member 均 0 / 4</td></tr>
             <tr><td>v46 幅度路径</td><td class="fail-text">网格有界负结果</td><td>81 点扫描 0 / 4；独立复算通过，不宣称连续域无解</td></tr>
             <tr><td>v47 五维受约束搜索</td><td class="fail-text">局部有界负结果</td><td>48 个 exact candidates 全部失败；独立复算通过，不宣称五维全局无解</td></tr>
+            <tr><td>v49 自适应全局+局部搜索</td><td class="fail-text">INCONCLUSIVE</td><td>独立请求重放在第 48 个局部请求失败；runner 诊断不得用于科学结论</td></tr>
+            <tr><td>v50 固定候选表</td><td class="fail-text">固定表负结果</td><td>2,304 个唯一候选全量独立精确重算，0 个完整门 witness；五维路线没有被关闭</td></tr>
             <tr><td>固定四方向 selector</td><td class="fail-text">不授权训练</td><td>oracle 仍未找到完整门候选</td></tr>
-            <tr><td>五系数预测器</td><td class="fail-text">不授权训练</td><td>当前局部 oracle 没有完整门 headroom；先做一次封顶全局反例搜索</td></tr>
+            <tr><td>五系数预测器</td><td class="fail-text">不授权训练</td><td>当前固定候选表没有完整门 headroom；下一步改变 span</td></tr>
             <tr><td>资源加速</td><td>未运行</td><td>精度失败后按协议无资格测速</td></tr>
             <tr><td>真实 BOST</td><td>未证明</td><td>当前仍是由 DNS 密度构造的代理 forward</td></tr>
             <tr><td>广泛燃烧场泛化</td><td>未证明</td><td>只有一个外部数据集且结果为负</td></tr>
@@ -727,8 +781,19 @@
     </section>
 
     <footer>
-      脱敏公开页不包含原始 DNS、私有场、模型参数、执行路径、release 或哈希。最新证据：v45-v47 bounded mechanism chain，2026-07-29；三种修复均 0 / 4；algorithm_breakthrough=false。
+      脱敏公开页不包含原始 DNS、私有场、模型参数、执行路径、release 或哈希。最新证据：v49 无结论，v50 固定候选表经独立重算为 0 / 2,304；五维路线未关闭；algorithm_breakthrough=false。
     </footer>
   </main>
+  <script>
+    window.addEventListener("load", () => {
+      const id = decodeURIComponent(window.location.hash.slice(1));
+      const target = id ? document.getElementById(id) : null;
+      if (!target) return;
+      const previous = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = "auto";
+      target.scrollIntoView({ block: "start" });
+      document.documentElement.style.scrollBehavior = previous;
+    });
+  </script>
 </body>
 </html>

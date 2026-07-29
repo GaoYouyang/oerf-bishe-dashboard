@@ -1,0 +1,267 @@
+{
+  "schema_version": "oerf-blastnet-h2air-phi05-feasible-global-search-49.0",
+  "status": "FROZEN_BEFORE_V49_RESULT",
+  "frozen_after_source_commit": "b695ebb5e53110557a3ba8dcc1f05642180654bb",
+  "supersedes_for_future_evidence": {
+    "v48_status": "INVALIDATED_BEFORE_PUBLICATION",
+    "reason": "v48 did not enforce its every-scored-point truth-feasibility condition",
+    "v48_numeric_output_may_not_close_the_route": true
+  },
+  "scientific_question": "Does the opened five-direction space contain a complete frozen-gate witness under a deterministic search in which every exact curved-forward evaluation is truth feasible?",
+  "scope": {
+    "dataset": "BLASTNet premixed H2-air DNS, phi=0.5",
+    "post_open": true,
+    "truth_constrained_oracle": true,
+    "stage_1_snapshot_ids": [
+      2
+    ],
+    "stage_2_snapshot_ids_if_and_only_if_stage_1_finds_a_witness": [
+      1,
+      3,
+      4
+    ],
+    "new_external_evidence": false,
+    "online_deployable_as_run": false,
+    "resource_gate_authorized": false
+  },
+  "frozen_inputs": {
+    "pair_role": "the independently validated v40.2 BLASTNet proxy bundle",
+    "v40_result_role": "the independently validated v40.2 frozen external result",
+    "v43_result_role": "the completed four-direction JVP trust-region diagnosis",
+    "v44_result_role": "the independently validated v44.3 curved-adjoint enrichment result",
+    "v47_result_role": "the independently replayed two-start five-direction local screen",
+    "required_content_bindings": [
+      "pair READY, manifest, checksums, observations, truth, and all coordinate arrays",
+      "v40 result report and snapshot-2 Direct-K3 field",
+      "v43 report",
+      "v44 stage-A report and snapshot-2 five-direction field artifacts",
+      "v47 report and independent validation",
+      "all five reconstructed direction arrays"
+    ],
+    "pre_result_execution_release": {
+      "required": true,
+      "filename": "V49_EXECUTION_RELEASE.json",
+      "created_after_protocol_and_runner_commit_before_any_v49_objective_evaluation": true,
+      "must_bind": [
+        "canonical role without publishing a private absolute path",
+        "byte length and SHA-256 for every required file",
+        "shape, dtype, byte order, and canonical-array SHA-256 for every required array",
+        "shape, dtype, byte order, and canonical-array SHA-256 for each of the five reconstructed directions",
+        "runner, validator, protocol, and release-generator SHA-256",
+        "the complete frozen local scientific source closure used by the forward, inverse geometry, truth constraints, metric, and gate paths, with every live file byte-identical to git HEAD",
+        "git HEAD",
+        "Python, NumPy, SciPy, Torch, executable, and canonical pip-freeze SHA-256"
+      ],
+      "runner_and_validator_must_reject_any_release_or_live_input_mismatch": true
+    },
+    "truth_may_enter": [
+      "field constraint",
+      "gradient constraint",
+      "post-open candidate scoring",
+      "feasible radial map"
+    ],
+    "truth_may_not_support": [
+      "an online selector claim",
+      "a fresh or external claim",
+      "a speed or resource claim",
+      "a generalization claim"
+    ]
+  },
+  "runtime_contract": {
+    "python": "3.11.5",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "torch": "2.13.0",
+    "floating_point": "float64",
+    "torch_intraop_threads": 1,
+    "torch_interop_threads": 1,
+    "optimizer_workers": 1
+  },
+  "basis": {
+    "base_field": "frozen Direct-K3 field",
+    "directions": [
+      "four frozen straight-CGLS increments reconstructed from the frozen curved-observation residual",
+      "the validated v44.3 coarse curved-adjoint direction recovered from its nonzero-weight ablation"
+    ],
+    "dimension": 5,
+    "basis_identity_rule": "All five v49 direction arrays receive content hashes; the reconstructed straight-basis ledger, fifth-direction audit, anchors, and every scalar identity available in v47 must match v47. v47 did not publish direction-array hashes, so no retrospective hash-equality claim is allowed.",
+    "basis_cost_is_not_a_deployable_method_cost": true
+  },
+  "truth_constraints": {
+    "field_limit": "minimum of 1.01 times Direct-K4 field relative-L2 and Zero field relative-L2",
+    "gradient_limit": "minimum of 1.01 times Direct-K4 gradient relative-L2 and Zero gradient relative-L2",
+    "normalized_margin_tolerance": 5e-08,
+    "constraint_functions": "squared relative-L2 convex quadratic forms",
+    "normalized_margin_formula": "For q in {field,gradient}, margin_q(w)=1-relative_squared_q(w)/(limit_q^2); a scored point is feasible only when all values are finite and min(margin_field,margin_gradient)>=-5e-8.",
+    "origin_is_required_to_be_feasible": true
+  },
+  "feasible_parameterization": {
+    "latent_dimension": 6,
+    "direction_coordinates": {
+      "count": 5,
+      "lower": -2.0,
+      "upper": 3.0
+    },
+    "radial_fraction": {
+      "index": 5,
+      "lower": 0.0,
+      "upper": 1.0
+    },
+    "map": "For latent (d,r), find the largest retained lower endpoint t in [0,1] for which t*d has finite normalized margins and both margins are >=0, using 60 frozen bisection steps, then return w=r*t*d.",
+    "convexity_reason": "The box and both squared-norm truth constraints are convex and contain the origin, so the segment from zero to the retained radial endpoint is feasible.",
+    "radial_bisection_iterations": 60,
+    "zero_direction_threshold": 1e-15,
+    "zero_direction_behavior": "If L_inf(d)<=1e-15, return w=0 and t=1 without bisection.",
+    "nonfinite_bisection_behavior": "Any nonfinite latent coordinate or normalized margin is a fatal execution error and produces no objective score.",
+    "endpoint_recheck": "After bisection and after multiplying by r, recompute all margins; an endpoint outside the box or below -5e-8 is a fatal execution error and produces no exact forward.",
+    "every_mapped_weight_must_be_finite_in_box_and_truth_feasible_before_exact_forward": true,
+    "an_infeasible_or_nonfinite_exact_forward_request_is_a_fatal_execution_error": true
+  },
+  "deterministic_global_search": {
+    "library": "scipy.optimize.differential_evolution",
+    "seed": 4901,
+    "strategy": "best1bin",
+    "rng_api": "numpy.random.Generator(numpy.random.PCG64(4901)) passed through scipy's rng keyword",
+    "bounds": [
+      [
+        -2.0,
+        3.0
+      ],
+      [
+        -2.0,
+        3.0
+      ],
+      [
+        -2.0,
+        3.0
+      ],
+      [
+        -2.0,
+        3.0
+      ],
+      [
+        -2.0,
+        3.0
+      ],
+      [
+        0.0,
+        1.0
+      ]
+    ],
+    "initialization": "sobol",
+    "population_size_multiplier": 16,
+    "actual_initial_population_size": 128,
+    "maximum_generations": 12,
+    "mutation": [
+      0.5,
+      1.0
+    ],
+    "recombination": 0.7,
+    "updating": "immediate",
+    "workers": 1,
+    "vectorized": false,
+    "integrality": null,
+    "x0": null,
+    "polish": false,
+    "relative_tolerance": 0.0,
+    "absolute_tolerance": 0.0,
+    "objective": "exact curved-observation squared relative-L2 at the feasible mapped weight",
+    "all_objective_requests_must_be_recorded": true,
+    "all_unique_mapped_weights_enter_the_candidate_bank": true,
+    "maximum_logical_objective_requests": 1664
+  },
+  "deterministic_local_refinement": {
+    "library": "scipy.optimize.minimize",
+    "method": "Powell",
+    "starts": "the four global-search records with smallest exact objective after absolute-L_inf deduplication of their mapped weights; each retained record carries its original latent vector",
+    "start_count": 4,
+    "bounds": "the same six latent bounds",
+    "maximum_iterations_per_start": 80,
+    "maximum_logical_objective_requests_per_start": 160,
+    "scipy_options": {
+      "maxiter": 80,
+      "maxfev": 160,
+      "xtol": 1e-08,
+      "ftol": 1e-12
+    },
+    "request_161_behavior": "Reject before exact forward, record budget_exhausted=true, and force the overall stage-1 decision to inconclusive.",
+    "xtol": 1e-08,
+    "ftol": 1e-12,
+    "minimum_successful_refinements_for_bounded_negative": 3,
+    "all_objective_requests_must_use_the_same_feasible_map_and_exact_forward": true,
+    "all_unique_mapped_weights_enter_the_candidate_bank": true
+  },
+  "frozen_anchors": [
+    "zero weights",
+    "v43 feasible four-direction point with zero fifth weight",
+    "v44 selected weights radially mapped to feasibility",
+    "v47 best diagnostic candidate radially mapped to feasibility"
+  ],
+  "candidate_deduplication": {
+    "metric": "L_inf",
+    "absolute_tolerance": 1e-10,
+    "first_exact_score_is_retained": true,
+    "rint_bucketing_is_forbidden": true
+  },
+  "candidate_bank": {
+    "members_in_request_order": [
+      "all global-search objective requests",
+      "all four frozen anchor exact-score requests",
+      "all local-refinement objective requests in start-index order"
+    ],
+    "deduplication": "Scan the request ledger in order and retain the first row unless an earlier retained mapped weight has L_inf distance <=1e-10.",
+    "local_start_order": "Deduplicate global-search mapped weights with the same first-match rule, then sort by (objective, global_request_index, latent_lexicographic) and retain the first four.",
+    "every_retained_member_must_have_an_exact_curved_forward_score": true,
+    "candidate_completeness_is_derived_from_the_independent_replay_not_the_runner_report": true
+  },
+  "complete_frozen_v40_gate": {
+    "per_snapshot": [
+      "all field, gradient, and observation metrics are at most 1.01 times Direct-K4",
+      "all field, gradient, and observation metrics are no worse than Zero",
+      "observation is no worse than Direct-K3 plus 1e-12",
+      "candidate is not Pareto dominated by Direct-K3"
+    ],
+    "no_gate_or_threshold_may_change_after_result_open": true
+  },
+  "stage_transition_and_decision_rule": {
+    "runner_may_only_emit_pending_evidence": true,
+    "only_the_independent_validator_may_emit_the_final_stage_1_decision": true,
+    "stage_1_witness": "at least one S2 candidate passes the complete frozen v40 gate after independent replay, with the global search and all four local executions valid, within budget, fully accounted, and deterministically replayed",
+    "stage_1_bounded_negative": "no S2 candidate passes, the global search and all four local executions are valid and within budget, at least three of four local refinements report optimizer success, every objective request and candidate is accounted for, every exact-scored point and every derived metric or ratio is finite, nonnegative where applicable, and truth feasible, all frozen inputs, source files, and basis arrays match, and independent replay agrees",
+    "stage_1_inconclusive": "input or basis parity, deterministic optimizer replay, request accounting, candidate completeness, finite/feasible checks, budget, minimum successful refinements, or independent replay fails",
+    "stage_2_authorized_only_after_stage_1_witness": true,
+    "five_coefficient_learning_target_authorized": "all four snapshots independently contain at least one complete-gate witness under the same frozen search",
+    "stage_2_exact_reuse": "For each of S1, S3, and S4 separately, repeat the same feasible map, PCG64 seed, 1664-request DE cap, four 160-request Powell caps, four anchors, request-order candidate roster, complete gate, input release checks, and independent replay. No snapshot may borrow candidates, starts, or budget from another snapshot.",
+    "five_space_engineering_route_closed": "S2 reaches the bounded-negative decision; this stops further five-coefficient search and training but does not prove mathematical nonexistence",
+    "forbidden_rescue_actions": [
+      "changing the seed",
+      "adding generations or starts",
+      "increasing a frozen budget",
+      "changing the five directions",
+      "relaxing the 1.01 gate",
+      "changing the objective after seeing results"
+    ]
+  },
+  "independent_validation": {
+    "must_not_import_the_v49_runner": true,
+    "must_reconstruct_and_content_bind_the_five_directions": true,
+    "must_independently_repeat_the_feasible_map_global_search_and_four_local_refinements": true,
+    "must_derive_the_expected_request_roster_from_its_own_replay": true,
+    "must_rerun_the_exact_curved_forward_for_every_unique_candidate": true,
+    "must_recompute_all_constraints_metrics_and_gates": true,
+    "constraint_metric_and_gate_math_must_be_locally_reimplemented_without_importing_the_runner_or_prior_metric_gate_helpers": true,
+    "must_reject_nan_or_inf_before_any_tolerance_comparison": true,
+    "must_verify_candidate_completeness_and_exact_forward_ledgers": true,
+    "shared_frozen_physics_kernels_must_be_disclosed": true
+  },
+  "claim_boundaries": {
+    "bounded_fixed_budget_search_only": true,
+    "mathematical_five_space_nonexistence_proven": false,
+    "online_selector_success": false,
+    "same_cost_or_speed_claim_authorized": false,
+    "external_generalization_proven": false,
+    "real_bost_proven": false,
+    "paper_success": false,
+    "algorithm_breakthrough": false
+  }
+}
