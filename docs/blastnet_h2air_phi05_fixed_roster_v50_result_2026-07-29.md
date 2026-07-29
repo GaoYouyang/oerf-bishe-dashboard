@@ -88,14 +88,15 @@ observation / Direct-K4 1.045775
 ## 下一项真实实验
 
 不训练五系数网络，也不继续堆同类搜索。下一步在 Direct-K3 的 curved residual
-上构造第二条 curved Gauss-Newton Krylov 方向：
+上构造第二个固定线性化 residual-adjoint 增广方向：
 
 1. 先沿现有第五方向消掉可解释的 observation residual；
 2. 对剩余 residual 做一次精确 VJP；
 3. 投到粗网格并从现有五方向 span 中正交化；
 4. 只在旧 span 外能量、伴随恒等式和完整门都通过后继续。
 
-这会真正改变可达空间，而不是继续精调原有五个旋钮。
+这会真正改变可达空间，而不是继续精调原有五个旋钮。它与投影
+Gauss-Newton / augmented Krylov 思路有关，但不能命名为完整 Hessian 或二阶求解器。
 
 ```text
 fixed_candidate_roster_negative=true

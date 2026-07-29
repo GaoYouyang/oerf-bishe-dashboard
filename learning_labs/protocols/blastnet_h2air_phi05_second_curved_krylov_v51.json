@@ -1,0 +1,178 @@
+{
+  "schema_version": "oerf-blastnet-h2air-phi05-second-residual-adjoint-mechanism-51.0",
+  "status": "FROZEN_BEFORE_V51_RESULT",
+  "date": "2026-07-29",
+  "scientific_question": "On the already opened BLASTNet H2-air phi=0.5 S2 snapshot, does one fixed-linearization coarse-projected second curved residual-adjoint enrichment add complete-gate headroom beyond the current five-direction span?",
+  "scope": {
+    "dataset": "BLASTNet premixed H2-air DNS, phi=0.5",
+    "snapshot_ids": [
+      2
+    ],
+    "role": "post-open mechanism development only",
+    "new_external_generalization_evidence": false,
+    "online_deployable_as_run": false,
+    "filesystem_truth_noninterference_proven": false,
+    "training_authorized_before_result": false,
+    "fresh_or_test_opening_authorized": false
+  },
+  "frozen_parent_evidence": {
+    "v44_role": "provides the independently validated first coarse-resolvable curved-adjoint direction for an exact parity check; v51 independently regenerates and seals its coarse d5c",
+    "v47_role": "provides the current five-direction local mechanism baseline",
+    "v50_role": "independently replayed fixed roster found zero complete-gate witnesses among 2304 unique candidates on S2",
+    "v49_role": "inconclusive and forbidden as numeric evidence"
+  },
+  "stage_a_allowed_inputs": [
+    "deployment-visible observation vector y for S2",
+    "frozen Direct-K3 field for S2",
+    "high and coarse coordinates",
+    "frozen straight inverse geometry",
+    "frozen differentiable curved forward/JVP/VJP implementation",
+    "v44 truth-free Stage-A S2 selected weights and candidate fields for parity only"
+  ],
+  "stage_a_forbidden_inputs": [
+    "density truth",
+    "field or gradient metrics",
+    "Direct-K4 metrics",
+    "Zero metrics",
+    "v47 or v50 selected candidate weights",
+    "any fresh, stopping-validation or test payload"
+  ],
+  "second_direction": {
+    "base_field": "x0 = frozen Direct-K3",
+    "visible_residual": "r0 = y - F_curved(x0)",
+    "first_curved_direction": "independently regenerate and seal coarse d5c = normalized (I-Pi4) Gc P^T Gh J^T r0, then d5 = Gh P d5c; the high direction must match the validated v44 Stage-A d5",
+    "first_tangent": "q5 = J_curved(x0) d5",
+    "line_projection": "alpha5 = <r0,q5> / <q5,q5>",
+    "deflated_residual": "r1 = r0 - alpha5 q5",
+    "raw_second_adjoint": "g1 = J_curved(x0)^T r1",
+    "coarse_restriction": "P^T g1 followed by unweighted coarse gauge",
+    "current_coarse_span": "four frozen straight-CGLS increments plus the independently regenerated and sealed coarse d5c",
+    "projection": "individually normalize the five gauged coarse columns, then use a thin float64 SVD projection onto their orthogonal complement",
+    "high_direction": "d6 = normalized P times the orthogonal coarse component",
+    "normalization": "match the median positive high-resolution L2 norm of d1 through d5",
+    "sign": "positive d6 coefficient must have positive inner product with g1",
+    "truth_used": false,
+    "adaptive_regeneration_inside_search": false,
+    "name": "fixed-linearization coarse-projected second curved residual-adjoint enrichment",
+    "interpretation": "projected Gauss-Newton or augmented-Krylov-like direction only",
+    "not_a_full_hessian_or_second_order_solver": true
+  },
+  "direction_gates": {
+    "q5_squared_norm_minimum": 1e-24,
+    "q5_relative_tangent_norm_minimum": 1e-8,
+    "residual_q5_absolute_correlation_minimum": 1e-8,
+    "deflated_residual_relative_orthogonality_maximum": 1e-12,
+    "v44_d5_high_direction_parity_relative_l2_maximum": 1e-10,
+    "explicit_prolongation_parity_maximum_absolute_difference": 1e-12,
+    "relative_singular_value_cutoff": 1e-12,
+    "required_five_direction_coarse_span_rank": 5,
+    "minimum_five_direction_sigma_min_over_sigma_max": 1e-8,
+    "positive_increment_norm_factor": 1e-14,
+    "first_adjoint_five_span_residual_relative_l2_maximum": 1e-10,
+    "minimum_coarse_out_of_span_energy_fraction": 0.05,
+    "minimum_absolute_out_of_span_norm_fraction": 1e-6,
+    "maximum_absolute_coarse_span_cosine": 1e-10,
+    "curved_adjoint_identity_relative_error_maximum": 1e-10,
+    "curved_adjoint_fixed_probe_seeds": [
+      5101,
+      5102,
+      5103
+    ],
+    "algebraic_g1_relative_l2_maximum": 1e-10,
+    "prolongation_adjoint_identity_relative_error_maximum": 1e-12,
+    "minimum_observation_out_of_span_energy_fraction": 0.0001,
+    "q5_independent_replay_relative_l2_maximum": 1e-10,
+    "required_first_five_observation_tangent_rank": 5,
+    "minimum_first_five_observation_sigma_min_over_sigma_max": 1e-8,
+    "required_observation_tangent_rank": 6,
+    "finite_difference_steps": [
+      0.0001,
+      0.00003,
+      0.00001
+    ],
+    "finite_difference_jvp_relative_error_maximum": 0.0001
+  },
+  "paired_stage_a_search": {
+    "arms": [
+      "S5 padded control: d1 through d5 plus one exact zero-direction JVP per outer iteration",
+      "S6 enrichment: d1 through d6"
+    ],
+    "same_zero_start": true,
+    "same_box_per_active_weight": [
+      -2.0,
+      3.0
+    ],
+    "same_optimizer": "frozen v44 exact-curved BVLS trust region",
+    "same_outer_iteration_cap": 8,
+    "same_exact_forward_count_per_arm_after_explicit_cost_padding": 9,
+    "same_jvp_count_per_arm_after_explicit_cost_padding": 48,
+    "same_vjp_inside_search": 0,
+    "cost_padding": "after each natural search terminates, repeat the final exact forward and zero-direction JVP only until both arms have exactly 9 F and 48 JVP; padding is included in wall time and cannot change candidate weights",
+    "S5_padding_cannot_change_candidate": true,
+    "S6_padding_cannot_change_candidate": true,
+    "selected_candidate_and_prediction_are_sealed_before_truth_load": true,
+    "S6_w6_zero_ablation_is_exactly_forward_scored_before_truth_load": true
+  },
+  "logical_ledger_maximum": {
+    "shared_straight_basis": {
+      "A": 4,
+      "A_transpose": 4
+    },
+    "first_and_second_direction_preparation": {
+      "F": 1,
+      "JVP": 1,
+      "VJP": 2
+    },
+    "direction_audit_separate_from_method_cost": {
+      "F": 6,
+      "JVP": 9,
+      "VJP": 1
+    },
+    "S5_padded_search": {
+      "F": 9,
+      "JVP": 48,
+      "VJP": 0
+    },
+    "S6_search": {
+      "F": 9,
+      "JVP": 48,
+      "VJP": 0
+    },
+    "S6_w6_zero_ablation": {
+      "F": 1,
+      "JVP": 0,
+      "VJP": 0
+    }
+  },
+  "stage_b_complete_gate": {
+    "truth_may_be_loaded_only_after_stage_a_ready": true,
+    "per_metric_compatibility": "field, gradient and observation must each be <= 1.01 times Direct-K4",
+    "zero_no_harm": "field, gradient and observation must each be no worse than Zero",
+    "direct_k3_observation_control": "observation must be no worse than Direct-K3 plus 1e-12",
+    "direct_k3_pareto_control": "candidate must not be Pareto dominated by Direct-K3",
+    "direction_attribution": "S6 passes, S5 cost-padded control fails, abs(w6) > 1e-6, and the exact w6=0 ablation fails at least one complete-gate check",
+    "fragile_witness_margin": "a witness with less than 1e-3 margin to any 1.01 Direct-K4 metric gate is flagged fragile"
+  },
+  "decision_rules": {
+    "mechanism_witness": "all direction gates pass and the S6 direction-attribution gate passes",
+    "degenerate_direction": "implementation and identities pass but out-of-span energy is below 0.05",
+    "degenerate_observation_tangent": "field-space direction gates pass but Jd6 does not add the frozen observation-space energy/rank",
+    "bounded_negative": "direction gates pass but S6 does not pass the complete attribution gate",
+    "inconclusive": "any implementation, identity, parity, finite-value, ledger, Stage-A ordering or independent-replay check fails",
+    "after_one_S2_witness": "freeze the unchanged method before running S1, S3 and S4; a witness closer than 1e-3 to any Direct-K4 compatibility boundary is fragile and does not authorize expansion; do not train a network yet",
+    "training_authorization": "requires unchanged witnesses on all four opened snapshots and a separate learning contract",
+    "six_space_impossibility_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  },
+  "required_independent_validation": [
+    "do not import the v51 runner",
+    "require a clean tracked worktree and independently recompute the source commit, four-file source closure, parent-evidence roster and Python/NumPy/PyTorch environment binding",
+    "independently regenerate and seal d5c from J^T r0, then verify high-direction parity to v44",
+    "independently recompute q5, alpha5, r1, g1 and d6",
+    "independently rerun both padded S5 and S6 searches",
+    "independently reconstruct all candidate fields and predictions",
+    "independently load truth only after validating Stage-A READY",
+    "independently recompute all metrics, gates, ledgers and final decision"
+  ]
+}
