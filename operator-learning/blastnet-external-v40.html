@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="SARC-K3-M4 v40.2 在 BLASTNet 预混 H2-air DNS 上的冻结外部精度检验，以及 v41-v53 从固定 Krylov span、六维连续 oracle 到 fixed-step 体素切换的机理诊断。" />
-  <title>BLASTNet 外部检验 v40.2 × 连续六维诊断 v53 | OERF C 路线</title>
+  <meta name="description" content="SARC-K3-M4 v40.2 在 BLASTNet 预混 H2-air DNS 上的冻结外部精度检验，以及 v41-v55 从 Krylov span、连续 oracle 到冻结 dual CNN 零适配控制的机理诊断。" />
+  <title>BLASTNet 外部检验 × w16d2 dual 迁移控制 v55 | OERF C 路线</title>
   <style>
     :root {
       --ink: #17211d;
@@ -312,6 +312,7 @@
     <a href="#verdict">判决</a>
     <a href="#evidence">证据</a>
     <a href="#diagnosis">机理</a>
+    <a href="#w16d2-transfer-v55">v54-v55 dual 迁移</a>
     <a href="#continuous-six-space-v53">v53 连续六维诊断</a>
     <a href="#six-space-v52">v52 六维候选表</a>
     <a href="#second-residual-adjoint-v51">v51 第二残差伴随</a>
@@ -338,12 +339,14 @@
         <span class="chip fail">v51 第六方向增秩但梯度仍 FAIL</span>
         <span class="chip fail">v52 六维冻结表 0 / 2,312</span>
         <span class="chip fail">v53 连续 oracle 无结论</span>
+        <span class="chip fail">v54-v55 dual 迁移严格 FAIL</span>
         <span class="chip warn">fixed-step cell switch 已定位</span>
         <span class="chip warn">资源门未授权</span>
         <span class="chip fail">algorithm_breakthrough=false</span>
       </div>
       <div class="actions">
         <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md">阅读完整负结果</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_w16d2_transfer_controls_v55_result_2026-07-30.md">阅读 v54-v55 dual 迁移判决</a>
         <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_continuous_oracle_v53_result_2026-07-30.md">阅读 v53 连续 oracle 判决</a>
         <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_truth_feasible_roster_v52_result_2026-07-29.md">阅读 v52 六维候选表判决</a>
         <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_second_residual_adjoint_v51_result_2026-07-29.md">阅读 v51 第二残差伴随诊断</a>
@@ -603,6 +606,52 @@
           <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_second_residual_adjoint_v51_result_2026-07-29.md">读 v51 完整判决</a>
           <a class="button" href="../docs/blastnet_h2air_phi05_second_residual_adjoint_v51_public_summary.json">打开 v51 脱敏摘要</a>
           <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_second_residual_adjoint_v51.png">查看 v51 总图</a>
+        </div>
+      </div>
+
+      <div id="w16d2-transfer-v55" style="scroll-margin-top:70px; padding-top:30px;">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">v54-v55 · frozen PoolFire dual CNN · zero BLASTNet adaptation</div>
+            <h2>存在小幅迁移信号，但没有达到同精度少一次迭代</h2>
+          </div>
+          <p>这两轮不再搜索真值系数。模型只看 2,072 维部署观测，经精确 A<sup>T</sup> lift 与未修改 CGLS；权重、输入排布和归一化全部冻结。</p>
+        </div>
+        <div class="grid-3">
+          <div class="panel">
+            <h3 class="fail-text">v54 · Dual-K1 严格失败</h3>
+            <p><code>2A+2A^T</code> 下，gradient 中位比同成本 Zero-K2 好 4.28%，但 field 与 observation 分别差 1.53% / 6.06%。</p>
+          </div>
+          <div class="panel">
+            <h3>v55 · 同成本出现弱信号</h3>
+            <p><code>3A+3A^T</code> 下，field / observation 中位比 Zero-K3 好 0.42% / 1.15%，但 gradient 差 1.62%。</p>
+          </div>
+          <div class="panel">
+            <h3 class="fail-text">仍追不上 Zero-K4</h3>
+            <p>Dual-K2 / Zero-K4 的 field / gradient / observation 中位比为 <code>1.023785 / 0.984510 / 1.163812</code>；四帧完整门 0/4。</p>
+          </div>
+        </div>
+        <figure class="figure" style="margin-top:18px;">
+          <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_w16d2_transfer_controls_v55.png">
+            <img src="../assets/blastnet_h2air_phi05_w16d2_transfer_controls_v55.png" alt="PoolFire 冻结 w16d2 dual CNN 在 BLASTNet 上的 v54-v55 同成本和 matched-accuracy 对照" />
+          </a>
+          <figcaption>上：Dual-K1/K2 与同成本 Zero 及 Zero-K4 的三项中位误差。下：v55 候选比值；低于 1 才表示更好。field 与 observation 的同成本小收益不足以抵消 gradient harm 和 Zero-K4 缺口。</figcaption>
+        </figure>
+        <div class="alert fail" style="margin-top:15px;">
+          <strong>严格状态：</strong>
+          <code>FAIL_POSTOPEN_W16D2_DUAL_K2_TRANSFER_HEADROOM_V55</code>。两套实现分别重算网络、CGLS、调用账和全部指标，最大绝对指标差为 <code>0</code>。
+        </div>
+        <div class="alert warn" style="margin-top:15px;">
+          <strong>策略改变：</strong>
+          不把同一 detector CNN 放大成 FNO。下一表示先由冻结几何 A 生成 measurement-range basis，再训练一个约数百参数的 observation-only dual gate；geometry-only 线性控制先行。
+        </div>
+        <div class="alert info" style="margin-top:15px;">
+          BLASTNet truth 在 v40 已经打开，因此这里只是 post-open 机理控制，不是 fresh 外部泛化。没有 matched-accuracy 调用减少、wall/RSS 加速、真实 BOST 或论文成功；<code>algorithm_breakthrough=false</code>。
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_w16d2_transfer_controls_v55_result_2026-07-30.md">读 v54-v55 完整判决</a>
+          <a class="button" href="../docs/blastnet_h2air_phi05_w16d2_transfer_controls_v55_public_summary.json">打开脱敏摘要</a>
+          <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_w16d2_transfer_controls_v55.png">查看对照图</a>
         </div>
       </div>
 
@@ -912,7 +961,7 @@
         </div>
       </div>
       <div class="alert" style="margin-top:15px;">
-        当前最窄、最有信息量的结论是：v53 的正式连续 oracle、Powell 与 Sobol 都没有找到六方向完整门 witness；同时 fixed-step cell switch 说明 smooth KKT 不能单独裁决这个表示。旧六方向继续加预算的边际价值已经很低，下一实验直接改变表示本身。
+        当前最窄、最有信息量的结论是：v53 使旧六方向路线停止；v54-v55 又证明冻结 dual CNN 虽有一点跨数据族信号，却仍不能以少一次调用追平 Zero-K4。下一实验不再扩大 CNN，而是直接改变 measurement-space 表示。
       </div>
     </section>
 
@@ -941,6 +990,8 @@
             <tr><td>v51 第二残差伴随增广</td><td class="fail-text">有界负结果</td><td>方向新增秩且 observation 过门，但 gradient / K4 为 1.030041；完整门仍失败</td></tr>
             <tr><td>v52 六维真值可行候选表</td><td class="fail-text">固定表负结果</td><td>2,312 个请求由两套实现各自精确评分，0 个完整门 witness；不证明连续六维无解</td></tr>
             <tr><td>v53 六维连续 oracle</td><td class="fail-text">INCONCLUSIVE</td><td>12 起点、3,088 F 独立重放；0 witness，但终点与非光滑边界不足以支持不存在性结论</td></tr>
+            <tr><td>v54 冻结 w16d2 Dual-K1</td><td class="fail-text">严格 FAIL</td><td>gradient 有同成本收益，但 field / observation 伤害；独立复算最大差 0</td></tr>
+            <tr><td>v55 冻结 w16d2 Dual-K2</td><td class="fail-text">严格 FAIL</td><td>同成本 field / observation 略优于 Zero-K3，但 gradient 变差且未追平 Zero-K4</td></tr>
             <tr><td>固定四方向 selector</td><td class="fail-text">不授权训练</td><td>oracle 仍未找到完整门候选</td></tr>
             <tr><td>六系数预测器</td><td class="fail-text">路线关闭</td><td>v52 固定表与 v53 连续搜索均无 witness；下一假设改用新的 observation-only dual 表示</td></tr>
             <tr><td>资源加速</td><td>未运行</td><td>精度失败后按协议无资格测速</td></tr>
@@ -958,7 +1009,7 @@
     </section>
 
     <footer>
-      脱敏公开页不包含原始 DNS、私有场、模型参数、候选权重、执行路径、release 或哈希。最新证据：v53 正式连续 oracle 经独立重放仍为 INCONCLUSIVE；Powell 最佳 field / gradient / observation 比为 0.982228 / 1.010000 / 1.033484，fixed-step cell switch 已定位但连续六维无解未证明；algorithm_breakthrough=false。
+      脱敏公开页不包含原始 DNS、私有场、模型参数、候选权重、执行路径、release 或哈希。最新证据：v54-v55 的冻结 w16d2 dual 控制经两套实现逐项复算，Dual-K2 相对同成本 Zero-K3 有小幅 field / observation 收益，但 gradient 变差且未追平 Zero-K4；下一表示改为 geometry-range basis；algorithm_breakthrough=false。
     </footer>
   </main>
   <script>

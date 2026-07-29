@@ -1,0 +1,74 @@
+{
+  "schema_version": "oerf-blastnet-sparse-detector-replay-protocol-59.0",
+  "status": "FROZEN_AFTER_EXTERNAL_COORDINATE_GEOMETRY_AUDIT_BEFORE_B_BUILD_V59",
+  "scientific_question": "Does the exact sparse detector-space CGLS K4 replay survive a separately constructed BLASTNet coordinate geometry without reusing the PoolFire detector Gram or sparsity pattern?",
+  "evidence_role": "post-open external-coordinate-geometry transfer of a classical fixed-geometry mechanism",
+  "source": {
+    "dataset": "BLASTNet premixed H2-air DNS phi=0.5 public proxy bundle v40.2",
+    "snapshot_count": 5,
+    "observation_shape": [5, 2072],
+    "field_shape": [16, 16, 32],
+    "truth_may_be_opened": false
+  },
+  "geometry_boundary": {
+    "construct_A_from_external_coordinates_only": true,
+    "reuse_poolfire_B": false,
+    "reuse_poolfire_sparse_pattern": false,
+    "external_coordinate_spans_m": {
+      "x": 0.050322581683435744,
+      "y": 0.030967743406372684,
+      "z": 0.01574603249392812
+    },
+    "poolfire_coordinate_spans_m_for_context": {
+      "x": 0.4499999782707118,
+      "y": 0.4499999782707118,
+      "z": 0.9300000208509551
+    },
+    "same_three_axis_projection_topology": true,
+    "arbitrary_camera_layout_transfer": false
+  },
+  "sparsification": {
+    "input": "fresh external-geometry float64 B=A A^T",
+    "absolute_threshold": "64 * float64_epsilon * max(1,max_abs_B)",
+    "observation_or_truth_used_to_select_threshold": false,
+    "format": "scipy CSR float64 with int32 indices",
+    "maximum_discarded_relative_frobenius_norm": 1e-14,
+    "maximum_storage_bytes": 2000000,
+    "minimum_dense_storage_reduction_fraction": 0.95,
+    "maximum_density": 0.05
+  },
+  "algebra_gate": {
+    "steps": 4,
+    "required_snapshot_count": 5,
+    "maximum_relative_field_difference": 1e-11,
+    "maximum_relative_residual_difference": 1e-11,
+    "baseline": "zero-start CGLS K4 with 4A+4A-transpose",
+    "candidate": "4 sparse external-B products plus one exact external A-transpose"
+  },
+  "single_process_wall_screen": {
+    "candidate_over_baseline_median_maximum": 0.9,
+    "diagnostic_only_until_fresh_process_gate": true
+  },
+  "fresh_process_gate_if_algebra_and_wall_pass": {
+    "repetitions": 17,
+    "arms": ["zero_cgls_k4", "sparse_detector_replay_k4"],
+    "trajectory_equal_outer_median_wall_ratio_maximum": 0.9,
+    "whole_pipeline_peak_rss_ratio_maximum": 1.05
+  },
+  "decision_rule": {
+    "pass": "PASS_EXTERNAL_COORDINATE_GEOMETRY_SPARSE_REPLAY_V59",
+    "fail": "FAIL_EXTERNAL_COORDINATE_GEOMETRY_SPARSE_REPLAY_V59",
+    "inconclusive": "INCONCLUSIVE_EXTERNAL_COORDINATE_GEOMETRY_SPARSE_REPLAY_V59"
+  },
+  "next_if_pass": "Run a sealed fresh-process resource gate, then treat exact sparse B as a fixed physics core and learn only geometry-change or curved-ray corrections.",
+  "next_if_fail": "Retain v58 as one-geometry classical evidence and do not claim transfer; inspect topology-specific sparsity before any learned correction.",
+  "claim_limits": {
+    "external_coordinate_geometry_transfer": false,
+    "arbitrary_camera_geometry_transfer": false,
+    "operator_learning_result": false,
+    "real_BOST": false,
+    "global_novelty_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

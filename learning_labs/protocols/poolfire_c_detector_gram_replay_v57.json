@@ -1,0 +1,105 @@
+{
+  "schema_version": "oerf-poolfire-c-detector-gram-replay-protocol-57.0",
+  "status": "FROZEN_BEFORE_DETECTOR_GRAM_CONSTRUCTION_OR_TRAJECTORY_REPLAY_V57",
+  "scientific_question": "For one fixed linear straight-ray geometry, can an offline exact detector Gram B=A A^T replay zero-start CGLS K4 online with four dense B products and one final exact A^T, while preserving the frozen K4 field and residual?",
+  "evidence_role": "classical fixed-geometry online-call ceiling and compression teacher",
+  "parent_protocols": {
+    "poolfire_c_cross_trajectory_experiment_v1_sha256": "bb536f8b0f25a4ced47263798b7d5cdb0efa94308d3796a6ced6e7c37fd1d76b",
+    "poolfire_c_fit_coverage_expansion_v4_sha256": "c934c61b3629f97c52078361bc1d0caa5f58b887024f2e6fc866d3de46a58767",
+    "poolfire_trajectory_protocol_v1_sha256": "c9ec3de5396b59c9fe75510fa5fcc9e3d3bcee6ea772ff4e42aa3115a5ee702b"
+  },
+  "geometry_source": {
+    "operator": "frozen three-view straight-ray A",
+    "construction_reads": [
+      "calibration coordinates",
+      "operator implementation"
+    ],
+    "construction_forbids": [
+      "trajectory observations",
+      "trajectory truth",
+      "validation truth",
+      "test truth",
+      "learned parameters"
+    ]
+  },
+  "offline_setup": {
+    "matrix": "B=A A^T in exact float64",
+    "shape": [
+      2072,
+      2072
+    ],
+    "conceptual_full_A_calls": 2072,
+    "conceptual_full_A_transpose_calls": 2072,
+    "storage_bytes": 34345472,
+    "setup_cost_must_be_reported_and_amortized": true
+  },
+  "online_replay": {
+    "baseline": "zero-start strict CGLS K4",
+    "detector_products": 4,
+    "final_full_A_calls": 0,
+    "final_full_A_transpose_calls": 1,
+    "recurrence": [
+      "r0=y",
+      "b0=B r0",
+      "d0=r0 and q0=b0",
+      "gamma_i=dot(r_i,b_i)",
+      "alpha_i=gamma_i/dot(q_i,q_i)",
+      "u_i_plus_1=u_i+alpha_i d_i",
+      "r_i_plus_1=r_i-alpha_i q_i",
+      "b_i_plus_1=B r_i_plus_1",
+      "beta_i=dot(r_i_plus_1,b_i_plus_1)/gamma_i",
+      "d_i_plus_1=r_i_plus_1+beta_i d_i",
+      "q_i_plus_1=b_i_plus_1+beta_i q_i",
+      "x4=A^T u4"
+    ]
+  },
+  "opened_fit_trajectory_ids": [
+    "p=14kw_size=05",
+    "p=22kw_size=03",
+    "p=33kw_size=01",
+    "p=45kw_size=05",
+    "p=58kw_size=03"
+  ],
+  "fit_coverage_first_batch_ids": [
+    "p=14kw_size=05",
+    "p=22kw_size=03"
+  ],
+  "validation_or_test_opened_by_this_screen": [],
+  "equivalence_gates": {
+    "maximum_relative_field_difference": 1e-11,
+    "maximum_relative_residual_difference": 1e-11,
+    "maximum_gram_symmetry_error": 1e-12,
+    "minimum_random_quadratic_form": -1e-10,
+    "required_frame_count": 505
+  },
+  "resource_gates": {
+    "report_setup_wall_and_peak_rss": true,
+    "report_online_wall_and_peak_rss": true,
+    "report_dense_B_wall_separately": true,
+    "report_final_A_transpose_wall_separately": true,
+    "report_break_even_frame_count": true,
+    "online_call_reduction_is_not_wall_time_speedup": true
+  },
+  "decision_rule": {
+    "algebra_pass": "PASS_EXACT_FIXED_GEOMETRY_CGLS_K4_REPLAY_V57",
+    "algebra_fail": "FAIL_EXACT_FIXED_GEOMETRY_CGLS_K4_REPLAY_V57",
+    "deployment_pass_requires": [
+      "all equivalence gates pass",
+      "fresh-process trajectory-equal wall median is lower than Zero-K4",
+      "no trajectory wall harm exceeds five percent",
+      "whole-pipeline peak RSS ratio is at most 1.05",
+      "reported use horizon exceeds the measured break-even frame count"
+    ]
+  },
+  "next_step_if_algebra_pass": "Use exact B only as a classical ceiling and teacher; test structured sparse, block, or learned compression without changing the one-final-A^T replay contract.",
+  "next_step_if_algebra_fail": "Stop and repair the recurrence or Gram construction before any compression or neural model.",
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "operator_learning_result": false,
+    "external_generalization": false,
+    "changing_geometry_support": false,
+    "nonlinear_or_curved_BOST_support": false,
+    "real_BOST": false,
+    "paper_success": false
+  }
+}

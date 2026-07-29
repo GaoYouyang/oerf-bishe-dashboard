@@ -339,10 +339,13 @@
       <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
       <a href="#objective-novelty">优化目标与原创性</a>
       <a href="#latest-gate">算法与实验</a>
+      <a href="#external-sparse-v59">v59 外部几何混合结果</a>
+      <a href="#sparse-detector-v58">v58.1 稀疏探测器重放</a>
       <a href="#trajectory-gate">多轨迹协议</a>
       <a href="#representation-gate">表示机制</a>
       <a href="#transport-proxy-gate">输运与校准门</a>
       <a href="#g0-evidence">真实 CFD 代理</a>
+      <a href="blastnet-external-v40.html#w16d2-transfer-v55">v54-v55 dual 迁移控制</a>
       <a href="blastnet-external-v40.html#continuous-six-space-v53">v53 连续六维诊断</a>
       <a href="blastnet-external-v40.html#six-space-v52">v52 六维候选表</a>
       <a href="blastnet-external-v40.html#second-residual-adjoint-v51">v51 第二残差伴随</a>
@@ -365,23 +368,32 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-30 · v53</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-30 · v59</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v53 已完成 12 起点连续约束 oracle 与独立重放，共 <code>3,088 F + 3,070 reverse-equivalent</code>，但正式状态仍是 <code>INCONCLUSIVE</code>。12 起点 Powell 的最佳 field / gradient / observation 比为 <code>0.982228 / 1.010000 / 1.033484</code>，仍未过门。双侧诊断进一步定位到一个 midpoint 的体素边界切换可造成约 <code>4.07e-5</code> 单侧 objective 跳变，因此停止继续给旧六方向 smooth optimizer 加预算，改为预注册最小 observation-only dual warm initializer；<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v57-v58 在固定 PoolFire 几何下令 <code>B=A A^T</code>，用 detector-space CR 精确重放 zero-start CGLS K4；505 帧的最大场差为 <code>4.34e-16</code>，170 个 fresh process 的端到端 wall ratio 为 <code>0.824652</code>、RSS ratio 为 <code>1.000865</code>。最新 v59 从 BLASTNet 外部坐标重新构造 <code>A</code>、<code>B</code> 和 CSR：代数迁移以最大场差 <code>4.30e-15</code> 通过，但 5 帧 fresh 资源门严格失败，核心计算 ratio <code>0.809684</code>，outer wall <code>1.023894</code>，RSS <code>1.153122</code>。因此当前只成立“同一三轴拓扑内的坐标尺度/长宽比代数迁移”，不成立跨几何资源加速、任意相机迁移、真实 BOST 或 learned component，<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="blastnet-external-v40.html#continuous-six-space-v53">打开 v53 判决</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_continuous_oracle_v53_result_2026-07-30.md">读 v53 完整判决</a>
-      <a class="button" href="../docs/blastnet_h2air_phi05_six_space_continuous_oracle_v53_public_summary.json">打开 v53 脱敏结果</a>
+      <a class="button primary" href="#external-sparse-v59">打开 v59 混合结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_sparse_detector_replay_v59_result_2026-07-30.md">读 v59 完整解释</a>
+      <a class="button" href="#sparse-detector-v58">回看 v58.1 关键正结果</a>
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert critical" style="margin-top:12px;">
-      <strong>最新科学增量：v53 抓到 fixed-step 体素边界跳变，旧六方向 smooth-optimizer 路线停止</strong>
-      <span>正式连续 oracle 经独立重放仍无结论；后验 Powell 与 Sobol 都未找到正见证。N=96 终点的 <code>198,912</code> 个采样位置中，正向扰动仅有一个 midpoint 跨 cell，却让 central derivative 从 AD 预测的 <code>-1.176e-4</code> 变成 <code>2.036e2</code>。这解释了 smooth KKT 为何不能独立裁决，但不证明连续六维无解。<a href="blastnet-external-v40.html#continuous-six-space-v53">打开 v53 证据</a>。</span>
+      <strong>最新外部结果：代数 PASS，5 帧部署资源 FAIL</strong>
+      <span>外部坐标下候选仍以机器精度重放 K4，CSR 仍只有 <code>2.58%</code> 非零；但 34 个 fresh process 证明短序列没有摊薄稀疏 <code>B</code> 的加载与内存，outer wall 慢 <code>2.39%</code>、RSS 多 <code>15.31%</code>。这项负证据把下一门收窄为事前冻结的 batch-length 摊销曲线和真正不同的视角拓扑，而不是把单进程核心加速包装成泛化。<a href="#external-sparse-v59">查看完整证据</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="#external-sparse-v59">v59 外部坐标混合结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_sparse_detector_replay_v59_result_2026-07-30.md">v59 完整裁决</a>
+      <a class="button" href="../docs/blastnet_sparse_detector_replay_v59_public_summary.json">v59 脱敏结果</a>
+      <a class="button primary" href="#sparse-detector-v58">v58.1 稀疏探测器重放</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_sparse_detector_replay_v58_result_2026-07-30.md">v58.1 完整解释</a>
+      <a class="button" href="../docs/poolfire_c_sparse_detector_replay_v58_public_summary.json">v58.1 脱敏结果</a>
+      <a class="button primary" href="blastnet-external-v40.html#w16d2-transfer-v55">v54-v55 dual 迁移控制</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_w16d2_transfer_controls_v55_result_2026-07-30.md">v54-v55 完整结果</a>
+      <a class="button" href="../docs/blastnet_h2air_phi05_w16d2_transfer_controls_v55_public_summary.json">v54-v55 脱敏结果</a>
       <a class="button primary" href="blastnet-external-v40.html#continuous-six-space-v53">v53 连续六维与体素切换</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_continuous_oracle_v53_result_2026-07-30.md">v53 完整判决</a>
       <a class="button" href="../docs/blastnet_h2air_phi05_six_space_continuous_oracle_v53_public_summary.json">v53 脱敏结果</a>
@@ -539,8 +551,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert critical">
-      <strong>最新开发判决：v53 正式 oracle 无结论，后验搜索无 witness，并定位 fixed-step cell switch</strong>
-      <span>正式 <code>3,088 F</code> 与独立重放没有形成可用的 bounded negative；Powell 12 起点的最佳 observation / Direct-K4 为 <code>1.033484</code>。N=96 的单个 midpoint 跨体素边界造成约 <code>4.07e-5</code> objective 跳变，说明 smooth KKT 不能单独裁决。旧六系数 selector 关闭，下一项改为新的 deployment-visible dual warm-start 表示。没有外部同精度、真实 BOST 或算法突破，<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新开发判决：v54-v55 证实旧 dual CNN 有弱迁移信号，但严格 matched-accuracy 仍失败</strong>
+      <span>Dual-K1 的 gradient 优于同成本 Zero-K2，却在 field 与 observation 上更差；多走一步后，Dual-K2 相对同成本 Zero-K3 的 field / observation 略优，但 gradient 恶化 1.62%，且 observation 仍比 Zero-K4 差 16.38%。两轮均由独立实现复算到最大差 0。停止扩大同类 CNN，转向 geometry-only measurement-range basis + 小型 dual gate；没有 fresh 外部泛化、真实 BOST 或算法突破。</span>
     </div>
   </header>
 
@@ -671,6 +683,9 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v59 资源 FAIL</span><span class="chip blue">外部坐标代数 PASS</span></div><h3 style="margin-top:10px;">External-coordinate sparse replay</h3><p>从 BLASTNet 坐标重新构造 <code>A</code>、<code>B</code> 和 CSR，没有复用 PoolFire 稀疏位置。独立重算最大 field / residual 差为 <code>4.30e-15 / 6.03e-15</code>，但 34 个 5 帧 fresh process 的核心/outer/RSS ratio 为 <code>0.809684 / 1.023894 / 1.153122</code>。当前只证明同一三轴拓扑内的代数迁移，资源迁移失败。</p></article>
+        <article class="panel"><div class="chips"><span class="chip gold">v58.1 重大代理正结果</span><span class="chip blue">505 帧 + 170 fresh process</span></div><h3 style="margin-top:10px;">Sparse detector-space exact replay</h3><p>固定几何下用稀疏 <code>B=A A^T</code> 精确重放 zero-start CGLS K4：最大 field / residual 差为 <code>4.34e-16 / 1.44e-15</code>，完整物理调用从 <code>4A+4A^T</code> 变成 <code>4B+1A^T</code>。CSR 少 <code>96.11%</code> 存储；fresh 端到端 wall ratio <code>0.824652</code>、RSS p90 ratio <code>1.000865</code>。v59 已证明外部坐标代数迁移，但没有保住短序列资源优势。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v54-v55 严格 FAIL</span><span class="chip blue">两套实现最大差 0</span></div><h3 style="margin-top:10px;">Frozen w16d2 dual transfer controls</h3><p>PoolFire 冻结 CNN 在 BLASTNet 上并非完全失效：Dual-K2 相对同成本 Zero-K3 的 field / observation 中位改善 0.42% / 1.15%，但 gradient 恶化 1.62%；相对 Zero-K4 的 observation 仍差 16.38%，四帧完整门 0/4。该证据支持换成 geometry-range 表示，不支持直接扩大同类 CNN。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v53 连续 oracle 无结论</span><span class="chip blue">3,088 F + 3,070 reverse</span></div><h3 style="margin-top:10px;">Six-space oracle + cell-switch diagnosis</h3><p>正式 12 起点由两套程序重放，0 个完整门 witness，但终点不足以形成 bounded negative。后验 Powell 最佳 observation 比为 1.033484；一个 midpoint 的体素边界切换可制造 4.07e-5 单侧 objective 跳变。停止旧六方向 smooth optimization，但不宣称连续六维无解。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v50 固定表负结果</span><span class="chip blue">2,304 个候选独立重算</span></div><h3 style="margin-top:10px;">Replayable five-space roster</h3><p>v49 因自适应局部请求不可稳定重放而无结论；v50 改用目标函数无关固定表，完整门 0/2,304。最佳 gradient/K4 为 1.01 时 observation/K4 仍为 1.045775。v51 随后真实改变了 span，而不是继续扩大同类搜索。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v44.3 有界负结果</span><span class="chip blue">Stage A/B 独立复算 PASS</span></div><h3 style="margin-top:10px;">Single coarse curved-adjoint enrichment</h3><p>第五方向来自 Direct-K3 的部署可见 curved residual VJP，与旧 span 最大余弦仅 2.95e-15，旧 span 外能量为 19.0%-31.4%。相对配对四方向控制，四帧 field 与 observation 都改善；但 gradient / K4 全为 1.0148-1.0312，完整门 0/4。正式账本 <code>96 F + 292 JVP + 4 VJP</code>，所以只保留为机理负结果。</p></article>
@@ -692,6 +707,36 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="sparse-detector-v58" class="alert success" style="margin-top:13px;">
+        <strong>v58.1：第一次把精确等价、少完整调用、fresh wall 与 RSS 四道门同时越过</strong>
+        <span>五条已打开 PoolFire fit 轨迹共 <code>505</code> 帧；独立 validator 重新构造 CSR、重新跑全部帧且没有导入正式 core/runner。资源门使用 <code>5 trajectories × 2 arms × 17 repeats = 170</code> 个新进程，端到端 ratio <code>0.824652</code>，即基线的 <code>82.47%</code>。当前可以称“固定公开 straight-ray 代理上的重大机理正结果”，但 <code>real_BOST=false</code>、<code>operator_learning_result=false</code>、<code>algorithm_breakthrough=false</code>；v59 只新增了同三轴拓扑的外部坐标代数迁移，资源迁移仍失败。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sparse_detector_replay_v58.png" aria-label="打开 v58.1 稀疏探测器空间重放结果总图">
+          <img src="../assets/poolfire_c_sparse_detector_replay_v58.png" alt="v58.1 的机器精度等价、几何稀疏压缩、完整物理调用账和 fresh-process wall 结果" />
+        </a>
+        <figcaption>左上：场与 residual 的独立复算差；右上：dense B 与 CSR B 存储；左下：每帧完整 A/A^T 调用；右下：五条轨迹的 fresh 核心计算与端到端 wall ratio。离线黑盒构造 B 的完整调用 break-even 约为 592 帧，当前 505 帧尚未单独越过该 setup 门。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_sparse_detector_replay_v58_result_2026-07-30.md">读 v56-v58 完整推导与裁决</a>
+        <a class="button" href="../docs/poolfire_c_sparse_detector_replay_v58_public_summary.json">打开机器可读摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sparse_detector_replay_v58.png">打开结果图原尺寸</a>
+      </div>
+      <div id="external-sparse-v59" class="alert critical" style="margin-top:13px;">
+        <strong>v59：外部坐标重放以机器精度通过，5 帧 fresh wall/RSS 双双失败</strong>
+        <span>外部 BLASTNet 坐标的尺度和长宽比明显不同，新的 <code>B</code> 与稀疏位置均从头构造。独立 validator 没有导入正式 replay core，5 个 observation 的最大 field / residual 差为 <code>4.30e-15 / 6.03e-15</code>；但 <code>17 repeats × 2 arms = 34</code> 个 fresh process 给出核心计算 <code>0.809684×</code>、outer wall <code>1.023894×</code>、RSS p90 <code>1.153122×</code>。所以 <code>external_coordinate_algebra_transfer=true</code>，<code>fresh_resource_transfer=false</code>，<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fblastnet_sparse_detector_replay_v59.png" aria-label="打开 v59 外部坐标稀疏探测器重放混合结果总图">
+          <img src="../assets/blastnet_sparse_detector_replay_v59.png" alt="v59 外部坐标几何的代数等价与稀疏结构通过，但五帧 fresh wall 和 RSS 失败" />
+        </a>
+        <figcaption>上排：外部坐标几何仍保持机器精度重放和 2.58% 稀疏度。下排：核心计算更快，但 5 帧 worker 未摊薄加载，端到端 wall 与 peak RSS 均越过失败线。视图拓扑仍是三正交轴，不能称任意相机迁移。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_sparse_detector_replay_v59_result_2026-07-30.md">读 v59 完整推导与裁决</a>
+        <a class="button" href="../docs/blastnet_sparse_detector_replay_v59_public_summary.json">打开 v59 机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_sparse_detector_replay_v59.png">打开 v59 结果图原尺寸</a>
       </div>
       <div id="v52-six-space-roster" class="alert critical" style="margin-top:13px;">
         <strong>v52：冻结六维真值可行候选表仍为 0 / 2,312</strong>
@@ -1604,9 +1649,11 @@
 已勾选证据门：${passed}
 最近未通过：${pending}
 
-当前最新证据是 BLASTNet 开封 S2 上的 v53。正式 12 起点连续约束 oracle 经独立程序完整重放，共执行 3,088 F + 3,070 reverse-equivalent，完整门仍为 0；最佳正式 field / gradient / observation 比为 0.982639 / 1.010000 / 1.033843。后验 Powell 12 起点的最佳 observation 比为 1.033484，固定 Sobol 探测也没有找到正见证。
+当前固定 PoolFire 几何的 v58.1 仍是最强资源正结果：B=A A^T 只有 2.58% 非零，五条轨迹505帧的最大 field / residual 差为4.34e-16 / 1.44e-15；170个fresh process的端到端wall ratio为0.824652，RSS p90 ratio为1.000865。
 
-双侧诊断发现，N=96 终点的 198,912 个采样位置中，一个 midpoint 的单侧体素边界切换就造成约 4.07e-5 objective 跳变，因此 smooth KKT 不能独立裁决，但这仍不证明连续六维无解。现在停止旧六系数网络和无边界优化器加预算，下一项改为结果前冻结的最小 observation-only dual warm initializer。当前没有 matched-accuracy、调用/时间/内存优势、真实 BOST、外部泛化或论文成功。algorithm_breakthrough=false。
+最新 v59 从 BLASTNet 外部坐标重新构造 A、B 和 CSR，不复用 PoolFire 稀疏位置。独立重算5个observation的最大 field / residual 差为4.30e-15 / 6.03e-15，说明相同三轴拓扑内的坐标尺度/长宽比代数迁移成立。但34个五帧fresh process的核心/outer/RSS ratio为0.809684 / 1.023894 / 1.153122：核心更快，短序列端到端与内存双双失败。
+
+因此当前不是 learned operator、任意相机迁移或真实 BOST。下一项只允许冻结 batch-length 摊销曲线与真正不同视角拓扑；若物理核心仍成立，再只学习几何变化/曲折光线的小修正并保留精确回退。algorithm_breakthrough=false。
 
 截至 2026-07-26 的公开一级来源检索没有发现完全同构的整套方法，但 learned warm start、learned backprojection、neural operator + Krylov、WB-IPM 和 Learned ReSeSOp 都是强近邻；当前只主张组合级差异，不主张全球唯一。还需要确认组内是否已有未发表的 observation-space filter / warm start / 专利，以及真实流程中 A、A^T、光流、ray tracing 哪部分最贵。`;
       }

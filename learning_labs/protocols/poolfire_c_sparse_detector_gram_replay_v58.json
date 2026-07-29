@@ -1,0 +1,72 @@
+{
+  "schema_version": "oerf-poolfire-c-sparse-detector-gram-replay-protocol-58.0",
+  "status": "FROZEN_AFTER_GEOMETRY_ONLY_SPARSITY_AUDIT_BEFORE_TRAJECTORY_REPLAY_V58",
+  "scientific_question": "Can the fixed projection-first straight-ray detector Gram be reduced to a scale-aware exact sparse CSR operator that preserves Zero-CGLS K4 while converting the v57 online-call reduction into lower wall time and memory?",
+  "evidence_role": "classical fixed-geometry sparse operator replay candidate",
+  "parent": {
+    "v57_protocol_sha256": "049020d8aa213d9adbd119cb6b89652c66fe87120a0084e6280329dc7e63b7ec",
+    "v57_algebra_status": "PASS_EXACT_FIXED_GEOMETRY_CGLS_K4_REPLAY_V57",
+    "v57_maximum_field_relative_difference": 4.192199532155094e-16,
+    "v57_maximum_residual_relative_difference": 1.4188062575790523e-15
+  },
+  "sparsification": {
+    "input": "geometry-only float64 B=A A^T",
+    "absolute_threshold": "64 * float64_epsilon * max(1,max_abs_B)",
+    "trajectory_observation_or_truth_used_to_select_threshold": false,
+    "format": "scipy CSR float64 with int32 indices",
+    "maximum_discarded_relative_frobenius_norm": 1e-14,
+    "maximum_storage_bytes": 2000000,
+    "minimum_dense_storage_reduction_fraction": 0.95
+  },
+  "online_replay": {
+    "steps": 4,
+    "sparse_B_products": 4,
+    "final_full_A_calls": 0,
+    "final_full_A_transpose_calls": 1,
+    "baseline": "zero-start CGLS K4 with 4A+4A-transpose",
+    "same_recurrence_as_v57": true
+  },
+  "opened_fit_trajectory_ids": [
+    "p=14kw_size=05",
+    "p=22kw_size=03",
+    "p=33kw_size=01",
+    "p=45kw_size=05",
+    "p=58kw_size=03"
+  ],
+  "validation_or_test_opened_by_this_screen": [],
+  "algebra_gates": {
+    "required_frame_count": 505,
+    "maximum_relative_field_difference": 1e-11,
+    "maximum_relative_residual_difference": 1e-11
+  },
+  "single_process_resource_screen": {
+    "trajectory_equal_candidate_over_baseline_wall_median_maximum": 0.9,
+    "maximum_per_trajectory_wall_harm_ratio": 1.05,
+    "candidate_peak_rss_over_baseline_maximum": 1.05,
+    "status_is_diagnostic_until_fresh_process_repeats_pass": true
+  },
+  "fresh_process_gate_if_single_process_passes": {
+    "repetitions": 17,
+    "order": "deterministically shuffled and paired",
+    "trajectory_equal_outer_median_wall_ratio_maximum": 0.9,
+    "maximum_per_trajectory_wall_harm_ratio": 1.05,
+    "whole_pipeline_peak_rss_ratio_maximum": 1.05
+  },
+  "decision_rule": {
+    "algebra_pass": "PASS_EXACT_SPARSE_DETECTOR_GRAM_REPLAY_V58",
+    "algebra_fail": "FAIL_EXACT_SPARSE_DETECTOR_GRAM_REPLAY_V58",
+    "resource_pass_requires_fresh_process_gate": true
+  },
+  "next_step_if_resource_pass": "Use the sparse geometry operator as the fixed physics core and learn only a small observation-visible correction for geometry or nonlinear model mismatch.",
+  "next_step_if_resource_fail": "Keep sparse replay as a classical ceiling and compression teacher; do not claim deployment acceleration.",
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "operator_learning_result": false,
+    "fresh_process_speedup": false,
+    "whole_pipeline_RSS_benefit": false,
+    "external_generalization": false,
+    "changing_geometry_support": false,
+    "real_BOST": false,
+    "paper_success": false
+  }
+}

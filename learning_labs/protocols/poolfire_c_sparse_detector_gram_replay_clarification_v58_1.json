@@ -1,0 +1,32 @@
+{
+  "schema_version": "oerf-poolfire-c-sparse-detector-gram-resource-clarification-58.1",
+  "status": "FROZEN_AFTER_V58_RSS_AGGREGATION_ERROR_BEFORE_FULL_V58_1_RERUN",
+  "parent_protocol_sha256": "e4e8659987a140f51ee29ab0b241f54ebd9a30bdff68da0629bc29050ece01d8",
+  "invalidated_result_status": "FAIL_FRESH_PROCESS_SPARSE_DETECTOR_GRAM_RESOURCE_V58",
+  "error": "The v58 controller gated the maximum ratio between two independently launched process peaks. The established repository convention gates the candidate arm peak-RSS p90-higher divided by the reference arm peak-RSS p90-higher.",
+  "aggregation_authority": {
+    "prior_implementation": "site_tools/run_poolfire_c_dual_detector_native_v12_5.py",
+    "candidate_statistic": "p90 higher of all candidate fresh-worker peak_RSS_bytes",
+    "reference_statistic": "p90 higher of all reference fresh-worker peak_RSS_bytes",
+    "ratio": "candidate_p90_higher / reference_p90_higher"
+  },
+  "unchanged_gates": {
+    "trajectory_equal_outer_median_wall_ratio_maximum": 0.9,
+    "maximum_per_trajectory_wall_harm_ratio": 1.05,
+    "whole_pipeline_peak_rss_ratio_maximum": 1.05,
+    "repetitions": 17,
+    "fresh_process_count": 170
+  },
+  "rerun_policy": {
+    "reuse_v58_worker_measurements": false,
+    "rerun_all_170_fresh_processes": true,
+    "same_worker_binary_required": true,
+    "same_deterministic_shuffle_seed": 2026073058
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "external_generalization": false,
+    "real_BOST": false,
+    "paper_success": false
+  }
+}
