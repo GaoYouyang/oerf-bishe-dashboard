@@ -9334,9 +9334,10 @@ best observation / K4   1.045775
 gradient 安全额度全部用完，observation 仍高出门槛约 3.58 个百分点。继续在原五个
 方向上细调，信息价值已经很低。
 
-下一步不是训练五系数网络，也不是继续堆搜索点，而是构造第二条 curved
-Gauss-Newton Krylov 方向：先消去第五方向解释的 residual，再对剩余 residual 做
-VJP，并从现有五方向中正交化。它会真正改变 span。
+下一步不是训练五系数网络，也不是继续堆搜索点，而是构造第二个固定线性化
+residual-adjoint 增广方向：先消去第五方向解释的 residual，再对剩余 residual 做
+VJP，并从现有五方向中正交化。它会真正改变 span，但不能夸大成完整 Hessian 或
+二阶求解器。
 
 ```text
 fixed_candidate_roster_negative=true
@@ -9349,3 +9350,64 @@ paper_success=false
 
 完整结果见
 `docs/blastnet_h2air_phi05_fixed_roster_v50_result_2026-07-29.md`。
+
+## 280. v51：第六方向是真的，也真的被用了，但梯度安全仍没过
+
+v50 告诉我们原五个方向继续细调价值很低，所以这一轮没有再加搜索点，而是真正换了
+可达空间。具体做法是：先让现有第五方向解释一部分 curved observation residual，
+再把剩余 residual 通过冻结在 Direct-K3 的精确伴随 `J^T` 送回三维场，投到粗网格
+并从旧五方向中正交化，得到第六方向。
+
+它不是完整 Hessian 或二阶优化器，准确名称是“固定线性化的第二残差伴随增广方向”。
+
+独立流程重放器没有导入正式 runner，而是重新生成方向、S5/S6 搜索和所有指标；
+但两者共享冻结的 v44 curved forward/JVP/VJP、几何和 metric/gate 内核，所以不是
+外部独立物理实现。方向审计得到：
+
+```text
+粗网格旧 span 外能量       30.84%
+观测旧 span 外能量         38.54%
+观测切空间秩               5 -> 6
+选中 w6                    0.244372
+Stage-A 数组最大差         0
+最终 score 最大差          2.44e-15
+```
+
+这说明第六方向在当前固定线性化和参数域内既不是旧方向的局部数值重复，也不是
+“算出来但没使用”的装饰项；它不证明全局可辨识性或抗噪秩。
+
+相同搜索账 `9 F + 48 JVP` 下，S5 与 S6 相对 Direct-K4 的结果是：
+
+```text
+              field      gradient    observation
+S5            0.976447   1.031173    1.013825
+S6            0.975858   1.030041    1.008749
+w6=0 ablation 0.976052   1.030495    1.015399
+```
+
+**讲人话：**新方向有用，它把 observation 从 1.01 门外推进了门内；但 gradient
+仍为 `1.030041`，比门线高约 2.0 个百分点，所以完整门还是失败。这不是突破，但它
+把问题进一步钉死：只沿 observation residual 继续加伴随方向，能补观测，却没有
+消掉梯度安全瓶颈。
+
+S5 的四次额外 F 是 no-op padding，并没有增加搜索机会；第六方向准备的
+`1 F + 1 JVP + 2 VJP` 也另记。因此这里的“相同预算”只是名义搜索调用账匹配，不是
+端到端总成本相同。`w6=0` 消融也没有重新优化前五个权重，不能拿它证明五维连续空间
+不可能。
+
+下一项不训练大网络，也不机械加第三条同类方向。先在冻结六维 span 内做一次有界
+truth-feasible headroom 诊断，区分“六维空间本身没有合格点”和“部署可见 selector
+没有找到合格点”。这两种失败需要完全不同的后续算法。
+
+```text
+direction_is_real_and_used=true
+observation_gate_crossed=true
+complete_gate_pass=false
+six_space_impossibility_proven=false
+neural_training_authorized=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整结果见
+`docs/blastnet_h2air_phi05_second_residual_adjoint_v51_result_2026-07-29.md`。

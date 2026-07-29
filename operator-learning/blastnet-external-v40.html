@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="SARC-K3-M4 v40.2 在 BLASTNet 预混 H2-air DNS 上的冻结外部精度检验，以及 v41-v44 从固定 Krylov span 到单 curved-adjoint 富集的机理诊断。" />
-  <title>BLASTNet 外部检验 v40.2 × curved-adjoint v44.3 | OERF C 路线</title>
+  <meta name="description" content="SARC-K3-M4 v40.2 在 BLASTNet 预混 H2-air DNS 上的冻结外部精度检验，以及 v41-v51 从固定 Krylov span 到第二残差伴随增广的机理诊断。" />
+  <title>BLASTNet 外部检验 v40.2 × 第二残差伴随 v51 | OERF C 路线</title>
   <style>
     :root {
       --ink: #17211d;
@@ -301,7 +301,7 @@
       header { min-height: auto; padding-top: 34px; }
       h1 { font-size: 31px; }
       h2 { font-size: 24px; }
-      .metrics { grid-template-columns: 1fr; }
+      .metrics, .grid-3 { grid-template-columns: 1fr; }
       .metric { min-height: 0; }
     }
   </style>
@@ -312,6 +312,7 @@
     <a href="#verdict">判决</a>
     <a href="#evidence">证据</a>
     <a href="#diagnosis">机理</a>
+    <a href="#second-residual-adjoint-v51">v51 第二残差伴随</a>
     <a href="#curved-v44">v44 curved-adjoint</a>
     <a href="#krylov-v43">v43 受约束 oracle</a>
     <a href="#krylov-v41">v41 四方向</a>
@@ -332,11 +333,13 @@
         <span class="chip ok">独立 curved replay PASS</span>
         <span class="chip fail">v43 受约束 oracle 仍 0 / 4</span>
         <span class="chip fail">v44 新方向有效但完整门仍 0 / 4</span>
+        <span class="chip fail">v51 第六方向增秩但梯度仍 FAIL</span>
         <span class="chip warn">资源门未授权</span>
         <span class="chip fail">algorithm_breakthrough=false</span>
       </div>
       <div class="actions">
         <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md">阅读完整负结果</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_second_residual_adjoint_v51_result_2026-07-29.md">阅读 v51 第二残差伴随诊断</a>
         <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_curved_adjoint_v44_result_2026-07-29.md">阅读 v44 curved-adjoint 诊断</a>
         <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_krylov_trust_region_v43_result_2026-07-29.md">阅读 v42/v43 受约束诊断</a>
         <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_krylov_increment_span_v41_result_2026-07-29.md">阅读 v41 四方向诊断</a>
@@ -423,11 +426,11 @@
         <div class="panel">
           <h3>幅度确实偏小</h3>
           <p>沿冻结 correction 方向扫描 <code>alpha in [0, 2]</code>，四帧的 observation 最优 alpha 为 <code>1.4, 1.4, 1.4, 1.2</code>。原始 alpha=1 没走够。</p>
-        </div>
-        <div class="panel">
-          <h3 class="fail-text">但方向仍不够</h3>
-          <p>调到 observation 最优幅度后仍是 0 / 4 同时过三门；三帧 observation 仍失败，四帧 gradient 都越过兼容界。</p>
-        </div>
+          </div>
+          <div class="panel">
+          <h3 class="fail-text">乘大 correction 也修不好</h3>
+            <p>调到 observation 最优幅度后仍是 0 / 4 同时过三门；三帧 observation 仍失败，四帧 gradient 都越过兼容界。</p>
+          </div>
       </div>
       <div class="alert warn" style="margin-top:15px;">
         <strong>机理判决：</strong>
@@ -533,13 +536,66 @@
           </table>
         </div>
         <div class="alert info" style="margin-top:15px;">
-          <strong>为什么转向第二条 curved Gauss-Newton Krylov 方向：</strong>
+          <strong>为什么转向第二个固定线性化 residual-adjoint 方向：</strong>
           最佳点把 gradient 用满到 <code>1.01</code>，observation 仍为 <code>1.045775</code>。下一实验先消去现有第五方向能解释的 residual，再对剩余 residual 做精确 VJP，并从现有五方向中正交化；这才会改变可达空间。
         </div>
         <div class="actions">
           <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_fixed_roster_v50_result_2026-07-29.md">读 v49-v50 完整判决</a>
           <a class="button" href="../docs/blastnet_h2air_phi05_fixed_roster_v50_public_summary.json">打开 v50 脱敏摘要</a>
           <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_fixed_roster_v50.png">查看 v50 总图</a>
+        </div>
+      </div>
+
+      <div id="second-residual-adjoint-v51" style="scroll-margin-top:70px; padding-top:30px;">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">v51 · independently replayed second residual-adjoint enrichment</div>
+            <h2>第六方向新增了秩，也改善了观测，但梯度仍未过门</h2>
+          </div>
+          <p>在已打开的 S2 快照上，用固定 Direct-K3 线性化把第二个 curved residual 伴随回粗网格；这是增广方向诊断，不是完整 Hessian、二阶优化器或外部泛化。</p>
+        </div>
+        <div class="grid-3">
+          <div class="panel">
+            <h3>方向真实新增</h3>
+            <p>粗网格与观测空间的旧五维 span 外能量分别为 <code>30.84%</code> 与 <code>38.54%</code>；观测切空间秩从 <code>5</code> 增到 <code>6</code>。</p>
+          </div>
+          <div class="panel">
+            <h3>方向确实被使用</h3>
+            <p>搜索选择 <code>w6=0.244372</code>。相同搜索预算下，observation / Direct-K4 从 S5 的 <code>1.013825</code> 降到 S6 的 <code>1.008749</code>。</p>
+          </div>
+          <div class="panel">
+            <h3 class="fail-text">完整门仍 FAIL</h3>
+            <p>S6 的 field / gradient / observation 比为 <code>0.975858 / 1.030041 / 1.008749</code>；gradient 仍比 1.01 门高约 2.0 个百分点。</p>
+          </div>
+        </div>
+        <div class="alert fail" style="margin-top:15px;">
+          <strong>独立验证后的有界负结果：</strong>
+          <code>NO_OBSERVATION_ONLY_WITNESS_S2_V51</code>。独立流程重放器重新生成方向、S5/S6 搜索与全部指标；Stage-A 数组最大差为 0，最终 score 最大差为 <code>2.44e-15</code>。它仍共享冻结的 v44 数值内核，不是外部独立物理实现。
+        </div>
+        <figure class="figure" style="margin-top:18px;">
+          <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_second_residual_adjoint_v51.png">
+            <img src="../assets/blastnet_h2air_phi05_second_residual_adjoint_v51.png" alt="BLASTNet H2-air S2 上 v51 第六残差伴随方向的 span 外能量、观测秩和相同预算三指标结果" />
+          </a>
+          <figcaption>左上与左下证明第六方向新增了粗网格和观测空间的秩；右上显示它把 observation 推进 1.01 包络，但 gradient 仍越线。右下明确这是独立验证的有界负结果。</figcaption>
+        </figure>
+        <div class="table-wrap" style="margin-top:15px;">
+          <table>
+            <thead><tr><th>相同搜索预算</th><th class="num">field / K4</th><th class="num">gradient / K4</th><th class="num">observation / K4</th><th>判决</th></tr></thead>
+            <tbody>
+              <tr><td>S5 五方向控制</td><td class="num pass">0.976447</td><td class="num fail-text">1.031173</td><td class="num fail-text">1.013825</td><td class="fail-text">FAIL</td></tr>
+              <tr><td>S6 第六方向增广</td><td class="num pass">0.975858</td><td class="num fail-text">1.030041</td><td class="num pass">1.008749</td><td class="fail-text">FAIL</td></tr>
+              <tr><td>S6 强制 w6=0</td><td class="num pass">0.976052</td><td class="num fail-text">1.030495</td><td class="num fail-text">1.015399</td><td class="fail-text">FAIL</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert info" style="margin-top:15px;">
+          <strong>已经排除的偷懒解释：</strong>
+          S5 与 S6 名义搜索账都记为 <code>9 F + 48 JVP + 0 VJP</code>；S5 的四次额外 F 是 no-op padding，不增加搜索机会，方向准备的 <code>1 F + 1 JVP + 2 VJP</code> 单独报告。这不是端到端总成本相同。下一诊断先区分“六维 span 没有 witness”和“observation-only selector 没找到 witness”，不直接扩大网络。
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_second_residual_adjoint_v51_result_2026-07-29.md">读 v51 完整判决</a>
+          <a class="button" href="../docs/blastnet_h2air_phi05_second_residual_adjoint_v51_public_summary.json">打开 v51 脱敏摘要</a>
+          <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_second_residual_adjoint_v51.png">查看 v51 总图</a>
         </div>
       </div>
 
@@ -738,7 +794,7 @@
         </div>
       </div>
       <div class="alert" style="margin-top:15px;">
-        当前最窄、最有信息量的结论是：新方向必须打破 gradient 与 curved-observation 的冲突。v50 固定候选表已完成且没有 witness；下一项构造第二条 curved Gauss-Newton Krylov 方向并做匹配预算比较，不把它夸大成完整 Hessian 或二阶优化器。
+        当前最窄、最有信息量的结论是：v51 第六方向真实新增观测秩，并把 observation 推进 1.01 门内，但 gradient 仍为 <code>1.030041</code>。因此 residual-only 增广没有消除 gradient-safety 冲突；下一项先做冻结六维 span 的有界可行性诊断，不继续机械增加同类方向。
       </div>
     </section>
 
@@ -764,8 +820,9 @@
             <tr><td>v47 五维受约束搜索</td><td class="fail-text">局部有界负结果</td><td>48 个 exact candidates 全部失败；独立复算通过，不宣称五维全局无解</td></tr>
             <tr><td>v49 自适应全局+局部搜索</td><td class="fail-text">INCONCLUSIVE</td><td>独立请求重放在第 48 个局部请求失败；runner 诊断不得用于科学结论</td></tr>
             <tr><td>v50 固定候选表</td><td class="fail-text">固定表负结果</td><td>2,304 个唯一候选全量独立精确重算，0 个完整门 witness；五维路线没有被关闭</td></tr>
+            <tr><td>v51 第二残差伴随增广</td><td class="fail-text">有界负结果</td><td>方向新增秩且 observation 过门，但 gradient / K4 为 1.030041；完整门仍失败</td></tr>
             <tr><td>固定四方向 selector</td><td class="fail-text">不授权训练</td><td>oracle 仍未找到完整门候选</td></tr>
-            <tr><td>五系数预测器</td><td class="fail-text">不授权训练</td><td>当前固定候选表没有完整门 headroom；下一步改变 span</td></tr>
+            <tr><td>六系数预测器</td><td class="fail-text">不授权训练</td><td>v51 的 observation-only selector 仍没有完整门 witness</td></tr>
             <tr><td>资源加速</td><td>未运行</td><td>精度失败后按协议无资格测速</td></tr>
             <tr><td>真实 BOST</td><td>未证明</td><td>当前仍是由 DNS 密度构造的代理 forward</td></tr>
             <tr><td>广泛燃烧场泛化</td><td>未证明</td><td>只有一个外部数据集且结果为负</td></tr>
@@ -781,7 +838,7 @@
     </section>
 
     <footer>
-      脱敏公开页不包含原始 DNS、私有场、模型参数、执行路径、release 或哈希。最新证据：v49 无结论，v50 固定候选表经独立重算为 0 / 2,304；五维路线未关闭；algorithm_breakthrough=false。
+      脱敏公开页不包含原始 DNS、私有场、模型参数、执行路径、release 或哈希。最新证据：v51 第六方向新增秩并改善 observation，但 gradient / K4 仍为 1.030041；完整门失败；algorithm_breakthrough=false。
     </footer>
   </main>
   <script>
