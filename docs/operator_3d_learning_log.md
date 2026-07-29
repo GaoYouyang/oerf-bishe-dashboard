@@ -9131,3 +9131,68 @@ paper_success=false
 
 完整结果见
 `docs/blastnet_h2air_phi05_krylov_trust_region_v43_result_2026-07-29.md`。
+
+## 275. v44.3：新方向是真的，但 raw curved-adjoint 仍不够安全
+
+v43 已经把“继续在固定四方向里换优化器”这条路关掉。这一轮不再调旧权重，而是
+真正改变 basis：在 Direct-K3 处用部署可见的 curved observation residual 做一次
+精确 VJP，把结果投到粗网格，再从四个 straight-CGLS 增量中正交化，得到第五个
+curved-adjoint 方向。
+
+先确认它不是假新方向。四帧的旧 span 外能量比例是：
+
+```text
+S1  19.04%
+S2  24.33%
+S3  26.35%
+S4  31.42%
+```
+
+它与旧 span 的最大余弦只有 `2.95e-15`，curved adjoint 恒等式误差也在
+`1.53e-15` 以下；第五权重为 `0.144-0.381`。因此新方向确实被优化器使用，也
+确实携带旧四方向没有的信息。
+
+正式五方向结果相对 Direct-K4 为：
+
+```text
+snapshot  field/K4  gradient/K4  observation/K4
+1         0.976348  1.015315     1.014640
+2         0.976447  1.031173     1.013825
+3         0.973110  1.026650     0.992946
+4         0.976449  1.014803     1.042355
+```
+
+四帧 field 都更好，但四帧 gradient 都越过冻结的 `1.01` 门，observation 也只有
+一帧通过，所以完整门仍是 `0 / 4`。与配对四方向控制相比，第五方向在四帧都改善
+field 和 observation，说明它不是完全无效；问题是它没有修复 gradient 安全性。
+
+独立程序不导入正式 runner/validator，重新生成两阶段数据和候选场：
+
+```text
+PASS_INDEPENDENT_RECOMPUTATION_PAIRED_COARSE_ADJOINT_ENRICHMENT_V44_3
+Stage-A 最大数值差     4.49e-11
+Stage-B 最大数值差     2.22e-15
+候选场最大绝对差       9.02e-17
+正式报告最大数值差     0
+```
+
+正式机理账本是 `96 F + 292 JVP + 4 VJP`，因此这只是昂贵的开封后诊断，不能写成
+部署加速。
+
+**讲人话：**我们造出了一条真正不同的新路，它确实让“大轮廓”和“相机观测”更
+接近答案，但把密度梯度细节弄坏了。现在最重要的决策不是马上训练网络，而是停止
+模仿这个 raw 方向，只做固定的 gradient-aware / Sobolev 预条件方向，并与匹配
+controls 比较。只有预条件后的方向先通过完整门，才值得让神经网络学习。
+
+```text
+validated_bounded_negative=true
+raw_curved_adjoint_training_authorized=false
+same_cost_or_speed_claim_authorized=false
+new_external_generalization_evidence=false
+real_BOST=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整结果见
+`docs/blastnet_h2air_phi05_curved_adjoint_v44_result_2026-07-29.md`。

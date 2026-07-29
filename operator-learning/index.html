@@ -331,6 +331,7 @@
       <a href="#representation-gate">表示机制</a>
       <a href="#transport-proxy-gate">输运与校准门</a>
       <a href="#g0-evidence">真实 CFD 代理</a>
+      <a href="blastnet-external-v40.html#curved-v44">v44 curved-adjoint 诊断</a>
       <a href="blastnet-external-v40.html#krylov-v43">v43 JVP 受约束诊断</a>
       <a href="blastnet-external-v40.html#krylov-v41">v41 四方向诊断</a>
       <a href="blastnet-external-v40.html">v40.2 BLASTNet 外部门</a>
@@ -347,23 +348,26 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-29 · v43</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-29 · v44.3</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v39.1 的 SARC-K3-M4 在已打开 PoolFire 上同时保住精度与资源优势；v40.2 的 BLASTNet 零适配外部门和 v41 的四方向调权均为 <code>0 / 4</code>。随后真正执行了 truth-aware constrained oracle：v42 的 direct curved SLSQP 耗尽预算，只能判为 inconclusive；v43 改用精确 JVP trust region 后完成有界搜索与独立逐步重放，四帧仍为 <code>0 / 4</code>，所有 observation ratio 均高于 1.01。固定四方向的系数预测网络因此停止授权。它是能改变研究决策的负结果，不是可部署算法或加速，当前 <code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v43 已关闭固定四方向系数预测；v44.3 随后真正加入一个由 curved residual 精确 VJP 得到、且与旧 span 正交的新方向。新方向携带 19.0%-31.4% 的旧 span 外能量，并在四帧都改善 field 与 observation；但 gradient / Direct-K4 仍为 <code>1.0148-1.0312</code>，完整门仍是 <code>0 / 4</code>。因此 raw curved-adjoint 近似器也不授权训练，下一项只研究固定的 gradient-aware / Sobolev 预条件方向。它是能改变研究决策的有界负结果，不是可部署算法或加速，当前 <code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="blastnet-external-v40.html#krylov-v43">打开 v43 受约束诊断</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_krylov_trust_region_v43_result_2026-07-29.md">读 v42/v43 完整执行</a>
-      <a class="button" href="../docs/blastnet_h2air_phi05_krylov_trust_region_v43_public_summary.json">打开 v43 脱敏结果</a>
+      <a class="button primary" href="blastnet-external-v40.html#curved-v44">打开 v44 curved-adjoint 诊断</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_curved_adjoint_v44_result_2026-07-29.md">读 v44 完整执行</a>
+      <a class="button" href="../docs/blastnet_h2air_phi05_curved_adjoint_v44_public_summary.json">打开 v44 脱敏结果</a>
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert critical" style="margin-top:12px;">
-      <strong>最新科学增量：truth-aware oracle 仍未救回固定四方向 basis</strong>
-      <span>v43 的四帧 field / Direct-K4 为 <code>0.9786-0.9844</code>，gradient 被推到 <code>1.01</code> 边界，observation / Direct-K4 仍为 <code>1.0204-1.0576</code>。正式账本为 <code>31 F + 112 JVP + 0 VJP</code>，独立重放三类最大数值差均为 0。结论是停止训练这个固定 basis 的 observation-only 系数网络；不是数学不可行性证明。<a href="blastnet-external-v40.html#krylov-v43">打开 v43 证据</a>。</span>
+      <strong>最新科学增量：新方向真实存在，但 raw curved-adjoint 不具备 gradient 安全性</strong>
+      <span>v44 的第五方向与旧 span 最大余弦仅 <code>2.95e-15</code>，第五权重为 <code>0.144-0.381</code>；相对配对四方向控制，四帧 field 和 observation 都改善。然而四帧 gradient ratio 全部超过 1.01，完整门仍为 0 / 4。独立复算候选场最大差 <code>9.02e-17</code>。结论是停止训练 raw 方向，先验证固定的梯度感知预条件；不是数学不可行性证明。<a href="blastnet-external-v40.html#curved-v44">打开 v44 证据</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="blastnet-external-v40.html#curved-v44">v44 curved-adjoint 诊断</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_curved_adjoint_v44_result_2026-07-29.md">v44 完整判决</a>
+      <a class="button" href="../docs/blastnet_h2air_phi05_curved_adjoint_v44_public_summary.json">v44 脱敏结果</a>
       <a class="button primary" href="blastnet-external-v40.html#krylov-v43">v43 JVP 受约束诊断</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_krylov_trust_region_v43_result_2026-07-29.md">v42/v43 完整判决</a>
       <a class="button" href="../docs/blastnet_h2air_phi05_krylov_trust_region_v43_public_summary.json">v43 脱敏结果</a>
@@ -508,8 +512,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert critical">
-      <strong>最新开发判决：v43 受约束 oracle 仍为 0 / 4，固定四方向系数网络关闭</strong>
-      <span>v42 的直接 curved-objective 搜索因预算耗尽而无结论；v43 用精确 JVP 与 trust region 完成同一四方向空间的有界复核，四帧 observation ratio 全部超过 1.01，独立重放最大差为 0。当前不再训练这个 basis 的 selector；下一项科学工作必须改变方向生成机制。没有外部同精度、真实 BOST 或算法突破，<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新开发判决：v44 新方向有效但完整门 0 / 4，raw curved-adjoint 训练关闭</strong>
+      <span>v44 已经改变方向生成机制，并验证新方向确实离开旧 span；但四帧 gradient ratio 为 <code>1.0153 / 1.0312 / 1.0267 / 1.0148</code>，无法守住兼容门。下一项只允许固定的 gradient-aware / Sobolev 预条件方向与匹配 controls；没有外部同精度、真实 BOST 或算法突破，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -640,6 +644,7 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v44.3 有界负结果</span><span class="chip blue">Stage A/B 独立复算 PASS</span></div><h3 style="margin-top:10px;">Single coarse curved-adjoint enrichment</h3><p>第五方向来自 Direct-K3 的部署可见 curved residual VJP，与旧 span 最大余弦仅 2.95e-15，旧 span 外能量为 19.0%-31.4%。相对配对四方向控制，四帧 field 与 observation 都改善；但 gradient / K4 全为 1.0148-1.0312，完整门 0/4。正式账本 <code>96 F + 292 JVP + 4 VJP</code>，所以只保留为机理负结果。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v43 有界负结果</span><span class="chip blue">curved forward / JVP 独立重放</span></div><h3 style="margin-top:10px;">Truth-aware four-Krylov trust-region oracle</h3><p>v42 direct SLSQP 耗尽预算后，v43 用精确 JVP 构造局部 observation 模型并做 exact curved rescore。四帧 field ratio 为 0.9786-0.9844，但 observation ratio 仍为 1.0204-1.0576，0/4 过完整门；正式账本 <code>31 F + 112 JVP + 0 VJP</code>。固定四方向系数预测支线关闭，但不宣称数学不存在。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v40.2 外部 FAIL</span><span class="chip blue">独立复算 PASS</span></div><h3 style="margin-top:10px;">BLASTNet H2-air zero-adaptation gate</h3><p>冻结 SARC-K3-M4 第一次进入不同数据族。四帧三项均优于 Zero，field 均优于 Direct-K4，但 observation ratio 为 1.0215-1.0654，最终 0/4 通过 matched-accuracy。后验 alpha 扫描显示最优幅度 1.2-1.4，仍无法同时修复 gradient 与 observation；单标量增益路线关闭。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">最新 · v39.1 关键正结果</span><span class="chip blue">迁移/调用/wall/RSS PASS</span></div><h3 style="margin-top:10px;">SARC-K3-M4 low-fidelity defect correction</h3><p>Learned Direct 初值接曲线 GN-CGLS K3，再用恰好四步 straight CGLS 修正曲线 residual，并由一个曲线 forward fail-closed 验证。v38.1 在两条额外 post-open 轨迹保住三项精度；v39.1 的 72 个 fresh child 给出 wall / Zero 中位 0.744260、wall / Direct-K4 中位 0.825418，原始系统回执和 summary 均独立复核。没有 untouched PoolFire 或真实 BOST。</p></article>
@@ -658,6 +663,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="v44-curved-adjoint" class="alert critical" style="margin-top:13px;">
+        <strong>v44.3：新 curved-adjoint 方向真实有效，但 gradient 安全门 0 / 4</strong>
+        <span>第五方向在四帧都离开旧 span，并相对配对四方向控制改善 field 和 observation；但 gradient / Direct-K4 为 <code>1.0153 / 1.0312 / 1.0267 / 1.0148</code>。独立程序重新生成两阶段数据和候选场，候选场最大绝对差为 <code>9.02e-17</code>。这说明“方向不同”仍不等于“可学目标成立”，<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_curved_adjoint_v44.png" aria-label="打开 v44 单 curved-adjoint 富集诊断图">
+          <img src="../assets/blastnet_h2air_phi05_curved_adjoint_v44.png" alt="BLASTNet 开封数据上 v44 单 curved-adjoint 富集的三指标、配对贡献与方向能量" />
+        </a>
+        <figcaption>新方向的旧 span 外能量与非零权重证明它不是数值装饰；完整门失败则阻止我们过早训练网络。下一门只检查固定的 gradient-aware / Sobolev 预条件方向。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="blastnet-external-v40.html#curved-v44">打开 v44 专项证据</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_curved_adjoint_v44_result_2026-07-29.md">读 v44 完整诊断</a>
+        <a class="button" href="../docs/blastnet_h2air_phi05_curved_adjoint_v44_public_summary.json">打开 v44 机器摘要</a>
       </div>
       <div id="v43-krylov-trust-region" class="alert critical" style="margin-top:13px;">
         <strong>v43：JVP trust-region oracle 完整门 0 / 4，固定四方向 selector 不再训练</strong>
