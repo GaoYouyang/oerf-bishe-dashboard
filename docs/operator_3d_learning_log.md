@@ -9301,3 +9301,51 @@ paper_success=false
 
 完整结果见
 `docs/blastnet_h2air_phi05_curved_followups_v47_result_2026-07-29.md`。
+
+## 279. v49-v50：先拒绝一次不可重放结果，再得到可信的固定表负结果
+
+v47 只看了五维空间中 48 个局部候选，所以这一轮用封顶预算检查较远处是否还有
+完整门 witness。
+
+v49 先做 1,664 次全局搜索，再跑四个 Powell 局部搜索；runner 记录了 2,304 个
+唯一候选和 0 个通过点。但独立 validator 在第 48 个局部请求发现请求几何不一致。
+小于 `1e-10` 的浮点差异改变了 Powell 分支，四个局部搜索也都没有报告收敛。
+因此 v49 不是负结果，而是：
+
+```text
+v49_scientific_decision=INCONCLUSIVE
+```
+
+v50 保留同一全局搜索，把不可稳定重放的 Powell 换成目标函数无关的固定局部候选
+表。runner 和 validator 分别生成候选表，validator 再对全部 2,304 个唯一候选做
+精确 curved forward 和完整门重算：
+
+```text
+independent_validation  PASS
+unique candidates       2,304
+complete-gate passes    0
+best field / K4         0.983386
+best gradient / K4      1.010000
+best observation / K4   1.045775
+```
+
+**讲人话：**这次真正可靠的不是“我们证明五维无解”，而是：在一张事先固定、
+可以被第二套程序逐项重放的 2,304 候选表里，没有合格答案。最好的候选已经把
+gradient 安全额度全部用完，observation 仍高出门槛约 3.58 个百分点。继续在原五个
+方向上细调，信息价值已经很低。
+
+下一步不是训练五系数网络，也不是继续堆搜索点，而是构造第二条 curved
+Gauss-Newton Krylov 方向：先消去第五方向解释的 residual，再对剩余 residual 做
+VJP，并从现有五方向中正交化。它会真正改变 span。
+
+```text
+fixed_candidate_roster_negative=true
+five_space_engineering_route_closed=false
+mathematical_nonexistence_proven=false
+stage_2_authorized=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整结果见
+`docs/blastnet_h2air_phi05_fixed_roster_v50_result_2026-07-29.md`。

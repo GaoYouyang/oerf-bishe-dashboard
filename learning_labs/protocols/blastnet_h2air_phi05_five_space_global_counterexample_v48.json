@@ -1,0 +1,155 @@
+{
+  "schema_version": "oerf-blastnet-h2air-phi05-five-space-global-counterexample-48.0",
+  "status": "FROZEN_BEFORE_V48_RESULT",
+  "frozen_after_source_commit": "c71ca7f9e8c94262fd666be79c146886e1fe1b73",
+  "scientific_question": "Does the already-opened five-direction v47 space contain a complete frozen-gate witness that the two-start local search missed?",
+  "scope": {
+    "dataset": "BLASTNet premixed H2-air DNS, phi=0.5",
+    "post_open": true,
+    "truth_constrained_oracle": true,
+    "stage_1_snapshot_ids": [
+      2
+    ],
+    "stage_2_snapshot_ids_if_and_only_if_stage_1_finds_a_witness": [
+      1,
+      3,
+      4
+    ],
+    "new_external_evidence": false,
+    "online_deployable_as_run": false,
+    "resource_gate_authorized": false
+  },
+  "frozen_inputs": {
+    "pair_role": "the independently validated v40.2 BLASTNet proxy bundle",
+    "v40_result_role": "the independently validated v40.2 frozen external result",
+    "v43_result_role": "the completed four-direction JVP trust-region diagnosis",
+    "v44_result_role": "the independently validated v44.3 curved-adjoint enrichment result",
+    "v47_result_role": "the independently replayed two-start five-direction local screen",
+    "truth_may_enter": [
+      "field constraint",
+      "gradient constraint",
+      "post-open candidate scoring"
+    ],
+    "truth_may_not_support": [
+      "an online selector claim",
+      "a fresh or external claim",
+      "a speed or resource claim",
+      "a generalization claim"
+    ]
+  },
+  "basis": {
+    "base_field": "frozen Direct-K3 field",
+    "directions": [
+      "four frozen straight-CGLS increments reconstructed from the frozen curved-observation residual",
+      "the validated v44.3 coarse curved-adjoint direction recovered from its nonzero-weight ablation"
+    ],
+    "dimension": 5,
+    "basis_must_match_v47": true,
+    "basis_cost_is_not_a_deployable_method_cost": true
+  },
+  "weight_domain": {
+    "lower": -2.0,
+    "upper": 3.0,
+    "dimension": 5
+  },
+  "truth_constraints": {
+    "field_limit": "minimum of 1.01 times Direct-K4 field relative-L2 and Zero field relative-L2",
+    "gradient_limit": "minimum of 1.01 times Direct-K4 gradient relative-L2 and Zero gradient relative-L2",
+    "normalized_margin_tolerance": 5e-08,
+    "constraint_functions": "squared relative-L2 quadratic forms with exact analytic Jacobians",
+    "origin_is_required_to_be_feasible": true
+  },
+  "deterministic_global_screen": {
+    "sequence": "unscrambled Sobol",
+    "sobol_power": 6,
+    "mapped_box": [
+      -2.0,
+      3.0
+    ],
+    "radial_projection_origin": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "radial_bisection_iterations": 60,
+    "boundary_fraction": 0.999999,
+    "interior_fraction": 0.5,
+    "interior_points": 16,
+    "anchors": [
+      "zero weights",
+      "v43 feasible four-direction point with zero fifth weight",
+      "v44 selected weights radially contracted to exact truth feasibility",
+      "v47 best diagnostic candidate"
+    ],
+    "screening_points_are_evaluated_once_with_the_exact_frozen_curved_forward": true,
+    "deduplication_absolute_tolerance": 1e-10
+  },
+  "exact_gradient_refinement": {
+    "method": "SLSQP",
+    "starts": "the four unique exact-screen candidates with smallest curved-observation squared relative-L2",
+    "start_count": 4,
+    "objective": "exact curved-observation squared relative-L2",
+    "objective_gradient": "exact PyTorch reverse gradient through the frozen curved forward",
+    "constraint_gradients": "exact analytic gradients",
+    "maximum_iterations_per_start": 80,
+    "maximum_forward_and_reverse_gradient_calls_per_start": 96,
+    "minimum_successful_optimizations_for_bounded_negative": 3,
+    "ftol": 1e-12,
+    "all_unique_objective_evaluation_points_enter_the_candidate_bank": true,
+    "finite_box_and_constraint_checks_required": true
+  },
+  "complete_frozen_v40_gate": {
+    "per_snapshot": [
+      "all field, gradient, and observation metrics are at most 1.01 times Direct-K4",
+      "all field, gradient, and observation metrics are no worse than Zero",
+      "observation is no worse than Direct-K3 plus 1e-12",
+      "candidate is not Pareto dominated by Direct-K3"
+    ],
+    "no_gate_or_threshold_may_change_after_result_open": true
+  },
+  "candidate_bank": {
+    "members": [
+      "all unique deterministic screen points",
+      "all unique anchor points",
+      "all unique exact-gradient objective evaluation points"
+    ],
+    "all_members_must_receive_exact_curved-observation_scoring": true,
+    "no_post_result_start_or_budget_extension": true
+  },
+  "stage_transition_and_decision_rule": {
+    "stage_1_witness": "at least one S2 candidate passes the complete frozen v40 gate after independent replay",
+    "stage_1_bounded_negative": "no S2 candidate passes, at least three of four exact-gradient refinements terminate successfully, every scored point is finite and truth feasible, all frozen budgets hold, and independent replay agrees",
+    "stage_1_inconclusive": "input parity, deterministic coverage, candidate completeness, finite checks, budget, minimum successful refinements, or independent replay fails",
+    "stage_2_authorized_only_after_stage_1_witness": true,
+    "five_coefficient_learning_target_authorized": "all four snapshots independently contain at least one complete-gate witness under the same frozen search",
+    "five_space_engineering_route_closed": "S2 reaches the bounded-negative decision; this closes further five-coefficient search and training but does not prove mathematical nonexistence",
+    "forbidden_rescue_actions": [
+      "adding starts",
+      "increasing the frozen budget",
+      "changing the five directions",
+      "relaxing the 1.01 gate",
+      "changing the objective after seeing results"
+    ]
+  },
+  "independent_validation": {
+    "must_not_import_the_v48_runner": true,
+    "must_reconstruct_the_five_directions": true,
+    "must_regenerate_the_sobol_screen_and_anchors": true,
+    "must_recompute_every_candidate_field": true,
+    "must_rerun_the_exact_curved_forward_for_every_candidate": true,
+    "must_recompute_all_metrics_and_gates": true,
+    "must_verify_candidate_completeness_and_ledgers": true,
+    "shared_frozen_physics_kernels_must_be_disclosed": true
+  },
+  "claim_boundaries": {
+    "mathematical_five_space_nonexistence_proven": false,
+    "online_selector_success": false,
+    "same_cost_or_speed_claim_authorized": false,
+    "external_generalization_proven": false,
+    "real_bost_proven": false,
+    "paper_success": false,
+    "algorithm_breakthrough": false
+  }
+}
