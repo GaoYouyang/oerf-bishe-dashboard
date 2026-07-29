@@ -343,7 +343,8 @@
       <a href="#representation-gate">表示机制</a>
       <a href="#transport-proxy-gate">输运与校准门</a>
       <a href="#g0-evidence">真实 CFD 代理</a>
-      <a href="blastnet-external-v40.html#six-space-v52">v52 六维可行性</a>
+      <a href="blastnet-external-v40.html#continuous-six-space-v53">v53 连续六维诊断</a>
+      <a href="blastnet-external-v40.html#six-space-v52">v52 六维候选表</a>
       <a href="blastnet-external-v40.html#second-residual-adjoint-v51">v51 第二残差伴随</a>
       <a href="blastnet-external-v40.html#five-space-v50">v49-v50 五维判决</a>
       <a href="blastnet-external-v40.html#curved-followups-v47">v45-v47 curved 修复链</a>
@@ -364,24 +365,27 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-29 · v52</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-30 · v53</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v52 已把 v51 的六个固定方向放进事前冻结的真值可行候选表：runner 与独立 validator 各执行 <code>2,312 F</code>，完整门通过数为 <code>0 / 2,312</code>。最佳 field / gradient / observation 比为 <code>0.985041 / 1.010000 / 1.038412</code>，说明在有限搜索表内，保住梯度安全会重新暴露 curved-observation 缺口。当前不训练六系数网络；下一门只做一次连续六维约束 oracle，有限表负结果不等于连续六维无解，<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v53 已完成 12 起点连续约束 oracle 与独立重放，共 <code>3,088 F + 3,070 reverse-equivalent</code>，但正式状态仍是 <code>INCONCLUSIVE</code>。12 起点 Powell 的最佳 field / gradient / observation 比为 <code>0.982228 / 1.010000 / 1.033484</code>，仍未过门。双侧诊断进一步定位到一个 midpoint 的体素边界切换可造成约 <code>4.07e-5</code> 单侧 objective 跳变，因此停止继续给旧六方向 smooth optimizer 加预算，改为预注册最小 observation-only dual warm initializer；<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="blastnet-external-v40.html#six-space-v52">打开 v52 判决</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_truth_feasible_roster_v52_result_2026-07-29.md">读 v52 完整判决</a>
-      <a class="button" href="../docs/blastnet_h2air_phi05_six_space_truth_feasible_roster_v52_public_summary.json">打开 v52 脱敏结果</a>
+      <a class="button primary" href="blastnet-external-v40.html#continuous-six-space-v53">打开 v53 判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_continuous_oracle_v53_result_2026-07-30.md">读 v53 完整判决</a>
+      <a class="button" href="../docs/blastnet_h2air_phi05_six_space_continuous_oracle_v53_public_summary.json">打开 v53 脱敏结果</a>
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert critical" style="margin-top:12px;">
-      <strong>最新科学增量：v52 有限六维候选表 0 / 2,312，六系数 selector 暂停</strong>
-      <span>两套流程按相同顺序重放全部请求，候选表与 score 的最大差均为 0。共有 <code>1,867</code> 个候选三项都优于 Zero，但没有一个同时进入 Direct-K4 的 1.01 包络；最佳候选的 observation 比仍为 <code>1.038412</code>。这是可复现的有限域负结果，不是连续六维无解证明，也不是算法突破。<a href="blastnet-external-v40.html#six-space-v52">打开 v52 证据</a>。</span>
+      <strong>最新科学增量：v53 抓到 fixed-step 体素边界跳变，旧六方向 smooth-optimizer 路线停止</strong>
+      <span>正式连续 oracle 经独立重放仍无结论；后验 Powell 与 Sobol 都未找到正见证。N=96 终点的 <code>198,912</code> 个采样位置中，正向扰动仅有一个 midpoint 跨 cell，却让 central derivative 从 AD 预测的 <code>-1.176e-4</code> 变成 <code>2.036e2</code>。这解释了 smooth KKT 为何不能独立裁决，但不证明连续六维无解。<a href="blastnet-external-v40.html#continuous-six-space-v53">打开 v53 证据</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="blastnet-external-v40.html#six-space-v52">v52 六维候选表</a>
+      <a class="button primary" href="blastnet-external-v40.html#continuous-six-space-v53">v53 连续六维与体素切换</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_continuous_oracle_v53_result_2026-07-30.md">v53 完整判决</a>
+      <a class="button" href="../docs/blastnet_h2air_phi05_six_space_continuous_oracle_v53_public_summary.json">v53 脱敏结果</a>
+      <a class="button" href="blastnet-external-v40.html#six-space-v52">v52 六维候选表</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_truth_feasible_roster_v52_result_2026-07-29.md">v52 完整判决</a>
       <a class="button" href="../docs/blastnet_h2air_phi05_six_space_truth_feasible_roster_v52_public_summary.json">v52 脱敏结果</a>
       <a class="button primary" href="blastnet-external-v40.html#second-residual-adjoint-v51">v51 第二残差伴随</a>
@@ -535,8 +539,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert critical">
-      <strong>最新开发判决：v52 未找到同时保住梯度与 curved observation 的有限六维见证</strong>
-      <span>冻结的 <code>2,312</code> 个请求里，最佳候选用满 gradient 的 1.01 安全额度，observation / Direct-K4 仍为 <code>1.038412</code>。六系数 selector 暂停；下一项只做一次事前冻结的连续约束 oracle，判断是候选表漏解还是固定 residual-only 表示本身缺乏 headroom。没有外部同精度、真实 BOST 或算法突破，<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新开发判决：v53 正式 oracle 无结论，后验搜索无 witness，并定位 fixed-step cell switch</strong>
+      <span>正式 <code>3,088 F</code> 与独立重放没有形成可用的 bounded negative；Powell 12 起点的最佳 observation / Direct-K4 为 <code>1.033484</code>。N=96 的单个 midpoint 跨体素边界造成约 <code>4.07e-5</code> objective 跳变，说明 smooth KKT 不能单独裁决。旧六系数 selector 关闭，下一项改为新的 deployment-visible dual warm-start 表示。没有外部同精度、真实 BOST 或算法突破，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -667,7 +671,7 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
-        <article class="panel"><div class="chips"><span class="chip coral">最新 · v52 冻结表负结果</span><span class="chip blue">2,312 + 2,312 curved F</span></div><h3 style="margin-top:10px;">Truth-feasible six-space roster</h3><p>冻结六方向真值可行域中的 2,312 个请求由两套实现逐项精确评分，完整门为 0/2,312，数值差为 0。最佳 field / gradient / observation 比为 0.985041 / 1.010000 / 1.038412；六系数 selector 不授权训练，但这不证明连续六维无解。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v53 连续 oracle 无结论</span><span class="chip blue">3,088 F + 3,070 reverse</span></div><h3 style="margin-top:10px;">Six-space oracle + cell-switch diagnosis</h3><p>正式 12 起点由两套程序重放，0 个完整门 witness，但终点不足以形成 bounded negative。后验 Powell 最佳 observation 比为 1.033484；一个 midpoint 的体素边界切换可制造 4.07e-5 单侧 objective 跳变。停止旧六方向 smooth optimization，但不宣称连续六维无解。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v50 固定表负结果</span><span class="chip blue">2,304 个候选独立重算</span></div><h3 style="margin-top:10px;">Replayable five-space roster</h3><p>v49 因自适应局部请求不可稳定重放而无结论；v50 改用目标函数无关固定表，完整门 0/2,304。最佳 gradient/K4 为 1.01 时 observation/K4 仍为 1.045775。v51 随后真实改变了 span，而不是继续扩大同类搜索。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v44.3 有界负结果</span><span class="chip blue">Stage A/B 独立复算 PASS</span></div><h3 style="margin-top:10px;">Single coarse curved-adjoint enrichment</h3><p>第五方向来自 Direct-K3 的部署可见 curved residual VJP，与旧 span 最大余弦仅 2.95e-15，旧 span 外能量为 19.0%-31.4%。相对配对四方向控制，四帧 field 与 observation 都改善；但 gradient / K4 全为 1.0148-1.0312，完整门 0/4。正式账本 <code>96 F + 292 JVP + 4 VJP</code>，所以只保留为机理负结果。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v43 有界负结果</span><span class="chip blue">curved forward / JVP 独立重放</span></div><h3 style="margin-top:10px;">Truth-aware four-Krylov trust-region oracle</h3><p>v42 direct SLSQP 耗尽预算后，v43 用精确 JVP 构造局部 observation 模型并做 exact curved rescore。四帧 field ratio 为 0.9786-0.9844，但 observation ratio 仍为 1.0204-1.0576，0/4 过完整门；正式账本 <code>31 F + 112 JVP + 0 VJP</code>。固定四方向系数预测支线关闭，但不宣称数学不存在。</p></article>
@@ -1600,9 +1604,9 @@
 已勾选证据门：${passed}
 最近未通过：${pending}
 
-当前最新证据是 BLASTNet 开封 S2 上的 v52。v51 新增第六个 residual-adjoint 方向后，observation / Direct-K4 已到 1.008749，但 gradient 仍为 1.030041。v52 随后事前冻结 2,312 个六维真值可行请求，runner 与独立 validator 各执行 2,312 次 curved forward，完整门为 0 / 2,312；最佳 field / gradient / observation 比为 0.985041 / 1.010000 / 1.038412。
+当前最新证据是 BLASTNet 开封 S2 上的 v53。正式 12 起点连续约束 oracle 经独立程序完整重放，共执行 3,088 F + 3,070 reverse-equivalent，完整门仍为 0；最佳正式 field / gradient / observation 比为 0.982639 / 1.010000 / 1.033843。后验 Powell 12 起点的最佳 observation 比为 1.033484，固定 Sobol 探测也没有找到正见证。
 
-这只证明有限候选表没有 witness，不证明连续六维无解。现在暂停六系数网络训练，下一项只做一次结果前冻结的连续六维约束 oracle；若它仍失败，再改变 residual-only 表示。当前没有 matched-accuracy、调用/时间/内存优势、真实 BOST、外部泛化或论文成功。algorithm_breakthrough=false。
+双侧诊断发现，N=96 终点的 198,912 个采样位置中，一个 midpoint 的单侧体素边界切换就造成约 4.07e-5 objective 跳变，因此 smooth KKT 不能独立裁决，但这仍不证明连续六维无解。现在停止旧六系数网络和无边界优化器加预算，下一项改为结果前冻结的最小 observation-only dual warm initializer。当前没有 matched-accuracy、调用/时间/内存优势、真实 BOST、外部泛化或论文成功。algorithm_breakthrough=false。
 
 截至 2026-07-26 的公开一级来源检索没有发现完全同构的整套方法，但 learned warm start、learned backprojection、neural operator + Krylov、WB-IPM 和 Learned ReSeSOp 都是强近邻；当前只主张组合级差异，不主张全球唯一。还需要确认组内是否已有未发表的 observation-space filter / warm start / 专利，以及真实流程中 A、A^T、光流、ray tracing 哪部分最贵。`;
       }

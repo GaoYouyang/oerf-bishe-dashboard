@@ -1,0 +1,214 @@
+{
+  "schema_version": "oerf-blastnet-h2air-phi05-six-space-continuous-oracle-53.0",
+  "status": "FROZEN_BEFORE_V53_RESULT",
+  "date": "2026-07-29",
+  "scientific_question": "Within the fixed post-open S2 six-direction family inherited from independently validated v52, can a fully pre-registered exact-gradient constrained multistart oracle find a complete frozen-v52 gate witness?",
+  "scope": {
+    "dataset": "BLASTNet premixed H2-air DNS, phi=0.5",
+    "snapshot_ids": [
+      2
+    ],
+    "role": "post-open representation-headroom diagnostic only",
+    "candidate_family": "x(w)=gauge(Direct-K3 + sum_i w_i d_i), i=1..6",
+    "weight_box": [
+      -2.0,
+      3.0
+    ],
+    "directions": "the same six fixed directions independently replayed in v52",
+    "truth_constraints": "the same exact affine-subspace field and coarse-gradient quadratic constraints used in v52",
+    "objective": "exact curved observation squared relative-L2",
+    "external_generalization": false,
+    "online_deployable_as_run": false,
+    "fresh_or_test_opening_authorized": false,
+    "neural_training_authorized": false,
+    "historical_same_snapshot_observation_dependence": true
+  },
+  "required_v52_evidence": {
+    "validated_ready_status": "PASS_VALIDATED_READY_V52",
+    "independent_validation_status": "PASS_INDEPENDENT_RECOMPUTATION_SIX_SPACE_TRUTH_FEASIBLE_ROSTER_V52",
+    "required_outcome": "NO_WITNESS_IN_FROZEN_TRUTH_FEASIBLE_ROSTER_S2_V52",
+    "required_request_count": 2312,
+    "required_best_request_index": 2137,
+    "bound_files": [
+      "VALIDATED_READY.json",
+      "INDEPENDENT_VALIDATION.json",
+      "report.json",
+      "ROSTER.json",
+      "ROSTER_SEAL.json",
+      "READY.json"
+    ],
+    "complete_source_and_input_closure_bound": true,
+    "source_and_input_identity_rehashed_after_execution": true
+  },
+  "fixed_start_roster": {
+    "start_count": 12,
+    "members_in_order": [
+      "Direct-K3 origin",
+      "0.99 times v52 request 2310 weights",
+      "v52 best request 2137 weights",
+      "0.99 times v52 best request 2137 weights",
+      "eight sealed-v52 requests selected by deterministic greedy farthest-point coverage"
+    ],
+    "v52_local_interior_request_index": 2310,
+    "v52_best_request_index": 2137,
+    "interior_factor": 0.99,
+    "farthest_point_candidate_bank": "all 2312 sealed v52 ROSTER weights",
+    "farthest_point_coordinates": "(w-weight_lower)/(weight_upper-weight_lower)",
+    "farthest_point_metric": "Euclidean distance in box-normalized coordinates",
+    "farthest_point_rule": "choose the request maximizing its minimum distance to all starts already selected",
+    "farthest_point_tie_break": "smallest v52 request index",
+    "farthest_point_additions": 8,
+    "score_usage": "only the independently validated best index 2137 may depend on v52 scores; farthest-point selection reads weights and request indices only",
+    "written_atomically_before_first_new_curved_forward": true,
+    "sealed_before_first_new_curved_forward": true,
+    "deduplication": false,
+    "all_starts_execute": true,
+    "early_stopping": false,
+    "post_seal_start_adaptation": false
+  },
+  "optimizer": {
+    "library": "scipy.optimize.minimize",
+    "method": "SLSQP",
+    "jac": true,
+    "maximum_iterations_per_start": 240,
+    "ftol": 1e-12,
+    "constraint_tolerance": 5e-8,
+    "maximum_objective_value_gradient_requests_per_start": 256,
+    "request_257_rejected_before_curved_forward": true,
+    "objective_gradient": "one operator.forward builds the graph and torch.autograd.grad(loss, weights) supplies the exact six-vector gradient",
+    "truth_constraint_jacobian": "analytic v52 affine-subspace quadratic Jacobian",
+    "all_objective_requests_record": [
+      "global request order",
+      "start index and start-local request order",
+      "weights",
+      "exact curved squared relative-L2 objective",
+      "exact autograd objective gradient",
+      "truth constraint margins"
+    ],
+    "maximum_optimization_ledger": {
+      "F": 3072,
+      "reverse_equivalent": 3072
+    }
+  },
+  "gradient_probes": {
+    "start_indices": [
+      0,
+      1,
+      2
+    ],
+    "direction_before_normalization": [
+      1.0,
+      -2.0,
+      3.0,
+      -4.0,
+      5.0,
+      -6.0
+    ],
+    "direction_normalization": "Euclidean unit norm",
+    "central_difference_steps": [
+      0.0001,
+      0.00003,
+      0.00001
+    ],
+    "relative_error_denominator": "max(abs(central_difference), abs(autograd_directional_derivative), 1e-12)",
+    "maximum_relative_error_each": 0.0001,
+    "exact_ledger": {
+      "F": 21,
+      "reverse_equivalent": 3
+    },
+    "failure_outcome": "INCONCLUSIVE_CONTINUOUS_SIX_SPACE_ORACLE_S2_V53"
+  },
+  "terminal_rescoring": {
+    "one_exact_value_gradient_request_per_start": true,
+    "maximum_ledger": {
+      "F": 12,
+      "reverse_equivalent": 12
+    },
+    "budget_exhausted_terminal_definition": "the last successfully evaluated point for that start, or the frozen start if no request completed",
+    "terminal_success_requirements_for_bounded_negative": [
+      "SLSQP success",
+      "no per-start budget exhaustion",
+      "finite terminal weights, objective, gradient and constraints",
+      "weights inside the frozen box within constraint tolerance",
+      "both truth constraints at least minus constraint tolerance",
+      "KKT stationarity and complementarity gates pass"
+    ]
+  },
+  "kkt_gate": {
+    "active_constraint_tolerance": 1e-6,
+    "multiplier_solver": "scipy.optimize.nnls on active truth constraints and active lower/upper bounds",
+    "lagrangian_stationarity": "grad(f)-J_truth_active^T lambda_truth-I_lower lambda_lower+I_upper lambda_upper",
+    "normalized_stationarity_denominator": "max(1.0, L2 norm of objective gradient)",
+    "maximum_normalized_stationarity": 1e-6,
+    "maximum_complementarity": 1e-6,
+    "multipliers_nonnegative": true
+  },
+  "formal_runner_budget": {
+    "maximum_total_F": 3105,
+    "maximum_total_reverse_equivalent": 3087,
+    "composition": "21F+3 reverse probes; at most 3072F+3072 reverse optimization; at most 12F+12 reverse terminal rescoring",
+    "logical_operator_VJP_calls": 0,
+    "one_primal_forward_per_recorded_F": true
+  },
+  "complete_gate": {
+    "identical_to_v52": true,
+    "within_1p01_of_direct_k4": "field, gradient and observation relative-L2 ratios must all be <= 1.01",
+    "no_worse_than_zero": "field, gradient and observation relative-L2 ratios must all be <= 1.0",
+    "observation_no_worse_than_direct_k3": true,
+    "direct_k3_observation_absolute_tolerance": 1e-12,
+    "not_pareto_dominated_by_direct_k3": true,
+    "robust_numeric_margin_minimum": 0.001,
+    "any_exact_request_is_eligible": true
+  },
+  "decision_rules": {
+    "robust_witness": "gradient probes pass and at least one exact request passes the complete gate with minimum numeric margin at least 0.001",
+    "fragile_witness": "gradient probes pass and at least one exact request passes the complete gate, but no passing request has minimum numeric margin at least 0.001",
+    "bounded_negative": "gradient probes pass, no exact request passes the complete gate, and all 12 terminals satisfy every frozen success, feasibility and KKT requirement",
+    "inconclusive": "gradient-probe failure, missing/invalid start execution, budget exhaustion without a positive witness, nonfinite value, failed terminal success/feasibility/KKT, source/input identity drift, seal drift or any execution-contract failure",
+    "robust_outcome": "PASS_ROBUST_CONTINUOUS_SIX_SPACE_WITNESS_S2_V53",
+    "fragile_outcome": "FRAGILE_CONTINUOUS_SIX_SPACE_WITNESS_S2_V53",
+    "negative_outcome": "BOUNDED_NEGATIVE_CONTINUOUS_SIX_SPACE_MULTISTART_S2_V53",
+    "inconclusive_outcome": "INCONCLUSIVE_CONTINUOUS_SIX_SPACE_ORACLE_S2_V53",
+    "runner_decision_status": "PENDING_INDEPENDENT_VALIDATION_V53",
+    "positive_result_authorizes": "design of a deployment-visible selector only after independent v53 validation",
+    "positive_result_does_not_authorize_neural_training": true,
+    "all_outcomes_algorithm_breakthrough": false
+  },
+  "output_contract": {
+    "output_location": "new private directory outside the repository",
+    "only_files": [
+      "START_ROSTER.json",
+      "START_ROSTER_SEAL.json",
+      "report.json",
+      "READY.json"
+    ],
+    "runner_report_status": "PENDING_INDEPENDENT_VALIDATION_SIX_SPACE_CONTINUOUS_ORACLE_V53",
+    "runner_ready_status": "PENDING_INDEPENDENT_VALIDATION_V53",
+    "independent_validator_must_not_import_runner": true
+  },
+  "required_future_independent_validation": [
+    "do not import the v53 runner",
+    "independently bind and replay the full v52 evidence chain and v53 source/input closure",
+    "independently reconstruct all six fixed directions, truth constraints and start roster",
+    "replay every optimizer request in the same order with an independent exact VJP route",
+    "independently rerun all 12 SLSQP starts and terminal KKT checks",
+    "independently replay all gradient probes and central differences",
+    "verify START_ROSTER and runner report bytes remain unchanged",
+    "disclose that runner and validator still share the frozen curved-physics kernel"
+  ],
+  "claim_boundary": {
+    "a_robust_positive_result_would_show": "representation headroom at one or more exact requests inside this fixed post-open S2 six-space, pending independent replay",
+    "a_fragile_positive_result_would_show": "numerically narrow representation headroom requiring a separately frozen robustness study",
+    "a_bounded_negative_would_show": "the fixed exact-gradient 12-start SLSQP contract found no complete-gate witness and every frozen terminal/probe validity gate passed",
+    "a_bounded_negative_would_not_prove": "continuous six-dimensional nonexistence, global optimality or mathematical impossibility",
+    "historical_same_snapshot_observation_dependence": "v52 request 2137 is an explicitly post-open exploitation start",
+    "shared_kernel_limitation": "future runner and validator orchestration may be independent while sharing the same frozen curved-physics implementation",
+    "algorithm_breakthrough": false,
+    "neural_training_authorized": false,
+    "matched_accuracy": false,
+    "speedup": false,
+    "external_generalization": false,
+    "real_bost": false,
+    "paper_success": false
+  }
+}

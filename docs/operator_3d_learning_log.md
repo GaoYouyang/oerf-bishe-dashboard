@@ -9472,3 +9472,65 @@ paper_success=false
 
 完整结果见
 `docs/blastnet_h2air_phi05_six_space_truth_feasible_roster_v52_result_2026-07-29.md`。
+
+## 282. v53：连续 oracle 无结论，但找到了会污染 smooth KKT 的体素边界切换
+
+v52 的 2,312 个固定候选全部失败后，这轮真正运行了事前冻结的连续六维约束 oracle：
+12 个起点、每起点最多 256 次 exact curved request。runner 和独立 validator
+分别重走请求、终点、KKT 和三指标，正式账为 `3,088 F + 3,070 reverse-equivalent`。
+
+结果仍是 0 个完整门 witness。正式最佳点相对 Direct-K4 为：
+
+```text
+field        0.982639
+gradient     1.010000
+observation  1.033843
+```
+
+但 11 个起点耗尽预算，唯一 SciPy success 也没过 KKT stationarity，所有终点没有
+同时满足有界负结论条件。因此正式判决不是“六维无解”，而是：
+
+```text
+INCONCLUSIVE_CONTINUOUS_SIX_SPACE_ORACLE_S2_V53
+```
+
+随后没有继续盲目加 optimizer budget，而是把 gradient 约束椭球精确映到球面并做
+双侧导数检查。真正抓到的问题是：`N=96` 终点的 `198,912` 个采样位置里，正向
+`1e-8` 扰动只有一个 midpoint 跨了体素 lower cell，负向没有：
+
+```text
+view/step/stage/ray       0 / 77 / midpoint / 259
+cell                      [26,19,41] -> [26,19,40]
+positive objective jump   4.07e-5
+negative objective change 1.18e-11
+AD derivative             -1.176e-4
+central derivative         2.036e2
+```
+
+同一个终点改用 N=128 时该处没有切换；但 N=128 重新优化后的终点又在另一个
+midpoint 出现一个单侧切换。这说明 fixed-step + 三线性 field-gradient forward 是
+piecewise smooth，换步数只移动切换面，不能让 smooth KKT 自动变成可靠裁判。
+
+为了仍然寻找正见证，12 起点 Powell 共执行 2,973 次 exact F，最佳 observation /
+Direct-K4 为 `1.033484`；固定 seed 的 1,024 点 Sobol 球面探测有 434 个可行 exact
+F，最佳为 `1.107221`。两者都是 0 pass，但都不构成不存在性证明。
+
+**讲人话：**旧六方向空间目前既没有合格答案，也没有被数学证明无解；更关键的是
+优化器所在的数值地面有细小台阶。继续往同一个 smooth optimizer 里投算力已经不值。
+下一步改表示：用最小 observation-only dual proposal，经精确 A^T、可观测 alpha
+和未修改 CGLS K1 做 warm start；旧六系数网络正式停止。
+
+```text
+formal_v53_independently_replayed=true
+postopen_cell_switch_diagnostic_independently_validated=false
+continuous_six_space_nonexistence_proven=false
+six_coefficient_selector_training_authorized=false
+new_initializer_hypothesis_may_be_preregistered=true
+matched_accuracy=false
+speedup=false
+real_bost=false
+algorithm_breakthrough=false
+```
+
+完整结果见
+`docs/blastnet_h2air_phi05_six_space_continuous_oracle_v53_result_2026-07-30.md`。
