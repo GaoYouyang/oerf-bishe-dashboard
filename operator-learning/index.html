@@ -343,6 +343,7 @@
       <a href="#representation-gate">表示机制</a>
       <a href="#transport-proxy-gate">输运与校准门</a>
       <a href="#g0-evidence">真实 CFD 代理</a>
+      <a href="blastnet-external-v40.html#six-space-v52">v52 六维可行性</a>
       <a href="blastnet-external-v40.html#second-residual-adjoint-v51">v51 第二残差伴随</a>
       <a href="blastnet-external-v40.html#five-space-v50">v49-v50 五维判决</a>
       <a href="blastnet-external-v40.html#curved-followups-v47">v45-v47 curved 修复链</a>
@@ -363,23 +364,26 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-29 · v51</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-29 · v52</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v51 已经实际构造并独立复算第二个固定线性化 residual-adjoint 方向：粗网格与观测空间的旧 span 外能量为 <code>30.84%</code> 与 <code>38.54%</code>，观测秩从 <code>5</code> 增到 <code>6</code>，且搜索选择 <code>w6=0.244372</code>。它把 observation / Direct-K4 从 <code>1.013825</code> 降到 <code>1.008749</code>，但 gradient 仍为 <code>1.030041</code>，所以完整门失败。当前不训练六系数网络；下一项先区分六维 span 的可行性与 selector 的失败，<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题：让只看部署可见观测的可学习初值，在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v52 已把 v51 的六个固定方向放进事前冻结的真值可行候选表：runner 与独立 validator 各执行 <code>2,312 F</code>，完整门通过数为 <code>0 / 2,312</code>。最佳 field / gradient / observation 比为 <code>0.985041 / 1.010000 / 1.038412</code>，说明在有限搜索表内，保住梯度安全会重新暴露 curved-observation 缺口。当前不训练六系数网络；下一门只做一次连续六维约束 oracle，有限表负结果不等于连续六维无解，<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="blastnet-external-v40.html#second-residual-adjoint-v51">打开 v51 判决</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_second_residual_adjoint_v51_result_2026-07-29.md">读 v51 完整判决</a>
-      <a class="button" href="../docs/blastnet_h2air_phi05_second_residual_adjoint_v51_public_summary.json">打开 v51 脱敏结果</a>
+      <a class="button primary" href="blastnet-external-v40.html#six-space-v52">打开 v52 判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_truth_feasible_roster_v52_result_2026-07-29.md">读 v52 完整判决</a>
+      <a class="button" href="../docs/blastnet_h2air_phi05_six_space_truth_feasible_roster_v52_public_summary.json">打开 v52 脱敏结果</a>
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert critical" style="margin-top:12px;">
-      <strong>最新科学增量：v51 第六方向真实新增秩，但完整门仍失败</strong>
-      <span>独立流程重放器重建方向与搜索后，Stage-A 数组最大差为 0、最终 score 最大差为 <code>2.44e-15</code>；它共享冻结的 v44 数值内核，不是外部独立物理实现。S6 的 field / gradient / observation 比为 <code>0.975858 / 1.030041 / 1.008749</code>：observation 已过门，gradient 仍差约 2.0 个百分点。这不是突破，也不能推出六维 span 无解。<a href="blastnet-external-v40.html#second-residual-adjoint-v51">打开 v51 证据</a>。</span>
+      <strong>最新科学增量：v52 有限六维候选表 0 / 2,312，六系数 selector 暂停</strong>
+      <span>两套流程按相同顺序重放全部请求，候选表与 score 的最大差均为 0。共有 <code>1,867</code> 个候选三项都优于 Zero，但没有一个同时进入 Direct-K4 的 1.01 包络；最佳候选的 observation 比仍为 <code>1.038412</code>。这是可复现的有限域负结果，不是连续六维无解证明，也不是算法突破。<a href="blastnet-external-v40.html#six-space-v52">打开 v52 证据</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="blastnet-external-v40.html#six-space-v52">v52 六维候选表</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_truth_feasible_roster_v52_result_2026-07-29.md">v52 完整判决</a>
+      <a class="button" href="../docs/blastnet_h2air_phi05_six_space_truth_feasible_roster_v52_public_summary.json">v52 脱敏结果</a>
       <a class="button primary" href="blastnet-external-v40.html#second-residual-adjoint-v51">v51 第二残差伴随</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_second_residual_adjoint_v51_result_2026-07-29.md">v51 完整判决</a>
       <a class="button" href="../docs/blastnet_h2air_phi05_second_residual_adjoint_v51_public_summary.json">v51 脱敏结果</a>
@@ -531,8 +535,8 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert critical">
-      <strong>最新开发判决：v51 改变了 span，但 residual-only 增广仍未消除梯度瓶颈</strong>
-      <span>第六方向新增观测秩并把 observation 推进 1.01 包络，gradient / Direct-K4 仍为 <code>1.030041</code>。下一项只做冻结六维 span 的有界可行性诊断，区分 span 限制与 observation-only selector 限制；不扩大网络。没有外部同精度、真实 BOST 或算法突破，<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新开发判决：v52 未找到同时保住梯度与 curved observation 的有限六维见证</strong>
+      <span>冻结的 <code>2,312</code> 个请求里，最佳候选用满 gradient 的 1.01 安全额度，observation / Direct-K4 仍为 <code>1.038412</code>。六系数 selector 暂停；下一项只做一次事前冻结的连续约束 oracle，判断是候选表漏解还是固定 residual-only 表示本身缺乏 headroom。没有外部同精度、真实 BOST 或算法突破，<code>algorithm_breakthrough=false</code>。</span>
     </div>
   </header>
 
@@ -663,7 +667,7 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
-        <article class="panel"><div class="chips"><span class="chip coral">最新 · v51 有界负结果</span><span class="chip blue">独立方向与搜索复算 PASS</span></div><h3 style="margin-top:10px;">Second fixed-linearization residual-adjoint enrichment</h3><p>第六方向的粗网格/观测旧 span 外能量为 30.84%/38.54%，观测秩 5→6，且 w6=0.244372。相同搜索账下 observation/K4 降至 1.008749，但 gradient/K4 仍为 1.030041。方向机制成立，完整目标失败，不授权训练六系数网络。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v52 冻结表负结果</span><span class="chip blue">2,312 + 2,312 curved F</span></div><h3 style="margin-top:10px;">Truth-feasible six-space roster</h3><p>冻结六方向真值可行域中的 2,312 个请求由两套实现逐项精确评分，完整门为 0/2,312，数值差为 0。最佳 field / gradient / observation 比为 0.985041 / 1.010000 / 1.038412；六系数 selector 不授权训练，但这不证明连续六维无解。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v50 固定表负结果</span><span class="chip blue">2,304 个候选独立重算</span></div><h3 style="margin-top:10px;">Replayable five-space roster</h3><p>v49 因自适应局部请求不可稳定重放而无结论；v50 改用目标函数无关固定表，完整门 0/2,304。最佳 gradient/K4 为 1.01 时 observation/K4 仍为 1.045775。v51 随后真实改变了 span，而不是继续扩大同类搜索。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v44.3 有界负结果</span><span class="chip blue">Stage A/B 独立复算 PASS</span></div><h3 style="margin-top:10px;">Single coarse curved-adjoint enrichment</h3><p>第五方向来自 Direct-K3 的部署可见 curved residual VJP，与旧 span 最大余弦仅 2.95e-15，旧 span 外能量为 19.0%-31.4%。相对配对四方向控制，四帧 field 与 observation 都改善；但 gradient / K4 全为 1.0148-1.0312，完整门 0/4。正式账本 <code>96 F + 292 JVP + 4 VJP</code>，所以只保留为机理负结果。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v43 有界负结果</span><span class="chip blue">curved forward / JVP 独立重放</span></div><h3 style="margin-top:10px;">Truth-aware four-Krylov trust-region oracle</h3><p>v42 direct SLSQP 耗尽预算后，v43 用精确 JVP 构造局部 observation 模型并做 exact curved rescore。四帧 field ratio 为 0.9786-0.9844，但 observation ratio 仍为 1.0204-1.0576，0/4 过完整门；正式账本 <code>31 F + 112 JVP + 0 VJP</code>。固定四方向系数预测支线关闭，但不宣称数学不存在。</p></article>
@@ -684,6 +688,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="v52-six-space-roster" class="alert critical" style="margin-top:13px;">
+        <strong>v52：冻结六维真值可行候选表仍为 0 / 2,312</strong>
+        <span>runner 与独立 validator 分别执行 <code>2,312 F</code>，roster 与 score 最大差均为 0。最佳 field / gradient / observation 比为 <code>0.985041 / 1.010000 / 1.038412</code>：gradient 已用满安全额度，observation 仍在门外。停止训练六系数 selector，但不宣称连续六维无解，<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_six_space_truth_feasible_roster_v52.png" aria-label="打开 v52 六维真值可行候选表总图">
+          <img src="../assets/blastnet_h2air_phi05_six_space_truth_feasible_roster_v52.png" alt="BLASTNet 开封 S2 数据上 v52 六维真值可行候选表的三指标分布、单项检查和最佳候选" />
+        </a>
+        <figcaption>2,312 个预先冻结请求中，没有一个同时越过三项 1.01 完整门。有限表负结果把下一步收窄到一次连续约束 oracle；在此之前不训练六系数网络。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="blastnet-external-v40.html#six-space-v52">打开 v52 专项证据</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_truth_feasible_roster_v52_result_2026-07-29.md">读 v52 完整判决</a>
+        <a class="button" href="../docs/blastnet_h2air_phi05_six_space_truth_feasible_roster_v52_public_summary.json">打开 v52 机器摘要</a>
       </div>
       <div id="v51-second-residual-adjoint" class="alert critical" style="margin-top:13px;">
         <strong>v51：第六方向新增秩并改善 observation，gradient 仍为 1.030041</strong>

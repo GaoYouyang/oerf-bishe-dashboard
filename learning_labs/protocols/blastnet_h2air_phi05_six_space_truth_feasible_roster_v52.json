@@ -1,0 +1,156 @@
+{
+    "schema_version": "oerf-blastnet-h2air-phi05-six-space-truth-feasible-roster-52.0",
+    "status": "FROZEN_BEFORE_V52_RESULT",
+    "date": "2026-07-29",
+    "scientific_question": "Inside the fixed six-direction S2 family inherited from v51, does a fully pre-fixed truth-feasible finite roster contain any complete frozen-v40 gate witness?",
+    "scope": {
+        "dataset": "BLASTNet premixed H2-air DNS, phi=0.5",
+        "snapshot_ids": [2],
+        "role": "post-open representation-headroom diagnostic only",
+        "candidate_family": "x(w)=gauge(Direct-K3 + sum_i w_i d_i), i=1..6",
+        "weight_box": [-2.0, 3.0],
+        "external_generalization": false,
+        "online_deployable_as_run": false,
+        "fresh_or_test_opening_authorized": false,
+        "neural_training_authorized_before_result": false
+    },
+    "frozen_parent_evidence": {
+        "v43_role": "Direct-K3, Direct-K4 and Zero reference metrics plus the four-direction diagnostic anchor",
+        "v44_role": "validated first curved-adjoint direction and five-direction anchor",
+        "v47_role": "five-direction truth-constrained diagnostic anchor",
+        "v50_role": "independently replayed 2304-request fixed-roster negative and its best diagnostic anchor",
+        "v51_role": "independently replayed fixed-linearization second residual-adjoint direction, S5 and S6 selected weights",
+        "v51_required_status": "PASS_INDEPENDENT_RECOMPUTATION_SECOND_RESIDUAL_ADJOINT_V51",
+        "v51_required_direction_classification": "VALID_SECOND_CURVED_RESIDUAL_ADJOINT_DIRECTION"
+    },
+    "direction_reconstruction": {
+        "direct_field": "frozen S2 Direct-K3 high-resolution field",
+        "direct_prediction": "validated v51 Stage-A direct_prediction.npy; no curved forward is allowed during roster construction",
+        "directions_1_to_4": "regenerate the four frozen straight-CGLS coarse increments from y-direct_prediction, then prolong with the frozen geometry",
+        "direction_5": "validated v51 Stage-A d5.npy",
+        "direction_6": "validated v51 Stage-A d6.npy",
+        "all_six_directions_fixed_before_roster_generation": true,
+        "roster_generation_curved_calls": {"F": 0, "JVP": 0, "VJP": 0}
+    },
+    "truth_feasibility": {
+        "field_limit": "min(1.01 * Direct-K4 field relative-L2, Zero field relative-L2)",
+        "gradient_limit": "min(1.01 * Direct-K4 gradient relative-L2, Zero gradient relative-L2)",
+        "constraint_form": "exact affine-subspace quadratic field and coarse-gradient residual norms",
+        "origin_must_be_feasible": true,
+        "fixed_bisection_iterations": 80,
+        "boundary_safety_factor": 0.99999999,
+        "feasibility_tolerance": 1e-12,
+        "observation_metric_forbidden_during_roster_generation": true
+    },
+    "fixed_roster": {
+        "sobol": {
+            "dimension": 6,
+            "scramble": false,
+            "mapping": "2*u-1, discard exact zero vectors, normalize by L-infinity norm",
+            "global_direction_count": 512,
+            "local_direction_count": 64,
+            "local_directions_follow_global_directions_without_restarting_the_sequence": true
+        },
+        "global": {
+            "direction_count": 512,
+            "radial_fractions": [0.25, 0.5, 0.75, 1.0],
+            "maximal_ray_length_respects_box_and_truth_feasibility": true,
+            "request_count": 2048
+        },
+        "local": {
+            "anchor": "v51 S6 weights radially mapped from the origin into truth feasibility, then multiplied by 0.99",
+            "signed_direction_count": 128,
+            "maximum_linf_step": 0.5,
+            "step_fractions": [0.5, 1.0],
+            "maximal_step_respects_box_and_truth_feasibility": true,
+            "request_count": 256
+        },
+        "anchors": {
+            "mapping": "radially map each frozen historical weight from the origin into the same box and truth-feasible set",
+            "all_nonzero_anchor_outputs_include_boundary_safety_factor": true,
+            "members_in_request_order": [
+                "Direct-K3 origin",
+                "v43 four-direction anchor padded with two zeros",
+                "v44 five-direction anchor padded with one zero",
+                "v47 five-direction anchor padded with one zero",
+                "v50 best diagnostic five-direction anchor padded with one zero",
+                "v51 S5 weights padded with one zero",
+                "v51 S6 weights",
+                "v51 S6 weights with w6 set to zero"
+            ],
+            "all_historical_weights_must_match_the_bound_parent_reports_before_roster_generation": true,
+            "request_count": 8
+        },
+        "total_request_count": 2312,
+        "request_order": [
+            "all global directions in Sobol order and radial-fraction order",
+            "all local directions in Sobol order, negative then positive sign, and step-fraction order",
+            "all eight anchors in the listed order"
+        ],
+        "deduplication": false,
+        "early_stopping": false,
+        "no_v52_post_seal_objective_adaptation": true,
+        "historical_same_snapshot_observation_dependence": true,
+        "post_result_added_points": false,
+        "continuous_optimizer": false
+    },
+    "execution_contract": {
+        "runtime": {"torch_intraop_threads": 1, "torch_interop_threads": 1},
+        "entire_roster_written_and_sha256_sealed_before_first_curved_forward": true,
+        "formal_runner_exact_curved_ledger": {"F": 2312, "JVP": 0, "VJP": 0},
+        "one_exact_curved_forward_per_request": true,
+        "all_requests_scored_even_after_a_witness": true,
+        "candidate_bank_preserves_request_multiplicity": true,
+        "runner_writes_pending_result_only": true,
+        "runner_rehashes_complete_source_and_input_identity_after_scoring": true,
+        "validator_rehashes_complete_source_and_input_identity_after_replay": true,
+        "any_nonfinite_replay_value_is_fatal": true
+    },
+    "complete_gate": {
+        "within_1p01_of_direct_k4": "field, gradient and observation relative-L2 ratios must all be <= 1.01",
+        "no_worse_than_zero": "field, gradient and observation relative-L2 ratios must all be <= 1.0",
+        "observation_no_worse_than_direct_k3": true,
+        "direct_k3_observation_absolute_tolerance": 1e-12,
+        "not_pareto_dominated_by_direct_k3": true,
+        "robust_numeric_margin_minimum": 0.001,
+        "numeric_margin_members": [
+            "1.01 minus each Direct-K4 metric ratio",
+            "1.0 minus each Zero metric ratio",
+            "(Direct-K3 observation minus candidate observation) divided by Direct-K3 observation"
+        ]
+    },
+    "decision_rules": {
+        "robust_witness": "at least one complete-gate candidate has minimum numeric margin >= 0.001",
+        "fragile_witness": "at least one complete-gate candidate exists but no passing candidate has minimum numeric margin >= 0.001",
+        "bounded_negative": "all 2312 requests are independently replayed and none passes the complete gate",
+        "inconclusive": "any source/input/roster/seal/call-ledger/numeric/replay check fails",
+        "robust_outcome": "PASS_ROBUST_TRUTH_FEASIBLE_SIX_SPACE_WITNESS_S2_V52",
+        "fragile_outcome": "FRAGILE_TRUTH_FEASIBLE_SIX_SPACE_WITNESS_S2_V52",
+        "negative_outcome": "NO_WITNESS_IN_FROZEN_TRUTH_FEASIBLE_ROSTER_S2_V52",
+        "inconclusive_outcome": "INCONCLUSIVE_V52_INTEGRITY_OR_REPLAY_FAILURE"
+    },
+    "required_independent_validation": [
+        "validator must not import the v52 runner",
+        "reverify the clean tracked source commit, source closure and frozen parent evidence",
+        "independently reconstruct all six fixed directions",
+        "independently rebuild the field and gradient truth-constraint model",
+        "independently regenerate all 2312 requests in the same order",
+        "verify the pre-forward roster seal and that roster bytes remain unchanged",
+        "independently execute exactly 2312 curved forwards and recompute every metric, gate, margin and final decision",
+        "verify the runner report bytes remain unchanged before and after replay"
+    ],
+    "claim_boundary": {
+        "a_robust_witness_would_show": "finite-roster representation headroom inside this fixed S2 six-space and would redirect work toward the observation-only selector",
+        "a_fragile_witness_would_show": "numerically narrow finite-roster headroom requiring a new frozen robustness test",
+        "a_negative_result_would_show": "no witness among this pre-fixed 2312-request truth-feasible roster",
+        "a_negative_result_would_not_prove": "continuous six-dimensional nonexistence or global mathematical impossibility",
+        "shared_kernel_limitation": "runner and validator are separate implementations but share the frozen v42 truth-margin class and v44 curved-forward, geometry and basis numerical kernels",
+        "historical_same_snapshot_observation_dependence": "the local roster is centered on the previously selected v51 S6 point; v52 forbids result-after adaptation but is not observation-independent",
+        "algorithm_breakthrough": false,
+        "matched_accuracy": false,
+        "speedup": false,
+        "external_generalization": false,
+        "real_bost": false,
+        "paper_success": false
+    }
+}

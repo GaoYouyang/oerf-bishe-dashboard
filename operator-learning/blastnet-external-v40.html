@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="SARC-K3-M4 v40.2 在 BLASTNet 预混 H2-air DNS 上的冻结外部精度检验，以及 v41-v51 从固定 Krylov span 到第二残差伴随增广的机理诊断。" />
-  <title>BLASTNet 外部检验 v40.2 × 第二残差伴随 v51 | OERF C 路线</title>
+  <meta name="description" content="SARC-K3-M4 v40.2 在 BLASTNet 预混 H2-air DNS 上的冻结外部精度检验，以及 v41-v52 从固定 Krylov span 到六维真值可行候选表的机理诊断。" />
+  <title>BLASTNet 外部检验 v40.2 × 六维候选表 v52 | OERF C 路线</title>
   <style>
     :root {
       --ink: #17211d;
@@ -312,6 +312,7 @@
     <a href="#verdict">判决</a>
     <a href="#evidence">证据</a>
     <a href="#diagnosis">机理</a>
+    <a href="#six-space-v52">v52 六维候选表</a>
     <a href="#second-residual-adjoint-v51">v51 第二残差伴随</a>
     <a href="#curved-v44">v44 curved-adjoint</a>
     <a href="#krylov-v43">v43 受约束 oracle</a>
@@ -334,11 +335,13 @@
         <span class="chip fail">v43 受约束 oracle 仍 0 / 4</span>
         <span class="chip fail">v44 新方向有效但完整门仍 0 / 4</span>
         <span class="chip fail">v51 第六方向增秩但梯度仍 FAIL</span>
+        <span class="chip fail">v52 六维冻结表 0 / 2,312</span>
         <span class="chip warn">资源门未授权</span>
         <span class="chip fail">algorithm_breakthrough=false</span>
       </div>
       <div class="actions">
         <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md">阅读完整负结果</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_truth_feasible_roster_v52_result_2026-07-29.md">阅读 v52 六维候选表判决</a>
         <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_second_residual_adjoint_v51_result_2026-07-29.md">阅读 v51 第二残差伴随诊断</a>
         <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_curved_adjoint_v44_result_2026-07-29.md">阅读 v44 curved-adjoint 诊断</a>
         <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_krylov_trust_region_v43_result_2026-07-29.md">阅读 v42/v43 受约束诊断</a>
@@ -599,6 +602,60 @@
         </div>
       </div>
 
+      <div id="six-space-v52" style="scroll-margin-top:70px; padding-top:30px;">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">v52 · independently replayed truth-feasible six-space roster</div>
+            <h2>六方向真值可行域中的 2,312 个冻结请求仍然 0 pass</h2>
+          </div>
+          <p>这是已打开 S2 快照上的表示 headroom 诊断。它区分“六系数 selector 没找对”和“冻结六方向候选表里没有合格点”，不回答连续六维是否数学无解。</p>
+        </div>
+        <div class="grid-3">
+          <div class="panel">
+            <h3>候选表先冻结</h3>
+            <p><code>2,048</code> 个全局 Sobol 射线请求、<code>256</code> 个 v51 S6 邻域请求和 <code>8</code> 个历史锚点，在第一次 curved forward 前密封；不去重、不早停。</p>
+          </div>
+          <div class="panel">
+            <h3>独立逐项复算</h3>
+            <p>runner 与 validator 各执行 <code>2,312 F</code>。第二套实现重建六方向、真值约束、roster、score 和完整门，roster/score 最大差均为 <code>0</code>。</p>
+          </div>
+          <div class="panel">
+            <h3 class="fail-text">完整门 · 0 / 2,312</h3>
+            <p>最佳 field / gradient / observation 比为 <code>0.985041 / 1.010000 / 1.038412</code>；gradient 已触边，observation 仍超标约 2.84 个百分点。</p>
+          </div>
+        </div>
+        <div class="alert fail" style="margin-top:15px;">
+          <strong>正式有界判决：</strong>
+          <code>NO_WITNESS_IN_FROZEN_TRUTH_FEASIBLE_ROSTER_S2_V52</code>。三项均不劣于 Zero 的请求有 1,867 个，observation 不劣于 Direct-K3 的有 778 个，但三项同时进入 Direct-K4 1.01 包络的请求为 0。六系数 selector 不授权训练。
+        </div>
+        <figure class="figure" style="margin-top:18px;">
+          <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_six_space_truth_feasible_roster_v52.png">
+            <img src="../assets/blastnet_h2air_phi05_six_space_truth_feasible_roster_v52.png" alt="BLASTNet H2-air S2 上 v52 六维真值可行候选表的 2312 个请求、检查通过率和最佳候选三指标" />
+          </a>
+          <figcaption>左上是全部冻结请求的 gradient-observation 分布；右上显示 observation 的最小值仍为 1.038412；左下分解单项门；右下显示最佳点把 gradient 额度用满后 observation 仍越线。</figcaption>
+        </figure>
+        <div class="table-wrap" style="margin-top:15px;">
+          <table>
+            <thead><tr><th>证据</th><th class="num">请求</th><th class="num">通过</th><th>判决</th></tr></thead>
+            <tbody>
+              <tr><td>全局 Sobol 真值可行射线</td><td class="num">2,048</td><td rowspan="3" class="num fail-text">0</td><td rowspan="3">冻结表没有完整门 witness；连续六维无解未证明</td></tr>
+              <tr><td>v51 S6 局部真值可行邻域</td><td class="num">256</td></tr>
+              <tr><td>历史锚点</td><td class="num">8</td></tr>
+              <tr><td>独立 exact rescore</td><td class="num">2,312 F</td><td class="num pass">PASS</td><td>逐候选 score 最大差为 0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert info" style="margin-top:15px;">
+          <strong>策略变化：</strong>
+          现在停止训练 FNO、DeepONet、MLP 等六系数预测器。固定六方向只剩一次结果前冻结的连续约束 oracle，用精确 curved VJP 检查候选表是否漏掉极窄可行口袋；若仍失败，直接改变表示并让新方向显式处理梯度安全。
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_six_space_truth_feasible_roster_v52_result_2026-07-29.md">读 v52 完整判决</a>
+          <a class="button" href="../docs/blastnet_h2air_phi05_six_space_truth_feasible_roster_v52_public_summary.json">打开 v52 脱敏摘要</a>
+          <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_six_space_truth_feasible_roster_v52.png">查看 v52 总图</a>
+        </div>
+      </div>
+
       <div id="curved-v44" style="scroll-margin-top:70px; padding-top:30px;">
         <div class="section-head">
           <div>
@@ -794,7 +851,7 @@
         </div>
       </div>
       <div class="alert" style="margin-top:15px;">
-        当前最窄、最有信息量的结论是：v51 第六方向真实新增观测秩，并把 observation 推进 1.01 门内，但 gradient 仍为 <code>1.030041</code>。因此 residual-only 增广没有消除 gradient-safety 冲突；下一项先做冻结六维 span 的有界可行性诊断，不继续机械增加同类方向。
+        当前最窄、最有信息量的结论是：v52 在冻结六方向的 2,312 个 field/gradient 真值可行请求中得到 0 个完整门 witness；最佳 gradient 已到 <code>1.010000</code>，observation 仍为 <code>1.038412</code>。因此停止训练六系数 selector，只保留一次连续约束 oracle；它若仍失败，就改变表示本身。
       </div>
     </section>
 
@@ -821,8 +878,9 @@
             <tr><td>v49 自适应全局+局部搜索</td><td class="fail-text">INCONCLUSIVE</td><td>独立请求重放在第 48 个局部请求失败；runner 诊断不得用于科学结论</td></tr>
             <tr><td>v50 固定候选表</td><td class="fail-text">固定表负结果</td><td>2,304 个唯一候选全量独立精确重算，0 个完整门 witness；五维路线没有被关闭</td></tr>
             <tr><td>v51 第二残差伴随增广</td><td class="fail-text">有界负结果</td><td>方向新增秩且 observation 过门，但 gradient / K4 为 1.030041；完整门仍失败</td></tr>
+            <tr><td>v52 六维真值可行候选表</td><td class="fail-text">固定表负结果</td><td>2,312 个请求由两套实现各自精确评分，0 个完整门 witness；不证明连续六维无解</td></tr>
             <tr><td>固定四方向 selector</td><td class="fail-text">不授权训练</td><td>oracle 仍未找到完整门候选</td></tr>
-            <tr><td>六系数预测器</td><td class="fail-text">不授权训练</td><td>v51 的 observation-only selector 仍没有完整门 witness</td></tr>
+            <tr><td>六系数预测器</td><td class="fail-text">不授权训练</td><td>v52 冻结真值可行候选表为 0 / 2,312，当前没有合格学习标签</td></tr>
             <tr><td>资源加速</td><td>未运行</td><td>精度失败后按协议无资格测速</td></tr>
             <tr><td>真实 BOST</td><td>未证明</td><td>当前仍是由 DNS 密度构造的代理 forward</td></tr>
             <tr><td>广泛燃烧场泛化</td><td>未证明</td><td>只有一个外部数据集且结果为负</td></tr>
@@ -838,7 +896,7 @@
     </section>
 
     <footer>
-      脱敏公开页不包含原始 DNS、私有场、模型参数、执行路径、release 或哈希。最新证据：v51 第六方向新增秩并改善 observation，但 gradient / K4 仍为 1.030041；完整门失败；algorithm_breakthrough=false。
+      脱敏公开页不包含原始 DNS、私有场、模型参数、候选权重、执行路径、release 或哈希。最新证据：v52 六维真值可行候选表为 0 / 2,312，最佳 field / gradient / observation 比为 0.985041 / 1.010000 / 1.038412；连续六维无解未证明；algorithm_breakthrough=false。
     </footer>
   </main>
   <script>

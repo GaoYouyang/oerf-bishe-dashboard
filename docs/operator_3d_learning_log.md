@@ -9411,3 +9411,63 @@ paper_success=false
 
 完整结果见
 `docs/blastnet_h2air_phi05_second_residual_adjoint_v51_result_2026-07-29.md`。
+
+## 281. v52：六个方向不是“再搜密一点就行”，冻结表 0 / 2,312
+
+v51 留下了一个必须回答的问题：第六方向已经新增了秩，为什么完整门还失败？可能是
+observation-only selector 选错了系数，也可能是固定六方向空间本身没有合格点。
+
+这轮没有训练网络，而是在同一个 S2 快照的六维空间里先构造 field/gradient 真值
+可行域，再把候选表完全冻结：
+
+```text
+global Sobol rays    2,048 requests
+local S6 neighborhood  256 requests
+historical anchors        8 requests
+total                  2,312 requests
+```
+
+候选表在第一次 curved forward 前密封，不去重、不早停。v47/v50 锚点重复，所以
+唯一权重是 2,311，但 runner 和 validator 都必须完整执行 2,312 次。
+
+独立红队在正式计算前发现了两个会伤害证据的 P1：`NaN` 能绕过旧差异比较，以及长跑
+后未重新哈希输入。修复后，runner 与不导入 runner 的 validator 分别跑完
+`2,312 F`，重新生成的 roster 和全部 score 最大差都为 0，source/input 前后身份
+也一致。
+
+正式结果：
+
+```text
+complete-gate passes               0 / 2,312
+all three no worse than Zero       1,867
+observation no worse than Direct-K3  778
+all three within 1.01 of Direct-K4     0
+
+best field / K4                    0.985041
+best gradient / K4                 1.010000
+best observation / K4              1.038412
+best minimum gate margin          -0.028412
+```
+
+**讲人话：**最好的点已经把 gradient 安全额度用到边界，field 也够好，但
+observation 仍差 2.84 个百分点。v51 原始 S6 能把 observation 压进门内，是因为
+gradient 退到了 1.030041；一旦要求 field/gradient 安全，observation 又回到门外。
+
+这不是“连续六维无解”的证明，但已经足以停止训练六系数 selector：我们没有一批
+合格标签，继续堆 FNO/DeepONet/MLP 只会学习一个未证实可达的目标。
+
+下一项只保留一次六维连续约束 oracle，用精确 curved VJP、固定多起点和独立请求
+轨迹重放检查是否存在很窄的可行口袋。若仍失败，正式停止 residual-only 六方向，
+改造表示本身，让新方向直接处理梯度安全；若找到 witness，才回到部署可见
+gradient-aware selector。
+
+```text
+finite_roster_negative=true
+continuous_six_space_nonexistence_proven=false
+six_coefficient_selector_training_authorized=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整结果见
+`docs/blastnet_h2air_phi05_six_space_truth_feasible_roster_v52_result_2026-07-29.md`。
