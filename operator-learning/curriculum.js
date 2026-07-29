@@ -1,9 +1,19 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.28-c-v25-controlled-curved-ray-stress",
-  previousVersion: "2026.07.28-c-v21-a-space-lift-negative",
-  previousBadge: "v21 temporal FAIL · global linear route closed",
-  olderBadge: "v20 lift · lift-L2 shared span FAIL",
+  version: "2026.07.29-c-v52-finite-six-space-negative",
+  previousVersion: "2026.07.29-c-v51-second-residual-adjoint",
+  previousBadge: "v51 sixth direction · observation repaired, gradient FAIL",
+  olderBadge: "v50 fixed five-space roster · 0 / 2,304",
   historyReleases: [
+    {
+      version: "2026.07.29-c-v51-second-residual-adjoint",
+      previousVersion: "2026.07.29-c-v50-fixed-roster-negative",
+      badge: "v51 sixth direction · observation repaired, gradient FAIL"
+    },
+    {
+      version: "2026.07.29-c-v50-fixed-roster-negative",
+      previousVersion: "2026.07.28-c-v21-a-space-lift-negative",
+      badge: "v50 fixed five-space roster · 0 / 2,304"
+    },
     {
       version: "2026.07.28-c-v21-a-space-lift-negative",
       previousVersion: "2026.07.28-c-v20-temporal-lift-negative",
@@ -34,7 +44,7 @@ window.OPERATOR_LEARNING_GUIDE = {
       badge: "v16.1 resource · wall headroom, CPU/RSS FAIL"
     }
   ],
-  updated: "2026-07-28",
+  updated: "2026-07-29",
   foundationChecks: [
     {
       id: "python-array",

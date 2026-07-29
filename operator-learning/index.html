@@ -1600,9 +1600,9 @@
 已勾选证据门：${passed}
 最近未通过：${pending}
 
-v10 已固定 Zero-CGLS K4 的 4A+4A^T 参考与 DualRange-K1 的 2A+2A^T 目标。v10.4.2 已通过独立复算：完整 K3 dual restart + K1 的 field / gradient / observation p90 是 0.6205 / 1.0923 / 0.3466，joint matched 100%、harm 0%；Zero-K4 是 0.6332 / 1.2180 / 0.3330。
+当前最新证据是 BLASTNet 开封 S2 上的 v52。v51 新增第六个 residual-adjoint 方向后，observation / Direct-K4 已到 1.008749，但 gradient 仍为 1.030041。v52 随后事前冻结 2,312 个六维真值可行请求，runner 与独立 validator 各执行 2,312 次 curved forward，完整门为 0 / 2,312；最佳 field / gradient / observation 比为 0.985041 / 1.010000 / 1.038412。
 
-v10.8.2 已证明完整 K3 dual 目标在五条 fit trajectory 上 5/5 可行，v10.9 full-linear KRR 三臂均为 0/5。严格 v11.2 随后完成 77,020 参数 odd multiview detector CNN 五折 5/5。v11.3 的锁模后 p45-s03 fresh proxy 达到 101/101 joint match、0 harm、调用减半，但 wall/RSS 失败。v12.1-v17 最终把模型压到 10,548 参数，并在额外 p33 development 上保持 101/101、0 harm、调用减半；v17 的典型 wall 与 peak-RSS 过门，但 CPU 和首个冷进程失败。v18 证明简单因果复用要么几乎全回退，要么丢精度，v19 又排除 bounded per-view shift-scale。v20 把时间状态放到 A^T-lift innovation，但 p45/p58 到 rank 192 仍只有 66%/72%。v21 保持同一 span、rank、关键帧与 strict K1，只把 oracle 系数换成 A-space：p45 仍为 66%，p58 为 70%，配对 lift-L2 仍为 72%；两条 harm=0。独立候选/metric 最大差 4.50e-14/3.22e-15；当前共享全局线性 50% 摊销路线关闭，尚无 fresh、native skip、wall/RSS、真实 BOST、泛化或论文成功。algorithm_breakthrough=false。
+这只证明有限候选表没有 witness，不证明连续六维无解。现在暂停六系数网络训练，下一项只做一次结果前冻结的连续六维约束 oracle；若它仍失败，再改变 residual-only 表示。当前没有 matched-accuracy、调用/时间/内存优势、真实 BOST、外部泛化或论文成功。algorithm_breakthrough=false。
 
 截至 2026-07-26 的公开一级来源检索没有发现完全同构的整套方法，但 learned warm start、learned backprojection、neural operator + Krylov、WB-IPM 和 Learned ReSeSOp 都是强近邻；当前只主张组合级差异，不主张全球唯一。还需要确认组内是否已有未发表的 observation-space filter / warm start / 专利，以及真实流程中 A、A^T、光流、ray tracing 哪部分最贵。`;
       }
