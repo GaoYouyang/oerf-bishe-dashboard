@@ -9069,3 +9069,65 @@ paper_success=false
 
 完整结果见
 `docs/blastnet_h2air_phi05_krylov_increment_span_v41_result_2026-07-29.md`。
+
+## 274. v42/v43：oracle 也没救回固定四方向，停止训练系数网络
+
+v41 只按 observation 目标调四个权重，可能因为没有把 field 和 gradient 门直接
+放进优化器而错过可行点。这一轮真正执行了两种 truth-aware constrained oracle，
+回答“这个四方向空间里到底有没有值得学习的目标”。
+
+v42 先穷举每帧 323 个确定性 screen 点，再直接对精确 curved observation 做
+SLSQP。screen 是 0 / 4 通过，但后面的第一个优化起点就把每帧预算耗尽：合计
+2800 次 curved forward 和 1508 次 reverse VJP，四次优化都没有形成可判定解。
+独立重放最大差为 0，所以正确结论只能是“搜索器预算耗尽、结果 inconclusive”，
+不能说 basis 已经失败。
+
+随后没有继续堆同类 SLSQP，而是冻结 v43：在每个 trust-region 中心计算一次精确
+curved prediction 和四个精确 JVP，用局部 affine observation 模型求四维 QCQP，
+候选再回到精确 curved forward 上验收。场与梯度门、四个方向、系数盒都没有改变。
+
+正式 v43 约 121 秒完成，独立程序约 119 秒完整重放。四帧最佳 ratio 是：
+
+```text
+snapshot  field/K4  gradient/K4  observation/K4
+1         0.979208  1.010000     1.020448
+2         0.984410  1.010000     1.055484
+3         0.980775  1.010000     1.022709
+4         0.978627  1.010000     1.057592
+```
+
+四帧的场误差都更低，但梯度被推到 1.01 边界，observation 仍全部超过 1.01。
+完整门仍是 0 / 4。正式调用账是：
+
+```text
+31 F + 112 JVP + 0 VJP
+```
+
+独立 validator 重新构造 basis、重跑 curved forward/JVP 轨迹、重做每次
+接受/拒绝并重算完整门；逐行、联合指标和选中场的最大数值差都为 0：
+
+```text
+PASS_INDEPENDENT_RECOMPUTATION_KRYLOV_JVP_TRUST_REGION_ORACLE_V43
+```
+
+**讲人话：**这次不是“网络没调好”，而是连能看 truth 的 oracle 在冻结搜索范围
+内也没找到四个系数同时守住三项指标。继续给同一个固定四方向 basis 训练
+MLP、FNO 或 DeepONet 没有依据，所以这条系数预测支线现在关闭。下一条真正有
+科学价值的工作必须改变方向/basis 如何产生，让新方向携带 curved-observation
+信息，而不是继续放大同一个搜索器。
+
+这是经过验证、能节省后续大量训练成本的负结果，但不是数学不可行性证明，也不是
+可部署算法、加速、真实 BOST 或论文成功：
+
+```text
+validated_bounded_negative=true
+selector_pilot_authorized=false
+same_cost_or_speed_claim_authorized=false
+new_external_generalization_evidence=false
+real_BOST=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整结果见
+`docs/blastnet_h2air_phi05_krylov_trust_region_v43_result_2026-07-29.md`。

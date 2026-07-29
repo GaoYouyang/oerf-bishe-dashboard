@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="SARC-K3-M4 v40.2 在 BLASTNet 预混 H2-air DNS 上的冻结外部精度检验，以及 v41 四个 Krylov 增量的后验机制诊断。" />
-  <title>BLASTNet 外部检验 v40.2 × Krylov 诊断 v41 | OERF C 路线</title>
+  <meta name="description" content="SARC-K3-M4 v40.2 在 BLASTNet 预混 H2-air DNS 上的冻结外部精度检验，以及 v41-v43 四方向 Krylov 的 observation 与受约束 oracle 诊断。" />
+  <title>BLASTNet 外部检验 v40.2 × Krylov oracle v43 | OERF C 路线</title>
   <style>
     :root {
       --ink: #17211d;
@@ -312,6 +312,7 @@
     <a href="#verdict">判决</a>
     <a href="#evidence">证据</a>
     <a href="#diagnosis">机理</a>
+    <a href="#krylov-v43">v43 受约束 oracle</a>
     <a href="#krylov-v41">v41 四方向</a>
     <a href="#meaning">意义</a>
     <a href="#boundary">边界</a>
@@ -328,12 +329,13 @@
         <span class="chip fail">正式外部精度 FAIL</span>
         <span class="chip ok">8 / 8 源文件二次下载一致</span>
         <span class="chip ok">独立 curved replay PASS</span>
-        <span class="chip fail">v41 四方向仍 0 / 4</span>
+        <span class="chip fail">v43 受约束 oracle 仍 0 / 4</span>
         <span class="chip warn">资源门未授权</span>
         <span class="chip fail">algorithm_breakthrough=false</span>
       </div>
       <div class="actions">
         <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_sarc_external_v40_result_2026-07-29.md">阅读完整负结果</a>
+        <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_krylov_trust_region_v43_result_2026-07-29.md">阅读 v42/v43 受约束诊断</a>
         <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_krylov_increment_span_v41_result_2026-07-29.md">阅读 v41 四方向诊断</a>
         <a class="button" href="../docs/blastnet_h2air_phi05_sarc_external_v40_public_summary.json">打开脱敏机器摘要</a>
         <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_sarc_external_v40.png">查看结果图</a>
@@ -429,6 +431,66 @@
         <code>POST_OPEN_CORRECTION_SPAN_INSUFFICIENT_FOR_OBSERVATION_GATE</code>。下一版不能只学习一个增益，而要改变可用修正方向，并让方向感知物理尺度、密度梯度频谱和部署可见残差。
       </div>
 
+      <div id="krylov-v43" style="scroll-margin-top:70px; padding-top:30px;">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">v42-v43 · truth-aware constrained mechanism diagnostic</div>
+            <h2>oracle 也没有在固定四方向里找到完整通过点</h2>
+          </div>
+          <p>v42 暴露 direct curved SLSQP 的预算失效；v43 保持四方向、系数盒和三重门不变，用精确 JVP trust region 完成有界复核。</p>
+        </div>
+        <div class="grid-3">
+          <div class="panel">
+            <h3 class="fail-text">v42 · inconclusive</h3>
+            <p>每帧 323 个确定性 screen 点均未通过；第一个 direct SLSQP 起点耗尽预算，合计 2800 curved forward + 1508 reverse VJP，不能据此否定 basis。</p>
+          </div>
+          <div class="panel">
+            <h3>v43 · exact JVP trust region</h3>
+            <p>在每个中心用精确 curved prediction 和四个 JVP 构造局部 QCQP；候选必须回到精确 curved forward 上验收，最多 8 个外层迭代。</p>
+          </div>
+          <div class="panel">
+            <h3 class="fail-text">0 / 4 complete gate</h3>
+            <p>四帧 field 均改善，但 gradient 均贴近 1.01 边界，observation ratio 仍全部高于 1.01；固定四方向 selector 停止授权。</p>
+          </div>
+        </div>
+        <div class="alert fail" style="margin-top:15px;">
+          <strong>独立验证后的有界负结果：</strong>
+          <code>NO_PASSING_CANDIDATE_FOUND_UNDER_PREREGISTERED_JVP_TRUST_REGION_SEARCH</code>。独立 validator 重新构造 basis、重跑 curved forward/JVP 和每次接受/拒绝，三类最大数值差均为 0。它不等于数学不可行性证明。
+        </div>
+        <figure class="figure" style="margin-top:18px;">
+          <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_krylov_trust_region_v43.png">
+            <img src="../assets/blastnet_h2air_phi05_krylov_trust_region_v43.png" alt="BLASTNet 开封数据上 v43 四方向 JVP trust-region 的精度比、权重和调用账" />
+          </a>
+          <figcaption>左：四帧最佳候选相对 Direct-K4 的三项误差；中上：四个 Krylov 增量权重；中下：有界搜索账本。observation 在四帧均未过 1.01 线。</figcaption>
+        </figure>
+        <div class="table-wrap" style="margin-top:15px;">
+          <table>
+            <thead>
+              <tr><th>快照</th><th class="num">field / K4</th><th class="num">gradient / K4</th><th class="num">observation / K4</th><th>curved 账本</th><th>判决</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>S1</td><td class="num pass">0.979208</td><td class="num">1.010000</td><td class="num fail-text">1.020448</td><td>8 F + 24 JVP</td><td class="fail-text">FAIL</td></tr>
+              <tr><td>S2</td><td class="num pass">0.984410</td><td class="num">1.010000</td><td class="num fail-text">1.055484</td><td>5 F + 32 JVP</td><td class="fail-text">FAIL</td></tr>
+              <tr><td>S3</td><td class="num pass">0.980775</td><td class="num">1.010000</td><td class="num fail-text">1.022709</td><td>9 F + 28 JVP</td><td class="fail-text">FAIL</td></tr>
+              <tr><td>S4</td><td class="num pass">0.978627</td><td class="num">1.010000</td><td class="num fail-text">1.057592</td><td>9 F + 28 JVP</td><td class="fail-text">FAIL</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert info" style="margin-top:15px;">
+          <strong>完整机制成本：</strong>
+          <code>31 F + 112 JVP + 0 VJP</code>。这不是部署 A/A<sup>T</sup> 账，也没有运行 matched-accuracy 后的 wall/RSS 门。正式状态仍为 <code>algorithm_breakthrough=false</code>。
+        </div>
+        <div class="alert warn" style="margin-top:15px;">
+          <strong>由结果直接推出的决策：</strong>
+          不训练这个固定四方向 basis 的 observation-only 系数网络。下一项有效研究必须改变方向/basis 的生成方式并引入 curved-observation 信息，而不是继续增大同一四维搜索器。
+        </div>
+        <div class="actions">
+          <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_krylov_trust_region_v43_result_2026-07-29.md">读 v42/v43 完整诊断</a>
+          <a class="button" href="../docs/blastnet_h2air_phi05_krylov_trust_region_v43_public_summary.json">打开 v43 脱敏摘要</a>
+          <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_krylov_trust_region_v43.png">查看 v43 图</a>
+        </div>
+      </div>
+
       <div id="krylov-v41" style="scroll-margin-top:70px; padding-top:30px;">
         <div class="section-head">
           <div>
@@ -470,8 +532,8 @@
           <a href="https://arxiv.org/abs/2503.08915">RAM</a> 已有 Krylov Subspace Module，<a href="https://arxiv.org/abs/2607.20138">CASSI CG unrolling</a>、<a href="https://proceedings.mlr.press/v235/rudikov24a.html">FCG-NO</a> 与 <a href="https://proceedings.mlr.press/v202/kaneda23a.html">DCDM</a> 也覆盖了学习 Krylov 修正或方向。因此“四个可学习权重”不是创新；尚可检验的差异只剩 BOST straight-to-curved cross-fidelity correction、固定昂贵调用预算和 observable fail-closed 回退。
         </div>
         <div class="alert warn" style="margin-top:15px;">
-          <strong>下一科学门：</strong>
-          先在同一四方向空间做 truth-aware constrained oracle feasibility。若 oracle 也找不到同时满足 field、gradient、observation 的点，就关闭这条 basis；只有 oracle 能通过，才值得训练 observation-only 系数网络。
+          <strong>后续状态：</strong>
+          v42/v43 已实际执行 truth-aware constrained oracle。v42 因预算耗尽无结论；v43 的有界 JVP trust-region 仍为 0 / 4，因此固定四方向系数网络已经关闭，不再是待办项。
         </div>
         <div class="actions">
           <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_h2air_phi05_krylov_increment_span_v41_result_2026-07-29.md">读 v41 完整诊断</a>
@@ -499,12 +561,12 @@
           <p>沿同一个 correction 方向做最优调幅，仍无法消除 gradient/observation 冲突。</p>
         </div>
         <div class="panel">
-          <h3>尚未保留：四方向学习</h3>
-          <p>v41 的 observation 最优四方向仍 0 / 4。必须先过 constrained oracle，才能决定是否训练系数器。</p>
+          <h3>已停止：固定四方向学习</h3>
+          <p>v43 truth-aware oracle 仍为 0 / 4。继续训练 observation-only 系数器没有目标可行性依据。</p>
         </div>
       </div>
       <div class="alert" style="margin-top:15px;">
-        当前最窄、最有信息量的问题已经变成：同一四方向空间内是否存在能同时守住 field、gradient 与 observation 的点？先回答 existence，再回答 observation-only selector；不能直接跳到更大的网络。
+        当前最窄、最有信息量的结论是：固定四个连续 straight-CGLS 增量表现出稳定的 field/gradient/observation 权衡。下一项实验必须改变方向生成机制，使候选空间真正携带 curved-observation 信息；不能在同一四维盒里继续换优化器或扩大网络。
       </div>
     </section>
 
@@ -523,6 +585,8 @@
             <tr><td>外部数据零适配</td><td class="pass">已真实执行</td><td>冻结 SARC 在四个目标时刻一次评分</td></tr>
             <tr><td>外部 matched-accuracy</td><td class="fail-text">FAIL</td><td>0 / 4 同时通过三指标门</td></tr>
             <tr><td>v41 四方向调权</td><td class="fail-text">未找到通过点</td><td>0 / 4；仅为开封后机制诊断</td></tr>
+            <tr><td>v43 truth-aware oracle</td><td class="fail-text">有界负结果</td><td>0 / 4；独立重放最大差为 0，不是数学不可行性证明</td></tr>
+            <tr><td>固定四方向 selector</td><td class="fail-text">不授权训练</td><td>oracle 仍未找到完整门候选</td></tr>
             <tr><td>资源加速</td><td>未运行</td><td>精度失败后按协议无资格测速</td></tr>
             <tr><td>真实 BOST</td><td>未证明</td><td>当前仍是由 DNS 密度构造的代理 forward</td></tr>
             <tr><td>广泛燃烧场泛化</td><td>未证明</td><td>只有一个外部数据集且结果为负</td></tr>
@@ -538,7 +602,7 @@
     </section>
 
     <footer>
-      脱敏公开页不包含原始 DNS、私有场、模型参数、执行路径、release 或哈希。最新证据：v41 post-open，2026-07-29。
+      脱敏公开页不包含原始 DNS、私有场、模型参数、执行路径、release 或哈希。最新证据：v43 validated bounded negative，2026-07-29；31 F + 112 JVP + 0 VJP；algorithm_breakthrough=false。
     </footer>
   </main>
 </body>
