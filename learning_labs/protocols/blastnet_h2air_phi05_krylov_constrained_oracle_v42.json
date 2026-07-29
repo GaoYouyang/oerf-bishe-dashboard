@@ -1,0 +1,143 @@
+{
+  "schema_version": "oerf-blastnet-h2air-phi05-krylov-constrained-oracle-42.0",
+  "status": "FROZEN_BEFORE_V42_RESULT",
+  "scientific_question": "Does the already-opened four-increment straight-CGLS span contain a candidate that passes the complete frozen v40 field, gradient, and curved-observation gate when truth is allowed only for a post-open feasibility oracle?",
+  "scope": {
+    "dataset": "BLASTNet premixed H2-air DNS, phi=0.5",
+    "snapshot_ids": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "post_open": true,
+    "new_external_evidence": false,
+    "online_deployable_as_run": false,
+    "resource_gate_authorized": false
+  },
+  "frozen_inputs": {
+    "pair_role": "the independently validated v40.2 BLASTNet proxy bundle",
+    "v40_result_role": "the independently validated v40.2 frozen external result",
+    "v41_result_role": "the independently validated v41 observation-only four-increment diagnosis",
+    "truth_may_enter": [
+      "field constraint",
+      "gradient constraint",
+      "post-selection feasibility scoring"
+    ],
+    "truth_may_not_support": [
+      "an online selector claim",
+      "a fresh or external claim",
+      "a speed or resource claim",
+      "a generalization claim"
+    ]
+  },
+  "basis": {
+    "base_field": "frozen Direct-K3 field",
+    "directions": "the four sequential straight-ray CGLS increments reconstructed from the frozen curved-observation residual",
+    "straight_operator_ledger_per_snapshot": {
+      "A": 4,
+      "A_transpose": 4
+    },
+    "basis_cost_is_not_total_oracle_cost": true
+  },
+  "weight_domain": {
+    "lower": -2.0,
+    "upper": 3.0,
+    "dimension": 4
+  },
+  "truth_constraints": {
+    "field_limit": "minimum of 1.01 times Direct-K4 field relative-L2 and Zero field relative-L2",
+    "gradient_limit": "minimum of 1.01 times Direct-K4 gradient relative-L2 and Zero gradient relative-L2",
+    "normalized_margin_tolerance": 5e-08,
+    "constraint_functions": "squared relative-L2 quadratic forms with exact analytic Jacobians"
+  },
+  "deterministic_screen": {
+    "sequence": "unscrambled Sobol",
+    "sobol_power": 8,
+    "mapped_box": [
+      -2.0,
+      3.0
+    ],
+    "radial_projection_origin": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "radial_bisection_iterations": 60,
+    "boundary_fraction": 0.999999,
+    "interior_fraction": 0.5,
+    "interior_points": 64,
+    "screening_points_are_evaluated_with_the_frozen_curved_forward": true,
+    "top_observation_starts": 12
+  },
+  "optimizer": {
+    "method": "SLSQP",
+    "objective": "curved observation squared relative-L2",
+    "objective_gradient": "exact PyTorch gradient through the frozen curved forward",
+    "constraint_gradients": "exact analytic gradients",
+    "maximum_iterations_per_start": 240,
+    "minimum_successful_optimizations_per_snapshot": 12,
+    "ftol": 1e-12,
+    "starts": [
+      "twelve best deterministic-screen points",
+      "zero weights",
+      "radially feasible original M4 weights",
+      "radially feasible v41 selected weights"
+    ],
+    "finite_and_box_checks_required": true,
+    "constraint_feasibility_required": true
+  },
+  "diagnostic_budget": {
+    "maximum_objective_curved_forward_calls_per_snapshot": 700,
+    "maximum_total_curved_forward_calls_including_reference_scoring": 2850,
+    "curved_forward_and_reverse_vjp_calls_are_reported_separately": true,
+    "budget_exhaustion_result": "INCONCLUSIVE_BUDGET_EXHAUSTED"
+  },
+  "candidate_bank": {
+    "members": [
+      "all deterministic-screen points",
+      "all optimizer terminal points",
+      "all explicit anchor points"
+    ],
+    "deduplication_absolute_tolerance": 1e-10,
+    "per_snapshot_full_gate_candidates_retained": 24,
+    "retention_rule": "union of the best eight candidates by field, gradient, and observation relative-L2, followed by deterministic lexicographic truncation",
+    "negative_result_is_inconclusive_if_any_passing_bank_was_truncated": true
+  },
+  "complete_frozen_v40_gate": {
+    "per_snapshot": [
+      "all field, gradient, and observation metrics are at most 1.01 times Direct-K4",
+      "all field, gradient, and observation metrics are no worse than Zero",
+      "observation is no worse than Direct-K3 plus 1e-12",
+      "candidate is not Pareto dominated by Direct-K3"
+    ],
+    "aggregate": "the median candidate field, gradient, and observation metrics are each no worse than the corresponding Direct-K4 medians",
+    "joint_selection": "enumerate the retained per-snapshot candidate-bank Cartesian product and select a complete-gate passing tuple lexicographically by aggregate observation median, mean observation, aggregate gradient median, and aggregate field median"
+  },
+  "independent_validation": {
+    "must_not_import_formal_runner": true,
+    "must_reconstruct_basis": true,
+    "must_rebuild_truth_quadratic_constraints": true,
+    "must_regenerate_sobol_screen": true,
+    "must_rerun_all_constrained_optimizations": true,
+    "must_recompute_candidate_bank_and_joint_selection": true,
+    "must_recompute_complete_v40_gate": true,
+    "shared_frozen_physics_kernels_must_be_disclosed": true
+  },
+  "decision_rule": {
+    "headroom_present": "all four snapshots have retained per-snapshot passing candidates and one retained joint tuple passes the complete frozen v40 gate in both the formal and independent implementations",
+    "search_bounded_negative": "no complete-gate tuple is found, all required searches meet the frozen execution and validation checks, and the result is stated only as no passing candidate found under the preregistered search",
+    "fragile_exact_pass": "an exact complete-gate tuple whose smallest margin to a 1.01 Direct-K4 gate is below 1e-3 is reported as fragile and does not authorize selector training",
+    "inconclusive": "input seals, basis parity, finite checks, minimum search coverage, budget, unreported candidate-bank truncation, optimizer replay, candidate-bank replay, or independent agreement fail"
+  },
+  "claim_boundaries": {
+    "mathematical_nonexistence_proven": false,
+    "online_selector_success": false,
+    "same_cost_or_speed_claim_authorized": false,
+    "external_generalization_proven": false,
+    "real_bost_proven": false,
+    "paper_success": false,
+    "algorithm_breakthrough": false
+  }
+}

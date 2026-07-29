@@ -1,0 +1,110 @@
+{
+  "schema_version": "oerf-blastnet-h2air-phi05-krylov-trust-region-oracle-43.0",
+  "status": "FROZEN_AFTER_V42_INCONCLUSIVE_BEFORE_V43_RESULT",
+  "scientific_question": "Can a deterministic JVP-based trust-region oracle find a complete-gate witness in the same four-increment span without repeating the v42 direct-SLSQP budget failure?",
+  "scope": {
+    "dataset": "BLASTNet premixed H2-air DNS, phi=0.5",
+    "snapshot_ids": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "post_open": true,
+    "new_external_evidence": false,
+    "online_deployable_as_run": false,
+    "resource_gate_authorized": false
+  },
+  "frozen_parent": {
+    "v42_required_status": "POST_OPEN_CONSTRAINED_ORACLE_SEARCH_INCONCLUSIVE",
+    "v42_required_reason": "each snapshot exhausted the 700-call direct curved-objective budget during the first SLSQP start",
+    "v42_best_diagnostic_candidate_is_the_only_start_per_snapshot": true,
+    "basis_and_weight_box_are_unchanged": true,
+    "truth_constraints_and_complete_v40_gate_are_unchanged": true
+  },
+  "representation": {
+    "base_field": "frozen Direct-K3 field",
+    "directions": "the same four sequential straight-ray CGLS increments used by v41 and v42",
+    "weight_box": [
+      -2.0,
+      3.0
+    ],
+    "straight_operator_ledger_per_snapshot": {
+      "A": 4,
+      "A_transpose": 4
+    }
+  },
+  "local_observation_model": {
+    "center_prediction": "exact frozen curved forward",
+    "directional_derivatives": "four exact torch.func.jvp evaluations, one for each high-resolution Krylov increment",
+    "surrogate": "squared relative-L2 of the affine observation model",
+    "truth_is_not_used_in_the_observation_surrogate": true,
+    "truth_is_used_only_in_the_unchanged_field_and_gradient_constraints_and_post-open scoring": true
+  },
+  "trust_region": {
+    "norm": "L-infinity",
+    "initial_radius": 0.5,
+    "minimum_radius": 0.015625,
+    "maximum_radius": 1.0,
+    "maximum_outer_iterations": 8,
+    "acceptance_ratio": 0.1,
+    "expansion_ratio": 0.75,
+    "boundary_step_fraction_for_expansion": 0.8,
+    "shrink_factor": 0.5,
+    "expansion_factor": 2.0,
+    "minimum_predicted_decrease": 1e-12,
+    "minimum_actual_decrease": 0.0,
+    "candidate_is_exactly_rescored_with_the_curved_forward": true
+  },
+  "inner_convex_qcqp": {
+    "solver": "SLSQP on an analytic convex quadratic objective and two analytic convex quadratic truth constraints",
+    "maximum_iterations": 500,
+    "ftol": 1e-12,
+    "constraint_tolerance": 5e-8,
+    "starts": [
+      "current feasible trust-region center",
+      "box-and-trust-region-clipped unconstrained affine least-squares solution when feasible after radial contraction to the center"
+    ],
+    "inner_solver_success_is_not_a_scientific_pass": true
+  },
+  "hard_budget_per_snapshot": {
+    "maximum_exact_curved_forward_calls": 10,
+    "maximum_exact_curved_jvp_calls": 32,
+    "maximum_reverse_vjp_calls": 0,
+    "forward_breakdown": "one Direct-K3 forward to reconstruct the frozen basis, one start-center forward, and at most eight exact candidate rescoring forwards",
+    "budget_exhaustion_result": "INCONCLUSIVE_BUDGET_EXHAUSTED"
+  },
+  "complete_gate": {
+    "per_snapshot": [
+      "field, gradient, and observation are each at most 1.01 times Direct-K4",
+      "field, gradient, and observation are each no worse than Zero",
+      "observation is no worse than Direct-K3 plus 1e-12",
+      "candidate is not Pareto dominated by Direct-K3"
+    ],
+    "aggregate": "median field, gradient, and observation are each no worse than the corresponding Direct-K4 median",
+    "fragile_margin": "a witness with minimum margin below 1e-3 to any 1.01 Direct-K4 gate is fragile and does not authorize selector training"
+  },
+  "independent_validation": {
+    "must_not_import_formal_v43_runner": true,
+    "must_reconstruct_the_four_increment_basis": true,
+    "must_recompute_all_exact_curved_forward_and_jvp_steps": true,
+    "must_recompute_trust_region_acceptance_and_complete_gate": true,
+    "must_compare_saved_fields_and_call_ledgers": true,
+    "shared_frozen_physics_kernels_must_be_disclosed": true
+  },
+  "decision_rule": {
+    "robust_witness": "all four independently replayed final candidates pass every per-snapshot and aggregate gate with minimum 1.01 margin at least 1e-3",
+    "fragile_witness": "the complete gate passes but the minimum 1.01 margin is below 1e-3",
+    "bounded_negative": "the preregistered trust-region execution is valid but no complete-gate witness is found; this is not a proof that the span is infeasible",
+    "inconclusive": "parent closure, basis parity, JVP, inner solve, finite checks, exact rescoring, budget, saved-field replay, or independent agreement fails"
+  },
+  "claim_boundaries": {
+    "mathematical_nonexistence_proven": false,
+    "online_selector_success": false,
+    "same_cost_or_speed_claim_authorized": false,
+    "external_generalization_proven": false,
+    "real_bost_proven": false,
+    "paper_success": false,
+    "algorithm_breakthrough": false
+  }
+}
