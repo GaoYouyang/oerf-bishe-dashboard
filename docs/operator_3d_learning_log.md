@@ -9997,3 +9997,72 @@ paper_success=false
 - `docs/nine_view_geometry_warm_refinement_v65_result_2026-07-30.md`
 - `docs/nine_view_geometry_warm_refinement_v65_public_summary.json`
 - `assets/nine_view_geometry_warm_refinement_v65.png`
+
+## 2026-07-30：v66.1 把小预言机正信号带到了目标尺寸，但还没有证明更快
+
+这一轮没有换模型，也没有为了追求更好看的平均数重新挑帧。v65 固定下来的两条
+方法原样扩到 `32×16×16` 九视角几何：
+
+```text
+q8: cheap detector CR -> exact Ag^T -> exact CGLS K1
+q4: cheap detector CR -> exact Ag^T -> exact CGLS K2
+```
+
+数据是五条已经开封的公开 PoolFire 形态轨迹，每条固定取
+`0 / 25 / 50 / 75 / 100` 帧，再乘三档相机几何扰动。每条候选共有 75 个单元，
+加上五条 controls，一共 525 个正式原子。
+
+第一版 runner 的数值虽然是正的，但连续红队审计找到了五类足以撤销正式资格的
+问题：正式 commit/source closure 没锁死、真值没有从原始 `rho` 重建、调用账
+仍可依赖声明值、存在绕过完整复算的发布入口、validation/READY 的原子发布次序
+不够严格。旧授权已经在公开前撤销并归档，不能用于下面的结论。
+
+v66.1 修复这五类问题，还加入了 A0 control 的全局支配性检查、轨迹等权汇总，
+以及 q8/q4 分开的 factor 质量诊断。最后一次正式运行得到：
+
+```text
+q8 + exact lift + K1     75 / 75 PASS
+exact cost               2A + 2A^T
+worst harm vs Zero-K4    0.995624 / 0.999003 / 0.925687
+worst vs Zero-K2         0.902464 / 0.984080 / 0.634459
+
+q4 + exact lift + K2     75 / 75 PASS
+exact cost               3A + 3A^T
+worst harm vs Zero-K4    0.970006 / 0.991862 / 0.797811
+worst vs Zero-K3         0.927389 / 0.985671 / 0.679828
+```
+
+**讲人话：**近似得并不非常准的 q4/q8 算子，仍能比普通 Zero-CGLS 更早找到
+有用方向；但它不能单独完成重建，必须由冻结的 noise-free straight-ray proxy
+下的精确 `Ag^T` 和未修改 CGLS 接管。
+
+修正后的独立程序从已提交、detached、tracked-clean 的 checkout 运行，并恢复
+正式 runner 的 Python/NumPy/PyTorch 数值环境。它没有导入正式 runner、v66
+factor core、v63 geometry core 或 v62 analytic core，而是从相机参数和随机种子
+重新搭建数值路径；同时从五条原始 `rho` 重新做轴翻转、固定 ROI、`2×2×2`
+block-mean 和全局均值规范化。五条轨迹合计 505 帧、4,136,960 个真值数与 pair
+真值逐值完全相同，最大差 0；随后复算 525 个原子，6,150 个行级数字最大差
+`8.88e-14`，1,062 个 factor 数字最大差 `1.85e-14`，所有 mismatch 为 0。
+五条 raw/pair 输入和正式结果在复算前后也没有变化，validation/test truth 未打开。
+这套程序仍共享冻结的体素梯度算子和三线性 stencil，所以它是独立重算，不是
+端到端物理独立。
+
+这次真正推进了论文判断：**公开 CFD straight-ray 形态代理上的目标尺寸 Stage A
+已经通过，五条轨迹合计 505 帧的 Stage B 可以开始。**但它仍没有回答 setup
+加进去以后是否更快、整条进程是否更省内存，也
+没有曲折光线、真实相机、组内位移图或外部未开数据：
+
+```text
+full_trajectory_stage_b_authorized=true
+fresh_resource_stage_c_authorized=false
+operator_learning_result=false
+real_bost=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整结果、脱敏机器摘要和图表：
+
+- `docs/nine_view_poolfire_target_scale_warm_v66_result_2026-07-30.md`
+- `docs/nine_view_poolfire_target_scale_warm_v66_public_summary.json`
+- `assets/nine_view_poolfire_target_scale_warm_v66.png`
