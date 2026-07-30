@@ -10334,3 +10334,74 @@ cold cost、online wall/RSS、artifact 大小和摊销临界点。只有在线�
 - `docs/nine_view_stencil_factor_fresh_resource_v70_1_result_2026-07-31.md`
 - `docs/nine_view_stencil_factor_fresh_resource_v70_1_public_summary.json`
 - `assets/nine_view_stencil_factor_fresh_resource_v70_1.png`
+
+## 2026-07-31：v72 第一次把在线速度和内存两扇门同时推开
+
+v70.1 / v71 已经把问题定位得很具体：q8-K1 的精度和调用减少都成立，时间也
+稳定更快，但每个 fresh worker 重新构造 factor 会留下过高的内存高水位。继续
+缩 tile 已经没有足够余量，所以这次没有再改算法，而是换成更符合固定装置的
+执行方式：
+
+```text
+冻结的已知合成几何
+-> 离线编译 5.63 MiB q8 factor artifact
+-> 在线 fresh worker 校验并只读映射 artifact
+-> exact A^T lift
+-> unchanged CGLS K1
+```
+
+先做了硬等价检查。18 个 view-component block 写入、重开以后，逐数组最大差、
+随机 forward 相对差、adjoint 相对差全部是 `0`。完整离线 fresh process 用时
+`2.2163 s`，peak RSS `446.20 MiB`，没有读取 observation、truth 或 raw rho。
+
+然后在一条已经开封的 101 帧 observation stream 上，按结果前写死的顺序跑六个
+相邻 fresh 配对区组：
+
+```text
+loaded q8-K1 / Zero-K4
+
+outer wall p50 / p90 / worst
+  0.566428 / 0.583830 / 0.583830        PASS
+
+worker-self RSS p50 / p90 / worst
+  1.002156 / 1.029576 / 1.029576        PASS
+```
+
+候选在线完整时间 p50 为 `8.6864 s`，Zero-K4 为 `15.3683 s`；候选依旧只用
+`2A+2A^T`，对照为 `4A+4A^T`。完整离线成本没有被藏起来：按当前 stream 的
+中位节省量，`2.2163 s` 在一条 101 帧序列内即可摊销。
+
+独立程序没有导入正式 probe/controller，重新哈希 54 个数组文件，核对 12 个
+worker 的实际调用账和读取边界，再从原子回执重组六个区组并独立算分位数与
+break-even。正式与独立结果最大差为 `0`：
+
+```text
+PASS_INDEPENDENT_RECOMPUTATION_CALIBRATED_FACTOR_ONLINE_V72
+PASS_CALIBRATED_FACTOR_ONLINE_HEADROOM_PROBE_V72
+```
+
+**讲人话：**这是真正值得高兴的阶段性正结果。此前我们一直是“速度过门、内存
+不过门”，现在第一次在固定几何在线口径下把两扇门同时推开了，而且不是靠放宽
+阈值或隐藏离线成本。
+
+但它还不能叫突破。这里只是一条已打开轨迹和一个已知合成几何；没有标定图像、
+相机参数估计或漂移测试，所以不是“完成相机标定”。loaded artifact 还必须重新
+跑三档几何、五条轨迹、全部 1,515 个精度单元：
+
+```text
+formal_loaded_artifact_stage_b=false
+formal_online_stage_c=false
+camera_calibration_result=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+下一步只做完整 loaded-artifact Stage B。只有 `1515/1515` 再次通过，才允许
+把同一路径放进多轨迹正式 fresh resource Stage C；不会提前训练大网络，也不会
+把这次单 stream 开发门包装成论文成功。
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_calibrated_factor_online_v72_result_2026-07-31.md`
+- `docs/nine_view_calibrated_factor_online_v72_public_summary.json`
+- `assets/nine_view_calibrated_factor_online_v72.png`
