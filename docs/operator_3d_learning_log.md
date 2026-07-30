@@ -10405,3 +10405,61 @@ paper_success=false
 - `docs/nine_view_calibrated_factor_online_v72_result_2026-07-31.md`
 - `docs/nine_view_calibrated_factor_online_v72_public_summary.json`
 - `assets/nine_view_calibrated_factor_online_v72.png`
+
+## 2026-07-31：v73 把 loaded artifact 的完整精度风险关掉了
+
+v72 的结果很鼓舞人：固定几何的 factor 不再每个 worker 现做，而是离线做好、
+在线只读加载以后，一条 101 帧 stream 的时间和内存第一次同时过门。但这还缺一
+块关键证据：加载和序列化会不会在其他几何、其他轨迹上悄悄改变数值？
+
+所以这次没有继续改模型，也没有换门槛。正式实验只做一件事：把三档几何各自
+编译成只读 q8 工件，再用真正的加载路径跑完五条 PoolFire fit trajectory 的
+全部 101 帧。
+
+```text
+3 geometries × 5 trajectories × 101 frames = 1515 cells
+
+compatibility PASS                    1515 / 1515
+loaded reproduces canonical v70       1515 / 1515
+three artifacts                       162 arrays
+maximum array difference              0
+maximum metric difference             0
+exact online budget                   2A + 2A^T
+```
+
+相对四步 Zero-CGLS 的 field / gradient / interior-gradient / observation
+最坏误差比是 `1.00252 / 0.99949 / 1.00281 / 0.93356`，全部低于事先固定的
+`1.01` 门。相对同样只花 `2A+2A^T` 的 Zero-CGLS K2，四项最坏比值也都低于
+1，所以这不是用更多精确算子换来的结果。
+
+我还用一套不导入正式 runner 和 loader 的程序重新验了一遍。它自己解析 NPY
+头和数据区，拒绝 object、Fortran-order、尾随字节和文件集合漂移，再重算全部
+1,515 个单元。正式与独立指标最大差仍然是 `0`；相对独立 dense p0 reference
+的 forward / adjoint 最大误差只有 `1.23e-15 / 1.24e-15`。
+
+**讲人话：**v72 回答的是“单条开发序列看起来能更快且不更吃内存”；v73 回答
+的是“把方法真正做成可加载工件以后，完整五条轨迹的精度没有坏”。这两个答案
+现在能接起来了，下一步终于可以正当地跑多轨迹 fresh 资源门。
+
+这是一个真实、扎实的阶段性进展，但还不是突破：
+
+```text
+loaded_artifact_full_trajectory_stage_b_pass=true
+formal_multi_trajectory_online_stage_c_authorized=true
+fresh_wall_speedup=false
+whole_pipeline_rss_advantage=false
+external_family_transfer=false
+real_bost_result=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+下一步只比较 loaded q8-K1 与 Zero-K4 的多轨迹 fresh wall 和三层 RSS，把工件
+加载、校验、worker 启动和整条 101 帧序列都算进去。wall 与 RSS 必须一起过，
+否则就老实记录失败，不会用更大网络或临时降低门槛挽救。
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_loaded_artifact_stageb_v73_result_2026-07-31.md`
+- `docs/nine_view_loaded_artifact_stageb_v73_public_summary.json`
+- `assets/nine_view_loaded_artifact_stageb_v73.png`
