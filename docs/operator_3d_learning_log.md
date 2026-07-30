@@ -9688,3 +9688,230 @@ paper_success=false
 
 完整结果见
 `docs/blastnet_sparse_detector_replay_v59_result_2026-07-30.md`。
+
+## 2026-07-30：v60.1 不再存 B，101 次调用下端到端真正过门
+
+v59 的失败很明确：稀疏 `B=A A^T` 在真正计算时快，但为了五帧任务把它从磁盘
+加载进来，固定成本和内存开销反而把收益吃掉了。这次没有继续压缩 CSR，而是重新
+拆了三轴投影算子。
+
+每个视角都能写成：
+
+```text
+A_s = G_s P_s
+```
+
+`P_s` 是沿视线把三维场压成二维图，`G_s` 是在探测器平面求两个偏折分量。
+因此任意源视角到目标视角的 `A_t A_s^T` 都可以先做二维梯度伴随，再做一次
+LOS 权重收缩或外积，最后做二维梯度 forward。当前三正交轴结构下，整个过程
+不需要保存 dense/CSR `B`，也不需要在每次 `B` 乘法中生成三维场。
+
+独立程序没有导入正式 core 或 runner，重新做了全部计算：
+
+```text
+17 个随机 detector vector 的最大 B 作用差     2.92e-16
+5 个 observation 的最大 K4 field 差           1.09e-15
+5 个 observation 的最大 K4 residual 差        1.28e-15
+persistent geometry factors                    45,568 bytes
+```
+
+每帧的完整物理算子账从：
+
+```text
+4A + 4A^T
+```
+
+变成：
+
+```text
+4 次二维 factorized-B + 1A^T
+```
+
+完整 `A/A^T` 从 8 次降到 1 次。正式 fresh 资源实验使用 17 次重复、两种算法和
+5/101 两种负载，共 68 个新进程。结果很能说明问题：
+
+```text
+5 calls:
+  core compute ratio   0.739354
+  outer wall ratio     0.983849
+
+101 calls:
+  core compute ratio   0.716687
+  outer wall p50       0.841184
+  outer wall p90       0.876558
+  outer worst          0.912475
+  worker-self RSS      0.967493
+```
+
+**讲人话：**五帧仍然太短，程序启动和读文件几乎把计算收益吃完；连续处理一条
+PoolFire 长度的 101 帧后，固定成本被摊薄，端到端典型时间真实下降约 15.9%，
+而且 worker 自身内存没有变坏。101 次只是按固定顺序循环五个 observation 来测
+资源，不是 101 个新样本，所以不能冒充泛化。
+
+这是今天真正可喜可贺的进展：第一次在外部坐标代理上同时得到“不存 `B`、机器
+精度等价、完整调用少 87.5%、fresh outer wall 通过、RSS 通过”。但它依赖
+`x/y/z` 三正交轴拓扑，不是九视角相机、曲折光线、learned warm start 或真实
+BOST：
+
+```text
+important_proxy_structure_result=true
+arbitrary_camera_geometry_transfer=false
+curved_ray_transfer=false
+operator_learning_result=false
+real_bost=false
+global_novelty_proven=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+下一步不会回去无边界换网络。先把何远哲师兄 NeRIF 里更接近真实实验的九视角、
+相机投影和校准射线放进同一资源合同，判断二维因子化能保留多少；只有剩余误差
+确实来自相机/曲折光线并且 deployment-visible，才训练一个最小 correction
+operator。这样网络负责的会是明确的物理缺口，而不是重新学一遍整个逆问题。
+
+完整结果见
+`docs/blastnet_factorized_detector_v60_1_result_2026-07-30.md`。
+
+## 2026-07-30：v61 把精确结构从三轴扩到了九个平行视角
+
+v60.1 的资源正结果仍可能只是 `x/y/z` 三正交轴的特殊现象。为避免把这个特例
+写成一般算法，这次把视角改成九个覆盖 `0°–170°` 的平行投影视角，其中八个都
+不是坐标轴方向。
+
+正式实验先冻结角度、网格、detector、采样数、精度门和独立复算要求，再在
+`8×8×8` 的小审计问题上显式构造 `A` 与 `B=A A^T`。这里允许显式矩阵只是为了
+检验结构，不是部署实现。结果为：
+
+```text
+view/component blocks                         324
+maximum sigma2 / sigma1                       3.20e-16
+maximum rank-one block reconstruction error   7.54e-15
+maximum factorized B action error             1.57e-15
+maximum K4 field / residual error              1.98e-15 / 2.37e-15
+independent validator maximum report drift     0
+```
+
+为什么会这样？这些相机只在 `xy` 平面内转动，detector 的竖直方向始终沿 `z`。
+每个分量的算子都能拆成一维竖直算子与二维水平投影算子的 Kronecker 积：
+
+```text
+A_(theta,c) = Z_c ⊗ H_(theta,c)
+
+B_((t,ct),(s,cs))
+  = (Z_ct Z_cs^T) ⊗ (H_(t,ct) H_(s,cs)^T)
+```
+
+所以每个目标/源视角和 u/v 分量 block，在竖直×水平重排后必然只有一个非零
+Kronecker 奇异值。独立程序没有导入正式 core 或 runner，重新构造了几何、
+全部 324 个谱、17 个随机 `Bv` 和 5 个 K4，得到完全相同的报告。
+
+**讲人话：**此前我们知道三台沿坐标轴看的理想相机可以省掉昂贵的三维往返；
+现在知道九台从不同水平角度看的平行相机也保留同一个精确结构。这比“换个网络
+再训练”更像一条可解释的方法主线，因为可精确计算的物理部分不需要交给网络猜。
+
+但现在还不能说算法完成。小审计里的 factors 是先造出完整 `B`，再逐 block 做
+SVD 提取的；这在真实尺寸上不可接受。`32× smaller` 只是小矩阵表示数字，不是
+正式内存结论。针孔相机、roll/elevation、逐射线标定和曲折光线也可能破坏同一个
+竖直因子：
+
+```text
+nine_view_parallel_algebra_transfer=true
+scalable_factor_construction=false
+online_resource_result=false
+pinhole_camera_transfer=false
+calibrated_camera_transfer=false
+operator_learning_result=false
+real_bost=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+下一步只做会改变论文判断的门：从一维竖直和二维水平 primitives 直接生成 factors，
+在 `16×16×32` 上完全不构造 dense `A/B`，再用 101 次 fresh 调用公平比较
+Zero-CGLS K4、matrix-free detector CR 和 analytic Kronecker replay。只有精度、
+端到端时间与内存一起通过，才进入真实相机失配与最小 learned correction。
+
+完整结果见
+`docs/nine_view_parallel_detector_kronecker_v61_result_2026-07-30.md`。
+
+## 2026-07-30：v62.2 把九视角结构变成了真正更快的可扩展数值核
+
+v61 只在 `8³` 小问题上显式构造 `A/B`，证明九视角 detector-normal block 是
+Kronecker rank one。那时还不知道能不能在正式粗网格尺寸上直接构造，也不知道
+实际程序是否更快。
+
+v62.2 已在 `16×16×32` 场上从一维竖直和二维水平 primitives 直接生成 factors，
+全程没有形成 dense 三维 `A` 或 `B`。三条正式算法臂是：
+
+```text
+Zero-CGLS K4                  4A + 4A^T
+matrix-free detector CR K4    4A + 5A^T
+analytic-factor detector CR   4 analytic-B + 1A^T
+```
+
+先用三个 fresh correctness process 保存并比较五个完整三维场和 residual，不再
+只比 norm：
+
+```text
+analytic maximum field difference       4.149e-15
+analytic maximum residual difference    8.674e-15
+matrix-free maximum field difference    4.364e-15
+matrix-free maximum residual difference 7.818e-15
+frozen threshold                        1.000e-10
+```
+
+然后运行 `2 workloads × 3 arms × 17 repeats = 102` 个串行 fresh timing
+process。每个区组内三条臂相邻、顺序随机。101 次负载的关键结果是：
+
+```text
+analytic / Zero compute p50             0.172307
+analytic / Zero outer p50               0.202526
+analytic / Zero outer p90               0.205030
+analytic / Zero outer worst             0.209606
+analytic / Zero process-tree RSS p90    0.988063
+matrix-free / Zero outer p50            1.053712
+```
+
+**讲人话：**只是把 CGLS 改写成 detector-space 递推并不会变快，matrix-free
+control 反而慢约 5.4%。真正的收益来自解析 Kronecker factors 删除四轮昂贵的
+三维 forward/adjoint 往返。连续 101 次处理时，fresh outer-wall 中位数从
+`23.901 s` 降到 `4.850 s`，下降约 79.7%；RSS 只下降约 1%，因此速度结果很强，
+内存只能写“不恶化”，不能写突破。
+
+首轮也完成了 102 个 timing worker，但 controller 的相邻区间检查写错，在
+controller 专有 wall/RSS 账本落盘前异常退出。因为这些外层计时无法从 worker
+输出恢复，首轮被永久标为 invalid，102 个 worker 的资源数值全部禁止复用。修复
+和回归测试后，从头重跑了第二轮 3 + 102 个进程。本文只使用第二轮。
+
+独立 validator 没有导入正式 runner/core，重新聚合全部 worker、完整向量和 68
+个配对行；batch、correctness、gate 和 CSV 的最大报告差都是 0，校验和全部通过。
+但它没有再跑一套独立的 102-worker timing，所以这是独立聚合审计，不是第二台
+机器的资源复现实验。
+
+这是今天最重要的真实正结果，但证据边界仍然很硬：
+
+```text
+scalable_analytic_factor_construction=true
+fresh_proxy_resource_gate=true
+parallel_camera_transfer=true
+pinhole_camera_transfer=false
+calibrated_camera_transfer=false
+curved_ray_transfer=false
+operator_learning_result=false
+real_bost=false
+broad_generalization=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+101 次负载只是循环五个 seeded synthetic proxy fields，不是 101 个独立物理
+样本。下一步最值钱的实验不再是重复调这个平行几何，也不是立刻堆大网络，而是
+加入 pinhole、elevation、roll 和逐射线标定扰动，测量精确 analytic core 的失配
+是否低秩、稳定、能由部署可见相机参数解释。只有这个答案为正，最小 learned
+correction 才有清楚的物理对象。
+
+完整结果、脱敏机器摘要和图表分别见：
+
+- `docs/nine_view_analytic_factor_resource_v62_result_2026-07-30.md`
+- `docs/nine_view_analytic_factor_resource_v62_public_summary.json`
+- `assets/nine_view_analytic_factor_resource_v62.png`

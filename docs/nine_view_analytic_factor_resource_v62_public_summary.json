@@ -1,0 +1,139 @@
+{
+  "schema_version": "oerf-nine-view-analytic-factor-public-summary-62.2",
+  "status": "VALIDATED_NINE_VIEW_ANALYTIC_FACTOR_RESOURCE_PASS_V62_2",
+  "scientific_decision": {
+    "analytic_factor_resource_gate_pass": true,
+    "interpretation": "For the frozen 16x16x32 nine-view parallel-ray proxy, analytic detector-normal factors reproduce zero-start CGLS K4 at roundoff and reduce the 101-snapshot fresh-process outer-wall median to 20.25% of the baseline while passing the frozen RSS gates."
+  },
+  "problem": {
+    "field_shape": [
+      32,
+      16,
+      16
+    ],
+    "field_unknowns": 8192,
+    "view_count": 9,
+    "view_angle_range_degrees": [
+      0.0,
+      170.0
+    ],
+    "detector_components": 2,
+    "observation_values_per_snapshot": 9216,
+    "geometry": "parallel rays rotating in the horizontal plane with a shared vertical detector axis",
+    "dense_3d_A_materialized": false,
+    "dense_3d_B_materialized": false
+  },
+  "algebra": {
+    "primitive_construction_seconds": 0.03536,
+    "pairwise_factor_construction_seconds": 0.000724,
+    "matrix_free_control_setup_seconds": 0.173795,
+    "primitive_state_bytes": 606208,
+    "persistent_factor_state_bytes": 696320,
+    "maximum_intermediate_elements": 165888,
+    "maximum_formal_B_action_relative_l2": 3.558e-15,
+    "maximum_independent_B_action_relative_l2": 3.534e-15,
+    "maximum_formal_K4_field_relative_l2": 4.149e-15,
+    "maximum_formal_K4_residual_relative_l2": 8.674e-15,
+    "maximum_independent_K4_field_relative_l2": 4.218e-15,
+    "maximum_independent_K4_residual_relative_l2": 8.808e-15,
+    "adjoint_relative_error": 1.8e-16
+  },
+  "fresh_resource_design": {
+    "correctness_fresh_processes": 3,
+    "timing_fresh_processes": 102,
+    "repetitions_per_workload_and_arm": 17,
+    "workloads": [
+      5,
+      101
+    ],
+    "arms": [
+      "zero_cgls_k4",
+      "matrix_free_detector_cr_k4",
+      "analytic_factor_detector_cr_k4"
+    ],
+    "randomized_complete_blocks": true,
+    "serial_workers": true,
+    "process_tree_rss_sampling_interval_ms": 5
+  },
+  "full_vector_correctness": {
+    "all_pass": true,
+    "observation_count": 5,
+    "maximum_analytic_field_relative_l2": 4.148763863629017e-15,
+    "maximum_analytic_residual_relative_l2": 8.674100577420235e-15,
+    "maximum_matrix_free_field_relative_l2": 4.363649260372462e-15,
+    "maximum_matrix_free_residual_relative_l2": 7.818034488383028e-15,
+    "threshold": 1e-10
+  },
+  "call_ledger_per_snapshot": {
+    "zero_cgls_k4": {
+      "A": 4,
+      "A_transpose": 4
+    },
+    "matrix_free_detector_cr_k4": {
+      "A": 4,
+      "A_transpose": 5
+    },
+    "analytic_factor_detector_cr_k4": {
+      "A": 0,
+      "A_transpose": 1,
+      "analytic_B": 4
+    }
+  },
+  "resource_results": {
+    "5_snapshots": {
+      "zero_outer_wall_p50_seconds": 2.0040005000773817,
+      "analytic_outer_wall_p50_seconds": 1.0665568341501057,
+      "analytic_to_zero_outer_wall_p50_ratio": 0.5326814431438117,
+      "analytic_to_zero_outer_wall_p90_ratio": 0.5370499500039285,
+      "analytic_to_zero_outer_wall_worst_ratio": 0.5459691037862752,
+      "analytic_to_zero_compute_p50_ratio": 0.1739664951610177,
+      "analytic_to_zero_process_tree_rss_p90_ratio": 0.9717273302474275,
+      "analytic_to_zero_worker_rss_p90_ratio": 0.9715741212429955
+    },
+    "101_snapshots": {
+      "zero_outer_wall_p50_seconds": 23.901176625164226,
+      "analytic_outer_wall_p50_seconds": 4.850215165875852,
+      "analytic_to_zero_outer_wall_p50_ratio": 0.2025263695885267,
+      "analytic_to_zero_outer_wall_p90_ratio": 0.20503030871720268,
+      "analytic_to_zero_outer_wall_worst_ratio": 0.20960634572708198,
+      "analytic_to_zero_compute_p50_ratio": 0.17230727729026332,
+      "analytic_to_zero_process_tree_rss_p90_ratio": 0.9880632145258911,
+      "analytic_to_zero_worker_rss_p90_ratio": 0.9868443591764021,
+      "matrix_free_to_zero_outer_wall_p50_ratio": 1.053711526630048,
+      "matrix_free_to_zero_compute_p50_ratio": 1.0558043972701037,
+      "matrix_free_to_zero_process_tree_rss_p90_ratio": 1.0093813046402151
+    }
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_AGGREGATION_AUDIT_NINE_VIEW_ANALYTIC_FACTOR_RESOURCE_V62_2",
+    "formal_runner_or_core_imported": false,
+    "maximum_formal_batch_absolute_difference": 0.0,
+    "maximum_formal_correctness_absolute_difference": 0.0,
+    "maximum_formal_gate_absolute_difference": 0.0,
+    "maximum_formal_paired_csv_absolute_difference": 0.0,
+    "resource_checksums_unchanged": true,
+    "independent_timing_replication_performed": false,
+    "resource_ledger_anchor_supplied_by_caller": true,
+    "resource_ledger_anchor_caller_authenticated": false
+  },
+  "invalid_run_disclosure": {
+    "prior_timing_batch_worker_count": 102,
+    "prior_batch_used_as_evidence": false,
+    "reason": "The first batch completed its workers but the controller schedule audit failed before controller-owned timing and RSS metadata were persisted. It was permanently marked invalid and no worker timing from it was reused."
+  },
+  "boundaries": {
+    "five_seeded_synthetic_proxy_fields": true,
+    "the_101_snapshot_workload_cycles_five_observations": true,
+    "parallel_camera_transfer": true,
+    "pinhole_camera_transfer": false,
+    "calibrated_camera_transfer": false,
+    "elevation_or_roll_transfer": false,
+    "curved_ray_transfer": false,
+    "operator_learning_result": false,
+    "real_bost": false,
+    "broad_generalization": false,
+    "whole_experimental_pipeline_peak_memory_measured": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

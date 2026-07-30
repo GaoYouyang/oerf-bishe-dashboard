@@ -1,0 +1,126 @@
+{
+  "schema_version": "oerf-nine-view-parallel-detector-kronecker-protocol-61.0",
+  "status": "FROZEN_AFTER_SMALL_SCRATCH_BEFORE_FORMAL_V61_RUN",
+  "frozen_at_utc": "2026-07-29T20:00:04Z",
+  "scientific_question": "Does the exact detector normal B=A A^T of a nine-view, non-axis-aligned, parallel-ray BOST voxel-gradient operator decompose into rank-one vertical-by-horizontal Kronecker blocks for every source-view, target-view, and UV-component pair, preserving zero-start CGLS K4 at roundoff?",
+  "evidence_role": "post-open algebraic view-topology transfer gate after v60.1 and before any scalable implementation, pinhole correction, learned residual, or real-BOST claim",
+  "primary_source_geometry_motivation": {
+    "source": "He et al., Neural refractive index field, arXiv:2409.14722v2",
+    "source_url": "https://arxiv.org/html/2409.14722v2",
+    "reported_numerical_view_count": 9,
+    "reported_numerical_angle_span_degrees": [
+      0.0,
+      170.0
+    ],
+    "scope_difference": "The formal v61 gate uses parallel rays and a regular voxel grid. It does not reproduce the paper's calibrated experimental back-traced rays or pinhole/fiber-bundle optics."
+  },
+  "preregistration_disclosure": {
+    "scratch_completed_before_freeze": [
+      "A small 8^3, 8x8-detector, nine-view parallel-ray matrix was materialised for angles 0,20,...,160 degrees.",
+      "All 324 source-view, target-view, and UV-component blocks had numerical Kronecker rank one at relative singular-value threshold 1e-10.",
+      "The minimum top-one Kronecker energy fraction was 1.0 in that non-formal scratch."
+    ],
+    "formal_changes_after_scratch": [
+      "Formal angles are fixed to nine equally spaced values from 0 to 170 degrees, matching the reported NeRIF numerical span rather than the scratch 0 to 160 degree grid.",
+      "Formal random-vector, block-reconstruction, K4 replay, validator, and failure thresholds did not exist in the scratch."
+    ],
+    "not_seen_before_freeze": [
+      "No formal v61 result directory exists.",
+      "No formal v61 independent validation exists.",
+      "No v61 resource timing or memory result exists.",
+      "No PoolFire, BLASTNet, validation, fresh, stopping-validation, or untouched-test truth is read."
+    ]
+  },
+  "formal_geometry": {
+    "angles_degrees": [
+      0.0,
+      21.25,
+      42.5,
+      63.75,
+      85.0,
+      106.25,
+      127.5,
+      148.75,
+      170.0
+    ],
+    "view_count": 9,
+    "non_axis_aligned_view_count": 8,
+    "ray_model": "parallel straight rays rotating in the xy plane",
+    "detector_shape": [
+      8,
+      8
+    ],
+    "detector_half_width": 0.72,
+    "sample_count_per_ray": 32,
+    "grid_shape_zyx": [
+      8,
+      8,
+      8
+    ],
+    "grid_bounds_xyz": [
+      -1.0,
+      1.0
+    ],
+    "outer_boundary_support": "one-voxel zero Dirichlet support",
+    "dtype": "float64",
+    "operator": "PSUB0VoxelGradientOperator",
+    "observation_layout": "view, detector-v, detector-u, UV-component",
+    "observation_dimension": 1152,
+    "field_dimension": 512
+  },
+  "formal_algebra_gate": {
+    "block_count": 324,
+    "block_definition": "Each B block fixes target view, source view, target UV component, and source UV component, then reshapes detector (v_t,u_t,v_s,u_s) as (v_t,v_s) by (u_t,u_s).",
+    "relative_second_to_first_singular_value_maximum": 1e-12,
+    "rank_one_block_reconstruction_relative_error_maximum": 1e-12,
+    "random_detector_seed": 2026073061,
+    "random_detector_vector_count": 17,
+    "factorized_B_matvec_relative_error_maximum": 1e-12,
+    "replay_seed": 2026073161,
+    "random_replay_observation_count": 5,
+    "replay_steps": 4,
+    "factorized_K4_field_relative_error_maximum": 1e-11,
+    "factorized_K4_residual_relative_error_maximum": 1e-11,
+    "operator_adjoint_relative_error_maximum": 1e-11
+  },
+  "implementation_boundary": {
+    "explicit_dense_A_allowed": true,
+    "explicit_dense_B_allowed": true,
+    "reason": "v61 is a small structural mechanism audit. Dense matrices are the independent oracle and are not a proposed scalable deployment path.",
+    "online_resource_claim_allowed": false,
+    "scalable_factor_construction_claim_allowed": false,
+    "persistent_memory_claim_allowed": false
+  },
+  "independent_validation": {
+    "must_not_import_formal_runner": true,
+    "must_rebuild_geometry_and_dense_A": true,
+    "must_recompute_all_324_block_spectra": true,
+    "must_recompute_random_B_actions_and_K4_replay": true,
+    "must_verify_formal_inputs_unchanged": true
+  },
+  "decision_rule": {
+    "pass": "PASS_NINE_VIEW_PARALLEL_KRONECKER_STRUCTURE_V61",
+    "fail": "FAIL_NINE_VIEW_PARALLEL_KRONECKER_STRUCTURE_V61",
+    "inconclusive": "INCONCLUSIVE_NINE_VIEW_PARALLEL_KRONECKER_STRUCTURE_V61",
+    "pass_requires": [
+      "All 324 blocks pass both rank-one gates.",
+      "All 17 factorized B actions pass.",
+      "All five factorized K4 field and residual comparisons pass.",
+      "The exact adjoint gate passes.",
+      "The independent validator reproduces the decision."
+    ]
+  },
+  "next_if_pass": "Derive factors from declared one-dimensional vertical and two-dimensional horizontal operator primitives without materialising dense A or B, then freeze a 16x16x32, nine-view, 101-call fresh resource gate. Only after that may a calibrated-pinhole or curved-ray residual correction be learned.",
+  "next_if_fail": "Stop exact Kronecker transfer and preregister a bounded block-low-rank approximation with explicit field/residual error, matched-accuracy refinement, wall, and memory gates before any learned correction.",
+  "claim_limits": {
+    "nine_view_parallel_algebra_transfer": false,
+    "pinhole_camera_transfer": false,
+    "calibrated_camera_transfer": false,
+    "curved_ray_transfer": false,
+    "operator_learning_result": false,
+    "real_bost": false,
+    "global_novelty_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

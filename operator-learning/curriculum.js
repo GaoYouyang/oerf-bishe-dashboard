@@ -1,9 +1,29 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.30-c-v58-sparse-detector-replay",
-  previousVersion: "2026.07.30-c-v55-w16d2-transfer-controls",
-  previousBadge: "v55 w16d2 transfer controls · strict FAIL",
-  olderBadge: "v53 continuous oracle · inconclusive + cell switch",
+  version: "2026.07.30-c-v62.2-nine-view-analytic-resource",
+  previousVersion: "2026.07.30-c-v61-nine-view-kronecker",
+  previousBadge: "v61 nine-view Kronecker · algebra PASS",
+  olderBadge: "v60.1 factorized detector normal · 101-call resource PASS",
   historyReleases: [
+    {
+      version: "2026.07.30-c-v61-nine-view-kronecker",
+      previousVersion: "2026.07.30-c-v60.1-factorized-detector-normal",
+      badge: "v61 nine-view Kronecker · algebra PASS"
+    },
+    {
+      version: "2026.07.30-c-v60.1-factorized-detector-normal",
+      previousVersion: "2026.07.30-c-v59-external-sparse-resource-mixed",
+      badge: "v60.1 factorized detector normal · 101-call resource PASS"
+    },
+    {
+      version: "2026.07.30-c-v59-external-sparse-resource-mixed",
+      previousVersion: "2026.07.30-c-v58-sparse-detector-replay",
+      badge: "v59 external sparse replay · algebra PASS / resource FAIL"
+    },
+    {
+      version: "2026.07.30-c-v58-sparse-detector-replay",
+      previousVersion: "2026.07.30-c-v55-w16d2-transfer-controls",
+      badge: "v58.1 sparse detector replay · fixed-geometry PASS"
+    },
     {
       version: "2026.07.30-c-v55-w16d2-transfer-controls",
       previousVersion: "2026.07.30-c-v53-continuous-oracle-cell-switch",
@@ -499,6 +519,9 @@ window.OPERATOR_LEARNING_GUIDE = {
     {id:"poolfire-trajectory-protocol",stage:"data",level:"必做",type:"主线数据协议",title:"PoolFire 11/2/2 完整轨迹协议",url:"../document_reader.html?doc=docs%2Fpoolfire_trajectory_protocol_evidence_2026-07-23.md",local:"",read:"先看 15 条官方 trajectory 的 train/validation/test 角色，再核对原始路径、字节数、SHA、test lockout、combination holdout 与 OOD 禁止声明。",output:"不看页面画出 11/2/2 角色图，并解释为什么同一轨迹随机切帧不是泛化、为什么两条 test 不是 unseen-power OOD。",verified:"PASS_FROZEN_POOLFIRE_TRAJECTORY_PROTOCOL；PASS_TWO_VALIDATION_TRAJECTORIES_READY；三条 train pilot 与两条职责隔离的 validation 均通过字节数/SHA、ZIP/NPY、full-resolution rho、checksums/READY 和独立复核；test_truth_opened=false；数据 READY 不等于算法结果"},
     {id:"poolfire-cross-trajectory-contract",stage:"warm-start",level:"必做",type:"事前实验合同",title:"C 路线跨轨迹 classical gate 与联合 test lock",url:"../document_reader.html?doc=docs%2Fpoolfire_c_cross_trajectory_experiment_contract_2026-07-25.md",local:"",read:"先看三条 fit pilot、两条 validation 的单向决策链，再核对 ROI/reference/gauge、train-only normalization、field+gradient+observation matched accuracy、harm、完整 A/A^T 和两条 test 联合冻结；最后读 505 帧输入失配图。",output:"不看页面写出四个 classical arms、三个逐帧容差、validation burn rule，以及同一几何下 p50 34.0%–51.0% 为何只是工况依赖的模型失配。",verified:"PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT；PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT；5 bundles / 505 frames / one geometry；strict validation loader 与 train-only ridge 代码门通过；test_truth_opened=false；algorithm_breakthrough=false"},
     {id:"poolfire-c-sparse-detector-replay-v58",stage:"warm-start",level:"必做",type:"最新重大机理正结果",title:"v56-v58 稀疏 detector-space 精确 CGLS 重放",url:"../document_reader.html?doc=docs%2Fpoolfire_c_sparse_detector_replay_v58_result_2026-07-30.md",local:"",read:"先手推 x_k=A^T z_k 与 B=A A^T 的 detector-space CR 递推，再看 v56 为什么拒绝全局低秩 basis，最后核对 v58 的机器精度等价、2.58% 稀疏度、完整调用账、170 个 fresh process 和 setup break-even。",output:"不用页面说明：为什么 4B+1A^T 与 4A+4A^T 得到同一 K4 场；为什么 87.5% 少完整调用仍必须实测 wall；为什么当前是重大代理机理结果却还不是新神经算法或顶刊结论。",verified:"五条 fit / 505 帧；独立 CSR 逐元素一致；最大 field/residual 差4.34e-16/1.44e-15；CSR 存储下降96.11%；170 fresh process；端到端 ratio 0.824652；RSS p90 ratio1.000865；external geometry/real BOST/operator learning/global novelty均未成立"},
+    {id:"nine-view-analytic-factor-resource-v62",stage:"warm-start",level:"必做",type:"最新重要结构化资源正结果",title:"v62.2 九视角解析因子的可扩展构造与 fresh 资源门",url:"../document_reader.html?doc=docs%2Fnine_view_analytic_factor_resource_v62_result_2026-07-30.md",local:"",read:"先从 A_(theta,c)=Z_c⊗H_(theta,c) 推出直接 factor construction，再比较 Zero-CGLS、matrix-free detector CR 与 analytic-factor detector CR 的完整向量、调用账和102个fresh worker；最后读首轮作废与独立聚合没有重复计时的边界。",output:"不用页面说明：为什么 matrix-free detector CR 仍慢约5.4%却 analytic factors 快约79.7%，证明收益来自结构而不是变量换名；为什么RSS只下降约1%不能写成内存突破；为什么parallel-ray资源PASS仍不等于pinhole、校准、曲线、learned或真实BOST。",verified:"16×16×32、9 views、无dense 3D A/B；3 full-vector + 102 fresh workers；最大field/residual差4.15e-15/8.67e-15；101-call compute/outer-p50/outer-p90/RSS-p90 ratio0.172307/0.202526/0.205030/0.988063；独立聚合最大报告差0；首轮102-worker批次永久作废；algorithm_breakthrough=false"},
+    {id:"nine-view-parallel-kronecker-v61",stage:"warm-start",level:"必做",type:"重要结构证明",title:"v61 九视角平行投影 detector-normal Kronecker 结构",url:"../document_reader.html?doc=docs%2Fnine_view_parallel_detector_kronecker_v61_result_2026-07-30.md",local:"",read:"先从 A_{theta,c}=Z_c⊗H_{theta,c} 手推 B_{(t,ct),(s,cs)}=(Z_ct Z_cs^T)⊗(H_tct H_scs^T)，再看 324 个 block 的独立谱审计和 K4 重放；最后区分结构存在、可扩展构造与部署资源三种不同证据。",output:"不用页面说明：为什么绕 z 轴改变平行视角不会破坏竖直×水平可分性；为什么 32 倍小尺寸存储不等于实际内存加速；为什么 pinhole、roll/elevation、校准射线与曲折光线仍需单独压力测试；v62.2 怎样闭合直接构造和资源门。",verified:"九视角覆盖0°–170°，八个非轴对齐；324 blocks；最大sigma2/sigma1=3.20e-16；最大block/B/K4-field/K4-residual误差7.54e-15/1.57e-15/1.98e-15/2.37e-15；独立validator最大报告差0；v61自身不含scalable/resource门，v62.2已另行闭合；pinhole/calibrated/learned/real BOST未成立"},
+    {id:"blastnet-factorized-detector-v60-1",stage:"warm-start",level:"必做",type:"重要结构化资源正结果",title:"v60.1 不存 B 的精确二维 detector-normal 核心",url:"../document_reader.html?doc=docs%2Fblastnet_factorized_detector_v60_1_result_2026-07-30.md",local:"",read:"先从 A_s=G_s P_s 手推 B_ts=G_t(P_t P_s^T)G_s^T，再看三正交轴下同视角标量乘法和跨视角 LOS 收缩/外积为什么不需要三维中间场；最后区分五次诊断和101次主资源门。",output:"不用页面说明：为什么 v59 的 CSR 加载失败可以靠删除 stored B 修复；为什么当前每帧从8个完整A/A^T降到1个却仍要实测wall；为什么101次循环五个observation只是资源摊销而不是泛化；为什么下一门必须是九视角非轴对齐相机。",verified:"17 random detector vectors + 5 opened observations；独立最大B/field/residual差2.92e-16/1.09e-15/1.28e-15；persistent factors 45,568 bytes；68 fresh process；101-call compute/outer p50/outer p90/RSS ratio0.716687/0.841184/0.876558/0.967493；全部冻结门PASS；arbitrary camera/curved/learned/real BOST/global novelty未成立"},
     {id:"blastnet-sparse-detector-replay-v59",stage:"warm-start",level:"必做",type:"最新跨坐标混合结果",title:"v59 外部坐标代数 PASS、五帧资源 FAIL",url:"../document_reader.html?doc=docs%2Fblastnet_sparse_detector_replay_v59_result_2026-07-30.md",local:"",read:"先区分 detector-space CR 与标准 CGNE，再核对外部坐标是否重建 A/B/CSR、独立代数误差、三轴拓扑边界，以及34个fresh process里核心计算与outer/RSS为什么给出相反判决。",output:"不用页面说明：为什么坐标尺度/长宽比代数迁移成立却不能叫任意相机迁移；为什么0.809684倍核心计算仍对应1.023894倍outer wall；为什么短batch失败支持研究摊销曲线却不能靠复制5帧冒充物理泛化。",verified:"5 external observations；independent field/residual差4.30e-15/6.03e-15；CSR indices/indptr exact；density2.5782%；34 fresh process；compute/outer/RSS ratio0.809684/1.023894/1.153122；resource transfer FAIL；truth/real BOST/operator learning/global novelty未成立"},
     {id:"poolfire-c-semiconvergence-coverage",stage:"warm-start",level:"必做",type:"算法诊断",title:"C 路线半收敛、覆盖扩充与固定子空间失败门",url:"../document_reader.html?doc=docs%2Fpoolfire_c_semiconvergence_coverage_diagnosis_2026-07-25.md",local:"",read:"先比较 p22 Zero K4/K24 的 field、gradient、observation 三条曲线，再看 ridge K2 固定迁移为何在 p14 与 wall time 失败；最后依次读 v4 覆盖 FAIL 与 v5.1 稳定 rank 504、过原点和 observation-RMS 四种固定全局子空间的可信失败。",output:"不用页面解释：为什么 residual 继续下降仍可能重建更差；为什么 37.5% 少调用不是速度成功；为什么 13.86% 真实改善仍必须 FAIL；为什么 rank 扩展的 31.68% 改善仍不是可部署模型；为什么 RMS 只改善 0.1009% 不足以成为创新。",verified:"完整 PoolFire + 聚焦页回归 243 passed；v4 独立重算 606 帧，rank256 p14 output p90=0.218051，相对改善13.8608%<20%；v5.1 独立重算 606 个 K4 teacher、1010 个缩放 K4 与 20 个 projector；best p90/worst=0.148823/0.165473，未过0.05/0.10；停止剩余 fit 接入和大模型训练；test_truth_opened=false；algorithm_breakthrough=false"},
     {id:"poolfire-c-transport-alignment-route",stage:"warm-start",level:"必做",type:"最新机制负结果",title:"raw BP 输运定位失败与几何灵敏度均衡路线",url:"../document_reader.html?doc=docs%2Fpoolfire_c_transport_alignment_reading_route_2026-07-25.md",local:"",read:"先分清 shifted POD、transport reversal、transported subspaces、registration MOR 与 nonlinear manifold；再读 v6 为什么 teacher 输运存在而 raw BP 质心仍会受 diag(A^T A) 几何灵敏度拉偏。",output:"不用页面复述 0A+606A^T observation-only Stage 1、2424A+2424A^T teacher Stage 2、p45-s05 失败数字与 T1 skipped-before-SVD；再写出 D^{-1}A^T y 为什么不增加完整 A 调用，以及它必须怎样重新过同一逐轨迹门。",verified:"v6 状态 FAIL_T0_BP_INTEGER_TRANSLATION_PROXY；teacher 最大 q10-q90 质心跨度2.596体素；p45-s05 centroid p90=1.847体素、exact shift=14.85%、within-one=63.37%；T1/SVD未运行；p22/test未打开；neural_training_authorized=false；algorithm_breakthrough=false"},

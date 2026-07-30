@@ -1,0 +1,65 @@
+{
+  "schema_version": "oerf-blastnet-factorized-detector-resource-protocol-60.1",
+  "status": "FROZEN_AFTER_FORMAL_ALGEBRA_BEFORE_FRESH_RESOURCE_V60_1",
+  "frozen_at_utc": "2026-07-29T19:31:00Z",
+  "base_algebra_protocol_sha256": "6f96d4079dbbd3266a059f3ed4bfeed53ae2f12f2af6290984c4d70746765527",
+  "required_parent_algebra_status": "PASS_FACTORIZED_DETECTOR_NORMAL_ALGEBRA_V60",
+  "amendment_reason": "The base v60 protocol called the RSS metric a peak ratio but did not distinguish worker-self RSS from a sampled process-tree peak and did not place a tail guard on outer wall. Before any formal fresh result, this amendment fixes those names and adds the p90 outer-wall guard.",
+  "result_visibility_at_freeze": {
+    "formal_algebra_seen": true,
+    "formal_algebra_status": "PASS_FACTORIZED_DETECTOR_NORMAL_ALGEBRA_V60",
+    "formal_fresh_resource_result_seen": false,
+    "independent_algebra_validation_required_before_resource_execution": true
+  },
+  "workloads": [
+    {
+      "snapshot_count": 5,
+      "role": "short-bundle diagnostic only",
+      "can_pass_protocol": false
+    },
+    {
+      "snapshot_count": 101,
+      "role": "primary full-PoolFire-trajectory-length resource workload",
+      "can_pass_protocol": true
+    }
+  ],
+  "workload_boundary": "The five immutable external observations are cycled in fixed order. The 101-call workload measures resource amortization only; it is not 101 independent samples, a new trajectory, or generalization evidence.",
+  "execution": {
+    "repetitions": 17,
+    "arms": [
+      "zero_cgls_k4",
+      "factorized_detector_replay_k4"
+    ],
+    "shuffle_seed": 2026073061,
+    "serial_fresh_processes": true,
+    "thread_count_per_numeric_backend": 1
+  },
+  "primary_101_call_gate": {
+    "paired_compute_wall_ratio_p50_maximum": 0.9,
+    "paired_outer_wall_ratio_p50_maximum": 0.9,
+    "paired_outer_wall_ratio_p90_maximum": 1.05,
+    "armwise_worker_self_peak_rss_p90_higher_ratio_maximum": 1.05
+  },
+  "required_reporting": [
+    "For both 5 and 101 calls, report paired compute, worker-lifetime, and outer-wall p50/p90/worst/mean.",
+    "For both 5 and 101 calls, report armwise worker-self peak RSS p90-higher and their ratio.",
+    "Do not call worker-self ru_maxrss a sampled process-tree or whole-pipeline peak.",
+    "Report persistent factor state bytes and complete A/A-transpose call ledgers.",
+    "Verify each immutable pair payload before and after the run."
+  ],
+  "decision_rule": {
+    "pass": "PASS_FACTORIZED_DETECTOR_NORMAL_EXTERNAL_RESOURCE_V60_1",
+    "mixed": "MIXED_FACTORIZED_DETECTOR_NORMAL_EXTERNAL_RESOURCE_V60_1",
+    "fail": "FAIL_FACTORIZED_DETECTOR_NORMAL_EXTERNAL_RESOURCE_V60_1",
+    "inconclusive": "INCONCLUSIVE_FACTORIZED_DETECTOR_NORMAL_EXTERNAL_RESOURCE_V60_1"
+  },
+  "claim_limits": {
+    "external_coordinate_geometry_transfer": false,
+    "arbitrary_camera_geometry_transfer": false,
+    "operator_learning_result": false,
+    "real_BOST": false,
+    "global_novelty_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
