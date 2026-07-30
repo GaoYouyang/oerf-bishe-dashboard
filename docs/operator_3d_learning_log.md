@@ -9915,3 +9915,85 @@ correction 才有清楚的物理对象。
 - `docs/nine_view_analytic_factor_resource_v62_result_2026-07-30.md`
 - `docs/nine_view_analytic_factor_resource_v62_public_summary.json`
 - `assets/nine_view_analytic_factor_resource_v62.png`
+
+## 2026-07-30：v63 先失败，v65 才找到低秩几何近似真正该做的工作
+
+这次没有因为 v62.2 在平行相机上很快，就直接把“低秩修补”写成新算法。
+先做的 v63 问得很严格：当相机出现有限源距、elevation、roll、焦距、主点和
+目标偏移以后，能不能把平行核心 `A0` 加一个很小的 residual，直接当成真实
+已知几何 `Ag` 来完成 K4？
+
+答案是不能。18 个场景、22 个 truth、两族近似和 `q=1/2/4/8` 一共 13,032
+个原子；`q=1/2/4` 全部没有通过，而且 `A0+residual` 比同 q standalone 更差。
+clean-room NumPy 程序没有导入正式射线、三线性、梯度、分解或 runner，仍把
+九张表和 FAIL 独立复现，最大差约 `1.03e-12`。
+
+**讲人话：**一个近似相机算子不够准，就不能假装它是真相。继续加 rank 或堆
+网络只会把问题藏起来，所以“近似算子直接替代真实物理”这条路线正式关闭。
+
+v64 随后换了一个更合理的角色：近似算子只在 detector space 里找一个便宜起点，
+然后必须经过一次真实 `Ag^T` 提升和一到两步未修改的真实 CGLS：
+
+```text
+y
+ -> cheap detector CR with standalone Atilde
+ -> dual proposal z
+ -> x0 = Ag^T z
+ -> exact Ag-CGLS K1 or K2
+```
+
+已开封场景出现全 cell 正信号后，没有继续在同一批数据上调。v65 在看到任何新
+结果前固定了新的九视角角度、11 个几何 pattern、19 个随机 truth、5 个结构 truth、
+两个候选和六项逐 cell 门。第一次正式运行和独立复算得到：
+
+```text
+formal atoms                                  1,848 / 1,848
+q8 + exact Ag^T + K1                         264 / 264 PASS
+q4 + exact Ag^T + K2                         264 / 264 PASS
+
+q8-K1 exact cost                             2A + 2A^T
+q8-K1 worst field/gradient/observation harm  0.985320 / 0.984208 / 0.952726
+q8-K1 worst ratio vs Zero-K2                 0.855251 / 0.881628 / 0.827317
+
+q4-K2 exact cost                             3A + 3A^T
+q4-K2 worst field/gradient/observation harm  0.959885 / 0.955884 / 0.915029
+q4-K2 worst ratio vs Zero-K3                 0.884484 / 0.896546 / 0.843994
+
+independent maximum numeric difference       3.38e-13
+```
+
+这次所有比值都小于 1，不是平均值变好却藏着坏样本。q8-K1 在每个新 cell 上
+都不劣于 Zero-K4，同时精确算子对从 4 个降到 2 个；q4-K2 从 4 个降到 3 个，
+精度余量更大。两者还都逐 cell 击败相同精确调用数的 Zero-K2/Zero-K3。
+
+**真正的新认识：**低秩几何近似不适合当最终物理模型，但可以提供普通
+Zero-CGLS 前几步找不到的有用方向；真实 `Ag^T` 和真实 CGLS 再负责把结果拉回
+物理一致空间。这比“训练一个网络直接猜密度场”更可解释，也更接近师兄说的
+warm start。
+
+但这还不是突破。当前是无噪声 `8×8×8` 已知 straight-ray 小预言机；cheap
+factor 动作、factor setup、目标尺寸 wall 和峰值 RSS 都没有计入，也没有曲折
+光线、真实相机标定、组内位移图或算子学习：
+
+```text
+fresh_known_geometry_small_oracle=true
+target_scale_resource_result=false
+wall_time_speedup=false
+whole_pipeline_peak_memory_result=false
+curved_ray_transfer=false
+operator_learning_result=false
+real_bost=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+下一步已经收窄：只把 q8-K1 和 q4-K2 扩到 `16×16×32`，逐相机/分量构造 factors，
+把 setup、cheap actions、精确调用、fresh wall 和整条进程峰值内存一起算清；
+再放到 PoolFire 和另一个公开反应流族。目标尺寸和公开外部族都过门之后，才研究
+最小 geometry/observation-conditioned rank 或 coefficient predictor。
+
+完整结果、脱敏摘要和图表：
+
+- `docs/nine_view_geometry_warm_refinement_v65_result_2026-07-30.md`
+- `docs/nine_view_geometry_warm_refinement_v65_public_summary.json`
+- `assets/nine_view_geometry_warm_refinement_v65.png`

@@ -339,6 +339,7 @@
       <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
       <a href="#objective-novelty">优化目标与原创性</a>
       <a href="#latest-gate">算法与实验</a>
+      <a href="#fresh-geometry-warm-v65">v65 全新几何 Warm PASS</a>
       <a href="#analytic-factor-resource-v62">v62.2 九视角资源门</a>
       <a href="#nine-view-kronecker-v61">v61 九视角 Kronecker</a>
       <a href="#factorized-detector-v60-1">v60.1 因子化正规算子</a>
@@ -371,10 +372,12 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-30 · v62.2</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-30 · v65</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v61 已证明九个覆盖 <code>0°–170°</code> 的平行视角保留精确 detector-normal Kronecker 结构；最新 v62.2 进一步在 <code>16×16×32</code> 三维场上从一维/二维 primitives 直接构造 factors，全程不形成 dense 三维 <code>A/B</code>。3 个全向量正确性进程和 102 个 fresh 计时进程均通过：解析法与 Zero-CGLS K4 的最大 field/residual 差为 <code>4.15e-15 / 8.67e-15</code>，101-call outer p50/p90 ratio 为 <code>0.202526 / 0.205030</code>，process-tree RSS p90 ratio 为 <code>0.988063</code>。这是重要的九视角结构化数值核正结果，但尚未迁移到 pinhole/校准/曲折光线，也不是 learned operator 或真实 BOST，<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v63 先独立证明小秩近似不能直接替代真实已知几何算子；v65 随后把它改成 detector-space warm initializer，再接一次精确 <code>A_g^T</code> 提升和一到两步未修改 CGLS。在结果前冻结的 11 个全新几何、24 个全新 truth 上，q8-K1 与 q4-K2 都达到 <code>264/264</code> cells PASS，并把精确调用从 Zero-K4 的 <code>4A+4A^T</code> 分别降到 <code>2A+2A^T</code> 与 <code>3A+3A^T</code>。clean-room NumPy 验证器重算 1,848 个原子，最大数值差 <code>3.38e-13</code>。这是可靠的小尺度已知几何 headroom，不是目标尺寸加速、算子学习、曲折光线或真实 BOST，<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="#fresh-geometry-warm-v65">打开 v65 全新几何结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_geometry_warm_refinement_v65_result_2026-07-30.md">读 v63-v65 完整证据</a>
       <a class="button primary" href="#analytic-factor-resource-v62">打开 v62.2 资源结果</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_analytic_factor_resource_v62_result_2026-07-30.md">读 v62.2 完整证据</a>
       <a class="button" href="#nine-view-kronecker-v61">回看 v61 结构门</a>
@@ -385,12 +388,15 @@
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert success" style="margin-top:12px;">
-      <strong>重要代理正结果：九视角解析因子通过完整向量与 fresh 资源门</strong>
-      <span>v62.2 将 v61 的小尺寸代数结构变成无需 dense <code>A/B</code> 的 <code>16×16×32</code> 实现。101-call fresh outer-wall 中位数从 <code>23.901 s</code> 降到 <code>4.850 s</code>，约减少 <code>79.7%</code>；完整场和 residual 仍与 Zero-CGLS K4 在舍入误差内一致。首轮 102-worker 批次因 controller 账本未落盘而永久作废，本文数字只来自修复后重新运行并通过独立聚合的第二轮。<a href="#analytic-factor-resource-v62">查看完整证据</a>。</span>
+      <strong>重要方法正结果：近似算子不能替代物理，但可以给精确求解器一个更好的起点</strong>
+      <span>v65 的两个固定候选都在 264 个全新 cell 上逐项通过 truth no-harm 和同调用对照门。q8-K1 节省 50% 精确算子对，最坏 field / gradient / observation harm 为 <code>0.9853 / 0.9842 / 0.9527</code>；q4-K2 节省 25%，对应 <code>0.9599 / 0.9559 / 0.9150</code>。尚未计入 cheap factor 动作、setup、wall 或 RSS，因此现在只称小预言机 headroom。<a href="#fresh-geometry-warm-v65">查看完整证据</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="#fresh-geometry-warm-v65">v65 全新几何 Warm PASS</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_geometry_warm_refinement_v65_result_2026-07-30.md">v63-v65 完整裁决</a>
+      <a class="button" href="../docs/nine_view_geometry_warm_refinement_v65_public_summary.json">v65 脱敏结果</a>
       <a class="button primary" href="#analytic-factor-resource-v62">v62.2 九视角解析因子</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_analytic_factor_resource_v62_result_2026-07-30.md">v62.2 完整裁决</a>
       <a class="button" href="../docs/nine_view_analytic_factor_resource_v62_public_summary.json">v62.2 脱敏结果</a>
@@ -698,7 +704,8 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
-        <article class="panel"><div class="chips"><span class="chip gold">最新 · v62.2 资源 PASS</span><span class="chip blue">3 correctness + 102 fresh</span></div><h3 style="margin-top:10px;">Scalable nine-view analytic factors</h3><p>在 <code>16×16×32</code> 场上直接从一维/二维 primitives 构造九视角 factors，不形成 dense 三维 <code>A/B</code>。完整 field/residual 最大差 <code>4.15e-15 / 8.67e-15</code>；101-call fresh compute / outer p50 / outer p90 / process-tree RSS p90 ratio 为 <code>0.172307 / 0.202526 / 0.205030 / 0.988063</code>。parallel-ray 代理通过，pinhole/校准/曲线/learned/真实 BOST 未通过。</p></article>
+        <article class="panel"><div class="chips"><span class="chip gold">最新 · v65 Small-oracle PASS</span><span class="chip blue">1,848 原子独立复算</span></div><h3 style="margin-top:10px;">Geometry-compressed warm refinement</h3><p>v63 关闭“低秩近似直接替代 <code>A_g</code>”；v65 验证“cheap detector warm → exact <code>A_g^T</code> → exact CGLS”。q8-K1 与 q4-K2 在全新 11×24 cells 上均为 264/264 PASS，精确调用对减少 50% / 25%。目标尺寸 wall/RSS、曲折光线、learned selector 与真实 BOST 仍未通过。</p></article>
+        <article class="panel"><div class="chips"><span class="chip gold">v62.2 资源 PASS</span><span class="chip blue">3 correctness + 102 fresh</span></div><h3 style="margin-top:10px;">Scalable nine-view analytic factors</h3><p>在 <code>16×16×32</code> 场上直接从一维/二维 primitives 构造九视角 factors，不形成 dense 三维 <code>A/B</code>。完整 field/residual 最大差 <code>4.15e-15 / 8.67e-15</code>；101-call fresh compute / outer p50 / outer p90 / process-tree RSS p90 ratio 为 <code>0.172307 / 0.202526 / 0.205030 / 0.988063</code>。parallel-ray 代理通过，校准/曲线/learned/真实 BOST 未通过。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">最新 · v61 结构 PASS</span><span class="chip blue">九个平行视角</span></div><h3 style="margin-top:10px;">Nine-view Kronecker detector normal</h3><p>九个覆盖 <code>0°–170°</code> 的视角中，全部 324 个目标/源视角与 u/v 分量 block 在竖直×水平重排后均为 rank one；独立复算的最大 block / <code>Bv</code> / K4 field / residual 误差为 <code>7.54e-15 / 1.57e-15 / 1.98e-15 / 2.37e-15</code>。它把精确结构从三轴扩到非轴对齐平行角度，但尚未证明可扩展构造或资源优势。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">v60.1 资源 PASS</span><span class="chip blue">不保存 dense / CSR B</span></div><h3 style="margin-top:10px;">Factorized detector-normal replay</h3><p>三正交轴 projection-first 几何中的 <code>A A^T</code> 被精确拆成二维梯度伴随、LOS 收缩与外积。独立代数误差不超过 <code>1.28e-15</code>；101-call fresh 的 compute / outer p50 / outer p90 / RSS ratio 为 <code>0.716687 / 0.841184 / 0.876558 / 0.967493</code>。完整 <code>A/A^T</code> 从 8 次降到 1 次，但任意相机和真实 BOST 尚未验证。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v59 资源 FAIL</span><span class="chip blue">外部坐标代数 PASS</span></div><h3 style="margin-top:10px;">External-coordinate sparse replay</h3><p>从 BLASTNet 坐标重新构造 <code>A</code>、<code>B</code> 和 CSR，没有复用 PoolFire 稀疏位置。独立重算最大 field / residual 差为 <code>4.30e-15 / 6.03e-15</code>，但 34 个 5 帧 fresh process 的核心/outer/RSS ratio 为 <code>0.809684 / 1.023894 / 1.153122</code>。该失败直接推动 v60.1 删除 stored <code>B</code>，而不是继续优化 CSR。</p></article>
@@ -725,6 +732,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="fresh-geometry-warm-v65" class="alert success" style="margin-top:13px;">
+        <strong>v65：已知几何低秩 Warm Start 通过结果前冻结的全新小预言机门</strong>
+        <span>v63 的 13,032 原子独立复算确认：小秩 <code>A_0+residual</code> 或 standalone 近似不能直接替代真实 <code>A_g</code> 完成 K4。v65 改用 standalone q4/q8 只生成 detector-space dual proposal，再做一次精确 <code>A_g^T</code> 提升和 K2/K1 精确 CGLS。11 个新几何 × 24 个新 truth 上，两臂均为 <code>264/264</code> PASS。q8-K1 的最坏 truth harm 为 <code>0.985320 / 0.984208 / 0.952726</code>，相对同调用 Zero-K2 最坏为 <code>0.855251 / 0.881628 / 0.827317</code>；q4-K2 分别为 <code>0.959885 / 0.955884 / 0.915029</code> 和 <code>0.884484 / 0.896546 / 0.843994</code>。clean-room 验证器独立重建几何、射线、三线性、梯度、SVD 和 Krylov，1,848 原子最大差 <code>3.38e-13</code>。当前 <code>target_scale_resource_result=false</code>、<code>curved_ray_transfer=false</code>、<code>operator_learning_result=false</code>、<code>real_bost=false</code>、<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_geometry_warm_refinement_v65.png" aria-label="打开 v63-v65 已知几何 warm refinement 结果图">
+          <img src="../assets/nine_view_geometry_warm_refinement_v65.png" alt="v63-v65 的精确调用账、truth no-harm、同调用对照与证据边界" />
+        </a>
+        <figcaption>A：q8-K1 与 q4-K2 分别减少 50% / 25% 精确算子对；B：相对 Zero-K4 的逐 cell 最坏 truth harm；C：相对同调用 Zero-K2/K3 的逐 cell 最坏误差比；D：独立复算与未完成证据门。所有比例小于 1，但仍只属于无噪声 8³ 已知 straight-ray 几何。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_geometry_warm_refinement_v65_result_2026-07-30.md">读 v63-v65 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_geometry_warm_refinement_v65_public_summary.json">打开 v65 机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_geometry_warm_refinement_v65.png">打开 v65 结果图原尺寸</a>
       </div>
       <div id="analytic-factor-resource-v62" class="alert success" style="margin-top:13px;">
         <strong>v62.2：九视角解析 detector-normal factors 通过可扩展构造与 fresh 资源门</strong>
