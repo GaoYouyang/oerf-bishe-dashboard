@@ -339,6 +339,7 @@
       <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
       <a href="#objective-novelty">优化目标与原创性</a>
       <a href="#latest-gate">算法与实验</a>
+      <a href="#full-trajectory-warm-v67">v67.1 全轨迹 PASS</a>
       <a href="#target-scale-warm-v66">v66.1 目标尺寸 PASS</a>
       <a href="#fresh-geometry-warm-v65">v65 全新几何 Warm PASS</a>
       <a href="#analytic-factor-resource-v62">v62.2 九视角资源门</a>
@@ -373,10 +374,12 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-30 · v66.1</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-30 · v67.1</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v65 先在全新小预言机上确认 detector-space warm → 精确 <code>A_g^T</code> → 未修改 CGLS 的 headroom；v66.1 已把同一固定方法扩到 <code>32×16×16</code>、九视角、三档已知几何和五条公开 PoolFire 形态轨迹。q8-K1 与 q4-K2 均为 <code>75/75</code> cells PASS；修正后的独立重算程序从原始 <code>rho</code> 零差异重建全部 505 帧真值，并复算 525 个原子，行级最大差 <code>8.88e-14</code>。该程序仍共享冻结的体素梯度算子与三线性 stencil，并非端到端物理独立。现在只证明公开 CFD straight-ray 形态代理的目标尺寸兼容性并解锁全 505 帧 Stage B；wall、RSS、曲折光线、真实 BOST 与论文门均未通过，<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v67.1 已把冻结的 q8-K1 / q4-K2 扩到五条公开 PoolFire 形态轨迹全部 505 帧和三档已知九视角几何，两臂均为 <code>1,515/1,515</code> cells PASS；独立程序从 raw <code>rho</code> 重建并复算 18 臂共 <code>27,270</code> 个原子，534,795 个行级数字最大差 <code>6.43e-10</code>，实际调用账差为 0。q8 用 <code>2A+2A^T</code>，相对 Zero-K4 理论少 50% 精确调用；相对同调用 Zero-K2 的四项最坏误差比均小于 1。它仍是固定 geometry-compressed factor，不是神经算子；fresh wall、整条流水线 RSS、独立反应流族、曲折光线和真实 BOST 均未通过，<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="#full-trajectory-warm-v67">打开 v67.1 全轨迹结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_poolfire_full_trajectory_v67_result_2026-07-30.md">读 v67.1 完整证据</a>
       <a class="button primary" href="#target-scale-warm-v66">打开 v66.1 目标尺寸结果</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_poolfire_target_scale_warm_v66_result_2026-07-30.md">读 v66.1 完整证据</a>
       <a class="button primary" href="#fresh-geometry-warm-v65">打开 v65 全新几何结果</a>
@@ -391,12 +394,15 @@
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert success" style="margin-top:12px;">
-      <strong>目标尺寸兼容性已由独立重算程序通过，下一门是全 505 帧而不是继续调 rank</strong>
-      <span>v66.1 的 q8-K1 / q4-K2 在 75 个冻结单元上均为 <code>75/75</code>，最坏 field / gradient / observation harm 分别为 <code>0.9956 / 0.9990 / 0.9257</code> 与 <code>0.9700 / 0.9919 / 0.7978</code>。独立程序还从五条原始 <code>rho</code> 重建 505 帧、4,136,960 个真值数，最大差为 0。精确算子对理论减少 50% / 25%，但 cheap factor setup、fresh wall 和整条流水线 RSS 尚未过门。<a href="#target-scale-warm-v66">查看完整证据</a>。</span>
+      <strong>全 505 帧 Stage B 已独立通过，下一门是真实 fresh wall/RSS 而不是继续挑帧或调 rank</strong>
+      <span>v67.1 的 q8-K1 / q4-K2 均为 <code>1,515/1,515</code> PASS。q8 相对 Zero-K4 的四项最坏 harm 为 <code>1.00201 / 0.99911 / 1.00140 / 0.92928</code>，全部低于冻结的 1.01 门；相对同调用 Zero-K2 的四项最坏比值为 <code>0.91059 / 0.98650 / 0.95395 / 0.64499</code>。没有同等或更低 exact A/A^T 预算的 control 在任何单元同时支配 q8 的四项指标。现在获准实测 setup、cheap factor actions、端到端 wall 和峰值 RSS，但尚未得到速度结论。<a href="#full-trajectory-warm-v67">查看完整证据</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="#full-trajectory-warm-v67">v67.1 全轨迹 PASS</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_poolfire_full_trajectory_v67_result_2026-07-30.md">v67.1 完整裁决</a>
+      <a class="button" href="../docs/nine_view_poolfire_full_trajectory_v67_public_summary.json">v67.1 脱敏结果</a>
       <a class="button primary" href="#target-scale-warm-v66">v66.1 目标尺寸 PASS</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_poolfire_target_scale_warm_v66_result_2026-07-30.md">v66.1 完整裁决</a>
       <a class="button" href="../docs/nine_view_poolfire_target_scale_warm_v66_public_summary.json">v66.1 脱敏结果</a>
@@ -710,6 +716,7 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
+        <article class="panel"><div class="chips"><span class="chip gold">最新 · v67.1 Stage B PASS</span><span class="chip blue">27,270 原子独立复算</span></div><h3 style="margin-top:10px;">PoolFire full-trajectory warm compatibility</h3><p>固定 q8-K1 / q4-K2 在五条公开 PoolFire 轨迹全部 505 帧与三档已知几何上均为 1,515/1,515 PASS。q8 的四项最坏 harm 不超过 1.00201，相对同调用 Zero-K2 的四项最坏比值均小于 1；16 个 controls 中没有一个在任何单元同时支配 q8 四项指标。独立复算比较 534,795 个行级数字，最大差 6.43e-10，调用账差为 0。fresh wall/RSS Stage C 已解锁，但速度、外部族、curved 和真实 BOST 尚未通过。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">最新 · v66.1 Proxy Stage A PASS</span><span class="chip blue">raw 505 帧零差异重建</span></div><h3 style="margin-top:10px;">PoolFire target-scale warm compatibility</h3><p>在 <code>32×16×16</code>、九视角、三档已知几何与五条公开 PoolFire 形态轨迹上，q8-K1 / q4-K2 均为 75/75 PASS；独立程序从原始 <code>rho</code> 重建全部 505 帧真值，最大差 0，再复算 525 个原子，行级最大差 8.88e-14。全 505 帧 Stage B 已解锁，wall/RSS、曲折光线、learned selector 与真实 BOST 仍未通过。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">v65 Small-oracle PASS</span><span class="chip blue">1,848 原子独立复算</span></div><h3 style="margin-top:10px;">Geometry-compressed warm refinement</h3><p>v63 关闭“低秩近似直接替代 <code>A_g</code>”；v65 验证“cheap detector warm → exact <code>A_g^T</code> → exact CGLS”。q8-K1 与 q4-K2 在全新 11×24 cells 上均为 264/264 PASS，精确调用对减少 50% / 25%。目标尺寸 wall/RSS、曲折光线、learned selector 与真实 BOST 仍未通过。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">v62.2 资源 PASS</span><span class="chip blue">3 correctness + 102 fresh</span></div><h3 style="margin-top:10px;">Scalable nine-view analytic factors</h3><p>在 <code>16×16×32</code> 场上直接从一维/二维 primitives 构造九视角 factors，不形成 dense 三维 <code>A/B</code>。完整 field/residual 最大差 <code>4.15e-15 / 8.67e-15</code>；101-call fresh compute / outer p50 / outer p90 / process-tree RSS p90 ratio 为 <code>0.172307 / 0.202526 / 0.205030 / 0.988063</code>。parallel-ray 代理通过，校准/曲线/learned/真实 BOST 未通过。</p></article>
@@ -739,6 +746,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="full-trajectory-warm-v67" class="alert success" style="margin-top:13px;">
+        <strong>v67.1：九视角 PoolFire 全轨迹兼容性通过独立 raw-rho 复算</strong>
+        <span>固定 q8-K1 与 q4-K2 已覆盖 <code>32×16×16</code>、五条公开 PoolFire 轨迹全部 505 帧和三档已知九视角 straight-ray 几何，两臂均为 <code>1,515/1,515</code> PASS。q8 的精确账为 <code>2A+2A^T</code>，相对 Zero-K4 理论减少 50%；四项最坏 harm 为 <code>1.002008 / 0.999111 / 1.001399 / 0.929281</code>，相对同调用 Zero-K2 的最坏比值为 <code>0.910587 / 0.986495 / 0.953952 / 0.644986</code>。没有任何同等或更低 exact A/A^T 预算 control 在任一单元同时支配 q8 的 field、完整 gradient、内部 gradient 和 observation。独立程序复算 18 臂共 <code>27,270</code> 个原子、534,795 个行级数字，最大差 <code>6.43e-10</code>，实际调用账差为 0；raw/pair 输入和正式 payload 均未变化。它仍共享冻结的体素梯度算子与三线性 stencil，且 q8 是固定 geometry-compressed factor，不是 neural operator。当前 <code>fresh_resource_stage_c_authorized=true</code>，但 <code>fresh_wall_speedup=false</code>、<code>real_bost=false</code>、<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_poolfire_full_trajectory_v67.png" aria-label="打开 v67.1 PoolFire 全轨迹 warm compatibility 结果图">
+          <img src="../assets/nine_view_poolfire_full_trajectory_v67.png" alt="v67.1 的精确调用账、全 1515 单元最坏 harm、同调用对照与 15 个全轨迹层热图" />
+        </a>
+        <figcaption>A：q8/q4 相对 Zero-K4 的理论精确算子对；B：全部 1,515 单元相对 Zero-K4 的四项最坏 harm；C：相对同调用 Zero-K2/K3 的四项最坏误差比；D：q8 在 15 个 trajectory-by-geometry 层的 101 帧最大 harm。图中通过的是 compatibility，不是 wall/RSS、外部族、curved 或真实 BOST。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_poolfire_full_trajectory_v67_result_2026-07-30.md">读 v67.1 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_poolfire_full_trajectory_v67_public_summary.json">打开 v67.1 机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_poolfire_full_trajectory_v67.png">打开 v67.1 结果图原尺寸</a>
       </div>
       <div id="target-scale-warm-v66" class="alert success" style="margin-top:13px;">
         <strong>v66.1：九视角目标尺寸 PoolFire 形态兼容性由修正后的独立重算程序通过</strong>
