@@ -10149,3 +10149,78 @@ whole-pipeline RSS 一起通过，才把“50% 少 exact calls”升级成“真
 - `docs/nine_view_poolfire_full_trajectory_v67_result_2026-07-30.md`
 - `docs/nine_view_poolfire_full_trajectory_v67_public_summary.json`
 - `assets/nine_view_poolfire_full_trajectory_v67.png`
+
+## 2026-07-31：v68.3 真的快了约 34.5%，但内存把整道资源门否决了
+
+v67.1 已经回答了“精度能不能守住”：固定 q8-K1 在五条 PoolFire 轨迹全部
+505 帧与三档已知九视角几何上通过，精确调用账从 Zero-K4 的
+`4A+4A^T` 降为 `2A+2A^T`。这次不再调 rank、不挑帧，也不训练新网络，只把
+两条方法放进全新的进程里公平计时和测内存。
+
+正式批次包括：
+
+```text
+reference workers           30
+timing workers              330
+random adjacent pairs       165
+trajectories × geometries   5 × 3
+```
+
+结果很清楚，而且是一个“半边成功、整体失败”的结论：
+
+```text
+q8 / Zero outer wall
+  p50                       0.655236   PASS
+  p90                       0.661113   PASS
+  worst                     0.671715
+
+q8 / Zero RSS p90
+  worker self               1.384474   FAIL
+  sampled worker tree       1.376802   FAIL
+  sampled pipeline          1.311116   FAIL
+```
+
+**讲人话：**q8 每次重建大约从 15.67 秒降到 10.27 秒，五条轨迹都稳定快，
+所以“少一半精确物理调用能不能真的省时间”这件事已经得到正答案。但 q8 为了
+这份速度，factor 构造阶段出现了很高的瞬时工作区；worker 自身的 p90 RSS
+大约多了 38.4%，连 controller+worker 的采样下界也多了 31.1%。合同要求
+时间和内存同时过门，所以不能挑速度宣布成功：
+
+```text
+fresh_wall_gate_pass=true
+rss_gate_pass=false
+stage_c_pass=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+独立程序重新播放了 30 个 reference、3,030 帧，核对 30/30 canonical digest
+和实际调用账；又重算 165 个配对区组与 903 个聚合数字，最大差全部是 0。
+validator 中有一条计时边界相差约 `6.0e-11 s`，小于系统时钟约
+`4.17e-8 s` 的分辨率。修复只允许这一类时钟量化差，没有改正式回执、结果
+数字或科学阈值；随后只读审计确认原子发布有效。
+
+我又检查了 165 个正式 candidate 回执。最终保留的 q8 factors 只有
+`5,899,392 bytes`（约 5.63 MiB），最大显式 rearranged block 是
+`33,554,432 bytes`（32 MiB）；它们都远小于约 167.6 MiB 的 worker-self p90
+增量。高水位还包含第二份 ray bundle、block 构造和 randomized-SVD 临时数组。
+所以准确瓶颈不是“常驻 factors 太大”，而是 **factor setup 与瞬时工作区**。
+
+这不是突破，但比继续盲目训练模型更有价值：问题已经从模糊的“算法到底行不行”
+收窄到一个具体瓶颈：
+
+> 用 tiled / streamed 构造、工作区复用、ray-bundle 共享，或低精度存储加
+> 高精度累积，尽量去掉 factor setup 的约 168 MiB 高水位差，同时保住
+> v67.1 精度、50% 精确调用减少和约 34.5% wall 收益。
+
+已有 tiled 小网格原型只能证明代数可行，synthetic 整进程内存曾下降，但 factor
+构造和 outer wall 反而变慢；它还不是科学结果。下一版不会直接把它包装成修复，
+而是先比较 compact、chunked、streamed 和 mixed-precision 几种表示的
+memory-time Pareto，再让唯一候选重新通过完整 v67.1 Stage B 与同一 v68.3
+fresh 门。大网络继续不授权。
+
+完整结果、脱敏机器摘要和图表：
+
+- `docs/nine_view_poolfire_fresh_resource_v68_result_2026-07-31.md`
+- `docs/nine_view_poolfire_fresh_resource_v68_public_summary.json`
+- `assets/nine_view_poolfire_fresh_resource_v68.png`

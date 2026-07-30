@@ -1,9 +1,29 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.30-c-v62.2-nine-view-analytic-resource",
-  previousVersion: "2026.07.30-c-v61-nine-view-kronecker",
-  previousBadge: "v61 nine-view Kronecker · algebra PASS",
-  olderBadge: "v60.1 factorized detector normal · 101-call resource PASS",
+  version: "2026.07.31-c-v68.3-fresh-resource-mixed",
+  previousVersion: "2026.07.30-c-v67.1-full-trajectory-pass",
+  previousBadge: "v67.1 full trajectory · compatibility PASS",
+  olderBadge: "v66.1 target scale · Stage A PASS",
   historyReleases: [
+    {
+      version: "2026.07.30-c-v67.1-full-trajectory-pass",
+      previousVersion: "2026.07.30-c-v66.1-target-scale-pass",
+      badge: "v67.1 full trajectory · 1,515 / 1,515 PASS"
+    },
+    {
+      version: "2026.07.30-c-v66.1-target-scale-pass",
+      previousVersion: "2026.07.30-c-v65-fresh-geometry-pass",
+      badge: "v66.1 target scale · 75 / 75 PASS"
+    },
+    {
+      version: "2026.07.30-c-v65-fresh-geometry-pass",
+      previousVersion: "2026.07.30-c-v62.2-nine-view-analytic-resource",
+      badge: "v65 fresh geometry · q8-K1 and q4-K2 PASS"
+    },
+    {
+      version: "2026.07.30-c-v62.2-nine-view-analytic-resource",
+      previousVersion: "2026.07.30-c-v61-nine-view-kronecker",
+      badge: "v62.2 nine-view analytic factor · resource PASS"
+    },
     {
       version: "2026.07.30-c-v61-nine-view-kronecker",
       previousVersion: "2026.07.30-c-v60.1-factorized-detector-normal",
@@ -79,7 +99,7 @@ window.OPERATOR_LEARNING_GUIDE = {
       badge: "v16.1 resource · wall headroom, CPU/RSS FAIL"
     }
   ],
-  updated: "2026-07-30",
+  updated: "2026-07-31",
   foundationChecks: [
     {
       id: "python-array",
@@ -518,7 +538,9 @@ window.OPERATOR_LEARNING_GUIDE = {
     {id:"c-route-lock",stage:"warm-start",level:"必做",type:"项目合同",title:"PoolFire BOST Warm Start 路线锁定",url:"../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md",local:"",read:"读清问题定义、C0/C1/C2、matched-accuracy、调用账本、停止条件和师兄待确认项。",output:"不看页面写出输入、输出、求解器、主指标和五个失败条件。",verified:"师兄已选择 C；算法与真实证据尚未验证"},
     {id:"poolfire-trajectory-protocol",stage:"data",level:"必做",type:"主线数据协议",title:"PoolFire 11/2/2 完整轨迹协议",url:"../document_reader.html?doc=docs%2Fpoolfire_trajectory_protocol_evidence_2026-07-23.md",local:"",read:"先看 15 条官方 trajectory 的 train/validation/test 角色，再核对原始路径、字节数、SHA、test lockout、combination holdout 与 OOD 禁止声明。",output:"不看页面画出 11/2/2 角色图，并解释为什么同一轨迹随机切帧不是泛化、为什么两条 test 不是 unseen-power OOD。",verified:"PASS_FROZEN_POOLFIRE_TRAJECTORY_PROTOCOL；PASS_TWO_VALIDATION_TRAJECTORIES_READY；三条 train pilot 与两条职责隔离的 validation 均通过字节数/SHA、ZIP/NPY、full-resolution rho、checksums/READY 和独立复核；test_truth_opened=false；数据 READY 不等于算法结果"},
     {id:"poolfire-cross-trajectory-contract",stage:"warm-start",level:"必做",type:"事前实验合同",title:"C 路线跨轨迹 classical gate 与联合 test lock",url:"../document_reader.html?doc=docs%2Fpoolfire_c_cross_trajectory_experiment_contract_2026-07-25.md",local:"",read:"先看三条 fit pilot、两条 validation 的单向决策链，再核对 ROI/reference/gauge、train-only normalization、field+gradient+observation matched accuracy、harm、完整 A/A^T 和两条 test 联合冻结；最后读 505 帧输入失配图。",output:"不看页面写出四个 classical arms、三个逐帧容差、validation burn rule，以及同一几何下 p50 34.0%–51.0% 为何只是工况依赖的模型失配。",verified:"PASS_FROZEN_POOLFIRE_C_CROSS_TRAJECTORY_EXPERIMENT；PASS_FIVE_OPEN_TRAJECTORY_PAIR_AUDIT；5 bundles / 505 frames / one geometry；strict validation loader 与 train-only ridge 代码门通过；test_truth_opened=false；algorithm_breakthrough=false"},
-    {id:"poolfire-c-sparse-detector-replay-v58",stage:"warm-start",level:"必做",type:"最新重大机理正结果",title:"v56-v58 稀疏 detector-space 精确 CGLS 重放",url:"../document_reader.html?doc=docs%2Fpoolfire_c_sparse_detector_replay_v58_result_2026-07-30.md",local:"",read:"先手推 x_k=A^T z_k 与 B=A A^T 的 detector-space CR 递推，再看 v56 为什么拒绝全局低秩 basis，最后核对 v58 的机器精度等价、2.58% 稀疏度、完整调用账、170 个 fresh process 和 setup break-even。",output:"不用页面说明：为什么 4B+1A^T 与 4A+4A^T 得到同一 K4 场；为什么 87.5% 少完整调用仍必须实测 wall；为什么当前是重大代理机理结果却还不是新神经算法或顶刊结论。",verified:"五条 fit / 505 帧；独立 CSR 逐元素一致；最大 field/residual 差4.34e-16/1.44e-15；CSR 存储下降96.11%；170 fresh process；端到端 ratio 0.824652；RSS p90 ratio1.000865；external geometry/real BOST/operator learning/global novelty均未成立"},
+    {id:"nine-view-poolfire-fresh-resource-v68",stage:"warm-start",level:"必做",type:"最新资源混合判决",title:"v68.3 九视角 q8-K1：wall 通过、RSS 失败",url:"../document_reader.html?doc=docs%2Fnine_view_poolfire_fresh_resource_v68_result_2026-07-31.md",local:"../docs/nine_view_poolfire_fresh_resource_v68_public_summary.json",read:"先确认 v67.1 的1,515/1,515精度前提，再逐项核对30个reference、330个timing worker、165个随机相邻区组、2A+2A^T对4A+4A^T，以及wall与三类RSS为什么必须联合裁决。",output:"不用页面解释：为什么0.65524的wall p50是真正正结果；为什么1.38447/1.37680/1.31112的三类RSS p90迫使Stage C整体FAIL；为什么保留factor仅5.63 MiB意味着下一步应流式构造、复用工作区而不是只压缩常驻状态或训练大网络。",verified:"PASS_INDEPENDENT_VALIDATION_POOLFIRE_FRESH_RESOURCE_V68_3；30 reference重放、3,030帧；165 block与903聚合数字最大差0；wall PASS、RSS FAIL；algorithm_breakthrough=false"},
+    {id:"nine-view-poolfire-full-trajectory-v67",stage:"warm-start",level:"必做",type:"全轨迹精度前提",title:"v67.1 九视角 PoolFire 全505帧兼容性",url:"../document_reader.html?doc=docs%2Fnine_view_poolfire_full_trajectory_v67_result_2026-07-30.md",local:"../docs/nine_view_poolfire_full_trajectory_v67_public_summary.json",read:"核对固定q8-K1/q4-K2如何覆盖五条轨迹、三档几何和全部505帧，再比较同调用Zero与16个controls。",output:"解释为什么1,515/1,515 PASS授权资源门，却不能单独证明wall、RSS、外部族或真实BOST。",verified:"27,270原子；独立row max diff 6.43e-10；q8 exact账2A+2A^T；Stage B PASS"},
+    {id:"poolfire-c-sparse-detector-replay-v58",stage:"warm-start",level:"必做",type:"重大机理正结果",title:"v56-v58 稀疏 detector-space 精确 CGLS 重放",url:"../document_reader.html?doc=docs%2Fpoolfire_c_sparse_detector_replay_v58_result_2026-07-30.md",local:"",read:"先手推 x_k=A^T z_k 与 B=A A^T 的 detector-space CR 递推，再看 v56 为什么拒绝全局低秩 basis，最后核对 v58 的机器精度等价、2.58% 稀疏度、完整调用账、170 个 fresh process 和 setup break-even。",output:"不用页面说明：为什么 4B+1A^T 与 4A+4A^T 得到同一 K4 场；为什么 87.5% 少完整调用仍必须实测 wall；为什么当前是重大代理机理结果却还不是新神经算法或顶刊结论。",verified:"五条 fit / 505 帧；独立 CSR 逐元素一致；最大 field/residual 差4.34e-16/1.44e-15；CSR 存储下降96.11%；170 fresh process；端到端 ratio 0.824652；RSS p90 ratio1.000865；external geometry/real BOST/operator learning/global novelty均未成立"},
     {id:"nine-view-analytic-factor-resource-v62",stage:"warm-start",level:"必做",type:"最新重要结构化资源正结果",title:"v62.2 九视角解析因子的可扩展构造与 fresh 资源门",url:"../document_reader.html?doc=docs%2Fnine_view_analytic_factor_resource_v62_result_2026-07-30.md",local:"",read:"先从 A_(theta,c)=Z_c⊗H_(theta,c) 推出直接 factor construction，再比较 Zero-CGLS、matrix-free detector CR 与 analytic-factor detector CR 的完整向量、调用账和102个fresh worker；最后读首轮作废与独立聚合没有重复计时的边界。",output:"不用页面说明：为什么 matrix-free detector CR 仍慢约5.4%却 analytic factors 快约79.7%，证明收益来自结构而不是变量换名；为什么RSS只下降约1%不能写成内存突破；为什么parallel-ray资源PASS仍不等于pinhole、校准、曲线、learned或真实BOST。",verified:"16×16×32、9 views、无dense 3D A/B；3 full-vector + 102 fresh workers；最大field/residual差4.15e-15/8.67e-15；101-call compute/outer-p50/outer-p90/RSS-p90 ratio0.172307/0.202526/0.205030/0.988063；独立聚合最大报告差0；首轮102-worker批次永久作废；algorithm_breakthrough=false"},
     {id:"nine-view-parallel-kronecker-v61",stage:"warm-start",level:"必做",type:"重要结构证明",title:"v61 九视角平行投影 detector-normal Kronecker 结构",url:"../document_reader.html?doc=docs%2Fnine_view_parallel_detector_kronecker_v61_result_2026-07-30.md",local:"",read:"先从 A_{theta,c}=Z_c⊗H_{theta,c} 手推 B_{(t,ct),(s,cs)}=(Z_ct Z_cs^T)⊗(H_tct H_scs^T)，再看 324 个 block 的独立谱审计和 K4 重放；最后区分结构存在、可扩展构造与部署资源三种不同证据。",output:"不用页面说明：为什么绕 z 轴改变平行视角不会破坏竖直×水平可分性；为什么 32 倍小尺寸存储不等于实际内存加速；为什么 pinhole、roll/elevation、校准射线与曲折光线仍需单独压力测试；v62.2 怎样闭合直接构造和资源门。",verified:"九视角覆盖0°–170°，八个非轴对齐；324 blocks；最大sigma2/sigma1=3.20e-16；最大block/B/K4-field/K4-residual误差7.54e-15/1.57e-15/1.98e-15/2.37e-15；独立validator最大报告差0；v61自身不含scalable/resource门，v62.2已另行闭合；pinhole/calibrated/learned/real BOST未成立"},
     {id:"blastnet-factorized-detector-v60-1",stage:"warm-start",level:"必做",type:"重要结构化资源正结果",title:"v60.1 不存 B 的精确二维 detector-normal 核心",url:"../document_reader.html?doc=docs%2Fblastnet_factorized_detector_v60_1_result_2026-07-30.md",local:"",read:"先从 A_s=G_s P_s 手推 B_ts=G_t(P_t P_s^T)G_s^T，再看三正交轴下同视角标量乘法和跨视角 LOS 收缩/外积为什么不需要三维中间场；最后区分五次诊断和101次主资源门。",output:"不用页面说明：为什么 v59 的 CSR 加载失败可以靠删除 stored B 修复；为什么当前每帧从8个完整A/A^T降到1个却仍要实测wall；为什么101次循环五个observation只是资源摊销而不是泛化；为什么下一门必须是九视角非轴对齐相机。",verified:"17 random detector vectors + 5 opened observations；独立最大B/field/residual差2.92e-16/1.09e-15/1.28e-15；persistent factors 45,568 bytes；68 fresh process；101-call compute/outer p50/outer p90/RSS ratio0.716687/0.841184/0.876558/0.967493；全部冻结门PASS；arbitrary camera/curved/learned/real BOST/global novelty未成立"},
