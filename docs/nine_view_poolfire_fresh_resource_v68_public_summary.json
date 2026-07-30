@@ -1,0 +1,215 @@
+{
+  "schema_version": "oerf-nine-view-poolfire-fresh-resource-public-68.3",
+  "date": "2026-07-31",
+  "status": "PASS_INDEPENDENT_VALIDATION_POOLFIRE_FRESH_RESOURCE_V68_3",
+  "scientific_status": "FAIL_POOLFIRE_FRESH_RESOURCE_STAGE_C_V68_3",
+  "comparison": {
+    "candidate": "StandaloneQ8_Aglift_then_Ag_K1",
+    "control": "Zero_CGLS_K4",
+    "candidate_exact_operator_budget": {
+      "A": 2,
+      "A_transpose": 2
+    },
+    "control_exact_operator_budget": {
+      "A": 4,
+      "A_transpose": 4
+    },
+    "exact_operator_pair_reduction_fraction": 0.5
+  },
+  "evidence_scope": {
+    "grid_shape_zyx": [
+      32,
+      16,
+      16
+    ],
+    "fit_trajectory_count": 5,
+    "frames_per_trajectory": 101,
+    "known_geometry_scenario_count": 3,
+    "reference_worker_count": 30,
+    "timed_worker_count": 330,
+    "paired_block_count": 165,
+    "all_workers_serial_and_nonoverlapping": true,
+    "test_truth_opened": false
+  },
+  "frozen_thresholds": {
+    "global_outer_wall_ratio_p50_max": 0.9,
+    "global_outer_wall_ratio_p90_higher_max": 1.05,
+    "per_trajectory_outer_wall_ratio_p50_max": 1.05,
+    "worker_self_rss_ratio_p90_higher_max": 1.05,
+    "sampled_worker_tree_rss_ratio_p90_higher_max": 1.05,
+    "sampled_pipeline_rss_ratio_p90_higher_max": 1.05
+  },
+  "candidate_factor_setup_diagnostics": {
+    "persistent_factor_state_bytes": 5899392,
+    "maximum_materialized_rearranged_block_bytes": 33554432,
+    "factor_setup_seconds_range": [
+      1.5292894588783383,
+      1.6108890830073506
+    ],
+    "interpretation": "The 5.63 MiB retained factors are too small to explain the roughly 168 MiB worker-self p90 increase by themselves. The measured high-water mark includes factor setup, a second ray bundle, rearranged-block construction, randomized-SVD workspaces, retained factors, and reconstruction. The current evidence localizes the failure to factor construction and its transient workspace, not to persistent factor bytes alone."
+  },
+  "global_results": {
+    "candidate_absolute": {
+      "outer_wall_seconds": {
+        "p50": 10.267054749885574,
+        "p90_higher": 10.351032125065103,
+        "worst": 10.541028582956642
+      },
+      "worker_self_high_water_rss_bytes": {
+        "p50": 664272896.0,
+        "p90_higher": 673693696.0,
+        "worst": 682770432.0
+      },
+      "sampled_worker_tree_peak_rss_lower_bound_bytes": {
+        "p50": 674168832.0,
+        "p90_higher": 683376640.0,
+        "worst": 692699136.0
+      },
+      "sampled_controller_plus_worker_pipeline_peak_rss_lower_bound_bytes": {
+        "p50": 1017446400.0,
+        "p90_higher": 1254883328.0,
+        "worst": 1267744768.0
+      }
+    },
+    "control_absolute": {
+      "outer_wall_seconds": {
+        "p50": 15.666293583111838,
+        "p90_higher": 15.746785124996677,
+        "worst": 15.873036208096892
+      },
+      "worker_self_high_water_rss_bytes": {
+        "p50": 490405888.0,
+        "p90_higher": 497958912.0,
+        "worst": 503037952.0
+      },
+      "sampled_worker_tree_peak_rss_lower_bound_bytes": {
+        "p50": 500252672.0,
+        "p90_higher": 507281408.0,
+        "worst": 512884736.0
+      },
+      "sampled_controller_plus_worker_pipeline_peak_rss_lower_bound_bytes": {
+        "p50": 842432512.0,
+        "p90_higher": 1079099392.0,
+        "worst": 1086881792.0
+      }
+    },
+    "candidate_over_control": {
+      "outer_wall_ratio": {
+        "p50": 0.6552362801476516,
+        "p90_higher": 0.6611134520920003,
+        "worst": 0.6717151303838349,
+        "gate_pass": true
+      },
+      "worker_self_peak_rss_ratio": {
+        "p50": 1.3551622817386606,
+        "p90_higher": 1.3844739530132788,
+        "worst": 1.418835192069393,
+        "gate_pass": false
+      },
+      "sampled_worker_tree_peak_rss_ratio": {
+        "p50": 1.3481312278610917,
+        "p90_higher": 1.3768019220501868,
+        "worst": 1.410150059011971,
+        "gate_pass": false
+      },
+      "sampled_pipeline_peak_rss_ratio": {
+        "p50": 1.2040586901323822,
+        "p90_higher": 1.311115528797001,
+        "worst": 1.3429257280027433,
+        "gate_pass": false
+      }
+    }
+  },
+  "per_trajectory_results": [
+    {
+      "trajectory_id": "p=14kw_size=05",
+      "block_count": 33,
+      "outer_wall_ratio_p50": 0.6545711748707325,
+      "outer_wall_ratio_p90_higher": 0.662173147494005,
+      "worker_self_rss_ratio_p90_higher": 1.3811080407090381,
+      "sampled_worker_tree_rss_ratio_p90_higher": 1.373550880206097,
+      "sampled_pipeline_rss_ratio_p90_higher": 1.3040024874215614
+    },
+    {
+      "trajectory_id": "p=22kw_size=03",
+      "block_count": 33,
+      "outer_wall_ratio_p50": 0.6546624002407523,
+      "outer_wall_ratio_p90_higher": 0.6594118897523988,
+      "worker_self_rss_ratio_p90_higher": 1.3759967563184214,
+      "sampled_worker_tree_rss_ratio_p90_higher": 1.3684175664039213,
+      "sampled_pipeline_rss_ratio_p90_higher": 1.3043772372389302
+    },
+    {
+      "trajectory_id": "p=33kw_size=01",
+      "block_count": 33,
+      "outer_wall_ratio_p50": 0.6570248984973915,
+      "outer_wall_ratio_p90_higher": 0.6596616705615734,
+      "worker_self_rss_ratio_p90_higher": 1.3970943486101188,
+      "sampled_worker_tree_rss_ratio_p90_higher": 1.389189008936908,
+      "sampled_pipeline_rss_ratio_p90_higher": 1.3116890395986884
+    },
+    {
+      "trajectory_id": "p=45kw_size=05",
+      "block_count": 33,
+      "outer_wall_ratio_p50": 0.6556516381845512,
+      "outer_wall_ratio_p90_higher": 0.6618082861258252,
+      "worker_self_rss_ratio_p90_higher": 1.379479543839464,
+      "sampled_worker_tree_rss_ratio_p90_higher": 1.3719156274873971,
+      "sampled_pipeline_rss_ratio_p90_higher": 1.3052598799682935
+    },
+    {
+      "trajectory_id": "p=58kw_size=03",
+      "block_count": 33,
+      "outer_wall_ratio_p50": 0.6547036066277785,
+      "outer_wall_ratio_p90_higher": 0.6613612854696104,
+      "worker_self_rss_ratio_p90_higher": 1.39228037257924,
+      "sampled_worker_tree_rss_ratio_p90_higher": 1.3847594022006897,
+      "sampled_pipeline_rss_ratio_p90_higher": 1.322816643804298
+    }
+  ],
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_VALIDATION_POOLFIRE_FRESH_RESOURCE_V68_3",
+    "reference_replay_count": 30,
+    "reference_frame_replay_count": 3030,
+    "reference_canonical_digest_match_count": 30,
+    "reference_actual_call_ledger_match_count": 30,
+    "reference_norm_sum_maximum_absolute_difference": 0.0,
+    "timed_receipt_count": 330,
+    "paired_block_count": 165,
+    "paired_block_maximum_absolute_difference": 0.0,
+    "aggregation_numeric_value_count": 903,
+    "aggregation_maximum_absolute_difference": 0.0,
+    "minimum_rss_sample_count": 452,
+    "maximum_reported_rss_sample_gap_seconds": 0.1480297080706805,
+    "source_pair_observation_and_formal_inputs_unchanged": true,
+    "roundoff_repair": {
+      "adjustment_count": 1,
+      "clock": "mach_absolute_time",
+      "clock_resolution_seconds": 4.166666666666667e-08,
+      "observed_interval_deficit_seconds": 6.02646821334929e-11,
+      "formal_receipt_mutated": false,
+      "formal_aggregation_changed": false,
+      "scientific_thresholds_changed": false
+    },
+    "end_to_end_numerical_independence_proven": false
+  },
+  "scientific_decision": {
+    "stage_c_pass": false,
+    "wall_gate_pass": true,
+    "rss_gate_pass": false,
+    "interpretation": "The fixed q8-K1 implementation preserves the v67.1 compatibility result, halves exact A/A^T pairs, and lowers median fresh-process wall time by about 34.5%, but factor construction and its transient workspaces raise every frozen RSS measure beyond the 1.05 limit. Stage C therefore fails overall; the next scientific question is whether streamed construction, workspace reuse, or mixed-precision storage can retain the wall gain while removing the setup high-water penalty."
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "neural_operator_result": false,
+    "operator_learning_result": false,
+    "independent_public_family_transfer": false,
+    "curved_ray_transfer": false,
+    "camera_calibration_result": false,
+    "real_bost": false,
+    "broad_generalization": false,
+    "global_novelty_proven": false,
+    "whole_pipeline_peak_memory_exactly_proven": false
+  }
+}
