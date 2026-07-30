@@ -1,0 +1,194 @@
+{
+  "schema_version": "oerf-nine-view-analytic-factor-resource-protocol-62.0",
+  "status": "FROZEN_AFTER_ANALYTIC_FACTOR_SCRATCH_BEFORE_FORMAL_V62_RUN",
+  "frozen_at_utc": "2026-07-29T20:19:58Z",
+  "parent_v61_protocol_sha256": "493616d0a073c01cac43309d6eae5ced5ce142933d5f8926518421b753d15fec",
+  "required_parent_v61_formal_status": "PASS_NINE_VIEW_PARALLEL_KRONECKER_STRUCTURE_V61",
+  "required_parent_v61_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_NINE_VIEW_KRONECKER_V61",
+  "scientific_question": "Can the exact nine-view parallel detector normal be constructed directly from one-dimensional vertical and two-dimensional horizontal primitives, without materialising a three-dimensional dense A or B, and then reproduce zero-start CGLS K4 while reducing fresh-process time and memory over a full 101-call workload?",
+  "evidence_role": "post-open scalable-construction and resource gate after the v61 small dense structural audit; no PoolFire truth, validation, fresh trajectory, test trajectory, calibrated camera, curved ray, learned correction, or real BOST is read",
+  "preregistration_disclosure": {
+    "scratch_completed_before_freeze": [
+      "The already opened v61 8x8x8, 8x8-detector, nine-view parallel geometry was used to test a direct primitive construction.",
+      "The scratch formed one-dimensional interpolation and derivative matrices plus two-dimensional horizontal ray-integration and directional-derivative matrices; it did not materialise dense three-dimensional A or B for the candidate.",
+      "One seeded random-field forward comparison had relative error 2.3950318496672986e-16 and maximum absolute difference 1.7763568394002505e-15.",
+      "One seeded random detector-vector B action comparison had relative error 5.262101651896927e-16 and maximum absolute difference 1.4210854715202004e-14.",
+      "A timing-only target-shape scratch measured approximately 9.49 ms per matrix-free A, 9.16 ms per A-transpose, and 18.23 ms per matrix-free B on the current Mac; no analytic-factor target-shape timing or formal output was seen."
+    ],
+    "formal_changes_after_scratch": [
+      "The formal field changes from 8x8x8 to 32x16x16 in z-y-x order.",
+      "The formal detector changes from 8x8 to 32x16 in v-u order.",
+      "The formal ray sample count changes from 32 to 64.",
+      "The formal gate adds 17 random forward checks, 17 random B actions, five K4 replays, a no-dense-A-or-B construction audit, a matrix-free detector-CR control, 17 fresh repetitions, 5-call diagnostics, 101-call primary workloads, paired wall tails, setup reporting, worker-self RSS, and sampled process-tree RSS."
+    ],
+    "not_seen_before_freeze": [
+      "No formal v62 analytic-factor result exists.",
+      "No formal v62 independent validation exists.",
+      "No target-shape analytic-factor compute, outer-wall, setup, worker-self RSS, or process-tree RSS result exists.",
+      "No PoolFire, BLASTNet, validation, fresh, stopping-validation, untouched-test, experimental, or group-private truth is read."
+    ]
+  },
+  "formal_geometry": {
+    "angles_degrees": [
+      0.0,
+      21.25,
+      42.5,
+      63.75,
+      85.0,
+      106.25,
+      127.5,
+      148.75,
+      170.0
+    ],
+    "view_count": 9,
+    "non_axis_aligned_view_count": 8,
+    "ray_model": "parallel straight rays rotating in the xy plane with detector-v fixed to z",
+    "detector_shape_vu": [
+      32,
+      16
+    ],
+    "detector_half_width": 0.72,
+    "sample_count_per_ray": 64,
+    "path_half_length": 1.4142135623730951,
+    "grid_shape_zyx": [
+      32,
+      16,
+      16
+    ],
+    "grid_bounds_xyz": [
+      -1.0,
+      1.0
+    ],
+    "outer_boundary_support": "one-voxel zero Dirichlet support",
+    "dtype": "float64",
+    "observation_layout": "view, detector-v, detector-u, UV-component",
+    "observation_dimension": 9216,
+    "field_dimension": 8192
+  },
+  "analytic_construction_contract": {
+    "vertical_u": "Z_u = W_z S_z",
+    "vertical_v": "Z_v = W_z D_z S_z",
+    "horizontal_u": "H_theta_u = P_theta (-sin(theta) D_x + cos(theta) D_y) S_xy",
+    "horizontal_v": "H_theta_v = P_theta S_xy",
+    "detector_block": "B_(t,ct),(s,cs) = (Z_ct Z_cs^T) kronecker (H_t_ct H_s_cs^T)",
+    "dense_three_dimensional_A_materialised": false,
+    "dense_detector_B_materialised": false,
+    "block_svd_used": false,
+    "truth_or_observation_used_to_build_factors": false,
+    "allowed_persistent_state": [
+      "one-dimensional interpolation, derivative, and support matrices",
+      "two-dimensional horizontal path-integration, directional-derivative, and support matrices",
+      "pairwise vertical and horizontal detector-normal factors"
+    ],
+    "persistent_factor_state_bytes_maximum": 4194304
+  },
+  "formal_exactness_gate": {
+    "random_field_seed": 2026073062,
+    "random_field_count": 17,
+    "analytic_forward_relative_error_maximum": 1e-11,
+    "random_detector_seed": 2026073162,
+    "random_detector_vector_count": 17,
+    "analytic_B_matvec_relative_error_maximum": 1e-11,
+    "replay_seed": 2026073262,
+    "random_replay_observation_count": 5,
+    "replay_steps": 4,
+    "analytic_K4_field_relative_error_maximum": 1e-10,
+    "analytic_K4_residual_relative_error_maximum": 1e-10,
+    "operator_adjoint_relative_error_maximum": 1e-11,
+    "call_ledgers": {
+      "zero_cgls_k4": {
+        "A": 4,
+        "A_transpose": 4
+      },
+      "matrix_free_detector_cr_k4": {
+        "A": 4,
+        "A_transpose": 5
+      },
+      "analytic_factor_detector_cr_k4": {
+        "A": 0,
+        "A_transpose": 1,
+        "analytic_B": 4
+      }
+    }
+  },
+  "fresh_resource_gate": {
+    "workloads": [
+      {
+        "snapshot_count": 5,
+        "role": "short-bundle diagnostic only",
+        "can_pass_protocol": false
+      },
+      {
+        "snapshot_count": 101,
+        "role": "primary full-PoolFire-trajectory-length resource workload",
+        "can_pass_protocol": true
+      }
+    ],
+    "workload_boundary": "Five immutable seeded observations are cycled in fixed order. The 101-call workload measures setup amortisation only; it is not 101 independent fields, a new CFD trajectory, or generalisation evidence.",
+    "repetitions": 17,
+    "arms": [
+      "zero_cgls_k4",
+      "matrix_free_detector_cr_k4",
+      "analytic_factor_detector_cr_k4"
+    ],
+    "primary_comparison": [
+      "analytic_factor_detector_cr_k4",
+      "zero_cgls_k4"
+    ],
+    "matrix_free_detector_cr_role": "exact data-space negative control showing that changing Krylov coordinates alone does not remove A/A-transpose work",
+    "shuffle_seed": 2026073362,
+    "serial_fresh_processes": true,
+    "thread_count_per_numeric_backend": 1,
+    "setup_is_inside_each_fresh_worker": true,
+    "paired_output_relative_difference_maximum": 1e-10,
+    "paired_compute_wall_ratio_p50_maximum": 0.9,
+    "paired_outer_wall_ratio_p50_maximum": 0.9,
+    "paired_outer_wall_ratio_p90_maximum": 1.05,
+    "armwise_worker_self_peak_rss_p90_higher_ratio_maximum": 1.05,
+    "sampled_process_tree_peak_rss_p90_higher_ratio_maximum": 1.05
+  },
+  "required_reporting": [
+    "Report direct analytic-factor construction time and persistent bytes; do not hide them as offline setup.",
+    "For 5 and 101 calls report per-arm setup, compute, worker-lifetime, and outer-wall p50, p90, worst, and mean.",
+    "For both workloads report worker-self ru_maxrss and independently sampled process-tree RSS, naming their scopes correctly.",
+    "Report all three complete A/A-transpose/analytic-B ledgers and verify output norms or digests for every worker.",
+    "Report exactness per random field, random detector action, and K4 observation; means may not hide a failing item.",
+    "Report that the 101-call workload cycles five immutable seeded observations and is not generalisation."
+  ],
+  "independent_validation": {
+    "must_not_import_formal_core_or_runner": true,
+    "must_rederive_one_dimensional_and_two_dimensional_primitives": true,
+    "must_recompute_all_forward_B_and_K4_exactness_checks": true,
+    "must_recompute_all_paired_resource_rows_and_gate_decisions": true,
+    "must_verify_protocol_and_formal_outputs_unchanged": true
+  },
+  "decision_rule": {
+    "pass": "PASS_NINE_VIEW_ANALYTIC_FACTOR_RESOURCE_V62",
+    "mixed": "MIXED_NINE_VIEW_ANALYTIC_FACTOR_RESOURCE_V62",
+    "fail": "FAIL_NINE_VIEW_ANALYTIC_FACTOR_RESOURCE_V62",
+    "inconclusive": "INCONCLUSIVE_NINE_VIEW_ANALYTIC_FACTOR_RESOURCE_V62",
+    "pass_requires": [
+      "The no-dense-A-or-B and no-SVD construction contract passes.",
+      "Every forward, B-action, K4 field, K4 residual, and adjoint exactness check passes.",
+      "Persistent factor state is within the frozen maximum.",
+      "The primary 101-call compute, outer-wall p50, outer-wall p90, worker-self RSS, and sampled process-tree RSS gates all pass.",
+      "The independent validator reproduces all exactness metrics, resource rows, and the final decision."
+    ]
+  },
+  "next_if_pass": "Freeze pinhole, elevation, roll, and calibrated-ray stress tests against the exact parallel core. Only if the deployment-visible residual has stable bounded structure may a minimum geometry-conditioned correction operator be trained.",
+  "next_if_fail": "Record the failed dimension separately: algebra, setup, compute, outer wall, worker memory, or process-tree memory. Do not rescue a resource failure by enlarging a neural model; compare CSR-A, streaming, and fixed-geometry PCGLS before changing the physical representation.",
+  "claim_limits": {
+    "nine_view_parallel_scalable_construction": false,
+    "online_resource_result": false,
+    "pinhole_camera_transfer": false,
+    "calibrated_camera_transfer": false,
+    "curved_ray_transfer": false,
+    "operator_learning_result": false,
+    "real_bost": false,
+    "independent_trajectory_generalisation": false,
+    "whole_experimental_pipeline_memory": false,
+    "global_novelty_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

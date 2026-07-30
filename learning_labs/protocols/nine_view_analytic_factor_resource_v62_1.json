@@ -1,0 +1,253 @@
+{
+  "schema_version": "oerf-nine-view-analytic-factor-resource-protocol-62.1",
+  "status": "FROZEN_AFTER_V62_RESOURCE_AUDIT_BEFORE_FORMAL_V62_1_RUN",
+  "frozen_at_utc": "2026-07-29T20:46:00Z",
+  "parent_v62_protocol_sha256": "46af0d52c52a98322221b36a19962dca4d07a9444ca093dc0a836f9d719764b5",
+  "parent_v61_protocol_sha256": "493616d0a073c01cac43309d6eae5ced5ce142933d5f8926518421b753d15fec",
+  "required_parent_v61_formal_status": "PASS_NINE_VIEW_PARALLEL_KRONECKER_STRUCTURE_V61",
+  "required_parent_v61_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_NINE_VIEW_KRONECKER_V61",
+  "scientific_question": "Can the already validated exact nine-view parallel analytic detector normal reproduce the full zero-start CGLS K4 vectors, not merely their norms, while reducing fresh-process time and memory over a full 101-call workload under adjacent randomized complete blocks and a sealed execution closure?",
+  "evidence_role": "corrected post-open resource gate after the v62 algebra PASS and the aborted v62 timing diagnostic; no PoolFire truth, validation, fresh trajectory, test trajectory, calibrated camera, curved ray, learned correction, or real BOST is read",
+  "aborted_parent_resource_diagnostic": {
+    "status": "ABORTED_INDEPENDENT_AUDIT_INVALID_RESOURCE_GATE_V62",
+    "completed_job_count": 55,
+    "planned_job_count": 102,
+    "never_eligible_for_formal_pass": true,
+    "primary_reason": "The v62 resource controller compared cross-arm field and residual norm sequences instead of the full output vectors.",
+    "additional_reasons": [
+      "The 102 jobs were globally shuffled rather than executed as adjacent randomized complete blocks.",
+      "The aggregation validator reported formal-versus-recomputed differences without enforcing equality.",
+      "The execution scripts, environment, and Git commit were not sealed across the batch."
+    ]
+  },
+  "preregistration_disclosure": {
+    "seen_before_v62_1_freeze": [
+      "The parent v62 algebra run and independent validator had already passed at 32x16x16 with machine-precision forward, B-action, K4 field, K4 residual, and adjoint agreement.",
+      "The invalid v62 timing diagnostic completed 55 of 102 globally shuffled workers before audit termination.",
+      "At least one 101-call analytic-factor worker showed timed compute 4.294829042162746 seconds and at least one 101-call Zero-CGLS worker showed 21.339001582935452 seconds.",
+      "No complete v62 paired p50, p90, worst, final status, or independent resource validation existed.",
+      "Independent red-team review had already identified the norm-only compatibility flaw, non-adjacent pairing, unenforced validator differences, and unsealed execution closure."
+    ],
+    "v62_1_changes_frozen_after_audit": [
+      "The algebra implementation, grid, detector, angles, observations, K4 algorithms, call ledgers, 17 repetitions, 5-call workload, 101-call workload, and all numeric pass thresholds remain unchanged.",
+      "A separate untimed three-worker batch now saves full field and residual arrays for all five unique observations and requires per-observation relative-L2 at or below 1e-10.",
+      "The 102 timing workers now execute as 34 adjacent randomized complete blocks with balanced within-block arm positions.",
+      "An execution release binds protocol, core, worker, controller, validator, Git HEAD, Python executables, numeric versions, and thread settings before the first worker.",
+      "The independent script is explicitly an aggregation audit, enforces all formal differences at or below 1e-15, and does not claim independent timing replication."
+    ],
+    "not_seen_before_v62_1_freeze": [
+      "No v62.1 full-vector correctness artifact exists.",
+      "No v62.1 randomized-block compute, outer-wall, worker high-water RSS, or sampled process-tree RSS result exists.",
+      "No v62.1 formal or independent aggregation decision exists.",
+      "No PoolFire, BLASTNet, validation, fresh, stopping-validation, untouched-test, experimental, or group-private truth is read."
+    ]
+  },
+  "formal_geometry": {
+    "angles_degrees": [
+      0.0,
+      21.25,
+      42.5,
+      63.75,
+      85.0,
+      106.25,
+      127.5,
+      148.75,
+      170.0
+    ],
+    "view_count": 9,
+    "non_axis_aligned_view_count": 8,
+    "ray_model": "parallel straight rays rotating in the xy plane with detector-v fixed to z",
+    "detector_shape_vu": [
+      32,
+      16
+    ],
+    "detector_half_width": 0.72,
+    "sample_count_per_ray": 64,
+    "path_half_length": 1.4142135623730951,
+    "grid_shape_zyx": [
+      32,
+      16,
+      16
+    ],
+    "grid_bounds_xyz": [
+      -1.0,
+      1.0
+    ],
+    "outer_boundary_support": "one-voxel zero Dirichlet support",
+    "dtype": "float64",
+    "observation_layout": "view, detector-v, detector-u, UV-component",
+    "observation_dimension": 9216,
+    "field_dimension": 8192
+  },
+  "analytic_construction_contract": {
+    "vertical_u": "Z_u = W_z S_z",
+    "vertical_v": "Z_v = W_z D_z S_z",
+    "horizontal_u": "H_theta_u = P_theta (-sin(theta) D_x + cos(theta) D_y) S_xy",
+    "horizontal_v": "H_theta_v = P_theta S_xy",
+    "detector_block": "B_(t,ct),(s,cs) = (Z_ct Z_cs^T) kronecker (H_t_ct H_s_cs^T)",
+    "dense_three_dimensional_A_materialised": false,
+    "dense_detector_B_materialised": false,
+    "block_svd_used": false,
+    "truth_or_observation_used_to_build_factors": false,
+    "allowed_persistent_state": [
+      "one-dimensional interpolation, derivative, and support matrices",
+      "two-dimensional horizontal path-integration, directional-derivative, and support matrices",
+      "pairwise vertical and horizontal detector-normal factors"
+    ],
+    "persistent_factor_state_bytes_maximum": 4194304
+  },
+  "formal_exactness_gate": {
+    "random_field_seed": 2026073062,
+    "random_field_count": 17,
+    "analytic_forward_relative_error_maximum": 1e-11,
+    "random_detector_seed": 2026073162,
+    "random_detector_vector_count": 17,
+    "analytic_B_matvec_relative_error_maximum": 1e-11,
+    "replay_seed": 2026073262,
+    "random_replay_observation_count": 5,
+    "replay_steps": 4,
+    "analytic_K4_field_relative_error_maximum": 1e-10,
+    "analytic_K4_residual_relative_error_maximum": 1e-10,
+    "operator_adjoint_relative_error_maximum": 1e-11,
+    "call_ledgers": {
+      "zero_cgls_k4": {
+        "A": 4,
+        "A_transpose": 4
+      },
+      "matrix_free_detector_cr_k4": {
+        "A": 4,
+        "A_transpose": 5
+      },
+      "analytic_factor_detector_cr_k4": {
+        "A": 0,
+        "A_transpose": 1,
+        "analytic_B": 4
+      }
+    }
+  },
+  "fresh_resource_gate": {
+    "full_vector_correctness_batch": {
+      "fresh_process_per_arm": true,
+      "observation_count": 5,
+      "field_shape_per_observation": [
+        8192
+      ],
+      "residual_shape_per_observation": [
+        9216
+      ],
+      "field_relative_l2_maximum": 1e-10,
+      "residual_relative_l2_maximum": 1e-10,
+      "separate_from_timed_workers": true
+    },
+    "workloads": [
+      {
+        "snapshot_count": 5,
+        "role": "short-bundle diagnostic only",
+        "can_pass_protocol": false
+      },
+      {
+        "snapshot_count": 101,
+        "role": "primary full-PoolFire-trajectory-length resource workload",
+        "can_pass_protocol": true
+      }
+    ],
+    "workload_boundary": "Five immutable seeded observations are cycled in fixed order. The 101-call workload measures setup amortisation only; it is not 101 independent fields, a new CFD trajectory, or generalisation evidence.",
+    "repetitions": 17,
+    "arms": [
+      "zero_cgls_k4",
+      "matrix_free_detector_cr_k4",
+      "analytic_factor_detector_cr_k4"
+    ],
+    "primary_comparison": [
+      "analytic_factor_detector_cr_k4",
+      "zero_cgls_k4"
+    ],
+    "matrix_free_detector_cr_role": "exact data-space negative control showing that changing Krylov coordinates alone does not remove A/A-transpose work",
+    "block_shuffle_seed": 2026073362,
+    "within_block_permutation_seed": 2026073462,
+    "randomized_complete_blocks": true,
+    "block_identity": "one workload and one repetition",
+    "arms_are_adjacent_within_each_block": true,
+    "within_block_order_balance": "all six permutations repeated and truncated so each arm occupies each position five or six times per workload",
+    "serial_fresh_processes": true,
+    "thread_count_per_numeric_backend": 1,
+    "setup_is_inside_each_fresh_worker": true,
+    "paired_output_relative_difference_maximum": 1e-10,
+    "paired_compute_wall_ratio_p50_maximum": 0.9,
+    "paired_outer_wall_ratio_p50_maximum": 0.9,
+    "paired_outer_wall_ratio_p90_maximum": 1.05,
+    "armwise_worker_self_peak_rss_p90_higher_ratio_maximum": 1.05,
+    "sampled_process_tree_peak_rss_p90_higher_ratio_maximum": 1.05
+  },
+  "required_reporting": [
+    "Report direct analytic-factor construction time and persistent bytes; do not hide them as offline setup.",
+    "For 5 and 101 calls report per-arm setup, compute, worker-lifetime, and outer-wall p50, p90, worst, and mean.",
+    "For both workloads report worker-self ru_maxrss and independently sampled process-tree RSS, naming their scopes correctly.",
+    "Report all three complete A/A-transpose/analytic-B ledgers and verify output norms or digests for every worker.",
+    "Report exactness per random field, random detector action, and K4 observation; means may not hide a failing item.",
+    "Report that the 101-call workload cycles five immutable seeded observations and is not generalisation."
+  ],
+  "execution_closure": {
+    "release_generated_before_first_worker": true,
+    "release_is_immutable_during_batch": true,
+    "bound_files": [
+      "protocol",
+      "analytic core",
+      "fresh worker",
+      "resource controller",
+      "aggregation validator"
+    ],
+    "bound_environment": [
+      "Git HEAD",
+      "worker Python realpath and executable SHA256",
+      "Python version",
+      "NumPy version",
+      "Torch version",
+      "psutil version",
+      "numeric thread environment",
+      "Torch intra-op and inter-op thread counts"
+    ],
+    "worker_must_self_verify_release": true,
+    "controller_must_verify_release_before_and_after_batch": true
+  },
+  "independent_validation": {
+    "must_not_import_formal_core_or_runner": true,
+    "algebra_prerequisite_already_rederived_and_validated": true,
+    "must_recompute_full_vector_correctness_from_separate_worker_arrays": true,
+    "must_recompute_all_paired_resource_rows_and_gate_decisions": true,
+    "must_verify_protocol_and_formal_outputs_unchanged": true,
+    "must_enforce_formal_batch_gate_and_csv_differences_maximum": 1e-15,
+    "claim_is_independent_aggregation_audit_not_independent_timing_replication": true
+  },
+  "decision_rule": {
+    "pass": "PASS_NINE_VIEW_ANALYTIC_FACTOR_RESOURCE_V62_1",
+    "mixed": "MIXED_NINE_VIEW_ANALYTIC_FACTOR_RESOURCE_V62_1",
+    "fail": "FAIL_NINE_VIEW_ANALYTIC_FACTOR_RESOURCE_V62_1",
+    "inconclusive": "INCONCLUSIVE_NINE_VIEW_ANALYTIC_FACTOR_RESOURCE_V62_1",
+    "pass_requires": [
+      "The no-dense-A-or-B and no-SVD construction contract passes.",
+      "The parent v62 algebra exactness checks remain valid and the separate v62.1 correctness workers pass full-vector field and residual relative-L2 for all five observations.",
+      "Persistent factor state is within the frozen maximum.",
+      "Every workload-repetition block contains three adjacent arms in the frozen balanced order.",
+      "The execution closure is unchanged before, during, and after the batch.",
+      "The primary 101-call compute, outer-wall p50, outer-wall p90, worker-self RSS, and sampled process-tree RSS gates all pass.",
+      "The independent aggregation auditor reproduces full-vector correctness, all resource rows, and the final decision with every declared formal difference at or below 1e-15."
+    ]
+  },
+  "next_if_pass": "Freeze pinhole, elevation, roll, and calibrated-ray stress tests against the exact parallel core. Only if the deployment-visible residual has stable bounded structure may a minimum geometry-conditioned correction operator be trained.",
+  "next_if_fail": "Record the failed dimension separately: algebra, setup, compute, outer wall, worker memory, or process-tree memory. Do not rescue a resource failure by enlarging a neural model; compare CSR-A, streaming, and fixed-geometry PCGLS before changing the physical representation.",
+  "claim_limits": {
+    "nine_view_parallel_scalable_construction": false,
+    "online_resource_result": false,
+    "pinhole_camera_transfer": false,
+    "calibrated_camera_transfer": false,
+    "curved_ray_transfer": false,
+    "operator_learning_result": false,
+    "real_bost": false,
+    "independent_trajectory_generalisation": false,
+    "whole_experimental_pipeline_memory": false,
+    "global_novelty_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

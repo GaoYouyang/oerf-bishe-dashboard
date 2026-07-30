@@ -339,6 +339,9 @@
       <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
       <a href="#objective-novelty">优化目标与原创性</a>
       <a href="#latest-gate">算法与实验</a>
+      <a href="#analytic-factor-resource-v62">v62.2 九视角资源门</a>
+      <a href="#nine-view-kronecker-v61">v61 九视角 Kronecker</a>
+      <a href="#factorized-detector-v60-1">v60.1 因子化正规算子</a>
       <a href="#external-sparse-v59">v59 外部几何混合结果</a>
       <a href="#sparse-detector-v58">v58.1 稀疏探测器重放</a>
       <a href="#trajectory-gate">多轨迹协议</a>
@@ -368,23 +371,35 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-30 · v59</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-30 · v62.2</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v57-v58 在固定 PoolFire 几何下令 <code>B=A A^T</code>，用 detector-space CR 精确重放 zero-start CGLS K4；505 帧的最大场差为 <code>4.34e-16</code>，170 个 fresh process 的端到端 wall ratio 为 <code>0.824652</code>、RSS ratio 为 <code>1.000865</code>。最新 v59 从 BLASTNet 外部坐标重新构造 <code>A</code>、<code>B</code> 和 CSR：代数迁移以最大场差 <code>4.30e-15</code> 通过，但 5 帧 fresh 资源门严格失败，核心计算 ratio <code>0.809684</code>，outer wall <code>1.023894</code>，RSS <code>1.153122</code>。因此当前只成立“同一三轴拓扑内的坐标尺度/长宽比代数迁移”，不成立跨几何资源加速、任意相机迁移、真实 BOST 或 learned component，<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v61 已证明九个覆盖 <code>0°–170°</code> 的平行视角保留精确 detector-normal Kronecker 结构；最新 v62.2 进一步在 <code>16×16×32</code> 三维场上从一维/二维 primitives 直接构造 factors，全程不形成 dense 三维 <code>A/B</code>。3 个全向量正确性进程和 102 个 fresh 计时进程均通过：解析法与 Zero-CGLS K4 的最大 field/residual 差为 <code>4.15e-15 / 8.67e-15</code>，101-call outer p50/p90 ratio 为 <code>0.202526 / 0.205030</code>，process-tree RSS p90 ratio 为 <code>0.988063</code>。这是重要的九视角结构化数值核正结果，但尚未迁移到 pinhole/校准/曲折光线，也不是 learned operator 或真实 BOST，<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
-      <a class="button primary" href="#external-sparse-v59">打开 v59 混合结果</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_sparse_detector_replay_v59_result_2026-07-30.md">读 v59 完整解释</a>
+      <a class="button primary" href="#analytic-factor-resource-v62">打开 v62.2 资源结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_analytic_factor_resource_v62_result_2026-07-30.md">读 v62.2 完整证据</a>
+      <a class="button" href="#nine-view-kronecker-v61">回看 v61 结构门</a>
+      <a class="button" href="#factorized-detector-v60-1">回看 v60.1 资源正结果</a>
+      <a class="button" href="#external-sparse-v59">查看 v59 失败起点</a>
       <a class="button" href="#sparse-detector-v58">回看 v58.1 关键正结果</a>
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
-    <div class="alert critical" style="margin-top:12px;">
-      <strong>最新外部结果：代数 PASS，5 帧部署资源 FAIL</strong>
-      <span>外部坐标下候选仍以机器精度重放 K4，CSR 仍只有 <code>2.58%</code> 非零；但 34 个 fresh process 证明短序列没有摊薄稀疏 <code>B</code> 的加载与内存，outer wall 慢 <code>2.39%</code>、RSS 多 <code>15.31%</code>。这项负证据把下一门收窄为事前冻结的 batch-length 摊销曲线和真正不同的视角拓扑，而不是把单进程核心加速包装成泛化。<a href="#external-sparse-v59">查看完整证据</a>。</span>
+    <div class="alert success" style="margin-top:12px;">
+      <strong>重要代理正结果：九视角解析因子通过完整向量与 fresh 资源门</strong>
+      <span>v62.2 将 v61 的小尺寸代数结构变成无需 dense <code>A/B</code> 的 <code>16×16×32</code> 实现。101-call fresh outer-wall 中位数从 <code>23.901 s</code> 降到 <code>4.850 s</code>，约减少 <code>79.7%</code>；完整场和 residual 仍与 Zero-CGLS K4 在舍入误差内一致。首轮 102-worker 批次因 controller 账本未落盘而永久作废，本文数字只来自修复后重新运行并通过独立聚合的第二轮。<a href="#analytic-factor-resource-v62">查看完整证据</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="#analytic-factor-resource-v62">v62.2 九视角解析因子</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_analytic_factor_resource_v62_result_2026-07-30.md">v62.2 完整裁决</a>
+      <a class="button" href="../docs/nine_view_analytic_factor_resource_v62_public_summary.json">v62.2 脱敏结果</a>
+      <a class="button primary" href="#nine-view-kronecker-v61">v61 九视角 Kronecker</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_parallel_detector_kronecker_v61_result_2026-07-30.md">v61 完整裁决</a>
+      <a class="button" href="../docs/nine_view_parallel_detector_kronecker_v61_public_summary.json">v61 脱敏结果</a>
+      <a class="button primary" href="#factorized-detector-v60-1">v60.1 因子化正规算子</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_factorized_detector_v60_1_result_2026-07-30.md">v60.1 完整裁决</a>
+      <a class="button" href="../docs/blastnet_factorized_detector_v60_1_public_summary.json">v60.1 脱敏结果</a>
       <a class="button primary" href="#external-sparse-v59">v59 外部坐标混合结果</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_sparse_detector_replay_v59_result_2026-07-30.md">v59 完整裁决</a>
       <a class="button" href="../docs/blastnet_sparse_detector_replay_v59_public_summary.json">v59 脱敏结果</a>
@@ -683,7 +698,10 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
-        <article class="panel"><div class="chips"><span class="chip coral">最新 · v59 资源 FAIL</span><span class="chip blue">外部坐标代数 PASS</span></div><h3 style="margin-top:10px;">External-coordinate sparse replay</h3><p>从 BLASTNet 坐标重新构造 <code>A</code>、<code>B</code> 和 CSR，没有复用 PoolFire 稀疏位置。独立重算最大 field / residual 差为 <code>4.30e-15 / 6.03e-15</code>，但 34 个 5 帧 fresh process 的核心/outer/RSS ratio 为 <code>0.809684 / 1.023894 / 1.153122</code>。当前只证明同一三轴拓扑内的代数迁移，资源迁移失败。</p></article>
+        <article class="panel"><div class="chips"><span class="chip gold">最新 · v62.2 资源 PASS</span><span class="chip blue">3 correctness + 102 fresh</span></div><h3 style="margin-top:10px;">Scalable nine-view analytic factors</h3><p>在 <code>16×16×32</code> 场上直接从一维/二维 primitives 构造九视角 factors，不形成 dense 三维 <code>A/B</code>。完整 field/residual 最大差 <code>4.15e-15 / 8.67e-15</code>；101-call fresh compute / outer p50 / outer p90 / process-tree RSS p90 ratio 为 <code>0.172307 / 0.202526 / 0.205030 / 0.988063</code>。parallel-ray 代理通过，pinhole/校准/曲线/learned/真实 BOST 未通过。</p></article>
+        <article class="panel"><div class="chips"><span class="chip gold">最新 · v61 结构 PASS</span><span class="chip blue">九个平行视角</span></div><h3 style="margin-top:10px;">Nine-view Kronecker detector normal</h3><p>九个覆盖 <code>0°–170°</code> 的视角中，全部 324 个目标/源视角与 u/v 分量 block 在竖直×水平重排后均为 rank one；独立复算的最大 block / <code>Bv</code> / K4 field / residual 误差为 <code>7.54e-15 / 1.57e-15 / 1.98e-15 / 2.37e-15</code>。它把精确结构从三轴扩到非轴对齐平行角度，但尚未证明可扩展构造或资源优势。</p></article>
+        <article class="panel"><div class="chips"><span class="chip gold">v60.1 资源 PASS</span><span class="chip blue">不保存 dense / CSR B</span></div><h3 style="margin-top:10px;">Factorized detector-normal replay</h3><p>三正交轴 projection-first 几何中的 <code>A A^T</code> 被精确拆成二维梯度伴随、LOS 收缩与外积。独立代数误差不超过 <code>1.28e-15</code>；101-call fresh 的 compute / outer p50 / outer p90 / RSS ratio 为 <code>0.716687 / 0.841184 / 0.876558 / 0.967493</code>。完整 <code>A/A^T</code> 从 8 次降到 1 次，但任意相机和真实 BOST 尚未验证。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">v59 资源 FAIL</span><span class="chip blue">外部坐标代数 PASS</span></div><h3 style="margin-top:10px;">External-coordinate sparse replay</h3><p>从 BLASTNet 坐标重新构造 <code>A</code>、<code>B</code> 和 CSR，没有复用 PoolFire 稀疏位置。独立重算最大 field / residual 差为 <code>4.30e-15 / 6.03e-15</code>，但 34 个 5 帧 fresh process 的核心/outer/RSS ratio 为 <code>0.809684 / 1.023894 / 1.153122</code>。该失败直接推动 v60.1 删除 stored <code>B</code>，而不是继续优化 CSR。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">v58.1 重大代理正结果</span><span class="chip blue">505 帧 + 170 fresh process</span></div><h3 style="margin-top:10px;">Sparse detector-space exact replay</h3><p>固定几何下用稀疏 <code>B=A A^T</code> 精确重放 zero-start CGLS K4：最大 field / residual 差为 <code>4.34e-16 / 1.44e-15</code>，完整物理调用从 <code>4A+4A^T</code> 变成 <code>4B+1A^T</code>。CSR 少 <code>96.11%</code> 存储；fresh 端到端 wall ratio <code>0.824652</code>、RSS p90 ratio <code>1.000865</code>。v59 已证明外部坐标代数迁移，但没有保住短序列资源优势。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v54-v55 严格 FAIL</span><span class="chip blue">两套实现最大差 0</span></div><h3 style="margin-top:10px;">Frozen w16d2 dual transfer controls</h3><p>PoolFire 冻结 CNN 在 BLASTNet 上并非完全失效：Dual-K2 相对同成本 Zero-K3 的 field / observation 中位改善 0.42% / 1.15%，但 gradient 恶化 1.62%；相对 Zero-K4 的 observation 仍差 16.38%，四帧完整门 0/4。该证据支持换成 geometry-range 表示，不支持直接扩大同类 CNN。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v53 连续 oracle 无结论</span><span class="chip blue">3,088 F + 3,070 reverse</span></div><h3 style="margin-top:10px;">Six-space oracle + cell-switch diagnosis</h3><p>正式 12 起点由两套程序重放，0 个完整门 witness，但终点不足以形成 bounded negative。后验 Powell 最佳 observation 比为 1.033484；一个 midpoint 的体素边界切换可制造 4.07e-5 单侧 objective 跳变。停止旧六方向 smooth optimization，但不宣称连续六维无解。</p></article>
@@ -708,9 +726,57 @@
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
       </div>
+      <div id="analytic-factor-resource-v62" class="alert success" style="margin-top:13px;">
+        <strong>v62.2：九视角解析 detector-normal factors 通过可扩展构造与 fresh 资源门</strong>
+        <span>正式实现把 v61 的 <code>A_(theta,c)=Z_c⊗H_(theta,c)</code> 结构直接扩到 <code>16×16×32</code>，全程不 materialize dense 三维 <code>A</code> 或 <code>B</code>。3 个 correctness fresh process 保存并比较完整场与 residual，解析法相对 Zero-CGLS K4 的最大差为 <code>4.15e-15 / 8.67e-15</code>。102 个串行 fresh timing workers 采用 17 次相邻随机完整区组：101-call compute / outer p50 / outer p90 / outer worst / process-tree RSS p90 ratio 为 <code>0.172307 / 0.202526 / 0.205030 / 0.209606 / 0.988063</code>；matrix-free detector control 的 outer p50 反而为 <code>1.053712</code>，说明收益来自解析结构，而不只是换到数据空间。独立 validator 重新聚合全部原始回执和门，最大报告差为 0，但没有另跑第二套 102-worker timing。当前仍有 <code>pinhole_camera_transfer=false</code>、<code>operator_learning_result=false</code>、<code>real_bost=false</code>、<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_analytic_factor_resource_v62.png" aria-label="打开 v62.2 九视角解析因子精度与资源结果图">
+          <img src="../assets/nine_view_analytic_factor_resource_v62.png" alt="v62.2 九视角解析因子的完整向量精度、fresh outer wall、资源比例与调用账" />
+        </a>
+        <figcaption>左上：每帧从 4A+4A^T 改为四次解析 B 和一次精确 A^T；右上：完整 field/residual 误差比 1e-10 门低四个数量级以上；左下：5 与 101 次 fresh outer-wall 中位数；右下：101 次 compute、outer 与 RSS 配对比例。101 次只是循环五个 seeded proxy fields，不是泛化样本。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_analytic_factor_resource_v62_result_2026-07-30.md">读 v62.2 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_analytic_factor_resource_v62_public_summary.json">打开 v62.2 机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_analytic_factor_resource_v62.png">打开 v62.2 结果图原尺寸</a>
+        <a class="button" href="https://arxiv.org/html/2409.14722v2" target="_blank" rel="noreferrer">对照 NeRIF 九视角设置</a>
+      </div>
+      <div id="nine-view-kronecker-v61" class="alert success" style="margin-top:13px;">
+        <strong>v61：九视角 detector-normal 的 Kronecker rank-one 结构通过独立复算</strong>
+        <span>正式门在 <code>8×8×8</code> 审计场上使用九个等间隔平行视角覆盖 <code>0°–170°</code>，其中八个为非轴对齐角度。全部 324 个 view/component block 的最大 <code>sigma2/sigma1</code> 为 <code>3.20e-16</code>，最大 rank-one 重建误差为 <code>7.54e-15</code>；17 个随机 <code>Bv</code> 和 5 个 K4 重放也均在舍入误差内。独立 validator 没有导入正式 core/runner，重新构造几何、<code>A/B</code>、全部 block spectra、17 个作用和 5 个 K4，最大报告差为 0。当前 factors 仍由小型显式 <code>B</code> 的 SVD 提取，所以 <code>scalable_factor_construction=false</code>、<code>online_resource_result=false</code>、<code>pinhole_camera_transfer=false</code>、<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_parallel_detector_kronecker_v61.png" aria-label="打开 v61 九视角平行投影 Kronecker 结构结果图">
+          <img src="../assets/nine_view_parallel_detector_kronecker_v61.png" alt="v61 九视角布局、324 个 rank-one block、小尺寸存储审计和独立重放误差" />
+        </a>
+        <figcaption>A：九个平行视角覆盖 0°–170°；B：324 个 view/component block 全部通过 rank-one 门；C：小尺寸审计中 factors 比 dense B 小 32 倍，但可扩展构造尚未证明；D：独立重算的 block、B 作用和 K4 误差均远低于冻结门。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_parallel_detector_kronecker_v61_result_2026-07-30.md">读 v61 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_parallel_detector_kronecker_v61_public_summary.json">打开 v61 机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_parallel_detector_kronecker_v61.png">打开 v61 结果图原尺寸</a>
+        <a class="button" href="https://arxiv.org/html/2409.14722v2" target="_blank" rel="noreferrer">对照 NeRIF 九视角设置</a>
+      </div>
+      <div id="factorized-detector-v60-1" class="alert success" style="margin-top:13px;">
+        <strong>v60.1：精确二维因子化核心通过完整轨迹长度的 fresh 资源门</strong>
+        <span>在同一三轴 projection-first straight-ray 拓扑内，<code>B=A A^T</code> 被写成源视角二维梯度伴随、LOS 权重收缩/外积和目标视角二维梯度 forward。独立 validator 没有导入正式 core/runner；17 个随机 detector vector 和 5 个 observation 的最大 <code>B</code> / field / residual 差为 <code>2.92e-16 / 1.09e-15 / 1.28e-15</code>。101-call fresh 负载的 compute / outer p50 / outer p90 / worker-self RSS ratio 为 <code>0.716687 / 0.841184 / 0.876558 / 0.967493</code>，全部通过。当前 <code>same_three_axis_projection_topology=true</code>，<code>arbitrary_camera_geometry_transfer=false</code>，<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fblastnet_factorized_detector_v60_1.png" aria-label="打开 v60.1 因子化探测器正规算子精确性与资源门结果图">
+          <img src="../assets/blastnet_factorized_detector_v60_1.png" alt="v60.1 因子化探测器正规算子的独立精确性、无存储 B、101-call wall 和 worker-self RSS 结果" />
+        </a>
+        <figcaption>A：独立复算的 B 作用、K4 field 与 residual 差均远低于冻结门；B：persistent factors 仅 45,568 bytes；C：五次调用受启动成本主导，101 次调用摊销后 outer p50 为 0.841 倍；D：worker-self RSS 不劣。101 次只是循环五个 observation 的资源负载，不是新数据或泛化。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fblastnet_factorized_detector_v60_1_result_2026-07-30.md">读 v60.1 完整推导与裁决</a>
+        <a class="button" href="../docs/blastnet_factorized_detector_v60_1_public_summary.json">打开 v60.1 机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fblastnet_factorized_detector_v60_1.png">打开 v60.1 结果图原尺寸</a>
+        <a class="button" href="https://arxiv.org/html/2409.14722v2" target="_blank" rel="noreferrer">对照 NeRIF 九视角真实几何</a>
+      </div>
       <div id="sparse-detector-v58" class="alert success" style="margin-top:13px;">
         <strong>v58.1：第一次把精确等价、少完整调用、fresh wall 与 RSS 四道门同时越过</strong>
-        <span>五条已打开 PoolFire fit 轨迹共 <code>505</code> 帧；独立 validator 重新构造 CSR、重新跑全部帧且没有导入正式 core/runner。资源门使用 <code>5 trajectories × 2 arms × 17 repeats = 170</code> 个新进程，端到端 ratio <code>0.824652</code>，即基线的 <code>82.47%</code>。当前可以称“固定公开 straight-ray 代理上的重大机理正结果”，但 <code>real_BOST=false</code>、<code>operator_learning_result=false</code>、<code>algorithm_breakthrough=false</code>；v59 只新增了同三轴拓扑的外部坐标代数迁移，资源迁移仍失败。</span>
+        <span>五条已打开 PoolFire fit 轨迹共 <code>505</code> 帧；独立 validator 重新构造 CSR、重新跑全部帧且没有导入正式 core/runner。资源门使用 <code>5 trajectories × 2 arms × 17 repeats = 170</code> 个新进程，端到端 ratio <code>0.824652</code>，即基线的 <code>82.47%</code>。当前可以称“固定公开 straight-ray 代理上的重大机理正结果”，但 <code>real_BOST=false</code>、<code>operator_learning_result=false</code>、<code>algorithm_breakthrough=false</code>；v59 暴露了短任务加载问题，v60.1 随后通过不保存 <code>B</code> 的二维因子化核心修复了完整轨迹长度资源门。</span>
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sparse_detector_replay_v58.png" aria-label="打开 v58.1 稀疏探测器空间重放结果总图">

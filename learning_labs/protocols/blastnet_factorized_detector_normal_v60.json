@@ -1,0 +1,102 @@
+{
+  "schema_version": "oerf-blastnet-factorized-detector-normal-protocol-60.0",
+  "status": "FROZEN_AFTER_SCRATCH_DERIVATION_BEFORE_FORMAL_V60_RUN",
+  "frozen_at_utc": "2026-07-29T19:24:00Z",
+  "scientific_question": "Can the exact detector normal B=A A^T for the frozen three-axis projection-first straight-ray operator be applied through separable two-dimensional contractions, preserving CGLS K4 at roundoff while removing the stored dense or CSR Gram and passing a full-trajectory-equivalent fresh resource gate?",
+  "evidence_role": "post-open classical physics-core representation gate before any learned curved-ray or camera correction",
+  "preregistration_disclosure": {
+    "scratch_work_completed_before_freeze": [
+      "The separable contraction identity was derived from the frozen operator definition.",
+      "A non-formal local scratch check compared ten random detector vectors and five opened observations.",
+      "A non-formal local timing check indicated that a direct contraction implementation may have core-compute headroom."
+    ],
+    "not_seen_before_freeze": [
+      "No formal v60 runner output exists.",
+      "No formal fresh-process v60 resource result exists.",
+      "No validation, stopping-validation, fresh, or untouched-test truth is opened."
+    ],
+    "threshold_source": "The algebra and resource thresholds are inherited unchanged from v59; the 101-frame primary workload is fixed by the public PoolFire trajectory length, not by a measured crossover."
+  },
+  "source": {
+    "dataset": "BLASTNet premixed H2-air DNS phi=0.5 public proxy bundle v40.2",
+    "unique_observation_count": 5,
+    "observation_shape": [
+      5,
+      2072
+    ],
+    "field_shape": [
+      16,
+      16,
+      32
+    ],
+    "truth_may_be_opened": false
+  },
+  "operator_scope": {
+    "required_view_count": 3,
+    "required_los_axes_in_order": [
+      0,
+      1,
+      2
+    ],
+    "required_view_type": "ProjectionFirstInteriorStraightRayOperator",
+    "same_three_axis_projection_topology_only": true,
+    "arbitrary_camera_layout_transfer": false,
+    "curved_ray_transfer": false
+  },
+  "factorization": {
+    "identity": "For source view s and target view t, P_t P_s^T g_s is evaluated by one LOS-weight contraction and at most one outer product; target and source detector-gradient maps remain exact.",
+    "stored_dense_B": false,
+    "stored_sparse_B": false,
+    "full_three_dimensional_field_during_B_matvec": false,
+    "geometry_only_persistent_state": true,
+    "observation_or_truth_used_to_build_state": false,
+    "maximum_persistent_state_bytes": 131072
+  },
+  "formal_algebra_gate": {
+    "random_seed": 2026073060,
+    "random_detector_vector_count": 17,
+    "unique_observation_count": 5,
+    "steps": 4,
+    "maximum_relative_B_matvec_difference": 1e-12,
+    "maximum_relative_field_difference": 1e-11,
+    "maximum_relative_residual_difference": 1e-11,
+    "baseline": "zero-start CGLS K4 with 4 complete A and 4 complete A-transpose calls",
+    "candidate": "4 exact factorized detector-normal products plus one complete A-transpose lift"
+  },
+  "fresh_resource_gate": {
+    "repetitions": 17,
+    "arms": [
+      "zero_cgls_k4",
+      "factorized_detector_replay_k4"
+    ],
+    "diagnostic_snapshot_count": 5,
+    "primary_snapshot_count": 101,
+    "primary_workload_semantics": "The five immutable observations are cycled in fixed order to 101 calls only to emulate one public PoolFire trajectory's deployment workload. This is a resource workload, not 101 independent scientific samples.",
+    "primary_outer_median_wall_ratio_maximum": 0.9,
+    "primary_peak_rss_p90_higher_ratio_maximum": 1.05,
+    "primary_compute_median_wall_ratio_maximum": 0.9,
+    "diagnostic_five_frame_result_can_pass_protocol": false
+  },
+  "decision_rule": {
+    "pass": "PASS_FACTORIZED_DETECTOR_NORMAL_EXTERNAL_RESOURCE_V60",
+    "mixed": "MIXED_FACTORIZED_DETECTOR_NORMAL_EXTERNAL_RESOURCE_V60",
+    "fail": "FAIL_FACTORIZED_DETECTOR_NORMAL_EXTERNAL_RESOURCE_V60",
+    "inconclusive": "INCONCLUSIVE_FACTORIZED_DETECTOR_NORMAL_EXTERNAL_RESOURCE_V60",
+    "pass_requires": [
+      "Independent algebra recomputation passes.",
+      "The primary 101-call workload passes compute, outer wall, and peak RSS gates.",
+      "All sealed inputs remain unchanged."
+    ]
+  },
+  "next_if_pass": "Freeze the factorized straight-ray detector normal as the non-learned physics core, then learn only the deployment-visible correction caused by curved rays, calibration perturbations, or non-axis-aligned camera geometry.",
+  "next_if_mixed_or_fail": "Retain the exact algebra result but stop representation micro-optimization; move to a changed-view-topology gate or return to a bounded learned warm-start residual without claiming a resource advantage.",
+  "claim_limits": {
+    "external_coordinate_geometry_transfer": false,
+    "arbitrary_camera_geometry_transfer": false,
+    "operator_learning_result": false,
+    "real_BOST": false,
+    "global_novelty_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
