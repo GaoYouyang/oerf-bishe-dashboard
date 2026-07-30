@@ -1,0 +1,135 @@
+{
+  "schema_version": "oerf-nine-view-stencil-factor-stage-b-protocol-70.0",
+  "status": "FROZEN_BEFORE_TILED_P0_FULL_TRAJECTORY_RESULT_ACCESS",
+  "frozen_at_utc": "2026-07-30T17:49:04Z",
+  "scientific_question": "Does the lower-memory exact-stencil tiled randomized rank-8 factor with zero power iterations preserve the unchanged v67.1 field, gradient, interior-gradient, and observation compatibility gate in every one of 1515 already-open PoolFire fit cells, while retaining the same 2 exact A plus 2 exact A-transpose deployment budget?",
+  "candidate": {
+    "arm_id": "TiledExactP0Q8_Aglift_then_Ag_K1",
+    "factor_source": "the frozen exact Ag operator's stored trilinear interpolation stencil, projection vectors, ray scales, support, and voxel-gradient discretization",
+    "rank": 8,
+    "oversampling": 8,
+    "power_iterations": 0,
+    "base_seed": 2026073066,
+    "block_seed": "base_seed + 101*view + component",
+    "detector_v_per_tile": 4,
+    "detector_cr_steps": 4,
+    "exact_cgls_refinement_steps": 1,
+    "exact_A_calls": 2,
+    "exact_AT_calls": 2,
+    "cheap_factor_forward_actions": 4,
+    "cheap_factor_adjoint_actions": 4,
+    "truth_or_observation_used_for_factor_construction": false,
+    "equal_call_control": "Zero_CGLS_K2",
+    "matched_accuracy_reference": "Zero_CGLS_K4"
+  },
+  "selection_boundary": {
+    "development_resource_screen_only": true,
+    "screened_scenario": "V66_F30_plus",
+    "screened_synthetic_observation_count_per_worker": 16,
+    "screened_randomized_complete_blocks": 3,
+    "reason_for_stage_b_candidate": "among the frozen screened constructions, tiled exact p0 was the only candidate with an approximately twenty-percent fresh-process peak-RSS reduction relative to the old dense q8 factor while retaining plausible wall-time headroom relative to the independently validated Zero-CGLS K4 reference",
+    "screen_not_a_scientific_accuracy_or_resource_result": true,
+    "no_parameter_reselection_after_stage_b_result": true
+  },
+  "parent_v67_binding": {
+    "scientific_status": "PASS_POOLFIRE_FULL_TRAJECTORY_COMPATIBILITY_V67",
+    "validation_status": "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_FULL_TRAJECTORY_V67",
+    "formal_commit": "20c6aed4c09984ac08b3ec0859d41a7f1abdd735",
+    "formal_result_sha256": "766fac85c8e6d8ce39ceb863d6eb26e31eebc0754a4bd41c3bb8bde931c9b1c8",
+    "rows_sha256": "5aae0c6a0252022bb7dc679bd18760059cd5c2d3971e176b3d120193a33e31fd",
+    "independent_validation_sha256": "6d1426d921d28a5246a330f83e45cf59a8b8dc7dcb055dd5aceb1506963ff096",
+    "validated_ready_sha256": "52603274b19be28989b271c68ca316a9240a5bf1536afba8384133657f09cc3f",
+    "pair_binding_sha256": "456ff6702b1e1ffbe2d36005f4fe4feac8e5e32f7aec93e2bf027829bb27020f",
+    "baseline_rows_used": [
+      "Zero_CGLS_K2",
+      "Zero_CGLS_K4"
+    ],
+    "baseline_row_count": 3030,
+    "parent_candidate_rows_not_used_for_scoring": true
+  },
+  "data_contract": {
+    "trajectory_ids_in_order": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "frame_indices_in_order": "all integer frames 0 through 100 inclusive",
+    "scenario_ids_in_order": [
+      "V66_F30_plus",
+      "V66_F15_plus",
+      "V66_F12_plus"
+    ],
+    "required_cell_count": 1515,
+    "truth_role": "already-open public CFD fit morphology only",
+    "observation_generation": "noise-free y=Ag*x from the exact frozen target operator; historical pair observations are forbidden",
+    "forbidden_trajectory_ids": [
+      "p=14kw_size=01",
+      "p=22kw_size=01",
+      "p=22kw_size=05",
+      "p=58kw_size=01",
+      "p=14kw_size=03",
+      "p=45kw_size=03"
+    ],
+    "validation_truth_opened_for_v70": false,
+    "test_truth_opened": false
+  },
+  "metric_and_gate_contract": {
+    "source": "reuse the frozen v67.1 metric definitions and every-cell thresholds without modification",
+    "field_harm_ratio_maximum_every_cell": 1.01,
+    "gradient_harm_ratio_maximum_every_cell": 1.01,
+    "interior_gradient_harm_ratio_maximum_every_cell": 1.01,
+    "observation_harm_ratio_maximum_every_cell": 1.01,
+    "field_equal_call_ratio_maximum_every_cell": 1.0,
+    "gradient_equal_call_ratio_maximum_every_cell": 1.0,
+    "interior_gradient_equal_call_ratio_maximum_every_cell": 1.0,
+    "observation_equal_call_ratio_maximum_every_cell": 1.0,
+    "required_pass_count": 1515,
+    "all_cells_must_pass": true,
+    "report_per_scenario_trajectory": [
+      "median",
+      "p90_higher",
+      "worst"
+    ],
+    "report_overall": [
+      "median",
+      "p90_higher",
+      "worst"
+    ],
+    "harmed_cell_identity_required": true,
+    "actual_exact_call_ledger_required": true,
+    "independent_recomputation_required": true
+  },
+  "independent_validation_contract": {
+    "formal_runner_factor_builder": "exact-stencil tiled p0",
+    "validator_factor_builder": "legacy dense geometry builder with the same randomized p0 specification",
+    "validator_must_not_import_formal_runner": true,
+    "validator_must_recompute_all_1515_candidate_fields_and_metrics": true,
+    "maximum_absolute_metric_difference": 1e-09,
+    "maximum_relative_metric_difference": 1e-09,
+    "shared_low_level_physics_kernels_disclosed": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "decision": {
+    "pending": "PENDING_INDEPENDENT_VALIDATION_TILED_EXACT_P0_STAGE_B_V70",
+    "pass": "PASS_TILED_EXACT_P0_FULL_TRAJECTORY_COMPATIBILITY_V70",
+    "fail": "FAIL_TILED_EXACT_P0_FULL_TRAJECTORY_COMPATIBILITY_V70",
+    "inconclusive": "INCONCLUSIVE_TILED_EXACT_P0_FULL_TRAJECTORY_COMPATIBILITY_V70",
+    "failure_action": "If any cell fails, close the tiled p0 candidate and do not run a fresh resource gate or enlarge a neural model to rescue it.",
+    "pass_action": "A validated pass authorizes a newly frozen fresh resource gate against Zero-CGLS K4; it does not itself establish wall-time, memory, transfer, real-BOST, or paper success."
+  },
+  "claim_limits": {
+    "stage_b_result": false,
+    "fresh_resource_result": false,
+    "independent_public_family_transfer": false,
+    "neural_operator_result": false,
+    "curved_ray_transfer": false,
+    "camera_calibration_result": false,
+    "real_bost": false,
+    "broad_generalization": false,
+    "global_novelty_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

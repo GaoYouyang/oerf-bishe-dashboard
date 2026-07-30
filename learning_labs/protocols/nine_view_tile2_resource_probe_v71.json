@@ -1,0 +1,115 @@
+{
+  "schema_version": "oerf-nine-view-tile2-resource-probe-protocol-71.0",
+  "status": "FROZEN_BEFORE_TILE2_RESOURCE_PROBE_RESULTS_V71",
+  "scientific_question": "Does reducing the exact-stencil randomized-p0 detector-v tile from four rows to two preserve the q8-K1 algebra while removing enough factor-setup high-water memory to retain the v70 wall advantage against Zero-CGLS K4?",
+  "scope": "Post-v70.1 development mechanism probe on one already-open PoolFire observation stratum. It selects whether tile2 deserves a complete 1,515-cell Stage B rerun; it is not a formal Stage B or Stage C result.",
+  "transition_from": {
+    "parent_status": "FAIL_TILED_EXACT_P0_FRESH_RESOURCE_STAGE_C_V70_1",
+    "parent_wall_gate_pass": true,
+    "parent_rss_gate_pass": false,
+    "changed_component": "detector_v_per_tile decreases from 4 to 2",
+    "unchanged_components": [
+      "rank 8",
+      "oversampling 8",
+      "power iterations 0",
+      "seed 2026073066",
+      "four cheap detector CR steps",
+      "exact A-transpose lift",
+      "unchanged exact CGLS K1",
+      "2A plus 2A-transpose candidate ledger",
+      "Zero-CGLS K4 control"
+    ]
+  },
+  "data_contract": {
+    "trajectory_id": "p=14kw_size=05",
+    "scenario_id": "V66_F30_plus",
+    "frame_count": 101,
+    "observation_shape": [
+      101,
+      9216
+    ],
+    "observation_dtype": "float64",
+    "observation_source": "one sealed observation-only payload from the already-open v70.1 fit-family bundle",
+    "truth_read": false,
+    "raw_rho_read": false
+  },
+  "candidate": {
+    "arm_id": "Tile2ExactP0Q8_Aglift_then_Ag_K1",
+    "detector_v_per_tile": 2,
+    "rank": 8,
+    "oversampling": 8,
+    "power_iterations": 0,
+    "seed": 2026073066,
+    "exact_stencil_reused": true,
+    "second_ray_bundle_built": false,
+    "exact_A_calls_per_frame": 2,
+    "exact_AT_calls_per_frame": 2,
+    "cheap_forward_actions_per_frame": 4,
+    "cheap_adjoint_actions_per_frame": 4
+  },
+  "control": {
+    "arm_id": "Zero_CGLS_K4",
+    "exact_A_calls_per_frame": 4,
+    "exact_AT_calls_per_frame": 4,
+    "cheap_forward_actions_per_frame": 0,
+    "cheap_adjoint_actions_per_frame": 0
+  },
+  "schedule": {
+    "complete_block_count": 6,
+    "arm_order_by_block": [
+      [
+        "Tile2ExactP0Q8_Aglift_then_Ag_K1",
+        "Zero_CGLS_K4"
+      ],
+      [
+        "Zero_CGLS_K4",
+        "Tile2ExactP0Q8_Aglift_then_Ag_K1"
+      ],
+      [
+        "Zero_CGLS_K4",
+        "Tile2ExactP0Q8_Aglift_then_Ag_K1"
+      ],
+      [
+        "Tile2ExactP0Q8_Aglift_then_Ag_K1",
+        "Zero_CGLS_K4"
+      ],
+      [
+        "Tile2ExactP0Q8_Aglift_then_Ag_K1",
+        "Zero_CGLS_K4"
+      ],
+      [
+        "Zero_CGLS_K4",
+        "Tile2ExactP0Q8_Aglift_then_Ag_K1"
+      ]
+    ],
+    "fresh_process_per_arm": true,
+    "workers_serial_and_nonoverlapping": true,
+    "worker_retry_allowed": false,
+    "partial_reuse_allowed": false
+  },
+  "development_headroom_gate": {
+    "outer_wall_ratio_p50_maximum": 0.9,
+    "outer_wall_ratio_p90_higher_maximum": 1.05,
+    "worker_self_peak_rss_ratio_p50_maximum": 1.05,
+    "worker_self_peak_rss_ratio_p90_higher_maximum": 1.05,
+    "candidate_digest_must_be_identical_across_repetitions": true,
+    "control_digest_must_be_identical_across_repetitions": true,
+    "actual_call_ledgers_must_match": true
+  },
+  "decision_rule": {
+    "pass": "PASS_TILE2_RESOURCE_HEADROOM_PROBE_V71",
+    "fail": "FAIL_TILE2_RESOURCE_HEADROOM_PROBE_V71",
+    "pass_action": "Freeze and run a complete five-trajectory by three-geometry by 101-frame Stage B compatibility gate before any formal resource claim.",
+    "fail_action": "Close tile-size tuning. Do not run another 330-worker formal batch or rescue it with a larger model."
+  },
+  "claim_limits": {
+    "formal_stage_b": false,
+    "formal_stage_c": false,
+    "independent_public_family_transfer": false,
+    "neural_operator_result": false,
+    "operator_learning_result": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
