@@ -10224,3 +10224,56 @@ fresh 门。大网络继续不授权。
 - `docs/nine_view_poolfire_fresh_resource_v68_result_2026-07-31.md`
 - `docs/nine_view_poolfire_fresh_resource_v68_public_summary.json`
 - `assets/nine_view_poolfire_fresh_resource_v68.png`
+
+## 2026-07-31：v70 把内存候选救回了精度门，1,515/1,515 通过
+
+v68.3 已经把问题说得很具体：旧 q8-K1 真能快约 34.5%，但 setup 期间的重复
+ray bundle、32 MiB block 和 randomized-SVD 工作区让 RSS 多 31%-38%。
+这次没有继续训练网络，而是直接改 factor 构造：
+
+```text
+旧：exact stencil + 第二份 ray bundle + 完整 block + p2 SVD
+新：复用 exact stencil + detector-v 四行 tile + p0 SVD
+```
+
+先做了三个随机完整区组的开发筛选。新 tiled p0 相对旧 dense q8 的
+worker-tree RSS 中位比是 `0.80093`，约少 19.9%；wall 中位比是 `1.05095`，
+只慢约 5.1%。这还不是正式资源结果，但它是唯一有机会同时修复 RSS、又保留旧
+q8 对 Zero-K4 大幅 wall headroom 的候选，所以在看精度结果前把参数固定下来。
+
+随后重跑与 v67.1 完全相同的全轨迹精度门：
+
+```text
+5 trajectories × 3 geometries × 101 frames = 1515 cells
+candidate pass                                1515 / 1515
+exact budget                                  2A + 2A^T
+failed cells                                  0
+```
+
+最差的 Zero-K4 harm 是 interior-gradient 的 `1.00281`，仍低于冻结的
+`1.01`；相对同调用 Zero-K2，四项 worst 全部低于 1。独立程序没有复用 tiled
+builder，而是用旧 dense p0 重新构造 factors，再重算全部 1,515 个单元；最大
+指标差只有 `5.68e-14`，通过判决完全一致。
+
+**讲人话：**低内存版本没有为了省内存把重建精度弄坏。这是今天最值得高兴的
+真实进展，也确实改变了下一步：v70 已获得重新跑 fresh wall/RSS 的资格。
+
+但它现在仍不是突破：
+
+```text
+stage_b_pass=true
+fresh_resource_stage_authorized=true
+fresh_resource_result=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+下一步不再改 rank、tile 或门槛，只按 v68.3 同一口径重跑 30 个 reference、
+330 个 timing worker、165 个随机相邻区组。wall 与三种 RSS 必须一起过门，
+才能说旧 q8 的“快但吃内存”被真正修好。
+
+完整结果、脱敏机器摘要和图表：
+
+- `docs/nine_view_stencil_factor_stageb_v70_result_2026-07-31.md`
+- `docs/nine_view_stencil_factor_stageb_v70_public_summary.json`
+- `assets/nine_view_stencil_factor_stageb_v70.png`
