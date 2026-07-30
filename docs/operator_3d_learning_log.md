@@ -10277,3 +10277,60 @@ paper_success=false
 - `docs/nine_view_stencil_factor_stageb_v70_result_2026-07-31.md`
 - `docs/nine_view_stencil_factor_stageb_v70_public_summary.json`
 - `assets/nine_view_stencil_factor_stageb_v70.png`
+
+## 2026-07-31：v70.1 速度仍过门，但内存高尾让 Stage C 再次失败
+
+v70 的低内存构造已经在 1,515/1,515 单元守住精度。这次把它和 Zero-K4 放进
+与 v68.3 同口径的正式 fresh 批次：30 个 reference、330 个 timing worker、
+165 个随机相邻区组，factor setup 与全部计算都包含在 worker 内。
+
+```text
+tiled p0 q8 / Zero-K4
+
+outer wall ratio
+  p50 / p90 / worst       0.670558 / 0.677727 / 0.701055   PASS
+
+worker-self RSS ratio
+  p50 / p90 / worst       1.086393 / 1.134775 / 1.171482   FAIL
+worker-tree RSS p90       1.132203                          FAIL
+pipeline RSS p90          1.064684                          FAIL
+```
+
+讲人话：时间收益是真的。candidate 的全局中位时间约 10.91 秒，Zero 约
+16.28 秒，五条轨迹都快约 33%。但正式合同不是“只要快就行”；三类内存高尾
+都超过 1.05，所以 Stage C 整体仍是 FAIL。
+
+独立程序从 raw pair 重建 1,515 个 observation，重放 30 个 reference 共
+3,030 帧，再重算 165 个区组和 903 个聚合数字；最大差全部为 0。它也核对了
+v70 父结果仍是 1,515/1,515 PASS。准确边界：
+
+```text
+PASS_INDEPENDENT_VALIDATION_TILED_EXACT_P0_FRESH_RESOURCE_V70_1
+FAIL_TILED_EXACT_P0_FRESH_RESOURCE_STAGE_C_V70_1
+algorithm_breakthrough=false
+paper_success=false
+```
+
+我没有立即再烧一批正式 worker，而是先问“工作区再减半是否真有资源
+headroom”。tile4 改为 tile2 后，三档几何的 factor/forward/adjoint 相对差都在
+约 `1.6e-13` 以内，声明工作区从 12 MiB 降到 6 MiB。随后冻结一条 101 帧
+observation stratum、六个 fresh 配对区组：
+
+```text
+tile2 / Zero-K4 outer wall p50 / p90   0.661271 / 0.678067   PASS
+tile2 / Zero-K4 RSS p50 / p90          1.040516 / 1.060203   FAIL
+```
+
+独立重算与正式摘要最大差为 0。内存中位已经过门，但保守高尾仍超出约 1.02 个
+百分点；按事前规则不降门、不扩到 330 worker，tile-size tuning 到此关闭。
+
+下一步不再抠 tile。真实 BOST 装置的几何在标定后固定，应把一次性 calibration
+factor build 与在线 observation-stream reconstruction 分成两张账，同时报告
+cold cost、online wall/RSS、artifact 大小和摊销临界点。只有在线账独立通过，
+才能谨慎说“固定标定几何下的在线重建资源收益”；离线成本不会被隐藏。
+
+完整证据与脱敏摘要：
+
+- `docs/nine_view_stencil_factor_fresh_resource_v70_1_result_2026-07-31.md`
+- `docs/nine_view_stencil_factor_fresh_resource_v70_1_public_summary.json`
+- `assets/nine_view_stencil_factor_fresh_resource_v70_1.png`
