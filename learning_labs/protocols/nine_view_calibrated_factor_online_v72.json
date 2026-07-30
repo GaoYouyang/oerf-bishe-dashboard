@@ -1,0 +1,162 @@
+{
+  "schema_version": "oerf-nine-view-calibrated-factor-online-protocol-72.0",
+  "status": "FROZEN_BEFORE_CALIBRATED_FACTOR_RESULTS_V72",
+  "scientific_question": "Can a geometry-only q8 factor compiled once from frozen known synthetic geometry be loaded for online reconstruction so that the validated 2A+2A-transpose warm refinement retains its wall advantage and passes the 1.05 RSS gate without hiding the one-time compilation cost?",
+  "scope": "Post-v70.1 and post-v71 development gate. It separates offline known-geometry factor compilation from online reconstruction for one already-open PoolFire observation stratum. This is not a camera-calibration result: no calibration images, parameter estimation, reprojection residual, or drift test exist. Passing only authorizes a complete loaded-artifact Stage B; it is not formal online Stage C, external-family, curved-ray, neural-operator, or real-BOST evidence.",
+  "frozen_parent_evidence": {
+    "stage_b_status": "PASS_TILED_EXACT_P0_FULL_TRAJECTORY_COMPATIBILITY_V70",
+    "stage_b_cells": 1515,
+    "stage_b_passed_cells": 1515,
+    "fresh_resource_status": "FAIL_TILED_EXACT_P0_FRESH_RESOURCE_STAGE_C_V70_1",
+    "fresh_wall_gate_pass": true,
+    "fresh_rss_gate_pass": false,
+    "tile2_status": "FAIL_TILE2_RESOURCE_HEADROOM_PROBE_V71",
+    "tile_size_tuning_closed": true
+  },
+  "factor_contract": {
+    "builder": "exact-stencil tiled randomized SVD",
+    "rank": 8,
+    "oversampling": 8,
+    "power_iterations": 0,
+    "detector_v_per_tile": 4,
+    "seed": 2026073066,
+    "block_count": 18,
+    "persistent_factor_state_bytes": 5899392,
+    "geometry_only": true,
+    "observation_read_during_build": false,
+    "truth_read_during_build": false,
+    "raw_rho_read_during_build": false,
+    "artifact_arrays": "one read-only NPY file for left, right, and retained singular values of every view-component block",
+    "artifact_manifest_must_bind": [
+      "expanded scenario identity",
+      "formal geometry identity",
+      "field and observation shapes",
+      "rank, oversampling, power iterations, tile size, and seed",
+      "all array names, shapes, dtypes, byte counts, and SHA-256 digests",
+      "all block residual diagnostics"
+    ],
+    "loaded_equivalence_preflight_scenarios": [
+      "V66_F30_plus",
+      "V66_F15_plus",
+      "V66_F12_plus"
+    ],
+    "loaded_array_maximum_absolute_difference": 0.0,
+    "loaded_forward_relative_l2_maximum": 1e-14,
+    "loaded_adjoint_relative_l2_maximum": 1e-14
+  },
+  "offline_geometry_compilation_ledger": {
+    "included": [
+      "fresh Python process startup",
+      "known-geometry exact operator construction",
+      "tile4 q8 factor construction",
+      "artifact serialization",
+      "artifact reopen and digest validation",
+      "worker-self peak RSS"
+    ],
+    "reported_separately_from_online": true,
+    "artifact_size_bytes_reported": true,
+    "incremental_cold_cost_never_hidden": true,
+    "break_even_sequence_count_formula": "ceil(full_cold_process_seconds / max(zero_online_seconds - candidate_online_seconds, tiny)); report infinity when the denominator is non-positive",
+    "break_even_frame_count_formula": "break_even_sequence_count times 101"
+  },
+  "online_data_contract": {
+    "trajectory_id": "p=14kw_size=05",
+    "scenario_id": "V66_F30_plus",
+    "frame_count": 101,
+    "observation_shape": [
+      101,
+      9216
+    ],
+    "observation_dtype": "float64",
+    "observation_source": "one sealed observation-only payload from the already-open v70.1 fit-family bundle",
+    "online_truth_read": false,
+    "online_raw_rho_read": false
+  },
+  "candidate": {
+    "arm_id": "CalibratedArtifactQ8_Aglift_then_Ag_K1",
+    "artifact_validation_and_load_inside_timed_worker": true,
+    "detector_cr_steps": 4,
+    "exact_cgls_steps": 1,
+    "exact_A_calls_per_frame": 2,
+    "exact_AT_calls_per_frame": 2,
+    "cheap_forward_actions_per_frame": 4,
+    "cheap_adjoint_actions_per_frame": 4
+  },
+  "control": {
+    "arm_id": "Zero_CGLS_K4",
+    "candidate_artifact_module_imported": false,
+    "candidate_artifact_path_touched": false,
+    "exact_A_calls_per_frame": 4,
+    "exact_AT_calls_per_frame": 4,
+    "cheap_forward_actions_per_frame": 0,
+    "cheap_adjoint_actions_per_frame": 0
+  },
+  "shared_online_setup_contract": {
+    "both_arms_build_the_same_exact_operator_inside_each_timed_fresh_worker": true,
+    "candidate_does_not_load_a_precompiled_exact_operator": true,
+    "control_does_not_load_or_touch_the_candidate_factor_artifact": true,
+    "observation_load_and_validation_are_timed_for_both_arms": true,
+    "candidate_factor_digest_validation_and_page_touch_are_timed": true
+  },
+  "online_schedule": {
+    "complete_block_count": 6,
+    "arm_order_by_block": [
+      [
+        "CalibratedArtifactQ8_Aglift_then_Ag_K1",
+        "Zero_CGLS_K4"
+      ],
+      [
+        "Zero_CGLS_K4",
+        "CalibratedArtifactQ8_Aglift_then_Ag_K1"
+      ],
+      [
+        "Zero_CGLS_K4",
+        "CalibratedArtifactQ8_Aglift_then_Ag_K1"
+      ],
+      [
+        "CalibratedArtifactQ8_Aglift_then_Ag_K1",
+        "Zero_CGLS_K4"
+      ],
+      [
+        "CalibratedArtifactQ8_Aglift_then_Ag_K1",
+        "Zero_CGLS_K4"
+      ],
+      [
+        "Zero_CGLS_K4",
+        "CalibratedArtifactQ8_Aglift_then_Ag_K1"
+      ]
+    ],
+    "fresh_process_per_arm": true,
+    "workers_serial_and_nonoverlapping": true,
+    "worker_retry_allowed": false,
+    "partial_reuse_allowed": false
+  },
+  "online_development_gate": {
+    "outer_wall_ratio_p50_maximum": 0.9,
+    "outer_wall_ratio_p90_higher_maximum": 1.05,
+    "worker_self_peak_rss_ratio_p50_maximum": 1.05,
+    "worker_self_peak_rss_ratio_p90_higher_maximum": 1.05,
+    "candidate_digest_must_be_identical_across_repetitions": true,
+    "control_digest_must_be_identical_across_repetitions": true,
+    "actual_call_ledgers_must_match": true
+  },
+  "decision_rule": {
+    "pass": "PASS_CALIBRATED_FACTOR_ONLINE_HEADROOM_PROBE_V72",
+    "fail": "FAIL_CALIBRATED_FACTOR_ONLINE_HEADROOM_PROBE_V72",
+    "pass_action": "Rebuild all three geometry artifacts and rerun the complete 1,515-cell Stage B with loaded factors before any formal online resource claim.",
+    "fail_action": "Close the current fixed-factor warm-start resource claim. Do not rescue it by hiding cold calibration, relaxing the RSS gate, or training a larger model."
+  },
+  "claim_limits": {
+    "formal_loaded_artifact_stage_b": false,
+    "formal_online_stage_c": false,
+    "camera_calibration_result": false,
+    "cold_start_resource_advantage": false,
+    "independent_public_family_transfer": false,
+    "neural_operator_result": false,
+    "operator_learning_result": false,
+    "curved_ray_transfer": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
