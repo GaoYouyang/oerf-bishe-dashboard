@@ -10066,3 +10066,86 @@ paper_success=false
 - `docs/nine_view_poolfire_target_scale_warm_v66_result_2026-07-30.md`
 - `docs/nine_view_poolfire_target_scale_warm_v66_public_summary.json`
 - `assets/nine_view_poolfire_target_scale_warm_v66.png`
+
+## 2026-07-30：v67.1 全 505 帧通过，终于排除了“只挑到五个好帧”
+
+v66.1 只在每条轨迹的五个冻结时间点上通过。它是重要正信号，但仍可能有一个
+很朴素的解释：方法恰好避开了中间更难的帧。因此这轮没有换模型，而是把同一
+q8-K1 / q4-K2 原样扩到五条轨迹全部 505 帧和三档已知九视角几何。
+
+正式运行前放入了 16 个对照：Zero K1-K4、scaled exact BP、Jacobi-PCGLS、两种
+A0 proposal，以及分别选择 lambda 的 leave-one-trajectory-out dual/direct ridge。
+第一版长任务刚启动、尚未产生任何结果时，独立红队发现四个会影响科学判决的
+问题：三种几何的 lambda 尾部被 pooled、direct-field 沿用 dual lambda、validator
+没有从实际调用点独立计数、`equal-or-cheaper` 用词超过了 exact-call 证据。
+我立即停止了空结果任务，没有读取任何数字，再把协议修成 v67.1：
+
+```text
+lambda selection  = max over geometry × metric × reference tails
+dual lambda       = selected independently
+direct lambda     = selected independently
+validator ledger  = counted at actual forward / adjoint call sites
+cost claim        = exact A/A^T budget only
+```
+
+修正版第二轮只读红队得到 P0=0、P1=0，随后唯一正式任务运行约 31.6 分钟，
+原子写出 18 臂 × 1,515 单元 = 27,270 个结果。正式 runner 自报 PASS，但当时
+仍没有把它当结论；另一个 detached clean checkout 又从 raw rho 重建并重跑全部
+arms，最终独立裁决也是 PASS：
+
+```text
+q8 + exact A^T + CGLS K1     1,515 / 1,515 PASS
+q4 + exact A^T + CGLS K2     1,515 / 1,515 PASS
+
+q8 exact cost                2A + 2A^T
+q8 worst harm / Zero-K4
+  field                      1.002008
+  gradient                   0.999111
+  interior gradient          1.001399
+  observation                0.929281
+
+q8 worst / equal-call Zero-K2
+  field                      0.910587
+  gradient                   0.986495
+  interior gradient          0.953952
+  observation                0.644986
+```
+
+**讲人话：**q8 在个别帧的 field 和内部梯度比跑满四步的 Zero-K4 略差
+0.20% / 0.14%，但没有超过事前允许的 1% 等价带；它对同样只用两对精确算子的
+Zero-K2，则每一帧四项都更好。更强的是，16 个 controls 中没有任何一个在任何
+单元同时压过 q8 的四项指标。不是平均数好看，也不是靠某条轨迹撑起来：15 个
+trajectory-by-geometry 层各自都是 101/101 PASS。
+
+独立程序比较了 534,795 个逐行数字，最大差 `6.43e-10`；14,136 个汇总和判决
+数字最大差 `2.55e-12`；selection 最大差 `2.27e-13`；实际调用总账差为 0。
+正式 `rows.jsonl` 另做外部完整性核对，恰好 27,270 行、27,270 个唯一 cell ID、
+重复 0。raw/pair 输入和正式 payload 在验证前后均未变化，两条 test 没有打开。
+
+这次是真正值得高兴的进展，因为它排除了“挑帧”“多调用”“简单 ridge 足够”
+和“便宜 control 全局支配”四个解释，并把 q8-K1 推进到了 fresh 资源门。但还
+不能说算法突破：
+
+```text
+full_trajectory_result=true
+fresh_resource_stage_c_authorized=true
+fresh_wall_speedup=false
+whole_pipeline_peak_memory_result=false
+independent_public_family_transfer=false
+neural_operator_result=false
+curved_ray_transfer=false
+real_bost=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+q8 目前是固定 geometry-compressed factor，不是神经网络。下一步只做一件事：
+把 factor setup 和八次 cheap factor actions 都放进 fresh worker，用至少 11 个
+随机相邻完整区组公平比较 q8-K1 与 Zero-K4。只有 outer wall、逐轨迹不变慢和
+whole-pipeline RSS 一起通过，才把“50% 少 exact calls”升级成“真实资源收益”。
+
+完整结果、脱敏机器摘要和图表：
+
+- `docs/nine_view_poolfire_full_trajectory_v67_result_2026-07-30.md`
+- `docs/nine_view_poolfire_full_trajectory_v67_public_summary.json`
+- `assets/nine_view_poolfire_full_trajectory_v67.png`
