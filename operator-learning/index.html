@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>C 路线：算子学习 Warm Start × 三维 BOST | Gao Youyang</title>
-  <meta name="description" content="以最终物理同精度下降低重建成本为长期目标、当前先过公开代理开发兼容性门的 BOST 三维重建 Warm Start 学习与实验主页。" />
+  <meta name="description" content="OERF 三维 BOST 算子学习 C 路线：PoolFire 内部精度与资源证据、BLASTNet 外部失败、v76 同预算二维表示严格不可行证书，以及下一步 field-space warm correction。" />
   <style>
     :root {
       --ink: #17252b;
@@ -340,6 +340,7 @@
       <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
       <a href="#objective-novelty">优化目标与原创性</a>
       <a href="#latest-gate">算法与实验</a>
+      <a href="#obs2d-oracle-v76">v76 二维表示严格 FAIL</a>
       <a href="#external-v75">v75 外部精度 5/75 FAIL</a>
       <a href="#loaded-artifact-fresh-resource-v74-1">v74.1 完整 fresh 资源 PASS</a>
       <a href="#loaded-artifact-stageb-v73">v73 加载工件全轨迹 PASS</a>
@@ -382,11 +383,13 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-31 · v75</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-31 · v76</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v73 与 v74.1 已在五条 PoolFire fit 轨迹、三档已知九视角几何上闭合 <code>1,515/1,515</code> 精度、<code>2A+2A^T</code> 调用和 fresh wall / RSS 正结果；但结果前选定的 BLASTNet vitiated H2-air Case 3 外部门在 25 帧 × 3 几何上只有 <code>5/75</code> 通过完整合同。候选虽在 <code>74/75</code> 单元守住全部 Zero-K4 harm 门，却有 <code>70/75</code> 单元的 interior-gradient 劣于同调用 Zero-K2。固定 loaded q8 因子原样跨反应流族的支线因此关闭，资源阶段没有启动；<code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>。</p>
+    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v73 与 v74.1 已在五条 PoolFire fit 轨迹、三档已知九视角几何上闭合 <code>1,515/1,515</code> 精度、<code>2A+2A^T</code> 调用和 fresh wall / RSS 正结果；但 v75 的 BLASTNet vitiated H2-air Case 3 外部门只有 <code>5/75</code>。v76 随后在完全相同的 <code>2A+2A^T</code> 预算下，让 truth-aware oracle 搜索整个 <code>span{h,n}</code>：<code>58/75</code> 有严格可行见证，<code>17/75</code> 有独立验证的精确不可行证书。任何只在这两个方向里预测系数的网络都无法通过完整合同，因此该二维表示正式关闭；下一步必须产生空间变化的 field correction，而不是继续放大同类系数网络。<code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
+      <a class="button danger" href="#obs2d-oracle-v76">打开 v76 严格不可行证据</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_obs2d_oracle_v76_result_2026-07-31.md">读 v76 完整证据</a>
       <a class="button primary" href="#external-v75">打开 v75 外部负结果</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_vitiated_h2air_external_accuracy_v75_result_2026-07-31.md">读 v75 完整证据</a>
       <a class="button primary" href="#loaded-artifact-fresh-resource-v74-1">打开 v74.1 最新资源正结果</a>
@@ -417,12 +420,19 @@
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert critical" style="margin-top:12px;">
+      <strong>v76 严格负结果：同预算二维 observation span 有 17/75 个单元不可行</strong>
+      <span>truth-aware oracle 在每个单元搜索 <code>x(c)=c1 h+c2 n</code>，搜索本身不增加精确调用；75 个单元中 <code>58</code> 个存在严格负裕量见证，<code>17</code> 个由精确有理数 dual lower bound 证明交集为空，<code>0</code> 个数值不确定。独立重建最大差 <code>4.80e-14</code>。这关闭的是 <code>span{h,n}</code> 系数预测器，不是所有 learned warm start；Case 4/6、资源门和大网络均未启动。<a href="#obs2d-oracle-v76">查看完整证据</a>。</span>
+    </div>
+    <div class="alert critical" style="margin-top:12px;">
       <strong>v75 外部精度负结果：完整合同 5/75，固定因子原样跨反应流族的支线关闭</strong>
       <span>预选 BLASTNet Case 3 的 field / observation 相对同调用 Zero-K2 均为 <code>75/75</code> 不劣，但 full-gradient 只有 <code>46/75</code>、interior-gradient 只有 <code>5/75</code>；相对 Zero-K4 的四项 joint harm 则为 <code>74/75</code>。这说明低频场和观测一致性有迁移信号，局部内部梯度没有稳定迁移。精度 FAIL 后没有运行 Case3 资源门，也没有用 Case 4/6 补考。<a href="#external-v75">查看完整证据</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button danger" href="#obs2d-oracle-v76">v76 二维表示 17/75 严格不可行</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_obs2d_oracle_v76_result_2026-07-31.md">v76 完整裁决</a>
+      <a class="button" href="../docs/nine_view_obs2d_oracle_v76_public_summary.json">v76 脱敏结果</a>
       <a class="button danger" href="#external-v75">v75 外部精度 5/75 FAIL</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_vitiated_h2air_external_accuracy_v75_result_2026-07-31.md">v75 完整裁决</a>
       <a class="button" href="../docs/nine_view_vitiated_h2air_external_accuracy_v75_public_summary.json">v75 脱敏结果</a>
@@ -754,6 +764,7 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v76 严格表示负结果</span><span class="chip blue">58 feasible + 17 certified infeasible</span></div><h3 style="margin-top:10px;">Same-budget OBS2D oracle</h3><p>在 v75 已开封的 75 个 Case 3 单元中，truth-aware oracle 搜索整个 <code>span{h,n}</code>，精确账仍为 <code>2A+2A^T</code>。58 个单元有直接可行见证，17 个单元有独立重建后仍严格为正的精确有理数 dual certificate，0 个落入弃权带。oracle 将 joint pass 从当前 q8-K1 的 5 提高到 58，但无法同时守住 K4 observation 与同调用 K2 gradients；同一二维 span 上不再授权更大网络。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v75 外部精度 FAIL</span><span class="chip blue">独立复算 75 cells</span></div><h3 style="margin-top:10px;">BLASTNet vitiated H2-air Case 3</h3><p>结果前预选的 25 帧外部 DNS 在三档冻结九视角几何上形成 75 个单元，完整合同只有 5/75 通过。候选相对 Zero-K4 的四项 joint harm 为 74/75，但相对同调用 Zero-K2 的 interior-gradient 只有 5/75，70 个单元失败；field / observation 则均为 75/75。资源阶段没有启动，固定 PoolFire loaded q8 因子原样跨族的支线关闭，algorithm_breakthrough=false。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">最新 · v74.1 Stage C PASS</span><span class="chip blue">fresh wall 与三层 RSS</span></div><h3 style="margin-top:10px;">Loaded artifact full resource gate</h3><p>v73 的 1,515/1,515 精度父门不变；v74.1 用 30 个 reference、330 个 fresh timing worker 与 165 个完整配对区组正式比较 loaded q8-K1 和 Zero-K4。候选精确调用各减半，wall p50/p90 ratio 为 0.56507/0.57440，worker-self、worker-tree、pipeline RSS p90 为 1.03456/1.01971/1.01409，全部通过。独立重放 3,030 帧最大差 0。范围仍是已开封 PoolFire fit family、已知几何、无噪声 straight-ray 代理，algorithm_breakthrough=false。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">v73 Stage B PASS</span><span class="chip blue">loaded 1,515/1,515</span></div><h3 style="margin-top:10px;">Loaded artifact full trajectory</h3><p>三档已知九视角几何、五条 PoolFire fit trajectory、每条 101 帧全部通过兼容性门并逐单元复现 v70。三份工件共 162 个数组最大差 0，独立指标最大差 0，dense p0 参考相对差不超过 1.24e-15；精确账仍为 2A+2A^T。该精度父门随后由 v74.1 的完整 fresh wall/RSS 正式资源门承接。</p></article>
@@ -792,6 +803,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="obs2d-oracle-v76" class="alert critical" style="margin-top:13px;">
+        <strong>v76：二维 <code>span{h,n}</code> 在 17/75 个单元严格不可行，系数网络支线关闭</strong>
+        <span>v76 没有增加调用、换帧或打开新工况。它复用 v75 的 25 帧 Case 3 与三档冻结几何，令 <code>h=A^T z</code>、<code>n=A^T(y-Ah)</code>，再让 truth-aware oracle 搜索 <code>x(c)=c1h+c2n</code>。生成该表示仍为 <code>2A+2A^T</code>，系数搜索增加 <code>0A+0A^T</code>。正式与独立验证一致得到 <code>58</code> 个严格可行见证、<code>17</code> 个严格不可行证书、<code>0</code> 个数值不确定；F12+/F15+/F30+ 分别有 <code>5/7/5</code> 个不可行单元。oracle 八门通过数为 K4 的 <code>75/75/75/58</code> 与 K2 的 <code>75/67/63/75</code>。17 个不可行单元全部在 minimax 点违反 K4 observation，其中 12 个同时违反 K2 interior-gradient、8 个同时违反 K2 full-gradient；最小 exact dual lower 为 <code>1.7169e-4</code>，远离 <code>1e-10</code> 边界。独立重建最大值差、exact lower 差和 determinant 相对差分别为 <code>4.80e-14 / 6.30e-16 / 2.79e-15</code>。因此任何只预测这两个全局系数的网络都无法救回完整合同；下一表示必须在 field space 产生空间变化 correction。Case 4/6、资源门和更大网络未授权，<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_obs2d_oracle_v76.png" aria-label="打开 v76 同预算二维可行性分类、逐门通过数、对照与时间分布图">
+          <img src="../assets/nine_view_obs2d_oracle_v76.png" alt="v76 三档几何可行与严格不可行单元、八项门通过数、四个方法 joint pass 和不可行帧时间分布" />
+        </a>
+        <figcaption>A：三档几何均含严格不可行单元；B：field 全过，但 K4 observation 与 K2 gradients 无法同时闭合；C：truth-aware oracle 将 joint pass 提升到 58/75，仍不足以通过全合同；D：失败集中在演化中段，frame 10 与 16 在三档几何均不可行。该图只说明表示上界，不是部署算法。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_obs2d_oracle_v76_result_2026-07-31.md">读 v76 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_obs2d_oracle_v76_public_summary.json">打开 v76 脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_obs2d_oracle_v76.png">打开 v76 结果图原尺寸</a>
       </div>
       <div id="external-v75" class="alert critical" style="margin-top:13px;">
         <strong>v75：预选 BLASTNet Case 3 外部精度门 5/75 FAIL，资源阶段停止</strong>

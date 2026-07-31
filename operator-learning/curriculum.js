@@ -1,9 +1,19 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.31-c-v74.1-loaded-artifact-fresh-resource-pass",
-  previousVersion: "2026.07.31-c-v73-loaded-artifact-stage-b-pass",
-  previousBadge: "v73 loaded artifact · 1,515 / 1,515 Stage B PASS",
-  olderBadge: "v72 loaded artifact · single-stream online wall/RSS PASS",
+  version: "2026.07.31-c-v76-obs2d-oracle-certified-negative",
+  previousVersion: "2026.07.31-c-v75-external-accuracy-fail",
+  previousBadge: "v75 BLASTNet Case 3 · 5 / 75 external accuracy FAIL",
+  olderBadge: "v74.1 loaded artifact · fresh wall/RSS PASS",
   historyReleases: [
+    {
+      version: "2026.07.31-c-v75-external-accuracy-fail",
+      previousVersion: "2026.07.31-c-v74.1-loaded-artifact-fresh-resource-pass",
+      badge: "v75 BLASTNet Case 3 · 5 / 75 external accuracy FAIL"
+    },
+    {
+      version: "2026.07.31-c-v74.1-loaded-artifact-fresh-resource-pass",
+      previousVersion: "2026.07.31-c-v73-loaded-artifact-stage-b-pass",
+      badge: "v74.1 loaded artifact · fresh wall/RSS PASS"
+    },
     {
       version: "2026.07.31-c-v73-loaded-artifact-stage-b-pass",
       previousVersion: "2026.07.31-c-v72-loaded-artifact-online-headroom",
@@ -498,6 +508,8 @@ window.OPERATOR_LEARNING_GUIDE = {
     }
   ],
   resources: [
+    {id:"nine-view-obs2d-oracle-v76",stage:"warm-start",level:"必做",type:"最新严格表示负结果",title:"v76 同预算二维 span 严格不可行证书",url:"../document_reader.html?doc=docs%2Fnine_view_obs2d_oracle_v76_result_2026-07-31.md",local:"../docs/nine_view_obs2d_oracle_v76_public_summary.json",read:"先写出 h=A^Tz、n=A^T(y-Ah) 与 x(c)=c1h+c2n，再读八个凸二次门、严格可行见证和 simplex dual 不可行证书。重点理解为什么 58/75 的 oracle headroom 仍是 FAIL，以及为什么 17 个 exact positive lower 能关闭同一 span 上的所有系数网络。",output:"不用页面解释：搜索为什么仍是 2A+2A^T；为什么 v76 只关闭 span{h,n} 而不关闭 field-space neural warm start；为什么下一步必须先改变表示、再训练模型。",verified:"FAIL_OBS2D_ORACLE_SPAN_INSUFFICIENT_V76；PASS_INDEPENDENT_VALIDATION_OBS2D_ORACLE_V76_1；58 feasible / 17 certified infeasible / 0 inconclusive；algorithm_breakthrough=false"},
+    {id:"nine-view-vitiated-h2air-external-v75",stage:"warm-start",level:"必做",type:"外部族负结果",title:"v75 BLASTNet Case 3 外部精度门",url:"../document_reader.html?doc=docs%2Fnine_view_vitiated_h2air_external_accuracy_v75_result_2026-07-31.md",local:"../docs/nine_view_vitiated_h2air_external_accuracy_v75_public_summary.json",read:"比较相对 Zero-K4 的 74/75 joint harm 与完整合同 5/75，重点看同调用 Zero-K2 的 interior-gradient 70 个失败为何不能被 field/observation 改善抵消。",output:"口述为什么 v75 关闭固定 factor 原样跨族，却给 v76 留下同预算 adaptive representation 的问题。",verified:"FAIL_VITIATED_H2AIR_CASE3_EXTERNAL_ACCURACY_SENTINEL_V75；5/75；resource stage not authorized"},
     {id:"nine-view-loaded-artifact-fresh-resource-v74-1",stage:"warm-start",level:"必做",type:"正式资源裁决",title:"v74.1 加载工件多轨迹 fresh wall / RSS 正结果",url:"../document_reader.html?doc=docs%2Fnine_view_loaded_artifact_fresh_resource_v74_1_result_2026-07-31.md",local:"../docs/nine_view_loaded_artifact_fresh_resource_v74_1_public_summary.json",read:"先核对 v73 的 1,515/1,515 精度父门，再读 30 reference、330 fresh timing worker、165 随机相邻完整区组和独立 3,030 帧重放。重点区分精确调用减半、wall p50 约下降 43.49%、三类 RSS p90 通过，与 worker-self/worker-tree worst 仍超过 1.05 的边界。",output:"不用页面解释 v74.0 为什么 invalid、v74.1 为什么没有复用旧行、通过的是哪几个预注册资源门，以及为什么当前仍不能称 external-family、curved-ray、真实 BOST、神经算子或算法突破。",verified:"PASS_LOADED_ARTIFACT_FRESH_RESOURCE_STAGE_C_V74_1；PASS_INDEPENDENT_VALIDATION_LOADED_ARTIFACT_FRESH_RESOURCE_V74_1；2A+2A^T 对 4A+4A^T；wall p50/p90=0.56507/0.57440；RSS p90=1.03456/1.01971/1.01409；algorithm_breakthrough=false"},
     {id:"mit-linear-algebra",stage:"foundation",level:"零基础",type:"课程",title:"MIT 18.06SC Linear Algebra",url:"https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/",local:"",read:"优先看 subspaces、orthogonality、least squares、eigenvalues、SVD 和 pseudoinverse。",output:"一张 SVD-可观测性概念图 + 一个 NumPy toy。",verified:"MIT OCW 官方页"},
     {id:"kak-slaney",stage:"foundation",level:"入门",type:"开放电子书",title:"Kak & Slaney: Principles of Computerized Tomographic Imaging",url:"https://engineering.purdue.edu/~malcolm/pct/",local:"",read:"先读 projection、Fourier slice theorem、backprojection 和 algebraic reconstruction 章节。",output:"用自己的图重画 forward/inverse 链。",verified:"Purdue 作者电子版，仅个人使用"},
