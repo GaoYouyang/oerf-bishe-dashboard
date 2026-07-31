@@ -10848,3 +10848,62 @@ fit 数据或改变 observation-adaptive 表示。
 - `docs/nine_view_geometry_spline_capacity_v78_result_2026-07-31.md`
 - `docs/nine_view_geometry_spline_capacity_v78_public_summary.json`
 - `assets/nine_view_geometry_spline_capacity_v78.png`
+
+## 2026-07-31：v79 说明“观测拟合得好”仍可能把三维梯度做错
+
+v78 的 75/75 很容易让人误以为网络训练已经万事俱备。其实 v78 的系数是看着真值
+选出来的，它只证明 32 模态空间里存在好答案，没有证明部署时能从 observation 找到它。
+
+所以 v79 先让两个最便宜的解析方法挑战学习模型：
+
+```text
+方法一：用 r_h = y - A h 直接解 U32 系数
+方法二：用 n_h = A^T(y - A h) 直接解 U32 系数
+两者：x0 = h + U32 a，再跑一轮不变的 exact CGLS
+在线账：2A + 2A^T
+```
+
+结果非常清楚：
+
+```text
+                                  observation residual   normal residual
+完整八门通过                           9 / 75              0 / 75
+field / K4, K2                       73 / 75, 75 / 75    49 / 75, 74 / 75
+full-gradient / K4, K2               62 / 75, 42 / 75    43 / 75, 16 / 75
+interior-gradient / K4, K2           55 / 75, 12 / 75    51 / 75,  2 / 75
+observation / K4, K2                 75 / 75, 75 / 75    75 / 75, 75 / 75
+```
+
+也就是说，两条方法都能把测量空间的答案做得很好，但这并不保证三维内部的梯度正确。
+对 BOST 而言，这不是一个可以忽略的指标问题：背景位移正是由折射率或密度梯度驱动，
+只报 observation loss 会把一个物理上错误的场包装成成功。
+
+v79.2 独立 validator 没有导入正式的 metric/pass helper，重新写了 gradient、误差和八门
+逻辑，并复算 1,200 条 arm rows 与 300 条 outer rows。三轮同一红队最终为
+`P0=0 / P1=0`，协调器的标准库 seal 复核也通过。主要 scaled 差不超过 `1.07e-11`。
+
+启动时还出现过一次纯工程错误：默认 Python 没有 SciPy，程序在 import 阶段就退出，
+没有读取 formal/raw 数据，也没有写结果。随后使用已绑定依赖的项目环境继续同一冻结验证。
+这个错误保留在日志中，但不算一次科学运行。
+
+现在应当准确写成：
+
+```text
+frozen observation-residual control closed
+frozen normal-residual control closed
+all observation-only predictors closed = false
+neural training authorized = false
+algorithm_breakthrough = false
+paper_success = false
+```
+
+这不是“又失败了一次”这么简单。它把后续模型真正需要解决的问题定位得更窄：模型不能
+只追求 coefficient MSE 或 observation residual，而必须从部署可见输入中恢复能守住局部
+三维梯度的系数。下一份最小 predictor 协议只有在结果前冻结输入、同帧三几何同折、
+fold-local preprocessing、逐单元八门和 fail-closed 动作后，才可能获得训练授权。
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_gslb32_analytic_controls_v79_result_2026-07-31.md`
+- `docs/nine_view_gslb32_analytic_controls_v79_public_summary.json`
+- `assets/nine_view_gslb32_analytic_controls_v79.png`

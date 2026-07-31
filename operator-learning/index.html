@@ -340,6 +340,7 @@
       <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
       <a href="#objective-novelty">优化目标与原创性</a>
       <a href="#latest-gate">算法与实验</a>
+      <a href="#analytic-controls-v79">v79 解析映射判决</a>
       <a href="#gslb8-v77">v77 空间修正容量 7/75</a>
       <a href="#obs2d-oracle-v76">v76 二维表示严格 FAIL</a>
       <a href="#external-v75">v75 外部精度 5/75 FAIL</a>
@@ -384,11 +385,13 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-31 · v78</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-31 · v79.2</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v73 与 v74.1 已在五条 PoolFire fit 轨迹、三档已知九视角几何上闭合 <code>1,515/1,515</code> 精度、<code>2A+2A^T</code> 调用和 fresh wall / RSS 正结果；但 v75 的 BLASTNet vitiated H2-air Case 3 外部门只有 <code>5/75</code>，v76 与 v77 又分别关闭二维系数 span 和 8 模态空间修正。v78 保持相同 75 个已开封单元、相同八门与相同 <code>2A+2A^T</code> 在线账，把同一嵌套几何样条空间扩到 32 模态；正式与独立复算一致得到 <code>75 pass / 0 negative / 0 inconclusive</code>。这证明 GSLB32 有表示 headroom，并允许冻结 observation-only 系数预测器协议；但当前没有部署可见映射，冷构造在 25 帧上尚未摊销，也没有新外部、wall/RSS、curved 或真实 BOST 结果。<code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>。</p>
+    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v78 已在相同 75 个已开封 Case 3 单元上证明 GSLB32 具有 <code>75/75</code> truth-aware 表示容量；v79 随即测试两个同为 <code>2A+2A^T</code> 的低成本解析映射。经 v79.2 独立复算，observation-residual projected ridge 完整通过 <code>9/75</code>，normal-residual projected ridge 为 <code>0/75</code>。两者的 observation 两门都是 <code>75/75</code>，但同调用 interior-gradient 只有 <code>12/75</code> 与 <code>2/75</code>。因此当前瓶颈不是观测拟合，而是从可见观测恢复正确的局部三维梯度；这两条解析 control 已关闭，但所有 observation-only predictor 尚未被否定，也未授权神经训练。<code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
+      <a class="button danger" href="#analytic-controls-v79">打开 v79 最新科学判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_gslb32_analytic_controls_v79_result_2026-07-31.md">读 v79 完整证据</a>
       <a class="button primary" href="#gslb32-v78">打开 v78 GSLB32 容量正结果</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_geometry_spline_capacity_v78_result_2026-07-31.md">读 v78 完整证据</a>
       <a class="button danger" href="#gslb8-v77">打开 v77 GSLB8 容量判决</a>
@@ -424,9 +427,13 @@
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
+    <div class="alert critical" style="margin-top:12px;">
+      <strong>v79 最新判决：两条解析 residual 映射均未把 75/75 表示容量变成梯度兼容</strong>
+      <span>Observation-residual control 完整通过 <code>9/75</code>，normal-residual control 为 <code>0/75</code>；两者 observation/K4 与 observation/K2 都是 <code>75/75</code>，但同调用 interior-gradient 只有 <code>12/75</code> 与 <code>2/75</code>。v79.2 独立重写指标与判决并复算 1,200 条 arm rows、300 条 outer rows，最终红队 <code>P0=0 / P1=0</code>。这关闭两个冻结解析 control，不关闭所有 observation-only predictor；神经训练、资源门、Case 4/6 与真实 BOST 均未授权。<a href="#analytic-controls-v79">查看完整证据</a>。</span>
+    </div>
     <div class="alert success" style="margin-top:12px;">
-      <strong>v78 表示容量正结果：GSLB32 75/75 独立复算通过，下一门才是可部署系数映射</strong>
-      <span>32 模态 truth-aware oracle 在三档几何各为 <code>25/25</code>，在线仍是 <code>2A+2A^T</code>；独立程序重跑全部 75 单元与每单元 21 个起点，最大 metric / gate / mode-column 差为 <code>1.33e-14 / 5.37e-11 / 1.55e-13</code>。但冷构造每套几何要 <code>160A+32A^T</code>：当前 25 帧总账为 <code>292</code>，Zero-K4 为 <code>200</code>，至少 48 帧才等权打平。因此它是表示 headroom，不是部署加速。<a href="#gslb32-v78">查看完整证据</a>。</span>
+      <strong>v78 父证据仍成立：GSLB32 75/75 truth-aware 表示容量独立复算通过</strong>
+      <span>v79 没有推翻 v78 的表示 headroom，只证明两个便宜解析映射无法可靠找到那些系数。32 模态 oracle 在三档几何各为 <code>25/25</code>，在线仍是 <code>2A+2A^T</code>；但冷构造每套几何要 <code>160A+32A^T</code>，当前 25 帧还不能写总加速。<a href="#gslb32-v78">查看父证据</a>。</span>
     </div>
     <div class="alert critical" style="margin-top:12px;">
       <strong>v77 空间修正容量负结果：GSLB8 仅 7/75 完整通过，下一门是 GSLB32</strong>
@@ -443,6 +450,9 @@
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button danger" href="#analytic-controls-v79">v79 解析映射 9/75 与 0/75</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_gslb32_analytic_controls_v79_result_2026-07-31.md">v79 完整裁决</a>
+      <a class="button" href="../docs/nine_view_gslb32_analytic_controls_v79_public_summary.json">v79 脱敏结果</a>
       <a class="button primary" href="#gslb32-v78">v78 GSLB32 完整见证 75/75</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_geometry_spline_capacity_v78_result_2026-07-31.md">v78 完整裁决</a>
       <a class="button" href="../docs/nine_view_geometry_spline_capacity_v78_public_summary.json">v78 脱敏结果</a>
@@ -783,6 +793,7 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v79 解析映射 FAIL</span><span class="chip blue">9/75 与 0/75</span></div><h3 style="margin-top:10px;">GSLB32 exact-residual projected ridge controls</h3><p>v78 已证明 32 模态表示有 75/75 truth-aware headroom；v79 再用 observation residual 与 normal residual 直接解同一 32 维系数。两条方法的 observation/K4、observation/K2 都是 75/75，但 equal-call interior-gradient 仅 12/75 与 2/75，完整通过为 9/75 与 0/75。v79.2 独立重写 metric 与八门判决，复算全部 1,200 arm rows 和 300 outer rows。这关闭两个解析 controls，不关闭所有 observation-only predictor，也不授权神经训练。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">最新 · v78 表示容量 PASS</span><span class="chip blue">75 pass + 0 negative</span></div><h3 style="margin-top:10px;">GSLB32 exact-K1 capacity oracle</h3><p>在 v75 已开封的 25 帧 Case 3 与三档冻结几何上，32 个 geometry-only low-observability spline modes 保持 <code>2A+2A^T</code> 在线账，并让全部 75 单元通过 K4 harm 与同调用 K2 的 field / full-gradient / interior-gradient / observation 八门。独立程序重建模态、重跑每单元 21 个起点，得到 <code>75/75</code>。这只证明表示 headroom；可部署 observation-only predictor、冷构造摊销、wall/RSS、Case 4/6 和真实 BOST 均未通过。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v77 空间表示容量 FAIL</span><span class="chip blue">7 pass + 68 negative</span></div><h3 style="margin-top:10px;">GSLB8 exact-K1 capacity oracle</h3><p>v77 跳出 v76 的两个全局系数，改用 8 个 geometry-only low-observability spline modes 产生空间变化 correction，再接一轮未修改 exact CGLS；在线精确账仍为 <code>2A+2A^T</code>。75 个已开封 Case 3 单元仅 7 个找到完整八门见证，68 个在冻结非凸搜索下未找到，0 个数值不确定。field / observation 均为 75/75，但同调用 K2 full-gradient / interior-gradient 仅 27/75 与 7/75。独立程序重建模态并重跑搜索。GSLB8 关闭，只授权预注册 GSLB32 容量门，不授权神经训练。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v76 严格表示负结果</span><span class="chip blue">58 feasible + 17 certified infeasible</span></div><h3 style="margin-top:10px;">Same-budget OBS2D oracle</h3><p>在 v75 已开封的 75 个 Case 3 单元中，truth-aware oracle 搜索整个 <code>span{h,n}</code>，精确账仍为 <code>2A+2A^T</code>。58 个单元有直接可行见证，17 个单元有独立重建后仍严格为正的精确有理数 dual certificate，0 个落入弃权带。oracle 将 joint pass 从当前 q8-K1 的 5 提高到 58，但无法同时守住 K4 observation 与同调用 K2 gradients；同一二维 span 上不再授权更大网络。</p></article>
@@ -824,6 +835,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="analytic-controls-v79" class="alert critical" style="margin-top:13px;">
+        <strong>v79：两个最自然的解析 residual 映射都在三维梯度门失败</strong>
+        <span>v79 保持 v78 的 32 模态、75 个已开封 Case 3 单元、五个连续时间外折、系数球、八门和 <code>2A+2A^T</code> 在线账不变。Observation-residual projected ridge 完整通过 <code>9/75</code>，normal-residual projected ridge 为 <code>0/75</code>；八门通过数分别是 <code>73/75, 75/75, 62/75, 42/75, 55/75, 12/75, 75/75, 75/75</code> 与 <code>49/75, 74/75, 43/75, 16/75, 51/75, 2/75, 75/75, 75/75</code>。因此 measurement fit 已经很好，真正丢失的是局部三维梯度。v79.2 独立重写 metrics/pass logic，复算 1,200 条 arm rows 与 300 条 outer rows，最大 scaled 差为 <code>1.07e-11</code>；三轮红队最终 <code>P0=0 / P1=0</code>。只关闭这两个冻结解析 control，不把负结果扩大到所有 observation-only predictor。<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_gslb32_analytic_controls_v79.png" aria-label="打开 v79 两个解析映射的完整通过数、逐门通过数与失败尾部图">
+          <img src="../assets/nine_view_gslb32_analytic_controls_v79.png" alt="v79 的 observation residual 方法完整通过九个单元，normal residual 方法零个，主要失败在三维梯度门" />
+        </a>
+        <figcaption>A：完整八门通过数为 9/75 与 0/75；B：两条方法都在 observation 两门 75/75，却在 full-gradient 与 interior-gradient 大面积失败；C：maximum normalized gate 的 p50、p90 与最坏值均在失败侧。图中没有神经模型、资源加速、外部泛化或真实 BOST 结论。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button danger" href="../document_reader.html?doc=docs%2Fnine_view_gslb32_analytic_controls_v79_result_2026-07-31.md">读 v79 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_gslb32_analytic_controls_v79_public_summary.json">打开 v79 脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_gslb32_analytic_controls_v79.png">打开 v79 结果图原尺寸</a>
       </div>
       <div id="gslb32-v78" class="alert success" style="margin-top:13px;">
         <strong>v78：GSLB32 在 75/75 已开封单元找到完整见证，表示容量门通过</strong>
