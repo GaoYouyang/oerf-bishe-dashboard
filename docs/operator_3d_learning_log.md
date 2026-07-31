@@ -2936,7 +2936,7 @@ D1/D2 结束时，下一步是把 N4.1 的 30 个已授权数组和 D2 的两个
 
 最终包是 `32 x 256 x 2` float64，23 格来自 H1024 raw subtraction，7 格来自
 H2048 raw subtraction，2 格来自 H8192 paired-Neumaier。整包数组哈希是
-`8d2bba156028e4b14385f5a563d4d7c18817bb17a70dc0856bfeb240e8e765ed`，独立 validator
+`[private digest omitted]`，独立 validator
 重建了 105 个 N4 checkpoint 的 Merkle root、每格身份、数组哈希和 5.835 亿 source-query
 成本账本，最后判决 `D3_VALID_MIXED_RESIDUAL_REFERENCE_ONLY`。
 
@@ -4171,7 +4171,7 @@ checkpoint 也从 1.0 升到 1.1。每条 arm/seed 仍是 epoch 0 到 30 的 31 
 state 接着跑，都会直接停。
 
 本次真实复核分成两层。独立 protocol validator 对当前 config 做了 180 项断言，全部通过；它确认
-canonical config SHA256 是 `7de695ebc419ad2e7a7edba0c10d45b9ff31027a0252c41c2481faf56f4eb085`，
+canonical config SHA256 已在私有证据中绑定，
 scientific case 为 0，L1 route/fresh 文件命中为 0，所有成功 claim 都是 false。随后跑 18 个文件的
 聚焦 pytest，当前结果是 `349 passed`，fit runner、Stage-1/materializer、授权根、evidence packer、implementation gate、checkpoint、
 ledger、normalization、cache、loss、arm 和 protocol 测试都已全绿。
@@ -4190,7 +4190,7 @@ test results 和 raw JUnit 四类输入。换句话说，旧工程报告有机�
 
 现在 protocol 1.3 明确冻结六项输入清单，并要求 implementation report 使用 1.1 schema、独立 validation
 使用 1.0 schema、至少 57 项断言，而且必须在授权所指向的干净 commit 上重跑。canonical hash 因此更新为
-`7de695ebc419ad2e7a7edba0c10d45b9ff31027a0252c41c2481faf56f4eb085`；协议仍为 180 项断言，完整聚焦回归为
+该私有 config SHA256；协议仍为 180 项断言，完整聚焦回归为
 `349 passed`。fit runner 的测试还故意把真实 `AdamW.step()` 设为硬失败，所以这些数字只说明调度、
 授权、调用账本、checkpoint 和负向门可工作，不说明模型已经训练。
 
@@ -4222,7 +4222,7 @@ calibration、Stage-1 source inventory，以及前后 optimizer step 都为 0。
 第三个修复是证据链。protocol report、test manifest、test results、raw JUnit、implementation report、
 independent validation 六份原件都会进入包；validation 同时绑定 report 文件字节 hash 与规范 JSON hash。
 现在 18 文件聚焦回归是 `349 passed`，协议是 180 项，规范配置 hash 是
-`7de695ebc419ad2e7a7edba0c10d45b9ff31027a0252c41c2481faf56f4eb085`。
+同一份私有 config SHA256。
 
 下一次真正有科学信息的动作不是继续扩建门禁，而是把
 `docs/n5_d5_advisor_first_contact_2026-07-19.md` 发给何远哲师兄，确认真实 forward callable、curved/straight
@@ -4284,7 +4284,7 @@ run/arm/seed/epoch、sequence、cluster、role、operation、purpose、batch siz
 再把每 epoch 推导出的八个逻辑 steps 与 checkpoint 对上。只改 checkpoint 自报 hash 或清空 events 都过不了。
 
 18 文件聚焦回归从 349 增加到 `361 passed`，protocol validator 仍为 180 项，规范配置 hash 仍为
-`7de695ebc419ad2e7a7edba0c10d45b9ff31027a0252c41c2481faf56f4eb085`。这仍只是当前工作树回归，正式
+同一份私有 config SHA256。这仍只是当前工作树回归，正式
 Stage 1 还要在干净 commit 上重建 raw JUnit 与证据包。
 
 剩下的 P0 是 epoch 跨事务恢复：参数更新、ledger、checkpoint、anchor 还不是一次可恢复提交。现在先把桌面
@@ -10907,3 +10907,61 @@ fold-local preprocessing、逐单元八门和 fail-closed 动作后，才可能�
 - `docs/nine_view_gslb32_analytic_controls_v79_result_2026-07-31.md`
 - `docs/nine_view_gslb32_analytic_controls_v79_public_summary.json`
 - `assets/nine_view_gslb32_analytic_controls_v79.png`
+
+## 2026-07-31：v80 说明“能学到一部分”还不等于可以部署
+
+v79 只测试了两个解析 residual 映射，所以不能据此说 observation-only 学习没有希望。
+v80 把这个问题变成了一个更严格但仍很小的确定性学习实验：同一 25 帧 Case 3、三档几何，
+每一帧的三套几何保持在同一个连续时间折里，并留一帧 embargo；所有 normalization、模型与
+超参数选择都只使用当前 fit 帧。
+
+部署输入不看真值，也不看第一次 exact forward 后才能得到的 residual。它只有：
+
+```text
+U^T h                        32 维
+(AU)^T y                     32 维
+(AU)^T r_q8                  32 维
+四个可见量的 log1p norm       4 维
+几何专属模型                  100 维
+共享模型再加 geometry one-hot  103 维
+```
+
+我没有直接上神经网络，而是按难度依次跑 mean、linear ridge、RBF KRR。结果是：
+
+```text
+                         mean    linear    RBF
+shared + geometry ID     50/75   51/75    58/75
+geometry-specific        50/75   49/75    58/75
+```
+
+RBF 确实比 v79 的 9/75 有明显进步，说明这些部署可见特征里不是完全没有信息。但合同要求
+75/75，因为任一工况帧伤害三维场或观测都不能被平均分掩盖。共享 RBF 的 17 个失败里，9 个
+只失败在 observation 相对 Zero-K4 不伤害，4 个只失败在同调用 interior-gradient；其余 4 个
+含 full-gradient 或多门联合失败。最难的 F30+ 仍只有 16/25。
+
+独立程序重新做了嵌套选择、预测、投影、物理指标和八门判断。450 份 raw prediction、投影后
+prediction 和 metrics 的最大差都是 0，gate 最大差是 `5.55e-16`。把 held-out 系数标签改掉
+以后，冻结 predictor API 输出变化也是 0。这里证明的是 API 级标签不干扰，不冒充整个进程从未
+读取相应文件。
+
+现在的准确结论是：
+
+```text
+constant / linear ridge / RBF KRR under the frozen v80 contract = closed
+all observation-only predictors closed = false
+larger neural model on the same target authorized = false
+online exact calls = 2A + 2A^T
+algorithm_breakthrough = false
+paper_success = false
+```
+
+这一步最重要的不是 58 这个数字，而是策略发生了变化。v78 的 oracle witness 可能不是唯一、
+连续或最容易从观测识别的一组系数。下一步先检查“相近观测特征是否对应跳变系数”，再尝试定义
+更规范的可行监督目标，或让表示本身随 observation 调整。只有一个小型确定性 sentinel 能先
+稳定全覆盖，才值得训练神经模型；否则堆容量只会掩盖目标歧义。
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_gslb32_strict_observation_krr_v80_result_2026-07-31.md`
+- `docs/nine_view_gslb32_strict_observation_krr_v80_public_summary.json`
+- `assets/nine_view_gslb32_strict_observation_krr_v80.png`
