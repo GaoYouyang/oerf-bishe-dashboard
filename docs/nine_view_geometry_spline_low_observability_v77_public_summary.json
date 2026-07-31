@@ -1,0 +1,144 @@
+{
+  "dataset_scope": {
+    "case4_or_case6_opened": false,
+    "cell_count": 75,
+    "frame_count": 25,
+    "known_geometry_count": 3,
+    "name": "BLASTNet vitiated H2-air Case 3",
+    "role": "already-open development-only mechanism diagnostic"
+  },
+  "decision": {
+    "algorithm_breakthrough": false,
+    "all_75_pass_required": true,
+    "confirmatory_or_external_claim_allowed": false,
+    "deployment_rule_found": false,
+    "gslb32_capacity_stage_authorized": true,
+    "gslb8_closed_under_frozen_search": true,
+    "inconclusive_count": 0,
+    "negative_count": 68,
+    "neural_training_authorized": false,
+    "paper_success": false,
+    "pass_count": 7,
+    "real_bost": false,
+    "resource_stage_authorized": false
+  },
+  "exact_call_ledger_per_cell": {
+    "coefficient_search_additional_exact_A": 0,
+    "coefficient_search_additional_exact_AT": 0,
+    "gslb8_online_exact_A": 2,
+    "gslb8_online_exact_AT": 2,
+    "zero_k2_exact_A": 2,
+    "zero_k2_exact_AT": 2,
+    "zero_k4_exact_A": 4,
+    "zero_k4_exact_AT": 4
+  },
+  "gate_pass_counts": {
+    "field_harm_vs_zero_k4": 75,
+    "field_vs_equal_call_zero_k2": 75,
+    "full_gradient_harm_vs_zero_k4": 56,
+    "full_gradient_vs_equal_call_zero_k2": 27,
+    "interior_gradient_harm_vs_zero_k4": 74,
+    "interior_gradient_vs_equal_call_zero_k2": 7,
+    "observation_harm_vs_zero_k4": 75,
+    "observation_vs_equal_call_zero_k2": 75
+  },
+  "independent_validation": {
+    "all_declared_starts_and_conditionally_triggered_restarts_rerun": true,
+    "end_to_end_physics_independence_proven": false,
+    "formal_optimizer_helper_imported": false,
+    "formal_payloads_unchanged": true,
+    "formal_runner_imported": false,
+    "formal_spline_or_mode_helper_imported": false,
+    "maximum_best_coefficient_difference_diagnostic_only": 5.284342935646391e-06,
+    "maximum_gate_recomputation_difference": 1.2022827178270745e-11,
+    "maximum_metric_recomputation_difference": 1.7763568394002505e-14,
+    "maximum_projector_spectral_distance": 2.0164641348176964e-13,
+    "raw_payloads_unchanged": true,
+    "shared_low_level_geometry_operator_kernels": true
+  },
+  "independent_validation_status": "PASS_INDEPENDENT_RECOMPUTATION_GSLB8_V77",
+  "interpretation": {
+    "next_valid_direction": "Run only the preregistered GSLB32 capacity stage on the same already-open development cells. Do not train a neural predictor, open another case, or run wall/RSS until a representation passes all 75 cells.",
+    "what_closed": "The eight-mode geometry-only low-observability spline correction did not contain a passing witness in every opened cell under the frozen search and coefficient cap.",
+    "what_did_not_fail": [
+      "the preregistered 32-mode and 127-mode capacity stages",
+      "all field-space learned warm initializers",
+      "curved-ray reconstruction",
+      "real BOST reconstruction"
+    ],
+    "why_it_failed": "The best GSLB8 candidates preserved field and observation in all 75 cells, but only 27/75 matched the equal-call Zero-K2 full-gradient target and only 7/75 matched its interior-gradient target."
+  },
+  "metric_ratios_overall": {
+    "field_vs_equal_call_zero_k2": {
+      "p50": 0.9677811376459999,
+      "p90_higher": 0.9858198677472911,
+      "worst": 0.9968185395248972
+    },
+    "full_gradient_vs_equal_call_zero_k2": {
+      "p50": 1.0038683258309113,
+      "p90_higher": 1.0110539975214523,
+      "worst": 1.0244076191309688
+    },
+    "interior_gradient_vs_equal_call_zero_k2": {
+      "p50": 1.0112022116041262,
+      "p90_higher": 1.0240941322512511,
+      "worst": 1.046011428386272
+    },
+    "observation_vs_equal_call_zero_k2": {
+      "p50": 0.6298798176668369,
+      "p90_higher": 0.6980361408497305,
+      "worst": 0.7426900102944702
+    }
+  },
+  "per_scenario": [
+    {
+      "best_maximum_gate": {
+        "p50": 0.03332734870045462,
+        "p90_higher": 0.07114857044527323,
+        "worst": 0.09413990831479824
+      },
+      "negative_count": 22,
+      "pass_count": 3,
+      "scenario": "F12+"
+    },
+    {
+      "best_maximum_gate": {
+        "p50": 0.028752005968862848,
+        "p90_higher": 0.047694489955416364,
+        "worst": 0.08963549007388227
+      },
+      "negative_count": 23,
+      "pass_count": 2,
+      "scenario": "F15+"
+    },
+    {
+      "best_maximum_gate": {
+        "p50": 0.012951995586512943,
+        "p90_higher": 0.024021009796424186,
+        "worst": 0.04624076803811761
+      },
+      "negative_count": 23,
+      "pass_count": 2,
+      "scenario": "F30+"
+    }
+  ],
+  "representation": {
+    "coefficient_dimension": 8,
+    "formula": "x0=h+U_g,8*a, followed by one unchanged exact CGLS step",
+    "geometry_only_basis": true,
+    "name": "GSLB8 exact-K1",
+    "online_same_budget_2A_2AT": true,
+    "truth_used": "only by the post-open coefficient oracle",
+    "unopened_data_used": false
+  },
+  "repair_and_audit_boundary": {
+    "final_tolerance_changed": false,
+    "old_formal_rows_reused": false,
+    "repairs_changed_data_representation_rank_radius_starts_gates_controls_or_calls": false,
+    "summary": "Three post-open numerical/validator repairs were disclosed. The final repair replaced a cancellation-prone projector-distance formula with a mathematically equivalent stable orthogonal-residual formula while keeping the frozen tolerance and rerunning formal plus independent validation from scratch."
+  },
+  "result_date": "2026-07-31",
+  "schema_version": "oerf-v77-gslb8-public-summary-1",
+  "scientific_question": "At the unchanged 2A+2A^T online budget, does an eight-mode geometry-only low-observability spline correction plus one unchanged CGLS step contain a direct witness satisfying all frozen field, full-gradient, interior-gradient and observation gates in every one of the 75 already-open Case 3 cells?",
+  "scientific_status": "NO_ALL_CELL_GSLB8_WITNESS_UNDER_FROZEN_SEARCH_V77"
+}

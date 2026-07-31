@@ -10689,3 +10689,85 @@ truth-aware capacity gate；Case 3 从此只作 development，另一个未打开
 - `docs/nine_view_obs2d_oracle_v76_result_2026-07-31.md`
 - `docs/nine_view_obs2d_oracle_v76_public_summary.json`
 - `assets/nine_view_obs2d_oracle_v76.png`
+
+## 2026-07-31：v77 第一次真的做了空间修正，但 GSLB8 只有 7/75
+
+v76 关掉的是两个全局系数。它告诉我们：不管系数网络多强，只要最后答案仍
+被限制在 `span{h,n}`，17 个单元就严格没有解。所以 v77 没有再训练一个更大
+MLP，而是先换表示。
+
+这次把三维场内部放了一套很粗的 spline 控制格，并用边界置零与零均值约束
+去掉不合理自由度。每档冻结几何再按“同样的内部梯度能量，谁最不容易被
+observation 看见”排序，取前 8 个空间模态：
+
+```text
+x0 = h + U_g,8 a
+x1 = one unchanged CGLS step from x0
+```
+
+这里的 `a` 仍由看得见真值的 oracle 选择。原因很简单：如果 oracle 都找不到
+合格系数，就不值得先训练一个只看 observation 的网络。
+
+正式结果：
+
+```text
+完整八门见证       7 / 75
+冻结搜索 negative 68 / 75
+数值不确定          0 / 75
+```
+
+真正有信息的不是只有“7/75”，而是各门的拆解：
+
+```text
+field / K4, K2             75 / 75, 75 / 75
+observation / K4, K2       75 / 75, 75 / 75
+full-gradient / K4, K2     56 / 75, 27 / 75
+interior-gradient / K4, K2 74 / 75,  7 / 75
+```
+
+所以空间变化 correction 的方向不是完全错。它把 observation residual 压得
+很明显，field 也全部优于同调用 K2；但 8 个模态没有足够容量恢复局部梯度。
+对 BOST 来说，梯度不能被当成次要指标，因为背景点位移正是由折射率梯度驱动。
+
+这次也要准确区分 v76 与 v77：
+
+- v76 的 17 个失败有数学上的 exact infeasibility certificate；
+- v77 是非凸搜索，68 个 negative 只表示冻结的 12 个起点和条件重启没有找到
+  见证，不证明 GSLB8 在数学上绝对无解；
+- 但结果前合同要求 75/75 才允许训练，所以 7/75 已足以停止 GSLB8 predictor。
+
+独立 validator 没有导入正式 runner、optimizer helper 或 spline/mode helper，
+重新构造三档模态并重跑全部声明起点与条件重启：
+
+```text
+maximum metric difference       1.7764e-14
+maximum gate difference         1.2023e-11
+stable projector distance       2.0165e-13
+formal/raw payload unchanged    true
+```
+
+中间暴露了三处数值/验证问题：一次有限非成功 endpoint 的确定性重启、一个
+过严的 provenance gate 比较，以及 `sqrt(1-sigma^2)` 在子空间几乎相同时的
+消减误差。每次只修明确缺陷，数据、表示、rank、系数球、起点、八门、controls
+和调用账都没动；最后从头重跑 formal 与独立验证，没有复用旧行。
+
+现在的结论不是“空间修正失败”，而是：
+
+```text
+GSLB8 closed under frozen search
+GSLB32 capacity stage authorized
+neural training not authorized
+resource stage not authorized
+algorithm_breakthrough=false
+paper_success=false
+```
+
+下一步只把同一套嵌套模态从 8 增到预注册的 32，仍保持相同 75 个 development
+单元、相同八门和 `2A+2A^T`。如果 32 模态仍不能 75/75，就继续按合同判断
+表示容量，而不是靠更大网络掩盖。
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_geometry_spline_low_observability_v77_result_2026-07-31.md`
+- `docs/nine_view_geometry_spline_low_observability_v77_public_summary.json`
+- `assets/nine_view_geometry_spline_low_observability_v77.png`

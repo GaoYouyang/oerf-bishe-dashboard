@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>C 路线：算子学习 Warm Start × 三维 BOST | Gao Youyang</title>
-  <meta name="description" content="OERF 三维 BOST 算子学习 C 路线：PoolFire 内部精度与资源证据、BLASTNet 外部失败、v76 同预算二维表示严格不可行证书，以及下一步 field-space warm correction。" />
+  <meta name="description" content="OERF 三维 BOST 算子学习 C 路线：PoolFire 内部精度与资源证据、BLASTNet 外部失败、v76 二维表示严格不可行证书，以及 v77 空间变化 GSLB8 容量负结果。" />
   <style>
     :root {
       --ink: #17252b;
@@ -340,6 +340,7 @@
       <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
       <a href="#objective-novelty">优化目标与原创性</a>
       <a href="#latest-gate">算法与实验</a>
+      <a href="#gslb8-v77">v77 空间修正容量 7/75</a>
       <a href="#obs2d-oracle-v76">v76 二维表示严格 FAIL</a>
       <a href="#external-v75">v75 外部精度 5/75 FAIL</a>
       <a href="#loaded-artifact-fresh-resource-v74-1">v74.1 完整 fresh 资源 PASS</a>
@@ -383,11 +384,13 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-31 · v76</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-31 · v77</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v73 与 v74.1 已在五条 PoolFire fit 轨迹、三档已知九视角几何上闭合 <code>1,515/1,515</code> 精度、<code>2A+2A^T</code> 调用和 fresh wall / RSS 正结果；但 v75 的 BLASTNet vitiated H2-air Case 3 外部门只有 <code>5/75</code>。v76 随后在完全相同的 <code>2A+2A^T</code> 预算下，让 truth-aware oracle 搜索整个 <code>span{h,n}</code>：<code>58/75</code> 有严格可行见证，<code>17/75</code> 有独立验证的精确不可行证书。任何只在这两个方向里预测系数的网络都无法通过完整合同，因此该二维表示正式关闭；下一步必须产生空间变化的 field correction，而不是继续放大同类系数网络。<code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>。</p>
+    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v73 与 v74.1 已在五条 PoolFire fit 轨迹、三档已知九视角几何上闭合 <code>1,515/1,515</code> 精度、<code>2A+2A^T</code> 调用和 fresh wall / RSS 正结果；但 v75 的 BLASTNet vitiated H2-air Case 3 外部门只有 <code>5/75</code>。v76 随后用精确证书关闭了两系数 <code>span{h,n}</code>。v77 第一次改成空间变化的三维修正：在相同 <code>2A+2A^T</code> 预算下，让 truth-aware oracle 搜索 8 个 geometry-only low-observability spline modes，再接一轮未修改 CGLS。它让 field / observation 在 <code>75/75</code> 单元守门，却只有 <code>27/75</code> 匹配同调用 K2 的 full-gradient、<code>7/75</code> 匹配 interior-gradient，最终完整见证仅 <code>7/75</code>。GSLB8 因此关闭，只允许预注册的 GSLB32 容量测试；尚未授权神经训练、资源门或新外部数据。<code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
+      <a class="button danger" href="#gslb8-v77">打开 v77 GSLB8 容量判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_geometry_spline_low_observability_v77_result_2026-07-31.md">读 v77 完整证据</a>
       <a class="button danger" href="#obs2d-oracle-v76">打开 v76 严格不可行证据</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_obs2d_oracle_v76_result_2026-07-31.md">读 v76 完整证据</a>
       <a class="button primary" href="#external-v75">打开 v75 外部负结果</a>
@@ -420,6 +423,10 @@
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert critical" style="margin-top:12px;">
+      <strong>v77 空间修正容量负结果：GSLB8 仅 7/75 完整通过，下一门是 GSLB32</strong>
+      <span>8 模态 spline correction 的 truth-aware oracle 保持 <code>2A+2A^T</code> 在线预算；field 与 observation 八门各为 <code>75/75</code>，但相对同调用 Zero-K2 的 full-gradient 只有 <code>27/75</code>、interior-gradient 只有 <code>7/75</code>。独立程序重建三档模态并重跑全部声明起点和条件重启，最大 metric / gate / projector 差为 <code>1.78e-14 / 1.20e-11 / 2.02e-13</code>。这足以按预注册规则关闭 GSLB8，但不是数学不可行证明；只允许继续 GSLB32，不允许直接训练网络。<a href="#gslb8-v77">查看完整证据</a>。</span>
+    </div>
+    <div class="alert critical" style="margin-top:12px;">
       <strong>v76 严格负结果：同预算二维 observation span 有 17/75 个单元不可行</strong>
       <span>truth-aware oracle 在每个单元搜索 <code>x(c)=c1 h+c2 n</code>，搜索本身不增加精确调用；75 个单元中 <code>58</code> 个存在严格负裕量见证，<code>17</code> 个由精确有理数 dual lower bound 证明交集为空，<code>0</code> 个数值不确定。独立重建最大差 <code>4.80e-14</code>。这关闭的是 <code>span{h,n}</code> 系数预测器，不是所有 learned warm start；Case 4/6、资源门和大网络均未启动。<a href="#obs2d-oracle-v76">查看完整证据</a>。</span>
     </div>
@@ -430,6 +437,9 @@
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button danger" href="#gslb8-v77">v77 GSLB8 完整见证 7/75</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_geometry_spline_low_observability_v77_result_2026-07-31.md">v77 完整裁决</a>
+      <a class="button" href="../docs/nine_view_geometry_spline_low_observability_v77_public_summary.json">v77 脱敏结果</a>
       <a class="button danger" href="#obs2d-oracle-v76">v76 二维表示 17/75 严格不可行</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_obs2d_oracle_v76_result_2026-07-31.md">v76 完整裁决</a>
       <a class="button" href="../docs/nine_view_obs2d_oracle_v76_public_summary.json">v76 脱敏结果</a>
@@ -764,6 +774,7 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v77 空间表示容量 FAIL</span><span class="chip blue">7 pass + 68 negative</span></div><h3 style="margin-top:10px;">GSLB8 exact-K1 capacity oracle</h3><p>v77 跳出 v76 的两个全局系数，改用 8 个 geometry-only low-observability spline modes 产生空间变化 correction，再接一轮未修改 exact CGLS；在线精确账仍为 <code>2A+2A^T</code>。75 个已开封 Case 3 单元仅 7 个找到完整八门见证，68 个在冻结非凸搜索下未找到，0 个数值不确定。field / observation 均为 75/75，但同调用 K2 full-gradient / interior-gradient 仅 27/75 与 7/75。独立程序重建模态并重跑搜索。GSLB8 关闭，只授权预注册 GSLB32 容量门，不授权神经训练。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v76 严格表示负结果</span><span class="chip blue">58 feasible + 17 certified infeasible</span></div><h3 style="margin-top:10px;">Same-budget OBS2D oracle</h3><p>在 v75 已开封的 75 个 Case 3 单元中，truth-aware oracle 搜索整个 <code>span{h,n}</code>，精确账仍为 <code>2A+2A^T</code>。58 个单元有直接可行见证，17 个单元有独立重建后仍严格为正的精确有理数 dual certificate，0 个落入弃权带。oracle 将 joint pass 从当前 q8-K1 的 5 提高到 58，但无法同时守住 K4 observation 与同调用 K2 gradients；同一二维 span 上不再授权更大网络。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v75 外部精度 FAIL</span><span class="chip blue">独立复算 75 cells</span></div><h3 style="margin-top:10px;">BLASTNet vitiated H2-air Case 3</h3><p>结果前预选的 25 帧外部 DNS 在三档冻结九视角几何上形成 75 个单元，完整合同只有 5/75 通过。候选相对 Zero-K4 的四项 joint harm 为 74/75，但相对同调用 Zero-K2 的 interior-gradient 只有 5/75，70 个单元失败；field / observation 则均为 75/75。资源阶段没有启动，固定 PoolFire loaded q8 因子原样跨族的支线关闭，algorithm_breakthrough=false。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">最新 · v74.1 Stage C PASS</span><span class="chip blue">fresh wall 与三层 RSS</span></div><h3 style="margin-top:10px;">Loaded artifact full resource gate</h3><p>v73 的 1,515/1,515 精度父门不变；v74.1 用 30 个 reference、330 个 fresh timing worker 与 165 个完整配对区组正式比较 loaded q8-K1 和 Zero-K4。候选精确调用各减半，wall p50/p90 ratio 为 0.56507/0.57440，worker-self、worker-tree、pipeline RSS p90 为 1.03456/1.01971/1.01409，全部通过。独立重放 3,030 帧最大差 0。范围仍是已开封 PoolFire fit family、已知几何、无噪声 straight-ray 代理，algorithm_breakthrough=false。</p></article>
@@ -803,6 +814,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="gslb8-v77" class="alert critical" style="margin-top:13px;">
+        <strong>v77：空间变化 GSLB8 只有 7/75 个完整见证，8 模态容量支线关闭</strong>
+        <span>v77 没有打开新工况，也没有训练网络。它在 v75 已开封的 25 帧 Case 3 与三档冻结几何上，把 v76 的两个全局方向换成受边界、零均值 gauge 与几何可观测性排序约束的 8 个三维 spline modes；truth-aware oracle 为每个单元搜索系数，再从 <code>x0=h+U_g,8 a</code> 运行一轮未修改 CGLS。在线精确账仍为 <code>2A+2A^T</code>，搜索额外调用为 <code>0A+0A^T</code>。正式与独立复算一致得到 <code>7</code> 个完整见证、<code>68</code> 个冻结搜索 negative、<code>0</code> 个 inconclusive；F12+/F15+/F30+ 分别通过 <code>3/2/2</code>。八门通过数为 K4 的 field/full-gradient/interior-gradient/observation <code>75/56/74/75</code>，同调用 K2 为 <code>75/27/7/75</code>。独立路径重建三档模态、重跑全部声明起点和条件重启，最大 metric、gate 与稳定 projector 差为 <code>1.78e-14 / 1.20e-11 / 2.02e-13</code>。这说明 8 模态能显著守住 field / observation，却没有足够局部梯度容量。68 个 negative 不是数学不可行证书，但已足以按结果前规则关闭 GSLB8；下一步只允许预注册 GSLB32，不授权神经训练、资源门、Case 4/6 或真实 BOST。<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_geometry_spline_low_observability_v77.png" aria-label="打开 v77 GSLB8 三档几何通过数、逐门通过数、同调用误差比和最大门尾部图">
+          <img src="../assets/nine_view_geometry_spline_low_observability_v77.png" alt="v77 三档几何各只有二到三个完整见证，同调用内部梯度仅七十五个单元中的七个通过" />
+        </a>
+        <figcaption>A：三档几何都远未达到 25/25；B：field 与 observation 全过，梯度尤其 interior-gradient 是瓶颈；C：相对同调用 K2，observation 明显改善但 gradient 尾部超过 1；D：各几何典型最佳候选仍在完整门外。negative 只表示冻结非凸搜索未找到见证，不是数学不可行证明。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_geometry_spline_low_observability_v77_result_2026-07-31.md">读 v77 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_geometry_spline_low_observability_v77_public_summary.json">打开 v77 脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_geometry_spline_low_observability_v77.png">打开 v77 结果图原尺寸</a>
       </div>
       <div id="obs2d-oracle-v76" class="alert critical" style="margin-top:13px;">
         <strong>v76：二维 <code>span{h,n}</code> 在 17/75 个单元严格不可行，系数网络支线关闭</strong>
