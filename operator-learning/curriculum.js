@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.31-c-v80.1-strict-observation-negative",
-  previousVersion: "2026.07.31-c-v79.2-analytic-controls-negative",
-  previousBadge: "v79.2 analytic controls · 9 / 75 and 0 / 75 FAIL",
-  olderBadge: "v78 GSLB32 · 75 / 75 representation headroom PASS",
+  version: "2026.08.01-c-v81-target-stability-audit",
+  previousVersion: "2026.07.31-c-v80.1-strict-observation-negative",
+  previousBadge: "v80 strict observation-only RBF · 58 / 75 FAIL",
+  olderBadge: "v79.2 analytic controls · 9 / 75 and 0 / 75 FAIL",
   historyReleases: [
+    {
+      version: "2026.07.31-c-v80.1-strict-observation-negative",
+      previousVersion: "2026.07.31-c-v79.2-analytic-controls-negative",
+      badge: "v80 strict observation-only RBF · 58 / 75 FAIL"
+    },
     {
       version: "2026.07.31-c-v79.2-analytic-controls-negative",
       previousVersion: "2026.07.31-c-v78-gslb32-capacity-pass",
@@ -149,7 +154,7 @@ window.OPERATOR_LEARNING_GUIDE = {
       badge: "v16.1 resource · wall headroom, CPU/RSS FAIL"
     }
   ],
-  updated: "2026-07-31",
+  updated: "2026-08-01",
   foundationChecks: [
     {
       id: "python-array",
@@ -523,6 +528,7 @@ window.OPERATOR_LEARNING_GUIDE = {
     }
   ],
   resources: [
+    {id:"nine-view-gslb32-target-stability-v81",stage:"warm-start",level:"必做",type:"最新失败归因审计",title:"v81：1575 个端点排除随机起点漂移主因",url:"../document_reader.html?doc=docs%2Fnine_view_gslb32_target_stability_v81_result_2026-08-01.md",local:"../docs/nine_view_gslb32_target_stability_v81_public_summary.json",read:"先回看 v78 的 truth-aware 75/75 与 v80 的 observation-only 58/75，再比较每个单元 21 个封存端点的最大距离和 v80 RBF 预测误差。重点理解 p50/p90/worst 只有 0.00662%/0.01197%/0.01898%，为何足以关闭数值起点不稳定，却不能关闭替代目标的概念多解。",output:"不用页面解释：为什么 v81 不做新训练也能改变研究决策；为什么下一步从同目标 canonicalization 转向 observation-adaptive representation；为什么这仍不是算法突破、外部泛化或真实 BOST。",verified:"V78_MULTISTART_VARIABILITY_BELOW_0P1_PERCENT_OF_V80_MISS_V81；PASS_INDEPENDENT_RECOMPUTATION_TARGET_STABILITY_V81；75 cells / 1575 endpoints；algorithm_breakthrough=false"},
     {id:"nine-view-gslb32-strict-observation-krr-v80",stage:"warm-start",level:"必做",type:"最新严格可学习性负结果",title:"v80：严格 observation-only RBF 到 58/75，仍未全覆盖",url:"../document_reader.html?doc=docs%2Fnine_view_gslb32_strict_observation_krr_v80_result_2026-07-31.md",local:"../docs/nine_view_gslb32_strict_observation_krr_v80_public_summary.json",read:"先区分 v78 的 truth-aware 75/75 表示容量与 v80 的部署可见系数预测。比较 shared / geometry-specific 两种策略下 mean、linear ridge、RBF KRR 的 50/51/58 与 50/49/58；再看共享 RBF 八门 74/74/73/71/75/68/65/75，理解 17 个失败为何仍足以拒绝部署。",output:"不用页面解释：为什么 58/75 是有学习信号的负结果；为什么它只关闭固定 100/103 维特征、原始 v78 witness 目标与三类确定性模型；为什么下一步先查目标规范化和 observation-adaptive 表示，而不是直接扩大网络。",verified:"NO_FROZEN_STRICT_OBSERVATION_MODEL_PASSES_ALL_75_V80；PASS_INDEPENDENT_RECOMPUTATION_STRICT_OBSERVATION_KRR_V80；best 58/75；neural_training_authorized=false；algorithm_breakthrough=false"},
     {id:"nine-view-gslb32-analytic-controls-v79",stage:"warm-start",level:"必做",type:"最新解析映射负结果",title:"v79：观测拟合 75/75，三维梯度兼容仍失败",url:"../document_reader.html?doc=docs%2Fnine_view_gslb32_analytic_controls_v79_result_2026-07-31.md",local:"../docs/nine_view_gslb32_analytic_controls_v79_public_summary.json",read:"先从 v78 的 truth-aware 75/75 表示 headroom 出发，再写出 observation residual r_h=y-Ah、normal residual n_h=A^T(y-Ah) 以及两条 U32 projected ridge。逐项比较 9/75 与 0/75 完整通过、两条 observation 门 75/75，以及 equal-call interior-gradient 12/75 与 2/75。",output:"不用页面解释：为什么观测残差更小不等于三维梯度更准；为什么 v79 只关闭两个冻结解析 control，而不关闭所有 observation-only predictor；为什么 v79 仍不授权神经训练、wall/RSS、Case4/6 或真实 BOST。",verified:"NO_PRIMARY_OR_SECONDARY_ANALYTIC_CONTROL_PASSES_ALL_75_V79；PASS_INDEPENDENT_RECOMPUTATION_ANALYTIC_CONTROLS_V79_2；9/75 and 0/75；algorithm_breakthrough=false"},
     {id:"nine-view-geometry-spline-capacity-v78",stage:"warm-start",level:"必做",type:"最新表示容量正结果",title:"v78 GSLB32：75/75 表示 headroom 与冷构造边界",url:"../document_reader.html?doc=docs%2Fnine_view_geometry_spline_capacity_v78_result_2026-07-31.md",local:"../docs/nine_view_geometry_spline_capacity_v78_public_summary.json",read:"先比较 v77 GSLB8 的 7/75 与 v78 GSLB32 的 75/75，再写出 x0=h+U_g,32 a 和一轮未修改 CGLS。重点核对同调用 K2 四项 worst、独立复算差值，以及 160A+32A^T 冷构造为何让当前 25 帧总账仍比 Zero-K4 高 46%。",output:"不用页面解释：v78 为什么是表示容量正结果而不是部署算法；为什么只授权冻结 observation-only predictor 协议；为什么下一步必须先跑 analytic U32 ridge、normal-image control 和 grouped-fold 最小线性头。",verified:"PASS_GSLB32_REPRESENTATION_HEADROOM_ALL_75_V78；PASS_INDEPENDENT_RECOMPUTATION_GSLB32_V78；75 pass / 0 negative / 0 inconclusive；algorithm_breakthrough=false"},
