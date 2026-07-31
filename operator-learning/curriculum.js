@@ -1,9 +1,24 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.07.31-c-v70.1-resource-fail-v71-tile-stop",
-  previousVersion: "2026.07.31-c-v70-tiled-p0-stage-b-pass",
-  previousBadge: "v70 tiled p0 · 1,515 / 1,515 Stage B PASS",
-  olderBadge: "v66.1 target scale · Stage A PASS",
+  version: "2026.07.31-c-v74.1-loaded-artifact-fresh-resource-pass",
+  previousVersion: "2026.07.31-c-v73-loaded-artifact-stage-b-pass",
+  previousBadge: "v73 loaded artifact · 1,515 / 1,515 Stage B PASS",
+  olderBadge: "v72 loaded artifact · single-stream online wall/RSS PASS",
   historyReleases: [
+    {
+      version: "2026.07.31-c-v73-loaded-artifact-stage-b-pass",
+      previousVersion: "2026.07.31-c-v72-loaded-artifact-online-headroom",
+      badge: "v73 loaded artifact · 1,515 / 1,515 Stage B PASS"
+    },
+    {
+      version: "2026.07.31-c-v72-loaded-artifact-online-headroom",
+      previousVersion: "2026.07.31-c-v70.1-resource-fail-v71-tile-stop",
+      badge: "v72 loaded artifact · online wall/RSS development PASS"
+    },
+    {
+      version: "2026.07.31-c-v70.1-resource-fail-v71-tile-stop",
+      previousVersion: "2026.07.31-c-v70-tiled-p0-stage-b-pass",
+      badge: "v70.1 fresh resource · wall PASS / RSS FAIL; v71 tile stop"
+    },
     {
       version: "2026.07.31-c-v70-tiled-p0-stage-b-pass",
       previousVersion: "2026.07.31-c-v68.3-fresh-resource-mixed",
@@ -483,6 +498,7 @@ window.OPERATOR_LEARNING_GUIDE = {
     }
   ],
   resources: [
+    {id:"nine-view-loaded-artifact-fresh-resource-v74-1",stage:"warm-start",level:"必做",type:"正式资源裁决",title:"v74.1 加载工件多轨迹 fresh wall / RSS 正结果",url:"../document_reader.html?doc=docs%2Fnine_view_loaded_artifact_fresh_resource_v74_1_result_2026-07-31.md",local:"../docs/nine_view_loaded_artifact_fresh_resource_v74_1_public_summary.json",read:"先核对 v73 的 1,515/1,515 精度父门，再读 30 reference、330 fresh timing worker、165 随机相邻完整区组和独立 3,030 帧重放。重点区分精确调用减半、wall p50 约下降 43.49%、三类 RSS p90 通过，与 worker-self/worker-tree worst 仍超过 1.05 的边界。",output:"不用页面解释 v74.0 为什么 invalid、v74.1 为什么没有复用旧行、通过的是哪几个预注册资源门，以及为什么当前仍不能称 external-family、curved-ray、真实 BOST、神经算子或算法突破。",verified:"PASS_LOADED_ARTIFACT_FRESH_RESOURCE_STAGE_C_V74_1；PASS_INDEPENDENT_VALIDATION_LOADED_ARTIFACT_FRESH_RESOURCE_V74_1；2A+2A^T 对 4A+4A^T；wall p50/p90=0.56507/0.57440；RSS p90=1.03456/1.01971/1.01409；algorithm_breakthrough=false"},
     {id:"mit-linear-algebra",stage:"foundation",level:"零基础",type:"课程",title:"MIT 18.06SC Linear Algebra",url:"https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/",local:"",read:"优先看 subspaces、orthogonality、least squares、eigenvalues、SVD 和 pseudoinverse。",output:"一张 SVD-可观测性概念图 + 一个 NumPy toy。",verified:"MIT OCW 官方页"},
     {id:"kak-slaney",stage:"foundation",level:"入门",type:"开放电子书",title:"Kak & Slaney: Principles of Computerized Tomographic Imaging",url:"https://engineering.purdue.edu/~malcolm/pct/",local:"",read:"先读 projection、Fourier slice theorem、backprojection 和 algebraic reconstruction 章节。",output:"用自己的图重画 forward/inverse 链。",verified:"Purdue 作者电子版，仅个人使用"},
     {id:"skimage-radon",stage:"foundation",level:"零基础",type:"可运行教程",title:"scikit-image Radon / FBP / SART example",url:"https://scikit-image.org/docs/stable/auto_examples/transform/plot_radon_transform.html",local:"",read:"跑完 forward Radon、FBP 和 SART，再改投影角数与噪声。",output:"视角数-场误差-重投影误差三联图。",verified:"scikit-image 0.26 官方文档"},

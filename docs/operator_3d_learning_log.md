@@ -10463,3 +10463,85 @@ paper_success=false
 - `docs/nine_view_loaded_artifact_stageb_v73_result_2026-07-31.md`
 - `docs/nine_view_loaded_artifact_stageb_v73_public_summary.json`
 - `assets/nine_view_loaded_artifact_stageb_v73.png`
+
+## 2026-07-31：v74.1 把完整多轨迹时间与内存资源门一起推开了
+
+v73 证明了加载工件以后精度不坏，但还不能回答一个更现实的问题：把 Python
+进程启动、工件加载和校验、101 帧完整重建都算进去，它是否真的比 Zero-CGLS
+K4 更快，并且不会用内存高尾换速度？
+
+第一次正式运行 v74.0 完成了全部 worker，却在独立验证时发现一份回执的浮点
+耗时比同源整数纳秒耗时短 `0.056 ns`。旧合同要求它不能更短，所以整批被判
+invalid。没有挑数字，也没有复用旧 worker；v74.1 先把时钟口径修成“同源差异
+超过 1 微秒即拒绝，计分取两者最大值”，然后从零重新运行：
+
+```text
+reference workers        30
+fresh timing workers     330
+paired blocks            165
+trajectories             5
+known geometries         3
+frames per worker        101
+```
+
+独立 validator 重建了 1,515 帧 observation，重放 30 个 reference 共 3,030
+帧，检查 360 份回执与 165 个随机相邻完整区组。所有 reference digest 和实际
+调用账都一致，norm-sum 最大差为 `0`。
+
+正式结果是：
+
+```text
+candidate exact budget        2A + 2A^T
+Zero-K4 exact budget          4A + 4A^T
+
+fresh wall ratio
+  p50 / p90 / worst           0.56507 / 0.57440 / 0.63788
+
+RSS ratio p90
+  worker-self                 1.03456
+  sampled worker-tree         1.01971
+  sampled pipeline            1.01409
+```
+
+候选的 fresh wall 中位数是 `8.9251 s`，Zero-K4 是 `15.7548 s`，也就是中位
+约下降 `43.49%`。五条轨迹与三档几何的 p50 wall 和 RSS 资源门全部通过。
+这次不只是“理论少算两步”，而是完整 fresh worker 的真实计时正结果。
+
+**讲人话：**此前我们知道候选“答案没坏、精确算子少一半”，现在第一次又确认
+“把加载和启动都算进去，确实稳定更快，而且预注册的内存高尾门也过了”。这把
+PoolFire 代理内的精度、调用和资源三层证据接起来了。
+
+但不能把好消息说大：
+
+- worker-self 和 worker-tree 的单次 worst ratio 仍为 `1.08731 / 1.07281`；
+  通过的是预先固定的全局 p90 与分层 p50 门，不是每一次都更省内存；
+- RSS 只保存 coverage summary 与峰值回执，没有保存 raw sampling trace，
+  所以独立程序不能重新生成操作系统采样轨迹；
+- 当前仍是已开封 PoolFire fit family、已知几何、无噪声 straight-ray 代理；
+- 没有独立公开反应流族、curved ray、相机标定、真实 BOS 位移图或组内重复测量；
+- q8 factor 是固定几何压缩工件，不是训练得到的 neural operator。
+
+所以准确状态是：
+
+```text
+loaded_artifact_fresh_resource_stage_c_pass=true
+exact_operator_pair_reduction_fraction=0.50
+median_fresh_wall_reduction_fraction=0.4349
+public_proxy_sampled_rss_gate_pass=true
+external_family_transfer=false
+curved_ray_result=false
+real_bost_result=false
+operator_learning_result=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+下一步只做结果前冻结的独立公开反应流族外门。外部数据不能参与当前 factor、
+门槛或候选选择；它必须重新通过 matched accuracy、精确调用、fresh wall 与
+三层 RSS，之后才有资格申请组内真实位移图与标定数据。
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_loaded_artifact_fresh_resource_v74_1_result_2026-07-31.md`
+- `docs/nine_view_loaded_artifact_fresh_resource_v74_1_public_summary.json`
+- `assets/nine_view_loaded_artifact_fresh_resource_v74_1.png`
