@@ -340,6 +340,7 @@
       <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
       <a href="#objective-novelty">优化目标与原创性</a>
       <a href="#latest-gate">算法与实验</a>
+      <a href="#external-v75">v75 外部精度 5/75 FAIL</a>
       <a href="#loaded-artifact-fresh-resource-v74-1">v74.1 完整 fresh 资源 PASS</a>
       <a href="#loaded-artifact-stageb-v73">v73 加载工件全轨迹 PASS</a>
       <a href="#calibrated-factor-v72">v72 在线 wall / RSS 双 PASS</a>
@@ -381,11 +382,13 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-31 · v74.1</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-31 · v75</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v73 已证明加载工件在三档已知九视角几何、五条 PoolFire fit 轨迹的全部 <code>1,515/1,515</code> 个重建单元保持精度。v74.1 又从零运行 <code>30</code> 个 reference、<code>330</code> 个 fresh timing worker 与 <code>165</code> 个随机相邻完整区组，并由独立程序重放 3,030 帧、复算全部资源门。候选精确账为 <code>2A+2A^T</code>，Zero-K4 为 <code>4A+4A^T</code>；fresh wall ratio 为 <code>p50=0.56507</code>、<code>p90=0.57440</code>，三类 RSS 的 p90 ratio 为 <code>1.03456 / 1.01971 / 1.01409</code>，全部通过冻结门。这是公开 PoolFire 代理上的完整资源正结果，但还不是外部族、曲线光线、真实 BOST、神经算子或论文成功；<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v73 与 v74.1 已在五条 PoolFire fit 轨迹、三档已知九视角几何上闭合 <code>1,515/1,515</code> 精度、<code>2A+2A^T</code> 调用和 fresh wall / RSS 正结果；但结果前选定的 BLASTNet vitiated H2-air Case 3 外部门在 25 帧 × 3 几何上只有 <code>5/75</code> 通过完整合同。候选虽在 <code>74/75</code> 单元守住全部 Zero-K4 harm 门，却有 <code>70/75</code> 单元的 interior-gradient 劣于同调用 Zero-K2。固定 loaded q8 因子原样跨反应流族的支线因此关闭，资源阶段没有启动；<code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
+      <a class="button primary" href="#external-v75">打开 v75 外部负结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_vitiated_h2air_external_accuracy_v75_result_2026-07-31.md">读 v75 完整证据</a>
       <a class="button primary" href="#loaded-artifact-fresh-resource-v74-1">打开 v74.1 最新资源正结果</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_loaded_artifact_fresh_resource_v74_1_result_2026-07-31.md">读 v74.1 完整证据</a>
       <a class="button primary" href="#loaded-artifact-stageb-v73">打开 v73 最新正结果</a>
@@ -413,13 +416,16 @@
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
-    <div class="alert success" style="margin-top:12px;">
-      <strong>v74.1 关键资源正结果：精确算子调用减半，fresh wall 中位约下降 43.49%，三层 RSS 高尾门同时通过</strong>
-      <span>五条 PoolFire fit trajectory、三档已知九视角几何的精度父门仍为 <code>1,515/1,515 PASS</code>。正式资源批次的 global wall p50 / p90 / worst ratio 为 <code>0.56507 / 0.57440 / 0.63788</code>；worker-self、worker-tree、pipeline RSS p90 ratio 为 <code>1.03456 / 1.01971 / 1.01409</code>。独立 validator 核验 360 份回执、165 个区组和 3,030 帧 reference replay，最大重放差为 0。worker-self 与 worker-tree 的 worst 仍分别为 <code>1.08731 / 1.07281</code>，因此只能说预注册 p90 资源门通过，不能说每次都更省内存。<a href="#loaded-artifact-fresh-resource-v74-1">查看完整证据</a>。</span>
+    <div class="alert critical" style="margin-top:12px;">
+      <strong>v75 外部精度负结果：完整合同 5/75，固定因子原样跨反应流族的支线关闭</strong>
+      <span>预选 BLASTNet Case 3 的 field / observation 相对同调用 Zero-K2 均为 <code>75/75</code> 不劣，但 full-gradient 只有 <code>46/75</code>、interior-gradient 只有 <code>5/75</code>；相对 Zero-K4 的四项 joint harm 则为 <code>74/75</code>。这说明低频场和观测一致性有迁移信号，局部内部梯度没有稳定迁移。精度 FAIL 后没有运行 Case3 资源门，也没有用 Case 4/6 补考。<a href="#external-v75">查看完整证据</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button danger" href="#external-v75">v75 外部精度 5/75 FAIL</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_vitiated_h2air_external_accuracy_v75_result_2026-07-31.md">v75 完整裁决</a>
+      <a class="button" href="../docs/nine_view_vitiated_h2air_external_accuracy_v75_public_summary.json">v75 脱敏结果</a>
       <a class="button primary" href="#loaded-artifact-fresh-resource-v74-1">v74.1 loaded-artifact fresh 资源 PASS</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_loaded_artifact_fresh_resource_v74_1_result_2026-07-31.md">v74.1 完整裁决</a>
       <a class="button" href="../docs/nine_view_loaded_artifact_fresh_resource_v74_1_public_summary.json">v74.1 脱敏结果</a>
@@ -616,7 +622,7 @@
       <div class="metric"><b id="overallMetric">0%</b><span>当前总进度，仅保存在本浏览器</span></div>
     </div>
     <div class="alert critical">
-      <strong>最新开发判决：v68.3 fresh wall 通过、三类 RSS 失败，Stage C 整体 FAIL</strong>
+      <strong>历史资源门判决：v68.3 fresh wall 通过、三类 RSS 失败，Stage C 整体 FAIL</strong>
       <span>q8-K1 相对 Zero-K4 的 outer-wall p50 / p90 为 <code>0.65524 / 0.66111</code>，但 worker-self、sampled worker-tree 与 sampled pipeline RSS p90 为 <code>1.38447 / 1.37680 / 1.31112</code>。30 个 reference、330 个 timing worker、165 个配对区组已由独立程序重算；block 与聚合最大差均为 0。保留 factor 仅约 5.63 MiB，当前失败定位在 factor setup 的瞬时工作区。下一门只允许流式构造/复用工作区并重跑完整精度与资源合同；仍不是神经算子、真实 BOST 或论文突破。</span>
     </div>
   </header>
@@ -748,6 +754,7 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v75 外部精度 FAIL</span><span class="chip blue">独立复算 75 cells</span></div><h3 style="margin-top:10px;">BLASTNet vitiated H2-air Case 3</h3><p>结果前预选的 25 帧外部 DNS 在三档冻结九视角几何上形成 75 个单元，完整合同只有 5/75 通过。候选相对 Zero-K4 的四项 joint harm 为 74/75，但相对同调用 Zero-K2 的 interior-gradient 只有 5/75，70 个单元失败；field / observation 则均为 75/75。资源阶段没有启动，固定 PoolFire loaded q8 因子原样跨族的支线关闭，algorithm_breakthrough=false。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">最新 · v74.1 Stage C PASS</span><span class="chip blue">fresh wall 与三层 RSS</span></div><h3 style="margin-top:10px;">Loaded artifact full resource gate</h3><p>v73 的 1,515/1,515 精度父门不变；v74.1 用 30 个 reference、330 个 fresh timing worker 与 165 个完整配对区组正式比较 loaded q8-K1 和 Zero-K4。候选精确调用各减半，wall p50/p90 ratio 为 0.56507/0.57440，worker-self、worker-tree、pipeline RSS p90 为 1.03456/1.01971/1.01409，全部通过。独立重放 3,030 帧最大差 0。范围仍是已开封 PoolFire fit family、已知几何、无噪声 straight-ray 代理，algorithm_breakthrough=false。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">v73 Stage B PASS</span><span class="chip blue">loaded 1,515/1,515</span></div><h3 style="margin-top:10px;">Loaded artifact full trajectory</h3><p>三档已知九视角几何、五条 PoolFire fit trajectory、每条 101 帧全部通过兼容性门并逐单元复现 v70。三份工件共 162 个数组最大差 0，独立指标最大差 0，dense p0 参考相对差不超过 1.24e-15；精确账仍为 2A+2A^T。该精度父门随后由 v74.1 的完整 fresh wall/RSS 正式资源门承接。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">v72 开发门 PASS</span><span class="chip blue">online wall / RSS 双通过</span></div><h3 style="margin-top:10px;">Geometry-bound q8 artifact</h3><p>把冻结已知合成几何的 5.63 MiB q8 factor 无损写成只读工件。单条已开封 101 帧 stream、六个 fresh 配对区组的 wall p50 / p90 为 0.56643 / 0.58383，worker-self RSS 为 1.00216 / 1.02958；完整离线构造 2.22 秒，一条序列可摊销。独立复算最大差 0。v73 随后已通过完整 loaded-artifact Stage B，但多轨迹资源门仍未运行。</p></article>
@@ -785,6 +792,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="external-v75" class="alert critical" style="margin-top:13px;">
+        <strong>v75：预选 BLASTNet Case 3 外部精度门 5/75 FAIL，资源阶段停止</strong>
+        <span>Case 3 在读取任何网格或密度数值前，按“至少 25 个有序快照、rho 字节数最低、case id 最低”选定。正式一次性开封后，25 帧 × 3 档冻结九视角几何形成 <code>75</code> 个单元；loaded q8-K1 的精确账为 <code>2A+2A^T</code>，同调用对照 Zero-K2 也是 <code>2A+2A^T</code>，参考 Zero-K4 为 <code>4A+4A^T</code>。候选相对 Zero-K4 的 field / full-gradient / interior-gradient / observation 通过数为 <code>75/75 / 75/75 / 74/75 / 75/75</code>；相对同调用 Zero-K2 则为 <code>75/75 / 46/75 / 5/75 / 75/75</code>。完整合同只有 <code>5/75</code>，三档几何分别为 <code>1/25、2/25、2/25</code>。独立 validator 重新哈希 29 个原始文件，不导入正式 runner、预处理或高层 solver，自行重算全部单元；最大绝对/相对指标差为 <code>2.13e-14 / 4.71e-16</code>。准确结论是固定 factor 能迁移部分低频场与观测一致性，但没有稳定迁移内部梯度；资源门和 Case 4/6 补考均未授权。不能把 <code>74/75</code> 改写成 PASS，也不能声称外部 wall/RSS、神经算子、曲线光线、真实 BOST 或论文成功。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_vitiated_h2air_external_accuracy_v75.png" aria-label="打开 v75 BLASTNet Case 3 外部精度门逐指标、逐几何和科学判决图">
+          <img src="../assets/nine_view_vitiated_h2air_external_accuracy_v75.png" alt="v75 外部精度门中相对 Zero-K4 和同调用 Zero-K2 的逐指标通过数、误差比、逐几何通过数与 5/75 失败判决" />
+        </a>
+        <figcaption>A：field 与 observation 在 K4 和同调用 K2 门下均为 75/75，interior-gradient 相对 K2 仅 5/75；B：同调用误差比显示低频场/观测改善与内部梯度恶化并存；C：三档几何完整合同均失败；D：精度 FAIL 后资源阶段停止。范围只是一条预选公开 DNS、已知几何、无噪声 straight-ray 代理。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_vitiated_h2air_external_accuracy_v75_result_2026-07-31.md">读 v75 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_vitiated_h2air_external_accuracy_v75_public_summary.json">打开 v75 脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_vitiated_h2air_external_accuracy_v75.png">打开 v75 结果图原尺寸</a>
       </div>
       <div id="loaded-artifact-fresh-resource-v74-1" class="alert success" style="margin-top:13px;">
         <strong>v74.1：加载工件候选通过五轨迹、三几何的完整 fresh wall 与 RSS 资源门</strong>

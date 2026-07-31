@@ -10545,3 +10545,68 @@ paper_success=false
 - `docs/nine_view_loaded_artifact_fresh_resource_v74_1_result_2026-07-31.md`
 - `docs/nine_view_loaded_artifact_fresh_resource_v74_1_public_summary.json`
 - `assets/nine_view_loaded_artifact_fresh_resource_v74_1.png`
+
+## 2026-07-31：v75 第一次真正跨反应流族，完整合同只有 5/75
+
+v74.1 把 PoolFire 内部的精度、调用、时间和内存接成了完整正结果。最危险的
+问题也随之变得很明确：这个固定几何 q8 factor 会不会只适合 PoolFire 形态？
+
+所以 v75 没有再看一条 PoolFire，也没有先看 BLASTNet 图像再挑容易的工况。
+它在读取任何网格或密度数值前，按“至少 25 个有序快照、rho 字节数最小、
+case id 最小”选定 vitiated H2-air Case 3。正式一次性开封后得到：
+
+```text
+25 frames x 3 geometries = 75 cells
+
+complete frozen contract       5 / 75
+all four Zero-K4 harm gates   74 / 75
+resource stage                not authorized
+```
+
+真正的失败点不是 field 或 observation：
+
+```text
+gate pass counts                vs Zero-K4    vs equal-call Zero-K2
+field                              75/75              75/75
+full gradient                       75/75              46/75
+interior gradient                   74/75               5/75
+observation                         75/75              75/75
+```
+
+相对同样只用 `2A+2A^T` 的 Zero-K2，候选 field p50 为 `0.96946`，
+observation p50 为 `0.62754`，都明显更好；但 interior-gradient p50 / p90 /
+worst 是 `1.01501 / 1.02677 / 1.04685`。也就是说，固定 factor 很会保低频场
+和观测残差，却没有保住外部反应流的局部梯度。
+
+boundary-shell gradient error / full-gradient error 的中位达到 `0.94879`，
+所以只看 full-gradient 很容易被边界壳掩盖；独立 interior-gradient 门确实
+抓到了 aggregate 指标看不见的失败。5 个完整通过单元也只出现在最早的 frame
+index 0 和 2，后续 22 帧全部没有通过。
+
+独立 validator 重新哈希 29 个原始文件，不导入正式预处理、runner 或高层
+solver，自行重建 25 个真值、75 个 observation 和三条臂。正式与独立指标
+最大绝对/相对差为 `2.13e-14 / 4.71e-16`，所以这不是偶然的脚本漂移。
+
+**讲人话：**这是一次有价值的负结果。PoolFire 上的 `1515/1515` 和资源 PASS
+都是真的，但“固定 loaded factor 原样跨族”不成立。不能拿 `74/75` 的 K4
+近似信号改写预注册的 `5/75 FAIL`，也不能换 Case 4/6 重跑同一个候选。
+
+下一步不直接上大网络。先在已经开封的 Case 3 上检查同样 `2A+2A^T` 预算内，
+当前 warm-CGLS 已经产生的二维可观测子空间是否存在 truth-aware oracle
+headroom。没有就关线；有才训练最小 observation-only 系数预测器，并把另一个
+未打开工况留给新算法，而不是替换 v75 负结果。
+
+```text
+external_accuracy_pass=false
+resource_stage_authorized=false
+unchanged_factor_cross_family_transfer=false
+adaptive_same_budget_initializer_impossible=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_vitiated_h2air_external_accuracy_v75_result_2026-07-31.md`
+- `docs/nine_view_vitiated_h2air_external_accuracy_v75_public_summary.json`
+- `assets/nine_view_vitiated_h2air_external_accuracy_v75.png`

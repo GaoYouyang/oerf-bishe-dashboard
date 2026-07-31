@@ -1,0 +1,194 @@
+{
+  "arms": {
+    "candidate": {
+      "exact_A": 2,
+      "exact_AT": 2,
+      "name": "loaded q8 detector CR plus exact lift plus CGLS K1"
+    },
+    "equal_call_control": {
+      "exact_A": 2,
+      "exact_AT": 2,
+      "name": "Zero-CGLS K2"
+    },
+    "matched_accuracy_reference": {
+      "exact_A": 4,
+      "exact_AT": 4,
+      "name": "Zero-CGLS K4"
+    }
+  },
+  "dataset": {
+    "cell_count": 75,
+    "frame_count": 25,
+    "geometry_count": 3,
+    "name": "BLASTNet vitiated H2-air Case 3",
+    "reconstruction_shape_zyx": [
+      32,
+      16,
+      16
+    ],
+    "selection": "lowest rho-only byte cost among eligible cases with at least 25 ordered snapshots; selected before reading grid or density values",
+    "source_shape_xyz": [
+      1152,
+      128,
+      128
+    ]
+  },
+  "decision": {
+    "algorithm_breakthrough": false,
+    "all_K4_harm_gates_pass_count": 74,
+    "all_equal_call_gates_pass_count": 5,
+    "case4_or_case6_authorized_for_replacing_v75": false,
+    "cell_count": 75,
+    "external_accuracy_pass": false,
+    "official_pass_count": 5,
+    "paper_success": false,
+    "resource_stage_authorized": false
+  },
+  "failure_patterns": [
+    {
+      "count": 40,
+      "failed_gates": [
+        "interior-gradient versus Zero-K2"
+      ]
+    },
+    {
+      "count": 29,
+      "failed_gates": [
+        "gradient versus Zero-K2",
+        "interior-gradient versus Zero-K2"
+      ]
+    },
+    {
+      "count": 1,
+      "failed_gates": [
+        "interior-gradient versus Zero-K4",
+        "interior-gradient versus Zero-K2"
+      ]
+    },
+    {
+      "count": 5,
+      "failed_gates": []
+    }
+  ],
+  "gate_pass_counts": {
+    "field": {
+      "versus_Zero_K2_at_1p00": 75,
+      "versus_Zero_K4_at_1p01": 75
+    },
+    "gradient": {
+      "versus_Zero_K2_at_1p00": 46,
+      "versus_Zero_K4_at_1p01": 75
+    },
+    "interior-gradient": {
+      "versus_Zero_K2_at_1p00": 5,
+      "versus_Zero_K4_at_1p01": 74
+    },
+    "observation": {
+      "versus_Zero_K2_at_1p00": 75,
+      "versus_Zero_K4_at_1p01": 75
+    }
+  },
+  "independent_validation": {
+    "all_29_raw_payload_hashes_recomputed": true,
+    "end_to_end_physics_independence_proven": false,
+    "formal_high_level_solver_imported": false,
+    "formal_payloads_unchanged": true,
+    "formal_preprocessing_helper_imported": false,
+    "formal_runner_imported": false,
+    "independent_factor_CR_and_CGLS_recurrences": true,
+    "maximum_absolute_metric_difference": 2.1316282072803006e-14,
+    "maximum_relative_metric_difference": 4.708780972072895e-16,
+    "raw_payloads_unchanged": true,
+    "shared_low_level_geometry_and_exact_operator_kernels": true
+  },
+  "independent_validation_status": "PASS_INDEPENDENT_VALIDATION_VITIATED_H2AIR_CASE3_EXTERNAL_ACCURACY_V75",
+  "interpretation": {
+    "boundary_shell_gradient_error_over_full_gradient_error_p50": 0.9487930961,
+    "closed_claim": "The fixed loaded PoolFire q8 factor cannot be claimed to transfer unchanged across reacting-flow families under the v75 contract.",
+    "complete_pass_frame_indices": [
+      0,
+      2
+    ],
+    "failure_mechanism": "The frozen method did not dominate equal-cost Zero-K2 in interior gradient: 70 of 75 cells failed that gate; 29 also failed the full-gradient equal-cost gate.",
+    "not_proven": [
+      "general neural-operator failure",
+      "mathematical impossibility of a same-budget adaptive initializer",
+      "curved-ray or real-BOST performance",
+      "paper or algorithm breakthrough"
+    ],
+    "positive_signal": "The candidate preserved every field, full-gradient and observation Zero-K4 harm gate and 74 of 75 joint Zero-K4 harm cells while halving exact A/A^T."
+  },
+  "per_scenario": [
+    {
+      "all_K4_harm_gates_pass_count": 24,
+      "cell_count": 25,
+      "official_pass_count": 1,
+      "scenario": "F12+"
+    },
+    {
+      "all_K4_harm_gates_pass_count": 25,
+      "cell_count": 25,
+      "official_pass_count": 2,
+      "scenario": "F15+"
+    },
+    {
+      "all_K4_harm_gates_pass_count": 25,
+      "cell_count": 25,
+      "official_pass_count": 2,
+      "scenario": "F30+"
+    }
+  ],
+  "ratios": {
+    "field": {
+      "versus_Zero_K2": {
+        "p50": 0.9694648796,
+        "p90_higher": 0.9831718589,
+        "worst": 0.9923666794
+      },
+      "versus_Zero_K4": {
+        "p50": 0.9961824781,
+        "p90_higher": 0.9983142134,
+        "worst": 0.9991895639
+      }
+    },
+    "gradient": {
+      "versus_Zero_K2": {
+        "p50": 0.9984386673,
+        "p90_higher": 1.0025163654,
+        "worst": 1.0030900048
+      },
+      "versus_Zero_K4": {
+        "p50": 0.999732705,
+        "p90_higher": 1.0000750722,
+        "worst": 1.0007321446
+      }
+    },
+    "interior-gradient": {
+      "versus_Zero_K2": {
+        "p50": 1.0150096827,
+        "p90_higher": 1.0267704742,
+        "worst": 1.0468521374
+      },
+      "versus_Zero_K4": {
+        "p50": 0.9995322316,
+        "p90_higher": 1.0052304585,
+        "worst": 1.0109656738
+      }
+    },
+    "observation": {
+      "versus_Zero_K2": {
+        "p50": 0.6275442789,
+        "p90_higher": 0.6896991366,
+        "worst": 0.738773038
+      },
+      "versus_Zero_K4": {
+        "p50": 0.9236785504,
+        "p90_higher": 0.938629327,
+        "worst": 0.9554775566
+      }
+    }
+  },
+  "result_date": "2026-07-31",
+  "schema_version": "oerf-v75-external-accuracy-public-summary-1",
+  "scientific_status": "FAIL_VITIATED_H2AIR_CASE3_EXTERNAL_ACCURACY_SENTINEL_V75"
+}
