@@ -10965,3 +10965,51 @@ paper_success = false
 - `docs/nine_view_gslb32_strict_observation_krr_v80_result_2026-07-31.md`
 - `docs/nine_view_gslb32_strict_observation_krr_v80_public_summary.json`
 - `assets/nine_view_gslb32_strict_observation_krr_v80.png`
+
+## 2026-08-01：v81 排除了一个很像主因、其实量级不够的解释
+
+v80 的 RBF 只有 58/75。最先该怀疑的不是“网络还不够大”，而是它学的 32 维标签
+本身会不会乱跳：v78 每个单元都从 21 个不同起点做优化，如果这些起点落到差异很大的
+合格解，同一个观测就可能没有唯一、平滑的监督答案。
+
+我没有重新训练，也没有再跑一轮优化，而是把 v78 已封存的全部端点逐单元比较：
+
+```text
+cells                              75
+starts per cell                    21
+passing endpoints                 1,575 / 1,575
+endpoint spread / v80 miss p50    0.00662%
+endpoint spread / v80 miss p90    0.01197%
+endpoint spread / v80 miss worst  0.01898%
+retrospective limit               0.1%
+```
+
+最坏单元的起点漂移也只占 v80 预测误差的约五千分之一。物理修正场的相对漂移最坏
+是 `6.36e-5`，21 个端点最大门值的范围最坏是 `8.42e-11`。所以至少在 v78 原来的
+minimax 目标和既定 21 个起点里，优化器不是把标签弄乱的那个人。
+
+独立程序没有导入正式 runner，而是用 Gram 矩阵公式重新算两两距离。两套公式的单元与
+汇总指标最大差都是 `5.55e-11`，科学判决相同。这个差来自对极小距离的浮点消减，远小于
+`1e-3` 科学判据，不会改变结论。
+
+这次没有算法突破，但它真正节省了后续研究时间：不再优先为同一个 v78 目标做多起点
+canonicalization，也不靠更大 RBF 或神经网络挽救。下一步应改变表示本身，让修正方向随
+部署时可见的 observation 和 geometry 自适应；仍保持同一八门、时间分组和在线调用账。
+
+边界必须讲清：v81 没测试另一种 truth-aware 目标是否有概念多解，也没有外部工况、资源、
+曲线光线或真实 BOST 结果。当前仍是：
+
+```text
+numerical start instability under the frozen v78 objective = closed
+alternative-objective nonuniqueness = untested
+next route = observation-adaptive representation diagnostic
+neural training authorized = false
+algorithm_breakthrough = false
+paper_success = false
+```
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_gslb32_target_stability_v81_result_2026-08-01.md`
+- `docs/nine_view_gslb32_target_stability_v81_public_summary.json`
+- `assets/nine_view_gslb32_target_stability_v81.png`

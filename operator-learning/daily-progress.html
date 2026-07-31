@@ -465,8 +465,8 @@
     </div>
     <div class="status-grid" aria-label="当前项目快照">
       <div class="metric">
-        <b>26 天</b>
-        <span>2026-07-06 至 2026-07-31，逐日回填且每个日期只出现一次。</span>
+        <b>27 天</b>
+        <span>2026-07-06 至 2026-08-01，逐日回填且每个日期只出现一次。</span>
       </div>
       <div class="metric">
         <b>1515/1515</b>
@@ -477,12 +477,12 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>58/75</b>
-        <span>v80 最佳严格 observation-only RBF 的完整通过数；仍需 75/75。</span>
+        <b>0.01898%</b>
+        <span>v81 中最坏多起点漂移占 v80 RBF 预测误差的比例；远低于 0.1% 回顾性门。</span>
       </div>
     </div>
     <div class="verdict negative">
-      <strong>最新科学判决：v80 提示 RBF 捕获了额外映射信号，但严格 observation-only 模型仍未全覆盖</strong>
+      <strong>最新科学判决：v81 排除数值起点漂移这个主因，下一步转向 observation-adaptive representation</strong>
       <span>
         v74.1 的 PoolFire wall / RSS 结果没有被推翻；但 v75 在预选的 BLASTNet Case 3 上只有
         <code>5/75</code> 单元通过完整合同。主要阻塞是相对同调用 Zero-K2 的 interior-gradient：
@@ -503,6 +503,12 @@
         <code>58/75</code>，但没有达到冻结要求的 <code>75/75</code>；共享 RBF 的 observation/K4
         与 interior-gradient/K2 分别只有 <code>65/75</code> 与 <code>68/75</code>。因此当前三类
         确定性模型关闭，下一步改查目标规范化和 observation-adaptive 表示，不直接扩大网络。
+        v81 随后审计 v78 的 <code>75 × 21 = 1575</code> 个已封存优化端点：全部端点继续通过，
+        同一单元的最大端点漂移相对 v80 RBF 预测误差，p50 / p90 / worst 只有
+        <code>0.00662% / 0.01197% / 0.01898%</code>，75 个单元全部低于回顾性
+        <code>0.1%</code> 门。独立程序用另一种距离公式得到相同判决。这说明既定 v78 目标下的
+        数值起点波动解释不了 v80 的 17 个失败；不再优先投入同目标 canonicalization，改查能随
+        observation 与 geometry 改变的表示。
         当前仍是
         <code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>。
       </span>
@@ -524,7 +530,7 @@
           <button class="filter-button" type="button" data-filter="engineering" aria-pressed="false">工程保障</button>
           <button class="filter-button" type="button" data-filter="learning" aria-pressed="false">调研与学习</button>
         </div>
-        <span class="result-count" id="resultCount" aria-live="polite">显示 26 / 26 天</span>
+        <span class="result-count" id="resultCount" aria-live="polite">显示 27 / 27 天</span>
       </div>
       <div class="legend">
         <button class="button" id="sortButton" type="button" aria-pressed="false">切换为最早优先</button>
@@ -537,13 +543,63 @@
       <section class="phase" id="phase-factor" data-phase-order="5">
         <div class="phase-heading">
           <div>
-            <div class="range">07-30 — 07-31</div>
-            <h2>因子化加速与外部门</h2>
+            <div class="range">07-30 — 08-01</div>
+            <h2>因子化加速、外部门与失败归因</h2>
           </div>
           <p>把“算得对”推进到“调用少、真实更快、内存不过线”，再冻结独立公开反应流外部门。</p>
         </div>
         <div class="timeline">
-          <article class="day-entry latest" id="latest" data-date="2026-07-31" data-categories="science-positive science-negative engineering decision">
+          <article class="day-entry latest" id="latest" data-date="2026-08-01" data-categories="science-negative engineering decision">
+            <details open>
+              <summary class="entry-summary">
+                <div class="date-block"><time datetime="2026-08-01">2026-08-01</time><span>周六 · Day 27</span></div>
+                <div class="entry-title">
+                  <div class="entry-tags">
+                    <span class="tag negative">错误归因关闭</span>
+                    <span class="tag engineering">独立复算</span>
+                    <span class="tag">路线重排</span>
+                  </div>
+                  <h3>v81 证明随机优化起点不是 v80 失败的主因</h3>
+                  <p>75 个单元的 1575 个封存端点全部通过；最坏端点漂移只占 v80 RBF 预测误差的 0.01898%，研究重点转向 observation-adaptive representation。</p>
+                </div>
+                <span class="expand-label" aria-hidden="true"></span>
+              </summary>
+              <div class="entry-body">
+                <div class="evidence-grid">
+                  <section>
+                    <h4>当天真正改变了什么</h4>
+                    <p>v80 之后没有直接换标签或扩大网络，而是先检验“truth-aware witness 会不会因优化起点不同而严重跳变”。v81 复用 v78 已封存的 75 个单元和每单元 21 个起点，只审计标签数值稳定性，不重新训练、不重新优化。结果把一个看似合理但不成立的主因排除了，因此后续算力不再优先花在同一目标的多起点 canonicalization。</p>
+                  </section>
+                  <section>
+                    <h4>证据与判决</h4>
+                    <ul>
+                      <li><code>75 × 21 = 1575</code> 个端点全部保持八门通过。</li>
+                      <li>端点漂移 / v80 RBF 预测误差 p50 / p90 / worst：<code>0.00662% / 0.01197% / 0.01898%</code>。</li>
+                      <li>端点系数漂移 / 冻结半径 p50 / p90 / worst：<code>5.95e-6 / 1.51e-5 / 2.32e-5</code>。</li>
+                      <li>物理修正场漂移最坏仅 <code>6.36e-5</code>；端点最大门值范围最坏 <code>8.42e-11</code>。</li>
+                      <li>三档几何共 75 个单元全部低于回顾性 <code>0.1%</code> 判据。</li>
+                      <li>独立程序以 Gram 距离公式复算，单元和汇总指标最大差均为 <code>5.55e-11</code>，科学判决一致。</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h4>留下的可复用产物</h4>
+                    <p>一套只读正式审计、一套不导入正式 runner 的独立复算、75 行脱敏尺度比较、公开机器摘要和三联结果图。它们以后可用于解释为什么改变的是表示，而不是单纯增加回归器容量。</p>
+                  </section>
+                  <section>
+                    <h4>边界与下一步</h4>
+                    <p>这是先看过父结果后的回顾性机制证据，只关闭 v78 既定 minimax 目标下的数值起点不稳定；没有检验替代目标的概念多解，也没有产生新算法、外部泛化、资源或真实 BOST 结果。下一门改为 observation-adaptive representation diagnostic，并继续保持同一八门和调用账。<code>algorithm_breakthrough=false</code>。</p>
+                  </section>
+                </div>
+                <div class="entry-links">
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_gslb32_target_stability_v81_result_2026-08-01.md">v81 完整证据</a>
+                  <a href="../docs/nine_view_gslb32_target_stability_v81_public_summary.json">v81 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_gslb32_target_stability_v81.png">v81 结果图</a>
+                </div>
+              </div>
+            </details>
+          </article>
+
+          <article class="day-entry" data-date="2026-07-31" data-categories="science-positive science-negative engineering decision">
             <details open>
               <summary class="entry-summary">
                 <div class="date-block"><time datetime="2026-07-31">2026-07-31</time><span>周五 · Day 26</span></div>
@@ -1723,14 +1779,16 @@
         <code>75/75</code> 通过 GSLB32 表示容量门。v79 再以 <code>9/75</code> 与 <code>0/75</code>
         关闭两个解析 residual controls，并把失败定位到三维梯度保持；v80 的确定性 RBF 随后把
         完整通过提高到 <code>58/75</code>，但仍未达到全部 75 单元，关闭当前严格 observation-only
-        特征/目标/模型合同并把下一问题转向目标规范化。当前仍没有部署 predictor、
+        特征/目标/模型合同。v81 再审计 <code>1575</code> 个封存端点，发现最坏起点漂移只占 v80
+        预测误差的 <code>0.01898%</code>，从而关闭“数值起点不稳定是主因”这一解释，并把下一问题
+        收束到 observation-adaptive representation。当前仍没有部署 predictor、
         神经训练授权、冷构造摊销、外部资源门或真实 BOST。
       </p>
     </section>
   </main>
 
   <footer>
-    持续更新至 v80 独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v81 独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
