@@ -1,0 +1,68 @@
+{
+  "schema_version": "oerf-nine-view-gslb32-validation-repair-78.1",
+  "status": "FROZEN_AFTER_FORMAL_BEFORE_VALIDATION_RETRY",
+  "frozen_at_utc": "2026-07-31T11:41:39Z",
+  "formal_result_access_before_repair": true,
+  "formal_scientific_signal_seen": {
+    "status": "PENDING_INDEPENDENT_VALIDATION_GSLB32_V78",
+    "cell_count": 75,
+    "pass_count": 75,
+    "negative_count": 0,
+    "inconclusive_count": 0,
+    "algorithm_breakthrough": false
+  },
+  "original_failure": {
+    "stage": "independent declared-start reconstruction",
+    "exception": "independent coefficient start remains outside the ball",
+    "failed_validation_output_created": false,
+    "formal_output_changed": false,
+    "observed_radius": 4.746760819409598,
+    "observed_input_norm": 4.8169099133547375,
+    "canonical_one_step_output_norm": 4.746760819409599,
+    "absolute_overshoot": 8.881784197001252e-16,
+    "relative_overshoot": 2.220446049250313e-16,
+    "interpretation": "One inward nextafter of the coefficient scale still left the independently reconstructed interior-gradient least-squares start one floating-point ulp outside the closed ball. This is a validator containment defect, not a scientific pass or fail."
+  },
+  "repair": {
+    "scope": "independent validator declared-start radial containment only",
+    "canonical_first_step_unchanged": true,
+    "rule": "Starting from radius/norm, move the scalar scale toward zero one float64 predecessor at a time, multiply the unchanged coefficient vector by that scale, and stop at the first result whose recomputed Euclidean norm is <= radius.",
+    "maximum_inward_nextafter_steps": 8,
+    "fail_closed_after_step_limit": true,
+    "formal_start_comparison_tolerance": 1e-09,
+    "must_report_maximum_inward_steps": true,
+    "must_report_multistep_projection_count": true,
+    "endpoint_certification_changed": false,
+    "data_changed": false,
+    "geometry_changed": false,
+    "rank_changed": false,
+    "radius_changed": false,
+    "start_roster_changed": false,
+    "optimizer_changed": false,
+    "gate_changed": false,
+    "control_changed": false,
+    "call_accounting_changed": false
+  },
+  "amended_validator": {
+    "sha256": "b658300ad80e8da98dbc646df38ac609b20d9a2ac4c21263152d8e7641231420",
+    "bytes": 85096
+  },
+  "bound_original_formal": {
+    "source_commit": "5dc022a531789ac5208bc6628ea03302e3208d7c",
+    "formal_result_sha256": "57555e6303aa7452f5c887c87c9b4d936b54bae4b816bf5a92755eb64f60af9d",
+    "formal_checksums_sha256": "fcc1c328ca5e6a5d135a40ac6f0844f3f06e583519749724b140b8376480db14",
+    "formal_ready_sha256": "71dfb2eab0963f9a88ddf2e2bd28dfba0f218bc23df9d443c366abe0f23c87ed",
+    "failed_validation_log_sha256": "11c6923b3417289aeb1218e9bc0e236baeecfaa89c3ac1fd5888ef978fa0d08b"
+  },
+  "scientific_contract_changed": false,
+  "claim_boundaries": {
+    "formal_result_still_pending": true,
+    "independent_validation_complete": false,
+    "neural_training_authorized": false,
+    "resource_stage_authorized": false,
+    "external_generalization": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

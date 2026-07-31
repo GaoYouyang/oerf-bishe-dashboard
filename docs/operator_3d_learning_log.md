@@ -10771,3 +10771,80 @@ paper_success=false
 - `docs/nine_view_geometry_spline_low_observability_v77_result_2026-07-31.md`
 - `docs/nine_view_geometry_spline_low_observability_v77_public_summary.json`
 - `assets/nine_view_geometry_spline_low_observability_v77.png`
+
+## 2026-07-31：v78 让 GSLB32 的 75/75 表示容量门真正成立
+
+v77 只有 7/75，不是因为空间修正这个大方向完全错了，而是前 8 个
+low-observability modes 没有足够的局部梯度容量。v78 没有换数据、放宽门槛或增加
+在线精确调用，只按之前冻结的嵌套顺序把表示扩到 32 模态：
+
+```text
+z  = loaded-q8 detector CR4(y)
+h  = A_g^T z
+x0 = h + U_g,32 a
+x1 = one unchanged exact CGLS step
+```
+
+正式结果先给出 75/75 待验证信号。第一次独立 validator 在任何结果输出前停住：
+一个起点缩进系数球后，因为 float64 舍入仍高出半径一个 ULP。没有重跑正式搜索，
+也没有改半径或容差；只让独立验证器把缩放因子逐 ULP 往球内移动，最多 8 步。
+实际只有 1 次投影需要 2 步，修复后的起点与封存正式起点最大差只有
+`3.66e-12`，原门仍是 `1e-9`。
+
+两轮独立红队先后发现并关闭了 formal evidence anchor 与 payload substitution 路径。
+最终审计为 `P0=0 / P1=0`，唯一 repaired validator 才被启动。它重新构造三档几何、
+32 个模态、75 个 observation、K2/K4 controls，并为每个单元重跑全部 21 个起点：
+
+```text
+pass / negative / inconclusive          75 / 0 / 0
+F12+ / F15+ / F30+                      25 / 25 / 25
+maximum metric recomputation difference 1.3323e-14
+maximum gate recomputation difference   5.3722e-11
+maximum mode-column difference          1.5451e-13
+maximum projector distance              1.3019e-13
+```
+
+相对同调用 Zero-K2，四项最坏误差比全部不超过 1：
+
+```text
+field / full-gradient / interior-gradient / observation
+0.975803 / 0.999036 / 0.999036 / 0.760340
+```
+
+所以科学判断发生了真实变化：
+
+```text
+GSLB32 representation headroom proven on opened Case3 cells
+separate observation-only predictor protocol may be frozen
+neural training not yet authorized
+resource stage not authorized
+algorithm_breakthrough=false
+paper_success=false
+```
+
+这里最容易被误写的是“调用减半”。在线确实从 Zero-K4 的 `4A+4A^T` 降到
+`2A+2A^T`，但 32 模态冷构造每套几何还要 `160A+32A^T`。当前每档几何只有
+25 帧：
+
+```text
+GSLB32 including setup = 192 + 25*4 = 292
+Zero-K4               =       25*8 = 200
+```
+
+满接受率也至少要 48 帧才打平，所以 v78 不是总加速结果。后验模型尺寸诊断还显示，
+第 25-32 模态承载约 59% 系数能量，不能把物理表示又截回 8/16；但 75 个物理修正场
+的 90%/95% 统计变化约落在 10/12 个主方向。这个低秩只能作为下一轮候选，PCA、decoder、
+scaler 和 rank 必须在 frame-grouped outer fold 内重新拟合，不能把全 75 cells 的后验
+统计冒充泛化。
+
+下一步先让最简单的方法挑战学习模型：analytic U32 observation-ridge、
+`A^T A U32` normal-image control、full-32 ridge 与 grouped-fold reduced-rank linear head。
+同一 truth 帧的三套几何必须同折，禁止随机 cell split 和时间索引。若 full-32
+observation-only control 都无法预测逐单元八门见证，就停止放大网络，转向增加独立
+fit 数据或改变 observation-adaptive 表示。
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_geometry_spline_capacity_v78_result_2026-07-31.md`
+- `docs/nine_view_geometry_spline_capacity_v78_public_summary.json`
+- `assets/nine_view_geometry_spline_capacity_v78.png`
