@@ -1,0 +1,148 @@
+{
+  "certificate": {
+    "all_infeasible_rows_have_positive_exact_dual_certificate": true,
+    "exact_rational_weight_denominator": 1099511627776,
+    "feasible_primal_upper_bound": {
+      "maximum": -9.333223087570897e-05,
+      "minimum": -0.027496475517613916,
+      "p50": -0.006181916040901625,
+      "p90_higher": -0.0005374983825534464
+    },
+    "infeasible_dual_lower_bound": {
+      "maximum": 0.009306304839290165,
+      "minimum": 0.00017168885516975174,
+      "p50": 0.0010561184317087176,
+      "p90_higher": 0.008564675465117275
+    },
+    "no_boundary_or_singular_abstention": true
+  },
+  "dataset_scope": {
+    "case4_or_case6_opened": false,
+    "cell_count": 75,
+    "frame_count": 25,
+    "known_geometry_count": 3,
+    "name": "BLASTNet vitiated H2-air Case 3"
+  },
+  "decision": {
+    "algorithm_breakthrough": false,
+    "all_75_feasible_required": true,
+    "feasible_count": 58,
+    "inconclusive_count": 0,
+    "infeasible_count": 17,
+    "larger_network_on_same_span_authorized": false,
+    "paper_success": false,
+    "real_bost": false,
+    "resource_stage_authorized": false,
+    "span_closed": true,
+    "span_sufficient": false
+  },
+  "independent_validation": {
+    "end_to_end_physics_independence_proven": false,
+    "formal_payloads_unchanged": true,
+    "formal_v76_runner_imported": false,
+    "formal_v76_solver_imported": false,
+    "maximum_absolute_recomputation_difference": 4.796163466380676e-14,
+    "maximum_exact_determinant_relative_rebuild_difference": 2.78706145332852e-15,
+    "maximum_exact_dual_lower_rebuild_difference": 6.29704621779581e-16,
+    "raw_payloads_unchanged": true,
+    "shared_low_level_geometry_and_exact_operator_kernels": true
+  },
+  "independent_validation_status": "PASS_INDEPENDENT_VALIDATION_OBS2D_ORACLE_V76_1",
+  "infeasibility_pattern": {
+    "common_infeasible_frames_in_all_three_geometries": [
+      10,
+      16
+    ],
+    "interpretation": "The limiting trade-off is no longer only interior-gradient versus equal-call K2. In all 17 certified-infeasible cells, the minimax point violates the K4 observation gate, while 12 also violate the K2 interior-gradient gate and 8 violate the K2 full-gradient gate.",
+    "largest_constraint_by_cell": {
+      "gradient|Zero_K2_equal_call": 1,
+      "interior_gradient|Zero_K2_equal_call": 4,
+      "observation|Zero_K4_harm": 12
+    },
+    "positive_constraint_occurrences": {
+      "gradient|Zero_K2_equal_call": 8,
+      "interior_gradient|Zero_K2_equal_call": 12,
+      "observation|Zero_K4_harm": 17
+    }
+  },
+  "interpretation": {
+    "next_valid_direction": "Change the field representation before training: construct a deployment-visible spatial correction outside span{h,n}, then retain the same exact residual and unmodified CGLS K1 budget. Case 3 remains development-only; a different unopened case must remain the external gate.",
+    "what_did_not_fail": [
+      "all same-budget adaptive warm initializers",
+      "field-space corrections outside span{h,n}",
+      "larger learned representations with a newly frozen gate",
+      "curved-ray or real-BOST reconstruction"
+    ],
+    "what_failed": "A coefficient predictor restricted to span{h,n} cannot satisfy the frozen external contract in every cell, even with access to truth during coefficient selection."
+  },
+  "joint_pass_counts": {
+    "current_q8_k1": 5,
+    "obs2d_ls": 4,
+    "oracle_minimax": 58,
+    "scaled_h": 2
+  },
+  "oracle_gate_pass_counts": {
+    "Field / K2": 75,
+    "Field / K4": 75,
+    "Gradient / K2": 67,
+    "Gradient / K4": 75,
+    "Interior / K2": 63,
+    "Interior / K4": 75,
+    "Observation / K2": 75,
+    "Observation / K4": 58
+  },
+  "per_scenario": [
+    {
+      "feasible_count": 20,
+      "infeasible_count": 5,
+      "infeasible_frame_indices": [
+        7,
+        9,
+        10,
+        16,
+        22
+      ],
+      "scenario": "F12+"
+    },
+    {
+      "feasible_count": 18,
+      "infeasible_count": 7,
+      "infeasible_frame_indices": [
+        9,
+        10,
+        11,
+        12,
+        14,
+        15,
+        16
+      ],
+      "scenario": "F15+"
+    },
+    {
+      "feasible_count": 20,
+      "infeasible_count": 5,
+      "infeasible_frame_indices": [
+        10,
+        11,
+        12,
+        15,
+        16
+      ],
+      "scenario": "F30+"
+    }
+  ],
+  "representation": {
+    "candidate_exact_A": 2,
+    "candidate_exact_AT": 2,
+    "coefficient_search_additional_exact_calls": 0,
+    "deployment_rule_found": false,
+    "formula": "x(c)=c1*h+c2*n",
+    "h": "exact adjoint lift of the loaded-q8 detector proposal",
+    "n": "first exact normal-residual direction",
+    "truth_used": "only by the post-open feasibility oracle"
+  },
+  "result_date": "2026-07-31",
+  "schema_version": "oerf-v76-obs2d-oracle-public-summary-1",
+  "scientific_question": "At the unchanged 2A+2A^T exact-call budget, does the two-dimensional span of h=A^T z and n=A^T(y-Ah) contain a candidate satisfying all frozen v75 field, full-gradient, interior-gradient and observation gates in all 75 opened Case 3 cells?",
+  "scientific_status": "FAIL_OBS2D_ORACLE_SPAN_INSUFFICIENT_V76"
+}

@@ -10610,3 +10610,82 @@ paper_success=false
 - `docs/nine_view_vitiated_h2air_external_accuracy_v75_result_2026-07-31.md`
 - `docs/nine_view_vitiated_h2air_external_accuracy_v75_public_summary.json`
 - `assets/nine_view_vitiated_h2air_external_accuracy_v75.png`
+
+## 2026-07-31：v76 证明“把两个系数交给更强网络”也救不回完整合同
+
+v75 失败后，最容易产生的错觉是：当前 `q8-K1` 只是系数选得不好，换一个
+MLP、FNO 或 DeepONet 预测两个更聪明的系数，也许就能把 `5/75` 救回来。
+
+v76 没有直接训练网络，而是先让一个能看见真值的 oracle 搜索这两个系数的
+全部可能性。表示保持同一个精确调用预算：
+
+```text
+h = A^T z
+n = A^T (y - A h)
+x(c) = c1 h + c2 n
+
+exact budget = 2A + 2A^T
+coefficient search = 0 additional exact calls
+```
+
+每个单元都要同时满足相对 Zero-K4 的四项 `1.01` no-harm 门，以及相对同调用
+Zero-K2 的四项 `1.00` 门。结果是：
+
+```text
+strict feasible witnesses          58 / 75
+exact dual infeasibility proofs    17 / 75
+numerical inconclusive              0 / 75
+```
+
+**讲人话：**58 个单元说明“调系数”确实比当前方法强很多；但 17 个单元不是
+“优化器没搜到”，而是数学证书证明这两个方向形成的二维平面与合格区域没有
+交点。既然答案根本不在平面里，再大的系数网络也不可能把它预测出来。
+
+每档几何都有失败：F12+/F15+/F30+ 分别为 `5/7/5` 个严格不可行。oracle 在
+全部 75 个单元守住 field，且相对 K4 的 full/interior gradient 也全过；真正
+冲突是为了改善同调用 K2 gradient，必须牺牲 K4 observation。17 个不可行
+单元的 minimax 点全部违反 K4 observation，其中 12 个同时违反 K2
+interior-gradient，8 个同时违反 K2 full-gradient。
+
+正式执行后，第一版 validator 因为要求独立重建后的 `Fraction` 分子分母逐字
+相同而 fail closed。不同浮点运算顺序在末位有约 `1e-15` 差，转成精确分数后
+文本当然不同。v76.1 没有改任何结果、门槛或单元，只把验证条件修成真正需要
+的东西：正式路径和独立路径都要用同一整数 simplex 权重，各自重建精确正定
+二次式，并在不可行单元上各自得到严格正的 exact lower。
+
+```text
+formal/independent max difference       4.7962e-14
+exact lower rebuild difference          6.2970e-16
+determinant relative rebuild difference 2.7871e-15
+```
+
+所以这次的失败是可信的，而且直接节省了后续训练成本：
+
+```text
+span_h_n_closed=true
+larger_network_on_same_span_authorized=false
+case4_or_case6_opened=false
+resource_stage_authorized=false
+algorithm_breakthrough=false
+paper_success=false
+```
+
+下一步不能再把算力投给“两系数预测器”。必须先让表示跳出这个二维平面，例如
+由只看部署可见输入的小型三维网络产生空间变化 correction：
+
+```text
+x0 = h + u_theta(h, geometry-visible features)
+r0 = y - A x0
+x1 = one unchanged CGLS step from x0
+```
+
+这样仍可能保持 `2A+2A^T`，但 `u_theta` 可以直接修局部梯度，而不是用两个
+全局标量在 observation 与 gradient 之间来回拉扯。新表示仍要先过
+truth-aware capacity gate；Case 3 从此只作 development，另一个未打开工况
+继续保留为一次性外部门。
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_obs2d_oracle_v76_result_2026-07-31.md`
+- `docs/nine_view_obs2d_oracle_v76_public_summary.json`
+- `assets/nine_view_obs2d_oracle_v76.png`
