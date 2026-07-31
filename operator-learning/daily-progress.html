@@ -477,12 +477,12 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>7/75 空间见证</b>
-        <span>v77 GSLB8 经独立复算；8 模态关闭，只允许预注册 GSLB32。</span>
+        <b>75/75 容量见证</b>
+        <span>v78 GSLB32 经独立复算；现在只授权冻结 observation-only predictor 协议。</span>
       </div>
     </div>
-    <div class="verdict negative">
-      <strong>最新科学判决：二维表示关闭后，8 模态空间修正仍只有 7/75 完整见证</strong>
+    <div class="verdict positive">
+      <strong>最新科学判决：GSLB32 表示容量 75/75 通过，但部署算法与总加速仍未成立</strong>
       <span>
         v74.1 的 PoolFire wall / RSS 结果没有被推翻；但 v75 在预选的 BLASTNet Case 3 上只有
         <code>5/75</code> 单元通过完整合同。主要阻塞是相对同调用 Zero-K2 的 interior-gradient：
@@ -492,7 +492,10 @@
         <code>0</code> 个不确定。v77 随后改用空间变化的 8 模态 spline correction，field 与
         observation 均守住 <code>75/75</code>，但同调用 full-gradient / interior-gradient 只有
         <code>27/75 / 7/75</code>，完整见证仍仅 <code>7/75</code>。因此 GSLB8 关闭，只允许
-        GSLB32 容量测试；神经训练与资源阶段未获授权，当前仍是
+        GSLB32 容量测试。v78 将同一嵌套空间扩到 32 模态后，正式与独立复算一致得到
+        <code>75 pass / 0 negative / 0 inconclusive</code>，三档几何各 <code>25/25</code>。
+        这证明表示 headroom，但尚无部署可见系数映射；当前 25 帧也不足以摊销每套几何
+        <code>160A+32A^T</code> 的冷构造。只允许先冻结解析 controls 与 grouped-fold 最小 predictor；当前仍是
         <code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>。
       </span>
     </div>
@@ -542,10 +545,11 @@
                     <span class="tag negative">外部精度负结果</span>
                     <span class="tag negative">二维表示严格关线</span>
                     <span class="tag negative">GSLB8 容量关线</span>
+                    <span class="tag">GSLB32 容量正结果</span>
                     <span class="tag engineering">独立复算</span>
                   </div>
-                  <h3>v74.1 完成内部资源闭环；v75-v76 关旧表示；v77 测试空间修正容量</h3>
-                  <p>GSLB8 第一次产生空间变化 correction，但只有 7/75 个完整见证；它守住 field / observation，却没有足够的局部梯度容量。</p>
+                  <h3>v74.1 完成内部资源闭环；v75-v77 关旧表示；v78 通过 GSLB32 容量门</h3>
+                  <p>同一在线 2A+2A<sup>T</sup> 预算下，GSLB32 将完整见证从 GSLB8 的 7/75 提高到 75/75；现在才有依据研究 observation-only 系数映射。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
@@ -553,7 +557,7 @@
                 <div class="evidence-grid">
                   <section>
                     <h4>当天真正改变了什么</h4>
-                    <p>先把已知九视角几何因子做成可加载工件并完成 fresh 资源比较，再按结果前合同一次性打开独立反应流 Case3；v75 失败后没有换工况补考。v76 用严格凸证书关闭二维表示，v77 再把修正扩成 8 个几何决定的三维 spline modes，直接检验空间变化表示是否足以补回局部梯度。</p>
+                    <p>先把已知九视角几何因子做成可加载工件并完成 fresh 资源比较，再按结果前合同一次性打开独立反应流 Case3；v75 失败后没有换工况补考。v76 用严格凸证书关闭二维表示，v77 以 8 个三维 spline modes 定位空间容量不足，v78 再按预注册嵌套前缀扩到 32 模态，并以独立程序重跑全部 75 单元。</p>
                   </section>
                   <section>
                     <h4>证据与判决</h4>
@@ -569,15 +573,19 @@
                       <li>v77 GSLB8：完整八门见证 <code>7/75</code>，冻结搜索 negative <code>68/75</code>，inconclusive <code>0</code>。</li>
                       <li>v77 的 field / observation 八门均为 <code>75/75</code>；同调用 K2 full-gradient / interior-gradient 仅 <code>27/75 / 7/75</code>。</li>
                       <li>v77 独立复算最大 metric / gate / stable-projector 差为 <code>1.78e-14 / 1.20e-11 / 2.02e-13</code>。</li>
+                      <li>v78 GSLB32：完整八门见证 <code>75/75</code>，negative / inconclusive 均为 <code>0</code>；三档几何各 <code>25/25</code>。</li>
+                      <li>相对同调用 K2 的 field / full-gradient / interior-gradient / observation worst 为 <code>0.975803 / 0.999036 / 0.999036 / 0.760340</code>。</li>
+                      <li>v78 独立复算最大 metric / gate / mode-column / projector 差为 <code>1.33e-14 / 5.37e-11 / 1.55e-13 / 1.30e-13</code>。</li>
+                      <li>冷构造计入后，当前每几何 25 帧的 GSLB32 / Zero-K4 等权总账为 <code>292 / 200</code>；满接受率至少 48 帧才打平。</li>
                     </ul>
                   </section>
                   <section>
                     <h4>留下的可复用产物</h4>
-                    <p>可加载几何因子、完整调用账、360 份资源回执、165 个随机相邻区组、独立 3,030 帧资源重放、75 个外部精度单元、v76 的精确不可行证书，以及 v77 的 127 维 geometry-only spline parent space、嵌套 GSLB8/32/127 容量阶梯和独立模态/搜索复算路径。</p>
+                    <p>可加载几何因子、完整调用账、360 份资源回执、165 个随机相邻区组、独立 3,030 帧资源重放、75 个外部精度单元、v76 的精确不可行证书、v77 的 127 维 geometry-only spline parent space，以及 v78 独立复算通过的 GSLB32 训练目标空间和冷构造 break-even 账。</p>
                   </section>
                   <section>
                     <h4>边界</h4>
-                    <p>v77 的 <code>68 negative</code> 是冻结非凸搜索未找到见证，不是数学不可行证书。它只关闭 8 模态 GSLB8，不关闭预注册 GSLB32/127 或所有 neural operator。Case 4/6、Case3 wall / RSS、曲线光线和真实 BOST 均未运行。</p>
+                    <p>v78 是 truth-aware、post-open 的表示容量诊断，不是部署 predictor。Case 4/6、Case3 wall / RSS、曲线光线和真实 BOST 均未运行；冷构造也未在当前 25 帧摊销。下一步只允许先跑 analytic U32 ridge、normal-image control 与 frame-grouped 最小线性头，不允许直接用大网络包装 75/75。</p>
                   </section>
                 </div>
                 <div class="entry-links">
@@ -586,6 +594,7 @@
                   <a href="../document_reader.html?doc=docs%2Fnine_view_vitiated_h2air_external_accuracy_v75_result_2026-07-31.md">v75 外部负结果</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_obs2d_oracle_v76_result_2026-07-31.md">v76 严格表示判决</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_geometry_spline_low_observability_v77_result_2026-07-31.md">v77 GSLB8 容量判决</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_geometry_spline_capacity_v78_result_2026-07-31.md">v78 GSLB32 容量判决</a>
                 </div>
               </div>
             </details>
@@ -1555,13 +1564,14 @@
         “突破性进展”只有在独立公开外部 matched-accuracy、完整资源门和真实 BOST 迁移证据成立后才会标注。
         截至本页快照时间，PoolFire 代理上的 v74.1 仍是最强内部资源正结果；外部 v75 已以
         <code>5/75</code> 判定 FAIL，v76 以 <code>17/75</code> 个严格不可行证书关闭同预算二维系数表示，
-        v77 又以 <code>7/75</code> 完整见证关闭 8 模态空间修正，只允许继续预注册的 GSLB32 容量门。
+        v77 又以 <code>7/75</code> 完整见证关闭 8 模态空间修正；v78 随后以独立复算的
+        <code>75/75</code> 通过 GSLB32 表示容量门，但仍没有部署 predictor、冷构造摊销、外部资源门或真实 BOST。
       </p>
     </section>
   </main>
 
   <footer>
-    最后整理：2026-07-31 23:40 CST · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    最后整理：2026-07-31 21:01 CST · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
