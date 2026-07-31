@@ -339,6 +339,7 @@
       <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
       <a href="#objective-novelty">优化目标与原创性</a>
       <a href="#latest-gate">算法与实验</a>
+      <a href="#loaded-artifact-fresh-resource-v74-1">v74.1 完整 fresh 资源 PASS</a>
       <a href="#loaded-artifact-stageb-v73">v73 加载工件全轨迹 PASS</a>
       <a href="#calibrated-factor-v72">v72 在线 wall / RSS 双 PASS</a>
       <a href="#fresh-resource-v70-1">v70.1 速度 PASS / 内存 FAIL</a>
@@ -379,10 +380,12 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-31 · v73</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-07-31 · v74.1</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v72 已把冻结已知几何的 q8 factor 编译成只读工件，并在一条 101 帧开发 stream 上首次同时通过在线 wall 与 worker-self RSS。v73 现在进一步把同一加载路径扩到三档几何、五条公开 PoolFire fit 轨迹和全部 <code>3×5×101=1,515</code> 个单元：兼容性与 canonical 复现均为 <code>1515/1515 PASS</code>，162 个数组最大差为 0，独立指标最大差为 0，在线精确账仍为 <code>2A+2A^T</code>。这正式授权多轨迹 loaded-artifact Stage C，但尚未得到多轨迹 wall/RSS、外部族、曲线光线或真实 BOST 结果；<code>algorithm_breakthrough=false</code>。</p>
+    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v73 已证明加载工件在三档已知九视角几何、五条 PoolFire fit 轨迹的全部 <code>1,515/1,515</code> 个重建单元保持精度。v74.1 又从零运行 <code>30</code> 个 reference、<code>330</code> 个 fresh timing worker 与 <code>165</code> 个随机相邻完整区组，并由独立程序重放 3,030 帧、复算全部资源门。候选精确账为 <code>2A+2A^T</code>，Zero-K4 为 <code>4A+4A^T</code>；fresh wall ratio 为 <code>p50=0.56507</code>、<code>p90=0.57440</code>，三类 RSS 的 p90 ratio 为 <code>1.03456 / 1.01971 / 1.01409</code>，全部通过冻结门。这是公开 PoolFire 代理上的完整资源正结果，但还不是外部族、曲线光线、真实 BOST、神经算子或论文成功；<code>algorithm_breakthrough=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="#loaded-artifact-fresh-resource-v74-1">打开 v74.1 最新资源正结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_loaded_artifact_fresh_resource_v74_1_result_2026-07-31.md">读 v74.1 完整证据</a>
       <a class="button primary" href="#loaded-artifact-stageb-v73">打开 v73 最新正结果</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_loaded_artifact_stageb_v73_result_2026-07-31.md">读 v73 完整证据</a>
       <a class="button primary" href="#calibrated-factor-v72">打开 v72 最新正结果</a>
@@ -409,12 +412,15 @@
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert success" style="margin-top:12px;">
-      <strong>v73 关键阶段性正结果：loaded-artifact 完整 1,515 单元兼容性门通过</strong>
-      <span>三档已知九视角几何、五条 PoolFire fit trajectory、每条 101 帧全部通过冻结的 field / gradient / interior-gradient / observation 门，并逐单元复现 v70 canonical 结果；162 个数组与全部指标最大差均为 0，独立 dense p0 forward / adjoint 相对差不超过 <code>1.24e-15</code>。候选保持 <code>2A+2A^T</code>，现在只授权多轨迹 loaded-artifact fresh Stage C；尚无多轨迹 wall/RSS、外部族、相机标定或真实 BOST 结论。<a href="#loaded-artifact-stageb-v73">查看完整证据</a>。</span>
+      <strong>v74.1 关键资源正结果：精确算子调用减半，fresh wall 中位约下降 43.49%，三层 RSS 高尾门同时通过</strong>
+      <span>五条 PoolFire fit trajectory、三档已知九视角几何的精度父门仍为 <code>1,515/1,515 PASS</code>。正式资源批次的 global wall p50 / p90 / worst ratio 为 <code>0.56507 / 0.57440 / 0.63788</code>；worker-self、worker-tree、pipeline RSS p90 ratio 为 <code>1.03456 / 1.01971 / 1.01409</code>。独立 validator 核验 360 份回执、165 个区组和 3,030 帧 reference replay，最大重放差为 0。worker-self 与 worker-tree 的 worst 仍分别为 <code>1.08731 / 1.07281</code>，因此只能说预注册 p90 资源门通过，不能说每次都更省内存。<a href="#loaded-artifact-fresh-resource-v74-1">查看完整证据</a>。</span>
     </div>
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="#loaded-artifact-fresh-resource-v74-1">v74.1 loaded-artifact fresh 资源 PASS</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_loaded_artifact_fresh_resource_v74_1_result_2026-07-31.md">v74.1 完整裁决</a>
+      <a class="button" href="../docs/nine_view_loaded_artifact_fresh_resource_v74_1_public_summary.json">v74.1 脱敏结果</a>
       <a class="button primary" href="#loaded-artifact-stageb-v73">v73 loaded-artifact Stage B PASS</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_loaded_artifact_stageb_v73_result_2026-07-31.md">v73 完整裁决</a>
       <a class="button" href="../docs/nine_view_loaded_artifact_stageb_v73_public_summary.json">v73 脱敏结果</a>
@@ -740,7 +746,8 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
-        <article class="panel"><div class="chips"><span class="chip gold">最新 · v73 Stage B PASS</span><span class="chip blue">loaded 1,515/1,515</span></div><h3 style="margin-top:10px;">Loaded artifact full trajectory</h3><p>三档已知九视角几何、五条 PoolFire fit trajectory、每条 101 帧全部通过兼容性门并逐单元复现 v70。三份工件共 162 个数组最大差 0，独立指标最大差 0，dense p0 参考相对差不超过 1.24e-15；精确账仍为 2A+2A^T。正式授权多轨迹 loaded-artifact Stage C，但还没有多轨迹 wall/RSS 或算法突破。</p></article>
+        <article class="panel"><div class="chips"><span class="chip gold">最新 · v74.1 Stage C PASS</span><span class="chip blue">fresh wall 与三层 RSS</span></div><h3 style="margin-top:10px;">Loaded artifact full resource gate</h3><p>v73 的 1,515/1,515 精度父门不变；v74.1 用 30 个 reference、330 个 fresh timing worker 与 165 个完整配对区组正式比较 loaded q8-K1 和 Zero-K4。候选精确调用各减半，wall p50/p90 ratio 为 0.56507/0.57440，worker-self、worker-tree、pipeline RSS p90 为 1.03456/1.01971/1.01409，全部通过。独立重放 3,030 帧最大差 0。范围仍是已开封 PoolFire fit family、已知几何、无噪声 straight-ray 代理，algorithm_breakthrough=false。</p></article>
+        <article class="panel"><div class="chips"><span class="chip gold">v73 Stage B PASS</span><span class="chip blue">loaded 1,515/1,515</span></div><h3 style="margin-top:10px;">Loaded artifact full trajectory</h3><p>三档已知九视角几何、五条 PoolFire fit trajectory、每条 101 帧全部通过兼容性门并逐单元复现 v70。三份工件共 162 个数组最大差 0，独立指标最大差 0，dense p0 参考相对差不超过 1.24e-15；精确账仍为 2A+2A^T。该精度父门随后由 v74.1 的完整 fresh wall/RSS 正式资源门承接。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">v72 开发门 PASS</span><span class="chip blue">online wall / RSS 双通过</span></div><h3 style="margin-top:10px;">Geometry-bound q8 artifact</h3><p>把冻结已知合成几何的 5.63 MiB q8 factor 无损写成只读工件。单条已开封 101 帧 stream、六个 fresh 配对区组的 wall p50 / p90 为 0.56643 / 0.58383，worker-self RSS 为 1.00216 / 1.02958；完整离线构造 2.22 秒，一条序列可摊销。独立复算最大差 0。v73 随后已通过完整 loaded-artifact Stage B，但多轨迹资源门仍未运行。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v70.1 Stage C FAIL</span><span class="chip blue">wall PASS / RSS FAIL</span></div><h3 style="margin-top:10px;">Exact-stencil tiled p0 fresh resource</h3><p>正式 30 reference、330 timing worker 与 165 paired blocks 显示 outer-wall p50 / p90 ratio 为 0.67056 / 0.67773，五条轨迹稳定通过；worker-self、worker-tree、pipeline RSS p90 ratio 为 1.13477 / 1.13220 / 1.06468，全部失败。独立程序重放 3,030 帧，block 与 aggregate 最大差均为 0。准确结论是速度正结果、内存负结果，不是整体资源成功。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v71 开发门 FAIL</span><span class="chip blue">tile tuning closed</span></div><h3 style="margin-top:10px;">Tile2 resource-headroom probe</h3><p>只把 detector-v tile 从 4 降到 2，factor/forward/adjoint 在三档几何上保持约 1.6e-13 内一致，声明工作区从 12 MiB 降到 6 MiB。六个 fresh 配对区组的 wall p50 / p90 为 0.66127 / 0.67807；RSS p50 / p90 为 1.04052 / 1.06020。高尾超门，按预注册规则不扩到另一批 330 worker。</p></article>
@@ -776,6 +783,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="loaded-artifact-fresh-resource-v74-1" class="alert success" style="margin-top:13px;">
+        <strong>v74.1：加载工件候选通过五轨迹、三几何的完整 fresh wall 与 RSS 资源门</strong>
+        <span>v73 已锁定 <code>1,515/1,515</code> 个 field / gradient / interior-gradient / observation 兼容单元；v74.1 不再调候选或阈值，只在 fresh process 中比较 loaded q8-K1 与 Zero-CGLS K4。正式批次从零运行 <code>30</code> 个 reference、<code>330</code> 个 timing worker 和 <code>165</code> 个随机相邻完整区组，候选与对照分别保持 <code>2A+2A^T</code> 和 <code>4A+4A^T</code>。global outer-wall p50 / p90 / worst ratio 为 <code>0.56507 / 0.57440 / 0.63788</code>，中位 wall 约下降 <code>43.49%</code>；worker-self、sampled worker-tree、sampled pipeline RSS 的 p90 ratio 为 <code>1.03456 / 1.01971 / 1.01409</code>，均低于冻结的 1.05 门。五条轨迹与三档几何的 p50 资源门也全部通过。独立 validator 重建 1,515 帧 observation、重放 30 个 reference 共 3,030 帧、核对 360 份回执与 165 个区组，reference norm 最大差为 <code>0</code>。v74.0 因同源 float / integer 时钟相差 0.056 ns 被判 invalid，v74.1 没有复用旧行并重新运行全部 worker。必须同时披露：worker-self / worker-tree worst ratio 仍为 <code>1.08731 / 1.07281</code>，raw RSS sampling trace 没有持久化，因此不能说每次都省内存或独立重生采样轨迹。准确状态是 <code>PASS_LOADED_ARTIFACT_FRESH_RESOURCE_STAGE_C_V74_1</code> 与 <code>PASS_INDEPENDENT_VALIDATION_LOADED_ARTIFACT_FRESH_RESOURCE_V74_1</code>；它还不是 external-family、curved-ray、真实 BOST、神经算子或论文成功，<code>algorithm_breakthrough=false</code>。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_loaded_artifact_fresh_resource_v74_1.png" aria-label="打开 v74.1 loaded-artifact fresh wall、三层 RSS、逐轨迹资源门和证据边界图">
+          <img src="../assets/nine_view_loaded_artifact_fresh_resource_v74_1.png" alt="v74.1 的 fresh outer wall 比值、worker-self worker-tree pipeline RSS 比值、五条轨迹资源门和证据边界" />
+        </a>
+        <figcaption>A：global fresh wall p50/p90/worst 均显著低于冻结门；B：三类 RSS 的 p90 全部通过，同时公开 worker-self 与 worker-tree 的 worst 超过 1.05；C：五条轨迹的 wall 与三类 RSS p50 均低于逐轨迹门；D：1,515 精度单元、360 workers、165 blocks 与 3,030 帧独立重放闭环。范围只属于已开封 PoolFire fit family 的已知几何无噪声 straight-ray 代理。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_loaded_artifact_fresh_resource_v74_1_result_2026-07-31.md">读 v74.1 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_loaded_artifact_fresh_resource_v74_1_public_summary.json">打开 v74.1 脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_loaded_artifact_fresh_resource_v74_1.png">打开 v74.1 结果图原尺寸</a>
       </div>
       <div id="loaded-artifact-stageb-v73" class="alert success" style="margin-top:13px;">
         <strong>v73：只读几何工件通过三档几何、五条轨迹、全部 1,515 单元兼容性门</strong>
