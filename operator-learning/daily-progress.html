@@ -497,22 +497,21 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>87/90</b>
-        <span>v90 补齐九参数全局二阶坐标族后的严格八门 witness；交叉项没有修复其余 3 个 F30+ 单元。</span>
+        <b>89/90</b>
+        <span>v91 在同一九维方向空间中移除任意坐标盒后的严格八门 witness；两个旧失败已被修复。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v90 补齐交叉二次项仍为 87/90，全局低阶多项式路线关闭</strong>
+      <strong>最新科学判决：v91 排除坐标盒混杂，同一九维方向空间由 87/90 提升到 89/90</strong>
       <span>
-        v90 在 v89 六维空间上精确嵌套 <code>xy / xz / yz</code> 三个中心化方向，保持物理预算、三档九视角几何、
-        exact K1 shell、八门和在线 <code>2A+2A^T</code> 不变。F30 frame 7 / 9 / 12 的越线只从
-        <code>0.744%、0.120%、6.271%</code> 降为 <code>0.737%、0.082%、6.249%</code>，修复数为 <code>0/3</code>。
-        独立程序分别重建父空间和交叉余量，并对每个失败单元各检查 <code>32768</code> 个 Sobol 点与 64 个
-        有限差分局部起点；正式/独立 field、residual、metrics、gates 最大差均为 <code>0</code>。
-        所以本轮排除了“只缺交叉项”的解释，关闭全局低阶多项式路线；下一门改为局部 / 多尺度表示，
-        不训练九系数 predictor，也不租 GPU。
-        父结果 v89 仍保留：两个对角二次方向曾把通过数从 <code>86/90</code> 提高到 <code>87/90</code>，
-        修复 F15 frame 12；它说明二阶形状有用，但不改变 v90 对完整全局二阶族的关线结论。
+        v91 保持 v90 的九个全局二阶方向、物理预算、三档九视角几何、exact K1 shell、八门和在线
+        <code>2A+2A^T</code> 不变，只把坐标依赖的 <code>[-1,1]^9</code> 系数盒换成基不变物理能量球。
+        F30 frame 7 / 9 的越线由 <code>0.737%、0.082%</code> 变成 <code>-0.444%、-1.851%</code>，两个
+        witness 的最大 <code>|beta|</code> 为 <code>1.82、1.90</code>，因此旧盒确实制造了两个假阴性。
+        F30 frame 12 仍越线 <code>3.688%</code>，所以同一 span 还没有达到 <code>90/90</code>。
+        独立程序重建 Gram、能量球和全部搜索，正式/独立 field、residual、metrics、gates 最大差均为
+        <code>0</code>。这撤回 v90 的宽泛关线，只关闭旧 box-constrained 参数化；下一门仅为最后一个单元
+        冻结最小局部 / 多尺度方向，不训练 predictor，也不租 GPU。
         父结果 v88.1 保持四参数 spatial-mask4、物理预算、三档九视角几何、exact K1 shell 与八门不变，先逐个 exact replay
         v88 已找到的 <code>86</code> 个 witness，再对四个未决单元运行四种子 differential evolution、DIRECT、
         13 个固定起点与约束 minimax 精化。结果仍为 <code>86/90</code>；F12 / F15 / F30 分别为
@@ -598,15 +597,17 @@
           <p>把“算得对”推进到“调用少、真实更快、内存不过线”，再冻结独立公开反应流外部门。</p>
         </div>
         <div class="timeline">
-          <article class="day-entry latest" id="latest" data-date="2026-08-02" data-categories="science-negative engineering decision">
+          <article class="day-entry latest" id="latest" data-date="2026-08-02" data-categories="science-positive science-negative engineering decision">
             <details open>
               <summary class="entry-summary">
                 <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
-                    <span class="tag negative">v90 witness 87/90</span>
-                    <span class="tag negative">交叉项修复 0/3</span>
-                    <span class="tag negative">3 个 F30+ 仍失败</span>
+                    <span class="tag">v91 witness 89/90</span>
+                    <span class="tag">同一 span 修复 2/3</span>
+                    <span class="tag">旧系数盒是假阴性来源</span>
+                    <span class="tag negative">1 个 F30+ 仍失败</span>
+                    <span class="tag negative">v90 box 内 87/90</span>
                     <span class="tag">v89 修复 1/4 旧反例</span>
                     <span class="tag">v88.1 witness 86/90</span>
                     <span class="tag negative">4 个单元未找到 witness</span>
@@ -616,8 +617,8 @@
                     <span class="tag engineering">独立逐值差 0</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3>v90 补齐全局交叉二次项仍只有 87/90，低阶多项式路线关闭</h3>
-                  <p>三个交叉方向只让残余越线略降，没有修复任何单元；这排除了“只缺 xy / xz / yz”的解释，下一步转向局部 / 多尺度结构。</p>
+                  <h3>v91 移除任意系数盒后，同一九维表示修复两个旧失败</h3>
+                  <p>没有增加一个方向，严格容量就从 87/90 提升到 89/90；这纠正了 v90 的宽泛关线，同时把下一步收缩到唯一剩余的 F30+/12。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
@@ -625,39 +626,39 @@
                 <div class="evidence-grid">
                   <section>
                     <h4>今天真正执行了什么</h4>
-                    <p>先保留 v89 的六维空间与 87 个 witness，再加入 <code>xy / xz / yz</code>。新增方向先投影掉父空间再白化，只对三个残余失败搜索九维系数；每个最终候选真实重放 <code>2A+2A<sup>T</sup></code>。</p>
+                    <p>保留 v90 的九个方向和全部已通过 witness，只把坐标盒换成由物理 correction Gram 定义的能量球；对三个旧失败重跑确定性 Sobol、64 起点约束优化和 exact <code>2A+2A<sup>T</sup></code> replay。</p>
                   </section>
                   <section>
                     <h4>结果与机理</h4>
                     <ul>
-                      <li>严格 witness / 未决：<code>87 / 3</code>；F12 / F15 / F30 为 <code>30 / 30 / 27</code>。</li>
-                      <li>F30 frame 7 / 9 / 12 仍越线 <code>0.737% / 0.082% / 6.249%</code>，唯一阻塞仍是 interior-gradient / Zero-K2。</li>
-                      <li>交叉项修复 <code>0/3</code>；完整全局二阶族的严格通过数没有超过 v89。</li>
-                      <li>这支持“残余结构需要局部性或多尺度”的解释，但还不是数学证明。</li>
-                      <li>同日 v89 父结果仍保留：对角二次方向修复了 F15 frame 12，说明低阶形状曾提供真实增量。</li>
+                      <li>严格 witness / 未决：<code>89 / 1</code>；F12 / F15 / F30 为 <code>30 / 30 / 29</code>。</li>
+                      <li>F30 frame 7 / 9 已过门 <code>-0.444% / -1.851%</code>；最大 <code>|beta|</code> 为 <code>1.82 / 1.90</code>，都落在旧盒外。</li>
+                      <li>F30 frame 12 仍越线 <code>3.688%</code>；唯一阻塞仍是 interior-gradient / Zero-K2。</li>
+                      <li>这证明 v90 的旧盒造成两个实质假阴性，但同一全局 span 仍不足以覆盖最后一个单元。</li>
+                      <li>v90 父结果仍保留为历史证据：它准确描述旧盒内的搜索，却不能再关闭九维方向空间本身。</li>
                       <li>更早的 v87 父诊断也保留：K1-K2 标量线上有 5 个空区间，五个单元连 truth-aware 最优阻尼都无解。</li>
                     </ul>
                   </section>
                   <section>
                     <h4>可信度与边界</h4>
-                    <p>独立 validator 不导入正式 runner 或 v90 表示核心；它分别重建六维父空间和三维交叉余量，并对三个残余失败单元各跑 <code>32768</code> 个 Sobol 点与 64 起点有限差分精化。正式/独立 field、residual、metrics、gates 最大差均为 <code>0</code>，无调用 receipt 失败。这仍是已开封 Case 6 的事后 truth-aware 容量诊断，不是数学不可行证书。</p>
+                    <p>独立 validator 不导入正式 runner 或 v91 能量球 helper；它重建物理 Gram、球面映射和每个旧失败的搜索，正式/独立 field、residual、metrics、gates 最大差均为 <code>0</code>，无调用 receipt 失败。这仍是已开封 Case 6 的事后 truth-aware 容量诊断，不是可部署 initializer、外部泛化或数学不可行证书。</p>
                   </section>
                   <section>
                     <h4>路线如何立即调整</h4>
-                    <p>完整全局低阶多项式表示按工程路线关闭。下一门结果前冻结少量局部窗、分区或多尺度方向；仍先过 90/90 truth-aware 容量门，再决定是否训练 predictor。Mac 足够完成这道容量检查，暂不租 GPU。</p>
+                    <p>撤回“完整全局低阶方向空间关闭”的过宽说法，只关闭旧 box-constrained 参数化。下一门只为 F30+/12 冻结最小、对称的局部窗或多尺度方向；仍先过 90/90 truth-aware 容量门。Mac 足够完成，暂不租 GPU。</p>
                   </section>
                 </div>
                 <figure class="entry-figure">
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90.png" aria-label="打开 v90 交叉二次容量结果图">
-                    <img src="../assets/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90.png" alt="v90 补齐全局二阶坐标族后仍有三个 F30 单元被内部梯度同成本门阻塞" />
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91.png" aria-label="打开 v91 物理能量球容量结果图">
+                    <img src="../assets/nine_view_v90_case6_basis_invariant_physical_ball_v91.png" alt="v91 在同一九维方向空间中修复两个旧失败并留下一个 F30 反例" />
                   </a>
-                  <figcaption>87 个单元找到严格 witness；交叉项让三个越线略降，却没有修复任何一个，完整全局二阶路线因此关闭。</figcaption>
+                  <figcaption>同一九维方向空间从 87/90 提高到 89/90；旧坐标盒制造了两个假阴性，最后一个内部梯度反例仍未解决。</figcaption>
                 </figure>
                 <div class="entry-links">
-                  <a href="../document_reader.html?doc=docs%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_result_2026-08-02.md">v90 完整证据</a>
-                  <a href="../docs/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_public_summary.json">v90 脱敏摘要</a>
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90.png">v90 结果图</a>
-                  <a href="../document_reader.html?doc=docs%2Fnine_view_v88_case6_spatial_quadrupole6_capacity_v89_result_2026-08-02.md">回看 v89 父证据</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91_result_2026-08-02.md">v91 完整证据</a>
+                  <a href="../docs/nine_view_v90_case6_basis_invariant_physical_ball_v91_public_summary.json">v91 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91.png">v91 结果图</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_result_2026-08-02.md">回看 v90 旧盒父证据</a>
                 </div>
               </div>
             </details>
@@ -1984,7 +1985,7 @@
   </main>
 
   <footer>
-    持续更新至 v90 Case 6 完整全局二阶表示容量独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v91 Case 6 基不变物理能量球容量独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
