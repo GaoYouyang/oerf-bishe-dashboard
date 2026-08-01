@@ -11173,3 +11173,55 @@ real BOST = false
 - `docs/nine_view_observable_safety_gate_v84_result_2026-08-01.md`
 - `docs/nine_view_observable_safety_gate_v84_public_summary.json`
 - `assets/nine_view_observable_safety_gate_v84.png`
+
+## 2026-08-01：v85 第一次完成两个零适配外部门，Case 4 全过，Case 6 卡在内部梯度
+
+今天不再继续在 Case 3 上调模型，而是把已经冻结的 predictor、归一化、九视角几何、residual 阈值和
+CGLS 回退原封不动地放到两个外部反应流工况。顺序也提前固定为 Case 4 再 Case 6，前一个结果不能用来
+更新后一个。这是当前路线第一次真正回答“换一个反应流以后还能不能守住严格八门”。
+
+结果不是单一的好消息，也不是模糊的失败：
+
+```text
+Case 4                  84 / 84 PASS
+Case 4 K1 / K2          41 / 43
+Case 4 mean exact calls 2.5119 A + 2.5119 A^T  (-37.2% vs Zero-K4)
+
+Case 6                  78 / 90 FAIL
+Case 6 K1 / K2          90 / 0
+Case 6 failures         12, all interior-gradient only
+joint external gate     FAIL (required 174 / 174)
+```
+
+Case 4 是可信的零适配外部正结果。Case 6 则说明当前 scalar residual gate 还不够：它把 90 个单元全部判断
+为“可以在 K1 停止”，但其中 12 个单元的内部局部梯度不安全。field、整体 gradient 和 observation 对照门
+都通过，因此不是整体场完全失效。12 个失败中，4 个违反相对 Zero-K4 的 no-harm 门，8 个违反相对同调用
+Zero-K2 的优势门。
+
+失败单元的 residual score 为 `0.24797-0.35614`，通过单元为 `0.21709-0.36313`，两类高度重叠。事后若仍
+坚持单标量阈值并要求零漏判，最多只能安全接受 `11/90`。这说明仅靠“全局残差有多小”看不见“局部内部
+梯度是否危险”。这个 11/90 只用于解释失效，不能拿来更新阈值后补考 Case 6。
+
+两个外部门都由独立程序重新生成预测、残差、八门和实际调用回执；声明的 prediction field、residual、score
+和调用账最大差都为 0。Case 6 observation 的独立物理重算也逐数组相等。证据可信，但联合科学结论仍然是
+FAIL，所以没有启动 wall/RSS 资源测试。
+
+下一项直接机理诊断是在已经开封的 Case 6 上，把同一个 warm K1 强制继续一步真实 CGLS K2：如果 12 个
+失败全部被救回，主因是门控器识别不了局部风险；如果 K2 仍失败，说明 warm 表示本身也缺少内部梯度容量。
+它只能改变机制判断，不能重新算一次外部通过。任何新选择器都必须留到另一个真正未打开的工况一次性验证。
+
+```text
+Case 4 zero-adaptation external pass = true
+Case 4 + Case 6 joint external pass = false
+resource gate authorized = false
+external generalization = false
+algorithm_breakthrough = false
+paper_success = false
+real BOST = false
+```
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_v84_external_cases_v85_result_2026-08-01.md`
+- `docs/nine_view_v84_external_cases_v85_public_summary.json`
+- `assets/nine_view_v84_external_cases_v85.png`
