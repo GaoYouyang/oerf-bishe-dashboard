@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.02-c-v89-diagonal-quadratic-capacity-partial",
-  previousVersion: "2026.08.02-c-v88.1-spatial-mask4-capacity-negative",
-  previousBadge: "v88.1 Case 6 spatial-mask4 · 86 / 90 witnesses",
+  version: "2026.08.02-c-v90-global-quadratic-capacity-negative",
+  previousVersion: "2026.08.02-c-v89-diagonal-quadratic-capacity-partial",
+  previousBadge: "v89 Case 6 diagonal-quadratic · 87 / 90 witnesses",
   olderBadge: "v84.2 Case 3 residual gate · 75 / 75 development PASS",
   historyReleases: [
+    {
+      version: "2026.08.02-c-v89-diagonal-quadratic-capacity-partial",
+      previousVersion: "2026.08.02-c-v88.1-spatial-mask4-capacity-negative",
+      badge: "v89 Case 6 diagonal-quadratic · 87 / 90 witnesses"
+    },
     {
       version: "2026.08.02-c-v88.1-spatial-mask4-capacity-negative",
       previousVersion: "2026.08.02-c-v87-k1-k2-line-negative",
@@ -558,6 +563,7 @@ window.OPERATOR_LEARNING_GUIDE = {
     }
   ],
   resources: [
+    {id:"nine-view-v90-case6-spatial-cross-quadratic9-capacity",stage:"warm-start",level:"必做",type:"最新表示容量负结果",title:"v90：补齐全局二阶坐标族仍只有 87/90",url:"../document_reader.html?doc=docs%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_result_2026-08-02.md",local:"../docs/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_public_summary.json",read:"先理解 v89 六维父空间为什么被精确嵌套，再核对 xy / xz / yz 三个交叉项让三个 F30 越线略降却修复 0 个单元。重点核对 32768 Sobol + 64 起点独立搜索、正式与独立逐值差为 0，以及为什么这足以关闭工程路线却不是数学不可能证明。",output:"不用页面解释：为什么完整全局二阶坐标族仍缺 F30 局部内部梯度结构；为什么不能训练九系数 predictor；为什么下一门必须转向局部 / 多尺度方向；为什么当前仍不该租 GPU。",verified:"NO_ALL_CELL_SPATIAL_CROSS_QUADRATIC9_WITNESS_FOUND_V90；PASS_INDEPENDENT_RECOMPUTATION_CASE6_CROSS_QUADRATIC9_V90；87 witnesses / 3 unresolved / 0 repaired；algorithm_breakthrough=false"},
     {id:"nine-view-v89-case6-spatial-quadrupole6-capacity",stage:"warm-start",level:"必做",type:"最新表示容量部分进展",title:"v89：对角二次扩展修复一个旧反例，但仍只有 87/90",url:"../document_reader.html?doc=docs%2Fnine_view_v88_case6_spatial_quadrupole6_capacity_v89_result_2026-08-02.md",local:"../docs/nine_view_v88_case6_spatial_quadrupole6_capacity_v89_public_summary.json",read:"先理解旧四维空间为什么被精确嵌套，再比较四个旧反例扩展前后的 interior-gradient/Zero-K2 越线。重点核对 F15+/12 已修复、三个 F30+ 仍失败，以及独立 Sobol + 48 起点搜索为什么只能支持工程关线，不能声称数学不可能。",output:"不用页面解释：为什么二阶自由度是真实有用但仍不足；为什么不能训练六系数 predictor；为什么下一门应补 xy/xz/yz 交叉项并在容量失败时关闭全局低阶多项式路线；为什么当前仍不该租 GPU。",verified:"NO_ALL_CELL_SPATIAL_QUADRUPLE6_WITNESS_FOUND_V89；PASS_INDEPENDENT_RECOMPUTATION_CASE6_QUADRUPLE6_V89；87 witnesses / 3 unresolved；algorithm_breakthrough=false"},
     {id:"nine-view-v88-case6-spatial-mask4-witness-v88-1",stage:"warm-start",level:"必做",type:"父表示容量负结果",title:"v88.1：spatial-mask4 仍只有 86/90 找到严格 witness",url:"../document_reader.html?doc=docs%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1_result_2026-08-02.md",local:"../docs/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1_public_summary.json",read:"先区分 v88 的 optimizer-terminal 歧义与 v88.1 的存在性判据，再核对 86/90、F12/F15/F30 为 30/29/27，以及四个反例只越过 interior-gradient/Zero-K2 门。重点理解正式全局搜索与独立 Sobol 搜索为什么只能支持工程关线，不能声称数学不可能。",output:"不用页面解释：为什么更大的 coefficient selector 无法补救表示容量缺口；为什么下一门应先增加最小空间自由度并重跑 truth-aware 90/90 容量门；为什么当前还不该租 GPU。",verified:"NO_ALL_CELL_SPATIAL_MASK4_WITNESS_FOUND_V88_1；PASS_INDEPENDENT_RECOMPUTATION_CASE6_SPATIAL_MASK4_WITNESSES_V88_1；86 witnesses / 4 unresolved；algorithm_breakthrough=false"},
     {id:"nine-view-v86-case6-k1-k2-line-v87",stage:"warm-start",level:"必做",type:"最新机理负结果",title:"v87：K1-K2 一维混合仍有 5/90 无解",url:"../document_reader.html?doc=docs%2Fnine_view_v86_case6_k1_k2_line_v87_result_2026-08-02.md",local:"../docs/nine_view_v86_case6_k1_k2_line_v87_public_summary.json",read:"先写出 x(t)=x_K1+t(x_K2-x_K1)，再理解八个误差门为什么都能化成凸二次不等式。重点核对 85/90 非空、5/90 空、0 ambiguity，以及五个反例均被单个 interior-gradient 门独立判死。",output:"不用页面解释：为什么更强的 scalar-t predictor 无法从空区间中选出答案；为什么 85 个可行单元仍说明主线有结构信号；为什么下一门应检查现有四参数空间 warm 表示在 Case 6 的 truth-aware 容量，而不是扩大 gate network。",verified:"FAIL_K1_K2_LINE_LACKS_ALL_CELL_ORACLE_FEASIBILITY_V87；PASS_INDEPENDENT_RECOMPUTATION_CASE6_K1_K2_LINE_V87；85 nonempty / 5 empty / 0 ambiguous；algorithm_breakthrough=false"},
