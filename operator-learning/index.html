@@ -507,17 +507,17 @@
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="#research-progress">查看当前研究进程</a>
           <a class="button" href="daily-progress.html">查看每日实质增量</a>
-          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91_result_2026-08-02.md">阅读最新完整证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v91_case6_radial_quartic10_v92_result_2026-08-02.md">阅读最新完整证据</a>
         </div>
       </div>
       <aside class="hero-verdict" aria-label="当前科学判决">
         <b>当前判决：尚未突破</b>
-        <p><code>v91</code> 不增加方向，只把 v90 任意的坐标盒替换为基不变物理能量球，就让严格 witness 从 <code>87/90</code> 提升到 <code>89/90</code>。这证明两个旧失败是假阴性；F30+/12 仍被内部梯度同成本门阻塞。</p>
-        <p><strong>下一步：</strong>只为最后一个反例冻结最小、对称的局部或多尺度方向；达到 90/90 前不训练 predictor，也不租 GPU。</p>
+        <p><code>v92</code> 在 v91 的九维物理球上增加一个合法、非退化的径向四次多尺度方向，但严格 witness 仍为 <code>89/90</code>。F30+/12 的内部梯度越线只从 <code>3.688%</code> 降至 <code>3.631%</code>，修复数为 0。</p>
+        <p><strong>下一步：</strong>停止堆叠全局径向阶数，先定位最后反例的轴向、局域和尺度结构；有定位证据后才冻结小型局域双尺度族。达到 90/90 前不训练 predictor，也不租 GPU。</p>
       </aside>
     </div>
     <div class="current-grid" aria-label="当前核心状态">
-      <div class="current-metric"><b id="liveWitnessCount">89 / 90</b><span>Case 6 严格 witness；同一九维 span 修复两个旧假阴性</span></div>
+      <div class="current-metric"><b id="liveWitnessCount">89 / 90</b><span>Case 6 严格 witness；v92 新方向未修复最后反例</span></div>
       <div class="current-metric warning"><b id="liveFailureCount">1 个反例</b><span>F30+/12 仍越过 interior-gradient / Zero-K2 门</span></div>
       <div class="current-metric"><b id="liveCallBudget">2A + 2A<sup>T</sup></b><span>每个候选的冻结 exact 在线预算</span></div>
       <div class="current-metric warning"><b id="liveBreakthrough">false</b><span><code>algorithm_breakthrough</code>；不夸大负结果</span></div>
@@ -527,9 +527,10 @@
       <div class="archive-body">
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
-      <a class="button primary" href="#basis-invariant-physical-ball-v91">打开 v91 最新容量判决</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91_result_2026-08-02.md">读 v91 完整证据</a>
-      <a class="button" href="../docs/nine_view_v90_case6_basis_invariant_physical_ball_v91_public_summary.json">读 v91 脱敏摘要</a>
+      <a class="button primary" href="#radial-quartic-v92">打开 v92 最新容量判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v91_case6_radial_quartic10_v92_result_2026-08-02.md">读 v92 完整证据</a>
+      <a class="button" href="../docs/nine_view_v91_case6_radial_quartic10_v92_public_summary.json">读 v92 脱敏摘要</a>
+      <a class="button" href="#basis-invariant-physical-ball-v91">回看 v91 参数化正进展</a>
       <a class="button danger" href="#spatial-cross-quadratic9-capacity-v90">回看 v90 受盒约束判决</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_result_2026-08-02.md">读 v90 完整证据</a>
       <a class="button" href="../docs/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_public_summary.json">读 v90 脱敏摘要</a>
@@ -593,9 +594,9 @@
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
-    <div class="alert success" style="margin-top:12px;">
-      <strong>v91 最新判决：同一九维方向空间由 87/90 提升到 89/90</strong>
-      <span>物理能量球替换任意坐标盒后，F30+/7 与 F30+/9 的内部梯度越线变为 <code>-0.444%</code> 与 <code>-1.851%</code>；两个 witness 的最大系数分别为 <code>1.82</code> 与 <code>1.90</code>，因此旧 <code>|beta|≤1</code> 盒确实制造了假阴性。F30+/12 仍越线 <code>3.688%</code>。独立程序逐值复算差为 <code>0</code>；这是参数化诊断的实质正进展，不是算法突破。<a href="#basis-invariant-physical-ball-v91">查看完整证据</a>。</span>
+    <div class="alert critical" style="margin-top:12px;">
+      <strong>v92 最新判决：一个径向四次多尺度方向没有修复最后反例</strong>
+      <span>新方向相对旧九维空间的残余物理能量非零，且独立程序重建后逐项指标差为 <code>0</code>；但 F30+/12 的内部梯度越线只由 <code>3.688%</code> 降至 <code>3.631%</code>，相当于只消掉剩余越线的 <code>1.55%</code>，严格容量仍为 <code>89/90</code>。这正式关闭单径向四次支线，下一步先做误差定位。<a href="#radial-quartic-v92">查看完整证据</a>。</span>
     </div>
     <div class="alert critical" style="margin-top:12px;">
       <strong>v88.1 父判决：四参数 spatial-mask4 只有 86/90 个 Case 6 单元找到严格 witness</strong>
@@ -901,7 +902,7 @@
         <div><b>公开反应流 CFD</b><span>PoolFire 与独立 BLASTNet 工况</span></div>
         <div><b>九视角观测</b><span>已知几何 straight-ray 密度梯度代理</span></div>
         <div><b>粗网格逆问题</b><span><code>32×16×16</code> 三维状态</span></div>
-        <div class="current"><b>当前：89/90 容量</b><span>旧盒假阴性已排除，只补最后一个局部缺口</span></div>
+        <div class="current"><b>当前：89/90 容量</b><span>单径向四次已关线，先定位最后局部缺口</span></div>
         <div><b>Observation-only 学习</b><span>容量过门后才训练预测器</span></div>
         <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
       </div>
@@ -948,21 +949,21 @@
           </article>
           <article class="evidence-row">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v91：移除坐标盒后，同一 span 达到 89/90</strong><p>没有增加新方向，F30+/7 与 F30+/9 已过门；v90 的两个失败被确认为坐标盒假阴性。F30+/12 仍需最小局部或多尺度自由度。</p></div>
-            <span class="evidence-state">实质正增量</span>
+            <div><strong>v92：单径向四次多尺度方向正式关线</strong><p>新方向非退化，但 F30+/12 越线只从 3.688% 降到 3.631%，严格容量仍为 89/90。停止堆全局径向阶数，先定位缺口。</p></div>
+            <span class="evidence-state fail">机理负结果</span>
           </article>
         </div>
         <figure class="latest-figure">
-          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91.png" aria-label="打开 v91 完整结果图">
-            <img src="../assets/nine_view_v90_case6_basis_invariant_physical_ball_v91.png" alt="v91 在相同九维方向空间中用物理能量球修复两个旧失败" />
+          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v91_case6_radial_quartic10_v92.png" aria-label="打开 v92 完整结果图">
+            <img src="../assets/nine_view_v91_case6_radial_quartic10_v92.png" alt="v92 径向四次多尺度方向没有修复最后一个 Case 6 反例" />
           </a>
-          <figcaption>最新可视化：F12+ / F15+ / F30+ 为 30/30、30/30、29/30。相同九维方向空间修复两个旧假阴性；最后一个单元仍越过内部梯度门 3.688%。这是参数化诊断正进展，不是算法突破。</figcaption>
+          <figcaption>最新可视化：F12+ / F15+ / F30+ 仍为 30/30、30/30、29/30。径向四次方向只消掉 1.55% 的剩余越线，修复数为 0；这是可信的关线负结果，不是算法突破。</figcaption>
         </figure>
       </div>
       <div class="actions" style="margin-top:13px;">
-        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91_result_2026-08-02.md">读 v91 完整证据</a>
-        <a class="button" href="../docs/nine_view_v90_case6_basis_invariant_physical_ball_v91_public_summary.json">读机器可读摘要</a>
-        <a class="button" href="#basis-invariant-physical-ball-v91">展开历史区中的技术细节</a>
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v91_case6_radial_quartic10_v92_result_2026-08-02.md">读 v92 完整证据</a>
+        <a class="button" href="../docs/nine_view_v91_case6_radial_quartic10_v92_public_summary.json">读机器可读摘要</a>
+        <a class="button" href="#radial-quartic-v92">展开历史区中的技术细节</a>
       </div>
     </section>
 
@@ -978,7 +979,7 @@
       <div class="focus-grid">
         <article class="focus-card positive"><h3>已建立可复算链</h3><p>每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。</p></article>
         <article class="focus-card boundary"><h3>当前更新源</h3><p id="liveEvidenceStatus" aria-live="polite">正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。</p></article>
-        <article class="focus-card current"><h3>本轮真实增量</h3><p>同一九维 span 改用物理能量球后修复两个旧反例，证明任意坐标盒制造了假阴性。现在只剩 F30+/12，下一步只为它增加最小局部或多尺度结构。</p></article>
+        <article class="focus-card current"><h3>本轮真实增量</h3><p>一个非退化的径向四次方向仍没有修复 F30+/12，只带来 1.55% 的剩余越线下降。由此停止全局径向阶数堆叠，把下一步改为误差定位。</p></article>
       </div>
     </section>
 
@@ -991,7 +992,7 @@
         </div>
       </div>
       <div class="outcome-ladder">
-        <div class="outcome-step closed"><div><b>找到足够但最小的空间表示</b><span>v91 排除任意系数盒后达到 89/90；下一门只为最后一个 F30+ 单元增加最小局部 / 多尺度自由度，同时保持在线 exact 预算可控。</span></div><em>当前进行中</em></div>
+        <div class="outcome-step closed"><div><b>找到足够但最小的空间表示</b><span>v92 的单径向四次方向仍停在 89/90；下一门先定位最后一个 F30+ 单元的空间缺口，再决定是否冻结小型局域双尺度族。</span></div><em>当前进行中</em></div>
         <div class="outcome-step"><div><b>训练 observation-only warm initializer</b><span>训练与部署都不读取真值；与 ridge、KRR、U-Net / FNO 等公平对照，并保留 fail-closed 回退。</span></div><em>容量过门后</em></div>
         <div class="outcome-step"><div><b>独立工况 matched-accuracy</b><span>在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
         <div class="outcome-step"><div><b>真实资源收益</b><span>fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。</span></div><em>尚未启动</em></div>
@@ -1022,7 +1023,7 @@
         </div>
       </div>
       <div class="future-grid">
-        <article class="focus-card current"><h3>最近科学门</h3><p>只为 F30+/12 冻结最小、对称的局部窗或多尺度方向，并保留 v91 的物理能量参数化。继续先做 truth-aware 容量审计；未达到 90/90 前不训练 predictor。</p></article>
+        <article class="focus-card current"><h3>最近科学门</h3><p>先对 F30+/12 做结果披露的误差定位，判断缺口是轴向、局域还是尺度相关；只有定位证据明确，才冻结小型 observation-visible 局域双尺度族。未达到 90/90 前不训练 predictor。</p></article>
         <article class="focus-card boundary"><h3>何时租 GPU</h3><p>只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。</p></article>
         <article class="focus-card positive"><h3>何时接组内数据</h3><p>公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。</p></article>
       </div>
@@ -1232,6 +1233,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="radial-quartic-v92" class="alert critical" style="margin-top:13px;">
+        <strong>v92：单径向四次多尺度方向非退化，但严格容量仍为 89/90</strong>
+        <span>v92 在 v91 九维物理球上加入一个由 <code>p4(s)=s²-(46/21)s+97/105</code> 生成的方向；对称的是解析径向掩膜，掩膜乘上非对称基础修正场并投影后，最终方向一般不对称。连续立方体测度下的解析正交只用于定义掩膜，离散 <code>32×16×16</code> 网格上的实际物理正交由 Gram 投影建立。新方向残余物理能量非零，但 F30+/12 越线只从 <code>3.688%</code> 降到 <code>3.631%</code>，仅消掉剩余越线的 <code>1.55%</code>，修复数为 0。正式与独立复算的 field、residual、metrics、gates 最大差均为 <code>0</code>；因此关闭单径向四次支线，先做空间误差定位。</span>
+      </div>
+      <figure class="result-figure">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_v91_case6_radial_quartic10_v92.png" aria-label="打开 v92 径向四次容量负结果图">
+          <img src="../assets/nine_view_v91_case6_radial_quartic10_v92.png" alt="v92 单径向四次方向保持八十九个严格 witness 并留下一个 F30 反例" />
+        </a>
+        <figcaption>A：v91 与 v92 的逐几何通过数完全相同；B：最后越线从 3.688% 降至 3.631%；C：八门中只有 interior-gradient / Zero-K2 仍为正。该结果关闭一个方向，不证明所有局域多尺度表示不可行。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v91_case6_radial_quartic10_v92_result_2026-08-02.md">读 v92 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_v91_case6_radial_quartic10_v92_public_summary.json">打开 v92 脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_v91_case6_radial_quartic10_v92.png">打开 v92 结果图原尺寸</a>
       </div>
       <div id="basis-invariant-physical-ball-v91" class="alert success" style="margin-top:13px;">
         <strong>v91：方向空间不变，物理能量球修复两个旧假阴性</strong>
@@ -2715,7 +2731,7 @@
           document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：${metrics.strict_witness_passed}/${metrics.cell_count} 个单元通过；下一门是 ${nextGate}。每次独立验证后的公开提交只需更新这份稳定清单。`;
         })
         .catch(() => {
-          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v91 为 89/90，algorithm_breakthrough=false。';
+          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v92 仍为 89/90，单径向四次方向已关线，algorithm_breakthrough=false。';
         });
     })();
   </script>

@@ -11533,3 +11533,48 @@ F30+/12    6.271258%      6.248878%     -0.022380 pp
 - `docs/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_result_2026-08-02.md`
 - `docs/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_public_summary.json`
 - `assets/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90.png`
+
+## 2026-08-02：v91 排除系数盒假阴性，v92 关闭单径向四次支线
+
+### 为什么连续做两步
+
+v90 的九维方向在逐坐标 `[-1,1]` 盒内只有 `87/90`，但这个盒会随方向基的缩放和旋转改变，不能直接代表物理修正场的大小。v91 因此没有加方向，只把约束换成由 correction Gram 定义的基不变物理能量球。它把 F30 frame 7 和 9 救回，严格容量升到 `89/90`，证明旧盒制造了两个假阴性。
+
+最后只剩 F30 frame 12。v92 随后只加入一个最低阶、参数无关的径向四次多尺度掩膜方向，保持九视角几何、K1 shell、八门和在线 `2A+2A^T` 不变。目的不是凑维度，而是直接检验“缺失的是全局内外尺度重分配”这个具体假设。
+
+### 实际结果
+
+```text
+v90 old coordinate box        87 / 90
+v91 physical-energy ball      89 / 90
+v92 + radial quartic          89 / 90
+```
+
+v92 没有修复任何新单元。F30 frame 12 的 interior-gradient / Zero-K2 越线只从 `3.688360%` 降到 `3.631127%`，相当于只消掉剩余越线的 `1.551720%`。
+
+新方向不是数值上的零：它相对旧九维空间的残余物理能量非零，十维 Gram 条件数约为 1。失败来自方向机制不对，而不是搜索空间退化。
+
+### 两个容易说错的地方
+
+- 对称的是解析径向掩膜 `p4(s)`；它乘上非对称基础修正场并投影后，最终场方向一般不对称。
+- `p4` 对常数和半径平方的解析正交成立于连续均匀立方体测度；离散网格上的实际物理正交由 Gram 投影建立。
+
+### 怎样确认
+
+独立 validator 不导入正式 v92 runner 或径向四次 core，重新推导掩膜系数、重建物理投影和十维能量球，并重放全部 90 个候选。对未决单元另跑 `32768` 个确定性 Sobol 点和 64 个有限差分 SLSQP 起点。
+
+正式与独立的 field、residual、metrics、gates 最大差均为 `0`，q 最大差为 `6.94e-18`，调用回执失败数为 0。共享冻结 physics kernels 的边界仍保留，所以这不是端到端独立物理实现。
+
+### 成功、失败与路线调整
+
+- **成功：** v91 找到两个真实假阴性，纠正了过宽的旧关线；v92 又用可信负证据排除了单一全局径向尺度解释。
+- **失败：** v92 仍是 `89/90`，没有授权 predictor 训练、GPU、wall/RSS 或外部工况。
+- **突破：** 没有。`algorithm_breakthrough=false`、`paper_success=false`。
+- **下一步：** 先对 F30 frame 12 做披露式空间误差定位，判断缺口是轴向、局域还是尺度相关；只有定位证据明确，才冻结小型局域双尺度族，不再盲目增加全局径向阶数。
+
+公开证据：
+
+- `docs/nine_view_v90_case6_basis_invariant_physical_ball_v91_result_2026-08-02.md`
+- `docs/nine_view_v91_case6_radial_quartic10_v92_result_2026-08-02.md`
+- `docs/nine_view_v91_case6_radial_quartic10_v92_public_summary.json`
+- `assets/nine_view_v91_case6_radial_quartic10_v92.png`
