@@ -11396,3 +11396,73 @@ real_BOST = false
 - `docs/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1_result_2026-08-02.md`
 - `docs/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1_public_summary.json`
 - `assets/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png`
+
+## 2026-08-02：v89 加两个对角二次方向，真实修复一个旧反例，但还不是答案
+
+### 先说人话
+
+v88.1 告诉我们：原来的四个空间方向最多只在 `86/90` 个 Case 6 单元里找到答案。今天没有直接训练更大的网络，而是先给网络未来能输出的场增加两个有明确物理形状的自由度：一个区分 z 和 y 方向的二次变化，另一个区分 x 与横向平面的二次变化。
+
+它们不是白加的。F15 frame 12 原本超门 `0.661%`，现在进入门内并留下 `0.606%` 余量；三个 F30 反例也都变好。但最终仍只有 `87/90`，所以六参数表示还不能拿去训练 predictor。
+
+### 我实际做了什么
+
+- 保留原来的 z / y / x / 径向四个方向，不重新旋转它们；
+- 加入中心化的 `z^2-y^2` 与 `2x^2-z^2-y^2`；
+- 先从新方向中投影掉旧四维空间，再只对白化后的二维余量归一化；
+- 验证旧四参数解以 `[beta4, 0, 0]` 嵌入时，field 和 residual 逐值完全相同；
+- 对四个旧失败单元重新搜索六维系数，并真实运行同一 K1 shell；
+- 保持物理预算、八个精度门和每个候选的 `2A+2A^T` 在线调用账不变。
+
+### 正式结果
+
+```text
+strict witnesses = 87 / 90
+F12+ = 30 / 30
+F15+ = 30 / 30
+F30+ = 27 / 30
+```
+
+四个旧失败的内部梯度越线幅度：
+
+```text
+             v88.1      v89
+F30/7        2.2239%   0.7439%   still fail
+F30/9        1.5887%   0.1202%   still fail
+F30/12       7.9417%   6.2713%   still fail
+F15/12       0.6611%  -0.6062%   repaired
+```
+
+负数表示已经过门。三个残余失败的其他七门都通过，仍然只卡在 interior-gradient 相对同成本 Zero-K2 的非劣门。
+
+### 我怎样确认这不是程序自己说自己对
+
+独立 validator 没有导入正式 runner 或正式表示核心。它重新构造六维表示、90 个问题、真值、观测和全部指标；对于三个失败单元，每格另扫 `16384` 个 Sobol 点，并从 `48` 个点做有限差分 SLSQP 精化。
+
+正式与独立复算的 field、residual、metrics、gates 最大差全部是 `0`。旧四维嵌入的 field / residual 差也是 `0`，物理预算差只有浮点舍入量级。所有最终 receipt 都是 `2A+2A^T`。
+
+### 成功了吗
+
+**局部机制成功，完整算法仍失败。**
+
+这次成功证明了二阶空间自由度确实能修复一部分内部梯度问题；失败之处是它没有把全部 90 个单元带过门。`87/90` 不能写成算法成功，更不能写成外部泛化、速度、真实 BOST 或论文成功。
+
+```text
+algorithm_breakthrough = false
+paper_success = false
+external_generalization = false
+real_BOST = false
+```
+
+### 路线如何调整
+
+不训练六系数 selector，也不租 GPU。下一步只补 `xy / xz / yz` 三个交叉二次项，让当前表示变成完整的低阶二次坐标族，同时精确嵌套现有六维空间。先看 truth-aware 容量能否达到 `90/90`：
+
+- 若通过，再研究 observation-only 系数预测；
+- 若仍失败，关闭全局低阶多项式路线，转向局部窗口、多尺度或小波式空间方向。
+
+公开证据：
+
+- `docs/nine_view_v88_case6_spatial_quadrupole6_capacity_v89_result_2026-08-02.md`
+- `docs/nine_view_v88_case6_spatial_quadrupole6_capacity_v89_public_summary.json`
+- `assets/nine_view_v88_case6_spatial_quadrupole6_capacity_v89.png`

@@ -497,14 +497,21 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>86/90</b>
-        <span>v88.1 中四参数 spatial-mask4 找到严格八门 witness 的 Case 6 单元；其余 4 个仍被内部梯度同成本门阻塞。</span>
+        <b>87/90</b>
+        <span>v89 中六参数对角二次表示找到严格八门 witness 的 Case 6 单元；其余 3 个 F30+ 单元仍被内部梯度同成本门阻塞。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v88.1 只有 86/90 个 Case 6 单元找到 spatial-mask4 严格 witness，当前四参数表示关闭</strong>
+      <strong>最新科学判决：v89 修复一个旧反例，但六参数对角二次表示仍只有 87/90</strong>
       <span>
-        v88.1 保持四参数 spatial-mask4、物理预算、三档九视角几何、exact K1 shell 与八门不变，先逐个 exact replay
+        v89 在四参数 spatial-mask4 上精确嵌套两个全局对角二次方向，保持物理预算、三档九视角几何、
+        exact K1 shell、八门和在线 <code>2A+2A^T</code> 不变。F15 frame 12 被修复，F30 frame 7 / 9 / 12
+        的越线分别从 <code>2.224%、1.589%、7.942%</code> 降为 <code>0.744%、0.120%、6.271%</code>，但仍只被
+        interior-gradient / Zero-K2 门阻塞。独立程序重新构造六维嵌套表示，并对三个失败单元各检查
+        <code>16384</code> 个 Sobol 点与 48 个有限差分局部起点；正式/独立 field、residual、metrics、gates
+        最大差均为 <code>0</code>。所以本轮是“二阶自由度有效但不足”的部分进展，不是突破；下一门只补
+        <code>xy / xz / yz</code> 交叉项，不训练六系数 predictor，也不租 GPU。
+        父结果 v88.1 保持四参数 spatial-mask4、物理预算、三档九视角几何、exact K1 shell 与八门不变，先逐个 exact replay
         v88 已找到的 <code>86</code> 个 witness，再对四个未决单元运行四种子 differential evolution、DIRECT、
         13 个固定起点与约束 minimax 精化。结果仍为 <code>86/90</code>；F12 / F15 / F30 分别为
         <code>30/30、29/30、27/30</code>。四个反例的其他七门均通过，只越过 interior-gradient 相对同成本
@@ -595,7 +602,10 @@
                 <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
-                    <span class="tag negative">v88.1 witness 86/90</span>
+                    <span class="tag negative">v89 witness 87/90</span>
+                    <span class="tag">修复 1/4 旧反例</span>
+                    <span class="tag negative">3 个 F30+ 仍失败</span>
+                    <span class="tag">v88.1 witness 86/90</span>
                     <span class="tag negative">4 个单元未找到 witness</span>
                     <span class="tag">v87 line 85/90</span>
                     <span class="tag">5 个区间为空</span>
@@ -603,8 +613,8 @@
                     <span class="tag engineering">独立逐值差 0</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3>v88.1 关闭当前四参数 spatial-mask4：全局与独立搜索仍只有 86/90</h3>
-                  <p>修正 v88 的 optimizer-terminal 歧义后，四个 Case 6 单元仍找不到严格 witness；容量缺口不能靠扩大 coefficient selector 补救。</p>
+                  <h3>v89 对角二次扩展修复一个旧反例，但六参数表示仍只有 87/90</h3>
+                  <p>两个新增全局二次方向确实改善了四个旧失败，但三个 F30+ 单元仍未过内部梯度同成本门；下一步转向交叉坐标结构，不训练容量不足的 predictor。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
@@ -612,37 +622,38 @@
                 <div class="evidence-grid">
                   <section>
                     <h4>今天真正执行了什么</h4>
-                    <p>保持四参数表示与所有精度门不变，对 v88 的 86 个可行 endpoint 做 exact replay；对四个未决单元运行四种子 differential evolution、DIRECT、原 13 起点和约束 minimax 精化。每个最终 witness 都真实重放 <code>2A+2A<sup>T</sup></code>。</p>
+                    <p>在 v88.1 的 z / y / x / 径向四方向上，加入 <code>z²-y²</code> 与 <code>2x²-z²-y²</code>。新增方向先投影掉旧空间再白化，保证旧 86 个 witness 精确嵌套；只对四个旧失败搜索六维系数，每个最终候选真实重放 <code>2A+2A<sup>T</sup></code>。</p>
                   </section>
                   <section>
                     <h4>结果与机理</h4>
                     <ul>
-                      <li>严格 witness / 未决：<code>86 / 4</code>；F12 / F15 / F30 为 <code>30 / 29 / 27</code>。</li>
-                      <li>四个失败为 F30 frame 7 / 9 / 12 与 F15 frame 12，全部只越过 interior-gradient / Zero-K2 门。</li>
-                      <li>最优仍越线 <code>2.22% / 1.59% / 7.94% / 0.66%</code>；最坏仍是 F30 frame 12。</li>
-                      <li>v87 同日父诊断也已关闭 K1-K2 scalar line：85/90 非空、5/90 空、0 ambiguity；五个单元连 truth-aware 最优阻尼都无解。</li>
+                      <li>严格 witness / 未决：<code>87 / 3</code>；F12 / F15 / F30 为 <code>30 / 30 / 27</code>。</li>
+                      <li>F15 frame 12 从越线 <code>0.661%</code> 变为门内余量 <code>0.606%</code>，被真实修复。</li>
+                      <li>F30 frame 7 / 9 / 12 仍越线 <code>0.744% / 0.120% / 6.271%</code>，唯一阻塞仍是 interior-gradient / Zero-K2。</li>
+                      <li>这说明全局二次形状有用，却不能完整表达 F30 的局部内部梯度结构。</li>
+                      <li>同日 v87 父诊断仍保留：K1-K2 标量线上有 5 个区间为空，五个单元连 truth-aware 最优阻尼都无解。</li>
                     </ul>
                   </section>
                   <section>
                     <h4>可信度与边界</h4>
-                    <p>独立 validator 不导入正式 v88.1 runner；它从原始 Case 6 场重建 90 个问题，逐个 exact replay，并在四个失败单元上另跑 <code>16384</code> 个 Sobol 点与 32 起点有限差分精化。正式/独立 field、residual、metrics、gates 最大差均为 <code>0</code>，无调用 receipt 失败。这仍是已开封 Case 6 的事后容量诊断，不是数学不可行证书。</p>
+                    <p>独立 validator 不导入正式 runner 或表示核心；它从原始 Case 6 场重建 90 个问题，并对三个残余失败单元各跑 <code>16384</code> 个 Sobol 点与 48 起点有限差分精化。正式/独立 field、residual、metrics、gates 最大差均为 <code>0</code>，无调用 receipt 失败。这仍是已开封 Case 6 的事后 truth-aware 容量诊断，不是数学不可行证书。</p>
                   </section>
                   <section>
                     <h4>路线如何立即调整</h4>
-                    <p>当前四参数表示按工程路线关闭。下一门只增加最小空间自由度，并先做 truth-aware 90/90 容量检查；没有容量就不训练 selector。Mac 足够完成这一步，暂不租 GPU，也不扩大 FNO、UNO 或 U-Net。</p>
+                    <p>当前六参数对角二次表示按工程路线关闭。下一门精确嵌套 <code>xy / xz / yz</code> 三个交叉项，补全低阶二次坐标族；若仍不能 90/90，就关闭全局多项式路线并转向局部多尺度方向。Mac 足够完成容量检查，暂不租 GPU。</p>
                   </section>
                 </div>
                 <figure class="entry-figure">
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png" aria-label="打开 v88.1 spatial-mask4 容量结果图">
-                    <img src="../assets/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png" alt="v88.1 中八十六个单元有严格 witness，四个单元仍被内部梯度同成本门阻塞" />
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v88_case6_spatial_quadrupole6_capacity_v89.png" aria-label="打开 v89 对角二次容量结果图">
+                    <img src="../assets/nine_view_v88_case6_spatial_quadrupole6_capacity_v89.png" alt="v89 对角二次扩展修复一个旧反例，三个 F30 单元仍被内部梯度同成本门阻塞" />
                   </a>
-                  <figcaption>86 个单元找到严格 witness；四个反例在正式与独立搜索中都落在同一内部梯度边界。</figcaption>
+                  <figcaption>87 个单元找到严格 witness；新增方向修复一个旧反例并缓解另外三个，但 F30 最坏单元仍明显越线。</figcaption>
                 </figure>
                 <div class="entry-links">
-                  <a href="../document_reader.html?doc=docs%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1_result_2026-08-02.md">v88.1 完整证据</a>
-                  <a href="../docs/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1_public_summary.json">v88.1 脱敏摘要</a>
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png">v88.1 结果图</a>
-                  <a href="../document_reader.html?doc=docs%2Fnine_view_v86_case6_k1_k2_line_v87_result_2026-08-02.md">回看 v87 父证据</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v88_case6_spatial_quadrupole6_capacity_v89_result_2026-08-02.md">v89 完整证据</a>
+                  <a href="../docs/nine_view_v88_case6_spatial_quadrupole6_capacity_v89_public_summary.json">v89 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v88_case6_spatial_quadrupole6_capacity_v89.png">v89 结果图</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1_result_2026-08-02.md">回看 v88.1 父证据</a>
                 </div>
               </div>
             </details>
@@ -1969,7 +1980,7 @@
   </main>
 
   <footer>
-    持续更新至 v88.1 Case 6 spatial-mask4 witness 独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v89 Case 6 对角二次表示容量独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
