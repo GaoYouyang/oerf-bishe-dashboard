@@ -1,0 +1,80 @@
+{
+  "schema_version": "oerf-nine-view-observation-adaptive-mask-capacity-public-summary-82.1",
+  "date": "2026-08-01",
+  "title": "v82：四个空间调制方向补齐 75/75 表示容量",
+  "evidence_level": "已开封 Case 3 的 post-open truth-aware 表示容量诊断",
+  "scientific_status": "PASS_SPATIAL_MASK4_FAMILY_SPECIFIC_FINITE_SEARCH_HEADROOM_V82",
+  "validation_status": "PASS_INDEPENDENT_RECOMPUTATION_MASK_CAPACITY_VALIDATION_REPAIR_V82_1",
+  "cells": 75,
+  "optimizer_starts_per_cell_per_family": 13,
+  "families": {
+    "coefficient_band4_in_span": {
+      "description": "在固定 GSLB32 张成空间内，对四段系数做匹配尺度修正",
+      "joint_pass_count": 73,
+      "rescued_v80_failures": 15,
+      "v80_failure_count": 17,
+      "failure_cells": [
+        "V66_F30_plus|case3|3",
+        "V66_F30_plus|case3|15"
+      ],
+      "maximum_gate": {
+        "p50": -0.07080845163785265,
+        "p90_higher": -0.011202281640066647,
+        "worst": 0.0082128812418798
+      },
+      "per_scenario_joint_pass": {
+        "V66_F12_plus": 25,
+        "V66_F15_plus": 25,
+        "V66_F30_plus": 23
+      },
+      "per_scenario_worst_maximum_gate": {
+        "V66_F12_plus": -0.044379023835363296,
+        "V66_F15_plus": -0.04398766875692617,
+        "V66_F30_plus": 0.0082128812418798
+      }
+    },
+    "spatial_mask4_out_of_span": {
+      "description": "用 z、y、x 与中心化径向掩膜调制 observation-conditioned 基础修正",
+      "joint_pass_count": 75,
+      "rescued_v80_failures": 17,
+      "v80_failure_count": 17,
+      "failure_cells": [],
+      "maximum_gate": {
+        "p50": -0.13882343159646182,
+        "p90_higher": -0.06459270265317063,
+        "worst": -0.04192238008899962
+      },
+      "per_scenario_joint_pass": {
+        "V66_F12_plus": 25,
+        "V66_F15_plus": 25,
+        "V66_F30_plus": 25
+      },
+      "per_scenario_worst_maximum_gate": {
+        "V66_F12_plus": -0.04192238008899962,
+        "V66_F15_plus": -0.05367142879347808,
+        "V66_F30_plus": -0.05960481967906606
+      }
+    }
+  },
+  "online_exact_calls_per_cell": {"A": 2, "AT": 2},
+  "spatial_modulation_additional_exact_calls": {"A": 0, "AT": 0},
+  "independent_recomputation": {
+    "formal_terminals_complete": 1950,
+    "independent_terminals_complete": 1950,
+    "maximum_gate_abs_difference": 4.440892098500626e-16,
+    "maximum_metric_abs_difference": 0.0,
+    "maximum_direct_replay_field_abs_difference": 4.5102810375396984e-17,
+    "maximum_direction_truth_mutation_abs_difference": 0.0,
+    "formal_outputs_unchanged": true,
+    "source_closure_unchanged": true,
+    "result_parents_unchanged": true
+  },
+  "what_changed": "v80 的 17 个失败单元都能在四个 observation-conditioned 空间调制方向中找到通过八门的 truth-aware 终点；同参数数目的固定空间内系数分段对照只救回 15 个。",
+  "what_did_not_change": "尚未训练部署时可用的 observation-only 系数预测器，也未测试独立工况、wall time、RSS、curved ray 或真实 BOST。",
+  "next_gate": "固定 spatial-mask4 表示后，以五个连续时间外折和一帧 embargo 训练最小 observation-only 四系数 predictor；必须 75/75 才能进入未打开工况外门。",
+  "algorithm_breakthrough": false,
+  "paper_success": false,
+  "external_generalization": false,
+  "resource_advantage": false,
+  "real_bost": false
+}

@@ -11013,3 +11013,71 @@ paper_success = false
 - `docs/nine_view_gslb32_target_stability_v81_result_2026-08-01.md`
 - `docs/nine_view_gslb32_target_stability_v81_public_summary.json`
 - `assets/nine_view_gslb32_target_stability_v81.png`
+
+## 2026-08-01：v82 用四个空间调制方向补齐了 75/75 表示容量
+
+v81 排除了“随机优化起点把标签搞乱”这个主因后，我没有继续扩大
+RBF，也没有直接上 FNO 或 U-Net。先问一个更便宜、能直接改变科学判断的问题：
+**固定 GSLB32 空间会不会少了随 observation 位置改变的局部形变自由度？**
+
+我把它做成了两个匹配对照。两者都只有四个参数，都用同一个
+`[-1,1]^4` 参数盒、同一物理预算、同一 13 起点搜索、同一八门，都放进
+`2A+2A^T` 的 strict CGLS K1 壳：
+
+```text
+coefficient-band4   在固定 U32 内分四段修正系数
+spatial-mask4       用 z / y / x / 径向掩膜调制 observation-conditioned 基础修正
+```
+
+结果是：
+
+```text
+                                     总通过    救回 v80 失败    F12 / F15 / F30
+coefficient-band4                     73/75          15/17            25 / 25 / 23
+spatial-mask4                         75/75          17/17            25 / 25 / 25
+
+coefficient-band4 worst maximum gate   +0.00821
+spatial-mask4 worst maximum gate       -0.04192
+```
+
+maximum gate 必须小于等于 0 才表示八门同时通过。固定空间内的对照剩下两个
+F30 失败；空间调制不仅把它们补上，而且全局最坏单元仍有明确负裕量。
+它也没有偷偷多调用物理算子：空间调制的额外 exact 账是 `0A+0A^T`。
+
+独立验证中有一个值得保留的失败记录。原 validator 把 32 维 base coefficient 送进了
+只接受 4 维 beta 的检查路径，在写出任何验证结果前 fail-closed 退出。我没有重跑或
+改动正式结果，修复只删除这个无效调用；每个 arm 的 beta=0 基线、exact endpoint replay、
+八门、原始优化约束与调用账都保留。
+
+修复后的独立程序自己重建方向、重跑搜索和八门：
+
+```text
+formal optimizer terminals complete       1950 / 1950
+independent terminals complete            1950 / 1950
+maximum gate difference                   4.44e-16
+maximum metric difference                 0
+exact best-field replay difference        4.51e-17
+direction change after truth mutation     0
+```
+
+这一轮是实质性的机制正结果：**空间自适应表示现在有了值得学的 75/75 容量**。
+但四个系数仍由真值可见的 oracle 选择，所以它不是部署算法，也没有证明外部泛化、
+wall/RSS 优势、curved ray 或真实 BOST。准确状态仍是：
+
+```text
+spatial-mask4 family-specific capacity = pass on opened Case 3
+observation-only coefficient predictor = untested
+external generalization = false
+algorithm_breakthrough = false
+paper_success = false
+```
+
+下一步只做一件事：冻结 spatial-mask4，用同一五个连续时间外折和一帧 embargo，
+训练最小的 observation-only `features -> 4 coefficients` predictor。若不能 75/75，就关闭该表示，
+不用更大网络挽救；只有它过门后，才值得打开一个之前未见的公开反应流工况。
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_observation_adaptive_mask_capacity_v82_result_2026-08-01.md`
+- `docs/nine_view_observation_adaptive_mask_capacity_v82_public_summary.json`
+- `assets/nine_view_observation_adaptive_mask_capacity_v82.png`
