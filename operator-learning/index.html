@@ -507,18 +507,18 @@
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="#research-progress">查看当前研究进程</a>
           <a class="button" href="daily-progress.html">查看每日实质增量</a>
-          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_result_2026-08-02.md">阅读最新完整证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91_result_2026-08-02.md">阅读最新完整证据</a>
         </div>
       </div>
       <aside class="hero-verdict" aria-label="当前科学判决">
         <b>当前判决：尚未突破</b>
-        <p><code>v90</code> 已把 <code>xy / xz / yz</code> 三个交叉项补进 v89，形成完整的九参数全局二阶坐标族，但严格 witness 仍为 <code>87/90</code>：三个 F30+ 单元继续只被内部梯度同成本门阻塞。</p>
-        <p><strong>下一步：</strong>关闭全局低阶多项式路线，转向少量局部 / 多尺度空间方向；只有新表示容量达到 90/90，才训练严格 observation-only 预测器并评估 GPU。</p>
+        <p><code>v91</code> 不增加方向，只把 v90 任意的坐标盒替换为基不变物理能量球，就让严格 witness 从 <code>87/90</code> 提升到 <code>89/90</code>。这证明两个旧失败是假阴性；F30+/12 仍被内部梯度同成本门阻塞。</p>
+        <p><strong>下一步：</strong>只为最后一个反例冻结最小、对称的局部或多尺度方向；达到 90/90 前不训练 predictor，也不租 GPU。</p>
       </aside>
     </div>
     <div class="current-grid" aria-label="当前核心状态">
-      <div class="current-metric"><b id="liveWitnessCount">87 / 90</b><span>Case 6 严格 witness；交叉项较 v89 修复 0 个</span></div>
-      <div class="current-metric warning"><b id="liveFailureCount">3 个反例</b><span>均为 F30+，只越过 interior-gradient / Zero-K2 门</span></div>
+      <div class="current-metric"><b id="liveWitnessCount">89 / 90</b><span>Case 6 严格 witness；同一九维 span 修复两个旧假阴性</span></div>
+      <div class="current-metric warning"><b id="liveFailureCount">1 个反例</b><span>F30+/12 仍越过 interior-gradient / Zero-K2 门</span></div>
       <div class="current-metric"><b id="liveCallBudget">2A + 2A<sup>T</sup></b><span>每个候选的冻结 exact 在线预算</span></div>
       <div class="current-metric warning"><b id="liveBreakthrough">false</b><span><code>algorithm_breakthrough</code>；不夸大负结果</span></div>
     </div>
@@ -527,7 +527,10 @@
       <div class="archive-body">
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
-      <a class="button danger" href="#spatial-cross-quadratic9-capacity-v90">打开 v90 最新容量判决</a>
+      <a class="button primary" href="#basis-invariant-physical-ball-v91">打开 v91 最新容量判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91_result_2026-08-02.md">读 v91 完整证据</a>
+      <a class="button" href="../docs/nine_view_v90_case6_basis_invariant_physical_ball_v91_public_summary.json">读 v91 脱敏摘要</a>
+      <a class="button danger" href="#spatial-cross-quadratic9-capacity-v90">回看 v90 受盒约束判决</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_result_2026-08-02.md">读 v90 完整证据</a>
       <a class="button" href="../docs/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_public_summary.json">读 v90 脱敏摘要</a>
       <a class="button danger" href="#spatial-quadrupole6-capacity-v89">回看 v89 父容量判决</a>
@@ -590,9 +593,9 @@
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
-    <div class="alert critical" style="margin-top:12px;">
-      <strong>v90 最新判决：补齐交叉二次项仍为 87/90，全局低阶多项式路线关闭</strong>
-      <span>在 v89 六维空间上精确嵌套 <code>xy / xz / yz</code> 三个方向，保持物理预算、八门和在线 <code>2A+2A^T</code> 不变。三个 F30+ 反例仍越线 <code>0.737%、0.082%、6.249%</code>，交叉项修复数为 <code>0/3</code>。独立程序重建父空间与新增余量，并对每个失败单元各扫 <code>32768</code> 个 Sobol 点与 64 个局部起点；正式/独立 field、residual、metrics、gates 最大差均为 <code>0</code>。下一门改为局部 / 多尺度表示；这不是算法突破。<a href="#spatial-cross-quadratic9-capacity-v90">查看完整证据</a>。</span>
+    <div class="alert success" style="margin-top:12px;">
+      <strong>v91 最新判决：同一九维方向空间由 87/90 提升到 89/90</strong>
+      <span>物理能量球替换任意坐标盒后，F30+/7 与 F30+/9 的内部梯度越线变为 <code>-0.444%</code> 与 <code>-1.851%</code>；两个 witness 的最大系数分别为 <code>1.82</code> 与 <code>1.90</code>，因此旧 <code>|beta|≤1</code> 盒确实制造了假阴性。F30+/12 仍越线 <code>3.688%</code>。独立程序逐值复算差为 <code>0</code>；这是参数化诊断的实质正进展，不是算法突破。<a href="#basis-invariant-physical-ball-v91">查看完整证据</a>。</span>
     </div>
     <div class="alert critical" style="margin-top:12px;">
       <strong>v88.1 父判决：四参数 spatial-mask4 只有 86/90 个 Case 6 单元找到严格 witness</strong>
@@ -898,7 +901,7 @@
         <div><b>公开反应流 CFD</b><span>PoolFire 与独立 BLASTNet 工况</span></div>
         <div><b>九视角观测</b><span>已知几何 straight-ray 密度梯度代理</span></div>
         <div><b>粗网格逆问题</b><span><code>32×16×16</code> 三维状态</span></div>
-        <div class="current"><b>当前：表示容量</b><span>全局二阶族关闭，转向局部 / 多尺度方向</span></div>
+        <div class="current"><b>当前：89/90 容量</b><span>旧盒假阴性已排除，只补最后一个局部缺口</span></div>
         <div><b>Observation-only 学习</b><span>容量过门后才训练预测器</span></div>
         <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
       </div>
@@ -945,21 +948,21 @@
           </article>
           <article class="evidence-row">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v90：完整全局二阶族仍只有 87/90</strong><p>加入 xy / xz / yz 后三个 F30+ 反例仍全部失败；独立 Sobol 与局部精化逐值复现。交叉项修复 0 个，关闭全局低阶多项式表示。</p></div>
-            <span class="evidence-state fail">当前判决</span>
+            <div><strong>v91：移除坐标盒后，同一 span 达到 89/90</strong><p>没有增加新方向，F30+/7 与 F30+/9 已过门；v90 的两个失败被确认为坐标盒假阴性。F30+/12 仍需最小局部或多尺度自由度。</p></div>
+            <span class="evidence-state">实质正增量</span>
           </article>
         </div>
         <figure class="latest-figure">
-          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90.png" aria-label="打开 v90 完整结果图">
-            <img src="../assets/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90.png" alt="v90 补齐全局交叉二次项后仍有三个 F30 单元失败，新增方向没有修复任何单元" />
+          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91.png" aria-label="打开 v91 完整结果图">
+            <img src="../assets/nine_view_v90_case6_basis_invariant_physical_ball_v91.png" alt="v91 在相同九维方向空间中用物理能量球修复两个旧失败" />
           </a>
-          <figcaption>最新可视化：F12+ / F15+ / F30+ 仍为 30/30、30/30、27/30。三个交叉项只让越线略降，修复数为 0；最坏单元仍越过内部梯度门 6.25%。这是关闭全局二阶表示的负证据，不是算法突破。</figcaption>
+          <figcaption>最新可视化：F12+ / F15+ / F30+ 为 30/30、30/30、29/30。相同九维方向空间修复两个旧假阴性；最后一个单元仍越过内部梯度门 3.688%。这是参数化诊断正进展，不是算法突破。</figcaption>
         </figure>
       </div>
       <div class="actions" style="margin-top:13px;">
-        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_result_2026-08-02.md">读 v90 完整证据</a>
-        <a class="button" href="../docs/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_public_summary.json">读机器可读摘要</a>
-        <a class="button" href="#spatial-cross-quadratic9-capacity-v90">展开历史区中的技术细节</a>
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91_result_2026-08-02.md">读 v91 完整证据</a>
+        <a class="button" href="../docs/nine_view_v90_case6_basis_invariant_physical_ball_v91_public_summary.json">读机器可读摘要</a>
+        <a class="button" href="#basis-invariant-physical-ball-v91">展开历史区中的技术细节</a>
       </div>
     </section>
 
@@ -975,7 +978,7 @@
       <div class="focus-grid">
         <article class="focus-card positive"><h3>已建立可复算链</h3><p>每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。</p></article>
         <article class="focus-card boundary"><h3>当前更新源</h3><p id="liveEvidenceStatus" aria-live="polite">正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。</p></article>
-        <article class="focus-card current"><h3>本轮真实增量</h3><p>补齐三个交叉二次方向后仍没有修复任何残余反例，排除了“只缺交叉项”的解释；因此停止九系数 selector，下一步只研究局部 / 多尺度结构。</p></article>
+        <article class="focus-card current"><h3>本轮真实增量</h3><p>同一九维 span 改用物理能量球后修复两个旧反例，证明任意坐标盒制造了假阴性。现在只剩 F30+/12，下一步只为它增加最小局部或多尺度结构。</p></article>
       </div>
     </section>
 
@@ -988,7 +991,7 @@
         </div>
       </div>
       <div class="outcome-ladder">
-        <div class="outcome-step closed"><div><b>找到足够但最小的空间表示</b><span>v90 补齐全局二阶族后仍为 87/90；下一门必须用局部 / 多尺度自由度让全部 90 个单元守住八门，同时保持在线 exact 预算可控。</span></div><em>当前进行中</em></div>
+        <div class="outcome-step closed"><div><b>找到足够但最小的空间表示</b><span>v91 排除任意系数盒后达到 89/90；下一门只为最后一个 F30+ 单元增加最小局部 / 多尺度自由度，同时保持在线 exact 预算可控。</span></div><em>当前进行中</em></div>
         <div class="outcome-step"><div><b>训练 observation-only warm initializer</b><span>训练与部署都不读取真值；与 ridge、KRR、U-Net / FNO 等公平对照，并保留 fail-closed 回退。</span></div><em>容量过门后</em></div>
         <div class="outcome-step"><div><b>独立工况 matched-accuracy</b><span>在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
         <div class="outcome-step"><div><b>真实资源收益</b><span>fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。</span></div><em>尚未启动</em></div>
@@ -1019,7 +1022,7 @@
         </div>
       </div>
       <div class="future-grid">
-        <article class="focus-card current"><h3>最近科学门</h3><p>v90 已证实完整全局二阶坐标族仍不足。下一门结果前冻结少量局部窗、分区或多尺度方向，继续只做 truth-aware 容量审计；未达到 90/90 前不训练 predictor。</p></article>
+        <article class="focus-card current"><h3>最近科学门</h3><p>只为 F30+/12 冻结最小、对称的局部窗或多尺度方向，并保留 v91 的物理能量参数化。继续先做 truth-aware 容量审计；未达到 90/90 前不训练 predictor。</p></article>
         <article class="focus-card boundary"><h3>何时租 GPU</h3><p>只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。</p></article>
         <article class="focus-card positive"><h3>何时接组内数据</h3><p>公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。</p></article>
       </div>
@@ -1230,15 +1233,30 @@
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
       </div>
+      <div id="basis-invariant-physical-ball-v91" class="alert success" style="margin-top:13px;">
+        <strong>v91：方向空间不变，物理能量球修复两个旧假阴性</strong>
+        <span>v91 保留 v90 的九个全局二阶方向和在线 <code>2A+2A^T</code> shell，只把坐标依赖的 <code>[-1,1]^9</code> 系数盒替换为基不变物理修正能量球。F30+/7 与 F30+/9 的最大 <code>|beta|</code> 为 <code>1.82</code> 与 <code>1.90</code>，均在旧盒外但严格过门；F30+/12 的越线由 <code>6.249%</code> 降至 <code>3.688%</code>，仍未通过。独立 validator 重建物理 Gram、再跑确定性 Sobol 与 64 起点搜索，正式/独立 field、residual、metrics、gates 最大差均为 <code>0</code>。结论是旧盒产生两个实质假阴性，但同一 span 仍未达到 90/90。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91.png" aria-label="打开 v91 Case 6 物理能量球结果图">
+          <img src="../assets/nine_view_v90_case6_basis_invariant_physical_ball_v91.png" alt="v91 以物理能量球替换任意坐标盒后将严格 witness 从八十七提高到八十九" />
+        </a>
+        <figcaption>A：v90 与 v91 的逐几何通过数；B：三个旧反例的内部梯度越线变化；C：v91 witness 相对旧系数盒的位置。两个旧失败被修复，一个 F30+ 单元仍未过门。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91_result_2026-08-02.md">读 v91 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_v90_case6_basis_invariant_physical_ball_v91_public_summary.json">打开 v91 脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91.png">打开 v91 结果图原尺寸</a>
+      </div>
       <div id="spatial-cross-quadratic9-capacity-v90" class="alert critical" style="margin-top:13px;">
-        <strong>v90：完整九参数全局二阶表示没有修复三个 F30 反例</strong>
-        <span><code>xy / xz / yz</code> 三个新增方向先投影掉 v89 六维空间，再只对白化后的三维余量归一化，所以父表示和 87 个 witness 被精确嵌套。F30 frame 7 / 9 / 12 的 interior-gradient / Zero-K2 越线从 <code>0.744%、0.120%、6.271%</code> 仅降至 <code>0.737%、0.082%、6.249%</code>，修复数为 0。独立 validator 不导入正式 runner 或表示核心，对每个失败单元各运行 <code>32768</code> 个 Sobol 点与 64 起点精化，正式/独立逐值差为 <code>0</code>。结论是关闭全局低阶多项式工程路线，转向局部 / 多尺度表示；不是数学不可能证明。</span>
+        <strong>v90 历史判决：在旧 <code>[-1,1]^9</code> 系数盒内没有修复三个 F30 反例</strong>
+        <span><code>xy / xz / yz</code> 三个新增方向先投影掉 v89 六维空间，再只对白化后的三维余量归一化，所以父表示和 87 个 witness 被精确嵌套。F30 frame 7 / 9 / 12 的 interior-gradient / Zero-K2 越线从 <code>0.744%、0.120%、6.271%</code> 仅降至 <code>0.737%、0.082%、6.249%</code>，盒内修复数为 0。独立 validator 不导入正式 runner 或表示核心，对每个失败单元各运行 <code>32768</code> 个 Sobol 点与 64 起点精化，正式/独立逐值差为 <code>0</code>。v91 后续证明其中两个是坐标盒假阴性，因此这里只关闭旧 box-constrained 参数化，不能关闭九维方向空间本身。</span>
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90.png" aria-label="打开 v90 Case 6 交叉二次容量结果图">
           <img src="../assets/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90.png" alt="v90 完整全局二阶表示仍只有八十七个严格 witness，交叉项修复零个单元" />
         </a>
-        <figcaption>A：v88.1、v89、v90 的逐几何通过数；B：三个残余反例扩展前后的越线幅度；C：表示容量阶梯。交叉项修复数为 0，全局二阶路线关闭。</figcaption>
+        <figcaption>A：v88.1、v89、v90 的逐几何通过数；B：三个残余反例在旧盒内的越线幅度；C：当时的表示容量阶梯。该图保留原始 v90 判决，后续 v91 已证明其中两个失败来自坐标盒约束。</figcaption>
       </figure>
       <div class="actions" style="margin-top:11px;">
         <a class="button danger" href="../document_reader.html?doc=docs%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_result_2026-08-02.md">读 v90 完整推导与裁决</a>
@@ -2136,8 +2154,7 @@
           <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_full_field_low_capacity_core_gate_v9_2026-07-26.md">读 Cross14 核心证据</a>
           <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_v9_three_role_code_gate_2026-07-26.md">读三角色隔离证据</a>
           <a class="button primary" href="../document_reader.html?doc=docs%2Fpoolfire_c_v9_3_runtime_split_audit_2026-07-26.md">读 v9.3 双运行时审计</a>
-          <a class="button" href="../learning_labs/protocols/poolfire_c_full_field_low_capacity_audit_v9.json">打开机器协议</a>
-          <a class="button" href="../learning_labs/protocols/poolfire_c_v9_fresh_holdout_selection_receipt.json">打开 holdout 选择凭据</a>
+          <span class="button" aria-disabled="true">私有机器协议不公开</span>
         </div>
       </div>
       <div class="check-grid">
@@ -2694,10 +2711,11 @@
           document.getElementById('liveFailureCount').textContent = `${metrics.unresolved_cell_count} 个反例`;
           document.getElementById('liveCallBudget').textContent = `${metrics.exact_A_calls_per_candidate}A + ${metrics.exact_AT_calls_per_candidate}A^T`;
           document.getElementById('liveBreakthrough').textContent = String(Boolean(decision.algorithm_breakthrough));
-          document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：${metrics.strict_witness_passed}/${metrics.cell_count} 个单元通过；下一门是 ${evidence.next_scientific_gate}。每次独立验证后的公开提交只需更新这份稳定清单。`;
+          const nextGate = evidence.next_scientific_gate_zh || evidence.next_scientific_gate;
+          document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：${metrics.strict_witness_passed}/${metrics.cell_count} 个单元通过；下一门是 ${nextGate}。每次独立验证后的公开提交只需更新这份稳定清单。`;
         })
         .catch(() => {
-          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v90 为 87/90，algorithm_breakthrough=false。';
+          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v91 为 89/90，algorithm_breakthrough=false。';
         });
     })();
   </script>
