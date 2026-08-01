@@ -11081,3 +11081,47 @@ paper_success = false
 - `docs/nine_view_observation_adaptive_mask_capacity_v82_result_2026-08-01.md`
 - `docs/nine_view_observation_adaptive_mask_capacity_v82_public_summary.json`
 - `assets/nine_view_observation_adaptive_mask_capacity_v82.png`
+
+## 2026-08-01：v83.1 证明“表示里有解”还没有变成“观测能找到解”
+
+v82 的 spatial-mask4 在 75 个已开封单元里都能找到八门通过的四维 beta。今天没有把它直接包装成
+算法成功，而是把最容易漏掉的那层数据隔离补齐：每个外折都从本折训练数据重新生成上游基础系数、
+beta 目标和超参数，不能复用全局 OOF 结果。
+
+正式结果与独立复算一致：
+
+```text
+fit targets with a direct passing witness      276 / 276
+held-out representation capacity                75 / 75
+beta-zero                                        58 / 75
+constant mean                                    66 / 75
+compact52 linear / RBF                           66 / 75, 65 / 75
+enriched148 linear / RBF                         63 / 75, 68 / 75
+formal vs independent maximum differences        0
+```
+
+所以失败不是“这一折根本没有可行 beta”，而是只看部署可见 observation 的冻结模型没能稳定预测它。
+最佳 enriched RBF 仍差 7 个单元。更重要的是，这七个失败不是杂乱地坏在不同物理量上：field、全梯度、
+内部梯度和同调用 Zero-K2 对照全部通过，只有最终 observation 相对 Zero-K4 的 1% no-harm 门越线。
+
+这给出了比“换更大网络”更具体的下一步。measurement residual 在部署时能直接算，所以先研究一个
+可观测的安全回退或追加一轮 CGLS：大多数安全单元停在 K1，危险单元再花一对 A/A^T。只有它能逐单元
+守住八门且平均调用仍少于 Zero-K4，才值得继续。不能用同一批已看过的失败帧反复调阈值后冒充外部验证。
+
+这是一条可信负结果，也是一条有用的路线收缩：
+
+```text
+spatial-mask4 representation capacity = 75 / 75
+best strict observation-only point predictor = 68 / 75
+direct point-regression roster = closed
+larger neural model authorized = false
+next mechanism = observable safety fallback / one-extra-iteration refinement
+algorithm_breakthrough = false
+paper_success = false
+```
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_spatial_mask_predictor_v83_result_2026-08-01.md`
+- `docs/nine_view_spatial_mask_predictor_v83_public_summary.json`
+- `assets/nine_view_spatial_mask_predictor_v83.png`
