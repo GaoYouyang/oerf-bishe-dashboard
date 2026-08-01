@@ -1,0 +1,76 @@
+{
+  "schema_version": "oerf-nine-view-v84-external-cases-public-summary-85.0",
+  "date": "2026-08-01",
+  "title": "v85：Case 4 全过，但 Case 6 的内部梯度门失败",
+  "scientific_status": "FAIL_CASE4_CASE6_EXTERNAL_ACCURACY_V85",
+  "method": "Case 3-only observation/geometry-conditioned warm initializer, observable residual gate, exact lift, and unchanged CGLS K1/K2",
+  "reference": "Zero-CGLS K4",
+  "accuracy_contract": {
+    "metrics": [
+      "field relative-L2",
+      "full-gradient relative-L2",
+      "interior-gradient relative-L2",
+      "observation relative-L2"
+    ],
+    "per_cell_gates": 8,
+    "all_cells_required": true,
+    "case_order": [4, 6],
+    "zero_adaptation_between_cases": true
+  },
+  "case4": {
+    "status": "PASS_EXTERNAL_CASE4_ACCURACY_V85",
+    "cells_passed": 84,
+    "cells_total": 84,
+    "accepted_k1": 41,
+    "continued_true_k2": 43,
+    "mean_exact_A_calls": 2.511904761904762,
+    "mean_exact_AT_calls": 2.511904761904762,
+    "exact_call_reduction_vs_zero_k4": 0.37202380952380953,
+    "maximum_gate_worst": -0.007274294235602996
+  },
+  "case6": {
+    "status": "FAIL_EXTERNAL_CASE6_ACCURACY_V85",
+    "cells_passed": 78,
+    "cells_total": 90,
+    "accepted_k1": 90,
+    "continued_true_k2": 0,
+    "mean_exact_A_calls": 2.0,
+    "mean_exact_AT_calls": 2.0,
+    "maximum_gate_worst": 0.09528851611443878,
+    "failure_count": 12,
+    "failure_metric": "interior gradient only",
+    "interior_gradient_harm_vs_zero_k4_failures": 4,
+    "interior_gradient_error_vs_zero_k2_failures": 8,
+    "failures_by_geometry": {
+      "V66_F12_plus": 2,
+      "V66_F15_plus": 3,
+      "V66_F30_plus": 7
+    }
+  },
+  "retrospective_scalar_gate_diagnostic": {
+    "failure_score_min": 0.2479684937581816,
+    "failure_score_max": 0.35613923129412794,
+    "passing_score_min": 0.2170905998254158,
+    "passing_score_max": 0.363129002799481,
+    "maximum_safe_accepts_with_one_scalar_threshold_on_opened_case6": 11,
+    "case6_cells_total": 90,
+    "interpretation": "The frozen scalar residual score does not separate interior-gradient risk on Case 6. This is retrospective diagnosis, not a deployable threshold update."
+  },
+  "independent_validation": {
+    "case4_terminal": "PASS_INDEPENDENT_VALIDATION_EXTERNAL_CASE4_TERMINAL_V85",
+    "case6_terminal": "PASS_INDEPENDENT_VALIDATION_EXTERNAL_CASE6_TERMINAL_V85",
+    "prediction_field_maximum_difference": 0.0,
+    "prediction_residual_maximum_difference": 0.0,
+    "score_maximum_difference": 0.0,
+    "actual_call_receipt_maximum_difference": 0.0
+  },
+  "boundaries": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_advantage_proven": false,
+    "curved_ray": false,
+    "real_bost": false,
+    "resource_gate_authorized": false
+  }
+}
