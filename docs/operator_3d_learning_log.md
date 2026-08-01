@@ -11125,3 +11125,51 @@ paper_success = false
 - `docs/nine_view_spatial_mask_predictor_v83_result_2026-08-01.md`
 - `docs/nine_view_spatial_mask_predictor_v83_public_summary.json`
 - `assets/nine_view_spatial_mask_predictor_v83.png`
+
+## 2026-08-01：v84.2 第一次把“学到的起点”与“可观测安全回退”闭成 75/75
+
+v83.1 留下的七个失败有一个很重要的共同点：三维场、全梯度、内部梯度和同调用 Zero-K2 都没坏，
+只有最终 measurement residual 相对 Zero-K4 略差。这个量部署时可以直接算，所以今天没有继续堆模型，
+而是问一个更实在的问题：**能不能让安全单元早点停，危险单元只多做一步？**
+
+做法很小：先运行 enriched148-RBF warm initializer 到 K1，再计算相对 residual。阈值只从每个外折
+fit 部分的 OOF residual 得到，而且同一帧三档几何先取最坏值；held-out 单元的 truth、八门和参照指标
+不参与分支。低于阈值就停在 K1，高于阈值就沿原来的 CGLS recurrence 继续到 K2。
+
+正式结果和不导入正式 runner 的独立复算完全一致：
+
+```text
+always learned K1                         67 / 75, 2.0000 A + 2.0000 A^T
+residual-gated K1/K2 continuation         75 / 75, 2.3467 A + 2.3467 A^T
+accepted at K1 / continued to K2          49 / 26
+F12 / F15 / F30 joint pass                25 / 25 / 25
+exact-call reduction versus Zero-K4       41.3333%
+formal versus independent declared diffs  all 0
+```
+
+这次可以叫“开发集机制正结果”，因为它同时守住了逐单元八门和调用预算，不再只是容量 oracle 或平均改善。
+但不能叫突破：Case 3 已经被反复用于机制开发；Case 4/6 仍封存；`41.3%` 只是 exact 调用账，不是 wall
+或内存实测；同一进程从模拟真值生成 observation，因此 process-level never-read 也没有证明。
+
+还修正了一个容易误解的参照问题。Zero-K4 只必然在相对自己的四个 no-harm 比值上等于 1，另外四门
+是在和不同的 Zero-K2 比；半收敛时它完全可能不通过。Zero-K2 同理。正式与独立程序分别验证两个参照
+的本征比值最大偏差都为 0，没有降低候选的八门标准。
+
+下一步不是在 Case 3 上继续调阈值。先把全量 Case 3 的 predictor、预处理、阈值、调用账和报告模板
+冻结成单一 deployment artifact，再按早已预注册的 Case 4、Case 6 顺序做外部门。外部 matched-accuracy
+通过后，才值得烧 fresh-process wall 与 whole-pipeline RSS。
+
+```text
+Case3 development mechanism headroom = true
+external generalization = false
+resource advantage = false
+algorithm_breakthrough = false
+paper_success = false
+real BOST = false
+```
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_observable_safety_gate_v84_result_2026-08-01.md`
+- `docs/nine_view_observable_safety_gate_v84_public_summary.json`
+- `assets/nine_view_observable_safety_gate_v84.png`

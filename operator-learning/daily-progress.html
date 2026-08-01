@@ -559,18 +559,35 @@
                 <div class="date-block"><time datetime="2026-08-01">2026-08-01</time><span>周六 · Day 27</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
+                    <span class="tag">v84.2 门控 75/75</span>
+                    <span class="tag">exact calls -41.3%</span>
                     <span class="tag negative">v83.1 预测 68/75</span>
                     <span class="tag">表示容量 75/75</span>
                     <span class="tag engineering">独立复算</span>
                     <span class="tag negative">v81 错误归因关闭</span>
                   </div>
-                  <h3>v83.1 将 75/75 容量推进到严格预测门，并得到可信的 68/75 负结果</h3>
-                  <p>split-correct 五折证明容量仍在，但六个 deployment-visible predictor 都未全覆盖；最佳模型的七个失败只剩可观测 observation no-harm 门。</p>
+                  <h3>v84.2 用可观测 residual gate 把 68/75 推进到 75/75，并减少 41.3% 精确调用</h3>
+                  <p>49 个单元停在 learned K1，26 个单元继续一次未修改 CGLS；全部八门逐单元通过，独立复算差为 0。仍只是已开封 Case 3 的开发机制正结果。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
               <div class="entry-body">
                 <div class="evidence-grid">
+                  <section>
+                    <h4>v84.2 当天真正改变了什么</h4>
+                    <p>没有扩大网络，而是利用 v83.1 唯一失败量可观测这一结构。每折只从 fit 内 OOF residual 冻结阈值；outer held-out 策略若 residual 安全就接受 learned K1，否则沿同一 recurrence 继续到真实 CGLS K2。结果从 always-K1 的 <code>67/75</code> 提高到 <code>75/75</code>，且没有用 held-out truth、门值或 Zero-K2/K4 指标决定分支。</p>
+                  </section>
+                  <section>
+                    <h4>v84.2 证据、成本与边界</h4>
+                    <ul>
+                      <li><code>49/75</code> 停在 K1，<code>26/75</code> 继续到 K2；F12 / F15 / F30 均为 <code>25/25</code>。</li>
+                      <li>平均调用 <code>2.3467A+2.3467A<sup>T</sup></code>，相对 Zero-K4 理论减少 <code>41.3%</code>。</li>
+                      <li>maximum gate p50 / p90 / worst 为 <code>-0.06754 / -0.04382 / -0.03107</code>，所有单元都有负裕量。</li>
+                      <li>独立程序重建 75 个单元、276 条 calibration、375 条策略与真实调用账；全部最大差为 <code>0</code>。</li>
+                      <li>held-out 标签扰动不改变任何封存策略字节；Case 4/6 未读取。</li>
+                      <li>尚未证明外部泛化、wall/RSS、curved ray 或真实 BOST；<code>algorithm_breakthrough=false</code>。</li>
+                    </ul>
+                  </section>
                   <section>
                     <h4>v83.1 当天真正改变了什么</h4>
                     <p>把 v82 的 truth-aware 四参数容量变成严格可部署学习问题。每个 outer fold 只用本折 fit 数据重新生成上游、内层 OOF 基础系数、四维 beta 目标与超参数；不复用全局 OOF，也不让 held-out truth 进入 feature 或模型选择。训练侧 <code>276/276</code>、held-out 侧 <code>75/75</code> 仍有直接八门见证，但六个冻结预测器最高只有 <code>68/75</code>。</p>
@@ -625,6 +642,9 @@
                   </section>
                 </div>
                 <div class="entry-links">
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_observable_safety_gate_v84_result_2026-08-01.md">v84.2 完整证据</a>
+                  <a href="../docs/nine_view_observable_safety_gate_v84_public_summary.json">v84.2 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_observable_safety_gate_v84.png">v84.2 结果图</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_spatial_mask_predictor_v83_result_2026-08-01.md">v83.1 完整证据</a>
                   <a href="../docs/nine_view_spatial_mask_predictor_v83_public_summary.json">v83.1 脱敏摘要</a>
                   <a href="../asset_viewer.html?asset=assets%2Fnine_view_spatial_mask_predictor_v83.png">v83.1 结果图</a>
@@ -1823,14 +1843,16 @@
         预测误差的 <code>0.01898%</code>，从而关闭“数值起点不稳定是主因”这一解释，并把下一问题
         收束到 observation-adaptive representation。v82 再以匹配四参数对照将固定空间内的 <code>73/75</code>
         提高为空间调制的 <code>75/75</code>。v83.1 用 leakage-safe 五折检验部署预测，容量保持 <code>75/75</code>，
-        但六个冻结 predictor 最高 <code>68/75</code>；七个失败只剩 observation/K4 no-harm 门。当前仍没有神经训练授权、
-        外部资源门或真实 BOST。
+        但六个冻结 predictor 最高 <code>68/75</code>；七个失败只剩 observation/K4 no-harm 门。v84.2 随后用
+        fit-only OOF residual 冻结安全阈值，让 <code>49</code> 个单元停在 K1、<code>26</code> 个继续真实 CGLS K2，
+        最终 <code>75/75</code> 通过八门并把每类 exact 调用从 <code>4</code> 降至 <code>2.3467</code>。独立复算全部差为
+        <code>0</code>。当前仍没有 Case 4/6 外部泛化、wall/RSS 或真实 BOST 证据。
       </p>
     </section>
   </main>
 
   <footer>
-    持续更新至 v83.1 独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v84.2 独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>

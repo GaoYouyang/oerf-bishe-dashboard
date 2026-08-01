@@ -1,0 +1,94 @@
+{
+  "schema_version": "oerf-nine-view-observable-safety-gate-public-summary-84.2",
+  "date": "2026-08-01",
+  "title": "v84.2：可观测残差门控 K1/K2 在 Case 3 上 75/75，并减少 41.3% 精确调用",
+  "evidence_level": "已开封 BLASTNet H2-air Case 3 的 post-open leakage-safe development mechanism result",
+  "scientific_status": "PASS_OBSERVABLE_GATED_TRUE_CGLS_K2_ALL_75_V84",
+  "validation_status": "PASS_INDEPENDENT_RECOMPUTATION_OBSERVABLE_SAFETY_GATE_V84",
+  "cells": 75,
+  "outer_folds": 5,
+  "embargo_frames": 1,
+  "calibration_rows": 276,
+  "policy_predictions": 375,
+  "policy": {
+    "name": "observation-residual gated enriched148-RBF K1, otherwise true CGLS K2 continuation",
+    "accepted_k1_cells": 49,
+    "continued_to_k2_cells": 26,
+    "acceptance_rate": 0.6533333333333333,
+    "joint_pass_count": 75,
+    "mean_exact_calls": {
+      "A": 2.3466666666666667,
+      "AT": 2.3466666666666667
+    },
+    "exact_call_reduction_vs_zero_k4": 0.41333333333333333,
+    "maximum_gate": {
+      "p50": -0.0675415461578952,
+      "p90_higher": -0.04381670048539166,
+      "worst": -0.031068870174035368
+    },
+    "per_scenario": {
+      "V66_F12_plus": {
+        "joint_pass_count": 25,
+        "accepted_k1_cells": 15,
+        "mean_exact_calls_per_operator": 2.4
+      },
+      "V66_F15_plus": {
+        "joint_pass_count": 25,
+        "accepted_k1_cells": 18,
+        "mean_exact_calls_per_operator": 2.28
+      },
+      "V66_F30_plus": {
+        "joint_pass_count": 25,
+        "accepted_k1_cells": 16,
+        "mean_exact_calls_per_operator": 2.36
+      }
+    }
+  },
+  "controls": {
+    "always_k1": {
+      "joint_pass_count": 67,
+      "mean_exact_calls_per_operator": 2.0
+    },
+    "gated_restart_zero_k4": {
+      "joint_pass_count": 49,
+      "mean_exact_calls_per_operator": 3.3866666666666667
+    },
+    "zero_k2_reference": {
+      "joint_pass_count_across_both_reference_families": 0,
+      "mean_exact_calls_per_operator": 2.0,
+      "own_equal_call_identity_ratio_maximum_deviation_from_one": 0.0
+    },
+    "zero_k4_reference": {
+      "joint_pass_count_across_both_reference_families": 4,
+      "mean_exact_calls_per_operator": 4.0,
+      "own_no_harm_identity_ratio_maximum_deviation_from_one": 0.0
+    }
+  },
+  "independent_recomputation": {
+    "maximum_field_difference": 0.0,
+    "maximum_residual_difference": 0.0,
+    "maximum_prediction_difference": 0.0,
+    "maximum_calibration_difference": 0.0,
+    "maximum_threshold_difference": 0.0,
+    "maximum_fit_target_difference": 0.0,
+    "maximum_selection_difference": 0.0,
+    "maximum_upstream_difference": 0.0,
+    "maximum_outer_difference": 0.0,
+    "heldout_label_mutation_all_sealed_policy_bytes_identical": true,
+    "formal_outputs_unchanged": true,
+    "parent_evidence_unchanged": true,
+    "case4_or_case6_read": false
+  },
+  "what_changed": "A deployment-visible residual gate converted the v83.1 best predictor from 68/75 at K1 into 75/75 by continuing only 26 of 75 cells through one unmodified CGLS step. The exact A and AT means fell from 4 each for Zero-K4 to 2.3467 each.",
+  "what_did_not_change": "This is still a post-open Case 3 development result. No Case 4/6 truth, fresh-process wall time, whole-pipeline RSS, curved-ray model or real BOST data was evaluated.",
+  "next_gate": "Freeze one full-fit Case 3 deployment artifact and threshold without reading external truth, then run the already precommitted Case 4 and Case 6 external gates. Only after external matched-accuracy may fresh wall and RSS be tested.",
+  "external_release_preparation_authorized": true,
+  "external_generalization": false,
+  "resource_advantage": false,
+  "process_level_never_read_proven": false,
+  "end_to_end_physics_independence_proven": false,
+  "neural_training_authorized": false,
+  "algorithm_breakthrough": false,
+  "paper_success": false,
+  "real_bost": false
+}
