@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>C 路线：算子学习 Warm Start × 三维 BOST | Gao Youyang</title>
-  <meta name="description" content="OERF 三维 BOST 算子学习 C 路线：PoolFire 内部精度与资源证据、BLASTNet 外部门、GSLB32 表示容量、严格 observation-only 学习与 v81 目标稳定性审计。" />
+  <meta name="description" content="OERF 三维 BOST 算子学习 C 路线聚焦主页：研究摘要、验证进程、每日工程增量、预期结果、工程意义与真实 BOST 迁移方向。" />
   <style>
     :root {
       --ink: #17252b;
@@ -295,11 +295,162 @@
     }
     .empty { padding: 16px; color: var(--muted); border: 1px dashed var(--line); border-radius: var(--radius); background: rgba(255,255,255,.9); }
     .visually-hidden { display: none; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr);
+      gap: 18px;
+      align-items: end;
+      margin-top: 22px;
+    }
+    .hero-grid h1 { max-width: 860px; margin-top: 8px; }
+    .hero-verdict {
+      min-width: 0;
+      padding: 17px;
+      border: 1px solid #dcb7af;
+      border-left: 5px solid var(--coral);
+      border-radius: var(--radius);
+      background: rgba(252,240,236,.97);
+      box-shadow: var(--shadow);
+    }
+    .hero-verdict b { display: block; margin-bottom: 5px; color: var(--coral); font-size: 16px; }
+    .hero-verdict p { color: #5d4c49; font-size: 13px; }
+    .current-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .current-metric {
+      min-width: 0;
+      min-height: 116px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--teal);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.96);
+      box-shadow: var(--shadow);
+    }
+    .current-metric.warning { border-top-color: var(--coral); }
+    .current-metric b { display: block; margin-bottom: 4px; color: var(--teal); font-size: 25px; }
+    .current-metric.warning b { color: var(--coral); }
+    .current-metric span { display: block; color: var(--muted); font-size: 12px; }
+    .route-line {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 7px;
+      margin-top: 15px;
+    }
+    .route-line div {
+      position: relative;
+      min-width: 0;
+      min-height: 78px;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--blue);
+      background: rgba(255,255,255,.96);
+    }
+    .route-line div.current { border-top-color: var(--coral); background: var(--coral-soft); }
+    .route-line b, .route-line span { display: block; }
+    .route-line b { font-size: 12px; }
+    .route-line span { margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .focus-grid, .meaning-grid, .future-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 11px;
+    }
+    .focus-card {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.96);
+      box-shadow: var(--shadow);
+    }
+    .focus-card h3 { margin-bottom: 7px; }
+    .focus-card p, .focus-card li { color: #4c5e65; font-size: 13px; }
+    .focus-card ul { margin: 8px 0 0; padding-left: 20px; }
+    .focus-card.current { border-top: 4px solid var(--coral); }
+    .focus-card.positive { border-top: 4px solid var(--teal); }
+    .focus-card.boundary { border-top: 4px solid var(--gold); }
+    .evidence-layout {
+      display: grid;
+      grid-template-columns: minmax(0, .85fr) minmax(360px, 1.15fr);
+      gap: 12px;
+      align-items: start;
+    }
+    .evidence-list { display: grid; gap: 9px; }
+    .evidence-row {
+      display: grid;
+      grid-template-columns: 88px minmax(0, 1fr) auto;
+      gap: 11px;
+      align-items: start;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.96);
+    }
+    .evidence-row time { color: var(--muted); font-size: 11px; font-weight: 760; }
+    .evidence-row strong { display: block; font-size: 14px; }
+    .evidence-row p { color: var(--muted); font-size: 12px; }
+    .evidence-state { color: var(--teal); font-size: 11px; font-weight: 850; white-space: nowrap; }
+    .evidence-state.fail { color: var(--coral); }
+    .latest-figure { padding: 12px; }
+    .latest-figure img { background: #fff; }
+    .outcome-ladder { display: grid; gap: 9px; counter-reset: outcome; }
+    .outcome-step {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr) auto;
+      gap: 11px;
+      align-items: center;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.96);
+      counter-increment: outcome;
+    }
+    .outcome-step::before {
+      content: counter(outcome);
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--blue);
+      font-weight: 850;
+    }
+    .outcome-step b, .outcome-step span { display: block; }
+    .outcome-step span { color: var(--muted); font-size: 12px; }
+    .outcome-step em { color: var(--gold); font-size: 11px; font-style: normal; font-weight: 850; white-space: nowrap; }
+    .outcome-step.closed em { color: var(--coral); }
+    details.header-archive, details.legacy-archive {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.82);
+    }
+    details.header-archive > summary, details.legacy-archive > summary {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 15px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    details.header-archive > summary::after, details.legacy-archive > summary::after { content: "展开"; color: var(--blue); font-size: 12px; }
+    details.header-archive[open] > summary::after, details.legacy-archive[open] > summary::after { content: "收起"; }
+    .archive-body { padding: 0 15px 16px; border-top: 1px solid var(--line); }
+    .archive-toolbar { padding: 13px 0 2px; }
+    .legacy-archive > .archive-body > section.band:first-of-type { padding-top: 18px; }
+    .legacy-archive > .archive-body > section.band:last-of-type { border-bottom: 0; }
     @media (max-width: 1020px) {
       .status-strip, .gate-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .track-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .phase-rail { grid-template-columns: repeat(4,minmax(0,1fr)); }
       .profile-panel, .senior-grid { grid-template-columns: 1fr; }
+      .hero-grid, .evidence-layout { grid-template-columns: 1fr; }
+      .route-line { grid-template-columns: repeat(3,minmax(0,1fr)); }
+      .focus-grid, .meaning-grid, .future-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
     }
     @media (max-width: 720px) {
       header, main, footer { width: min(100% - 22px, 1220px); }
@@ -318,6 +469,12 @@
       h1 { font-size: 31px; }
       h2 { font-size: 23px; }
       .status-strip, .check-grid, .concept-grid, .resource-grid, .track-grid, .gate-grid, .figure-grid, .week-columns { grid-template-columns: 1fr; }
+      .current-grid, .focus-grid, .meaning-grid, .future-grid { grid-template-columns: 1fr; }
+      .route-line { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .evidence-row { grid-template-columns: 72px minmax(0,1fr); }
+      .evidence-state { grid-column: 2; }
+      .outcome-step { grid-template-columns: 34px minmax(0,1fr); }
+      .outcome-step em { grid-column: 2; }
       .phase-rail { grid-template-columns: repeat(2,minmax(0,1fr)); }
       summary { grid-template-columns: 64px minmax(0,1fr); }
       summary > *, .week-title { min-width: 0; }
@@ -335,65 +492,45 @@
   <a class="skip-link" href="#main">跳到主内容</a>
   <header>
     <nav class="nav" aria-label="主导航">
-      <a href="./" aria-current="page">C 路线主页</a>
-      <a href="daily-progress.html">每日实质增量</a>
-      <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
-      <a href="#objective-novelty">优化目标与原创性</a>
-      <a href="#latest-gate">算法与实验</a>
-      <a href="#adaptive-mask-v82">v82 自适应表示容量</a>
-      <a href="#target-stability-v81">v81 目标稳定性审计</a>
-      <a href="#strict-observation-v80">v80 严格可学习性门</a>
-      <a href="#analytic-controls-v79">v79 解析映射判决</a>
-      <a href="#gslb8-v77">v77 空间修正容量 7/75</a>
-      <a href="#obs2d-oracle-v76">v76 二维表示严格 FAIL</a>
-      <a href="#external-v75">v75 外部精度 5/75 FAIL</a>
-      <a href="#loaded-artifact-fresh-resource-v74-1">v74.1 完整 fresh 资源 PASS</a>
-      <a href="#loaded-artifact-stageb-v73">v73 加载工件全轨迹 PASS</a>
-      <a href="#calibrated-factor-v72">v72 在线 wall / RSS 双 PASS</a>
-      <a href="#fresh-resource-v70-1">v70.1 速度 PASS / 内存 FAIL</a>
-      <a href="#stencil-factor-v70">v70 低内存候选精度 PASS</a>
-      <a href="#fresh-resource-v68">v68.3 速度 PASS / 内存 FAIL</a>
-      <a href="#full-trajectory-warm-v67">v67.1 全轨迹 PASS</a>
-      <a href="#target-scale-warm-v66">v66.1 目标尺寸 PASS</a>
-      <a href="#fresh-geometry-warm-v65">v65 全新几何 Warm PASS</a>
-      <a href="#analytic-factor-resource-v62">v62.2 九视角资源门</a>
-      <a href="#nine-view-kronecker-v61">v61 九视角 Kronecker</a>
-      <a href="#factorized-detector-v60-1">v60.1 因子化正规算子</a>
-      <a href="#external-sparse-v59">v59 外部几何混合结果</a>
-      <a href="#sparse-detector-v58">v58.1 稀疏探测器重放</a>
-      <a href="#trajectory-gate">多轨迹协议</a>
-      <a href="#representation-gate">表示机制</a>
-      <a href="#transport-proxy-gate">输运与校准门</a>
-      <a href="#g0-evidence">真实 CFD 代理</a>
-      <a href="blastnet-external-v40.html#w16d2-transfer-v55">v54-v55 dual 迁移控制</a>
-      <a href="blastnet-external-v40.html#continuous-six-space-v53">v53 连续六维诊断</a>
-      <a href="blastnet-external-v40.html#six-space-v52">v52 六维候选表</a>
-      <a href="blastnet-external-v40.html#second-residual-adjoint-v51">v51 第二残差伴随</a>
-      <a href="blastnet-external-v40.html#five-space-v50">v49-v50 五维判决</a>
-      <a href="blastnet-external-v40.html#curved-followups-v47">v45-v47 curved 修复链</a>
-      <a href="blastnet-external-v40.html#curved-v44">v44 curved-adjoint 起点</a>
-      <a href="blastnet-external-v40.html#krylov-v43">v43 JVP 受约束诊断</a>
-      <a href="blastnet-external-v40.html#krylov-v41">v41 四方向诊断</a>
-      <a href="blastnet-external-v40.html">v40.2 BLASTNet 外部门</a>
-      <a href="sarc-k3-m4-v37.html">v39.1 SARC-K3-M4</a>
-      <a href="direct-field-k1-v29.html">v29 Direct-Field K1</a>
-      <a href="differentiable-curved-matched-v28.html">v28 可微曲线逆问题</a>
-      <a href="external-curved-resource-v27.html">v27 资源实测</a>
-      <a href="external-curved-stress-v26.html">v26.3 外部曲折压力</a>
-      <a href="curved-ray-stress-v25.html">v25 曲折光线压力</a>
-      <a href="observable-external-v24.html">v24 三轨迹复现</a>
-      <a href="observable-reduced-v23.html">v23 支持性结果</a>
-      <a href="#path">16 周学习</a>
-      <a href="../learning_library/index.html">教材讲义库</a>
-      <a href="../paper_library/index.html">论文库</a>
-      <a href="../learning_log.html">学习日志</a>
+      <a href="#research-summary" aria-current="page">研究摘要</a>
+      <a href="#research-progress">研究进程</a>
+      <a href="#engineering-increments">工程增量</a>
+      <a href="#expected-results">预期结果</a>
+      <a href="#engineering-meaning">工程意义</a>
+      <a href="#future-direction">未来期许和方向</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-08-02 · v87 K1-K2 line 机理诊断</div>
-    <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题不变：在 field / full-gradient / interior-gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v87 解析审计 Case 6 的完整 K1-K2 线段：<code>85/90</code> 个单元存在八门可行阻尼区间，<code>5/90</code> 整段无解，且五个反例都被单个 interior-gradient 门独立判死。独立程序用另一种二分求根与 100001 点致密检查复算，区间端点最大差 <code>3.19e-15</code>。因此 scalar damping family 正式关闭；下一门改查现有四参数空间 warm 表示在 Case 6 的容量，而不是扩大 selector 网络。当前仍不启动 wall/RSS，也不声称外部泛化、算法突破或论文成功。</p>
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">毕业设计聚焦主页 · 师兄确认 C 路线 · 更新至 2026-08-02</div>
+        <h1>低成本 Warm Start 加速三维 BOST 重建</h1>
+        <p class="lead">研究一个可被严格检验的问题：让只读取多视角观测与已知几何的低成本初始化器，给 CGLS / PCGLS 提供更好的三维起点；在最终场、完整梯度、内部梯度和观测误差均不劣于标准重建时，减少昂贵的 <code>A/A^T</code> 调用、端到端时间和峰值内存。当前使用公开反应流 CFD 构造九视角 straight-ray 代理，最终目标是迁移到 OERF 的真实 BOST 数据。</p>
+        <div class="actions" style="margin-top:14px;">
+          <a class="button primary" href="#research-progress">查看当前研究进程</a>
+          <a class="button" href="daily-progress.html">查看每日实质增量</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1_result_2026-08-02.md">阅读最新完整证据</a>
+        </div>
+      </div>
+      <aside class="hero-verdict" aria-label="当前科学判决">
+        <b>当前判决：尚未突破</b>
+        <p><code>v88.1</code> 在 Case 6 的 90 个单元中找到 <code>86</code> 个严格 witness，剩余 4 个只被内部梯度同成本门阻塞。这个结果关闭了当前四参数表示，但没有证明更高空间自由度的表示不可行。</p>
+        <p><strong>下一步：</strong>先检验最小的高空间自由度表示容量；容量过门后，才训练严格 observation-only 预测器并评估是否需要租用 GPU。</p>
+      </aside>
+    </div>
+    <div class="current-grid" aria-label="当前核心状态">
+      <div class="current-metric"><b id="liveWitnessCount">86 / 90</b><span>Case 6 严格 witness；独立程序复算一致</span></div>
+      <div class="current-metric warning"><b id="liveFailureCount">4 个反例</b><span>全部只越过 interior-gradient / Zero-K2 门</span></div>
+      <div class="current-metric"><b id="liveCallBudget">2A + 2A<sup>T</sup></b><span>每个候选的冻结 exact 在线预算</span></div>
+      <div class="current-metric warning"><b id="liveBreakthrough">false</b><span><code>algorithm_breakthrough</code>；不夸大负结果</span></div>
+    </div>
+    <details class="header-archive">
+      <summary>展开历史证据快捷入口与旧浏览器学习进度</summary>
+      <div class="archive-body">
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
-      <a class="button danger" href="#k1-k2-line-v87">打开 v87 最新机理负结果</a>
+      <a class="button danger" href="#spatial-mask4-capacity-v88-1">打开 v88.1 最新容量负结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1_result_2026-08-02.md">读 v88.1 完整证据</a>
+      <a class="button" href="../docs/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1_public_summary.json">读 v88.1 脱敏摘要</a>
+      <a class="button danger" href="#k1-k2-line-v87">回看 v87 机理负结果</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v86_case6_k1_k2_line_v87_result_2026-08-02.md">读 v87 完整证据</a>
       <a class="button" href="../docs/nine_view_v86_case6_k1_k2_line_v87_public_summary.json">读 v87 脱敏摘要</a>
       <a class="button danger" href="#forced-k2-v86">回看 v86 父负结果</a>
@@ -446,6 +583,10 @@
       <a class="button" href="#sparse-detector-v58">回看 v58.1 关键正结果</a>
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
+    </div>
+    <div class="alert critical" style="margin-top:12px;">
+      <strong>v88.1 最新判决：四参数 spatial-mask4 只有 86/90 个 Case 6 单元找到严格 witness</strong>
+      <span>v88 的 optimizer-terminal 歧义已移除：一个通过物理预算、exact replay、八门和 <code>2A+2A^T</code> receipt 的 endpoint 就足以证明存在。正式全局搜索与独立 Sobol + 局部搜索仍共同留下 F30 frame 7 / 9 / 12 和 F15 frame 12 四个反例；它们只被 interior-gradient / Zero-K2 非劣门阻塞，最优仍越线 <code>2.22%、1.59%、7.94%、0.66%</code>。正式/独立 90 个 endpoint 的 field、residual、metrics、gates 最大差均为 <code>0</code>。这关闭当前四参数表示的工程路线，不构成数学不可能或算法突破。<a href="#spatial-mask4-capacity-v88-1">查看完整证据</a>。</span>
     </div>
     <div class="alert critical" style="margin-top:12px;">
       <strong>v87 最新判决：K1-K2 一维线只有 85/90 可行，五个内部梯度反例关闭 scalar damping</strong>
@@ -730,9 +871,177 @@
       <strong>历史资源门判决：v68.3 fresh wall 通过、三类 RSS 失败，Stage C 整体 FAIL</strong>
       <span>q8-K1 相对 Zero-K4 的 outer-wall p50 / p90 为 <code>0.65524 / 0.66111</code>，但 worker-self、sampled worker-tree 与 sampled pipeline RSS p90 为 <code>1.38447 / 1.37680 / 1.31112</code>。30 个 reference、330 个 timing worker、165 个配对区组已由独立程序重算；block 与聚合最大差均为 0。保留 factor 仅约 5.63 MiB，当前失败定位在 factor setup 的瞬时工作区。下一门只允许流式构造/复用工作区并重跑完整精度与资源合同；仍不是神经算子、真实 BOST 或论文突破。</span>
     </div>
+      </div>
+    </details>
   </header>
 
   <main id="main">
+    <section id="research-summary" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">研究摘要</div>
+          <h2>把算子学习限制在一个可验证的作用：提供更便宜、更安全的三维重建起点</h2>
+          <p>背景纹影从多视角图像位移反推三维折射率或密度场，本质上是昂贵且病态的逆问题。C 路线不替换物理求解器，而是学习一个部署时只依赖观测与已知几何的 warm initializer，再交给未修改的 CGLS / PCGLS 精化。这样既保留物理一致性，也能把“快多少、伤不伤精度、在哪些工况失效”拆成可复算的实验问题。</p>
+        </div>
+      </div>
+      <div class="route-line" aria-label="C 路线研究链">
+        <div><b>公开反应流 CFD</b><span>PoolFire 与独立 BLASTNet 工况</span></div>
+        <div><b>九视角观测</b><span>已知几何 straight-ray 密度梯度代理</span></div>
+        <div><b>粗网格逆问题</b><span><code>32×16×16</code> 三维状态</span></div>
+        <div class="current"><b>当前：表示容量</b><span>寻找最小的高空间自由度修正</span></div>
+        <div><b>Observation-only 学习</b><span>容量过门后才训练预测器</span></div>
+        <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
+      </div>
+      <div class="focus-grid" style="margin-top:12px;">
+        <article class="focus-card positive">
+          <h3>要优化什么</h3>
+          <p>在相同最终精度下，减少完整 <code>A/A^T</code> 调用；随后再以独立 fresh process 测 wall time 与 whole-pipeline peak RSS。理论调用减少不能代替真实资源实测。</p>
+        </article>
+        <article class="focus-card boundary">
+          <h3>怎样定义“同精度”</h3>
+          <p>逐单元同时检查 field、full-gradient、interior-gradient、observation 四类误差及相对 Zero-K2 / Zero-K4 的八个门。任何局部材料性伤害都不能被平均收益掩盖。</p>
+        </article>
+        <article class="focus-card current">
+          <h3>当前科学边界</h3>
+          <p>公开实验仍是 noise-free、known-geometry、straight-ray 代理。它能筛选算法机制，但不能冒充曲折光线、相机标定、真实噪声或实验室真实 BOST 结论。</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="research-progress" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">研究进程</div>
+          <h2>正结果证明“值得继续”，负结果决定“下一步不能再做什么”</h2>
+          <p>当前最重要的不是版本号数量，而是四个经过独立复算、真正改变路线判断的节点。</p>
+        </div>
+      </div>
+      <div class="evidence-layout">
+        <div class="evidence-list">
+          <article class="evidence-row">
+            <time datetime="2026-07-31">2026-07-31</time>
+            <div><strong>v74.1：PoolFire 内部资源门通过</strong><p>1515/1515 精度兼容；exact 调用从 <code>4A+4A^T</code> 降为 <code>2A+2A^T</code>，fresh wall 中位数下降 43.49%，三类 RSS p90 均过门。只证明已开封同族代理。</p></div>
+            <span class="evidence-state">内部正结果</span>
+          </article>
+          <article class="evidence-row">
+            <time datetime="2026-08-01">2026-08-01</time>
+            <div><strong>v85：外部 Case 4 通过，Case 6 失败</strong><p>Case 4 为 84/84；Case 6 仅 78/90，12 个失败全部落在内部梯度。说明全局 residual gate 无法识别局部风险。</p></div>
+            <span class="evidence-state fail">混合外部结果</span>
+          </article>
+          <article class="evidence-row">
+            <time datetime="2026-08-02">2026-08-02</time>
+            <div><strong>v87：单一 K1-K2 标量线关闭</strong><p>严格可行单元 85/90；五个内部梯度反例证明 scalar damping 自由度不足，不能靠调一个系数修复 Case 6。</p></div>
+            <span class="evidence-state fail">机理负结果</span>
+          </article>
+          <article class="evidence-row">
+            <time datetime="2026-08-02">2026-08-02</time>
+            <div><strong>v88.1：四参数 spatial-mask4 关闭</strong><p>严格 witness 为 86/90；四个失败由独立 Sobol 与局部精化再次搜索，仍未找到反例。下一门必须增加空间自由度，不能直接扩大预测网络。</p></div>
+            <span class="evidence-state fail">当前判决</span>
+          </article>
+        </div>
+        <figure class="latest-figure">
+          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png" aria-label="打开 v88.1 完整结果图">
+            <img src="../assets/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png" alt="v88.1 中 86 个 Case 6 单元通过，4 个单元被内部梯度同成本门阻塞" />
+          </a>
+          <figcaption>最新可视化：F12+ 为 30/30，F15+ 为 29/30，F30+ 为 27/30。四个反例的最优解仍越过内部梯度门 0.66%–7.94%。这是表示容量边界，不是算法突破。</figcaption>
+        </figure>
+      </div>
+      <div class="actions" style="margin-top:13px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1_result_2026-08-02.md">读 v88.1 完整证据</a>
+        <a class="button" href="../docs/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1_public_summary.json">读机器可读摘要</a>
+        <a class="button" href="#spatial-mask4-capacity-v88-1">展开历史区中的技术细节</a>
+      </div>
+    </section>
+
+    <section id="engineering-increments" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">工程增量</div>
+          <h2>每天只记录能被复算的实质变化</h2>
+          <p>独立页面从 2026-07-06 起逐日记录：做了什么、为什么做、正式结果、独立验证、失败边界与下一科学门。协议、下载、页面和测试数量不会被写成算法成果。</p>
+        </div>
+        <div class="section-actions"><a class="button primary" href="daily-progress.html">打开每日实质增量</a></div>
+      </div>
+      <div class="focus-grid">
+        <article class="focus-card positive"><h3>已建立可复算链</h3><p>每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。</p></article>
+        <article class="focus-card boundary"><h3>当前更新源</h3><p id="liveEvidenceStatus" aria-live="polite">正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。</p></article>
+        <article class="focus-card current"><h3>本轮真实增量</h3><p>排除了“只要把四参数系数预测得更准就能修复 Case 6”的路线，避免把 GPU 与训练时间花在没有表示容量的模型上。</p></article>
+      </div>
+    </section>
+
+    <section id="expected-results" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">预期结果</div>
+          <h2>论文要交付的是一条完整证据链，不是单张漂亮误差图</h2>
+          <p>以下顺序不可交换。当前只完成了前置筛选的一部分，后面的训练、外部验证与真实实验都尚未被授权为成功。</p>
+        </div>
+      </div>
+      <div class="outcome-ladder">
+        <div class="outcome-step closed"><div><b>找到足够但最小的空间表示</b><span>在 Case 6 的全部 90 个单元守住八门，并保持在线 exact 预算可控。</span></div><em>当前进行中</em></div>
+        <div class="outcome-step"><div><b>训练 observation-only warm initializer</b><span>训练与部署都不读取真值；与 ridge、KRR、U-Net / FNO 等公平对照，并保留 fail-closed 回退。</span></div><em>容量过门后</em></div>
+        <div class="outcome-step"><div><b>独立工况 matched-accuracy</b><span>在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
+        <div class="outcome-step"><div><b>真实资源收益</b><span>fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。</span></div><em>尚未启动</em></div>
+        <div class="outcome-step"><div><b>真实 BOST 迁移</b><span>接入组内位移图、相机标定、重复测量噪声与认可基线，重新定义实验“同精度”。</span></div><em>需要组内数据</em></div>
+      </div>
+    </section>
+
+    <section id="engineering-meaning" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">工程意义</div>
+          <h2>让计算成像重建从“每次慢慢求”变成“快速起步、物理收尾、失败可退”</h2>
+        </div>
+      </div>
+      <div class="meaning-grid">
+        <article class="focus-card positive"><h3>降低重复重建成本</h3><p>高速反应流包含大量连续帧与多视角数据。若 warm start 能少做若干次完整 forward / adjoint，收益会随帧数和实验批次累积。</p></article>
+        <article class="focus-card boundary"><h3>保留物理可信度</h3><p>学习模块只负责起点，最终仍由显式物理算子和未修改迭代器精化；观测残差与几何信息还能用于拒绝危险候选。</p></article>
+        <article class="focus-card current"><h3>暴露局部失效而非掩盖</h3><p>Case 6 已显示平均 field 变好并不代表内部梯度安全。逐单元八门把会破坏火焰局部结构的失败直接显露出来。</p></article>
+      </div>
+    </section>
+
+    <section id="future-direction" class="band">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">未来期许和方向</div>
+          <h2>下一步只扩展真正缺失的自由度</h2>
+          <p>路线会随负证据收缩，而不是因为已经投入很多时间就继续堆模型。</p>
+        </div>
+      </div>
+      <div class="future-grid">
+        <article class="focus-card current"><h3>最近科学门</h3><p>冻结一个比 spatial-mask4 只多最少空间自由度的表示，先做 truth-aware 容量审计。若仍不能 90/90，就继续关闭该表示，不训练预测器。</p></article>
+        <article class="focus-card boundary"><h3>何时租 GPU</h3><p>只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。</p></article>
+        <article class="focus-card positive"><h3>何时接组内数据</h3><p>公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。</p></article>
+      </div>
+      <div class="alert" style="margin-top:13px;"><strong>期许，但不预支结论</strong><span>理想论文贡献是“BOST 专用的 observation-conditioned warm initializer + exact physics refinement + 可观测安全回退”，在同精度下稳定减少昂贵算子与真实资源成本。它是否成立，必须由下一表示门、独立外部门和真实 BOST 三层证据共同决定。</span></div>
+    </section>
+
+    <details class="legacy-archive">
+      <summary><span>历史研究档案与旧资料入口</span><span>旧实验链、16 周学习、教材、论文库与师兄对齐工具默认折叠</span></summary>
+      <div class="archive-body">
+        <div class="archive-toolbar actions">
+          <a class="button" href="#objective-novelty">历史优化目标</a>
+          <a class="button" href="#latest-gate">完整算法实验链</a>
+          <a class="button" href="#transport-proxy-gate">输运与校准门</a>
+          <a class="button" href="#path">16 周学习路径</a>
+          <a class="button" href="../learning_library/index.html">教材讲义库</a>
+          <a class="button" href="../paper_library/index.html">论文库</a>
+          <a class="button" href="../learning_log.html">旧学习日志</a>
+        </div>
+        <details class="history-diagnostics" style="margin-top:12px;">
+          <summary>历史页面快照与早期判决标签</summary>
+          <div class="archive-body">
+            <p>以下文字只用于保留旧页面的可追溯索引，不代表当前最新判决。</p>
+            <ul>
+              <li>2026-07-29 页面快照：<strong>师兄已选 C · 当前证据 2026-07-29</strong>；当时标题为“神经算子 Warm Start × 三维 BOST 重建”。</li>
+              <li>早期门槛口径：预注册的 field / gradient / observation 单侧非劣门成立后才比较成本；早期公开协议的 11/2/2 文件划分仍保留，统计角色已按真实访问历史纠正。</li>
+              <li>v10.9：<strong>v10.9 full-linear KRR 三臂均为 0/5</strong>，模型规模 77,020 参数；随后进入严格 v11.2，相关差值记录为 12.64%。</li>
+              <li>v27：<code>FAIL_EXTERNAL_CURVED_RECONSTRUCTION_RESOURCE_V27</code>；冻结差距为 2.19%-2.89%，没有算法突破。</li>
+              <li>v39.1 仍是 PoolFire 内部关键正结果：历史比值 <code>0.744260</code> 与 <code>0.825418</code>，但 all official PoolFire test streams historically opened，不能重新包装为 fresh 外部证据。</li>
+              <li>v52 之后的当时快照写作“当前最新证据是 BLASTNet 开封代理上的 v54-v55”；该“当前”只属于 2026-07-29 历史语境。</li>
+            </ul>
+          </div>
+        </details>
     <section id="objective-novelty" class="band">
       <div class="section-head">
         <div>
@@ -859,7 +1168,8 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
-        <article class="panel"><div class="chips"><span class="chip coral">最新 · v87 机理 FAIL</span><span class="chip blue">85 nonempty · 5 empty</span></div><h3 style="margin-top:10px;">K1-K2 analytic line feasibility</h3><p>逐单元解析求完整八门可行 t 区间。五个 Case 6 反例即使使用 truth-aware 最优阻尼也无法守住内部梯度；因此关闭单一 scalar selector。85 个可行单元多数具有宽区间，说明问题集中而非全线失效。下一门改查四参数空间 warm 表示容量。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v88.1 容量未过</span><span class="chip blue">86 witness · 4 unresolved</span></div><h3 style="margin-top:10px;">Case 6 spatial-mask4 oracle capacity</h3><p>保持四参数空间和 <code>2A+2A^T</code> 不变，对四个边界单元追加差分进化、DIRECT、局部 minimax 与独立 Sobol 搜索，仍只有 86/90 找到严格 witness。四个失败只越过 interior-gradient / Zero-K2 门。当前表示按工程路线关闭，下一门增加最小空间自由度，不用大网络挽救。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">v87 机理 FAIL</span><span class="chip blue">85 nonempty · 5 empty</span></div><h3 style="margin-top:10px;">K1-K2 analytic line feasibility</h3><p>逐单元解析求完整八门可行 t 区间。五个 Case 6 反例即使使用 truth-aware 最优阻尼也无法守住内部梯度；因此关闭单一 scalar selector。85 个可行单元多数具有宽区间，说明问题集中而非全线失效。下一门改查四参数空间 warm 表示容量。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v86 机理 FAIL</span><span class="chip blue">K1 78/90 · K2 71/90</span></div><h3 style="margin-top:10px;">Forced true-CGLS K2 on Case 6</h3><p>冻结模型、几何和 warm correction 不变，对 90 个 Case 6 单元统一追加一轮 CGLS。5 个旧失败被修复，但新增 12 个早期瞬态内部梯度失败；全局误差和观测残差更小，局部梯度尾部却更差。独立复算逐值差为 0，关闭固定迭代深度组合。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v85 联合外部门 FAIL</span><span class="chip blue">Case 4 84/84 · Case 6 78/90</span></div><h3 style="margin-top:10px;">Zero-adaptation external Case 4 / Case 6</h3><p>Case 3 冻结策略不调参依次外测。Case 4 全部通过并减少 37.2% exact 调用；Case 6 的 scalar gate 将 90 个单元全停 K1，12 个失败只出现在内部梯度。独立程序重新预测、评分并核对调用账，声明差值为 0。联合门严格失败，wall/RSS 没有启动。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">v84.2 开发父证据 PASS</span><span class="chip blue">75/75 · calls -41.3%</span></div><h3 style="margin-top:10px;">Observable residual-gated K1/K2</h3><p>v83.1 的 enriched148-RBF warm start 先运行到 K1；部署可见 residual 安全时直接接受，否则只追加一轮未修改 CGLS。49 个单元停 K1、26 个继续 K2，全部 75 个单元通过八门，平均每类 exact 调用为 2.3467。独立复算和 held-out 标签扰动均通过；它随后由 v85 的 Case 4/6 外部门检验。</p></article>
@@ -909,6 +1219,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="spatial-mask4-capacity-v88-1" class="alert critical" style="margin-top:13px;">
+        <strong>v88.1：四参数 spatial-mask4 仍有 4/90 个 Case 6 单元找不到严格八门 witness</strong>
+        <span>正式程序复用并 exact replay v88 的 86 个可行 endpoint；其余四个单元分别运行四个冻结种子的 differential evolution、非局部偏置 DIRECT、原 13 起点和约束 minimax 精化。独立 validator 从原始场重建 90 个问题，并对四个失败单元另跑 <code>16384</code> 个 Sobol 点和 32 起点有限差分精化。两套搜索均留下 F30 frame 7 / 9 / 12 与 F15 frame 12，唯一阻塞项是 interior-gradient 相对同成本 Zero-K2 的非劣门，越线 <code>2.22%、1.59%、7.94%、0.66%</code>。全部 exact receipt 为 <code>2A+2A^T</code>，正式/独立 field、residual、metrics、gates 最大差为 <code>0</code>。结论是 engineering closure，不是数学不可行证书。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png" aria-label="打开 v88.1 Case 6 spatial-mask4 容量结果图">
+          <img src="../assets/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png" alt="v88.1 中八十六个 Case 6 单元有严格 witness，四个单元仍被内部梯度同成本门阻塞" />
+        </a>
+        <figcaption>A：三档几何分别 30/30、29/30、27/30；B：四个反例相对同成本 Zero-K2 的内部梯度最优越线幅度；C：正式全局搜索与独立 Sobol 搜索落在同一边界。该图是已开封 Case 6 的表示容量审计。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button danger" href="../document_reader.html?doc=docs%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1_result_2026-08-02.md">读 v88.1 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1_public_summary.json">打开 v88.1 脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png">打开 v88.1 结果图原尺寸</a>
       </div>
       <div id="k1-k2-line-v87" class="alert critical" style="margin-top:13px;">
         <strong>v87：K1-K2 一维混合只有 85/90 个 Case 6 单元存在八门可行区间</strong>
@@ -2021,6 +2346,8 @@
         </div>
       </div>
     </section>
+      </div>
+    </details>
   </main>
 
   <footer>
@@ -2302,6 +2629,36 @@
       renderQuestions();
       renderBrief();
       document.getElementById('versionText').textContent = `${guide.version} · 更新 ${guide.updated}`;
+    })();
+  </script>
+  <script>
+    (() => {
+      const legacyArchive = document.querySelector('details.legacy-archive');
+      const revealLegacyTarget = () => {
+        if (!legacyArchive || !location.hash) return;
+        const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+        if (target && legacyArchive.contains(target)) legacyArchive.open = true;
+      };
+      revealLegacyTarget();
+      window.addEventListener('hashchange', revealLegacyTarget);
+
+      fetch('./current-evidence.json', { cache: 'no-store' })
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.json();
+        })
+        .then(evidence => {
+          const metrics = evidence.metrics || {};
+          const decision = evidence.current_decision || {};
+          document.getElementById('liveWitnessCount').textContent = `${metrics.strict_witness_passed} / ${metrics.cell_count}`;
+          document.getElementById('liveFailureCount').textContent = `${metrics.unresolved_cell_count} 个反例`;
+          document.getElementById('liveCallBudget').textContent = `${metrics.exact_A_calls_per_candidate}A + ${metrics.exact_AT_calls_per_candidate}A^T`;
+          document.getElementById('liveBreakthrough').textContent = String(Boolean(decision.algorithm_breakthrough));
+          document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：${metrics.strict_witness_passed}/${metrics.cell_count} 个单元通过；下一门是 ${evidence.next_scientific_gate}。每次独立验证后的公开提交只需更新这份稳定清单。`;
+        })
+        .catch(() => {
+          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v88.1 为 86/90，algorithm_breakthrough=false。';
+        });
     })();
   </script>
   <script src="../site_link_router.js" data-site-root="../"></script>

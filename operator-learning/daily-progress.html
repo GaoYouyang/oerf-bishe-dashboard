@@ -497,20 +497,28 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>85/90</b>
-        <span>v87 中 K1-K2 一维线存在八门可行区间的 Case 6 单元；其余 5 个被内部梯度单独判死。</span>
+        <b>86/90</b>
+        <span>v88.1 中四参数 spatial-mask4 找到严格八门 witness 的 Case 6 单元；其余 4 个仍被内部梯度同成本门阻塞。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v87 证明 K1-K2 一维混合只有 85/90 可行，scalar damping 家族关闭</strong>
+      <strong>最新科学判决：v88.1 只有 86/90 个 Case 6 单元找到 spatial-mask4 严格 witness，当前四参数表示关闭</strong>
       <span>
-        v87 沿 <code>x(t)=x<sub>K1</sub>+t(x<sub>K2</sub>-x<sub>K1</sub>)</code> 解析求出每个 Case 6 单元
+        v88.1 保持四参数 spatial-mask4、物理预算、三档九视角几何、exact K1 shell 与八门不变，先逐个 exact replay
+        v88 已找到的 <code>86</code> 个 witness，再对四个未决单元运行四种子 differential evolution、DIRECT、
+        13 个固定起点与约束 minimax 精化。结果仍为 <code>86/90</code>；F12 / F15 / F30 分别为
+        <code>30/30、29/30、27/30</code>。四个反例的其他七门均通过，只越过 interior-gradient 相对同成本
+        Zero-K2 的门，最优越线 <code>2.22%、1.59%、7.94%、0.66%</code>。独立程序从原始场重建全部
+        90 个问题，并对失败单元另跑每格 <code>16384</code> 个 Sobol 点与 32 起点精化；没有找到反例，
+        正式/独立 field、residual、metrics、gates 最大差均为 <code>0</code>。因此当前表示按工程路线关闭；
+        下一门增加最小空间自由度，在容量到达 90/90 前不租算卡训练大网络。这不是数学不可能证书。
+        同日父结果 v87 沿 <code>x(t)=x<sub>K1</sub>+t(x<sub>K2</sub>-x<sub>K1</sub>)</code> 解析求出每个 Case 6 单元
         的完整八门可行区间，而不是抽样几个阻尼值。结果为 <code>85</code> 个非空、<code>5</code> 个空、
         <code>0</code> 个数值不确定；F12 / F15 / F30 分别为 <code>30/30、29/30、26/30</code>。五个反例
         都不是多个门的交集冲突，而是单个 interior-gradient 门在整条线上已经无解；线上最优值仍超门槛
         <code>0.59%–4.77%</code>。独立程序重新生成几何、模型预测、K1/K2、真值和观测，并用另一种
         long-double 二分法与 <code>100001</code> 点致密检查复算；区间端点最大差 <code>3.19e-15</code>。
-        因此不再训练 scalar-t selector，下一门改查现有四参数空间 warm 表示在 Case 6 的 truth-aware 容量。
+        因此 scalar-t selector 已关闭，而 v88.1 进一步关闭当前四参数空间 warm 表示。
         v86 的父结果仍成立：强制 K2 把通过数从 <code>78/90</code> 降到 <code>71/90</code>。
         v74.1 的 PoolFire wall / RSS 结果没有被推翻；但 v75 在预选的 BLASTNet Case 3 上只有
         <code>5/75</code> 单元通过完整合同。主要阻塞是相对同调用 Zero-K2 的 interior-gradient：
@@ -587,15 +595,16 @@
                 <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
-                    <span class="tag negative">v87 line 85/90</span>
-                    <span class="tag negative">5 个区间为空</span>
-                    <span class="tag">0 ambiguity</span>
+                    <span class="tag negative">v88.1 witness 86/90</span>
+                    <span class="tag negative">4 个单元未找到 witness</span>
+                    <span class="tag">v87 line 85/90</span>
+                    <span class="tag">5 个区间为空</span>
                     <span class="tag">v86 forced K2 71/90</span>
-                    <span class="tag engineering">端点差 3.19e-15</span>
+                    <span class="tag engineering">独立逐值差 0</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3>v87 关闭整条 K1-K2 scalar damping：五个单元连 truth-aware 最优阻尼都无解</h3>
-                  <p>把八门写成关于 t 的完整凸二次区间后，只有 85/90 个 Case 6 单元有交集；五个反例全部由内部梯度单独阻塞。</p>
+                  <h3>v88.1 关闭当前四参数 spatial-mask4：全局与独立搜索仍只有 86/90</h3>
+                  <p>修正 v88 的 optimizer-terminal 歧义后，四个 Case 6 单元仍找不到严格 witness；容量缺口不能靠扩大 coefficient selector 补救。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
@@ -603,36 +612,37 @@
                 <div class="evidence-grid">
                   <section>
                     <h4>今天真正执行了什么</h4>
-                    <p>沿 <code>x(t)=x<sub>K1</sub>+t(x<sub>K2</sub>-x<sub>K1</sub>)</code>，把四类误差相对 Zero-K4 与 Zero-K2 的八门全部化成凸二次不等式，解析求每个门的完整区间并取交集。因为 K1、K2 和 reference 已冻结，这项事后容量审计新增精确调用为 <code>0A+0A<sup>T</sup></code>。</p>
+                    <p>保持四参数表示与所有精度门不变，对 v88 的 86 个可行 endpoint 做 exact replay；对四个未决单元运行四种子 differential evolution、DIRECT、原 13 起点和约束 minimax 精化。每个最终 witness 都真实重放 <code>2A+2A<sup>T</sup></code>。</p>
                   </section>
                   <section>
                     <h4>结果与机理</h4>
                     <ul>
-                      <li>非空 / 空 / 不确定：<code>85 / 5 / 0</code>；F12 / F15 / F30 为 <code>30 / 29 / 26</code>。</li>
-                      <li>五个空区间都被一个 interior-gradient 门单独判死，不是其他七门互相错开。</li>
-                      <li>线上最优仍超门槛 <code>0.59%–4.77%</code>；最坏反例是 F30 frame 12。</li>
-                      <li>85 个可行单元的区间宽度最小 / p10 / p50 为 <code>0.16227 / 0.59073 / 1.0</code>，多数单元并不需要精细阻尼。</li>
+                      <li>严格 witness / 未决：<code>86 / 4</code>；F12 / F15 / F30 为 <code>30 / 29 / 27</code>。</li>
+                      <li>四个失败为 F30 frame 7 / 9 / 12 与 F15 frame 12，全部只越过 interior-gradient / Zero-K2 门。</li>
+                      <li>最优仍越线 <code>2.22% / 1.59% / 7.94% / 0.66%</code>；最坏仍是 F30 frame 12。</li>
+                      <li>v87 同日父诊断也已关闭 K1-K2 scalar line：85/90 非空、5/90 空、0 ambiguity；五个单元连 truth-aware 最优阻尼都无解。</li>
                     </ul>
                   </section>
                   <section>
                     <h4>可信度与边界</h4>
-                    <p>独立 validator 不导入正式 v87 求根器；它重建几何、模型、K1/K2、真值、观测和两组 reference，以 long double 的极小值分段 + 二分求根，并用 <code>100001</code> 点致密检查。fields / residuals 差为 <code>0</code>，区间端点差 <code>3.19e-15</code>。这仍是已开封 Case 6 的事后容量诊断。</p>
+                    <p>独立 validator 不导入正式 v88.1 runner；它从原始 Case 6 场重建 90 个问题，逐个 exact replay，并在四个失败单元上另跑 <code>16384</code> 个 Sobol 点与 32 起点有限差分精化。正式/独立 field、residual、metrics、gates 最大差均为 <code>0</code>，无调用 receipt 失败。这仍是已开封 Case 6 的事后容量诊断，不是数学不可行证书。</p>
                   </section>
                   <section>
                     <h4>路线如何立即调整</h4>
-                    <p>关闭所有只输出单个全局 <code>t</code> 的 selector。下一门直接检查现有四参数空间 warm 表示在 Case 6 的 truth-aware 容量：若能 90/90，问题在跨工况预测；若仍失败，表示本身要增加空间自由度。在这个容量问题回答前，不扩大 FNO、UNO 或 U-Net。</p>
+                    <p>当前四参数表示按工程路线关闭。下一门只增加最小空间自由度，并先做 truth-aware 90/90 容量检查；没有容量就不训练 selector。Mac 足够完成这一步，暂不租 GPU，也不扩大 FNO、UNO 或 U-Net。</p>
                   </section>
                 </div>
                 <figure class="entry-figure">
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v86_case6_k1_k2_line_v87.png" aria-label="打开 v87 K1-K2 线可行性结果图">
-                    <img src="../assets/nine_view_v86_case6_k1_k2_line_v87.png" alt="v87 中八十五个单元有可行阻尼区间，五个单元被内部梯度门单独阻塞" />
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png" aria-label="打开 v88.1 spatial-mask4 容量结果图">
+                    <img src="../assets/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png" alt="v88.1 中八十六个单元有严格 witness，四个单元仍被内部梯度同成本门阻塞" />
                   </a>
-                  <figcaption>85 个单元有可行区间；五个反例即使使用 truth-aware 最优 t，内部梯度仍超门槛。</figcaption>
+                  <figcaption>86 个单元找到严格 witness；四个反例在正式与独立搜索中都落在同一内部梯度边界。</figcaption>
                 </figure>
                 <div class="entry-links">
-                  <a href="../document_reader.html?doc=docs%2Fnine_view_v86_case6_k1_k2_line_v87_result_2026-08-02.md">v87 完整证据</a>
-                  <a href="../docs/nine_view_v86_case6_k1_k2_line_v87_public_summary.json">v87 脱敏摘要</a>
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v86_case6_k1_k2_line_v87.png">v87 结果图</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1_result_2026-08-02.md">v88.1 完整证据</a>
+                  <a href="../docs/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1_public_summary.json">v88.1 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png">v88.1 结果图</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v86_case6_k1_k2_line_v87_result_2026-08-02.md">回看 v87 父证据</a>
                 </div>
               </div>
             </details>
@@ -1959,7 +1969,7 @@
   </main>
 
   <footer>
-    持续更新至 v87 Case 6 K1-K2 线可行性独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v88.1 Case 6 spatial-mask4 witness 独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
