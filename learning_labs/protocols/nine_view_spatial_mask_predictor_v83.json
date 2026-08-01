@@ -1,0 +1,194 @@
+{
+  "schema_version": "oerf-nine-view-spatial-mask-predictor-protocol-83.1",
+  "status": "FROZEN_BEFORE_V83_1_STRICT_OUTER_PREDICTION",
+  "frozen_at_utc": "2026-08-01T04:55:00Z",
+  "v83_result_access_before_freeze": false,
+  "pre_execution_amendment": {
+    "amended_at_utc": "2026-08-01T05:24:58Z",
+    "result_access_before_amendment": false,
+    "formal_run_started_before_amendment": false,
+    "reason": "Independent pre-execution review required an explicit beta=0 contribution control and warned that an overly compressed feature sentinel could create a false negative. The amendment therefore reports beta=0, a compact 52-feature family, and an enriched 148-feature family that only adds the already-frozen v80 deployment-visible 100-vector.",
+    "target_validity_hardening": {
+      "amended_at_utc": "2026-08-01T05:31:00Z",
+      "result_access_before_amendment": false,
+      "formal_run_started_before_amendment": false,
+      "reason": "Every supervised beta row is defined as a strict-passing finite-search endpoint. Therefore all 276 outer-fit target constructions, not only the 75 heldout capacity checks, must pass before any downstream predictor decision is interpretable."
+    },
+    "positive_witness_execution_repair": {
+      "amended_at_utc": "2026-08-01T05:43:00Z",
+      "first_two_attempts_started": true,
+      "prediction_seal_created_before_repair": false,
+      "heldout_capacity_or_outer_score_opened_before_repair": false,
+      "observed_fit_only_failure": "One split-correct outer-fit cell had two SLSQP status-8 terminals whose directly recomputed maximum normalized gate was about -0.1555 and whose normalized physical-budget excess was zero.",
+      "reason": "A numerical optimizer success flag is not required to prove existence of a feasible strict-passing beta. v83.1 therefore accepts a positive witness only after direct box, physical-budget, original eight-metric, and gate recomputation. Incomplete starts still make a no-witness conclusion inconclusive; they can never support a negative capacity claim. Accuracy thresholds, folds, features, models, costs, and heldout roles are unchanged."
+    },
+    "independent_p1_audit_repair": {
+      "amended_at_utc": "2026-08-01T05:50:00Z",
+      "result_access_before_amendment": "Only the fit-only optimizer status-8 failure described above was observed; no prediction seal, heldout capacity, or outer score existed.",
+      "formal_run_started_before_amendment": true,
+      "reason": "Independent audit found no P0 and four P1 issues. v83.1 now rejects any nonpassing outer-fit target before training, uses the frozen radial projection and exact beta-zero reproduction check, states feature-dependency rather than process-order evidence, and cross-binds the supplied v80 parent into the validated v82 ancestry."
+    },
+    "inconclusive_execution_history": {
+      "attempt_count_before_final_repair": 3,
+      "prediction_seal_count": 0,
+      "heldout_capacity_or_outer_score_count": 0,
+      "attempts": [
+        "The first attempt stopped on the inherited all-terminals-complete rule at a fit-only status-8 endpoint.",
+        "The diagnostic replay exposed the same fit-only endpoint and no additional result.",
+        "The first audit-repair attempt stopped at the first context because a beta-zero diagnostic keyword was wired to the feature builder rather than the context record."
+      ],
+      "scientific_reuse": false
+    }
+  },
+  "scientific_question": "Can four coefficients of the v82 spatial-mask correction be predicted from deployment-visible observations under a leakage-safe nested pipeline while preserving all eight matched-accuracy gates in every one of the 75 already-open Case3 cells?",
+  "evidence_role": {
+    "dataset": "already-open BLASTNet vitiated H2-air Case 3",
+    "role": "post-open development strict-observation learnability gate",
+    "confirmatory_or_external": false,
+    "case4_or_case6_opened": false,
+    "curved_ray": false,
+    "real_bost": false,
+    "resource_stage_authorized": false
+  },
+  "validated_parents": {
+    "v80_required_scientific_status": "NO_FROZEN_STRICT_OBSERVATION_MODEL_PASSES_ALL_75_V80",
+    "v81_required_scientific_status": "V78_MULTISTART_VARIABILITY_BELOW_0P1_PERCENT_OF_V80_MISS_V81",
+    "v82_required_scientific_status": "PASS_SPATIAL_MASK4_FAMILY_SPECIFIC_FINITE_SEARCH_HEADROOM_V82",
+    "v82_required_spatial_capacity_cells": 75
+  },
+  "fixed_cells": {
+    "scenario_ids_in_order": ["V66_F30_plus", "V66_F15_plus", "V66_F12_plus"],
+    "frame_indices_in_order": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+    "cell_count": 75,
+    "field_shape_zyx": [32, 16, 16]
+  },
+  "outer_fold_contract": {
+    "heldout_blocks_in_order": [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9], [10, 11, 12, 13, 14], [15, 16, 17, 18, 19], [20, 21, 22, 23, 24]],
+    "embargo_radius_frames": 1,
+    "same_truth_frame_all_geometries_same_fold": true,
+    "no_random_cell_split": true,
+    "heldout_truth_may_only_score_sealed_predictions_and_heldout_capacity": true
+  },
+  "nested_upstream_contract": {
+    "base_model": "v80 shared_geometry_conditioned rbf_krr_nested",
+    "outer_heldout_base": "select upstream hyperparameters using outer-fit only, refit on all outer-fit rows, and predict outer-heldout rows",
+    "outer_fit_base": "using the same outer-fit-selected hyperparameters, generate one inner-cross-fitted base prediction for every outer-fit row; each row is excluded from its own upstream fit",
+    "outer_heldout_label_must_not_enter_any_upstream_fit_selection_scaler_or_target": true,
+    "frozen_v80_global_oof_artifact_is_not_accepted_as_a_strict_v83_training_feature": true,
+    "reason": "A v80 OOF prediction for a v83 training row may have been fitted using labels from the current v83 heldout block. Reusing it would create cross-stage stacking leakage even though every v80 row is individually out of fold."
+  },
+  "spatial_representation": {
+    "base_correction": "c0=U32 a0 where a0 is produced under the nested upstream contract",
+    "raw_directions": "c0 elementwise multiplied by the fixed normalized z, y, x, and centered radial masks",
+    "whitening": "the unchanged v82 interior-gradient plus epsilon supported-field metric whitening",
+    "candidate": "c0 + D beta followed by unchanged strict CGLS K1",
+    "beta_dimension": 4,
+    "beta_box": [-1.0, 1.0],
+    "physical_budget": "unchanged v82 complete-correction metric ball",
+    "online_exact_calls_per_cell": {"A": 2, "AT": 2},
+    "additional_online_exact_calls_for_spatial_modulation": {"A": 0, "AT": 0}
+  },
+  "deployment_feature_contract": {
+    "pre_first_exact_forward_feature_dependency": true,
+    "formal_replay_process_order_proven": false,
+    "formal_replay_note": "The formal runner builds the complete exact shell once per cell before replaying many fold models, but the frozen feature builder accepts no post-forward state. This supports deployability at the pre-first-forward point, not a measured process-order claim.",
+    "allowed_state": "after the q8 detector solve and first exact adjoint h=A^T z_q8",
+    "blocks_in_order": [
+      {"name": "nested_base_coefficients", "dimension": 32, "formula": "a0"},
+      {"name": "direction_anchor_cosines", "dimension": 4, "formula": "normalized D^T h"},
+      {"name": "projected_direction_observation_cosines", "dimension": 4, "formula": "normalized (AD)^T y"},
+      {"name": "projected_direction_q8_residual_cosines", "dimension": 4, "formula": "normalized (AD)^T r_q8"},
+      {"name": "visible_log_norms", "dimension": 4, "formula": "log1p norms of y, z_q8, r_q8, and h"},
+      {"name": "direction_metric_log_spectrum", "dimension": 4, "formula": "log of the four raw metric eigenvalues divided by their maximum"}
+    ],
+    "compact_continuous_dimension": 52,
+    "compact_shared_total_dimension": 55,
+    "enriched_definition": "the compact 52-vector concatenated with the existing v80 100-dimensional deployment-visible vector, omitting the compact duplicate of the four visible log norms",
+    "enriched_continuous_dimension": 148,
+    "enriched_shared_total_dimension": 151,
+    "shared_geometry_one_hot_dimension": 3,
+    "forbidden_inputs": [
+      "truth field or truth gradient",
+      "v78 coefficients",
+      "v82 beta or any heldout beta target",
+      "Zero-K2 or Zero-K4 fields or residuals",
+      "candidate field, gradient, observation error, or gate",
+      "frame index, snapshot time, or temporal neighbors",
+      "A h, y-A h, or any state requiring the first online exact forward"
+    ]
+  },
+  "fit_target_contract": {
+    "target": "the directly recomputed feasible strict-passing beta with the lowest maximum gate among all 13 proposed terminals around the split-correct a0; SciPy success is diagnostic rather than necessary for a positive existence witness",
+    "fit_truth_only": true,
+    "heldout_target_never_enters_prediction": true,
+    "capacity_gate": "every outer-fit training target and every heldout split-correct representation must retain a strict passing endpoint before predictor success can be claimed",
+    "positive_witness_rule": "A terminal is eligible only when its projected beta is finite, inside [-1,1]^4, inside the unchanged physical budget, directly passes the original eight metric comparisons, and has directly recomputed maximum gate <=1e-10.",
+    "negative_scope": "If no positive witness exists and any start is incomplete, the cell is inconclusive. Only a complete 13-start roster with no witness can support no passing endpoint found under the frozen search; that is still not a mathematical impossibility proof."
+  },
+  "model_roster": {
+    "policy": "shared_geometry_conditioned",
+    "arms_in_order": [
+      "beta_zero",
+      "constant_mean",
+      "compact52_linear_ridge_nested",
+      "compact52_rbf_krr_nested",
+      "enriched148_linear_ridge_nested",
+      "enriched148_rbf_krr_nested"
+    ],
+    "linear_dimensionless_lambdas": [1e-06, 0.0001, 0.01, 1.0, 100.0],
+    "rbf_scale_factors": [0.25, 0.5, 1.0, 2.0, 4.0],
+    "rbf_dimensionless_lambdas": [1e-06, 0.0001, 0.01, 1.0],
+    "fold_local_feature_and_target_scaling": true,
+    "geometry_one_hot_scale": 4.0,
+    "large_neural_model_in_v83": false
+  },
+  "nested_beta_selection": {
+    "inner_folds": "original five-frame blocks intersected with current outer-fit, one-frame inner embargo, and a complete partition of outer-fit heldout rows",
+    "selection_criteria_in_order": [
+      "maximize inner truth groups passing all eight gates in all three geometries",
+      "maximize inner cell joint-pass count",
+      "minimize inner p90-higher maximum gate",
+      "minimize inner worst maximum gate",
+      "prefer larger regularization",
+      "prefer smaller RBF scale"
+    ],
+    "all_scalers_models_and_hyperparameters_are_fit_inside_current_split": true
+  },
+  "unchanged_accuracy_contract": {
+    "gate_count": 8,
+    "metrics": ["field", "full_gradient", "interior_gradient", "observation"],
+    "comparators": ["1.01 no-harm versus Zero-K4", "noninferiority versus equal-call Zero-K2"],
+    "required_joint_pass_cells_per_reported_arm": 75,
+    "no_average_can_override_a_cell_failure": true
+  },
+  "prediction_noninterference": {
+    "prediction_bytes_sealed_before_heldout_truth_scoring": true,
+    "heldout_beta_target_mutation_must_leave_predictions_identical": true,
+    "heldout_v78_target_mutation_must_leave_predictions_identical": true,
+    "api_level_noninterference_only": true,
+    "process_level_never_read_proven": false
+  },
+  "decision": {
+    "beta_zero_all_75": "The split-correct nested v80 base already passes all cells; spatial-beta contribution is not established.",
+    "constant_all_75": "A fold-local mean suffices; close more complex predictor families.",
+    "linear_all_75": "A preregistered linear observation-only coefficient predictor suffices; do not train a larger model.",
+    "rbf_all_75": "A preregistered nonlinear sentinel passes; record strict opened-development learnability headroom and freeze one previously unopened public reacting-flow condition as the next external gate; do not run resource claims yet.",
+    "no_arm_all_75": "Close the preregistered compact52/enriched148 spatial-mask predictor roster; do not rescue it with a larger neural network.",
+    "capacity_below_75": "Close the split-correct four-mask representation around the nested base if any required outer-fit target or any of the 75 heldout cells lacks a strict passing endpoint; do not interpret the downstream predictor score.",
+    "inconclusive": "Any parent, split, optimizer, finite-value, exact-call, seal, mutation, source, or independent-recomputation check fails.",
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_advantage": false,
+    "real_bost": false
+  },
+  "independent_validation": {
+    "must_not_import_formal_runner_or_formal_feature_builder": true,
+    "must_rebuild_all_folds_and_nested_upstream_predictions": true,
+    "must_rebuild_all_75_observations_and_split_correct_spatial_directions": true,
+    "must_recompute_fit_targets_outer_predictions_and_heldout_capacity": true,
+    "must_recompute_all_eight_gates_and_exact_call_ledgers": true,
+    "must_run_heldout_label_mutation_noninterference": true,
+    "any_mismatch_is_inconclusive": true
+  }
+}

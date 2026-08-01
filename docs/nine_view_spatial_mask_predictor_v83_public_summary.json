@@ -1,0 +1,82 @@
+{
+  "schema_version": "oerf-nine-view-spatial-mask-predictor-public-summary-83.1",
+  "date": "2026-08-01",
+  "title": "v83.1：空间调制容量存在，但冻结的 observation-only 预测器最高 68/75",
+  "evidence_level": "已开封 BLASTNet H2-air Case 3 的 post-open leakage-safe outer-fold development diagnostic",
+  "scientific_status": "NO_STRICT_OBSERVATION_SPATIAL_MASK_BETA_MODEL_PASSES_ALL_75_V83",
+  "validation_status": "PASS_INDEPENDENT_RECOMPUTATION_SPATIAL_MASK_PREDICTOR_V83",
+  "cells": 75,
+  "outer_folds": 5,
+  "embargo_frames": 1,
+  "fit_targets": {
+    "count": 276,
+    "direct_strict_witness_count": 276
+  },
+  "heldout_representation_capacity": {
+    "count": 75,
+    "direct_strict_witness_count": 75
+  },
+  "predictions": 450,
+  "models": {
+    "beta_zero": 58,
+    "constant_mean": 66,
+    "compact52_linear_ridge_nested": 66,
+    "compact52_rbf_krr_nested": 65,
+    "enriched148_linear_ridge_nested": 63,
+    "enriched148_rbf_krr_nested": 68
+  },
+  "best_model": {
+    "name": "enriched148_rbf_krr_nested",
+    "joint_pass_count": 68,
+    "per_scenario_joint_pass": {
+      "V66_F12_plus": 23,
+      "V66_F15_plus": 23,
+      "V66_F30_plus": 22
+    },
+    "failure_cells": [
+      "V66_F30_plus|case3|11",
+      "V66_F15_plus|case3|11",
+      "V66_F15_plus|case3|12",
+      "V66_F12_plus|case3|11",
+      "V66_F12_plus|case3|12",
+      "V66_F30_plus|case3|15",
+      "V66_F30_plus|case3|16"
+    ],
+    "failure_mechanism": "All seven failures violate only observation_harm_vs_zero_k4; field, full-gradient, interior-gradient and all equal-call Zero-K2 gates remain passing.",
+    "maximum_gate": {
+      "p50": -0.1072783139669099,
+      "p90_higher": -0.013330261573389124,
+      "worst": 0.19272900081672661
+    }
+  },
+  "online_exact_calls_per_cell": {
+    "A": 2,
+    "AT": 2
+  },
+  "spatial_modulation_additional_exact_calls": {
+    "A": 0,
+    "AT": 0
+  },
+  "independent_recomputation": {
+    "maximum_fit_target_abs_difference": 0.0,
+    "maximum_heldout_capacity_abs_difference": 0.0,
+    "maximum_outer_row_abs_difference": 0.0,
+    "maximum_prediction_abs_difference": 0.0,
+    "heldout_beta_label_mutation_prediction_bytes_identical": true,
+    "heldout_parent_label_mutation_prediction_bytes_identical": true,
+    "prediction_seal_verified": true,
+    "formal_outputs_unchanged": true,
+    "parent_evidence_unchanged": true
+  },
+  "what_changed": "v82 的 75/75 truth-aware representation capacity survived leakage-safe nested reconstruction, but none of six preregistered deployment-visible predictors converted it into 75/75 strict predictions. The best model reached 68/75.",
+  "what_did_not_change": "No unopened external condition was read; no wall-time, RSS, curved-ray or real-BOST gate was run; no neural model was authorized.",
+  "next_gate": "Close direct point regression to one oracle beta. Test a preregistered observation-visible safety fallback or one-extra-iteration refinement rule, because every best-model failure is visible in the final observation residual; do not tune a larger network on the same 75 opened cells.",
+  "process_level_never_read_proven": false,
+  "end_to_end_physics_independence_proven": false,
+  "neural_training_authorized": false,
+  "algorithm_breakthrough": false,
+  "paper_success": false,
+  "external_generalization": false,
+  "resource_advantage": false,
+  "real_bost": false
+}
