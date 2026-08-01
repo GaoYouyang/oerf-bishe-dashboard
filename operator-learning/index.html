@@ -388,11 +388,14 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-08-01 · v85 外部门</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-08-02 · v86 forced-K2 机理诊断</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题不变：在 field / full-gradient / interior-gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v85 已把 Case 3 冻结策略零适配外测：Case 4 为 <code>84/84</code> 八门通过，<code>41</code> 个停 K1、<code>43</code> 个继续 K2，平均每类 exact 调用为 <code>2.5119</code>，比 Zero-K4 少 <code>37.2%</code>；Case 6 只有 <code>78/90</code> 通过，冻结 scalar residual gate 把 <code>90/90</code> 都停在 K1，12 个失败全部来自内部梯度。联合外部门因此严格 <strong>FAIL</strong>，不启动 wall/RSS，也不声称外部泛化、算法突破或论文成功。</p>
+    <p class="lead">唯一主问题不变：在 field / full-gradient / interior-gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v86 保持 Case 3-only 模型与三档几何不变，把 Case 6 的 90 个 warm K1 强制继续到真实 CGLS K2；结果从 <code>78/90</code> 降到 <code>71/90</code>。K2 修复 <code>5</code> 个旧失败，却新增 <code>12</code> 个失败；虽然 field、整体 gradient 和 observation 在 90/90 上都改善，早期瞬态的局部 interior-gradient 尾部反而恶化。当前 scalar gate 与“统一多走一步”都关闭，仍不启动 wall/RSS，也不声称外部泛化、算法突破或论文成功。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
+      <a class="button danger" href="#forced-k2-v86">打开 v86 最新机理负结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v85_case6_forced_k2_v86_result_2026-08-02.md">读 v86 完整证据</a>
+      <a class="button" href="../docs/nine_view_v85_case6_forced_k2_v86_public_summary.json">读 v86 脱敏摘要</a>
       <a class="button danger" href="#external-cases-v85">打开 v85 外部正负结果</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v84_external_cases_v85_result_2026-08-01.md">读 v85 完整证据</a>
       <a class="button" href="../docs/nine_view_v84_external_cases_v85_public_summary.json">读 v85 脱敏摘要</a>
@@ -440,6 +443,10 @@
       <a class="button" href="#sparse-detector-v58">回看 v58.1 关键正结果</a>
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
+    </div>
+    <div class="alert critical" style="margin-top:12px;">
+      <strong>v86 最新判决：强制 K2 从 78/90 降到 71/90，固定迭代深度不能补救 Case 6</strong>
+      <span>同一个 warm K1 在所有单元追加一轮未修改 CGLS：<code>66</code> 个保持通过，<code>5</code> 个由失败转通过，<code>12</code> 个由通过转失败，<code>7</code> 个继续失败。额外一步在每个单元都降低 field、整体 gradient 与 observation error，却把 early-transient interior-gradient no-harm 失败从 <code>4</code> 个增到 <code>16</code> 个。独立程序重新构建几何、模型、K1/K2 recurrence、真值和八门，fields、residuals、逐行结果与摘要差均为 <code>0</code>。下一门是 K1-K2 线段的逐单元阻尼可行性，不是扩大网络。<a href="#forced-k2-v86">查看完整证据</a>。</span>
     </div>
     <div class="alert critical" style="margin-top:12px;">
       <strong>v85 外部门：Case 4 为 84/84 PASS，Case 6 为 78/90 FAIL</strong>
@@ -849,7 +856,8 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
-        <article class="panel"><div class="chips"><span class="chip coral">最新 · v85 联合外部门 FAIL</span><span class="chip blue">Case 4 84/84 · Case 6 78/90</span></div><h3 style="margin-top:10px;">Zero-adaptation external Case 4 / Case 6</h3><p>Case 3 冻结策略不调参依次外测。Case 4 全部通过并减少 37.2% exact 调用；Case 6 的 scalar gate 将 90 个单元全停 K1，12 个失败只出现在内部梯度。独立程序重新预测、评分并核对调用账，声明差值为 0。联合门严格失败，wall/RSS 没有启动。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">最新 · v86 机理 FAIL</span><span class="chip blue">K1 78/90 · K2 71/90</span></div><h3 style="margin-top:10px;">Forced true-CGLS K2 on Case 6</h3><p>冻结模型、几何和 warm correction 不变，对 90 个 Case 6 单元统一追加一轮 CGLS。5 个旧失败被修复，但新增 12 个早期瞬态内部梯度失败；全局误差和观测残差更小，局部梯度尾部却更差。独立复算逐值差为 0，关闭 scalar gate 与固定迭代深度组合。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">v85 联合外部门 FAIL</span><span class="chip blue">Case 4 84/84 · Case 6 78/90</span></div><h3 style="margin-top:10px;">Zero-adaptation external Case 4 / Case 6</h3><p>Case 3 冻结策略不调参依次外测。Case 4 全部通过并减少 37.2% exact 调用；Case 6 的 scalar gate 将 90 个单元全停 K1，12 个失败只出现在内部梯度。独立程序重新预测、评分并核对调用账，声明差值为 0。联合门严格失败，wall/RSS 没有启动。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">v84.2 开发父证据 PASS</span><span class="chip blue">75/75 · calls -41.3%</span></div><h3 style="margin-top:10px;">Observable residual-gated K1/K2</h3><p>v83.1 的 enriched148-RBF warm start 先运行到 K1；部署可见 residual 安全时直接接受，否则只追加一轮未修改 CGLS。49 个单元停 K1、26 个继续 K2，全部 75 个单元通过八门，平均每类 exact 调用为 2.3467。独立复算和 held-out 标签扰动均通过；它随后由 v85 的 Case 4/6 外部门检验。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v83.1 严格预测 FAIL</span><span class="chip blue">best 68/75</span></div><h3 style="margin-top:10px;">Leakage-safe spatial-mask4 predictor</h3><p>同一 75 个已开封单元、五个连续时间外折和一帧 embargo 下，每折重新生成上游与四维标签。容量继续是 75/75，但 mean / linear / RBF 六臂最高 68/75；七个最佳模型失败全部只越过部署可见的 observation/K4 no-harm 门。独立程序复算 276 个目标与 450 个预测，逐值差为 0。关闭当前 point-regression roster，不授权扩大网络。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">v82 表示容量 PASS</span><span class="chip blue">75/75</span></div><h3 style="margin-top:10px;">Observation-conditioned spatial-mask4 capacity</h3><p>同样只用四个系数和 <code>2A+2A^T</code> 在线账，固定 U32 内分段修正为 <code>73/75</code>，空间调制方向为 <code>75/75</code>。后者补齐 v80 的 17 个失败，独立程序重跑 1950 个终点并对齐原八门。这只是 truth-aware 表示容量；四系数还没有被 observation-only 模型预测。</p></article>
@@ -897,6 +905,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="forced-k2-v86" class="alert critical" style="margin-top:13px;">
+        <strong>v86：统一追加真实 K2 让 Case 6 从 78/90 降到 71/90</strong>
+        <span>90 个单元都使用原封不动的 Case 3-only observation model、三档九视角几何和 warm correction，只把在线账从 <code>2A+2A^T</code> 增至 <code>3A+3A^T</code>。转移为 <code>66</code> pass→pass、<code>5</code> fail→pass、<code>12</code> pass→fail、<code>7</code> fail→fail。forced K2 在所有单元都改善 field、整体 gradient 和 observation，但新的 early-transient interior-gradient 尾部使 maximum gate p90 / worst 升到 <code>0.07291 / 0.14654</code>。独立 validator 没有导入正式 runner，并重新构建全部数值路径；四类声明差值均为 <code>0</code>。这只是已开封 Case 6 的事后机理负结果。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_v85_case6_forced_k2_v86.png" aria-label="打开 v86 Case 6 forced-K2 结果图">
+          <img src="../assets/nine_view_v85_case6_forced_k2_v86.png" alt="v86 中 forced K2 从七十八个通过降到七十一个，并显示单元转移和早期瞬态失败" />
+        </a>
+        <figcaption>A：通过数 78→71；B：5 个旧失败修复但新增 12 个失败；C：新的正门值集中在早期瞬态。理论少 25% 算子对不构成资源成功，因为精度门失败。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button danger" href="../document_reader.html?doc=docs%2Fnine_view_v85_case6_forced_k2_v86_result_2026-08-02.md">读 v86 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_v85_case6_forced_k2_v86_public_summary.json">打开 v86 脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_v85_case6_forced_k2_v86.png">打开 v86 结果图原尺寸</a>
       </div>
       <div id="external-cases-v85" class="alert critical" style="margin-top:13px;">
         <strong>v85：一个零适配外部全过，一个明确失败，联合结论为 FAIL</strong>

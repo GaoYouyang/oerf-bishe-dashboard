@@ -11225,3 +11225,57 @@ real BOST = false
 - `docs/nine_view_v84_external_cases_v85_result_2026-08-01.md`
 - `docs/nine_view_v84_external_cases_v85_public_summary.json`
 - `assets/nine_view_v84_external_cases_v85.png`
+
+## 2026-08-02：v86 证明“统一多走一步”也不是 Case 6 的答案
+
+今天没有换网络，也没有给 Case 6 重新调阈值。我把 v85 留下的问题拆成最小实验：同一个 observation-only
+warm K1，所有 90 个单元都强制沿未修改 CGLS recurrence 再走一步。模型、归一化、几何、候选场和两组
+对照都不变；唯一新增成本是每单元 `1A+1A^T`，总账从 `2A+2A^T` 变成 `3A+3A^T`。
+
+结果不是“12 个失败全部救回”，而是总体更差：
+
+```text
+Warm K1 pass             78 / 90
+Forced K2 pass           71 / 90
+pass -> pass             66
+fail -> pass              5
+pass -> fail             12
+fail -> fail              7
+```
+
+最值得记住的不是 71 这个数字，而是它为什么发生。forced K2 在 90 个单元上都让 field、整体 gradient 和
+observation relative-L2 下降，说明全局拟合确实继续变好；但 interior-gradient 不是单调下降。K1 时只有
+4 个相对 Zero-K4 的内部梯度 no-harm 失败，K2 后增到 16 个。新增失败集中在早期瞬态：frame 0-4 的
+15 个 geometry-cell 中，11 个由通过变失败，剩下 4 个继续失败；frame 15-29 的 45 个单元则全部通过。
+
+这给了一个非常具体的物理/算法判断：全局观测残差看不到局部火焰梯度风险，而标准 CGLS 的下一步也只保证
+它自己的全局最小二乘目标继续下降，不保证局部 interior-gradient 不受伤。所以旧 scalar gate 要关闭，
+“所有单元统一停 K1”和“所有单元统一走 K2”也都要关闭。
+
+独立程序没有导入正式 v86 runner。它重新建三档九视角几何、重新跑模型、独立实现 K1/K2 recurrence、
+重新预处理真值并计算全部八门；fields、residuals、90 行结果和摘要最大差都是 0。正式科学判决是：
+
+`FAIL_FORCED_K2_DOES_NOT_RESCUE_ALL_CASE6_CELLS_V86`
+
+下一步不是扩大 FNO/UNO/U-Net，而是先审计 K1 与 K2 之间的连续线段：
+
+`x(t)=x_K1+t(x_K2-x_K1),  t in [0,1]`
+
+如果每个单元都有非空的八门可行区间，才说明“阻尼/深度选择”有表示容量，之后再研究部署可见的选择器；
+如果有单元整段都无解，就关闭这条方向，重新设计 warm correction 表示。因为 Case 6 已经开封，这仍只能是
+机理诊断，任何新策略都必须在另一个未打开工况重做一次性外部门。
+
+```text
+post-open mechanism diagnostic = true
+external validation = false
+resource advantage = false
+algorithm_breakthrough = false
+paper_success = false
+real BOST = false
+```
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_v85_case6_forced_k2_v86_result_2026-08-02.md`
+- `docs/nine_view_v85_case6_forced_k2_v86_public_summary.json`
+- `assets/nine_view_v85_case6_forced_k2_v86.png`

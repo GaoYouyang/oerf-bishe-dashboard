@@ -1,0 +1,78 @@
+{
+  "schema_version": "oerf-nine-view-v85-case6-forced-k2-public-summary-86.0",
+  "date": "2026-08-02",
+  "title": "v86：强制多走一步 CGLS 没有救回 Case 6",
+  "scientific_status": "FAIL_FORCED_K2_DOES_NOT_RESCUE_ALL_CASE6_CELLS_V86",
+  "question": "Case 6 的 v85 失败究竟只是 residual gate 把所有单元过早停在 K1，还是冻结 warm 表示在继续到 K2 后仍不安全？",
+  "frozen_intervention": {
+    "model_update": false,
+    "normalization_update": false,
+    "geometry_update": false,
+    "threshold_update": false,
+    "forced_true_cgls_continuation_for_every_cell": true,
+    "warm_k1_exact_calls": "2A+2AT",
+    "forced_k2_exact_calls": "3A+3AT",
+    "zero_k4_reference_exact_calls": "4A+4AT"
+  },
+  "results": {
+    "cell_count": 90,
+    "warm_k1_joint_pass_count": 78,
+    "forced_k2_joint_pass_count": 71,
+    "transitions": {
+      "pass_to_pass": 66,
+      "fail_to_pass": 5,
+      "pass_to_fail": 12,
+      "fail_to_fail": 7
+    },
+    "forced_k2_pass_count_by_geometry": {
+      "F30_plus": 21,
+      "F15_plus": 25,
+      "F12_plus": 25
+    },
+    "warm_k1_failure_gate_counts": {
+      "interior_gradient_vs_zero_k4": 4,
+      "interior_gradient_vs_zero_k2": 8
+    },
+    "forced_k2_failure_gate_counts": {
+      "interior_gradient_vs_zero_k4": 16,
+      "interior_gradient_vs_zero_k2": 5
+    },
+    "forced_k2_maximum_gate": {
+      "p50": -0.07009033385020413,
+      "p90_higher": 0.07290727109753048,
+      "worst": 0.14654493456889672
+    },
+    "operator_pair_reduction_vs_zero_k4_if_accuracy_had_passed": 0.25
+  },
+  "mechanism": {
+    "global_field_error_improved_on_every_cell": true,
+    "global_gradient_error_improved_on_every_cell": true,
+    "observation_error_improved_on_every_cell": true,
+    "interior_gradient_error_improved_on_every_cell": false,
+    "new_failures_concentrate_in_early_transient": true,
+    "interpretation": "A smaller measurement residual and better global errors do not guarantee safer local interior gradients. The v85 scalar gate is insufficient, but unconditional K2 is also unsafe."
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_CASE6_FORCED_K2_V86",
+    "formal_runner_imported": false,
+    "geometry_rebuilt": true,
+    "model_predictions_rebuilt": true,
+    "k1_and_k2_recurrence_reimplemented": true,
+    "all_eight_gates_recomputed": true,
+    "fields_maximum_absolute_difference": 0.0,
+    "residuals_maximum_absolute_difference": 0.0,
+    "rows_maximum_numeric_difference": 0.0,
+    "summaries_maximum_numeric_difference": 0.0
+  },
+  "next_scientific_gate": "On the already opened Case 6 only, determine whether a damped point x(t)=x_K1+t(x_K2-x_K1), t in [0,1], has an eight-gate-feasible interval for every cell. This is an oracle mechanism test, not a deployable policy or a new external test.",
+  "boundaries": {
+    "post_open_mechanism_diagnostic": true,
+    "external_validation": false,
+    "external_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "resource_advantage_proven": false,
+    "curved_ray": false,
+    "real_bost": false
+  }
+}

@@ -399,6 +399,26 @@
       font-size: 12px;
       font-weight: 760;
     }
+    .entry-figure {
+      min-width: 0;
+      margin: 13px 0 0;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .96);
+    }
+    .entry-figure a,
+    .entry-figure img {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+    }
+    .entry-figure img { height: auto; }
+    .entry-figure figcaption {
+      padding: 7px 3px 1px;
+      color: var(--muted);
+      font-size: 12px;
+    }
     .empty-state {
       display: none;
       padding: 30px;
@@ -465,8 +485,8 @@
     </div>
     <div class="status-grid" aria-label="当前项目快照">
       <div class="metric">
-        <b>27 天</b>
-        <span>2026-07-06 至 2026-08-01，逐日回填且每个日期只出现一次。</span>
+        <b>28 天</b>
+        <span>2026-07-06 至 2026-08-02，逐日回填且每个日期只出现一次。</span>
       </div>
       <div class="metric">
         <b>1515/1515</b>
@@ -482,8 +502,15 @@
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v82 证明四个空间调制方向具有 75/75 容量，下一步只验证它能否由 observation 预测</strong>
+      <strong>最新科学判决：v86 强制 K2 从 78/90 降到 71/90，固定“多走一步”同样不安全</strong>
       <span>
+        v86 保持 Case 3-only 模型、归一化、三档九视角几何和 warm correction 全部不变，只把 Case 6
+        的 90 个单元从 K1 强制沿同一 CGLS recurrence 继续到 K2。结果修复 <code>5</code> 个旧失败，
+        却新增 <code>12</code> 个失败，净结果由 <code>78/90</code> 降至 <code>71/90</code>。K2 在所有单元
+        都改善 field、整体 gradient 和 observation，却在早期瞬态放大局部 interior-gradient 尾部。
+        独立程序重建几何、模型、recurrence、真值与八门，fields、residuals、逐行结果和摘要差均为
+        <code>0</code>。因此旧 scalar gate 与无条件 K2 都关闭；下一门只检查 K1-K2 线段是否存在逐单元
+        可行阻尼区间，仍是事后机理诊断而非外部成功。
         v74.1 的 PoolFire wall / RSS 结果没有被推翻；但 v75 在预选的 BLASTNet Case 3 上只有
         <code>5/75</code> 单元通过完整合同。主要阻塞是相对同调用 Zero-K2 的 interior-gradient：
         <code>70/75</code> 单元失败，固定因子跨族支线被真实外部门关闭，资源阶段没有启动。
@@ -534,7 +561,7 @@
           <button class="filter-button" type="button" data-filter="engineering" aria-pressed="false">工程保障</button>
           <button class="filter-button" type="button" data-filter="learning" aria-pressed="false">调研与学习</button>
         </div>
-        <span class="result-count" id="resultCount" aria-live="polite">显示 27 / 27 天</span>
+        <span class="result-count" id="resultCount" aria-live="polite">显示 28 / 28 天</span>
       </div>
       <div class="legend">
         <button class="button" id="sortButton" type="button" aria-pressed="false">切换为最早优先</button>
@@ -547,13 +574,70 @@
       <section class="phase" id="phase-factor" data-phase-order="5">
         <div class="phase-heading">
           <div>
-            <div class="range">07-30 — 08-01</div>
+            <div class="range">07-30 — 08-02</div>
             <h2>因子化加速、外部门与失败归因</h2>
           </div>
           <p>把“算得对”推进到“调用少、真实更快、内存不过线”，再冻结独立公开反应流外部门。</p>
         </div>
         <div class="timeline">
-          <article class="day-entry latest" id="latest" data-date="2026-08-01" data-categories="science-positive science-negative engineering decision">
+          <article class="day-entry latest" id="latest" data-date="2026-08-02" data-categories="science-negative engineering decision">
+            <details open>
+              <summary class="entry-summary">
+                <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
+                <div class="entry-title">
+                  <div class="entry-tags">
+                    <span class="tag negative">v86 forced K2 71/90</span>
+                    <span class="tag">修复 5</span>
+                    <span class="tag negative">新增失败 12</span>
+                    <span class="tag engineering">独立复算差 0</span>
+                    <span class="tag negative">algorithm breakthrough false</span>
+                  </div>
+                  <h3>v86 关闭“所有单元统一多走一步”：全局误差更好，局部梯度尾部更差</h3>
+                  <p>同一 warm K1 强制继续真实 CGLS K2 后，完整八门从 78/90 降到 71/90。问题不只是旧门控漏判，固定迭代深度本身也不安全。</p>
+                </div>
+                <span class="expand-label" aria-hidden="true"></span>
+              </summary>
+              <div class="entry-body">
+                <div class="evidence-grid">
+                  <section>
+                    <h4>今天真正执行了什么</h4>
+                    <p>结果前冻结唯一变化：模型、归一化、几何、warm correction 和两组对照全部保持不变，Case 6 的 90 个单元无条件从 K1 沿未修改 CGLS recurrence 继续到 K2。每单元理论在线账从 <code>2A+2A<sup>T</sup></code> 增为 <code>3A+3A<sup>T</sup></code>，仍低于 Zero-K4 的 <code>4A+4A<sup>T</sup></code>。</p>
+                  </section>
+                  <section>
+                    <h4>结果与机理</h4>
+                    <ul>
+                      <li>通过数：K1 <code>78/90</code>，forced K2 <code>71/90</code>。</li>
+                      <li>转移：<code>66</code> pass→pass，<code>5</code> fail→pass，<code>12</code> pass→fail，<code>7</code> fail→fail。</li>
+                      <li>K2 在 90/90 上都降低 field、整体 gradient 和 observation 误差，但 interior-gradient 并不单调。</li>
+                      <li>新增失败集中在早期瞬态；frame 0-4 的 15 个 geometry-cell 中，11 个由通过变失败，4 个继续失败。</li>
+                      <li>forced K2 的 maximum gate p50 / p90 / worst 为 <code>-0.07009 / 0.07291 / 0.14654</code>，平均更好不能抵消尾部失败。</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h4>可信度与边界</h4>
+                    <p>独立 validator 没有导入正式 v86 runner；它重新构建几何、模型预测、K1/K2 recurrence、真值和全部八门。fields、residuals、90 行结果和摘要最大差均为 <code>0</code>。这是已开封 Case 6 的事后机理负结果，不是新的外部验证、速度结果、真实 BOST 或论文成功。</p>
+                  </section>
+                  <section>
+                    <h4>路线如何立即调整</h4>
+                    <p>关闭当前 scalar residual gate，也关闭所有单元统一停 K1 或统一走 K2。下一步不扩大网络，先对 <code>x(t)=x<sub>K1</sub>+t(x<sub>K2</sub>-x<sub>K1</sub>)</code> 做逐单元可行区间审计：若某些单元连 <code>t∈[0,1]</code> 都无解，就关闭整条 K1-K2 线段；只有 90/90 都存在区间，才研究部署可见的阻尼/深度选择。</p>
+                  </section>
+                </div>
+                <figure class="entry-figure">
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v85_case6_forced_k2_v86.png" aria-label="打开 v86 forced-K2 结果图">
+                    <img src="../assets/nine_view_v85_case6_forced_k2_v86.png" alt="v86 中 forced K2 从七十八个通过降到七十一个，并显示修复、新增失败和早期瞬态门值" />
+                  </a>
+                  <figcaption>K2 改善全局量，却在早期瞬态制造新的 interior-gradient 尾部失败。</figcaption>
+                </figure>
+                <div class="entry-links">
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v85_case6_forced_k2_v86_result_2026-08-02.md">v86 完整证据</a>
+                  <a href="../docs/nine_view_v85_case6_forced_k2_v86_public_summary.json">v86 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v85_case6_forced_k2_v86.png">v86 结果图</a>
+                </div>
+              </div>
+            </details>
+          </article>
+
+          <article class="day-entry" data-date="2026-08-01" data-categories="science-positive science-negative engineering decision">
             <details open>
               <summary class="entry-summary">
                 <div class="date-block"><time datetime="2026-08-01">2026-08-01</time><span>周六 · Day 27</span></div>
@@ -1874,7 +1958,7 @@
   </main>
 
   <footer>
-    持续更新至 v85 Case 4 / Case 6 外部门独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v86 Case 6 forced-K2 独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
