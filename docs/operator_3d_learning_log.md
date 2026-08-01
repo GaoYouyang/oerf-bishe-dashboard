@@ -11329,3 +11329,70 @@ real BOST = false
 - `docs/nine_view_v86_case6_k1_k2_line_v87_result_2026-08-02.md`
 - `docs/nine_view_v86_case6_k1_k2_line_v87_public_summary.json`
 - `assets/nine_view_v86_case6_k1_k2_line_v87.png`
+
+## 2026-08-02：v88.1 证明当前四参数表示也还不够
+
+### 先说人话
+
+今天没有租 GPU，也没有训练大网络。原因不是保守，而是我先检查了“网络最终能输出的四个系数空间里，到底有没有答案”。
+
+结果是：90 个 Case 6 单元中，只有 `86` 个找到同时通过八个精度门的系数组合，另外 `4` 个没有找到。既然这四个单元连真值直接帮忙挑系数都过不了，那么让神经网络只预测这四个系数，也不可能凭空创造当前表示里没有的自由度。
+
+### 为什么 v88 还需要修一次
+
+上一版 v88 把两件事混在了一起：
+
+1. 某个起点有没有找到一个真正可行的 endpoint；
+2. 同一个单元的其他所有优化起点是否都正常退出。
+
+第二件事不应该推翻第一件事。只要已经有一个 endpoint 通过物理预算、真实 K1 重放、八门和 `2A+2A^T` 调用账，它就足以证明“存在”。v88.1 只修正这个判定语义，表示、预算、几何和门槛一个都没改。
+
+### 我实际跑了什么
+
+- 对 v88 已经找到的 86 个 endpoint 全部重新做 exact replay；
+- 对四个未决单元分别跑四个冻结种子的 differential evolution；
+- 再跑一次不偏向局部的 DIRECT；
+- 把全局候选和原 13 个固定起点都送入约束 minimax 精化；
+- 独立验证器不导入正式 runner，从原始 Case 6 场重建 90 个问题；
+- 对四个失败单元，独立再扫 `16384` 个 Sobol 点，并从最好的 `32` 个点做另一套有限差分局部精化。
+
+### 结果
+
+```text
+strict witnesses = 86 / 90
+F12+ = 30 / 30
+F15+ = 29 / 30
+F30+ = 27 / 30
+```
+
+四个未决单元是 F30 frame 7、9、12 和 F15 frame 12。它们的 field、整体 gradient、observation 和其他对照门都能过，唯一过不了的是 interior-gradient 相对同成本 Zero-K2 的非劣门。最优越线分别是：
+
+```text
+F30/7  = 2.22%
+F30/9  = 1.59%
+F30/12 = 7.94%
+F15/12 = 0.66%
+```
+
+正式搜索和独立搜索落到同一边界。独立重算的 field、residual、metrics 和 gates 与正式输出最大差全部是 `0`；90 个 exact replay 的调用 receipt 全部是 `2A+2A^T`。
+
+### 成功了吗
+
+**作为算法，没有成功。作为研究决策，成功排除了一个错误方向。**
+
+当前四参数 spatial-mask4 不再继续训练更大的 selector，因为它没有显示 90/90 的表示容量。下一步先增加最小的空间自由度，再做同样的 truth-aware 容量门。Mac 足够完成这一步，所以现在租算卡没有意义；GPU 应该留到表示容量和 observation-only 可预测性都过门以后。
+
+还必须保留边界：这不是数学上的全局不可行证明，只是两套冻结搜索都没有找到四个单元的 witness；也不是外部泛化、速度、内存、真实 BOST 或论文成功。
+
+```text
+algorithm_breakthrough = false
+paper_success = false
+external_generalization = false
+real_BOST = false
+```
+
+公开证据：
+
+- `docs/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1_result_2026-08-02.md`
+- `docs/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1_public_summary.json`
+- `assets/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png`

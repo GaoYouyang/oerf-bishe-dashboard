@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.02-c-v87-k1-k2-line-negative",
-  previousVersion: "2026.08.01-c-v84.2-observable-safety-gate-pass",
-  previousBadge: "v84.2 Case 3 residual gate · 75 / 75 development PASS",
-  olderBadge: "v83.1 strict observation-only predictor · best 68 / 75",
+  version: "2026.08.02-c-v88.1-spatial-mask4-capacity-negative",
+  previousVersion: "2026.08.02-c-v87-k1-k2-line-negative",
+  previousBadge: "v87 Case 6 K1-K2 line · 85 / 90 feasible",
+  olderBadge: "v84.2 Case 3 residual gate · 75 / 75 development PASS",
   historyReleases: [
+    {
+      version: "2026.08.02-c-v87-k1-k2-line-negative",
+      previousVersion: "2026.08.01-c-v84.2-observable-safety-gate-pass",
+      badge: "v87 Case 6 K1-K2 line · 85 / 90 feasible"
+    },
     {
       version: "2026.08.01-c-v84.2-observable-safety-gate-pass",
       previousVersion: "2026.08.01-c-v83.1-spatial-mask-predictor-negative",
@@ -548,6 +553,7 @@ window.OPERATOR_LEARNING_GUIDE = {
     }
   ],
   resources: [
+    {id:"nine-view-v88-case6-spatial-mask4-witness-v88-1",stage:"warm-start",level:"必做",type:"最新表示容量负结果",title:"v88.1：spatial-mask4 仍只有 86/90 找到严格 witness",url:"../document_reader.html?doc=docs%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1_result_2026-08-02.md",local:"../docs/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1_public_summary.json",read:"先区分 v88 的 optimizer-terminal 歧义与 v88.1 的存在性判据，再核对 86/90、F12/F15/F30 为 30/29/27，以及四个反例只越过 interior-gradient/Zero-K2 门。重点理解正式全局搜索与独立 Sobol 搜索为什么只能支持工程关线，不能声称数学不可能。",output:"不用页面解释：为什么更大的 coefficient selector 无法补救表示容量缺口；为什么下一门应先增加最小空间自由度并重跑 truth-aware 90/90 容量门；为什么当前还不该租 GPU。",verified:"NO_ALL_CELL_SPATIAL_MASK4_WITNESS_FOUND_V88_1；PASS_INDEPENDENT_RECOMPUTATION_CASE6_SPATIAL_MASK4_WITNESSES_V88_1；86 witnesses / 4 unresolved；algorithm_breakthrough=false"},
     {id:"nine-view-v86-case6-k1-k2-line-v87",stage:"warm-start",level:"必做",type:"最新机理负结果",title:"v87：K1-K2 一维混合仍有 5/90 无解",url:"../document_reader.html?doc=docs%2Fnine_view_v86_case6_k1_k2_line_v87_result_2026-08-02.md",local:"../docs/nine_view_v86_case6_k1_k2_line_v87_public_summary.json",read:"先写出 x(t)=x_K1+t(x_K2-x_K1)，再理解八个误差门为什么都能化成凸二次不等式。重点核对 85/90 非空、5/90 空、0 ambiguity，以及五个反例均被单个 interior-gradient 门独立判死。",output:"不用页面解释：为什么更强的 scalar-t predictor 无法从空区间中选出答案；为什么 85 个可行单元仍说明主线有结构信号；为什么下一门应检查现有四参数空间 warm 表示在 Case 6 的 truth-aware 容量，而不是扩大 gate network。",verified:"FAIL_K1_K2_LINE_LACKS_ALL_CELL_ORACLE_FEASIBILITY_V87；PASS_INDEPENDENT_RECOMPUTATION_CASE6_K1_K2_LINE_V87；85 nonempty / 5 empty / 0 ambiguous；algorithm_breakthrough=false"},
     {id:"nine-view-v85-case6-forced-k2-v86",stage:"warm-start",level:"必做",type:"最新机理负结果",title:"v86：强制 K2 从 78/90 降到 71/90",url:"../document_reader.html?doc=docs%2Fnine_view_v85_case6_forced_k2_v86_result_2026-08-02.md",local:"../docs/nine_view_v85_case6_forced_k2_v86_public_summary.json",read:"先核对唯一变化是所有 Case 6 单元从同一 warm K1 强制继续真实 CGLS K2，再读 66 pass→pass、5 fail→pass、12 pass→fail、7 fail→fail。重点理解为什么 field、整体 gradient 和 observation 全部改善，仍不能抵消早期瞬态 interior-gradient 尾部。",output:"不用页面解释：为什么旧 scalar gate 和无条件 K2 都要关闭；为什么 3A+3A^T 比 Zero-K4 少 25% 仍不是速度或算法成功；为什么下一门应先做 K1-K2 线段的阻尼可行性，而不是扩大网络。",verified:"FAIL_FORCED_K2_DOES_NOT_RESCUE_ALL_CASE6_CELLS_V86；PASS_INDEPENDENT_RECOMPUTATION_CASE6_FORCED_K2_V86；K1 78/90；K2 71/90；algorithm_breakthrough=false"},
     {id:"nine-view-v84-external-cases-v85",stage:"warm-start",level:"必做",type:"外部门正负结果",title:"v85：Case 4 84/84，Case 6 78/90",url:"../document_reader.html?doc=docs%2Fnine_view_v84_external_cases_v85_result_2026-08-01.md",local:"../docs/nine_view_v84_external_cases_v85_public_summary.json",read:"先核对零适配顺序与联合门，再分开读 Case 4 的 84/84、41 K1 + 43 K2、平均 2.5119 exact calls，以及 Case 6 的 78/90、90 K1、12 个内部梯度失败。重点比较通过/失败 residual score 的重叠，而不是只看平均调用减少。",output:"不用页面解释：为什么 Case 4 是真实外部正结果但联合 v85 仍为 FAIL；为什么 Case 6 关闭当前 scalar residual gate，而不是否定整个 warm-start 表示；为什么下一门是强制 true K2 的事后机理诊断，且不能拿 Case 6 调参后补考。",verified:"PASS_INDEPENDENT_VALIDATION_EXTERNAL_CASE4_TERMINAL_V85；PASS_INDEPENDENT_VALIDATION_EXTERNAL_CASE6_TERMINAL_V85；Case4 84/84；Case6 78/90；12 interior-gradient failures；algorithm_breakthrough=false"},
