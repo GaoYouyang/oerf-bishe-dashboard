@@ -11466,3 +11466,70 @@ real_BOST = false
 - `docs/nine_view_v88_case6_spatial_quadrupole6_capacity_v89_result_2026-08-02.md`
 - `docs/nine_view_v88_case6_spatial_quadrupole6_capacity_v89_public_summary.json`
 - `assets/nine_view_v88_case6_spatial_quadrupole6_capacity_v89.png`
+
+## 2026-08-02：v90 补齐 xy / xz / yz 后仍是 87/90，全局二阶路线关闭
+
+### 这次为什么值得跑
+
+v89 已经说明两个对角二次方向有用：它把 Case 6 从 `86/90` 推到 `87/90`。但还剩一个合理解释没有排除：是不是只因为二阶项没有补全，缺了 `xy / xz / yz` 三个交叉方向？
+
+所以这次没有训练更大的网络，也没有租 GPU，而是先把这个最小结构问题问到底。v90 精确保留 v89 的六维空间，再加入三个交叉项；物理预算、三档九视角几何、真实 K1 shell、八个误差门和每个候选的 `2A+2A^T` 调用账都不变。
+
+### 实际做了什么
+
+- 87 个父 witness 全部 exact replay，field 和 residual 最大差为 `0`；
+- 只对 F30 frame 7、9、12 三个旧失败搜索九维系数；
+- 正式搜索使用冻结的 28 个固定起点、4 个差分进化种子、DIRECT 和局部精化；
+- 独立程序不导入正式 runner 或 v90 表示核心，重新构造六维父空间与三维交叉余量；
+- 每个失败单元另检查 `32768` 个 Sobol 点与 64 个有限差分 SLSQP 起点；
+- 90 个最终候选都重新核对真实 `2A+2A^T` receipt。
+
+### 结果
+
+| 几何 | v89 | v90 | 新修复 |
+|---|---:|---:|---:|
+| F12+ | 30/30 | 30/30 | 0 |
+| F15+ | 30/30 | 30/30 | 0 |
+| F30+ | 27/30 | 27/30 | 0 |
+| **合计** | **87/90** | **87/90** | **0** |
+
+三个残余失败只卡 interior-gradient / Zero-K2 门：
+
+```text
+单元       v89 越线      v90 越线      变化
+F30+/7     0.743944%      0.737196%     -0.006748 pp
+F30+/9     0.120169%      0.082101%     -0.038068 pp
+F30+/12    6.271258%      6.248878%     -0.022380 pp
+```
+
+交叉项让数字略微变好，但**修复数是 0**。正式与独立复算的 field、residual、metrics、gates 最大差全部为 `0`；独立搜索也没有找到反例。状态是：
+
+`PASS_INDEPENDENT_RECOMPUTATION_CASE6_CROSS_QUADRATIC9_V90`
+
+科学判决是：
+
+`NO_ALL_CELL_SPATIAL_CROSS_QUADRATIC9_WITNESS_FOUND_V90`
+
+### 讲人话解释
+
+我们现在已经把这类全局低阶形状问得比较完整：原来的线性 / 径向空间方向、两个对角二次方向，再加三个交叉二次方向。即使答案可见，九个系数也仍不能让三个 F30 单元同时过八门。继续训练一个更聪明的九系数预测器没有意义，因为它只能在这个不足的空间里选答案，不能创造空间外的局部结构。
+
+这次最大的价值是及时关线：失败更像是局部内部梯度结构没有被全局形状表达，而不是少了某个交叉项。下一步只研究少量局部窗、空间分区或多尺度方向，先看 truth-aware 容量能否到 `90/90`。
+
+### 成功、失败与突破判断
+
+- **成功之处：** 排除了“只缺交叉二次项”的解释，并用独立复算把全局低阶多项式路线关干净。
+- **失败之处：** v90 没有修复任何残余单元，不能进入 predictor 训练。
+- **突破判断：** 没有算法突破；新增的是一条可信负证据和一次有效止损。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`real_BOST=false`。
+
+### 下一步
+
+冻结一个最小局部 / 多尺度表示容量协议，继续保持同一 `2A+2A^T` shell 和八门。只有容量达到 `90/90`，才训练 observation-only predictor。当前 Mac CPU 足够，不租 GPU。
+
+公开证据：
+
+- `docs/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_result_2026-08-02.md`
+- `docs/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_public_summary.json`
+- `assets/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90.png`
