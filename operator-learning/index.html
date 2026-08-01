@@ -340,6 +340,7 @@
       <a href="../document_reader.html?doc=docs%2Fpoolfire_bost_warmstart_project_lock_2026-07-23.md">路线锁定合同</a>
       <a href="#objective-novelty">优化目标与原创性</a>
       <a href="#latest-gate">算法与实验</a>
+      <a href="#adaptive-mask-v82">v82 自适应表示容量</a>
       <a href="#target-stability-v81">v81 目标稳定性审计</a>
       <a href="#strict-observation-v80">v80 严格可学习性门</a>
       <a href="#analytic-controls-v79">v79 解析映射判决</a>
@@ -387,11 +388,13 @@
       <a href="../paper_library/index.html">论文库</a>
       <a href="../learning_log.html">学习日志</a>
     </nav>
-    <div class="eyebrow">师兄已选 C · 当前证据 2026-08-01 · v81</div>
+    <div class="eyebrow">师兄已选 C · 当前证据 2026-08-01 · v82</div>
     <h1>神经算子 Warm Start × 三维 BOST 重建</h1>
-    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v78 已在 75 个已开封 Case 3 单元上证明 GSLB32 具有 <code>75/75</code> truth-aware 表示容量；v79 的两个解析 residual controls 只得到 <code>9/75</code> 与 <code>0/75</code>。v80 随后以严格时间分组、只看部署可见 observation 的 mean、linear ridge 与 RBF KRR 挑战同一 32 维目标，最佳仍只有 <code>58/75</code>。v81 再审计 v78 的 <code>75 × 21 = 1575</code> 个封存端点：全部通过，且同单元最坏端点漂移只占 v80 RBF 预测误差的 <code>0.01898%</code>。这排除了“既定目标下随机起点导致标签严重漂移”这一主因；下一步直接研究随 observation 与 geometry 改变的低维表示，不在同一标签上堆回归器。<code>neural_training_authorized=false</code>、<code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>。</p>
+    <p class="lead">唯一主问题不变：在 field / gradient / observation 同精度成立后，稳定减少真实昂贵的物理算子、端到端时间和内存。v78-v81 已经把问题从“有没有 32 维容量”收窄到“固定空间是否缺少随观测位置变化的局部形变”。v82 用两个同为四参数、同为 <code>2A+2A^T</code> 的 truth-aware 容量对照回答这个问题：GSLB32 空间内分段修正是 <code>73/75</code>，由 observation-conditioned 基础修正生成的四个空间调制方向是 <code>75/75</code>。独立程序重跑全部 <code>1950</code> 个终点并得到同一判决。这是“空间自适应表示有值得学的容量”证据，四个系数仍由真值 oracle 选择，所以还不是部署算法。<code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>。</p>
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
+      <a class="button primary" href="#adaptive-mask-v82">打开 v82 最新科学判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_observation_adaptive_mask_capacity_v82_result_2026-08-01.md">读 v82 完整证据</a>
       <a class="button danger" href="#target-stability-v81">打开 v81 最新科学判决</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_gslb32_target_stability_v81_result_2026-08-01.md">读 v81 完整证据</a>
       <a class="button danger" href="#strict-observation-v80">回看 v80 严格可学习性</a>
@@ -433,6 +436,10 @@
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
+    <div class="alert success" style="margin-top:12px;">
+      <strong>v82 最新判决：四个 observation-conditioned 空间方向补齐 75/75 表示容量</strong>
+      <span>同为四参数的 fixed-U32 系数分段对照通过 <code>73/75</code>，留下两个 F30 失败；spatial-mask4 在 z / y / x / 径向四个空间调制方向上搜索，通过 <code>75/75</code>，并救回 v80 全部 <code>17/17</code> 个失败。两家族都保持 <code>2A+2A^T</code>，空间调制不增加 exact 调用。独立验证重跑 <code>1950/1950</code> 个终点，maximum gate 最大差 <code>4.44e-16</code>。这只授权一个最小 observation-only 四系数预测门；当前仍为 truth-aware 容量证据。<a href="#adaptive-mask-v82">查看完整证据</a>。</span>
+    </div>
     <div class="alert critical" style="margin-top:12px;">
       <strong>v81 最新判决：1575 个端点证明随机优化起点不是 v80 失败的主因</strong>
       <span>v78 的 75 个单元、每单元 21 个封存端点全部继续通过八门。端点漂移相对 v80 RBF 预测误差的 p50 / p90 / worst 为 <code>0.00662% / 0.01197% / 0.01898%</code>，75/75 单元均低于回顾性 <code>0.1%</code> 门。独立程序改用 Gram 距离公式复算，单元与汇总最大差均为 <code>5.55e-11</code>。因此停止把算力优先花在同一目标的多起点 canonicalization，下一门改为 observation-adaptive representation；替代目标的概念多解仍未检验。<a href="#target-stability-v81">查看完整证据</a>。</span>
@@ -464,6 +471,9 @@
     <details class="panel evidence-index" style="margin-top:12px;">
       <summary>展开完整证据索引</summary>
     <div class="actions" style="margin-top:14px;">
+      <a class="button primary" href="#adaptive-mask-v82">v82 空间调制容量 75/75</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_observation_adaptive_mask_capacity_v82_result_2026-08-01.md">v82 完整裁决</a>
+      <a class="button" href="../docs/nine_view_observation_adaptive_mask_capacity_v82_public_summary.json">v82 脱敏结果</a>
       <a class="button danger" href="#target-stability-v81">v81 数值起点漂移主因关闭</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_gslb32_target_stability_v81_result_2026-08-01.md">v81 完整裁决</a>
       <a class="button" href="../docs/nine_view_gslb32_target_stability_v81_public_summary.json">v81 脱敏结果</a>
@@ -813,7 +823,8 @@
         <div><b>7 · 封存验证</b><span>官方组合留出；不冒充参数 OOD</span></div>
       </div>
       <div class="check-grid" style="margin-top:13px;">
-        <article class="panel"><div class="chips"><span class="chip coral">最新 · v81 原因排除</span><span class="chip blue">1575 endpoints</span></div><h3 style="margin-top:10px;">Frozen-target multistart stability audit</h3><p>比较 v78 每个单元的 21 个封存优化端点与 v80 shared RBF 的系数预测误差。75/75 单元的端点漂移都低于预测误差的 0.1%，最坏只有 <code>0.01898%</code>；独立距离公式得到同一结论。这关闭的是既定 minimax 目标下的数值起点不稳定，不关闭替代目标多解；下一步改表示，不在同一标签上扩大模型。</p></article>
+        <article class="panel"><div class="chips"><span class="chip gold">最新 · v82 表示容量 PASS</span><span class="chip blue">75/75</span></div><h3 style="margin-top:10px;">Observation-conditioned spatial-mask4 capacity</h3><p>同样只用四个系数和 <code>2A+2A^T</code> 在线账，固定 U32 内分段修正为 <code>73/75</code>，空间调制方向为 <code>75/75</code>。后者补齐 v80 的 17 个失败，独立程序重跑 1950 个终点并对齐原八门。这只是 truth-aware 表示容量；四系数还没有被 observation-only 模型预测。</p></article>
+        <article class="panel"><div class="chips"><span class="chip coral">v81 原因排除</span><span class="chip blue">1575 endpoints</span></div><h3 style="margin-top:10px;">Frozen-target multistart stability audit</h3><p>比较 v78 每个单元的 21 个封存优化端点与 v80 shared RBF 的系数预测误差。75/75 单元的端点漂移都低于预测误差的 0.1%，最坏只有 <code>0.01898%</code>；独立距离公式得到同一结论。这关闭的是既定 minimax 目标下的数值起点不稳定，不关闭替代目标多解。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v80 严格可学习性 FAIL</span><span class="chip blue">best 58/75</span></div><h3 style="margin-top:10px;">Strict observation-only deterministic sentinel</h3><p>固定 v78 的 32 维目标、五个连续时间外折、三档已知几何、八门和 <code>2A+2A^T</code> 在线账，只比较 fold-local mean、linear ridge 与 nonlinear RBF KRR。共享策略为 50/51/58，几何专属策略为 50/49/58；没有模型达到 75/75。独立重训与物理复算覆盖 450 份 outer prediction，数值差闭合。该结果说明存在非线性可学习信号，但当前目标/表示仍不稳定，故不授权直接扩大网络。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">最新 · v79 解析映射 FAIL</span><span class="chip blue">9/75 与 0/75</span></div><h3 style="margin-top:10px;">GSLB32 exact-residual projected ridge controls</h3><p>v78 已证明 32 模态表示有 75/75 truth-aware headroom；v79 再用 observation residual 与 normal residual 直接解同一 32 维系数。两条方法的 observation/K4、observation/K2 都是 75/75，但 equal-call interior-gradient 仅 12/75 与 2/75，完整通过为 9/75 与 0/75。v79.2 独立重写 metric 与八门判决，复算全部 1,200 arm rows 和 300 outer rows。这关闭两个解析 controls，不关闭所有 observation-only predictor，也不授权神经训练。</p></article>
         <article class="panel"><div class="chips"><span class="chip gold">最新 · v78 表示容量 PASS</span><span class="chip blue">75 pass + 0 negative</span></div><h3 style="margin-top:10px;">GSLB32 exact-K1 capacity oracle</h3><p>在 v75 已开封的 25 帧 Case 3 与三档冻结几何上，32 个 geometry-only low-observability spline modes 保持 <code>2A+2A^T</code> 在线账，并让全部 75 单元通过 K4 harm 与同调用 K2 的 field / full-gradient / interior-gradient / observation 八门。独立程序重建模态、重跑每单元 21 个起点，得到 <code>75/75</code>。这只证明表示 headroom；可部署 observation-only predictor、冷构造摊销、wall/RSS、Case 4/6 和真实 BOST 均未通过。</p></article>
@@ -857,6 +868,21 @@
         <article class="panel"><div class="chips"><span class="chip coral">v4 正式 FAIL</span><span class="chip gold">13.86% &lt; 20%</span></div><h3 style="margin-top:10px;">有改善，但不能临时降低门槛</h3><p>首批两条 clean fit 让 p14 表征误差改善 <code>13.8608%</code>，但没有达到事前冻结的 20% 标准。剩余同类数据接入和神经网络训练均不放行；后续 v5.1 已把固定全局子空间诊断推进到稳定 rank 504，并继续得到 FAIL。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
+      </div>
+      <div id="adaptive-mask-v82" class="alert success" style="margin-top:13px;">
+        <strong>v82：离开固定 U32 的四个空间调制方向，在已开封 Case 3 上补齐 75/75</strong>
+        <span>v82 保持同一 <code>25 帧 × 3 几何</code>、同一八门、同一四参数盒与同一 <code>2A+2A^T</code> 在线壳。coefficient-band4 只在固定 GSLB32 张成空间内分段修正，通过 <code>73/75</code>；spatial-mask4 用 z / y / x / 径向掩膜调制 observation-conditioned 基础修正，通过 <code>75/75</code>。前者 F30 最坏 maximum gate 为 <code>+0.00821</code>，后者全局最坏仍为 <code>-0.04192</code>。独立验证重建方向、重跑全部搜索并重算八门；formal / independent 的 <code>1950/1950</code> 个终点均完整，maximum gate 最大差 <code>4.44e-16</code>。原 validator 曾在发布任何验证结果前因 32 维 / 4 维调用错误 fail-closed；修复后正式结果未重跑。结论只是 family-specific truth-aware headroom，不是部署 predictor、外部泛化或算法突破。</span>
+      </div>
+      <figure style="margin-top:14px;">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_observation_adaptive_mask_capacity_v82.png" aria-label="打开 v82 四参数表示容量对照图">
+          <img src="../assets/nine_view_observation_adaptive_mask_capacity_v82.png" alt="v82 的固定空间内对照通过七十三个单元，空间调制表示通过全部七十五个单元" />
+        </a>
+        <figcaption>A：F12 / F15 / F30 逐几何通过数；B：负 maximum gate 代表八门仍有裕量。spatial-mask4 的 75/75 只是已开封开发工况的 truth-aware finite-search capacity，不是可部署结果。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_observation_adaptive_mask_capacity_v82_result_2026-08-01.md">读 v82 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_observation_adaptive_mask_capacity_v82_public_summary.json">打开 v82 脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_observation_adaptive_mask_capacity_v82.png">打开 v82 结果图原尺寸</a>
       </div>
       <div id="target-stability-v81" class="alert critical" style="margin-top:13px;">
         <strong>v81：多起点数值漂移不足以解释 v80 的 observation-only 预测失败</strong>

@@ -477,12 +477,12 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>0.01898%</b>
-        <span>v81 中最坏多起点漂移占 v80 RBF 预测误差的比例；远低于 0.1% 回顾性门。</span>
+        <b>75/75</b>
+        <span>v82 spatial-mask4 的 truth-aware 表示容量；同参数数 fixed-U32 对照为 73/75。</span>
       </div>
     </div>
-    <div class="verdict negative">
-      <strong>最新科学判决：v81 排除数值起点漂移这个主因，下一步转向 observation-adaptive representation</strong>
+    <div class="verdict">
+      <strong>最新科学判决：v82 证明四个空间调制方向具有 75/75 容量，下一步只验证它能否由 observation 预测</strong>
       <span>
         v74.1 的 PoolFire wall / RSS 结果没有被推翻；但 v75 在预选的 BLASTNet Case 3 上只有
         <code>5/75</code> 单元通过完整合同。主要阻塞是相对同调用 Zero-K2 的 interior-gradient：
@@ -509,6 +509,10 @@
         <code>0.1%</code> 门。独立程序用另一种距离公式得到相同判决。这说明既定 v78 目标下的
         数值起点波动解释不了 v80 的 17 个失败；不再优先投入同目标 canonicalization，改查能随
         observation 与 geometry 改变的表示。
+        v82 随后用两个同为四参数、同为 <code>2A+2A<sup>T</sup></code> 的家族做最小对照：
+        固定 GSLB32 空间内分段修正为 <code>73/75</code>，z / y / x / 径向空间调制为
+        <code>75/75</code>，救回 v80 全部 <code>17/17</code> 个失败。独立程序重跑全部
+        <code>1950</code> 个终点并得到同一判决。这只是 truth-aware 容量证据，四个系数还没有被部署可见输入预测。
         当前仍是
         <code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>。
       </span>
@@ -549,23 +553,37 @@
           <p>把“算得对”推进到“调用少、真实更快、内存不过线”，再冻结独立公开反应流外部门。</p>
         </div>
         <div class="timeline">
-          <article class="day-entry latest" id="latest" data-date="2026-08-01" data-categories="science-negative engineering decision">
+          <article class="day-entry latest" id="latest" data-date="2026-08-01" data-categories="science-positive science-negative engineering decision">
             <details open>
               <summary class="entry-summary">
                 <div class="date-block"><time datetime="2026-08-01">2026-08-01</time><span>周六 · Day 27</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
-                    <span class="tag negative">错误归因关闭</span>
+                    <span class="tag">表示容量 75/75</span>
                     <span class="tag engineering">独立复算</span>
-                    <span class="tag">路线重排</span>
+                    <span class="tag negative">v81 错误归因关闭</span>
                   </div>
-                  <h3>v81 证明随机优化起点不是 v80 失败的主因</h3>
-                  <p>75 个单元的 1575 个封存端点全部通过；最坏端点漂移只占 v80 RBF 预测误差的 0.01898%，研究重点转向 observation-adaptive representation。</p>
+                  <h3>v82 让四个空间调制方向补齐 75/75，v81 同日排除错误主因</h3>
+                  <p>同为四参数的 fixed-U32 对照是 73/75，spatial-mask4 是 75/75；1950 个独立搜索终点复算通过。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
               <div class="entry-body">
                 <div class="evidence-grid">
+                  <section>
+                    <h4>v82 当天真正改变了什么</h4>
+                    <p>没有扩大回归器，而是把表示本身换成最小可对照实验。两家族同样只有四个系数、同样放入 <code>2A+2A<sup>T</sup></code> 壳：fixed-U32 系数分段通过 <code>73/75</code>，离开 U32 的 z / y / x / 径向空间调制通过 <code>75/75</code>。这说明 v80 的两个最难缺口不只是“回归器没学好”，而是固定空间缺少局部形变自由度。</p>
+                  </section>
+                  <section>
+                    <h4>v82 证据与独立复算</h4>
+                    <ul>
+                      <li>coefficient-band4：<code>73/75</code>，救回 v80 的 <code>15/17</code> 个失败。</li>
+                      <li>spatial-mask4：<code>75/75</code>，救回 <code>17/17</code>，F12 / F15 / F30 均为 <code>25/25</code>。</li>
+                      <li>空间调制额外 exact 调用为 <code>0A+0A<sup>T</sup></code>。</li>
+                      <li>formal 与 independent 均完整跑完 <code>1950/1950</code> 个搜索终点。</li>
+                      <li>maximum gate 最大差 <code>4.44e-16</code>，metrics 最大差 <code>0</code>，exact field replay 最大差 <code>4.51e-17</code>。</li>
+                    </ul>
+                  </section>
                   <section>
                     <h4>当天真正改变了什么</h4>
                     <p>v80 之后没有直接换标签或扩大网络，而是先检验“truth-aware witness 会不会因优化起点不同而严重跳变”。v81 复用 v78 已封存的 75 个单元和每单元 21 个起点，只审计标签数值稳定性，不重新训练、不重新优化。结果把一个看似合理但不成立的主因排除了，因此后续算力不再优先花在同一目标的多起点 canonicalization。</p>
@@ -587,10 +605,13 @@
                   </section>
                   <section>
                     <h4>边界与下一步</h4>
-                    <p>这是先看过父结果后的回顾性机制证据，只关闭 v78 既定 minimax 目标下的数值起点不稳定；没有检验替代目标的概念多解，也没有产生新算法、外部泛化、资源或真实 BOST 结果。下一门改为 observation-adaptive representation diagnostic，并继续保持同一八门和调用账。<code>algorithm_breakthrough=false</code>。</p>
+                    <p>v81 只关闭既定 minimax 目标下的数值起点不稳定；v82 只证明已开封开发工况上的 truth-aware family-specific 容量。四个系数还是由真值 oracle 选的，所以不是可部署 predictor，也没有外部泛化、wall/RSS、curved ray 或真实 BOST 结果。下一门固定 spatial-mask4，在同一五个连续时间外折与一帧 embargo 下训练最小 observation-only 四系数 predictor；若不能 <code>75/75</code>，就关闭该表示，不用大网络挽救。<code>algorithm_breakthrough=false</code>。</p>
                   </section>
                 </div>
                 <div class="entry-links">
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_observation_adaptive_mask_capacity_v82_result_2026-08-01.md">v82 完整证据</a>
+                  <a href="../docs/nine_view_observation_adaptive_mask_capacity_v82_public_summary.json">v82 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_observation_adaptive_mask_capacity_v82.png">v82 结果图</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_gslb32_target_stability_v81_result_2026-08-01.md">v81 完整证据</a>
                   <a href="../docs/nine_view_gslb32_target_stability_v81_public_summary.json">v81 脱敏摘要</a>
                   <a href="../asset_viewer.html?asset=assets%2Fnine_view_gslb32_target_stability_v81.png">v81 结果图</a>
@@ -1781,14 +1802,15 @@
         完整通过提高到 <code>58/75</code>，但仍未达到全部 75 单元，关闭当前严格 observation-only
         特征/目标/模型合同。v81 再审计 <code>1575</code> 个封存端点，发现最坏起点漂移只占 v80
         预测误差的 <code>0.01898%</code>，从而关闭“数值起点不稳定是主因”这一解释，并把下一问题
-        收束到 observation-adaptive representation。当前仍没有部署 predictor、
+        收束到 observation-adaptive representation。v82 再以匹配四参数对照将固定空间内的 <code>73/75</code>
+        提高为空间调制的 <code>75/75</code>，独立复算通过；这仍是 truth-aware 容量门。当前仍没有部署 predictor、
         神经训练授权、冷构造摊销、外部资源门或真实 BOST。
       </p>
     </section>
   </main>
 
   <footer>
-    持续更新至 v81 独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v82 独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
