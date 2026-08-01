@@ -11279,3 +11279,53 @@ real BOST = false
 - `docs/nine_view_v85_case6_forced_k2_v86_result_2026-08-02.md`
 - `docs/nine_view_v85_case6_forced_k2_v86_public_summary.json`
 - `assets/nine_view_v85_case6_forced_k2_v86.png`
+
+## 2026-08-02：v87 把 K1-K2 一维阻尼整条关掉了
+
+v86 只比较了两个端点：K1 有 `78/90` 通过，K2 有 `71/90`。今天进一步问了一个更严格的问题：
+也许端点都不好，但中间某个阻尼值刚好能同时守住八门？因此我没有训练新网络，而是把每个单元的
+
+`x(t)=x_K1+t(x_K2-x_K1), t in [0,1]`
+
+完整算清楚。field、整体梯度、内部梯度和 observation 都沿这条线仿射变化，所以每个相对 Zero-K4 或
+Zero-K2 的误差门都能写成一个凸二次不等式。正式程序稳定求根，独立程序从原始场重建全部输入后，使用
+long-double 极小值分段、左右二分和 100001 点致密检查复算。
+
+结果是：
+
+```text
+all Case 6 cells                 90
+nonempty eight-gate intervals   85
+empty intervals                  5
+numeric ambiguity                0
+F12 / F15 / F30             30 / 29 / 26
+formal-independent endpoint max  3.19e-15
+```
+
+五个无解单元都不是“八个门各自能过、但区间碰不到一起”。每个反例都有一个 interior-gradient 门单独在
+整条线上无解。即使使用真值挑选最优 `t`，仍分别超门槛约 `0.59%–4.77%`。这意味着再做一个更大的
+scalar gate network 没有意义：网络再聪明，也不能从空区间里选出答案。
+
+85 个可行单元也提供了有用信号。它们的可行宽度最小为 `0.16227`、p10 为 `0.59073`、中位数为 `1`；
+多数单元不是需要极精细的阻尼，而是五个早期/中早期内部梯度反例需要真正的空间自由度。
+
+所以路线立即调整：关闭统一 K1、统一 K2 和所有单一 `t` 的 K1-K2 混合。下一项只在已经开封的 Case 6
+检查现有四参数空间 warm 表示的 truth-aware 容量，并保持同一 exact-K1 壳。若能 `90/90`，说明 Case 3
+训练的 predictor 没有跨工况预测对；若仍不能，说明表示本身要扩展。容量门回答前，不扩大 FNO、UNO 或
+U-Net，也不打开新的外部工况。
+
+```text
+scalar K1-K2 damping family = closed
+post-open mechanism diagnostic = true
+external validation = false
+resource advantage = false
+algorithm_breakthrough = false
+paper_success = false
+real BOST = false
+```
+
+完整证据、脱敏摘要和图表：
+
+- `docs/nine_view_v86_case6_k1_k2_line_v87_result_2026-08-02.md`
+- `docs/nine_view_v86_case6_k1_k2_line_v87_public_summary.json`
+- `assets/nine_view_v86_case6_k1_k2_line_v87.png`

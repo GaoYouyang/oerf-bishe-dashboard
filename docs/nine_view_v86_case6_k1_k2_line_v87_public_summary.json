@@ -1,0 +1,119 @@
+{
+  "schema_version": "oerf-nine-view-v86-case6-k1-k2-line-public-summary-87.0",
+  "date": "2026-08-02",
+  "title": "v87：K1-K2 整条一维混合线仍有 5 个 Case 6 单元无解",
+  "scientific_status": "FAIL_K1_K2_LINE_LACKS_ALL_CELL_ORACLE_FEASIBILITY_V87",
+  "question": "在 warm K1 与 true-CGLS K2 之间，是否每个 Case 6 单元都存在一个同时通过八门的连续阻尼系数？",
+  "candidate_family": {
+    "formula": "x(t)=x_K1+t(x_K2-x_K1)",
+    "domain": "0<=t<=1",
+    "shared_scalar_per_cell": true,
+    "truth_used_only_for_post_open_feasibility": true,
+    "deployment_selector_defined": false,
+    "new_exact_calls_for_post_open_interval_analysis": "0A+0AT",
+    "hypothetical_online_endpoint_construction": "3A+3AT"
+  },
+  "results": {
+    "cell_count": 90,
+    "nonempty_cell_count": 85,
+    "empty_cell_count": 5,
+    "ambiguous_cell_count": 0,
+    "per_geometry_nonempty": {
+      "F12_plus": "30/30",
+      "F15_plus": "29/30",
+      "F30_plus": "26/30"
+    },
+    "feasible_width": {
+      "minimum": 0.16227014827736527,
+      "p10_lower": 0.5907291152344336,
+      "p50": 1.0,
+      "p90_higher": 1.0,
+      "maximum": 1.0
+    },
+    "witness_t": {
+      "minimum": 0.13394968237715665,
+      "p10_lower": 0.3645397388736621,
+      "p50": 0.5,
+      "p90_higher": 0.5,
+      "maximum": 0.7046354423827832
+    }
+  },
+  "infeasible_cells": [
+    {
+      "geometry": "F30_plus",
+      "frame_index": 0,
+      "blocking_gate": "interior_gradient_harm_vs_zero_k4",
+      "best_t": 0.127345799,
+      "minimum_ratio": 1.038940466,
+      "limit": 1.01,
+      "excess": 0.028940466
+    },
+    {
+      "geometry": "F30_plus",
+      "frame_index": 4,
+      "blocking_gate": "interior_gradient_harm_vs_zero_k4",
+      "best_t": 0.046196105,
+      "minimum_ratio": 1.016995352,
+      "limit": 1.01,
+      "excess": 0.006995352
+    },
+    {
+      "geometry": "F30_plus",
+      "frame_index": 9,
+      "blocking_gate": "interior_gradient_equal_vs_zero_k2",
+      "best_t": 0.685816803,
+      "minimum_ratio": 1.005920659,
+      "limit": 1.0,
+      "excess": 0.005920659
+    },
+    {
+      "geometry": "F30_plus",
+      "frame_index": 12,
+      "blocking_gate": "interior_gradient_equal_vs_zero_k2",
+      "best_t": 1.0,
+      "minimum_ratio": 1.047703062,
+      "limit": 1.0,
+      "excess": 0.047703062
+    },
+    {
+      "geometry": "F15_plus",
+      "frame_index": 0,
+      "blocking_gate": "interior_gradient_harm_vs_zero_k4",
+      "best_t": 0.151267273,
+      "minimum_ratio": 1.028324906,
+      "limit": 1.01,
+      "excess": 0.018324906
+    }
+  ],
+  "mechanism": {
+    "all_failures_are_individually_blocked_by_one_interior_gradient_gate": true,
+    "failure_is_not_caused_by_disjoint_intersection_of_other_gates": true,
+    "scalar_damping_family_closed": true,
+    "interpretation": "A global scalar along the K1-to-K2 direction cannot repair the local interior-gradient tail in five cells, even with truth-aware post-open selection. The next shortest test is representation capacity, not a larger scalar selector."
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_CASE6_K1_K2_LINE_V87",
+    "formal_runner_imported": false,
+    "geometry_rebuilt": true,
+    "model_predictions_rebuilt": true,
+    "k1_and_k2_recurrence_reimplemented": true,
+    "truth_and_observations_rebuilt": true,
+    "alternate_interval_method": "convex-minimum bracketing plus bisection",
+    "dense_grid_points": 100001,
+    "endpoint_fields_maximum_absolute_difference": 0.0,
+    "endpoint_residuals_maximum_absolute_difference": 0.0,
+    "line_endpoint_maximum_absolute_difference": 3.191891195797325e-15,
+    "summary_maximum_numeric_difference": 6.38378239159465e-15
+  },
+  "next_scientific_gate": "On already opened Case 6, test truth-aware capacity of the existing four-parameter spatial warm representation under the same exact-K1 shell. This separates predictor transfer failure from representation failure before any larger observation-only model is trained.",
+  "boundaries": {
+    "post_open_mechanism_diagnostic": true,
+    "external_validation": false,
+    "external_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "resource_advantage_proven": false,
+    "curved_ray": false,
+    "real_bost": false
+  }
+}
