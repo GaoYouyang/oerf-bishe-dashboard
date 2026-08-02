@@ -506,18 +506,18 @@
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="#research-progress">查看当前研究进程</a>
           <a class="button" href="daily-progress.html">查看每日实质增量</a>
-          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md">阅读最新完整证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v93_anchor_locator_cross_geometry_v94_result_2026-08-02.md">阅读最新完整证据</a>
         </div>
       </div>
       <aside class="hero-verdict" aria-label="当前科学判决">
         <b>当前判决：尚未突破</b>
-        <p><code>v93</code> 已把 F30+/12 的剩余内部梯度差额定位到 z 负侧的局部低频区域：前 <code>10%</code> 体素承载 <code>76.71%</code> 正误差，低频占 <code>79.57%</code>。</p>
-        <p><strong>下一步：</strong>预注册的 K1 法向残差定位器三门全失败，不能直接生成局部窗口。先修改可观测壳或显式接受最小额外精确调用；达到 90/90 前不训练 predictor，也不租 GPU。</p>
+        <p><code>v94</code> 已在 F12+ 的 30 帧上检验 v93 的局部伤害假设：eligible 帧为 <code>0/30</code>，候选 / Zero-K2 内部梯度误差比全部低于 1，范围 <code>0.845–0.979</code>。</p>
+        <p><strong>下一步：</strong>关闭 anchor / local-window 修补路线，转向九维 physical-ball witness 的 observation-only 系数预测，并为少数异常帧建立校准置信度与 fail-closed 回退；当前仍不租 GPU。</p>
       </aside>
     </div>
     <div class="current-grid" aria-label="当前核心状态">
-      <div class="current-metric"><b id="liveWitnessCount">89 / 90</b><span>Case 6 严格 witness；v92 新方向未修复最后反例</span></div>
-      <div class="current-metric warning"><b id="liveFailureCount">1 个反例</b><span>F30+/12 仍越过 interior-gradient / Zero-K2 门</span></div>
+      <div class="current-metric"><b id="liveWitnessCount">89 / 90</b><span>Case 6 严格 witness；最后反例仍只出现在 F30+/12</span></div>
+      <div class="current-metric warning"><b id="liveFailureCount">0 / 30 普遍伤害</b><span>v94 在 F12+ 没有复现 F30 的净内部梯度伤害</span></div>
       <div class="current-metric"><b id="liveCallBudget">2A + 2A<sup>T</sup></b><span>每个候选的冻结 exact 在线预算</span></div>
       <div class="current-metric warning"><b id="liveBreakthrough">false</b><span><code>algorithm_breakthrough</code>；不夸大负结果</span></div>
     </div>
@@ -526,7 +526,10 @@
       <div class="archive-body">
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
-      <a class="button primary" href="#spatial-error-localization-v93">打开 v93 最新机制判决</a>
+      <a class="button primary" href="#anchor-cross-geometry-v94">打开 v94 最新路线判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v93_anchor_locator_cross_geometry_v94_result_2026-08-02.md">读 v94 完整证据</a>
+      <a class="button" href="../docs/nine_view_v93_anchor_locator_cross_geometry_v94_public_summary.json">读 v94 脱敏摘要</a>
+      <a class="button" href="#spatial-error-localization-v93">回看 v93 机制判决</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md">读 v93 完整证据</a>
       <a class="button" href="../docs/nine_view_v92_case6_spatial_error_localization_v93_public_summary.json">读 v93 脱敏摘要</a>
       <a class="button" href="#basis-invariant-physical-ball-v91">回看 v91 参数化正进展</a>
@@ -594,8 +597,8 @@
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert critical" style="margin-top:12px;">
-      <strong>v93 最新判决：缺口高度局部，但预注册可观测定位器看不见</strong>
-      <span>前 <code>10%</code> 内部体素承载 <code>76.71%</code> 正误差，z 第一四分区承载 <code>80.60%</code>，低频占 <code>79.57%</code>；空间集中门通过。但主定位器最高 10% 只捕获 <code>4.84%</code>，Spearman 为 <code>0.193</code>，质心距离为 <code>0.217</code>，三门全失败。下一步先改可观测壳，不训练局部 predictor。<a href="#spatial-error-localization-v93">查看完整证据</a>。</span>
+      <strong>v94 最新判决：F30 局部伤害没有在 F12 成为普遍机制</strong>
+      <span>F12+ 的 30 帧中，候选 / Zero-K2 内部梯度误差比为 <code>0.845–0.979</code>，总 signed excess 为正的帧数为 <code>0</code>，eligible 为 <code>0/30</code>。局部红区不等于总体更差，因此关闭 anchor / local-window 修补路线，F15 局部图继续保留。<a href="#anchor-cross-geometry-v94">查看完整证据</a>。</span>
     </div>
     <div class="alert critical" style="margin-top:12px;">
       <strong>v88.1 父判决：四参数 spatial-mask4 只有 86/90 个 Case 6 单元找到严格 witness</strong>
@@ -901,8 +904,8 @@
         <div><b>公开反应流 CFD</b><span>PoolFire 与独立 BLASTNet 工况</span></div>
         <div><b>九视角观测</b><span>已知几何 straight-ray 密度梯度代理</span></div>
         <div><b>粗网格逆问题</b><span><code>32×16×16</code> 三维状态</span></div>
-        <div class="current"><b>当前：修改可观测壳</b><span>局部低频缺口已定位，但主残差信号定位失败</span></div>
-        <div><b>Observation-only 学习</b><span>容量过门后才训练预测器</span></div>
+        <div class="current"><b>当前：预测已有 physical-ball witness</b><span>停止局部窗口；研究系数可预测性与置信回退</span></div>
+        <div><b>Observation-only 学习</b><span>先用小模型证明可预测性，再决定是否租 GPU</span></div>
         <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
       </div>
       <div class="focus-grid" style="margin-top:12px;">
@@ -956,18 +959,23 @@
             <div><strong>v93：局部缺口成立，主定位器三门失败</strong><p>前 10% 体素承载 76.71% 正误差，79.57% 属于低频；预注册法向残差定位器最高 10% 只捕获 4.84%，不能直接生成局部窗口。</p></div>
             <span class="evidence-state fail">路线诊断</span>
           </article>
+          <article class="evidence-row">
+            <time datetime="2026-08-02">2026-08-02</time>
+            <div><strong>v94：跨几何普遍性为 0/30，局部修补路线关闭</strong><p>F12+ 的候选 / Zero-K2 内部梯度误差比全部低于 1；22 帧虽有集中的局部正误差，但 30 帧总 signed excess 全为负，不能把局部红区误写成净伤害。</p></div>
+            <span class="evidence-state fail">关线结果</span>
+          </article>
         </div>
         <figure class="latest-figure">
-          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v92_case6_spatial_error_localization_v93.png" aria-label="打开 v93 完整结果图">
-            <img loading="lazy" decoding="async" src="../assets/nine_view_v92_case6_spatial_error_localization_v93.png" alt="v93 最后一个内部梯度缺口的空间、频率与可观测定位结果" />
+          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v93_anchor_locator_cross_geometry_v94.png" aria-label="打开 v94 完整结果图">
+            <img loading="lazy" decoding="async" src="../assets/nine_view_v93_anchor_locator_cross_geometry_v94.png" alt="v94 F12 跨几何局部伤害普遍性检验结果" />
           </a>
-          <figcaption>最新可视化：缺口高度集中于 z 负侧且主要是低频，但预注册 K1 法向残差定位器三门全失败；它改变下一步，却不是新算法或突破。</figcaption>
+          <figcaption>最新可视化：F12+ 的 30 帧全部低于同成本 Zero-K2 的内部梯度误差；局部正误差并未形成任何一帧净伤害，局部修补路线因此关闭。</figcaption>
         </figure>
       </div>
       <div class="actions" style="margin-top:13px;">
-        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md">读 v93 完整证据</a>
-        <a class="button" href="../docs/nine_view_v92_case6_spatial_error_localization_v93_public_summary.json">读机器可读摘要</a>
-        <a class="button" href="#spatial-error-localization-v93">展开历史区中的技术细节</a>
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v93_anchor_locator_cross_geometry_v94_result_2026-08-02.md">读 v94 完整证据</a>
+        <a class="button" href="../docs/nine_view_v93_anchor_locator_cross_geometry_v94_public_summary.json">读机器可读摘要</a>
+        <a class="button" href="#anchor-cross-geometry-v94">展开历史区中的技术细节</a>
       </div>
     </section>
 
@@ -983,7 +991,7 @@
       <div class="focus-grid">
         <article class="focus-card positive"><h3>已建立可复算链</h3><p>每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。</p></article>
         <article class="focus-card boundary"><h3>当前更新源</h3><p id="liveEvidenceStatus" aria-live="polite">正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。</p></article>
-        <article class="focus-card current"><h3>本轮真实增量</h3><p>v93 确认最后缺口局部、单侧、低频，但当前法向残差定位器无法找到它。由此停止直接构造局部 predictor，把下一步改为修改可观测壳。</p></article>
+        <article class="focus-card current"><h3>本轮真实增量</h3><p>v94 在 F12+ 的 30 帧上得到 0 个净伤害样本，证明 F30 单帧局部缺口不是跨几何普遍机制。局部窗口路线关闭，下一步直接研究已有九维 witness 的 observation-only 可预测性。</p></article>
       </div>
     </section>
 
@@ -996,8 +1004,8 @@
         </div>
       </div>
       <div class="outcome-ladder">
-        <div class="outcome-step closed"><div><b>找到足够但最小的空间表示</b><span>v93 已证明最后缺口高度局部，但主定位器失败；先获得可靠的 deployment-visible 粗定位信号，才能冻结局域双尺度族。</span></div><em>当前进行中</em></div>
-        <div class="outcome-step"><div><b>训练 observation-only warm initializer</b><span>训练与部署都不读取真值；与 ridge、KRR、U-Net / FNO 等公平对照，并保留 fail-closed 回退。</span></div><em>容量过门后</em></div>
+        <div class="outcome-step closed"><div><b>找到足够但最小的空间表示</b><span>v91 的九维 physical-ball 已达到 89/90；v94 关闭了围绕最后单帧继续加局部窗口的路线，表示扩建暂停。</span></div><em>局部扩建关闭</em></div>
+        <div class="outcome-step"><div><b>训练 observation-only warm initializer</b><span>先预测现有九维 witness 系数，并以校准置信度对 rare outlier 回退；与 ridge、KRR、U-Net / FNO 等公平对照。</span></div><em>最近科学门</em></div>
         <div class="outcome-step"><div><b>独立工况 matched-accuracy</b><span>在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
         <div class="outcome-step"><div><b>真实资源收益</b><span>fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。</span></div><em>尚未启动</em></div>
         <div class="outcome-step"><div><b>真实 BOST 迁移</b><span>接入组内位移图、相机标定、重复测量噪声与认可基线，重新定义实验“同精度”。</span></div><em>需要组内数据</em></div>
@@ -1027,7 +1035,7 @@
         </div>
       </div>
       <div class="future-grid">
-        <article class="focus-card current"><h3>最近科学门</h3><p>先修改可观测壳：把 detector anchor 的粗位置线索另行冻结，并在未参与选择的局部误差图上验证；若仍看不见，再明确增加最小精确调用预算。此门通过前不训练局部 predictor。</p></article>
+        <article class="focus-card current"><h3>最近科学门</h3><p>不再修局部窗口。直接检验九维 physical-ball witness 的 observation-only 系数预测：同时输出校准置信度，低置信样本必须 fail closed 回退，不能靠读取真值挑选。</p></article>
         <article class="focus-card boundary"><h3>何时租 GPU</h3><p>只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。</p></article>
         <article class="focus-card positive"><h3>何时接组内数据</h3><p>公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。</p></article>
       </div>
@@ -1238,6 +1246,22 @@
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
       </div>
+      <div id="anchor-cross-geometry-v94" class="alert critical" style="margin-top:13px;">
+        <strong>v94：F30 局部缺口没有在 F12 形成普遍净伤害，局部修补路线关闭</strong>
+        <span>v94 把 v93 的事后 anchor 线索冻结成跨几何假设，只在 F12+ 的 30 帧上确认。候选 / 同成本 Zero-K2 的内部梯度误差比为 <code>0.845–0.979</code>，大于 1 的帧数为 <code>0</code>，总 signed excess 为正的帧数为 <code>0</code>，eligible 为 <code>0/30</code>；三个十帧区间均为 0。虽然 <code>22/30</code> 帧能看到集中的 componentwise positive map，但整体误差仍更低。独立复算的局部图差和判决差均为 <code>0</code>，标量最大差 <code>1.11e-16</code>；F15 局部图未生成、未评分。下一步停止 anchor / local-window repair，转向 observation-only 预测已有九维 physical-ball witness，并对 rare outlier 做置信回退。</span>
+      </div>
+      <figure class="result-figure">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_v93_anchor_locator_cross_geometry_v94.png" aria-label="打开 v94 跨几何局部机制结果图">
+          <img loading="lazy" decoding="async" src="../assets/nine_view_v93_anchor_locator_cross_geometry_v94.png" alt="v94 F12 跨几何局部伤害普遍性检验" />
+        </a>
+        <figcaption>v94 区分“局部有红色误差”与“总体净伤害”：F12+ 30 帧全部优于 Zero-K2，因此不再为单个 F30 反例扩建局部模型。</figcaption>
+      </figure>
+      <div class="actions">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v93_anchor_locator_cross_geometry_v94_result_2026-08-02.md">读 v94 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_v93_anchor_locator_cross_geometry_v94_public_summary.json">打开 v94 脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_v93_anchor_locator_cross_geometry_v94.png">打开 v94 结果图原尺寸</a>
+      </div>
+
       <div id="spatial-error-localization-v93" class="alert critical" style="margin-top:13px;">
         <strong>v93：最后一个梯度缺口高度局部，但预注册定位器看不见</strong>
         <span>v93 没有加方向或训练模型，只把 v92 的 F30+/12 相对同成本 Zero-K2 多出来的内部梯度误差分解到位置和频率。最高 <code>10%</code> 体素承载 <code>76.71%</code> 正误差，解释 80% 只需 <code>12.62%</code> 体素；z 第一四分区占 <code>80.60%</code>，低频占 <code>79.57%</code>。空间集中门通过，但预注册 <code>|∇A^T(y-Ax0)|²</code> 的 top-10% 捕获 / Spearman / 质心距离为 <code>4.84% / 0.193 / 0.217</code>，相对 <code>40% / 0.35 / 0.20</code> 三门全失败。手写有限差分独立复算的标量最大差 <code>1.11e-16</code>、热图逐点差 <code>0</code>。当前只允许改可观测壳，不允许直接训练局部 predictor。</span>
@@ -2751,7 +2775,7 @@
           document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：${metrics.strict_witness_passed}/${metrics.cell_count} 个单元通过；下一门是 ${nextGateSentence}每次独立验证后的公开提交只需更新这份稳定清单。`;
         })
         .catch(() => {
-          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v93 证明缺口局部但主定位器失败，algorithm_breakthrough=false。';
+          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v94 在 F12+ 得到 0/30 个净伤害样本，局部修补路线关闭，algorithm_breakthrough=false。';
         });
     })();
   </script>

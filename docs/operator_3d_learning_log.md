@@ -11635,3 +11635,56 @@ Spearman                     0.1926    要求 >= 0.35
 - `docs/nine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md`
 - `docs/nine_view_v92_case6_spatial_error_localization_v93_public_summary.json`
 - `assets/nine_view_v92_case6_spatial_error_localization_v93.png`
+
+## 2026-08-02：v94 关闭零调用局部修补，F12 的 30 帧反而全部优于 Zero-K2
+
+### 为什么要跨几何确认
+
+v93 的 F30 frame 12 热图很诱人：缺口局部、低频，而且事后 anchor-gradient control 的粗位置明显好于主定位器。但这还不能说明局部修补是一个普遍问题。于是 v94 把这个线索固定成待确认假设，只在另一个几何 F12 的 30 帧上问一件事：有没有足够多的帧同时出现“总体更差”与“误差局部集中”？
+
+结果前门槛要求至少 `8/30` 帧 eligible，且每个连续十帧区间至少一帧。每帧还必须同时满足候选 / Zero-K2 内部梯度误差比大于 `1.01`、总 signed excess 实质为正，以及两项空间集中条件。F15 局部 target / saliency 图保留，不为挽救假设而读取或评分。
+
+### 实际结果
+
+```text
+eligible materially harmful localized frames    0 / 30
+三个十帧区间                                    0 / 0 / 0
+candidate / Zero-K2 ratio min                  0.845318
+median                                          0.917441
+p90-higher                                      0.942557
+worst                                           0.979357
+ratio > 1                                       0 / 30
+signed excess > 0                               0 / 30
+```
+
+F12 的 30 帧里，v92 truth-aware witness 的内部梯度误差全部低于同成本 Zero-K2。虽然其中 `22/30` 帧能找到空间集中的 componentwise positive map，但候选在其他区域的改善更大，总 signed excess 仍全部为负。
+
+这件事用人话说就是：热图里有红色，不代表整个结果更差。围绕这些红色区域训练修补器，可能是在修一个不存在的净问题。
+
+### 独立复算与执行边界
+
+正式执行先保持授权 pending，单次开封后才读取 F12；独立 validator 重新构建局部图与门，得到：
+
+```text
+PASS_INDEPENDENT_RECOMPUTATION_ANCHOR_LOCATOR_V94
+局部图最大差        0
+判决最大差          0
+标量最大差          1.11e-16
+F15 局部图生成/评分 false
+```
+
+执行中实际 all-geometry setup 与 F12 shell 的总账是 `1020A + 540A^T`；这只是诊断账，不是部署成本或加速结果。父结果已经物化后，局部 map 的边际 exact 调用为 `0A + 0A^T`。
+
+### 成功、失败与路线调整
+
+- **成功：** 排除了“F30 单帧局部缺口是跨几何普遍伤害机制”的解释，及时阻止局部窗口和局部 U-Net 支线继续消耗算力。
+- **附带正信息：** F12 的 truth-aware witness 对 Zero-K2 在内部梯度上是 `30/30` 净改善，但它仍不是部署算法。
+- **失败：** anchor/local-window repair 没有普遍性支持，新局部 capacity search、predictor、GPU 与资源门均未授权。
+- **路线调整：** 不再加空间窗口。转向已经存在的九维 physical-ball witness：研究 observation-only 系数预测，并用校准置信度对少数异常帧 fail closed 回退。
+- **突破：** 没有。`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`real_BOST=false`。
+
+公开证据：
+
+- `docs/nine_view_v93_anchor_locator_cross_geometry_v94_result_2026-08-02.md`
+- `docs/nine_view_v93_anchor_locator_cross_geometry_v94_public_summary.json`
+- `assets/nine_view_v93_anchor_locator_cross_geometry_v94.png`
