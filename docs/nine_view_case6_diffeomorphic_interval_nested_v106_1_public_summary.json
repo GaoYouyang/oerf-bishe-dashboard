@@ -1,0 +1,117 @@
+{
+  "schema_version": "oerf-nine-view-case6-diffeomorphic-interval-nested-public-summary-106.1",
+  "updated": "2026-08-02",
+  "formal_status": "PASS_COMMON_GAUGE_INTERVAL_NESTED_TRANSPORT_CONVERGENCE_HEADROOM_V106_1",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_CASE6_COMMON_GAUGE_INTERVAL_NESTED_V106_1",
+  "evidence_role": "post-open Case-6 numerical mechanism diagnostic for diffeomorphism-consistent transport",
+  "selected_physical_frames": 5,
+  "known_geometries": 3,
+  "diffeomorphisms": 6,
+  "rows_per_level": 90,
+  "formal_rows": 360,
+  "independent_rows": 360,
+  "levels": [
+    {
+      "level_id": "interval_nested_1x",
+      "shape_zyx": [32, 16, 16],
+      "field": {"p50": 0.05024733262673064, "p90_higher": 0.10216021516162772, "worst": 0.10533935547710675},
+      "interior_gradient": {"p50": 0.12987041643936859, "p90_higher": 0.28199403963157754, "worst": 0.2910550066152159},
+      "observation": {"p50": 0.0371412989682823, "p90_higher": 0.12444573638057077, "worst": 0.13087892166861165}
+    },
+    {
+      "level_id": "interval_nested_2x",
+      "shape_zyx": [63, 31, 31],
+      "field": {"p50": 0.019126575568695427, "p90_higher": 0.07044710995982877, "worst": 0.07345247756450866},
+      "interior_gradient": {"p50": 0.06443258573078946, "p90_higher": 0.20233839020453467, "worst": 0.2529011045171303},
+      "observation": {"p50": 0.014665782447148092, "p90_higher": 0.07435498011511463, "worst": 0.08749156837039933}
+    },
+    {
+      "level_id": "interval_nested_4x",
+      "shape_zyx": [125, 61, 61],
+      "field": {"p50": 0.006244284253167141, "p90_higher": 0.03993574278291957, "worst": 0.052644462483135056},
+      "interior_gradient": {"p50": 0.020021655768015352, "p90_higher": 0.14984300705307663, "worst": 0.18777978508523882},
+      "observation": {"p50": 0.004398753224729643, "p90_higher": 0.045285956609017616, "worst": 0.05382642683877745}
+    },
+    {
+      "level_id": "interval_nested_8x",
+      "shape_zyx": [249, 121, 121],
+      "field": {"p50": 0.001719717064497093, "p90_higher": 0.01672592300100557, "worst": 0.026396629968207297},
+      "interior_gradient": {"p50": 0.004933681091999572, "p90_higher": 0.05205798326667795, "worst": 0.09557630972205486},
+      "observation": {"p50": 0.0011958363170912064, "p90_higher": 0.015018027750218056, "worst": 0.023116141742206366}
+    }
+  ],
+  "frozen_limits": {
+    "field_worst": 0.08,
+    "interior_gradient_worst": 0.25,
+    "observation_worst": 0.12,
+    "final_worst_ratio_vs_1x_maximum": 0.8,
+    "cellwise_final_noninferior_fraction_minimum": 0.95,
+    "cellwise_all_level_monotone_fraction_minimum": 0.8
+  },
+  "gate_outcomes": {
+    "final_absolute_limits_passed": 3,
+    "final_absolute_limits_total": 3,
+    "p90_higher_monotonic_passed": 3,
+    "p90_higher_monotonic_total": 3,
+    "worst_monotonic_passed": 3,
+    "worst_monotonic_total": 3,
+    "final_worst_ratio_passed": 3,
+    "final_worst_ratio_total": 3,
+    "cellwise_final_noninferior_passed": 3,
+    "cellwise_final_noninferior_total": 3,
+    "cellwise_all_level_monotone_passed": 3,
+    "cellwise_all_level_monotone_total": 3
+  },
+  "final_8x_worst_ratio_vs_1x": {
+    "field": 0.25058659082021856,
+    "interior_gradient": 0.32837885468299066,
+    "observation": 0.17662234260102594
+  },
+  "cellwise_final_noninferior_fraction": {
+    "field": 1.0,
+    "interior_gradient": 1.0,
+    "observation": 1.0
+  },
+  "cellwise_all_level_monotone_fraction": {
+    "field": 1.0,
+    "interior_gradient": 1.0,
+    "observation": 1.0
+  },
+  "empirical_order": {
+    "field_p50": 1.5580082555546244,
+    "interior_gradient_p50": 1.525987888491696,
+    "observation_p50": 1.5738486805118264
+  },
+  "integrity": {
+    "exact_nested_coordinate_maximum_absolute_difference": 0.0,
+    "coarse_reference_relative_l2_maximum": 5.744253290289926e-16,
+    "coarse_field_gradient_vs_v105_1_maximum_absolute_difference": 3.0808688933348094e-15,
+    "row_metric_maximum_absolute_difference": 1.5806800313100666e-14,
+    "summary_maximum_absolute_difference": 1.1834977442504169e-13,
+    "predicate_boolean_mismatch_count": 0,
+    "formal_inputs_and_outputs_unchanged": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "invalid_parent_attempt": {
+    "status": "INCONCLUSIVE_INVALID_INTERVAL_NESTED_TRANSPORT_EXECUTION_V106",
+    "reason": "the observation metric scored a pre-common-gauge state, so an otherwise constant coarse gauge offset became visible at support edges and produced an unwarped baseline drift from 0 to 0.0100921 across the four grids",
+    "used_for_scientific_decision": false
+  },
+  "decision": "With interval-nested coordinates, exact stride restriction and one common coarse gauge for field, gradient and observation, all frozen convergence predicates pass for all three metrics and all 90 cells. This is independently reproduced numerical mechanism headroom, not a learned initializer or coordinate-generalization result.",
+  "next_gate": "Hold the physical support thickness fixed across resolutions before integrating coordinate-conditioned warm initialization; only then test held-out coordinate changes under the unchanged matched-accuracy and exact-call contract.",
+  "claims": {
+    "interval_nested_exact_stride_validated": true,
+    "common_gauge_observation_identity_passed": true,
+    "four_level_monotone_convergence_passed": true,
+    "numerical_mechanism_headroom_breakthrough": true,
+    "warm_initializer_evaluated": false,
+    "matched_accuracy": false,
+    "coordinate_generalization": false,
+    "resource_advantage": false,
+    "external_generalization": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "gpu_training_authorized": false
+  }
+}

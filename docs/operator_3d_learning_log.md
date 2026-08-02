@@ -12307,3 +12307,66 @@ PASS_INDEPENDENT_RECOMPUTATION_CASE6_DIFFEOMORPHIC_TRANSPORT_CONVERGENCE_V105_1
 - `docs/nine_view_case6_diffeomorphic_transport_convergence_v105_1_result_2026-08-02.md`
 - `docs/nine_view_case6_diffeomorphic_transport_convergence_v105_1_public_summary.json`
 - `assets/nine_view_case6_diffeomorphic_transport_convergence_v105_1.png`
+
+## 2026-08-02：v106.1 关闭了微分同胚离散输运的首个严格数值门
+
+### 先说人话
+
+师兄说“加入微分同胚原理，可以增强坐标系变化后的泛化”。我没有马上给网络多塞几个坐标参数，而是先检查一件更基础的事：同一个三维场换坐标、再换回来，网格越细时是不是稳定地越来越准。
+
+答案现在是：**在节点严格嵌套、观测和场使用同一个零均值规范后，是的。**
+
+### v106 先暴露了一个不该被掩盖的问题
+
+v105.1 的 `32/64/128/256` 节点不严格嵌套，2x 出现反常尖峰。v106 改成 `32/63/125/249`，让粗节点恰好出现在细网格上，并直接 stride 回粗网格。
+
+但完整性门先发现：没有施加任何形变时，field 和 gradient 几乎完全相同，observation 却从 0 漂到 `0.0060 / 0.0087 / 0.0101`。原因是观测评分用了第二次共同零均值之前的场；常数偏置在连续 BOST 中本应不可见，却被 support 边缘的有限差分变成假梯度。
+
+所以 v106 被判 `INCONCLUSIVE_INVALID`。即使它的收敛曲线很好看，也没有拿来宣布成功。
+
+### v106.1 只修了同一规范
+
+保持以下内容完全不变：
+
+- 已开封 Case 6 的 5 帧；
+- x/y/z 正负共 6 类微分同胚；
+- 3 套九视角几何；
+- 四级区间嵌套网格；
+- 所有绝对门、比值门、p90/worst 单调门和逐单元门。
+
+唯一变化是 field、gradient、observation 都对同一个 coarse support-zero-mean roundtrip tensor 评分。
+
+### 正式结果
+
+| 网格 | field worst | 内部梯度 worst | observation worst |
+|---|---:|---:|---:|
+| `32x16x16` | 0.105339 | 0.291055 | 0.130879 |
+| `63x31x31` | 0.073452 | 0.252901 | 0.087492 |
+| `125x61x61` | 0.052644 | 0.187780 | 0.053826 |
+| `249x121x121` | **0.026397** | **0.095576** | **0.023116** |
+
+- p90-higher 四级单调：`3/3`；
+- worst 四级单调：`3/3`；
+- 8x 绝对保真：`3/3`；
+- 8x/1x worst：`0.251 / 0.328 / 0.177`；
+- 90 个单元最终不劣比例：三项均 `100%`；
+- 90 个单元四级全程单调比例：三项均 `100%`。
+
+独立程序用另一套手写插值与 restriction 重算 360 行，逐行最大差 `1.58e-14`、汇总最大差 `1.18e-13`、判据不一致为 0。
+
+### 是否成功，是否突破
+
+- **成功：** 微分同胚坐标输运在当前公开三维反应流代理上形成了严格、可独立复算的四级收敛链。
+- **突破性进展：** 这是数值机制门突破，意味着后续模型不必再拟合一个明显不可信的离散 warp。
+- **还不是算法突破：** 没有 learned initializer、未见坐标外测、matched-accuracy 调用减少、wall/RSS 或真实 BOST。
+- **状态：** `algorithm_breakthrough=false`、`paper_success=false`、`real_BOST=false`。
+
+### 为什么下一步仍不租 GPU
+
+当前每级网格都保留一格 support 边界，因此其物理厚度随分辨率变化。下一门先固定这个物理厚度，排除“边界层变薄才让误差下降”的替代解释。只有它继续通过，才接入最小坐标条件 warm initializer，并在结果前封存的未见坐标变化上测试。
+
+公开证据：
+
+- `docs/nine_view_case6_diffeomorphic_interval_nested_v106_1_result_2026-08-02.md`
+- `docs/nine_view_case6_diffeomorphic_interval_nested_v106_1_public_summary.json`
+- `assets/nine_view_case6_diffeomorphic_interval_nested_v106_1.png`

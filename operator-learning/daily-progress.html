@@ -509,13 +509,13 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>3 / 3 · 0 / 3</b>
-        <span>v105.1 的 8× 三项绝对保真通过数，以及 p90 / worst 四级单调收敛通过数。</span>
+        <b>3 / 3 · 100%</b>
+        <span>v106.1 的三项 p90 / worst 四级单调通过数，以及逐单元全级单调比例。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v105.1 的 8× 端点有真实余量，但四级微分同胚输运没有单调收敛</strong>
-      <span>从原始公开 CFD 场构造的 <code>8×</code> 输运在 field、内部梯度、观测三项绝对门均通过，worst 相对 <code>1×</code> 降至 <code>0.324 / 0.428 / 0.240</code>；但非嵌套 <code>2×</code> 网格让全部尾部先恶化，p90 与 worst 单调门都是 <code>0/3</code>。独立复算逐行最大差 <code>4.48e-15</code>。当前不租 GPU，下一门只检验区间嵌套网格与精确 stride restriction；<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新科学判决：v106.1 通过微分同胚输运的共同规范四级收敛门</strong>
+      <span>区间严格嵌套的 <code>32/63/125/249</code> 节点链与精确 stride restriction 下，field、内部梯度、观测的 p90 和 worst 单调门均为 <code>3/3</code>，逐单元全级单调比例均为 <code>100%</code>；8×/1× worst 为 <code>0.251 / 0.328 / 0.177</code>。独立复算逐行最大差 <code>1.58e-14</code>、判据不一致为 0。当前是<strong>数值机制门突破</strong>，仍有 <code>algorithm_breakthrough=false</code>；下一门固定物理 support 厚度，仍不租 GPU。</span>
       <details style="margin-top:10px;">
         <summary>展开同日 v94 及更早父证据</summary>
         <span>
@@ -631,12 +631,15 @@
                 <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
-                    <span class="tag">v105.1 8× 绝对保真：3/3</span>
-                    <span class="tag negative">p90 / worst 单调：0/3</span>
-                    <span class="tag">8× / 1× worst：0.324 / 0.428 / 0.240</span>
-                    <span class="tag negative">2× 三项共同尖峰</span>
+                    <span class="tag">v106.1 p90 / worst 单调：3/3</span>
+                    <span class="tag">逐单元全级单调：100% / 100% / 100%</span>
+                    <span class="tag">8× / 1× worst：0.251 / 0.328 / 0.177</span>
+                    <span class="tag">数值机制门突破</span>
                     <span class="tag engineering">360 + 360 行独立复算</span>
-                    <span class="tag">下一门：区间嵌套网格</span>
+                    <span class="tag negative">algorithm breakthrough false</span>
+                    <span class="tag">下一门：固定物理 support 厚度</span>
+                    <span class="tag negative">v106 首跑：观测基线漂移而无效</span>
+                    <span class="tag negative">v105.1 非嵌套单调：0/3</span>
                     <span class="tag">v104 伴随误差：5.59e-14</span>
                     <span class="tag negative">粗网格保真：0/3</span>
                     <span class="tag negative">恒等 fixed-anchor：0/15</span>
@@ -661,13 +664,37 @@
                     <span class="tag engineering">270 回放逐值复算</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3>v105.1：高分辨率端点明显变准，但非嵌套网格没有形成可信收敛链</h3>
-                  <p>师兄提出的微分同胚建议已从公式门推进到原始三维 CFD 的四级输运。8× 端点三项绝对误差都过线，说明连续域方向值得追；但 2× 反常变差使预注册收敛门失败，当前不能把这个正信号包装成算法或泛化成功。</p>
+                  <h3>v106.1：共同规范与严格嵌套网格关闭了微分同胚输运的首个数值机制门</h3>
+                  <p>师兄提出的微分同胚建议已从公式门推进到可独立复算的四级收敛链。三类误差的 p90、worst、最终绝对门与逐单元单调全部通过；但这是数值机制门突破，不是 learned initializer 或未见坐标泛化成功。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
               <div class="entry-body">
                 <div class="evidence-grid">
+                  <section>
+                    <h4>为什么做 v106-v106.1</h4>
+                    <p>v105.1 的 8× 端点变准，却因 <code>32/64/128/256</code> 节点不严格嵌套而在 2× 出现尖峰。v106 保持 5 帧、6 类形变、3 套几何和全部阈值不变，只改用 <code>32/63/125/249</code> 节点与精确 stride，先排除节点错位。</p>
+                  </section>
+                  <section>
+                    <h4>v106 为什么 fail-closed</h4>
+                    <p>没有施加形变时，field 与内部梯度恒等误差约 <code>1e-16</code>，但 observation 基线从 <code>0</code> 漂到 <code>0.00603 / 0.00874 / 0.01009</code>。连续 BOST 不应看到常数折射率规范，离散 support 边缘却把偏置变成假梯度，因此 v106 判 <code>INCONCLUSIVE_INVALID</code>。</p>
+                  </section>
+                  <section>
+                    <h4>v106.1 只修一件事</h4>
+                    <p>不改网格、形变、帧、相机、插值或门值，只让 field、gradient、observation 对同一个粗网格 support-zero-mean roundtrip 场评分。修复后四级未形变参考态的三类恒等误差都不超过约 <code>1.66e-15</code>。</p>
+                  </section>
+                  <section>
+                    <h4>正式数值结果</h4>
+                    <p>field worst 为 <code>0.1053→0.0735→0.0526→0.0264</code>；内部梯度为 <code>0.2911→0.2529→0.1878→0.0956</code>；observation 为 <code>0.1309→0.0875→0.0538→0.0231</code>。三项 p90 与 worst 单调门、最终绝对门、最终比值门均为 <code>3/3</code>。</p>
+                  </section>
+                  <section>
+                    <h4>独立复算</h4>
+                    <p>独立程序用手写八角点 gather 与局部 stride restriction 重算 360 行；逐行最大差 <code>1.58e-14</code>，汇总最大差 <code>1.18e-13</code>，判据不一致为 0，正式输入输出未漂移。共享九视角 physics kernel 的边界继续披露。</p>
+                  </section>
+                  <section>
+                    <h4>突破与边界</h4>
+                    <p>这是<strong>数值机制门突破</strong>：今后的坐标条件模型不再建立在明显失真的离散 warp 上。但没有训练模型、没有未见坐标外测、没有 matched-accuracy 调用优势或真实 BOST；<code>algorithm_breakthrough=false</code>。下一门固定 support 的物理厚度，仍不租 GPU。</p>
+                  </section>
                   <section>
                     <h4>为什么做 v105.1</h4>
                     <p>v104 已证明微分同胚算子共轭与伴随写对了，却在 <code>32×16×16</code> 粗网格上失真。v105.1 因此不训练模型，直接从公开 CFD 原始密度场构造四级分辨率，先问离散输运本身是否趋近可信连续结果。</p>
@@ -967,12 +994,15 @@
                   </section>
                 </div>
                 <figure class="entry-figure">
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_transport_convergence_v105_1.png" aria-label="打开 v105.1 微分同胚输运收敛结果图">
-                    <img src="../assets/nine_view_case6_diffeomorphic_transport_convergence_v105_1.png" alt="v105.1 高分辨率微分同胚输运端点余量与非单调收敛结果" />
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_interval_nested_v106_1.png" aria-label="打开 v106.1 微分同胚输运收敛结果图">
+                    <img src="../assets/nine_view_case6_diffeomorphic_interval_nested_v106_1.png" alt="v106.1 共同规范严格嵌套微分同胚输运四级收敛结果" />
                   </a>
-                  <figcaption>v105.1：8× 端点绝对保真 3/3，但非嵌套 2× 网格三项共同恶化，p90 与 worst 四级单调门均为 0/3。</figcaption>
+                  <figcaption>v106.1：三项 worst 随严格嵌套网格逐级下降，p90 / worst 单调门、最终绝对门与逐单元全级单调全部通过；算法突破仍未成立。</figcaption>
                 </figure>
                 <div class="entry-links">
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_interval_nested_v106_1_result_2026-08-02.md">v106.1 完整证据</a>
+                  <a href="../docs/nine_view_case6_diffeomorphic_interval_nested_v106_1_public_summary.json">v106.1 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_interval_nested_v106_1.png">v106.1 结果图</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_transport_convergence_v105_1_result_2026-08-02.md">v105.1 完整证据</a>
                   <a href="../docs/nine_view_case6_diffeomorphic_transport_convergence_v105_1_public_summary.json">v105.1 脱敏摘要</a>
                   <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_transport_convergence_v105_1.png">v105.1 结果图</a>
@@ -2331,13 +2361,15 @@
         Jacobian、逆映射与 <code>A_phi/A_phi^T</code> 伴随数学通过，但粗网格保真为 <code>0/3</code>，fixed-anchor
         在恒等坐标与形变坐标分别为 <code>0/15</code> 与 <code>0/90</code>。v105.1 再从原始 CFD 构造四级高分辨率输运：
         <code>8×</code> 端点三项绝对保真全部通过，但非嵌套 <code>2×</code> 网格形成共同尖峰，p90 与 worst 单调门均为
-        <code>0/3</code>。因此下一问题进一步收束为区间嵌套网格与精确 stride restriction；它仍没有证明未见 pose 泛化、真实 BOST 或论文成功。
+        <code>0/3</code>。v106 改用区间嵌套网格后因未形变 observation 基线漂移而 fail-closed；v106.1 只统一共同粗网格规范，
+        随即让三项 p90、worst、最终绝对门和逐单元四级单调全部通过，独立复算汇总最大差 <code>1.18e-13</code>。
+        这构成数值机制门突破，但仍没有证明 learned warm-start、未见 pose 泛化、真实资源收益、真实 BOST 或论文成功。
       </p>
     </section>
   </main>
 
   <footer>
-    持续更新至 v105.1 微分同胚高分辨率端点余量与非单调收敛独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v106.1 共同规范区间嵌套微分同胚输运收敛独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
