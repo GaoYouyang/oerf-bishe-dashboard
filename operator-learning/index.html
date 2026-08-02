@@ -502,19 +502,19 @@
     </nav>
     <div class="hero-grid">
       <div>
-        <div class="eyebrow">毕业设计聚焦主页 · 师兄确认 C 路线 · 更新至 2026-08-02</div>
+        <div class="eyebrow">毕业设计聚焦主页 · 师兄确认 C 路线 · 更新至 2026-08-03</div>
         <h1>低成本 Warm Start 加速三维 BOST 重建</h1>
         <p class="lead">研究一个可被严格检验的问题：让只读取多视角观测与已知几何的低成本初始化器，给 CGLS / PCGLS 提供更好的三维起点；在最终场、完整梯度、内部梯度和观测误差均不劣于标准重建时，减少昂贵的 <code>A/A^T</code> 调用、端到端时间和峰值内存。当前使用公开反应流 CFD 构造九视角 straight-ray 代理，最终目标是迁移到 OERF 的真实 BOST 数据。</p>
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="#research-progress">查看当前研究进程</a>
           <a class="button" href="daily-progress.html">查看每日实质增量</a>
-          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_interval_nested_v106_1_result_2026-08-02.md">阅读最新完整证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_support_chain_v109_result_2026-08-03.md">阅读最新完整证据</a>
         </div>
       </div>
       <aside class="hero-verdict" aria-label="当前科学判决">
-        <b>当前判决：微分同胚离散输运的首个严格数值门已通过</b>
-        <p><code>v106.1</code> 在区间严格嵌套的 <code>32/63/125/249</code> 节点链上，用精确 stride restriction 和共同粗网格规范重算。field、内部梯度、观测的 p90 与 worst 单调门均为 <code>3/3</code>，逐单元四级单调比例均为 <code>100%</code>。</p>
-        <p><strong>突破边界：</strong>这是可独立复算的数值机制门突破，不是 learned warm-start 或坐标泛化成功。下一门固定 support 的物理厚度；通过后才把坐标条件接入最小初始化器，当前仍不租 GPU。</p>
+        <b>突破性进展：固定物理宽度的平滑支撑通过微分同胚四级收敛门</b>
+        <p><code>v107</code> 先证明旧结果受“边界物理厚度缩小”混杂，<code>v108</code> 再证明支撑必须随场一起输运；<code>v109</code> 用粗节点完全等价的半余弦窗消除硬边界后，field、内部梯度、观测的 p90 与 worst 单调门均为 <code>3/3</code>，逐单元四级单调比例三项均为 <code>100%</code>。</p>
+        <p><strong>突破边界：</strong>这是正式与独立实现共同确认的数值机制突破，尚不是 learned warm-start 或坐标泛化成功。现在才授权最小 CPU 级坐标条件初始化器；未见形变与几何外门通过前仍不租 GPU。</p>
       </aside>
     </div>
     <div class="current-grid" aria-label="当前核心状态">
@@ -528,9 +528,9 @@
       <div class="archive-body">
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
-      <a class="button primary" href="#diffeomorphic-interval-nested-v106-1">打开 v106.1 最新路线判决</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_interval_nested_v106_1_result_2026-08-02.md">读 v106.1 完整证据</a>
-      <a class="button" href="../docs/nine_view_case6_diffeomorphic_interval_nested_v106_1_public_summary.json">读 v106.1 脱敏摘要</a>
+      <a class="button primary" href="#diffeomorphic-smooth-support-v109">打开 v107-v109 最新路线判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_support_chain_v109_result_2026-08-03.md">读 v107-v109 完整证据</a>
+      <a class="button" href="../docs/nine_view_case6_diffeomorphic_support_chain_v109_public_summary.json">读 v109 脱敏摘要</a>
       <a class="button danger" href="#diffeomorphic-transport-convergence-v105-1">回看 v105.1 父负结果</a>
       <a class="button" href="#diffeomorphic-normalized-anchor-v104">回看 v104 父判决</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_normalized_anchor_v104_result_2026-08-02.md">读 v104 父证据</a>
@@ -628,8 +628,8 @@
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert success" style="margin-top:12px;">
-      <strong>v106.1 数值机制门突破：共同规范 + 严格嵌套网格使三项四级收敛全部通过</strong>
-      <span><code>32×16×16 → 63×31×31 → 125×61×61 → 249×121×121</code> 上，field、内部梯度、观测的 p90 和 worst 单调门均为 <code>3/3</code>，逐单元全级单调比例均为 <code>100%</code>；8×/1× worst 降至 <code>0.251 / 0.328 / 0.177</code>。独立复算逐行最大差 <code>1.58e-14</code>、判据不一致为 0。<strong>这是数值机制门突破，<code>algorithm_breakthrough=false</code></strong>；下一门先固定 support 的物理厚度。<a href="#diffeomorphic-interval-nested-v106-1">查看完整证据</a>。</span>
+      <strong>v109 数值机制突破：固定物理宽度 + 支撑协变 + 平滑边界使三项完整收敛门通过</strong>
+      <span><code>32×16×16 → 63×31×31 → 125×61×61 → 249×121×121</code> 上，field、内部梯度、观测的 p90 和 worst 单调门均为 <code>3/3</code>，逐单元全级单调比例均为 <code>100%</code>；8×/1× worst 为 <code>0.251 / 0.329 / 0.177</code>。平滑窗在所有粗节点上与原硬支撑差为 0；独立复算逐行最大差 <code>1.58e-14</code>、判据不一致为 0。<strong>这是数值机制门突破，<code>algorithm_breakthrough=false</code></strong>；下一门正式进入最小坐标条件 observation-only initializer。<a href="#diffeomorphic-smooth-support-v109">查看完整证据</a>。</span>
     </div>
     <div class="alert critical" style="margin-top:12px;">
       <strong>v104 最新判决：微分同胚算子共轭正确，但当前粗网格离散与固定 anchor 不可用</strong>
@@ -966,7 +966,9 @@
         <div><b>v102 可观测 rank 4 已关闭</b><span>正确输运 90/90；无输运 71/90；优势方法 0/3</span></div>
         <div><b>v103-v104 微分同胚粗网格门失败</b><span>伴随数学通过；保真 0/3；恒等 anchor 0/15；形变 0/90</span></div>
         <div><b>v106.1 嵌套输运收敛已通过</b><span>共同规范、32/63/125/249 节点与精确 stride；三项四级单调均 3/3</span></div>
-        <div class="current"><b>当前：固定物理 support 厚度</b><span>排除一格边界随分辨率变薄后，才接入坐标条件 warm initializer</span></div>
+        <div><b>v107-v108 支撑混杂已定位</b><span>固定物理厚度推翻旧解释；随场输运修复梯度/观测，但硬边界仍失败</span></div>
+        <div><b>v109 平滑支撑已通过</b><span>coarse-node identity 为 0 差；三项完整四级收敛与独立复算通过</span></div>
+        <div class="current"><b>当前：坐标条件 initializer</b><span>结果前留出微分同胚与相机几何，先跑 CPU 级无学习/线性/RBF/小 MLP</span></div>
         <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
       </div>
       <div class="focus-grid" style="margin-top:12px;">
@@ -1080,18 +1082,33 @@
             <div><strong>v106.1 共同规范嵌套输运：三项四级收敛与逐单元门全部通过</strong><p>v106 先因未形变观测基线随分辨率漂移而 fail-closed；v106.1 只统一 field、gradient、observation 的粗网格零均值规范。严格嵌套节点和精确 stride 下，三项 p90/worst 单调为 <code>3/3</code>，逐单元全级单调均为 <code>100%</code>。360 行独立复算的汇总最大差 <code>1.18e-13</code>。</p></div>
             <span class="evidence-state">数值机制门突破 · 算法未证</span>
           </article>
+          <article class="evidence-row">
+            <time datetime="2026-08-03">2026-08-03</time>
+            <div><strong>v107 固定物理厚度：推翻 v106.1 的宽泛解释</strong><p>把各级硬支撑保持为一个粗网格间隔后，8× field / gradient / observation worst 变为 <code>0.2431 / 0.3192 / 0.1073</code>，完整收敛门 <code>0/3</code>。这确认旧通过含有边界层随网格变薄的混杂。</p></div>
+            <span class="evidence-state fail">关键反证</span>
+          </article>
+          <article class="evidence-row">
+            <time datetime="2026-08-03">2026-08-03</time>
+            <div><strong>v108 支撑协变：梯度与观测修复，硬边界仍失败</strong><p>取消变换坐标系中的轴对齐重新裁边后，gradient 与 observation 的尾部恢复逐级下降；field 仍在 4× 反弹，逐单元全级单调仅 <code>26.7% / 46.7% / 33.3%</code>。</p></div>
+            <span class="evidence-state fail">部分修复 · 仍失败</span>
+          </article>
+          <article class="evidence-row" id="diffeomorphic-smooth-support-v109">
+            <time datetime="2026-08-03">2026-08-03</time>
+            <div><strong>v109 固定宽度平滑支撑：三项完整四级收敛门全部通过</strong><p>半余弦窗在所有粗节点上与原硬支撑逐点相同，只平滑粗节点之间的边界。8× worst 为 <code>0.02647 / 0.09567 / 0.02312</code>，三项 p90、worst、最终比值、绝对门和逐单元门全部通过。独立 360 行复算最大差 <code>1.58e-14</code>。</p></div>
+            <span class="evidence-state">突破性数值机制进展 · 算法未证</span>
+          </article>
         </div>
         <figure class="latest-figure">
-          <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_interval_nested_v106_1.png" aria-label="打开 v106.1 完整结果图">
-            <img loading="lazy" decoding="async" src="../assets/nine_view_case6_diffeomorphic_interval_nested_v106_1.png" alt="v106.1 共同规范严格嵌套微分同胚输运四级收敛结果" />
+          <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_support_chain_v109.png" aria-label="打开 v107-v109 支撑因果链完整结果图">
+            <img loading="lazy" decoding="async" src="../assets/nine_view_case6_diffeomorphic_support_chain_v109.png" alt="v107 至 v109 固定物理宽度、支撑协变和平滑边界的微分同胚输运因果链" />
           </a>
-          <figcaption>最新可视化：严格嵌套节点、精确 stride 与共同粗网格规范下，field、内部梯度、观测的 worst 均逐级下降；三项冻结收敛门全部通过。</figcaption>
+          <figcaption>最新可视化：v107 用固定物理厚度推翻混杂，v108 验证支撑协变但仍暴露硬边界问题，v109 只平滑亚粗网格边界后恢复三项完整四级收敛。</figcaption>
         </figure>
       </div>
       <div class="actions" style="margin-top:13px;">
-        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_interval_nested_v106_1_result_2026-08-02.md">读 v106.1 完整证据</a>
-        <a class="button" href="../docs/nine_view_case6_diffeomorphic_interval_nested_v106_1_public_summary.json">读机器可读摘要</a>
-        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_interval_nested_v106_1.png">打开结果图原尺寸</a>
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_support_chain_v109_result_2026-08-03.md">读 v107-v109 完整证据</a>
+        <a class="button" href="../docs/nine_view_case6_diffeomorphic_support_chain_v109_public_summary.json">读机器可读摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_support_chain_v109.png">打开结果图原尺寸</a>
       </div>
     </section>
 
@@ -1107,7 +1124,7 @@
       <div class="focus-grid">
         <article class="focus-card positive"><h3>已建立可复算链</h3><p>每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。</p></article>
         <article class="focus-card boundary"><h3>当前更新源</h3><p id="liveEvidenceStatus" aria-live="polite">正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。</p></article>
-        <article class="focus-card current"><h3>本轮真实增量</h3><p>v106.1 关闭了微分同胚路线的第一个严格数值门：共同规范与区间嵌套网格使三类误差逐级下降，360 行独立复算一致。它授权下一步检验固定物理 support 厚度，但尚未授权把结果写成 learned initializer、泛化或算法突破。</p></article>
+        <article class="focus-card current"><h3>本轮真实增量</h3><p>v107-v109 完成了一条可证伪的因果链：先识别固定物理厚度混杂，再修复支撑坐标协变，最后用 coarse-node 等价的半余弦窗消除硬边界插值伪差。v109 的 360 行正式与独立复算全部闭合，授权最小坐标条件 initializer，但仍不构成算法或泛化成功。</p></article>
       </div>
     </section>
 
@@ -1132,7 +1149,9 @@
         <div class="outcome-step closed"><div><b>粗网格三线性输运与固定 normalized anchor</b><span>三项数值保真门 0/3；identity 0/15；正确形变 0/90。停止继续调小形变幅值或用大网络救援。</span></div><em>当前实现已关闭</em></div>
         <div class="outcome-step closed"><div><b>非嵌套节点倍增的四级输运</b><span>v105.1 的 8× 端点三项通过，但 2× 全部恶化，p90 与 worst 单调门均为 0/3；不能据此声明收敛。</span></div><em>当前序列已关闭</em></div>
         <div class="outcome-step passed"><div><b>区间嵌套网格共同规范输运</b><span>v106.1 在 <code>32/63/125/249</code> 节点与精确 stride 下，field、内部梯度、observation 的全部冻结收敛门均通过。</span></div><em>数值机制已通过</em></div>
-        <div class="outcome-step"><div><b>固定物理 support 厚度</b><span>保持其他条件不变，排除一格 support 边界随网格加密而物理变薄的替代解释。</span></div><em>下一门</em></div>
+        <div class="outcome-step closed"><div><b>固定物理宽度的硬支撑</b><span>v107 推翻 v106.1 的宽泛解释；v108 证明随场输运支撑可修复部分误差，但硬边界仍不能通过完整收敛门。</span></div><em>负结果已解释</em></div>
+        <div class="outcome-step passed"><div><b>固定宽度、协变输运的平滑支撑</b><span>v109 的 half-cosine 窗在所有粗节点上与原问题相同，三项 p90/worst/逐单元四级收敛门全部通过。</span></div><em>数值机制已通过</em></div>
+        <div class="outcome-step"><div><b>坐标条件 observation-only initializer</b><span>结果前留出微分同胚与相机几何组合，先比较无学习、线性/RBF 和最小 MLP，再接同一 exact physics refinement。</span></div><em>当前科学门</em></div>
         <div class="outcome-step"><div><b>独立工况 matched-accuracy</b><span>在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
         <div class="outcome-step"><div><b>真实资源收益</b><span>fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。</span></div><em>尚未启动</em></div>
         <div class="outcome-step"><div><b>真实 BOST 迁移</b><span>接入组内位移图、相机标定、重复测量噪声与认可基线，重新定义实验“同精度”。</span></div><em>需要组内数据</em></div>
@@ -1162,7 +1181,7 @@
         </div>
       </div>
       <div class="future-grid">
-        <article class="focus-card current"><h3>最近科学门</h3><p>v106.1 已把非嵌套节点和规范不一致两个混杂因素排除，三类误差都形成严格四级收敛链。下一步固定 support 的物理厚度，确认改善不是边界层随网格变薄的偶然结果；通过后才接入最小坐标条件 warm initializer。</p></article>
+        <article class="focus-card current"><h3>最近科学门</h3><p>v107-v109 已依次排除支撑物理厚度、坐标协变与硬边界三个混杂因素，v109 的平滑支撑通过全部冻结收敛门。现在冻结最小坐标条件 observation-only initializer，并在未见微分同胚和相机几何组合上检验 matched-accuracy。</p></article>
         <article class="focus-card boundary"><h3>何时租 GPU</h3><p>只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。</p></article>
         <article class="focus-card positive"><h3>何时接组内数据</h3><p>公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。</p></article>
       </div>
@@ -2896,17 +2915,17 @@
         .then(evidence => {
           const metrics = evidence.metrics || {};
           const decision = evidence.current_decision || {};
-          const fidelityPassed = Number(metrics.v106_1_final_absolute_limits_passed);
-          document.getElementById('liveWitnessCount').textContent = `${fidelityPassed} / ${metrics.v106_1_final_absolute_limits_total}`;
-          document.getElementById('liveFailureCount').textContent = `${metrics.v106_1_p90_monotonic_passed} / ${metrics.v106_1_p90_monotonic_total}`;
-          document.getElementById('liveCallBudget').textContent = `${metrics.v106_1_worst_monotonic_passed} / ${metrics.v106_1_worst_monotonic_total}`;
+          const fidelityPassed = Number(metrics.v109_final_absolute_limits_passed);
+          document.getElementById('liveWitnessCount').textContent = `${fidelityPassed} / ${metrics.v109_final_absolute_limits_total}`;
+          document.getElementById('liveFailureCount').textContent = `${metrics.v109_p90_monotonic_passed} / ${metrics.v109_p90_monotonic_total}`;
+          document.getElementById('liveCallBudget').textContent = `${metrics.v109_worst_monotonic_passed} / ${metrics.v109_worst_monotonic_total}`;
           document.getElementById('liveBreakthrough').textContent = String(Boolean(decision.algorithm_breakthrough));
           const nextGate = String(evidence.next_scientific_gate_zh || evidence.next_scientific_gate).trim();
           const nextGateSentence = /[。！？.!?]$/.test(nextGate) ? nextGate : `${nextGate}。`;
-          document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：v106.1 的 8x 绝对保真为 ${fidelityPassed}/${metrics.v106_1_final_absolute_limits_total}，p90 与 worst 四级单调门分别为 ${metrics.v106_1_p90_monotonic_passed}/${metrics.v106_1_p90_monotonic_total}、${metrics.v106_1_worst_monotonic_passed}/${metrics.v106_1_worst_monotonic_total}；独立复算逐行最大差 ${Number(metrics.v106_1_row_metric_maximum_absolute_difference).toExponential(2)}。下一门是 ${nextGateSentence}`;
+          document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：v109 的 8x 绝对保真为 ${fidelityPassed}/${metrics.v109_final_absolute_limits_total}，p90 与 worst 四级单调门分别为 ${metrics.v109_p90_monotonic_passed}/${metrics.v109_p90_monotonic_total}、${metrics.v109_worst_monotonic_passed}/${metrics.v109_worst_monotonic_total}；独立复算逐行最大差 ${Number(metrics.v109_row_metric_maximum_absolute_difference).toExponential(2)}。下一门是 ${nextGateSentence}`;
         })
         .catch(() => {
-          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v106.1 的 8x 绝对保真、p90 与 worst 四级单调门均为 3/3，逐单元全级单调均为 100%；下一步固定物理 support 厚度，algorithm_breakthrough=false。';
+          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v109 的 8x 绝对保真、p90 与 worst 四级单调门均为 3/3，逐单元全级单调均为 100%；下一步冻结最小坐标条件 observation-only initializer，algorithm_breakthrough=false。';
         });
     })();
   </script>
