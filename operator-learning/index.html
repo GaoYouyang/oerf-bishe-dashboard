@@ -506,18 +506,18 @@
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="#research-progress">查看当前研究进程</a>
           <a class="button" href="daily-progress.html">查看每日实质增量</a>
-          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v93_anchor_locator_cross_geometry_v94_result_2026-08-02.md">阅读最新完整证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95_result_2026-08-02.md">阅读最新完整证据</a>
         </div>
       </div>
       <aside class="hero-verdict" aria-label="当前科学判决">
         <b>当前判决：尚未突破</b>
-        <p><code>v94</code> 已在 F12+ 的 30 帧上检验 v93 的局部伤害假设：eligible 帧为 <code>0/30</code>，候选 / Zero-K2 内部梯度误差比全部低于 1，范围 <code>0.845–0.979</code>。</p>
-        <p><strong>下一步：</strong>关闭 anchor / local-window 修补路线，转向九维 physical-ball witness 的 observation-only 系数预测，并为少数异常帧建立校准置信度与 fail-closed 回退；当前仍不租 GPU。</p>
+        <p><code>v95.1</code> 用 deployment-visible observation 与 known geometry 预测九维 physical-ball 坐标。最佳线性策略把严格通过从父 K1 的 <code>78/90</code> 提高到 <code>81/90</code>，但仍未达到全单元门。</p>
+        <p><strong>下一步：</strong>当前候选即使用真值挑选也最多 <code>83/90</code>，因此停止只调置信度，先验证 observation-adaptive direction 是否具备 <code>90/90</code> 表示容量；当前仍不租 GPU。</p>
       </aside>
     </div>
     <div class="current-grid" aria-label="当前核心状态">
-      <div class="current-metric"><b id="liveWitnessCount">89 / 90</b><span>Case 6 严格 witness；最后反例仍只出现在 F30+/12</span></div>
-      <div class="current-metric warning"><b id="liveFailureCount">0 / 30 普遍伤害</b><span>v94 在 F12+ 没有复现 F30 的净内部梯度伤害</span></div>
+      <div class="current-metric"><b id="liveWitnessCount">81 / 90</b><span>v95.1 最佳 observation-only 策略严格通过数</span></div>
+      <div class="current-metric warning"><b id="liveFailureCount">9 个反例</b><span>全部落在内部梯度尾部，不能被平均改善掩盖</span></div>
       <div class="current-metric"><b id="liveCallBudget">2A + 2A<sup>T</sup></b><span>每个候选的冻结 exact 在线预算</span></div>
       <div class="current-metric warning"><b id="liveBreakthrough">false</b><span><code>algorithm_breakthrough</code>；不夸大负结果</span></div>
     </div>
@@ -526,9 +526,10 @@
       <div class="archive-body">
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
-      <a class="button primary" href="#anchor-cross-geometry-v94">打开 v94 最新路线判决</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v93_anchor_locator_cross_geometry_v94_result_2026-08-02.md">读 v94 完整证据</a>
-      <a class="button" href="../docs/nine_view_v93_anchor_locator_cross_geometry_v94_public_summary.json">读 v94 脱敏摘要</a>
+      <a class="button primary" href="#physical-ball-predictor-v95">打开 v95.1 最新路线判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95_result_2026-08-02.md">读 v95.1 完整证据</a>
+      <a class="button" href="../docs/nine_view_v94_case6_physical_ball_observation_predictor_v95_public_summary.json">读 v95.1 脱敏摘要</a>
+      <a class="button" href="#anchor-cross-geometry-v94">回看 v94 路线判决</a>
       <a class="button" href="#spatial-error-localization-v93">回看 v93 机制判决</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md">读 v93 完整证据</a>
       <a class="button" href="../docs/nine_view_v92_case6_spatial_error_localization_v93_public_summary.json">读 v93 脱敏摘要</a>
@@ -597,8 +598,8 @@
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert critical" style="margin-top:12px;">
-      <strong>v94 最新判决：F30 局部伤害没有在 F12 成为普遍机制</strong>
-      <span>F12+ 的 30 帧中，候选 / Zero-K2 内部梯度误差比为 <code>0.845–0.979</code>，总 signed excess 为正的帧数为 <code>0</code>，eligible 为 <code>0/30</code>。局部红区不等于总体更差，因此关闭 anchor / local-window 修补路线，F15 局部图继续保留。<a href="#anchor-cross-geometry-v94">查看完整证据</a>。</span>
+      <strong>v95.1 最新判决：小模型存在可学习信号，但严格全单元门失败</strong>
+      <span>最佳 selected linear ridge 为 <code>81/90</code>，高于父 K1 的 <code>78/90</code>；但九个失败全部被置信选择器接受。更关键的是，父 K1、mean、linear 与 RBF 的真值神谕并集上限也只有 <code>83/90</code>，所以继续调置信阈值无法达到 90/90。<a href="#physical-ball-predictor-v95">查看完整证据</a>。</span>
     </div>
     <div class="alert critical" style="margin-top:12px;">
       <strong>v88.1 父判决：四参数 spatial-mask4 只有 86/90 个 Case 6 单元找到严格 witness</strong>
@@ -904,8 +905,8 @@
         <div><b>公开反应流 CFD</b><span>PoolFire 与独立 BLASTNet 工况</span></div>
         <div><b>九视角观测</b><span>已知几何 straight-ray 密度梯度代理</span></div>
         <div><b>粗网格逆问题</b><span><code>32×16×16</code> 三维状态</span></div>
-        <div class="current"><b>当前：预测已有 physical-ball witness</b><span>停止局部窗口；研究系数可预测性与置信回退</span></div>
-        <div><b>Observation-only 学习</b><span>先用小模型证明可预测性，再决定是否租 GPU</span></div>
+        <div><b>九维小模型已判失败</b><span>最佳 81/90；候选神谕上限 83/90</span></div>
+        <div class="current"><b>当前：自适应方向容量</b><span>只由 observation / geometry 生成方向，先过 90/90</span></div>
         <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
       </div>
       <div class="focus-grid" style="margin-top:12px;">
@@ -964,18 +965,23 @@
             <div><strong>v94：跨几何普遍性为 0/30，局部修补路线关闭</strong><p>F12+ 的候选 / Zero-K2 内部梯度误差比全部低于 1；22 帧虽有集中的局部正误差，但 30 帧总 signed excess 全为负，不能把局部红区误写成净伤害。</p></div>
             <span class="evidence-state fail">关线结果</span>
           </article>
+          <article class="evidence-row" id="physical-ball-predictor-v95">
+            <time datetime="2026-08-02">2026-08-02</time>
+            <div><strong>v95.1：小模型提高到 81/90，但候选神谕也只有 83/90</strong><p>线性 observation-only predictor 证明九维坐标存在可学习信号；然而九个失败全部落在内部梯度，且完美候选选择仍留下七个共同失败。关闭固定九维小模型与 confidence-only 修补。</p></div>
+            <span class="evidence-state fail">严格负结果</span>
+          </article>
         </div>
         <figure class="latest-figure">
-          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v93_anchor_locator_cross_geometry_v94.png" aria-label="打开 v94 完整结果图">
-            <img loading="lazy" decoding="async" src="../assets/nine_view_v93_anchor_locator_cross_geometry_v94.png" alt="v94 F12 跨几何局部伤害普遍性检验结果" />
+          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95.png" aria-label="打开 v95.1 完整结果图">
+            <img loading="lazy" decoding="async" src="../assets/nine_view_v94_case6_physical_ball_observation_predictor_v95.png" alt="v95.1 observation-only 九维预测与候选上限结果" />
           </a>
-          <figcaption>最新可视化：F12+ 的 30 帧全部低于同成本 Zero-K2 的内部梯度误差；局部正误差并未形成任何一帧净伤害，局部修补路线因此关闭。</figcaption>
+          <figcaption>最新可视化：最佳冻结策略从 78 提高到 81，但 p90 与 worst 仍越线；即使真值神谕挑选所有候选也只有 83/90，证明瓶颈已转到候选表示本身。</figcaption>
         </figure>
       </div>
       <div class="actions" style="margin-top:13px;">
-        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v93_anchor_locator_cross_geometry_v94_result_2026-08-02.md">读 v94 完整证据</a>
-        <a class="button" href="../docs/nine_view_v93_anchor_locator_cross_geometry_v94_public_summary.json">读机器可读摘要</a>
-        <a class="button" href="#anchor-cross-geometry-v94">展开历史区中的技术细节</a>
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95_result_2026-08-02.md">读 v95.1 完整证据</a>
+        <a class="button" href="../docs/nine_view_v94_case6_physical_ball_observation_predictor_v95_public_summary.json">读机器可读摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95.png">打开结果图原尺寸</a>
       </div>
     </section>
 
@@ -991,7 +997,7 @@
       <div class="focus-grid">
         <article class="focus-card positive"><h3>已建立可复算链</h3><p>每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。</p></article>
         <article class="focus-card boundary"><h3>当前更新源</h3><p id="liveEvidenceStatus" aria-live="polite">正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。</p></article>
-        <article class="focus-card current"><h3>本轮真实增量</h3><p>v94 在 F12+ 的 30 帧上得到 0 个净伤害样本，证明 F30 单帧局部缺口不是跨几何普遍机制。局部窗口路线关闭，下一步直接研究已有九维 witness 的 observation-only 可预测性。</p></article>
+        <article class="focus-card current"><h3>本轮真实增量</h3><p>v95.1 真实训练并外折评估 mean、linear ridge、RBF-KRR 与折内置信回退。最佳为 81/90；候选真值神谕上限仅 83/90，因此固定九维小模型和 confidence-only 修补同时关闭。</p></article>
       </div>
     </section>
 
@@ -1004,8 +1010,8 @@
         </div>
       </div>
       <div class="outcome-ladder">
-        <div class="outcome-step closed"><div><b>找到足够但最小的空间表示</b><span>v91 的九维 physical-ball 已达到 89/90；v94 关闭了围绕最后单帧继续加局部窗口的路线，表示扩建暂停。</span></div><em>局部扩建关闭</em></div>
-        <div class="outcome-step"><div><b>训练 observation-only warm initializer</b><span>先预测现有九维 witness 系数，并以校准置信度对 rare outlier 回退；与 ridge、KRR、U-Net / FNO 等公平对照。</span></div><em>最近科学门</em></div>
+        <div class="outcome-step closed"><div><b>固定九维小模型与置信回退</b><span>v95.1 最佳为 81/90，候选神谕上限为 83/90；继续加分类器无法补齐七个共同失败。</span></div><em>已关闭</em></div>
+        <div class="outcome-step"><div><b>验证 observation-adaptive direction 容量</b><span>新方向只由 residual 与 known geometry 生成，并精确嵌套九维父表示；先用 truth-aware 系数检查是否能达到 90/90。</span></div><em>最近科学门</em></div>
         <div class="outcome-step"><div><b>独立工况 matched-accuracy</b><span>在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
         <div class="outcome-step"><div><b>真实资源收益</b><span>fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。</span></div><em>尚未启动</em></div>
         <div class="outcome-step"><div><b>真实 BOST 迁移</b><span>接入组内位移图、相机标定、重复测量噪声与认可基线，重新定义实验“同精度”。</span></div><em>需要组内数据</em></div>
@@ -1035,7 +1041,7 @@
         </div>
       </div>
       <div class="future-grid">
-        <article class="focus-card current"><h3>最近科学门</h3><p>不再修局部窗口。直接检验九维 physical-ball witness 的 observation-only 系数预测：同时输出校准置信度，低置信样本必须 fail closed 回退，不能靠读取真值挑选。</p></article>
+        <article class="focus-card current"><h3>最近科学门</h3><p>不再调九维 predictor 或 confidence gate。先让部署可见 residual 与 known geometry 生成少量自适应方向，检查它是否能在同一 2A+2A<sup>T</sup> 预算下补齐七个共同失败并达到 90/90。</p></article>
         <article class="focus-card boundary"><h3>何时租 GPU</h3><p>只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。</p></article>
         <article class="focus-card positive"><h3>何时接组内数据</h3><p>公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。</p></article>
       </div>
@@ -2775,7 +2781,7 @@
           document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：${metrics.strict_witness_passed}/${metrics.cell_count} 个单元通过；下一门是 ${nextGateSentence}每次独立验证后的公开提交只需更新这份稳定清单。`;
         })
         .catch(() => {
-          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v94 在 F12+ 得到 0/30 个净伤害样本，局部修补路线关闭，algorithm_breakthrough=false。';
+          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v95.1 最佳 observation-only 策略为 81/90，候选神谕上限 83/90，algorithm_breakthrough=false。';
         });
     })();
   </script>

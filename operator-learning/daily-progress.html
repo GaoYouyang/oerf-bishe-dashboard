@@ -445,6 +445,18 @@
     }
     @media (max-width: 620px) {
       header, main, footer { width: min(100% - 24px, 1180px); }
+      .nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        overflow-x: visible;
+        gap: 7px;
+        padding-bottom: 8px;
+      }
+      .nav a {
+        min-width: 0;
+        white-space: normal;
+        line-height: 1.25;
+      }
       h1 { font-size: 31px; }
       .status-grid, .evidence-grid { grid-template-columns: 1fr; }
       .metric { min-height: 0; }
@@ -497,13 +509,16 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>0 / 30</b>
-        <span>v94 在 F12+ 中确认的净伤害帧；F30 局部缺口没有成为跨几何普遍机制。</span>
+        <b>81 / 90</b>
+        <span>v95.1 最佳 observation-only 策略；候选真值神谕上限也只有 83/90。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v94 跨几何普遍性为 0/30，局部窗口修补路线关闭</strong>
-      <span>
+      <strong>最新科学判决：v95.1 有可学习信号，但固定九维小模型与置信回退严格失败</strong>
+      <span>最佳 selected linear ridge 把严格通过从父 K1 的 <code>78/90</code> 提高到 <code>81/90</code>，maximum-gate 中位数由 <code>-0.04173</code> 改善到 <code>-0.06344</code>；可是 p90 与 worst 仍为正，九个失败全部被选择器接受。更关键的是，真值神谕在父 K1、mean、linear、RBF 四个候选中逐单元挑选也最多 <code>83/90</code>。因此瓶颈不只是 confidence calibration，而是候选表示本身。固定九维小模型和 confidence-only 修补关闭；下一门改为 observation-adaptive direction 容量，当前不租 GPU。<code>algorithm_breakthrough=false</code>。</span>
+      <details style="margin-top:10px;">
+        <summary>展开同日 v94 及更早父证据</summary>
+        <span>
         v94 把 v93 在 F30+/12 看到的 anchor 局部伤害冻结成待确认假设，在 F12+ 的 30 帧中检查净内部梯度伤害与空间集中是否共同复现。
         结果 eligible 为 <code>0/30</code>；候选 / Zero-K2 内部梯度误差比全部低于 1，范围 <code>0.845–0.979</code>，
         总 signed excess 为正的帧数也是 <code>0</code>。虽然 <code>22/30</code> 帧能看到集中的局部正误差，但整体仍更好。
@@ -571,7 +586,8 @@
         <code>1950</code> 个终点并得到同一判决。这只是 truth-aware 容量证据，四个系数还没有被部署可见输入预测。
         当前仍是
         <code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>。
-      </span>
+        </span>
+      </details>
     </div>
   </header>
 
@@ -615,17 +631,16 @@
                 <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
-                    <span class="tag">v94 F12 全部净改善</span>
-                    <span class="tag">ratio 0.845–0.979</span>
-                    <span class="tag negative">eligible 0/30</span>
-                    <span class="tag negative">局部修补关线</span>
-                    <span class="tag">F15 局部图保留</span>
-                    <span class="tag negative">v92 仍为 89/90</span>
-                    <span class="tag engineering">独立图与判决差 0</span>
+                    <span class="tag">v95.1 最佳 81/90</span>
+                    <span class="tag">父 K1 78/90</span>
+                    <span class="tag negative">神谕上限 83/90</span>
+                    <span class="tag negative">9 个内部梯度失败</span>
+                    <span class="tag negative">confidence-only 关线</span>
+                    <span class="tag engineering">正式/独立逐值差 0</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3>v94 证明 F30 的局部伤害不是跨几何普遍机制，局部窗口路线关闭</h3>
-                  <p>v93 找到一个真实但单帧的 F30 局部缺口；v94 用另一个几何 F12 的 30 帧确认后，得到 0 个净伤害样本。局部红区不等于整体更差，所以不再为这个单帧现象扩建局部表示。</p>
+                  <h3>v95.1 证明九维系数可部分预测，但当前候选集合无法达到 90/90</h3>
+                  <p>线性 observation-only predictor 确实修复了部分父 K1 失败；严格通过由 78 提高到 81。候选集合即使用真值挑选也最多 83，因此不能靠继续调置信度或换更大分类器补齐尾部。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
@@ -633,6 +648,31 @@
                 <div class="evidence-grid">
                   <section>
                     <h4>今天真正执行了什么</h4>
+                    <p>在 30 个 Case 6 物理帧、三档九视角几何和五个连续时间外折上，真实拟合并比较 scenario mean、linear ridge、RBF-KRR 共 33 个候选。输入只含 deployment-visible observation 与 known geometry；每条预测和父 K1 回退都精确回放为 <code>2A+2A<sup>T</sup></code>，并逐单元检查八门。</p>
+                  </section>
+                  <section>
+                    <h4>v95.1 的实质结果</h4>
+                    <ul>
+                      <li>父 K1 为 <code>78/90</code>；ungated linear 为 <code>80/90</code>；selected linear 最佳，为 <code>81/90</code>。</li>
+                      <li>最佳策略逐几何为 F30 <code>25/30</code>、F15 <code>26/30</code>、F12 <code>30/30</code>。</li>
+                      <li>maximum-gate p50 为 <code>-0.06344</code>，但 p90 / worst 为 <code>0.00576 / 0.07148</code>，严格尾部仍失败。</li>
+                      <li>九个失败全部来自内部梯度：五个同成本非劣失败、四个相对 Zero-K4 no-harm 失败。</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h4>为什么不能只继续调置信度</h4>
+                    <p>最佳策略接受 <code>69/90</code>，九个最终失败却全部被接受。事后仅用于定位瓶颈的真值神谕，在父 K1 与 linear 间最多 <code>82/90</code>，在父 K1、mean、linear、RBF 全候选间也只有 <code>83/90</code>；仍有七个共同失败。完美分类器也无法从不存在的安全候选中选出答案。</p>
+                  </section>
+                  <section>
+                    <h4>独立复算</h4>
+                    <p>独立程序没有导入 v95 模型或正式 runner，重建折分、特征、33 个候选、选择阈值与 540 次精确回放。selection、q、field、residual、metrics、gates 最大差全部为 <code>0</code>，heldout-label mutation 输出差为 <code>0</code>，exact receipt 失败为 0。</p>
+                  </section>
+                  <section>
+                    <h4>路线如何立即调整</h4>
+                    <p>固定九维小模型与 confidence-only 修补关闭。下一门先验证 observation-adaptive direction 的 truth-aware 容量：方向只能由 residual 与 known geometry 生成，必须嵌套九维父表示，并在同一在线预算下补齐七个共同失败。容量达到 <code>90/90</code> 前不训练大网络、不租 GPU。</p>
+                  </section>
+                  <section>
+                    <h4>同日 v94 父证据</h4>
                     <p>把 v93 的事后 anchor 线索固定为待确认假设，在读取 F12 局部图前冻结“净伤害 + 空间集中 + 跨时间区间”的普遍性门。只评估已有 v92 witness 和同成本 Zero-K2，没有优化新候选；F15 局部图不生成、不评分。</p>
                   </section>
                   <section>
@@ -658,15 +698,16 @@
                   </section>
                 </div>
                 <figure class="entry-figure">
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v93_anchor_locator_cross_geometry_v94.png" aria-label="打开 v94 跨几何局部机制结果图">
-                    <img src="../assets/nine_view_v93_anchor_locator_cross_geometry_v94.png" alt="v94 F12 跨几何局部伤害普遍性检验" />
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95.png" aria-label="打开 v95.1 observation-only 九维预测结果图">
+                    <img src="../assets/nine_view_v94_case6_physical_ball_observation_predictor_v95.png" alt="v95.1 observation-only 九维预测与候选上限" />
                   </a>
-                  <figcaption>F12+ 30 帧全部在内部梯度上优于 Zero-K2。局部正误差虽可见，却没有形成净伤害；局部修补路线因此关闭。</figcaption>
+                  <figcaption>典型帧质量改善不等于严格成功：最佳方法只有 81/90，且当前候选集合的真值神谕上限仅 83/90。</figcaption>
                 </figure>
                 <div class="entry-links">
-                  <a href="../document_reader.html?doc=docs%2Fnine_view_v93_anchor_locator_cross_geometry_v94_result_2026-08-02.md">v94 完整证据</a>
-                  <a href="../docs/nine_view_v93_anchor_locator_cross_geometry_v94_public_summary.json">v94 脱敏摘要</a>
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v93_anchor_locator_cross_geometry_v94.png">v94 结果图</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95_result_2026-08-02.md">v95.1 完整证据</a>
+                  <a href="../docs/nine_view_v94_case6_physical_ball_observation_predictor_v95_public_summary.json">v95.1 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95.png">v95.1 结果图</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v93_anchor_locator_cross_geometry_v94_result_2026-08-02.md">回看 v94 关线结果</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md">回看 v93 定位结果</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91_result_2026-08-02.md">回看 v91 参数化正进展</a>
                 </div>
@@ -1995,7 +2036,7 @@
   </main>
 
   <footer>
-    持续更新至 v94 Case 6 跨几何局部机制独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v95.1 Case 6 observation-only 九维预测独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
