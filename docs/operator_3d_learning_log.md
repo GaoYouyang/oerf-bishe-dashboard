@@ -11923,3 +11923,62 @@ Geo-FNO、DNO 和 DIMON 都使用“物理域到参考域”的思路，但 BOST
 - `docs/nine_view_v97_case6_joint13_observation_predictor_v98_result_2026-08-02.md`
 - `docs/nine_view_v97_case6_joint13_observation_predictor_v98_public_summary.json`
 - `assets/nine_view_v97_case6_joint13_observation_predictor_v98.png`
+
+## 2026-08-02：v99 把师兄的微分同胚建议做成了可独立复算的物理门
+
+### 为什么没有马上把“微分同胚”塞进神经网络
+
+v98 已经说明，继续扩大普通联合回归器没有依据。师兄提出的关键不是再加一个模型名，而是：坐标系变化后，密度、梯度、相机射线和测量算子必须一起变。若这层关系写错，网络学到的只是坐标伪差。
+
+所以我先没有训练模型，而是冻结一个结果前物理门。设物理坐标 `x = phi(xi)`，密度按标量 pullback，梯度必须满足
+
+```text
+grad_x rho = J_phi^{-T} grad_xi rho_ref.
+```
+
+BOST 的射线、探测器 `u/v` 基、forward 与 adjoint 也必须使用同一个坐标映射。
+
+### 真正运行了什么
+
+- 两个保持立方格点的三维旋转：绕 z 轴 90 度和 xyz 循环置换；
+- 七个固定随机内场、九视角 forward 与 adjoint；
+- 一个显式可逆、`det J = 1` 的三维光滑剪切；
+- 只旋转体场、只旋转射线、漏掉 `J^{-T}`、固定探测器基四类错误 warp 对照；
+- 独立 validator 不导入正式 v99 core 或 runner，重写全部变换与门；
+- 独立程序从 `rho_ref(phi_inverse(X))` 直接用自动微分求物理梯度，与解析 `J^{-T}` 交叉核对。
+
+### 结果
+
+| 检查 | 结果 |
+|---|---:|
+| 冻结物理门 | **11 / 11 通过** |
+| 正确 forward 交换最坏相对误差 | `3.55e-16` |
+| 正确 adjoint 交换最坏相对误差 | `5.28e-16` |
+| 算子伴随最坏相对误差 | `1.29e-15` |
+| 光滑剪切 observation 相对误差 | `6.79e-17` |
+| 独立 autograd 与 `J^{-T}` 梯度差 | `1.67e-16` |
+| 只变体场的错误 warp | `132.56%` |
+| 只变射线的错误 warp | `79.16%` |
+| 漏 `J^{-T}` / 固定探测器基 | `6.88% / 6.88%` |
+
+正式与独立结果的最大差为 `8.88e-16`，正式结果在验证前后没有变化。
+
+### 是否成功、是否突破
+
+- **物理接口成功：** 完整坐标输运在两个三维刚体变换和一个光滑剪切上达到数值舍入精度。
+- **错误实现被排除：** 只 warp 三维数组、只变射线或漏掉 Jacobian 都会产生明显偏差。
+- **算法尚未成功：** 没有训练新 initializer，也没有做未见相机位姿外折。
+- **固定物理相机仍未证明：** 光滑剪切用的是逐采样点 pushed-forward detector basis 与参考参数积分，不能冒充一般非刚体映射下固定相机等价。
+- **突破状态：** `algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`real_BOST=false`。
+
+### 下一步为什么是连续 pose/ray，而不是更大网络
+
+下一门会把每视角相机原点、方向、探测器 `u/v` 基、内参与射线参数作为连续输入，公平比较 geometry ID、pose/ray encoding 和参考域 canonicalization。整套几何必须做 leave-one-geometry-out：被留出的机位完全不能参与拟合。
+
+只有 truth-aware 容量与严格 observation-only 预测都通过，才授权最小 pose-conditioned sentinel。现在 CPU 足够，仍不需要租 GPU。
+
+公开证据：
+
+- `docs/nine_view_coordinate_transport_v99_result_2026-08-02.md`
+- `docs/nine_view_coordinate_transport_v99_public_summary.json`
+- `assets/nine_view_coordinate_transport_v99.png`

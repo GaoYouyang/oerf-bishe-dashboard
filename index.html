@@ -304,19 +304,19 @@
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="./operator-learning/">进入完整 C 路线研究台</a>
           <a class="button" href="./operator-learning/daily-progress.html">查看每日实质增量</a>
-          <a class="button" id="latestEvidenceLink" href="./document_reader.html?doc=docs%2Fnine_view_v97_case6_joint13_observation_predictor_v98_result_2026-08-02.md">阅读最新证据</a>
+          <a class="button" id="latestEvidenceLink" href="./document_reader.html?doc=docs%2Fnine_view_coordinate_transport_v99_result_2026-08-02.md">阅读最新证据</a>
         </div>
       </div>
       <aside class="verdict" aria-label="当前科学判决">
-        <b>当前判决：表示容量突破，算法尚未完成</b>
-        <p id="headlineVerdict">v98 独立确认：直接联合 13 维的 mean、linear ridge 与 RBF 小模型最多达到 75/90，均未通过 90/90；下一门转向相机位姿、射线条件化和微分同胚坐标一致性。</p>
+        <b>当前判决：物理坐标输运门通过，部署算法尚未完成</b>
+        <p id="headlineVerdict">v99 独立复现全部 11 个坐标输运门：完整变换误差约为 1e-16，错误 warp 为 6.9% 至 133%；下一门是连续相机 pose/ray 输入与 leave-one-geometry-out。</p>
         <p><strong>证据边界：</strong>目前仍是公开反应流、已知几何、无噪声 straight-ray 代理，不是组内真实 BOST、外部泛化或论文成功。</p>
       </aside>
     </div>
     <div class="metrics" aria-label="当前研究状态">
-      <div class="metric"><b id="witnessMetric">75 / 90</b><span>v98 最佳简单联合预测器；与 scenario mean 持平</span></div>
-      <div class="metric"><b id="failureMetric">15 个反例</b><span>早期时间折与 F30+ 尾部集中；普通回归路线关闭</span></div>
-      <div class="metric"><b id="callMetric">2A + 2A<sup>T</sup></b><span>候选在线 exact 调用预算；资源收益还需 fresh 实测</span></div>
+      <div class="metric"><b id="witnessMetric">11 / 11</b><span>v99 坐标输运物理门，正式与独立程序全部通过</span></div>
+      <div class="metric"><b id="failureMetric">约 1e-15</b><span>完整体场、射线、探测器基和伴随同步变换的最坏误差</span></div>
+      <div class="metric"><b id="callMetric">6.88%–132.56%</b><span>遗漏 Jacobian、相机或探测器基时的错误 warp 偏差</span></div>
       <div class="metric warning"><b id="breakthroughMetric">false</b><span><code>algorithm_breakthrough</code>，未过外部与真实实验门</span></div>
     </div>
   </header>
@@ -335,7 +335,8 @@
         <div><b>九视角观测</b><span>known-geometry straight-ray 密度梯度代理</span></div>
         <div><b>三维逆问题</b><span><code>32×16×16</code> 粗网格场</span></div>
         <div><b>联合 13D 简单模型已失败</b><span>mean / linear 最佳 75/90；RBF 71/90</span></div>
-        <div class="current"><b>当前：几何原理门</b><span>显式位姿、射线条件化与微分同胚可交换性</span></div>
+        <div><b>v99 坐标输运已通过</b><span>标量 pullback、梯度 J<sup>-T</sup>、相机与伴随同步变换</span></div>
+        <div class="current"><b>当前：连续几何泛化门</b><span>pose/ray encoding + leave-one-geometry-out</span></div>
         <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
       </div>
       <div class="three-grid" style="margin-top:12px;">
@@ -363,13 +364,14 @@
           <article class="evidence-row"><time datetime="2026-08-02">08-02</time><div><strong>v95.1：最佳 81/90，候选神谕上限 83/90</strong><p>九维线性预测存在信号，但候选集合不足；这一负结果直接触发 v96 的表示结构升级。</p></div><span class="state fail">严格负结果</span></article>
           <article class="evidence-row"><time datetime="2026-08-02">08-02</time><div><strong>v96：观测自适应频谱表示容量 90/90</strong><p>四个 residual/geometry-only 频谱方向修复旧九维 family 的最后缺口；三档几何全部 30/30，独立复算逐值一致。</p></div><span class="state">容量突破</span></article>
           <article class="evidence-row"><time datetime="2026-08-02">08-02</time><div><strong>v97：固定旧九维 + 四系数最多 86/90</strong><p>条件容量门关闭四系数训练，要求旧九维与新四维联合适配。</p></div><span class="state fail">结构负结果</span></article>
-          <article class="evidence-row" id="latestEvidenceRow"><time datetime="2026-08-02">08-02</time><div><strong>v98：联合 13D 小模型最多 75/90</strong><p>mean 与 linear ridge 同为 75/90，RBF 为 71/90；270 次独立精确回放确认普通坐标回归未封口，下一门转向几何与坐标变换原理。</p></div><span class="state fail">最新负结果</span></article>
+          <article class="evidence-row"><time datetime="2026-08-02">08-02</time><div><strong>v98：联合 13D 小模型最多 75/90</strong><p>mean 与 linear ridge 同为 75/90，RBF 为 71/90；270 次独立精确回放确认普通坐标回归未封口。</p></div><span class="state fail">关键负结果</span></article>
+          <article class="evidence-row" id="latestEvidenceRow"><time datetime="2026-08-02">08-02</time><div><strong>v99：坐标输运实现门 11/11</strong><p>两个三维格点旋转和一个光滑剪切均通过；完整输运达到约 1e-16，遗漏 Jacobian 或相机量时误差为 6.9%–133%。</p></div><span class="state">物理正结果</span></article>
         </div>
         <figure>
-          <a id="latestFigureLink" href="./asset_viewer.html?asset=assets%2Fnine_view_v97_case6_joint13_observation_predictor_v98.png" aria-label="打开最新完整结果图">
-            <img loading="lazy" decoding="async" id="latestFigure" src="./assets/nine_view_v97_case6_joint13_observation_predictor_v98.png" alt="v98 联合十三维小模型严格外折结果" />
+          <a id="latestFigureLink" href="./asset_viewer.html?asset=assets%2Fnine_view_coordinate_transport_v99.png" aria-label="打开最新完整结果图">
+            <img loading="lazy" decoding="async" id="latestFigure" src="./assets/nine_view_coordinate_transport_v99.png" alt="v99 三维坐标输运物理门结果" />
           </a>
-          <figcaption id="latestFigureCaption">v98 表明直接联合预测 13 个坐标仍未封口：mean 与 linear ridge 均为 75/90，RBF 为 71/90；失败集中在较早时间折和 F30+，更大普通回归器没有获得授权。</figcaption>
+          <figcaption id="latestFigureCaption">v99 证明完整坐标输运实现达到数值舍入精度，同时错误 warp 会产生 6.88% 至 132.56% 偏差。它是物理接口正结果，不是未见机位泛化或 learned initializer 成功。</figcaption>
         </figure>
       </div>
       <div class="live-note"><strong>稳定状态自动同步</strong><span id="liveStatus" aria-live="polite">正在读取公开证据清单；读取失败时保留上面的最近一次独立验证状态。</span></div>
@@ -386,7 +388,7 @@
       </div>
       <div class="three-grid">
         <article class="panel positive"><div class="chips"><span class="chip">可复算</span></div><h3 style="margin-top:9px;">正式结果与独立程序分离</h3><p>关键数字必须由第二条实现重建输入、指标、门和调用账；验证未通过时不进入主页结论。</p></article>
-        <article class="panel boundary"><div class="chips"><span class="chip gold">会纠错</span></div><h3 style="margin-top:9px;">负结果转化为新结构</h3><p>v97 排除四系数拆分；v98 又证明普通联合回归没有封口。现在不靠更大模型挽救，而是先补显式相机几何和坐标变换一致性。</p></article>
+        <article class="panel boundary"><div class="chips"><span class="chip gold">会纠错</span></div><h3 style="margin-top:9px;">负结果转化为新结构</h3><p>v98 排除普通联合回归；v99 已把标量、梯度、相机和伴随的坐标输运闭合。现在只推进连续 pose/ray 与未见几何验证。</p></article>
         <article class="panel current"><div class="chips"><span class="chip coral">不夸大</span></div><h3 style="margin-top:9px;">突破必须跨过完整门槛</h3><p>单工况容量、漂亮均值、调用数下降或页面完善，都不能单独写成算法突破与论文成功。</p></article>
       </div>
     </section>
@@ -396,7 +398,8 @@
       <div class="ladder">
         <div class="step done"><div><b>observation-adaptive warm 表示</b><span>四个 residual / geometry-only 频谱方向精确嵌套九维父表示；truth-aware 容量已独立验证为 90/90。</span></div><em>容量已通过</em></div>
         <div class="step done"><div><b>简单 observation-only 联合预测</b><span>v98 的 mean / linear / RBF 最多 75/90，均未达到严格门；普通坐标回归路线关闭。</span></div><em>已判失败</em></div>
-        <div class="step current"><div><b>几何一致的 initializer</b><span>显式输入位姿/射线，验证微分同胚 pullback、梯度 Jacobian 变换和 forward/adjoint 可交换性，再做 leave-one-geometry-out。</span></div><em>当前科学门</em></div>
+        <div class="step done"><div><b>坐标输运物理接口</b><span>v99 已验证标量 pullback、梯度 Jacobian 逆转置、射线/探测器基与 forward/adjoint 同步变换。</span></div><em>11 / 11 已通过</em></div>
+        <div class="step current"><div><b>连续几何条件化 initializer</b><span>显式输入相机 pose/ray，比较参考域 canonicalization，并做 leave-one-geometry-out 容量与严格 observation-only 预测。</span></div><em>当前科学门</em></div>
         <div class="step"><div><b>独立公开工况 matched-accuracy</b><span>结果前冻结新工况，逐单元守住 field、gradient、observation 并减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
         <div class="step"><div><b>真实资源收益</b><span>随机配对 fresh worker 同时验证 wall p50/p90 与 whole-pipeline peak RSS。</span></div><em>尚未启动</em></div>
         <div class="step"><div><b>OERF 真实 BOST 迁移</b><span>接入相机标定、位移图、重复测量噪声与组内认可基线，重新定义实验同精度。</span></div><em>需要组内数据</em></div>
@@ -415,7 +418,7 @@
     <section id="future-direction" class="band">
       <div class="section-head"><div><div class="eyebrow">未来期许和方向</div><h2>只扩展证据指出的缺失结构</h2><p>研究路线由最新负证据驱动，而不是由模型名、算力规模或已经投入的时间驱动。</p></div></div>
       <div class="future-grid">
-        <article class="panel current"><h3>最近科学门</h3><p id="nextGate">先冻结坐标变换物理门：验证微分同胚可逆性、密度标量 pullback、梯度的 Jacobian 逆转置变换、射线/forward/adjoint 的可交换性，并改用 leave-one-geometry-out；这些通过后才训练小型位姿或射线条件化模型。</p></article>
+        <article class="panel current"><h3>最近科学门</h3><p id="nextGate">不再只输入三个 geometry ID：显式输入每视角相机原点/方向、探测器 u/v 基、内参与射线参数，公平比较连续 pose/ray encoding 和参考域 canonicalization，并用 leave-one-geometry-out 同时检查容量与严格 observation-only 预测；通过后才训练最小 sentinel。</p></article>
         <article class="panel boundary"><h3>何时租 GPU</h3><p>只有表示容量全过、严格 observation-only 小模型出现稳定外折 headroom，且 CPU 原型确认训练吞吐成为瓶颈时才租算卡。</p></article>
         <article class="panel positive"><h3>何时接组内数据</h3><p>公开独立工况通过后，接入位移图、相机内外参、视角定义、重复测量噪声、现有重建接口和认可基线。</p></article>
       </div>
@@ -444,7 +447,7 @@
 
   <script>
     (() => {
-      const fallback = '最近一次独立验证状态：v98 的 mean / linear / RBF 联合 13D 小模型最多为 75/90；普通回归路线关闭，algorithm_breakthrough=false。';
+      const fallback = '最近一次独立验证状态：v99 坐标输运物理门 11/11 通过；固定物理相机和未见位姿泛化尚未证明，algorithm_breakthrough=false。';
       fetch('./operator-learning/current-evidence.json', { cache: 'no-store' })
         .then((response) => {
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -453,20 +456,20 @@
         .then((evidence) => {
           const metrics = evidence.metrics || {};
           const decision = evidence.current_decision || {};
-          if (Number.isFinite(metrics.strict_witness_passed) && Number.isFinite(metrics.cell_count)) {
-            document.getElementById('witnessMetric').textContent = `${metrics.strict_witness_passed} / ${metrics.cell_count}`;
+          if (Number.isFinite(metrics.coordinate_transport_gates_passed) && Number.isFinite(metrics.coordinate_transport_gate_count)) {
+            document.getElementById('witnessMetric').textContent = `${metrics.coordinate_transport_gates_passed} / ${metrics.coordinate_transport_gate_count}`;
           }
-          if (Number.isFinite(metrics.unresolved_cell_count)) {
-            document.getElementById('failureMetric').textContent = `${metrics.unresolved_cell_count} 个反例`;
+          if (Number.isFinite(metrics.maximum_correct_transport_relative_l2)) {
+            document.getElementById('failureMetric').textContent = metrics.maximum_correct_transport_relative_l2.toExponential(2);
           }
-          if (Number.isFinite(metrics.exact_A_calls_per_candidate) && Number.isFinite(metrics.exact_AT_calls_per_candidate)) {
-            document.getElementById('callMetric').innerHTML = `${metrics.exact_A_calls_per_candidate}A + ${metrics.exact_AT_calls_per_candidate}A<sup>T</sup>`;
+          if (Number.isFinite(metrics.minimum_incomplete_transport_relative_l2)) {
+            document.getElementById('callMetric').textContent = `>= ${(100 * metrics.minimum_incomplete_transport_relative_l2).toFixed(2)}%`;
           }
           document.getElementById('breakthroughMetric').textContent = String(Boolean(decision.algorithm_breakthrough));
           if (evidence.updated) document.getElementById('updatedDate').textContent = evidence.updated;
           if (evidence.headline_zh || evidence.headline) document.getElementById('headlineVerdict').textContent = evidence.headline_zh || evidence.headline;
           if (evidence.next_scientific_gate_zh || evidence.next_scientific_gate) document.getElementById('nextGate').textContent = evidence.next_scientific_gate_zh || evidence.next_scientific_gate;
-          document.getElementById('liveStatus').textContent = `状态清单已同步至 ${evidence.updated || '最近一次发布'}：${metrics.strict_witness_passed}/${metrics.cell_count} 个单元通过，${metrics.unresolved_cell_count} 个仍未解决；algorithm_breakthrough=${Boolean(decision.algorithm_breakthrough)}。`;
+          document.getElementById('liveStatus').textContent = `状态清单已同步至 ${evidence.updated || '最近一次发布'}：坐标输运门 ${metrics.coordinate_transport_gates_passed}/${metrics.coordinate_transport_gate_count} 通过；fixed_physical_camera_proven=${Boolean(decision.fixed_physical_camera_proven)}，algorithm_breakthrough=${Boolean(decision.algorithm_breakthrough)}。`;
           const publicEvidence = evidence.public_evidence || {};
           if (typeof publicEvidence.result === 'string') {
             document.getElementById('latestEvidenceLink').href = publicEvidence.result.replace(/^\.\.\//, './');

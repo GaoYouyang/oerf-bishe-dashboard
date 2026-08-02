@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.02-c-v98-joint13-predictor-negative-geometry-gate",
-  previousVersion: "2026.08.02-c-v96-adaptive-spectral-capacity-pass",
-  previousBadge: "v96 joint representation capacity · 90 / 90",
+  version: "2026.08.02-c-v99-coordinate-transport-pass",
+  previousVersion: "2026.08.02-c-v98-joint13-predictor-negative-geometry-gate",
+  previousBadge: "v98 strict observation-only joint predictor · 75 / 90",
   olderBadge: "v84.2 Case 3 residual gate · 75 / 75 development PASS",
   historyReleases: [
+    {
+      version: "2026.08.02-c-v98-joint13-predictor-negative-geometry-gate",
+      previousVersion: "2026.08.02-c-v96-adaptive-spectral-capacity-pass",
+      badge: "v98 strict observation-only joint predictor · 75 / 90"
+    },
     {
       version: "2026.08.02-c-v96-adaptive-spectral-capacity-pass",
       previousVersion: "2026.08.02-c-v95-physical-ball-predictor-negative",
@@ -588,6 +593,7 @@ window.OPERATOR_LEARNING_GUIDE = {
     }
   ],
   resources: [
+    {id:"nine-view-v99-coordinate-transport",stage:"geometry",level:"必做",type:"最新物理坐标输运正结果",title:"v99：完整坐标输运 11/11 通过，连续机位泛化仍待验证",url:"../document_reader.html?doc=docs%2Fnine_view_coordinate_transport_v99_result_2026-08-02.md",local:"../docs/nine_view_coordinate_transport_v99_public_summary.json",read:"先写清标量 pullback 与梯度 J^{-T} 的区别，再核对体场、射线、探测器基和 adjoint 为什么必须同步变换。比较约 1e-16 的正确输运误差与 6.88%-132.56% 的错误 warp 对照，并理解光滑剪切为什么没有证明固定物理相机。",output:"不用页面解释：v99 成功证明了哪一个物理接口、为什么还不是 learned initializer 或未见 pose 泛化、下一轮连续 pose/ray encoding 与 leave-one-geometry-out 应怎样设计。",verified:"PASS_PHYSICS_CONSISTENT_COORDINATE_TRANSPORT_V99；PASS_INDEPENDENT_RECOMPUTATION_COORDINATE_TRANSPORT_V99；11/11；algorithm_breakthrough=false"},
     {id:"nine-view-v98-joint13-observation-predictor",stage:"warm-start",level:"必做",type:"最新联合预测负结果",title:"v98：联合 13D 的 mean / linear / RBF 最多 75/90",url:"../document_reader.html?doc=docs%2Fnine_view_v97_case6_joint13_observation_predictor_v98_result_2026-08-02.md",local:"../docs/nine_view_v97_case6_joint13_observation_predictor_v98_public_summary.json",read:"先区分 v96 的 truth-aware 90/90 表示容量和 v98 的严格 observation-only 预测。核对 mean、linear、RBF 的 75/90、75/90、71/90，五折与三档几何的失败分布，以及当前输入为什么不能称连续相机位姿或坐标群泛化。",output:"不用页面解释：为什么 v98 关闭的是普通联合坐标回归而不是全部神经模型；为什么下一门必须先验证微分同胚可逆性、梯度 Jacobian 变换和 forward/adjoint 可交换性；为什么 leave-one-geometry-out 比 geometry ID 更能回答师兄的问题。",verified:"FAIL_NO_STRICT_OBSERVATION_ONLY_JOINT13_PREDICTOR_V98；PASS_INDEPENDENT_RECOMPUTATION_JOINT13_OBSERVATION_PREDICTOR_V98；best 75/90；270 exact replays；algorithm_breakthrough=false"},
     {id:"nine-view-v97-conditional-spectral-capacity",stage:"warm-start",level:"必做",type:"父条件容量负结果",title:"v97：固定旧九维后，四个新频谱系数最多 86/90",url:"../document_reader.html?doc=docs%2Fnine_view_v96_case6_conditional_spectral_band4_capacity_v97_result_2026-08-02.md",local:"../docs/nine_view_v96_case6_conditional_spectral_band4_capacity_v97_public_summary.json",read:"先区分 v96 联合 13 维 truth-aware 的 90/90 与 v97 固定旧九维后的四维条件容量。核对三个冻结基线为何分别只能到 86/90、85/90、85/90，以及最佳基线剩余四个失败为什么全是 interior-gradient 门。",output:"不用页面解释：为什么 v97 没有推翻 v96 的表示容量突破；为什么它足以取消四系数 predictor 训练；为什么 v98 随后必须联合适配旧九维与新四维。",verified:"NO_FROZEN_OLD_NINE_BASE_HAS_ALL_CELL_FOUR_COEFFICIENT_CAPACITY_V97；PASS_INDEPENDENT_RECOMPUTATION_CONDITIONAL_SPECTRAL_BAND4_V97；best 86/90；270 exact replays；algorithm_breakthrough=false"},
     {id:"nine-view-v96-adaptive-spectral-capacity",stage:"warm-start",level:"必做",type:"父表示容量突破",title:"v96：四个观测自适应频谱方向把联合容量补到 90/90",url:"../document_reader.html?doc=docs%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_result_2026-08-02.md",local:"../docs/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_public_summary.json",read:"先区分 v95.1 observation-only 的 81/90、旧九维 truth-aware 的 89/90 与 v96 十三维 truth-aware 的 90/90。重点核对四个方向为何只依赖父 residual 与 known geometry、如何精确嵌套旧 family、为什么在线 exact 账仍为 2A+2A^T，以及三档几何 worst maximum-gate 为什么都严格小于零。",output:"不用页面解释：为什么 v96 是表示容量突破却还不是可部署算法突破；为什么真值辅助 13 维系数不能部署；为什么 v97 随后证明固定旧九维、只预测四个新增系数不可行；为什么当前仍不租 GPU。",verified:"PASS_ALL_CELL_OBSERVATION_ADAPTIVE_SPECTRAL_BAND4_CAPACITY_V96；PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_ADAPTIVE_SPECTRAL_BAND4_V96；90/90；formal/independent maximum difference 0；representation_capacity_breakthrough=true；algorithm_breakthrough=false"},
