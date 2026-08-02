@@ -509,13 +509,13 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>90 / 90</b>
-        <span>v96 观测自适应频谱表示的 truth-aware 容量；独立实现复算通过。</span>
+        <b>86 / 90</b>
+        <span>v97 固定旧九维后的最佳四系数条件容量；联合 13D 的 v96 容量仍为 90/90。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v96 把观测自适应表示容量补到 90/90，下一门转向四系数可学习性</strong>
-      <span>四个新方向只由父 K1 observation residual 与 known geometry 生成，精确嵌套旧九维 family，在线 exact 账仍为 <code>2A+2A^T</code>。F30+、F15+、F12+ 均为 <code>30/30</code>，独立实现对 90 个单元复算后的 field、residual、metrics、gates 最大差全部为 <code>0</code>。这是 <code>representation_capacity_breakthrough=true</code>；但系数仍由真值辅助寻找，所以 <code>algorithm_breakthrough=false</code>，当前仍不租 GPU。</span>
+      <strong>最新科学判决：v97 关闭固定旧九维后的四系数训练，下一门改为 13D 联合适配</strong>
+      <span>v96 的联合 13D truth-aware 容量仍为 <code>90/90</code>；但 v97 把旧九维冻结为三个 deployment-visible 基线后，即使真值辅助搜索四个新系数，最佳也只有 <code>86/90</code>。剩余四个失败全部是 interior-gradient 门。独立程序重放 270 个 base-cell 后 field、residual、metrics、gates 最大差为 <code>0</code>。因此四系数训练不授权，<code>algorithm_breakthrough=false</code>，当前仍不租 GPU。</span>
       <details style="margin-top:10px;">
         <summary>展开同日 v94 及更早父证据</summary>
         <span>
@@ -631,21 +631,42 @@
                 <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
-                    <span class="tag">v96 容量 90/90</span>
-                    <span class="tag">F30 / F15 / F12 均 30/30</span>
-                    <span class="tag">新增 4 个残差频谱方向</span>
+                    <span class="tag negative">v97 条件容量 86/90</span>
+                    <span class="tag negative">四系数训练不授权</span>
+                    <span class="tag">v96 联合容量仍为 90/90</span>
                     <span class="tag">在线仍为 2A+2A<sup>T</sup></span>
                     <span class="tag">表示容量突破</span>
-                    <span class="tag engineering">正式/独立逐值差 0</span>
+                    <span class="tag engineering">270 回放逐值复算</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3>v96 找到可解释的观测自适应补空间，truth-aware 表示容量首次达到 90/90</h3>
-                  <p>v95.1 的 81/90 与候选神谕 83/90 证明旧表示不足；v96 没有堆更大网络，而是从 residual 与 geometry 构造四个固定频谱带方向，补齐最后一个严格反例。</p>
+                  <h3>v96 补齐联合表示容量；v97 随即证明四个新系数不能在固定旧基线上单独封口</h3>
+                  <p>先得到联合 13D 的 90/90，再用条件容量门检查实际训练拆分。结果最佳冻结旧九维从 81/90 提升到 86/90，却仍有四个内部梯度反例，因此直接取消错误的四系数训练。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
               <div class="entry-body">
                 <div class="evidence-grid">
+                  <section>
+                    <h4>v97 为什么必须先跑</h4>
+                    <p>v96 的 13 个系数都由真值辅助寻找。若计划只训练四个新系数，就必须先证明固定 observation-only 旧九维后，每个单元的四维条件物理球里仍有通过解；否则网络容量再大也无法达到 90/90。</p>
+                  </section>
+                  <section>
+                    <h4>v97 正式结果</h4>
+                    <ul>
+                      <li>selected linear：<code>81/90 → 86/90</code>，剩余 4 个失败。</li>
+                      <li>ungated linear：<code>80/90 → 85/90</code>，剩余 5 个失败。</li>
+                      <li>parent K1：<code>78/90 → 85/90</code>，剩余 5 个失败。</li>
+                      <li>最佳逐几何为 F30 <code>29/30</code>、F15 <code>27/30</code>、F12 <code>30/30</code>。</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h4>v97 失败说明什么</h4>
+                    <p>selected 基线的四个失败全部只落在 interior-gradient 门，field、full-gradient 与 observation 均已通过。问题不是四个方向没有作用，而是固定旧九维后无法重新分配局部梯度所需的物理预算。</p>
+                  </section>
+                  <section>
+                    <h4>v97 独立复算与决策</h4>
+                    <p>独立程序重写条件物理球并重放 <code>3 × 90 = 270</code> 个候选；field、residual、metrics、gates 与 zero-new 诊断最大差全部为 <code>0</code>，调用 receipt 失败为 0。四系数训练不授权，下一门改为旧九维与新四维联合适配。</p>
+                  </section>
                   <section>
                     <h4>今天真正执行了什么</h4>
                     <p>把旧 GSLB32 观测投影 <code>P=AU</code> 的谱分成四个八模态频带，用父 K1 residual 的 <code>P^T r</code> 构造四个 ridge 型反投影方向，再在物理 correction 内积下对旧九维 family 正交化与白化。新系数为零时严格回到旧 family。</p>
@@ -669,7 +690,7 @@
                   </section>
                   <section>
                     <h4>下一科学门</h4>
-                    <p>只预测四个新增频谱系数，输入限于 observation、known geometry 与父 residual 频谱特征；保持五折时间隔离、一帧 embargo、同一八门和 <code>2A+2A^T</code>。预测器也达到 <code>90/90</code> 后，才打开一个此前未读的公开工况。</p>
+                    <p>v97 已否决只预测四个新增系数。下一门联合预测旧九维与新四维，或使用显式耦合的低秩修正头；保持五折时间隔离、一帧 embargo、同一八门和 <code>2A+2A^T</code>。达到 <code>90/90</code> 后才开新工况。</p>
                   </section>
                   <section>
                     <h4>同日 v95.1 父负证据</h4>
@@ -723,12 +744,15 @@
                   </section>
                 </div>
                 <figure class="entry-figure">
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96.png" aria-label="打开 v96 观测自适应频谱表示容量结果图">
-                    <img src="../assets/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96.png" alt="v96 观测自适应频谱表示容量结果" />
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v96_case6_conditional_spectral_band4_capacity_v97.png" aria-label="打开 v97 四系数条件容量结果图">
+                    <img src="../assets/nine_view_v96_case6_conditional_spectral_band4_capacity_v97.png" alt="v97 固定旧九维后的四系数条件容量结果" />
                   </a>
-                  <figcaption>v96 把旧九维 truth-aware 容量的 89/90 补到 90/90；图中同时标明它仍不是部署预测、算法完成或真实 BOST 成功。</figcaption>
+                  <figcaption>v97：四个新系数能把最佳冻结基线从 81/90 修到 86/90，但不能封口；v96 的联合表示容量突破保留，算法仍未完成。</figcaption>
                 </figure>
                 <div class="entry-links">
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v96_case6_conditional_spectral_band4_capacity_v97_result_2026-08-02.md">v97 完整证据</a>
+                  <a href="../docs/nine_view_v96_case6_conditional_spectral_band4_capacity_v97_public_summary.json">v97 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v96_case6_conditional_spectral_band4_capacity_v97.png">v97 结果图</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_result_2026-08-02.md">v96 完整证据</a>
                   <a href="../docs/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_public_summary.json">v96 脱敏摘要</a>
                   <a href="../asset_viewer.html?asset=assets%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96.png">v96 结果图</a>
@@ -2062,7 +2086,7 @@
   </main>
 
   <footer>
-    持续更新至 v96 Case 6 观测自适应频谱表示容量独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v97 Case 6 四系数条件容量独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
