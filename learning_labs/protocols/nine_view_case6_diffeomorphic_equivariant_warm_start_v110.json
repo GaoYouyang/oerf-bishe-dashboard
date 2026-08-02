@@ -1,0 +1,186 @@
+{
+  "schema_version": "oerf-nine-view-case6-diffeomorphic-equivariant-warm-start-protocol-110.0",
+  "status": "FROZEN_BEFORE_V110_NUMERIC_RESULTS",
+  "frozen_date": "2026-08-03",
+  "research_question": "Can a known-coordinate diffeomorphic transport wrapper preserve the frozen 2A+2AT observation-only warm-start accuracy envelope on composed coordinate maps that were never used to fit the predictor, while missing and wrong transport controls fail on the same cells?",
+  "scientific_role": "post-open Case6 coordinate-equivariance mechanism gate; not a new physical-flow deformation experiment, external dataset test, resource gate, curved-ray result, arbitrary-diffeomorphism theorem, or real-BOST result",
+  "parent_evidence": {
+    "v102_protocol_sha256": "1c7c1d04a958c286a2cbedac7f55c111c50523e0004292a59da9f14c8d746c7f",
+    "v102_formal_scientific_status": "FAIL_NO_REFERENCE_RANK4_OBSERVATION_PREDICTOR_ADVANTAGE_V102",
+    "v102_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_REFERENCE_RANK4_OBSERVATION_PREDICTOR_V102",
+    "v102_canonical_compatibility": {
+      "projected_ridge": "90/90",
+      "transport_rbf_residual": "90/90",
+      "static_rank0": "90/90"
+    },
+    "v102_limit": "No rank4 arm established paired advantage over the static rank0 prior; v110 must preserve that negative result unless the preregistered coordinate stress changes the paired ordering.",
+    "v109_protocol_sha256": "a5442ac26be31ae8b13ef64dcdf4482b7e36453c5768933acef20bfb41902a7c",
+    "v109_formal_status": "PASS_SMOOTH_SUPPORT_DIFFEOMORPHIC_CONVERGENCE_V109",
+    "v109_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_CASE6_SMOOTH_SUPPORT_V109",
+    "v109_limit": "Only one-axis plus/minus maps at absolute amplitude 0.08 and five already-open Case6 frames were tested; no warm initializer or heldout coordinate composition was tested."
+  },
+  "coordinate_interpretation": {
+    "meaning": "Each map is a change of spatial chart. The scalar field and camera operator are conjugated together through the known map; it is not presented as a new physical flame realization.",
+    "reference_domain_algorithm": "Run the already-sealed observation-only predictor and strict K1 refinement in the canonical reference chart, then push the reconstructed scalar through the known diffeomorphism.",
+    "covariant_observation": "Score a transformed field with A_phi = A_ref composed with the declared pullback to the reference chart.",
+    "forbidden_interpretations": [
+      "fixed-camera physical deformation",
+      "learned registration",
+      "unknown-warp inference",
+      "arbitrary-coordinate generalization",
+      "new independent physical samples"
+    ]
+  },
+  "frozen_data_roles": {
+    "dataset": "already-open BLASTNet H2-air Case 6",
+    "selected_frame_indices": [2, 8, 14, 20, 26],
+    "geometry_ids": ["V66_F30_plus", "V66_F15_plus", "V66_F12_plus"],
+    "independent_physical_frame_count": 5,
+    "canonical_parent_cell_count": 15,
+    "same_frame_and_heldout_geometry_excluded_by_v102_outer_folds": true,
+    "v102_predictions_are_reused_byte_for_byte": true,
+    "v102_refit_or_hyperparameter_change_forbidden": true,
+    "new_validation_or_test_truth_opened": false,
+    "post_open_development": true
+  },
+  "heldout_composed_diffeomorphisms": {
+    "component_amplitude_absolute": 0.06,
+    "component_family": "the frozen boundary-preserving one-axis analytic map from v103",
+    "composition_order": "components are listed in reference-to-physical order; scalar pushforward evaluates inverse components in the mathematically required reverse-coordinate composition",
+    "roster": [
+      {"warp_id": "xy_pp", "components": [{"axis": "x", "amplitude": 0.06}, {"axis": "y", "amplitude": 0.06}], "wrong_warp_id": "xy_mm"},
+      {"warp_id": "xy_mm", "components": [{"axis": "x", "amplitude": -0.06}, {"axis": "y", "amplitude": -0.06}], "wrong_warp_id": "xy_pp"},
+      {"warp_id": "yz_pp", "components": [{"axis": "y", "amplitude": 0.06}, {"axis": "z", "amplitude": 0.06}], "wrong_warp_id": "yz_mm"},
+      {"warp_id": "yz_mm", "components": [{"axis": "y", "amplitude": -0.06}, {"axis": "z", "amplitude": -0.06}], "wrong_warp_id": "yz_pp"},
+      {"warp_id": "zx_pp", "components": [{"axis": "z", "amplitude": 0.06}, {"axis": "x", "amplitude": 0.06}], "wrong_warp_id": "zx_mm"},
+      {"warp_id": "zx_mm", "components": [{"axis": "z", "amplitude": -0.06}, {"axis": "x", "amplitude": -0.06}], "wrong_warp_id": "zx_pp"}
+    ],
+    "not_used_by_v102_fit": true,
+    "not_present_in_v109_one_axis_roster": true,
+    "warp_parameter_sweep_forbidden": true
+  },
+  "continuous_transport": {
+    "coarse_shape_zyx": [32, 16, 16],
+    "evaluation_multiplier": 8,
+    "evaluation_shape_zyx": [249, 121, 121],
+    "coarse_to_fine_lift": "separable linear interpolation on the exact nested grid, followed once by the v109 one-coarse-interval half-cosine support window",
+    "coarse_node_identity_required": true,
+    "scalar_pushforward": "compose bounded-memory trilinear gathers at inverse map coordinates without transformed-frame remasking or regauging",
+    "scalar_pullback_for_scoring": "apply the true forward map sequence in reverse component order; score field and gradients in the common reference chart, which is the Jacobian-consistent coordinate-invariant metric rather than an ordinary L2 on deformed voxel indices",
+    "scalar_pullback_for_observation": "after the same true pullback, restrict by exact stride, apply the common coarse support-zero-mean gauge, and evaluate the frozen reference camera operator",
+    "candidate_and_all_zero_controls_share_the_same_lift": true,
+    "truth_reference": "source-informed full-resolution density resampled directly to the 8x nested grid, plateau-gauged and windowed once before transport"
+  },
+  "arm_roster": [
+    {"arm": "rbf_correct_transport", "canonical_parent_arm": "transport_rbf_residual", "transport": "correct", "online_exact_calls": {"A": 2, "AT": 2}, "primary": true},
+    {"arm": "projected_ridge_correct_transport", "canonical_parent_arm": "projected_ridge", "transport": "correct", "online_exact_calls": {"A": 2, "AT": 2}, "primary": false},
+    {"arm": "static_rank0_correct_transport", "canonical_parent_arm": "static_rank0", "transport": "correct", "online_exact_calls": {"A": 2, "AT": 2}, "primary": false},
+    {"arm": "rbf_no_transport_control", "canonical_parent_arm": "transport_rbf_residual", "transport": "identity", "online_exact_calls": {"A": 2, "AT": 2}, "primary": false},
+    {"arm": "rbf_wrong_transport_control", "canonical_parent_arm": "transport_rbf_residual", "transport": "declared_wrong_warp", "online_exact_calls": {"A": 2, "AT": 2}, "primary": false},
+    {"arm": "zero_k2_correct_transport", "canonical_parent_arm": "zero_k2_reference", "transport": "correct", "online_exact_calls": {"A": 2, "AT": 2}, "primary": false},
+    {"arm": "zero_k4_correct_transport", "canonical_parent_arm": "zero_k4_reference", "transport": "correct", "online_exact_calls": {"A": 4, "AT": 4}, "primary": false}
+  ],
+  "cell_roster": {
+    "frame_count": 5,
+    "geometry_count": 3,
+    "composed_warp_count": 6,
+    "cells_per_arm": 90,
+    "arm_count": 7,
+    "formal_row_count": 630
+  },
+  "numerical_integrity_gate": {
+    "each_component_dense_jacobian_determinant_minimum": 0.85,
+    "each_composition_dense_jacobian_determinant_minimum": 0.72,
+    "composition_inverse_maximum_absolute_residual": 2e-12,
+    "coarse_node_lift_identity_maximum_absolute_difference": 2e-12,
+    "transport_linearity_maximum_relative_l2": 2e-12,
+    "correct_roundtrip_field_relative_l2_worst_maximum": 0.04,
+    "correct_roundtrip_interior_gradient_relative_l2_worst_maximum": 0.14,
+    "correct_roundtrip_observation_relative_l2_worst_maximum": 0.035,
+    "all_rows_finite": true,
+    "all_expected_rows_present_once": true
+  },
+  "matched_accuracy_gate": {
+    "metrics": ["field", "gradient", "interior_gradient", "observation"],
+    "error_ratio_vs_zero_k2_maximum_every_cell": 1.0,
+    "harm_ratio_vs_zero_k4_maximum_every_cell": 1.01,
+    "eight_gates_per_candidate_cell": true,
+    "primary_rbf_correct_transport_must_pass_cells": 90,
+    "primary_rbf_correct_transport_must_pass_each_warp_cells": 15,
+    "primary_rbf_correct_transport_must_pass_each_geometry_cells": 30,
+    "primary_online_exact_calls_each_cell": {"A": 2, "AT": 2},
+    "zero_k4_reference_online_exact_calls_each_cell": {"A": 4, "AT": 4},
+    "breakdown_count_maximum": 0
+  },
+  "transport_discrimination_gate": {
+    "no_transport_joint_pass_count_maximum": 72,
+    "wrong_transport_joint_pass_count_maximum": 72,
+    "correct_minus_each_control_maximum_gate_p50_improvement_minimum": 0.01,
+    "correct_minus_each_control_maximum_gate_p90_higher_improvement_minimum": 0.02,
+    "correct_maximum_gate_worst_must_not_exceed_each_control": true,
+    "correct_better_cell_count_minimum_for_each_metric": 60,
+    "correct_worse_composed_warp_p50_count_maximum": 0,
+    "absolute_comparison_tolerance": 1e-12
+  },
+  "learned_advantage_gate": {
+    "role": "separate from coordinate-mechanism validity; a transport pass cannot erase the frozen v102 simple-baseline result",
+    "primary_must_not_be_globally_dominated_by_projected_ridge_or_static_rank0": true,
+    "all_eight_p50_p90_higher_worst_summaries_must_be_noninferior_to_each_simple_control": true,
+    "paired_primary_better_than_each_simple_control_count_minimum_per_metric": 46,
+    "if_failed": "Keep the analytic coordinate wrapper but close the RBF predictor as a novelty claim; do not authorize a larger neural model to rescue it on Case6."
+  },
+  "cost_accounting": {
+    "prediction_parent_calls_are_inherited_from_byte-sealed_v102_receipts": true,
+    "coordinate_transport_adds_exact_A_or_AT_calls": false,
+    "v102_fold_geometry_reference_projection_setup": "5A for one fold-geometry pair: A(mean) plus A of four reference modes; report separately and amortize only across an explicitly stated batch",
+    "v102_total_frozen_reference_projection_setup": {"A": 225, "AT": 0},
+    "v102_total_fit_only_anchor_features": {"A": 0, "AT": 672},
+    "high_resolution_research_transport_wall_and_peak_rss_must_be_reported": true,
+    "high_resolution_research_transport_is_not_a_deployment_resource_claim": true,
+    "formal_scoring_A_calls_are_evaluation_only_and_must_not_be_added_to_online_algorithm_calls": true
+  },
+  "independent_validation": {
+    "validator_must_not_import": [
+      "learning_labs/nine_view_diffeomorphic_equivariant_warm_start_v110.py",
+      "site_tools/run_nine_view_case6_diffeomorphic_equivariant_warm_start_v110.py"
+    ],
+    "independent_lift": "separately implemented exact-nested separable interpolation and half-cosine support",
+    "independent_composition": "manual composed coordinate evaluation with fixed-iteration bisection inverses and independent bounded-memory eight-corner gather",
+    "validator_must_recompute": [
+      "v102 and v109 parent terminal identities",
+      "all selected parent fields and exact-call receipts",
+      "all composed-map Jacobian and inverse diagnostics",
+      "all truth and candidate lifts, correct/identity/wrong transports, pullbacks, and coordinate-covariant observations",
+      "all 630 rows, eight-gate decisions, paired controls, ledgers, summaries, and final decision",
+      "formal inputs and outputs remained byte-identical"
+    ],
+    "row_metric_maximum_absolute_difference": 2e-10,
+    "summary_maximum_absolute_difference": 2e-10,
+    "predicate_boolean_mismatch_count_maximum": 0
+  },
+  "decision": {
+    "pass_status": "PASS_COMPOSED_DIFFEOMORPHIC_EQUIVARIANT_WARM_START_MECHANISM_V110",
+    "fail_accuracy_status": "FAIL_COMPOSED_DIFFEOMORPHIC_WARM_START_ACCURACY_V110",
+    "fail_discrimination_status": "FAIL_NO_COMPOSED_DIFFEOMORPHIC_TRANSPORT_DISCRIMINATION_V110",
+    "invalid_status": "INCONCLUSIVE_INVALID_COMPOSED_DIFFEOMORPHIC_EXECUTION_V110",
+    "mechanism_pass_requires": "every numerical-integrity, primary matched-accuracy, exact-call, and correct-versus-missing/wrong transport predicate",
+    "learned_advantage_is_reported_separately": true,
+    "if_mechanism_pass_and_learned_advantage_pass": "Freeze a minimal CPU coordinate-conditioned MLP sentinel on a separate fit-only roster, preserving the same analytic transport wrapper and simple controls.",
+    "if_mechanism_pass_and_learned_advantage_fail": "Retain the analytic equivariant wrapper as a structural component, keep projected-ridge or rank0 as the honest candidate, and do not train a larger network on Case6.",
+    "if_mechanism_fail": "Close this composed trilinear-lift wrapper and move to a continuous coefficient or mesh-aware operator before any neural training.",
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_advantage": false,
+    "real_bost": false,
+    "gpu_training_authorized": false
+  },
+  "claim_limits": [
+    "A pass supports only a known-map coordinate-equivariant warm-start mechanism on five already-open Case6 frames and six preregistered composed maps.",
+    "The independent physical sample count is five, not ninety or six hundred thirty.",
+    "The maps are coordinate charts, not six new flame realizations or fixed-camera physical deformations; all physical scoring is performed after pullback to the common reference chart.",
+    "The composed maps are held out from predictor fitting but the physical Case6 truth is post-open development data.",
+    "The formal process may read already-open truth for post-seal scoring, so API-level target noninterference may be shown but process-level never-read is not claimed.",
+    "No arbitrary diffeomorphism, unknown registration, external physical generalization, wall-time speedup, memory advantage, neural-operator superiority, curved-ray, first, unique, state-of-the-art, real-BOST, or paper-success claim is allowed."
+  ]
+}

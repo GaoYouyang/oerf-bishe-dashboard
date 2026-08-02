@@ -1,0 +1,52 @@
+{
+  "schema_version": "oerf-nine-view-case6-v110-tail-root-cause-public-summary-1.0",
+  "updated": "2026-08-03",
+  "formal_status": "INCONCLUSIVE_INVALID_COMPOSED_DIFFEOMORPHIC_EXECUTION_V110",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_V110_TAIL_ROOT_CAUSE",
+  "evidence_role": "post-open root-cause audit of the invalid v110 execution; not a repaired algorithm result",
+  "row_count": 480,
+  "frozen_interior_gradient_limit": 0.14,
+  "groups": {
+    "warm_initializer_roundtrip": {
+      "count": 450,
+      "mean": 0.04095860292656518,
+      "p50": 0.05421834208391801,
+      "p90_higher": 0.05917087119818635,
+      "worst": 0.06524285718914771,
+      "worst_within_frozen_limit": true
+    },
+    "resampled_cfd_truth_roundtrip": {
+      "count": 30,
+      "mean": 0.11714402016277582,
+      "p50": 0.15862153121260864,
+      "p90_higher": 0.22183167809955856,
+      "worst": 0.22334585255157774,
+      "worst_within_frozen_limit": false
+    }
+  },
+  "axis_diagnostic": {
+    "xy_worst_maximum": 0.02239202218093826,
+    "yz_worst_maximum": 0.2230693458195877,
+    "zx_worst_maximum": 0.22334585255157774,
+    "interpretation": "The invalid tail is concentrated in transforms involving the long z axis, not in the learned-initializer roundtrips."
+  },
+  "integrity": {
+    "top_20_worst_rows_all_truth": true,
+    "formal_to_independent_maximum_absolute_difference": 2.42861286636753e-16,
+    "formal_to_independent_boolean_mismatch_count": 0,
+    "end_to_end_physics_independence_proven": false
+  },
+  "decision": "v110 remains invalid. The independent audit localizes the failed interior-gradient gate to repeated resampling of CFD truth, while every initializer roundtrip remains below the frozen numerical limit. The next implementation must compose coordinates first and gather each source tensor once.",
+  "claims": {
+    "tail_root_cause_localized": true,
+    "v110_repaired": false,
+    "warm_initializer_evaluated_validly": false,
+    "matched_accuracy": false,
+    "coordinate_generalization": false,
+    "resource_advantage": false,
+    "external_generalization": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
