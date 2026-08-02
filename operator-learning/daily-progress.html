@@ -509,13 +509,13 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>11 / 11</b>
-        <span>v99 坐标输运物理门；完整变换约 1e-16，错误 warp 为 6.88%–132.56%。</span>
+        <b>90 / 90</b>
+        <span>v101 公共物理 rank 0 与 rank 4 的八门通过数；旧 endpoint rank 4 仅 37/90。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v99 坐标输运物理接口 11/11 通过，连续未见机位泛化仍待验证</strong>
-      <span>正式与独立程序在两个三维格点旋转和一个光滑可逆剪切上，验证密度标量 pullback、梯度 <code>J<sup>-T</sup></code>、射线、探测器基和伴随同步输运。完整变换最坏误差约 <code>1.29e-15</code>，错误 warp 为 <code>6.88%–132.56%</code>。这只证明物理接口正确；固定物理相机、SE(3)、任意微分同胚、未见 pose、learned initializer 与真实 BOST 均未证明。<code>algorithm_breakthrough=false</code>，当前仍不租 GPU。</span>
+      <strong>最新科学判决：v101 确认公共物理参考域容量，但 rank 4 尚未证明胜过静态 rank 0</strong>
+      <span>v101 的 physical-reference rank 0 与 rank 4 在 15 个 geometry-time 留出折上均为 <code>90/90</code>，而匹配的 geometry-specific endpoint rank 4 只有 <code>37/90</code>。独立程序重建 43 个臂、3870 次 exact K1 与 <code>7740A+7740A^T</code>，正式差值全部为 0。下一门先做严格 observation-only rank 4 对静态 rank 0；<code>algorithm_breakthrough=false</code>，仍不租 GPU。</span>
       <details style="margin-top:10px;">
         <summary>展开同日 v94 及更早父证据</summary>
         <span>
@@ -631,6 +631,11 @@
                 <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
+                    <span class="tag">v101 公共物理 rank 0：90/90</span>
+                    <span class="tag">v101 公共物理 rank 4：90/90</span>
+                    <span class="tag negative">旧 endpoint rank 4：37/90</span>
+                    <span class="tag engineering">43 臂 · 3870 次独立复算</span>
+                    <span class="tag">当前 rank 4 对 rank 0</span>
                     <span class="tag">v99 物理门 11/11</span>
                     <span class="tag engineering">完整输运约 1e-16</span>
                     <span class="tag negative">错误 warp 6.88%–132.56%</span>
@@ -644,13 +649,71 @@
                     <span class="tag engineering">270 回放逐值复算</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3>v99 把微分同胚建议变成 11 个物理门并全部通过；下一步转向连续 pose/ray 未见几何验证</h3>
-                  <p>v98 证明普通联合回归最多 75/90 后，v99 没有扩大模型，而是先检查坐标变化下体场、梯度、相机和伴随是否物理一致。正确实现达到数值舍入精度，错误 warp 被明确检出。</p>
+                  <h3>v101 公共物理参考域容量通过；静态 rank 0 成为必须击败的基线</h3>
+                  <p>v99 写对物理坐标输运，v100 排除几何相关 optimizer endpoints；v101 进一步确认相机无关 physical field 是可用的公共参考域目标。但 rank 0 与 rank 4 都是 90/90，复杂系数预测器还没有获得部署价值。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
               <div class="entry-body">
                 <div class="evidence-grid">
+                  <section>
+                    <h4>v101 为什么必须做</h4>
+                    <p>v100 失败可能来自错误目标，而不是公共参考域思想失败。v101 因此不再学习几何相关优化器终点，改用相机无关物理真值建立 fold-local mean/SVD，再与部署可见 anchor 固定混合。</p>
+                  </section>
+                  <section>
+                    <h4>v101 真正运行了什么</h4>
+                    <p>同一 90 个 Case 6 单元与 15 个 geometry-time folds，固定 43 个臂、rank 0/4/8/12/16/20 和三个 beta；总计 3870 次 strict K1、<code>7740A+7740A^T</code>，逐单元检查原八门。</p>
+                  </section>
+                  <section>
+                    <h4>v101 正式结果</h4>
+                    <ul>
+                      <li>observable anchor only：<code>20/90</code>。</li>
+                      <li>matched endpoint rank 4：<code>37/90</code>。</li>
+                      <li>physical-reference static rank 0：<code>90/90</code>。</li>
+                      <li>physical-reference rank 4 oracle：<code>90/90</code>。</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h4>独立复算</h4>
+                    <p>独立程序没有导入正式 v101 runner 或容量 core，从原始真值重做预处理、15 折、SVD、43 个臂与全部 strict K1。initializer、field、residual、rows、result、manifest 的正式差值全部为 <code>0</code>。</p>
+                  </section>
+                  <section>
+                    <h4>rank 4 是否已经更好</h4>
+                    <p>它在 field / full-gradient 上 90/90 优于 rank 0，在 observation 上 78/90 更好；但 interior-gradient 只 56/90 更好，maximum-gate 仅 63/90 更好且 27/90 更差，所以尚未稳定支配静态先验。</p>
+                  </section>
+                  <section>
+                    <h4>当前是否突破</h4>
+                    <p>参考域目标选择取得正证据，但 rank 4 系数仍由真值辅助得到。严格 observation-only 预测、未见坐标系、资源和真实 BOST 都未通过，因此 <code>algorithm_breakthrough=false</code>。</p>
+                  </section>
+                  <section>
+                    <h4>v100 为什么必须做</h4>
+                    <p>v99 只证明坐标变化的物理接口写对了。下一步还要确认不同相机几何下得到的 reconstruction endpoint 是否真能放进一个公共输出空间；否则更大的 PCA、FNO 或 MLP 只是在错误目标上增加容量。</p>
+                  </section>
+                  <section>
+                    <h4>v100 真正运行了什么</h4>
+                    <p>在已开封 Case 6 的三套九视角几何与 30 个物理时刻上，构造 15 个 geometry-time folds。每折完整留出一套几何与连续六帧，并对相邻时刻 embargo；折内拟合 rank 0/8/16/24/32/40 场基，再逐格运行不变 strict K1。</p>
+                  </section>
+                  <section>
+                    <h4>v100 正式结果</h4>
+                    <ul>
+                      <li>direct target + K1 ceiling：<code>90/90</code>。</li>
+                      <li>共享 endpoint basis：rank 0 为 <code>0/90</code>，rank 8 为 <code>1/90</code>，rank 16 至 40 均只有 <code>2/90</code>。</li>
+                      <li>rank 40 projection field-L2 p50 / p90：<code>0.5705 / 0.7397</code>。</li>
+                      <li>每次候选保持 <code>2A+2A^T</code>，没有把便宜代理调用冒充 exact 调用。</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h4>独立复算与结论</h4>
+                    <p>独立程序没有导入正式 runner 或 v100 容量 core，重建全部 15 折、630 个 initializer 与 630 次 strict K1；candidate-row 最大差为 <code>2.20e-13</code>。结论是 endpoint 目标不具备跨几何公共线性容量，不是 K1 外壳坏了。</p>
+                  </section>
+                  <section>
+                    <h4>与微分同胚建议的关系</h4>
+                    <p>数组位置相同不代表物理语义已规范化。几何相关 optimizer endpoint 含有可辨识方向、正则化和求解器偏差；v101 因而改用相机无关密度真值作为公共参考域标量场，再用 v99 的 Jacobian-consistent 输运处理未来非恒等坐标映射。</p>
+                  </section>
+                  <section>
+                    <h4>当前是否突破</h4>
+                    <p>没有。v100 是高价值负结果，关闭错误输出目标；v101 仍是 truth-aware 容量门。只有未来参考域容量、严格 observation-only 未见几何、资源与真实 BOST 都通过，才可能形成算法突破。</p>
+                  </section>
                   <section>
                     <h4>师兄的建议是什么意思</h4>
                     <p>模型不能只记住 F12/F15/F30 三个 geometry ID。若换坐标系或相机位姿，密度标量、密度梯度、射线和探测器方向必须按同一个可逆映射变化；否则模型会把坐标伪差当成物理规律。</p>
@@ -815,12 +878,18 @@
                   </section>
                 </div>
                 <figure class="entry-figure">
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_coordinate_transport_v99.png" aria-label="打开 v99 坐标输运结果图">
-                    <img src="../assets/nine_view_coordinate_transport_v99.png" alt="v99 三维坐标输运物理门结果" />
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_reference_truth_blend_loo_capacity_v101.png" aria-label="打开 v101 公共物理参考域结果图">
+                    <img src="../assets/nine_view_case6_reference_truth_blend_loo_capacity_v101.png" alt="v101 公共物理参考域容量结果" />
                   </a>
-                  <figcaption>v99：完整坐标输运达到约 1e-16，错误 warp 为 6.88%–132.56%。物理接口通过，但固定物理相机与未见 pose 泛化尚未证明。</figcaption>
+                  <figcaption>v101：公共物理 rank 0 与 rank 4 都是 90/90，旧 endpoint rank 4 仅 37/90；目标选对了，但复杂预测器尚未赢过静态先验。</figcaption>
                 </figure>
                 <div class="entry-links">
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_case6_reference_truth_blend_loo_capacity_v101_result_2026-08-02.md">v101 完整证据</a>
+                  <a href="../docs/nine_view_case6_reference_truth_blend_loo_capacity_v101_public_summary.json">v101 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_reference_truth_blend_loo_capacity_v101.png">v101 结果图</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_case6_canonical_field_loo_capacity_v100_result_2026-08-02.md">v100 完整证据</a>
+                  <a href="../docs/nine_view_case6_canonical_field_loo_capacity_v100_public_summary.json">v100 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_canonical_field_loo_capacity_v100.png">v100 结果图</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_coordinate_transport_v99_result_2026-08-02.md">v99 完整证据</a>
                   <a href="../docs/nine_view_coordinate_transport_v99_public_summary.json">v99 脱敏摘要</a>
                   <a href="../asset_viewer.html?asset=assets%2Fnine_view_coordinate_transport_v99.png">v99 结果图</a>
@@ -2157,14 +2226,16 @@
         Case 4 为 <code>84/84</code>，Case 6 为 <code>78/90</code>，12 个失败全部只在内部梯度；联合外部门因此 FAIL。
         两例独立复算声明差值均为 <code>0</code>，wall/RSS 未启动。v96-v98 随后把问题收束为“表示有容量、普通
         observation-only 回归不能封口”；v99 再把师兄提出的微分同胚思想落实为 11 个坐标输运门并全部独立通过。
-        正确变换达到约 <code>1e-16</code>，错误 warp 为 <code>6.88%–132.56%</code>。这仍没有证明固定物理相机、未见
-        pose 泛化、真实 BOST 或论文成功。
+        v100 随后证明几何相关 reconstruction endpoint 的共享场基最高只有 <code>2/90</code>，而 direct target 外壳为
+        <code>90/90</code>。v101 再用相机无关物理真值参考域取得 rank 0 与 rank 4 的 <code>90/90</code> 容量正结果，
+        但静态 rank 0 同样过门，因此复杂预测器仍需在严格 observation-only 对照中证明价值。它仍没有证明固定物理相机、
+        未见 pose 泛化、真实 BOST 或论文成功。
       </p>
     </section>
   </main>
 
   <footer>
-    持续更新至 v99 坐标输运物理门独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v101 公共物理参考域容量独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>

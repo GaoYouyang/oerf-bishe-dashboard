@@ -11982,3 +11982,133 @@ BOST 的射线、探测器 `u/v` 基、forward 与 adjoint 也必须使用同一
 - `docs/nine_view_coordinate_transport_v99_result_2026-08-02.md`
 - `docs/nine_view_coordinate_transport_v99_public_summary.json`
 - `assets/nine_view_coordinate_transport_v99.png`
+
+## 2026-08-02：v100 证明“不同几何的重建终点”不是可直接复用的公共场目标
+
+### 为什么 v99 通过后仍然会失败
+
+v99 证明的是坐标输运接口正确，不是任何三维数组都已经具有相同物理语义。不同相机几何下的 truth-aware reconstruction endpoint 还混入了可辨识方向、正则化偏差和求解器选择。即使数组尺寸都为 `32x16x16`，也不能直接把它们当作一个跨几何 PCA、FNO 或 DeepONet 的统一输出样本。
+
+所以 v100 先问一个比训练更便宜的问题：完整留出相机几何和连续时间块后，由其他几何的 optimizer endpoints 建立的公共线性场空间，是否至少有足够 truth-aware 容量通过原来的八个 matched-accuracy 门？
+
+### 真正运行了什么
+
+- 已开封 BLASTNet H2-air Case 6，三套九视角几何、30 个物理时刻，共 90 个单元；
+- 15 个 geometry-time folds，每折完整留出一套几何中的连续六帧，并删除相邻物理时刻；
+- 折内只用其他几何的 truth-aware reconstruction endpoints 拟合 mean 和 thin SVD；
+- 固定比较 rank `0/8/16/24/32/40`；
+- 投影场作为 initializer，再运行不变 strict CGLS K1，每次精确记录 `2A+2A^T`；
+- direct heldout target + K1 作为外壳安全上限；
+- 独立 validator 不导入正式 runner 或 v100 capacity core，重建全部 folds、SVD、630 个 initializer、630 次 K1、八门与调用账。
+
+### 正式结果
+
+| 输出目标 | 完整八门通过 | projection field-L2 p50 | p90-higher |
+|---|---:|---:|---:|
+| direct target + K1 | **90 / 90** | 0 | 0 |
+| rank 0 | 0 / 90 | 0.8053 | 1.1344 |
+| rank 8 | 1 / 90 | 0.6542 | 0.8259 |
+| rank 16 | 2 / 90 | 0.6117 | 0.7781 |
+| rank 24 | 2 / 90 | 0.5986 | 0.7603 |
+| rank 32 | 2 / 90 | 0.5723 | 0.7495 |
+| rank 40 | 2 / 90 | 0.5705 | 0.7397 |
+
+rank 40 在三套留出几何上分别只有 `1/30`、`1/30`、`0/30`。增加秩让投影误差缓慢下降，却没有让安全通过数继续增加。这不是简单“模型再大一点”就能合理修补的缺口。
+
+独立程序的 candidate-row 最大绝对差为 `2.20e-13`，场最大绝对差为 `2.43e-14`；正式输入和输出在验证前后保持不变。最终状态为：
+
+```text
+FAIL_NO_CANONICAL_FIELD_LOO_CAPACITY_V100
+PASS_INDEPENDENT_RECOMPUTATION_CANONICAL_FIELD_LOO_CAPACITY_V100
+```
+
+### 与师兄提出的微分同胚原理怎样衔接
+
+DNO、Geo-FNO 和 DIMON 已经覆盖“把不同域映射到公共参考域再学习”的一般思想，所以不能把微分同胚本身写成原创。BOST 的额外困难是：密度标量之外，梯度要按 `J^{-T}` 变化，相机 ray、detector basis、forward 与 adjoint 也必须共同输运。
+
+v99 已通过这层物理接口；v100 又证明 geometry-specific optimizer endpoint 不是合适的公共参考域目标。当前 v101 因而改用相机无关的物理密度真值，在每折只保留唯一物理时刻建立参考域基，再与部署可见 detector-dual anchor 按固定 beta 混合。它先回答表示是否装得下，只有 `90/90` 容量成立，才有资格训练 observation + continuous ray/camera descriptor 到参考域系数的小模型。
+
+### 是否成功、是否突破
+
+- **实验执行成功：** 15 折、630 次正式与独立 exact K1 完整闭合。
+- **原路线失败：** 共享 geometry-specific endpoint 场基最高只有 2/90，正式关闭。
+- **策略调整成功：** 目标由求解器终点改成相机无关物理真值参考域。
+- **算法尚未突破：** 没有 observation-only 未见几何模型、资源收益或真实 BOST。
+- **当前状态：** `algorithm_breakthrough=false`、`paper_success=false`、`gpu_training_authorized=false`。
+
+公开证据：
+
+- `docs/nine_view_case6_canonical_field_loo_capacity_v100_result_2026-08-02.md`
+- `docs/nine_view_case6_canonical_field_loo_capacity_v100_public_summary.json`
+- `assets/nine_view_case6_canonical_field_loo_capacity_v100.png`
+
+## 2026-08-02：v101 公共物理参考域容量通过，但 rank 0 静态先验抢回了优先级
+
+### 为什么这一步直接回应师兄的微分同胚建议
+
+v99 已经证明：换坐标系时不能只 warp 一个三维数组。密度是标量 pullback，梯度要乘 `J^{-T}`，相机射线、探测器基、forward 和 adjoint 也必须同步变化。v100 又证明：不同几何下的 optimizer endpoints 即使数组 shape 相同，也不是一个可直接共享的公共物理目标。
+
+所以 v101 改用真正相机无关的三维物理真值建立公共参考域。它先回答最便宜的问题：在严格留一几何和连续时间块后，这个目标空间是否至少装得下全部安全 initializer？容量过不了，就没有理由训练 FNO、DeepONet 或更大的坐标网络。
+
+### 真正运行了什么
+
+- 已开封 Case 6 的三套九视角几何、30 个物理时刻，共 90 个单元；
+- 15 个 geometry-time folds，并保留相邻一帧 embargo；
+- 每折先按唯一物理时刻建立相机无关真值 mean/SVD；
+- 固定 rank `0/4/8/12/16/20`、beta `0.25/0.5/0.75`、完整真值上限、匹配 endpoint controls 与 anchor-only，共 43 个臂；
+- 3870 次 strict K1，实际调用总账 `7740A+7740A^T`，没有 breakdown；
+- 每个单元仍检查 field、full-gradient、interior-gradient、observation 的八个 matched-accuracy 门。
+
+### 正式与独立结果
+
+| beta 0.25 候选 | 八门通过 |
+|---|---:|
+| anchor only | 20 / 90 |
+| geometry-specific endpoint rank 4 | 37 / 90 |
+| physical-reference static rank 0 | **90 / 90** |
+| physical-reference rank 4 oracle | **90 / 90** |
+
+独立 validator 没有导入正式 v101 runner 或容量 core。它从原始 Case 6 真值重新做预处理、15 折、unique-frame SVD、43 个臂、3870 个 initializer、3870 次 strict K1、八门和调用账。正式与独立的 initializer、field、residual、candidate rows、fold rows、result、manifest 最大差全部为 `0`。
+
+最终状态：
+
+```text
+PASS_REFERENCE_TRUTH_BLEND_CAPACITY_V101
+PASS_INDEPENDENT_RECOMPUTATION_REFERENCE_TRUTH_BLEND_CAPACITY_V101
+```
+
+### 成功了什么
+
+公共物理参考域目标选择成功。旧 endpoint rank 4 只有 `37/90`，而 physical-reference rank 0 与 rank 4 都是 `90/90`。这说明 v100 的失败不是“微分同胚参考域思想没用”，而是目标选错了：求解器终点混入了几何相关可辨识性与正则化偏差，真实物理场才是正确的公共对象。
+
+### 为什么还不是算法突破
+
+rank 4 系数仍由 held-out truth 辅助投影得到，所以这里只证明表示容量。更关键的是，rank 0 不预测任何系数，也达到 `90/90`。
+
+rank 4 对 rank 0 的逐单元比较是：
+
+- field：`90/90` 更好；
+- full-gradient：`90/90` 更好；
+- interior-gradient：只有 `56/90` 更好；
+- observation：`78/90` 更好；
+- 八门 maximum-gate：`63/90` 更好，`27/90` 更差。
+
+因此不能把 rank 4 oracle 的平均 margin 写成可部署模型优势，更不能把它写成未见坐标系泛化成功。当前仍是 `algorithm_breakthrough=false`、`external_generalization=false`、`real_BOST=false`、`paper_success=false`。
+
+### 策略怎样立即调整
+
+下一门不消耗未开封外部工况，也不租 GPU。先在同一已开封 Case 6 上做严格 observation-only 的公平对照：
+
+```text
+fold-local static physical rank 0
+vs
+observation + known geometry -> rank 4 coefficients
+```
+
+保持同一 15 折、embargo、`2A+2A^T` strict K1 与八门。rank 4 必须既保持 `90/90`，又以结果前冻结的 paired margin 稳定优于 rank 0，才有资格进入未见坐标外门；否则冻结更简单的 rank 0 作为候选。
+
+公开证据：
+
+- `docs/nine_view_case6_reference_truth_blend_loo_capacity_v101_result_2026-08-02.md`
+- `docs/nine_view_case6_reference_truth_blend_loo_capacity_v101_public_summary.json`
+- `assets/nine_view_case6_reference_truth_blend_loo_capacity_v101.png`
