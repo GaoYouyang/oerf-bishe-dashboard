@@ -1,0 +1,92 @@
+{
+  "schema_version": "oerf-nine-view-case6-reference-rank4-observation-predictor-public-summary-102.0",
+  "updated": "2026-08-02",
+  "formal_status": "FAIL_NO_REFERENCE_RANK4_OBSERVATION_PREDICTOR_ADVANTAGE_V102",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_REFERENCE_RANK4_OBSERVATION_PREDICTOR_V102",
+  "evidence_role": "post-open observation-only known-geometry transport diagnostic on BLASTNet H2-air Case 6",
+  "cells": 90,
+  "folds": 15,
+  "arms": 7,
+  "exact_replays": 630,
+  "breakdown_count": 0,
+  "actual_exact_call_ledger": {
+    "candidate_online": {"A": 1260, "AT": 1260},
+    "fold_geometry_transport_setup": {"A": 225, "AT": 0},
+    "offline_fit_feature_anchor": {"A": 0, "AT": 672}
+  },
+  "all_eight_gate_pass_counts": [
+    {"arm": "static physical rank 0", "joint_pass_count": 90},
+    {"arm": "transported projected ridge", "joint_pass_count": 90},
+    {"arm": "transported linear residual", "joint_pass_count": 90},
+    {"arm": "transported RBF residual", "joint_pass_count": 90},
+    {"arm": "geometry-ID linear control", "joint_pass_count": 90},
+    {"arm": "no-transport linear control", "joint_pass_count": 71},
+    {"arm": "wrong-pose projected-ridge control", "joint_pass_count": 90}
+  ],
+  "eligible_arm_results": [
+    {
+      "arm": "transported projected ridge",
+      "qualified": false,
+      "maximum_gate": {"p50": -0.12480465340315994, "p90_higher": -0.09365826155729962, "worst": -0.040294188999444924},
+      "maximum_gate_improvement_vs_rank0": {"p50": 0.004930109055051757, "p90_higher": 0.052073301050878484, "worst": 0.0024306675078309414},
+      "paired_field_better_cells": 59,
+      "paired_full_gradient_better_cells": 66,
+      "geometry_p50_no_worse_count": 2,
+      "metric_summary_noninferior_count": 4
+    },
+    {
+      "arm": "transported linear residual",
+      "qualified": false,
+      "maximum_gate": {"p50": -0.10304261738766807, "p90_higher": -0.05884407940835379, "worst": -0.024343233967555333},
+      "maximum_gate_improvement_vs_rank0": {"p50": -0.016831926960440113, "p90_higher": 0.017259118901932657, "worst": -0.01352028752405865},
+      "paired_field_better_cells": 53,
+      "paired_full_gradient_better_cells": 58,
+      "geometry_p50_no_worse_count": 0,
+      "metric_summary_noninferior_count": 0
+    },
+    {
+      "arm": "transported RBF residual",
+      "qualified": false,
+      "maximum_gate": {"p50": -0.12478381227730695, "p90_higher": -0.09371002956161611, "worst": -0.038895656493623254},
+      "maximum_gate_improvement_vs_rank0": {"p50": 0.004909267929198768, "p90_higher": 0.052125069055194984, "worst": 0.0010321350020092712},
+      "paired_field_better_cells": 59,
+      "paired_full_gradient_better_cells": 66,
+      "geometry_p50_no_worse_count": 2,
+      "metric_summary_noninferior_count": 4
+    }
+  ],
+  "static_rank0_maximum_gate": {"p50": -0.11987454434810818, "p90_higher": -0.04158496050642113, "worst": -0.03786352149161398},
+  "projected_ridge_failed_noninferiority_tails": [
+    {"metric": "field harm vs Zero-K4", "p90_candidate_minus_rank0": 0.010706426736220132, "worst_candidate_minus_rank0": 0.025234957293037485},
+    {"metric": "interior-gradient harm vs Zero-K4", "p90_candidate_minus_rank0": -0.03661969886995242, "worst_candidate_minus_rank0": 0.016728681071208062},
+    {"metric": "observation error vs Zero-K2", "p90_candidate_minus_rank0": 0.0036105794707852468, "worst_candidate_minus_rank0": 0.01790781440167266},
+    {"metric": "observation harm vs Zero-K4", "p90_candidate_minus_rank0": -0.008155251846551415, "worst_candidate_minus_rank0": 0.010317817621106506}
+  ],
+  "independent_validation": {
+    "formal_runner_or_v102_core_imported": false,
+    "all_folds_features_models_and_replays_rebuilt": true,
+    "recomputed_exact_replays": 630,
+    "heldout_label_mutation_maximum_difference": 0.0,
+    "final_formal_independent_maximum_absolute_difference": 0.0,
+    "formal_inputs_and_outputs_unchanged": true,
+    "shared_pre_v102_physics_kernels_disclosed": true,
+    "first_attempt_status": "INCONCLUSIVE_NUMERIC_TOLERANCE",
+    "first_attempt_reason": "the independent implementation evaluated the same Gram product twice; the corrected implementation preserved the original 2e-12 tolerance and then matched every formal array and decision exactly"
+  },
+  "decision": "Freeze static physical rank 0 as the preferred Case-6 initializer, close the current rank-4 observation predictor family, and move the coordinate question to a preregistered continuous diffeomorphic stress gate rather than a larger network.",
+  "claims": {
+    "physics_consistent_coordinate_transport_useful_for_compatibility": true,
+    "strict_observation_only_rank4_advantage_proven": false,
+    "static_rank0_preferred_on_current_evidence": true,
+    "learned_diffeomorphism": false,
+    "continuous_pose_model": false,
+    "wrong_pose_discriminated_by_current_gate": false,
+    "arbitrary_diffeomorphism_generalization": false,
+    "external_generalization": false,
+    "resource_advantage": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "gpu_training_authorized": false
+  }
+}

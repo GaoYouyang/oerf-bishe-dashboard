@@ -12112,3 +12112,63 @@ observation + known geometry -> rank 4 coefficients
 - `docs/nine_view_case6_reference_truth_blend_loo_capacity_v101_result_2026-08-02.md`
 - `docs/nine_view_case6_reference_truth_blend_loo_capacity_v101_public_summary.json`
 - `assets/nine_view_case6_reference_truth_blend_loo_capacity_v101.png`
+
+## 2026-08-02：v102 证明坐标输运有用，但当前 rank 4 预测器没有稳定优势
+
+### 为什么要马上执行师兄的微分同胚建议
+
+v101 已经证明公共物理参考域能装下安全 initializer，但 rank-4 系数仍由真值辅助得到。真正部署时模型只能看到多视角 observation 与已知相机几何，因此必须回答两个分开的问题：坐标输运是否真的保护跨几何兼容性，以及在写对输运后，预测 rank-4 系数是否比不预测系数的 static rank 0 更好。
+
+这一步没有把“微分同胚”当成网络名称。密度按标量 pullback、梯度按 `J^{-T}` 变化，相机 ray、detector basis、forward 与 adjoint 必须共同变换。v102 先实现最小的 known-geometry physical transport diagnostic，避免一上来训练无法归因的大模型。
+
+### 真正运行了什么
+
+- 已开封 Case 6 的三套九视角几何、30 个物理时刻，共 `90` 个单元；
+- `15` 个 geometry-time folds，每折留出一套几何中的连续六帧，并删除相邻一帧；
+- 折内用相机无关物理真值建立 mean/rank-4 基，再用每套几何的 `A_g` 输运到观测坐标；
+- 输入只含 observation、known geometry、detector-dual anchor、投影 Gram、各视角能量和旧观测特征；
+- 比较 static rank 0、transported projected-ridge / linear / RBF、geometry-ID、no-transport 与 wrong-pose 共七臂；
+- `630` 个候选全部进入相同 strict K1，在线候选总账 `1260A+1260A^T`，即每条恰好 `2A+2A^T`。
+
+### 正式结果
+
+| 方法 | 八门通过 | 通过 rank-0 优势门 |
+|---|---:|---:|
+| static physical rank 0 | **90 / 90** | 基线 |
+| transported projected ridge | **90 / 90** | 否 |
+| transported linear residual | **90 / 90** | 否 |
+| transported RBF residual | **90 / 90** | 否 |
+| no-transport linear control | **71 / 90** | 不可选对照 |
+| wrong-pose projected-ridge control | **90 / 90** | 不可选对照 |
+
+projected-ridge 是最简单、最接近成功的一臂，但 maximum-gate p50 改善只有 `0.00493`，低于结果前冻结的 `0.01`；field 胜数为 `59/90`，低于最低 `60/90`，三套几何也只有 `2/3` 的 p50 不劣。field、内部梯度和 observation 的尾部仍有小但真实的伤害，不能用平均改善掩盖。
+
+最终状态：
+
+```text
+FAIL_NO_REFERENCE_RANK4_OBSERVATION_PREDICTOR_ADVANTAGE_V102
+PASS_INDEPENDENT_RECOMPUTATION_REFERENCE_RANK4_OBSERVATION_PREDICTOR_V102
+```
+
+### 独立复算和一次透明的无效尝试
+
+第一次独立复算因独立实现把同一个 Gram 乘积计算两次，末位舍入经回归放大到 `4.30e-12`，略高于冻结的 `2e-12` 容差，因此 fail-closed 记为 inconclusive，没有拿来解释科学结果。
+
+随后只把运算次序改成“Gram 计算一次后再对称化”；数据、模型、正式输出、科学门和原容差都没有变化。第二次独立程序重建全部 15 折、特征、模型、630 次 strict K1 与八门，coefficients、initializer、field、residual、metrics、gates、held-out-label mutation 和最终判决的最大差全部为 `0`。
+
+### 成功、失败与突破判断
+
+- **成功：** 正确坐标输运的三种方法均为 `90/90`，无输运只有 `71/90`。师兄的物理建议确实保护跨几何兼容性。
+- **失败：** 三个 eligible rank-4 方法没有一个稳定优于 static rank 0，当前 predictor family 关闭。
+- **仍有缺口：** wrong-pose control 也是 `90/90`，说明目前三套离散几何和兼容门还不足以检验真正的坐标泛化。
+- **没有突破：** `algorithm_breakthrough=false`、`external_generalization=false`、`real_BOST=false`、`paper_success=false`。
+
+### 路线怎样立即调整
+
+不再用 FNO、UNO 或 U-Net 挽救当前 rank-4 family，也不租 GPU。下一门改成结果前冻结的连续微分同胚压力测试：形变必须可逆、Jacobian 正且有界，并对 density、gradient、ray、detector basis、forward 与 adjoint 做联合输运。只有正确输运能持续通过、错误姿态能被明确击穿，并产生可由 observation 预测的 headroom，才重新授权最小学习模型。
+
+公开证据：
+
+- `docs/nine_view_case6_reference_rank4_observation_predictor_v102_result_2026-08-02.md`
+- `docs/nine_view_case6_reference_rank4_observation_predictor_v102_public_summary.json`
+- `assets/nine_view_case6_reference_rank4_observation_predictor_v102.png`

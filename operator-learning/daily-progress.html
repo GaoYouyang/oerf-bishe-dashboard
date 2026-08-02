@@ -509,13 +509,13 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>90 / 90</b>
-        <span>v101 公共物理 rank 0 与 rank 4 的八门通过数；旧 endpoint rank 4 仅 37/90。</span>
+        <b>90 / 90 vs 71 / 90</b>
+        <span>v102 正确坐标输运 projected-ridge 与 no-transport 对照的八门通过数。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v101 确认公共物理参考域容量，但 rank 4 尚未证明胜过静态 rank 0</strong>
-      <span>v101 的 physical-reference rank 0 与 rank 4 在 15 个 geometry-time 留出折上均为 <code>90/90</code>，而匹配的 geometry-specific endpoint rank 4 只有 <code>37/90</code>。独立程序重建 43 个臂、3870 次 exact K1 与 <code>7740A+7740A^T</code>，正式差值全部为 0。下一门先做严格 observation-only rank 4 对静态 rank 0；<code>algorithm_breakthrough=false</code>，仍不租 GPU。</span>
+      <strong>最新科学判决：v102 证明坐标输运有用，但当前 rank 4 预测 family 没有算法优势</strong>
+      <span>正确 known-geometry 输运的 projected-ridge、linear 与 RBF 都守住 <code>90/90</code>，完全不输运的 linear control 只有 <code>71/90</code>；然而三个 eligible 方法均未通过对 static rank 0 的预注册优势门。独立程序重建 15 折、7 臂和 630 次 exact K1，最终所有差值为 0。当前 family 关闭，下一门改为连续微分同胚压力测试；<code>algorithm_breakthrough=false</code>，仍不租 GPU。</span>
       <details style="margin-top:10px;">
         <summary>展开同日 v94 及更早父证据</summary>
         <span>
@@ -631,6 +631,11 @@
                 <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
+                    <span class="tag">v102 正确输运：90/90</span>
+                    <span class="tag negative">v102 无输运：71/90</span>
+                    <span class="tag negative">eligible 优势：0/3</span>
+                    <span class="tag engineering">630 次独立复算差值 0</span>
+                    <span class="tag">下一门：连续微分同胚压力</span>
                     <span class="tag">v101 公共物理 rank 0：90/90</span>
                     <span class="tag">v101 公共物理 rank 4：90/90</span>
                     <span class="tag negative">旧 endpoint rank 4：37/90</span>
@@ -649,13 +654,42 @@
                     <span class="tag engineering">270 回放逐值复算</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3>v101 公共物理参考域容量通过；静态 rank 0 成为必须击败的基线</h3>
-                  <p>v99 写对物理坐标输运，v100 排除几何相关 optimizer endpoints；v101 进一步确认相机无关 physical field 是可用的公共参考域目标。但 rank 0 与 rank 4 都是 90/90，复杂系数预测器还没有获得部署价值。</p>
+                  <h3>v102：坐标输运把兼容性恢复到 90/90，但 rank 4 优势门 0/3</h3>
+                  <p>师兄提出的微分同胚建议已经进入正式数值实验。正确几何输运明显优于完全不输运，但三种 rank-4 预测器都没有稳定击败 static physical rank 0，因此保留物理输运、关闭当前预测 family。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
               <div class="entry-body">
                 <div class="evidence-grid">
+                  <section>
+                    <h4>v102 为什么必须做</h4>
+                    <p>v101 只证明公共物理参考域装得下安全解，rank-4 系数仍由真值辅助获得。v102 首次只用部署可见 observation 与 known geometry 预测系数，直接检验“坐标输运是否带来可部署优势”。</p>
+                  </section>
+                  <section>
+                    <h4>v102 真正运行了什么</h4>
+                    <p>在同一 Case 6 的 90 个几何-时间单元上构建 15 个留出折，比较 static rank 0、transported projected-ridge / linear / RBF、geometry-ID、no-transport 与 wrong-pose 共七臂；630 个候选全部进入同一 <code>2A+2A^T</code> strict K1。</p>
+                  </section>
+                  <section>
+                    <h4>正式结果</h4>
+                    <ul>
+                      <li>static rank 0 与三种正确输运方法：均为 <code>90/90</code>。</li>
+                      <li>no-transport linear：<code>71/90</code>。</li>
+                      <li>三个 eligible rank-4 方法通过优势门：<code>0/3</code>。</li>
+                      <li>wrong-pose control 仍为 <code>90/90</code>，说明当前离散几何压力不足。</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h4>为什么不算突破</h4>
+                    <p>projected-ridge 的 maximum-gate p50 改善只有 <code>0.00493</code>，低于预注册 <code>0.01</code>；field 胜数 <code>59/90</code>，也低于最低 <code>60/90</code>，并留下 field、内部梯度和 observation 尾部伤害。它证明输运有用，不证明 rank-4 算法更优。</p>
+                  </section>
+                  <section>
+                    <h4>独立复算</h4>
+                    <p>第一次验证因独立实现重复计算 Gram 造成 <code>4.30e-12</code> 末位差而 fail-closed；保持原模型、数据、门和 <code>2e-12</code> 容差不变，只对齐代数运算次序后，第二次 coefficients、fields、metrics、gates 与最终判决差值全部为 <code>0</code>。</p>
+                  </section>
+                  <section>
+                    <h4>下一科学门</h4>
+                    <p>冻结 static rank 0，关闭当前 rank-4 family，不用 FNO / U-Net 补考。下一步构造连续、可逆、Jacobian 有界的形变，并共同输运 density、gradient、ray、detector basis、forward 与 adjoint；只有它产生可辨识 headroom 才重新授权学习模型。</p>
+                  </section>
                   <section>
                     <h4>v101 为什么必须做</h4>
                     <p>v100 失败可能来自错误目标，而不是公共参考域思想失败。v101 因此不再学习几何相关优化器终点，改用相机无关物理真值建立 fold-local mean/SVD，再与部署可见 anchor 固定混合。</p>
@@ -878,12 +912,15 @@
                   </section>
                 </div>
                 <figure class="entry-figure">
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_reference_truth_blend_loo_capacity_v101.png" aria-label="打开 v101 公共物理参考域结果图">
-                    <img src="../assets/nine_view_case6_reference_truth_blend_loo_capacity_v101.png" alt="v101 公共物理参考域容量结果" />
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_reference_rank4_observation_predictor_v102.png" aria-label="打开 v102 坐标输运结果图">
+                    <img src="../assets/nine_view_case6_reference_rank4_observation_predictor_v102.png" alt="v102 坐标输运与 rank-4 预测结果" />
                   </a>
-                  <figcaption>v101：公共物理 rank 0 与 rank 4 都是 90/90，旧 endpoint rank 4 仅 37/90；目标选对了，但复杂预测器尚未赢过静态先验。</figcaption>
+                  <figcaption>v102：正确输运把兼容通过数从 71/90 恢复到 90/90，但三个 eligible rank-4 方法均未稳定击败 static rank 0。</figcaption>
                 </figure>
                 <div class="entry-links">
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_case6_reference_rank4_observation_predictor_v102_result_2026-08-02.md">v102 完整证据</a>
+                  <a href="../docs/nine_view_case6_reference_rank4_observation_predictor_v102_public_summary.json">v102 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_reference_rank4_observation_predictor_v102.png">v102 结果图</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_case6_reference_truth_blend_loo_capacity_v101_result_2026-08-02.md">v101 完整证据</a>
                   <a href="../docs/nine_view_case6_reference_truth_blend_loo_capacity_v101_public_summary.json">v101 脱敏摘要</a>
                   <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_reference_truth_blend_loo_capacity_v101.png">v101 结果图</a>
@@ -2227,15 +2264,16 @@
         两例独立复算声明差值均为 <code>0</code>，wall/RSS 未启动。v96-v98 随后把问题收束为“表示有容量、普通
         observation-only 回归不能封口”；v99 再把师兄提出的微分同胚思想落实为 11 个坐标输运门并全部独立通过。
         v100 随后证明几何相关 reconstruction endpoint 的共享场基最高只有 <code>2/90</code>，而 direct target 外壳为
-        <code>90/90</code>。v101 再用相机无关物理真值参考域取得 rank 0 与 rank 4 的 <code>90/90</code> 容量正结果，
-        但静态 rank 0 同样过门，因此复杂预测器仍需在严格 observation-only 对照中证明价值。它仍没有证明固定物理相机、
-        未见 pose 泛化、真实 BOST 或论文成功。
+        <code>90/90</code>。v101 再用相机无关物理真值参考域取得 rank 0 与 rank 4 的 <code>90/90</code> 容量正结果。
+        v102 随后完成严格 observation-only 对照：正确输运的三种方法均保持 <code>90/90</code>，无输运仅
+        <code>71/90</code>，但 eligible rank-4 优势门为 <code>0/3</code>。因此保留坐标输运、关闭当前 rank-4 family，
+        下一问题转为连续微分同胚压力门。它仍没有证明固定物理相机、未见 pose 泛化、真实 BOST 或论文成功。
       </p>
     </section>
   </main>
 
   <footer>
-    持续更新至 v101 公共物理参考域容量独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v102 坐标输运 rank-4 预测独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
