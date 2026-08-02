@@ -11746,3 +11746,59 @@ v94 已经关闭围绕单帧局部红区继续扩建窗口的路线，v91 又证
 - `docs/nine_view_v94_case6_physical_ball_observation_predictor_v95_result_2026-08-02.md`
 - `docs/nine_view_v94_case6_physical_ball_observation_predictor_v95_public_summary.json`
 - `assets/nine_view_v94_case6_physical_ball_observation_predictor_v95.png`
+
+## 2026-08-02：v96 用四个残差频谱方向把表示容量真正补到 90/90
+
+### 今天为什么没有继续调 v95 的小模型
+
+v95.1 的最佳 observation-only 策略只有 `81/90`，而且就算用真值从父 K1、mean、linear、RBF 中完美挑选，也只能到 `83/90`。这说明问题不是“分类器还不够聪明”，而是候选集合里根本没有七个失败单元需要的安全解。
+
+所以今天先不训练更大的网络，也不租 GPU。我把问题缩成一个最小的可证伪实验：能不能从父 K1 的观测残差和已知九视角几何里，构造少量新方向，让严格可行解重新存在？
+
+### 实际做了什么
+
+把旧 GSLB32 基在观测空间里的投影写成 `P=AU`，对 `P^T P` 的谱按顺序分成四个八模态频带。每个频带都用父残差 `r` 产生一个 ridge 型反投影方向，再在物理 correction 内积下对旧九维 family 做正交化与白化。
+
+这四个方向有三个重要约束：
+
+1. 生成时只看 observation residual 和 known geometry；
+2. 新系数全为零时精确回到旧九维 family；
+3. 候选在线 exact 账仍为 `2A+2A^T`，没有因为加四个方向多调用物理算子。
+
+### 结果是否成功
+
+成功的是**表示容量**：
+
+- F30+、F15+、F12+ 都是 `30/30`；总计 `90/90`；
+- 三档几何的 worst maximum-gate 分别为 `-0.00444 / -0.00606 / -0.02064`，全部严格小于零；
+- 旧九维 family 唯一没解决的 F30 第 12 帧被修复；
+- 旧 family 嵌套差为零，13 维物理 Gram 条件数约为 1，新方向补空间最大条件数 11.22。
+
+独立 validator 没有导入正式 v96 core 或 runner，重新实现频谱方向、物理补空间和 13 维球。它对 90 个单元复算后仍是 `90/90`，formal / independent 的 field、residual、metrics、gates 和方向诊断最大差全部为 `0`。它还独立对最难帧做了 99,216 次全局搜索评估并接 SLSQP，得到 maximum-gate `-0.0113983`，确认可行解不是正式 runner 的偶然产物。
+
+### 这是不是突破
+
+是一个明确的**表示容量突破**：此前始终缺失的最后一个严格可行单元，在一个低维、可解释、部署可见方向生成机制中被补上了。
+
+但它还不是完整算法突破。因为今天用真值寻找了 13 维球里的系数；真实部署时没有真值。当前状态必须写成：
+
+```text
+representation_capacity_breakthrough = true
+algorithm_breakthrough = false
+paper_success = false
+external_generalization = false
+resource_advantage = false
+real_BOST = false
+```
+
+### 接下来直接做什么
+
+冻结一个最小 observation-only 系数预测器，只预测四个新增频谱方向的系数，输入只用 `y`、known geometry、父 residual 的频带能量和投影特征；保持五折时间外推、一帧隔离、同一八门和 `2A+2A^T`。先和零新增系数、解析频谱滤波、linear ridge、RBF-KRR 公平比较。
+
+只有这个预测器也达到 `90/90`，才会打开一个此前未读的新公开反应流工况；外部门过后才测 wall / RSS，再进入组内真实 BOST。现在仍不需要租 GPU。
+
+公开证据：
+
+- `docs/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_result_2026-08-02.md`
+- `docs/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_public_summary.json`
+- `assets/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96.png`

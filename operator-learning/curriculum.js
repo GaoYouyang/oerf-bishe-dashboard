@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.02-c-v95-physical-ball-predictor-negative",
-  previousVersion: "2026.08.02-c-v94-local-repair-not-prevalent",
-  previousBadge: "v94 F12 local-harm prevalence · 0 / 30",
+  version: "2026.08.02-c-v96-adaptive-spectral-capacity-pass",
+  previousVersion: "2026.08.02-c-v95-physical-ball-predictor-negative",
+  previousBadge: "v95.1 observation-only selector · 81 / 90",
   olderBadge: "v84.2 Case 3 residual gate · 75 / 75 development PASS",
   historyReleases: [
+    {
+      version: "2026.08.02-c-v95-physical-ball-predictor-negative",
+      previousVersion: "2026.08.02-c-v94-local-repair-not-prevalent",
+      badge: "v95.1 observation-only selector · 81 / 90"
+    },
     {
       version: "2026.08.02-c-v94-local-repair-not-prevalent",
       previousVersion: "2026.08.02-c-v93-localized-not-observably-located",
@@ -578,6 +583,7 @@ window.OPERATOR_LEARNING_GUIDE = {
     }
   ],
   resources: [
+    {id:"nine-view-v96-adaptive-spectral-capacity",stage:"warm-start",level:"必做",type:"最新表示容量突破",title:"v96：四个观测自适应频谱方向把容量补到 90/90",url:"../document_reader.html?doc=docs%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_result_2026-08-02.md",local:"../docs/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_public_summary.json",read:"先区分 v95.1 observation-only 的 81/90、旧九维 truth-aware 的 89/90 与 v96 十三维 truth-aware 的 90/90。重点核对四个方向为何只依赖父 residual 与 known geometry、如何精确嵌套旧 family、为什么在线 exact 账仍为 2A+2A^T，以及三档几何 worst maximum-gate 为什么都严格小于零。",output:"不用页面解释：为什么 v96 是表示容量突破却还不是可部署算法突破；为什么真值辅助系数不能部署；为什么下一门只预测四个新增系数并要求同一 90 单元达到 90/90；为什么当前仍不租 GPU。",verified:"PASS_ALL_CELL_OBSERVATION_ADAPTIVE_SPECTRAL_BAND4_CAPACITY_V96；PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_ADAPTIVE_SPECTRAL_BAND4_V96；90/90；formal/independent maximum difference 0；representation_capacity_breakthrough=true；algorithm_breakthrough=false"},
     {id:"nine-view-v95-physical-ball-observation-predictor",stage:"warm-start",level:"必做",type:"最新严格 observation-only 负结果",title:"v95.1：九维小模型提高到 81/90，但候选神谕上限仅 83/90",url:"../document_reader.html?doc=docs%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95_result_2026-08-02.md",local:"../docs/nine_view_v94_case6_physical_ball_observation_predictor_v95_public_summary.json",read:"先区分父 K1 78/90、ungated linear 80/90、selected linear 81/90，再看 p50 改善而 p90/worst 仍越线。重点核对为什么九个失败全部被置信选择器接受，以及父 K1、mean、linear、RBF 的 truth-aware candidate union 也只有 83/90。",output:"不用页面解释：为什么 v95.1 证明存在可学习信号却仍是严格负结果；为什么完美 confidence classifier 也无法修复七个共同失败；为什么下一步先做 observation-adaptive direction capacity，而不是租 GPU 扩大模型。",verified:"FAIL_NO_STRICT_OBSERVATION_ONLY_PHYSICAL_BALL_SELECTOR_V95；PASS_INDEPENDENT_RECOMPUTATION_PHYSICAL_BALL_OBSERVATION_SELECTOR_V95；best 81/90；candidate-union oracle 83/90；algorithm_breakthrough=false"},
     {id:"nine-view-v92-case6-radial-quartic10-capacity",stage:"warm-start",level:"必做",type:"最新机理负结果",title:"v92：单径向四次方向保持 89/90，正式关线",url:"../document_reader.html?doc=docs%2Fnine_view_v91_case6_radial_quartic10_v92_result_2026-08-02.md",local:"../docs/nine_view_v91_case6_radial_quartic10_v92_public_summary.json",read:"先区分解析径向掩膜与最终场方向：对称的是 p4(s)，它乘上非对称基础修正并投影后一般不对称。再区分连续测度解析正交与离散 Gram 物理正交。最后核对 F30+/12 越线为何只从 3.688% 降到 3.631%、新方向为何非退化但修复数仍为 0。",output:"不用页面解释：为什么 v92 足以关闭单径向四次支线；为什么它不关闭所有局域多尺度表示；为什么下一步先定位轴向、局域与尺度缺口，而不是直接训练大网络。",verified:"NO_ALL_CELL_RADIAL_QUARTIC10_WITNESS_FOUND_V92；PASS_INDEPENDENT_RECOMPUTATION_CASE6_RADIAL_QUARTIC10_V92；89 witnesses / 1 unresolved / 0 repaired；algorithm_breakthrough=false"},
     {id:"nine-view-v91-case6-basis-invariant-physical-ball",stage:"warm-start",level:"必做",type:"历史参数化诊断正进展",title:"v91：同一九维方向空间排除系数盒后达到 89/90",url:"../document_reader.html?doc=docs%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91_result_2026-08-02.md",local:"../docs/nine_view_v90_case6_basis_invariant_physical_ball_v91_public_summary.json",read:"先理解为什么坐标逐项的 [-1,1]^9 约束依赖基选择，再理解由物理 correction Gram 定义的能量球为何基不变。重点核对没有新增方向、F30+/7 与 F30+/9 的 witness 为什么落在旧盒外、F30+/12 为什么仍越线 3.688%，以及独立程序如何重建 Gram 和搜索。",output:"不用页面解释：为什么 v91 证明 v90 有两个假阴性；为什么这要求撤回宽泛关线却仍不是算法突破；为什么 v92 后续又关闭了单径向四次支线；为什么当前仍不租 GPU。",verified:"NO_ALL_CELL_SAME_SPAN_PHYSICAL_BALL_WITNESS_FOUND_V91；PASS_INDEPENDENT_RECOMPUTATION_CASE6_PHYSICAL_BALL_V91；89 witnesses / 1 unresolved / 2 repaired；algorithm_breakthrough=false"},
