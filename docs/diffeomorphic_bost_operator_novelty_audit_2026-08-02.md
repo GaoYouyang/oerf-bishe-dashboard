@@ -19,7 +19,7 @@
 
 截至本次限定在官方期刊、作者 arXiv 与作者代码的审计，没有发现一项公开近邻同时闭合以上全部环节。这只能写成“在限定来源范围内未发现完全同构方法”，不能写成全球首个、唯一或 SOTA。
 
-## 六个最接近的方法
+## 八个最接近的方法或理论边界
 
 | 方法 | 它真正解决什么 | 与本项目的重合 | 仍缺什么 |
 |---|---|---|---|
@@ -29,6 +29,8 @@
 | [Adaptive Coordinate Transforms](https://arxiv.org/abs/2605.06203) | 在神经算子层间学习数据自适应坐标重采样，追踪移动结构 | 可作 observation-adaptive warp 对照 | 不保证全局可逆，不能自动称微分同胚 |
 | [Diffeomorphism-Equivariant Neural Networks](https://arxiv.org/abs/2602.06695) | 通过可微配准把图像规范化到群轨道的 canonical representative | 对应“先规范化观测、再预测 initializer” | 当前是图像识别/分割，不是 BOST 逆问题 |
 | [Diffeomorphic Neural Operator Learning](https://arxiv.org/abs/2508.06690) | 用网络预测微分同胚并以映射复合推进输运型演化 | 可启发用可逆形变表达流动结构 | 学的是时间演化，不是多视角重建 |
+| [Can neural operators always be continuously discretized?](https://proceedings.neurips.cc/paper_files/paper/2024/hash/b31f6d65f2584b3c4347148db36fe07f-Abstract-Conference.html) | 给出有限维微分同胚近似的 no-go theorem，并要求表示本身随离散收敛 | 直接支持 v105.1-v106.1 先做网格收敛门 | 是一般理论，不给 BOST forward/adjoint 或 warm start |
+| [Radon Neural Operator](https://proceedings.neurips.cc/paper_files/paper/2025/hash/e66233a208ef32f56df6312263239fa0-Abstract-Conference.html) | 在 sinogram 域学习 PDE operator，并证明微分同胚下的双 Lipschitz 强单调性质 | 与多视角投影域、角度非均匀贡献和坐标泛化相关 | 不是层析逆问题求解器，也没有 exact BOST adjoint 与 matched-cost refinement |
 
 ## 物理接口矩阵
 
@@ -40,6 +42,8 @@
 | ACT | 隐特征重采样 | 不是显式物理梯度通道 | 无 | 无 |
 | DiffeoNN | 图像复合 | 无 | 无 | 无 |
 | Diffeomorphic NO | 标量或守恒密度群作用 | 未处理 BOST 梯度投影 | 无 | 无 |
+| Discretization no-go theorem | 不对应具体物理量 | 要求有限维表示序列收敛 | 无 | 无 |
+| Radon Neural Operator | sinogram 表示 | 在算子理论层讨论微分同胚稳定性 | Radon 角度域 | 无 exact BOST inverse adjoint |
 | 本项目 v99 | 有 | 有，`J^{-T}` | 有 | 有，含 forward/adjoint 交换与 dot-product test |
 
 这里最容易混淆的一点是：模型训练中的反向传播不能自动算作经过物理验证的 BOST adjoint。我们需要的是测量算子 `A_phi` 与精确伴随 `A_phi^T` 在坐标输运下共同成立。
@@ -58,6 +62,14 @@ v100 完整留出相机几何与连续时间块。direct target + K1 为 `90/90`
 
 v101 改用相机无关的物理密度真值，只从每折唯一物理时刻建立参考域基，再与部署可见 detector-dual anchor 按固定 beta 混合。它当前只回答 truth-aware 容量是否存在；正式与独立结果出来前，不是 observation-only 模型、泛化或算法成功。
 
+## v103-v106.1：连续原理怎样变成可信离散机制
+
+v103-v104 构造了六类平滑可逆三维形变，并证明变换算子伴随正确，但 `32x16x16` 粗网格往返失真。v105.1 从公开原始三维 CFD 构造四级高分辨率输运，发现 `8x` 端点改善而非嵌套 `2x` 出现尖峰。v106 换成区间严格嵌套网格后，又因为观测与场/梯度使用不同零均值规范而 fail-closed。
+
+v106.1 只统一粗网格规范，不改变帧、形变、几何、网格和阈值。`32x16x16 -> 63x31x31 -> 125x61x61 -> 249x121x121` 上，field、interior-gradient 与 observation 的 p90、worst、最终绝对门、最终比值和逐单元全级单调全部通过；独立实现复算 360 行后，汇总最大差约 `1.18e-13`、判据不一致为 0。
+
+这与 NeurIPS 2024 的离散化 no-go 结果形成重要边界：连续微分同胚理论正确，不代表任意有限网格实现自然具有离散不变性。当前项目先得到的是表示与物理观测共同收敛的数值机制证据，尚未得到 learned warm-start 或未见坐标泛化证据。
+
 ## 论文必须保留的对照
 
 1. 完整输运、scalar-only、去掉 `J^{-T}`、只变 ray、固定 detector basis、wrong warp。
@@ -72,15 +84,15 @@ v101 改用相机无关的物理密度真值，只从每折唯一物理时刻建
 
 ## 可以向师兄怎样准确表述
 
-> 我们已经先把微分同胚原理落实到 BOST 的物理坐标输运，而不是只 warp 三维数组。v99 验证了标量、梯度、ray、detector basis、forward 和 adjoint 的共同变换；v100 又发现不同几何的重建终点不能直接组成公共输出空间。现在 v101 正在改用相机无关真值参考域做容量门。只有它通过，才训练 observation 与连续相机描述到参考域系数的小模型。
+> 我们已经先把微分同胚原理落实到 BOST 的物理坐标输运，而不是只 warp 三维数组。v99 验证了标量、梯度、ray、detector basis、forward 和 adjoint 的共同变换；v106.1 又在严格嵌套网格和共同规范下证明三类输运误差随四级分辨率稳定下降。当前突破的是数值机制门，不是 learned warm-start 或泛化。下一步先固定物理 support 厚度复核，再把连续坐标描述接入最小 observation-only initializer。
 
 当前证据状态：
 
 ```text
 coordinate_transport_interface = passed
-geometry_specific_endpoint_common_space = failed
-reference_truth_capacity = running
-strict_observation_only_unseen_geometry = not run
+interval_nested_common_gauge_convergence = passed
+fixed_physical_support_thickness = not run
+strict_observation_only_unseen_coordinate = not run
 algorithm_breakthrough = false
 paper_success = false
 real_BOST = false
