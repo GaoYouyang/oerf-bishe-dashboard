@@ -508,18 +508,18 @@
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="#research-progress">查看当前研究进程</a>
           <a class="button" href="daily-progress.html">查看每日实质增量</a>
-          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v96_case6_conditional_spectral_band4_capacity_v97_result_2026-08-02.md">阅读最新完整证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v97_case6_joint13_observation_predictor_v98_result_2026-08-02.md">阅读最新完整证据</a>
         </div>
       </div>
       <aside class="hero-verdict" aria-label="当前科学判决">
         <b>当前判决：表示容量突破，部署算法尚未完成</b>
-        <p><code>v96</code> 的联合 13 维表示容量仍为 <code>90/90</code>；但 <code>v97</code> 证明一旦固定部署可见的旧九维，只调四个新系数最多达到 <code>86/90</code>。</p>
-        <p><strong>下一步：</strong>关闭四系数训练，改为旧九维与新四维联合适配；保持五折时间隔离、八门和 <code>2A+2A^T</code>。当前仍不租 GPU。</p>
+        <p><code>v98</code> 已独立确认：允许旧九维与新四维联合变化后，mean 与 linear ridge 也只有 <code>75/90</code>，RBF 为 <code>71/90</code>；普通坐标回归仍未封口。</p>
+        <p><strong>下一步：</strong>不再堆同类回归器，先把连续相机位姿、射线条件和微分同胚坐标一致性写进物理合同。当前仍不租 GPU。</p>
       </aside>
     </div>
     <div class="current-grid" aria-label="当前核心状态">
-      <div class="current-metric"><b id="liveWitnessCount">86 / 90</b><span>v97 固定旧九维后的最佳条件容量</span></div>
-      <div class="current-metric"><b id="liveFailureCount">4 个反例</b><span>全部是 interior-gradient 门；四系数训练关闭</span></div>
+      <div class="current-metric"><b id="liveWitnessCount">75 / 90</b><span>v98 最佳简单联合预测器；与 scenario mean 持平</span></div>
+      <div class="current-metric"><b id="liveFailureCount">15 个反例</b><span>早期时间折与 F30+ 尾部集中</span></div>
       <div class="current-metric"><b id="liveCallBudget">2A + 2A<sup>T</sup></b><span>每个候选的冻结 exact 在线预算</span></div>
       <div class="current-metric warning"><b id="liveBreakthrough">false</b><span><code>algorithm_breakthrough</code>；不夸大负结果</span></div>
     </div>
@@ -528,6 +528,9 @@
       <div class="archive-body">
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
+      <a class="button danger" href="#joint13-observation-predictor-v98">打开 v98 最新负结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v97_case6_joint13_observation_predictor_v98_result_2026-08-02.md">读 v98 完整证据</a>
+      <a class="button" href="../docs/nine_view_v97_case6_joint13_observation_predictor_v98_public_summary.json">读 v98 脱敏摘要</a>
       <a class="button danger" href="#conditional-spectral-capacity-v97">打开 v97 关键负结果</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v96_case6_conditional_spectral_band4_capacity_v97_result_2026-08-02.md">读 v97 完整证据</a>
       <a class="button" href="../docs/nine_view_v96_case6_conditional_spectral_band4_capacity_v97_public_summary.json">读 v97 脱敏摘要</a>
@@ -606,7 +609,11 @@
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert critical" style="margin-top:12px;">
-      <strong>v97 最新判决：固定旧九维后，四个新系数最多只能达到 86/90</strong>
+      <strong>v98 最新判决：联合 13 维的小型 observation-only 回归仍未封口</strong>
+      <span>scenario mean 与 nested linear ridge 均为 <code>75/90</code>，nested RBF KRR 为 <code>71/90</code>；全部候选保持 <code>2A+2A^T</code>。独立程序重建全部模型选择并重跑 270 个精确物理单元，最终判决一致，held-out target mutation 对预测与选择的影响均为 0。普通联合坐标回归路线关闭；下一门转向显式连续位姿、射线条件化与微分同胚可交换性。<code>algorithm_breakthrough=false</code>。<a href="#joint13-observation-predictor-v98">查看完整证据</a>。</span>
+    </div>
+    <div class="alert critical" style="margin-top:12px;">
+      <strong>v97 父判决：固定旧九维后，四个新系数最多只能达到 86/90</strong>
       <span>selected linear、ungated linear 与 parent K1 三个冻结基线均未达到 90/90；最佳基线从 81 提升到 86，但剩余四个失败全部是 interior-gradient 门。独立程序重放 270 个 base-cell，field、residual、metrics、gates 最大差均为 0。四系数训练不授权，下一门改为旧九维与新四维联合适配；<code>algorithm_breakthrough=false</code>。<a href="#conditional-spectral-capacity-v97">查看完整证据</a>。</span>
     </div>
     <div class="alert success" style="margin-top:12px;">
@@ -921,8 +928,8 @@
         <div><b>公开反应流 CFD</b><span>PoolFire 与独立 BLASTNet 工况</span></div>
         <div><b>九视角观测</b><span>已知几何 straight-ray 密度梯度代理</span></div>
         <div><b>粗网格逆问题</b><span><code>32×16×16</code> 三维状态</span></div>
-        <div><b>九维小模型已判失败</b><span>最佳 81/90；候选神谕上限 83/90</span></div>
-        <div class="current"><b>当前：13D 联合可学习性</b><span>联合容量 90/90；固定旧九维后仅 86/90</span></div>
+        <div><b>联合 13D 小模型已失败</b><span>mean / linear 75/90；RBF 71/90</span></div>
+        <div class="current"><b>当前：几何原理门</b><span>显式位姿、射线条件化与微分同胚可交换性</span></div>
         <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
       </div>
       <div class="focus-grid" style="margin-top:12px;">
@@ -996,18 +1003,23 @@
             <div><strong>v97：固定旧九维 + 四个自由频谱系数最多 86/90</strong><p>最佳冻结基线从 81/90 修到 86/90，却仍留下四个 interior-gradient 失败；三个基线均未通过条件容量门。独立复算 270 次精确回放后关闭四系数训练，转向 13D 联合适配。</p></div>
             <span class="evidence-state fail">关键负结果</span>
           </article>
+          <article class="evidence-row" id="joint13-observation-predictor-v98">
+            <time datetime="2026-08-02">2026-08-02</time>
+            <div><strong>v98：联合 13D 的 mean / linear / RBF 最多 75/90</strong><p>允许旧九维与新四维共同变化后，简单模型仍未达到 90/90；270 次独立精确回放确认结果。失败集中在较早时间折与 F30+，下一门不再堆普通回归器，而是验证相机几何和坐标变换的一致性。</p></div>
+            <span class="evidence-state fail">最新负结果</span>
+          </article>
         </div>
         <figure class="latest-figure">
-          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v96_case6_conditional_spectral_band4_capacity_v97.png" aria-label="打开 v97 完整结果图">
-            <img loading="lazy" decoding="async" src="../assets/nine_view_v96_case6_conditional_spectral_band4_capacity_v97.png" alt="v97 固定旧九维后的四系数条件容量结果" />
+          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v97_case6_joint13_observation_predictor_v98.png" aria-label="打开 v98 完整结果图">
+            <img loading="lazy" decoding="async" src="../assets/nine_view_v97_case6_joint13_observation_predictor_v98.png" alt="v98 联合十三维小模型严格外折结果" />
           </a>
-          <figcaption>最新可视化：v97 的四系数真值搜索能修复部分失败，却只能达到 86/90；剩余风险全部位于内部梯度，说明新旧系数必须联合适配。</figcaption>
+          <figcaption>最新可视化：v98 的 mean 与 linear ridge 同为 75/90，RBF 为 71/90；后三折较好、前两折集中失败，普通联合坐标回归没有封口。</figcaption>
         </figure>
       </div>
       <div class="actions" style="margin-top:13px;">
-        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v96_case6_conditional_spectral_band4_capacity_v97_result_2026-08-02.md">读 v97 完整证据</a>
-        <a class="button" href="../docs/nine_view_v96_case6_conditional_spectral_band4_capacity_v97_public_summary.json">读机器可读摘要</a>
-        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_v96_case6_conditional_spectral_band4_capacity_v97.png">打开结果图原尺寸</a>
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v97_case6_joint13_observation_predictor_v98_result_2026-08-02.md">读 v98 完整证据</a>
+        <a class="button" href="../docs/nine_view_v97_case6_joint13_observation_predictor_v98_public_summary.json">读机器可读摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_v97_case6_joint13_observation_predictor_v98.png">打开结果图原尺寸</a>
       </div>
     </section>
 
@@ -1023,7 +1035,7 @@
       <div class="focus-grid">
         <article class="focus-card positive"><h3>已建立可复算链</h3><p>每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。</p></article>
         <article class="focus-card boundary"><h3>当前更新源</h3><p id="liveEvidenceStatus" aria-live="polite">正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。</p></article>
-        <article class="focus-card current"><h3>本轮真实增量</h3><p>v97 先做条件容量门，证明固定旧九维后四个新系数最多只能达到 86/90。这个负结果直接取消错误的四系数训练任务，并把下一门收敛到新旧 13 维联合适配。</p></article>
+        <article class="focus-card current"><h3>本轮真实增量</h3><p>v98 完成了真正的联合 13D 外折预测，但 mean / linear / RBF 最多只有 75/90。结合师兄审查，下一门已经从“模型更大”改成“连续相机几何与坐标变换是否被物理正确表达”。</p></article>
       </div>
     </section>
 
@@ -1039,7 +1051,8 @@
         <div class="outcome-step closed"><div><b>固定九维小模型与置信回退</b><span>v95.1 最佳为 81/90，候选神谕上限为 83/90；继续加分类器无法补齐七个共同失败。</span></div><em>已关闭</em></div>
         <div class="outcome-step passed"><div><b>observation-adaptive direction 容量</b><span>四个 residual / geometry-only 频谱方向精确嵌套九维父表示；truth-aware 容量已独立验证为 90/90。</span></div><em>已通过</em></div>
         <div class="outcome-step closed"><div><b>固定旧九维 + 四系数预测</b><span>v97 的 truth-aware 条件容量最多为 86/90；网络尚未训练就已被结构上限否决。</span></div><em>已关闭</em></div>
-        <div class="outcome-step"><div><b>严格 observation-only 13D 联合适配</b><span>保持五折隔离、八门和同一 exact 账，与便宜 controls 公平比较；必须达到 90/90。</span></div><em>最近科学门</em></div>
+        <div class="outcome-step closed"><div><b>简单 observation-only 13D 联合适配</b><span>v98 的 mean / linear / RBF 最多 75/90；同类普通坐标回归不再扩建。</span></div><em>已关闭</em></div>
+        <div class="outcome-step"><div><b>几何一致的 observation-only initializer</b><span>显式位姿/射线条件化，验证微分同胚、梯度 Jacobian 与 forward/adjoint 可交换性，并做 leave-one-geometry-out。</span></div><em>最近科学门</em></div>
         <div class="outcome-step"><div><b>独立工况 matched-accuracy</b><span>在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
         <div class="outcome-step"><div><b>真实资源收益</b><span>fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。</span></div><em>尚未启动</em></div>
         <div class="outcome-step"><div><b>真实 BOST 迁移</b><span>接入组内位移图、相机标定、重复测量噪声与认可基线，重新定义实验“同精度”。</span></div><em>需要组内数据</em></div>
@@ -1069,7 +1082,7 @@
         </div>
       </div>
       <div class="future-grid">
-        <article class="focus-card current"><h3>最近科学门</h3><p>方向容量已经补齐，但 v97 排除了固定旧九维。现在冻结小型 observation-only 13D 联合预测器或显式耦合低秩头；同一 90 单元必须达到 90/90 才能开新工况。</p></article>
+        <article class="focus-card current"><h3>最近科学门</h3><p>v98 已排除普通联合坐标回归。现在先验证微分同胚可逆性、密度标量 pullback、梯度的 Jacobian 逆转置变换以及射线/forward/adjoint 可交换性；这些通过后才训练小型位姿或射线条件化 sentinel。</p></article>
         <article class="focus-card boundary"><h3>何时租 GPU</h3><p>只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。</p></article>
         <article class="focus-card positive"><h3>何时接组内数据</h3><p>公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。</p></article>
       </div>
@@ -2809,7 +2822,7 @@
           document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：${metrics.strict_witness_passed}/${metrics.cell_count} 个单元通过；下一门是 ${nextGateSentence}每次独立验证后的公开提交只需更新这份稳定清单。`;
         })
         .catch(() => {
-          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v97 固定旧九维后的四系数条件容量最多为 86/90；四系数训练不授权，algorithm_breakthrough=false。';
+          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v98 的 mean / linear / RBF 联合 13D 小模型最多为 75/90；下一门转向几何原理，algorithm_breakthrough=false。';
         });
     })();
   </script>

@@ -11851,3 +11851,75 @@ v96 证明旧九维与四个新频谱方向合在一起时，truth-aware 容量�
 - `docs/nine_view_v96_case6_conditional_spectral_band4_capacity_v97_result_2026-08-02.md`
 - `docs/nine_view_v96_case6_conditional_spectral_band4_capacity_v97_public_summary.json`
 - `assets/nine_view_v96_case6_conditional_spectral_band4_capacity_v97.png`
+
+## 2026-08-02：v98 真正联合预测 13 个坐标，但普通小模型最多只有 75/90
+
+### 为什么这一轮不是继续做容量搜索
+
+v96 已经证明联合 13 维表示里存在 `90/90` 的合格答案，v97 又证明不能锁死旧九维、只预测四个新系数。今天的问题因此变成真正的部署问题：只给模型多视角 observation 和已知几何，它能不能把 13 个坐标一起预测出来？
+
+我没有直接训练大网络。先用最便宜的三个候选做一个会失败的门：scenario mean、nested linear ridge 和 nested RBF KRR。若连目标和输入合同都不对，扩大参数量只会更昂贵地重复失败。
+
+### 真正运行了什么
+
+- 已开封 BLASTNet Case 6 的 30 帧、三档已知九视角几何，共 90 个单元；
+- 五个连续六帧 outer folds，同一物理帧的三档几何不拆开，边界一帧 embargo；
+- 输入只用 observation、残差、投影、范数、物理 Gram 谱、physical-ball 中心、parent K1 坐标、既有 observation features 和 geometry identity；
+- inner selection 只看 fit 内 13D 坐标误差，held-out truth 在预测封存后才读取；
+- 三个模型全部精确回放为 `2A+2A^T`，逐单元检查同一八门；
+- held-out target mutation 哨兵必须让模型选择与预测逐值不变。
+
+### 正式结果
+
+| 模型 | 严格通过 | F12 | F15 | F30 |
+|---|---:|---:|---:|---:|
+| scenario mean | 75 / 90 | 29 / 30 | 24 / 30 | 22 / 30 |
+| nested linear ridge | **75 / 90** | 29 / 30 | 24 / 30 | 22 / 30 |
+| nested RBF KRR | 71 / 90 | 28 / 30 | 23 / 30 | 20 / 30 |
+
+linear 的五折是 `11/12/16/18/18`；mean 是 `8/15/16/18/18`；RBF 是 `8/13/15/17/18`。较早时间折集中失败，后三折明显更容易。这个现象只属于已开封 Case 6 开发集，不能直接解释成确定的物理阶段。
+
+更重要的是，linear 没有超过 mean，RBF 还更差。现在不能把瓶颈简单归因为“模型非线性不够”。三类模型的失败还涉及 field、full-gradient、interior-gradient 与 observation 的不同门，不是单一 scalar threshold 能补上的问题。
+
+### 独立复算
+
+独立 validator 没有导入正式 v98 模型或 runner，重写了特征缩放、mean / ridge / RBF、五折、66 个候选、13D 投影和 inner selection，再重跑全部 270 个精确物理单元。
+
+- 三个模型的通过数和最终判决完全一致；
+- held-out target mutation 对选择与预测的影响都是 `0`；
+- predicted-q / field / gate 最大差为 `8.54e-10 / 2.88e-9 / 4.52e-9`；
+- metric 最大差为 `1.84e-7`，低于独立审计的 `1e-6` 容差；
+- 调用 receipt 失败为 `0`。
+
+### 师兄指出了什么问题
+
+当前输入没有每台相机连续的内外参或位姿矩阵。它只包含三档 geometry identity，以及由固定 forward operator 派生的投影和 Gram 特征。也就是说，当前是在固定几何下做模型/求解器优化；没有学习相机排列不变性、`SE(3)` 等变性或新机位泛化。
+
+师兄提出加入微分同胚原理。这不是简单增加一个特征：
+
+1. 不同几何要通过平滑可逆映射变到统一参考域；
+2. 密度是标量，可以 pull back；
+3. 密度梯度必须按 Jacobian 的逆转置变换；
+4. 相机射线、探测器坐标、forward 和 adjoint 也必须同步变换；
+5. 变换前后的测量和内积恒等式必须可交换。
+
+Geo-FNO、DNO 和 DIMON 都使用“物理域到参考域”的思路，但 BOST 相机变化首先改变测量算子，不一定改变物理域。因此只能借鉴结构，不能把三维数组做形变就声称具备坐标泛化。
+
+### 结果是否成功、是否突破
+
+- **执行成功：** 联合 13D observation-only 门与独立复算完整跑完。
+- **算法失败：** 三种普通小模型均未达到 `90/90`。
+- **科学增量：** 排除了“只需更普通的联合回归器”这一解释，并把缺口推进到连续几何表示与坐标共变关系。
+- **突破状态：** `algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_advantage=false`、`real_BOST=false`。
+
+### 下一步直接执行
+
+先冻结一个不训练的坐标变换 feasibility gate：检查微分同胚可逆性、正 Jacobian、标量 pullback、梯度 `J_phi^{-T}` 变换、射线/forward/adjoint 可交换性与伴随恒等式。随后比较 geometry ID、连续位姿/射线编码和参考域 canonicalization，并用 leave-one-geometry-out 测未见机位。
+
+只有这些物理门先通过，才训练一个小型 pose/ray-conditioned sentinel。现在仍不需要租 GPU。
+
+公开证据：
+
+- `docs/nine_view_v97_case6_joint13_observation_predictor_v98_result_2026-08-02.md`
+- `docs/nine_view_v97_case6_joint13_observation_predictor_v98_public_summary.json`
+- `assets/nine_view_v97_case6_joint13_observation_predictor_v98.png`

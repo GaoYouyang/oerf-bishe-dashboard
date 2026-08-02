@@ -1,0 +1,97 @@
+{
+  "schema_version": "oerf-public-nine-view-v98-summary-v1",
+  "title": "v98: small observation-only joint 13-dimensional predictors do not pass all 90 Case 6 cells",
+  "updated": "2026-08-02",
+  "route": "C: observation-conditioned warm initializer for three-dimensional BOST reconstruction",
+  "scientific_status": "FAIL_NO_STRICT_OBSERVATION_ONLY_JOINT13_PREDICTOR_V98",
+  "independent_validation_status": "PASS_INDEPENDENT_RECOMPUTATION_JOINT13_OBSERVATION_PREDICTOR_V98",
+  "result_level": "independently validated negative predictor result on an already-open public development condition",
+  "scientific_question": "Can deployment-visible observations and known fixed geometry predict the jointly adaptable 13-dimensional v96 witness under leakage-safe time folds?",
+  "fixed_contract": {
+    "cell_count": 90,
+    "physical_frames": 30,
+    "known_geometries": 3,
+    "outer_fold_count": 5,
+    "heldout_cells_per_fold": 18,
+    "temporal_embargo_frames": 1,
+    "gate_count_per_cell": 8,
+    "joint_target_dimension": 13,
+    "online_exact_A_calls": 2,
+    "online_exact_AT_calls": 2,
+    "heldout_truth_available_to_prediction_or_selection": false
+  },
+  "results": {
+    "passing_arm_count": 0,
+    "scenario_mean": {
+      "joint_passed": 75,
+      "cell_count": 90,
+      "per_fold_passed": [8, 15, 16, 18, 18],
+      "per_geometry_passed": {
+        "V66_F12_plus": 29,
+        "V66_F15_plus": 24,
+        "V66_F30_plus": 22
+      }
+    },
+    "linear_ridge_nested": {
+      "joint_passed": 75,
+      "cell_count": 90,
+      "per_fold_passed": [11, 12, 16, 18, 18],
+      "per_geometry_passed": {
+        "V66_F12_plus": 29,
+        "V66_F15_plus": 24,
+        "V66_F30_plus": 22
+      },
+      "maximum_gate_p50": -0.055046948968737186,
+      "maximum_gate_p90_higher": 0.029634628500645466,
+      "maximum_gate_worst": 0.357247275175695
+    },
+    "rbf_krr_nested": {
+      "joint_passed": 71,
+      "cell_count": 90,
+      "per_fold_passed": [8, 13, 15, 17, 18],
+      "per_geometry_passed": {
+        "V66_F12_plus": 28,
+        "V66_F15_plus": 23,
+        "V66_F30_plus": 20
+      }
+    },
+    "failure_pattern": "mean and linear tie at 75/90 while RBF falls to 71/90; failures concentrate in early time folds and the F30+ geometry, and multiple field, gradient and observation gates are involved"
+  },
+  "independent_recomputation": {
+    "exact_replay_count": 270,
+    "formal_v98_model_or_runner_imported": false,
+    "features_scaling_mean_ridge_rbf_folds_and_selection_reimplemented": true,
+    "heldout_target_mutation_prediction_difference": 0.0,
+    "heldout_target_mutation_selection_difference": 0.0,
+    "predicted_q_maximum_difference": 8.533627693374513e-10,
+    "field_maximum_difference": 2.87659007724983e-9,
+    "gate_maximum_difference": 4.518474261416827e-9,
+    "metric_maximum_difference": 1.8310388583131498e-7,
+    "receipt_failure_count": 0,
+    "shared_pre_v98_physics_and_data_kernels": true,
+    "process_level_never_read_proven": false
+  },
+  "geometry_scope": {
+    "raw_camera_intrinsics_or_extrinsics_used_as_continuous_input": false,
+    "known_geometry_identity_used": true,
+    "geometry_derived_operator_features_used": true,
+    "camera_permutation_invariance_proven": false,
+    "SE3_equivariance_proven": false,
+    "unseen_camera_pose_generalization_proven": false
+  },
+  "decision": {
+    "representation_capacity_breakthrough_from_v96_retained": true,
+    "scenario_mean_linear_ridge_rbf_joint_target_route_open": false,
+    "strict_observation_only_joint_predictor_passed": false,
+    "large_neural_training_authorized": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_advantage": false,
+    "curved_ray": false,
+    "real_bost": false,
+    "gpu_rental_recommended_now": false
+  },
+  "next_gate": "freeze a physics-consistent coordinate-change gate before training: verify diffeomorphic invertibility, scalar pullback, inverse-transpose gradient transport, transformed ray/forward/adjoint commutation, and leave-one-geometry-out evaluation; only then authorize a small pose- or ray-conditioned sentinel"
+}
+
