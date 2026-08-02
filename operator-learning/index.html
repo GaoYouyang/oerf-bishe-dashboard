@@ -508,19 +508,19 @@
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="#research-progress">查看当前研究进程</a>
           <a class="button" href="daily-progress.html">查看每日实质增量</a>
-          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_coordinate_transport_v99_result_2026-08-02.md">阅读最新完整证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_reference_truth_blend_loo_capacity_v101_result_2026-08-02.md">阅读最新完整证据</a>
         </div>
       </div>
       <aside class="hero-verdict" aria-label="当前科学判决">
-        <b>当前判决：坐标输运物理门通过，部署算法尚未完成</b>
-        <p><code>v99</code> 已独立确认：体场、梯度、射线、探测器基与伴随同步输运时，11 个冻结门全部通过，最坏正确误差约 <code>1.29e-15</code>。</p>
-        <p><strong>下一步：</strong>把连续相机 pose/ray 写入模型输入，并做 leave-one-geometry-out；固定物理相机与未见机位泛化仍未证明，当前仍不租 GPU。</p>
+        <b>当前判决：公共物理参考域容量通过，但复杂模型还没有赢过静态先验</b>
+        <p><code>v101</code> 在 15 个 geometry-time 留出折上确认 physical-reference rank 0 与 rank 4 都是 <code>90/90</code>；旧 geometry-specific endpoint rank 4 只有 <code>37/90</code>。独立程序重算 3870 次 strict K1，正式差值全部为 0。</p>
+        <p><strong>当前执行：</strong>先在已开封 Case 6 上比较严格 observation-only rank 4 系数预测器与静态 rank 0 物理先验。未稳定击败 rank 0 前，不开外门、不训练大网络，也不租 GPU。</p>
       </aside>
     </div>
     <div class="current-grid" aria-label="当前核心状态">
-      <div class="current-metric"><b id="liveWitnessCount">11 / 11</b><span>v99 坐标输运门，正式与独立程序全部通过</span></div>
-      <div class="current-metric"><b id="liveFailureCount">约 1e-15</b><span>完整物理输运的最坏相对误差</span></div>
-      <div class="current-metric"><b id="liveCallBudget">6.88%–132.56%</b><span>错误 warp 对照的明显偏差</span></div>
+      <div class="current-metric"><b id="liveWitnessCount">90 / 90</b><span>公共物理静态 rank 0 八门通过</span></div>
+      <div class="current-metric"><b id="liveFailureCount">90 / 90</b><span>公共物理 rank 4 oracle 八门通过</span></div>
+      <div class="current-metric"><b id="liveCallBudget">37 / 90</b><span>旧几何相关 endpoint rank 4 对照</span></div>
       <div class="current-metric warning"><b id="liveBreakthrough">false</b><span><code>algorithm_breakthrough</code>；不夸大负结果</span></div>
     </div>
     <details class="header-archive">
@@ -528,6 +528,12 @@
       <div class="archive-body">
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
+      <a class="button primary" href="#reference-truth-capacity-v101">打开 v101 公共参考域正结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_reference_truth_blend_loo_capacity_v101_result_2026-08-02.md">读 v101 完整证据</a>
+      <a class="button" href="../docs/nine_view_case6_reference_truth_blend_loo_capacity_v101_public_summary.json">读 v101 脱敏摘要</a>
+      <a class="button danger" href="#canonical-field-capacity-v100">打开 v100 跨几何负结果</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_canonical_field_loo_capacity_v100_result_2026-08-02.md">读 v100 完整证据</a>
+      <a class="button" href="../docs/nine_view_case6_canonical_field_loo_capacity_v100_public_summary.json">读 v100 脱敏摘要</a>
       <a class="button primary" href="#coordinate-transport-v99">打开 v99 物理正结果</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_coordinate_transport_v99_result_2026-08-02.md">读 v99 完整证据</a>
       <a class="button" href="../docs/nine_view_coordinate_transport_v99_public_summary.json">读 v99 脱敏摘要</a>
@@ -937,7 +943,9 @@
         <div><b>粗网格逆问题</b><span><code>32×16×16</code> 三维状态</span></div>
         <div><b>联合 13D 小模型已失败</b><span>mean / linear 75/90；RBF 71/90</span></div>
         <div><b>v99 坐标输运已通过</b><span>标量 pullback、梯度 J<sup>-T</sup>、相机与伴随同步变换</span></div>
-        <div class="current"><b>当前：连续几何泛化门</b><span>pose/ray encoding + leave-one-geometry-out</span></div>
+        <div><b>v100 终点公共场基失败</b><span>留一几何最高 2/90，不能直接放大网络</span></div>
+        <div><b>v101 公共物理参考域通过</b><span>rank 0 与 rank 4 均为 90/90</span></div>
+        <div class="current"><b>当前：可观测 rank 4 对 rank 0</b><span>先击败静态先验，再开未见坐标外门</span></div>
         <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
       </div>
       <div class="focus-grid" style="margin-top:12px;">
@@ -1021,18 +1029,28 @@
             <div><strong>v99 坐标输运实现门：11/11 独立复现</strong><p>完整变换在两个三维格点旋转和一个光滑剪切上达到约 <code>1e-16</code>；错误 warp 产生 <code>6.88%–132.56%</code> 偏差。下一门是连续 pose/ray 与 leave-one-geometry-out。</p></div>
             <span class="evidence-state">物理正结果</span>
           </article>
+          <article class="evidence-row" id="canonical-field-capacity-v100">
+            <time datetime="2026-08-02">2026-08-02</time>
+            <div><strong>v100 跨几何公共重建终点场基：最高 2/90</strong><p>direct target + strict K1 为 <code>90/90</code>，但完整留出相机几何和连续时间块后，rank 0 至 40 的共享线性终点场空间最多只有 <code>2/90</code>。独立程序重建 15 折与 630 次精确 K1，判决一致。</p></div>
+            <span class="evidence-state fail">关键负结果</span>
+          </article>
+          <article class="evidence-row" id="reference-truth-capacity-v101">
+            <time datetime="2026-08-02">2026-08-02</time>
+            <div><strong>v101 公共物理参考域容量：rank 0 与 rank 4 均为 90/90</strong><p>相机无关 physical-reference family 在 15 个 geometry-time 外折上完整过门；匹配的 geometry-specific endpoint rank 4 仅 <code>37/90</code>。独立程序重算 43 个臂与 3870 次 strict K1，正式差值全部为 0。</p></div>
+            <span class="evidence-state">参考域容量正结果</span>
+          </article>
         </div>
         <figure class="latest-figure">
-          <a href="../asset_viewer.html?asset=assets%2Fnine_view_coordinate_transport_v99.png" aria-label="打开 v99 完整结果图">
-            <img loading="lazy" decoding="async" src="../assets/nine_view_coordinate_transport_v99.png" alt="v99 三维坐标输运物理门结果" />
+          <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_reference_truth_blend_loo_capacity_v101.png" aria-label="打开 v101 完整结果图">
+            <img loading="lazy" decoding="async" src="../assets/nine_view_case6_reference_truth_blend_loo_capacity_v101.png" alt="v101 公共物理参考域容量结果" />
           </a>
-          <figcaption>最新可视化：v99 的完整坐标输运误差处于数值舍入量级，而遗漏 Jacobian、相机或探测器基会产生 6.88% 至 132.56% 偏差。固定物理相机泛化仍未证明。</figcaption>
+          <figcaption>最新可视化：v101 确认公共物理参考域比几何相关 optimizer endpoint 更合适；但静态 rank 0 与 rank 4 都是 90/90，下一门必须检验 rank 4 的严格可预测价值。</figcaption>
         </figure>
       </div>
       <div class="actions" style="margin-top:13px;">
-        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_coordinate_transport_v99_result_2026-08-02.md">读 v99 完整证据</a>
-        <a class="button" href="../docs/nine_view_coordinate_transport_v99_public_summary.json">读机器可读摘要</a>
-        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_coordinate_transport_v99.png">打开结果图原尺寸</a>
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_case6_reference_truth_blend_loo_capacity_v101_result_2026-08-02.md">读 v101 完整证据</a>
+        <a class="button" href="../docs/nine_view_case6_reference_truth_blend_loo_capacity_v101_public_summary.json">读机器可读摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_case6_reference_truth_blend_loo_capacity_v101.png">打开结果图原尺寸</a>
       </div>
     </section>
 
@@ -1048,7 +1066,7 @@
       <div class="focus-grid">
         <article class="focus-card positive"><h3>已建立可复算链</h3><p>每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。</p></article>
         <article class="focus-card boundary"><h3>当前更新源</h3><p id="liveEvidenceStatus" aria-live="polite">正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。</p></article>
-        <article class="focus-card current"><h3>本轮真实增量</h3><p>v99 已把师兄的微分同胚建议变成 11 个可证伪物理门并全部独立通过。它排除了错误坐标 warp，下一步才有资格比较连续相机 pose/ray 表示。</p></article>
+        <article class="focus-card current"><h3>本轮真实增量</h3><p>v101 已独立确认相机无关物理参考域容量：rank 0 与 rank 4 均为 90/90，旧 endpoint rank 4 仅 37/90。更简单的 rank 0 也过门，因而下一步先做严格 observation-only 对决。</p></article>
       </div>
     </section>
 
@@ -1066,7 +1084,9 @@
         <div class="outcome-step closed"><div><b>固定旧九维 + 四系数预测</b><span>v97 的 truth-aware 条件容量最多为 86/90；网络尚未训练就已被结构上限否决。</span></div><em>已关闭</em></div>
         <div class="outcome-step closed"><div><b>简单 observation-only 13D 联合适配</b><span>v98 的 mean / linear / RBF 最多 75/90；同类普通坐标回归不再扩建。</span></div><em>已关闭</em></div>
         <div class="outcome-step passed"><div><b>坐标输运物理接口</b><span>v99 已验证标量 pullback、梯度 Jacobian 逆转置、射线/探测器基和 forward/adjoint 同步变换。</span></div><em>11 / 11 已通过</em></div>
-        <div class="outcome-step"><div><b>连续几何条件化 initializer</b><span>显式输入 pose/ray，比较参考域 canonicalization，并做 leave-one-geometry-out 容量与严格 observation-only 预测。</span></div><em>最近科学门</em></div>
+        <div class="outcome-step closed"><div><b>几何相关重建终点公共空间</b><span>v100 direct target 为 90/90，但共享终点场基最高仅 2/90；该输出目标不再放大网络。</span></div><em>已关闭</em></div>
+        <div class="outcome-step passed"><div><b>相机无关参考域真值容量</b><span>v101 的 static rank 0 与 truth-aware rank 4 均为 90/90；匹配 endpoint rank 4 仅 37/90，目标选择已闭合。</span></div><em>已通过</em></div>
+        <div class="outcome-step"><div><b>严格可观测 rank 4 对静态 rank 0</b><span>同一 15 折、embargo、2A+2A^T strict K1 与八门；rank 4 必须保持 90/90 并稳定给出逐单元优势。</span></div><em>下一门</em></div>
         <div class="outcome-step"><div><b>独立工况 matched-accuracy</b><span>在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
         <div class="outcome-step"><div><b>真实资源收益</b><span>fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。</span></div><em>尚未启动</em></div>
         <div class="outcome-step"><div><b>真实 BOST 迁移</b><span>接入组内位移图、相机标定、重复测量噪声与认可基线，重新定义实验“同精度”。</span></div><em>需要组内数据</em></div>
@@ -1096,9 +1116,12 @@
         </div>
       </div>
       <div class="future-grid">
-        <article class="focus-card current"><h3>最近科学门</h3><p>v99 已通过坐标输运实现门。现在显式输入相机原点/方向、探测器 u/v 基、内参与射线参数，公平比较连续 pose/ray encoding 和参考域 canonicalization，并用 leave-one-geometry-out 检查未见机位。</p></article>
+        <article class="focus-card current"><h3>最近科学门</h3><p>v101 已证明公共物理参考域装得下，但 rank 0 静态先验也达到 90/90。当前先训练最小 observation + known-geometry rank 4 系数预测器，并要求它在不伤任何单元的前提下稳定优于 rank 0。</p></article>
         <article class="focus-card boundary"><h3>何时租 GPU</h3><p>只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。</p></article>
         <article class="focus-card positive"><h3>何时接组内数据</h3><p>公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。</p></article>
+      </div>
+      <div class="actions" style="margin-top:13px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fdiffeomorphic_bost_operator_novelty_audit_2026-08-02.md">阅读微分同胚创新边界与必做对照</a>
       </div>
       <div class="alert" style="margin-top:13px;"><strong>期许，但不预支结论</strong><span>理想论文贡献是“BOST 专用的 observation-conditioned warm initializer + exact physics refinement + 可观测安全回退”，在同精度下稳定减少昂贵算子与真实资源成本。它是否成立，必须由下一表示门、独立外部门和真实 BOST 三层证据共同决定。</span></div>
     </section>
@@ -2827,16 +2850,16 @@
         .then(evidence => {
           const metrics = evidence.metrics || {};
           const decision = evidence.current_decision || {};
-          document.getElementById('liveWitnessCount').textContent = `${metrics.coordinate_transport_gates_passed} / ${metrics.coordinate_transport_gate_count}`;
-          document.getElementById('liveFailureCount').textContent = Number(metrics.maximum_correct_transport_relative_l2).toExponential(2);
-          document.getElementById('liveCallBudget').textContent = `>= ${(100 * Number(metrics.minimum_incomplete_transport_relative_l2)).toFixed(2)}%`;
+          document.getElementById('liveWitnessCount').textContent = `${metrics.v101_static_rank0_passed} / ${metrics.v101_cell_count}`;
+          document.getElementById('liveFailureCount').textContent = `${metrics.v101_truth_rank4_passed} / ${metrics.v101_cell_count}`;
+          document.getElementById('liveCallBudget').textContent = `${metrics.v101_matched_endpoint_rank4_passed} / ${metrics.v101_cell_count}`;
           document.getElementById('liveBreakthrough').textContent = String(Boolean(decision.algorithm_breakthrough));
           const nextGate = String(evidence.next_scientific_gate_zh || evidence.next_scientific_gate).trim();
           const nextGateSentence = /[。！？.!?]$/.test(nextGate) ? nextGate : `${nextGate}。`;
-          document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：坐标输运门 ${metrics.coordinate_transport_gates_passed}/${metrics.coordinate_transport_gate_count} 通过；下一门是 ${nextGateSentence}每次独立验证后的公开提交只需更新这份稳定清单。`;
+          document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：v101 公共物理 rank 0 与 rank 4 均为 ${metrics.v101_static_rank0_passed}/${metrics.v101_cell_count}，匹配旧 endpoint rank 4 为 ${metrics.v101_matched_endpoint_rank4_passed}/${metrics.v101_cell_count}；下一门是 ${nextGateSentence}每次独立验证后的公开提交只需更新这份稳定清单。`;
         })
         .catch(() => {
-          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v99 坐标输运门 11/11 通过；固定物理相机与未见位姿泛化未证明，algorithm_breakthrough=false。';
+          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v101 公共物理 rank 0 与 rank 4 均为 90/90，旧 endpoint rank 4 为 37/90；当前比较严格 observation-only rank 4 与静态 rank 0，algorithm_breakthrough=false。';
         });
     })();
   </script>
