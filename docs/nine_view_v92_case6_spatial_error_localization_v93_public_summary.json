@@ -1,0 +1,91 @@
+{
+  "schema_version": "oerf-public-nine-view-case6-spatial-error-localization-93.0",
+  "title": "v93: the sole v92 interior-gradient excess is strongly localized but not located by the preregistered initial-normal saliency",
+  "scientific_status": "LOCALIZED_BUT_NOT_OBSERVABLY_LOCATED_V93",
+  "scope": {
+    "dataset_role": "already-open post-open BLASTNet Case 6 mechanism diagnostic",
+    "primary_cell": "F30+/12",
+    "context_cells": 30,
+    "context_geometry": "F30+",
+    "candidate": "the independently validated v92 endpoint",
+    "equal_call_reference": "Zero-CGLS K2",
+    "interior_shape_zyx": [28, 12, 12],
+    "new_candidate_optimization": false,
+    "additional_online_exact_calls": {"A": 0, "AT": 0},
+    "case6_target_truth_used_for_saliency_generation": false,
+    "frozen_case3_supervised_upstream_model_used": true
+  },
+  "spatial_localization": {
+    "top_5_percent_voxel_positive_excess_capture": 0.6615732676924766,
+    "top_10_percent_voxel_positive_excess_capture": 0.7671326806607344,
+    "top_20_percent_voxel_positive_excess_capture": 0.8630758460184106,
+    "minimum_voxel_fraction_for_50_percent_positive_excess": 0.026041666666666668,
+    "minimum_voxel_fraction_for_80_percent_positive_excess": 0.12624007936507936,
+    "minimum_voxel_fraction_for_90_percent_positive_excess": 0.2690972222222222,
+    "positive_excess_centroid_zyx": [-0.6950434424603109, 0.08029294381485579, -0.05344239110916237],
+    "z_quartile_positive_excess_fraction": [0.8060196050894703, 0.0689636266936805, 0.09913278489961104, 0.02588398331723799],
+    "spatial_concentration_gate_pass": true
+  },
+  "scale_localization": {
+    "low_frequency_positive_excess_fraction": 0.795718567917217,
+    "mid_frequency_positive_excess_fraction": 0.20183010539241547,
+    "high_frequency_positive_excess_fraction": 0.0024513266903673394,
+    "interpretation": "The excess is primarily low-frequency and one-sided along z, not a diffuse high-frequency texture defect."
+  },
+  "preregistered_primary_locator": {
+    "name": "initial_normal_gradient_energy",
+    "top_10_percent_saliency_positive_excess_capture": 0.04844446331299077,
+    "required_top_10_capture": 0.4,
+    "spearman_rank_correlation": 0.19262003407493541,
+    "required_spearman": 0.35,
+    "normalized_centroid_distance": 0.21693706153381792,
+    "maximum_centroid_distance": 0.2,
+    "passed_predicate_count": 0,
+    "predicate_count": 3,
+    "locator_gate_pass": false
+  },
+  "predeclared_controls": {
+    "anchor_gradient_energy": {
+      "top_10_capture": 0.5773052114386223,
+      "spearman": 0.3037776914711979,
+      "centroid_distance": 0.05151272658721505,
+      "post_result_role": "future hypothesis generator only; it cannot replace the failed primary v93 locator"
+    },
+    "base_correction_gradient_energy": {
+      "top_10_capture": 0.4146093142487321,
+      "spearman": 0.14538414900750762,
+      "centroid_distance": 0.07593647882305214
+    },
+    "base_correction_field_energy": {
+      "top_10_capture": 0.4159845341459278,
+      "spearman": 0.18605322498498097,
+      "centroid_distance": 0.08511905477822818
+    }
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_SPATIAL_ERROR_LOCALIZATION_V93",
+    "independent_gradient_implementation": "manual second-order finite differences rather than the formal numpy.gradient helper",
+    "maximum_formal_independent_scalar_absolute_difference": 1.1102230246251565e-16,
+    "maximum_formal_independent_target_map_absolute_difference": 0.0,
+    "formal_runner_or_v93_helper_imported": false,
+    "shared_pre_v93_physics_and_data_loading_kernels": true
+  },
+  "decision": {
+    "localized_excess_established": true,
+    "preregistered_observable_locator_established": false,
+    "new_local_capacity_search_authorized": false,
+    "large_neural_training_authorized": false,
+    "wall_or_rss_authorized": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_advantage": false,
+    "real_bost": false
+  },
+  "interpretation": {
+    "what_changed": "v92 left one interior-gradient failure. v93 decomposed that exact candidate-minus-ZeroK2 error without optimizing a new field and found a compact, low-frequency, z-sided defect.",
+    "why_the_route_did_not_advance_directly": "The frozen deployment-visible initial-normal saliency failed all three locator predicates, so the protocol forbids immediately building or training a local two-scale predictor.",
+    "next_scientific_gate": "Freeze a separate observable-shell diagnostic. A predeclared anchor-gradient control may generate that hypothesis, but it must earn support on local maps not used to select it or under an explicitly costed extra-call shell.",
+    "claim_boundary": "The saliency does not read the current Case6 target truth, but it inherits a frozen Case3-supervised upstream model and shared pre-v93 physics/data-loading kernels. This is a post-open localization and route-selection result, not a new reconstruction algorithm, a capacity witness, a trained operator, an external result, a speed result, real BOST, or a publication breakthrough."
+  }
+}

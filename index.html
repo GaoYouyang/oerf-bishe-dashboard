@@ -270,8 +270,8 @@
       header, main, footer { width: min(100% - 22px, 1200px); }
       h1 { font-size: 31px; }
       h2 { font-size: 23px; }
-      .nav { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; }
-      .nav a { flex: 0 0 auto; min-height: 40px; }
+      .nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; padding-bottom: 8px; }
+      .nav a { min-height: 40px; justify-content: center; text-align: center; }
       .metrics, .three-grid, .meaning-grid, .future-grid { grid-template-columns: 1fr; }
       .route { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .evidence-row { grid-template-columns: 68px minmax(0, 1fr); }
@@ -302,12 +302,12 @@
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="./operator-learning/">进入完整 C 路线研究台</a>
           <a class="button" href="./operator-learning/daily-progress.html">查看每日实质增量</a>
-          <a class="button" id="latestEvidenceLink" href="./document_reader.html?doc=docs%2Fnine_view_v91_case6_radial_quartic10_v92_result_2026-08-02.md">阅读最新证据</a>
+          <a class="button" id="latestEvidenceLink" href="./document_reader.html?doc=docs%2Fnine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md">阅读最新证据</a>
         </div>
       </div>
       <aside class="verdict" aria-label="当前科学判决">
         <b>当前判决：尚未形成算法突破</b>
-        <p id="headlineVerdict">v92 增加一个由径向四次多尺度掩膜生成的方向，但独立复算后仍为 89/90；它只消掉最后越线的 1.55%，修复数为 0。这条单方向路线已经关闭，尚未形成算法突破。</p>
+        <p id="headlineVerdict">v93 证明最后缺口高度局部且以 z 负侧低频结构为主，但预注册法向残差定位器三门全失败；下一步先改可观测壳，不能直接训练局部预测器。</p>
         <p><strong>证据边界：</strong>目前仍是公开反应流、已知几何、无噪声 straight-ray 代理，不是组内真实 BOST、外部泛化或论文成功。</p>
       </aside>
     </div>
@@ -332,7 +332,7 @@
         <div><b>公开反应流 CFD</b><span>PoolFire 与 BLASTNet 已开封开发工况</span></div>
         <div><b>九视角观测</b><span>known-geometry straight-ray 密度梯度代理</span></div>
         <div><b>三维逆问题</b><span><code>32×16×16</code> 粗网格场</span></div>
-        <div class="current"><b>当前：定位最后一个反例</b><span>径向四次已关线，先查轴向、局域与观测可见结构</span></div>
+        <div class="current"><b>当前：修改可观测壳</b><span>局部低频缺口已定位，但当前法向残差信号看不见它</span></div>
         <div><b>Observation-only 学习</b><span>容量过门后才训练最小预测器</span></div>
         <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
       </div>
@@ -356,13 +356,14 @@
           <article class="evidence-row"><time datetime="2026-07-31">07-31</time><div><strong>v74.1：内部资源门通过</strong><p>1515/1515 精度兼容；exact 调用减半，fresh wall 中位下降 43.49%，三类 RSS p90 过门。仅限已开封 PoolFire 同族代理。</p></div><span class="state">内部正结果</span></article>
           <article class="evidence-row"><time datetime="2026-08-01">08-01</time><div><strong>v85：Case 4 通过，Case 6 失败</strong><p>84/84 对 78/90；12 个失败全部暴露在内部梯度，说明全局 residual gate 看不见局部风险。</p></div><span class="state fail">混合外部结果</span></article>
           <article class="evidence-row"><time datetime="2026-08-02">08-02</time><div><strong>v87：标量 K1-K2 混合关闭</strong><p>85/90 可行，五个单元的严格区间为空；增加一个阻尼系数无法修复局部梯度。</p></div><span class="state fail">机理负结果</span></article>
-          <article class="evidence-row" id="latestEvidenceRow"><time datetime="2026-08-02">08-02</time><div><strong>v92：单径向四次多尺度方向正式关线</strong><p>新增方向物理上非退化、在线仍为 2A+2A<sup>T</sup>，但严格容量保持 89/90；F30+/12 越线仅由 3.688% 降至 3.631%。下一步先做误差定位，不训练大模型。</p></div><span class="state fail">机理负结果</span></article>
+          <article class="evidence-row"><time datetime="2026-08-02">08-02</time><div><strong>v92：单径向四次多尺度方向正式关线</strong><p>新增方向非退化但严格容量仍为 89/90，最后越线只减少 1.55%。由此停止堆全局径向阶数。</p></div><span class="state fail">机理负结果</span></article>
+          <article class="evidence-row" id="latestEvidenceRow"><time datetime="2026-08-02">08-02</time><div><strong>v93：局部缺口成立，主定位器失败</strong><p>前 10% 体素承载 76.71% 正误差，79.57% 属于低频；但预注册定位器最高 10% 只捕获 4.84%，三项定位门全失败。</p></div><span class="state fail">路线诊断</span></article>
         </div>
         <figure>
-          <a id="latestFigureLink" href="./asset_viewer.html?asset=assets%2Fnine_view_v91_case6_radial_quartic10_v92.png" aria-label="打开最新完整结果图">
-            <img id="latestFigure" src="./assets/nine_view_v91_case6_radial_quartic10_v92.png" alt="v92 径向四次多尺度方向未修复最后一个容量反例" />
+          <a id="latestFigureLink" href="./asset_viewer.html?asset=assets%2Fnine_view_v92_case6_spatial_error_localization_v93.png" aria-label="打开最新完整结果图">
+            <img loading="lazy" decoding="async" id="latestFigure" src="./assets/nine_view_v92_case6_spatial_error_localization_v93.png" alt="v93 最后一个内部梯度缺口的空间、频率与可观测定位结果" />
           </a>
-          <figcaption id="latestFigureCaption">v92 的 F12+ / F15+ / F30+ 仍为 30/30、30/30、29/30；一个合法的新方向只减少 1.55% 的剩余越线，修复数为 0。这是改变后续策略的可信负结果。</figcaption>
+          <figcaption id="latestFigureCaption">v93 把最后缺口定位到 z 负侧的局部低频区域，但预注册 K1 法向残差定位器三门全失败。这是真正改变下一步的机制诊断，不是新算法成功。</figcaption>
         </figure>
       </div>
       <div class="live-note"><strong>稳定状态自动同步</strong><span id="liveStatus" aria-live="polite">正在读取公开证据清单；读取失败时保留上面的最近一次独立验证状态。</span></div>
@@ -379,7 +380,7 @@
       </div>
       <div class="three-grid">
         <article class="panel positive"><div class="chips"><span class="chip">可复算</span></div><h3 style="margin-top:9px;">正式结果与独立程序分离</h3><p>关键数字必须由第二条实现重建输入、指标、门和调用账；验证未通过时不进入主页结论。</p></article>
-        <article class="panel boundary"><div class="chips"><span class="chip gold">会纠错</span></div><h3 style="margin-top:9px;">负结果直接改变下一步</h3><p>v92 证明单一全局径向尺度不是缺失机制，因此停止沿径向阶数堆叠。现在先定位最后反例的局部结构，再决定是否冻结小型双尺度族。</p></article>
+        <article class="panel boundary"><div class="chips"><span class="chip gold">会纠错</span></div><h3 style="margin-top:9px;">负结果直接改变下一步</h3><p>v93 证明缺口虽局部，但当前法向残差无法定位，因此不直接训练局部预测器；下一门先改可观测壳，必要时显式增加最小精确调用预算。</p></article>
         <article class="panel current"><div class="chips"><span class="chip coral">不夸大</span></div><h3 style="margin-top:9px;">突破必须跨过完整门槛</h3><p>单工况容量、漂亮均值、调用数下降或页面完善，都不能单独写成算法突破与论文成功。</p></article>
       </div>
     </section>
@@ -407,7 +408,7 @@
     <section id="future-direction" class="band">
       <div class="section-head"><div><div class="eyebrow">未来期许和方向</div><h2>只扩展证据指出的缺失结构</h2><p>研究路线由最新负证据驱动，而不是由模型名、算力规模或已经投入的时间驱动。</p></div></div>
       <div class="future-grid">
-        <article class="panel current"><h3>最近科学门</h3><p id="nextGate">先定位 F30+/12 的内部梯度缺口是否具有轴向、局域或观测残差可见结构；有明确证据后才冻结小型局域双尺度族，达到 90/90 前不训练预测器。</p></article>
+        <article class="panel current"><h3>最近科学门</h3><p id="nextGate">先修改可观测壳：把 detector anchor 的粗位置线索另行冻结，并在未参与选择的局部误差图上验证；若仍看不见，再明确增加最小精确调用预算。此门通过前不训练局部预测器。</p></article>
         <article class="panel boundary"><h3>何时租 GPU</h3><p>只有表示容量全过、严格 observation-only 小模型出现稳定外折 headroom，且 CPU 原型确认训练吞吐成为瓶颈时才租算卡。</p></article>
         <article class="panel positive"><h3>何时接组内数据</h3><p>公开独立工况通过后，接入位移图、相机内外参、视角定义、重复测量噪声、现有重建接口和认可基线。</p></article>
       </div>
@@ -436,7 +437,7 @@
 
   <script>
     (() => {
-      const fallback = '最近一次独立验证状态：v92 仍为 89/90，单径向四次方向已关线，algorithm_breakthrough=false。';
+      const fallback = '最近一次独立验证状态：v93 证明缺口局部但主定位器失败，下一步修改可观测壳，algorithm_breakthrough=false。';
       fetch('./operator-learning/current-evidence.json', { cache: 'no-store' })
         .then((response) => {
           if (!response.ok) throw new Error(`HTTP ${response.status}`);

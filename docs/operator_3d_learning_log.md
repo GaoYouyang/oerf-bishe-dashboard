@@ -11578,3 +11578,60 @@ v92 没有修复任何新单元。F30 frame 12 的 interior-gradient / Zero-K2 �
 - `docs/nine_view_v91_case6_radial_quartic10_v92_result_2026-08-02.md`
 - `docs/nine_view_v91_case6_radial_quartic10_v92_public_summary.json`
 - `assets/nine_view_v91_case6_radial_quartic10_v92.png`
+
+## 2026-08-02：v93 找到最后缺口的位置，但主定位器看不见它
+
+### 为什么没有直接继续加方向
+
+v92 只剩 F30 frame 12 一个单元失败，而且只失 interior-gradient / Zero-K2 门。继续凭感觉增加局部掩膜，很容易先看真值热图、再挑一个刚好覆盖热区的窗口。v93 因此先在读取局部图前冻结两个问题：误差是否真的集中，以及严格 K1 起点处本来可见的法向残差能否指出它。
+
+这一步没有优化新场、没有训练模型，也没有新增在线 `A/A^T`。它只比较已经独立验证的 v92 endpoint 与同成本 Zero-K2，把内部梯度平方误差差额分解到体素和正交 DCT 频带。
+
+### 实际结果
+
+```text
+top 10% 体素捕获正误差       76.713%
+解释 80% 所需体素            12.624%
+z 第一四分区正误差           80.602%
+低 / 中 / 高频               79.572% / 20.183% / 0.245%
+```
+
+这确认缺口是 z 负侧的一块大尺度局部结构，不是全域弥散的小误差，也不是高频纹理。
+
+但预注册主定位器 `|gradient(A^T(y-Ax0))|^2` 的三个结果是：
+
+```text
+top-10% 捕获                  4.844%    要求 >= 40%
+Spearman                     0.1926    要求 >= 0.35
+归一化质心距离               0.2169    要求 <= 0.20
+```
+
+三门全部失败，所以科学状态是 `LOCALIZED_BUT_NOT_OBSERVABLY_LOCATED_V93`。局部缺口存在，不等于部署时能够定位它。
+
+### 独立复算与监督审计
+
+独立 validator 不导入正式 v93 runner 或定位 core，用手写二阶有限差分重算 30 个 F30+ 上下文。正式 / 独立标量最大差为 `1.11e-16`，目标热图逐点差为 `0`。
+
+额外监督审计没有发现 P0，但指出两处 P1。随后已经：
+
+1. 显式绑定 v92 field 数组行、cell index 与 cell ID，拒绝位置置换；
+2. 把“truth-free”收紧为“当前 Case 6 目标真值不参与 saliency 生成”。上游仍使用冻结的 Case 3 监督模型，不能写成全过程无监督。
+
+修复后重新正式运行和独立复算，结论与数字不变。
+
+### 一个不能偷换判决的线索
+
+预先列入对照的 anchor-gradient top-10% 捕获 `57.731%`，质心距离 `0.0515`，但 Spearman 只有 `0.3038`。它可以生成下一假设，却不能看过结果后替代失败的主定位器。
+
+### 成功、失败与路线调整
+
+- **成功：** 把“可能局部”推进成了可复算的空间与频率结论。
+- **失败：** 当前法向残差看不见该区域，局部 capacity search 与 predictor 训练均未授权。
+- **路线调整：** 先修改可观测壳，在未参与选择的局部误差图上检验 detector anchor 的粗定位；若仍失败，再把一个最小额外精确算子动作写进调用预算。
+- **突破：** 没有。`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`real_BOST=false`。
+
+公开证据：
+
+- `docs/nine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md`
+- `docs/nine_view_v92_case6_spatial_error_localization_v93_public_summary.json`
+- `assets/nine_view_v92_case6_spatial_error_localization_v93.png`

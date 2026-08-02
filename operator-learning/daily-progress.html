@@ -497,13 +497,18 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>89/90</b>
-        <span>v92 加入单径向四次方向后仍保持的严格八门 witness；该方向修复数为 0。</span>
+        <b>76.71%</b>
+        <span>v93 中最高 10% 内部体素承载的正误差；空间集中成立，但主定位器失败。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v92 单径向四次方向仍为 89/90，正式关线</strong>
+      <strong>最新科学判决：v93 缺口空间集中通过，但主定位器三门失败</strong>
       <span>
+        v93 不增加新方向或模型，只把 v92 最后一个 F30+/12 内部梯度差额分解到体素和频带。最高 10% 体素承载
+        <code>76.71%</code> 正误差，z 第一四分区占 <code>80.60%</code>，低频占 <code>79.57%</code>；但预注册
+        K1 法向残差定位器的 top-10% 捕获 / Spearman / 质心距离为 <code>4.84% / 0.193 / 0.217</code>，三门全失败。
+        手写有限差分独立复算的标量最大差为 <code>1.11e-16</code>、热图差为 <code>0</code>。因此下一步先改可观测壳，
+        不直接训练局部 predictor。
         v92 在 v91 九维物理球上只加入一个参数无关的径向四次多尺度方向，几何、K1 shell、八门和在线
         <code>2A+2A^T</code> 不变。新方向物理上非退化，但 F30 frame 12 的内部梯度越线只由
         <code>3.688%</code> 降至 <code>3.631%</code>，修复数为 0，只消掉剩余越线的 <code>1.55%</code>。
@@ -608,23 +613,17 @@
                 <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
+                    <span class="tag">v93 空间集中 PASS</span>
+                    <span class="tag">top 10% 捕获 76.71%</span>
+                    <span class="tag">低频 79.57%</span>
+                    <span class="tag negative">主定位器 0/3</span>
+                    <span class="tag negative">局部搜索未授权</span>
                     <span class="tag negative">v92 仍为 89/90</span>
-                    <span class="tag negative">径向四次修复 0/1</span>
-                    <span class="tag negative">剩余越线仅下降 1.55%</span>
-                    <span class="tag">v91 修复 2/3 旧失败</span>
-                    <span class="tag negative">1 个 F30+ 仍失败</span>
-                    <span class="tag negative">v90 box 内 87/90</span>
-                    <span class="tag">v89 修复 1/4 旧反例</span>
-                    <span class="tag">v88.1 witness 86/90</span>
-                    <span class="tag negative">4 个单元未找到 witness</span>
-                    <span class="tag">v87 line 85/90</span>
-                    <span class="tag">5 个区间为空</span>
-                    <span class="tag">v86 forced K2 71/90</span>
-                    <span class="tag engineering">独立逐值差 0</span>
+                    <span class="tag engineering">独立热图差 0</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3>v92 径向四次方向仍停在 89/90，单一全局尺度支线正式关线</h3>
-                  <p>v91 先排除旧坐标盒造成的两个假阴性；v92 再加入一个非退化的径向四次方向，但没有修复最后的 F30+/12。今天的净科学结论是：停止堆全局径向阶数，先做局部误差定位。</p>
+                  <h3>v93 找到了最后缺口的位置与尺度，但当前可观测信号找不到它</h3>
+                  <p>v92 先关闭单径向四次方向；v93 随后不加模型，只分解最后一个内部梯度反例。缺口高度局部、z 单侧、低频，但预注册 K1 法向残差定位器三门全失败，所以路线从“直接加局部表示”改成“先修改可观测壳”。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
@@ -632,39 +631,41 @@
                 <div class="evidence-grid">
                   <section>
                     <h4>今天真正执行了什么</h4>
-                    <p>先用 v91 的基不变物理能量球确认九维父表示为 <code>89/90</code>；随后只加入一个参数无关的径向四次掩膜方向，保持几何、K1 shell、八门和在线 <code>2A+2A<sup>T</sup></code> 不变。正式与独立程序都对唯一未决单元运行确定性 Sobol、64 起点约束优化和 exact replay。</p>
+                    <p>先用 v91 排除旧系数盒假阴性，再用 v92 证明一个非退化的全局径向四次方向仍无法修复 F30+/12。随后在读取局部图前冻结 v93，把 v92 与同成本 Zero-K2 的内部梯度平方误差差额分解到体素、梯度分量和正交 DCT 频带；没有优化任何新候选场。</p>
                   </section>
                   <section>
-                    <h4>结果与机理</h4>
+                    <h4>v93 的实质结果</h4>
                     <ul>
-                      <li>严格 witness / 未决仍为 <code>89 / 1</code>；F12 / F15 / F30 为 <code>30 / 30 / 29</code>。</li>
-                      <li>F30 frame 12 的唯一正门由 <code>3.688%</code> 降至 <code>3.631%</code>，只消掉原剩余越线的 <code>1.55%</code>。</li>
-                      <li>新方向相对旧九维空间的残余物理能量非零，因此不是“方向数值退化成零”。</li>
-                      <li>对称的是解析径向掩膜；它乘上非对称基础修正场并投影后，最终方向一般不对称。</li>
-                      <li>连续测度下的解析正交不冒充离散正交；实际离散物理正交由冻结 Gram 投影建立。</li>
-                      <li>v91 的正进展仍保留：它证明旧盒制造两个假阴性；v92 则说明单个全局径向尺度不是最后缺失机制。</li>
-                      <li>更早的 v87 父诊断仍保留：K1-K2 标量线上有 5 个空区间，五个单元连 truth-aware 最优阻尼都无解。</li>
+                      <li>最高 <code>10%</code> 体素承载 <code>76.71%</code> 正误差；解释 80% 只需 <code>12.62%</code> 体素，空间集中门通过。</li>
+                      <li>z 第一四分区承载 <code>80.60%</code> 正误差，正误差质心 z 为 <code>-0.695</code>。</li>
+                      <li>低 / 中 / 高频正误差为 <code>79.57% / 20.18% / 0.25%</code>，不是高频纹理缺陷。</li>
+                      <li>主定位器 top-10% 捕获 / Spearman / 质心距离为 <code>4.84% / 0.193 / 0.217</code>，相对 <code>40% / 0.35 / 0.20</code> 三门全失败。</li>
                     </ul>
                   </section>
                   <section>
-                    <h4>可信度与边界</h4>
-                    <p>独立 validator 不导入正式 v92 runner 或径向四次 core；它从立方体矩重新推导掩膜、重建 Gram 投影、十维物理球与全部 90 个 replay。正式/独立 field、residual、metrics、gates 最大差均为 <code>0</code>，没有调用回执失败。共享冻结 physics kernels 的边界仍明确披露，所以这不是端到端独立物理实现。</p>
+                    <h4>独立复算与审计修复</h4>
+                    <p>独立程序不用正式 v93 runner 或定位 core，以手写二阶有限差分重算 30 个 F30+ 上下文；标量最大差 <code>1.11e-16</code>，目标热图逐点差 <code>0</code>。监督审计还要求显式绑定 v92 field 行、cell index 与 cell ID，并把措辞收紧为“当前 Case 6 目标真值不参与 saliency 生成”；上游仍继承冻结的 Case 3 监督模型。</p>
                   </section>
                   <section>
                     <h4>路线如何立即调整</h4>
-                    <p>单径向四次支线正式停止，不再沿全局径向阶数追加方向。下一门改为披露式误差定位：检查 F30+/12 的缺口是轴向、局域还是尺度相关；只有定位证据明确，才冻结小型局域双尺度族。Mac 足够完成，暂不租 GPU。</p>
+                    <p>不直接训练局部 predictor，也不租 GPU。下一门先把 detector anchor 的粗位置线索另行冻结，在未参与选择的局部误差图上验证；若仍不可靠，再把一个最小额外精确算子动作写入调用预算，而不是免费获得局部信息。</p>
+                  </section>
+                  <section>
+                    <h4>同日父证据保留</h4>
+                    <p><code>v86 forced K2 71/90</code>，<code>v87 line 85/90</code> 且 5 个区间为空，五个单元连 truth-aware 最优阻尼都无解；<code>v88.1 witness 86/90</code>，4 个单元未找到 witness，独立搜索各用 <code>16384</code> 个 Sobol 点且独立逐值差 0。v89 修复 1/4 旧反例但 3 个 F30+ 仍失败，随后 <code>v90 box 内 87/90</code>。<code>v91 witness 89/90</code>、v91 修复 2/3 旧失败并证明旧坐标盒造成的两个假阴性，同一 span 修复 2/3，仍有 1 个 F30+ 仍失败。v92 维持 89/90。当前暂不租 GPU，<code>algorithm breakthrough false</code>。</p>
                   </section>
                 </div>
                 <figure class="entry-figure">
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v91_case6_radial_quartic10_v92.png" aria-label="打开 v92 径向四次容量负结果图">
-                    <img src="../assets/nine_view_v91_case6_radial_quartic10_v92.png" alt="v92 径向四次方向保持八十九个严格 witness 并留下一个 F30 反例" />
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v92_case6_spatial_error_localization_v93.png" aria-label="打开 v93 空间误差定位结果图">
+                    <img src="../assets/nine_view_v92_case6_spatial_error_localization_v93.png" alt="v93 局部低频误差成立但预注册可观测定位器失败" />
                   </a>
-                  <figcaption>v92 没有改变 30/30、30/30、29/30 的逐几何通过数；最后越线只从 3.688% 降到 3.631%，因此可信地关闭单径向四次方向。</figcaption>
+                  <figcaption>空间集中性通过，主定位器三门失败。anchor-gradient 对照只能生成下一假设，不能在看过结果后替代主门。</figcaption>
                 </figure>
                 <div class="entry-links">
-                  <a href="../document_reader.html?doc=docs%2Fnine_view_v91_case6_radial_quartic10_v92_result_2026-08-02.md">v92 完整证据</a>
-                  <a href="../docs/nine_view_v91_case6_radial_quartic10_v92_public_summary.json">v92 脱敏摘要</a>
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v91_case6_radial_quartic10_v92.png">v92 结果图</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md">v93 完整证据</a>
+                  <a href="../docs/nine_view_v92_case6_spatial_error_localization_v93_public_summary.json">v93 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v92_case6_spatial_error_localization_v93.png">v93 结果图</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v91_case6_radial_quartic10_v92_result_2026-08-02.md">回看 v92 关线结果</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91_result_2026-08-02.md">回看 v91 参数化正进展</a>
                 </div>
               </div>
@@ -1992,7 +1993,7 @@
   </main>
 
   <footer>
-    持续更新至 v92 Case 6 径向四次容量独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v93 Case 6 空间误差定位独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
