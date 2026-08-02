@@ -12461,3 +12461,43 @@ v109 在一个粗网格间隔内使用半余弦窗。它没有改粗网格逆问
 - `docs/nine_view_case6_diffeomorphic_support_chain_v109_result_2026-08-03.md`
 - `docs/nine_view_case6_diffeomorphic_support_chain_v109_public_summary.json`
 - `assets/nine_view_case6_diffeomorphic_support_chain_v109.png`
+
+## 2026-08-03：v110 仍然无效，但失败已经不再是一个黑箱
+
+### 先说人话
+
+v109 把微分同胚输运本身的数值基础做稳后，v110 开始尝试把坐标变化接入 warm-start 评估。正式执行在内部梯度尾部门失败，因此整个 v110 被判为无效；没有拿其余指标宣布算法成功。
+
+真正需要回答的是：究竟是 initializer 破坏了局部梯度，还是评估过程中对 CFD 真值反复插值制造了误差。
+
+### 独立程序重新算了什么
+
+独立程序不用正式尾部汇总代码，重算全部 `480` 行，并把它们分成两类：
+
+| 分组 | 行数 | p50 | p90 | worst | 冻结上限 |
+|---|---:|---:|---:|---:|---:|
+| initializer 往返 | `450` | `0.05422` | `0.05917` | **`0.06524`** | `0.14` |
+| 重采样 CFD 真值往返 | `30` | `0.15862` | `0.22183` | **`0.22335`** | `0.14` |
+
+最坏 `20/20` 行全部来自真值；正式和独立数值最大差 `2.43e-16`，判决差为 0。涉及长轴的 `yz / zx` 变换最明显，而 `xy` worst 只有约 `0.0224`。
+
+### 为什么这仍然不是成功
+
+- v110 的正式状态没有改变，仍为 `INCONCLUSIVE_INVALID`；
+- 这些数字没有构成有效的 learned initializer 性能对比；
+- 没有 matched-accuracy、exact `A/A^T`、wall、RSS、外部泛化或真实 BOST 结果；
+- `algorithm_breakthrough=false`。
+
+### 这次失败怎样直接改变实现
+
+下一版只保留一个明确结构：先在参考坐标中复合所有微分同胚，再从每个未经插值的源张量执行一次三线性 gather。不能把一次插值后的 CFD 场继续送入第二次插值。
+
+独立红队同时指出，正式训练前还必须把 trajectory、held-out map、相机几何、三个 seed 的判决方式、模型宽度和逐次 `A/A^T` receipt 从文字协议变成可执行约束。完成这些约束之前不会启动大模型训练。
+
+同日完成的 v111 真实几何桥接 smoke 已通过：冻结九视角相机 token 为 `9x18`，场为 `32x16x16`，局部几何为 7 通道，坐标映射为 13 通道，模型参数量为 `42,237`，零初始化输出与 q8 基线最大差为 0。它只证明工程管线可接通；smoke 没有加载真实 q8 factor、没有训练，也没有形成科学性能结果。
+
+公开证据：
+
+- `docs/nine_view_case6_diffeomorphic_v110_tail_root_cause_2026-08-03.md`
+- `docs/nine_view_case6_diffeomorphic_v110_tail_root_cause_public_summary.json`
+- `assets/nine_view_case6_diffeomorphic_v110_tail_root_cause.png`
