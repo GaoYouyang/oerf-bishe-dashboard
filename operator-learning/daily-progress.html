@@ -652,11 +652,13 @@
                     <span class="tag" data-i18n-zh="数值机制突破" data-i18n-en="Numerical-mechanism breakthrough">数值机制突破</span>
                     <span class="tag negative" data-i18n-zh="v110：仍为无效执行" data-i18n-en="v110: still an invalid execution">v110：仍为无效执行</span>
                     <span class="tag engineering" data-i18n-zh="根因独立复算：480 行" data-i18n-en="Independent root-cause recomputation: 480 rows">根因独立复算：480 行</span>
-                    <span class="tag engineering" data-i18n-zh="v111 真实几何桥接 smoke：PASS" data-i18n-en="v111 real-geometry bridge smoke: PASS">v111 真实几何桥接 smoke：PASS</span>
+                    <span class="tag" data-i18n-zh="v111 未见形变八门：11/11" data-i18n-en="v111 unseen-map eight-gate pass: 11/11">v111 未见形变八门：11/11</span>
+                    <span class="tag" data-i18n-zh="severe harm：0/11" data-i18n-en="Severe harm: 0/11">severe harm：0/11</span>
+                    <span class="tag engineering" data-i18n-zh="独立逐帧最大差：4.94e-8" data-i18n-en="Independent maximum per-frame difference: 4.94e-8">独立逐帧最大差：4.94e-8</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3 data-i18n-zh="v107-v110：数值基础通过后，继续拆开一次无效执行的真实根因" data-i18n-en="v107-v110: after closing the numerical foundation, isolate the true cause of an invalid execution">v107-v110：数值基础通过后，继续拆开一次无效执行的真实根因</h3>
-                  <p data-i18n-zh="v107-v109 先形成固定物理宽度、支撑协变和平滑边界的可信因果链；v110 接入 warm-start 评估后因梯度尾部无效，没有掩盖。独立 480 行审计确认超限来自真值重复重采样，促使下一实现改成坐标先复合、原始张量单次 gather。" data-i18n-en="v107-v109 first established a credible causal chain of fixed physical width, covariant support, and a smooth boundary. When v110 became invalid after integration into the warm-start evaluation, the failure was not concealed. A 480-row independent audit showed that the violating tail came from repeated truth resampling, motivating compose-first, single-gather transport in the next implementation.">v107-v109 先形成固定物理宽度、支撑协变和平滑边界的可信因果链；v110 接入 warm-start 评估后因梯度尾部无效，没有掩盖。独立 480 行审计确认超限来自真值重复重采样，促使下一实现改成坐标先复合、原始张量单次 gather。</p>
+                  <h3 data-i18n-zh="v107-v111：从数值混杂、失败根因走到第一个真实学习信号" data-i18n-en="v107-v111: from numerical confounds and failure diagnosis to the first real learning signal">v107-v111：从数值混杂、失败根因走到第一个真实学习信号</h3>
+                  <p data-i18n-zh="v107-v109 建立可信的坐标输运数值链，v110 定位重复重采样真值制造的梯度尾部；v111 改成坐标先复合、原始张量单次 gather 后，在训练未见的双轴微分同胚上 11/11 帧八门通过并由独立程序复算。" data-i18n-en="v107-v109 established a credible numerical chain for coordinate transport, and v110 localized the gradient tail created by repeated truth resampling. After switching to compose-first, single-gather transport, v111 passes all eight gates on 11/11 frames of a held-out two-axis diffeomorphism and is independently reproduced.">v107-v109 建立可信的坐标输运数值链，v110 定位重复重采样真值制造的梯度尾部；v111 改成坐标先复合、原始张量单次 gather 后，在训练未见的双轴微分同胚上 11/11 帧八门通过并由独立程序复算。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
@@ -707,8 +709,16 @@
                     <p data-i18n-zh="下一版不再顺序插值已经插值过的张量，而是先复合所有坐标映射，再从每个未经修改的源张量执行一次 gather。正式训练前还必须把 trajectory、map、geometry、seed、架构和逐调用账绑定成执行约束。" data-i18n-en="The next version no longer interpolates an already interpolated tensor. It composes all coordinate maps first and performs one gather from each untouched source. Before formal training, the trajectory, map, geometry, seed, architecture, and operator-call ledger must also be bound as executable constraints.">下一版不再顺序插值已经插值过的张量，而是先复合所有坐标映射，再从每个未经修改的源张量执行一次 gather。正式训练前还必须把 trajectory、map、geometry、seed、架构和逐调用账绑定成执行约束。</p>
                   </section>
                   <section>
-                    <h4 data-i18n-zh="v111 当前只完成到哪里" data-i18n-en="What v111 has actually completed">v111 当前只完成到哪里</h4>
-                    <p data-i18n-html-zh="真实冻结九视角几何已接通：camera token <code>9×18</code>、场 <code>32×16×16</code>、局部几何 <code>7</code> 通道、坐标映射 <code>13</code> 通道，模型 <code>42,237</code> 参数，零初始化头严格保持 q8 基线。该 smoke 没有加载真实 q8 factor、没有训练，也不是性能结果。" data-i18n-html-en="The frozen real nine-view geometry is connected: camera tokens <code>9×18</code>, field <code>32×16×16</code>, <code>7</code> local-geometry channels, <code>13</code> coordinate-map channels, and a <code>42,237</code>-parameter model whose zero-initialized head exactly preserves the q8 baseline. This smoke did not load the real q8 factor, did not train, and is not a performance result.">真实冻结九视角几何已接通：camera token <code>9×18</code>、场 <code>32×16×16</code>、局部几何 <code>7</code> 通道、坐标映射 <code>13</code> 通道，模型 <code>42,237</code> 参数，零初始化头严格保持 q8 基线。该 smoke 没有加载真实 q8 factor、没有训练，也不是性能结果。</p>
+                    <h4 data-i18n-zh="v111 真正跑了什么" data-i18n-en="What v111 actually ran">v111 真正跑了什么</h4>
+                    <p data-i18n-html-zh="<code>42,237</code> 参数模型在 1 条公开三维 PoolFire 轨迹、1 套九视角几何上训练；fit 只含恒等与六个单轴形变，held-out 是双轴正向平滑微分同胚。它只看观测、已知几何和坐标映射，并进入真实 q8 + 未修改 K1 的 <code>2A+2A^T</code> 壳。" data-i18n-html-en="A <code>42,237</code>-parameter model was trained on one public 3D PoolFire trajectory and one nine-view geometry. Fit maps include only identity plus six single-axis maps; held-out evaluation uses a positive two-axis smooth diffeomorphism. It reads only observations, known geometry, and the coordinate map, then enters the real q8 plus unchanged K1 <code>2A+2A^T</code> shell."><code>42,237</code> 参数模型在 1 条公开三维 PoolFire 轨迹、1 套九视角几何上训练；fit 只含恒等与六个单轴形变，held-out 是双轴正向平滑微分同胚。它只看观测、已知几何和坐标映射，并进入真实 q8 + 未修改 K1 的 <code>2A+2A^T</code> 壳。</p>
+                  </section>
+                  <section>
+                    <h4 data-i18n-zh="未见坐标结果" data-i18n-en="Held-out coordinate result">未见坐标结果</h4>
+                    <p data-i18n-html-zh="<code>11/11</code> 帧八门联合通过，severe harm 为 <code>0</code>；field / interior-gradient 相对 Direct q8-K1 的中位误差比为 <code>0.44043 / 0.61411</code>，两项逐帧胜数均为 <code>11/11</code>。" data-i18n-html-en="All <code>11/11</code> frames pass the joint eight-gate test with <code>0</code> severe harm. Median field/interior-gradient error ratios versus Direct q8-K1 are <code>0.44043 / 0.61411</code>, and both metrics improve on all <code>11/11</code> frames."><code>11/11</code> 帧八门联合通过，severe harm 为 <code>0</code>；field / interior-gradient 相对 Direct q8-K1 的中位误差比为 <code>0.44043 / 0.61411</code>，两项逐帧胜数均为 <code>11/11</code>。</p>
+                  </section>
+                  <section>
+                    <h4 data-i18n-zh="独立复算与边界" data-i18n-en="Independent recomputation and boundary">独立复算与边界</h4>
+                    <p data-i18n-html-zh="独立程序未导入正式 runner，逐帧最大差 <code>4.94e-8</code>、聚合最大差 <code>2.00e-8</code>，结论一致。它仍只有 1 条轨迹、1 套几何、1 个 seed；跨轨迹、跨几何、外部反应流、资源和真实 BOST 均未证，<code>algorithm_breakthrough=false</code>。" data-i18n-html-en="The independent program does not import the formal runner. Maximum per-frame and aggregate differences are <code>4.94e-8</code> and <code>2.00e-8</code>, with the same decision. This remains one trajectory, one geometry, and one seed; cross-trajectory, cross-geometry, external-flow, resource, and real-BOST evidence remain open, so <code>algorithm_breakthrough=false</code>.">独立程序未导入正式 runner，逐帧最大差 <code>4.94e-8</code>、聚合最大差 <code>2.00e-8</code>，结论一致。它仍只有 1 条轨迹、1 套几何、1 个 seed；跨轨迹、跨几何、外部反应流、资源和真实 BOST 均未证，<code>algorithm_breakthrough=false</code>。</p>
                   </section>
                 </div>
                 <figure class="entry-figure">
@@ -717,12 +727,20 @@
                   </a>
                   <figcaption data-i18n-zh="冻结上限 0.14；initializer 全部低于上限，而重采样真值的 p50、p90 与 worst 均越线。" data-i18n-en="Frozen limit 0.14; every initializer roundtrip stays below it, while p50, p90, and worst for resampled truth all exceed it.">冻结上限 0.14；initializer 全部低于上限，而重采样真值的 p50、p90 与 worst 均越线。</figcaption>
                 </figure>
+                <figure class="entry-figure">
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_diffeomorphic_ray_conditioned_warm_pilot_v111.png">
+                    <img loading="lazy" decoding="async" src="../assets/nine_view_diffeomorphic_ray_conditioned_warm_pilot_v111.png" alt="v111 单轨迹未见双轴微分同胚学习信号" data-i18n-alt-zh="v111 单轨迹未见双轴微分同胚学习信号" data-i18n-alt-en="v111 single-trajectory learning signal on an unseen two-axis diffeomorphism" />
+                  </a>
+                  <figcaption data-i18n-zh="11 帧的 field / interior-gradient 比值和相对 Zero-K4 的 harm 比值全部低于冻结边界；该图只支持单轨迹开发正信号。" data-i18n-en="Field/interior-gradient ratios and Zero-K4 harm ratios remain below frozen boundaries on all 11 frames. The figure supports only a single-trajectory development signal.">11 帧的 field / interior-gradient 比值和相对 Zero-K4 的 harm 比值全部低于冻结边界；该图只支持单轨迹开发正信号。</figcaption>
+                </figure>
                 <div class="entry-links">
                   <a href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_support_chain_v109_result_2026-08-03.md">v107-v109 完整证据</a>
                   <a href="../docs/nine_view_case6_diffeomorphic_support_chain_v109_public_summary.json">机器可读摘要</a>
                   <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_support_chain_v109.png">结果图原尺寸</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_v110_tail_root_cause_2026-08-03.md" data-i18n-zh="v110 根因完整证据" data-i18n-en="Full v110 root-cause evidence">v110 根因完整证据</a>
                   <a href="../docs/nine_view_case6_diffeomorphic_v110_tail_root_cause_public_summary.json" data-i18n-zh="v110 脱敏摘要" data-i18n-en="v110 redacted summary">v110 脱敏摘要</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_diffeomorphic_ray_conditioned_warm_pilot_v111_result_2026-08-03.md" data-i18n-zh="v111 完整证据" data-i18n-en="Full v111 evidence">v111 完整证据</a>
+                  <a href="../docs/nine_view_diffeomorphic_ray_conditioned_warm_pilot_v111_public_summary.json" data-i18n-zh="v111 脱敏摘要" data-i18n-en="v111 redacted summary">v111 脱敏摘要</a>
                 </div>
               </div>
             </details>
