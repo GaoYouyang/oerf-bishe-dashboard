@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-title-zh="C 路线：算子学习 Warm Start × 三维 BOST | Gao Youyang" data-title-en="C Route: Operator-Learning Warm Starts × 3D BOST | Gao Youyang">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>C 路线：算子学习 Warm Start × 三维 BOST | Gao Youyang</title>
-  <meta name="description" content="OERF 三维 BOST 算子学习 C 路线聚焦主页：研究摘要、验证进程、每日工程增量、预期结果、工程意义与真实 BOST 迁移方向。" />
+  <meta name="description" content="OERF 三维 BOST 算子学习 C 路线聚焦主页：研究摘要、验证进程、每日工程增量、预期结果、工程意义与真实 BOST 迁移方向。" data-content-zh="OERF 三维 BOST 算子学习 C 路线聚焦主页：研究摘要、验证进程、每日工程增量、预期结果、工程意义与真实 BOST 迁移方向。" data-content-en="OERF 3D BOST operator-learning C-route hub: research summary, validation progress, daily engineering increments, expected results, engineering meaning, and the direction of real-BOST transfer." />
+  <link rel="stylesheet" href="../assets/site-language.css" />
   <style>
     :root {
       --ink: #17252b;
@@ -473,7 +474,12 @@
       .current-grid, .focus-grid, .meaning-grid, .future-grid { grid-template-columns: 1fr; }
       .route-line { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .evidence-row { grid-template-columns: 72px minmax(0,1fr); }
-      .evidence-state { grid-column: 2; }
+      .evidence-state {
+        grid-column: 2;
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
       .outcome-step { grid-template-columns: 34px minmax(0,1fr); }
       .outcome-step em { grid-column: 2; }
       .phase-rail { grid-template-columns: repeat(2,minmax(0,1fr)); }
@@ -490,42 +496,42 @@
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main">跳到主内容</a>
+  <a class="skip-link" href="#main" data-i18n-zh="跳到主内容" data-i18n-en="Skip to main content">跳到主内容</a>
   <header>
-    <nav class="nav" aria-label="主导航">
-      <a href="#research-summary" aria-current="page">研究摘要</a>
-      <a href="#research-progress">研究进程</a>
-      <a href="#engineering-increments">工程增量</a>
-      <a href="#expected-results">预期结果</a>
-      <a href="#engineering-meaning">工程意义</a>
-      <a href="#future-direction">未来期许和方向</a>
+    <nav class="nav" aria-label="主导航" data-i18n-aria-label-zh="主导航" data-i18n-aria-label-en="Primary navigation">
+      <a href="#research-summary" aria-current="page" data-i18n-zh="研究摘要" data-i18n-en="Research summary">研究摘要</a>
+      <a href="#research-progress" data-i18n-zh="研究进程" data-i18n-en="Research progress">研究进程</a>
+      <a href="#engineering-increments" data-i18n-zh="工程增量" data-i18n-en="Engineering increments">工程增量</a>
+      <a href="#expected-results" data-i18n-zh="预期结果" data-i18n-en="Expected results">预期结果</a>
+      <a href="#engineering-meaning" data-i18n-zh="工程意义" data-i18n-en="Engineering meaning">工程意义</a>
+      <a href="#future-direction" data-i18n-zh="未来期许和方向" data-i18n-en="Future direction">未来期许和方向</a>
     </nav>
     <div class="hero-grid">
       <div>
-        <div class="eyebrow">毕业设计聚焦主页 · 师兄确认 C 路线 · 更新至 2026-08-03</div>
-        <h1>低成本 Warm Start 加速三维 BOST 重建</h1>
-        <p class="lead">研究一个可被严格检验的问题：让只读取多视角观测与已知几何的低成本初始化器，给 CGLS / PCGLS 提供更好的三维起点；在最终场、完整梯度、内部梯度和观测误差均不劣于标准重建时，减少昂贵的 <code>A/A^T</code> 调用、端到端时间和峰值内存。当前使用公开反应流 CFD 构造九视角 straight-ray 代理，最终目标是迁移到 OERF 的真实 BOST 数据。</p>
+        <div class="eyebrow" data-i18n-zh="毕业设计聚焦主页 · 师兄确认 C 路线 · 更新至 2026-08-03" data-i18n-en="Graduation-project focus hub · C route confirmed with senior collaborator · updated 2026-08-03">毕业设计聚焦主页 · 师兄确认 C 路线 · 更新至 2026-08-03</div>
+        <h1 data-i18n-zh="低成本 Warm Start 加速三维 BOST 重建" data-i18n-en="Low-Cost Warm Starts for Faster 3D BOST Reconstruction">低成本 Warm Start 加速三维 BOST 重建</h1>
+        <p class="lead" data-i18n-html-zh="研究一个可被严格检验的问题：让只读取多视角观测与已知几何的低成本初始化器，给 CGLS / PCGLS 提供更好的三维起点；在最终场、完整梯度、内部梯度和观测误差均不劣于标准重建时，减少昂贵的 <code>A/A^T</code> 调用、端到端时间和峰值内存。当前使用公开反应流 CFD 构造九视角 straight-ray 代理，最终目标是迁移到 OERF 的真实 BOST 数据。" data-i18n-html-en="This investigates a strictly testable question: can a low-cost initializer that reads only multiview observations and known geometry provide CGLS / PCGLS with a better 3D starting point, reducing expensive <code>A/A^T</code> calls, end-to-end time, and peak memory without worsening final-field, full-gradient, interior-gradient, or observation error relative to standard reconstruction? The current nine-view straight-ray proxy is built from public reacting-flow CFD; the final goal is transfer to OERF real BOST data.">研究一个可被严格检验的问题：让只读取多视角观测与已知几何的低成本初始化器，给 CGLS / PCGLS 提供更好的三维起点；在最终场、完整梯度、内部梯度和观测误差均不劣于标准重建时，减少昂贵的 <code>A/A^T</code> 调用、端到端时间和峰值内存。当前使用公开反应流 CFD 构造九视角 straight-ray 代理，最终目标是迁移到 OERF 的真实 BOST 数据。</p>
         <div class="actions" style="margin-top:14px;">
-          <a class="button primary" href="#research-progress">查看当前研究进程</a>
-          <a class="button" href="daily-progress.html">查看每日实质增量</a>
-          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_support_chain_v109_result_2026-08-03.md">阅读最新完整证据</a>
+          <a class="button primary" href="#research-progress" data-i18n-zh="查看当前研究进程" data-i18n-en="View current research progress">查看当前研究进程</a>
+          <a class="button" href="daily-progress.html" data-i18n-zh="查看每日实质增量" data-i18n-en="View daily substantive increments">查看每日实质增量</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_support_chain_v109_result_2026-08-03.md" data-i18n-zh="阅读最新完整证据" data-i18n-en="Read the latest full evidence">阅读最新完整证据</a>
         </div>
       </div>
-      <aside class="hero-verdict" aria-label="当前科学判决">
-        <b>突破性进展：固定物理宽度的平滑支撑通过微分同胚四级收敛门</b>
-        <p><code>v107</code> 先证明旧结果受“边界物理厚度缩小”混杂，<code>v108</code> 再证明支撑必须随场一起输运；<code>v109</code> 用粗节点完全等价的半余弦窗消除硬边界后，field、内部梯度、观测的 p90 与 worst 单调门均为 <code>3/3</code>，逐单元四级单调比例三项均为 <code>100%</code>。</p>
-        <p><strong>突破边界：</strong>这是正式与独立实现共同确认的数值机制突破，尚不是 learned warm-start 或坐标泛化成功。现在才授权最小 CPU 级坐标条件初始化器；未见形变与几何外门通过前仍不租 GPU。</p>
+      <aside class="hero-verdict" aria-label="当前科学判决" data-i18n-aria-label-zh="当前科学判决" data-i18n-aria-label-en="Current scientific verdict">
+        <b data-i18n-zh="突破性进展：固定物理宽度的平滑支撑通过微分同胚四级收敛门" data-i18n-en="Mechanism breakthrough: fixed-physical-width smooth support passes the four-level diffeomorphic convergence gates">突破性进展：固定物理宽度的平滑支撑通过微分同胚四级收敛门</b>
+        <p data-i18n-html-zh="<code>v107</code> 先证明旧结果受“边界物理厚度缩小”混杂，<code>v108</code> 再证明支撑必须随场一起输运；<code>v109</code> 用粗节点完全等价的半余弦窗消除硬边界后，field、内部梯度、观测的 p90 与 worst 单调门均为 <code>3/3</code>，逐单元四级单调比例三项均为 <code>100%</code>。" data-i18n-html-en="<code>v107</code> first showed that the prior result was confounded by shrinking physical boundary thickness; <code>v108</code> then showed that support must be transported with the field. With a half-cosine window that is exactly equivalent at coarse nodes, <code>v109</code> removes the hard boundary: the p90 and worst monotonic gates for field, interior gradient, and observations are each <code>3/3</code>, and all three per-cell four-level monotonic proportions are <code>100%</code>."><code>v107</code> 先证明旧结果受“边界物理厚度缩小”混杂，<code>v108</code> 再证明支撑必须随场一起输运；<code>v109</code> 用粗节点完全等价的半余弦窗消除硬边界后，field、内部梯度、观测的 p90 与 worst 单调门均为 <code>3/3</code>，逐单元四级单调比例三项均为 <code>100%</code>。</p>
+        <p data-i18n-html-zh="<strong>突破边界：</strong>这是正式与独立实现共同确认的数值机制突破，尚不是 learned warm-start 或坐标泛化成功。现在才授权最小 CPU 级坐标条件初始化器；未见形变与几何外门通过前仍不租 GPU。" data-i18n-html-en="<strong>Claim boundary:</strong> This is a numerical-mechanism breakthrough jointly confirmed by the formal and independent implementations. It is not learned warm-start or coordinate-generalization success. It only authorizes a minimal CPU-scale coordinate-conditioned initializer; no GPU is rented before gates on unseen deformations and geometries pass."><strong>突破边界：</strong>这是正式与独立实现共同确认的数值机制突破，尚不是 learned warm-start 或坐标泛化成功。现在才授权最小 CPU 级坐标条件初始化器；未见形变与几何外门通过前仍不租 GPU。</p>
       </aside>
     </div>
-    <div class="current-grid" aria-label="当前核心状态">
-      <div class="current-metric"><b id="liveWitnessCount">3 / 3</b><span><code>8×</code> field / interior-gradient / observation 绝对保真门</span></div>
-      <div class="current-metric"><b id="liveFailureCount">3 / 3</b><span>四级 p90-higher 单调收敛门</span></div>
-      <div class="current-metric"><b id="liveCallBudget">3 / 3</b><span>四级 worst 单调收敛门</span></div>
-      <div class="current-metric warning"><b id="liveBreakthrough">false</b><span><code>algorithm_breakthrough</code>；不夸大负结果</span></div>
+    <div class="current-grid" aria-label="当前核心状态" data-i18n-aria-label-zh="当前核心状态" data-i18n-aria-label-en="Current core status">
+      <div class="current-metric"><b id="liveWitnessCount">3 / 3</b><span data-i18n-html-zh="<code>8×</code> field / interior-gradient / observation 绝对保真门" data-i18n-html-en="<code>8×</code> field / interior-gradient / observation absolute-fidelity gates"><code>8×</code> field / interior-gradient / observation 绝对保真门</span></div>
+      <div class="current-metric"><b id="liveFailureCount">3 / 3</b><span data-i18n-zh="四级 p90-higher 单调收敛门" data-i18n-en="Four-level p90-higher monotonic-convergence gates">四级 p90-higher 单调收敛门</span></div>
+      <div class="current-metric"><b id="liveCallBudget">3 / 3</b><span data-i18n-zh="四级 worst 单调收敛门" data-i18n-en="Four-level worst monotonic-convergence gates">四级 worst 单调收敛门</span></div>
+      <div class="current-metric warning"><b id="liveBreakthrough">false</b><span data-i18n-html-zh="<code>algorithm_breakthrough</code>；不夸大负结果" data-i18n-html-en="<code>algorithm_breakthrough</code>; do not overstate negative evidence"><code>algorithm_breakthrough</code>；不夸大负结果</span></div>
     </div>
     <details class="header-archive">
-      <summary>展开历史证据快捷入口与旧浏览器学习进度</summary>
-      <div class="archive-body">
+      <summary data-i18n-zh="展开历史证据快捷入口与旧浏览器学习进度" data-i18n-en="Expand historical-evidence shortcuts and legacy browser learning progress">展开历史证据快捷入口与旧浏览器学习进度</summary>
+      <div class="archive-body" data-i18n-fallback="zh">
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
       <a class="button primary" href="#diffeomorphic-smooth-support-v109">打开 v107-v109 最新路线判决</a>
@@ -950,39 +956,39 @@
     <section id="research-summary" class="band">
       <div class="section-head">
         <div>
-          <div class="eyebrow">研究摘要</div>
-          <h2>把算子学习限制在一个可验证的作用：提供更便宜、更安全的三维重建起点</h2>
-          <p>背景纹影从多视角图像位移反推三维折射率或密度场，本质上是昂贵且病态的逆问题。C 路线不替换物理求解器，而是学习一个部署时只依赖观测与已知几何的 warm initializer，再交给未修改的 CGLS / PCGLS 精化。这样既保留物理一致性，也能把“快多少、伤不伤精度、在哪些工况失效”拆成可复算的实验问题。</p>
+          <div class="eyebrow" data-i18n-zh="研究摘要" data-i18n-en="Research summary">研究摘要</div>
+          <h2 data-i18n-zh="把算子学习限制在一个可验证的作用：提供更便宜、更安全的三维重建起点" data-i18n-en="Constrain operator learning to a verifiable role: a cheaper, safer 3D reconstruction starting point">把算子学习限制在一个可验证的作用：提供更便宜、更安全的三维重建起点</h2>
+          <p data-i18n-html-zh="背景纹影从多视角图像位移反推三维折射率或密度场，本质上是昂贵且病态的逆问题。C 路线不替换物理求解器，而是学习一个部署时只依赖观测与已知几何的 warm initializer，再交给未修改的 CGLS / PCGLS 精化。这样既保留物理一致性，也能把“快多少、伤不伤精度、在哪些工况失效”拆成可复算的实验问题。" data-i18n-html-en="Background-oriented schlieren reconstructs a 3D refractive-index or density field from multiview image displacements, an expensive ill-posed inverse problem. The C route does not replace the physics solver: it learns a warm initializer that at deployment depends only on observations and known geometry, then passes it to unchanged CGLS / PCGLS refinement. This preserves physical consistency and turns speed, accuracy harm, and failure conditions into reproducible experimental questions.">背景纹影从多视角图像位移反推三维折射率或密度场，本质上是昂贵且病态的逆问题。C 路线不替换物理求解器，而是学习一个部署时只依赖观测与已知几何的 warm initializer，再交给未修改的 CGLS / PCGLS 精化。这样既保留物理一致性，也能把“快多少、伤不伤精度、在哪些工况失效”拆成可复算的实验问题。</p>
         </div>
       </div>
-      <div class="route-line" aria-label="C 路线研究链">
-        <div><b>公开反应流 CFD</b><span>PoolFire 与独立 BLASTNet 工况</span></div>
-        <div><b>九视角观测</b><span>已知几何 straight-ray 密度梯度代理</span></div>
-        <div><b>粗网格逆问题</b><span><code>32×16×16</code> 三维状态</span></div>
-        <div><b>联合 13D 小模型已失败</b><span>mean / linear 75/90；RBF 71/90</span></div>
-        <div><b>v99 坐标输运已通过</b><span>标量 pullback、梯度 J<sup>-T</sup>、相机与伴随同步变换</span></div>
-        <div><b>v100 终点公共场基失败</b><span>留一几何最高 2/90，不能直接放大网络</span></div>
-        <div><b>v101 公共物理参考域通过</b><span>rank 0 与 truth-aware rank 4 均为 90/90</span></div>
-        <div><b>v102 可观测 rank 4 已关闭</b><span>正确输运 90/90；无输运 71/90；优势方法 0/3</span></div>
-        <div><b>v103-v104 微分同胚粗网格门失败</b><span>伴随数学通过；保真 0/3；恒等 anchor 0/15；形变 0/90</span></div>
-        <div><b>v106.1 嵌套输运收敛已通过</b><span>共同规范、32/63/125/249 节点与精确 stride；三项四级单调均 3/3</span></div>
-        <div><b>v107-v108 支撑混杂已定位</b><span>固定物理厚度推翻旧解释；随场输运修复梯度/观测，但硬边界仍失败</span></div>
-        <div><b>v109 平滑支撑已通过</b><span>coarse-node identity 为 0 差；三项完整四级收敛与独立复算通过</span></div>
-        <div class="current"><b>当前：坐标条件 initializer</b><span>结果前留出微分同胚与相机几何，先跑 CPU 级无学习/线性/RBF/小 MLP</span></div>
-        <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
+      <div class="route-line" aria-label="C 路线研究链" data-i18n-aria-label-zh="C 路线研究链" data-i18n-aria-label-en="C-route research chain">
+        <div data-i18n-html-zh="<b>公开反应流 CFD</b><span>PoolFire 与独立 BLASTNet 工况</span>" data-i18n-html-en="<b>Public reacting-flow CFD</b><span>PoolFire and an independent BLASTNet condition</span>"><b>公开反应流 CFD</b><span>PoolFire 与独立 BLASTNet 工况</span></div>
+        <div data-i18n-html-zh="<b>九视角观测</b><span>已知几何 straight-ray 密度梯度代理</span>" data-i18n-html-en="<b>Nine-view observations</b><span>Known-geometry straight-ray density-gradient proxy</span>"><b>九视角观测</b><span>已知几何 straight-ray 密度梯度代理</span></div>
+        <div data-i18n-html-zh="<b>粗网格逆问题</b><span><code>32×16×16</code> 三维状态</span>" data-i18n-html-en="<b>Coarse-grid inverse problem</b><span><code>32×16×16</code> 3D state</span>"><b>粗网格逆问题</b><span><code>32×16×16</code> 三维状态</span></div>
+        <div data-i18n-html-zh="<b>联合 13D 小模型已失败</b><span>mean / linear 75/90；RBF 71/90</span>" data-i18n-html-en="<b>Joint 13D small models failed</b><span>mean / linear 75/90; RBF 71/90</span>"><b>联合 13D 小模型已失败</b><span>mean / linear 75/90；RBF 71/90</span></div>
+        <div data-i18n-html-zh="<b>v99 坐标输运已通过</b><span>标量 pullback、梯度 J<sup>-T</sup>、相机与伴随同步变换</span>" data-i18n-html-en="<b>v99 coordinate transport passed</b><span>Scalar pullback, gradient J<sup>-T</sup>, and synchronized camera/adjoint transforms</span>"><b>v99 坐标输运已通过</b><span>标量 pullback、梯度 J<sup>-T</sup>、相机与伴随同步变换</span></div>
+        <div data-i18n-html-zh="<b>v100 终点公共场基失败</b><span>留一几何最高 2/90，不能直接放大网络</span>" data-i18n-html-en="<b>v100 shared endpoint field basis failed</b><span>At most 2/90 under leave-one-geometry-out; scaling up the network is not justified</span>"><b>v100 终点公共场基失败</b><span>留一几何最高 2/90，不能直接放大网络</span></div>
+        <div data-i18n-html-zh="<b>v101 公共物理参考域通过</b><span>rank 0 与 truth-aware rank 4 均为 90/90</span>" data-i18n-html-en="<b>v101 shared physical reference domain passed</b><span>Both rank 0 and truth-aware rank 4 reached 90/90</span>"><b>v101 公共物理参考域通过</b><span>rank 0 与 truth-aware rank 4 均为 90/90</span></div>
+        <div data-i18n-html-zh="<b>v102 可观测 rank 4 已关闭</b><span>正确输运 90/90；无输运 71/90；优势方法 0/3</span>" data-i18n-html-en="<b>v102 observable rank 4 closed</b><span>Correct transport 90/90; no transport 71/90; advantage methods 0/3</span>"><b>v102 可观测 rank 4 已关闭</b><span>正确输运 90/90；无输运 71/90；优势方法 0/3</span></div>
+        <div data-i18n-html-zh="<b>v103-v104 微分同胚粗网格门失败</b><span>伴随数学通过；保真 0/3；恒等 anchor 0/15；形变 0/90</span>" data-i18n-html-en="<b>v103-v104 diffeomorphic coarse-grid gate failed</b><span>Adjoint mathematics passed; fidelity 0/3; identity anchor 0/15; deformations 0/90</span>"><b>v103-v104 微分同胚粗网格门失败</b><span>伴随数学通过；保真 0/3；恒等 anchor 0/15；形变 0/90</span></div>
+        <div><b data-i18n-zh="v106.1 嵌套输运收敛已通过" data-i18n-en="v106.1 nested-transport convergence passed">v106.1 嵌套输运收敛已通过</b><span data-i18n-zh="共同规范、32/63/125/249 节点与精确 stride；三项四级单调均 3/3" data-i18n-en="Shared convention, 32/63/125/249 nodes, and exact stride; all three four-level monotonic checks are 3/3">共同规范、32/63/125/249 节点与精确 stride；三项四级单调均 3/3</span></div>
+        <div><b data-i18n-zh="v107-v108 支撑混杂已定位" data-i18n-en="v107-v108 support confounding located">v107-v108 支撑混杂已定位</b><span data-i18n-zh="固定物理厚度推翻旧解释；随场输运修复梯度/观测，但硬边界仍失败" data-i18n-en="Fixed physical width refuted the earlier interpretation; co-transport repaired gradients/observations, but the hard boundary still failed">固定物理厚度推翻旧解释；随场输运修复梯度/观测，但硬边界仍失败</span></div>
+        <div><b data-i18n-zh="v109 平滑支撑已通过" data-i18n-en="v109 smooth support passed">v109 平滑支撑已通过</b><span data-i18n-zh="coarse-node identity 为 0 差；三项完整四级收敛与独立复算通过" data-i18n-en="Coarse-node identity has zero difference; all three full four-level convergence checks and independent recomputation passed">coarse-node identity 为 0 差；三项完整四级收敛与独立复算通过</span></div>
+        <div class="current"><b data-i18n-zh="当前：坐标条件 initializer" data-i18n-en="Current: coordinate-conditioned initializer">当前：坐标条件 initializer</b><span data-i18n-zh="结果前留出微分同胚与相机几何，先跑 CPU 级无学习/线性/RBF/小 MLP" data-i18n-en="Hold out deformation and camera-geometry combinations before results; first run CPU-scale non-learning / linear / RBF / small MLP baselines">结果前留出微分同胚与相机几何，先跑 CPU 级无学习/线性/RBF/小 MLP</span></div>
+        <div><b data-i18n-zh="真实 BOST 迁移" data-i18n-en="Real-BOST transfer">真实 BOST 迁移</b><span data-i18n-zh="组内位移图、标定、噪声与认可基线" data-i18n-en="In-group displacement images, calibration, noise, and accepted baselines">组内位移图、标定、噪声与认可基线</span></div>
       </div>
       <div class="focus-grid" style="margin-top:12px;">
         <article class="focus-card positive">
-          <h3>要优化什么</h3>
-          <p>在相同最终精度下，减少完整 <code>A/A^T</code> 调用；随后再以独立 fresh process 测 wall time 与 whole-pipeline peak RSS。理论调用减少不能代替真实资源实测。</p>
+          <h3 data-i18n-zh="要优化什么" data-i18n-en="What to optimize">要优化什么</h3>
+          <p data-i18n-html-zh="在相同最终精度下，减少完整 <code>A/A^T</code> 调用；随后再以独立 fresh process 测 wall time 与 whole-pipeline peak RSS。理论调用减少不能代替真实资源实测。" data-i18n-html-en="At matched final accuracy, reduce full <code>A/A^T</code> calls; then measure wall time and whole-pipeline peak RSS in independent fresh processes. A theoretical reduction in calls cannot substitute for real resource measurements.">在相同最终精度下，减少完整 <code>A/A^T</code> 调用；随后再以独立 fresh process 测 wall time 与 whole-pipeline peak RSS。理论调用减少不能代替真实资源实测。</p>
         </article>
         <article class="focus-card boundary">
-          <h3>怎样定义“同精度”</h3>
-          <p>逐单元同时检查 field、full-gradient、interior-gradient、observation 四类误差及相对 Zero-K2 / Zero-K4 的八个门。任何局部材料性伤害都不能被平均收益掩盖。</p>
+          <h3 data-i18n-zh="怎样定义“同精度”" data-i18n-en="How matched accuracy is defined">怎样定义“同精度”</h3>
+          <p data-i18n-html-zh="逐单元同时检查 field、full-gradient、interior-gradient、observation 四类误差及相对 Zero-K2 / Zero-K4 的八个门。任何局部材料性伤害都不能被平均收益掩盖。" data-i18n-html-en="For every cell, check field, full-gradient, interior-gradient, and observation errors together with eight gates relative to Zero-K2 / Zero-K4. No local material harm may be hidden by average gains.">逐单元同时检查 field、full-gradient、interior-gradient、observation 四类误差及相对 Zero-K2 / Zero-K4 的八个门。任何局部材料性伤害都不能被平均收益掩盖。</p>
         </article>
         <article class="focus-card current">
-          <h3>当前科学边界</h3>
-          <p>公开实验仍是 noise-free、known-geometry、straight-ray 代理。它能筛选算法机制，但不能冒充曲折光线、相机标定、真实噪声或实验室真实 BOST 结论。</p>
+          <h3 data-i18n-zh="当前科学边界" data-i18n-en="Current scientific boundary">当前科学边界</h3>
+          <p data-i18n-zh="公开实验仍是 noise-free、known-geometry、straight-ray 代理。它能筛选算法机制，但不能冒充曲折光线、相机标定、真实噪声或实验室真实 BOST 结论。" data-i18n-en="The public experiments remain a noise-free, known-geometry, straight-ray proxy. They can screen algorithmic mechanisms, but cannot stand in for curved rays, camera calibration, real noise, or laboratory real-BOST conclusions.">公开实验仍是 noise-free、known-geometry、straight-ray 代理。它能筛选算法机制，但不能冒充曲折光线、相机标定、真实噪声或实验室真实 BOST 结论。</p>
         </article>
       </div>
     </section>
@@ -990,218 +996,218 @@
     <section id="research-progress" class="band">
       <div class="section-head">
         <div>
-          <div class="eyebrow">研究进程</div>
-          <h2>正结果证明“值得继续”，负结果决定“下一步不能再做什么”</h2>
-          <p>当前最重要的不是版本号数量，而是四个经过独立复算、真正改变路线判断的节点。</p>
+          <div class="eyebrow" data-i18n-zh="研究进程" data-i18n-en="Research progress">研究进程</div>
+          <h2 data-i18n-zh="正结果证明“值得继续”，负结果决定“下一步不能再做什么”" data-i18n-en="Positive results show what is worth continuing; negative results determine what cannot be the next step">正结果证明“值得继续”，负结果决定“下一步不能再做什么”</h2>
+          <p data-i18n-zh="当前最重要的不是版本号数量，而是四个经过独立复算、真正改变路线判断的节点。" data-i18n-en="What matters now is not the number of version labels, but the independently recomputed nodes that genuinely changed the route decision.">当前最重要的不是版本号数量，而是四个经过独立复算、真正改变路线判断的节点。</p>
         </div>
       </div>
       <div class="evidence-layout">
         <div class="evidence-list">
           <article class="evidence-row">
             <time datetime="2026-07-31">2026-07-31</time>
-            <div><strong>v74.1：PoolFire 内部资源门通过</strong><p>1515/1515 精度兼容；exact 调用从 <code>4A+4A^T</code> 降为 <code>2A+2A^T</code>，fresh wall 中位数下降 43.49%，三类 RSS p90 均过门。只证明已开封同族代理。</p></div>
-            <span class="evidence-state">内部正结果</span>
+            <div data-i18n-html-zh="<strong>v74.1：PoolFire 内部资源门通过</strong><p>1515/1515 精度兼容；exact 调用从 <code>4A+4A^T</code> 降为 <code>2A+2A^T</code>，fresh wall 中位数下降 43.49%，三类 RSS p90 均过门。只证明已开封同族代理。</p>" data-i18n-html-en="<strong>v74.1: internal PoolFire resource gate passed</strong><p>Accuracy was compatible in 1515/1515 cells; exact calls fell from <code>4A+4A^T</code> to <code>2A+2A^T</code>, median fresh-process wall time fell 43.49%, and all three RSS p90 gates passed. This supports only the opened same-family proxy.</p>"><strong>v74.1：PoolFire 内部资源门通过</strong><p>1515/1515 精度兼容；exact 调用从 <code>4A+4A^T</code> 降为 <code>2A+2A^T</code>，fresh wall 中位数下降 43.49%，三类 RSS p90 均过门。只证明已开封同族代理。</p></div>
+            <span class="evidence-state" data-i18n-zh="内部正结果" data-i18n-en="Internal positive result">内部正结果</span>
           </article>
           <article class="evidence-row">
             <time datetime="2026-08-01">2026-08-01</time>
-            <div><strong>v85：外部 Case 4 通过，Case 6 失败</strong><p>Case 4 为 84/84；Case 6 仅 78/90，12 个失败全部落在内部梯度。说明全局 residual gate 无法识别局部风险。</p></div>
-            <span class="evidence-state fail">混合外部结果</span>
+            <div data-i18n-html-zh="<strong>v85：外部 Case 4 通过，Case 6 失败</strong><p>Case 4 为 84/84；Case 6 仅 78/90，12 个失败全部落在内部梯度。说明全局 residual gate 无法识别局部风险。</p>" data-i18n-html-en="<strong>v85: external Case 4 passed; Case 6 failed</strong><p>Case 4 reached 84/84, while Case 6 reached only 78/90; all 12 failures were in the interior gradient. A global residual gate therefore cannot identify the local risk.</p>"><strong>v85：外部 Case 4 通过，Case 6 失败</strong><p>Case 4 为 84/84；Case 6 仅 78/90，12 个失败全部落在内部梯度。说明全局 residual gate 无法识别局部风险。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="混合外部结果" data-i18n-en="Mixed external result">混合外部结果</span>
           </article>
           <article class="evidence-row">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v87：单一 K1-K2 标量线关闭</strong><p>严格可行单元 85/90；五个内部梯度反例证明 scalar damping 自由度不足，不能靠调一个系数修复 Case 6。</p></div>
-            <span class="evidence-state fail">机理负结果</span>
+            <div data-i18n-html-zh="<strong>v87：单一 K1-K2 标量线关闭</strong><p>严格可行单元 85/90；五个内部梯度反例证明 scalar damping 自由度不足，不能靠调一个系数修复 Case 6。</p>" data-i18n-html-en="<strong>v87: single K1-K2 scalar line closed</strong><p>Only 85/90 cells were strictly feasible; five interior-gradient counterexamples showed that scalar damping lacks sufficient degrees of freedom to repair Case 6.</p>"><strong>v87：单一 K1-K2 标量线关闭</strong><p>严格可行单元 85/90；五个内部梯度反例证明 scalar damping 自由度不足，不能靠调一个系数修复 Case 6。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="机理负结果" data-i18n-en="Negative mechanism result">机理负结果</span>
           </article>
           <article class="evidence-row">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v92：单径向四次多尺度方向正式关线</strong><p>新方向非退化，但 F30+/12 越线只从 3.688% 降到 3.631%，严格容量仍为 89/90。停止堆全局径向阶数，先定位缺口。</p></div>
-            <span class="evidence-state fail">机理负结果</span>
+            <div data-i18n-html-zh="<strong>v92：单径向四次多尺度方向正式关线</strong><p>新方向非退化，但 F30+/12 越线只从 3.688% 降到 3.631%，严格容量仍为 89/90。停止堆全局径向阶数，先定位缺口。</p>" data-i18n-html-en="<strong>v92: single radial quartic multiscale direction closed</strong><p>The new direction was non-degenerate, but the F30+/12 excess fell only from 3.688% to 3.631%, leaving strict capacity at 89/90. Global radial orders were stopped in favor of locating the missing degree of freedom.</p>"><strong>v92：单径向四次多尺度方向正式关线</strong><p>新方向非退化，但 F30+/12 越线只从 3.688% 降到 3.631%，严格容量仍为 89/90。停止堆全局径向阶数，先定位缺口。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="机理负结果" data-i18n-en="Negative mechanism result">机理负结果</span>
           </article>
           <article class="evidence-row">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v93：局部缺口成立，主定位器三门失败</strong><p>前 10% 体素承载 76.71% 正误差，79.57% 属于低频；预注册法向残差定位器最高 10% 只捕获 4.84%，不能直接生成局部窗口。</p></div>
-            <span class="evidence-state fail">路线诊断</span>
+            <div data-i18n-html-zh="<strong>v93：局部缺口成立，主定位器三门失败</strong><p>前 10% 体素承载 76.71% 正误差，79.57% 属于低频；预注册法向残差定位器最高 10% 只捕获 4.84%，不能直接生成局部窗口。</p>" data-i18n-html-en="<strong>v93: the local deficit was real, but the primary localizer failed three gates</strong><p>The top 10% of voxels carried 76.71% of positive error and 79.57% was low-frequency; the preregistered normal-residual localizer captured only 4.84% in its top 10%, so it could not directly generate a local window.</p>"><strong>v93：局部缺口成立，主定位器三门失败</strong><p>前 10% 体素承载 76.71% 正误差，79.57% 属于低频；预注册法向残差定位器最高 10% 只捕获 4.84%，不能直接生成局部窗口。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="路线诊断" data-i18n-en="Route diagnostic">路线诊断</span>
           </article>
           <article class="evidence-row">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v94：跨几何普遍性为 0/30，局部修补路线关闭</strong><p>F12+ 的候选 / Zero-K2 内部梯度误差比全部低于 1；22 帧虽有集中的局部正误差，但 30 帧总 signed excess 全为负，不能把局部红区误写成净伤害。</p></div>
-            <span class="evidence-state fail">关线结果</span>
+            <div data-i18n-html-zh="<strong>v94：跨几何普遍性为 0/30，局部修补路线关闭</strong><p>F12+ 的候选 / Zero-K2 内部梯度误差比全部低于 1；22 帧虽有集中的局部正误差，但 30 帧总 signed excess 全为负，不能把局部红区误写成净伤害。</p>" data-i18n-html-en="<strong>v94: cross-geometry universality was 0/30; local repair closed</strong><p>Every F12+ candidate-to-Zero-K2 interior-gradient error ratio was below 1. Although 22 frames contained concentrated local positive error, all 30 frames had negative total signed excess, so local red regions could not be reported as net harm.</p>"><strong>v94：跨几何普遍性为 0/30，局部修补路线关闭</strong><p>F12+ 的候选 / Zero-K2 内部梯度误差比全部低于 1；22 帧虽有集中的局部正误差，但 30 帧总 signed excess 全为负，不能把局部红区误写成净伤害。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="关线结果" data-i18n-en="Closed-route result">关线结果</span>
           </article>
           <article class="evidence-row" id="physical-ball-predictor-v95">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v95.1：小模型提高到 81/90，但候选神谕也只有 83/90</strong><p>线性 observation-only predictor 证明九维坐标存在可学习信号；然而九个失败全部落在内部梯度，且完美候选选择仍留下七个共同失败。关闭固定九维小模型与 confidence-only 修补。</p></div>
-            <span class="evidence-state fail">严格负结果</span>
+            <div data-i18n-html-zh="<strong>v95.1：小模型提高到 81/90，但候选神谕也只有 83/90</strong><p>线性 observation-only predictor 证明九维坐标存在可学习信号；然而九个失败全部落在内部梯度，且完美候选选择仍留下七个共同失败。关闭固定九维小模型与 confidence-only 修补。</p>" data-i18n-html-en="<strong>v95.1: a small model improved to 81/90, but the candidate oracle reached only 83/90</strong><p>A linear observation-only predictor showed learnable signal in the nine-dimensional coordinates; however, all nine failures were in the interior gradient and perfect candidate selection still left seven shared failures. Fixed nine-dimensional small models and confidence-only repair were closed.</p>"><strong>v95.1：小模型提高到 81/90，但候选神谕也只有 83/90</strong><p>线性 observation-only predictor 证明九维坐标存在可学习信号；然而九个失败全部落在内部梯度，且完美候选选择仍留下七个共同失败。关闭固定九维小模型与 confidence-only 修补。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="严格负结果" data-i18n-en="Strict negative result">严格负结果</span>
           </article>
           <article class="evidence-row" id="adaptive-spectral-capacity-v96">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v96：四个观测自适应频谱方向达到 90/90 容量</strong><p>从父 residual 和 known geometry 生成四个频谱带方向，精确嵌套旧九维 family；三档几何各 30/30，独立复算逐值差为 0。当前是 truth-aware 容量正结果，不是部署预测成功。</p></div>
-            <span class="evidence-state">容量突破</span>
+            <div data-i18n-html-zh="<strong>v96：四个观测自适应频谱方向达到 90/90 容量</strong><p>从父 residual 和 known geometry 生成四个频谱带方向，精确嵌套旧九维 family；三档几何各 30/30，独立复算逐值差为 0。当前是 truth-aware 容量正结果，不是部署预测成功。</p>" data-i18n-html-en="<strong>v96: four observation-adaptive spectral directions reached 90/90 capacity</strong><p>Four spectral-band directions generated from the parent residual and known geometry exactly nested the old nine-dimensional family; each of three geometries reached 30/30 and independent recomputation had zero elementwise difference. This is a positive truth-aware capacity result, not successful deployment prediction.</p>"><strong>v96：四个观测自适应频谱方向达到 90/90 容量</strong><p>从父 residual 和 known geometry 生成四个频谱带方向，精确嵌套旧九维 family；三档几何各 30/30，独立复算逐值差为 0。当前是 truth-aware 容量正结果，不是部署预测成功。</p></div>
+            <span class="evidence-state" data-i18n-zh="容量突破" data-i18n-en="Capacity breakthrough">容量突破</span>
           </article>
           <article class="evidence-row" id="conditional-spectral-capacity-v97">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v97：固定旧九维 + 四个自由频谱系数最多 86/90</strong><p>最佳冻结基线从 81/90 修到 86/90，却仍留下四个 interior-gradient 失败；三个基线均未通过条件容量门。独立复算 270 次精确回放后关闭四系数训练，转向 13D 联合适配。</p></div>
-            <span class="evidence-state fail">关键负结果</span>
+            <div data-i18n-html-zh="<strong>v97：固定旧九维 + 四个自由频谱系数最多 86/90</strong><p>最佳冻结基线从 81/90 修到 86/90，却仍留下四个 interior-gradient 失败；三个基线均未通过条件容量门。独立复算 270 次精确回放后关闭四系数训练，转向 13D 联合适配。</p>" data-i18n-html-en="<strong>v97: fixed old nine-dimensional state plus four free spectral coefficients reached at most 86/90</strong><p>The best frozen baseline improved from 81/90 to 86/90 but still left four interior-gradient failures; none of the three baselines passed the conditional-capacity gate. After 270 independently recomputed exact replays, four-coefficient training was closed in favor of joint 13D adaptation.</p>"><strong>v97：固定旧九维 + 四个自由频谱系数最多 86/90</strong><p>最佳冻结基线从 81/90 修到 86/90，却仍留下四个 interior-gradient 失败；三个基线均未通过条件容量门。独立复算 270 次精确回放后关闭四系数训练，转向 13D 联合适配。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="关键负结果" data-i18n-en="Key negative result">关键负结果</span>
           </article>
           <article class="evidence-row" id="joint13-observation-predictor-v98">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v98：联合 13D 的 mean / linear / RBF 最多 75/90</strong><p>允许旧九维与新四维共同变化后，简单模型仍未达到 90/90；270 次独立精确回放确认结果。失败集中在较早时间折与 F30+，下一门不再堆普通回归器，而是验证相机几何和坐标变换的一致性。</p></div>
-            <span class="evidence-state fail">关键负结果</span>
+            <div data-i18n-html-zh="<strong>v98：联合 13D 的 mean / linear / RBF 最多 75/90</strong><p>允许旧九维与新四维共同变化后，简单模型仍未达到 90/90；270 次独立精确回放确认结果。失败集中在较早时间折与 F30+，下一门不再堆普通回归器，而是验证相机几何和坐标变换的一致性。</p>" data-i18n-html-en="<strong>v98: joint 13D mean / linear / RBF reached at most 75/90</strong><p>Even after allowing the old nine and new four dimensions to vary jointly, simple models did not reach 90/90; 270 independent exact replays confirmed the result. Failures concentrated in earlier temporal folds and F30+, so the next gate shifted from ordinary regressors to consistency of camera geometry and coordinate transforms.</p>"><strong>v98：联合 13D 的 mean / linear / RBF 最多 75/90</strong><p>允许旧九维与新四维共同变化后，简单模型仍未达到 90/90；270 次独立精确回放确认结果。失败集中在较早时间折与 F30+，下一门不再堆普通回归器，而是验证相机几何和坐标变换的一致性。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="关键负结果" data-i18n-en="Key negative result">关键负结果</span>
           </article>
           <article class="evidence-row" id="coordinate-transport-v99">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v99 坐标输运实现门：11/11 独立复现</strong><p>完整变换在两个三维格点旋转和一个光滑剪切上达到约 <code>1e-16</code>；错误 warp 产生 <code>6.88%–132.56%</code> 偏差。下一门是连续 pose/ray 与 leave-one-geometry-out。</p></div>
-            <span class="evidence-state">物理正结果</span>
+            <div data-i18n-html-zh="<strong>v99 坐标输运实现门：11/11 独立复现</strong><p>完整变换在两个三维格点旋转和一个光滑剪切上达到约 <code>1e-16</code>；错误 warp 产生 <code>6.88%–132.56%</code> 偏差。下一门是连续 pose/ray 与 leave-one-geometry-out。</p>" data-i18n-html-en="<strong>v99 coordinate-transport implementation gate: 11/11 independently reproduced</strong><p>The complete transform reached about <code>1e-16</code> on two 3D grid rotations and one smooth shear; incorrect warps produced <code>6.88%–132.56%</code> deviations. The next gate was continuous pose/ray and leave-one-geometry-out.</p>"><strong>v99 坐标输运实现门：11/11 独立复现</strong><p>完整变换在两个三维格点旋转和一个光滑剪切上达到约 <code>1e-16</code>；错误 warp 产生 <code>6.88%–132.56%</code> 偏差。下一门是连续 pose/ray 与 leave-one-geometry-out。</p></div>
+            <span class="evidence-state" data-i18n-zh="物理正结果" data-i18n-en="Positive physics result">物理正结果</span>
           </article>
           <article class="evidence-row" id="canonical-field-capacity-v100">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v100 跨几何公共重建终点场基：最高 2/90</strong><p>direct target + strict K1 为 <code>90/90</code>，但完整留出相机几何和连续时间块后，rank 0 至 40 的共享线性终点场空间最多只有 <code>2/90</code>。独立程序重建 15 折与 630 次精确 K1，判决一致。</p></div>
-            <span class="evidence-state fail">关键负结果</span>
+            <div data-i18n-html-zh="<strong>v100 跨几何公共重建终点场基：最高 2/90</strong><p>direct target + strict K1 为 <code>90/90</code>，但完整留出相机几何和连续时间块后，rank 0 至 40 的共享线性终点场空间最多只有 <code>2/90</code>。独立程序重建 15 折与 630 次精确 K1，判决一致。</p>" data-i18n-html-en="<strong>v100 shared cross-geometry reconstruction-endpoint basis: at most 2/90</strong><p>Direct target plus strict K1 reached <code>90/90</code>, but after fully holding out camera geometries and contiguous time blocks, shared linear endpoint-field spaces of ranks 0 through 40 reached at most <code>2/90</code>. An independent program rebuilt 15 folds and 630 exact K1 runs and reached the same verdict.</p>"><strong>v100 跨几何公共重建终点场基：最高 2/90</strong><p>direct target + strict K1 为 <code>90/90</code>，但完整留出相机几何和连续时间块后，rank 0 至 40 的共享线性终点场空间最多只有 <code>2/90</code>。独立程序重建 15 折与 630 次精确 K1，判决一致。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="关键负结果" data-i18n-en="Key negative result">关键负结果</span>
           </article>
           <article class="evidence-row" id="reference-truth-capacity-v101">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v101 公共物理参考域容量：rank 0 与 rank 4 均为 90/90</strong><p>相机无关 physical-reference family 在 15 个 geometry-time 外折上完整过门；匹配的 geometry-specific endpoint rank 4 仅 <code>37/90</code>。独立程序重算 43 个臂与 3870 次 strict K1，正式差值全部为 0。</p></div>
-            <span class="evidence-state">参考域容量正结果</span>
+            <div data-i18n-html-zh="<strong>v101 公共物理参考域容量：rank 0 与 rank 4 均为 90/90</strong><p>相机无关 physical-reference family 在 15 个 geometry-time 外折上完整过门；匹配的 geometry-specific endpoint rank 4 仅 <code>37/90</code>。独立程序重算 43 个臂与 3870 次 strict K1，正式差值全部为 0。</p>" data-i18n-html-en="<strong>v101 shared physical-reference-domain capacity: both rank 0 and rank 4 reached 90/90</strong><p>The camera-independent physical-reference family passed all 15 geometry-time outer folds; the matched geometry-specific endpoint rank 4 reached only <code>37/90</code>. An independent program recomputed 43 arms and 3,870 strict K1 runs, with zero formal-value difference.</p>"><strong>v101 公共物理参考域容量：rank 0 与 rank 4 均为 90/90</strong><p>相机无关 physical-reference family 在 15 个 geometry-time 外折上完整过门；匹配的 geometry-specific endpoint rank 4 仅 <code>37/90</code>。独立程序重算 43 个臂与 3870 次 strict K1，正式差值全部为 0。</p></div>
+            <span class="evidence-state" data-i18n-zh="参考域容量正结果" data-i18n-en="Positive reference-domain capacity result">参考域容量正结果</span>
           </article>
           <article class="evidence-row" id="reference-rank4-predictor-v102">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v102 坐标输运 rank-4 预测：兼容性恢复，但优势门 0/3</strong><p>正确输运的 projected-ridge、linear、RBF 均为 <code>90/90</code>，no-transport 对照只有 <code>71/90</code>；三种 eligible 方法都没有稳定优于 static rank 0。独立程序重建 15 折、7 臂和 630 次 strict K1，最终逐值差全部为 0。</p></div>
-            <span class="evidence-state fail">有效机理 · 算法负结果</span>
+            <div data-i18n-html-zh="<strong>v102 坐标输运 rank-4 预测：兼容性恢复，但优势门 0/3</strong><p>正确输运的 projected-ridge、linear、RBF 均为 <code>90/90</code>，no-transport 对照只有 <code>71/90</code>；三种 eligible 方法都没有稳定优于 static rank 0。独立程序重建 15 折、7 臂和 630 次 strict K1，最终逐值差全部为 0。</p>" data-i18n-html-en="<strong>v102 coordinate-transported rank-4 prediction: compatibility restored, advantage gate 0/3</strong><p>Correctly transported projected-ridge, linear, and RBF methods all reached <code>90/90</code>, while the no-transport control reached only <code>71/90</code>; none of the three eligible methods was stably better than static rank 0. An independent program rebuilt 15 folds, seven arms, and 630 strict K1 runs, with zero final elementwise difference.</p>"><strong>v102 坐标输运 rank-4 预测：兼容性恢复，但优势门 0/3</strong><p>正确输运的 projected-ridge、linear、RBF 均为 <code>90/90</code>，no-transport 对照只有 <code>71/90</code>；三种 eligible 方法都没有稳定优于 static rank 0。独立程序重建 15 折、7 臂和 630 次 strict K1，最终逐值差全部为 0。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="有效机理 · 算法负结果" data-i18n-en="Valid mechanism · negative algorithm result">有效机理 · 算法负结果</span>
           </article>
           <article class="evidence-row" id="diffeomorphic-normalized-anchor-v104">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v103-v104 微分同胚压力：数学闭合，粗网格与固定 anchor 失败</strong><p>六类可逆形变的 Jacobian、逆映射与变换算子伴随全部通过；但 field、内部梯度、观测保真门为 <code>0/3</code>，identity normalized-BP + K1 为 <code>0/15</code>，正确形变为 <code>0/90</code>。独立复算最大数组差 <code>1.17e-15</code>。</p></div>
-            <span class="evidence-state fail">数学正结果 · 数值与算法负结果</span>
+            <div data-i18n-html-zh="<strong>v103-v104 微分同胚压力：数学闭合，粗网格与固定 anchor 失败</strong><p>六类可逆形变的 Jacobian、逆映射与变换算子伴随全部通过；但 field、内部梯度、观测保真门为 <code>0/3</code>，identity normalized-BP + K1 为 <code>0/15</code>，正确形变为 <code>0/90</code>。独立复算最大数组差 <code>1.17e-15</code>。</p>" data-i18n-html-en="<strong>v103-v104 diffeomorphic stress: mathematics closed, coarse grid and fixed anchor failed</strong><p>Jacobians, inverse maps, and transformed-operator adjoints passed for six invertible deformations; however, field, interior-gradient, and observation fidelity gates were <code>0/3</code>, identity normalized-BP plus K1 was <code>0/15</code>, and correct deformations were <code>0/90</code>. The maximum independently recomputed array difference was <code>1.17e-15</code>.</p>"><strong>v103-v104 微分同胚压力：数学闭合，粗网格与固定 anchor 失败</strong><p>六类可逆形变的 Jacobian、逆映射与变换算子伴随全部通过；但 field、内部梯度、观测保真门为 <code>0/3</code>，identity normalized-BP + K1 为 <code>0/15</code>，正确形变为 <code>0/90</code>。独立复算最大数组差 <code>1.17e-15</code>。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="数学正结果 · 数值与算法负结果" data-i18n-en="Positive mathematical result · negative numerical and algorithmic result">数学正结果 · 数值与算法负结果</span>
           </article>
           <article class="evidence-row" id="diffeomorphic-transport-convergence-v105-1">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v105.1 高分辨率输运：8× 端点 3/3 过线，四级单调收敛 0/3</strong><p>从原始 CFD 构造 <code>32×16×16</code> 至 <code>256×128×128</code> 四级三维场。8× field、内部梯度、观测 worst 为 <code>0.0342 / 0.1247 / 0.0314</code>；但非嵌套 2× 网格三项全部恶化，p90 与 worst 单调性均为 <code>0/3</code>。正式和独立各复算 360 行，布尔判决差为 0。</p></div>
-            <span class="evidence-state fail">端点正信号 · 收敛负结果</span>
+            <div><strong data-i18n-zh="v105.1 高分辨率输运：8× 端点 3/3 过线，四级单调收敛 0/3" data-i18n-en="v105.1 high-resolution transport: all three 8× endpoints passed, four-level monotonic convergence 0/3">v105.1 高分辨率输运：8× 端点 3/3 过线，四级单调收敛 0/3</strong><p data-i18n-html-zh="从原始 CFD 构造 <code>32×16×16</code> 至 <code>256×128×128</code> 四级三维场。8× field、内部梯度、观测 worst 为 <code>0.0342 / 0.1247 / 0.0314</code>；但非嵌套 2× 网格三项全部恶化，p90 与 worst 单调性均为 <code>0/3</code>。正式和独立各复算 360 行，布尔判决差为 0。" data-i18n-html-en="Four levels of 3D fields were constructed from the original CFD, from <code>32×16×16</code> to <code>256×128×128</code>. At 8×, field, interior-gradient, and observation worst values were <code>0.0342 / 0.1247 / 0.0314</code>; but all three worsened on the non-nested 2× grids, with both p90 and worst monotonicity at <code>0/3</code>. The formal and independent runs each recomputed 360 rows, with zero Boolean-verdict difference.">从原始 CFD 构造 <code>32×16×16</code> 至 <code>256×128×128</code> 四级三维场。8× field、内部梯度、观测 worst 为 <code>0.0342 / 0.1247 / 0.0314</code>；但非嵌套 2× 网格三项全部恶化，p90 与 worst 单调性均为 <code>0/3</code>。正式和独立各复算 360 行，布尔判决差为 0。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="端点正信号 · 收敛负结果" data-i18n-en="Positive endpoint signal · negative convergence result">端点正信号 · 收敛负结果</span>
           </article>
           <article class="evidence-row" id="diffeomorphic-interval-nested-v106-1">
             <time datetime="2026-08-02">2026-08-02</time>
-            <div><strong>v106.1 共同规范嵌套输运：三项四级收敛与逐单元门全部通过</strong><p>v106 先因未形变观测基线随分辨率漂移而 fail-closed；v106.1 只统一 field、gradient、observation 的粗网格零均值规范。严格嵌套节点和精确 stride 下，三项 p90/worst 单调为 <code>3/3</code>，逐单元全级单调均为 <code>100%</code>。360 行独立复算的汇总最大差 <code>1.18e-13</code>。</p></div>
-            <span class="evidence-state">数值机制门突破 · 算法未证</span>
+            <div><strong data-i18n-zh="v106.1 共同规范嵌套输运：三项四级收敛与逐单元门全部通过" data-i18n-en="v106.1 nested transport with a shared convention: all three four-level convergence and per-cell gates passed">v106.1 共同规范嵌套输运：三项四级收敛与逐单元门全部通过</strong><p data-i18n-html-zh="v106 先因未形变观测基线随分辨率漂移而 fail-closed；v106.1 只统一 field、gradient、observation 的粗网格零均值规范。严格嵌套节点和精确 stride 下，三项 p90/worst 单调为 <code>3/3</code>，逐单元全级单调均为 <code>100%</code>。360 行独立复算的汇总最大差 <code>1.18e-13</code>。" data-i18n-html-en="v106 first failed closed because the undeformed observation baseline drifted with resolution; v106.1 changed only the coarse-grid zero-mean convention shared by field, gradient, and observation. With strictly nested nodes and exact stride, all three p90/worst monotonic checks were <code>3/3</code> and every per-cell all-level monotonic proportion was <code>100%</code>. The maximum aggregate difference in the 360-row independent recomputation was <code>1.18e-13</code>.">v106 先因未形变观测基线随分辨率漂移而 fail-closed；v106.1 只统一 field、gradient、observation 的粗网格零均值规范。严格嵌套节点和精确 stride 下，三项 p90/worst 单调为 <code>3/3</code>，逐单元全级单调均为 <code>100%</code>。360 行独立复算的汇总最大差 <code>1.18e-13</code>。</p></div>
+            <span class="evidence-state" data-i18n-zh="数值机制门突破 · 算法未证" data-i18n-en="Numerical-mechanism gate breakthrough · algorithm not established">数值机制门突破 · 算法未证</span>
           </article>
           <article class="evidence-row">
             <time datetime="2026-08-03">2026-08-03</time>
-            <div><strong>v107 固定物理厚度：推翻 v106.1 的宽泛解释</strong><p>把各级硬支撑保持为一个粗网格间隔后，8× field / gradient / observation worst 变为 <code>0.2431 / 0.3192 / 0.1073</code>，完整收敛门 <code>0/3</code>。这确认旧通过含有边界层随网格变薄的混杂。</p></div>
-            <span class="evidence-state fail">关键反证</span>
+            <div><strong data-i18n-zh="v107 固定物理厚度：推翻 v106.1 的宽泛解释" data-i18n-en="v107 fixed physical thickness: refutes v106.1's broad interpretation">v107 固定物理厚度：推翻 v106.1 的宽泛解释</strong><p data-i18n-html-zh="把各级硬支撑保持为一个粗网格间隔后，8× field / gradient / observation worst 变为 <code>0.2431 / 0.3192 / 0.1073</code>，完整收敛门 <code>0/3</code>。这确认旧通过含有边界层随网格变薄的混杂。" data-i18n-html-en="After holding hard support at one coarse-grid interval at every level, 8× field / gradient / observation worst became <code>0.2431 / 0.3192 / 0.1073</code>, and the full convergence gate was <code>0/3</code>. This confirmed that the earlier pass was confounded by a boundary layer that thinned with the grid.">把各级硬支撑保持为一个粗网格间隔后，8× field / gradient / observation worst 变为 <code>0.2431 / 0.3192 / 0.1073</code>，完整收敛门 <code>0/3</code>。这确认旧通过含有边界层随网格变薄的混杂。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="关键反证" data-i18n-en="Key counterevidence">关键反证</span>
           </article>
           <article class="evidence-row">
             <time datetime="2026-08-03">2026-08-03</time>
-            <div><strong>v108 支撑协变：梯度与观测修复，硬边界仍失败</strong><p>取消变换坐标系中的轴对齐重新裁边后，gradient 与 observation 的尾部恢复逐级下降；field 仍在 4× 反弹，逐单元全级单调仅 <code>26.7% / 46.7% / 33.3%</code>。</p></div>
-            <span class="evidence-state fail">部分修复 · 仍失败</span>
+            <div><strong data-i18n-zh="v108 支撑协变：梯度与观测修复，硬边界仍失败" data-i18n-en="v108 support covariance: gradients and observations repaired, hard boundary still failed">v108 支撑协变：梯度与观测修复，硬边界仍失败</strong><p data-i18n-html-zh="取消变换坐标系中的轴对齐重新裁边后，gradient 与 observation 的尾部恢复逐级下降；field 仍在 4× 反弹，逐单元全级单调仅 <code>26.7% / 46.7% / 33.3%</code>。" data-i18n-html-en="After removing axis-aligned recropping in transformed coordinates, gradient and observation tails again decreased level by level; field still rebounded at 4×, and per-cell all-level monotonicity was only <code>26.7% / 46.7% / 33.3%</code>.">取消变换坐标系中的轴对齐重新裁边后，gradient 与 observation 的尾部恢复逐级下降；field 仍在 4× 反弹，逐单元全级单调仅 <code>26.7% / 46.7% / 33.3%</code>。</p></div>
+            <span class="evidence-state fail" data-i18n-zh="部分修复 · 仍失败" data-i18n-en="Partial repair · still failed">部分修复 · 仍失败</span>
           </article>
           <article class="evidence-row" id="diffeomorphic-smooth-support-v109">
             <time datetime="2026-08-03">2026-08-03</time>
-            <div><strong>v109 固定宽度平滑支撑：三项完整四级收敛门全部通过</strong><p>半余弦窗在所有粗节点上与原硬支撑逐点相同，只平滑粗节点之间的边界。8× worst 为 <code>0.02647 / 0.09567 / 0.02312</code>，三项 p90、worst、最终比值、绝对门和逐单元门全部通过。独立 360 行复算最大差 <code>1.58e-14</code>。</p></div>
-            <span class="evidence-state">突破性数值机制进展 · 算法未证</span>
+            <div><strong data-i18n-zh="v109 固定宽度平滑支撑：三项完整四级收敛门全部通过" data-i18n-en="v109 fixed-width smooth support: all three full four-level convergence gates passed">v109 固定宽度平滑支撑：三项完整四级收敛门全部通过</strong><p data-i18n-html-zh="半余弦窗在所有粗节点上与原硬支撑逐点相同，只平滑粗节点之间的边界。8× worst 为 <code>0.02647 / 0.09567 / 0.02312</code>，三项 p90、worst、最终比值、绝对门和逐单元门全部通过。独立 360 行复算最大差 <code>1.58e-14</code>。" data-i18n-html-en="The half-cosine window matches the original hard support point-for-point at every coarse node and smooths only boundaries between coarse nodes. At 8×, worst values are <code>0.02647 / 0.09567 / 0.02312</code>; all three p90, worst, final-ratio, absolute, and per-cell gates passed. The maximum difference in the independent 360-row recomputation was <code>1.58e-14</code>.">半余弦窗在所有粗节点上与原硬支撑逐点相同，只平滑粗节点之间的边界。8× worst 为 <code>0.02647 / 0.09567 / 0.02312</code>，三项 p90、worst、最终比值、绝对门和逐单元门全部通过。独立 360 行复算最大差 <code>1.58e-14</code>。</p></div>
+            <span class="evidence-state" data-i18n-zh="突破性数值机制进展 · 算法未证" data-i18n-en="Breakthrough numerical-mechanism progress · algorithm not established">突破性数值机制进展 · 算法未证</span>
           </article>
         </div>
         <figure class="latest-figure">
-          <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_support_chain_v109.png" aria-label="打开 v107-v109 支撑因果链完整结果图">
-            <img loading="lazy" decoding="async" src="../assets/nine_view_case6_diffeomorphic_support_chain_v109.png" alt="v107 至 v109 固定物理宽度、支撑协变和平滑边界的微分同胚输运因果链" />
+          <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_support_chain_v109.png" aria-label="打开 v107-v109 支撑因果链完整结果图" data-i18n-aria-label-zh="打开 v107-v109 支撑因果链完整结果图" data-i18n-aria-label-en="Open the full v107-v109 support causal-chain result figure">
+            <img loading="lazy" decoding="async" src="../assets/nine_view_case6_diffeomorphic_support_chain_v109.png" alt="v107 至 v109 固定物理宽度、支撑协变和平滑边界的微分同胚输运因果链" data-i18n-alt-zh="v107 至 v109 固定物理宽度、支撑协变和平滑边界的微分同胚输运因果链" data-i18n-alt-en="Diffeomorphic-transport causal chain from v107 to v109: fixed physical width, covariant support, and a smooth boundary" />
           </a>
-          <figcaption>最新可视化：v107 用固定物理厚度推翻混杂，v108 验证支撑协变但仍暴露硬边界问题，v109 只平滑亚粗网格边界后恢复三项完整四级收敛。</figcaption>
+          <figcaption data-i18n-zh="最新可视化：v107 用固定物理厚度推翻混杂，v108 验证支撑协变但仍暴露硬边界问题，v109 只平滑亚粗网格边界后恢复三项完整四级收敛。" data-i18n-en="Latest visualization: v107 used fixed physical width to refute the confound; v108 verified covariant support but still exposed the hard-boundary problem; v109 restored full four-level convergence on all three measures by smoothing only sub-coarse-grid boundaries.">最新可视化：v107 用固定物理厚度推翻混杂，v108 验证支撑协变但仍暴露硬边界问题，v109 只平滑亚粗网格边界后恢复三项完整四级收敛。</figcaption>
         </figure>
       </div>
       <div class="actions" style="margin-top:13px;">
-        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_support_chain_v109_result_2026-08-03.md">读 v107-v109 完整证据</a>
-        <a class="button" href="../docs/nine_view_case6_diffeomorphic_support_chain_v109_public_summary.json">读机器可读摘要</a>
-        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_support_chain_v109.png">打开结果图原尺寸</a>
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_support_chain_v109_result_2026-08-03.md" data-i18n-zh="读 v107-v109 完整证据" data-i18n-en="Read the full v107-v109 evidence">读 v107-v109 完整证据</a>
+        <a class="button" href="../docs/nine_view_case6_diffeomorphic_support_chain_v109_public_summary.json" data-i18n-zh="读机器可读摘要" data-i18n-en="Read the machine-readable summary">读机器可读摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_support_chain_v109.png" data-i18n-zh="打开结果图原尺寸" data-i18n-en="Open the full-size result figure">打开结果图原尺寸</a>
       </div>
     </section>
 
     <section id="engineering-increments" class="band">
       <div class="section-head">
         <div>
-          <div class="eyebrow">工程增量</div>
-          <h2>每天只记录能被复算的实质变化</h2>
-          <p>独立页面从 2026-07-06 起逐日记录：做了什么、为什么做、正式结果、独立验证、失败边界与下一科学门。协议、下载、页面和测试数量不会被写成算法成果。</p>
+          <div class="eyebrow" data-i18n-zh="工程增量" data-i18n-en="Engineering increments">工程增量</div>
+          <h2 data-i18n-zh="每天只记录能被复算的实质变化" data-i18n-en="Record only substantive changes that can be recomputed">每天只记录能被复算的实质变化</h2>
+          <p data-i18n-zh="独立页面从 2026-07-06 起逐日记录：做了什么、为什么做、正式结果、独立验证、失败边界与下一科学门。协议、下载、页面和测试数量不会被写成算法成果。" data-i18n-en="Since 2026-07-06, a separate page has recorded what was done, why, the formal result, independent validation, failure boundary, and next scientific gate each day. Protocols, downloads, pages, and test counts are not written up as algorithmic results.">独立页面从 2026-07-06 起逐日记录：做了什么、为什么做、正式结果、独立验证、失败边界与下一科学门。协议、下载、页面和测试数量不会被写成算法成果。</p>
         </div>
-        <div class="section-actions"><a class="button primary" href="daily-progress.html">打开每日实质增量</a></div>
+        <div class="section-actions"><a class="button primary" href="daily-progress.html" data-i18n-zh="打开每日实质增量" data-i18n-en="Open daily substantive increments">打开每日实质增量</a></div>
       </div>
       <div class="focus-grid">
-        <article class="focus-card positive"><h3>已建立可复算链</h3><p>每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。</p></article>
-        <article class="focus-card boundary"><h3>当前更新源</h3><p id="liveEvidenceStatus" aria-live="polite">正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。</p></article>
-        <article class="focus-card current"><h3>本轮真实增量</h3><p>v107-v109 完成了一条可证伪的因果链：先识别固定物理厚度混杂，再修复支撑坐标协变，最后用 coarse-node 等价的半余弦窗消除硬边界插值伪差。v109 的 360 行正式与独立复算全部闭合，授权最小坐标条件 initializer，但仍不构成算法或泛化成功。</p></article>
+        <article class="focus-card positive"><h3 data-i18n-zh="已建立可复算链" data-i18n-en="Recomputable chain established">已建立可复算链</h3><p data-i18n-zh="每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。" data-i18n-en="Every key result has a formal run, independent-program recomputation, per-cell errors, a real call ledger, and a public redacted summary; failures are retained just as completely.">每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。</p></article>
+        <article class="focus-card boundary"><h3 data-i18n-zh="当前更新源" data-i18n-en="Current update source">当前更新源</h3><p id="liveEvidenceStatus" aria-live="polite" data-i18n-zh="正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。" data-i18n-en="Reading the stable status manifest; if it cannot be read, the page retains its static audited result.">正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。</p></article>
+        <article class="focus-card current"><h3 data-i18n-zh="本轮真实增量" data-i18n-en="Substantive increment in this round">本轮真实增量</h3><p data-i18n-html-zh="v107-v109 完成了一条可证伪的因果链：先识别固定物理厚度混杂，再修复支撑坐标协变，最后用 coarse-node 等价的半余弦窗消除硬边界插值伪差。v109 的 360 行正式与独立复算全部闭合，授权最小坐标条件 initializer，但仍不构成算法或泛化成功。" data-i18n-html-en="v107-v109 completed a falsifiable causal chain: identify the fixed-physical-thickness confound, repair support-coordinate covariance, then use a half-cosine window equivalent at coarse nodes to remove hard-boundary interpolation artifacts. v109's 360 formal and independent recomputation rows all close, authorizing a minimal coordinate-conditioned initializer, but still do not constitute algorithmic or generalization success.">v107-v109 完成了一条可证伪的因果链：先识别固定物理厚度混杂，再修复支撑坐标协变，最后用 coarse-node 等价的半余弦窗消除硬边界插值伪差。v109 的 360 行正式与独立复算全部闭合，授权最小坐标条件 initializer，但仍不构成算法或泛化成功。</p></article>
       </div>
     </section>
 
     <section id="expected-results" class="band">
       <div class="section-head">
         <div>
-          <div class="eyebrow">预期结果</div>
-          <h2>论文要交付的是一条完整证据链，不是单张漂亮误差图</h2>
-          <p>以下顺序不可交换。当前只完成了前置筛选的一部分，后面的训练、外部验证与真实实验都尚未被授权为成功。</p>
+          <div class="eyebrow" data-i18n-zh="预期结果" data-i18n-en="Expected results">预期结果</div>
+          <h2 data-i18n-zh="论文要交付的是一条完整证据链，不是单张漂亮误差图" data-i18n-en="The thesis must deliver a complete evidence chain, not a single attractive error plot">论文要交付的是一条完整证据链，不是单张漂亮误差图</h2>
+          <p data-i18n-zh="以下顺序不可交换。当前只完成了前置筛选的一部分，后面的训练、外部验证与真实实验都尚未被授权为成功。" data-i18n-en="The following order is not interchangeable. Only part of the preliminary screening is complete; later training, external validation, and real experiments have not been authorized as successes.">以下顺序不可交换。当前只完成了前置筛选的一部分，后面的训练、外部验证与真实实验都尚未被授权为成功。</p>
         </div>
       </div>
       <div class="outcome-ladder">
-        <div class="outcome-step closed"><div><b>固定九维小模型与置信回退</b><span>v95.1 最佳为 81/90，候选神谕上限为 83/90；继续加分类器无法补齐七个共同失败。</span></div><em>已关闭</em></div>
-        <div class="outcome-step passed"><div><b>observation-adaptive direction 容量</b><span>四个 residual / geometry-only 频谱方向精确嵌套九维父表示；truth-aware 容量已独立验证为 90/90。</span></div><em>已通过</em></div>
-        <div class="outcome-step closed"><div><b>固定旧九维 + 四系数预测</b><span>v97 的 truth-aware 条件容量最多为 86/90；网络尚未训练就已被结构上限否决。</span></div><em>已关闭</em></div>
-        <div class="outcome-step closed"><div><b>简单 observation-only 13D 联合适配</b><span>v98 的 mean / linear / RBF 最多 75/90；同类普通坐标回归不再扩建。</span></div><em>已关闭</em></div>
-        <div class="outcome-step passed"><div><b>坐标输运物理接口</b><span>v99 已验证标量 pullback、梯度 Jacobian 逆转置、射线/探测器基和 forward/adjoint 同步变换。</span></div><em>11 / 11 已通过</em></div>
-        <div class="outcome-step closed"><div><b>几何相关重建终点公共空间</b><span>v100 direct target 为 90/90，但共享终点场基最高仅 2/90；该输出目标不再放大网络。</span></div><em>已关闭</em></div>
-        <div class="outcome-step passed"><div><b>相机无关参考域真值容量</b><span>v101 的 static rank 0 与 truth-aware rank 4 均为 90/90；匹配 endpoint rank 4 仅 37/90，目标选择已闭合。</span></div><em>已通过</em></div>
-        <div class="outcome-step closed"><div><b>严格可观测 rank 4 对静态 rank 0</b><span>v102 中三个 transported eligible 方法均保持 90/90，但没有一个满足预注册优势门；no-transport 只有 71/90。</span></div><em>当前 family 已关闭</em></div>
-        <div class="outcome-step passed"><div><b>微分同胚算子共轭与伴随</b><span>v104 已验证 Jacobian、逆映射和 <code>A_phi/A_phi^T</code>；最坏伴随相对误差 <code>5.59e-14</code>。</span></div><em>数学已通过</em></div>
-        <div class="outcome-step closed"><div><b>粗网格三线性输运与固定 normalized anchor</b><span>三项数值保真门 0/3；identity 0/15；正确形变 0/90。停止继续调小形变幅值或用大网络救援。</span></div><em>当前实现已关闭</em></div>
-        <div class="outcome-step closed"><div><b>非嵌套节点倍增的四级输运</b><span>v105.1 的 8× 端点三项通过，但 2× 全部恶化，p90 与 worst 单调门均为 0/3；不能据此声明收敛。</span></div><em>当前序列已关闭</em></div>
-        <div class="outcome-step passed"><div><b>区间嵌套网格共同规范输运</b><span>v106.1 在 <code>32/63/125/249</code> 节点与精确 stride 下，field、内部梯度、observation 的全部冻结收敛门均通过。</span></div><em>数值机制已通过</em></div>
-        <div class="outcome-step closed"><div><b>固定物理宽度的硬支撑</b><span>v107 推翻 v106.1 的宽泛解释；v108 证明随场输运支撑可修复部分误差，但硬边界仍不能通过完整收敛门。</span></div><em>负结果已解释</em></div>
-        <div class="outcome-step passed"><div><b>固定宽度、协变输运的平滑支撑</b><span>v109 的 half-cosine 窗在所有粗节点上与原问题相同，三项 p90/worst/逐单元四级收敛门全部通过。</span></div><em>数值机制已通过</em></div>
-        <div class="outcome-step"><div><b>坐标条件 observation-only initializer</b><span>结果前留出微分同胚与相机几何组合，先比较无学习、线性/RBF 和最小 MLP，再接同一 exact physics refinement。</span></div><em>当前科学门</em></div>
-        <div class="outcome-step"><div><b>独立工况 matched-accuracy</b><span>在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
-        <div class="outcome-step"><div><b>真实资源收益</b><span>fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。</span></div><em>尚未启动</em></div>
-        <div class="outcome-step"><div><b>真实 BOST 迁移</b><span>接入组内位移图、相机标定、重复测量噪声与认可基线，重新定义实验“同精度”。</span></div><em>需要组内数据</em></div>
+        <div class="outcome-step closed"><div data-i18n-html-zh="<b>固定九维小模型与置信回退</b><span>v95.1 最佳为 81/90，候选神谕上限为 83/90；继续加分类器无法补齐七个共同失败。</span>" data-i18n-html-en="<b>Fixed nine-dimensional small models and confidence fallback</b><span>v95.1 peaked at 81/90 and the candidate-oracle ceiling at 83/90; adding classifiers could not repair the seven shared failures.</span>"><b>固定九维小模型与置信回退</b><span>v95.1 最佳为 81/90，候选神谕上限为 83/90；继续加分类器无法补齐七个共同失败。</span></div><em data-i18n-zh="已关闭" data-i18n-en="Closed">已关闭</em></div>
+        <div class="outcome-step passed"><div data-i18n-html-zh="<b>observation-adaptive direction 容量</b><span>四个 residual / geometry-only 频谱方向精确嵌套九维父表示；truth-aware 容量已独立验证为 90/90。</span>" data-i18n-html-en="<b>Observation-adaptive direction capacity</b><span>Four residual/geometry-only spectral directions exactly nest the nine-dimensional parent representation; truth-aware capacity was independently validated at 90/90.</span>"><b>observation-adaptive direction 容量</b><span>四个 residual / geometry-only 频谱方向精确嵌套九维父表示；truth-aware 容量已独立验证为 90/90。</span></div><em data-i18n-zh="已通过" data-i18n-en="Passed">已通过</em></div>
+        <div class="outcome-step closed"><div data-i18n-html-zh="<b>固定旧九维 + 四系数预测</b><span>v97 的 truth-aware 条件容量最多为 86/90；网络尚未训练就已被结构上限否决。</span>" data-i18n-html-en="<b>Fixed old nine-dimensional state plus four-coefficient prediction</b><span>v97 truth-aware conditional capacity reached at most 86/90; the structural ceiling rejected network training before it began.</span>"><b>固定旧九维 + 四系数预测</b><span>v97 的 truth-aware 条件容量最多为 86/90；网络尚未训练就已被结构上限否决。</span></div><em data-i18n-zh="已关闭" data-i18n-en="Closed">已关闭</em></div>
+        <div class="outcome-step closed"><div data-i18n-html-zh="<b>简单 observation-only 13D 联合适配</b><span>v98 的 mean / linear / RBF 最多 75/90；同类普通坐标回归不再扩建。</span>" data-i18n-html-en="<b>Simple observation-only joint 13D adaptation</b><span>v98 mean / linear / RBF reached at most 75/90; ordinary coordinate regressors of this class will not be expanded.</span>"><b>简单 observation-only 13D 联合适配</b><span>v98 的 mean / linear / RBF 最多 75/90；同类普通坐标回归不再扩建。</span></div><em data-i18n-zh="已关闭" data-i18n-en="Closed">已关闭</em></div>
+        <div class="outcome-step passed"><div data-i18n-html-zh="<b>坐标输运物理接口</b><span>v99 已验证标量 pullback、梯度 Jacobian 逆转置、射线/探测器基和 forward/adjoint 同步变换。</span>" data-i18n-html-en="<b>Coordinate-transport physics interface</b><span>v99 verified scalar pullback, inverse-transpose gradient Jacobians, ray/detector bases, and synchronized forward/adjoint transforms.</span>"><b>坐标输运物理接口</b><span>v99 已验证标量 pullback、梯度 Jacobian 逆转置、射线/探测器基和 forward/adjoint 同步变换。</span></div><em data-i18n-zh="11 / 11 已通过" data-i18n-en="11 / 11 passed">11 / 11 已通过</em></div>
+        <div class="outcome-step closed"><div data-i18n-html-zh="<b>几何相关重建终点公共空间</b><span>v100 direct target 为 90/90，但共享终点场基最高仅 2/90；该输出目标不再放大网络。</span>" data-i18n-html-en="<b>Shared space for geometry-dependent reconstruction endpoints</b><span>v100 direct targets reached 90/90, but the shared endpoint-field basis reached only 2/90; this output target will not be scaled to a larger network.</span>"><b>几何相关重建终点公共空间</b><span>v100 direct target 为 90/90，但共享终点场基最高仅 2/90；该输出目标不再放大网络。</span></div><em data-i18n-zh="已关闭" data-i18n-en="Closed">已关闭</em></div>
+        <div class="outcome-step passed"><div data-i18n-html-zh="<b>相机无关参考域真值容量</b><span>v101 的 static rank 0 与 truth-aware rank 4 均为 90/90；匹配 endpoint rank 4 仅 37/90，目标选择已闭合。</span>" data-i18n-html-en="<b>Camera-independent reference-domain truth capacity</b><span>v101 static rank 0 and truth-aware rank 4 both reached 90/90; the matched endpoint rank 4 reached only 37/90, closing the target-selection question.</span>"><b>相机无关参考域真值容量</b><span>v101 的 static rank 0 与 truth-aware rank 4 均为 90/90；匹配 endpoint rank 4 仅 37/90，目标选择已闭合。</span></div><em data-i18n-zh="已通过" data-i18n-en="Passed">已通过</em></div>
+        <div class="outcome-step closed"><div data-i18n-html-zh="<b>严格可观测 rank 4 对静态 rank 0</b><span>v102 中三个 transported eligible 方法均保持 90/90，但没有一个满足预注册优势门；no-transport 只有 71/90。</span>" data-i18n-html-en="<b>Strict observable rank 4 versus static rank 0</b><span>All three transported eligible methods in v102 retained 90/90, but none met the preregistered advantage gate; no transport reached only 71/90.</span>"><b>严格可观测 rank 4 对静态 rank 0</b><span>v102 中三个 transported eligible 方法均保持 90/90，但没有一个满足预注册优势门；no-transport 只有 71/90。</span></div><em data-i18n-zh="当前 family 已关闭" data-i18n-en="Current family closed">当前 family 已关闭</em></div>
+        <div class="outcome-step passed"><div data-i18n-html-zh="<b>微分同胚算子共轭与伴随</b><span>v104 已验证 Jacobian、逆映射和 <code>A_phi/A_phi^T</code>；最坏伴随相对误差 <code>5.59e-14</code>。</span>" data-i18n-html-en="<b>Diffeomorphic operator conjugacy and adjoint</b><span>v104 verified Jacobians, inverse maps, and <code>A_phi/A_phi^T</code>; the worst relative adjoint error was <code>5.59e-14</code>.</span>"><b>微分同胚算子共轭与伴随</b><span>v104 已验证 Jacobian、逆映射和 <code>A_phi/A_phi^T</code>；最坏伴随相对误差 <code>5.59e-14</code>。</span></div><em data-i18n-zh="数学已通过" data-i18n-en="Mathematics passed">数学已通过</em></div>
+        <div class="outcome-step closed"><div data-i18n-html-zh="<b>粗网格三线性输运与固定 normalized anchor</b><span>三项数值保真门 0/3；identity 0/15；正确形变 0/90。停止继续调小形变幅值或用大网络救援。</span>" data-i18n-html-en="<b>Coarse-grid trilinear transport and fixed normalized anchor</b><span>Numerical-fidelity gates were 0/3; identity 0/15; correct deformations 0/90. Further shrinking of deformation amplitude and rescue by a larger network were stopped.</span>"><b>粗网格三线性输运与固定 normalized anchor</b><span>三项数值保真门 0/3；identity 0/15；正确形变 0/90。停止继续调小形变幅值或用大网络救援。</span></div><em data-i18n-zh="当前实现已关闭" data-i18n-en="Current implementation closed">当前实现已关闭</em></div>
+        <div class="outcome-step closed"><div><b data-i18n-zh="非嵌套节点倍增的四级输运" data-i18n-en="Four-level transport with non-nested node doubling">非嵌套节点倍增的四级输运</b><span data-i18n-zh="v105.1 的 8× 端点三项通过，但 2× 全部恶化，p90 与 worst 单调门均为 0/3；不能据此声明收敛。" data-i18n-en="All three v105.1 8× endpoints passed, but every 2× step worsened and both p90 and worst monotonic gates were 0/3; convergence cannot be claimed from this.">v105.1 的 8× 端点三项通过，但 2× 全部恶化，p90 与 worst 单调门均为 0/3；不能据此声明收敛。</span></div><em data-i18n-zh="当前序列已关闭" data-i18n-en="Current sequence closed">当前序列已关闭</em></div>
+        <div class="outcome-step passed"><div><b data-i18n-zh="区间嵌套网格共同规范输运" data-i18n-en="Shared-convention transport on interval-nested grids">区间嵌套网格共同规范输运</b><span data-i18n-html-zh="v106.1 在 <code>32/63/125/249</code> 节点与精确 stride 下，field、内部梯度、observation 的全部冻结收敛门均通过。" data-i18n-html-en="With <code>32/63/125/249</code> nodes and exact stride, v106.1 passed every frozen convergence gate for field, interior gradient, and observation.">v106.1 在 <code>32/63/125/249</code> 节点与精确 stride 下，field、内部梯度、observation 的全部冻结收敛门均通过。</span></div><em data-i18n-zh="数值机制已通过" data-i18n-en="Numerical mechanism passed">数值机制已通过</em></div>
+        <div class="outcome-step closed"><div><b data-i18n-zh="固定物理宽度的硬支撑" data-i18n-en="Hard support at fixed physical width">固定物理宽度的硬支撑</b><span data-i18n-zh="v107 推翻 v106.1 的宽泛解释；v108 证明随场输运支撑可修复部分误差，但硬边界仍不能通过完整收敛门。" data-i18n-en="v107 refuted v106.1's broad interpretation; v108 showed that transporting support with the field repairs some errors, but the hard boundary still cannot pass the full convergence gate.">v107 推翻 v106.1 的宽泛解释；v108 证明随场输运支撑可修复部分误差，但硬边界仍不能通过完整收敛门。</span></div><em data-i18n-zh="负结果已解释" data-i18n-en="Negative result explained">负结果已解释</em></div>
+        <div class="outcome-step passed"><div><b data-i18n-zh="固定宽度、协变输运的平滑支撑" data-i18n-en="Smooth support with fixed width and covariant transport">固定宽度、协变输运的平滑支撑</b><span data-i18n-zh="v109 的 half-cosine 窗在所有粗节点上与原问题相同，三项 p90/worst/逐单元四级收敛门全部通过。" data-i18n-en="v109's half-cosine window matches the original problem at every coarse node, and all three p90/worst/per-cell four-level convergence gates passed.">v109 的 half-cosine 窗在所有粗节点上与原问题相同，三项 p90/worst/逐单元四级收敛门全部通过。</span></div><em data-i18n-zh="数值机制已通过" data-i18n-en="Numerical mechanism passed">数值机制已通过</em></div>
+        <div class="outcome-step"><div><b data-i18n-zh="坐标条件 observation-only initializer" data-i18n-en="Coordinate-conditioned observation-only initializer">坐标条件 observation-only initializer</b><span data-i18n-zh="结果前留出微分同胚与相机几何组合，先比较无学习、线性/RBF 和最小 MLP，再接同一 exact physics refinement。" data-i18n-en="Hold out deformation and camera-geometry combinations before results; compare non-learning, linear/RBF, and minimal MLP approaches before applying the same exact-physics refinement.">结果前留出微分同胚与相机几何组合，先比较无学习、线性/RBF 和最小 MLP，再接同一 exact physics refinement。</span></div><em data-i18n-zh="当前科学门" data-i18n-en="Current scientific gate">当前科学门</em></div>
+        <div class="outcome-step"><div><b data-i18n-zh="独立工况 matched-accuracy" data-i18n-en="Matched accuracy on independent conditions">独立工况 matched-accuracy</b><span data-i18n-html-zh="在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。" data-i18n-html-en="On public reacting-flow conditions sealed before results, preserve field / gradient / observation cell by cell while reducing exact <code>A/A^T</code>.">在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。</span></div><em data-i18n-zh="尚未完成" data-i18n-en="Not completed">尚未完成</em></div>
+        <div class="outcome-step"><div><b data-i18n-zh="真实资源收益" data-i18n-en="Real resource benefit">真实资源收益</b><span data-i18n-zh="fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。" data-i18n-en="Fresh processes, randomized paired blocks, wall p50/p90, and whole-pipeline peak RSS must pass together.">fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。</span></div><em data-i18n-zh="尚未启动" data-i18n-en="Not started">尚未启动</em></div>
+        <div class="outcome-step"><div><b data-i18n-zh="真实 BOST 迁移" data-i18n-en="Real-BOST transfer">真实 BOST 迁移</b><span data-i18n-zh="接入组内位移图、相机标定、重复测量噪声与认可基线，重新定义实验“同精度”。" data-i18n-en="Integrate in-group displacement images, camera calibration, repeated-measurement noise, and accepted baselines to redefine experimental matched accuracy.">接入组内位移图、相机标定、重复测量噪声与认可基线，重新定义实验“同精度”。</span></div><em data-i18n-zh="需要组内数据" data-i18n-en="Requires in-group data">需要组内数据</em></div>
       </div>
     </section>
 
     <section id="engineering-meaning" class="band">
       <div class="section-head">
         <div>
-          <div class="eyebrow">工程意义</div>
-          <h2>让计算成像重建从“每次慢慢求”变成“快速起步、物理收尾、失败可退”</h2>
+          <div class="eyebrow" data-i18n-zh="工程意义" data-i18n-en="Engineering meaning">工程意义</div>
+          <h2 data-i18n-zh="让计算成像重建从“每次慢慢求”变成“快速起步、物理收尾、失败可退”" data-i18n-en="Turn computational-imaging reconstruction from slow solves into fast starts, physics finish, and safe fallback">让计算成像重建从“每次慢慢求”变成“快速起步、物理收尾、失败可退”</h2>
         </div>
       </div>
       <div class="meaning-grid">
-        <article class="focus-card positive"><h3>降低重复重建成本</h3><p>高速反应流包含大量连续帧与多视角数据。若 warm start 能少做若干次完整 forward / adjoint，收益会随帧数和实验批次累积。</p></article>
-        <article class="focus-card boundary"><h3>保留物理可信度</h3><p>学习模块只负责起点，最终仍由显式物理算子和未修改迭代器精化；观测残差与几何信息还能用于拒绝危险候选。</p></article>
-        <article class="focus-card current"><h3>暴露局部失效而非掩盖</h3><p>Case 6 已显示平均 field 变好并不代表内部梯度安全。逐单元八门把会破坏火焰局部结构的失败直接显露出来。</p></article>
+        <article class="focus-card positive"><h3 data-i18n-zh="降低重复重建成本" data-i18n-en="Lower repeated-reconstruction cost">降低重复重建成本</h3><p data-i18n-zh="高速反应流包含大量连续帧与多视角数据。若 warm start 能少做若干次完整 forward / adjoint，收益会随帧数和实验批次累积。" data-i18n-en="High-speed reacting flows contain many sequential frames and multiview data. If a warm start avoids several full forward / adjoint operations, the benefit accumulates across frames and experimental batches.">高速反应流包含大量连续帧与多视角数据。若 warm start 能少做若干次完整 forward / adjoint，收益会随帧数和实验批次累积。</p></article>
+        <article class="focus-card boundary"><h3 data-i18n-zh="保留物理可信度" data-i18n-en="Preserve physical credibility">保留物理可信度</h3><p data-i18n-zh="学习模块只负责起点，最终仍由显式物理算子和未修改迭代器精化；观测残差与几何信息还能用于拒绝危险候选。" data-i18n-en="The learned module only supplies a start; the final state is still refined by explicit physics operators and an unchanged iterator. Observation residuals and geometric information can reject unsafe candidates.">学习模块只负责起点，最终仍由显式物理算子和未修改迭代器精化；观测残差与几何信息还能用于拒绝危险候选。</p></article>
+        <article class="focus-card current"><h3 data-i18n-zh="暴露局部失效而非掩盖" data-i18n-en="Expose rather than hide local failures">暴露局部失效而非掩盖</h3><p data-i18n-zh="Case 6 已显示平均 field 变好并不代表内部梯度安全。逐单元八门把会破坏火焰局部结构的失败直接显露出来。" data-i18n-en="Case 6 has shown that a better average field does not mean safe interior gradients. Eight per-cell gates directly expose failures that would damage local flame structure.">Case 6 已显示平均 field 变好并不代表内部梯度安全。逐单元八门把会破坏火焰局部结构的失败直接显露出来。</p></article>
       </div>
     </section>
 
     <section id="future-direction" class="band">
       <div class="section-head">
         <div>
-          <div class="eyebrow">未来期许和方向</div>
-          <h2>下一步只扩展真正缺失的自由度</h2>
-          <p>路线会随负证据收缩，而不是因为已经投入很多时间就继续堆模型。</p>
+          <div class="eyebrow" data-i18n-zh="未来期许和方向" data-i18n-en="Future direction">未来期许和方向</div>
+          <h2 data-i18n-zh="下一步只扩展真正缺失的自由度" data-i18n-en="Next, extend only the degrees of freedom that are genuinely missing">下一步只扩展真正缺失的自由度</h2>
+          <p data-i18n-zh="路线会随负证据收缩，而不是因为已经投入很多时间就继续堆模型。" data-i18n-en="The route contracts in response to negative evidence; it does not keep adding models merely because much time has already been invested.">路线会随负证据收缩，而不是因为已经投入很多时间就继续堆模型。</p>
         </div>
       </div>
       <div class="future-grid">
-        <article class="focus-card current"><h3>最近科学门</h3><p>v107-v109 已依次排除支撑物理厚度、坐标协变与硬边界三个混杂因素，v109 的平滑支撑通过全部冻结收敛门。现在冻结最小坐标条件 observation-only initializer，并在未见微分同胚和相机几何组合上检验 matched-accuracy。</p></article>
-        <article class="focus-card boundary"><h3>何时租 GPU</h3><p>只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。</p></article>
-        <article class="focus-card positive"><h3>何时接组内数据</h3><p>公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。</p></article>
+        <article class="focus-card current"><h3 data-i18n-zh="最近科学门" data-i18n-en="Nearest scientific gate">最近科学门</h3><p data-i18n-zh="v107-v109 已依次排除支撑物理厚度、坐标协变与硬边界三个混杂因素，v109 的平滑支撑通过全部冻结收敛门。现在冻结最小坐标条件 observation-only initializer，并在未见微分同胚和相机几何组合上检验 matched-accuracy。" data-i18n-en="v107-v109 successively excluded three confounds: support physical thickness, coordinate covariance, and the hard boundary. v109's smooth support passed every frozen convergence gate. Now freeze a minimal coordinate-conditioned observation-only initializer and test matched accuracy on unseen deformation and camera-geometry combinations.">v107-v109 已依次排除支撑物理厚度、坐标协变与硬边界三个混杂因素，v109 的平滑支撑通过全部冻结收敛门。现在冻结最小坐标条件 observation-only initializer，并在未见微分同胚和相机几何组合上检验 matched-accuracy。</p></article>
+        <article class="focus-card boundary"><h3 data-i18n-zh="何时租 GPU" data-i18n-en="When to rent a GPU">何时租 GPU</h3><p data-i18n-zh="只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。" data-i18n-en="Rent a GPU only after representation capacity reaches 90/90, a strict observation-only small model shows stable headroom in development outer folds, and the CPU prototype confirms training scale is the bottleneck. Those conditions are not currently met.">只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。</p></article>
+        <article class="focus-card positive"><h3 data-i18n-zh="何时接组内数据" data-i18n-en="When to use in-group data">何时接组内数据</h3><p data-i18n-zh="公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。" data-i18n-en="After the public external gate passes, request synchronized displacement images/density references, camera intrinsics and extrinsics, view definitions, repeated-measurement noise, existing reconstruction code, and accepted baselines from the senior collaborator, then use the same contract for real transfer.">公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。</p></article>
       </div>
       <div class="actions" style="margin-top:13px;">
-        <a class="button primary" href="../document_reader.html?doc=docs%2Fdiffeomorphic_bost_operator_novelty_audit_2026-08-02.md">阅读微分同胚创新边界与必做对照</a>
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fdiffeomorphic_bost_operator_novelty_audit_2026-08-02.md" data-i18n-zh="阅读微分同胚创新边界与必做对照" data-i18n-en="Read the diffeomorphic innovation boundary and required controls">阅读微分同胚创新边界与必做对照</a>
       </div>
-      <div class="alert" style="margin-top:13px;"><strong>期许，但不预支结论</strong><span>理想论文贡献是“BOST 专用的 observation-conditioned warm initializer + exact physics refinement + 可观测安全回退”，在同精度下稳定减少昂贵算子与真实资源成本。它是否成立，必须由下一表示门、独立外部门和真实 BOST 三层证据共同决定。</span></div>
+      <div class="alert" style="margin-top:13px;"><strong data-i18n-zh="期许，但不预支结论" data-i18n-en="Ambition, without pre-claiming a conclusion">期许，但不预支结论</strong><span data-i18n-zh="理想论文贡献是“BOST 专用的 observation-conditioned warm initializer + exact physics refinement + 可观测安全回退”，在同精度下稳定减少昂贵算子与真实资源成本。它是否成立，必须由下一表示门、独立外部门和真实 BOST 三层证据共同决定。" data-i18n-en="The intended thesis contribution is a BOST-specific observation-conditioned warm initializer plus exact-physics refinement and observable safety fallback, consistently reducing expensive operators and real resource cost at matched accuracy. Whether it holds must be determined jointly by the next representation gate, an independent external gate, and real BOST evidence.">理想论文贡献是“BOST 专用的 observation-conditioned warm initializer + exact physics refinement + 可观测安全回退”，在同精度下稳定减少昂贵算子与真实资源成本。它是否成立，必须由下一表示门、独立外部门和真实 BOST 三层证据共同决定。</span></div>
     </section>
 
-    <details class="legacy-archive">
-      <summary><span>历史研究档案与旧资料入口</span><span>旧实验链、16 周学习、教材、论文库与师兄对齐工具默认折叠</span></summary>
-      <div class="archive-body">
+    <details class="legacy-archive" data-i18n-fallback="zh">
+      <summary data-i18n-fallback="zh"><span data-i18n-zh="历史研究档案与旧资料入口" data-i18n-en="Historical research archive and legacy materials">历史研究档案与旧资料入口</span><span data-i18n-zh="旧实验链、16 周学习、教材、论文库与师兄对齐工具默认折叠" data-i18n-en="Legacy experiment chain, 16-week study, materials, paper library, and senior-alignment tools are collapsed by default">旧实验链、16 周学习、教材、论文库与师兄对齐工具默认折叠</span></summary>
+      <div class="archive-body" data-i18n-fallback="zh">
         <div class="archive-toolbar actions">
-          <a class="button" href="#objective-novelty">历史优化目标</a>
-          <a class="button" href="#latest-gate">完整算法实验链</a>
-          <a class="button" href="#transport-proxy-gate">输运与校准门</a>
-          <a class="button" href="#path">16 周学习路径</a>
-          <a class="button" href="../learning_library/index.html">教材讲义库</a>
-          <a class="button" href="../paper_library/index.html">论文库</a>
-          <a class="button" href="../learning_log.html">旧学习日志</a>
+          <a class="button" href="#objective-novelty" data-i18n-zh="历史优化目标" data-i18n-en="Historical optimization objective">历史优化目标</a>
+          <a class="button" href="#latest-gate" data-i18n-zh="完整算法实验链" data-i18n-en="Full algorithm experiment chain">完整算法实验链</a>
+          <a class="button" href="#transport-proxy-gate" data-i18n-zh="输运与校准门" data-i18n-en="Transport and calibration gates">输运与校准门</a>
+          <a class="button" href="#path" data-i18n-zh="16 周学习路径" data-i18n-en="16-week study path">16 周学习路径</a>
+          <a class="button" href="../learning_library/index.html" data-i18n-zh="教材讲义库" data-i18n-en="Learning-material library">教材讲义库</a>
+          <a class="button" href="../paper_library/index.html" data-i18n-zh="论文库" data-i18n-en="Paper library">论文库</a>
+          <a class="button" href="../learning_log.html" data-i18n-zh="旧学习日志" data-i18n-en="Legacy study log">旧学习日志</a>
         </div>
         <details class="history-diagnostics" style="margin-top:12px;">
           <summary>历史页面快照与早期判决标签</summary>
@@ -2616,7 +2622,7 @@
   </main>
 
   <footer>
-    <p>路线版本 <span id="versionText"></span>。论文与教程链接优先指向作者、出版社、PMLR、OpenReview、官方文档或本站已审计条目；其他模态的结果不直接当作 BOST 证据。</p>
+    <p><span data-i18n-zh="路线版本" data-i18n-en="Route version">路线版本</span> <span id="versionText"></span><span data-i18n-zh="。论文与教程链接优先指向作者、出版社、PMLR、OpenReview、官方文档或本站已审计条目；其他模态的结果不直接当作 BOST 证据。" data-i18n-en=". Paper and tutorial links preferentially point to authors, publishers, PMLR, OpenReview, official documentation, or audited entries on this site; results from other modalities are not treated directly as BOST evidence.">。论文与教程链接优先指向作者、出版社、PMLR、OpenReview、官方文档或本站已审计条目；其他模态的结果不直接当作 BOST 证据。</span></p>
   </footer>
 
   <script src="../learning_library/resources.js"></script>
@@ -2893,7 +2899,10 @@
       renderGates();
       renderQuestions();
       renderBrief();
-      document.getElementById('versionText').textContent = `${guide.version} · 更新 ${guide.updated}`;
+      const versionText = document.getElementById('versionText');
+      versionText.setAttribute('data-i18n-zh', `${guide.version} · 更新 ${guide.updated}`);
+      versionText.setAttribute('data-i18n-en', `${guide.version} · updated ${guide.updated}`);
+      versionText.textContent = `${guide.version} · 更新 ${guide.updated}`;
     })();
   </script>
   <script>
@@ -2920,15 +2929,24 @@
           document.getElementById('liveFailureCount').textContent = `${metrics.v109_p90_monotonic_passed} / ${metrics.v109_p90_monotonic_total}`;
           document.getElementById('liveCallBudget').textContent = `${metrics.v109_worst_monotonic_passed} / ${metrics.v109_worst_monotonic_total}`;
           document.getElementById('liveBreakthrough').textContent = String(Boolean(decision.algorithm_breakthrough));
-          const nextGate = String(evidence.next_scientific_gate_zh || evidence.next_scientific_gate).trim();
-          const nextGateSentence = /[。！？.!?]$/.test(nextGate) ? nextGate : `${nextGate}。`;
-          document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：v109 的 8x 绝对保真为 ${fidelityPassed}/${metrics.v109_final_absolute_limits_total}，p90 与 worst 四级单调门分别为 ${metrics.v109_p90_monotonic_passed}/${metrics.v109_p90_monotonic_total}、${metrics.v109_worst_monotonic_passed}/${metrics.v109_worst_monotonic_total}；独立复算逐行最大差 ${Number(metrics.v109_row_metric_maximum_absolute_difference).toExponential(2)}。下一门是 ${nextGateSentence}`;
+          const nextGateZh = String(evidence.next_scientific_gate_zh || evidence.next_scientific_gate).trim();
+          const nextGateEn = String(evidence.next_scientific_gate_en || evidence.next_scientific_gate).trim();
+          const nextGateSentenceZh = /[。！？.!?]$/.test(nextGateZh) ? nextGateZh : `${nextGateZh}。`;
+          const nextGateSentenceEn = /[。！？.!?]$/.test(nextGateEn) ? nextGateEn : `${nextGateEn}.`;
+          const status = document.getElementById('liveEvidenceStatus');
+          status.setAttribute('data-i18n-zh', `状态清单已同步至 ${evidence.updated}：v109 的 8x 绝对保真为 ${fidelityPassed}/${metrics.v109_final_absolute_limits_total}，p90 与 worst 四级单调门分别为 ${metrics.v109_p90_monotonic_passed}/${metrics.v109_p90_monotonic_total}、${metrics.v109_worst_monotonic_passed}/${metrics.v109_worst_monotonic_total}；独立复算逐行最大差 ${Number(metrics.v109_row_metric_maximum_absolute_difference).toExponential(2)}。下一门是 ${nextGateSentenceZh}`);
+          status.setAttribute('data-i18n-en', `Status manifest synchronized to ${evidence.updated}: v109 8x absolute fidelity is ${fidelityPassed}/${metrics.v109_final_absolute_limits_total}; p90 and worst four-level monotonic gates are ${metrics.v109_p90_monotonic_passed}/${metrics.v109_p90_monotonic_total} and ${metrics.v109_worst_monotonic_passed}/${metrics.v109_worst_monotonic_total}; the maximum row-level difference in the independent recomputation is ${Number(metrics.v109_row_metric_maximum_absolute_difference).toExponential(2)}. The next gate is ${nextGateSentenceEn}`);
+          window.OERFLanguage?.translateSubtree(status);
         })
         .catch(() => {
-          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v109 的 8x 绝对保真、p90 与 worst 四级单调门均为 3/3，逐单元全级单调均为 100%；下一步冻结最小坐标条件 observation-only initializer，algorithm_breakthrough=false。';
+          const status = document.getElementById('liveEvidenceStatus');
+          status.setAttribute('data-i18n-zh', '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v109 的 8x 绝对保真、p90 与 worst 四级单调门均为 3/3，逐单元全级单调均为 100%；下一步冻结最小坐标条件 observation-only initializer，algorithm_breakthrough=false。');
+          status.setAttribute('data-i18n-en', 'The status manifest is temporarily unavailable. The page retains the most recent independently validated static result: v109 8x absolute-fidelity, p90, and worst four-level monotonic gates are all 3/3, and every per-cell all-level monotonic proportion is 100%. Next, freeze the minimal coordinate-conditioned observation-only initializer; algorithm_breakthrough=false.');
+          window.OERFLanguage?.translateSubtree(status);
         });
     })();
   </script>
   <script src="../site_link_router.js" data-site-root="../"></script>
+  <script src="../assets/site-language.js" defer></script>
 </body>
 </html>
