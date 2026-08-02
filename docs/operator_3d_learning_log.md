@@ -11802,3 +11802,52 @@ real_BOST = false
 - `docs/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_result_2026-08-02.md`
 - `docs/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_public_summary.json`
 - `assets/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96.png`
+
+## 2026-08-02：v97 先做容量门，阻止我训练一个结构上限只有 86/90 的四系数模型
+
+### 为什么 v96 之后不能直接训练
+
+v96 证明旧九维与四个新频谱方向合在一起时，truth-aware 容量是 `90/90`。但那 13 个系数都由真值辅助寻找。原计划是固定 v95 的 observation-only 旧九维，只训练四个新系数；这个拆分是否仍有解，v96 并没有证明。
+
+所以我没有租 GPU，也没有先写更大的网络。我先把三个已经冻结的部署可见旧九维基线锁住，只给四个新系数自由度，问一个更硬的问题：即使真值帮忙，四维条件子空间能不能覆盖全部 90 个单元？
+
+### 真正运行了什么
+
+- selected linear v95、ungated linear v95、parent K1 v85 三个冻结旧九维基线；
+- 每个基线 × 90 个 Case 6 单元，共 `270` 个条件容量问题；
+- 在原 13 维物理球里精确切出四维条件球；
+- 零新增系数、33 个确定性起点和三种子全局搜索；
+- 每个端点精确回放 `2A+2A^T`，逐单元重算八门；
+- 独立 validator 不导入正式 v97 core 或 runner，重写条件球并完整复算。
+
+### 结果
+
+| 固定旧九维 | 搜索前 | 四系数真值搜索后 |
+|---|---:|---:|
+| selected linear | 81 / 90 | **86 / 90** |
+| ungated linear | 80 / 90 | 85 / 90 |
+| parent K1 | 78 / 90 | 85 / 90 |
+
+没有任何基线达到 `90/90`。最佳 selected linear 的逐几何结果是 F30 `29/30`、F15 `27/30`、F12 `30/30`；worst maximum-gate 为 `+0.03207`，仍明确越线。
+
+剩余四个失败全部只落在 interior-gradient 门。field、full-gradient 和 observation 已经过门，说明四个方向确实有用；但旧九维一旦锁死，四个新方向无法单独重新分配局部梯度所需的物理预算。
+
+### 独立复算
+
+独立程序重放全部 270 个 base-cell。正式/独立 field、residual、metrics、gates 和 zero-new maximum-gate 最大差全部为 `0`，条件坐标最大差 `1.39e-17`，调用 receipt 失败为 0。最难失败单元的独立全局搜索仍未找到通过候选。
+
+### 是否成功、是否突破
+
+- **科学上成功定位：** 在训练前证明四系数拆分不具备全单元容量，避免无效训练。
+- **算法上失败：** 固定旧九维 + 四个新系数最多 86/90，四系数 predictor 不授权。
+- **v96 保留：** 联合 13 维表示容量突破没有被推翻。
+- **下一门：** 旧九维与新四维联合预测，或显式耦合的低秩修正；仍使用同一五折隔离、八门与 `2A+2A^T`。
+- **突破状态：** `algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_advantage=false`、`real_BOST=false`。
+
+当前仍不需要租 GPU。
+
+公开证据：
+
+- `docs/nine_view_v96_case6_conditional_spectral_band4_capacity_v97_result_2026-08-02.md`
+- `docs/nine_view_v96_case6_conditional_spectral_band4_capacity_v97_public_summary.json`
+- `assets/nine_view_v96_case6_conditional_spectral_band4_capacity_v97.png`

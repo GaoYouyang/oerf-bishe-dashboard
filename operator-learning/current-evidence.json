@@ -2,13 +2,14 @@
   "schema_version": "oerf-operator-learning-current-evidence-v1",
   "updated": "2026-08-02",
   "route": "C: observation-conditioned warm initializer for three-dimensional BOST reconstruction",
-  "scientific_status": "PASS_ALL_CELL_OBSERVATION_ADAPTIVE_SPECTRAL_BAND4_CAPACITY_V96",
-  "headline": "v96 adds four observation-adaptive spectral-band directions and independently validates truth-aware representation capacity on all 90 Case 6 cells",
-  "headline_zh": "v96 用四个只由观测残差与已知几何生成的频谱方向，把 Case 6 的 truth-aware 表示容量补到 90/90；这是表示容量突破，但还不是可部署算法成功。",
+  "scientific_status": "NO_FROZEN_OLD_NINE_BASE_HAS_ALL_CELL_FOUR_COEFFICIENT_CAPACITY_V97",
+  "headline": "v97 independently shows that fixing an observation-only nine-dimensional base and varying only four spectral coefficients reaches at most 86/90 Case 6 cells",
+  "headline_zh": "v97 证明固定 observation-only 旧九维、只调四个新频谱系数最多达到 86/90；四系数训练路线已关闭，下一步必须联合适配旧九维与新四维。",
   "metrics": {
-    "strict_witness_passed": 90,
+    "strict_witness_passed": 86,
     "cell_count": 90,
-    "unresolved_cell_count": 0,
+    "unresolved_cell_count": 4,
+    "joint_representation_capacity_passed": 90,
     "parent_nine_direction_capacity_passed": 89,
     "previous_best_observation_only_passed": 81,
     "parent_direction_count": 9,
@@ -16,16 +17,18 @@
     "total_direction_count": 13,
     "exact_A_calls_per_candidate": 2,
     "exact_AT_calls_per_candidate": 2,
-    "F30_maximum_gate_worst": -0.004443434233774024,
-    "F15_maximum_gate_worst": -0.006062035553507927,
-    "F12_maximum_gate_worst": -0.02064306947204564,
-    "independent_hardest_cell_maximum_gate": -0.011398311216612056,
-    "maximum_formal_independent_difference": 0.0
+    "F30_conditional_passed": 29,
+    "F15_conditional_passed": 27,
+    "F12_conditional_passed": 30,
+    "conditional_maximum_gate_worst": 0.0320668320518378,
+    "maximum_formal_independent_difference": 1.3877787807814457e-17
   },
   "current_decision": {
     "representation_capacity_breakthrough": true,
     "observation_adaptive_direction_capacity_passed": true,
-    "observation_only_four_coefficient_predictor_authorized": true,
+    "observation_only_four_coefficient_predictor_authorized": false,
+    "fixed_old_nine_plus_four_spectral_route_open": false,
+    "joint_old_and_new_adaptation_required": true,
     "fixed_nine_dimensional_small_model_route_open": false,
     "algorithm_breakthrough": false,
     "paper_success": false,
@@ -35,11 +38,11 @@
     "external_generalization": false,
     "real_bost": false
   },
-  "next_scientific_gate": "freeze and independently validate a minimal observation-only predictor for the four new spectral-band coefficients under the same five-fold embargoed 90-cell eight-gate and 2A+2AT contract; only a 90/90 result authorizes one unopened public external condition",
-  "next_scientific_gate_zh": "冻结最小 observation-only 四系数预测器：只读取 observation、known geometry 与父残差频谱特征，保持同一五折隔离、90 单元、八门和 2A+2A^T 在线预算；只有预测结果也达到 90/90，才打开一个此前未读的公开外部工况。",
+  "next_scientific_gate": "freeze and independently validate a small observation-only joint 13-dimensional predictor or explicitly coupled old/new low-rank correction under the same embargoed folds, eight gates and 2A+2AT budget; do not train the invalid four-coefficient-only model",
+  "next_scientific_gate_zh": "冻结小型 observation-only 联合 13 维预测器或显式耦合的低秩修正头：保持同一五折隔离、90 单元、八门和 2A+2A^T 在线预算；不再训练已被容量门否决的四系数模型。",
   "public_evidence": {
-    "result": "../document_reader.html?doc=docs%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_result_2026-08-02.md",
-    "summary": "../docs/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_public_summary.json",
-    "figure": "../assets/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96.png"
+    "result": "../document_reader.html?doc=docs%2Fnine_view_v96_case6_conditional_spectral_band4_capacity_v97_result_2026-08-02.md",
+    "summary": "../docs/nine_view_v96_case6_conditional_spectral_band4_capacity_v97_public_summary.json",
+    "figure": "../assets/nine_view_v96_case6_conditional_spectral_band4_capacity_v97.png"
   }
 }
