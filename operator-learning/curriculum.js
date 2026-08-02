@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.02-c-v93-localized-not-observably-located",
-  previousVersion: "2026.08.02-c-v92-radial-quartic-negative",
-  previousBadge: "v92 Case 6 radial-quartic · 89 / 90 witnesses",
+  version: "2026.08.02-c-v94-local-repair-not-prevalent",
+  previousVersion: "2026.08.02-c-v93-localized-not-observably-located",
+  previousBadge: "v93 Case 6 localized defect · primary locator 0 / 3",
   olderBadge: "v84.2 Case 3 residual gate · 75 / 75 development PASS",
   historyReleases: [
+    {
+      version: "2026.08.02-c-v93-localized-not-observably-located",
+      previousVersion: "2026.08.02-c-v92-radial-quartic-negative",
+      badge: "v93 Case 6 localized defect · primary locator 0 / 3"
+    },
     {
       version: "2026.08.02-c-v92-radial-quartic-negative",
       previousVersion: "2026.08.02-c-v89-diagonal-quadratic-capacity-partial",
