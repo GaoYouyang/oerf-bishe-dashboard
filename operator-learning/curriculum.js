@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.02-c-v92-radial-quartic-negative",
-  previousVersion: "2026.08.02-c-v89-diagonal-quadratic-capacity-partial",
-  previousBadge: "v89 Case 6 diagonal-quadratic · 87 / 90 witnesses",
+  version: "2026.08.02-c-v93-localized-not-observably-located",
+  previousVersion: "2026.08.02-c-v92-radial-quartic-negative",
+  previousBadge: "v92 Case 6 radial-quartic · 89 / 90 witnesses",
   olderBadge: "v84.2 Case 3 residual gate · 75 / 75 development PASS",
   historyReleases: [
+    {
+      version: "2026.08.02-c-v92-radial-quartic-negative",
+      previousVersion: "2026.08.02-c-v89-diagonal-quadratic-capacity-partial",
+      badge: "v92 Case 6 radial-quartic · 89 / 90 witnesses"
+    },
     {
       version: "2026.08.02-c-v89-diagonal-quadratic-capacity-partial",
       previousVersion: "2026.08.02-c-v88.1-spatial-mask4-capacity-negative",

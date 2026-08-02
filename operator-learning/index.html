@@ -455,16 +455,15 @@
     @media (max-width: 720px) {
       header, main, footer { width: min(100% - 22px, 1220px); }
       .nav {
-        flex-wrap: nowrap;
-        overflow-x: auto;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
         padding-bottom: 8px;
-        scroll-snap-type: x proximity;
-        scrollbar-width: thin;
       }
       .nav a {
-        flex: 0 0 auto;
         min-height: 40px;
-        scroll-snap-align: start;
+        justify-content: center;
+        text-align: center;
       }
       h1 { font-size: 31px; }
       h2 { font-size: 23px; }
@@ -507,13 +506,13 @@
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="#research-progress">查看当前研究进程</a>
           <a class="button" href="daily-progress.html">查看每日实质增量</a>
-          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v91_case6_radial_quartic10_v92_result_2026-08-02.md">阅读最新完整证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md">阅读最新完整证据</a>
         </div>
       </div>
       <aside class="hero-verdict" aria-label="当前科学判决">
         <b>当前判决：尚未突破</b>
-        <p><code>v92</code> 在 v91 的九维物理球上增加一个合法、非退化的径向四次多尺度方向，但严格 witness 仍为 <code>89/90</code>。F30+/12 的内部梯度越线只从 <code>3.688%</code> 降至 <code>3.631%</code>，修复数为 0。</p>
-        <p><strong>下一步：</strong>停止堆叠全局径向阶数，先定位最后反例的轴向、局域和尺度结构；有定位证据后才冻结小型局域双尺度族。达到 90/90 前不训练 predictor，也不租 GPU。</p>
+        <p><code>v93</code> 已把 F30+/12 的剩余内部梯度差额定位到 z 负侧的局部低频区域：前 <code>10%</code> 体素承载 <code>76.71%</code> 正误差，低频占 <code>79.57%</code>。</p>
+        <p><strong>下一步：</strong>预注册的 K1 法向残差定位器三门全失败，不能直接生成局部窗口。先修改可观测壳或显式接受最小额外精确调用；达到 90/90 前不训练 predictor，也不租 GPU。</p>
       </aside>
     </div>
     <div class="current-grid" aria-label="当前核心状态">
@@ -527,9 +526,9 @@
       <div class="archive-body">
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
-      <a class="button primary" href="#radial-quartic-v92">打开 v92 最新容量判决</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v91_case6_radial_quartic10_v92_result_2026-08-02.md">读 v92 完整证据</a>
-      <a class="button" href="../docs/nine_view_v91_case6_radial_quartic10_v92_public_summary.json">读 v92 脱敏摘要</a>
+      <a class="button primary" href="#spatial-error-localization-v93">打开 v93 最新机制判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md">读 v93 完整证据</a>
+      <a class="button" href="../docs/nine_view_v92_case6_spatial_error_localization_v93_public_summary.json">读 v93 脱敏摘要</a>
       <a class="button" href="#basis-invariant-physical-ball-v91">回看 v91 参数化正进展</a>
       <a class="button danger" href="#spatial-cross-quadratic9-capacity-v90">回看 v90 受盒约束判决</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90_result_2026-08-02.md">读 v90 完整证据</a>
@@ -595,8 +594,8 @@
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
     </div>
     <div class="alert critical" style="margin-top:12px;">
-      <strong>v92 最新判决：一个径向四次多尺度方向没有修复最后反例</strong>
-      <span>新方向相对旧九维空间的残余物理能量非零，且独立程序重建后逐项指标差为 <code>0</code>；但 F30+/12 的内部梯度越线只由 <code>3.688%</code> 降至 <code>3.631%</code>，相当于只消掉剩余越线的 <code>1.55%</code>，严格容量仍为 <code>89/90</code>。这正式关闭单径向四次支线，下一步先做误差定位。<a href="#radial-quartic-v92">查看完整证据</a>。</span>
+      <strong>v93 最新判决：缺口高度局部，但预注册可观测定位器看不见</strong>
+      <span>前 <code>10%</code> 内部体素承载 <code>76.71%</code> 正误差，z 第一四分区承载 <code>80.60%</code>，低频占 <code>79.57%</code>；空间集中门通过。但主定位器最高 10% 只捕获 <code>4.84%</code>，Spearman 为 <code>0.193</code>，质心距离为 <code>0.217</code>，三门全失败。下一步先改可观测壳，不训练局部 predictor。<a href="#spatial-error-localization-v93">查看完整证据</a>。</span>
     </div>
     <div class="alert critical" style="margin-top:12px;">
       <strong>v88.1 父判决：四参数 spatial-mask4 只有 86/90 个 Case 6 单元找到严格 witness</strong>
@@ -902,7 +901,7 @@
         <div><b>公开反应流 CFD</b><span>PoolFire 与独立 BLASTNet 工况</span></div>
         <div><b>九视角观测</b><span>已知几何 straight-ray 密度梯度代理</span></div>
         <div><b>粗网格逆问题</b><span><code>32×16×16</code> 三维状态</span></div>
-        <div class="current"><b>当前：89/90 容量</b><span>单径向四次已关线，先定位最后局部缺口</span></div>
+        <div class="current"><b>当前：修改可观测壳</b><span>局部低频缺口已定位，但主残差信号定位失败</span></div>
         <div><b>Observation-only 学习</b><span>容量过门后才训练预测器</span></div>
         <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
       </div>
@@ -952,18 +951,23 @@
             <div><strong>v92：单径向四次多尺度方向正式关线</strong><p>新方向非退化，但 F30+/12 越线只从 3.688% 降到 3.631%，严格容量仍为 89/90。停止堆全局径向阶数，先定位缺口。</p></div>
             <span class="evidence-state fail">机理负结果</span>
           </article>
+          <article class="evidence-row">
+            <time datetime="2026-08-02">2026-08-02</time>
+            <div><strong>v93：局部缺口成立，主定位器三门失败</strong><p>前 10% 体素承载 76.71% 正误差，79.57% 属于低频；预注册法向残差定位器最高 10% 只捕获 4.84%，不能直接生成局部窗口。</p></div>
+            <span class="evidence-state fail">路线诊断</span>
+          </article>
         </div>
         <figure class="latest-figure">
-          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v91_case6_radial_quartic10_v92.png" aria-label="打开 v92 完整结果图">
-            <img src="../assets/nine_view_v91_case6_radial_quartic10_v92.png" alt="v92 径向四次多尺度方向没有修复最后一个 Case 6 反例" />
+          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v92_case6_spatial_error_localization_v93.png" aria-label="打开 v93 完整结果图">
+            <img loading="lazy" decoding="async" src="../assets/nine_view_v92_case6_spatial_error_localization_v93.png" alt="v93 最后一个内部梯度缺口的空间、频率与可观测定位结果" />
           </a>
-          <figcaption>最新可视化：F12+ / F15+ / F30+ 仍为 30/30、30/30、29/30。径向四次方向只消掉 1.55% 的剩余越线，修复数为 0；这是可信的关线负结果，不是算法突破。</figcaption>
+          <figcaption>最新可视化：缺口高度集中于 z 负侧且主要是低频，但预注册 K1 法向残差定位器三门全失败；它改变下一步，却不是新算法或突破。</figcaption>
         </figure>
       </div>
       <div class="actions" style="margin-top:13px;">
-        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v91_case6_radial_quartic10_v92_result_2026-08-02.md">读 v92 完整证据</a>
-        <a class="button" href="../docs/nine_view_v91_case6_radial_quartic10_v92_public_summary.json">读机器可读摘要</a>
-        <a class="button" href="#radial-quartic-v92">展开历史区中的技术细节</a>
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md">读 v93 完整证据</a>
+        <a class="button" href="../docs/nine_view_v92_case6_spatial_error_localization_v93_public_summary.json">读机器可读摘要</a>
+        <a class="button" href="#spatial-error-localization-v93">展开历史区中的技术细节</a>
       </div>
     </section>
 
@@ -979,7 +983,7 @@
       <div class="focus-grid">
         <article class="focus-card positive"><h3>已建立可复算链</h3><p>每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。</p></article>
         <article class="focus-card boundary"><h3>当前更新源</h3><p id="liveEvidenceStatus" aria-live="polite">正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。</p></article>
-        <article class="focus-card current"><h3>本轮真实增量</h3><p>一个非退化的径向四次方向仍没有修复 F30+/12，只带来 1.55% 的剩余越线下降。由此停止全局径向阶数堆叠，把下一步改为误差定位。</p></article>
+        <article class="focus-card current"><h3>本轮真实增量</h3><p>v93 确认最后缺口局部、单侧、低频，但当前法向残差定位器无法找到它。由此停止直接构造局部 predictor，把下一步改为修改可观测壳。</p></article>
       </div>
     </section>
 
@@ -992,7 +996,7 @@
         </div>
       </div>
       <div class="outcome-ladder">
-        <div class="outcome-step closed"><div><b>找到足够但最小的空间表示</b><span>v92 的单径向四次方向仍停在 89/90；下一门先定位最后一个 F30+ 单元的空间缺口，再决定是否冻结小型局域双尺度族。</span></div><em>当前进行中</em></div>
+        <div class="outcome-step closed"><div><b>找到足够但最小的空间表示</b><span>v93 已证明最后缺口高度局部，但主定位器失败；先获得可靠的 deployment-visible 粗定位信号，才能冻结局域双尺度族。</span></div><em>当前进行中</em></div>
         <div class="outcome-step"><div><b>训练 observation-only warm initializer</b><span>训练与部署都不读取真值；与 ridge、KRR、U-Net / FNO 等公平对照，并保留 fail-closed 回退。</span></div><em>容量过门后</em></div>
         <div class="outcome-step"><div><b>独立工况 matched-accuracy</b><span>在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
         <div class="outcome-step"><div><b>真实资源收益</b><span>fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。</span></div><em>尚未启动</em></div>
@@ -1023,7 +1027,7 @@
         </div>
       </div>
       <div class="future-grid">
-        <article class="focus-card current"><h3>最近科学门</h3><p>先对 F30+/12 做结果披露的误差定位，判断缺口是轴向、局域还是尺度相关；只有定位证据明确，才冻结小型 observation-visible 局域双尺度族。未达到 90/90 前不训练 predictor。</p></article>
+        <article class="focus-card current"><h3>最近科学门</h3><p>先修改可观测壳：把 detector anchor 的粗位置线索另行冻结，并在未参与选择的局部误差图上验证；若仍看不见，再明确增加最小精确调用预算。此门通过前不训练局部 predictor。</p></article>
         <article class="focus-card boundary"><h3>何时租 GPU</h3><p>只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。</p></article>
         <article class="focus-card positive"><h3>何时接组内数据</h3><p>公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。</p></article>
       </div>
@@ -1234,13 +1238,28 @@
         <article class="panel"><div class="chips"><span class="chip coral">v5.1 正式 FAIL</span><span class="chip blue">独立复算通过</span></div><h3 style="margin-top:10px;">rank 有 headroom，固定 basis 仍不够</h3><p>过原点子空间与稳定 rank 504 有帮助，但最佳 target-oracle p90/worst 仍为 <code>0.148823 / 0.165473</code>，绝对门是 <code>0.05 / 0.10</code>。RMS 齐次化只有 0.1009% 额外改善，不能包装成创新；这一步也不是可部署 observation→field 模型。</p></article>
         <article class="panel"><div class="chips"><span class="chip coral">v6 T0 正式 FAIL</span><span class="chip blue">输运存在</span></div><h3 style="margin-top:10px;">raw BP 跟得上趋势，却带有工况偏差</h3><p>606 个 deployment-visible BP 的成本为 <code>0 A + 606 A^T</code>，606 个 K4 teacher 的审计成本为 <code>2424 A + 2424 A^T</code>。teacher 最大位置跨度为 <code>2.596</code> 体素；但 raw BP 的整数 shift 在六条轨迹中只有 p22-s03 过 75% exact 门，p45-s05 的 exact 仅 <code>14.85%</code>。协议在 SVD 前停止，没有 aligned-basis 或模型结果。</p></article>
       </div>
+      <div id="spatial-error-localization-v93" class="alert critical" style="margin-top:13px;">
+        <strong>v93：最后一个梯度缺口高度局部，但预注册定位器看不见</strong>
+        <span>v93 没有加方向或训练模型，只把 v92 的 F30+/12 相对同成本 Zero-K2 多出来的内部梯度误差分解到位置和频率。最高 <code>10%</code> 体素承载 <code>76.71%</code> 正误差，解释 80% 只需 <code>12.62%</code> 体素；z 第一四分区占 <code>80.60%</code>，低频占 <code>79.57%</code>。空间集中门通过，但预注册 <code>|∇A^T(y-Ax0)|²</code> 的 top-10% 捕获 / Spearman / 质心距离为 <code>4.84% / 0.193 / 0.217</code>，相对 <code>40% / 0.35 / 0.20</code> 三门全失败。手写有限差分独立复算的标量最大差 <code>1.11e-16</code>、热图逐点差 <code>0</code>。当前只允许改可观测壳，不允许直接训练局部 predictor。</span>
+      </div>
+      <figure class="result-figure">
+        <a href="../asset_viewer.html?asset=assets%2Fnine_view_v92_case6_spatial_error_localization_v93.png" aria-label="打开 v93 空间误差定位结果图">
+          <img loading="lazy" decoding="async" src="../assets/nine_view_v92_case6_spatial_error_localization_v93.png" alt="v93 局部低频误差集中但预注册可观测定位器失败" />
+        </a>
+        <figcaption>A / B：正误差集中在 z 负侧；C：79.57% 为低频；D：主定位器只捕获 4.84%，三门全失败。anchor-gradient 只能生成下一假设，不能事后替代主门。</figcaption>
+      </figure>
+      <div class="actions" style="margin-top:11px;">
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md">读 v93 完整推导与裁决</a>
+        <a class="button" href="../docs/nine_view_v92_case6_spatial_error_localization_v93_public_summary.json">打开 v93 脱敏机器摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_v92_case6_spatial_error_localization_v93.png">打开 v93 结果图原尺寸</a>
+      </div>
       <div id="radial-quartic-v92" class="alert critical" style="margin-top:13px;">
         <strong>v92：单径向四次多尺度方向非退化，但严格容量仍为 89/90</strong>
         <span>v92 在 v91 九维物理球上加入一个由 <code>p4(s)=s²-(46/21)s+97/105</code> 生成的方向；对称的是解析径向掩膜，掩膜乘上非对称基础修正场并投影后，最终方向一般不对称。连续立方体测度下的解析正交只用于定义掩膜，离散 <code>32×16×16</code> 网格上的实际物理正交由 Gram 投影建立。新方向残余物理能量非零，但 F30+/12 越线只从 <code>3.688%</code> 降到 <code>3.631%</code>，仅消掉剩余越线的 <code>1.55%</code>，修复数为 0。正式与独立复算的 field、residual、metrics、gates 最大差均为 <code>0</code>；因此关闭单径向四次支线，先做空间误差定位。</span>
       </div>
       <figure class="result-figure">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_v91_case6_radial_quartic10_v92.png" aria-label="打开 v92 径向四次容量负结果图">
-          <img src="../assets/nine_view_v91_case6_radial_quartic10_v92.png" alt="v92 单径向四次方向保持八十九个严格 witness 并留下一个 F30 反例" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_v91_case6_radial_quartic10_v92.png" alt="v92 单径向四次方向保持八十九个严格 witness 并留下一个 F30 反例" />
         </a>
         <figcaption>A：v91 与 v92 的逐几何通过数完全相同；B：最后越线从 3.688% 降至 3.631%；C：八门中只有 interior-gradient / Zero-K2 仍为正。该结果关闭一个方向，不证明所有局域多尺度表示不可行。</figcaption>
       </figure>
@@ -1255,7 +1274,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91.png" aria-label="打开 v91 Case 6 物理能量球结果图">
-          <img src="../assets/nine_view_v90_case6_basis_invariant_physical_ball_v91.png" alt="v91 以物理能量球替换任意坐标盒后将严格 witness 从八十七提高到八十九" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_v90_case6_basis_invariant_physical_ball_v91.png" alt="v91 以物理能量球替换任意坐标盒后将严格 witness 从八十七提高到八十九" />
         </a>
         <figcaption>A：v90 与 v91 的逐几何通过数；B：三个旧反例的内部梯度越线变化；C：v91 witness 相对旧系数盒的位置。两个旧失败被修复，一个 F30+ 单元仍未过门。</figcaption>
       </figure>
@@ -1270,7 +1289,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90.png" aria-label="打开 v90 Case 6 交叉二次容量结果图">
-          <img src="../assets/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90.png" alt="v90 完整全局二阶表示仍只有八十七个严格 witness，交叉项修复零个单元" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_v89_case6_spatial_cross_quadratic9_capacity_v90.png" alt="v90 完整全局二阶表示仍只有八十七个严格 witness，交叉项修复零个单元" />
         </a>
         <figcaption>A：v88.1、v89、v90 的逐几何通过数；B：三个残余反例在旧盒内的越线幅度；C：当时的表示容量阶梯。该图保留原始 v90 判决，后续 v91 已证明其中两个失败来自坐标盒约束。</figcaption>
       </figure>
@@ -1280,12 +1299,12 @@
         <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_v89_case6_spatial_cross_quadratic9_capacity_v90.png">打开 v90 结果图原尺寸</a>
       </div>
       <div id="spatial-quadrupole6-capacity-v89" class="alert critical" style="margin-top:13px;">
-        <strong>v89：六参数对角二次表示修复一个旧反例，但 3/90 个 F30 单元仍无严格 witness</strong>
+        <strong>v89：六参数对角二次表示严格通过 87/90，仍有 3 个 F30 单元无严格 witness</strong>
         <span>两个新增方向 <code>z²-y²</code> 与 <code>2x²-z²-y²</code> 先投影掉旧四维空间，再只对白化后的二维余量归一化，所以 v88.1 的 86 个 witness 被精确嵌套；field / residual 差为 <code>0</code>。F15 frame 12 被修复，F30 frame 7 / 9 / 12 的 interior-gradient / Zero-K2 越线从 <code>2.224%、1.589%、7.942%</code> 降至 <code>0.744%、0.120%、6.271%</code>，但仍未过门。独立 validator 不导入正式 runner 或表示核心，对三个失败单元各运行 <code>16384</code> 个 Sobol 点与 48 起点精化，正式/独立逐值差为 <code>0</code>。结论是全局对角二次自由度有用但不充分，不能训练六系数 predictor。</span>
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_v88_case6_spatial_quadrupole6_capacity_v89.png" aria-label="打开 v89 Case 6 对角二次容量结果图">
-          <img src="../assets/nine_view_v88_case6_spatial_quadrupole6_capacity_v89.png" alt="v89 将 Case 6 严格 witness 从八十六个提高到八十七个，并显示四个旧反例的内部梯度门变化" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_v88_case6_spatial_quadrupole6_capacity_v89.png" alt="v89 将 Case 6 严格 witness 从八十六个提高到八十七个，并显示四个旧反例的内部梯度门变化" />
         </a>
         <figcaption>A：v88.1 与 v89 的逐几何通过数；B：四个旧反例扩展前后的越线幅度；C：新增方向带来的改善。F15+/12 已过门，三个 F30+ 单元仍失败。</figcaption>
       </figure>
@@ -1300,7 +1319,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png" aria-label="打开 v88.1 Case 6 spatial-mask4 容量结果图">
-          <img src="../assets/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png" alt="v88.1 中八十六个 Case 6 单元有严格 witness，四个单元仍被内部梯度同成本门阻塞" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_v88_case6_spatial_mask4_witness_repair_v88_1.png" alt="v88.1 中八十六个 Case 6 单元有严格 witness，四个单元仍被内部梯度同成本门阻塞" />
         </a>
         <figcaption>A：三档几何分别 30/30、29/30、27/30；B：四个反例相对同成本 Zero-K2 的内部梯度最优越线幅度；C：正式全局搜索与独立 Sobol 搜索落在同一边界。该图是已开封 Case 6 的表示容量审计。</figcaption>
       </figure>
@@ -1315,7 +1334,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_v86_case6_k1_k2_line_v87.png" aria-label="打开 v87 Case 6 K1-K2 线可行性结果图">
-          <img src="../assets/nine_view_v86_case6_k1_k2_line_v87.png" alt="v87 中八十五个 Case 6 单元有可行阻尼区间，五个单元被内部梯度门单独阻塞" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_v86_case6_k1_k2_line_v87.png" alt="v87 中八十五个 Case 6 单元有可行阻尼区间，五个单元被内部梯度门单独阻塞" />
         </a>
         <figcaption>A：三档几何分别 30/30、29/30、26/30；B：五个反例的最佳可能门值仍超标；C：其余 85 个单元多数有宽可行区间。该图是已开封 Case 6 的机理容量审计。</figcaption>
       </figure>
@@ -1330,7 +1349,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_v85_case6_forced_k2_v86.png" aria-label="打开 v86 Case 6 forced-K2 结果图">
-          <img src="../assets/nine_view_v85_case6_forced_k2_v86.png" alt="v86 中 forced K2 从七十八个通过降到七十一个，并显示单元转移和早期瞬态失败" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_v85_case6_forced_k2_v86.png" alt="v86 中 forced K2 从七十八个通过降到七十一个，并显示单元转移和早期瞬态失败" />
         </a>
         <figcaption>A：通过数 78→71；B：5 个旧失败修复但新增 12 个失败；C：新的正门值集中在早期瞬态。理论少 25% 算子对不构成资源成功，因为精度门失败。</figcaption>
       </figure>
@@ -1345,7 +1364,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_v84_external_cases_v85.png" aria-label="打开 v85 Case 4 与 Case 6 外部门结果图">
-          <img src="../assets/nine_view_v84_external_cases_v85.png" alt="v85 中 Case 4 八十四个单元全部通过，Case 6 九十个单元通过七十八个，失败只来自内部梯度" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_v84_external_cases_v85.png" alt="v85 中 Case 4 八十四个单元全部通过，Case 6 九十个单元通过七十八个，失败只来自内部梯度" />
         </a>
         <figcaption>A：Case 4 全过而 Case 6 为 78/90；B：两例 exact 调用均低于 Zero-K4，但调用少不能抵消精度失败；C：Case 6 的 12 个失败分为相对 Zero-K4 的 4 个内部梯度 no-harm 失败和相对 Zero-K2 的 8 个同调用失败。</figcaption>
       </figure>
@@ -1360,7 +1379,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_observable_safety_gate_v84.png" aria-label="打开 v84.2 可观测 residual gate 结果图">
-          <img src="../assets/nine_view_observable_safety_gate_v84.png" alt="v84.2 的 residual gate 在七十五个 Case 3 单元全部通过八门，并将平均精确调用减少百分之四十一点三" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_observable_safety_gate_v84.png" alt="v84.2 的 residual gate 在七十五个 Case 3 单元全部通过八门，并将平均精确调用减少百分之四十一点三" />
         </a>
         <figcaption>A：always K1、门控 K1/K2 与 restart 策略的逐单元通过数；B：每类 exact A 或 Aᵀ 平均调用；C：三档几何的 K1 接受与 K2 continuation。41.3% 只是调用账，不是 wall 或 RSS 结论。</figcaption>
       </figure>
@@ -1375,7 +1394,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_spatial_mask_predictor_v83.png" aria-label="打开 v83.1 严格 observation-only predictor 结果图">
-          <img src="../assets/nine_view_spatial_mask_predictor_v83.png" alt="v83.1 的六个冻结预测器最高通过七十五个单元中的六十八个，七个失败都只越过 observation no-harm 门" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_spatial_mask_predictor_v83.png" alt="v83.1 的六个冻结预测器最高通过七十五个单元中的六十八个，七个失败都只越过 observation no-harm 门" />
         </a>
         <figcaption>A：六个冻结 arm 联合通过最高 68/75；B：最佳模型逐几何为 23/25、23/25、22/25；C：七个失败只越过同一个可观测 observation/K4 门。容量 75/75 与可部署预测 68/75 必须分开。</figcaption>
       </figure>
@@ -1390,7 +1409,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_observation_adaptive_mask_capacity_v82.png" aria-label="打开 v82 四参数表示容量对照图">
-          <img src="../assets/nine_view_observation_adaptive_mask_capacity_v82.png" alt="v82 的固定空间内对照通过七十三个单元，空间调制表示通过全部七十五个单元" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_observation_adaptive_mask_capacity_v82.png" alt="v82 的固定空间内对照通过七十三个单元，空间调制表示通过全部七十五个单元" />
         </a>
         <figcaption>A：F12 / F15 / F30 逐几何通过数；B：负 maximum gate 代表八门仍有裕量。spatial-mask4 的 75/75 只是已开封开发工况的 truth-aware finite-search capacity，不是可部署结果。</figcaption>
       </figure>
@@ -1405,7 +1424,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_gslb32_target_stability_v81.png" aria-label="打开 v81 优化起点漂移与 v80 预测误差尺度比较图">
-          <img src="../assets/nine_view_gslb32_target_stability_v81.png" alt="v81 的七十五个单元中，最坏优化起点漂移只占 v80 预测误差的百分之零点零一八九八" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_gslb32_target_stability_v81.png" alt="v81 的七十五个单元中，最坏优化起点漂移只占 v80 预测误差的百分之零点零一八九八" />
         </a>
         <figcaption>A：75 个单元全部远低于 0.1% 回顾性门；B：v78 端点漂移与 v80 RBF 预测误差相差多个数量级；C：最坏比例仅 0.01898%。这是回顾性原因排除，不是算法、泛化、资源或真实 BOST 结果。</figcaption>
       </figure>
@@ -1420,7 +1439,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_gslb32_strict_observation_krr_v80.png" aria-label="打开 v80 六个确定性模型的通过数、最佳 RBF 逐门结果与逐几何结果图">
-          <img src="../assets/nine_view_gslb32_strict_observation_krr_v80.png" alt="v80 最好的共享与几何专属 RBF 都通过七十五个单元中的五十八个，仍有十七个失败" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_gslb32_strict_observation_krr_v80.png" alt="v80 最好的共享与几何专属 RBF 都通过七十五个单元中的五十八个，仍有十七个失败" />
         </a>
         <figcaption>A：六个冻结模型的完整八门通过数，最佳为 58/75；B：共享 RBF 的主要缺口在 observation/K4 与 interior-gradient/K2；C：F30+ 两种策略都只有 16/25。该图不表示神经训练、资源加速、外部泛化或真实 BOST 成功。</figcaption>
       </figure>
@@ -1435,7 +1454,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_gslb32_analytic_controls_v79.png" aria-label="打开 v79 两个解析映射的完整通过数、逐门通过数与失败尾部图">
-          <img src="../assets/nine_view_gslb32_analytic_controls_v79.png" alt="v79 的 observation residual 方法完整通过九个单元，normal residual 方法零个，主要失败在三维梯度门" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_gslb32_analytic_controls_v79.png" alt="v79 的 observation residual 方法完整通过九个单元，normal residual 方法零个，主要失败在三维梯度门" />
         </a>
         <figcaption>A：完整八门通过数为 9/75 与 0/75；B：两条方法都在 observation 两门 75/75，却在 full-gradient 与 interior-gradient 大面积失败；C：maximum normalized gate 的 p50、p90 与最坏值均在失败侧。图中没有神经模型、资源加速、外部泛化或真实 BOST 结论。</figcaption>
       </figure>
@@ -1450,7 +1469,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_geometry_spline_capacity_v78.png" aria-label="打开 v78 GSLB32 容量、精度尾部与冷构造摊销图">
-          <img src="../assets/nine_view_geometry_spline_capacity_v78.png" alt="v78 将 GSLB8 的七十五分之七提高到 GSLB32 的七十五分之七十五，但当前二十五帧尚未摊销冷构造" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_geometry_spline_capacity_v78.png" alt="v78 将 GSLB8 的七十五分之七提高到 GSLB32 的七十五分之七十五，但当前二十五帧尚未摊销冷构造" />
         </a>
         <figcaption>A：GSLB8 的 7/75 与 GSLB32 的 75/75 容量门；B：四项相对同调用 Zero-K2 的 p50、p90 与最坏误差比；C：在线每帧调用减半，但冷构造使当前 25 帧总账为 292 对 200，满接受率至少 48 帧才打平。图中没有部署 predictor、外部泛化、wall/RSS 或真实 BOST 结论。</figcaption>
       </figure>
@@ -1465,7 +1484,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_geometry_spline_low_observability_v77.png" aria-label="打开 v77 GSLB8 三档几何通过数、逐门通过数、同调用误差比和最大门尾部图">
-          <img src="../assets/nine_view_geometry_spline_low_observability_v77.png" alt="v77 三档几何各只有二到三个完整见证，同调用内部梯度仅七十五个单元中的七个通过" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_geometry_spline_low_observability_v77.png" alt="v77 三档几何各只有二到三个完整见证，同调用内部梯度仅七十五个单元中的七个通过" />
         </a>
         <figcaption>A：三档几何都远未达到 25/25；B：field 与 observation 全过，梯度尤其 interior-gradient 是瓶颈；C：相对同调用 K2，observation 明显改善但 gradient 尾部超过 1；D：各几何典型最佳候选仍在完整门外。negative 只表示冻结非凸搜索未找到见证，不是数学不可行证明。</figcaption>
       </figure>
@@ -1480,7 +1499,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_obs2d_oracle_v76.png" aria-label="打开 v76 同预算二维可行性分类、逐门通过数、对照与时间分布图">
-          <img src="../assets/nine_view_obs2d_oracle_v76.png" alt="v76 三档几何可行与严格不可行单元、八项门通过数、四个方法 joint pass 和不可行帧时间分布" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_obs2d_oracle_v76.png" alt="v76 三档几何可行与严格不可行单元、八项门通过数、四个方法 joint pass 和不可行帧时间分布" />
         </a>
         <figcaption>A：三档几何均含严格不可行单元；B：field 全过，但 K4 observation 与 K2 gradients 无法同时闭合；C：truth-aware oracle 将 joint pass 提升到 58/75，仍不足以通过全合同；D：失败集中在演化中段，frame 10 与 16 在三档几何均不可行。该图只说明表示上界，不是部署算法。</figcaption>
       </figure>
@@ -1495,7 +1514,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_vitiated_h2air_external_accuracy_v75.png" aria-label="打开 v75 BLASTNet Case 3 外部精度门逐指标、逐几何和科学判决图">
-          <img src="../assets/nine_view_vitiated_h2air_external_accuracy_v75.png" alt="v75 外部精度门中相对 Zero-K4 和同调用 Zero-K2 的逐指标通过数、误差比、逐几何通过数与 5/75 失败判决" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_vitiated_h2air_external_accuracy_v75.png" alt="v75 外部精度门中相对 Zero-K4 和同调用 Zero-K2 的逐指标通过数、误差比、逐几何通过数与 5/75 失败判决" />
         </a>
         <figcaption>A：field 与 observation 在 K4 和同调用 K2 门下均为 75/75，interior-gradient 相对 K2 仅 5/75；B：同调用误差比显示低频场/观测改善与内部梯度恶化并存；C：三档几何完整合同均失败；D：精度 FAIL 后资源阶段停止。范围只是一条预选公开 DNS、已知几何、无噪声 straight-ray 代理。</figcaption>
       </figure>
@@ -1510,7 +1529,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_loaded_artifact_fresh_resource_v74_1.png" aria-label="打开 v74.1 loaded-artifact fresh wall、三层 RSS、逐轨迹资源门和证据边界图">
-          <img src="../assets/nine_view_loaded_artifact_fresh_resource_v74_1.png" alt="v74.1 的 fresh outer wall 比值、worker-self worker-tree pipeline RSS 比值、五条轨迹资源门和证据边界" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_loaded_artifact_fresh_resource_v74_1.png" alt="v74.1 的 fresh outer wall 比值、worker-self worker-tree pipeline RSS 比值、五条轨迹资源门和证据边界" />
         </a>
         <figcaption>A：global fresh wall p50/p90/worst 均显著低于冻结门；B：三类 RSS 的 p90 全部通过，同时公开 worker-self 与 worker-tree 的 worst 超过 1.05；C：五条轨迹的 wall 与三类 RSS p50 均低于逐轨迹门；D：1,515 精度单元、360 workers、165 blocks 与 3,030 帧独立重放闭环。范围只属于已开封 PoolFire fit family 的已知几何无噪声 straight-ray 代理。</figcaption>
       </figure>
@@ -1525,7 +1544,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_loaded_artifact_stageb_v73.png" aria-label="打开 v73 loaded-artifact 全轨迹兼容性、独立复算和调用账结果图">
-          <img src="../assets/nine_view_loaded_artifact_stageb_v73.png" alt="v73 相对 Zero-K4 与同调用 Zero-K2 的误差比、1515 单元独立复算、精确算子调用账和证据边界" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_loaded_artifact_stageb_v73.png" alt="v73 相对 Zero-K4 与同调用 Zero-K2 的误差比、1515 单元独立复算、精确算子调用账和证据边界" />
         </a>
         <figcaption>A：相对 Zero-K4 的四项 p50/p90/worst 全部守住 1.01 门；B：相对同调用 Zero-K2 的四项 worst 全部不高于 1；C：1,515 单元、162 数组和独立 dense p0 证据闭环；D：候选保持 2A+2A^T，并明确多轨迹 wall/RSS、外部族、曲线光线和真实 BOST 尚未通过。</figcaption>
       </figure>
@@ -1540,7 +1559,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_calibrated_factor_online_v72.png" aria-label="打开 v72 固定几何在线 wall、RSS、绝对时间与双成本账结果图">
-          <img src="../assets/nine_view_calibrated_factor_online_v72.png" alt="v72 六个 fresh 配对区组的 wall 与 RSS 比值、候选和对照绝对时间、离线构造与证据边界" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_calibrated_factor_online_v72.png" alt="v72 六个 fresh 配对区组的 wall 与 RSS 比值、候选和对照绝对时间、离线构造与证据边界" />
         </a>
         <figcaption>A：六个区组 wall ratio 全部远低于冻结门；B：worker-self RSS 高尾首次压到 1.05 以下；C：加载和完整校验已计入候选 fresh outer wall；D：一次性离线构造、工件体积、摊销和未通过证据明确分账。范围只是一条已开封 PoolFire stream 与一个已知合成几何。</figcaption>
       </figure>
@@ -1555,7 +1574,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_stencil_factor_fresh_resource_v70_1.png" aria-label="打开 v70.1 fresh wall 与 RSS 以及 v71 tile2 停止门图">
-          <img src="../assets/nine_view_stencil_factor_fresh_resource_v70_1.png" alt="v70.1 的 fresh wall 通过、三类 RSS 失败、逐轨迹稳定性和 v71 tile2 高尾停止门" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_stencil_factor_fresh_resource_v70_1.png" alt="v70.1 的 fresh wall 通过、三类 RSS 失败、逐轨迹稳定性和 v71 tile2 高尾停止门" />
         </a>
         <figcaption>A：tiled p0 q8-K1 的绝对 wall 相对 Zero-K4 稳定下降；B：三类 RSS p90 全部超过 1.05；C：五条轨迹均为速度通过、worker-self 内存受损；D：v71 tile2 的 RSS 中位通过但 p90 为 1.0602，按冻结规则停止。范围仍只是 noise-free known-geometry straight-ray PoolFire fit family，不是 neural、external-family、curved-ray 或 real-BOST 证据。</figcaption>
       </figure>
@@ -1570,7 +1589,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_stencil_factor_stageb_v70.png" aria-label="打开 v70 tiled p0 全轨迹精度与开发 Pareto 图">
-          <img src="../assets/nine_view_stencil_factor_stageb_v70.png" alt="v70 tiled p0 相对 Zero-K4 与 Zero-K2 的精度比，以及结果前开发 wall/RSS Pareto" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_stencil_factor_stageb_v70.png" alt="v70 tiled p0 相对 Zero-K4 与 Zero-K2 的精度比，以及结果前开发 wall/RSS Pareto" />
         </a>
         <figcaption>左：1,515 个单元的 p50、p90 与 worst，分别受 1.01 harm 门和 1.00 同调用门约束；右：三组开发筛选相对旧 dense q8 的 wall/RSS 中位比。右图只解释为什么选 p0，不能替代下一轮正式 fresh Stage C。</figcaption>
       </figure>
@@ -1585,7 +1604,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_poolfire_fresh_resource_v68.png" aria-label="打开 v68.3 PoolFire fresh wall 与 RSS 资源判决图">
-          <img src="../assets/nine_view_poolfire_fresh_resource_v68.png" alt="v68.3 的 fresh wall 通过、三类 RSS 失败、逐轨迹稳定性与科学判决" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_poolfire_fresh_resource_v68.png" alt="v68.3 的 fresh wall 通过、三类 RSS 失败、逐轨迹稳定性与科学判决" />
         </a>
         <figcaption>A：global fresh outer wall 的 p50、p90 与 worst 均通过；B：worker-self、worker-tree 和 pipeline RSS p90 均超过 1.05；C：五条轨迹的速度收益与内存伤害都稳定存在；D：Stage C 整体 FAIL，下一门是 compact / tiled / streamed factors，不是扩大模型。</figcaption>
       </figure>
@@ -1600,7 +1619,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_poolfire_full_trajectory_v67.png" aria-label="打开 v67.1 PoolFire 全轨迹 warm compatibility 结果图">
-          <img src="../assets/nine_view_poolfire_full_trajectory_v67.png" alt="v67.1 的精确调用账、全 1515 单元最坏 harm、同调用对照与 15 个全轨迹层热图" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_poolfire_full_trajectory_v67.png" alt="v67.1 的精确调用账、全 1515 单元最坏 harm、同调用对照与 15 个全轨迹层热图" />
         </a>
         <figcaption>A：q8/q4 相对 Zero-K4 的理论精确算子对；B：全部 1,515 单元相对 Zero-K4 的四项最坏 harm；C：相对同调用 Zero-K2/K3 的四项最坏误差比；D：q8 在 15 个 trajectory-by-geometry 层的 101 帧最大 harm。图中通过的是 compatibility，不是 wall/RSS、外部族、curved 或真实 BOST。</figcaption>
       </figure>
@@ -1615,7 +1634,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_poolfire_target_scale_warm_v66.png" aria-label="打开 v66.1 目标尺寸 PoolFire warm compatibility 结果图">
-          <img src="../assets/nine_view_poolfire_target_scale_warm_v66.png" alt="v66.1 的精确调用账、75 单元最坏误差比、独立复算和证据边界" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_poolfire_target_scale_warm_v66.png" alt="v66.1 的精确调用账、75 单元最坏误差比、独立复算和证据边界" />
         </a>
         <figcaption>A：候选相对 Zero-K4 的理论精确算子对；B：75 个冻结单元相对 Zero-K4 的逐单元最坏 harm；C：相对同精确调用 Zero-K2/K3 的最坏误差比；D：原始 rho 真值链、独立原子复算和仍未完成的 wall、RSS、curved、真实 BOST 门。cheap factor 动作和 setup 未隐藏，但还没有进入 fresh 资源结论。</figcaption>
       </figure>
@@ -1630,7 +1649,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_geometry_warm_refinement_v65.png" aria-label="打开 v63-v65 已知几何 warm refinement 结果图">
-          <img src="../assets/nine_view_geometry_warm_refinement_v65.png" alt="v63-v65 的精确调用账、truth no-harm、同调用对照与证据边界" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_geometry_warm_refinement_v65.png" alt="v63-v65 的精确调用账、truth no-harm、同调用对照与证据边界" />
         </a>
         <figcaption>A：q8-K1 与 q4-K2 分别减少 50% / 25% 精确算子对；B：相对 Zero-K4 的逐 cell 最坏 truth harm；C：相对同调用 Zero-K2/K3 的逐 cell 最坏误差比；D：独立复算与未完成证据门。所有比例小于 1，但仍只属于无噪声 8³ 已知 straight-ray 几何。</figcaption>
       </figure>
@@ -1645,7 +1664,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_analytic_factor_resource_v62.png" aria-label="打开 v62.2 九视角解析因子精度与资源结果图">
-          <img src="../assets/nine_view_analytic_factor_resource_v62.png" alt="v62.2 九视角解析因子的完整向量精度、fresh outer wall、资源比例与调用账" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_analytic_factor_resource_v62.png" alt="v62.2 九视角解析因子的完整向量精度、fresh outer wall、资源比例与调用账" />
         </a>
         <figcaption>左上：每帧从 4A+4A^T 改为四次解析 B 和一次精确 A^T；右上：完整 field/residual 误差比 1e-10 门低四个数量级以上；左下：5 与 101 次 fresh outer-wall 中位数；右下：101 次 compute、outer 与 RSS 配对比例。101 次只是循环五个 seeded proxy fields，不是泛化样本。</figcaption>
       </figure>
@@ -1661,7 +1680,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fnine_view_parallel_detector_kronecker_v61.png" aria-label="打开 v61 九视角平行投影 Kronecker 结构结果图">
-          <img src="../assets/nine_view_parallel_detector_kronecker_v61.png" alt="v61 九视角布局、324 个 rank-one block、小尺寸存储审计和独立重放误差" />
+          <img loading="lazy" decoding="async" src="../assets/nine_view_parallel_detector_kronecker_v61.png" alt="v61 九视角布局、324 个 rank-one block、小尺寸存储审计和独立重放误差" />
         </a>
         <figcaption>A：九个平行视角覆盖 0°–170°；B：324 个 view/component block 全部通过 rank-one 门；C：小尺寸审计中 factors 比 dense B 小 32 倍，但可扩展构造尚未证明；D：独立重算的 block、B 作用和 K4 误差均远低于冻结门。</figcaption>
       </figure>
@@ -1677,7 +1696,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fblastnet_factorized_detector_v60_1.png" aria-label="打开 v60.1 因子化探测器正规算子精确性与资源门结果图">
-          <img src="../assets/blastnet_factorized_detector_v60_1.png" alt="v60.1 因子化探测器正规算子的独立精确性、无存储 B、101-call wall 和 worker-self RSS 结果" />
+          <img loading="lazy" decoding="async" src="../assets/blastnet_factorized_detector_v60_1.png" alt="v60.1 因子化探测器正规算子的独立精确性、无存储 B、101-call wall 和 worker-self RSS 结果" />
         </a>
         <figcaption>A：独立复算的 B 作用、K4 field 与 residual 差均远低于冻结门；B：persistent factors 仅 45,568 bytes；C：五次调用受启动成本主导，101 次调用摊销后 outer p50 为 0.841 倍；D：worker-self RSS 不劣。101 次只是循环五个 observation 的资源负载，不是新数据或泛化。</figcaption>
       </figure>
@@ -1693,7 +1712,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sparse_detector_replay_v58.png" aria-label="打开 v58.1 稀疏探测器空间重放结果总图">
-          <img src="../assets/poolfire_c_sparse_detector_replay_v58.png" alt="v58.1 的机器精度等价、几何稀疏压缩、完整物理调用账和 fresh-process wall 结果" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_sparse_detector_replay_v58.png" alt="v58.1 的机器精度等价、几何稀疏压缩、完整物理调用账和 fresh-process wall 结果" />
         </a>
         <figcaption>左上：场与 residual 的独立复算差；右上：dense B 与 CSR B 存储；左下：每帧完整 A/A^T 调用；右下：五条轨迹的 fresh 核心计算与端到端 wall ratio。离线黑盒构造 B 的完整调用 break-even 约为 592 帧，当前 505 帧尚未单独越过该 setup 门。</figcaption>
       </figure>
@@ -1708,7 +1727,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fblastnet_sparse_detector_replay_v59.png" aria-label="打开 v59 外部坐标稀疏探测器重放混合结果总图">
-          <img src="../assets/blastnet_sparse_detector_replay_v59.png" alt="v59 外部坐标几何的代数等价与稀疏结构通过，但五帧 fresh wall 和 RSS 失败" />
+          <img loading="lazy" decoding="async" src="../assets/blastnet_sparse_detector_replay_v59.png" alt="v59 外部坐标几何的代数等价与稀疏结构通过，但五帧 fresh wall 和 RSS 失败" />
         </a>
         <figcaption>上排：外部坐标几何仍保持机器精度重放和 2.58% 稀疏度。下排：核心计算更快，但 5 帧 worker 未摊薄加载，端到端 wall 与 peak RSS 均越过失败线。视图拓扑仍是三正交轴，不能称任意相机迁移。</figcaption>
       </figure>
@@ -1723,7 +1742,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_six_space_truth_feasible_roster_v52.png" aria-label="打开 v52 六维真值可行候选表总图">
-          <img src="../assets/blastnet_h2air_phi05_six_space_truth_feasible_roster_v52.png" alt="BLASTNet 开封 S2 数据上 v52 六维真值可行候选表的三指标分布、单项检查和最佳候选" />
+          <img loading="lazy" decoding="async" src="../assets/blastnet_h2air_phi05_six_space_truth_feasible_roster_v52.png" alt="BLASTNet 开封 S2 数据上 v52 六维真值可行候选表的三指标分布、单项检查和最佳候选" />
         </a>
         <figcaption>2,312 个预先冻结请求中，没有一个同时越过三项 1.01 完整门。有限表负结果把下一步收窄到一次连续约束 oracle；在此之前不训练六系数网络。</figcaption>
       </figure>
@@ -1738,7 +1757,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_second_residual_adjoint_v51.png" aria-label="打开 v51 第二残差伴随增广总图">
-          <img src="../assets/blastnet_h2air_phi05_second_residual_adjoint_v51.png" alt="BLASTNet 开封 S2 数据上 v51 第六残差伴随方向的 span 外能量、秩和三指标结果" />
+          <img loading="lazy" decoding="async" src="../assets/blastnet_h2air_phi05_second_residual_adjoint_v51.png" alt="BLASTNet 开封 S2 数据上 v51 第六残差伴随方向的 span 外能量、秩和三指标结果" />
         </a>
         <figcaption>第六方向真实改变了可达空间，也改善了观测误差，但没有解决梯度安全瓶颈。下一诊断区分六维 span 限制和 selector 限制，不直接扩大网络。</figcaption>
       </figure>
@@ -1753,7 +1772,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_fixed_roster_v50.png" aria-label="打开 v50 固定候选表总图">
-          <img src="../assets/blastnet_h2air_phi05_fixed_roster_v50.png" alt="BLASTNet 开封 S2 数据上 v50 固定候选表的三指标门与独立判决" />
+          <img loading="lazy" decoding="async" src="../assets/blastnet_h2air_phi05_fixed_roster_v50.png" alt="BLASTNet 开封 S2 数据上 v50 固定候选表的三指标门与独立判决" />
         </a>
         <figcaption>2,304 个候选中，没有一个同时越过三项 1.01 完整门。v51 随后增加了真实的第六方向；它修复 observation，但 gradient 仍未过门。</figcaption>
       </figure>
@@ -1768,7 +1787,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_curved_adjoint_v44.png" aria-label="打开 v44 单 curved-adjoint 富集诊断图">
-          <img src="../assets/blastnet_h2air_phi05_curved_adjoint_v44.png" alt="BLASTNet 开封数据上 v44 单 curved-adjoint 富集的三指标、配对贡献与方向能量" />
+          <img loading="lazy" decoding="async" src="../assets/blastnet_h2air_phi05_curved_adjoint_v44.png" alt="BLASTNet 开封数据上 v44 单 curved-adjoint 富集的三指标、配对贡献与方向能量" />
         </a>
         <figcaption>新方向的旧 span 外能量与非零权重证明它不是数值装饰；后续 v45-v47 已进一步排除固定平滑、整体调幅和局部五系数重调。</figcaption>
       </figure>
@@ -1783,7 +1802,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_krylov_trust_region_v43.png" aria-label="打开 v43 JVP trust-region 诊断图">
-          <img src="../assets/blastnet_h2air_phi05_krylov_trust_region_v43.png" alt="BLASTNet 开封数据上 v43 四方向 JVP trust-region 的逐帧精度比、权重和调用账" />
+          <img loading="lazy" decoding="async" src="../assets/blastnet_h2air_phi05_krylov_trust_region_v43.png" alt="BLASTNet 开封数据上 v43 四方向 JVP trust-region 的逐帧精度比、权重和调用账" />
         </a>
         <figcaption>v42 的 direct curved SLSQP 因预算耗尽只能判为 inconclusive；v43 用有界 JVP trust region 完成可复算诊断。四帧均未同时守住 field / gradient / observation，固定四方向系数网络停止授权。</figcaption>
       </figure>
@@ -1798,7 +1817,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_krylov_increment_span_v41.png" aria-label="打开 v41 四方向 Krylov 诊断图">
-          <img src="../assets/blastnet_h2air_phi05_krylov_increment_span_v41.png" alt="BLASTNet 开封数据上四个 Krylov 增量调权后的逐帧精度比、权重和聚合误差" />
+          <img loading="lazy" decoding="async" src="../assets/blastnet_h2air_phi05_krylov_increment_span_v41.png" alt="BLASTNet 开封数据上四个 Krylov 增量调权后的逐帧精度比、权重和聚合误差" />
         </a>
         <figcaption>v41 是开封后机制实验。4A+4A<sup>T</sup> 只是 basis 成本；完整搜索用了 1425 次 curved forward，不能写成加速。</figcaption>
       </figure>
@@ -1813,7 +1832,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fblastnet_h2air_phi05_sarc_external_v40.png" aria-label="打开 v40.2 BLASTNet 外部检验图">
-          <img src="../assets/blastnet_h2air_phi05_sarc_external_v40.png" alt="BLASTNet H2-air 外部检验的逐帧精度比、中位误差与后验幅度诊断" />
+          <img loading="lazy" decoding="async" src="../assets/blastnet_h2air_phi05_sarc_external_v40.png" alt="BLASTNet H2-air 外部检验的逐帧精度比、中位误差与后验幅度诊断" />
         </a>
         <figcaption>外部门 4/4 失败；右图是开封后机理诊断，只能解释失败，不能回写外部分数。</figcaption>
       </figure>
@@ -1828,7 +1847,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_sarc_postopen_v39_1.png" aria-label="打开 v38-v39.1 SARC-K3-M4 结果图">
-          <img src="../assets/poolfire_c_sarc_postopen_v39_1.png" alt="SARC-K3-M4 v38-v39.1 精度迁移、fresh wall 与峰值 RSS 结果" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_sarc_postopen_v39_1.png" alt="SARC-K3-M4 v38-v39.1 精度迁移、fresh wall 与峰值 RSS 结果" />
         </a>
         <figcaption>左：两条 post-open 轨迹相对 Direct-K4 的精度；中：相对三种强对照的 wall；右：相对 Zero-K4 与 Direct-K4 的 RSS。图中没有 untouched 泛化或真实 BOST。</figcaption>
       </figure>
@@ -1843,7 +1862,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_direct_field_v29.png" aria-label="打开 v29 Direct-Field 结果图">
-          <img src="../assets/poolfire_c_direct_field_v29.png" alt="PoolFire Direct-Field v29 的六条轨迹精度比、真实调用数、CPU 资源失败与证据判决" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_direct_field_v29.png" alt="PoolFire Direct-Field v29 的六条轨迹精度比、真实调用数、CPU 资源失败与证据判决" />
         </a>
         <figcaption>误差比低于 1 为改善；Direct-K1 每 100 帧对执行 401 次完整 A/A^T，对照 Zero-K3 为 600 次。当前 Mac 的 wall/RSS 比均高于 1，因此少算还没有转化成端到端加速。</figcaption>
       </figure>
@@ -1858,7 +1877,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_differentiable_curved_matched_v28.png" aria-label="打开 v28 可微曲线 matched-budget 结果图">
-          <img src="../assets/poolfire_c_differentiable_curved_matched_v28.png" alt="PoolFire C v28 七条轨迹的 matched accuracy、wall 降幅、非线性调用账与证据边界" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_differentiable_curved_matched_v28.png" alt="PoolFire C v28 七条轨迹的 matched accuracy、wall 降幅、非线性调用账与证据边界" />
         </a>
         <figcaption>A：相对 Zero 的三项比低于 1；B/C：同进程 wall 与调用 headroom；D：Full Parent gradient harm 为 7/7，完整输入绑定和独立科学复算未完成。正式状态 HOLD，algorithm_breakthrough=false。</figcaption>
       </figure>
@@ -1873,7 +1892,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_external_curved_resource_v27.png" aria-label="打开 v27 外部曲折资源实测图">
-          <img src="../assets/poolfire_c_external_curved_resource_v27.png" alt="PoolFire C v27 六个曲折代理单元相对 Full Parent 和 Zero-K4 的 wall、尾部、RSS 与 CPU 配对结果" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_external_curved_resource_v27.png" alt="PoolFire C v27 六个曲折代理单元相对 Full Parent 和 Zero-K4 的 wall、尾部、RSS 与 CPU 配对结果" />
         </a>
         <figcaption>A：只有相对父方法的 wall 点估计约过 10%；B：相对 Zero-K4 的慢尾部没有优势；C：所有 direct-child RSS p90 均越过 1.05；D：CPU 有下降但不足以形成完整资源通过。algorithm_breakthrough=false。</figcaption>
       </figure>
@@ -1888,7 +1907,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../assets/poolfire_c_dual_detector_w8d2_v14.png" target="_blank" rel="noreferrer" aria-label="打开 v14 w8d2 五轨迹容量边界图原尺寸">
-          <img src="../assets/poolfire_c_dual_detector_w8d2_v14.png" alt="PoolFire C v14 的参数压缩、五轨迹 joint matched 比例和 P45 observation margin" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_dual_detector_w8d2_v14.png" alt="PoolFire C v14 的参数压缩、五轨迹 joint matched 比例和 P45 observation margin" />
         </a>
         <figcaption>五条完整 fit-trajectory LOTO、505 帧。P45 有 90/101 joint match，11 个 miss 全为 observation-only；其余四条均 101/101，全部轨迹 harm=0、severe=0。严格结论仍是 FAIL，不授权 full-fit 或资源门。</figcaption>
       </figure>
@@ -1898,7 +1917,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../assets/poolfire_c_observation_residual_v15_1.png" target="_blank" rel="noreferrer" aria-label="打开 v15.1 五轨迹观测残差机制图原尺寸">
-          <img src="../assets/poolfire_c_observation_residual_v15_1.png" alt="PoolFire C v15.1 的跨轨迹 residual support、P45 富集比和五轨迹频带能量矩阵" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_observation_residual_v15_1.png" alt="PoolFire C v15.1 的跨轨迹 residual support、P45 富集比和五轨迹频带能量矩阵" />
         </a>
         <figcaption>共享模式必须在至少三条相同轨迹同时获得一致性与 top-3 票、没有强反转，并通过 P45 两项 1.25 富集门。没有模式通过；独立复算数组与摘要最大差均为 0，algorithm_breakthrough=false。</figcaption>
       </figure>
@@ -1908,7 +1927,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../assets/poolfire_c_independent_resource_v16_1.png" target="_blank" rel="noreferrer" aria-label="打开 v16/v16.1 独立轨迹与资源门结果图原尺寸">
-          <img src="../assets/poolfire_c_independent_resource_v16_1.png" alt="PoolFire C v16/v16.1 的 18 组 fresh-process wall、资源比和冻结判决" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_independent_resource_v16_1.png" alt="PoolFire C v16/v16.1 的 18 组 fresh-process wall、资源比和冻结判决" />
         </a>
         <figcaption>一条额外公开 development trajectory、101 帧、每个 arm 18 个 fresh process。数值等价、调用减半和典型 wall 通过；冷启动稳定性、CPU 与 peak RSS 失败。独立审计 P0=0/P1=0，algorithm_breakthrough=false。</figcaption>
       </figure>
@@ -1918,7 +1937,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../assets/poolfire_c_persistent_serial_v17.png" target="_blank" rel="noreferrer" aria-label="打开 v17 单持久线程资源结果图原尺寸">
-          <img src="../assets/poolfire_c_persistent_serial_v17.png" alt="PoolFire C v17 的典型 wall、CPU、peak RSS 和首次冷启动严格判决" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_persistent_serial_v17.png" alt="PoolFire C v17 的典型 wall、CPU、peak RSS 和首次冷启动严格判决" />
         </a>
         <figcaption>18×2 fresh process、无 warm-up、第一次运行保留。v17 修复了 v16.1 的 peak-RSS 失败，也通过典型 wall 门；CPU 和冷启动 no-harm 没过，所以不能写成稳定部署加速，algorithm_breakthrough=false。</figcaption>
       </figure>
@@ -1928,7 +1947,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_temporal_dual_v18.png" aria-label="打开 v18 因果时间复用结果图">
-          <img src="../assets/poolfire_c_temporal_dual_v18.png" alt="PoolFire C v18 五折计划 CNN 比例、p33 调度帧数与同精度命中率" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_temporal_dual_v18.png" alt="PoolFire C v18 五折计划 CNN 比例、p33 调度帧数与同精度命中率" />
         </a>
         <figcaption>Event gate 以接近全回退守住精度；Stride-2 证明强行提高复用率会越过精度边界。所有 temporal arms 仍是既有 <code>202A+202A^T</code>，没有新增算子减少、真实 CNN 加速、fresh 泛化或真实 BOST 结论，algorithm_breakthrough=false。</figcaption>
       </figure>
@@ -1938,7 +1957,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_motion_state_v19.png" aria-label="打开 v19 平移状态诊断图">
-          <img src="../assets/poolfire_c_motion_state_v19.png" alt="PoolFire C v19 五轨迹 skipped-only joint match、非零位移比例和 proposal p90 三联图" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_motion_state_v19.png" alt="PoolFire C v19 五轨迹 skipped-only joint match、非零位移比例和 proposal p90 三联图" />
         </a>
         <figcaption>左：三个工况即使使用 proposal-visible diagnostic 仍未过 90% 门。中：完整 proposal 几乎从不选择非零位移。右：对角增量能显著降低 dual MSE，却仍不能保证最终 field/gradient/observation 非劣。v19 只否定固定 per-view integer shift + scale 家族，不证明其他非刚性或低秩状态模型不可能；algorithm_breakthrough=false。</figcaption>
       </figure>
@@ -1948,7 +1967,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_temporal_lift_v20.png" aria-label="打开 v20 共享 lift 子空间诊断图">
-          <img src="../assets/poolfire_c_temporal_lift_v20.png" alt="PoolFire C v20 五条轨迹随公共 rank 变化的 skipped-only joint match，以及 rank 192 与时间控制对比" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_temporal_lift_v20.png" alt="PoolFire C v20 五条轨迹随公共 rank 变化的 skipped-only joint match，以及 rank 192 与时间控制对比" />
         </a>
         <figcaption>左：p45 与 p58 随 rank 增加持续改善但停在 90% 门下，p22 从 rank 32 起通过，p14/p33 在 rank 0 已通过。右：rank 192 明显优于 diagonal/linear control，却仍不能覆盖全部工况。v20 只否定 lift-L2 系数下的共享线性 span；下一门是在同一 span 内改用 measurement-aware oracle 系数，algorithm_breakthrough=false。</figcaption>
       </figure>
@@ -1958,7 +1977,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../asset_viewer.html?asset=assets%2Fpoolfire_c_temporal_lift_measurement_v21.png" aria-label="打开 v21 A-space 与 lift-L2 同 rank 对照图">
-          <img src="../assets/poolfire_c_temporal_lift_measurement_v21.png" alt="PoolFire C v21 五条留出轨迹在固定 rank 192 下的 A-space oracle 与配对 lift-L2 skipped-only joint match 对照" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_temporal_lift_measurement_v21.png" alt="PoolFire C v21 五条留出轨迹在固定 rank 192 下的 A-space oracle 与配对 lift-L2 skipped-only joint match 对照" />
         </a>
         <figcaption>固定 primary centered family 与 rank 192 的同因子比较。前三条轨迹两种目标都通过；p45 两者同为 66%，p58 的 A-space 为 70%、lift-L2 为 72%，都低于 90% 门。A-space 只产生混合的小变化，没有形成稳定改善；algorithm_breakthrough=false。</figcaption>
       </figure>
@@ -1979,19 +1998,19 @@
       <div class="figure-grid" style="margin-top:14px;">
         <figure>
           <a href="../assets/poolfire_c_dual_representation_ceiling_v10_4_2.png" target="_blank" rel="noreferrer">
-            <img src="../assets/poolfire_c_dual_representation_ceiling_v10_4_2.png" alt="PoolFire C v10.4.2 对比 Zero K4、完整 K3 dual restart、best capped 与 uncapped B96 的三项 p90，并展示 DCT capture 真实低侧尾部和六个 view-channel 的修正能量失衡" />
+            <img loading="lazy" decoding="async" src="../assets/poolfire_c_dual_representation_ceiling_v10_4_2.png" alt="PoolFire C v10.4.2 对比 Zero K4、完整 K3 dual restart、best capped 与 uncapped B96 的三项 p90，并展示 DCT capture 真实低侧尾部和六个 view-channel 的修正能量失衡" />
           </a>
           <figcaption>完整 K3 restart 通过门，而有限 B96 搜索失败；rank 96 只保留约 37%–42% 的低侧/中位修正能量。这是已见 p14 的机制诊断。</figcaption>
         </figure>
         <figure>
           <a href="../assets/poolfire_c_dual_spectral_fit_loto_v10_5.png" target="_blank" rel="noreferrer">
-            <img src="../assets/poolfire_c_dual_spectral_fit_loto_v10_5.png" alt="PoolFire C v10.5 五条 fit 轨迹留一比较 selected 与 uniform DCT 的 q teacher p90 差值；rank 96 和 216 均匀控制更好，rank 384 selected 略好" />
+            <img loading="lazy" decoding="async" src="../assets/poolfire_c_dual_spectral_fit_loto_v10_5.png" alt="PoolFire C v10.5 五条 fit 轨迹留一比较 selected 与 uniform DCT 的 q teacher p90 差值；rank 96 和 216 均匀控制更好，rank 384 selected 略好" />
           </a>
           <figcaption>正值表示均匀 DCT 更好。rank 96/216 是 10 次稳定负证据；rank 384 的 selected 在五条 held-out fit 上均略好。它仍是未封存的 fit-only 探索结果，不是 p14、泛化或算法突破。</figcaption>
         </figure>
         <figure>
           <a href="../assets/poolfire_c_dual_spectral_v10_5_p14.png" target="_blank" rel="noreferrer">
-            <img src="../assets/poolfire_c_dual_spectral_v10_5_p14.png" alt="PoolFire C v10.5 正式 p14 机制矩阵：projection 两个 family 三个 rank 全部失败，selected teacher-oracle 从 rank 96 起通过，uniform oracle 全部失败" />
+            <img loading="lazy" decoding="async" src="../assets/poolfire_c_dual_spectral_v10_5_p14.png" alt="PoolFire C v10.5 正式 p14 机制矩阵：projection 两个 family 三个 rank 全部失败，selected teacher-oracle 从 rank 96 起通过，uniform oracle 全部失败" />
           </a>
           <figcaption>左图是冻结 compatibility gate，右图是 K4 teacher objective。selected rank96 已有 oracle headroom，但 projection 完全找不到该解；这是“该学系数映射”的证据，不是 learned predictor 成功。</figcaption>
         </figure>
@@ -2059,7 +2078,7 @@
         </div>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_c_dual_detector_w8d2_v14.png" alt="PoolFire C 路线 v14 的 w16d2/w8d2 参数量、五轨迹 joint match 和 P45 observation margin 三联图" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_c_dual_detector_w8d2_v14.png" alt="PoolFire C 路线 v14 的 w16d2/w8d2 参数量、五轨迹 joint match 和 P45 observation margin 三联图" />
         <figcaption>Candidate 为 observation-only w8d2 dual proposal + exact Aᵀ + observable alpha + strict K1。独立回放最大差 3.33e-16；P45 的 11 个 miss 全为 observation-only，harm 与 severe 为 0，但 90/101 仍低于至少 91/101 的门，algorithm_breakthrough=false。</figcaption>
       </figure>
       <div class="section-head" style="margin-top:20px;">
@@ -2077,7 +2096,7 @@
         <span>reference-vs-inverse 投影失配的逐轨迹 p50 为 <code>34.0%–51.0%</code>，worst 为 <code>39.5%–55.7%</code>。几何完全相同而失配仍随工况变化，说明 fixed-K warm start 必须接受跨轨迹伤害审计；它不证明 ridge、FNO 或我们的模型更优。</span>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_c_cross_trajectory_pair_audit_v1.png" alt="五条开放 PoolFire 轨迹上独立参考正演与粗网格 inverse 投影失配的 p50、p90 和 worst 审计" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_c_cross_trajectory_pair_audit_v1.png" alt="五条开放 PoolFire 轨迹上独立参考正演与粗网格 inverse 投影失配的 p50、p90 和 worst 审计" />
         <figcaption>方块、圆点、三角分别是 p50、p90、worst。五条轨迹共享一个冻结几何、共 505 帧；图中只有输入模型失配，没有重建、速度或神经算法结果。</figcaption>
       </figure>
       <div class="section-head" style="margin-top:22px;">
@@ -2091,7 +2110,7 @@
         </div>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_c_semiconvergence_coverage_diagnosis_v1.png" alt="PoolFire C 路线在 p22 的 CGLS 半收敛、ridge K2 跨五轨迹迁移和 p14 PCA 覆盖缺口三联图" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_c_semiconvergence_coverage_diagnosis_v1.png" alt="PoolFire C 路线在 p22 的 CGLS 半收敛、ridge K2 跨五轨迹迁移和 p14 PCA 覆盖缺口三联图" />
         <figcaption>全部是已打开的开放代理 development/validation 诊断；原两条 test 后来也已被历史流程打开。图中没有真实实验 BOST，也没有算法突破。</figcaption>
       </figure>
       <div id="representation-gate" class="section-head" style="margin-top:22px;">
@@ -2106,7 +2125,7 @@
         </div>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_c_homogeneous_representation_audit_v5_1.png" alt="PoolFire C 路线 v5.1 四种固定全局表示在 rank 256 到 504 上的 p14 K4 target oracle 投影误差，以及 best raw、best RMS 与绝对门比较" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_c_homogeneous_representation_audit_v5_1.png" alt="PoolFire C 路线 v5.1 四种固定全局表示在 rank 256 到 504 上的 p14 K4 target oracle 投影误差，以及 best raw、best RMS 与绝对门比较" />
         <figcaption>rank 256→504 是主要改善来源；RMS 只比 best raw 好 0.1009%，未过 2% material-win 门。最佳 p90 0.148823 仍高于 0.05；这是可信负证据，不是算法突破。</figcaption>
       </figure>
       <div id="transport-proxy-gate" class="section-head" style="margin-top:22px;">
@@ -2122,7 +2141,7 @@
         </div>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_c_bp_transport_alignment_v6.png" alt="PoolFire C 路线 v6 六条轨迹的 raw BP 质心误差、整数 shift 一致率与冻结阈值" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_c_bp_transport_alignment_v6.png" alt="PoolFire C 路线 v6 六条轨迹的 raw BP 质心误差、整数 shift 一致率与冻结阈值" />
         <figcaption>teacher 最大 q10-q90 质心跨度 2.596 体素，说明输运存在；p45-s05 质心 p90 为 1.847 体素、exact shift 仅 14.85%。这是 raw-BP 统一平移的可信负结果，不是算法突破。</figcaption>
       </figure>
       <div id="geometry-equalized-bp-gate" class="section-head" style="margin-top:22px;">
@@ -2138,7 +2157,7 @@
         </div>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_c_geometry_equalized_bp_v7_1.png" alt="PoolFire C 路线 v7.1 六条轨迹 raw BP 与几何均衡 BP 的质心 p90 和整数 shift 完全一致率对照" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_c_geometry_equalized_bp_v7_1.png" alt="PoolFire C 路线 v7.1 六条轨迹 raw BP 与几何均衡 BP 的质心 p90 和整数 shift 完全一致率对照" />
         <figcaption>均衡对 p45 和 p14-s05 有真实改善，但没有跨轨迹关闭定位缺口；p22 的 p90 harm 说明固定对角校正也会伤害原本较好的工况。独立复算逐数组差为 0；没有 T1、神经训练、test 打开或算法突破。</figcaption>
       </figure>
       <div id="observation-centroid-calibration-gate" class="section-head" style="margin-top:22px;">
@@ -2155,7 +2174,7 @@
       </div>
       <figure style="margin-top:14px;">
         <a href="../assets/poolfire_c_observation_centroid_calibration_v8.png" target="_blank" rel="noreferrer" aria-label="打开 v8 三联图原尺寸">
-          <img src="../assets/poolfire_c_observation_centroid_calibration_v8.png" alt="PoolFire C 路线 v8 六条轨迹的低容量质心校准 p90、整数 shift 完全一致率和特征训练范围覆盖率" />
+          <img loading="lazy" decoding="async" src="../assets/poolfire_c_observation_centroid_calibration_v8.png" alt="PoolFire C 路线 v8 六条轨迹的低容量质心校准 p90、整数 shift 完全一致率和特征训练范围覆盖率" />
         </a>
         <figcaption>点击图可查看原尺寸。p45 有改善但仍未过门；p58 的连续误差略降、整数 exact 却受损；p14-s05 高覆盖仍失败。独立 validator 复算 43/43 个数组且最大差为 0.0。该负结果终止 shifted-POD 质心代理路线，不代表三维场、速度、内存、泛化或论文成功。</figcaption>
       </figure>
@@ -2196,15 +2215,15 @@
         </article>
       </div>
       <figure class="figure-card" style="margin-top:13px;">
-        <img src="../assets/poolfire_c_dual_coefficient_attainability_v10_7.png" alt="PoolFire C v10.7 五条 fit trajectory 的 rank96 可达性结果与 rank96/rank384 held-out K3 correction 能量覆盖诊断" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_c_dual_coefficient_attainability_v10_7.png" alt="PoolFire C v10.7 五条 fit trajectory 的 rank96 可达性结果与 rank96/rank384 held-out K3 correction 能量覆盖诊断" />
         <figcaption>左：正式 T0 只有 1/5 通过；右：结果后覆盖诊断显示 rank96 是明确瓶颈，rank384 仅为探索性容量信号，不是算法成功。</figcaption>
       </figure>
       <figure class="figure-card" style="margin-top:13px;">
-        <img src="../assets/poolfire_c_dual_full_view_controls_v10_8.png" alt="PoolFire C v10.8.2 full-view K3 dual 目标与四个 observation-only 控制的五轨迹判决" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_c_dual_full_view_controls_v10_8.png" alt="PoolFire C v10.8.2 full-view K3 dual 目标与四个 observation-only 控制的五轨迹判决" />
         <figcaption>左：完整 K3 dual 目标 5/5 通过，四个便宜控制均为 0/5；右：DCT diagonal 的 certificate L2 已明显下降，observation harm 仍在四条轨迹上大面积触发。</figcaption>
       </figure>
       <figure class="figure-card" style="margin-top:13px;">
-        <img src="../assets/poolfire_c_dual_full_linear_krr_v10_9.png" alt="PoolFire C v10.9 冻结九点 full-linear KRR 五折负结果" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_c_dual_full_linear_krr_v10_9.png" alt="PoolFire C v10.9 冻结九点 full-linear KRR 五折负结果" />
         <figcaption>左：自由跨坐标线性耦合的 held-out certificate p90 反而比 DCT diagonal 更差；右：每条轨迹都允许 outer oracle 选择 lambda，仍为 0/5。</figcaption>
       </figure>
       <div class="alert" style="margin-top:13px;">
@@ -2234,7 +2253,7 @@
         <span>后期五帧上，Direct-Warm 在固定 <code>K=2</code> 的平均 field-L2 为 <code>0.41486</code>；跑到 <code>K=24</code> 后恶化为 <code>0.48620</code>，即使 data residual 仍继续下降。高分辨率 reference 与 coarse inverse 的平均失配为 <code>35.011%</code>，所以主线创新应转向 calibration-aware correction budget，而不是无条件加深网络或迭代。</span>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_cfd_morphology_proxy_gate_v1.png" alt="真实 PoolFire CFD 形态代理、固定两步 warm-start 结果、完整物理调用曲线与独立进程成本边界" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_cfd_morphology_proxy_gate_v1.png" alt="真实 PoolFire CFD 形态代理、固定两步 warm-start 结果、完整物理调用曲线与独立进程成本边界" />
         <figcaption>v1 数值与 v0 一致，并新增 fresh-exec wall time 与 child RSS。横轴是累计完整三视角 <code>A+A^T</code> 调用；worker 内存不是全流程内存，当前也没有 wall-time 加速。</figcaption>
       </figure>
       <div class="check-grid" style="margin-top:14px;">
@@ -2269,7 +2288,7 @@
         <div class="actions"><a class="button" href="../document_reader.html?doc=docs%2Fpoolfire_c_baseline_contract_evidence_2026-07-23.md">完整统一基线证据</a></div>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_c_baseline_contract_gate_v0.png" alt="制造数据上的 Zero、归一化 BP 与 ridge Direct warm 逐物理调用合同检查" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_c_baseline_contract_gate_v0.png" alt="制造数据上的 Zero、归一化 BP 与 ridge Direct warm 逐物理调用合同检查" />
         <figcaption>这张制造数据图只保留为 solver/call-ledger 单元合同；研究证据重心已经转到上方真实 CFD 形态代理。</figcaption>
       </figure>
       <div class="section-head" style="margin-top:20px;">
@@ -2281,7 +2300,7 @@
         <span>线性、二次、余弦解析场相对误差为 <code>1.54e-16 / 2.08e-16 / 1.64e-15</code>；连续 reference 与 coarse inverse 在 <code>9³ → 65³</code> 上的差从 <code>7.927%</code> 降至 <code>0.156%</code>，约二阶收敛。</span>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_g0_reference_forward_gate_v0.png" alt="任意视角 straight-ray 参考正演的相机切盒、求积收敛、inverse 非同构和证据边界" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_g0_reference_forward_gate_v0.png" alt="任意视角 straight-ray 参考正演的相机切盒、求积收敛、inverse 非同构和证据边界" />
         <figcaption>左上展示 metre 坐标中的斜射线切盒，右上是求积收敛，左下证明有限网格 reference 与 inverse 不同但趋向同一连续极限。</figcaption>
       </figure>
       <div class="section-head" style="margin-top:20px;">
@@ -2292,7 +2311,7 @@
         <span>在精确 cell-average 解析场上，cell-to-node 在最细平滑场误差高 <code>3.664×</code>，在已解析前缘上高 <code>2.642×</code>，因此只保留为离散敏感性对照。</span>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_g0_cell_center_gate_v0.png" alt="三种 cell-centred BOST 接口路线的解析收敛、前缘分辨率、LOS 权重和单视角零空间比较" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_g0_cell_center_gate_v0.png" alt="三种 cell-centred BOST 接口路线的解析收敛、前缘分辨率、LOS 权重和单视角零空间比较" />
         <figcaption>左上比较精确 cell-average 平滑场收敛，右上显示前缘分辨率门，左下揭示 cell-to-node 的 <code>1.25/0.75</code> LOS 重加权，右下说明 exact adjoint 并没有消除单视角大零空间。</figcaption>
       </figure>
       <div class="check-grid" style="margin-top:14px;">
@@ -2343,7 +2362,7 @@
         </article>
       </div>
       <figure style="margin-top:14px;">
-        <img src="../assets/poolfire_preprocessing_proxy_v0.png" alt="PoolFire 两种块平均候选的梯度 RMS 保留率和正交 LOS 代理差比较" />
+        <img loading="lazy" decoding="async" src="../assets/poolfire_preprocessing_proxy_v0.png" alt="PoolFire 两种块平均候选的梯度 RMS 保留率和正交 LOS 代理差比较" />
         <figcaption>这是 rho-gradient 的三帧正交直线代理，不含相机透视、曲光线、折射率常数、背景渲染或光流；图中差异不能写成真实 BOST 误差。</figcaption>
       </figure>
       <div class="alert critical" style="margin-top:13px;">
@@ -2402,8 +2421,8 @@
     <section class="band">
       <div class="section-head"><div><div class="eyebrow">物理与模型图</div><h2>阅读时始终回到这两条链</h2></div></div>
       <div class="figure-grid">
-        <figure><img src="../figures/bost_physical_chain.png" alt="BOST 从流场物理量到背景位移和三维重建的链条" /><figcaption>每个数据通道、loss 和指标都应能在这条物理链上定位。</figcaption></figure>
-        <figure><img src="../figures/nerif_pipeline.png" alt="NeRIF 神经折射率场与 BOST 前向验证流程" /><figcaption>算子学习负责跨样本快速起点，NeRIF 负责单场连续表示和物理细化。</figcaption></figure>
+        <figure><img loading="lazy" decoding="async" src="../figures/bost_physical_chain.png" alt="BOST 从流场物理量到背景位移和三维重建的链条" /><figcaption>每个数据通道、loss 和指标都应能在这条物理链上定位。</figcaption></figure>
+        <figure><img loading="lazy" decoding="async" src="../figures/nerif_pipeline.png" alt="NeRIF 神经折射率场与 BOST 前向验证流程" /><figcaption>算子学习负责跨样本快速起点，NeRIF 负责单场连续表示和物理细化。</figcaption></figure>
       </div>
     </section>
 
@@ -2727,11 +2746,12 @@
           document.getElementById('liveFailureCount').textContent = `${metrics.unresolved_cell_count} 个反例`;
           document.getElementById('liveCallBudget').textContent = `${metrics.exact_A_calls_per_candidate}A + ${metrics.exact_AT_calls_per_candidate}A^T`;
           document.getElementById('liveBreakthrough').textContent = String(Boolean(decision.algorithm_breakthrough));
-          const nextGate = evidence.next_scientific_gate_zh || evidence.next_scientific_gate;
-          document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：${metrics.strict_witness_passed}/${metrics.cell_count} 个单元通过；下一门是 ${nextGate}。每次独立验证后的公开提交只需更新这份稳定清单。`;
+          const nextGate = String(evidence.next_scientific_gate_zh || evidence.next_scientific_gate).trim();
+          const nextGateSentence = /[。！？.!?]$/.test(nextGate) ? nextGate : `${nextGate}。`;
+          document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：${metrics.strict_witness_passed}/${metrics.cell_count} 个单元通过；下一门是 ${nextGateSentence}每次独立验证后的公开提交只需更新这份稳定清单。`;
         })
         .catch(() => {
-          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v92 仍为 89/90，单径向四次方向已关线，algorithm_breakthrough=false。';
+          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v93 证明缺口局部但主定位器失败，algorithm_breakthrough=false。';
         });
     })();
   </script>
