@@ -10,6 +10,29 @@
   const pageExtensions = new Set(["html", "htm"]);
   const blockedPrefixes = ["private_library/", "tmp_downloads/", ".git/", "_public_pages_export/"];
 
+  function loadLanguageSupport() {
+    const cssUrl = new URL("assets/site-language.css", rootUrl).href;
+    const jsUrl = new URL("assets/site-language.js", rootUrl).href;
+    const hasStylesheet = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+      .some((link) => new URL(link.href, location.href).href === cssUrl);
+    if (!hasStylesheet) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = cssUrl;
+      link.dataset.siteLanguageAsset = "stylesheet";
+      document.head.appendChild(link);
+    }
+    const hasScript = Array.from(document.querySelectorAll("script[src]"))
+      .some((script) => new URL(script.src, location.href).href === jsUrl);
+    if (!hasScript) {
+      const script = document.createElement("script");
+      script.src = jsUrl;
+      script.defer = true;
+      script.dataset.siteLanguageAsset = "script";
+      document.head.appendChild(script);
+    }
+  }
+
   function injectStyles() {
     if (document.getElementById("site-link-router-styles")) return;
     const style = document.createElement("style");
@@ -212,8 +235,12 @@
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", routeLinks, { once: true });
+    document.addEventListener("DOMContentLoaded", () => {
+      loadLanguageSupport();
+      routeLinks();
+    }, { once: true });
   } else {
+    loadLanguageSupport();
     routeLinks();
   }
 
