@@ -12172,3 +12172,75 @@ PASS_INDEPENDENT_RECOMPUTATION_REFERENCE_RANK4_OBSERVATION_PREDICTOR_V102
 - `docs/nine_view_case6_reference_rank4_observation_predictor_v102_result_2026-08-02.md`
 - `docs/nine_view_case6_reference_rank4_observation_predictor_v102_public_summary.json`
 - `assets/nine_view_case6_reference_rank4_observation_predictor_v102.png`
+
+## 2026-08-02：v103-v104 真正测试了微分同胚，但粗网格本身先失真
+
+### 师兄的建议怎样变成了真实实验
+
+师兄说可以加入微分同胚原理，提高换坐标系后的泛化。这里没有直接换一个名字很漂亮的网络，而是先构造六个光滑、可逆、Jacobian 始终为正的三维坐标变换：分别沿 x/y/z 正向或反向轻微弯曲坐标。
+
+关键不是只把三维数组 warp 一下。正式实现同时改变物理场的采样、forward 和 adjoint：
+
+```text
+A_phi x   = A_ref P_phi S x
+A_phi^T y = S P_phi^T A_ref^T y
+```
+
+`P_phi^T` 使用与 forward 完全相同插值权重的精确转置。54 组伴随探针的最坏相对误差为 `5.60e-14`，说明公式和代码方向没有写反。
+
+### v103 先暴露了两个问题
+
+第一轮使用较明显的 `|a|=0.18` 形变。可逆性和伴随都通过，但形变后再变回来的粗网格场、内部梯度和观测误差最坏分别为 `0.1468 / 0.2996 / 0.1307`，全部越过预先冻结的可信上限。
+
+更严重的是直接拿 `A^T y` 当初值，maximum-gate 已经到 `156–228`。这不是一个“模型略差”的结果，而是初值量纲/尺度失控。因此 v103 被写成 `INCONCLUSIVE`，不能拿来判断微分同胚有没有用。
+
+### v104 只允许修两件事
+
+1. 形变幅值从 `0.18` 降到 `0.08`，不做 sweep；
+2. 只用观测计算 BP 的最小残差标量，再混入 25% 的固定物理均值目标。
+
+归一化确实把 maximum-gate 从百量级降到约 `0.43–0.52`，说明尺度病态被修掉了。但 gate 是“实际比值减阈值”，必须小于等于零才通过；所以它仍然不合格。
+
+### 真正结果
+
+| 项目 | 结果 |
+|---|---:|
+| 恒等坐标候选 | `0/15` |
+| 正确微分同胚搬运 | `0/90` |
+| 完全不搬运 control | `0/90` |
+| 相反符号 control | `0/90` |
+| field roundtrip worst / limit | `0.1053 / 0.08` |
+| interior-gradient roundtrip worst / limit | `0.2911 / 0.25` |
+| observation equivariance worst / limit | `0.1309 / 0.12` |
+
+正确搬运没有比不搬运或反向搬运形成稳定优势。由于粗网格数值保真门先失败，不能把这些对照写成算法性能结论；但恒等坐标的 `0/15` 已足以说明“固定 rank-0 目标 + normalized BP + K1”不是下一步值得扩大的 initializer。
+
+### 独立复算
+
+独立程序不用正式 v104 的坐标映射、normalized-anchor core 或 runner，而是用固定轮数二分法重新求逆映射，重新构造 gather/scatter 和 495 条重建。
+
+- 六个数组最大差：`1.17e-15`；
+- 指标和 gate 最大差：`1.11e-15`；
+- 数值诊断最大差：`7.63e-15`；
+- joint-pass 判决不一致：`0`。
+
+前两次独立运行因为把扁平场和三维场混在严格 shape 检查里而停止，没有生成签字。修复后从新提交把正式与独立两遍都重跑了一次，最终才形成有效结论。
+
+### 是否成功、是否突破
+
+- **物理/数学实现成功：** 微分同胚离散共轭、逆映射和伴随闭合。
+- **算法机制失败：** 固定 rank-0 normalized anchor 连恒等预条件都没过。
+- **实验载体失败：** `32x16x16` 三线性 warp 不能代表可信连续坐标变化。
+- **没有突破：** `algorithm_breakthrough=false`，没有外部泛化、资源或真实 BOST 结果。
+
+### 接下来怎样调整
+
+不再继续把形变幅值调小，也不在这套目标上训练更大的网络。下一步先把坐标变化放到高分辨率或连续物理域，再统一 restriction 到粗逆问题网格，检查场、梯度和观测误差是否随分辨率收敛。
+
+只有这个门通过，才有资格重新设计 observation-adaptive、pose-conditioned initializer。当前 CPU 足够，仍不租 GPU。
+
+公开证据：
+
+- `docs/nine_view_case6_diffeomorphic_normalized_anchor_v104_result_2026-08-02.md`
+- `docs/nine_view_case6_diffeomorphic_normalized_anchor_v104_public_summary.json`
+- `assets/nine_view_case6_diffeomorphic_normalized_anchor_v104.png`
