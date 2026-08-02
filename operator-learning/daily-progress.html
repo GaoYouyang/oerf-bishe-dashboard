@@ -509,13 +509,13 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>75 / 90</b>
-        <span>v98 最佳简单联合 13D predictor；mean 与 linear 持平，RBF 为 71/90。</span>
+        <b>11 / 11</b>
+        <span>v99 坐标输运物理门；完整变换约 1e-16，错误 warp 为 6.88%–132.56%。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v98 的普通联合 13D 回归最多 75/90，下一门转向相机几何与坐标变换原理</strong>
-      <span>v96 的联合 13D truth-aware 容量仍为 <code>90/90</code>，但 v98 在五折隔离下得到 scenario mean <code>75/90</code>、linear ridge <code>75/90</code>、RBF KRR <code>71/90</code>。独立程序重建模型选择并重跑全部 270 个精确物理单元，判决一致；held-out target mutation 对选择与预测的影响均为 0。因此普通联合坐标回归路线关闭，下一门验证显式位姿/射线条件化与微分同胚物理可交换性。<code>algorithm_breakthrough=false</code>，当前仍不租 GPU。</span>
+      <strong>最新科学判决：v99 坐标输运物理接口 11/11 通过，连续未见机位泛化仍待验证</strong>
+      <span>正式与独立程序在两个三维格点旋转和一个光滑可逆剪切上，验证密度标量 pullback、梯度 <code>J<sup>-T</sup></code>、射线、探测器基和伴随同步输运。完整变换最坏误差约 <code>1.29e-15</code>，错误 warp 为 <code>6.88%–132.56%</code>。这只证明物理接口正确；固定物理相机、SE(3)、任意微分同胚、未见 pose、learned initializer 与真实 BOST 均未证明。<code>algorithm_breakthrough=false</code>，当前仍不租 GPU。</span>
       <details style="margin-top:10px;">
         <summary>展开同日 v94 及更早父证据</summary>
         <span>
@@ -631,6 +631,10 @@
                 <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
+                    <span class="tag">v99 物理门 11/11</span>
+                    <span class="tag engineering">完整输运约 1e-16</span>
+                    <span class="tag negative">错误 warp 6.88%–132.56%</span>
+                    <span class="tag negative">固定物理相机未证明</span>
                     <span class="tag negative">v98 联合预测 75/90</span>
                     <span class="tag negative">普通回归路线关闭</span>
                     <span class="tag negative">v97 条件容量 86/90</span>
@@ -640,13 +644,50 @@
                     <span class="tag engineering">270 回放逐值复算</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3>v98 完成联合 13D 外折预测仍未封口；路线转向显式几何与微分同胚一致性</h3>
-                  <p>v96 先证明表示有 90/90 容量，v97 排除四系数拆分，v98 再直接预测联合 13D。mean、linear、RBF 仍最多 75/90，说明下一步不能只靠扩大普通回归器。</p>
+                  <h3>v99 把微分同胚建议变成 11 个物理门并全部通过；下一步转向连续 pose/ray 未见几何验证</h3>
+                  <p>v98 证明普通联合回归最多 75/90 后，v99 没有扩大模型，而是先检查坐标变化下体场、梯度、相机和伴随是否物理一致。正确实现达到数值舍入精度，错误 warp 被明确检出。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
               <div class="entry-body">
                 <div class="evidence-grid">
+                  <section>
+                    <h4>师兄的建议是什么意思</h4>
+                    <p>模型不能只记住 F12/F15/F30 三个 geometry ID。若换坐标系或相机位姿，密度标量、密度梯度、射线和探测器方向必须按同一个可逆映射变化；否则模型会把坐标伪差当成物理规律。</p>
+                  </section>
+                  <section>
+                    <h4>v99 真正运行了什么</h4>
+                    <p>结果前冻结两个保持格点的三维旋转和一个显式光滑剪切。正式程序逐项验证 scalar pullback、<code>J<sup>-T</sup></code> 梯度、相机 bundle、forward 交换、adjoint 交换与伴随恒等式，并加入只变体场、只变射线、漏变梯度或探测器基的错误对照。</p>
+                  </section>
+                  <section>
+                    <h4>v99 正式结果</h4>
+                    <ul>
+                      <li>冻结的坐标输运门：<code>11 / 11</code> 全部通过。</li>
+                      <li>正确 forward / adjoint / 伴随最坏相对误差：<code>1.2870e-15</code>。</li>
+                      <li>只旋转体场的中位误差至少 <code>132.56%</code>；只旋转射线至少 <code>79.16%</code>。</li>
+                      <li>光滑剪切中省略 <code>J<sup>-T</sup></code> 或固定探测器基，observation 误差均为 <code>6.88%</code>。</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h4>独立复算为什么可信</h4>
+                    <p>独立程序没有导入正式 v99 core 或 runner，重新实现旋转、pullback、相机变换、剪切和错误对照。它还从 <code>rho_ref(phi_inverse(X))</code> 出发，用自动微分直接求物理坐标梯度；与解析 <code>J<sup>-T</sup></code> 的误差为 <code>1.67e-16</code>。</p>
+                  </section>
+                  <section>
+                    <h4>成功了什么</h4>
+                    <p>成功把“微分同胚能否帮助泛化”拆成了先决物理门，并证明当前坐标输运接口数值正确。今后训练连续 pose/ray 模型时，可以区分真正的几何规律与错误数组 warp。</p>
+                  </section>
+                  <section>
+                    <h4>为什么还不是算法突破</h4>
+                    <p>Stage B 使用逐采样点 pushed-forward detector basis 与参考参数积分，尚未证明一般非刚体映射下的固定物理相机等价；也没有 learned initializer、未见 pose、SE(3)、任意微分同胚、外部数据、wall/RSS 或真实 BOST 结果。</p>
+                  </section>
+                  <section>
+                    <h4>下一科学门</h4>
+                    <p>不再只输入 geometry ID，而是输入每个视角的相机原点/方向、探测器 u/v 基、内参与射线参数。公平比较连续 pose/ray encoding 与参考域 canonicalization，并用 leave-one-geometry-out 同时检查 truth-aware 容量和严格 observation-only 预测。</p>
+                  </section>
+                  <section>
+                    <h4>算力决策</h4>
+                    <p>当前门仍是小规模物理接口与表示验证，CPU 足够。只有未见几何外折出现稳定 headroom，才授权最小 pose-conditioned sentinel；此时再根据吞吐判断是否租 GPU。</p>
+                  </section>
                   <section>
                     <h4>v98 真正执行了什么</h4>
                     <p>在同一 30 帧、三档已知九视角几何上，按五个连续时间外折和一帧 embargo，训练 scenario mean、nested linear ridge 与 nested RBF KRR。输入只含部署可见观测、残差、物理 Gram/投影特征和已知几何身份，联合预测 v96 的 13 个坐标。</p>
@@ -774,12 +815,15 @@
                   </section>
                 </div>
                 <figure class="entry-figure">
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v97_case6_joint13_observation_predictor_v98.png" aria-label="打开 v98 联合十三维预测结果图">
-                    <img src="../assets/nine_view_v97_case6_joint13_observation_predictor_v98.png" alt="v98 联合十三维小模型严格外折结果" />
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_coordinate_transport_v99.png" aria-label="打开 v99 坐标输运结果图">
+                    <img src="../assets/nine_view_coordinate_transport_v99.png" alt="v99 三维坐标输运物理门结果" />
                   </a>
-                  <figcaption>v98：mean 与 linear ridge 均为 75/90，RBF 为 71/90；联合表示容量仍在，但简单 observation-only 算法未完成。</figcaption>
+                  <figcaption>v99：完整坐标输运达到约 1e-16，错误 warp 为 6.88%–132.56%。物理接口通过，但固定物理相机与未见 pose 泛化尚未证明。</figcaption>
                 </figure>
                 <div class="entry-links">
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_coordinate_transport_v99_result_2026-08-02.md">v99 完整证据</a>
+                  <a href="../docs/nine_view_coordinate_transport_v99_public_summary.json">v99 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_coordinate_transport_v99.png">v99 结果图</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_v97_case6_joint13_observation_predictor_v98_result_2026-08-02.md">v98 完整证据</a>
                   <a href="../docs/nine_view_v97_case6_joint13_observation_predictor_v98_public_summary.json">v98 脱敏摘要</a>
                   <a href="../asset_viewer.html?asset=assets%2Fnine_view_v97_case6_joint13_observation_predictor_v98.png">v98 结果图</a>
@@ -2111,13 +2155,16 @@
         fit-only OOF residual 冻结安全阈值，让 <code>49</code> 个单元停在 K1、<code>26</code> 个继续真实 CGLS K2，
         最终 <code>75/75</code> 通过八门并把每类 exact 调用从 <code>4</code> 降至 <code>2.3467</code>。v85 再零适配外测：
         Case 4 为 <code>84/84</code>，Case 6 为 <code>78/90</code>，12 个失败全部只在内部梯度；联合外部门因此 FAIL。
-        两例独立复算声明差值均为 <code>0</code>，wall/RSS 未启动，仍没有外部泛化、真实 BOST 或论文成功证据。
+        两例独立复算声明差值均为 <code>0</code>，wall/RSS 未启动。v96-v98 随后把问题收束为“表示有容量、普通
+        observation-only 回归不能封口”；v99 再把师兄提出的微分同胚思想落实为 11 个坐标输运门并全部独立通过。
+        正确变换达到约 <code>1e-16</code>，错误 warp 为 <code>6.88%–132.56%</code>。这仍没有证明固定物理相机、未见
+        pose 泛化、真实 BOST 或论文成功。
       </p>
     </section>
   </main>
 
   <footer>
-    持续更新至 v98 Case 6 联合 13D observation-only 预测独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v99 坐标输运物理门独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
