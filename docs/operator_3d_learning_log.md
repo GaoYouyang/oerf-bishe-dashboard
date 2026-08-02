@@ -12244,3 +12244,66 @@ A_phi^T y = S P_phi^T A_ref^T y
 - `docs/nine_view_case6_diffeomorphic_normalized_anchor_v104_result_2026-08-02.md`
 - `docs/nine_view_case6_diffeomorphic_normalized_anchor_v104_public_summary.json`
 - `assets/nine_view_case6_diffeomorphic_normalized_anchor_v104.png`
+
+## 2026-08-02：v105.1 找到高分辨率端点余量，但没有伪装成“已经收敛”
+
+### 为什么这一步比直接训练网络更重要
+
+v104 的微分同胚公式、逆映射和离散伴随已经通过，但 `32x16x16` 粗网格往返失真。若底层坐标输运自己都不可信，任何 FNO、U-Net 或 DeepONet 都只会学习离散伪差。因此这一轮没有训练模型，而是直接读取公开 CFD 的原始三维密度场，在更细物理网格上先做形变，再限制回粗逆问题网格。
+
+### 真正运行了什么
+
+- 保持已开封 Case 6 的 5 个物理帧、6 类平滑可逆形变和 3 套九视角几何不变；
+- 比较 `32x16x16`、`64x32x32`、`128x64x64`、`256x128x128` 四级源网格；
+- 每级 90 行，共 360 行正式结果；
+- 独立程序不用正式插值 core，改写八角点 gather、48 步二分逆映射和全部指标，再复算 360 行；
+- 不读取新 validation/test，不训练模型，不运行 wall/RSS 门。
+
+### 结果里真正可喜的部分
+
+| 级别 | field worst | 内部梯度 worst | observation worst |
+|---|---:|---:|---:|
+| 1x | 0.105339 | 0.291055 | 0.130877 |
+| 2x | 0.130155 | 0.457941 | 0.144313 |
+| 4x | 0.059296 | 0.209123 | 0.064429 |
+| 8x | **0.034155** | **0.124688** | **0.031399** |
+| 冻结上限 | 0.08 | 0.25 | 0.12 |
+
+8x 三项都过绝对门。它们相对 1x worst 的比例为 `0.324 / 0.428 / 0.240`。这说明 v104 的粗网格失败并非微分同胚思想本身必然错误；把坐标变化放到更细物理域确实存在明显数值余量。
+
+### 为什么正式判决仍然是 FAIL
+
+2x 比 1x 更差，而且 field、内部梯度、observation 三项同时出现尖峰。因此：
+
+- p90-higher 四级单调门：`0/3`；
+- worst 四级单调门：`0/3`；
+- 逐单元最终不劣比例：`100% / 93.3% / 93.3%`，只有 field 达到 95% 门；
+- 逐单元全级单调比例：`33.3% / 20.0% / 26.7%`，全部低于 80% 门。
+
+最终状态是：
+
+```text
+FAIL_NO_HIGH_RESOLUTION_DIFFEOMORPHIC_TRANSPORT_CONVERGENCE_V105_1
+PASS_INDEPENDENT_RECOMPUTATION_CASE6_DIFFEOMORPHIC_TRANSPORT_CONVERGENCE_V105_1
+```
+
+独立逐行指标最大差 `4.48e-15`、汇总最大差 `2.33e-14`、布尔判决不一致为 0。较早 v105 因 observation 指标口径与 v104 不一致，在科学解释前 fail-closed；v105.1 只修了这一个定义，其他物理条件和门均未变化。
+
+### 现在最合理的解释与下一动作
+
+当前网格按节点数翻倍，但不是按区间嵌套：32 个节点对应 31 个区间，64 个节点对应 63 个区间，所以粗节点不是细网格的严格子集，restriction 又引入一次节点错位插值。下一门因此只改一个因素：使用 `32/63/125/249` 节点序列和精确 stride restriction，保留全部物理帧、形变、几何与阈值。
+
+若区间嵌套后仍不单调，才检查固定“一体素支撑”在不同分辨率下物理厚度变化的问题。现在没有理由租 GPU 或训练更大网络。
+
+### 成功、失败与突破判断
+
+- **成功：** 8x 高分辨率端点三项绝对保真全部过线，给连续域路线留下真实数值依据。
+- **失败：** 四级单调收敛没有成立，当前节点倍增序列关闭。
+- **没有算法结果：** 没有评估 warm initializer、matched-accuracy、exact `A/A^T`、wall 或 RSS。
+- **突破状态：** `algorithm_breakthrough=false`、`coordinate_generalization=false`、`external_generalization=false`、`real_BOST=false`、`paper_success=false`。
+
+公开证据：
+
+- `docs/nine_view_case6_diffeomorphic_transport_convergence_v105_1_result_2026-08-02.md`
+- `docs/nine_view_case6_diffeomorphic_transport_convergence_v105_1_public_summary.json`
+- `assets/nine_view_case6_diffeomorphic_transport_convergence_v105_1.png`
