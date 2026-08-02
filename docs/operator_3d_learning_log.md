@@ -11688,3 +11688,61 @@ F15 局部图生成/评分 false
 - `docs/nine_view_v93_anchor_locator_cross_geometry_v94_result_2026-08-02.md`
 - `docs/nine_view_v93_anchor_locator_cross_geometry_v94_public_summary.json`
 - `assets/nine_view_v93_anchor_locator_cross_geometry_v94.png`
+
+## 2026-08-02：v95.1 九维小模型把严格通过提高到 81/90，但候选集合本身不足
+
+### 为什么做
+
+v94 已经关闭围绕单帧局部红区继续扩建窗口的路线，v91 又证明九维 physical-ball 表示中存在大量 truth-aware witness。于是我直接执行最小可部署问题：只让模型看到 observation 与 known geometry，预测九维物理球坐标，再用折内置信度决定接受预测还是回退父 K1。若连这一组便宜模型都守不住全部 90 个 Case 6 单元，就不应该先租 GPU 堆大网络。
+
+### 真正运行了什么
+
+- 30 个物理帧、3 档九视角几何，共 90 个单元；
+- 5 个连续六帧 outer fold，带一帧 embargo，同一物理帧的三几何不拆角色；
+- 81 维 compact 与 177 维 enriched observation-only 特征；
+- scenario mean、linear ridge、RBF-KRR 共 33 个冻结候选；
+- 选择器只用 fit 内 OOF 最近标准化特征距离校准；
+- 预测分支和父 K1 回退都真实执行为 `2A + 2A^T`；
+- 每个单元同时检查 field、full-gradient、interior-gradient、observation 的八个门。
+
+正式运行前发现一次身份错误：九维 `beta=0` 会删掉父 K1 已有的四维 spatial correction，并不等于父 K1。这个错误在任何正式模型成绩或输出生成前 fail closed。修订仅将父 K1 的四维 beta 嵌入九维坐标，其余模型、折分、阈值、八门和成本均不变；独立重建后父字段差约 `2.84e-15`。
+
+### 正式数字
+
+| 方法 | 严格通过 |
+|---|---:|
+| 父 always-K1 | 78 / 90 |
+| ungated mean | 74 / 90 |
+| ungated linear ridge | 80 / 90 |
+| ungated RBF-KRR | 79 / 90 |
+| selected mean | 74 / 90 |
+| selected linear ridge | **81 / 90** |
+| selected RBF-KRR | 79 / 90 |
+
+最佳 selected linear 在 F30 / F15 / F12 分别通过 `25/30、26/30、30/30`。maximum-gate 的 mean / p50 / p90-higher / worst 为 `-0.05386 / -0.06344 / 0.00576 / 0.07148`：典型帧确实比父 K1 更安全，但尾部仍越线。九个失败全部来自内部梯度，且九个都被置信选择器接受。
+
+### 最关键的失败归因
+
+我没有停在“换一个置信模型也许会更好”。在独立验证后的候选上做了只用于定位瓶颈的真值神谕上限：
+
+- 父 K1 与 linear 候选逐单元最优选择：最多 `82/90`；
+- 父 K1、mean、linear、RBF 全部候选逐单元最优选择：最多 `83/90`；
+- 七个共同失败没有任何可选的通过候选。
+
+所以就算 confidence classifier 完美，当前候选集合也到不了 `90/90`。主瓶颈是候选表示 / 预测 headroom，而不只是置信度校准。
+
+### 独立复算与结论
+
+独立 validator 没有导入 v95 模型或正式 runner，重新构建 folds、features、33 个候选、选择阈值和 540 次精确回放。selection、q、field、residual、metrics、gates 最大差全部为 `0`；heldout-label mutation 输出差为 `0`；exact receipt 失败为 0。上游物理内核仍为共享的 pre-v95 实现，因此不声称端到端物理独立或 process-level never-read。
+
+- **成功：** 证明 observation 对九维物理球坐标存在低复杂度线性信号，严格通过从 78 提高到 81，典型门余量改善。
+- **失败：** 没有任何冻结策略达到 90/90；候选真值神谕也只有 83/90。
+- **关线：** 固定九维小模型与 confidence-only 修补关闭。
+- **下一门：** 新方向只能由部署可见 residual 与 known geometry 生成，精确嵌套现有九维表示；先做 truth-aware 容量诊断，必须在同一 `2A + 2A^T` 在线预算下修复七个共同失败并达到 90/90，之后才允许训练新的小 predictor。
+- **突破：** 没有。`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_advantage=false`、`real_BOST=false`。当前仍不租 GPU。
+
+公开证据：
+
+- `docs/nine_view_v94_case6_physical_ball_observation_predictor_v95_result_2026-08-02.md`
+- `docs/nine_view_v94_case6_physical_ball_observation_predictor_v95_public_summary.json`
+- `assets/nine_view_v94_case6_physical_ball_observation_predictor_v95.png`

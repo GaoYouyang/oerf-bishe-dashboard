@@ -302,18 +302,18 @@
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="./operator-learning/">进入完整 C 路线研究台</a>
           <a class="button" href="./operator-learning/daily-progress.html">查看每日实质增量</a>
-          <a class="button" id="latestEvidenceLink" href="./document_reader.html?doc=docs%2Fnine_view_v93_anchor_locator_cross_geometry_v94_result_2026-08-02.md">阅读最新证据</a>
+          <a class="button" id="latestEvidenceLink" href="./document_reader.html?doc=docs%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95_result_2026-08-02.md">阅读最新证据</a>
         </div>
       </div>
       <aside class="verdict" aria-label="当前科学判决">
         <b>当前判决：尚未形成算法突破</b>
-        <p id="headlineVerdict">v94 在 F12+ 的 30 帧中得到 0 个净内部梯度伤害样本；局部红区并不等于总体更差，因此关闭 anchor / local-window 修补路线。</p>
+        <p id="headlineVerdict">v95.1 的 observation-only 线性预测与折内回退把严格通过从 78/90 提高到 81/90，但没有达到 90/90；当前九维小模型路线正式失败。</p>
         <p><strong>证据边界：</strong>目前仍是公开反应流、已知几何、无噪声 straight-ray 代理，不是组内真实 BOST、外部泛化或论文成功。</p>
       </aside>
     </div>
     <div class="metrics" aria-label="当前研究状态">
-      <div class="metric"><b id="witnessMetric">89 / 90</b><span>Case 6 严格表示容量；只记录独立复算后的公开结果</span></div>
-      <div class="metric warning"><b id="failureMetric">1 个反例</b><span>当前未解决单元；平均收益不能掩盖局部梯度伤害</span></div>
+      <div class="metric"><b id="witnessMetric">81 / 90</b><span>v95.1 最佳 observation-only 策略；只记录独立复算结果</span></div>
+      <div class="metric warning"><b id="failureMetric">9 个反例</b><span>严格尾部仍失败；候选真值神谕也只有 83/90</span></div>
       <div class="metric"><b id="callMetric">2A + 2A<sup>T</sup></b><span>候选在线 exact 调用预算；资源收益还需 fresh 实测</span></div>
       <div class="metric warning"><b id="breakthroughMetric">false</b><span><code>algorithm_breakthrough</code>，未过外部与真实实验门</span></div>
     </div>
@@ -332,8 +332,8 @@
         <div><b>公开反应流 CFD</b><span>PoolFire 与 BLASTNet 已开封开发工况</span></div>
         <div><b>九视角观测</b><span>known-geometry straight-ray 密度梯度代理</span></div>
         <div><b>三维逆问题</b><span><code>32×16×16</code> 粗网格场</span></div>
-        <div class="current"><b>当前：修改可观测壳</b><span>局部低频缺口已定位，但当前法向残差信号看不见它</span></div>
-        <div><b>Observation-only 学习</b><span>容量过门后才训练最小预测器</span></div>
+        <div><b>九维小模型已判失败</b><span>最佳 81/90；confidence-only 无法补齐</span></div>
+        <div class="current"><b>当前：自适应方向容量</b><span>只用 observation / geometry 生成方向，先过 90/90</span></div>
         <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
       </div>
       <div class="three-grid" style="margin-top:12px;">
@@ -357,13 +357,14 @@
           <article class="evidence-row"><time datetime="2026-08-01">08-01</time><div><strong>v85：Case 4 通过，Case 6 失败</strong><p>84/84 对 78/90；12 个失败全部暴露在内部梯度，说明全局 residual gate 看不见局部风险。</p></div><span class="state fail">混合外部结果</span></article>
           <article class="evidence-row"><time datetime="2026-08-02">08-02</time><div><strong>v87：标量 K1-K2 混合关闭</strong><p>85/90 可行，五个单元的严格区间为空；增加一个阻尼系数无法修复局部梯度。</p></div><span class="state fail">机理负结果</span></article>
           <article class="evidence-row"><time datetime="2026-08-02">08-02</time><div><strong>v92：单径向四次多尺度方向正式关线</strong><p>新增方向非退化但严格容量仍为 89/90，最后越线只减少 1.55%。由此停止堆全局径向阶数。</p></div><span class="state fail">机理负结果</span></article>
-          <article class="evidence-row" id="latestEvidenceRow"><time datetime="2026-08-02">08-02</time><div><strong>v94：跨几何普遍性 0/30，局部修补关线</strong><p>F12+ 的候选 / Zero-K2 内部梯度误差比全部低于 1；22 帧虽有局部正误差集中，但没有一帧形成净伤害。</p></div><span class="state fail">关线结果</span></article>
+          <article class="evidence-row"><time datetime="2026-08-02">08-02</time><div><strong>v94：跨几何普遍性 0/30，局部修补关线</strong><p>F12+ 没有复现 F30 的净伤害，停止围绕单帧扩建局部窗口。</p></div><span class="state fail">关线结果</span></article>
+          <article class="evidence-row" id="latestEvidenceRow"><time datetime="2026-08-02">08-02</time><div><strong>v95.1：最佳 81/90，候选神谕上限 83/90</strong><p>九维线性预测存在信号，但九个内部梯度尾部仍失败；完美选择器也无法让当前候选集合达到 90/90。</p></div><span class="state fail">严格负结果</span></article>
         </div>
         <figure>
-          <a id="latestFigureLink" href="./asset_viewer.html?asset=assets%2Fnine_view_v93_anchor_locator_cross_geometry_v94.png" aria-label="打开最新完整结果图">
-            <img loading="lazy" decoding="async" id="latestFigure" src="./assets/nine_view_v93_anchor_locator_cross_geometry_v94.png" alt="v94 F12 跨几何局部伤害普遍性检验结果" />
+          <a id="latestFigureLink" href="./asset_viewer.html?asset=assets%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95.png" aria-label="打开最新完整结果图">
+            <img loading="lazy" decoding="async" id="latestFigure" src="./assets/nine_view_v94_case6_physical_ball_observation_predictor_v95.png" alt="v95.1 observation-only 九维预测与候选上限结果" />
           </a>
-          <figcaption id="latestFigureCaption">v94 证明 F30 的单帧局部伤害没有在 F12 成为普遍机制，阻止继续扩建局部窗口。这是可靠关线结果，不是新算法成功。</figcaption>
+          <figcaption id="latestFigureCaption">v95.1 的中位表现确实改善，但 p90 与 worst 仍越线；候选真值神谕只有 83/90，因此关闭固定九维小模型与 confidence-only 修补。</figcaption>
         </figure>
       </div>
       <div class="live-note"><strong>稳定状态自动同步</strong><span id="liveStatus" aria-live="polite">正在读取公开证据清单；读取失败时保留上面的最近一次独立验证状态。</span></div>
@@ -380,7 +381,7 @@
       </div>
       <div class="three-grid">
         <article class="panel positive"><div class="chips"><span class="chip">可复算</span></div><h3 style="margin-top:9px;">正式结果与独立程序分离</h3><p>关键数字必须由第二条实现重建输入、指标、门和调用账；验证未通过时不进入主页结论。</p></article>
-        <article class="panel boundary"><div class="chips"><span class="chip gold">会纠错</span></div><h3 style="margin-top:9px;">负结果直接改变下一步</h3><p>v94 证明局部红区在 F12 没有形成净伤害，因此停止 anchor / local-window repair；下一门改为预测已有九维 witness，并为 rare outlier 做置信回退。</p></article>
+        <article class="panel boundary"><div class="chips"><span class="chip gold">会纠错</span></div><h3 style="margin-top:9px;">负结果直接改变下一步</h3><p>v95.1 证明继续调九维 predictor 或置信阈值无法达到 90/90；下一门改为先验证 observation-adaptive direction 的表示容量。</p></article>
         <article class="panel current"><div class="chips"><span class="chip coral">不夸大</span></div><h3 style="margin-top:9px;">突破必须跨过完整门槛</h3><p>单工况容量、漂亮均值、调用数下降或页面完善，都不能单独写成算法突破与论文成功。</p></article>
       </div>
     </section>
@@ -388,8 +389,8 @@
     <section id="expected-results" class="band">
       <div class="section-head"><div><div class="eyebrow">预期结果</div><h2>论文要交付一条不可交换顺序的证据链</h2><p>任何早期阶段失败都会准确记录并重排方法，不通过更大的网络掩盖表示或物理问题。</p></div></div>
       <div class="ladder">
-        <div class="step current"><div><b>最小而足够的 warm 表示</b><span>在全部开发单元守住八门，排除坐标约束伪影，并保持在线 exact 预算可控。</span></div><em>当前进行中</em></div>
-        <div class="step"><div><b>严格 observation-only initializer</b><span>训练与部署不读真值，和便宜解析控制、ridge、KRR、U-Net / FNO 等公平比较。</span></div><em>容量过门后</em></div>
+        <div class="step current"><div><b>observation-adaptive warm 表示</b><span>新方向只由 residual 与 known geometry 生成，精确嵌套九维父表示，并先证明 truth-aware 容量达到 90/90。</span></div><em>当前进行中</em></div>
+        <div class="step"><div><b>严格 observation-only initializer</b><span>容量过门后才训练新 predictor，并与便宜解析控制、ridge、KRR、U-Net / FNO 公平比较。</span></div><em>容量过门后</em></div>
         <div class="step"><div><b>独立公开工况 matched-accuracy</b><span>结果前冻结新工况，逐单元守住 field、gradient、observation 并减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
         <div class="step"><div><b>真实资源收益</b><span>随机配对 fresh worker 同时验证 wall p50/p90 与 whole-pipeline peak RSS。</span></div><em>尚未启动</em></div>
         <div class="step"><div><b>OERF 真实 BOST 迁移</b><span>接入相机标定、位移图、重复测量噪声与组内认可基线，重新定义实验同精度。</span></div><em>需要组内数据</em></div>
@@ -408,7 +409,7 @@
     <section id="future-direction" class="band">
       <div class="section-head"><div><div class="eyebrow">未来期许和方向</div><h2>只扩展证据指出的缺失结构</h2><p>研究路线由最新负证据驱动，而不是由模型名、算力规模或已经投入的时间驱动。</p></div></div>
       <div class="future-grid">
-        <article class="panel current"><h3>最近科学门</h3><p id="nextGate">先修改可观测壳：把 detector anchor 的粗位置线索另行冻结，并在未参与选择的局部误差图上验证；若仍看不见，再明确增加最小精确调用预算。此门通过前不训练局部预测器。</p></article>
+        <article class="panel current"><h3>最近科学门</h3><p id="nextGate">先冻结 observation-adaptive direction 容量诊断：新方向只能由部署可见 residual 与 known geometry 生成，必须嵌套现有九维表示，并在同一 2A+2A^T 在线预算下先证明七个共同失败能被全部修复；容量过 90/90 前不训练大模型、不租 GPU。</p></article>
         <article class="panel boundary"><h3>何时租 GPU</h3><p>只有表示容量全过、严格 observation-only 小模型出现稳定外折 headroom，且 CPU 原型确认训练吞吐成为瓶颈时才租算卡。</p></article>
         <article class="panel positive"><h3>何时接组内数据</h3><p>公开独立工况通过后，接入位移图、相机内外参、视角定义、重复测量噪声、现有重建接口和认可基线。</p></article>
       </div>
@@ -437,7 +438,7 @@
 
   <script>
     (() => {
-      const fallback = '最近一次独立验证状态：v94 在 F12+ 得到 0/30 个净伤害样本，局部修补路线关闭，algorithm_breakthrough=false。';
+      const fallback = '最近一次独立验证状态：v95.1 最佳 observation-only 策略为 81/90，候选神谕上限 83/90，algorithm_breakthrough=false。';
       fetch('./operator-learning/current-evidence.json', { cache: 'no-store' })
         .then((response) => {
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
