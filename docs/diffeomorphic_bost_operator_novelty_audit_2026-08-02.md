@@ -97,3 +97,34 @@ algorithm_breakthrough = false
 paper_success = false
 real_BOST = false
 ```
+
+## 2026-08-03 更新：v107-v109 把 support 混杂排除后，才真正授权坐标条件模型
+
+v106.1 的区间嵌套收敛随后接受了更严格反证。v107 把每级 support 厚度固定为一个粗网格间隔后，三项完整收敛门变为 `0/3`，证明旧通过含有“一层节点随分辨率变薄”的混杂。v108 取消变换坐标系中的轴对齐重新裁边，支持支撑应随标量场一起输运；gradient 与 observation 尾部恢复下降，但 hard edge 仍令 field 和逐单元门失败。
+
+v109 只把同一固定物理宽度内的硬跳变换成半余弦窗。该窗在所有粗网格节点上与原二值支撑逐点相同，故没有改变 `32x16x16` 逆问题。五帧、六形变、三几何和全部冻结门不变时，field、interior-gradient、observation 的 p90、worst、最终比值、绝对门和 90 个单元的全四级单调全部通过；独立 360 行复算逐行最大差约 `1.58e-14`。
+
+这个结果强化的不是“微分同胚本身原创”，而是论文中一个更窄、更可信的工程贡献边界：
+
+```text
+fixed-physical-width smooth support
++ support-covariant scalar transport
++ BOST gradient/ray forward-adjoint consistency
++ exact-coarse-node inverse-problem identity
+```
+
+它仍只是数值机制层突破。现在授权的下一门是最小 observation/geometry-only 坐标条件 initializer，并必须采用结果前留出的微分同胚与相机几何组合。未通过该外门前，不能写 coordinate generalization、algorithm breakthrough、SOTA 或真实 BOST。
+
+更新后的状态：
+
+```text
+coordinate_transport_interface = passed
+interval_nested_common_gauge_convergence = passed_but_support_confound_identified
+fixed_physical_hard_support = failed
+transported_hard_support = partial_repair_but_failed
+fixed_physical_smooth_support = passed_and_independently_recomputed
+strict_observation_only_unseen_coordinate = next_gate
+algorithm_breakthrough = false
+paper_success = false
+real_BOST = false
+```

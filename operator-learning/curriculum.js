@@ -1,8 +1,8 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.02-c-v106-1-common-gauge-interval-nested-convergence",
-  previousVersion: "2026.08.02-c-v104-diffeomorphic-coarse-grid-invalid-high-resolution-next",
-  previousBadge: "v104 adjoint valid · coarse fidelity 0/3 · fixed anchor closed",
-  olderBadge: "v84.2 Case 3 residual gate · 75 / 75 development PASS",
+  version: "2026.08.03-c-v109-smooth-support-diffeomorphic-convergence",
+  previousVersion: "2026.08.02-c-v106-1-common-gauge-interval-nested-convergence",
+  previousBadge: "v106.1 converged · later support-thickness confound identified",
+  olderBadge: "v104 adjoint valid · coarse fidelity 0/3 · fixed anchor closed",
   historyReleases: [
     {
       version: "2026.08.02-c-v98-joint13-predictor-negative-geometry-gate",
@@ -219,7 +219,7 @@ window.OPERATOR_LEARNING_GUIDE = {
       badge: "v16.1 resource · wall headroom, CPU/RSS FAIL"
     }
   ],
-  updated: "2026-08-02",
+  updated: "2026-08-03",
   foundationChecks: [
     {
       id: "python-array",
@@ -594,6 +594,7 @@ window.OPERATOR_LEARNING_GUIDE = {
   ],
   resources: [
     {id:"diffeomorphic-bost-novelty-audit",stage:"geometry",level:"必做",type:"一级来源创新边界",title:"微分同胚怎样真正进入 BOST：近邻工作、物理接口与必做对照",url:"../document_reader.html?doc=docs%2Fdiffeomorphic_bost_operator_novelty_audit_2026-08-02.md",local:"../docs/diffeomorphic_bost_operator_novelty_audit_2026-08-02.md",read:"对照 DNO、Geo-FNO、DIMON、离散化 no-go theorem、Radon Neural Operator 与 NeRIF，区分公共参考域思想、表示收敛、协梯度输运、相机 ray/detector basis 和 BOST exact adjoint。重点理解为何微分同胚本身不是创新，以及限定来源审计为什么不能写成全球首个。",output:"不用页面解释：现有方法覆盖了哪些组件；本项目还剩哪个窄而真实的 BOST-specific 缺口；论文必须保留哪些 no-warp、wrong-warp、geometry-ID、continuous-pose、resolution-convergence 和 reference-domain controls。",verified:"primary-source bounded audit；no fully isomorphic public method found within reviewed scope；global uniqueness not proven；algorithm_breakthrough=false"},
+    {id:"nine-view-v109-diffeomorphic-smooth-support",stage:"geometry",level:"必做",type:"当前数值机制突破",title:"v107-v109：排除支撑厚度混杂，固定宽度平滑支撑恢复三项严格收敛",url:"../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_support_chain_v109_result_2026-08-03.md",local:"../docs/nine_view_case6_diffeomorphic_support_chain_v109_public_summary.json",read:"按因果顺序读：v107 为什么把固定物理宽度后的完整门打回 0/3；v108 为什么说明支撑必须随标量场一起输运；v109 为什么只在一个粗网格间隔内使用半余弦窗，而且在全部粗节点上与原硬支撑逐点相同。重点核对三项 p90/worst 3/3、逐单元全级单调 100% 和独立 360 行复算。",output:"不用页面解释：v106.1 的边界层缩薄混杂是什么；support covariance 与 transformed-frame remask 有何区别；硬边界为何会制造插值伪差；v109 为何授权最小坐标条件 initializer，却仍不能写坐标泛化或算法成功。",verified:"PASS_SMOOTH_SUPPORT_DIFFEOMORPHIC_CONVERGENCE_V109；PASS_INDEPENDENT_RECOMPUTATION_CASE6_SMOOTH_SUPPORT_V109；360 formal + 360 independent rows；row max diff 1.58e-14；all field/gradient/observation convergence predicates passed；numerical mechanism breakthrough only；algorithm_breakthrough=false"},
     {id:"nine-view-v106-1-diffeomorphic-interval-nested",stage:"geometry",level:"必做",type:"最新数值机制正结果",title:"v106.1：共同规范 + 严格嵌套网格，三项四级收敛全部通过",url:"../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_interval_nested_v106_1_result_2026-08-02.md",local:"../docs/nine_view_case6_diffeomorphic_interval_nested_v106_1_public_summary.json",read:"先看 v106 为什么因未形变观测基线漂移而 fail-closed，再看 v106.1 如何只统一 field/gradient/observation 的粗网格零均值规范。重点核对 32/63/125/249 严格嵌套节点、精确 stride restriction、三项 p90/worst 单调 3/3 和逐单元全级单调 100%。",output:"不用页面解释：为什么 BOST 的常数规范在连续物理中不可见，却会被 support 边缘离散差分误变成观测；为什么 v106.1 是数值机制门突破但不是算法突破；下一门为何固定物理 support 厚度后才接入坐标条件 warm initializer。",verified:"PASS_COMMON_GAUGE_INTERVAL_NESTED_TRANSPORT_CONVERGENCE_HEADROOM_V106_1；PASS_INDEPENDENT_RECOMPUTATION_CASE6_COMMON_GAUGE_INTERVAL_NESTED_V106_1；360 formal + 360 independent rows；row max diff 1.58e-14；all three metric families pass every frozen convergence predicate；algorithm_breakthrough=false"},
     {id:"nine-view-v105-1-diffeomorphic-transport-convergence",stage:"geometry",level:"必做",type:"最新高分辨率输运诊断",title:"v105.1：8x 端点三项过线，但四级单调收敛 0/3",url:"../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_transport_convergence_v105_1_result_2026-08-02.md",local:"../docs/nine_view_case6_diffeomorphic_transport_convergence_v105_1_public_summary.json",read:"先核对 8x field/interior-gradient/observation worst 0.0342/0.1247/0.0314 都低于 v104 上限，再看非嵌套 2x 网格为什么让三项尾部共同恶化。重点区分 final endpoint headroom、four-level monotone convergence 和 coordinate generalization 三个不同命题。",output:"不用页面解释：为什么 8x 端点是值得继续的数值信号却不是算法突破；32/64 节点为什么不是区间嵌套；下一门为何改成 32/63/125/249 与 exact stride restriction；什么结果才允许重新打开 pose-conditioned initializer。",verified:"FAIL_NO_HIGH_RESOLUTION_DIFFEOMORPHIC_TRANSPORT_CONVERGENCE_V105_1；PASS_INDEPENDENT_RECOMPUTATION_CASE6_DIFFEOMORPHIC_TRANSPORT_CONVERGENCE_V105_1；360 formal + 360 independent rows；row max diff 4.48e-15；algorithm_breakthrough=false"},
     {id:"nine-view-v104-diffeomorphic-normalized-anchor",stage:"geometry",level:"必做",type:"最新微分同胚压力负结果",title:"v103-v104：离散伴随正确，但粗网格输运与固定目标 warm start 均未通过",url:"../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_normalized_anchor_v104_result_2026-08-02.md",local:"../docs/nine_view_case6_diffeomorphic_normalized_anchor_v104_public_summary.json",read:"先区分数学接口和科学门：六类 warp 的可逆性、正 Jacobian 与 A_phi/A_phi^T 伴随误差通过，但 32x16x16 三线性往返的 field/interior-gradient/observation worst 为 0.1053/0.2911/0.1309，分别越过 0.08/0.25/0.12。再看 normalized BP 怎样消除 v103 的尺度爆炸，却在恒等坐标 0/15、正确/无/反向搬运均 0/90。",output:"不用页面解释：为什么这不是微分同胚原理的普遍失败；为什么 coarse-grid warp 不能充当连续坐标泛化证据；为什么固定 rank0 normalized-BP + K1 关闭；下一门为什么必须把形变放在高分辨率/连续物理域、再 restriction 到逆问题网格。",verified:"INCONCLUSIVE_INVALID_NUMERICAL_TRANSPORT_V104；PASS_INDEPENDENT_RECOMPUTATION_CASE6_DIFFEOMORPHIC_NORMALIZED_ANCHOR_V104；495 formal + 495 independent replays；array max diff 1.17e-15；algorithm_breakthrough=false"},

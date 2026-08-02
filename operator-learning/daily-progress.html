@@ -497,8 +497,8 @@
     </div>
     <div class="status-grid" aria-label="当前项目快照">
       <div class="metric">
-        <b>28 天</b>
-        <span>2026-07-06 至 2026-08-02，逐日回填且每个日期只出现一次。</span>
+        <b>29 天</b>
+        <span>2026-07-06 至 2026-08-03，逐日回填且每个日期只出现一次。</span>
       </div>
       <div class="metric">
         <b>1515/1515</b>
@@ -510,12 +510,12 @@
       </div>
       <div class="metric">
         <b>3 / 3 · 100%</b>
-        <span>v106.1 的三项 p90 / worst 四级单调通过数，以及逐单元全级单调比例。</span>
+        <span>v109 固定物理宽度平滑支撑的三项 p90 / worst 通过数，以及逐单元全级单调比例。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v106.1 通过微分同胚输运的共同规范四级收敛门</strong>
-      <span>区间严格嵌套的 <code>32/63/125/249</code> 节点链与精确 stride restriction 下，field、内部梯度、观测的 p90 和 worst 单调门均为 <code>3/3</code>，逐单元全级单调比例均为 <code>100%</code>；8×/1× worst 为 <code>0.251 / 0.328 / 0.177</code>。独立复算逐行最大差 <code>1.58e-14</code>、判据不一致为 0。当前是<strong>数值机制门突破</strong>，仍有 <code>algorithm_breakthrough=false</code>；下一门固定物理 support 厚度，仍不租 GPU。</span>
+      <strong>突破性进展：v109 通过固定物理宽度、支撑协变的平滑微分同胚输运门</strong>
+      <span>v107 先用固定物理厚度推翻 v106.1 的宽泛解释，v108 再证明支撑必须随场输运；v109 的 half-cosine 窗在所有粗节点上与原硬支撑差为 0，只平滑亚粗网格边界。field、内部梯度、观测的 p90 与 worst 单调门均为 <code>3/3</code>，逐单元全级单调均为 <code>100%</code>；独立复算逐行最大差 <code>1.58e-14</code>。这是<strong>数值机制门突破</strong>，仍有 <code>algorithm_breakthrough=false</code>；下一门进入最小坐标条件 observation-only initializer，仍不租 GPU。</span>
       <details style="margin-top:10px;">
         <summary>展开同日 v94 及更早父证据</summary>
         <span>
@@ -606,7 +606,7 @@
           <button class="filter-button" type="button" data-filter="engineering" aria-pressed="false">工程保障</button>
           <button class="filter-button" type="button" data-filter="learning" aria-pressed="false">调研与学习</button>
         </div>
-        <span class="result-count" id="resultCount" aria-live="polite">显示 28 / 28 天</span>
+        <span class="result-count" id="resultCount" aria-live="polite">显示 29 / 29 天</span>
       </div>
       <div class="legend">
         <button class="button" id="sortButton" type="button" aria-pressed="false">切换为最早优先</button>
@@ -619,13 +619,75 @@
       <section class="phase" id="phase-factor" data-phase-order="5">
         <div class="phase-heading">
           <div>
-            <div class="range">07-30 — 08-02</div>
+            <div class="range">07-30 — 08-03</div>
             <h2>因子化加速、外部门与失败归因</h2>
           </div>
           <p>把“算得对”推进到“调用少、真实更快、内存不过线”，再冻结独立公开反应流外部门。</p>
         </div>
         <div class="timeline">
-          <article class="day-entry latest" id="latest" data-date="2026-08-02" data-categories="science-positive science-negative engineering decision">
+          <article class="day-entry latest" id="latest" data-date="2026-08-03" data-categories="science-positive science-negative engineering decision">
+            <details open>
+              <summary class="entry-summary">
+                <div class="date-block"><time datetime="2026-08-03">2026-08-03</time><span>周一 · Day 29</span></div>
+                <div class="entry-title">
+                  <div class="entry-tags">
+                    <span class="tag negative">v107 完整门：0/3</span>
+                    <span class="tag negative">v108：部分修复仍 FAIL</span>
+                    <span class="tag">v109 p90 / worst：3/3</span>
+                    <span class="tag">逐单元全级单调：100% / 100% / 100%</span>
+                    <span class="tag engineering">coarse-node window 差：0</span>
+                    <span class="tag engineering">360 + 360 行独立复算</span>
+                    <span class="tag">数值机制突破</span>
+                    <span class="tag negative">algorithm breakthrough false</span>
+                  </div>
+                  <h3>v107-v109：从推翻混杂到平滑支撑通过，微分同胚路线获得可信离散基础</h3>
+                  <p>固定物理宽度先推翻旧解释，支撑随场输运再修复坐标协变，最终用粗节点完全等价的半余弦边界通过全部冻结收敛门；这是一条经过反证的因果链，不是把单次漂亮曲线包装成成功。</p>
+                </div>
+                <span class="expand-label" aria-hidden="true"></span>
+              </summary>
+              <div class="entry-body">
+                <div class="evidence-grid">
+                  <section>
+                    <h4>为什么重查已经通过的 v106.1</h4>
+                    <p>v106.1 每级只清零一层节点，边界的物理厚度会随网格加密而缩小。v107 改为始终保持一个粗网格间隔后，8× field / gradient / observation worst 变为 <code>0.2431 / 0.3192 / 0.1073</code>，完整门 <code>0/3</code>，确认旧通过含有真实混杂。</p>
+                  </section>
+                  <section>
+                    <h4>v108 为什么只修好一半</h4>
+                    <p>取消变换坐标系中的轴对齐重新裁边后，gradient 与 observation 尾部恢复下降，但 field 在 4× 反弹；逐单元四级单调只有 <code>26.7% / 46.7% / 33.3%</code>。这把剩余问题定位到硬边界穿过三线性插值时的亚网格误差。</p>
+                  </section>
+                  <section>
+                    <h4>v109 真正改了什么</h4>
+                    <p>在恰好一个粗网格间隔内使用 half-cosine taper。边界严格为 0，第一层粗内部节点起严格为 1；2×/4×/8× 所有粗节点上的窗值与原硬支撑逐点相同。数据、五帧、六形变、三几何、360 行和全部阈值均未变化。</p>
+                  </section>
+                  <section>
+                    <h4>正式结果</h4>
+                    <p>8× field / gradient / observation worst 为 <code>0.02647 / 0.09567 / 0.02312</code>，8×/1× 比为 <code>0.251 / 0.329 / 0.177</code>。三项 p90、worst、绝对门、比值门、最终不劣与全级单调全部通过。</p>
+                  </section>
+                  <section>
+                    <h4>独立复算</h4>
+                    <p>另一程序重新实现半余弦窗、plateau 规范、八角点插值、逆映射与 restriction；正式/独立逐行最大差 <code>1.58e-14</code>、汇总最大差 <code>1.65e-13</code>、判据差 0，正式输入输出保持不变。</p>
+                  </section>
+                  <section>
+                    <h4>成功、边界与下一门</h4>
+                    <p><strong>数值机制突破成立</strong>：坐标条件模型不必再拟合硬边界伪差。尚未训练 initializer、没有未见坐标外门、没有 exact 调用或资源收益，因此 <code>algorithm_breakthrough=false</code>。下一步冻结 CPU 级 observation-only 坐标条件 initializer，仍不租 GPU。</p>
+                  </section>
+                </div>
+                <figure class="entry-figure">
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_support_chain_v109.png">
+                    <img loading="lazy" decoding="async" src="../assets/nine_view_case6_diffeomorphic_support_chain_v109.png" alt="v106.1 至 v109 支撑表示因果修复与三项四级误差曲线" />
+                  </a>
+                  <figcaption>同一 5 帧、6 个微分同胚、3 套几何和冻结阈值下，v107 暴露混杂，v108 部分修复，v109 通过全部三项门。</figcaption>
+                </figure>
+                <div class="entry-links">
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_support_chain_v109_result_2026-08-03.md">v107-v109 完整证据</a>
+                  <a href="../docs/nine_view_case6_diffeomorphic_support_chain_v109_public_summary.json">机器可读摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_support_chain_v109.png">结果图原尺寸</a>
+                </div>
+              </div>
+            </details>
+          </article>
+
+          <article class="day-entry" data-date="2026-08-02" data-categories="science-positive science-negative engineering decision">
             <details open>
               <summary class="entry-summary">
                 <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
@@ -2369,7 +2431,7 @@
   </main>
 
   <footer>
-    持续更新至 v106.1 共同规范区间嵌套微分同胚输运收敛独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v109 固定物理宽度、支撑协变的平滑微分同胚输运独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>

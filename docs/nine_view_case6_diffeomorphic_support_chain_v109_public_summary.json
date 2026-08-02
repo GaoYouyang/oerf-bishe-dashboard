@@ -1,0 +1,143 @@
+{
+  "schema_version": "oerf-nine-view-case6-diffeomorphic-support-chain-public-summary-109.0",
+  "updated": "2026-08-03",
+  "formal_status": "PASS_SMOOTH_SUPPORT_DIFFEOMORPHIC_CONVERGENCE_V109",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_CASE6_SMOOTH_SUPPORT_V109",
+  "evidence_role": "post-open Case-6 numerical mechanism diagnostic for fixed-physical-width support-covariant diffeomorphic transport",
+  "selected_physical_frames": 5,
+  "known_geometries": 3,
+  "diffeomorphisms": 6,
+  "rows_per_level": 90,
+  "formal_rows": 360,
+  "independent_rows": 360,
+  "causal_chain": [
+    {
+      "version": "v106.1",
+      "status": "PASS_WITH_LATER_IDENTIFIED_SUPPORT_THICKNESS_CONFOUND",
+      "isolated_change": "interval-nested grids, exact stride restriction, and common coarse gauge",
+      "scientific_reading": "established a convergent discrete path, but the one-node support layer became physically thinner with resolution"
+    },
+    {
+      "version": "v107",
+      "status": "FAIL_FIXED_PHYSICAL_SUPPORT_DIFFEOMORPHIC_TRANSPORT_CONVERGENCE_V107",
+      "isolated_change": "hold the hard support thickness at one coarse interval",
+      "scientific_reading": "invalidated the claim that v106.1 alone proved fixed-physical-domain convergence"
+    },
+    {
+      "version": "v108",
+      "status": "FAIL_TRANSPORTED_SUPPORT_DIFFEOMORPHIC_CONVERGENCE_V108",
+      "isolated_change": "transport the supported scalar without an axis-aligned transformed-frame remask",
+      "scientific_reading": "repaired gradient and observation tails, but hard-edge interpolation still failed the field and cellwise gates"
+    },
+    {
+      "version": "v109",
+      "status": "PASS_SMOOTH_SUPPORT_DIFFEOMORPHIC_CONVERGENCE_V109",
+      "isolated_change": "replace the fixed-width hard edge with a one-coarse-interval separable half-cosine taper that is identical at every coarse node",
+      "scientific_reading": "all unchanged convergence and integrity predicates pass"
+    }
+  ],
+  "levels": [
+    {
+      "level_id": "smooth_support_1x",
+      "shape_zyx": [32, 16, 16],
+      "field": {"p50": 0.050247127762780806, "p90_higher": 0.10216138212687283, "worst": 0.10533441726101145},
+      "interior_gradient": {"p50": 0.1298703517554059, "p90_higher": 0.28198907234266757, "worst": 0.291054468471278},
+      "observation": {"p50": 0.03713974213930566, "p90_higher": 0.12444571904810438, "worst": 0.13087892384332092}
+    },
+    {
+      "level_id": "smooth_support_2x",
+      "shape_zyx": [63, 31, 31],
+      "field": {"p50": 0.03305292580570128, "p90_higher": 0.07409074837736901, "worst": 0.07568709254506127},
+      "interior_gradient": {"p50": 0.06830281914447246, "p90_higher": 0.20570779474719308, "worst": 0.2555289680159877},
+      "observation": {"p50": 0.017165402321120453, "p90_higher": 0.07435496895183037, "worst": 0.08750561888328018}
+    },
+    {
+      "level_id": "smooth_support_4x",
+      "shape_zyx": [125, 61, 61],
+      "field": {"p50": 0.013074775247086601, "p90_higher": 0.041145582678641705, "worst": 0.05322754884888983},
+      "interior_gradient": {"p50": 0.02223587409193551, "p90_higher": 0.15074194289033815, "worst": 0.1884725445104946},
+      "observation": {"p50": 0.0063478738866859855, "p90_higher": 0.04528594935138742, "worst": 0.053825972245151885}
+    },
+    {
+      "level_id": "smooth_support_8x",
+      "shape_zyx": [249, 121, 121],
+      "field": {"p50": 0.0029902025175856713, "p90_higher": 0.016909343335829653, "worst": 0.02646950086750074},
+      "interior_gradient": {"p50": 0.005612632756261588, "p90_higher": 0.052228225824627196, "worst": 0.09566595347006036},
+      "observation": {"p50": 0.0016111468517190492, "p90_higher": 0.015018024746420324, "worst": 0.023117177664268577}
+    }
+  ],
+  "frozen_limits": {
+    "field_worst": 0.08,
+    "interior_gradient_worst": 0.25,
+    "observation_worst": 0.12,
+    "final_worst_ratio_vs_1x_maximum": 0.8,
+    "cellwise_final_noninferior_fraction_minimum": 0.95,
+    "cellwise_all_level_monotone_fraction_minimum": 0.8
+  },
+  "gate_outcomes": {
+    "final_absolute_limits_passed": 3,
+    "final_absolute_limits_total": 3,
+    "p90_higher_monotonic_passed": 3,
+    "p90_higher_monotonic_total": 3,
+    "worst_monotonic_passed": 3,
+    "worst_monotonic_total": 3,
+    "final_worst_ratio_passed": 3,
+    "final_worst_ratio_total": 3,
+    "cellwise_final_noninferior_passed": 3,
+    "cellwise_final_noninferior_total": 3,
+    "cellwise_all_level_monotone_passed": 3,
+    "cellwise_all_level_monotone_total": 3
+  },
+  "final_8x_worst_ratio_vs_1x": {
+    "field": 0.25129014386542947,
+    "interior_gradient": 0.3286874583047362,
+    "observation": 0.17663025478374839
+  },
+  "cellwise_final_noninferior_fraction": {
+    "field": 1.0,
+    "interior_gradient": 1.0,
+    "observation": 1.0
+  },
+  "cellwise_all_level_monotone_fraction": {
+    "field": 1.0,
+    "interior_gradient": 1.0,
+    "observation": 1.0
+  },
+  "empirical_order_p50": {
+    "field": 1.241095053172914,
+    "interior_gradient": 1.4439794229082346,
+    "observation": 1.3885729121556436
+  },
+  "support_diagnostic": {
+    "coarse_grid_hard_vs_smooth_relative_l2": 0.0,
+    "smooth_window_stride_maximum_absolute_difference": 0.0,
+    "normalized_taper_width_maximum_absolute_difference": 0.0,
+    "interpretation": "the inverse problem at coarse nodes is unchanged; only the sub-coarse boundary representation is regularized"
+  },
+  "integrity": {
+    "coarse_reference_relative_l2_maximum": 5.744253290289926e-16,
+    "row_metric_maximum_absolute_difference": 1.5765166949677223e-14,
+    "summary_maximum_absolute_difference": 1.645350522494482e-13,
+    "predicate_boolean_mismatch_count": 0,
+    "formal_inputs_and_outputs_unchanged": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "decision": "A fixed-physical-width, support-covariant half-cosine representation passes every unchanged four-level field, interior-gradient and observation convergence gate on the already-open Case-6 mechanism set. This authorizes a minimal coordinate-conditioned observation-only initializer protocol, but it is not yet an algorithm or generalization result.",
+  "next_gate": "Freeze a minimal CPU-scale coordinate-conditioned observation-only initializer with result-before-held-out diffeomorphism and geometry splits, exact A/A^T accounting, and unchanged matched-accuracy gates.",
+  "claims": {
+    "fixed_physical_support_confound_identified": true,
+    "support_covariance_repair_supported": true,
+    "smooth_fixed_physical_support_convergence_passed": true,
+    "numerical_mechanism_headroom_breakthrough": true,
+    "coordinate_conditioned_initializer_authorized": true,
+    "warm_initializer_evaluated": false,
+    "matched_accuracy": false,
+    "coordinate_generalization": false,
+    "resource_advantage": false,
+    "external_generalization": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "gpu_training_authorized": false
+  }
+}
