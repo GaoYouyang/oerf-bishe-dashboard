@@ -508,19 +508,19 @@
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="#research-progress">查看当前研究进程</a>
           <a class="button" href="daily-progress.html">查看每日实质增量</a>
-          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_normalized_anchor_v104_result_2026-08-02.md">阅读最新完整证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_transport_convergence_v105_1_result_2026-08-02.md">阅读最新完整证据</a>
         </div>
       </div>
       <aside class="hero-verdict" aria-label="当前科学判决">
-        <b>当前判决：微分同胚数学闭合，但粗网格输运与固定 warm anchor 均未过门</b>
-        <p><code>v103-v104</code> 已把师兄提出的微分同胚建议落实为六类三维可逆形变。变换后的 <code>A_phi/A_phi^T</code> 伴随误差最坏仅 <code>5.59e-14</code>；但 <code>32×16×16</code> 三线性输运的 field、内部梯度、观测保真 worst 为 <code>0.1053 / 0.2911 / 0.1309</code>，三项都越过冻结上限。</p>
-        <p><strong>当前执行：</strong>关闭固定 rank-0 normalized-BP + K1 机制：恒等坐标 <code>0/15</code>、形变坐标 <code>0/90</code>。不继续调小幅值或放大网络；下一门是在 restriction 到粗网格前完成高分辨率/连续域形变，验证误差是否随分辨率真正收敛。</p>
+        <b>当前判决：高分辨率端点有真实余量，但微分同胚输运尚未证明收敛</b>
+        <p><code>v105.1</code> 直接从公开 CFD 原始三维场构造 <code>1× / 2× / 4× / 8×</code> 输运。<code>8×</code> 的 field、内部梯度、观测 worst 为 <code>0.0342 / 0.1247 / 0.0314</code>，三项均低于冻结上限；但非嵌套 <code>2×</code> 网格让三项尾部全部先恶化，p90 与 worst 单调门均为 <code>0/3</code>。</p>
+        <p><strong>当前执行：</strong>不把端点改善写成坐标泛化成功，也不租 GPU。下一门只修网格几何：改用区间严格嵌套的 <code>32/63/125/249</code> 节点序列和精确 stride restriction，判断 <code>2×</code> 尖峰是否来自节点错位。</p>
       </aside>
     </div>
     <div class="current-grid" aria-label="当前核心状态">
-      <div class="current-metric"><b id="liveWitnessCount">0 / 3</b><span>粗网格 field / interior-gradient / observation 保真门</span></div>
-      <div class="current-metric"><b id="liveFailureCount">0 / 15</b><span>恒等坐标 fixed-anchor 八门通过</span></div>
-      <div class="current-metric"><b id="liveCallBudget">0 / 90</b><span>正确微分同胚输运候选八门通过</span></div>
+      <div class="current-metric"><b id="liveWitnessCount">3 / 3</b><span><code>8×</code> field / interior-gradient / observation 绝对保真门</span></div>
+      <div class="current-metric"><b id="liveFailureCount">0 / 3</b><span>四级 p90-higher 单调收敛门</span></div>
+      <div class="current-metric"><b id="liveCallBudget">0 / 3</b><span>四级 worst 单调收敛门</span></div>
       <div class="current-metric warning"><b id="liveBreakthrough">false</b><span><code>algorithm_breakthrough</code>；不夸大负结果</span></div>
     </div>
     <details class="header-archive">
@@ -528,9 +528,12 @@
       <div class="archive-body">
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
-      <a class="button danger" href="#diffeomorphic-normalized-anchor-v104">打开 v104 最新路线判决</a>
-      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_normalized_anchor_v104_result_2026-08-02.md">读 v104 完整证据</a>
-      <a class="button" href="../docs/nine_view_case6_diffeomorphic_normalized_anchor_v104_public_summary.json">读 v104 脱敏摘要</a>
+      <a class="button danger" href="#diffeomorphic-transport-convergence-v105-1">打开 v105.1 最新路线判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_transport_convergence_v105_1_result_2026-08-02.md">读 v105.1 完整证据</a>
+      <a class="button" href="../docs/nine_view_case6_diffeomorphic_transport_convergence_v105_1_public_summary.json">读 v105.1 脱敏摘要</a>
+      <a class="button" href="#diffeomorphic-normalized-anchor-v104">回看 v104 父判决</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_normalized_anchor_v104_result_2026-08-02.md">读 v104 父证据</a>
+      <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_normalized_anchor_v104.png">看 v104 父结果图</a>
       <a class="button" href="#reference-rank4-predictor-v102">回看 v102 父判决</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_case6_reference_rank4_observation_predictor_v102_result_2026-08-02.md">读 v102 完整证据</a>
       <a class="button" href="../docs/nine_view_case6_reference_rank4_observation_predictor_v102_public_summary.json">读 v102 脱敏摘要</a>
@@ -622,6 +625,10 @@
       <a class="button" href="#sparse-detector-v58">回看 v58.1 关键正结果</a>
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
+    </div>
+    <div class="alert critical" style="margin-top:12px;">
+      <strong>v105.1 最新判决：8× 端点三项过线，但非嵌套 2× 尖峰使收敛门 0/3</strong>
+      <span>从原始三维 CFD 场独立构造四级输运后，<code>8×</code> worst 相对 <code>1×</code> 降至 <code>0.324 / 0.428 / 0.240</code>，绝对保真 <code>3/3</code>；但 p90 与 worst 全部不单调，逐单元全级单调比例仅 <code>33.3% / 20.0% / 26.7%</code>。独立复算逐行最大差 <code>4.48e-15</code>。这是真实数值余量，不是收敛、warm-start 或泛化成功；下一门只检验区间嵌套网格。<a href="#diffeomorphic-transport-convergence-v105-1">查看完整证据</a>。</span>
     </div>
     <div class="alert critical" style="margin-top:12px;">
       <strong>v104 最新判决：微分同胚算子共轭正确，但当前粗网格离散与固定 anchor 不可用</strong>
@@ -1061,18 +1068,23 @@
             <div><strong>v103-v104 微分同胚压力：数学闭合，粗网格与固定 anchor 失败</strong><p>六类可逆形变的 Jacobian、逆映射与变换算子伴随全部通过；但 field、内部梯度、观测保真门为 <code>0/3</code>，identity normalized-BP + K1 为 <code>0/15</code>，正确形变为 <code>0/90</code>。独立复算最大数组差 <code>1.17e-15</code>。</p></div>
             <span class="evidence-state fail">数学正结果 · 数值与算法负结果</span>
           </article>
+          <article class="evidence-row" id="diffeomorphic-transport-convergence-v105-1">
+            <time datetime="2026-08-02">2026-08-02</time>
+            <div><strong>v105.1 高分辨率输运：8× 端点 3/3 过线，四级单调收敛 0/3</strong><p>从原始 CFD 构造 <code>32×16×16</code> 至 <code>256×128×128</code> 四级三维场。8× field、内部梯度、观测 worst 为 <code>0.0342 / 0.1247 / 0.0314</code>；但非嵌套 2× 网格三项全部恶化，p90 与 worst 单调性均为 <code>0/3</code>。正式和独立各复算 360 行，布尔判决差为 0。</p></div>
+            <span class="evidence-state fail">端点正信号 · 收敛负结果</span>
+          </article>
         </div>
         <figure class="latest-figure">
-          <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_normalized_anchor_v104.png" aria-label="打开 v104 完整结果图">
-            <img loading="lazy" decoding="async" src="../assets/nine_view_case6_diffeomorphic_normalized_anchor_v104.png" alt="v104 微分同胚粗网格输运与 normalized anchor 结果" />
+          <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_transport_convergence_v105_1.png" aria-label="打开 v105.1 完整结果图">
+            <img loading="lazy" decoding="async" src="../assets/nine_view_case6_diffeomorphic_transport_convergence_v105_1.png" alt="v105.1 微分同胚高分辨率端点余量与非单调收敛结果" />
           </a>
-          <figcaption>最新可视化：微分同胚算子共轭与伴随成立；但粗网格保真为 <code>0/3</code>，固定 normalized anchor 在恒等坐标 <code>0/15</code>、形变坐标 <code>0/90</code>。</figcaption>
+          <figcaption>最新可视化：<code>8×</code> 端点三项绝对保真均通过，但 <code>2×</code> 网格出现反常尖峰，冻结的四级单调收敛判决失败。</figcaption>
         </figure>
       </div>
       <div class="actions" style="margin-top:13px;">
-        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_normalized_anchor_v104_result_2026-08-02.md">读 v104 完整证据</a>
-        <a class="button" href="../docs/nine_view_case6_diffeomorphic_normalized_anchor_v104_public_summary.json">读机器可读摘要</a>
-        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_normalized_anchor_v104.png">打开结果图原尺寸</a>
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_transport_convergence_v105_1_result_2026-08-02.md">读 v105.1 完整证据</a>
+        <a class="button" href="../docs/nine_view_case6_diffeomorphic_transport_convergence_v105_1_public_summary.json">读机器可读摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_transport_convergence_v105_1.png">打开结果图原尺寸</a>
       </div>
     </section>
 
@@ -1088,7 +1100,7 @@
       <div class="focus-grid">
         <article class="focus-card positive"><h3>已建立可复算链</h3><p>每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。</p></article>
         <article class="focus-card boundary"><h3>当前更新源</h3><p id="liveEvidenceStatus" aria-live="polite">正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。</p></article>
-        <article class="focus-card current"><h3>本轮真实增量</h3><p>v103-v104 把微分同胚从概念变成了 90 个三维压力单元：伴随关系通过，但粗网格保真 0/3、固定 normalized anchor 恒等 0/15、形变 0/90。失败已定位到离散输运和目标机制，下一步不再靠调幅值或堆网络。</p></article>
+        <article class="focus-card current"><h3>本轮真实增量</h3><p>v105.1 从公开 CFD 原始场重建四级高分辨率输运：8× 端点三项过线，却在非嵌套 2× 网格出现共同尖峰。它把“粗网格不保真”推进为更具体的节点错位假设，同时明确禁止把端点改善包装成收敛或算法突破。</p></article>
       </div>
     </section>
 
@@ -1111,7 +1123,8 @@
         <div class="outcome-step closed"><div><b>严格可观测 rank 4 对静态 rank 0</b><span>v102 中三个 transported eligible 方法均保持 90/90，但没有一个满足预注册优势门；no-transport 只有 71/90。</span></div><em>当前 family 已关闭</em></div>
         <div class="outcome-step passed"><div><b>微分同胚算子共轭与伴随</b><span>v104 已验证 Jacobian、逆映射和 <code>A_phi/A_phi^T</code>；最坏伴随相对误差 <code>5.59e-14</code>。</span></div><em>数学已通过</em></div>
         <div class="outcome-step closed"><div><b>粗网格三线性输运与固定 normalized anchor</b><span>三项数值保真门 0/3；identity 0/15；正确形变 0/90。停止继续调小形变幅值或用大网络救援。</span></div><em>当前实现已关闭</em></div>
-        <div class="outcome-step"><div><b>高分辨率/连续域输运收敛</b><span>先在高分辨率域应用微分同胚，再 restriction 到 <code>32×16×16</code>；要求 field、内部梯度与观测误差随分辨率收敛。</span></div><em>下一门</em></div>
+        <div class="outcome-step closed"><div><b>非嵌套节点倍增的四级输运</b><span>v105.1 的 8× 端点三项通过，但 2× 全部恶化，p90 与 worst 单调门均为 0/3；不能据此声明收敛。</span></div><em>当前序列已关闭</em></div>
+        <div class="outcome-step"><div><b>区间嵌套网格输运收敛</b><span>保持物理条件不变，改用 <code>32/63/125/249</code> 节点与精确 stride restriction，排除节点错位伪差。</span></div><em>下一门</em></div>
         <div class="outcome-step"><div><b>独立工况 matched-accuracy</b><span>在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
         <div class="outcome-step"><div><b>真实资源收益</b><span>fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。</span></div><em>尚未启动</em></div>
         <div class="outcome-step"><div><b>真实 BOST 迁移</b><span>接入组内位移图、相机标定、重复测量噪声与认可基线，重新定义实验“同精度”。</span></div><em>需要组内数据</em></div>
@@ -1141,7 +1154,7 @@
         </div>
       </div>
       <div class="future-grid">
-        <article class="focus-card current"><h3>最近科学门</h3><p>v104 已确认微分同胚数学不是问题，问题在于粗网格三线性 warp 不保真，且 fixed rank-0 target 即使在恒等坐标也不够准。下一步只做高分辨率/连续域输运收敛：若三类误差不随分辨率下降，就关闭这套离散路线；只有收敛后才重设 observation-adaptive、pose-conditioned initializer。</p></article>
+        <article class="focus-card current"><h3>最近科学门</h3><p>v105.1 已显示高分辨率端点确有余量，但当前 32/64/128/256 节点序列不共享粗网格节点，restriction 会额外插值。下一步只改成区间嵌套的 32/63/125/249 节点序列；若仍不单调，再检查形变支撑的物理厚度，而不是上大网络。</p></article>
         <article class="focus-card boundary"><h3>何时租 GPU</h3><p>只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。</p></article>
         <article class="focus-card positive"><h3>何时接组内数据</h3><p>公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。</p></article>
       </div>
@@ -2875,21 +2888,17 @@
         .then(evidence => {
           const metrics = evidence.metrics || {};
           const decision = evidence.current_decision || {};
-          const fidelityPassed = [
-            metrics.v104_field_roundtrip_worst <= metrics.v104_field_roundtrip_limit,
-            metrics.v104_interior_gradient_roundtrip_worst <= metrics.v104_interior_gradient_roundtrip_limit,
-            metrics.v104_observation_equivariance_worst <= metrics.v104_observation_equivariance_limit,
-          ].filter(Boolean).length;
-          document.getElementById('liveWitnessCount').textContent = `${fidelityPassed} / 3`;
-          document.getElementById('liveFailureCount').textContent = `${metrics.v104_identity_candidate_passed} / ${metrics.v104_identity_cell_count}`;
-          document.getElementById('liveCallBudget').textContent = `${metrics.v104_correct_transport_passed} / ${metrics.v104_stress_cell_count}`;
+          const fidelityPassed = Number(metrics.v105_final_absolute_limits_passed);
+          document.getElementById('liveWitnessCount').textContent = `${fidelityPassed} / ${metrics.v105_final_absolute_limits_total}`;
+          document.getElementById('liveFailureCount').textContent = `${metrics.v105_p90_monotonic_passed} / ${metrics.v105_p90_monotonic_total}`;
+          document.getElementById('liveCallBudget').textContent = `${metrics.v105_worst_monotonic_passed} / ${metrics.v105_worst_monotonic_total}`;
           document.getElementById('liveBreakthrough').textContent = String(Boolean(decision.algorithm_breakthrough));
           const nextGate = String(evidence.next_scientific_gate_zh || evidence.next_scientific_gate).trim();
           const nextGateSentence = /[。！？.!?]$/.test(nextGate) ? nextGate : `${nextGate}。`;
-          document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：v104 粗网格数值保真为 ${fidelityPassed}/3，恒等坐标 fixed-anchor 为 ${metrics.v104_identity_candidate_passed}/${metrics.v104_identity_cell_count}，正确微分同胚输运为 ${metrics.v104_correct_transport_passed}/${metrics.v104_stress_cell_count}；独立复算最大数组差 ${Number(metrics.v104_array_maximum_absolute_difference).toExponential(2)}。下一门是 ${nextGateSentence}`;
+          document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：v105.1 的 8x 绝对保真为 ${fidelityPassed}/${metrics.v105_final_absolute_limits_total}，p90 与 worst 四级单调门分别为 ${metrics.v105_p90_monotonic_passed}/${metrics.v105_p90_monotonic_total}、${metrics.v105_worst_monotonic_passed}/${metrics.v105_worst_monotonic_total}；独立复算逐行最大差 ${Number(metrics.v105_row_metric_maximum_absolute_difference).toExponential(2)}。下一门是 ${nextGateSentence}`;
         })
         .catch(() => {
-          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v104 微分同胚伴随数学通过，但粗网格保真为 0/3，恒等 fixed-anchor 为 0/15，正确形变为 0/90；下一步是高分辨率/连续域输运收敛，algorithm_breakthrough=false。';
+          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v105.1 的 8x 端点绝对保真为 3/3，但 p90 与 worst 四级单调门均为 0/3；下一步是区间嵌套网格与精确 stride restriction，algorithm_breakthrough=false。';
         });
     })();
   </script>

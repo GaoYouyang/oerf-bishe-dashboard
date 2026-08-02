@@ -1,0 +1,111 @@
+{
+  "schema_version": "oerf-nine-view-case6-diffeomorphic-transport-convergence-public-summary-105.1",
+  "updated": "2026-08-02",
+  "formal_status": "FAIL_NO_HIGH_RESOLUTION_DIFFEOMORPHIC_TRANSPORT_CONVERGENCE_V105_1",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_CASE6_DIFFEOMORPHIC_TRANSPORT_CONVERGENCE_V105_1",
+  "evidence_role": "post-open Case-6 numerical transport convergence diagnostic",
+  "selected_physical_frames": 5,
+  "known_geometries": 3,
+  "diffeomorphisms": 6,
+  "rows_per_level": 90,
+  "formal_rows": 360,
+  "levels": [
+    {
+      "level_id": "source_informed_1x",
+      "shape_zyx": [32, 16, 16],
+      "field": {"p50": 0.05024733262673064, "p90_higher": 0.10216021516162772, "worst": 0.10533935547710675},
+      "interior_gradient": {"p50": 0.12987041643936859, "p90_higher": 0.28199403963157754, "worst": 0.2910550066152159},
+      "observation": {"p50": 0.03714594542973274, "p90_higher": 0.12444794170013805, "worst": 0.13087671573491125}
+    },
+    {
+      "level_id": "source_informed_2x",
+      "shape_zyx": [64, 32, 32],
+      "field": {"p50": 0.09260131674312068, "p90_higher": 0.12148199195012802, "worst": 0.1301552075308377},
+      "interior_gradient": {"p50": 0.24540737072791727, "p90_higher": 0.43079365803277364, "worst": 0.45794099328747756},
+      "observation": {"p50": 0.09166523027982124, "p90_higher": 0.1309109609289288, "worst": 0.14431322331588614}
+    },
+    {
+      "level_id": "source_informed_4x",
+      "shape_zyx": [128, 64, 64],
+      "field": {"p50": 0.04033052271607442, "p90_higher": 0.05455826622895874, "worst": 0.059296365800271866},
+      "interior_gradient": {"p50": 0.10761195927900472, "p90_higher": 0.19536716612358035, "worst": 0.2091232029439236},
+      "observation": {"p50": 0.034682320734874976, "p90_higher": 0.060306226424548956, "worst": 0.06442886945679008}
+    },
+    {
+      "level_id": "source_informed_8x",
+      "shape_zyx": [256, 128, 128],
+      "field": {"p50": 0.012316037151605242, "p90_higher": 0.021682580380696894, "worst": 0.034155096082129306},
+      "interior_gradient": {"p50": 0.04280049424491864, "p90_higher": 0.07151698727738562, "worst": 0.12468797511862717},
+      "observation": {"p50": 0.01277267747233269, "p90_higher": 0.02141288157420083, "worst": 0.03139914101666538}
+    }
+  ],
+  "frozen_limits": {
+    "field_worst": 0.08,
+    "interior_gradient_worst": 0.25,
+    "observation_worst": 0.12,
+    "final_worst_ratio_vs_1x_maximum": 0.8,
+    "cellwise_final_noninferior_fraction_minimum": 0.95,
+    "cellwise_all_level_monotone_fraction_minimum": 0.8
+  },
+  "gate_outcomes": {
+    "final_absolute_limits_passed": 3,
+    "final_absolute_limits_total": 3,
+    "p90_higher_monotonic_passed": 0,
+    "p90_higher_monotonic_total": 3,
+    "worst_monotonic_passed": 0,
+    "worst_monotonic_total": 3,
+    "final_worst_ratio_passed": 3,
+    "final_worst_ratio_total": 3,
+    "cellwise_final_noninferior_passed": 1,
+    "cellwise_final_noninferior_total": 3,
+    "cellwise_all_level_monotone_passed": 0,
+    "cellwise_all_level_monotone_total": 3
+  },
+  "final_8x_worst_ratio_vs_1x": {
+    "field": 0.3242387038294741,
+    "interior_gradient": 0.42840003533582466,
+    "observation": 0.23991388262113678
+  },
+  "cellwise_final_noninferior_fraction": {
+    "field": 1.0,
+    "interior_gradient": 0.9333333333333333,
+    "observation": 0.9333333333333333
+  },
+  "cellwise_all_level_monotone_fraction": {
+    "field": 0.3333333333333333,
+    "interior_gradient": 0.2,
+    "observation": 0.26666666666666666
+  },
+  "integrity": {
+    "coarse_reference_relative_l2_maximum": 0.0,
+    "coarse_metric_vs_v104_maximum_absolute_difference": 9.43689570931383e-16,
+    "formal_rows": 360,
+    "independent_rows": 360,
+    "row_metric_maximum_absolute_difference": 4.4825254619240695e-15,
+    "summary_maximum_absolute_difference": 2.3314683517128287e-14,
+    "predicate_boolean_mismatch_count": 0,
+    "formal_inputs_and_outputs_unchanged": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "v105_invalid_attempt": {
+    "status": "INCONCLUSIVE_INVALID_HIGH_RESOLUTION_TRANSPORT_EXECUTION_V105",
+    "reason": "observation metric used the post-gauge roundtrip instead of the v104 pre-second-gauge pullback",
+    "used_for_scientific_decision": false
+  },
+  "decision": "The source-informed 8x endpoint has substantial numerical headroom and passes all three absolute limits, but the preregistered four-level convergence claim fails because the non-nested 2x grid worsens every tail and too few cells are monotone. Do not claim convergence or train a larger model from this result.",
+  "next_gate": "Use interval-nested grids 32x16x16, 63x31x31, 125x61x61 and 249x121x121 with exact strided restriction to test whether node misalignment caused the 2x spike; keep all physical frames, warps, geometries and numerical limits unchanged.",
+  "claims": {
+    "source_informed_8x_absolute_fidelity_passed": true,
+    "four_level_monotone_convergence_passed": false,
+    "fixed_rank0_normalized_anchor_reopened": false,
+    "warm_initializer_evaluated": false,
+    "matched_accuracy": false,
+    "coordinate_generalization": false,
+    "resource_advantage": false,
+    "external_generalization": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "gpu_training_authorized": false
+  }
+}

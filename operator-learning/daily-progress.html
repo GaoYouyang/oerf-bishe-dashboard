@@ -509,13 +509,13 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>0 / 3 · 0 / 15 · 0 / 90</b>
-        <span>v104 粗网格三类保真门、恒等 fixed-anchor 与正确微分同胚候选的通过数。</span>
+        <b>3 / 3 · 0 / 3</b>
+        <span>v105.1 的 8× 三项绝对保真通过数，以及 p90 / worst 四级单调收敛通过数。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v104 证明微分同胚算子数学正确，但当前粗网格离散与固定 anchor 不可用</strong>
-      <span>六类三维可逆形变的 Jacobian、逆映射和 <code>A_phi/A_phi^T</code> 伴随均闭合；但 <code>32×16×16</code> 三线性输运的 field、内部梯度、观测保真门为 <code>0/3</code>，normalized-BP + K1 在恒等坐标为 <code>0/15</code>、形变坐标为 <code>0/90</code>。独立复算最大数组差 <code>1.17e-15</code>。当前不继续调形变幅值或租 GPU，下一门是高分辨率/连续域输运收敛；<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新科学判决：v105.1 的 8× 端点有真实余量，但四级微分同胚输运没有单调收敛</strong>
+      <span>从原始公开 CFD 场构造的 <code>8×</code> 输运在 field、内部梯度、观测三项绝对门均通过，worst 相对 <code>1×</code> 降至 <code>0.324 / 0.428 / 0.240</code>；但非嵌套 <code>2×</code> 网格让全部尾部先恶化，p90 与 worst 单调门都是 <code>0/3</code>。独立复算逐行最大差 <code>4.48e-15</code>。当前不租 GPU，下一门只检验区间嵌套网格与精确 stride restriction；<code>algorithm_breakthrough=false</code>。</span>
       <details style="margin-top:10px;">
         <summary>展开同日 v94 及更早父证据</summary>
         <span>
@@ -631,6 +631,12 @@
                 <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
+                    <span class="tag">v105.1 8× 绝对保真：3/3</span>
+                    <span class="tag negative">p90 / worst 单调：0/3</span>
+                    <span class="tag">8× / 1× worst：0.324 / 0.428 / 0.240</span>
+                    <span class="tag negative">2× 三项共同尖峰</span>
+                    <span class="tag engineering">360 + 360 行独立复算</span>
+                    <span class="tag">下一门：区间嵌套网格</span>
                     <span class="tag">v104 伴随误差：5.59e-14</span>
                     <span class="tag negative">粗网格保真：0/3</span>
                     <span class="tag negative">恒等 fixed-anchor：0/15</span>
@@ -655,13 +661,37 @@
                     <span class="tag engineering">270 回放逐值复算</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3>v103-v104：微分同胚数学成立，但粗网格输运和固定 warm anchor 都失败</h3>
-                  <p>师兄提出的微分同胚建议已经变成 90 个三维可逆形变压力单元。结果把问题分开了：坐标共轭和伴随没有错，当前失败来自粗网格三线性输运不保真，以及 fixed rank-0 target 即使在恒等坐标也不够准。</p>
+                  <h3>v105.1：高分辨率端点明显变准，但非嵌套网格没有形成可信收敛链</h3>
+                  <p>师兄提出的微分同胚建议已从公式门推进到原始三维 CFD 的四级输运。8× 端点三项绝对误差都过线，说明连续域方向值得追；但 2× 反常变差使预注册收敛门失败，当前不能把这个正信号包装成算法或泛化成功。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
               <div class="entry-body">
                 <div class="evidence-grid">
+                  <section>
+                    <h4>为什么做 v105.1</h4>
+                    <p>v104 已证明微分同胚算子共轭与伴随写对了，却在 <code>32×16×16</code> 粗网格上失真。v105.1 因此不训练模型，直接从公开 CFD 原始密度场构造四级分辨率，先问离散输运本身是否趋近可信连续结果。</p>
+                  </section>
+                  <section>
+                    <h4>真正运行了什么</h4>
+                    <p>保持同一 5 个物理帧、6 类平滑可逆形变和 3 套九视角几何，比较 <code>32×16×16</code>、<code>64×32×32</code>、<code>128×64×64</code>、<code>256×128×128</code>。正式与独立程序各重算 <code>360</code> 行，不读取新 validation/test，也没有训练模型。</p>
+                  </section>
+                  <section>
+                    <h4>8× 端点的正信号</h4>
+                    <p>8× field、内部梯度和观测 worst 为 <code>0.034155 / 0.124688 / 0.031399</code>，分别低于 <code>0.08 / 0.25 / 0.12</code> 上限。相对 1× worst 比例为 <code>0.324 / 0.428 / 0.240</code>，说明更细物理域确实减少输运误差。</p>
+                  </section>
+                  <section>
+                    <h4>为什么正式判决仍是失败</h4>
+                    <p>2× 的三项 worst 反而升至 <code>0.130155 / 0.457941 / 0.144313</code>。p90-higher 和 worst 的四级单调门均为 <code>0/3</code>；逐单元全级单调比例只有 <code>33.3% / 20.0% / 26.7%</code>，不能据 8× 端点反推收敛已证。</p>
+                  </section>
+                  <section>
+                    <h4>独立复算与无效尝试</h4>
+                    <p>首个 v105 因 observation 定义与 v104 不同而 fail-closed，没有参与科学判决。v105.1 只修正这一口径；独立程序改用手写八角点插值与固定轮数逆映射，逐行指标最大差 <code>4.48e-15</code>、布尔不一致为 0。</p>
+                  </section>
+                  <section>
+                    <h4>路线怎样收缩</h4>
+                    <p>当前节点数倍增不是区间嵌套：32 节点有 31 个区间，64 节点有 63 个区间，粗节点不是细网格子集。下一门保持全部物理条件不变，只改为 <code>32/63/125/249</code> 节点并精确 stride restriction；仍不租 GPU。</p>
+                  </section>
                   <section>
                     <h4>为什么做 v103-v104</h4>
                     <p>v102 只在三套离散相机几何上检验坐标输运，wrong-pose control 仍能过门。v103 因此构造六类平滑、可逆、Jacobian 有界的三维形变；v104 再缩小形变并修复 raw BP 的尺度病态，检验这条机制是否真的可用于 warm start。</p>
@@ -937,12 +967,15 @@
                   </section>
                 </div>
                 <figure class="entry-figure">
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_normalized_anchor_v104.png" aria-label="打开 v104 微分同胚结果图">
-                    <img src="../assets/nine_view_case6_diffeomorphic_normalized_anchor_v104.png" alt="v104 微分同胚粗网格输运与 normalized anchor 结果" />
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_transport_convergence_v105_1.png" aria-label="打开 v105.1 微分同胚输运收敛结果图">
+                    <img src="../assets/nine_view_case6_diffeomorphic_transport_convergence_v105_1.png" alt="v105.1 高分辨率微分同胚输运端点余量与非单调收敛结果" />
                   </a>
-                  <figcaption>v104：微分同胚算子共轭与伴随数学成立；粗网格三类保真门、恒等 fixed-anchor 和形变候选分别为 0/3、0/15、0/90。</figcaption>
+                  <figcaption>v105.1：8× 端点绝对保真 3/3，但非嵌套 2× 网格三项共同恶化，p90 与 worst 四级单调门均为 0/3。</figcaption>
                 </figure>
                 <div class="entry-links">
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_transport_convergence_v105_1_result_2026-08-02.md">v105.1 完整证据</a>
+                  <a href="../docs/nine_view_case6_diffeomorphic_transport_convergence_v105_1_public_summary.json">v105.1 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_transport_convergence_v105_1.png">v105.1 结果图</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_case6_diffeomorphic_normalized_anchor_v104_result_2026-08-02.md">v104 完整证据</a>
                   <a href="../docs/nine_view_case6_diffeomorphic_normalized_anchor_v104_public_summary.json">v104 脱敏摘要</a>
                   <a href="../asset_viewer.html?asset=assets%2Fnine_view_case6_diffeomorphic_normalized_anchor_v104.png">v104 结果图</a>
@@ -2296,14 +2329,15 @@
         v102 随后完成严格 observation-only 对照：正确输运的三种方法均保持 <code>90/90</code>，无输运仅
         <code>71/90</code>，但 eligible rank-4 优势门为 <code>0/3</code>。v103-v104 再把连续微分同胚压力落到六类三维形变：
         Jacobian、逆映射与 <code>A_phi/A_phi^T</code> 伴随数学通过，但粗网格保真为 <code>0/3</code>，fixed-anchor
-        在恒等坐标与形变坐标分别为 <code>0/15</code> 与 <code>0/90</code>。因此下一问题收束为高分辨率/连续域输运收敛；
-        它仍没有证明未见 pose 泛化、真实 BOST 或论文成功。
+        在恒等坐标与形变坐标分别为 <code>0/15</code> 与 <code>0/90</code>。v105.1 再从原始 CFD 构造四级高分辨率输运：
+        <code>8×</code> 端点三项绝对保真全部通过，但非嵌套 <code>2×</code> 网格形成共同尖峰，p90 与 worst 单调门均为
+        <code>0/3</code>。因此下一问题进一步收束为区间嵌套网格与精确 stride restriction；它仍没有证明未见 pose 泛化、真实 BOST 或论文成功。
       </p>
     </section>
   </main>
 
   <footer>
-    持续更新至 v104 微分同胚粗网格输运与 normalized-anchor 独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v105.1 微分同胚高分辨率端点余量与非单调收敛独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>
