@@ -509,13 +509,13 @@
         <span>v74.1 候选完整精确算子账；Zero-K4 对照为 4A+4A<sup>T</sup>。</span>
       </div>
       <div class="metric">
-        <b>81 / 90</b>
-        <span>v95.1 最佳 observation-only 策略；候选真值神谕上限也只有 83/90。</span>
+        <b>90 / 90</b>
+        <span>v96 观测自适应频谱表示的 truth-aware 容量；独立实现复算通过。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong>最新科学判决：v95.1 有可学习信号，但固定九维小模型与置信回退严格失败</strong>
-      <span>最佳 selected linear ridge 把严格通过从父 K1 的 <code>78/90</code> 提高到 <code>81/90</code>，maximum-gate 中位数由 <code>-0.04173</code> 改善到 <code>-0.06344</code>；可是 p90 与 worst 仍为正，九个失败全部被选择器接受。更关键的是，真值神谕在父 K1、mean、linear、RBF 四个候选中逐单元挑选也最多 <code>83/90</code>。因此瓶颈不只是 confidence calibration，而是候选表示本身。固定九维小模型和 confidence-only 修补关闭；下一门改为 observation-adaptive direction 容量，当前不租 GPU。<code>algorithm_breakthrough=false</code>。</span>
+      <strong>最新科学判决：v96 把观测自适应表示容量补到 90/90，下一门转向四系数可学习性</strong>
+      <span>四个新方向只由父 K1 observation residual 与 known geometry 生成，精确嵌套旧九维 family，在线 exact 账仍为 <code>2A+2A^T</code>。F30+、F15+、F12+ 均为 <code>30/30</code>，独立实现对 90 个单元复算后的 field、residual、metrics、gates 最大差全部为 <code>0</code>。这是 <code>representation_capacity_breakthrough=true</code>；但系数仍由真值辅助寻找，所以 <code>algorithm_breakthrough=false</code>，当前仍不租 GPU。</span>
       <details style="margin-top:10px;">
         <summary>展开同日 v94 及更早父证据</summary>
         <span>
@@ -631,16 +631,16 @@
                 <div class="date-block"><time datetime="2026-08-02">2026-08-02</time><span>周日 · Day 28</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
-                    <span class="tag">v95.1 最佳 81/90</span>
-                    <span class="tag">父 K1 78/90</span>
-                    <span class="tag negative">神谕上限 83/90</span>
-                    <span class="tag negative">9 个内部梯度失败</span>
-                    <span class="tag negative">confidence-only 关线</span>
+                    <span class="tag">v96 容量 90/90</span>
+                    <span class="tag">F30 / F15 / F12 均 30/30</span>
+                    <span class="tag">新增 4 个残差频谱方向</span>
+                    <span class="tag">在线仍为 2A+2A<sup>T</sup></span>
+                    <span class="tag">表示容量突破</span>
                     <span class="tag engineering">正式/独立逐值差 0</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3>v95.1 证明九维系数可部分预测，但当前候选集合无法达到 90/90</h3>
-                  <p>线性 observation-only predictor 确实修复了部分父 K1 失败；严格通过由 78 提高到 81。候选集合即使用真值挑选也最多 83，因此不能靠继续调置信度或换更大分类器补齐尾部。</p>
+                  <h3>v96 找到可解释的观测自适应补空间，truth-aware 表示容量首次达到 90/90</h3>
+                  <p>v95.1 的 81/90 与候选神谕 83/90 证明旧表示不足；v96 没有堆更大网络，而是从 residual 与 geometry 构造四个固定频谱带方向，补齐最后一个严格反例。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
@@ -648,6 +648,31 @@
                 <div class="evidence-grid">
                   <section>
                     <h4>今天真正执行了什么</h4>
+                    <p>把旧 GSLB32 观测投影 <code>P=AU</code> 的谱分成四个八模态频带，用父 K1 residual 的 <code>P^T r</code> 构造四个 ridge 型反投影方向，再在物理 correction 内积下对旧九维 family 正交化与白化。新系数为零时严格回到旧 family。</p>
+                  </section>
+                  <section>
+                    <h4>v96 的实质结果</h4>
+                    <ul>
+                      <li>F30+、F15+、F12+ 均为 <code>30/30</code>；总计 <code>90/90</code>。</li>
+                      <li>三档几何的 worst maximum-gate 为 <code>-0.00444 / -0.00606 / -0.02064</code>，全部严格小于零。</li>
+                      <li>旧九维 family 唯一未解决的 F30 第 12 帧被修复。</li>
+                      <li>在线 exact 账保持 <code>2A+2A^T</code>；没有用新增物理调用换容量。</li>
+                    </ul>
+                  </section>
+                  <section>
+                    <h4>独立复算</h4>
+                    <p>独立程序没有导入正式 v96 core 或 runner，重写频谱方向、物理补空间和 13 维 physical ball。90 个单元的 field、residual、metrics、gates 与方向诊断正式/独立最大差全部为 <code>0</code>；最难帧的独立全局搜索得到 maximum-gate <code>-0.0113983</code>。</p>
+                  </section>
+                  <section>
+                    <h4>突破与边界</h4>
+                    <p><code>representation_capacity_breakthrough=true</code>：最后容量缺口被低维、可解释、部署可见方向生成机制补齐。可是 13 维系数仍由真值辅助搜索，尚不能部署，因此 <code>algorithm_breakthrough=false</code>、<code>paper_success=false</code>、<code>real_BOST=false</code>。</p>
+                  </section>
+                  <section>
+                    <h4>下一科学门</h4>
+                    <p>只预测四个新增频谱系数，输入限于 observation、known geometry 与父 residual 频谱特征；保持五折时间隔离、一帧 embargo、同一八门和 <code>2A+2A^T</code>。预测器也达到 <code>90/90</code> 后，才打开一个此前未读的公开工况。</p>
+                  </section>
+                  <section>
+                    <h4>同日 v95.1 父负证据</h4>
                     <p>在 30 个 Case 6 物理帧、三档九视角几何和五个连续时间外折上，真实拟合并比较 scenario mean、linear ridge、RBF-KRR 共 33 个候选。输入只含 deployment-visible observation 与 known geometry；每条预测和父 K1 回退都精确回放为 <code>2A+2A<sup>T</sup></code>，并逐单元检查八门。</p>
                   </section>
                   <section>
@@ -698,15 +723,16 @@
                   </section>
                 </div>
                 <figure class="entry-figure">
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95.png" aria-label="打开 v95.1 observation-only 九维预测结果图">
-                    <img src="../assets/nine_view_v94_case6_physical_ball_observation_predictor_v95.png" alt="v95.1 observation-only 九维预测与候选上限" />
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96.png" aria-label="打开 v96 观测自适应频谱表示容量结果图">
+                    <img src="../assets/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96.png" alt="v96 观测自适应频谱表示容量结果" />
                   </a>
-                  <figcaption>典型帧质量改善不等于严格成功：最佳方法只有 81/90，且当前候选集合的真值神谕上限仅 83/90。</figcaption>
+                  <figcaption>v96 把旧九维 truth-aware 容量的 89/90 补到 90/90；图中同时标明它仍不是部署预测、算法完成或真实 BOST 成功。</figcaption>
                 </figure>
                 <div class="entry-links">
-                  <a href="../document_reader.html?doc=docs%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95_result_2026-08-02.md">v95.1 完整证据</a>
-                  <a href="../docs/nine_view_v94_case6_physical_ball_observation_predictor_v95_public_summary.json">v95.1 脱敏摘要</a>
-                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95.png">v95.1 结果图</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_result_2026-08-02.md">v96 完整证据</a>
+                  <a href="../docs/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_public_summary.json">v96 脱敏摘要</a>
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96.png">v96 结果图</a>
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95_result_2026-08-02.md">回看 v95.1 父负证据</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_v93_anchor_locator_cross_geometry_v94_result_2026-08-02.md">回看 v94 关线结果</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_v92_case6_spatial_error_localization_v93_result_2026-08-02.md">回看 v93 定位结果</a>
                   <a href="../document_reader.html?doc=docs%2Fnine_view_v90_case6_basis_invariant_physical_ball_v91_result_2026-08-02.md">回看 v91 参数化正进展</a>
@@ -2036,7 +2062,7 @@
   </main>
 
   <footer>
-    持续更新至 v95.1 Case 6 observation-only 九维预测独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
+    持续更新至 v96 Case 6 观测自适应频谱表示容量独立复算 · 内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。
   </footer>
 
   <script>

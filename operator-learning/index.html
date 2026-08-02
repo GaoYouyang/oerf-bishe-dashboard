@@ -422,6 +422,8 @@
     .outcome-step b, .outcome-step span { display: block; }
     .outcome-step span { color: var(--muted); font-size: 12px; }
     .outcome-step em { color: var(--gold); font-size: 11px; font-style: normal; font-weight: 850; white-space: nowrap; }
+    .outcome-step.passed::before { background: var(--teal); }
+    .outcome-step.passed em { color: var(--teal); }
     .outcome-step.closed em { color: var(--coral); }
     details.header-archive, details.legacy-archive {
       margin-top: 18px;
@@ -506,18 +508,18 @@
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="#research-progress">查看当前研究进程</a>
           <a class="button" href="daily-progress.html">查看每日实质增量</a>
-          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95_result_2026-08-02.md">阅读最新完整证据</a>
+          <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_result_2026-08-02.md">阅读最新完整证据</a>
         </div>
       </div>
       <aside class="hero-verdict" aria-label="当前科学判决">
-        <b>当前判决：尚未突破</b>
-        <p><code>v95.1</code> 用 deployment-visible observation 与 known geometry 预测九维 physical-ball 坐标。最佳线性策略把严格通过从父 K1 的 <code>78/90</code> 提高到 <code>81/90</code>，但仍未达到全单元门。</p>
-        <p><strong>下一步：</strong>当前候选即使用真值挑选也最多 <code>83/90</code>，因此停止只调置信度，先验证 observation-adaptive direction 是否具备 <code>90/90</code> 表示容量；当前仍不租 GPU。</p>
+        <b>当前判决：表示容量突破，部署算法尚未完成</b>
+        <p><code>v96</code> 用父 K1 观测残差与 known geometry 生成四个固定频谱带方向。truth-aware 搜索在三档几何上达到 <code>90/90</code>，并由另一套实现完整复算。</p>
+        <p><strong>下一步：</strong>只预测四个新增系数，保持五折时间隔离、八门和 <code>2A+2A^T</code>；预测器也达到 <code>90/90</code> 后才打开新公开工况。当前仍不租 GPU。</p>
       </aside>
     </div>
     <div class="current-grid" aria-label="当前核心状态">
-      <div class="current-metric"><b id="liveWitnessCount">81 / 90</b><span>v95.1 最佳 observation-only 策略严格通过数</span></div>
-      <div class="current-metric warning"><b id="liveFailureCount">9 个反例</b><span>全部落在内部梯度尾部，不能被平均改善掩盖</span></div>
+      <div class="current-metric"><b id="liveWitnessCount">90 / 90</b><span>v96 truth-aware 表示容量；独立复算通过</span></div>
+      <div class="current-metric"><b id="liveFailureCount">0 个反例</b><span>容量缺口已补齐；可学习性仍待验证</span></div>
       <div class="current-metric"><b id="liveCallBudget">2A + 2A<sup>T</sup></b><span>每个候选的冻结 exact 在线预算</span></div>
       <div class="current-metric warning"><b id="liveBreakthrough">false</b><span><code>algorithm_breakthrough</code>；不夸大负结果</span></div>
     </div>
@@ -526,6 +528,9 @@
       <div class="archive-body">
     <div class="actions" style="margin-top:14px;">
       <a class="button primary" href="daily-progress.html">查看每日实质增量</a>
+      <a class="button primary" href="#adaptive-spectral-capacity-v96">打开 v96 表示容量突破</a>
+      <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_result_2026-08-02.md">读 v96 完整证据</a>
+      <a class="button" href="../docs/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_public_summary.json">读 v96 脱敏摘要</a>
       <a class="button primary" href="#physical-ball-predictor-v95">打开 v95.1 最新路线判决</a>
       <a class="button" href="../document_reader.html?doc=docs%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95_result_2026-08-02.md">读 v95.1 完整证据</a>
       <a class="button" href="../docs/nine_view_v94_case6_physical_ball_observation_predictor_v95_public_summary.json">读 v95.1 脱敏摘要</a>
@@ -596,6 +601,10 @@
       <a class="button" href="#sparse-detector-v58">回看 v58.1 关键正结果</a>
       <a class="button" href="blastnet-external-v40.html">回看 v40.2 外部门</a>
       <a class="button" href="sarc-k3-m4-v37.html">回看 v39.1 PoolFire 正结果</a>
+    </div>
+    <div class="alert success" style="margin-top:12px;">
+      <strong>v96 最新判决：四个观测自适应频谱方向把 truth-aware 表示容量补到 90/90</strong>
+      <span>新方向只由父 residual 与 known geometry 生成，精确嵌套旧九维 family，在线 exact 账仍为 <code>2A+2A^T</code>。三档几何均为 <code>30/30</code>，独立重实现对 90 个单元复算后逐值差为 0；但系数仍由真值辅助寻找，所以当前只是表示容量突破，<code>algorithm_breakthrough=false</code>。<a href="#adaptive-spectral-capacity-v96">查看完整证据</a>。</span>
     </div>
     <div class="alert critical" style="margin-top:12px;">
       <strong>v95.1 最新判决：小模型存在可学习信号，但严格全单元门失败</strong>
@@ -906,7 +915,7 @@
         <div><b>九视角观测</b><span>已知几何 straight-ray 密度梯度代理</span></div>
         <div><b>粗网格逆问题</b><span><code>32×16×16</code> 三维状态</span></div>
         <div><b>九维小模型已判失败</b><span>最佳 81/90；候选神谕上限 83/90</span></div>
-        <div class="current"><b>当前：自适应方向容量</b><span>只由 observation / geometry 生成方向，先过 90/90</span></div>
+        <div class="current"><b>当前：四系数可学习性</b><span>13D 容量已达 90/90；下一步只看 observation 预测</span></div>
         <div><b>真实 BOST 迁移</b><span>组内位移图、标定、噪声与认可基线</span></div>
       </div>
       <div class="focus-grid" style="margin-top:12px;">
@@ -970,18 +979,23 @@
             <div><strong>v95.1：小模型提高到 81/90，但候选神谕也只有 83/90</strong><p>线性 observation-only predictor 证明九维坐标存在可学习信号；然而九个失败全部落在内部梯度，且完美候选选择仍留下七个共同失败。关闭固定九维小模型与 confidence-only 修补。</p></div>
             <span class="evidence-state fail">严格负结果</span>
           </article>
+          <article class="evidence-row" id="adaptive-spectral-capacity-v96">
+            <time datetime="2026-08-02">2026-08-02</time>
+            <div><strong>v96：四个观测自适应频谱方向达到 90/90 容量</strong><p>从父 residual 和 known geometry 生成四个频谱带方向，精确嵌套旧九维 family；三档几何各 30/30，独立复算逐值差为 0。当前是 truth-aware 容量正结果，不是部署预测成功。</p></div>
+            <span class="evidence-state">容量突破</span>
+          </article>
         </div>
         <figure class="latest-figure">
-          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95.png" aria-label="打开 v95.1 完整结果图">
-            <img loading="lazy" decoding="async" src="../assets/nine_view_v94_case6_physical_ball_observation_predictor_v95.png" alt="v95.1 observation-only 九维预测与候选上限结果" />
+          <a href="../asset_viewer.html?asset=assets%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96.png" aria-label="打开 v96 完整结果图">
+            <img loading="lazy" decoding="async" src="../assets/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96.png" alt="v96 观测自适应频谱表示容量结果" />
           </a>
-          <figcaption>最新可视化：最佳冻结策略从 78 提高到 81，但 p90 与 worst 仍越线；即使真值神谕挑选所有候选也只有 83/90，证明瓶颈已转到候选表示本身。</figcaption>
+          <figcaption>最新可视化：v96 把 truth-aware 表示容量从旧九维的 89/90 补到 90/90，三档几何 worst maximum-gate 全部小于零；下一门是 observation-only 系数预测。</figcaption>
         </figure>
       </div>
       <div class="actions" style="margin-top:13px;">
-        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95_result_2026-08-02.md">读 v95.1 完整证据</a>
-        <a class="button" href="../docs/nine_view_v94_case6_physical_ball_observation_predictor_v95_public_summary.json">读机器可读摘要</a>
-        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_v94_case6_physical_ball_observation_predictor_v95.png">打开结果图原尺寸</a>
+        <a class="button primary" href="../document_reader.html?doc=docs%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_result_2026-08-02.md">读 v96 完整证据</a>
+        <a class="button" href="../docs/nine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96_public_summary.json">读机器可读摘要</a>
+        <a class="button" href="../asset_viewer.html?asset=assets%2Fnine_view_v95_case6_observation_adaptive_spectral_band4_capacity_v96.png">打开结果图原尺寸</a>
       </div>
     </section>
 
@@ -997,7 +1011,7 @@
       <div class="focus-grid">
         <article class="focus-card positive"><h3>已建立可复算链</h3><p>每个关键结果都有正式运行、独立程序复算、逐单元误差、真实调用账和公开脱敏摘要；失败同样完整保留。</p></article>
         <article class="focus-card boundary"><h3>当前更新源</h3><p id="liveEvidenceStatus" aria-live="polite">正在读取稳定状态清单；读取失败时保留页面内的静态审计结果。</p></article>
-        <article class="focus-card current"><h3>本轮真实增量</h3><p>v95.1 真实训练并外折评估 mean、linear ridge、RBF-KRR 与折内置信回退。最佳为 81/90；候选真值神谕上限仅 83/90，因此固定九维小模型和 confidence-only 修补同时关闭。</p></article>
+        <article class="focus-card current"><h3>本轮真实增量</h3><p>v96 新增四个 residual/geometry-only 频谱方向，并在同一物理球、八门与 <code>2A+2A^T</code> 账下得到 90/90 truth-aware 容量；独立实现逐值复算一致。</p></article>
       </div>
     </section>
 
@@ -1011,7 +1025,8 @@
       </div>
       <div class="outcome-ladder">
         <div class="outcome-step closed"><div><b>固定九维小模型与置信回退</b><span>v95.1 最佳为 81/90，候选神谕上限为 83/90；继续加分类器无法补齐七个共同失败。</span></div><em>已关闭</em></div>
-        <div class="outcome-step"><div><b>验证 observation-adaptive direction 容量</b><span>新方向只由 residual 与 known geometry 生成，并精确嵌套九维父表示；先用 truth-aware 系数检查是否能达到 90/90。</span></div><em>最近科学门</em></div>
+        <div class="outcome-step passed"><div><b>observation-adaptive direction 容量</b><span>四个 residual / geometry-only 频谱方向精确嵌套九维父表示；truth-aware 容量已独立验证为 90/90。</span></div><em>已通过</em></div>
+        <div class="outcome-step"><div><b>严格 observation-only 四系数预测</b><span>保持五折隔离、八门和同一 exact 账，与便宜 controls 公平比较；必须达到 90/90。</span></div><em>最近科学门</em></div>
         <div class="outcome-step"><div><b>独立工况 matched-accuracy</b><span>在结果前封存的公开反应流工况上，逐单元守住 field / gradient / observation，且减少 exact <code>A/A^T</code>。</span></div><em>尚未完成</em></div>
         <div class="outcome-step"><div><b>真实资源收益</b><span>fresh process、随机配对区组、wall p50/p90 与 whole-pipeline peak RSS 同时过门。</span></div><em>尚未启动</em></div>
         <div class="outcome-step"><div><b>真实 BOST 迁移</b><span>接入组内位移图、相机标定、重复测量噪声与认可基线，重新定义实验“同精度”。</span></div><em>需要组内数据</em></div>
@@ -1041,7 +1056,7 @@
         </div>
       </div>
       <div class="future-grid">
-        <article class="focus-card current"><h3>最近科学门</h3><p>不再调九维 predictor 或 confidence gate。先让部署可见 residual 与 known geometry 生成少量自适应方向，检查它是否能在同一 2A+2A<sup>T</sup> 预算下补齐七个共同失败并达到 90/90。</p></article>
+        <article class="focus-card current"><h3>最近科学门</h3><p>方向容量已经补齐。现在只预测四个新增频谱系数，输入限于 observation、known geometry 与父 residual 频谱特征；同一 90 单元必须达到 90/90 才能开新工况。</p></article>
         <article class="focus-card boundary"><h3>何时租 GPU</h3><p>只有表示容量 90/90、严格 observation-only 小模型在开发外折出现稳定 headroom、CPU 原型确认训练规模成为瓶颈时才租算卡。当前不满足。</p></article>
         <article class="focus-card positive"><h3>何时接组内数据</h3><p>公开外部门通过后，向师兄申请同步位移图/密度参考、相机内外参、视角定义、重复测量噪声、现有重建代码和认可基线，用同一合同做真实迁移。</p></article>
       </div>
@@ -2781,7 +2796,7 @@
           document.getElementById('liveEvidenceStatus').textContent = `状态清单已同步至 ${evidence.updated}：${metrics.strict_witness_passed}/${metrics.cell_count} 个单元通过；下一门是 ${nextGateSentence}每次独立验证后的公开提交只需更新这份稳定清单。`;
         })
         .catch(() => {
-          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v95.1 最佳 observation-only 策略为 81/90，候选神谕上限 83/90，algorithm_breakthrough=false。';
+          document.getElementById('liveEvidenceStatus').textContent = '状态清单暂时不可读取，页面保留最近一次独立验证后的静态结果：v96 观测自适应频谱表示容量为 90/90；representation_capacity_breakthrough=true，algorithm_breakthrough=false。';
         });
     })();
   </script>
