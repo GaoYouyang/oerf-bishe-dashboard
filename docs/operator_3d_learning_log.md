@@ -12577,3 +12577,56 @@ rank-4 的每个 11 帧 map-geometry 上下文总 exact-call 账为 `38`，低�
 - `docs/nine_view_drc_warm_projected_ridge_parent_screen_v112_1_public_result_2026-08-03.md`
 - `docs/nine_view_drc_warm_projected_ridge_parent_screen_v112_1_public_summary.json`
 - `assets/nine_view_drc_warm_projected_ridge_parent_screen_v112_1_public.svg`
+
+## 2026-08-04：完整父控制正在跑，FNO 先被做成公平对照
+
+### 先说人话
+
+今天没有新的算法胜负可以宣布。正式队列正在依次回答一个很危险的问题：v111 的效果究竟来自我们真正想研究的坐标条件结构，还是一个更普通的 CNN 只靠时间邻帧、相机姿态或参考坐标图也能做到。
+
+为避免训练结束后再挑有利解释，三个父控制沿用同一五条留一轨迹、三个 seed、八项精度门和 `2A + 2A^T` 壳。此处记录的发布快照为 `5/15` 个 fit 完成，第六个正在运行；prediction、score 和独立复算都还没结束，所以现在没有正式科学判决。
+
+### 三个父控制分别在问什么
+
+- temporal parent 去掉显式 pose、map 和 camera token，检查时间邻帧本身能解释多少；但 q8 / BP 仍可能隐式编码坐标，这个边界必须保留。
+- pose parent 去掉坐标 map，保留射线几何和相机信息，检查“只靠相机姿态”是否已经足够。
+- reference parent 去掉 camera token，保留局部几何和 map，检查候选是否只是参考坐标图的普通条件回归。
+
+任一同 seed、同成本的父控制通过拒绝门，learned advantage 主张就必须收缩；不会因为候选已经花了很多训练时间而绕开它。
+
+### 为什么同时准备一个 FNO 对照
+
+师兄给出的方向包含算子学习。如果最终只拿自定义模型和很弱的 MLP 比较，论文不会有说服力。因此我把 reference-chart FNO 收紧为一个真正等参数的对照：
+
+```text
+候选参数量 = 42,237
+FNO 参数量 = 42,166
+绝对差 = 71
+相对差 = 0.168%
+冻结容差 = 0.2%
+```
+
+FNO 使用三层频谱块、宽度 6 和 `5 x 3 x 3` 个频谱模态。四个 rFFT 角块都与独立的掩膜 FFT 参考实现核对；未授权状态下，任何训练入口都会直接拒绝。当前 `8` 个定向测试通过，两轮独立代码审计的 P0/P1 都为 0。
+
+这仍然只是**把公平对照做对**，不是 FNO 已训练，更不是我们的模型已经优于 FNO。只有三个 CNN 父控制全部不能否定候选，FNO 才会被允许进入同数据、同 seed、同精度门和同调用账的正式训练。
+
+### 文献核对怎样改变了比较方式
+
+相关工作边界补入了五类最危险近邻：BOST 直接序列重建、NeRIF/NeDF 类隐式折射率场、learned warm start、inverse neural operator，以及可学习 Krylov/预条件方法。
+
+这要求后续实验拆成两条公平赛道：
+
+1. warm-start 方法必须共享同一个 exact physics refinement 和逐次 `A/A^T` 成本账；
+2. direct / unrolled 方法不强行接同一个 CGLS，但必须报告自己的端到端算子调用、wall 和 RSS。
+
+所以当前可以探索的创新，不是“FNO 没人做过”或“warm start 没人做过”，而是一个更窄、也更诚实的组合：BOST 特定的坐标条件 initializer、未修改 exact-physics refinement、matched-accuracy、明确的失败回退和完整资源账。组内未发表方案与专利仍要向师兄核对，不能写“首个”“全球唯一”或 SOTA。
+
+### 今天是否成功，是否突破
+
+- **工程成功：** 父控制正式序列健康运行；FNO 已达到等参数、fail-closed、可独立审计的公平基线状态；文献边界已补齐到会实际改变实验设计。
+- **科学判决未产生：** 还没有完整 parent-control score，也没有 FNO 训练结果。
+- **突破状态：** `algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`real_bost=false`。
+
+公开阅读：
+
+- `docs/drc_warm_diffeomorphic_operator_related_work_boundary_2026-08-04.md`
