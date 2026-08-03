@@ -12534,3 +12534,46 @@ field 中位误差比 = 0.44043
 - `docs/nine_view_diffeomorphic_ray_conditioned_warm_pilot_v111_result_2026-08-03.md`
 - `docs/nine_view_diffeomorphic_ray_conditioned_warm_pilot_v111_public_summary.json`
 - `assets/nine_view_diffeomorphic_ray_conditioned_warm_pilot_v111.png`
+
+## 2026-08-03：v112.1 排除了两个简单父解释，但完整父控制合同还没结束
+
+### 先说人话
+
+v111 的 Formal Stage A 已经把单轨迹信号扩展成五条 PoolFire 轨迹、三套几何和三个 seed 的正式精度结果：`15/15` trajectory-seed summary 全部通过。接下来必须问得更严格：是不是根本不需要学习模型，只用一个简单的 PCA 低秩先验和 projected ridge 就能得到同样结果？
+
+v112.1 因此比较了两个经典父控制：rank-4 和 rank-32 projected ridge，后面接同一个未修改 K1。
+
+### 真正跑出来的结果
+
+rank-4 的每个 11 帧 map-geometry 上下文总 exact-call 账为 `38`，低于候选的 `44`，所以它确实有资格否定 learned advantage。但它在五条轨迹上的联合通过率依次只有：
+
+```text
+18.18% / 9.09% / 0% / 0% / 0%
+```
+
+对应 observation p90 / Zero-K4 为：
+
+```text
+1.205 / 1.173 / 1.704 / 1.878 / 1.396
+```
+
+全部高于冻结的 `1.01` harm 门。rank-32 总账为 `66`，比候选更贵，而且同样 `0/5` 轨迹通过。
+
+### 独立复算是否闭合
+
+独立程序没有导入正式预测器或评分器，重新构造 PCA/ridge proposal、精确物理提升与 K1，并重算 `1980` 个控制单元和 `2970` 个候选单元。最大绝对差为 `6.67e-16`。
+
+同时生成 `90` 份大幅有限真值扰动副本；这些副本存在时，独立重放全部 `180` 个部署上下文，预测字节保持不变。这证明当前父控制筛查的 API 级 truth-mutation non-interference，但还不是整个进程的 never-read 证明。
+
+### 是否成功，是否突破
+
+- **成功：** 两个简单 projected-ridge 父控制都不能用“同精度、更低成本”解释 v111 信号。
+- **没有算法突破：** 三个预注册 CNN 父控制还没完成；候选侧 process-level never-read、fresh wall/RSS、独立公开反应流外门和真实 BOST 仍未通过。
+- **当前判决：** `projected_ridge_rejects_learned_advantage=false`，但 `full_parent_contract_complete=false`。
+- **状态不变：** `algorithm_breakthrough=false`、`paper_success=false`、`real_bost=false`。
+
+公开证据：
+
+- `docs/nine_view_drc_warm_projected_ridge_parent_screen_v112_1_public_result_2026-08-03.md`
+- `docs/nine_view_drc_warm_projected_ridge_parent_screen_v112_1_public_summary.json`
+- `assets/nine_view_drc_warm_projected_ridge_parent_screen_v112_1_public.svg`
