@@ -643,6 +643,11 @@
                 <div class="date-block"><time datetime="2026-08-03">2026-08-03</time><span data-i18n-zh="周一 · Day 29" data-i18n-en="Mon · Day 29">周一 · Day 29</span></div>
                 <div class="entry-title">
                   <div class="entry-tags">
+                    <span class="tag" data-i18n-zh="Formal Stage A：15/15" data-i18n-en="Formal Stage A: 15/15">Formal Stage A：15/15</span>
+                    <span class="tag engineering" data-i18n-zh="2970 candidate / 990 control cells" data-i18n-en="2970 candidate / 990 control cells">2970 candidate / 990 control cells</span>
+                    <span class="tag engineering" data-i18n-zh="270 predictions · 90 bundles" data-i18n-en="270 predictions · 90 bundles">270 predictions · 90 bundles</span>
+                    <span class="tag" data-i18n-zh="独立复算最大差：0" data-i18n-en="Independent maximum difference: 0">独立复算最大差：0</span>
+                    <span class="tag negative" data-i18n-zh="parent / resource / external gates open" data-i18n-en="parent / resource / external gates open">parent / resource / external gates open</span>
                     <span class="tag negative" data-i18n-zh="v107 完整门：0/3" data-i18n-en="v107 full gate: 0/3">v107 完整门：0/3</span>
                     <span class="tag negative" data-i18n-zh="v108：部分修复仍 FAIL" data-i18n-en="v108: partial repair, still FAIL">v108：部分修复仍 FAIL</span>
                     <span class="tag">v109 p90 / worst：3/3</span>
@@ -657,12 +662,36 @@
                     <span class="tag engineering" data-i18n-zh="独立逐帧最大差：4.94e-8" data-i18n-en="Independent maximum per-frame difference: 4.94e-8">独立逐帧最大差：4.94e-8</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3 data-i18n-zh="v107-v111：从数值混杂、失败根因走到第一个真实学习信号" data-i18n-en="v107-v111: from numerical confounds and failure diagnosis to the first real learning signal">v107-v111：从数值混杂、失败根因走到第一个真实学习信号</h3>
-                  <p data-i18n-zh="v107-v109 建立可信的坐标输运数值链，v110 定位重复重采样真值制造的梯度尾部；v111 改成坐标先复合、原始张量单次 gather 后，在训练未见的双轴微分同胚上 11/11 帧八门通过并由独立程序复算。" data-i18n-en="v107-v109 established a credible numerical chain for coordinate transport, and v110 localized the gradient tail created by repeated truth resampling. After switching to compose-first, single-gather transport, v111 passes all eight gates on 11/11 frames of a held-out two-axis diffeomorphism and is independently reproduced.">v107-v109 建立可信的坐标输运数值链，v110 定位重复重采样真值制造的梯度尾部；v111 改成坐标先复合、原始张量单次 gather 后，在训练未见的双轴微分同胚上 11/11 帧八门通过并由独立程序复算。</p>
+                  <h3 data-i18n-zh="v111 Formal Stage A：从单轨迹 pilot 到正式多轨迹精度证据" data-i18n-en="v111 Formal Stage A: from a single-trajectory pilot to formal multi-trajectory accuracy evidence">v111 Formal Stage A：从单轨迹 pilot 到正式多轨迹精度证据</h3>
+                  <p data-i18n-zh="单轨迹 pilot 只是起点；本日 Formal Stage A 覆盖 15 个 trajectory-seed summary，全部通过，并由独立程序复算一致。这把“有一个学习信号”推进成“在当前公开 proxy 的正式多轨迹精度门下仍能复现”，但没有把资源和真实 BOST 的门提前算作通过。" data-i18n-en="The single-trajectory pilot was only the starting point. Formal Stage A covers 15 trajectory-seed summaries, all passing and independently reproduced. It upgrades one learning signal into reproducible formal multi-trajectory accuracy evidence on the current public proxy, without treating resource or real-BOST gates as passed.">单轨迹 pilot 只是起点；本日 Formal Stage A 覆盖 15 个 trajectory-seed summary，全部通过，并由独立程序复算一致。这把“有一个学习信号”推进成“在当前公开 proxy 的正式多轨迹精度门下仍能复现”，但没有把资源和真实 BOST 的门提前算作通过。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
               <div class="entry-body" data-i18n-fallback="zh">
+                <div class="evidence-grid">
+                  <section>
+                    <h4 data-i18n-zh="这次真正完成了什么" data-i18n-en="What was actually completed">这次真正完成了什么</h4>
+                    <p data-i18n-html-zh="正式 Stage A 完成 <code>15/15</code> trajectory-seed summary；汇总包含 <code>2970</code> candidate cells、<code>990</code> control cells、<code>270</code> predictions 和 <code>90</code> input bundles。" data-i18n-html-en="Formal Stage A completed <code>15/15</code> trajectory-seed summaries, covering <code>2970</code> candidate cells, <code>990</code> control cells, <code>270</code> predictions, and <code>90</code> input bundles.">正式 Stage A 完成 <code>15/15</code> trajectory-seed summary；汇总包含 <code>2970</code> candidate cells、<code>990</code> control cells、<code>270</code> predictions 和 <code>90</code> input bundles。</p>
+                  </section>
+                  <section>
+                    <h4 data-i18n-zh="为什么可信" data-i18n-en="Why it is credible">为什么可信</h4>
+                    <p data-i18n-html-zh="独立程序重新实现指标与判决并复算正式结果，最大数值差为 <code>0</code>；当前简单 frozen controls 没有对 candidate 形成支配。冻结 physics kernels 仍共享，端到端物理独立性未证。" data-i18n-html-en="An independent program reimplemented the metrics and decision and reproduced the formal result with maximum numeric difference <code>0</code>; no simple frozen control currently dominates the candidate. Frozen physics kernels are still shared, so end-to-end physics independence is unproven.">独立程序重新实现指标与判决并复算正式结果，最大数值差为 <code>0</code>；当前简单 frozen controls 没有对 candidate 形成支配。冻结 physics kernels 仍共享，端到端物理独立性未证。</p>
+                  </section>
+                  <section>
+                    <h4 data-i18n-zh="边界必须保留" data-i18n-en="Boundaries that must remain">边界必须保留</h4>
+                    <p data-i18n-html-zh="parent controls、truth-mutation non-interference、fresh wall/RSS、外部反应流和真实 BOST 尚未完成；所以 <code>algorithm_breakthrough=false</code>。" data-i18n-html-en="Parent controls, truth-mutation non-interference, fresh wall/RSS, external reacting flow, and real BOST remain open; therefore <code>algorithm_breakthrough=false</code>.">parent controls、truth-mutation non-interference、fresh wall/RSS、外部反应流和真实 BOST 尚未完成；所以 <code>algorithm_breakthrough=false</code>。</p>
+                  </section>
+                </div>
+                <figure class="entry-figure">
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_drc_warm_formal_stage_a_v111_public.svg" data-i18n-aria-label-zh="打开 v111 Formal Stage A 脱敏结果图" data-i18n-aria-label-en="Open the v111 Formal Stage A redacted result figure" aria-label="打开 v111 Formal Stage A 脱敏结果图">
+                    <img loading="lazy" decoding="async" src="../assets/nine_view_drc_warm_formal_stage_a_v111_public.svg" alt="v111 Formal Stage A 脱敏结果图" data-i18n-alt-zh="v111 Formal Stage A 脱敏结果图" data-i18n-alt-en="v111 Formal Stage A redacted result figure" />
+                  </a>
+                  <figcaption data-i18n-zh="正式多轨迹精度证据成立；资源、外部和真实 BOST 门仍开放。" data-i18n-en="Formal multi-trajectory accuracy evidence is established; resource, external, and real-BOST gates remain open.">正式多轨迹精度证据成立；资源、外部和真实 BOST 门仍开放。</figcaption>
+                </figure>
+                <div class="entry-links">
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_drc_warm_formal_stage_a_v111_public_result_2026-08-03.md" data-i18n-zh="读 Formal Stage A 双语证据" data-i18n-en="Read bilingual Formal Stage A evidence">读 Formal Stage A 双语证据</a>
+                  <a href="../docs/nine_view_drc_warm_formal_stage_a_v111_public_summary.json" data-i18n-zh="读脱敏 JSON 摘要" data-i18n-en="Read redacted JSON summary">读脱敏 JSON 摘要</a>
+                </div>
                 <div class="evidence-grid">
                   <section>
                     <h4>为什么重查已经通过的 v106.1</h4>

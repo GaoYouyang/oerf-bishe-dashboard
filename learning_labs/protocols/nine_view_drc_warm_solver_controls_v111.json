@@ -1,0 +1,191 @@
+{
+  "schema_version": "oerf-nine-view-drc-warm-solver-controls-protocol-111.0",
+  "status": "FROZEN_BEFORE_V111_FORMAL_STAGE_A_HELDOUT_BUNDLE_GENERATION_OR_SCORING",
+  "frozen_at_utc": "2026-08-03T01:35:18Z",
+  "role": "Result-blind extension that adds the geometry-PCGLS and dual-ridge controls required by the C-route objective. It does not change v111 Stage A, the DRC-Warm model, any heldout roster, metric, threshold, or exact-call claim.",
+  "parent_contracts": {
+    "scientific_protocol": {
+      "path": "learning_labs/protocols/nine_view_diffeomorphic_ray_conditioned_warm_v111.json",
+      "canonical_sha256": "9462c7b9ea3817b79981cdd8a12af896bb43547621f990bc74280fb0f9b03d85"
+    },
+    "formal_execution_protocol": {
+      "path": "learning_labs/protocols/nine_view_drc_warm_formal_execution_v111.json",
+      "canonical_sha256": "a9ab95ffdc29433e0b612c8be61c9ae71eed833cf730aca60b13c58355a12460"
+    },
+    "stage_a_scoring_protocol": {
+      "path": "learning_labs/protocols/nine_view_drc_warm_formal_scoring_v111.json",
+      "canonical_sha256": "403d851d0b3f41d8b5b6ad39679a568dcd51e9a8aa065e7a1c55598b1d3ccef6"
+    }
+  },
+  "activation_gate": {
+    "formal_stage_a_independently_validated": true,
+    "formal_stage_a_status": "PASS_V111_FORMAL_STAGE_A_ALL_SEEDS",
+    "cheap_control_dominance_found": false,
+    "action_if_not_activated": "do not fit or score these controls; retain the Stage A negative or cheap-control-dominance result",
+    "resource_or_external_gate_authorized_by_activation": false
+  },
+  "shared_evaluation_roster": {
+    "outer_split": "leave one complete PoolFire trajectory out",
+    "trajectory_ids": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "geometry_scenario_ids": [
+      "V66_F30_plus",
+      "V66_F15_plus",
+      "V66_F12_plus"
+    ],
+    "fit_map_ids": [
+      "identity",
+      "x_p08",
+      "x_m08",
+      "y_p08",
+      "y_m08",
+      "z_p08",
+      "z_m08"
+    ],
+    "heldout_map_ids": [
+      "xy_pp",
+      "xy_mm",
+      "yz_pp",
+      "yz_mm",
+      "zx_pp",
+      "zx_mm"
+    ],
+    "frame_indices": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+    "grid_shape_zyx": [32, 16, 16],
+    "view_count": 9,
+    "detector_shape_vu": [32, 16],
+    "metric_order": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "interior_gradient_relative_l2",
+      "observation_relative_l2"
+    ],
+    "candidate_reference": "the same Zero-CGLS K2 accuracy and Zero-CGLS K4 harm references used by v111 Stage A",
+    "truth_or_trajectory_label_in_deployment_input": false
+  },
+  "controls": [
+    {
+      "control_id": "geometry_jacobi_pcgls_k2",
+      "family": "deterministic geometry-only PCGLS",
+      "definition": "Build the exact geometry-only diag(A^T A), apply the frozen median-normalized inverse diagonal with a 1e-6 relative floor, and run zero-start PCGLS to K2.",
+      "setup_visibility": "known camera geometry only",
+      "setup_truth_reads": 0,
+      "fit_sample_count": 0,
+      "seed_count": 0,
+      "exact_A_per_cell": 2,
+      "exact_AT_per_cell": 2,
+      "cheap_or_setup_cost_reporting": [
+        "Jacobi setup wall time",
+        "exact and inverse diagonal persistent bytes",
+        "per-frame PCGLS arithmetic wall time"
+      ],
+      "implementation_donor": "learning_labs.nine_view_poolfire_full_trajectory_v67.build_exact_geometry_jacobi and zero_pcgls_checkpoints(checkpoints=(2,))",
+      "required_setup_call": {
+        "module": "learning_labs.nine_view_poolfire_full_trajectory_v67",
+        "function": "build_exact_geometry_jacobi",
+        "keyword_arguments": {"relative_floor": 1e-06}
+      },
+      "required_donor_call": {
+        "module": "learning_labs.nine_view_poolfire_full_trajectory_v67",
+        "function": "zero_pcgls_checkpoints",
+        "keyword_arguments": {"checkpoints": [2]}
+      },
+      "forbidden": [
+        "truth-dependent preconditioner",
+        "learned diagonal",
+        "relabeling identity PCGLS as geometry preconditioning",
+        "excluding setup from whole-pipeline resource reporting"
+      ]
+    },
+    {
+      "control_id": "fit_only_kernel_dual_ridge_k1",
+      "family": "amplitude-equivariant linear-kernel ridge in detector-dual space",
+      "definition": "Within each outer fold and geometry, map sealed deployment observations to Zero-CGLS K4 detector-dual teachers using the donor's Euclidean-norm amplitude-equivariant normalization and fit trajectories plus fit maps only; lift the predicted dual once with exact A^T and run unchanged exact CGLS K1.",
+      "teacher": "fit-only Zero-CGLS K4 detector dual",
+      "normalization": {
+        "external_pre_normalization": "none",
+        "fit": "divide each observation and its teacher dual by that observation's Euclidean L2 norm",
+        "prediction": "divide the query observation by its Euclidean L2 norm and multiply the predicted normalized dual by the same query norm",
+        "rms_normalization_reused_from_drc_inputs": false
+      },
+      "model_partition": "one independently selected and fitted model per outer fold and geometry scenario",
+      "outer_fit_sample_count_per_geometry": 308,
+      "outer_heldout_sample_count_per_geometry": 66,
+      "ridge_lambda_candidates": [1e-06, 0.0001, 0.01, 1.0, 100.0],
+      "inner_selection": {
+        "split": "leave one of the four outer-fit trajectories out",
+        "fit_maps_only": true,
+        "heldout_composed_maps_visible": false,
+        "score_after_exact_dual_lift_and_unchanged_K1": true,
+        "objective": "lexicographically minimize the maximum inner-trajectory-by-metric p90-higher, then maximum worst, then negative lambda so exact ties choose the larger lambda",
+        "selection_truth_role": "inner fit-only metric evaluation",
+        "outer_heldout_truth_visible": false
+      },
+      "seed_count": 0,
+      "exact_A_per_cell": 2,
+      "exact_AT_per_cell": 2,
+      "offline_teacher_calls_reported_separately": true,
+      "resource_reporting": [
+        "fit wall time",
+        "persistent train-observation and dual-coefficient bytes",
+        "prediction workspace bytes",
+        "prediction plus exact K1 wall time",
+        "whole-pipeline peak RSS"
+      ],
+      "implementation_donor": "learning_labs.nine_view_poolfire_full_trajectory_v67.predict_kernel_dual_ridge_batch and dual_warm_cgls_checkpoints(refinement_checkpoints=(1,))",
+      "required_donor_call": {
+        "module": "learning_labs.nine_view_poolfire_full_trajectory_v67",
+        "function": "dual_warm_cgls_checkpoints",
+        "keyword_arguments": {"refinement_checkpoints": [1]}
+      },
+      "forbidden": [
+        "outer heldout truth in lambda selection or fit",
+        "heldout map samples in fit",
+        "geometry pooling",
+        "external RMS or second amplitude normalization",
+        "direct-field target substitution",
+        "best-seed or best-trajectory selection"
+      ]
+    }
+  ],
+  "decision_rules": {
+    "same_eight_gate_trajectory_thresholds_as_stage_a": true,
+    "all_five_trajectories_must_pass": true,
+    "deterministic_control_is_compared_to_each_drc_seed_separately": true,
+    "dominance": "a control with no greater exact A and no greater exact A^T dominates one DRC seed only if the control passes the same trajectory gates, every trajectory-by-metric p50/p90-higher/worst component is no worse within 1e-12, and at least one is better by more than 1e-12",
+    "paired_better_fraction_vs_dual_ridge": {
+      "field_minimum": 0.5,
+      "interior_gradient_minimum": 0.5
+    },
+    "tail_noninferiority": "for every trajectory, DRC-Warm p90-higher and worst must be no worse than each activated same-or-lower-call control for all four metrics",
+    "effect_of_any_failed_drc_seed": "learned advantage fails under the parent all-seed rule",
+    "resource_measurement_before_parent_controls_and_this_extension_pass": false
+  },
+  "execution_boundaries": {
+    "protocol_frozen_before_stage_a_numeric_result": true,
+    "implementation_and_numeric_hyperparameters_must_be_frozen_before_control_prediction": true,
+    "fit_only_artifacts_sealed_before_outer_prediction": true,
+    "outer_prediction_worker_accepts_no_truth_path_or_array": true,
+    "all_control_predictions_sealed_before_control_truth_scoring": true,
+    "partial_control_result_interpretation": false,
+    "actual_A_AT_receipt_required_per_cell": true,
+    "setup_fit_inference_and_refinement_costs_reported_separately_and_jointly": true,
+    "independent_recomputation_required": true
+  },
+  "claim_limits": {
+    "this_protocol_is_an_algorithm_result": false,
+    "stage_a_pass_is_parent_contract_success": false,
+    "solver_control_advantage_proven": false,
+    "learned_advantage_gate_complete": false,
+    "resource_advantage": false,
+    "external_generalization": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}
