@@ -1,0 +1,126 @@
+{
+  "schema_version": "oerf-nine-view-drc-warm-classical-transfer-public-v114",
+  "date": "2026-08-04",
+  "title_zh": "v114 经典迁移控制：五个经典解释均未通过同精度门",
+  "title_en": "v114 classical-transfer controls: five classical explanations fail the matched-accuracy gate",
+  "evidence_status": "PASS_INDEPENDENT_RECOMPUTATION_DUAL_RIDGE_SCORE_V114",
+  "scientific_status": "PASS_V114_DUAL_RIDGE_NO_REJECTION",
+  "design": {
+    "trajectory_count": 5,
+    "geometry_count": 3,
+    "map_count": 6,
+    "frames_per_map": 11,
+    "stage0_control_count": 4,
+    "stage0_control_cells": 3960,
+    "dual_ridge_control_cells": 990,
+    "total_classical_control_cells": 4950,
+    "candidate_cells_referenced": 2970,
+    "trajectory_gates_passed": 0,
+    "trajectory_gate_count": 25,
+    "observation_p90_ratio_gate": 1.01
+  },
+  "controls": [
+    {
+      "id": "scaled_exact_bp_k0",
+      "label_zh": "缩放精确反投影 K0",
+      "label_en": "Scaled exact backprojection K0",
+      "cell_count": 990,
+      "trajectory_gates_passed": 0,
+      "trajectory_gate_count": 5,
+      "joint_pass_count": 0,
+      "severe_harm_count": 990,
+      "maximum_trajectory_observation_p90_ratio_vs_zero_k4": 2.418226920573839
+    },
+    {
+      "id": "scaled_exact_bp_k1",
+      "label_zh": "缩放精确反投影 + K1",
+      "label_en": "Scaled exact backprojection plus K1",
+      "cell_count": 990,
+      "trajectory_gates_passed": 0,
+      "trajectory_gate_count": 5,
+      "joint_pass_count": 0,
+      "severe_harm_count": 990,
+      "maximum_trajectory_observation_p90_ratio_vs_zero_k4": 2.189846503862294
+    },
+    {
+      "id": "geometry_pcgls_k1",
+      "label_zh": "几何 Jacobi-PCGLS K1",
+      "label_en": "Geometry-Jacobi PCGLS K1",
+      "cell_count": 990,
+      "trajectory_gates_passed": 0,
+      "trajectory_gate_count": 5,
+      "joint_pass_count": 0,
+      "severe_harm_count": 990,
+      "maximum_trajectory_observation_p90_ratio_vs_zero_k4": 2.5229131855879077
+    },
+    {
+      "id": "geometry_pcgls_k2",
+      "label_zh": "几何 Jacobi-PCGLS K2",
+      "label_en": "Geometry-Jacobi PCGLS K2",
+      "cell_count": 990,
+      "trajectory_gates_passed": 0,
+      "trajectory_gate_count": 5,
+      "joint_pass_count": 0,
+      "severe_harm_count": 990,
+      "maximum_trajectory_observation_p90_ratio_vs_zero_k4": 1.97870954685142
+    },
+    {
+      "id": "dual_ridge_k4dual_k1",
+      "label_zh": "条件 dual ridge + K1",
+      "label_en": "Conditional dual ridge plus K1",
+      "cell_count": 990,
+      "trajectory_gates_passed": 0,
+      "trajectory_gate_count": 5,
+      "joint_pass_count": 0,
+      "harm_count": 990,
+      "severe_harm_count": 990,
+      "minimum_trajectory_observation_p90_ratio_vs_zero_k4": 1.3166281108940154,
+      "maximum_trajectory_observation_p90_ratio_vs_zero_k4": 1.7087910405490976,
+      "candidate_paired_better_field_fraction_minimum_across_seeds": 1.0,
+      "candidate_paired_better_interior_gradient_fraction_minimum_across_seeds": 1.0
+    }
+  ],
+  "dual_ridge_cost_and_fit": {
+    "online_exact_A_per_cell": 2,
+    "online_exact_AT_per_cell": 2,
+    "actual_shared_teacher_exact_A": 3960,
+    "actual_shared_teacher_exact_AT": 3960,
+    "actual_online_exact_A": 1980,
+    "actual_online_exact_AT": 1980,
+    "independently_measured_total_exact_A": 5940,
+    "independently_measured_total_exact_AT": 5940,
+    "model_count": 90,
+    "selected_lambda_0_01_contexts": 63,
+    "selected_lambda_1_0_contexts": 27,
+    "maximum_persistent_state_bytes": 6503552,
+    "maximum_workspace_bytes_lower_bound": 1629760,
+    "offline_teacher_cost_disclosed": true
+  },
+  "independent_validation": {
+    "prediction_status": "PASS_INDEPENDENT_RECOMPUTATION_DUAL_RIDGE_PREDICTIONS_V114",
+    "score_status": "PASS_INDEPENDENT_RECOMPUTATION_DUAL_RIDGE_SCORE_V114",
+    "maximum_prediction_numeric_difference": 0,
+    "maximum_score_numeric_difference": 0,
+    "api_level_truth_noninterference_proven": true,
+    "process_level_never_read_proven": false,
+    "shared_frozen_physics_kernels": true
+  },
+  "decision": {
+    "all_five_controls_pass_all_trajectory_gates": false,
+    "classical_controls_reject_learned_advantage": false,
+    "cnn_parent_resume_authorized": true,
+    "cnn_parent_sequence_complete": false,
+    "fno_training_authorized": false,
+    "resource_advantage": false,
+    "external_generalization": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  },
+  "claim_boundary_zh": "只排除了五个具体经典解释；CNN 父控制、资源、外部反应流和真实 BOST 门仍未完成。",
+  "claim_boundary_en": "Only five specific classical explanations are ruled out; CNN-parent, resource, external reacting-flow, and real-BOST gates remain open.",
+  "public_links": {
+    "result": "../document_reader.html?doc=docs%2Fnine_view_drc_warm_classical_transfer_v114_public_result_2026-08-04.md",
+    "figure": "../assets/nine_view_drc_warm_classical_transfer_v114_public.svg"
+  }
+}

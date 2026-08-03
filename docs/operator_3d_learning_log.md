@@ -12630,3 +12630,53 @@ FNO 使用三层频谱块、宽度 6 和 `5 x 3 x 3` 个频谱模态。四个 rF
 公开阅读：
 
 - `docs/drc_warm_diffeomorphic_operator_related_work_boundary_2026-08-04.md`
+
+## 2026-08-04：v114 排除五个经典解释，CNN 父控制恢复
+
+### 先说人话
+
+今天得到了一条真正改变下一步判断的结果。v111 的学习模型之前表现不错，但还可能有一个很普通的解释：也许缩放反投影、PCGLS 或小型 ridge 就能做到同样的事，那就不能把效果归给 learned initializer。
+
+v114 直接跑了五个这样的经典对照：scaled BP K0、scaled BP K1、geometry PCGLS K1、geometry PCGLS K2，以及用 K4 dual teacher 拟合的 conditional dual ridge + K1。它们使用相同的五条 PoolFire 轨迹、三套几何、六个坐标图、每图 11 帧、Zero-K4 基线和八项精度门。
+
+### 真正跑出的结果
+
+```text
+经典控制总数 = 5
+经典控制单元 = 4950
+trajectory gates = 0 / 25
+每个控制 joint pass = 0 / 990
+每个控制 severe harm = 990 / 990
+```
+
+dual ridge 是五个方法里最强的，但五条轨迹的 observation p90 / Zero-K4 仍是：
+
+```text
+1.3493 / 1.3166 / 1.7088 / 1.5602 / 1.4721
+```
+
+冻结的 harm 门是 `1.01`，所以五条都没有守住。三个候选随机种子在所有单元上都同时优于 dual ridge 的 field 与内部梯度。
+
+### 成本有没有藏起来
+
+没有。dual ridge 在线仍是与候选相同的 `2A + 2A^T`。离线生成 K4 teacher 实际用了 `3960A + 3960A^T`，在线预测与 K1 实际用了 `1980A + 1980A^T`；这些离线成本完整披露，不能把训练当成免费。
+
+### 为什么结果可信
+
+独立程序没有导入正式 dual-ridge 预测器、选择器或 Krylov 包装器，而是重新生成 teacher、核岭模型、lambda 选择、dual K1、指标、尾部和判决。预测、模型、选择、场、dual、残差、成本与最终 score 的最大差全部为 `0`，独立实测总账为 `5940A + 5940A^T`。
+
+API 级 truth-mutation noninterference 已通过；process-level never-read 仍未证明，这个边界继续保留。
+
+### 是否成功，是否突破
+
+- **成功：** 五个具体经典解释均不能在同精度门下解释 v111 的开发集信号，因此 CNN 父控制序列恢复运行。
+- **尚未成功：** 三个 CNN 父控制还没全部评分，FNO 训练未授权，fresh wall/RSS、独立公开反应流外门和组内真实 BOST 都未通过。
+- **准确状态：** `algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`real_bost=false`。
+
+下一步不扩大无关路线：先完成并独立评分 temporal、pose、reference 三个 CNN 父控制。只有它们都不能否定 learned signal，等参数 FNO 才允许进入正式训练。
+
+公开证据：
+
+- `docs/nine_view_drc_warm_classical_transfer_v114_public_result_2026-08-04.md`
+- `docs/nine_view_drc_warm_classical_transfer_v114_public_summary.json`
+- `assets/nine_view_drc_warm_classical_transfer_v114_public.svg`
