@@ -12690,3 +12690,45 @@ API 级 truth-mutation noninterference 已通过；process-level never-read 仍�
 它也给未来 FNO 消融一个具体启发：若实际结果出现明确的轴向/横向频谱不对称，可以比较当前等参数 3-D FNO 与 `2-D lateral + 1-D axial` 因子化频谱结构。但这个想法不能越过当前父控制门，也不能在父控制失败后被用来扩大模型救场。
 
 **突破监测：没有算法突破。** 新增的是会改变论文 claim 和基线设计的文献边界；CNN 父控制仍在运行，FNO 训练仍未授权。
+
+## 2026-08-04：一级来源红队把“我们到底新在哪里”钉死了
+
+### 先说人话
+
+今天没有再堆一串看起来很厉害的论文名，而是把我们想做的方法拆成七个零件，逐篇问：有没有一篇文章已经把这七个零件全部按同样方式装起来？
+
+七个零件是：稀疏视角三维 BOST、只看 observation 与已知 geometry 的摊销初值、微分同胚公共参考域、精确 `A_g^T` 提升、未修改 Krylov、逐单元四类误差 no-harm，以及完整 `A/A^T` + wall + RSS 成本门。
+
+在截至今天核对的论文、期刊和 arXiv 官方页面里，**没有找到一篇七项全部同构的工作**。这对我们是好消息，但不是“已经证明全球唯一”。更重要的另一半是：每个零件和多个零件组合都已经有人做过，所以不能把 FNO、微分同胚、warm start、伴随、Krylov 或 no-harm 单独写成创新。
+
+### 最危险的近邻是谁
+
+1. **WB-IPM** 最危险。它已经在三维光学逆问题里让网络从测量生成 warm basis，再进入带 `A/A^T` 的 Golub-Kahan / Krylov。我们真正剩下的差别是 BOST 几何、精确伴随提升、后端不修改，以及逐单元成本合同。
+2. **nine-view NIRT** 已经用九个实验 BOS 视角重建真实高速流。九视角、实验三维 BOS、稀疏神经重建都不能再当卖点。
+3. **inverse-acoustic warm start** 已经做了“测量 -> 神经初值 -> 经典 Gauss-Newton”。这吃掉了上层工作流的新颖性。
+4. **NOWS** 已经做了 neural operator 初值 + 未修改 CG/GMRES，并测迭代和 wall time。这吃掉了 solver shell 的新颖性。
+5. **DIMON / Geo-FNO / DNO** 已经系统覆盖微分同胚参考域和跨几何 operator learning。公共参考坐标只能写成借用的机制。
+
+### 一个很容易说错的地方
+
+当前页面里的“cellwise no-harm gate”会读取真值，所以它只是**离线评价合同**，不是部署时的安全开关。若未来要写 safe fallback，还必须另做只看 observation residual 或 uncertainty 的接受/回退机制，并在未见数据上验证。
+
+同样，当前 `A_g/A_g^T` 只对冻结的 straight-ray 离散代理精确。它不能被写成“真实 BOST exact physics”；真实曲折光线、边界折射率、相机标定与实验噪声仍是后续独立物理门。
+
+### 最终留下的窄问题
+
+可以继续严肃检验的句子只有：
+
+> 一个只看部署可见观测与已知几何的三维 BOST 初值，能否经冻结离散算子的精确伴随提升后进入未修改 Krylov，并在逐单元同精度下稳定减少 exact calls、wall 和 RSS？
+
+这个问题如果在独立公开反应流和组内真实 BOST 上通过，会形成一个 BOST-specific 组合与证据合同；如果失败，也能准确告诉我们学习初值在哪些几何或物理条件下不值得使用。
+
+### 是否成功，是否突破
+
+- **成功：** 原创性边界变得可防御，最危险近邻、禁用 claim 和剩余贡献已经逐项写清。
+- **没有成功：** 这不是算法性能结果，没有让任何 accuracy、wall、RSS 或真实 BOST 门自动通过。
+- **准确状态：** `PRIMARY_SOURCE_RED_TEAM_COMPLETE`、`global_uniqueness_proven=false`、`algorithm_breakthrough=false`、`paper_success=false`。
+
+完整红队：
+
+- `docs/c_route_primary_source_red_team_2026-08-04.md`

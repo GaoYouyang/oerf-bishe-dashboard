@@ -4,6 +4,8 @@
 
 ## 先给结论
 
+> **2026-08-04 严格红队已经单独完成。** [打开“高度同构近邻与可主张边界”报告](c_route_primary_source_red_team_2026-08-04.md)。该报告用七项判据逐篇核对 sparse-view 3D BOST、observation/geometry-only initializer、diffeomorphic reference chart、精确 `A_g^T` lift、未修改 Krylov、逐单元多指标 no-harm 和完整调用/wall/RSS 账。限定检索内未发现七项同时成立的单篇工作，但组件级创新已经全部否决，`global_uniqueness_proven=false`、`algorithm_breakthrough=false`。
+
 当前方法不能把“使用微分同胚、把不同坐标域映射到公共参考域”写成创新点。该一般机制在 Geo-FNO、DIMON、DNO、CT-FNO、DAFNO 和后续 diffeomorphic neural operator 工作中已有明确先例；“神经算子为三维光学求解器提供 warm start”也已被 2026 年 7 月的 EUV 电磁仿真工作直接覆盖。这不等于它们已经覆盖 BOST-specific、observation-only、exact refinement 与成本审计的完整组合。
 
 当前尚可检验的窄贡献是：
