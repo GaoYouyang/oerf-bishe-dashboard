@@ -647,6 +647,9 @@
                     <span class="tag engineering" data-i18n-zh="2970 candidate / 990 control cells" data-i18n-en="2970 candidate / 990 control cells">2970 candidate / 990 control cells</span>
                     <span class="tag engineering" data-i18n-zh="270 predictions · 90 bundles" data-i18n-en="270 predictions · 90 bundles">270 predictions · 90 bundles</span>
                     <span class="tag" data-i18n-zh="独立复算最大差：0" data-i18n-en="Independent maximum difference: 0">独立复算最大差：0</span>
+                    <span class="tag" data-i18n-zh="v112 父控制 trajectory gates：0/10" data-i18n-en="v112 parent-control trajectory gates: 0/10">v112 父控制 trajectory gates：0/10</span>
+                    <span class="tag engineering" data-i18n-zh="truth mutation：90 copies / 180 contexts" data-i18n-en="Truth mutation: 90 copies / 180 contexts">truth mutation：90 copies / 180 contexts</span>
+                    <span class="tag engineering" data-i18n-zh="v112 独立最大差：6.67e-16" data-i18n-en="v112 independent maximum difference: 6.67e-16">v112 独立最大差：6.67e-16</span>
                     <span class="tag negative" data-i18n-zh="parent / resource / external gates open" data-i18n-en="parent / resource / external gates open">parent / resource / external gates open</span>
                     <span class="tag negative" data-i18n-zh="v107 完整门：0/3" data-i18n-en="v107 full gate: 0/3">v107 完整门：0/3</span>
                     <span class="tag negative" data-i18n-zh="v108：部分修复仍 FAIL" data-i18n-en="v108: partial repair, still FAIL">v108：部分修复仍 FAIL</span>
@@ -662,8 +665,8 @@
                     <span class="tag engineering" data-i18n-zh="独立逐帧最大差：4.94e-8" data-i18n-en="Independent maximum per-frame difference: 4.94e-8">独立逐帧最大差：4.94e-8</span>
                     <span class="tag negative">algorithm breakthrough false</span>
                   </div>
-                  <h3 data-i18n-zh="v111 Formal Stage A：从单轨迹 pilot 到正式多轨迹精度证据" data-i18n-en="v111 Formal Stage A: from a single-trajectory pilot to formal multi-trajectory accuracy evidence">v111 Formal Stage A：从单轨迹 pilot 到正式多轨迹精度证据</h3>
-                  <p data-i18n-zh="单轨迹 pilot 只是起点；本日 Formal Stage A 覆盖 15 个 trajectory-seed summary，全部通过，并由独立程序复算一致。这把“有一个学习信号”推进成“在当前公开 proxy 的正式多轨迹精度门下仍能复现”，但没有把资源和真实 BOST 的门提前算作通过。" data-i18n-en="The single-trajectory pilot was only the starting point. Formal Stage A covers 15 trajectory-seed summaries, all passing and independently reproduced. It upgrades one learning signal into reproducible formal multi-trajectory accuracy evidence on the current public proxy, without treating resource or real-BOST gates as passed.">单轨迹 pilot 只是起点；本日 Formal Stage A 覆盖 15 个 trajectory-seed summary，全部通过，并由独立程序复算一致。这把“有一个学习信号”推进成“在当前公开 proxy 的正式多轨迹精度门下仍能复现”，但没有把资源和真实 BOST 的门提前算作通过。</p>
+                  <h3 data-i18n-zh="v111-v112.1：正式多轨迹精度通过，并排除两个简单 projected-ridge 父解释" data-i18n-en="v111-v112.1: formal multi-trajectory accuracy passes and two simple projected-ridge parents are ruled out">v111-v112.1：正式多轨迹精度通过，并排除两个简单 projected-ridge 父解释</h3>
+                  <p data-i18n-zh="Formal Stage A 的 15 个 trajectory-seed summary 全部通过；随后 v112.1 发现 rank-4 虽比候选少 6 次总 exact calls，仍在五条轨迹全部失守，rank-32 更贵且同样失败。独立重放与真值扰动检查闭合了这两个父控制，但完整父合同和资源门仍未通过。" data-i18n-en="All 15 Formal Stage A trajectory-seed summaries pass. v112.1 then shows that rank 4, despite using six fewer total exact calls than the candidate, fails all five trajectories; rank 32 costs more and also fails. Independent replay and truth-mutation checks close these two parents, while the full parent contract and resource gate remain open.">Formal Stage A 的 15 个 trajectory-seed summary 全部通过；随后 v112.1 发现 rank-4 虽比候选少 6 次总 exact calls，仍在五条轨迹全部失守，rank-32 更贵且同样失败。独立重放与真值扰动检查闭合了这两个父控制，但完整父合同和资源门仍未通过。</p>
                 </div>
                 <span class="expand-label" aria-hidden="true"></span>
               </summary>
@@ -679,7 +682,7 @@
                   </section>
                   <section>
                     <h4 data-i18n-zh="边界必须保留" data-i18n-en="Boundaries that must remain">边界必须保留</h4>
-                    <p data-i18n-html-zh="parent controls、truth-mutation non-interference、fresh wall/RSS、外部反应流和真实 BOST 尚未完成；所以 <code>algorithm_breakthrough=false</code>。" data-i18n-html-en="Parent controls, truth-mutation non-interference, fresh wall/RSS, external reacting flow, and real BOST remain open; therefore <code>algorithm_breakthrough=false</code>.">parent controls、truth-mutation non-interference、fresh wall/RSS、外部反应流和真实 BOST 尚未完成；所以 <code>algorithm_breakthrough=false</code>。</p>
+                    <p data-i18n-html-zh="projected-ridge 父控制及其 API 级 truth-mutation 检查已经完成；三个 CNN 父控制、候选侧 process-level never-read、fresh wall/RSS、外部反应流和真实 BOST 尚未完成，所以 <code>algorithm_breakthrough=false</code>。" data-i18n-html-en="The projected-ridge parents and their API-level truth-mutation check are complete. Three CNN parents, candidate-side process-level never-read, fresh wall/RSS, external reacting flow, and real BOST remain open; therefore <code>algorithm_breakthrough=false</code>.">projected-ridge 父控制及其 API 级 truth-mutation 检查已经完成；三个 CNN 父控制、候选侧 process-level never-read、fresh wall/RSS、外部反应流和真实 BOST 尚未完成，所以 <code>algorithm_breakthrough=false</code>。</p>
                   </section>
                 </div>
                 <figure class="entry-figure">
@@ -691,6 +694,30 @@
                 <div class="entry-links">
                   <a href="../document_reader.html?doc=docs%2Fnine_view_drc_warm_formal_stage_a_v111_public_result_2026-08-03.md" data-i18n-zh="读 Formal Stage A 双语证据" data-i18n-en="Read bilingual Formal Stage A evidence">读 Formal Stage A 双语证据</a>
                   <a href="../docs/nine_view_drc_warm_formal_stage_a_v111_public_summary.json" data-i18n-zh="读脱敏 JSON 摘要" data-i18n-en="Read redacted JSON summary">读脱敏 JSON 摘要</a>
+                </div>
+                <div class="evidence-grid">
+                  <section>
+                    <h4 data-i18n-zh="v112.1 为什么要做" data-i18n-en="Why v112.1 was necessary">v112.1 为什么要做</h4>
+                    <p data-i18n-html-zh="如果一个更便宜的 PCA projected-ridge + K1 也能守住同一八门，那么 learned initializer 没有独立贡献。rank-4 的总账为 <code>38</code>，候选为 <code>44</code>，因此它是有拒绝资格的关键父控制。" data-i18n-html-en="If a cheaper PCA projected-ridge plus K1 also passed the same eight gates, the learned initializer would have no independent contribution. Rank 4 costs <code>38</code> total exact calls versus the candidate's <code>44</code>, making it the key parent eligible to reject.">如果一个更便宜的 PCA projected-ridge + K1 也能守住同一八门，那么 learned initializer 没有独立贡献。rank-4 的总账为 <code>38</code>，候选为 <code>44</code>，因此它是有拒绝资格的关键父控制。</p>
+                  </section>
+                  <section>
+                    <h4 data-i18n-zh="实际结果" data-i18n-en="Observed result">实际结果</h4>
+                    <p data-i18n-html-zh="rank-4 和 rank-32 都是 <code>0/5</code> trajectory gates。rank-4 的 observation p90 / Zero-K4 在五条轨迹为 <code>1.205 / 1.173 / 1.704 / 1.878 / 1.396</code>，全部高于 <code>1.01</code> harm 门。" data-i18n-html-en="Both rank 4 and rank 32 pass <code>0/5</code> trajectory gates. Rank 4's observation p90 ratios versus Zero-K4 are <code>1.205 / 1.173 / 1.704 / 1.878 / 1.396</code>, all above the <code>1.01</code> harm gate.">rank-4 和 rank-32 都是 <code>0/5</code> trajectory gates。rank-4 的 observation p90 / Zero-K4 在五条轨迹为 <code>1.205 / 1.173 / 1.704 / 1.878 / 1.396</code>，全部高于 <code>1.01</code> harm 门。</p>
+                  </section>
+                  <section>
+                    <h4 data-i18n-zh="独立复算与边界" data-i18n-en="Independent replay and boundary">独立复算与边界</h4>
+                    <p data-i18n-html-zh="<code>1980</code> 控制单元与 <code>2970</code> 候选单元最大差 <code>6.67e-16</code>；<code>90</code> 份真值扰动下 <code>180</code> 个预测上下文保持不变。只证明 API 级非干扰，不证明 process-level never-read 或端到端物理独立。" data-i18n-html-en="Across <code>1980</code> control cells and <code>2970</code> candidate cells, the maximum difference is <code>6.67e-16</code>. All <code>180</code> prediction contexts remain unchanged under <code>90</code> truth mutations. This proves API-level noninterference, not process-level never-read or end-to-end physics independence."><code>1980</code> 控制单元与 <code>2970</code> 候选单元最大差 <code>6.67e-16</code>；<code>90</code> 份真值扰动下 <code>180</code> 个预测上下文保持不变。只证明 API 级非干扰，不证明 process-level never-read 或端到端物理独立。</p>
+                  </section>
+                </div>
+                <figure class="entry-figure">
+                  <a href="../asset_viewer.html?asset=assets%2Fnine_view_drc_warm_projected_ridge_parent_screen_v112_1_public.svg" data-i18n-aria-label-zh="打开 v112.1 父控制结果图" data-i18n-aria-label-en="Open the v112.1 parent-control figure" aria-label="打开 v112.1 父控制结果图">
+                    <img loading="lazy" decoding="async" src="../assets/nine_view_drc_warm_projected_ridge_parent_screen_v112_1_public.svg" alt="v112.1 projected-ridge 父控制筛查" data-i18n-alt-zh="v112.1 projected-ridge 父控制筛查" data-i18n-alt-en="v112.1 projected-ridge parent-control screen" />
+                  </a>
+                  <figcaption data-i18n-zh="更少 exact calls 只有在同精度成立时才有意义；rank-4 没有守住 observation harm 门。" data-i18n-en="Fewer exact calls matter only at matched accuracy; rank 4 does not preserve the observation-harm gate.">更少 exact calls 只有在同精度成立时才有意义；rank-4 没有守住 observation harm 门。</figcaption>
+                </figure>
+                <div class="entry-links">
+                  <a href="../document_reader.html?doc=docs%2Fnine_view_drc_warm_projected_ridge_parent_screen_v112_1_public_result_2026-08-03.md" data-i18n-zh="读 v112.1 双语证据" data-i18n-en="Read bilingual v112.1 evidence">读 v112.1 双语证据</a>
+                  <a href="../docs/nine_view_drc_warm_projected_ridge_parent_screen_v112_1_public_summary.json" data-i18n-zh="读 v112.1 脱敏 JSON" data-i18n-en="Read v112.1 redacted JSON">读 v112.1 脱敏 JSON</a>
                 </div>
                 <div class="evidence-grid">
                   <section>
