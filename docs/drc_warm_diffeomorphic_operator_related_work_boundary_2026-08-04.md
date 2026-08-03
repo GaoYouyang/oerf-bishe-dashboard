@@ -4,7 +4,7 @@
 
 ## 先给结论
 
-当前方法不能把“使用微分同胚、把不同坐标域映射到公共参考域”写成创新点。该一般机制在 Geo-FNO、DIMON、DNO、CT-FNO、DAFNO 和后续 diffeomorphic neural operator 工作中已有明确先例；这不等于它们已经覆盖 BOST-specific、observation-only、exact refinement 与成本审计的完整组合。
+当前方法不能把“使用微分同胚、把不同坐标域映射到公共参考域”写成创新点。该一般机制在 Geo-FNO、DIMON、DNO、CT-FNO、DAFNO 和后续 diffeomorphic neural operator 工作中已有明确先例；“神经算子为三维光学求解器提供 warm start”也已被 2026 年 7 月的 EUV 电磁仿真工作直接覆盖。这不等于它们已经覆盖 BOST-specific、observation-only、exact refinement 与成本审计的完整组合。
 
 当前尚可检验的窄贡献是：
 
@@ -55,6 +55,7 @@
 | 工作 | 已覆盖的核心思想 | 对当前实验合同的直接要求 |
 |---|---|---|
 | [NOWS: Neural Operator Warm Starts for Accelerating Iterative Solvers](https://arxiv.org/abs/2511.02481) | 用 neural operator 生成初值，再交给未替换的 CG/GMRES 等 Krylov 方法；报告迭代数和端到端时间下降 | 当前必须把贡献限定到多视角 BOST inverse、坐标/相机条件、精确 `A/A^T` 账和严格同精度，不得把 hybrid warm start 本身写成创新 |
+| [Physics-Informed Neural Operator for Warm-Starting Background-Decomposed and Preconditioned PSFD](https://arxiv.org/abs/2607.25330) | 将二维横向分支与一维轴向分支组成因子化 FNO，以物理方程自监督训练，并结合 spectral damping 为三维 EUV 电磁 PSFD 求解器提供初值 | 这是目前检索到的最直接“光学 + 三维 neural-operator warm start”近邻，阻断“首个光学 neural-operator warm start”表述；当前差异只能落在稀疏视角 BOST inverse、坐标/相机条件、逐单元同精度、精确 `A/A^T` 和失败边界。它于 2026-07-28 提交，当前是一级预印本而非已完成同行评审的结论 |
 | [Neural operator-based super-fidelity: A warm-start approach for accelerating steady-state simulations](https://arxiv.org/abs/2312.11842) | 将低保真解映射为高保真初值，再由传统稳态流动求解器收敛；比较不同迭代器并报告至少两倍加速 | 当前 q8/cheap BP 到 warm field 的结构与之高度相似；必须说明我们解决的是成像逆问题而非 PDE forward，并公平计入低保真初值和模型推理成本 |
 | [Spectrally Safe Neural Operator Warm-Starts for Large-Scale Newton Solvers](https://arxiv.org/abs/2606.21828) | 证明很低的平均 relative-L2 仍可能产生局部物理缺陷并破坏后端 Krylov 所需的谱性质，再以物理正则修复 | 强化当前逐单元 field/full-gradient/interior-gradient/observation 与 harm 门的必要性；平均误差、漂亮切片或迭代数下降绝不能单独证明 warm start 安全 |
 | [Neural Operator Learning for Ultrasound Tomography Inversion](https://arxiv.org/abs/2304.03297) | 用 T-FNO 从二维发射器-接收器 TOF 场直接预测二维声速场，并与参数相近的 U-Net 比较 | 层析 inverse + FNO 也不是空白；未来 BOST 实验至少要有参数/输入公平的 FNO 与 U-Net，并强调三维多视角折射率/密度梯度和 exact refinement 的差别 |
@@ -104,6 +105,7 @@
 ### 当前不能写
 
 - first diffeomorphic neural operator for varying geometries
+- first optical neural-operator warm start
 - globally unique coordinate-equivariant reconstruction method
 - discretization-invariant neural operator
 - state of the art, external generalization, real BOST acceleration, or paper success
@@ -114,7 +116,7 @@
 
 1. 传统下限必须包括 Zero/cheap-BP cold start 的 CGLS/PCGLS、适用的 dual-ridge/正则化重建，并保留完整 `A/A^T` 和成本账。
 2. 先在现有五轨迹 LOTO 合同中比较同输入、参数量相近的 physical/reference-chart 3D CNN 与已经预定义的 reference-chart FNO；只有内部机制成立，才进入独立公开反应流工况。
-3. 若主张几何贡献，独立公开工况加入 Geo-FNO/DAFNO-style control；至少再有同预算 3D U-Net/DeepONet。NIO/iFNO 仅在观测编码、输出和预算可公平对齐时作为实验基线，否则作为必须讨论的相关工作。
+3. 若主张几何贡献，独立公开工况加入 Geo-FNO/DAFNO-style control；至少再有同预算 3D U-Net/DeepONet。若结果显示明显的轴向/横向频谱不对称，再增加 EUV-PINO 风格的 `2-D lateral + 1-D axial` 因子化 FNO 消融，但不能在当前父控制完成前借它无边界扩模。NIO/iFNO 仅在观测编码、输出和预算可公平对齐时作为实验基线，否则作为必须讨论的相关工作。
 4. 至少讨论一个 learned iterative/data-consistency 邻居（Learned Primal-Dual 或 ΨDONet）；若不复现，要给出 online operator budget、数据或实现不可比的明确理由。
 5. 比较分成两条不可混写的轨道：warm-start 方法必须使用相同 observation、几何、训练轨迹、未修改 CGLS/PCGLS 后端和完整成本账；NeRIF、NIO/iFNO、Learned Primal-Dual、ΨDONet 等 direct/unrolled 方法按各自完整端到端管线比较，不强制拼接同一后端，但必须报告实际 operator calls、wall、RSS 和训练/预处理边界。
 6. 两条轨道都先过相同的逐单元 matched-accuracy/harm 门，再比较 exact `A/A^T`、fresh-process wall 和 whole-pipeline peak RSS；不得把 direct 单次推理与 warm-start 的不完整阶段直接对比。
