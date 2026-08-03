@@ -12680,3 +12680,13 @@ API 级 truth-mutation noninterference 已通过；process-level never-read 仍�
 - `docs/nine_view_drc_warm_classical_transfer_v114_public_result_2026-08-04.md`
 - `docs/nine_view_drc_warm_classical_transfer_v114_public_summary.json`
 - `assets/nine_view_drc_warm_classical_transfer_v114_public.svg`
+
+## 2026-08-04：最新光学近邻进一步收窄原创性表述
+
+在 CNN 父控制后台运行期间，我没有重复启动训练，而是检查了会直接改变论文主张的 2026 年最新一级来源。新发现的 [Physics-Informed Neural Operator for Warm-Starting Background-Decomposed and Preconditioned PSFD](https://arxiv.org/abs/2607.25330) 于 2026-07-28 提交：它把二维横向分支和一维轴向分支组成因子化 FNO，以物理方程训练，并为三维 EUV 光学电磁 PSFD 求解器提供 warm start。
+
+这条文献证据直接删除一个可能但错误的卖点：我们不能再写“首个光学 neural-operator warm start”。如果后续结果成立，能保留的差异只剩多视角稀疏 BOST inverse、部署可见 observation 与已知坐标/相机条件、未修改 exact-physics CGLS、逐单元 field/gradient/observation 同精度门，以及完整 `A/A^T`、wall、RSS 与失败回退。
+
+它也给未来 FNO 消融一个具体启发：若实际结果出现明确的轴向/横向频谱不对称，可以比较当前等参数 3-D FNO 与 `2-D lateral + 1-D axial` 因子化频谱结构。但这个想法不能越过当前父控制门，也不能在父控制失败后被用来扩大模型救场。
+
+**突破监测：没有算法突破。** 新增的是会改变论文 claim 和基线设计的文献边界；CNN 父控制仍在运行，FNO 训练仍未授权。
