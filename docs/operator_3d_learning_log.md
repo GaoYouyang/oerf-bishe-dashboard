@@ -12501,3 +12501,36 @@ v109 把微分同胚输运本身的数值基础做稳后，v110 开始尝试把�
 - `docs/nine_view_case6_diffeomorphic_v110_tail_root_cause_2026-08-03.md`
 - `docs/nine_view_case6_diffeomorphic_v110_tail_root_cause_public_summary.json`
 - `assets/nine_view_case6_diffeomorphic_v110_tail_root_cause.png`
+
+## 2026-08-03：v111 第一次真正学到了一个未见坐标变化，但范围仍然很窄
+
+### 先说人话
+
+这次不再是 smoke，也不再只是解释为什么上一次失败。小模型真的训练了，并且在训练时没见过的“双轴一起变形”上测试了 11 帧。11 帧的 field、完整梯度、内部梯度和 observation 八个门全部通过，另一套验证程序重新算后也得到相同判决。
+
+### 为什么这一步值得高兴
+
+训练阶段只给模型看恒等坐标和六种单轴正负平滑形变，测试时换成双轴复合形变。模型只看九视角观测、已知相机几何和坐标映射，不看测试真值。它输出的 warm correction 进入真实 q8 起点和未修改 K1 refinement，完整账仍是 `2A + 2A^T`。
+
+```text
+未见形变八门联合通过 = 11 / 11
+severe harm = 0 / 11
+field 优于 Direct q8-K1 = 11 / 11
+内部梯度优于 Direct q8-K1 = 11 / 11
+field 中位误差比 = 0.44043
+内部梯度中位误差比 = 0.61411
+```
+
+比值小于 1 就是比 Direct q8-K1 更低。独立复算的逐帧最大差为 `4.94e-8`，聚合最大差为 `2.00e-8`，所以这不是正式 runner 自己给自己打分。
+
+### 为什么还不能宣布算法突破
+
+目前只有一条 PoolFire 轨迹、一套已知几何和一个 seed。它说明“这个结构确实有值得继续验证的学习信号”，还不能说明换一条火焰轨迹、换相机布局或换反应流家族也成立，也没有测 wall/RSS，更不是组内真实 BOST。
+
+因此当前结论是：**单轨迹阶段正信号成立；正式多轨迹验证已获得执行理由；`algorithm_breakthrough=false`。** 下一轮保持模型、算子账和八项门不变，直接扩展到五条轨迹、三套几何、三个 seed。只有三个 seed 都分别过门，才继续外部工况与资源验证。
+
+公开证据：
+
+- `docs/nine_view_diffeomorphic_ray_conditioned_warm_pilot_v111_result_2026-08-03.md`
+- `docs/nine_view_diffeomorphic_ray_conditioned_warm_pilot_v111_public_summary.json`
+- `assets/nine_view_diffeomorphic_ray_conditioned_warm_pilot_v111.png`

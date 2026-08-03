@@ -1,0 +1,459 @@
+{
+  "schema_version": "oerf-nine-view-drc-warm-parent-controls-protocol-111.1",
+  "status": "FROZEN_BEFORE_V111_FORMAL_STAGE_A_NUMERIC_RESULT",
+  "frozen_at_utc": "2026-08-03T02:50:54Z",
+  "revision_history": [
+    {
+      "revision": "111.0-draft",
+      "created_at_utc": "2026-08-03T02:10:50Z",
+      "status": "NEVER_COMMITTED_NEVER_ACTIVATED_SUPERSEDED_DURING_RESULT_BLIND_RED_TEAM",
+      "reason_superseded": "red-team found ambiguous activation, a weak or non-unique projected-ridge definition, an unfrozen train/selection frame boundary, and non-executable ablation decisions"
+    },
+    {
+      "revision": "111.1",
+      "created_at_utc": "2026-08-03T02:50:54Z",
+      "status": "FINAL_RESULT_BLIND_FREEZE_TO_BE_COMMITTED_WITH_TESTS",
+      "changes": "separates current and required activation state; strengthens projected ridge with fit-only nested selection and unique math; freezes frame, seed, update, and precision contracts; defines same-seed ablation decisions; narrows mechanism claims; discloses all missing runtime implementations"
+    }
+  ],
+  "role": "Result-blind executable specification for the four parent-required controls deferred until a fully independently validated Stage A pass. It does not activate, fit, predict, score, or authorize any control by itself.",
+  "parent_contracts": {
+    "scientific_protocol": {
+      "path": "learning_labs/protocols/nine_view_diffeomorphic_ray_conditioned_warm_v111.json",
+      "canonical_sha256": "9462c7b9ea3817b79981cdd8a12af896bb43547621f990bc74280fb0f9b03d85"
+    },
+    "formal_execution_protocol": {
+      "path": "learning_labs/protocols/nine_view_drc_warm_formal_execution_v111.json",
+      "canonical_sha256": "a9ab95ffdc29433e0b612c8be61c9ae71eed833cf730aca60b13c58355a12460"
+    },
+    "stage_a_scoring_protocol": {
+      "path": "learning_labs/protocols/nine_view_drc_warm_formal_scoring_v111.json",
+      "canonical_sha256": "403d851d0b3f41d8b5b6ad39679a568dcd51e9a8aa065e7a1c55598b1d3ccef6"
+    },
+    "solver_control_extension": {
+      "path": "learning_labs/protocols/nine_view_drc_warm_solver_controls_v111.json",
+      "canonical_sha256": "35c1ec91dc16274e885225c0ccb59595f1e3f167cd38fc380b28ea940bb66d16"
+    }
+  },
+  "implementation_donors": {
+    "drc_warm_core": {
+      "path": "learning_labs/nine_view_diffeomorphic_ray_conditioned_warm_v111.py",
+      "file_sha256": "8751a03cd6bdacaad67a8e88092994aab4769591d567d87b2318e43ccb4eeb40"
+    },
+    "v29_temporal_cnn": {
+      "path": "learning_labs/poolfire_c_direct_field_warm_v29.py",
+      "file_sha256": "01151a4ac924f1d4156a543a87a978a979d2bdec6b0b1f004aead4bb7b1c4ea2"
+    },
+    "rank4_projected_ridge": {
+      "path": "learning_labs/nine_view_reference_rank4_observation_predictor_v102.py",
+      "file_sha256": "f9757e9798737b096a643c7cbb20a9527d72e03958d288bc240a1f5ff0ec6524"
+    },
+    "exact_solver_shell": {
+      "path": "learning_labs/nine_view_poolfire_full_trajectory_v67.py",
+      "file_sha256": "3e63a95a57ea582c25fb1d61d03482207eb828d17bfa8774d8ca8a23759627dd"
+    }
+  },
+  "activation_gate": {
+    "current_state": "NOT_ACTIVATED_STAGE_A_RESULT_NOT_AVAILABLE",
+    "formal_stage_a_independently_validated_now": false,
+    "required_formal_stage_a_status": "PASS_V111_FORMAL_STAGE_A_ALL_SEEDS",
+    "required_always_score_control_dominance_found": false,
+    "runtime_evidence_binding": "a later immutable execution release must bind the formal Stage A result, independent VALIDATED_READY, scoring report, source closure, and all parent digests before any control fit or prediction process can start",
+    "protocol_mutation_to_activate": false,
+    "action_if_not_activated": "do not implement, fit, predict, or score these controls; retain the Stage A failure or cheap-control-dominance result",
+    "resource_or_external_gate_authorized_by_activation": false
+  },
+  "shared_roster": {
+    "outer_split": "leave one complete PoolFire trajectory out",
+    "trajectory_ids": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "geometry_scenario_ids": [
+      "V66_F30_plus",
+      "V66_F15_plus",
+      "V66_F12_plus"
+    ],
+    "fit_map_ids": [
+      "identity",
+      "x_p08",
+      "x_m08",
+      "y_p08",
+      "y_m08",
+      "z_p08",
+      "z_m08"
+    ],
+    "heldout_map_ids": [
+      "xy_pp",
+      "xy_mm",
+      "yz_pp",
+      "yz_mm",
+      "zx_pp",
+      "zx_mm"
+    ],
+    "frame_indices": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+    "train_frame_indices": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90],
+    "fit_only_checkpoint_selection_frame": 100,
+    "seeds": [1103, 2203, 3301],
+    "field_shape_zyx": [32, 16, 16],
+    "observation_shape": [9, 32, 16, 2],
+    "fit_sequences_per_outer_fold": 84,
+    "gradient_train_rows_per_outer_fold_and_geometry": 280,
+    "fit_only_selection_rows_per_outer_fold_and_geometry": 28,
+    "total_fit_visible_rows_per_outer_fold_and_geometry": 308,
+    "heldout_rows_per_outer_fold_and_geometry": 66,
+    "heldout_cells_per_outer_fold": 198,
+    "total_heldout_cells_per_deterministic_control": 990,
+    "total_heldout_predictions_per_three_seed_control": 2970,
+    "outer_heldout_truth_in_fit_selection_or_prediction": false
+  },
+  "controls": [
+    {
+      "control_id": "fit_only_reference_projected_ridge_k1",
+      "parent_label": "projected ridge plus CGLS K1",
+      "kind": "deterministic fit-only geometry-aware control",
+      "fit_target": "for each known geometry separately, use observation-RMS-normalized, supported, zero-mean reference-chart truth rows from the four outer-fit trajectories, seven fit maps, and ten train frames 0 through 90; frame 100, outer-heldout truth, and heldout composed maps are absent from mean, SVD, and guard",
+      "candidate_reference_ranks": [4, 8, 16, 32],
+      "candidate_dimensionless_ridge_lambdas": [1e-06, 0.0001, 0.01, 1.0],
+      "candidate_blend_betas": [0.25, 0.5, 0.75, 1.0],
+      "fit_only_model_selection": {
+        "split": "fit mean, basis, and guard on frames 0 through 90; select rank, lambda, and beta only on frame 100 of the same four outer-fit trajectories",
+        "geometry_partition": "run an independent complete search, basis, guard, and selection for each frozen known geometry; no geometry is pooled and each outer fold produces exactly three selected hyperparameter triples",
+        "fit_maps_only": true,
+        "outer_heldout_truth_visible": false,
+        "heldout_composed_maps_visible": false,
+        "score_after_exact_anchor_blend_and_unchanged_k1": true,
+        "objective": "within each geometry separately, apply the exact formal v111 fit-only checkpoint score to four trajectories by seven fit maps at frame 100, then tie-break by lower rank, larger ridge lambda, and smaller beta",
+        "post_selection_refit": "none; retain the geometry-specific mean, basis, and guard built from all four outer-fit trajectories, seven fit maps, and frames 0 through 90"
+      },
+      "basis_construction": {
+        "mean": "float64 arithmetic mean of the complete inner-fit or outer-fit target matrix",
+        "svd": "numpy.linalg.svd(centered_matrix, full_matrices=false) in float64",
+        "mode_order": "descending singular value order returned by SVD",
+        "sign_canonicalization": "for each right singular vector, find the first smallest-index entry attaining the maximum absolute value and multiply the mode by the sign required to make that entry nonnegative",
+        "coefficient_target": "centered_target_matrix multiplied by the transposed sign-canonicalized right-singular-vector rows",
+        "degenerate_rank_action": "reject if the selected singular value is non-finite or not strictly positive"
+      },
+      "projected_ridge_math": {
+        "physical_projection": "Q_physical(x) = support * (x - sum(support*x)/sum(support)); Q_physical is linear, uses the frozen operator support, and is applied identically to every pushed mean, mode, proposal, and q8 anchor",
+        "reference_to_physical_order": "T_map = Q_physical composed with the single frozen analytic reference-to-physical push; compute A_g T_map(mean) and A_g T_map(mode_j) for the same fields later used by the initializer",
+        "observation_normalization": "divide the deployment observation and loaded-q8 anchor by the same current-frame observation RMS used by DRC-Warm",
+        "projected_mean": "y_mean = A_g(T_map(mean_reference))",
+        "projected_modes": "P columns are A_g(T_map(mode_j)) in canonical mode order",
+        "gram": "G = P^T P in float64",
+        "rhs": "b = P^T (y_normalized - y_mean) in float64",
+        "solve": "numpy.linalg.solve(G + lambda * trace(G)/rank * I, b); reject a non-finite or non-positive-definite system",
+        "rank4_mathematical_donor_functions": [
+          "build_transport_context",
+          "projected_ridge_raw",
+          "fit_coefficient_guard",
+          "apply_coefficient_guard"
+        ],
+        "generic_rank_implementation_status": "not implemented; a new tested generic-rank core must reproduce these formulas and bind its source before activation"
+      },
+      "coefficient_guard": {
+        "center": "fit-target coefficient population mean",
+        "scale": "fit-target coefficient population standard deviation when greater than 64*float64_epsilon*max(1,max_abs_dimension), otherwise one",
+        "radius": "maximum fit-row Euclidean norm after centering and scaling",
+        "projection": "radially project every proposal onto the closed standardized ball; reject non-finite center, scale, radius, or proposal"
+      },
+      "geometry_action": "for each outer fold, heldout map, and known geometry, push the final fit-only reference mean and selected modes once and precompute their exact forward actions",
+      "setup_exact_A_calls_per_outer_fold_map_geometry": "1 + selected_reference_rank",
+      "setup_exact_AT_calls_per_outer_fold_map_geometry": 0,
+      "fit_only_search_exact_call_accounting": {
+        "maximum_rank_projection_cache": "within each outer fold, geometry, and fit map, compute A_g T_map(mean) plus all 32 ordered modes once; every lower-rank candidate reuses the corresponding prefix",
+        "basis_projection_setup_A_per_outer_fold": 693,
+        "basis_projection_setup_formula": "3 geometries * 7 fit maps * (1 mean + 32 modes)",
+        "candidate_count_per_geometry": 64,
+        "candidate_count_formula": "4 ranks * 4 lambdas * 4 betas",
+        "candidate_replay_cells_per_outer_fold": 5376,
+        "candidate_replay_formula": "3 geometries * 4 fit trajectories * 7 fit maps * one frame-100 row * 64 candidates",
+        "candidate_replay_exact_A_per_outer_fold": 10752,
+        "candidate_replay_exact_AT_per_outer_fold": 10752,
+        "selection_reference_cells_per_outer_fold": 84,
+        "selection_reference_strategy": "for each frame-100 cell, run one Zero-CGLS K4 recurrence and retain both K2 and K4 checkpoints; separate K2 and K4 runs are forbidden",
+        "selection_reference_exact_A_per_outer_fold": 336,
+        "selection_reference_exact_AT_per_outer_fold": 336,
+        "selection_reference_formula": "84 cells * one shared four-step recurrence",
+        "final_basis_refit_exact_calls": 0,
+        "heldout_map_setup_A_per_outer_fold": "sum over three geometries of 6 * (1 + selected_reference_rank_for_geometry)",
+        "heldout_map_setup_AT_per_outer_fold": 0,
+        "outer_prediction_cells_per_outer_fold": 198,
+        "outer_prediction_exact_A_per_outer_fold": 396,
+        "outer_prediction_exact_AT_per_outer_fold": 396,
+        "whole_pipeline_exact_A_per_outer_fold": "693 + 10752 + 336 + heldout_map_setup_A + 396",
+        "whole_pipeline_exact_AT_per_outer_fold": "10752 + 336 + 396",
+        "all_fit_target_preparation_svd_guard_and_cheap_costs_reported_separately": true
+      },
+      "setup_cost_excluded_from_online_exact_call_claim": true,
+      "online_shell": {
+        "anchor": "h_q8_physical = Q_physical(A_g^T z_q8 / observation_rms) with exactly one exact A^T",
+        "proposal": "x_ridge_reference = mean_reference + U_selected c_guarded",
+        "proposal_physical": "x_ridge_physical = T_map(x_ridge_reference)",
+        "initializer_normalized_physical": "x0_normalized_physical = h_q8_physical + beta_selected * (x_ridge_physical - h_q8_physical)",
+        "physical_initializer": "x0_physical = observation_rms * x0_normalized_physical; no additional support or gauge operator may be inserted after coefficient selection",
+        "observable_line_search": "reuse A_g x0; reject only a non-finite denominator, set alpha=0 when denominator<=1e-30, otherwise alpha=max(<y,A_g x0>,0)/denominator; replace x0 by alpha*x0 before forming the K1 residual, exactly matching the parent fallback",
+        "refinement": "reuse the line-search forward action to form y-A_g(alpha*x0), apply exact A_g^T once, apply exact A_g once to the CGLS direction, and take unchanged CGLS K1",
+        "observable_line_search_additional_exact_calls": 0
+      },
+      "online_exact_A_per_cell": 2,
+      "online_exact_AT_per_cell": 2,
+      "random_seed_count": 0,
+      "hyperparameter_selection": "complete deterministic fit-only frame-100 Cartesian search over 4 ranks by 4 lambdas by 4 betas independently for each geometry; partial candidate rosters are invalid",
+      "forbidden": [
+        "outer-heldout truth in mean, basis, guard, ridge, or beta",
+        "heldout composed maps in fit target construction",
+        "rank, lambda, or beta selection from Stage A or outer-control results",
+        "hiding basis construction, inner search, or selected-rank setup forward actions from whole-pipeline reporting"
+      ]
+    },
+    {
+      "control_id": "v29_backbone_drc_input_no_pose_no_map_k1",
+      "parent_label": "v29-style temporal 3-D CNN without pose or map channels",
+      "kind": "small causal physical-chart v29-backbone ablation on the v111 cheap-factor inputs",
+      "architecture": {
+        "donor_class": "DirectFieldTemporalCNN",
+        "input_channels": 5,
+        "hidden_channels": 17,
+        "maximum_normalized_correction": 0.5,
+        "trainable_parameter_count": 10524,
+        "features": [
+          "current physical loaded-q8 base",
+          "physical support",
+          "previous physical cheap factor backprojection",
+          "current physical cheap factor backprojection",
+          "current minus previous physical cheap factor backprojection"
+        ],
+        "camera_tokens_visible": false,
+        "local_geometry_channels_visible": false,
+        "reference_map_channels_visible": false
+      },
+      "relationship_to_v29": "reuses the 10524-parameter DirectFieldTemporalCNN backbone and five-channel causal layout but replaces v29 exact geometry-equalized BP with v111 cheap-factor BP to preserve the common 2A+2AT deployment budget; it is not a reproduction of v29",
+      "information_boundary": "no explicit pose, geometry, map, or Jacobian channels are accepted; observation-derived q8/base/BP fields and support can still carry implicit geometry information, so this is not a geometry-independent control",
+      "causal_previous_rule": "frame 0 repeats current; every later selected frame reads the immediately preceding physical frame from the same trajectory",
+      "normalization": "current-frame observation RMS, independently per trajectory, geometry, map, and frame",
+      "training": {
+        "one_model_per_outer_fold_and_seed": true,
+        "optimizer": "AdamW",
+        "learning_rate": 0.001,
+        "weight_decay": 0.0001,
+        "gradient_norm_clip": 5.0,
+        "maximum_epochs": 80,
+        "patience_epochs": 12,
+        "train_frame_indices": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90],
+        "fit_only_checkpoint_selection_frame": 100,
+        "model_and_shuffle_seed": "torch.manual_seed(seed), numpy.random.seed(seed), and numpy.random.default_rng(seed); the same listed seed initializes the model and epoch group permutation",
+        "precision_and_determinism": "float32 model and differentiable fit physics, float64 exact checkpoint selection and scoring, PyTorch deterministic algorithms and frozen thread counts recorded in the checkpoint manifest",
+        "optimizer_step_roster": "exactly 120 trajectory-by-geometry-by-train-frame groups per epoch: four fit trajectories by three geometries by ten train frames; each group contains all seven fit maps in one batch and produces exactly one optimizer step",
+        "group_permutation": "one numpy.random.default_rng(seed) PCG64 permutation of the same 120 group identities per epoch, continuing one generator state across epochs",
+        "loss_reduction": "reuse the formal DRC differentiable loss reductions over the complete seven-map batch; form one weighted scalar loss, call backward once, clip once, and call optimizer.step once per group",
+        "loss_math": {
+          "relative_mse": "for each batch row compute sum(delta^2)/max(sum(target^2),1e-20), then take the arithmetic mean across all seven map rows",
+          "physical_field": "relative_mse(raw normalized physical proposal - normalized physical truth, normalized physical truth)",
+          "physical_gradient": "apply the formal finite_difference_gradient with spacing_xyz=(2/(X-1),2/(Y-1),2/(Z-1)) to raw proposal and truth, then apply relative_mse",
+          "physical_observation": "apply the frozen differentiable exact training forward to the observation-RMS-denormalized raw proposal before any observable line search or K1, then apply relative_mse against the raw observation",
+          "equivariance": "not evaluated and weighted exactly zero for this physical-chart no-map backbone",
+          "total": "1.0*physical_field + 1.0*physical_gradient + 1.0*physical_observation"
+        },
+        "loss_weights": {
+          "physical_field_relative_mse": 1.0,
+          "physical_gradient_relative_mse": 1.0,
+          "physical_observation_relative_mse": 1.0,
+          "same_frame_fit_map_equivariance": 0.0
+        },
+        "checkpoint_selection": "same 84-cell fit-only frame-100 eight-gate lexicographic rule and numeric tolerance as formal v111"
+      },
+      "online_shell": "observable-only nonnegative scalar line search followed by unchanged CGLS K1",
+      "online_exact_A_per_cell": 2,
+      "online_exact_AT_per_cell": 2,
+      "forbidden": [
+        "camera pose or identity token",
+        "analytic map or Jacobian channel",
+        "reference-chart local geometry descriptor",
+        "outer-heldout truth or heldout-map fit rows",
+        "best-seed selection or ensembling"
+      ]
+    },
+    {
+      "control_id": "pose_conditioned_reference_cnn_zero_map_k1",
+      "parent_label": "pose-conditioned CNN without reference-chart map channels",
+      "kind": "same-backbone zero-map-input DRC ablation",
+      "architecture": {
+        "base_model": "the frozen 42237-parameter DRC-Warm model",
+        "nominal_requires_grad_parameter_count": 42237,
+        "map_slice_first_convolution_weights_with_zero_gradient": 7020,
+        "gradient_reachable_parameter_count": 35217,
+        "camera_tokens_visible": true,
+        "local_geometry_channels_visible": true,
+        "reference_map_tensor": "all thirteen map channels are replaced by exact zeros before both fit and prediction; nonzero map-channel input is rejected",
+        "one_way_transport_of_base_bp_and_geometry_retained": true
+      },
+      "information_boundary": "the analytic map still acts once in reference-chart transport and can be implicit in transported base/BP/geometry fields; only the thirteen explicit map channels are removed",
+      "training": "identical outer folds, seeds, train frames 0 through 90, frame-100-only checkpoint selection, seed mapping, precision, normalization, AdamW settings, four loss weights, 80-epoch ceiling, patience, and fit-only checkpoint-selection rule as formal DRC-Warm",
+      "online_shell": "identical observable-only line search and unchanged CGLS K1 as DRC-Warm",
+      "online_exact_A_per_cell": 2,
+      "online_exact_AT_per_cell": 2,
+      "forbidden": [
+        "nonzero explicit map channels",
+        "different checkpoint-selection rule",
+        "outer-heldout truth or heldout-map fit rows",
+        "best-seed selection or ensembling"
+      ]
+    },
+    {
+      "control_id": "reference_chart_cnn_no_camera_film_k1",
+      "parent_label": "reference-chart CNN without camera-token conditioning",
+      "kind": "matched-backbone DRC ablation",
+      "architecture": {
+        "base_model": "the frozen DRC-Warm convolutional backbone and residual head",
+        "camera_encoder_and_film_bypassed": true,
+        "camera_encoder_and_film_trainable": false,
+        "effective_trainable_parameter_count": 35301,
+        "film_gamma": 0.0,
+        "film_beta": 0.0,
+        "local_geometry_channels_visible": true,
+        "reference_map_channels_visible": true
+      },
+      "information_boundary": "camera tokens and FiLM are absent, but the seven local-geometry and thirteen map channels remain visible; this isolates token conditioning rather than all geometry information",
+      "training": "identical outer folds, seeds, train frames 0 through 90, frame-100-only checkpoint selection, seed mapping, precision, normalization, AdamW settings, four loss weights, 80-epoch ceiling, patience, and fit-only checkpoint-selection rule as formal DRC-Warm",
+      "online_shell": "identical observable-only line search and unchanged CGLS K1 as DRC-Warm",
+      "online_exact_A_per_cell": 2,
+      "online_exact_AT_per_cell": 2,
+      "forbidden": [
+        "camera token, camera identity, or geometry ID entering FiLM",
+        "trainable constant FiLM substitute",
+        "different checkpoint-selection rule",
+        "outer-heldout truth or heldout-map fit rows",
+        "best-seed selection or ensembling"
+      ]
+    }
+  ],
+  "formal_execution_boundaries": {
+    "implementation_and_numeric_constants_frozen_before_control_prediction": true,
+    "fit_artifacts_sealed_before_outer_prediction": true,
+    "outer_prediction_worker_accepts_no_truth_path_array_metric_or_scorer": true,
+    "all_predictions_for_one_control_sealed_before_its_truth_scoring": true,
+    "actual_A_AT_receipt_required_per_cell": true,
+    "setup_fit_inference_refinement_wall_and_memory_reported_separately_and_jointly": true,
+    "heldout_label_mutation_noninterference_required": true,
+    "independent_recomputation_required": true,
+    "partial_control_result_interpretation": false,
+    "process_level_never_read_proven_by_this_protocol": false,
+    "runtime_control_implementations_present_now": false,
+    "runtime_execution_tests_passed_now": false,
+    "formal_execution_authorized_now": false
+  },
+  "decision_rules": {
+    "same_eight_stage_a_gates": true,
+    "control_state_machine": {
+      "execution_complete": "all frozen predictions, actual call receipts, scores, source bindings, mutation checks, and independent recomputation pass for the full roster; required for every control before any comparison",
+      "control_accuracy_pass": "the control itself passes the same five-trajectory Stage A gate for the applicable deterministic roster or each of its three seeds; reported separately and not required for a valid ablation mechanism comparison",
+      "drc_component_advantage_pass": "DRC satisfies the same-seed paired-better, no-worse-tail, and strict-improvement predicates against the complete ablation predictions; may pass even when the ablation control_accuracy_pass is false",
+      "parent_learned_advantage_pass": "DRC passes Stage A, is not dominated by any complete equal-or-lower-call control, satisfies projected-ridge and loaded-q8 paired gates, satisfies every-control tail noninferiority, and all runtime implementations and independent validators are complete"
+    },
+    "deterministic_projected_ridge_compared_to_each_drc_seed_separately": true,
+    "neural_controls_compared_to_drc_by_identical_seed_only": true,
+    "cross_seed_best_case_comparison_forbidden": true,
+    "dominance_tolerance": 1e-12,
+    "projected_ridge_fit_only_selection_score": {
+      "selection_cells_per_geometry": 28,
+      "metric_order": [
+        "field_relative_l2",
+        "gradient_relative_l2",
+        "interior_gradient_relative_l2",
+        "observation_relative_l2"
+      ],
+      "ratio_formula": "ratio(candidate,reference) = (candidate + floor)/(reference + floor), floor = 1e-12 * max(abs(reference), 1e-30)",
+      "eight_gate_order": [
+        "four metric ratios versus Zero-CGLS K2 in metric_order",
+        "four metric ratios versus Zero-CGLS K4 divided by 1.01 in metric_order"
+      ],
+      "selection_partition": "select one hyperparameter triple independently within each geometry; each selection sees four fit trajectories by seven fit maps at frame 100 and never aggregates another geometry",
+      "candidate_primary": "maximum of all 28 cells by 8 ordered normalized gate values within the current geometry",
+      "candidate_secondary": "arithmetic mean of all 28 cells by 8 ordered normalized gate values within the current geometry",
+      "cross_geometry_summary": "after all three triples are frozen, report the maximum primary and secondary across geometries for diagnostics only; it cannot change any selected triple",
+      "floating_comparison_tolerance": 1e-08,
+      "tie_break_order": [
+        "lower candidate_primary beyond tolerance",
+        "lower candidate_secondary beyond tolerance",
+        "lower reference rank",
+        "larger ridge lambda",
+        "smaller beta"
+      ],
+      "breakdown_or_incomplete_roster_action": "candidate score is positive infinity and the missing or broken cell list is reported; partial candidate rosters cannot win"
+    },
+    "all_equal_or_lower_call_controls": [
+      "Zero-CGLS K1",
+      "Zero-CGLS K2",
+      "normalized geometry-equalized backprojection plus CGLS K1",
+      "loaded q8 factor plus CGLS K1",
+      "geometry_jacobi_pcgls_k2",
+      "fit_only_kernel_dual_ridge_k1",
+      "fit_only_reference_projected_ridge_k1",
+      "v29_backbone_drc_input_no_pose_no_map_k1",
+      "pose_conditioned_reference_cnn_zero_map_k1",
+      "reference_chart_cnn_no_camera_film_k1"
+    ],
+    "all_required_controls_for_tail_noninferiority": [
+      "Zero-CGLS K1",
+      "Zero-CGLS K2",
+      "Zero-CGLS K4",
+      "normalized geometry-equalized backprojection plus CGLS K1",
+      "loaded q8 factor plus CGLS K1",
+      "geometry_jacobi_pcgls_k2",
+      "fit_only_kernel_dual_ridge_k1",
+      "fit_only_reference_projected_ridge_k1",
+      "v29_backbone_drc_input_no_pose_no_map_k1",
+      "pose_conditioned_reference_cnn_zero_map_k1",
+      "reference_chart_cnn_no_camera_film_k1"
+    ],
+    "paired_better_fraction_vs_projected_ridge": {
+      "field_minimum": 0.5,
+      "interior_gradient_minimum": 0.5
+    },
+    "paired_better_fraction_vs_loaded_q8": {
+      "field_minimum": 0.5,
+      "interior_gradient_minimum": 0.5
+    },
+    "trajectory_equal_p90_higher_and_worst_no_worse_than_every_simple_control": "apply to the explicit all_required_controls_for_tail_noninferiority roster, including the higher-call Zero-CGLS K4 accuracy reference",
+    "neural_ablation_mechanism_gate": {
+      "pairing": "same seed, trajectory, heldout map, geometry, and frame",
+      "metrics": [
+        "field_relative_l2",
+        "gradient_relative_l2",
+        "interior_gradient_relative_l2",
+        "observation_relative_l2"
+      ],
+      "drc_paired_better_fraction_field_minimum": 0.5,
+      "drc_paired_better_fraction_interior_gradient_minimum": 0.5,
+      "per_trajectory_all_metric_p90_higher_and_worst_no_worse_tolerance": 1e-12,
+      "strict_improvement_requirement": "for every seed, at least one trajectory-by-metric p50, p90-higher, or worst value is lower by more than 1e-12",
+      "ablation_dominates_drc": "the ablation passes the same five-trajectory Stage A gate, every paired tail is no worse within 1e-12, and at least one tail is lower by more than 1e-12; this closes the corresponding DRC component claim and learned-advantage gate",
+      "ablation_fails_stage_a": "record control_accuracy_pass=false but keep execution_complete=true when execution is valid; this is not sufficient by itself to claim component necessity, and the paired-better, no-worse-tail, and strict-improvement predicates must still pass before drc_component_advantage_pass=true"
+    },
+    "any_equal_or_lower_call_control_dominance_closes_learned_advantage": true,
+    "wall_rss_or_external_gate_before_all_control_executions_complete_and_parent_learned_advantage_pass": false
+  },
+  "failure_actions": {
+    "stage_a_not_activated": "do not run this supplement",
+    "control_invalid": "retain evidence, repair only the explicit execution defect, and rerun under a new bound release",
+    "simple_control_dominance": "reject learned advantage and retain the simpler control",
+    "neural_ablation_matches_or_beats_drc": "reject only the isolated incremental contribution claim: explicit thirteen-channel map encoding for the zero-map ablation, camera-token FiLM for the no-camera ablation, or the larger reference-chart conditioned design relative to the v29-backbone DRC-input ablation; do not reject broader geometry, transport, or map effects that remain implicit in other inputs",
+    "parent_gate_failure": "do not open wall, RSS, external, or real-BOST gates unless every required control has execution_complete=true and parent_learned_advantage_pass=true; individual control_accuracy_pass values are reported but are not a standalone resource prerequisite"
+  },
+  "claim_limits": {
+    "this_protocol_is_an_algorithm_result": false,
+    "controls_implemented": false,
+    "controls_executed": false,
+    "parent_contract_complete": false,
+    "learned_advantage_proven": false,
+    "resource_advantage": false,
+    "external_generalization": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false
+  }
+}

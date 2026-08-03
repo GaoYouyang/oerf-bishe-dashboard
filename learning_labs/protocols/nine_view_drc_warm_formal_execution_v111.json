@@ -1,0 +1,295 @@
+{
+  "schema_version": "oerf-nine-view-drc-warm-formal-execution-protocol-111.2",
+  "status": "FROZEN_BEFORE_V111_FORMAL_STAGE_A_DATA_PREPARATION_OR_TRAINING",
+  "frozen_at_utc": "2026-08-02T22:27:21Z",
+  "revision_history": [
+    "111.0 froze the formal roster, fit-only training and checkpoint selection, process order, Stage A decision, controls, and claim limits before formal data preparation or training.",
+    "111.1 was frozen before formal data preparation or training and only normalizes the execution-protocol digest field name to execution_protocol_sha256 so checkpoint, bundle, and worker schemas are byte-consistent; no scientific or numerical field changed.",
+    "111.2 was frozen after real-data preflight but before formal training. It adds fail-closed pair/factor/source/checkpoint identities, heldout-map and array-content binding, and a per-frame q8 exact-adjoint receipt. No roster, model, loss, threshold, cost target, or scientific decision changed."
+  ],
+  "role": "Execution supplement for the already-frozen v111 scientific contract. It resolves training, checkpoint, process, and scoring order without changing the model family, data roster, eight gates, exact-call budget, or claim limits.",
+  "parent_contract": {
+    "path": "learning_labs/protocols/nine_view_diffeomorphic_ray_conditioned_warm_v111.json",
+    "schema_version": "oerf-nine-view-diffeomorphic-ray-conditioned-warm-protocol-111.3",
+    "canonical_sha256": "9462c7b9ea3817b79981cdd8a12af896bb43547621f990bc74280fb0f9b03d85",
+    "precedence": "The parent scientific contract wins. This supplement may only make under-specified execution details deterministic."
+  },
+  "development_evidence_entry_condition": {
+    "frozen_pilot_status": "PASS_SINGLE_TRAJECTORY_UNSEEN_MAP_LEARNING_SIGNAL_V111",
+    "pilot_worker_bridge_status": "PASS_DEPLOYMENT_WORKER_REPRODUCES_FROZEN_PILOT_V111",
+    "pilot_worker_bridge_independent_status": "PASS_INDEPENDENT_VALIDATION_PILOT_WORKER_BRIDGE_V111",
+    "meaning": "The 11-frame pilot signal can be reproduced through the deployment-only worker. This is an engineering entry condition, not cross-trajectory evidence."
+  },
+  "formal_roster": {
+    "trajectory_order": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "outer_fold_order": "leave out each trajectory in trajectory_order; preserve the remaining trajectory order",
+    "geometry_order": [
+      "V66_F30_plus",
+      "V66_F15_plus",
+      "V66_F12_plus"
+    ],
+    "seed_order": [1103, 2203, 3301],
+    "fit_map_order": [
+      "identity",
+      "x_p08",
+      "x_m08",
+      "y_p08",
+      "y_m08",
+      "z_p08",
+      "z_m08"
+    ],
+    "heldout_map_order": [
+      "xy_pp",
+      "xy_mm",
+      "yz_pp",
+      "yz_mm",
+      "zx_pp",
+      "zx_mm"
+    ],
+    "frame_order": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+    "train_frame_order": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90],
+    "fit_only_checkpoint_selection_frame": 100,
+    "formal_checkpoint_count": 15,
+    "heldout_deployment_bundle_count": 90,
+    "prediction_worker_invocation_count": 270,
+    "heldout_cells_per_seed": 990,
+    "total_heldout_cells": 2970,
+    "ordering_is_binding": true
+  },
+  "factor_contract": {
+    "family": "frozen calibrated loaded q8 rank factor",
+    "rank": 8,
+    "oversampling": 8,
+    "power_iterations": 0,
+    "detector_v_per_tile": 4,
+    "seed": 2026073066,
+    "identity_derivation": "derive the complete expected factor identity from each frozen expanded scenario, the frozen formal geometry, and only these fixed parameters; never infer expected parameters from the candidate artifact manifest",
+    "geometry_identity_must_match": true
+  },
+  "fit_data_preparation": {
+    "allowed_truth": "only the four fit trajectories of the current outer fold and only the seven fit maps",
+    "forbidden_truth": "the outer-heldout trajectory and all six heldout composed maps",
+    "previous_frame_rule": "frame 0 repeats current; every other selected frame t reads t-1 from the same trajectory",
+    "normalization": "current-frame observation RMS independently per trajectory, geometry, map, and frame",
+    "fit_dataset_count_per_outer_fold": 84,
+    "train_groups_per_epoch": 120,
+    "train_group_definition": "one trajectory by geometry by train-frame group containing all seven fit maps so the paired equivariance loss never mixes trajectories or geometries",
+    "group_shuffle": "NumPy PCG64 seeded by the frozen model seed; one new permutation of the 120 groups per epoch",
+    "heldout_map_dataset_generation_before_checkpoint_freeze": false,
+    "outer_heldout_trajectory_read_before_checkpoint_freeze": false
+  },
+  "optimization": {
+    "model": "the frozen 42237-parameter DRC-Warm model, jointly conditioned on all three known geometries",
+    "one_model_per_outer_fold_and_seed": true,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "gradient_norm_clip": 5.0,
+    "maximum_epochs": 80,
+    "patience_epochs": 12,
+    "precision": "float32 model and differentiable training physics; float64 exact checkpoint selection and heldout scoring",
+    "loss_weights": {
+      "reference_field_relative_mse": 1.0,
+      "reference_gradient_relative_mse": 1.0,
+      "physical_observation_relative_mse": 1.0,
+      "same_frame_fit_map_equivariance": 0.1
+    },
+    "hyperparameter_source": "copied unchanged from the preregistered v111 pilot protocol; no pilot metric was used to tune these values",
+    "no_learning_rate_search": true,
+    "no_seed_selection": true,
+    "no_ensemble": true
+  },
+  "fit_only_checkpoint_selection": {
+    "evaluation_schedule": "evaluate the initialized epoch -1 checkpoint and every completed training epoch",
+    "evaluation_cells_per_checkpoint": 84,
+    "cell_roster": "four fit trajectories by three geometries by seven fit maps at physical frame 100",
+    "candidate": "DRC-Warm observable line search plus unchanged exact CGLS K1",
+    "accuracy_reference": "Zero-CGLS K2",
+    "harm_reference": "Zero-CGLS K4",
+    "metric_order": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "interior_gradient_relative_l2",
+      "observation_relative_l2"
+    ],
+    "eight_normalized_cell_values": [
+      "candidate field divided by Zero-K2 field",
+      "candidate full-gradient divided by Zero-K2 full-gradient",
+      "candidate interior-gradient divided by Zero-K2 interior-gradient",
+      "candidate observation divided by Zero-K2 observation",
+      "candidate field divided by Zero-K4 field and then divided by 1.01",
+      "candidate full-gradient divided by Zero-K4 full-gradient and then divided by 1.01",
+      "candidate interior-gradient divided by Zero-K4 interior-gradient and then divided by 1.01",
+      "candidate observation divided by Zero-K4 observation and then divided by 1.01"
+    ],
+    "trajectory_geometry_score": "maximum of all eight normalized values across the seven fit maps",
+    "primary_checkpoint_score": "maximum trajectory_geometry_score across the four fit trajectories and three geometries",
+    "tie_break_order": [
+      "lower primary_checkpoint_score",
+      "lower mean of all 84 by 8 normalized values",
+      "lower mean differentiable fit-only validation loss",
+      "earlier epoch"
+    ],
+    "numeric_improvement_tolerance": 1e-08,
+    "patience_definition": "stop after 12 consecutive completed epochs without a lexicographic improvement larger than the numeric tolerance in the first differing floating criterion",
+    "zero_control_metrics_may_be_cached": true,
+    "candidate_metrics_must_be_recomputed_for_each_checkpoint": true,
+    "heldout_trajectory_or_heldout_map_in_selection": false
+  },
+  "checkpoint_contract": {
+    "schema_version": "oerf-nine-view-drc-warm-formal-checkpoint-111.0",
+    "checkpoint_role": "formal_leave_one_trajectory_out",
+    "required_metadata": [
+      "seed",
+      "outer_fold_heldout_trajectory_id",
+      "evaluation_trajectory_id",
+      "fit_trajectory_ids",
+      "parent_protocol_sha256",
+      "execution_protocol_sha256",
+      "model_parameter_count",
+      "best_epoch",
+        "fit_only_checkpoint_score",
+        "checkpoint_frozen_before_heldout_truth_read",
+        "heldout_map_opened",
+        "source_commit",
+        "fit_pair_bundle_identities",
+        "factor_artifact_bindings",
+        "runtime_identity"
+    ],
+    "outer_heldout_trajectory_must_not_appear_in_fit_roster": true,
+    "checkpoint_frozen_before_heldout_truth_read": true,
+    "heldout_map_opened": false,
+    "checkpoint_mutation_after_freeze": "forbidden"
+  },
+  "deployment_bundle_contract": {
+    "one_bundle_per": "outer-heldout trajectory by geometry by heldout map; shared read-only across the three seed workers",
+    "members": [
+      "101-frame observation array with only causally required frames populated",
+      "101-frame observation-derived loaded-q8 initial field array",
+      "101-frame cheap factor-backprojection array",
+      "provenance-only manifest"
+    ],
+    "truth_member_count": 0,
+      "required_provenance": [
+        "trajectory_id",
+        "map_id",
+        "geometry_scenario_id",
+      "operator_identity",
+      "parent_protocol_sha256",
+      "execution_protocol_sha256",
+      "factor_identity_sha256",
+        "source roles"
+      ],
+      "array_descriptor_required_fields": [
+        "path",
+        "sha256",
+        "shape",
+        "dtype"
+      ],
+      "q8_generation_receipt": {
+        "one_receipt_per_scored_frame": true,
+        "required_frame_indices": [
+          0,
+          10,
+          20,
+          30,
+          40,
+          50,
+          60,
+          70,
+          80,
+          90,
+          100
+        ],
+        "exact_A_per_frame": 0,
+        "exact_AT_per_frame": 1,
+        "must_bind": [
+          "trajectory_id",
+          "map_id",
+          "geometry_scenario_id",
+          "frame_index",
+          "operator_identity",
+          "factor_artifact_binding",
+          "observation_frame_sha256",
+          "q8_initial_frame_sha256"
+        ]
+      },
+      "cross_trajectory_input_concatenation": false,
+      "bundle_sealed_before_worker": true
+    },
+  "prediction_and_scoring_order": {
+    "step_1": "freeze one checkpoint for the current outer fold and seed using fit data only",
+    "step_2": "only after all 15 checkpoints are sealed, generate the 90 heldout deployment bundles and private scoring truths",
+    "step_3": "run exactly one deployment-only worker per checkpoint by geometry by heldout map; worker receives no truth or scorer path",
+      "step_4": "seal 270 prediction directories, checkpoint and array digests, and 2970 per-frame 2A+2AT receipts whose first AT is bound to a q8-generation receipt",
+    "step_5": "only after the global prediction barrier, permit the scorer to read heldout truth",
+    "step_6": "independently rebuild the roster, metrics, eight gates, tails, exact-call ledger, and truth-mutation noninterference",
+    "global_prediction_barrier_required": true,
+      "partial_result_interpretation": "forbidden"
+    },
+    "execution_closure_contract": {
+      "fit_pair_bundle_before_read": "verify directory identity, trajectory manifest, READY, checksums file, every checksummed payload, shape, dtype, and no symlink for exactly the four fit trajectories",
+      "factor_before_use": "load through the calibrated-factor validator and bind manifest plus READY content digests per geometry into the checkpoint",
+      "source": "record the clean source commit in checkpoint and report; formal worker must execute from the same clean commit",
+      "checkpoint": "hash checkpoint bytes after atomic creation; formal worker must receive and verify the expected checkpoint SHA-256",
+      "runtime": "record Python, NumPy, PyTorch, device, thread counts, and deterministic-algorithm state",
+      "claim_boundary": "API-level read roster and content binding do not prove process-level filesystem non-access"
+    },
+  "stage_a_decision": {
+    "cell_gate": "all four ratios versus Zero-K2 are at most 1.0 and all four ratios versus Zero-K4 are at most 1.01",
+    "trajectory_scope": "all 198 cells for one heldout trajectory: six heldout maps by three geometries by eleven frames",
+    "joint_pass_fraction_per_trajectory_minimum": 0.9,
+    "joint_harm_fraction_per_trajectory_maximum": 0.05,
+    "severe_harm_ratio": 1.1,
+    "severe_harm_count_per_trajectory_maximum": 0,
+    "seed_rule": "all five heldout trajectories must pass separately for each of the three seeds",
+    "per_geometry_reporting_required": true,
+    "tail_reporting": ["p50", "p90-higher", "worst"],
+    "pass_status": "PASS_V111_FORMAL_STAGE_A_ALL_SEEDS",
+    "fail_status": "FAIL_V111_FORMAL_STAGE_A",
+    "invalid_status": "INCONCLUSIVE_INVALID_V111_FORMAL_STAGE_A"
+  },
+  "control_order_after_stage_a": {
+    "always_score_with_stage_a": [
+      "Zero-CGLS K1",
+      "Zero-CGLS K2",
+      "Zero-CGLS K4",
+      "normalized geometry-equalized backprojection plus CGLS K1",
+      "loaded q8 factor plus CGLS K1"
+    ],
+    "only_if_all_seed_stage_a_passes": [
+      "projected ridge plus CGLS K1",
+      "v29-style temporal 3-D CNN without pose or map channels",
+      "pose-conditioned CNN without reference-chart map channels",
+      "reference-chart CNN without camera-token conditioning"
+    ],
+    "reason_for_staging": "the parent decision order evaluates matched accuracy before learned advantage; a failed DRC-Warm candidate is closed rather than rescued by training additional models",
+    "simple_control_dominance_closes_learned_advantage": true,
+    "resource_measurement_before_all_controls": false
+  },
+  "formal_stop_rules": {
+    "invalid_preflight": "stop before training and repair only the explicit identity, shape, adjoint, factor, or causal-input defect",
+    "any_seed_stage_a_failure": "record the complete negative result and close DRC-Warm at the frozen capacity",
+    "simple_control_dominance": "retain the simple control and reject learned-advantage",
+    "no_larger_model_rescue": true,
+    "no_external_case_opening_before_pass": true,
+    "no_wall_or_rss_measurement_before_accuracy_and_controls_pass": true
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_advantage": false,
+    "real_bost": false,
+    "noise_robustness": false,
+    "camera_calibration_robustness": false,
+    "curved_ray_robustness": false,
+    "process_level_never_read_proven": false
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "schema_version": "oerf-nine-view-drc-warm-formal-scoring-protocol-111.4",
+  "status": "FROZEN_BEFORE_V111_FORMAL_HELDOUT_BUNDLE_GENERATION_OR_SCORING",
+  "frozen_at_utc": "2026-08-03T01:20:00Z",
+  "revision_history": [
+    "111.0 fixed the Stage A arithmetic, cheap controls, reporting tails, and an initial simple-control dominance rule before heldout bundle generation or scoring.",
+    "111.1 was frozen before heldout bundle generation or scoring after result-blind red-team review. It requires all 270 actual prediction products to validate before the first truth path is constructed, derives checkpoint/factor trust from the sealed fit roster instead of prediction self-report, evaluates simple-control dominance separately for every seed as required by the parent all-seed rule, and persists fail-closed invalid executions.",
+    "111.2 was frozen before heldout bundle generation or scoring after a second result-blind red-team review. It requires the independent validator to preflight all 270 actual predictions before its own first truth decode, independently reload and numerically replay the frozen factor artifact, bind validated checkpoint seals, and rehash all trusted inputs after scoring. It also corrects the earlier non-causal truth-copy claim.",
+    "111.3 was frozen before heldout bundle generation or scoring after a third result-blind red-team review. After truth decode it requires 990 independent exact forward replays to prove every selected observation matches its paired truth, applies the 2e-7 factor replay tolerance separately to every selected q8 frame and required factor-BP frame, requires all non-required stored frames to be exactly zero, and rejects symlink checkpoint leaves.",
+    "111.4 was frozen before heldout bundle generation or scoring after a fourth result-blind red-team review. Every replay input, difference, norm, and ratio must be finite before any maximum is evaluated; any overflow or NaN is invalid. An independent-validator failure atomically publishes a nonnumeric INVALID report and seal with a failure fingerprint and formal-score seals, and never creates VALIDATED_READY. No model, training data, heldout roster, metric, threshold, or deployment exact-call target changed."
+  ],
+  "role": "Result-blind scoring supplement for the frozen v111.2 execution contract. It fixes the Stage A arithmetic, cheap-control implementations, reporting tails, and simple-control dominance rule without changing the trained model, roster, eight gates, thresholds, or call budgets.",
+  "parent_execution_contract": {
+    "path": "learning_labs/protocols/nine_view_drc_warm_formal_execution_v111.json",
+    "schema_version": "oerf-nine-view-drc-warm-formal-execution-protocol-111.2",
+    "canonical_sha256": "a9ab95ffdc29433e0b612c8be61c9ae71eed833cf730aca60b13c58355a12460"
+  },
+  "barrier": {
+    "required_status": "PASS_ALL_FORMAL_DEPLOYMENT_PREDICTIONS_SEALED_V111",
+    "required_prediction_count": 270,
+    "required_cell_count": 2970,
+    "truth_decode_before_barrier": false,
+    "all_270_actual_ready_arrays_receipts_checkpoint_and_source_bindings_validate_before_first_truth_path": true,
+    "partial_result_scoring": false
+  },
+  "independent_validation": {
+    "all_270_actual_predictions_validate_before_validator_first_truth_decode": true,
+    "checkpoint_ready_validated_ready_report_validation_and_checkpoint_payload_are_bound": true,
+    "factor_manifest_ready_payload_and_identity_are_reloaded_from_a_frozen_factor_root": true,
+    "all_q8_and_cheap_factor_backprojection_inputs_are_numerically_replayed_from_the_sealed_observations_with_per_frame_relative_l2_maximum_2e-7": true,
+    "all_non_required_q8_and_factor_backprojection_frames_are_exactly_zero": true,
+    "all_990_selected_observations_match_independent_exact_forward_of_the_paired_truth_with_per_frame_relative_l2_maximum_2e-7": true,
+    "independent_input_validation_exact_call_ledger": "990 exact A for truth-observation pairing plus 990 exact A^T for q8 lift replay; excluded from deployment and scorer offline metric budgets",
+    "trusted_checkpoint_factor_bundle_prediction_and_score_seals_are_rehashed_after_recomputation": true,
+    "all_replay_inputs_differences_norms_and_ratios_are_finite_or_validation_is_invalid": true,
+    "validator_failure_persists_nonnumeric_invalid_seal_and_never_creates_validated_ready": true
+  },
+  "metric_order": [
+    "field_relative_l2",
+    "gradient_relative_l2",
+    "interior_gradient_relative_l2",
+    "observation_relative_l2"
+  ],
+  "metric_definition": {
+    "field_relative_l2": "||x-x_star||_2 / max(||x_star||_2,1e-30)",
+    "gradient_relative_l2": "||grad(x)-grad(x_star)||_2 / max(||grad(x_star)||_2,1e-30), using axis spacings 2/(n-1) and edge_order=2",
+    "interior_gradient_relative_l2": "the same gradient ratio after removing two cells from each spatial boundary",
+    "observation_relative_l2": "||y-Ax||_2 / max(||y||_2,1e-30)",
+    "ratio_floor": "(candidate + 1e-12*max(abs(reference),1e-30)) / (reference + the same floor)"
+  },
+  "candidate_gate": {
+    "accuracy_reference": "Zero-CGLS K2",
+    "accuracy_ratio_maximum": 1.0,
+    "harm_reference": "Zero-CGLS K4",
+    "harm_ratio_maximum": 1.01,
+    "severe_harm_ratio": 1.1,
+    "cell_joint_pass": "all four accuracy ratios <=1.0 and all four harm ratios <=1.01",
+    "cell_harm": "any harm ratio >1.01",
+    "cell_severe_harm": "any harm ratio >1.1",
+    "trajectory_seed_pass": "joint-pass fraction across the fixed 198 cells >=0.90, harm fraction <=0.05, and severe-harm count=0",
+    "formal_stage_a_pass": "all five trajectories pass separately for all three seeds"
+  },
+  "control_implementations": [
+    {
+      "control_id": "zero_k1",
+      "definition": "unchanged zero-start exact CGLS K1",
+      "exact_A_per_cell": 1,
+      "exact_AT_per_cell": 1
+    },
+    {
+      "control_id": "zero_k2",
+      "definition": "unchanged zero-start exact CGLS K2",
+      "exact_A_per_cell": 2,
+      "exact_AT_per_cell": 2
+    },
+    {
+      "control_id": "zero_k4",
+      "definition": "unchanged zero-start exact CGLS K4",
+      "exact_A_per_cell": 4,
+      "exact_AT_per_cell": 4
+    },
+    {
+      "control_id": "geometry_equalized_bp_k1",
+      "definition": "one exact A^T y, multiply by the fixed geometry-only median-normalized inverse diag(A^T A) with 1e-6 relative floor, nonnegative observable line search, then unchanged exact CGLS K1",
+      "exact_A_per_cell": 2,
+      "exact_AT_per_cell": 2
+    },
+    {
+      "control_id": "loaded_q8_k1",
+      "definition": "the bundle-sealed observation-derived loaded q8 exact-A^T lift, nonnegative observable line search, then unchanged exact CGLS K1",
+      "exact_A_per_cell": 2,
+      "exact_AT_per_cell": 2
+    }
+  ],
+  "reporting": {
+    "cell_count_per_trajectory_seed": 198,
+    "cell_count_per_geometry_trajectory_seed": 66,
+    "tail_method": "NumPy quantile method=higher",
+    "tails": ["p50", "p90_higher", "worst"],
+    "candidate_rows": 2970,
+    "control_rows": 990,
+    "report_candidate_by_trajectory_seed_and_geometry": true,
+    "report_controls_by_trajectory_and_geometry": true,
+    "offline_metric_replay_calls_are_separate_from_deployment_call_budgets": true
+  },
+  "simple_control_dominance": {
+    "eligible_controls": [
+      "zero_k1",
+      "zero_k2",
+      "geometry_equalized_bp_k1",
+      "loaded_q8_k1"
+    ],
+    "budget_rule": "the control must use no more exact A and no more exact A^T per cell than DRC-Warm K1",
+    "candidate_summary_vector": "separately for each seed, concatenate each trajectory by metric p50, p90_higher, and worst over its 198 cells",
+    "control_summary_vector": "compare the deterministic control summary independently to each one-seed candidate vector",
+    "dominance_rule": "for one seed, a control dominates only if every control summary component is <= that seed's matched candidate component within 1e-12 and at least one component is lower by >1e-12, while the control itself passes the same trajectory accuracy and harm gates against Zero-K2 and Zero-K4",
+    "effect": "record dominance per (seed,control); any dominated seed fails the parent all-seed learned-advantage requirement even if DRC-Warm Stage A accuracy passes"
+  },
+  "sealed_prediction_stability": {
+    "stage": "independent validator after formal score sealing",
+    "rule": "hash all 270 sealed prediction products before the validator opens truth and require byte-identical hashes after all independent recomputation",
+    "scope_limit": "this proves only that sealed prediction files did not change during validation; it is not a causal truth-mutation audit and does not prove truth noninterference or process-level filesystem non-access"
+  },
+  "invalidity": {
+    "missing_or_duplicate_roster_cell": "INCONCLUSIVE_INVALID_V111_FORMAL_STAGE_A",
+    "seal_or_identity_drift": "INCONCLUSIVE_INVALID_V111_FORMAL_STAGE_A",
+    "stored_candidate_residual_disagrees_with_fresh_exact_Ax_above_2e-7_relative": "INCONCLUSIVE_INVALID_V111_FORMAL_STAGE_A",
+    "nonfinite_metric_or_zero_reference_breakdown": "INCONCLUSIVE_INVALID_V111_FORMAL_STAGE_A",
+    "independent_validator_failure": "INCONCLUSIVE_INVALID_V111_FORMAL_STAGE_A_INDEPENDENT_VALIDATION"
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_advantage": false,
+    "real_bost": false,
+    "truth_mutation_noninterference_proven": false,
+    "process_level_never_read_proven": false
+  }
+}
