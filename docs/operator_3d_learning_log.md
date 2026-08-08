@@ -12759,3 +12759,25 @@ API 级 truth-mutation noninterference 已通过；process-level never-read 仍�
 - `docs/nine_view_drc_warm_temporal_cnn_parent_v112_4_public_result_2026-08-08.md`
 - `docs/nine_view_drc_warm_temporal_cnn_parent_v112_4_public_summary.json`
 - `assets/nine_view_drc_warm_temporal_cnn_parent_v112_4_public.svg`
+
+## 2026-08-08：全局平移输运也被输入证据关掉了
+
+### 做了什么
+
+在关闭当前 CNN/FNO 延伸后，我没有直接换更大的网络，而是运行一个训练为零的物理基线：对相邻时刻的 cheap factor-BP 做三维 FFT 相位相关，估计把前一时刻移动到当前时刻的全局整数位移。诊断只读取部署时可见的 BP 和已知支撑，不读取真值或评分器。
+
+### 真正结果
+
+五条已开封 PoolFire 轨迹、三套九视角几何、六张坐标图和十个相邻帧对给出 `900` 个 pair。`900/900` 可辨识，但非零全局位移为 `0/900`；超过 `1e-12` 的一致性改善也为 `0/900`。独立程序逐对重算，位移和一致性改善最大差都为 `0`。
+
+### 这意味着什么
+
+当前代理的 BP 输入不支持“整团火焰每一帧整体平移一点”这个最简单的输运解释。它不表示反应流没有运动，而是说明运动若可被利用，很可能是局部、非刚性、伴随形态变化的；没有新的 deployment-visible 测量合同前，不应把这个想法继续扩展成训练任务。
+
+**突破监测：没有算法突破。** 这是一个独立复算的物理负门：关闭全局刚性平移，而不是关闭全部 C 路线。
+
+公开证据：
+
+- `docs/nine_view_phase_transport_v116_public_result_2026-08-08.md`
+- `docs/nine_view_phase_transport_v116_public_summary.json`
+- `assets/nine_view_phase_transport_v116_public.svg`
