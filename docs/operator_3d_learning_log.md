@@ -12732,3 +12732,30 @@ API 级 truth-mutation noninterference 已通过；process-level never-read 仍�
 完整红队：
 
 - `docs/c_route_primary_source_red_team_2026-08-04.md`
+
+## 2026-08-08：temporal CNN 父对照把当前 CNN 路线关掉了
+
+### 做了什么
+
+对已经完成的 temporal CNN 父对照做了独立重放：从封存 checkpoint 和部署时可见输入重新生成 `270` 个 prediction，分别重算候选与父对照两侧各 `2970` 个 cell 的场、残差、八门和跨五条轨迹的尾部判决。
+
+### 为什么这样做
+
+之前的正信号仍可能有一个更普通的解释：同样成本的 temporal CNN 就足以达到同等表现。只有把这个父对照在同一随机种子、同一成本壳和同一尾部门下跑完，才知道能否把效果归给当前坐标条件 warm initializer。
+
+### 得到了什么
+
+独立重放与正式结果的数值、field 和 residual 最大差都为 `0`。三个同种子配对中，`2203` 与 `3301` 的五轨迹 p90/worst 尾部拒绝候选，只有 `1103` 没有拒绝。因此不能用局部或平均改善宣称当前 CNN 稳定优于这个同价父对照。
+
+### 结论和边界
+
+- **成功完成了检验：** 结论经独立实现复算成立。
+- **科学结论是负结果：** 当前坐标条件 CNN 路线关闭；pose/reference 父控制和 FNO 不再作为补救继续运行。
+- **这不等于整条 C 路线失败：** 它没有检验所有物理机制、也没有检验真实 BOST、外部泛化或资源收益。
+- **突破监测：** `algorithm_breakthrough=false`，`paper_success=false`。
+
+公开证据：
+
+- `docs/nine_view_drc_warm_temporal_cnn_parent_v112_4_public_result_2026-08-08.md`
+- `docs/nine_view_drc_warm_temporal_cnn_parent_v112_4_public_summary.json`
+- `assets/nine_view_drc_warm_temporal_cnn_parent_v112_4_public.svg`
