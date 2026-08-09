@@ -13142,3 +13142,60 @@ v131 把任务缩小到：先正常算出精确 CGLS K1，只让模型预测“K
 - `docs/poolfire_k1_residual_correction_v131_result_2026-08-10.md`
 - `docs/poolfire_k1_residual_correction_v131_public_summary.json`
 - `assets/figures/poolfire_k1_residual_correction_v131.png`
+
+## 2026-08-10：v131.1 模型跑完了，结果是 0/5，但失败原因比“网络不够大”更具体
+
+### 先说人话
+
+这次已经不是训练中。五折训练、留出预测、物理评分和独立复算全部完成，正式结论是负结果。
+
+v131 告诉我们：如果能拿到完全正确的一组 correction dual，只用 `2A+2A^T` 就能复现 K4。v131.1 真正让 11484 参数的小模型去做这件事，五条完整留出轨迹没有一条通过严格同精度门，结果是 `0/5`。
+
+### 我实际做了什么
+
+五条 PoolFire 轨迹各留出一次。每个模型只读当前 K1 residual、报告相机位姿和有效相机 mask，输入支持 `5/7/9/12` 台相机和相机乱序。五个 checkpoint 先统一封存，之后才生成 3700 个留出预测；预测也先封存，再接入同一个精确 K1 + correction-dual 物理壳评分。
+
+候选每个单元真实调用 `2A+2A^T`，K4 参考是 `4A+4A^T`。validation 和 test 真值都没有打开。
+
+### 跑出来的结果
+
+冻结门要求每条轨迹的 field、完整梯度、内部梯度和 observation 同时满足 p90 不高于 `1.02`、worst 不高于 `1.05`。五条轨迹全部失败。
+
+最明显的缺口在 observation：五条轨迹的 p90 分别约为 `1.238 / 1.334 / 1.476 / 1.413 / 1.415`。相机越少越难：5、7、9、12 相机汇总 observation p90 分别为 `1.500 / 1.375 / 1.307 / 1.240`。
+
+它不是完全没用。候选在五条轨迹上都比同成本 Zero-K2 的 observation p90 更好，而且没有一个便宜控制能全局支配它。但我们的目标是“一半调用追平 K4”，不是“比 K2 好一点”，所以必须判失败。
+
+### 独立复算是否站得住
+
+站得住。第二个程序重算了预测、物理壳、四类指标、五类控制和实际 forward/adjoint 调用点：prediction、metric、summary、control、alpha、parity、K1 residual 与 pose token 的最大差全部是 `0`。实际总调用是 `7400A+7400A^T`，正好对应 3700 个单元各 `2A+2A^T`。
+
+正式状态是 `FAIL_V131_1_PRIMARY_HELDOUT_ACCURACY`，独立状态是 `PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_K1_RESIDUAL_SCORE_V131_1`。
+
+### 为什么失败
+
+模型预测的 dual 和精确教师在“大方向”上其实很接近：cosine 中位数约 `0.9915`。但 dual 相对误差 p90 仍约 `0.4484`，经过线搜索后的有效三维修正相对误差 p90 仍约 `0.4384`。
+
+这说明普通 dual-L2 的训练目标有结构性缺口。逆问题是病态的，某些看起来很小的 detector-space 形状误差，会被 `A^T`、`A` 和最终场指标放大。标量线搜索能修正总幅值，却不能修正这些敏感方向上的形状误差。clean 条件也没有明显更好，因此不能把责任简单推给噪声或位姿扰动。
+
+### 现在关掉什么，保留什么
+
+关掉的是“用普通 dual-L2 训练当前最小集合模型预测 correction dual”这条表示。按结果前约定，不追加多 seed、大 CNN、FNO、UNO、DeepONet 或 GPU 来挽救，也不做资源门和外部门。
+
+保留的是 v131 的精确机制事实：一组 correction dual 确实能在一半精确调用预算内复现 K4。下一步要先改变目标，而不是放大网络。具体问题是：normal operator 或 field lift 加权后的目标，能不能更直接约束会被物理算子放大的敏感方向？在任何新训练前，先做一个结果前冻结、可证伪的精确容量与便宜控制诊断。
+
+当前边界：
+
+- `v131_mechanism_capacity_headroom=true`；
+- `v131_1_learned_initializer_validated=false`；
+- `current_dual_l2_representation_closed=true`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_residual_loto_v131_1_result_2026-08-10.md`
+- `docs/poolfire_k1_residual_loto_v131_1_public_summary.json`
+- `assets/figures/poolfire_k1_residual_loto_v131_1.png`
