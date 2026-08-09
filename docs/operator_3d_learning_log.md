@@ -13199,3 +13199,49 @@ v131 告诉我们：如果能拿到完全正确的一组 correction dual，只�
 - `docs/poolfire_k1_residual_loto_v131_1_result_2026-08-10.md`
 - `docs/poolfire_k1_residual_loto_v131_1_public_summary.json`
 - `assets/figures/poolfire_k1_residual_loto_v131_1.png`
+
+## 2026-08-10：v132 排除了“每台相机只差一个增益”这个解释
+
+### 先说人话
+
+v131.1 失败以后，一个自然怀疑是：模型其实已经学到了大致形状，只是不同相机的 correction dual 幅值没调准。若真是这样，每台相机乘一个有正有负的标量，也许就能补回 K4。
+
+我没有先训练另一个网络，而是先做了更严格的容量检查：允许每个样本直接看真值，为每台有效相机寻找最有利的标量。这是部署模型不可能超过的上界。如果这个上界都过不了，就没有理由再花算力学习这些标量。
+
+### 我实际做了什么
+
+实验仍使用五条已经打开的 PoolFire 三维轨迹，共 3700 个单元，覆盖 `5/7/9/12` 台有效相机。每个单元从 K1 residual 构造逐相机 field lift，只允许每台相机一个 signed scalar coefficient；之后仍进入同一个精确 `A^T` lift、可观测线搜索和未修改 CGLS K1，在线理论账保持 `2A+2A^T`。
+
+同时比较了一个完全不看真值的便宜控制：按每台相机 residual RMS 做归一化。validation 和 test 真值都没有打开。
+
+### 跑出来的结果
+
+真值可见的逐相机标量 oracle 和 RMS 控制都是 `0/5`：五条轨迹没有一条通过冻结的 field、完整梯度、内部梯度和 observation 八门。
+
+oracle 的逐轨迹 field p90 仍在 `1.0891` 到 `1.1336`，observation p90 在 `1.2164` 到 `1.4135`，明显高于 `1.02` 门。更关键的是，逐相机 field-lift 相对完整 K4 correction 的误差 p90 约为 `0.4716`；经过 observation 投影后反而约为 `0.6774`。这说明缺失的是 detector 内部的空间或频谱形状，不只是相机之间的总幅值。
+
+### 独立复算是否站得住
+
+站得住。第二个程序重新构造逐相机 lift、解析标量 oracle、RMS 控制、K1 物理壳和全部判决。系数最大差约 `6.66e-15`，诊断最大差约 `1.33e-14`，oracle 指标最大差约 `4.44e-16`，K1 residual 最大差约 `2.54e-13`。正式状态是 `FAIL_V132_FIELD_LIFT_CAMERA_MIXING_CAPACITY`，独立状态是 `PASS_INDEPENDENT_RECOMPUTATION_FIELD_LIFT_CAMERA_MIXING_V132`。
+
+### 这一步改变了什么
+
+关闭的是“每台相机一个标量增益”的 camera-mixing 路线。它连真值可见上界都不能追平 K4，因此不训练标量预测器，也不靠扩大网络挽救。
+
+保留的主线没有变：师兄建议的变机位、加减相机、乱序、观测噪声和位姿标定误差仍然要做，但下一候选必须能表达每个 detector 内部的像素级空间或频谱修正，并先通过同样的真值可见容量门。只有容量门通过，才有资格训练最小 observation/geometry-only 模型。
+
+当前边界：
+
+- `camera_scalar_mixing_closed=true`；
+- `pixelwise_representation_not_yet_validated=true`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_field_lift_camera_mixing_v132_result_2026-08-10.md`
+- `docs/poolfire_field_lift_camera_mixing_v132_public_summary.json`
+- `assets/figures/poolfire_field_lift_camera_mixing_v132.png`
