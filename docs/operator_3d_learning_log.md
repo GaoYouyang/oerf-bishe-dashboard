@@ -13005,3 +13005,78 @@ v130 补回共轭方向以后，`3700/3700` 个单元都数值复现 K4。正式
 - `docs/poolfire_set_krylov2_v130_result_2026-08-10.md`
 - `docs/poolfire_set_krylov2_v130_public_summary.json`
 - `assets/figures/poolfire_set_krylov2_v130.png`
+
+## 2026-08-10：v130.1 证明双状态结构能表示，但当前小模型学不会
+
+### 先说结论
+
+这次不是“还在训练”，而是已经跑完并得到正式负结果。
+
+v130 的精确教师告诉我们：只要两组 dual 完全正确，用 `2A+2A^T` 就能复现 K4。但真正的 11504 参数相机集合模型，在五条完整留出 PoolFire 轨迹上是 `0/5` 通过。换句话说，代数结构装得下答案，不等于网络能从新流场轨迹的观测与报告位姿中把答案稳定猜出来。
+
+### 实际做了什么
+
+五条轨迹各做一次 leave-one-complete-trajectory-out：四条训练，一条整轨迹留出。每折固定 30 epoch，不 early stop，也不挑最好 epoch。所有五个 checkpoint 在读取任何留出重建指标前统一封存；随后 3700 个主预测和 3700 个 wrong-pose 预测也先封存，再让冻结的物理壳读取已开封真值做评分。
+
+输入已经落实师兄要求的关键条件：
+
+- 每台相机都有自己的 `16x16x2` 观测、18 维报告位姿和 mask；
+- 相机集合可乱序、可从 12 台删到 `9/7/5` 台；
+- 有观测噪声，以及旋转、平移、焦距、主点和联合标定扰动；
+- forward 和 adjoint 按每个相机的报告几何重新构建。
+
+### 跑出来的数字
+
+冻结门要求每条轨迹、每项指标的 `candidate/K4` 同时满足 `p90-higher <= 1.02` 和 `worst <= 1.05`。五条轨迹全部失败。3700 个单元合在一起时：
+
+- field：`p50/p90/worst = 1.0501/1.0726/1.1128`；
+- full gradient：`1.0085/1.0308/1.0664`；
+- interior gradient：`1.0359/1.0658/1.1150`；
+- observation：`1.2668/1.4499/1.7946`。
+
+模型仍然明显优于同成本 Zero-K2 和 geometry-PCGLS K2，但我们的目标是“以 K2 成本追平 K4”，所以不能把“比 K2 好”写成成功。
+
+### 独立复算是否站得住
+
+第二个程序没有导入正式 scorer 或正式双方向壳。它重新加载五个 checkpoint，重算主预测、wrong-pose 预测、二维盒约束求解、全部物理指标、经典控制和调用账：
+
+- 主预测最大差：`0`；
+- candidate metric 最大差：`6.66e-16`；
+- 聚合摘要最大差：`6.66e-16`；
+- 系数最大差：`2.00e-15`；
+- 调用账不匹配：`0`。
+
+因此这不是偶然的页面数字或一次 scorer 偏差，而是独立确认的负结果。
+
+### 为什么失败
+
+打开结果后的根因审计显示：
+
+- K3 solution dual 相对误差 p90 约 `0.358`；
+- K3→K4 direction dual 相对误差 p90 约 `0.521`；
+- direction-dual 误差与最终 observation ratio 的相关系数约 `0.65`；
+- 相机越少越难，5 相机 observation ratio 中位约 `1.42`，12 相机约 `1.16`。
+
+当前网络不是完全没有学到东西，而是“同时预测两组完整 K3 dual”这个目标太重，尤其第二组共轭方向最难。按结果前合同，我们关闭当前表示，不追加 no-pose、ridge、多 seed 或更大 CNN/FNO/UNO/U-Net 来挽救。
+
+### 下一步为什么改成更小的问题
+
+下一条机制从已经算出的精确 CGLS K1 状态出发。部署时可见 K1 residual，因此模型只需要预测一组 detector-space correction dual，再做一次精确 `A^T` 提升、一次 `A` 投影和观测线搜索，总预算仍不超过 `2A+2A^T`。
+
+这不是降低标准，而是把不可稳定学习的“两组完整 K3 历史状态”改成“当前 K1 没修好的那一部分”。先用 exact teacher 检查这一组 correction dual 在表示上能不能追平 K4，再比较便宜的 residual 控制；只有这两门通过才训练新模型。
+
+当前证据边界：
+
+- `v130_mechanism_capacity_breakthrough=true`；
+- `v130_1_learned_initializer_validated=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_set_krylov2_loto_v130_1_result_2026-08-10.md`
+- `docs/poolfire_set_krylov2_loto_v130_1_public_summary.json`
+- `assets/figures/poolfire_set_krylov2_loto_v130_1.png`

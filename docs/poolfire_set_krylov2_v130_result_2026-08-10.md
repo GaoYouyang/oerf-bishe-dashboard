@@ -71,7 +71,7 @@ The online exact-call ledger is fixed at `2A+2A^T`, versus `4A+4A^T` for the K4 
 
 The formal status is `PASS_V130_STAGE_A_DUAL_STATE_KRYLOV2_CAPACITY`; the independent status is `PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_SET_KRYLOV2_STAGE_A_V130`. The independent implementation rebuilds the CGLS recurrence, both dual states, the box-constrained 2D solve, and all metrics. It still shares frozen low-level physics kernels, so end-to-end physics independence is not claimed.
 
-## 5. 现在正在验证什么 / What is being tested now
+## 5. 后续学习验证结果 / Subsequent learning result
 
 首个可学习模型固定为 `OddPoseSetKrylov2Warm`，只有 `11,504` 个参数。它使用共享相机编码器、18 维位姿 MLP、masked mean/max DeepSets 聚合与双状态 decoder；训练采用五条完整轨迹留一、固定 30 epoch、固定 seed、无 early stopping、无 epoch 选择。
 
@@ -79,7 +79,15 @@ The first learnable model is fixed at `11,504` parameters. It uses a shared came
 
 所有五个 checkpoint 在任何 held-out 重建指标被读取前统一封存。随后才用冻结的 `2A+2A^T` 壳逐单元评分，并公平比较 Zero-K2、geometry-PCGLS K2、fit-only ridge、no-pose、wrong-pose 与相机共置换。
 
-All five checkpoints are sealed before any held-out reconstruction metric is read. Only then is every held-out cell scored through the frozen `2A+2A^T` shell and compared with Zero-K2, geometry-PCGLS K2, fit-only ridge, no-pose, wrong-pose, and camera co-permutation controls.
+All five checkpoints were sealed before any held-out reconstruction metric was read. Every held-out cell was then scored through the frozen `2A+2A^T` shell against K4 and equal-cost controls.
+
+正式 v130.1 结果已经完成并由第二个程序独立复算：五条完整留出轨迹为 `0/5` 通过。全局 candidate/K4 的 observation error ratio 为 `p50=1.2668`、`p90-higher=1.4499`、`worst=1.7946`。模型优于同成本 K2 控制，但没有达到冻结的 K4 同精度目标，因此当前双状态学习表示按合同关闭，不追加大模型或多 seed 挽救。
+
+The formal v130.1 evaluation is complete and independently recomputed: `0/5` complete held-out trajectories pass. The global candidate/K4 observation-error ratio is `p50=1.2668`, `p90-higher=1.4499`, and `worst=1.7946`. The model beats equal-cost K2 controls but does not meet the frozen K4 matched-accuracy target, so the current dual-state learned representation is closed without a larger-model or extra-seed rescue.
+
+完整负结果见 [v130.1 整轨迹留一证据](../document_reader.html?doc=docs%2Fpoolfire_set_krylov2_loto_v130_1_result_2026-08-10.md)。下一机制从精确 K1 residual 出发，只预测一组 detector-space correction dual；在 exact-teacher 容量与便宜确定性控制通过前，不授权新训练。
+
+See the [complete v130.1 LOTO evidence](../document_reader.html?doc=docs%2Fpoolfire_set_krylov2_loto_v130_1_result_2026-08-10.md). The next mechanism starts from the exact K1 residual and predicts one detector-space correction dual; no new training is authorized before exact-teacher capacity and cheap deterministic controls pass.
 
 ## 6. 证据边界 / Evidence boundary
 
