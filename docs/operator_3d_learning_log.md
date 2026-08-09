@@ -12880,3 +12880,79 @@ K4  0.6112
 - `docs/poolfire_camera_set_classical_screen_v127_result_2026-08-10.md`
 - `docs/poolfire_camera_set_classical_screen_v127_public_summary.json`
 - `assets/figures/poolfire_camera_set_classical_screen_v127.png`
+
+## 2026-08-10：v128 把噪声、位姿和经典预条件的作用真正拆开了
+
+### 这一步为什么必须做
+
+v127 已经告诉我“相机越多、迭代越深，重建通常越好”，但它把观测噪声和标定误差合在几个 profile 里，所以还不能回答三个关键问题：究竟是噪声、旋转、平移还是内参更伤；更强的几何经典方法能不能直接填掉低调用预算的缺口；如果经典控制已经足够，那还有没有必要训练网络。
+
+v128 专门回答这三个问题。它不是新模型，而是训练前必须过的一道科学筛选。
+
+### 实际跑了什么
+
+我在五条已经开封的 PoolFire fit 轨迹上，每条取 5 帧，使用 5、7、9、12 个相机。除了 clean，还分别加入：
+
+- observation noise；
+- camera rotation；
+- camera translation，同时改变相机中心和目标点；
+- intrinsics，包括焦距和主点；
+- pose-all；
+- combined。
+
+每种扰动有 medium / stress 两档，并做三次独立重复。最后形成：
+
+- 37 种条件；
+- 740 个相机 rig；
+- 3700 个物理单元；
+- 33300 行经典控制。
+
+控制组不只包含 Zero、BP 和 CGLS K1/K2/K4，还加入了用 `diag(A^T A)` 做几何灵敏度均衡的 BP，以及 geometry-PCGLS K1/K2/K4。
+
+### 得到了什么
+
+第一，噪声和标定误差确实有影响。combined stress 相对 clean 的 p90 harm 是：
+
+- field：`+1.84%`；
+- gradient：`+3.74%`；
+- observation：`+6.81%`。
+
+第二，它们还不是当前最大的瓶颈。clean 条件下，Zero-CGLS K4 的场误差中位数从 5 相机的 `0.7486` 降到 12 相机的 `0.6112`，相对降低 `18.35%`。相机数量和迭代深度的影响仍更大。
+
+第三，更强的经典预条件没有关闭两次调用缺口。相对 Zero-CGLS K4：
+
+- Zero-CGLS K2 的场误差 p50 仍高 `18.21%`；
+- geometry-PCGLS K2 的场误差 p50 仍高 `17.68%`；
+- 3700 个单元中，两者都没有任何一个达到 K4 的场精度。
+
+第四，只看 observation residual 会误导。geometry-PCGLS K4 的 observation p50 比 CGLS K4 低 `4.12%`，但 field p50 反而高 `1.04%`。所以后续模型必须同时看 field、gradient 和 observation，不能靠“残差更低”宣布成功。
+
+### 独立复算有没有过
+
+过了。第二个程序没有导入 v128 正式 core 或 runner，重新生成全部 3700 个单元和 33300 行控制。逐数组、指标、rig、Jacobi、聚合和 paired-effect 的最大差全部为 `0`。不过两个程序仍共享冻结的底层 physics kernels，所以还不能说端到端物理实现完全独立。
+
+### 这算突破吗
+
+不算。
+
+这一步真正改变的判断是：**最小的相机集合条件 warm initializer 现在值得做了**。原因不是“神经网络可能很强”，而是强经典控制后仍留下稳定、可量化的低调用预算缺口。
+
+当前边界仍是：
+
+- `algorithm_breakthrough=false`；
+- `paper_success=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- validation 和 test truth 都没有打开。
+
+### 下一步直接做什么
+
+下一步是最小 SetDual-Warm。每台相机作为一个无序集合元素，输入自己的 `16x16x2` 观测、18 维位姿/标定编码和 mask。模型用共享逐相机编码器和 mean/max 聚合，输出 detector-dual proposal，再通过精确 `A^T`、可观测 alpha line search 和一次未修改 CGLS refinement 构成 `2A+2A^T` 候选。
+
+它必须按轨迹 leave-one-trajectory-out，并公平比较 Zero-CGLS K2、geometry-PCGLS K2、fit-only dual ridge、no-pose 和 wrong-pose/permutation。通过这些门之前，不租 GPU，不上 FNO，不把 CFD 代理结果写成真实 BOST 成功。
+
+公开证据：
+
+- `docs/poolfire_camera_set_factorized_controls_v128_result_2026-08-10.md`
+- `docs/poolfire_camera_set_factorized_controls_v128_public_summary.json`
+- `assets/figures/poolfire_camera_set_factorized_controls_v128.png`
