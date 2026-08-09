@@ -12732,3 +12732,86 @@ API 级 truth-mutation noninterference 已通过；process-level never-read 仍�
 完整红队：
 
 - `docs/c_route_primary_source_red_team_2026-08-04.md`
+
+## 2026-08-08：temporal CNN 父对照把当前 CNN 路线关掉了
+
+### 做了什么
+
+对已经完成的 temporal CNN 父对照做了独立重放：从封存 checkpoint 和部署时可见输入重新生成 `270` 个 prediction，分别重算候选与父对照两侧各 `2970` 个 cell 的场、残差、八门和跨五条轨迹的尾部判决。
+
+### 为什么这样做
+
+之前的正信号仍可能有一个更普通的解释：同样成本的 temporal CNN 就足以达到同等表现。只有把这个父对照在同一随机种子、同一成本壳和同一尾部门下跑完，才知道能否把效果归给当前坐标条件 warm initializer。
+
+### 得到了什么
+
+独立重放与正式结果的数值、field 和 residual 最大差都为 `0`。三个同种子配对中，`2203` 与 `3301` 的五轨迹 p90/worst 尾部拒绝候选，只有 `1103` 没有拒绝。因此不能用局部或平均改善宣称当前 CNN 稳定优于这个同价父对照。
+
+### 结论和边界
+
+- **成功完成了检验：** 结论经独立实现复算成立。
+- **科学结论是负结果：** 当前坐标条件 CNN 路线关闭；pose/reference 父控制和 FNO 不再作为补救继续运行。
+- **这不等于整条 C 路线失败：** 它没有检验所有物理机制、也没有检验真实 BOST、外部泛化或资源收益。
+- **突破监测：** `algorithm_breakthrough=false`，`paper_success=false`。
+
+公开证据：
+
+- `docs/nine_view_drc_warm_temporal_cnn_parent_v112_4_public_result_2026-08-08.md`
+- `docs/nine_view_drc_warm_temporal_cnn_parent_v112_4_public_summary.json`
+- `assets/nine_view_drc_warm_temporal_cnn_parent_v112_4_public.svg`
+
+## 2026-08-08：全局平移输运也被输入证据关掉了
+
+### 做了什么
+
+在关闭当前 CNN/FNO 延伸后，我没有直接换更大的网络，而是运行一个训练为零的物理基线：对相邻时刻的 cheap factor-BP 做三维 FFT 相位相关，估计把前一时刻移动到当前时刻的全局整数位移。诊断只读取部署时可见的 BP 和已知支撑，不读取真值或评分器。
+
+### 真正结果
+
+五条已开封 PoolFire 轨迹、三套九视角几何、六张坐标图和十个相邻帧对给出 `900` 个 pair。`900/900` 可辨识，但非零全局位移为 `0/900`；超过 `1e-12` 的一致性改善也为 `0/900`。独立程序逐对重算，位移和一致性改善最大差都为 `0`。
+
+### 这意味着什么
+
+当前代理的 BP 输入不支持“整团火焰每一帧整体平移一点”这个最简单的输运解释。它不表示反应流没有运动，而是说明运动若可被利用，很可能是局部、非刚性、伴随形态变化的；没有新的 deployment-visible 测量合同前，不应把这个想法继续扩展成训练任务。
+
+**突破监测：没有算法突破。** 这是一个独立复算的物理负门：关闭全局刚性平移，而不是关闭全部 C 路线。
+
+公开证据：
+
+- `docs/nine_view_phase_transport_v116_public_result_2026-08-08.md`
+- `docs/nine_view_phase_transport_v116_public_summary.json`
+- `assets/nine_view_phase_transport_v116_public.svg`
+
+## 2026-08-10：把师兄说的“相机互换、增删、加噪声”真正做成了数据链
+
+### 做了什么
+
+我没有继续给固定九视角模型加层，而是先把输入问题改对。新数据链从 12 个候选相机里选择 `5 / 7 / 9 / 12` 个；每个相机独立保存自己的观测与 18 维位姿描述，并分别加入真实装置变化、报告标定误差和观测噪声。相机顺序、相机数量和噪声档不再是写死的。
+
+正式生成了 `64` 个 `32 × 16 × 16` 三维 Gaussian-field 样本，覆盖 clean、40 dB、30 dB、20 dB 四档。为了抓住很隐蔽的错误，每个样本还把相机列表倒序再生成一次；如果随机噪声跟“列表第几个位置”绑定，而不是跟 camera ID 绑定，这个检查会立刻失败。
+
+### 为什么这样做
+
+师兄指出，真正有意义的坐标泛化不应只是在固定九台相机上输入 pose token。模型应该把每个相机视为一个独立集合元素，能接受乱序、缺失和新增相机，并且知道收到的标定可能有误差。否则所谓“位姿条件”仍可能只是记住三个固定 rig。
+
+### 得到了什么
+
+- `64/64` 样本完成；相机数量覆盖 `5 / 7 / 9 / 12`。
+- 反序相机恢复的最大绝对误差为 `0`。
+- 最大 forward/adjoint 相对误差为 `2.758 × 10^-15`。
+- clean 档噪声与报告标定误差严格为 `0`。
+- 加噪档实际噪声强度相对目标的最坏偏差为 `2.128%`。
+- 独立程序不导入正式生成器，重新实现整条随机与扰动逻辑；六类数组和汇总指标的最大差均为 `0`。
+
+### 是否成功，是否突破
+
+- **成功：** 变机位、变相机数量、观测噪声和位姿/标定误差的数据接口已经可运行并独立复算。
+- **尚未成功：** 还没有把它接到 PoolFire，也没有证明任何 warm initializer 在这些扰动下更准、更快或更稳。
+- **准确状态：** `algorithm_breakthrough=false`、`paper_success=false`、`real_bost=false`。
+
+下一步直接把同一合同接到已打开的 PoolFire fit trajectories，先跑 Zero、BP、CGLS、PCGLS 等经典基线。只有确认变机位和噪声制造了稳定、可量化的性能缺口，才训练最小的 permutation-invariant camera-set 模型。
+
+公开证据：
+
+- `docs/camera_set_virtual_bos_dataset_v126_public_result_2026-08-10.md`
+- `docs/camera_set_virtual_bos_dataset_v126_public_summary.json`
