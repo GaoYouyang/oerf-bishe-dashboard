@@ -12815,3 +12815,68 @@ API 级 truth-mutation noninterference 已通过；process-level never-read 仍�
 
 - `docs/camera_set_virtual_bos_dataset_v126_public_result_2026-08-10.md`
 - `docs/camera_set_virtual_bos_dataset_v126_public_summary.json`
+
+## 2026-08-10：v127 把 camera set 接到 PoolFire，经典难度图跑完了
+
+### 这次真正做了什么
+
+v126 只是用 Gaussian 场把“相机可乱序、可增删、可加观测噪声和标定误差”的数据机制做对。v127 往前走了一步：把同一份 camera-set 合同接到五条已开封的公开 PoolFire CFD 密度轨迹，再跑真正的经典逆问题对照。
+
+实验共有：
+
+```text
+5 条 trajectory
+× 5 个时刻
+× 4 种相机数量（5 / 7 / 9 / 12）
+× 3 档条件（clean / medium / stress）
+= 300 个物理单元
+```
+
+每个单元完整比较 zero field、scaled exact BP、Zero-CGLS K1 / K2 / K4，总计 `1500` 行经典控制。这一步故意不训练网络：先知道经典方法在变相机数量和扰动下到底难在哪里，才能判断 learned initializer 有没有真正可以填的空间。
+
+### 真正跑出来的结果
+
+clean 条件下，K4 场相对 L2 误差的单元中位数为：
+
+```text
+5 cameras   0.7486
+7 cameras   0.6869
+9 cameras   0.6288
+12 cameras  0.6112
+```
+
+从 5 台增加到 12 台，K4 场误差中位数相对降低 `18.35%`。在 12 相机下，K1 / K2 / K4 的场误差中位数为：
+
+```text
+K1  0.8665
+K2  0.7720
+K4  0.6112
+```
+
+这说明目前最大的两个可见瓶颈是：**视角太少**和 **迭代太浅**。stress 条件下的尾部会变坏，但在当前这一组幅度里，变化小于相机数量与迭代深度的影响。
+
+### 为什么可以信
+
+独立验证程序没有导入 v127 正式 core 或 runner，而是重新实现相机 roster、随机键、真实/报告 rig、噪声、CGLS、逐单元指标和聚合。最终：
+
+- 独立数组最大差：`0`
+- 独立指标最大差：`0`
+- 独立 rig 最大差：`0`
+- 独立聚合最大差：`0`
+- 相机乱序恢复最大差：`0`
+- forward / adjoint 最大相对误差：`1.06e-14`
+
+### 是否成功，是否突破
+
+- **成功：** 师兄要求的变相机数量、可乱序/增删相机和噪声/标定扰动，已经从 Gaussian 机械检查走到 PoolFire 经典重建难度图。我们现在有了训练模型之前必需的基线坐标系。
+- **尚未成功：** 还没有 learned initializer，没有证明同精度下减少 `A/A^T`，没有 wall/RSS 优势，也没有真实 BOST 结果。
+- **不能过度解释：** medium/stress 同时改变观测噪声和报告位姿，因此现在不能说“噪声不重要”，也不能知道尾部变化是哪个因素造成的。
+- **突破监测：** `algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`real_bost=false`。
+
+下一门不是立即租 GPU，而是把 `noise-only / pose-only / combined` 拆开并做重复，再补 geometry-equalized BP 和 PCGLS 对照。只有这些对照之后仍留下稳定的、可学习的缺口，才会训练最小的 permutation-invariant camera-set initializer。
+
+公开证据：
+
+- `docs/poolfire_camera_set_classical_screen_v127_result_2026-08-10.md`
+- `docs/poolfire_camera_set_classical_screen_v127_public_summary.json`
+- `assets/figures/poolfire_camera_set_classical_screen_v127.png`
