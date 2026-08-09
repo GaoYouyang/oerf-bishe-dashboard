@@ -1,7 +1,8 @@
 {
   "schema_version": "oerf-operator-learning-current-evidence-v1",
-  "updated": "2026-08-09",
-  "route": "C: diffeomorphism-consistent observation-only warm initializer for three-dimensional BOST reconstruction",
+  "updated": "2026-08-10",
+  "route": "C: permutation-invariant variable-camera observation/geometry-only warm initializer for three-dimensional BOST reconstruction",
+  "engineering_status": "PASS_INDEPENDENT_RECOMPUTATION_CAMERA_SET_DATASET_V126",
   "scientific_status": "PASS_GEOMETRY_TANGENT_CAPACITY_V125_WEAK",
   "formal_status": "PASS_GEOMETRY_TANGENT_CAPACITY_V125",
   "v119_1_local_residual_transport_status": "FAIL_V119_1_LOCAL_RESIDUAL_TRANSPORT_DEVELOPMENT_GATE",
@@ -25,9 +26,18 @@
   "v111_formal_stage_a_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_V111_FORMAL_STAGE_A",
   "latest_valid_mechanism_status": "PASS_INDEPENDENT_RECOMPUTATION_CASE6_SMOOTH_SUPPORT_V109",
   "latest_valid_mechanism_formal_status": "PASS_SMOOTH_SUPPORT_DIFFEOMORPHIC_CONVERGENCE_V109",
-  "headline": "v125 independently finds only weak oracle capacity for the geometry tangent; no training is authorized",
-  "headline_zh": "v125 独立确认几何切向量仅有微弱 oracle 容量，不授权训练。",
+  "headline": "v126 independently validates variable camera count, camera reordering, observation noise, and pose/calibration noise mechanics; no model-performance claim",
+  "headline_zh": "v126 独立验证变相机数量、相机乱序、观测噪声与位姿/标定噪声的数据机制；尚无模型性能结论。",
   "metrics": {
+    "v126_sample_count": 64,
+    "v126_camera_count_minimum": 5,
+    "v126_camera_count_maximum": 12,
+    "v126_profile_count": 4,
+    "v126_maximum_adjoint_relative_error": 2.7581431561492174e-15,
+    "v126_maximum_permutation_restore_absolute_error": 0,
+    "v126_maximum_relative_noise_ratio_error_fraction": 0.02127979525931356,
+    "v126_independent_maximum_array_difference": 0,
+    "v126_independent_maximum_metric_difference": 0,
     "v125_context_count": 900,
     "v125_positive_fraction": 0.9333333333333333,
     "v125_relative_l2_reduction_p50": 0.0008713295666163412,
@@ -290,6 +300,12 @@
     "exact_AT_calls_per_future_candidate": 2
   },
   "current_decision": {
+    "variable_camera_dataset_mechanics_validated": true,
+    "camera_order_invariance_mechanics_validated": true,
+    "observation_noise_injection_validated": true,
+    "pose_calibration_noise_injection_validated": true,
+    "poolfire_variable_camera_attachment_complete": false,
+    "variable_camera_warm_initializer_evaluated": false,
     "representation_capacity_breakthrough": true,
     "v98_strict_observation_only_joint_predictor_passed": false,
     "coordinate_transport_implementation_gate_passed": true,
@@ -378,12 +394,11 @@
     "external_generalization": false,
     "real_bost": false
   },
-  "next_scientific_gate": "do not train or run K1 for the closed q8/BP transport objects; any continuation needs a separately frozen physical target or observation representation that is not a repackaging of q8, BP, or their residual",
-  "next_scientific_gate_en": "Do not train or run K1 for the closed q8/BP transport objects. Any continuation needs a separately frozen physical target or observation representation that is not a repackaging of q8, BP, or their residual.",
-  "next_scientific_gate_zh": "不为已关闭的 q8/BP 搬运对象训练或运行 K1；任何后续机制必须另行冻结新的物理目标或观测表示，且不能只是 q8、BP 或其残差的改写。",
+  "next_scientific_gate": "attach the frozen variable-camera, observation-noise, and calibration-error contract to opened PoolFire fit trajectories; run classical controls before authorizing a minimal camera-set warm initializer",
+  "next_scientific_gate_en": "Attach the frozen variable-camera, observation-noise, and calibration-error contract to the opened PoolFire fit trajectories. Run classical controls before authorizing a minimal camera-set warm initializer.",
+  "next_scientific_gate_zh": "将冻结的变机位、观测噪声和标定误差合同接到已打开的 PoolFire fit trajectories；先跑经典基线，再决定是否授权最小 camera-set warm initializer。",
   "public_evidence": {
-    "result": "../document_reader.html?doc=docs%2Fnine_view_phase_transport_v116_public_result_2026-08-08.md",
-    "summary": "../docs/nine_view_phase_transport_v116_public_summary.json",
-    "figure": "../assets/nine_view_phase_transport_v116_public.svg"
+    "result": "../document_reader.html?doc=docs%2Fcamera_set_virtual_bos_dataset_v126_public_result_2026-08-10.md",
+    "summary": "../docs/camera_set_virtual_bos_dataset_v126_public_summary.json"
   }
 }
