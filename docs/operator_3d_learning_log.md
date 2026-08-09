@@ -12956,3 +12956,52 @@ v128 专门回答这三个问题。它不是新模型，而是训练前必须过
 - `docs/poolfire_camera_set_factorized_controls_v128_result_2026-08-10.md`
 - `docs/poolfire_camera_set_factorized_controls_v128_public_summary.json`
 - `assets/figures/poolfire_camera_set_factorized_controls_v128.png`
+
+## 2026-08-10：v129 失败后，v130 找回了真正缺失的 Krylov 信息
+
+### 先说人话
+
+上一版的想法是：网络预测第三步 CGLS 已经得到的解，再从这里重启一步，看看能不能用较少调用追上第四步。这个想法看起来合理，但 v129 用“完美教师”检查后仍然失败。也就是说，即使网络一丁点误差都没有，这个结构本身也不够，继续换大模型只会浪费算力。
+
+原因是 CGLS 不只记住当前解，还积累了一条与以前方向共轭的新搜索方向。重启会把这段历史丢掉。v130 因此不再只保存一个状态，而是同时保存：
+
+1. 第三步解对应的 detector-space dual；
+2. 从第三步走向第四步所需的共轭方向 dual。
+
+部署时，两组 dual 各做一次精确反投影和一次正投影，再只用当前观测解一个二维盒约束最小二乘。总账固定为 `2A+2A^T`，而直接运行 K4 是 `4A+4A^T`。
+
+### 真正跑出来的结果
+
+v129 在五条 PoolFire fit 轨迹、3700 个因子化相机集合单元上全部没有通过。candidate / K4 的 p90-higher 为：
+
+- field：`1.08840`；
+- full gradient：`1.03241`；
+- interior gradient：`1.03180`；
+- observation：`1.11253`。
+
+v130 补回共轭方向以后，`3700/3700` 个单元都数值复现 K4。正式最大 field / residual / metric 差为 `7.32e-16 / 1.87e-15 / 3.33e-16`；独立程序重新构造 recurrence、两组 dual、二维求解和指标后，最大差为 `2.50e-15 / 7.44e-15 / 6.66e-16`。
+
+### 这算什么突破
+
+这是一次**机制容量突破**：我们已经证明“一半精确算子调用预算内，有一个足够表达 K4 的双状态结构”。它比泛泛说“训练一个网络试试”前进了一大步，因为现在模型有明确、可证伪的学习目标。
+
+但它还不是算法突破。上面的两组 dual 来自精确教师，尚未证明模型能从观测与报告位姿中预测准确。因此仍然是：
+
+- `mechanism_capacity_breakthrough=true`；
+- `learned_initializer_validated=false`；
+- `algorithm_breakthrough=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+### 当前正在做什么
+
+首个模型固定为 11504 参数的相机集合网络，输入每台相机的 `16x16x2` 观测、18 维报告位姿和 mask。相机可乱序、可增删，编码器共享参数并用 masked mean/max 聚合。实验按五条完整轨迹 leave-one-trajectory-out，固定 30 epoch 和一个主 seed，不做 early stopping 或 epoch 挑选。
+
+所有五个 checkpoint 必须先统一封存，之后才允许读取 held-out 重建指标。主模型若失败，就直接记录负结果，不靠增加模型规模挽救；若通过，才继续 no-pose、wrong-pose、fit-only ridge 与多 seed 复验。真实实验数据到位后，再把同一输入合同迁移到组内位移图、相机标定和重复测量噪声。
+
+公开证据：
+
+- `docs/poolfire_set_krylov2_v130_result_2026-08-10.md`
+- `docs/poolfire_set_krylov2_v130_public_summary.json`
+- `assets/figures/poolfire_set_krylov2_v130.png`

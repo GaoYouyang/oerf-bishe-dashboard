@@ -1,0 +1,71 @@
+{
+  "schema_version": "oerf-poolfire-set-krylov2-v130-public-v1",
+  "updated": "2026-08-10",
+  "title_zh": "v129-v130：从失败的重启 K1 到双状态 Krylov 机制容量突破",
+  "title_en": "v129-v130: from a failed restarted K1 to a dual-state Krylov mechanism-capacity breakthrough",
+  "scope_zh": "五条已开封 PoolFire fit 轨迹、3700 个 straight-ray 合成 BOS 单元；相机数 5/7/9/12，含观测、旋转、平移、内参与联合扰动。",
+  "scope_en": "Five opened PoolFire fit trajectories and 3,700 straight-ray synthetic-BOS cells, with 5/7/9/12 cameras and observation, rotation, translation, intrinsics, and combined perturbations.",
+  "v129": {
+    "formal_status": "FAIL_V129_STAGE_A_K3_DUAL_SHELL_CAPACITY",
+    "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_SET_DUAL_STAGE_A_V129",
+    "sample_count": 3700,
+    "candidate_exact_A": 2,
+    "candidate_exact_AT": 2,
+    "reference_exact_A": 4,
+    "reference_exact_AT": 4,
+    "global_candidate_to_k4": {
+      "field": {"p50": 1.0550859726180672, "p90_higher": 1.0883965857246132, "worst": 1.141135690566972},
+      "gradient": {"p50": 1.015149042720503, "p90_higher": 1.0324145058282361, "worst": 1.0587879203539592},
+      "interior_gradient": {"p50": 1.0133781386305076, "p90_higher": 1.0317969462025238, "worst": 1.0629108503186677},
+      "observation": {"p50": 1.08798895353529, "p90_higher": 1.1125313225340199, "worst": 1.1447533268542223}
+    },
+    "independent_maximum_observation_difference": 0.0,
+    "independent_maximum_pose_difference": 0.0,
+    "independent_maximum_dual_difference": 0.0,
+    "independent_maximum_metric_difference": 0.0,
+    "interpretation_zh": "精确 K3 解对偶经 A^T 提升、可观测缩放并重启 K1，仍在五条轨迹全部失败。原因不是网络容量，而是重启时丢掉了第 4 步所需的 Krylov 共轭方向；因此 v129 禁止训练。",
+    "interpretation_en": "Even the exact K3 solution dual, lifted through A^T, observably rescaled, and followed by restarted K1, fails on all five trajectories. The missing information is the conjugate Krylov direction needed by step four, so v129 training is prohibited."
+  },
+  "v130": {
+    "formal_status": "PASS_V130_STAGE_A_DUAL_STATE_KRYLOV2_CAPACITY",
+    "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_SET_KRYLOV2_STAGE_A_V130",
+    "sample_count": 3700,
+    "passed_cell_count": 3700,
+    "candidate_exact_A": 2,
+    "candidate_exact_AT": 2,
+    "reference_exact_A": 4,
+    "reference_exact_AT": 4,
+    "formal_maximum_relative_field_difference_to_k4": 7.321200063777132e-16,
+    "formal_maximum_relative_residual_difference_to_k4": 1.870179014668376e-15,
+    "formal_maximum_absolute_metric_difference_to_k4": 3.3306690738754696e-16,
+    "independent_maximum_relative_field_difference_to_k4": 2.5041197353530687e-15,
+    "independent_maximum_relative_residual_difference_to_k4": 7.44242100674047e-15,
+    "independent_maximum_absolute_metric_difference_to_k4": 6.661338147750939e-16,
+    "independent_maximum_solution_dual_difference": 0.0,
+    "independent_maximum_direction_dual_difference": 0.0,
+    "training_authorized": true,
+    "interpretation_zh": "v130 同时保留 K3 解对偶 z3 与 K3 到 K4 的共轭方向对偶 e3；两次 A^T 提升和两次 A 投影后，只用观测做二维盒约束最小二乘。精确教师下，3700/3700 单元以约 1e-15 误差复现 K4，证明两调用预算内的表示壳层是充分的。",
+    "interpretation_en": "v130 retains both the K3 solution dual z3 and the K3-to-K4 conjugate-direction dual e3. Two A^T lifts and two A projections are followed by an observation-only box-constrained 2D least-squares solve. With exact teachers, all 3,700 cells reproduce K4 to about 1e-15, proving that the two-call representation shell is sufficient."
+  },
+  "current_model_gate": {
+    "model": "OddPoseSetKrylov2Warm",
+    "parameter_count": 11504,
+    "inputs": "per-camera 16x16x2 observations, 18D reported pose tokens, and mask",
+    "outer_rule": "five leave-one-complete-trajectory-out folds",
+    "fixed_epochs": 30,
+    "primary_seed": 13001,
+    "heldout_scoring_status": "NOT_YET_EVALUATED",
+    "gpu_rental_recommended": false
+  },
+  "claim_boundary": {
+    "mechanism_capacity_breakthrough": true,
+    "learned_initializer_validated": false,
+    "algorithm_breakthrough": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "paper_success": false,
+    "end_to_end_physics_independence_proven": false
+  }
+}
