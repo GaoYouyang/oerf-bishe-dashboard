@@ -52,12 +52,14 @@ def test_independent_recomputation_is_exact_without_overclaiming_independence() 
     assert independent["end_to_end_physics_independence_proven"] is False
 
 
-def test_current_evidence_and_pages_point_to_the_same_final_result() -> None:
+def test_current_evidence_and_pages_preserve_the_v131_1_historical_result() -> None:
     evidence = load_json(EVIDENCE_PATH)
     page_texts = [path.read_text(encoding="utf-8") for path in PUBLIC_PAGES]
 
-    assert evidence["formal_status"] == "FAIL_V131_1_PRIMARY_HELDOUT_ACCURACY"
-    assert evidence["engineering_status"] == (
+    assert evidence["v131_1_k1_residual_loto_formal_status"] == (
+        "FAIL_V131_1_PRIMARY_HELDOUT_ACCURACY"
+    )
+    assert evidence["v131_1_k1_residual_loto_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_K1_RESIDUAL_SCORE_V131_1"
     )
     assert evidence["metrics"]["v131_1_trajectory_gate_passed"] == 0
