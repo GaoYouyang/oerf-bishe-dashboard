@@ -13080,3 +13080,65 @@ v130 的精确教师告诉我们：只要两组 dual 完全正确，用 `2A+2A^T
 - `docs/poolfire_set_krylov2_loto_v130_1_result_2026-08-10.md`
 - `docs/poolfire_set_krylov2_loto_v130_1_public_summary.json`
 - `assets/figures/poolfire_set_krylov2_loto_v130_1.png`
+
+## 2026-08-10：v131 把学习目标缩成一组 correction dual，精确容量和便宜控制门都过了
+
+### 先说人话
+
+v130.1 失败后，我没有继续把网络做大，而是先问一个更关键的问题：是不是一次让模型预测两组完整 K3 状态本来就太重？
+
+v131 把任务缩小到：先正常算出精确 CGLS K1，只让模型预测“K1 还缺的那一段”对应的一组 detector-space correction dual。随后只增加一次精确反投影、一次正投影和一个只看观测残差的标量线搜索。这样完整在线账仍是 `2A+2A^T`，而 K4 是 `4A+4A^T`。
+
+### 实际跑了什么
+
+同一五条已开封 PoolFire 轨迹共有 3700 个单元，覆盖 `5/7/9/12` 台可乱序、可增删相机，以及 37 种 clean、观测噪声、旋转、平移、焦距、主点和联合扰动条件。
+
+我先没有训练模型，而是比较了：
+
+1. 精确 correction-dual 教师；
+2. Zero-CGLS K1；
+3. Zero-CGLS K2；
+4. 直接把 K1 residual 当作 dual；
+5. 逐相机 RMS 均衡 residual；
+6. constant-preserving `3x3` box-filtered residual。
+
+### 跑出来的结果
+
+精确教师在五条轨迹上全部通过，并在数值精度内复现 K4：
+
+- 最大 field 相对差：`6.12e-16`；
+- 最大 observation residual 相对差：`1.34e-15`；
+- 最大指标差：`3.33e-16`；
+- 线搜索系数离 1 的最大差：`6.66e-16`。
+
+五类便宜控制没有一个通过完整逐轨迹门。即使 field 表现最好的 box3 residual，其全局 field p90 / worst 仍为 `1.2608 / 1.4176`，observation p90 / worst 为 `1.8263 / 2.0873`；都明显超过冻结的 `1.02 / 1.05` 门。
+
+### 独立复算是否站得住
+
+站得住。第二个程序没有导入正式 runner 或 v131 core，而是重新实现 CGLS、单 dual 修正、五类控制、指标、聚合与逐轨迹判决。K1 residual、teacher dual、metrics、alpha、parity 和报告位姿编码的最大差全部为 `0`，正式证据树在验证前后没有变化。
+
+### 为什么这一步有价值
+
+这一步排除了五个最便宜的解释：不是“多跑一步”就够，也不是把 residual 原样送回去、做视角归一化或简单局部平滑就够。更小的 correction-dual 目标确实有机制余量，而且比 v130.1 同时预测两组 K3 dual 更聚焦。
+
+但这仍然不是算法成功。精确教师来自离线 K4 参考，真正模型能否跨完整留出轨迹学出来还不知道。因此当前是：
+
+- `mechanism_capacity_headroom=true`；
+- `learned_initializer_validated=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+### 当前正在运行什么
+
+现在只运行一个 11484 参数的最小相机集合模型。输入是部署可见的 K1 residual、每台相机 18 维报告位姿和有效相机 mask；结构对相机顺序不敏感，并支持 `5/7/9/12` 台相机。五条完整轨迹各留出一次，固定 30 epoch、单主 seed，不 early stop，也不读取留出指标来挑 checkpoint。
+
+全部五折 checkpoint 必须先统一封存，之后才允许生成留出预测和正式评分。主模型若失败就关闭当前表示，不追加多 seed、大 CNN/FNO/UNO 或 GPU 来挽救；若通过，才继续独立复算、资源门和此前未打开的公开反应流外门。
+
+公开证据：
+
+- `docs/poolfire_k1_residual_correction_v131_result_2026-08-10.md`
+- `docs/poolfire_k1_residual_correction_v131_public_summary.json`
+- `assets/figures/poolfire_k1_residual_correction_v131.png`
