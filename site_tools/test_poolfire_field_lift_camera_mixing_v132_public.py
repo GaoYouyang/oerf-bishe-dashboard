@@ -50,12 +50,14 @@ def test_independent_recomputation_is_precise_without_overclaiming() -> None:
     assert independent["end_to_end_physics_independence_proven"] is False
 
 
-def test_current_evidence_and_pages_point_to_v132() -> None:
+def test_historical_v132_evidence_remains_traceable_after_v133() -> None:
     evidence = load_json(EVIDENCE_PATH)
     page_texts = [path.read_text(encoding="utf-8") for path in PUBLIC_PAGES]
 
-    assert evidence["formal_status"] == "FAIL_V132_FIELD_LIFT_CAMERA_MIXING_CAPACITY"
-    assert evidence["engineering_status"] == (
+    assert evidence["v132_field_lift_camera_mixing_formal_status"] == (
+        "FAIL_V132_FIELD_LIFT_CAMERA_MIXING_CAPACITY"
+    )
+    assert evidence["v132_field_lift_camera_mixing_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_FIELD_LIFT_CAMERA_MIXING_V132"
     )
     assert evidence["metrics"]["v132_sample_count"] == 3700
@@ -68,7 +70,6 @@ def test_current_evidence_and_pages_point_to_v132() -> None:
 
     joined = "\n".join(page_texts)
     assert "poolfire_field_lift_camera_mixing_v132_result_2026-08-10.md" in joined
-    assert "poolfire_field_lift_camera_mixing_v132.png" in joined
     assert FIGURE_PATH.stat().st_size > 100_000
 
 

@@ -1,0 +1,140 @@
+{
+  "schema_version": "oerf-poolfire-detector-spectral-capacity-v133-public-v1",
+  "updated": "2026-08-10",
+  "title_zh": "v133：逐相机频谱表示显著缩小缺口，但严格容量仍失败",
+  "title_en": "v133: Per-camera spectral representation sharply narrows the gap but still fails strict capacity",
+  "formal_status": "FAIL_V133_DETECTOR_SPECTRAL_CAPACITY",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_DETECTOR_SPECTRAL_CAPACITY_V133",
+  "scope": {
+    "sample_count": 3700,
+    "trajectory_count": 5,
+    "camera_counts": [5, 7, 9, 12],
+    "spectral_directions_per_camera": 8,
+    "active_basis_dimensions": {
+      "5": 40,
+      "7": 56,
+      "9": 72,
+      "12": 96
+    },
+    "candidate_exact_A": 2,
+    "candidate_exact_AT": 2,
+    "reference_exact_A": 4,
+    "reference_exact_AT": 4,
+    "role": "post-open truth-aware representation-capacity diagnostic"
+  },
+  "representation": {
+    "detector_size": "16x16",
+    "components_per_camera": 2,
+    "fixed_transform": "orthonormal DCT-II",
+    "bands": ["LL", "LH", "HL", "HH"],
+    "cutoff": 4,
+    "proposal_source": "deployment-visible v131.1 correction-dual proposal",
+    "strictly_contains_v132_scalar_mixing": true,
+    "component_novelty_claimed": false
+  },
+  "gate": {
+    "p90_higher_maximum": 1.02,
+    "worst_maximum": 1.05,
+    "per_cell_metric_ratio_maximum": 1.05,
+    "oracle_cell_pass_count": 2353,
+    "oracle_cell_total": 3700,
+    "oracle_trajectory_gate_passed": false,
+    "spectral_ls_control_cell_pass_count": 0,
+    "spectral_ls_control_trajectory_gate_passed": false,
+    "coefficient_predictor_authorized": false
+  },
+  "metric_cell_pass_counts": {
+    "field": 3700,
+    "full_gradient": 3700,
+    "interior_gradient": 3700,
+    "observation": 2353
+  },
+  "failure_patterns": {
+    "all_four_metrics_pass": 2353,
+    "observation_only_failure": 1347,
+    "any_field_or_gradient_failure": 0
+  },
+  "trajectory_order": ["p14_s05", "p22_s03", "p33_s01", "p45_s05", "p58_s03"],
+  "parent_v131_1_observation_p90_higher": {
+    "p14_s05": 1.23768470905773,
+    "p22_s03": 1.3336759883063938,
+    "p33_s01": 1.4764416474412576,
+    "p45_s05": 1.413454739638494,
+    "p58_s03": 1.4154476222819028
+  },
+  "v132_scalar_oracle_observation_p90_higher": {
+    "p14_s05": 1.216364472932275,
+    "p22_s03": 1.3082084040665078,
+    "p33_s01": 1.4134924869959071,
+    "p45_s05": 1.353196303010732,
+    "p58_s03": 1.4081424217641192
+  },
+  "oracle_p90_higher": {
+    "p14_s05": {"field": 1.01065, "gradient": 1.00636, "interior_gradient": 1.00363, "observation": 1.04521},
+    "p22_s03": {"field": 1.01770, "gradient": 1.02921, "interior_gradient": 1.02998, "observation": 1.06888},
+    "p33_s01": {"field": 1.00889, "gradient": 0.99731, "interior_gradient": 1.00201, "observation": 1.07250},
+    "p45_s05": {"field": 1.01719, "gradient": 1.00589, "interior_gradient": 1.00714, "observation": 1.14836},
+    "p58_s03": {"field": 1.01639, "gradient": 1.01929, "interior_gradient": 1.02782, "observation": 1.20331}
+  },
+  "oracle_worst": {
+    "p14_s05": {"field": 1.01836, "gradient": 1.02556, "interior_gradient": 1.01441, "observation": 1.10185},
+    "p22_s03": {"field": 1.02930, "gradient": 1.04367, "interior_gradient": 1.04342, "observation": 1.10773},
+    "p33_s01": {"field": 1.01323, "gradient": 1.01801, "interior_gradient": 1.00541, "observation": 1.12606},
+    "p45_s05": {"field": 1.02540, "gradient": 1.01346, "interior_gradient": 1.01396, "observation": 1.19361},
+    "p58_s03": {"field": 1.02152, "gradient": 1.03409, "interior_gradient": 1.04922, "observation": 1.38684}
+  },
+  "cell_pass_by_trajectory": {
+    "p14_s05": {"passed": 687, "total": 740},
+    "p22_s03": {"passed": 564, "total": 740},
+    "p33_s01": {"passed": 562, "total": 740},
+    "p45_s05": {"passed": 188, "total": 740},
+    "p58_s03": {"passed": 352, "total": 740}
+  },
+  "cell_pass_by_camera_count": {
+    "5": {"v132_passed": 0, "v133_passed": 272, "total": 925},
+    "7": {"v132_passed": 0, "v133_passed": 553, "total": 925},
+    "9": {"v132_passed": 0, "v133_passed": 744, "total": 925},
+    "12": {"v132_passed": 61, "v133_passed": 784, "total": 925}
+  },
+  "observation_ratio_by_camera_count": {
+    "5": {"p50": 1.07250, "p90_higher": 1.17894, "worst": 1.38684},
+    "7": {"p50": 1.03893, "p90_higher": 1.08829, "worst": 1.14079},
+    "9": {"p50": 1.02122, "p90_higher": 1.06335, "worst": 1.10223},
+    "12": {"p50": 0.99909, "p90_higher": 1.06531, "worst": 1.10713}
+  },
+  "oracle_diagnostic": {
+    "field_lift_relative_l2_before_line_search": {"p50": 0.26672, "p90_higher": 0.43440, "worst": 0.68646},
+    "projected_lift_relative_l2_before_line_search": {"p50": 0.33088, "p90_higher": 0.48052, "worst": 0.73441},
+    "regularized_condition_number": {"p50": 391.77, "p90_higher": 918.97, "worst": 3858.48},
+    "maximum_absolute_spectral_coefficient": {"p50": 2.1437, "p90_higher": 2.8378, "worst": 3.8324},
+    "observable_line_search_alpha": {"p50": 1.1677, "p90_higher": 1.5570, "worst": 2.7066}
+  },
+  "independent_recomputation": {
+    "maximum_oracle_coefficient_difference": 1.27e-12,
+    "maximum_diagnostic_difference": 1.20e-10,
+    "maximum_oracle_metric_difference": 9.99e-16,
+    "maximum_spectral_ls_control_coefficient_difference": 0.0,
+    "maximum_spectral_ls_control_metric_difference": 0.0,
+    "maximum_summary_difference": 6.66e-16,
+    "candidate_receipt_failures": 0,
+    "formal_tree_unchanged": true,
+    "prediction_tree_unchanged": true,
+    "validation_truth_read": false,
+    "test_truth_read": false,
+    "end_to_end_physics_independence_proven": false
+  },
+  "decision_zh": "关闭当前 DCT 四频带、双分量、等权 field/projected surrogate 的直接训练路线。由于全部场与梯度指标都通过而 1347 个单元只失 observation，下一步先在同一表示内做结果前冻结的 projection-prioritized Pareto 可行性诊断，区分表示容量不足与目标权重失配；仍不训练大模型。",
+  "decision_en": "Close direct training of the current four-band, two-component DCT family under the equal-weight field/projected surrogate. Because every field and gradient metric passes while 1,347 cells fail only observation, the next step is a preregistered projection-prioritized Pareto feasibility diagnostic within the same span, separating representation insufficiency from objective-weight mismatch. No large model is trained.",
+  "claim_boundary": {
+    "strict_representation_capacity_passed": false,
+    "objective_weight_mismatch_ruled_out": false,
+    "coefficient_predictor_authorized": false,
+    "deployable_algorithm": false,
+    "algorithm_breakthrough": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "paper_success": false
+  }
+}

@@ -13245,3 +13245,69 @@ oracle 的逐轨迹 field p90 仍在 `1.0891` 到 `1.1336`，observation p90 在
 - `docs/poolfire_field_lift_camera_mixing_v132_result_2026-08-10.md`
 - `docs/poolfire_field_lift_camera_mixing_v132_public_summary.json`
 - `assets/figures/poolfire_field_lift_camera_mixing_v132.png`
+
+## 2026-08-10：v133 把剩余失败精确定位到了 observation
+
+### 先说人话
+
+v132 已经说明“每台相机乘一个系数”不够，但它没有告诉我需要多复杂的像素级变化。v133 做了一个比训练网络更便宜、也更能证伪的检查：把每台相机的两个位移分量分别拆成四个频带，让真值知晓 oracle 在这些频带之间自由组合，然后看这个表示本身有没有追平 K4 的能力。
+
+结果不是简单的成功或失败。严格联合通过数从 v132 的 `61/3700` 大幅提高到 `2353/3700`，说明频谱形状确实抓到了重要结构；但五条完整轨迹仍然 `0/5`，所以还不能训练或宣称算法成立。
+
+### 我实际做了什么
+
+每个 active camera 的 `16x16` detector 上，两个位移分量各自做固定正交 DCT-II，并按 cutoff 4 分成 LL、LH、HL、HH 四个互不重叠的频带。于是每台相机有八个方向，`5/7/9/12` 台相机分别对应 `40/56/72/96` 维。这个表示严格包含 v132 标量混合，因为八个方向取相同系数就能恢复每台相机一个总增益。
+
+oracle 仍只在已经打开的 PoolFire fit 数据上看真值，用等权的 field-lift 与 projected-lift 相对误差选择系数。另跑一个完全不看真值的 spectral-LS 便宜控制。两者都进入同一个可观测线搜索和未修改 CGLS K1，候选在线账保持 `2A+2A^T`，K4 参考是 `4A+4A^T`。validation 和 test 真值没有打开。
+
+### 跑出来的结果
+
+v133 oracle 的严格联合通过是 `2353/3700`；便宜 spectral-LS 控制是 `0/3700`。最重要的逐指标结果是：
+
+- field：`3700/3700`；
+- full-gradient：`3700/3700`；
+- interior-gradient：`3700/3700`；
+- observation：`2353/3700`。
+
+因此全部 `1347` 个失败都是 observation-only，没有任何一个单元因为 field 或 gradient 失败。这把问题从“频谱表示整体不够”缩成了更具体的“等权目标是否没有充分照顾 observation 尾部”。
+
+相机数增加时通过率明显提高：`5/7/9/12` 相机分别为 `272/925`、`553/925`、`744/925`、`784/925`。但更多相机也不能自动消掉尾部。12 相机 observation 中位 ratio 已到 `0.9991`，p90 和 worst 仍为 `1.0653/1.1071`；平均好看不能替代严格门。
+
+逐轨迹 observation p90 / worst 分别为：
+
+- p14-s05：`1.0452 / 1.1019`；
+- p22-s03：`1.0689 / 1.1077`；
+- p33-s01：`1.0725 / 1.1261`；
+- p45-s05：`1.1484 / 1.1936`；
+- p58-s03：`1.2033 / 1.3868`。
+
+这解释了为什么逐单元通过率已经很高，完整轨迹门仍然是 `0/5`。
+
+### 独立复算是否站得住
+
+站得住。第二个程序不导入正式频谱基或 oracle solver helper，独立重建频带、逐相机 lift、频谱方程、便宜控制、K1 物理壳、四类指标和全部门。oracle 系数最大差 `1.27e-12`，诊断最大差 `1.20e-10`，指标最大差 `9.99e-16`，summary 最大差 `6.66e-16`，便宜控制逐值差为 `0`，调用回执失败数为 `0`。
+
+正式状态是 `FAIL_V133_DETECTOR_SPECTRAL_CAPACITY`，独立状态是 `PASS_INDEPENDENT_RECOMPUTATION_DETECTOR_SPECTRAL_CAPACITY_V133`。两条实现仍共享冻结物理 kernel，所以不能声称端到端物理独立。
+
+### 这一步改变了什么
+
+它关闭的是“在当前四频带 span 上，直接按照等权 field/projected surrogate 训练系数预测器”。它没有证明这个 span 数学上不可能，因为 oracle 优化的只是预注册 surrogate，不是直接在四个最终指标门内寻找 Pareto 可行点。
+
+下一步保持表示、物理壳、数据和成本账不变，结果前冻结 projection-prioritized Pareto 可行性诊断：先要求 field、full-gradient、interior-gradient 全部不越 `1.05`，再优先最小化 observation。若仍不能达到 `3700/3700`，才更有力地说明表示本身还缺方向；若达到，也只说明已开封开发集存在目标函数 headroom，之后才有资格训练最小 observation/geometry-only 系数预测器。
+
+当前边界：
+
+- `strict_representation_capacity_passed=false`；
+- `objective_weight_mismatch_ruled_out=false`；
+- `coefficient_predictor_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_detector_spectral_capacity_v133_result_2026-08-10.md`
+- `docs/poolfire_detector_spectral_capacity_v133_public_summary.json`
+- `assets/figures/poolfire_detector_spectral_capacity_v133.png`
