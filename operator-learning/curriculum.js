@@ -1,5 +1,5 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.03-c-v111-drc-warm-single-trajectory-signal",
+  version: "2026.08.10-c-v136-residual-adaptive-capacity",
   previousVersion: "2026.08.02-c-v106-1-common-gauge-interval-nested-convergence",
   previousBadge: "v106.1 converged · later support-thickness confound identified",
   olderBadge: "v104 adjoint valid · coarse fidelity 0/3 · fixed anchor closed",
@@ -219,7 +219,7 @@ window.OPERATOR_LEARNING_GUIDE = {
       badge: "v16.1 resource · wall headroom, CPU/RSS FAIL"
     }
   ],
-  updated: "2026-08-03",
+  updated: "2026-08-10",
   foundationChecks: [
     {
       id: "python-array",
