@@ -1,0 +1,136 @@
+{
+  "schema_version": "oerf-public-poolfire-ray-overlap-epipolar-capacity-v138.3",
+  "updated": "2026-08-10",
+  "title_zh": "v138 真实射线重叠与极线相位容量诊断",
+  "title_en": "v138 Geometry-Faithful Ray-Overlap and Epipolar-Phase Capacity Diagnostic",
+  "status": "FAIL_V138_RAY_OVERLAP_EPIPOLAR_CAPACITY",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_RAY_OVERLAP_EPIPOLAR_V138_3",
+  "sample_count": 3700,
+  "trajectory_count": 5,
+  "strict_gate": {
+    "v136_passed": 3215,
+    "v137_passed": 3351,
+    "v138_passed": 3397,
+    "v138_rescued_from_v137": 46,
+    "v138_remaining_failures": 303,
+    "complete_trajectories_passed": 0,
+    "complete_trajectories_total": 5,
+    "per_cell_ratio_limit": 1.05,
+    "trajectory_p90_ratio_limit": 1.02,
+    "trajectory_worst_ratio_limit": 1.05
+  },
+  "metric_pass_counts": {
+    "field_relative_l2": 3700,
+    "gradient_relative_l2": 3700,
+    "interior_gradient_relative_l2": 3700,
+    "reported_observation_relative_l2": 3397
+  },
+  "remaining_failure_pattern": {
+    "observation_only": 303,
+    "field_or_gradient": 0,
+    "observation_ratio_p50": 1.068216,
+    "observation_ratio_p90_higher": 1.090995,
+    "observation_ratio_worst": 1.119560
+  },
+  "cell_pass_by_camera_count": {
+    "5": {"total": 925, "v137_passed": 582, "v138_passed": 627, "rescued": 45, "remaining": 298},
+    "7": {"total": 925, "v137_passed": 919, "v138_passed": 920, "rescued": 1, "remaining": 5},
+    "9": {"total": 925, "v137_passed": 925, "v138_passed": 925, "rescued": 0, "remaining": 0},
+    "12": {"total": 925, "v137_passed": 925, "v138_passed": 925, "rescued": 0, "remaining": 0}
+  },
+  "trajectory_rows": [
+    {"trajectory": "p=14kw_size=05", "total": 740, "v137_passed": 737, "v138_passed": 738, "rescued": 1, "remaining": 2, "observation_p90_higher": 1.037070, "observation_worst": 1.059372},
+    {"trajectory": "p=22kw_size=03", "total": 740, "v137_passed": 726, "v138_passed": 727, "rescued": 1, "remaining": 13, "observation_p90_higher": 1.046408, "observation_worst": 1.074095},
+    {"trajectory": "p=33kw_size=01", "total": 740, "v137_passed": 726, "v138_passed": 726, "rescued": 0, "remaining": 14, "observation_p90_higher": 1.046423, "observation_worst": 1.058956},
+    {"trajectory": "p=45kw_size=05", "total": 740, "v137_passed": 568, "v138_passed": 610, "rescued": 42, "remaining": 130, "observation_p90_higher": 1.060562, "observation_worst": 1.079444},
+    {"trajectory": "p=58kw_size=03", "total": 740, "v137_passed": 594, "v138_passed": 596, "rescued": 2, "remaining": 144, "observation_p90_higher": 1.076480, "observation_worst": 1.119560}
+  ],
+  "factor_rows": [
+    {"factor": "clean", "total": 100, "v137_passed": 91, "v138_passed": 93, "rescued": 2, "remaining": 7},
+    {"factor": "noise_only", "total": 600, "v137_passed": 543, "v138_passed": 553, "rescued": 10, "remaining": 47},
+    {"factor": "rotation_only", "total": 600, "v137_passed": 546, "v138_passed": 555, "rescued": 9, "remaining": 45},
+    {"factor": "translation_only", "total": 600, "v137_passed": 546, "v138_passed": 550, "rescued": 4, "remaining": 50},
+    {"factor": "intrinsics_only", "total": 600, "v137_passed": 544, "v138_passed": 554, "rescued": 10, "remaining": 46},
+    {"factor": "pose_all", "total": 600, "v137_passed": 547, "v138_passed": 551, "rescued": 4, "remaining": 49},
+    {"factor": "combined", "total": 600, "v137_passed": 534, "v138_passed": 541, "rescued": 7, "remaining": 59}
+  ],
+  "representation": {
+    "parent": "the complete v137 signed-phase and peer-frame basis",
+    "geometry": "reported finite-source or orthographic rays reconstructed from each active camera's geometry token",
+    "depth_anchors": "three fixed Gauss-Legendre anchors on each target ray clipped to the reconstruction cube",
+    "peer_message": "signed peer residuals bilinearly sampled at reprojected epipolar locations, lifted to world vectors, symmetrically averaged, and projected into the target ray frame",
+    "limitation": "peer and depth-anchor identities are averaged before the final eight directions per camera are formed",
+    "full_basis_count_per_camera": 56,
+    "full_basis_count_by_camera_count": {"5": 280, "7": 392, "9": 504, "12": 672},
+    "strictly_contains_v137_parent": true,
+    "camera_permutation_equivariant": true,
+    "variable_camera_count": true,
+    "candidate_shell": "2A+2A^T",
+    "reference_shell": "4A+4A^T"
+  },
+  "controls": {
+    "deployment_visible_ray_overlap_joint_ls_passed": 0,
+    "deployment_visible_ray_overlap_joint_ls_total": 3700,
+    "minimal_predictor_authorized": false,
+    "cnn_fno_uno_deeponet_training_authorized": false,
+    "gpu_training_authorized": false
+  },
+  "rescue_attribution": {
+    "ray_overlap_rescues": 46,
+    "remaining_failures": 303,
+    "remaining_five_camera": 298,
+    "remaining_p45_p58": 274
+  },
+  "selected_source_histogram": {
+    "v137_parent": 3371,
+    "projection_weight_1": 47,
+    "projection_weight_4": 62,
+    "projection_weight_16": 29,
+    "projection_weight_64": 7,
+    "projection_weight_256": 0,
+    "projection_weight_1024": 0,
+    "projection_only": 184,
+    "cheap_control": 0
+  },
+  "mechanism_diagnosis": {
+    "geometry_faithful_correspondence_is_incrementally_useful": true,
+    "gl3_ray_average_is_sufficient": false,
+    "five_camera_pass_fraction": 0.677838,
+    "seven_camera_pass_fraction": 0.994595,
+    "nine_camera_pass_fraction": 1.0,
+    "twelve_camera_pass_fraction": 1.0,
+    "diagnosis": "Exact ray reprojection rescues a real but small subset, concentrated in p45. The unresolved tail remains almost entirely five-camera and high-power. Averaging peer and depth-anchor identity before forming the detector directions removes depth-resolved multiview consistency needed by the sparse-view regime."
+  },
+  "independent_recomputation": {
+    "maximum_ray_phase_difference": 1.84297022087776e-14,
+    "maximum_valid_peer_fraction_difference": 0,
+    "maximum_effective_peer_weight_difference": 0,
+    "maximum_cheap_control_metric_difference": 7.771561172376096e-16,
+    "maximum_coefficient_difference": 5.970302030533503e-11,
+    "maximum_local_candidate_metric_difference": 7.771561172376096e-15,
+    "maximum_selected_metric_difference": 6.994405055138486e-15,
+    "maximum_physical_diagnostic_difference": 3.7402081431991974e-11,
+    "maximum_condition_relative_difference": 1.9531938354692126e-11,
+    "exact_array_failures": 0,
+    "formal_tree_unchanged": true,
+    "parent_trees_unchanged": true
+  },
+  "audit_note": {
+    "formal_numeric_repetitions": 3,
+    "all_15_numeric_arrays_byte_identical": true,
+    "initial_independent_runs": "Two independent runs stopped at fail-closed audit checks before emitting validated results: first because a cross-solver diagnostic tolerance was too strict for the conditioned basis, then because the repaired helper asserted five rather than six diagnostic columns.",
+    "final_action": "Both failures remain recorded. v138.3 reran the unchanged formal algorithm and the independent implementation under a versioned audit contract."
+  },
+  "next_gate_zh": "关闭 v138 的 GL3 射线平均表示。下一门改为深度分辨的三维射线一致性体：把每个活跃相机的 signed residual 沿真实射线回投到冻结粗网格，在每个体素分别保留跨相机一致均值与冲突/方差，再投影回 detector 方向。它必须继续支持 5/7/9/12 相机、换序等变、2A+2A^T 壳和便宜对照；容量全过前不训练预测器。",
+  "next_gate_en": "Close the v138 GL3 ray-average representation. The next gate is a depth-resolved 3D ray-consistency volume: backproject each active camera's signed residual along its reported rays onto a frozen coarse volume, retain camera-set consensus and disagreement/variance separately at each voxel, and project those depth-resolved fields back into detector directions. It must retain 5/7/9/12 cameras, permutation equivariance, the 2A+2A^T shell, and cheap controls. No predictor is trained before capacity passes completely.",
+  "claim_boundary": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "validation_truth_read": false,
+    "test_truth_read": false
+  }
+}

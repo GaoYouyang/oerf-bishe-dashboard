@@ -74,25 +74,23 @@ def test_sparse_view_tail_and_independent_recomputation_are_consistent() -> None
     assert independent["parent_trees_unchanged"] is True
 
 
-def test_current_evidence_and_pages_point_to_v137_in_both_languages() -> None:
+def test_current_evidence_and_pages_preserve_v137_as_archived_parent() -> None:
     evidence = load_json(EVIDENCE_PATH)
     page_texts = [path.read_text(encoding="utf-8") for path in PUBLIC_PAGES]
 
-    assert evidence["formal_status"] == "FAIL_V137_SIGNED_PHASE_CROSS_CAMERA_CAPACITY"
-    assert evidence["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_PHASE_CROSS_CAMERA_V137_1"
-    )
-    assert evidence["latest_valid_mechanism_formal_status"] == (
+    assert evidence["v137_signed_phase_cross_camera_formal_status"] == (
         "FAIL_V137_SIGNED_PHASE_CROSS_CAMERA_CAPACITY"
     )
-    assert evidence["headline"].startswith("v137 preserves signed residual phase")
-    assert evidence["headline_zh"].startswith("v137 保留 residual 正负相位")
+    assert evidence["v137_signed_phase_cross_camera_independent_status"] == (
+        "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_PHASE_CROSS_CAMERA_V137_1"
+    )
     assert evidence["metrics"]["v137_selected_cell_pass_count"] == 3351
     assert evidence["metrics"]["v137_observation_only_failure_count"] == 349
     assert evidence["metrics"]["v137_five_camera_remaining_failure_count"] == 343
     assert evidence["current_decision"]["v137_same_pixel_peer_representation_closed"] is True
     assert evidence["current_decision"]["v137_minimal_predictor_authorized"] is False
-    assert evidence["current_decision"]["v138_ray_overlap_epipolar_capacity_required"] is True
+    assert evidence["current_decision"]["v138_ray_overlap_epipolar_capacity_required"] is False
+    assert evidence["current_decision"]["v138_ray_overlap_epipolar_evaluated"] is True
 
     for text in page_texts:
         assert "v137" in text

@@ -13593,3 +13593,75 @@ truth-aware capacity 的意思是：为了判断表示本身能不能做到，�
 ### English checkpoint
 
 v137 preserves signed local residual phase and adds camera-permutation-equivariant peer coupling through known camera right/up axes. Strict passes rise from `3215/3700` to `3351/3700`: self phase rescues `92` cells and peer geometry adds `44`. The gain is real but insufficient. All `349` remaining failures are observation-only, `343` occur with five cameras, complete trajectories remain `0/5`, and the cheap deployment-visible control passes `0/3700`. Independent v137.1 recomputation confirms selected metrics to `3.89e-15`. Same-normalized-pixel peer averaging is therefore closed; v138 will test ray-overlap and epipolar residual transport before any predictor or GPU training is authorized.
+
+## 2026-08-10：v138 真实射线对应有增量价值，但三锚点平均仍然失败
+
+### 先说人话
+
+v137 已经证明 residual 的正负号和跨相机信息有用，但它把不同相机的同一个归一化像素当成同一位置。v138 把这个近似换成真实几何对应：从报告的相机参数重建每条射线，在射线上取三个固定深度点，再把这些点投影到其他相机，读取真正对应极线位置的 signed residual。
+
+结果确实更好，但仍未达到可以训练模型的门槛。严格通过从 `3351/3700` 提高到 `3397/3700`，新救回 `46` 个；然而完整轨迹仍是 `0/5`。这不是算法突破，而是一次把缺失结构进一步定位清楚的负结果。
+
+### 我实际做了什么
+
+1. 完整保留 v137 的每相机 48 个父方向，避免破坏已有通过单元。
+2. 从每个活跃相机的 18 维报告几何重建 finite-source 或 orthographic ray，并裁剪到 `[-1,1]^3` 重建立方体。
+3. 在每条目标 ray 上使用三个结果前冻结的 GL3 深度锚点。
+4. 把锚点重投影到 peer cameras，双线性采样对应位置的 signed residual。
+5. 将 peer residual 提升到世界坐标、对 active camera set 对称聚合，再投回目标 ray frame。
+6. 与四个冻结频带组合成每相机 8 个新方向；完整表示为每相机 56 个方向，继续支持 `5/7/9/12` 相机并保持换序等变。
+7. 候选壳仍是 `2A+2A^T`，K4 参考仍是 `4A+4A^T`；另跑不读真值的 ray-overlap joint-LS 便宜控制。
+
+### 跑出来的结果
+
+- v138 严格通过：`3397/3700`；
+- 相比 v137 新救回：`46`；
+- 剩余失败：`303`，全部只在 observation；
+- field、完整梯度、内部梯度：全部 `3700/3700`；
+- 完整轨迹：`0/5`；
+- 便宜 ray-overlap joint-LS 控制：`0/3700`。
+
+按相机数看，5 / 7 / 9 / 12 相机分别通过 `627 / 920 / 925 / 925` 个。剩余 `303` 个失败中，`298` 个来自 5 相机；p45-s05 与 p58-s03 合计贡献 `274` 个。真实射线对应主要救回 p45 的一部分，但没有消除稀疏视角和高功率形态尾部。
+
+### 独立复算与审计过程
+
+第二实现独立重建射线、重投影、phase、候选和全部门：
+
+- selected / local metric 最大差：`6.99e-15 / 7.77e-15`；
+- ray phase 最大差：`1.84e-14`；
+- 系数最大差：`5.97e-11`；
+- 精确数组失败：`0`；
+- 正式结果树和父证据在验证前后未改变。
+
+前两次独立审计都 fail-closed：第一次发现诊断容差不适合条件数较高的基，第二次发现审计 helper 把六列诊断误断言成五列。两次都没有生成“通过”结论。版本化修复后，v138.3 完整重跑并通过；三次 formal 的 15 个数值数组逐字节一致，说明审计修复没有改变算法数值，只修正了验证合同。
+
+正式状态为 `FAIL_V138_RAY_OVERLAP_EPIPOLAR_CAPACITY`，独立状态为 `PASS_INDEPENDENT_RECOMPUTATION_RAY_OVERLAP_EPIPOLAR_V138_3`。
+
+### 为什么仍然失败
+
+v138 虽然找到了正确的极线位置，却在形成 detector 方向之前把三个深度锚点和不同 peer camera 的身份平均掉了。对 9 或 12 相机，这种平均还能依靠视角冗余工作；对 5 相机，深度歧义和跨视角冲突不能被一个平均消息表达。
+
+因此关闭 v138 的 GL3 射线平均表示。下一门不是增加锚点或调权，而是构造深度分辨的三维射线一致性体：把每路 signed residual 沿真实射线回投到冻结粗网格，在每个体素分别保留跨相机一致均值与冲突/方差，再投影回 detector 方向。
+
+当前边界：
+
+- `geometry_faithful_correspondence_useful_but_insufficient=true`；
+- `gl3_ray_average_representation_closed=true`；
+- `remaining_failures_observation_only=true`；
+- `five_camera_sparse_view_is_primary_bottleneck=true`；
+- `minimal_predictor_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_ray_overlap_epipolar_capacity_v138_result_2026-08-10.md`
+- `docs/poolfire_ray_overlap_epipolar_capacity_v138_public_summary.json`
+- `assets/figures/poolfire_ray_overlap_epipolar_capacity_v138.png`
+
+### English checkpoint
+
+v138 reconstructs exact reported rays and samples peer signed residuals through three frozen GL3 depth anchors. Strict passes rise from `3351/3700` to `3397/3700`, adding `46` rescues. The gain is real but insufficient: all `303` remaining failures are observation-only, `298` occur with five cameras, complete trajectories remain `0/5`, and the cheap deployment-visible control passes `0/3700`. Independent v138.3 recomputation confirms selected metrics to `6.99e-15`. Averaging depth-anchor and peer identity before forming detector directions is therefore closed; the next gate is a depth-resolved 3D ray-consistency volume. No predictor or GPU training is authorized.
