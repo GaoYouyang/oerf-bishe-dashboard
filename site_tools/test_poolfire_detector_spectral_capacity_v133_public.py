@@ -60,12 +60,14 @@ def test_camera_counts_and_independent_recomputation_are_consistent() -> None:
     assert independent["end_to_end_physics_independence_proven"] is False
 
 
-def test_current_evidence_and_pages_point_to_v133() -> None:
+def test_current_evidence_preserves_v133_as_historical_parent() -> None:
     evidence = load_json(EVIDENCE_PATH)
     page_texts = [path.read_text(encoding="utf-8") for path in PUBLIC_PAGES]
 
-    assert evidence["formal_status"] == "FAIL_V133_DETECTOR_SPECTRAL_CAPACITY"
-    assert evidence["engineering_status"] == (
+    assert evidence["v133_detector_spectral_capacity_formal_status"] == (
+        "FAIL_V133_DETECTOR_SPECTRAL_CAPACITY"
+    )
+    assert evidence["v133_detector_spectral_capacity_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_DETECTOR_SPECTRAL_CAPACITY_V133"
     )
     assert evidence["metrics"]["v133_oracle_cell_pass_count"] == 2353

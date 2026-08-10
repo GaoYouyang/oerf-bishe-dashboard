@@ -1,0 +1,163 @@
+{
+  "schema_version": "oerf-poolfire-projection-pareto-capacity-v134-public-v1",
+  "updated": "2026-08-10",
+  "title_zh": "v134：优先投影误差能继续缩小缺口，但固定全局频谱表示仍不够",
+  "title_en": "v134: Prioritizing projection error narrows the gap further, but the fixed global spectral representation remains insufficient",
+  "formal_status": "FAIL_V134_PROJECTION_PARETO_CAPACITY",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PROJECTION_PARETO_V134",
+  "scope": {
+    "sample_count": 3700,
+    "trajectory_count": 5,
+    "camera_counts": [5, 7, 9, 12],
+    "projection_weights": [1, 4, 16, 64, 256, 1024],
+    "projection_only_endpoint_included": true,
+    "candidate_exact_A": 2,
+    "candidate_exact_AT": 2,
+    "reference_exact_A": 4,
+    "reference_exact_AT": 4,
+    "role": "post-open truth-aware finite Pareto capacity diagnostic"
+  },
+  "selection_rule": {
+    "first": "among candidates passing all four per-cell gates, minimize the worst normalized metric and then observation",
+    "second": "if none pass all four, preserve all three field and gradient gates and minimize observation",
+    "fallback": "if no physical-field-feasible candidate exists, minimize the worst physical metric",
+    "truth_aware": true,
+    "deployable": false
+  },
+  "gate": {
+    "p90_higher_maximum": 1.02,
+    "worst_maximum": 1.05,
+    "per_cell_metric_ratio_maximum": 1.05,
+    "selected_all_metric_pass_count": 2591,
+    "selected_all_metric_total": 3700,
+    "complete_trajectory_pass_count": 0,
+    "complete_trajectory_total": 5,
+    "any_all_metric_feasible_candidate_count": 2591,
+    "any_physical_metric_feasible_candidate_count": 3700,
+    "minimal_predictor_authorized": false
+  },
+  "comparison": {
+    "v133_equal_weight_cell_pass_count": 2353,
+    "v134_selected_cell_pass_count": 2591,
+    "absolute_gain": 238,
+    "percentage_point_gain_of_all_cells": 6.43,
+    "projection_only_cell_pass_count": 2564,
+    "finite_pareto_gain_over_projection_only": 27
+  },
+  "metric_cell_pass_counts": {
+    "field": 3700,
+    "full_gradient": 3700,
+    "interior_gradient": 3700,
+    "observation": 2591
+  },
+  "failure_patterns": {
+    "all_four_metrics_pass": 2591,
+    "observation_only_failure": 1109,
+    "any_field_or_gradient_failure": 0,
+    "multi_metric_failure": 0
+  },
+  "selection_mode_counts": {
+    "all_metric_feasible_minimax": 2591,
+    "physical_feasible_observation_minimum": 1109,
+    "physical_minimax_fallback": 0
+  },
+  "selected_candidate_counts": {
+    "projection_only": 2718,
+    "weight_1": 365,
+    "weight_4": 375,
+    "weight_16": 149,
+    "weight_64": 67,
+    "weight_256": 22,
+    "weight_1024": 4
+  },
+  "individual_candidate_cell_pass_counts": {
+    "projection_only": 2564,
+    "weight_1": 2353,
+    "weight_4": 2504,
+    "weight_16": 2544,
+    "weight_64": 2555,
+    "weight_256": 2563,
+    "weight_1024": 2563
+  },
+  "trajectory_order": ["p14_s05", "p22_s03", "p33_s01", "p45_s05", "p58_s03"],
+  "selected_p90_higher": {
+    "p14_s05": {"field": 1.007844, "gradient": 1.004598, "interior_gradient": 1.002055, "observation": 1.038042},
+    "p22_s03": {"field": 1.017537, "gradient": 1.028998, "interior_gradient": 1.029656, "observation": 1.064566},
+    "p33_s01": {"field": 1.007998, "gradient": 0.996690, "interior_gradient": 1.001710, "observation": 1.071034},
+    "p45_s05": {"field": 1.013846, "gradient": 1.006425, "interior_gradient": 1.007382, "observation": 1.136340},
+    "p58_s03": {"field": 1.012032, "gradient": 1.018956, "interior_gradient": 1.027425, "observation": 1.202940}
+  },
+  "selected_worst": {
+    "p14_s05": {"field": 1.016061, "gradient": 1.024477, "interior_gradient": 1.012535, "observation": 1.096077},
+    "p22_s03": {"field": 1.028767, "gradient": 1.043304, "interior_gradient": 1.043419, "observation": 1.101623},
+    "p33_s01": {"field": 1.013529, "gradient": 1.018799, "interior_gradient": 1.005060, "observation": 1.122687},
+    "p45_s05": {"field": 1.022250, "gradient": 1.013270, "interior_gradient": 1.013495, "observation": 1.175757},
+    "p58_s03": {"field": 1.022619, "gradient": 1.034087, "interior_gradient": 1.049221, "observation": 1.359276}
+  },
+  "cell_pass_by_trajectory": {
+    "p14_s05": {"passed": 705, "total": 740},
+    "p22_s03": {"passed": 578, "total": 740},
+    "p33_s01": {"passed": 577, "total": 740},
+    "p45_s05": {"passed": 275, "total": 740},
+    "p58_s03": {"passed": 456, "total": 740}
+  },
+  "cell_pass_by_camera_count": {
+    "5": {"v133_passed": 272, "v134_passed": 310, "total": 925},
+    "7": {"v133_passed": 553, "v134_passed": 625, "total": 925},
+    "9": {"v133_passed": 744, "v134_passed": 833, "total": 925},
+    "12": {"v133_passed": 784, "v134_passed": 823, "total": 925}
+  },
+  "observation_ratio_by_camera_count": {
+    "5": {"p50": 1.070632, "p90_higher": 1.167708, "worst": 1.359276},
+    "7": {"p50": 1.031864, "p90_higher": 1.073921, "worst": 1.130266},
+    "9": {"p50": 1.015253, "p90_higher": 1.049870, "worst": 1.087355},
+    "12": {"p50": 0.992968, "p90_higher": 1.055627, "worst": 1.088556}
+  },
+  "factor_group_summary": {
+    "clean": {"passed": 69, "total": 100, "observation_p90_higher": 1.102110},
+    "combined": {"passed": 417, "total": 600, "observation_p90_higher": 1.101623},
+    "intrinsics": {"passed": 425, "total": 600, "observation_p90_higher": 1.097360},
+    "noise": {"passed": 420, "total": 600, "observation_p90_higher": 1.094170},
+    "pose_all": {"passed": 423, "total": 600, "observation_p90_higher": 1.092220},
+    "rotation": {"passed": 418, "total": 600, "observation_p90_higher": 1.093520},
+    "translation": {"passed": 419, "total": 600, "observation_p90_higher": 1.098610}
+  },
+  "severity_group_pass_counts": {
+    "clean": {"passed": 69, "total": 100},
+    "medium": {"passed": 1263, "total": 1800},
+    "stress": {"passed": 1259, "total": 1800}
+  },
+  "independent_recomputation": {
+    "maximum_candidate_coefficient_difference": 1.90e-12,
+    "maximum_diagnostic_difference": 2.57e-10,
+    "maximum_candidate_metric_difference": 2.23e-15,
+    "maximum_selected_coefficient_difference": 1.26e-12,
+    "maximum_selected_metric_difference": 2.23e-15,
+    "maximum_summary_difference": 1.34e-15,
+    "weight_1_metric_difference_from_v133": 3.34e-16,
+    "weight_1_coefficient_difference_from_v133": 0.0,
+    "physical_replay_field_difference": 8.89e-16,
+    "physical_replay_residual_difference": 3.11e-15,
+    "exact_array_failure_count": 0,
+    "formal_tree_unchanged": true,
+    "validation_truth_read": false,
+    "test_truth_read": false,
+    "end_to_end_physics_independence_proven": false
+  },
+  "decision_zh": "关闭固定全局 DCT 四频带表示内的有限 projection-weight/Pareto 调权路线。v134 比 v133 多通过 238 个单元，但仍为 0/5 完整轨迹；1109 个失败全部只在 observation。相机稀疏和 p45/p58 形态比噪声类别或扰动强度更能解释尾部。下一步只检验一个严格包含 v133、保持变机位与排列不变性的局部空间-频率表示；容量全过以前不训练网络。",
+  "decision_en": "Close finite projection-weight and Pareto retuning inside the fixed global four-band DCT representation. v134 passes 238 more cells than v133 but still reaches 0/5 complete trajectories; all 1,109 failures remain observation-only. Sparse camera sets and p45/p58 morphology explain the tail more strongly than perturbation category or severity. The next step tests one local space-frequency representation that strictly contains v133 while preserving variable-camera and permutation invariance. No network is trained before capacity passes.",
+  "claim_boundary": {
+    "finite_objective_roster_passed": false,
+    "continuous_span_impossibility_proven": false,
+    "objective_weight_mismatch_sufficient": false,
+    "local_space_frequency_hypothesis_proven": false,
+    "minimal_predictor_authorized": false,
+    "deployable_algorithm": false,
+    "algorithm_breakthrough": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "paper_success": false
+  }
+}

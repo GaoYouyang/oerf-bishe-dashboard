@@ -13311,3 +13311,62 @@ v133 oracle 的严格联合通过是 `2353/3700`；便宜 spectral-LS 控制是 
 - `docs/poolfire_detector_spectral_capacity_v133_result_2026-08-10.md`
 - `docs/poolfire_detector_spectral_capacity_v133_public_summary.json`
 - `assets/figures/poolfire_detector_spectral_capacity_v133.png`
+
+## 2026-08-10：v134 证明简单改目标权重仍不够
+
+### 先说人话
+
+v133 已经把问题缩到很小：三类场和梯度全都过门，只剩 observation 尾部。v134 没有换网络、换数据或换成本账，而是在完全相同的频谱表示里，故意把 observation 的优先级一步步加大，检查是不是原来的等权目标“选错了点”。
+
+结果确实又前进了一截：严格通过从 `2353/3700` 提高到 `2591/3700`。但五条完整轨迹仍然 `0/5`，所以不能说算法成功。更关键的是，projection-only 端点单独已经通过 `2564/3700`，整个有限 Pareto 候选只再多修复 `27` 个单元。这说明继续在同一个全局频谱 span 里拧权重，收益已经接近饱和。
+
+### 我实际做了什么
+
+保持 v133 的逐相机双分量四频带 DCT 表示、同一 `3700` 个已开封单元、同一可观测线搜索、同一未修改 CGLS K1 和同一 `2A+2A^T` 候选账不变。结果前固定六档投影权重 `1/4/16/64/256/1024`，再加入 projection-only 端点。
+
+每个单元先找有没有四指标全部不越 `1.05` 的候选；有就按最坏指标和 observation 排序。没有的话，只在 field、full-gradient、interior-gradient 全部过门的候选中选择 observation 最小者。真值只用于这个已开封容量诊断，不是部署输入。
+
+### 跑出来的结果
+
+- v134 严格联合通过：`2591/3700`；
+- v133 父结果：`2353/3700`；
+- 净增加：`238`，即全部样本的 `6.43` 个百分点；
+- projection-only 单独：`2564/3700`；
+- 有限 Pareto 相对 projection-only 只再增加：`27`；
+- field / full-gradient / interior-gradient：仍全部 `3700/3700`；
+- observation：`2591/3700`；
+- 剩余 `1109` 个失败全部是 observation-only；
+- 完整轨迹：仍为 `0/5`。
+
+相机数依然很重要：`5/7/9/12` 相机分别通过 `310/925`、`625/925`、`833/925`、`823/925`。形态也很重要：p14 通过 `705/740`，p45 只有 `275/740`，p58 为 `456/740`。相反，clean、noise、pose、rotation、translation 等扰动类别的 observation p90 都很接近，medium 与 stress 通过率也几乎相同。当前证据更像是“局部形态与相机覆盖需要更细的空间表达”，而不是“某一种噪声强度没有调好”。
+
+### 独立复算是否站得住
+
+站得住。第二个程序独立重建所有加权方程、七类候选、物理重放、选择器、指标和汇总。candidate/selected 指标最大差都是 `2.23e-15`，candidate/selected 系数最大差为 `1.90e-12 / 1.26e-12`，诊断最大差 `2.57e-10`，summary 最大差 `1.34e-15`，精确数组失败数为 `0`。权重 1 对 v133 的指标复现差只有 `3.34e-16`，系数差为 `0`。
+
+正式状态是 `FAIL_V134_PROJECTION_PARETO_CAPACITY`，独立状态是 `PASS_INDEPENDENT_RECOMPUTATION_PROJECTION_PARETO_V134`。两条实现仍共享冻结物理 kernel，所以不能声称端到端物理独立。
+
+### 这一步改变了什么
+
+关闭的是“固定全局 DCT4x2 表示内，靠有限 projection 权重或 Pareto 调权就足够”的路线。它没有数学证明整个连续 span 绝对不可能，但已经说明简单目标权重失配不是充分解释。
+
+下一步不训练 CNN、FNO、UNO、DeepONet，也不租 GPU。只先冻结并检验一个严格包含 v133 的小型确定性局部空间-频率表示：让每台相机的 correction 不仅有全局频带，还能在 detector 的局部区域表达随火焰形态变化的差异，同时继续保持相机数量可变和排列不变。只有容量达到 `3700/3700` 且完整轨迹 `5/5`，才允许训练最小 observation/geometry-only 预测器。
+
+当前边界：
+
+- `finite_objective_roster_passed=false`；
+- `continuous_span_impossibility_proven=false`；
+- `objective_weight_mismatch_sufficient=false`；
+- `local_space_frequency_hypothesis_proven=false`；
+- `minimal_predictor_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_projection_pareto_capacity_v134_result_2026-08-10.md`
+- `docs/poolfire_projection_pareto_capacity_v134_public_summary.json`
+- `assets/figures/poolfire_projection_pareto_capacity_v134.png`
