@@ -13370,3 +13370,65 @@ v133 已经把问题缩到很小：三类场和梯度全都过门，只剩 obser
 - `docs/poolfire_projection_pareto_capacity_v134_result_2026-08-10.md`
 - `docs/poolfire_projection_pareto_capacity_v134_public_summary.json`
 - `assets/figures/poolfire_projection_pareto_capacity_v134.png`
+
+## 2026-08-10：v135 证明局部空间表达有用，但固定象限仍不够
+
+### 先说人话
+
+v134 已经说明，在同一个全局频谱表示里继续调 observation 权重，收益基本见顶。v135 因此没有训练更大的网络，而是先问一个更基础的问题：让每个频带在 detector 的四个局部区域里分别变化，能不能把剩余 observation 尾部补回来？
+
+答案是“明显有帮助，但还没有过门”。严格通过从 `2591/3700` 提高到 `3162/3700`，新救回 571 个单元；但完整轨迹仍是 `0/5`，所以这不是算法成功，也不授权神经网络训练。
+
+### 我实际做了什么
+
+每个相机、每个位移分量仍使用 v133 的四个 DCT 频带，但每个频带再乘上四个平滑、非负、逐像素和为 1 的 2x2 局部窗口。这样得到的表示严格包含 v134：把四个窗口的系数设成同一个值，就能恢复原来的全局频带。
+
+`5/7/9/12` 相机分别对应 `160/224/288/384` 个方向。所有相机使用同一规则，因此相机换序时表示也按相同方式换序。候选仍进入同一个 exact lift、observation line search 和未修改 CGLS K1，理论在线账仍为 `2A+2A^T`，K4 参考仍为 `4A+4A^T`。
+
+v134 已通过的 2591 个单元直接保留，只对 1109 个失败运行七个真值知晓的局部容量候选。另外，对全部 3700 个单元运行一个只看部署可见 K1 residual 的局部 ridge-LS 便宜控制。validation 和 test 真值没有打开。
+
+### 跑出来的结果
+
+- v135 严格通过：`3162/3700`；
+- 相比 v134 新救回：`571`；
+- 剩余失败：`538`，全部只在 observation；
+- field、完整梯度、内部梯度：全部 `3700/3700`；
+- 完整轨迹：`0/5`；
+- 便宜的 residual-only 局部 LS：`0/3700`。
+
+相机数把瓶颈暴露得很清楚。5 相机条件只通过 `483/925`，留下 `442` 个失败，占全部剩余失败的 `442/538`；7、9、12 相机分别只剩 `63/9/24` 个失败。逐轨迹看，p45-s05 与 p58-s03 分别还剩 `247` 和 `179` 个失败，是主要形态尾部。
+
+这说明固定局部化抓到了真实结构，但四个预设象限不能跟着不同火焰形态和稀疏视角的 residual 位置移动。下一步不该平均扩大模型，而应专门让窗口中心和尺度由当前观测残差决定。
+
+### 独立复算与一次验证器修正
+
+第一版独立验证器完整复算后 fail-closed，因为同一个绝对容差被同时用于 order-one 物理指标和最高约 `1.47e5` 的条件数诊断。科学输出其实已经一致：指标最大差 `2.11e-15`、系数最大差 `7.77e-12`、summary 最大差 `6.66e-16`、离散数组差为 `0`。
+
+我没有放宽科学门，而是先冻结 v135.1 的尺度感知诊断比较，再重新完整运行独立验证。最终诊断缩放差为 `0.1701 < 1`，正式结果和所有物理判决不变。正式状态为 `FAIL_V135_LOCAL_SPACE_FREQUENCY_CAPACITY`，独立状态为 `PASS_INDEPENDENT_RECOMPUTATION_LOCAL_SPACE_FREQUENCY_V135_1`。
+
+### 现在关掉什么，下一步做什么
+
+固定 2x2 窗口关闭，不训练 CNN、FNO、UNO 或 DeepONet。下一门是 v136：只用部署可见 K1 residual 和已知几何生成相机等变的自适应局部窗口，优先检验 5 相机的 442 个失败以及 p45/p58 尾部。仍然先跑真值知晓容量和便宜确定性控制；没有达到 `3700/3700` 与 `5/5` 前，不训练预测器。
+
+当前边界：
+
+- `fixed_2x2_representation_capacity_passed=false`；
+- `fixed_2x2_representation_closed=true`；
+- `remaining_failures_observation_only=true`；
+- `five_camera_sparse_view_is_primary_bottleneck=true`；
+- `minimal_predictor_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_local_space_frequency_capacity_v135_result_2026-08-10.md`
+- `docs/poolfire_local_space_frequency_capacity_v135_public_summary.json`
+- `assets/figures/poolfire_local_space_frequency_capacity_v135.png`
+
+### English checkpoint
+
+v135 multiplies each per-camera, per-component DCT band by four smooth 2x2 partition-of-unity windows. Strict passes rise from `2591/3700` to `3162/3700`, but complete trajectories remain `0/5`. All `538` failures are observation-only, and `442` occur with five cameras. Independent v135.1 recomputation confirms the physical metrics to `2.11e-15`. The fixed-window representation is therefore closed; v136 will test residual-adaptive, camera-equivariant local windows before any neural training.

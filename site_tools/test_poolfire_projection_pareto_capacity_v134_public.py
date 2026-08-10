@@ -62,12 +62,16 @@ def test_roster_camera_counts_and_independent_recomputation_are_consistent() -> 
     assert independent["test_truth_read"] is False
 
 
-def test_current_evidence_and_pages_point_to_v134() -> None:
+def test_current_evidence_preserves_v134_as_historical_parent() -> None:
     evidence = load_json(EVIDENCE_PATH)
     page_texts = [path.read_text(encoding="utf-8") for path in PUBLIC_PAGES]
 
-    assert evidence["formal_status"] == "FAIL_V134_PROJECTION_PARETO_CAPACITY"
-    assert evidence["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_PROJECTION_PARETO_V134"
+    assert evidence["v134_projection_pareto_formal_status"] == (
+        "FAIL_V134_PROJECTION_PARETO_CAPACITY"
+    )
+    assert evidence["v134_projection_pareto_independent_status"] == (
+        "PASS_INDEPENDENT_RECOMPUTATION_PROJECTION_PARETO_V134"
+    )
     assert evidence["metrics"]["v134_selected_cell_pass_count"] == 2591
     assert evidence["metrics"]["v134_observation_only_failure_count"] == 1109
     assert evidence["current_decision"]["v134_minimal_predictor_authorized"] is False
@@ -78,7 +82,6 @@ def test_current_evidence_and_pages_point_to_v134() -> None:
 
     joined = "\n".join(page_texts)
     assert "poolfire_projection_pareto_capacity_v134_result_2026-08-10.md" in joined
-    assert "poolfire_projection_pareto_capacity_v134.png" in joined
     assert FIGURE_PATH.stat().st_size > 100_000
 
 

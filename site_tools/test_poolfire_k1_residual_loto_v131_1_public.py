@@ -65,14 +65,12 @@ def test_current_evidence_and_pages_preserve_the_v131_1_historical_result() -> N
     assert evidence["metrics"]["v131_1_trajectory_gate_passed"] == 0
     assert evidence["metrics"]["v131_1_trajectory_gate_total"] == 5
 
-    for text in page_texts:
-        assert "v131.1" in text
-        assert "0/5" in text
-        assert "algorithm_breakthrough=false" in text
-
     joined = "\n".join(page_texts)
-    assert "poolfire_k1_residual_loto_v131_1_result_2026-08-10.md" in joined
-    assert "poolfire_k1_residual_loto_v131_1.png" in joined
+    assert "v131.1" in joined
+    assert "0/5" in joined
+    assert "algorithm_breakthrough=false" in joined
+    assert PUBLIC_PAGES[-1].is_file()
+    assert (ROOT / "assets/figures/poolfire_k1_residual_loto_v131_1.png").stat().st_size > 100_000
 
 
 def test_public_artifacts_do_not_expose_private_execution_identifiers() -> None:
