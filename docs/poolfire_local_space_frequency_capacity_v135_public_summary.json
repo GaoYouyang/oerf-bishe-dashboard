@@ -1,0 +1,101 @@
+{
+  "schema_version": "oerf-public-poolfire-local-space-frequency-capacity-v135.1",
+  "updated": "2026-08-10",
+  "title_zh": "v135 固定 2x2 局部空间-频率容量诊断",
+  "title_en": "v135 Fixed 2x2 Local Space-Frequency Capacity Diagnostic",
+  "status": "FAIL_V135_LOCAL_SPACE_FREQUENCY_CAPACITY",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_LOCAL_SPACE_FREQUENCY_V135_1",
+  "sample_count": 3700,
+  "trajectory_count": 5,
+  "strict_gate": {
+    "v133_passed": 2353,
+    "v134_passed": 2591,
+    "v135_passed": 3162,
+    "v135_rescued_from_v134": 571,
+    "v135_remaining_failures": 538,
+    "complete_trajectories_passed": 0,
+    "complete_trajectories_total": 5,
+    "per_cell_ratio_limit": 1.05
+  },
+  "metric_pass_counts": {
+    "field_relative_l2": 3700,
+    "gradient_relative_l2": 3700,
+    "interior_gradient_relative_l2": 3700,
+    "reported_observation_relative_l2": 3162
+  },
+  "remaining_failure_pattern": {
+    "observation_only": 538,
+    "field_or_gradient": 0,
+    "observation_ratio_p50": 1.0822013039266427,
+    "observation_ratio_p90_higher": 1.1831215206641126,
+    "observation_ratio_worst": 1.2386770141044272
+  },
+  "cell_pass_by_camera_count": {
+    "5": {"total": 925, "v134_passed": 310, "v135_passed": 483, "rescued": 173, "remaining": 442},
+    "7": {"total": 925, "v134_passed": 625, "v135_passed": 862, "rescued": 237, "remaining": 63},
+    "9": {"total": 925, "v134_passed": 833, "v135_passed": 916, "rescued": 83, "remaining": 9},
+    "12": {"total": 925, "v134_passed": 823, "v135_passed": 901, "rescued": 78, "remaining": 24}
+  },
+  "trajectory_rows": [
+    {"trajectory": "p=14kw_size=05", "total": 740, "passed": 735, "rescued": 30, "remaining": 5, "observation_p50": 1.0084336236497147, "observation_p90_higher": 1.0370698792062498, "observation_worst": 1.076790121599293},
+    {"trajectory": "p=22kw_size=03", "total": 740, "passed": 702, "rescued": 124, "remaining": 38, "observation_p50": 1.0210738076177812, "observation_p90_higher": 1.0470885084659325, "observation_worst": 1.0781963356881707},
+    {"trajectory": "p=33kw_size=01", "total": 740, "passed": 671, "rescued": 94, "remaining": 69, "observation_p50": 1.0054740459059814, "observation_p90_higher": 1.0495468070967666, "observation_worst": 1.0794285327858557},
+    {"trajectory": "p=45kw_size=05", "total": 740, "passed": 493, "rescued": 218, "remaining": 247, "observation_p50": 1.0426449274097078, "observation_p90_higher": 1.091206884657335, "observation_worst": 1.117267965350646},
+    {"trajectory": "p=58kw_size=03", "total": 740, "passed": 561, "rescued": 105, "remaining": 179, "observation_p50": 1.0357724693324628, "observation_p90_higher": 1.1525956334363698, "observation_worst": 1.2386770141044272}
+  ],
+  "factor_rows": [
+    {"factor": "clean", "total": 100, "passed": 87, "rescued": 18, "remaining": 13},
+    {"factor": "noise_only", "total": 600, "passed": 517, "rescued": 97, "remaining": 83},
+    {"factor": "rotation_only", "total": 600, "passed": 519, "rescued": 101, "remaining": 81},
+    {"factor": "translation_only", "total": 600, "passed": 512, "rescued": 93, "remaining": 88},
+    {"factor": "intrinsics_only", "total": 600, "passed": 516, "rescued": 91, "remaining": 84},
+    {"factor": "pose_all", "total": 600, "passed": 511, "rescued": 88, "remaining": 89},
+    {"factor": "combined", "total": 600, "passed": 500, "rescued": 83, "remaining": 100}
+  ],
+  "representation": {
+    "parent": "per-camera and per-component four-band detector DCT basis",
+    "localization": "four smooth nonnegative 2x2 partition-of-unity windows",
+    "basis_count_by_camera_count": {"5": 160, "7": 224, "9": 288, "12": 384},
+    "strictly_contains_v134_parent": true,
+    "camera_permutation_equivariant": true,
+    "candidate_shell": "2A+2A^T",
+    "reference_shell": "4A+4A^T"
+  },
+  "controls": {
+    "deployment_visible_local_residual_joint_ls_passed": 0,
+    "deployment_visible_local_residual_joint_ls_total": 3700,
+    "minimal_predictor_authorized": false
+  },
+  "selected_source_histogram": {
+    "v134_parent": 2591,
+    "local_projection_weight_1": 106,
+    "local_projection_weight_4": 226,
+    "local_projection_weight_16": 72,
+    "local_projection_weight_64": 31,
+    "local_projection_weight_256": 10,
+    "local_projection_weight_1024": 4,
+    "local_projection_only": 660,
+    "local_residual_joint_ls": 0
+  },
+  "independent_recomputation": {
+    "maximum_selected_metric_difference": 2.1094237467877974e-15,
+    "maximum_local_candidate_metric_difference": 2.1094237467877974e-15,
+    "maximum_coefficient_difference": 7.770672993956396e-12,
+    "maximum_diagnostic_absolute_difference": 4.59185685031116e-8,
+    "maximum_diagnostic_scaled_difference": 0.17012835513090976,
+    "maximum_summary_difference": 6.661338147750939e-16,
+    "exact_array_failures": 0,
+    "validator_amendment": "v135.0 was inconclusive because one absolute tolerance was applied to order-one metrics and large condition-number diagnostics; v135.1 froze scale-aware diagnostic comparison without changing the formal result or scientific gates."
+  },
+  "next_gate_zh": "关闭固定 2x2 局部表示。下一门只测试由部署可见 K1 残差与已知几何生成的自适应局部窗口，优先解释 5 相机稀疏视角的 observation 尾部；仍先做 truth-aware 容量与便宜确定性控制，不训练 CNN/FNO。",
+  "next_gate_en": "Close the fixed 2x2 local representation. The next gate tests adaptive local windows generated only from deployment-visible K1 residuals and known geometry, targeting the five-camera observation tail. Truth-aware capacity and cheap deterministic controls still precede any CNN/FNO training.",
+  "claim_boundary": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "real_bost": false,
+    "validation_truth_read": false,
+    "test_truth_read": false
+  }
+}

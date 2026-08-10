@@ -1,0 +1,73 @@
+{
+  "schema_version": "oerf-poolfire-k1-residual-correction-v131-public-v1",
+  "updated": "2026-08-10",
+  "title_zh": "v131：K1 residual 单 correction-dual 机制容量与便宜控制",
+  "title_en": "v131: K1-residual single-correction-dual mechanism capacity and cheap controls",
+  "scope_zh": "五条已开封 PoolFire fit 轨迹、3700 个变相机 straight-ray 合成 BOS 单元；5/7/9/12 相机及 37 种 clean、观测噪声、位姿和内参扰动条件。",
+  "scope_en": "Five opened PoolFire fit trajectories and 3,700 variable-camera straight-ray synthetic-BOS cells with 5/7/9/12 cameras and 37 clean, observation-noise, pose, and intrinsics conditions.",
+  "formal_status": "PASS_V131_CAPACITY_AND_CONTROL_HEADROOM",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_K1_RESIDUAL_CAPACITY_V131",
+  "sample_count": 3700,
+  "trajectory_count": 5,
+  "condition_count": 37,
+  "camera_counts": [5, 7, 9, 12],
+  "candidate_exact_A": 2,
+  "candidate_exact_AT": 2,
+  "reference_exact_A": 4,
+  "reference_exact_AT": 4,
+  "exact_teacher": {
+    "trajectory_gate_passed": 5,
+    "trajectory_gate_total": 5,
+    "maximum_relative_field_difference_to_k4": 6.119542670610758e-16,
+    "maximum_relative_residual_difference_to_k4": 1.3435101347725832e-15,
+    "maximum_absolute_metric_difference_to_k4": 3.3306690738754696e-16,
+    "maximum_absolute_alpha_difference_from_one": 6.661338147750939e-16
+  },
+  "cheap_controls": {
+    "trajectory_gate_passed": 0,
+    "trajectory_gate_total": 5,
+    "zero_cgls_k1": {
+      "field_p90_higher": 1.464569418343144,
+      "field_worst": 1.6413416275827533,
+      "observation_p90_higher": 2.154097770187007,
+      "observation_worst": 2.4021548668633637
+    },
+    "zero_cgls_k2": {
+      "field_p90_higher": 1.2862159409795242,
+      "field_worst": 1.4491834978366536,
+      "observation_p90_higher": 1.6225738174083653,
+      "observation_worst": 1.7995475201922453
+    },
+    "raw_residual": {
+      "field_p90_higher": 1.3835445652532474,
+      "field_worst": 1.5544884656074889,
+      "observation_p90_higher": 1.801836100111906,
+      "observation_worst": 1.9380494763801073
+    },
+    "view_balanced_residual": {
+      "field_p90_higher": 1.3836768194180207,
+      "field_worst": 1.5556889838731065,
+      "observation_p90_higher": 1.8021565227591223,
+      "observation_worst": 1.9241726998924398
+    },
+    "box3_residual": {
+      "field_p90_higher": 1.260754111750879,
+      "field_worst": 1.4175841513960732,
+      "observation_p90_higher": 1.826296643080915,
+      "observation_worst": 2.0873086255254085
+    }
+  },
+  "decision_zh": "精确单 correction-dual 有容量，五个便宜控制均不能解释余量；授权一个 11484 参数主模型做五折整轨迹留一，但在正式评分前仍没有学习或泛化结论。",
+  "decision_en": "The exact single correction dual has capacity and five cheap controls do not explain the headroom. One 11,484-parameter primary model is authorized for five-fold complete-trajectory LOTO, but no learned or generalization conclusion exists before formal scoring.",
+  "claim_boundary": {
+    "mechanism_capacity_headroom": true,
+    "cheap_control_explanation_found": false,
+    "learned_initializer_validated": false,
+    "algorithm_breakthrough": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "paper_success": false
+  }
+}

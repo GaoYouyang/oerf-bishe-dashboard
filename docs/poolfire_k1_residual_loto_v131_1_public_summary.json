@@ -1,0 +1,75 @@
+{
+  "schema_version": "oerf-poolfire-k1-residual-loto-v131.1-public-v1",
+  "updated": "2026-08-10",
+  "title_zh": "v131.1：最小 K1-residual 相机集合模型整轨迹留一负结果",
+  "title_en": "v131.1: Minimal K1-residual camera-set model complete-trajectory LOTO negative result",
+  "formal_status": "FAIL_V131_1_PRIMARY_HELDOUT_ACCURACY",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_K1_RESIDUAL_SCORE_V131_1",
+  "scope": {
+    "sample_count": 3700,
+    "trajectory_count": 5,
+    "camera_counts": [5, 7, 9, 12],
+    "model_parameter_count": 11484,
+    "candidate_exact_A": 2,
+    "candidate_exact_AT": 2,
+    "reference_exact_A": 4,
+    "reference_exact_AT": 4
+  },
+  "gate": {
+    "p90_higher_maximum": 1.02,
+    "worst_maximum": 1.05,
+    "trajectory_passed": 0,
+    "trajectory_total": 5,
+    "accuracy_gate_passed": false
+  },
+  "trajectory_p90_higher": {
+    "p14_s05": {"field": 1.0964948115817588, "gradient": 1.0221238897579705, "interior_gradient": 1.0253534227233867, "observation": 1.23768470905773},
+    "p22_s03": {"field": 1.1305055586939075, "gradient": 1.0437972870658743, "interior_gradient": 1.0537206742085752, "observation": 1.3336759883063938},
+    "p33_s01": {"field": 1.1478605662201524, "gradient": 1.0089967856128288, "interior_gradient": 1.0255654800372558, "observation": 1.4764416474412576},
+    "p45_s05": {"field": 1.1045256378227013, "gradient": 1.0414230057542044, "interior_gradient": 1.0265131832396537, "observation": 1.413454739638494},
+    "p58_s03": {"field": 1.1022569708223966, "gradient": 1.0324412099584699, "interior_gradient": 1.0501055803916342, "observation": 1.4154476222819028}
+  },
+  "trajectory_worst": {
+    "p14_s05": {"field": 1.1345643954826956, "gradient": 1.0504312313549051, "interior_gradient": 1.0431242513950645, "observation": 1.3229236367988804},
+    "p22_s03": {"field": 1.1870510613286256, "gradient": 1.0784106817779184, "interior_gradient": 1.098291812806211, "observation": 1.4604782283697808},
+    "p33_s01": {"field": 1.2520885320584323, "gradient": 1.0268708701781697, "interior_gradient": 1.0693645404561487, "observation": 1.6225010852933435},
+    "p45_s05": {"field": 1.1358263940743993, "gradient": 1.0544636158698302, "interior_gradient": 1.0564921353102164, "observation": 1.5408860260132495},
+    "p58_s03": {"field": 1.1343547271320968, "gradient": 1.0586097738195455, "interior_gradient": 1.090520201262471, "observation": 1.6235724520449488}
+  },
+  "postopen_diagnostic": {
+    "teacher_prediction_dual_relative_l2": {"p50": 0.245124, "p90_higher": 0.448385, "worst": 0.719041},
+    "effective_correction_relative_l2": {"p50": 0.310694, "p90_higher": 0.438350, "worst": 0.607737},
+    "dual_cosine": {"p10": 0.984639, "p50": 0.991513},
+    "observation_p90_by_camera_count": {"5": 1.500043, "7": 1.374770, "9": 1.307015, "12": 1.239717},
+    "clean_observation_p90": 1.410947,
+    "interpretation": "Ordinary dual-L2 captures the broad direction but does not control A/A^T-sensitive shape errors, especially for sparse camera sets. This is a descriptive post-open diagnosis, not a separately validated algorithm result."
+  },
+  "independent_recomputation": {
+    "maximum_prediction_difference": 0.0,
+    "maximum_metric_difference": 0.0,
+    "maximum_summary_difference": 0.0,
+    "maximum_control_summary_difference": 0.0,
+    "maximum_alpha_difference": 0.0,
+    "maximum_parity_difference": 0.0,
+    "maximum_k1_residual_difference": 0.0,
+    "maximum_pose_token_difference": 0.0,
+    "actual_exact_A_calls": 7400,
+    "actual_exact_AT_calls": 7400,
+    "validation_truth_read": false,
+    "test_truth_read": false,
+    "end_to_end_physics_independence_proven": false
+  },
+  "decision_zh": "当前普通 dual-L2 预测表示关闭，不以更多 seed、更大 CNN/FNO/UNO/DeepONet 或 GPU 挽救。下一门先做结果前冻结的 normal-operator/field-lift 敏感目标或低维表示容量诊断。",
+  "decision_en": "The current ordinary dual-L2 predictive representation is closed without extra seeds, larger CNN/FNO/UNO/DeepONet models, or GPU rescue. The next gate is a preregistered capacity diagnostic for a normal-operator/field-lift-sensitive target or low-dimensional representation.",
+  "claim_boundary": {
+    "mechanism_capacity_headroom": true,
+    "learned_initializer_validated": false,
+    "current_dual_l2_representation_closed": true,
+    "algorithm_breakthrough": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "paper_success": false
+  }
+}

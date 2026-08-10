@@ -12815,3 +12815,620 @@ API 级 truth-mutation noninterference 已通过；process-level never-read 仍�
 
 - `docs/camera_set_virtual_bos_dataset_v126_public_result_2026-08-10.md`
 - `docs/camera_set_virtual_bos_dataset_v126_public_summary.json`
+
+## 2026-08-10：v127 把 camera set 接到 PoolFire，经典难度图跑完了
+
+### 这次真正做了什么
+
+v126 只是用 Gaussian 场把“相机可乱序、可增删、可加观测噪声和标定误差”的数据机制做对。v127 往前走了一步：把同一份 camera-set 合同接到五条已开封的公开 PoolFire CFD 密度轨迹，再跑真正的经典逆问题对照。
+
+实验共有：
+
+```text
+5 条 trajectory
+× 5 个时刻
+× 4 种相机数量（5 / 7 / 9 / 12）
+× 3 档条件（clean / medium / stress）
+= 300 个物理单元
+```
+
+每个单元完整比较 zero field、scaled exact BP、Zero-CGLS K1 / K2 / K4，总计 `1500` 行经典控制。这一步故意不训练网络：先知道经典方法在变相机数量和扰动下到底难在哪里，才能判断 learned initializer 有没有真正可以填的空间。
+
+### 真正跑出来的结果
+
+clean 条件下，K4 场相对 L2 误差的单元中位数为：
+
+```text
+5 cameras   0.7486
+7 cameras   0.6869
+9 cameras   0.6288
+12 cameras  0.6112
+```
+
+从 5 台增加到 12 台，K4 场误差中位数相对降低 `18.35%`。在 12 相机下，K1 / K2 / K4 的场误差中位数为：
+
+```text
+K1  0.8665
+K2  0.7720
+K4  0.6112
+```
+
+这说明目前最大的两个可见瓶颈是：**视角太少**和 **迭代太浅**。stress 条件下的尾部会变坏，但在当前这一组幅度里，变化小于相机数量与迭代深度的影响。
+
+### 为什么可以信
+
+独立验证程序没有导入 v127 正式 core 或 runner，而是重新实现相机 roster、随机键、真实/报告 rig、噪声、CGLS、逐单元指标和聚合。最终：
+
+- 独立数组最大差：`0`
+- 独立指标最大差：`0`
+- 独立 rig 最大差：`0`
+- 独立聚合最大差：`0`
+- 相机乱序恢复最大差：`0`
+- forward / adjoint 最大相对误差：`1.06e-14`
+
+### 是否成功，是否突破
+
+- **成功：** 师兄要求的变相机数量、可乱序/增删相机和噪声/标定扰动，已经从 Gaussian 机械检查走到 PoolFire 经典重建难度图。我们现在有了训练模型之前必需的基线坐标系。
+- **尚未成功：** 还没有 learned initializer，没有证明同精度下减少 `A/A^T`，没有 wall/RSS 优势，也没有真实 BOST 结果。
+- **不能过度解释：** medium/stress 同时改变观测噪声和报告位姿，因此现在不能说“噪声不重要”，也不能知道尾部变化是哪个因素造成的。
+- **突破监测：** `algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`real_bost=false`。
+
+下一门不是立即租 GPU，而是把 `noise-only / pose-only / combined` 拆开并做重复，再补 geometry-equalized BP 和 PCGLS 对照。只有这些对照之后仍留下稳定的、可学习的缺口，才会训练最小的 permutation-invariant camera-set initializer。
+
+公开证据：
+
+- `docs/poolfire_camera_set_classical_screen_v127_result_2026-08-10.md`
+- `docs/poolfire_camera_set_classical_screen_v127_public_summary.json`
+- `assets/figures/poolfire_camera_set_classical_screen_v127.png`
+
+## 2026-08-10：v128 把噪声、位姿和经典预条件的作用真正拆开了
+
+### 这一步为什么必须做
+
+v127 已经告诉我“相机越多、迭代越深，重建通常越好”，但它把观测噪声和标定误差合在几个 profile 里，所以还不能回答三个关键问题：究竟是噪声、旋转、平移还是内参更伤；更强的几何经典方法能不能直接填掉低调用预算的缺口；如果经典控制已经足够，那还有没有必要训练网络。
+
+v128 专门回答这三个问题。它不是新模型，而是训练前必须过的一道科学筛选。
+
+### 实际跑了什么
+
+我在五条已经开封的 PoolFire fit 轨迹上，每条取 5 帧，使用 5、7、9、12 个相机。除了 clean，还分别加入：
+
+- observation noise；
+- camera rotation；
+- camera translation，同时改变相机中心和目标点；
+- intrinsics，包括焦距和主点；
+- pose-all；
+- combined。
+
+每种扰动有 medium / stress 两档，并做三次独立重复。最后形成：
+
+- 37 种条件；
+- 740 个相机 rig；
+- 3700 个物理单元；
+- 33300 行经典控制。
+
+控制组不只包含 Zero、BP 和 CGLS K1/K2/K4，还加入了用 `diag(A^T A)` 做几何灵敏度均衡的 BP，以及 geometry-PCGLS K1/K2/K4。
+
+### 得到了什么
+
+第一，噪声和标定误差确实有影响。combined stress 相对 clean 的 p90 harm 是：
+
+- field：`+1.84%`；
+- gradient：`+3.74%`；
+- observation：`+6.81%`。
+
+第二，它们还不是当前最大的瓶颈。clean 条件下，Zero-CGLS K4 的场误差中位数从 5 相机的 `0.7486` 降到 12 相机的 `0.6112`，相对降低 `18.35%`。相机数量和迭代深度的影响仍更大。
+
+第三，更强的经典预条件没有关闭两次调用缺口。相对 Zero-CGLS K4：
+
+- Zero-CGLS K2 的场误差 p50 仍高 `18.21%`；
+- geometry-PCGLS K2 的场误差 p50 仍高 `17.68%`；
+- 3700 个单元中，两者都没有任何一个达到 K4 的场精度。
+
+第四，只看 observation residual 会误导。geometry-PCGLS K4 的 observation p50 比 CGLS K4 低 `4.12%`，但 field p50 反而高 `1.04%`。所以后续模型必须同时看 field、gradient 和 observation，不能靠“残差更低”宣布成功。
+
+### 独立复算有没有过
+
+过了。第二个程序没有导入 v128 正式 core 或 runner，重新生成全部 3700 个单元和 33300 行控制。逐数组、指标、rig、Jacobi、聚合和 paired-effect 的最大差全部为 `0`。不过两个程序仍共享冻结的底层 physics kernels，所以还不能说端到端物理实现完全独立。
+
+### 这算突破吗
+
+不算。
+
+这一步真正改变的判断是：**最小的相机集合条件 warm initializer 现在值得做了**。原因不是“神经网络可能很强”，而是强经典控制后仍留下稳定、可量化的低调用预算缺口。
+
+当前边界仍是：
+
+- `algorithm_breakthrough=false`；
+- `paper_success=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- validation 和 test truth 都没有打开。
+
+### 下一步直接做什么
+
+下一步是最小 SetDual-Warm。每台相机作为一个无序集合元素，输入自己的 `16x16x2` 观测、18 维位姿/标定编码和 mask。模型用共享逐相机编码器和 mean/max 聚合，输出 detector-dual proposal，再通过精确 `A^T`、可观测 alpha line search 和一次未修改 CGLS refinement 构成 `2A+2A^T` 候选。
+
+它必须按轨迹 leave-one-trajectory-out，并公平比较 Zero-CGLS K2、geometry-PCGLS K2、fit-only dual ridge、no-pose 和 wrong-pose/permutation。通过这些门之前，不租 GPU，不上 FNO，不把 CFD 代理结果写成真实 BOST 成功。
+
+公开证据：
+
+- `docs/poolfire_camera_set_factorized_controls_v128_result_2026-08-10.md`
+- `docs/poolfire_camera_set_factorized_controls_v128_public_summary.json`
+- `assets/figures/poolfire_camera_set_factorized_controls_v128.png`
+
+## 2026-08-10：v129 失败后，v130 找回了真正缺失的 Krylov 信息
+
+### 先说人话
+
+上一版的想法是：网络预测第三步 CGLS 已经得到的解，再从这里重启一步，看看能不能用较少调用追上第四步。这个想法看起来合理，但 v129 用“完美教师”检查后仍然失败。也就是说，即使网络一丁点误差都没有，这个结构本身也不够，继续换大模型只会浪费算力。
+
+原因是 CGLS 不只记住当前解，还积累了一条与以前方向共轭的新搜索方向。重启会把这段历史丢掉。v130 因此不再只保存一个状态，而是同时保存：
+
+1. 第三步解对应的 detector-space dual；
+2. 从第三步走向第四步所需的共轭方向 dual。
+
+部署时，两组 dual 各做一次精确反投影和一次正投影，再只用当前观测解一个二维盒约束最小二乘。总账固定为 `2A+2A^T`，而直接运行 K4 是 `4A+4A^T`。
+
+### 真正跑出来的结果
+
+v129 在五条 PoolFire fit 轨迹、3700 个因子化相机集合单元上全部没有通过。candidate / K4 的 p90-higher 为：
+
+- field：`1.08840`；
+- full gradient：`1.03241`；
+- interior gradient：`1.03180`；
+- observation：`1.11253`。
+
+v130 补回共轭方向以后，`3700/3700` 个单元都数值复现 K4。正式最大 field / residual / metric 差为 `7.32e-16 / 1.87e-15 / 3.33e-16`；独立程序重新构造 recurrence、两组 dual、二维求解和指标后，最大差为 `2.50e-15 / 7.44e-15 / 6.66e-16`。
+
+### 这算什么突破
+
+这是一次**机制容量突破**：我们已经证明“一半精确算子调用预算内，有一个足够表达 K4 的双状态结构”。它比泛泛说“训练一个网络试试”前进了一大步，因为现在模型有明确、可证伪的学习目标。
+
+但它还不是算法突破。上面的两组 dual 来自精确教师，尚未证明模型能从观测与报告位姿中预测准确。因此仍然是：
+
+- `mechanism_capacity_breakthrough=true`；
+- `learned_initializer_validated=false`；
+- `algorithm_breakthrough=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+### 当前正在做什么
+
+首个模型固定为 11504 参数的相机集合网络，输入每台相机的 `16x16x2` 观测、18 维报告位姿和 mask。相机可乱序、可增删，编码器共享参数并用 masked mean/max 聚合。实验按五条完整轨迹 leave-one-trajectory-out，固定 30 epoch 和一个主 seed，不做 early stopping 或 epoch 挑选。
+
+所有五个 checkpoint 必须先统一封存，之后才允许读取 held-out 重建指标。主模型若失败，就直接记录负结果，不靠增加模型规模挽救；若通过，才继续 no-pose、wrong-pose、fit-only ridge 与多 seed 复验。真实实验数据到位后，再把同一输入合同迁移到组内位移图、相机标定和重复测量噪声。
+
+公开证据：
+
+- `docs/poolfire_set_krylov2_v130_result_2026-08-10.md`
+- `docs/poolfire_set_krylov2_v130_public_summary.json`
+- `assets/figures/poolfire_set_krylov2_v130.png`
+
+## 2026-08-10：v130.1 证明双状态结构能表示，但当前小模型学不会
+
+### 先说结论
+
+这次不是“还在训练”，而是已经跑完并得到正式负结果。
+
+v130 的精确教师告诉我们：只要两组 dual 完全正确，用 `2A+2A^T` 就能复现 K4。但真正的 11504 参数相机集合模型，在五条完整留出 PoolFire 轨迹上是 `0/5` 通过。换句话说，代数结构装得下答案，不等于网络能从新流场轨迹的观测与报告位姿中把答案稳定猜出来。
+
+### 实际做了什么
+
+五条轨迹各做一次 leave-one-complete-trajectory-out：四条训练，一条整轨迹留出。每折固定 30 epoch，不 early stop，也不挑最好 epoch。所有五个 checkpoint 在读取任何留出重建指标前统一封存；随后 3700 个主预测和 3700 个 wrong-pose 预测也先封存，再让冻结的物理壳读取已开封真值做评分。
+
+输入已经落实师兄要求的关键条件：
+
+- 每台相机都有自己的 `16x16x2` 观测、18 维报告位姿和 mask；
+- 相机集合可乱序、可从 12 台删到 `9/7/5` 台；
+- 有观测噪声，以及旋转、平移、焦距、主点和联合标定扰动；
+- forward 和 adjoint 按每个相机的报告几何重新构建。
+
+### 跑出来的数字
+
+冻结门要求每条轨迹、每项指标的 `candidate/K4` 同时满足 `p90-higher <= 1.02` 和 `worst <= 1.05`。五条轨迹全部失败。3700 个单元合在一起时：
+
+- field：`p50/p90/worst = 1.0501/1.0726/1.1128`；
+- full gradient：`1.0085/1.0308/1.0664`；
+- interior gradient：`1.0359/1.0658/1.1150`；
+- observation：`1.2668/1.4499/1.7946`。
+
+模型仍然明显优于同成本 Zero-K2 和 geometry-PCGLS K2，但我们的目标是“以 K2 成本追平 K4”，所以不能把“比 K2 好”写成成功。
+
+### 独立复算是否站得住
+
+第二个程序没有导入正式 scorer 或正式双方向壳。它重新加载五个 checkpoint，重算主预测、wrong-pose 预测、二维盒约束求解、全部物理指标、经典控制和调用账：
+
+- 主预测最大差：`0`；
+- candidate metric 最大差：`6.66e-16`；
+- 聚合摘要最大差：`6.66e-16`；
+- 系数最大差：`2.00e-15`；
+- 调用账不匹配：`0`。
+
+因此这不是偶然的页面数字或一次 scorer 偏差，而是独立确认的负结果。
+
+### 为什么失败
+
+打开结果后的根因审计显示：
+
+- K3 solution dual 相对误差 p90 约 `0.358`；
+- K3→K4 direction dual 相对误差 p90 约 `0.521`；
+- direction-dual 误差与最终 observation ratio 的相关系数约 `0.65`；
+- 相机越少越难，5 相机 observation ratio 中位约 `1.42`，12 相机约 `1.16`。
+
+当前网络不是完全没有学到东西，而是“同时预测两组完整 K3 dual”这个目标太重，尤其第二组共轭方向最难。按结果前合同，我们关闭当前表示，不追加 no-pose、ridge、多 seed 或更大 CNN/FNO/UNO/U-Net 来挽救。
+
+### 下一步为什么改成更小的问题
+
+下一条机制从已经算出的精确 CGLS K1 状态出发。部署时可见 K1 residual，因此模型只需要预测一组 detector-space correction dual，再做一次精确 `A^T` 提升、一次 `A` 投影和观测线搜索，总预算仍不超过 `2A+2A^T`。
+
+这不是降低标准，而是把不可稳定学习的“两组完整 K3 历史状态”改成“当前 K1 没修好的那一部分”。先用 exact teacher 检查这一组 correction dual 在表示上能不能追平 K4，再比较便宜的 residual 控制；只有这两门通过才训练新模型。
+
+当前证据边界：
+
+- `v130_mechanism_capacity_breakthrough=true`；
+- `v130_1_learned_initializer_validated=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_set_krylov2_loto_v130_1_result_2026-08-10.md`
+- `docs/poolfire_set_krylov2_loto_v130_1_public_summary.json`
+- `assets/figures/poolfire_set_krylov2_loto_v130_1.png`
+
+## 2026-08-10：v131 把学习目标缩成一组 correction dual，精确容量和便宜控制门都过了
+
+### 先说人话
+
+v130.1 失败后，我没有继续把网络做大，而是先问一个更关键的问题：是不是一次让模型预测两组完整 K3 状态本来就太重？
+
+v131 把任务缩小到：先正常算出精确 CGLS K1，只让模型预测“K1 还缺的那一段”对应的一组 detector-space correction dual。随后只增加一次精确反投影、一次正投影和一个只看观测残差的标量线搜索。这样完整在线账仍是 `2A+2A^T`，而 K4 是 `4A+4A^T`。
+
+### 实际跑了什么
+
+同一五条已开封 PoolFire 轨迹共有 3700 个单元，覆盖 `5/7/9/12` 台可乱序、可增删相机，以及 37 种 clean、观测噪声、旋转、平移、焦距、主点和联合扰动条件。
+
+我先没有训练模型，而是比较了：
+
+1. 精确 correction-dual 教师；
+2. Zero-CGLS K1；
+3. Zero-CGLS K2；
+4. 直接把 K1 residual 当作 dual；
+5. 逐相机 RMS 均衡 residual；
+6. constant-preserving `3x3` box-filtered residual。
+
+### 跑出来的结果
+
+精确教师在五条轨迹上全部通过，并在数值精度内复现 K4：
+
+- 最大 field 相对差：`6.12e-16`；
+- 最大 observation residual 相对差：`1.34e-15`；
+- 最大指标差：`3.33e-16`；
+- 线搜索系数离 1 的最大差：`6.66e-16`。
+
+五类便宜控制没有一个通过完整逐轨迹门。即使 field 表现最好的 box3 residual，其全局 field p90 / worst 仍为 `1.2608 / 1.4176`，observation p90 / worst 为 `1.8263 / 2.0873`；都明显超过冻结的 `1.02 / 1.05` 门。
+
+### 独立复算是否站得住
+
+站得住。第二个程序没有导入正式 runner 或 v131 core，而是重新实现 CGLS、单 dual 修正、五类控制、指标、聚合与逐轨迹判决。K1 residual、teacher dual、metrics、alpha、parity 和报告位姿编码的最大差全部为 `0`，正式证据树在验证前后没有变化。
+
+### 为什么这一步有价值
+
+这一步排除了五个最便宜的解释：不是“多跑一步”就够，也不是把 residual 原样送回去、做视角归一化或简单局部平滑就够。更小的 correction-dual 目标确实有机制余量，而且比 v130.1 同时预测两组 K3 dual 更聚焦。
+
+但这仍然不是算法成功。精确教师来自离线 K4 参考，真正模型能否跨完整留出轨迹学出来还不知道。因此当前是：
+
+- `mechanism_capacity_headroom=true`；
+- `learned_initializer_validated=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+### 当前正在运行什么
+
+现在只运行一个 11484 参数的最小相机集合模型。输入是部署可见的 K1 residual、每台相机 18 维报告位姿和有效相机 mask；结构对相机顺序不敏感，并支持 `5/7/9/12` 台相机。五条完整轨迹各留出一次，固定 30 epoch、单主 seed，不 early stop，也不读取留出指标来挑 checkpoint。
+
+全部五折 checkpoint 必须先统一封存，之后才允许生成留出预测和正式评分。主模型若失败就关闭当前表示，不追加多 seed、大 CNN/FNO/UNO 或 GPU 来挽救；若通过，才继续独立复算、资源门和此前未打开的公开反应流外门。
+
+公开证据：
+
+- `docs/poolfire_k1_residual_correction_v131_result_2026-08-10.md`
+- `docs/poolfire_k1_residual_correction_v131_public_summary.json`
+- `assets/figures/poolfire_k1_residual_correction_v131.png`
+
+## 2026-08-10：v131.1 模型跑完了，结果是 0/5，但失败原因比“网络不够大”更具体
+
+### 先说人话
+
+这次已经不是训练中。五折训练、留出预测、物理评分和独立复算全部完成，正式结论是负结果。
+
+v131 告诉我们：如果能拿到完全正确的一组 correction dual，只用 `2A+2A^T` 就能复现 K4。v131.1 真正让 11484 参数的小模型去做这件事，五条完整留出轨迹没有一条通过严格同精度门，结果是 `0/5`。
+
+### 我实际做了什么
+
+五条 PoolFire 轨迹各留出一次。每个模型只读当前 K1 residual、报告相机位姿和有效相机 mask，输入支持 `5/7/9/12` 台相机和相机乱序。五个 checkpoint 先统一封存，之后才生成 3700 个留出预测；预测也先封存，再接入同一个精确 K1 + correction-dual 物理壳评分。
+
+候选每个单元真实调用 `2A+2A^T`，K4 参考是 `4A+4A^T`。validation 和 test 真值都没有打开。
+
+### 跑出来的结果
+
+冻结门要求每条轨迹的 field、完整梯度、内部梯度和 observation 同时满足 p90 不高于 `1.02`、worst 不高于 `1.05`。五条轨迹全部失败。
+
+最明显的缺口在 observation：五条轨迹的 p90 分别约为 `1.238 / 1.334 / 1.476 / 1.413 / 1.415`。相机越少越难：5、7、9、12 相机汇总 observation p90 分别为 `1.500 / 1.375 / 1.307 / 1.240`。
+
+它不是完全没用。候选在五条轨迹上都比同成本 Zero-K2 的 observation p90 更好，而且没有一个便宜控制能全局支配它。但我们的目标是“一半调用追平 K4”，不是“比 K2 好一点”，所以必须判失败。
+
+### 独立复算是否站得住
+
+站得住。第二个程序重算了预测、物理壳、四类指标、五类控制和实际 forward/adjoint 调用点：prediction、metric、summary、control、alpha、parity、K1 residual 与 pose token 的最大差全部是 `0`。实际总调用是 `7400A+7400A^T`，正好对应 3700 个单元各 `2A+2A^T`。
+
+正式状态是 `FAIL_V131_1_PRIMARY_HELDOUT_ACCURACY`，独立状态是 `PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_K1_RESIDUAL_SCORE_V131_1`。
+
+### 为什么失败
+
+模型预测的 dual 和精确教师在“大方向”上其实很接近：cosine 中位数约 `0.9915`。但 dual 相对误差 p90 仍约 `0.4484`，经过线搜索后的有效三维修正相对误差 p90 仍约 `0.4384`。
+
+这说明普通 dual-L2 的训练目标有结构性缺口。逆问题是病态的，某些看起来很小的 detector-space 形状误差，会被 `A^T`、`A` 和最终场指标放大。标量线搜索能修正总幅值，却不能修正这些敏感方向上的形状误差。clean 条件也没有明显更好，因此不能把责任简单推给噪声或位姿扰动。
+
+### 现在关掉什么，保留什么
+
+关掉的是“用普通 dual-L2 训练当前最小集合模型预测 correction dual”这条表示。按结果前约定，不追加多 seed、大 CNN、FNO、UNO、DeepONet 或 GPU 来挽救，也不做资源门和外部门。
+
+保留的是 v131 的精确机制事实：一组 correction dual 确实能在一半精确调用预算内复现 K4。下一步要先改变目标，而不是放大网络。具体问题是：normal operator 或 field lift 加权后的目标，能不能更直接约束会被物理算子放大的敏感方向？在任何新训练前，先做一个结果前冻结、可证伪的精确容量与便宜控制诊断。
+
+当前边界：
+
+- `v131_mechanism_capacity_headroom=true`；
+- `v131_1_learned_initializer_validated=false`；
+- `current_dual_l2_representation_closed=true`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_residual_loto_v131_1_result_2026-08-10.md`
+- `docs/poolfire_k1_residual_loto_v131_1_public_summary.json`
+- `assets/figures/poolfire_k1_residual_loto_v131_1.png`
+
+## 2026-08-10：v132 排除了“每台相机只差一个增益”这个解释
+
+### 先说人话
+
+v131.1 失败以后，一个自然怀疑是：模型其实已经学到了大致形状，只是不同相机的 correction dual 幅值没调准。若真是这样，每台相机乘一个有正有负的标量，也许就能补回 K4。
+
+我没有先训练另一个网络，而是先做了更严格的容量检查：允许每个样本直接看真值，为每台有效相机寻找最有利的标量。这是部署模型不可能超过的上界。如果这个上界都过不了，就没有理由再花算力学习这些标量。
+
+### 我实际做了什么
+
+实验仍使用五条已经打开的 PoolFire 三维轨迹，共 3700 个单元，覆盖 `5/7/9/12` 台有效相机。每个单元从 K1 residual 构造逐相机 field lift，只允许每台相机一个 signed scalar coefficient；之后仍进入同一个精确 `A^T` lift、可观测线搜索和未修改 CGLS K1，在线理论账保持 `2A+2A^T`。
+
+同时比较了一个完全不看真值的便宜控制：按每台相机 residual RMS 做归一化。validation 和 test 真值都没有打开。
+
+### 跑出来的结果
+
+真值可见的逐相机标量 oracle 和 RMS 控制都是 `0/5`：五条轨迹没有一条通过冻结的 field、完整梯度、内部梯度和 observation 八门。
+
+oracle 的逐轨迹 field p90 仍在 `1.0891` 到 `1.1336`，observation p90 在 `1.2164` 到 `1.4135`，明显高于 `1.02` 门。更关键的是，逐相机 field-lift 相对完整 K4 correction 的误差 p90 约为 `0.4716`；经过 observation 投影后反而约为 `0.6774`。这说明缺失的是 detector 内部的空间或频谱形状，不只是相机之间的总幅值。
+
+### 独立复算是否站得住
+
+站得住。第二个程序重新构造逐相机 lift、解析标量 oracle、RMS 控制、K1 物理壳和全部判决。系数最大差约 `6.66e-15`，诊断最大差约 `1.33e-14`，oracle 指标最大差约 `4.44e-16`，K1 residual 最大差约 `2.54e-13`。正式状态是 `FAIL_V132_FIELD_LIFT_CAMERA_MIXING_CAPACITY`，独立状态是 `PASS_INDEPENDENT_RECOMPUTATION_FIELD_LIFT_CAMERA_MIXING_V132`。
+
+### 这一步改变了什么
+
+关闭的是“每台相机一个标量增益”的 camera-mixing 路线。它连真值可见上界都不能追平 K4，因此不训练标量预测器，也不靠扩大网络挽救。
+
+保留的主线没有变：师兄建议的变机位、加减相机、乱序、观测噪声和位姿标定误差仍然要做，但下一候选必须能表达每个 detector 内部的像素级空间或频谱修正，并先通过同样的真值可见容量门。只有容量门通过，才有资格训练最小 observation/geometry-only 模型。
+
+当前边界：
+
+- `camera_scalar_mixing_closed=true`；
+- `pixelwise_representation_not_yet_validated=true`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_field_lift_camera_mixing_v132_result_2026-08-10.md`
+- `docs/poolfire_field_lift_camera_mixing_v132_public_summary.json`
+- `assets/figures/poolfire_field_lift_camera_mixing_v132.png`
+
+## 2026-08-10：v133 把剩余失败精确定位到了 observation
+
+### 先说人话
+
+v132 已经说明“每台相机乘一个系数”不够，但它没有告诉我需要多复杂的像素级变化。v133 做了一个比训练网络更便宜、也更能证伪的检查：把每台相机的两个位移分量分别拆成四个频带，让真值知晓 oracle 在这些频带之间自由组合，然后看这个表示本身有没有追平 K4 的能力。
+
+结果不是简单的成功或失败。严格联合通过数从 v132 的 `61/3700` 大幅提高到 `2353/3700`，说明频谱形状确实抓到了重要结构；但五条完整轨迹仍然 `0/5`，所以还不能训练或宣称算法成立。
+
+### 我实际做了什么
+
+每个 active camera 的 `16x16` detector 上，两个位移分量各自做固定正交 DCT-II，并按 cutoff 4 分成 LL、LH、HL、HH 四个互不重叠的频带。于是每台相机有八个方向，`5/7/9/12` 台相机分别对应 `40/56/72/96` 维。这个表示严格包含 v132 标量混合，因为八个方向取相同系数就能恢复每台相机一个总增益。
+
+oracle 仍只在已经打开的 PoolFire fit 数据上看真值，用等权的 field-lift 与 projected-lift 相对误差选择系数。另跑一个完全不看真值的 spectral-LS 便宜控制。两者都进入同一个可观测线搜索和未修改 CGLS K1，候选在线账保持 `2A+2A^T`，K4 参考是 `4A+4A^T`。validation 和 test 真值没有打开。
+
+### 跑出来的结果
+
+v133 oracle 的严格联合通过是 `2353/3700`；便宜 spectral-LS 控制是 `0/3700`。最重要的逐指标结果是：
+
+- field：`3700/3700`；
+- full-gradient：`3700/3700`；
+- interior-gradient：`3700/3700`；
+- observation：`2353/3700`。
+
+因此全部 `1347` 个失败都是 observation-only，没有任何一个单元因为 field 或 gradient 失败。这把问题从“频谱表示整体不够”缩成了更具体的“等权目标是否没有充分照顾 observation 尾部”。
+
+相机数增加时通过率明显提高：`5/7/9/12` 相机分别为 `272/925`、`553/925`、`744/925`、`784/925`。但更多相机也不能自动消掉尾部。12 相机 observation 中位 ratio 已到 `0.9991`，p90 和 worst 仍为 `1.0653/1.1071`；平均好看不能替代严格门。
+
+逐轨迹 observation p90 / worst 分别为：
+
+- p14-s05：`1.0452 / 1.1019`；
+- p22-s03：`1.0689 / 1.1077`；
+- p33-s01：`1.0725 / 1.1261`；
+- p45-s05：`1.1484 / 1.1936`；
+- p58-s03：`1.2033 / 1.3868`。
+
+这解释了为什么逐单元通过率已经很高，完整轨迹门仍然是 `0/5`。
+
+### 独立复算是否站得住
+
+站得住。第二个程序不导入正式频谱基或 oracle solver helper，独立重建频带、逐相机 lift、频谱方程、便宜控制、K1 物理壳、四类指标和全部门。oracle 系数最大差 `1.27e-12`，诊断最大差 `1.20e-10`，指标最大差 `9.99e-16`，summary 最大差 `6.66e-16`，便宜控制逐值差为 `0`，调用回执失败数为 `0`。
+
+正式状态是 `FAIL_V133_DETECTOR_SPECTRAL_CAPACITY`，独立状态是 `PASS_INDEPENDENT_RECOMPUTATION_DETECTOR_SPECTRAL_CAPACITY_V133`。两条实现仍共享冻结物理 kernel，所以不能声称端到端物理独立。
+
+### 这一步改变了什么
+
+它关闭的是“在当前四频带 span 上，直接按照等权 field/projected surrogate 训练系数预测器”。它没有证明这个 span 数学上不可能，因为 oracle 优化的只是预注册 surrogate，不是直接在四个最终指标门内寻找 Pareto 可行点。
+
+下一步保持表示、物理壳、数据和成本账不变，结果前冻结 projection-prioritized Pareto 可行性诊断：先要求 field、full-gradient、interior-gradient 全部不越 `1.05`，再优先最小化 observation。若仍不能达到 `3700/3700`，才更有力地说明表示本身还缺方向；若达到，也只说明已开封开发集存在目标函数 headroom，之后才有资格训练最小 observation/geometry-only 系数预测器。
+
+当前边界：
+
+- `strict_representation_capacity_passed=false`；
+- `objective_weight_mismatch_ruled_out=false`；
+- `coefficient_predictor_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_detector_spectral_capacity_v133_result_2026-08-10.md`
+- `docs/poolfire_detector_spectral_capacity_v133_public_summary.json`
+- `assets/figures/poolfire_detector_spectral_capacity_v133.png`
+
+## 2026-08-10：v134 证明简单改目标权重仍不够
+
+### 先说人话
+
+v133 已经把问题缩到很小：三类场和梯度全都过门，只剩 observation 尾部。v134 没有换网络、换数据或换成本账，而是在完全相同的频谱表示里，故意把 observation 的优先级一步步加大，检查是不是原来的等权目标“选错了点”。
+
+结果确实又前进了一截：严格通过从 `2353/3700` 提高到 `2591/3700`。但五条完整轨迹仍然 `0/5`，所以不能说算法成功。更关键的是，projection-only 端点单独已经通过 `2564/3700`，整个有限 Pareto 候选只再多修复 `27` 个单元。这说明继续在同一个全局频谱 span 里拧权重，收益已经接近饱和。
+
+### 我实际做了什么
+
+保持 v133 的逐相机双分量四频带 DCT 表示、同一 `3700` 个已开封单元、同一可观测线搜索、同一未修改 CGLS K1 和同一 `2A+2A^T` 候选账不变。结果前固定六档投影权重 `1/4/16/64/256/1024`，再加入 projection-only 端点。
+
+每个单元先找有没有四指标全部不越 `1.05` 的候选；有就按最坏指标和 observation 排序。没有的话，只在 field、full-gradient、interior-gradient 全部过门的候选中选择 observation 最小者。真值只用于这个已开封容量诊断，不是部署输入。
+
+### 跑出来的结果
+
+- v134 严格联合通过：`2591/3700`；
+- v133 父结果：`2353/3700`；
+- 净增加：`238`，即全部样本的 `6.43` 个百分点；
+- projection-only 单独：`2564/3700`；
+- 有限 Pareto 相对 projection-only 只再增加：`27`；
+- field / full-gradient / interior-gradient：仍全部 `3700/3700`；
+- observation：`2591/3700`；
+- 剩余 `1109` 个失败全部是 observation-only；
+- 完整轨迹：仍为 `0/5`。
+
+相机数依然很重要：`5/7/9/12` 相机分别通过 `310/925`、`625/925`、`833/925`、`823/925`。形态也很重要：p14 通过 `705/740`，p45 只有 `275/740`，p58 为 `456/740`。相反，clean、noise、pose、rotation、translation 等扰动类别的 observation p90 都很接近，medium 与 stress 通过率也几乎相同。当前证据更像是“局部形态与相机覆盖需要更细的空间表达”，而不是“某一种噪声强度没有调好”。
+
+### 独立复算是否站得住
+
+站得住。第二个程序独立重建所有加权方程、七类候选、物理重放、选择器、指标和汇总。candidate/selected 指标最大差都是 `2.23e-15`，candidate/selected 系数最大差为 `1.90e-12 / 1.26e-12`，诊断最大差 `2.57e-10`，summary 最大差 `1.34e-15`，精确数组失败数为 `0`。权重 1 对 v133 的指标复现差只有 `3.34e-16`，系数差为 `0`。
+
+正式状态是 `FAIL_V134_PROJECTION_PARETO_CAPACITY`，独立状态是 `PASS_INDEPENDENT_RECOMPUTATION_PROJECTION_PARETO_V134`。两条实现仍共享冻结物理 kernel，所以不能声称端到端物理独立。
+
+### 这一步改变了什么
+
+关闭的是“固定全局 DCT4x2 表示内，靠有限 projection 权重或 Pareto 调权就足够”的路线。它没有数学证明整个连续 span 绝对不可能，但已经说明简单目标权重失配不是充分解释。
+
+下一步不训练 CNN、FNO、UNO、DeepONet，也不租 GPU。只先冻结并检验一个严格包含 v133 的小型确定性局部空间-频率表示：让每台相机的 correction 不仅有全局频带，还能在 detector 的局部区域表达随火焰形态变化的差异，同时继续保持相机数量可变和排列不变。只有容量达到 `3700/3700` 且完整轨迹 `5/5`，才允许训练最小 observation/geometry-only 预测器。
+
+当前边界：
+
+- `finite_objective_roster_passed=false`；
+- `continuous_span_impossibility_proven=false`；
+- `objective_weight_mismatch_sufficient=false`；
+- `local_space_frequency_hypothesis_proven=false`；
+- `minimal_predictor_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_projection_pareto_capacity_v134_result_2026-08-10.md`
+- `docs/poolfire_projection_pareto_capacity_v134_public_summary.json`
+- `assets/figures/poolfire_projection_pareto_capacity_v134.png`
+
+## 2026-08-10：v135 证明局部空间表达有用，但固定象限仍不够
+
+### 先说人话
+
+v134 已经说明，在同一个全局频谱表示里继续调 observation 权重，收益基本见顶。v135 因此没有训练更大的网络，而是先问一个更基础的问题：让每个频带在 detector 的四个局部区域里分别变化，能不能把剩余 observation 尾部补回来？
+
+答案是“明显有帮助，但还没有过门”。严格通过从 `2591/3700` 提高到 `3162/3700`，新救回 571 个单元；但完整轨迹仍是 `0/5`，所以这不是算法成功，也不授权神经网络训练。
+
+### 我实际做了什么
+
+每个相机、每个位移分量仍使用 v133 的四个 DCT 频带，但每个频带再乘上四个平滑、非负、逐像素和为 1 的 2x2 局部窗口。这样得到的表示严格包含 v134：把四个窗口的系数设成同一个值，就能恢复原来的全局频带。
+
+`5/7/9/12` 相机分别对应 `160/224/288/384` 个方向。所有相机使用同一规则，因此相机换序时表示也按相同方式换序。候选仍进入同一个 exact lift、observation line search 和未修改 CGLS K1，理论在线账仍为 `2A+2A^T`，K4 参考仍为 `4A+4A^T`。
+
+v134 已通过的 2591 个单元直接保留，只对 1109 个失败运行七个真值知晓的局部容量候选。另外，对全部 3700 个单元运行一个只看部署可见 K1 residual 的局部 ridge-LS 便宜控制。validation 和 test 真值没有打开。
+
+### 跑出来的结果
+
+- v135 严格通过：`3162/3700`；
+- 相比 v134 新救回：`571`；
+- 剩余失败：`538`，全部只在 observation；
+- field、完整梯度、内部梯度：全部 `3700/3700`；
+- 完整轨迹：`0/5`；
+- 便宜的 residual-only 局部 LS：`0/3700`。
+
+相机数把瓶颈暴露得很清楚。5 相机条件只通过 `483/925`，留下 `442` 个失败，占全部剩余失败的 `442/538`；7、9、12 相机分别只剩 `63/9/24` 个失败。逐轨迹看，p45-s05 与 p58-s03 分别还剩 `247` 和 `179` 个失败，是主要形态尾部。
+
+这说明固定局部化抓到了真实结构，但四个预设象限不能跟着不同火焰形态和稀疏视角的 residual 位置移动。下一步不该平均扩大模型，而应专门让窗口中心和尺度由当前观测残差决定。
+
+### 独立复算与一次验证器修正
+
+第一版独立验证器完整复算后 fail-closed，因为同一个绝对容差被同时用于 order-one 物理指标和最高约 `1.47e5` 的条件数诊断。科学输出其实已经一致：指标最大差 `2.11e-15`、系数最大差 `7.77e-12`、summary 最大差 `6.66e-16`、离散数组差为 `0`。
+
+我没有放宽科学门，而是先冻结 v135.1 的尺度感知诊断比较，再重新完整运行独立验证。最终诊断缩放差为 `0.1701 < 1`，正式结果和所有物理判决不变。正式状态为 `FAIL_V135_LOCAL_SPACE_FREQUENCY_CAPACITY`，独立状态为 `PASS_INDEPENDENT_RECOMPUTATION_LOCAL_SPACE_FREQUENCY_V135_1`。
+
+### 现在关掉什么，下一步做什么
+
+固定 2x2 窗口关闭，不训练 CNN、FNO、UNO 或 DeepONet。下一门是 v136：只用部署可见 K1 residual 和已知几何生成相机等变的自适应局部窗口，优先检验 5 相机的 442 个失败以及 p45/p58 尾部。仍然先跑真值知晓容量和便宜确定性控制；没有达到 `3700/3700` 与 `5/5` 前，不训练预测器。
+
+当前边界：
+
+- `fixed_2x2_representation_capacity_passed=false`；
+- `fixed_2x2_representation_closed=true`；
+- `remaining_failures_observation_only=true`；
+- `five_camera_sparse_view_is_primary_bottleneck=true`；
+- `minimal_predictor_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_local_space_frequency_capacity_v135_result_2026-08-10.md`
+- `docs/poolfire_local_space_frequency_capacity_v135_public_summary.json`
+- `assets/figures/poolfire_local_space_frequency_capacity_v135.png`
+
+### English checkpoint
+
+v135 multiplies each per-camera, per-component DCT band by four smooth 2x2 partition-of-unity windows. Strict passes rise from `2591/3700` to `3162/3700`, but complete trajectories remain `0/5`. All `538` failures are observation-only, and `442` occur with five cameras. Independent v135.1 recomputation confirms the physical metrics to `2.11e-15`. The fixed-window representation is therefore closed; v136 will test residual-adaptive, camera-equivariant local windows before any neural training.

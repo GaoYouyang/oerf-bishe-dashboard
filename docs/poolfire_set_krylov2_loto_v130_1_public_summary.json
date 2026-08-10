@@ -1,0 +1,53 @@
+{
+  "schema_version": "oerf-poolfire-set-krylov2-loto-v130.1-public-v1",
+  "updated": "2026-08-10",
+  "title_zh": "v130.1：SetKrylov2 整轨迹留一负结果",
+  "title_en": "v130.1: SetKrylov2 complete-trajectory LOTO negative result",
+  "scope_zh": "五条已开封 PoolFire fit 轨迹、3700 个变相机 straight-ray 合成 BOS 单元；5/7/9/12 相机及观测、位姿和内参扰动。",
+  "scope_en": "Five opened PoolFire fit trajectories and 3,700 variable-camera straight-ray synthetic-BOS cells with 5/7/9/12 cameras and observation, pose, and intrinsics perturbations.",
+  "formal_status": "FAIL_V130_1_PRIMARY_HELDOUT_ACCURACY",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_SET_KRYLOV2_LOTO_SCORE_V130_1",
+  "sample_count": 3700,
+  "trajectory_count": 5,
+  "model_parameter_count": 11504,
+  "candidate_exact_A": 2,
+  "candidate_exact_AT": 2,
+  "reference_exact_A": 4,
+  "reference_exact_AT": 4,
+  "trajectory_gate_passed": 0,
+  "trajectory_gate_total": 5,
+  "global_candidate_to_k4": {
+    "field": {"p50": 1.0500941775344916, "p90_higher": 1.0725972453640686, "worst": 1.1128466837226028},
+    "gradient": {"p50": 1.008543813119583, "p90_higher": 1.030807289673933, "worst": 1.0664260275201434},
+    "interior_gradient": {"p50": 1.0359260878284526, "p90_higher": 1.0657929357906213, "worst": 1.1149705673866368},
+    "observation": {"p50": 1.2667920849949612, "p90_higher": 1.449890687259288, "worst": 1.7946064315593002}
+  },
+  "independent_maxima": {
+    "prediction": 0.0,
+    "wrong_pose_prediction": 0.0,
+    "candidate_metric": 6.661338147750939e-16,
+    "aggregate": 6.661338147750939e-16,
+    "coefficient": 1.9984014443252818e-15,
+    "control_metric": 0.0,
+    "call_ledger_mismatch_count": 0
+  },
+  "postopen_root_cause": {
+    "solution_dual_relative_l2": {"p50": 0.222584, "p90_higher": 0.357587, "worst": 0.576287},
+    "direction_dual_relative_l2": {"p50": 0.387044, "p90_higher": 0.520960, "worst": 1.049998},
+    "direction_error_observation_ratio_correlation": 0.6500717822160408,
+    "five_camera_observation_ratio_p50": 1.4199,
+    "twelve_camera_observation_ratio_p50": 1.1636
+  },
+  "decision_zh": "当前双状态网络表示关闭，不以更大模型挽救。下一门改为从精确 K1 residual 预测单一 Range(A^T) correction dual，先做 exact-teacher 容量与便宜控制。",
+  "decision_en": "The current dual-state network representation is closed without a larger-model rescue. The next gate predicts one Range(A^T) correction dual from the exact K1 residual, beginning with exact-teacher capacity and cheap controls.",
+  "claim_boundary": {
+    "mechanism_capacity_breakthrough": true,
+    "learned_initializer_validated": false,
+    "algorithm_breakthrough": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "paper_success": false
+  }
+}
