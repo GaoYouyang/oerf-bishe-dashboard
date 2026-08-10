@@ -13665,3 +13665,90 @@ v138 虽然找到了正确的极线位置，却在形成 detector 方向之前�
 ### English checkpoint
 
 v138 reconstructs exact reported rays and samples peer signed residuals through three frozen GL3 depth anchors. Strict passes rise from `3351/3700` to `3397/3700`, adding `46` rescues. The gain is real but insufficient: all `303` remaining failures are observation-only, `298` occur with five cameras, complete trajectories remain `0/5`, and the cheap deployment-visible control passes `0/3700`. Independent v138.3 recomputation confirms selected metrics to `6.99e-15`. Averaging depth-anchor and peer identity before forming detector directions is therefore closed; the next gate is a depth-resolved 3D ray-consistency volume. No predictor or GPU training is authorized.
+
+## 2026-08-11：v139 把深度尾部减半，但5 相机多解性仍未解决
+
+今天直接完成了 v138 指向的机制实验：不再把三个深度锚点提前平均，而是将每路部署可见的 signed K1 residual 沿报告射线回投到一个冻结的粗三维网格。每个体素分开保留 active cameras 之间的一致信号和冲突，再沿 target ray 投回 detector 方向。
+
+这一步的目的不是训练网络，而是先回答“三维深度信息本身到底够不够”。如果连真值知晓的最佳系数都不能过门，那么租 GPU 训练 predictor 只会更快地学一个已知容量不足的表示。
+
+### 今天真正跑了什么
+
+数据和评价合同全部保持不变：
+
+- 五条已开封 PoolFire 三维轨迹；
+- `3700` 个物理单元；
+- `5/7/9/12` 台 active cameras；
+- clean、观测噪声、旋转、平移、焦距/主点和 combined 扰动；
+- 同一 straight-ray forward、K4 参考、四类指标与逐单元门；
+- 候选在线精确调用账仍为 `2A+2A^T`，K4 为 `4A+4A^T`；
+- validation 和 test 真值仍未打开。
+
+v139 的冻结表示使用 `16x8x8` 粗三维网格、12 个 target-ray 采样点和每相机 72 个方向。对全部 3700 个单元还跑了一个只看部署可见量的 cheap joint-LS control，用来排除“不需要 truth-aware 选择也能直接解决”这个便宜解释。
+
+### 数值结果
+
+- v138 父结果：`3397/3700`；
+- v139 严格四指标联合通过：`3549/3700`；
+- 新救回：`152`；
+- 剩余失败：`151`，全部只在 observation；
+- field / full-gradient / interior-gradient：各 `3700/3700`；
+- cheap deployment-visible joint-LS：`0/3700`；
+- 完整轨迹：`0/5`。
+
+按 active camera 数看：
+
+- 5 cameras：`774/925`，剩 `151`；
+- 7 cameras：`925/925`；
+- 9 cameras：`925/925`；
+- 12 cameras：`925/925`。
+
+按轨迹看，p14 和 p33 已没有逐单元失败，p22 剩 `6`，p45 剩 `73`，p58 剩 `72`。p45/p58 合计 `145/151`，说明高功率形态和稀疏视角的联合深度歧义已成为很具体的剩余问题。
+
+剩余失败在 clean / noise / rotation / translation / intrinsics / pose-all / combined 中分别为 `4 / 26 / 24 / 27 / 24 / 23 / 23`。因此这不只是一个噪声问题；即使 clean 也存在 5 相机深度多解性，而位姿、内参和组合扰动会扩大这个尾部。
+
+### 独立复算与可信边界
+
+第二实现没有导入正式 v139 runner，独立重建射线回投、三维一致性体、候选、物理重放、便宜控制、3700 个逐单元门和逐轨迹尾部。结果为：
+
+- selected metric 最大差：`1.54e-11`；
+- local candidate metric 最大差：`1.58e-11`；
+- cheap metric 最大差：`1.13e-11`；
+- summary 最大差：`1.04e-11`；
+- 精确离散输出失败：`0`；
+- 求解驻点残差：`1.49e-14`；
+- formal 和父证据树在验证前后未改变。
+
+正式状态为 `FAIL_V139_DEPTH_RESOLVED_RAY_CONSISTENCY_CAPACITY`，独立状态为 `PASS_INDEPENDENT_RECOMPUTATION_DEPTH_RESOLVED_RAY_CONSISTENCY_V139_3`。
+
+### 为什么是“有价值但未成功”
+
+v139 相对 v138 新救回 152 个，几乎把剩余尾部减半，这足以证明“先在三维中对齐真实射线，再分开保留跨视角一致和冲突”是正确方向。
+
+但 v139 最后仍把 target-ray 上的深度分布压缩成固定 P1/P2 两个低阶矩。对 7/9/12 相机，视角冗余足以补偿；对 5 相机，多个可能深度、peer residual 符号冲突与三角测量角的差别不能被两个矩唯一表达。因此当前固定 P1/P2 表示已关闭，不通过调矩权或上大模型挽救。
+
+下一门是物理上不同的 target-ray 多假设深度代价体：保留固定 depth bins、peer residual 的符号一致/冲突，并按三角测量角或基线分层。它仍必须保持部署可见输入、可变相机数、相机换序等变、`2A+2A^T` 壳和同一 3700 单元八门。只有容量真正达到 `3700/3700` 且完整轨迹 `5/5`，才能训练最小 predictor。
+
+当前边界：
+
+- `depth_resolved_3d_consistency_useful_but_insufficient=true`；
+- `fixed_p1_p2_depth_moment_representation_closed=true`；
+- `remaining_failures_observation_only=true`；
+- `all_remaining_failures_five_camera=true`；
+- `minimal_predictor_authorized=false`；
+- `gpu_rental_recommended_now=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_depth_resolved_ray_consistency_capacity_v139_result_2026-08-11.md`
+- `docs/poolfire_depth_resolved_ray_consistency_capacity_v139_public_summary.json`
+- `assets/figures/poolfire_depth_resolved_ray_consistency_capacity_v139.png`
+
+### English checkpoint
+
+v139 backprojects deployment-visible signed K1 residuals along exact reported rays into a frozen depth-resolved 3D consistency volume. Strict passes rise from `3397/3700` to `3549/3700`, rescuing `152` additional cells. The gain is substantial but insufficient: all `151` remaining failures are observation-only and all occur with five cameras, while complete trajectories remain `0/5` and the cheap deployment-visible control remains `0/3700`. Independent v139.3 recomputation confirms selected metrics to `1.54e-11` with zero discrete-output mismatches. Fixed P1/P2 depth moments are therefore closed. The next gate is a five-camera-focused, target-ray-conditioned multi-hypothesis depth cost volume that preserves depth bins, peer-residual sign conflict, and triangulation-angle or baseline strata before any predictor or GPU training is authorized.
