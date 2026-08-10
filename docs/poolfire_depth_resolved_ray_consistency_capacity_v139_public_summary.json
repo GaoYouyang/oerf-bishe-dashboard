@@ -1,0 +1,137 @@
+{
+  "schema_version": "oerf-public-poolfire-depth-resolved-ray-consistency-capacity-v139.3",
+  "updated": "2026-08-11",
+  "title_zh": "v139 深度分辨三维射线一致性容量诊断",
+  "title_en": "v139 Depth-Resolved 3D Ray-Consistency Capacity Diagnostic",
+  "status": "FAIL_V139_DEPTH_RESOLVED_RAY_CONSISTENCY_CAPACITY",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_DEPTH_RESOLVED_RAY_CONSISTENCY_V139_3",
+  "sample_count": 3700,
+  "trajectory_count": 5,
+  "strict_gate": {
+    "v137_passed": 3351,
+    "v138_passed": 3397,
+    "v139_passed": 3549,
+    "v139_rescued_from_v138": 152,
+    "v139_remaining_failures": 151,
+    "complete_trajectories_passed": 0,
+    "complete_trajectories_total": 5,
+    "per_cell_ratio_limit": 1.05,
+    "trajectory_p90_ratio_limit": 1.02,
+    "trajectory_worst_ratio_limit": 1.05
+  },
+  "metric_pass_counts": {
+    "field_relative_l2": 3700,
+    "gradient_relative_l2": 3700,
+    "interior_gradient_relative_l2": 3700,
+    "reported_observation_relative_l2": 3549
+  },
+  "remaining_failure_pattern": {
+    "observation_only": 151,
+    "field_or_gradient": 0,
+    "observation_ratio_p50": 1.058912,
+    "observation_ratio_p90_higher": 1.072718,
+    "observation_ratio_worst": 1.086717
+  },
+  "cell_pass_by_camera_count": {
+    "5": {"total": 925, "v138_passed": 627, "v139_passed": 774, "rescued": 147, "remaining": 151},
+    "7": {"total": 925, "v138_passed": 920, "v139_passed": 925, "rescued": 5, "remaining": 0},
+    "9": {"total": 925, "v138_passed": 925, "v139_passed": 925, "rescued": 0, "remaining": 0},
+    "12": {"total": 925, "v138_passed": 925, "v139_passed": 925, "rescued": 0, "remaining": 0}
+  },
+  "trajectory_rows": [
+    {"trajectory": "p=14kw_size=05", "total": 740, "v138_passed": 738, "v139_passed": 740, "rescued": 2, "remaining": 0, "observation_p90_higher": 1.037070, "observation_worst": 1.049961},
+    {"trajectory": "p=22kw_size=03", "total": 740, "v138_passed": 727, "v139_passed": 734, "rescued": 7, "remaining": 6, "observation_p90_higher": 1.046037, "observation_worst": 1.062677},
+    {"trajectory": "p=33kw_size=01", "total": 740, "v138_passed": 726, "v139_passed": 740, "rescued": 14, "remaining": 0, "observation_p90_higher": 1.045625, "observation_worst": 1.049933},
+    {"trajectory": "p=45kw_size=05", "total": 740, "v138_passed": 610, "v139_passed": 667, "rescued": 57, "remaining": 73, "observation_p90_higher": 1.049974, "observation_worst": 1.069615},
+    {"trajectory": "p=58kw_size=03", "total": 740, "v138_passed": 596, "v139_passed": 668, "rescued": 72, "remaining": 72, "observation_p90_higher": 1.049964, "observation_worst": 1.086717}
+  ],
+  "factor_rows": [
+    {"factor": "clean", "total": 100, "v138_passed": 93, "v139_passed": 96, "rescued": 3, "remaining": 4},
+    {"factor": "noise_only", "total": 600, "v138_passed": 553, "v139_passed": 574, "rescued": 21, "remaining": 26},
+    {"factor": "rotation_only", "total": 600, "v138_passed": 555, "v139_passed": 576, "rescued": 21, "remaining": 24},
+    {"factor": "translation_only", "total": 600, "v138_passed": 550, "v139_passed": 573, "rescued": 23, "remaining": 27},
+    {"factor": "intrinsics_only", "total": 600, "v138_passed": 554, "v139_passed": 576, "rescued": 22, "remaining": 24},
+    {"factor": "pose_all", "total": 600, "v138_passed": 551, "v139_passed": 577, "rescued": 26, "remaining": 23},
+    {"factor": "combined", "total": 600, "v138_passed": 541, "v139_passed": 577, "rescued": 36, "remaining": 23}
+  ],
+  "representation": {
+    "parent": "the complete v138 geometry-faithful ray-overlap basis",
+    "volume_shape_zyx": [16, 8, 8],
+    "ray_samples": 12,
+    "volume_message": "signed K1 residual vectors are splatted along reported rays; leave-one-camera-out consensus, agreement, normalized disagreement, and visibility are retained per voxel",
+    "depth_readout": "fixed P1 odd and P2 even depth moments are read back along each target ray",
+    "limitation": "a fixed pair of low-order depth moments still compresses multimodal depth support and peer-baseline identity in five-camera cases",
+    "full_basis_count_per_camera": 72,
+    "full_basis_count_by_camera_count": {"5": 360, "7": 504, "9": 648, "12": 864},
+    "strictly_contains_v138_parent": true,
+    "camera_permutation_equivariant": true,
+    "variable_camera_count": true,
+    "candidate_shell": "2A+2A^T",
+    "reference_shell": "4A+4A^T"
+  },
+  "controls": {
+    "deployment_visible_depth_resolved_joint_ls_passed": 0,
+    "deployment_visible_depth_resolved_joint_ls_total": 3700,
+    "minimal_predictor_authorized": false,
+    "cnn_fno_uno_deeponet_training_authorized": false,
+    "gpu_training_authorized": false,
+    "wall_rss_gate_authorized": false
+  },
+  "rescue_attribution": {
+    "depth_resolved_rescues": 152,
+    "five_camera_rescues": 147,
+    "remaining_failures": 151,
+    "remaining_five_camera": 151,
+    "remaining_p45_p58": 145
+  },
+  "selected_source_histogram": {
+    "v138_parent": 3398,
+    "projection_weight_1": 70,
+    "projection_weight_4": 48,
+    "projection_weight_16": 5,
+    "projection_weight_64": 2,
+    "projection_weight_256": 0,
+    "projection_weight_1024": 0,
+    "projection_only": 177,
+    "cheap_control": 0
+  },
+  "mechanism_diagnosis": {
+    "depth_resolved_consensus_is_incrementally_useful": true,
+    "fixed_p1_p2_depth_moments_are_sufficient": false,
+    "five_camera_pass_fraction": 0.836757,
+    "seven_camera_pass_fraction": 1.0,
+    "nine_camera_pass_fraction": 1.0,
+    "twelve_camera_pass_fraction": 1.0,
+    "diagnosis": "Depth-resolved cross-view consensus removes every seven-, nine-, and twelve-camera cell failure and halves the five-camera failure set. The unresolved tail is now exclusively five-camera and is concentrated in p45/p58, indicating that fixed low-order depth moments still erase target-ray depth hypotheses and peer-baseline identity where angular redundancy is weakest."
+  },
+  "independent_recomputation": {
+    "maximum_selected_metric_difference": 1.5375034578823943e-11,
+    "maximum_local_candidate_metric_difference": 1.5812462450526255e-11,
+    "maximum_cheap_control_metric_difference": 1.1348810780020813e-11,
+    "maximum_coefficient_difference": 2.6561253030354948e-8,
+    "maximum_selected_summary_difference": 1.0374812120517163e-11,
+    "maximum_solver_stationarity": 1.487688358201431e-14,
+    "maximum_condition_relative_difference": 9.068761371313287e-10,
+    "maximum_physical_solver_diagnostic_difference": 9.752616492164634e-9,
+    "exact_array_failures": 0,
+    "formal_tree_unchanged": true,
+    "parent_trees_unchanged": true
+  },
+  "audit_note": {
+    "discarded_formal_attempt": "An initial formal attempt used a hand-copied camera-mask digest that did not match the sealed input and was discarded; the complete formal experiment was rerun after the input seal was repaired.",
+    "inconclusive_independent_attempt": "A prior independent run reproduced every scientific metric, discrete selection, gate, count, and failure stratum but stopped because one legacy tolerance conflated physical outputs with non-unique coefficients and representation diagnostics.",
+    "final_action": "Typed numerical-equivalence tolerances were frozen before a fresh full recomputation. Scientific metrics remained at 1e-9 absolute tolerance, trajectory summaries at 1e-10, and every science-changing discrete result required exact equality."
+  },
+  "next_gate_zh": "关闭 v139 的固定 P1/P2 深度矩表示。下一门是面向 5 相机的 target-ray 条件多假设深度代价体：沿目标射线保留固定深度 bins，把 peer residual 的符号一致性、冲突与三角测量角/基线分层保留下来，而不是压成两个低阶矩。它仍须只读部署可见 residual 与报告几何、对相机换序等变、支持 5/7/9/12 相机，并在同一 2A+2A^T 壳中先过 3700/3700、5/5 与便宜控制门。",
+  "next_gate_en": "Close the fixed P1/P2 depth-moment representation. The next gate is a five-camera-focused, target-ray-conditioned multi-hypothesis depth cost volume: retain fixed depth bins and preserve peer-residual sign agreement, conflict, and triangulation-angle or baseline strata instead of compressing them into two low-order moments. It must still use only deployment-visible residuals and reported geometry, remain camera-permutation equivariant, support 5/7/9/12 cameras, and pass 3700/3700 cells, 5/5 complete trajectories, and cheap controls inside the same 2A+2A^T shell before predictor training.",
+  "claim_boundary": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "validation_truth_read": false,
+    "test_truth_read": false
+  }
+}

@@ -65,16 +65,16 @@ def test_sparse_view_tail_and_independent_recomputation_are_consistent() -> None
     assert summary["audit_note"]["all_15_numeric_arrays_byte_identical"] is True
 
 
-def test_current_evidence_and_pages_point_to_v138_in_both_languages() -> None:
+def test_current_evidence_and_pages_preserve_v138_history_in_both_languages() -> None:
     evidence = load_json(EVIDENCE_PATH)
     page_texts = [path.read_text(encoding="utf-8") for path in PUBLIC_PAGES]
 
-    assert evidence["formal_status"] == "FAIL_V138_RAY_OVERLAP_EPIPOLAR_CAPACITY"
-    assert evidence["engineering_status"] == (
+    assert evidence["v138_ray_overlap_epipolar_formal_status"] == (
+        "FAIL_V138_RAY_OVERLAP_EPIPOLAR_CAPACITY"
+    )
+    assert evidence["v138_ray_overlap_epipolar_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_RAY_OVERLAP_EPIPOLAR_V138_3"
     )
-    assert evidence["headline"].startswith("v138 reconstructs exact reported rays")
-    assert evidence["headline_zh"].startswith("v138 重建真实报告射线")
     assert evidence["metrics"]["v138_selected_cell_pass_count"] == 3397
     assert evidence["metrics"]["v138_observation_only_failure_count"] == 303
     assert evidence["metrics"]["v138_five_camera_remaining_failure_count"] == 298
