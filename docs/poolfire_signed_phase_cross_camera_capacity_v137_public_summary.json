@@ -1,0 +1,146 @@
+{
+  "schema_version": "oerf-public-poolfire-signed-phase-cross-camera-capacity-v137.1",
+  "updated": "2026-08-10",
+  "title_zh": "v137 有符号相位与跨相机几何容量诊断",
+  "title_en": "v137 Signed-Phase and Cross-Camera Geometry Capacity Diagnostic",
+  "status": "FAIL_V137_SIGNED_PHASE_CROSS_CAMERA_CAPACITY",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_PHASE_CROSS_CAMERA_V137_1",
+  "sample_count": 3700,
+  "trajectory_count": 5,
+  "strict_gate": {
+    "v135_passed": 3162,
+    "v136_passed": 3215,
+    "v137_passed": 3351,
+    "v137_rescued_from_v136": 136,
+    "v137_remaining_failures": 349,
+    "complete_trajectories_passed": 0,
+    "complete_trajectories_total": 5,
+    "per_cell_ratio_limit": 1.05,
+    "trajectory_p90_ratio_limit": 1.02,
+    "trajectory_worst_ratio_limit": 1.05
+  },
+  "metric_pass_counts": {
+    "field_relative_l2": 3700,
+    "gradient_relative_l2": 3700,
+    "interior_gradient_relative_l2": 3700,
+    "reported_observation_relative_l2": 3351
+  },
+  "remaining_failure_pattern": {
+    "observation_only": 349,
+    "field_or_gradient": 0,
+    "observation_ratio_p50": 1.071397,
+    "observation_ratio_p90_higher": 1.116677,
+    "observation_ratio_worst": 1.159885
+  },
+  "cell_pass_by_camera_count": {
+    "5": {"total": 925, "v136_passed": 516, "v137_passed": 582, "rescued": 66, "remaining": 343},
+    "7": {"total": 925, "v136_passed": 875, "v137_passed": 919, "rescued": 44, "remaining": 6},
+    "9": {"total": 925, "v136_passed": 920, "v137_passed": 925, "rescued": 5, "remaining": 0},
+    "12": {"total": 925, "v136_passed": 904, "v137_passed": 925, "rescued": 21, "remaining": 0}
+  },
+  "trajectory_rows": [
+    {"trajectory": "p=14kw_size=05", "total": 740, "v136_passed": 737, "v137_passed": 737, "rescued": 0, "remaining": 3, "observation_p90_higher": 1.037070, "observation_worst": 1.066108},
+    {"trajectory": "p=22kw_size=03", "total": 740, "v136_passed": 717, "v137_passed": 726, "rescued": 9, "remaining": 14, "observation_p90_higher": 1.046408, "observation_worst": 1.074781},
+    {"trajectory": "p=33kw_size=01", "total": 740, "v136_passed": 690, "v137_passed": 726, "rescued": 36, "remaining": 14, "observation_p90_higher": 1.046423, "observation_worst": 1.066337},
+    {"trajectory": "p=45kw_size=05", "total": 740, "v136_passed": 507, "v137_passed": 568, "rescued": 61, "remaining": 172, "observation_p90_higher": 1.065263, "observation_worst": 1.087911},
+    {"trajectory": "p=58kw_size=03", "total": 740, "v136_passed": 564, "v137_passed": 594, "rescued": 30, "remaining": 146, "observation_p90_higher": 1.092504, "observation_worst": 1.159885}
+  ],
+  "factor_rows": [
+    {"factor": "clean", "total": 100, "v136_passed": 88, "v137_passed": 91, "rescued": 3, "remaining": 9},
+    {"factor": "noise_only", "total": 600, "v136_passed": 525, "v137_passed": 543, "rescued": 18, "remaining": 57},
+    {"factor": "rotation_only", "total": 600, "v136_passed": 525, "v137_passed": 546, "rescued": 21, "remaining": 54},
+    {"factor": "translation_only", "total": 600, "v136_passed": 521, "v137_passed": 546, "rescued": 25, "remaining": 54},
+    {"factor": "intrinsics_only", "total": 600, "v136_passed": 527, "v137_passed": 544, "rescued": 17, "remaining": 56},
+    {"factor": "pose_all", "total": 600, "v136_passed": 519, "v137_passed": 547, "rescued": 28, "remaining": 53},
+    {"factor": "combined", "total": 600, "v136_passed": 510, "v137_passed": 534, "rescued": 24, "remaining": 66}
+  ],
+  "remaining_by_severity": {
+    "clean": 9,
+    "medium": 160,
+    "stress": 180
+  },
+  "representation": {
+    "parent": "v136 residual-energy adaptive 2x2 local windows with four detector DCT bands",
+    "self_phase": "bounded odd tanh phase of each deployment-visible K1 residual map, normalized by its RMS",
+    "cross_camera_coupling": "peer residual vectors are lifted into the reported world frame, averaged over the active set, and projected into each target camera frame",
+    "spatial_correspondence": "same normalized detector coordinate across cameras; no ray-overlap or epipolar transport",
+    "self_basis_count_per_camera": 40,
+    "full_basis_count_per_camera": 48,
+    "full_basis_count_by_camera_count": {"5": 240, "7": 336, "9": 432, "12": 576},
+    "strictly_contains_v136_parent": true,
+    "camera_permutation_equivariant": true,
+    "variable_camera_count": true,
+    "candidate_shell": "2A+2A^T",
+    "reference_shell": "4A+4A^T"
+  },
+  "controls": {
+    "deployment_visible_signed_phase_joint_ls_passed": 0,
+    "deployment_visible_signed_phase_joint_ls_total": 3700,
+    "minimal_predictor_authorized": false,
+    "cnn_fno_uno_deeponet_training_authorized": false,
+    "gpu_training_authorized": false
+  },
+  "rescue_attribution": {
+    "self_phase_rescues": 92,
+    "peer_geometry_incremental_rescues": 44,
+    "total_rescues": 136,
+    "remaining_failures": 349,
+    "remaining_five_camera": 343,
+    "remaining_p45_p58": 318
+  },
+  "selected_source_histogram": {
+    "v136_parent": 3227,
+    "self_phase_family": 42,
+    "self_peer_phase_family": 431,
+    "cheap_control": 0
+  },
+  "oracle_selection": {
+    "all_metric_feasible": 136,
+    "physical_feasible_observation_minimum": 349,
+    "fallback": 0
+  },
+  "mechanism_diagnosis": {
+    "signed_phase_is_useful": true,
+    "cross_camera_geometry_is_incrementally_useful": true,
+    "same_pixel_peer_coupling_is_sufficient": false,
+    "five_camera_pass_fraction": 0.629189,
+    "seven_camera_pass_fraction": 0.993514,
+    "nine_camera_pass_fraction": 1.0,
+    "twelve_camera_pass_fraction": 1.0,
+    "diagnosis": "The residual sign and peer-frame vector coupling recover real capacity, but almost all unresolved cells collapse into the five-camera regime. The remaining bottleneck is sparse-view geometric correspondence or rank, not residual phase alone."
+  },
+  "independent_recomputation": {
+    "maximum_self_phase_difference": 0,
+    "maximum_peer_phase_difference": 0,
+    "maximum_peer_residual_rms_difference": 0,
+    "maximum_cheap_control_metric_difference": 3.3306690738754696e-16,
+    "maximum_coefficient_difference": 1.7583046130198454e-11,
+    "maximum_local_candidate_metric_difference": 4.551914400963142e-15,
+    "maximum_selected_metric_difference": 3.885780586188048e-15,
+    "maximum_summary_difference": 4.884981308350689e-15,
+    "exact_array_failures": 0,
+    "formal_tree_unchanged": true,
+    "parent_trees_unchanged": true
+  },
+  "advisor_guidance": {
+    "cfd_benchmark_first": true,
+    "observation_noise": true,
+    "camera_rotation_translation_intrinsics_and_combined_errors": true,
+    "camera_counts": [5, 7, 9, 12],
+    "camera_add_drop_and_order": true,
+    "coordinate_change_and_diffeomorphic_generalization": true,
+    "real_experimental_data_after_public_proxy": true
+  },
+  "next_gate_zh": "关闭按同一归一化像素坐标平均 peer residual 的 v137 表示。下一门改为几何上更真实的射线重叠/极线输运：利用已知相机内外参沿目标射线设置冻结深度锚点，把其他相机的有符号 residual 重采样到对应极线位置，形成相机换序等变、可变数量的便宜跨视角消息。仍先跑确定性 control 和 truth-aware capacity；只有 3700/3700 与 5/5 完整轨迹同时过门，才允许最小预测器。",
+  "next_gate_en": "Close the v137 representation that averages peer residuals at the same normalized detector coordinate. The next gate uses physically meaningful ray-overlap or epipolar transport: frozen depth anchors along each target ray reproject signed peer residuals through known intrinsics and extrinsics into corresponding epipolar locations, yielding a variable-cardinality, camera-permutation-equivariant cheap message. Deterministic controls and truth-aware capacity come first; a minimal predictor is authorized only after 3,700/3,700 cells and 5/5 complete trajectories pass.",
+  "claim_boundary": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "validation_truth_read": false,
+    "test_truth_read": false
+  }
+}

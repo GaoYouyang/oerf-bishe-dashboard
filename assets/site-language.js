@@ -117,13 +117,12 @@
     const bar = document.createElement('div');
     bar.className = 'site-language-bar';
     bar.dataset.siteLanguageSwitcher = '';
-    bar.setAttribute('aria-label', '语言切换 / Language switcher');
     bar.innerHTML = `
       <p class="site-language-page-note" data-site-language-page-note hidden>This archived page has not yet been translated; the Chinese source is preserved.</p>
       <div class="site-language-switcher" role="group" aria-label="Language / 语言">
         <span class="site-language-mark" aria-hidden="true">文 / A</span>
-        <button class="site-language-option" type="button" lang="zh-CN" data-site-language-option="zh" data-i18n-title-zh="切换到中文" data-i18n-title-en="Switch to Chinese">中文</button>
-        <button class="site-language-option" type="button" lang="en" data-site-language-option="en" data-i18n-title-zh="切换到英文" data-i18n-title-en="Switch to English">EN</button>
+        <button class="site-language-option" type="button" lang="zh-CN" data-site-language-option="zh">中文</button>
+        <button class="site-language-option" type="button" lang="en" data-site-language-option="en">EN</button>
       </div>`;
     const host = document.querySelector('header') || document.body;
     host.insertBefore(bar, host.firstChild);
