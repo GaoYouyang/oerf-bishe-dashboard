@@ -63,16 +63,16 @@ def test_five_camera_tail_and_independent_recomputation_are_consistent() -> None
     assert independent["formal_tree_unchanged"] is True
 
 
-def test_current_evidence_and_pages_point_to_v139_in_both_languages() -> None:
+def test_current_evidence_and_pages_preserve_v139_as_bilingual_parent_evidence() -> None:
     evidence = load_json(EVIDENCE_PATH)
     page_texts = [path.read_text(encoding="utf-8") for path in PUBLIC_PAGES]
 
-    assert evidence["formal_status"] == "FAIL_V139_DEPTH_RESOLVED_RAY_CONSISTENCY_CAPACITY"
-    assert evidence["engineering_status"] == (
+    assert evidence["v139_depth_resolved_ray_consistency_formal_status"] == (
+        "FAIL_V139_DEPTH_RESOLVED_RAY_CONSISTENCY_CAPACITY"
+    )
+    assert evidence["v139_depth_resolved_ray_consistency_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_DEPTH_RESOLVED_RAY_CONSISTENCY_V139_3"
     )
-    assert evidence["headline"].startswith("v139 backprojects signed K1 residuals")
-    assert evidence["headline_zh"].startswith("v139 将 signed K1 residual")
     assert evidence["metrics"]["v139_selected_cell_pass_count"] == 3549
     assert evidence["metrics"]["v139_observation_only_failure_count"] == 151
     assert evidence["metrics"]["v139_five_camera_remaining_failure_count"] == 151

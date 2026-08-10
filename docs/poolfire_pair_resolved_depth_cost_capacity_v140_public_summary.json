@@ -1,0 +1,102 @@
+{
+  "schema_version": "oerf-public-poolfire-pair-resolved-depth-cost-capacity-v140.3",
+  "updated": "2026-08-11",
+  "title_zh": "v140 成对深度代价表示 Stage A 容量诊断",
+  "title_en": "v140 Pair-Resolved Depth-Cost Stage-A Capacity Diagnostic",
+  "formal_status": "PASS_V140_STAGE_A_HARD_FAILURE_CAPACITY",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PAIR_RESOLVED_DEPTH_COST_V140",
+  "stage_a": {
+    "parent_hard_failure_count": 151,
+    "evaluated_count": 151,
+    "passed_count": 151,
+    "remaining_failure_count": 0,
+    "cheap_control_passed_count": 0,
+    "stage_b_authorized": true,
+    "stage_b_active_tail_count": 2199,
+    "all_3700_cells_proven": false,
+    "all_five_complete_trajectories_proven": false
+  },
+  "representation": {
+    "parent": "the complete v139 72C depth-resolved 3D ray-consistency basis",
+    "target_ray_samples": 12,
+    "depth_bins": 6,
+    "samples_per_bin": 2,
+    "angle_branches": ["constant", "centered_sine_squared"],
+    "pair_direction_count_formula": "24*C*(C-1)",
+    "total_direction_count_formula": "72*C + 24*C*(C-1)",
+    "five_camera_direction_count": 840,
+    "camera_permutation_equivariant": true,
+    "variable_camera_count": true,
+    "representation_inputs_are_deployment_visible": true,
+    "capacity_coefficients_are_truth_aware": true,
+    "candidate_shell": "2A+2A^T",
+    "reference_shell": "4A+4A^T"
+  },
+  "selected_source_histogram": {
+    "pair_depth_projection_only": 132,
+    "pair_depth_projection_weight_1": 4,
+    "pair_depth_projection_weight_4": 6,
+    "pair_depth_projection_weight_16": 7,
+    "pair_depth_projection_weight_64": 2,
+    "pair_depth_projection_weight_256": 0,
+    "pair_depth_projection_weight_1024": 0,
+    "pair_depth_residual_joint_ls": 0,
+    "v139_parent": 0
+  },
+  "selected_ratio_quantiles": {
+    "field_relative_l2": {"p50": 1.004175, "p90_higher": 1.006457, "worst": 1.007293},
+    "gradient_relative_l2": {"p50": 1.001493, "p90_higher": 1.006657, "worst": 1.009623},
+    "interior_gradient_relative_l2": {"p50": 1.005076, "p90_higher": 1.007377, "worst": 1.008883},
+    "reported_observation_relative_l2": {"p50": 1.016866, "p90_higher": 1.020157, "worst": 1.029300}
+  },
+  "cheap_control_ratio_quantiles": {
+    "field_relative_l2": {"p50": 1.163705, "p90_higher": 1.185240, "worst": 1.189144},
+    "gradient_relative_l2": {"p50": 1.047301, "p90_higher": 1.068368, "worst": 1.080733},
+    "interior_gradient_relative_l2": {"p50": 1.029185, "p90_higher": 1.051224, "worst": 1.055883},
+    "reported_observation_relative_l2": {"p50": 1.807949, "p90_higher": 1.854309, "worst": 1.901595}
+  },
+  "independent_recomputation": {
+    "maximum_selected_metric_difference": 8.689382546833713e-12,
+    "maximum_local_candidate_metric_difference": 8.689382546833713e-12,
+    "maximum_cheap_control_metric_difference": 3.6025626926061705e-12,
+    "maximum_pair_diagnostic_difference": 8.326672684688674e-16,
+    "maximum_coefficient_difference": 2.628045763231057e-7,
+    "maximum_selected_quantile_difference": 4.292122213200855e-12,
+    "maximum_cheap_quantile_difference": 1.0345058143457209e-12,
+    "maximum_condition_relative_difference": 1.746824104661509e-8,
+    "maximum_stationarity": 7.740003808168109e-14,
+    "exact_array_failures": 0,
+    "call_receipt_failures": 0,
+    "formal_tree_unchanged": true,
+    "parent_trees_unchanged": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "numerical_audit": {
+    "post_open_typed_tolerance_repair": true,
+    "reason": "A full independent recomputation matched every science-changing metric, selection, gate, count, and receipt, but a legacy absolute tolerance rejected high-condition-number solver diagnostics. A typed diagnostic-only tolerance addendum was frozen before a fresh full recomputation.",
+    "science_metric_absolute_tolerance": 2e-8,
+    "condition_relative_tolerance": 1e-7,
+    "coefficient_absolute_tolerance": 2e-6,
+    "science_changing_discrete_arrays_require_exact_match": true,
+    "scientific_roster_thresholds_candidates_and_selectors_unchanged": true
+  },
+  "controls": {
+    "minimal_predictor_authorized": false,
+    "cnn_fno_uno_deeponet_training_authorized": false,
+    "gpu_training_authorized": false,
+    "wall_rss_gate_authorized": false,
+    "validation_or_test_opening_authorized": false
+  },
+  "next_gate_zh": "结果前单独冻结并运行 Stage B：只评估固定的 2199 个 v139 active-tail 单元，再与封存的 v139 父结果合并。只有 3700/3700 且 5/5 完整轨迹都通过并经独立复算，才允许冻结最小的换序等变 observation/geometry-only 系数预测器。",
+  "next_gate_en": "Freeze and run Stage B separately on the fixed 2,199-cell v139 active tail, then merge it with the sealed v139 parent evidence. A minimal permutation-equivariant observation/geometry-only coefficient predictor may be frozen only after independent recomputation proves 3,700/3,700 cells and 5/5 complete trajectories.",
+  "claim_boundary": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "validation_truth_read": false,
+    "test_truth_read": false
+  }
+}

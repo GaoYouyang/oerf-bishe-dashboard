@@ -13752,3 +13752,93 @@ v139 相对 v138 新救回 152 个，几乎把剩余尾部减半，这足以证�
 ### English checkpoint
 
 v139 backprojects deployment-visible signed K1 residuals along exact reported rays into a frozen depth-resolved 3D consistency volume. Strict passes rise from `3397/3700` to `3549/3700`, rescuing `152` additional cells. The gain is substantial but insufficient: all `151` remaining failures are observation-only and all occur with five cameras, while complete trajectories remain `0/5` and the cheap deployment-visible control remains `0/3700`. Independent v139.3 recomputation confirms selected metrics to `1.54e-11` with zero discrete-output mismatches. Fixed P1/P2 depth moments are therefore closed. The next gate is a five-camera-focused, target-ray-conditioned multi-hypothesis depth cost volume that preserves depth bins, peer-residual sign conflict, and triangulation-angle or baseline strata before any predictor or GPU training is authorized.
+
+## 2026-08-11：v140 Stage A 补齐 151 个硬失败，但还不能写“3700 全过”
+
+### 先说人话
+
+v139 已经把三维射线信息放回体素空间，但最后仍用两个 P1/P2 低阶矩把 target ray 上的信息压扁了。v140 改成不再提前混合：它分别保留“哪一台目标相机、哪一台 peer 相机、射线上的哪一个 depth bin、两条射线夹角属于哪个分支”。
+
+我们先没有直接跑全部 3700 个单元，而是按结果前合同只看 v139 剩下的 151 个最难失败。如果这 151 个都救不回，新表示就应立即关闭；如果全部救回，才值得付出更大成本跑全量 Stage B。
+
+结果是 **151/151 全部救回**，而廉价 joint-LS 对照是 **0/151**。第二套独立实现也从射线和重投影开始重新算出相同结论。这个结果很值得高兴：它证明 v139 的最后尾部不是 `2A+2A^T` 壳天然无解，而是之前丢掉了 target-peer 与 depth-bin 身份。
+
+但要特别诚实：这不是 3700/3700。Stage A 只检验了固定硬集，Stage B 的 2199 个 active-tail 单元还没跑，完整轨迹 5/5 也没证明。
+
+### 我实际做了什么
+
+1. 保留完整 v139 父表示，每相机 72 个方向。
+2. 对每个有序 target-peer 相机对，沿目标射线取 12 个固定样本。
+3. 把 12 个样本分成 6 个双样本 depth bins，避免把多峰深度支持压成两个矩。
+4. 在 peer detector 上重投影并双线性读取 signed K1 residual。
+5. 分开保留 constant 与 centered-sine-squared 两个角度分支，使不同三角测量几何不会被直接平均。
+6. 新增方向数为 `24C(C-1)`，总数为 `72C + 24C(C-1)`；5 相机时为 `840` 个。
+7. 表示构造只看 K1 residual 与报告几何，支持 5/7/9/12 相机并对相机换序等变。
+8. 容量系数仍由已开封真值辅助求取，所以这一轮只是上界诊断，不是上线预测器。
+
+候选在线精确账仍是 `2A+2A^T`，K4 参考是 `4A+4A^T`。
+
+### 正式结果
+
+- 固定硬失败：`151`；
+- 评估：`151`；
+- 严格通过：`151/151`；
+- 剩余：`0`；
+- cheap deployment-visible joint-LS：`0/151`；
+- Stage B active tail：`2199`，未运行；
+- 全量 3700/3700：未证明；
+- 完整轨迹 5/5：未证明。
+
+151 个候选中，projection-only 目标选中 `132` 个；固定权重 1 / 4 / 16 / 64 分别选中 `4 / 6 / 7 / 2` 个。权重 256、1024、v139 父端点和便宜对照都没有被选中。
+
+### 独立复算与数值审计
+
+第二实现没有导入 v140 正式 core 或 runner，独立重建 target rays、peer reprojection、双线性采样、phase、840 个方向、求解、物理重放、门和调用回执。最终：
+
+- selected metric 最大差：`8.69e-12`；
+- cheap metric 最大差：`3.60e-12`；
+- pair diagnostic 最大差：`8.33e-16`；
+- selected quantile 最大差：`4.29e-12`；
+- 非唯一系数最大差：`2.63e-7`；
+- condition number 相对差：`1.75e-8`；
+- 影响判决的精确数组失败：`0`；
+- 调用回执失败：`0`。
+
+审计中有一个必须公开的插曲：一次完整复算已经匹配所有科学指标、选择、门、计数与回执，却因为最高约 `2.00e9` 的条件数诊断被旧统一绝对容差拒绝。查清后没有改样本、候选、门槛、选择器或科学容差，只在重新完整复算前冻结了分型诊断容差：科学数组仍为 `2e-8`，改变判决的离散量仍须完全一致，condition number 用 `1e-7` 相对容差，非唯一系数用 `2e-6` 绝对容差。随后从头复算并通过。
+
+这个 post-open repair 只能解释为审计合同修复，不能解释为算法调参。共享 physics kernels 仍未端到端独立，因此 `end_to_end_physics_independence_proven=false`。
+
+### 这一步成功在哪里，没成功在哪里
+
+成功的是机制判断：成对 target-peer 与 depth-bin 表示在固定硬集上具有足够 truth-aware 容量，且便宜解析对照不能解释这个结果。它直接改变了下一步策略：值得运行 Stage B，而不是放弃这条表示。
+
+没有成功的是算法与泛化：我们还没有一个 observation-only 系数预测器，没有外折，没有全量 3700 单元结果，没有完整轨迹 5/5，没有 wall/RSS，没有独立数据族，也没有真实 BOST。
+
+### 下一门
+
+下一步只做单独冻结的 v140 Stage B：对固定 2199 个 v139 active-tail 单元运行同一表示，再与封存的 v139 父证据合并并独立复算全部 3700 个单元和 5 条轨迹。
+
+只有 `3700/3700` 与 `5/5` 同时通过，才允许冻结最小 permutation-equivariant observation/geometry-only 系数预测器。在此之前不训练 CNN/FNO/UNO/DeepONet，不租 GPU，不启动 wall/RSS 或外部门。
+
+当前边界：
+
+- `v140_stage_a_capacity_passed=true`；
+- `v140_stage_b_completed=false`；
+- `v140_all_3700_cells_proven=false`；
+- `v140_complete_trajectory_gate_proven=false`；
+- `minimal_predictor_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_pair_resolved_depth_cost_capacity_v140_result_2026-08-11.md`
+- `docs/poolfire_pair_resolved_depth_cost_capacity_v140_public_summary.json`
+- `assets/figures/poolfire_pair_resolved_depth_cost_capacity_v140.png`
+
+### English checkpoint
+
+v140 retains the complete v139 parent basis and separately encodes ordered target-peer identities, six fixed two-sample depth bins, and two angle branches. Truth-aware Stage A rescues all `151/151` fixed v139 hard failures, while the cheap deployment-visible joint-LS control rescues `0/151`. An independent implementation rebuilds the representation, solve, physical replay, gates, and call receipts; the maximum selected-metric difference is `8.69e-12`, with zero science-changing discrete mismatches. A disclosed post-open typed numerical-audit repair changed no scientific roster, candidate, selector, threshold, or tolerance before a fresh full recomputation passed. This is genuine hard-set representation-capacity progress, but Stage B on the fixed 2,199-cell active tail remains pending. It is not a 3,700/3,700 result, a 5/5 trajectory result, a predictor, an algorithmic breakthrough, a resource speedup, external generalization, or real-BOST validation.
