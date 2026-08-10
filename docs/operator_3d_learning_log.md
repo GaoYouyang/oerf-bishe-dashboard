@@ -13515,3 +13515,81 @@ v135 的 538 个失败中，有 447 个在 v136 下 observation 误差变小，�
 ### English checkpoint
 
 v136 adapts each camera's local-window center and width from deployment-visible K1 residual energy. Strict passes rise only from `3162/3700` to `3215/3700`, with `485` observation-only failures and `0/5` complete trajectories remaining. Independent v136.1 recomputation confirms selected metrics to `9.99e-16`. Because rescued and unresolved cells have strongly overlapping residual centroids and widths, this representation is closed. The next gate must encode signed residual phase, local structure, and cross-camera geometry while preserving the same exact-call shell and strict gates. The advisor's clean/noise/pose/camera-set robustness program remains part of the long-term route; real experimental BOST data will be incorporated when available.
+
+## 2026-08-10：v137 证明符号和跨相机信息有用，但还没有解决 5 相机稀疏视角
+
+### 先说人话
+
+v136 只看 residual 能量有多大、集中在哪里，却把正负号抹掉了，也没有真正利用不同相机之间的方向关系。v137 因此换了一种物理信息：保留 residual 正负相位，并用已知相机的 right/up 方向把其他相机的残差转换到同一个世界坐标系，再投回当前相机。
+
+这次确实有进步，但没有过最终容量门。严格通过从 `3215/3700` 增加到 `3351/3700`：单相机有符号相位救回 `92` 个，跨相机几何又额外救回 `44` 个。可是完整轨迹仍是 `0/5`，所以不能开始训练网络，更不能称算法突破。
+
+### 我实际做了什么
+
+1. 保留 v136 的每相机 32 个父方向，避免把已有通过单元弄坏。
+2. 对归一化 residual 使用 `tanh(residual/RMS)`，得到有界、保留正负号且对整体幅值缩放稳定的相位。
+3. 每相机加入 8 个 self signed-phase DCT 方向。
+4. 把其他 active cameras 的二维 residual 通过各自 right/up 轴提升到世界坐标，做相机集合平均，再投回目标相机，加入 8 个 peer signed-phase DCT 方向。
+5. 表示对相机换序等变，并支持 `5/7/9/12` 个 active cameras；方向总数分别为 `240/336/432/576`。
+6. 仍只对 v136 的 485 个失败跑 truth-aware 容量，候选在线壳保持 `2A+2A^T`，K4 参考仍是 `4A+4A^T`。
+7. 另外跑了不读取真值的 signed-phase joint-LS 便宜控制，检验进步是否只是一个简单解析缩放就能解释。
+
+### 跑出来的结果
+
+- v137 严格通过：`3351/3700`；
+- 相比 v136 新救回：`136`；
+- self signed phase 救回：`92`；
+- peer geometry 增量救回：`44`；
+- 剩余失败：`349`，全部只在 observation；
+- field、完整梯度、内部梯度：全部 `3700/3700`；
+- 完整轨迹：`0/5`；
+- 便宜 signed-phase joint-LS 控制：`0/3700`。
+
+按相机数看，9 相机和 12 相机都达到 `925/925`，7 相机只剩 `6` 个失败；但 5 相机仍剩 `343` 个，占全部 349 个失败的 `98.3%`。按工况看，p45-s05 和 p58-s03 合计留下 `318/349` 个失败。现在问题已经很集中：主要不是有没有符号信息，而是稀疏视角下不同相机像素如何对应到同一条三维结构。
+
+### 独立复算
+
+第二实现没有调用正式特征和候选构造器，而是重新生成 signed phase、世界坐标 peer coupling、便宜控制、候选和全部门：
+
+- self phase、peer phase、peer residual RMS 最大差都是 `0`；
+- cheap-control 指标最大差 `3.33e-16`；
+- candidate / selected 指标最大差 `4.55e-15 / 3.89e-15`；
+- 系数最大差 `1.76e-11`；
+- summary 最大差 `4.88e-15`；
+- 精确数组失败 `0`；
+- 正式结果树和 v136 父证据在验证前后没有变化。
+
+正式状态是 `FAIL_V137_SIGNED_PHASE_CROSS_CAMERA_CAPACITY`，独立状态是 `PASS_INDEPENDENT_RECOMPUTATION_SIGNED_PHASE_CROSS_CAMERA_V137_1`。
+
+### 为什么下一步不是训练网络
+
+truth-aware capacity 的意思是：为了判断表示本身能不能做到，我们暂时允许真值替每个单元选择最有利的系数。连这个上界都只有 `3351/3700`，任何只在同一表示上训练的 predictor、CNN、FNO、UNO 或 DeepONet 都不可能凭空达到 `3700/3700`。此时租 GPU 只会更快地验证一个已经知道过不了的表示。
+
+### 关闭什么，下一步做什么
+
+关闭“不同相机同一个归一化像素就是同一三维位置”的 peer 平均。它是方便的近似，但相机视角变化后，同一物体点通常沿极线出现在不同像素，尤其在只有 5 个视角时误差会被放大。
+
+下一门 v138 改做几何忠实的 ray-overlap / epipolar residual transport：沿目标相机射线放置结果前冻结的深度锚点，用已知内外参把这些三维点投影到其他相机，采样对应极线位置的有符号 residual，再以相机换序等变方式聚合。仍先跑便宜确定性 control 和 truth-aware capacity；只有达到 `3700/3700` 且完整轨迹 `5/5`，才允许训练最小 predictor。
+
+当前边界：
+
+- `signed_phase_signal_useful=true`；
+- `peer_geometry_increment_useful=true`；
+- `same_normalized_pixel_peer_representation_closed=true`；
+- `five_camera_sparse_view_is_primary_bottleneck=true`；
+- `minimal_predictor_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_signed_phase_cross_camera_capacity_v137_result_2026-08-10.md`
+- `docs/poolfire_signed_phase_cross_camera_capacity_v137_public_summary.json`
+- `assets/figures/poolfire_signed_phase_cross_camera_capacity_v137.png`
+
+### English checkpoint
+
+v137 preserves signed local residual phase and adds camera-permutation-equivariant peer coupling through known camera right/up axes. Strict passes rise from `3215/3700` to `3351/3700`: self phase rescues `92` cells and peer geometry adds `44`. The gain is real but insufficient. All `349` remaining failures are observation-only, `343` occur with five cameras, complete trajectories remain `0/5`, and the cheap deployment-visible control passes `0/3700`. Independent v137.1 recomputation confirms selected metrics to `3.89e-15`. Same-normalized-pixel peer averaging is therefore closed; v138 will test ray-overlap and epipolar residual transport before any predictor or GPU training is authorized.

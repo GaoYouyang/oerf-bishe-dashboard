@@ -68,20 +68,16 @@ def test_camera_tail_mechanism_and_independent_recomputation_are_consistent() ->
     assert independent["exact_array_failures"] == 0
 
 
-def test_current_evidence_and_pages_point_to_v136_in_both_languages() -> None:
+def test_current_evidence_and_pages_preserve_v136_as_archived_parent() -> None:
     evidence = load_json(EVIDENCE_PATH)
     page_texts = [path.read_text(encoding="utf-8") for path in PUBLIC_PAGES]
 
-    assert evidence["formal_status"] == "FAIL_V136_RESIDUAL_ADAPTIVE_LOCAL_WINDOW_CAPACITY"
-    assert evidence["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_RESIDUAL_ADAPTIVE_LOCAL_WINDOW_V136_1"
-    )
     assert evidence["metrics"]["v136_selected_cell_pass_count"] == 3215
     assert evidence["metrics"]["v136_observation_only_failure_count"] == 485
     assert evidence["metrics"]["v136_five_camera_remaining_failure_count"] == 409
     assert evidence["current_decision"]["v136_residual_centroid_width_representation_closed"] is True
     assert evidence["current_decision"]["v136_minimal_predictor_authorized"] is False
-    assert evidence["current_decision"]["v137_signed_phase_cross_camera_capacity_required"] is True
+    assert evidence["current_decision"]["v136_residual_adaptive_local_window_independently_recomputed"] is True
 
     for text in page_texts:
         assert "v136" in text
