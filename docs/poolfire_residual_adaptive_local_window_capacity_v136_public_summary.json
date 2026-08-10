@@ -1,0 +1,145 @@
+{
+  "schema_version": "oerf-public-poolfire-residual-adaptive-local-window-capacity-v136.1",
+  "updated": "2026-08-10",
+  "title_zh": "v136 残差自适应局部窗口容量诊断",
+  "title_en": "v136 Residual-Adaptive Local-Window Capacity Diagnostic",
+  "status": "FAIL_V136_RESIDUAL_ADAPTIVE_LOCAL_WINDOW_CAPACITY",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_RESIDUAL_ADAPTIVE_LOCAL_WINDOW_V136_1",
+  "sample_count": 3700,
+  "trajectory_count": 5,
+  "strict_gate": {
+    "v133_passed": 2353,
+    "v134_passed": 2591,
+    "v135_passed": 3162,
+    "v136_passed": 3215,
+    "v136_rescued_from_v135": 53,
+    "v136_remaining_failures": 485,
+    "complete_trajectories_passed": 0,
+    "complete_trajectories_total": 5,
+    "per_cell_ratio_limit": 1.05,
+    "trajectory_p90_ratio_limit": 1.02,
+    "trajectory_worst_ratio_limit": 1.05
+  },
+  "metric_pass_counts": {
+    "field_relative_l2": 3700,
+    "gradient_relative_l2": 3700,
+    "interior_gradient_relative_l2": 3700,
+    "reported_observation_relative_l2": 3215
+  },
+  "remaining_failure_pattern": {
+    "observation_only": 485,
+    "field_or_gradient": 0,
+    "observation_ratio_p50": 1.07846,
+    "observation_ratio_p90_higher": 1.18139,
+    "observation_ratio_worst": 1.233614
+  },
+  "cell_pass_by_camera_count": {
+    "5": {"total": 925, "v135_passed": 483, "v136_passed": 516, "rescued": 33, "remaining": 409},
+    "7": {"total": 925, "v135_passed": 862, "v136_passed": 875, "rescued": 13, "remaining": 50},
+    "9": {"total": 925, "v135_passed": 916, "v136_passed": 920, "rescued": 4, "remaining": 5},
+    "12": {"total": 925, "v135_passed": 901, "v136_passed": 904, "rescued": 3, "remaining": 21}
+  },
+  "trajectory_rows": [
+    {"trajectory": "p=14kw_size=05", "total": 740, "v135_passed": 735, "v136_passed": 737, "rescued": 2, "remaining": 3, "observation_p90_higher": 1.037070, "observation_worst": 1.074428},
+    {"trajectory": "p=22kw_size=03", "total": 740, "v135_passed": 702, "v136_passed": 717, "rescued": 15, "remaining": 23, "observation_p90_higher": 1.047089, "observation_worst": 1.074781},
+    {"trajectory": "p=33kw_size=01", "total": 740, "v135_passed": 671, "v136_passed": 690, "rescued": 19, "remaining": 50, "observation_p90_higher": 1.048168, "observation_worst": 1.075064},
+    {"trajectory": "p=45kw_size=05", "total": 740, "v135_passed": 493, "v136_passed": 507, "rescued": 14, "remaining": 233, "observation_p90_higher": 1.082583, "observation_worst": 1.110465},
+    {"trajectory": "p=58kw_size=03", "total": 740, "v135_passed": 561, "v136_passed": 564, "rescued": 3, "remaining": 176, "observation_p90_higher": 1.149686, "observation_worst": 1.233614}
+  ],
+  "factor_rows": [
+    {"factor": "clean", "total": 100, "v135_passed": 87, "v136_passed": 88, "rescued": 1, "remaining": 12},
+    {"factor": "noise_only", "total": 600, "v135_passed": 517, "v136_passed": 525, "rescued": 8, "remaining": 75},
+    {"factor": "rotation_only", "total": 600, "v135_passed": 519, "v136_passed": 525, "rescued": 6, "remaining": 75},
+    {"factor": "translation_only", "total": 600, "v135_passed": 512, "v136_passed": 521, "rescued": 9, "remaining": 79},
+    {"factor": "intrinsics_only", "total": 600, "v135_passed": 516, "v136_passed": 527, "rescued": 11, "remaining": 73},
+    {"factor": "pose_all", "total": 600, "v135_passed": 511, "v136_passed": 519, "rescued": 8, "remaining": 81},
+    {"factor": "combined", "total": 600, "v135_passed": 500, "v136_passed": 510, "rescued": 10, "remaining": 90}
+  ],
+  "remaining_by_severity": {
+    "clean": 12,
+    "medium": 220,
+    "stress": 253
+  },
+  "representation": {
+    "parent": "v135 per-camera, per-component four-band detector DCT basis with fixed 2x2 windows",
+    "adaptation": "per-camera residual-energy centroid and width computed from deployment-visible CGLS-K1 residuals",
+    "window_rule": "four smooth nonnegative 2x2 partition-of-unity windows centered and scaled by the frozen residual moments",
+    "basis_count_by_camera_count": {"5": 160, "7": 224, "9": 288, "12": 384},
+    "strictly_contains_v135_parent": true,
+    "camera_permutation_equivariant": true,
+    "candidate_shell": "2A+2A^T",
+    "reference_shell": "4A+4A^T",
+    "center_range": [3.0322, 13.5],
+    "half_width_range": [3.5598, 8.0],
+    "fallback_count": 0,
+    "maximum_partition_of_unity_error": 2.220446049250313e-16
+  },
+  "controls": {
+    "deployment_visible_adaptive_projection_only_passed": 0,
+    "deployment_visible_adaptive_projection_only_total": 3700,
+    "minimal_predictor_authorized": false,
+    "cnn_fno_uno_deeponet_training_authorized": false
+  },
+  "selected_source_histogram": {
+    "v135_parent": 3253,
+    "adaptive_projection_only": 328,
+    "adaptive_projection_weight_1": 49,
+    "adaptive_projection_weight_4": 42,
+    "adaptive_projection_weight_16": 16,
+    "adaptive_projection_weight_64": 11,
+    "adaptive_projection_weight_256": 1,
+    "adaptive_projection_weight_1024": 0,
+    "cheap_control": 0
+  },
+  "oracle_selection": {
+    "all_metric_feasible": 53,
+    "physical_feasible_observation_minimum": 485,
+    "fallback": 0
+  },
+  "mechanism_diagnosis": {
+    "original_v135_failures_evaluated": 538,
+    "cells_with_observation_improvement": 447,
+    "cells_unchanged": 91,
+    "observation_improvement_factor_p50": 1.00283,
+    "observation_improvement_factor_p90_higher": 1.01069,
+    "observation_improvement_factor_maximum": 1.02031,
+    "rescued_center_p50": 7.876,
+    "remaining_center_p50": 7.624,
+    "rescued_half_width_p50": 6.113,
+    "remaining_half_width_p50": 6.332,
+    "diagnosis": "Residual-energy centroid and width are too similar between rescued and unresolved cells to discriminate the remaining observation tail."
+  },
+  "independent_recomputation": {
+    "maximum_center_difference": 0,
+    "maximum_half_width_difference": 0,
+    "maximum_cheap_control_metric_difference": 3.3306690738754696e-16,
+    "maximum_coefficient_difference": 4.405809050701093e-12,
+    "maximum_diagnostic_absolute_difference": 1.2651e-8,
+    "maximum_diagnostic_scaled_difference": 0.08459,
+    "maximum_local_candidate_metric_difference": 1.2212453270876722e-15,
+    "maximum_selected_metric_difference": 9.992007221626409e-16,
+    "maximum_summary_difference": 1.1102230246251565e-15,
+    "exact_array_failures": 0,
+    "formal_tree_unchanged": true,
+    "parent_tree_unchanged": true
+  },
+  "advisor_guidance": {
+    "cfd_benchmark_first": true,
+    "observation_noise": true,
+    "camera_rotation_translation_intrinsics_and_combined_errors": true,
+    "camera_counts": [5, 7, 9, 12],
+    "future_camera_add_drop_order_gate": true,
+    "real_experimental_data_after_public_proxy": true
+  },
+  "next_gate_zh": "关闭只调 residual 能量质心与宽度的 2x2 自适应窗口。下一门必须使用物理上不同、仍只看部署可见信息的载体，同时表达 residual 正负相位、局部结构与跨相机几何耦合；仍保持 2A+2A^T 壳、3700 个单元、八门和便宜控制。容量未全过前不训练大模型。",
+  "next_gate_en": "Close 2x2 adaptive windows driven only by residual-energy centroids and widths. The next gate must use a physically distinct deployment-visible carrier that captures residual sign/phase, local structure, and cross-camera geometric coupling while retaining the 2A+2A^T shell, all 3,700 cells, eight gates, and cheap controls. No large model is trained before full capacity passes.",
+  "claim_boundary": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "real_bost": false,
+    "validation_truth_read": false,
+    "test_truth_read": false
+  }
+}

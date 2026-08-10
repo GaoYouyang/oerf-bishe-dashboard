@@ -71,8 +71,10 @@ def test_current_evidence_and_pages_point_to_v135_in_both_languages() -> None:
     evidence = load_json(EVIDENCE_PATH)
     page_texts = [path.read_text(encoding="utf-8") for path in PUBLIC_PAGES]
 
-    assert evidence["formal_status"] == "FAIL_V135_LOCAL_SPACE_FREQUENCY_CAPACITY"
-    assert evidence["engineering_status"] == (
+    assert evidence["v135_local_space_frequency_formal_status"] == (
+        "FAIL_V135_LOCAL_SPACE_FREQUENCY_CAPACITY"
+    )
+    assert evidence["v135_local_space_frequency_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_LOCAL_SPACE_FREQUENCY_V135_1"
     )
     assert evidence["metrics"]["v135_selected_cell_pass_count"] == 3162
@@ -80,7 +82,8 @@ def test_current_evidence_and_pages_point_to_v135_in_both_languages() -> None:
     assert evidence["metrics"]["v135_five_camera_remaining_failure_count"] == 442
     assert evidence["current_decision"]["v135_fixed_2x2_representation_closed"] is True
     assert evidence["current_decision"]["v135_minimal_predictor_authorized"] is False
-    assert evidence["current_decision"]["v136_adaptive_residual_window_capacity_required"] is True
+    assert evidence["current_decision"]["v136_adaptive_residual_window_capacity_required"] is False
+    assert evidence["current_decision"]["v136_residual_adaptive_local_window_evaluated"] is True
 
     for text in page_texts:
         assert "v135" in text
@@ -90,7 +93,6 @@ def test_current_evidence_and_pages_point_to_v135_in_both_languages() -> None:
     assert "固定 2x2 局部" in joined
     assert "fixed 2x2" in joined.lower()
     assert "poolfire_local_space_frequency_capacity_v135_result_2026-08-10.md" in joined
-    assert "poolfire_local_space_frequency_capacity_v135.png" in joined
     assert FIGURE_PATH.stat().st_size > 100_000
 
 

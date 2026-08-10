@@ -13432,3 +13432,86 @@ v134 已通过的 2591 个单元直接保留，只对 1109 个失败运行七个
 ### English checkpoint
 
 v135 multiplies each per-camera, per-component DCT band by four smooth 2x2 partition-of-unity windows. Strict passes rise from `2591/3700` to `3162/3700`, but complete trajectories remain `0/5`. All `538` failures are observation-only, and `442` occur with five cameras. Independent v135.1 recomputation confirms the physical metrics to `2.11e-15`. The fixed-window representation is therefore closed; v136 will test residual-adaptive, camera-equivariant local windows before any neural training.
+
+## 2026-08-10：v136 只救回 53 个单元，残差质心/宽度路线关闭
+
+### 先说人话
+
+师兄建议先把 CFD 基准做扎实，并在公开数据里系统加入噪声、相机位姿误差和相机集合变化。v136 正是在这个合同下继续推进：它没有用真值决定窗口，也没有训练网络，而是只从当前 K1 residual 的能量分布估计每路相机“误差主要在哪、范围多宽”，再移动和缩放局部窗口。
+
+结果是一个可信但明确的负结果：严格通过从 `3162/3700` 提高到 `3215/3700`，只多救回 `53` 个单元；完整轨迹仍为 `0/5`。因此不能继续围绕“窗口中心和宽度”消耗算力。
+
+### 我实际做了什么
+
+对每个活跃相机和位移分量，我从部署可见 K1 residual 的平方能量计算 detector 平面质心与标准差。质心、半宽的裁剪范围和四个平滑 partition-of-unity 窗口都在结果前固定。每个窗口仍乘 v135 的四个 DCT 频带，因此 `5/7/9/12` 相机仍分别有 `160/224/288/384` 个方向，并且严格包含 v135 父表示。
+
+候选没有新增 exact physics 调用：仍为 `2A+2A^T`，参考 K4 仍为 `4A+4A^T`。v135 已通过的单元保留，只对 538 个失败运行七个 truth-aware 容量候选；另对全部 3700 单元跑不读取真值的 adaptive projection-only 便宜控制。
+
+### 跑出来的结果
+
+- v136 严格通过：`3215/3700`；
+- 相比 v135 新救回：`53`；
+- 剩余失败：`485`，全部只在 observation；
+- field、完整梯度、内部梯度：全部 `3700/3700`；
+- 完整轨迹：`0/5`；
+- adaptive projection-only 控制：`0/3700`。
+
+5 相机从 `483/925` 提高到 `516/925`，但仍留下 `409` 个失败，占全部 485 个失败的大多数。p45-s05 和 p58-s03 分别留下 `233` 与 `176` 个失败，二者合计也是 `409`。说明稀疏视角与高功率形态尾部仍是最硬的交叉区域。
+
+按师兄要求保留的因子拆分中，clean / noise / rotation / translation / intrinsics / full-pose / combined 分别还剩 `12 / 75 / 75 / 79 / 73 / 81 / 90` 个失败。问题并不只来自一种噪声或一种标定误差。
+
+### 为什么不是“再调一下窗口就行”
+
+v135 的 538 个失败中，有 447 个在 v136 下 observation 误差变小，但中位改善因子只有 `1.00283`，p90 只有 `1.01069`，最大为 `1.02031`；只有 53 个真正跨过严格门，91 个没有变化。
+
+被救回与未解决单元的 residual 能量统计也几乎重叠：中心 p50 为 `7.876` 对 `7.624`，半宽 p50 为 `6.113` 对 `6.332`。这两个统计量没有足够辨识度，无法告诉我们哪个单元需要什么修正。继续微调裁剪范围、窗口平滑度或堆更多尺度，缺乏物理依据。
+
+### 独立复算
+
+第二实现重新生成 residual moments、窗口、局部候选、物理指标和选择判决：
+
+- 质心与宽度最大差都是 `0`；
+- local / selected 指标最大差为 `1.22e-15 / 9.99e-16`；
+- 系数最大差 `4.41e-12`；
+- summary 最大差 `1.11e-15`；
+- 离散数组失败 `0`；
+- 诊断缩放差 `0.08459 < 1`；
+- 正式树和父证据在验证前后没有变化。
+
+正式状态为 `FAIL_V136_RESIDUAL_ADAPTIVE_LOCAL_WINDOW_CAPACITY`，独立状态为 `PASS_INDEPENDENT_RECOMPUTATION_RESIDUAL_ADAPTIVE_LOCAL_WINDOW_V136_1`。
+
+### 现在关掉什么，下一步做什么
+
+关闭 residual 能量质心/宽度的 2x2 自适应窗口，不训练 coefficient predictor、CNN、FNO、UNO 或 DeepONet，也不租 GPU。
+
+下一门必须是物理上不同的最小载体：仍只读取部署可见 observation / residual 和已知几何，但显式保留 residual 的正负相位、局部符号结构以及不同相机之间的几何耦合。它仍要在同一个 `2A+2A^T` 壳、3700 个单元和八个 matched-accuracy 门下，先与便宜确定性 control 做容量比较。容量没有达到 `3700/3700` 和 `5/5` 前，不训练预测器。
+
+师兄的长期建议已经固化：
+
+1. 公开 CFD 阶段保留 clean baseline；
+2. 分别加入观测噪声、旋转、平移、焦距/主点和 combined 误差；
+3. 检验 `5/7/9/12` 相机数量，以及相机增删、换序和不同集合；
+4. 实验数据到位后，再接真实位移图、相机内外参、重复测量噪声、现有重建代码和认可基线。
+
+当前边界：
+
+- `residual_centroid_width_representation_capacity_passed=false`；
+- `residual_centroid_width_representation_closed=true`；
+- `remaining_failures_observation_only=true`；
+- `five_camera_sparse_view_is_primary_bottleneck=true`；
+- `minimal_predictor_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_residual_adaptive_local_window_capacity_v136_result_2026-08-10.md`
+- `docs/poolfire_residual_adaptive_local_window_capacity_v136_public_summary.json`
+- `assets/figures/poolfire_residual_adaptive_local_window_capacity_v136.png`
+
+### English checkpoint
+
+v136 adapts each camera's local-window center and width from deployment-visible K1 residual energy. Strict passes rise only from `3162/3700` to `3215/3700`, with `485` observation-only failures and `0/5` complete trajectories remaining. Independent v136.1 recomputation confirms selected metrics to `9.99e-16`. Because rescued and unresolved cells have strongly overlapping residual centroids and widths, this representation is closed. The next gate must encode signed residual phase, local structure, and cross-camera geometry while preserving the same exact-call shell and strict gates. The advisor's clean/noise/pose/camera-set robustness program remains part of the long-term route; real experimental BOST data will be incorporated when available.
