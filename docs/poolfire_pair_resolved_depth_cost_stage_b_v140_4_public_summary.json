@@ -1,0 +1,141 @@
+{
+  "schema_version": "oerf-public-poolfire-pair-resolved-depth-cost-stage-b-v140.4",
+  "updated": "2026-08-13",
+  "title_zh": "v140.4 成对深度代价全量容量与固定目标判决",
+  "title_en": "v140.4 Full-Roster Pair-Resolved Depth-Cost Capacity and Fixed-Target Decision",
+  "formal_status": "PASS_V140_4_STAGE_B_HIERARCHICAL_STABLE_CAPACITY",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PAIR_RESOLVED_DEPTH_COST_STAGE_B_V140_4",
+  "data_scope": {
+    "opened_poolfire_trajectories": 5,
+    "cells_per_trajectory": 740,
+    "total_cells": 3700,
+    "camera_counts": [5, 7, 9, 12],
+    "factor_profiles": [
+      "clean",
+      "noise",
+      "rotation",
+      "translation",
+      "intrinsics",
+      "pose-all",
+      "combined"
+    ],
+    "validation_truth_read": false,
+    "test_truth_read": false,
+    "real_bost_data_used": false
+  },
+  "stage_a": {
+    "fixed_hard_set_count": 151,
+    "passed_count": 151,
+    "cheap_control_passed_count": 0
+  },
+  "stage_b": {
+    "active_tail_count": 2199,
+    "passed_count": 2199,
+    "merged_complete_count": 3700,
+    "merged_complete_passed_count": 3700,
+    "complete_trajectory_count": 5,
+    "complete_trajectory_passed_count": 5,
+    "cheap_control_passed_count": 0,
+    "remaining_failures": 0,
+    "active_tail_camera_counts": {
+      "5": 878,
+      "7": 592,
+      "9": 423,
+      "12": 306
+    },
+    "remaining_failures_by_camera_count": {
+      "5": 0,
+      "7": 0,
+      "9": 0,
+      "12": 0
+    }
+  },
+  "pre_registered_fixed_target": {
+    "label": "pair_depth_projection_only",
+    "teacher_uses_cfd_truth": false,
+    "definition": "Fit the frozen pair-depth direction roster to the exact detector-space CGLS dual correction z4-z1 with projection-only loss and a fixed 1e-6 ridge; CFD truth is used only to score the four accuracy gates.",
+    "active_tail_passed_count": 2199,
+    "complete_passed_count": 3700,
+    "complete_trajectory_passed_count": 5,
+    "post_result_target_switch_used": false,
+    "trajectory_tails": {
+      "p14": {
+        "field_worst": 1.0055926899575862,
+        "gradient_worst": 1.0199607513424456,
+        "interior_gradient_worst": 1.0089253940347054,
+        "observation_worst": 1.0199998341835397
+      },
+      "p22": {
+        "field_worst": 1.010770187977706,
+        "gradient_worst": 1.0199294034559516,
+        "interior_gradient_worst": 1.0195301250653706,
+        "observation_worst": 1.0301959528489928
+      },
+      "p33": {
+        "field_worst": 1.004509292977698,
+        "gradient_worst": 1.0080975709495197,
+        "interior_gradient_worst": 1.0046895606684074,
+        "observation_worst": 1.0198766172083433
+      },
+      "p45": {
+        "field_worst": 1.0073901011479944,
+        "gradient_worst": 1.0074047239146455,
+        "interior_gradient_worst": 1.0078256929298113,
+        "observation_worst": 1.0224931542437896
+      },
+      "p58": {
+        "field_worst": 1.010418948865582,
+        "gradient_worst": 1.019579675064935,
+        "interior_gradient_worst": 1.0195553006187112,
+        "observation_worst": 1.0280003068063261
+      }
+    }
+  },
+  "accuracy_and_cost": {
+    "metrics": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "interior_gradient_relative_l2",
+      "reported_observation_relative_l2"
+    ],
+    "per_cell_ratio_limit": 1.05,
+    "trajectory_p90_higher_ratio_limit": 1.02,
+    "trajectory_worst_ratio_limit": 1.05,
+    "candidate_shell": "2A+2A^T",
+    "zero_cgls_k4_reference_shell": "4A+4A^T",
+    "offline_capacity_search_is_not_deployment_cost": true
+  },
+  "independent_recomputation": {
+    "field_image_normalized_difference": 4.488671398116718e-09,
+    "projection_image_normalized_difference": 4.462254783863082e-09,
+    "physical_image_tolerance": 1e-06,
+    "maximum_fixed_candidate_summary_difference": 4.229727679216921e-12,
+    "exact_array_failures": 0,
+    "call_receipt_failures": 0,
+    "formal_and_parent_trees_unchanged": true,
+    "single_use_validation_receipt_unchanged": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "authorization": {
+    "minimal_predictor_contract_may_be_frozen": true,
+    "complete_3700_fixed_teacher_bundle_generation_authorized": true,
+    "predictor_training_authorized_now": false,
+    "reason": "The stored Stage-B coefficient bundle covers only the truth-defined 2,199-cell active tail. A deployment-valid model cannot receive that membership bit, so the same fixed target must first be rebuilt and independently verified for all 3,700 cells.",
+    "gpu_rental_recommended_now": false,
+    "wall_rss_gate_authorized": false,
+    "external_gate_authorized": false
+  },
+  "next_gate_zh": "先为全部 3700 个单元生成并独立复算同一个不读 CFD 真值的 pair_depth_projection_only 教师目标，禁止使用 active-tail 真值成员标签。全量教师封存后，才在五个完整轨迹留一外折上比较零参数、线性与不超过 1.6 万参数的最小换序等变模型。",
+  "next_gate_en": "First generate and independently recompute the same truth-free pair_depth_projection_only teacher target for all 3,700 cells, without exposing truth-defined active-tail membership. Only after sealing the complete teacher bundle may five complete-trajectory leave-one-out folds compare zero-parameter, linear, and at-most-16k-parameter permutation-equivariant models.",
+  "claim_boundary": {
+    "fixed_target_capacity_proven": true,
+    "complete_teacher_bundle_proven": false,
+    "observation_only_prediction_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}

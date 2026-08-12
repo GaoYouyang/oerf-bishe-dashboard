@@ -1,6 +1,6 @@
 # 微分同胚原理怎样真正进入三维 BOST warm start：近邻工作、创新边界与必做对照
 
-更新日期：2026-08-02
+更新日期：2026-08-03
 
 ## 先给结论
 
@@ -19,7 +19,7 @@
 
 截至本次限定在官方期刊、作者 arXiv 与作者代码的审计，没有发现一项公开近邻同时闭合以上全部环节。这只能写成“在限定来源范围内未发现完全同构方法”，不能写成全球首个、唯一或 SOTA。
 
-## 八个最接近的方法或理论边界
+## 十个最接近的方法或理论边界
 
 | 方法 | 它真正解决什么 | 与本项目的重合 | 仍缺什么 |
 |---|---|---|---|
@@ -31,6 +31,8 @@
 | [Diffeomorphic Neural Operator Learning](https://arxiv.org/abs/2508.06690) | 用网络预测微分同胚并以映射复合推进输运型演化 | 可启发用可逆形变表达流动结构 | 学的是时间演化，不是多视角重建 |
 | [Can neural operators always be continuously discretized?](https://proceedings.neurips.cc/paper_files/paper/2024/hash/b31f6d65f2584b3c4347148db36fe07f-Abstract-Conference.html) | 给出有限维微分同胚近似的 no-go theorem，并要求表示本身随离散收敛 | 直接支持 v105.1-v106.1 先做网格收敛门 | 是一般理论，不给 BOST forward/adjoint 或 warm start |
 | [Radon Neural Operator](https://proceedings.neurips.cc/paper_files/paper/2025/hash/e66233a208ef32f56df6312263239fa0-Abstract-Conference.html) | 在 sinogram 域学习 PDE operator，并证明微分同胚下的双 Lipschitz 强单调性质 | 与多视角投影域、角度非均匀贡献和坐标泛化相关 | 不是层析逆问题求解器，也没有 exact BOST adjoint 与 matched-cost refinement |
+| [Free Boundary Neural Operator](https://www.nature.com/articles/s42256-026-01233-9) | 同时学习参考域中的共轭动力学与到动态物理域的微分同胚，并用正 Jacobian 约束可逆映射 | 否掉“学习 map + 参考域 operator”本身的新颖性；其动态参考域思想与反应流形态变化相邻 | 解决自由边界 PDE 的 forward solution operator，不处理多视角 BOST inverse、exact `A^T` 或 warm-refinement 成本账 |
+| [Born-Series-Inspired Residual Metric for Learned Preconditioners](https://openreview.net/pdf?id=eIXkwPgAc0) | 把 residual-to-correction 神经算子嵌入迭代求解器，并在预条件器诱导的 Riesz 度量中训练；正式发表于 ICLR 2026 | 否掉“学习残差修正 + 物理迭代”或“度量匹配训练”本身的新颖性 | 面向 Helmholtz 等 PDE forward linear solve，不含 BOST 相机条件、坐标输运、exact-adjoint lift 或 matched-accuracy tomography |
 
 ## 物理接口矩阵
 
@@ -44,6 +46,8 @@
 | Diffeomorphic NO | 标量或守恒密度群作用 | 未处理 BOST 梯度投影 | 无 | 无 |
 | Discretization no-go theorem | 不对应具体物理量 | 要求有限维表示序列收敛 | 无 | 无 |
 | Radon Neural Operator | sinogram 表示 | 在算子理论层讨论微分同胚稳定性 | Radon 角度域 | 无 exact BOST inverse adjoint |
+| FBNO | 学习得到的参考域共轭表示 | 用正 Jacobian 约束 map | 无 BOST ray / detector basis | 无 |
+| NPBS | 不使用域 pullback | 不对应 BOST 协梯度 | 无 | 有 learned residual correction，但不是 BOST inverse adjoint |
 | 本项目 v99 | 有 | 有，`J^{-T}` | 有 | 有，含 forward/adjoint 交换与 dot-product test |
 
 这里最容易混淆的一点是：模型训练中的反向传播不能自动算作经过物理验证的 BOST adjoint。我们需要的是测量算子 `A_phi` 与精确伴随 `A_phi^T` 在坐标输运下共同成立。
@@ -81,6 +85,7 @@ v106.1 只统一粗网格规范，不改变帧、形变、几何、网格和阈�
 7. 完整留出相机 geometry，并按形变幅度、Jacobian condition number 和训练域距离分层报告。
 8. field、full-gradient、interior-gradient、observation 八门全部 matched-accuracy，再报告逐工况 harm、exact `A/A^T`、fresh wall 与 whole-pipeline RSS。
 9. 最终使用组内位移图、完整标定、重复测量噪声与师兄认可基线重跑真实 BOST 迁移。
+10. 必须把 learned residual/preconditioner 类方法作为 solver-level 近邻；如果训练损失使用某种 geometry-equalized 或 preconditioned residual，还要与普通 observation loss 做同架构对照，不能把“度量匹配”单独写成创新。
 
 ## 可以向师兄怎样准确表述
 
@@ -128,3 +133,22 @@ algorithm_breakthrough = false
 paper_success = false
 real_BOST = false
 ```
+
+## 2026-08-03 更新：v111 只把师兄建议变成可检验模型，尚未取得正式结论
+
+v111 的 DRC-Warm 已经把相机与坐标条件真正接到计算图，而不是只写进方法名称：每个视角输入 forward/right/up、源距、焦距、detector scale、主点和中心/目标偏移等 18 维已知标定 token；三维参考网格输入位移、完整 Jacobian、`log det J`、灵敏度和按 `J^{-1}GJ^{-T}` 变换的 local ray Gram。训练 roster 覆盖三套已知九视角几何、identity 加六个单轴 fit maps，正式留出六个不同的双轴组合。
+
+单轨迹 pilot 的 `11/11` 只说明该接口值得进入跨轨迹正式实验。正式实验使用五条完整 PoolFire trajectory 的 leave-one-trajectory-out、三 seed、990 cells/seed，并保持 `2A+2A^T + K1`；在 15 个 fit checkpoint、270 个隔离 outer prediction 与独立复算全部结束前，不能写成跨轨迹、跨相机或微分同胚泛化。
+
+新增两项 2026 近邻进一步收窄了论文贡献：FBNO 已覆盖“学习微分同胚 + 参考域神经算子”，NPBS 已覆盖“残差到修正的神经算子 + 迭代 solver + 预条件度量”。因此当前可检验的独特组合只能限定为：
+
+```text
+known multiview BOST calibration and ray moments
++ diffeomorphism-covariant scalar/gradient/measurement transport
++ observation-only bounded warm correction
++ exact A^T lift and unchanged CGLS refinement
++ matched field/gradient/observation accuracy
++ explicit exact-call, wall and whole-pipeline RSS accounting
+```
+
+即使这套组合通过公开代理门，也只能称“在限定检索范围内未发现完全同构的 BOST 方法”；仍需何远哲师兄确认组内未发表工作与真实数据迁移，才能形成论文主张。

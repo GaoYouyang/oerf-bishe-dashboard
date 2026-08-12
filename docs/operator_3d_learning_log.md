@@ -13842,3 +13842,105 @@ v139 已经把三维射线信息放回体素空间，但最后仍用两个 P1/P2
 ### English checkpoint
 
 v140 retains the complete v139 parent basis and separately encodes ordered target-peer identities, six fixed two-sample depth bins, and two angle branches. Truth-aware Stage A rescues all `151/151` fixed v139 hard failures, while the cheap deployment-visible joint-LS control rescues `0/151`. An independent implementation rebuilds the representation, solve, physical replay, gates, and call receipts; the maximum selected-metric difference is `8.69e-12`, with zero science-changing discrete mismatches. A disclosed post-open typed numerical-audit repair changed no scientific roster, candidate, selector, threshold, or tolerance before a fresh full recomputation passed. This is genuine hard-set representation-capacity progress, but Stage B on the fixed 2,199-cell active tail remains pending. It is not a 3,700/3,700 result, a 5/5 trajectory result, a predictor, an algorithmic breakthrough, a resource speedup, external generalization, or real-BOST validation.
+
+## 2026-08-12：v140.4 正式全量运行完成，但仍不提前宣布成功
+
+### 先说人话
+
+今天把 v140 Stage A 之后真正昂贵的 Stage B 跑完了。正式程序在固定的 `2199` 个 active-tail 单元上全部通过，与已经封存的 `1501` 个父单元合并后，表面数字达到 `3700/3700` 和完整轨迹 `5/5`。
+
+但这一天没有把它写成科学成功。原因很具体：旧 v140.2 曾出现“通过/失败判决一致，物理图像数值却不够一致”的问题。正式程序只能说明自己的执行闭包内部一致，不能代替采用另一种稳定求解路径的独立复算。
+
+### 当天实际完成了什么
+
+- 固定的 Stage B roster 完成 `2199/2199`；
+- 与父证据合并出 `3700` 个逐单元记录和五条完整轨迹；
+- formal runner 只写 pending eligibility，没有自行授权预测器；
+- validation 和 test 真值仍未打开；
+- 候选理论在线精确调用账仍是 `2A+2A^T`，但离线容量搜索不能写成部署成本。
+
+同日还在解释正式结果前固定了唯一未来训练目标：`pair_depth_projection_only`。它只拟合同一观测和几何下 exact CGLS 的 detector-space dual correction `z4-z1`，projection 权重为 1、field 权重为 0、ridge 固定为 `1e-6`。CFD 真值只允许用来检查 field、完整梯度、内部梯度和 observation 四类门，不能选择目标。
+
+这一步是为了避免看到七个候选的结果后再挑最漂亮的一个。后续禁止逐样本 truth-aware selector，也禁止事后把另外六个目标替换成 primary。
+
+### 当天准确状态
+
+- `formal_execution_complete=true`；
+- `independent_recomputation_complete=false`；
+- `fixed_training_target_preregistered=true`；
+- `minimal_predictor_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `paper_success=false`。
+
+### English checkpoint
+
+The v140.4 formal runner completes all `2,199/2,199` fixed Stage-B active-tail cells and merges them with `1,501` sealed parent cells into a nominal `3,700/3,700` and `5/5` result. No scientific success is declared on this day because an independent implementation must still rebuild the physical outputs through a different stable solve path. Before interpreting the full result, the sole future target is fixed as `pair_depth_projection_only`: a truth-free projection loss to the exact-CGLS detector-space dual correction with ridge `1e-6`. Formal completion remains pending evidence, not a predictor or breakthrough.
+
+## 2026-08-13：v140.4 全量固定目标容量独立通过，科学问题转向“能否预测”
+
+### 先说人话
+
+今天得到的是一项真正改变下一步的正结果：第二套程序独立确认，v140.4 不只在 151 个最难单元上有容量，而是在全部 `3700` 个已开封 PoolFire 单元和五条完整轨迹上都能守住冻结的四指标门。
+
+更关键的是，结果并不依赖逐样本读取 CFD 真值来挑不同目标。结果前固定的 `pair_depth_projection_only` 自身也达到 `3700/3700` 和 `5/5`。因此“成对 target-peer、六个 depth bins、两个角度分支是否有足够表示容量”这个问题已经得到肯定答案。
+
+这仍然不是可部署算法。当前存下来的系数只覆盖由真值定义的 `2199` 个 active-tail 单元；如果直接训练，模型就会间接依赖一个部署时不存在的成员标签。下一步必须先用同一个固定目标补齐全部 `3700` 个 teacher，独立封存后才能开始完整轨迹留一预测。
+
+### 正式与独立结果
+
+- Stage B active tail：`2199/2199`；
+- 合并全量：`3700/3700`；
+- 完整轨迹：`5/5`；
+- 固定 primary 全量：`3700/3700`；
+- 固定 primary 完整轨迹：`5/5`；
+- Stage B cheap deployment-visible control：`0/2199`；
+- 剩余失败：`0`。
+
+第二实现从已开封原始 rho、报告几何和 K1 residual 开始，重新生成成对深度方向、稳定特征分解求解、七个固定候选、物理场与投影，并重算 3700 个逐单元门和逐轨迹尾部。formal 与 independent 的物理输出差为：
+
+- field image normalized difference：`4.4887e-9`；
+- projection image normalized difference：`4.4623e-9`；
+- 冻结容差：`1e-6`；
+- 精确数组失败：`0`；
+- 调用回执失败：`0`。
+
+这里的“固定目标不读 CFD 真值”指 teacher 的定义只依赖观测、已知几何和 exact CGLS 的 dual difference。CFD 真值仍用于容量阶段的四指标否决，因此这只是已开封开发代理上的 teacher capacity，不是 deployment-visible prediction。
+
+### 为什么不能立刻训练
+
+Stage B 的 `2199` 个单元来自父方法 active-tail，它们的成员身份是用真值门定义的；剩余 `1501` 个单元沿用父证据，但没有同格式的固定目标系数。把两部分直接拼成训练集会让目标是否存在本身泄漏真值。
+
+因此新的 fail-closed 合同要求：
+
+1. 对全部 `3700` 单元统一生成 `pair_depth_projection_only` teacher；
+2. 不允许把 active-tail 成员标签作为输入、mask、采样权重或缺失值模式；
+3. teacher bundle 先由第二实现逐项复算并封存；
+4. 再做五个完整 trajectory leave-one-out folds，每折 `2960` 个 fit、`740` 个 held-out；
+5. 先比较零参数 joint LS 与共享线性 ridge，再比较唯一一个不超过 `16000` 参数的换序等变 Deep Sets sentinel；
+6. 如果最小模型不能稳定通过，不用 CNN、FNO、UNO 或 DeepONet 扩模挽救。
+
+### 是否突破
+
+这是 **固定目标表示容量门的实质性通过**，值得明确标记为阶段性正进展。它排除了“只有逐样本 truth-aware 目标切换才能补齐尾部”这一解释，也把研究问题从“有没有足够方向”推进到“部署可见输入能否跨完整轨迹预测固定 teacher”。
+
+但正式论文所需的算法突破仍未成立：
+
+- `fixed_target_capacity_proven=true`；
+- `complete_teacher_bundle_proven=false`；
+- `observation_only_prediction_proven=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_pair_resolved_depth_cost_stage_b_v140_4_result_2026-08-13.md`
+- `docs/poolfire_pair_resolved_depth_cost_stage_b_v140_4_public_summary.json`
+- `assets/figures/poolfire_pair_resolved_depth_cost_stage_b_v140_4.png`
+
+### English checkpoint
+
+Independent v140.4 recomputation confirms `2,199/2,199` Stage-B active-tail cells, `3,700/3,700` merged cells, and `5/5` complete trajectories. Crucially, the preregistered truth-free `pair_depth_projection_only` target also reaches `3,700/3,700` and `5/5`, so the result does not require per-sample truth-aware target switching. A second implementation rebuilds directions, the stable eigensolve, physical fields, projections, all cell gates, and trajectory tails; normalized field/projection image differences are `4.49e-9 / 4.46e-9`, below the `1e-6` gate, with zero exact-array or call-receipt failures. This is a substantive fixed-target representation-capacity result, not a deployable predictor. Existing teachers cover only a truth-defined active tail, so all `3,700` teachers must first be generated and independently sealed before complete-trajectory leave-one-out fitting. Algorithmic breakthrough, resource speedup, external generalization, curved-ray validity, real BOST, and paper success all remain false.
