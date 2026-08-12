@@ -101,6 +101,16 @@ def test_current_evidence_and_bilingual_surfaces_show_the_new_gate() -> None:
     assert FIGURE.stat().st_size > 100_000
 
 
+def test_mobile_primary_navigation_keeps_bilingual_labels_readable() -> None:
+    focused_page = (ROOT / "operator-learning/index.html").read_text(encoding="utf-8")
+
+    assert "@media (max-width: 720px)" in focused_page
+    assert "overflow-x: auto" in focused_page
+    assert "flex-wrap: nowrap" in focused_page
+    assert "white-space: nowrap" in focused_page
+    assert "word-break: normal" in focused_page
+
+
 def test_new_public_artifacts_do_not_expose_private_execution_details() -> None:
     paths = [*PAGES[:3], RESULT, SUMMARY, EVIDENCE]
     text = "\n".join(path.read_text(encoding="utf-8") for path in paths)

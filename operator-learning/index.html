@@ -458,15 +458,27 @@
     @media (max-width: 720px) {
       header, main, footer { width: min(100% - 22px, 1220px); }
       .nav {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        display: flex;
+        flex-wrap: nowrap;
         gap: 7px;
+        margin-inline: -11px;
+        padding-inline: 11px;
         padding-bottom: 8px;
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+        scrollbar-width: thin;
+        scroll-snap-type: inline proximity;
       }
       .nav a {
+        flex: 0 0 auto;
         min-height: 40px;
+        max-width: none;
         justify-content: center;
         text-align: center;
+        white-space: nowrap;
+        overflow-wrap: normal;
+        word-break: normal;
+        scroll-snap-align: start;
       }
       h1 { font-size: 31px; }
       h2 { font-size: 23px; }
