@@ -13944,3 +13944,59 @@ Stage B 的 `2199` 个单元来自父方法 active-tail，它们的成员身份�
 ### English checkpoint
 
 Independent v140.4 recomputation confirms `2,199/2,199` Stage-B active-tail cells, `3,700/3,700` merged cells, and `5/5` complete trajectories. Crucially, the preregistered truth-free `pair_depth_projection_only` target also reaches `3,700/3,700` and `5/5`, so the result does not require per-sample truth-aware target switching. A second implementation rebuilds directions, the stable eigensolve, physical fields, projections, all cell gates, and trajectory tails; normalized field/projection image differences are `4.49e-9 / 4.46e-9`, below the `1e-6` gate, with zero exact-array or call-receipt failures. This is a substantive fixed-target representation-capacity result, not a deployable predictor. Existing teachers cover only a truth-defined active tail, so all `3,700` teachers must first be generated and independently sealed before complete-trajectory leave-one-out fitting. Algorithmic breakthrough, resource speedup, external generalization, curved-ray validity, real BOST, and paper success all remain false.
+
+## 2026-08-13：v141 泄漏链作废，v142 精确 K1-dual 四困难哨兵独立通过
+
+### 先说人话
+
+今天先纠正了一条不能继续使用的路线。原 v141 计划把固定教师接到完整轨迹留一预测器，但在产生任何 prediction 或 score 之前发现：上游表示构造跨过了 outer-fold 边界，留出轨迹可能影响训练侧表示。它被 fail-closed 作废，已有中间文件不解释、不评分，也不复用。
+
+随后我没有用更大的网络补救，而是把问题缩回到一个更小、更物理的机制：只用同一观测下的精确 CGLS K1 detector dual、K1 residual 和报告相机几何，构造 target-peer 成对深度方向。没有 learned upstream，也没有跨折教师。
+
+在结果前固定的四个困难单元上，也就是 5、7、9、12 相机各一个，v142 warm K1 达到 `4/4`；三个同成本经典对照都至少失败一个单元。第二套实现从 K1/K4 状态、方向、稳定求解、物理场、观测残差、四指标和调用账全部重新计算，得到同一判决。
+
+这是一项值得继续跑全量的机制正信号，但还不是突破。原因很重要：更便宜的 initializer-only `2A+2A^T` 在四个单元上同样 `4/4`。因此四单元结果不能证明额外一次 K1 refinement 必要，也不能证明全轨迹稳定。
+
+### 实际结果
+
+- warm K1：`4/4`，完整理论账 `3A+3A^T`；
+- warm K1 最大四指标比：`0.99644555`；
+- initializer-only：`4/4`，完整理论账 `2A+2A^T`；
+- initializer-only 最坏四指标比：`1.04729495`；
+- Zero-CGLS K3、scaled BP + K2、geometry-PCGLS K3：均未达到 `4/4`；
+- independent warm-field 相对差：`8.87e-10`；
+- independent metric-ratio 绝对差：`1.84e-11`。
+
+这里的比值是相对 Zero-CGLS K4 的四类物理误差最大值，冻结门为 `<=1.05`。CFD 真值只用于离线容量评价，不参与在线载体生成。
+
+### 为什么现在跑 v142.1
+
+四个单元只能筛掉明显不工作的机制，不能支撑论文结论。当前唯一正式任务把同一无学习上游机制原样扩展到全部 `3700` 个已开封 PoolFire 单元，覆盖五条完整轨迹、5/7/9/12 相机以及 clean、noise、pose、intrinsics 和 combined 分层。
+
+全量审计同时保留 warm K1、initializer-only 和三个同成本 controls。若 initializer-only 全局支配，就删除额外 K1；若任何完整轨迹或关键尾部门失败，就关闭该表示，不训练 CNN、FNO 或更大模型挽救。正式结果完成后仍必须由第二实现重建全部物理状态、逐轨迹尾部和精确调用账。
+
+### 当前证据边界
+
+- `v141_stacked_predictor_valid=false`；
+- `v142_four_cell_mechanism_headroom=true`；
+- `v142_full_3700_capacity_proven=false`；
+- `predictor_training_authorized=false`；
+- `gpu_rental_recommended_now=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_dual_pair_depth_sentinel_v142_result_2026-08-13.md`
+- `docs/poolfire_k1_dual_pair_depth_sentinel_v142_public_summary.json`
+- `assets/figures/poolfire_k1_dual_pair_depth_sentinel_v142.png`
+
+### English checkpoint
+
+The v141 stacked teacher/predictor path was invalidated before any prediction or score because its upstream representation crossed outer-fold boundaries. No intermediate output is interpreted or reused. v142 removes the learned upstream and builds pair-depth directions only from the exact CGLS-K1 detector dual, signed K1 residual, and reported camera geometry. Warm-restart K1 passes all four preregistered difficult post-open cells, one at each of 5, 7, 9, and 12 active cameras, while none of three same-cost classical control families passes all four. A second implementation independently rebuilds all states, directions, solves, physical fields, metrics, decisions, and call ledgers.
+
+This is mechanism headroom, not an algorithmic breakthrough. The lower-cost initializer-only arm also passes 4/4, so the four-cell screen does not establish that the extra K1 refinement is necessary. The ongoing v142.1 audit applies the unchanged mechanism to all 3,700 opened PoolFire cells, five complete trajectories, all camera counts, and clean/noise/pose/intrinsics/combined strata, retaining initializer-only and same-cost controls. Predictor training, resource testing, external generalization, curved-ray validation, real BOST, and paper success remain unauthorized or unproven.
