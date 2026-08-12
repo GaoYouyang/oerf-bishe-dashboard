@@ -1,0 +1,103 @@
+{
+  "schema_version": "oerf-public-poolfire-k1-dual-pair-depth-sentinel-v142.0",
+  "updated": "2026-08-13",
+  "title_zh": "v142 精确 K1-dual 成对深度暖启动哨兵诊断",
+  "title_en": "v142 Exact K1-Dual Pair-Depth Warm-Start Sentinel Diagnostic",
+  "formal_status": "PENDING_INDEPENDENT_VALIDATION_PASS_K1_DUAL_SENTINEL_V142",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_K1_DUAL_SENTINEL_V142",
+  "scientific_decision": "PASS_K1_DUAL_PAIR_DEPTH_WARM_SENTINEL_V142",
+  "data_scope": {
+    "opened_poolfire_cells": 4,
+    "selection": "One previously fixed worst-condition cell for each active-camera count",
+    "camera_counts": [5, 7, 9, 12],
+    "post_open_diagnostic": true,
+    "validation_truth_read": false,
+    "test_truth_read": false,
+    "real_bost_data_used": false
+  },
+  "mechanism": {
+    "learned_upstream_used": false,
+    "deployment_visible_carrier": "The exact CGLS-K1 detector dual, its K1 residual, and reported camera geometry generate the pair-depth basis.",
+    "offline_capacity_target": "The projection-only ridge target is the exact detector-space CGLS correction z4-z1 with a fixed 1e-6 ridge.",
+    "cfd_truth_role": "Opened CFD truth is used only to evaluate the four physical accuracy metrics.",
+    "primary_arm": "warm_restart_k1",
+    "primary_exact_calls": "3A+3A^T",
+    "reference_arm": "zero_cgls_k4",
+    "reference_exact_calls": "4A+4A^T"
+  },
+  "primary_result": {
+    "passed_cells": 4,
+    "required_cells": 4,
+    "maximum_metric_ratio_to_zero_cgls_k4": 0.996445549123816,
+    "maximum_metric_ratio_by_camera_count": {
+      "5": 0.996445549123816,
+      "7": 0.9905712191825726,
+      "9": 0.9865582919748456,
+      "12": 0.9730638412853176
+    }
+  },
+  "lower_cost_initializer_diagnostic": {
+    "arm": "initializer_k0",
+    "exact_calls": "2A+2A^T",
+    "passed_the_same_four_sentinel_metric_gates": true,
+    "maximum_metric_ratio_by_camera_count": {
+      "5": 1.047294948593972,
+      "7": 1.0155176144545615,
+      "9": 1.0078461664049163,
+      "12": 1.0028103805907795
+    },
+    "interpretation": "The four-cell screen does not establish that the additional K1 refinement is necessary or superior. The initializer-only arm must remain visible in the full-roster audit."
+  },
+  "same_cost_controls": {
+    "exact_calls": "3A+3A^T",
+    "zero_cgls_k3_passed_all_four": false,
+    "scaled_bp_k2_passed_all_four": false,
+    "geometry_pcgls_k3_passed_all_four": false,
+    "maximum_metric_ratio_by_camera_count": {
+      "zero_cgls_k3": {
+        "5": 1.2728099149845946,
+        "7": 1.2199318739582803,
+        "9": 1.2135058830339842,
+        "12": 1.237689185812477
+      },
+      "scaled_bp_k2": {
+        "5": 1.4109065412872976,
+        "7": 1.339764175980961,
+        "9": 1.3658631445196316,
+        "12": 1.3556747240836675
+      },
+      "geometry_pcgls_k3": {
+        "5": 1.1543669976935402,
+        "7": 1.1615910588148746,
+        "9": 1.1590371706065523,
+        "12": 1.1849065580617817
+      }
+    }
+  },
+  "independent_recomputation": {
+    "mixed_dual_relative_difference": 1.2528872220669271e-8,
+    "initializer_field_relative_difference": 8.966136373737718e-10,
+    "warm_field_relative_difference": 8.865167605380575e-10,
+    "metric_absolute_difference": 1.5876855385954514e-11,
+    "ratio_absolute_difference": 1.838296181944088e-11,
+    "k1_dual_lift_absolute_difference": 2.7755575615628914e-16
+  },
+  "route_decision": {
+    "invalidated_parent_path": "The v141 stacked predictor path was invalidated before predictions or scores because its upstream construction crossed outer-fold boundaries.",
+    "authorized_next_action": "Run the unchanged no-learned-upstream K1-dual mechanism on all 3,700 opened PoolFire cells and independently rebuild every physical state, metric, trajectory tail, perturbation stratum, and exact-call receipt.",
+    "full_3700_run_in_progress": true,
+    "predictor_training_authorized": false,
+    "gpu_rental_recommended_now": false
+  },
+  "claim_boundary": {
+    "four_cell_mechanism_headroom": true,
+    "full_3700_capacity_proven": false,
+    "observation_only_prediction_proven": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}

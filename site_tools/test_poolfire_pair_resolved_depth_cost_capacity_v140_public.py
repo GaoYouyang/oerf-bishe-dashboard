@@ -62,8 +62,10 @@ def test_current_evidence_keeps_v140_stage_a_as_history_after_v140_4() -> None:
     texts = [path.read_text(encoding="utf-8") for path in PUBLIC_PAGES]
     joined = "\n".join(texts)
 
-    assert evidence["formal_status"] == "PASS_V140_4_STAGE_B_HIERARCHICAL_STABLE_CAPACITY"
-    assert evidence["engineering_status"] == (
+    assert evidence["v140_4_pair_resolved_depth_cost_formal_status"] == (
+        "PASS_V140_4_STAGE_B_HIERARCHICAL_STABLE_CAPACITY"
+    )
+    assert evidence["v140_4_pair_resolved_depth_cost_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_PAIR_RESOLVED_DEPTH_COST_STAGE_B_V140_4"
     )
     assert evidence["metrics"]["v140_stage_a_pass_count"] == 151
