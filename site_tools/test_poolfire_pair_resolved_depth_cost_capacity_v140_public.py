@@ -57,19 +57,21 @@ def test_independent_recomputation_and_numerical_audit_are_explicit() -> None:
     assert audit["scientific_roster_thresholds_candidates_and_selectors_unchanged"] is True
 
 
-def test_current_evidence_and_bilingual_pages_publish_the_v140_boundary() -> None:
+def test_current_evidence_keeps_v140_stage_a_as_history_after_v140_4() -> None:
     evidence = load_json(EVIDENCE_PATH)
     texts = [path.read_text(encoding="utf-8") for path in PUBLIC_PAGES]
     joined = "\n".join(texts)
 
-    assert evidence["formal_status"] == "PASS_V140_STAGE_A_HARD_FAILURE_CAPACITY"
+    assert evidence["formal_status"] == "PASS_V140_4_STAGE_B_HIERARCHICAL_STABLE_CAPACITY"
     assert evidence["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_PAIR_RESOLVED_DEPTH_COST_V140"
+        "PASS_INDEPENDENT_RECOMPUTATION_PAIR_RESOLVED_DEPTH_COST_STAGE_B_V140_4"
     )
     assert evidence["metrics"]["v140_stage_a_pass_count"] == 151
     assert evidence["metrics"]["v140_stage_b_active_tail_count"] == 2199
-    assert evidence["current_decision"]["v140_all_3700_cells_proven"] is False
-    assert evidence["current_decision"]["v140_minimal_predictor_authorized"] is False
+    assert evidence["current_decision"]["v140_all_3700_cells_proven"] is True
+    assert evidence["current_decision"]["v140_complete_trajectory_gate_proven"] is True
+    assert evidence["current_decision"]["v141_complete_teacher_bundle_proven"] is False
+    assert evidence["current_decision"]["v141_predictor_training_authorized"] is False
 
     for text in texts:
         assert "v140" in text
@@ -81,6 +83,7 @@ def test_current_evidence_and_bilingual_pages_publish_the_v140_boundary() -> Non
     assert "post-open" in joined
     assert "poolfire_pair_resolved_depth_cost_capacity_v140_result_2026-08-11.md" in joined
     assert "poolfire_pair_resolved_depth_cost_capacity_v140.png" in joined
+    assert "poolfire_pair_resolved_depth_cost_stage_b_v140_4_result_2026-08-13.md" in joined
     assert FIGURE_PATH.stat().st_size > 100_000
 
 
