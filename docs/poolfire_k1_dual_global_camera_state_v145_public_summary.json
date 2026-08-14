@@ -1,0 +1,140 @@
+{
+  "schema_version": "oerf-public-k1-dual-global-camera-state-v145.1",
+  "updated": "2026-08-14",
+  "title": "v145 global camera-set state identifiability diagnostic",
+  "formal_status": "FAIL_GLOBAL_CAMERA_STATE_IDENTIFIABILITY_V145",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_GLOBAL_CAMERA_STATE_V145",
+  "audit_status": "PASS_POST_RESULT_CAMERA_COUNT_MIXING_AUDIT_V145_1",
+  "scientific_decision": "FAIL_GLOBAL_CAMERA_STATE_IDENTIFIABILITY_V145",
+  "evaluation": {
+    "opened_poolfire_sample_count": 3700,
+    "sentinel_count": 20,
+    "trajectory_count": 5,
+    "camera_counts": [5, 7, 9, 12],
+    "structural_direction_key_count": 96,
+    "per_camera_feature_dimension": 45,
+    "moments_signature_dimension": 94,
+    "observable_pose_coupled_signature_dimension": 580,
+    "neighbor_count": 8,
+    "trainable_parameter_count": 0,
+    "additional_exact_A_calls": 0,
+    "additional_exact_AT_calls": 0
+  },
+  "frozen_gates": {
+    "scale_invariant_relative_l2_each_sentinel_maximum": 0.45,
+    "cosine_each_sentinel_minimum": 0.9,
+    "trajectory_p90_higher_maximum": 0.35,
+    "required_sentinel_pass_count": 20,
+    "required_trajectory_pass_count": 5
+  },
+  "methods": {
+    "camera_count_mean_control": {
+      "role": "outer-fit camera-count mean target control",
+      "sentinel_pass_count": 0,
+      "full_cell_pass_count": 0,
+      "trajectory_pass_count": 0,
+      "scale_invariant_relative_l2_median": 0.9079029132805547,
+      "scale_invariant_relative_l2_p90_higher": 0.9570396981929077,
+      "scale_invariant_relative_l2_worst": 0.9929995398352901,
+      "cosine_median": 0.4191805072961387
+    },
+    "cross_trajectory_moments_knn": {
+      "role": "complete-trajectory held-out global-moments diagnostic",
+      "sentinel_pass_count": 0,
+      "full_cell_pass_count": 0,
+      "trajectory_pass_count": 0,
+      "scale_invariant_relative_l2_median": 0.9193754648763142,
+      "scale_invariant_relative_l2_p90_higher": 0.9776530931409262,
+      "scale_invariant_relative_l2_worst": 0.9999984513242246,
+      "cosine_median": 0.39338118222050716,
+      "trajectory_p90_higher": {
+        "p=14kw_size=05": 0.969904,
+        "p=22kw_size=03": 0.987993,
+        "p=33kw_size=01": 0.978409,
+        "p=45kw_size=05": 0.977177,
+        "p=58kw_size=03": 0.969913
+      }
+    },
+    "cross_trajectory_observable_pose_coupled_knn": {
+      "role": "complete-trajectory held-out observable-pose coupled diagnostic",
+      "sentinel_pass_count": 0,
+      "full_cell_pass_count": 0,
+      "trajectory_pass_count": 0,
+      "scale_invariant_relative_l2_median": 0.9244412725658622,
+      "scale_invariant_relative_l2_p90_higher": 0.9829949973811197,
+      "scale_invariant_relative_l2_worst": 0.9999997667845271,
+      "cosine_median": 0.3813244465039811,
+      "trajectory_p90_higher": {
+        "p=14kw_size=05": 0.982959,
+        "p=22kw_size=03": 0.976855,
+        "p=33kw_size=01": 0.993382,
+        "p=45kw_size=05": 0.982302,
+        "p=58kw_size=03": 0.977126
+      }
+    },
+    "same_trajectory_moments_diagnostic": {
+      "role": "post-open same-trajectory diagnostic, not deployable",
+      "sentinel_pass_count": 0,
+      "full_cell_pass_count": 0,
+      "trajectory_pass_count": 0,
+      "scale_invariant_relative_l2_median": 0.8606375486049571,
+      "scale_invariant_relative_l2_p90_higher": 0.9627086657053656,
+      "scale_invariant_relative_l2_worst": 0.9999994470772323,
+      "cosine_median": 0.5092180360206029
+    },
+    "same_trajectory_observable_pose_coupled_diagnostic": {
+      "role": "post-open same-trajectory diagnostic, not deployable",
+      "sentinel_pass_count": 0,
+      "full_cell_pass_count": 0,
+      "trajectory_pass_count": 0,
+      "scale_invariant_relative_l2_median": 0.8590270397588303,
+      "scale_invariant_relative_l2_p90_higher": 0.9635426407606731,
+      "scale_invariant_relative_l2_worst": 0.9999963531741197,
+      "cosine_median": 0.5119302145216573,
+      "trajectory_p90_higher": {
+        "p=14kw_size=05": 0.955697,
+        "p=22kw_size=03": 0.977799,
+        "p=33kw_size=01": 0.971813,
+        "p=45kw_size=05": 0.836483,
+        "p=58kw_size=03": 0.967999
+      }
+    }
+  },
+  "independent_recomputation": {
+    "check_count": 9,
+    "all_checks_passed": true,
+    "integer_neighbor_and_direction_arrays_exact": true,
+    "maximum_float_array_absolute_difference": 1.31206157050201e-12,
+    "maximum_summary_absolute_difference": 1.454392162258955e-14,
+    "scientific_decision_exact": true,
+    "formal_tree_unchanged": true,
+    "formal_v145_module_imported": false,
+    "additional_exact_A_calls": 0,
+    "additional_exact_AT_calls": 0
+  },
+  "post_result_camera_count_audit": {
+    "scientific_decision_changed": false,
+    "cross_trajectory_moments_same_count_neighbor_edge_fraction": 0.5579391892,
+    "cross_trajectory_coupled_same_count_neighbor_edge_fraction": 0.3065878378,
+    "same_trajectory_moments_same_count_neighbor_edge_fraction": 0.9710135135,
+    "same_trajectory_coupled_same_count_neighbor_edge_fraction": 0.9568243243,
+    "conclusion": "Camera-count mixing is material in cross-trajectory neighborhoods, but it is not a sufficient explanation because same-trajectory neighborhoods exceed 95% same-count edges and still pass 0/20 sentinels and 0/3700 cells."
+  },
+  "route_action": {
+    "shared_global_neighbor_metric_closed": true,
+    "direction_conditioned_local_global_metric_ruled_out": false,
+    "all_nonlinear_or_global_models_ruled_out": false,
+    "physical_replay_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false,
+    "next_gate": "Hard-match camera count and concatenate the existing direction-local 155D representation with global moments or observable-pose coupling. Compare count-stratified local-only, local-plus-moments, and local-plus-coupling on CPU before any trainable model."
+  },
+  "claim_boundary": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}
