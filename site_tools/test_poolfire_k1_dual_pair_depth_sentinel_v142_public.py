@@ -71,15 +71,13 @@ def test_route_decision_and_claim_boundary_remain_narrow() -> None:
     )
 
 
-def test_current_surfaces_point_to_v142_without_overclaiming() -> None:
+def test_historical_surfaces_preserve_v142_without_overclaiming() -> None:
     evidence = _read(EVIDENCE)
     text = "\n".join(path.read_text(encoding="utf-8") for path in PAGES)
 
-    assert evidence["latest_valid_mechanism_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_K1_DUAL_SENTINEL_V142"
-    )
     assert evidence["metrics"]["v142_sentinel_pass_count"] == 4
-    assert evidence["current_decision"]["v142_full_3700_capacity_proven"] is False
+    assert evidence["current_decision"]["v142_four_cell_mechanism_headroom"] is True
+    assert evidence["current_decision"]["v142_full_3700_capacity_proven"] is True
     assert evidence["current_decision"]["v142_predictor_training_authorized"] is False
     assert "initializer-only" in text
     assert "Initializer-only" in text

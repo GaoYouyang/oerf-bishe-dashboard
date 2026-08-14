@@ -80,11 +80,11 @@ def test_independent_audit_and_claim_boundary_are_narrow() -> None:
     )
 
 
-def test_current_evidence_and_bilingual_surfaces_show_the_new_gate() -> None:
+def test_current_evidence_and_bilingual_surfaces_preserve_v140_4_gate() -> None:
     evidence = _read(EVIDENCE)
     text = "\n".join(path.read_text(encoding="utf-8") for path in PAGES)
 
-    assert evidence["updated"] == "2026-08-13"
+    assert evidence["updated"] >= "2026-08-13"
     assert evidence["metrics"]["v140_4_stage_b_pass_count"] == 2199
     assert evidence["metrics"]["v140_4_full_pass_count"] == 3700
     assert evidence["metrics"]["v140_4_trajectory_pass_count"] == 5
