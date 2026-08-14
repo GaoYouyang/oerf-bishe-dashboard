@@ -1,8 +1,8 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.15-c-v147-local-span-capacity",
-  previousVersion: "2026.08.15-c-v146-direction-conditioned-identifiability",
-  previousBadge: "v146 fixed-eight direction family closed · 1 / 20 cross-trajectory",
-  olderBadge: "v145 shared global-neighbor metric closed · 0 / 20 sentinels",
+  version: "2026.08.15-c-v148-detector-krylov-capacity",
+  previousVersion: "2026.08.15-c-v147-local-span-capacity",
+  previousBadge: "v147 local action span closed · 14 / 20 cross span-32",
+  olderBadge: "v146 fixed-eight direction family closed · 1 / 20 cross-trajectory",
   historyReleases: [
     {
       version: "2026.08.02-c-v98-joint13-predictor-negative-geometry-gate",

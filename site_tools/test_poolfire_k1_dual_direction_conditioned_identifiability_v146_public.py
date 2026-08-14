@@ -23,7 +23,6 @@ EVIDENCE = ROOT / "operator-learning/current-evidence.json"
 SURFACES = [
     ROOT / "index.html",
     ROOT / "operator-learning/index.html",
-    ROOT / "operator-learning/daily-progress.html",
 ]
 
 

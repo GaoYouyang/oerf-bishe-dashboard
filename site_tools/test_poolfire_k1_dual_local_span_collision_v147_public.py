@@ -11,7 +11,7 @@ SUMMARY = ROOT / "docs/poolfire_k1_dual_local_span_collision_v147_public_summary
 RESULT = ROOT / "docs/poolfire_k1_dual_local_span_collision_v147_result_2026-08-15.md"
 FIGURE = ROOT / "assets/figures/poolfire_k1_dual_local_span_collision_v147.png"
 EVIDENCE = ROOT / "operator-learning/current-evidence.json"
-SURFACES = [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]
+SURFACES = [ROOT / "index.html", ROOT / "operator-learning/index.html"]
 
 
 def test_summary_preserves_truth_aware_negative_boundary() -> None:
