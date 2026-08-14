@@ -14162,3 +14162,53 @@ v144 asks whether the v143 target is at least locally identifiable even though i
 An independent implementation rebuilds structural keys, features, whitening, neighbor order, predictions, metrics, and decisions. Integer neighbor arrays match exactly and the maximum floating-point array difference is `8.88e-16`. The initial mechanical status remained inconclusive only because nested trajectory-tail JSON values differed by `1.11e-16` instead of matching bit-for-bit. A transparently labeled post-result tolerance audit changes no scientific object or threshold and confirms the same negative verdict.
 
 The result closes the frozen local-neighborhood hypothesis for the current per-direction representation, not all nonlinear or globally conditioned models. No physical replay, neural training, GPU rental, resource gate, external generalization, curved-ray claim, real-BOST claim, or paper-success claim is authorized. `algorithm_breakthrough=false`.
+
+## 2026-08-14：v145 全局 camera-set 状态仍不能辨识共享目标
+
+### 先说人话
+
+v144 失败后，我没有把同一个 155D 局部模型放大，也没有租 GPU，而是直接检验它明确指出的缺口：每个方向是不是缺少整组相机的全局状态。
+
+v145 用每台相机的 45D 部署可见特征构造两种排列不变签名。第一种只取相机数、均值和标准差，共 94D；第二种再加入 detector observable 与报告位姿的中心化耦合，共 580D。两种方法都用固定八近邻预测 96 个方向的 Riesz-action 目标，训练参数为 0，额外精确调用为 `+0A/+0A^T`。
+
+结果非常明确：camera-count mean、跨轨迹 moments、跨轨迹 coupled、同轨迹 moments 和同轨迹 coupled 五种方法全部是 `0/20` 哨兵、`0/3700` 完整单元、`0/5` 轨迹。表现最好的同轨迹 coupled 误差中位数仍为 `0.85903`，远高于 `0.45` 门；五条轨迹 p90 也都远高于 `0.35` 门。
+
+### 独立复算
+
+第二实现没有导入正式 v145 模块。它用逐样本循环重建全局签名，再用独立距离实现重建邻居、预测、指标和判决。整数邻居与方向数组完全一致，浮点数组最大差 `1.31e-12`，汇总最大差 `1.45e-14`，`9/9` 完整性检查全部通过。
+
+所以这不是程序没跑完、VPN 切换、数值漂移或算力不足造成的失败，而是当前共享全局邻居度量在这五条已开封 PoolFire 轨迹上没有可辨识性。
+
+### 相机数量混合审计
+
+跨轨迹邻居确实存在明显相机数混合：moments 的同相机数边比例为 `55.8%`，coupled 为 `30.7%`。但它不是充分解释，因为同轨迹 moments/coupled 的同相机数边已经达到 `97.1% / 95.7%`，结果仍是 `0/20` 与 `0/3700`。
+
+下一门因此不能只做相机数分层，也不能继续使用一个共享全局距离。它必须硬匹配相机数，并把 v144 的逐方向 155D 局部状态与 v145 的全局 moments 或 observable-pose coupling 拼接，公平比较 local-only、local + moments、local + coupled。这个门仍然是 CPU 诊断，只有出现清晰正信号才允许冻结最小可训练模型。
+
+### 当前边界
+
+- `shared_global_neighbor_metric_closed=true`；
+- `direction_conditioned_local_global_metric_ruled_out=false`；
+- `neural_training_authorized=false`；
+- `gpu_rental_authorized=false`；
+- `physical_replay_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_dual_global_camera_state_v145_result_2026-08-14.md`
+- `docs/poolfire_k1_dual_global_camera_state_v145_public_summary.json`
+- `assets/figures/poolfire_k1_dual_global_camera_state_v145.png`
+
+### English checkpoint
+
+v145 tests the specific gap exposed by v144 instead of enlarging the same local model. Two permutation-invariant global camera-set signatures are built from deployment-visible per-camera features: a 94-dimensional camera-count/moment signature and a 580-dimensional observable-pose coupled signature. Fixed eight-neighbor prediction over 96 action keys adds no trainable parameters and no exact operator calls.
+
+All five tested methods pass `0/20` sentinels, `0/3700` cells, and `0/5` trajectory-tail gates. Even the non-deployable same-trajectory coupled diagnostic has median error `0.85903`, far above the frozen `0.45` gate. An independent implementation reconstructs signatures, neighbors, predictions, metrics, and decisions without importing the formal v145 module; integer arrays match exactly, the largest floating-point array difference is `1.31e-12`, the largest summary difference is `1.45e-14`, and all nine integrity checks pass.
+
+Cross-trajectory camera-count mixing is material, but it cannot fully explain the failure: same-trajectory neighborhoods already contain more than 95% same-count edges and still fail every sentinel and cell. The next CPU-only gate therefore hard-matches camera count and combines the existing direction-local representation with global moments or observable-pose coupling. This closes the shared-global-neighbor metric, not all direction-conditioned local-plus-global models or the full C route. Neural training, GPU rental, physical replay, speedup, external generalization, curved-ray validation, real BOST, algorithmic breakthrough, and paper success remain unauthorized or unproven.
