@@ -14329,3 +14329,71 @@ Cross span-32 improves to `14/20` sentinels and `1/5` trajectory tails, while th
 Every candidate inside the nearest 5% neighborhood conflicts with the target gate: `740/740` cross-trajectory and `200/200` same-trajectory candidates. This is a relative-neighborhood conflict under the current metric, not proof of an exact feature collision or global mathematical impossibility.
 
 An independent Gram-eigendecomposition implementation reproduces neighbor indices and conflict flags exactly. The maximum projection difference is `9.01e-15`, metric and gate-summary differences are at most `2.22e-16`, and all thirteen checks pass. The current sample-level direction-local span up to K=32 is closed. The next gate must change the physically observable state or correction target before any larger predictor or GPU rental is considered.
+
+## 2026-08-15：v148 找到分组探测器 Krylov 容量 headroom
+
+### 为什么这次不是继续堆模型
+
+v147 已经说明，跨样本邻居 action 即使允许 32 维真值最优重组，也过不了完整轨迹门。继续用同一 155D 邻域表示训练更大的 CNN / FNO 没有依据。v148 因此改问一个物理上不同的问题：目标 correction 是否已经存在于当前样本自己的探测器谱响应里，只是不同相机/分量组不能共用同一套系数？
+
+正式程序从 exact-K1 dual、带符号 K1 residual 与报告几何重建固定的 96 个探测器方向。每个方向只作用于自己的目标相机/分量，随后从可见 seed 生成 `[s, Hs, H^2s, H^3s]` 四阶 Krylov 列。所有方向、阶数、分组和门都在读目标前冻结；训练参数为 0，新增精确调用为 `+0A/+0A^T`。
+
+### 真正跑出来的结果
+
+- visible seed control：`18/20` 哨兵、`2/5` 轨迹尾部；
+- global Krylov-4 oracle：`18/20`、`3/5`，误差中位数 / p90 / worst 为 `0.27411 / 0.45006 / 0.54507`；
+- block Krylov-4 oracle：`20/20`、`5/5`，误差中位数 / p90 / worst 为 `0.08437 / 0.15074 / 0.21897`。
+
+block 方法的五条轨迹 p90-higher 为 `0.14560 / 0.11303 / 0.05864 / 0.21897 / 0.11814`，全部低于冻结的 `0.35` 门。global 方法仍在 p45 与 p58 失败，因此正结果不是“随便四个系数就够”，而是具体支持：不同探测器相机/分量组具有不同的低阶谱响应。
+
+科学判决为 `HEADROOM_BLOCK_DETECTOR_KRYLOV4_V148`。
+
+### 独立复算
+
+第二实现没有复用正式 thin-SVD projector，而改用列 Gram 对称特征分解，并在物理空间做约化 QR 清理。它独立重建状态、方向、三种预测、误差、cosine、轨迹尾部和判决。
+
+- 投影秩完全一致；
+- 状态浮点数组最大差 `1.92e-15`；
+- block / global / seed 预测最大差 `1.46e-12 / 5.33e-15 / 1.11e-16`；
+- error / cosine 最大差 `2.56e-14 / 1.89e-15`；
+- `14/14` 检查全部通过，正式结果树未改变。
+
+两个实现仍共享冻结物理核，所以端到端 physics independence 没有证明。
+
+### 这次到底成功了什么
+
+这是一个真实的机制容量正结果：它排除了“当前样本自身没有足够物理方向”的悲观解释，并把下一问题压缩为少量分组系数的 deployment-visible 预测。
+
+它还不是算法突破。oracle 系数读取已开封 CFD 真值，没有 observation-only predictor、物理重放、重建 matched-accuracy、调用减少、wall/RSS、外部工况、curved ray 或真实 BOST 结果。
+
+下一门只冻结一个最小共享、相机置换等变、只读 observation/geometry 的分组系数预测器，并在 CPU 上做完整 trajectory-level leave-one-out 和便宜 control 对照。这个规模不需要租 GPU；只有严格外折通过且 CPU 吞吐经实测成为主瓶颈，才重新评估算卡。
+
+当前边界：
+
+- `groupwise_spectral_capacity_headroom=true`；
+- `oracle_is_deployable=false`；
+- `observation_only_predictor_passed=false`；
+- `neural_training_authorized=false`；
+- `gpu_rental_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_dual_detector_krylov_capacity_v148_result_2026-08-15.md`
+- `docs/poolfire_k1_dual_detector_krylov_capacity_v148_public_summary.json`
+- `assets/figures/poolfire_k1_dual_detector_krylov_capacity_v148.png`
+
+### English checkpoint
+
+v148 replaces v147's cross-sample neighbor span with a sample-specific detector Krylov family built from exact-K1 dual state, signed K1 residual, and reported geometry. The visible seed generates four columns, `[s, Hs, H^2s, H^3s]`, over 96 frozen detector directions.
+
+The visible-seed control reaches `18/20` sentinels and `2/5` trajectory tails. A truth-aware oracle with four global coefficients reaches `18/20` and `3/5`. Four coefficients per camera/component group reach `20/20` and `5/5`, with median / p90 / worst error `0.08437 / 0.15074 / 0.21897`. All five trajectory tails pass the frozen `0.35` threshold.
+
+An independent implementation uses a symmetric column-Gram eigensolve and physical-space reduced QR instead of the formal thin SVD. Projection ranks match exactly; the maximum block-prediction difference is `1.46e-12`, metric differences are at most `2.56e-14`, and all fourteen checks pass. Shared frozen physics kernels remain, so end-to-end physics independence is not proven.
+
+This is genuine mechanism-capacity headroom, not a deployable warm-start algorithm. Oracle coefficients use opened CFD truth. Observation-only prediction, physical replay, matched-accuracy reconstruction, exact-call reduction, wall/RSS speedup, external generalization, curved rays, real BOST, and paper success remain unproven. The next experiment is a minimal shared camera-permutation-equivariant observation/geometry-only group-coefficient predictor under complete-trajectory leave-one-out on CPU; GPU rental is not warranted yet.

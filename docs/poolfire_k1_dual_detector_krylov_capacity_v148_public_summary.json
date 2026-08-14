@@ -1,0 +1,103 @@
+{
+  "schema_version": "oerf-public-k1-dual-detector-krylov-capacity-v148.0",
+  "updated": "2026-08-15",
+  "title": "v148 detector-group Krylov capacity diagnostic",
+  "formal_status": "PASS_FORMAL_DETECTOR_KRYLOV_CAPACITY_EXECUTION_V148",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_DETECTOR_KRYLOV_CAPACITY_V148",
+  "scientific_decision": "HEADROOM_BLOCK_DETECTOR_KRYLOV4_V148",
+  "evaluation": {
+    "opened_poolfire_sentinel_count": 20,
+    "trajectory_count": 5,
+    "camera_counts": [5, 7, 9, 12],
+    "frozen_direction_count": 96,
+    "krylov_degree": 4,
+    "trainable_parameter_count": 0,
+    "additional_exact_A_calls": 0,
+    "additional_exact_AT_calls": 0,
+    "physical_replay_run": false
+  },
+  "frozen_gates": {
+    "scale_invariant_relative_l2_each_sentinel_maximum": 0.45,
+    "cosine_each_sentinel_minimum": 0.9,
+    "trajectory_p90_higher_maximum": 0.35,
+    "required_sentinel_pass_count": 20,
+    "required_trajectory_pass_count": 5
+  },
+  "methods": {
+    "visible_seed_control": {
+      "role": "deployment-visible signed seed without oracle coefficient fitting",
+      "sentinel_pass_count": 18,
+      "trajectory_pass_count": 2,
+      "error_median": 0.3129232717191125,
+      "error_p90_higher": 0.5045712592859638,
+      "error_worst": 0.5484548742209873
+    },
+    "global_krylov4": {
+      "role": "truth-aware upper bound with one shared four-coefficient Krylov rule",
+      "sentinel_pass_count": 18,
+      "trajectory_pass_count": 3,
+      "error_median": 0.2741085713705169,
+      "error_p90_higher": 0.4500618518431895,
+      "error_worst": 0.5450656136590728,
+      "trajectory_p90_higher": {
+        "p14": 0.33123112480342615,
+        "p22": 0.28567721878734087,
+        "p33": 0.2747455864596909,
+        "p45": 0.5450656136590728,
+        "p58": 0.3519221663172905
+      }
+    },
+    "block_krylov4": {
+      "role": "truth-aware upper bound with four coefficients per detector camera/component group",
+      "sentinel_pass_count": 20,
+      "trajectory_pass_count": 5,
+      "error_median": 0.08436637217959717,
+      "error_p90_higher": 0.15074395630362547,
+      "error_worst": 0.21896946963702846,
+      "cosine_median": 0.996434255893431,
+      "cosine_p10_lower": 0.9885728398241226,
+      "cosine_worst": 0.975731710751925,
+      "trajectory_p90_higher": {
+        "p14": 0.14559513678577582,
+        "p22": 0.11302899843776448,
+        "p33": 0.05863862988057597,
+        "p45": 0.21896946963702846,
+        "p58": 0.11814224253443187
+      }
+    }
+  },
+  "independent_recomputation": {
+    "check_count": 14,
+    "all_checks_passed": true,
+    "projection_ranks_exact": true,
+    "maximum_state_numeric_difference": 1.915134717478395e-15,
+    "maximum_block_prediction_difference": 1.4633849687584188e-12,
+    "maximum_global_prediction_difference": 5.329070518200751e-15,
+    "maximum_visible_seed_prediction_difference": 1.1102230246251565e-16,
+    "maximum_error_difference": 2.5604518505417673e-14,
+    "maximum_cosine_difference": 1.887379141862766e-15,
+    "formal_tree_unchanged": true,
+    "shared_frozen_physics_kernels": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "route_action": {
+    "groupwise_spectral_heterogeneity_supported": true,
+    "minimal_groupwise_observation_only_predictor_next": true,
+    "complete_trajectory_loto_required": true,
+    "larger_neural_model_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false,
+    "physical_replay_authorized": false
+  },
+  "claim_boundary": {
+    "deployable_algorithm": false,
+    "oracle_coefficients_are_truth_aware": true,
+    "reconstruction_accuracy_proven": false,
+    "algorithm_breakthrough": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "paper_success": false
+  }
+}
