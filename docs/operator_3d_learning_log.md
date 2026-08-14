@@ -14000,3 +14000,52 @@ Independent v140.4 recomputation confirms `2,199/2,199` Stage-B active-tail cell
 The v141 stacked teacher/predictor path was invalidated before any prediction or score because its upstream representation crossed outer-fold boundaries. No intermediate output is interpreted or reused. v142 removes the learned upstream and builds pair-depth directions only from the exact CGLS-K1 detector dual, signed K1 residual, and reported camera geometry. Warm-restart K1 passes all four preregistered difficult post-open cells, one at each of 5, 7, 9, and 12 active cameras, while none of three same-cost classical control families passes all four. A second implementation independently rebuilds all states, directions, solves, physical fields, metrics, decisions, and call ledgers.
 
 This is mechanism headroom, not an algorithmic breakthrough. The lower-cost initializer-only arm also passes 4/4, so the four-cell screen does not establish that the extra K1 refinement is necessary. The ongoing v142.1 audit applies the unchanged mechanism to all 3,700 opened PoolFire cells, five complete trajectories, all camera counts, and clean/noise/pose/intrinsics/combined strata, retaining initializer-only and same-cost controls. Predictor training, resource testing, external generalization, curved-ray validation, real BOST, and paper success remain unauthorized or unproven.
+
+## 2026-08-14：v142.4 独立复算关闭当前共享线性预测器
+
+### 先说人话
+
+今天回答了一个不能再回避的问题：前一天证明了成对深度方向“装得下” K4-K1 修正，但部署时只看观测和几何，能不能跨完整轨迹把这些系数预测出来？
+
+答案是当前的共享线性 ridge 不能。五条 PoolFire 轨迹共 `3700` 个单元中，正式特征视图和第二实现重建的独立特征视图都只有 `1/3700` 通过，完整轨迹是 `0/5`。两个视图的指标比最大差只有 `2.59e-11`，所以不是第二套几何实现把好结果算坏了，而是线性映射本身没有把容量转成跨轨迹预测。
+
+### 实际数字
+
+- 正式特征视图：`1/3700`、`0/5`，最坏指标比 `1.93336`；
+- 独立特征视图：`1/3700`、`0/5`，最坏指标比 `1.93336`；
+- joint-LS warm-restart control：`0/3700`、`0/5`，最坏指标比 `1.74351`；
+- 候选完整在线账为 `3A+3A^T`，参考 Zero-CGLS K4 为 `4A+4A^T`；
+- 五条轨迹 observation p90 比约为 `1.579` 到 `1.861`，field 和 gradient 尾部也同时越线。
+
+第一次完整复算其实已经跑完所有预测和物理重放，只是在最后写 JSON 时遇到 NumPy 布尔值不能序列化。这次被保留为 `INCONCLUSIVE`，partial 数组没有复用。后续只修了报告序列化，不改模型、数据、折分、阈值、对照或物理路径，然后完整重跑。最终 `19/19` 完整性检查为真。
+
+### 为什么这个负结果有价值
+
+它把“方向容量不够”和“系数不能预测”分开了。前者已经由 fixed teacher 的 `3700/3700`、`5/5` 排除；今天证明的是当前 deployment-visible 特征到 teacher 系数的共享线性映射不成立。
+
+按结果前合同，这条分支现在关闭：不换目标、不重扫 lambda、不事后选视图、不用 CNN/FNO 放大模型挽救。如果继续 C 路线，下一个实验必须是物理上不同且可证伪的表示或安全门。
+
+### 当前边界
+
+- `fixed_teacher_mechanism_capacity_proven=true`；
+- `deployable_linear_predictor_proven=false`；
+- `matched_accuracy_call_reduction_proven=false`；
+- `resource_gate_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_exact_k1_dual_view_ridge_v142_4_result_2026-08-14.md`
+- `docs/poolfire_exact_k1_dual_view_ridge_v142_4_public_summary.json`
+- `assets/figures/poolfire_exact_k1_dual_view_ridge_v142_4.png`
+
+### English checkpoint
+
+The preregistered shared linear exact-K1 direction ridge fails complete-trajectory transfer. Both the sealed formal feature view and an independently rebuilt geometry-feature view pass only `1/3,700` cells and `0/5` trajectories. Their maximum per-cell metric-ratio difference is `2.59e-11`, so the failure is not explained by numerical drift between the two geometry implementations. The worst metric ratio is `1.93336`, and all five observation p90 ratios lie between roughly `1.579` and `1.861`; field and gradient tails also miss their gates.
+
+The first full replay became inconclusive only while serializing a NumPy boolean into the final JSON. Its partial arrays were not reused. A serialization-only successor repeated all predictions and physical replays unchanged, with `19/19` integrity checks passing. The preregistered branch therefore closes: no target switch, lambda retuning, feature-view selection, or larger-model rescue is allowed. Fixed-teacher capacity remains established, but deployable prediction, matched-accuracy call reduction, resources, external generalization, curved rays, real BOST, and paper success remain unproven.
