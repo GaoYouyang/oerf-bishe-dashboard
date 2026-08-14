@@ -14105,3 +14105,60 @@ v143 tests whether the v142.4 failure was merely caused by a poor coefficient co
 Independent recomputation agrees on the scientific arrays. The initial validator became inconclusive only because a single absolute tolerance was incorrectly applied to both near-unit metrics and a condition number near `6.53e7`. The original inconclusive receipt remains preserved. A transparently labeled post-result dimensional audit uses an unchanged `1e-8` absolute tolerance for ordinary metrics and a `1e-9` symmetric relative tolerance for the condition number, obtaining a maximum relative difference of `8.35e-11`. No model, prediction, target, threshold, sentinel, or scientific gate changed.
 
 The scientific verdict is `FAIL_SHARED_LINEAR_RIESZ_ACTION_PREDICTABILITY_V143`. Physical replay, neural training, and GPU rental are not authorized. The next gate is a small CPU local-identifiability diagnostic on held-out trajectory targets within deployment-visible neighborhoods. This is a validated negative result that narrows the mechanism; it is not an algorithmic breakthrough, speedup, external generalization, curved-ray result, real BOST result, or paper success.
+
+## 2026-08-14：v144 局部邻域仍不能辨识 Riesz-action 目标
+
+### 先说人话
+
+v143 已经排除了“只要换一个自然线性坐标就行”。今天继续测更宽松、也更接近小型非线性模型的解释：即使没有全局线性关系，相近的部署可见输入会不会对应相近的目标？
+
+答案仍是否定的。用结果前固定的 155 维观测/几何特征、结构键内白化和八近邻规则，跨轨迹只通过 `1/20` 个哨兵。即使允许从同一条已开封轨迹找邻居，这个不能部署、只用于判断局部连续性的诊断也只有 `8/20`。两种方法在五条轨迹上的 p90 都没有通过。
+
+这说明当前问题不是“CPU 太慢”或“模型还不够大”，而是这组逐方向局部特征没有把 action 目标组织成稳定邻域。现在租 GPU 没有科学依据。
+
+### 实际数字
+
+- 跨轨迹 kNN：`1/20`；误差 median / p90 / worst 为 `0.60845 / 0.84100 / 0.90479`，余弦中位数 `0.79359`；
+- 同轨迹诊断 kNN：`8/20`；误差 median / p90 / worst 为 `0.44161 / 0.62566 / 0.63569`，余弦中位数 `0.89720`；
+- 结构均值 control：`0/20`，误差中位数 `0.91391`；
+- 冻结门：每哨兵误差 `<=0.45`、余弦 `>=0.90`，每轨迹 p90 `<=0.35`；
+- 跨轨迹和同轨迹两种诊断均为轨迹尾部 `0/5`；
+- 训练参数 `0`，新增精确调用 `+0A/+0A^T`。
+
+### 独立复算与透明审计
+
+第二实现独立重建结构键、155 维特征、白化、邻居顺序、预测、指标与判决。整数邻居数组完全一致，浮点数组最大差 `8.88e-16`，科学判决一致。
+
+初始独立报告的机械状态仍是 inconclusive，因为验证器要求嵌套 JSON 中的轨迹尾部浮点数逐字相等；两套实现的最大差只有 `1.11e-16`。结果后容差审计没有改变邻居、预测、目标、阈值或判决顺序，只用 `1e-12` 比较轨迹尾部，审计通过并确认同一负判决。
+
+### 路线动作
+
+关闭的是当前 155D 逐方向局部邻域假设，不是所有非线性模型，也不是整个 C 路线。下一步不放大这个模型，而只允许一个物理上不同的 CPU 机制诊断：用全局 residual 与完整 camera-set 状态为每个方向补充非局部上下文。它若仍不能先过可辨识性门，就继续关线，不训练网络。
+
+### 当前边界
+
+- `local_neighborhood_identifiability_proven=false`；
+- `all_nonlinear_models_ruled_out=false`；
+- `neural_training_authorized=false`；
+- `gpu_rental_authorized=false`；
+- `physical_replay_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_dual_local_identifiability_v144_result_2026-08-14.md`
+- `docs/poolfire_k1_dual_local_identifiability_v144_public_summary.json`
+- `assets/figures/poolfire_k1_dual_local_identifiability_v144.png`
+
+### English checkpoint
+
+v144 asks whether the v143 target is at least locally identifiable even though it is not globally linearly predictable. With a preregistered 155-dimensional deployment-visible feature, structural-key-local whitening, and fixed eight-neighbor rules, complete-trajectory cross-trajectory kNN passes only `1/20` sentinels. A same-trajectory diagnostic, which is not deployable and is used only as a local-continuity upper bound, passes `8/20`. Both methods fail all five trajectory p90 gates. The structural-mean control passes `0/20`.
+
+An independent implementation rebuilds structural keys, features, whitening, neighbor order, predictions, metrics, and decisions. Integer neighbor arrays match exactly and the maximum floating-point array difference is `8.88e-16`. The initial mechanical status remained inconclusive only because nested trajectory-tail JSON values differed by `1.11e-16` instead of matching bit-for-bit. A transparently labeled post-result tolerance audit changes no scientific object or threshold and confirms the same negative verdict.
+
+The result closes the frozen local-neighborhood hypothesis for the current per-direction representation, not all nonlinear or globally conditioned models. No physical replay, neural training, GPU rental, resource gate, external generalization, curved-ray claim, real-BOST claim, or paper-success claim is authorized. `algorithm_breakthrough=false`.

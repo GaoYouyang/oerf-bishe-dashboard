@@ -1,0 +1,129 @@
+{
+  "schema_version": "oerf-public-k1-dual-local-identifiability-v144.1",
+  "updated": "2026-08-14",
+  "title": "v144 local identifiability diagnostic",
+  "formal_status": "FAIL_LOCAL_OBSERVABLE_IDENTIFIABILITY_V144",
+  "original_independent_status": "INCONCLUSIVE_EXACT_GATE_JSON_COMPARISON_V144",
+  "audit_status": "PASS_POST_RESULT_GATE_TOLERANCE_AUDIT_V144_1",
+  "scientific_decision": "FAIL_LOCAL_OBSERVABLE_IDENTIFIABILITY_V144",
+  "evaluation": {
+    "opened_poolfire_sample_count": 3700,
+    "sentinel_count": 20,
+    "trajectory_count": 5,
+    "camera_counts": [5, 7, 9, 12],
+    "deployment_feature_dimension": 155,
+    "structural_direction_key_count": 96,
+    "trainable_parameter_count": 0,
+    "additional_exact_A_calls": 0,
+    "additional_exact_AT_calls": 0
+  },
+  "frozen_gates": {
+    "scale_invariant_relative_l2_each_sentinel_maximum": 0.45,
+    "cosine_each_sentinel_minimum": 0.9,
+    "trajectory_p90_higher_maximum": 0.35,
+    "required_sentinel_pass_count": 20,
+    "required_trajectory_pass_count": 5
+  },
+  "methods": {
+    "cross_trajectory_knn": {
+      "role": "complete-trajectory held-out deployment diagnostic",
+      "sentinel_pass_count": 1,
+      "sentinel_count": 20,
+      "trajectory_pass_count": 0,
+      "trajectory_count": 5,
+      "scale_invariant_relative_l2_median": 0.6084532106124305,
+      "scale_invariant_relative_l2_p90_higher": 0.8410030533002184,
+      "scale_invariant_relative_l2_worst": 0.904794812090014,
+      "cosine_median": 0.7935897374157985,
+      "cosine_minimum": 0.4258477991195871,
+      "neighbor_radius_median": 1.105874890251664,
+      "neighbor_radius_p90_higher": 1.6011499138885796,
+      "neighbor_radius_worst": 1.744493960030161,
+      "camera_count_passes": {
+        "5": 0,
+        "7": 1,
+        "9": 0,
+        "12": 0
+      },
+      "trajectory_p90_higher": {
+        "p=14kw_size=05": 0.6085630697751769,
+        "p=22kw_size=03": 0.5773775007110195,
+        "p=33kw_size=01": 0.6407333259890139,
+        "p=45kw_size=05": 0.904794812090014,
+        "p=58kw_size=03": 0.8410030533002184
+      }
+    },
+    "same_trajectory_diagnostic_knn": {
+      "role": "post-open identifiability diagnostic, not a deployable cross-trajectory model",
+      "sentinel_pass_count": 8,
+      "sentinel_count": 20,
+      "trajectory_pass_count": 0,
+      "trajectory_count": 5,
+      "scale_invariant_relative_l2_median": 0.441612318425615,
+      "scale_invariant_relative_l2_p90_higher": 0.6256558158956188,
+      "scale_invariant_relative_l2_worst": 0.635689489154137,
+      "cosine_median": 0.8971960221990334,
+      "cosine_minimum": 0.771944864209195,
+      "neighbor_radius_median": 0.6997625080819136,
+      "neighbor_radius_p90_higher": 1.219427662591086,
+      "neighbor_radius_worst": 1.2709980015292908,
+      "camera_count_passes": {
+        "5": 2,
+        "7": 2,
+        "9": 2,
+        "12": 2
+      },
+      "trajectory_p90_higher": {
+        "p=14kw_size=05": 0.6118525268883082,
+        "p=22kw_size=03": 0.5421117967276812,
+        "p=33kw_size=01": 0.4170835441092283,
+        "p=45kw_size=05": 0.635689489154137,
+        "p=58kw_size=03": 0.6256558158956188
+      }
+    },
+    "structural_mean_control": {
+      "sentinel_pass_count": 0,
+      "sentinel_count": 20,
+      "scale_invariant_relative_l2_median": 0.913905658990523,
+      "scale_invariant_relative_l2_p90_higher": 0.956573727003654,
+      "scale_invariant_relative_l2_worst": 0.9648385449698467,
+      "cosine_median": 0.40586536520881833,
+      "cosine_minimum": 0.2628432653511767
+    }
+  },
+  "independent_recomputation": {
+    "integer_neighbor_arrays_exact": true,
+    "maximum_float_array_absolute_difference": 8.881784197001252e-16,
+    "scientific_decisions_exact": true,
+    "formal_tree_unchanged": true
+  },
+  "audit_repair": {
+    "post_result": true,
+    "scientific_gate_changed": false,
+    "neighbor_or_prediction_changed": false,
+    "target_or_threshold_changed": false,
+    "original_failed_check_exactly": "exact nested JSON equality for trajectory-tail floating-point values",
+    "trajectory_tail_maximum_absolute_difference": 1.1102230246251565e-16,
+    "trajectory_tail_audit_tolerance": 1e-12,
+    "array_maximum_absolute_difference": 8.881784197001252e-16,
+    "array_audit_tolerance": 1e-9
+  },
+  "route_action": {
+    "frozen_local_neighborhood_hypothesis_closed": true,
+    "all_nonlinear_models_ruled_out": false,
+    "global_identifiability_ruled_out": false,
+    "physical_replay_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false,
+    "larger_model_rescue_allowed": false,
+    "next_gate": "Test a result-blind global residual and camera-set state summary that conditions each direction. Do not enlarge the same 155-dimensional per-direction model."
+  },
+  "claim_boundary": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}
