@@ -14049,3 +14049,59 @@ This is mechanism headroom, not an algorithmic breakthrough. The lower-cost init
 The preregistered shared linear exact-K1 direction ridge fails complete-trajectory transfer. Both the sealed formal feature view and an independently rebuilt geometry-feature view pass only `1/3,700` cells and `0/5` trajectories. Their maximum per-cell metric-ratio difference is `2.59e-11`, so the failure is not explained by numerical drift between the two geometry implementations. The worst metric ratio is `1.93336`, and all five observation p90 ratios lie between roughly `1.579` and `1.861`; field and gradient tails also miss their gates.
 
 The first full replay became inconclusive only while serializing a NumPy boolean into the final JSON. Its partial arrays were not reused. A serialization-only successor repeated all predictions and physical replays unchanged, with `19/19` integrity checks passing. The preregistered branch therefore closes: no target switch, lambda retuning, feature-view selection, or larger-model rescue is allowed. Fixed-teacher capacity remains established, but deployable prediction, matched-accuracy call reduction, resources, external generalization, curved rays, real BOST, and paper success remain unproven.
+
+## 2026-08-14：v143 Riesz-action 坐标未恢复共享线性可预测性
+
+### 先说人话
+
+v142.4 失败后，一个合理怀疑是：模型预测的原始系数坐标可能很差，即使两个系数相差很大，它们也可能对物理状态产生相近作用。v143 因此没有放大网络，而是把 teacher 与预测都换到 Riesz-action 物理作用空间中，直接检查“坐标选错了”能否解释上一次失败。
+
+结果是：坐标反演本身没问题，但共享线性预测仍然几乎没有对准目标。因此当前瓶颈是部署可见信息下的可辨识性与可预测性，不是 CPU 训练太慢，也不是缺 GPU。
+
+### 实际数字
+
+- 已开封 PoolFire 单元：`3700`；
+- oracle 反演最大误差：`0.00308383`，通过 `<=0.02` 门；
+- 共享线性预测目标误差 min / median / max：`0.997509 / 0.999639 / 0.999943`，未通过 `<=0.45` 门；
+- 预测与目标 cosine min / median / max：`0.010662 / 0.026878 / 0.070541`，未通过 `>=0.90` 门；
+- 固定哨兵：`0/20`；
+- 五条轨迹 p90 通过：`0/5`，实际均约为 `0.99963-0.99994`，门为 `<=0.35`；
+- 该诊断额外精确调用：`+0A/+0A^T`。
+
+### 独立复算与透明修正
+
+独立程序重算后，预测 action 最大绝对差为 `3.24e-11`，系数最大差为 `1.00e-9`，判决数组一致。但初始 validator 把同一个 `1e-8` 绝对差门同时用于接近 1 的误差和约 `6.53e7` 的 condition 数，后者虽只有 `8.35e-11` 对称相对差，绝对差却为 `0.00546`，因此被错记为 inconclusive。
+
+我保留了原始 inconclusive 记录，然后做了一次明确标注为 post-result 的量纲审计：普通指标仍用 `1e-8` 绝对差，condition 数改用结果无关的 `1e-9` 对称相对差。模型、预测、门、哨兵、目标和科学结论都没有改。审计通过，正式科学判决仍是 `FAIL_SHARED_LINEAR_RIESZ_ACTION_PREDICTABILITY_V143`。
+
+### 现在为什么不租 GPU
+
+当前还没有一个被授权的大模型训练问题。Riesz-action 共享线性目标已经被证伪，把它交给更大 CNN/FNO 只会增加算力消耗，不会自动产生可辨识性。下一步是小型 CPU 局部可辨识性诊断：在 deployment-visible 特征邻域内，检查留出轨迹的 Riesz-action 目标是否一致。若不一致，直接关闭该目标；只有正结果才能另行冻结一个最小非线性哨兵，届时再根据实测吞吐决定是否租卡。
+
+### 当前边界
+
+- `riesz_oracle_inverse_proven=true`；
+- `shared_linear_riesz_predictability_proven=false`；
+- `full_physical_replay_authorized=false`；
+- `neural_training_authorized=false`；
+- `gpu_rental_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_dual_riesz_action_v143_result_2026-08-14.md`
+- `docs/poolfire_k1_dual_riesz_action_v143_public_summary.json`
+- `assets/figures/poolfire_k1_dual_riesz_action_v143.png`
+
+### English checkpoint
+
+v143 tests whether the v142.4 failure was merely caused by a poor coefficient coordinate system. It moves both targets and predictions into a physical Riesz-action space. Oracle inversion passes with maximum error `0.00308383`, but the deployment-visible shared-linear predictor has median target-space error `0.999639`, median cosine `0.026878`, `0/20` fixed sentinel passes, and `0/5` trajectory-tail passes. This rules out the simple coordinate-choice explanation under the tested shared-linear family.
+
+Independent recomputation agrees on the scientific arrays. The initial validator became inconclusive only because a single absolute tolerance was incorrectly applied to both near-unit metrics and a condition number near `6.53e7`. The original inconclusive receipt remains preserved. A transparently labeled post-result dimensional audit uses an unchanged `1e-8` absolute tolerance for ordinary metrics and a `1e-9` symmetric relative tolerance for the condition number, obtaining a maximum relative difference of `8.35e-11`. No model, prediction, target, threshold, sentinel, or scientific gate changed.
+
+The scientific verdict is `FAIL_SHARED_LINEAR_RIESZ_ACTION_PREDICTABILITY_V143`. Physical replay, neural training, and GPU rental are not authorized. The next gate is a small CPU local-identifiability diagnostic on held-out trajectory targets within deployment-visible neighborhoods. This is a validated negative result that narrows the mechanism; it is not an algorithmic breakthrough, speedup, external generalization, curved-ray result, real BOST result, or paper success.
