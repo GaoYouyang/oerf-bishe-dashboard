@@ -14265,3 +14265,67 @@ Cross-trajectory local-only, local-plus-moments, and local-plus-pose each pass o
 An independent implementation rebuilds features, hard-count candidate pools, neighbors, predictions, trajectory tails, and the scientific decision without importing the formal v146 module. Integer neighbor arrays match exactly, floating-point arrays differ by at most `8.88e-16`, gate summaries differ by at most `1.11e-16`, and all nine checks pass. The resulting decision is `FAIL_DIRECTION_CONDITIONED_IDENTIFIABILITY_V146`.
 
 Because no cross-trajectory method passes Stage A, the 3,700-cell Stage B was not run and must not be reported as `0/3,700`. This closes the frozen hard-count, fixed-eight-neighbor direction-conditioned family, not every nonlinear model. The next result-blind CPU oracle-span or collision diagnostic will separate a weak inverse-distance rule from genuinely missing deployment-visible state. GPU rental, neural training, physical replay, resource claims, external generalization, curved-ray validation, real BOST, algorithmic breakthrough, and paper success remain unauthorized or unproven.
+
+## 2026-08-15：v147 证明问题不只是八近邻权重太简单
+
+### 这次为什么值得做
+
+v146 失败后，不能直接断言“输入里没有信息”。还有一种更温和的解释：155D 可观测特征也许已经找到一群相关样本，只是 nearest / IDW 不会把它们组合成正确的 96D correction action。v147 就专门检验这个解释，而且仍然只用 CPU。
+
+正式程序先用 deployment-visible 特征把每个查询的候选顺序封存，然后才允许一个 post-open truth-aware oracle 在最近 `8` 或 `32` 个 action 的线性跨度中找最佳正交投影。这个 oracle 读取 CFD 真值，所以它不能部署，只能作为“当前表示最多能做到哪里”的上限。
+
+### 真正跑出来的结果
+
+- cross span-8：`0/20` 哨兵、`0/5` 轨迹尾部；
+- cross span-32：`14/20`、`1/5`，误差中位数 / p90 / worst 为 `0.34630 / 0.62727 / 0.67313`；
+- within span-8：`1/20`、`0/5`；
+- within span-32：`18/20`、`2/5`，误差中位数 / p90 / worst 为 `0.30284 / 0.44817 / 0.44951`。
+
+这个提升是真实的：允许 32 个 action 做有符号重组，明显强于 IDW。可是合同不是看平均提升，而是要求 `20/20` 哨兵和 `5/5` 完整轨迹同时过门。cross 只有 p33 通过，within 也只有 p22、p33 通过；p45 仍是最明显的缺口。因此正式判决是 `FAIL_LOCAL_SPAN_CAPACITY_V147`。
+
+### 相对邻域冲突，不是数学不可能
+
+每个查询最近 `5%` 的候选里，跨轨迹 `740/740`、同轨迹 `200/200` 都没有一个单独 action 能过兼容门，20 个查询全部如此。这说明当前距离的“近”与 action 的“相容”并不一致。
+
+但这里必须说准确：这只是**相对邻域冲突**。没有找到完全相同特征却对应不同目标的精确 collision，也没有证明所有可能的可观测表示都不可辨识。
+
+### 独立复算
+
+第二实现没有导入正式 span projector，而是用 Gram eigendecomposition 重新求解。邻居索引与冲突标志完全一致，距离最大差 `0`，投影最大差 `9.01e-15`，指标和门摘要最大差 `2.22e-16`，最小 span rank 为 `8`，最大条件数 `56.18`，最大 stationarity `2.31e-15`，`13/13` 检查全部通过。
+
+所以这次负结果不是断网、切换代理、GPU 不够、跨度求解病态或第二实现漂移造成的。
+
+### 接下来怎么调方向
+
+v147 关闭的是当前 `K<=32` 样本级方向局部跨度，不是整个 C 路线。下一步不能继续把同一 155D 输入塞给更大的 CNN / FNO，而要先改变信息：加入能区分全局流动工况、三维形态或残差场结构的 deployment-visible 物理状态，或者重新定义更稳定的 correction target。新表示仍先过一个小型 CPU capacity gate；完整轨迹 headroom 出现前，不租 GPU。
+
+当前边界：
+
+- `sample_level_direction_local_span_k_le_32_closed=true`；
+- `oracle_is_deployable=false`；
+- `exact_feature_collision_proven=false`；
+- `global_unidentifiability_proven=false`；
+- `neural_training_authorized=false`；
+- `gpu_rental_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_dual_local_span_collision_v147_result_2026-08-15.md`
+- `docs/poolfire_k1_dual_local_span_collision_v147_public_summary.json`
+- `assets/figures/poolfire_k1_dual_local_span_collision_v147.png`
+
+### English checkpoint
+
+v147 asks whether v146 failed only because fixed nearest-neighbor or inverse-distance weights were too rigid. Deployment-visible 155D features seal the neighbors first; only then does a post-open truth-aware oracle project the 96D target action onto the span of the nearest 8 or 32 actions. The oracle is a capacity upper bound, not a deployable method.
+
+Cross span-32 improves to `14/20` sentinels and `1/5` trajectory tails, while the non-deployable within-trajectory span-32 upper bound reaches `18/20` and `2/5`. The preregistered requirement remains `20/20` and `5/5`, so the decision is `FAIL_LOCAL_SPAN_CAPACITY_V147`. All nearest and IDW controls remain at `0/20`.
+
+Every candidate inside the nearest 5% neighborhood conflicts with the target gate: `740/740` cross-trajectory and `200/200` same-trajectory candidates. This is a relative-neighborhood conflict under the current metric, not proof of an exact feature collision or global mathematical impossibility.
+
+An independent Gram-eigendecomposition implementation reproduces neighbor indices and conflict flags exactly. The maximum projection difference is `9.01e-15`, metric and gate-summary differences are at most `2.22e-16`, and all thirteen checks pass. The current sample-level direction-local span up to K=32 is closed. The next gate must change the physically observable state or correction target before any larger predictor or GPU rental is considered.
