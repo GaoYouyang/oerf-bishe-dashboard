@@ -1,0 +1,129 @@
+{
+  "schema_version": "oerf-public-k1-dual-local-span-collision-v147.0",
+  "updated": "2026-08-15",
+  "title": "v147 truth-aware local-span and relative-neighborhood conflict diagnostic",
+  "formal_status": "PASS_FORMAL_LOCAL_SPAN_COLLISION_EXECUTION_V147",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_LOCAL_SPAN_COLLISION_V147",
+  "scientific_decision": "FAIL_LOCAL_SPAN_CAPACITY_V147",
+  "evaluation": {
+    "opened_poolfire_sample_count_available": 3700,
+    "sentinel_count": 20,
+    "trajectory_count": 5,
+    "camera_counts": [5, 7, 9, 12],
+    "direction_local_feature_dimension": 155,
+    "action_dimension": 96,
+    "span_sizes": [8, 32],
+    "cross_trajectory_candidates_per_query": 740,
+    "same_trajectory_candidates_per_query": 184,
+    "trainable_parameter_count": 0,
+    "additional_exact_A_calls": 0,
+    "additional_exact_AT_calls": 0,
+    "stage_b_full_trajectory_run": false
+  },
+  "frozen_gates": {
+    "scale_invariant_relative_l2_each_sentinel_maximum": 0.45,
+    "cosine_each_sentinel_minimum": 0.9,
+    "trajectory_p90_higher_maximum": 0.35,
+    "required_sentinel_pass_count": 20,
+    "required_trajectory_pass_count": 5,
+    "relative_neighborhood_fraction": 0.05
+  },
+  "methods": {
+    "cross_span8": {
+      "role": "truth-aware orthogonal projection onto the eight nearest cross-trajectory actions",
+      "sentinel_pass_count": 0,
+      "trajectory_pass_count": 0,
+      "error_median": 0.6902232627272455,
+      "error_p90_higher": 0.8818190323207221,
+      "error_worst": 0.8892758697021834
+    },
+    "cross_span32": {
+      "role": "truth-aware orthogonal projection onto the 32 nearest cross-trajectory actions",
+      "sentinel_pass_count": 14,
+      "trajectory_pass_count": 1,
+      "error_median": 0.3462993519902343,
+      "error_p90_higher": 0.6272730825690882,
+      "error_worst": 0.673127809510553,
+      "trajectory_p90_higher": {
+        "p14": 0.4396972848169919,
+        "p22": 0.3608721848903183,
+        "p33": 0.3270127385832151,
+        "p45": 0.673127809510553,
+        "p58": 0.487446852274156
+      }
+    },
+    "within_span8": {
+      "role": "post-open same-trajectory truth-aware eight-action span upper bound",
+      "sentinel_pass_count": 1,
+      "trajectory_pass_count": 0,
+      "error_median": 0.6230439970735199,
+      "error_p90_higher": 0.7985433399523988,
+      "error_worst": 0.8055331575309187
+    },
+    "within_span32": {
+      "role": "post-open same-trajectory truth-aware 32-action span upper bound",
+      "sentinel_pass_count": 18,
+      "trajectory_pass_count": 2,
+      "error_median": 0.3028411882273988,
+      "error_p90_higher": 0.4481677639965511,
+      "error_worst": 0.44951089216131884,
+      "trajectory_p90_higher": {
+        "p14": 0.38282442318038973,
+        "p22": 0.25029527521559075,
+        "p33": 0.3047561707608386,
+        "p45": 0.44951089216131884,
+        "p58": 0.38285772394130113
+      }
+    },
+    "cross_nearest_and_idw_controls": {
+      "role": "deployment-visible nearest and inverse-distance controls",
+      "best_sentinel_pass_count": 0
+    },
+    "within_nearest_and_idw_controls": {
+      "role": "same-trajectory nearest and inverse-distance controls",
+      "best_sentinel_pass_count": 0
+    }
+  },
+  "relative_neighborhood_conflict": {
+    "cross_candidate_count": 740,
+    "cross_conflict_count": 740,
+    "within_candidate_count": 200,
+    "within_conflict_count": 200,
+    "queries_with_no_compatible_cross_neighbor": 20,
+    "queries_with_no_compatible_within_neighbor": 20,
+    "exact_feature_collision_proven": false
+  },
+  "independent_recomputation": {
+    "check_count": 13,
+    "all_checks_passed": true,
+    "neighbor_indices_and_conflict_flags_exact": true,
+    "maximum_distance_absolute_difference": 0.0,
+    "maximum_projection_absolute_difference": 9.006684287271582e-15,
+    "maximum_metric_absolute_difference": 2.220446049250313e-16,
+    "maximum_gate_summary_absolute_difference": 2.220446049250313e-16,
+    "minimum_span_rank": 8,
+    "maximum_span_condition": 56.178270479471855,
+    "maximum_span_stationarity": 2.3054474995731766e-15,
+    "formal_tree_unchanged": true
+  },
+  "route_action": {
+    "sample_level_direction_local_span_k_le_32_closed": true,
+    "change_physical_observable_or_target_representation_next": true,
+    "larger_model_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false,
+    "physical_replay_authorized": false
+  },
+  "claim_boundary": {
+    "deployable_algorithm": false,
+    "exact_feature_collision_proven": false,
+    "global_unidentifiability_proven": false,
+    "mathematical_impossibility_proven": false,
+    "algorithm_breakthrough": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "paper_success": false
+  }
+}
