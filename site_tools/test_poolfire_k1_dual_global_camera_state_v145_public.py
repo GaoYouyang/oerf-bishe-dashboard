@@ -55,7 +55,7 @@ def test_daily_progress_keeps_one_latest_date() -> None:
     assert page.count('class="day-entry latest"') == 1
 
 
-def test_current_manifest_exposes_v145_without_overclaiming() -> None:
+def test_current_manifest_retains_v145_history_without_blocking_newer_evidence() -> None:
     evidence = json.loads(EVIDENCE.read_text(encoding="utf-8"))
     metrics = evidence["metrics"]
     decision = evidence["current_decision"]
@@ -66,7 +66,9 @@ def test_current_manifest_exposes_v145_without_overclaiming() -> None:
     assert decision["v145_direction_conditioned_local_global_metric_ruled_out"] is False
     assert decision["gpu_rental_recommended_now"] is False
     assert decision["algorithm_breakthrough"] is False
-    assert "v145" in evidence["public_evidence"]["result"]
+    assert RESULT.exists()
+    assert SUMMARY.exists()
+    assert "v146" in evidence["public_evidence"]["result"]
 
 
 def test_figure_is_large_and_readable() -> None:

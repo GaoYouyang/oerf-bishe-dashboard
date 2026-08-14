@@ -1,0 +1,177 @@
+{
+  "schema_version": "oerf-public-k1-dual-direction-conditioned-identifiability-v146.0",
+  "updated": "2026-08-15",
+  "title": "v146 hard-count direction-conditioned identifiability diagnostic",
+  "formal_status": "PASS_FORMAL_DIRECTION_CONDITIONED_SENTINEL_EXECUTION_V146",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_DIRECTION_CONDITIONED_V146",
+  "scientific_decision": "FAIL_DIRECTION_CONDITIONED_IDENTIFIABILITY_V146",
+  "evaluation": {
+    "opened_poolfire_sample_count_available": 3700,
+    "stage_a_sentinel_count": 20,
+    "stage_b_full_roster_run": false,
+    "trajectory_count": 5,
+    "camera_counts": [5, 7, 9, 12],
+    "structural_direction_key_count": 96,
+    "direction_local_feature_dimension": 155,
+    "global_moment_dimension": 90,
+    "observable_pose_coupling_dimension": 486,
+    "neighbor_count": 8,
+    "cross_trajectory_candidates_per_query": 740,
+    "same_trajectory_candidates_per_query": 184,
+    "trainable_parameter_count": 0,
+    "additional_exact_A_calls": 0,
+    "additional_exact_AT_calls": 0
+  },
+  "frozen_gates": {
+    "hard_camera_count_match": true,
+    "scale_invariant_relative_l2_each_sentinel_maximum": 0.45,
+    "cosine_each_sentinel_minimum": 0.9,
+    "trajectory_p90_higher_maximum": 0.35,
+    "required_sentinel_pass_count": 20,
+    "required_trajectory_pass_count": 5,
+    "stage_b_requires_independent_stage_a_cross_method_pass": true
+  },
+  "methods": {
+    "count_mean": {
+      "role": "same-count outer-fit target mean control",
+      "sentinel_pass_count": 0,
+      "all_pass": false,
+      "error_median": 0.9057913056620226,
+      "error_p90_higher": 0.9584401315547981,
+      "error_worst": 0.9638398734973743,
+      "cosine_median": 0.42371941374063743
+    },
+    "cross_global_moments": {
+      "role": "complete-trajectory held-out, same-count global moments",
+      "sentinel_pass_count": 0,
+      "all_pass": false,
+      "error_median": 0.8856724577803088,
+      "error_p90_higher": 0.9940559053159126,
+      "error_worst": 0.9982189427627194,
+      "cosine_median": 0.46428569513620466
+    },
+    "cross_global_pose_coupled": {
+      "role": "complete-trajectory held-out, same-count observable-pose coupling",
+      "sentinel_pass_count": 0,
+      "all_pass": false,
+      "error_median": 0.9211919617707758,
+      "error_p90_higher": 0.9933263332104515,
+      "error_worst": 0.9943252382603661,
+      "cosine_median": 0.3891032028667613
+    },
+    "cross_local_only": {
+      "role": "complete-trajectory held-out, same-count direction-local features",
+      "sentinel_pass_count": 1,
+      "all_pass": false,
+      "error_median": 0.611313267679739,
+      "error_p90_higher": 0.8670083390467906,
+      "error_worst": 0.8842708981298882,
+      "cosine_median": 0.7912262780253518,
+      "trajectory_p90_higher": {
+        "p14": 0.6980764763841504,
+        "p22": 0.6403482500477314,
+        "p33": 0.6756683506624682,
+        "p45": 0.8842708981298882,
+        "p58": 0.8668288179889202
+      }
+    },
+    "cross_local_moments": {
+      "role": "complete-trajectory held-out, same-count local plus moments",
+      "sentinel_pass_count": 1,
+      "all_pass": false,
+      "error_median": 0.6320040120262871,
+      "error_p90_higher": 0.8679969268581194,
+      "error_worst": 0.8908461063180488,
+      "cosine_median": 0.7749636770877777
+    },
+    "cross_local_pose_coupled": {
+      "role": "complete-trajectory held-out, same-count local plus moments plus coupling",
+      "sentinel_pass_count": 1,
+      "all_pass": false,
+      "error_median": 0.6299231098204394,
+      "error_p90_higher": 0.8751089811244454,
+      "error_worst": 0.8830043611171537,
+      "cosine_median": 0.775727597900741
+    },
+    "within_global_moments": {
+      "role": "post-open same-trajectory diagnostic, not deployable",
+      "sentinel_pass_count": 0,
+      "all_pass": false,
+      "error_median": 0.8334358291640801,
+      "error_p90_higher": 0.9845412252428789,
+      "error_worst": 0.9962313099660141,
+      "cosine_median": 0.5526000819272257
+    },
+    "within_global_pose_coupled": {
+      "role": "post-open same-trajectory diagnostic, not deployable",
+      "sentinel_pass_count": 0,
+      "all_pass": false,
+      "error_median": 0.835907608442963,
+      "error_p90_higher": 0.992890864983639,
+      "error_worst": 0.9999659326554564,
+      "cosine_median": 0.5487829427821851
+    },
+    "within_local_only": {
+      "role": "post-open same-trajectory diagnostic, not deployable",
+      "sentinel_pass_count": 9,
+      "all_pass": false,
+      "error_median": 0.4498850127603887,
+      "error_p90_higher": 0.6056387400138871,
+      "error_worst": 0.6492058484475975,
+      "cosine_median": 0.8930860266561753,
+      "trajectory_p90_higher": {
+        "p14": 0.4490741783143495,
+        "p22": 0.5790230253117516,
+        "p33": 0.4734880830115163,
+        "p45": 0.5912378313295664,
+        "p58": 0.6492058484475975
+      }
+    },
+    "within_local_moments": {
+      "role": "post-open same-trajectory diagnostic, not deployable",
+      "sentinel_pass_count": 7,
+      "all_pass": false,
+      "error_median": 0.48794092247301923,
+      "error_p90_higher": 0.6659132322476591,
+      "error_worst": 0.7315768603387921,
+      "cosine_median": 0.8717435265131069
+    },
+    "within_local_pose_coupled": {
+      "role": "post-open same-trajectory diagnostic, not deployable",
+      "sentinel_pass_count": 4,
+      "all_pass": false,
+      "error_median": 0.5462078823071979,
+      "error_p90_higher": 0.7441085489808376,
+      "error_worst": 0.8318492760960029,
+      "cosine_median": 0.8370317634538593
+    }
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "check_count": 9,
+    "integer_neighbor_arrays_exact": true,
+    "maximum_float_array_absolute_difference": 8.881784197001252e-16,
+    "maximum_gate_summary_absolute_difference": 1.1102230246251565e-16,
+    "non_numeric_summary_mismatch_count": 0,
+    "scientific_decision_exact": true,
+    "formal_tree_unchanged": true,
+    "formal_v146_implementation_imported": false
+  },
+  "route_action": {
+    "hard_count_direction_conditioned_neighbor_family_closed": true,
+    "stage_b_full_roster_authorized": false,
+    "stage_b_full_roster_run": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false,
+    "physical_replay_authorized": false,
+    "next_gate": "Use a result-blind CPU oracle-span or collision diagnostic to separate inverse-distance-rule failure from missing observable state; do not enlarge the model family."
+  },
+  "claim_boundary": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}
