@@ -14212,3 +14212,56 @@ v145 tests the specific gap exposed by v144 instead of enlarging the same local 
 All five tested methods pass `0/20` sentinels, `0/3700` cells, and `0/5` trajectory-tail gates. Even the non-deployable same-trajectory coupled diagnostic has median error `0.85903`, far above the frozen `0.45` gate. An independent implementation reconstructs signatures, neighbors, predictions, metrics, and decisions without importing the formal v145 module; integer arrays match exactly, the largest floating-point array difference is `1.31e-12`, the largest summary difference is `1.45e-14`, and all nine integrity checks pass.
 
 Cross-trajectory camera-count mixing is material, but it cannot fully explain the failure: same-trajectory neighborhoods already contain more than 95% same-count edges and still fail every sentinel and cell. The next CPU-only gate therefore hard-matches camera count and combines the existing direction-local representation with global moments or observable-pose coupling. This closes the shared-global-neighbor metric, not all direction-conditioned local-plus-global models or the full C route. Neural training, GPU rental, physical replay, speedup, external generalization, curved-ray validation, real BOST, algorithmic breakthrough, and paper success remain unauthorized or unproven.
+
+## 2026-08-15：v146 硬匹配相机数后，方向条件邻域仍失败
+
+### 先说人话
+
+v145 留下了一个很具体的问题：是不是因为不同样本的相机数量混在一起，才让邻居找错了？v146 没有继续猜，也没有上更大的网络，而是把这个解释直接做成了可证伪实验。
+
+这次每个查询只允许和相机数量完全相同的样本比较，再把 v144 的 155D 逐方向局部状态分别与 v145 的 90D 全局 moments、486D 可观测位姿耦合组合。邻居数固定为 8，结构方向固定为 96 个，训练参数为 0，额外精确调用为 `+0A/+0A^T`。
+
+结果仍然没有形成可用的跨轨迹信号：cross local-only、local+moments、local+pose 都只通过 `1/20` 哨兵。表现最好的 cross local-only 误差中位数 / p90 / worst 为 `0.61131 / 0.86701 / 0.88427`，五条轨迹 p90 全部超过 `0.35` 门。同轨迹 local-only 是一个不部署的上限诊断，也只通过 `9/20`，误差中位数 / p90 / worst 为 `0.44989 / 0.60564 / 0.64921`。
+
+### 独立复算
+
+第二实现没有导入正式 v146 模块，独立重建方向特征、硬相机数候选池、八近邻、预测、轨迹尾部和科学判决。整数邻居数组完全一致，浮点数组最大差 `8.88e-16`，门摘要最大差 `1.11e-16`，非数值不一致为 0，`9/9` 检查全部通过。
+
+正式判决为 `FAIL_DIRECTION_CONDITIONED_IDENTIFIABILITY_V146`。这说明失败不是 VPN、任务暂停、数值漂移、相机数量混合或 CPU 算得不够久造成的。
+
+### 为什么没有跑 3700 单元，也不租 GPU
+
+合同要求至少一种跨轨迹方法先完整通过 20 个 Stage-A 哨兵，才允许进入 3700 单元 Stage B。现在最好只有 `1/20`，因此 Stage B **没有运行**，不能写成 `0/3700`。
+
+当前瓶颈是部署可见状态与目标之间的可辨识性，不是训练吞吐。租 GPU 只会更快地扩大一个尚无机制依据的模型，不能补回输入中可能缺失的信息。下一门只在 CPU 上做结果盲的 oracle-span / collision 诊断：区分固定反距离权重太弱，还是部署可见状态本身存在目标碰撞。只有前者被证实，且最小预测器获得结果前授权，GPU 才可能有价值。
+
+### 当前边界
+
+- `hard_count_direction_conditioned_neighbor_family_closed=true`；
+- `stage_b_full_roster_run=false`；
+- `all_nonlinear_models_ruled_out=false`；
+- `neural_training_authorized=false`；
+- `gpu_rental_authorized=false`；
+- `physical_replay_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_dual_direction_conditioned_identifiability_v146_result_2026-08-15.md`
+- `docs/poolfire_k1_dual_direction_conditioned_identifiability_v146_public_summary.json`
+- `assets/figures/poolfire_k1_dual_direction_conditioned_identifiability_v146.png`
+
+### English checkpoint
+
+v146 directly tests whether camera-count mixing explains the v145 failure. Every query is restricted to candidates with exactly the same active-camera count, and the 155D direction-local state is compared alone and together with 90D global moments or 486D observable-pose coupling. The neighbor count remains fixed at eight, the structural roster contains 96 action keys, trainable parameters remain zero, and the diagnostic adds `+0A/+0A^T`.
+
+Cross-trajectory local-only, local-plus-moments, and local-plus-pose each pass only `1/20` preregistered sentinels. The best cross-trajectory median / p90 / worst error is `0.61131 / 0.86701 / 0.88427`, and every trajectory p90 exceeds the `0.35` gate. Even the non-deployable same-trajectory local-only upper-bound diagnostic reaches only `9/20`, with median / p90 / worst error `0.44989 / 0.60564 / 0.64921`.
+
+An independent implementation rebuilds features, hard-count candidate pools, neighbors, predictions, trajectory tails, and the scientific decision without importing the formal v146 module. Integer neighbor arrays match exactly, floating-point arrays differ by at most `8.88e-16`, gate summaries differ by at most `1.11e-16`, and all nine checks pass. The resulting decision is `FAIL_DIRECTION_CONDITIONED_IDENTIFIABILITY_V146`.
+
+Because no cross-trajectory method passes Stage A, the 3,700-cell Stage B was not run and must not be reported as `0/3,700`. This closes the frozen hard-count, fixed-eight-neighbor direction-conditioned family, not every nonlinear model. The next result-blind CPU oracle-span or collision diagnostic will separate a weak inverse-distance rule from genuinely missing deployment-visible state. GPU rental, neural training, physical replay, resource claims, external generalization, curved-ray validation, real BOST, algorithmic breakthrough, and paper success remain unauthorized or unproven.

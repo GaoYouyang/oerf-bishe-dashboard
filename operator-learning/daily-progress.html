@@ -562,12 +562,12 @@
     </div>
     <div class="status-grid" aria-label="当前项目快照" data-i18n-aria-label-zh="当前项目快照" data-i18n-aria-label-en="Current project snapshot">
       <div class="metric">
-        <b data-i18n-zh="40 天" data-i18n-en="40 days">40 天</b>
-        <span data-i18n-zh="2026-07-06 至 2026-08-14，逐日回填且每个日期只出现一次。" data-i18n-en="2026-07-06 to 2026-08-14, backfilled day by day with each date appearing once.">2026-07-06 至 2026-08-14，逐日回填且每个日期只出现一次。</span>
+        <b data-i18n-zh="41 天" data-i18n-en="41 days">41 天</b>
+        <span data-i18n-zh="2026-07-06 至 2026-08-15，逐日回填且每个日期只出现一次。" data-i18n-en="2026-07-06 to 2026-08-15, backfilled day by day with each date appearing once.">2026-07-06 至 2026-08-15，逐日回填且每个日期只出现一次。</span>
       </div>
       <div class="metric">
         <b>1 / 20</b>
-        <span data-i18n-zh="v144 跨轨迹局部邻域通过的固定哨兵；同轨迹诊断为 8/20，五条轨迹尾部均失败。" data-i18n-en="Fixed sentinels passed by v144 cross-trajectory neighborhoods; the same-trajectory diagnostic reaches 8/20, while all five trajectory-tail gates fail.">v144 跨轨迹局部邻域通过的固定哨兵；同轨迹诊断为 8/20，五条轨迹尾部均失败。</span>
+        <span data-i18n-zh="v146 硬匹配相机数后的最佳跨轨迹哨兵；同轨迹上限诊断为 9/20，五条轨迹尾部均失败。" data-i18n-en="Best v146 cross-trajectory sentinel result after hard-matching camera count; the same-trajectory upper-bound diagnostic reaches 9/20, while all five trajectory-tail gates fail.">v146 硬匹配相机数后的最佳跨轨迹哨兵；同轨迹上限诊断为 9/20，五条轨迹尾部均失败。</span>
       </div>
       <div class="metric">
         <b>5–12</b>
@@ -575,12 +575,12 @@
       </div>
       <div class="metric">
         <b>+0A/+0A<sup>T</sup></b>
-        <span data-i18n-zh="v144 只做已封存局部可辨识性诊断，不运行物理重放、神经训练或 GPU 资源门。" data-i18n-en="v144 only diagnoses sealed local identifiability; it does not run physical replay, neural training, or a GPU resource gate.">v144 只做已封存局部可辨识性诊断，不运行物理重放、神经训练或 GPU 资源门。</span>
+        <span data-i18n-zh="v146 只做 20 哨兵可辨识性诊断；Stage B 未运行，也不运行物理重放、神经训练或 GPU 资源门。" data-i18n-en="v146 runs only the 20-sentinel identifiability diagnostic. Stage B, physical replay, neural training, and the GPU resource gate were not run.">v146 只做 20 哨兵可辨识性诊断；Stage B 未运行，也不运行物理重放、神经训练或 GPU 资源门。</span>
       </div>
     </div>
     <div class="verdict">
-      <strong data-i18n-zh="最新实质增量：v144 独立复算关闭当前局部邻域目标" data-i18n-en="Latest substantive increment: v144 independently closes the current local-neighborhood target">最新实质增量：v144 独立复算关闭当前局部邻域目标</strong>
-      <span data-i18n-html-zh="跨轨迹 kNN 只通过 <code>1/20</code>，误差中位数 <code>0.60845</code>；同轨迹诊断改善到 <code>8/20</code> 与 <code>0.44161</code>，但五条轨迹 p90 仍全部失败。第二实现浮点数组最大差 <code>8.88e-16</code>；结果后容差审计只处理 <code>1.11e-16</code> 的 JSON 浮点差，不改任何科学对象或门。当前不租 GPU，<code>algorithm_breakthrough=false</code>。" data-i18n-html-en="Cross-trajectory kNN passes only <code>1/20</code> with median error <code>0.60845</code>. The same-trajectory diagnostic improves to <code>8/20</code> and <code>0.44161</code>, yet all five trajectory p90 gates still fail. A second implementation differs by at most <code>8.88e-16</code> in floating-point arrays. The post-result tolerance audit addresses only a <code>1.11e-16</code> JSON floating-point difference and changes no scientific object or gate. No GPU rental is warranted now; <code>algorithm_breakthrough=false</code>.">跨轨迹 kNN 只通过 <code>1/20</code>，误差中位数 <code>0.60845</code>；同轨迹诊断改善到 <code>8/20</code> 与 <code>0.44161</code>，但五条轨迹 p90 仍全部失败。第二实现浮点数组最大差 <code>8.88e-16</code>；结果后容差审计只处理 <code>1.11e-16</code> 的 JSON 浮点差，不改任何科学对象或门。当前不租 GPU，<code>algorithm_breakthrough=false</code>。</span>
+      <strong data-i18n-zh="最新实质增量：v146 独立复算关闭固定八邻居方向条件族" data-i18n-en="Latest substantive increment: v146 independently closes the fixed-eight-neighbor direction-conditioned family">最新实质增量：v146 独立复算关闭固定八邻居方向条件族</strong>
+      <span data-i18n-html-zh="硬匹配相机数后，local-only、local+moments 与 local+pose 三种跨轨迹方法都只通过 <code>1/20</code>；最佳误差中位数 <code>0.61131</code>。同轨迹 local-only 上限诊断也仅 <code>9/20</code>，五条轨迹 p90 全失败。第二实现浮点数组最大差 <code>8.88e-16</code>；Stage B 没有运行。当前不租 GPU，<code>algorithm_breakthrough=false</code>。" data-i18n-html-en="After hard-matching camera count, the cross-trajectory local-only, local-plus-moments, and local-plus-pose methods each pass only <code>1/20</code>; the best median error is <code>0.61131</code>. Even the same-trajectory local-only upper-bound diagnostic reaches only <code>9/20</code>, and all five trajectory p90 gates fail. A second implementation differs by at most <code>8.88e-16</code> in floating-point arrays. Stage B was not run. No GPU rental is warranted now; <code>algorithm_breakthrough=false</code>.">硬匹配相机数后，local-only、local+moments 与 local+pose 三种跨轨迹方法都只通过 <code>1/20</code>；最佳误差中位数 <code>0.61131</code>。同轨迹 local-only 上限诊断也仅 <code>9/20</code>，五条轨迹 p90 全失败。第二实现浮点数组最大差 <code>8.88e-16</code>；Stage B 没有运行。当前不租 GPU，<code>algorithm_breakthrough=false</code>。</span>
       <details style="margin-top:10px;">
         <summary data-i18n-zh="展开同日 v94 及更早父证据" data-i18n-en="Expand same-day v94 and earlier parent evidence">展开同日 v94 及更早父证据</summary>
         <span>
@@ -671,7 +671,7 @@
           <button class="filter-button" type="button" data-filter="engineering" aria-pressed="false" data-i18n-zh="工程保障" data-i18n-en="Engineering assurance">工程保障</button>
           <button class="filter-button" type="button" data-filter="learning" aria-pressed="false" data-i18n-zh="调研与学习" data-i18n-en="Research and learning">调研与学习</button>
         </div>
-        <span class="result-count" id="resultCount" aria-live="polite">显示 40 / 40 天</span>
+        <span class="result-count" id="resultCount" aria-live="polite">显示 41 / 41 天</span>
       </div>
       <div class="legend">
         <button class="button" id="sortButton" type="button" aria-pressed="false" data-i18n-zh="切换为最早优先" data-i18n-en="Switch to oldest first">切换为最早优先</button>
@@ -685,13 +685,35 @@
       <section class="phase" id="phase-factor" data-phase-order="5">
         <div class="phase-heading">
           <div>
-            <div class="range">07-30 — 08-14</div>
+            <div class="range">07-30 — 08-15</div>
             <h2 data-i18n-zh="因子化加速、外部门与失败归因" data-i18n-en="Factorized acceleration, external gates, and failure attribution">因子化加速、外部门与失败归因</h2>
           </div>
           <p data-i18n-zh="把“算得对”推进到“调用少、真实更快、内存不过线”，再冻结独立公开反应流外部门。" data-i18n-en="Move from correct computation to fewer calls, real speed, and memory within limits, then freeze an independent public reacting-flow external gate.">把“算得对”推进到“调用少、真实更快、内存不过线”，再冻结独立公开反应流外部门。</p>
         </div>
         <div class="timeline">
-          <article class="day-entry latest" id="latest" data-date="2026-08-14" data-categories="science-negative engineering decision learning">
+          <article class="day-entry latest" id="latest" data-date="2026-08-15" data-categories="science-negative engineering decision learning">
+            <details open>
+              <summary class="entry-summary">
+                <div class="date-block"><time datetime="2026-08-15">2026-08-15</time><span data-i18n-zh="周六 · Day 41" data-i18n-en="Sat · Day 41">周六 · Day 41</span></div>
+                <div class="entry-title">
+                  <div class="entry-tags"><span class="tag negative">v146 direction family closed</span><span class="tag negative">1 / 20 cross</span><span class="tag negative">9 / 20 within upper bound</span><span class="tag engineering">array diff 8.88e-16</span><span class="tag negative">Stage B not run</span><span class="tag negative">GPU not authorized</span></div>
+                  <h3 data-i18n-zh="硬匹配相机数和方向条件局部/全局状态仍没有形成跨轨迹可辨识性" data-i18n-en="Hard camera-count matching and direction-conditioned local/global state still do not yield cross-trajectory identifiability">硬匹配相机数和方向条件局部/全局状态仍没有形成跨轨迹可辨识性</h3>
+                  <p data-i18n-zh="v146 在同一 20 个冻结哨兵上联合 155D 方向局部特征、90D 全局 moments 与 486D 可观测位姿耦合。三种跨轨迹方向方法都只通过 1/20，同轨迹 local-only 上限也只有 9/20，因此按合同停止在 Stage A。" data-i18n-en="v146 combines 155D direction-local features, 90D global moments, and 486D observable-pose coupling on the same 20 frozen sentinels. All three cross-trajectory direction methods pass only 1/20, while the same-trajectory local-only upper bound reaches only 9/20, so the contract stops at Stage A.">v146 在同一 20 个冻结哨兵上联合 155D 方向局部特征、90D 全局 moments 与 486D 可观测位姿耦合。三种跨轨迹方向方法都只通过 1/20，同轨迹 local-only 上限也只有 9/20，因此按合同停止在 Stage A。</p>
+                </div><span class="expand-label" aria-hidden="true"></span>
+              </summary>
+              <div class="entry-body">
+                <div class="evidence-grid">
+                  <section><h4 data-i18n-zh="科学判决" data-i18n-en="Scientific verdict">科学判决</h4><p data-i18n-html-zh="cross local-only 的误差中位数 / p90 / worst 为 <code>0.61131 / 0.86701 / 0.88427</code>；local+moments 与 local+pose 也各仅通过 <code>1/20</code>。五条轨迹 p90 全部高于 <code>0.35</code> 门，正式判决为 <code>FAIL_DIRECTION_CONDITIONED_IDENTIFIABILITY_V146</code>。" data-i18n-html-en="Cross local-only error median / p90 / worst are <code>0.61131 / 0.86701 / 0.88427</code>; local-plus-moments and local-plus-pose also pass only <code>1/20</code> each. All five trajectory p90 values exceed the <code>0.35</code> gate, yielding <code>FAIL_DIRECTION_CONDITIONED_IDENTIFIABILITY_V146</code>.">cross local-only 的误差中位数 / p90 / worst 为 <code>0.61131 / 0.86701 / 0.88427</code>；local+moments 与 local+pose 也各仅通过 <code>1/20</code>。五条轨迹 p90 全部高于 <code>0.35</code> 门，正式判决为 <code>FAIL_DIRECTION_CONDITIONED_IDENTIFIABILITY_V146</code>。</p></section>
+                  <section><h4 data-i18n-zh="独立复算" data-i18n-en="Independent recomputation">独立复算</h4><p data-i18n-html-zh="第二实现不导入正式 v146 模块，独立重建特征、硬相机数候选池、八近邻、预测、轨迹尾部与判决。整数邻居数组完全一致，浮点数组最大差 <code>8.88e-16</code>，门摘要最大差 <code>1.11e-16</code>，九项检查全过。" data-i18n-html-en="A second implementation does not import the formal v146 module and independently rebuilds features, hard-camera-count candidate pools, eight-neighbor predictions, trajectory tails, and decisions. Integer neighbor arrays match exactly, floating-point arrays differ by at most <code>8.88e-16</code>, gate summaries differ by at most <code>1.11e-16</code>, and all nine checks pass.">第二实现不导入正式 v146 模块，独立重建特征、硬相机数候选池、八近邻、预测、轨迹尾部与判决。整数邻居数组完全一致，浮点数组最大差 <code>8.88e-16</code>，门摘要最大差 <code>1.11e-16</code>，九项检查全过。</p></section>
+                  <section><h4 data-i18n-zh="没有运行什么" data-i18n-en="What was not run">没有运行什么</h4><p data-i18n-html-zh="Stage A 没有任何跨轨迹方法全过，因此 <code>3700</code> 单元 Stage B 按合同没有启动，不能写成 <code>0/3700</code>。没有物理 replay、神经训练、wall/RSS、外部门或真实 BOST 结果。" data-i18n-html-en="No cross-trajectory Stage-A method passes completely, so the <code>3,700</code>-cell Stage B was not launched under the contract and must not be reported as <code>0/3,700</code>. There is no physical replay, neural training, wall/RSS, external-gate, or real-BOST result.">Stage A 没有任何跨轨迹方法全过，因此 <code>3700</code> 单元 Stage B 按合同没有启动，不能写成 <code>0/3700</code>。没有物理 replay、神经训练、wall/RSS、外部门或真实 BOST 结果。</p></section>
+                  <section><h4 data-i18n-zh="路线动作" data-i18n-en="Route action">路线动作</h4><p data-i18n-html-zh="关闭当前固定八邻居方向条件族。下一步只在 CPU 上做结果盲 oracle-span / collision 诊断，区分反距离权重失败与部署可见状态缺失；不扩模型、不租 GPU，<code>algorithm_breakthrough=false</code>。" data-i18n-html-en="Close the current fixed-eight-neighbor direction-conditioned family. The next CPU-only result-blind oracle-span or collision diagnostic separates inverse-distance-weight failure from missing deployment-visible state. Do not enlarge the model or rent a GPU; <code>algorithm_breakthrough=false</code>.">关闭当前固定八邻居方向条件族。下一步只在 CPU 上做结果盲 oracle-span / collision 诊断，区分反距离权重失败与部署可见状态缺失；不扩模型、不租 GPU，<code>algorithm_breakthrough=false</code>。</p></section>
+                </div>
+                <figure class="entry-figure"><a href="../asset_viewer.html?asset=assets%2Ffigures%2Fpoolfire_k1_dual_direction_conditioned_identifiability_v146.png" aria-label="打开 v146 方向条件可辨识性失败图" data-i18n-aria-label-zh="打开 v146 方向条件可辨识性失败图" data-i18n-aria-label-en="Open the v146 direction-conditioned identifiability failure figure"><img loading="lazy" decoding="async" src="../assets/figures/poolfire_k1_dual_direction_conditioned_identifiability_v146.png" alt="v146 跨轨迹与同轨迹方向条件误差及五条轨迹尾部" data-i18n-alt-zh="v146 跨轨迹与同轨迹方向条件误差及五条轨迹尾部" data-i18n-alt-en="v146 cross-trajectory and same-trajectory direction-conditioned errors with five trajectory tails" /></a><figcaption data-i18n-zh="跨轨迹三种方向方法均 1/20；同轨迹 local-only 上限 9/20；Stage B 未运行。" data-i18n-en="All three cross-trajectory direction methods reach 1/20; the same-trajectory local-only upper bound reaches 9/20; Stage B was not run.">跨轨迹三种方向方法均 1/20；同轨迹 local-only 上限 9/20；Stage B 未运行。</figcaption></figure>
+                <div class="entry-links"><a href="../document_reader.html?doc=docs%2Fpoolfire_k1_dual_direction_conditioned_identifiability_v146_result_2026-08-15.md" data-i18n-zh="阅读 v146 完整双语结果" data-i18n-en="Read the complete bilingual v146 result">阅读 v146 完整双语结果</a><a href="../docs/poolfire_k1_dual_direction_conditioned_identifiability_v146_public_summary.json" data-i18n-zh="打开脱敏 JSON 摘要" data-i18n-en="Open the redacted JSON summary">打开脱敏 JSON 摘要</a><a href="../document_reader.html?doc=docs%2Fpoolfire_k1_dual_global_camera_state_v145_result_2026-08-14.md" data-i18n-zh="回看 v145 父结果" data-i18n-en="Review the v145 parent result">回看 v145 父结果</a></div>
+              </div>
+            </details>
+          </article>
+          <article class="day-entry" data-date="2026-08-14" data-categories="science-negative engineering decision learning">
             <details open>
               <summary class="entry-summary">
                 <div class="date-block"><time datetime="2026-08-14">2026-08-14</time><span data-i18n-zh="周五 · Day 40" data-i18n-en="Fri · Day 40">周五 · Day 40</span></div>
@@ -2871,7 +2893,7 @@
   </main>
 
   <footer>
-    <span data-i18n-zh="持续更新至 v145 全局 camera-set 状态的独立复算负判决：五种方法均为 0/20 哨兵、0/3700 单元和 0/5 轨迹，当前共享全局邻居度量已关闭且不租 GPU。内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。" data-i18n-en="Continuously updated through the independently recomputed v145 global camera-set-state verdict: all five methods reach 0/20 sentinels, 0/3700 cells, and 0/5 trajectories, with the shared global-neighbor metric closed and no GPU rental authorized. Content comes from project commit history, formal result documents, and the plain-language learning log; this public page contains no private data, execution paths, model parameters, or restricted material.">持续更新至 v145 全局 camera-set 状态的独立复算负判决：五种方法均为 0/20 哨兵、0/3700 单元和 0/5 轨迹，当前共享全局邻居度量已关闭且不租 GPU。内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。</span>
+    <span data-i18n-zh="持续更新至 v146 方向条件可辨识性的独立复算负判决：最佳跨轨迹方法 1/20、同轨迹上限 9/20，五条轨迹尾部全部失败；3700 单元 Stage B 未运行，当前固定八邻居方向条件族已关闭且不租 GPU。内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。" data-i18n-en="Continuously updated through the independently recomputed v146 direction-conditioned identifiability verdict: the best cross-trajectory method reaches 1/20, the same-trajectory upper bound reaches 9/20, and every trajectory tail fails. The 3,700-cell Stage B was not run; the fixed-eight-neighbor direction-conditioned family is closed and no GPU rental is authorized. Content comes from project commit history, formal result documents, and the plain-language learning log; this public page contains no private data, execution paths, model parameters, or restricted material.">持续更新至 v146 方向条件可辨识性的独立复算负判决：最佳跨轨迹方法 1/20、同轨迹上限 9/20，五条轨迹尾部全部失败；3700 单元 Stage B 未运行，当前固定八邻居方向条件族已关闭且不租 GPU。内容来自项目提交历史、正式结果文档与讲人话学习日志；公开页不含私有数据、执行路径、模型参数或受限材料。</span>
   </footer>
 
   <script>
