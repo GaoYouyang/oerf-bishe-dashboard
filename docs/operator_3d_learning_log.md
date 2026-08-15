@@ -14585,3 +14585,67 @@ Original-p33 support under `5/7/9/12` cameras changes from `76.86% / 87.18% / 93
 An independent implementation rebuilds the one-step CGLS state, camera features, fold-only normalization, and nearest-neighbor support. All `17/17` checks pass; maximum state, feature, and distance differences are `1.78e-14`, `1.78e-14`, and `2.00e-15`, with identical discrete decisions. The scientific decision is `FAIL_P33_SAME_POWER_MUTUAL_SUPPORT_V152`.
 
 Same-power coverage helps but is insufficient under sparse views across size conditions. Predictor fitting, physical replay, and GPU rental remain unauthorized. The next target-free gate tests observation-derived multiview coordinate canonicalization; if the five-camera cross-size gap persists, the current prediction route stops pending genuinely broader training conditions.
+
+## 2026-08-16：v153 坐标规范化没有修复覆盖，当前预测路线关闭
+
+### 为什么这次没有继续加模型
+
+v152 的原 p33 五相机支持率只有 `83.68%`，但同功率新增轨迹自身四档相机数都能过门。一个合理解释是：不同轨迹的观测中心、尺度或单调坐标分布没有对齐，而不是模型容量不够。v153 因此先做一个不读目标的表示诊断。
+
+本轮固定比较：
+
+- 便宜仿射 control：用 K1 residual 的多视角中心与尺度规范坐标；
+- primary 单调 warp：用 residual 幅值质量的固定逆 CDF 变换，并一致更新 observation、residual、dual 与 reported geometry。
+
+六条公开 train 轨迹继续做完整轨迹外折，共 `4,440` 个样本、`36,630` 个 active camera rows。fold 内标准化和支持门不看 held-out 轨迹；CFD truth、Krylov target、validation/test 都没有读取。没有 predictor、没有物理 replay，新增精确调用为 `0A+0A^T`。
+
+### 独立确认的结果
+
+原 p33-s01 在 `5/7/9/12` 相机下：
+
+- v152 raw：`83.68% / 91.81% / 97.24% / 97.79%`；
+- v153 affine：`65.73% / 79.77% / 88.41% / 93.47%`；
+- v153 monotone：`71.14% / 82.93% / 89.07% / 94.77%`。
+
+所以 primary 不但没有救回 5 相机，还破坏了原本通过的 7/9 相机分层。新增 p33-s03 仍全部过门，但 p45 完整轨迹的单调支持率只有 `7.60%`，说明固定坐标变换无法把当前跨功率、跨尺寸状态装进同一个可靠支持域。
+
+独立第二实现重建全部坐标映射、几何更新、fold-only normalization、最近邻支持与判决。`15/15` 项检查通过；浮点数组最大差 `3.29e-14`，汇总最大差 `4.00e-15`，离散判决完全一致。正式判决是：
+
+`FAIL_TARGET_FREE_MONOTONE_COORDINATE_SUPPORT_V153`
+
+### 这次负结果如何节省后续算力
+
+当前证据不支持“把网络做大就能解决”。更直接的问题是公开 train 工况覆盖不足，而且固定仿射/单调规范化还会伤害已通过分层。因此关闭当前坐标规范化 + 跨轨迹系数预测路线，不训练 CNN/FNO/UNO/DeepONet，也不租 GPU。
+
+下一门只先扩展公开 train 工况覆盖，重点补足跨功率与尺寸状态；validation/test 继续封存。deployment-visible 跨轨迹支持重新过门前，不启动 predictor、物理 replay、wall/RSS 或外部门。
+
+当前边界：
+
+- `current_cross_trajectory_predictor_route_closed=true`；
+- `predictor_training_authorized=false`；
+- `physical_replay=false`；
+- `gpu_rental_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_coordinate_canonicalization_v153_result_2026-08-16.md`
+- `docs/poolfire_k1_coordinate_canonicalization_v153_public_summary.json`
+- `assets/figures/poolfire_k1_coordinate_canonicalization_v153.png`
+
+### English checkpoint
+
+v153 tests whether observation-visible center, scale, or monotone coordinate changes explain the remaining cross-trajectory support gap. It compares a cheap residual-centroid/scale affine control with one fixed inverse-CDF monotone warp, applying each map consistently to observations, exact-K1 residuals, detector duals, and reported geometry.
+
+The six public train trajectories contain `4,440` samples and `36,630` active camera rows. Complete-trajectory leave-one-out normalization and support thresholds use fit trajectories only. No CFD truth, Krylov target, validation/test truth, predictor, or reconstruction replay is used; the incremental ledger is `0A+0A^T`.
+
+Original-p33 support under `5/7/9/12` cameras is `83.68% / 91.81% / 97.24% / 97.79%` before canonicalization, `65.73% / 79.77% / 88.41% / 93.47%` for the affine control, and `71.14% / 82.93% / 89.07% / 94.77%` for the monotone primary. The primary fails to rescue five cameras and harms the previously passing seven- and nine-camera strata. Complete-trajectory monotone support for p45 is only `7.60%`.
+
+An independent second implementation rebuilds every map, geometry update, fold normalization, support calculation, and decision. All `15/15` checks pass; the maximum floating-array and summary differences are `3.29e-14` and `4.00e-15`. The decision is `FAIL_TARGET_FREE_MONOTONE_COORDINATE_SUPPORT_V153`.
+
+This closes the current coordinate-canonicalization plus cross-trajectory coefficient-prediction route. It does not prove all mappings impossible and is not a reconstruction, learned-model, exact-call-saving, resource, external, curved-ray, real-BOST, or paper-success result. The next gate expands public training-condition coverage while validation and test remain sealed.

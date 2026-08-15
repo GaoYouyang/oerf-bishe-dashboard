@@ -1,10 +1,10 @@
 {
   "schema_version": "oerf-operator-learning-current-evidence-v1",
-  "updated": "2026-08-15",
+  "updated": "2026-08-16",
   "route": "C: permutation-invariant variable-camera observation/geometry-only warm initializer for three-dimensional BOST reconstruction",
-  "engineering_status": "PASS_INDEPENDENT_RECOMPUTATION_EXPANDED_TRAIN_SUPPORT_V152",
-  "scientific_status": "FAIL_P33_SAME_POWER_MUTUAL_SUPPORT_V152",
-  "formal_status": "PASS_FORMAL_EXPANDED_TRAIN_SUPPORT_EXECUTION_V152",
+  "engineering_status": "PASS_INDEPENDENT_RECOMPUTATION_COORDINATE_CANONICALIZATION_V153",
+  "scientific_status": "FAIL_TARGET_FREE_MONOTONE_COORDINATE_SUPPORT_V153",
+  "formal_status": "PASS_FORMAL_COORDINATE_CANONICALIZATION_EXECUTION_V153",
   "v129_set_dual_formal_status": "FAIL_V129_STAGE_A_K3_DUAL_SHELL_CAPACITY",
   "v129_set_dual_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_SET_DUAL_STAGE_A_V129",
   "v130_set_krylov2_formal_status": "PASS_V130_STAGE_A_DUAL_STATE_KRYLOV2_CAPACITY",
@@ -94,10 +94,10 @@
   "v112_projected_ridge_parent_screen_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_V112_PROJECTED_RIDGE_SCREEN",
   "v111_formal_stage_a_status": "PASS_V111_FORMAL_STAGE_A_ALL_SEEDS",
   "v111_formal_stage_a_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_V111_FORMAL_STAGE_A",
-  "latest_valid_mechanism_status": "PASS_INDEPENDENT_RECOMPUTATION_EXPANDED_TRAIN_SUPPORT_V152",
-  "latest_valid_mechanism_formal_status": "PASS_FORMAL_EXPANDED_TRAIN_SUPPORT_EXECUTION_V152",
-  "headline": "v152 independently confirms that one added same-power trajectory helps but does not close the five-camera cross-size support gap; predictor fitting and GPU rental remain closed",
-  "headline_zh": "v152 独立确认：新增同功率轨迹虽有帮助，仍未关闭 5 相机跨尺寸支持缺口；预测器训练与 GPU 租用继续关闭。",
+  "latest_valid_mechanism_status": "PASS_INDEPENDENT_RECOMPUTATION_COORDINATE_CANONICALIZATION_V153",
+  "latest_valid_mechanism_formal_status": "PASS_FORMAL_COORDINATE_CANONICALIZATION_EXECUTION_V153",
+  "headline": "v153 independently confirms that target-free affine and monotone coordinate canonicalization worsen cross-trajectory support; the current predictor route is closed",
+  "headline_zh": "v153 独立确认：不读目标的仿射与单调坐标规范化反而削弱跨轨迹支持，当前预测路线关闭。",
   "metrics": {
     "v129_cell_count": 3700,
     "v129_trajectory_count": 5,
@@ -1055,7 +1055,21 @@
     "v102_projected_ridge_gradient_better_cells": 66,
     "v102_eligible_qualified_arm_count": 0,
     "exact_A_calls_per_future_candidate": 2,
-    "exact_AT_calls_per_future_candidate": 2
+    "exact_AT_calls_per_future_candidate": 2,
+    "v153_sample_count": 4440,
+    "v153_active_camera_row_count": 36630,
+    "v153_p33s01_five_camera_raw_supported_fraction": 0.8367567567567568,
+    "v153_p33s01_five_camera_affine_supported_fraction": 0.6572972972972972,
+    "v153_p33s01_five_camera_monotone_supported_fraction": 0.7113513513513513,
+    "v153_p33s01_seven_camera_monotone_supported_fraction": 0.8293436293436294,
+    "v153_p33s01_nine_camera_monotone_supported_fraction": 0.8906906906906907,
+    "v153_p33s01_twelve_camera_monotone_supported_fraction": 0.9477477477477477,
+    "v153_p45_monotone_supported_fraction": 0.076003276003276,
+    "v153_independent_check_count": 15,
+    "v153_independent_maximum_float_array_difference": 3.2862601528904634e-14,
+    "v153_independent_maximum_summary_difference": 3.9968028886505635e-15,
+    "v153_incremental_exact_A": 0,
+    "v153_incremental_exact_AT": 0
   },
   "current_decision": {
     "variable_camera_dataset_mechanics_validated": true,
@@ -1377,14 +1391,27 @@
     "gpu_rental_recommended_now": false,
     "wall_or_rss_authorized": false,
     "external_generalization": false,
-    "real_bost": false
+    "real_bost": false,
+    "v153_coordinate_canonicalization_audit_completed": true,
+    "v153_independently_recomputed": true,
+    "v153_coordinate_canonicalization_gate_passed": false,
+    "v153_prior_passed_strata_preserved": false,
+    "v153_affine_control_rescued_primary": false,
+    "v153_current_cross_trajectory_predictor_route_closed": true,
+    "v153_predictor_training_authorized": false,
+    "v153_physical_replay_authorized": false,
+    "v153_gpu_rental_authorized": false,
+    "v153_neural_operator_training_authorized": false
   },
-  "next_scientific_gate": "Preregister a target-free observation-derived multiview coordinate-canonicalization audit with a cheap affine control and one minimal monotone transport warp. If the five-camera cross-size gate still fails, stop this predictor route until broader training conditions are available.",
-  "next_scientific_gate_en": "Preregister a target-free observation-derived multiview coordinate-canonicalization audit with a cheap affine control and one minimal monotone transport warp. If the five-camera cross-size gate still fails, stop this predictor route until broader training conditions are available.",
-  "next_scientific_gate_zh": "下一门预注册不读目标、由观测生成的多视角坐标规范化审计，比较便宜仿射 control 与一个最小单调输运 warp；若 5 相机跨尺寸门仍失败，就停止该预测路线并等待更广训练工况。",
+  "next_scientific_gate": "Expand public training-condition coverage while keeping validation and test sealed; reassess deployment-visible cross-trajectory support before any predictor or neural-operator training.",
+  "next_scientific_gate_en": "Expand public training-condition coverage while keeping validation and test sealed; reassess deployment-visible cross-trajectory support before any predictor or neural-operator training.",
+  "next_scientific_gate_zh": "先扩展公开训练工况覆盖，validation/test 继续封存；重新通过 deployment-visible 跨轨迹支持门后，才允许训练 predictor 或神经算子。",
   "public_evidence": {
-    "result": "../document_reader.html?doc=docs%2Fpoolfire_k1_expanded_train_support_v152_result_2026-08-15.md",
-    "summary": "../docs/poolfire_k1_expanded_train_support_v152_public_summary.json",
-    "figure": "../assets/figures/poolfire_k1_expanded_train_support_v152.png"
-  }
+    "result": "../document_reader.html?doc=docs%2Fpoolfire_k1_coordinate_canonicalization_v153_result_2026-08-16.md",
+    "summary": "../docs/poolfire_k1_coordinate_canonicalization_v153_public_summary.json",
+    "figure": "../assets/figures/poolfire_k1_coordinate_canonicalization_v153.png"
+  },
+  "v153_coordinate_canonicalization_formal_status": "PASS_FORMAL_COORDINATE_CANONICALIZATION_EXECUTION_V153",
+  "v153_coordinate_canonicalization_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_COORDINATE_CANONICALIZATION_V153",
+  "v153_coordinate_canonicalization_scientific_decision": "FAIL_TARGET_FREE_MONOTONE_COORDINATE_SUPPORT_V153"
 }

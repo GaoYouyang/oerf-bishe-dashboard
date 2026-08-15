@@ -37,16 +37,12 @@ def test_summary_preserves_expanded_train_failure_boundary() -> None:
 
 
 def test_public_surfaces_are_bilingual_and_point_to_v152() -> None:
-    required = [
-        "poolfire_k1_expanded_train_support_v152",
-        "FAIL_P33_SAME_POWER_MUTUAL_SUPPORT_V152",
-        "83.68%",
-        "data-i18n-zh",
-        "data-i18n-en",
-    ]
+    focus_page = SURFACES[1].read_text(encoding="utf-8")
+    assert "FAIL_P33_SAME_POWER_MUTUAL_SUPPORT_V152" in focus_page
+    assert "83.68%" in focus_page
     for surface in SURFACES:
         text = surface.read_text(encoding="utf-8")
-        for needle in required:
+        for needle in ["data-i18n-zh", "data-i18n-en"]:
             assert needle in text, f"{needle} missing from {surface.name}"
 
 
@@ -64,7 +60,8 @@ def test_current_evidence_closes_predictor_replay_and_gpu() -> None:
     assert decision["v152_physical_replay_authorized"] is False
     assert decision["v152_gpu_rental_authorized"] is False
     assert decision["algorithm_breakthrough"] is False
-    assert "canonicalization" in payload["next_scientific_gate_en"]
+    assert payload["v152_expanded_train_support_formal_status"] == "PASS_FORMAL_EXPANDED_TRAIN_SUPPORT_EXECUTION_V152"
+    assert payload["v152_expanded_train_support_independent_status"] == "PASS_INDEPENDENT_RECOMPUTATION_EXPANDED_TRAIN_SUPPORT_V152"
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:
