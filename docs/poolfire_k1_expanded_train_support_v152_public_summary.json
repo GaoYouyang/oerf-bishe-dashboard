@@ -1,0 +1,74 @@
+{
+  "schema_version": "oerf-public-poolfire-k1-expanded-train-support-v152",
+  "updated": "2026-08-15",
+  "formal_status": "PASS_FORMAL_EXPANDED_TRAIN_SUPPORT_EXECUTION_V152",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_EXPANDED_TRAIN_SUPPORT_V152",
+  "scientific_decision": "FAIL_P33_SAME_POWER_MUTUAL_SUPPORT_V152",
+  "scope": "Target-free support audit after adding one previously unused public PoolFire training trajectory at the same power but a different size; validation and test remain sealed.",
+  "added_training_trajectory_count": 1,
+  "added_sample_count": 740,
+  "combined_sample_count": 4440,
+  "active_camera_rows": 36630,
+  "frozen_support_gate": 0.9,
+  "primary_raw_camera_state": {
+    "global_supported_fraction": 0.8388752388752388,
+    "p33_size01_overall_supported_fraction": 0.9423423423423424,
+    "p33_size03_overall_supported_fraction": 0.9824733824733825,
+    "p33_size01_baseline_by_camera_count": {
+      "5": 0.7686486486486487,
+      "7": 0.8718146718146718,
+      "9": 0.9309309309309309,
+      "12": 0.945045045045045
+    },
+    "p33_size01_expanded_by_camera_count": {
+      "5": 0.8367567567567568,
+      "7": 0.9181467181467181,
+      "9": 0.9723723723723724,
+      "12": 0.9779279279279279
+    },
+    "p33_size03_heldout_by_camera_count": {
+      "5": 0.9567567567567568,
+      "7": 0.9891891891891892,
+      "9": 0.9831831831831832,
+      "12": 0.9887387387387387
+    },
+    "p33_size01_rows_rescued_by_added_trajectory": 265,
+    "p33_size01_fraction_rescued_by_added_trajectory": 0.043407043407043405,
+    "all_p33_camera_strata_passed": false
+  },
+  "normalized_control": {
+    "global_supported_fraction": 0.9481026481026481,
+    "p33_size01_five_camera_supported_fraction": 0.8421621621621621,
+    "p33_size03_five_camera_supported_fraction": 0.9805405405405405,
+    "all_p33_camera_strata_passed": false
+  },
+  "offline_state_construction": {
+    "exact_A_calls": 740,
+    "exact_AT_calls": 740,
+    "deployment_cost_claimed": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "check_count": 17,
+    "added_state_maximum_difference": 1.7763568394002505e-14,
+    "camera_feature_maximum_difference": 1.7763568394002505e-14,
+    "distance_maximum_difference": 1.9984014443252818e-15,
+    "normalization_maximum_difference": 0.0,
+    "summary_maximum_difference": 0.0,
+    "end_to_end_physics_independence_proven": false
+  },
+  "interpretation": "The added same-power trajectory improves support and fully supports its own held-out camera-count strata, but it does not close the five-camera gap for the original p33 size condition. Same power alone is therefore not sufficient coverage under sparse views.",
+  "next_gate": "Freeze a target-free observation-derived multiview coordinate-canonicalization audit, with an affine control and one minimal monotone transport warp. If the five-camera cross-size gate still fails, stop this predictor route until genuinely broader training conditions are available.",
+  "claim_limits": {
+    "predictor_training_authorized": false,
+    "physical_replay": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}

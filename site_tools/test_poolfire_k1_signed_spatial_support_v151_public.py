@@ -34,16 +34,12 @@ def test_summary_preserves_signed_spatial_failure_boundary() -> None:
 
 
 def test_public_surfaces_are_bilingual_and_point_to_v151() -> None:
-    required = [
-        "poolfire_k1_signed_spatial_support_v151",
-        "FAIL_SIGNED_SPATIAL_CROSS_TRAJECTORY_SUPPORT_V151",
-        "67.42%",
-        "data-i18n-zh",
-        "data-i18n-en",
-    ]
+    focus_page = SURFACES[1].read_text(encoding="utf-8")
+    assert "FAIL_SIGNED_SPATIAL_CROSS_TRAJECTORY_SUPPORT_V151" in focus_page
+    assert "67.42%" in focus_page
     for surface in SURFACES:
         text = surface.read_text(encoding="utf-8")
-        for needle in required:
+        for needle in ["data-i18n-zh", "data-i18n-en"]:
             assert needle in text, f"{needle} missing from {surface.name}"
 
 
@@ -60,7 +56,8 @@ def test_current_evidence_closes_state_predictor_and_gpu() -> None:
     assert decision["v151_physical_replay_authorized"] is False
     assert decision["v151_gpu_rental_authorized"] is False
     assert decision["algorithm_breakthrough"] is False
-    assert "train-split" in payload["next_scientific_gate_en"]
+    assert payload["v151_signed_spatial_support_formal_status"] == "PASS_FORMAL_SIGNED_SPATIAL_SUPPORT_EXECUTION_V151"
+    assert payload["v151_signed_spatial_support_independent_status"] == "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_SPATIAL_SUPPORT_V151"
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:

@@ -32,15 +32,17 @@ def test_summary_preserves_inconclusive_boundary() -> None:
 
 
 def test_public_surfaces_are_bilingual_and_point_to_v149() -> None:
-    required = [
+    historical = [
         "poolfire_k1_dual_group_krylov_predictor_v149",
         "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_GROUP_KRYLOV_PREDICTOR_V149",
-        "data-i18n-zh",
-        "data-i18n-en",
     ]
+    for surface in SURFACES[:2]:
+        text = surface.read_text(encoding="utf-8")
+        for needle in historical:
+            assert needle in text, f"{needle} missing from {surface.name}"
     for surface in SURFACES:
         text = surface.read_text(encoding="utf-8")
-        for needle in required:
+        for needle in ["data-i18n-zh", "data-i18n-en"]:
             assert needle in text, f"{needle} missing from {surface.name}"
 
 

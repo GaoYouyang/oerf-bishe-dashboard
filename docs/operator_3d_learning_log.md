@@ -14529,3 +14529,59 @@ Across `60,654` active group rows, global support falls from `84.43%` for the sc
 An independent SciPy implementation reproduces the features, normalization, distances, indices, support flags, and scientific decision; maximum differences are at most `2.88e-14`. The decision is `FAIL_SIGNED_SPATIAL_CROSS_TRAJECTORY_SUPPORT_V151`.
 
 This closes the current signed-spatial peer state before predictor training. It does not prove mathematical impossibility and provides no reconstruction, exact-call, wall/RSS, external, curved-ray, real-BOST, or paper-success result. The next gate expands public training-condition coverage and freezes a target-free condition-normalization support audit before any new predictor or GPU use.
+
+## 2026-08-15：v152 同功率新增训练轨迹有帮助，但 5 相机跨尺寸缺口仍未关闭
+
+### 为什么没有直接训练模型
+
+v151 已经把问题收窄到跨工况覆盖。v152 因此先加入一条此前没有进入审计、但属于公开 train split 的 p33 同功率不同尺寸轨迹，不读取 Krylov 系数目标，也不拟合 predictor。新增轨迹生成 `740` 个样本；六条 train 轨迹合并后共有 `4,440` 个样本和 `36,630` 个 active camera rows。validation/test 继续封存。
+
+新增轨迹的离线一步状态构造用了 `740A+740A^T`。这只是支持审计输入，不是部署成本，也不能当作 exact-call 节省。
+
+### 独立确认的结果
+
+原 p33-s01 在 `5/7/9/12` 相机下的支持率由：
+
+- `76.86% / 87.18% / 93.09% / 94.50%`
+
+提高到：
+
+- `83.68% / 91.81% / 97.24% / 97.79%`。
+
+也就是说，7/9/12 相机已经过冻结的 90% 门，5 相机仍未通过。新增 p33-s03 完整留出时四档支持率为 `95.68% / 98.92% / 98.32% / 98.87%`，全部通过；它还救回了原 p33-s01 的 `265` 个 active camera rows。便宜的样本内中心/RMS 归一化 control 在原 p33 五相机上只有 `84.22%`，也没有关闭缺口。
+
+独立第二实现重新构造一步 CGLS 状态、每相机特征、fold-only normalization 和最近邻距离。`17/17` 项检查全部通过，state / feature / distance 最大差为 `1.78e-14 / 1.78e-14 / 2.00e-15`，索引、支持标志和科学判决完全一致。正式判决是：
+
+`FAIL_P33_SAME_POWER_MUTUAL_SUPPORT_V152`
+
+### 这次负结果怎样改变路线
+
+同功率数据不是无效，它明确改善了覆盖；但它没有解决少相机下的跨尺寸变化。因此当前仍不训练 predictor、不做物理 replay、不租 GPU。下一门是结果前冻结、仍不读目标的多视角坐标规范化：先比较便宜仿射 control，再测试一个由 observation 与 reported geometry 生成的最小单调输运 warp。如果原 p33 和新增 p33 的 5/7/9/12 相机分层不能全部过 90%，就停止当前跨轨迹预测路线，等待真正更广的训练工况。
+
+当前边界：
+
+- `predictor_training_authorized=false`；
+- `physical_replay_authorized=false`；
+- `gpu_rental_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_expanded_train_support_v152_result_2026-08-15.md`
+- `docs/poolfire_k1_expanded_train_support_v152_public_summary.json`
+- `assets/figures/poolfire_k1_expanded_train_support_v152.png`
+
+### English checkpoint
+
+v152 adds one previously unused public p33 training trajectory at the same power and a different size before fitting any predictor. The added trajectory contributes `740` samples; the six-trajectory train-only audit contains `4,440` samples and `36,630` active camera rows. Validation and test remain sealed.
+
+Original-p33 support under `5/7/9/12` cameras changes from `76.86% / 87.18% / 93.09% / 94.50%` to `83.68% / 91.81% / 97.24% / 97.79%`. The added p33 trajectory reaches `95.68% / 98.92% / 98.32% / 98.87%` when held out and rescues `265` original-p33 rows, but the original five-camera stratum remains below the frozen 90% gate. A cheap within-sample center/RMS control also fails at `84.22%`.
+
+An independent implementation rebuilds the one-step CGLS state, camera features, fold-only normalization, and nearest-neighbor support. All `17/17` checks pass; maximum state, feature, and distance differences are `1.78e-14`, `1.78e-14`, and `2.00e-15`, with identical discrete decisions. The scientific decision is `FAIL_P33_SAME_POWER_MUTUAL_SUPPORT_V152`.
+
+Same-power coverage helps but is insufficient under sparse views across size conditions. Predictor fitting, physical replay, and GPU rental remain unauthorized. The next target-free gate tests observation-derived multiview coordinate canonicalization; if the five-camera cross-size gap persists, the current prediction route stops pending genuinely broader training conditions.
