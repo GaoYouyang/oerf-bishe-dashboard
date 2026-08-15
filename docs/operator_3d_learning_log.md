@@ -14459,3 +14459,73 @@ The truth-aware oracle remains at `3700/3700` cells and `5/5` trajectories. Visi
 The independent implementation reproduces the oracle, seed, mean, and linear paths, with a maximum linear-prediction difference of `3.67e-13`. RFF is not reproducible under the frozen tolerance: hashing rounded floating features to choose 512 lengthscale rows turns a `9.06e-15` feature difference into a `0.46577` lengthscale difference and a `0.01168` prediction difference. The final status must therefore remain `INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_GROUP_KRYLOV_PREDICTOR_V149`.
 
 The current group-coordinate predictor family is closed without claiming mathematical impossibility. There is no physical replay, larger-neural-model rescue, GPU rental, resource result, external generalization, curved-ray result, real BOST result, or algorithmic breakthrough. The next diagnostic audits cross-trajectory conditional ambiguity in the sealed feature-to-target map.
+
+## 2026-08-15：v151 有符号空间状态没有关闭跨轨迹支持缺口
+
+### 先把 v150 的边界说准确
+
+v150 用 v149 的 305 维 deployment-visible 汇总状态做精确跨轨迹邻域审计。正式程序找到的最差留出分层只有 `0.2704%` 支持；独立程序对邻居、支持标志和离散判决逐项一致。但一个连续误差数组的差为 `1.47e-10`，超过结果前冻结的 `1e-10` 容差，所以 v150 总状态必须保持 `INCONCLUSIVE`。本轮没有事后放宽门槛，也没有把它包装成独立确认失败。
+
+### v151 改了什么
+
+这次不训练模型，也不读取 CFD 真值或 canonical Krylov target。每个相机/分量保留：
+
+- K1 residual 的有符号 `4x4` 低频 DCT 相位；
+- exact-K1 dual 的同类相位；
+- 通过报告 right/up 轴在世界坐标对齐、再投回目标相机的 peer residual 相位；
+- 相机置换等变的 active-set mean/std/min/max。
+
+五条完整轨迹做 leave-one-trajectory-out，fit-only 标准化和支持阈值都不看 held-out target。共审计 `60,654` 个 active group rows，新增精确调用为 `+0A/+0A^T`，没有物理 replay。
+
+### 独立确认的结果
+
+原 305 维汇总状态的全局支持率为 `84.43%`；新 signed-spatial peer state 降到 `67.42%`。component 分层由 `15/40` 变为 `16/40`，camera 分层由 `7/20` 变为 `8/20`。最差 component 分层从 `0.216%` 提高到 `4.98%`，说明符号空间信息确实救回了一部分最极端局部缺口，但离冻结的 `90%` 门仍很远。
+
+轨迹差异更关键：
+
+- p14-s05：`99.20%`；
+- p22-s03：`99.62%`；
+- p33-s01：`48.25%`；
+- p45-s05：`43.24%`；
+- p58-s03：`46.73%`。
+
+第二实现使用 SciPy `dctn`、独立世界坐标 peer alignment 和 `cdist` 重建。feature、normalization、distance 最大差分别为 `5.33e-15 / 2.88e-14 / 8.66e-15`；全部整数索引、support flags 和科学判决一致，所有检查通过。
+
+正式判决是 `FAIL_SIGNED_SPATIAL_CROSS_TRAJECTORY_SUPPORT_V151`。
+
+### 这次失败改变了什么
+
+当前瓶颈不再像“网络太小”，而更像五条工况之间缺少可比覆盖。新状态让 p14/p22 几乎完全覆盖，却把 p33/p45/p58 的工况差异更清楚地暴露出来。继续在这套状态上加深 CNN/FNO 只会掩盖数据覆盖问题。
+
+因此关闭 signed-spatial peer state，不训练 predictor，不做物理 replay，不租 GPU。下一步优先接入已经属于公开 train split、但没有进入当前五轨迹审计的其他 PoolFire 功率/尺寸组合，先冻结一个 target-free 工况归一化与支持门。validation/test 继续封存；扩展 fit 覆盖通过前不重新启动神经模型。
+
+当前边界：
+
+- `signed_spatial_peer_state_closed=true`；
+- `predictor_training_authorized=false`；
+- `physical_replay_authorized=false`；
+- `gpu_rental_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_signed_spatial_support_v151_result_2026-08-15.md`
+- `docs/poolfire_k1_signed_spatial_support_v151_public_summary.json`
+- `assets/figures/poolfire_k1_signed_spatial_support_v151.png`
+
+### English checkpoint
+
+v150 found a severe cross-trajectory support gap in the sealed 305D scalar-summary state, but its overall status remains `INCONCLUSIVE` because one independently recomputed metric array differs by `1.47e-10`, above the preregistered `1e-10` tolerance. That tolerance was not changed after seeing the result.
+
+v151 fits no target model and reads no CFD truth or canonical Krylov target. It adds signed low-frequency `4x4` DCT phase features for each camera/component K1 residual and exact-K1 dual, plus a geometry-aligned peer residual constructed through reported right/up axes. Complete-trajectory leave-one-out normalization and support thresholds use fit trajectories only.
+
+Across `60,654` active group rows, global support falls from `84.43%` for the scalar-summary baseline to `67.42%` for the signed-spatial peer state. The worst component stratum improves from `0.216%` to `4.98%`, but only `16/40` component strata and `8/20` camera strata pass. Per-trajectory support is `99.20% / 99.62% / 48.25% / 43.24% / 46.73%` for p14, p22, p33, p45, and p58.
+
+An independent SciPy implementation reproduces the features, normalization, distances, indices, support flags, and scientific decision; maximum differences are at most `2.88e-14`. The decision is `FAIL_SIGNED_SPATIAL_CROSS_TRAJECTORY_SUPPORT_V151`.
+
+This closes the current signed-spatial peer state before predictor training. It does not prove mathematical impossibility and provides no reconstruction, exact-call, wall/RSS, external, curved-ray, real-BOST, or paper-success result. The next gate expands public training-condition coverage and freezes a target-free condition-normalization support audit before any new predictor or GPU use.
