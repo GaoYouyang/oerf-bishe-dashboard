@@ -1,0 +1,99 @@
+{
+  "schema_version": "oerf-public-k1-dual-group-krylov-predictor-v149.1",
+  "updated": "2026-08-15",
+  "title": "v149.1 observation-only detector-group Krylov predictor gate",
+  "formal_status": "PASS_FORMAL_GROUP_KRYLOV_PREDICTOR_EXECUTION_V149",
+  "formal_scientific_decision": "FAIL_OBSERVATION_ONLY_GROUP_KRYLOV_PREDICTOR_V149",
+  "independent_status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_GROUP_KRYLOV_PREDICTOR_V149",
+  "adjudicated_status": "INCONCLUSIVE_V149_CURRENT_GROUP_COORDINATE_PREDICTOR_FAMILY_CLOSED",
+  "evaluation": {
+    "opened_poolfire_cell_count": 3700,
+    "trajectory_count": 5,
+    "trajectory_camera_stratum_count": 20,
+    "camera_counts": [5, 7, 9, 12],
+    "outer_split": "complete-trajectory leave-one-out",
+    "additional_exact_A_calls": 0,
+    "additional_exact_AT_calls": 0,
+    "physical_replay_run": false
+  },
+  "methods": {
+    "oracle_block_krylov4": {
+      "role": "truth-aware representation-capacity upper bound",
+      "formal_cell_pass_count": 3700,
+      "independent_cell_pass_count": 3700,
+      "trajectory_pass_count": 5,
+      "trajectory_camera_stratum_pass_count": 20,
+      "error_p50": 0.08025334632208188,
+      "error_p90_higher": 0.1553104562941178,
+      "error_worst": 0.3520692045326736
+    },
+    "visible_seed_control": {
+      "role": "deployment-visible unfitted control",
+      "formal_cell_pass_count": 2951,
+      "independent_cell_pass_count": 2951,
+      "trajectory_pass_count": 0,
+      "trajectory_camera_stratum_pass_count": 2,
+      "error_p90_higher": 0.4969808816051817
+    },
+    "fit_mean_control": {
+      "role": "four fit-only coordinate means",
+      "formal_cell_pass_count": 11,
+      "independent_cell_pass_count": 11,
+      "trajectory_pass_count": 0,
+      "trajectory_camera_stratum_pass_count": 0,
+      "error_p90_higher": 0.7890901726046307
+    },
+    "linear_set_ridge": {
+      "role": "shared 305-feature linear ridge",
+      "formal_cell_pass_count": 3089,
+      "independent_cell_pass_count": 3089,
+      "trajectory_pass_count": 0,
+      "trajectory_camera_stratum_pass_count": 2,
+      "formal_error_p90_higher": 0.4785160660677474,
+      "independent_error_p90_higher": 0.4785160660677914,
+      "maximum_prediction_difference": 3.6692870963861424e-13
+    },
+    "rff_set_ridge": {
+      "role": "shared 128-feature RFF ridge",
+      "formal_cell_pass_count": 2137,
+      "independent_cell_pass_count": 2139,
+      "formal_trajectory_pass_count": 0,
+      "independent_trajectory_pass_count": 0,
+      "formal_error_p90_higher": 0.5647494431833877,
+      "independent_error_p90_higher": 0.5651642202782238,
+      "maximum_prediction_difference": 0.011682141913622823
+    }
+  },
+  "independent_recomputation": {
+    "all_checks_passed": false,
+    "state_arrays_within_tolerance": true,
+    "linear_predictions_within_tolerance": true,
+    "scientific_branch_exact": true,
+    "rff_predictions_within_tolerance": false,
+    "maximum_group_local_feature_difference": 9.06219543850284e-15,
+    "maximum_fold_lengthscale_difference": 0.46576694922187656,
+    "root_cause": "RFF lengthscale used a discontinuous float-hash subset; tiny independent state differences changed almost all selected rows",
+    "formal_tree_unchanged": true,
+    "shared_frozen_physics_kernels": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "route_action": {
+    "v148_representation_capacity_retained": true,
+    "current_group_coordinate_predictor_family_closed": true,
+    "physical_replay_authorized": false,
+    "larger_neural_model_authorized": false,
+    "gpu_rental_authorized": false,
+    "next_gate": "cross-trajectory conditional-ambiguity diagnostic on sealed deployment-visible group features"
+  },
+  "claim_boundary": {
+    "independently_validated_formal_negative": false,
+    "mathematical_impossibility": false,
+    "deployable_algorithm": false,
+    "algorithm_breakthrough": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "paper_success": false
+  }
+}

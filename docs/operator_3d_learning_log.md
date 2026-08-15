@@ -14397,3 +14397,65 @@ The visible-seed control reaches `18/20` sentinels and `2/5` trajectory tails. A
 An independent implementation uses a symmetric column-Gram eigensolve and physical-space reduced QR instead of the formal thin SVD. Projection ranks match exactly; the maximum block-prediction difference is `1.46e-12`, metric differences are at most `2.56e-14`, and all fourteen checks pass. Shared frozen physics kernels remain, so end-to-end physics independence is not proven.
 
 This is genuine mechanism-capacity headroom, not a deployable warm-start algorithm. Oracle coefficients use opened CFD truth. Observation-only prediction, physical replay, matched-accuracy reconstruction, exact-call reduction, wall/RSS speedup, external generalization, curved rays, real BOST, and paper success remain unproven. The next experiment is a minimal shared camera-permutation-equivariant observation/geometry-only group-coefficient predictor under complete-trajectory leave-one-out on CPU; GPU rental is not warranted yet.
+
+## 2026-08-15：v149.1 容量还在，但完整轨迹外折预测没有过门
+
+### 这次真正问了什么
+
+v148 只回答了“答案是否存在于当前样本的分组 Krylov 方向中”，并给出 `3700/3700`、`5/5` 的真值容量上限。v149.1 把问题推进到部署条件：不再把 CFD 真值作为输入，只读取 observation、K1 residual、exact-K1 dual 与报告几何，能不能预测每个相机/分量组的四个 canonical Krylov 系数？
+
+合同使用五条已开封 PoolFire 轨迹、`3700` 个单元、`5 / 7 / 9 / 12` 相机和完整 trajectory-level leave-one-trajectory-out。held-out trajectory 真值不进入标准化、拟合、超参数或停止。比较 visible seed、fit-only mean、线性 ridge、128-feature RFF ridge 和 truth-aware oracle。本轮只做坐标预测，新增精确调用为 `+0A/+0A^T`，没有物理 replay。
+
+### 实际结果
+
+- oracle：`3700/3700` 单元、`5/5` 轨迹、`20/20` 轨迹-相机分层；
+- visible seed：`2951/3700`、`0/5`、`2/20`；
+- fit-only mean：`11/3700`、`0/5`、`0/20`；
+- linear ridge：`3089/3700`、`0/5`、`2/20`；
+- formal RFF：`2137/3700`、`0/5`、`0/20`。
+
+容量上限没有消失，但最好的严格 observation-only 模型仍有 `611` 个单元失败，而且五条完整轨迹全部越过冻结尾部门。正式程序因此得到 `FAIL_OBSERVATION_ONLY_GROUP_KRYLOV_PREDICTOR_V149`。
+
+### 为什么最终仍必须写 INCONCLUSIVE
+
+独立程序复现了 oracle、visible seed、mean 与 linear 的离散判决。group local feature 最大差只有 `9.06e-15`，线性预测最大差为 `3.67e-13`。
+
+分叉只出现在 RFF：正式规则把标准化后的浮点特征四舍五入到 12 位，再按 SHA-256 选择 512 行估计长度尺度。极小浮点差改变了几乎整个子集，使五折长度尺度最大相差 `0.46577`，RFF 预测最大相差 `0.01168`；独立 RFF 为 `2139/3700`、`0/5`。这超过结果前冻结的容差。
+
+不能在看到结果后放宽容差，也不能让独立程序读取正式程序选中的子集。因此最终状态必须是 `INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_GROUP_KRYLOV_PREDICTOR_V149`，而不是“独立确认失败”。
+
+### 路线如何收缩
+
+按预注册规则，当前分组坐标 predictor family 关闭。这个结论不推翻 v148 的容量正结果，也不证明所有 observation-only 映射在数学上不可能。它只说明当前 sealed deployment-visible 特征加 mean、linear、RFF 三个小模型没有形成可独立验证的完整轨迹预测器。
+
+下一门先审计这些特征到 canonical target 的跨轨迹条件歧义，区分“输入本身信息不足”和“小模型容量不足”。在回答这个问题前，不做物理 replay，不扩大 CNN/FNO/UNO，不租 GPU，也不启动 wall/RSS 或外部工况。
+
+当前边界：
+
+- `current_group_coordinate_predictor_family_closed=true`；
+- `formal_negative_independently_validated=false`；
+- `mathematical_impossibility=false`；
+- `physical_replay_authorized=false`；
+- `gpu_rental_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_dual_group_krylov_predictor_v149_result_2026-08-15.md`
+- `docs/poolfire_k1_dual_group_krylov_predictor_v149_public_summary.json`
+- `assets/figures/poolfire_k1_dual_group_krylov_predictor_v149.png`
+
+### English checkpoint
+
+v149.1 asks whether a shared camera-permutation-equivariant predictor can recover four canonical groupwise Krylov coordinates using only deployment-visible observation, K1 residual, exact-K1 dual state, and reported geometry under complete-trajectory leave-one-out.
+
+The truth-aware oracle remains at `3700/3700` cells and `5/5` trajectories. Visible seed, fit-only mean, linear ridge, and formal RFF pass `2951`, `11`, `3089`, and `2137` cells respectively; every deployment-visible method reaches `0/5` trajectories. The formal branch therefore finds no passing observation-only predictor.
+
+The independent implementation reproduces the oracle, seed, mean, and linear paths, with a maximum linear-prediction difference of `3.67e-13`. RFF is not reproducible under the frozen tolerance: hashing rounded floating features to choose 512 lengthscale rows turns a `9.06e-15` feature difference into a `0.46577` lengthscale difference and a `0.01168` prediction difference. The final status must therefore remain `INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_GROUP_KRYLOV_PREDICTOR_V149`.
+
+The current group-coordinate predictor family is closed without claiming mathematical impossibility. There is no physical replay, larger-neural-model rescue, GPU rental, resource result, external generalization, curved-ray result, real BOST result, or algorithmic breakthrough. The next diagnostic audits cross-trajectory conditional ambiguity in the sealed feature-to-target map.

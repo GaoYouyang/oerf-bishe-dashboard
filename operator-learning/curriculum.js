@@ -1,5 +1,5 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.15-c-v148-detector-krylov-capacity",
+  version: "2026.08.15-c-v149-group-krylov-predictor-adjudication",
   previousVersion: "2026.08.15-c-v147-local-span-capacity",
   previousBadge: "v147 local action span closed · 14 / 20 cross span-32",
   olderBadge: "v146 fixed-eight direction family closed · 1 / 20 cross-trajectory",
