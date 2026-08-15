@@ -1,0 +1,99 @@
+{
+  "schema_version": "oerf-public-poolfire-k1-coordinate-canonicalization-v153",
+  "updated": "2026-08-16",
+  "formal_status": "PASS_FORMAL_COORDINATE_CANONICALIZATION_EXECUTION_V153",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_COORDINATE_CANONICALIZATION_V153",
+  "scientific_decision": "FAIL_TARGET_FREE_MONOTONE_COORDINATE_SUPPORT_V153",
+  "scope": "Target-free complete-trajectory leave-one-out support audit on six public PoolFire training trajectories. Validation and test remain sealed; no predictor is fit and no physical reconstruction is replayed.",
+  "sample_count": 4440,
+  "active_camera_rows": 36630,
+  "frozen_support_gate": 0.9,
+  "p33_size01_camera_support": {
+    "v152_raw": {
+      "5": 0.8367567567567568,
+      "7": 0.9181467181467181,
+      "9": 0.9723723723723724,
+      "12": 0.9779279279279279
+    },
+    "v153_affine": {
+      "5": 0.6572972972972972,
+      "7": 0.7976833976833977,
+      "9": 0.8840840840840841,
+      "12": 0.9346846846846847
+    },
+    "v153_monotone": {
+      "5": 0.7113513513513513,
+      "7": 0.8293436293436294,
+      "9": 0.8906906906906907,
+      "12": 0.9477477477477477
+    }
+  },
+  "p33_size03_camera_support": {
+    "v153_affine": {
+      "5": 0.9827027027027027,
+      "7": 0.983011583011583,
+      "9": 0.9693693693693693,
+      "12": 0.9887387387387387
+    },
+    "v153_monotone": {
+      "5": 0.9827027027027027,
+      "7": 0.9698841698841699,
+      "9": 0.9747747747747748,
+      "12": 0.9905405405405405
+    }
+  },
+  "monotone_trajectory_support": {
+    "p14_size05": 0.9991809991809992,
+    "p22_size03": 0.9955773955773956,
+    "p33_size01": 0.8712530712530713,
+    "p45_size05": 0.076003276003276,
+    "p58_size03": 0.9385749385749386,
+    "p33_size03": 0.9806715806715807
+  },
+  "frozen_gate_outcome": {
+    "p33_all_camera_strata_passed": false,
+    "previously_passing_strata_preserved": false,
+    "affine_control_rescued_primary": false,
+    "harmed_previous_strata": [
+      {
+        "trajectory": "p33_size01",
+        "camera_count": 7,
+        "v152_raw": 0.9181467181467181,
+        "v153_monotone": 0.8293436293436294
+      },
+      {
+        "trajectory": "p33_size01",
+        "camera_count": 9,
+        "v152_raw": 0.9723723723723724,
+        "v153_monotone": 0.8906906906906907
+      }
+    ]
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "check_count": 15,
+    "maximum_float_array_difference": 3.2862601528904634e-14,
+    "maximum_summary_difference": 3.9968028886505635e-15,
+    "end_to_end_physics_independence_proven": false
+  },
+  "incremental_exact_call_ledger": {
+    "A": 0,
+    "AT": 0,
+    "deployment_saving_claimed": false
+  },
+  "interpretation": "A fixed target-free affine or monotone coordinate canonicalization does not repair cross-trajectory support. The monotone primary reduces p33-size01 five-camera support from 83.68% to 71.14%, harms previously passing seven- and nine-camera strata, and exposes only 7.60% aggregate support for p45-size05.",
+  "route_action": "Close the current coordinate-canonicalization plus cross-trajectory coefficient-prediction route. Do not use a larger neural model or GPU to compensate for missing condition coverage.",
+  "next_gate": "Expand public training-condition coverage while keeping validation and test sealed, then reassess deployment-visible cross-trajectory support before any predictor or neural-operator training.",
+  "claim_limits": {
+    "predictor_training_authorized": false,
+    "physical_replay": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}

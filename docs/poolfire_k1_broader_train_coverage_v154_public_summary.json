@@ -1,0 +1,95 @@
+{
+  "schema_version": "oerf-public-poolfire-k1-broader-train-coverage-v154",
+  "updated": "2026-08-16",
+  "formal_status": "PASS_FORMAL_BROADER_TRAIN_COVERAGE_EXECUTION_V154",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_BROADER_TRAIN_COVERAGE_V154",
+  "scientific_decision": "FAIL_BROADER_TRAIN_COVERAGE_V154",
+  "scope": "Target-free complete-trajectory leave-one-out support audit on ten full post-open public PoolFire training trajectories. Validation and test remain sealed; no predictor is fit and no physical reconstruction is replayed.",
+  "sample_count": 7400,
+  "active_camera_rows": 61050,
+  "supported_camera_rows": 53157,
+  "global_supported_fraction": 0.8707125307125307,
+  "added_trajectory_count": 4,
+  "added_sample_count": 2960,
+  "frozen_support_gate": 0.9,
+  "trajectory_support": {
+    "p14_size05": 0.9993447993447994,
+    "p22_size03": 0.972972972972973,
+    "p33_size01": 0.9754299754299754,
+    "p45_size05": 0.1678951678951679,
+    "p58_size03": 0.7762489762489763,
+    "p33_size03": 0.9775593775593776,
+    "p33_size05": 0.9898443898443898,
+    "p45_size01": 0.9972153972153972,
+    "p45_size03": 0.9793611793611794,
+    "p58_size05": 0.8712530712530713
+  },
+  "failed_trajectory_camera_support": {
+    "p45_size05": {
+      "5": 0.16324324324324324,
+      "7": 0.20617760617760617,
+      "9": 0.17957957957957957,
+      "12": 0.13873873873873874
+    },
+    "p58_size03": {
+      "5": 0.774054054054054,
+      "7": 0.7976833976833977,
+      "9": 0.7747747747747747,
+      "12": 0.7657657657657657
+    },
+    "p58_size05": {
+      "5": 0.9102702702702703,
+      "7": 0.8247104247104247,
+      "9": 0.8996996996996997,
+      "12": 0.8608108108108108
+    }
+  },
+  "gate_outcome": {
+    "aggregate_trajectory_pass_count": 7,
+    "aggregate_trajectory_count": 10,
+    "failed_trajectories": [
+      "p45_size05",
+      "p58_size03",
+      "p58_size05"
+    ],
+    "failed_trajectory_camera_strata": 11,
+    "failed_trajectory_condition_strata": 35,
+    "p45_size05_clean_supported_fraction": 0.21212121212121213,
+    "p58_size03_clean_supported_fraction": 0.806060606060606,
+    "all_trajectory_camera_strata_passed": false,
+    "all_trajectory_condition_strata_passed": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "check_count": 20,
+    "maximum_added_adjoint_relative_error": 1.1550905460028845e-13,
+    "maximum_added_state_absolute_difference": 7.105427357601002e-15,
+    "maximum_numeric_array_difference": 3.1086244689504383e-15,
+    "maximum_summary_difference": 0.0,
+    "end_to_end_physics_independence_proven": false
+  },
+  "offline_added_state_exact_call_ledger": {
+    "A": 2960,
+    "AT": 2960,
+    "deployment_saving_claimed": false
+  },
+  "support_audit_exact_call_ledger": {
+    "A": 0,
+    "AT": 0
+  },
+  "interpretation": "All four remaining full post-open fit candidates were added, but raw deployment-visible support still fails. Seven of ten trajectories pass in aggregate; p45-size05, p58-size03, and p58-size05 remain below 90%, with clean support already low for the first two.",
+  "route_action": "Close the current raw cross-trajectory coefficient-prediction route. Do not use a larger neural model or GPU to compensate. Further work requires genuinely broader or real conditions, or a separately preregistered physically different deployment-visible representation.",
+  "next_gate": "Wait for broader or real training conditions, or preregister one physically different target-free representation while validation and test remain sealed.",
+  "claim_limits": {
+    "predictor_training_authorized": false,
+    "physical_replay": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}
