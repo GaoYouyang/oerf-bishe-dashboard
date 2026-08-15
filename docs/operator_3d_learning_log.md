@@ -14649,3 +14649,64 @@ Original-p33 support under `5/7/9/12` cameras is `83.68% / 91.81% / 97.24% / 97.
 An independent second implementation rebuilds every map, geometry update, fold normalization, support calculation, and decision. All `15/15` checks pass; the maximum floating-array and summary differences are `3.29e-14` and `4.00e-15`. The decision is `FAIL_TARGET_FREE_MONOTONE_COORDINATE_SUPPORT_V153`.
 
 This closes the current coordinate-canonicalization plus cross-trajectory coefficient-prediction route. It does not prove all mappings impossible and is not a reconstruction, learned-model, exact-call-saving, resource, external, curved-ray, real-BOST, or paper-success result. The next gate expands public training-condition coverage while validation and test remain sealed.
+
+## 2026-08-16：v154 扩大到十条公开训练轨迹后，支持门仍然失败
+
+### 为什么还值得做一次覆盖扩展
+
+v153 说明固定坐标规范化不是答案，但它留下一个更朴素的解释：六条 train 轨迹可能太少。v154 因此先做角色审计，只加入四条此前已经被开发工作打开、不能再承担 future fresh holdout 的完整 PoolFire train 候选：p33-s05、p45-s01、p45-s03、p58-s05。
+
+十条完整轨迹合计 `7,400` 个样本、`61,050` 个 active camera rows。表示、fold-only normalization、90% 支持门、5/7/9/12 相机和 perturbation 分层都保持 v152 raw 定义；不再运行 v153 warp，不增加候选、不调阈值、不读 Krylov target 或 CFD truth。validation、stopping-validation 和两条 untouched test 继续封存，旧五帧 development 也没有冒充完整轨迹。
+
+四条新增轨迹的离线 exact-K1 state 构造用了 `2960A+2960A^T`，支持审计本身是 `0A+0A^T`。前者只是离线输入构造账，不是部署成本或 exact-call 节省。
+
+### 独立确认的结果
+
+全局支持为 `53,157 / 61,050 = 87.07%`，只有 `7/10` 条完整轨迹通过汇总门。三个失败轨迹是：
+
+- p45-s05：`16.79%`；5/7/9/12 相机为 `16.32% / 20.62% / 17.96% / 13.87%`；
+- p58-s03：`77.62%`；5/7/9/12 相机为 `77.41% / 79.77% / 77.48% / 76.58%`；
+- p58-s05：`87.13%`；5/7/9/12 相机为 `91.03% / 82.47% / 89.97% / 86.08%`。
+
+新增 p33-s05、p45-s01、p45-s03 的汇总支持率分别是 `98.98% / 99.72% / 97.94%`，说明扩展数据确实能局部改善覆盖；但新增 p58-s05 本身仍失败，旧 p45-s05 与 p58-s03 也没有被救回。更关键的是，p45-s05 和 p58-s03 的 clean 分层只有 `21.21%` 与 `80.61%`，所以主缺口不是扰动注入造成的。
+
+总计 `11` 个 trajectory×camera-count 分层和 `35` 个 trajectory×perturbation 分层未过门。独立第二实现重建四条新增 state、全部特征、fold normalization、最近邻和判决；`20/20` 项检查全真，state 最大差 `7.11e-15`，数值数组最大差 `3.11e-15`，汇总差为 `0`。科学判决是：
+
+`FAIL_BROADER_TRAIN_COVERAGE_V154`
+
+### 这次负结果怎样改变路线
+
+当前四条剩余完整 post-open 公开 train 候选已经用完，继续把同一系数预测器做大没有证据基础。因此 raw cross-trajectory coefficient-prediction 路线关闭，不训练 CNN/FNO/UNO/DeepONet，不做物理 replay，不租 GPU。
+
+下一步只接受两类真正新的证据：一是更广的公开或组内真实工况；二是结果前单独冻结、物理上不同且仍只读取 deployment-visible observation/geometry 的表示。validation/test 继续封存。
+
+当前边界：
+
+- `current_cross_trajectory_predictor_route_closed=true`；
+- `predictor_training_authorized=false`；
+- `physical_replay=false`；
+- `gpu_rental_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_broader_train_coverage_v154_result_2026-08-16.md`
+- `docs/poolfire_k1_broader_train_coverage_v154_public_summary.json`
+- `assets/figures/poolfire_k1_broader_train_coverage_v154.png`
+
+### English checkpoint
+
+v154 tests the remaining straightforward explanation after v153: perhaps six training trajectories were simply too few. A role audit adds the four remaining full PoolFire fit candidates that had already been opened by development work and therefore cannot serve as future fresh holdouts: p33-s05, p45-s01, p45-s03, and p58-s05.
+
+The ten complete trajectories contain `7,400` samples and `61,050` active-camera rows. The v152 raw representation, complete-trajectory leave-one-out normalization, frozen 90% threshold, 5/7/9/12-camera strata, and perturbation strata remain unchanged. No v153 warp, new candidate, threshold tuning, Krylov target, CFD truth, validation, or test is used.
+
+Global support is `53,157 / 61,050 = 87.07%`, and only `7/10` complete trajectories pass in aggregate. p45-s05, p58-s03, and p58-s05 reach only `16.79%`, `77.62%`, and `87.13%`. Their camera-count breakdowns show that the failure is not confined to one active-camera count. Clean support is already only `21.21%` for p45-s05 and `80.61%` for p58-s03, so synthetic perturbations are not the dominant cause.
+
+An independent second implementation rebuilds all four added states, features, fold normalization, nearest-neighbor support, and decisions. All `20/20` checks pass; the maximum state and numeric-array differences are `7.11e-15` and `3.11e-15`, and the summary difference is zero. The scientific decision is `FAIL_BROADER_TRAIN_COVERAGE_V154`.
+
+This closes the current raw cross-trajectory coefficient-prediction route. It is not a reconstruction, learned-model, deployment-call-saving, resource, external, curved-ray, real-BOST, or paper-success result. Further work requires genuinely broader or real conditions, or a separately preregistered physically different deployment-visible representation. Validation and test remain sealed.
