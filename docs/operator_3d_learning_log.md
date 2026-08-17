@@ -14771,3 +14771,49 @@ State / geometry contributions are `71.91% / 28.09%` for p45-s05, `61.34% / 38.6
 An independent second implementation recomputes every distance, block-squared distance, and share. All six scientific checks pass; maximum total-distance, block-squared-distance, and share differences are `1.78e-15`, `1.42e-14`, and `2.22e-16`. All 171 exact dominant-label mismatches are ties within `1e-12`, and the scientific decision agrees exactly: `ROOT_CAUSE_MIXED_SUPPORT_GAP_V155`.
 
 This closes geometry-only, temporal-only, repeated residual-LS, larger-model, and GPU rescues for the current public coefficient-prediction route. Progress now requires physically different information, especially an exactly decodable experimental 3D field with corresponding 2D displacement projections, or genuinely broader public operating conditions. This remains post-open target-free failure attribution, not a reconstruction, learned algorithm, resource, external-generalization, curved-ray, real-BOST, or paper-success result.
+
+## 2026-08-17：v157 用组内三维场与相机标定建立九相机经典参考
+
+### 新数据真正补上了什么
+
+师兄重新提供的数据包含 9 个可直接执行的三维重建场和 13 套九相机标定。这样可以把“相机位姿逻辑是否一致”从口头检查推进到完整 forward / adjoint 数值闭合，也可以用真实标定构造可控多相机代理。
+
+但数据里仍没有逐工况配对的实验二维位移投影。因此本轮把 9 个场与 13 套标定做固定交叉组合，只能称为 117 个受控 operator setups，不能称为 117 次独立真实实验或真实 BOST 重建。
+
+v156 先确认相机约定、伴随和常量响应正确，但 8×8 每相机观测过稀。v157 保持同一输入，比较 8×8、16×16、24×24 三档密度，以及 full-grid CGLS、DCT256、DCT1024 和 geometry-PCGLS 等经典臂。正式运行共 1,053 cells、21,060 条候选记录；没有 predictor 或神经网络。
+
+### 独立确认后的正负分界
+
+主候选为 24×24、DCT1024-CGLS K16：
+
+| 活跃相机 | field p90 | gradient p90 | observation p90 | 结论 |
+| ---: | ---: | ---: | ---: | :--- |
+| 5 | 0.637 | 0.904 | 0.143 | field、gradient 失败 |
+| 7 | 0.578 | 0.793 | 0.159 | field、gradient 失败 |
+| 9 | 0.482 | 0.720 | 0.166 | 全部通过 |
+
+冻结门为 field ≤ 0.50、gradient ≤ 0.75、observation ≤ 0.20。九相机第一次形成了可信的受控经典参考；五/七相机虽然 observation residual 已低，三维 field 和 gradient 仍不够可靠。
+
+DCT1024 truth-aware oracle 的 field / gradient p90 为 `0.143 / 0.493`，容量门通过。这说明问题不再是“平滑三维子空间装不下目标”，而更像缺视角下的 conditioning / regularization 问题。
+
+独立第二实现从输入场和标定重建射线、算子、DCT 方向、经典迭代和指标。`17/17` 项检查全真；逐 cell / 汇总最大差为 `4.91e-9 / 1.82e-11`，伴随与常量响应误差最大为 `1.99e-13 / 4.16e-16`。最终判决：
+
+`FAIL_REFERENCE_ADEQUACY_V157`
+
+这个名字保留了完整失败事实：总体参考门没有在 5/7/9 三档同时通过；同时也不能抹掉九相机已经通过的正结果。
+
+### 接下来为什么仍不训练模型
+
+下一步只做一个结果前固定的经典平滑正则诊断，专门检验 24×24 的五/七相机缺视角条件，并保留九相机正对照。若失败，停止当前 variable-cardinality predictor 路线，等待更广三维场或对应实验二维位移；不以 CNN/FNO/UNO/DeepONet 或 GPU 挽救。
+
+当前边界：`predictor_training_authorized=false`、`gpu_rental_authorized=false`、`algorithm_breakthrough=false`、`real_bost=false`、`paper_success=false`。
+
+### English checkpoint
+
+The corrected group package provides nine executable reconstructed 3D fields and thirteen nine-camera calibration sets. Their fixed cross-product enables a calibration-driven controlled forward/adjoint proxy, but no condition-matched experimental 2D displacement maps are available, so the 117 field-by-calibration setups are not independent real experiments.
+
+v157 compares 8×8, 16×16, and 24×24 per-camera sampling together with full-grid CGLS, DCT256, DCT1024, and geometry-PCGLS classical arms. At 24×24, DCT1024-CGLS K16 passes all frozen field, gradient, and observation tails with nine cameras. Five and seven cameras still fail field and gradient tails despite low observation residuals. A DCT1024 truth-aware oracle passes, localizing the remaining gap to sparse-view conditioning or regularization rather than smooth-representation capacity.
+
+An independent second implementation rebuilds the rays, operators, DCT directions, iterations, and metrics. All `17/17` checks pass; maximum per-cell / summary differences are `4.91e-9 / 1.82e-11`, and maximum adjoint / constant-response errors are `1.99e-13 / 4.16e-16`. The decision is `FAIL_REFERENCE_ADEQUACY_V157`.
+
+This is a useful controlled classical-reference boundary, not a learned method, exact-call saving, resource result, external generalization, or real-BOST reconstruction. The only next gate is one fixed classical smoothness-regularization diagnostic for five/seven cameras. Predictor training and GPU rental remain unauthorized.

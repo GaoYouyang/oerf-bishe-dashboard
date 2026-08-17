@@ -68,7 +68,8 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     assert decision["v154_predictor_training_authorized"] is False
     assert decision["v154_gpu_rental_authorized"] is False
     assert decision["algorithm_breakthrough"] is False
-    assert "exactly decodable experimental three-dimensional field" in payload["next_scientific_gate_en"]
+    assert payload["scientific_status"] == "FAIL_REFERENCE_ADEQUACY_V157"
+    assert "classical smoothness-regularization diagnostic" in payload["next_scientific_gate_en"]
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:
