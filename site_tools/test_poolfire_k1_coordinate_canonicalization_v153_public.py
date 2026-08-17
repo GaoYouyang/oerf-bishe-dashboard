@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import json
+import struct
 from pathlib import Path
-
-from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -53,10 +52,10 @@ def test_public_surfaces_are_bilingual_and_point_to_v153() -> None:
     for needle in historical_required:
         assert needle in operator_text, f"{needle} missing from {SURFACES[1].name}"
     assert "poolfire_k1_coordinate_canonicalization_v153" in SURFACES[2].read_text(encoding="utf-8")
-    assert "poolfire_k1_broader_train_coverage_v154" in SURFACES[0].read_text(encoding="utf-8")
+    assert "poolfire_k1_support_root_cause_v155" in SURFACES[0].read_text(encoding="utf-8")
     daily = SURFACES[2].read_text(encoding="utf-8")
-    assert "42 天" in daily
-    assert "Day 42" in daily
+    assert "43 天" in daily
+    assert "Day 43" in daily
 
 
 def test_current_evidence_closes_predictor_and_gpu() -> None:
@@ -94,8 +93,9 @@ def test_public_artifacts_do_not_disclose_private_execution_details() -> None:
 
 
 def test_figure_is_large_nonblank_png() -> None:
-    with Image.open(FIGURE) as image:
-        assert image.format == "PNG"
-        assert image.width >= 2000
-        assert image.height >= 800
-        assert image.getbbox() is not None
+    raw = FIGURE.read_bytes()
+    assert raw.startswith(b"\x89PNG\r\n\x1a\n")
+    width, height = struct.unpack(">II", raw[16:24])
+    assert width >= 2000
+    assert height >= 800
+    assert len(raw) >= 50_000

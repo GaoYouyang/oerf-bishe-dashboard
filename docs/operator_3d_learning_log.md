@@ -14710,3 +14710,64 @@ Global support is `53,157 / 61,050 = 87.07%`, and only `7/10` complete trajector
 An independent second implementation rebuilds all four added states, features, fold normalization, nearest-neighbor support, and decisions. All `20/20` checks pass; the maximum state and numeric-array differences are `7.11e-15` and `3.11e-15`, and the summary difference is zero. The scientific decision is `FAIL_BROADER_TRAIN_COVERAGE_V154`.
 
 This closes the current raw cross-trajectory coefficient-prediction route. It is not a reconstruction, learned-model, deployment-call-saving, resource, external, curved-ray, real-BOST, or paper-success result. Further work requires genuinely broader or real conditions, or a separately preregistered physically different deployment-visible representation. Validation and test remain sealed.
+
+## 2026-08-17：v155 把三条失败轨迹定位为混合支持缺口
+
+### 为什么没有继续堆模型
+
+v154 已经用完当前十条完整 post-open 公开训练轨迹，但 `p45-s05`、`p58-s03`、`p58-s05` 仍未过支持门。继续把同一 predictor 做大，只会把“数据或表示缺什么”这个问题藏在更多参数后面。v155 因此不训练任何模型，而是把每个不支持查询与其最近训练邻居的 45 维标准化距离拆成四个结果前冻结的块：observation、K1 residual、K1 dual 和 reported geometry。
+
+审计沿用 v154 的十轨迹 roster、complete-trajectory leave-one-out、fold-train-only normalization 与 61,050 个 active-camera rows。它不读 Krylov target 或 CFD truth，不打开 validation/test，不做物理 replay，新增精确调用账为 `0A+0A^T`。
+
+### 独立复算后的数字
+
+三条失败轨迹分别有 `5,080 / 1,366 / 786` 个不支持行。分块平方距离的汇总占比为：
+
+| 轨迹 | observation | K1 residual | K1 dual | reported geometry | state 合计 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| p45-s05 | 23.66% | 24.59% | 23.66% | 28.09% | 71.91% |
+| p58-s03 | 21.71% | 17.91% | 21.71% | 38.66% | 61.34% |
+| p58-s05 | 20.17% | 21.07% | 20.17% | 38.59% | 61.41% |
+
+因此 `p45-s05` 更像状态或形态覆盖缺口；两个 p58 失败则同时包含明显的几何与状态差异。选取帧 0/25/50/75/100 后，各轨迹支持率随时间变化，但变化模式不一致，只能作描述，不能据此宣称存在可部署的时间输运规律。
+
+独立第二实现重算全部距离、四块平方距离与占比。六项科学检查全部通过；总距离、分块平方距离和占比最大差为 `1.78e-15 / 1.42e-14 / 2.22e-16`。171 个最大块文字标签不同的位置，全部是 observation 与 K1 dual 在 `1e-12` 内并列；连续数值和科学判决一致。最终判决是：
+
+`ROOT_CAUSE_MIXED_SUPPORT_GAP_V155`
+
+### 这次归因怎样改变路线
+
+当前证据不支持 geometry-only warp，也不支持 temporal-only model；已经失败的 residual joint least squares 不重复。继续训练 CNN/FNO/UNO/DeepONet 或租 GPU 同样没有依据。
+
+下一份真正能改变判断的信息应是：可精确解码的实验三维场及其逐工况对应二维位移投影，或者真正更广的公开工况。前者能够把当前 straight-ray 公开代理推进到真实 BOST forward、matched-accuracy 与迁移验证；在此之前当前 predictor 路线保持关闭。
+
+当前边界：
+
+- `mixed_support_gap_confirmed=true`；
+- `geometry_only_explanation_supported=false`；
+- `temporal_only_explanation_supported=false`；
+- `predictor_training_authorized=false`；
+- `physical_replay=false`；
+- `gpu_rental_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_support_root_cause_v155_result_2026-08-17.md`
+- `docs/poolfire_k1_support_root_cause_v155_public_summary.json`
+- `assets/figures/poolfire_k1_support_root_cause_v155.png`
+
+### English checkpoint
+
+v155 does not fit another model. It decomposes the standardized nearest-neighbour support distance for the three v154 failures into observation, K1 residual, K1 dual, and reported geometry while preserving the ten-trajectory roster, complete-trajectory leave-one-out evaluation, fold-only normalization, and sealed validation/test roles.
+
+State / geometry contributions are `71.91% / 28.09%` for p45-s05, `61.34% / 38.66%` for p58-s03, and `61.41% / 38.59%` for p58-s05. The p45 gap is more state/morphology dominated, while both p58 gaps contain substantial geometry and state mismatch. Selected-frame variation is descriptive and does not establish a temporal mechanism.
+
+An independent second implementation recomputes every distance, block-squared distance, and share. All six scientific checks pass; maximum total-distance, block-squared-distance, and share differences are `1.78e-15`, `1.42e-14`, and `2.22e-16`. All 171 exact dominant-label mismatches are ties within `1e-12`, and the scientific decision agrees exactly: `ROOT_CAUSE_MIXED_SUPPORT_GAP_V155`.
+
+This closes geometry-only, temporal-only, repeated residual-LS, larger-model, and GPU rescues for the current public coefficient-prediction route. Progress now requires physically different information, especially an exactly decodable experimental 3D field with corresponding 2D displacement projections, or genuinely broader public operating conditions. This remains post-open target-free failure attribution, not a reconstruction, learned algorithm, resource, external-generalization, curved-ray, real-BOST, or paper-success result.
