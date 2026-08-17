@@ -14710,3 +14710,110 @@ Global support is `53,157 / 61,050 = 87.07%`, and only `7/10` complete trajector
 An independent second implementation rebuilds all four added states, features, fold normalization, nearest-neighbor support, and decisions. All `20/20` checks pass; the maximum state and numeric-array differences are `7.11e-15` and `3.11e-15`, and the summary difference is zero. The scientific decision is `FAIL_BROADER_TRAIN_COVERAGE_V154`.
 
 This closes the current raw cross-trajectory coefficient-prediction route. It is not a reconstruction, learned-model, deployment-call-saving, resource, external, curved-ray, real-BOST, or paper-success result. Further work requires genuinely broader or real conditions, or a separately preregistered physically different deployment-visible representation. Validation and test remain sealed.
+
+## 2026-08-17：v155 把三条失败轨迹定位为混合支持缺口
+
+### 为什么没有继续堆模型
+
+v154 已经用完当前十条完整 post-open 公开训练轨迹，但 `p45-s05`、`p58-s03`、`p58-s05` 仍未过支持门。继续把同一 predictor 做大，只会把“数据或表示缺什么”这个问题藏在更多参数后面。v155 因此不训练任何模型，而是把每个不支持查询与其最近训练邻居的 45 维标准化距离拆成四个结果前冻结的块：observation、K1 residual、K1 dual 和 reported geometry。
+
+审计沿用 v154 的十轨迹 roster、complete-trajectory leave-one-out、fold-train-only normalization 与 61,050 个 active-camera rows。它不读 Krylov target 或 CFD truth，不打开 validation/test，不做物理 replay，新增精确调用账为 `0A+0A^T`。
+
+### 独立复算后的数字
+
+三条失败轨迹分别有 `5,080 / 1,366 / 786` 个不支持行。分块平方距离的汇总占比为：
+
+| 轨迹 | observation | K1 residual | K1 dual | reported geometry | state 合计 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| p45-s05 | 23.66% | 24.59% | 23.66% | 28.09% | 71.91% |
+| p58-s03 | 21.71% | 17.91% | 21.71% | 38.66% | 61.34% |
+| p58-s05 | 20.17% | 21.07% | 20.17% | 38.59% | 61.41% |
+
+因此 `p45-s05` 更像状态或形态覆盖缺口；两个 p58 失败则同时包含明显的几何与状态差异。选取帧 0/25/50/75/100 后，各轨迹支持率随时间变化，但变化模式不一致，只能作描述，不能据此宣称存在可部署的时间输运规律。
+
+独立第二实现重算全部距离、四块平方距离与占比。六项科学检查全部通过；总距离、分块平方距离和占比最大差为 `1.78e-15 / 1.42e-14 / 2.22e-16`。171 个最大块文字标签不同的位置，全部是 observation 与 K1 dual 在 `1e-12` 内并列；连续数值和科学判决一致。最终判决是：
+
+`ROOT_CAUSE_MIXED_SUPPORT_GAP_V155`
+
+### 这次归因怎样改变路线
+
+当前证据不支持 geometry-only warp，也不支持 temporal-only model；已经失败的 residual joint least squares 不重复。继续训练 CNN/FNO/UNO/DeepONet 或租 GPU 同样没有依据。
+
+下一份真正能改变判断的信息应是：可精确解码的实验三维场及其逐工况对应二维位移投影，或者真正更广的公开工况。前者能够把当前 straight-ray 公开代理推进到真实 BOST forward、matched-accuracy 与迁移验证；在此之前当前 predictor 路线保持关闭。
+
+当前边界：
+
+- `mixed_support_gap_confirmed=true`；
+- `geometry_only_explanation_supported=false`；
+- `temporal_only_explanation_supported=false`；
+- `predictor_training_authorized=false`；
+- `physical_replay=false`；
+- `gpu_rental_authorized=false`；
+- `algorithm_breakthrough=false`；
+- `resource_speedup=false`；
+- `external_generalization=false`；
+- `curved_ray_validated=false`；
+- `real_bost=false`；
+- `paper_success=false`。
+
+公开证据：
+
+- `docs/poolfire_k1_support_root_cause_v155_result_2026-08-17.md`
+- `docs/poolfire_k1_support_root_cause_v155_public_summary.json`
+- `assets/figures/poolfire_k1_support_root_cause_v155.png`
+
+### English checkpoint
+
+v155 does not fit another model. It decomposes the standardized nearest-neighbour support distance for the three v154 failures into observation, K1 residual, K1 dual, and reported geometry while preserving the ten-trajectory roster, complete-trajectory leave-one-out evaluation, fold-only normalization, and sealed validation/test roles.
+
+State / geometry contributions are `71.91% / 28.09%` for p45-s05, `61.34% / 38.66%` for p58-s03, and `61.41% / 38.59%` for p58-s05. The p45 gap is more state/morphology dominated, while both p58 gaps contain substantial geometry and state mismatch. Selected-frame variation is descriptive and does not establish a temporal mechanism.
+
+An independent second implementation recomputes every distance, block-squared distance, and share. All six scientific checks pass; maximum total-distance, block-squared-distance, and share differences are `1.78e-15`, `1.42e-14`, and `2.22e-16`. All 171 exact dominant-label mismatches are ties within `1e-12`, and the scientific decision agrees exactly: `ROOT_CAUSE_MIXED_SUPPORT_GAP_V155`.
+
+This closes geometry-only, temporal-only, repeated residual-LS, larger-model, and GPU rescues for the current public coefficient-prediction route. Progress now requires physically different information, especially an exactly decodable experimental 3D field with corresponding 2D displacement projections, or genuinely broader public operating conditions. This remains post-open target-free failure attribution, not a reconstruction, learned algorithm, resource, external-generalization, curved-ray, real-BOST, or paper-success result.
+
+## 2026-08-17：v157 用组内三维场与相机标定建立九相机经典参考
+
+### 新数据真正补上了什么
+
+师兄重新提供的数据包含 9 个可直接执行的三维重建场和 13 套九相机标定。这样可以把“相机位姿逻辑是否一致”从口头检查推进到完整 forward / adjoint 数值闭合，也可以用真实标定构造可控多相机代理。
+
+但数据里仍没有逐工况配对的实验二维位移投影。因此本轮把 9 个场与 13 套标定做固定交叉组合，只能称为 117 个受控 operator setups，不能称为 117 次独立真实实验或真实 BOST 重建。
+
+v156 先确认相机约定、伴随和常量响应正确，但 8×8 每相机观测过稀。v157 保持同一输入，比较 8×8、16×16、24×24 三档密度，以及 full-grid CGLS、DCT256、DCT1024 和 geometry-PCGLS 等经典臂。正式运行共 1,053 cells、21,060 条候选记录；没有 predictor 或神经网络。
+
+### 独立确认后的正负分界
+
+主候选为 24×24、DCT1024-CGLS K16：
+
+| 活跃相机 | field p90 | gradient p90 | observation p90 | 结论 |
+| ---: | ---: | ---: | ---: | :--- |
+| 5 | 0.637 | 0.904 | 0.143 | field、gradient 失败 |
+| 7 | 0.578 | 0.793 | 0.159 | field、gradient 失败 |
+| 9 | 0.482 | 0.720 | 0.166 | 全部通过 |
+
+冻结门为 field ≤ 0.50、gradient ≤ 0.75、observation ≤ 0.20。九相机第一次形成了可信的受控经典参考；五/七相机虽然 observation residual 已低，三维 field 和 gradient 仍不够可靠。
+
+DCT1024 truth-aware oracle 的 field / gradient p90 为 `0.143 / 0.493`，容量门通过。这说明问题不再是“平滑三维子空间装不下目标”，而更像缺视角下的 conditioning / regularization 问题。
+
+独立第二实现从输入场和标定重建射线、算子、DCT 方向、经典迭代和指标。`17/17` 项检查全真；逐 cell / 汇总最大差为 `4.91e-9 / 1.82e-11`，伴随与常量响应误差最大为 `1.99e-13 / 4.16e-16`。最终判决：
+
+`FAIL_REFERENCE_ADEQUACY_V157`
+
+这个名字保留了完整失败事实：总体参考门没有在 5/7/9 三档同时通过；同时也不能抹掉九相机已经通过的正结果。
+
+### 接下来为什么仍不训练模型
+
+下一步只做一个结果前固定的经典平滑正则诊断，专门检验 24×24 的五/七相机缺视角条件，并保留九相机正对照。若失败，停止当前 variable-cardinality predictor 路线，等待更广三维场或对应实验二维位移；不以 CNN/FNO/UNO/DeepONet 或 GPU 挽救。
+
+当前边界：`predictor_training_authorized=false`、`gpu_rental_authorized=false`、`algorithm_breakthrough=false`、`real_bost=false`、`paper_success=false`。
+
+### English checkpoint
+
+The corrected group package provides nine executable reconstructed 3D fields and thirteen nine-camera calibration sets. Their fixed cross-product enables a calibration-driven controlled forward/adjoint proxy, but no condition-matched experimental 2D displacement maps are available, so the 117 field-by-calibration setups are not independent real experiments.
+
+v157 compares 8×8, 16×16, and 24×24 per-camera sampling together with full-grid CGLS, DCT256, DCT1024, and geometry-PCGLS classical arms. At 24×24, DCT1024-CGLS K16 passes all frozen field, gradient, and observation tails with nine cameras. Five and seven cameras still fail field and gradient tails despite low observation residuals. A DCT1024 truth-aware oracle passes, localizing the remaining gap to sparse-view conditioning or regularization rather than smooth-representation capacity.
+
+An independent second implementation rebuilds the rays, operators, DCT directions, iterations, and metrics. All `17/17` checks pass; maximum per-cell / summary differences are `4.91e-9 / 1.82e-11`, and maximum adjoint / constant-response errors are `1.99e-13 / 4.16e-16`. The decision is `FAIL_REFERENCE_ADEQUACY_V157`.
+
+This is a useful controlled classical-reference boundary, not a learned method, exact-call saving, resource result, external generalization, or real-BOST reconstruction. The only next gate is one fixed classical smoothness-regularization diagnostic for five/seven cameras. Predictor training and GPU rental remain unauthorized.

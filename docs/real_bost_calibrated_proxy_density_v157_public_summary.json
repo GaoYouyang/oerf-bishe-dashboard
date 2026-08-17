@@ -1,0 +1,98 @@
+{
+  "schema_version": "oerf-public-real-bost-calibrated-proxy-density-v157",
+  "updated": "2026-08-17",
+  "formal_status": "PASS_FORMAL_PRIVATE_CALIBRATED_PROXY_DENSITY_V157",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_CALIBRATED_PROXY_DENSITY_V157",
+  "scientific_decision": "FAIL_REFERENCE_ADEQUACY_V157",
+  "scope": "A calibration-driven controlled proxy formed from nine executable three-dimensional reconstructed fields and thirteen nine-camera calibration sets. No condition-matched experimental 2D displacement maps are used, so this is not a real-BOST reconstruction result.",
+  "field_count": 9,
+  "calibration_set_count": 13,
+  "operator_setup_count": 117,
+  "cell_count": 1053,
+  "candidate_row_count": 21060,
+  "observation_grids": [8, 16, 24],
+  "active_camera_counts": [5, 7, 9],
+  "primary": {
+    "name": "DCT1024-CGLS-K16 at 24x24",
+    "thresholds": {
+      "field_p90": 0.5,
+      "field_worst": 0.75,
+      "gradient_p90": 0.75,
+      "gradient_worst": 1.0,
+      "observation_p90": 0.2,
+      "observation_worst": 0.35
+    },
+    "by_camera_count": {
+      "5": {
+        "field_p50": 0.600170,
+        "field_p90": 0.636964,
+        "field_worst": 0.675252,
+        "gradient_p50": 0.810325,
+        "gradient_p90": 0.903568,
+        "gradient_worst": 0.963056,
+        "observation_p50": 0.115451,
+        "observation_p90": 0.143256,
+        "observation_worst": 0.156019,
+        "passed": false
+      },
+      "7": {
+        "field_p50": 0.520349,
+        "field_p90": 0.577864,
+        "field_worst": 0.618897,
+        "gradient_p50": 0.732053,
+        "gradient_p90": 0.793385,
+        "gradient_worst": 0.950028,
+        "observation_p50": 0.127476,
+        "observation_p90": 0.158612,
+        "observation_worst": 0.162445,
+        "passed": false
+      },
+      "9": {
+        "field_p50": 0.405677,
+        "field_p90": 0.482448,
+        "field_worst": 0.526333,
+        "gradient_p50": 0.656801,
+        "gradient_p90": 0.720058,
+        "gradient_worst": 0.752709,
+        "observation_p50": 0.134527,
+        "observation_p90": 0.166325,
+        "observation_worst": 0.172471,
+        "passed": true
+      }
+    }
+  },
+  "dct1024_oracle_capacity": {
+    "passed": true,
+    "field_p50": 0.1235326213,
+    "field_p90": 0.1433258845,
+    "field_worst": 0.1433258845,
+    "gradient_p50": 0.3833115543,
+    "gradient_p90": 0.4934482731,
+    "gradient_worst": 0.4934482731
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "check_count": 17,
+    "maximum_per_cell_metric_difference": 4.904284978124451e-9,
+    "maximum_summary_metric_difference": 1.8108181620846153e-11,
+    "maximum_adjoint_error": 1.9846756816965962e-13,
+    "maximum_constant_response_error": 4.153802586996505e-16,
+    "discrete_decision_identical": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "interpretation": "Denser calibrated rays and a fixed smooth 3D representation establish an adequate nine-camera classical reference. Five- and seven-camera conditions still fail field and gradient tails despite low observation residuals, localizing the remaining gap to sparse-view conditioning or regularization rather than DCT representation capacity.",
+  "next_gate": "Run one preregistered, fixed, deployment-visible classical smoothness-regularization diagnostic at 24x24 for five and seven cameras, retaining nine cameras as a positive control. Stop the variable-cardinality predictor route if it fails.",
+  "claim_limits": {
+    "paired_experimental_2d_projections_used": false,
+    "predictor_training_authorized": false,
+    "physical_replay_for_a_predictor": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}
