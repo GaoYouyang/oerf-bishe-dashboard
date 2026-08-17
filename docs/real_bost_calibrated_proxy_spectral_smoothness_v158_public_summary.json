@@ -1,0 +1,127 @@
+{
+  "schema_version": "oerf-public-real-bost-calibrated-proxy-spectral-smoothness-v158",
+  "updated": "2026-08-17",
+  "formal_status": "PASS_FORMAL_PRIVATE_CALIBRATED_PROXY_SPECTRAL_SMOOTHNESS_V158",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_CALIBRATED_PROXY_SPECTRAL_SMOOTHNESS_V158",
+  "scientific_decision": "FAIL_SPECTRAL_SMOOTHNESS_REFERENCE_V158",
+  "scope": "A controlled straight-ray proxy formed from nine executable reconstructed 3D fields and thirteen nine-camera calibration sets. No condition-matched experimental 2D displacement maps are used.",
+  "field_count": 9,
+  "calibration_set_count": 13,
+  "operator_setup_count": 39,
+  "cell_count": 351,
+  "arm_row_count": 4914,
+  "primary": {
+    "name": "DCT1024-H1-Tikhonov Budget0.18",
+    "logical_online_calls": {
+      "A": 1,
+      "AT": 1
+    },
+    "thresholds": {
+      "field_p90": 0.5,
+      "field_worst": 0.75,
+      "gradient_p90": 0.75,
+      "gradient_worst": 1.0,
+      "observation_p90": 0.2,
+      "observation_worst": 0.35
+    },
+    "by_camera_count": {
+      "5": {
+        "field_p50": 0.482807,
+        "field_p90": 0.629665,
+        "field_worst": 0.651895,
+        "gradient_p50": 0.639872,
+        "gradient_p90": 0.692700,
+        "gradient_worst": 0.705345,
+        "observation_p50": 0.153025,
+        "observation_p90": 0.174788,
+        "observation_worst": 0.179586,
+        "passed": false
+      },
+      "7": {
+        "field_p50": 0.371690,
+        "field_p90": 0.452293,
+        "field_worst": 0.531790,
+        "gradient_p50": 0.532797,
+        "gradient_p90": 0.610831,
+        "gradient_worst": 0.661306,
+        "observation_p50": 0.148961,
+        "observation_p90": 0.173949,
+        "observation_worst": 0.179607,
+        "passed": true
+      },
+      "9": {
+        "field_p50": 0.241022,
+        "field_p90": 0.323380,
+        "field_worst": 0.376234,
+        "gradient_p50": 0.460988,
+        "gradient_p90": 0.583177,
+        "gradient_worst": 0.622725,
+        "observation_p50": 0.153113,
+        "observation_p90": 0.171654,
+        "observation_worst": 0.179090,
+        "passed": true
+      }
+    }
+  },
+  "parent_control": {
+    "name": "DCT1024-CGLS K16",
+    "logical_online_calls": {
+      "A": 16,
+      "AT": 16
+    },
+    "field_p90_by_camera_count": {
+      "5": 0.636964,
+      "7": 0.577864,
+      "9": 0.482448
+    },
+    "gradient_p90_by_camera_count": {
+      "5": 0.903568,
+      "7": 0.793385,
+      "9": 0.720058
+    },
+    "observation_p90_by_camera_count": {
+      "5": 0.143256,
+      "7": 0.158612,
+      "9": 0.166325
+    }
+  },
+  "fixed_lambda_diagnostics": {
+    "can_replace_primary": false,
+    "multipliers_passing_all_absolute_camera_gates": [
+      0.03,
+      0.1
+    ],
+    "interpretation": "These post-result diagnostic rows suggest regularization-selection headroom but cannot replace the preregistered primary."
+  },
+  "setup_cost": {
+    "basis_projection_forward_equivalents_per_calibration": 1023,
+    "total_basis_projection_forward_equivalents": 13299,
+    "treated_as_free": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "check_count": 18,
+    "maximum_per_cell_metric_difference": 4.4114234487580006e-10,
+    "maximum_summary_metric_difference": 3.5344349669230724e-10,
+    "maximum_lambda_relative_difference": 3.4557301302741063e-12,
+    "maximum_direct_residual_difference": 8.21703816100694e-14,
+    "maximum_reduced_forward_difference": 9.947598300641403e-14,
+    "discrete_decision_identical": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "interpretation": "Observable residual-budget selection improves field and gradient tails over the K16 parent but still misses the frozen five-camera field-p90 threshold. The valid primary failure closes the current private variable-cardinality predictor route; fixed-lambda diagnostic rows are not a post-hoc substitute.",
+  "next_gate": "Wait for genuinely new three-dimensional fields or paired experimental two-dimensional displacement measurements. A fixed-lambda hypothesis may be preregistered only on new data; no predictor, larger neural model, GPU, or resource gate is authorized now.",
+  "claim_limits": {
+    "paired_experimental_2d_projections_used": false,
+    "predictor_training_authorized": false,
+    "physical_replay_for_a_predictor": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}

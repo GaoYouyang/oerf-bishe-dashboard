@@ -14817,3 +14817,56 @@ v157 compares 8×8, 16×16, and 24×24 per-camera sampling together with full-gr
 An independent second implementation rebuilds the rays, operators, DCT directions, iterations, and metrics. All `17/17` checks pass; maximum per-cell / summary differences are `4.91e-9 / 1.82e-11`, and maximum adjoint / constant-response errors are `1.99e-13 / 4.16e-16`. The decision is `FAIL_REFERENCE_ADEQUACY_V157`.
 
 This is a useful controlled classical-reference boundary, not a learned method, exact-call saving, resource result, external generalization, or real-BOST reconstruction. The only next gate is one fixed classical smoothness-regularization diagnostic for five/seven cameras. Predictor training and GPU rental remain unauthorized.
+
+## 2026-08-17：v158 可观测谱平滑改善尾部，但五相机场仍未过门
+
+### 为什么做这一步
+
+v157 已经证明九相机经典参考可用，但五/七相机仍受缺视角条件限制。v158 不训练模型，也不读取实验真值来在线选参数，而是在看到结果前固定一条经典诊断：在 DCT1024 空间加入 H1 谱平滑，并用可观测的 reduced residual / observation norm 预算 `0.18`，从固定的十二个正则倍数中选择允许的最大值。
+
+这一步回答的不是“神经网络能不能学”，而是更前面的物理问题：缺视角尾部是否能被一个可部署、可审计的经典平滑规则救回。
+
+### 正式运行做了什么
+
+- 输入仍是 9 个可执行三维场、13 套标定、`24×24` 每相机采样，以及 5/7/9 三档相机数。
+- 共重放 39 个算子 setup、351 个受控 cells、4,914 条候选记录。
+- 主策略逻辑在线账为 `1A+1A^T`；但几何缓存需要 13,299 次 basis forward-equivalent 投影，这一 setup 成本没有被隐藏或当作免费。
+- 父对照仍是 DCT1024-CGLS K16，其逻辑账为 `16A+16A^T`。
+
+### 结果
+
+| 相机数 | field p90 | gradient p90 | observation p90 | 是否通过 |
+|---|---:|---:|---:|---|
+| 5 | 0.629665 | 0.692700 | 0.174788 | 否，仅 field p90 超过 0.500 |
+| 7 | 0.452293 | 0.610831 | 0.173949 | 是 |
+| 9 | 0.323380 | 0.583177 | 0.171654 | 是 |
+
+相对 K16 父对照，主策略明显改善了梯度尾部，也让七相机跨过全部冻结门；但五相机 field p90 仍为 `0.629665`，没有跨过 `0.500`。所以正式科学判决是：
+
+`FAIL_SPECTRAL_SMOOTHNESS_REFERENCE_V158`
+
+### 独立复算
+
+独立第二实现重新构造算子、谱方向、稳定特征分解、候选、物理重放和全部汇总。`18/18` 项检查全部通过：逐 cell 指标最大差 `4.41e-10`，汇总最大差 `3.53e-10`，正则倍数相对差最大 `3.46e-12`，直接残差与 reduced forward 最大差均低于 `1e-13`；离散选择和最终判决完全一致。
+
+验证程序曾在读取科学结果前暴露两个工程问题：常量模审计没有按体素数归一化，以及独立 wrapper 使用了错误的相机行字段名。两次失败证据都保留，修复只针对明确错误，正式结果没有改变；这两次工程修复不计为科学成果。
+
+### 固定正则诊断为什么不能改判
+
+固定倍数 `0.03` 和 `0.1` 的诊断行在当前数据上通过了全部绝对相机门，说明“如何从观测中选择正则强度”仍可能有研究余量。但这些行是在主策略判决后看到的诊断，不得事后替换预注册主策略，也不能据此训练预测器或宣称算法成功。它们最多只能成为新数据上的结果前假设。
+
+### 路线动作与边界
+
+当前 private variable-cardinality predictor 路线关闭。下一步必须等待真正新增的三维场，或逐工况配对的实验二维位移；只有在新物理信息上，才能结果前冻结固定正则或其他可证伪假设。当前不训练 CNN/FNO/UNO/DeepONet，不租 GPU，不运行 wall/RSS 资源门。
+
+`predictor_training_authorized=false`、`gpu_rental_authorized=false`、`algorithm_breakthrough=false`、`resource_speedup=false`、`real_bost=false`、`paper_success=false`。
+
+### English checkpoint
+
+v158 asks whether a deployable classical rule can rescue the sparse-view tails before any learned predictor is considered. It adds H1 spectral smoothing in DCT1024 space and selects the largest preregistered regularization multiplier whose observable reduced-residual / observation-norm ratio remains within `0.18`.
+
+Across 39 operator setups, 351 controlled cells, and 4,914 candidate rows, the primary reaches field p90 values of `0.629665 / 0.452293 / 0.323380` for five/seven/nine cameras. Seven and nine cameras pass every frozen gate. Five cameras miss only the field-p90 threshold: `0.629665` versus `0.500`. The scientific decision is `FAIL_SPECTRAL_SMOOTHNESS_REFERENCE_V158`.
+
+An independent second implementation rebuilds the operators, spectral directions, stable eigensolve, candidates, physical replay, and summaries. All `18/18` checks pass; maximum per-cell and summary differences are `4.41e-10` and `3.53e-10`, with identical discrete selections and decisions.
+
+Fixed multipliers `0.03` and `0.1` pass all absolute camera gates only as post-result diagnostics. They suggest regularization-selection headroom but cannot replace the preregistered primary. The current variable-cardinality predictor route therefore closes pending genuinely new 3D fields or condition-matched experimental 2D displacements. This is not a learned method, resource speedup, external generalization, curved-ray validation, real BOST, or paper success.
