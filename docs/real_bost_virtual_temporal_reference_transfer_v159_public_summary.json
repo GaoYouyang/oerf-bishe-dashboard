@@ -1,0 +1,99 @@
+{
+  "schema_version": "oerf-public-real-bost-virtual-temporal-reference-transfer-v159",
+  "updated": "2026-08-18",
+  "formal_status": "PASS_FORMAL_PRIVATE_TEMPORAL_REFERENCE_TRANSFER_V159_1",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_TEMPORAL_REFERENCE_TRANSFER_V159_1",
+  "scientific_decision": "FAIL_TEMPORAL_REFERENCE_TRANSFER_V159_1",
+  "scope": "A controlled virtual straight-ray proxy generated in code from nine executable reconstructed 3D fields and thirteen nine-camera calibration sets. It is not condition-matched experimental BOST.",
+  "source_semantics": {
+    "density_output": "The first model output is treated as the reconstructed density field.",
+    "time_input": "Time is normalized to the closed interval [0, 1].",
+    "virtual_pairing": "Camera-field pairings and two-component projections are generated in code; no real experimental pairing is inferred.",
+    "density_sign_policy": "All fields must be finite. Small nonpositive reconstruction values are counted but are not clipped, shifted, or treated as invalid."
+  },
+  "model_count": 9,
+  "calibration_set_count": 13,
+  "time_values": [0.0, 0.25, 0.75, 1.0],
+  "camera_counts": [5, 7, 9],
+  "operator_setup_count": 39,
+  "cell_count": 1404,
+  "arm_row_count": 2808,
+  "primary": {
+    "name": "DCT1024-H1-Tikhonov Fixed 0.03",
+    "selection_boundary": "The multiplier was fixed from the already opened t=0.5 development diagnostic before these four temporal evaluation points were scored.",
+    "logical_online_calls_per_cell": {
+      "A": 1,
+      "AT": 1
+    },
+    "thresholds": {
+      "field_p90": 0.5,
+      "field_worst": 0.75,
+      "gradient_p90": 0.75,
+      "gradient_worst": 1.0,
+      "observation_p90": 0.2,
+      "observation_worst": 0.35
+    },
+    "strata": [
+      {"time": 0.0, "camera_count": 5, "field_p90": 0.382638, "gradient_p90": 0.708532, "observation_p90": 0.132665, "passed": true},
+      {"time": 0.0, "camera_count": 7, "field_p90": 0.290478, "gradient_p90": 0.573003, "observation_p90": 0.140589, "passed": true},
+      {"time": 0.0, "camera_count": 9, "field_p90": 0.214329, "gradient_p90": 0.494193, "observation_p90": 0.148419, "passed": true},
+      {"time": 0.25, "camera_count": 5, "field_p90": 0.379078, "gradient_p90": 0.695875, "observation_p90": 0.114801, "passed": true},
+      {"time": 0.25, "camera_count": 7, "field_p90": 0.290840, "gradient_p90": 0.570304, "observation_p90": 0.132770, "passed": true},
+      {"time": 0.25, "camera_count": 9, "field_p90": 0.212274, "gradient_p90": 0.510066, "observation_p90": 0.145725, "passed": true},
+      {"time": 0.75, "camera_count": 5, "field_p90": 0.357930, "gradient_p90": 0.758639, "observation_p90": 0.118507, "passed": false},
+      {"time": 0.75, "camera_count": 7, "field_p90": 0.287434, "gradient_p90": 0.593088, "observation_p90": 0.130231, "passed": true},
+      {"time": 0.75, "camera_count": 9, "field_p90": 0.208150, "gradient_p90": 0.538779, "observation_p90": 0.142318, "passed": true},
+      {"time": 1.0, "camera_count": 5, "field_p90": 0.370989, "gradient_p90": 0.712033, "observation_p90": 0.119172, "passed": true},
+      {"time": 1.0, "camera_count": 7, "field_p90": 0.291896, "gradient_p90": 0.572169, "observation_p90": 0.137424, "passed": true},
+      {"time": 1.0, "camera_count": 9, "field_p90": 0.205047, "gradient_p90": 0.505160, "observation_p90": 0.146786, "passed": true}
+    ],
+    "strata_passed": 11,
+    "strata_total": 12,
+    "passed": false
+  },
+  "failed_stratum": {
+    "time": 0.75,
+    "camera_count": 5,
+    "failed_metric": "gradient_p90",
+    "value": 0.7586388258013472,
+    "threshold": 0.75,
+    "excess": 0.0086388258013472,
+    "field_p90": 0.3579302231506964,
+    "gradient_worst": 0.8357518889112961,
+    "observation_p90": 0.11850672912085879
+  },
+  "cost_accounting": {
+    "geometry_setup_forward_equivalents": 13299,
+    "offline_truth_observation_calls": 1404,
+    "offline_selected_projection_calls": 1404,
+    "setup_or_offline_cost_treated_as_free": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "check_count": 17,
+    "maximum_per_cell_metric_difference": 1.6356249687987656e-11,
+    "maximum_summary_metric_difference": 7.11242176265614e-12,
+    "maximum_lambda_relative_difference": 3.4554038456992224e-12,
+    "maximum_operator_numeric_difference": 1.5921486351544445e-11,
+    "maximum_reduced_vs_direct_forward_difference": 5.3290705182007514e-14,
+    "maximum_quadratic_vs_direct_residual_difference": 2.0550922075202038e-13,
+    "discrete_decision_identical": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "interpretation": "The senior clarification is sufficient to generate controlled virtual temporal camera-field pairs in code. Fixed multiplier 0.03 transfers to 11 of 12 time-by-camera strata, but the preregistered all-strata rule fails at t=0.75 with five cameras. This closes the fixed-lambda temporal-transfer hypothesis on the current controlled proxy.",
+  "next_gate": "Do not tune another multiplier on these opened temporal results or train a larger model. Further real-BOST progress requires condition-matched experimental two-component displacement data and its camera/frame/calibration mapping; a physically different virtual hypothesis would need a new result-before protocol.",
+  "claim_limits": {
+    "paired_experimental_2d_projections_used": false,
+    "learned_predictor_used": false,
+    "predictor_training_authorized": false,
+    "physical_replay_for_a_predictor": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}
