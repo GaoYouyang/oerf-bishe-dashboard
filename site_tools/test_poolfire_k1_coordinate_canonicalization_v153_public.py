@@ -54,8 +54,8 @@ def test_public_surfaces_are_bilingual_and_point_to_v153() -> None:
     assert "poolfire_k1_coordinate_canonicalization_v153" in SURFACES[2].read_text(encoding="utf-8")
     assert "poolfire_k1_support_root_cause_v155" in SURFACES[0].read_text(encoding="utf-8")
     daily = SURFACES[2].read_text(encoding="utf-8")
-    assert "43 天" in daily
-    assert "Day 43" in daily
+    assert "44 天" in daily
+    assert "Day 44" in daily
 
 
 def test_current_evidence_closes_predictor_and_gpu() -> None:

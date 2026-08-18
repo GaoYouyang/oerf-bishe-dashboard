@@ -50,8 +50,8 @@ def test_public_surfaces_are_bilingual_and_point_to_v155() -> None:
         for needle in required:
             assert needle in text, f"{needle} missing from {surface.name}"
     daily = SURFACES[2].read_text(encoding="utf-8")
-    assert "43 天" in daily
-    assert "Day 43" in daily
+    assert "44 天" in daily
+    assert "Day 44" in daily
 
 
 def test_current_evidence_preserves_route_closure() -> None:

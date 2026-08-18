@@ -51,8 +51,8 @@ def test_public_surfaces_are_bilingual_and_point_to_v154() -> None:
     assert "poolfire_k1_broader_train_coverage_v154" in SURFACES[2].read_text(encoding="utf-8")
     assert "poolfire_k1_support_root_cause_v155" in SURFACES[0].read_text(encoding="utf-8")
     daily = SURFACES[2].read_text(encoding="utf-8")
-    assert "43 天" in daily
-    assert "Day 43" in daily
+    assert "44 天" in daily
+    assert "Day 44" in daily
 
 
 def test_current_evidence_closes_current_predictor_and_gpu() -> None:
@@ -68,8 +68,8 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     assert decision["v154_predictor_training_authorized"] is False
     assert decision["v154_gpu_rental_authorized"] is False
     assert decision["algorithm_breakthrough"] is False
-    assert payload["scientific_status"] == "FAIL_SPECTRAL_SMOOTHNESS_REFERENCE_V158"
-    assert "genuinely new three-dimensional fields" in payload["next_scientific_gate_en"]
+    assert payload["scientific_status"] == "FAIL_TEMPORAL_REFERENCE_TRANSFER_V159_1"
+    assert "condition-matched experimental two-component displacements" in payload["next_scientific_gate_en"]
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:

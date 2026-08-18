@@ -14870,3 +14870,51 @@ Across 39 operator setups, 351 controlled cells, and 4,914 candidate rows, the p
 An independent second implementation rebuilds the operators, spectral directions, stable eigensolve, candidates, physical replay, and summaries. All `18/18` checks pass; maximum per-cell and summary differences are `4.41e-10` and `3.53e-10`, with identical discrete selections and decisions.
 
 Fixed multipliers `0.03` and `0.1` pass all absolute camera gates only as post-result diagnostics. They suggest regularization-selection headroom but cannot replace the preregistered primary. The current variable-cardinality predictor route therefore closes pending genuinely new 3D fields or condition-matched experimental 2D displacements. This is not a learned method, resource speedup, external generalization, curved-ray validation, real BOST, or paper success.
+
+## 2026-08-18：v159.1 虚拟时序生成已执行，但固定正则只过 11/12 分层
+
+### 师兄的澄清改变了什么
+
+师兄明确：第一个模型输出就是用于当前研究的三维重建密度场，时间输入统一归一化到 `0–1`；虚拟数据阶段的相机、三维场和二维双分量投影可以由代码受控生成，不需要假装它们与真实实验逐工况一一对应。
+
+这使“虚拟数据能否继续生成”不再是阻塞。我没有再索取一份不存在的对应表，而是直接把 v158 中只能作诊断的固定正则 `0.03` 冻结为唯一时序假设，在四个结果前固定的时间点 `0 / 0.25 / 0.75 / 1` 和 5/7/9 相机上检验。
+
+### 实际运行
+
+- 仍使用 9 个可执行三维重建场、13 套九相机标定和 DCT1024-H1 Tikhonov 经典参考。
+- 代码生成四个时间点的三维场、相机子集和二维双分量 straight-ray 观测。
+- 共检查 `39` 个 operator setups、`1,404` 个 cells、`2,808` 条 arm rows。
+- 固定主策略在几何缓存后的逻辑在线账为每 cell `1A+1A^T`，但同时披露 `13,299` 次几何 basis setup 投影与离线构造调用，不把它们冒充免费部署成本。
+
+### 结果
+
+固定 `0.03` 在 `12` 个时间×相机数分层中过了 `11` 个。唯一失败是 `t=0.75`、5 相机：
+
+- field p90 `0.357930`，通过 `0.500000` 门；
+- gradient p90 `0.758639`，高于 `0.750000` 门 `0.008639`；
+- gradient worst `0.835752`，通过 `1.000000` 门；
+- observation p90 `0.118507`，通过 `0.200000` 门。
+
+合同要求 `12/12`，所以科学判决是 `FAIL_TEMPORAL_REFERENCE_TRANSFER_V159_1`。它很接近，但不能写成“基本成功”，也不能看到这个格子以后换成 `0.1`。
+
+### 独立复算
+
+独立实现改用解析余弦基、另一条相机射线与稀疏算子路径、另一种稳定特征分解，重建全部 cells、候选、物理场和判决。`17/17` 项检查通过；逐 cell 指标、汇总指标和算子数值最大差分别为 `1.64e-11 / 7.12e-12 / 1.60e-11`，离散判决完全一致。
+
+最初 v159.0 在评分前错误地要求每个“密度”体素严格为正。已有封存审计早已显示一个重建模型在两个时间点含少量非正值，所以该协议在产生科学结果前失效。v159.1 只把有效性改为 finite，并记录符号；没有裁剪、加偏置或改动时间、相机数、正则、指标与阈值。这是工程纠错，不是科学成果。
+
+### 路线动作
+
+师兄的虚拟数据逻辑已被实际执行，但固定正则时序迁移未完整过门。当前不训练 predictor、不租 GPU、不启动 wall/RSS，也不把代码生成的投影写成真实 BOST。下一步不围绕唯一失败格继续调参；真实迁移需要逐工况实验二维双分量位移及相机、帧、标定映射，或者另行结果前冻结一个物理上不同的虚拟机制。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+The senior collaborator clarified that the first model output is the reconstructed density field, time is normalized to `[0,1]`, and camera-field pairings plus two-component projections may be generated in code for a controlled virtual dataset without claiming one-to-one experimental correspondence.
+
+v159.1 therefore freezes fixed multiplier `0.03` before evaluating four times and 5/7/9 cameras. Eleven of twelve time-by-camera strata pass. The only failure is five cameras at `t=0.75`, where field / gradient / observation p90 values are `0.357930 / 0.758639 / 0.118507`; gradient p90 exceeds its `0.750000` gate by `0.008639`. The decision is `FAIL_TEMPORAL_REFERENCE_TRANSFER_V159_1`.
+
+An independent implementation rebuilds the analytic cosine basis, camera rays, sparse operators, stable eigensystems, physical fields, metrics, and decisions. All `17/17` checks pass, with maximum per-cell, summary, and operator-numeric differences of `1.64e-11`, `7.12e-12`, and `1.60e-11`.
+
+The clarification makes controlled virtual generation executable, but the fixed-lambda temporal hypothesis still fails its strict all-strata rule. This is not a learned predictor, resource result, external generalization, paired experiment, real BOST, or algorithm breakthrough.
