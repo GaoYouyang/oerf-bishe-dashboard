@@ -14918,3 +14918,123 @@ v159.1 therefore freezes fixed multiplier `0.03` before evaluating four times an
 An independent implementation rebuilds the analytic cosine basis, camera rays, sparse operators, stable eigensystems, physical fields, metrics, and decisions. All `17/17` checks pass, with maximum per-cell, summary, and operator-numeric differences of `1.64e-11`, `7.12e-12`, and `1.60e-11`.
 
 The clarification makes controlled virtual generation executable, but the fixed-lambda temporal hypothesis still fails its strict all-strata rule. This is not a learned predictor, resource result, external generalization, paired experiment, real BOST, or algorithm breakthrough.
+
+## 2026-08-19：v160 半阶 Sobolev 未救回五相机，过平滑解释被否定
+
+### 为什么做这一门
+
+v159.1 只在 `t=0.75` 的五相机 gradient p90 越门，看起来像一个很小的缺口。一个可证伪的物理解释是：一阶 H1 惩罚对高频压得太重，损伤了梯度。如果这个解释成立，把谱惩罚阶数结果前固定为 `1/2`，应当至少改善五相机梯度尾部，而不是只靠事后换正则倍数。
+
+因此 v160 保持九个三维场、十三套标定、四个时间点、5/7/9 相机、DCT1024、固定倍数 `0.03`、field/gradient/observation 门和几何构造完全不变，只把各向同性 H1 频率权重换成归一化的齐次半阶 Sobolev 权重。没有搜索阶数，没有读取真值选参数。
+
+### 实际运行与结果
+
+- formal 重建 `39` 个 operator setups、`1,404` 个 cells 和三臂共 `4,212` 条记录；有效性门 `21/21` 通过。
+- 半阶主策略只通过 `8/12` 个时间×相机分层；7/9 相机全部通过，四个五相机分层全部失败。
+- 四个五相机 gradient p90 依次为 `0.777364 / 0.770968 / 0.809636 / 0.772459`，全部高于冻结门 `0.750000`。
+- 对应 H1 父参考为 `0.708532 / 0.695875 / 0.758639 / 0.712034`；半阶方案分别恶化 `0.068832 / 0.075093 / 0.050997 / 0.060425`。
+
+科学判决是 `FAIL_FRACTIONAL_SOBOLEV_TEMPORAL_V160`。这不是“还差一点”的随机波动：四个时间点方向一致，放松高频惩罚系统性放大了五相机的欠定方向。当前证据不支持“旧 H1 过平滑”解释。
+
+### 独立复算
+
+第二实现独立重建 Sobolev 权重、相机算子、稳定特征分解、三条 arms、全部物理场和汇总。`19/19` 项检查通过；逐 cell、汇总、lambda 与算子数值最大差分别为 `1.64e-11 / 1.36e-11 / 9.54e-12 / 4.19e-11`。它同时把冻结 H1 父结果复现到 `1.64e-11`，因此比较不是来自实现漂移。
+
+### 路线动作
+
+关闭半阶先验，也关闭看到结果后继续扫描 Sobolev 阶数的做法。现有数据上的下一条物理门改为几何灵敏度各向异性：只用活动相机的报告几何推导三个方向的横向梯度灵敏度，再形成结果前固定的各向异性 H1 惩罚；不读真值、不搜索阶数或倍数。
+
+真实 BOST 仍等待逐工况实验二维双分量位移及 camera/frame/calibration/t 对应。当前不训练 predictor、不租 GPU、不启动资源门。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v160 tests one preregistered physical explanation for the near miss in v159.1: perhaps isotropic H1 oversmoothing damages sparse-view gradients. It keeps the same fields, calibrations, four times, 5/7/9-camera strata, DCT1024 basis, fixed multiplier `0.03`, and frozen gates, changing only the spectral penalty to homogeneous half-order Sobolev weighting.
+
+The half-order primary clears only `8/12` strata. All four five-camera strata fail, with gradient-p90 values of `0.777364 / 0.770968 / 0.809636 / 0.772459`, versus `0.708532 / 0.695875 / 0.758639 / 0.712034` for the H1 parent. Thus weaker high-frequency attenuation does not repair the sparse-view gradient tail; it worsens every five-camera time point.
+
+An independent second implementation passes all `19/19` checks. Maximum per-cell and summary differences are `1.64e-11` and `1.36e-11`, and the H1 parent is independently reproduced. Decision: `FAIL_FRACTIONAL_SOBOLEV_TEMPORAL_V160`.
+
+The oversmoothing explanation and post-hoc Sobolev-order search are closed. The next physically different gate is a geometry-derived anisotropic H1 penalty based only on active-camera transverse-gradient sensitivity. No predictor training, GPU rental, resource claim, experimental pairing, real-BOST claim, or algorithm breakthrough is authorized.
+
+## 2026-08-19：v161 纯几何对角各向异性仍未救回原五相机缺口
+
+### 为什么这和 v160 不同
+
+v160 已经否定“少平滑一点就能救回五相机”。v161 不再改 Sobolev 阶数，而是检查另一个可证伪的物理解释：活动相机对三个世界坐标轴的横向梯度灵敏度不均衡，是否需要方向不同的 H1 约束。
+
+结果前唯一冻结公式是：用真正进入 forward 的世界坐标单位射线计算 `s_j = mean(1-d_j^2)`，再取 `w_j = geometric_mean(s)/max(s_j,1e-12)`。频率惩罚为三个轴的加权平方频率和，并把正频率中位数归一到 1。固定 lambda 仍为 `0.03`，没有搜索权重、floor、clip、阶数或倍数。
+
+### 实际运行与结果
+
+- formal 重建 `39` 个 operator setups、`1,404` 个 cells 和三臂共 `4,212` 条记录；有效性门 `26/26` 通过。
+- 三轴灵敏度范围为 `0.172859–0.998331`，权重范围为 `0.524955–3.025801`，所以主策略不是原 H1 的数值复制。
+- 主策略通过 `11/12` 个时间×相机分层。
+- 唯一失败仍是 `t=0.75`、五相机：field / gradient / observation p90 为 `0.417905 / 0.768197 / 0.119424`。
+- gradient p90 高于冻结门 `0.750000`；同一层各向同性 H1 为 `0.758639`，新方案反而变差 `0.009558`。
+
+科学判决是 `FAIL_GEOMETRY_ANISOTROPIC_H1_TEMPORAL_V161`。这说明只用活动射线的三轴平均灵敏度做对角权重，不足以描述五相机下真正缺失的耦合或局部结构。
+
+### 独立复算
+
+第二实现独立重建活动射线、三轴灵敏度、权重、DCT 惩罚、稳定特征分解、候选场、二维观测和 12 个分层。`19/19` 项检查通过；逐 cell、汇总和算子数值最大差分别为 `1.64e-11 / 7.65e-12 / 1.59e-11`。相机乱序后的灵敏度、权重与惩罚最大相对差为 `9.49e-15`，置换不变性通过。
+
+第一次执行曾因一个附加实现检查误用绝对容差而在科学解释前 fail-closed。只把该检查修正为协议冻结的相对容差后才产生这里的有效运行；物理机制、数据、指标和门没有改变。
+
+### 路线动作
+
+关闭当前对角几何各向异性，也关闭看到结果后继续修改权重公式或 lambda 的做法。没有真正不同、结果前可写清且可证伪的新物理机制时，不再制造代理候选；优先等待逐工况实验二维双分量位移及 camera/frame/calibration/checkpoint/t、单位、符号、crop/resize/mask、重复背景噪声和认可基线。
+
+当前不训练 predictor、不租 GPU、不启动 wall/RSS，也不把受控 straight-ray 代理写成真实 BOST。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v161 tests a physically different explanation from v160. Instead of changing Sobolev order, it derives fixed diagonal H1 weights from active reported camera rays: `s_j = mean(1-d_j^2)` and `w_j = geometric_mean(s)/max(s_j,1e-12)`. The multiplier remains `0.03`, with no weight, floor, clipping, order, or multiplier search.
+
+The primary clears `11/12` frozen time-by-camera strata. The sole miss remains five cameras at `t=0.75`, where field / gradient / observation p90 are `0.417905 / 0.768197 / 0.119424`. The gradient gate is `0.750000`, and isotropic H1 reaches `0.758639`, so the geometry-derived anisotropy worsens the missed tail by `0.009558`.
+
+An independent second implementation rebuilds rays, sensitivities, weights, DCT penalties, eigensystems, fields, observations, and decisions. All `19/19` checks pass; maximum per-cell, summary, and operator-numeric differences are `1.64e-11`, `7.65e-12`, and `1.59e-11`. Camera reordering changes the geometry quantities by at most `9.49e-15` relatively.
+
+Decision: `FAIL_GEOMETRY_ANISOTROPIC_H1_TEMPORAL_V161`. The current diagonal geometry-anisotropy mechanism and post-hoc weight/lambda tuning are closed. Further proxy work requires a genuinely different preregistered physical mechanism; otherwise the route waits for paired experimental two-component displacements and complete metadata. This is not predictor training, a GPU case, a resource result, real BOST, or an algorithm breakthrough.
+
+## 2026-08-20：v162 全张量几何耦合改善最后尾部，但仍差 0.001035 过门
+
+### 为什么这是最后一条当前几何二次型门
+
+v161 只给三个世界坐标轴不同的对角权重，可能丢掉相机几何在轴间产生的耦合。v162 检验这一解释的最完整全局二次型版本：由实际进入 forward 的活动世界坐标单位射线构造 `S = mean(I-dd^T)`，只对特征值使用固定 `1e-12` floor，再取 `W=S^-1`。惩罚在与物理梯度一致的有限差分空间中实现，保留全部非对角交叉项；固定 lambda 仍为 `0.03`，没有搜索矩阵函数、旋转、floor、倍数或候选。
+
+### 实际运行与结果
+
+- formal 重建 `39` 个 operator setups、`1,404` 个 cells 和四臂共 `5,616` 条记录；有效性门 `32/32` 通过。
+- 非对角相对 Frobenius 比例覆盖 `0.037367–0.417255`，说明主策略不是对角方案的数值复制。
+- 主策略通过 `11/12` 个时间×相机分层。
+- 唯一失败仍是 `t=0.75`、五相机：field / gradient / observation p90 为 `0.447236 / 0.751035 / 0.120629`。
+- gradient p90 比冻结门 `0.750000` 高 `0.001035`。
+- 同一层各向同性 H1 为 `0.758639`，v161 对角方案为 `0.768197`；全张量方案分别改善 `0.007604` 与 `0.017162`。改善真实存在，但绝对门不交换。
+
+科学判决是 `FAIL_FULL_TENSOR_GEOMETRY_H1_TEMPORAL_V162`。非对角耦合确实解释了一部分尾部误差，却不足以让当前全局二次型几何正则稳定过门。
+
+### 独立复算
+
+第二实现独立重建活动射线、`S/W`、完整有限差分二次型、reduced quadratic form、候选场、二维观测和 12 个分层。`21/21` 项检查通过；逐 cell、汇总和算子数值最大差分别为 `1.64e-11 / 7.65e-12 / 7.05e-10`。reduced 与直接 forward 最大差 `6.39e-14`，二次型与直接 residual 最大差 `2.06e-13`，相机乱序最大相对差 `6.19e-15`。
+
+### 路线动作
+
+关闭当前全部全局二次型几何各向异性，也关闭看到结果后继续修改矩阵公式、floor 或 lambda 的做法。下一有效依赖是逐工况实验二维双分量位移及完整元数据；若继续受控虚拟代理，必须先提出物理上真正不同、结果前冻结且可证伪的非全局二次型机制。
+
+当前不训练 predictor、不租 GPU、不启动 wall/RSS，也不把受控 straight-ray 代理写成真实 BOST。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v162 tests the most complete global-quadratic form of the geometry-coupling explanation left open by v161. It constructs `S = mean(I-dd^T)` from the active world-frame rays, uses `W=S^-1` with only the fixed `1e-12` eigenvalue floor, and retains all off-diagonal terms in a finite-difference gradient quadratic. The multiplier remains `0.03`; no matrix function, rotation, floor, multiplier, or candidate is searched.
+
+The primary clears `11/12` frozen time-by-camera strata. The sole miss remains five cameras at `t=0.75`, where field / gradient / observation p90 are `0.447236 / 0.751035 / 0.120629`. Gradient p90 exceeds the `0.750000` gate by `0.001035`. The same stratum reaches `0.758639` for isotropic H1 and `0.768197` for the diagonal geometry variant, so the full tensor provides real improvements of `0.007604` and `0.017162`, but the absolute gate is nonexchangeable.
+
+An independent second implementation rebuilds rays, tensors, finite-difference quadratics, reduced operators, fields, observations, and decisions. All `21/21` checks pass; maximum per-cell, summary, and operator-numeric differences are `1.64e-11`, `7.65e-12`, and `7.05e-10`. Camera reordering changes the quadratic by at most `6.19e-15` relatively.
+
+Decision: `FAIL_FULL_TENSOR_GEOMETRY_H1_TEMPORAL_V162`. The current global quadratic geometry-anisotropy family and post-hoc matrix/floor/multiplier tuning are closed. Further proxy work requires a genuinely different preregistered non-global-quadratic physical mechanism; otherwise the route waits for paired experimental two-component displacements and complete metadata. This is not predictor training, a GPU case, a resource result, real BOST, or an algorithm breakthrough.

@@ -1,0 +1,99 @@
+{
+  "schema_version": "oerf-public-real-bost-full-tensor-geometry-h1-temporal-v162",
+  "updated": "2026-08-20",
+  "formal_status": "PASS_FORMAL_PRIVATE_FULL_TENSOR_GEOMETRY_H1_TEMPORAL_V162",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_FULL_TENSOR_GEOMETRY_H1_TEMPORAL_V162",
+  "scientific_decision": "FAIL_FULL_TENSOR_GEOMETRY_H1_TEMPORAL_V162",
+  "scope": "A post-open controlled virtual straight-ray proxy. It tests one preregistered full-tensor geometry quadratic and is not condition-matched experimental BOST.",
+  "question": "Can off-diagonal coupling in the active-ray transverse-sensitivity tensor repair the last five-camera temporal miss?",
+  "time_values": [0.0, 0.25, 0.75, 1.0],
+  "camera_counts": [5, 7, 9],
+  "primary": {
+    "name": "DCT1024-FullTensorGeometryH1-Tikhonov Fixed 0.03",
+    "sensitivity": "S = mean(I - d d^T) over active reported world-frame unit rays",
+    "coupling": "W = S^-1 with a fixed 1e-12 eigenvalue floor",
+    "penalty": "The full finite-difference gradient quadratic retains all cross-axis terms and is normalized to median eigenvalue one",
+    "multiplier": 0.03,
+    "selection": "The tensor formula, floor, derivative, normalization, multiplier, data roster, and gates were frozen before v162 results. No alternative matrix or multiplier was evaluated.",
+    "logical_online_calls_per_cell": {"A": 1, "AT": 1},
+    "strata": [
+      {"time": 0.0, "camera_count": 5, "field_p90": 0.46386393819714905, "gradient_p90": 0.7113052955114874, "observation_p90": 0.1335391577359081, "passed": true},
+      {"time": 0.0, "camera_count": 7, "field_p90": 0.37643870395678075, "gradient_p90": 0.5820419933634859, "observation_p90": 0.14099583505949376, "passed": true},
+      {"time": 0.0, "camera_count": 9, "field_p90": 0.24911826503110568, "gradient_p90": 0.5109084867118142, "observation_p90": 0.14889344834166335, "passed": true},
+      {"time": 0.25, "camera_count": 5, "field_p90": 0.47800807075275487, "gradient_p90": 0.7092213091148015, "observation_p90": 0.1194068815890024, "passed": true},
+      {"time": 0.25, "camera_count": 7, "field_p90": 0.3710309344647674, "gradient_p90": 0.5868522529597784, "observation_p90": 0.13432411407719946, "passed": true},
+      {"time": 0.25, "camera_count": 9, "field_p90": 0.2514559239556297, "gradient_p90": 0.5135201386572553, "observation_p90": 0.14607056085098458, "passed": true},
+      {"time": 0.75, "camera_count": 5, "field_p90": 0.44723572042124515, "gradient_p90": 0.7510347942945529, "observation_p90": 0.12062852895654357, "passed": false},
+      {"time": 0.75, "camera_count": 7, "field_p90": 0.36140006954997284, "gradient_p90": 0.611439754938934, "observation_p90": 0.13129602583422775, "passed": true},
+      {"time": 0.75, "camera_count": 9, "field_p90": 0.24933203991394756, "gradient_p90": 0.5422512920795515, "observation_p90": 0.14293402740968655, "passed": true},
+      {"time": 1.0, "camera_count": 5, "field_p90": 0.4583333749854736, "gradient_p90": 0.718487799474099, "observation_p90": 0.12052991126329671, "passed": true},
+      {"time": 1.0, "camera_count": 7, "field_p90": 0.3613695428042542, "gradient_p90": 0.5820858905656372, "observation_p90": 0.13881523136657378, "passed": true},
+      {"time": 1.0, "camera_count": 9, "field_p90": 0.24030207999868594, "gradient_p90": 0.5068757471127636, "observation_p90": 0.1475321308285691, "passed": true}
+    ],
+    "strata_passed": 11,
+    "strata_total": 12,
+    "passed": false
+  },
+  "failed_stratum_comparison": {
+    "time": 0.75,
+    "camera_count": 5,
+    "gradient_gate": 0.75,
+    "full_tensor_gradient_p90": 0.7510347942945529,
+    "isotropic_h1_gradient_p90": 0.7586388258013472,
+    "diagonal_geometry_h1_gradient_p90": 0.7681965846720447,
+    "full_tensor_minus_gate": 0.0010347942945528876,
+    "full_tensor_minus_isotropic_h1": -0.00760403150679434,
+    "full_tensor_minus_diagonal_h1": -0.01716179037749177
+  },
+  "geometry_audit": {
+    "offdiagonal_relative_frobenius_minimum": 0.03736693384280121,
+    "offdiagonal_relative_frobenius_maximum": 0.41725522359119127,
+    "maximum_reduced_quadratic_condition_number": 1037.814673025052,
+    "maximum_camera_permutation_quadratic_relative_difference": 6.1924396961127484e-15,
+    "maximum_generalized_eigen_stationarity_relative": 7.595804786513673e-15
+  },
+  "frozen_thresholds": {
+    "field_p90": 0.5,
+    "field_worst": 0.75,
+    "gradient_p90": 0.75,
+    "gradient_worst": 1.0,
+    "observation_p90": 0.2,
+    "observation_worst": 0.35
+  },
+  "execution": {
+    "operator_setup_count": 39,
+    "cell_count": 1404,
+    "arm_row_count": 5616,
+    "formal_validity_checks": 32,
+    "independent_validity_checks": 21,
+    "geometry_setup_forward_equivalents": 13299,
+    "offline_truth_observation_calls": 1404,
+    "offline_selected_projection_calls": 4212,
+    "setup_or_offline_cost_treated_as_free": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "maximum_per_cell_metric_difference": 1.6356249687987656e-11,
+    "maximum_summary_metric_difference": 7.64732721592054e-12,
+    "maximum_lambda_relative_difference": 3.4554038456992224e-12,
+    "maximum_operator_numeric_difference": 7.051994543871842e-10,
+    "maximum_reduced_vs_direct_forward_difference": 6.394884621840902e-14,
+    "maximum_quadratic_vs_direct_residual_difference": 2.0550922075202038e-13,
+    "discrete_decision_identical": true
+  },
+  "interpretation": "The full tensor produces a real improvement over both frozen H1 references at the last five-camera stratum, but gradient p90 remains 0.001035 above the preregistered absolute gate. The complete family of current global quadratic geometry-anisotropy mechanisms is therefore closed.",
+  "next_gate": "Wait for condition-matched experimental two-component displacements and complete metadata, or preregister a genuinely different non-global-quadratic physical mechanism before further proxy computation.",
+  "claim_limits": {
+    "paired_experimental_2d_projections_used": false,
+    "learned_predictor_used": false,
+    "predictor_training_authorized": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}

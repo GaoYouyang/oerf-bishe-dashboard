@@ -1,0 +1,98 @@
+{
+  "schema_version": "oerf-public-real-bost-geometry-anisotropic-h1-temporal-v161",
+  "updated": "2026-08-19",
+  "formal_status": "PASS_FORMAL_PRIVATE_GEOMETRY_ANISOTROPIC_H1_TEMPORAL_V161",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_GEOMETRY_ANISOTROPIC_H1_TEMPORAL_V161",
+  "scientific_decision": "FAIL_GEOMETRY_ANISOTROPIC_H1_TEMPORAL_V161",
+  "scope": "A post-open controlled virtual straight-ray proxy. It tests one preregistered geometry-derived diagonal anisotropy and is not condition-matched experimental BOST.",
+  "question": "Can active-camera ray geometry identify a fixed diagonal anisotropic H1 penalty that repairs the lone five-camera temporal miss?",
+  "time_values": [0.0, 0.25, 0.75, 1.0],
+  "camera_counts": [5, 7, 9],
+  "primary": {
+    "name": "DCT1024-GeometryAnisotropicH1-Tikhonov Fixed 0.03",
+    "sensitivity": "s_j = mean(1 - d_j^2) over active reported world-frame unit rays",
+    "axis_weight": "w_j = geometric_mean(s) / max(s_j, 1e-12)",
+    "penalty": "sum_j w_j * (pi * k_j / span_j)^2, normalized to positive-frequency median one",
+    "multiplier": 0.03,
+    "selection": "The weight formula, floor, normalization, multiplier, data roster, and gates were frozen before v161 results. No alternative weight or multiplier was evaluated.",
+    "logical_online_calls_per_cell": {"A": 1, "AT": 1},
+    "strata": [
+      {"time": 0.0, "camera_count": 5, "field_p90": 0.42911069846435634, "gradient_p90": 0.7231119660467543, "observation_p90": 0.1334819436466677, "passed": true},
+      {"time": 0.0, "camera_count": 7, "field_p90": 0.3647122910695808, "gradient_p90": 0.5802886065543597, "observation_p90": 0.1407925982810485, "passed": true},
+      {"time": 0.0, "camera_count": 9, "field_p90": 0.23916922854476705, "gradient_p90": 0.49965573403851704, "observation_p90": 0.14890065332300212, "passed": true},
+      {"time": 0.25, "camera_count": 5, "field_p90": 0.4468650349660808, "gradient_p90": 0.7187155679923831, "observation_p90": 0.11619618351554721, "passed": true},
+      {"time": 0.25, "camera_count": 7, "field_p90": 0.35780126286799596, "gradient_p90": 0.5841261601196966, "observation_p90": 0.13406219925662644, "passed": true},
+      {"time": 0.25, "camera_count": 9, "field_p90": 0.2469320537037555, "gradient_p90": 0.5104281453916175, "observation_p90": 0.14611627946671424, "passed": true},
+      {"time": 0.75, "camera_count": 5, "field_p90": 0.41790457829893674, "gradient_p90": 0.7681965846720447, "observation_p90": 0.11942435577776343, "passed": false},
+      {"time": 0.75, "camera_count": 7, "field_p90": 0.3473325140626269, "gradient_p90": 0.6184833055217046, "observation_p90": 0.13076033466023307, "passed": true},
+      {"time": 0.75, "camera_count": 9, "field_p90": 0.2403535352554782, "gradient_p90": 0.5410223419871396, "observation_p90": 0.14271897397080022, "passed": true},
+      {"time": 1.0, "camera_count": 5, "field_p90": 0.4295918116416234, "gradient_p90": 0.7278516988629895, "observation_p90": 0.11984079873131437, "passed": true},
+      {"time": 1.0, "camera_count": 7, "field_p90": 0.34651110979549854, "gradient_p90": 0.5798475197658998, "observation_p90": 0.13844383080847567, "passed": true},
+      {"time": 1.0, "camera_count": 9, "field_p90": 0.23420387433413195, "gradient_p90": 0.50411118931732, "observation_p90": 0.1475085312474087, "passed": true}
+    ],
+    "strata_passed": 11,
+    "strata_total": 12,
+    "passed": false
+  },
+  "frozen_h1_control": {
+    "name": "DCT1024-H1-Tikhonov Fixed 0.03",
+    "strata_passed": 11,
+    "strata_total": 12,
+    "failed_stratum": {"time": 0.75, "camera_count": 5, "gradient_p90": 0.7586388258013472},
+    "primary_minus_h1_failed_gradient_p90": 0.0095577588706975,
+    "maximum_per_cell_reproduction_difference": 1.6356249687987656e-11,
+    "maximum_summary_reproduction_difference": 7.11242176265614e-12
+  },
+  "geometry_audit": {
+    "sensitivity_minimum": 0.1728588507901163,
+    "sensitivity_maximum": 0.9983313097779125,
+    "weight_minimum": 0.5249553809578693,
+    "weight_maximum": 3.0258008308167343,
+    "maximum_weight_product_error": 5.551115123125783e-16,
+    "maximum_camera_permutation_relative_difference": 9.481269029236332e-15
+  },
+  "frozen_thresholds": {
+    "field_p90": 0.5,
+    "field_worst": 0.75,
+    "gradient_p90": 0.75,
+    "gradient_worst": 1.0,
+    "observation_p90": 0.2,
+    "observation_worst": 0.35
+  },
+  "execution": {
+    "operator_setup_count": 39,
+    "cell_count": 1404,
+    "arm_row_count": 4212,
+    "formal_validity_checks": 26,
+    "independent_validity_checks": 19,
+    "geometry_setup_forward_equivalents": 13299,
+    "offline_truth_observation_calls": 1404,
+    "offline_selected_projection_calls": 2808,
+    "setup_or_offline_cost_treated_as_free": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "maximum_per_cell_metric_difference": 1.6356249687987656e-11,
+    "maximum_summary_metric_difference": 7.64732721592054e-12,
+    "maximum_lambda_relative_difference": 3.4554038456992224e-12,
+    "maximum_operator_numeric_difference": 1.5921486351544445e-11,
+    "maximum_reduced_vs_direct_forward_difference": 5.3290705182007514e-14,
+    "maximum_quadratic_vs_direct_residual_difference": 2.0550922075202038e-13,
+    "discrete_decision_identical": true
+  },
+  "interpretation": "The preregistered geometry-derived diagonal anisotropy preserves 11 of 12 strata but does not repair the original t=0.75 five-camera gradient tail. It worsens that tail versus isotropic H1, so active-ray axis sensitivity alone is not the missing mechanism.",
+  "next_gate": "Close diagonal geometry-anisotropy tuning. Wait for condition-matched experimental two-component displacements and metadata, or preregister a genuinely different physical mechanism before any further controlled-proxy computation.",
+  "claim_limits": {
+    "paired_experimental_2d_projections_used": false,
+    "learned_predictor_used": false,
+    "predictor_training_authorized": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}
