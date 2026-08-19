@@ -14918,3 +14918,42 @@ v159.1 therefore freezes fixed multiplier `0.03` before evaluating four times an
 An independent implementation rebuilds the analytic cosine basis, camera rays, sparse operators, stable eigensystems, physical fields, metrics, and decisions. All `17/17` checks pass, with maximum per-cell, summary, and operator-numeric differences of `1.64e-11`, `7.12e-12`, and `1.60e-11`.
 
 The clarification makes controlled virtual generation executable, but the fixed-lambda temporal hypothesis still fails its strict all-strata rule. This is not a learned predictor, resource result, external generalization, paired experiment, real BOST, or algorithm breakthrough.
+
+## 2026-08-19：v160 半阶 Sobolev 未救回五相机，过平滑解释被否定
+
+### 为什么做这一门
+
+v159.1 只在 `t=0.75` 的五相机 gradient p90 越门，看起来像一个很小的缺口。一个可证伪的物理解释是：一阶 H1 惩罚对高频压得太重，损伤了梯度。如果这个解释成立，把谱惩罚阶数结果前固定为 `1/2`，应当至少改善五相机梯度尾部，而不是只靠事后换正则倍数。
+
+因此 v160 保持九个三维场、十三套标定、四个时间点、5/7/9 相机、DCT1024、固定倍数 `0.03`、field/gradient/observation 门和几何构造完全不变，只把各向同性 H1 频率权重换成归一化的齐次半阶 Sobolev 权重。没有搜索阶数，没有读取真值选参数。
+
+### 实际运行与结果
+
+- formal 重建 `39` 个 operator setups、`1,404` 个 cells 和三臂共 `4,212` 条记录；有效性门 `21/21` 通过。
+- 半阶主策略只通过 `8/12` 个时间×相机分层；7/9 相机全部通过，四个五相机分层全部失败。
+- 四个五相机 gradient p90 依次为 `0.777364 / 0.770968 / 0.809636 / 0.772459`，全部高于冻结门 `0.750000`。
+- 对应 H1 父参考为 `0.708532 / 0.695875 / 0.758639 / 0.712034`；半阶方案分别恶化 `0.068832 / 0.075093 / 0.050997 / 0.060425`。
+
+科学判决是 `FAIL_FRACTIONAL_SOBOLEV_TEMPORAL_V160`。这不是“还差一点”的随机波动：四个时间点方向一致，放松高频惩罚系统性放大了五相机的欠定方向。当前证据不支持“旧 H1 过平滑”解释。
+
+### 独立复算
+
+第二实现独立重建 Sobolev 权重、相机算子、稳定特征分解、三条 arms、全部物理场和汇总。`19/19` 项检查通过；逐 cell、汇总、lambda 与算子数值最大差分别为 `1.64e-11 / 1.36e-11 / 9.54e-12 / 4.19e-11`。它同时把冻结 H1 父结果复现到 `1.64e-11`，因此比较不是来自实现漂移。
+
+### 路线动作
+
+关闭半阶先验，也关闭看到结果后继续扫描 Sobolev 阶数的做法。现有数据上的下一条物理门改为几何灵敏度各向异性：只用活动相机的报告几何推导三个方向的横向梯度灵敏度，再形成结果前固定的各向异性 H1 惩罚；不读真值、不搜索阶数或倍数。
+
+真实 BOST 仍等待逐工况实验二维双分量位移及 camera/frame/calibration/t 对应。当前不训练 predictor、不租 GPU、不启动资源门。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v160 tests one preregistered physical explanation for the near miss in v159.1: perhaps isotropic H1 oversmoothing damages sparse-view gradients. It keeps the same fields, calibrations, four times, 5/7/9-camera strata, DCT1024 basis, fixed multiplier `0.03`, and frozen gates, changing only the spectral penalty to homogeneous half-order Sobolev weighting.
+
+The half-order primary clears only `8/12` strata. All four five-camera strata fail, with gradient-p90 values of `0.777364 / 0.770968 / 0.809636 / 0.772459`, versus `0.708532 / 0.695875 / 0.758639 / 0.712034` for the H1 parent. Thus weaker high-frequency attenuation does not repair the sparse-view gradient tail; it worsens every five-camera time point.
+
+An independent second implementation passes all `19/19` checks. Maximum per-cell and summary differences are `1.64e-11` and `1.36e-11`, and the H1 parent is independently reproduced. Decision: `FAIL_FRACTIONAL_SOBOLEV_TEMPORAL_V160`.
+
+The oversmoothing explanation and post-hoc Sobolev-order search are closed. The next physically different gate is a geometry-derived anisotropic H1 penalty based only on active-camera transverse-gradient sensitivity. No predictor training, GPU rental, resource claim, experimental pairing, real-BOST claim, or algorithm breakthrough is authorized.

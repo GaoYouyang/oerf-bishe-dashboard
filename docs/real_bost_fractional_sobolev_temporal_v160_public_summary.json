@@ -1,0 +1,89 @@
+{
+  "schema_version": "oerf-public-real-bost-fractional-sobolev-temporal-v160",
+  "updated": "2026-08-19",
+  "formal_status": "PASS_FORMAL_PRIVATE_FRACTIONAL_SOBOLEV_TEMPORAL_V160",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_FRACTIONAL_SOBOLEV_TEMPORAL_V160",
+  "scientific_decision": "FAIL_FRACTIONAL_SOBOLEV_TEMPORAL_V160",
+  "scope": "A post-open controlled virtual straight-ray proxy. It tests one preregistered spectral-prior mechanism and is not condition-matched experimental BOST.",
+  "question": "Was the single five-camera gradient-tail miss in v159.1 caused by excessive high-frequency attenuation from the integer-order H1 penalty?",
+  "time_values": [0.0, 0.25, 0.75, 1.0],
+  "camera_counts": [5, 7, 9],
+  "primary": {
+    "name": "DCT1024-HalfSobolev-Tikhonov Fixed 0.03",
+    "penalty": "homogeneous half-order spatial-frequency magnitude, normalized to median one",
+    "fractional_order": 0.5,
+    "multiplier": 0.03,
+    "selection": "Both order and multiplier were frozen before v160 results. No alternative order or multiplier was evaluated.",
+    "logical_online_calls_per_cell": {"A": 1, "AT": 1},
+    "strata": [
+      {"time": 0.0, "camera_count": 5, "field_p90": 0.4973936819313898, "gradient_p90": 0.7773642475462625, "observation_p90": 0.13327623281108109, "passed": false},
+      {"time": 0.0, "camera_count": 7, "field_p90": 0.4339561486612811, "gradient_p90": 0.6247931303276827, "observation_p90": 0.1414778983622594, "passed": true},
+      {"time": 0.0, "camera_count": 9, "field_p90": 0.3109892281732327, "gradient_p90": 0.5318259042652639, "observation_p90": 0.14992646778828345, "passed": true},
+      {"time": 0.25, "camera_count": 5, "field_p90": 0.5131877076262518, "gradient_p90": 0.7709680085003597, "observation_p90": 0.11728738820216598, "passed": false},
+      {"time": 0.25, "camera_count": 7, "field_p90": 0.4433595055245578, "gradient_p90": 0.6145059530299737, "observation_p90": 0.13529139812688265, "passed": true},
+      {"time": 0.25, "camera_count": 9, "field_p90": 0.3217169848014743, "gradient_p90": 0.5346370776038596, "observation_p90": 0.14716567543158068, "passed": true},
+      {"time": 0.75, "camera_count": 5, "field_p90": 0.48282324740590526, "gradient_p90": 0.8096358300574921, "observation_p90": 0.1191422946295205, "passed": false},
+      {"time": 0.75, "camera_count": 7, "field_p90": 0.4203689371873795, "gradient_p90": 0.6326422554455384, "observation_p90": 0.13158695623344543, "passed": true},
+      {"time": 0.75, "camera_count": 9, "field_p90": 0.3169643763574416, "gradient_p90": 0.5596472437820951, "observation_p90": 0.14389961795131978, "passed": true},
+      {"time": 1.0, "camera_count": 5, "field_p90": 0.5015537489253913, "gradient_p90": 0.7724587996928564, "observation_p90": 0.12001020876708868, "passed": false},
+      {"time": 1.0, "camera_count": 7, "field_p90": 0.4251104131138937, "gradient_p90": 0.6184543669405841, "observation_p90": 0.13875411763469536, "passed": true},
+      {"time": 1.0, "camera_count": 9, "field_p90": 0.31987749134135857, "gradient_p90": 0.5334427880873326, "observation_p90": 0.148182672415939, "passed": true}
+    ],
+    "strata_passed": 8,
+    "strata_total": 12,
+    "passed": false
+  },
+  "frozen_h1_control": {
+    "name": "DCT1024-H1-Tikhonov Fixed 0.03",
+    "strata_passed": 11,
+    "strata_total": 12,
+    "five_camera_gradient_p90": [0.708531987549841, 0.6958749009227938, 0.7586388258013472, 0.7120334997660993],
+    "half_order_minus_h1_five_camera_gradient_p90": [0.06883225999642151, 0.07509310757756593, 0.05099700425614484, 0.06042529992675705],
+    "maximum_per_cell_reproduction_difference": 1.6356249687987656e-11,
+    "maximum_summary_reproduction_difference": 7.11242176265614e-12
+  },
+  "frozen_thresholds": {
+    "field_p90": 0.5,
+    "field_worst": 0.75,
+    "gradient_p90": 0.75,
+    "gradient_worst": 1.0,
+    "observation_p90": 0.2,
+    "observation_worst": 0.35
+  },
+  "execution": {
+    "operator_setup_count": 39,
+    "cell_count": 1404,
+    "arm_row_count": 4212,
+    "formal_validity_checks": 21,
+    "independent_validity_checks": 19,
+    "geometry_setup_forward_equivalents": 13299,
+    "offline_truth_observation_calls": 1404,
+    "offline_selected_projection_calls": 2808,
+    "setup_or_offline_cost_treated_as_free": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "maximum_per_cell_metric_difference": 1.6356249687987656e-11,
+    "maximum_summary_metric_difference": 1.3648637775531824e-11,
+    "maximum_lambda_relative_difference": 9.53760886223501e-12,
+    "maximum_operator_numeric_difference": 4.18634016341457e-11,
+    "maximum_reduced_vs_direct_forward_difference": 5.950795411990839e-14,
+    "maximum_quadratic_vs_direct_residual_difference": 2.0550922075202038e-13,
+    "discrete_decision_identical": true
+  },
+  "interpretation": "Reducing high-frequency attenuation worsens the gradient p90 in every five-camera time stratum. The v159.1 miss is therefore not repaired by a less smoothing spectral prior; the evidence instead supports sparse-view directional underdetermination or noise amplification within this controlled proxy.",
+  "next_gate": "Close half-order and post-hoc Sobolev-order search. If the controlled proxy continues before experimental data arrive, freeze one geometry-only anisotropic sensitivity metric derived from the active camera transverse-gradient directions, with the same strata and an independent implementation.",
+  "claim_limits": {
+    "paired_experimental_2d_projections_used": false,
+    "learned_predictor_used": false,
+    "predictor_training_authorized": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}

@@ -42,12 +42,16 @@ def test_public_result_is_substantively_bilingual() -> None:
 
 
 def test_public_surfaces_point_to_v159_in_both_languages() -> None:
-    for path in SURFACES:
+    for path in SURFACES[1:]:
         text = path.read_text(encoding="utf-8")
-        assert "real_bost_virtual_temporal_reference_transfer_v159" in text
         assert "FAIL_TEMPORAL_REFERENCE_TRANSFER_V159_1" in text
         assert "data-i18n-zh" in text
         assert "data-i18n-en" in text
+    daily = SURFACES[2].read_text(encoding="utf-8")
+    assert "real_bost_virtual_temporal_reference_transfer_v159" in daily
+    homepage = SURFACES[0].read_text(encoding="utf-8")
+    assert "real_bost_fractional_sobolev_temporal_v160" in homepage
+    assert "FAIL_FRACTIONAL_SOBOLEV_TEMPORAL_V160" in homepage
 
 
 def test_public_figure_is_nonblank_and_wide() -> None:
