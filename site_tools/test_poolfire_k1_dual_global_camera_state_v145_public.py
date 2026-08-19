@@ -68,7 +68,8 @@ def test_current_manifest_retains_v145_history_without_blocking_newer_evidence()
     assert decision["algorithm_breakthrough"] is False
     assert RESULT.exists()
     assert SUMMARY.exists()
-    assert "v160" in evidence["public_evidence"]["result"]
+    assert evidence["public_evidence"]["result"].startswith("../document_reader.html?doc=docs%2Freal_bost_")
+    assert evidence["current_decision"]["v161_independently_recomputed"] is True
 
 
 def test_figure_is_large_and_readable() -> None:

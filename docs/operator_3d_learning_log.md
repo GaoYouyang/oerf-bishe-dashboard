@@ -14957,3 +14957,45 @@ The half-order primary clears only `8/12` strata. All four five-camera strata fa
 An independent second implementation passes all `19/19` checks. Maximum per-cell and summary differences are `1.64e-11` and `1.36e-11`, and the H1 parent is independently reproduced. Decision: `FAIL_FRACTIONAL_SOBOLEV_TEMPORAL_V160`.
 
 The oversmoothing explanation and post-hoc Sobolev-order search are closed. The next physically different gate is a geometry-derived anisotropic H1 penalty based only on active-camera transverse-gradient sensitivity. No predictor training, GPU rental, resource claim, experimental pairing, real-BOST claim, or algorithm breakthrough is authorized.
+
+## 2026-08-19：v161 纯几何对角各向异性仍未救回原五相机缺口
+
+### 为什么这和 v160 不同
+
+v160 已经否定“少平滑一点就能救回五相机”。v161 不再改 Sobolev 阶数，而是检查另一个可证伪的物理解释：活动相机对三个世界坐标轴的横向梯度灵敏度不均衡，是否需要方向不同的 H1 约束。
+
+结果前唯一冻结公式是：用真正进入 forward 的世界坐标单位射线计算 `s_j = mean(1-d_j^2)`，再取 `w_j = geometric_mean(s)/max(s_j,1e-12)`。频率惩罚为三个轴的加权平方频率和，并把正频率中位数归一到 1。固定 lambda 仍为 `0.03`，没有搜索权重、floor、clip、阶数或倍数。
+
+### 实际运行与结果
+
+- formal 重建 `39` 个 operator setups、`1,404` 个 cells 和三臂共 `4,212` 条记录；有效性门 `26/26` 通过。
+- 三轴灵敏度范围为 `0.172859–0.998331`，权重范围为 `0.524955–3.025801`，所以主策略不是原 H1 的数值复制。
+- 主策略通过 `11/12` 个时间×相机分层。
+- 唯一失败仍是 `t=0.75`、五相机：field / gradient / observation p90 为 `0.417905 / 0.768197 / 0.119424`。
+- gradient p90 高于冻结门 `0.750000`；同一层各向同性 H1 为 `0.758639`，新方案反而变差 `0.009558`。
+
+科学判决是 `FAIL_GEOMETRY_ANISOTROPIC_H1_TEMPORAL_V161`。这说明只用活动射线的三轴平均灵敏度做对角权重，不足以描述五相机下真正缺失的耦合或局部结构。
+
+### 独立复算
+
+第二实现独立重建活动射线、三轴灵敏度、权重、DCT 惩罚、稳定特征分解、候选场、二维观测和 12 个分层。`19/19` 项检查通过；逐 cell、汇总和算子数值最大差分别为 `1.64e-11 / 7.65e-12 / 1.59e-11`。相机乱序后的灵敏度、权重与惩罚最大相对差为 `9.49e-15`，置换不变性通过。
+
+第一次执行曾因一个附加实现检查误用绝对容差而在科学解释前 fail-closed。只把该检查修正为协议冻结的相对容差后才产生这里的有效运行；物理机制、数据、指标和门没有改变。
+
+### 路线动作
+
+关闭当前对角几何各向异性，也关闭看到结果后继续修改权重公式或 lambda 的做法。没有真正不同、结果前可写清且可证伪的新物理机制时，不再制造代理候选；优先等待逐工况实验二维双分量位移及 camera/frame/calibration/checkpoint/t、单位、符号、crop/resize/mask、重复背景噪声和认可基线。
+
+当前不训练 predictor、不租 GPU、不启动 wall/RSS，也不把受控 straight-ray 代理写成真实 BOST。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v161 tests a physically different explanation from v160. Instead of changing Sobolev order, it derives fixed diagonal H1 weights from active reported camera rays: `s_j = mean(1-d_j^2)` and `w_j = geometric_mean(s)/max(s_j,1e-12)`. The multiplier remains `0.03`, with no weight, floor, clipping, order, or multiplier search.
+
+The primary clears `11/12` frozen time-by-camera strata. The sole miss remains five cameras at `t=0.75`, where field / gradient / observation p90 are `0.417905 / 0.768197 / 0.119424`. The gradient gate is `0.750000`, and isotropic H1 reaches `0.758639`, so the geometry-derived anisotropy worsens the missed tail by `0.009558`.
+
+An independent second implementation rebuilds rays, sensitivities, weights, DCT penalties, eigensystems, fields, observations, and decisions. All `19/19` checks pass; maximum per-cell, summary, and operator-numeric differences are `1.64e-11`, `7.65e-12`, and `1.59e-11`. Camera reordering changes the geometry quantities by at most `9.49e-15` relatively.
+
+Decision: `FAIL_GEOMETRY_ANISOTROPIC_H1_TEMPORAL_V161`. The current diagonal geometry-anisotropy mechanism and post-hoc weight/lambda tuning are closed. Further proxy work requires a genuinely different preregistered physical mechanism; otherwise the route waits for paired experimental two-component displacements and complete metadata. This is not predictor training, a GPU case, a resource result, real BOST, or an algorithm breakthrough.
