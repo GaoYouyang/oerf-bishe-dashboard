@@ -54,6 +54,11 @@ def test_public_surfaces_point_to_v162_in_both_languages() -> None:
         assert "data-i18n-zh" in text
         assert "data-i18n-en" in text
 
+    focus = (ROOT / "operator-learning/index.html").read_text(encoding="utf-8")
+    assert "这是关闭当前全局二次型几何各向异性家族的机制负结果" in focus
+    assert "v162 以完整几何张量保留非对角耦合" in focus
+    assert "这是关闭当前对角几何各向异性的机制负结果" not in focus
+
 
 def test_public_figure_is_nonblank_and_wide() -> None:
     with Image.open(FIGURE) as image:
