@@ -70,6 +70,7 @@ def test_current_manifest_retains_v145_history_without_blocking_newer_evidence()
     assert SUMMARY.exists()
     assert evidence["public_evidence"]["result"].startswith("../document_reader.html?doc=docs%2Freal_bost_")
     assert evidence["current_decision"]["v161_independently_recomputed"] is True
+    assert evidence["current_decision"]["v162_independently_recomputed"] is True
 
 
 def test_figure_is_large_and_readable() -> None:

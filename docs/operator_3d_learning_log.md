@@ -14999,3 +14999,42 @@ The primary clears `11/12` frozen time-by-camera strata. The sole miss remains f
 An independent second implementation rebuilds rays, sensitivities, weights, DCT penalties, eigensystems, fields, observations, and decisions. All `19/19` checks pass; maximum per-cell, summary, and operator-numeric differences are `1.64e-11`, `7.65e-12`, and `1.59e-11`. Camera reordering changes the geometry quantities by at most `9.49e-15` relatively.
 
 Decision: `FAIL_GEOMETRY_ANISOTROPIC_H1_TEMPORAL_V161`. The current diagonal geometry-anisotropy mechanism and post-hoc weight/lambda tuning are closed. Further proxy work requires a genuinely different preregistered physical mechanism; otherwise the route waits for paired experimental two-component displacements and complete metadata. This is not predictor training, a GPU case, a resource result, real BOST, or an algorithm breakthrough.
+
+## 2026-08-20：v162 全张量几何耦合改善最后尾部，但仍差 0.001035 过门
+
+### 为什么这是最后一条当前几何二次型门
+
+v161 只给三个世界坐标轴不同的对角权重，可能丢掉相机几何在轴间产生的耦合。v162 检验这一解释的最完整全局二次型版本：由实际进入 forward 的活动世界坐标单位射线构造 `S = mean(I-dd^T)`，只对特征值使用固定 `1e-12` floor，再取 `W=S^-1`。惩罚在与物理梯度一致的有限差分空间中实现，保留全部非对角交叉项；固定 lambda 仍为 `0.03`，没有搜索矩阵函数、旋转、floor、倍数或候选。
+
+### 实际运行与结果
+
+- formal 重建 `39` 个 operator setups、`1,404` 个 cells 和四臂共 `5,616` 条记录；有效性门 `32/32` 通过。
+- 非对角相对 Frobenius 比例覆盖 `0.037367–0.417255`，说明主策略不是对角方案的数值复制。
+- 主策略通过 `11/12` 个时间×相机分层。
+- 唯一失败仍是 `t=0.75`、五相机：field / gradient / observation p90 为 `0.447236 / 0.751035 / 0.120629`。
+- gradient p90 比冻结门 `0.750000` 高 `0.001035`。
+- 同一层各向同性 H1 为 `0.758639`，v161 对角方案为 `0.768197`；全张量方案分别改善 `0.007604` 与 `0.017162`。改善真实存在，但绝对门不交换。
+
+科学判决是 `FAIL_FULL_TENSOR_GEOMETRY_H1_TEMPORAL_V162`。非对角耦合确实解释了一部分尾部误差，却不足以让当前全局二次型几何正则稳定过门。
+
+### 独立复算
+
+第二实现独立重建活动射线、`S/W`、完整有限差分二次型、reduced quadratic form、候选场、二维观测和 12 个分层。`21/21` 项检查通过；逐 cell、汇总和算子数值最大差分别为 `1.64e-11 / 7.65e-12 / 7.05e-10`。reduced 与直接 forward 最大差 `6.39e-14`，二次型与直接 residual 最大差 `2.06e-13`，相机乱序最大相对差 `6.19e-15`。
+
+### 路线动作
+
+关闭当前全部全局二次型几何各向异性，也关闭看到结果后继续修改矩阵公式、floor 或 lambda 的做法。下一有效依赖是逐工况实验二维双分量位移及完整元数据；若继续受控虚拟代理，必须先提出物理上真正不同、结果前冻结且可证伪的非全局二次型机制。
+
+当前不训练 predictor、不租 GPU、不启动 wall/RSS，也不把受控 straight-ray 代理写成真实 BOST。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v162 tests the most complete global-quadratic form of the geometry-coupling explanation left open by v161. It constructs `S = mean(I-dd^T)` from the active world-frame rays, uses `W=S^-1` with only the fixed `1e-12` eigenvalue floor, and retains all off-diagonal terms in a finite-difference gradient quadratic. The multiplier remains `0.03`; no matrix function, rotation, floor, multiplier, or candidate is searched.
+
+The primary clears `11/12` frozen time-by-camera strata. The sole miss remains five cameras at `t=0.75`, where field / gradient / observation p90 are `0.447236 / 0.751035 / 0.120629`. Gradient p90 exceeds the `0.750000` gate by `0.001035`. The same stratum reaches `0.758639` for isotropic H1 and `0.768197` for the diagonal geometry variant, so the full tensor provides real improvements of `0.007604` and `0.017162`, but the absolute gate is nonexchangeable.
+
+An independent second implementation rebuilds rays, tensors, finite-difference quadratics, reduced operators, fields, observations, and decisions. All `21/21` checks pass; maximum per-cell, summary, and operator-numeric differences are `1.64e-11`, `7.65e-12`, and `7.05e-10`. Camera reordering changes the quadratic by at most `6.19e-15` relatively.
+
+Decision: `FAIL_FULL_TENSOR_GEOMETRY_H1_TEMPORAL_V162`. The current global quadratic geometry-anisotropy family and post-hoc matrix/floor/multiplier tuning are closed. Further proxy work requires a genuinely different preregistered non-global-quadratic physical mechanism; otherwise the route waits for paired experimental two-component displacements and complete metadata. This is not predictor training, a GPU case, a resource result, real BOST, or an algorithm breakthrough.
