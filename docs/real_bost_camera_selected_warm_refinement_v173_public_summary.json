@@ -1,0 +1,144 @@
+{
+  "schema_version": "oerf-public-real-bost-camera-selected-warm-refinement-v173",
+  "updated": "2026-08-21",
+  "formal_status": "PASS_FORMAL_PRIVATE_CAMERA_SELECTED_WARM_REFINEMENT_V173",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_CAMERA_SELECTED_WARM_V173",
+  "scientific_decision": "FAIL_CLASSICAL_CONTROL_EXPLAINS_CAMERA_SELECTED_WARM_V173",
+  "scope": "A post-open controlled virtual straight-ray diagnostic that connects the v172 selected five-camera subset to a fixed H1 initializer and unchanged CGLS K1.",
+  "question": "Does one unchanged CGLS refinement step add a stable accuracy or cost advantage after the selected-camera H1 initializer?",
+  "evaluation": {
+    "cell_count_per_arm": 468,
+    "calibration_count": 13,
+    "field_model_count": 9,
+    "time_count": 4,
+    "camera_count": 5,
+    "reference": "Zero-K4",
+    "all_parent_camera_selections_consumed_without_replacement": true
+  },
+  "primary_h1_k1": {
+    "description": "v172 selected five-camera subset, fixed H1 initializer, then unchanged CGLS K1",
+    "exact_forward_calls": 2,
+    "exact_adjoint_calls": 2,
+    "strict_safe_cells": 468,
+    "strict_safe_total": 468,
+    "whole_calibrations_passed": 13,
+    "whole_field_models_passed": 9,
+    "time_strata_passed": 4,
+    "global_metrics": {
+      "field_p90_higher": 0.3268079053327541,
+      "field_worst": 0.4103508533924405,
+      "gradient_p90_higher": 0.610169181385774,
+      "gradient_worst": 0.7217565331483013,
+      "observation_p90_higher": 0.07505519986510752,
+      "observation_worst": 0.08489805563169331
+    },
+    "matched_zero_k4_passed": true,
+    "joint_harm_count": 0,
+    "complete_pass": true
+  },
+  "blocking_h1_k0": {
+    "description": "The same selected five-camera subset and fixed H1 initializer, with no CGLS refinement",
+    "exact_forward_calls": 1,
+    "exact_adjoint_calls": 1,
+    "strict_safe_cells": 468,
+    "strict_safe_total": 468,
+    "whole_calibrations_passed": 13,
+    "whole_field_models_passed": 9,
+    "time_strata_passed": 4,
+    "global_metrics": {
+      "field_p90_higher": 0.3274957214949013,
+      "field_worst": 0.4108761933048193,
+      "gradient_p90_higher": 0.6212038961816176,
+      "gradient_worst": 0.731542779937635,
+      "observation_p90_higher": 0.11842171075535059,
+      "observation_worst": 0.14582923590005203
+    },
+    "matched_zero_k4_passed": true,
+    "joint_harm_count": 0,
+    "complete_pass": true,
+    "blocks_k1_advantage_claim": true
+  },
+  "controls": {
+    "zero_k2": {
+      "strict_safe_cells": 0,
+      "complete_pass": false,
+      "exact_forward_calls": 2,
+      "exact_adjoint_calls": 2
+    },
+    "zero_k4": {
+      "strict_safe_cells": 0,
+      "complete_pass": false,
+      "exact_forward_calls": 4,
+      "exact_adjoint_calls": 4,
+      "is_matched_reference": true
+    },
+    "bp_k1": {
+      "strict_safe_cells": 0,
+      "complete_pass": false,
+      "exact_forward_calls": 2,
+      "exact_adjoint_calls": 2
+    },
+    "jacobi_pcgls_k2": {
+      "strict_safe_cells": 0,
+      "complete_pass": false,
+      "exact_forward_calls": 2,
+      "exact_adjoint_calls": 2
+    },
+    "fit_static_h1_k1": {
+      "strict_safe_cells": 334,
+      "whole_calibrations_passed": 1,
+      "whole_field_models_passed": 0,
+      "time_strata_passed": 0,
+      "complete_pass": false,
+      "exact_forward_calls": 2,
+      "exact_adjoint_calls": 2
+    },
+    "v169_fixed_h1_k1": {
+      "strict_safe_cells": 222,
+      "whole_calibrations_passed": 0,
+      "whole_field_models_passed": 0,
+      "time_strata_passed": 0,
+      "complete_pass": false,
+      "exact_forward_calls": 2,
+      "exact_adjoint_calls": 2
+    },
+    "blocking_controls_that_passed": [
+      "primary_h1_k0"
+    ]
+  },
+  "execution": {
+    "geometry_cache_forward_equivalents": 13299,
+    "offline_truth_observation_calls": 1395,
+    "fresh_wall_or_rss_measured": false,
+    "logical_online_call_ledger_only": true
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "check_count": 21,
+    "metric_maximum_absolute_difference": 1.6432077920569554e-11,
+    "arm_summary_maximum_absolute_difference": 8.65751914602697e-12,
+    "exact_call_maximum_difference": 0,
+    "primary_field_relative_difference": 1.47210557357823e-11,
+    "primary_residual_relative_difference": 3.8710961134189795e-11,
+    "all_discrete_decisions_exact": true
+  },
+  "interpretation": "The complete selected-camera H1-K1 chain is safe on the opened controlled roster, but the cheaper same-subset H1-K0 control is equally complete while using half the exact forward/adjoint calls. The extra unchanged CGLS K1 step therefore has no established stable advantage in this mechanism.",
+  "closed_claim": "The extra unchanged CGLS K1 refinement provides a stable advantage for the current selected-camera H1 initializer.",
+  "remaining_narrow_question": "Does the deployment-visible five-camera selector itself add value when every selection policy is evaluated with the same cheaper H1-K0 reconstruction?",
+  "next_gate": "Freeze a selector-only attribution audit in which the v172 selector, fit-static, v169, and result-free deterministic geometry controls all use the same H1-K0 1A+1A^T reconstruction. Do not add K1, a larger model, or GPU training.",
+  "claim_limits": {
+    "post_open_controlled_proxy_only": true,
+    "cgls_k1_advantage_established": false,
+    "selector_advantage_under_equal_h1_k0_cost_established": false,
+    "fresh_external_generalization": false,
+    "paired_experimental_2d_projections_used": false,
+    "exact_call_reduction_established_for_a_learned_algorithm": false,
+    "resource_speedup": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}

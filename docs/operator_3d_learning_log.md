@@ -15485,3 +15485,41 @@ The Gram-ridge selector with at most `357` parameters is strict-safe on `468/468
 An independent implementation uses augmented least squares instead of the formal batched normal equations and rebuilds all 468 folds, three policies, time strata, and the call ledger. All `22/22` checks pass. Maximum feature, prediction, and policy-report differences are `2.33e-11`, `2.58e-11`, and `8.04e-12`; fold-target and held-out-axis mutation differences are both zero, and every discrete selection agrees.
 
 Decision: `PASS_WHOLE_FIELD_TIME_ISOLATED_GEOMETRY_SELECTOR_HEADROOM_V172`. This is a substantive post-open mechanism increment: simple adaptation to the nine opened fields or four times no longer explains the selector. All finite candidate outcomes were already opened by v170, however, so this is not fresh external generalization, a complete observation/geometry-only warm-start pipeline, real BOST, a resource speedup, paper success, or an algorithmic breakthrough. The next gate integrates the passing camera policy with the observation-only initializer, exact `A^T` lift, and unchanged CGLS under fair controls; GPU rental remains unauthorized.
+
+## 2026-08-21：v173 完整链能过门，但更便宜 H1-K0 阻断了额外 K1 优势
+
+### 为什么这是必要的阻断对照
+
+v172 只证明了相机选择器在标定、完整三维场和时间三重隔离下能选到安全的五相机子集。v173 把这个子集真正接入 H1 initializer、精确物理算子和未修改 CGLS K1，同时必须保留“相同子集、不做 K1”的 H1-K0。如果后者已能过全部门，就不能把额外 K1 写成算法优势。
+
+### 正式结果与科学判决
+
+H1-K1 在 `468/468` 个三重隔离单元上严格安全，完整标定、完整场和时间分层分别为 `13/13`、`9/9`和 `4/4`。field / gradient / observation p90 为 `0.326808 / 0.610169 / 0.075055`，逻辑在线账为 `2A+2A^T`。
+
+但同一子集的 H1-K0 也以 `468/468`、`13/13`、`9/9`、`4/4` 通过全部门，field / gradient / observation p90 为 `0.327496 / 0.621204 / 0.118422`，且只需 `1A+1A^T`。两条 arm 的 harm 均为零。因此更便宜 H1-K0 构成阻断对照，当前额外 CGLS K1 优势主张关闭。
+
+科学判决为 `FAIL_CLASSICAL_CONTROL_EXPLAINS_CAMERA_SELECTED_WARM_V173`。
+
+### 其他对照与独立复算
+
+fit-static H1-K1 只安全 `334/468`，完整标定 / 场 / 时间为 `1/13 · 0/9 · 0/4`；v169 fixed H1-K1 为 `222/468`，三类完整组均为零通过。Zero K2/K4、BP 与 Jacobi PCGLS 也没有通过严格绝对门。
+
+完全独立第二实现重放了全部 arm、物理场、二维观测、尾部门与 exact-call 账，`21/21` 项检查全真。逐单元指标和 arm 汇总最大差分别为 `1.64e-11` 与 `8.66e-12`，exact-call 差为 `0`。
+
+### 边界与下一门
+
+v173 关闭的是当前 H1+K1 refinement 优势主张，不是整条 C 路线。它也不是 fresh 外部泛化、真实 BOST、wall/RSS 加速、论文成功或算法突破。
+
+下一个最小门只做 selector-only 归因：v172 选择器、fit-static、v169 和结果不可见的确定性几何对照全部使用同一 H1-K0 与 `1A+1A^T`。不再增加 K1、更大模型或 GPU。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v173 connects the v172 selected camera subset to the H1 initializer, exact physics operator, and unchanged CGLS K1. The primary H1-K1 arm is strict-safe on `468/468` triple-isolated cells and clears `13/13` calibrations, `9/9` fields, and `4/4` times. Its field / gradient / observation p90 values are `0.326808 / 0.610169 / 0.075055` at `2A+2A^T`.
+
+The same-subset H1-K0 control also reaches `468/468`, `13/13`, `9/9`, and `4/4`, with field / gradient / observation p90 values `0.327496 / 0.621204 / 0.118422` at only `1A+1A^T`. Both arms have zero harm. The cheaper control therefore blocks the claimed advantage of the extra K1 step.
+
+A fully independent second implementation replays every arm, physical field, observation, tail gate, and exact-call ledger. All `21/21` checks pass. Maximum per-cell metric and arm-summary differences are `1.64e-11` and `8.66e-12`, with zero exact-call discrepancy.
+
+Decision: `FAIL_CLASSICAL_CONTROL_EXPLAINS_CAMERA_SELECTED_WARM_V173`. This closes the current H1-plus-K1 refinement advantage claim, not the full C route. It is not fresh external generalization, real BOST, a wall/RSS speedup, paper success, or an algorithmic breakthrough. The next gate is selector attribution under equal H1-K0 and `1A+1A^T` cost; no larger model or GPU rescue is authorized.
