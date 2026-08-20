@@ -1,0 +1,119 @@
+{
+  "schema_version": "oerf-public-real-bost-observation-continuity-affine-transport-v166",
+  "updated": "2026-08-20",
+  "formal_status": "PASS_FORMAL_PRIVATE_OBSERVATION_CONTINUITY_AFFINE_TRANSPORT_V166",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_OBSERVATION_CONTINUITY_AFFINE_TRANSPORT_V166",
+  "scientific_decision": "FAIL_OBSERVATION_CONTINUITY_AFFINE_TRANSPORT_V166",
+  "scope": "A post-open controlled virtual straight-ray proxy generated from executable 3D reconstructed density fields and camera geometry. It is not condition-matched experimental BOST.",
+  "question": "Does replacing passive-scalar affine transport with the mass-conserving density action -div(rho*u) and a reciprocal-determinant push-forward repair the two late five-camera gradient tails?",
+  "time_values": [0.0, 0.25, 0.75, 1.0],
+  "camera_counts": [5, 7, 9],
+  "primary": {
+    "name": "DCT1024-ObservationContinuityAffineTransport-H1 Fixed 0.03",
+    "transport_family": "Twelve global affine generators: three translations and all nine linear entries, acting on density through the continuity equation",
+    "inputs": "Current simulated two-component observations, reported active-camera geometry, and the immediately preceding deployed reconstruction only",
+    "fit": "Column-normalized least squares on twelve projected continuity tangents with a fixed SVD cutoff of 1e-10",
+    "transport": "Centered affine exponential, inverse-map trilinear interpolation with zero outside, and the exact reciprocal determinant density factor; one minimum-grid-cell cap per 0.25 normalized-time step",
+    "update": "Use the mass-conserving transported previous field as the center of the frozen H1 solve with multiplier 0.03",
+    "selection": "Density action, generators, signs, normalization, determinant power, SVD cutoff, cap, interpolation, boundary rule, H1 multiplier, data roster, controls, and gates were frozen before results",
+    "logical_online_calls_initial_anchor": {"A": 1, "AT": 1},
+    "logical_online_calls_non_anchor": {"A": 13, "AT": 1},
+    "strata": [
+      {"time": 0.0, "camera_count": 5, "field_p90": 0.38263797074676853, "field_worst": 0.4155475814398069, "gradient_p90": 0.7085320352330898, "gradient_worst": 0.7913163228905832, "observation_p90": 0.13266505940940757, "observation_worst": 0.1463069278919664, "passed": true},
+      {"time": 0.0, "camera_count": 7, "field_p90": 0.2904776371717633, "field_worst": 0.32127459994343927, "gradient_p90": 0.5730029838233638, "gradient_worst": 0.6100955549146233, "observation_p90": 0.14058871733732242, "observation_worst": 0.15053852497907297, "passed": true},
+      {"time": 0.0, "camera_count": 9, "field_p90": 0.2143288570461954, "field_worst": 0.23279742854743343, "gradient_p90": 0.4941925347083315, "gradient_worst": 0.5294899782919998, "observation_p90": 0.14841877944571488, "observation_worst": 0.15446581184604463, "passed": true},
+      {"time": 0.25, "camera_count": 5, "field_p90": 0.342981285530066, "field_worst": 0.38471742687048677, "gradient_p90": 0.7235993066162826, "gradient_worst": 0.9403267330801403, "observation_p90": 0.11472611948409442, "observation_worst": 0.1586841386403278, "passed": true},
+      {"time": 0.25, "camera_count": 7, "field_p90": 0.25259387431378233, "field_worst": 0.28521672473841864, "gradient_p90": 0.60842878696463, "gradient_worst": 0.6841312112495149, "observation_p90": 0.13298255509119933, "observation_worst": 0.1627489344258126, "passed": true},
+      {"time": 0.25, "camera_count": 9, "field_p90": 0.19967954511949612, "field_worst": 0.2140946069873427, "gradient_p90": 0.5336036474560016, "gradient_worst": 0.5696454997191807, "observation_p90": 0.14558536242166206, "observation_worst": 0.16609637313258255, "passed": true},
+      {"time": 0.75, "camera_count": 5, "field_p90": 0.32990023376105787, "field_worst": 0.3916940138637041, "gradient_p90": 0.795555563289827, "gradient_worst": 1.0597905916590662, "observation_p90": 0.11753798868811294, "observation_worst": 0.12493766284438397, "passed": false},
+      {"time": 0.75, "camera_count": 7, "field_p90": 0.23988574593085674, "field_worst": 0.2698403527464516, "gradient_p90": 0.6264768129690189, "gradient_worst": 0.788318151981795, "observation_p90": 0.12997754872765502, "observation_worst": 0.14432688615694725, "passed": true},
+      {"time": 0.75, "camera_count": 9, "field_p90": 0.20009878638095377, "field_worst": 0.2172305544422745, "gradient_p90": 0.5617255822095832, "gradient_worst": 0.6837048507317881, "observation_p90": 0.14226028794405143, "observation_worst": 0.15435698291295194, "passed": true},
+      {"time": 1.0, "camera_count": 5, "field_p90": 0.3145002532279859, "field_worst": 0.3498582347467847, "gradient_p90": 0.7302566599627898, "gradient_worst": 1.0879873835714176, "observation_p90": 0.11923738474824902, "observation_worst": 0.13298740174575763, "passed": false},
+      {"time": 1.0, "camera_count": 7, "field_p90": 0.2302926351853918, "field_worst": 0.2590907299925782, "gradient_p90": 0.6224531340150317, "gradient_worst": 0.7427415196296252, "observation_p90": 0.13717437025444376, "observation_worst": 0.14523339162045162, "passed": true},
+      {"time": 1.0, "camera_count": 9, "field_p90": 0.19363001094945334, "field_worst": 0.2024010448008684, "gradient_p90": 0.5367059329079304, "gradient_worst": 0.5748659945423372, "observation_p90": 0.14678252954358204, "observation_worst": 0.1556992483422736, "passed": true}
+    ],
+    "strata_passed": 10,
+    "strata_total": 12,
+    "passed": false
+  },
+  "controls": {
+    "no_transport_centered_h1": {
+      "logical_online_calls_per_cell": {"A": 1, "AT": 1},
+      "strata_passed": 10,
+      "strata_total": 12,
+      "failed_strata": [[0.75, 5], [1.0, 5]],
+      "passed": false
+    },
+    "frozen_isotropic_h1": {
+      "logical_online_calls_per_cell": {"A": 1, "AT": 1},
+      "t075_five_camera_gradient_p90": 0.7586387509824308,
+      "t075_five_camera_gradient_worst": 0.8357519533000473,
+      "t100_five_camera_gradient_p90": 0.7120334287186397,
+      "t100_five_camera_gradient_worst": 0.7890852092404959
+    },
+    "passive_scalar_cross_terms_v165": {
+      "logical_online_calls_non_anchor": {"A": 13, "AT": 1},
+      "t075_five_camera_gradient_p90": 0.8011623908089439,
+      "t075_five_camera_gradient_worst": 1.0807513759108238,
+      "t100_five_camera_gradient_p90": 0.7592179177687344,
+      "t100_five_camera_gradient_worst": 1.1487267632768896
+    },
+    "passive_scalar_affine_v164_1": {
+      "logical_online_calls_non_anchor": {"A": 13, "AT": 1},
+      "t075_five_camera_gradient_p90": 0.7885312942827567,
+      "t075_five_camera_gradient_worst": 1.0783015727582606,
+      "t100_five_camera_gradient_p90": 0.7652103552313456,
+      "t100_five_camera_gradient_worst": 1.1576682405159193
+    },
+    "cgls_k16": {"logical_online_calls_per_cell": {"A": 16, "AT": 16}}
+  },
+  "frozen_thresholds": {
+    "field_p90": 0.5,
+    "field_worst": 0.75,
+    "gradient_p90": 0.75,
+    "gradient_worst": 1.0,
+    "observation_p90": 0.2,
+    "observation_worst": 0.35
+  },
+  "execution": {
+    "operator_setup_count": 39,
+    "cell_count": 1404,
+    "arm_row_count": 5616,
+    "formal_validity_checks": 42,
+    "independent_validity_checks": 53,
+    "geometry_setup_forward_equivalents": 13299,
+    "formal_permutation_audit_tangent_forward_calls": 12636,
+    "offline_truth_observation_calls": 1404,
+    "offline_selected_projection_calls": 4212,
+    "setup_audit_or_offline_cost_treated_as_free": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "maximum_affine_parameter_relative_difference": 7.038094536958623e-11,
+    "maximum_primary_coefficient_relative_difference": 1.6112785827055083e-10,
+    "maximum_transport_prior_relative_difference": 1.4564775492379432e-10,
+    "maximum_per_cell_metric_difference": 5.7891136329146775e-11,
+    "maximum_summary_metric_difference": 1.3567036383221875e-11,
+    "maximum_camera_permutation_primary_relative_difference": 7.148269531141158e-13,
+    "maximum_density_factor_times_determinant_difference": 1.1102230246251565e-16,
+    "affine_rank": 12,
+    "minimum_affine_determinant": 0.9889682394428683,
+    "maximum_displacement_cap_ratio": 1.0,
+    "discrete_decision_identical": true
+  },
+  "interpretation": "Mass-conserving density transport improves selected late-tail values relative to passive-scalar transport, but it still fails the frozen five-camera gradient gates and remains worse than the much cheaper frozen H1 control. The exact global affine continuity family is closed without determinant, cap, SVD, or H1 tuning.",
+  "next_gate": "Prioritize condition-matched experimental two-component displacements with complete metadata. Any further virtual-proxy mechanism must use a genuinely local or otherwise non-global physical representation, be preregistered, and be independently recomputed; global affine continuity is not retuned.",
+  "claim_limits": {
+    "paired_experimental_2d_projections_used": false,
+    "learned_predictor_used": false,
+    "predictor_training_authorized": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}

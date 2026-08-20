@@ -1,0 +1,116 @@
+{
+  "schema_version": "oerf-public-real-bost-observation-local-continuity-flow-v167",
+  "updated": "2026-08-20",
+  "formal_status": "PASS_FORMAL_PRIVATE_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167",
+  "scientific_decision": "FAIL_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167",
+  "scope": "A post-open controlled virtual straight-ray proxy generated from executable 3D reconstructed density fields and camera geometry. It is not condition-matched experimental BOST.",
+  "question": "Does an equal-budget four-region local mass-conserving flow repair the late five-camera gradient tails that remained under global affine continuity transport?",
+  "primary": {
+    "name": "DCT1024-ObservationLocalContinuityFlow-H1 Fixed 0.03",
+    "transport_family": "Four fixed tetrahedrally symmetric soft regions, each with a three-component stationary translation velocity, for twelve observation-fitted local continuity directions",
+    "inputs": "Current simulated two-component observations, reported active-camera geometry, and the immediately preceding deployed reconstruction only",
+    "fit": "Column-normalized least squares on twelve projected local continuity tangents with a fixed SVD cutoff of 1e-10",
+    "transport": "Sixteen-step RK4 inverse flow, C1 Catmull-Rom interpolation with explicit zero extension, and the continuity-equation log-density factor",
+    "update": "Use the transported previous density as the center of the frozen H1 solve with multiplier 0.03",
+    "selection": "Partitions, tangents, interpolation, boundary rule, RK4 steps, SVD cutoff, speed cap, H1 multiplier, controls, data roster, and gates were frozen before scientific arrays were read",
+    "local_parameter_count": 12,
+    "soft_region_count": 4,
+    "rk4_steps": 16,
+    "logical_online_calls_initial_anchor": {"A": 1, "AT": 1},
+    "logical_online_calls_non_anchor": {"A": 13, "AT": 1},
+    "strata": [
+      {"time": 0.0, "camera_count": 5, "field_p90": 0.3826379707469229, "field_worst": 0.4155475814399057, "gradient_p90": 0.7085320352331681, "gradient_worst": 0.7913163228893775, "observation_p90": 0.13266505940940773, "observation_worst": 0.14630692789196628, "passed": true},
+      {"time": 0.0, "camera_count": 7, "field_p90": 0.2904776371717096, "field_worst": 0.3212745999434823, "gradient_p90": 0.5730029838233637, "gradient_worst": 0.6100955549146294, "observation_p90": 0.14058871733732267, "observation_worst": 0.1505385249790732, "passed": true},
+      {"time": 0.0, "camera_count": 9, "field_p90": 0.21432885704620275, "field_worst": 0.23279742854672092, "gradient_p90": 0.49419253470832897, "gradient_worst": 0.5294899782919953, "observation_p90": 0.14841877944571458, "observation_worst": 0.15446581184604471, "passed": true},
+      {"time": 0.25, "camera_count": 5, "field_p90": 0.34600200621104876, "field_worst": 0.39473549100552163, "gradient_p90": 0.7284037909706405, "gradient_worst": 0.9786592653637302, "observation_p90": 0.11471550103776805, "observation_worst": 0.15823344482129492, "passed": true},
+      {"time": 0.25, "camera_count": 7, "field_p90": 0.2628380632756557, "field_worst": 0.29438570877204173, "gradient_p90": 0.6081982994476242, "gradient_worst": 0.7168631632564495, "observation_p90": 0.13272906551584884, "observation_worst": 0.16218543616379763, "passed": true},
+      {"time": 0.25, "camera_count": 9, "field_p90": 0.20082392467317003, "field_worst": 0.21770539289557544, "gradient_p90": 0.5288092290314645, "gradient_worst": 0.5487187467783944, "observation_p90": 0.1452662571805686, "observation_worst": 0.16570899949398754, "passed": true},
+      {"time": 0.75, "camera_count": 5, "field_p90": 0.33366235120296406, "field_worst": 0.42927230767705865, "gradient_p90": 0.8131226543116701, "gradient_worst": 1.145759337839328, "observation_p90": 0.11730929889874753, "observation_worst": 0.12372482199044575, "passed": false},
+      {"time": 0.75, "camera_count": 7, "field_p90": 0.2590658732572471, "field_worst": 0.27772930299584925, "gradient_p90": 0.6240859614918026, "gradient_worst": 0.8243398837690155, "observation_p90": 0.12977362179336097, "observation_worst": 0.1442984338114534, "passed": true},
+      {"time": 0.75, "camera_count": 9, "field_p90": 0.20077701925640373, "field_worst": 0.21540737065093396, "gradient_p90": 0.5647026370472633, "gradient_worst": 0.6044616273366208, "observation_p90": 0.14189705351109447, "observation_worst": 0.15442089533883208, "passed": true},
+      {"time": 1.0, "camera_count": 5, "field_p90": 0.33170086271546456, "field_worst": 0.3731967772487588, "gradient_p90": 0.7575244446898495, "gradient_worst": 1.2448335163543267, "observation_p90": 0.11917992797995022, "observation_worst": 0.13297570384884355, "passed": false},
+      {"time": 1.0, "camera_count": 7, "field_p90": 0.251890120602019, "field_worst": 0.28365046739152816, "gradient_p90": 0.632306265716124, "gradient_worst": 0.8291160919392344, "observation_p90": 0.13708600046860697, "observation_worst": 0.1453261202886575, "passed": true},
+      {"time": 1.0, "camera_count": 9, "field_p90": 0.1957397210999394, "field_worst": 0.20685771469583564, "gradient_p90": 0.5425120344125662, "gradient_worst": 0.5808817339199117, "observation_p90": 0.1467198152851639, "observation_worst": 0.15561465139752384, "passed": true}
+    ],
+    "strata_passed": 10,
+    "strata_total": 12,
+    "passed": false
+  },
+  "controls": {
+    "no_transport_centered_h1": {
+      "logical_online_calls_per_cell": {"A": 1, "AT": 1},
+      "strata_passed": 10,
+      "strata_total": 12,
+      "failed_strata": [[0.75, 5], [1.0, 5]],
+      "passed": false
+    },
+    "frozen_isotropic_h1": {
+      "logical_online_calls_per_cell": {"A": 1, "AT": 1},
+      "t075_five_camera_gradient_p90": 0.7586387509824308,
+      "t075_five_camera_gradient_worst": 0.8357519533000473,
+      "t100_five_camera_gradient_p90": 0.7120334287186677,
+      "t100_five_camera_gradient_worst": 0.7890852092333692
+    },
+    "mass_conserving_global_affine_v166": {
+      "logical_online_calls_non_anchor": {"A": 13, "AT": 1},
+      "t075_five_camera_gradient_p90": 0.795555563289827,
+      "t075_five_camera_gradient_worst": 1.0597905916590662,
+      "t100_five_camera_gradient_p90": 0.7302566599627898,
+      "t100_five_camera_gradient_worst": 1.0879873835714176
+    },
+    "cgls_k16": {"logical_online_calls_per_cell": {"A": 16, "AT": 16}}
+  },
+  "frozen_thresholds": {
+    "field_p90": 0.5,
+    "field_worst": 0.75,
+    "gradient_p90": 0.75,
+    "gradient_worst": 1.0,
+    "observation_p90": 0.2,
+    "observation_worst": 0.35
+  },
+  "execution": {
+    "operator_setup_count": 39,
+    "cell_count": 1404,
+    "arm_row_count": 5616,
+    "formal_validity_checks": 46,
+    "independent_validity_checks": 58,
+    "geometry_setup_forward_equivalents": 13299,
+    "formal_permutation_audit_tangent_forward_calls": 12636,
+    "offline_truth_observation_calls": 1404,
+    "offline_selected_projection_calls": 4212,
+    "setup_audit_or_offline_cost_treated_as_free": false,
+    "first_attempt_status": "INVALID_EXECUTION_BEFORE_FORMAL_REPORT_DUE_TO_JSON_BOOLEAN_SERIALIZATION",
+    "first_attempt_scientific_arrays_reused": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "maximum_local_parameter_relative_difference": 7.391468829302285e-11,
+    "maximum_primary_coefficient_relative_difference": 1.799536707401403e-10,
+    "maximum_transport_prior_relative_difference": 1.6553323679624217e-10,
+    "maximum_per_cell_metric_difference": 5.7891136329146775e-11,
+    "maximum_summary_metric_difference": 7.126632617371342e-12,
+    "maximum_camera_permutation_primary_relative_difference": 7.712919130685549e-13,
+    "maximum_flow_roundtrip_relative_to_minimum_spacing": 2.101887305135126e-14,
+    "maximum_partition_sum_difference": 3.3306690738754696e-16,
+    "minimum_density_factor": 0.9086210215436499,
+    "maximum_density_factor": 1.0449281173034421,
+    "local_rank": 12,
+    "discrete_decision_identical": true
+  },
+  "interpretation": "The fixed four-region local mass-conserving flow does not repair the late sparse-view gradient tails. It is worse than both the same-budget v166 global affine continuity transport and the cheaper frozen H1 control in the failed strata, so this exact local family closes.",
+  "next_gate": "Prioritize condition-matched experimental two-component displacements with complete metadata. Any further virtual-proxy mechanism must be physically different from fixed stationary four-region transport, preregistered, and independently recomputed.",
+  "claim_limits": {
+    "paired_experimental_2d_projections_used": false,
+    "learned_predictor_used": false,
+    "predictor_training_authorized": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}
