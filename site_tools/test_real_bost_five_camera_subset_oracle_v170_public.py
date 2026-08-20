@@ -42,18 +42,25 @@ def test_public_result_is_substantively_bilingual() -> None:
 def test_public_surfaces_expose_the_same_capacity_verdict() -> None:
     for surface in SURFACES:
         text = surface.read_text(encoding="utf-8")
+        assert "v170" in text
+        assert "real_bost_five_camera_subset_oracle_v170_result_2026-08-21.md" in text
+        assert "algorithm_breakthrough" in text
+    for surface in SURFACES[:2]:
+        text = surface.read_text(encoding="utf-8")
         assert "PASS_GEOMETRY_ONLY_SHARED_FIVE_CAMERA_SUBSET_CAPACITY_V170" in text
         assert "0.748953" in text
-        assert "algorithm_breakthrough" in text
 
 
-def test_current_evidence_points_to_v170() -> None:
+def test_current_evidence_preserves_v170_but_points_to_v171() -> None:
     payload = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert payload["engineering_status"].endswith("FIVE_CAMERA_SUBSET_ORACLE_V170")
-    assert payload["formal_status"].endswith("FIVE_CAMERA_SUBSET_ORACLE_V170")
-    assert payload["scientific_status"] == "PASS_GEOMETRY_ONLY_SHARED_FIVE_CAMERA_SUBSET_CAPACITY_V170"
+    assert payload["v170_five_camera_subset_oracle_scientific_decision"] == (
+        "PASS_GEOMETRY_ONLY_SHARED_FIVE_CAMERA_SUBSET_CAPACITY_V170"
+    )
     assert payload["current_decision"]["v170_calibration_shared_capacity_passed"] is True
     assert payload["current_decision"]["v170_deployable_selector_established"] is False
+    assert payload["engineering_status"].endswith("RESULT_BLIND_CAMERA_SELECTOR_V171")
+    assert payload["formal_status"].endswith("RESULT_BLIND_CAMERA_SELECTOR_V171")
+    assert payload["scientific_status"] == "PASS_RESULT_BLIND_GEOMETRY_SELECTOR_HEADROOM_V171"
 
 
 def test_public_figure_is_large_and_nonblank() -> None:

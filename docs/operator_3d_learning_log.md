@@ -15403,3 +15403,43 @@ The formal implementation uses binary mixed-integer feasibility. A fully indepen
 One already selected H1 solve has a logical online ledger of `1A+1A^T`, but the exhaustive offline search is not deployment cost or speed evidence. The witnesses read opened 3D truth, so v170 is finite capacity rather than an observation/geometry-only selector. The next gate must separate geometry-development and held-out geometry conditions and compare a result-blind CPU-scale selector against cheap deterministic controls.
 
 This is a substantive scientific-judgment advance, but not an algorithm breakthrough: `algorithm_breakthrough=false`, `paper_success=false`, `resource_speedup=false`, `real_bost=false`.
+
+## 2026-08-21：v171 结果不可见几何选择器找回五相机容量
+
+### 从存在性走到结果不可见选择
+
+v170 证明了每套标定的五相机有限家族中存在合格子集，但见证读取三维真值。v171 保持同一 13 套标定、126 个五相机候选、冻结 H1 重建和六项误差门，改问一个更接近部署的问题：留出整套标定的候选结果完全不进入拟合和预测时，只从报告几何能否选到安全子集。
+
+主策略用固定世界 DCT 坐标中的 26 个非恒定 H1-whitened 低频模态构造每个候选的 Gram，取 trace 归一化上三角与五个谱标量，共 `356` 个特征。外折 fit 侧用固定 `lambda=0.01` 的线性 ridge 拟合风险，最大参数数为 `357`；未做超参搜索。预测包不含留出候选真值行，预测进程不读取父指标。
+
+### 科学结果与对照
+
+Gram-ridge 在 `13/13` 个留一整套标定外折中选到严格本地安全子集，四个时间分层全部通过。四个 gradient p90 为 `0.612250 / 0.623236 / 0.630384 / 0.617378`；`t=0.75` 的 gradient p90 / worst 为 `0.630384 / 0.692196`，明显低于冻结门和冻结 H1 的 `0.758639`。
+
+fit-static 对照只有 `2/13` 个留出标定本地安全，v169 固定几何对照为 `0/13`；两者四个全局时间分层均失败。因此当前正结果不是固定名单或旧低频几何启发式的简单复述。
+
+科学判决为 `PASS_RESULT_BLIND_GEOMETRY_SELECTOR_HEADROOM_V171`。
+
+### 独立复算与成本
+
+独立程序重建几何特征、13 个外折拟合、结果不可见预测、三个策略选择、指标汇总与成本账。`21/21` 项检查通过。特征、预测、策略报告最大绝对差为 `2.33e-11 / 1.96e-11 / 8.04e-12`；fold 风险差与留出标签突变后的预测变化均为 `0`，全部离散选择一致。
+
+几何特征 cache 披露 `338` 个 forward-equivalent 低模态投影。cache 建成后 selector 拟合为 `0A+0A^T`，一个已选 H1 重建逻辑在线账为 `1A+1A^T`。这没有 fresh wall/RSS 证据，不能写成资源优势。
+
+### 边界与下一门
+
+这一步把 v170 的真值容量推进成了小型、结果不可见、只读报告几何的选择机制，因此是实质科学增量。但 13 套标定的完整候选结果此前已经由 v170 开封；当前外折证明数据流 noninterference，不等于 fresh field/time 或外部泛化。它也只负责选相机，没有完成 observation-only warm initializer、exact lift 与 unchanged CGLS 的整条链。
+
+下一门是结果前冻结整场与时间隔离，排除选择器只编码已开封九个场；只有该门通过，才接入完整 warm-start 物理链。当前仍不租 GPU。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v171 advances v170 truth-aware capacity into result-blind selection. It retains the same thirteen calibrations, 126 five-camera candidates, frozen H1 reconstruction, and six error gates. Each candidate is represented by a trace-normalized Gram over 26 nonconstant H1-whitened low-frequency world-DCT modes plus five spectral scalars, for 356 geometry-only features. A fixed-lambda linear ridge uses at most 357 parameters. Held-out candidate outcomes are absent from the prediction packages, and the prediction process does not read parent metrics.
+
+The primary selects a strict local-safe subset in all `13/13` leave-one-complete-calibration-out folds and clears all `4/4` time strata. Gradient p90 values are `0.612250 / 0.623236 / 0.630384 / 0.617378`; at `t=0.75`, gradient p90 / worst are `0.630384 / 0.692196`. Fit-static reaches only `2/13` strict-safe folds, while the frozen v169 geometry control reaches `0/13`; both fail all four global strata.
+
+An independent second implementation rebuilds the features, thirteen outer fits, result-blind predictions, three policy selections, summaries, and the call ledger. All `21/21` checks pass. Maximum feature, prediction, and policy-report differences are `2.33e-11`, `1.96e-11`, and `8.04e-12`; fold-risk difference and prediction change under held-out-label mutation are both zero.
+
+Decision: `PASS_RESULT_BLIND_GEOMETRY_SELECTOR_HEADROOM_V171`. This is substantive post-open mechanism headroom, because all thirteen calibration outcome families were already opened by v170. It is not fresh field/time or external generalization, a complete observation/geometry-only warm-start pipeline, real BOST, a resource speedup, paper success, or an algorithmic breakthrough. The next gate adds whole-field/time separation before full physics integration; GPU rental remains unauthorized.

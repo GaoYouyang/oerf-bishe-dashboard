@@ -1,0 +1,130 @@
+{
+  "schema_version": "oerf-public-real-bost-result-blind-camera-selector-v171",
+  "updated": "2026-08-21",
+  "formal_status": "PASS_FORMAL_PRIVATE_RESULT_BLIND_CAMERA_SELECTOR_V171",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_RESULT_BLIND_CAMERA_SELECTOR_V171",
+  "scientific_decision": "PASS_RESULT_BLIND_GEOMETRY_SELECTOR_HEADROOM_V171",
+  "scope": "A post-open leave-one-complete-calibration-out development diagnostic on a controlled virtual straight-ray proxy. The selector reads reported geometry only, but all calibration outcomes were already opened by v170; this is not fresh external generalization or condition-matched experimental BOST.",
+  "question": "Can a small result-blind geometry-only selector recover the five-camera capacity exposed by v170 on held-out reported calibrations, without using held-out reconstruction outcomes?",
+  "selector": {
+    "name": "Gram-ridge geometry selector",
+    "outer_split": "leave one complete calibration out",
+    "calibration_count": 13,
+    "candidate_subsets_per_calibration": 126,
+    "camera_count": 5,
+    "feature_dimension": 356,
+    "trainable_parameters_max": 357,
+    "ridge_lambda": 0.01,
+    "deployment_inputs": ["reported camera geometry"],
+    "heldout_outcomes_available_to_prediction": false,
+    "prediction_stage_parent_metrics_read": false,
+    "camera_permutation_invariant": true,
+    "strict_local_safe_count": 13,
+    "strict_local_safe_total": 13,
+    "selected_local_risk_worst": 0.9364246445942102,
+    "passed": true
+  },
+  "controls": {
+    "fit_static": {
+      "definition": "One subset selected from fit-calibration outcomes and reused on the held-out calibration",
+      "strict_local_safe_count": 2,
+      "strict_local_safe_total": 13,
+      "strata_passed": 0,
+      "strata_total": 4,
+      "passed": false
+    },
+    "v169_fixed_geometry": {
+      "definition": "Frozen low-frequency geometry observability heuristic from v169",
+      "strict_local_safe_count": 0,
+      "strict_local_safe_total": 13,
+      "strata_passed": 0,
+      "strata_total": 4,
+      "passed": false
+    },
+    "passing_cheap_controls": []
+  },
+  "primary_strata": [
+    {
+      "time": 0.0,
+      "cell_count": 117,
+      "field": {"p90_higher": 0.33073191122467693, "worst": 0.36105617380510824},
+      "gradient": {"p90_higher": 0.6122498397948979, "worst": 0.7023184834456576},
+      "observation": {"p90_higher": 0.13008450734328814, "worst": 0.14582924470272737},
+      "passed": true
+    },
+    {
+      "time": 0.25,
+      "cell_count": 117,
+      "field": {"p90_higher": 0.3377345538438707, "worst": 0.39469429662439914},
+      "gradient": {"p90_higher": 0.6232361751515126, "worst": 0.6498523971795463},
+      "observation": {"p90_higher": 0.11960209544765815, "worst": 0.12509617695967062},
+      "passed": true
+    },
+    {
+      "time": 0.75,
+      "cell_count": 117,
+      "field": {"p90_higher": 0.32309841975772874, "worst": 0.357847374895639},
+      "gradient": {"p90_higher": 0.6303836430312433, "worst": 0.6921956179642821},
+      "observation": {"p90_higher": 0.11732061821277406, "worst": 0.1202104411223819},
+      "passed": true
+    },
+    {
+      "time": 1.0,
+      "cell_count": 117,
+      "field": {"p90_higher": 0.32217955266852, "worst": 0.35799592735132335},
+      "gradient": {"p90_higher": 0.6173775268893773, "worst": 0.6367025745990706},
+      "observation": {"p90_higher": 0.1194573623469809, "worst": 0.12412458944041639},
+      "passed": true
+    }
+  ],
+  "frozen_thresholds": {
+    "field_p90_higher_max": 0.5,
+    "field_worst_max": 0.75,
+    "gradient_p90_higher_max": 0.75,
+    "gradient_worst_max": 1.0,
+    "observation_p90_higher_max": 0.2,
+    "observation_worst_max": 0.35,
+    "strict_t075_gradient_improvement_vs_frozen_h1": true
+  },
+  "comparison": {
+    "gram_ridge_gradient_p90_by_time": [0.6122498397948979, 0.6232361751515126, 0.6303836430312433, 0.6173775268893773],
+    "fit_static_gradient_p90_by_time": [0.8513929904838691, 0.8521122668675452, 0.8686192725738223, 0.8755584931261048],
+    "v169_fixed_geometry_gradient_p90_by_time": [0.8954786655069235, 0.8834571783983814, 0.8959141946922606, 0.8602696356493538],
+    "frozen_h1_t075_gradient_p90": 0.7586387509824308
+  },
+  "execution": {
+    "fold_count": 13,
+    "selector_geometry_setup_forward_equivalents": 338,
+    "selector_fit_exact_A": 0,
+    "selector_fit_exact_AT": 0,
+    "selected_h1_logical_online_A": 1,
+    "selected_h1_logical_online_AT": 1,
+    "fresh_wall_or_rss_measured": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "check_count": 21,
+    "feature_maximum_absolute_difference": 2.325517556300838e-11,
+    "fold_package_log_risk_maximum_absolute_difference": 0.0,
+    "heldout_label_mutation_prediction_maximum_absolute_difference": 0.0,
+    "prediction_maximum_absolute_difference": 1.9596768652263563e-11,
+    "policy_report_maximum_absolute_difference": 8.04051270009154e-12,
+    "all_policy_selections_exact": true
+  },
+  "interpretation": "The v170 truth-aware capacity can be recovered by a small result-blind geometry-only ranker on held-out reported calibrations, while the frozen static and v169 geometry controls fail. This establishes post-open mechanism headroom for sensor selection, not fresh field or external generalization and not the full warm-start reconstruction pipeline.",
+  "next_gate": "Freeze a field-and-time-separated test of the same selector, then integrate any passing subset policy with the observation-only warm initializer, exact lift, and unchanged CGLS. Resource measurement remains downstream of matched-accuracy and fresh-condition gates.",
+  "claim_limits": {
+    "all_calibration_outcomes_were_opened_before_v171": true,
+    "fresh_field_or_time_generalization_established": false,
+    "external_generalization": false,
+    "paired_experimental_2d_projections_used": false,
+    "full_observation_geometry_warm_initializer_established": false,
+    "exact_call_reduction_established": false,
+    "resource_speedup": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}
