@@ -15214,3 +15214,51 @@ The primary clears `10/12` strata. Five-camera gradient p90 / worst are `0.79555
 An independent second implementation rebuilds the complete mechanism and all four arms. All `53/53` checks pass, every affine fit has rank `12`, the minimum determinant is `0.988968`, and the reciprocal-determinant identity is reproduced to `1.11e-16`.
 
 Decision: `FAIL_OBSERVATION_CONTINUITY_AFFINE_TRANSPORT_V166`. The exact mass-conserving global affine family closes without determinant, cap, SVD, H1, larger-model, or GPU rescue. This does not exclude local or non-global continuity flow and does not close the C route. It is not predictor training, a resource result, external generalization, real BOST, paper success, or an algorithm breakthrough.
+
+## 2026-08-20：v167 四分区局部连续性流没有救回五相机梯度尾部
+
+### 为什么继续做这一条
+
+v166 关闭了质量守恒的全局仿射输运，但留下一个更窄的问题：失败是否只是因为全局速度场不能表达局部非刚性运动。v167 因此不增加参数数目或调用预算，而是把十二个全局仿射方向换成四个平滑空间分区，每个分区三项平移，共十二个局部连续性方向。
+
+每个方向都使用 `-div(rho * phi_r * e_j)`。十二个系数只从当前仿真二维双分量观测、报告几何和上一时刻部署重建中拟合；当前三维真值不进入方向、系数、cap、回退或停止。非初始 cell 仍为 `13A+1A^T`，与 v166 同预算；冻结 H1 control 为 `1A+1A^T`。
+
+### 执行前机械修复不是科学结果
+
+在读取正式科学数组前，一阶变分合成检查发现普通三线性插值在网格节点不可微，零流在上边界也不稳定。执行链改成 C1 Catmull-Rom 三次卷积、显式零延拓、边界数值吸附和一致导数，并固定 16 步 RK4。十二个一阶方向、零流恒等和独立机械实现随后全部通过。
+
+第一次完整计算只在写 JSON report 时因非原生布尔量序列化失败，没有生成 formal report 或 READY；当时不读取、不复用科学数组。修正序列化后用新 run ID 完整重跑。这两项都属于执行有效性，不是算法增量。
+
+### 正式结果与同预算比较
+
+主策略仍只通过 `10/12` 个时间×相机分层：
+
+- `t=0.75` 五相机 field / gradient / observation p90 为 `0.333662 / 0.813123 / 0.117309`，gradient worst 为 `1.145759`；
+- `t=1.0` 五相机 field / gradient / observation p90 为 `0.331701 / 0.757524 / 0.119180`，gradient worst 为 `1.244834`；
+- 两层 field 与 observation 过门，但 gradient p90 与 worst 均失败。
+
+局部化没有改善父机制。v166 同两层为 `0.795556 / 1.059791` 与 `0.730257 / 1.087987`；v167 两组都更差。冻结 H1 更便宜，且分别为 `0.758639 / 0.835752` 与 `0.712033 / 0.789085`。因此局部机制既未通过完整精度门，也没有同预算或低成本优势。
+
+### 独立复算与判决
+
+完全独立第二实现重建四个分区、十二个连续性切向、SVD 拟合、速度 cap、16 步 RK4、log-density 因子、四类候选、二维观测、逐 cell 指标、调用账和十二个分层。`58/58` 项检查全部通过。
+
+局部参数、主系数、输运 prior、逐 cell 指标、汇总和相机乱序主结果的最大差为 `7.39e-11 / 1.80e-10 / 1.66e-10 / 5.79e-11 / 7.13e-12 / 7.71e-13`。局部拟合秩始终为 `12`，分区和误差为 `3.33e-16`，流往返误差相对最小网格间距为 `2.10e-14`。
+
+科学判决是 `FAIL_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167`。关闭固定四分区、固定静止局部速度、固定 RK4 / SVD / cap / H1 的连续性流，不增加分区、不换插值、不调正则，也不用 CNN、FNO、UNO、DeepONet 或 GPU 挽救。
+
+这不证明所有局部或时变流都不可能，也不关闭整个 C 路线。当前更有价值的依赖仍是逐工况配对实验二维双分量位移及完整元数据；没有新物理信息时，不继续扩建相邻旧家族。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v167 asks whether v166 failed only because a global affine velocity cannot represent local nonrigid motion. It replaces the twelve global affine generators with four smooth spatial partitions times three translation components, keeping twelve parameters and the same non-anchor `13A+1A^T` budget. Each tangent is `-div(rho * phi_r * e_j)`, and fitting reads only current simulated two-component observations, reported geometry, and the previous deployed reconstruction.
+
+Before formal scientific arrays were read, synthetic first-variation tests exposed grid-node non-differentiability and a zero-flow boundary defect in trilinear interpolation. The execution was frozen with C1 Catmull-Rom interpolation, explicit zero extension, matching derivatives, and 16-step RK4. A later first full run failed only during JSON boolean serialization and produced no formal report or READY; its scientific arrays were neither read nor reused. These are engineering-validity corrections, not scientific results.
+
+The primary clears `10/12` strata. Five-camera gradient p90 / worst are `0.813123 / 1.145759` at `t=0.75` and `0.757524 / 1.244834` at `t=1.0`. Both are worse than same-budget v166 and the cheaper frozen H1 control.
+
+An independent second implementation rebuilds the entire local flow and all four arms. All `58/58` checks pass. Maximum local-parameter, primary-coefficient, transported-prior, per-cell, summary, and camera-permutation differences are `7.39e-11`, `1.80e-10`, `1.66e-10`, `5.79e-11`, `7.13e-12`, and `7.71e-13`.
+
+Decision: `FAIL_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167`. The fixed four-region stationary local-continuity family closes without partition-count, interpolation, SVD, cap, H1, larger-model, or GPU rescue. This does not exclude every local or time-varying flow and does not close the C route. It is not predictor training, a resource result, external generalization, real BOST, paper success, or an algorithm breakthrough.

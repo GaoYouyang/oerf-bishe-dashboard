@@ -7,25 +7,28 @@ from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SUMMARY = ROOT / "docs/real_bost_observation_crossterm_transport_v165_public_summary.json"
-RESULT = ROOT / "docs/real_bost_observation_crossterm_transport_v165_result_2026-08-20.md"
-FIGURE = ROOT / "assets/figures/real_bost_observation_crossterm_transport_v165.png"
+SUMMARY = ROOT / "docs/real_bost_observation_local_continuity_flow_v167_public_summary.json"
+RESULT = ROOT / "docs/real_bost_observation_local_continuity_flow_v167_result_2026-08-20.md"
+FIGURE = ROOT / "assets/figures/real_bost_observation_local_continuity_flow_v167.png"
 SURFACES = [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]
 
 
-def test_public_summary_keeps_the_v165_boundary() -> None:
+def test_public_summary_keeps_the_v167_boundary() -> None:
     payload = json.loads(SUMMARY.read_text(encoding="utf-8"))
-    assert payload["scientific_decision"] == "FAIL_OBSERVATION_CROSSTERM_TRANSPORT_V165"
+    assert payload["scientific_decision"] == "FAIL_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167"
     assert payload["primary"]["strata_passed"] == 10
     assert payload["primary"]["strata_total"] == 12
     assert payload["primary"]["passed"] is False
     failed = [row for row in payload["primary"]["strata"] if not row["passed"]]
     assert [(row["time"], row["camera_count"]) for row in failed] == [(0.75, 5), (1.0, 5)]
-    assert failed[0]["gradient_p90"] == 0.8011623908089439
-    assert failed[1]["gradient_worst"] == 1.1487267632768896
-    assert payload["controls"]["same_budget_global_affine_v164_1"]["logical_online_calls_non_anchor"] == {"A": 13, "AT": 1}
-    assert payload["execution"]["independent_validity_checks"] == 48
+    assert failed[0]["gradient_p90"] == 0.8131226543116701
+    assert failed[1]["gradient_worst"] == 1.2448335163543267
+    assert payload["primary"]["logical_online_calls_non_anchor"] == {"A": 13, "AT": 1}
+    assert payload["execution"]["formal_validity_checks"] == 46
+    assert payload["execution"]["independent_validity_checks"] == 58
+    assert payload["execution"]["first_attempt_scientific_arrays_reused"] is False
     assert payload["independent_recomputation"]["all_checks_passed"] is True
+    assert payload["independent_recomputation"]["local_rank"] == 12
     assert payload["claim_limits"]["predictor_training_authorized"] is False
     assert payload["claim_limits"]["gpu_rental_authorized"] is False
     assert payload["claim_limits"]["real_bost"] is False
@@ -33,25 +36,37 @@ def test_public_summary_keeps_the_v165_boundary() -> None:
 
 def test_public_result_is_substantively_bilingual() -> None:
     text = RESULT.read_text(encoding="utf-8")
-    assert "纯交叉项输运仍未救回" in text
-    assert "pure cross-term transport still does not repair" in text
+    assert "四分区局部连续性流没有救回" in text
+    assert "four-region local continuity flow does not repair" in text
     assert "13A+1A^T" in text
-    assert "FAIL_OBSERVATION_CROSSTERM_TRANSPORT_V165" in text
+    assert "FAIL_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167" in text
     assert "algorithm_breakthrough=false" in text
 
 
-def test_public_surfaces_keep_v165_as_traceable_history() -> None:
+def test_public_surfaces_expose_the_same_verdict() -> None:
     for surface in SURFACES:
         text = surface.read_text(encoding="utf-8")
-        assert "v165" in text
+        assert "FAIL_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167" in text
         assert "10/12" in text
+        assert "0.813123" in text
         assert "algorithm_breakthrough" in text
 
-    # Detailed historical evidence stays on the research surface while the
-    # root and daily summaries prioritize the latest result.
-    text = SURFACES[1].read_text(encoding="utf-8")
-    assert "FAIL_OBSERVATION_CROSSTERM_TRANSPORT_V165" in text
-    assert "0.801162" in text
+
+def test_current_evidence_points_to_v167() -> None:
+    payload = json.loads(
+        (ROOT / "operator-learning/current-evidence.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert payload["engineering_status"].endswith(
+        "OBSERVATION_LOCAL_CONTINUITY_FLOW_V167"
+    )
+    assert payload["formal_status"].endswith(
+        "OBSERVATION_LOCAL_CONTINUITY_FLOW_V167"
+    )
+    assert payload["scientific_status"] == (
+        "FAIL_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167"
+    )
 
 
 def test_public_figure_is_large_and_nonblank() -> None:

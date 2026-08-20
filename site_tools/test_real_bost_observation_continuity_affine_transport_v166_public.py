@@ -58,13 +58,18 @@ def test_public_result_is_substantively_bilingual() -> None:
     assert "algorithm_breakthrough=false" in text
 
 
-def test_public_surfaces_expose_the_same_verdict() -> None:
+def test_public_surfaces_keep_v166_as_a_traceable_parent() -> None:
     for surface in SURFACES:
         text = surface.read_text(encoding="utf-8")
         assert "FAIL_OBSERVATION_CONTINUITY_AFFINE_TRANSPORT_V166" in text
         assert "10/12" in text
-        assert "0.795556" in text
+        assert "real_bost_observation_continuity_affine_transport_v166_result_2026-08-20.md" in text
         assert "algorithm_breakthrough" in text
+
+    # The full historical metric remains visible on the two research summaries,
+    # while the daily card can stay focused on the current v167 result.
+    for surface in SURFACES[:2]:
+        assert "0.795556" in surface.read_text(encoding="utf-8")
 
 
 def test_public_figure_is_large_and_nonblank() -> None:
