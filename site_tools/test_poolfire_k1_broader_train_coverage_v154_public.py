@@ -68,7 +68,7 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     assert decision["v154_predictor_training_authorized"] is False
     assert decision["v154_gpu_rental_authorized"] is False
     assert decision["algorithm_breakthrough"] is False
-    assert payload["scientific_status"] == "FAIL_FULL_TENSOR_GEOMETRY_H1_TEMPORAL_V162"
+    assert payload["scientific_status"] == "FAIL_TEMPORAL_INNOVATION_L2_V163"
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     assert "condition-matched experimental two-component displacements" in payload["next_scientific_gate_en"]
 

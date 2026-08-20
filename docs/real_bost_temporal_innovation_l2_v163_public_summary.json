@@ -1,0 +1,87 @@
+{
+  "schema_version": "oerf-public-real-bost-temporal-innovation-l2-v163",
+  "updated": "2026-08-20",
+  "formal_status": "PASS_FORMAL_PRIVATE_TEMPORAL_INNOVATION_L2_V163",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_TEMPORAL_INNOVATION_L2_V163",
+  "scientific_decision": "FAIL_TEMPORAL_INNOVATION_L2_V163",
+  "scope": "A post-open controlled virtual straight-ray proxy generated from executable 3D reconstructed density fields and camera geometry. It is not condition-matched experimental BOST.",
+  "question": "Can a deployment-visible one-sided temporal prior on reduced coefficients repair sparse-view gradient tails without changing the current observation operator?",
+  "time_values": [0.0, 0.25, 0.75, 1.0],
+  "camera_counts": [5, 7, 9],
+  "primary": {
+    "name": "DCT1024-TemporalInnovationL2 Fixed 0.03",
+    "initial_state": "At t=0, use the frozen isotropic H1 reference with multiplier 0.03",
+    "update": "At each later time solve (G + alpha I)c = q + alpha c_previous",
+    "alpha": "0.03 times the median positive eigenvalue of G times 0.25/delta_t",
+    "inputs": "Current simulated two-component observation, reported active-camera geometry, and the immediately preceding deployed reconstruction only",
+    "selection": "The one-sided prior, multiplier, time scaling, data roster, controls, and gates were frozen before v163 results; no alternate alpha, extrapolation, or bidirectional smoother was evaluated",
+    "logical_online_calls_per_cell": {"A": 1, "AT": 1},
+    "strata": [
+      {"time": 0.0, "camera_count": 5, "field_p90": 0.38263795606875906, "field_worst": 0.4155475802872956, "gradient_p90": 0.708531987549841, "gradient_worst": 0.7913161664380745, "observation_p90": 0.13266504400298357, "observation_worst": 0.14630692421859223, "passed": true},
+      {"time": 0.0, "camera_count": 7, "field_p90": 0.2904776523609332, "field_worst": 0.32127460651969364, "gradient_p90": 0.5730029774495184, "gradient_worst": 0.6100955588524274, "observation_p90": 0.14058871962327538, "observation_worst": 0.15053851058446222, "passed": true},
+      {"time": 0.0, "camera_count": 9, "field_p90": 0.21432886442017923, "field_worst": 0.2327974419983562, "gradient_p90": 0.494192544110467, "gradient_worst": 0.5294899749840091, "observation_p90": 0.14841878034998018, "observation_worst": 0.15446581948676624, "passed": true},
+      {"time": 0.25, "camera_count": 5, "field_p90": 0.4148665466435825, "field_worst": 0.5386847743880968, "gradient_p90": 0.8007186828254684, "gradient_worst": 1.0818118714557308, "observation_p90": 0.11690802945765216, "observation_worst": 0.15842943420345304, "passed": false},
+      {"time": 0.25, "camera_count": 7, "field_p90": 0.3309547735165557, "field_worst": 0.47793414695561, "gradient_p90": 0.6511349384379936, "gradient_worst": 0.7995897817908635, "observation_p90": 0.13638725735027474, "observation_worst": 0.16390915091223102, "passed": true},
+      {"time": 0.25, "camera_count": 9, "field_p90": 0.2425116479040902, "field_worst": 0.32022951919628106, "gradient_p90": 0.5554075551315828, "gradient_worst": 0.5999169896349194, "observation_p90": 0.1471888248405641, "observation_worst": 0.17033628525756994, "passed": true},
+      {"time": 0.75, "camera_count": 5, "field_p90": 0.3876929050897832, "field_worst": 0.4834502609410873, "gradient_p90": 0.9393422072082294, "gradient_worst": 1.3587055648253772, "observation_p90": 0.11623318876185308, "observation_worst": 0.12199496490298621, "passed": false},
+      {"time": 0.75, "camera_count": 7, "field_p90": 0.29564507413772706, "field_worst": 0.3393080601783445, "gradient_p90": 0.7118730886935112, "gradient_worst": 1.0150234714362087, "observation_p90": 0.1283795812134158, "observation_worst": 0.14218603512858688, "passed": false},
+      {"time": 0.75, "camera_count": 9, "field_p90": 0.21980790681610074, "field_worst": 0.23351337047818502, "gradient_p90": 0.6130976984600228, "gradient_worst": 0.6766287801964327, "observation_p90": 0.14155416410967503, "observation_worst": 0.15367048174314613, "passed": true},
+      {"time": 1.0, "camera_count": 5, "field_p90": 0.4002867209761393, "field_worst": 0.4303273884211199, "gradient_p90": 0.8647913631648897, "gradient_worst": 1.4335357105154565, "observation_p90": 0.11994082062219631, "observation_worst": 0.1331586321971156, "passed": false},
+      {"time": 1.0, "camera_count": 7, "field_p90": 0.30823097593680554, "field_worst": 0.36574675644633414, "gradient_p90": 0.7110173414447833, "gradient_worst": 1.0643626510743212, "observation_p90": 0.13964373919245168, "observation_worst": 0.14701107968501168, "passed": false},
+      {"time": 1.0, "camera_count": 9, "field_p90": 0.22373382558131116, "field_worst": 0.24535451692782026, "gradient_p90": 0.5839135381735009, "gradient_worst": 0.6637872800081079, "observation_p90": 0.15019979003246392, "observation_worst": 0.15696591120046632, "passed": true}
+    ],
+    "strata_passed": 7,
+    "strata_total": 12,
+    "passed": false
+  },
+  "same_scale_static_l2_control": {
+    "strata_passed": 1,
+    "strata_total": 12,
+    "passed": false
+  },
+  "frozen_thresholds": {
+    "field_p90": 0.5,
+    "field_worst": 0.75,
+    "gradient_p90": 0.75,
+    "gradient_worst": 1.0,
+    "observation_p90": 0.2,
+    "observation_worst": 0.35
+  },
+  "execution": {
+    "operator_setup_count": 39,
+    "cell_count": 1404,
+    "arm_row_count": 5616,
+    "formal_validity_checks": 26,
+    "independent_validity_checks": 28,
+    "geometry_setup_forward_equivalents": 13299,
+    "offline_truth_observation_calls": 1404,
+    "offline_selected_projection_calls": 4212,
+    "setup_or_offline_cost_treated_as_free": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "maximum_primary_coefficient_relative_difference": 1.8877512629791803e-10,
+    "maximum_per_cell_metric_difference": 6.619271797347892e-11,
+    "maximum_summary_metric_difference": 7.23154869319842e-12,
+    "maximum_operator_scaled_difference": 3.4553958140789173e-12,
+    "maximum_camera_permutation_primary_relative_difference": 6.046495941706161e-13,
+    "maximum_density_audit_difference": 5.551115123125783e-17,
+    "discrete_decision_identical": true
+  },
+  "validation_history": "The first independent attempt was inconclusive because it required exact JSON equality between mathematically equivalent RMS reductions that differed by 5.55e-17. All other 27 checks passed. The audit was corrected to retain exact discrete checks and a float64 roundoff bound; no scientific array, algorithm, threshold, or decision rule changed.",
+  "interpretation": "One-sided persistence preserves good observation residuals but imports stale coefficient structure into sparse-view reconstructions, substantially worsening gradient tails. This frozen temporal mechanism is closed without tuning alpha or adding a larger model.",
+  "next_gate": "Prioritize condition-matched experimental two-component displacements with complete metadata. Any further virtual-proxy mechanism must be physically distinct from coefficient persistence and the closed global-quadratic family, preregistered, and independently recomputed.",
+  "claim_limits": {
+    "paired_experimental_2d_projections_used": false,
+    "learned_predictor_used": false,
+    "predictor_training_authorized": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}
