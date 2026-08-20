@@ -15172,3 +15172,45 @@ The non-anchor cost is the same `13A+1A^T` as v164.1. At `t=0.75`, v165 is worse
 An independent second implementation rebuilds all `39` operator setups, `1,404` cells, and `5,616` four-arm rows. All `48/48` checks pass. Maximum cross-parameter, primary-coefficient, per-cell, summary, and camera-permutation differences are `1.21e-10`, `1.58e-10`, `5.79e-11`, `2.74e-11`, and `7.27e-13`.
 
 Decision: `FAIL_OBSERVATION_CROSSTERM_TRANSPORT_V165`. The exact pure `xy/xz/yz/xyz` cross-term family closes without mode, cap, SVD, H1, larger-model, or GPU rescue. This does not exclude every local nonrigid mechanism and does not close the C route. It is not predictor training, a resource result, external generalization, real BOST, paper success, or an algorithm breakthrough.
+
+## 2026-08-20：v166 质量守恒全局仿射仍未稳住五相机梯度尾部
+
+### 为什么必须重做一次全局仿射
+
+v164.1 和 v165 都把模型第 0 通道当成普通被动标量做坐标拉回，但师兄已经明确它代表密度。密度随速度场变化时不仅会被搬运，也会因局部压缩或膨胀改变幅值。因此 v166 保持同一十二参数全局仿射家族和同一调用预算，只改正物理作用：
+
+- 一阶切向由 `-u·grad(rho)` 改为 `-div(rho*u) = -u·grad(rho) - rho div(u)`；
+- 精确输运由单纯逆映射采样改为 `rho(A^-1(x-b))/det(A)`；
+- 仿射生成元、位移 cap、SVD cutoff、边界、插值、H1 乘数、四个时间、`5/7/9` 相机与所有判决门都保持冻结。
+
+这不是在旧结果后调参数，而是在检验一个物理上不同且可证伪的问题：此前失败是否只是因为漏掉了密度守恒项。
+
+### 实际结果
+
+主策略仍只通过 `10/12` 个时间×相机分层：
+
+- `t=0.75` 五相机 gradient p90 / worst 为 `0.795556 / 1.059791`，两道门都失败；
+- `t=1.0` 五相机为 `0.730257 / 1.087987`，p90 回到门内，但 worst 仍失败；
+- 两个失败层的 field p90 为 `0.329900 / 0.314500`，observation p90 为 `0.117538 / 0.119237`，都守住各自绝对门。
+
+质量守恒修正确实改变了结果。相对 v165，`t=0.75` 五相机从 `0.801162 / 1.080751` 改善到 `0.795556 / 1.059791`；`t=1.0` 从 `0.759218 / 1.148727` 改善到 `0.730257 / 1.087987`。但改善没有让完整门通过，而且仍差于只需 `1A+1A^T` 的 frozen H1：后者两层分别为 `0.758639 / 0.835752` 与 `0.712033 / 0.789085`。v166 非初始 cell 则需要 `13A+1A^T`。
+
+### 独立复算与判决
+
+完全独立的第二实现重建连续性切向、仿射拟合、矩阵指数、精确密度 push-forward、三类 control、候选场、二维观测、逐 cell 指标和调用账。`53/53` 项检查全部通过；仿射参数、主系数、输运 prior、逐 cell 指标、汇总和相机乱序的最大差分别为 `7.04e-11 / 1.61e-10 / 1.46e-10 / 5.79e-11 / 1.36e-11 / 7.15e-13`。所有拟合秩为 `12`，最小仿射行列式为 `0.988968`，`density_factor * det(A)` 与 1 的最大差为 `1.11e-16`。
+
+科学判决是 `FAIL_OBSERVATION_CONTINUITY_AFFINE_TRANSPORT_V166`。这关闭固定十二生成元、固定 cap、固定 SVD 和固定 H1 下的质量守恒全局仿射家族，不事后改 determinant 幂、生成元或正则。它没有关闭局部或非全局连续性流，也没有关闭整个 C 路线。
+
+当前仍没有逐工况配对实验二维位移。没有 predictor、fresh wall/RSS、外部泛化、真实 BOST、论文成功或算法突破；GPU 训练继续不授权。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v166 corrects the physical mismatch of transporting the model's density channel as a passive scalar. It keeps the same twelve global affine generators, caps, SVD cutoff, H1 multiplier, time-camera roster, gates, and non-anchor `13A+1A^T` cost, but changes the tangent to `-div(rho*u)` and the exact push-forward to `rho(A^-1(x-b))/det(A)`.
+
+The primary clears `10/12` strata. Five-camera gradient p90 / worst are `0.795556 / 1.059791` at `t=0.75` and `0.730257 / 1.087987` at `t=1.0`. Mass conservation improves selected tails relative to v165, but the complete gate still fails and the method remains worse than the much cheaper frozen H1 control.
+
+An independent second implementation rebuilds the complete mechanism and all four arms. All `53/53` checks pass, every affine fit has rank `12`, the minimum determinant is `0.988968`, and the reciprocal-determinant identity is reproduced to `1.11e-16`.
+
+Decision: `FAIL_OBSERVATION_CONTINUITY_AFFINE_TRANSPORT_V166`. The exact mass-conserving global affine family closes without determinant, cap, SVD, H1, larger-model, or GPU rescue. This does not exclude local or non-global continuity flow and does not close the C route. It is not predictor training, a resource result, external generalization, real BOST, paper success, or an algorithm breakthrough.
