@@ -15310,3 +15310,50 @@ The first independent-validator attempt stopped before reading scientific record
 A complete independent second implementation then rebuilds all envelopes, curl velocities, divergence and boundary identities, fits, caps, RK4 flows, candidates, observations, metrics, call ledgers, and twelve strata. All `60/60` checks pass. Maximum local-parameter, primary-coefficient, transported-prior, per-cell, summary, and camera-permutation differences are `2.49e-10`, `1.89e-10`, `1.77e-10`, `5.79e-11`, `7.13e-12`, and `1.28e-12`; flow round-trip error is `7.87e-16`.
 
 Decision: `FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168`. The exact fixed four-envelope stationary local divergence-free vortex family closes without envelope-width, cap, SVD, RK4, interpolation, H1, larger-model, or GPU rescue. This does not exclude every local or time-varying divergence-free flow and does not close the C route. It is not predictor training, a resource result, external generalization, real BOST, paper success, or an algorithm breakthrough.
+
+## 2026-08-21：v169 纯几何相机选择没有修复五相机梯度尾部
+
+### 为什么做相机选择，而不是再改重建正则
+
+v159-v168 一直在同一组固定 5/7/9 相机名单上比较不同 reference 或输运机制。五相机梯度尾部反复失败，留下一个更便宜的替代解释：也许问题不在重建器，而只是旧固定五相机名单对三维低频状态的几何可观测性太差。
+
+v169 因此不训练模型，也不读取 observation 或三维真值来挑相机。它从报告内外参重建实际进入 forward 的射线，在 63 个零均值、H1-whitened 低频 DCT 模态上枚举全部 5/7/9 相机子集。唯一选择顺序依次最大化有效秩、log pseudodeterminant、最小正特征值和 trace；特征值 cutoff、归一化与字典序 tie-break 均在结果前固定。选好名单后，继续使用冻结的 DCT1024-H1、固定 lambda multiplier `0.03`；CGLS K16 只作参考 control。
+
+### 相机名单确实变了，但五相机更差
+
+5 相机和 7 相机名单在 `13/13` 套标定中都不同于旧固定名单，分别形成 `10` 和 `7` 种唯一子集；9 相机仍是完整名单。这说明选择器不是机械地复述原 roster。
+
+但是主策略只通过 `8/12` 个时间×相机分层：七、九相机全部通过，四个五相机分层全部失败。五相机 gradient p90 在 `t=0 / 0.25 / 0.75 / 1.0` 分别为：
+
+- `0.895479`
+- `0.883457`
+- `0.895914`
+- `0.860270`
+
+冻结 H1 的对应值为 `0.708532 / 0.695875 / 0.758639 / 0.712033`。也就是说，纯几何选择在四个时间点都把五相机梯度尾部变差。以最关键的 `t=0.75` 为例，主策略 field / gradient / observation p90 为 `0.331804 / 0.895914 / 0.132072`，gradient worst 为 `1.026562`；H1 gradient p90 / worst 则为 `0.758639 / 0.835752`。
+
+### 独立复算与成本边界
+
+完全独立第二实现重建低频基、射线响应、所有相机子集评分、39 个最终选择、DCT1024-H1 与 CGLS 候选、`1,404` 个 cells、`2,808` 条双臂记录、全部指标、分层和调用账。`27/27` 项独立检查全部通过。
+
+选择评分、主策略系数和 CGLS 系数最大相对差为 `6.19e-12 / 8.24e-11 / 1.83e-10`；逐 cell 指标和汇总最大差为 `1.95e-11 / 6.65e-12`。因此负结果不是两套实现选了不同名单或数值重放漂移。
+
+几何 cache 构建披露 `13,299` 个 forward-equivalent setup projections；cache 建成后，相机选择本身为 `+0A+0A^T`。主策略逻辑在线账为 `1A+1A^T`，CGLS K16 为 `16A+16A^T`。这些是调用账，不是 fresh wall / RSS 或真实速度结果。
+
+### 科学判决与路线动作
+
+科学判决是 `FAIL_GEOMETRY_SELECTED_CAMERAS_V169`。这次正式实验和独立复算都成功，但假设失败：旧固定五相机名单不是当前梯度尾部的充分解释，至少按这套预注册的纯几何低频可观测性准则，换名单不能修复问题。
+
+关闭当前纯几何低频 DCT 相机选择器，不事后改 basis、objective、cutoff 或 tie-break，也不用 CNN、FNO、UNO、DeepONet 或 GPU 挽救。它不证明所有传感器设计都不可能，也不关闭整个 C 路线。下一有效依赖优先仍是逐工况配对实验二维双分量位移及完整元数据；若只在虚拟代理上继续，新机制必须与相机名单选择和已关闭的静止局部输运家族物理上真正不同。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v169 tests a cheaper alternative explanation for the recurring five-camera gradient tail: perhaps the reconstruction mechanisms were not the main issue and the old fixed camera roster was simply geometrically weak. The selector reads reported geometry only. It reconstructs the rays used by the forward model, enumerates every 5/7/9-camera subset over 63 zero-mean H1-whitened low-frequency DCT modes, and selects lexicographically by effective rank, log pseudodeterminant, minimum positive eigenvalue, and trace. The eigenvalue cutoff, normalization, and subset tie-break are frozen before results.
+
+The selector is active rather than degenerate: the 5- and 7-camera rosters change in all `13/13` calibrations, producing ten and seven unique subsets. Yet the primary clears only `8/12` strata. Every seven- and nine-camera stratum passes, while all four five-camera strata fail. Five-camera gradient p90 values are `0.895479 / 0.883457 / 0.895914 / 0.860270` over the four times, compared with `0.708532 / 0.695875 / 0.758639 / 0.712033` for frozen H1.
+
+An independent second implementation rebuilds the basis, ray responses, all subset scores, 39 selections, both reconstruction arms, `1,404` cells, `2,808` rows, all metrics, strata, and the call ledger. All `27/27` checks pass. Maximum relative selection-score, primary-coefficient, and CGLS-coefficient differences are `6.19e-12`, `8.24e-11`, and `1.83e-10`; maximum per-cell and summary differences are `1.95e-11` and `6.65e-12`.
+
+Decision: `FAIL_GEOMETRY_SELECTED_CAMERAS_V169`. Execution and independent recomputation succeed, but the hypothesis fails. The old fixed five-camera roster is not a sufficient explanation for the current gradient tail under this preregistered geometry-only low-frequency observability criterion. The selector closes without post-hoc basis, objective, cutoff, tie-break, larger-model, or GPU rescue. This does not rule out every sensor-design strategy and does not close the C route. It is not predictor training, a resource result, external generalization, real BOST, paper success, or an algorithm breakthrough.

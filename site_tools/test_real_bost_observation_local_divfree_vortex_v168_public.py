@@ -50,26 +50,29 @@ def test_public_surfaces_expose_the_same_verdict() -> None:
     for surface in SURFACES:
         text = surface.read_text(encoding="utf-8")
         assert "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168" in text
+        assert "algorithm_breakthrough" in text
+    for surface in SURFACES[:2]:
+        text = surface.read_text(encoding="utf-8")
         assert "10/12" in text
         assert "0.817990" in text
-        assert "algorithm_breakthrough" in text
 
 
-def test_current_evidence_points_to_v168() -> None:
+def test_current_evidence_preserves_v168_as_historical_evidence() -> None:
     payload = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(
             encoding="utf-8"
         )
     )
-    assert payload["engineering_status"].endswith(
+    assert payload["v168_observation_local_divfree_vortex_formal_status"].endswith(
         "OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
-    assert payload["formal_status"].endswith(
+    assert payload["v168_observation_local_divfree_vortex_independent_status"].endswith(
         "OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
-    assert payload["scientific_status"] == (
+    assert payload["v168_observation_local_divfree_vortex_scientific_decision"] == (
         "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
+    assert payload["scientific_status"] == "FAIL_GEOMETRY_SELECTED_CAMERAS_V169"
 
 
 def test_public_figure_is_large_and_nonblank() -> None:
