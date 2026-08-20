@@ -15357,3 +15357,49 @@ The selector is active rather than degenerate: the 5- and 7-camera rosters chang
 An independent second implementation rebuilds the basis, ray responses, all subset scores, 39 selections, both reconstruction arms, `1,404` cells, `2,808` rows, all metrics, strata, and the call ledger. All `27/27` checks pass. Maximum relative selection-score, primary-coefficient, and CGLS-coefficient differences are `6.19e-12`, `8.24e-11`, and `1.83e-10`; maximum per-cell and summary differences are `1.95e-11` and `6.65e-12`.
 
 Decision: `FAIL_GEOMETRY_SELECTED_CAMERAS_V169`. Execution and independent recomputation succeed, but the hypothesis fails. The old fixed five-camera roster is not a sufficient explanation for the current gradient tail under this preregistered geometry-only low-frequency observability criterion. The selector closes without post-hoc basis, objective, cutoff, tie-break, larger-model, or GPU rescue. This does not rule out every sensor-design strategy and does not close the C route. It is not predictor training, a resource result, external generalization, real BOST, paper success, or an algorithm breakthrough.
+
+## 2026-08-21：v170 五相机有限家族有容量，当前选择目标才是失败点
+
+### 为什么做这一步
+
+v169 只证明了预注册的低频几何可观测性目标会选错五相机名单。它没有区分两种完全不同的解释：九选五的有限家族是否整体没有足够信息，还是家族中存在合格子集、只是当前目标找不到。
+
+v170 保持同一 DCT1024、各向同性 H1、固定 multiplier `0.03` 和原六项 field / gradient / observation 门，对 13 套标定各自穷举全部 `126` 个五相机子集。总计重建 `1,638` 个算子设置、`58,968` 个候选 cell。主容量层级要求一套标定只使用一个子集，并在该标定的 9 个三维场与 4 个时间上共享。
+
+### 科学结果
+
+标定共享真值见证通过全部 `4/4` 个时间分层。四个时间的 field p90 为 `0.383423 / 0.379728 / 0.365320 / 0.365310`，gradient p90 为 `0.733335 / 0.744963 / 0.748953 / 0.730538`，observation p90 为 `0.129987 / 0.124331 / 0.121018 / 0.126488`。正式判决为：
+
+`PASS_GEOMETRY_ONLY_SHARED_FIVE_CAMERA_SUBSET_CAPACITY_V170`
+
+这改变了失败归因：当前受控代理里的五相机有限家族有容量，v169 失败的是具体选择目标，不能再写成“所有五相机子集都不行”。但余量很窄；`t=0.75` 的 gradient p90 为 `0.748953`，只比冻结 `0.750000` 门低 `0.001047`。
+
+结果后仅用于解释的稳健性核查显示，每套标定都有 `12–81` 个在本标定全部 9 个场和 4 个时间上零越线的五相机子集，中位数为 `64`，合计 `744` 个。正式与独立候选数组给出完全相同的分类。这说明正容量不是唯一偶然子集擦线，但它仍不提供部署时的选择规则。
+
+### 独立复算与成本边界
+
+正式程序使用二进制 MILP 判定有限可行性；完全独立第二实现改用支配剪枝整数动态规划，并重建全部候选。`23/23` 项检查通过。候选指标与汇总最大差为 `3.49e-11 / 1.87e-12`，direct forward / residual 哨兵最大差为 `4.09e-14 / 6.30e-13`，stationarity 最大差为 `1.03e-15`；所有阈值分类与两级容量判决一致。
+
+单个已经选定的 H1 重建逻辑在线账仍为 `1A+1A^T`。但穷举本身用了 `468` 次离线完整观测、`1,638` 次 direct sentinel，并继承 `13,299` 个 forward-equivalent 几何基投影。这些不能写成部署成本、wall/RSS 加速或资源优势。
+
+### 下一门与突破判断
+
+v170 的见证读取已经开封的三维真值，只是有限容量证据，不是 observation/geometry-only 部署选择器。下一门必须结果前分开几何开发条件和未见几何，只让部署选择器读取报告几何，并与便宜确定性 control 比较；这是 CPU 规模，不租 GPU。
+
+科学判断取得了实质进展，但没有算法突破：`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v170 separates two explanations left unresolved by v169: whether every five-camera subset is inadequate, or whether adequate subsets exist but the current geometry objective fails to find them. It freezes the same DCT1024 basis, isotropic H1 penalty, multiplier `0.03`, and six error gates, then exhausts all `126` five-of-nine subsets for each of 13 calibrations. This yields `1,638` operator setups and `58,968` candidate cells.
+
+The primary capacity level assigns one subset per calibration and shares it across all nine 3D fields and four times. It clears all `4/4` time strata. Field p90 values are `0.383423 / 0.379728 / 0.365320 / 0.365310`, gradient p90 values are `0.733335 / 0.744963 / 0.748953 / 0.730538`, and observation p90 values are `0.129987 / 0.124331 / 0.121018 / 0.126488`. Decision: `PASS_GEOMETRY_ONLY_SHARED_FIVE_CAMERA_SUBSET_CAPACITY_V170`.
+
+This changes the attribution: the finite five-camera family has capacity in the controlled proxy, so v169 failed because of its specific selection objective rather than because every five-camera subset lacked capacity. The margin remains narrow: gradient p90 at `t=0.75` is `0.748953`, only `0.001047` below the frozen `0.750000` gate.
+
+A post-open interpretation-only audit finds `12–81` locally robust subsets per calibration, with median `64` and total `744`; formal and independent classifications agree exactly. Capacity is therefore not supported by a single accidental subset, but this audit does not establish a deployment rule.
+
+The formal implementation uses binary mixed-integer feasibility. A fully independent second implementation uses dominance-pruned integer dynamic programming and rebuilds every candidate. All `23/23` checks pass. Maximum candidate-metric / summary differences are `3.49e-11 / 1.87e-12`; direct-forward / residual sentinel differences are `4.09e-14 / 6.30e-13`; maximum stationarity difference is `1.03e-15`.
+
+One already selected H1 solve has a logical online ledger of `1A+1A^T`, but the exhaustive offline search is not deployment cost or speed evidence. The witnesses read opened 3D truth, so v170 is finite capacity rather than an observation/geometry-only selector. The next gate must separate geometry-development and held-out geometry conditions and compare a result-blind CPU-scale selector against cheap deterministic controls.
+
+This is a substantive scientific-judgment advance, but not an algorithm breakthrough: `algorithm_breakthrough=false`, `paper_success=false`, `resource_speedup=false`, `real_bost=false`.

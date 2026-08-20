@@ -45,22 +45,31 @@ def test_public_result_is_substantively_bilingual() -> None:
     assert "algorithm_breakthrough=false" in text
 
 
-def test_public_surfaces_expose_the_same_verdict() -> None:
+def test_public_surfaces_keep_v169_as_traceable_parent_evidence() -> None:
     for surface in SURFACES:
+        text = surface.read_text(encoding="utf-8")
+        assert "v169" in text
+        assert "real_bost_geometry_selected_cameras_v169_result_2026-08-21.md" in text
+        assert "algorithm_breakthrough" in text
+    for surface in SURFACES[:2]:
         text = surface.read_text(encoding="utf-8")
         assert "FAIL_GEOMETRY_SELECTED_CAMERAS_V169" in text
         assert "8/12" in text
-        assert "0.895914" in text
-        assert "algorithm_breakthrough" in text
+    assert "0.895914" in SURFACES[1].read_text(encoding="utf-8")
 
 
-def test_current_evidence_points_to_v169() -> None:
+def test_current_evidence_preserves_v169_but_points_to_v170() -> None:
     payload = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert payload["engineering_status"].endswith("GEOMETRY_SELECTED_CAMERAS_V169")
-    assert payload["formal_status"].endswith("GEOMETRY_SELECTED_CAMERAS_V169")
-    assert payload["scientific_status"] == "FAIL_GEOMETRY_SELECTED_CAMERAS_V169"
+    assert payload["v169_geometry_selected_cameras_scientific_decision"] == (
+        "FAIL_GEOMETRY_SELECTED_CAMERAS_V169"
+    )
     assert payload["current_decision"]["v169_geometry_selected_cameras_passed"] is False
     assert payload["current_decision"]["v169_predictor_training_authorized"] is False
+    assert payload["engineering_status"].endswith("FIVE_CAMERA_SUBSET_ORACLE_V170")
+    assert payload["formal_status"].endswith("FIVE_CAMERA_SUBSET_ORACLE_V170")
+    assert payload["scientific_status"] == (
+        "PASS_GEOMETRY_ONLY_SHARED_FIVE_CAMERA_SUBSET_CAPACITY_V170"
+    )
 
 
 def test_public_figure_is_large_and_nonblank() -> None:

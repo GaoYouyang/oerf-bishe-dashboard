@@ -1,0 +1,134 @@
+{
+  "schema_version": "oerf-public-real-bost-five-camera-subset-oracle-v170",
+  "updated": "2026-08-21",
+  "formal_status": "PASS_FORMAL_PRIVATE_FIVE_CAMERA_SUBSET_ORACLE_V170",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_FIVE_CAMERA_SUBSET_ORACLE_V170",
+  "scientific_decision": "PASS_GEOMETRY_ONLY_SHARED_FIVE_CAMERA_SUBSET_CAPACITY_V170",
+  "scope": "A post-open truth-aware capacity diagnostic on a controlled virtual straight-ray proxy generated from executable 3D reconstructed density fields and camera geometry. It is not a deployable selector or condition-matched experimental BOST.",
+  "question": "Does the frozen five-camera H1 family contain adequate subsets, or did v169 fail because the geometry-only low-frequency observability objective selected the wrong subsets?",
+  "frozen_family": {
+    "candidate_subsets_per_calibration": 126,
+    "camera_count": 5,
+    "calibration_count": 13,
+    "model_count": 9,
+    "time_values": [0.0, 0.25, 0.75, 1.0],
+    "reconstruction": "DCT1024 isotropic H1 with fixed multiplier 0.03",
+    "logical_online_calls_for_one_chosen_subset": {"A": 1, "AT": 1},
+    "truth_used_for_capacity_selection": true,
+    "geometry_only_deployable_selector_used": false
+  },
+  "capacity": {
+    "cellwise_upper_bound": {
+      "definition": "One subset may vary for every model-calibration-time cell",
+      "strata_passed": 4,
+      "strata_total": 4,
+      "passed": true
+    },
+    "calibration_shared": {
+      "definition": "One subset per calibration is shared across all nine models and all four times",
+      "strata_passed": 4,
+      "strata_total": 4,
+      "passed": true,
+      "strata": [
+        {
+          "time": 0.0,
+          "cell_count": 117,
+          "field": {"p50": 0.3068163888993355, "p90_higher": 0.3834232870391631, "worst": 0.4068182376917274},
+          "gradient": {"p50": 0.6093061394731458, "p90_higher": 0.7333347077884184, "worst": 0.9315433238505026},
+          "observation": {"p50": 0.1070263586287909, "p90_higher": 0.12998663298880897, "worst": 0.148662092266617},
+          "passed": true
+        },
+        {
+          "time": 0.25,
+          "cell_count": 117,
+          "field": {"p50": 0.29793980479100257, "p90_higher": 0.37972849735938347, "worst": 0.44962067908531966},
+          "gradient": {"p50": 0.6223122605493105, "p90_higher": 0.7449633798053098, "worst": 0.9425619408093656},
+          "observation": {"p50": 0.10610773578362963, "p90_higher": 0.12433053166169646, "worst": 0.15072113359194303},
+          "passed": true
+        },
+        {
+          "time": 0.75,
+          "cell_count": 117,
+          "field": {"p50": 0.2889645207913724, "p90_higher": 0.3653197615473523, "worst": 0.3893533052855198},
+          "gradient": {"p50": 0.6243143546421506, "p90_higher": 0.7489533005177225, "worst": 0.8660797550554642},
+          "observation": {"p50": 0.10973333175626972, "p90_higher": 0.12101768757495909, "worst": 0.14421122624319688},
+          "passed": true,
+          "gradient_p90_margin_to_gate": 0.0010466994822775
+        },
+        {
+          "time": 1.0,
+          "cell_count": 117,
+          "field": {"p50": 0.2838257739606296, "p90_higher": 0.36531015408413603, "worst": 0.3932126854507504},
+          "gradient": {"p50": 0.5980407182633826, "p90_higher": 0.7305382163645735, "worst": 0.8432559348957703},
+          "observation": {"p50": 0.09576321644060577, "p90_higher": 0.12648841427377727, "worst": 0.1442319275339693},
+          "passed": true
+        }
+      ]
+    }
+  },
+  "frozen_thresholds": {
+    "field_p90_higher_max": 0.5,
+    "field_worst_max": 0.75,
+    "gradient_p90_higher_max": 0.75,
+    "gradient_worst_max": 1.0,
+    "observation_p90_higher_max": 0.2,
+    "observation_worst_max": 0.35,
+    "strict_t075_gradient_improvement_vs_frozen_h1": true
+  },
+  "parent_comparison": {
+    "v169_geometry_selected_gradient_p90_by_time": [0.8954786655069239, 0.8834571783983738, 0.8959141946922606, 0.8602696356493538],
+    "frozen_h1_gradient_p90_by_time": [0.7085320352330898, 0.6958749264566532, 0.7586387509824308, 0.7120334287186397],
+    "v170_calibration_shared_gradient_p90_by_time": [0.7333347077884184, 0.7449633798053098, 0.7489533005177225, 0.7305382163645735],
+    "v170_witness_subsets_different_from_v169": 13,
+    "calibration_count": 13
+  },
+  "post_open_robustness_audit": {
+    "interpretation_only": true,
+    "definition": "A locally robust subset has no p90-threshold or worst-threshold violation across all nine models and four times of its calibration",
+    "formal_and_independent_classifications_identical": true,
+    "locally_robust_subset_counts": [64, 64, 64, 61, 75, 39, 37, 64, 43, 76, 81, 64, 12],
+    "minimum": 12,
+    "median": 64,
+    "maximum": 81,
+    "total": 744,
+    "all_calibrations_have_at_least_one": true
+  },
+  "execution": {
+    "operator_setup_count": 1638,
+    "candidate_cell_count": 58968,
+    "formal_validity_checks": 25,
+    "independent_validity_checks": 23,
+    "geometry_setup_forward_equivalents": 13299,
+    "offline_full_observation_calls": 468,
+    "offline_direct_sentinel_calls": 1638,
+    "candidate_search_is_deployment_cost": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "formal_solver": "binary mixed-integer linear feasibility",
+    "independent_solver": "dominance-pruned integer dynamic programming",
+    "candidate_metric_maximum_absolute_difference": 3.492334199606262e-11,
+    "summary_maximum_absolute_difference": 1.871169885703239e-12,
+    "direct_forward_sentinel_maximum_absolute_difference": 4.085620730620576e-14,
+    "direct_residual_sentinel_maximum_absolute_difference": 6.301903443528545e-13,
+    "stationarity_maximum_absolute_difference": 1.029231810876017e-15,
+    "candidate_threshold_classifications_identical": true,
+    "capacity_feasibility_identical": true
+  },
+  "interpretation": "The finite five-camera H1 family has calibration-shared capacity under the frozen controlled proxy. v169 therefore failed because its low-frequency geometry objective chose inadequate subsets, not because every five-camera subset lacked capacity. The tightest passing margin is only 0.001047 at t=0.75, and truth is used offline to find witnesses, so this is objective-design headroom rather than a deployable algorithm.",
+  "next_gate": "Freeze a result-blind, CPU-scale subset-selection study on separated geometry development and held-out geometry conditions. It must read only reported geometry at deployment, compare cheap deterministic controls, and keep held-out truth for final scoring only.",
+  "claim_limits": {
+    "paired_experimental_2d_projections_used": false,
+    "deployable_selector_established": false,
+    "learned_predictor_used": false,
+    "predictor_training_authorized": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}

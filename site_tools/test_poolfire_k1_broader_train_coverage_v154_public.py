@@ -84,7 +84,7 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     assert (
         "condition-matched experimental two-component displacements"
-        in payload["next_scientific_gate_en"]
+        in payload["next_scientific_gate_en"].lower()
     )
 
 
