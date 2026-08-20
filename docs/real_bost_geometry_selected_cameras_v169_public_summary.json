@@ -1,0 +1,107 @@
+{
+  "schema_version": "oerf-public-real-bost-geometry-selected-cameras-v169",
+  "updated": "2026-08-21",
+  "formal_status": "PASS_FORMAL_PRIVATE_GEOMETRY_SELECTED_CAMERAS_V169",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_GEOMETRY_SELECTED_CAMERAS_V169",
+  "scientific_decision": "FAIL_GEOMETRY_SELECTED_CAMERAS_V169",
+  "scope": "A post-open controlled virtual straight-ray proxy generated from executable 3D reconstructed density fields and camera geometry. It is not condition-matched experimental BOST.",
+  "question": "Is the sparse-view gradient-tail failure mainly caused by the previously fixed camera roster, and can a geometry-only low-frequency observability selector repair it without changing the online reconstruction budget?",
+  "primary": {
+    "name": "DCT1024-GeometrySelectedCameras-H1 Fixed 0.03",
+    "selection_inputs": "Reported camera rotation, translation, intrinsics, and distortion only",
+    "selection_basis": "The 63 zero-mean DCT modes with all three mode indices below four, whitened by the frozen H1 penalty",
+    "selection_objective": "Lexicographically maximize numerical rank, log pseudodeterminant, minimum positive eigenvalue, and trace",
+    "selection_tie_break": "First lexicographic camera subset",
+    "selection_eigen_cutoff": 1e-12,
+    "reconstruction": "The frozen DCT1024 H1 reference with multiplier 0.03, evaluated on the geometry-selected subset",
+    "logical_online_calls_per_cell": {"A": 1, "AT": 1},
+    "strata": [
+      {"time": 0.0, "camera_count": 5, "field_p90": 0.3339679649497016, "field_worst": 0.3719047719527151, "gradient_p90": 0.8954786655069239, "gradient_worst": 0.9539893810050848, "observation_p90": 0.13385673338442747, "observation_worst": 0.13784448500680654, "passed": false},
+      {"time": 0.0, "camera_count": 7, "field_p90": 0.23462169546252454, "field_worst": 0.2500143286044946, "gradient_p90": 0.6040970368737079, "gradient_worst": 0.6470060509010753, "observation_p90": 0.14474068998688958, "observation_worst": 0.15614680814188348, "passed": true},
+      {"time": 0.0, "camera_count": 9, "field_p90": 0.2143288570462149, "field_worst": 0.23279742854741794, "gradient_p90": 0.49419253470833663, "gradient_worst": 0.5294899782920008, "observation_p90": 0.14841877944571516, "observation_worst": 0.15446581184604471, "passed": true},
+      {"time": 0.25, "camera_count": 5, "field_p90": 0.3236189738004927, "field_worst": 0.4420652660371047, "gradient_p90": 0.8834571783983738, "gradient_worst": 1.1356556504830335, "observation_p90": 0.13468937015007784, "observation_worst": 0.14187715776837342, "passed": false},
+      {"time": 0.25, "camera_count": 7, "field_p90": 0.22871341246495297, "field_worst": 0.2464314656446339, "gradient_p90": 0.6041431229813814, "gradient_worst": 0.6708346789097342, "observation_p90": 0.14712006772744984, "observation_worst": 0.15997725628398568, "passed": true},
+      {"time": 0.25, "camera_count": 9, "field_p90": 0.2122737516724917, "field_worst": 0.23604715445562294, "gradient_p90": 0.5100663517260774, "gradient_worst": 0.5248490024228526, "observation_p90": 0.1457250563076548, "observation_worst": 0.1664559412026038, "passed": true},
+      {"time": 0.75, "camera_count": 5, "field_p90": 0.33180376837223036, "field_worst": 0.3743456541631624, "gradient_p90": 0.8959141946922606, "gradient_worst": 1.0265615174131693, "observation_p90": 0.13207150974845722, "observation_worst": 0.14392633573945207, "passed": false},
+      {"time": 0.75, "camera_count": 7, "field_p90": 0.23828057946224881, "field_worst": 0.2688745627128216, "gradient_p90": 0.6052834810699201, "gradient_worst": 0.6885761808284503, "observation_p90": 0.14285040170506147, "observation_worst": 0.15712943542957314, "passed": true},
+      {"time": 0.75, "camera_count": 9, "field_p90": 0.2081496856436181, "field_worst": 0.22519774329936756, "gradient_p90": 0.538779430505589, "gradient_worst": 0.5735440834566895, "observation_p90": 0.1423182559505515, "observation_worst": 0.15494671911772323, "passed": true},
+      {"time": 1.0, "camera_count": 5, "field_p90": 0.3094657981855623, "field_worst": 0.3495569252611715, "gradient_p90": 0.8602696356493538, "gradient_worst": 0.920675379524232, "observation_p90": 0.13516984903417043, "observation_worst": 0.1444703477729734, "passed": false},
+      {"time": 1.0, "camera_count": 7, "field_p90": 0.22472503358647333, "field_worst": 0.24170195649173548, "gradient_p90": 0.6069665579483878, "gradient_worst": 0.6320275203716832, "observation_p90": 0.1463664520641066, "observation_worst": 0.15755030468226455, "passed": true},
+      {"time": 1.0, "camera_count": 9, "field_p90": 0.20504746002434285, "field_worst": 0.2297387878390584, "gradient_p90": 0.5051603897464586, "gradient_worst": 0.5290994305457144, "observation_p90": 0.14678650269662874, "observation_worst": 0.15574580749819114, "passed": true}
+    ],
+    "strata_passed": 8,
+    "strata_total": 12,
+    "passed": false
+  },
+  "controls": {
+    "frozen_isotropic_h1_on_previous_fixed_subset": {
+      "logical_online_calls_per_cell": {"A": 1, "AT": 1},
+      "five_camera_gradient_p90_by_time": [0.7085320352330898, 0.6958749264566532, 0.7586387509824308, 0.7120334287186397]
+    },
+    "same_selected_subset_cgls_k16": {
+      "logical_online_calls_per_cell": {"A": 16, "AT": 16},
+      "t075_five_camera_gradient_p90": 0.9901248469581462
+    }
+  },
+  "selection_audit": {
+    "calibration_count": 13,
+    "selection_row_count": 39,
+    "five_camera_candidate_count_per_calibration": 126,
+    "seven_camera_candidate_count_per_calibration": 36,
+    "nine_camera_candidate_count_per_calibration": 1,
+    "five_camera_subsets_different_from_previous_fixed_roster": 13,
+    "seven_camera_subsets_different_from_previous_fixed_roster": 13,
+    "nine_camera_subsets_identical_to_full_roster": 13,
+    "five_camera_unique_selected_subsets": 10,
+    "seven_camera_unique_selected_subsets": 7,
+    "camera_permutation_equivariant": true,
+    "truth_or_observation_used_for_selection": false
+  },
+  "frozen_thresholds": {
+    "field_p90": 0.5,
+    "field_worst": 0.75,
+    "gradient_p90": 0.75,
+    "gradient_worst": 1.0,
+    "observation_p90": 0.2,
+    "observation_worst": 0.35,
+    "strict_t075_five_camera_gradient_improvement_vs_frozen_h1": true
+  },
+  "execution": {
+    "operator_setup_count": 39,
+    "cell_count": 1404,
+    "arm_row_count": 2808,
+    "formal_validity_checks": 28,
+    "independent_validity_checks": 27,
+    "geometry_setup_forward_equivalents": 13299,
+    "selection_online_calls_after_geometry_cache": {"A": 0, "AT": 0},
+    "setup_audit_or_offline_cost_treated_as_free": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "selection_score_maximum_relative_difference": 6.194238703892482e-12,
+    "primary_coefficient_maximum_relative_difference": 8.235373976981818e-11,
+    "cgls_coefficient_maximum_relative_difference": 1.8284591345043524e-10,
+    "per_cell_metric_maximum_absolute_difference": 1.95146121484413e-11,
+    "summary_metric_maximum_absolute_difference": 6.6523453412514755e-12,
+    "lambda_maximum_relative_difference": 2.8437026833996815e-12,
+    "operator_maximum_absolute_difference": 1.4811263326919288e-11,
+    "reduced_vs_direct_forward_maximum_absolute_difference": 9.059419880941277e-14,
+    "quadratic_vs_direct_residual_maximum_absolute_difference": 9.303668946358812e-14,
+    "discrete_decision_identical": true
+  },
+  "interpretation": "The geometry-only low-frequency H1-whitened observability selector actively changes every five- and seven-camera roster, yet all four five-camera gradient p90 values worsen relative to the frozen H1 control. The sparse-view failure is therefore not explained merely by the previous fixed camera roster under this exact geometry criterion.",
+  "next_gate": "Prioritize condition-matched experimental two-component displacements with complete metadata. Any further virtual-proxy mechanism must be physically different from the closed geometry-only low-frequency subset selector and the closed stationary local-transport families, preregistered, and independently recomputed.",
+  "claim_limits": {
+    "paired_experimental_2d_projections_used": false,
+    "learned_predictor_used": false,
+    "predictor_training_authorized": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}
