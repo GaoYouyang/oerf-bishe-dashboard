@@ -15038,3 +15038,50 @@ The primary clears `11/12` frozen time-by-camera strata. The sole miss remains f
 An independent second implementation rebuilds rays, tensors, finite-difference quadratics, reduced operators, fields, observations, and decisions. All `21/21` checks pass; maximum per-cell, summary, and operator-numeric differences are `1.64e-11`, `7.65e-12`, and `7.05e-10`. Camera reordering changes the quadratic by at most `6.19e-15` relatively.
 
 Decision: `FAIL_FULL_TENSOR_GEOMETRY_H1_TEMPORAL_V162`. The current global quadratic geometry-anisotropy family and post-hoc matrix/floor/multiplier tuning are closed. Further proxy work requires a genuinely different preregistered non-global-quadratic physical mechanism; otherwise the route waits for paired experimental two-component displacements and complete metadata. This is not predictor training, a GPU case, a resource result, real BOST, or an algorithm breakthrough.
+
+## 2026-08-20：v163 单向时序系数持续在稀疏视角放大梯度尾部
+
+### 为什么做这条物理上不同的诊断
+
+v162 已把全局二次型几何正则做到了包含全部非对角耦合，仍未稳定过门。v163 不再修改空间惩罚，而是检验时序连续性是否能提供新的可观测信息：`t=0` 继续用冻结的 H1、固定 `0.03`；以后每个时刻只把上一时刻已经部署得到的约化系数作为当前 L2 先验，求解
+
+`(G + alpha I)c = q + alpha c_previous`，
+
+其中 `alpha = 0.03 × median_positive_eigenvalue(G) × 0.25 / delta_t`。公式、时间缩放、同尺度静态 L2 control、四个时间、`5/7/9` 相机、绝对门和调用账均在结果前固定；没有搜索 alpha、外推形式或双向平滑。输入只有当前仿真的二维双分量观测、报告几何和上一时刻部署解，不读当前真值。
+
+### 实际运行与结果
+
+- formal 重建 `39` 个 operator setups、`1,404` 个 cells 和四臂共 `5,616` 条记录。
+- 主策略只通过 `7/12` 个时间×相机分层；同尺度静态 L2 control 只通过 `1/12`。
+- `t=0.25` 五相机 gradient p90 / worst 为 `0.800719 / 1.081812`。
+- `t=0.75` 五相机为 `0.939342 / 1.358706`，七相机为 `0.711873 / 1.015023`。
+- `t=1.0` 五相机为 `0.864791 / 1.433536`，七相机为 `0.711017 / 1.064363`。
+- 所有 observation p90 仍低于冻结的 `0.2` 门。也就是说，观测拟合看起来良好，但上一时刻的系数结构在稀疏视角下变成了明显的空间梯度伤害。
+
+科学判决是 `FAIL_TEMPORAL_INNOVATION_L2_V163`。单向持续相对静态 control 有帮助，却远未达到安全暖启动要求；不能因为 residual 小就忽略 field-gradient 尾部。
+
+### 独立复算与一次浮点审计修复
+
+第二实现独立重建算子、时间链、系数、候选场、二维观测、逐 cell 指标和 12 个分层。最终 `28/28` 项检查全部通过；主策略系数、逐 cell 指标、汇总和相机乱序最大差分别为 `1.89e-10 / 6.62e-11 / 7.23e-12 / 6.05e-13`。
+
+第一次独立验证曾保持 `INCONCLUSIVE`：两个数学等价的 RMS 归约只差 `5.55e-17`，但旧审计要求 JSON 浮点完全相等。其余 `27` 项当时已经通过。修复只保留离散身份的精确比较，并给连续浮点量使用 float64 roundoff 界；没有改 formal 数组、机制、阈值、alpha、时间缩放或科学判决。
+
+### 路线动作
+
+关闭当前单向系数持续机制，不事后调整 alpha、不换外推、不增加双向平滑，也不用 CNN、FNO 或 GPU 挽救。它不关闭整个 C 路线，也不证明所有时序方法都不可能；它精确排除了“直接把上一时刻约化系数当当前先验”这一冻结形式。
+
+下一有效依赖优先是逐工况配对实验二维双分量位移及完整元数据。若继续受控虚拟代理，新机制必须同时不同于已关闭的系数持续和全局二次型家族，并在结果前冻结、可证伪、可由独立第二实现重算。
+
+当前不训练 predictor、不租 GPU、不启动 wall/RSS，也不把受控 straight-ray 代理写成真实 BOST。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v163 tests a physically distinct temporal explanation rather than another spatial quadratic. At `t=0`, it retains the frozen H1 reference. At later times it solves `(G + alpha I)c = q + alpha c_previous`, using only the current simulated two-component observation, reported geometry, and the previous deployed reconstruction. The alpha formula, time scaling, static L2 control, four times, `5/7/9` camera counts, absolute gates, and call ledger were frozen before results.
+
+The primary clears only `7/12` strata, while the same-scale static L2 control clears only `1/12`. Five-camera gradient p90 / worst reach `0.939342 / 1.358706` at `t=0.75` and `0.864791 / 1.433536` at `t=1.0`; two seven-camera strata also fail on gradient worst. Observation p90 stays below `0.2` throughout, showing that a good residual can coexist with material stale-structure damage in the spatial gradient.
+
+An independent second implementation rebuilds operators, the temporal chain, coefficients, fields, observations, metrics, and all twelve decisions. All `28/28` checks pass. The first validation attempt was inconclusive only because mathematically equivalent RMS reductions differed by `5.55e-17`; the audit fix added a float64 roundoff bound without changing any scientific array, mechanism, threshold, or decision.
+
+Decision: `FAIL_TEMPORAL_INNOVATION_L2_V163`. The frozen one-sided coefficient-persistence mechanism is closed without alpha tuning, extrapolation changes, bidirectional smoothing, larger models, or GPU rescue. This is not predictor training, a resource result, real BOST, paper success, or an algorithm breakthrough.
