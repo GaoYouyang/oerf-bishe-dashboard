@@ -15133,3 +15133,42 @@ The no-transport centered-H1 control also clears `10/12` and fails the same two 
 An independent second implementation rebuilds affine directions, SVD, matrix exponentials, displacement caps, interpolation, controls, fields, observations, metrics, and the call ledger. All `39/39` checks pass. Maximum affine-parameter, primary-coefficient, per-cell-metric, summary, and operator-numeric differences are `5.84e-11`, `1.49e-10`, `5.79e-11`, `7.13e-12`, and `3.46e-12`; camera reordering changes the primary by at most `7.09e-13` relatively.
 
 Decision: `FAIL_OBSERVATION_AFFINE_TRANSPORT_V164_1`. The frozen global affine-transport representation is closed without tuning the cap, SVD cutoff, warp, directions, H1, model size, or GPU use. This closes only global affine transport, not every possible local nonrigid mechanism and not the entire C route. This is not predictor training, a resource result, external generalization, real BOST, paper success, or an algorithm breakthrough.
+
+## 2026-08-20：v165 纯交叉项输运仍未救回五相机梯度尾部
+
+### 为什么做
+
+v164.1 已经排除整体平移、旋转、剪切和尺度变化组成的十二参数全局仿射流，但不能回答失败是否来自“没有非仿射空间耦合”。v165 保持完全相同的十二参数数目和非初始在线账，删除全部常数和线性项，只保留 `sx*sy`、`sx*sz`、`sy*sz`、`sx*sy*sz` 四类模式，并分别作用到三个位移分量。
+
+拟合仍只使用上一部署重建、相邻两帧仿真二维双分量观测和报告几何。列归一化、`1e-10` SVD cutoff、一格位移 cap、`0.5` 位移 Jacobian 谱范数 cap、逆映射三线性插值、域外置零、固定 `0.03` H1、四个时间、`5/7/9` 相机、绝对门和调用账均在结果前冻结。当前三维真值不参与拟合、方向生成、回退或停止。
+
+### 实际结果
+
+- 主策略通过 `10/12` 个时间×相机分层，失败仍是 `t=0.75` 和 `t=1.0` 五相机。
+- `t=0.75` 五相机 field / gradient / observation p90 为 `0.333054 / 0.801162 / 0.117583`，gradient worst 为 `1.080751`。
+- `t=1.0` 五相机 field / gradient / observation p90 为 `0.326976 / 0.759218 / 0.119543`，gradient worst 为 `1.148727`。
+- 两层的 field 与 observation 都过门；失败集中在 gradient p90 / worst。
+
+同预算比较没有支持该机制。v165 和 v164.1 非初始 cell 都是 `13A+1A^T`。在 `t=0.75`，v165 的 `0.801162` 比仿射的 `0.788531` 更差，也比 frozen H1 的 `0.758639` 更差；在 `t=1.0`，v165 比仿射改善 `0.005992`，但仍越绝对门，并明显差于 frozen H1 的 `0.712033`。不能只挑这一处局部改善宣称成功。
+
+### 独立复算与判决
+
+第二实现独立重建 `39` 个算子设置、`1,404` 个 cells 和四臂 `5,616` 条记录。`48/48` 项检查全部通过；交叉参数、主系数、逐 cell 指标、汇总和相机乱序最大差为 `1.21e-10 / 1.58e-10 / 5.79e-11 / 2.74e-11 / 7.27e-13`。拟合秩始终为 `12`，最大位移 Jacobian 谱范数 `0.202748`，最小行列式下界 `0.506742`，说明负结果不是退化拟合或 cap 失守。
+
+科学判决是 `FAIL_OBSERVATION_CROSSTERM_TRANSPORT_V165`。关闭精确定义的纯 `xy/xz/yz/xyz` 交叉项输运家族，不事后混入仿射项、追加多项式次数、调整 cap、SVD cutoff 或 H1，也不用 CNN、FNO、UNO、DeepONet 或 GPU 挽救。这不证明所有局部非刚性输运都不可能，也不关闭整个 C 路线。
+
+下一有效依赖优先是逐工况配对实验二维双分量位移及完整元数据。若仍在受控虚拟代理上推进，新机制必须同时不同于系数持续、全局二次型、全局仿射和当前纯交叉项家族，并在结果前冻结、可证伪、可由独立第二实现重算。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v165 tests the non-affine spatial-coupling explanation left open by v164.1 while holding parameter count and online cost fixed. It removes every constant and linear-affine term and retains only `sx*sy`, `sx*sz`, `sy*sz`, and `sx*sy*sz` for each of three displacement components. Fitting reads only the previous deployed reconstruction, adjacent simulated two-component observations, and reported geometry; modes, normalization, SVD cutoff, caps, interpolation, boundary rule, H1 multiplier, gates, and call ledger are frozen before results.
+
+The primary clears `10/12` strata. Five-camera field / gradient / observation p90 are `0.333054 / 0.801162 / 0.117583` at `t=0.75` and `0.326976 / 0.759218 / 0.119543` at `t=1.0`; gradient worst reaches `1.080751` and `1.148727`. Field and observation pass, but the gradient tails do not.
+
+The non-anchor cost is the same `13A+1A^T` as v164.1. At `t=0.75`, v165 is worse than both affine transport and frozen H1. At `t=1.0`, it improves affine gradient p90 by `0.005992`, but still fails the absolute gate and remains worse than frozen H1. The isolated improvement is not a passing result.
+
+An independent second implementation rebuilds all `39` operator setups, `1,404` cells, and `5,616` four-arm rows. All `48/48` checks pass. Maximum cross-parameter, primary-coefficient, per-cell, summary, and camera-permutation differences are `1.21e-10`, `1.58e-10`, `5.79e-11`, `2.74e-11`, and `7.27e-13`.
+
+Decision: `FAIL_OBSERVATION_CROSSTERM_TRANSPORT_V165`. The exact pure `xy/xz/yz/xyz` cross-term family closes without mode, cap, SVD, H1, larger-model, or GPU rescue. This does not exclude every local nonrigid mechanism and does not close the C route. It is not predictor training, a resource result, external generalization, real BOST, paper success, or an algorithm breakthrough.

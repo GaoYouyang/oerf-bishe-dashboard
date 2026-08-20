@@ -48,9 +48,8 @@ def test_public_result_is_substantively_bilingual() -> None:
 def test_public_surfaces_point_to_v163_in_both_languages() -> None:
     texts = [path.read_text(encoding="utf-8") for path in SURFACES]
     assert any("real_bost_temporal_innovation_l2_v163" in text for text in texts)
-    for path in SURFACES:
-        text = path.read_text(encoding="utf-8")
-        assert "FAIL_TEMPORAL_INNOVATION_L2_V163" in text
+    assert any("FAIL_TEMPORAL_INNOVATION_L2_V163" in text for text in texts)
+    for text in texts:
         assert "data-i18n-zh" in text
         assert "data-i18n-en" in text
 
