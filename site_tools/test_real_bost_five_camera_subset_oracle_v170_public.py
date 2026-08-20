@@ -51,16 +51,18 @@ def test_public_surfaces_expose_the_same_capacity_verdict() -> None:
         assert "0.748953" in text
 
 
-def test_current_evidence_preserves_v170_but_points_to_v171() -> None:
+def test_current_evidence_preserves_v170_but_points_to_v172() -> None:
     payload = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
     assert payload["v170_five_camera_subset_oracle_scientific_decision"] == (
         "PASS_GEOMETRY_ONLY_SHARED_FIVE_CAMERA_SUBSET_CAPACITY_V170"
     )
     assert payload["current_decision"]["v170_calibration_shared_capacity_passed"] is True
     assert payload["current_decision"]["v170_deployable_selector_established"] is False
-    assert payload["engineering_status"].endswith("RESULT_BLIND_CAMERA_SELECTOR_V171")
-    assert payload["formal_status"].endswith("RESULT_BLIND_CAMERA_SELECTOR_V171")
-    assert payload["scientific_status"] == "PASS_RESULT_BLIND_GEOMETRY_SELECTOR_HEADROOM_V171"
+    assert payload["engineering_status"].endswith("WHOLE_FIELD_TIME_SELECTOR_V172")
+    assert payload["formal_status"].endswith("WHOLE_FIELD_TIME_SELECTOR_V172")
+    assert payload["scientific_status"] == (
+        "PASS_WHOLE_FIELD_TIME_ISOLATED_GEOMETRY_SELECTOR_HEADROOM_V172"
+    )
 
 
 def test_public_figure_is_large_and_nonblank() -> None:

@@ -15443,3 +15443,45 @@ The primary selects a strict local-safe subset in all `13/13` leave-one-complete
 An independent second implementation rebuilds the features, thirteen outer fits, result-blind predictions, three policy selections, summaries, and the call ledger. All `21/21` checks pass. Maximum feature, prediction, and policy-report differences are `2.33e-11`, `1.96e-11`, and `8.04e-12`; fold-risk difference and prediction change under held-out-label mutation are both zero.
 
 Decision: `PASS_RESULT_BLIND_GEOMETRY_SELECTOR_HEADROOM_V171`. This is substantive post-open mechanism headroom, because all thirteen calibration outcome families were already opened by v170. It is not fresh field/time or external generalization, a complete observation/geometry-only warm-start pipeline, real BOST, a resource speedup, paper success, or an algorithmic breakthrough. The next gate adds whole-field/time separation before full physics integration; GPU rental remains unauthorized.
+
+## 2026-08-21：v172 同时留出标定、完整场和时间后仍然通过
+
+### 为什么还要做三重隔离
+
+v171 已经证明，留出一整套标定时，只读报告几何的小型选择器可以找到安全的五相机子集。但它的 fit 标签仍汇总了全部九个已开封三维场和四个时间点，留下一个需要直接排除的解释：选择器可能只是适配了这九个场或四个时间。
+
+v172 因此把每个外折同时定义为“留出一整套标定、一个完整三维场、一个完整时间”。拟合侧只剩 `12` 套标定、`8` 个场和 `3` 个时间，总计形成 `13×9×4=468` 个预测。留出的三类结果都不能进入风险目标、特征标准化、ridge、静态对照、tie-break 或回退。
+
+### 科学结果与对照
+
+最多 `357` 参数的 Gram-ridge 在 `468/468` 个三重隔离单元上严格安全，完整标定、完整三维场和时间分层分别通过 `13/13`、`9/9` 和 `4/4`。最坏严格风险为 `0.975390`，仍低于单位门。
+
+四个时间的 gradient p90 为 `0.613132 / 0.623236 / 0.632018 / 0.621204`。最紧的 `t=0.75` gradient p90 / worst 为 `0.632018 / 0.731543`，均守住冻结门。
+
+fit-static 与 v169 固定几何对照分别只安全 `323/468` 与 `192/468` 个单元，完整三维场均为 `0/9`、时间层均为 `0/4`。因此正结果不能由固定子集或旧几何启发式解释。
+
+科学判决为 `PASS_WHOLE_FIELD_TIME_ISOLATED_GEOMETRY_SELECTOR_HEADROOM_V172`。
+
+### 独立复算与成本
+
+独立程序使用增广最小二乘，而正式程序使用批量正规方程。它重建全部 `468` 个外折、三个策略、四个时间分层和调用账，`22/22` 项检查全部通过。特征、预测和策略报告最大差为 `2.33e-11 / 2.58e-11 / 8.04e-12`；fold 目标差与同时突变三类留出标签后的目标变化均为 `0`，全部离散选择一致。
+
+继承的几何特征 cache 为 `338` 个 forward-equivalent 低模态投影。cache 建成后 selector 拟合为 `0A+0A^T`，一个已选 H1 重建的逻辑在线账为 `1A+1A^T`。这仍不是 fresh wall / RSS 或资源加速证据。
+
+### 边界与下一门
+
+v172 排除了对九个已开封场或四个时间的简单适配解释，是明确的科学增量。但全部有限候选结果此前已经由 v170 开封，所以它仍是 post-open 受控代理证据，而不是 fresh 外部泛化。它只完成相机选择，没有完成 observation-only warm initializer、精确 `A^T` lift 和未修改 CGLS 的完整链。
+
+下一门是结果前冻结完整物理接入，并与 Zero、BP、CGLS、PCGLS、dual-ridge 做同预算、同精度比较。当前仍不租 GPU。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v172 tests whether the v171 positive result can be explained by simple adaptation to the nine opened 3D fields or four opened times. Each fold jointly holds out one complete calibration, one complete field model, and one time, leaving twelve calibrations, eight fields, and three times on the fit side. This produces `13×9×4=468` predictions, with every held-out-axis outcome excluded from target construction, normalization, ridge fitting, the static control, tie breaking, and fallback.
+
+The Gram-ridge selector with at most `357` parameters is strict-safe on `468/468` cells and clears `13/13` complete calibrations, `9/9` complete fields, and `4/4` time strata. Gradient p90 values are `0.613132 / 0.623236 / 0.632018 / 0.621204`; at `t=0.75`, gradient p90 / worst are `0.632018 / 0.731543`. Fit-static and v169 controls reach only `323/468` and `192/468` cells, with `0/9` complete fields each.
+
+An independent implementation uses augmented least squares instead of the formal batched normal equations and rebuilds all 468 folds, three policies, time strata, and the call ledger. All `22/22` checks pass. Maximum feature, prediction, and policy-report differences are `2.33e-11`, `2.58e-11`, and `8.04e-12`; fold-target and held-out-axis mutation differences are both zero, and every discrete selection agrees.
+
+Decision: `PASS_WHOLE_FIELD_TIME_ISOLATED_GEOMETRY_SELECTOR_HEADROOM_V172`. This is a substantive post-open mechanism increment: simple adaptation to the nine opened fields or four times no longer explains the selector. All finite candidate outcomes were already opened by v170, however, so this is not fresh external generalization, a complete observation/geometry-only warm-start pipeline, real BOST, a resource speedup, paper success, or an algorithmic breakthrough. The next gate integrates the passing camera policy with the observation-only initializer, exact `A^T` lift, and unchanged CGLS under fair controls; GPU rental remains unauthorized.

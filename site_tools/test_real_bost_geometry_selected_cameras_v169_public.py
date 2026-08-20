@@ -58,17 +58,17 @@ def test_public_surfaces_keep_v169_as_traceable_parent_evidence() -> None:
     assert "0.895914" in SURFACES[1].read_text(encoding="utf-8")
 
 
-def test_current_evidence_preserves_v169_but_points_to_v171() -> None:
+def test_current_evidence_preserves_v169_but_points_to_v172() -> None:
     payload = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
     assert payload["v169_geometry_selected_cameras_scientific_decision"] == (
         "FAIL_GEOMETRY_SELECTED_CAMERAS_V169"
     )
     assert payload["current_decision"]["v169_geometry_selected_cameras_passed"] is False
     assert payload["current_decision"]["v169_predictor_training_authorized"] is False
-    assert payload["engineering_status"].endswith("RESULT_BLIND_CAMERA_SELECTOR_V171")
-    assert payload["formal_status"].endswith("RESULT_BLIND_CAMERA_SELECTOR_V171")
+    assert payload["engineering_status"].endswith("WHOLE_FIELD_TIME_SELECTOR_V172")
+    assert payload["formal_status"].endswith("WHOLE_FIELD_TIME_SELECTOR_V172")
     assert payload["scientific_status"] == (
-        "PASS_RESULT_BLIND_GEOMETRY_SELECTOR_HEADROOM_V171"
+        "PASS_WHOLE_FIELD_TIME_ISOLATED_GEOMETRY_SELECTOR_HEADROOM_V172"
     )
 
 

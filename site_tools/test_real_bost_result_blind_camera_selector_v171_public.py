@@ -46,16 +46,19 @@ def test_public_surfaces_expose_the_same_v171_verdict() -> None:
     for surface in SURFACES:
         text = surface.read_text(encoding="utf-8")
         assert "PASS_RESULT_BLIND_GEOMETRY_SELECTOR_HEADROOM_V171" in text
-        assert "0.630384" in text
         assert "13/13" in text
         assert "algorithm_breakthrough" in text
+    for surface in SURFACES[1:]:
+        assert "0.630384" in surface.read_text(encoding="utf-8")
 
 
-def test_current_evidence_points_to_v171() -> None:
+def test_current_evidence_preserves_v171_but_points_to_v172() -> None:
     payload = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert payload["engineering_status"].endswith("RESULT_BLIND_CAMERA_SELECTOR_V171")
-    assert payload["formal_status"].endswith("RESULT_BLIND_CAMERA_SELECTOR_V171")
-    assert payload["scientific_status"] == "PASS_RESULT_BLIND_GEOMETRY_SELECTOR_HEADROOM_V171"
+    assert payload["engineering_status"].endswith("WHOLE_FIELD_TIME_SELECTOR_V172")
+    assert payload["formal_status"].endswith("WHOLE_FIELD_TIME_SELECTOR_V172")
+    assert payload["scientific_status"] == (
+        "PASS_WHOLE_FIELD_TIME_ISOLATED_GEOMETRY_SELECTOR_HEADROOM_V172"
+    )
     assert payload["current_decision"]["v171_result_blind_selector_passed"] is True
     assert payload["current_decision"]["v171_external_generalization"] is False
     assert payload["current_decision"]["algorithm_breakthrough"] is False
