@@ -15262,3 +15262,51 @@ The primary clears `10/12` strata. Five-camera gradient p90 / worst are `0.81312
 An independent second implementation rebuilds the entire local flow and all four arms. All `58/58` checks pass. Maximum local-parameter, primary-coefficient, transported-prior, per-cell, summary, and camera-permutation differences are `7.39e-11`, `1.80e-10`, `1.66e-10`, `5.79e-11`, `7.13e-12`, and `7.71e-13`.
 
 Decision: `FAIL_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167`. The fixed four-region stationary local-continuity family closes without partition-count, interpolation, SVD, cap, H1, larger-model, or GPU rescue. This does not exclude every local or time-varying flow and does not close the C route. It is not predictor training, a resource result, external generalization, real BOST, paper success, or an algorithm breakthrough.
+
+## 2026-08-21：v168 局部无散旋涡仍未救回五相机梯度尾部
+
+### 为什么这不是 v167 的换名重跑
+
+v167 的局部平移速度一般含有非零散度，密度输运会同时受局部压缩或膨胀影响。v168 检验一个物理上不同的说法：晚时刻稀疏视角缺口是否需要保体积的局部旋涡输运。
+
+唯一主策略在结果前冻结为四个固定、边界衰减的标量包络。每个包络与三个世界轴单位向量组成向量势，取 curl 后生成 `4 x 3 = 12` 个解析无散速度场。密度一阶切向是 `-u·grad(rho)`，精确候选使用 16 步 RK4 逆流映射。包络、宽度、边界、速度 cap、SVD cutoff、RK4、插值、H1 control、四个时间、`5/7/9` 相机、绝对门和调用账全部事先固定。
+
+十二个系数只从当前仿真二维双分量观测、报告几何和上一时刻部署重建中拟合；当前三维真值不进入方向、系数、cap、回退或停止。非初始 cell 的逻辑在线账仍为 `13A+1A^T`，与 v167 同预算；冻结 H1 control 为 `1A+1A^T`。
+
+### 正式结果与同预算比较
+
+主策略仍只通过 `10/12` 个时间×相机分层：
+
+- `t=0.75` 五相机 field / gradient / observation p90 为 `0.327235 / 0.817990 / 0.117324`，gradient worst 为 `1.158071`；
+- `t=1.0` 五相机 field / gradient / observation p90 为 `0.322356 / 0.759393 / 0.119172`，gradient worst 为 `1.271909`；
+- 两层 field 与 observation 过门，但 gradient p90 与 worst 均失败。
+
+无散旋涡没有改善父机制。v167 同两层 gradient p90 / worst 为 `0.813123 / 1.145759` 与 `0.757524 / 1.244834`；v168 分别变差 `0.004867 / 0.012311` 与 `0.001868 / 0.027075`。更便宜的 H1 则为 `0.758639 / 0.835752` 与 `0.712033 / 0.789085`。因此新机制既未过完整精度门，也没有同预算或低成本优势。
+
+### 独立复算与执行边界
+
+第一次独立 validator 在读取科学记录前，因浮点类型没有预期属性而停止。当时没有生成验证 rows、summary 或科学判决，修复只更正数值容差的读取方式，没有改机制、数组、门或 formal 结果。这是工程失效，不是科学增量。
+
+修正后，完全独立第二实现重建四个包络、十二个 curl 速度场、无散与边界恒等式、SVD 拟合、速度 cap、16 步 RK4、四类候选、二维观测、逐 cell 指标、调用账和十二个分层。`60/60` 项检查全部通过。
+
+局部参数、主系数、输运 prior、逐 cell 指标、汇总和相机乱序的最大差为 `2.49e-10 / 1.89e-10 / 1.77e-10 / 5.79e-11 / 7.13e-12 / 1.28e-12`。流往返误差为 `7.87e-16`，包络边界值、边界梯度、边界速度与解析散度均为零，所有局部拟合秩均为 `12`。
+
+### 科学判决与路线动作
+
+科学判决是 `FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168`。关闭固定四包络、固定静止无散旋涡、固定 RK4 / SVD / cap / H1 的这一精确家族，不事后调包络宽度、cap、SVD cutoff、RK4、插值或 H1，也不用 CNN、FNO、UNO、DeepONet 或 GPU 挽救。
+
+这不证明所有局部、时变或受边界驱动的无散流都不可能，也不关闭整个 C 路线。当前更有价值的依赖仍是逐工况配对实验二维双分量位移及完整元数据；若只在受控虚拟代理上继续，下一机制必须与已关闭的静止局部输运家族物理上真正不同。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v168 tests a physically distinct explanation left open by v167: whether the sparse-view temporal miss requires volume-preserving local vortical transport rather than compressible local translations. Four fixed boundary-tapered scalar envelopes are paired with three world axes; taking the curl of each vector potential produces twelve analytically divergence-free local velocity fields. The field tangent is `-u·grad(rho)`, and the exact candidate uses a sixteen-step RK4 inverse flow. Envelopes, width, boundary rule, speed cap, SVD cutoff, RK4, interpolation, H1 control, times, camera counts, gates, and call ledger are frozen before results.
+
+The primary clears `10/12` strata. Five-camera gradient p90 / worst are `0.817990 / 1.158071` at `t=0.75` and `0.759393 / 1.271909` at `t=1.0`. Both late tails are worse than same-budget v167 and the cheaper frozen H1 control.
+
+The first independent-validator attempt stopped before reading scientific records because a floating-point type lacked an expected attribute. It generated no validation rows, summaries, or scientific decision; the correction changed only tolerance lookup. This was an engineering failure, not a scientific result.
+
+A complete independent second implementation then rebuilds all envelopes, curl velocities, divergence and boundary identities, fits, caps, RK4 flows, candidates, observations, metrics, call ledgers, and twelve strata. All `60/60` checks pass. Maximum local-parameter, primary-coefficient, transported-prior, per-cell, summary, and camera-permutation differences are `2.49e-10`, `1.89e-10`, `1.77e-10`, `5.79e-11`, `7.13e-12`, and `1.28e-12`; flow round-trip error is `7.87e-16`.
+
+Decision: `FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168`. The exact fixed four-envelope stationary local divergence-free vortex family closes without envelope-width, cap, SVD, RK4, interpolation, H1, larger-model, or GPU rescue. This does not exclude every local or time-varying divergence-free flow and does not close the C route. It is not predictor training, a resource result, external generalization, real BOST, paper success, or an algorithm breakthrough.
