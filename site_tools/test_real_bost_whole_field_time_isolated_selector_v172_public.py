@@ -59,16 +59,16 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_points_to_v172_and_the_next_physics_gate() -> None:
+def test_current_evidence_preserves_v172_and_points_to_v173() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "PASS_WHOLE_FIELD_TIME_ISOLATED_GEOMETRY_SELECTOR_HEADROOM_V172"
+        "FAIL_CLASSICAL_CONTROL_EXPLAINS_CAMERA_SELECTED_WARM_V173"
     )
     assert payload["metrics"]["v172_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v172_primary_complete_fields_passed"] == 9
     assert payload["metrics"]["v172_independent_check_count"] == 22
-    assert "observation-only warm initializer" in payload["next_scientific_gate_en"]
-    assert "精确 A 转置 lift" in payload["next_scientific_gate_zh"]
+    assert "same H1-K0" in payload["next_scientific_gate_en"]
+    assert "同一 H1-K0" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v172_in_both_languages() -> None:
@@ -79,7 +79,7 @@ def test_primary_pages_reference_v172_in_both_languages() -> None:
         assert "v172" in text
     assert "整场与时间三重隔离" in operator
     assert "whole-field and time isolation" in operator
-    assert "real_bost_whole_field_time_isolated_selector_v172.png" in operator
+    assert "real_bost_whole_field_time_isolated_selector_v172_result_2026-08-21.md" in operator
     assert daily.count("PASS_WHOLE_FIELD_TIME_ISOLATED_GEOMETRY_SELECTOR_HEADROOM_V172") == 1
 
 
