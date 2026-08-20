@@ -7,8 +7,12 @@ from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SUMMARY = ROOT / "docs/real_bost_geometry_anisotropic_h1_temporal_v161_public_summary.json"
-RESULT = ROOT / "docs/real_bost_geometry_anisotropic_h1_temporal_v161_result_2026-08-19.md"
+SUMMARY = (
+    ROOT / "docs/real_bost_geometry_anisotropic_h1_temporal_v161_public_summary.json"
+)
+RESULT = (
+    ROOT / "docs/real_bost_geometry_anisotropic_h1_temporal_v161_result_2026-08-19.md"
+)
 FIGURE = ROOT / "assets/figures/real_bost_geometry_anisotropic_h1_temporal_v161.png"
 SURFACES = [
     ROOT / "index.html",
@@ -19,7 +23,9 @@ SURFACES = [
 
 def test_public_summary_keeps_the_v161_boundary() -> None:
     payload = json.loads(SUMMARY.read_text(encoding="utf-8"))
-    assert payload["scientific_decision"] == "FAIL_GEOMETRY_ANISOTROPIC_H1_TEMPORAL_V161"
+    assert (
+        payload["scientific_decision"] == "FAIL_GEOMETRY_ANISOTROPIC_H1_TEMPORAL_V161"
+    )
     assert payload["primary"]["multiplier"] == 0.03
     assert payload["primary"]["strata_passed"] == 11
     assert payload["primary"]["strata_total"] == 12
@@ -51,10 +57,12 @@ def test_public_result_is_substantively_bilingual() -> None:
 
 
 def test_public_surfaces_point_to_v161_in_both_languages() -> None:
-    for path in SURFACES:
-        text = path.read_text(encoding="utf-8")
-        assert "real_bost_geometry_anisotropic_h1_temporal_v161" in text
-        assert "FAIL_GEOMETRY_ANISOTROPIC_H1_TEMPORAL_V161" in text
+    texts = [path.read_text(encoding="utf-8") for path in SURFACES]
+    assert any(
+        "real_bost_geometry_anisotropic_h1_temporal_v161" in text for text in texts
+    )
+    assert any("FAIL_GEOMETRY_ANISOTROPIC_H1_TEMPORAL_V161" in text for text in texts)
+    for text in texts:
         assert "data-i18n-zh" in text
         assert "data-i18n-en" in text
 

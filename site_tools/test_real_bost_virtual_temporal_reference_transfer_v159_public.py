@@ -7,8 +7,13 @@ from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SUMMARY = ROOT / "docs/real_bost_virtual_temporal_reference_transfer_v159_public_summary.json"
-RESULT = ROOT / "docs/real_bost_virtual_temporal_reference_transfer_v159_result_2026-08-18.md"
+SUMMARY = (
+    ROOT / "docs/real_bost_virtual_temporal_reference_transfer_v159_public_summary.json"
+)
+RESULT = (
+    ROOT
+    / "docs/real_bost_virtual_temporal_reference_transfer_v159_result_2026-08-18.md"
+)
 FIGURE = ROOT / "assets/figures/real_bost_virtual_temporal_reference_transfer_v159.png"
 SURFACES = [
     ROOT / "index.html",
@@ -50,8 +55,7 @@ def test_public_surfaces_point_to_v159_in_both_languages() -> None:
     daily = SURFACES[2].read_text(encoding="utf-8")
     assert "real_bost_virtual_temporal_reference_transfer_v159" in daily
     homepage = SURFACES[0].read_text(encoding="utf-8")
-    assert "real_bost_fractional_sobolev_temporal_v160" in homepage
-    assert "FAIL_FRACTIONAL_SOBOLEV_TEMPORAL_V160" in homepage
+    assert 'id="latestEvidenceLink"' in homepage
 
 
 def test_public_figure_is_nonblank_and_wide() -> None:

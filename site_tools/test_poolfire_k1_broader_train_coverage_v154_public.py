@@ -20,8 +20,13 @@ SURFACES = [
 def test_summary_preserves_broader_coverage_failure_boundary() -> None:
     payload = json.loads(SUMMARY.read_text(encoding="utf-8"))
     outcome = payload["gate_outcome"]
-    assert payload["formal_status"] == "PASS_FORMAL_BROADER_TRAIN_COVERAGE_EXECUTION_V154"
-    assert payload["independent_status"] == "PASS_INDEPENDENT_RECOMPUTATION_BROADER_TRAIN_COVERAGE_V154"
+    assert (
+        payload["formal_status"] == "PASS_FORMAL_BROADER_TRAIN_COVERAGE_EXECUTION_V154"
+    )
+    assert (
+        payload["independent_status"]
+        == "PASS_INDEPENDENT_RECOMPUTATION_BROADER_TRAIN_COVERAGE_V154"
+    )
     assert payload["scientific_decision"] == "FAIL_BROADER_TRAIN_COVERAGE_V154"
     assert payload["sample_count"] == 7400
     assert payload["active_camera_rows"] == 61050
@@ -48,8 +53,12 @@ def test_public_surfaces_are_bilingual_and_point_to_v154() -> None:
             "87.07%",
         ]:
             assert needle in text, f"{needle} missing from {surface.name}"
-    assert "poolfire_k1_broader_train_coverage_v154" in SURFACES[2].read_text(encoding="utf-8")
-    assert "poolfire_k1_support_root_cause_v155" in SURFACES[0].read_text(encoding="utf-8")
+    assert "poolfire_k1_broader_train_coverage_v154" in SURFACES[2].read_text(
+        encoding="utf-8"
+    )
+    assert "poolfire_k1_support_root_cause_v155" in SURFACES[0].read_text(
+        encoding="utf-8"
+    )
     daily = SURFACES[2].read_text(encoding="utf-8")
     assert "45 天" in daily
     assert "Day 44" in daily
@@ -68,9 +77,15 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     assert decision["v154_predictor_training_authorized"] is False
     assert decision["v154_gpu_rental_authorized"] is False
     assert decision["algorithm_breakthrough"] is False
-    assert payload["scientific_status"] == "FAIL_TEMPORAL_INNOVATION_L2_V163"
+    assert (
+        payload["v154_broader_train_coverage_scientific_decision"]
+        == "FAIL_BROADER_TRAIN_COVERAGE_V154"
+    )
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
-    assert "condition-matched experimental two-component displacements" in payload["next_scientific_gate_en"]
+    assert (
+        "condition-matched experimental two-component displacements"
+        in payload["next_scientific_gate_en"]
+    )
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:
@@ -88,7 +103,9 @@ def test_public_artifacts_do_not_disclose_private_execution_details() -> None:
     for artifact in [SUMMARY, RESULT, EVIDENCE, *SURFACES]:
         text = artifact.read_text(encoding="utf-8")
         for needle in forbidden:
-            assert needle not in text, f"private token {needle!r} leaked into {artifact.name}"
+            assert needle not in text, (
+                f"private token {needle!r} leaked into {artifact.name}"
+            )
 
 
 def test_figure_is_large_nonblank_png() -> None:

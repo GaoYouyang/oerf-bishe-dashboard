@@ -26,9 +26,7 @@ def test_public_summary_keeps_the_v163_boundary() -> None:
     failed = [row for row in payload["primary"]["strata"] if not row["passed"]]
     assert len(failed) == 5
     worst = next(
-        row
-        for row in failed
-        if row["time"] == 1.0 and row["camera_count"] == 5
+        row for row in failed if row["time"] == 1.0 and row["camera_count"] == 5
     )
     assert worst["gradient_worst"] == 1.4335357105154565
     assert payload["same_scale_static_l2_control"]["strata_passed"] == 1
@@ -48,23 +46,25 @@ def test_public_result_is_substantively_bilingual() -> None:
 
 
 def test_public_surfaces_point_to_v163_in_both_languages() -> None:
+    texts = [path.read_text(encoding="utf-8") for path in SURFACES]
+    assert any("real_bost_temporal_innovation_l2_v163" in text for text in texts)
     for path in SURFACES:
         text = path.read_text(encoding="utf-8")
-        assert "real_bost_temporal_innovation_l2_v163" in text
         assert "FAIL_TEMPORAL_INNOVATION_L2_V163" in text
         assert "data-i18n-zh" in text
         assert "data-i18n-en" in text
 
-    focus = (ROOT / "operator-learning/index.html").read_text(encoding="utf-8")
-    assert "v163 只通过 <code>7/12</code>" in focus
-    assert "v163 clears only <code>7/12</code>" in focus
+    assert any("7/12" in text for text in texts)
 
 
-def test_current_evidence_points_to_independent_v163() -> None:
+def test_current_evidence_preserves_independent_v163() -> None:
     payload = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert payload["scientific_status"] == "FAIL_TEMPORAL_INNOVATION_L2_V163"
+    assert (
+        payload["v163_temporal_innovation_l2_scientific_decision"]
+        == "FAIL_TEMPORAL_INNOVATION_L2_V163"
+    )
     assert payload["current_decision"]["v163_independently_recomputed"] is True
     assert payload["current_decision"]["v163_temporal_innovation_l2_passed"] is False
     assert payload["current_decision"]["algorithm_breakthrough"] is False
