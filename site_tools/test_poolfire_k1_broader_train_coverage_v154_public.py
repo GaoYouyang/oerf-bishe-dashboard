@@ -60,7 +60,7 @@ def test_public_surfaces_are_bilingual_and_point_to_v154() -> None:
         encoding="utf-8"
     )
     daily = SURFACES[2].read_text(encoding="utf-8")
-    assert "46 天" in daily
+    assert "47 天" in daily
     assert "Day 44" in daily
 
 

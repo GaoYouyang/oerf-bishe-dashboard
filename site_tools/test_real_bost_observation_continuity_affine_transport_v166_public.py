@@ -67,7 +67,7 @@ def test_public_surfaces_keep_v166_as_a_traceable_parent() -> None:
         assert "algorithm_breakthrough" in text
 
     # The full historical metric remains visible on the two research summaries,
-    # while the daily card can stay focused on the current v167 result.
+    # while the daily card can stay focused on the current v168 result.
     for surface in SURFACES[:2]:
         assert "0.795556" in surface.read_text(encoding="utf-8")
 

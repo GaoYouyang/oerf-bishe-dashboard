@@ -7,28 +7,31 @@ from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SUMMARY = ROOT / "docs/real_bost_observation_local_continuity_flow_v167_public_summary.json"
-RESULT = ROOT / "docs/real_bost_observation_local_continuity_flow_v167_result_2026-08-20.md"
-FIGURE = ROOT / "assets/figures/real_bost_observation_local_continuity_flow_v167.png"
+SUMMARY = ROOT / "docs/real_bost_observation_local_divfree_vortex_v168_public_summary.json"
+RESULT = ROOT / "docs/real_bost_observation_local_divfree_vortex_v168_result_2026-08-21.md"
+FIGURE = ROOT / "assets/figures/real_bost_observation_local_divfree_vortex_v168.png"
 SURFACES = [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]
 
 
-def test_public_summary_keeps_the_v167_boundary() -> None:
+def test_public_summary_keeps_the_v168_boundary() -> None:
     payload = json.loads(SUMMARY.read_text(encoding="utf-8"))
-    assert payload["scientific_decision"] == "FAIL_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167"
+    assert payload["scientific_decision"] == "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     assert payload["primary"]["strata_passed"] == 10
     assert payload["primary"]["strata_total"] == 12
     assert payload["primary"]["passed"] is False
     failed = [row for row in payload["primary"]["strata"] if not row["passed"]]
     assert [(row["time"], row["camera_count"]) for row in failed] == [(0.75, 5), (1.0, 5)]
-    assert failed[0]["gradient_p90"] == 0.8131226543116701
-    assert failed[1]["gradient_worst"] == 1.2448335163543267
+    assert failed[0]["gradient_p90"] == 0.8179899494053545
+    assert failed[1]["gradient_worst"] == 1.271908652182564
     assert payload["primary"]["logical_online_calls_non_anchor"] == {"A": 13, "AT": 1}
-    assert payload["execution"]["formal_validity_checks"] == 46
-    assert payload["execution"]["independent_validity_checks"] == 58
-    assert payload["execution"]["first_attempt_scientific_arrays_reused"] is False
+    assert payload["execution"]["formal_validity_checks"] == 48
+    assert payload["execution"]["independent_validity_checks"] == 60
+    assert payload["execution"]["first_validation_attempt_outputs_reused"] is False
     assert payload["independent_recomputation"]["all_checks_passed"] is True
     assert payload["independent_recomputation"]["local_rank"] == 12
+    assert payload["independent_recomputation"]["maximum_analytic_divergence"] == 0.0
+    assert payload["independent_recomputation"]["minimum_density_factor"] == 1.0
+    assert payload["independent_recomputation"]["maximum_density_factor"] == 1.0
     assert payload["claim_limits"]["predictor_training_authorized"] is False
     assert payload["claim_limits"]["gpu_rental_authorized"] is False
     assert payload["claim_limits"]["real_bost"] is False
@@ -36,37 +39,36 @@ def test_public_summary_keeps_the_v167_boundary() -> None:
 
 def test_public_result_is_substantively_bilingual() -> None:
     text = RESULT.read_text(encoding="utf-8")
-    assert "四分区局部连续性流没有救回" in text
-    assert "four-region local continuity flow does not repair" in text
+    assert "局部无散旋涡仍未救回" in text
+    assert "local divergence-free vortices still do not repair" in text
     assert "13A+1A^T" in text
-    assert "FAIL_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167" in text
+    assert "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168" in text
     assert "algorithm_breakthrough=false" in text
 
 
 def test_public_surfaces_expose_the_same_verdict() -> None:
     for surface in SURFACES:
         text = surface.read_text(encoding="utf-8")
-        assert "FAIL_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167" in text
+        assert "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168" in text
         assert "10/12" in text
-        assert "0.813123" in text
+        assert "0.817990" in text
         assert "algorithm_breakthrough" in text
 
 
-def test_current_evidence_preserves_v167_as_parent_evidence() -> None:
+def test_current_evidence_points_to_v168() -> None:
     payload = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(
             encoding="utf-8"
         )
     )
-    independent = payload[
-        "v167_observation_local_continuity_flow_independent_status"
-    ]
-    assert independent.endswith("OBSERVATION_LOCAL_CONTINUITY_FLOW_V167")
-    assert payload["v167_observation_local_continuity_flow_formal_status"].endswith(
-        "OBSERVATION_LOCAL_CONTINUITY_FLOW_V167"
+    assert payload["engineering_status"].endswith(
+        "OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
-    assert payload["v167_observation_local_continuity_flow_scientific_decision"] == (
-        "FAIL_OBSERVATION_LOCAL_CONTINUITY_FLOW_V167"
+    assert payload["formal_status"].endswith(
+        "OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
+    )
+    assert payload["scientific_status"] == (
+        "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
 
 
@@ -84,6 +86,7 @@ def test_public_payload_does_not_expose_private_execution_material() -> None:
         "private_data",
         "model_tree_seal",
         "calibration_tree_seal",
+        "checkpoint",
     ]
     for value in forbidden:
         assert value not in text
