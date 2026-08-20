@@ -1,0 +1,104 @@
+{
+  "schema_version": "oerf-public-real-bost-observation-affine-transport-v164_1",
+  "updated": "2026-08-20",
+  "formal_status": "PASS_FORMAL_PRIVATE_OBSERVATION_AFFINE_TRANSPORT_V164_1",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_OBSERVATION_AFFINE_TRANSPORT_V164_1",
+  "scientific_decision": "FAIL_OBSERVATION_AFFINE_TRANSPORT_V164_1",
+  "scope": "A post-open controlled virtual straight-ray proxy generated from executable 3D reconstructed density fields and camera geometry. It is not condition-matched experimental BOST.",
+  "question": "Can a causal global affine transport fitted only from observation innovation and reported geometry repair sparse-view gradient tails before a centered H1 update?",
+  "time_values": [0.0, 0.25, 0.75, 1.0],
+  "camera_counts": [5, 7, 9],
+  "primary": {
+    "name": "DCT1024-ObservationAffineTransport-H1 Fixed 0.03",
+    "affine_family": "Twelve generators: three translations and nine linear coordinate terms",
+    "inputs": "Current and previous simulated two-component observations, reported active-camera geometry, and the immediately preceding deployed reconstruction only",
+    "fit": "Column-normalized least squares on observation innovation with a fixed SVD cutoff of 1e-10",
+    "transport": "Exact homogeneous matrix exponential, inverse-map trilinear interpolation, and a displacement cap of one minimum-grid cell per 0.25 normalized-time step",
+    "update": "Use the transported previous field as the center of the frozen H1 solve with multiplier 0.03",
+    "selection": "The affine generators, SVD cutoff, cap, interpolation, H1 multiplier, data roster, controls, and gates were frozen before results; no alternate warp, radius, or multiplier was selected",
+    "logical_online_calls_initial_anchor": {"A": 1, "AT": 1},
+    "logical_online_calls_non_anchor": {"A": 13, "AT": 1},
+    "strata": [
+      {"time": 0.0, "camera_count": 5, "field_p90": 0.38263797074676853, "field_worst": 0.4155475814398069, "gradient_p90": 0.7085320352330898, "gradient_worst": 0.7913163228905832, "observation_p90": 0.13266505940940757, "observation_worst": 0.1463069278919664, "passed": true},
+      {"time": 0.0, "camera_count": 7, "field_p90": 0.2904776371717633, "field_worst": 0.32127459994343927, "gradient_p90": 0.5730029838233638, "gradient_worst": 0.6100955549146233, "observation_p90": 0.14058871733732242, "observation_worst": 0.15053852497907297, "passed": true},
+      {"time": 0.0, "camera_count": 9, "field_p90": 0.2143288570461954, "field_worst": 0.23279742854743343, "gradient_p90": 0.4941925347083315, "gradient_worst": 0.5294899782919998, "observation_p90": 0.14841877944571488, "observation_worst": 0.15446581184604463, "passed": true},
+      {"time": 0.25, "camera_count": 5, "field_p90": 0.31871276411773647, "field_worst": 0.4062255127501999, "gradient_p90": 0.72363666840017, "gradient_worst": 0.9540757259607836, "observation_p90": 0.11473029813351342, "observation_worst": 0.1586668486821777, "passed": true},
+      {"time": 0.25, "camera_count": 7, "field_p90": 0.237105432322658, "field_worst": 0.2879199187143996, "gradient_p90": 0.6067841161977685, "gradient_worst": 0.6881107962204451, "observation_p90": 0.13285548509186837, "observation_worst": 0.16260675280663217, "passed": true},
+      {"time": 0.25, "camera_count": 9, "field_p90": 0.19516862875160865, "field_worst": 0.21148942806700657, "gradient_p90": 0.5318966541463689, "gradient_worst": 0.5698220199113881, "observation_p90": 0.14550530114781413, "observation_worst": 0.1660416048632137, "passed": true},
+      {"time": 0.75, "camera_count": 5, "field_p90": 0.3296502907604067, "field_worst": 0.4166355852615035, "gradient_p90": 0.7885312942827567, "gradient_worst": 1.0783015727582606, "observation_p90": 0.11758888598679233, "observation_worst": 0.12504531344757425, "passed": false},
+      {"time": 0.75, "camera_count": 7, "field_p90": 0.2637079409846237, "field_worst": 0.29546930084528167, "gradient_p90": 0.6319062115640018, "gradient_worst": 0.7983175597723215, "observation_p90": 0.13037567580248846, "observation_worst": 0.14432950818869936, "passed": true},
+      {"time": 0.75, "camera_count": 9, "field_p90": 0.21463054887950608, "field_worst": 0.22295337487614167, "gradient_p90": 0.565898854290163, "gradient_worst": 0.6885883696436108, "observation_p90": 0.14254525535987528, "observation_worst": 0.15435314394699792, "passed": true},
+      {"time": 1.0, "camera_count": 5, "field_p90": 0.3612593525512159, "field_worst": 0.3855446187504995, "gradient_p90": 0.7652103552313456, "gradient_worst": 1.1576682405159193, "observation_p90": 0.11971192518028342, "observation_worst": 0.1333058164765335, "passed": false},
+      {"time": 1.0, "camera_count": 7, "field_p90": 0.3034181985138674, "field_worst": 0.37400496021438345, "gradient_p90": 0.6560062368217194, "gradient_worst": 0.787558446352197, "observation_p90": 0.1377767970465867, "observation_worst": 0.14536928395747228, "passed": true},
+      {"time": 1.0, "camera_count": 9, "field_p90": 0.21739484992362235, "field_worst": 0.27053504536319234, "gradient_p90": 0.5613049184933826, "gradient_worst": 0.5825936051242255, "observation_p90": 0.14726996066815365, "observation_worst": 0.15564926728144857, "passed": true}
+    ],
+    "strata_passed": 10,
+    "strata_total": 12,
+    "passed": false
+  },
+  "controls": {
+    "no_transport_centered_h1": {
+      "logical_online_calls_per_cell": {"A": 1, "AT": 1},
+      "strata_passed": 10,
+      "strata_total": 12,
+      "failed_strata": [[0.75, 5], [1.0, 5]],
+      "passed": false
+    },
+    "frozen_isotropic_h1": {
+      "logical_online_calls_per_cell": {"A": 1, "AT": 1},
+      "t075_five_camera_gradient_p90": 0.7586387509824308,
+      "t100_five_camera_gradient_p90": 0.7120334287186397
+    },
+    "cgls_k16": {"logical_online_calls_per_cell": {"A": 16, "AT": 16}}
+  },
+  "frozen_thresholds": {
+    "field_p90": 0.5,
+    "field_worst": 0.75,
+    "gradient_p90": 0.75,
+    "gradient_worst": 1.0,
+    "observation_p90": 0.2,
+    "observation_worst": 0.35
+  },
+  "execution": {
+    "operator_setup_count": 39,
+    "cell_count": 1404,
+    "arm_row_count": 5616,
+    "formal_validity_checks": 37,
+    "independent_validity_checks": 39,
+    "geometry_setup_forward_equivalents": 13299,
+    "formal_permutation_audit_tangent_forward_calls": 12636,
+    "offline_truth_observation_calls": 1404,
+    "offline_selected_projection_calls": 4212,
+    "setup_audit_or_offline_cost_treated_as_free": false
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "maximum_affine_parameter_relative_difference": 5.840912223268837e-11,
+    "maximum_primary_coefficient_relative_difference": 1.4868189908006223e-10,
+    "maximum_per_cell_metric_difference": 5.7891136329146775e-11,
+    "maximum_summary_metric_difference": 7.126632617371342e-12,
+    "maximum_operator_scaled_difference": 3.4555885729662345e-12,
+    "maximum_camera_permutation_primary_relative_difference": 7.091353612324347e-13,
+    "maximum_density_audit_difference": 3.3306690738754696e-16,
+    "affine_rank": 12,
+    "minimum_affine_determinant": 0.9306884714653145,
+    "maximum_displacement_cap_ratio": 1.0,
+    "discrete_decision_identical": true
+  },
+  "validation_history": "The first v164 execution was inconclusive before any scientific interpretation because historical runtime bit replay was not stable. v164.1 changed no scientific mechanism, threshold, control, or decision rule; it bound the corrected input roots and required formal-versus-independent current-run equality.",
+  "interpretation": "Global affine transport improves the no-transport gradient tail in some cells but still fails the same two five-camera strata, is worse than frozen H1 at the preregistered t=0.75 target, and costs twelve additional forward calls per non-anchor cell. The frozen global affine-transport mechanism is closed without warp tuning or larger-model rescue.",
+  "next_gate": "Prioritize condition-matched experimental two-component displacements with complete metadata. Any further virtual-proxy mechanism must be physically distinct from global affine transport, coefficient persistence, and global quadratics, preregistered, and independently recomputed.",
+  "claim_limits": {
+    "paired_experimental_2d_projections_used": false,
+    "learned_predictor_used": false,
+    "predictor_training_authorized": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}

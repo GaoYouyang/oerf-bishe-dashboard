@@ -15085,3 +15085,51 @@ The primary clears only `7/12` strata, while the same-scale static L2 control cl
 An independent second implementation rebuilds operators, the temporal chain, coefficients, fields, observations, metrics, and all twelve decisions. All `28/28` checks pass. The first validation attempt was inconclusive only because mathematically equivalent RMS reductions differed by `5.55e-17`; the audit fix added a float64 roundoff bound without changing any scientific array, mechanism, threshold, or decision.
 
 Decision: `FAIL_TEMPORAL_INNOVATION_L2_V163`. The frozen one-sided coefficient-persistence mechanism is closed without alpha tuning, extrapolation changes, bidirectional smoothing, larger models, or GPU rescue. This is not predictor training, a resource result, real BOST, paper success, or an algorithm breakthrough.
+
+## 2026-08-20：v164.1 全局仿射输运未救回五相机梯度尾部
+
+### 为什么做这条物理上不同的诊断
+
+v163 证明直接沿用上一时刻约化系数会累积错误，但没有检验三维场在相邻时刻是否主要发生可观测的整体平移、旋转、剪切或尺度变化。v164.1 因此不再持续系数，而是只用上一时刻部署重建、相邻两帧仿真二维双分量观测和报告几何，拟合十二参数三维仿射速度场。十二个方向由三项平移与九项线性坐标变换组成，切向量为上一部署场梯度对各方向的负内积。
+
+参数求解采用列归一化与固定 `1e-10` SVD cutoff；仿射矩阵用精确齐次矩阵指数生成，位移由固定的一格上限和 60 步二分限制。随后以逆映射和三线性插值输运上一部署场，并在输运先验周围求固定 `0.03` 的 centered-H1 解。方向、归一化、边界、cap、control、四个时间、`5/7/9` 相机、绝对门和调用账都在结果前固定，没有读取当前三维真值来拟合仿射参数。
+
+### 实际运行与结果
+
+- formal 重建 `1,404` 个 cells 和四臂共 `5,616` 条记录；全部 `37/37` 项执行有效性门通过。
+- 主策略通过 `10/12` 个时间×相机分层。
+- `t=0.75` 五相机 field / gradient / observation p90 为 `0.329650 / 0.788531 / 0.117589`，gradient worst 为 `1.078302`。
+- `t=1.0` 五相机 field / gradient / observation p90 为 `0.361259 / 0.765210 / 0.119712`，gradient worst 为 `1.157668`。
+- 两个失败层的 field 与 observation 都过门，失败只来自 gradient p90 / worst；说明整体仿射能改善部分场与观测量，却不能稳定保住稀疏视角的空间梯度尾部。
+
+科学判决是 `FAIL_OBSERVATION_AFFINE_TRANSPORT_V164_1`。
+
+### 为什么 control 和成本同时否定这条路线
+
+不做输运、只在上一部署场周围运行 centered-H1 的 control 也通过 `10/12`，并在同两个晚时刻五相机分层失败。仿射输运相对这个 control 改善了一些数值，但在预注册的 frozen-H1 比较层仍更差。更关键的是，仿射参数需要十二次额外 forward：非初始 cell 的逻辑在线账为 `13A+1A^T`，而无输运 centered-H1 与 frozen H1 都是 `1A+1A^T`。因此它既没有完整精度通过，也没有成本优势。
+
+### 独立复算
+
+完全独立的第二实现重建仿射方向、SVD、矩阵指数、位移 cap、逆映射插值、三类 control、候选场、二维观测、逐 cell 指标、调用账和 12 个分层。`39/39` 项检查全部通过；仿射参数、主系数、逐 cell 指标、汇总和算子数值最大差分别为 `5.84e-11 / 1.49e-10 / 5.79e-11 / 7.13e-12 / 3.46e-12`。相机乱序等变最大相对差为 `7.09e-13`，仿射秩始终为 `12`，最小行列式为 `0.930688`。
+
+### 路线动作
+
+关闭当前全局仿射输运表示，不事后调整位移 cap、SVD cutoff、warp、方向族或 H1，也不用 CNN、FNO、UNO、DeepONet 或 GPU 挽救。该判决只排除这一冻结的全局仿射形式，不排除未来由新物理信息支撑的局部非刚性输运，也不关闭整个 C 路线。
+
+下一有效依赖优先是逐工况配对实验二维双分量位移及完整映射。若仍在受控虚拟代理上推进，新机制必须同时不同于全局仿射、单向系数持续和全局二次型家族，并在结果前冻结、可证伪、可由独立第二实现重算。
+
+当前不训练 predictor、不租 GPU、不启动 wall/RSS，也不把受控 straight-ray 代理写成真实 BOST。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v164.1 tests whether adjacent 3D fields are related by an observation-identifiable global affine flow rather than by coefficient persistence. It fits twelve translation and linear-coordinate generators using only the previous deployed reconstruction, adjacent simulated two-component observations, and reported geometry. Column normalization, the `1e-10` SVD cutoff, exact homogeneous matrix exponential, one-cell displacement cap, inverse-map interpolation, fixed centered-H1 multiplier, controls, gates, and call ledger are all frozen before results.
+
+The primary clears `10/12` time-by-camera strata. Five-camera field / gradient / observation p90 are `0.329650 / 0.788531 / 0.117589` at `t=0.75` and `0.361259 / 0.765210 / 0.119712` at `t=1.0`; gradient worst reaches `1.078302` and `1.157668`. Field and observation pass, but the sparse-view gradient tails do not.
+
+The no-transport centered-H1 control also clears `10/12` and fails the same two strata. Affine transport improves some values but remains worse than frozen H1 at the preregistered target, while increasing non-anchor online cost from `1A+1A^T` to `13A+1A^T`.
+
+An independent second implementation rebuilds affine directions, SVD, matrix exponentials, displacement caps, interpolation, controls, fields, observations, metrics, and the call ledger. All `39/39` checks pass. Maximum affine-parameter, primary-coefficient, per-cell-metric, summary, and operator-numeric differences are `5.84e-11`, `1.49e-10`, `5.79e-11`, `7.13e-12`, and `3.46e-12`; camera reordering changes the primary by at most `7.09e-13` relatively.
+
+Decision: `FAIL_OBSERVATION_AFFINE_TRANSPORT_V164_1`. The frozen global affine-transport representation is closed without tuning the cap, SVD cutoff, warp, directions, H1, model size, or GPU use. This closes only global affine transport, not every possible local nonrigid mechanism and not the entire C route. This is not predictor training, a resource result, external generalization, real BOST, paper success, or an algorithm breakthrough.
