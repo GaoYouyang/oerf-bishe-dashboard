@@ -1,0 +1,115 @@
+{
+  "schema_version": "oerf-public-poolfire-projection-potential-warm-v184.0",
+  "updated": "2026-08-22",
+  "role": "post-open mechanism diagnostic on the already opened PoolFire p22 four-frame roster",
+  "formal_status": "PASS_FORMAL_POOLFIRE_PROJECTION_POTENTIAL_WARM_EXECUTION_V184",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PROJECTION_POTENTIAL_WARM_V184",
+  "scientific_decision": "FAIL_PROJECTION_POTENTIAL_WARM_V184",
+  "mechanism": {
+    "input": "current two-component BOS observation, active camera IDs, reported geometry, and fit-only affine basis",
+    "detector_step": "integrate each camera residual into one zero-mean detector-plane scalar potential",
+    "lift": "camera-centered scalar straight-ray adjoint with fixed Jacobi scaling",
+    "observable_step": "one exact observation-space line search",
+    "refinement": "one unchanged physical CGLS step",
+    "trainable_parameters": 0,
+    "candidate_search": false
+  },
+  "absolute_gate": {
+    "field_p90_max": 0.5,
+    "field_worst_max": 0.75,
+    "gradient_p90_max": 0.75,
+    "gradient_worst_max": 1.0,
+    "observation_p90_max": 0.2,
+    "observation_worst_max": 0.35,
+    "strict_cells_required": 52,
+    "complete_calibrations_required": 13,
+    "complete_frames_required": 4
+  },
+  "five_camera_primary_k1": {
+    "passed": false,
+    "strict_cells_safe": 0,
+    "strict_cells_total": 52,
+    "complete_calibrations_safe": 0,
+    "complete_frames_safe": 0,
+    "global_p90": {
+      "field_relative_l2": 0.6616130149313562,
+      "gradient_relative_l2": 0.9110136018826716,
+      "observation_relative_l2": 0.40222714536922255
+    },
+    "global_worst": {
+      "field_relative_l2": 0.6617569852074371,
+      "gradient_relative_l2": 0.9150771656767115,
+      "observation_relative_l2": 0.41332823067604246
+    }
+  },
+  "all_nine_primary_k1": {
+    "passed": false,
+    "strict_cells_safe": 0,
+    "strict_cells_total": 52,
+    "complete_calibrations_safe": 0,
+    "complete_frames_safe": 0,
+    "global_p90": {
+      "field_relative_l2": 0.6361391442545362,
+      "gradient_relative_l2": 0.8415905889088822,
+      "observation_relative_l2": 0.4461462719862605
+    },
+    "global_worst": {
+      "field_relative_l2": 0.6392194337134777,
+      "gradient_relative_l2": 0.8532019830903746,
+      "observation_relative_l2": 0.47110226345681133
+    }
+  },
+  "parent_v183_primary_k1": {
+    "five_camera": {
+      "strict_cells_safe": 1,
+      "field_p90": 0.4456936597523407,
+      "gradient_p90": 0.6123733663470948,
+      "observation_p90": 0.22665850278378047
+    },
+    "all_nine": {
+      "strict_cells_safe": 37,
+      "field_p90": 0.3716213969701007,
+      "gradient_p90": 0.5089267831552342,
+      "observation_p90": 0.20722437270752003
+    }
+  },
+  "mechanism_diagnostics": {
+    "minimum_detector_gradient_explained_energy": 0.8856871119406244,
+    "minimum_defined_derivative_fraction": 0.9989517819706499,
+    "maximum_potential_stationarity": 5.832348849387013e-14,
+    "maximum_potential_zero_sum_abs": 5.562772464884347e-13,
+    "maximum_observable_stationarity": 1.4440831703104945e-16
+  },
+  "independent_recomputation": {
+    "checks_passed": 50,
+    "checks_total": 50,
+    "maximum_candidate_field_relative_difference": 6.116962614997491e-12,
+    "maximum_potential_relative_difference": 1.4817042789591036e-11,
+    "maximum_metric_absolute_difference": 1.8475776464299543e-12,
+    "all_discrete_decisions_exact": true
+  },
+  "call_and_cache_boundary": {
+    "primary_k1_exact_vector_forward": 3,
+    "primary_k1_exact_vector_adjoint": 1,
+    "primary_k1_scalar_forward": 0,
+    "primary_k1_scalar_adjoint": 1,
+    "inherited_vector_geometry_cache_forward_equivalents": 26260,
+    "new_scalar_geometry_cache_forward_equivalents": 26260,
+    "exact_call_reduction_established": false,
+    "wall_or_rss_measured": false
+  },
+  "interpretation": "The residual is predominantly integrable on the detector plane, but this exact scalar-potential Jacobi inverse lift is not field-compatible and performs worse than the v183 camera-component parent. Integrability does not identify a useful three-dimensional warm direction.",
+  "closed_mechanism": "zero-mean detector-potential integration plus camera-centered scalar straight-ray Jacobi lift, one observable line search, and unchanged CGLS K1",
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "deployable_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

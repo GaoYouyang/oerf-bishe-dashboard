@@ -90,8 +90,8 @@ def test_primary_pages_preserve_v182_as_bilingual_parent_evidence() -> None:
 def test_route_metadata_keeps_v182_in_history_after_v183_advance() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v183" in operator
-    assert 'version: "2026.08.21-c-v183-observation-block-galerkin-negative"' in curriculum
+    assert "curriculum.js?v=20260822-v184" in operator
+    assert 'version: "2026.08.22-c-v184-projection-potential-negative"' in curriculum
     assert 'previousVersion: "2026.08.21-c-v182-observation-adaptive-jacobi-pcgls1-negative"' in curriculum
     assert 'version: "2026.08.21-c-v182-observation-adaptive-jacobi-pcgls1-negative"' in curriculum
     assert 'updated: "2026-08-21"' in curriculum

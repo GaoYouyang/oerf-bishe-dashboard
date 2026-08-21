@@ -15911,3 +15911,41 @@ A fully independent second implementation uses a different SVD path and rebuilds
 The evidence therefore supports genuine low-order camera-component heterogeneity while rejecting the claim that one fixed coefficient per block is sufficient. Close this exact block-Galerkin family without post-hoc cutoff, ridge, damping, partition, gate, larger-model, or GPU rescue. Although the logical K1 ledger is `3A+2A^T`, failed accuracy prevents any call-reduction or wall/RSS claim.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v184 残差大体可积，但标量势 Jacobi 逆提升不能产生安全三维暖方向
+
+### 讲人话：二维箭头能拼成一张“高度图”，不代表这张图能反推出正确三维火焰
+
+v183 说明不同相机和探测器分量需要不同响应，但每块一个固定系数仍不够。v184 因此检验一个物理上不同的问题：每个相机的二维 BOS 残差是否主要来自某个标量势；如果是，再把这个势通过一个独立的 scalar-ray 模型、精确转置和固定 Jacobi 对角量提升回三维，是否能得到安全起点。
+
+势场这一半确实成立。最差样本仍有 `88.5687%` 的探测器残差能量可由零均值势场解释，有效差分覆盖至少 `99.8952%`；势场 stationarity、零和约束和线搜索 stationarity 最大值分别只有 `5.83e-14 / 5.56e-13 / 1.44e-16`。所以不是数值求解没有收敛。
+
+但三维逆提升失败得很明确。未修改 CGLS K1 后，五相机 field / gradient / observation p90 为 `0.661613 / 0.911014 / 0.402227`，九相机为 `0.636139 / 0.841591 / 0.446146`；三项 p90 在两臂都越过冻结门，严格通过均为 `0/52`，完整标定 `0/13`，完整帧 `0/4`。K0 同样失败。
+
+而且它比 v183 父机制更差。v183 对应的五相机 / 九相机 p90 是 `0.445694 · 0.612373 · 0.226659` 与 `0.371621 · 0.508927 · 0.207224`，严格通过为 `1/52 · 37/52`。因此不能把“残差可积”包装成更好的三维表示；真正缺失的是从二维势到 field-compatible 三维更新的物理信息。
+
+完全独立第二实现改用三点 Gauss 积分和独立 dense KKT 组装，重新构造势场、scalar-ray 算子、精确转置、Jacobi 提升、线搜索、物理 K1、全部指标和离散判决，`50/50` 项检查全真。候选场、势场和指标最大差为 `6.12e-12 / 1.48e-11 / 1.85e-12`。
+
+首次 formal 在科学评分前因不规则 mask 中一个没有相邻节点的差分分量而 fail-closed。修复只把协议本来就定义为无效的该分量排除，并保留所有有效标量射线；没有改机制、门、阈值或候选。这个过程是工程完整性，不是算法成果。
+
+正式判决为 `FAIL_PROJECTION_POTENTIAL_WARM_V184`。关闭当前“零均值探测器势场 + camera-centered scalar-ray Jacobi 逆提升 + 一次可观测线搜索 + 未修改 K1”机制；不再调差分、gauge、ridge、阻尼、线搜索、相机子集或门槛，也不用 CNN/FNO/UNO/DeepONet 或 GPU 挽救。完整 C 路线没有被关闭，但当前没有算法突破、调用减少、wall/RSS、外部泛化或真实 BOST 结果。
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+### English checkpoint
+
+v183 shows that cameras and detector components require heterogeneous responses, but one fixed coefficient per block is insufficient. v184 tests a physically distinct question: whether each camera's two-component BOS residual is predominantly the gradient of a scalar detector potential, and whether that potential can be lifted into a safe 3D warm field through an independent scalar-ray model, exact transpose, and frozen Jacobi diagonal.
+
+The potential half succeeds mechanically. At least `88.5687%` of detector residual energy is explained, defined-derivative coverage is at least `99.8952%`, and maximum potential stationarity, zero-sum violation, and line-search stationarity are `5.83e-14`, `5.56e-13`, and `1.44e-16`. The failure is not caused by a nonconverged potential solve.
+
+The 3D inverse lift fails clearly. After unchanged CGLS K1, five-camera field / gradient / observation p90 values are `0.661613 / 0.911014 / 0.402227`; all-nine values are `0.636139 / 0.841591 / 0.446146`. All three p90 gates fail in both arms, with `0/52` strict-safe cells, `0/13` complete calibrations, and `0/4` complete frames. K0 also fails.
+
+It is also worse than the v183 parent. The corresponding v183 p90 values are `0.445694 · 0.612373 · 0.226659` and `0.371621 · 0.508927 · 0.207224`, with `1/52 · 37/52` strict-safe cells. Residual integrability therefore cannot be presented as a better 3D representation; the missing information lies in the map from detector potential to a field-compatible volumetric update.
+
+A fully independent second implementation uses three-point Gauss integration and an independently assembled dense KKT system to rebuild potentials, the scalar-ray operator, exact transpose, Jacobi lift, line search, physical K1 replay, every metric, and every discrete decision. All `50/50` checks pass. Maximum candidate-field, potential, and metric differences are `6.12e-12`, `1.48e-11`, and `1.85e-12`.
+
+The first formal attempt failed closed before scientific scoring on a derivative component with no adjacent node under an irregular mask. The repair only omitted the component already defined as invalid by the protocol while retaining every valid scalar ray. No mechanism, gate, threshold, or candidate changed. This is engineering assurance, not an algorithmic result.
+
+Decision: `FAIL_PROJECTION_POTENTIAL_WARM_V184`. Close the exact zero-mean detector-potential plus camera-centered scalar-ray Jacobi inverse lift plus one observable line search plus unchanged K1 mechanism. Do not tune finite differences, gauge, ridge, damping, line search, camera subsets, or gates, and do not rescue it with CNN/FNO/UNO/DeepONet or a GPU. The full C route remains open, but v184 establishes no algorithmic breakthrough, call reduction, wall/RSS benefit, external generalization, or real-BOST result.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.

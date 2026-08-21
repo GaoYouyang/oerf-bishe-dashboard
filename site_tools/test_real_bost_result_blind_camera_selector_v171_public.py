@@ -65,14 +65,14 @@ def test_current_evidence_preserves_v171_but_points_to_v181() -> None:
     )
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_BLOCK_GALERKIN_V183"
+        == "PASS_INDEPENDENT_RECOMPUTATION_PROJECTION_POTENTIAL_WARM_V184"
     )
     assert (
         payload["formal_status"]
-        == "PASS_FORMAL_POOLFIRE_OBSERVATION_BLOCK_GALERKIN_EXECUTION_V183"
+        == "PASS_FORMAL_POOLFIRE_PROJECTION_POTENTIAL_WARM_EXECUTION_V184"
     )
     assert payload["scientific_status"] == (
-        "FAIL_OBSERVATION_BLOCK_GALERKIN_V183"
+        "FAIL_PROJECTION_POTENTIAL_WARM_V184"
     )
     assert payload["current_decision"]["v171_result_blind_selector_passed"] is True
     assert payload["current_decision"]["v171_external_generalization"] is False

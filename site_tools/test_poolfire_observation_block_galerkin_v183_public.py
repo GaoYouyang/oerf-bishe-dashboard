@@ -70,10 +70,15 @@ def test_v183_public_files_exclude_private_execution_details() -> None:
         assert not any(token in text for token in forbidden), path
 
 
-def test_current_evidence_points_to_v183_without_overclaiming() -> None:
+def test_current_evidence_preserves_v183_after_v184_supersedes_latest_status() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_OBSERVATION_BLOCK_GALERKIN_V183"
-    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_BLOCK_GALERKIN_V183"
+    assert current["scientific_status"] == "FAIL_PROJECTION_POTENTIAL_WARM_V184"
+    assert current["v183_observation_block_galerkin_scientific_decision"] == (
+        "FAIL_OBSERVATION_BLOCK_GALERKIN_V183"
+    )
+    assert current["v183_observation_block_galerkin_independent_status"] == (
+        "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_BLOCK_GALERKIN_V183"
+    )
     assert current["metrics"]["v183_five_primary_k1_strict_safe_count"] == 1
     assert current["metrics"]["v183_all_nine_primary_k1_strict_safe_count"] == 37
     assert current["current_decision"]["v183_camera_component_block_galerkin_family_closed"] is True
