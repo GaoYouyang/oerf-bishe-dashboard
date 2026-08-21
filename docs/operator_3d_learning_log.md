@@ -15727,3 +15727,41 @@ The key limitation is rank `1009/1010`, nearly the full sample count. This is no
 A fully independent implementation uses a different stable SVD path and rebuilds the affine span, projections, operators, K1 states, metrics, strata, call ledgers, and camera-order checks. All `26/26` checks pass. Maximum projected-field, candidate-field, and metric differences are `4.21e-15`, `9.28e-13`, and `4.48e-12`, and every discrete decision agrees. The preserved initial inconclusive came from comparing physical source times directly with normalized labels; the repair changes only that validator check.
 
 The next gate is a preregistered minimal observation-and-geometry-only affine-coordinate predictability diagnostic with complete-trajectory isolation and cheap deterministic controls. Neural training, GPU rental, resource tests, and untouched-test opening remain unauthorized.
+
+## 2026-08-21：v179 证明五相机观测可辨识全部仿射坐标，但精确逆仍太重
+
+### 讲人话：答案在观测里，但还没有便宜的取法
+
+v178 找到一个稳定秩 `1,009` 的训练场仿射空间，却仍有一个关键疑问：二维观测里到底有没有足够信息确定这 `1,009` 个坐标？如果没有，再强的预测器也只是猜。
+
+v179 不读目标三维真值，只用当前二维观测和报告相机几何，构造测量矩阵 `A U^T` 的精确缓存伪逆。结果在冻结五相机下，K0 和未修改 CGLS K1 都通过 `52/52` 单元、`13/13` 标定和 `4/4` 帧；全部测量设置的秩都是 `1009/1009`。九相机主臂同样全部通过。
+
+五相机精确逆 K0 的 field / gradient / observation p90 是 `0.253087 / 0.406712 / 0.098374`；K1 是 `0.250113 / 0.396906 / 0.067119`。一次坐标迭代 K0/K1 和静态均值 K0/K1 都只有 `0/52`，所以便宜的固定先验或一步更新解释不了这个正结果。
+
+正式判决为 `PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179`。它把科学判断向前推了一步：当前瓶颈不是“五相机观测缺信息”，而是“怎样把一个可用但庞大的精确逆压缩成稳定、共享、低成本的近似”。
+
+### 为什么还不能叫算法成功
+
+测量缓存需要对每套传感器与标定投影训练均值和 `1,009` 个基方向，总计 `26,260` 次 forward-equivalent setup projection。这是一个高成本解析见证，不是低成本 warm initializer。
+
+完全独立第二实现通过 `36/36` 项检查。候选场、坐标和指标最大差分别是 `8.40e-12 / 1.35e-11 / 4.48e-12`；相机换序后的坐标差为 `1.22e-14`；固定观测后突变真值，坐标和候选变化为 `0`。
+
+下一门只允许结果前冻结一个紧凑共享 CPU 近似，并使用完整轨迹隔离和相同便宜对照。现在不授权神经训练、GPU、wall/RSS、封存测试或真实 BOST 主张。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v178 finds a stable-rank-`1,009` affine span but leaves a decisive question: do the 2D observations contain enough information to identify all `1,009` coordinates? If not, a stronger predictor would still be guessing.
+
+v179 reads no target 3D truth. It uses the current 2D observation and reported camera geometry to form an exact cached pseudoinverse of `A U^T`. Under the frozen five-camera sensor, K0 and unchanged CGLS K1 both pass `52/52` cells, `13/13` calibrations, and `4/4` frames. Every measurement setup has rank `1009/1009`, and the all-nine primary arms also pass completely.
+
+Five-camera exact-inverse K0 field / gradient / observation p90 values are `0.253087 / 0.406712 / 0.098374`; K1 reaches `0.250113 / 0.396906 / 0.067119`. One-step coordinate K0/K1 and static-mean K0/K1 all remain `0/52`, so neither a cheap fixed prior nor a single update explains the positive result.
+
+Decision: `PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179`. The diagnosis moves forward: the immediate bottleneck is no longer missing five-camera information, but compactly approximating a useful yet large exact inverse.
+
+The result is not an algorithmic success. Cache construction projects the fit mean and `1,009` basis directions for every sensor and calibration, totaling `26,260` forward-equivalent setup projections. This is a high-cost analytic witness rather than a low-cost warm initializer.
+
+A fully independent implementation passes `36/36` checks. Maximum candidate-field, coordinate, and metric differences are `8.40e-12`, `1.35e-11`, and `4.48e-12`; camera permutation changes coordinates by at most `1.22e-14`; fixed-observation truth mutation changes coordinates and candidates by exactly zero.
+
+The next gate is only a preregistered compact shared CPU approximation with complete-trajectory isolation and the same cheap controls. Neural training, GPU rental, wall/RSS testing, untouched tests, and real-BOST claims remain unauthorized.

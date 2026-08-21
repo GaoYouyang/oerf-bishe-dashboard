@@ -1,0 +1,151 @@
+{
+  "schema_version": "oerf-public-poolfire-affine-coordinate-observability-v179",
+  "updated": "2026-08-21",
+  "formal_status": "PASS_FORMAL_POOLFIRE_AFFINE_COORDINATE_OBSERVABILITY_EXECUTION_V179",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_AFFINE_COORDINATE_OBSERVABILITY_V179",
+  "scientific_decision": "PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179",
+  "scope": "A post-open mechanism diagnostic on four already opened PoolFire frames. It asks whether deployment-visible observation and reported geometry can identify the 1,009 coordinates of the v178 affine field representation through an exact cached measurement pseudoinverse.",
+  "question": "Is the near-full-rank v178 affine representation fundamentally hidden from the frozen five-camera observations, or is it observable but still too expensive to use directly?",
+  "evaluation": {
+    "fit_trajectories": 10,
+    "fit_fields": 1010,
+    "stable_affine_rank": 1009,
+    "evaluation_calibrations": 13,
+    "evaluation_frames": 4,
+    "evaluation_cells_per_arm_and_sensor": 52,
+    "measurement_rank_minimum": 1009,
+    "measurement_rank_maximum": 1009,
+    "sensors": [
+      "frozen geometry-selected five-camera sensor from v176",
+      "all-nine camera control"
+    ],
+    "deployment_visible_inputs": [
+      "observation",
+      "reported geometry"
+    ],
+    "truth_used_to_construct_coordinates": false,
+    "predictor_or_neural_model_trained": false,
+    "trainable_parameters": 0
+  },
+  "five_camera_measurement_pseudoinverse_k0": {
+    "passed": true,
+    "strict_cells_safe": 52,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 13,
+    "whole_calibrations_total": 13,
+    "frame_strata_passed": 4,
+    "frame_strata_total": 4,
+    "global_p90": {
+      "field_relative_l2": 0.25308673788600183,
+      "gradient_relative_l2": 0.4067115178533254,
+      "observation_relative_l2": 0.0983741686688936
+    },
+    "global_worst": {
+      "field_relative_l2": 0.25801413539114015,
+      "gradient_relative_l2": 0.4283653983354676,
+      "observation_relative_l2": 0.1043795195614458
+    },
+    "logical_exact_calls": {
+      "forward": 1,
+      "adjoint": 0
+    }
+  },
+  "five_camera_measurement_pseudoinverse_k1": {
+    "passed": true,
+    "strict_cells_safe": 52,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 13,
+    "whole_calibrations_total": 13,
+    "frame_strata_passed": 4,
+    "frame_strata_total": 4,
+    "global_p90": {
+      "field_relative_l2": 0.250113321891,
+      "gradient_relative_l2": 0.396906332635,
+      "observation_relative_l2": 0.0671194673171
+    },
+    "global_worst": {
+      "field_relative_l2": 0.255266652052,
+      "gradient_relative_l2": 0.420202310834,
+      "observation_relative_l2": 0.0727640157063
+    },
+    "logical_exact_calls": {
+      "forward": 2,
+      "adjoint": 1
+    }
+  },
+  "all_nine_camera_primary": {
+    "k0_passed": true,
+    "k1_passed": true,
+    "strict_cells_safe_per_arm": 52,
+    "strict_cells_total": 52
+  },
+  "five_camera_cheap_controls": {
+    "one_step_coordinate_k0": {
+      "passed": false,
+      "strict_cells_safe": 0,
+      "strict_cells_total": 52,
+      "global_p90": {
+        "field_relative_l2": 0.556113822702,
+        "gradient_relative_l2": 0.769582382893,
+        "observation_relative_l2": 0.465576718023
+      }
+    },
+    "one_step_coordinate_k1": {
+      "passed": false,
+      "strict_cells_safe": 0,
+      "strict_cells_total": 52,
+      "global_p90": {
+        "field_relative_l2": 0.533538831287,
+        "gradient_relative_l2": 0.703929089815,
+        "observation_relative_l2": 0.290899038183
+      }
+    },
+    "static_mean_k0": {
+      "passed": false,
+      "strict_cells_safe": 0,
+      "strict_cells_total": 52
+    },
+    "static_mean_k1": {
+      "passed": false,
+      "strict_cells_safe": 0,
+      "strict_cells_total": 52
+    }
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "check_count": 36,
+    "candidate_field_maximum_relative_difference": 8.399753020564734e-12,
+    "coordinate_maximum_relative_difference": 1.3492967286502263e-11,
+    "metric_maximum_absolute_difference": 4.476086168381244e-12,
+    "stationarity_maximum": 5.915647693365618e-15,
+    "measurement_cache_forward_maximum_relative_error": 3.1043072214054504e-16,
+    "camera_permutation_coordinate_maximum_relative_error": 1.2150580972356476e-14,
+    "fixed_observation_truth_mutation_maximum_absolute_change": 0.0,
+    "all_discrete_decisions_exact": true
+  },
+  "cost_disclosure": {
+    "geometry_cache_forward_equivalents": 26260,
+    "resource_claim": "none",
+    "interpretation": "The exact cached pseudoinverse is a high-cost observability witness, not a low-cost deployed initializer."
+  },
+  "interpretation": "The full 1,009-dimensional affine coordinates are identifiable from the frozen five-camera observation and reported geometry on all 52 opened evaluation cells. Both exact-pseudoinverse arms pass, while the static mean and one-step coordinate controls fail. The v178 near-full-rank representation is therefore observable in this opened proxy; the remaining problem is compact approximation, not missing measurement information.",
+  "limitation": "The result uses only four already opened frames and a 1,009-dimensional exact pseudoinverse with 26,260 forward-equivalent geometry-cache projections. It establishes neither a compact predictor nor a deployable cost advantage, external generalization, curved-ray validity, or real BOST performance.",
+  "route_action": "Preregister a compact shared observation-and-geometry-only approximation diagnostic with complete-trajectory isolation and the same cheap controls. Do not jump to neural training, GPU rental, resource claims, or untouched tests.",
+  "claim_limits": {
+    "post_open_mechanism_headroom_only": true,
+    "compact_predictor_established": false,
+    "deployable_algorithm": false,
+    "learned_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "broad_external_generalization": false,
+    "untouched_test_evidence": false,
+    "paired_experimental_2d_projections_used": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}
