@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.22-c-v185-potential-affine-capacity",
-  previousVersion: "2026.08.22-c-v184-projection-potential-negative",
-  previousBadge: "v184 scalar-potential Jacobi lift · five 0 / 52 · nine 0 / 52",
-  olderBadge: "v181 geometry-conditioned rank 16 · five 0 / 52 · nine 0 / 52",
+  version: "2026.08.22-c-v186.1-potential-set-linear-negative",
+  previousVersion: "2026.08.22-c-v185-potential-affine-capacity",
+  previousBadge: "v185 dense potential-affine capacity · five 52 / 52 · nine 52 / 52",
+  olderBadge: "v184 scalar-potential Jacobi lift · five 0 / 52 · nine 0 / 52",
   historyReleases: [
+    {
+      version: "2026.08.22-c-v185-potential-affine-capacity",
+      previousVersion: "2026.08.22-c-v184-projection-potential-negative",
+      badge: "v185 dense potential-affine capacity · five 52 / 52 · nine 52 / 52"
+    },
     {
       version: "2026.08.22-c-v184-projection-potential-negative",
       previousVersion: "2026.08.21-c-v183-observation-block-galerkin-negative",

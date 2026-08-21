@@ -15991,3 +15991,39 @@ The result is still not deployable. The dense inverse processes `1013` potential
 Only a separately preregistered compact shared-parameter observation/geometry-only approximation is authorized next. GPU rental remains unauthorized.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v186.1 紧凑共享线性近似未通过完整轨迹门
+
+### 讲人话：知道答案藏在哪里，不等于一把固定尺子就能量出来
+
+v185 已经证明，稠密 detector-potential 逆里确实保留了足够的信息。v186.1 接着问一个更接近部署的问题：能不能不用那套稠密逆，只拿当前观测和报告几何，通过一套共享线性规则直接给出足够好的三维起点？
+
+冻结表示先把每个相机的势场压成固定 `12x12` DCT 方块中的 `143` 个非 DC 系数，再结合报告射线方向与 Plucker 线矩，跨相机求和为 `1144` 维、换序不变的特征。共享线性权重只用十条已打开 fit 轨迹的 `1010` 个三维场闭式拟合，不看 held-out 真值，不做候选搜索、ridge、回退或事后调参。
+
+直接 K0 在五相机和九相机下都是 `0/52`。运行一轮未修改物理 CGLS K1 后，五相机提高到 `39/52`，九相机提高到 `25/52`；完整标定为 `7/13` 与 `1/13`，四个时间层则仍是 `0/4` 与 `0/4`。
+
+失败并不来自 field 或 gradient。五相机 K1 的 field / gradient / observation p90 为 `0.305891 / 0.484862 / 0.215971`，九相机为 `0.284107 / 0.449993 / 0.235876`。前两项已经过门，observation 仍高于 `0.20`。逐时间层看得更清楚：五相机 observation p90 为 `0.232724 / 0.200616 / 0.216058 / 0.199495`，九相机为 `0.235876 / 0.213836 / 0.253397 / 0.210684`。所以不能拿合并平均数掩盖完整轨迹失败。
+
+几何盲 DCT12、一方向 potential-coordinate CGLS1 和 fit mean 三组便宜 control 在 K1 下两臂仍都是 `0/52`。它们说明 primary 确实学到了一些有用结构，但没有提供一个通过门的简单替代。
+
+完全独立第二实现重建 fit-only 仿射基、势场、DCT/Plucker 特征、共享线性求解、held-out 预测、物理 K1、指标、调用账和相机换序审计，`44/44` 检查全真。候选场 / 坐标 / 指标最大差为 `5.65e-10 / 9.04e-10 / 5.89e-11`；相机换序与 held-out truth mutation 对预测的影响都为 `0`。
+
+正式判决为 `FAIL_POTENTIAL_SET_LINEAR_V186_1_1`。这不推翻 v185 的稠密容量正结果，也不关闭整条 C 路线；它只关闭当前固定 DCT12 + Plucker pooling + 共享线性映射。后续不扩大这个表示，不用 CNN/FNO/UNO 或 GPU 挽救。逻辑 K1 账虽然是 `2A+1A^T`，但 accuracy 门失败，所以不能声称 exact-call 减少，也没有 wall/RSS、外部泛化或真实 BOST 结果。
+
+下一步只有两种合理选择：结果前冻结一个物理上真正不同、直接针对逐时间层 observation 尾部的观测自适应机制；或者等待成对真实二维 BOST 位移数据。当前不租 GPU。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v185 establishes that the dense detector-potential inverse contains sufficient observable information. v186.1 asks whether a compact shared-linear rule can reproduce that action from only the current observation and reported geometry.
+
+The frozen representation retains `143` non-DC coefficients from a fixed `12x12` DCT square per camera, combines them with reported-ray direction and Plucker line-moment descriptors, and sums across cameras into a `1144`-dimensional permutation-invariant feature. Shared weights are fit in closed form from `1010` fields on ten opened fit trajectories, with no heldout-truth tuning, candidate search, ridge, or fallback.
+
+Both direct K0 arms are `0/52`. After one unchanged physical CGLS K1 step, five-camera and all-nine arms reach `39/52` and `25/52`, with `7/13` and `1/13` complete calibrations and `0/4` complete time strata in both arms. Field and gradient tails pass, but observation p90 remains above the frozen `0.20` gate. Five-camera observation p90 by time is `0.232724 / 0.200616 / 0.216058 / 0.199495`; all-nine is `0.235876 / 0.213836 / 0.253397 / 0.210684`.
+
+The geometry-blind DCT12, one-direction potential-coordinate CGLS1, and fit-mean controls remain `0/52` in both K1 arms. A fully independent second implementation passes `44/44` checks. Maximum candidate-field, coordinate, and metric differences are `5.65e-10 / 9.04e-10 / 5.89e-11`; camera reordering and heldout-truth mutation each change predictions by `0`.
+
+Decision: `FAIL_POTENTIAL_SET_LINEAR_V186_1_1`. The dense v185 capacity result remains valid, but the current fixed DCT12 + Plucker pooling + shared-linear map is closed. It will not be enlarged or rescued with CNN/FNO/UNO or GPU rental. Because the accuracy gate fails, the logical `2A+1A^T` K1 ledger establishes no exact-call reduction, wall/RSS benefit, external generalization, or real-BOST result.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.

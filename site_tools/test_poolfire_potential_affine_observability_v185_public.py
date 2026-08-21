@@ -92,13 +92,13 @@ def test_v185_public_files_exclude_private_execution_details() -> None:
         assert private_receipt.search(content) is None, path
 
 
-def test_current_evidence_points_to_v185_without_overclaiming() -> None:
+def test_current_evidence_retains_v185_after_v186_1_advances_the_gate() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == "PASS_POTENTIAL_AFFINE_K1_CAPACITY_V185"
+    assert current["scientific_status"] == "FAIL_POTENTIAL_SET_LINEAR_V186_1_1"
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_AFFINE_OBSERVABILITY_V185"
+        "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_SET_LINEAR_V186_1_1"
     )
     assert current["metrics"]["v185_five_primary_k1_strict_safe_count"] == 52
     assert current["metrics"]["v185_all_nine_primary_k1_strict_safe_count"] == 52

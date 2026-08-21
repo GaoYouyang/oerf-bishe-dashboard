@@ -62,7 +62,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "PASS_POTENTIAL_AFFINE_K1_CAPACITY_V185"
+    assert payload["scientific_status"] == "FAIL_POTENTIAL_SET_LINEAR_V186_1_1"
     assert (
         payload["v174_equal_cost_selector_scientific_decision"]
         == "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"
