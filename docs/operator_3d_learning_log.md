@@ -15523,3 +15523,41 @@ The same-subset H1-K0 control also reaches `468/468`, `13/13`, `9/9`, and `4/4`,
 A fully independent second implementation replays every arm, physical field, observation, tail gate, and exact-call ledger. All `21/21` checks pass. Maximum per-cell metric and arm-summary differences are `1.64e-11` and `8.66e-12`, with zero exact-call discrepancy.
 
 Decision: `FAIL_CLASSICAL_CONTROL_EXPLAINS_CAMERA_SELECTED_WARM_V173`. This closes the current H1-plus-K1 refinement advantage claim, not the full C route. It is not fresh external generalization, real BOST, a wall/RSS speedup, paper success, or an algorithmic breakthrough. The next gate is selector attribution under equal H1-K0 and `1A+1A^T` cost; no larger model or GPU rescue is authorized.
+
+## 2026-08-21：v174 同成本归因确认选择器本身有开发集余量
+
+### 为什么要把后端和成本完全锁死
+
+v173 的 H1-K1 虽然通过全部门，但同一相机子集的 H1-K0 更便宜且同样通过，所以不能把结果归因于额外 CGLS K1。v174 只回答剩下的一个问题：当四种相机选择策略全部使用同一个 H1-K0 重建、同一个 `1A+1A^T` 逻辑在线账，并各自与同子集 Zero-K4 比较时，v172 选择器是否仍优于便宜对照。
+
+四种策略是 v172 三重隔离选择器、fit-static、v169 低频 D-opt，以及一个完全结果不可见的 ray-axis maximin。最后一个对照只从实际进入冻结 forward 的世界坐标射线构造每台相机的平均轴，最大化五相机集合的最小轴间分离；它不读取三维真值、候选结果或算子投影。
+
+### 科学结果
+
+v172 selector 在 `468/468` 个三重隔离单元上严格安全，完整标定、完整场和时间分别通过 `13/13`、`9/9` 与 `4/4`。field / gradient / observation p90 为 `0.327496 / 0.621204 / 0.118422`，harm 与 severe harm 都为零。
+
+三个同成本对照都没有完整通过：fit-static 为 `323/468`，完整标定 / 场 / 时间为 `1/13 · 0/9 · 0/4`；v169 为 `192/468`，三类完整组均为零；ray-axis maximin 虽达到 `455/468`，但完整标定 / 场 / 时间只有 `9/13 · 4/9 · 1/4`。因此对照完整通过数为 `0/3`。
+
+科学判决为 `PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174`。这说明在已经开封的受控代理中，选择器本身的价值不能由这三个冻结、同成本对照解释。
+
+### 独立复算与边界
+
+完全独立第二实现用距离矩阵重建 ray-axis maximin，而正式实现逐对计算分离度；它还独立重建稀疏 forward / adjoint、解析 DCT、四种策略、物理场、二维观测、逐单元门、完整轴尾部与调用账。`27/27` 项检查全部通过。逐单元指标和策略汇总最大差为 `1.62e-11` 与 `8.66e-12`，调用差为 `0`，全部离散选择与判决一致。
+
+这是一个真实的科学判断增量，但仍不是可部署算法。v172 选择来自一个已开封风险模型流程；尚未训练并物理重放最终的最小共享参数、observation/geometry-only CPU 选择器。下一门只做这件事，并继续锁定 H1-K0 与 `1A+1A^T`。当前不授权 GPU、大模型、wall/RSS 或外部门。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v173 cannot attribute its passing result to the extra CGLS K1 step because the cheaper same-subset H1-K0 control also passes. v174 therefore isolates the remaining question by giving four camera-selection policies the same H1-K0 reconstruction, the same logical online ledger of `1A+1A^T`, and each policy's own same-subset Zero-K4 reference.
+
+The four policies are the v172 triple-isolated selector, fit-static, the v169 low-frequency D-opt rule, and a result-free ray-axis maximin control. The last control uses only the world-frame rays entering the frozen forward model: it forms one mean axis per camera and maximizes the minimum pairwise axis separation, without reading 3D truth, candidate outcomes, or operator projections.
+
+The v172 selector is strict-safe on `468/468` cells and clears `13/13` complete calibrations, `9/9` fields, and `4/4` times. Its field / gradient / observation p90 values are `0.327496 / 0.621204 / 0.118422`, with zero harm and zero severe harm.
+
+None of the three equal-cost controls passes completely. Fit-static reaches `323/468` and `1/13 · 0/9 · 0/4`; v169 reaches `192/468` with no complete group; ray-axis maximin reaches `455/468` but only `9/13 · 4/9 · 1/4`. The control pass count is therefore `0/3`.
+
+A fully independent second implementation reconstructs ray-axis maximin through a full distance matrix rather than formal pairwise scoring, and independently rebuilds the sparse forward / adjoint, analytic DCT, all policies, physical fields, observations, cell gates, complete-axis tails, and call ledgers. All `27/27` checks pass. Maximum per-cell metric and policy-summary differences are `1.62e-11` and `8.66e-12`, call discrepancy is zero, and every discrete selection and verdict agrees.
+
+Decision: `PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174`. This is a real scientific-judgment increment on the opened controlled proxy, but not yet a deployable algorithm. The v172 choice still comes from an opened risk-model pipeline. The next gate is a minimal shared-parameter, observation/geometry-only CPU selector with physical replay under the same H1-K0 and `1A+1A^T` budget. GPU use, larger models, wall/RSS claims, and external testing remain unauthorized.

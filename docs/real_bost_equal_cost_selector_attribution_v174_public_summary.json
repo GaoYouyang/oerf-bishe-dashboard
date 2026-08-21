@@ -1,0 +1,127 @@
+{
+  "schema_version": "oerf-public-real-bost-equal-cost-selector-attribution-v174",
+  "updated": "2026-08-21",
+  "formal_status": "PASS_FORMAL_PRIVATE_EQUAL_COST_SELECTOR_ATTRIBUTION_V174",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_EQUAL_COST_SELECTOR_V174",
+  "scientific_decision": "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174",
+  "scope": "A post-open controlled straight-ray proxy audit that isolates camera-subset selection while every policy uses the same H1-K0 reconstruction and the same 1A+1A^T logical online ledger.",
+  "question": "Does the v172 deployment-visible camera selector retain a complete accuracy advantage when reconstruction and exact-call cost are held identical across selection policies?",
+  "evaluation": {
+    "cell_count_per_policy": 468,
+    "calibration_count": 13,
+    "field_model_count": 9,
+    "time_count": 4,
+    "camera_count": 5,
+    "reference_per_policy": "Zero-K4 on the same selected subset",
+    "candidate_reconstruction": "fixed H1-K0",
+    "candidate_exact_forward_calls": 1,
+    "candidate_exact_adjoint_calls": 1
+  },
+  "policies": {
+    "v172_selector": {
+      "description": "The v172 result-blind geometry selector under complete calibration, field, and time isolation",
+      "strict_safe_cells": 468,
+      "strict_safe_total": 468,
+      "whole_calibrations_passed": 13,
+      "whole_field_models_passed": 9,
+      "time_strata_passed": 4,
+      "global_metrics": {
+        "field_p90_higher": 0.3274957214949013,
+        "gradient_p90_higher": 0.6212038961816176,
+        "observation_p90_higher": 0.11842171075535059
+      },
+      "matched_own_zero_k4_passed": true,
+      "joint_harm_count": 0,
+      "severe_harm_count": 0,
+      "complete_pass": true
+    },
+    "fit_static": {
+      "description": "A fit-side static camera subset",
+      "strict_safe_cells": 323,
+      "strict_safe_total": 468,
+      "whole_calibrations_passed": 1,
+      "whole_field_models_passed": 0,
+      "time_strata_passed": 0,
+      "global_metrics": {
+        "field_p90_higher": 0.3383751478998902,
+        "gradient_p90_higher": 0.857126637977577,
+        "observation_p90_higher": 0.13166224326012682
+      },
+      "matched_own_zero_k4_passed": false,
+      "joint_harm_count": 1,
+      "severe_harm_count": 1,
+      "complete_pass": false
+    },
+    "v169_low_mode_d_opt": {
+      "description": "The frozen low-mode geometry D-optimality heuristic from v169",
+      "strict_safe_cells": 192,
+      "strict_safe_total": 468,
+      "whole_calibrations_passed": 0,
+      "whole_field_models_passed": 0,
+      "time_strata_passed": 0,
+      "global_metrics": {
+        "field_p90_higher": 0.32408708987135576,
+        "gradient_p90_higher": 0.882022667648015,
+        "observation_p90_higher": 0.13409560606827078
+      },
+      "matched_own_zero_k4_passed": true,
+      "joint_harm_count": 1,
+      "severe_harm_count": 0,
+      "complete_pass": false
+    },
+    "ray_axis_maximin": {
+      "description": "A result-free deterministic maximin policy built only from the world-frame mean ray axes of the active reported cameras",
+      "strict_safe_cells": 455,
+      "strict_safe_total": 468,
+      "whole_calibrations_passed": 9,
+      "whole_field_models_passed": 4,
+      "time_strata_passed": 1,
+      "global_metrics": {
+        "field_p90_higher": 0.2747641062891049,
+        "gradient_p90_higher": 0.7125838465600417,
+        "observation_p90_higher": 0.12890853967571086
+      },
+      "matched_own_zero_k4_passed": true,
+      "joint_harm_count": 0,
+      "severe_harm_count": 0,
+      "complete_pass": false
+    }
+  },
+  "controls_that_passed": [],
+  "execution": {
+    "all_candidate_policies_use_equal_exact_call_cost": true,
+    "candidate_exact_call_ledger": "1A+1A^T",
+    "fresh_wall_or_rss_measured": false,
+    "logical_online_call_ledger_only": true
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "check_count": 27,
+    "metric_maximum_absolute_difference": 1.6153078874481253e-11,
+    "policy_summary_maximum_absolute_difference": 8.65751914602697e-12,
+    "candidate_field_maximum_relative_difference": 1.4692886642466628e-11,
+    "candidate_residual_maximum_relative_difference": 2.7815199410786754e-11,
+    "ray_axis_maximum_absolute_difference": 5.551115123125783e-15,
+    "adjoint_identity_maximum_relative_error": 1.7774076497771787e-16,
+    "exact_call_maximum_difference": 0,
+    "v173_parent_metric_maximum_absolute_difference": 0,
+    "all_discrete_decisions_exact": true
+  },
+  "interpretation": "Under identical H1-K0 reconstruction and identical 1A+1A^T cost, the v172 selector is the only policy that clears every cell and every complete calibration, field, and time axis. The three frozen controls do not explain the selector result on this opened controlled proxy.",
+  "remaining_narrow_question": "Can the smallest shared-parameter observation/geometry-only CPU selector reproduce the safe choices under complete-trajectory isolation and preserve the result under physical replay?",
+  "next_gate": "Freeze the smallest shared-parameter CPU selector, keep complete-trajectory isolation, replay the same H1-K0 1A+1A^T reconstruction, and compare against the same cheap controls. Do not authorize a large neural operator or GPU before this gate passes.",
+  "claim_limits": {
+    "post_open_controlled_proxy_only": true,
+    "selector_only_headroom_established_on_opened_proxy": true,
+    "deployable_learned_selector_established": false,
+    "fresh_external_generalization": false,
+    "paired_experimental_2d_projections_used": false,
+    "resource_speedup": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "large_neural_operator_training_authorized": false
+  }
+}
