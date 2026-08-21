@@ -54,17 +54,17 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_preserves_v173_but_points_to_v174() -> None:
+def test_current_evidence_preserves_v173_but_points_to_v175() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"
+        "PASS_MINIMAL_SHARED_SELECTOR_HEADROOM_V175"
     )
     assert payload["metrics"]["v173_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_exact_A"] == 1
     assert payload["metrics"]["v173_independent_check_count"] == 21
-    assert "smallest shared-parameter CPU selector" in payload["next_scientific_gate_en"]
-    assert "最小共享参数 CPU 选择器" in payload["next_scientific_gate_zh"]
+    assert "previously unopened public reacting-flow condition" in payload["next_scientific_gate_en"]
+    assert "此前未打开的公开反应流工况" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v173_in_both_languages() -> None:

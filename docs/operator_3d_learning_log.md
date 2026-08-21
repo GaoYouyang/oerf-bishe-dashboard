@@ -15561,3 +15561,45 @@ None of the three equal-cost controls passes completely. Fit-static reaches `323
 A fully independent second implementation reconstructs ray-axis maximin through a full distance matrix rather than formal pairwise scoring, and independently rebuilds the sparse forward / adjoint, analytic DCT, all policies, physical fields, observations, cell gates, complete-axis tails, and call ledgers. All `27/27` checks pass. Maximum per-cell metric and policy-summary differences are `1.62e-11` and `8.66e-12`, call discrepancy is zero, and every discrete selection and verdict agrees.
 
 Decision: `PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174`. This is a real scientific-judgment increment on the opened controlled proxy, but not yet a deployable algorithm. The v172 choice still comes from an opened risk-model pipeline. The next gate is a minimal shared-parameter, observation/geometry-only CPU selector with physical replay under the same H1-K0 and `1A+1A^T` budget. GPU use, larger models, wall/RSS claims, and external testing remain unauthorized.
+
+## 2026-08-21：v175 最小共享 CPU 选择器通过完整标定与完整场外折
+
+### 这次真正推进了什么
+
+v174 只能说明“选择相机这件事有价值”，但它复用了已经封存的逐场景选择。v175 把选择过程压缩为每折一个标量 Gram-ridge 风险模型，最多 `357` 个参数；推理时只读取报告相机几何，不读取三维场、时间、候选误差或真值。
+
+每个外折同时排除一套完整标定和一个完整三维场，共 `13×9=117` 折。每折只产生一个五相机子集，并把同一个选择用于留出场的四个时间。这样直接检验模型是否能跨完整场工作，而不是按时间逐点切换答案。
+
+### 正式结果与公平对照
+
+最小共享选择器严格安全 `468/468`，完整标定、三维场和时间分别通过 `13/13`、`9/9` 与 `4/4`。field / gradient / observation p90 为 `0.327494 / 0.620640 / 0.118422`，matched-reference harm 和 severe harm 都为零。
+
+三个便宜对照都没有完整通过：fit-static 为 `328/468`，完整组 `1/13 · 0/9 · 0/4`；v169 为 `192/468`，完整组全为零；ray-axis maximin 为 `455/468`，完整组 `9/13 · 4/9 · 1/4`。四条策略都使用同一个 H1-K0、同一个逻辑在线账 `1A+1A^T`，并各自对同相机子集的 Zero-K4。
+
+科学判决为 `PASS_MINIMAL_SHARED_SELECTOR_HEADROOM_V175`。
+
+### 独立复算与隔离
+
+独立第二实现使用增广最小二乘替代正式正规方程，并以不同的稀疏算子、解析 DCT、H1 与 CGLS 路径重建全部预测和物理结果。`31/31` 项检查全真：预测风险最大差 `2.19e-11`，逐单元指标最大差 `1.62e-11`，候选场 / 残差最大相对差 `1.47e-11 / 2.80e-11`，调用差为零，全部离散选择与判决一致。
+
+留出标定和留出完整场的标签在目标构造前就被排除；大幅突变这些留出标签后，拟合目标和输出最大变化仍为 `0`。这排除了 held-out 标签偷偷影响选择的实现解释。
+
+### 边界与下一门
+
+这是重要的机制进展：在已开封受控 straight-ray 代理上，一个极小、共享参数、时间不变的 CPU 选择器确实可以工作。但它尚未经过此前未打开的公开反应流工况，也没有 fresh wall/RSS、curved ray 或真实配对 BOST 证据。
+
+下一门冻结使用全部开发数据的最终小模型，并在此前未打开的公开反应流工况上只评估一次 matched accuracy。只有外部门通过，才测 fresh wall/RSS。当前没有租 GPU 或扩大网络的理由。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`curved_ray_validated=false`、`real_bost=false`。
+
+### English checkpoint
+
+v174 shows selector-only headroom but replays already sealed per-scenario choices. v175 compresses selection into one scalar Gram-ridge risk model per fold with at most `357` parameters. Inference reads reported camera geometry only; it reads no 3D field, time, candidate error, or truth.
+
+Each of the `13×9=117` folds jointly holds out one complete calibration and one complete 3D field. The fold emits one five-camera subset shared across all four times of the held-out field. The minimal shared selector is strict-safe on `468/468` cells and clears `13/13` calibrations, `9/9` fields, and `4/4` times. Field / gradient / observation p90 values are `0.327494 / 0.620640 / 0.118422`, with zero harm.
+
+Fit-static reaches `328/468` and `1/13 · 0/9 · 0/4`; v169 reaches `192/468` with no complete group; ray-axis maximin reaches `455/468` and `9/13 · 4/9 · 1/4`. Every policy uses the same H1-K0 reconstruction, the same logical `1A+1A^T` ledger, and its own same-subset Zero-K4 reference.
+
+A fully independent implementation uses augmented least squares instead of formal normal equations and independently rebuilds the sparse operator, analytic DCT, H1 solve, CGLS reference, predictions, physical replay, tails, and call ledger. All `31/31` checks pass. Maximum predicted-risk and per-cell metric differences are `2.19e-11` and `1.62e-11`; every discrete selection and verdict agrees. Mutating held-out calibration and complete-field labels changes the fit and output by exactly zero.
+
+Decision: `PASS_MINIMAL_SHARED_SELECTOR_HEADROOM_V175`. This is a substantive minimal-selector mechanism result on the opened controlled straight-ray proxy. It is not fresh external generalization, a resource speedup, curved-ray validation, real BOST, paper success, or an algorithmic breakthrough. The next gate is one evaluation on a previously unopened public reacting-flow condition; fresh wall/RSS follows only if that gate passes, and GPU rental remains unauthorized.
