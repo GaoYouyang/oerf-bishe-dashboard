@@ -90,12 +90,14 @@ def test_v186_1_public_files_exclude_private_execution_details() -> None:
         assert private_receipt.search(content) is None, path
 
 
-def test_current_evidence_points_to_v186_1_without_overclaiming() -> None:
+def test_current_evidence_preserves_v186_1_as_closed_parent_evidence() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == "FAIL_POTENTIAL_SET_LINEAR_V186_1_1"
-    assert current["engineering_status"] == (
+    assert current["v186_1_potential_set_linear_scientific_decision"] == (
+        "FAIL_POTENTIAL_SET_LINEAR_V186_1_1"
+    )
+    assert current["v186_1_potential_set_linear_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_SET_LINEAR_V186_1_1"
     )
     assert current["metrics"]["v186_1_primary_k1_five_strict_safe_count"] == 39

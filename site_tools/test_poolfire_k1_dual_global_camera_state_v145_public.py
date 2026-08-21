@@ -95,7 +95,7 @@ def test_current_manifest_retains_v145_history_without_blocking_newer_evidence()
     assert evidence["public_evidence"]["result"].startswith(
         "../document_reader.html?doc=docs%2F"
     )
-    assert evidence["scientific_status"] == "FAIL_POTENTIAL_SET_LINEAR_V186_1_1"
+    assert evidence["scientific_status"] == "FAIL_GEOMETRY_LOCAL_FEATURE_CAPACITY_V187_1"
     assert evidence["current_decision"]["v161_independently_recomputed"] is True
     assert evidence["current_decision"]["v162_independently_recomputed"] is True
 

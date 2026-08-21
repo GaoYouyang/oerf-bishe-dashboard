@@ -96,9 +96,9 @@ def test_current_evidence_retains_v185_after_v186_1_advances_the_gate() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == "FAIL_POTENTIAL_SET_LINEAR_V186_1_1"
+    assert current["scientific_status"] == "FAIL_GEOMETRY_LOCAL_FEATURE_CAPACITY_V187_1"
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_SET_LINEAR_V186_1_1"
+        "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_LOCAL_FEATURE_INVERSE_V187_1"
     )
     assert current["metrics"]["v185_five_primary_k1_strict_safe_count"] == 52
     assert current["metrics"]["v185_all_nine_primary_k1_strict_safe_count"] == 52

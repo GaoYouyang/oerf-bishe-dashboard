@@ -55,7 +55,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v179_as_parent_after_v181() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_POTENTIAL_SET_LINEAR_V186_1_1"
+    assert payload["scientific_status"] == "FAIL_GEOMETRY_LOCAL_FEATURE_CAPACITY_V187_1"
     assert payload["metrics"]["v179_measurement_rank_minimum"] == 1009
     assert payload["metrics"]["v179_five_pseudoinverse_k0_strict_safe_count"] == 52
     assert payload["metrics"]["v179_five_coordinate_cgls1_k0_strict_safe_count"] == 0
@@ -83,7 +83,7 @@ def test_primary_pages_reference_v179_in_both_languages() -> None:
 def test_route_metadata_preserves_v179_after_v181_advance() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260822-v186-1" in operator
+    assert "curriculum.js?v=20260822-v187-1" in operator
     assert 'version: "2026.08.22-c-v185-potential-affine-capacity"' in curriculum
     assert 'previousVersion: "2026.08.22-c-v184-projection-potential-negative"' in curriculum
     assert 'updated: "2026-08-21"' in curriculum

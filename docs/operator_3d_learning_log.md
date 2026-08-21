@@ -16027,3 +16027,35 @@ The geometry-blind DCT12, one-direction potential-coordinate CGLS1, and fit-mean
 Decision: `FAIL_POTENTIAL_SET_LINEAR_V186_1_1`. The dense v185 capacity result remains valid, but the current fixed DCT12 + Plucker pooling + shared-linear map is closed. It will not be enlarged or rescued with CNN/FNO/UNO or GPU rental. Because the accuracy gate fails, the logical `2A+1A^T` K1 ledger establishes no exact-call reduction, wall/RSS benefit, external generalization, or real-BOST result.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v187.1 去掉共享回归仍失败，问题定位到当前汇聚特征
+
+### 讲人话：换一把更精确的尺子仍量不准，说明图纸在压缩时已经丢了东西
+
+v186.1 失败后，还有一个必须排除的解释：也许 DCT12 + Plucker 特征其实足够，只是让所有几何共用一套回归权重太勉强。v187.1 因此完全去掉共享回归，让每个相机集合和报告标定都用自己的固定门 Moore-Penrose 伪逆。数据、特征、误差门、K0/K1 和调用账都不变，也没有 ridge、阻尼、回退或候选搜索。
+
+结果比 v186.1 更能排除歧义。K0 下五/九相机都是 `0/52`。一轮未修改物理 K1 后，五相机只有 `2/52`，九相机仍是 `0/52`，两臂完整标定都是 `0/13`，完整时间层都是 `0/4`。
+
+五相机 K1 的 field / gradient / observation p90 为 `0.365208 / 0.620812 / 0.241597`：场和梯度仍过门，但 observation 高于 `0.20`。九相机则是 `2.378947 / 4.577949 / 1.792774`，三项都大幅失败。伪逆保留秩只有 `715-1001`，条件数最高约 `6.65e7`，说明当前汇聚特征空间确实存在严重信息损失或病态性。
+
+完全独立第二实现改用不同 SVD driver，重建特征响应、伪逆、三维候选、物理 K1、指标与分层尾部，`40/40` 检查全真。候选场相对差和指标绝对差最大为 `2.83e-9 / 4.43e-9`，所有离散判决一致；相机换序与 truth mutation 影响都为 `0`。
+
+正式判决是 `FAIL_GEOMETRY_LOCAL_FEATURE_CAPACITY_V187_1`。这不再只是“共享线性模型太弱”，而是当前 DCT12 + 报告射线 Plucker 池化特征本身无法保住 v185 稠密逆所需的信息。共享线性和 setup-local 两种逆都关闭，不事后调 SVD 门、加 ridge、堆大网络或租 GPU。
+
+v185 的 camera-resolved 稠密容量仍然有效，整条 C 路线也没关闭。下一个可证伪问题是单独冻结 camera-resolved 与 pooled DCT12 容量对照，区分损失来自跨相机池化还是 DCT12 截断。当前仍没有调用减少、wall/RSS、外部泛化或真实 BOST 结果。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v187.1 tests whether v186.1 failed only because one linear map was shared across geometries. It removes that shared fit and applies one fixed-threshold Moore-Penrose inverse to each setup's frozen `1009x1144` DCT12 plus reported-ray Plucker response-feature matrix, while leaving data, gates, K0/K1 replay, and call accounting unchanged. No ridge, damping, fallback, search, or truth-based tuning is used.
+
+K0 is `0/52` under both five and nine cameras. After one unchanged physical K1 step, five-camera and all-nine arms reach only `2/52` and `0/52`, with `0/13` complete calibrations and `0/4` complete times in both arms. Five-camera field / gradient / observation p90 values are `0.365208 / 0.620812 / 0.241597`; all-nine values are `2.378947 / 4.577949 / 1.792774`. Ranks range from `715` to `1001`, and the maximum condition number is about `6.65e7`.
+
+A fully independent second implementation uses a different SVD driver and passes `40/40` checks. Maximum candidate-field relative and metric absolute differences are `2.83e-9 / 4.43e-9`; all discrete decisions agree, while camera reordering and truth mutation each have zero effect.
+
+Decision: `FAIL_GEOMETRY_LOCAL_FEATURE_CAPACITY_V187_1`. Shared cross-geometry regression is not the sole problem. The current pooled DCT12 plus reported-ray Plucker feature map itself loses or ill-conditions information needed to reproduce the dense v185 capacity. Close both shared and setup-local inverses on this representation without SVD-threshold retuning, post-result ridge, larger-network rescue, or GPU rental.
+
+The dense camera-resolved v185 capacity and the overall C route remain open. A separately frozen camera-resolved-versus-pooled DCT12 diagnostic may next distinguish pooling loss from spectral truncation. No exact-call, wall/RSS, external-generalization, or real-BOST result is established.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
