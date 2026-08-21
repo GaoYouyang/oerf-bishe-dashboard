@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.22-c-v184-projection-potential-negative",
-  previousVersion: "2026.08.21-c-v182-observation-adaptive-jacobi-pcgls1-negative",
-  previousBadge: "v182 global residual line · five 0 / 52 · nine 0 / 52",
+  version: "2026.08.22-c-v185-potential-affine-capacity",
+  previousVersion: "2026.08.22-c-v184-projection-potential-negative",
+  previousBadge: "v184 scalar-potential Jacobi lift · five 0 / 52 · nine 0 / 52",
   olderBadge: "v181 geometry-conditioned rank 16 · five 0 / 52 · nine 0 / 52",
   historyReleases: [
+    {
+      version: "2026.08.22-c-v184-projection-potential-negative",
+      previousVersion: "2026.08.21-c-v183-observation-block-galerkin-negative",
+      badge: "v184 scalar-potential Jacobi lift · five 0 / 52 · nine 0 / 52"
+    },
     {
       version: "2026.08.21-c-v182-observation-adaptive-jacobi-pcgls1-negative",
       previousVersion: "2026.08.21-c-v181-geometry-conditioned-rank16-negative",

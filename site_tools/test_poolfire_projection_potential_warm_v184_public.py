@@ -80,12 +80,14 @@ def test_v184_public_files_exclude_private_execution_details() -> None:
         assert not any(token in content for token in forbidden), path
 
 
-def test_current_evidence_points_to_v184_without_overclaiming() -> None:
+def test_current_evidence_preserves_v184_as_historical_negative() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == "FAIL_PROJECTION_POTENTIAL_WARM_V184"
-    assert current["engineering_status"] == (
+    assert current["v184_projection_potential_scientific_decision"] == (
+        "FAIL_PROJECTION_POTENTIAL_WARM_V184"
+    )
+    assert current["v184_projection_potential_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_PROJECTION_POTENTIAL_WARM_V184"
     )
     assert current["metrics"]["v184_five_primary_k1_strict_safe_count"] == 0

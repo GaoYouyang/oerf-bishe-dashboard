@@ -82,7 +82,7 @@ def test_current_evidence_preserves_v168_as_historical_evidence() -> None:
         "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
     assert payload["scientific_status"] == (
-        "FAIL_PROJECTION_POTENTIAL_WARM_V184"
+        "PASS_POTENTIAL_AFFINE_K1_CAPACITY_V185"
     )
 
 

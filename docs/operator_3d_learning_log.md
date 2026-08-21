@@ -15949,3 +15949,45 @@ The first formal attempt failed closed before scientific scoring on a derivative
 Decision: `FAIL_PROJECTION_POTENTIAL_WARM_V184`. Close the exact zero-mean detector-potential plus camera-centered scalar-ray Jacobi inverse lift plus one observable line search plus unchanged K1 mechanism. Do not tune finite differences, gauge, ridge, damping, line search, camera subsets, or gates, and do not rescue it with CNN/FNO/UNO/DeepONet or a GPU. The full C route remains open, but v184 establishes no algorithmic breakthrough, call reduction, wall/RSS benefit, external generalization, or real-BOST result.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v185 同一势域坐标保住完整仿射信息，两档 K1 完整通过
+
+### 讲人话：同一张二维地图不该只抄成一根箭头
+
+v184 的问题不是“二维势场没有信息”，而是把整张二维势场压成一条 scalar-ray Jacobi 三维方向时丢掉了信息。v185 因此不再猜一根箭头：它把当前观测和全部 `1009` 个仿射响应列都翻译到完全相同的零均值 detector-potential 坐标里，再用固定门精确恢复完整仿射坐标。
+
+这一次，势域映射在所有单元都保留 `1009/1009` 可观测秩。九相机 K0 已经是 `52/52`；五相机 K0 为 `50/52`，只在两套标定的 observation p90 上轻微越过 `0.20`，分别为 `0.203064` 和 `0.206737`。
+
+再运行一轮完全未修改的物理 CGLS K1 后，五相机与九相机都达到 `52/52` 严格通过、`13/13` 完整标定和 `4/4` 完整时间层。五相机 field / gradient / observation p90 为 `0.338439 / 0.549518 / 0.118081`；九相机为 `0.240014 / 0.409766 / 0.116577`。
+
+便宜的一方向 potential-coordinate CGLS1 control 在五相机与九相机的 K0/K1 四臂仍全部是 `0/52`。因此，结果不是“把残差积分成势场，再随便走一步就行”，而是依赖观测和完整仿射响应在同一个势域坐标中的联合可观测结构。
+
+完全独立第二实现重新构造全部势域响应列、固定门伪逆、三维候选、未修改 K1、指标、调用账和相机换序审计，`32/32` 检查全真。候选场 / 仿射坐标 / 势场 / 指标最大差为 `8.40e-12 / 1.84e-11 / 1.48e-11 / 4.48e-12`；相机换序场相对差为 `1.39e-14`，held-out truth mutation 对预测的影响为 `0`。
+
+两次独立验证启动缺陷原样保留：一次在读取科学数组前混淆物理时间与归一化标签，另一次在最终报告比较时把二元返回值当成标量。两次都 fail-closed，失败数组没有复用；正式 runner 未改变，三次完整 formal 的 `22` 个科学数组和两个 barrier 逐字节一致。这是工程完整性，不是算法成果。
+
+正式判决为 `PASS_POTENTIAL_AFFINE_K1_CAPACITY_V185`。它改变了 v184 的失败归因：有损的是 scalar-ray Jacobi lift，不是 detector-potential 坐标本身。
+
+但 v185 仍不是部署算法。稠密逆每套 sensor setup 需要处理 `1013` 个势变换右端，并继承 `26260` 个 forward-equivalent 的几何缓存构造；逻辑在线 K1 账虽为 `2A+1A^T`，也不能据此声称 exact-call 减少，更没有 wall/RSS、外部泛化、curved ray 或真实 BOST 证据。
+
+下一门只允许结果前冻结一个紧凑、共享参数、observation/geometry-only 的势域逆近似，与一方向和均值 control 公平比较，并重放未修改物理 K1。当前不租 GPU。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v185 tests whether detector-potential coordinates themselves lose the 3D affine information, rather than compressing the potential into the single lossy scalar-ray Jacobi direction used by v184. The centered observation and all `1009` affine-response columns undergo exactly the same zero-mean detector-potential transform, followed by a fixed-threshold exact potential-domain inverse.
+
+The map retains rank `1009/1009` in every cell. All-nine K0 reaches `52/52`; five-camera K0 reaches `50/52`, with only two calibration observation-p90 values narrowly above `0.20` at `0.203064` and `0.206737`.
+
+After one unchanged physical CGLS K1 step, both five-camera and all-nine arms reach `52/52` strict-safe cells, `13/13` complete calibrations, and `4/4` complete time strata. Five-camera field / gradient / observation p90 values are `0.338439 / 0.549518 / 0.118081`; all-nine values are `0.240014 / 0.409766 / 0.116577`.
+
+The cheap one-direction potential-coordinate CGLS1 control remains `0/52` at K0 and K1 under both camera arms. A fully independent second implementation passes `32/32` checks. Maximum field / coordinate / potential / metric differences are `8.40e-12 / 1.84e-11 / 1.48e-11 / 4.48e-12`; camera-reordering field error is `1.39e-14`, and held-out truth mutation changes predictions by `0`.
+
+Decision: `PASS_POTENTIAL_AFFINE_K1_CAPACITY_V185`. This attributes v184's failure to its lossy scalar-ray Jacobi lift rather than to detector-potential compression itself.
+
+The result is still not deployable. The dense inverse processes `1013` potential-transform right-hand sides per sensor setup and inherits a `26260` forward-equivalent geometry cache. A logical online ledger of `2A+1A^T` does not establish exact-call reduction, wall/RSS benefit, external generalization, curved-ray validity, or real BOST.
+
+Only a separately preregistered compact shared-parameter observation/geometry-only approximation is authorized next. GPU rental remains unauthorized.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
