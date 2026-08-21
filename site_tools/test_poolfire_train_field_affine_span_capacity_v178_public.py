@@ -64,9 +64,10 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_points_to_v178_and_preserves_limitations() -> None:
+def test_current_evidence_preserves_v178_as_parent_and_advances_to_v179() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
+    assert payload["scientific_status"] == "PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179"
+    assert payload["v178_affine_span_scientific_decision"] == "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
     assert payload["metrics"]["v178_fit_field_count"] == 1010
     assert payload["metrics"]["v178_stable_affine_rank"] == 1009
     assert payload["metrics"]["v178_five_projection_k1_strict_safe_count"] == 52
@@ -86,18 +87,20 @@ def test_primary_pages_reference_v178_in_both_languages() -> None:
     home = (ROOT / "index.html").read_text()
     for text in (operator, daily, home):
         assert "v178" in text
-        assert "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178" in text
+    assert "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178" in operator
+    assert "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178" in daily
     assert "近满秩" in operator
     assert "near-full-rank" in operator
-    assert "poolfire_train_field_affine_span_capacity_v178.png" in operator
+    assert FIGURE.exists()
     assert daily.count('data-date="2026-08-21"') == 1
 
 
-def test_route_metadata_and_cachebuster_advance_to_v178() -> None:
+def test_route_metadata_preserves_v178_as_previous_release() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v178" in operator
-    assert 'version: "2026.08.21-c-v178-affine-span-capacity-positive"' in curriculum
+    assert "curriculum.js?v=20260821-v179" in operator
+    assert 'version: "2026.08.21-c-v179-affine-coordinate-observability"' in curriculum
+    assert 'previousVersion: "2026.08.21-c-v178-affine-span-capacity-positive"' in curriculum
     assert 'updated: "2026-08-21"' in curriculum
 
 

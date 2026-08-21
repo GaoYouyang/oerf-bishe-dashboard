@@ -95,7 +95,7 @@ def test_current_manifest_retains_v145_history_without_blocking_newer_evidence()
     assert evidence["public_evidence"]["result"].startswith(
         "../document_reader.html?doc=docs%2F"
     )
-    assert evidence["scientific_status"] == "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
+    assert evidence["scientific_status"] == "PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179"
     assert evidence["current_decision"]["v161_independently_recomputed"] is True
     assert evidence["current_decision"]["v162_independently_recomputed"] is True
 

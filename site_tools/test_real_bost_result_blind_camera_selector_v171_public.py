@@ -59,20 +59,20 @@ def test_public_surfaces_expose_the_same_v171_verdict() -> None:
         assert "0.630384" in surface.read_text(encoding="utf-8")
 
 
-def test_current_evidence_preserves_v171_but_points_to_v178() -> None:
+def test_current_evidence_preserves_v171_but_points_to_v179() -> None:
     payload = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_TRAIN_FIELD_AFFINE_SPAN_V178"
+        == "PASS_INDEPENDENT_RECOMPUTATION_AFFINE_COORDINATE_OBSERVABILITY_V179"
     )
     assert (
         payload["formal_status"]
-        == "PASS_FORMAL_POOLFIRE_TRAIN_FIELD_AFFINE_SPAN_EXECUTION_V178"
+        == "PASS_FORMAL_POOLFIRE_AFFINE_COORDINATE_OBSERVABILITY_EXECUTION_V179"
     )
     assert payload["scientific_status"] == (
-        "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
+        "PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179"
     )
     assert payload["current_decision"]["v171_result_blind_selector_passed"] is True
     assert payload["current_decision"]["v171_external_generalization"] is False

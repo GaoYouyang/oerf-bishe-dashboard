@@ -82,7 +82,7 @@ def test_current_evidence_preserves_v168_as_historical_evidence() -> None:
         "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
     assert payload["scientific_status"] == (
-        "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
+        "PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179"
     )
 
 

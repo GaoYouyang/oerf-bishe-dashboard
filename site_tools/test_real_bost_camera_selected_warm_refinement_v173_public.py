@@ -61,10 +61,10 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_preserves_v173_but_points_to_v178() -> None:
+def test_current_evidence_preserves_v173_but_points_to_v179() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
+        "PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179"
     )
     assert payload["metrics"]["v173_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_strict_safe_count"] == 468
