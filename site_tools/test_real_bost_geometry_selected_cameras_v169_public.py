@@ -58,17 +58,17 @@ def test_public_surfaces_keep_v169_as_traceable_parent_evidence() -> None:
     assert "0.895914" in SURFACES[1].read_text(encoding="utf-8")
 
 
-def test_current_evidence_preserves_v169_but_points_to_v175() -> None:
+def test_current_evidence_preserves_v169_but_points_to_v176() -> None:
     payload = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
     assert payload["v169_geometry_selected_cameras_scientific_decision"] == (
         "FAIL_GEOMETRY_SELECTED_CAMERAS_V169"
     )
     assert payload["current_decision"]["v169_geometry_selected_cameras_passed"] is False
     assert payload["current_decision"]["v169_predictor_training_authorized"] is False
-    assert payload["engineering_status"].endswith("MINIMAL_SHARED_SELECTOR_V175")
-    assert payload["formal_status"].endswith("MINIMAL_SHARED_SELECTOR_V175")
+    assert payload["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_CONDITION_V176"
+    assert payload["formal_status"] == "PASS_FORMAL_POOLFIRE_RESULT_UNOPENED_CONDITION_V176"
     assert payload["scientific_status"] == (
-        "PASS_MINIMAL_SHARED_SELECTOR_HEADROOM_V175"
+        "FAIL_RESULT_UNOPENED_POOLFIRE_CONDITION_PARITY_V176"
     )
 
 

@@ -56,14 +56,15 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_points_to_v175_and_external_next_gate() -> None:
+def test_current_evidence_retains_v175_as_historical_parent_evidence() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "PASS_MINIMAL_SHARED_SELECTOR_HEADROOM_V175"
+    assert payload["v175_minimal_shared_selector_scientific_decision"] == "PASS_MINIMAL_SHARED_SELECTOR_HEADROOM_V175"
     assert payload["metrics"]["v175_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v175_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v175_independent_check_count"] == 31
-    assert "previously unopened public reacting-flow condition" in payload["next_scientific_gate_en"]
-    assert "此前未打开的公开反应流工况" in payload["next_scientific_gate_zh"]
+    assert payload["scientific_status"] == "FAIL_RESULT_UNOPENED_POOLFIRE_CONDITION_PARITY_V176"
+    assert "K4-or-better reference capacity" in payload["next_scientific_gate_en"]
+    assert "K4-or-better 参考容量" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v175_in_both_languages() -> None:
@@ -74,7 +75,7 @@ def test_primary_pages_reference_v175_in_both_languages() -> None:
         assert "v175" in text
     assert "最小共享 CPU 选择器" in operator
     assert "minimal shared CPU selector" in operator
-    assert "real_bost_minimal_shared_selector_v175.png" in operator
+    assert "real_bost_minimal_shared_selector_v175_result_2026-08-21.md" in operator
     assert daily.count("PASS_MINIMAL_SHARED_SELECTOR_HEADROOM_V175") == 1
 
 

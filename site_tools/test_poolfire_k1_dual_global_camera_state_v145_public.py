@@ -68,7 +68,8 @@ def test_current_manifest_retains_v145_history_without_blocking_newer_evidence()
     assert decision["algorithm_breakthrough"] is False
     assert RESULT.exists()
     assert SUMMARY.exists()
-    assert evidence["public_evidence"]["result"].startswith("../document_reader.html?doc=docs%2Freal_bost_")
+    assert evidence["public_evidence"]["result"].startswith("../document_reader.html?doc=docs%2F")
+    assert evidence["scientific_status"] == "FAIL_RESULT_UNOPENED_POOLFIRE_CONDITION_PARITY_V176"
     assert evidence["current_decision"]["v161_independently_recomputed"] is True
     assert evidence["current_decision"]["v162_independently_recomputed"] is True
 

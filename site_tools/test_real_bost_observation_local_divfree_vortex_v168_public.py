@@ -71,7 +71,7 @@ def test_current_evidence_preserves_v168_as_historical_evidence() -> None:
         "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
     assert payload["scientific_status"] == (
-        "PASS_MINIMAL_SHARED_SELECTOR_HEADROOM_V175"
+        "FAIL_RESULT_UNOPENED_POOLFIRE_CONDITION_PARITY_V176"
     )
 
 
