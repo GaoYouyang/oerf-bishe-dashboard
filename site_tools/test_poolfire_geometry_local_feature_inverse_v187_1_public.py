@@ -97,12 +97,14 @@ def test_v187_1_public_files_exclude_private_execution_details() -> None:
     assert commit_hash.search(section) is None
 
 
-def test_current_evidence_points_to_v187_1_without_overclaiming() -> None:
+def test_current_evidence_preserves_v187_1_history_without_overclaiming() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == "FAIL_GEOMETRY_LOCAL_FEATURE_CAPACITY_V187_1"
-    assert current["engineering_status"] == (
+    assert current["v187_1_geometry_local_feature_inverse_scientific_decision"] == (
+        "FAIL_GEOMETRY_LOCAL_FEATURE_CAPACITY_V187_1"
+    )
+    assert current["v187_1_geometry_local_feature_inverse_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_LOCAL_FEATURE_INVERSE_V187_1"
     )
     assert current["metrics"]["v187_1_primary_k1_five_strict_safe_count"] == 2

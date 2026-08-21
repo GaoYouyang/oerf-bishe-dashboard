@@ -65,14 +65,14 @@ def test_current_evidence_preserves_v171_but_points_to_v181() -> None:
     )
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_LOCAL_FEATURE_INVERSE_V187_1"
+        == "PASS_INDEPENDENT_RECOMPUTATION_CAMERA_RESOLVED_DCT12_V188_1"
     )
     assert (
         payload["formal_status"]
-        == "PASS_FORMAL_POOLFIRE_GEOMETRY_LOCAL_FEATURE_INVERSE_EXECUTION_V187_1"
+        == "PASS_FORMAL_POOLFIRE_CAMERA_RESOLVED_DCT12_EXECUTION_V188"
     )
     assert payload["scientific_status"] == (
-        "FAIL_GEOMETRY_LOCAL_FEATURE_CAPACITY_V187_1"
+        "FAIL_CAMERA_RESOLVED_DCT12_CAPACITY_V188"
     )
     assert payload["current_decision"]["v171_result_blind_selector_passed"] is True
     assert payload["current_decision"]["v171_external_generalization"] is False

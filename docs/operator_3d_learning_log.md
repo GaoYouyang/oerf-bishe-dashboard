@@ -16059,3 +16059,39 @@ Decision: `FAIL_GEOMETRY_LOCAL_FEATURE_CAPACITY_V187_1`. Shared cross-geometry r
 The dense camera-resolved v185 capacity and the overall C route remain open. A separately frozen camera-resolved-versus-pooled DCT12 diagnostic may next distinguish pooling loss from spectral truncation. No exact-call, wall/RSS, external-generalization, or real-BOST result is established.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v188 拆开相机后九相机好很多，但 DCT12 仍不够
+
+### 讲人话：池化确实丢了不少东西，却不是唯一问题
+
+v187.1 已经说明，失败不只是因为所有几何共用一套线性权重。但它仍把不同相机的 DCT12 和几何描述汇聚到同一个特征向量里，所以还不能区分：究竟是跨相机池化丢了信息，还是每台相机只保留 DCT12 本身就太粗。
+
+v188 只改这一点。每台 active camera 的零均值 detector potential 独立做正交二维 DCT，保留 `12x12` 方块并去掉 DC；每台相机得到 `143` 个系数，再按固定 camera ID 顺序拼接。五相机是 `715` 维，九相机是 `1287` 维。数据、13 套标定、4 个时间层、固定门伪逆、K0/K1、误差门和调用账全部不变；没有 ridge、阻尼、回退、搜索、真值调参或可训练参数。
+
+五相机几乎完全没变。一轮未修改物理 K1 后，field / gradient / observation p90 是 `0.365208 / 0.620812 / 0.241597`，严格通过仍为 `2/52`，完整标定 `0/13`，完整时间层 `0/4`。field 和 gradient 过门，但 observation 仍高于 `0.20`。
+
+九相机则明显变好。p90 从 v187.1 的 `2.378947 / 4.577949 / 1.792774` 降到 `0.797161 / 1.353802 / 0.594341`，分别下降约 `66.5% / 70.4% / 66.8%`；条件数上限也从约 `6.65e7` 降到 `4.33e4`。这证明跨相机池化确实造成了重要病态性。但改善后的三项仍全部越门，严格通过仍为 `0/52`，完整标定 `0/13`，完整时间层 `0/4`。
+
+独立第二实现用不同 SVD driver 重建逐相机 DCT、矩形伪逆、三维候选、未修改 K1、指标、分层尾部和调用账，`44/44` 检查全真。候选场最大相对差为 `5.53e-11`，指标最大绝对差为 `1.37e-11`；相机换序对响应和特征的影响均为 `0`。
+
+第一次独立验证在读取正式科学数组和独立评分前，因为元数据字段适配错误而停止。旧的一次性执行回执和失败证据保留；随后只修复字段适配，没有改 DCT、伪逆、K0/K1、误差门或判决。这个修复是工程完整性，不是算法成果。
+
+正式判决为 `FAIL_CAMERA_RESOLVED_DCT12_CAPACITY_V188`。科学上可以说：跨相机池化是九相机失败的重要来源，但不是唯一瓶颈；pooled 与 camera-resolved DCT12 两种形式都关闭。不能说所有紧凑表示都不可能，也不能推翻 v185 稠密 camera-resolved 势域容量。
+
+下一门只能另行结果前冻结稠密逐相机 detector-potential 参考，判断剩余损失究竟来自 DCT12 截断，还是更深的仿射逆限制。当前不调奇异值门、不加 ridge、不堆 CNN/FNO/UNO、不租 GPU，也不运行资源门或封存 test。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v188 isolates the remaining ambiguity in v187.1: whether cross-camera pooling causes the capacity loss, or whether retaining only DCT12 content per camera is already insufficient. Each active camera now undergoes its own orthonormal 2D DCT, retaining the leading `12x12` square without DC. The resulting `143` coefficients per camera are concatenated in canonical camera-ID order, yielding `715` and `1287` features for five and all-nine cameras. Data, 13 calibrations, four times, fixed-threshold inverses, K0/K1 replay, gates, and call accounting remain unchanged, with no ridge, damping, fallback, search, truth-based tuning, or trainable parameter.
+
+Five-camera is numerically unchanged. After one unchanged physical K1 step, field / gradient / observation p90 values are `0.365208 / 0.620812 / 0.241597`, with `2/52` strict-safe cells, `0/13` complete calibrations, and `0/4` complete time strata.
+
+All-nine improves sharply. Its p90 values fall from v187.1's `2.378947 / 4.577949 / 1.792774` to `0.797161 / 1.353802 / 0.594341`, reductions of about `66.5% / 70.4% / 66.8%`; the condition-number ceiling falls from about `6.65e7` to `4.33e4`. Yet all three p90 gates still fail, leaving `0/52` strict-safe cells, `0/13` complete calibrations, and `0/4` complete time strata.
+
+A fully independent second implementation passes `44/44` checks. Maximum candidate-field relative and metric absolute differences are `5.53e-11 / 1.37e-11`, and camera reordering changes neither responses nor features. The first independent attempt stopped before reading formal scientific arrays or constructing independent scores because of a metadata-field adapter error. The preserved repair changes only that adapter and is engineering assurance, not a scientific gain.
+
+Decision: `FAIL_CAMERA_RESOLVED_DCT12_CAPACITY_V188`. Cross-camera pooling is a major all-nine penalty but not the sole bottleneck. Close both pooled and camera-resolved DCT12 without post-result threshold tuning, ridge, larger-network rescue, or GPU rental. Dense v185 camera-resolved potential-domain capacity remains valid, and the full C route remains open.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
