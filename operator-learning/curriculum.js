@@ -1,8 +1,8 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.15-c-v149-group-krylov-predictor-adjudication",
-  previousVersion: "2026.08.15-c-v147-local-span-capacity",
-  previousBadge: "v147 local action span closed · 14 / 20 cross span-32",
-  olderBadge: "v146 fixed-eight direction family closed · 1 / 20 cross-trajectory",
+  version: "2026.08.21-c-v176-result-unopened-condition-negative",
+  previousVersion: "2026.08.21-c-v175-minimal-shared-selector-headroom",
+  previousBadge: "v175 minimal shared selector · 468 / 468 development cells",
+  olderBadge: "v174 equal-cost selector attribution · 468 / 468 development cells",
   historyReleases: [
     {
       version: "2026.08.02-c-v98-joint13-predictor-negative-geometry-gate",
@@ -219,7 +219,7 @@ window.OPERATOR_LEARNING_GUIDE = {
       badge: "v16.1 resource · wall headroom, CPU/RSS FAIL"
     }
   ],
-  updated: "2026-08-15",
+  updated: "2026-08-21",
   foundationChecks: [
     {
       id: "python-array",

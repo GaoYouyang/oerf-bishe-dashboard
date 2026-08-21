@@ -15603,3 +15603,45 @@ Fit-static reaches `328/468` and `1/13 · 0/9 · 0/4`; v169 reaches `192/468` wi
 A fully independent implementation uses augmented least squares instead of formal normal equations and independently rebuilds the sparse operator, analytic DCT, H1 solve, CGLS reference, predictions, physical replay, tails, and call ledger. All `31/31` checks pass. Maximum predicted-risk and per-cell metric differences are `2.19e-11` and `1.62e-11`; every discrete selection and verdict agrees. Mutating held-out calibration and complete-field labels changes the fit and output by exactly zero.
 
 Decision: `PASS_MINIMAL_SHARED_SELECTOR_HEADROOM_V175`. This is a substantive minimal-selector mechanism result on the opened controlled straight-ray proxy. It is not fresh external generalization, a resource speedup, curved-ray validation, real BOST, paper success, or an algorithmic breakthrough. The next gate is one evaluation on a previously unopened public reacting-flow condition; fresh wall/RSS follows only if that gate passes, and GPU rental remains unauthorized.
+
+## 2026-08-21：v176 一次结果未开工况把当前选择器迁移否掉了
+
+### 讲人话：这次不是“差一点”
+
+v175 在开发数据上很漂亮：完整留出标定和三维场之后仍是 `468/468`。真正有价值的下一步不是继续在这些数据上优化，而是把模型完全冻住，去看一个此前没有读过结果的 PoolFire 工况。
+
+v176 就做了这件事。它没有重新拟合、调阈值或换重建方法，只把冻结的 v175 放到 `13` 套报告标定和 `4` 个帧上，共 `52` 个单元。结果是严格安全 `0/52`，完整标定 `0/13`，帧分层 `0/4`。field / gradient / observation p90 为 `0.880095 / 0.994590 / 0.416498`，都没有守住冻结要求。相对同一相机子集的 K4，`52/52` 个单元被联合伤害，`50/52` 属于严重伤害。
+
+所以不能说“再调一点 ridge 就好了”。当前最小共享选择器的跨工况迁移主张已经被直接否定。
+
+### 更深一层：不只是相机选错
+
+如果只有选择器候选失败，而同一相机子集的 K4 很强，那么最直接的解释会是“选择器把相机排错了”。但实际不是这样：主策略的 K4 参考也严格安全 `0/52`；四条冻结策略各自的 K4 参考全部零通过。主策略 K4 的 field / gradient / observation p90 为 `0.875520 / 0.786218 / 0.286067`，参考本身就越过绝对门。
+
+因此，这个工况暴露的是更广的五相机 reference / representation mismatch。换句话说，在讨论学习选择器能否胜过基线之前，当前五相机重建壳本身就不够好。这是一次有用的失败归因：它阻止我们把算力继续花在更大的 selector 上。
+
+### 为什么可以相信这个负结果
+
+完全独立第二实现重建了选择、候选场、同子集 K4、残差、逐单元门和调用账，`35/35` 项检查全真。逐单元指标最大差为 `2.07e-11`，预测最大差为 `9.45e-12`，exact-call 差为零，所有选择和判决一致。
+
+执行过程中也有一条需要透明说明的工程异常：前两次启动在科学输入打开前失败；第三次在选择和预测已经封存后，因为残差审计数组假设固定长度而停止。当时没有正式指标或判决文件。修复只改变残差如何零填充保存，并记录真实长度；选择、预测、物理算子和阈值都没有变，恢复后的正式预测变化为零。这是存储修复，不是看结果后改算法。
+
+### 现在明确不做什么
+
+关闭当前最小共享选择器迁移，不继续调参，不用 CNN/FNO/UNO/DeepONet 挽救，不租 GPU，不跑 wall/RSS 资源门，也不打开封存测试。若还要在这个已开工况上推进，只能另行结果前冻结一条 post-open 诊断，先回答是否存在足够的固定五相机子集和 K4-or-better 参考容量；这条诊断不能再被写成外部成功。
+
+这不关闭整个 C 路线，也不证明五相机数学上不可能。它只把当前错误方向及时关掉：`FAIL_RESULT_UNOPENED_POOLFIRE_CONDITION_PARITY_V176`。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`broad_external_generalization=false`、`resource_speedup=false`、`curved_ray_validated=false`、`real_bost=false`。
+
+### English checkpoint
+
+v175 is attractive on development data, reaching `468/468` under complete calibration and complete-field outer isolation. v176 freezes that model and evaluates one previously result-unopened PoolFire condition without refitting, threshold changes, or reconstruction changes. Across thirteen reported calibrations and four frames, the frozen selector is strict-safe on `0/52`, with `0/13` complete calibrations and `0/4` frame strata. Field / gradient / observation p90 values are `0.880095 / 0.994590 / 0.416498`. All `52/52` cells are jointly harmed relative to their own same-subset K4 reference, and `50/52` are severe.
+
+The deeper attribution is that selector ranking alone cannot explain the failure. The primary same-subset K4 is also strict-safe on `0/52`, and every policy-specific K4 reference has zero strict-safe cells. Its field / gradient / observation p90 values are `0.875520 / 0.786218 / 0.286067`. The condition therefore exposes a broader five-camera reference or representation mismatch before learned-selector advantage can be assessed.
+
+A fully independent second implementation rebuilds selections, candidate fields, same-subset K4 references, residuals, cell gates, and call accounting. All `35/35` checks pass. Maximum per-cell metric difference is `2.07e-11`, prediction difference is `9.45e-12`, exact-call discrepancy is zero, and every discrete decision agrees.
+
+The execution history is also retained. Two launches fail before scientific input is opened. A third run stops after selections and predictions are sealed because residual audit storage incorrectly assumes a fixed vector length; no formal metrics or decision files exist at that point. The recovery changes only zero-padded residual storage and length receipts. Selections and predictions are unchanged. This is an engineering repair rather than a post-result algorithm change.
+
+Decision: `FAIL_RESULT_UNOPENED_POOLFIRE_CONDITION_PARITY_V176`. Close the current minimal shared-selector transfer without retuning, a larger-model rescue, GPU rental, a resource gate, or untouched-test opening. Any continuation on the opened condition must be a separately preregistered post-open reference-capacity diagnostic and cannot be repackaged as external success. The full C route is not closed, and mathematical impossibility is not claimed.
