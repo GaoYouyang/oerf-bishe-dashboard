@@ -64,7 +64,7 @@ def test_public_surfaces_expose_the_same_capacity_verdict() -> None:
         assert "0.748953" in text
 
 
-def test_current_evidence_preserves_v170_but_points_to_v179() -> None:
+def test_current_evidence_preserves_v170_but_points_to_v180() -> None:
     payload = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
@@ -77,14 +77,14 @@ def test_current_evidence_preserves_v170_but_points_to_v179() -> None:
     assert payload["current_decision"]["v170_deployable_selector_established"] is False
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_AFFINE_COORDINATE_OBSERVABILITY_V179"
+        == "PASS_ZERO_MEAN_COMPARISON_AUDIT_V180_1"
     )
     assert (
         payload["formal_status"]
-        == "PASS_FORMAL_POOLFIRE_AFFINE_COORDINATE_OBSERVABILITY_EXECUTION_V179"
+            == "PASS_FORMAL_POOLFIRE_COMPACT_AFFINE_ADJOINT_EXECUTION_V180"
     )
     assert payload["scientific_status"] == (
-        "PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179"
+        "FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180"
     )
 
 

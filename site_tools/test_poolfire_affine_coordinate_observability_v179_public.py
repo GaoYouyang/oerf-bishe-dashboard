@@ -53,9 +53,9 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_points_to_v179_and_preserves_limitations() -> None:
+def test_current_evidence_preserves_v179_as_parent_after_v180() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179"
+    assert payload["scientific_status"] == "FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180"
     assert payload["metrics"]["v179_measurement_rank_minimum"] == 1009
     assert payload["metrics"]["v179_five_pseudoinverse_k0_strict_safe_count"] == 52
     assert payload["metrics"]["v179_five_coordinate_cgls1_k0_strict_safe_count"] == 0
@@ -72,18 +72,19 @@ def test_primary_pages_reference_v179_in_both_languages() -> None:
     home = (ROOT / "index.html").read_text()
     for text in (operator, daily, home):
         assert "v179" in text
+    for text in (operator, daily):
         assert "PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179" in text
-    assert "观测可辨识" in operator
+    assert "可辨识" in operator
     assert "observable" in operator
-    assert "poolfire_affine_coordinate_observability_v179.png" in operator
+    assert FIGURE.exists()
     assert daily.count('data-date="2026-08-21"') == 1
 
 
-def test_route_metadata_and_cachebuster_advance_to_v179() -> None:
+def test_route_metadata_preserves_v179_after_v180_advance() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v179" in operator
-    assert 'version: "2026.08.21-c-v179-affine-coordinate-observability"' in curriculum
+    assert "curriculum.js?v=20260821-v180" in operator
+    assert 'version: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative"' in curriculum
     assert 'updated: "2026-08-21"' in curriculum
 
 

@@ -100,9 +100,9 @@ def test_primary_pages_preserve_v176_as_parent_evidence() -> None:
 def test_route_metadata_has_advanced_beyond_v176() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v179" in operator
-    assert 'version: "2026.08.21-c-v179-affine-coordinate-observability"' in curriculum
-    assert 'previousVersion: "2026.08.21-c-v178-affine-span-capacity-positive"' in curriculum
+    assert "curriculum.js?v=20260821-v180" in operator
+    assert 'version: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative"' in curriculum
+    assert 'previousVersion: "2026.08.21-c-v179-affine-coordinate-observability"' in curriculum
     assert 'updated: "2026-08-21"' in curriculum
 
 

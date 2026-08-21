@@ -73,9 +73,9 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_preserves_v177_after_v179_becomes_current() -> None:
+def test_current_evidence_preserves_v177_after_v180_becomes_current() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179"
+    assert payload["scientific_status"] == "FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180"
     assert (
         payload["v177_krylov_capacity_scientific_decision"]
         == "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
@@ -116,9 +116,9 @@ def test_primary_pages_retain_v177_as_parent_evidence() -> None:
 def test_route_metadata_records_v177_as_older_release() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v179" in operator
-    assert 'previousVersion: "2026.08.21-c-v178-affine-span-capacity-positive"' in curriculum
-    assert 'olderBadge: "v177 low-depth Krylov field-reference capacity' in curriculum
+    assert "curriculum.js?v=20260821-v180" in operator
+    assert 'previousVersion: "2026.08.21-c-v179-affine-coordinate-observability"' in curriculum
+    assert 'olderBadge: "v178 truth-aware affine-span capacity' in curriculum
     assert 'updated: "2026-08-21"' in curriculum
 
 

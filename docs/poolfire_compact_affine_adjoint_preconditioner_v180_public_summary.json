@@ -1,0 +1,139 @@
+{
+  "schema_version": "oerf-public-poolfire-compact-affine-adjoint-preconditioner-v180",
+  "updated": "2026-08-21",
+  "formal_status": "PASS_FORMAL_POOLFIRE_COMPACT_AFFINE_ADJOINT_EXECUTION_V180",
+  "original_independent_status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_COMPACT_AFFINE_ADJOINT_V180",
+  "zero_mean_audit_status": "PASS_ZERO_MEAN_COMPARISON_AUDIT_V180_1",
+  "scientific_decision": "FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180",
+  "scope": "A post-open compact-approximation diagnostic on four already opened PoolFire frames. It tests whether a single shared diagonal-plus-rank-16 linear map can approximate the geometry-specific exact affine inverse established by v179.",
+  "question": "Does one exact adjoint feature contain a geometry-independent compact linear map that preserves the frozen field, gradient, and observation gates under five and nine cameras?",
+  "evaluation": {
+    "fit_trajectories": 10,
+    "fit_rows": 26260,
+    "stable_affine_rank": 1009,
+    "evaluation_calibrations": 13,
+    "evaluation_frames": 4,
+    "evaluation_cells_per_sensor": 52,
+    "sensors": [
+      "frozen geometry-selected five-camera sensor from v176",
+      "all-nine camera control"
+    ],
+    "deployment_visible_inputs": [
+      "observation",
+      "reported geometry through the exact adjoint"
+    ],
+    "primary_residual_rank": 16,
+    "primary_fitted_coefficients": 34322,
+    "diagonal_control_fitted_coefficients": 2018,
+    "heldout_truth_used_for_features_or_prediction": false,
+    "neural_model_trained": false
+  },
+  "absolute_gate": {
+    "field_p90_max": 0.5,
+    "field_worst_max": 0.75,
+    "gradient_p90_max": 0.75,
+    "gradient_worst_max": 1.0,
+    "observation_p90_max": 0.2,
+    "observation_worst_max": 0.35,
+    "strict_cells_required": 52,
+    "calibrations_required": 13,
+    "frames_required": 4
+  },
+  "five_camera_primary_k1": {
+    "passed": false,
+    "strict_cells_safe": 4,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 1,
+    "whole_calibrations_total": 13,
+    "frame_strata_passed": 0,
+    "frame_strata_total": 4,
+    "global_p90": {
+      "field_relative_l2": 0.3442484948697683,
+      "gradient_relative_l2": 0.4858709876926626,
+      "observation_relative_l2": 0.3109997237224262
+    },
+    "global_worst": {
+      "field_relative_l2": 0.37075213341212937,
+      "gradient_relative_l2": 0.5279290910233941,
+      "observation_relative_l2": 0.3544288421913239
+    },
+    "logical_exact_calls": {
+      "forward": 2,
+      "adjoint": 2
+    }
+  },
+  "all_nine_primary_k1": {
+    "passed": false,
+    "strict_cells_safe": 7,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 1,
+    "whole_calibrations_total": 13,
+    "frame_strata_passed": 0,
+    "frame_strata_total": 4,
+    "global_p90": {
+      "field_relative_l2": 0.3326017941213722,
+      "gradient_relative_l2": 0.46672659748316025,
+      "observation_relative_l2": 0.3630925193341628
+    },
+    "global_worst": {
+      "field_relative_l2": 0.37654159605260645,
+      "gradient_relative_l2": 0.5095684010522253,
+      "observation_relative_l2": 0.4057828546187471
+    },
+    "logical_exact_calls": {
+      "forward": 2,
+      "adjoint": 2
+    }
+  },
+  "primary_k0": {
+    "five_camera_strict_cells_safe": 0,
+    "all_nine_strict_cells_safe": 0,
+    "five_camera_observation_p90": 0.6123249938329688,
+    "all_nine_observation_p90": 0.6601950981880881,
+    "logical_exact_calls": {
+      "forward": 0,
+      "adjoint": 1
+    }
+  },
+  "cheap_controls": {
+    "shared_diagonal_passed": false,
+    "one_step_coordinate_cgls_passed": false,
+    "static_fit_mean_passed": false
+  },
+  "independent_recomputation": {
+    "original_check_count": 42,
+    "original_checks_true": 41,
+    "original_inconclusive_preserved": true,
+    "original_false_check": "relative comparison of numerically zero feature and target means",
+    "corrected_zero_mean_audit_checks_passed": 24,
+    "corrected_zero_mean_audit_checks_total": 24,
+    "feature_mean_maximum_absolute_difference": 7.84995534767736e-16,
+    "target_mean_maximum_absolute_difference": 3.165784466257872e-16,
+    "candidate_field_maximum_relative_difference": 8.399673722886204e-12,
+    "deployment_feature_maximum_relative_difference": 1.4516590191199299e-11,
+    "metric_maximum_absolute_difference": 7.853606653895895e-12,
+    "arm_summary_maximum_absolute_difference": 7.213563080199492e-12,
+    "formal_or_validator_rerun": false,
+    "all_discrete_decisions_exact": true
+  },
+  "interpretation": "v179 shows that the observation and reported geometry identify all 1,009 affine coordinates through a geometry-specific exact inverse. v180 shows that a single shared diagonal-plus-rank-16 linear map from one-adjoint features does not approximate that inverse reliably. After one unchanged CGLS step, field and gradient tails remain inside their global absolute limits, but observation p90 exceeds 0.20 under both five and nine cameras and complete cell, calibration, and frame coverage fails.",
+  "limitation": "This closes only the frozen shared linear adjoint-preconditioner family on a post-open four-frame PoolFire proxy. It is not an impossibility result for nonlinear or explicitly geometry-conditioned mechanisms and establishes no deployment, resource, external, curved-ray, or real-BOST result.",
+  "route_action": "Do not enlarge this shared linear family or rent a GPU. Continue only with a preregistered physically distinct geometry-conditioned factorization or new paired physical BOS information; otherwise wait.",
+  "claim_limits": {
+    "shared_linear_family_closed": true,
+    "all_compact_mechanisms_ruled_out": false,
+    "deployable_algorithm": false,
+    "neural_operator_advantage": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "broad_external_generalization": false,
+    "untouched_test_evidence": false,
+    "paired_experimental_2d_projections_used": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

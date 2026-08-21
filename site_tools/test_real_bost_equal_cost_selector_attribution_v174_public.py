@@ -60,9 +60,9 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_retains_v174_after_v179_advances_the_gate() -> None:
+def test_current_evidence_retains_v174_after_v180_advances_the_gate() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179"
+    assert payload["scientific_status"] == "FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180"
     assert (
         payload["v174_equal_cost_selector_scientific_decision"]
         == "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"
@@ -70,8 +70,8 @@ def test_current_evidence_retains_v174_after_v179_advances_the_gate() -> None:
     assert payload["metrics"]["v174_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v174_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v174_independent_check_count"] == 27
-    assert "affine coordinates" in payload["next_scientific_gate_en"]
-    assert "仿射坐标" in payload["next_scientific_gate_zh"]
+    assert "geometry-conditioned" in payload["next_scientific_gate_en"]
+    assert "显式几何条件化" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_retain_v174_as_parent_evidence() -> None:

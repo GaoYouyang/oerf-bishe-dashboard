@@ -61,17 +61,17 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_preserves_v173_but_points_to_v179() -> None:
+def test_current_evidence_preserves_v173_but_points_to_v180() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179"
+        "FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180"
     )
     assert payload["metrics"]["v173_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_exact_A"] == 1
     assert payload["metrics"]["v173_independent_check_count"] == 21
-    assert "affine coordinates" in payload["next_scientific_gate_en"]
-    assert "仿射坐标" in payload["next_scientific_gate_zh"]
+    assert "geometry-conditioned" in payload["next_scientific_gate_en"]
+    assert "显式几何条件化" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v173_in_both_languages() -> None:
