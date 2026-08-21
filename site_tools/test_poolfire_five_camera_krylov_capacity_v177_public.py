@@ -75,7 +75,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v177_after_v181_becomes_current() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181"
+    assert payload["scientific_status"] == "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182"
     assert (
         payload["v177_krylov_capacity_scientific_decision"]
         == "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
@@ -119,9 +119,9 @@ def test_primary_pages_retain_v177_as_parent_evidence() -> None:
 def test_route_metadata_records_v177_as_older_release() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v181" in operator
+    assert "curriculum.js?v=20260821-v182" in operator
     assert 'previousVersion: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative"' in curriculum
-    assert 'olderBadge: "v179 exact affine-coordinate inverse' in curriculum
+    assert 'olderBadge: "v180 shared compact inverse' in curriculum
     assert 'updated: "2026-08-21"' in curriculum
 
 

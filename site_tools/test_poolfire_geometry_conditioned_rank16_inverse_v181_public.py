@@ -56,9 +56,9 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_points_to_v181_and_preserves_limitations() -> None:
+def test_current_evidence_preserves_v181_and_points_to_v182() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181"
+    assert payload["scientific_status"] == "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182"
     assert payload["metrics"]["v181_five_primary_k1_strict_safe_count"] == 0
     assert payload["metrics"]["v181_all_nine_primary_k1_strict_safe_count"] == 0
     assert payload["metrics"]["v181_rank16_inverse_residual_p90"] > 1.0
@@ -79,15 +79,15 @@ def test_primary_pages_reference_v181_in_both_languages() -> None:
     assert "显式几何条件" in operator
     assert "explicit geometry conditioning" in operator
     assert '<span class="evidence-state fail" data-i18n-zh="几何条件 rank-16 负结果' in operator
-    assert "poolfire_geometry_conditioned_rank16_inverse_v181.png" in operator
+    assert "poolfire_geometry_conditioned_rank16_inverse_v181_result_2026-08-21.md" in operator
     assert daily.count('data-date="2026-08-21"') == 1
 
 
 def test_route_metadata_and_cachebuster_advance_to_v181() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v181" in operator
-    assert 'version: "2026.08.21-c-v181-geometry-conditioned-rank16-negative"' in curriculum
+    assert "curriculum.js?v=20260821-v182" in operator
+    assert 'version: "2026.08.21-c-v182-observation-adaptive-jacobi-pcgls1-negative"' in curriculum
     assert 'updated: "2026-08-21"' in curriculum
 
 

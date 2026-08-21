@@ -62,7 +62,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181"
+    assert payload["scientific_status"] == "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182"
     assert (
         payload["v174_equal_cost_selector_scientific_decision"]
         == "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"

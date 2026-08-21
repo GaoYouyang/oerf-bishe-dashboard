@@ -15835,3 +15835,45 @@ Decision: `FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181`. Close the fixed Jacob
 Cache construction still costs `26,260` forward-equivalent setup projections. Although the logical K1 ledger is `2A+2A^T`, matched accuracy fails, so v181 establishes no exact-call reduction, wall/RSS speedup, external generalization, or real-BOST success.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `resource_speedup=false`, `broad_external_generalization=false`, `curved_ray_validated=false`, `real_bost=false`.
+
+## 2026-08-21：v182 一步可观测 Jacobi-PCGLS 改善残差，但仍未通过 observation 门
+
+### 讲人话：方向是对着残差走的，但一步还不够安全
+
+v181 已经证明，固定的几何条件 rank-16 谱校正太窄。v182 改成一个物理上不同的机制：不再使用固定谱方向，而是让坐标更新方向随**当前观测残差**变化。
+
+在冻结的 `1,009` 维仿射场空间中，v182 只读取当前二维观测、报告相机几何、fit-only 仿射中心/基和封存的 Jacobi 对角量。它计算 `g=M^T r`、`z=D^-1g`、`q=Mz`，再用 `beta=(g^Tz)/(q^Tq)` 做精确一维观测最小化，得到 warm field，随后运行一轮完全未修改的物理 CGLS K1。没有搜索、阻尼、裁剪、回退、目标真值或可训练参数。
+
+结果显示这一步确实有效，但没有有效到通过完整门。五相机 observation p90 从 K0 的 `0.381231` 降到 K1 的 `0.244595`，九相机从 `0.404757` 降到 `0.266826`；降幅分别为 `35.8%` 与 `34.1%`。同时，两档 field 和 gradient p90 都通过冻结门。
+
+然而 observation p90 门是 `0.20`，两档仍然越线。因此五相机和九相机 K1 都是 `0/52`，完整标定都是 `0/13`，完整帧都是 `0/4`。正式判决为 `FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182`。
+
+完全独立第二实现重建仿射坐标、Jacobi 对角、精确线搜索、候选场、观测、未修改 K1、指标、调用账和相机换序审计，`47/47` 项检查全真。候选场、`beta` 和指标最大差为 `5.07e-12 / 1.36e-12 / 8.38e-13`，所有离散判决一致。
+
+第一次独立验证已完成科学评分，但在写最终 JSON 时遇到 NumPy 布尔值序列化错误，因此 fail-closed 并保留原记录。后续只修 JSON 标量归一化，候选、数据、数组、门和正式结果均未变化。这是工程完整性，不是算法成果。
+
+逻辑 K1 账为 `3A+2A^T`，直接 K4 为 `4A+4A^T`。由于 matched accuracy 没有成立，不能声称 exact-call 减少，也没有启动 wall/RSS 门。
+
+当前只关闭一步、对角预条件的 Jacobi-PCGLS1。不再调 `beta`、阻尼、对角 floor、裁剪或门槛，也不用 CNN/FNO/UNO/DeepONet 或 GPU 挽救。它没有关闭完整 C 路线，也不是数学不可能性证明。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v181 shows that a fixed geometry-conditioned rank-16 spectral correction is too narrow. v182 tests a physically distinct mechanism: instead of fixed spectral directions, the coordinate update adapts to the **current observation residual**.
+
+In the frozen `1,009`-dimensional affine field space, v182 reads only the current 2D observation, reported geometry, fit-only affine center and basis, and a sealed Jacobi diagonal. It computes `g=M^T r`, `z=D^-1g`, `q=Mz`, and the exact observable line minimizer `beta=(g^Tz)/(q^Tq)`, then applies one unchanged physical CGLS K1 step. There is no search, damping, clipping, fallback, target truth, or trainable parameter.
+
+The step is useful but not safe enough. Five-camera observation p90 falls from `0.381231` at K0 to `0.244595` at K1; all-nine falls from `0.404757` to `0.266826`, reductions of `35.8%` and `34.1%`. Field and gradient p90 pass under both sensor arms.
+
+The frozen observation p90 gate is `0.20`, however, and both arms still fail it. Five-camera and all-nine K1 are therefore each `0/52`, with `0/13` complete calibrations and `0/4` complete frames. Decision: `FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182`.
+
+A fully independent implementation rebuilds affine coordinates, the Jacobi diagonal, exact line minimization, candidate fields, observations, unchanged K1, metrics, call ledgers, and camera-permutation audits. All `47/47` checks pass. Maximum candidate-field, `beta`, and metric differences are `5.07e-12`, `1.36e-12`, and `8.38e-13`, and every discrete decision agrees.
+
+The first independent attempt completed scientific scoring but failed closed while serializing a NumPy boolean into final JSON. Only JSON scalar normalization was repaired; candidates, data, arrays, gates, and the formal result remained unchanged. This is engineering assurance, not an algorithmic result.
+
+The logical K1 ledger is `3A+2A^T`, versus `4A+4A^T` for direct K4. Because matched accuracy fails, no exact-call reduction is established and no wall/RSS gate is authorized.
+
+This closes only the one-step diagonally preconditioned Jacobi-PCGLS1 mechanism. Do not retune `beta`, damping, diagonal floors, clipping, or gates, and do not use CNN/FNO/UNO/DeepONet or GPU scale as rescue. It does not close the full C route and is not an impossibility result.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.

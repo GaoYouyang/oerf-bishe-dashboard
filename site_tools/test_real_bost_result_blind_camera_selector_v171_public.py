@@ -65,14 +65,14 @@ def test_current_evidence_preserves_v171_but_points_to_v181() -> None:
     )
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_CONDITIONED_RANK16_V181"
+        == "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182"
     )
     assert (
         payload["formal_status"]
-        == "PASS_FORMAL_POOLFIRE_GEOMETRY_CONDITIONED_RANK16_EXECUTION_V181"
+        == "PASS_FORMAL_POOLFIRE_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_EXECUTION_V182"
     )
     assert payload["scientific_status"] == (
-        "FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181"
+        "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182"
     )
     assert payload["current_decision"]["v171_result_blind_selector_passed"] is True
     assert payload["current_decision"]["v171_external_generalization"] is False

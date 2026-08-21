@@ -55,7 +55,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v179_as_parent_after_v181() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181"
+    assert payload["scientific_status"] == "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182"
     assert payload["metrics"]["v179_measurement_rank_minimum"] == 1009
     assert payload["metrics"]["v179_five_pseudoinverse_k0_strict_safe_count"] == 52
     assert payload["metrics"]["v179_five_coordinate_cgls1_k0_strict_safe_count"] == 0
@@ -83,8 +83,8 @@ def test_primary_pages_reference_v179_in_both_languages() -> None:
 def test_route_metadata_preserves_v179_after_v181_advance() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v181" in operator
-    assert 'version: "2026.08.21-c-v181-geometry-conditioned-rank16-negative"' in curriculum
+    assert "curriculum.js?v=20260821-v182" in operator
+    assert 'version: "2026.08.21-c-v182-observation-adaptive-jacobi-pcgls1-negative"' in curriculum
     assert 'previousVersion: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative"' in curriculum
     assert 'updated: "2026-08-21"' in curriculum
 

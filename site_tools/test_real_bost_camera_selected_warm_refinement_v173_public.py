@@ -64,7 +64,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 def test_current_evidence_preserves_v173_but_points_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181"
+        "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182"
     )
     assert payload["metrics"]["v173_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_strict_safe_count"] == 468
