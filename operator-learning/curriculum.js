@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.21-c-v182-observation-adaptive-jacobi-pcgls1-negative",
-  previousVersion: "2026.08.21-c-v181-geometry-conditioned-rank16-negative",
-  previousBadge: "v181 geometry-conditioned rank 16 · five 0 / 52 · nine 0 / 52",
-  olderBadge: "v180 shared compact inverse · five 4 / 52 · nine 7 / 52",
+  version: "2026.08.21-c-v183-observation-block-galerkin-negative",
+  previousVersion: "2026.08.21-c-v182-observation-adaptive-jacobi-pcgls1-negative",
+  previousBadge: "v182 global residual line · five 0 / 52 · nine 0 / 52",
+  olderBadge: "v181 geometry-conditioned rank 16 · five 0 / 52 · nine 0 / 52",
   historyReleases: [
+    {
+      version: "2026.08.21-c-v182-observation-adaptive-jacobi-pcgls1-negative",
+      previousVersion: "2026.08.21-c-v181-geometry-conditioned-rank16-negative",
+      badge: "v182 global residual line · five 0 / 52 · nine 0 / 52"
+    },
     {
       version: "2026.08.21-c-v181-geometry-conditioned-rank16-negative",
       previousVersion: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative",

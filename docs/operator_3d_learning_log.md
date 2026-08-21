@@ -15877,3 +15877,37 @@ The logical K1 ledger is `3A+2A^T`, versus `4A+4A^T` for direct K4. Because matc
 This closes only the one-step diagonally preconditioned Jacobi-PCGLS1 mechanism. Do not retune `beta`, damping, diagonal floors, clipping, or gates, and do not use CNN/FNO/UNO/DeepONet or GPU scale as rescue. It does not close the full C route and is not an impossibility result.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-21：v183 相机×分量分块 Galerkin 明显改善观测，但仍未通过完整门
+
+### 讲人话：不同相机确实需要不同响应，但每块一个固定系数还不够
+
+v182 已证明，沿当前观测残差生成更新方向是有用的，但它只用一条全局方向，不能表达不同相机和两个探测器分量之间的响应差异。v183 因此冻结一个物理上不同、仍然完全结果不可见的机制：把中心化观测残差按 camera ID × detector component 拆成物理块，每个块生成一条 Jacobi 预条件仿射坐标方向，再联合求解一次最小范数可观测 Galerkin 最小二乘。
+
+五相机使用 `10` 条方向，九相机使用 `18` 条方向。系数只读取当前观测、报告几何、fit-only 仿射空间和封存的 Jacobi 对角量；SVD cutoff 固定为 `1e-12`，没有 ridge、阻尼、裁剪、回退、真值输入、搜索或可训练参数。得到 warm field 后，再运行一轮完全未修改的物理 CGLS K1。
+
+结果说明分块结构确实有科学价值。五相机 field / gradient / observation p90 为 `0.445694 / 0.612373 / 0.226659`，严格通过 `1/52`；九相机为 `0.371621 / 0.508927 / 0.207224`，严格通过 `37/52`。相对 v182，observation p90 分别从 `0.244595 / 0.266826` 改善了 `0.017936 / 0.059602`。
+
+但冻结 observation p90 门是 `0.20`，两档仍然越线；完整标定只有 `0/13 · 3/13`，完整帧只有 `0/4 · 1/4`。field 与 gradient 通过不能替代完整 matched accuracy。正式判决为 `FAIL_OBSERVATION_BLOCK_GALERKIN_V183`。
+
+完全独立第二实现使用不同 SVD 路径，重建物理分块、方向、联合系数、候选场、观测、未修改 K1、全部指标、调用账和相机换序审计，`46/46` 项检查全真。候选场、系数和逐单元指标最大差为 `5.85e-12 / 1.11e-10 / 9.46e-13`，全部离散判决一致。
+
+因此当前证据支持“相机×分量低阶异质性真实存在”，但否定“每块一个固定系数就足够”。关闭这一精确分块 Galerkin 家族，不事后调 cutoff、ridge、阻尼、分块或门槛，也不用大模型/GPU 挽救。逻辑 K1 账虽为 `3A+2A^T`，但精度门失败，不能声称调用减少或 wall/RSS 收益。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v182 shows that a direction driven by the current observation residual is useful, but one global direction cannot express response differences between cameras and detector components. v183 freezes a physically distinct, still strictly deployment-visible mechanism: split the centered residual by camera ID × detector component, form one Jacobi-preconditioned affine-coordinate direction per block, and jointly solve one minimum-norm observable Galerkin least-squares problem.
+
+Five cameras use `10` directions and all nine use `18`. Coefficients read only the current observation, reported geometry, the fit-only affine space, and a sealed Jacobi diagonal. The SVD cutoff is fixed at `1e-12`; there is no ridge, damping, clipping, fallback, target truth, search, or trainable parameter. One unchanged physical CGLS K1 step follows the warm field.
+
+The block structure is scientifically useful. Five-camera field / gradient / observation p90 values are `0.445694 / 0.612373 / 0.226659`, with `1/52` strict-safe cells. All-nine values are `0.371621 / 0.508927 / 0.207224`, with `37/52` strict-safe cells. Relative to v182, observation p90 improves from `0.244595 / 0.266826` by `0.017936 / 0.059602`.
+
+The frozen observation p90 gate is `0.20`, however, so both arms still fail. Complete calibrations are only `0/13 · 3/13`, and complete frames are `0/4 · 1/4`. Passing field and gradient cannot replace complete matched accuracy. Decision: `FAIL_OBSERVATION_BLOCK_GALERKIN_V183`.
+
+A fully independent second implementation uses a different SVD path and rebuilds physical blocks, directions, joint coefficients, candidate fields, observations, unchanged K1, all metrics, call ledgers, and camera-permutation audits. All `46/46` checks pass. Maximum candidate-field, coefficient, and per-cell metric differences are `5.85e-12`, `1.11e-10`, and `9.46e-13`, and every discrete decision agrees.
+
+The evidence therefore supports genuine low-order camera-component heterogeneity while rejecting the claim that one fixed coefficient per block is sufficient. Close this exact block-Galerkin family without post-hoc cutoff, ridge, damping, partition, gate, larger-model, or GPU rescue. Although the logical K1 ledger is `3A+2A^T`, failed accuracy prevents any call-reduction or wall/RSS claim.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.

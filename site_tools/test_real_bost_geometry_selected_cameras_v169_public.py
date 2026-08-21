@@ -78,14 +78,14 @@ def test_current_evidence_preserves_v169_but_points_to_v181() -> None:
     assert payload["current_decision"]["v169_predictor_training_authorized"] is False
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182"
+        == "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_BLOCK_GALERKIN_V183"
     )
     assert (
         payload["formal_status"]
-        == "PASS_FORMAL_POOLFIRE_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_EXECUTION_V182"
+        == "PASS_FORMAL_POOLFIRE_OBSERVATION_BLOCK_GALERKIN_EXECUTION_V183"
     )
     assert payload["scientific_status"] == (
-        "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182"
+        "FAIL_OBSERVATION_BLOCK_GALERKIN_V183"
     )
 
 

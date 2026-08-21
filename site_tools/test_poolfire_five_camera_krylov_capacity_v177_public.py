@@ -75,7 +75,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v177_after_v181_becomes_current() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182"
+    assert payload["scientific_status"] == "FAIL_OBSERVATION_BLOCK_GALERKIN_V183"
     assert (
         payload["v177_krylov_capacity_scientific_decision"]
         == "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
@@ -119,9 +119,10 @@ def test_primary_pages_retain_v177_as_parent_evidence() -> None:
 def test_route_metadata_records_v177_as_older_release() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v182" in operator
+    assert "curriculum.js?v=20260821-v183" in operator
+    assert 'previousVersion: "2026.08.21-c-v182-observation-adaptive-jacobi-pcgls1-negative"' in curriculum
+    assert 'olderBadge: "v181 geometry-conditioned rank 16' in curriculum
     assert 'previousVersion: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative"' in curriculum
-    assert 'olderBadge: "v180 shared compact inverse' in curriculum
     assert 'updated: "2026-08-21"' in curriculum
 
 

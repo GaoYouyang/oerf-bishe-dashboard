@@ -73,13 +73,13 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 def test_current_evidence_preserves_v172_and_points_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182"
+        "FAIL_OBSERVATION_BLOCK_GALERKIN_V183"
     )
     assert payload["metrics"]["v172_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v172_primary_complete_fields_passed"] == 9
     assert payload["metrics"]["v172_independent_check_count"] == 22
-    assert "observation-adaptive" in payload["next_scientific_gate_en"]
-    assert "由观测自适应" in payload["next_scientific_gate_zh"]
+    assert "physically distinct" in payload["next_scientific_gate_en"]
+    assert "物理上真正不同" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v172_in_both_languages() -> None:

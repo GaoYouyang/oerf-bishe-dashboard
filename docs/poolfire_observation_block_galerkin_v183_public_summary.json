@@ -1,0 +1,191 @@
+{
+  "schema_version": "oerf-public-poolfire-observation-block-galerkin-v183",
+  "updated": "2026-08-21",
+  "formal_status": "PASS_FORMAL_POOLFIRE_OBSERVATION_BLOCK_GALERKIN_EXECUTION_V183",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_BLOCK_GALERKIN_V183",
+  "scientific_decision": "FAIL_OBSERVATION_BLOCK_GALERKIN_V183",
+  "scope": "A post-open mechanism diagnostic on four already opened PoolFire frames. It splits the current centered observation residual by physical camera ID and detector component, then solves one joint observable Galerkin problem in the frozen 1,009-coordinate affine field space.",
+  "question": "Does camera-by-component residual heterogeneity provide enough deployment-visible directions to pass the frozen five-camera and all-nine matched-accuracy gates after one unchanged CGLS step?",
+  "mechanism": {
+    "affine_coordinate_count": 1009,
+    "five_camera_direction_count": 10,
+    "all_nine_direction_count": 18,
+    "grouping": "one block for each active camera ID and detector component",
+    "direction": "one sealed Jacobi-preconditioned affine-coordinate direction per physical block",
+    "coefficient_solve": "joint minimum-norm observable Galerkin least squares",
+    "relative_svd_cutoff": 1e-12,
+    "search_or_tuning": false,
+    "ridge_or_damping": false,
+    "clipping": false,
+    "fallback": false,
+    "target_truth_used_for_update": false,
+    "trainable_parameters": 0,
+    "physical_refinement": "one unchanged CGLS K1 step"
+  },
+  "evaluation": {
+    "fit_trajectories": 10,
+    "fit_fields": 1010,
+    "evaluation_calibrations": 13,
+    "evaluation_frames": 4,
+    "evaluation_cells_per_sensor": 52,
+    "sensors": [
+      "frozen geometry-selected five-camera sensor",
+      "all-nine camera control"
+    ]
+  },
+  "absolute_gate": {
+    "field_p90_max": 0.5,
+    "field_worst_max": 0.75,
+    "gradient_p90_max": 0.75,
+    "gradient_worst_max": 1.0,
+    "observation_p90_max": 0.2,
+    "observation_worst_max": 0.35,
+    "strict_cells_required": 52,
+    "calibrations_required": 13,
+    "frames_required": 4
+  },
+  "five_camera_k0": {
+    "passed": false,
+    "strict_cells_safe": 0,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 0,
+    "frame_strata_passed": 0,
+    "global_p50": {
+      "field_relative_l2": 0.43564560604883373,
+      "gradient_relative_l2": 0.6066634509998221,
+      "observation_relative_l2": 0.3465926709427447
+    },
+    "global_p90": {
+      "field_relative_l2": 0.46461137764295074,
+      "gradient_relative_l2": 0.6670488000108579,
+      "observation_relative_l2": 0.3666273103282613
+    },
+    "global_worst": {
+      "field_relative_l2": 0.47524397886188596,
+      "gradient_relative_l2": 0.6805513021648091,
+      "observation_relative_l2": 0.3796245959360619
+    }
+  },
+  "all_nine_k0": {
+    "passed": false,
+    "strict_cells_safe": 0,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 0,
+    "frame_strata_passed": 0,
+    "global_p50": {
+      "field_relative_l2": 0.37088600032869323,
+      "gradient_relative_l2": 0.5372407548500793,
+      "observation_relative_l2": 0.314686015540157
+    },
+    "global_p90": {
+      "field_relative_l2": 0.3984082451688015,
+      "gradient_relative_l2": 0.5844183062488013,
+      "observation_relative_l2": 0.33173479545025514
+    },
+    "global_worst": {
+      "field_relative_l2": 0.41215769062637464,
+      "gradient_relative_l2": 0.5979018017363601,
+      "observation_relative_l2": 0.3370233792899219
+    }
+  },
+  "five_camera_primary_k1": {
+    "passed": false,
+    "strict_cells_safe": 1,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 0,
+    "whole_calibrations_total": 13,
+    "frame_strata_passed": 0,
+    "frame_strata_total": 4,
+    "global_p50": {
+      "field_relative_l2": 0.41827178951558247,
+      "gradient_relative_l2": 0.5527667520974755,
+      "observation_relative_l2": 0.21267139720773137
+    },
+    "global_p90": {
+      "field_relative_l2": 0.4456936597523407,
+      "gradient_relative_l2": 0.6123733663470948,
+      "observation_relative_l2": 0.22665850278378047
+    },
+    "global_worst": {
+      "field_relative_l2": 0.45764220672769534,
+      "gradient_relative_l2": 0.6287283697931036,
+      "observation_relative_l2": 0.23411366492397012
+    }
+  },
+  "all_nine_primary_k1": {
+    "passed": false,
+    "strict_cells_safe": 37,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 3,
+    "whole_calibrations_total": 13,
+    "frame_strata_passed": 1,
+    "frame_strata_total": 4,
+    "global_p50": {
+      "field_relative_l2": 0.3441484773333445,
+      "gradient_relative_l2": 0.46591101846088107,
+      "observation_relative_l2": 0.1968459118457559
+    },
+    "global_p90": {
+      "field_relative_l2": 0.3716213969701007,
+      "gradient_relative_l2": 0.5089267831552342,
+      "observation_relative_l2": 0.20722437270752003
+    },
+    "global_worst": {
+      "field_relative_l2": 0.38787190559056883,
+      "gradient_relative_l2": 0.5295524544846287,
+      "observation_relative_l2": 0.221890042081953
+    }
+  },
+  "v182_parent_comparison": {
+    "five_camera_observation_p90": 0.2445946846947643,
+    "all_nine_observation_p90": 0.26682637731585646,
+    "five_camera_absolute_improvement": 0.01793618191098384,
+    "all_nine_absolute_improvement": 0.05960200460833643,
+    "block_space_never_worse_in_observable_residual": true
+  },
+  "cost_boundary": {
+    "direct_cgls_k4_forward_calls": 4,
+    "direct_cgls_k4_adjoint_calls": 4,
+    "logical_online_k0_forward_calls": 1,
+    "logical_online_k0_adjoint_calls": 1,
+    "logical_online_k1_forward_calls": 3,
+    "logical_online_k1_adjoint_calls": 2,
+    "inherited_geometry_cache_forward_equivalents": 26260,
+    "matched_accuracy_passed": false,
+    "exact_call_reduction_established": false,
+    "wall_or_rss_measured": false
+  },
+  "independent_recomputation": {
+    "checks_passed": 46,
+    "checks_total": 46,
+    "candidate_field_maximum_relative_difference": 5.849567236487408e-12,
+    "coefficient_maximum_absolute_difference": 1.1063905347441505e-10,
+    "coordinate_maximum_relative_difference": 1.2827940223265824e-11,
+    "metric_maximum_absolute_difference": 9.460210392830959e-13,
+    "singular_value_maximum_relative_difference": 6.535981013803195e-12,
+    "maximum_stationarity": 4.279353952154266e-15,
+    "camera_permutation_field_relative_error": 7.028740003149162e-16,
+    "fixed_observation_truth_mutation_max_abs": 0.0,
+    "all_discrete_decisions_exact": true
+  },
+  "interpretation": "Camera-by-component heterogeneity is scientifically useful: the block space materially improves observation p90 over the v182 global residual line and recovers 37 of 52 all-nine cells. It remains insufficient because observation p90 still exceeds the frozen 0.20 gate under both sensor arms.",
+  "limitation": "This closes only the frozen exact one-coefficient-per-camera-component Galerkin mechanism on a post-open four-frame straight-ray PoolFire proxy. It is not an impossibility result for the C route and establishes no deployment, resource, external, curved-ray, or real-BOST result.",
+  "route_action": "Do not tune the SVD cutoff, add ridge or damping, split more blocks post hoc, relax the gate, or rescue this mechanism with a larger neural model or GPU. Continue only with a preregistered physically distinct mechanism or new paired two-component BOS evidence.",
+  "claim_limits": {
+    "camera_component_block_galerkin_family_closed": true,
+    "full_c_route_closed": false,
+    "deployable_algorithm": false,
+    "matched_accuracy": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "broad_external_generalization": false,
+    "untouched_test_evidence": false,
+    "paired_experimental_2d_projections_used": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

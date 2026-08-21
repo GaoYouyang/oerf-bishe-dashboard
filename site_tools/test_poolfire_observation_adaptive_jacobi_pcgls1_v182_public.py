@@ -59,9 +59,9 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_points_to_v182_and_preserves_limitations() -> None:
+def test_current_evidence_preserves_v182_history_and_limitations() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182"
+    assert payload["v182_observation_adaptive_jacobi_pcgls1_scientific_decision"] == "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182"
     assert payload["metrics"]["v182_five_primary_k1_strict_safe_count"] == 0
     assert payload["metrics"]["v182_all_nine_primary_k1_strict_safe_count"] == 0
     assert payload["metrics"]["v182_five_primary_k1_observation_p90"] > 0.2
@@ -73,25 +73,26 @@ def test_current_evidence_points_to_v182_and_preserves_limitations() -> None:
     assert payload["current_decision"]["v182_algorithm_breakthrough"] is False
 
 
-def test_primary_pages_reference_v182_in_both_languages() -> None:
+def test_primary_pages_preserve_v182_as_bilingual_parent_evidence() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     daily = (ROOT / "operator-learning/daily-progress.html").read_text()
-    home = (ROOT / "index.html").read_text()
     learning = (ROOT / "docs/operator_3d_learning_log.md").read_text()
-    for text in (operator, daily, home, learning):
+    for text in (operator, daily, learning):
         assert "v182" in text
-        assert "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182" in text
+    assert "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182" in daily
+    assert "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182" in learning
     assert "一步可观测 Jacobi-PCGLS" in operator
     assert "observable Jacobi-PCGLS" in operator
-    assert '<span class="evidence-state fail" data-i18n-zh="一步 Jacobi-PCGLS 负结果' in operator
-    assert "poolfire_observation_adaptive_jacobi_pcgls1_v182.png" in operator
+    assert "poolfire_observation_adaptive_jacobi_pcgls1_v182_result_2026-08-21.md" in operator
     assert daily.count('data-date="2026-08-21"') == 1
 
 
-def test_route_metadata_and_cachebuster_advance_to_v182() -> None:
+def test_route_metadata_keeps_v182_in_history_after_v183_advance() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v182" in operator
+    assert "curriculum.js?v=20260821-v183" in operator
+    assert 'version: "2026.08.21-c-v183-observation-block-galerkin-negative"' in curriculum
+    assert 'previousVersion: "2026.08.21-c-v182-observation-adaptive-jacobi-pcgls1-negative"' in curriculum
     assert 'version: "2026.08.21-c-v182-observation-adaptive-jacobi-pcgls1-negative"' in curriculum
     assert 'updated: "2026-08-21"' in curriculum
 
