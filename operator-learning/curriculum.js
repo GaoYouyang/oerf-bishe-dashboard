@@ -1,8 +1,8 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.21-c-v176-result-unopened-condition-negative",
-  previousVersion: "2026.08.21-c-v175-minimal-shared-selector-headroom",
-  previousBadge: "v175 minimal shared selector · 468 / 468 development cells",
-  olderBadge: "v174 equal-cost selector attribution · 468 / 468 development cells",
+  version: "2026.08.21-c-v178-affine-span-capacity-positive",
+  previousVersion: "2026.08.21-c-v177-krylov-reference-capacity-negative",
+  previousBadge: "v177 low-depth Krylov field-reference capacity · 0 / 52",
+  olderBadge: "v175 minimal shared selector · 468 / 468 development cells",
   historyReleases: [
     {
       version: "2026.08.02-c-v98-joint13-predictor-negative-geometry-gate",

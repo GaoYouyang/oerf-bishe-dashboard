@@ -1,0 +1,133 @@
+{
+  "schema_version": "oerf-public-poolfire-train-field-affine-span-capacity-v178",
+  "updated": "2026-08-21",
+  "formal_status": "PASS_FORMAL_POOLFIRE_TRAIN_FIELD_AFFINE_SPAN_EXECUTION_V178",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_TRAIN_FIELD_AFFINE_SPAN_V178",
+  "scientific_decision": "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178",
+  "scope": "A truth-aware, post-open representation-capacity diagnostic using all 1,010 fields from ten already opened PoolFire training trajectories and the four already opened v177 evaluation frames. It evaluates the frozen five-camera sensor and an all-nine sensor control before and after one unchanged CGLS step.",
+  "question": "Does v177 fail because the opened PoolFire training family lacks a linear field representation capable of matching the four evaluation fields, or because the useful representation cannot yet be selected from deployment-visible observations?",
+  "evaluation": {
+    "fit_trajectories": 10,
+    "fit_fields": 1010,
+    "evaluation_calibrations": 13,
+    "evaluation_frames": 4,
+    "evaluation_cells_per_arm_and_sensor": 52,
+    "stable_affine_rank": 1009,
+    "relative_singular_value_floor": 1e-10,
+    "sensors": [
+      "frozen geometry-selected five-camera sensor from v176",
+      "all-nine camera control"
+    ],
+    "arms": [
+      "truth-aware affine projection before refinement",
+      "truth-aware affine projection followed by unchanged CGLS K1",
+      "static fit mean before refinement",
+      "static fit mean followed by unchanged CGLS K1"
+    ],
+    "predictor_or_selector_trained": false,
+    "truth_used_to_construct_offline_capacity_witness": true
+  },
+  "five_camera_affine_projection_k0": {
+    "passed": true,
+    "strict_cells_safe": 52,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 13,
+    "whole_calibrations_total": 13,
+    "frame_strata_passed": 4,
+    "frame_strata_total": 4,
+    "global_p90": {
+      "field_relative_l2": 0.14267344480919872,
+      "gradient_relative_l2": 0.2654793401270289,
+      "observation_relative_l2": 0.19075660689418864
+    },
+    "global_worst": {
+      "field_relative_l2": 0.14267344480919872,
+      "gradient_relative_l2": 0.2654793401270289,
+      "observation_relative_l2": 0.1961289968229009
+    }
+  },
+  "five_camera_affine_projection_k1": {
+    "passed": true,
+    "strict_cells_safe": 52,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 13,
+    "whole_calibrations_total": 13,
+    "frame_strata_passed": 4,
+    "frame_strata_total": 4,
+    "global_p90": {
+      "field_relative_l2": 0.12963091243761557,
+      "gradient_relative_l2": 0.23371217698809799,
+      "observation_relative_l2": 0.09973522090236815
+    },
+    "global_worst": {
+      "field_relative_l2": 0.13017567932423216,
+      "gradient_relative_l2": 0.2358913766250411,
+      "observation_relative_l2": 0.104122020598178
+    },
+    "logical_exact_calls": {
+      "forward": 2,
+      "adjoint": 1
+    }
+  },
+  "all_nine_camera_controls": {
+    "affine_projection_k0_passed": true,
+    "affine_projection_k1_passed": true,
+    "strict_cells_safe_per_affine_arm": 52,
+    "strict_cells_total": 52
+  },
+  "five_camera_static_mean_controls": {
+    "k0_passed": false,
+    "k0_strict_cells_safe": 0,
+    "k1_passed": false,
+    "k1_strict_cells_safe": 0,
+    "strict_cells_total": 52,
+    "k0_global_p90": {
+      "field_relative_l2": 0.7176248210056488,
+      "gradient_relative_l2": 0.962842501217137,
+      "observation_relative_l2": 0.8827075408314426
+    },
+    "k1_global_p90": {
+      "field_relative_l2": 0.6494876992239711,
+      "gradient_relative_l2": 0.813888266973587,
+      "observation_relative_l2": 0.4648388496440875
+    }
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "check_count": 26,
+    "retained_singular_value_maximum_relative_difference": 1.248363795661898e-15,
+    "projected_field_maximum_relative_difference": 4.205908633365043e-15,
+    "candidate_field_maximum_relative_difference": 9.279668998042455e-13,
+    "metric_maximum_absolute_difference": 4.476141679532475e-12,
+    "coefficient_maximum_absolute_difference": 2.105798174723006e-13,
+    "camera_permutation_maximum_relative_difference": 1.1509399477294794e-16,
+    "adjoint_identity_maximum_relative_error": 3.230010301390603e-15,
+    "all_discrete_decisions_exact": true,
+    "preserved_initial_inconclusive": {
+      "status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_TRAIN_FIELD_AFFINE_SPAN_V178",
+      "cause": "The first validator compared physical source times against normalized time labels.",
+      "repair_scope": "Validation-only normalization check; no scientific arm, threshold, metric, formal array, or decision rule changed."
+    }
+  },
+  "interpretation": "The stable affine span of the 1,010 opened PoolFire training fields contains a truth-aware witness that passes every frozen five-camera and all-nine field, gradient, and observation gate before and after one unchanged CGLS step. The static fit mean fails, so the result is not a fixed-prior effect. This removes missing linear field-span capacity as the explanation for v177.",
+  "limitation": "The stable affine rank is 1,009 out of 1,010 fields, so the positive witness is almost full sample rank. The experiment does not show a compact latent representation or that deployment-visible observations can predict the affine coordinates.",
+  "route_action": "Freeze a separate minimal observation-and-geometry-only predictability diagnostic for the affine coordinates, with complete-trajectory isolation and cheap deterministic controls. Do not train a neural model, rent a GPU, open untouched tests, or claim resource savings from v178 alone.",
+  "claim_limits": {
+    "post_open_truth_aware_capacity_only": true,
+    "compact_representation_established": false,
+    "deployment_visible_coordinate_prediction_established": false,
+    "deployable_algorithm": false,
+    "exact_call_reduction": false,
+    "broad_external_generalization": false,
+    "untouched_test_evidence": false,
+    "paired_experimental_2d_projections_used": false,
+    "resource_speedup": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false,
+    "predictor_training_authorized": false
+  }
+}

@@ -15645,3 +15645,85 @@ A fully independent second implementation rebuilds selections, candidate fields,
 The execution history is also retained. Two launches fail before scientific input is opened. A third run stops after selections and predictions are sealed because residual audit storage incorrectly assumes a fixed vector length; no formal metrics or decision files exist at that point. The recovery changes only zero-padded residual storage and length receipts. Selections and predictions are unchanged. This is an engineering repair rather than a post-result algorithm change.
 
 Decision: `FAIL_RESULT_UNOPENED_POOLFIRE_CONDITION_PARITY_V176`. Close the current minimal shared-selector transfer without retuning, a larger-model rescue, GPU rental, a resource gate, or untouched-test opening. Any continuation on the opened condition must be a separately preregistered post-open reference-capacity diagnostic and cannot be repackaged as external success. The full C route is not closed, and mathematical impossibility is not claimed.
+
+## 2026-08-21：v177 穷举后确认，不是选择器挑错了相机
+
+### 讲人话：把“可能只是选错”真正查死
+
+v176 说冻结选择器在新工况上失败，而且它所选子集的 K4 参考也失败。但这还没有排除一个朴素解释：也许别的五台相机能过，只是选择器挑错了。
+
+v177 对同一个已经开封的工况做了一次明确的 post-open 诊断。对 `13` 套标定、每套全部 `126` 个五相机子集和 `4` 个帧，分别运行未修改 Zero-CGLS K4 与 K8；再用九相机 K4 判断是不是单纯相机太少。每一档五相机深度都有 `6552` 个候选。
+
+结果非常干净：五相机 K4 与 K8 都是严格安全候选 `0/6552`、逐单元容量 `0/52`、标定共享容量 `0/13`；九相机 K4 也只有 `0/52`。所以 v176 不是“选择器碰巧挑错了五台相机”。
+
+### 真正有信息量的是 K8 的分解
+
+K4 的 field / gradient / observation 单指标通过数是 `0/52 · 45/52 · 1/52`。K8 把它变成 `0/52 · 52/52 · 52/52`。这说明增加 Krylov 深度确实改善了可观测量和梯度，不是无效计算；但三维 field 仍然没有一个单元能过。
+
+K8 cellwise witness 的 field / gradient / observation p90 为 `0.768040 / 0.778511 / 0.134546`。即使在全部候选里分别寻找最小 field，最小值仍是 `0.578590`，高于 `0.50` 门。
+
+因此瓶颈现在被收缩为低深度 field reference / representation adequacy。当前 Zero-CGLS K4/K8 壳不适合再承载一个新 selector 或 predictor。这里没有把“某个选择器失败”偷换成“所有方法不可能”；只是停止围绕一个已知没有 field 容量的参考继续花算力。
+
+### 为什么可以相信
+
+完全独立第二实现重新构造全部子集、K4/K8、九相机对照、二维观测、指标、容量、调用账与相机乱序审计。`25/25` 项检查通过；五相机与九相机指标最大差为 `1.29e-12 / 6.72e-13`，容量汇总最大差 `5.00e-15`，所有离散判决一致。
+
+正式判决是 `FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177`。不调 K，不放宽阈值，不上大模型，不租 GPU，不开资源门或封存 test。下一候选必须在物理上改变 field reference / representation，或者等待工况匹配的真实二维双分量 BOS 位移。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`broad_external_generalization=false`、`resource_speedup=false`、`curved_ray_validated=false`、`real_bost=false`。
+
+### English checkpoint
+
+v176 leaves open the possibility that its selector merely chose the wrong five cameras. v177 exhausts all `126` five-camera subsets for each of thirteen calibrations and four frames, using unchanged Zero-CGLS K4 and K8, with nine-camera K4 as a sensor-count control.
+
+Five-camera K4 and K8 both produce `0/6552` jointly strict-safe candidates, `0/52` cellwise capacity, and `0/13` calibration-shared capacity. Nine-camera K4 is also `0/52`. The failure cannot be repaired by selecting another five-camera subset.
+
+The per-metric decomposition localizes the bottleneck. K4 field / gradient / observation feasibility is `0/52 · 45/52 · 1/52`; K8 changes it to `0/52 · 52/52 · 52/52`. Additional Krylov depth repairs gradient and observation, while field remains infeasible on every cell. Even the minimum field error over all candidates is `0.578590`, above the frozen `0.50` gate.
+
+A fully independent implementation rebuilds subsets, K4/K8 states, the nine-camera control, observations, metrics, capacity decisions, call ledgers, and camera-order audits. All `25/25` checks pass; maximum five-camera and nine-camera metric differences are `1.29e-12` and `6.72e-13`, and every discrete decision agrees.
+
+Decision: `FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177`. Close the current low-depth Zero-CGLS field-reference shell without K tuning, gate relaxation, larger-model rescue, GPU rental, a resource gate, or untouched-test opening. Any next mechanism must preregister a physically different field reference or representation, or use new condition-matched experimental two-component BOS displacement. This is not a mathematical impossibility claim and does not close the full C route.
+
+## 2026-08-21：v178 证明训练场线性空间有容量，但 1009/1010 近满秩
+
+### 讲人话：v177 的失败不是“训练场里根本没有答案”
+
+v177 证明低深度 Krylov 场参考没有容量。下一步最有价值的问题不是继续调 K，而是检查已经开封的 PoolFire 训练场族，是否至少张成了一个能覆盖目标场的线性空间。
+
+v178 把十条已开封训练轨迹的 `1,010` 个三维场组成仿射空间，稳定秩是 `1,009`。它在同一组已经开封的 `13` 套标定和 `4` 帧上，用三维真值离线寻找仿射投影，再分别检查 K0 与一轮完全未修改的 CGLS K1；五相机和九相机都保留，静态训练场均值作为便宜对照。
+
+结果是：五相机仿射 K0 与 K1 都通过 `52/52` 单元、`13/13` 标定和 `4/4` 帧；九相机的两个仿射臂也都通过 `52/52`。五相机 K1 的 field / gradient / observation p90 为 `0.129631 / 0.233712 / 0.099735`。静态均值 K0 与 K1 则都只有 `0/52`。
+
+因此正式判决是 `PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178`：训练场的线性张成空间确实包含完整通过见证，v177 不能再归因于“缺少线性场表示容量”。静态均值失败还说明，这不是一个固定平均先验就能解释的结果。
+
+### 为什么这还不是可部署算法
+
+秩 `1009/1010` 几乎等于样本数。这不是发现了一个紧凑低维流形，而是确认样本张成空间足够大。每个目标仍需要不同的、由三维真值求出的高维仿射坐标；部署时能否只看二维观测与相机几何预测这些坐标，完全没有被 v178 证明。
+
+所以逻辑在线账虽然是 K0 的 `1A` 或 K1 的 `2A+1A^T`，目前都不能写成真实部署节省。v178 没有训练 selector、predictor 或神经网络，也没有跑 wall/RSS、外部门或真实 BOST。
+
+### 独立复算与下一门
+
+完全独立第二实现使用不同的稳定 SVD 路径，重建仿射空间、投影、五/九相机算子、K1、指标、分层门、调用账和相机乱序审计。`26/26` 项检查全真；投影场、候选场和指标最大差为 `4.21e-15 / 9.28e-13 / 4.48e-12`，所有离散判决一致。
+
+第一次独立验证因为把物理源时间与归一化时间标签直接比较而 fail-closed；这条 inconclusive 被原样保留。修复只涉及验证器的时间归一化检查，没有改变协议、正式数组、候选、门或判决。
+
+下一科学门是结果前冻结一个最小 observation + geometry-only 仿射坐标可预测性诊断，使用完整轨迹隔离和便宜确定性对照。现在不授权大模型、GPU、资源门或封存 test。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint
+
+v177 shows that the low-depth Krylov field reference lacks capacity. v178 asks a physically different question: do the ten already opened PoolFire training trajectories at least span a linear field family that can cover the four opened evaluation fields?
+
+The 1,010 training fields form an affine space with stable rank `1,009`. Using 3D truth only to construct offline affine projections, v178 evaluates the same thirteen calibrations and four frames under the frozen five-camera sensor and an all-nine control, before and after one unchanged CGLS K1 step. The static training-field mean is the cheap control.
+
+Five-camera affine K0 and K1 each pass `52/52` cells, `13/13` calibrations, and `4/4` frames. Both all-nine affine arms also pass `52/52`. Five-camera K1 field / gradient / observation p90 values are `0.129631 / 0.233712 / 0.099735`. The static-mean K0 and K1 controls remain `0/52`.
+
+Decision: `PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178`. The opened training family contains a passing linear field witness, so missing linear field-span capacity no longer explains v177. The failed static mean shows that this is not merely a fixed-prior effect.
+
+The key limitation is rank `1009/1010`, nearly the full sample count. This is not a compact latent representation. Every target still requires distinct high-dimensional affine coordinates computed from 3D truth; v178 does not show that deployment-visible 2D observations and reported geometry can predict them. Logical K0/K1 ledgers therefore do not establish deployment savings.
+
+A fully independent implementation uses a different stable SVD path and rebuilds the affine span, projections, operators, K1 states, metrics, strata, call ledgers, and camera-order checks. All `26/26` checks pass. Maximum projected-field, candidate-field, and metric differences are `4.21e-15`, `9.28e-13`, and `4.48e-12`, and every discrete decision agrees. The preserved initial inconclusive came from comparing physical source times directly with normalized labels; the repair changes only that validator check.
+
+The next gate is a preregistered minimal observation-and-geometry-only affine-coordinate predictability diagnostic with complete-trajectory isolation and cheap deterministic controls. Neural training, GPU rental, resource tests, and untouched-test opening remain unauthorized.
