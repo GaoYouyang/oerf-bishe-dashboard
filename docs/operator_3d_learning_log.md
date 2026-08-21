@@ -15799,3 +15799,39 @@ The original independent validator passes `41/42` checks and remains inconclusiv
 Any next candidate must be a preregistered, physically distinct, explicitly geometry-conditioned factorization, or wait for condition-matched experimental two-component BOS displacement and complete correspondence. No rank expansion, ridge retuning, CNN/FNO/UNO/DeepONet rescue, or GPU rental is authorized.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `resource_speedup=false`, `broad_external_generalization=false`, `curved_ray_validated=false`, `real_bost=false`.
+
+## 2026-08-21：v181 显式加入几何后，固定 rank-16 逆因子仍然失败
+
+### 讲人话：问题确实随几何变化，但低秩几何修正还远远不够
+
+v180 排除了一个固定共享的 diagonal + rank-16 线性逆近似，但还留下一个合理解释：它失败，也许只是因为没有显式读取每套相机几何。v181 直接检验这个解释。它保持 v178/v179 的 `1,009` 维仿射场空间，针对每套报告几何先做 Jacobi 白化，再加入恰好 `16` 个谱修正方向，随后运行一轮完全未修改的 CGLS K1。
+
+结果仍然是否定的。五相机 K1 严格通过 `0/52`，全九相机 K1 也是 `0/52`；两个 K0 臂同样都是 `0/52`，完整标定和完整帧均为零。五相机 K1 的 field / gradient / observation p90 为 `0.510874 / 0.819616 / 0.568073`，全九相机为 `0.483807 / 0.693110 / 0.581855`。
+
+加入几何并非完全没有作用，但作用太小：白化后的逆残差 p90 从 `1.024692` 降到 `1.017375`，相对只下降约 `0.71%`。这说明误差不是少数十六个谱方向能够捕获的低秩缺口，而是更广谱的几何相关逆失配。
+
+### 独立复算与边界
+
+完全独立第二实现重新构造几何因子、仿射坐标、候选场、观测、K1、指标和分层判决，`48/48` 项检查全真。因子作用、坐标、候选场、逐单元指标和汇总的最大差分别为 `1.82e-11 / 1.35e-11 / 1.03e-11 / 5.92e-12 / 5.21e-12`，所有离散判决一致。
+
+正式判决为 `FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181`。关闭的是当前固定 Jacobi 白化、几何条件 rank-16 逆因子族；不再调 rank、floor、ridge 或谱方向打分，也不使用 CNN/FNO 或 GPU 挽救。它没有关闭 observation-adaptive、非线性或物理上真正不同的机制，更没有关闭整条 C 路线。
+
+几何缓存构建仍需 `26,260` 次 forward-equivalent setup projection。逻辑 K1 账虽然是 `2A+2A^T`，但 matched accuracy 没有成立，因此不能声称减少调用、wall/RSS 加速、外部泛化或真实 BOST 成功。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`broad_external_generalization=false`、`curved_ray_validated=false`、`real_bost=false`。
+
+### English checkpoint
+
+v180 rules out one fixed shared diagonal-plus-rank-16 inverse approximation but leaves a plausible explanation: perhaps the failure comes from omitting the reported camera geometry. v181 tests that explanation directly. It keeps the `1,009`-dimensional v178/v179 affine field space, applies geometry-specific Jacobi whitening, adds exactly `16` spectral correction modes, and then runs one unchanged CGLS K1 step.
+
+The result remains negative. Five-camera K1 is strict-safe on `0/52` cells, and all-nine K1 is also `0/52`; both K0 arms are `0/52`, with no complete calibration or frame. Five-camera K1 field / gradient / observation p90 values are `0.510874 / 0.819616 / 0.568073`; all-nine values are `0.483807 / 0.693110 / 0.581855`.
+
+Geometry conditioning is not numerically inert, but it is far too weak. The whitened inverse-residual p90 falls only from `1.024692` to `1.017375`, a relative reduction of about `0.71%`. The mismatch is therefore broad-spectrum rather than a low-rank defect captured by sixteen spectral modes.
+
+A fully independent implementation rebuilds the geometry factors, affine coordinates, candidate fields, observations, K1 states, metrics, and strata. All `48/48` checks pass. Maximum factor-action, coordinate, candidate-field, per-cell metric, and summary differences are `1.82e-11`, `1.35e-11`, `1.03e-11`, `5.92e-12`, and `5.21e-12`, with every discrete decision agreeing.
+
+Decision: `FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181`. Close the fixed Jacobi-whitened, geometry-conditioned rank-16 inverse-factor family without tuning rank, floor, ridge, or mode score and without CNN/FNO or GPU rescue. This does not close observation-adaptive, nonlinear, or otherwise physically distinct mechanisms, and it does not close the full C route.
+
+Cache construction still costs `26,260` forward-equivalent setup projections. Although the logical K1 ledger is `2A+2A^T`, matched accuracy fails, so v181 establishes no exact-call reduction, wall/RSS speedup, external generalization, or real-BOST success.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `resource_speedup=false`, `broad_external_generalization=false`, `curved_ray_validated=false`, `real_bost=false`.
