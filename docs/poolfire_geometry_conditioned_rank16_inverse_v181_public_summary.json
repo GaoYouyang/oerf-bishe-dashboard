@@ -1,0 +1,153 @@
+{
+  "schema_version": "oerf-public-poolfire-geometry-conditioned-rank16-inverse-v181",
+  "updated": "2026-08-21",
+  "formal_status": "PASS_FORMAL_POOLFIRE_GEOMETRY_CONDITIONED_RANK16_EXECUTION_V181",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_CONDITIONED_RANK16_V181",
+  "scientific_decision": "FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181",
+  "scope": "A post-open mechanism diagnostic on four already opened PoolFire frames. It tests one fixed-rank, explicitly geometry-conditioned approximation of the observable 1,009-coordinate affine inverse.",
+  "question": "Does a reported-geometry-specific Jacobi whitening plus exactly 16 spectral corrections preserve the frozen field, gradient, and observation gates under five and nine cameras?",
+  "evaluation": {
+    "fit_trajectories": 10,
+    "fit_fields": 1010,
+    "stable_affine_rank": 1009,
+    "evaluation_calibrations": 13,
+    "evaluation_frames": 4,
+    "evaluation_cells_per_sensor": 52,
+    "sensors": [
+      "frozen geometry-selected five-camera sensor from v176",
+      "all-nine camera control"
+    ],
+    "deployment_visible_inputs": [
+      "observation",
+      "reported camera geometry"
+    ],
+    "spectral_correction_rank": 16,
+    "trainable_parameters": 0,
+    "heldout_truth_used_for_factor_or_prediction": false,
+    "neural_model_trained": false
+  },
+  "absolute_gate": {
+    "field_p90_max": 0.5,
+    "field_worst_max": 0.75,
+    "gradient_p90_max": 0.75,
+    "gradient_worst_max": 1.0,
+    "observation_p90_max": 0.2,
+    "observation_worst_max": 0.35,
+    "strict_cells_required": 52,
+    "calibrations_required": 13,
+    "frames_required": 4
+  },
+  "five_camera_primary_k1": {
+    "passed": false,
+    "strict_cells_safe": 0,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 0,
+    "whole_calibrations_total": 13,
+    "frame_strata_passed": 0,
+    "frame_strata_total": 4,
+    "global_p90": {
+      "field_relative_l2": 0.5108742601960882,
+      "gradient_relative_l2": 0.8196156354083503,
+      "observation_relative_l2": 0.5680726089046061
+    },
+    "global_worst": {
+      "field_relative_l2": 0.538748845172157,
+      "gradient_relative_l2": 0.8423089227229273,
+      "observation_relative_l2": 0.6026789347411766
+    },
+    "logical_exact_calls": {
+      "forward": 2,
+      "adjoint": 2
+    }
+  },
+  "all_nine_primary_k1": {
+    "passed": false,
+    "strict_cells_safe": 0,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 0,
+    "whole_calibrations_total": 13,
+    "frame_strata_passed": 0,
+    "frame_strata_total": 4,
+    "global_p90": {
+      "field_relative_l2": 0.48380692810249143,
+      "gradient_relative_l2": 0.693110222652549,
+      "observation_relative_l2": 0.5818547684076318
+    },
+    "global_worst": {
+      "field_relative_l2": 0.5166939245714824,
+      "gradient_relative_l2": 0.7308796874678143,
+      "observation_relative_l2": 0.6338691236083913
+    },
+    "logical_exact_calls": {
+      "forward": 2,
+      "adjoint": 2
+    }
+  },
+  "primary_k0": {
+    "five_camera_strict_cells_safe": 0,
+    "all_nine_strict_cells_safe": 0
+  },
+  "cheap_controls": {
+    "geometry_jacobi_passed": false,
+    "one_step_coordinate_cgls_passed": false,
+    "static_fit_mean_passed": false,
+    "geometry_jacobi_five_camera_k1_p90": {
+      "field_relative_l2": 0.5148203027367508,
+      "gradient_relative_l2": 0.8232696827512709,
+      "observation_relative_l2": 0.5682763859601077
+    },
+    "geometry_jacobi_all_nine_k1_p90": {
+      "field_relative_l2": 0.49327676523296476,
+      "gradient_relative_l2": 0.6879007357268995,
+      "observation_relative_l2": 0.5826160754283842
+    }
+  },
+  "mechanism_diagnostics": {
+    "whitened_eigenvalue_minimum": 0.014603227725047343,
+    "whitened_eigenvalue_maximum": 5.981863215559174,
+    "jacobi_inverse_residual_p90": 1.0246918623449623,
+    "rank16_inverse_residual_p90": 1.017375068410933,
+    "relative_p90_reduction": 0.007140404369138986,
+    "interpretation": "The geometry-specific whitening is valid, but correcting only 16 spectral modes removes less than one percent of the broad normal-inverse residual at p90."
+  },
+  "cost_boundary": {
+    "geometry_factor_basis_forward_equivalents": 26234,
+    "deployment_mean_cache_forward_equivalents": 26,
+    "total_setup_forward_equivalents": 26260,
+    "logical_online_k1_forward_calls": 2,
+    "logical_online_k1_adjoint_calls": 2,
+    "matched_accuracy_passed": false,
+    "call_reduction_established": false
+  },
+  "independent_recomputation": {
+    "checks_passed": 48,
+    "checks_total": 48,
+    "factor_action_maximum_relative_difference": 1.8209073977800453e-11,
+    "coordinate_maximum_relative_difference": 1.3540138757605569e-11,
+    "candidate_field_maximum_relative_difference": 1.0332430145262133e-11,
+    "metric_maximum_absolute_difference": 5.916378498227459e-12,
+    "arm_summary_maximum_absolute_difference": 5.208056208516609e-12,
+    "all_discrete_decisions_exact": true
+  },
+  "interpretation": "v181 directly conditions the compact factor on reported geometry, but both sensor arms remain 0/52 strict-safe after one unchanged CGLS step. The failure is not explained by omitting geometry from a shared factor; the chosen fixed rank-16 spectral correction is too narrow for the broad inverse mismatch.",
+  "limitation": "This closes only the frozen Jacobi-whitened geometry-conditioned rank-16 family on a post-open four-frame PoolFire proxy. It is not an impossibility result for nonlinear or observation-adaptive mechanisms and establishes no deployment, resource, external, curved-ray, or real-BOST result.",
+  "route_action": "Do not tune rank, eigenvalue floors, ridge, or the post-result mode score, and do not rescue this family with a larger neural model or GPU. Re-rank toward one physically different observation-adaptive mechanism or wait for new paired 2D BOS evidence.",
+  "claim_limits": {
+    "geometry_conditioning_omission_explains_v180": false,
+    "fixed_geometry_rank16_family_closed": true,
+    "all_compact_mechanisms_ruled_out": false,
+    "deployable_algorithm": false,
+    "neural_operator_advantage": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "broad_external_generalization": false,
+    "untouched_test_evidence": false,
+    "paired_experimental_2d_projections_used": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

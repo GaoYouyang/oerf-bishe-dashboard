@@ -73,9 +73,9 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_preserves_v177_after_v180_becomes_current() -> None:
+def test_current_evidence_preserves_v177_after_v181_becomes_current() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180"
+    assert payload["scientific_status"] == "FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181"
     assert (
         payload["v177_krylov_capacity_scientific_decision"]
         == "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
@@ -102,9 +102,12 @@ def test_primary_pages_retain_v177_as_parent_evidence() -> None:
     home = (ROOT / "index.html").read_text()
     for text in (operator, daily):
         assert "v177" in text
-    for text in (operator, daily, home):
+    for text in (operator, daily):
         assert "v178" in text
         assert "v179" in text
+    for text in (operator, daily, home):
+        assert "v179" in text
+        assert "v181" in text
     for text in (operator, daily):
         assert "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177" in text
     assert "低深度场参考" in daily
@@ -116,9 +119,9 @@ def test_primary_pages_retain_v177_as_parent_evidence() -> None:
 def test_route_metadata_records_v177_as_older_release() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v180" in operator
-    assert 'previousVersion: "2026.08.21-c-v179-affine-coordinate-observability"' in curriculum
-    assert 'olderBadge: "v178 truth-aware affine-span capacity' in curriculum
+    assert "curriculum.js?v=20260821-v181" in operator
+    assert 'previousVersion: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative"' in curriculum
+    assert 'olderBadge: "v179 exact affine-coordinate inverse' in curriculum
     assert 'updated: "2026-08-21"' in curriculum
 
 

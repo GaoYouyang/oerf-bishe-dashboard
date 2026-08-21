@@ -70,9 +70,9 @@ def test_current_evidence_retains_v175_as_historical_parent_evidence() -> None:
     assert payload["metrics"]["v175_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v175_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v175_independent_check_count"] == 31
-    assert payload["scientific_status"] == "FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180"
-    assert "geometry-conditioned" in payload["next_scientific_gate_en"]
-    assert "显式几何条件化" in payload["next_scientific_gate_zh"]
+    assert payload["scientific_status"] == "FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181"
+    assert "observation-adaptive" in payload["next_scientific_gate_en"]
+    assert "由观测自适应" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v175_in_both_languages() -> None:

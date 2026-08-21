@@ -1,8 +1,8 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative",
-  previousVersion: "2026.08.21-c-v179-affine-coordinate-observability",
-  previousBadge: "v179 exact affine-coordinate inverse · 52 / 52",
-  olderBadge: "v178 truth-aware affine-span capacity · 52 / 52",
+  version: "2026.08.21-c-v181-geometry-conditioned-rank16-negative",
+  previousVersion: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative",
+  previousBadge: "v180 shared compact inverse · five 4 / 52 · nine 7 / 52",
+  olderBadge: "v179 exact affine-coordinate inverse · 52 / 52",
   historyReleases: [
     {
       version: "2026.08.02-c-v98-joint13-predictor-negative-geometry-gate",

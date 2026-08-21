@@ -63,9 +63,9 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_points_to_v180_and_preserves_limitations() -> None:
+def test_current_evidence_preserves_v180_after_v181_advance() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180"
+    assert payload["scientific_status"] == "FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181"
     assert payload["metrics"]["v180_five_primary_k1_strict_safe_count"] == 4
     assert payload["metrics"]["v180_all_nine_primary_k1_strict_safe_count"] == 7
     assert payload["metrics"]["v180_five_primary_k1_observation_p90"] > 0.2
@@ -81,20 +81,23 @@ def test_primary_pages_reference_v180_in_both_languages() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     daily = (ROOT / "operator-learning/daily-progress.html").read_text()
     home = (ROOT / "index.html").read_text()
-    for text in (operator, daily, home):
+    for text in (operator, daily):
         assert "v180" in text
         assert "FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180" in text
+    for text in (operator, daily, home):
+        assert "v181" in text
     assert "共享紧凑线性" in operator
     assert "shared compact linear" in operator
-    assert "poolfire_compact_affine_adjoint_preconditioner_v180.png" in operator
+    assert FIGURE.exists()
     assert daily.count('data-date="2026-08-21"') == 1
 
 
-def test_route_metadata_and_cachebuster_advance_to_v180() -> None:
+def test_route_metadata_and_cachebuster_advance_to_v181() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v180" in operator
-    assert 'version: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative"' in curriculum
+    assert "curriculum.js?v=20260821-v181" in operator
+    assert 'version: "2026.08.21-c-v181-geometry-conditioned-rank16-negative"' in curriculum
+    assert 'previousVersion: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative"' in curriculum
     assert 'updated: "2026-08-21"' in curriculum
 
 

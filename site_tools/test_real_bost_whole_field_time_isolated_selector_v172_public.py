@@ -70,16 +70,16 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_preserves_v172_and_points_to_v180() -> None:
+def test_current_evidence_preserves_v172_and_points_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180"
+        "FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181"
     )
     assert payload["metrics"]["v172_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v172_primary_complete_fields_passed"] == 9
     assert payload["metrics"]["v172_independent_check_count"] == 22
-    assert "geometry-conditioned" in payload["next_scientific_gate_en"]
-    assert "显式几何条件化" in payload["next_scientific_gate_zh"]
+    assert "observation-adaptive" in payload["next_scientific_gate_en"]
+    assert "由观测自适应" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v172_in_both_languages() -> None:

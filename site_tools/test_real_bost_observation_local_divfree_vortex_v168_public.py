@@ -82,7 +82,7 @@ def test_current_evidence_preserves_v168_as_historical_evidence() -> None:
         "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
     assert payload["scientific_status"] == (
-        "FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180"
+        "FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181"
     )
 
 

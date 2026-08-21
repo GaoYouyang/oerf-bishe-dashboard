@@ -89,8 +89,10 @@ def test_primary_pages_preserve_v176_as_parent_evidence() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     daily = (ROOT / "operator-learning/daily-progress.html").read_text()
     home = (ROOT / "index.html").read_text()
-    for text in (operator, daily, home):
+    for text in (operator, daily):
         assert "v178" in text
+    for text in (operator, daily, home):
+        assert "v181" in text
     for text in (operator, daily):
         assert "v176" in text
     assert "FAIL_RESULT_UNOPENED_POOLFIRE_CONDITION_PARITY_V176" in operator
@@ -100,9 +102,9 @@ def test_primary_pages_preserve_v176_as_parent_evidence() -> None:
 def test_route_metadata_has_advanced_beyond_v176() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v180" in operator
-    assert 'version: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative"' in curriculum
-    assert 'previousVersion: "2026.08.21-c-v179-affine-coordinate-observability"' in curriculum
+    assert "curriculum.js?v=20260821-v181" in operator
+    assert 'version: "2026.08.21-c-v181-geometry-conditioned-rank16-negative"' in curriculum
+    assert 'previousVersion: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative"' in curriculum
     assert 'updated: "2026-08-21"' in curriculum
 
 
