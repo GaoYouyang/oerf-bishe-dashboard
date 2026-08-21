@@ -15765,3 +15765,37 @@ The result is not an algorithmic success. Cache construction projects the fit me
 A fully independent implementation passes `36/36` checks. Maximum candidate-field, coordinate, and metric differences are `8.40e-12`, `1.35e-11`, and `4.48e-12`; camera permutation changes coordinates by at most `1.22e-14`; fixed-observation truth mutation changes coordinates and candidates by exactly zero.
 
 The next gate is only a preregistered compact shared CPU approximation with complete-trajectory isolation and the same cheap controls. Neural training, GPU rental, wall/RSS testing, untouched tests, and real-BOST claims remain unauthorized.
+
+## 2026-08-21：v180 关闭固定共享紧凑线性逆近似
+
+### 讲人话：答案在观测里，但一个固定低秩公式取不稳
+
+v179 已经证明，冻结五相机观测与报告几何能够完整辨识 `1,009` 个仿射坐标。v180 紧接着问一个更接近部署的问题：能否不用逐几何庞大精确逆，而改用一个共享的 diagonal + rank-16 线性映射，再接一轮未修改 CGLS K1？
+
+正式结果是否定的。五相机 primary K1 只严格通过 `4/52`，全九相机也只有 `7/52`；两臂完整帧都是 `0/4`。五相机 field / gradient / observation p90 为 `0.344248 / 0.485871 / 0.311000`，九相机为 `0.332602 / 0.466727 / 0.363093`。field 与 gradient 总体在冻结门内，但 observation p90 都高于 `0.20`，所以逻辑在线账即使是 `2A+2A^T`，也不能写成有效调用减少。
+
+这条负结果很有定位价值：v179 排除了“观测没有信息”，v180 则排除了“一个固定共享低秩线性映射就足够”。当前瓶颈被收缩到随相机几何变化的逆结构。关闭的是当前 shared linear adjoint-preconditioner family，不是全部非线性、显式几何条件机制，也不是整条 C 路线。
+
+### 独立审计为什么分两步
+
+原独立验证 `42` 项中有 `41` 项通过，唯一失败是对数量级接近数值零的 feature mean 和 target mean 使用相对误差。它们的独立绝对差仅为 `7.85e-16` 与 `3.17e-16`，但近零分母会放大相对量，因此原 `INCONCLUSIVE` 记录保持不变。
+
+随后另行冻结的窄审计没有重跑拟合、预测、物理重放或评分，只把近零均值改用预注册绝对误差门；其余非零数组仍用原相对门。`24/24` 项全部通过，封存树、连续指标和离散判决均未改变。因此这次审计修正的是比较尺度，不是候选、阈值或科学结果。
+
+下一候选只有两种合理入口：一个结果前冻结、物理结构真正不同且显式依赖几何的因子化机制；或者等待工况匹配的实验二维双分量 BOS 位移与完整映射。当前不扩 rank、不改 ridge、不上 CNN/FNO/UNO/DeepONet，也不租 GPU。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`broad_external_generalization=false`、`curved_ray_validated=false`、`real_bost=false`。
+
+### English checkpoint
+
+v179 shows that frozen five-camera observations and reported geometry identify all `1,009` affine coordinates. v180 asks the deployment-relevant next question: can one shared diagonal-plus-rank-16 linear map replace the large geometry-specific exact inverses before one unchanged CGLS K1 step?
+
+The answer is negative. Primary K1 is strict-safe on only `4/52` five-camera cells and `7/52` all-nine cells, with `0/4` complete frames in both arms. Five-camera field / gradient / observation p90 values are `0.344248 / 0.485871 / 0.311000`; all-nine values are `0.332602 / 0.466727 / 0.363093`. Field and gradient tails satisfy their global gates, but observation exceeds `0.20` in both arms. The logical `2A+2A^T` ledger therefore does not establish an effective call reduction.
+
+The diagnosis is useful: v179 rules out missing observation information, while v180 rules out one fixed shared low-rank linear approximation. The remaining bottleneck is the geometry-dependent inverse structure. The current shared linear adjoint-preconditioner family is closed, not every nonlinear or explicitly geometry-conditioned mechanism and not the full C route.
+
+The original independent validator passes `41/42` checks and remains inconclusive because it applies relative error to feature and target means near numerical zero. Their independent absolute differences are only `7.85e-16` and `3.17e-16`. A separately frozen narrow audit reruns no fitting, prediction, physical replay, or scoring; it uses preregistered absolute gates only for those near-zero means and passes `24/24` checks with sealed trees, continuous metrics, and discrete decisions unchanged.
+
+Any next candidate must be a preregistered, physically distinct, explicitly geometry-conditioned factorization, or wait for condition-matched experimental two-component BOS displacement and complete correspondence. No rank expansion, ridge retuning, CNN/FNO/UNO/DeepONet rescue, or GPU rental is authorized.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `resource_speedup=false`, `broad_external_generalization=false`, `curved_ray_validated=false`, `real_bost=false`.
