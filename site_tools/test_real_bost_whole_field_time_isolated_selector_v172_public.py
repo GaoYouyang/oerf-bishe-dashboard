@@ -59,16 +59,16 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_preserves_v172_and_points_to_v173() -> None:
+def test_current_evidence_preserves_v172_and_points_to_v174() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "FAIL_CLASSICAL_CONTROL_EXPLAINS_CAMERA_SELECTED_WARM_V173"
+        "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"
     )
     assert payload["metrics"]["v172_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v172_primary_complete_fields_passed"] == 9
     assert payload["metrics"]["v172_independent_check_count"] == 22
-    assert "same H1-K0" in payload["next_scientific_gate_en"]
-    assert "同一 H1-K0" in payload["next_scientific_gate_zh"]
+    assert "smallest shared-parameter CPU selector" in payload["next_scientific_gate_en"]
+    assert "最小共享参数 CPU 选择器" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v172_in_both_languages() -> None:

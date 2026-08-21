@@ -71,7 +71,7 @@ def test_current_evidence_preserves_v168_as_historical_evidence() -> None:
         "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
     assert payload["scientific_status"] == (
-        "FAIL_CLASSICAL_CONTROL_EXPLAINS_CAMERA_SELECTED_WARM_V173"
+        "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"
     )
 
 

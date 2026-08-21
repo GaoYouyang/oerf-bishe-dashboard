@@ -54,17 +54,17 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_points_to_v173_and_selector_only_next_gate() -> None:
+def test_current_evidence_preserves_v173_but_points_to_v174() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "FAIL_CLASSICAL_CONTROL_EXPLAINS_CAMERA_SELECTED_WARM_V173"
+        "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"
     )
     assert payload["metrics"]["v173_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_exact_A"] == 1
     assert payload["metrics"]["v173_independent_check_count"] == 21
-    assert "same H1-K0" in payload["next_scientific_gate_en"]
-    assert "同一 H1-K0" in payload["next_scientific_gate_zh"]
+    assert "smallest shared-parameter CPU selector" in payload["next_scientific_gate_en"]
+    assert "最小共享参数 CPU 选择器" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v173_in_both_languages() -> None:
@@ -75,7 +75,7 @@ def test_primary_pages_reference_v173_in_both_languages() -> None:
         assert "v173" in text
     assert "更便宜的 H1-K0" in operator
     assert "cheaper H1-K0" in operator
-    assert "real_bost_camera_selected_warm_refinement_v173.png" in operator
+    assert "real_bost_camera_selected_warm_refinement_v173_result_2026-08-21.md" in operator
     assert daily.count("FAIL_CLASSICAL_CONTROL_EXPLAINS_CAMERA_SELECTED_WARM_V173") == 1
 
 
