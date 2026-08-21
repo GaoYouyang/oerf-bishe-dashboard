@@ -15,18 +15,31 @@ CURRENT = ROOT / "operator-learning/current-evidence.json"
 
 def test_public_summary_preserves_the_negative_scientific_boundary() -> None:
     payload = json.loads(SUMMARY.read_text())
-    assert payload["scientific_decision"] == "FAIL_RESULT_UNOPENED_POOLFIRE_CONDITION_PARITY_V176"
+    assert (
+        payload["scientific_decision"]
+        == "FAIL_RESULT_UNOPENED_POOLFIRE_CONDITION_PARITY_V176"
+    )
     assert payload["primary"]["strict_safe_cells"] == 0
     assert payload["primary"]["strict_safe_total"] == 52
     assert payload["primary"]["complete_calibrations_passed"] == 0
     assert payload["primary"]["frame_strata_passed"] == 0
     assert payload["primary"]["own_reference_joint_harm_count"] == 52
     assert payload["primary"]["own_reference_severe_harm_count"] == 50
-    assert payload["reference_adequacy_diagnostic"]["primary_same_subset_k4_strict_safe_cells"] == 0
-    assert payload["reference_adequacy_diagnostic"]["all_four_policy_k4_reference_strict_safe_counts"] == [0, 0, 0, 0]
+    assert (
+        payload["reference_adequacy_diagnostic"][
+            "primary_same_subset_k4_strict_safe_cells"
+        ]
+        == 0
+    )
+    assert payload["reference_adequacy_diagnostic"][
+        "all_four_policy_k4_reference_strict_safe_counts"
+    ] == [0, 0, 0, 0]
     assert payload["controls"]["controls_that_passed"] == []
     assert payload["independent_recomputation"]["check_count"] == 35
-    assert payload["execution_disclosure"]["repair_changed_only_residual_audit_storage"] is True
+    assert (
+        payload["execution_disclosure"]["repair_changed_only_residual_audit_storage"]
+        is True
+    )
     assert payload["claim_limits"]["algorithm_breakthrough"] is False
     assert payload["claim_limits"]["resource_speedup"] is False
     assert payload["claim_limits"]["real_bost"] is False
@@ -62,7 +75,12 @@ def test_current_evidence_preserves_v176_as_a_closed_parent_result() -> None:
     assert payload["metrics"]["v176_primary_strict_safe_total"] == 52
     assert payload["metrics"]["v176_primary_k4_strict_safe_count"] == 0
     assert payload["metrics"]["v176_independent_check_count"] == 35
-    assert payload["current_decision"]["v176_current_minimal_shared_selector_transfer_closed"] is True
+    assert (
+        payload["current_decision"][
+            "v176_current_minimal_shared_selector_transfer_closed"
+        ]
+        is True
+    )
     assert payload["current_decision"]["v176_resource_gate_authorized"] is False
     assert payload["current_decision"]["v176_gpu_rental_authorized"] is False
 
@@ -72,17 +90,22 @@ def test_primary_pages_preserve_v176_as_parent_evidence() -> None:
     daily = (ROOT / "operator-learning/daily-progress.html").read_text()
     home = (ROOT / "index.html").read_text()
     for text in (operator, daily, home):
+        assert "v178" in text
+    for text in (operator, daily):
         assert "v176" in text
     assert "FAIL_RESULT_UNOPENED_POOLFIRE_CONDITION_PARITY_V176" in operator
     assert "poolfire_result_unopened_condition_v176_result_2026-08-21.md" in operator
-    assert "poolfire_result_unopened_condition_v176_result_2026-08-21.md" in daily
 
 
 def test_route_metadata_has_advanced_beyond_v176() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v177" in operator
-    assert 'version: "2026.08.21-c-v177-krylov-reference-capacity-negative"' in curriculum
+    assert "curriculum.js?v=20260821-v178" in operator
+    assert 'version: "2026.08.21-c-v178-affine-span-capacity-positive"' in curriculum
+    assert (
+        'previousVersion: "2026.08.21-c-v177-krylov-reference-capacity-negative"'
+        in curriculum
+    )
     assert 'updated: "2026-08-21"' in curriculum
 
 

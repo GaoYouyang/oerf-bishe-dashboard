@@ -7,20 +7,33 @@ from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SUMMARY = ROOT / "docs/real_bost_observation_local_divfree_vortex_v168_public_summary.json"
-RESULT = ROOT / "docs/real_bost_observation_local_divfree_vortex_v168_result_2026-08-21.md"
+SUMMARY = (
+    ROOT / "docs/real_bost_observation_local_divfree_vortex_v168_public_summary.json"
+)
+RESULT = (
+    ROOT / "docs/real_bost_observation_local_divfree_vortex_v168_result_2026-08-21.md"
+)
 FIGURE = ROOT / "assets/figures/real_bost_observation_local_divfree_vortex_v168.png"
-SURFACES = [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]
+SURFACES = [
+    ROOT / "index.html",
+    ROOT / "operator-learning/index.html",
+    ROOT / "operator-learning/daily-progress.html",
+]
 
 
 def test_public_summary_keeps_the_v168_boundary() -> None:
     payload = json.loads(SUMMARY.read_text(encoding="utf-8"))
-    assert payload["scientific_decision"] == "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
+    assert (
+        payload["scientific_decision"] == "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
+    )
     assert payload["primary"]["strata_passed"] == 10
     assert payload["primary"]["strata_total"] == 12
     assert payload["primary"]["passed"] is False
     failed = [row for row in payload["primary"]["strata"] if not row["passed"]]
-    assert [(row["time"], row["camera_count"]) for row in failed] == [(0.75, 5), (1.0, 5)]
+    assert [(row["time"], row["camera_count"]) for row in failed] == [
+        (0.75, 5),
+        (1.0, 5),
+    ]
     assert failed[0]["gradient_p90"] == 0.8179899494053545
     assert failed[1]["gradient_worst"] == 1.271908652182564
     assert payload["primary"]["logical_online_calls_non_anchor"] == {"A": 13, "AT": 1}
@@ -57,9 +70,7 @@ def test_public_surfaces_expose_the_same_verdict() -> None:
 
 def test_current_evidence_preserves_v168_as_historical_evidence() -> None:
     payload = json.loads(
-        (ROOT / "operator-learning/current-evidence.json").read_text(
-            encoding="utf-8"
-        )
+        (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
     assert payload["v168_observation_local_divfree_vortex_formal_status"].endswith(
         "OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
@@ -71,7 +82,7 @@ def test_current_evidence_preserves_v168_as_historical_evidence() -> None:
         "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
     assert payload["scientific_status"] == (
-        "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
+        "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
     )
 
 

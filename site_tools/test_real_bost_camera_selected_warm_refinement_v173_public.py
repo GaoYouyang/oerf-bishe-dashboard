@@ -7,8 +7,12 @@ from PIL import Image, ImageStat
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SUMMARY = ROOT / "docs/real_bost_camera_selected_warm_refinement_v173_public_summary.json"
-RESULT = ROOT / "docs/real_bost_camera_selected_warm_refinement_v173_result_2026-08-21.md"
+SUMMARY = (
+    ROOT / "docs/real_bost_camera_selected_warm_refinement_v173_public_summary.json"
+)
+RESULT = (
+    ROOT / "docs/real_bost_camera_selected_warm_refinement_v173_result_2026-08-21.md"
+)
 FIGURE = ROOT / "assets/figures/real_bost_camera_selected_warm_refinement_v173.png"
 CURRENT = ROOT / "operator-learning/current-evidence.json"
 
@@ -27,7 +31,10 @@ def test_public_summary_preserves_the_negative_scientific_boundary() -> None:
     assert payload["controls"]["blocking_controls_that_passed"] == ["primary_h1_k0"]
     assert payload["independent_recomputation"]["check_count"] == 21
     assert payload["claim_limits"]["cgls_k1_advantage_established"] is False
-    assert payload["claim_limits"]["selector_advantage_under_equal_h1_k0_cost_established"] is False
+    assert (
+        payload["claim_limits"]["selector_advantage_under_equal_h1_k0_cost_established"]
+        is False
+    )
     assert payload["claim_limits"]["algorithm_breakthrough"] is False
     assert payload["claim_limits"]["resource_speedup"] is False
     assert payload["claim_limits"]["real_bost"] is False
@@ -54,17 +61,17 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_preserves_v173_but_points_to_v177() -> None:
+def test_current_evidence_preserves_v173_but_points_to_v178() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
+        "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
     )
     assert payload["metrics"]["v173_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_exact_A"] == 1
     assert payload["metrics"]["v173_independent_check_count"] == 21
-    assert "physically different field reference" in payload["next_scientific_gate_en"]
-    assert "物理上不同的场参考" in payload["next_scientific_gate_zh"]
+    assert "affine coordinates" in payload["next_scientific_gate_en"]
+    assert "仿射坐标" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v173_in_both_languages() -> None:
@@ -75,7 +82,10 @@ def test_primary_pages_reference_v173_in_both_languages() -> None:
         assert "v173" in text
     assert "更便宜的 H1-K0" in operator
     assert "cheaper H1-K0" in operator
-    assert "real_bost_camera_selected_warm_refinement_v173_result_2026-08-21.md" in operator
+    assert (
+        "real_bost_camera_selected_warm_refinement_v173_result_2026-08-21.md"
+        in operator
+    )
     assert daily.count("FAIL_CLASSICAL_CONTROL_EXPLAINS_CAMERA_SELECTED_WARM_V173") == 1
 
 

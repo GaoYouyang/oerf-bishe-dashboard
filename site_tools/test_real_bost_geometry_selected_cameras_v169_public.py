@@ -10,7 +10,11 @@ ROOT = Path(__file__).resolve().parents[1]
 SUMMARY = ROOT / "docs/real_bost_geometry_selected_cameras_v169_public_summary.json"
 RESULT = ROOT / "docs/real_bost_geometry_selected_cameras_v169_result_2026-08-21.md"
 FIGURE = ROOT / "assets/figures/real_bost_geometry_selected_cameras_v169.png"
-SURFACES = [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]
+SURFACES = [
+    ROOT / "index.html",
+    ROOT / "operator-learning/index.html",
+    ROOT / "operator-learning/daily-progress.html",
+]
 
 
 def test_public_summary_keeps_the_v169_boundary() -> None:
@@ -27,7 +31,12 @@ def test_public_summary_keeps_the_v169_boundary() -> None:
         (1.0, 5),
     ]
     assert failed[2]["gradient_p90"] == 0.8959141946922606
-    assert payload["selection_audit"]["five_camera_subsets_different_from_previous_fixed_roster"] == 13
+    assert (
+        payload["selection_audit"][
+            "five_camera_subsets_different_from_previous_fixed_roster"
+        ]
+        == 13
+    )
     assert payload["selection_audit"]["five_camera_unique_selected_subsets"] == 10
     assert payload["execution"]["independent_validity_checks"] == 27
     assert payload["independent_recomputation"]["all_checks_passed"] is True
@@ -58,17 +67,25 @@ def test_public_surfaces_keep_v169_as_traceable_parent_evidence() -> None:
     assert "0.895914" in SURFACES[1].read_text(encoding="utf-8")
 
 
-def test_current_evidence_preserves_v169_but_points_to_v177() -> None:
-    payload = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
+def test_current_evidence_preserves_v169_but_points_to_v178() -> None:
+    payload = json.loads(
+        (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
+    )
     assert payload["v169_geometry_selected_cameras_scientific_decision"] == (
         "FAIL_GEOMETRY_SELECTED_CAMERAS_V169"
     )
     assert payload["current_decision"]["v169_geometry_selected_cameras_passed"] is False
     assert payload["current_decision"]["v169_predictor_training_authorized"] is False
-    assert payload["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_KRYLOV_CAPACITY_V177"
-    assert payload["formal_status"] == "PASS_FORMAL_POOLFIRE_KRYLOV_CAPACITY_EXECUTION_V177"
+    assert (
+        payload["engineering_status"]
+        == "PASS_INDEPENDENT_RECOMPUTATION_TRAIN_FIELD_AFFINE_SPAN_V178"
+    )
+    assert (
+        payload["formal_status"]
+        == "PASS_FORMAL_POOLFIRE_TRAIN_FIELD_AFFINE_SPAN_EXECUTION_V178"
+    )
     assert payload["scientific_status"] == (
-        "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
+        "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
     )
 
 

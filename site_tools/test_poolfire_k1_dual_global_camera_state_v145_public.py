@@ -12,16 +12,32 @@ SUMMARY = ROOT / "docs/poolfire_k1_dual_global_camera_state_v145_public_summary.
 RESULT = ROOT / "docs/poolfire_k1_dual_global_camera_state_v145_result_2026-08-14.md"
 FIGURE = ROOT / "assets/figures/poolfire_k1_dual_global_camera_state_v145.png"
 EVIDENCE = ROOT / "operator-learning/current-evidence.json"
-SURFACES = [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]
+SURFACES = [
+    ROOT / "index.html",
+    ROOT / "operator-learning/index.html",
+    ROOT / "operator-learning/daily-progress.html",
+]
 
 
 def test_summary_preserves_the_negative_scientific_boundary() -> None:
     payload = json.loads(SUMMARY.read_text(encoding="utf-8"))
-    assert payload["scientific_decision"] == "FAIL_GLOBAL_CAMERA_STATE_IDENTIFIABILITY_V145"
-    assert payload["independent_status"] == "PASS_INDEPENDENT_RECOMPUTATION_GLOBAL_CAMERA_STATE_V145"
-    assert payload["post_result_camera_count_audit"]["scientific_decision_changed"] is False
+    assert (
+        payload["scientific_decision"]
+        == "FAIL_GLOBAL_CAMERA_STATE_IDENTIFIABILITY_V145"
+    )
+    assert (
+        payload["independent_status"]
+        == "PASS_INDEPENDENT_RECOMPUTATION_GLOBAL_CAMERA_STATE_V145"
+    )
+    assert (
+        payload["post_result_camera_count_audit"]["scientific_decision_changed"]
+        is False
+    )
     assert payload["independent_recomputation"]["all_checks_passed"] is True
-    assert payload["independent_recomputation"]["maximum_float_array_absolute_difference"] <= 2e-12
+    assert (
+        payload["independent_recomputation"]["maximum_float_array_absolute_difference"]
+        <= 2e-12
+    )
     for method in payload["methods"].values():
         assert method["sentinel_pass_count"] == 0
         assert method["full_cell_pass_count"] == 0
@@ -38,7 +54,13 @@ def test_public_surfaces_are_bilingual_and_point_to_v145() -> None:
     log = (ROOT / "docs/operator_3d_learning_log.md").read_text(encoding="utf-8")
     marker = "## 2026-08-14：v145 全局 camera-set 状态仍不能辨识共享目标"
     assert marker in log
-    text = "\n".join([*(path.read_text(encoding="utf-8") for path in SURFACES), RESULT.read_text(encoding="utf-8"), marker + log.split(marker, 1)[1]])
+    text = "\n".join(
+        [
+            *(path.read_text(encoding="utf-8") for path in SURFACES),
+            RESULT.read_text(encoding="utf-8"),
+            marker + log.split(marker, 1)[1],
+        ]
+    )
     assert "poolfire_k1_dual_global_camera_state_v145_result_2026-08-14.md" in text
     assert "poolfire_k1_dual_global_camera_state_v145.png" in text
     assert "0/20" in text and "0/3700" in text and "1.31e-12" in text
@@ -55,7 +77,9 @@ def test_daily_progress_keeps_one_latest_date() -> None:
     assert page.count('class="day-entry latest"') == 1
 
 
-def test_current_manifest_retains_v145_history_without_blocking_newer_evidence() -> None:
+def test_current_manifest_retains_v145_history_without_blocking_newer_evidence() -> (
+    None
+):
     evidence = json.loads(EVIDENCE.read_text(encoding="utf-8"))
     metrics = evidence["metrics"]
     decision = evidence["current_decision"]
@@ -68,8 +92,10 @@ def test_current_manifest_retains_v145_history_without_blocking_newer_evidence()
     assert decision["algorithm_breakthrough"] is False
     assert RESULT.exists()
     assert SUMMARY.exists()
-    assert evidence["public_evidence"]["result"].startswith("../document_reader.html?doc=docs%2F")
-    assert evidence["scientific_status"] == "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
+    assert evidence["public_evidence"]["result"].startswith(
+        "../document_reader.html?doc=docs%2F"
+    )
+    assert evidence["scientific_status"] == "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
     assert evidence["current_decision"]["v161_independently_recomputed"] is True
     assert evidence["current_decision"]["v162_independently_recomputed"] is True
 
@@ -82,7 +108,17 @@ def test_figure_is_large_and_readable() -> None:
 
 
 def test_public_artifacts_do_not_expose_private_execution_details() -> None:
-    text = "\n".join(path.read_text(encoding="utf-8") for path in [*SURFACES, SUMMARY, RESULT, EVIDENCE])
-    forbidden = ["/Users/", "private_results", "private_worktrees", "c0e5736e", "eafdab4f", "45cb821e"]
+    text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in [*SURFACES, SUMMARY, RESULT, EVIDENCE]
+    )
+    forbidden = [
+        "/Users/",
+        "private_results",
+        "private_worktrees",
+        "c0e5736e",
+        "eafdab4f",
+        "45cb821e",
+    ]
     assert all(fragment not in text for fragment in forbidden)
     assert re.search(r"\b[0-9a-f]{40,64}\b", text, flags=re.IGNORECASE) is None

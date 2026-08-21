@@ -15,14 +15,29 @@ CURRENT = ROOT / "operator-learning/current-evidence.json"
 
 def test_public_summary_preserves_the_capacity_failure_and_attribution() -> None:
     payload = json.loads(SUMMARY.read_text())
-    assert payload["formal_status"] == "PASS_FORMAL_POOLFIRE_KRYLOV_CAPACITY_EXECUTION_V177"
-    assert payload["independent_status"] == "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_KRYLOV_CAPACITY_V177"
-    assert payload["scientific_decision"] == "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
+    assert (
+        payload["formal_status"]
+        == "PASS_FORMAL_POOLFIRE_KRYLOV_CAPACITY_EXECUTION_V177"
+    )
+    assert (
+        payload["independent_status"]
+        == "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_KRYLOV_CAPACITY_V177"
+    )
+    assert (
+        payload["scientific_decision"]
+        == "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
+    )
     k4 = payload["five_camera_zero_cgls_k4"]
     k8 = payload["five_camera_zero_cgls_k8"]
     nine = payload["nine_camera_zero_cgls_k4"]
-    assert (k4["strict_safe_candidates"], k4["strict_safe_candidate_total"]) == (0, 6552)
-    assert (k8["strict_safe_candidates"], k8["strict_safe_candidate_total"]) == (0, 6552)
+    assert (k4["strict_safe_candidates"], k4["strict_safe_candidate_total"]) == (
+        0,
+        6552,
+    )
+    assert (k8["strict_safe_candidates"], k8["strict_safe_candidate_total"]) == (
+        0,
+        6552,
+    )
     assert (k4["cellwise_safe_cells"], k8["cellwise_safe_cells"]) == (0, 0)
     assert k8["per_metric_cellwise_oracle_pass"] == {
         "field": 0,
@@ -58,38 +73,52 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_points_to_v177_and_closes_low_depth_reference_shell() -> None:
+def test_current_evidence_preserves_v177_after_v178_becomes_current() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
+    assert payload["scientific_status"] == "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
+    assert (
+        payload["v177_krylov_capacity_scientific_decision"]
+        == "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
+    )
     assert payload["metrics"]["v177_five_k4_strict_safe_candidate_count"] == 0
     assert payload["metrics"]["v177_five_k8_strict_safe_candidate_count"] == 0
     assert payload["metrics"]["v177_five_k8_field_pass_count"] == 0
     assert payload["metrics"]["v177_five_k8_gradient_pass_count"] == 52
     assert payload["metrics"]["v177_five_k8_observation_pass_count"] == 52
     assert payload["metrics"]["v177_independent_check_count"] == 25
-    assert payload["current_decision"]["v177_wrong_subset_explanation_supported"] is False
-    assert payload["current_decision"]["v177_low_depth_field_reference_shell_closed"] is True
+    assert (
+        payload["current_decision"]["v177_wrong_subset_explanation_supported"] is False
+    )
+    assert (
+        payload["current_decision"]["v177_low_depth_field_reference_shell_closed"]
+        is True
+    )
     assert payload["current_decision"]["v177_gpu_rental_authorized"] is False
 
 
-def test_primary_pages_reference_v177_in_both_languages() -> None:
+def test_primary_pages_retain_v177_as_parent_evidence() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     daily = (ROOT / "operator-learning/daily-progress.html").read_text()
     home = (ROOT / "index.html").read_text()
     for text in (operator, daily, home):
         assert "v177" in text
+        assert "v178" in text
+    for text in (operator, daily):
         assert "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177" in text
-    assert "低深度场参考" in operator
-    assert "low-depth field reference" in operator
-    assert "poolfire_five_camera_krylov_capacity_v177.png" in operator
+    assert "低深度场参考" in daily
+    assert "low-depth field reference" in daily
+    assert 'id="poolfire-five-camera-krylov-capacity-v177"' in operator
     assert daily.count("FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177") == 1
 
 
-def test_route_metadata_and_cachebuster_advance_to_v177() -> None:
+def test_route_metadata_records_v177_as_previous_release() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260821-v177" in operator
-    assert 'version: "2026.08.21-c-v177-krylov-reference-capacity-negative"' in curriculum
+    assert "curriculum.js?v=20260821-v178" in operator
+    assert (
+        'previousVersion: "2026.08.21-c-v177-krylov-reference-capacity-negative"'
+        in curriculum
+    )
     assert 'updated: "2026-08-21"' in curriculum
 
 

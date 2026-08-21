@@ -15,7 +15,9 @@ CURRENT = ROOT / "operator-learning/current-evidence.json"
 
 def test_public_summary_preserves_the_scientific_boundary() -> None:
     payload = json.loads(SUMMARY.read_text())
-    assert payload["scientific_decision"] == "PASS_MINIMAL_SHARED_SELECTOR_HEADROOM_V175"
+    assert (
+        payload["scientific_decision"] == "PASS_MINIMAL_SHARED_SELECTOR_HEADROOM_V175"
+    )
     assert payload["policies"]["minimal_shared_gram_ridge"]["strict_safe_cells"] == 468
     assert payload["policies"]["minimal_shared_gram_ridge"]["complete_pass"] is True
     assert payload["policies"]["fit_static"]["strict_safe_cells"] == 328
@@ -28,7 +30,10 @@ def test_public_summary_preserves_the_scientific_boundary() -> None:
     assert payload["selector"]["trainable_parameters_max"] == 357
     assert payload["selector"]["outer_fold_count"] == 117
     assert payload["selector"]["one_subset_shared_across_all_four_times"] is True
-    assert payload["claim_limits"]["minimal_shared_cpu_selector_validated_on_opened_proxy"] is True
+    assert (
+        payload["claim_limits"]["minimal_shared_cpu_selector_validated_on_opened_proxy"]
+        is True
+    )
     assert payload["claim_limits"]["fresh_external_generalization"] is False
     assert payload["claim_limits"]["algorithm_breakthrough"] is False
     assert payload["claim_limits"]["resource_speedup"] is False
@@ -58,13 +63,16 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_retains_v175_as_historical_parent_evidence() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["v175_minimal_shared_selector_scientific_decision"] == "PASS_MINIMAL_SHARED_SELECTOR_HEADROOM_V175"
+    assert (
+        payload["v175_minimal_shared_selector_scientific_decision"]
+        == "PASS_MINIMAL_SHARED_SELECTOR_HEADROOM_V175"
+    )
     assert payload["metrics"]["v175_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v175_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v175_independent_check_count"] == 31
-    assert payload["scientific_status"] == "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
-    assert "low-depth Zero-CGLS field-reference shell" in payload["next_scientific_gate_en"]
-    assert "低深度 Zero-CGLS 场参考壳" in payload["next_scientific_gate_zh"]
+    assert payload["scientific_status"] == "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
+    assert "affine coordinates" in payload["next_scientific_gate_en"]
+    assert "仿射坐标" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v175_in_both_languages() -> None:

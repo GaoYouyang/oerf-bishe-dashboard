@@ -10,12 +10,19 @@ ROOT = Path(__file__).resolve().parents[1]
 SUMMARY = ROOT / "docs/real_bost_result_blind_camera_selector_v171_public_summary.json"
 RESULT = ROOT / "docs/real_bost_result_blind_camera_selector_v171_result_2026-08-21.md"
 FIGURE = ROOT / "assets/figures/real_bost_result_blind_camera_selector_v171.png"
-SURFACES = [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]
+SURFACES = [
+    ROOT / "index.html",
+    ROOT / "operator-learning/index.html",
+    ROOT / "operator-learning/daily-progress.html",
+]
 
 
 def test_public_summary_preserves_result_blind_headroom_boundary() -> None:
     payload = json.loads(SUMMARY.read_text(encoding="utf-8"))
-    assert payload["scientific_decision"] == "PASS_RESULT_BLIND_GEOMETRY_SELECTOR_HEADROOM_V171"
+    assert (
+        payload["scientific_decision"]
+        == "PASS_RESULT_BLIND_GEOMETRY_SELECTOR_HEADROOM_V171"
+    )
     assert payload["selector"]["strict_local_safe_count"] == 13
     assert payload["selector"]["strict_local_safe_total"] == 13
     assert payload["selector"]["trainable_parameters_max"] == 357
@@ -52,12 +59,20 @@ def test_public_surfaces_expose_the_same_v171_verdict() -> None:
         assert "0.630384" in surface.read_text(encoding="utf-8")
 
 
-def test_current_evidence_preserves_v171_but_points_to_v177() -> None:
-    payload = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert payload["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_KRYLOV_CAPACITY_V177"
-    assert payload["formal_status"] == "PASS_FORMAL_POOLFIRE_KRYLOV_CAPACITY_EXECUTION_V177"
+def test_current_evidence_preserves_v171_but_points_to_v178() -> None:
+    payload = json.loads(
+        (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
+    )
+    assert (
+        payload["engineering_status"]
+        == "PASS_INDEPENDENT_RECOMPUTATION_TRAIN_FIELD_AFFINE_SPAN_V178"
+    )
+    assert (
+        payload["formal_status"]
+        == "PASS_FORMAL_POOLFIRE_TRAIN_FIELD_AFFINE_SPAN_EXECUTION_V178"
+    )
     assert payload["scientific_status"] == (
-        "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
+        "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
     )
     assert payload["current_decision"]["v171_result_blind_selector_passed"] is True
     assert payload["current_decision"]["v171_external_generalization"] is False

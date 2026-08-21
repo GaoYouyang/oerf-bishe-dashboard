@@ -10,18 +10,31 @@ ROOT = Path(__file__).resolve().parents[1]
 SUMMARY = ROOT / "docs/real_bost_five_camera_subset_oracle_v170_public_summary.json"
 RESULT = ROOT / "docs/real_bost_five_camera_subset_oracle_v170_result_2026-08-21.md"
 FIGURE = ROOT / "assets/figures/real_bost_five_camera_subset_oracle_v170.png"
-SURFACES = [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]
+SURFACES = [
+    ROOT / "index.html",
+    ROOT / "operator-learning/index.html",
+    ROOT / "operator-learning/daily-progress.html",
+]
 
 
 def test_public_summary_preserves_truth_aware_capacity_boundary() -> None:
     payload = json.loads(SUMMARY.read_text(encoding="utf-8"))
-    assert payload["scientific_decision"] == "PASS_GEOMETRY_ONLY_SHARED_FIVE_CAMERA_SUBSET_CAPACITY_V170"
+    assert (
+        payload["scientific_decision"]
+        == "PASS_GEOMETRY_ONLY_SHARED_FIVE_CAMERA_SUBSET_CAPACITY_V170"
+    )
     assert payload["capacity"]["calibration_shared"]["strata_passed"] == 4
     assert payload["capacity"]["calibration_shared"]["strata_total"] == 4
     assert payload["capacity"]["calibration_shared"]["passed"] is True
-    assert payload["capacity"]["calibration_shared"]["strata"][2]["gradient"]["p90_higher"] == 0.7489533005177225
+    assert (
+        payload["capacity"]["calibration_shared"]["strata"][2]["gradient"]["p90_higher"]
+        == 0.7489533005177225
+    )
     assert payload["post_open_robustness_audit"]["minimum"] == 12
-    assert payload["post_open_robustness_audit"]["all_calibrations_have_at_least_one"] is True
+    assert (
+        payload["post_open_robustness_audit"]["all_calibrations_have_at_least_one"]
+        is True
+    )
     assert payload["execution"]["candidate_cell_count"] == 58968
     assert payload["independent_recomputation"]["all_checks_passed"] is True
     assert payload["claim_limits"]["deployable_selector_established"] is False
@@ -51,17 +64,27 @@ def test_public_surfaces_expose_the_same_capacity_verdict() -> None:
         assert "0.748953" in text
 
 
-def test_current_evidence_preserves_v170_but_points_to_v177() -> None:
-    payload = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
+def test_current_evidence_preserves_v170_but_points_to_v178() -> None:
+    payload = json.loads(
+        (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
+    )
     assert payload["v170_five_camera_subset_oracle_scientific_decision"] == (
         "PASS_GEOMETRY_ONLY_SHARED_FIVE_CAMERA_SUBSET_CAPACITY_V170"
     )
-    assert payload["current_decision"]["v170_calibration_shared_capacity_passed"] is True
+    assert (
+        payload["current_decision"]["v170_calibration_shared_capacity_passed"] is True
+    )
     assert payload["current_decision"]["v170_deployable_selector_established"] is False
-    assert payload["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_KRYLOV_CAPACITY_V177"
-    assert payload["formal_status"] == "PASS_FORMAL_POOLFIRE_KRYLOV_CAPACITY_EXECUTION_V177"
+    assert (
+        payload["engineering_status"]
+        == "PASS_INDEPENDENT_RECOMPUTATION_TRAIN_FIELD_AFFINE_SPAN_V178"
+    )
+    assert (
+        payload["formal_status"]
+        == "PASS_FORMAL_POOLFIRE_TRAIN_FIELD_AFFINE_SPAN_EXECUTION_V178"
+    )
     assert payload["scientific_status"] == (
-        "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
+        "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
     )
 
 
