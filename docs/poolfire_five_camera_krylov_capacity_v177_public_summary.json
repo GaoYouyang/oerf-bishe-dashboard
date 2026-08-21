@@ -1,0 +1,119 @@
+{
+  "schema_version": "oerf-public-poolfire-five-camera-krylov-capacity-v177",
+  "updated": "2026-08-21",
+  "formal_status": "PASS_FORMAL_POOLFIRE_KRYLOV_CAPACITY_EXECUTION_V177",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_KRYLOV_CAPACITY_V177",
+  "scientific_decision": "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177",
+  "scope": "A post-open reference-capacity diagnostic on the already opened PoolFire condition from v176, using thirteen calibrations, four frozen frames, every five-of-nine camera subset, unchanged Zero-CGLS K4 and K8, and a nine-camera K4 sensor control.",
+  "question": "Did v176 fail because the selector chose the wrong five-camera subset, or because the low-depth Krylov reference and field representation are inadequate on this condition?",
+  "evaluation": {
+    "reported_calibrations": 13,
+    "frozen_frames": 4,
+    "cells": 52,
+    "five_camera_subsets_per_calibration": 126,
+    "five_camera_candidates_per_depth": 6552,
+    "primary_reference": "unchanged Zero-CGLS K4",
+    "depth_diagnostic": "unchanged Zero-CGLS K8",
+    "sensor_control": "nine-camera unchanged Zero-CGLS K4",
+    "five_camera_k4_exact_forward_calls": 4,
+    "five_camera_k4_exact_adjoint_calls": 4,
+    "five_camera_k8_exact_forward_calls": 8,
+    "five_camera_k8_exact_adjoint_calls": 8,
+    "selector_or_predictor_trained": false,
+    "truth_used_only_for_offline_capacity_classification": true
+  },
+  "five_camera_zero_cgls_k4": {
+    "strict_safe_candidates": 0,
+    "strict_safe_candidate_total": 6552,
+    "cellwise_safe_cells": 0,
+    "cellwise_safe_total": 52,
+    "calibration_shared_safe": 0,
+    "calibration_shared_total": 13,
+    "cellwise_witness_p90": {
+      "field_relative_l2": 0.8208211659183836,
+      "gradient_relative_l2": 0.7882385299883724,
+      "observation_relative_l2": 0.29814995478781886
+    },
+    "per_metric_cellwise_oracle_pass": {
+      "field": 0,
+      "gradient": 45,
+      "observation": 1,
+      "total": 52
+    },
+    "minimum_over_all_candidates": {
+      "field_relative_l2": 0.6663471160260402,
+      "gradient_relative_l2": 0.6363062914168509,
+      "observation_relative_l2": 0.19704906355862858
+    }
+  },
+  "five_camera_zero_cgls_k8": {
+    "strict_safe_candidates": 0,
+    "strict_safe_candidate_total": 6552,
+    "cellwise_safe_cells": 0,
+    "cellwise_safe_total": 52,
+    "calibration_shared_safe": 0,
+    "calibration_shared_total": 13,
+    "cellwise_witness_p90": {
+      "field_relative_l2": 0.7680397049017591,
+      "gradient_relative_l2": 0.7785111065064576,
+      "observation_relative_l2": 0.1345455184422842
+    },
+    "per_metric_cellwise_oracle_pass": {
+      "field": 0,
+      "gradient": 52,
+      "observation": 52,
+      "total": 52
+    },
+    "minimum_over_all_candidates": {
+      "field_relative_l2": 0.5785898160474648,
+      "gradient_relative_l2": 0.5807366117750485,
+      "observation_relative_l2": 0.10040996271725891
+    }
+  },
+  "nine_camera_zero_cgls_k4": {
+    "strict_safe_cells": 0,
+    "strict_safe_total": 52,
+    "whole_calibrations_safe": 0,
+    "whole_calibrations_total": 13,
+    "frame_strata_passed": 0,
+    "frame_strata_total": 4,
+    "global_p90": {
+      "field_relative_l2": 0.815319187254417,
+      "gradient_relative_l2": 0.711087858522362,
+      "observation_relative_l2": 0.31523268655722586
+    },
+    "per_metric_pass": {
+      "field": 0,
+      "gradient": 52,
+      "observation": 0,
+      "total": 52
+    }
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "check_count": 25,
+    "five_camera_metric_maximum_absolute_difference": 1.2902456880681257e-12,
+    "nine_camera_metric_maximum_absolute_difference": 6.724620860154573e-13,
+    "capacity_summary_maximum_absolute_difference": 4.9960036108132044e-15,
+    "adjoint_identity_maximum_relative_error": 2.1281307257059182e-16,
+    "camera_permutation_maximum_relative_difference": 2.8633665464518584e-16,
+    "all_discrete_decisions_exact": true
+  },
+  "interpretation": "The selector did not merely choose the wrong subset. No five-camera subset is jointly strict-safe for any calibration-frame cell at K4 or K8, and nine-camera K4 also has no strict-safe cell. K8 makes gradient and observation individually feasible on all 52 cells, but field remains infeasible on all 52; the active bottleneck is therefore low-depth field-reference or representation adequacy.",
+  "route_action": "Close the current low-depth Zero-CGLS reference shell as a basis for another selector or predictor on this opened condition. Do not tune K, relax the gate, train a larger model, rent a GPU, run a resource gate, or open untouched tests. A future mechanism must use a separately frozen and physically different field reference, or new real two-component BOS data.",
+  "claim_limits": {
+    "post_open_mechanism_diagnostic_only": true,
+    "mathematical_impossibility_proven": false,
+    "selector_or_predictor_success": false,
+    "broad_external_generalization": false,
+    "untouched_test_evidence": false,
+    "paired_experimental_2d_projections_used": false,
+    "resource_speedup": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

@@ -51,17 +51,17 @@ def test_public_surfaces_expose_the_same_capacity_verdict() -> None:
         assert "0.748953" in text
 
 
-def test_current_evidence_preserves_v170_but_points_to_v176() -> None:
+def test_current_evidence_preserves_v170_but_points_to_v177() -> None:
     payload = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
     assert payload["v170_five_camera_subset_oracle_scientific_decision"] == (
         "PASS_GEOMETRY_ONLY_SHARED_FIVE_CAMERA_SUBSET_CAPACITY_V170"
     )
     assert payload["current_decision"]["v170_calibration_shared_capacity_passed"] is True
     assert payload["current_decision"]["v170_deployable_selector_established"] is False
-    assert payload["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_CONDITION_V176"
-    assert payload["formal_status"] == "PASS_FORMAL_POOLFIRE_RESULT_UNOPENED_CONDITION_V176"
+    assert payload["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_KRYLOV_CAPACITY_V177"
+    assert payload["formal_status"] == "PASS_FORMAL_POOLFIRE_KRYLOV_CAPACITY_EXECUTION_V177"
     assert payload["scientific_status"] == (
-        "FAIL_RESULT_UNOPENED_POOLFIRE_CONDITION_PARITY_V176"
+        "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
     )
 
 

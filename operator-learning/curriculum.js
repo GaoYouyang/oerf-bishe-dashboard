@@ -1,5 +1,5 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.21-c-v176-result-unopened-condition-negative",
+  version: "2026.08.21-c-v177-krylov-reference-capacity-negative",
   previousVersion: "2026.08.21-c-v175-minimal-shared-selector-headroom",
   previousBadge: "v175 minimal shared selector · 468 / 468 development cells",
   olderBadge: "v174 equal-cost selector attribution · 468 / 468 development cells",

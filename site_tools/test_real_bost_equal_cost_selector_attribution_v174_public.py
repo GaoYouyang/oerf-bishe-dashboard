@@ -53,15 +53,15 @@ def test_figure_is_nonblank_and_stable_size() -> None:
         assert any(high - low > 100 for low, high in extrema)
 
 
-def test_current_evidence_retains_v174_after_v176_advances_the_gate() -> None:
+def test_current_evidence_retains_v174_after_v177_advances_the_gate() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_RESULT_UNOPENED_POOLFIRE_CONDITION_PARITY_V176"
+    assert payload["scientific_status"] == "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"
     assert payload["v174_equal_cost_selector_scientific_decision"] == "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"
     assert payload["metrics"]["v174_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v174_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v174_independent_check_count"] == 27
-    assert "K4-or-better reference capacity" in payload["next_scientific_gate_en"]
-    assert "K4-or-better 参考容量" in payload["next_scientific_gate_zh"]
+    assert "physically different field reference" in payload["next_scientific_gate_en"]
+    assert "物理上不同的场参考" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_retain_v174_as_parent_evidence() -> None:
