@@ -83,10 +83,10 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     )
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     next_gate = payload["next_scientific_gate_en"].lower()
-    assert "previously accepted physical reference" in next_gate
+    assert "non-exchangeable physical reference" in next_gate
     assert "do not replace zero-k4 post hoc" in next_gate
     assert "open p14" in next_gate
-    assert "result-independent reference correction" in next_gate
+    assert "independently establish" in next_gate
     assert "gpu" in next_gate
 
 

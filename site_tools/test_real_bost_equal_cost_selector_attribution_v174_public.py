@@ -62,7 +62,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196"
+    assert payload["scientific_status"] == "PROTOCOL_REFERENCE_GATE_PREDETERMINED_INCONCLUSIVE_V196_1"
     assert (
         payload["v174_equal_cost_selector_scientific_decision"]
         == "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"
@@ -70,8 +70,8 @@ def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     assert payload["metrics"]["v174_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v174_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v174_independent_check_count"] == 27
-    assert "previously accepted physical reference" in payload["next_scientific_gate_en"]
-    assert "之前被接受的物理 reference" in payload["next_scientific_gate_zh"]
+    assert "non-exchangeable physical reference" in payload["next_scientific_gate_en"]
+    assert "不可交换、已通过绝对充分性门的物理 reference" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_retain_v174_as_parent_evidence() -> None:

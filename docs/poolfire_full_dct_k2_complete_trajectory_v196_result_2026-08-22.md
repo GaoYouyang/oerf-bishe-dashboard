@@ -1,5 +1,11 @@
 # v196：稠密 full-DCT K2 全部过门，但冻结 Zero-K4 参考不足
 
+## v196.1 后续纠偏：reference 身份审计已完成
+
+独立审计确认，v196 五相机 Zero-K4 与 v176 的 primary selected-subset Zero-K4 是同一个物理参考。两者在共同的 `13 x 4 x 3 = 156` 个指标上最大绝对差仅 `5.55e-17`；两份保留场逐位一致。关键问题不在数值复现，而在合同可判别性：v176 在 v196 冻结前已经独立封存该参考为 `0/52`，v175 也曾在候选过门时把自身 `0/468` 的 Zero-K4 称作 reference。
+
+因此，v196 的“Zero-K4 任一严格单元失败就记 inconclusive”分支在冻结前已被旧证据预定触发。v196 的计算、`2626/2626` 的 full-DCT K2 绝对结果和原始 `INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196` 判决均保持有效；纠偏的是解释边界：**v196 不能再描述为一次前瞻性的 comparative-headroom 检验**。full-DCT K2 只能保留为 post-open 绝对容量诊断，不能据此声称相对调用减少。没有事后替换 reference。
+
 ## 为什么做
 
 v195.2 显示 full-DCT K1 在九相机已经完整通过，五相机只剩 `3/1313` 个单元和 `1/13` 个标定组未过。v196 结果前单独冻结一个不可与 v195 互换的问题：在稠密 full-DCT 起点上再做一步未修改 CGLS，能否跨过完整 p22 开发轨迹，并相对冻结的 Zero-CGLS K2/K3/K4 参考建立可比较的 headroom。
@@ -35,11 +41,17 @@ full-DCT K2 的五相机 field / gradient / observation p90 为 `0.363959 / 0.59
 
 正式判决是 `INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196`。结果前冻结的顺序规定：**先检查 reference 是否足够；reference 失效时，必须停在 inconclusive**。因此，不能因 full-DCT K2 绝对过门就宣称相对 headroom、exact-call 减少、速度或算法成功，也不能在看到结果后为 v196 更换 reference。
 
-下一步只能先追溯之前被接受的 reference 究竟是哪个物理对象、为什么当时可以过门，再结果前冻结新合同。p14、test、wall/RSS、预测器、神经训练和 GPU 仍不授权。这不是紧凑或学习初始化器，也不是外部泛化、真实 BOST 或论文成功。`algorithm_breakthrough=false`。
+v196.1 已完成 reference 身份追溯，并证明旧 reference 在冻结前已知不充分。下一步必须先单独冻结并独立建立一个不可交换、在候选结果出现前就通过绝对充分性门的 reference，之后才能评价新的候选。p14、test、wall/RSS、预测器、神经训练和 GPU 仍不授权。这不是紧凑或学习初始化器，也不是外部泛化、真实 BOST 或论文成功。`algorithm_breakthrough=false`。
 
 ---
 
 # v196: Dense full-DCT K2 passes every gate, but the frozen Zero-K4 reference is inadequate
+
+## v196.1 follow-up correction: the reference-identity audit is complete
+
+An independent audit confirms that the five-camera Zero-K4 arm in v196 is the same physical reference as the primary selected-subset Zero-K4 arm in v176. Across the shared `13 x 4 x 3 = 156` metrics, the maximum absolute difference is only `5.55e-17`, and two retained fields are bitwise identical. The problem is therefore not numerical reproduction but protocol informativeness: v176 had independently sealed this reference at `0/52` before v196 was frozen, while v175 had also called a `0/468` Zero-K4 arm a reference when its candidate passed.
+
+The v196 branch stating that any strict-cell failure by Zero-K4 forces an inconclusive verdict was thus predetermined by evidence available before freeze. The v196 computation, the `2626/2626` absolute full-DCT K2 result, and the original `INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196` decision remain valid. The correction is interpretive: **v196 is not a prospective comparative-headroom test**. Full-DCT K2 remains only a post-open absolute-capacity diagnostic and cannot support a relative exact-call claim. No reference is replaced post hoc.
 
 ## Why this test
 
@@ -76,4 +88,4 @@ The independent truth-observation construction uses `2626` offline forwards, exp
 
 The formal decision is `INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196`. The result-blind order requires reference adequacy to be checked first; **an inadequate reference must stop adjudication as inconclusive**. Full-DCT K2's absolute pass therefore cannot establish relative headroom, exact-call reduction, speedup, or algorithm success, and the reference cannot be replaced post hoc inside v196.
 
-The next action is limited to auditing which physical reference was previously accepted and why it passed, before freezing any new contract. p14, tests, wall/RSS, predictor work, neural training, and GPU use remain unauthorized. This is not a compact or learned initializer, external generalization, real BOST, or paper success. `algorithm_breakthrough=false`.
+v196.1 completes the identity audit and shows that the old reference was already known to be inadequate before freeze. The next gate must first freeze and independently establish a non-exchangeable reference that satisfies the absolute adequacy gate before any candidate result is seen; only then may another candidate be evaluated. p14, tests, wall/RSS, predictor work, neural training, and GPU use remain unauthorized. This is not a compact or learned initializer, external generalization, real BOST, or paper success. `algorithm_breakthrough=false`.

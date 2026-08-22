@@ -41,6 +41,25 @@ def test_v196_independent_recomputation_and_call_boundary() -> None:
     assert payload["cost_boundary"]["exact_call_reduction_established"] is False
 
 
+def test_v196_1_reference_identity_audit_corrects_the_interpretation() -> None:
+    payload = load_summary()
+    audit = payload["reference_identity_audit_v196_1"]
+    assert audit["independent_status"] == (
+        "PASS_INDEPENDENT_RECOMPUTATION_REFERENCE_IDENTITY_AUDIT_V196_1"
+    )
+    assert audit["scientific_conclusion"] == "PROTOCOL_REFERENCE_GATE_PREDETERMINED_INCONCLUSIVE_V196_1"
+    assert audit["overlapping_metric_count"] == 156
+    assert audit["maximum_overlap_absolute_difference"] <= 6e-17
+    assert audit["retained_field_pairs_bitwise_identical"] == 2
+    assert audit["v176_reference_strict_safe_cells"] == 0
+    assert audit["v176_reference_total_cells"] == 52
+    assert audit["v175_reference_strict_safe_cells"] == 0
+    assert audit["v175_reference_total_cells"] == 468
+    assert audit["v196_reference_gate_predetermined_inconclusive_before_freeze"] is True
+    assert audit["v196_original_numerics_and_decision_preserved"] is True
+    assert audit["prospective_comparative_headroom_test"] is False
+
+
 def test_v196_public_assets_and_bilingual_copy_exist() -> None:
     result = (ROOT / "docs/poolfire_full_dct_k2_complete_trajectory_v196_result_2026-08-22.md").read_text(
         encoding="utf-8"
@@ -51,6 +70,7 @@ def test_v196_public_assets_and_bilingual_copy_exist() -> None:
     log = (ROOT / "docs/operator_3d_learning_log.md").read_text(encoding="utf-8")
     for content in (result, daily, focus, root, log):
         assert "v196" in content
+        assert "v196.1" in content
     assert "# v196：" in result and "# v196:" in result
     assert "data-i18n-zh" in daily and "data-i18n-en" in daily
     figure = ROOT / "assets/figures/poolfire_full_dct_k2_complete_trajectory_v196.png"
@@ -59,14 +79,17 @@ def test_v196_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v196_current_evidence_and_claim_boundary() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196"
-    assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_FULL_DCT_K2_COMPLETE_TRAJECTORY_V196"
-    )
+    assert current["scientific_status"] == "PROTOCOL_REFERENCE_GATE_PREDETERMINED_INCONCLUSIVE_V196_1"
+    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_REFERENCE_IDENTITY_AUDIT_V196_1"
     assert current["metrics"]["v196_full_dct_k2_five_safe_cells"] == 1313
     assert current["metrics"]["v196_zero_k4_all_nine_safe_cells"] == 0
+    assert current["metrics"]["v196_1_overlap_metric_count"] == 156
+    assert current["metrics"]["v196_1_retained_field_pairs_bitwise_identical"] == 2
     assert current["current_decision"]["v196_algorithm_breakthrough"] is False
-    assert current["current_decision"]["v196_reference_identity_audit_required"] is True
+    assert current["current_decision"]["v196_reference_identity_audit_required"] is False
+    assert current["current_decision"]["v196_1_reference_identity_audit_completed"] is True
+    assert current["current_decision"]["v196_1_reference_gate_predetermined_inconclusive_before_freeze"] is True
+    assert current["current_decision"]["v196_1_prospective_comparative_headroom_test"] is False
 
 
 def test_v196_public_files_exclude_private_execution_details() -> None:

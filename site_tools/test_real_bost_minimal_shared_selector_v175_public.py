@@ -70,9 +70,9 @@ def test_current_evidence_retains_v175_as_historical_parent_evidence() -> None:
     assert payload["metrics"]["v175_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v175_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v175_independent_check_count"] == 31
-    assert payload["scientific_status"] == "INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196"
-    assert "previously accepted physical reference" in payload["next_scientific_gate_en"]
-    assert "之前被接受的物理 reference" in payload["next_scientific_gate_zh"]
+    assert payload["scientific_status"] == "PROTOCOL_REFERENCE_GATE_PREDETERMINED_INCONCLUSIVE_V196_1"
+    assert "non-exchangeable physical reference" in payload["next_scientific_gate_en"]
+    assert "不可交换、已通过绝对充分性门的物理 reference" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v175_in_both_languages() -> None:

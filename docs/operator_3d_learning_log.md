@@ -15890,7 +15890,7 @@ v195.2 中，同价 full-DCT K1 已经非常接近完整门：九相机为 `1313
 
 完全独立第二实现重新构造 full-DCT 坐标、K1 父状态、K2 候选、Zero K2/K3/K4 controls、全部观测与逐单元/逐标定指标，`23/23` 检查全真。正式与独立的指标、残差、哨兵、汇总差均为 `0`，观测重放与父 K1 差也为 `0`；相机换序相对误差约 `9.46e-17`。两条实现仍共享冻结物理 kernel，因此不声称端到端物理独立。
 
-正式科学判决是 `INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196`。它不是 full-DCT K2 的负结果：候选绝对门已经全过；也不是算法成功，因为冻结比较 reference 失效，不能完成相对调用预算判决。不能在看到结果后把 reference 换成另一个方法包装成功。下一步只能先追溯此前被接受的物理 reference 身份与充分性，再结果前冻结新的比较合同。
+正式科学判决是 `INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196`。它不是 full-DCT K2 的负结果：候选绝对门已经全过；也不是算法成功，因为冻结比较 reference 失效，不能完成相对调用预算判决。不能在看到结果后把 reference 换成另一个方法包装成功。当时冻结的下一步是追溯此前被接受的物理 reference；该审计随后由本文末 v196.1 完成并纠正了解释边界。
 
 full-DCT 仍是稠密初始化器，`0` 个可训练参数，不是紧凑 observation/geometry-only predictor。几何缓存需要 `26 x 1009 = 26234` 次 setup projection，这与逻辑在线调用账分开披露；尚无 fresh wall/RSS、外部泛化、曲线光路或真实 BOST 证据。p14 与 test 继续封存，GPU 和神经训练仍未授权。
 
@@ -15906,7 +15906,7 @@ The preregistered comparative reference is nevertheless inadequate. Zero-CGLS K2
 
 A fully independent second implementation rebuilds full-DCT coordinates, the K1 parent state, the K2 candidate, Zero K2/K3/K4 controls, observations, and every cell and calibration metric. All `23/23` checks pass. Formal-versus-independent metric, residual, sentinel, and summary differences are exactly `0`; observation replay and parent-K1 differences are also `0`, while camera-permutation relative error is approximately `9.46e-17`. Shared frozen physics kernels remain disclosed, so end-to-end physics independence is not claimed.
 
-The scientific decision is `INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196`. This is not a negative result for full-DCT K2, whose absolute gate passes completely, but it is not algorithm success either: the frozen reference cannot support the relative call-budget comparison. Replacing the reference after seeing these results is prohibited. The next eligible action is to trace the identity and adequacy of the previously accepted physical reference, then freeze any corrected comparison before observing new results.
+The scientific decision is `INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196`. This is not a negative result for full-DCT K2, whose absolute gate passes completely, but it is not algorithm success either: the frozen reference cannot support the relative call-budget comparison. Replacing the reference after seeing these results is prohibited. At that point, the next eligible action was to trace the identity and adequacy of the previously accepted physical reference; the v196.1 checkpoint at the end of this log later completes that audit and corrects the interpretation boundary.
 
 Full-DCT remains a dense initializer with `0` trainable parameters, not a compact observation/geometry-only predictor. Geometry-cache construction requires `26 x 1009 = 26234` setup projections and is disclosed separately from logical online calls. There is no fresh wall/RSS, external-generalization, curved-ray, or real-BOST result. p14 and tests remain sealed; GPU rental and neural training remain unauthorized.
 
@@ -16363,5 +16363,35 @@ The equal-call full-DCT control is substantially stronger: all-nine reaches `131
 A fully independent second implementation rebuilds observations, coordinates, candidates, physical K1, every cell metric, calibration grouping, and the call ledger. All `27/27` checks pass. Maximum coordinate relative, metric absolute, and summary absolute differences are `2.38e-14 / 6.77e-15 / 4.44e-15`; camera-ray permutation error is `0`. Two earlier executions stopped before scientific scoring because of contract or validity-implementation errors, so their partial artifacts are excluded; those repairs establish engineering integrity only.
 
 Decision: `FAIL_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2`. This closes only the frozen one-step diagonal signed-sketch correction, not the broader C route and not mathematical possibility. Do not tune or rename it, promote full-DCT after results, or open p14, resource, external, neural, or GPU gates. Continue only with genuinely new physical information or a separately preregistered, representationally distinct result-blind mechanism.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v196.1 reference 身份审计纠正比较证据边界
+
+### 讲人话：数值没算错，但这道比较题在出题前就知道 reference 会不及格
+
+v196 的稠密 full-DCT K2 在完整 p22 两档相机上达到 `2626/2626` 严格安全单元，原始计算和 `INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196` 判决都已经独立复算。后续 v196.1 没有重新跑候选，也没有换 reference；它只审计 v196 使用的五相机 Zero-K4 到底是不是之前那个物理对象。
+
+结果非常明确。v196 与 v176 primary selected-subset Zero-K4 在共同的 `13 x 4 x 3 = 156` 个指标上最大绝对差为 `5.55e-17`，两份保留场逐位一致。也就是说，它们不是“名字相同但物理对象不同”，而是同一个 reference。问题在于：v176 在 v196 冻结前已经独立封存这个 reference 为 `0/52`。更早的 v175 也说明 `reference` 标签本身不保证充分性，因为其 Zero-K4 在候选过门时仍为 `0/468`。
+
+因此，v196 合同中“Zero-K4 任一严格单元失败就直接 inconclusive”的分支，在 v196 冻结前已被旧证据预定触发。v196 的数值和原判决继续有效，但它不能再被描述为一项前瞻性的 comparative-headroom 试验。full-DCT K2 的全过门只保留为 post-open 绝对容量诊断，不能据此声称相对 exact-call 减少，也不能事后替换 reference 包装成功。
+
+下一门不是继续训练或换参数，而是先单独冻结并独立建立一个不可交换、在任何新候选结果出现前就通过绝对充分性门的物理 reference。p14、test、wall/RSS、预测器、神经训练和 GPU 继续关闭。
+
+正式审计状态为 `PASS_FORMAL_REFERENCE_IDENTITY_AUDIT_V196_1`，独立状态为 `PASS_INDEPENDENT_RECOMPUTATION_REFERENCE_IDENTITY_AUDIT_V196_1`，科学结论为 `PROTOCOL_REFERENCE_GATE_PREDETERMINED_INCONCLUSIVE_V196_1`。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v196's dense full-DCT K2 reaches `2626/2626` strict-safe cells across both complete-p22 sensor arms, and both the original computation and `INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196` verdict remain independently verified. v196.1 does not rerun the candidate or replace its reference; it audits whether the five-camera Zero-K4 arm is the same physical object used earlier.
+
+It is. Across the shared `13 x 4 x 3 = 156` metrics, v196 and the primary selected-subset Zero-K4 arm in v176 differ by at most `5.55e-17`, and two retained fields are bitwise identical. Yet v176 had already independently sealed this reference at `0/52` before v196 was frozen. v175 also shows that a `reference` label does not establish adequacy: its Zero-K4 arm was `0/468` even when the candidate gate passed.
+
+The v196 branch stating that any strict-cell failure by Zero-K4 forces an inconclusive verdict was therefore predetermined by evidence available before freeze. The v196 numerics and original decision remain valid, but v196 cannot be described as a prospective comparative-headroom test. The full-DCT K2 pass remains only a post-open absolute-capacity diagnostic; it establishes no relative exact-call reduction, and the reference cannot be swapped post hoc.
+
+Before evaluating another candidate, the next contract must separately freeze and independently establish a non-exchangeable physical reference that already passes the absolute adequacy gate. p14, tests, wall/RSS, predictor work, neural training, and GPU use remain closed.
+
+Formal audit status: `PASS_FORMAL_REFERENCE_IDENTITY_AUDIT_V196_1`. Independent status: `PASS_INDEPENDENT_RECOMPUTATION_REFERENCE_IDENTITY_AUDIT_V196_1`. Scientific conclusion: `PROTOCOL_REFERENCE_GATE_PREDETERMINED_INCONCLUSIVE_V196_1`.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
