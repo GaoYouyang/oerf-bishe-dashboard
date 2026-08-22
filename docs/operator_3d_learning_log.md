@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-23：v197 先把未来比较的尺子校准好
+
+**为什么做。** v196 的 full-DCT K2 达到 `2626/2626`，但当时冻结的 Zero-K4 reference 自身是 `0/2626`；v196.1 又证明这个失败在 v196 冻结前已经知道。旧实验的数值没有错，但它不能前瞻性判断候选相对一个合格标准是否有 headroom。因此，继续提出候选前，先要固定一把未来不能随结果更换的尺子。
+
+**实际做了什么。** v197 没有提出新候选，也没有打开新数据。它只在既有 p22 开发 roster 上，把已经封存的 full-DCT K2 固定为 future-only reference，并重新核对五相机与九相机两臂的逐单元门、完整标定组尾部、`3A+2A^T` 调用账和正裕量。第二实现先独立生成并逐项复算，完成后才读取 formal 输出比较。
+
+**结果。** 严格单元为 **2626/2626**，完整标定组为 **26/26**，调用行为 **2626/2626**。最小逐单元、组 p90、组 worst 裕量分别为 **0.004185 / 0.081378 / 0.234186**；formal 与独立实现最大数值差为 **0**。判决为 `PASS_FUTURE_ONLY_FULL_DCT_K2_REFERENCE_QUALIFICATION_V197`。
+
+**讲人话。** 我们现在终于有了一把合格且不能事后换掉的尺子，下一候选可以被真正接受或拒绝。但这只是把实验合同修到可判别，不是算法变快了，也不是模型变强了。它不回头改写 v196，不证明调用减少、wall/RSS、p14 泛化或真实 BOST。下一步只能先冻结一个物理上不同的新候选，再看结果。`algorithm_breakthrough=false`。
+
+### English summary
+
+v197 fixes the already sealed full-DCT K2 endpoint as a non-exchangeable reference for future candidate contracts only. It passes **2626/2626** strict cells, **26/26** complete calibration groups, and **2626/2626** `3A+2A^T` call rows; the minimum cell, group-p90, and group-worst margins are **0.004185 / 0.081378 / 0.234186**, and the maximum formal/independent difference is **0**. This makes the next comparison adjudicable, but it does not revise v196 and is not a candidate algorithm, call-reduction result, speedup, p14 result, or real-BOST result. `algorithm_breakthrough=false`.
+
 ## 先把证据等级说清楚
 
 - **L0：真实实验/论文证据。** 目前没有。这里没有 OpenBOS/OERF 真实测量，也没有论文级 superiority 结果。
