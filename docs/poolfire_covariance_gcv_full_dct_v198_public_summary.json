@@ -1,0 +1,126 @@
+{
+  "schema_version": "oerf-public-poolfire-covariance-gcv-full-dct-v198.0.0",
+  "date": "2026-08-23",
+  "title_zh": "v198：经验协方差候选全过，但同价 identity-GCV 控制也全过",
+  "title_en": "v198: the empirical-covariance candidate passes, but an equal-cost identity-GCV control also passes",
+  "formal_status": "PASS_FORMAL_POOLFIRE_COVARIANCE_GCV_EXECUTION_V198",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_COVARIANCE_GCV_FULL_DCT_V198",
+  "scientific_decision": "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198",
+  "scope_zh": "仅限已经打开的 p22 完整开发轨迹、13 套标定和五/九相机两臂。",
+  "scope_en": "Limited to the already-opened complete p22 development trajectory, 13 calibrations, and the five/all-nine camera arms.",
+  "scientific_question": "Does a fit-only empirical coordinate covariance add necessary headroom beyond generic identity-prior GCV when both retain the full per-camera DCT observation and use one unchanged physical CGLS step?",
+  "methods": {
+    "empirical_covariance_gcv_full_dct_k1": {
+      "strict_safe_cells": 2626,
+      "strict_total_cells": 2626,
+      "complete_groups_passed": 26,
+      "complete_groups_total": 26,
+      "logical_online_exact_calls": {
+        "A": 2,
+        "AT": 1
+      },
+      "all_nine_p90": {
+        "field": 0.2546444405,
+        "gradient": 0.4317760089,
+        "observation": 0.1224761154
+      },
+      "five_camera_p90": {
+        "field": 0.3563623786,
+        "gradient": 0.5875468041,
+        "observation": 0.1275399894
+      }
+    },
+    "identity_gcv_full_dct_k1": {
+      "strict_safe_cells": 2626,
+      "strict_total_cells": 2626,
+      "complete_groups_passed": 26,
+      "complete_groups_total": 26,
+      "logical_online_exact_calls": {
+        "A": 2,
+        "AT": 1
+      },
+      "all_nine_p90": {
+        "field": 0.2567879409,
+        "gradient": 0.4357270076,
+        "observation": 0.1251088135
+      },
+      "five_camera_p90": {
+        "field": 0.3436188766,
+        "gradient": 0.5691203245,
+        "observation": 0.1269009911
+      }
+    },
+    "full_dct_k1_parent": {
+      "strict_safe_cells": 2623,
+      "strict_total_cells": 2626,
+      "complete_groups_passed": 25,
+      "complete_groups_total": 26,
+      "logical_online_exact_calls": {
+        "A": 2,
+        "AT": 1
+      }
+    },
+    "full_dct_k2_reference": {
+      "strict_safe_cells": 2626,
+      "strict_total_cells": 2626,
+      "complete_groups_passed": 26,
+      "complete_groups_total": 26,
+      "logical_online_exact_calls": {
+        "A": 3,
+        "AT": 2
+      },
+      "all_nine_p90": {
+        "field": 0.2499122834,
+        "gradient": 0.4178211876,
+        "observation": 0.0889784456
+      },
+      "five_camera_p90": {
+        "field": 0.3639587234,
+        "gradient": 0.5994497497,
+        "observation": 0.098924275
+      }
+    }
+  },
+  "selected_regularization": {
+    "identity_gcv": {
+      "tau": 0.00390625,
+      "tau_label": "2^-8",
+      "selected_cells": 2626,
+      "total_cells": 2626
+    },
+    "empirical_covariance_gcv": {
+      "tau_2^-14_cells": 2218,
+      "tau_2^-12_cells": 408,
+      "total_cells": 2626
+    }
+  },
+  "independent_numeric_audit": {
+    "metric_maximum_absolute_difference": 1.0092982006e-11,
+    "coordinate_block_relative_difference": 6.6314963718e-11,
+    "result_summary_maximum_absolute_difference": 7.4800721173e-12,
+    "camera_permutation_coordinate_relative_difference": 1.8177718423e-14,
+    "camera_permutation_gcv_relative_difference": 2.1302869544e-14,
+    "formal_tree_unchanged": true,
+    "input_tree_unchanged": true,
+    "single_use_release_consumed": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "interpretation_zh": "经验协方差候选达到了完整绝对精度门，但 identity-GCV 在相同 2A+1A^T 账下也达到 2626/2626 单元与 26/26 完整组，因此没有证据表明经验协方差是必要成分。更强的开发集线索是：完整 DCT 表示配合简单正则可以修复 full-DCT K1 父方法剩余的 3 个五相机单元；但 identity-GCV 在全部单元选择同一 tau，当前结果也没有证明逐观测自适应本身不可替代。",
+  "interpretation_en": "The empirical-covariance candidate clears the complete absolute-accuracy gate, but identity-GCV also reaches 2626/2626 cells and 26/26 groups at the same 2A+1AT ledger. There is therefore no evidence that empirical covariance is necessary. The stronger development-set clue is that full-DCT coordinates plus simple regularization repair the three remaining five-camera cells of the full-DCT K1 parent. Because identity-GCV selects the same tau for every cell, this result also does not establish that per-observation adaptation is necessary.",
+  "decision_boundary_zh": "这是已打开 p22 开发轨迹上的控制归因，不是 p14 验证、外部泛化、fresh wall/RSS、真实 BOST 或论文成功。经验协方差路线关闭；不能把同价控制通过包装成协方差创新。",
+  "decision_boundary_en": "This is control attribution on the already-opened p22 development trajectory, not p14 validation, external generalization, fresh wall/RSS, real BOST, or paper success. The empirical-covariance route closes; an equal-cost control pass cannot be repackaged as covariance innovation.",
+  "next_scientific_gate_zh": "先把 p22 开发结果蒸馏成唯一固定的 identity-prior 正则候选，并在读取 p14 前冻结一次性验证合同；必须保留 full-DCT K1、v197 K2 reference、便宜控制、完整调用账和独立第二实现。",
+  "next_scientific_gate_en": "Distill the p22 development result into one fixed identity-prior regularized candidate and freeze a one-shot validation contract before reading p14. Retain the full-DCT K1 parent, the v197 K2 reference, cheap controls, complete call accounting, and an independent second implementation.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_validation": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

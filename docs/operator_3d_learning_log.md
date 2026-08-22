@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-23：v198 全过以后，先让更简单的解释赢
+
+**为什么做。** v197 已经把 full-DCT K2 固定成合格 reference，接下来要问的是：能否用更少的精确调用达到同一绝对精度。v198 保留完整 DCT 坐标，用 fit 场的经验协方差做先验，再让当前观测通过 GCV 自己选正则强度，最后只走一次未修改 CGLS K1。
+
+**实际做了什么。** 在已经打开的 p22 完整轨迹上，正式程序和独立第二实现分别重建五/九相机两臂的 13 套标定、101 帧、GCV、物理 replay、逐单元门、完整组尾部和真实调用账。最关键的对照不是更深求解器，而是完全相同调用成本的 identity-GCV：它把经验协方差换成单位先验，其他环节不变。
+
+**结果。** 经验协方差候选和 identity-GCV 都达到 **2626/2626** 严格单元、**26/26** 完整组，逻辑在线账都为 **2A+1A^T**。未正则 full-DCT K1 为 **2623/2626、25/26**，v197 K2 reference 为 **2626/2626、26/26** 但需要 **3A+2A^T**。独立指标最大差约 **1.01e-11**。identity-GCV 在全部 2626 个单元都选择 `tau=2^-8`。
+
+**讲人话。** 这轮不是“经验协方差成功”，而是“更简单的同价控制解释了成功”。我们找到了简单正则可以补掉 K1 最后三个五相机失败单元的开发线索，但没有证据证明经验协方差必要，也没有证明逐观测自适应必要。因此协方差路线立即关闭；下一门应把固定 identity-prior 正则写死后再做一次结果前验证。p14、wall/RSS、外部数据和真实 BOST 仍未打开，`algorithm_breakthrough=false`。
+
+### English summary
+
+v198 evaluates a fit-covariance GCV full-DCT initializer followed by unchanged CGLS K1 on the already-opened complete p22 development trajectory. Both the primary and the equal-cost identity-GCV control reach **2626/2626** strict cells and **26/26** complete groups at **2A+1AT**, while unregularized full-DCT K1 reaches **2623/2626 and 25/26** and the v197 K2 reference reaches **2626/2626 and 26/26** at **3A+2AT**. The maximum independent metric difference is about **1.01e-11**. Because identity-GCV selects `tau=2^-8` for all 2626 cells, the result supports simple full-DCT regularization but not covariance-specific or per-observation-adaptive necessity. The covariance route closes; p14, wall/RSS, external, and real-BOST claims remain unopened. `algorithm_breakthrough=false`.
+
 ## 2026-08-23：v197 先把未来比较的尺子校准好
 
 **为什么做。** v196 的 full-DCT K2 达到 `2626/2626`，但当时冻结的 Zero-K4 reference 自身是 `0/2626`；v196.1 又证明这个失败在 v196 冻结前已经知道。旧实验的数值没有错，但它不能前瞻性判断候选相对一个合格标准是否有 headroom。因此，继续提出候选前，先要固定一把未来不能随结果更换的尺子。
