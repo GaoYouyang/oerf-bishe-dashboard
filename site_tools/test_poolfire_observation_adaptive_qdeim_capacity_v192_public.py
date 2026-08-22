@@ -76,6 +76,7 @@ def test_v192_public_assets_and_bilingual_claims_exist() -> None:
     assert "FAIL_NORMAL_CONTRIBUTION_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192" in result
     assert "data-i18n-zh" in daily and "data-i18n-en" in daily
     assert all("v192" in content for content in (daily, focus, root, log))
+    assert "curriculum.js?v=20260822-v192-1" in focus
     assert 'version: "2026.08.22-c-v192-observation-adaptive-qdeim-negative"' in curriculum
     assert 'updated: "2026-08-22"' in curriculum
     figure = ROOT / "assets/figures/poolfire_observation_adaptive_qdeim_capacity_v192.png"

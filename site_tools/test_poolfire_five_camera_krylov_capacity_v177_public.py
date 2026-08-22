@@ -119,7 +119,7 @@ def test_primary_pages_retain_v177_as_parent_evidence() -> None:
 def test_route_metadata_records_v177_as_older_release() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260822-v192" in operator
+    assert "curriculum.js?v=20260822-v192-1" in operator
     assert 'previousVersion: "2026.08.22-c-v184-projection-potential-negative"' in curriculum
     assert 'version: "2026.08.21-c-v181-geometry-conditioned-rank16-negative"' in curriculum
     assert 'previousVersion: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative"' in curriculum
