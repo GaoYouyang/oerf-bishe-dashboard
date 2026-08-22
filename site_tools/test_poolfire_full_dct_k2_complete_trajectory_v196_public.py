@@ -47,7 +47,9 @@ def test_v196_1_reference_identity_audit_corrects_the_interpretation() -> None:
     assert audit["independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_REFERENCE_IDENTITY_AUDIT_V196_1"
     )
-    assert audit["scientific_conclusion"] == "PROTOCOL_REFERENCE_GATE_PREDETERMINED_INCONCLUSIVE_V196_1"
+    assert audit["scientific_conclusion"] == (
+        "PROTOCOL_REFERENCE_GATE_PREDETERMINED_INCONCLUSIVE_V196_1"
+    )
     assert audit["overlapping_metric_count"] == 156
     assert audit["maximum_overlap_absolute_difference"] <= 6e-17
     assert audit["retained_field_pairs_bitwise_identical"] == 2
@@ -68,9 +70,12 @@ def test_v196_public_assets_and_bilingual_copy_exist() -> None:
     focus = (ROOT / "operator-learning/index.html").read_text(encoding="utf-8")
     root = (ROOT / "index.html").read_text(encoding="utf-8")
     log = (ROOT / "docs/operator_3d_learning_log.md").read_text(encoding="utf-8")
-    for content in (result, daily, focus, root, log):
+    for content in (result, daily, log):
         assert "v196" in content
         assert "v196.1" in content
+    for content in (focus, root):
+        assert "v196" in content
+        assert "v197" in content
     assert "# v196：" in result and "# v196:" in result
     assert "data-i18n-zh" in daily and "data-i18n-en" in daily
     figure = ROOT / "assets/figures/poolfire_full_dct_k2_complete_trajectory_v196.png"
@@ -79,8 +84,8 @@ def test_v196_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v196_current_evidence_and_claim_boundary() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "PROTOCOL_REFERENCE_GATE_PREDETERMINED_INCONCLUSIVE_V196_1"
-    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_REFERENCE_IDENTITY_AUDIT_V196_1"
+    assert current["scientific_status"] == "PASS_FUTURE_ONLY_FULL_DCT_K2_REFERENCE_QUALIFICATION_V197"
+    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"
     assert current["metrics"]["v196_full_dct_k2_five_safe_cells"] == 1313
     assert current["metrics"]["v196_zero_k4_all_nine_safe_cells"] == 0
     assert current["metrics"]["v196_1_overlap_metric_count"] == 156

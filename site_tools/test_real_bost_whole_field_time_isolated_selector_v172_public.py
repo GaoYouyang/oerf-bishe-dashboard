@@ -73,13 +73,13 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 def test_current_evidence_preserves_v172_and_points_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "PROTOCOL_REFERENCE_GATE_PREDETERMINED_INCONCLUSIVE_V196_1"
+        "PASS_FUTURE_ONLY_FULL_DCT_K2_REFERENCE_QUALIFICATION_V197"
     )
     assert payload["metrics"]["v172_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v172_primary_complete_fields_passed"] == 9
     assert payload["metrics"]["v172_independent_check_count"] == 22
-    assert "non-exchangeable physical reference" in payload["next_scientific_gate_en"]
-    assert "不可交换、已通过绝对充分性门的物理 reference" in payload["next_scientific_gate_zh"]
+    assert "non-exchangeable v197 reference" in payload["next_scientific_gate_en"]
+    assert "物理上不同的候选合同" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v172_in_both_languages() -> None:
