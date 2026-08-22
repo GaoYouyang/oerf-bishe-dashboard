@@ -1,9 +1,29 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.21-c-v181-geometry-conditioned-rank16-negative",
-  previousVersion: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative",
-  previousBadge: "v180 shared compact inverse · five 4 / 52 · nine 7 / 52",
-  olderBadge: "v179 exact affine-coordinate inverse · 52 / 52",
+  version: "2026.08.22-c-v186.1-potential-set-linear-negative",
+  previousVersion: "2026.08.22-c-v185-potential-affine-capacity",
+  previousBadge: "v185 dense potential-affine capacity · five 52 / 52 · nine 52 / 52",
+  olderBadge: "v184 scalar-potential Jacobi lift · five 0 / 52 · nine 0 / 52",
   historyReleases: [
+    {
+      version: "2026.08.22-c-v185-potential-affine-capacity",
+      previousVersion: "2026.08.22-c-v184-projection-potential-negative",
+      badge: "v185 dense potential-affine capacity · five 52 / 52 · nine 52 / 52"
+    },
+    {
+      version: "2026.08.22-c-v184-projection-potential-negative",
+      previousVersion: "2026.08.21-c-v183-observation-block-galerkin-negative",
+      badge: "v184 scalar-potential Jacobi lift · five 0 / 52 · nine 0 / 52"
+    },
+    {
+      version: "2026.08.21-c-v182-observation-adaptive-jacobi-pcgls1-negative",
+      previousVersion: "2026.08.21-c-v181-geometry-conditioned-rank16-negative",
+      badge: "v182 global residual line · five 0 / 52 · nine 0 / 52"
+    },
+    {
+      version: "2026.08.21-c-v181-geometry-conditioned-rank16-negative",
+      previousVersion: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative",
+      badge: "v181 geometry-conditioned rank 16 · five 0 / 52 · nine 0 / 52"
+    },
     {
       version: "2026.08.02-c-v98-joint13-predictor-negative-geometry-gate",
       previousVersion: "2026.08.02-c-v96-adaptive-spectral-capacity-pass",

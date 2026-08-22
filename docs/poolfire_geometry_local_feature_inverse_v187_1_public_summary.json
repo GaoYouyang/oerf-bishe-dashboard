@@ -1,0 +1,135 @@
+{
+  "schema_version": "oerf-public-poolfire-geometry-local-feature-inverse-v187.1.1",
+  "updated": "2026-08-22",
+  "role": "post-open representation-capacity diagnostic on the already opened PoolFire p22 four-frame roster",
+  "formal_status": "PASS_FORMAL_POOLFIRE_GEOMETRY_LOCAL_FEATURE_INVERSE_EXECUTION_V187_1",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_LOCAL_FEATURE_INVERSE_V187_1",
+  "scientific_decision": "FAIL_GEOMETRY_LOCAL_FEATURE_CAPACITY_V187_1",
+  "scientific_question": "Did v186.1 fail because one shared cross-geometry fit was too restrictive, or because the frozen DCT12 plus reported-ray Plucker pooled feature map itself lost detector-potential information?",
+  "mechanism": {
+    "response_features": "the frozen v186.1 DCT12 plus reported-ray Plucker pooled features",
+    "response_matrix_shape_per_setup": [1009, 1144],
+    "inverse": "one setup-local fixed-threshold Moore-Penrose pseudoinverse per sensor arm and reported calibration",
+    "formal_lapack_driver": "gesdd",
+    "independent_lapack_driver": "gesvd",
+    "singular_value_threshold": "largest singular value multiplied by sqrt(float64 epsilon)",
+    "ridge": false,
+    "damping": false,
+    "fallback": false,
+    "candidate_search": false,
+    "shared_cross_geometry_weights": false,
+    "trainable_parameter_count": 0,
+    "camera_permutation_invariant": true,
+    "camera_cardinalities": [5, 9]
+  },
+  "absolute_gate": {
+    "field_p90_max": 0.5,
+    "field_worst_max": 0.75,
+    "gradient_p90_max": 0.75,
+    "gradient_worst_max": 1.0,
+    "observation_p90_max": 0.2,
+    "observation_worst_max": 0.35,
+    "strict_cells_required": 52,
+    "complete_calibrations_required": 13,
+    "complete_time_strata_required": 4
+  },
+  "primary_k0": {
+    "five_camera": {
+      "passed": false,
+      "strict_cells_safe": 0,
+      "strict_cells_total": 52,
+      "complete_calibrations_safe": 0,
+      "complete_time_strata_safe": 0,
+      "field_p90": 0.391476118016139,
+      "gradient_p90": 0.6904324796025284,
+      "observation_p90": 0.4672236355248736
+    },
+    "all_nine": {
+      "passed": false,
+      "strict_cells_safe": 0,
+      "strict_cells_total": 52,
+      "complete_calibrations_safe": 0,
+      "complete_time_strata_safe": 0,
+      "field_p90": 2.703148014877606,
+      "gradient_p90": 5.1566364110977725,
+      "observation_p90": 3.5000115810357277
+    }
+  },
+  "primary_k1": {
+    "five_camera": {
+      "passed": false,
+      "strict_cells_safe": 2,
+      "strict_cells_total": 52,
+      "complete_calibrations_safe": 0,
+      "complete_time_strata_safe": 0,
+      "field_p90": 0.36520798126712556,
+      "field_worst": 0.3901346046026255,
+      "gradient_p90": 0.6208119845691268,
+      "gradient_worst": 0.6775888199268078,
+      "observation_p90": 0.24159744999686908,
+      "observation_worst": 0.25584981055493144
+    },
+    "all_nine": {
+      "passed": false,
+      "strict_cells_safe": 0,
+      "strict_cells_total": 52,
+      "complete_calibrations_safe": 0,
+      "complete_time_strata_safe": 0,
+      "field_p90": 2.3789470086206315,
+      "field_worst": 2.9599604501680146,
+      "gradient_p90": 4.577949493823213,
+      "gradient_worst": 5.647797824371617,
+      "observation_p90": 1.792773880217756,
+      "observation_worst": 2.381701384801522
+    }
+  },
+  "conditioning_diagnostics": {
+    "retained_rank_minimum": 715,
+    "retained_rank_maximum": 1001,
+    "condition_minimum": 413594.0098937649,
+    "condition_maximum": 66523666.22550619,
+    "interpretation": "The all-nine setup-local inverse is severely ill-conditioned inside the frozen pooled feature space."
+  },
+  "independent_recomputation": {
+    "checks_passed": 40,
+    "checks_total": 40,
+    "maximum_candidate_field_relative_difference": 2.83139036959686e-9,
+    "maximum_metric_absolute_difference": 4.434641986961196e-9,
+    "maximum_coordinate_relative_difference": 9.764327280726171e-10,
+    "maximum_response_feature_relative_difference": 2.2673558651013612e-12,
+    "maximum_singular_value_relative_difference": 1.4511998829950524e-13,
+    "camera_permutation_response_relative_error": 0.0,
+    "truth_mutation_max_abs": 0.0,
+    "formal_and_input_trees_unchanged": true,
+    "all_discrete_decisions_exact": true,
+    "end_to_end_physics_independence_proven": false,
+    "shared_frozen_physics_kernels_disclosed": true
+  },
+  "cost_boundary": {
+    "logical_online_k0_exact_vector_forward": 1,
+    "logical_online_k0_exact_vector_adjoint": 0,
+    "logical_online_k1_exact_vector_forward": 2,
+    "logical_online_k1_exact_vector_adjoint": 1,
+    "dense_setup_response_matrices_required": 26,
+    "compact_storage_established": false,
+    "exact_call_reduction_established": false,
+    "wall_or_rss_measured": false
+  },
+  "interpretation": "Removing the shared cross-geometry fit does not rescue matched accuracy. The current pooled DCT12 plus reported-ray Plucker feature map itself loses or ill-conditions information needed by this detector-potential affine inverse.",
+  "route_action": "Close both shared and setup-local inverses built on the current pooled DCT12 plus reported-ray Plucker feature map. Preserve the dense v185 camera-resolved potential inverse as a capacity parent. Do not retune the threshold, add ridge after seeing the result, scale a larger neural model, or rent a GPU for this representation.",
+  "next_eligible_question": "A separately frozen camera-resolved-versus-pooled spectral capacity diagnostic may distinguish camera pooling loss from DCT12 truncation. It remains a post-open mechanism diagnostic with no deployment or resource claim.",
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "untouched_test_evidence": false,
+    "neural_operator_advantage": false,
+    "deployable_compact_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

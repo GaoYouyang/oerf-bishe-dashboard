@@ -1,0 +1,128 @@
+{
+  "schema_version": "oerf-public-poolfire-potential-affine-observability-v185.0",
+  "updated": "2026-08-22",
+  "role": "post-open information-capacity diagnostic on the already opened PoolFire p22 four-frame roster",
+  "formal_status": "PASS_FORMAL_POTENTIAL_AFFINE_K1_CAPACITY_PENDING_INDEPENDENT_V185",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_AFFINE_OBSERVABILITY_V185",
+  "scientific_decision": "PASS_POTENTIAL_AFFINE_K1_CAPACITY_V185",
+  "mechanism": {
+    "input": "current centered multiview observation, active camera IDs, reported geometry, and fit-only affine basis",
+    "detector_transform": "apply the same zero-mean detector-potential integration to the observation and every affine forward-response column",
+    "inverse": "fixed-threshold exact potential-domain affine pseudoinverse retaining every observable affine coordinate",
+    "refinement": "one unchanged physical CGLS step",
+    "trainable_parameters": 0,
+    "candidate_search": false,
+    "truth_used_for_prediction": false
+  },
+  "absolute_gate": {
+    "field_p90_max": 0.5,
+    "field_worst_max": 0.75,
+    "gradient_p90_max": 0.75,
+    "gradient_worst_max": 1.0,
+    "observation_p90_max": 0.2,
+    "observation_worst_max": 0.35,
+    "strict_cells_required": 52,
+    "complete_calibrations_required": 13,
+    "complete_frames_required": 4
+  },
+  "primary_k0": {
+    "five_camera": {
+      "passed": false,
+      "strict_cells_safe": 50,
+      "strict_cells_total": 52,
+      "complete_calibrations_safe": 11,
+      "complete_frames_safe": 3,
+      "field_p90": 0.3434773417016709,
+      "gradient_p90": 0.5629383479943058,
+      "observation_p90": 0.18687185432943057,
+      "failure": "two calibrations exceed only the observation p90 gate at 0.20306417387321496 and 0.20673708257754672"
+    },
+    "all_nine": {
+      "passed": true,
+      "strict_cells_safe": 52,
+      "strict_cells_total": 52,
+      "complete_calibrations_safe": 13,
+      "complete_frames_safe": 4,
+      "field_p90": 0.2493601273305949,
+      "gradient_p90": 0.44573949762626114,
+      "observation_p90": 0.18033719008469892
+    }
+  },
+  "primary_k1": {
+    "five_camera": {
+      "passed": true,
+      "strict_cells_safe": 52,
+      "strict_cells_total": 52,
+      "complete_calibrations_safe": 13,
+      "complete_frames_safe": 4,
+      "field_p90": 0.3384385989330667,
+      "gradient_p90": 0.5495175351183796,
+      "observation_p90": 0.11808144065555547
+    },
+    "all_nine": {
+      "passed": true,
+      "strict_cells_safe": 52,
+      "strict_cells_total": 52,
+      "complete_calibrations_safe": 13,
+      "complete_frames_safe": 4,
+      "field_p90": 0.2400137327518787,
+      "gradient_p90": 0.4097664905448133,
+      "observation_p90": 0.11657732461750007
+    }
+  },
+  "blocking_control": {
+    "name": "one-direction potential-coordinate CGLS1",
+    "five_camera_k0_strict_cells_safe": 0,
+    "five_camera_k1_strict_cells_safe": 0,
+    "all_nine_k0_strict_cells_safe": 0,
+    "all_nine_k1_strict_cells_safe": 0,
+    "blocks_primary_interpretation": false
+  },
+  "mechanism_diagnostics": {
+    "minimum_observation_detector_gradient_explained_energy": 0.8856871119406248,
+    "minimum_basis_detector_gradient_explained_energy": 0.3086555166663789,
+    "minimum_defined_derivative_fraction": 0.9989517819706499,
+    "retained_affine_rank_minimum": 1009,
+    "retained_affine_rank_maximum": 1009,
+    "maximum_potential_condition": 187.40505114381517,
+    "maximum_inverse_stationarity": 2.888680031417397e-15,
+    "maximum_reconstruction_identity_error": 6.6372911910377765e-15
+  },
+  "independent_recomputation": {
+    "checks_passed": 32,
+    "checks_total": 32,
+    "maximum_candidate_field_relative_difference": 8.399673722886204e-12,
+    "maximum_coordinate_relative_difference": 1.835359723981889e-11,
+    "maximum_potential_relative_difference": 1.4817042789591036e-11,
+    "maximum_metric_absolute_difference": 4.476252701834937e-12,
+    "camera_permutation_primary_field_relative_error": 1.3874570060236385e-14,
+    "truth_mutation_max_abs": 0.0,
+    "all_discrete_decisions_exact": true
+  },
+  "cost_boundary": {
+    "logical_online_k1_exact_vector_forward": 2,
+    "logical_online_k1_exact_vector_adjoint": 1,
+    "potential_transform_rhs_per_sensor_setup": 1013,
+    "inherited_vector_geometry_cache_forward_equivalents": 26260,
+    "offline_candidate_scoring_forward_calls": 624,
+    "offline_truth_observation_calls": 104,
+    "exact_call_reduction_established": false,
+    "wall_or_rss_measured": false
+  },
+  "interpretation": "Using one common detector-potential transform for the centered observation and all affine response columns preserves the complete 1009-dimensional observable affine state well enough for one unchanged physical CGLS step to pass every opened five- and nine-camera cell. This attributes v184's failure to its scalar-ray Jacobi lift rather than to detector-potential compression itself.",
+  "authorization": "A separately preregistered compact observation-and-geometry-only approximation to the dense potential-domain inverse may now be tested.",
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "untouched_test_evidence": false,
+    "neural_operator_advantage": false,
+    "deployable_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

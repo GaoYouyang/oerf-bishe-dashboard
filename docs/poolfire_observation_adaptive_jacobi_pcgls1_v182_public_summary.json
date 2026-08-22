@@ -1,0 +1,194 @@
+{
+  "schema_version": "oerf-public-poolfire-observation-adaptive-jacobi-pcgls1-v182",
+  "updated": "2026-08-21",
+  "formal_status": "PASS_FORMAL_POOLFIRE_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_EXECUTION_V182",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182",
+  "scientific_decision": "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182",
+  "scope": "A post-open mechanism diagnostic on four already opened PoolFire frames. It tests one exact observable line-minimizing Jacobi-PCGLS1 update in the frozen 1,009-coordinate affine field space.",
+  "question": "Can one deployment-visible diagonal-preconditioned coordinate step, followed by one unchanged physical CGLS step, preserve the frozen field, gradient, and observation gates under five and nine cameras?",
+  "mechanism": {
+    "affine_coordinate_count": 1009,
+    "deployment_visible_inputs": [
+      "current observation",
+      "reported camera geometry",
+      "fit-only affine center and basis",
+      "sealed geometry-specific Jacobi diagonal"
+    ],
+    "coordinate_step": "g = M^T r; z = D^-1 g; q = M z; beta = (g^T z) / (q^T q); x0 = mean + beta U^T z",
+    "physical_refinement": "one unchanged CGLS K1 step",
+    "search_or_tuning": false,
+    "damping": false,
+    "clipping": false,
+    "fallback": false,
+    "target_truth_used_for_update": false,
+    "trainable_parameters": 0
+  },
+  "evaluation": {
+    "fit_trajectories": 10,
+    "fit_fields": 1010,
+    "evaluation_calibrations": 13,
+    "evaluation_frames": 4,
+    "evaluation_cells_per_sensor": 52,
+    "sensors": [
+      "frozen geometry-selected five-camera sensor",
+      "all-nine camera control"
+    ]
+  },
+  "absolute_gate": {
+    "field_p90_max": 0.5,
+    "field_worst_max": 0.75,
+    "gradient_p90_max": 0.75,
+    "gradient_worst_max": 1.0,
+    "observation_p90_max": 0.2,
+    "observation_worst_max": 0.35,
+    "strict_cells_required": 52,
+    "calibrations_required": 13,
+    "frames_required": 4
+  },
+  "five_camera_k0": {
+    "passed": false,
+    "strict_cells_safe": 0,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 0,
+    "frame_strata_passed": 0,
+    "global_p90": {
+      "field_relative_l2": 0.4796357951531929,
+      "gradient_relative_l2": 0.6793109257668127,
+      "observation_relative_l2": 0.38123062418255893
+    },
+    "global_worst": {
+      "field_relative_l2": 0.49381332683521967,
+      "gradient_relative_l2": 0.6903287116363875,
+      "observation_relative_l2": 0.40223914605640115
+    },
+    "logical_exact_calls": {
+      "forward": 1,
+      "adjoint": 1
+    }
+  },
+  "all_nine_k0": {
+    "passed": false,
+    "strict_cells_safe": 0,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 0,
+    "frame_strata_passed": 0,
+    "global_p90": {
+      "field_relative_l2": 0.4595100298260417,
+      "gradient_relative_l2": 0.637158228490304,
+      "observation_relative_l2": 0.4047567140070021
+    },
+    "global_worst": {
+      "field_relative_l2": 0.4746001693078401,
+      "gradient_relative_l2": 0.6504775805846259,
+      "observation_relative_l2": 0.42015806961714947
+    },
+    "logical_exact_calls": {
+      "forward": 1,
+      "adjoint": 1
+    }
+  },
+  "five_camera_primary_k1": {
+    "passed": false,
+    "strict_cells_safe": 0,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 0,
+    "whole_calibrations_total": 13,
+    "frame_strata_passed": 0,
+    "frame_strata_total": 4,
+    "global_p90": {
+      "field_relative_l2": 0.45773343575755926,
+      "gradient_relative_l2": 0.6215638846967647,
+      "observation_relative_l2": 0.2445946846947643
+    },
+    "global_worst": {
+      "field_relative_l2": 0.4728811751912292,
+      "gradient_relative_l2": 0.6389375755676994,
+      "observation_relative_l2": 0.25468453619988163
+    },
+    "logical_exact_calls": {
+      "forward": 3,
+      "adjoint": 2
+    }
+  },
+  "all_nine_primary_k1": {
+    "passed": false,
+    "strict_cells_safe": 0,
+    "strict_cells_total": 52,
+    "whole_calibrations_safe": 0,
+    "whole_calibrations_total": 13,
+    "frame_strata_passed": 0,
+    "frame_strata_total": 4,
+    "global_p90": {
+      "field_relative_l2": 0.42182799894966694,
+      "gradient_relative_l2": 0.5477145402999477,
+      "observation_relative_l2": 0.26682637731585646
+    },
+    "global_worst": {
+      "field_relative_l2": 0.4391365559186355,
+      "gradient_relative_l2": 0.5587101209673173,
+      "observation_relative_l2": 0.29638630706212393
+    },
+    "logical_exact_calls": {
+      "forward": 3,
+      "adjoint": 2
+    }
+  },
+  "cheap_controls": {
+    "parent_control_blocks": false,
+    "static_fit_mean_passed": false,
+    "geometry_jacobi_passed": false,
+    "one_step_coordinate_cgls_passed": false
+  },
+  "cost_boundary": {
+    "direct_cgls_k4_forward_calls": 4,
+    "direct_cgls_k4_adjoint_calls": 4,
+    "logical_online_k0_forward_calls": 1,
+    "logical_online_k0_adjoint_calls": 1,
+    "logical_online_k1_forward_calls": 3,
+    "logical_online_k1_adjoint_calls": 2,
+    "matched_accuracy_passed": false,
+    "exact_call_reduction_established": false,
+    "wall_or_rss_measured": false
+  },
+  "independent_recomputation": {
+    "checks_passed": 47,
+    "checks_total": 47,
+    "fit_singular_value_maximum_relative_difference": 0.0,
+    "jacobi_diagonal_maximum_relative_difference": 1.089e-16,
+    "feature_maximum_relative_difference": 0.0,
+    "coordinate_maximum_relative_difference": 3.376e-16,
+    "candidate_field_maximum_relative_difference": 5.066503916643291e-12,
+    "beta_maximum_absolute_difference": 1.3566925360919413e-12,
+    "metric_maximum_absolute_difference": 8.383294058944557e-13,
+    "line_identity_maximum_relative_difference": 3.5767e-16,
+    "adjoint_maximum_relative_difference": 3.0762e-16,
+    "all_discrete_decisions_exact": true
+  },
+  "validation_execution_boundary": {
+    "initial_attempt_status": "INCONCLUSIVE_ENGINEERING_FAILURE_BEFORE_REPORT_SEAL",
+    "initial_attempt_failure": "NumPy boolean JSON serialization after independent scoring",
+    "recovery_scope": "JSON scalar normalization only; candidate, data, gates, arrays, and formal result remained unchanged",
+    "failed_attempt_preserved": true,
+    "single_use_receipts_preserved": true
+  },
+  "interpretation": "The exact observable line-minimizing Jacobi-PCGLS1 step materially reduces observation residuals, but neither sensor arm reaches the frozen observation p90 gate after one unchanged physical CGLS step. Field and gradient tails pass; observation remains the sole global bottleneck.",
+  "limitation": "This closes only the frozen one-step diagonal-preconditioned affine-coordinate PCGLS mechanism on a post-open four-frame PoolFire proxy. It is not an impossibility result for the C route and establishes no deployment, resource, external, curved-ray, or real-BOST result.",
+  "route_action": "Do not tune beta, damping, diagonal floors, clipping, or the frozen gate, and do not rescue this mechanism with a larger neural model or GPU. Continue only with a preregistered physically different mechanism or new paired two-component BOS evidence.",
+  "claim_limits": {
+    "one_step_jacobi_pcgls1_family_closed": true,
+    "full_c_route_closed": false,
+    "deployable_algorithm": false,
+    "matched_accuracy": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "broad_external_generalization": false,
+    "untouched_test_evidence": false,
+    "paired_experimental_2d_projections_used": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

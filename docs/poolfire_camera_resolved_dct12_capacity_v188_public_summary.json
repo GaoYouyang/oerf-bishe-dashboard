@@ -1,0 +1,148 @@
+{
+  "schema_version": "oerf-public-poolfire-camera-resolved-dct12-capacity-v188.1.0",
+  "updated": "2026-08-22",
+  "role": "post-open representation-capacity attribution on the already opened PoolFire p22 four-frame roster",
+  "formal_status": "PASS_FORMAL_POOLFIRE_CAMERA_RESOLVED_DCT12_EXECUTION_V188",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_CAMERA_RESOLVED_DCT12_V188_1",
+  "scientific_decision": "FAIL_CAMERA_RESOLVED_DCT12_CAPACITY_V188",
+  "scientific_question": "After removing shared regression, does preserving DCT12 coefficients separately for every camera recover capacity, or is DCT12 truncation itself still insufficient?",
+  "mechanism": {
+    "per_camera_transform": "orthonormal type-II 2D DCT on each zero-mean detector-potential grid, retaining the leading 12x12 square without DC",
+    "modes_per_camera": 143,
+    "five_camera_feature_count": 715,
+    "all_nine_feature_count": 1287,
+    "response_coordinate_count": 1009,
+    "camera_order": "canonical numeric camera-ID order",
+    "cross_camera_pooling": false,
+    "reported_ray_plucker_descriptors": false,
+    "formal_lapack_driver": "gesdd",
+    "independent_lapack_driver": "gesvd",
+    "singular_value_threshold": "largest singular value multiplied by sqrt(float64 epsilon)",
+    "ridge": false,
+    "damping": false,
+    "fallback": false,
+    "candidate_search": false,
+    "trainable_parameter_count": 0,
+    "camera_permutation_invariant": true,
+    "camera_cardinalities": [5, 9]
+  },
+  "absolute_gate": {
+    "field_p90_max": 0.5,
+    "field_worst_max": 0.75,
+    "gradient_p90_max": 0.75,
+    "gradient_worst_max": 1.0,
+    "observation_p90_max": 0.2,
+    "observation_worst_max": 0.35,
+    "strict_cells_required": 52,
+    "complete_calibrations_required": 13,
+    "complete_time_strata_required": 4
+  },
+  "primary_k0": {
+    "five_camera": {
+      "passed": false,
+      "strict_cells_safe": 0,
+      "strict_cells_total": 52,
+      "complete_calibrations_safe": 0,
+      "complete_time_strata_safe": 0,
+      "field_p90": 0.39147611801617677,
+      "gradient_p90": 0.690432479588126,
+      "observation_p90": 0.4672236355265678
+    },
+    "all_nine": {
+      "passed": false,
+      "strict_cells_safe": 0,
+      "strict_cells_total": 52,
+      "complete_calibrations_safe": 0,
+      "complete_time_strata_safe": 0,
+      "field_p90": 0.9177173543897078,
+      "gradient_p90": 1.5752711376135464,
+      "observation_p90": 1.1655867420924884
+    }
+  },
+  "primary_k1": {
+    "five_camera": {
+      "passed": false,
+      "strict_cells_safe": 2,
+      "strict_cells_total": 52,
+      "complete_calibrations_safe": 0,
+      "complete_time_strata_safe": 0,
+      "field_p90": 0.36520798126553283,
+      "field_worst": 0.39013460460039234,
+      "gradient_p90": 0.6208119845495638,
+      "gradient_worst": 0.6775888199240226,
+      "observation_p90": 0.24159745000010277,
+      "observation_worst": 0.2558498105547566
+    },
+    "all_nine": {
+      "passed": false,
+      "strict_cells_safe": 0,
+      "strict_cells_total": 52,
+      "complete_calibrations_safe": 0,
+      "complete_time_strata_safe": 0,
+      "field_p90": 0.7971613311072608,
+      "field_worst": 0.8329103332177143,
+      "gradient_p90": 1.3538020577682002,
+      "gradient_worst": 1.5164471966261244,
+      "observation_p90": 0.5943408991313505,
+      "observation_worst": 0.6363446939246078
+    }
+  },
+  "comparison_to_v187_1": {
+    "five_camera_numerically_unchanged": true,
+    "five_camera_maximum_p90_relative_change": 3.151198488201324e-11,
+    "all_nine_field_p90_reduction_fraction": 0.6649100092525922,
+    "all_nine_gradient_p90_reduction_fraction": 0.7042776335573789,
+    "all_nine_observation_p90_reduction_fraction": 0.6684797197853195,
+    "interpretation": "Cross-camera pooling materially worsened the all-nine inverse, but removing it is insufficient and does not change the five-camera failure."
+  },
+  "conditioning_diagnostics": {
+    "five_camera_retained_rank": 715,
+    "all_nine_retained_rank": 1009,
+    "condition_minimum": 1451.7127999423692,
+    "condition_maximum": 43324.06897491966,
+    "maximum_feature_reconstruction_residual": 0.0060497566401485105
+  },
+  "independent_recomputation": {
+    "checks_passed": 44,
+    "checks_total": 44,
+    "maximum_candidate_field_relative_difference": 5.5323822736173166e-11,
+    "maximum_metric_absolute_difference": 1.3687495581393705e-11,
+    "maximum_coordinate_relative_difference": 1.4358756666948151e-11,
+    "maximum_response_feature_relative_difference": 3.686861014817193e-12,
+    "camera_permutation_response_relative_error": 0.0,
+    "camera_permutation_feature_relative_error": 0.0,
+    "formal_and_input_trees_unchanged": true,
+    "all_discrete_decisions_exact": true,
+    "post_formal_metadata_adapter_repair_disclosed": true,
+    "failed_attempt_read_formal_scientific_arrays": false,
+    "end_to_end_physics_independence_proven": false,
+    "shared_frozen_physics_kernels_disclosed": true
+  },
+  "cost_boundary": {
+    "logical_online_k0_exact_vector_forward": 1,
+    "logical_online_k0_exact_vector_adjoint": 0,
+    "logical_online_k1_exact_vector_forward": 2,
+    "logical_online_k1_exact_vector_adjoint": 1,
+    "dense_setup_response_matrices_required": 26,
+    "compact_storage_established": false,
+    "exact_call_reduction_established": false,
+    "wall_or_rss_measured": false
+  },
+  "interpretation": "Camera-resolved DCT12 removes a major all-nine pooling penalty but still fails both sensor arms. Pooling is not the sole bottleneck, and DCT12 truncation remains insufficient under the frozen affine inverse diagnostic.",
+  "route_action": "Close DCT12 truncation in both pooled and camera-resolved forms. Do not retune the threshold, add post-result ridge or damping, scale a neural model, or rent a GPU for this representation.",
+  "next_eligible_question": "A separately frozen dense per-camera detector-potential reference may test whether the remaining loss is specifically DCT12 truncation or a deeper affine-inverse limitation.",
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "untouched_test_evidence": false,
+    "neural_operator_advantage": false,
+    "deployable_compact_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

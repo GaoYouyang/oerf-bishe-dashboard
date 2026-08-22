@@ -1,0 +1,97 @@
+{
+  "schema_version": "oerf-public-poolfire-qdeim-normal-metric-attribution-v191.1.0",
+  "updated": "2026-08-22",
+  "role": "post-open retrospective mechanism attribution on the sealed v190 four-frame development roster",
+  "formal_status": "PASS_FORMAL_POOLFIRE_QDEIM_NORMAL_METRIC_ATTRIBUTION_V191",
+  "original_independent_status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_QDEIM_NORMAL_METRIC_ATTRIBUTION_V191",
+  "repair_status": "PASS_NUMERIC_COMPARATOR_REPAIR_V191_1",
+  "scientific_decision": "PASS_OBSERVATION_ACTIVATED_NORMAL_METRIC_DISTORTION_ATTRIBUTION_V191_1",
+  "scientific_question": "Does the fixed v190 coreset fail because it changes the observation-activated least-squares metric in a frame-dependent way, rather than because one geometry-only condition scalar is uniformly bad?",
+  "frozen_scope": {
+    "sensor_arms": ["five_camera", "all_nine"],
+    "calibrations_per_arm": 13,
+    "total_sensor_calibration_setups": 26,
+    "frames_per_setup": 4,
+    "v190_failed_cells_five_camera": 17,
+    "v190_failed_cells_all_nine": 22,
+    "new_training": false,
+    "new_candidate_search": false,
+    "physics_rerun_in_repair": false
+  },
+  "setup_outcomes": {
+    "five_camera": {
+      "mixed_pass_fail_setups": 10,
+      "all_pass_setups": 2,
+      "all_fail_setups": 1,
+      "setup_frame_pass_counts": [3, 3, 1, 4, 3, 2, 0, 3, 4, 3, 3, 3, 3]
+    },
+    "all_nine": {
+      "mixed_pass_fail_setups": 11,
+      "all_pass_setups": 1,
+      "all_fail_setups": 1,
+      "setup_frame_pass_counts": [3, 3, 2, 2, 3, 2, 1, 3, 0, 4, 3, 3, 1]
+    },
+    "mixed_setups_total": 21,
+    "mixed_setups_total_denominator": 26
+  },
+  "normal_metric_diagnostics": {
+    "every_failed_cell_coordinate_delta_relative_above_1e_8": true,
+    "every_failed_cell_full_normal_defect_above_1e_8": true,
+    "every_mixed_setup_within_setup_coordinate_delta_spread_above_1e_8": true,
+    "coordinate_discrepancy_p50": {
+      "five_camera": 0.4592800633466101,
+      "all_nine": 0.42964016558181156
+    },
+    "discarded_delta_energy_fraction_p50": {
+      "five_camera": 0.9081601473122421,
+      "all_nine": 0.9350030922065818
+    },
+    "trace_normalized_directional_ratio_p50": {
+      "five_camera": 0.10658521984906785,
+      "all_nine": 0.0869839535030518
+    },
+    "condition_inflation_p50": {
+      "five_camera": 3.6899178638673145,
+      "all_nine": 4.949972102000821
+    },
+    "generalized_metric_eigenvalue_minimum": 0.0053014373729791675,
+    "generalized_metric_eigenvalue_maximum": 1.3910435109808772,
+    "selected_stationarity_formal_maximum": 1.3851950620954547e-14,
+    "selected_stationarity_independent_maximum": 3.732624825136498e-12
+  },
+  "independent_recomputation": {
+    "setups_completed": 13,
+    "setups_total": 13,
+    "parent_response_reconstruction_scale": "approximately 1e-12",
+    "attribution_predicates_exact": true,
+    "original_scientific_arrays_read_once": true,
+    "original_output_preserved": true,
+    "original_inconclusive_reason": "A blanket whole-array relative comparison was applied to stationarity and energy-identity residual arrays whose values were already near numerical zero.",
+    "selected_stationarity_max_absolute_difference": 3.72643018404978e-12,
+    "energy_identity_max_absolute_difference": 2.3162466837512426e-15,
+    "ordinary_array_maximum_relative_difference": 1.6745131913727377e-11,
+    "repair_checks_passed": 15,
+    "repair_checks_total": 15,
+    "repair_changed_physics_or_scientific_arrays": false,
+    "end_to_end_physics_independence_proven": false,
+    "shared_frozen_physics_kernels_disclosed": true
+  },
+  "interpretation": "The fixed v190 coreset changes the observation-activated least-squares metric, and the resulting mismatch varies across frames even when reported geometry is identical. The selected solves are stationary for their own reduced objective but generally violate the full-DCT normal equations; most coordinate-error response energy lies in columns discarded by the fixed subset.",
+  "ruled_out_explanation": "One geometry-only scalar condition score is not sufficient to explain or predict failure, because 21 of 26 fixed setups contain both passing and failing frames.",
+  "route_action": "Keep the fixed 1280-column family closed. Authorize only one separately preregistered minimal observation-adaptive coordinate capacity diagnostic on the same opened development roster; do not train a predictor or open resource, external, or real-BOST gates.",
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "observation_adaptive_mechanism_constructed": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "untouched_test_evidence": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}

@@ -15835,3 +15835,397 @@ Decision: `FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181`. Close the fixed Jacob
 Cache construction still costs `26,260` forward-equivalent setup projections. Although the logical K1 ledger is `2A+2A^T`, matched accuracy fails, so v181 establishes no exact-call reduction, wall/RSS speedup, external generalization, or real-BOST success.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `resource_speedup=false`, `broad_external_generalization=false`, `curved_ray_validated=false`, `real_bost=false`.
+
+## 2026-08-21：v182 一步可观测 Jacobi-PCGLS 改善残差，但仍未通过 observation 门
+
+### 讲人话：方向是对着残差走的，但一步还不够安全
+
+v181 已经证明，固定的几何条件 rank-16 谱校正太窄。v182 改成一个物理上不同的机制：不再使用固定谱方向，而是让坐标更新方向随**当前观测残差**变化。
+
+在冻结的 `1,009` 维仿射场空间中，v182 只读取当前二维观测、报告相机几何、fit-only 仿射中心/基和封存的 Jacobi 对角量。它计算 `g=M^T r`、`z=D^-1g`、`q=Mz`，再用 `beta=(g^Tz)/(q^Tq)` 做精确一维观测最小化，得到 warm field，随后运行一轮完全未修改的物理 CGLS K1。没有搜索、阻尼、裁剪、回退、目标真值或可训练参数。
+
+结果显示这一步确实有效，但没有有效到通过完整门。五相机 observation p90 从 K0 的 `0.381231` 降到 K1 的 `0.244595`，九相机从 `0.404757` 降到 `0.266826`；降幅分别为 `35.8%` 与 `34.1%`。同时，两档 field 和 gradient p90 都通过冻结门。
+
+然而 observation p90 门是 `0.20`，两档仍然越线。因此五相机和九相机 K1 都是 `0/52`，完整标定都是 `0/13`，完整帧都是 `0/4`。正式判决为 `FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182`。
+
+完全独立第二实现重建仿射坐标、Jacobi 对角、精确线搜索、候选场、观测、未修改 K1、指标、调用账和相机换序审计，`47/47` 项检查全真。候选场、`beta` 和指标最大差为 `5.07e-12 / 1.36e-12 / 8.38e-13`，所有离散判决一致。
+
+第一次独立验证已完成科学评分，但在写最终 JSON 时遇到 NumPy 布尔值序列化错误，因此 fail-closed 并保留原记录。后续只修 JSON 标量归一化，候选、数据、数组、门和正式结果均未变化。这是工程完整性，不是算法成果。
+
+逻辑 K1 账为 `3A+2A^T`，直接 K4 为 `4A+4A^T`。由于 matched accuracy 没有成立，不能声称 exact-call 减少，也没有启动 wall/RSS 门。
+
+当前只关闭一步、对角预条件的 Jacobi-PCGLS1。不再调 `beta`、阻尼、对角 floor、裁剪或门槛，也不用 CNN/FNO/UNO/DeepONet 或 GPU 挽救。它没有关闭完整 C 路线，也不是数学不可能性证明。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v181 shows that a fixed geometry-conditioned rank-16 spectral correction is too narrow. v182 tests a physically distinct mechanism: instead of fixed spectral directions, the coordinate update adapts to the **current observation residual**.
+
+In the frozen `1,009`-dimensional affine field space, v182 reads only the current 2D observation, reported geometry, fit-only affine center and basis, and a sealed Jacobi diagonal. It computes `g=M^T r`, `z=D^-1g`, `q=Mz`, and the exact observable line minimizer `beta=(g^Tz)/(q^Tq)`, then applies one unchanged physical CGLS K1 step. There is no search, damping, clipping, fallback, target truth, or trainable parameter.
+
+The step is useful but not safe enough. Five-camera observation p90 falls from `0.381231` at K0 to `0.244595` at K1; all-nine falls from `0.404757` to `0.266826`, reductions of `35.8%` and `34.1%`. Field and gradient p90 pass under both sensor arms.
+
+The frozen observation p90 gate is `0.20`, however, and both arms still fail it. Five-camera and all-nine K1 are therefore each `0/52`, with `0/13` complete calibrations and `0/4` complete frames. Decision: `FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182`.
+
+A fully independent implementation rebuilds affine coordinates, the Jacobi diagonal, exact line minimization, candidate fields, observations, unchanged K1, metrics, call ledgers, and camera-permutation audits. All `47/47` checks pass. Maximum candidate-field, `beta`, and metric differences are `5.07e-12`, `1.36e-12`, and `8.38e-13`, and every discrete decision agrees.
+
+The first independent attempt completed scientific scoring but failed closed while serializing a NumPy boolean into final JSON. Only JSON scalar normalization was repaired; candidates, data, arrays, gates, and the formal result remained unchanged. This is engineering assurance, not an algorithmic result.
+
+The logical K1 ledger is `3A+2A^T`, versus `4A+4A^T` for direct K4. Because matched accuracy fails, no exact-call reduction is established and no wall/RSS gate is authorized.
+
+This closes only the one-step diagonally preconditioned Jacobi-PCGLS1 mechanism. Do not retune `beta`, damping, diagonal floors, clipping, or gates, and do not use CNN/FNO/UNO/DeepONet or GPU scale as rescue. It does not close the full C route and is not an impossibility result.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v192 观测自适应补列有改善，但固定 1280 坐标仍不够
+
+### 讲人话：找对了漏掉的信息方向，但固定小书包还是装不下全部答案
+
+v191.1 已经证明，固定 geometry-only 子集失败，是因为每帧观测会激活不同的正规方程方向。v192 不训练模型，只验证最小机制：保留固定 `1009` 个 QDEIM 锚点，再用当前部署可见观测与报告几何计算每个候选列对完整正规缺陷的贡献，补选 `271` 列。总预算仍为 `1280`，没有真值选列、预算搜索、评分搜索、ridge 或回退；最后只运行一轮未修改的精确 CGLS。
+
+这条评分确实带来实质改善。五相机严格安全单元从 v190 的 `35/52` 提高到 `40/52`，九相机从 `30/52` 提高到 `40/52`。便宜的观测幅值补列 control 只有 `32/52 · 26/52`，所以改善来自正规缺陷方向，而不是简单挑大幅值。
+
+但门要求两臂都达到 `52/52`。primary 在五/九相机下仍各失败 `12` 个单元，四个时间层都是 `0/4` 完整通过。五相机失败主要来自 gradient：`10` 个梯度越线、`5` 个 observation 越线，部分重叠；九相机 `12` 个失败全部是 observation-only。两臂 field 都是 `0` 个失败。
+
+完全独立第二实现重建评分、排序、候选场、未修改 K1、逐单元指标、调用账和相机换序审计，`17/17` 检查全真。普通数组最大相对差为 `1.74e-10`，近零数组最大绝对差为 `1.96e-14`，相机换序后的特征、响应和离散选列完全一致。
+
+正式判决为 `FAIL_NORMAL_CONTRIBUTION_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192`。科学上可以说，v191.1 的归因得到了机制支持：观测自适应选列确实能救回一部分失败。但不能说当前表示成功，因为两档都还差 `12/52`，没有任何完整时间层通过。
+
+因此关闭这一条精确 `1009 + 271` 正规贡献评分机制，不提高预算、不事后增加或调整评分、不训练 predictor、不用 CNN/FNO/UNO/DeepONet 或 GPU 挽救。后续只有物理上真正不同的结果不可见机制，或新的成对真实二维双分量 BOST 位移数据，才值得继续。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v191.1 shows that the fixed geometry-only subset fails because each frame activates different normal-equation directions. v192 tests the smallest non-learned response: retain the fixed `1009` QDEIM anchors, score every remaining column by its contribution to the full normal defect using only the current deployment-visible observation and reported geometry, and add exactly `271` columns. The total budget remains `1280`, with no truth-based selection, budget or score search, ridge, or fallback. One unchanged exact CGLS step follows.
+
+The score produces a substantive improvement. Strict-safe cells rise from v190's `35/52` to `40/52` under five cameras and from `30/52` to `40/52` under all nine. The cheap observation-magnitude control reaches only `32/52 · 26/52`, so the gain is specific to the normal-defect information rather than simple amplitude ranking.
+
+The gate still requires `52/52` in both arms. The primary leaves `12` failed cells under each sensor count and passes `0/4` complete time strata. Five-camera failures are gradient-dominated, with 10 gradient and 5 observation violations that partly overlap. All 12 all-nine failures are observation-only. Neither arm has a field failure.
+
+A fully independent second implementation rebuilds scores, rankings, candidates, unchanged K1 replay, cell metrics, call accounting, and camera-permutation audits. All `17/17` checks pass. Maximum ordinary-array relative and near-zero-array absolute differences are `1.74e-10 / 1.96e-14`, and camera reordering leaves features, responses, and discrete selections unchanged.
+
+Decision: `FAIL_NORMAL_CONTRIBUTION_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192`. The v191.1 diagnosis receives mechanism-level support because adaptive selection rescues some failures, but the current representation does not pass complete capacity.
+
+Close this exact `1009 + 271` normal-contribution mechanism without increasing the budget, adding or tuning scores post hoc, training a predictor, or using CNN/FNO/UNO/DeepONet or GPU scale as rescue. Continue only with a physically distinct result-blind mechanism or new paired real two-component BOS displacement data.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v191.1 证明固定子集改变了观测激活的正规度量
+
+### 讲人话：同一套相机位置，有的帧能过、有的帧会失败，问题不只是“这套几何太难”
+
+v190 已经说明固定 `1280` 列 QDEIM + 杠杆子集虽然保留 `1009/1009` 响应秩，却只达到五/九相机 K1 `35/52 · 30/52`。v191 不再换表示，而是利用这批已经开封并封存的四帧结果追问：失败究竟是某些相机标定整体条件差，还是每帧观测会激活不同的最小二乘方向。
+
+结果很清楚。五相机 13 个固定 setup 中有 10 个在四帧里混合成败，九相机有 11 个，总计 `21/26`。因此只看报告几何给每个 setup 一个固定条件数或难度分数，不可能解释同一 setup 下为什么有的帧过门、有的帧失败。
+
+所有 v190 失败单元都同时出现了子集/完整 DCT 坐标差和完整正规方程缺陷。坐标差异中位数为五/九相机 `45.93% / 42.96%`；其中落在被子集丢弃列上的观测响应能量中位数高达 `90.82% / 93.50%`。所选子集的 trace-normalized 方向权重中位数只有 `10.66% / 8.70%`，条件数膨胀中位数为 `3.69x / 4.95x`。
+
+另一方面，子集解对自己的目标已经收敛：formal 与独立实现的最大 stationarity residual 约为 `1.39e-14 / 3.73e-12`。因此不是优化器偷懒，而是固定选列改变了 observation-activated normal metric：同一几何下，不同观测需要的方向不同，约九成缺失响应能量就在被固定丢掉的列里。
+
+独立程序用不同 SVD driver 和广义特征值形式完成 `13/13` 重建，所有归因谓词完全一致。原始 v191 仍保留为 `INCONCLUSIVE`：唯一失败是把接近数值零的 stationarity 和能量恒等式残差也套进统一相对误差，导致除法放大。v191.1 在看到失败后透明冻结一次静态比较器修复；不重跑物理、不修改数组、不重置一次性验证，普通数组继续用相对门，近零残差改用绝对门，最终 `15/15` 通过。这是数值审计修复，不是算法成果。
+
+正式判决为 `PASS_OBSERVATION_ACTIVATED_NORMAL_METRIC_DISTORTION_ATTRIBUTION_V191_1`。它只授权下一条结果前冻结的最小 observation-adaptive 坐标容量诊断；没有构造新表示、训练 predictor、减少调用或验证 wall/RSS、外部工况与真实 BOST，也不租 GPU。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v191.1 localizes why the fixed v190 QDEIM-plus-leverage subset fails. Ten of 13 five-camera setups and 11 of 13 all-nine setups contain both passing and failing frames, yielding `21/26` mixed setups. A single geometry-only condition score therefore cannot explain frame-level failure under identical reported geometry.
+
+Every failed v190 cell has both a subset-versus-full-DCT coordinate discrepancy and a full-normal-equation defect. Median coordinate discrepancy is `45.93% / 42.96%` under five/all-nine cameras, while median response energy in discarded columns is `90.82% / 93.50%`. Median trace-normalized selected directional weighting is only `10.66% / 8.70%`, and median condition inflation is `3.69x / 4.95x`.
+
+The reduced solves are nevertheless stationary for their own objective: maximum formal and independent residuals are approximately `1.39e-14 / 3.73e-12`. The mechanism is therefore observation-activated normal-metric distortion, not an unconverged optimizer.
+
+The original v191 independent result remains preserved as `INCONCLUSIVE` because one blanket relative comparator divided near-zero stationarity and energy-identity residuals. A transparent v191.1 static repair reruns no physics, changes no arrays, and resets no single-use validation; it retains relative gates for ordinary arrays and uses stated absolute gates for near-zero residuals, passing `15/15` checks. This repair is numerical audit integrity, not an algorithmic contribution.
+
+Decision: `PASS_OBSERVATION_ACTIVATED_NORMAL_METRIC_DISTORTION_ATTRIBUTION_V191_1`. This authorizes only one separately preregistered minimal observation-adaptive coordinate capacity diagnostic. No representation, predictor, exact-call reduction, wall/RSS gain, external generalization, curved-ray result, real-BOST evidence, or GPU authorization is established.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v190 保留全部响应秩，仍然丢了物理容量
+
+### 讲人话：选出的列在代数上“够独立”，不代表它们能稳定还原物理场
+
+v189 已经证明，每台相机保留完整 `24x24` DCT 非 DC 频谱时，五相机和九相机的未修改 K1 都能达到 `52/52`。但这个完整表示分别需要 `2875 / 5175` 个坐标，不是紧凑部署。
+
+v190 因此只问一个更小的问题：能不能在不看 held-out 真值的前提下，只依据报告几何从完整 DCT 中固定选出 `1280` 列，同时保住 v189 的容量。选列规则在真值读取前封存：`1009` 个 QDEIM 锚点加 `271` 个杠杆补列，没有 ridge、搜索、回退或训练。坐标数在五/九相机下分别减少 `55.48% / 75.27%`，并且保留了 `1009/1009` 响应秩。
+
+然而，物理结果没有保住。一轮未修改 K1 后，五相机只有 `35/52` 个 cell 严格通过、`2/13` 个完整标定通过、时间层 `0/4`；九相机为 `30/52`、`1/13`和 `0/4`。五相机 field / gradient / observation p90 为 `0.475126 / 0.844848 / 0.197362`，主要失在 gradient；九相机为 `0.385466 / 0.633956 / 0.225603`，主要失在 observation。
+
+完全独立的第二实现重建了 QDEIM 锚点、杠杆补列、候选场、物理 K1、指标和所有分层，`59/59` 检查全真。候选场最大相对差为 `3.11e-11`，指标最大绝对差为 `6.15e-12`，离散选列完全一致。
+
+正式判决为 `FAIL_GEOMETRY_QDEIM1280_CORESET_CAPACITY_V190`。科学上可以说：保留代数响应秩不足以保证紧凑子集能稳定保留物理逆问题容量。固定 `1280` 列 QDEIM + 杠杆家族关闭，不提高预算、不事后调选列、不用更大模型挽救。v189 仅保留为完整基容量参考。
+
+这仍不是部署算法。坐标数减少不等于 exact-call 减少、wall/RSS 收益或 GPU 训练价值。下一门只能用已封存 v190 失败分布区分固定子集条件性损失与 observation-adaptive 坐标需求，再结果前冻结一个物理上不同的表示。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v190 asks whether reported geometry alone can compress v189's complete per-camera non-DC DCT to a fixed `1280` columns before held-out truth is read, while preserving complete physical capacity. The frozen selection contains `1009` QDEIM anchors plus `271` leverage supplements, with no ridge, search, fallback, or training. Coordinate counts fall by `55.48% / 75.27%` under five/all-nine cameras, and response rank remains `1009/1009`.
+
+Physical capacity is not preserved. After one unchanged K1 step, five-camera reaches `35/52` strict-safe cells, `2/13` complete calibrations, and `0/4` time strata; all-nine reaches `30/52`, `1/13`, and `0/4`. Five-camera field / gradient / observation p90 values are `0.475126 / 0.844848 / 0.197362`, while all-nine values are `0.385466 / 0.633956 / 0.225603`.
+
+A fully independent second implementation rebuilds the QDEIM anchors, leverage supplements, candidates, physical K1, metrics, and strata, passing `59/59` checks. Maximum candidate-field relative and metric absolute differences are `3.11e-11 / 6.15e-12`, with exact agreement in discrete selections.
+
+Decision: `FAIL_GEOMETRY_QDEIM1280_CORESET_CAPACITY_V190`. Preserving algebraic response rank is insufficient to preserve the stable physical inverse capacity of a compact subset. Close the fixed `1280`-column QDEIM-plus-leverage family without increasing the budget, tuning selection post hoc, or rescuing it with a larger model. v189 remains only the complete-basis capacity reference.
+
+This is not a deployable algorithm or evidence of exact-call, wall-time, RSS, external-generalization, curved-ray, or real-BOST gains. Coordinate reduction is not resource evidence, and GPU rental remains unauthorized.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-21：v183 相机×分量分块 Galerkin 明显改善观测，但仍未通过完整门
+
+### 讲人话：不同相机确实需要不同响应，但每块一个固定系数还不够
+
+v182 已证明，沿当前观测残差生成更新方向是有用的，但它只用一条全局方向，不能表达不同相机和两个探测器分量之间的响应差异。v183 因此冻结一个物理上不同、仍然完全结果不可见的机制：把中心化观测残差按 camera ID × detector component 拆成物理块，每个块生成一条 Jacobi 预条件仿射坐标方向，再联合求解一次最小范数可观测 Galerkin 最小二乘。
+
+五相机使用 `10` 条方向，九相机使用 `18` 条方向。系数只读取当前观测、报告几何、fit-only 仿射空间和封存的 Jacobi 对角量；SVD cutoff 固定为 `1e-12`，没有 ridge、阻尼、裁剪、回退、真值输入、搜索或可训练参数。得到 warm field 后，再运行一轮完全未修改的物理 CGLS K1。
+
+结果说明分块结构确实有科学价值。五相机 field / gradient / observation p90 为 `0.445694 / 0.612373 / 0.226659`，严格通过 `1/52`；九相机为 `0.371621 / 0.508927 / 0.207224`，严格通过 `37/52`。相对 v182，observation p90 分别从 `0.244595 / 0.266826` 改善了 `0.017936 / 0.059602`。
+
+但冻结 observation p90 门是 `0.20`，两档仍然越线；完整标定只有 `0/13 · 3/13`，完整帧只有 `0/4 · 1/4`。field 与 gradient 通过不能替代完整 matched accuracy。正式判决为 `FAIL_OBSERVATION_BLOCK_GALERKIN_V183`。
+
+完全独立第二实现使用不同 SVD 路径，重建物理分块、方向、联合系数、候选场、观测、未修改 K1、全部指标、调用账和相机换序审计，`46/46` 项检查全真。候选场、系数和逐单元指标最大差为 `5.85e-12 / 1.11e-10 / 9.46e-13`，全部离散判决一致。
+
+因此当前证据支持“相机×分量低阶异质性真实存在”，但否定“每块一个固定系数就足够”。关闭这一精确分块 Galerkin 家族，不事后调 cutoff、ridge、阻尼、分块或门槛，也不用大模型/GPU 挽救。逻辑 K1 账虽为 `3A+2A^T`，但精度门失败，不能声称调用减少或 wall/RSS 收益。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v182 shows that a direction driven by the current observation residual is useful, but one global direction cannot express response differences between cameras and detector components. v183 freezes a physically distinct, still strictly deployment-visible mechanism: split the centered residual by camera ID × detector component, form one Jacobi-preconditioned affine-coordinate direction per block, and jointly solve one minimum-norm observable Galerkin least-squares problem.
+
+Five cameras use `10` directions and all nine use `18`. Coefficients read only the current observation, reported geometry, the fit-only affine space, and a sealed Jacobi diagonal. The SVD cutoff is fixed at `1e-12`; there is no ridge, damping, clipping, fallback, target truth, search, or trainable parameter. One unchanged physical CGLS K1 step follows the warm field.
+
+The block structure is scientifically useful. Five-camera field / gradient / observation p90 values are `0.445694 / 0.612373 / 0.226659`, with `1/52` strict-safe cells. All-nine values are `0.371621 / 0.508927 / 0.207224`, with `37/52` strict-safe cells. Relative to v182, observation p90 improves from `0.244595 / 0.266826` by `0.017936 / 0.059602`.
+
+The frozen observation p90 gate is `0.20`, however, so both arms still fail. Complete calibrations are only `0/13 · 3/13`, and complete frames are `0/4 · 1/4`. Passing field and gradient cannot replace complete matched accuracy. Decision: `FAIL_OBSERVATION_BLOCK_GALERKIN_V183`.
+
+A fully independent second implementation uses a different SVD path and rebuilds physical blocks, directions, joint coefficients, candidate fields, observations, unchanged K1, all metrics, call ledgers, and camera-permutation audits. All `46/46` checks pass. Maximum candidate-field, coefficient, and per-cell metric differences are `5.85e-12`, `1.11e-10`, and `9.46e-13`, and every discrete decision agrees.
+
+The evidence therefore supports genuine low-order camera-component heterogeneity while rejecting the claim that one fixed coefficient per block is sufficient. Close this exact block-Galerkin family without post-hoc cutoff, ridge, damping, partition, gate, larger-model, or GPU rescue. Although the logical K1 ledger is `3A+2A^T`, failed accuracy prevents any call-reduction or wall/RSS claim.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v184 残差大体可积，但标量势 Jacobi 逆提升不能产生安全三维暖方向
+
+### 讲人话：二维箭头能拼成一张“高度图”，不代表这张图能反推出正确三维火焰
+
+v183 说明不同相机和探测器分量需要不同响应，但每块一个固定系数仍不够。v184 因此检验一个物理上不同的问题：每个相机的二维 BOS 残差是否主要来自某个标量势；如果是，再把这个势通过一个独立的 scalar-ray 模型、精确转置和固定 Jacobi 对角量提升回三维，是否能得到安全起点。
+
+势场这一半确实成立。最差样本仍有 `88.5687%` 的探测器残差能量可由零均值势场解释，有效差分覆盖至少 `99.8952%`；势场 stationarity、零和约束和线搜索 stationarity 最大值分别只有 `5.83e-14 / 5.56e-13 / 1.44e-16`。所以不是数值求解没有收敛。
+
+但三维逆提升失败得很明确。未修改 CGLS K1 后，五相机 field / gradient / observation p90 为 `0.661613 / 0.911014 / 0.402227`，九相机为 `0.636139 / 0.841591 / 0.446146`；三项 p90 在两臂都越过冻结门，严格通过均为 `0/52`，完整标定 `0/13`，完整帧 `0/4`。K0 同样失败。
+
+而且它比 v183 父机制更差。v183 对应的五相机 / 九相机 p90 是 `0.445694 · 0.612373 · 0.226659` 与 `0.371621 · 0.508927 · 0.207224`，严格通过为 `1/52 · 37/52`。因此不能把“残差可积”包装成更好的三维表示；真正缺失的是从二维势到 field-compatible 三维更新的物理信息。
+
+完全独立第二实现改用三点 Gauss 积分和独立 dense KKT 组装，重新构造势场、scalar-ray 算子、精确转置、Jacobi 提升、线搜索、物理 K1、全部指标和离散判决，`50/50` 项检查全真。候选场、势场和指标最大差为 `6.12e-12 / 1.48e-11 / 1.85e-12`。
+
+首次 formal 在科学评分前因不规则 mask 中一个没有相邻节点的差分分量而 fail-closed。修复只把协议本来就定义为无效的该分量排除，并保留所有有效标量射线；没有改机制、门、阈值或候选。这个过程是工程完整性，不是算法成果。
+
+正式判决为 `FAIL_PROJECTION_POTENTIAL_WARM_V184`。关闭当前“零均值探测器势场 + camera-centered scalar-ray Jacobi 逆提升 + 一次可观测线搜索 + 未修改 K1”机制；不再调差分、gauge、ridge、阻尼、线搜索、相机子集或门槛，也不用 CNN/FNO/UNO/DeepONet 或 GPU 挽救。完整 C 路线没有被关闭，但当前没有算法突破、调用减少、wall/RSS、外部泛化或真实 BOST 结果。
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+### English checkpoint
+
+v183 shows that cameras and detector components require heterogeneous responses, but one fixed coefficient per block is insufficient. v184 tests a physically distinct question: whether each camera's two-component BOS residual is predominantly the gradient of a scalar detector potential, and whether that potential can be lifted into a safe 3D warm field through an independent scalar-ray model, exact transpose, and frozen Jacobi diagonal.
+
+The potential half succeeds mechanically. At least `88.5687%` of detector residual energy is explained, defined-derivative coverage is at least `99.8952%`, and maximum potential stationarity, zero-sum violation, and line-search stationarity are `5.83e-14`, `5.56e-13`, and `1.44e-16`. The failure is not caused by a nonconverged potential solve.
+
+The 3D inverse lift fails clearly. After unchanged CGLS K1, five-camera field / gradient / observation p90 values are `0.661613 / 0.911014 / 0.402227`; all-nine values are `0.636139 / 0.841591 / 0.446146`. All three p90 gates fail in both arms, with `0/52` strict-safe cells, `0/13` complete calibrations, and `0/4` complete frames. K0 also fails.
+
+It is also worse than the v183 parent. The corresponding v183 p90 values are `0.445694 · 0.612373 · 0.226659` and `0.371621 · 0.508927 · 0.207224`, with `1/52 · 37/52` strict-safe cells. Residual integrability therefore cannot be presented as a better 3D representation; the missing information lies in the map from detector potential to a field-compatible volumetric update.
+
+A fully independent second implementation uses three-point Gauss integration and an independently assembled dense KKT system to rebuild potentials, the scalar-ray operator, exact transpose, Jacobi lift, line search, physical K1 replay, every metric, and every discrete decision. All `50/50` checks pass. Maximum candidate-field, potential, and metric differences are `6.12e-12`, `1.48e-11`, and `1.85e-12`.
+
+The first formal attempt failed closed before scientific scoring on a derivative component with no adjacent node under an irregular mask. The repair only omitted the component already defined as invalid by the protocol while retaining every valid scalar ray. No mechanism, gate, threshold, or candidate changed. This is engineering assurance, not an algorithmic result.
+
+Decision: `FAIL_PROJECTION_POTENTIAL_WARM_V184`. Close the exact zero-mean detector-potential plus camera-centered scalar-ray Jacobi inverse lift plus one observable line search plus unchanged K1 mechanism. Do not tune finite differences, gauge, ridge, damping, line search, camera subsets, or gates, and do not rescue it with CNN/FNO/UNO/DeepONet or a GPU. The full C route remains open, but v184 establishes no algorithmic breakthrough, call reduction, wall/RSS benefit, external generalization, or real-BOST result.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v185 同一势域坐标保住完整仿射信息，两档 K1 完整通过
+
+### 讲人话：同一张二维地图不该只抄成一根箭头
+
+v184 的问题不是“二维势场没有信息”，而是把整张二维势场压成一条 scalar-ray Jacobi 三维方向时丢掉了信息。v185 因此不再猜一根箭头：它把当前观测和全部 `1009` 个仿射响应列都翻译到完全相同的零均值 detector-potential 坐标里，再用固定门精确恢复完整仿射坐标。
+
+这一次，势域映射在所有单元都保留 `1009/1009` 可观测秩。九相机 K0 已经是 `52/52`；五相机 K0 为 `50/52`，只在两套标定的 observation p90 上轻微越过 `0.20`，分别为 `0.203064` 和 `0.206737`。
+
+再运行一轮完全未修改的物理 CGLS K1 后，五相机与九相机都达到 `52/52` 严格通过、`13/13` 完整标定和 `4/4` 完整时间层。五相机 field / gradient / observation p90 为 `0.338439 / 0.549518 / 0.118081`；九相机为 `0.240014 / 0.409766 / 0.116577`。
+
+便宜的一方向 potential-coordinate CGLS1 control 在五相机与九相机的 K0/K1 四臂仍全部是 `0/52`。因此，结果不是“把残差积分成势场，再随便走一步就行”，而是依赖观测和完整仿射响应在同一个势域坐标中的联合可观测结构。
+
+完全独立第二实现重新构造全部势域响应列、固定门伪逆、三维候选、未修改 K1、指标、调用账和相机换序审计，`32/32` 检查全真。候选场 / 仿射坐标 / 势场 / 指标最大差为 `8.40e-12 / 1.84e-11 / 1.48e-11 / 4.48e-12`；相机换序场相对差为 `1.39e-14`，held-out truth mutation 对预测的影响为 `0`。
+
+两次独立验证启动缺陷原样保留：一次在读取科学数组前混淆物理时间与归一化标签，另一次在最终报告比较时把二元返回值当成标量。两次都 fail-closed，失败数组没有复用；正式 runner 未改变，三次完整 formal 的 `22` 个科学数组和两个 barrier 逐字节一致。这是工程完整性，不是算法成果。
+
+正式判决为 `PASS_POTENTIAL_AFFINE_K1_CAPACITY_V185`。它改变了 v184 的失败归因：有损的是 scalar-ray Jacobi lift，不是 detector-potential 坐标本身。
+
+但 v185 仍不是部署算法。稠密逆每套 sensor setup 需要处理 `1013` 个势变换右端，并继承 `26260` 个 forward-equivalent 的几何缓存构造；逻辑在线 K1 账虽为 `2A+1A^T`，也不能据此声称 exact-call 减少，更没有 wall/RSS、外部泛化、curved ray 或真实 BOST 证据。
+
+下一门只允许结果前冻结一个紧凑、共享参数、observation/geometry-only 的势域逆近似，与一方向和均值 control 公平比较，并重放未修改物理 K1。当前不租 GPU。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v185 tests whether detector-potential coordinates themselves lose the 3D affine information, rather than compressing the potential into the single lossy scalar-ray Jacobi direction used by v184. The centered observation and all `1009` affine-response columns undergo exactly the same zero-mean detector-potential transform, followed by a fixed-threshold exact potential-domain inverse.
+
+The map retains rank `1009/1009` in every cell. All-nine K0 reaches `52/52`; five-camera K0 reaches `50/52`, with only two calibration observation-p90 values narrowly above `0.20` at `0.203064` and `0.206737`.
+
+After one unchanged physical CGLS K1 step, both five-camera and all-nine arms reach `52/52` strict-safe cells, `13/13` complete calibrations, and `4/4` complete time strata. Five-camera field / gradient / observation p90 values are `0.338439 / 0.549518 / 0.118081`; all-nine values are `0.240014 / 0.409766 / 0.116577`.
+
+The cheap one-direction potential-coordinate CGLS1 control remains `0/52` at K0 and K1 under both camera arms. A fully independent second implementation passes `32/32` checks. Maximum field / coordinate / potential / metric differences are `8.40e-12 / 1.84e-11 / 1.48e-11 / 4.48e-12`; camera-reordering field error is `1.39e-14`, and held-out truth mutation changes predictions by `0`.
+
+Decision: `PASS_POTENTIAL_AFFINE_K1_CAPACITY_V185`. This attributes v184's failure to its lossy scalar-ray Jacobi lift rather than to detector-potential compression itself.
+
+The result is still not deployable. The dense inverse processes `1013` potential-transform right-hand sides per sensor setup and inherits a `26260` forward-equivalent geometry cache. A logical online ledger of `2A+1A^T` does not establish exact-call reduction, wall/RSS benefit, external generalization, curved-ray validity, or real BOST.
+
+Only a separately preregistered compact shared-parameter observation/geometry-only approximation is authorized next. GPU rental remains unauthorized.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v186.1 紧凑共享线性近似未通过完整轨迹门
+
+### 讲人话：知道答案藏在哪里，不等于一把固定尺子就能量出来
+
+v185 已经证明，稠密 detector-potential 逆里确实保留了足够的信息。v186.1 接着问一个更接近部署的问题：能不能不用那套稠密逆，只拿当前观测和报告几何，通过一套共享线性规则直接给出足够好的三维起点？
+
+冻结表示先把每个相机的势场压成固定 `12x12` DCT 方块中的 `143` 个非 DC 系数，再结合报告射线方向与 Plucker 线矩，跨相机求和为 `1144` 维、换序不变的特征。共享线性权重只用十条已打开 fit 轨迹的 `1010` 个三维场闭式拟合，不看 held-out 真值，不做候选搜索、ridge、回退或事后调参。
+
+直接 K0 在五相机和九相机下都是 `0/52`。运行一轮未修改物理 CGLS K1 后，五相机提高到 `39/52`，九相机提高到 `25/52`；完整标定为 `7/13` 与 `1/13`，四个时间层则仍是 `0/4` 与 `0/4`。
+
+失败并不来自 field 或 gradient。五相机 K1 的 field / gradient / observation p90 为 `0.305891 / 0.484862 / 0.215971`，九相机为 `0.284107 / 0.449993 / 0.235876`。前两项已经过门，observation 仍高于 `0.20`。逐时间层看得更清楚：五相机 observation p90 为 `0.232724 / 0.200616 / 0.216058 / 0.199495`，九相机为 `0.235876 / 0.213836 / 0.253397 / 0.210684`。所以不能拿合并平均数掩盖完整轨迹失败。
+
+几何盲 DCT12、一方向 potential-coordinate CGLS1 和 fit mean 三组便宜 control 在 K1 下两臂仍都是 `0/52`。它们说明 primary 确实学到了一些有用结构，但没有提供一个通过门的简单替代。
+
+完全独立第二实现重建 fit-only 仿射基、势场、DCT/Plucker 特征、共享线性求解、held-out 预测、物理 K1、指标、调用账和相机换序审计，`44/44` 检查全真。候选场 / 坐标 / 指标最大差为 `5.65e-10 / 9.04e-10 / 5.89e-11`；相机换序与 held-out truth mutation 对预测的影响都为 `0`。
+
+正式判决为 `FAIL_POTENTIAL_SET_LINEAR_V186_1_1`。这不推翻 v185 的稠密容量正结果，也不关闭整条 C 路线；它只关闭当前固定 DCT12 + Plucker pooling + 共享线性映射。后续不扩大这个表示，不用 CNN/FNO/UNO 或 GPU 挽救。逻辑 K1 账虽然是 `2A+1A^T`，但 accuracy 门失败，所以不能声称 exact-call 减少，也没有 wall/RSS、外部泛化或真实 BOST 结果。
+
+下一步只有两种合理选择：结果前冻结一个物理上真正不同、直接针对逐时间层 observation 尾部的观测自适应机制；或者等待成对真实二维 BOST 位移数据。当前不租 GPU。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v185 establishes that the dense detector-potential inverse contains sufficient observable information. v186.1 asks whether a compact shared-linear rule can reproduce that action from only the current observation and reported geometry.
+
+The frozen representation retains `143` non-DC coefficients from a fixed `12x12` DCT square per camera, combines them with reported-ray direction and Plucker line-moment descriptors, and sums across cameras into a `1144`-dimensional permutation-invariant feature. Shared weights are fit in closed form from `1010` fields on ten opened fit trajectories, with no heldout-truth tuning, candidate search, ridge, or fallback.
+
+Both direct K0 arms are `0/52`. After one unchanged physical CGLS K1 step, five-camera and all-nine arms reach `39/52` and `25/52`, with `7/13` and `1/13` complete calibrations and `0/4` complete time strata in both arms. Field and gradient tails pass, but observation p90 remains above the frozen `0.20` gate. Five-camera observation p90 by time is `0.232724 / 0.200616 / 0.216058 / 0.199495`; all-nine is `0.235876 / 0.213836 / 0.253397 / 0.210684`.
+
+The geometry-blind DCT12, one-direction potential-coordinate CGLS1, and fit-mean controls remain `0/52` in both K1 arms. A fully independent second implementation passes `44/44` checks. Maximum candidate-field, coordinate, and metric differences are `5.65e-10 / 9.04e-10 / 5.89e-11`; camera reordering and heldout-truth mutation each change predictions by `0`.
+
+Decision: `FAIL_POTENTIAL_SET_LINEAR_V186_1_1`. The dense v185 capacity result remains valid, but the current fixed DCT12 + Plucker pooling + shared-linear map is closed. It will not be enlarged or rescued with CNN/FNO/UNO or GPU rental. Because the accuracy gate fails, the logical `2A+1A^T` K1 ledger establishes no exact-call reduction, wall/RSS benefit, external generalization, or real-BOST result.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v187.1 去掉共享回归仍失败，问题定位到当前汇聚特征
+
+### 讲人话：换一把更精确的尺子仍量不准，说明图纸在压缩时已经丢了东西
+
+v186.1 失败后，还有一个必须排除的解释：也许 DCT12 + Plucker 特征其实足够，只是让所有几何共用一套回归权重太勉强。v187.1 因此完全去掉共享回归，让每个相机集合和报告标定都用自己的固定门 Moore-Penrose 伪逆。数据、特征、误差门、K0/K1 和调用账都不变，也没有 ridge、阻尼、回退或候选搜索。
+
+结果比 v186.1 更能排除歧义。K0 下五/九相机都是 `0/52`。一轮未修改物理 K1 后，五相机只有 `2/52`，九相机仍是 `0/52`，两臂完整标定都是 `0/13`，完整时间层都是 `0/4`。
+
+五相机 K1 的 field / gradient / observation p90 为 `0.365208 / 0.620812 / 0.241597`：场和梯度仍过门，但 observation 高于 `0.20`。九相机则是 `2.378947 / 4.577949 / 1.792774`，三项都大幅失败。伪逆保留秩只有 `715-1001`，条件数最高约 `6.65e7`，说明当前汇聚特征空间确实存在严重信息损失或病态性。
+
+完全独立第二实现改用不同 SVD driver，重建特征响应、伪逆、三维候选、物理 K1、指标与分层尾部，`40/40` 检查全真。候选场相对差和指标绝对差最大为 `2.83e-9 / 4.43e-9`，所有离散判决一致；相机换序与 truth mutation 影响都为 `0`。
+
+正式判决是 `FAIL_GEOMETRY_LOCAL_FEATURE_CAPACITY_V187_1`。这不再只是“共享线性模型太弱”，而是当前 DCT12 + 报告射线 Plucker 池化特征本身无法保住 v185 稠密逆所需的信息。共享线性和 setup-local 两种逆都关闭，不事后调 SVD 门、加 ridge、堆大网络或租 GPU。
+
+v185 的 camera-resolved 稠密容量仍然有效，整条 C 路线也没关闭。下一个可证伪问题是单独冻结 camera-resolved 与 pooled DCT12 容量对照，区分损失来自跨相机池化还是 DCT12 截断。当前仍没有调用减少、wall/RSS、外部泛化或真实 BOST 结果。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v187.1 tests whether v186.1 failed only because one linear map was shared across geometries. It removes that shared fit and applies one fixed-threshold Moore-Penrose inverse to each setup's frozen `1009x1144` DCT12 plus reported-ray Plucker response-feature matrix, while leaving data, gates, K0/K1 replay, and call accounting unchanged. No ridge, damping, fallback, search, or truth-based tuning is used.
+
+K0 is `0/52` under both five and nine cameras. After one unchanged physical K1 step, five-camera and all-nine arms reach only `2/52` and `0/52`, with `0/13` complete calibrations and `0/4` complete times in both arms. Five-camera field / gradient / observation p90 values are `0.365208 / 0.620812 / 0.241597`; all-nine values are `2.378947 / 4.577949 / 1.792774`. Ranks range from `715` to `1001`, and the maximum condition number is about `6.65e7`.
+
+A fully independent second implementation uses a different SVD driver and passes `40/40` checks. Maximum candidate-field relative and metric absolute differences are `2.83e-9 / 4.43e-9`; all discrete decisions agree, while camera reordering and truth mutation each have zero effect.
+
+Decision: `FAIL_GEOMETRY_LOCAL_FEATURE_CAPACITY_V187_1`. Shared cross-geometry regression is not the sole problem. The current pooled DCT12 plus reported-ray Plucker feature map itself loses or ill-conditions information needed to reproduce the dense v185 capacity. Close both shared and setup-local inverses on this representation without SVD-threshold retuning, post-result ridge, larger-network rescue, or GPU rental.
+
+The dense camera-resolved v185 capacity and the overall C route remain open. A separately frozen camera-resolved-versus-pooled DCT12 diagnostic may next distinguish pooling loss from spectral truncation. No exact-call, wall/RSS, external-generalization, or real-BOST result is established.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v188 拆开相机后九相机好很多，但 DCT12 仍不够
+
+### 讲人话：池化确实丢了不少东西，却不是唯一问题
+
+v187.1 已经说明，失败不只是因为所有几何共用一套线性权重。但它仍把不同相机的 DCT12 和几何描述汇聚到同一个特征向量里，所以还不能区分：究竟是跨相机池化丢了信息，还是每台相机只保留 DCT12 本身就太粗。
+
+v188 只改这一点。每台 active camera 的零均值 detector potential 独立做正交二维 DCT，保留 `12x12` 方块并去掉 DC；每台相机得到 `143` 个系数，再按固定 camera ID 顺序拼接。五相机是 `715` 维，九相机是 `1287` 维。数据、13 套标定、4 个时间层、固定门伪逆、K0/K1、误差门和调用账全部不变；没有 ridge、阻尼、回退、搜索、真值调参或可训练参数。
+
+五相机几乎完全没变。一轮未修改物理 K1 后，field / gradient / observation p90 是 `0.365208 / 0.620812 / 0.241597`，严格通过仍为 `2/52`，完整标定 `0/13`，完整时间层 `0/4`。field 和 gradient 过门，但 observation 仍高于 `0.20`。
+
+九相机则明显变好。p90 从 v187.1 的 `2.378947 / 4.577949 / 1.792774` 降到 `0.797161 / 1.353802 / 0.594341`，分别下降约 `66.5% / 70.4% / 66.8%`；条件数上限也从约 `6.65e7` 降到 `4.33e4`。这证明跨相机池化确实造成了重要病态性。但改善后的三项仍全部越门，严格通过仍为 `0/52`，完整标定 `0/13`，完整时间层 `0/4`。
+
+独立第二实现用不同 SVD driver 重建逐相机 DCT、矩形伪逆、三维候选、未修改 K1、指标、分层尾部和调用账，`44/44` 检查全真。候选场最大相对差为 `5.53e-11`，指标最大绝对差为 `1.37e-11`；相机换序对响应和特征的影响均为 `0`。
+
+第一次独立验证在读取正式科学数组和独立评分前，因为元数据字段适配错误而停止。旧的一次性执行回执和失败证据保留；随后只修复字段适配，没有改 DCT、伪逆、K0/K1、误差门或判决。这个修复是工程完整性，不是算法成果。
+
+正式判决为 `FAIL_CAMERA_RESOLVED_DCT12_CAPACITY_V188`。科学上可以说：跨相机池化是九相机失败的重要来源，但不是唯一瓶颈；pooled 与 camera-resolved DCT12 两种形式都关闭。不能说所有紧凑表示都不可能，也不能推翻 v185 稠密 camera-resolved 势域容量。
+
+下一门只能另行结果前冻结稠密逐相机 detector-potential 参考，判断剩余损失究竟来自 DCT12 截断，还是更深的仿射逆限制。当前不调奇异值门、不加 ridge、不堆 CNN/FNO/UNO、不租 GPU，也不运行资源门或封存 test。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v188 isolates the remaining ambiguity in v187.1: whether cross-camera pooling causes the capacity loss, or whether retaining only DCT12 content per camera is already insufficient. Each active camera now undergoes its own orthonormal 2D DCT, retaining the leading `12x12` square without DC. The resulting `143` coefficients per camera are concatenated in canonical camera-ID order, yielding `715` and `1287` features for five and all-nine cameras. Data, 13 calibrations, four times, fixed-threshold inverses, K0/K1 replay, gates, and call accounting remain unchanged, with no ridge, damping, fallback, search, truth-based tuning, or trainable parameter.
+
+Five-camera is numerically unchanged. After one unchanged physical K1 step, field / gradient / observation p90 values are `0.365208 / 0.620812 / 0.241597`, with `2/52` strict-safe cells, `0/13` complete calibrations, and `0/4` complete time strata.
+
+All-nine improves sharply. Its p90 values fall from v187.1's `2.378947 / 4.577949 / 1.792774` to `0.797161 / 1.353802 / 0.594341`, reductions of about `66.5% / 70.4% / 66.8%`; the condition-number ceiling falls from about `6.65e7` to `4.33e4`. Yet all three p90 gates still fail, leaving `0/52` strict-safe cells, `0/13` complete calibrations, and `0/4` complete time strata.
+
+A fully independent second implementation passes `44/44` checks. Maximum candidate-field relative and metric absolute differences are `5.53e-11 / 1.37e-11`, and camera reordering changes neither responses nor features. The first independent attempt stopped before reading formal scientific arrays or constructing independent scores because of a metadata-field adapter error. The preserved repair changes only that adapter and is engineering assurance, not a scientific gain.
+
+Decision: `FAIL_CAMERA_RESOLVED_DCT12_CAPACITY_V188`. Cross-camera pooling is a major all-nine penalty but not the sole bottleneck. Close both pooled and camera-resolved DCT12 without post-result threshold tuning, ridge, larger-network rescue, or GPU rental. Dense v185 camera-resolved potential-domain capacity remains valid, and the full C route remains open.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v189 补回完整频谱后两档相机都过门，根因锁定为 DCT12 截断
+
+### 讲人话：不是这把尺子量不了，而是先前把尺子上的高频刻度裁掉了
+
+v188 已经拆掉跨相机池化，但每台相机仍只保留 `143` 个 DCT12 非 DC 低频系数。五相机 K1 只有 `2/52`，九相机为 `0/52`。v189 保持同一已开封 PoolFire p22 四帧、13 套标定、五/九相机、1009 维仿射空间、固定门伪逆、K0/K1、误差门与调用账不变，只把每台相机的表示恢复为完整 `24x24` 正交 DCT，去掉 DC 后保留 `575` 个系数。
+
+结果清楚地改变了科学判断。一轮未修改物理 K1 后，五相机从 `2/52` 恢复到 `52/52`，九相机从 `0/52` 恢复到 `52/52`；两臂都是完整标定 `13/13`、完整时间层 `4/4`。五相机 field / gradient / observation p90 为 `0.338439 / 0.549518 / 0.118081`，九相机为 `0.240014 / 0.409766 / 0.116577`。
+
+完整 DCT 还逐单元复现了 v185 稠密 camera-resolved 势域结果：候选场、坐标、奇异值和指标的最大差分别约为 `1.62e-14 / 2.24e-14 / 4.44e-15 / 3.22e-15`。这说明 v189 不是偶然擦线，而是把同一稠密信息换到完整正交频谱坐标中。
+
+完全独立第二实现重新构造完整 DCT、响应矩阵、固定门伪逆、候选场、未修改 K1、分层和调用账，`50/50` 检查全真。正式与独立候选场最大相对差为 `7.47e-12`，指标最大绝对差为 `1.30e-12`；相机换序和固定观测下的真值修改对输出影响均为 `0`。两条实现仍共享冻结物理 kernel，因此不能写成端到端物理独立。
+
+正式判决为 `PASS_DCT12_TRUNCATION_ROOT_CAUSE_V189`。在这条冻结的已开封容量诊断里，v188 的失败现在可归因于 DCT12 频谱截断，而不是更深的 setup-local 仿射逆容量不足。
+
+但这仍不是部署算法。完整表示需要每台相机 `575` 个系数和 setup-local 稠密响应矩阵，没有 observation/geometry-only 紧凑预测器、exact-call 减少、fresh wall/RSS、外部泛化、曲线光路或真实 BOST 结果。下一步只能另行冻结一个保留关键高频、相机换序等变、可变相机数且只读部署可见输入的紧凑表示，先过容量门，再决定是否值得训练。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v189 resolves the ambiguity left by v188. Data, four opened PoolFire p22 frames, 13 calibrations, five/all-nine camera arms, the 1009-dimensional affine space, fixed-threshold inverses, K0/K1 replay, gates, and call accounting remain unchanged. The only change is to retain the complete non-DC `24x24` orthonormal DCT of every camera's detector potential: `575` coefficients per camera instead of `143` DCT12 coefficients.
+
+After one unchanged physical K1 step, five-camera rises from `2/52` to `52/52` and all-nine rises from `0/52` to `52/52`. Both arms pass all `13/13` calibrations and all `4/4` time strata. Five-camera field / gradient / observation p90 values are `0.338439 / 0.549518 / 0.118081`; all-nine values are `0.240014 / 0.409766 / 0.116577`.
+
+The full DCT reproduces dense v185 cellwise: maximum candidate-field, coordinate, singular-value, and metric differences are approximately `1.62e-14 / 2.24e-14 / 4.44e-15 / 3.22e-15`. A fully independent second implementation passes `50/50` checks. Maximum formal-versus-independent candidate-field relative and metric absolute differences are `7.47e-12 / 1.30e-12`; camera reordering and fixed-observation truth mutation each change outputs by `0`. Shared frozen physics kernels remain disclosed, so end-to-end physics independence is not claimed.
+
+Decision: `PASS_DCT12_TRUNCATION_ROOT_CAUSE_V189`. Under this frozen opened-data capacity diagnostic, v188 failed because DCT12 omitted essential detector frequencies, not because the setup-local affine inverse lacked capacity.
+
+This remains a full-basis capacity reference, not a deployable algorithm. It uses `575` coefficients per camera and dense setup-local response matrices, with no compact observation/geometry-only predictor, exact-call reduction, fresh wall/RSS result, external generalization, curved-ray validation, or real-BOST evidence. The next eligible test is a separately preregistered compact high-frequency-preserving, camera-permutation-equivariant, variable-cardinality representation using deployment-visible inputs only.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+> 同日后续结论见上方 v190 与 v191.1 checkpoints：v190 独立关闭固定 `1280` 列 geometry-QDEIM + 杠杆子集家族；v191.1 进一步把失败归因于帧级观测激活的正规度量失真，但仍未提出 observation-adaptive 表示。
+
+> Later same-day conclusions are recorded in the v190 and v191.1 checkpoints above: v190 independently closes the fixed `1280`-column geometry-QDEIM-plus-leverage family, while v191.1 attributes its failure to frame-level observation-activated normal-metric distortion without yet constructing an observation-adaptive representation.

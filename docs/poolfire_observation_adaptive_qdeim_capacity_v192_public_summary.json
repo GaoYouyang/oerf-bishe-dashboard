@@ -1,0 +1,108 @@
+{
+  "schema_version": "oerf-public-poolfire-observation-adaptive-qdeim-capacity-v192.1.0",
+  "updated": "2026-08-22",
+  "role": "post-open observation-adaptive capacity diagnostic on the sealed four-frame development roster",
+  "formal_status": "PASS_FORMAL_POOLFIRE_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192_1",
+  "scientific_decision": "FAIL_NORMAL_CONTRIBUTION_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192",
+  "scientific_question": "Can one result-blind, deployment-visible normal-contribution score adapt the frozen 1280-coordinate QDEIM subset to the current observation while preserving strict physical capacity under five and all-nine cameras?",
+  "frozen_scope": {
+    "sensor_arms": ["five_camera", "all_nine"],
+    "calibrations_per_arm": 13,
+    "opened_frames_per_calibration": 4,
+    "cells_per_sensor_arm": 52,
+    "fixed_qdeim_anchors": 1009,
+    "adaptive_supplements": 271,
+    "total_coordinate_budget": 1280,
+    "refinement": "one unchanged exact CGLS step",
+    "new_training": false,
+    "target_truth_used_for_selection": false,
+    "budget_or_score_search": false
+  },
+  "strict_safe_cells": {
+    "fixed_geometry_qdeim_v190": {
+      "five_camera": 35,
+      "all_nine": 30
+    },
+    "observation_magnitude_control": {
+      "five_camera": 32,
+      "all_nine": 26
+    },
+    "normal_contribution_primary": {
+      "five_camera": 40,
+      "all_nine": 40
+    },
+    "required": {
+      "five_camera": 52,
+      "all_nine": 52
+    }
+  },
+  "primary_frame_safe_cells_out_of_13": {
+    "five_camera": [6, 12, 10, 12],
+    "all_nine": [12, 12, 7, 9]
+  },
+  "primary_failure_modes": {
+    "five_camera": {
+      "failed_cells": 12,
+      "field_failures": 0,
+      "gradient_failures": 10,
+      "observation_failures": 5,
+      "metric_counts_can_overlap": true
+    },
+    "all_nine": {
+      "failed_cells": 12,
+      "field_failures": 0,
+      "gradient_failures": 0,
+      "observation_failures": 12,
+      "metric_counts_can_overlap": false
+    }
+  },
+  "primary_global_tails": {
+    "five_camera": {
+      "field_p90_higher": 0.4508335153331213,
+      "field_worst": 0.4894639256810748,
+      "gradient_p90_higher": 0.7722015753922769,
+      "gradient_worst": 0.8575508380870039,
+      "observation_p90_higher": 0.1871050112984412,
+      "observation_worst": 0.21640268835170465
+    },
+    "all_nine": {
+      "field_p90_higher": 0.3686513045447784,
+      "field_worst": 0.39864115970834685,
+      "gradient_p90_higher": 0.6537209524103927,
+      "gradient_worst": 0.6978777451624965,
+      "observation_p90_higher": 0.21757901847238165,
+      "observation_worst": 0.23244467672043373
+    }
+  },
+  "independent_recomputation": {
+    "checks_passed": 17,
+    "checks_total": 17,
+    "maximum_regular_array_relative_difference": 1.741387795864744e-10,
+    "maximum_near_zero_array_absolute_difference": 1.957403858502785e-14,
+    "camera_permutation_feature_error": 0.0,
+    "camera_permutation_response_error": 0.0,
+    "camera_permutation_selection_exact": true,
+    "measured_refinement_calls_exact": true,
+    "independent_result_built_before_formal_array_comparison": true,
+    "end_to_end_physics_independence_proven": false,
+    "shared_frozen_physics_kernels_disclosed": true
+  },
+  "interpretation": "The deployment-visible normal-contribution score partially recovers the observation-activated information lost by the fixed geometry-only subset and clearly outperforms the cheap magnitude control at the same coordinate budget. It is nevertheless insufficient: both sensor arms retain 12 failed cells and no complete frame stratum passes.",
+  "route_action": "Close this exact 1009-anchor plus 271-adaptive normal-contribution QDEIM mechanism. Do not raise the coordinate budget, tune or add scores, train a predictor, enlarge a neural model, rent a GPU, or open resource and untouched-test gates as rescue. Continue only with a physically distinct result-blind mechanism or genuinely new paired real two-component BOS displacement data.",
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "complete_trajectory_accuracy": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "untouched_test_evidence": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}
