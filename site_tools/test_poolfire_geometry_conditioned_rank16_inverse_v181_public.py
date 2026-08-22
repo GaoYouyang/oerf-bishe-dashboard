@@ -58,7 +58,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v181_and_points_to_v182() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_SIGNED_COUNTSKETCH_CAPACITY_V193"
+    assert payload["scientific_status"] == "FAIL_SIGNED_SKETCH_FULL_NORMAL_REFINEMENT_V194"
     assert payload["metrics"]["v181_five_primary_k1_strict_safe_count"] == 0
     assert payload["metrics"]["v181_all_nine_primary_k1_strict_safe_count"] == 0
     assert payload["metrics"]["v181_rank16_inverse_residual_p90"] > 1.0
@@ -86,7 +86,7 @@ def test_primary_pages_reference_v181_in_both_languages() -> None:
 def test_route_metadata_and_cachebuster_advance_to_v181() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260822-v193-1" in operator
+    assert "curriculum.js?v=20260822-v194-1" in operator
     assert 'version: "2026.08.22-c-v185-potential-affine-capacity"' in curriculum
     assert 'updated: "2026-08-22"' in curriculum
 

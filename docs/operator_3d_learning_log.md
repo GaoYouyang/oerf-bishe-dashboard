@@ -16267,3 +16267,37 @@ This remains a full-basis capacity reference, not a deployable algorithm. It use
 > 同日后续结论见上方 v190 与 v191.1 checkpoints：v190 独立关闭固定 `1280` 列 geometry-QDEIM + 杠杆子集家族；v191.1 进一步把失败归因于帧级观测激活的正规度量失真，但仍未提出 observation-adaptive 表示。
 
 > Later same-day conclusions are recorded in the v190 and v191.1 checkpoints above: v190 independently closes the fixed `1280`-column geometry-QDEIM-plus-leverage family, while v191.1 attributes its failure to frame-level observation-activated normal-metric distortion without yet constructing an observation-adaptive representation.
+
+## 2026-08-22：v194 全正规耦合发生过冲，对角缩放只保留为后续机制线索
+
+### 讲人话：方向本身接近正确，但一次把所有坐标强耦合起来反而迈过头了
+
+v193 已经证明，部署可见的 signed CountSketch seed 在同一 `104` 个已开封哨兵上非常接近冻结门。v194 因而只问一个更窄的问题：用 seed 的完整小型正规矩阵做一次无训练 refinement，能否把剩余误差稳定压进门内。结果前冻结的唯一 primary 是完整 Hessian 更新；逐坐标对角更新只是同时预注册的便宜诊断 control。数据、五/九相机分层、物理 K1、阈值与判决顺序均保持不变，不允许结果后缩步长、加阻尼或交换主次。
+
+正式结果很明确：完整 Hessian primary 在五相机、九相机和合并集合分别为 `0/52`、`0/52`、`0/104`。它的 correction norm p50 / p90 / worst 达到 `62.3505 / 92.8819 / 117.8027`，完整正规残差比达到 `17.0406 / 24.1404 / 30.5062`。五相机 field / gradient / observation p90 为 `3.708482 / 6.213349 / 1.664556`，九相机为 `6.161608 / 11.004109 / 3.734964`。这不是擦线失败，而是完整耦合在固定单位步长下发生了系统性过冲。
+
+预注册对角 control 则为五相机 `52/52`、九相机 `52/52`、合计 `104/104`。五相机 field / gradient / observation p90 为 `0.425415 / 0.709087 / 0.163922`，九相机为 `0.327851 / 0.573580 / 0.175634`；correction norm p50 / p90 / worst 只有 `0.7953 / 1.0368 / 1.1893`。这提供了一个有价值但严格受限的机制线索：当前构造中的非对角耦合有害，坐标级缩放更稳定。
+
+然而，冻结判决顺序要求 primary 先通过，才允许继续选择 control。因为 primary 为 `0/104`，所以 v194 的正式判决仍是 `FAIL_SIGNED_SKETCH_FULL_NORMAL_REFINEMENT_V194`。不能在看到结果后把对角 control 的 `104/104` 改称 v194 成功，也不能据此打开完整轨迹、训练模型、资源门或外部门。若以后要检验对角机制，必须另行结果前冻结独立合同。
+
+完全独立第二实现重新构造 seed 坐标、完整与对角正规更新、候选场、未修改 K1、分层指标和判决，`17/17` 检查全真。正式与独立数值最大相对差为 `1.06e-10`，近零量最大绝对差为 `6.51e-11`；相机换序误差为 `0`。因此负判决和诊断线索均不是实现偶然。
+
+这不是算法突破，也没有证明 exact-call 减少、wall/RSS、外部泛化、曲线光路或真实 BOST。当前只关闭完整 Hessian 单步 refinement；对角 control 只保留为下一条结果前可证伪机制的线索。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v194 asks whether one training-free normal-equation refinement can turn the deployment-visible signed CountSketch seed from v193 into a strict pass on the same `104` opened sentinels. The uniquely frozen primary uses the full reduced Hessian. A coordinate-wise diagonal update is preregistered only as a cheap diagnostic control. Data, five/all-nine camera strata, unchanged physical K1 replay, thresholds, and decision order remain fixed; no post-result step scaling, damping, or role swapping is allowed.
+
+The full-Hessian primary passes `0/52` five-camera cells, `0/52` all-nine cells, and `0/104` overall. Its correction-norm p50 / p90 / worst values are `62.3505 / 92.8819 / 117.8027`, while the full normal-residual ratio reaches `17.0406 / 24.1404 / 30.5062`. Five-camera field / gradient / observation p90 values are `3.708482 / 6.213349 / 1.664556`; all-nine values are `6.161608 / 11.004109 / 3.734964`. The primary therefore overshoots decisively rather than narrowly missing a gate.
+
+The preregistered diagonal control reaches `52/52`, `52/52`, and `104/104`. Its five-camera p90 values are `0.425415 / 0.709087 / 0.163922`, and all-nine values are `0.327851 / 0.573580 / 0.175634`; correction-norm p50 / p90 / worst values remain `0.7953 / 1.0368 / 1.1893`. This is useful mechanism evidence that off-diagonal coupling is harmful in the frozen unit-step construction and coordinate-wise scaling is safer.
+
+The frozen adjudication nevertheless requires the primary to pass before any control can be selected. The formal decision is therefore `FAIL_SIGNED_SKETCH_FULL_NORMAL_REFINEMENT_V194`. The diagonal `104/104` cannot be promoted post hoc into v194 success or used to authorize complete trajectories, training, resource tests, or external gates. Any future diagonal mechanism requires a separately preregistered test.
+
+A fully independent second implementation rebuilds seed coordinates, full and diagonal normal updates, candidate fields, unchanged K1 replay, strata metrics, and adjudication. All `17/17` checks pass; the maximum numeric relative difference is `1.06e-10`, the maximum near-zero absolute difference is `6.51e-11`, and camera permutation error is `0`.
+
+This closes the full-Hessian one-step refinement only. It establishes no deployable algorithm, exact-call reduction, wall/RSS benefit, external generalization, curved-ray validation, or real-BOST result.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.

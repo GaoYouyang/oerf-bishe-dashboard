@@ -65,14 +65,14 @@ def test_current_evidence_preserves_v171_but_points_to_v181() -> None:
     )
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_COUNTSKETCH_CAPACITY_V193_1"
+        == "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_SKETCH_NORMAL_REFINEMENT_V194_1"
     )
     assert (
         payload["formal_status"]
-            == "PASS_FORMAL_POOLFIRE_SIGNED_COUNTSKETCH_CAPACITY_V193"
+            == "PASS_FORMAL_POOLFIRE_SIGNED_SKETCH_NORMAL_REFINEMENT_V194"
     )
     assert payload["scientific_status"] == (
-        "FAIL_SIGNED_COUNTSKETCH_CAPACITY_V193"
+        "FAIL_SIGNED_SKETCH_FULL_NORMAL_REFINEMENT_V194"
     )
     assert payload["current_decision"]["v171_result_blind_selector_passed"] is True
     assert payload["current_decision"]["v171_external_generalization"] is False
