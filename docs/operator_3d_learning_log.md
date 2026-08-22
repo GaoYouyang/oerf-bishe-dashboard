@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-23：观测残差继续下降，三维梯度却没有被救回来
+
+**为什么做。** v200 的 Huber-TV 已经把五相机 reference 从 K2 的 `1213/1313、0/13` 提高到 `1289/1313、5/13`，但剩下 24 个失败单元全部涉及 gradient。v201 不再调整 Huber，而是结果前固定二阶 TGV2：让一个辅助向量场吸收一阶斜坡，再惩罚它的对称梯度，检验“保留斜坡而不是继续压边缘”能否消除这些失败。
+
+**实际做了什么。** 正式程序和完全独立第二实现分别重建 13 套标定、101 帧、五相机 forward、K2 起点、三轴 forward-Neumann 差分及转置、六通道对称梯度及转置、两个对偶投影和 256 步 PDHG。固定权重为一阶 `0.001`、二阶 `0.002`，搜索次数为 0；没有裁剪、回退、提前停止或事后选择。逻辑参考账为 `259A+258A^T`，只属于昂贵参考诊断。
+
+**结果。** TGV2 仍是 **1289/1313** 个严格安全单元和 **5/13** 个完整组，与 Huber 完全相同。更关键的是，TGV2 在 **1313/1313** 个单元上都降低了 observation error，但 Huber 的 **24/24** 个失败全部保留，救回数为 **0**。失败单元中 gradient 越线 **24/24**，field 同时越线 **4/24**，observation 越线 **0/24**。TGV2 的 field / gradient / observation p90 为 **0.418041 / 0.660039 / 0.014690**。独立 field 相对差约 **2.40e-16**，指标最大差 **2.22e-16**，通过掩码逐值一致。
+
+**讲人话。** 这次不是“优化器没动”：它把每个单元的观测都拟合得更好。但三维梯度失败一个都没少，说明当前五相机 reference 的剩余问题不是观测残差还不够低，而是稀疏视角下的三维梯度不可辨。固定判决为 `FAIL_TGV2_PDHG_REFERENCE_ADEQUACY_V201`，TGV2 路线关闭，不继续调权重或迭代数。v199 候选仍未在合格 reference 下完成判决；没有 exact-call、wall/RSS、外部泛化、真实 BOST 或论文成功证据，`algorithm_breakthrough=false`。
+
+### English summary
+
+v201 preregisters a fixed second-order TGV2 reference to test whether ramp preservation can remove the 24 five-camera failures left by v200 Huber-TV. The formal and fully independent implementations rebuild 13 calibrations, 101 frames, the K2 start, forward-Neumann gradients and transposes, a six-channel symmetric gradient and transpose, both dual projections, and 256 PDHG iterations. TGV2 remains at **1289/1313 strict-safe cells and 5/13 complete groups**, exactly matching Huber. It lowers observation error in **1313/1313 cells**, yet rescues **0/24** Huber failures; all 24 still violate gradient, four also violate field, and none violates observation. Field / gradient / observation p90 values are **0.418041 / 0.660039 / 0.014690**. Independent field and metric differences are about **2.40e-16** and **2.22e-16**, with identical pass masks. The verdict is `FAIL_TGV2_PDHG_REFERENCE_ADEQUACY_V201`: better observation fit does not recover the missing 3D gradient. The fixed TGV2 mechanism closes without tuning, and no call, wall/RSS, external, real-BOST, paper-success, or algorithm-breakthrough claim is authorized.
+
 ## 2026-08-23：v200 换成保边参考后明显变好，但参考门仍没有真正站稳
 
 **为什么做。** v199 发现五相机 K2 reference 自身只有 `1213/1313` 个严格安全单元和 `0/13` 个完整组，因此候选的调用数比较无法解释。v200 不再调整候选，也不继续增加 Krylov 深度，而是结果前冻结一个物理上不同的参考：从完整 DCT K2 起点出发，用保边 Huber-TV 目标和固定 128 步 PDHG 检验五相机 reference 是否能达到绝对充分。

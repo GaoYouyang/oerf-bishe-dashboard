@@ -78,14 +78,14 @@ def test_current_evidence_preserves_v169_but_points_to_v181() -> None:
     assert payload["current_decision"]["v169_predictor_training_authorized"] is False
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_HUBER_PDHG_REFERENCE_P14_V200"
+        == "PASS_INDEPENDENT_RECOMPUTATION_TGV2_PDHG_REFERENCE_P14_V201"
     )
     assert (
         payload["formal_status"]
-            == "PASS_FORMAL_POOLFIRE_HUBER_PDHG_REFERENCE_P14_EXECUTION_V200"
+            == "PASS_FORMAL_POOLFIRE_TGV2_PDHG_REFERENCE_P14_EXECUTION_V201"
     )
     assert payload["scientific_status"] == (
-        "FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200"
+        "FAIL_TGV2_PDHG_REFERENCE_ADEQUACY_V201"
     )
 
 

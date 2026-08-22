@@ -70,7 +70,7 @@ def test_current_evidence_retains_v175_as_historical_parent_evidence() -> None:
     assert payload["metrics"]["v175_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v175_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v175_independent_check_count"] == 31
-    assert payload["scientific_status"] == "FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200"
+    assert payload["scientific_status"] == "FAIL_TGV2_PDHG_REFERENCE_ADEQUACY_V201"
     assert "five-camera reference adequacy" in payload["next_scientific_gate_en"]
     assert "五相机参考充分性" in payload["next_scientific_gate_zh"]
 

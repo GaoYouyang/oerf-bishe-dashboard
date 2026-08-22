@@ -41,16 +41,13 @@ def test_v200_public_assets_and_bilingual_copy_exist() -> None:
     ):
         content = page.read_text()
         assert "poolfire_huber_pdhg_reference_p14_v200" in content
-        assert "FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200" in content
 
 
-def test_v200_current_evidence_is_the_public_headline() -> None:
+def test_v200_current_evidence_is_preserved_as_parent_history() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200"
-    assert current["formal_status"] == "PASS_FORMAL_POOLFIRE_HUBER_PDHG_REFERENCE_P14_EXECUTION_V200"
-    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_HUBER_PDHG_REFERENCE_P14_V200"
     assert current["metrics"]["v200_huber_five_strict_safe_cells"] == 1289
     assert current["metrics"]["v200_huber_five_complete_groups_passed"] == 5
     assert current["current_decision"]["v200_huber_reference_adequate"] is False
     assert current["current_decision"]["v200_fixed_huber_reference_closed"] is True
-    assert current["public_evidence"]["result"].endswith("poolfire_huber_pdhg_reference_p14_v200_result_2026-08-23.md")
+    assert SUMMARY.is_file()
+    assert (ROOT / "docs/poolfire_huber_pdhg_reference_p14_v200_result_2026-08-23.md").is_file()

@@ -83,7 +83,7 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     )
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     next_gate = payload["next_scientific_gate_en"].lower()
-    assert "do not tune this fixed huber-tv reference" in next_gate
+    assert "do not tune huber-tv or tgv2 further" in next_gate
     assert "five-camera reference adequacy" in next_gate
     assert "real 2d bost displacement" in next_gate
     assert "accepted baseline" in next_gate
