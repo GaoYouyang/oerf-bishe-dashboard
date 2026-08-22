@@ -16301,3 +16301,33 @@ A fully independent second implementation rebuilds seed coordinates, full and di
 This closes the full-Hessian one-step refinement only. It establishes no deployable algorithm, exact-call reduction, wall/RSS benefit, external generalization, curved-ray validation, or real-BOST result.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v195.2 完整轨迹否定固定对角 signed-sketch 修正
+
+### 讲人话：四帧里的好线索，到了整条 101 帧轨迹并没有站稳
+
+v194 的 full-Hessian 单位步在四帧中严重过冲，而对角缩放对照达到 `104/104`，所以对角机制值得单独做一次结果前冻结的完整轨迹检验。v195.2 没有调公式，也没有继续用四帧反复证明；它直接覆盖已打开 p22 开发轨迹的 `101` 帧、13 套标定、五/九相机两臂，共 `2626` 个物理评分单元，随后运行同一个未修改 CGLS K1。
+
+结果明确否定了固定机制。五相机 primary 只有 `987/1313` 个严格安全单元、`0/13` 个标定组完整通过；九相机为 `1234/1313` 与 `3/13`。五相机 field / gradient / observation p90 为 `0.474417 / 0.813224 / 0.187029`，九相机为 `0.367619 / 0.651307 / 0.192660`。虽然有些汇总量看起来接近门，逐单元 worst 与完整标定要求仍然失败，不能用平均改善替代完整门。
+
+同价 full-DCT control 明显更强：九相机达到 `1313/1313 · 13/13`，五相机达到 `1310/1313 · 12/13`。这说明固定 diagonal sketch 仍丢失关键坐标信息，但 full-DCT 自己也没有完成两档相机门，因此不能事后升格为成功方法。fit-mean 与 signed-seed 两个 K1 controls 在两臂也都只有 `0/13` 个完整标定组。
+
+完全独立第二实现重建观测、坐标、候选、物理 K1、全部逐单元指标、标定分组和调用账，`27/27` 检查全真。坐标最大相对差 `2.38e-14`，指标最大绝对差 `6.77e-15`，汇总最大绝对差 `4.44e-15`，相机射线换序误差为 `0`。前两次执行在科学评分前因合同或有效性实现错误停止，partial 不进入判决；这些修复只算工程完整性。
+
+正式判决为 `FAIL_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2`。关闭的只是固定一步对角 signed-sketch 修正，不是整条 C 路线，也不是数学不可能证明。不得调公式、换名重跑或升格 full-DCT；p14、资源门、外部门、神经训练和 GPU 均未授权。后续只接受新的物理信息，或另行结果前冻结且表示上真正不同的结果不可见机制。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v194's four-frame result made the coordinate-wise mechanism worth a separately preregistered complete-trajectory test: the full-Hessian unit step overshot, while its diagonal control reached `104/104`. v195.2 does not tune the formula or reuse the four sentinels as proof. It directly evaluates all `101` frames of the already-opened p22 development trajectory, 13 calibrations, five/all-nine camera arms, and `2626` physical scoring cells before the same unchanged CGLS K1 step.
+
+The frozen mechanism fails. The five-camera primary reaches only `987/1313` strict-safe cells and `0/13` complete calibration groups; all-nine reaches `1234/1313` and `3/13`. Five-camera field / gradient / observation p90 values are `0.474417 / 0.813224 / 0.187029`; all-nine values are `0.367619 / 0.651307 / 0.192660`. Near-threshold aggregate values do not replace cellwise worst-case and complete-group gates.
+
+The equal-call full-DCT control is substantially stronger: all-nine reaches `1313/1313 · 13/13`, while five-camera reaches `1310/1313 · 12/13`. This localizes information lost by the fixed diagonal sketch, but full-DCT itself still misses the complete two-sensor gate and cannot be promoted post hoc. Fit-mean and signed-seed K1 controls each reach `0/13` complete groups in both arms.
+
+A fully independent second implementation rebuilds observations, coordinates, candidates, physical K1, every cell metric, calibration grouping, and the call ledger. All `27/27` checks pass. Maximum coordinate relative, metric absolute, and summary absolute differences are `2.38e-14 / 6.77e-15 / 4.44e-15`; camera-ray permutation error is `0`. Two earlier executions stopped before scientific scoring because of contract or validity-implementation errors, so their partial artifacts are excluded; those repairs establish engineering integrity only.
+
+Decision: `FAIL_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2`. This closes only the frozen one-step diagonal signed-sketch correction, not the broader C route and not mathematical possibility. Do not tune or rename it, promote full-DCT after results, or open p14, resource, external, neural, or GPU gates. Continue only with genuinely new physical information or a separately preregistered, representationally distinct result-blind mechanism.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.

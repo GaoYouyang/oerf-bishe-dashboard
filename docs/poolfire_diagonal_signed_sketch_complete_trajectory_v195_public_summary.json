@@ -1,0 +1,135 @@
+{
+  "schema_version": "oerf-public-poolfire-diagonal-signed-sketch-complete-trajectory-v195.2.0",
+  "updated": "2026-08-22",
+  "title_zh": "v195.2 固定对角 signed-sketch 修正在完整 p22 开发轨迹上失败",
+  "title_en": "v195.2 frozen diagonal signed-sketch correction fails on the complete p22 development trajectory",
+  "formal_status": "PASS_FORMAL_POOLFIRE_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2",
+  "scientific_decision": "FAIL_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2",
+  "scientific_question": "Does the separately frozen one-step diagonal signed-sketch correction remain strictly safe across every frame and calibration of the already-opened complete p22 development trajectory under both five-camera and all-nine-camera sensing?",
+  "scope": {
+    "dataset_role": "already-opened complete p22 development trajectory",
+    "frames": 101,
+    "calibration_groups": 13,
+    "cells_per_sensor_arm": 1313,
+    "total_physical_scoring_cells": 2626,
+    "sensor_arms": [
+      "five_camera",
+      "all_nine"
+    ],
+    "post_open_development": true,
+    "complete_trajectory": true,
+    "fresh_validation_opened": false,
+    "untouched_tests_opened": false
+  },
+  "frozen_mechanisms": {
+    "primary": "the v194 diagonal signed-sketch formula, applied once before one unchanged physical CGLS K1 step",
+    "fit_mean_control": "fit-only mean coordinate followed by the same unchanged physical CGLS K1 step",
+    "signed_seed_control": "the frozen signed-sketch seed followed by the same unchanged physical CGLS K1 step",
+    "full_dct_control": "the equal-call full-DCT coordinate followed by the same unchanged physical CGLS K1 step",
+    "adaptation": "none: no step-size, damping, ridge, clipping, fallback, threshold search, sketch search, learned model, or post-result role change"
+  },
+  "strict_limits": {
+    "field_relative_l2": 0.5,
+    "gradient_relative_l2": 0.75,
+    "observation_relative_l2": 0.2
+  },
+  "primary_diagonal_k1": {
+    "five_camera": {
+      "strict_safe_cells": 987,
+      "strict_total_cells": 1313,
+      "complete_calibration_groups_passed": 0,
+      "complete_calibration_groups_total": 13,
+      "field_p90_higher": 0.47441709506660634,
+      "field_worst": 0.5534332175416132,
+      "gradient_p90_higher": 0.8132238442276404,
+      "gradient_worst": 1.0015477166490985,
+      "observation_p90_higher": 0.18702856161702344,
+      "observation_worst": 0.22220239238164793,
+      "passed": false
+    },
+    "all_nine": {
+      "strict_safe_cells": 1234,
+      "strict_total_cells": 1313,
+      "complete_calibration_groups_passed": 3,
+      "complete_calibration_groups_total": 13,
+      "field_p90_higher": 0.36761866666997844,
+      "field_worst": 0.42927814200378916,
+      "gradient_p90_higher": 0.6513070443941115,
+      "gradient_worst": 0.7632632650746234,
+      "observation_p90_higher": 0.19265976046646927,
+      "observation_worst": 0.2441985585358316,
+      "passed": false
+    }
+  },
+  "controls": {
+    "fit_mean_k1_complete_groups": {
+      "five_camera": "0/13",
+      "all_nine": "0/13"
+    },
+    "signed_seed_k1_complete_groups": {
+      "five_camera": "0/13",
+      "all_nine": "0/13"
+    },
+    "full_dct_k1": {
+      "five_camera": {
+        "strict_safe_cells": 1310,
+        "strict_total_cells": 1313,
+        "complete_calibration_groups_passed": 12,
+        "complete_calibration_groups_total": 13,
+        "passed": false
+      },
+      "all_nine": {
+        "strict_safe_cells": 1313,
+        "strict_total_cells": 1313,
+        "complete_calibration_groups_passed": 13,
+        "complete_calibration_groups_total": 13,
+        "passed": true
+      }
+    }
+  },
+  "cost_boundary": {
+    "logical_k1_exact_forward_calls": 2,
+    "logical_k1_exact_adjoint_calls": 1,
+    "new_exact_physical_calls_for_coordinate_formula": 0,
+    "geometry_cache_or_offline_setup_excluded_from_online_claim": true,
+    "fresh_wall_or_rss_measured": false,
+    "exact_call_reduction_established": false
+  },
+  "independent_recomputation": {
+    "checks_passed": 27,
+    "checks_total": 27,
+    "formal_trees_unchanged": true,
+    "input_trees_unchanged": true,
+    "maximum_observation_relative_error": 0.0,
+    "maximum_coordinate_relative_error": 2.3781953638279235e-14,
+    "maximum_metric_absolute_error": 6.772360450213455e-15,
+    "maximum_result_summary_absolute_error": 4.440892098500626e-15,
+    "maximum_sentinel_field_relative_error": 1.190468648042069e-14,
+    "maximum_exact_solve_stationarity": 3.776850127059039e-14,
+    "maximum_camera_ray_permutation_error": 0.0,
+    "measured_k1_calls_exact": true
+  },
+  "execution_boundary": {
+    "earlier_failed_attempts": "Two earlier executions stopped before scientific scoring because of contract or validity-implementation errors; their partial artifacts are excluded from the verdict.",
+    "scientifically_adjudicated_version": "v195.2 only"
+  },
+  "interpretation_zh": "v194 的逐坐标线索没有跨越到完整轨迹成功。固定对角 primary 在五相机仅 987/1313 个单元严格安全、0/13 个标定组完整通过；九相机为 1234/1313 与 3/13。它在两臂都未达到完整门，因此该固定机制关闭。",
+  "interpretation_en": "The coordinate-wise clue from v194 does not survive the complete-trajectory gate. The frozen diagonal primary is strict-safe in only 987/1313 cells and 0/13 complete calibration groups under five cameras, and 1234/1313 cells and 3/13 groups under all nine. It misses the complete gate in both arms, closing this frozen mechanism.",
+  "decision_boundary_zh": "判决顺序在 primary 失败处停止。full-DCT 同价对照更强，但五相机仍只有 1310/1313、12/13，不能构成两档相机完整成功，也不能事后替换 primary。p14 新鲜验证、资源门、外部门、神经训练和 GPU 均未授权。",
+  "decision_boundary_en": "Adjudication stops at primary failure. The equal-call full-DCT control is stronger, but its five-camera arm still reaches only 1310/1313 cells and 12/13 complete groups, so it does not establish complete two-sensor success and cannot replace the primary post hoc. Fresh p14 validation, resource gates, external gates, neural training, and GPU use remain unauthorized.",
+  "route_action": "Close only the fixed one-step diagonal signed-sketch correction on the already-opened complete p22 development trajectory. Do not tune or rename it, do not open p14, and do not treat the stronger full-DCT diagnostic as a successful deployable method. Continue the wider C route only with genuinely new physical information or a separately preregistered representational mechanism.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_validation": false,
+    "external_generalization": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}
