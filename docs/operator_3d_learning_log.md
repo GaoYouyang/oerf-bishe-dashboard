@@ -15878,6 +15878,38 @@ This closes only the one-step diagonally preconditioned Jacobi-PCGLS1 mechanism.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-22：v190 保留全部响应秩，仍然丢了物理容量
+
+### 讲人话：选出的列在代数上“够独立”，不代表它们能稳定还原物理场
+
+v189 已经证明，每台相机保留完整 `24x24` DCT 非 DC 频谱时，五相机和九相机的未修改 K1 都能达到 `52/52`。但这个完整表示分别需要 `2875 / 5175` 个坐标，不是紧凑部署。
+
+v190 因此只问一个更小的问题：能不能在不看 held-out 真值的前提下，只依据报告几何从完整 DCT 中固定选出 `1280` 列，同时保住 v189 的容量。选列规则在真值读取前封存：`1009` 个 QDEIM 锚点加 `271` 个杠杆补列，没有 ridge、搜索、回退或训练。坐标数在五/九相机下分别减少 `55.48% / 75.27%`，并且保留了 `1009/1009` 响应秩。
+
+然而，物理结果没有保住。一轮未修改 K1 后，五相机只有 `35/52` 个 cell 严格通过、`2/13` 个完整标定通过、时间层 `0/4`；九相机为 `30/52`、`1/13`和 `0/4`。五相机 field / gradient / observation p90 为 `0.475126 / 0.844848 / 0.197362`，主要失在 gradient；九相机为 `0.385466 / 0.633956 / 0.225603`，主要失在 observation。
+
+完全独立的第二实现重建了 QDEIM 锚点、杠杆补列、候选场、物理 K1、指标和所有分层，`59/59` 检查全真。候选场最大相对差为 `3.11e-11`，指标最大绝对差为 `6.15e-12`，离散选列完全一致。
+
+正式判决为 `FAIL_GEOMETRY_QDEIM1280_CORESET_CAPACITY_V190`。科学上可以说：保留代数响应秩不足以保证紧凑子集能稳定保留物理逆问题容量。固定 `1280` 列 QDEIM + 杠杆家族关闭，不提高预算、不事后调选列、不用更大模型挽救。v189 仅保留为完整基容量参考。
+
+这仍不是部署算法。坐标数减少不等于 exact-call 减少、wall/RSS 收益或 GPU 训练价值。下一门只能用已封存 v190 失败分布区分固定子集条件性损失与 observation-adaptive 坐标需求，再结果前冻结一个物理上不同的表示。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v190 asks whether reported geometry alone can compress v189's complete per-camera non-DC DCT to a fixed `1280` columns before held-out truth is read, while preserving complete physical capacity. The frozen selection contains `1009` QDEIM anchors plus `271` leverage supplements, with no ridge, search, fallback, or training. Coordinate counts fall by `55.48% / 75.27%` under five/all-nine cameras, and response rank remains `1009/1009`.
+
+Physical capacity is not preserved. After one unchanged K1 step, five-camera reaches `35/52` strict-safe cells, `2/13` complete calibrations, and `0/4` time strata; all-nine reaches `30/52`, `1/13`, and `0/4`. Five-camera field / gradient / observation p90 values are `0.475126 / 0.844848 / 0.197362`, while all-nine values are `0.385466 / 0.633956 / 0.225603`.
+
+A fully independent second implementation rebuilds the QDEIM anchors, leverage supplements, candidates, physical K1, metrics, and strata, passing `59/59` checks. Maximum candidate-field relative and metric absolute differences are `3.11e-11 / 6.15e-12`, with exact agreement in discrete selections.
+
+Decision: `FAIL_GEOMETRY_QDEIM1280_CORESET_CAPACITY_V190`. Preserving algebraic response rank is insufficient to preserve the stable physical inverse capacity of a compact subset. Close the fixed `1280`-column QDEIM-plus-leverage family without increasing the budget, tuning selection post hoc, or rescuing it with a larger model. v189 remains only the complete-basis capacity reference.
+
+This is not a deployable algorithm or evidence of exact-call, wall-time, RSS, external-generalization, curved-ray, or real-BOST gains. Coordinate reduction is not resource evidence, and GPU rental remains unauthorized.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-21：v183 相机×分量分块 Galerkin 明显改善观测，但仍未通过完整门
 
 ### 讲人话：不同相机确实需要不同响应，但每块一个固定系数还不够
@@ -16127,3 +16159,7 @@ Decision: `PASS_DCT12_TRUNCATION_ROOT_CAUSE_V189`. Under this frozen opened-data
 This remains a full-basis capacity reference, not a deployable algorithm. It uses `575` coefficients per camera and dense setup-local response matrices, with no compact observation/geometry-only predictor, exact-call reduction, fresh wall/RSS result, external generalization, curved-ray validation, or real-BOST evidence. The next eligible test is a separately preregistered compact high-frequency-preserving, camera-permutation-equivariant, variable-cardinality representation using deployment-visible inputs only.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+> 同日最新结论见上方 v190 checkpoint：固定 `1280` 列 geometry-QDEIM + 杠杆子集虽保留 `1009/1009` 响应秩，却只达到五/九相机 K1 `35/52 · 30/52`，因此已独立复算并关闭该固定子集家族。
+
+> Latest same-day conclusion: the v190 checkpoint above independently confirms that the fixed `1280`-column geometry-QDEIM-plus-leverage subset retains response rank `1009/1009` but reaches only `35/52 · 30/52` K1 cells under five/all-nine cameras, closing this fixed-subset family.

@@ -77,14 +77,14 @@ def test_current_evidence_preserves_v170_but_points_to_v181() -> None:
     assert payload["current_decision"]["v170_deployable_selector_established"] is False
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_DENSE_CAMERA_RESOLVED_DCT_V189_1"
+        == "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_QDEIM1280_CORESET_V190_1"
     )
     assert (
         payload["formal_status"]
-        == "PASS_FORMAL_POOLFIRE_DENSE_CAMERA_RESOLVED_DCT_EXECUTION_V189"
+        == "PASS_FORMAL_POOLFIRE_GEOMETRY_QDEIM1280_CORESET_EXECUTION_V190"
     )
     assert payload["scientific_status"] == (
-        "PASS_DCT12_TRUNCATION_ROOT_CAUSE_V189"
+        "FAIL_GEOMETRY_QDEIM1280_CORESET_CAPACITY_V190"
     )
 
 

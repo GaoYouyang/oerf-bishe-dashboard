@@ -62,7 +62,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "PASS_DCT12_TRUNCATION_ROOT_CAUSE_V189"
+    assert payload["scientific_status"] == "FAIL_GEOMETRY_QDEIM1280_CORESET_CAPACITY_V190"
     assert (
         payload["v174_equal_cost_selector_scientific_decision"]
         == "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"
@@ -70,8 +70,8 @@ def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     assert payload["metrics"]["v174_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v174_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v174_independent_check_count"] == 27
-    assert "high-frequency-preserving" in payload["next_scientific_gate_en"]
-    assert "保留关键高频" in payload["next_scientific_gate_zh"]
+    assert "subset-conditioning loss" in payload["next_scientific_gate_en"]
+    assert "固定子集条件性损失" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_retain_v174_as_parent_evidence() -> None:
