@@ -1,0 +1,143 @@
+{
+  "schema_version": "oerf-public-poolfire-signed-sketch-normal-refinement-v194.1.0",
+  "updated": "2026-08-22",
+  "title_zh": "v194 有符号 sketch 全法向一步修正失败，对角缩放对照提供新线索",
+  "title_en": "v194 full-normal signed-sketch refinement fails, while the diagonal control provides a new clue",
+  "formal_status": "PASS_FORMAL_POOLFIRE_SIGNED_SKETCH_NORMAL_REFINEMENT_V194",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_SKETCH_NORMAL_REFINEMENT_V194_1",
+  "scientific_decision": "FAIL_SIGNED_SKETCH_FULL_NORMAL_REFINEMENT_V194",
+  "scientific_question": "Can the sealed v193 signed-sketch coordinate be corrected by one frozen full-normal unit step, preconditioned by the signed-sketch Hessian, before one unchanged physical CGLS K1 step?",
+  "scope": {
+    "opened_development_frames": 4,
+    "calibrations": 13,
+    "cells_per_sensor_arm": 52,
+    "sensor_arms": [
+      "five_camera",
+      "all_nine"
+    ],
+    "post_open_development": true,
+    "complete_trajectory": false,
+    "validation_or_test": false
+  },
+  "frozen_mechanisms": {
+    "seed": "sealed v193 signed CountSketch coordinate at the same 1280-channel budget",
+    "primary": "one unit full-normal correction preconditioned by the complete signed-sketch Hessian, then unchanged physical CGLS K1",
+    "cheap_control": "one unit coordinate-wise normal correction using only the signed-sketch Hessian diagonal, then unchanged physical CGLS K1",
+    "adaptation": "none: no line search, damping, ridge, clipping, extra iterations, sketch change, normalization search, or learned model"
+  },
+  "strict_limits": {
+    "field_relative_l2": 0.5,
+    "gradient_relative_l2": 0.75,
+    "observation_relative_l2": 0.2
+  },
+  "strict_safe_cells": {
+    "full_hessian_primary_k0": {
+      "five_camera": 0,
+      "all_nine": 0
+    },
+    "full_hessian_primary_k1": {
+      "five_camera": 0,
+      "all_nine": 0
+    },
+    "diagonal_control_k0": {
+      "five_camera": 0,
+      "all_nine": 0
+    },
+    "diagonal_control_k1": {
+      "five_camera": 52,
+      "all_nine": 52
+    },
+    "v193_seed_k1": {
+      "five_camera": 51,
+      "all_nine": 49
+    }
+  },
+  "k1_metric_summary": {
+    "full_hessian_primary": {
+      "five_camera": {
+        "field_p90_higher": 3.7084823394780533,
+        "field_worst": 4.4065578669515055,
+        "gradient_p90_higher": 6.213348563862089,
+        "gradient_worst": 7.481712468968034,
+        "observation_p90_higher": 1.6645562869277504,
+        "observation_worst": 2.1371692668366298
+      },
+      "all_nine": {
+        "field_p90_higher": 6.161608208566872,
+        "field_worst": 7.471749503497287,
+        "gradient_p90_higher": 11.00410864177666,
+        "gradient_worst": 12.363481363452857,
+        "observation_p90_higher": 3.7349641435920464,
+        "observation_worst": 4.777139131336965
+      }
+    },
+    "diagonal_control": {
+      "five_camera": {
+        "field_p90_higher": 0.42541459938880527,
+        "field_worst": 0.4545289286429978,
+        "gradient_p90_higher": 0.7090867626662717,
+        "gradient_worst": 0.7469437965647099,
+        "observation_p90_higher": 0.1639218916803631,
+        "observation_worst": 0.1922734137765981
+      },
+      "all_nine": {
+        "field_p90_higher": 0.32785123697157936,
+        "field_worst": 0.35556624784988783,
+        "gradient_p90_higher": 0.5735795877987793,
+        "gradient_worst": 0.6615677398258222,
+        "observation_p90_higher": 0.1756342304850798,
+        "observation_worst": 0.1913834461513633
+      }
+    }
+  },
+  "mechanism_diagnostics": {
+    "full_normal_residual_ratio_p50": {
+      "full_hessian_primary": 17.04062943106747,
+      "diagonal_control": 2.775488226565783
+    },
+    "coordinate_correction_norm_p50": {
+      "full_hessian_primary": 62.35050790999641,
+      "diagonal_control": 0.7952481486126753
+    },
+    "full_hessian_condition_maximum": 190374.9140151864,
+    "maximum_primary_stationarity": 1.544348011263164e-12
+  },
+  "cost_boundary": {
+    "logical_k1_exact_forward_calls": 2,
+    "logical_k1_exact_adjoint_calls": 1,
+    "new_exact_physical_calls_for_warm_correction": 0,
+    "dense_online_full_feature_scan": true,
+    "dense_online_full_normal_multiply": true,
+    "geometry_response_setups": 26,
+    "fresh_wall_or_rss_measured": false
+  },
+  "independent_recomputation": {
+    "checks_passed": 17,
+    "checks_total": 17,
+    "maximum_numeric_array_relative_difference": 1.0611565106114173e-10,
+    "maximum_near_zero_array_absolute_difference": 6.510258998559948e-11,
+    "parent_seed_coordinate_maximum_block_relative_difference": 3.2379242024852626e-11,
+    "parent_seed_field_maximum_block_relative_difference": 2.3595980333577036e-11,
+    "camera_permutation_feature_relative_error": 0.0,
+    "camera_permutation_response_relative_error": 0.0,
+    "measured_k1_calls_exact": true
+  },
+  "interpretation_zh": "全 Hessian 单位步在 104 个 K1 单元全部失败，修正范数和法向残差明显放大，因此该 primary 被关闭。同一 seed 下的对角缩放对照却在五/九相机各 52/52 过门，支持“非对角耦合在这个单位步机制中有害，逐坐标缩放更安全”的机制线索。",
+  "interpretation_en": "The full-Hessian unit step fails all 104 K1 cells and strongly amplifies both the coordinate correction and the full normal residual, closing that primary. Under the same seed, the diagonal-scaling control passes 52/52 in both sensor arms, supporting the mechanism-level clue that off-diagonal coupling is harmful in this unit-step construction and coordinate-wise scaling is much safer.",
+  "decision_boundary_zh": "预注册顺序要求 full-Hessian primary 先通过，才能在两种机制中选择。因此对角对照的 104/104 只是 post-open 诊断线索，不是 v194 成功方法，也不授权完整轨迹、资源门、外部门或 GPU。",
+  "decision_boundary_en": "The preregistered order requires the full-Hessian primary to pass before selecting between mechanisms. The diagonal control's 104/104 result is therefore a post-open diagnostic clue, not a successful v194 method, and it does not authorize complete trajectories, resource gates, external gates, or GPU use.",
+  "route_action": "Close the frozen one-step unit full-Hessian correction without step-size, iteration, damping, ridge, clipping, sketch, or learned rescue. Retain the diagonal outcome only as a clue for a separately preregistered future mechanism on new evidence.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "complete_trajectory_accuracy": false,
+    "external_generalization": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}
