@@ -15878,6 +15878,40 @@ This closes only the one-step diagonally preconditioned Jacobi-PCGLS1 mechanism.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-22：v192 观测自适应补列有改善，但固定 1280 坐标仍不够
+
+### 讲人话：找对了漏掉的信息方向，但固定小书包还是装不下全部答案
+
+v191.1 已经证明，固定 geometry-only 子集失败，是因为每帧观测会激活不同的正规方程方向。v192 不训练模型，只验证最小机制：保留固定 `1009` 个 QDEIM 锚点，再用当前部署可见观测与报告几何计算每个候选列对完整正规缺陷的贡献，补选 `271` 列。总预算仍为 `1280`，没有真值选列、预算搜索、评分搜索、ridge 或回退；最后只运行一轮未修改的精确 CGLS。
+
+这条评分确实带来实质改善。五相机严格安全单元从 v190 的 `35/52` 提高到 `40/52`，九相机从 `30/52` 提高到 `40/52`。便宜的观测幅值补列 control 只有 `32/52 · 26/52`，所以改善来自正规缺陷方向，而不是简单挑大幅值。
+
+但门要求两臂都达到 `52/52`。primary 在五/九相机下仍各失败 `12` 个单元，四个时间层都是 `0/4` 完整通过。五相机失败主要来自 gradient：`10` 个梯度越线、`5` 个 observation 越线，部分重叠；九相机 `12` 个失败全部是 observation-only。两臂 field 都是 `0` 个失败。
+
+完全独立第二实现重建评分、排序、候选场、未修改 K1、逐单元指标、调用账和相机换序审计，`17/17` 检查全真。普通数组最大相对差为 `1.74e-10`，近零数组最大绝对差为 `1.96e-14`，相机换序后的特征、响应和离散选列完全一致。
+
+正式判决为 `FAIL_NORMAL_CONTRIBUTION_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192`。科学上可以说，v191.1 的归因得到了机制支持：观测自适应选列确实能救回一部分失败。但不能说当前表示成功，因为两档都还差 `12/52`，没有任何完整时间层通过。
+
+因此关闭这一条精确 `1009 + 271` 正规贡献评分机制，不提高预算、不事后增加或调整评分、不训练 predictor、不用 CNN/FNO/UNO/DeepONet 或 GPU 挽救。后续只有物理上真正不同的结果不可见机制，或新的成对真实二维双分量 BOST 位移数据，才值得继续。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v191.1 shows that the fixed geometry-only subset fails because each frame activates different normal-equation directions. v192 tests the smallest non-learned response: retain the fixed `1009` QDEIM anchors, score every remaining column by its contribution to the full normal defect using only the current deployment-visible observation and reported geometry, and add exactly `271` columns. The total budget remains `1280`, with no truth-based selection, budget or score search, ridge, or fallback. One unchanged exact CGLS step follows.
+
+The score produces a substantive improvement. Strict-safe cells rise from v190's `35/52` to `40/52` under five cameras and from `30/52` to `40/52` under all nine. The cheap observation-magnitude control reaches only `32/52 · 26/52`, so the gain is specific to the normal-defect information rather than simple amplitude ranking.
+
+The gate still requires `52/52` in both arms. The primary leaves `12` failed cells under each sensor count and passes `0/4` complete time strata. Five-camera failures are gradient-dominated, with 10 gradient and 5 observation violations that partly overlap. All 12 all-nine failures are observation-only. Neither arm has a field failure.
+
+A fully independent second implementation rebuilds scores, rankings, candidates, unchanged K1 replay, cell metrics, call accounting, and camera-permutation audits. All `17/17` checks pass. Maximum ordinary-array relative and near-zero-array absolute differences are `1.74e-10 / 1.96e-14`, and camera reordering leaves features, responses, and discrete selections unchanged.
+
+Decision: `FAIL_NORMAL_CONTRIBUTION_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192`. The v191.1 diagnosis receives mechanism-level support because adaptive selection rescues some failures, but the current representation does not pass complete capacity.
+
+Close this exact `1009 + 271` normal-contribution mechanism without increasing the budget, adding or tuning scores post hoc, training a predictor, or using CNN/FNO/UNO/DeepONet or GPU scale as rescue. Continue only with a physically distinct result-blind mechanism or new paired real two-component BOS displacement data.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-22：v191.1 证明固定子集改变了观测激活的正规度量
 
 ### 讲人话：同一套相机位置，有的帧能过、有的帧会失败，问题不只是“这套几何太难”

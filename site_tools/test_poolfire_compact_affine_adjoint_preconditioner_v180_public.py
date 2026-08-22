@@ -65,7 +65,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v180_after_v181_advance() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "PASS_OBSERVATION_ACTIVATED_NORMAL_METRIC_DISTORTION_ATTRIBUTION_V191_1"
+    assert payload["scientific_status"] == "FAIL_NORMAL_CONTRIBUTION_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192"
     assert payload["metrics"]["v180_five_primary_k1_strict_safe_count"] == 4
     assert payload["metrics"]["v180_all_nine_primary_k1_strict_safe_count"] == 7
     assert payload["metrics"]["v180_five_primary_k1_observation_p90"] > 0.2
@@ -95,7 +95,7 @@ def test_primary_pages_reference_v180_in_both_languages() -> None:
 def test_route_metadata_and_cachebuster_advance_to_v181() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260822-v191-1" in operator
+    assert "curriculum.js?v=20260822-v192" in operator
     assert 'version: "2026.08.22-c-v185-potential-affine-capacity"' in curriculum
     assert 'previousVersion: "2026.08.22-c-v184-projection-potential-negative"' in curriculum
     assert 'updated: "2026-08-21"' in curriculum

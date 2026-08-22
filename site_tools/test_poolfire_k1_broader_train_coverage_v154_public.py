@@ -83,9 +83,10 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     )
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     next_gate = payload["next_scientific_gate_en"].lower()
-    assert "observation-adaptive coordinate" in next_gate
-    assert "keep the fixed 1280-column family closed" in next_gate
-    assert "do not train a predictor" in next_gate
+    assert "physically distinct result-blind mechanism" in next_gate
+    assert "paired real two-component bos displacement data" in next_gate
+    assert "close the exact v192" in next_gate
+    assert "do not raise the budget" in next_gate
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:
