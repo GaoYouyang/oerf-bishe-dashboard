@@ -15878,6 +15878,40 @@ This closes only the one-step diagonally preconditioned Jacobi-PCGLS1 mechanism.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-22：v196 稠密 full-DCT K2 全过，但冻结参考失效使比较判决停在不确定
+
+### 讲人话：候选这次做对了题，但用来判输赢的参照答案本身不合格
+
+v195.2 中，同价 full-DCT K1 已经非常接近完整门：九相机为 `1313/1313 · 13/13`，五相机为 `1310/1313 · 12/13`。v196 因此只做一个不可交换的诊断：保持已打开 p22 的 `101` 帧、13 套标定、五/九相机两臂、稠密 full-DCT 初始化与全部冻结误差门不变，把后续物理 refinement 从 K1 增加到 K2；同时按结果前合同比较 Zero-CGLS K2、K3 与 K4 reference。没有打开 p14、validation 或 test，也没有训练模型。
+
+稠密 full-DCT K2 的绝对精度结果很强。五相机与九相机都达到 `1313/1313` 个严格安全单元、`13/13` 个完整标定组，合计 `2626/2626 · 26/26`。五相机 field / gradient / observation p90 为 `0.363959 / 0.599450 / 0.098924`，九相机为 `0.249912 / 0.417821 / 0.088978`。因此，v195.2 中五相机最后三个失败单元可以由一次额外、未修改的物理 CGLS 步消除；这是真实的机制增量。
+
+但预注册的比较参考完全不合格。Zero-CGLS K2、K3 和 K4 在五相机与九相机两臂均为 `0/1313 · 0/13`；其中冻结 Zero-K4 reference 合计为 `0/2626 · 0/26`。它的 field / gradient / observation p90 在九相机为 `0.813283 / 0.668945 / 0.313174`，五相机为 `0.872453 / 0.752918 / 0.281930`。参照自己不能守住冻结绝对门，就不能用它证明候选相对标准重建更省调用。
+
+完全独立第二实现重新构造 full-DCT 坐标、K1 父状态、K2 候选、Zero K2/K3/K4 controls、全部观测与逐单元/逐标定指标，`23/23` 检查全真。正式与独立的指标、残差、哨兵、汇总差均为 `0`，观测重放与父 K1 差也为 `0`；相机换序相对误差约 `9.46e-17`。两条实现仍共享冻结物理 kernel，因此不声称端到端物理独立。
+
+正式科学判决是 `INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196`。它不是 full-DCT K2 的负结果：候选绝对门已经全过；也不是算法成功，因为冻结比较 reference 失效，不能完成相对调用预算判决。不能在看到结果后把 reference 换成另一个方法包装成功。下一步只能先追溯此前被接受的物理 reference 身份与充分性，再结果前冻结新的比较合同。
+
+full-DCT 仍是稠密初始化器，`0` 个可训练参数，不是紧凑 observation/geometry-only predictor。几何缓存需要 `26 x 1009 = 26234` 次 setup projection，这与逻辑在线调用账分开披露；尚无 fresh wall/RSS、外部泛化、曲线光路或真实 BOST 证据。p14 与 test 继续封存，GPU 和神经训练仍未授权。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v195.2 left the equal-call full-DCT K1 control very close to the complete gate: `1313/1313 · 13/13` for all nine cameras and `1310/1313 · 12/13` for five cameras. v196 therefore asks one non-exchangeable diagnostic question. It keeps the already-opened p22 trajectory (`101` frames), 13 calibrations, five/all-nine camera arms, dense full-DCT initializer, and all frozen error gates unchanged, while extending the physical refinement from K1 to K2. The preregistered comparison also evaluates Zero-CGLS K2, K3, and the frozen K4 reference. No p14, validation, or test data are opened, and no model is trained.
+
+Dense full-DCT K2 passes the absolute accuracy gate completely. Both camera arms reach `1313/1313` strict-safe cells and `13/13` complete calibration groups, or `2626/2626 · 26/26` overall. Five-camera field / gradient / observation p90 values are `0.363959 / 0.599450 / 0.098924`; all-nine values are `0.249912 / 0.417821 / 0.088978`. The three remaining five-camera failures from v195.2 are therefore removed by one additional unchanged physical CGLS step.
+
+The preregistered comparative reference is nevertheless inadequate. Zero-CGLS K2, K3, and K4 each reach `0/1313 · 0/13` in both arms; the frozen Zero-K4 reference is `0/2626 · 0/26` overall. Its field / gradient / observation p90 values are `0.813283 / 0.668945 / 0.313174` for all nine cameras and `0.872453 / 0.752918 / 0.281930` for five cameras. A reference that fails the frozen absolute gate cannot establish that the candidate reduces exact calls relative to an adequate standard reconstruction.
+
+A fully independent second implementation rebuilds full-DCT coordinates, the K1 parent state, the K2 candidate, Zero K2/K3/K4 controls, observations, and every cell and calibration metric. All `23/23` checks pass. Formal-versus-independent metric, residual, sentinel, and summary differences are exactly `0`; observation replay and parent-K1 differences are also `0`, while camera-permutation relative error is approximately `9.46e-17`. Shared frozen physics kernels remain disclosed, so end-to-end physics independence is not claimed.
+
+The scientific decision is `INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196`. This is not a negative result for full-DCT K2, whose absolute gate passes completely, but it is not algorithm success either: the frozen reference cannot support the relative call-budget comparison. Replacing the reference after seeing these results is prohibited. The next eligible action is to trace the identity and adequacy of the previously accepted physical reference, then freeze any corrected comparison before observing new results.
+
+Full-DCT remains a dense initializer with `0` trainable parameters, not a compact observation/geometry-only predictor. Geometry-cache construction requires `26 x 1009 = 26234` setup projections and is disclosed separately from logical online calls. There is no fresh wall/RSS, external-generalization, curved-ray, or real-BOST result. p14 and tests remain sealed; GPU rental and neural training remain unauthorized.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-22：v192 观测自适应补列有改善，但固定 1280 坐标仍不够
 
 ### 讲人话：找对了漏掉的信息方向，但固定小书包还是装不下全部答案
