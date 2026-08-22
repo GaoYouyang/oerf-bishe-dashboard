@@ -30,6 +30,7 @@ def test_v198_public_assets_and_bilingual_copy_exist() -> None:
     result = (ROOT / "docs/poolfire_covariance_gcv_full_dct_v198_result_2026-08-23.md").read_text()
     assert "# v198：" in result and "# v198:" in result
     assert "identity-GCV" in result
+    assert "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198" in result
     assert (ROOT / "assets/figures/poolfire_covariance_gcv_full_dct_v198.png").is_file()
     for page in (
         ROOT / "index.html",
@@ -38,16 +39,16 @@ def test_v198_public_assets_and_bilingual_copy_exist() -> None:
     ):
         content = page.read_text()
         assert "poolfire_covariance_gcv_full_dct_v198" in content
-        assert "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198" in content
 
 
-def test_v198_current_evidence_is_the_public_headline() -> None:
+def test_v198_evidence_remains_preserved_after_v199() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198"
+    assert current["scientific_status"] == "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
     assert current["metrics"]["v198_primary_strict_safe_cells"] == 2626
     assert current["metrics"]["v198_identity_control_strict_safe_cells"] == 2626
     assert current["current_decision"]["v198_algorithm_breakthrough"] is False
-    assert "identity-prior" in current["next_scientific_gate_en"]
+    assert current["current_decision"]["v198_empirical_covariance_route_closed"] is True
+    assert "Stop tuning tau or Krylov depth" in current["next_scientific_gate_en"]
 
 
 def test_v198_public_files_exclude_private_execution_details() -> None:

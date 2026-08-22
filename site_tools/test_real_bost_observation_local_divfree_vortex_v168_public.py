@@ -82,7 +82,7 @@ def test_current_evidence_preserves_v168_as_historical_evidence() -> None:
         "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
     assert payload["scientific_status"] == (
-        "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198"
+        "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
     )
 
 

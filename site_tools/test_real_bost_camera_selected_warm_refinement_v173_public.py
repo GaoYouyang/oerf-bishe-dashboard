@@ -64,14 +64,14 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 def test_current_evidence_preserves_v173_but_points_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198"
+        "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
     )
     assert payload["metrics"]["v173_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_exact_A"] == 1
     assert payload["metrics"]["v173_independent_check_count"] == 21
-    assert "v197 K2 reference" in payload["next_scientific_gate_en"]
-    assert "唯一固定的 identity-prior 正则候选" in payload["next_scientific_gate_zh"]
+    assert "five-camera reference adequacy" in payload["next_scientific_gate_en"]
+    assert "五相机参考充分性" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v173_in_both_languages() -> None:

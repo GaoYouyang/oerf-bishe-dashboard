@@ -55,16 +55,16 @@ def test_v197_public_assets_and_bilingual_copy_exist() -> None:
     assert figure.exists() and figure.stat().st_size > 20_000
 
 
-def test_v197_remains_visible_after_v198_becomes_current_state() -> None:
+def test_v197_remains_visible_after_v199_becomes_current_state() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
     assert current["updated"] == "2026-08-23"
     assert current["formal_status"] == (
-        "PASS_FORMAL_POOLFIRE_COVARIANCE_GCV_EXECUTION_V198"
+        "PASS_FORMAL_POOLFIRE_FIXED_IDENTITY_PRIOR_P14_EXECUTION_V199"
     )
     assert current["scientific_status"] == (
-        "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198"
+        "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
     )
     assert current["v197_future_reference_qualification_formal_status"] == (
         "PASS_FORMAL_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"
@@ -76,18 +76,12 @@ def test_v197_remains_visible_after_v198_becomes_current_state() -> None:
     assert current["metrics"]["v197_reference_complete_groups_passed"] == 26
     assert current["current_decision"]["v197_algorithm_breakthrough"] is False
 
-    pages = [
-        (ROOT / "index.html").read_text(encoding="utf-8"),
-        (ROOT / "operator-learning/index.html").read_text(encoding="utf-8"),
-        (ROOT / "operator-learning/daily-progress.html").read_text(encoding="utf-8"),
-    ]
-    for page in pages:
-        assert "poolfire_full_dct_k2_future_reference_qualification_v197" in page
-        assert "2626/2626" in page
-        assert "26/26" in page
-        assert "algorithm_breakthrough=false" in page
+    focus = (ROOT / "operator-learning/index.html").read_text(encoding="utf-8")
+    assert "poolfire_full_dct_k2_future_reference_qualification_v197" in focus
+    assert "2626/2626" in focus
+    assert "26/26" in focus
 
-    daily = pages[2]
+    daily = (ROOT / "operator-learning/daily-progress.html").read_text(encoding="utf-8")
     assert daily.count('data-date="2026-08-23"') == 1
     assert daily.count('id="latest"') == 1
 

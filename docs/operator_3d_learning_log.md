@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-23：v199 有改善也不能急着报成功，先看比较的尺子够不够格
+
+**为什么做。** v198 在已打开 p22 上发现简单 `identity-prior` 正则可以补齐 K1 尾部，而且同价控制已经说明经验协方差不是必要成分。v199 因此不再调参，把 p22 选出的 `tau=2^-8` 原样固定，带到历史上已经暴露的 p14 开发轨迹，问它能否在合格 K2 reference 下以更少精确调用守住完整门。
+
+**实际做了什么。** 正式程序与完全独立第二实现分别重建 13 套标定、101 帧、五/九相机两臂、固定正则正规方程、未修改物理 K1、K1 父方法、K2 reference、便宜控制、逐单元门、完整组尾部和调用 receipt。正则强度没有在 p14 上重新选择，一次性验证链在读取评分真值前封存。
+
+**结果。** 九相机 fixed K1 为 **1313/1313、13/13**。五相机 fixed K1 为 **1268/1313、3/13**，比未正则 K1 的 **1173/1313、0/13** 多 95 个安全单元和 3 个完整组；五相机 field / gradient / observation p90 为 **0.421892 / 0.697287 / 0.148866**。但 K2 reference 自身只有 **1213/1313、0/13**。独立指标最大差约 **1.23e-11**，坐标块相对差约 **6.23e-11**，相机换序差约 **1.82e-14**。
+
+**讲人话。** 固定正则不是没用，它在另一条开发轨迹上确实明显改善了五相机尾部；但这次不能回答“少一次 A 和 A^T 是否达到同等精度”，因为拿来比较的 K2 reference 自己就没过五相机完整门。按结果前规则，判决必须是 `INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199`，不能把局部改善包装成候选成功，也不能把账面 `2A+1A^T` 对 `3A+2A^T` 写成加速。p14 不是 fresh validation；现在停止在 p14 上调 `tau` 或 Krylov 深度，下一步只能先建立物理上不同且合格的五相机 reference，或等待真实二维 BOST 数据。`algorithm_breakthrough=false`。
+
+### English summary
+
+v199 carries the fixed `identity-prior tau=2^-8` from p22 into the historically exposed p14 development trajectory without retuning. Fixed K1 reaches **1313/1313 and 13/13** under all nine cameras. Under five cameras it reaches **1268/1313 and 3/13**, improving unregularized K1 at **1173/1313 and 0/13** by 95 safe cells and three complete groups; field / gradient / observation p90 values are **0.421892 / 0.697287 / 0.148866**. The K2 reference itself reaches only **1213/1313 and 0/13** under five cameras. The maximum independent metric, coordinate-block, and camera-reordering differences are about **1.23e-11 / 6.23e-11 / 1.82e-14**. The frozen decision is therefore `INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199`: fixed regularization shows partial improvement, but reference inadequacy prevents any equivalent-accuracy or exact-call claim. p14 is not fresh validation, and no wall/RSS, external, real-BOST, training, or GPU gate is opened. `algorithm_breakthrough=false`.
+
 ## 2026-08-23：v198 全过以后，先让更简单的解释赢
 
 **为什么做。** v197 已经把 full-DCT K2 固定成合格 reference，接下来要问的是：能否用更少的精确调用达到同一绝对精度。v198 保留完整 DCT 坐标，用 fit 场的经验协方差做先验，再让当前观测通过 GCV 自己选正则强度，最后只走一次未修改 CGLS K1。
