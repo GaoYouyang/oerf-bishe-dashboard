@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.22-c-v195.2-diagonal-complete-trajectory-negative",
-  previousVersion: "2026.08.22-c-v194-full-normal-refinement-negative",
-  previousBadge: "v194 full-Hessian 0 / 104 · diagonal clue 104 / 104",
-  olderBadge: "v193 signed CountSketch · five 51 / 52 · nine 49 / 52",
+  version: "2026.08.22-c-v196-full-dct-k2-reference-inconclusive",
+  previousVersion: "2026.08.22-c-v195.2-diagonal-complete-trajectory-negative",
+  previousBadge: "v195.2 diagonal complete trajectory · five 987 / 1313 · nine 1234 / 1313",
+  olderBadge: "v194 full-Hessian 0 / 104 · diagonal clue 104 / 104",
   historyReleases: [
+    {
+      version: "2026.08.22-c-v195.2-diagonal-complete-trajectory-negative",
+      previousVersion: "2026.08.22-c-v194-full-normal-refinement-negative",
+      badge: "v195.2 diagonal complete trajectory · five 987 / 1313 · nine 1234 / 1313"
+    },
     {
       version: "2026.08.22-c-v194-full-normal-refinement-negative",
       previousVersion: "2026.08.22-c-v193-signed-countsketch-negative",

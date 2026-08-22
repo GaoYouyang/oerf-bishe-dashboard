@@ -73,13 +73,13 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 def test_current_evidence_preserves_v172_and_points_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "FAIL_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2"
+        "INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196"
     )
     assert payload["metrics"]["v172_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v172_primary_complete_fields_passed"] == 9
     assert payload["metrics"]["v172_independent_check_count"] == 22
-    assert "fixed one-step diagonal signed-sketch correction" in payload["next_scientific_gate_en"]
-    assert "固定的一步对角 signed-sketch 修正" in payload["next_scientific_gate_zh"]
+    assert "previously accepted physical reference" in payload["next_scientific_gate_en"]
+    assert "之前被接受的物理 reference" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v172_in_both_languages() -> None:

@@ -1,0 +1,167 @@
+{
+  "schema_version": "oerf-public-poolfire-full-dct-k2-complete-trajectory-v196.0.0",
+  "updated": "2026-08-22",
+  "title_zh": "v196 稠密 full-DCT K2 全部过门，但冻结 Zero-K4 参考不足",
+  "title_en": "v196 dense full-DCT K2 passes every gate, but the frozen Zero-K4 reference is inadequate",
+  "formal_status": "PASS_FORMAL_POOLFIRE_FULL_DCT_K2_COMPLETE_TRAJECTORY_V196",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_FULL_DCT_K2_COMPLETE_TRAJECTORY_V196",
+  "scientific_decision": "INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196",
+  "scientific_question": "Does one additional unchanged dense full-DCT CGLS step provide complete p22 development-trajectory headroom relative to the separately frozen Zero-CGLS K2/K3/K4 references under five-camera and all-nine sensing?",
+  "scope": {
+    "dataset_role": "already-opened complete p22 development trajectory",
+    "frames": 101,
+    "calibration_groups": 13,
+    "cells_per_sensor_arm": 1313,
+    "total_physical_scoring_cells": 2626,
+    "sensor_arms": [
+      "five_camera",
+      "all_nine"
+    ],
+    "post_open_development": true,
+    "complete_trajectory": true,
+    "fresh_p14_validation_opened": false,
+    "untouched_tests_opened": false
+  },
+  "strict_limits": {
+    "field_relative_l2": 0.5,
+    "gradient_relative_l2": 0.75,
+    "observation_relative_l2": 0.2
+  },
+  "arms": {
+    "full_dct_k1_parent": {
+      "logical_exact_A": 2,
+      "logical_exact_AT": 1,
+      "five_camera": {
+        "strict_safe_cells": 1310,
+        "strict_total_cells": 1313,
+        "complete_calibration_groups_passed": 12,
+        "complete_calibration_groups_total": 13,
+        "passed": false
+      },
+      "all_nine": {
+        "strict_safe_cells": 1313,
+        "strict_total_cells": 1313,
+        "complete_calibration_groups_passed": 13,
+        "complete_calibration_groups_total": 13,
+        "passed": true
+      }
+    },
+    "full_dct_k2": {
+      "logical_exact_A": 3,
+      "logical_exact_AT": 2,
+      "dense_initializer": true,
+      "trainable_parameters": 0,
+      "five_camera": {
+        "strict_safe_cells": 1313,
+        "strict_total_cells": 1313,
+        "complete_calibration_groups_passed": 13,
+        "complete_calibration_groups_total": 13,
+        "field_p90_higher": 0.3639587234,
+        "gradient_p90_higher": 0.5994497497,
+        "observation_p90_higher": 0.098924275,
+        "passed": true
+      },
+      "all_nine": {
+        "strict_safe_cells": 1313,
+        "strict_total_cells": 1313,
+        "complete_calibration_groups_passed": 13,
+        "complete_calibration_groups_total": 13,
+        "field_p90_higher": 0.2499122834,
+        "gradient_p90_higher": 0.4178211876,
+        "observation_p90_higher": 0.0889784456,
+        "passed": true
+      }
+    },
+    "zero_cgls_k2": {
+      "logical_exact_A": 2,
+      "logical_exact_AT": 2,
+      "five_camera_strict_safe_cells": 0,
+      "five_camera_complete_groups": 0,
+      "all_nine_strict_safe_cells": 0,
+      "all_nine_complete_groups": 0,
+      "passed": false
+    },
+    "zero_cgls_k3": {
+      "logical_exact_A": 3,
+      "logical_exact_AT": 3,
+      "five_camera_strict_safe_cells": 0,
+      "five_camera_complete_groups": 0,
+      "all_nine_strict_safe_cells": 0,
+      "all_nine_complete_groups": 0,
+      "passed": false
+    },
+    "zero_cgls_k4_reference": {
+      "logical_exact_A": 4,
+      "logical_exact_AT": 4,
+      "five_camera": {
+        "strict_safe_cells": 0,
+        "strict_total_cells": 1313,
+        "complete_calibration_groups_passed": 0,
+        "complete_calibration_groups_total": 13,
+        "field_p90_higher": 0.8724533888,
+        "gradient_p90_higher": 0.7529182598,
+        "observation_p90_higher": 0.2819303886,
+        "passed": false
+      },
+      "all_nine": {
+        "strict_safe_cells": 0,
+        "strict_total_cells": 1313,
+        "complete_calibration_groups_passed": 0,
+        "complete_calibration_groups_total": 13,
+        "field_p90_higher": 0.8132829191,
+        "gradient_p90_higher": 0.6689452807,
+        "observation_p90_higher": 0.3131740191,
+        "passed": false
+      }
+    }
+  },
+  "fixed_adjudication_order": [
+    "invalid execution -> inconclusive",
+    "inadequate Zero-K4 reference -> inconclusive",
+    "full-DCT K2 failure -> close the tested K2 diagnostic",
+    "same-or-cheaper Zero-K2/K3 explanation -> no dense-K2 headroom",
+    "only then may dense-K2 headroom be considered"
+  ],
+  "cost_boundary": {
+    "geometry_cache_setup_count": 26,
+    "geometry_cache_projections_per_setup": 1009,
+    "geometry_cache_forward_equivalents": 26234,
+    "geometry_cache_excluded_from_logical_online_calls": true,
+    "fresh_wall_or_rss_measured": false,
+    "exact_call_reduction_established": false
+  },
+  "independent_recomputation": {
+    "checks_passed": 23,
+    "checks_total": 23,
+    "formal_trees_unchanged": true,
+    "input_trees_unchanged": true,
+    "maximum_metric_absolute_difference": 0.0,
+    "maximum_residual_absolute_difference": 0.0,
+    "maximum_sentinel_absolute_difference": 0.0,
+    "maximum_summary_absolute_difference": 0.0,
+    "maximum_observation_relative_error": 0.0,
+    "maximum_parent_k1_error": 0.0,
+    "maximum_camera_permutation_relative_error": 9.4564e-17,
+    "independent_truth_observation_offline_forward_calls": 2626,
+    "end_to_end_physics_independence_proven": false
+  },
+  "interpretation_zh": "稠密 full-DCT K2 在五相机和九相机两臂均达到 1313/1313 严格安全单元与 13/13 完整标定组，说明这个稠密起点再做一步 CGLS 的诊断精度充足。但冻结的 Zero-K4 参考在两臂均为 0/1313 和 0/13，不具备作为接受参考的基本精度。",
+  "interpretation_en": "Dense full-DCT K2 reaches 1313/1313 strict-safe cells and 13/13 complete calibration groups in both sensor arms, showing that this dense starting point followed by one additional CGLS step is diagnostically accurate. However, the frozen Zero-K4 reference reaches 0/1313 cells and 0/13 groups in both arms and is not an adequate accepted reference.",
+  "decision_boundary_zh": "按结果前冻结的判决顺序，参考不足必须先记 inconclusive。因此不能由 full-DCT K2 的绝对过门推出算法成功、exact-call 减少或速度收益，也不能在 v196 内事后换参考。下一步只能先审计之前被接受的 reference 身份。",
+  "decision_boundary_en": "The result-blind adjudication order requires an inadequate reference to produce an inconclusive verdict before candidate headroom is considered. Therefore the absolute full-DCT K2 pass cannot establish algorithm success, exact-call reduction, or speedup, and v196 cannot replace the reference post hoc. The next action is limited to auditing the identity of the previously accepted reference.",
+  "route_action": "Retain full-DCT K2 as a strong post-open diagnostic clue, invalidate the current Zero-K4 comparative contract, and audit the prior accepted reference identity before freezing any new gate. Keep p14, tests, resource measurement, predictor training, neural training, and GPU use closed.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "compact_or_learned_initializer": false,
+    "fresh_validation": false,
+    "external_generalization": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

@@ -78,14 +78,14 @@ def test_current_evidence_preserves_v169_but_points_to_v181() -> None:
     assert payload["current_decision"]["v169_predictor_training_authorized"] is False
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2"
+        == "PASS_INDEPENDENT_RECOMPUTATION_FULL_DCT_K2_COMPLETE_TRAJECTORY_V196"
     )
     assert (
         payload["formal_status"]
-            == "PASS_FORMAL_POOLFIRE_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2"
+            == "PASS_FORMAL_POOLFIRE_FULL_DCT_K2_COMPLETE_TRAJECTORY_V196"
     )
     assert payload["scientific_status"] == (
-        "FAIL_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2"
+        "INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196"
     )
 
 
