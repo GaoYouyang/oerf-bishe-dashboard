@@ -78,14 +78,14 @@ def test_current_evidence_preserves_v169_but_points_to_v181() -> None:
     assert payload["current_decision"]["v169_predictor_training_authorized"] is False
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_CAMERA_RESOLVED_DCT12_V188_1"
+        == "PASS_INDEPENDENT_RECOMPUTATION_DENSE_CAMERA_RESOLVED_DCT_V189_1"
     )
     assert (
         payload["formal_status"]
-        == "PASS_FORMAL_POOLFIRE_CAMERA_RESOLVED_DCT12_EXECUTION_V188"
+        == "PASS_FORMAL_POOLFIRE_DENSE_CAMERA_RESOLVED_DCT_EXECUTION_V189"
     )
     assert payload["scientific_status"] == (
-        "FAIL_CAMERA_RESOLVED_DCT12_CAPACITY_V188"
+        "PASS_DCT12_TRUNCATION_ROOT_CAUSE_V189"
     )
 
 

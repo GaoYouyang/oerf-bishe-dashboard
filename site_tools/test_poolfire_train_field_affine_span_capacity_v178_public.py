@@ -66,7 +66,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v178_as_parent_and_advances_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_CAMERA_RESOLVED_DCT12_CAPACITY_V188"
+    assert payload["scientific_status"] == "PASS_DCT12_TRUNCATION_ROOT_CAUSE_V189"
     assert payload["v178_affine_span_scientific_decision"] == "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
     assert payload["metrics"]["v178_fit_field_count"] == 1010
     assert payload["metrics"]["v178_stable_affine_rank"] == 1009
@@ -100,7 +100,7 @@ def test_primary_pages_reference_v178_in_both_languages() -> None:
 def test_route_metadata_preserves_v178_as_previous_release() -> None:
     operator = (ROOT / "operator-learning/index.html").read_text()
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
-    assert "curriculum.js?v=20260822-v188" in operator
+    assert "curriculum.js?v=20260822-v189" in operator
     assert 'version: "2026.08.22-c-v185-potential-affine-capacity"' in curriculum
     assert 'previousVersion: "2026.08.22-c-v184-projection-potential-negative"' in curriculum
     assert 'updated: "2026-08-21"' in curriculum

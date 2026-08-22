@@ -16095,3 +16095,35 @@ A fully independent second implementation passes `44/44` checks. Maximum candida
 Decision: `FAIL_CAMERA_RESOLVED_DCT12_CAPACITY_V188`. Cross-camera pooling is a major all-nine penalty but not the sole bottleneck. Close both pooled and camera-resolved DCT12 without post-result threshold tuning, ridge, larger-network rescue, or GPU rental. Dense v185 camera-resolved potential-domain capacity remains valid, and the full C route remains open.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-22：v189 补回完整频谱后两档相机都过门，根因锁定为 DCT12 截断
+
+### 讲人话：不是这把尺子量不了，而是先前把尺子上的高频刻度裁掉了
+
+v188 已经拆掉跨相机池化，但每台相机仍只保留 `143` 个 DCT12 非 DC 低频系数。五相机 K1 只有 `2/52`，九相机为 `0/52`。v189 保持同一已开封 PoolFire p22 四帧、13 套标定、五/九相机、1009 维仿射空间、固定门伪逆、K0/K1、误差门与调用账不变，只把每台相机的表示恢复为完整 `24x24` 正交 DCT，去掉 DC 后保留 `575` 个系数。
+
+结果清楚地改变了科学判断。一轮未修改物理 K1 后，五相机从 `2/52` 恢复到 `52/52`，九相机从 `0/52` 恢复到 `52/52`；两臂都是完整标定 `13/13`、完整时间层 `4/4`。五相机 field / gradient / observation p90 为 `0.338439 / 0.549518 / 0.118081`，九相机为 `0.240014 / 0.409766 / 0.116577`。
+
+完整 DCT 还逐单元复现了 v185 稠密 camera-resolved 势域结果：候选场、坐标、奇异值和指标的最大差分别约为 `1.62e-14 / 2.24e-14 / 4.44e-15 / 3.22e-15`。这说明 v189 不是偶然擦线，而是把同一稠密信息换到完整正交频谱坐标中。
+
+完全独立第二实现重新构造完整 DCT、响应矩阵、固定门伪逆、候选场、未修改 K1、分层和调用账，`50/50` 检查全真。正式与独立候选场最大相对差为 `7.47e-12`，指标最大绝对差为 `1.30e-12`；相机换序和固定观测下的真值修改对输出影响均为 `0`。两条实现仍共享冻结物理 kernel，因此不能写成端到端物理独立。
+
+正式判决为 `PASS_DCT12_TRUNCATION_ROOT_CAUSE_V189`。在这条冻结的已开封容量诊断里，v188 的失败现在可归因于 DCT12 频谱截断，而不是更深的 setup-local 仿射逆容量不足。
+
+但这仍不是部署算法。完整表示需要每台相机 `575` 个系数和 setup-local 稠密响应矩阵，没有 observation/geometry-only 紧凑预测器、exact-call 减少、fresh wall/RSS、外部泛化、曲线光路或真实 BOST 结果。下一步只能另行冻结一个保留关键高频、相机换序等变、可变相机数且只读部署可见输入的紧凑表示，先过容量门，再决定是否值得训练。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v189 resolves the ambiguity left by v188. Data, four opened PoolFire p22 frames, 13 calibrations, five/all-nine camera arms, the 1009-dimensional affine space, fixed-threshold inverses, K0/K1 replay, gates, and call accounting remain unchanged. The only change is to retain the complete non-DC `24x24` orthonormal DCT of every camera's detector potential: `575` coefficients per camera instead of `143` DCT12 coefficients.
+
+After one unchanged physical K1 step, five-camera rises from `2/52` to `52/52` and all-nine rises from `0/52` to `52/52`. Both arms pass all `13/13` calibrations and all `4/4` time strata. Five-camera field / gradient / observation p90 values are `0.338439 / 0.549518 / 0.118081`; all-nine values are `0.240014 / 0.409766 / 0.116577`.
+
+The full DCT reproduces dense v185 cellwise: maximum candidate-field, coordinate, singular-value, and metric differences are approximately `1.62e-14 / 2.24e-14 / 4.44e-15 / 3.22e-15`. A fully independent second implementation passes `50/50` checks. Maximum formal-versus-independent candidate-field relative and metric absolute differences are `7.47e-12 / 1.30e-12`; camera reordering and fixed-observation truth mutation each change outputs by `0`. Shared frozen physics kernels remain disclosed, so end-to-end physics independence is not claimed.
+
+Decision: `PASS_DCT12_TRUNCATION_ROOT_CAUSE_V189`. Under this frozen opened-data capacity diagnostic, v188 failed because DCT12 omitted essential detector frequencies, not because the setup-local affine inverse lacked capacity.
+
+This remains a full-basis capacity reference, not a deployable algorithm. It uses `575` coefficients per camera and dense setup-local response matrices, with no compact observation/geometry-only predictor, exact-call reduction, fresh wall/RSS result, external generalization, curved-ray validation, or real-BOST evidence. The next eligible test is a separately preregistered compact high-frequency-preserving, camera-permutation-equivariant, variable-cardinality representation using deployment-visible inputs only.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.

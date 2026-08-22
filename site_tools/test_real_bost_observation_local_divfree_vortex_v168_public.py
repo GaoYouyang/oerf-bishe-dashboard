@@ -82,7 +82,7 @@ def test_current_evidence_preserves_v168_as_historical_evidence() -> None:
         "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
     assert payload["scientific_status"] == (
-        "FAIL_CAMERA_RESOLVED_DCT12_CAPACITY_V188"
+        "PASS_DCT12_TRUNCATION_ROOT_CAUSE_V189"
     )
 
 
