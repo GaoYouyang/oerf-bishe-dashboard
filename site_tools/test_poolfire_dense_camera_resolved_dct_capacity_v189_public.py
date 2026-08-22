@@ -101,9 +101,9 @@ def test_current_evidence_points_to_v189_without_overclaiming() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == "FAIL_GEOMETRY_QDEIM1280_CORESET_CAPACITY_V190"
+    assert current["scientific_status"] == "PASS_OBSERVATION_ACTIVATED_NORMAL_METRIC_DISTORTION_ATTRIBUTION_V191_1"
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_QDEIM1280_CORESET_V190_1"
+        "PASS_NUMERIC_COMPARATOR_REPAIR_V191_1"
     )
     assert current["metrics"]["v189_primary_k1_five_strict_safe_count"] == 52
     assert current["metrics"]["v189_primary_k1_all_nine_strict_safe_count"] == 52

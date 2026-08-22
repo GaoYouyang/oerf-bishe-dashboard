@@ -15878,6 +15878,38 @@ This closes only the one-step diagonally preconditioned Jacobi-PCGLS1 mechanism.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-22：v191.1 证明固定子集改变了观测激活的正规度量
+
+### 讲人话：同一套相机位置，有的帧能过、有的帧会失败，问题不只是“这套几何太难”
+
+v190 已经说明固定 `1280` 列 QDEIM + 杠杆子集虽然保留 `1009/1009` 响应秩，却只达到五/九相机 K1 `35/52 · 30/52`。v191 不再换表示，而是利用这批已经开封并封存的四帧结果追问：失败究竟是某些相机标定整体条件差，还是每帧观测会激活不同的最小二乘方向。
+
+结果很清楚。五相机 13 个固定 setup 中有 10 个在四帧里混合成败，九相机有 11 个，总计 `21/26`。因此只看报告几何给每个 setup 一个固定条件数或难度分数，不可能解释同一 setup 下为什么有的帧过门、有的帧失败。
+
+所有 v190 失败单元都同时出现了子集/完整 DCT 坐标差和完整正规方程缺陷。坐标差异中位数为五/九相机 `45.93% / 42.96%`；其中落在被子集丢弃列上的观测响应能量中位数高达 `90.82% / 93.50%`。所选子集的 trace-normalized 方向权重中位数只有 `10.66% / 8.70%`，条件数膨胀中位数为 `3.69x / 4.95x`。
+
+另一方面，子集解对自己的目标已经收敛：formal 与独立实现的最大 stationarity residual 约为 `1.39e-14 / 3.73e-12`。因此不是优化器偷懒，而是固定选列改变了 observation-activated normal metric：同一几何下，不同观测需要的方向不同，约九成缺失响应能量就在被固定丢掉的列里。
+
+独立程序用不同 SVD driver 和广义特征值形式完成 `13/13` 重建，所有归因谓词完全一致。原始 v191 仍保留为 `INCONCLUSIVE`：唯一失败是把接近数值零的 stationarity 和能量恒等式残差也套进统一相对误差，导致除法放大。v191.1 在看到失败后透明冻结一次静态比较器修复；不重跑物理、不修改数组、不重置一次性验证，普通数组继续用相对门，近零残差改用绝对门，最终 `15/15` 通过。这是数值审计修复，不是算法成果。
+
+正式判决为 `PASS_OBSERVATION_ACTIVATED_NORMAL_METRIC_DISTORTION_ATTRIBUTION_V191_1`。它只授权下一条结果前冻结的最小 observation-adaptive 坐标容量诊断；没有构造新表示、训练 predictor、减少调用或验证 wall/RSS、外部工况与真实 BOST，也不租 GPU。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v191.1 localizes why the fixed v190 QDEIM-plus-leverage subset fails. Ten of 13 five-camera setups and 11 of 13 all-nine setups contain both passing and failing frames, yielding `21/26` mixed setups. A single geometry-only condition score therefore cannot explain frame-level failure under identical reported geometry.
+
+Every failed v190 cell has both a subset-versus-full-DCT coordinate discrepancy and a full-normal-equation defect. Median coordinate discrepancy is `45.93% / 42.96%` under five/all-nine cameras, while median response energy in discarded columns is `90.82% / 93.50%`. Median trace-normalized selected directional weighting is only `10.66% / 8.70%`, and median condition inflation is `3.69x / 4.95x`.
+
+The reduced solves are nevertheless stationary for their own objective: maximum formal and independent residuals are approximately `1.39e-14 / 3.73e-12`. The mechanism is therefore observation-activated normal-metric distortion, not an unconverged optimizer.
+
+The original v191 independent result remains preserved as `INCONCLUSIVE` because one blanket relative comparator divided near-zero stationarity and energy-identity residuals. A transparent v191.1 static repair reruns no physics, changes no arrays, and resets no single-use validation; it retains relative gates for ordinary arrays and uses stated absolute gates for near-zero residuals, passing `15/15` checks. This repair is numerical audit integrity, not an algorithmic contribution.
+
+Decision: `PASS_OBSERVATION_ACTIVATED_NORMAL_METRIC_DISTORTION_ATTRIBUTION_V191_1`. This authorizes only one separately preregistered minimal observation-adaptive coordinate capacity diagnostic. No representation, predictor, exact-call reduction, wall/RSS gain, external generalization, curved-ray result, real-BOST evidence, or GPU authorization is established.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-22：v190 保留全部响应秩，仍然丢了物理容量
 
 ### 讲人话：选出的列在代数上“够独立”，不代表它们能稳定还原物理场
@@ -16160,6 +16192,6 @@ This remains a full-basis capacity reference, not a deployable algorithm. It use
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
 
-> 同日最新结论见上方 v190 checkpoint：固定 `1280` 列 geometry-QDEIM + 杠杆子集虽保留 `1009/1009` 响应秩，却只达到五/九相机 K1 `35/52 · 30/52`，因此已独立复算并关闭该固定子集家族。
+> 同日后续结论见上方 v190 与 v191.1 checkpoints：v190 独立关闭固定 `1280` 列 geometry-QDEIM + 杠杆子集家族；v191.1 进一步把失败归因于帧级观测激活的正规度量失真，但仍未提出 observation-adaptive 表示。
 
-> Latest same-day conclusion: the v190 checkpoint above independently confirms that the fixed `1280`-column geometry-QDEIM-plus-leverage subset retains response rank `1009/1009` but reaches only `35/52 · 30/52` K1 cells under five/all-nine cameras, closing this fixed-subset family.
+> Later same-day conclusions are recorded in the v190 and v191.1 checkpoints above: v190 independently closes the fixed `1280`-column geometry-QDEIM-plus-leverage family, while v191.1 attributes its failure to frame-level observation-activated normal-metric distortion without yet constructing an observation-adaptive representation.

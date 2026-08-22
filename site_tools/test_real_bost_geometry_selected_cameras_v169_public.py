@@ -78,14 +78,14 @@ def test_current_evidence_preserves_v169_but_points_to_v181() -> None:
     assert payload["current_decision"]["v169_predictor_training_authorized"] is False
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_QDEIM1280_CORESET_V190_1"
+        == "PASS_NUMERIC_COMPARATOR_REPAIR_V191_1"
     )
     assert (
         payload["formal_status"]
-        == "PASS_FORMAL_POOLFIRE_GEOMETRY_QDEIM1280_CORESET_EXECUTION_V190"
+            == "PASS_FORMAL_POOLFIRE_QDEIM_NORMAL_METRIC_ATTRIBUTION_V191"
     )
     assert payload["scientific_status"] == (
-        "FAIL_GEOMETRY_QDEIM1280_CORESET_CAPACITY_V190"
+        "PASS_OBSERVATION_ACTIVATED_NORMAL_METRIC_DISTORTION_ATTRIBUTION_V191_1"
     )
 
 

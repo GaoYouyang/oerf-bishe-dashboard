@@ -73,13 +73,13 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 def test_current_evidence_preserves_v172_and_points_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "FAIL_GEOMETRY_QDEIM1280_CORESET_CAPACITY_V190"
+        "PASS_OBSERVATION_ACTIVATED_NORMAL_METRIC_DISTORTION_ATTRIBUTION_V191_1"
     )
     assert payload["metrics"]["v172_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v172_primary_complete_fields_passed"] == 9
     assert payload["metrics"]["v172_independent_check_count"] == 22
-    assert "subset-conditioning loss" in payload["next_scientific_gate_en"]
-    assert "固定子集条件性损失" in payload["next_scientific_gate_zh"]
+    assert "observation-adaptive coordinate" in payload["next_scientific_gate_en"]
+    assert "固定 1280 列家族继续关闭" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v172_in_both_languages() -> None:
