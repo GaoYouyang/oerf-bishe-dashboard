@@ -1,0 +1,153 @@
+{
+  "schema_version": "oerf-public-poolfire-fixed-identity-prior-p14-v199.0.0",
+  "date": "2026-08-23",
+  "title_zh": "v199：固定正则改善五相机尾部，但 p14 的 K2 参考本身不足",
+  "title_en": "v199: fixed regularization improves the five-camera tail, but the p14 K2 reference is inadequate",
+  "formal_status": "PASS_FORMAL_POOLFIRE_FIXED_IDENTITY_PRIOR_P14_EXECUTION_V199",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_FIXED_IDENTITY_PRIOR_P14_V199",
+  "scientific_decision": "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199",
+  "scope_zh": "仅限历史上已经暴露的 p14 开发轨迹、13 套标定和五/九相机两臂；不是 fresh、blind、validation 或 test。",
+  "scope_en": "Limited to the historically exposed p14 development trajectory, 13 calibrations, and the five/all-nine camera arms; this is not fresh, blind, validation, or test evidence.",
+  "scientific_question": "Does the fixed identity-prior regularization distilled before reading p14 preserve the absolute gate at K1 while a non-exchangeable full-DCT K2 reference remains adequate on the same arms?",
+  "fixed_regularization": {
+    "tau": 0.00390625,
+    "tau_label": "2^-8",
+    "selected_on": "already-opened p22 development only",
+    "changed_after_p14": false
+  },
+  "methods": {
+    "fixed_identity_k1": {
+      "logical_online_exact_calls": {
+        "A": 2,
+        "AT": 1
+      },
+      "all_nine": {
+        "strict_safe_cells": 1313,
+        "strict_total_cells": 1313,
+        "complete_groups_passed": 13,
+        "complete_groups_total": 13,
+        "p90": {
+          "field": 0.315450018,
+          "gradient": 0.5109249834,
+          "observation": 0.1435946544
+        }
+      },
+      "five_camera": {
+        "strict_safe_cells": 1268,
+        "strict_total_cells": 1313,
+        "complete_groups_passed": 3,
+        "complete_groups_total": 13,
+        "p90": {
+          "field": 0.4218917827,
+          "gradient": 0.6972873238,
+          "observation": 0.1488658207
+        },
+        "worst": {
+          "field": 0.5396415157,
+          "gradient": 0.9256360524,
+          "observation": 0.1968647861
+        }
+      }
+    },
+    "full_dct_k1_parent": {
+      "logical_online_exact_calls": {
+        "A": 2,
+        "AT": 1
+      },
+      "all_nine": {
+        "strict_safe_cells": 1313,
+        "strict_total_cells": 1313,
+        "complete_groups_passed": 13,
+        "complete_groups_total": 13
+      },
+      "five_camera": {
+        "strict_safe_cells": 1173,
+        "strict_total_cells": 1313,
+        "complete_groups_passed": 0,
+        "complete_groups_total": 13,
+        "p90": {
+          "field": 0.4560484689,
+          "gradient": 0.7513775084,
+          "observation": 0.1566676114
+        },
+        "worst": {
+          "field": 0.5981787095,
+          "gradient": 1.0263104093,
+          "observation": 0.2053679695
+        }
+      }
+    },
+    "full_dct_k2_reference": {
+      "logical_online_exact_calls": {
+        "A": 3,
+        "AT": 2
+      },
+      "all_nine": {
+        "strict_safe_cells": 1313,
+        "strict_total_cells": 1313,
+        "complete_groups_passed": 13,
+        "complete_groups_total": 13
+      },
+      "five_camera": {
+        "strict_safe_cells": 1213,
+        "strict_total_cells": 1313,
+        "complete_groups_passed": 0,
+        "complete_groups_total": 13,
+        "p90": {
+          "field": 0.4498511794,
+          "gradient": 0.7379402047,
+          "observation": 0.1160216065
+        },
+        "worst": {
+          "field": 0.5902707245,
+          "gradient": 1.0065661095,
+          "observation": 0.1544202247
+        }
+      }
+    }
+  },
+  "other_controls": {
+    "fixed_initializer_only": {
+      "all_nine_strict_safe_cells": 654,
+      "five_camera_strict_safe_cells": 599,
+      "complete_groups_passed": 0
+    },
+    "affine_jacobi_pcgls1_strict_safe_cells": 0,
+    "bp_cgls1_strict_safe_cells": 0,
+    "zero_k2_strict_safe_cells": 0,
+    "dual_ridge_k1_all_nine_strict_safe_cells": 42,
+    "dual_ridge_k1_five_camera_strict_safe_cells": 95
+  },
+  "independent_numeric_audit": {
+    "direct_normal_solve_maximum_relative_difference": 4.4230813309e-13,
+    "observation_reconstruction_maximum_relative_difference": 1.9553694701e-11,
+    "camera_permutation_coordinate_maximum_relative_difference": 1.8181773177e-14,
+    "camera_permutation_stationarity_maximum_absolute_difference": 5.1757221793e-15,
+    "formal_independent_coordinate_block_relative_difference": 6.2268827006e-11,
+    "metric_maximum_absolute_difference": 1.2257417303e-11,
+    "summary_maximum_absolute_difference": 1.1297851543e-11,
+    "formal_tree_unchanged": true,
+    "input_tree_unchanged": true,
+    "single_use_release_consumed": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "interpretation_zh": "固定 identity-prior K1 把五相机严格安全单元从未正则 K1 的 1173/1313 提高到 1268/1313，并把完整组从 0/13 提高到 3/13；这是明确的局部改善。但候选仍未通过完整五相机门，而且预注册 full-DCT K2 reference 自身也只有 1213/1313、0/13，因此固定判决顺序要求本轮记为参考不足的 inconclusive，而不是候选成功或失败。",
+  "interpretation_en": "Fixed identity-prior K1 raises five-camera strict-safe cells from 1173/1313 for unregularized K1 to 1268/1313 and complete groups from 0/13 to 3/13, which is a clear partial improvement. The candidate still misses the complete five-camera gate, however, and the preregistered full-DCT K2 reference itself reaches only 1213/1313 and 0/13. The frozen adjudication order therefore makes this run inconclusive because of reference inadequacy, rather than a candidate pass or fail.",
+  "decision_boundary_zh": "p14 是历史上已经暴露的开发轨迹；本轮不是 fresh validation、blind test、exact-call reduction、wall/RSS、外部泛化或真实 BOST 证据。参考本身不充分时，不能用 2A+1A^T 对 3A+2A^T 的账面差声称加速。",
+  "decision_boundary_en": "p14 is a historically exposed development trajectory. This is not fresh validation, a blind test, exact-call reduction, wall/RSS evidence, external generalization, or real BOST. Because the reference is inadequate, the nominal 2A+1AT versus 3A+2AT ledger difference cannot support a speedup claim.",
+  "next_scientific_gate_zh": "停止在 p14 上调整 tau 或 Krylov 深度。下一步只接受结果前冻结、物理上不同且先证明五相机参考充分性的机制；若没有这样的机制，就等待工况匹配的真实二维 BOST 位移、标定映射、噪声重复与认可基线。",
+  "next_scientific_gate_en": "Stop tuning tau or Krylov depth on p14. The next eligible step must be a preregistered, physically distinct mechanism that first establishes five-camera reference adequacy; absent such a mechanism, wait for condition-matched real 2D BOST displacement, calibration mapping, repeated-noise data, and an accepted baseline.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_validation": false,
+    "exact_call_reduction_established": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}
