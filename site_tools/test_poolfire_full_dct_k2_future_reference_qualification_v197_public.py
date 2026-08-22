@@ -55,15 +55,21 @@ def test_v197_public_assets_and_bilingual_copy_exist() -> None:
     assert figure.exists() and figure.stat().st_size > 20_000
 
 
-def test_v197_is_the_current_bilingual_public_state() -> None:
+def test_v197_remains_visible_after_v198_becomes_current_state() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
     assert current["updated"] == "2026-08-23"
     assert current["formal_status"] == (
-        "PASS_FORMAL_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"
+        "PASS_FORMAL_POOLFIRE_COVARIANCE_GCV_EXECUTION_V198"
     )
     assert current["scientific_status"] == (
+        "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198"
+    )
+    assert current["v197_future_reference_qualification_formal_status"] == (
+        "PASS_FORMAL_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"
+    )
+    assert current["v197_future_reference_qualification_scientific_decision"] == (
         "PASS_FUTURE_ONLY_FULL_DCT_K2_REFERENCE_QUALIFICATION_V197"
     )
     assert current["metrics"]["v197_reference_strict_safe_cells"] == 2626

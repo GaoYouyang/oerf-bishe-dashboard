@@ -65,14 +65,14 @@ def test_current_evidence_preserves_v171_but_points_to_v181() -> None:
     )
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"
+        == "PASS_INDEPENDENT_RECOMPUTATION_COVARIANCE_GCV_FULL_DCT_V198"
     )
     assert (
         payload["formal_status"]
-            == "PASS_FORMAL_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"
+            == "PASS_FORMAL_POOLFIRE_COVARIANCE_GCV_EXECUTION_V198"
     )
     assert payload["scientific_status"] == (
-        "PASS_FUTURE_ONLY_FULL_DCT_K2_REFERENCE_QUALIFICATION_V197"
+        "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198"
     )
     assert payload["current_decision"]["v171_result_blind_selector_passed"] is True
     assert payload["current_decision"]["v171_external_generalization"] is False

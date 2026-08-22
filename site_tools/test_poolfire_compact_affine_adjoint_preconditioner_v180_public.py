@@ -65,7 +65,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v180_after_v181_advance() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "PASS_FUTURE_ONLY_FULL_DCT_K2_REFERENCE_QUALIFICATION_V197"
+    assert payload["scientific_status"] == "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198"
     assert payload["metrics"]["v180_five_primary_k1_strict_safe_count"] == 4
     assert payload["metrics"]["v180_all_nine_primary_k1_strict_safe_count"] == 7
     assert payload["metrics"]["v180_five_primary_k1_observation_p90"] > 0.2

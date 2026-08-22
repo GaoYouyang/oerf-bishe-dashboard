@@ -82,7 +82,7 @@ def test_v193_public_assets_and_bilingual_claims_exist() -> None:
     assert "FAIL_SIGNED_COUNTSKETCH_CAPACITY_V193" in result
     assert "data-i18n-zh" in daily and "data-i18n-en" in daily
     assert all("v193" in content for content in (daily, focus, log))
-    assert "v196" in root
+    assert "v198" in root
     assert "curriculum.js?v=20260822-v196" in focus
     assert 'version: "2026.08.22-c-v193-signed-countsketch-negative"' in curriculum
     assert 'updated: "2026-08-22"' in curriculum
@@ -114,9 +114,9 @@ def test_v193_public_files_exclude_private_execution_details() -> None:
 
 def test_current_evidence_preserves_v193_after_v195_without_overclaiming() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "PASS_FUTURE_ONLY_FULL_DCT_K2_REFERENCE_QUALIFICATION_V197"
+    assert current["scientific_status"] == "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198"
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"
+        "PASS_INDEPENDENT_RECOMPUTATION_COVARIANCE_GCV_FULL_DCT_V198"
     )
     assert current["metrics"]["v193_primary_five_safe_cells"] == 51
     assert current["metrics"]["v193_primary_all_nine_safe_cells"] == 49

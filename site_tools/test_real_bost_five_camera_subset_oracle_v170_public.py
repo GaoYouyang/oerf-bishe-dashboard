@@ -77,14 +77,14 @@ def test_current_evidence_preserves_v170_but_points_to_v181() -> None:
     assert payload["current_decision"]["v170_deployable_selector_established"] is False
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"
+        == "PASS_INDEPENDENT_RECOMPUTATION_COVARIANCE_GCV_FULL_DCT_V198"
     )
     assert (
         payload["formal_status"]
-            == "PASS_FORMAL_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"
+            == "PASS_FORMAL_POOLFIRE_COVARIANCE_GCV_EXECUTION_V198"
     )
     assert payload["scientific_status"] == (
-        "PASS_FUTURE_ONLY_FULL_DCT_K2_REFERENCE_QUALIFICATION_V197"
+        "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198"
     )
 
 

@@ -83,12 +83,11 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     )
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     next_gate = payload["next_scientific_gate_en"].lower()
-    assert "non-exchangeable v197 reference" in next_gate
-    assert "physically distinct candidate contract" in next_gate
-    assert "keep p14" in next_gate
-    assert "closed" in next_gate
-    assert "independently passes" in next_gate
-    assert "gpu" in next_gate
+    assert "fixed identity-prior regularized candidate" in next_gate
+    assert "one-shot validation contract" in next_gate
+    assert "before reading p14" in next_gate
+    assert "v197 k2 reference" in next_gate
+    assert "independent second implementation" in next_gate
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:

@@ -96,9 +96,9 @@ def test_current_evidence_retains_v185_after_v186_1_advances_the_gate() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == "PASS_FUTURE_ONLY_FULL_DCT_K2_REFERENCE_QUALIFICATION_V197"
+    assert current["scientific_status"] == "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198"
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"
+        "PASS_INDEPENDENT_RECOMPUTATION_COVARIANCE_GCV_FULL_DCT_V198"
     )
     assert current["metrics"]["v185_five_primary_k1_strict_safe_count"] == 52
     assert current["metrics"]["v185_all_nine_primary_k1_strict_safe_count"] == 52

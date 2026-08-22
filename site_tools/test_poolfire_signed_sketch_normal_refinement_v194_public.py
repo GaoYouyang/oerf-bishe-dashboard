@@ -41,7 +41,7 @@ def test_v194_public_assets_and_bilingual_copy_exist() -> None:
     log = (ROOT / "docs/operator_3d_learning_log.md").read_text(encoding="utf-8")
     for content in (result, daily, focus, log):
         assert "v194" in content
-    assert "v196" in root
+    assert "v198" in root
     assert "# v194：" in result and "# v194:" in result
     assert "data-i18n-zh" in daily and "data-i18n-en" in daily
     figure = ROOT / "assets/figures/poolfire_signed_sketch_normal_refinement_v194.png"

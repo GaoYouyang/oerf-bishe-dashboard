@@ -95,7 +95,7 @@ def test_current_manifest_retains_v145_history_without_blocking_newer_evidence()
     assert evidence["public_evidence"]["result"].startswith(
         "../document_reader.html?doc=docs%2F"
     )
-    assert evidence["scientific_status"] == "PASS_FUTURE_ONLY_FULL_DCT_K2_REFERENCE_QUALIFICATION_V197"
+    assert evidence["scientific_status"] == "PASS_CHEAPER_CONTROL_EXPLAINS_COVARIANCE_GCV_V198"
     assert evidence["current_decision"]["v161_independently_recomputed"] is True
     assert evidence["current_decision"]["v162_independently_recomputed"] is True
 
