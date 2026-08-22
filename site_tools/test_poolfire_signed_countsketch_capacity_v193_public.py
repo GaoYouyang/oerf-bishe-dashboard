@@ -81,8 +81,9 @@ def test_v193_public_assets_and_bilingual_claims_exist() -> None:
     assert "v193：" in result and "# v193:" in result
     assert "FAIL_SIGNED_COUNTSKETCH_CAPACITY_V193" in result
     assert "data-i18n-zh" in daily and "data-i18n-en" in daily
-    assert all("v193" in content for content in (daily, focus, root, log))
-    assert "curriculum.js?v=20260822-v194-1" in focus
+    assert all("v193" in content for content in (daily, focus, log))
+    assert "v195.2" in root
+    assert "curriculum.js?v=20260822-v195-2" in focus
     assert 'version: "2026.08.22-c-v193-signed-countsketch-negative"' in curriculum
     assert 'updated: "2026-08-22"' in curriculum
     figure = ROOT / "assets/figures/poolfire_signed_countsketch_capacity_v193.png"
@@ -111,11 +112,11 @@ def test_v193_public_files_exclude_private_execution_details() -> None:
         assert commit_hash.search(content) is None, path
 
 
-def test_current_evidence_preserves_v193_after_v194_without_overclaiming() -> None:
+def test_current_evidence_preserves_v193_after_v195_without_overclaiming() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_SIGNED_SKETCH_FULL_NORMAL_REFINEMENT_V194"
+    assert current["scientific_status"] == "FAIL_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2"
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_SKETCH_NORMAL_REFINEMENT_V194_1"
+        "PASS_INDEPENDENT_RECOMPUTATION_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2"
     )
     assert current["metrics"]["v193_primary_five_safe_cells"] == 51
     assert current["metrics"]["v193_primary_all_nine_safe_cells"] == 49

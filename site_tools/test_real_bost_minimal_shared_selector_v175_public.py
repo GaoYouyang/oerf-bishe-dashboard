@@ -70,9 +70,9 @@ def test_current_evidence_retains_v175_as_historical_parent_evidence() -> None:
     assert payload["metrics"]["v175_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v175_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v175_independent_check_count"] == 31
-    assert payload["scientific_status"] == "FAIL_SIGNED_SKETCH_FULL_NORMAL_REFINEMENT_V194"
-    assert "separately preregistered coordinate-wise mechanism" in payload["next_scientific_gate_en"]
-    assert "关闭冻结的全 Hessian 单位步 primary" in payload["next_scientific_gate_zh"]
+    assert payload["scientific_status"] == "FAIL_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2"
+    assert "fixed one-step diagonal signed-sketch correction" in payload["next_scientific_gate_en"]
+    assert "固定的一步对角 signed-sketch 修正" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v175_in_both_languages() -> None:

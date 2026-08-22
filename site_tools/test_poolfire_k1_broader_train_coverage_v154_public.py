@@ -83,10 +83,11 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     )
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     next_gate = payload["next_scientific_gate_en"].lower()
-    assert "separately preregistered coordinate-wise mechanism" in next_gate
-    assert "paired real two-component bos displacement data" in next_gate
-    assert "do not reuse the opened v194 cells as proof" in next_gate
-    assert "rent a gpu" in next_gate
+    assert "close the fixed one-step diagonal signed-sketch correction" in next_gate
+    assert "do not tune or rename it" in next_gate
+    assert "open p14" in next_gate
+    assert "genuinely new physical information" in next_gate
+    assert "gpu" in next_gate
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:
