@@ -73,7 +73,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 def test_current_evidence_preserves_v172_and_points_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
+        "FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200"
     )
     assert payload["metrics"]["v172_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v172_primary_complete_fields_passed"] == 9

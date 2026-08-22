@@ -1,0 +1,111 @@
+{
+  "schema_version": "oerf-public-poolfire-huber-pdhg-reference-p14-v200.0.0",
+  "date": "2026-08-23",
+  "title_zh": "v200：Huber-TV 明显改善五相机参考，但仍未达到完整充分性门",
+  "title_en": "v200: Huber-TV materially improves the five-camera reference but still misses the complete adequacy gate",
+  "formal_status": "PASS_FORMAL_POOLFIRE_HUBER_PDHG_REFERENCE_P14_EXECUTION_V200",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_HUBER_PDHG_REFERENCE_P14_V200",
+  "scientific_decision": "FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200",
+  "scope_zh": "仅限历史上已经暴露的 p14 开发轨迹、13 套标定和五相机臂；不是 fresh、blind、validation 或 test。",
+  "scope_en": "Limited to the historically exposed p14 development trajectory, 13 calibrations, and the five-camera arm; this is not fresh, blind, validation, or test evidence.",
+  "scientific_question": "Can one fixed scale-equivariant edge-preserving Huber-PDHG refinement make the five-camera p14 reference adequate in every cell and calibration group?",
+  "fixed_primary": {
+    "name": "scale_equivariant_huber_pdhg_reference_from_full_dct_k2",
+    "starting_point": "full-DCT K2",
+    "iterations": 128,
+    "regularization_weight": 0.001,
+    "huber_delta": 0.08,
+    "hyperparameter_search_count": 0,
+    "trainable_parameter_count": 0,
+    "logical_online_exact_calls": {
+      "A": 131,
+      "AT": 130
+    },
+    "five_camera": {
+      "strict_safe_cells": 1289,
+      "strict_total_cells": 1313,
+      "failed_cells": 24,
+      "complete_groups_passed": 5,
+      "complete_groups_total": 13,
+      "failed_groups": 8,
+      "p90": {
+        "field": 0.4182715673,
+        "gradient": 0.6600694609,
+        "observation": 0.0205845834
+      },
+      "worst": {
+        "field": 0.5473759514,
+        "gradient": 0.9049703219,
+        "observation": 0.0272132329
+      }
+    }
+  },
+  "controls": {
+    "full_dct_k2_parent": {
+      "logical_online_exact_calls": {
+        "A": 3,
+        "AT": 2
+      },
+      "five_camera": {
+        "strict_safe_cells": 1213,
+        "strict_total_cells": 1313,
+        "complete_groups_passed": 0,
+        "complete_groups_total": 13,
+        "p90": {
+          "field": 0.4498511794,
+          "gradient": 0.7379402047,
+          "observation": 0.1160216065
+        },
+        "worst": {
+          "field": 0.5902707245,
+          "gradient": 1.0065661095,
+          "observation": 0.1544202247
+        }
+      }
+    },
+    "fixed_identity_k1_v199": {
+      "logical_online_exact_calls": {
+        "A": 2,
+        "AT": 1
+      },
+      "five_camera": {
+        "strict_safe_cells": 1268,
+        "strict_total_cells": 1313,
+        "complete_groups_passed": 3,
+        "complete_groups_total": 13
+      }
+    }
+  },
+  "independent_numeric_audit": {
+    "reference_field_block_relative_difference": 1.7815970015e-16,
+    "k2_field_block_relative_difference": 3.3002942855e-17,
+    "metric_maximum_absolute_difference": 2.2204460493e-16,
+    "parent_k2_metric_maximum_absolute_difference": 2.2204460493e-16,
+    "strict_masks_exact": true,
+    "formal_tree_unchanged": true,
+    "input_tree_unchanged": true,
+    "single_use_release_consumed": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "interpretation_zh": "固定 Huber-TV 参考把严格安全单元从 K2 的 1213/1313 提高到 1289/1313，把完整组从 0/13 提高到 5/13，并显著降低观测误差；这是明确的参考质量改善。但仍有 24 个单元和 8 个完整组未过门，因此五相机参考充分性仍未建立。",
+  "interpretation_en": "The fixed Huber-TV reference raises strict-safe cells from 1213/1313 for K2 to 1289/1313 and complete groups from 0/13 to 5/13, while materially reducing observation error. This is a clear reference-quality improvement. Yet 24 cells and eight complete groups still miss the gate, so five-camera reference adequacy remains unestablished.",
+  "decision_boundary_zh": "固定 Huber 目标与 128 步求解器按协议关闭，不得事后调整权重、Huber 阈值、迭代数、归一化或起点。参考仍不足，所以 v199 的 2A+1A^T 与参考账不能用于声称 exact-call、wall/RSS 或速度收益。",
+  "decision_boundary_en": "The fixed Huber objective and 128-step solver are closed by protocol; its weight, Huber threshold, iteration count, normalization, and starting point must not be tuned post hoc. Because the reference remains inadequate, v199's 2A+1AT ledger cannot support an exact-call, wall/RSS, or speed claim.",
+  "next_scientific_gate_zh": "不再微调这条 Huber-TV 参考。下一步只有结果前冻结、物理上真正不同且能先建立五相机参考充分性的机制，或等待工况匹配的真实二维 BOST 位移、标定映射、噪声重复与认可基线。",
+  "next_scientific_gate_en": "Do not tune this Huber-TV reference further. The next eligible step is a preregistered, physically distinct mechanism that first establishes five-camera reference adequacy, or condition-matched real 2D BOST displacement with calibration mapping, repeated-noise data, and an accepted baseline.",
+  "fixed_huber_reference_closed": true,
+  "fixed_identity_candidate_closed": false,
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_validation": false,
+    "exact_call_reduction_established": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

@@ -82,7 +82,7 @@ def test_current_evidence_preserves_v168_as_historical_evidence() -> None:
         "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
     assert payload["scientific_status"] == (
-        "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
+        "FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200"
     )
 
 

@@ -65,14 +65,14 @@ def test_current_evidence_preserves_v171_but_points_to_v181() -> None:
     )
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_FIXED_IDENTITY_PRIOR_P14_V199"
+        == "PASS_INDEPENDENT_RECOMPUTATION_HUBER_PDHG_REFERENCE_P14_V200"
     )
     assert (
         payload["formal_status"]
-            == "PASS_FORMAL_POOLFIRE_FIXED_IDENTITY_PRIOR_P14_EXECUTION_V199"
+            == "PASS_FORMAL_POOLFIRE_HUBER_PDHG_REFERENCE_P14_EXECUTION_V200"
     )
     assert payload["scientific_status"] == (
-        "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
+        "FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200"
     )
     assert payload["current_decision"]["v171_result_blind_selector_passed"] is True
     assert payload["current_decision"]["v171_external_generalization"] is False

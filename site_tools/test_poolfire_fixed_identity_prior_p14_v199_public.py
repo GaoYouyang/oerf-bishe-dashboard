@@ -41,16 +41,16 @@ def test_v199_public_assets_and_bilingual_copy_exist() -> None:
     ):
         content = page.read_text()
         assert "poolfire_fixed_identity_prior_p14_v199" in content
-        assert "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199" in content
 
 
-def test_v199_current_evidence_is_the_public_headline() -> None:
+def test_v199_evidence_remains_preserved_after_v200_becomes_current() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
-    assert current["formal_status"] == "PASS_FORMAL_POOLFIRE_FIXED_IDENTITY_PRIOR_P14_EXECUTION_V199"
-    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_FIXED_IDENTITY_PRIOR_P14_V199"
+    assert current["scientific_status"] == "FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200"
+    assert current["formal_status"] == "PASS_FORMAL_POOLFIRE_HUBER_PDHG_REFERENCE_P14_EXECUTION_V200"
+    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_HUBER_PDHG_REFERENCE_P14_V200"
+    assert current["v199_fixed_identity_p14_scientific_decision"] == "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
     assert current["metrics"]["v199_primary_five_strict_safe_cells"] == 1268
     assert current["metrics"]["v199_reference_five_complete_groups_passed"] == 0
     assert current["current_decision"]["v199_p14_reference_adequate"] is False
     assert current["current_decision"]["v199_exact_call_headroom_interpretable"] is False
-    assert current["public_evidence"]["result"].endswith("poolfire_fixed_identity_prior_p14_v199_result_2026-08-23.md")
+    assert current["public_evidence"]["result"].endswith("poolfire_huber_pdhg_reference_p14_v200_result_2026-08-23.md")

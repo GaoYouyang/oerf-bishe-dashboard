@@ -43,12 +43,12 @@ def test_v198_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v198_evidence_remains_preserved_after_v199() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
+    assert current["scientific_status"] == "FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200"
     assert current["metrics"]["v198_primary_strict_safe_cells"] == 2626
     assert current["metrics"]["v198_identity_control_strict_safe_cells"] == 2626
     assert current["current_decision"]["v198_algorithm_breakthrough"] is False
     assert current["current_decision"]["v198_empirical_covariance_route_closed"] is True
-    assert "Stop tuning tau or Krylov depth" in current["next_scientific_gate_en"]
+    assert "Do not tune this fixed Huber-TV reference" in current["next_scientific_gate_en"]
 
 
 def test_v198_public_files_exclude_private_execution_details() -> None:

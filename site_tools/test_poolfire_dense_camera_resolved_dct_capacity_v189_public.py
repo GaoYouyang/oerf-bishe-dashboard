@@ -101,9 +101,9 @@ def test_current_evidence_points_to_v189_without_overclaiming() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
+    assert current["scientific_status"] == "FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200"
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_FIXED_IDENTITY_PRIOR_P14_V199"
+        "PASS_INDEPENDENT_RECOMPUTATION_HUBER_PDHG_REFERENCE_P14_V200"
     )
     assert current["metrics"]["v189_primary_k1_five_strict_safe_count"] == 52
     assert current["metrics"]["v189_primary_k1_all_nine_strict_safe_count"] == 52
