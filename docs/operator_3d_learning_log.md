@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-23：v200 换成保边参考后明显变好，但参考门仍没有真正站稳
+
+**为什么做。** v199 发现五相机 K2 reference 自身只有 `1213/1313` 个严格安全单元和 `0/13` 个完整组，因此候选的调用数比较无法解释。v200 不再调整候选，也不继续增加 Krylov 深度，而是结果前冻结一个物理上不同的参考：从完整 DCT K2 起点出发，用保边 Huber-TV 目标和固定 128 步 PDHG 检验五相机 reference 是否能达到绝对充分。
+
+**实际做了什么。** 正式程序和完全独立第二实现分别重建 13 套标定、101 帧、五相机 forward、K2 起点、物理轴前向 Neumann 梯度及其精确转置、固定 Huber-TV 目标、PDHG 迭代、逐单元三指标门和完整组门。参数、迭代数、边界、归一化和调用账在结果前固定；没有搜索、裁剪、回退或提前停止。参考诊断的逻辑账是 `131A+130A^T`，这不是部署成本。
+
+**结果。** Huber-TV reference 达到 **1289/1313** 个严格安全单元和 **5/13** 个完整组，比 K2 的 **1213/1313、0/13** 多 76 个安全单元和 5 个完整组。其 field / gradient / observation p90 为 **0.418272 / 0.660069 / 0.020585**；但仍有 **24 个单元和 8 个完整组失败**。独立第二实现的 reference field 相对差为 **1.78e-16**，逐指标最大绝对差为 **2.22e-16**，离散判决完全一致。
+
+**讲人话。** 保边先验确实比单纯 K2 更适合作为稀疏五相机参考，这是实质性认识；但它仍没有把参考变成合格的比较尺子。因此固定判决是 `FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200`。这条固定 Huber-TV 目标、参数和 128 步求解器关闭，不在同一条路线上继续调参。v199 的 fixed-identity 候选本身没有被判失败，只是仍不能据此解释 exact-call 优势。没有 wall/RSS、外部泛化、真实 BOST 或论文成功证据，`algorithm_breakthrough=false`。
+
+### English summary
+
+v200 replaces the inadequate five-camera K2 reference with a preregistered, physically distinct edge-preserving Huber-TV reference initialized from full-DCT K2 and solved by 128 fixed PDHG iterations. The Huber reference reaches **1289/1313 strict-safe cells and 5/13 complete groups**, improving K2 at **1213/1313 and 0/13** by 76 cells and five groups. Its field / gradient / observation p90 values are **0.418272 / 0.660069 / 0.020585**, but **24 cells and eight complete groups still fail**. A fully independent implementation agrees to **1.78e-16** in the reference field and **2.22e-16** in all metrics, with identical discrete decisions. The frozen verdict is `FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200`: edge preservation helps materially, but the reference remains inadequate. The fixed Huber objective and solver are closed without tuning. v199's fixed-identity candidate is not adjudicated against an adequate reference, and no exact-call, wall/RSS, external, real-BOST, paper-success, or algorithm-breakthrough claim is authorized.
+
 ## 2026-08-23：v199 有改善也不能急着报成功，先看比较的尺子够不够格
 
 **为什么做。** v198 在已打开 p22 上发现简单 `identity-prior` 正则可以补齐 K1 尾部，而且同价控制已经说明经验协方差不是必要成分。v199 因此不再调参，把 p22 选出的 `tau=2^-8` 原样固定，带到历史上已经暴露的 p14 开发轨迹，问它能否在合格 K2 reference 下以更少精确调用守住完整门。
