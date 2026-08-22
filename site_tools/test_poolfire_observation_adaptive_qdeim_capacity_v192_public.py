@@ -70,11 +70,14 @@ def test_v192_public_assets_and_bilingual_claims_exist() -> None:
     daily = (ROOT / "operator-learning/daily-progress.html").read_text(encoding="utf-8")
     focus = (ROOT / "operator-learning/index.html").read_text(encoding="utf-8")
     root = (ROOT / "index.html").read_text(encoding="utf-8")
+    curriculum = (ROOT / "operator-learning/curriculum.js").read_text(encoding="utf-8")
     log = (ROOT / "docs/operator_3d_learning_log.md").read_text(encoding="utf-8")
     assert "v192：" in result and "# v192:" in result
     assert "FAIL_NORMAL_CONTRIBUTION_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192" in result
     assert "data-i18n-zh" in daily and "data-i18n-en" in daily
     assert all("v192" in content for content in (daily, focus, root, log))
+    assert 'version: "2026.08.22-c-v192-observation-adaptive-qdeim-negative"' in curriculum
+    assert 'updated: "2026-08-22"' in curriculum
     figure = ROOT / "assets/figures/poolfire_observation_adaptive_qdeim_capacity_v192.png"
     assert figure.is_file()
     with Image.open(figure) as image:

@@ -123,7 +123,7 @@ def test_route_metadata_records_v177_as_older_release() -> None:
     assert 'previousVersion: "2026.08.22-c-v184-projection-potential-negative"' in curriculum
     assert 'version: "2026.08.21-c-v181-geometry-conditioned-rank16-negative"' in curriculum
     assert 'previousVersion: "2026.08.21-c-v180-compact-adjoint-preconditioner-negative"' in curriculum
-    assert 'updated: "2026-08-21"' in curriculum
+    assert 'updated: "2026-08-22"' in curriculum
 
 
 def test_public_artifacts_contain_no_private_execution_material() -> None:

@@ -1,8 +1,8 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.22-c-v186.1-potential-set-linear-negative",
-  previousVersion: "2026.08.22-c-v185-potential-affine-capacity",
-  previousBadge: "v185 dense potential-affine capacity · five 52 / 52 · nine 52 / 52",
-  olderBadge: "v184 scalar-potential Jacobi lift · five 0 / 52 · nine 0 / 52",
+  version: "2026.08.22-c-v192-observation-adaptive-qdeim-negative",
+  previousVersion: "2026.08.22-c-v191.1-normal-metric-attribution",
+  previousBadge: "v191.1 normal-metric attribution · 15 / 15 static checks · non-algorithm",
+  olderBadge: "v190 geometry-QDEIM1280 · five 35 / 52 · nine 30 / 52",
   historyReleases: [
     {
       version: "2026.08.22-c-v185-potential-affine-capacity",
@@ -239,7 +239,7 @@ window.OPERATOR_LEARNING_GUIDE = {
       badge: "v16.1 resource · wall headroom, CPU/RSS FAIL"
     }
   ],
-  updated: "2026-08-21",
+  updated: "2026-08-22",
   foundationChecks: [
     {
       id: "python-array",

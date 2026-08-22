@@ -105,7 +105,7 @@ def test_route_metadata_has_advanced_beyond_v176() -> None:
     assert "curriculum.js?v=20260822-v192" in operator
     assert 'version: "2026.08.22-c-v185-potential-affine-capacity"' in curriculum
     assert 'previousVersion: "2026.08.22-c-v184-projection-potential-negative"' in curriculum
-    assert 'updated: "2026-08-21"' in curriculum
+    assert 'updated: "2026-08-22"' in curriculum
 
 
 def test_public_artifacts_contain_no_private_execution_material() -> None:

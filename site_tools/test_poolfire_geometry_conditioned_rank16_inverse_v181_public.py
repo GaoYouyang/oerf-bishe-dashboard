@@ -88,7 +88,7 @@ def test_route_metadata_and_cachebuster_advance_to_v181() -> None:
     curriculum = (ROOT / "operator-learning/curriculum.js").read_text()
     assert "curriculum.js?v=20260822-v192" in operator
     assert 'version: "2026.08.22-c-v185-potential-affine-capacity"' in curriculum
-    assert 'updated: "2026-08-21"' in curriculum
+    assert 'updated: "2026-08-22"' in curriculum
 
 
 def test_public_artifacts_contain_no_private_execution_material() -> None:
