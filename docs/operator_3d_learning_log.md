@@ -15912,6 +15912,44 @@ Close this exact `1009 + 271` normal-contribution mechanism without increasing t
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-22：v193 保留全部弱符号贡献几乎补齐容量，但固定 CountSketch 仍失败
+
+### 讲人话：不是再挑 271 个“最响”的坐标，而是让所有微弱声音都参与投票
+
+v192 只补选 `271` 个坐标，五/九相机都停在 `40/52`。v193 检验一个物理上不同的解释：许多被丢掉的坐标也许单独很弱，却能以正负符号共同修正完整正规方程。
+
+固定 `1009` 个 QDEIM 锚点和总 `1280` 个紧凑通道保持不变。全部非锚点逐相机 DCT 坐标按结果前冻结的相机 ID 与 DCT 模式哈希进入 `271` 个桶。primary 保留固定正负号，unsigned control 使用同样的桶但全部取正号。没有真值输入、哈希 seed 搜索、桶数搜索、归一化搜索、阈值搜索、回退或训练；最后仍只运行一轮未修改的精确 CGLS K1。
+
+结果是当前紧凑表示中最强的一次改善。signed primary 达到五相机 `51/52`、九相机 `49/52`；unsigned control 为 `48/52 · 46/52`，v192 为 `40/52 · 40/52`，v190 为 `35/52 · 30/52`。这说明弥散在大量弱坐标中的信息确实有用，并且符号抵消本身具有机制意义。
+
+但冻结门仍是两臂都 `52/52`。五相机只剩一个 gradient 失败，最坏 gradient `0.755045831`，比 `0.75` 高 `0.005045831`；九相机只剩三个 observation-only 失败，最坏 observation `0.212354655`，比 `0.20` 高 `0.012354655`。完整标定为 `12/13 · 11/13`，完整时间层为 `3/4 · 2/4`。几乎补齐不是完整通过。
+
+完全独立第二实现使用独立哈希和显式桶循环、不同 SVD driver，重建候选场、未修改 K1、指标、调用账和相机换序审计，`19/19` 检查全真。普通数组最大相对差为 `3.72e-11`，近零数组最大绝对差为 `2.10e-14`；相机换序后的特征、响应、紧凑响应、坐标误差均为 `0`，桶与符号离散换序完全一致。
+
+正式判决为 `FAIL_SIGNED_COUNTSKETCH_CAPACITY_V193`。科学增量是：保留全部弱符号贡献明显优于挑选少量强坐标，signed 也明显优于 unsigned。科学失败是：这一条固定相机-模式哈希、符号约定和 `271` 桶机制仍未达到完整容量门。
+
+因此关闭该精确 CountSketch，不搜索 seed、桶数、归一化、门槛或预算，也不用 CNN/FNO/UNO/DeepONet 或 GPU 挽救。后续只能结果前冻结一个物理或表示上真正不同的结果不可见机制，或等待新的成对真实二维双分量 BOST 位移数据。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v192 selects only `271` supplemental coordinates and reaches `40/52` under both five and all-nine cameras. v193 tests a physically distinct explanation: many discarded coordinates may be individually weak but jointly useful through their signed action on the full normal equations.
+
+The fixed `1009` QDEIM anchors and total `1280` compact channels remain unchanged. Every non-anchor camera-resolved DCT coordinate enters one of `271` buckets through a preregistered camera-ID and DCT-mode hash. The primary keeps fixed signs; the unsigned control uses the same buckets with all signs positive. There is no truth input, hash-seed, bucket-count, normalization, threshold, fallback, or training search, and one unchanged exact CGLS K1 step follows.
+
+The signed primary reaches `51/52` under five cameras and `49/52` under all nine, versus `48/52 · 46/52` for unsigned buckets, `40/52 · 40/52` for v192, and `35/52 · 30/52` for v190. Diffuse weak information and sign cancellation therefore receive direct mechanism-level support.
+
+The frozen gate still requires `52/52` in both arms. Five-camera retains one gradient failure, with worst gradient `0.755045831` above `0.75`. All-nine retains three observation-only failures, with worst observation `0.212354655` above `0.20`. Complete calibrations are `12/13 · 11/13`, and complete time strata are `3/4 · 2/4`.
+
+A fully independent second implementation uses a separate hash and explicit bucket loop plus a different SVD driver. It rebuilds candidates, unchanged K1 replay, metrics, call accounting, and camera-permutation audits, passing `19/19` checks. Maximum ordinary-array relative and near-zero-array absolute differences are `3.72e-11 / 2.10e-14`; all permutation errors are zero and discrete bucket/sign permutations agree exactly.
+
+Decision: `FAIL_SIGNED_COUNTSKETCH_CAPACITY_V193`. Aggregating all weak signed contributions is materially better than selecting a few strong coordinates, and signed aggregation beats unsigned aggregation. The exact frozen camera-mode hash, sign convention, and `271`-bucket mechanism nevertheless fails complete capacity.
+
+Close this exact CountSketch without seed, bucket-count, normalization, threshold, budget, larger-model, or GPU rescue. Continue only with a preregistered physically or representationally distinct result-blind mechanism or new paired real two-component BOS displacement data.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-22：v191.1 证明固定子集改变了观测激活的正规度量
 
 ### 讲人话：同一套相机位置，有的帧能过、有的帧会失败，问题不只是“这套几何太难”

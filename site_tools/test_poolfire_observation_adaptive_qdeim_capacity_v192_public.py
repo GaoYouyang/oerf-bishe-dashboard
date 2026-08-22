@@ -76,8 +76,8 @@ def test_v192_public_assets_and_bilingual_claims_exist() -> None:
     assert "FAIL_NORMAL_CONTRIBUTION_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192" in result
     assert "data-i18n-zh" in daily and "data-i18n-en" in daily
     assert all("v192" in content for content in (daily, focus, root, log))
-    assert "curriculum.js?v=20260822-v192-1" in focus
-    assert 'version: "2026.08.22-c-v192-observation-adaptive-qdeim-negative"' in curriculum
+    assert "v192" in focus
+    assert 'previousVersion: "2026.08.22-c-v192-observation-adaptive-qdeim-negative"' in curriculum
     assert 'updated: "2026-08-22"' in curriculum
     figure = ROOT / "assets/figures/poolfire_observation_adaptive_qdeim_capacity_v192.png"
     assert figure.is_file()
@@ -105,12 +105,12 @@ def test_v192_public_files_exclude_private_execution_details() -> None:
         assert commit_hash.search(content) is None, path
 
 
-def test_current_evidence_points_to_v192_without_overclaiming() -> None:
+def test_current_evidence_retains_v192_as_historical_parent() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == (
+    assert current["v192_observation_adaptive_qdeim_scientific_decision"] == (
         "FAIL_NORMAL_CONTRIBUTION_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192"
     )
-    assert current["engineering_status"] == (
+    assert current["v192_observation_adaptive_qdeim_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192_1"
     )
     assert current["metrics"]["v192_primary_five_safe_cells"] == 40

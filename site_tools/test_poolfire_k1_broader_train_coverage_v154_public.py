@@ -85,8 +85,8 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     next_gate = payload["next_scientific_gate_en"].lower()
     assert "physically distinct result-blind mechanism" in next_gate
     assert "paired real two-component bos displacement data" in next_gate
-    assert "close the exact v192" in next_gate
-    assert "do not raise the budget" in next_gate
+    assert "close the exact v193" in next_gate
+    assert "do not search seeds, bucket counts, normalization, thresholds, budgets" in next_gate
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:

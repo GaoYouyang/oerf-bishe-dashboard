@@ -1,0 +1,155 @@
+{
+  "schema_version": "oerf-public-poolfire-signed-countsketch-capacity-v193.1.0",
+  "updated": "2026-08-22",
+  "role": "post-open deterministic signed-aggregation capacity diagnostic on the sealed four-frame development roster",
+  "formal_status": "PASS_FORMAL_POOLFIRE_SIGNED_COUNTSKETCH_CAPACITY_V193",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_COUNTSKETCH_CAPACITY_V193_1",
+  "scientific_decision": "FAIL_SIGNED_COUNTSKETCH_CAPACITY_V193",
+  "scientific_question": "Can a frozen signed CountSketch retain all weak discarded camera-resolved DCT contributions at the same 1280-channel budget and close the v192 strict-capacity gap under five and all-nine cameras?",
+  "frozen_scope": {
+    "sensor_arms": ["five_camera", "all_nine"],
+    "calibrations_per_arm": 13,
+    "opened_frames_per_calibration": 4,
+    "cells_per_sensor_arm": 52,
+    "fixed_qdeim_anchors": 1009,
+    "deterministic_aggregation_buckets": 271,
+    "total_compact_channels": 1280,
+    "aggregation_input": "all non-anchor camera-resolved DCT coordinates",
+    "primary": "signed CountSketch",
+    "cheap_control": "the same buckets with all signs set to positive one",
+    "refinement": "one unchanged exact CGLS step",
+    "new_training": false,
+    "target_truth_used_for_hash_or_signs": false,
+    "hash_seed_or_bucket_count_search": false
+  },
+  "strict_safe_cells": {
+    "fixed_geometry_qdeim_v190": {
+      "five_camera": 35,
+      "all_nine": 30
+    },
+    "adaptive_selected_columns_v192": {
+      "five_camera": 40,
+      "all_nine": 40
+    },
+    "unsigned_bucket_control": {
+      "five_camera": 48,
+      "all_nine": 46
+    },
+    "signed_countsketch_primary": {
+      "five_camera": 51,
+      "all_nine": 49
+    },
+    "required": {
+      "five_camera": 52,
+      "all_nine": 52
+    }
+  },
+  "primary_frame_safe_cells_out_of_13": {
+    "five_camera": [12, 13, 13, 13],
+    "all_nine": [13, 13, 11, 12]
+  },
+  "primary_complete_calibrations_out_of_13": {
+    "five_camera": 12,
+    "all_nine": 11
+  },
+  "primary_complete_frames_out_of_4": {
+    "five_camera": 3,
+    "all_nine": 2
+  },
+  "primary_failure_modes": {
+    "five_camera": {
+      "failed_cells": 1,
+      "field_failures": 0,
+      "gradient_failures": 1,
+      "observation_failures": 0
+    },
+    "all_nine": {
+      "failed_cells": 3,
+      "field_failures": 0,
+      "gradient_failures": 0,
+      "observation_failures": 3
+    }
+  },
+  "primary_failure_locations": {
+    "five_camera": [
+      {
+        "calibration_index": 5,
+        "frame_roster_index": 0,
+        "field_ratio": 0.410435,
+        "gradient_ratio": 0.7550458305485492,
+        "observation_ratio": 0.164184,
+        "violated_metric": "gradient"
+      }
+    ],
+    "all_nine": [
+      {
+        "calibration_index": 2,
+        "frame_roster_index": 2,
+        "observation_ratio": 0.2123546546,
+        "violated_metric": "observation"
+      },
+      {
+        "calibration_index": 2,
+        "frame_roster_index": 3,
+        "observation_ratio": 0.2073269911,
+        "violated_metric": "observation"
+      },
+      {
+        "calibration_index": 3,
+        "frame_roster_index": 2,
+        "observation_ratio": 0.2077331715,
+        "violated_metric": "observation"
+      }
+    ]
+  },
+  "primary_global_tails": {
+    "five_camera": {
+      "field_p90_higher": 0.428320458,
+      "field_worst": 0.457733958,
+      "gradient_p90_higher": 0.718126532,
+      "gradient_worst": 0.755045831,
+      "observation_p90_higher": 0.168627687,
+      "observation_worst": 0.199322871
+    },
+    "all_nine": {
+      "field_p90_higher": 0.347570582,
+      "field_worst": 0.372785285,
+      "gradient_p90_higher": 0.605437655,
+      "gradient_worst": 0.690982148,
+      "observation_p90_higher": 0.195025121,
+      "observation_worst": 0.212354655
+    }
+  },
+  "independent_recomputation": {
+    "checks_passed": 19,
+    "checks_total": 19,
+    "maximum_regular_array_relative_difference": 3.7158699283717324e-11,
+    "maximum_near_zero_array_absolute_difference": 2.10027223327266e-14,
+    "camera_permutation_feature_error": 0.0,
+    "camera_permutation_response_error": 0.0,
+    "camera_permutation_compact_response_error": 0.0,
+    "camera_permutation_coordinate_error": 0.0,
+    "bucket_and_sign_permutation_exact": true,
+    "measured_refinement_calls_exact": true,
+    "independent_result_built_before_formal_array_comparison": true,
+    "end_to_end_physics_independence_proven": false,
+    "shared_frozen_physics_kernels_disclosed": true
+  },
+  "interpretation": "Aggregating every weak discarded signed contribution materially improves strict capacity: signed CountSketch reaches 51/52 and 49/52, beats the unsigned control at 48/52 and 46/52, and greatly exceeds the selected-column v192 result at 40/52 in both arms. This supports diffuse signed normal-equation information and sign cancellation as real mechanisms. The frozen 52/52 gate nevertheless fails in both arms.",
+  "route_action": "Close the exact frozen camera-mode hash, sign convention, and 271-bucket CountSketch mechanism. Do not search hash seeds, bucket counts, normalization, thresholds, budgets, or model/GPU rescue. Continue only with one preregistered physically or representationally distinct result-blind mechanism or genuinely new paired real two-component BOS displacement data.",
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "complete_capacity": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "untouched_test_evidence": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}

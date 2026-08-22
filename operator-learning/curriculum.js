@@ -1,9 +1,14 @@
 window.OPERATOR_LEARNING_GUIDE = {
-  version: "2026.08.22-c-v192-observation-adaptive-qdeim-negative",
-  previousVersion: "2026.08.22-c-v191.1-normal-metric-attribution",
-  previousBadge: "v191.1 normal-metric attribution · 15 / 15 static checks · non-algorithm",
-  olderBadge: "v190 geometry-QDEIM1280 · five 35 / 52 · nine 30 / 52",
+  version: "2026.08.22-c-v193-signed-countsketch-negative",
+  previousVersion: "2026.08.22-c-v192-observation-adaptive-qdeim-negative",
+  previousBadge: "v192 adaptive QDEIM · five 40 / 52 · nine 40 / 52",
+  olderBadge: "v191.1 normal-metric attribution · 15 / 15 static checks · non-algorithm",
   historyReleases: [
+    {
+      version: "2026.08.22-c-v192-observation-adaptive-qdeim-negative",
+      previousVersion: "2026.08.22-c-v191.1-normal-metric-attribution",
+      badge: "v192 adaptive QDEIM · five 40 / 52 · nine 40 / 52"
+    },
     {
       version: "2026.08.22-c-v185-potential-affine-capacity",
       previousVersion: "2026.08.22-c-v184-projection-potential-negative",

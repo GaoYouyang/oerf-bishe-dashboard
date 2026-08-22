@@ -62,7 +62,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_NORMAL_CONTRIBUTION_OBSERVATION_ADAPTIVE_QDEIM_CAPACITY_V192"
+    assert payload["scientific_status"] == "FAIL_SIGNED_COUNTSKETCH_CAPACITY_V193"
     assert (
         payload["v174_equal_cost_selector_scientific_decision"]
         == "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"
@@ -71,7 +71,7 @@ def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     assert payload["metrics"]["v174_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v174_independent_check_count"] == 27
     assert "physically distinct result-blind mechanism" in payload["next_scientific_gate_en"]
-    assert "关闭 v192 的 1009 锚点 + 271 自适应补列" in payload["next_scientific_gate_zh"]
+    assert "关闭 v193 冻结的相机-模式哈希、符号约定和 271 桶" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_retain_v174_as_parent_evidence() -> None:
