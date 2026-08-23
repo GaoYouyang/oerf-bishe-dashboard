@@ -72,7 +72,7 @@ def test_v208_is_preserved_as_the_historical_parent() -> None:
     assert current["current_decision"]["v208_case5_external_gate_adjudicated"] is False
     assert current["current_decision"]["v208_resource_gate_authorized"] is False
     assert current["scientific_status"] == (
-        "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
+        "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211"
     )
 
 

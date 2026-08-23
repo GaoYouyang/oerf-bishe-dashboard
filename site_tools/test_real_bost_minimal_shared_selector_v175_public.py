@@ -70,7 +70,7 @@ def test_current_evidence_retains_v175_as_historical_parent_evidence() -> None:
     assert payload["metrics"]["v175_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v175_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v175_independent_check_count"] == 31
-    assert payload["scientific_status"] == "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
+    assert payload["scientific_status"] == "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211"
     assert "fixed 64-mode spectral floor" in payload["next_scientific_gate_en"]
     assert "paired real-BOST physical data" in payload["next_scientific_gate_en"]
     assert "配对真实 BOST 物理数据" in payload["next_scientific_gate_zh"]

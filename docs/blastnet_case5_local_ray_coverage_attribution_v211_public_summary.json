@@ -1,0 +1,82 @@
+{
+  "schema_version": "oerf-public-blastnet-case5-local-ray-coverage-attribution-v211.0.0",
+  "updated": "2026-08-23",
+  "title_zh": "v211：局部射线覆盖下限方向相反，关闭该标量作为 reference 充分性解释",
+  "title_en": "v211: The local ray-coverage floor moves in the opposite direction, closing this scalar explanation of reference adequacy",
+  "scope": {
+    "diagnostic_type": "post-open geometry-only local-coverage attribution",
+    "supplied_nine_camera_rigs": 13,
+    "virtual_nine_camera_rigs": 13,
+    "virtual_twelve_camera_rigs_diagnostic_only": 13,
+    "geometry_rows": 39,
+    "grid_shape": [32, 16, 16],
+    "interior_tensor_count_per_geometry": 5880,
+    "midpoint_samples_per_active_ray": 64,
+    "offline_active_rays": 131359,
+    "offline_midpoint_ray_samples": 8406976,
+    "offline_forward_equivalent_probes": 0,
+    "deployment_exact_calls": {"A": 0, "AT": 0},
+    "trainable_parameters": 0,
+    "density_reads": 0,
+    "observation_reads": 0,
+    "reconstruction_reads": 0,
+    "residual_reads": 0,
+    "parent_metric_array_reads": 0
+  },
+  "fixed_primary": {
+    "name": "10th-percentile-higher of the normalized voxelwise transverse-sensitivity minimum eigenvalue",
+    "camera_weighting": "equal total weight per active camera",
+    "spatial_deposition": "64 fixed midpoint samples per clipped ray with trilinear deposition",
+    "normalization": "divide every interior tensor by the geometry's mean interior trace",
+    "strict_success_rule": "every virtual-nine primary must exceed every supplied-nine primary",
+    "comparison_count": 169,
+    "virtual_strictly_greater_count": 0,
+    "tie_count": 0,
+    "superiority_fraction": 0.0,
+    "strict_family_separation": false
+  },
+  "family_summaries": {
+    "supplied_nine": {
+      "primary_min_median_max": [0.10381494565708, 0.12500831003255441, 0.16574280281132603],
+      "local_floor_median_min_median_max": [0.12249126202622629, 0.14353243694831164, 0.18796872052761932],
+      "local_trace_p10_min_median_max": [0.8836761444102703, 0.8933547736650317, 0.8956795476448272]
+    },
+    "virtual_nine": {
+      "primary_min_median_max": [0.07348347064991055, 0.07912234851471091, 0.08569582312999037],
+      "local_floor_median_min_median_max": [0.176809192222219, 0.2078373762290443, 0.21196303594398055],
+      "local_trace_p10_min_median_max": [0.5416411077990799, 0.5484679161347291, 0.5682996873295623]
+    },
+    "virtual_twelve_diagnostic_only": {
+      "primary_min_median_max": [0.09488408755124596, 0.09623957978253374, 0.09900132480931355],
+      "local_floor_median_min_median_max": [0.22412938270812377, 0.22496396412849284, 0.22732147054505875],
+      "local_trace_p10_min_median_max": [0.5479012568598463, 0.555939380363143, 0.5720978122375584]
+    }
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_LOCAL_RAY_COVERAGE_ATTRIBUTION_V211",
+    "all_checks_passed": true,
+    "maximum_formal_independent_metric_difference": 5.329070518200751e-15,
+    "maximum_local_eigenvalue_difference": 1.4432899320127035e-15,
+    "maximum_summary_difference": 4.440892098500626e-15,
+    "maximum_camera_reversal_difference": 0.0
+  },
+  "scientific_decision": "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211",
+  "interpretation_zh": "结果前固定的局部下尾覆盖指标不仅没有严格分开两族，而且169个跨族比较中虚拟九相机没有一次高于师兄标定族。师兄标定族主指标中位数为0.12501，虚拟九相机为0.07912。与此同时，虚拟九相机的逐体素中位局部下限反而更高，说明差异集中在空间下尾，而不是所有位置都更弱。该结果关闭的是这一种固定、归一化、下10%局部覆盖标量，不能推广为局部几何完全无关。结合v210，当前更可信的解释仍是全局低模态耦合与条件结构，而非局部覆盖下尾本身。",
+  "interpretation_en": "The preregistered lower-tail local-coverage primary does not separate the families and is higher for virtual nine cameras in none of the 169 cross-family comparisons. Its median is 0.12501 for the supplied family and 0.07912 for virtual nine cameras. Yet the median voxelwise local floor is higher for virtual nine cameras, showing that the reversal is concentrated in the spatial lower tail rather than every location being weaker. The result closes this fixed, normalized, lower-10-percent local-coverage scalar; it does not establish that all local geometry is irrelevant. Together with v210, global low-mode coupling and conditioning remain the more credible explanation than this local lower-tail measure.",
+  "route_action_zh": "关闭当前局部射线覆盖下限标量，不事后改变分位数、归一化、采样数、坐标映射或张量公式。没有配对真实BOST数据或另一条物理上真正不同且结果前冻结的机制时停止扩建；预测器、资源门、神经训练和GPU继续不授权。",
+  "route_action_en": "Close the current local ray-coverage floor scalar. Do not change its quantile, normalization, sample count, coordinate map, or tensor definition after seeing the result. Stop expanding the route until paired real-BOST data or another genuinely distinct preregistered mechanism exists. Predictor, resource, neural-training, and GPU stages remain unauthorized.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "external_generalization": false,
+    "broad_generalization": false,
+    "predictor_success": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

@@ -80,7 +80,7 @@ def test_v209_remains_preserved_as_parent_evidence_below_v210() -> None:
     )
     assert current["current_decision"]["v209_resource_gate_authorized"] is False
     assert current["scientific_status"] == (
-        "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
+        "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211"
     )
 
 

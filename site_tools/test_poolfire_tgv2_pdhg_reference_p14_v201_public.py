@@ -63,7 +63,7 @@ def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
     assert (
         current["scientific_status"]
-        == "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
+        == "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211"
     )
     assert (
         current["v201_tgv2_reference_scientific_decision"]
@@ -83,5 +83,5 @@ def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     assert current["current_decision"]["v201_tgv2_reference_adequate"] is False
     assert current["current_decision"]["v201_fixed_tgv2_reference_closed"] is True
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_geometry_observability_attribution_v210_result_2026-08-23.md"
+        "blastnet_case5_local_ray_coverage_attribution_v211_result_2026-08-23.md"
     )

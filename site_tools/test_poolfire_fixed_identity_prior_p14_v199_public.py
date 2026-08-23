@@ -45,14 +45,14 @@ def test_v199_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v199_evidence_remains_preserved_after_v201_becomes_current() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
-    assert current["formal_status"] == "FORMAL_PENDING_INDEPENDENT_GEOMETRY_OBSERVABILITY_ATTRIBUTION_V210"
-    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_OBSERVABILITY_ATTRIBUTION_V210"
+    assert current["scientific_status"] == "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211"
+    assert current["formal_status"] == "FORMAL_PENDING_INDEPENDENT_LOCAL_RAY_COVERAGE_ATTRIBUTION_V211"
+    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_LOCAL_RAY_COVERAGE_ATTRIBUTION_V211"
     assert current["v199_fixed_identity_p14_scientific_decision"] == "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
     assert current["metrics"]["v199_primary_five_strict_safe_cells"] == 1268
     assert current["metrics"]["v199_reference_five_complete_groups_passed"] == 0
     assert current["current_decision"]["v199_p14_reference_adequate"] is False
     assert current["current_decision"]["v199_exact_call_headroom_interpretable"] is False
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_geometry_observability_attribution_v210_result_2026-08-23.md"
+        "blastnet_case5_local_ray_coverage_attribution_v211_result_2026-08-23.md"
     )

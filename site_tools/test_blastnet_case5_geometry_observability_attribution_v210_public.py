@@ -63,24 +63,22 @@ def test_v210_result_and_figure_are_bilingual_and_nonblank() -> None:
         assert any(high - low > 100 for low, high in ImageStat.Stat(image).extrema)
 
 
-def test_v210_is_the_current_public_headline() -> None:
+def test_v210_remains_preserved_as_parent_evidence_below_v211() -> None:
     current = json.loads(CURRENT.read_text())
-    assert current["scientific_status"] == (
+    assert current["v210_geometry_observability_scientific_decision"] == (
         "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
     )
-    assert current["engineering_status"] == (
+    assert current["v210_geometry_observability_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_OBSERVABILITY_ATTRIBUTION_V210"
     )
     assert current["metrics"]["v210_primary_comparison_count"] == 169
     assert current["metrics"]["v210_primary_strictly_greater_count"] == 167
     assert current["current_decision"]["v210_fixed_primary_strictly_separates"] is False
     assert current["current_decision"]["v210_predictor_authorized"] is False
-    assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_geometry_observability_attribution_v210_result_2026-08-23.md"
-    )
+    assert current["scientific_status"].endswith("_V211")
 
 
-def test_primary_pages_reference_v210_in_both_languages() -> None:
+def test_primary_pages_preserve_v210_parent_evidence() -> None:
     for path in (
         ROOT / "index.html",
         ROOT / "operator-learning/index.html",
@@ -88,11 +86,12 @@ def test_primary_pages_reference_v210_in_both_languages() -> None:
     ):
         content = path.read_text()
         assert "blastnet_case5_geometry_observability_attribution_v210" in content
-        assert "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210" in content
         assert "algorithm_breakthrough=false" in content
     focus = (ROOT / "operator-learning/index.html").read_text()
-    assert "当前：v210 几何可观测性归因已独立封存" in focus
-    assert "Current: v210 geometry-observability attribution independently sealed" in focus
+    assert "167/169" in focus
+    assert "v210 Case 5" in focus
+    assert "v210 Case 5:" in focus
+    assert "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210" in focus
     assert "当前：v192" not in focus
 
 

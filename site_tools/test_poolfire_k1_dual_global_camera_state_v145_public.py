@@ -95,7 +95,7 @@ def test_current_manifest_retains_v145_history_without_blocking_newer_evidence()
     assert evidence["public_evidence"]["result"].startswith(
         "../document_reader.html?doc=docs%2F"
     )
-    assert evidence["scientific_status"] == "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
+    assert evidence["scientific_status"] == "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211"
     assert evidence["current_decision"]["v161_independently_recomputed"] is True
     assert evidence["current_decision"]["v162_independently_recomputed"] is True
 
