@@ -61,10 +61,10 @@ def test_v197_remains_visible_after_v199_becomes_current_state() -> None:
     )
     assert current["updated"] == "2026-08-24"
     assert current["formal_status"] == (
-        "FORMAL_PENDING_INDEPENDENT_OBSERVATION_SPECTRAL_PROXY_V214"
+        "FORMAL_PENDING_INDEPENDENT_OBSERVATION_PROXY_WARM_REPLAY_V215"
     )
     assert current["scientific_status"] == (
-        "PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214"
+        "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
     )
     assert current["v197_future_reference_qualification_formal_status"] == (
         "PASS_FORMAL_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"

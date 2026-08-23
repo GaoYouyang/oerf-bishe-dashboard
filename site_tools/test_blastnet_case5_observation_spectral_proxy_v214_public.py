@@ -1,4 +1,4 @@
-"""Public evidence checks for the independently sealed v214 result."""
+"""Public evidence checks for the preserved v214 parent result."""
 
 from __future__ import annotations
 
@@ -60,13 +60,13 @@ def test_v214_result_and_figure_are_bilingual_and_nonblank() -> None:
         assert any(low != high for low, high in extrema)
 
 
-def test_v214_is_the_current_public_headline() -> None:
+def test_v214_remains_preserved_beneath_the_v215_headline() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-24"
-    assert current["engineering_status"] == (
+    assert current["v214_observation_spectral_proxy_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_SPECTRAL_PROXY_V214"
     )
-    assert current["scientific_status"] == (
+    assert current["v214_observation_spectral_proxy_scientific_decision"] == (
         "PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214"
     )
     assert current["metrics"]["v214_primary_comparison_count"] == 169
@@ -86,8 +86,8 @@ def test_primary_pages_reference_v214_in_both_languages() -> None:
         assert "blastnet_case5_observation_spectral_proxy_v214" in content
         assert "v214" in content
     focus = (ROOT / "operator-learning/index.html").read_text(encoding="utf-8")
-    assert "v214 观测谱代理已独立封存" in focus
-    assert "v214 observation spectral proxy independently sealed" in focus
+    assert "blastnet-case5-observation-spectral-proxy-v214" in focus
+    assert "v214 Case 5" in focus
     log = LEARNING_LOG.read_text(encoding="utf-8")
     assert "v214 用当前二维观测复现谱对齐判决" in log
     assert "v214 moves one step closer to deployment" in log

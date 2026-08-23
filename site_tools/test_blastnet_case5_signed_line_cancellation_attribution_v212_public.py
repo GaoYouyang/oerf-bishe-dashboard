@@ -89,10 +89,10 @@ def test_v212_result_and_figure_are_bilingual_and_nonblank() -> None:
 def test_v212_remains_historical_after_the_v214_headline() -> None:
     current = json.loads(CURRENT.read_text())
     assert current["scientific_status"] == (
-        "PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214"
+        "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
     )
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_observation_spectral_proxy_v214_result_2026-08-24.md"
+        "blastnet_case5_observation_proxy_warm_replay_v215_result_2026-08-24.md"
     )
     historical = json.loads(SUMMARY.read_text())
     assert historical["scientific_decision"] == (

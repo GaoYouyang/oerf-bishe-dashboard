@@ -65,14 +65,14 @@ def test_current_evidence_preserves_v171_but_points_to_v181() -> None:
     )
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_SPECTRAL_PROXY_V214"
+        == "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_OBSERVATION_PROXY_WARM_REPLAY_V215"
     )
     assert (
         payload["formal_status"]
-            == "FORMAL_PENDING_INDEPENDENT_OBSERVATION_SPECTRAL_PROXY_V214"
+            == "FORMAL_PENDING_INDEPENDENT_OBSERVATION_PROXY_WARM_REPLAY_V215"
     )
     assert payload["scientific_status"] == (
-        "PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214"
+        "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
     )
     assert payload["current_decision"]["v171_result_blind_selector_passed"] is True
     assert payload["current_decision"]["v171_external_generalization"] is False

@@ -80,7 +80,7 @@ def test_v209_remains_preserved_as_parent_evidence_below_v210() -> None:
     )
     assert current["current_decision"]["v209_resource_gate_authorized"] is False
     assert current["scientific_status"] == (
-        "PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214"
+        "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
     )
 
 

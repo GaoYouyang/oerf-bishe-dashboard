@@ -62,7 +62,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214"
+    assert payload["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
     assert (
         payload["v174_equal_cost_selector_scientific_decision"]
         == "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"

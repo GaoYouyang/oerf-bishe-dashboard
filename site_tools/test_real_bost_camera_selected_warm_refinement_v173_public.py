@@ -64,7 +64,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 def test_current_evidence_preserves_v173_but_points_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214"
+        "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
     )
     assert payload["metrics"]["v173_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_strict_safe_count"] == 468

@@ -16582,6 +16582,36 @@ The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFE
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v215 物理重放完成，但 reference 不充分
+
+### 讲人话：代理已经接上物理求解器，裁判却先被判定不合格
+
+v214 证明只读取当前二维观测与已知几何，也能构造足以复现 Case 5 谱对齐判别的代理场。v215 没有继续停留在归因指标，而是把该代理作为 warm initializer 接入未修改 CGLS，并对 `13` 套虚拟九相机几何与 `42` 帧已开封 Case 5 数据完成 `546` 个物理重放。
+
+预注册协议要求先确认 Zero-CGLS K16 reference 本身在 field、完整梯度、内部梯度和 observation 四类绝对门上充分，再选择 proxy depth、比较便宜 control 或解释 exact-call 账。结果显示 reference 只有 `466/546` 个单元和 `1/13` 套完整几何通过。共有 `80` 个失败，全部只来自内部梯度；field、完整梯度和 observation 的违反数均为 `0`。十三套几何的内部梯度 p90 范围为 `0.71296-0.78644`，而冻结门为 `0.75`。
+
+完全独立第二实现重建全部方向、候选物理场、二维观测、逐单元指标、逐几何汇总和每个 arm 的 A/A^T 调用账。正式与独立的物理场最大相对差为 `3.42e-9`，逐单元指标最大差为 `1.43e-10`，汇总最大差为 `5.75e-11`，相机乱序指标差最高为 `7.66e-15`；封存输入与正式数组在验证前后保持不变，科学判决完全一致。
+
+v215 不是 warm start 失败，也不是 warm start 成功。因为 reference 不充分，协议在选择任何 proxy depth 前就 fail closed，所以代理、便宜 control 和 exact-call 收益都没有被裁决。真正增量是把 observation-only 代理推进到了完整物理链，同时避免把 reference 不足误写成候选失败。
+
+下一门必须结果前另行冻结 reference qualification。新的 reference 需要在同一 `13 × 42` 范围内独立通过四类充分性门，之后才能重新裁决 v214 proxy field 作为 warm start。不得在 v215 内事后修改 K、门槛或 control。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v214 shows that the current 2D observation and known geometry alone can form a proxy field sufficient to reproduce the Case 5 spectral-alignment decision. v215 moves beyond attribution: it uses that proxy as a warm initializer for unchanged CGLS and completes `546` physical replays across `13` virtual-nine geometries and `42` opened Case 5 frames.
+
+The preregistered protocol first requires the Zero-CGLS K16 reference itself to satisfy absolute field, full-gradient, interior-gradient, and observation gates before any proxy depth, cheap control, or exact-call ledger is adjudicated. The reference clears all four gates in only `466/546` cells and `1/13` complete geometries. All `80` failures are interior-gradient only; field, full-gradient, and observation violation counts are each `0`. Interior-gradient p90 spans `0.71296-0.78644` across the thirteen geometries against the frozen `0.75` gate.
+
+A fully independent second implementation rebuilds every direction, candidate physical field, 2D observation, cell metric, geometry summary, and per-arm A/AT ledger. Maximum formal-independent physical-field relative, cell-metric, and summary differences are `3.42e-9`, `1.43e-10`, and `5.75e-11`; the maximum camera-permutation metric difference is `7.66e-15`. Sealed inputs and formal arrays remain unchanged, and the scientific decision matches exactly.
+
+v215 is not a failed warm start, and it is not a successful one. Because the reference is inadequate, the protocol fails closed before selecting any proxy depth. The proxy, cheap controls, and exact-call gain therefore remain unadjudicated. The substantive increment is connecting the observation-only proxy to the full physics chain while preventing reference inadequacy from being mislabeled as candidate failure.
+
+The next gate must separately preregister reference qualification. A new reference must independently clear all four adequacy families on the same `13 × 42` scope before the v214 proxy field may be adjudicated again as a warm start. K, thresholds, and controls may not be changed post hoc inside v215.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v214 用当前二维观测复现谱对齐判决
 
 ### 讲人话：不再偷看三维答案，也能判断哪组相机更看得清
