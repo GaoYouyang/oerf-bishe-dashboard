@@ -13499,7 +13499,7 @@ v134 已通过的 2591 个单元直接保留，只对 1109 个失败运行七个
 - `docs/poolfire_local_space_frequency_capacity_v135_public_summary.json`
 - `assets/figures/poolfire_local_space_frequency_capacity_v135.png`
 
-### English checkpoint
+### English summary
 
 v135 multiplies each per-camera, per-component DCT band by four smooth 2x2 partition-of-unity windows. Strict passes rise from `2591/3700` to `3162/3700`, but complete trajectories remain `0/5`. All `538` failures are observation-only, and `442` occur with five cameras. Independent v135.1 recomputation confirms the physical metrics to `2.11e-15`. The fixed-window representation is therefore closed; v136 will test residual-adaptive, camera-equivariant local windows before any neural training.
 
@@ -16465,3 +16465,37 @@ Before evaluating another candidate, the next contract must separately freeze an
 Formal audit status: `PASS_FORMAL_REFERENCE_IDENTITY_AUDIT_V196_1`. Independent status: `PASS_INDEPENDENT_RECOMPUTATION_REFERENCE_IDENTITY_AUDIT_V196_1`. Scientific conclusion: `PROTOCOL_REFERENCE_GATE_PREDETERMINED_INCONCLUSIVE_V196_1`.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-23：v203-v204 九相机物理信息与稠密表示调用归因
+
+### 讲人话：五相机确实缺信息；九相机下 K1 可以少算一步，但稠密缓存还没有被拿掉
+
+v201 已经把五相机的失败定位为 24 个三维梯度单元：继续降低 observation error 也一个没有救回。v203 因此不再调整正则，而是直接问一个物理问题：同一批失败如果使用封存的全部九相机，K2 能不能恢复严格安全。结果是五相机 K2 为 `0/24`，九相机 K2 为 `24/24`。九相机在这 24 个单元上的 field / gradient / observation p90 为 `0.365356 / 0.611084 / 0.120974`。这说明当前失败中确实包含可由更多视角补足的物理信息缺口，而不只是求解器或观测拟合问题。
+
+v204 随后在同一九相机条件下做完整对照归因。稠密 full-DCT K1、固定 identity K1 和 full-DCT K2 都通过 `1313/1313` 个严格单元与 `13/13` 个完整标定组。full-DCT K1 的 field / gradient / observation p90 为 `0.318154 / 0.517536 / 0.144493`，逻辑在线账为 `2A+1A^T`；K2 为 `3A+2A^T`，因此 K1 少 `1A+1A^T`。固定 identity 并不是必要解释，因为未正则 full-DCT K1 自身也全量通过。
+
+便宜纯经典对照没有一个全量通过：initializer-only 为 `654/1313`，dual ridge 为 `42/1313`，Zero、BP-CGLS1、Zero-CGLS K2 与 affine Jacobi-PCGLS1 均为 `0/1313`。所以当前正结果不能由这些同场便宜控制解释。
+
+独立程序重建 v203 的 24 个失败与九相机指标，并在 v204 中重放全部九个对照臂、逐单元门、13 个完整组尾部和逻辑调用账。正式与独立的指标数组、通过掩码和汇总逐项相同，最大差为 `0`。v202 的结果不可见行/零空间预审因固定数值门未收敛而保持 inconclusive，不进入 v203-v204 的成功证据。
+
+正式科学判决为 `PASS_NINE_CAMERA_PHYSICAL_INFORMATION_HEADROOM_V203` 与 `PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204`。这是真正改变下一步判断的开发集增量：物理信息门通过，稠密表示层面的调用 headroom 也成立；下一瓶颈是移除 full-DCT 稠密几何缓存与特征路径，得到紧凑、相机置换等变、支持可变相机数且只读部署可见输入的表示。
+
+边界不变：p14 是历史已暴露开发轨迹，当前 full-DCT 路径仍依赖稠密缓存；没有 fresh wall/RSS、外部泛化、曲线光路或真实 BOST 证据，也没有授权神经训练或 GPU。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction_deployed=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v201 localized the five-camera failures to 24 cells with unresolved 3D-gradient error: further lowering observation error rescued none of them. v203 therefore asks a direct physical question rather than retuning regularization: does sealed all-nine-camera K2 make those same failures strict-safe? Five-camera K2 reaches `0/24`; all-nine-camera K2 reaches `24/24`. On these 24 cells, all-nine field / gradient / observation p90 values are `0.365356 / 0.611084 / 0.120974`. The failure set therefore contains a physical-information gap that additional views can remove.
+
+v204 then performs complete control attribution under the same all-nine-camera condition. Dense full-DCT K1, fixed-identity K1, and full-DCT K2 each pass `1313/1313` strict cells and `13/13` complete calibration groups. Full-DCT K1 has field / gradient / observation p90 values of `0.318154 / 0.517536 / 0.144493` and a logical online ledger of `2A+1A^T`; K2 uses `3A+2A^T`, so K1 removes one `A` and one `A^T`. Fixed identity is not necessary because unregularized full-DCT K1 also passes in full.
+
+No cheap pure-classical control passes completely: initializer-only reaches `654/1313`, dual ridge reaches `42/1313`, and Zero, BP-CGLS1, Zero-CGLS K2, and affine Jacobi-PCGLS1 each reach `0/1313`. These controls therefore do not explain the positive result.
+
+An independent implementation rebuilds v203's 24-cell failure set and nine-camera metrics, then replays all nine v204 arms, cellwise gates, 13 complete-group tails, and logical call ledgers. Formal and independent metric arrays, pass masks, and summaries are identical, with a maximum difference of `0`. The result-blind v202 row/null-space pre-audit remains inconclusive because its frozen numerical gate did not converge and contributes no positive evidence to v203-v204.
+
+The sealed scientific decisions are `PASS_NINE_CAMERA_PHYSICAL_INFORMATION_HEADROOM_V203` and `PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204`. This changes the development decision: the physical-information gate passes, and dense-representation call headroom exists. The next bottleneck is removing the full-DCT dense geometry cache and feature path while retaining a compact, camera-permutation-equivariant, variable-cardinality representation that reads deployment-visible inputs only.
+
+The boundary is unchanged. p14 is historically exposed development data, and the current full-DCT path still depends on dense caching. There is no fresh wall/RSS, external-generalization, curved-ray, or real-BOST evidence, and neural training or GPU use is not authorized.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction_deployed=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.

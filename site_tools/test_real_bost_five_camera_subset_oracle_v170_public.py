@@ -77,14 +77,14 @@ def test_current_evidence_preserves_v170_but_points_to_v181() -> None:
     assert payload["current_decision"]["v170_deployable_selector_established"] is False
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_TGV2_PDHG_REFERENCE_P14_V201"
+        == "PASS_INDEPENDENT_RECOMPUTATION_ALL_NINE_CONTROL_ATTRIBUTION_V204"
     )
     assert (
         payload["formal_status"]
-            == "PASS_FORMAL_POOLFIRE_TGV2_PDHG_REFERENCE_P14_EXECUTION_V201"
+            == "PASS_FORMAL_POOLFIRE_ALL_NINE_CONTROL_ATTRIBUTION_P14_V204"
     )
     assert payload["scientific_status"] == (
-        "FAIL_TGV2_PDHG_REFERENCE_ADEQUACY_V201"
+        "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204"
     )
 
 

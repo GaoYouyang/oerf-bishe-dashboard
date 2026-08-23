@@ -54,17 +54,34 @@ def test_v201_public_assets_and_bilingual_copy_exist() -> None:
     ):
         content = page.read_text()
         assert "poolfire_tgv2_pdhg_reference_p14_v201" in content
-        assert "FAIL_TGV2_PDHG_REFERENCE_ADEQUACY_V201" in content
+    assert "FAIL_TGV2_PDHG_REFERENCE_ADEQUACY_V201" in (
+        ROOT / "operator-learning/index.html"
+    ).read_text()
 
 
-def test_v201_current_evidence_is_the_public_headline() -> None:
+def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "FAIL_TGV2_PDHG_REFERENCE_ADEQUACY_V201"
-    assert current["formal_status"] == "PASS_FORMAL_POOLFIRE_TGV2_PDHG_REFERENCE_P14_EXECUTION_V201"
-    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_TGV2_PDHG_REFERENCE_P14_V201"
+    assert (
+        current["scientific_status"]
+        == "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204"
+    )
+    assert (
+        current["v201_tgv2_reference_scientific_decision"]
+        == "FAIL_TGV2_PDHG_REFERENCE_ADEQUACY_V201"
+    )
+    assert (
+        current["v201_tgv2_reference_formal_status"]
+        == "PASS_FORMAL_POOLFIRE_TGV2_PDHG_REFERENCE_P14_EXECUTION_V201"
+    )
+    assert (
+        current["v201_tgv2_reference_independent_status"]
+        == "PASS_INDEPENDENT_RECOMPUTATION_TGV2_PDHG_REFERENCE_P14_V201"
+    )
     assert current["metrics"]["v201_tgv2_five_strict_safe_cells"] == 1289
     assert current["metrics"]["v201_tgv2_observation_improved_cells"] == 1313
     assert current["metrics"]["v201_tgv2_rescued_failed_cells"] == 0
     assert current["current_decision"]["v201_tgv2_reference_adequate"] is False
     assert current["current_decision"]["v201_fixed_tgv2_reference_closed"] is True
-    assert current["public_evidence"]["result"].endswith("poolfire_tgv2_pdhg_reference_p14_v201_result_2026-08-23.md")
+    assert current["public_evidence"]["result"].endswith(
+        "poolfire_nine_camera_control_attribution_p14_v204_result_2026-08-23.md"
+    )

@@ -83,10 +83,10 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     )
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     next_gate = payload["next_scientific_gate_en"].lower()
-    assert "do not tune huber-tv or tgv2 further" in next_gate
-    assert "five-camera reference adequacy" in next_gate
-    assert "real 2d bost displacement" in next_gate
-    assert "accepted baseline" in next_gate
+    assert "dense-cache-removal" in next_gate
+    assert "camera-permutation-equivariant" in next_gate
+    assert "variable-cardinality" in next_gate
+    assert "cheap cpu controls" in next_gate
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:

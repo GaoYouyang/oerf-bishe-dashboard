@@ -1,0 +1,110 @@
+{
+  "schema_version": "oerf-public-poolfire-nine-camera-control-attribution-p14-v204.0.0",
+  "date": "2026-08-23",
+  "title_zh": "v203-v204：九相机救回全部五相机失败，但当前调用余量仍依赖稠密表示",
+  "title_en": "v203-v204: nine cameras rescue every five-camera failure, but current call headroom still depends on a dense representation",
+  "formal_status": "PASS_FORMAL_POOLFIRE_ALL_NINE_CONTROL_ATTRIBUTION_P14_V204",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_ALL_NINE_CONTROL_ATTRIBUTION_V204",
+  "scientific_decision": "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204",
+  "scope_zh": "仅限历史上已经暴露的 p14 开发轨迹、13 套标定和封存的五/九相机结果；不是 fresh、blind、validation 或 test。",
+  "scope_en": "Limited to the historically exposed p14 development trajectory, 13 calibrations, and sealed five/all-nine-camera results; this is not fresh, blind, validation, or test evidence.",
+  "v203_physical_information_attribution": {
+    "audited_five_camera_failures": 24,
+    "five_camera_k2_strict_safe": 0,
+    "all_nine_camera_k2_strict_safe": 24,
+    "all_nine_camera_k2_field_p90": 0.3653556283,
+    "all_nine_camera_k2_gradient_p90": 0.6110843113,
+    "all_nine_camera_k2_observation_p90": 0.120974388,
+    "scientific_decision": "PASS_NINE_CAMERA_PHYSICAL_INFORMATION_HEADROOM_V203"
+  },
+  "v204_all_nine_complete_trajectory": {
+    "cell_count": 1313,
+    "calibration_groups": 13,
+    "passing_arms": [
+      "fixed_identity_tau2m8_full_dct_k1",
+      "full_dct_k1_parent",
+      "full_dct_k2_reference"
+    ],
+    "passing_pure_classical_controls": [],
+    "full_dct_k1_parent": {
+      "strict_safe_cells": 1313,
+      "complete_groups": 13,
+      "logical_online_exact_calls": {
+        "A": 2,
+        "AT": 1
+      },
+      "p90": {
+        "field": 0.3181543966,
+        "gradient": 0.5175363608,
+        "observation": 0.1444932435
+      },
+      "worst": {
+        "field": 0.3873199441,
+        "gradient": 0.7038494127,
+        "observation": 0.1737616653
+      }
+    },
+    "fixed_identity_k1": {
+      "strict_safe_cells": 1313,
+      "complete_groups": 13,
+      "logical_online_exact_calls": {
+        "A": 2,
+        "AT": 1
+      },
+      "p90": {
+        "field": 0.315450018,
+        "gradient": 0.5109249834,
+        "observation": 0.1435946544
+      }
+    },
+    "full_dct_k2_reference": {
+      "strict_safe_cells": 1313,
+      "complete_groups": 13,
+      "logical_online_exact_calls": {
+        "A": 3,
+        "AT": 2
+      },
+      "p90": {
+        "field": 0.308633187,
+        "gradient": 0.4895494983,
+        "observation": 0.1031011249
+      }
+    },
+    "strict_safe_cells_by_arm": {
+      "zero": 0,
+      "bp_cgls1": 0,
+      "zero_cgls_k2": 0,
+      "affine_jacobi_pcgls1": 0,
+      "fixed_identity_initializer_only": 654,
+      "dual_ridge_rank16_k1": 42,
+      "full_dct_k1_parent": 1313,
+      "fixed_identity_tau2m8_full_dct_k1": 1313,
+      "full_dct_k2_reference": 1313
+    }
+  },
+  "independent_numeric_audit": {
+    "formal_independent_metric_maximum_absolute": 0.0,
+    "strict_masks_exact": true,
+    "passing_arm_roster_exact": true,
+    "formal_tree_unchanged": true,
+    "parent_trees_unchanged": true
+  },
+  "interpretation_zh": "四个额外视角消除了全部 24 个被审计的五相机失败；在完整 1313 单元上，九相机 full-DCT K1 已与 K2 一样通过全部严格门，并少用 1 次 A 和 1 次 A^T。可是 Zero、BP-CGLS1、Zero-CGLS K2 和 affine Jacobi-PCGLS1 均为 0/1313，说明当前余量来自稠密 full-DCT 表示，而不是任意便宜经典迭代。",
+  "interpretation_en": "Four additional views remove all 24 audited five-camera failures. Across all 1,313 cells, all-nine full-DCT K1 clears every strict gate like K2 while using one fewer A and one fewer AT. Zero, BP-CGLS1, Zero-CGLS K2, and affine Jacobi-PCGLS1 each reach 0/1,313, so the current headroom comes from the dense full-DCT representation rather than any cheap classical iteration.",
+  "decision_boundary_zh": "full-DCT K1 继承稠密几何缓存和特征路径；本轮没有 fresh wall/RSS，也没有独立公开工况或真实 BOST。因此只能称历史已暴露开发条件下的表示/调用数余量，不能称部署算法、速度提升或算法突破。",
+  "decision_boundary_en": "Full-DCT K1 inherits a dense geometry cache and feature path. This run contains no fresh wall/RSS evidence, independent public condition, or real BOST. It therefore establishes representation/call-count headroom only on an exposed development condition, not a deployable algorithm, speedup, or algorithmic breakthrough.",
+  "next_scientific_gate_zh": "结果前只冻结一个最小的稠密缓存移除门：用部署可见观测和报告几何产生紧凑、相机置换等变且支持可变相机数的表示，在保持九相机 K1 全轨迹门的同时接受五/七/九/十二相机；先跑便宜 CPU 对照和独立复算，不上大模型或 GPU。",
+  "next_scientific_gate_en": "Preregister one minimal dense-cache-removal gate: derive a compact, camera-permutation-equivariant, variable-cardinality representation from deployment-visible observations and reported geometry while preserving the all-nine K1 complete-trajectory gate and supporting 5/7/9/12 cameras. Run cheap CPU controls and independent recomputation first; do not use a large model or GPU.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_validation": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}
