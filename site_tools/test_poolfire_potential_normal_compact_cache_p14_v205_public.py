@@ -81,6 +81,14 @@ def test_primary_pages_reference_v205_in_both_languages() -> None:
         assert "algorithm_breakthrough=false" in content
 
 
+def test_operator_evidence_grid_cannot_be_widened_by_status_text() -> None:
+    content = (ROOT / "operator-learning/index.html").read_text()
+    assert "grid-template-columns: 88px minmax(0, 1fr);" in content
+    assert ".evidence-row > * { min-width: 0; }" in content
+    assert "grid-column: 2;" in content
+    assert "overflow-wrap: anywhere;" in content
+
+
 def test_v205_public_artifacts_contain_no_private_execution_material() -> None:
     forbidden_schema_keys = ["formal_commit", "validator_commit", '"run_id"']
     for path in (SUMMARY, RESULT, CURRENT, ROOT / "operator-learning/index.html"):
