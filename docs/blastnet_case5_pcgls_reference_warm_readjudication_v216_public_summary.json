@@ -1,0 +1,124 @@
+{
+  "schema_version": "oerf-public-blastnet-case5-pcgls-reference-warm-readjudication-v216.0.0",
+  "updated": "2026-08-24",
+  "title_zh": "v216：合格 PCGLS 参考下，固定 Low-64 Warm Start 正式失败",
+  "title_en": "v216: the fixed low-64 warm start fails against an adequate PCGLS reference",
+  "scope": {
+    "diagnostic_type": "post-open result-blind sealed-array re-adjudication",
+    "opened_density_frames": 42,
+    "virtual_nine_camera_geometries": 13,
+    "cells": 546,
+    "new_truth_reads": 0,
+    "new_forward_calls": 0,
+    "new_adjoint_calls": 0,
+    "trainable_parameters": 0,
+    "resource_measurement_authorized": false
+  },
+  "adequate_reference": {
+    "arm": "geometry-Jacobi PCGLS K16",
+    "logical_calls": {
+      "A": 16,
+      "AT": 16
+    },
+    "strict_cells_passed": 546,
+    "strict_cells_total": 546,
+    "complete_geometries_passed": 13,
+    "complete_geometries_total": 13,
+    "adequate": true
+  },
+  "proxy_checkpoints": [
+    {
+      "arm": "low-64 K0",
+      "exact_A": 1,
+      "exact_AT": 0,
+      "absolute_cells_passed": 0,
+      "absolute_geometries_passed": 0,
+      "matched_cells_passed": 0,
+      "matched_geometries_passed": 0
+    },
+    {
+      "arm": "low-64 K1",
+      "exact_A": 2,
+      "exact_AT": 1,
+      "absolute_cells_passed": 0,
+      "absolute_geometries_passed": 0,
+      "matched_cells_passed": 0,
+      "matched_geometries_passed": 0
+    },
+    {
+      "arm": "low-64 K2",
+      "exact_A": 3,
+      "exact_AT": 2,
+      "absolute_cells_passed": 0,
+      "absolute_geometries_passed": 0,
+      "matched_cells_passed": 0,
+      "matched_geometries_passed": 0
+    },
+    {
+      "arm": "low-64 K4",
+      "exact_A": 5,
+      "exact_AT": 4,
+      "absolute_cells_passed": 390,
+      "absolute_geometries_passed": 0,
+      "matched_cells_passed": 0,
+      "matched_geometries_passed": 0
+    },
+    {
+      "arm": "low-64 K8",
+      "exact_A": 9,
+      "exact_AT": 8,
+      "absolute_cells_passed": 546,
+      "absolute_geometries_passed": 13,
+      "matched_cells_passed": 0,
+      "matched_geometries_passed": 0
+    }
+  ],
+  "proxy_k8_matched_diagnostic": {
+    "per_cell_ratio_limit": 1.05,
+    "field_violation_cells": 545,
+    "full_gradient_violation_cells": 546,
+    "interior_gradient_violation_cells": 23,
+    "observation_violation_cells": 546,
+    "field_ratio_p50": 1.1434276838251707,
+    "full_gradient_ratio_p50": 1.1670486700438558,
+    "interior_gradient_ratio_p50": 0.9961886847855507,
+    "observation_ratio_p50": 1.7133880041842071,
+    "field_ratio_worst": 1.253910054295041,
+    "full_gradient_ratio_worst": 1.226989518469438,
+    "interior_gradient_ratio_worst": 1.0695377928922716,
+    "observation_ratio_worst": 1.8416862325542582
+  },
+  "independent_readjudication": {
+    "status": "PASS_INDEPENDENT_PCGLS_REFERENCE_WARM_READJUDICATION_V216",
+    "checks_passed": 18,
+    "checks_total": 18,
+    "decision_exact_match": true,
+    "call_ledgers_exact_match": true,
+    "maximum_parent_metric_absolute_difference": 1.4321721586441072e-10,
+    "maximum_summary_absolute_difference": 1.8622636765996958e-10,
+    "sealed_inputs_unchanged": true
+  },
+  "adjudication": {
+    "selected_proxy_arm": null,
+    "dominating_controls": [],
+    "fixed_low64_proxy_closed": true,
+    "exact_call_reduction_established": false
+  },
+  "scientific_decision": "FAIL_FIXED_LOW64_PROXY_WARM_START_AGAINST_ADEQUATE_PCGLS_REFERENCE_V216",
+  "interpretation_zh": "几何 Jacobi-PCGLS K16 在 546/546 单元和 13/13 完整几何上构成合格参考。low-64 K8 虽通过全部绝对门，却相对该参考为 0/546 matched；observation 与完整梯度在全部 546 单元都差逾 5%。因此当前固定 low-64 observation proxy warm-start 机制被独立确认关闭。",
+  "interpretation_en": "Geometry-Jacobi PCGLS K16 is adequate in 546/546 cells and 13/13 complete geometries. Although low-64 K8 clears every absolute gate, it reaches 0/546 matched cells against that reference; observation and full-gradient errors are more than five percent worse in all 546 cells. The fixed low-64 observation-proxy warm-start mechanism is therefore independently closed.",
+  "route_action_zh": "先结果前资格化最低仍充分的全局 PCGLS 深度，收紧 deterministic baseline；新 observation-only initializer 必须同时通过 matched accuracy、严格减少 A/A^T，并排除同价或更便宜控制。不得用大模型或 GPU 挽救当前代理。",
+  "route_action_en": "Preregister the lowest globally adequate PCGLS depth to tighten the deterministic baseline. A new observation-only initializer must pass matched accuracy, strictly reduce A/A^T, and survive equal-or-cheaper control attribution. Do not rescue the current proxy with a larger model or GPU.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_warm_start": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

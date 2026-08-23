@@ -43,14 +43,14 @@ def test_v198_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v198_evidence_remains_preserved_after_v201() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
+    assert current["scientific_status"] == "FAIL_FIXED_LOW64_PROXY_WARM_START_AGAINST_ADEQUATE_PCGLS_REFERENCE_V216"
     assert current["metrics"]["v198_primary_strict_safe_cells"] == 2626
     assert current["metrics"]["v198_identity_control_strict_safe_cells"] == 2626
     assert current["current_decision"]["v198_algorithm_breakthrough"] is False
     assert current["current_decision"]["v198_empirical_covariance_route_closed"] is True
     next_gate = current["next_scientific_gate_en"]
-    assert "v214 observation-only proxy field" in next_gate
-    assert "real-BOST gates remain closed" in next_gate
+    assert "lowest globally adequate deterministic PCGLS depth" in next_gate
+    assert "real-BOST gates can open" in next_gate
 
 
 def test_v198_public_files_exclude_private_execution_details() -> None:

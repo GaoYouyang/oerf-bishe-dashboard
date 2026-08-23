@@ -96,9 +96,9 @@ def test_current_evidence_retains_v185_after_v186_1_advances_the_gate() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
+    assert current["scientific_status"] == "FAIL_FIXED_LOW64_PROXY_WARM_START_AGAINST_ADEQUATE_PCGLS_REFERENCE_V216"
     assert current["engineering_status"] == (
-        "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_OBSERVATION_PROXY_WARM_REPLAY_V215"
+        "PASS_INDEPENDENT_PCGLS_REFERENCE_WARM_READJUDICATION_V216"
     )
     assert current["metrics"]["v185_five_primary_k1_strict_safe_count"] == 52
     assert current["metrics"]["v185_all_nine_primary_k1_strict_safe_count"] == 52

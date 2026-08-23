@@ -16582,6 +16582,36 @@ The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFE
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v216 现在可以下负结论
+
+### 讲人话：裁判换成合格的 PCGLS 后，当前 low-64 warm start 仍然输了
+
+v215 的代理物理重放没有被判成功或失败，因为当时预注册的 Zero-CGLS K16 reference 自身只在 `466/546` 个单元、`1/13` 套完整几何上合格。v216 没有重跑物理，也没有看到结果后挑参考：它在读取新的 matched 数值前，把同一批已封存控制中已经由两套实现重放的 geometry-Jacobi PCGLS K16 固定为唯一 reference。该参考在 `546/546` 个单元、`13/13` 套完整几何上通过 field、完整梯度、内部梯度与 observation 四项绝对门。
+
+五个固定 low-64 checkpoint 的裁决很直接。K0/K1/K2 均为 `0/546` 绝对通过，K4 为 `390/546`；K8 达到 `546/546` 绝对通过和 `13/13` 完整几何通过，但相对合格 PCGLS-K16 的 matched 结果仍为 `0/546` 单元、`0/13` 完整几何。按逐单元 `1.05` 上限，K8 的 field、完整梯度、内部梯度和 observation 越线数为 `545/546/23/546`；中位 matched ratio 为 `1.14343/1.16705/0.99619/1.71339`。失败不是一个边缘点，也不是只剩内部梯度：完整梯度和 observation 在全部单元都没有达到等价精度。
+
+正式与独立再审裁分别读取 v215 已封存的 formal 与 independent 指标数组，不共享判决函数，也没有新真值读取、forward、adjoint 或训练。独立 `18/18` 项检查全真；父指标最大差 `1.43e-10`，v216 汇总最大差 `1.86e-10`，调用账、reference 充分性、checkpoint 判决和最终结论完全一致。
+
+因此当前 fixed low-64 observation-proxy warm start 正式关闭，不用更大的 CNN、FNO、UNO 或 GPU 挽救。下一门先在结果前确定 K8 到 K16 之间最低仍充分的全局 PCGLS 深度，给未来候选建立更严格且公平的 deterministic baseline。任何新 initializer 都必须达到 matched accuracy、同时严格减少 `A/A^T`，并排除同价或更便宜控制。
+
+这只是已开封 Case 5 的 post-open 机制负结果，不是 wall/RSS、外部泛化、曲线光路或真实 BOST 结论。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v216 can now make a valid negative decision
+
+v215 cannot call the proxy a success or failure because its preregistered Zero-CGLS K16 reference is adequate in only `466/546` cells and `1/13` complete geometries. Before reading any new matched value, v216 fixes geometry-Jacobi PCGLS K16 from the same sealed control replay as the sole reference. Both implementations show that this reference clears field, full-gradient, interior-gradient, and observation absolute gates in `546/546` cells and `13/13` complete geometries.
+
+The five fixed low-64 checkpoints yield a clear decision. K0/K1/K2 pass `0/546` absolute cells and K4 passes `390/546`. K8 reaches `546/546` absolute cells and `13/13` complete geometries, yet it matches the adequate PCGLS-K16 reference in `0/546` cells and `0/13` geometries. Under the per-cell `1.05` limit, K8 violates field, full-gradient, interior-gradient, and observation matching in `545/546/23/546` cells, with median ratios of `1.14343/1.16705/0.99619/1.71339`. This is not a marginal-cell or interior-gradient-only miss: full-gradient and observation equivalence fail in every cell.
+
+The formal and independent re-adjudications read separate sealed v215 metric arrays, share no decision implementation, and perform no new truth read, forward, adjoint, or training. All `18/18` independent checks pass; maximum parent-metric and v216-summary differences are `1.43e-10` and `1.86e-10`, while call ledgers, reference adequacy, checkpoint decisions, and the final verdict agree exactly.
+
+The fixed low-64 observation-proxy warm start is therefore closed without a larger CNN, FNO, UNO, or GPU rescue. The next gate preregisters the lowest globally adequate PCGLS depth between K8 and K16, creating a tighter deterministic baseline. Any future initializer must achieve matched accuracy, strictly reduce both `A/A^T`, and survive equal-or-cheaper control attribution.
+
+This is a post-open Case 5 mechanism failure, not wall/RSS evidence, external generalization, curved-ray validation, or real BOST.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v215 物理重放完成，但 reference 不充分
 
 ### 讲人话：代理已经接上物理求解器，裁判却先被判定不合格

@@ -63,7 +63,7 @@ def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
     assert (
         current["scientific_status"]
-        == "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
+        == "FAIL_FIXED_LOW64_PROXY_WARM_START_AGAINST_ADEQUATE_PCGLS_REFERENCE_V216"
     )
     assert (
         current["v201_tgv2_reference_scientific_decision"]
@@ -83,5 +83,5 @@ def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     assert current["current_decision"]["v201_tgv2_reference_adequate"] is False
     assert current["current_decision"]["v201_fixed_tgv2_reference_closed"] is True
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_observation_proxy_warm_replay_v215_result_2026-08-24.md"
+        "blastnet_case5_pcgls_reference_warm_readjudication_v216_result_2026-08-24.md"
     )

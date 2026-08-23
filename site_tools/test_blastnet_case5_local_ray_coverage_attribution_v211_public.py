@@ -77,10 +77,10 @@ def test_v211_result_and_figure_are_bilingual_and_nonblank() -> None:
 def test_v211_is_preserved_as_parent_evidence_after_v212() -> None:
     current = json.loads(CURRENT.read_text())
     assert current["scientific_status"] == (
-        "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
+        "FAIL_FIXED_LOW64_PROXY_WARM_START_AGAINST_ADEQUATE_PCGLS_REFERENCE_V216"
     )
     assert current["engineering_status"] == (
-        "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_OBSERVATION_PROXY_WARM_REPLAY_V215"
+        "PASS_INDEPENDENT_PCGLS_REFERENCE_WARM_READJUDICATION_V216"
     )
     assert current["metrics"]["v211_primary_comparison_count"] == 169
     assert current["metrics"]["v211_primary_strictly_greater_count"] == 0

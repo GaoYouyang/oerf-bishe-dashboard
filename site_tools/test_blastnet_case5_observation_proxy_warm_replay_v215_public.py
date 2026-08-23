@@ -62,11 +62,11 @@ def test_v215_result_and_figure_are_bilingual_and_nonblank() -> None:
         assert any(low != high for low, high in extrema)
 
 
-def test_v215_is_the_current_public_headline() -> None:
+def test_v215_is_preserved_beneath_the_v216_current_headline() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-24"
     assert current["scientific_status"] == (
-        "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
+        "FAIL_FIXED_LOW64_PROXY_WARM_START_AGAINST_ADEQUATE_PCGLS_REFERENCE_V216"
     )
     assert current["metrics"]["v215_reference_strict_cells_passed"] == 466
     assert current["metrics"]["v215_reference_complete_rigs_passed"] == 1

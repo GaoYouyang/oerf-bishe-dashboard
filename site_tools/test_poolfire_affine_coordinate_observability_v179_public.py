@@ -55,7 +55,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v179_as_parent_after_v181() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
+    assert payload["scientific_status"] == "FAIL_FIXED_LOW64_PROXY_WARM_START_AGAINST_ADEQUATE_PCGLS_REFERENCE_V216"
     assert payload["metrics"]["v179_measurement_rank_minimum"] == 1009
     assert payload["metrics"]["v179_five_pseudoinverse_k0_strict_safe_count"] == 52
     assert payload["metrics"]["v179_five_coordinate_cgls1_k0_strict_safe_count"] == 0

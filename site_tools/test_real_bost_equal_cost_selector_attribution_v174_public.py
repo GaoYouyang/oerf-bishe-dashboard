@@ -62,7 +62,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
+    assert payload["scientific_status"] == "FAIL_FIXED_LOW64_PROXY_WARM_START_AGAINST_ADEQUATE_PCGLS_REFERENCE_V216"
     assert (
         payload["v174_equal_cost_selector_scientific_decision"]
         == "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"
@@ -70,9 +70,9 @@ def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     assert payload["metrics"]["v174_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v174_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v174_independent_check_count"] == 27
-    assert "v214 observation-only proxy field" in payload["next_scientific_gate_en"]
-    assert "real-BOST gates remain closed" in payload["next_scientific_gate_en"]
-    assert "真实 BOST 门仍关闭" in payload["next_scientific_gate_zh"]
+    assert "lowest globally adequate deterministic PCGLS depth" in payload["next_scientific_gate_en"]
+    assert "real-BOST gates can open" in payload["next_scientific_gate_en"]
+    assert "才允许打开资源、外部、神经、GPU 或真实 BOST 门" in payload["next_scientific_gate_zh"]
     assert "真实 BOST" in payload["next_scientific_gate_zh"]
 
 

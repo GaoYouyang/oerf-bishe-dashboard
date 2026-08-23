@@ -65,7 +65,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v180_after_v181_advance() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVATION_PROXY_WARM_REPLAY_V215"
+    assert payload["scientific_status"] == "FAIL_FIXED_LOW64_PROXY_WARM_START_AGAINST_ADEQUATE_PCGLS_REFERENCE_V216"
     assert payload["metrics"]["v180_five_primary_k1_strict_safe_count"] == 4
     assert payload["metrics"]["v180_all_nine_primary_k1_strict_safe_count"] == 7
     assert payload["metrics"]["v180_five_primary_k1_observation_p90"] > 0.2
