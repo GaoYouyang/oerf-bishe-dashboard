@@ -1,0 +1,82 @@
+{
+  "schema_version": "oerf-public-blastnet-case5-signed-line-cancellation-attribution-v212.0.0",
+  "updated": "2026-08-23",
+  "title_zh": "v212：固定有符号射线相消标量不能解释 Case 5 reference 差异",
+  "title_en": "v212: The fixed signed-line cancellation scalar does not explain the Case 5 reference difference",
+  "scope": {
+    "diagnostic_type": "post-open geometry-only signed-line phase-cancellation attribution",
+    "supplied_nine_camera_rigs": 13,
+    "virtual_nine_camera_rigs": 13,
+    "virtual_twelve_camera_rigs_diagnostic_only": 13,
+    "geometry_rows": 39,
+    "fixed_sine_modes": 64,
+    "midpoint_samples_per_active_ray": 64,
+    "offline_active_rays": 131359,
+    "offline_midpoint_ray_samples": 8406976,
+    "offline_forward_equivalent_probes": 0,
+    "deployment_exact_calls": {"A": 0, "AT": 0},
+    "trainable_parameters": 0,
+    "density_reads": 0,
+    "observation_reads": 0,
+    "reconstruction_reads": 0,
+    "residual_reads": 0,
+    "parent_metric_array_reads": 0
+  },
+  "fixed_primary": {
+    "name": "square root of camera-balanced coherent signed-line energy divided by unsigned-envelope energy",
+    "field_family": "64 fixed separable sine modes with frequencies 1 through 4 on each array axis",
+    "camera_weighting": "equal total weight per active camera",
+    "ray_quadrature": "64 fixed open midpoint samples on each clipped ray",
+    "strict_success_rule": "every virtual-nine primary must exceed every supplied-nine primary",
+    "comparison_count": 169,
+    "virtual_strictly_greater_count": 7,
+    "tie_count": 0,
+    "superiority_fraction": 0.04142011834319527,
+    "strict_family_separation": false
+  },
+  "family_summaries": {
+    "supplied_nine": {
+      "primary_min_median_max": [0.6321200540548987, 0.6459669420442566, 0.6670212055105766],
+      "mode_ratio_minimum_min_median_max": [0.16958875481137675, 0.18287118880477038, 0.36559841986780545],
+      "mode_ratio_median_min_median_max": [0.6260977966124467, 0.638215534061086, 0.6694165478639926]
+    },
+    "virtual_nine": {
+      "primary_min_median_max": [0.6190214865199252, 0.6292190015049202, 0.6401525012853682],
+      "mode_ratio_minimum_min_median_max": [0.35385748924564236, 0.42067664802225574, 0.45061972567818337],
+      "mode_ratio_median_min_median_max": [0.6276736235521196, 0.63138113715371, 0.6464808533756624]
+    },
+    "virtual_twelve_diagnostic_only": {
+      "primary_min_median_max": [0.6274232254622569, 0.6284784884249431, 0.6316893017798126],
+      "mode_ratio_minimum_min_median_max": [0.42048937683314924, 0.4269912325579622, 0.4473280970377008],
+      "mode_ratio_median_min_median_max": [0.6224919723628478, 0.6236683950094084, 0.6251399488718312]
+    }
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_LINE_CANCELLATION_ATTRIBUTION_V212",
+    "all_checks_passed": true,
+    "check_count": 15,
+    "maximum_formal_independent_metric_difference": 4.440892098500626e-16,
+    "maximum_mode_ratio_difference": 3.3306690738754696e-16,
+    "maximum_summary_difference": 2.220446049250313e-16,
+    "maximum_camera_reversal_difference": 0.0
+  },
+  "scientific_decision": "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212",
+  "interpretation_zh": "结果前固定的有符号线积分相干比没有严格分开两族：虚拟九相机在169个跨族比较中只赢7个，师兄标定族与虚拟九相机的主指标中位数分别为0.64597和0.62922。因为指标越高代表相消越少，结果没有支持‘通过的虚拟九相机相消更弱’这一解释。该负结果只关闭固定64个正弦模态、固定中点积分和固定相机等权聚合得到的这一标量；它不能证明所有有符号相位结构都无关。结合v210-v212，实际低模forward谱结构仍有方向性，但单独的局部无符号覆盖与当前有符号相消标量都不足以解释reference差异。",
+  "interpretation_en": "The preregistered signed-line coherence ratio does not strictly separate the families. Virtual nine cameras win only 7 of 169 cross-family comparisons, while the supplied and virtual-nine medians are 0.64597 and 0.62922. Because a larger ratio means less cancellation, the result does not support the explanation that the passing virtual-nine family cancels less. This negative result closes only the scalar built from the fixed 64 sine modes, fixed midpoint integration, and fixed equal-camera aggregation; it does not prove that every signed phase structure is irrelevant. Across v210-v212, the actual low-mode forward spectrum remains directional, but neither unsigned local coverage nor this signed-cancellation scalar is sufficient to explain reference adequacy.",
+  "route_action_zh": "关闭当前固定有符号射线相消标量，不事后改变模态族、相位、积分、相机权重或判决阈值。下一步只接受配对真实BOST物理数据，或一个与v210全局Gram、v211局部覆盖和v212相消比都物理上不同且结果前冻结的机制；预测器、资源门、神经训练和GPU继续不授权。",
+  "route_action_en": "Close the current fixed signed-line cancellation scalar. Do not change the mode family, phase, integration, camera weighting, or decision threshold after seeing the result. Continue only with paired real-BOST physical data or a preregistered mechanism physically distinct from v210's global Gram, v211's local coverage, and v212's cancellation ratio. Predictor, resource, neural-training, and GPU stages remain unauthorized.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "external_generalization": false,
+    "broad_generalization": false,
+    "predictor_success": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

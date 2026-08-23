@@ -16556,6 +16556,32 @@ v205 留下两个必须补齐的问题：正式 setup 还会瞬时构造全相�
 
 `algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
 
+## 2026-08-23：v212 固定有符号射线相消归因
+
+### 讲人话：沿射线正负抵消也不是这次 reference 差异的充分解释
+
+v210 发现实际低模 forward 的全局谱下限具有很强方向性，v211 又排除了固定的局部无符号覆盖下尾。v212 因此检验一个物理上不同的桥梁：即使局部覆盖不弱，低频场沿射线正负交替时，线积分是否会互相抵消，从而让师兄标定九相机 reference 变差。
+
+本轮只读取 reported geometry，不读取密度、二维观测、重建、残差或旧科学指标。对每条裁剪后的 active ray 取 64 个固定中点，解析投影频率 `(1..4)^3` 的 64 个固定正弦场梯度到图像平面 u/v 方向，同时计算有符号积分和逐点绝对值包络。每台相机先内部平均，再让 active camera 等权。唯一主指标是相干有符号能量与无符号包络能量之比的平方根，越高表示相消越少；唯一严格门要求 13 个虚拟九相机值全部高于 13 个师兄标定值，即 `169/169`。
+
+结果没有支持这个解释。虚拟九相机只在 `7/169` 个跨族配对中更高，`162/169` 个反向；师兄标定族与虚拟九相机主指标中位数为 `0.64597` 与 `0.62922`。虚拟九相机在“64 个模态中的单个最弱相干比”上更好，中位数为 `0.42068` 对 `0.18287`，但这个诊断量不能替换结果前固定的全模态主指标。
+
+完全独立第二实现重新构造相机、虚拟 rig、射线裁剪和逐模态世界梯度。15 项检查全部通过；逐几何主指标、逐模态相干比和汇总最大差为 `4.44e-16 / 3.33e-16 / 2.22e-16`，相机反转差为 0。封存判决为 `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212`。
+
+这只关闭当前 64 个固定模态、固定相位、固定积分和相机等权聚合得到的相消标量，不证明所有有符号相位结构都无关，也不否定 v210 实际 forward Gram 的方向性。没有 predictor、warm start、物理 replay、exact-call 减少、wall/RSS、外部泛化或真实 BOST 结果。下一步只接受配对真实 BOST 物理数据，或一个同时与 v210 全局 Gram、v211 局部无符号覆盖和 v212 相消比物理上不同、结果前冻结的新机制。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v210 finds directional structure in the actual low-mode forward spectrum, while v211 rules out the fixed unsigned local-coverage lower tail. v212 tests a physically distinct bridge: whether positive-negative low-frequency phase cancellation along rays explains the supplied-reference deficit. It reads reported geometry only and uses 64 fixed sine modes, 64 open midpoint samples per clipped ray, ray-specific u/v projection, and equal-camera aggregation. The unique primary is the square root of coherent signed energy divided by unsigned-envelope energy, with strict success requiring all `169/169` virtual-nine versus supplied comparisons to move in the expected direction.
+
+Only `7/169` comparisons do so; `162/169` reverse. Supplied and virtual-nine medians are `0.64597` and `0.62922`. Virtual nine cameras are better on the single weakest-mode diagnostic, but that diagnostic cannot replace the preregistered all-mode primary. A fully independent implementation agrees to `4.44e-16 / 3.33e-16 / 2.22e-16` in geometry metric, per-mode ratio, and summary, with zero camera-reversal difference and all 15 checks passing.
+
+The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212`. It closes only this fixed 64-mode, fixed-phase, fixed-quadrature, equal-camera scalar; it does not establish that every signed phase structure is irrelevant and does not negate v210's directional actual-forward Gram. No predictor, warm start, physical replay, exact-call reduction, wall/RSS, external-generalization, or real-BOST result is established.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
 ### English checkpoint
 
 v205 left two obligations: formal setup still transiently formed the all-camera dense response, and a smaller cache did not itself prove faster execution. v206 does not change the candidate, accuracy thresholds, or train a model. It makes potential-normal setup camera-streamed and places setup inside every fresh worker.
