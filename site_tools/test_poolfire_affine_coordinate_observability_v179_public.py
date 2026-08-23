@@ -55,7 +55,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v179_as_parent_after_v181() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208"
+    assert payload["scientific_status"] == "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
     assert payload["metrics"]["v179_measurement_rank_minimum"] == 1009
     assert payload["metrics"]["v179_five_pseudoinverse_k0_strict_safe_count"] == 52
     assert payload["metrics"]["v179_five_coordinate_cgls1_k0_strict_safe_count"] == 0

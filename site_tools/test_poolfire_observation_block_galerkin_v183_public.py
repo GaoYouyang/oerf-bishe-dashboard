@@ -72,7 +72,7 @@ def test_v183_public_files_exclude_private_execution_details() -> None:
 
 def test_current_evidence_preserves_v183_after_v184_supersedes_latest_status() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208"
+    assert current["scientific_status"] == "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
     assert current["v183_observation_block_galerkin_scientific_decision"] == (
         "FAIL_OBSERVATION_BLOCK_GALERKIN_V183"
     )

@@ -16576,6 +16576,40 @@ The next gate preregisters a previously unopened independent public reacting-flo
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-23：v209 虚拟相机几何归因与残差方程闭环
+
+### 讲人话：Case 5 不是天生重建不了，关键差别在相机几何，不在多三台相机
+
+v208 在师兄提供的十三套九相机标定下发现，Zero-CGLS K16 虽然已经把 gradient 和 observation 尾部压进门内，但 field p90 仍为 `0.7252-0.7608`，所以只有 `0/546` 个严格安全单元和 `0/13` 个完整组。这时至少有两种解释：Case 5 三维场、网格或 K16 本身没有可重建性；或者这组相机几何对三维场的覆盖不够。
+
+v209 保持同一批 42 个 Case 5 场、同一 `32x16x16` 网格、同一 straight-ray forward、同一绝对门和同一 Zero-CGLS K16，只替换为此前独立验证过的虚拟环形相机几何。每个 rig 同时保留嵌套九相机控制和十二相机 primary；九相机严格取冻结十二相机列表的前九台，从而把“几何更好”与“相机更多”拆开。
+
+结果很明确：虚拟环形九相机已经达到 `546/546` 个严格单元和 `13/13` 个完整组，field / gradient / observation p90 范围为 `0.3199-0.3515 / 0.6152-0.6581 / 0.0625-0.0689`；十二相机也达到 `546/546、13/13`，对应范围为 `0.2764-0.3074 / 0.5516-0.5836 / 0.0573-0.0622`。九相机已经全过，所以十二相机误差更低不能被写成额外三台相机的必要贡献。
+
+独立第二实现重建 rigs、二维观测、K16 场和全部指标。场和观测最大相对差约为 `1.12e-9 / 6.82e-16`，逐单元指标与汇总最大差约为 `6.75e-12 / 6.41e-13`。原始独立审计把残差差除以近零残差范数，最高得到约 `8.25e-8`，因此先按协议记为 inconclusive。v209.2 没有重跑或修改科学数组，而是对封存场和观测验证 `r=b-Ax`，统一按独立观测范数归一化。1092 个单元的跨实现残差差最大为 `4.34e-9`，正式与独立各自的方程闭环误差最多为 `7.07e-16 / 2.04e-16`，11 项检查全部通过。
+
+封存判决为 `PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209`。它推翻的是“Case 5 数据、网格或 K16 本身不可重建”的悲观解释，并把 v208 的阻塞重排为相机几何/覆盖问题。它不证明外部泛化，不证明相机越多越好，也没有训练、exact-call 减少、wall/RSS 或真实 BOST 结果。
+
+下一门应结果前冻结 reported-geometry-only 的可观测性、角覆盖和条件数指标，对比失败的师兄九相机标定族与通过的虚拟环形 rigs，找出哪种几何性质决定 K16 reference 充分性。在完成这个归因前，不训练预测器、不运行 Case 5 资源门，也不租 GPU。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v208 found that zero-start CGLS K16 under the thirteen supplied nine-camera calibrations brought gradient and observation tails within their gates, but field p90 remained `0.7252-0.7608`, leaving only `0/546` strict-safe cells and `0/13` complete groups. This allowed at least two explanations: the Case 5 fields, grid, or K16 might be intrinsically unreconstructable, or that camera family might provide inadequate 3D coverage.
+
+v209 preserves the same 42 Case 5 fields, `32x16x16` grid, straight-ray forward model, absolute gates, and zero-start CGLS K16 while substituting a previously independently validated virtual-ring geometry. Every rig contains a nested nine-camera control and twelve-camera primary; the control uses exactly the first nine cameras in the frozen twelve-camera roster, separating better geometry from more cameras.
+
+The result is decisive. Virtual-ring nine cameras already reach `546/546` strict-safe cells and `13/13` complete groups, with field / gradient / observation p90 ranges of `0.3199-0.3515 / 0.6152-0.6581 / 0.0625-0.0689`. Twelve cameras also reach `546/546 and 13/13`, with ranges of `0.2764-0.3074 / 0.5516-0.5836 / 0.0573-0.0622`. Because nine cameras already pass completely, lower twelve-camera errors cannot be claimed as necessary benefit from three additional cameras.
+
+The independent implementation rebuilds rigs, 2D observations, K16 fields, and all metrics. Maximum field and observation relative differences are about `1.12e-9 / 6.82e-16`, while maximum cell-metric and summary differences are about `6.75e-12 / 6.41e-13`. The original audit divided residual differences by a near-zero residual norm and therefore correctly failed closed at about `8.25e-8`. v209.2 does not rerun or change scientific arrays. It verifies `r=b-Ax` on sealed fields and observations, normalized consistently by the independent observation norm. Across 1,092 cells, the maximum cross-implementation residual difference is `4.34e-9`, and formal and independent equation-closure errors are at most `7.07e-16 / 2.04e-16`. All eleven checks pass.
+
+The sealed verdict is `PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209`. It rejects the pessimistic explanation that the Case 5 data, grid, or K16 are intrinsically unreconstructable and reranks the v208 blocker as a camera-geometry or coverage problem. It does not establish external generalization, a benefit from more cameras, training, exact-call reduction, wall/RSS gain, or real BOST.
+
+The next gate should preregister reported-geometry-only observability, angular-coverage, and conditioning measures comparing the failing supplied nine-camera family with the passing virtual-ring rigs. Identify which geometric property controls K16 reference adequacy before training a predictor, running a Case 5 resource gate, or renting a GPU.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-23：v207-v208 BLASTNet Case 5 外部门与 K16 参考充分性
 
 ### 讲人话：新工况真的打开了，但“标准答案”自己不合格，所以不能判候选输赢

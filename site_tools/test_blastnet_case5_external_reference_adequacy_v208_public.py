@@ -59,20 +59,20 @@ def test_v208_result_and_figure_are_bilingual_and_nonblank() -> None:
         assert any(high - low > 100 for low, high in ImageStat.Stat(image).extrema)
 
 
-def test_v208_is_the_current_public_headline() -> None:
+def test_v208_is_preserved_as_the_historical_parent() -> None:
     current = json.loads(CURRENT.read_text())
-    assert current["scientific_status"] == (
+    assert current["v208_reference_scientific_decision"] == (
         "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208"
     )
-    assert current["engineering_status"] == (
+    assert current["v208_reference_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_ZERO_CGLS_REFERENCE_ADEQUACY_V208"
     )
     assert current["metrics"]["v208_k16_strict_safe_cells"] == 0
     assert current["metrics"]["v208_k16_complete_groups_passed"] == 0
     assert current["current_decision"]["v208_case5_external_gate_adjudicated"] is False
     assert current["current_decision"]["v208_resource_gate_authorized"] is False
-    assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_external_reference_adequacy_v207_v208_result_2026-08-23.md"
+    assert current["scientific_status"] == (
+        "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
     )
 
 
@@ -84,7 +84,7 @@ def test_primary_pages_reference_v208_in_both_languages() -> None:
     ):
         content = path.read_text()
         assert "blastnet_case5_external_reference_adequacy_v207_v208" in content
-        assert "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208" in content
+        assert "v207-v208" in content
         assert "algorithm_breakthrough=false" in content
 
 

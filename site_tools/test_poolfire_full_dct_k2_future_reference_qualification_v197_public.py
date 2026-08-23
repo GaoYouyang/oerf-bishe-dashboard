@@ -61,10 +61,10 @@ def test_v197_remains_visible_after_v199_becomes_current_state() -> None:
     )
     assert current["updated"] == "2026-08-23"
     assert current["formal_status"] == (
-        "FORMAL_PENDING_INDEPENDENT_ZERO_CGLS_REFERENCE_ADEQUACY_V208"
+        "FORMAL_PENDING_INDEPENDENT_VIRTUAL_CAMERA_INFORMATION_V209"
     )
     assert current["scientific_status"] == (
-        "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208"
+        "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
     )
     assert current["v197_future_reference_qualification_formal_status"] == (
         "PASS_FORMAL_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"

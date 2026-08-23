@@ -75,7 +75,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v177_after_v181_becomes_current() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208"
+    assert payload["scientific_status"] == "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
     assert (
         payload["v177_krylov_capacity_scientific_decision"]
         == "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"

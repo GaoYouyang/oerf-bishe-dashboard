@@ -64,15 +64,16 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 def test_current_evidence_preserves_v173_but_points_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208"
+        "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
     )
     assert payload["metrics"]["v173_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_exact_A"] == 1
     assert payload["metrics"]["v173_independent_check_count"] == 21
-    assert "physically distinct preregistered reference" in payload["next_scientific_gate_en"]
-    assert "物理不同 reference" in payload["next_scientific_gate_zh"]
-    assert "真实 BOS 双分量位移" in payload["next_scientific_gate_zh"]
+    assert "geometry-only observability" in payload["next_scientific_gate_en"]
+    assert "conditioning" in payload["next_scientific_gate_en"]
+    assert "只由几何计算的可观测性" in payload["next_scientific_gate_zh"]
+    assert "真实 BOST" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v173_in_both_languages() -> None:
