@@ -95,7 +95,7 @@ def test_current_manifest_retains_v145_history_without_blocking_newer_evidence()
     assert evidence["public_evidence"]["result"].startswith(
         "../document_reader.html?doc=docs%2F"
     )
-    assert evidence["scientific_status"] == "PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206"
+    assert evidence["scientific_status"] == "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208"
     assert evidence["current_decision"]["v161_independently_recomputed"] is True
     assert evidence["current_decision"]["v162_independently_recomputed"] is True
 

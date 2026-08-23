@@ -70,9 +70,10 @@ def test_current_evidence_retains_v175_as_historical_parent_evidence() -> None:
     assert payload["metrics"]["v175_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v175_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v175_independent_check_count"] == 31
-    assert payload["scientific_status"] == "PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206"
-    assert "previously unopened independent public reacting-flow" in payload["next_scientific_gate_en"]
-    assert "此前未打开的独立公开反应流工况" in payload["next_scientific_gate_zh"]
+    assert payload["scientific_status"] == "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208"
+    assert "physically distinct preregistered reference" in payload["next_scientific_gate_en"]
+    assert "物理不同 reference" in payload["next_scientific_gate_zh"]
+    assert "真实 BOS 双分量位移" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_reference_v175_in_both_languages() -> None:

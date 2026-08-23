@@ -69,13 +69,13 @@ def test_v204_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v204_current_evidence_is_preserved_beneath_the_v205_headline() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206"
-    assert current["engineering_status"] == "PASS_INDEPENDENT_ADJUDICATION_STREAMING_COMPACT_FRESH_RESOURCE_V206"
+    assert current["scientific_status"] == "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208"
+    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_ZERO_CGLS_REFERENCE_ADEQUACY_V208"
     assert current["v204_all_nine_control_scientific_decision"] == "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204"
     assert current["metrics"]["v203_nine_camera_rescued_failures"] == 24
     assert current["metrics"]["v204_full_dct_k1_strict_safe_cells"] == 1313
     assert current["current_decision"]["v204_algorithm_breakthrough"] is False
     assert current["current_decision"]["v204_dense_cache_removal_required"] is True
     assert current["public_evidence"]["result"].endswith(
-        "poolfire_potential_normal_streaming_resource_p14_v206_result_2026-08-23.md"
+        "blastnet_case5_external_reference_adequacy_v207_v208_result_2026-08-23.md"
     )

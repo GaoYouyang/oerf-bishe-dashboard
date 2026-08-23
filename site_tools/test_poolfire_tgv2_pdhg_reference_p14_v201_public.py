@@ -63,7 +63,7 @@ def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
     assert (
         current["scientific_status"]
-        == "PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206"
+        == "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208"
     )
     assert (
         current["v201_tgv2_reference_scientific_decision"]
@@ -83,5 +83,5 @@ def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     assert current["current_decision"]["v201_tgv2_reference_adequate"] is False
     assert current["current_decision"]["v201_fixed_tgv2_reference_closed"] is True
     assert current["public_evidence"]["result"].endswith(
-        "poolfire_potential_normal_streaming_resource_p14_v206_result_2026-08-23.md"
+        "blastnet_case5_external_reference_adequacy_v207_v208_result_2026-08-23.md"
     )

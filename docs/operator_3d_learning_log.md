@@ -16575,3 +16575,41 @@ Scope does not broaden. p14 is historically exposed development data, and only a
 The next gate preregisters a previously unopened independent public reacting-flow condition and jointly rechecks all-nine matched accuracy and resource gains. Five-camera accuracy remains a separate unresolved gate.
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-23：v207-v208 BLASTNet Case 5 外部门与 K16 参考充分性
+
+### 讲人话：新工况真的打开了，但“标准答案”自己不合格，所以不能判候选输赢
+
+v206 在历史已暴露的 PoolFire p14 九相机条件上证明了流式路径的 fresh wall 与 RSS headroom。下一步原本应该在此前未打开的公开反应流工况上，同时复核准确率和资源收益。v207 因此打开 BLASTNet Case 5，并保持候选、稠密 K1、冻结 K2 reference、逐单元门和 fail-closed 规则不变。
+
+正式结果首先暴露了一个比候选输赢更基础的问题：候选、稠密 K1 和冻结 K2 reference 都是 `0/546` 个严格安全单元、`0/13` 个完整标定组。也就是说，当前 reference 自己无法在这个工况上给出合格的三维场，直接拿它裁决候选会把“参考不充分”错写成“算法外部失败”。因此 v207 没有运行 wall/RSS，科学判决保持 `INCONCLUSIVE_BLASTNET_CASE5_REFERENCE_INADEQUATE_V207`。
+
+v208 没有修改候选，也没有事后挑一个更好看的 reference。它在结果前只冻结一个问题：把零起点 CGLS 从 K4、K8 加深到唯一主判据 K16，能否让 Case 5 reference 达到原来的 field、gradient 和 observation 门。K4、K8、K16 的逻辑诊断账分别是 `4A+4A^T`、`8A+8A^T` 和 `16A+16A^T`；这些是 reference 诊断成本，不是部署候选成本。
+
+结果显示，继续迭代确实显著改善了观测拟合。K16 在十三套标定上的 observation p90 为 `0.0473-0.0567`，低于 `0.20` 门；gradient p90 为 `0.5627-0.6795`，也低于 `0.75` 门。但 field p90 仍为 `0.7252-0.7608`，十三组全部高于 `0.50` 门。因此 K16 仍只有 `0/546` 个严格安全单元和 `0/13` 个完整组。
+
+完全独立的第二实现重新完成真值预处理、十三套几何、二维观测和 K4/K8/K16 轨迹。正式与独立的逐单元指标最大差为 `3.33e-16`，汇总最大差为 `2.22e-16`，全部有效性检查通过。封存判决为 `PASS_INDEPENDENT_RECOMPUTATION_ZERO_CGLS_REFERENCE_ADEQUACY_V208` 与 `INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208`。
+
+这次的实质增量不是算法变强，而是避免了错误结论并定位了真正阻塞：当前 Case 5 straight-ray、网格和零起点 K4/K8/K16 reference 族缺少足够的三维场精度。该 reference 族关闭，不再通过继续加深同一 Krylov 迭代或事后换门槛挽救。v206 的 p14 九相机资源正结果继续作为父证据保留，但不能外推到 Case 5；在新 reference 先通过充分性门之前，不运行 Case 5 wall/RSS、不训练模型，也不租 GPU。
+
+下一步只接受两类新信息：物理上不同、结果前冻结且先证明三维场 reference 充分性的机制，或者工况匹配的真实二维 BOS 双分量位移、相机与标定映射、噪声重复和认可基线。当前没有外部泛化、全局资源加速或真实 BOST 结论。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v206 established fresh wall-time and RSS headroom for the streamed path under the historically exposed all-nine-camera PoolFire p14 condition. The next intended step was to recheck matched accuracy and resources on a previously unopened public reacting-flow condition. v207 therefore opens BLASTNet Case 5 while preserving the candidate, dense K1, frozen K2 reference, cellwise gates, and fail-closed decision rule.
+
+The formal result exposes a more basic problem than candidate performance: the candidate, dense K1, and frozen K2 reference all reach `0/546` strict-safe cells and `0/13` complete calibration groups. The current reference cannot itself produce an adequate 3D field on this condition. Using it to adjudicate the candidate would mislabel reference inadequacy as algorithm external failure. v207 therefore does not run wall/RSS and remains `INCONCLUSIVE_BLASTNET_CASE5_REFERENCE_INADEQUATE_V207`.
+
+v208 neither changes the candidate nor selects a better-looking reference after seeing results. It preregisters one question: can deepening zero-start CGLS from K4 and K8 to the unique K16 primary make the Case 5 reference satisfy the existing field, gradient, and observation gates? The K4, K8, and K16 logical diagnostic ledgers are `4A+4AT`, `8A+8AT`, and `16A+16AT`; these are reference-diagnostic costs, not deployment-candidate costs.
+
+Deeper iteration materially improves observation fit. Across 13 calibrations, K16 observation p90 is `0.0473-0.0567`, below the `0.20` gate, and gradient p90 is `0.5627-0.6795`, below `0.75`. Field p90 nevertheless remains `0.7252-0.7608`, above the `0.50` gate in every group. K16 therefore remains at `0/546` strict-safe cells and `0/13` complete groups.
+
+A fully independent second implementation repeats truth preprocessing, all 13 geometries, 2D observations, and K4/K8/K16 trajectories. The maximum formal-independent cellwise metric difference is `3.33e-16`, the maximum summary difference is `2.22e-16`, and every validity check passes. The sealed statuses are `PASS_INDEPENDENT_RECOMPUTATION_ZERO_CGLS_REFERENCE_ADEQUACY_V208` and `INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208`.
+
+The substantive increment is not a stronger algorithm. It prevents a false conclusion and localizes the actual blocker: the current Case 5 straight-ray, grid, and zero-start K4/K8/K16 reference family lacks adequate 3D-field accuracy. That reference family is closed; it will not be rescued by further deepening of the same Krylov iteration or by changing thresholds after the fact. The v206 p14 all-nine resource result remains preserved parent evidence but cannot be extrapolated to Case 5. No Case 5 wall/RSS, model training, or GPU rental is authorized before a new reference first clears adequacy.
+
+The next step requires either a physically distinct, preregistered mechanism that first establishes 3D-field reference adequacy, or condition-matched real 2D BOS displacement with camera/calibration mapping, repeated-noise data, and an accepted baseline. External generalization, global resource speedup, and real BOST remain unestablished.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.

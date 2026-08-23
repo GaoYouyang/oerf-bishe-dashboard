@@ -65,22 +65,25 @@ def test_v206_result_and_figure_are_bilingual_and_nonblank() -> None:
         assert any(high - low > 100 for low, high in ImageStat.Stat(image).extrema)
 
 
-def test_v206_is_the_current_public_headline() -> None:
+def test_v206_remains_preserved_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text())
-    assert current["scientific_status"] == "PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206"
+    assert current["scientific_status"] == (
+        "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208"
+    )
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_ADJUDICATION_STREAMING_COMPACT_FRESH_RESOURCE_V206"
+        "PASS_INDEPENDENT_RECOMPUTATION_ZERO_CGLS_REFERENCE_ADEQUACY_V208"
     )
     assert current["metrics"]["v206_outer_wall_vs_dense_k1_p50"] < 0.90
     assert current["metrics"]["v206_pipeline_rss_vs_dense_k1_p90_higher"] < 1.05
     assert current["current_decision"]["v206_post_open_all_nine_resource_headroom"] is True
     assert current["current_decision"]["v206_global_resource_speedup_claim"] is False
+    assert current["current_decision"]["v208_case5_external_gate_adjudicated"] is False
     assert current["public_evidence"]["result"].endswith(
-        "poolfire_potential_normal_streaming_resource_p14_v206_result_2026-08-23.md"
+        "blastnet_case5_external_reference_adequacy_v207_v208_result_2026-08-23.md"
     )
 
 
-def test_primary_pages_reference_v206_in_both_languages() -> None:
+def test_primary_pages_preserve_v206_as_bilingual_parent_evidence() -> None:
     for path in (
         ROOT / "index.html",
         ROOT / "operator-learning/index.html",
@@ -88,7 +91,8 @@ def test_primary_pages_reference_v206_in_both_languages() -> None:
     ):
         content = path.read_text()
         assert "poolfire_potential_normal_streaming_resource_p14_v206" in content
-        assert "PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206" in content
+        assert "v206" in content
+        assert "data-i18n-zh" in content and "data-i18n-en" in content
         assert "algorithm_breakthrough=false" in content
 
 

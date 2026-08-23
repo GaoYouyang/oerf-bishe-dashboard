@@ -45,14 +45,14 @@ def test_v199_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v199_evidence_remains_preserved_after_v201_becomes_current() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206"
-    assert current["formal_status"] == "PASS_FORMAL_POTENTIAL_NORMAL_STREAMING_FRESH_RESOURCE_EXECUTION_V206"
-    assert current["engineering_status"] == "PASS_INDEPENDENT_ADJUDICATION_STREAMING_COMPACT_FRESH_RESOURCE_V206"
+    assert current["scientific_status"] == "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208"
+    assert current["formal_status"] == "FORMAL_PENDING_INDEPENDENT_ZERO_CGLS_REFERENCE_ADEQUACY_V208"
+    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_ZERO_CGLS_REFERENCE_ADEQUACY_V208"
     assert current["v199_fixed_identity_p14_scientific_decision"] == "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
     assert current["metrics"]["v199_primary_five_strict_safe_cells"] == 1268
     assert current["metrics"]["v199_reference_five_complete_groups_passed"] == 0
     assert current["current_decision"]["v199_p14_reference_adequate"] is False
     assert current["current_decision"]["v199_exact_call_headroom_interpretable"] is False
     assert current["public_evidence"]["result"].endswith(
-        "poolfire_potential_normal_streaming_resource_p14_v206_result_2026-08-23.md"
+        "blastnet_case5_external_reference_adequacy_v207_v208_result_2026-08-23.md"
     )
