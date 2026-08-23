@@ -16576,6 +16576,36 @@ The next gate preregisters a previously unopened independent public reacting-flo
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-23：v211 局部射线覆盖下尾归因
+
+### 讲人话：预注册局部指标不仅没解释成功，而且 169 次比较全部反向
+
+v210 的固定全局低模谱下限在 `169` 个跨族比较中有 `167` 个偏向通过的虚拟九相机，但区间仍重叠。v211 因而检验一个物理上不同的解释：失败的师兄标定族是否存在更弱的局部射线覆盖下尾。
+
+本轮不读密度场、二维观测、重建、残差或父实验科学数组。每条 active ray 裁剪到重建盒后取 `64` 个固定中点，用三线性权重沉积；每个相机等总权，逐体素累积 `I-dd^T`，排除一层边界后保留 `5880` 个局部张量。唯一主指标是按平均内部 trace 归一化后，逐体素最小特征值的 `10th-percentile-higher`。成功门在结果前固定为虚拟九相机对师兄标定族的全部 `13x13=169` 个比较都严格更高。
+
+结果完整反向：预期方向 `0/169`，反方向 `169/169`。师兄标定族主指标 min/median/max 为 `0.10381/0.12501/0.16574`，虚拟九相机为 `0.07348/0.07912/0.08570`。但虚拟九相机的逐体素局部下限中位数反而更高，家族中位数为 `0.20784`，师兄标定族为 `0.14353`。这说明反向差异集中在空间下 10% 尾部，而不是虚拟几何在每个位置都更弱。
+
+完全独立的第二实现自行重建几何、射线裁剪、沉积、张量、特征值和全部判决。15 项检查全真；正式与独立指标、局部特征值、汇总最大差分别为 `5.33e-15/1.44e-15/4.44e-15`，相机反转差为 0。科学判决为 `FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211`。
+
+本轮覆盖 39 套几何、`131359` 条 active rays 和 `8406976` 个中点样本，但没有 forward-equivalent 探针，部署账为 `0A+0A^T`，训练参数为 0。关闭的是这一种固定、归一化、局部下 10% 标量，不是全部局部几何。结合 v210，全局低模耦合和条件结构仍是更可信的归因方向，但尚未形成 predictor、重建、资源或真实 BOST 结果。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v210's fixed global low-mode spectral floor favors the passing virtual-nine family in `167` of `169` comparisons but still overlaps. v211 tests a physically different explanation: whether the failing supplied family contains a weaker lower tail of local ray coverage.
+
+The audit reads no density, 2D observation, reconstruction, residual, or parent scientific array. It clips every active ray to the box, takes `64` fixed midpoint samples, deposits them trilinearly with equal total camera weights, accumulates `I-dd^T`, excludes one boundary layer, and retains `5,880` local tensors. The unique primary is the `10th-percentile-higher` of the voxelwise minimum eigenvalue after mean-interior-trace normalization. The preregistered success gate requires all `13x13=169` virtual-nine versus supplied comparisons to be strictly higher.
+
+The result separates completely in the opposite direction: `0/169` expected-direction wins and `169/169` opposite-direction wins. Supplied-family primary min/median/max values are `0.10381/0.12501/0.16574`, versus `0.07348/0.07912/0.08570` for virtual nine cameras. Yet the family median of the voxelwise local-floor median is higher for virtual nine cameras, `0.20784` versus `0.14353`, so the reversal is concentrated in the lower 10% spatial tail rather than every location.
+
+A fully independent second implementation rebuilds geometry, clipping, deposition, tensors, eigenvalues, and every decision. All 15 checks pass. Maximum formal-independent metric, local-eigenvalue, and summary differences are `5.33e-15/1.44e-15/4.44e-15`, with zero camera-reversal difference. The scientific decision is `FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211`.
+
+The audit covers 39 geometries, `131359` active rays, and `8406976` midpoint samples, but uses no forward-equivalent probe. The deployment ledger is `0A+0AT`, with zero trainable parameters. The result closes this fixed normalized lower-10-percent scalar, not all local geometry. Together with v210, global low-mode coupling and conditioning remain the more credible attribution direction, but no predictor, reconstruction, resource, or real-BOST result is established.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-23：v210 固定低模几何可观测性归因
 
 ### 讲人话：几何确实很重要，但一个漂亮的谱指标还不能决定重建一定行不行
