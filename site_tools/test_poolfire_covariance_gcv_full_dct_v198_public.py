@@ -43,7 +43,7 @@ def test_v198_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v198_evidence_remains_preserved_after_v201() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211"
+    assert current["scientific_status"] == "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212"
     assert current["metrics"]["v198_primary_strict_safe_cells"] == 2626
     assert current["metrics"]["v198_identity_control_strict_safe_cells"] == 2626
     assert current["current_decision"]["v198_algorithm_breakthrough"] is False

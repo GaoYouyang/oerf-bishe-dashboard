@@ -61,10 +61,10 @@ def test_v197_remains_visible_after_v199_becomes_current_state() -> None:
     )
     assert current["updated"] == "2026-08-23"
     assert current["formal_status"] == (
-        "FORMAL_PENDING_INDEPENDENT_LOCAL_RAY_COVERAGE_ATTRIBUTION_V211"
+        "FORMAL_PENDING_INDEPENDENT_SIGNED_LINE_CANCELLATION_ATTRIBUTION_V212"
     )
     assert current["scientific_status"] == (
-        "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211"
+        "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212"
     )
     assert current["v197_future_reference_qualification_formal_status"] == (
         "PASS_FORMAL_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"

@@ -69,13 +69,13 @@ def test_v204_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v204_current_evidence_is_preserved_beneath_the_v205_headline() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211"
-    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_LOCAL_RAY_COVERAGE_ATTRIBUTION_V211"
+    assert current["scientific_status"] == "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212"
+    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_LINE_CANCELLATION_ATTRIBUTION_V212"
     assert current["v204_all_nine_control_scientific_decision"] == "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204"
     assert current["metrics"]["v203_nine_camera_rescued_failures"] == 24
     assert current["metrics"]["v204_full_dct_k1_strict_safe_cells"] == 1313
     assert current["current_decision"]["v204_algorithm_breakthrough"] is False
     assert current["current_decision"]["v204_dense_cache_removal_required"] is True
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_local_ray_coverage_attribution_v211_result_2026-08-23.md"
+        "blastnet_case5_signed_line_cancellation_attribution_v212_result_2026-08-23.md"
     )

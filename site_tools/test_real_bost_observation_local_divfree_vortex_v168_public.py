@@ -82,7 +82,7 @@ def test_current_evidence_preserves_v168_as_historical_evidence() -> None:
         "FAIL_OBSERVATION_LOCAL_DIVFREE_VORTEX_V168"
     )
     assert payload["scientific_status"] == (
-        "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211"
+        "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212"
     )
 
 

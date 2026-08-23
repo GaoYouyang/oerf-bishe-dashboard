@@ -101,9 +101,9 @@ def test_current_evidence_points_to_v189_without_overclaiming() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211"
+    assert current["scientific_status"] == "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212"
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_LOCAL_RAY_COVERAGE_ATTRIBUTION_V211"
+        "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_LINE_CANCELLATION_ATTRIBUTION_V212"
     )
     assert current["metrics"]["v189_primary_k1_five_strict_safe_count"] == 52
     assert current["metrics"]["v189_primary_k1_all_nine_strict_safe_count"] == 52

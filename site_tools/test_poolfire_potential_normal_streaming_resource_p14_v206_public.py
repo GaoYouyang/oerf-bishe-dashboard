@@ -68,10 +68,10 @@ def test_v206_result_and_figure_are_bilingual_and_nonblank() -> None:
 def test_v206_remains_preserved_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text())
     assert current["scientific_status"] == (
-        "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211"
+        "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212"
     )
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_LOCAL_RAY_COVERAGE_ATTRIBUTION_V211"
+        "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_LINE_CANCELLATION_ATTRIBUTION_V212"
     )
     assert current["metrics"]["v206_outer_wall_vs_dense_k1_p50"] < 0.90
     assert current["metrics"]["v206_pipeline_rss_vs_dense_k1_p90_higher"] < 1.05
@@ -79,7 +79,7 @@ def test_v206_remains_preserved_parent_evidence() -> None:
     assert current["current_decision"]["v206_global_resource_speedup_claim"] is False
     assert current["current_decision"]["v208_case5_external_gate_adjudicated"] is False
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_local_ray_coverage_attribution_v211_result_2026-08-23.md"
+        "blastnet_case5_signed_line_cancellation_attribution_v212_result_2026-08-23.md"
     )
 
 
