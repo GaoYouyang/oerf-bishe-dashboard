@@ -16582,6 +16582,40 @@ The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFE
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v213 实际源场谱对齐归因
+
+### 讲人话：不是“最差方向”本身决定成败，而是火焰场有没有把能量压到这个方向上
+
+v210 用固定 low-64 子空间检查几何本身的谱下限，在虚拟环形九相机与师兄标定九相机之间得到 `167/169` 个预期方向比较，但两族仍有重叠。v211 的局部无符号覆盖和 v212 的固定有符号射线相消都没有解释这两个重叠。v213 因而检验一个更贴近源场的问题：几何的弱谱方向，是否恰好承载了 Case 5 实际三维密度场的主要低频能量。
+
+本轮沿用同一个固定 low-64 子空间、`42` 帧已经开封的三维密度场和 `39` 套九相机几何。对每套几何构造迹归一 Gram，再用每帧真实 low-64 系数计算源加权调和可观测性，并把 `42` 帧中的最小值作为唯一主指标。结果前固定的门是：13 套虚拟环形九相机的每一个值，都必须严格高于 13 套师兄标定九相机的每一个值。
+
+结果达到 `169/169`，没有平局。师兄标定族主指标 min/median/max 为 `0.51347/0.52811/0.60360`，虚拟九相机为 `0.89028/0.97869/1.03812`；虚拟族最小值仍比师兄标定族最大值高 `0.28668`。固定 low-64 子空间捕获每帧三维场能量的 `77.69%` 到 `79.38%`，中位数为 `78.47%`。相比之下，源盲 v210 control 仍只有 `167/169`，说明决定差异的不是单独一个最小特征值，而是实际源场能量与几何弱谱方向的对齐。
+
+完全独立第二实现重新读取原始密度文件和三张网格，用不同的分块、插值表达式和 SVD 基构造重建 low-64 投影、全部 Gram、逐帧指标、最坏帧与 `169` 个比较。`19/19` 项检查全真；源投影、逐帧指标、逐几何汇总、Gram 特征值和相机换序最大差分别为 `6.39e-15 / 3.60e-14 / 3.40e-14 / 1.15e-14 / 2.62e-14`。第一次独立程序完成数值重建后仅因一个 `float32` 审计量无法写入 JSON 而失效；v213.1 只修复序列化，并从原始输入完整重跑 formal 与 independent 链，没有修改数据、指标、阈值或几何。
+
+封存判决为 `PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213`。这是一个真实的机制归因增量：它解释了为什么两个九相机几何族在同一 Case 5 源场上表现不同。但它读取了已经开封的三维真值系数，所以仍是 post-open、truth-aware 诊断，不是部署可计算的 predictor 或 warm start，也没有证明 exact-call 减少、wall/RSS、外部泛化、curved ray 或真实 BOST。
+
+下一门只允许一个无训练、无真值输入的最小谱代理：只用部署可见二维观测和已知几何尝试复现同一个 `169/169` 分离。失败就把 v213 保留为真值可见归因，不用 CNN、FNO、UNO、DeepONet 或 GPU 挽救。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v210's source-blind low-64 spectral floor moves in the expected direction for `167/169` virtual-ring-nine versus supplied-nine comparisons, while v211's unsigned local coverage and v212's fixed signed-line cancellation do not explain the remaining overlap. v213 asks a source-specific question: whether each geometry's weak spectral directions carry the actual low-frequency energy of the opened Case 5 density trajectory.
+
+Using the same fixed low-64 span, all `42` opened 3D density frames, and `39` nine-camera geometries, the unique primary is the worst-frame source-weighted harmonic observability of the trace-normalized Gram. The preregistered gate requires every one of the 13 virtual-nine values to exceed every one of the 13 supplied-nine values.
+
+The result reaches `169/169` strict comparisons with no ties. Supplied-family min/median/max values are `0.51347/0.52811/0.60360`, versus `0.89028/0.97869/1.03812` for virtual nine cameras. The strict family gap is `0.28668`. The fixed low-64 span captures `77.69%` to `79.38%` of each field's energy, with a `78.47%` median. The source-blind v210 control remains at `167/169`, showing that the distinction is not the weakest eigenvalue alone but the alignment between actual source energy and weak geometry directions.
+
+A fully independent second implementation rereads the raw density files and grids, uses different chunking and interpolation expressions plus SVD rather than the formal basis construction, and rebuilds every projection, Gram, frame metric, worst frame, and comparison. All `19/19` checks pass. Maximum source-projection, frame-metric, geometry-summary, Gram-eigenvalue, and camera-permutation differences are `6.39e-15 / 3.60e-14 / 3.40e-14 / 1.15e-14 / 2.62e-14`. The first independent program completed the numerical rebuild but failed only when serializing one `float32` audit value. v213.1 fixes that serialization and reruns the complete formal and independent chain from raw inputs without changing data, metrics, thresholds, or geometry.
+
+The sealed decision is `PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213`. This is a substantive mechanism-attribution result, but it remains post-open and truth-aware because it reads the opened 3D density coefficients. It is not a deployable predictor or warm start and establishes no exact-call reduction, wall/RSS gain, external generalization, curved-ray result, or real BOST result.
+
+The next gate permits only one untrained, truth-free minimal spectral proxy using deployment-visible 2D observations and known geometry, retaining the same `169/169` strict gate and an independent second implementation. Failure leaves v213 as truth-aware attribution only; no CNN, FNO, UNO, DeepONet, or GPU rescue is authorized.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
 ### English checkpoint
 
 v205 left two obligations: formal setup still transiently formed the all-camera dense response, and a smaller cache did not itself prove faster execution. v206 does not change the candidate, accuracy thresholds, or train a model. It makes potential-normal setup camera-streamed and places setup inside every fresh worker.

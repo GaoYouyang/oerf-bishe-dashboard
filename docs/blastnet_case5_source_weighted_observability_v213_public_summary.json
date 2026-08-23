@@ -1,0 +1,96 @@
+{
+  "schema_version": "oerf-public-blastnet-case5-source-weighted-observability-v213.1.0",
+  "updated": "2026-08-24",
+  "title_zh": "v213：实际源场的谱方向把 Case 5 两类九相机几何严格分开",
+  "title_en": "v213: Actual-source spectral direction strictly separates the two Case 5 nine-camera families",
+  "scope": {
+    "diagnostic_type": "post-open truth-aware source-weighted low-mode observability attribution",
+    "opened_density_frames": 42,
+    "supplied_nine_camera_rigs": 13,
+    "virtual_nine_camera_rigs": 13,
+    "virtual_twelve_camera_rigs_diagnostic_only": 13,
+    "geometry_rows": 39,
+    "fixed_low_modes": 64,
+    "offline_forward_equivalent_probes": 2496,
+    "deployment_exact_calls": {"A": 0, "AT": 0},
+    "trainable_parameters": 0,
+    "density_reads": 42,
+    "observation_reads": 0,
+    "reconstruction_reads": 0,
+    "residual_reads": 0,
+    "parent_metric_array_reads": 0
+  },
+  "fixed_primary": {
+    "name": "worst-frame source-weighted harmonic observability in the fixed low-64 span",
+    "source_role": "Each already opened density frame is projected into the fixed v210 low-64 span; truth is used only for post-open mechanism attribution.",
+    "geometry_role": "Each geometry uses the same trace-normalized exact low-64 response Gram as v210.",
+    "aggregation": "minimum over all 42 frames for each geometry",
+    "strict_success_rule": "every virtual-nine primary must exceed every supplied-nine primary",
+    "comparison_count": 169,
+    "virtual_strictly_greater_count": 169,
+    "tie_count": 0,
+    "superiority_fraction": 1.0,
+    "strict_family_separation": true,
+    "strict_gap_virtual_min_minus_supplied_max": 0.2866793781261446
+  },
+  "source_blind_control": {
+    "name": "v210 trace-normalized low-64 Gram spectral floor",
+    "virtual_strictly_greater_count": 167,
+    "comparison_count": 169,
+    "strict_family_separation": false
+  },
+  "source_energy_fraction": {
+    "minimum": 0.7769052857179327,
+    "median": 0.7847241128353489,
+    "maximum": 0.7937540318976688
+  },
+  "family_summaries": {
+    "supplied_nine": {
+      "source_weighted_harmonic_min_median_max": [0.5134731135409704, 0.5281144017287187, 0.6035974839226074],
+      "source_weighted_rayleigh_min_median_max": [0.5986964061027651, 0.6453522629744293, 0.7270633899091271],
+      "source_blind_floor_min_median_max": [0.011857128995938512, 0.02146072143939408, 0.1315874803284104]
+    },
+    "virtual_nine": {
+      "source_weighted_harmonic_min_median_max": [0.890276862048752, 0.9786919783513081, 1.0381163551236654],
+      "source_weighted_rayleigh_min_median_max": [1.021198787772115, 1.0755551042139258, 1.1173040806095533],
+      "source_blind_floor_min_median_max": [0.10931577130040641, 0.30756491380640494, 0.340079527029416]
+    },
+    "virtual_twelve_diagnostic_only": {
+      "source_weighted_harmonic_min_median_max": [0.990736540621001, 1.001989510704155, 1.0110777050724096],
+      "source_weighted_rayleigh_min_median_max": [1.0643505771238222, 1.0770935613391523, 1.0851568688264972],
+      "source_blind_floor_min_median_max": [0.393992894256478, 0.405610225049605, 0.42762720935676435]
+    }
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_SOURCE_WEIGHTED_OBSERVABILITY_V213_1",
+    "all_checks_passed": true,
+    "check_count": 19,
+    "maximum_source_projection_difference": 6.394961323605649e-15,
+    "maximum_frame_metric_difference": 3.597122599785507e-14,
+    "maximum_geometry_metric_difference": 3.397282455352979e-14,
+    "maximum_gram_eigenvalue_difference": 1.1546319456101628e-14,
+    "maximum_summary_difference": 3.397282455352979e-14,
+    "maximum_camera_permutation_difference": 2.6201263381153694e-14
+  },
+  "execution_note_zh": "v213 首次独立程序在完成全部数值重建后因一个 float32 无法写入 JSON 而失效，没有形成可用独立判决。v213.1 只修复该类型转换，并从原始输入完整重跑正式与独立链；主指标、数据、几何和阈值均未改变。",
+  "execution_note_en": "The first v213 independent program completed all numerical reconstruction but failed to serialize one float32 audit value, so it produced no usable independent decision. v213.1 changes only that type conversion and reruns the complete formal and independent chain from raw inputs; the primary, data, geometry, and thresholds are unchanged.",
+  "scientific_decision": "PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213",
+  "interpretation_zh": "源盲的 v210 谱下界在169个跨族比较中通过167个，仍有重叠；把42帧实际密度在固定low-64子空间中的能量方向纳入后，169/169全部严格符合预期。师兄标定九相机的最坏帧调和可观测性范围为0.51347至0.60360，虚拟环形九相机为0.89028至1.03812，严格间隔为0.28668。low-64捕获每帧约77.69%至79.38%的场能量。因此，当前证据支持一个更具体的机制：reference差异不仅取决于几何的最弱谱值，还取决于实际源场是否把能量放在几何的弱谱方向。",
+  "interpretation_en": "The source-blind v210 spectral floor wins 167 of 169 cross-family comparisons and still overlaps. Once the energy direction of all 42 actual density frames in the fixed low-64 span is included, all 169 of 169 comparisons move strictly as expected. Worst-frame harmonic observability ranges from 0.51347 to 0.60360 for supplied nine-camera calibrations and from 0.89028 to 1.03812 for virtual ring-nine rigs, leaving a strict gap of 0.28668. The low-64 span captures about 77.69% to 79.38% of each frame's energy. The evidence therefore supports a more specific mechanism: reference adequacy depends not only on the weakest geometric eigenvalue, but also on whether the actual source loads weak spectral directions of that geometry.",
+  "route_action_zh": "保留源-几何谱对齐机制，下一门只检验它能否由部署可见的观测与已知几何估计。结果前冻结一个无训练、无真值输入的最小谱代理，并继续以169/169严格分离和独立第二实现为门；若代理失败，就把v213限定为真值可见归因，不用大网络或GPU挽救。",
+  "route_action_en": "Retain the source-geometry spectral-alignment mechanism. The next gate asks only whether deployment-visible observations and known geometry can estimate it. Freeze one untrained, truth-free minimal spectral proxy before results and retain the 169/169 strict-separation and independent-second-implementation gates. If the proxy fails, keep v213 as truth-aware attribution only; do not rescue it with a larger model or GPU.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "external_generalization": false,
+    "broad_generalization": false,
+    "predictor_success": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

@@ -77,10 +77,10 @@ def test_v211_result_and_figure_are_bilingual_and_nonblank() -> None:
 def test_v211_is_preserved_as_parent_evidence_after_v212() -> None:
     current = json.loads(CURRENT.read_text())
     assert current["scientific_status"] == (
-        "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212"
+        "PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213"
     )
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_LINE_CANCELLATION_ATTRIBUTION_V212"
+        "PASS_INDEPENDENT_RECOMPUTATION_SOURCE_WEIGHTED_OBSERVABILITY_V213_1"
     )
     assert current["metrics"]["v211_primary_comparison_count"] == 169
     assert current["metrics"]["v211_primary_strictly_greater_count"] == 0

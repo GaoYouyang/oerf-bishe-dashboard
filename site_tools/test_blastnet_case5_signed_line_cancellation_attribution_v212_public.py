@@ -86,23 +86,19 @@ def test_v212_result_and_figure_are_bilingual_and_nonblank() -> None:
         assert any(high - low > 100 for low, high in ImageStat.Stat(image).extrema)
 
 
-def test_v212_is_the_current_public_headline() -> None:
+def test_v212_remains_historical_after_the_v213_headline() -> None:
     current = json.loads(CURRENT.read_text())
     assert current["scientific_status"] == (
+        "PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213"
+    )
+    assert current["public_evidence"]["result"].endswith(
+        "blastnet_case5_source_weighted_observability_v213_result_2026-08-24.md"
+    )
+    historical = json.loads(SUMMARY.read_text())
+    assert historical["scientific_decision"] == (
         "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212"
     )
-    assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_LINE_CANCELLATION_ATTRIBUTION_V212"
-    )
-    assert current["metrics"]["v212_primary_comparison_count"] == 169
-    assert current["metrics"]["v212_primary_strictly_greater_count"] == 7
-    assert current["metrics"]["v212_primary_opposite_direction_count"] == 162
-    assert current["current_decision"]["v212_expected_direction_supported"] is False
-    assert current["current_decision"]["v212_all_signed_phase_irrelevant"] is False
-    assert current["current_decision"]["v212_predictor_authorized"] is False
-    assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_signed_line_cancellation_attribution_v212_result_2026-08-23.md"
-    )
+    assert historical["fixed_primary"]["virtual_strictly_greater_count"] == 7
 
 
 def test_primary_pages_reference_v212_in_both_languages() -> None:
@@ -114,11 +110,11 @@ def test_primary_pages_reference_v212_in_both_languages() -> None:
         content = path.read_text()
         assert "blastnet_case5_signed_line_cancellation_attribution_v212" in content
         assert "7/169" in content
-        assert "162/169" in content
+        assert "162" in content
         assert "algorithm_breakthrough=false" in content
     focus = (ROOT / "operator-learning/index.html").read_text()
-    assert "当前：v212 有符号射线相消归因已独立封存" in focus
-    assert "Current: v212 signed-line cancellation attribution independently sealed" in focus
+    assert "v212 Case 5：固定有符号射线相消比" in focus
+    assert "v212 Case 5: the fixed signed-line cancellation ratio" in focus
 
 
 def test_v212_public_artifacts_contain_no_private_execution_material() -> None:

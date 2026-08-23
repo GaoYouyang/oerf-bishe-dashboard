@@ -99,9 +99,9 @@ def test_v191_1_public_files_exclude_private_execution_details() -> None:
 def test_current_evidence_points_to_v191_1_without_overclaiming() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212"
+        "PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213"
     )
-    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_SIGNED_LINE_CANCELLATION_ATTRIBUTION_V212"
+    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_SOURCE_WEIGHTED_OBSERVABILITY_V213_1"
     assert current["metrics"]["v191_mixed_setup_count"] == 21
     assert current["metrics"]["v191_total_setup_count"] == 26
     assert current["current_decision"]["v191_observation_activated_metric_attribution_passed"] is True

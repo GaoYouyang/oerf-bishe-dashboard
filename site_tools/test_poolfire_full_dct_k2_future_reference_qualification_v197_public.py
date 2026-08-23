@@ -59,12 +59,12 @@ def test_v197_remains_visible_after_v199_becomes_current_state() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["updated"] == "2026-08-23"
+    assert current["updated"] == "2026-08-24"
     assert current["formal_status"] == (
-        "FORMAL_PENDING_INDEPENDENT_SIGNED_LINE_CANCELLATION_ATTRIBUTION_V212"
+        "FORMAL_PENDING_INDEPENDENT_SOURCE_WEIGHTED_OBSERVABILITY_V213_1"
     )
     assert current["scientific_status"] == (
-        "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212"
+        "PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213"
     )
     assert current["v197_future_reference_qualification_formal_status"] == (
         "PASS_FORMAL_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"

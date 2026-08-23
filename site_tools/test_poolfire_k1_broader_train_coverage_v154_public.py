@@ -83,7 +83,7 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     )
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     next_gate = payload["next_scientific_gate_en"].lower()
-    assert "fixed 64-mode spectral floor" in next_gate
+    assert "deployment-visible observations" in next_gate
     assert "paired real-bost physical data" in next_gate
 
 
