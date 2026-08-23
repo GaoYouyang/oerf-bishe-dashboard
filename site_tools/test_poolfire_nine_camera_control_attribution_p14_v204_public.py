@@ -69,13 +69,13 @@ def test_v204_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v204_current_evidence_is_preserved_beneath_the_v205_headline() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
-    assert current["engineering_status"] == "PASS_INDEPENDENT_GLOBAL_PCGLS_DEPTH_QUALIFICATION_V217_1"
+    assert current["scientific_status"] == "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
+    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_PCGLS_WARM_V218_1_1"
     assert current["v204_all_nine_control_scientific_decision"] == "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204"
     assert current["metrics"]["v203_nine_camera_rescued_failures"] == 24
     assert current["metrics"]["v204_full_dct_k1_strict_safe_cells"] == 1313
     assert current["current_decision"]["v204_algorithm_breakthrough"] is False
     assert current["current_decision"]["v204_dense_cache_removal_required"] is True
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_global_pcgls_depth_qualification_v217_1_result_2026-08-24.md"
+        "blastnet_case5_potential_normal_pcgls_warm_v218_1_result_2026-08-24.md"
     )

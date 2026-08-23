@@ -77,10 +77,10 @@ def test_v211_result_and_figure_are_bilingual_and_nonblank() -> None:
 def test_v211_is_preserved_as_parent_evidence_after_v212() -> None:
     current = json.loads(CURRENT.read_text())
     assert current["scientific_status"] == (
-        "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
+        "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
     )
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_GLOBAL_PCGLS_DEPTH_QUALIFICATION_V217_1"
+        "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_PCGLS_WARM_V218_1_1"
     )
     assert current["metrics"]["v211_primary_comparison_count"] == 169
     assert current["metrics"]["v211_primary_strictly_greater_count"] == 0

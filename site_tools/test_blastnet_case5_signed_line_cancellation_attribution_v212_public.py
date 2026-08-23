@@ -89,10 +89,10 @@ def test_v212_result_and_figure_are_bilingual_and_nonblank() -> None:
 def test_v212_remains_historical_after_the_v214_headline() -> None:
     current = json.loads(CURRENT.read_text())
     assert current["scientific_status"] == (
-        "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
+        "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
     )
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_global_pcgls_depth_qualification_v217_1_result_2026-08-24.md"
+        "blastnet_case5_potential_normal_pcgls_warm_v218_1_result_2026-08-24.md"
     )
     historical = json.loads(SUMMARY.read_text())
     assert historical["scientific_decision"] == (

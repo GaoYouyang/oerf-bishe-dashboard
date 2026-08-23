@@ -64,15 +64,15 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 def test_current_evidence_preserves_v173_but_points_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
+        "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
     )
     assert payload["metrics"]["v173_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_exact_A"] == 1
     assert payload["metrics"]["v173_independent_check_count"] == 21
-    assert "lowest globally adequate deterministic PCGLS depth" in payload["next_scientific_gate_en"]
-    assert "real-BOST gates can open" in payload["next_scientific_gate_en"]
-    assert "才允许打开资源、外部、神经、GPU 或真实 BOST 门" in payload["next_scientific_gate_zh"]
+    assert "Low-64 representation and PCGLS K11 depth" in payload["next_scientific_gate_en"]
+    assert "real-BOST claims remain unauthorized" in payload["next_scientific_gate_en"]
+    assert "神经、GPU 与真实 BOST 主张继续关闭" in payload["next_scientific_gate_zh"]
     assert "真实 BOST" in payload["next_scientific_gate_zh"]
 
 

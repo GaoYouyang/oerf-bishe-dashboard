@@ -76,7 +76,7 @@ def test_v210_remains_preserved_as_parent_evidence_below_v211() -> None:
     assert current["current_decision"]["v210_fixed_primary_strictly_separates"] is False
     assert current["current_decision"]["v210_predictor_authorized"] is False
     assert current["scientific_status"] == (
-        "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
+        "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
     )
 
 

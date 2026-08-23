@@ -62,11 +62,11 @@ def test_v217_1_result_and_figure_are_bilingual_and_nonblank() -> None:
         assert any(low != high for low, high in extrema)
 
 
-def test_v217_1_is_the_current_public_headline() -> None:
+def test_v217_1_history_is_preserved_beneath_v218_1() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-24"
     assert current["scientific_status"] == (
-        "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
+        "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
     )
     assert current["metrics"]["v217_1_k15_absolute_cells_passed"] == 544
     assert current["metrics"]["v217_1_k15_matched_cells_passed"] == 0

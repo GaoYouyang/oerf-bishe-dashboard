@@ -77,14 +77,14 @@ def test_current_evidence_preserves_v170_but_points_to_v181() -> None:
     assert payload["current_decision"]["v170_deployable_selector_established"] is False
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_GLOBAL_PCGLS_DEPTH_QUALIFICATION_V217_1"
+        == "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_PCGLS_WARM_V218_1_1"
     )
     assert (
         payload["formal_status"]
-            == "FORMAL_PENDING_INDEPENDENT_GLOBAL_PCGLS_DEPTH_QUALIFICATION_V217_1"
+            == "FORMAL_PENDING_INDEPENDENT_POTENTIAL_NORMAL_PCGLS_WARM_V218_1"
     )
     assert payload["scientific_status"] == (
-        "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
+        "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
     )
 
 

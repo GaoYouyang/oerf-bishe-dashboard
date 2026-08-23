@@ -64,7 +64,7 @@ def test_v216_is_preserved_beneath_the_v217_1_current_headline() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-24"
     assert current["scientific_status"] == (
-        "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
+        "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
     )
     assert current["metrics"]["v216_reference_strict_cells_passed"] == 546
     assert current["metrics"]["v216_proxy_k8_absolute_cells_passed"] == 546

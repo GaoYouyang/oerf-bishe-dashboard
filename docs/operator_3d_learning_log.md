@@ -16582,6 +16582,36 @@ The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFE
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v218.1 关闭 potential-normal，但 Low-64 K11 出现确定性调用余量
+
+### 讲人话：新想法彻底没过，老 control 却在公平重放里第一次真的省下调用
+
+v217.1 已经把 geometry-Jacobi PCGLS K16 定为同一批已开封 Case 5 数据上的最低可靠 reference。v218.1 随后检验一个物理上不同的 potential-normal warm initializer：它只读取二维观测和已知几何，生成起点后继续执行未修改的 PCGLS K1-K14，并与 K16 同时比较绝对精度和 matched accuracy。
+
+主候选的结果很明确，也不是擦边失败。到 K14 时它仍为 `0/546` 绝对单元、`0/13` 完整几何，同时也是 `0/546` matched 单元、`0/13` matched 几何；逻辑账已经达到 `15A+15A^T`。逐几何 p90 范围为 field `2.016-2.224`、完整梯度 `3.327-3.691`、内部梯度 `7.876-9.037`、observation `0.175-0.211`。因此 scientific decision 是 `FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1`，该表示立即关闭，不再调阈值、秩、深度或网络容量。
+
+真正改变下一步优先级的是同一冻结重放中的既有 Low-64 observation-only control。Low-64 K10 虽然已经通过 `546/546` 绝对单元和 `13/13` 完整几何，但 matched 只有 `164/546`、`0/13`；Low-64 K11 则第一次同时达到 `546/546` matched 单元和 `13/13` 完整几何，最大 matched ratio 为 `1.02190`。它的调用账是 `12A+11A^T`，相对 K16 的 `16A+16A^T`，A 减少 `25%`、A^T 减少 `31.25%`、总精确调用减少 `28.125%`。Normalized BP K14 虽绝对门全过，matched 仍是 `0/546`，所以这个正结果不能被“任何便宜起点都行”解释。
+
+首轮独立 validator 的逐 arm 指标、主候选场、调用账和离散判决都一致，但它额外使用了未冻结的 reference 场容差，并用重新计算的浮点 K16 指标替代封存 K16 指标作 matched 分母，因此按规则保持 inconclusive。修正只改 validator 审裁，不改正式数组、候选、controls、阈值、求解器或数据，首次 inconclusive 证据也原样保留。修正后的独立实现全部检查通过：预测坐标/场最大相对差 `2.17e-13/2.79e-13`，主候选场最大相对差 `9.34e-10`，逐单元指标与汇总最大差 `2.37e-9/3.23e-11`，相机乱序 K14 场差 `4.40e-10`。
+
+Low-64 K11 现在只被称为已开封虚拟 Case 5 上的确定性 control headroom，不是 learned algorithm、wall/RSS 加速、外部泛化或真实 BOST。下一步把 Low-64 表示和 K11 深度原样固定，在一个结果前未开的等价公开工况上做一次确认；确认通过前不测资源、不训练网络、不租 GPU。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v218.1 closes potential-normal while Low-64 K11 establishes deterministic call headroom
+
+v217.1 fixes geometry-Jacobi PCGLS K16 as the lowest reliable reference on the opened Case 5 roster. v218.1 then tests a physically distinct potential-normal warm initializer. It reads only 2D observations and known geometry, generates a starting field, and runs unchanged PCGLS K1-K14. Absolute accuracy and K16-matched accuracy are evaluated together.
+
+The primary fails decisively. At K14 it remains at `0/546` absolute cells and `0/13` complete rigs, as well as `0/546` matched cells and `0/13` matched rigs, despite a `15A+15A^T` logical ledger. Per-rig p90 ranges are `2.016-2.224` for field, `3.327-3.691` for full gradient, `7.876-9.037` for interior gradient, and `0.175-0.211` for observation. The scientific decision is `FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1`; this representation is closed without further threshold, rank, depth, or network expansion.
+
+The route-changing finding comes from the existing observation-only Low-64 control in the same frozen replay. Low-64 K10 clears all `546/546` absolute cells and `13/13` complete rigs but reaches only `164/546` matched cells and `0/13` matched rigs. Low-64 K11 is the first depth to reach both `546/546` matched cells and `13/13` complete rigs, with a maximum matched ratio of `1.02190`. Its ledger is `12A+11A^T`, versus `16A+16A^T` for K16: A is reduced by `25%`, A^T by `31.25%`, and total exact calls by `28.125%`. Normalized BP K14 clears the absolute gates but remains at `0/546` matched cells, so the positive cannot be explained by any cheap starting point.
+
+The first independent validator agrees on all per-arm metrics, primary fields, call ledgers, and discrete decisions, but introduces an unfrozen reference-field tolerance and substitutes freshly recomputed floating-point K16 metrics for sealed K16 matched denominators. It therefore remains inconclusive. The correction changes validator adjudication only; formal arrays, candidates, controls, thresholds, solver, and data remain unchanged, and the first inconclusive record is preserved. The corrected independent implementation passes every check. Maximum prediction-coordinate/field differences are `2.17e-13/2.79e-13`, maximum primary-field difference is `9.34e-10`, maximum cell-metric/summary differences are `2.37e-9/3.23e-11`, and the K14 camera-permutation field difference is `4.40e-10`.
+
+Low-64 K11 is currently deterministic control headroom on opened virtual Case 5 only. It is not a learned algorithm, wall/RSS speedup, external generalization, or real BOST. Fix the Low-64 representation and K11 depth exactly, then run one confirmation on an equivalent previously unopened public condition. Resource measurement, neural training, and GPU rental remain closed until that confirmation passes.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v217.1 定下最低可靠的全局 PCGLS 深度
 
 ### 讲人话：K15 看起来只差一点，但不能当成和 K16 一样

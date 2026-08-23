@@ -61,10 +61,10 @@ def test_v197_remains_visible_after_v199_becomes_current_state() -> None:
     )
     assert current["updated"] == "2026-08-24"
     assert current["formal_status"] == (
-        "FORMAL_PENDING_INDEPENDENT_GLOBAL_PCGLS_DEPTH_QUALIFICATION_V217_1"
+        "FORMAL_PENDING_INDEPENDENT_POTENTIAL_NORMAL_PCGLS_WARM_V218_1"
     )
     assert current["scientific_status"] == (
-        "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
+        "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
     )
     assert current["v197_future_reference_qualification_formal_status"] == (
         "PASS_FORMAL_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"

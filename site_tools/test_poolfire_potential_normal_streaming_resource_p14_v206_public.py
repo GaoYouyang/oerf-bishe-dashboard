@@ -68,10 +68,10 @@ def test_v206_result_and_figure_are_bilingual_and_nonblank() -> None:
 def test_v206_remains_preserved_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text())
     assert current["scientific_status"] == (
-        "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
+        "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
     )
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_GLOBAL_PCGLS_DEPTH_QUALIFICATION_V217_1"
+        "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_PCGLS_WARM_V218_1_1"
     )
     assert current["metrics"]["v206_outer_wall_vs_dense_k1_p50"] < 0.90
     assert current["metrics"]["v206_pipeline_rss_vs_dense_k1_p90_higher"] < 1.05
@@ -79,7 +79,7 @@ def test_v206_remains_preserved_parent_evidence() -> None:
     assert current["current_decision"]["v206_global_resource_speedup_claim"] is False
     assert current["current_decision"]["v208_case5_external_gate_adjudicated"] is False
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_global_pcgls_depth_qualification_v217_1_result_2026-08-24.md"
+        "blastnet_case5_potential_normal_pcgls_warm_v218_1_result_2026-08-24.md"
     )
 
 
