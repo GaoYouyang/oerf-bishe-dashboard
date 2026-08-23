@@ -1,0 +1,132 @@
+{
+  "schema_version": "oerf-public-poolfire-tgv2-pdhg-reference-p14-v201.0.0",
+  "date": "2026-08-23",
+  "title_zh": "v201：TGV2 进一步压低观测误差，但未救回任何五相机失败单元",
+  "title_en": "v201: TGV2 further lowers observation error but rescues no five-camera failure",
+  "formal_status": "PASS_FORMAL_POOLFIRE_TGV2_PDHG_REFERENCE_P14_EXECUTION_V201",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_TGV2_PDHG_REFERENCE_P14_V201",
+  "scientific_decision": "FAIL_TGV2_PDHG_REFERENCE_ADEQUACY_V201",
+  "scope_zh": "仅限历史上已经暴露的 p14 开发轨迹、13 套标定和五相机臂；不是 fresh、blind、validation 或 test。",
+  "scope_en": "Limited to the historically exposed p14 development trajectory, 13 calibrations, and the five-camera arm; this is not fresh, blind, validation, or test evidence.",
+  "scientific_question": "Can one fixed second-order TGV2 reference resolve the 24 residual five-camera failures left by the v200 Huber-TV reference?",
+  "fixed_primary": {
+    "name": "scale_equivariant_tgv2_pdhg_reference_from_full_dct_k2",
+    "starting_point": "full-DCT K2",
+    "iterations": 256,
+    "first_order_weight": 0.001,
+    "second_order_weight": 0.002,
+    "hyperparameter_search_count": 0,
+    "trainable_parameter_count": 0,
+    "logical_online_exact_calls": {
+      "A": 259,
+      "AT": 258
+    },
+    "five_camera": {
+      "strict_safe_cells": 1289,
+      "strict_total_cells": 1313,
+      "failed_cells": 24,
+      "complete_groups_passed": 5,
+      "complete_groups_total": 13,
+      "failed_groups": 8,
+      "p90": {
+        "field": 0.4180412508,
+        "gradient": 0.6600393761,
+        "observation": 0.0146895855
+      },
+      "worst": {
+        "field": 0.5477090234,
+        "gradient": 0.9058457736,
+        "observation": 0.0184463863
+      }
+    }
+  },
+  "controls": {
+    "huber_pdhg_parent_v200": {
+      "logical_online_exact_calls": {
+        "A": 131,
+        "AT": 130
+      },
+      "five_camera": {
+        "strict_safe_cells": 1289,
+        "strict_total_cells": 1313,
+        "failed_cells": 24,
+        "complete_groups_passed": 5,
+        "complete_groups_total": 13,
+        "failed_groups": 8,
+        "p90": {
+          "field": 0.4182715673,
+          "gradient": 0.6600694609,
+          "observation": 0.0205845834
+        },
+        "worst": {
+          "field": 0.5473759514,
+          "gradient": 0.9049703219,
+          "observation": 0.0272132329
+        }
+      }
+    },
+    "full_dct_k2_parent": {
+      "logical_online_exact_calls": {
+        "A": 3,
+        "AT": 2
+      },
+      "five_camera": {
+        "strict_safe_cells": 1213,
+        "strict_total_cells": 1313,
+        "complete_groups_passed": 0,
+        "complete_groups_total": 13
+      }
+    }
+  },
+  "mechanism_attribution": {
+    "observation_error_improved_cells": 1313,
+    "observation_error_worsened_cells": 0,
+    "huber_failed_cells": 24,
+    "tgv2_failed_cells": 24,
+    "shared_failed_cells": 24,
+    "rescued_failed_cells": 0,
+    "failure_mask_xor_cells": 0,
+    "tgv2_failed_cell_metric_counts": {
+      "field": 4,
+      "gradient": 24,
+      "observation": 0
+    },
+    "field_error_improved_cells": 998,
+    "gradient_error_improved_cells": 923
+  },
+  "independent_numeric_audit": {
+    "reference_field_block_relative_difference": 2.3958555645e-16,
+    "auxiliary_sentinel_relative_difference": 1.4030753715e-16,
+    "metric_maximum_absolute_difference": 2.2204460493e-16,
+    "diagnostic_maximum_absolute_difference": 3.6379788071e-12,
+    "permutation_field_relative_difference": 2.6196514204e-16,
+    "permutation_auxiliary_relative_difference": 6.2103046267e-17,
+    "strict_masks_exact": true,
+    "formal_tree_unchanged": true,
+    "input_tree_unchanged": true,
+    "single_use_release_consumed": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "interpretation_zh": "TGV2 在 1313/1313 个单元上都把 observation error 压得比 Huber 更低，但严格安全单元仍为 1289/1313、完整组仍为 5/13，24 个失败单元与 Huber 完全重合。观测拟合继续变好却没有恢复三维梯度，说明当前五相机 reference 的剩余瓶颈不是简单的数据残差不足。",
+  "interpretation_en": "TGV2 lowers observation error relative to Huber in all 1313 cells, yet strict-safe cells remain 1289/1313, complete groups remain 5/13, and all 24 failures are identical to Huber's. Better data fit without recovered 3D gradients shows that the remaining five-camera reference bottleneck is not simply insufficient observation fitting.",
+  "decision_boundary_zh": "固定 TGV2 目标、权重与 256 步求解器按协议关闭，不得事后调权重、迭代数、步长或边界。参考仍不足，所以 v199 的相对 exact-call、wall/RSS 与速度判决继续悬置。",
+  "decision_boundary_en": "The fixed TGV2 objective, weights, and 256-step solver are closed by protocol; weights, iterations, steps, and boundaries must not be tuned post hoc. Because the reference remains inadequate, v199's relative exact-call, wall/RSS, and speed adjudication remains suspended.",
+  "next_scientific_gate_zh": "不再微调 Huber 或 TGV2。下一步只接受结果前冻结、能处理五相机三维梯度不可辨性的物理上不同机制，或等待工况匹配的真实二维 BOST 位移、标定映射、噪声重复与认可基线。",
+  "next_scientific_gate_en": "Do not tune Huber or TGV2 further. Continue only with a preregistered, physically distinct mechanism that addresses five-camera 3D-gradient ambiguity, or wait for condition-matched real 2D BOST displacement, calibration mapping, repeated-noise data, and an accepted baseline.",
+  "fixed_tgv2_reference_closed": true,
+  "fixed_huber_reference_closed": true,
+  "fixed_identity_candidate_closed": false,
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_validation": false,
+    "exact_call_reduction_established": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}
