@@ -1,0 +1,92 @@
+{
+  "schema_version": "oerf-public-poolfire-potential-normal-compact-cache-p14-v205.0.0",
+  "date": "2026-08-23",
+  "title_zh": "v205：势函数正规方程缓存复现稠密 full-DCT K1，并显著缩小保留状态",
+  "title_en": "v205: a potential-normal cache reproduces dense full-DCT K1 with a much smaller retained state",
+  "formal_status": "PASS_FORMAL_POOLFIRE_POTENTIAL_NORMAL_COMPACT_CACHE_P14_V205",
+  "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_COMPACT_CACHE_V205",
+  "scientific_decision": "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205",
+  "scope_zh": "仅限历史上已经暴露的 p14 开发轨迹、13 套标定、101 帧以及封存的五/九相机结果；不是 fresh、blind、validation 或 test。",
+  "scope_en": "Limited to the historically exposed p14 development trajectory, 13 calibrations, 101 frames, and sealed five/all-nine-camera results; this is not fresh, blind, validation, or test evidence.",
+  "representation": {
+    "affine_rank": 1009,
+    "cell_count": 2626,
+    "calibration_groups": 13,
+    "frames_per_group": 101,
+    "camera_counts": [
+      5,
+      9
+    ],
+    "retained_packed_values": 509545,
+    "dense_values_five_camera": 2900875,
+    "dense_values_all_nine_camera": 5221575,
+    "compression_ratio_five_camera": 5.693069306930693,
+    "compression_ratio_all_nine_camera": 10.247524752475247,
+    "description_zh": "把零均值探测器位移积分为势函数，经一次精确伴随提升到三维场，再在固定非直流 DCT 基中求解封存的正规方程 Cholesky 因子；在线不再保留或扫描稠密响应矩阵。",
+    "description_en": "Zero-mean detector displacement is integrated into a potential, lifted to the 3D field by one exact adjoint, and solved in the fixed non-DC DCT basis using a sealed normal-equation Cholesky factor; the dense response matrix is no longer retained or scanned online."
+  },
+  "equivalence_audit": {
+    "maximum_coordinate_relative_difference_to_formal": 1.4294906475069879e-12,
+    "maximum_coordinate_relative_difference_to_v199": 9.839411178500311e-13,
+    "maximum_field_relative_difference_to_v199": 9.839356615853982e-13,
+    "maximum_direct_rhs_relative_difference": 2.0418312176792448e-14,
+    "maximum_formal_factor_reconstruction_relative_difference": 2.0433224374178144e-13,
+    "maximum_regularization_relative_difference_to_formal": 1.2052154541376042e-13,
+    "maximum_camera_permutation_coordinate_relative_difference": 4.241531947453145e-13,
+    "maximum_camera_permutation_gram_relative_difference": 4.2798564529017013e-16,
+    "formal_tree_unchanged": true,
+    "parent_trees_unchanged": true
+  },
+  "inherited_accuracy": {
+    "all_nine_camera": {
+      "strict_safe_cells": 1313,
+      "cell_count": 1313,
+      "complete_groups_passed": 13,
+      "complete_group_count": 13
+    },
+    "five_camera": {
+      "strict_safe_cells": 1268,
+      "cell_count": 1313,
+      "complete_groups_passed": 3,
+      "complete_group_count": 13
+    }
+  },
+  "logical_online_exact_calls": {
+    "compact_initializer": {
+      "A": 0,
+      "AT": 1
+    },
+    "compact_k1_total": {
+      "A": 2,
+      "AT": 2
+    },
+    "dense_full_dct_k1_parent": {
+      "A": 2,
+      "AT": 1
+    },
+    "full_dct_k2_reference": {
+      "A": 3,
+      "AT": 2
+    }
+  },
+  "interpretation_zh": "v205 证明 v204 的稠密响应缓存不是复现 full-DCT K1 所必需的：固定势函数正规方程缓存以约 5.69 倍和 10.25 倍更少的保留标量，在五/九相机的 2626 个单元上把坐标和物理场复现到约 1e-12。九相机准确率仍为 1313/1313、13/13；五相机仍只有 1268/1313、3/13，因此没有建立全可变相机数成功。",
+  "interpretation_en": "v205 shows that the dense response cache from v204 is not required to reproduce full-DCT K1. A fixed potential-normal cache retains about 5.69x and 10.25x fewer scalar values and reproduces coordinates and physical fields to about 1e-12 across 2,626 five/all-nine-camera cells. All-nine accuracy remains 1,313/1,313 and 13/13, whereas five-camera accuracy remains only 1,268/1,313 and 3/13, so variable-cardinality success has not been established.",
+  "decision_boundary_zh": "紧凑路径的 K1 总账为 2A+2A^T，比稠密 K1 多一次 A^T；正式 setup 仍会瞬时构造响应矩阵。本轮没有 fresh wall/RSS、整流水线峰值内存、独立公开工况或真实 BOST 证据。因此只能称开发集上的紧凑表示/缓存 headroom，不能称速度、资源收益、部署算法或算法突破。",
+  "decision_boundary_en": "Compact K1 has a 2A+2AT total ledger, one AT above dense K1, and formal setup still constructs the response matrix transiently. This run contains no fresh wall/RSS, whole-pipeline peak-memory, independent public-condition, or real-BOST evidence. It therefore establishes compact representation/cache headroom only on an exposed development condition, not speed, resource savings, deployment, or an algorithmic breakthrough.",
+  "next_scientific_gate_zh": "结果前冻结一次 fresh-process 资源审计：先移除 setup 的瞬时稠密响应，保留相机换序等变、原生支持可变相机数的接口但不声称所有基数已过门；把 setup 纳入 worker，保留便宜 CPU 对照，并显式测紧凑 K1、稠密 K1 与 K2 的端到端 wall、worker/process-tree RSS 和整流水线峰值。任何资源门失败都不得只凭缓存计数宣称加速。",
+  "next_scientific_gate_en": "Preregister one fresh-process resource audit: first remove the transient dense setup response and preserve the camera-permutation-equivariant, variable-cardinality interface without claiming that every cardinality passes; place setup inside the worker, retain cheap CPU controls, and measure end-to-end wall time, worker/process-tree RSS, and whole-pipeline peak memory for compact K1, dense K1, and K2. If any resource gate fails, cache counts alone cannot support a speedup claim.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_validation": false,
+    "variable_cardinality_accuracy": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "whole_pipeline_peak_rss_reduction": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

@@ -16499,3 +16499,37 @@ The sealed scientific decisions are `PASS_NINE_CAMERA_PHYSICAL_INFORMATION_HEADR
 The boundary is unchanged. p14 is historically exposed development data, and the current full-DCT path still depends on dense caching. There is no fresh wall/RSS, external-generalization, curved-ray, or real-BOST evidence, and neural training or GPU use is not authorized.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction_deployed=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-23：v205 势函数正规方程紧凑缓存
+
+### 讲人话：在线稠密矩阵拿掉了，但多算一次伴随，所以还不能说更快
+
+v204 已经证明九相机 full-DCT K1 在历史已暴露 p14 上能够通过全部 `1313/1313` 个单元和 `13/13` 个完整组，但在线需要保留并扫描稠密响应。v205 没有重新发明候选，也没有训练模型；它只检验这个稠密缓存是否是复现同一物理结果的必要条件。
+
+新的路径把零均值双分量探测器位移积分成势函数，用一次精确 `A^T` 提升回三维场，再投影到固定的 1009 维非直流 DCT 基，并使用几何预计算的正规方程 Cholesky 因子求解。在线阶段因此不再保留或扫描稠密响应矩阵。五相机保留标量从 `2,900,875` 降为 `509,545`，缩小 `5.69x`；九相机从 `5,221,575` 降为同样的 `509,545`，缩小 `10.25x`。
+
+正式程序与完全独立的第二实现覆盖五/九相机共 `2626` 个单元、13 套标定和每套 101 帧。相对正式实现的最大坐标差为 `1.43e-12`，相对封存父结果的最大三维场差为 `9.84e-13`；相机乱序后的最大坐标差为 `4.24e-13`，Gram 矩阵差为 `4.28e-16`。这说明 v205 复现的是连续物理量，而不仅是通过标签。
+
+准确率没有被重新包装。九相机继承 `1313/1313 · 13/13`；五相机仍只有 `1268/1313 · 3/13`，所以没有建立五/九相机都稳定成功的可变基数结论。
+
+正式科学判决为 `PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205`，独立状态为 `PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_COMPACT_CACHE_V205`。这是真正的缓存表示增量：v204 的在线稠密响应不是数值复现 full-DCT K1 所必需的。
+
+但资源结论仍是负空间。紧凑 initializer 为 `0A+1A^T`，接上未修改 K1 后总账为 `2A+2A^T`，比稠密 K1 的 `2A+1A^T` 多一次精确伴随；正式 setup 仍会瞬时构造响应矩阵。本轮没有 fresh wall、worker/process-tree RSS 或整流水线峰值内存证据。下一门必须先移除 setup 的瞬时稠密响应，保留相机换序等变、原生支持可变相机数的接口但不声称所有基数已过门；再把 setup 放入 fresh worker，保留便宜 CPU 对照，随机配对比较紧凑 K1、稠密 K1 与 K2，不能只凭缓存标量减少宣称加速。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`exact_call_reduction_vs_dense_k1=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v204 established that all-nine full-DCT K1 clears all `1,313/1,313` p14 cells and `13/13` complete groups, but its online path retains and scans a dense response. v205 neither introduces a new candidate nor trains a model; it tests only whether that dense cache is necessary to reproduce the same physical result.
+
+The new path integrates zero-mean two-component detector displacement into a potential, lifts it into the 3D field with one exact `A^T`, projects it into the fixed 1,009-dimensional non-DC DCT basis, and solves with a geometry-precomputed normal-equation Cholesky factor. The online stage no longer retains or scans the dense response matrix. Retained scalars fall from `2,900,875` to `509,545` under five cameras, a `5.69x` reduction, and from `5,221,575` to the same `509,545` under all nine cameras, a `10.25x` reduction.
+
+The formal program and a fully independent second implementation cover `2,626` five/all-nine-camera cells across 13 calibrations and 101 frames each. Maximum coordinate difference to formal is `1.43e-12`; maximum 3D-field difference to the sealed parent is `9.84e-13`. Camera permutation produces at most `4.24e-13` coordinate difference and `4.28e-16` Gram-matrix difference. v205 therefore reproduces continuous physical quantities, not merely pass labels.
+
+Accuracy is not repackaged. All-nine inherits `1,313/1,313 · 13/13`; five cameras remain at only `1,268/1,313 · 3/13`. Stable success across both cardinalities has not been established.
+
+The sealed scientific decision is `PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205`, and the independent status is `PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_COMPACT_CACHE_V205`. This is a substantive cache-representation increment: v204's retained online dense response is not required for numerical reproduction of full-DCT K1.
+
+The resource claim remains open. The compact initializer uses `0A+1A^T`, and unchanged K1 brings the total to `2A+2A^T`, one exact adjoint above dense K1 at `2A+1A^T`. Formal setup still constructs the response matrix transiently. No fresh wall-time, worker/process-tree RSS, or whole-pipeline peak-memory gate was run. The next gate must first remove the transient dense setup response and preserve the camera-permutation-equivariant, variable-cardinality interface without claiming every cardinality passes; it must then place setup inside fresh workers, retain cheap CPU controls, and compare compact K1, dense K1, and K2 in randomized pairs. Fewer cached scalars alone cannot support a speedup claim.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction_vs_dense_k1=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
