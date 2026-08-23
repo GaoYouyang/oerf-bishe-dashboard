@@ -1,0 +1,78 @@
+{
+  "schema_version": "oerf-public-blastnet-case5-observation-spectral-proxy-v214.0.0",
+  "updated": "2026-08-24",
+  "title_zh": "v214：二维观测与已知几何足以复现 Case 5 的谱对齐判别",
+  "title_en": "v214: 2D observations and known geometry reproduce the Case 5 spectral-alignment decision",
+  "scope": {
+    "diagnostic_type": "post-open observation-and-geometry-only low-64 spectral proxy",
+    "opened_density_frames_used_to_generate_synthetic_observations": 42,
+    "supplied_nine_camera_geometries": 13,
+    "virtual_nine_camera_geometries": 13,
+    "virtual_twelve_camera_geometries_diagnostic_only": 13,
+    "geometry_rows": 39,
+    "geometry_frame_observations": 1638,
+    "fixed_low_modes": 64,
+    "trainable_parameters": 0,
+    "fitted_hyperparameters": 0,
+    "geometry_response_probe_forward_equivalents": 2496,
+    "synthetic_observation_generation_A_equivalents": 1638,
+    "logical_proxy_calls_after_observation_and_geometry_cache": {"A": 0, "AT": 0}
+  },
+  "proxy_input_barrier": {
+    "allowed": ["known reported-geometry low-64 response M", "current generated 2D observation y"],
+    "forbidden": ["3D truth coefficients", "frame or geometry-family label", "parent outcome", "reconstruction", "residual", "fitted statistic"],
+    "truth_role": "Opened 3D fields generate noiseless synthetic observations and support post-proxy diagnostics only; they never enter the proxy function."
+  },
+  "fixed_primary": {
+    "name": "worst-frame harmonic observability of the unregularized low-64 Moore-Penrose observation proxy",
+    "comparison_count": 169,
+    "virtual_strictly_greater_count": 169,
+    "tie_count": 0,
+    "superiority_fraction": 1.0,
+    "strict_family_separation": true,
+    "supplied_minimum": 0.1978332041637769,
+    "supplied_median": 0.32483357212452413,
+    "supplied_maximum": 0.5918615724542227,
+    "virtual_nine_minimum": 0.989166252312245,
+    "virtual_nine_median": 1.0657380616646408,
+    "virtual_nine_maximum": 1.1170270254113215,
+    "strict_gap_virtual_min_minus_supplied_max": 0.3973046798580223
+  },
+  "source_blind_control": {
+    "name": "v210 trace-normalized low-64 Gram spectral floor",
+    "comparison_count": 169,
+    "virtual_strictly_greater_count": 167,
+    "strict_family_separation": false
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_SPECTRAL_PROXY_V214",
+    "all_checks_passed": true,
+    "check_count": 19,
+    "maximum_proxy_field_relative_difference": 1.1208531831239851e-13,
+    "maximum_frame_metric_difference": 1.705857677336553e-13,
+    "maximum_geometry_metric_difference": 8.487655023259322e-14,
+    "maximum_singular_value_relative_difference": 6.101848032275904e-14,
+    "maximum_family_summary_difference": 4.035660694512444e-14,
+    "maximum_camera_permutation_difference": 1.865174681370263e-13
+  },
+  "scientific_decision": "PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214",
+  "interpretation_zh": "v214 用已知几何和当前二维观测复现了 v213 的严格谱对齐分离：169/169 个跨族比较全部通过，严格间隔为 0.39730，而源盲 control 仍是 167/169。这排除了部署时必须读三维真值才能获得该判别信号的解释，但它仍是无噪声合成观测上的 post-open 机制诊断，还没有通过 warm-start 物理重放、matched-accuracy 或资源门。",
+  "interpretation_en": "v214 reproduces the v213 strict spectral-alignment separation using known geometry and the current 2D observation: all 169/169 cross-family comparisons pass with a strict gap of 0.39730, while the source-blind control remains at 167/169. This rejects the explanation that deployment-time 3D truth is required to obtain the decision signal. It remains a post-open mechanism diagnostic with noiseless synthetic observations and has not passed warm-start physical replay, matched-accuracy, or resource gates.",
+  "route_action_zh": "下一步结果前单独冻结最小 warm-start 可行性实验：把 observation-only 代理场送入未修改 CGLS，用实际 A/A^T 回执与 Zero/BP/CGLS/PCGLS 及便宜 control 公平比较。",
+  "route_action_en": "Freeze a separate minimal warm-start feasibility experiment before results: feed the observation-only proxy field into unchanged CGLS and compare it fairly against Zero/BP/CGLS/PCGLS and cheap controls using actual A/AT receipts.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_warm_start": false,
+    "matched_accuracy": false,
+    "external_generalization": false,
+    "broad_generalization": false,
+    "predictor_success": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

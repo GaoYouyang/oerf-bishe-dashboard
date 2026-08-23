@@ -77,10 +77,10 @@ def test_v211_result_and_figure_are_bilingual_and_nonblank() -> None:
 def test_v211_is_preserved_as_parent_evidence_after_v212() -> None:
     current = json.loads(CURRENT.read_text())
     assert current["scientific_status"] == (
-        "PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213"
+        "PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214"
     )
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_SOURCE_WEIGHTED_OBSERVABILITY_V213_1"
+        "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_SPECTRAL_PROXY_V214"
     )
     assert current["metrics"]["v211_primary_comparison_count"] == 169
     assert current["metrics"]["v211_primary_strictly_greater_count"] == 0

@@ -72,7 +72,7 @@ def test_v208_is_preserved_as_the_historical_parent() -> None:
     assert current["current_decision"]["v208_case5_external_gate_adjudicated"] is False
     assert current["current_decision"]["v208_resource_gate_authorized"] is False
     assert current["scientific_status"] == (
-        "PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213"
+        "PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214"
     )
 
 

@@ -73,14 +73,14 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 def test_current_evidence_preserves_v172_and_points_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
     assert payload["scientific_status"] == (
-        "PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213"
+        "PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214"
     )
     assert payload["metrics"]["v172_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v172_primary_complete_fields_passed"] == 9
     assert payload["metrics"]["v172_independent_check_count"] == 22
-    assert "deployment-visible observations" in payload["next_scientific_gate_en"]
-    assert "paired real-BOST physical data" in payload["next_scientific_gate_en"]
-    assert "配对真实 BOST 物理数据" in payload["next_scientific_gate_zh"]
+    assert "v214 observation-only proxy field" in payload["next_scientific_gate_en"]
+    assert "real-BOST gates remain closed" in payload["next_scientific_gate_en"]
+    assert "真实 BOST 门仍关闭" in payload["next_scientific_gate_zh"]
     assert "真实 BOST" in payload["next_scientific_gate_zh"]
 
 

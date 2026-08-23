@@ -86,13 +86,13 @@ def test_v212_result_and_figure_are_bilingual_and_nonblank() -> None:
         assert any(high - low > 100 for low, high in ImageStat.Stat(image).extrema)
 
 
-def test_v212_remains_historical_after_the_v213_headline() -> None:
+def test_v212_remains_historical_after_the_v214_headline() -> None:
     current = json.loads(CURRENT.read_text())
     assert current["scientific_status"] == (
-        "PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213"
+        "PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214"
     )
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_source_weighted_observability_v213_result_2026-08-24.md"
+        "blastnet_case5_observation_spectral_proxy_v214_result_2026-08-24.md"
     )
     historical = json.loads(SUMMARY.read_text())
     assert historical["scientific_decision"] == (

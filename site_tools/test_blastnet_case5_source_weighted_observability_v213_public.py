@@ -67,15 +67,9 @@ def test_v213_result_and_figure_are_bilingual_and_nonblank() -> None:
         assert any(low != high for low, high in extrema)
 
 
-def test_v213_is_the_current_public_headline() -> None:
+def test_v213_remains_preserved_as_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-24"
-    assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_SOURCE_WEIGHTED_OBSERVABILITY_V213_1"
-    )
-    assert current["scientific_status"] == (
-        "PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213"
-    )
     assert current["metrics"]["v213_primary_comparison_count"] == 169
     assert current["metrics"]["v213_primary_strictly_greater_count"] == 169
     assert current["current_decision"]["v213_truth_aware_mechanism_supported"] is True
@@ -92,9 +86,6 @@ def test_primary_pages_reference_v213_in_both_languages() -> None:
         content = (ROOT / relative).read_text(encoding="utf-8")
         assert "blastnet_case5_source_weighted_observability_v213" in content
         assert "v213" in content
-    focus = (ROOT / "operator-learning/index.html").read_text(encoding="utf-8")
-    assert "v213 实际源场谱对齐归因已独立封存" in focus
-    assert "v213 actual-source spectral-alignment attribution independently sealed" in focus
 
 
 def test_v213_public_artifacts_contain_no_private_execution_material() -> None:

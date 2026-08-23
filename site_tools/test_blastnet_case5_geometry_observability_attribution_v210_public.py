@@ -75,7 +75,7 @@ def test_v210_remains_preserved_as_parent_evidence_below_v211() -> None:
     assert current["metrics"]["v210_primary_strictly_greater_count"] == 167
     assert current["current_decision"]["v210_fixed_primary_strictly_separates"] is False
     assert current["current_decision"]["v210_predictor_authorized"] is False
-    assert current["scientific_status"].endswith("_V213")
+    assert current["scientific_status"].endswith("_V214")
 
 
 def test_primary_pages_preserve_v210_parent_evidence() -> None:

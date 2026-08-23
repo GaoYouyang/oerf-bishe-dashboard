@@ -16582,6 +16582,40 @@ The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFE
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v214 用当前二维观测复现谱对齐判决
+
+### 讲人话：不再偷看三维答案，也能判断哪组相机更看得清
+
+v213 已经证明，Case 5 实际三维源场会把能量加载到师兄标定族的弱谱方向上，因此 truth-aware 指标能把两类九相机几何严格分开。但部署时没有三维真值可读。v214 问的是更接近算法入口的问题：只给当前二维观测与已知相机几何，能不能重建足以作出同一判决的低模代理场。
+
+本轮固定使用同一 low-64 子空间、`42` 帧已开封 Case 5 合成观测和 `39` 套九相机几何。代理只把二维观测投影回几何响应空间，不读取每帧三维 CFD 系数，也不训练模型。主指标仍比较 13 套虚拟九相机与 13 套师兄标定几何的全部 `169` 个跨族配对。
+
+结果为 `169/169` 严格通过，无平局。师兄标定族 min/median/max 为 `0.19783/0.32483/0.59186`，虚拟九相机为 `0.98917/1.06574/1.11703`；虚拟族最小值比师兄族最大值高 `0.39730`。源盲几何 control 仍只有 `167/169`。这排除了“代理必须读取 CFD 真值才能恢复谱对齐判决”的解释。
+
+完全独立第二实现重建 `1638` 个 geometry-frame 观测、39 套几何响应、全部 proxy fields 与谱统计。`19/19` 项检查全真；proxy field 每场 L2 相对差、逐帧指标差、逐几何指标差、奇异值相对差和汇总差最高为 `1.12e-13 / 1.71e-13 / 8.49e-14 / 6.10e-14 / 4.04e-14`。
+
+成本边界必须完整写：几何响应 cache 构造用了 `2496` 个 forward-equivalent probes，合成观测生成用了 `1638A`；只有在观测与 cache 已存在以后，代理本身才是 `0A+0A^T`。因此它不是端到端调用减少或速度结果。
+
+封存判决为 `PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214`。这是一个窄而真实的 observation-visible 机制增量，但还不是 warm start 或重建。下一门必须把 proxy field 作为初值接入未修改 CGLS，物理重放并公平比较 Zero、BP、CGLS、PCGLS 和便宜 control；只有 field、完整梯度、内部梯度与 observation 的 matched-accuracy 全过，才能讨论 exact-call 与资源收益。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v213 shows with opened 3D truth that the Case 5 source loads weak spectral directions of the supplied camera family. v214 moves one step closer to deployment: it asks whether current 2D observations and known geometry alone can reconstruct a low-mode proxy sufficient for the same cross-family decision.
+
+Using the same fixed low-64 span, `42` opened synthetic Case 5 observation frames, and `39` nine-camera geometries, the untrained proxy projects each 2D observation back through the known geometry response. It does not read per-frame 3D CFD coefficients. The primary again evaluates all `169` supplied-versus-virtual-nine comparisons.
+
+All `169/169` comparisons pass strictly with no ties. Supplied-family min/median/max values are `0.19783/0.32483/0.59186`, versus `0.98917/1.06574/1.11703` for virtual nine cameras, yielding a strict gap of `0.39730`. The source-blind geometry control remains at `167/169`. This rejects the explanation that CFD truth must be read inside the proxy to recover the spectral-alignment decision.
+
+A fully independent implementation rebuilds all `1,638` geometry-frame observations, 39 geometry responses, proxy fields, and spectral statistics. All `19/19` checks pass. Maximum per-field proxy relative, frame-metric, geometry-metric, singular-value relative, and summary differences are `1.12e-13 / 1.71e-13 / 8.49e-14 / 6.10e-14 / 4.04e-14`.
+
+The cost boundary is explicit: geometry-response cache construction uses `2,496` forward-equivalent probes and synthetic-observation generation uses `1,638A`. Only after observations and the cache already exist is the proxy itself `0A+0AT`. This is not an end-to-end call-reduction or speed result.
+
+The sealed decision is `PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214`. It is a narrow but substantive observation-visible mechanism result, not a warm start or reconstruction. The next gate must use the proxy field to initialize unchanged CGLS, physically replay the pipeline, and compare fairly against Zero, BP, CGLS, PCGLS, and cheap controls. Exact-call and resource claims remain closed until field, full-gradient, interior-gradient, and observation matched-accuracy all pass.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v213 实际源场谱对齐归因
 
 ### 讲人话：不是“最差方向”本身决定成败，而是火焰场有没有把能量压到这个方向上

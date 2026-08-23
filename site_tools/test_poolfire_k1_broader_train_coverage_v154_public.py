@@ -83,8 +83,8 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     )
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     next_gate = payload["next_scientific_gate_en"].lower()
-    assert "deployment-visible observations" in next_gate
-    assert "paired real-bost physical data" in next_gate
+    assert "v214 observation-only proxy field" in next_gate
+    assert "real-bost gates remain closed" in next_gate
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:
