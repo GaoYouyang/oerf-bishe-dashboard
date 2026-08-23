@@ -62,23 +62,20 @@ def test_v204_public_assets_and_bilingual_copy_exist() -> None:
     ):
         content = page.read_text()
         assert "poolfire_nine_camera_control_attribution_p14_v204" in content
-        assert "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204" in content
+    assert "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204" in (
+        ROOT / "operator-learning/index.html"
+    ).read_text()
 
 
-def test_v204_current_evidence_is_the_public_headline() -> None:
+def test_v204_current_evidence_is_preserved_beneath_the_v205_headline() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert (
-        current["scientific_status"]
-        == "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204"
-    )
-    assert (
-        current["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_ALL_NINE_CONTROL_ATTRIBUTION_V204"
-    )
+    assert current["scientific_status"] == "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
+    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
+    assert current["v204_all_nine_control_scientific_decision"] == "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204"
     assert current["metrics"]["v203_nine_camera_rescued_failures"] == 24
     assert current["metrics"]["v204_full_dct_k1_strict_safe_cells"] == 1313
     assert current["current_decision"]["v204_algorithm_breakthrough"] is False
     assert current["current_decision"]["v204_dense_cache_removal_required"] is True
     assert current["public_evidence"]["result"].endswith(
-        "poolfire_nine_camera_control_attribution_p14_v204_result_2026-08-23.md"
+        "poolfire_potential_normal_compact_cache_p14_v205_result_2026-08-23.md"
     )

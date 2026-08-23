@@ -85,8 +85,8 @@ def test_v196_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v196_current_evidence_and_claim_boundary() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204"
-    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_ALL_NINE_CONTROL_ATTRIBUTION_V204"
+    assert current["scientific_status"] == "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
+    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
     assert current["metrics"]["v196_full_dct_k2_five_safe_cells"] == 1313
     assert current["metrics"]["v196_zero_k4_all_nine_safe_cells"] == 0
     assert current["metrics"]["v196_1_overlap_metric_count"] == 156

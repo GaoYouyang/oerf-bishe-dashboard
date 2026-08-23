@@ -63,7 +63,7 @@ def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
     assert (
         current["scientific_status"]
-        == "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204"
+        == "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
     )
     assert (
         current["v201_tgv2_reference_scientific_decision"]
@@ -83,5 +83,5 @@ def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     assert current["current_decision"]["v201_tgv2_reference_adequate"] is False
     assert current["current_decision"]["v201_fixed_tgv2_reference_closed"] is True
     assert current["public_evidence"]["result"].endswith(
-        "poolfire_nine_camera_control_attribution_p14_v204_result_2026-08-23.md"
+        "poolfire_potential_normal_compact_cache_p14_v205_result_2026-08-23.md"
     )

@@ -114,9 +114,9 @@ def test_v193_public_files_exclude_private_execution_details() -> None:
 
 def test_current_evidence_preserves_v193_after_v195_without_overclaiming() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204"
+    assert current["scientific_status"] == "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
     assert current["engineering_status"] == (
-        "PASS_INDEPENDENT_RECOMPUTATION_ALL_NINE_CONTROL_ATTRIBUTION_V204"
+        "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
     )
     assert current["metrics"]["v193_primary_five_safe_cells"] == 51
     assert current["metrics"]["v193_primary_all_nine_safe_cells"] == 49

@@ -72,7 +72,7 @@ def test_v183_public_files_exclude_private_execution_details() -> None:
 
 def test_current_evidence_preserves_v183_after_v184_supersedes_latest_status() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204"
+    assert current["scientific_status"] == "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
     assert current["v183_observation_block_galerkin_scientific_decision"] == (
         "FAIL_OBSERVATION_BLOCK_GALERKIN_V183"
     )

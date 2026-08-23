@@ -65,14 +65,14 @@ def test_current_evidence_preserves_v171_but_points_to_v181() -> None:
     )
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_ALL_NINE_CONTROL_ATTRIBUTION_V204"
+        == "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
     )
     assert (
         payload["formal_status"]
-            == "PASS_FORMAL_POOLFIRE_ALL_NINE_CONTROL_ATTRIBUTION_P14_V204"
+            == "PASS_FORMAL_POOLFIRE_POTENTIAL_NORMAL_COMPACT_CACHE_P14_V205"
     )
     assert payload["scientific_status"] == (
-        "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204"
+        "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
     )
     assert payload["current_decision"]["v171_result_blind_selector_passed"] is True
     assert payload["current_decision"]["v171_external_generalization"] is False

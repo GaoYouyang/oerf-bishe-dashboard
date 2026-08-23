@@ -70,7 +70,7 @@ def test_current_evidence_retains_v175_as_historical_parent_evidence() -> None:
     assert payload["metrics"]["v175_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v175_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v175_independent_check_count"] == 31
-    assert payload["scientific_status"] == "PASS_ALL_NINE_DENSE_REPRESENTATION_CALL_HEADROOM_V204"
+    assert payload["scientific_status"] == "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
     assert "dense-cache-removal" in payload["next_scientific_gate_en"]
     assert "稠密缓存移除" in payload["next_scientific_gate_zh"]
 
