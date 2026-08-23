@@ -66,7 +66,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v178_as_parent_and_advances_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_FIXED_LOW64_PROXY_WARM_START_AGAINST_ADEQUATE_PCGLS_REFERENCE_V216"
+    assert payload["scientific_status"] == "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
     assert payload["v178_affine_span_scientific_decision"] == "PASS_TRAIN_FIELD_AFFINE_SPAN_HEADROOM_V178"
     assert payload["metrics"]["v178_fit_field_count"] == 1010
     assert payload["metrics"]["v178_stable_affine_rank"] == 1009

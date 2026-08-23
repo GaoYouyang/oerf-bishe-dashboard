@@ -16582,6 +16582,44 @@ The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFE
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v217.1 定下最低可靠的全局 PCGLS 深度
+
+### 讲人话：K15 看起来只差一点，但不能当成和 K16 一样
+
+v216 已经证明 geometry-Jacobi PCGLS K16 是合格 reference。接下来最自然的问题是：K16 会不会其实太深？如果 K15、K14 或更浅的全局固定深度也能给出等价结果，就应该先收紧 deterministic baseline，再判断 warm start 到底省了多少调用。
+
+v217 因此在同一批已开封 Case 5 数据上比较 K8 到 K16。第一次执行没有通过独立审计：测试相机换序时，代码反转了相机标签，却没有按 camera ID 把对应观测块恢复到冻结顺序。相机乱序 K16 场相对差约为 `6.35e-10`，高于冻结的 `1e-10` 门。这个执行被保留为 `INCONCLUSIVE_INVALID_GLOBAL_PCGLS_DEPTH_QUALIFICATION_V217`，没有拿来解释科学数字。
+
+v217.1 只修复这个相机包恢复漏项。数据、PCGLS、K8-K16 深度列表、绝对门、matched 门、指标和调用账全部不变，正式科学数组也与不可用 v217 逐字节一致。修复后，相机乱序 K16 场差为 `0`；独立第二实现重新构造相机包、预条件、全部深度的场和观测、逐单元四项指标、逐几何尾部与调用账，`14/14` 项检查全真。
+
+严格结果是：K11/K12/K13/K14/K15 的绝对门通过单元依次为 `96/318/467/526/544`，完整几何为 `0/0/5/8/11`，但 K8-K15 的 matched 单元全部是 `0/546`。只有 K16 同时达到 `546/546` 绝对单元、`13/13` 完整几何和 `546/546` matched 单元。
+
+K15 确实很接近绝对门，只差两个单元；但它相对 K16 的 field / 完整梯度 / 内部梯度 / observation 比值中位数仍为 `1.0546 / 1.0471 / 1.0362 / 1.1176`，而且每个单元至少有一个指标超过 `1.05`。所以不能把 reference 从 K16 降到 K15，再把少一次 A 和一次 A^T 写成“无损加速”。
+
+封存判决为 `PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1`。它的价值是把 deterministic reference 定死，防止未来比较靠削弱裁判获得漂亮数字。下一候选必须是物理上不同、只读取二维观测与已知几何的 warm initializer，在匹配 K16 的 field、完整梯度、内部梯度和 observation 时，同时严格减少 A 与 A^T。
+
+这不是 learned initializer、exact-call 减少、wall/RSS 加速、外部泛化、曲线光路或真实 BOST 结果。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v217.1 qualifies the lowest reliable global PCGLS depth
+
+v216 establishes geometry-Jacobi PCGLS K16 as an adequate reference. The next natural question is whether K16 is deeper than necessary. If K15, K14, or another shallower globally fixed depth were accuracy-equivalent, the deterministic baseline should be tightened before attributing any call saving to a warm start.
+
+v217 therefore compares K8 through K16 on the same opened Case 5 data. The first execution fails independent audit: during the camera-permutation test it reverses camera labels without restoring the corresponding observation blocks by camera ID. The resulting K16 field relative difference is about `6.35e-10`, above the frozen `1e-10` limit. That execution is preserved as `INCONCLUSIVE_INVALID_GLOBAL_PCGLS_DEPTH_QUALIFICATION_V217` and is not used to interpret scientific values.
+
+v217.1 repairs only that camera-packet restoration omission. The data, PCGLS solver, K8-K16 roster, absolute gates, matched gates, metrics, and call ledgers remain unchanged, and the formal science arrays are bit-identical to the invalid v217 execution. After the repair, the camera-permutation K16 field difference is `0`. A fully independent second implementation rebuilds camera packets, preconditioning, every depth's field and observation, all four cell metrics, per-geometry tails, and call ledgers. All `14/14` checks pass.
+
+The strict result is that K11/K12/K13/K14/K15 reach `96/318/467/526/544` absolute cells and `0/0/5/8/11` complete geometries, while every depth from K8 through K15 remains at `0/546` matched cells. Only K16 reaches `546/546` absolute cells, `13/13` complete geometries, and `546/546` matched cells.
+
+K15 is close on the absolute gates, missing only two cells, but its median field / full-gradient / interior-gradient / observation ratios to K16 are still `1.0546 / 1.0471 / 1.0362 / 1.1176`, and every cell exceeds `1.05` in at least one metric. Lowering the reference from K16 to K15 therefore cannot be presented as losslessly saving one A and one A^T.
+
+The sealed decision is `PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1`. Its value is to fix the deterministic referee so future comparisons cannot obtain attractive numbers by weakening it. The next candidate must be a physically distinct warm initializer that reads only 2D observations and known geometry, matches K16 field, full-gradient, interior-gradient, and observation accuracy, and strictly reduces both A and A^T.
+
+This is not a learned initializer, exact-call reduction, wall/RSS speedup, external generalization, curved-ray validation, or real BOST.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v216 现在可以下负结论
 
 ### 讲人话：裁判换成合格的 PCGLS 后，当前 low-64 warm start 仍然输了

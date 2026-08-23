@@ -70,7 +70,7 @@ def test_current_evidence_retains_v175_as_historical_parent_evidence() -> None:
     assert payload["metrics"]["v175_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v175_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v175_independent_check_count"] == 31
-    assert payload["scientific_status"] == "FAIL_FIXED_LOW64_PROXY_WARM_START_AGAINST_ADEQUATE_PCGLS_REFERENCE_V216"
+    assert payload["scientific_status"] == "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
     assert "lowest globally adequate deterministic PCGLS depth" in payload["next_scientific_gate_en"]
     assert "real-BOST gates can open" in payload["next_scientific_gate_en"]
     assert "才允许打开资源、外部、神经、GPU 或真实 BOST 门" in payload["next_scientific_gate_zh"]

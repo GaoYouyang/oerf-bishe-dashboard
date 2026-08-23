@@ -78,14 +78,14 @@ def test_current_evidence_preserves_v169_but_points_to_v181() -> None:
     assert payload["current_decision"]["v169_predictor_training_authorized"] is False
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_PCGLS_REFERENCE_WARM_READJUDICATION_V216"
+        == "PASS_INDEPENDENT_GLOBAL_PCGLS_DEPTH_QUALIFICATION_V217_1"
     )
     assert (
         payload["formal_status"]
-            == "FORMAL_PENDING_INDEPENDENT_PCGLS_REFERENCE_WARM_READJUDICATION_V216"
+            == "FORMAL_PENDING_INDEPENDENT_GLOBAL_PCGLS_DEPTH_QUALIFICATION_V217_1"
     )
     assert payload["scientific_status"] == (
-        "FAIL_FIXED_LOW64_PROXY_WARM_START_AGAINST_ADEQUATE_PCGLS_REFERENCE_V216"
+        "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
     )
 
 

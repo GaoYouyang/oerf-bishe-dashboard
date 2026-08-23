@@ -80,7 +80,7 @@ def test_v209_remains_preserved_as_parent_evidence_below_v210() -> None:
     )
     assert current["current_decision"]["v209_resource_gate_authorized"] is False
     assert current["scientific_status"] == (
-        "FAIL_FIXED_LOW64_PROXY_WARM_START_AGAINST_ADEQUATE_PCGLS_REFERENCE_V216"
+        "PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1"
     )
 
 
