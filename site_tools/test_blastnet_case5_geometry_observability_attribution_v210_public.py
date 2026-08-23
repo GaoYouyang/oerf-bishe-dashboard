@@ -90,6 +90,10 @@ def test_primary_pages_reference_v210_in_both_languages() -> None:
         assert "blastnet_case5_geometry_observability_attribution_v210" in content
         assert "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210" in content
         assert "algorithm_breakthrough=false" in content
+    focus = (ROOT / "operator-learning/index.html").read_text()
+    assert "当前：v210 几何可观测性归因已独立封存" in focus
+    assert "Current: v210 geometry-observability attribution independently sealed" in focus
+    assert "当前：v192" not in focus
 
 
 def test_v210_public_artifacts_contain_no_private_execution_material() -> None:
