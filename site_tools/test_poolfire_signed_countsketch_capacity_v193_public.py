@@ -114,9 +114,9 @@ def test_v193_public_files_exclude_private_execution_details() -> None:
 
 def test_current_evidence_preserves_v193_after_v195_without_overclaiming() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
+    assert current["scientific_status"] == "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
     assert current["engineering_status"] == (
-        "PASS_RESIDUAL_EQUATION_CLOSURE_ADJUDICATION_V209_2"
+        "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_OBSERVABILITY_ATTRIBUTION_V210"
     )
     assert current["metrics"]["v193_primary_five_safe_cells"] == 51
     assert current["metrics"]["v193_primary_all_nine_safe_cells"] == 49

@@ -77,14 +77,14 @@ def test_current_evidence_preserves_v170_but_points_to_v181() -> None:
     assert payload["current_decision"]["v170_deployable_selector_established"] is False
     assert (
         payload["engineering_status"]
-        == "PASS_RESIDUAL_EQUATION_CLOSURE_ADJUDICATION_V209_2"
+        == "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_OBSERVABILITY_ATTRIBUTION_V210"
     )
     assert (
         payload["formal_status"]
-            == "FORMAL_PENDING_INDEPENDENT_VIRTUAL_CAMERA_INFORMATION_V209"
+            == "FORMAL_PENDING_INDEPENDENT_GEOMETRY_OBSERVABILITY_ATTRIBUTION_V210"
     )
     assert payload["scientific_status"] == (
-        "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
+        "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
     )
 
 

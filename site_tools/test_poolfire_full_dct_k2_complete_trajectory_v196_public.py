@@ -85,8 +85,8 @@ def test_v196_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v196_current_evidence_and_claim_boundary() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
-    assert current["engineering_status"] == "PASS_RESIDUAL_EQUATION_CLOSURE_ADJUDICATION_V209_2"
+    assert current["scientific_status"] == "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
+    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_OBSERVABILITY_ATTRIBUTION_V210"
     assert current["metrics"]["v196_full_dct_k2_five_safe_cells"] == 1313
     assert current["metrics"]["v196_zero_k4_all_nine_safe_cells"] == 0
     assert current["metrics"]["v196_1_overlap_metric_count"] == 156

@@ -64,14 +64,13 @@ def test_v209_result_and_figure_are_bilingual_and_nonblank() -> None:
         assert any(high - low > 100 for low, high in ImageStat.Stat(image).extrema)
 
 
-def test_v209_is_the_current_public_headline() -> None:
+def test_v209_remains_preserved_as_parent_evidence_below_v210() -> None:
     current = json.loads(CURRENT.read_text())
-    assert current["scientific_status"] == (
+    assert current["v209_virtual_camera_scientific_decision"] == (
         "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
     )
-    assert (
-        current["engineering_status"]
-        == "PASS_RESIDUAL_EQUATION_CLOSURE_ADJUDICATION_V209_2"
+    assert current["v209_residual_closure_adjudication_status"] == (
+        "PASS_RESIDUAL_EQUATION_CLOSURE_ADJUDICATION_V209_2"
     )
     assert current["metrics"]["v209_virtual_nine_strict_safe_cells"] == 546
     assert current["metrics"]["v209_virtual_twelve_strict_safe_cells"] == 546
@@ -80,8 +79,8 @@ def test_v209_is_the_current_public_headline() -> None:
         is False
     )
     assert current["current_decision"]["v209_resource_gate_authorized"] is False
-    assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_virtual_camera_information_v209_result_2026-08-23.md"
+    assert current["scientific_status"] == (
+        "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
     )
 
 
@@ -93,11 +92,12 @@ def test_primary_pages_reference_v209_in_both_languages() -> None:
     ):
         content = path.read_text()
         assert "blastnet_case5_virtual_camera_information_v209" in content
+        assert "algorithm_breakthrough=false" in content
+    for path in (ROOT / "index.html", ROOT / "operator-learning/index.html"):
         assert (
             "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
-            in content
+            in path.read_text()
         )
-        assert "algorithm_breakthrough=false" in content
 
 
 def test_v209_public_artifacts_contain_no_private_execution_material() -> None:

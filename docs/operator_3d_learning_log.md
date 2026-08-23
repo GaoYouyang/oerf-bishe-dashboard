@@ -16576,6 +16576,36 @@ The next gate preregisters a previously unopened independent public reacting-flo
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-23：v210 固定低模几何可观测性归因
+
+### 讲人话：几何确实很重要，但一个漂亮的谱指标还不能决定重建一定行不行
+
+v209 已经把同一 Case 5 场在两种九相机布局下的 K16 差异归因到几何/覆盖。v210 因此保持场、二维观测、重建、残差和父实验指标全部封存，只从 reported geometry 构造固定 64 维低频 Dirichlet 正弦基的可观测性 Gram 矩阵，检验其最小非负特征值能否严格分开失败的师兄九相机标定族与通过的虚拟环形九相机族。
+
+结果具有很强方向性：`13x13=169` 个跨族配对中，虚拟九相机有 `167` 个谱下限更高，比例为 `98.8166%`。师兄标定族主指标 min/median/max 为 `0.01186/0.02146/0.13159`，虚拟九相机为 `0.10932/0.30756/0.34008`；中位条件数则从 `152.13` 降到 `11.65`。这说明几何和条件性是 Case 5 reference 充分性的主要因素。
+
+但结果前冻结的严格门是 `169/169`，而虚拟最小值仍低于师兄标定最大值，存在两个反向配对。因此科学判决是 `PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210`，不是通过。固定 64 维谱下限不能单独充当充分性分类器，也不能在看到结果后调阈值、换基或改选其他诊断量包装成功。
+
+独立第二实现重新构建固定基、forward 响应、Gram 矩阵、谱和全部配对。主指标最大差为 `2.25e-11`，Gram 与横向特征值最大差为 `1.24e-14/4.00e-15`，相机反转差为 0，全部数值门通过。前两次执行分别因 active-ray 行映射和浮点归约顺序 fail-closed；它们只属于工程与数值完整性，不是科学增量。
+
+本轮共 39 套几何和 `2496` 次离线 forward-equivalent 探针，但部署账为 `0A+0A^T`，训练参数为 0。没有 warm start、物理 replay、exact-call 减少、wall/RSS、外部泛化或真实 BOST 结果。下一步只接受配对真实 BOST 数据，或一个结果前冻结、物理上真正不同且可独立证伪的几何机制。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v209 attributed the K16 difference between two nine-camera layouts on the same Case 5 fields to geometry or coverage. v210 therefore keeps fields, 2D observations, reconstructions, residuals, and parent metrics sealed. It builds the observability Gram matrix of a fixed 64-mode low-frequency Dirichlet sine span from reported geometry alone and tests whether its smallest nonnegative eigenvalue strictly separates the failing supplied nine-camera family from the passing virtual-ring nine-camera family.
+
+The result is strongly directional. Virtual nine cameras have a higher spectral floor in `167` of `13x13=169` cross-family pairs, or `98.8166%`. Supplied-family primary min/median/max values are `0.01186/0.02146/0.13159`, versus `0.10932/0.30756/0.34008` for virtual nine cameras. Median condition number falls from `152.13` to `11.65`. Geometry and conditioning are therefore major factors in Case 5 reference adequacy.
+
+The preregistered strict gate is nevertheless `169/169`. The minimum virtual value remains below the maximum supplied value, reversing two pairs. The scientific decision is therefore `PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210`, not a pass. The fixed 64-mode spectral floor cannot serve as a sufficient classifier by itself, and no threshold, basis, or alternate diagnostic may be selected after seeing the result.
+
+The independent implementation rebuilds the fixed span, forward responses, Gram matrices, spectra, and every pairwise decision. Maximum primary difference is `2.25e-11`, maximum Gram and transverse eigenvalue differences are `1.24e-14/4.00e-15`, and camera-reversal difference is zero. Every numerical gate passes. Two earlier executions fail closed on active-ray row mapping and floating-point reduction order; these establish engineering and numerical integrity only, not scientific progress.
+
+The audit covers 39 geometries and `2,496` offline forward-equivalent probes, while the deployment ledger remains `0A+0AT` with zero trainable parameters. No warm start, physical replay, exact-call reduction, wall/RSS, external-generalization, or real-BOST result is established. Continue only with paired real-BOST data or a preregistered, physically distinct geometry mechanism that can be independently falsified.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-23：v209 虚拟相机几何归因与残差方程闭环
 
 ### 讲人话：Case 5 不是天生重建不了，关键差别在相机几何，不在多三台相机

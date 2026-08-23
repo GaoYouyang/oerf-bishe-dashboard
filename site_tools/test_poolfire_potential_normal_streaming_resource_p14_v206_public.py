@@ -68,10 +68,10 @@ def test_v206_result_and_figure_are_bilingual_and_nonblank() -> None:
 def test_v206_remains_preserved_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text())
     assert current["scientific_status"] == (
-        "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
+        "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
     )
     assert current["engineering_status"] == (
-        "PASS_RESIDUAL_EQUATION_CLOSURE_ADJUDICATION_V209_2"
+        "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_OBSERVABILITY_ATTRIBUTION_V210"
     )
     assert current["metrics"]["v206_outer_wall_vs_dense_k1_p50"] < 0.90
     assert current["metrics"]["v206_pipeline_rss_vs_dense_k1_p90_higher"] < 1.05
@@ -79,7 +79,7 @@ def test_v206_remains_preserved_parent_evidence() -> None:
     assert current["current_decision"]["v206_global_resource_speedup_claim"] is False
     assert current["current_decision"]["v208_case5_external_gate_adjudicated"] is False
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_virtual_camera_information_v209_result_2026-08-23.md"
+        "blastnet_case5_geometry_observability_attribution_v210_result_2026-08-23.md"
     )
 
 

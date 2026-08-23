@@ -96,9 +96,9 @@ def test_current_evidence_retains_v185_after_v186_1_advances_the_gate() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
+    assert current["scientific_status"] == "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
     assert current["engineering_status"] == (
-        "PASS_RESIDUAL_EQUATION_CLOSURE_ADJUDICATION_V209_2"
+        "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_OBSERVABILITY_ATTRIBUTION_V210"
     )
     assert current["metrics"]["v185_five_primary_k1_strict_safe_count"] == 52
     assert current["metrics"]["v185_all_nine_primary_k1_strict_safe_count"] == 52

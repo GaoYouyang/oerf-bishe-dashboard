@@ -1,0 +1,82 @@
+{
+  "schema_version": "oerf-public-blastnet-case5-geometry-observability-attribution-v210.0.0",
+  "updated": "2026-08-23",
+  "title_zh": "v210：几何可观测性强烈偏向虚拟环形族，但固定谱下限未能严格分离",
+  "title_en": "v210: Geometry observability strongly favors the virtual-ring family, but the fixed spectral floor does not strictly separate it",
+  "scope": {
+    "diagnostic_type": "post-open geometry-only attribution",
+    "supplied_nine_camera_rigs": 13,
+    "virtual_nine_camera_rigs": 13,
+    "virtual_twelve_camera_rigs_diagnostic_only": 13,
+    "geometry_rows": 39,
+    "grid_shape": [32, 16, 16],
+    "fixed_low_mode_count": 64,
+    "offline_forward_equivalent_probes": 2496,
+    "deployment_exact_calls": {"A": 0, "AT": 0},
+    "trainable_parameters": 0,
+    "density_reads": 0,
+    "observation_reads": 0,
+    "reconstruction_reads": 0,
+    "residual_reads": 0,
+    "parent_metric_array_reads": 0
+  },
+  "fixed_primary": {
+    "name": "smallest nonnegative eigenvalue of the trace-normalized 64-mode observability Gram matrix",
+    "mode_family": "fixed low-frequency Dirichlet sine span",
+    "normalization": "G_norm = 64 * G / trace(G)",
+    "strict_success_rule": "every virtual-nine metric must exceed every supplied-nine metric",
+    "comparison_count": 169,
+    "virtual_strictly_greater_count": 167,
+    "tie_count": 0,
+    "superiority_fraction": 0.9881656804733728,
+    "strict_family_separation": false
+  },
+  "family_summaries": {
+    "supplied_nine": {
+      "primary_min_median_max": [0.011857128995937665, 0.02146072143939357, 0.13158748032840895],
+      "normalized_condition_min_median_max": [22.9197319562878, 152.12990819173936, 282.54127470973987],
+      "effective_rank_min_median_max": [0.7569525758647212, 0.7883116915710225, 0.8786405545230803],
+      "transverse_floor_min_median_max": [0.3674986450026028, 0.434827038502582, 0.578576744221217]
+    },
+    "virtual_nine": {
+      "primary_min_median_max": [0.10931577130040626, 0.3075649138064044, 0.3400795270294168],
+      "normalized_condition_min_median_max": [10.023845529918965, 11.653634696962563, 30.753265659817686],
+      "effective_rank_min_median_max": [0.8436974639059012, 0.8725336893792296, 0.8856457529480626],
+      "transverse_floor_min_median_max": [0.5465660706845873, 0.6778660578973871, 0.6930517087577249]
+    },
+    "virtual_twelve_diagnostic_only": {
+      "primary_min_median_max": [0.3939928942564763, 0.405610225049606, 0.42762720935676435],
+      "normalized_condition_min_median_max": [8.01352091780168, 8.562402048141596, 8.80993167813531],
+      "effective_rank_min_median_max": [0.8987824929690627, 0.9000702994222027, 0.9032149891730887],
+      "transverse_floor_min_median_max": [0.750707060885532, 0.7560129945072632, 0.7592137620647681]
+    }
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_GEOMETRY_OBSERVABILITY_ATTRIBUTION_V210",
+    "all_checks_passed": true,
+    "maximum_formal_independent_metric_difference": 2.2509993868879974e-11,
+    "maximum_gram_eigenvalue_difference": 1.2434497875801753e-14,
+    "maximum_transverse_eigenvalue_difference": 3.9968028886505635e-15,
+    "maximum_summary_difference": 2.2509993868879974e-11,
+    "maximum_camera_reversal_difference": 0.0
+  },
+  "scientific_decision": "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210",
+  "interpretation_zh": "固定的几何可观测性指标在169个跨族配对中有167个偏向虚拟九相机，并给出约14.3倍的中位谱下限和约13.1倍更低的中位条件数，说明几何/条件性是Case 5 reference充分性的主要因素。但虚拟九相机最小谱下限仍低于师兄标定族的最大值，两个配对反向，未达到严格169/169分离。该固定64维谱下限不能单独作为充分性分类器。",
+  "interpretation_en": "The fixed geometry-only observability metric favors virtual nine cameras in 167 of 169 cross-family pairs, with about a 14.3-fold higher median spectral floor and about a 13.1-fold lower median condition number. Geometry and conditioning are therefore major factors in Case 5 reference adequacy. However, the smallest virtual-nine spectral floor remains below the largest supplied-family value, reversing two pairwise comparisons. The fixed 64-mode floor does not strictly separate the families and is not a sufficient classifier by itself.",
+  "route_action_zh": "关闭把这一个固定低模谱下限当作充分分类器的解释；不得事后调阈值、换基或挑其他诊断量包装成功。下一步只接受配对真实BOST物理数据，或一个结果前冻结且物理上不同的几何机制。预测器、资源门和GPU继续不授权。",
+  "route_action_en": "Close the interpretation that this fixed low-mode spectral floor is a sufficient classifier. Do not retune thresholds, replace the basis, or select another diagnostic after seeing the result. The next gate requires paired real-BOST physical data or a preregistered, physically distinct geometry mechanism. Predictor, resource, and GPU stages remain unauthorized.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "external_generalization": false,
+    "broad_generalization": false,
+    "predictor_success": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

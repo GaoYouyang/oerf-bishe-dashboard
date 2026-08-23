@@ -58,7 +58,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v181_and_points_to_v182() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
+    assert payload["scientific_status"] == "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210"
     assert payload["metrics"]["v181_five_primary_k1_strict_safe_count"] == 0
     assert payload["metrics"]["v181_all_nine_primary_k1_strict_safe_count"] == 0
     assert payload["metrics"]["v181_rank16_inverse_residual_p90"] > 1.0
