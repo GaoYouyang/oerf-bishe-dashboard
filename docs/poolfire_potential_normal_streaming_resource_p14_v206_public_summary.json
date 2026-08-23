@@ -1,0 +1,131 @@
+{
+  "schema_version": "oerf-public-poolfire-potential-normal-streaming-resource-p14-v206.0.0",
+  "date": "2026-08-23",
+  "title_zh": "v206：流式势函数正规 setup 在九相机 p14 上通过 fresh wall/RSS 资源门",
+  "title_en": "v206: streamed potential-normal setup clears the fresh wall/RSS resource gate on all-nine p14",
+  "formal_setup_status": "PASS_FORMAL_POTENTIAL_NORMAL_STREAMING_SETUP_V206",
+  "independent_setup_status": "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_STREAMING_SETUP_V206",
+  "formal_resource_status": "PASS_FORMAL_POTENTIAL_NORMAL_STREAMING_FRESH_RESOURCE_EXECUTION_V206",
+  "independent_resource_status": "PASS_INDEPENDENT_ADJUDICATION_STREAMING_COMPACT_FRESH_RESOURCE_V206",
+  "scientific_decision": "PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206",
+  "scope_zh": "仅限历史上已经暴露的 p14 开发轨迹、全部九相机、13 套标定与每套 101 帧；这是 post-open fresh-process 资源证据，不是 fresh validation、外部工况或真实 BOST。",
+  "scope_en": "Limited to the historically exposed p14 development trajectory, all nine cameras, 13 calibrations, and 101 frames per calibration. This is post-open fresh-process resource evidence, not fresh validation, an external condition, or real BOST.",
+  "streamed_setup": {
+    "description_zh": "按相机流式构造势函数正规方程所需状态，不再瞬时形成全相机稠密响应；保留 v205 的固定 1009 维非直流 DCT 表示与未修改 K1。",
+    "description_en": "The potential-normal state is constructed camera by camera without transiently forming the all-camera dense response, while retaining v205's fixed 1,009-dimensional non-DC DCT representation and unchanged K1.",
+    "setup_count": 26,
+    "equivalence_cell_count": 2626,
+    "maximum_coordinate_relative_difference_to_formal": 1.4795374899614921e-12,
+    "maximum_factor_reconstruction_relative_difference": 2.0678989589435617e-13,
+    "maximum_helmert_gauge_sum_absolute": 2.1299628727433628e-13,
+    "maximum_helmert_stationarity": 4.0281765625621995e-15,
+    "maximum_regularization_relative_difference": 1.252346784746338e-13
+  },
+  "fresh_resource_audit": {
+    "reference_workers": 39,
+    "timed_workers": 429,
+    "randomized_complete_blocks": 143,
+    "raw_worker_records": 468,
+    "calibration_groups": 13,
+    "maximum_output_relative_difference_streaming_vs_dense_k1": 6.023257825424685e-13,
+    "all_resource_thresholds_passed": true,
+    "all_13_calibration_p50_checks_passed": true,
+    "streaming_vs_dense_k1": {
+      "outer_wall": {
+        "mean": 0.8592594981040487,
+        "p50": 0.8602935674111056,
+        "p90_higher": 0.8728758587189879,
+        "worst": 0.8926400320182716
+      },
+      "setup_wall": {
+        "p50": 0.7800770691067174,
+        "p90_higher": 0.7972855404530471
+      },
+      "worker_self_peak_rss": {
+        "p50": 0.6886209995701614,
+        "p90_higher": 0.7159629888811134
+      },
+      "sampled_worker_tree_peak_rss": {
+        "p50": 0.6907444011591088,
+        "p90_higher": 0.7192390717754992
+      },
+      "sampled_pipeline_peak_rss": {
+        "p50": 0.7100309530665131,
+        "p90_higher": 0.7370300583221175
+      }
+    },
+    "streaming_vs_dense_k2": {
+      "outer_wall": {
+        "mean": 0.7399667515658875,
+        "p50": 0.7395327153430761,
+        "p90_higher": 0.7503400179490815,
+        "worst": 0.7698416509007677
+      },
+      "setup_wall": {
+        "p50": 0.7804364096464594,
+        "p90_higher": 0.7990946455054388
+      },
+      "worker_self_peak_rss": {
+        "p50": 0.6882850796568627,
+        "p90_higher": 0.7123550595591436
+      },
+      "sampled_worker_tree_peak_rss": {
+        "p50": 0.6933994658527279,
+        "p90_higher": 0.7148566567081495
+      },
+      "sampled_pipeline_peak_rss": {
+        "p50": 0.7122364389980177,
+        "p90_higher": 0.733891658114646
+      }
+    }
+  },
+  "logical_exact_calls_per_frame": {
+    "streaming_compact_k1": {
+      "A": 2,
+      "AT": 2
+    },
+    "dense_full_dct_k1": {
+      "A": 2,
+      "AT": 1
+    },
+    "dense_full_dct_k2_reference": {
+      "A": 3,
+      "AT": 2
+    }
+  },
+  "inherited_accuracy": {
+    "all_nine_camera": {
+      "strict_safe_cells": 1313,
+      "cell_count": 1313,
+      "complete_groups_passed": 13,
+      "complete_group_count": 13
+    },
+    "five_camera": {
+      "strict_safe_cells": 1268,
+      "cell_count": 1313,
+      "complete_groups_passed": 3,
+      "complete_group_count": 13
+    }
+  },
+  "interpretation_zh": "v206 把 v205 尚未解决的瞬时稠密 setup 改成相机流式构造，并在随机相邻完整区组的 fresh worker 审计中，同时通过 wall 与三种 RSS 口径。相对稠密 K1，outer wall p50/p90 为 0.8603/0.8729，sampled whole-pipeline RSS p50/p90 为 0.7100/0.7370；相对 K2 分别为 0.7395/0.7503 与 0.7122/0.7339。",
+  "interpretation_en": "v206 replaces v205's transient dense setup with camera-streamed construction and jointly clears wall-time and three RSS measures in randomized adjacent complete blocks of fresh workers. Versus dense K1, outer-wall p50/p90 ratios are 0.8603/0.8729 and sampled whole-pipeline RSS p50/p90 ratios are 0.7100/0.7370; versus K2 they are 0.7395/0.7503 and 0.7122/0.7339.",
+  "decision_boundary_zh": "这是 p14 已暴露开发轨迹上的九相机 post-open 资源 headroom，不是全局加速结论。五相机准确率仍未通过；流式 K1 相对稠密 K1 多一次 A^T，外部工况、曲线光路与真实 BOST 均未验证。",
+  "decision_boundary_en": "This is all-nine, post-open resource headroom on the exposed p14 development trajectory, not a global speedup claim. Five-camera accuracy still fails; streamed K1 uses one extra AT versus dense K1, and external conditions, curved rays, and real BOST remain unvalidated.",
+  "next_scientific_gate_zh": "结果前冻结一个此前未打开的独立公开反应流工况，先验证同一九相机 matched-accuracy 与资源优势是否共同复现；五相机继续作为单独未解决的准确率门，不能由本轮资源正结果代替。",
+  "next_scientific_gate_en": "Preregister a previously unopened independent public reacting-flow condition and test whether the same all-nine matched accuracy and resource advantage reproduce together. Five-camera accuracy remains a separate unresolved gate and cannot be replaced by this resource-positive result.",
+  "post_open_all_nine_resource_headroom": true,
+  "global_resource_speedup_claim": false,
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_validation": false,
+    "variable_cardinality_accuracy": false,
+    "external_generalization": false,
+    "global_resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

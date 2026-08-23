@@ -61,10 +61,10 @@ def test_v197_remains_visible_after_v199_becomes_current_state() -> None:
     )
     assert current["updated"] == "2026-08-23"
     assert current["formal_status"] == (
-        "PASS_FORMAL_POOLFIRE_POTENTIAL_NORMAL_COMPACT_CACHE_P14_V205"
+        "PASS_FORMAL_POTENTIAL_NORMAL_STREAMING_FRESH_RESOURCE_EXECUTION_V206"
     )
     assert current["scientific_status"] == (
-        "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
+        "PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206"
     )
     assert current["v197_future_reference_qualification_formal_status"] == (
         "PASS_FORMAL_FULL_DCT_K2_FUTURE_REFERENCE_QUALIFICATION_V197"

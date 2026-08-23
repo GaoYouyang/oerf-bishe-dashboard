@@ -83,10 +83,10 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     )
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     next_gate = payload["next_scientific_gate_en"].lower()
-    assert "dense-cache-removal" in next_gate
-    assert "camera-permutation-equivariant" in next_gate
-    assert "variable-cardinality" in next_gate
-    assert "cheap cpu controls" in next_gate
+    assert "previously unopened independent public reacting-flow" in next_gate
+    assert "all-nine matched accuracy" in next_gate
+    assert "resource" in next_gate
+    assert "five-camera accuracy remains a separate unresolved gate" in next_gate
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:

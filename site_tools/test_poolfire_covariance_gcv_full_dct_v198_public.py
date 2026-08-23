@@ -43,12 +43,12 @@ def test_v198_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v198_evidence_remains_preserved_after_v201() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
+    assert current["scientific_status"] == "PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206"
     assert current["metrics"]["v198_primary_strict_safe_cells"] == 2626
     assert current["metrics"]["v198_identity_control_strict_safe_cells"] == 2626
     assert current["current_decision"]["v198_algorithm_breakthrough"] is False
     assert current["current_decision"]["v198_empirical_covariance_route_closed"] is True
-    assert "dense-cache-removal" in current["next_scientific_gate_en"]
+    assert "previously unopened independent public reacting-flow" in current["next_scientific_gate_en"]
 
 
 def test_v198_public_files_exclude_private_execution_details() -> None:

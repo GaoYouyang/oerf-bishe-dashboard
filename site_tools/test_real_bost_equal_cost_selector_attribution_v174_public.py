@@ -62,7 +62,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
+    assert payload["scientific_status"] == "PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206"
     assert (
         payload["v174_equal_cost_selector_scientific_decision"]
         == "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"
@@ -70,8 +70,8 @@ def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     assert payload["metrics"]["v174_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v174_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v174_independent_check_count"] == 27
-    assert "dense-cache-removal" in payload["next_scientific_gate_en"]
-    assert "稠密缓存移除" in payload["next_scientific_gate_zh"]
+    assert "previously unopened independent public reacting-flow" in payload["next_scientific_gate_en"]
+    assert "此前未打开的独立公开反应流工况" in payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_retain_v174_as_parent_evidence() -> None:

@@ -16533,3 +16533,45 @@ The sealed scientific decision is `PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205`, an
 The resource claim remains open. The compact initializer uses `0A+1A^T`, and unchanged K1 brings the total to `2A+2A^T`, one exact adjoint above dense K1 at `2A+1A^T`. Formal setup still constructs the response matrix transiently. No fresh wall-time, worker/process-tree RSS, or whole-pipeline peak-memory gate was run. The next gate must first remove the transient dense setup response and preserve the camera-permutation-equivariant, variable-cardinality interface without claiming every cardinality passes; it must then place setup inside fresh workers, retain cheap CPU controls, and compare compact K1, dense K1, and K2 in randomized pairs. Fewer cached scalars alone cannot support a speedup claim.
 
 `algorithm_breakthrough=false`, `paper_success=false`, `exact_call_reduction_vs_dense_k1=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-23：v206 流式势函数正规 setup 与 fresh 资源门
+
+### 讲人话：这次不只是“矩阵更小”，而是九相机真的更省时间和内存了
+
+v205 留下两个必须补齐的问题：正式 setup 还会瞬时构造全相机稠密响应，而且缓存更小并不自动等于程序更快。v206 没有换算法、调准确率门或训练网络，只把势函数正规 setup 改成按相机流式构造，并把 setup 放进每个 fresh worker 里直接测。
+
+在先看资源数值之前，独立 setup 程序重建了五/九相机共 `26` 个几何 setup 和 `2626` 个单元。相对正式实现的最大坐标差为 `1.48e-12`，因子重建差为 `2.07e-13`，正则项差为 `1.25e-13`。这先排除了“少占内存只是因为数值算得不一样”的解释。
+
+随后资源批次在历史已暴露 p14 的全部九相机上运行：13 套标定、每套 101 帧，共 `39` 个 reference worker、`429` 个 timed worker、`143` 个随机相邻完整区组。独立审裁逐条核对 `468` 份 worker 记录、调用账、监控覆盖和输出，流式结果相对稠密 K1 的最大差为 `6.02e-13`。
+
+相对稠密 K1，outer wall p50 / p90-higher 为 `0.8603 / 0.8729`，setup wall 为 `0.7801 / 0.7973`，worker-self RSS 为 `0.6886 / 0.7160`，sampled worker-tree RSS 为 `0.6907 / 0.7192`，sampled whole-pipeline RSS 为 `0.7100 / 0.7370`。相对 K2，outer wall 为 `0.7395 / 0.7503`，sampled whole-pipeline RSS 为 `0.7122 / 0.7339`。全部全局门和 13 套标定逐组 p50 门通过。
+
+因此正式科学判决是 `PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206`，独立状态是 `PASS_INDEPENDENT_ADJUDICATION_STREAMING_COMPACT_FRESH_RESOURCE_V206`。真正增量是：v205 的缓存表示 headroom 已经在九相机 p14 上转化为同时通过的 fresh wall 与 whole-pipeline RSS 证据。
+
+但调用账必须继续写在正结果旁边。流式 K1 仍是 `2A+2A^T`，稠密 K1 是 `2A+1A^T`，所以流式路径相对稠密 K1 多一次精确伴随；它相对 K2 的 `3A+2A^T` 才少一次 forward。当前资源收益来自流式 setup 与较小工作状态，不是相对稠密 K1 的 exact-call 减少。
+
+范围也没有被扩大。p14 是历史已暴露开发轨迹，本轮资源审计只覆盖全部九相机；九相机准确率继承 `1313/1313 · 13/13`，五相机仍只有 `1268/1313 · 3/13`。因此这里只能称 post-open 九相机资源 headroom，不能称全局加速、可变基数成功、外部泛化、曲线光路或真实 BOST。
+
+下一门是在读取结果前冻结一个此前未打开的独立公开反应流工况，同时复核九相机 matched-accuracy 与资源收益；五相机继续作为单独未解决的准确率门。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v205 left two obligations: formal setup still transiently formed the all-camera dense response, and a smaller cache did not itself prove faster execution. v206 does not change the candidate, accuracy thresholds, or train a model. It makes potential-normal setup camera-streamed and places setup inside every fresh worker.
+
+Before interpreting resource values, an independent setup program rebuilds `26` five/all-nine geometry setups and `2,626` cells. Maximum coordinate difference to formal is `1.48e-12`, factor-reconstruction difference is `2.07e-13`, and regularization difference is `1.25e-13`. This rules out numerical drift as the source of lower memory.
+
+The resource batch then runs on all nine cameras of historically exposed p14: 13 calibrations, 101 frames each, `39` reference workers, `429` timed workers, and `143` randomized adjacent complete blocks. Independent adjudication checks all `468` worker records, call ledgers, monitor coverage, and outputs. Maximum streamed-output difference to dense K1 is `6.02e-13`.
+
+Versus dense K1, outer-wall p50 / p90-higher ratios are `0.8603 / 0.8729`, setup-wall ratios are `0.7801 / 0.7973`, worker-self RSS ratios are `0.6886 / 0.7160`, sampled worker-tree RSS ratios are `0.6907 / 0.7192`, and sampled whole-pipeline RSS ratios are `0.7100 / 0.7370`. Versus K2, outer-wall ratios are `0.7395 / 0.7503` and sampled whole-pipeline RSS ratios are `0.7122 / 0.7339`. Every global gate and all 13 per-calibration p50 gates pass.
+
+The sealed scientific decision is `PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206`, with independent status `PASS_INDEPENDENT_ADJUDICATION_STREAMING_COMPACT_FRESH_RESOURCE_V206`. The substantive increment is that v205's cache-representation headroom now converts into jointly passing fresh wall-time and whole-pipeline RSS evidence on all-nine p14.
+
+The exact-call ledger remains part of the result. Streamed K1 uses `2A+2AT`, while dense K1 uses `2A+1AT`; streamed K1 therefore adds one exact adjoint versus dense K1. It saves one forward only relative to K2 at `3A+2AT`. The resource result comes from streamed setup and a smaller working state, not fewer exact calls than dense K1.
+
+Scope does not broaden. p14 is historically exposed development data, and only all nine cameras enter this resource audit. All-nine accuracy inherits `1,313/1,313 · 13/13`, while five cameras remain at only `1,268/1,313 · 3/13`. This supports post-open all-nine resource headroom only, not global speedup, variable-cardinality success, external generalization, curved rays, or real BOST.
+
+The next gate preregisters a previously unopened independent public reacting-flow condition and jointly rechecks all-nine matched accuracy and resource gains. Five-camera accuracy remains a separate unresolved gate.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.

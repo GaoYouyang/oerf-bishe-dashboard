@@ -56,29 +56,25 @@ def test_v205_result_and_figure_are_bilingual_and_nonblank() -> None:
         assert any(high - low > 100 for low, high in ImageStat.Stat(image).extrema)
 
 
-def test_v205_is_the_current_public_headline() -> None:
+def test_v205_remains_preserved_as_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text())
-    assert current["scientific_status"] == "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
-    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
     assert current["metrics"]["v205_retained_packed_values"] == 509545
     assert current["metrics"]["v205_all_nine_strict_safe_cells"] == 1313
     assert current["current_decision"]["v205_compact_cache_equivalence_passed"] is True
     assert current["current_decision"]["v205_resource_speedup"] is False
-    assert current["public_evidence"]["result"].endswith(
-        "poolfire_potential_normal_compact_cache_p14_v205_result_2026-08-23.md"
-    )
+    assert current["scientific_status"] != "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
 
 
 def test_primary_pages_reference_v205_in_both_languages() -> None:
-    for path in (
-        ROOT / "index.html",
-        ROOT / "operator-learning/index.html",
-        ROOT / "operator-learning/daily-progress.html",
-    ):
+    linked_pages = (ROOT / "index.html", ROOT / "operator-learning/daily-progress.html")
+    for path in linked_pages:
         content = path.read_text()
         assert "poolfire_potential_normal_compact_cache_p14_v205" in content
-        assert "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205" in content
         assert "algorithm_breakthrough=false" in content
+    focus = (ROOT / "operator-learning/index.html").read_text()
+    assert 'id="potential-normal-compact-cache-p14-v205"' in focus
+    assert "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205" in focus
+    assert "algorithm_breakthrough=false" in focus
 
 
 def test_operator_evidence_grid_cannot_be_widened_by_status_text() -> None:

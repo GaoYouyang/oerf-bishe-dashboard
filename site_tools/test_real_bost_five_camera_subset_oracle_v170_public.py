@@ -77,14 +77,14 @@ def test_current_evidence_preserves_v170_but_points_to_v181() -> None:
     assert payload["current_decision"]["v170_deployable_selector_established"] is False
     assert (
         payload["engineering_status"]
-        == "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
+        == "PASS_INDEPENDENT_ADJUDICATION_STREAMING_COMPACT_FRESH_RESOURCE_V206"
     )
     assert (
         payload["formal_status"]
-            == "PASS_FORMAL_POOLFIRE_POTENTIAL_NORMAL_COMPACT_CACHE_P14_V205"
+            == "PASS_FORMAL_POTENTIAL_NORMAL_STREAMING_FRESH_RESOURCE_EXECUTION_V206"
     )
     assert payload["scientific_status"] == (
-        "PASS_POTENTIAL_NORMAL_COMPACT_CACHE_V205"
+        "PASS_STREAMING_COMPACT_FRESH_RESOURCE_V206"
     )
 
 
