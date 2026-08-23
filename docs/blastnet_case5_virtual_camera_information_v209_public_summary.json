@@ -1,0 +1,108 @@
+{
+  "schema_version": "oerf-public-blastnet-case5-virtual-camera-information-v209.0.0",
+  "updated": "2026-08-23",
+  "title_zh": "v209：虚拟环形九/十二相机均救回 Case 5 reference，改善归因于几何而非相机数量",
+  "title_en": "v209: virtual-ring nine and twelve cameras both rescue the Case 5 reference, attributing the gain to geometry rather than camera count",
+  "scope": {
+    "condition": "BLASTNet vitiated H2-air freely propagating flame DNS Case 5",
+    "condition_role": "already opened; post-open synthetic geometry diagnostic",
+    "field_shape_zyx": [32, 16, 16],
+    "frame_count": 42,
+    "virtual_rig_count_per_arm": 13,
+    "cell_count_per_arm": 546,
+    "total_replayed_cells": 1092,
+    "camera_counts": [9, 12],
+    "ray_model": "straight-ray proxy",
+    "reference": "zero-start CGLS K16"
+  },
+  "parent_v208_supplied_nine_camera_family": {
+    "scientific_decision": "INCONCLUSIVE_CASE5_REFERENCE_REMAINS_INADEQUATE_AT_ZERO_CGLS_K16_V208",
+    "strict_safe_cells": 0,
+    "strict_total_cells": 546,
+    "complete_groups_passed": 0,
+    "complete_groups_total": 13,
+    "group_p90_higher_ranges": {
+      "field_relative_l2": [0.7252081324094662, 0.7607689701416551],
+      "gradient_relative_l2": [0.5626643031069452, 0.6795003865559772],
+      "observation_relative_l2": [0.04730074849461957, 0.05666623571929454]
+    }
+  },
+  "v209_virtual_ring_diagnostic": {
+    "formal_status": "FORMAL_PENDING_INDEPENDENT_VIRTUAL_CAMERA_INFORMATION_V209",
+    "original_independent_status": "INCONCLUSIVE_V209_VALIDATION",
+    "residual_closure_status": "PASS_RESIDUAL_EQUATION_CLOSURE_ADJUDICATION_V209_2",
+    "scientific_decision": "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209",
+    "accuracy_gates": {
+      "metric_order": ["field_relative_l2", "gradient_relative_l2", "observation_relative_l2"],
+      "strict_cell_limits": [0.5, 0.75, 0.2],
+      "complete_group_p90_higher_limits": [0.5, 0.75, 0.2],
+      "complete_group_worst_limits": [0.75, 1.0, 0.35]
+    },
+    "arms": {
+      "virtual_ring_nine_camera_control": {
+        "logical_exact_calls": {"A": 16, "AT": 16},
+        "strict_safe_cells": 546,
+        "strict_total_cells": 546,
+        "complete_groups_passed": 13,
+        "complete_groups_total": 13,
+        "group_p90_higher_ranges": {
+          "field_relative_l2": [0.3199100705925034, 0.3515339755742317],
+          "gradient_relative_l2": [0.6151958905405381, 0.6580897216558215],
+          "observation_relative_l2": [0.06250662620336819, 0.06893411676688427]
+        },
+        "group_worst_ranges": {
+          "field_relative_l2": [0.32370641517653964, 0.36327124641973796],
+          "gradient_relative_l2": [0.618906856868955, 0.6670455463520839],
+          "observation_relative_l2": [0.06359336704464885, 0.07081206843791375]
+        }
+      },
+      "virtual_ring_twelve_camera_primary": {
+        "logical_exact_calls": {"A": 16, "AT": 16},
+        "strict_safe_cells": 546,
+        "strict_total_cells": 546,
+        "complete_groups_passed": 13,
+        "complete_groups_total": 13,
+        "group_p90_higher_ranges": {
+          "field_relative_l2": [0.276375637305765, 0.30736053621209425],
+          "gradient_relative_l2": [0.5515774375574432, 0.5835577091476161],
+          "observation_relative_l2": [0.057268997526641836, 0.062170859655034494]
+        },
+        "group_worst_ranges": {
+          "field_relative_l2": [0.2777800030994342, 0.31297052680512716],
+          "gradient_relative_l2": [0.5533691246673705, 0.5879925015790455],
+          "observation_relative_l2": [0.058249353657936855, 0.06345723104105212]
+        }
+      }
+    },
+    "residual_equation_closure": {
+      "normalization": "independent observation L2 norm",
+      "tolerance": 1e-8,
+      "shape": [2, 13, 42, 4],
+      "all_values_finite": true,
+      "maximum_independent_vs_formal_residual_over_observation": 4.340717130070469e-9,
+      "maximum_formal_recursive_residual_closure_over_observation": 7.074002994300133e-16,
+      "maximum_independent_recursive_residual_closure_over_observation": 2.0437099709388117e-16,
+      "maximum_formal_vs_independent_observation_over_observation": 6.822248189559228e-16,
+      "all_checks_passed": true
+    }
+  },
+  "interpretation_zh": "同一虚拟环形几何的九相机控制已经达到 546/546 个严格单元和 13/13 个完整组，十二相机也达到相同通过数。因此，不能把改善归因于额外三台相机；可支持的结论是虚拟环形几何/覆盖让 Case 5 的 K16 reference 达到充分性。v208 在师兄提供的九相机标定族上的失败，不是 Case 5 数据、网格或 K16 本身必然不可重建。",
+  "interpretation_en": "The nine-camera control under the same virtual-ring geometry already reaches 546/546 strict-safe cells and 13/13 complete groups, and the twelve-camera arm reaches the same pass counts. The improvement therefore cannot be attributed to three additional cameras. The supported conclusion is that the virtual-ring geometry or coverage makes the Case 5 K16 reference adequate. The v208 failure under the supplied nine-camera calibration family is not intrinsic to the Case 5 data, grid, or K16 alone.",
+  "route_action_zh": "下一门先比较失败的实测标定族与通过的虚拟环形几何，冻结可观测性、覆盖与条件数指标，定位哪种几何性质决定 reference 充分性。暂不训练预测器、不运行 Case 5 wall/RSS，也不把这条 post-open synthetic 诊断写成外部泛化。",
+  "route_action_en": "The next gate should compare the failing supplied calibration family with the passing virtual-ring geometry using preregistered observability, coverage, and conditioning measures, identifying which geometric property controls reference adequacy. Do not train a predictor, run Case 5 wall/RSS, or claim external generalization from this post-open synthetic diagnostic.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_external_generalization": false,
+    "broad_external_family_generalization": false,
+    "extra_camera_cardinality_benefit": false,
+    "variable_cardinality_predictor_success": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}
