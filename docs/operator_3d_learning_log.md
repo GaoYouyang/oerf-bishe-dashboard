@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v230.1 先修正了一个病态数值比较，随后发现 Case 12 的 K16 reference 不够格
+
+**为什么做。** v229 只授权一个冻结的新工况门，Case 12 首次正式与独立执行却在相机换序和第二求解器的近零残差向量相对比较上触发 fail-closed。那时没有解释接受数、精度、调用账或策略胜负。v230.1 要先回答“这是物理/决策漂移，还是一个不适合近零量的数值比较”，再决定科学数组能否释放。
+
+**实际做了什么。** 在读取真值指标、策略汇总和接受结果前，我冻结了唯一的结果盲数值审裁：比较完整候选场、标量观测误差、保存残差的观测方程闭合、原始与白化分数以及离散决策；近零残差向量的相对差只保留为诊断。正式与完全独立第二实现分别重建相机换序、场、观测、分数和决策。数值门通过后，才释放同一批封存科学数组，逐单元重算 K16 reference 的严格门。
+
+**结果。** 数值检查 **18/18**、科学释放检查 **7/7** 全部通过。正式/独立场差最多约 **4.85e-9**，标量观测误差差 **3.18e-14**，分数差 **2.22e-15**，决策差为 **0**；相机换序场差约 **5.68e-9**，残差方程闭合到 **2.04e-16**。随后 K16 reference 只达到 **594/598** 个严格单元与 **11/13** 个完整 rig。四个失败都在 rig 0/12 的 frame 11/42，且只越过内部梯度门 0.75，范围 **0.751727-0.754621**。
+
+**讲人话。** 原来的数值告警不是相机换序或第二求解器改变了物理场、分数或决策；这个解释已经排除。但科学结果不是“dual-PRESS 外门通过”，而是 reference 先失败：没有合格参考，就不能解释策略接受、安全、exact-call、wall/RSS。精确判决是 `INCONCLUSIVE_INADEQUATE_CASE12_K16_REFERENCE_V230`。下一步只能另行结果前冻结 post-open Case 12 reference-depth qualification，用固定深度名单找最小合格的未修改 PCGLS reference，不能回调策略或放宽门。`algorithm_breakthrough=false`。
+
+### English summary
+
+v230.1 replaces the ill-conditioned relative comparison of a near-zero residual vector with a result-blind numerical adjudication based on complete fields, scalar observation errors, residual-equation closure, both scores, and discrete decisions. All **18/18** numerical checks and **7/7** science-release checks pass. Formal-independent field, scalar-error, and score differences are at most about **4.85e-9 / 3.18e-14 / 2.22e-15**, with **0** decision mismatches. Once that numerical barrier releases the sealed science arrays, the frozen unchanged K16 reference passes only **594/598** strict cells and **11/13** complete rigs. All four misses occur only at the interior-gradient cell gate, in frames 11 and 42 of rigs 0 and 12. The exact verdict is `INCONCLUSIVE_INADEQUATE_CASE12_K16_REFERENCE_V230`: the policy is not adjudicated, and no external, exact-call, wall/RSS, or real-BOST claim is supported. The next valid step is a separately preregistered post-open reference-depth qualification.
+
 ## 2026-08-25：v229 把事后 OR 线索改成了不读取目标 rig 分数的固定校准门
 
 **为什么做。** v228 已经证明原始 PRESS 与几何白化 PRESS 含有互补安全信号，但固定 OR 是在父失败 rig 已经可见以后提出的，不能当作前瞻部署规则。v229 要回答更窄也更关键的问题：如果完全隔离目标 rig 的分数，只用其他 rig 做折内校准，这种互补性还能否守住逐 rig 安全、效用和成本门。
