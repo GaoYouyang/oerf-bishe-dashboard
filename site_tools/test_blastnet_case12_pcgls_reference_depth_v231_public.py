@@ -52,11 +52,10 @@ def test_v231_historical_surfaces_and_log_are_preserved() -> None:
     assert current["current_decision"]["v231_selected_depth"] is None
     assert current["current_decision"]["v231_reference_depth_adjudicated"] is False
     assert current["current_decision"]["v231_algorithm_breakthrough"] is False
-    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
-        content = (ROOT / relative).read_text(encoding="utf-8")
-        assert "v231" in content
-        assert "blastnet_case12_pcgls_reference_depth_v231_result_2026-08-25.md" in content
-        assert "598 x 64" in content
+    focus = (ROOT / "operator-learning/index.html").read_text(encoding="utf-8")
+    assert "v231" in focus
+    assert "blastnet_case12_pcgls_reference_depth_v231_result_2026-08-25.md" in focus
+    assert "598 x 64" in focus
     log = (ROOT / "docs/operator_3d_learning_log.md").read_text(encoding="utf-8")
     assert "v231 把 K1-K64 全部算完" in log
     assert "v231 completes every K1-K64" in log

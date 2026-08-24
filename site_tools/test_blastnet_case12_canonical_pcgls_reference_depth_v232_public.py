@@ -47,28 +47,24 @@ def test_v232_figure_is_rendered() -> None:
         assert image.height >= 700
 
 
-def test_v232_current_surfaces_and_log_are_synchronized() -> None:
+def test_v232_historical_surfaces_and_log_are_preserved() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == (
+    assert current["v232_1_scientific_decision"] == (
         "INCONCLUSIVE_INVALID_CASE12_CANONICAL_PCGLS_REFERENCE_DEPTH_V232_1"
     )
     assert current["metrics"]["v232_1_first_field_failure_depth"] == 17
     assert current["current_decision"]["v232_1_selected_depth"] is None
     assert current["current_decision"]["v232_1_reference_depth_adjudicated"] is False
     assert current["current_decision"]["v232_1_algorithm_breakthrough"] is False
-    assert "stable" in current["next_scientific_gate"].lower()
-    assert "reference_depth_v232" in current["public_evidence"]["result"]
     for relative in (
         "index.html",
         "operator-learning/index.html",
         "operator-learning/daily-progress.html",
     ):
         content = (ROOT / relative).read_text(encoding="utf-8")
-        assert "v232.1" in content
-        assert "blastnet_case12_canonical_pcgls_reference_depth_v232.png" in content
-        assert "1.674" in content
+        assert "blastnet_case12_canonical_pcgls_reference_depth_v232_result_2026-08-25.md" in content
     log = (ROOT / "docs/operator_3d_learning_log.md").read_text(encoding="utf-8")
     assert "v232.1 把问题收窄" in log
     assert "v232.1 narrows the blocker" in log

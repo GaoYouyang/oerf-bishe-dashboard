@@ -4,6 +4,28 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v233/v233.1 证明投影拟合好不等于三维场正确
+
+**为什么做。** v232.1 已经关闭会放大浮点差异的 deep-PCGLS reference 壳，但这还没有回答“换成稳定的绝对求解后，Case 12 reference 能不能合格”。v233 因此只检验一个结果前固定的 reference：零均值 DCT1024、observation-only machine ridge、同一 13 个 rig、598 个单元和同一组 field / full-gradient / interior-gradient / observation 绝对门。
+
+**实际做了什么。** 正式实现用薄 SVD，独立实现显式重建余弦基、逐列调用物理 forward，再用 Gram/Cholesky 求解。独立程序重算全部 598 个单元，`17/17` 项检查全真；正式与独立场差最大 **1.25e-13**，指标差最大 **6.22e-14**，归一化驻点残差最大 **1.24e-16**。这次数值证书通过，不能再把失败归因于求解器漂移。
+
+**结果。** observation p90-higher 为 **0.133957**，低于冻结 **0.20** 门；但 field / full-gradient / interior-gradient p90-higher 为 **0.820180 / 1.231545 / 0.779164**，分别高于 **0.50 / 0.75 / 0.75**。严格安全单元是 **0/598**，完整 rig 是 **0/13**。
+
+**讲人话。** 这个稳定 reference 能很好解释九相机二维观测，却给出错误的三维场和梯度。二维投影吻合不能替代三维真值门。判决为 `FAIL_INADEQUATE_CASE12_ABSOLUTE_SPECTRAL_REFERENCE_V233`：固定 DCT1024 + machine-ridge reference 关闭，不调 rank、ridge、基、截断或门。它没有裁决 dual-PRESS，也没有建立 exact-call、wall/RSS、外部泛化或真实 BOST 成功。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v233/v233.1 shows that a projection fit does not certify the 3D field
+
+v232.1 closes the deep-PCGLS reference shell that amplifies roundoff differences, but it does not answer whether a numerically stable absolute solve can qualify the Case 12 reference. v233 freezes one such reference before results: zero-mean DCT1024, an observation-only machine ridge, the same 13 rigs and 598 cells, and the same absolute field, full-gradient, interior-gradient, and observation gates.
+
+The formal implementation uses a thin SVD. The independent implementation explicitly rebuilds the cosine basis, applies the physical forward map column by column, and solves with Gram/Cholesky. All **17/17** independent checks pass across all 598 cells. Maximum formal-independent field and metric differences are **1.25e-13** and **6.22e-14**, with maximum normalized stationarity **1.24e-16**. Numerical instability is no longer a viable explanation.
+
+Observation p90-higher is **0.133957**, below the frozen **0.20** gate. Field, full-gradient, and interior-gradient p90-higher are **0.820180 / 1.231545 / 0.779164**, above **0.50 / 0.75 / 0.75**. The result has **0/598** strict-safe cells and **0/13** complete rigs. The exact verdict is `FAIL_INADEQUATE_CASE12_ABSOLUTE_SPECTRAL_REFERENCE_V233`: projection fit does not certify the 3D field. The fixed DCT1024 machine-ridge reference closes without rank, ridge, basis, cutoff, or gate retuning. Dual-PRESS, exact calls, wall/RSS, external generalization, and real BOST remain unadjudicated.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `resource_speedup=false`, `real_bost=false`.
+
 ## 2026-08-25：v232.1 把问题收窄到深层 PCGLS 的浮点稳定性
 
 **为什么做。** v231 发现相机块顺序会让深层 PCGLS 轨迹分叉，因此没有资格从 K1-K64 选 reference 深度。v232 只修复这一个数值表示问题：在组装算子、Jacobi 和未修改 PCGLS 之前，按相机 ID 规范排序完整观测块；598 个单元、K1-K64、精度门与 `1e-8` 数值门全部不变。

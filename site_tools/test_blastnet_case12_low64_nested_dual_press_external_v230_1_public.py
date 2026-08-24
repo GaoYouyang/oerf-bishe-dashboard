@@ -60,11 +60,13 @@ def test_v230_1_historical_surfaces_and_log_are_preserved() -> None:
     assert current["current_decision"]["v230_dual_press_policy_adjudicated"] is False
     assert current["current_decision"]["v230_resource_gate_authorized"] is False
     assert current["current_decision"]["v230_algorithm_breakthrough"] is False
-    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+    for relative in ("index.html", "operator-learning/index.html"):
         content = (ROOT / relative).read_text(encoding="utf-8")
         assert "v230.1" in content
         assert "blastnet_case12_low64_nested_dual_press_external_v230_1_result_2026-08-25.md" in content
         assert "594/598" in content
+    daily = (ROOT / "operator-learning/daily-progress.html").read_text(encoding="utf-8")
+    assert "blastnet_case12_low64_nested_dual_press_external_v230_1_result_2026-08-25.md" in daily
     log = (ROOT / "docs/operator_3d_learning_log.md").read_text(encoding="utf-8")
     assert "v230.1 先修正了一个病态数值比较" in log
     assert "v230.1 replaces the ill-conditioned" in log
