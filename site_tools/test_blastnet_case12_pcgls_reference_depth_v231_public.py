@@ -44,20 +44,18 @@ def test_v231_figure_is_rendered() -> None:
         assert image.height >= 700
 
 
-def test_v231_current_surfaces_and_log_are_synchronized() -> None:
+def test_v231_historical_surfaces_and_log_are_preserved() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE12_PCGLS_REFERENCE_DEPTH_V231"
+    assert current["v231_scientific_decision"] == "INCONCLUSIVE_INVALID_CASE12_PCGLS_REFERENCE_DEPTH_V231"
     assert current["metrics"]["v231_case12_cells_completed"] == 598
     assert current["metrics"]["v231_depth_states_per_cell"] == 64
     assert current["current_decision"]["v231_selected_depth"] is None
     assert current["current_decision"]["v231_reference_depth_adjudicated"] is False
     assert current["current_decision"]["v231_algorithm_breakthrough"] is False
-    assert "canonical" in current["next_scientific_gate"].lower()
-    assert "reference_depth_v231" in current["public_evidence"]["result"]
     for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
         content = (ROOT / relative).read_text(encoding="utf-8")
         assert "v231" in content
-        assert "blastnet_case12_pcgls_reference_depth_v231.png" in content
+        assert "blastnet_case12_pcgls_reference_depth_v231_result_2026-08-25.md" in content
         assert "598 x 64" in content
     log = (ROOT / "docs/operator_3d_learning_log.md").read_text(encoding="utf-8")
     assert "v231 把 K1-K64 全部算完" in log

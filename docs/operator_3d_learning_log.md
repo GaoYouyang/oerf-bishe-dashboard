@@ -4,6 +4,28 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v232.1 把问题收窄到深层 PCGLS 的浮点稳定性
+
+**为什么做。** v231 发现相机块顺序会让深层 PCGLS 轨迹分叉，因此没有资格从 K1-K64 选 reference 深度。v232 只修复这一个数值表示问题：在组装算子、Jacobi 和未修改 PCGLS 之前，按相机 ID 规范排序完整观测块；598 个单元、K1-K64、精度门与 `1e-8` 数值门全部不变。
+
+**实际做了什么。** v232.1 的独立程序不使用正式结果生成科学数组，而是从同一封存的规范观测重建 13 个 rig、598 个单元与每个单元 K1-K64 的场、残差和指标。两套实现各自的相机换序观测、Jacobi、场、残差和指标差都是 **0**，说明规范排序确实修好了 v231 的换序缺口。
+
+**结果。** 两边都各自暂定得到 K17 的 **598/598 个严格单元和 13/13 个完整 rig**，但跨实现数值合同仍失败。K16 场差为 **3.278e-9**；K17 第一次越过 `1e-8`，达到 **1.67429e-8**；更深层的最大场差为 **1.17927e-2**，指标差为 **8.61528e-3**。所以 K17 只是两次失效执行各自给出的 provisional 结果，不能释放；`selected_depth=null`。
+
+**讲人话。** 封存后根因诊断把问题收窄了：正式实现用 `sum(rows*rows)` 构造 Jacobi，独立实现用数学等价的 `einsum`。13 个 rig 的 Jacobi inverse 最大相对差只有 **2.24977e-16**，但深层 PCGLS 会放大它。强制两套 solver 用同一 Jacobi 时，检查的各个深度都逐值一致。最终判决是 `INCONCLUSIVE_INVALID_CASE12_CANONICAL_PCGLS_REFERENCE_DEPTH_V232_1`：关闭当前 deep-PCGLS reference 壳，不做第三次同壳修复、不放宽容差、不事后换深度。这不证明 K64 内无合格 reference，也没有判 dual-PRESS 成功或失败。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v232.1 narrows the blocker to deep-PCGLS floating-point stability
+
+v232 preregisters canonical camera-ID ordering before operator, Jacobi, and unchanged-PCGLS assembly while preserving all 598 cells, K1-K64 checkpoints, accuracy gates, and the `1e-8` numerical contract. v232.1 independently rebuilds all 598 x 64 fields, residuals, and metrics from the same sealed canonical observations. Camera-permutation differences in observations, Jacobi states, fields, residuals, and metrics are exactly **zero** in both implementations, so the canonicalization itself works.
+
+Both executions provisionally derive K17 with **598/598 strict cells and 13/13 complete rigs**, but the cross-implementation contract fails. The K16 field difference is **3.278e-9**; K17 is the first depth above `1e-8`, at **1.67429e-8**; deeper states reach a maximum field difference of **1.17927e-2** and metric difference of **8.61528e-3**. K17 therefore cannot be released, and `selected_depth=null`.
+
+A post-seal diagnostic localizes the instability to floating-point reduction in the Jacobi diagonal. Formal `sum(rows*rows)` and independent `einsum` produce inverse diagonals differing by only **2.24977e-16** relatively, yet deep PCGLS amplifies that perturbation. When both solvers receive the same Jacobi, the checked fields agree value for value. The exact verdict is `INCONCLUSIVE_INVALID_CASE12_CANONICAL_PCGLS_REFERENCE_DEPTH_V232_1`. The current deep-PCGLS reference shell closes without a third same-shell repair, tolerance relaxation, or post-result depth substitution. This does not prove that no adequate reference exists through K64 and does not adjudicate dual-PRESS.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `resource_speedup=false`, `real_bost=false`.
+
 ## 2026-08-25：v231 把 K1-K64 全部算完，但不能从失效的数值门里挑一个深度
 
 **为什么做。** v230.1 证明 Case 12 的 K16 reference 在四个内部梯度单元上先失败，因此 dual-PRESS 策略没有资格进入比较。v231 只问一个更基础的问题：保持同一已开封工况、未修改 PCGLS、Jacobi 预条件与全部精度门，K1-K64 中是否存在一个对 598 个单元都合格的最小全局深度。
