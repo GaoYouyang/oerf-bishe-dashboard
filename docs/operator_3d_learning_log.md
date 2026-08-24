@@ -16638,6 +16638,36 @@ This closes the current exact nine-camera block-PRESS certificate, not every mul
 
 `algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v227 几何白化提高安全接受但逐 rig 效用仍失败
+
+### 讲人话：白化不是没用，它多救回 26 个安全单元；但最差一套相机仍过不了门
+
+v226 已经把 Case 2 的危险误接降到 `0`，但 Case 5 最差留一 rig 只接受 `4/42`。v227 没有事后改阈值或 `10%` 效用门，而是检验一个物理和统计上不同的问题：被遮相机在当前 reported geometry 下越难预测，它的误差是否应该按预测协方差进行白化后再与其他相机聚合。
+
+正式分数逐台遮相机，用其余八台的 Low-64 响应拟合，再构造 `V_j = I + M_j(M_-j^T M_-j)^-1M_j^T`。九个白化误差二次型开方后除以全拟合残差。这个过程只读二维观测和 reported geometry；Case 5 阈值仍完整留一 rig，Case 2 接受决策在读取其真值门前封存。v226 原始 PRESS 作为父 control 被精确重建，分数、阈值和离散决策差都是 `0`。
+
+白化确实有作用。Case 2 安全接受从 `297` 增加到 `323`，多出 `26` 个，危险误接仍为 `0`；混合策略在 Case 2 和 Case 5 都保持 `13/13` 完整 rig 精度，最大 matched ratio 为 `1.027761 / 1.007896`。但 Case 5 总接受从 `126` 变为 `123`，最差 rig 仍是 `4/42=9.52%`，只是失败从 v226 的 rig 11 移到了 v227 的 rig 4。冻结门要求至少 `5/42`，因此白化改变了分数，却没有解决跨 rig 效用稳定性。
+
+完全独立第二实现不用正式 Cholesky 路线，改用正规矩阵特征分解与 Woodbury 二次型，重建全部 `1261` 个单元、预测协方差、白化分数、阈值、接受决策、物理门和调用账。`19/19` 项必需检查通过；特征、阈值、汇总和相机换序最大差为 `1.11e-15 / 2.22e-16 / 2.57e-11 / 1.55e-15`。
+
+严格判决是 `FAIL_LOW64_STUDENTIZED_BLOCK_PRESS_CERTIFICATE_V227`。这关闭当前 geometry-studentized block-PRESS 单分数证书，不关闭全部多视角机制或整个 C 路线。不得再调协方差公式、floor、阈值、`10%` 门、秩或深度；不训练大模型、不租 GPU、不跑 wall/RSS，也不打开新工况。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v227 geometry whitening raises safe acceptance but per-rig utility still fails
+
+v226 already reduces unsafe Case 2 accepts to `0`, but its worst held-out Case 5 rig accepts only `4/42` frames. v227 does not change the threshold or `10%` utility gate after results. It tests a physically and statistically different question: when a held-out camera is harder to predict under reported geometry, should its error be whitened by predictive covariance before aggregation with other cameras?
+
+The formal score holds out each camera, fits the Low-64 response on the other eight, and forms `V_j = I + M_j(M_-j^T M_-j)^-1M_j^T`. The root-sum-square whitened quadratic errors are divided by the full-fit residual. This reads only 2D observations and reported geometry. Case 5 still uses complete leave-one-rig-out thresholds, and Case 2 accept decisions are sealed before its truth gates are read. Raw v226 PRESS is exactly rebuilt as the parent control with zero score, threshold, and discrete-decision differences.
+
+Whitening has a measurable effect. Safe Case 2 accepts rise from `297` to `323`, adding `26`, while unsafe accepts remain `0`. The mixed policy preserves `13/13` complete-rig accuracy in both Cases 2 and 5, with maximum matched ratios of `1.027761 / 1.007896`. But total Case 5 accepts move from `126` to `123`, and the worst rig remains at `4/42=9.52%`; failure moves from rig 11 in v226 to rig 4 in v227. The frozen gate requires at least `5/42`, so whitening changes the score without solving cross-rig utility stability.
+
+A fully independent implementation replaces the formal Cholesky route with normal-matrix eigendecomposition and a Woodbury quadratic form. It rebuilds all `1261` cells, predictive covariances, whitened scores, thresholds, accept decisions, physical gates, and call ledgers. All `19/19` required checks pass; maximum feature, threshold, summary, and camera-permutation differences are `1.11e-15 / 2.22e-16 / 2.57e-11 / 1.55e-15`.
+
+The strict verdict is `FAIL_LOW64_STUDENTIZED_BLOCK_PRESS_CERTIFICATE_V227`. This closes the current geometry-studentized block-PRESS single-score certificate, not every multiview mechanism or the C route. Covariance formula, floor, threshold, `10%` gate, rank, and depth will not be retuned. No larger model, GPU, wall/RSS run, or new-condition opening is authorized.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v224 逐相机删除稳定度仍重叠，单标量回退关闭
 
 ### 讲人话：删掉一台相机后会不会“变脸”确实能量到，但还不足以安全决定走快路还是回退

@@ -64,7 +64,7 @@ def test_public_surfaces_are_bilingual_and_point_to_v154() -> None:
     assert "Day 44" in daily
 
 
-def test_current_evidence_closes_current_predictor_and_gpu() -> None:
+def test_current_evidence_preserves_v154_predictor_and_gpu_closure() -> None:
     payload = json.loads(EVIDENCE.read_text(encoding="utf-8"))
     metrics = payload["metrics"]
     decision = payload["current_decision"]
@@ -84,7 +84,6 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     assert decision["v224_scalar_camera_jackknife_route_closed"] is True
     assert decision["v224_all_multiview_mechanisms_closed"] is False
-    assert "multivariate cross-camera structure" in payload["next_scientific_gate_en"]
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:

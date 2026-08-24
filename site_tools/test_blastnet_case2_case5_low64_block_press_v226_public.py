@@ -76,11 +76,13 @@ def test_v226_figure_is_rendered() -> None:
         assert image.height >= 700
 
 
-def test_v226_current_surfaces_and_log_are_synchronized() -> None:
+def test_v226_historical_surfaces_and_log_remain_available() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == "FAIL_LOW64_BLOCK_PRESS_CERTIFICATE_V226"
+    assert current["v226_low64_block_press_scientific_decision"] == (
+        "FAIL_LOW64_BLOCK_PRESS_CERTIFICATE_V226"
+    )
     assert current["metrics"]["v226_primary_case2_accepted_unsafe"] == 0
     assert current["metrics"]["v226_primary_case5_minimum_rig_accepted"] == 4
     assert (
