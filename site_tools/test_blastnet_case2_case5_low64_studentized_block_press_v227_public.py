@@ -88,11 +88,11 @@ def test_v227_figure_is_rendered() -> None:
         assert image.height >= 700
 
 
-def test_v227_current_surfaces_and_log_are_synchronized() -> None:
+def test_v227_historical_surfaces_and_log_remain_available() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == (
+    assert current["v227_low64_studentized_block_press_scientific_decision"] == (
         "FAIL_LOW64_STUDENTIZED_BLOCK_PRESS_CERTIFICATE_V227"
     )
     assert current["metrics"]["v227_primary_case2_accepted_safe"] == 323
@@ -105,11 +105,6 @@ def test_v227_current_surfaces_and_log_are_synchronized() -> None:
         is True
     )
     assert current["current_decision"]["v227_algorithm_breakthrough"] is False
-    assert "v227" in current["next_scientific_gate"]
-    assert "v226 closes" not in current["next_scientific_gate"]
-    assert "studentized_block_press_v227" in current["public_evidence"]["result"]
-    assert "studentized_block_press_v227" in current["public_evidence"]["summary"]
-    assert "studentized_block_press_v227" in current["public_evidence"]["figure"]
     for relative in (
         "index.html",
         "operator-learning/index.html",
@@ -117,7 +112,7 @@ def test_v227_current_surfaces_and_log_are_synchronized() -> None:
     ):
         content = (ROOT / relative).read_text(encoding="utf-8")
         assert "v227" in content
-        assert "blastnet_case2_case5_low64_studentized_block_press_v227.png" in content
+        assert "blastnet_case2_case5_low64_studentized_block_press_v227" in content
         assert "blastnet_case2_case5_low64_block_press_v226" in content
     log = (ROOT / "docs/operator_3d_learning_log.md").read_text(encoding="utf-8")
     assert "v227 几何白化提高安全接受但逐 rig 效用仍失败" in log

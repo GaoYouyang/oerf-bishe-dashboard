@@ -16638,6 +16638,32 @@ This closes the current exact nine-camera block-PRESS certificate, not every mul
 
 `algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v228 两种 PRESS 判据互补，但只构成事后机制线索
+
+### 讲人话：两个各差一帧的安全筛选，固定并起来后补上了彼此漏掉的帧
+
+v226 的原始相机分块 PRESS 和 v227 的几何白化 PRESS 都把 Case 2 的危险误接保持为 `0`，但它们在 Case 5 失败的 rig 不同。v228 没有训练模型、拟合新分数或重调阈值，只对两份已经封存的接受判决取固定 OR，检查两种 deployment-visible 信号是否真的互补。
+
+固定 OR 在 Case 5 接受 `140/546` 个单元，最差 rig 从两个父证书各自的 `4/42` 提高到 `5/42=11.90%`；十三套 rig 全部守住 matched-accuracy，最大 matched ratio 为 `1.007896`。其中有 `17` 个单元只被原始 PRESS 接受、`14` 个只被白化 PRESS 接受；原先失败的 rig 4 为原始/白化/OR=`5/4/5`，rig 11 为 `4/6/6`。Case 2 接受 `324/715` 个单元，`324` 个全部安全，危险误接仍为 `0`；十三套 rig 全部通过，最大 matched ratio 为 `1.027761`。两边每套 rig 的平均逻辑 `A/A^T` 账都严格低于 K16 reference。
+
+完全独立的第二实现从封存父数组重建两种接受掩码、固定 OR、逐 rig 物理门、matched ratio 与调用账。`17/17` 项必需检查全部通过，正式与独立汇总最大差为 `2.57e-11`，输入与父证据树保持不变。
+
+严格判决是 `POST_OPEN_COMPLEMENTARY_DUAL_PRESS_SIGNAL_V228`。这个结果改变了机制判断：瓶颈不再只是“某个单分数缺少效用”，而是“怎样在结果前完成组合与校准”。但 v226/v227 的失败 rig 在 v228 前已经可见，所以这不是结果前成功、部署算法或外部泛化证据。不得继续在已开封数据上搜索布尔公式、阈值或打开 Case 4/6；下一步只能另行冻结一个前瞻组合校准合同，或者等待映射完整的真实 BOST 数据。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v228 two PRESS criteria are complementary, but only as a retrospective mechanism lead
+
+Raw camera-block PRESS in v226 and geometry-whitened PRESS in v227 both keep unsafe Case 2 accepts at `0`, but they fail on different Case 5 rigs. v228 trains no model, fits no new score, and retunes no threshold. It applies fixed OR to the two sealed accept decisions to test whether the deployment-visible signals are genuinely complementary.
+
+Fixed OR accepts `140/546` Case 5 cells and raises the worst rig from `4/42` under either parent to `5/42=11.90%`; all thirteen rigs retain matched accuracy and the maximum matched ratio is `1.007896`. There are `17` raw-only accepts and `14` whitened-only accepts. For the former failing rigs, raw/whitened/OR counts are `5/4/5` in rig 4 and `4/6/6` in rig 11. In Case 2, OR accepts `324/715` cells, all `324` are safe, and unsafe accepts remain `0`; all thirteen rigs pass with a maximum matched ratio of `1.027761`. Mean logical `A/A^T` cost remains strictly below the K16 reference in every rig of both conditions.
+
+A fully independent second implementation rebuilds the two accept masks, fixed OR, per-rig physics gates, matched ratios, and call ledgers from the sealed parent arrays. All `17/17` required checks pass, the maximum formal-independent summary difference is `2.57e-11`, and the inputs and parent evidence trees remain unchanged.
+
+The strict verdict is `POST_OPEN_COMPLEMENTARY_DUAL_PRESS_SIGNAL_V228`. It changes the mechanism diagnosis: the bottleneck is no longer merely utility of either single score, but prospective combination and calibration. Yet the v226/v227 failure rigs were visible before v228, so this is not preregistered success, a deployment algorithm, or external-generalization evidence. No Boolean formula or threshold search is allowed on the opened data, and Cases 4/6 remain sealed. Any next step must freeze a prospective combination-calibration contract separately or wait for fully mapped real-BOST data.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v227 几何白化提高安全接受但逐 rig 效用仍失败
 
 ### 讲人话：白化不是没用，它多救回 26 个安全单元；但最差一套相机仍过不了门

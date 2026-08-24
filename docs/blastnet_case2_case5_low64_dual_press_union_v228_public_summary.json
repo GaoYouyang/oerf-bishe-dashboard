@@ -1,0 +1,124 @@
+{
+  "schema_version": "oerf-public-blastnet-case2-case5-low64-dual-press-union-v228.0.0",
+  "updated": "2026-08-24",
+  "title_zh": "v228：两种 PRESS 判据互补，但只构成事后机制线索",
+  "title_en": "v228: two PRESS criteria are complementary, but only as a retrospective mechanism lead",
+  "scope": {
+    "diagnostic_type": "post-open retrospective fixed-OR mechanism diagnostic",
+    "conditions": 2,
+    "cells": 1261,
+    "case5_cells": 546,
+    "case2_cells": 715,
+    "camera_count": 9,
+    "trainable_parameters": 0,
+    "new_score_fitted": false,
+    "new_threshold_fitted": false,
+    "new_condition_opened": false,
+    "deployment_algorithm_established": false,
+    "preregistered_success": false
+  },
+  "fixed_union_policy": {
+    "definition": "Accept exactly when the sealed raw block-PRESS decision from v226 OR the sealed geometry-studentized block-PRESS decision from v227 accepts.",
+    "case5": {
+      "accepted_cells": 140,
+      "accepted_safe_cells": 140,
+      "accepted_unsafe_cells": 0,
+      "safe_accept_fraction": 0.2564102564102564,
+      "minimum_rig_accept_fraction": 0.11904761904761904,
+      "maximum_rig_accept_fraction": 0.5714285714285714,
+      "minimum_rig_accepted_cells": 5,
+      "minimum_rig_total_cells": 42,
+      "complete_rigs_accuracy_passed": 13,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 1.0078960694294001,
+      "support_gate_passed": true
+    },
+    "case2": {
+      "accepted_cells": 324,
+      "accepted_safe_cells": 324,
+      "accepted_unsafe_cells": 0,
+      "safe_accept_fraction": 0.6254826254826255,
+      "minimum_rig_accept_fraction": 0.34545454545454546,
+      "maximum_rig_accept_fraction": 0.5454545454545454,
+      "complete_rigs_accuracy_passed": 13,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 1.0277609910834127,
+      "support_gate_passed": true
+    },
+    "accuracy_gate_passed": true,
+    "logical_cost_gate_passed": true,
+    "retrospective_gate_passed": true
+  },
+  "parent_comparison": {
+    "case5": {
+      "raw_accepted": 126,
+      "studentized_accepted": 123,
+      "union_accepted": 140,
+      "both_accept": 109,
+      "raw_only_accept": 17,
+      "studentized_only_accept": 14,
+      "neither_accept": 406,
+      "rig4_raw_studentized_union": [5, 4, 5],
+      "rig11_raw_studentized_union": [4, 6, 6],
+      "per_rig_raw": [6, 5, 14, 12, 5, 5, 22, 10, 5, 23, 10, 4, 5],
+      "per_rig_studentized": [7, 9, 15, 9, 4, 6, 17, 9, 5, 20, 9, 6, 7],
+      "per_rig_union": [7, 9, 17, 12, 5, 6, 22, 10, 5, 24, 10, 6, 7]
+    },
+    "case2": {
+      "raw_accepted_safe": 297,
+      "studentized_accepted_safe": 323,
+      "union_accepted_safe": 324,
+      "accepted_unsafe": 0,
+      "both_accept": 296,
+      "raw_only_accept": 1,
+      "studentized_only_accept": 27,
+      "neither_accept": 391
+    }
+  },
+  "cost_boundary": {
+    "accepted_direct_K11_exact_A_At": [12, 11],
+    "fallback_zero_PCGLS_K16_exact_A_At": [16, 16],
+    "case5_union_mean_A_range": [13.714285714285715, 15.523809523809524],
+    "case5_union_mean_At_range": [13.142857142857142, 15.404761904761905],
+    "case2_union_mean_A_range": [13.818181818181818, 14.618181818181817],
+    "case2_union_mean_At_range": [13.272727272727273, 14.272727272727273],
+    "actual_exact_call_reduction_established": false,
+    "fresh_wall_rss_measured": false
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_RETROSPECTIVE_DUAL_PRESS_UNION_V228",
+    "scientific_decision": "POST_OPEN_COMPLEMENTARY_DUAL_PRESS_SIGNAL_V228",
+    "required_checks_passed": 17,
+    "required_checks_total": 17,
+    "maximum_formal_summary_absolute_difference": 2.5677460158135545e-11,
+    "discrete_decisions_match": true,
+    "formal_tree_unchanged": true,
+    "parent_trees_unchanged": true,
+    "source_closure_unchanged": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "adjudication": {
+    "complementary_observable_signals_supported_on_opened_cases": true,
+    "single_score_scalarization_or_calibration_bottleneck_supported": true,
+    "deployment_policy_established": false,
+    "external_validation_authorized": false,
+    "case4_or_case6_opening_authorized": false,
+    "boolean_formula_or_threshold_retuning_authorized": false,
+    "larger_model_rescue_authorized": false,
+    "route_action_zh": "固定 OR 在已开封 Case 2/5 上补回两种单分数各自漏掉的安全样本，并通过原有逐 rig 支持、完整精度与逻辑成本门。这支持两类可观测信号互补，也把瓶颈从单个分数本身重排到如何在未开封数据上结果前组合或校准。由于失败 rig 身份已知，本结果只能作为事后机制线索；不打开 Case 4/6，不事后搜索其他布尔公式或阈值。",
+    "route_action_en": "The fixed OR recovers safe cells missed by either single score on opened Cases 2 and 5 while passing the existing per-rig support, complete-accuracy, and logical-cost gates. This supports complementary observable signals and reranks the bottleneck from either score alone to prospective combination or calibration on unopened data. Because the failing rig identities were already known, this is only a retrospective mechanism lead. Do not open Cases 4/6 or search other Boolean formulas or thresholds after the result."
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployment_algorithm": false,
+    "preregistered_success": false,
+    "exact_call_reduction_established": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}
