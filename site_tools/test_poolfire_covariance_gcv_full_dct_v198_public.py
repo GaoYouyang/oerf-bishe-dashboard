@@ -48,8 +48,9 @@ def test_v198_evidence_remains_preserved_after_v201() -> None:
     assert current["metrics"]["v198_identity_control_strict_safe_cells"] == 2626
     assert current["current_decision"]["v198_algorithm_breakthrough"] is False
     assert current["current_decision"]["v198_empirical_covariance_route_closed"] is True
+    assert current["current_decision"]["v224_scalar_camera_jackknife_route_closed"] is True
+    assert current["current_decision"]["v224_all_multiview_mechanisms_closed"] is False
     next_gate = current["next_scientific_gate_en"]
-    assert "null(A)-content explanation is closed" in next_gate
     assert "paired real-BOST displacement data" in next_gate
 
 

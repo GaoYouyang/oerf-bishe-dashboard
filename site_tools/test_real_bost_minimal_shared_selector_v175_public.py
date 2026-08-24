@@ -71,7 +71,8 @@ def test_current_evidence_retains_v175_as_historical_parent_evidence() -> None:
     assert payload["metrics"]["v175_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v175_independent_check_count"] == 31
     assert payload["v221_low64_exact_rowspace_lift_scientific_decision"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
-    assert "null(A)-content explanation is closed" in payload["next_scientific_gate_en"]
+    assert payload["current_decision"]["v224_scalar_camera_jackknife_route_closed"] is True
+    assert payload["current_decision"]["v224_all_multiview_mechanisms_closed"] is False
     assert "paired real-BOST displacement data" in payload["next_scientific_gate_en"]
     assert "配对真实 BOST 位移数据" in payload["next_scientific_gate_zh"]
     assert "真实 BOST" in payload["next_scientific_gate_zh"]

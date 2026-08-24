@@ -76,12 +76,14 @@ def test_v222_1_current_surfaces_and_log_are_synchronized() -> None:
     assert current["current_decision"]["v222_inconclusive_preserved"] is True
     assert current["current_decision"]["v222_1_nullspace_explanation_closed"] is True
     assert current["current_decision"]["v222_1_algorithm_breakthrough"] is False
-    for page in [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]:
+    for page in [ROOT / "index.html", ROOT / "operator-learning/index.html"]:
         content = page.read_text(encoding="utf-8")
         assert "v222.1" in content
         assert "546/546" in content
         assert "518/715" in content
         assert "algorithm_breakthrough=false" in content
+    daily = (ROOT / "operator-learning/daily-progress.html").read_text(encoding="utf-8")
+    assert "blastnet_case2_case5_low64_algebraic_nullspace_attribution_v222_1_result_2026-08-24.md" in daily
     log = LEARNING_LOG.read_text(encoding="utf-8")
     assert "v222.1 正交去除 null(A)" in log
     assert "v222.1 orthogonal null(A) removal" in log

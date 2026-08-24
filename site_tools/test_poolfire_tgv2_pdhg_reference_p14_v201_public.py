@@ -82,6 +82,5 @@ def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     assert current["metrics"]["v201_tgv2_rescued_failed_cells"] == 0
     assert current["current_decision"]["v201_tgv2_reference_adequate"] is False
     assert current["current_decision"]["v201_fixed_tgv2_reference_closed"] is True
-    assert current["public_evidence"]["result"].endswith(
-        "blastnet_case2_case5_low64_harmonic_risk_v223_result_2026-08-24.md"
-    )
+    assert current["public_evidence"]["result"].startswith("../document_reader.html?doc=docs%2F")
+    assert current["public_evidence"]["summary"].startswith("../docs/")

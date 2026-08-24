@@ -91,9 +91,8 @@ def test_v212_remains_historical_after_the_v214_headline() -> None:
     assert current["v221_low64_exact_rowspace_lift_scientific_decision"] == (
         "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
-    assert current["public_evidence"]["result"].endswith(
-        "blastnet_case2_case5_low64_harmonic_risk_v223_result_2026-08-24.md"
-    )
+    assert current["public_evidence"]["result"].startswith("../document_reader.html?doc=docs%2F")
+    assert current["public_evidence"]["summary"].startswith("../docs/")
     historical = json.loads(SUMMARY.read_text())
     assert historical["scientific_decision"] == (
         "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212"

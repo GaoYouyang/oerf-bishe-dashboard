@@ -78,9 +78,8 @@ def test_v206_remains_preserved_parent_evidence() -> None:
     assert current["current_decision"]["v206_post_open_all_nine_resource_headroom"] is True
     assert current["current_decision"]["v206_global_resource_speedup_claim"] is False
     assert current["current_decision"]["v208_case5_external_gate_adjudicated"] is False
-    assert current["public_evidence"]["result"].endswith(
-        "blastnet_case2_case5_low64_harmonic_risk_v223_result_2026-08-24.md"
-    )
+    assert current["public_evidence"]["result"].startswith("../document_reader.html?doc=docs%2F")
+    assert current["public_evidence"]["summary"].startswith("../docs/")
 
 
 def test_primary_pages_preserve_v206_as_bilingual_parent_evidence() -> None:

@@ -16582,6 +16582,36 @@ The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFE
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v224 逐相机删除稳定度仍重叠，单标量回退关闭
+
+### 讲人话：删掉一台相机后会不会“变脸”确实能量到，但还不足以安全决定走快路还是回退
+
+v223 已证明调和可观测性和全局拟合残差这两个一维分数都不能把安全与不安全单元完全分开。v224 因此没有重调这两个分数，而是换成物理上不同的多视角自一致问题：对当前九视角观测先拟合 Low-64 系数，再逐台删除相机并用剩余八台重拟合，测量完整九视角预测发生的最坏相对漂移。
+
+九个删相机子问题在全部十三套几何中都保持 `64` 阶满秩。观测特征也在读取真值评分前先完成封存，所以安全标签没有参与特征构造。按冻结门，`1261` 个已开封单元仍有 `1064` 个安全、`197` 个不安全。
+
+主指标的安全区间为 `0.020138-0.091682`，不安全区间为 `0.037873-0.178650`，严格 margin 为 `-0.053809`。只做一次全量拟合的便宜逐相机残差 control 也重叠，安全/不安全区间为 `0.478493-0.736101` 与 `0.565201-0.850216`，margin 为 `-0.170900`。因此没有一个一维阈值能对全部单元 fail-closed，也没有回退策略或 exact-call 节省可供评分。
+
+独立第二实现改用 SVD Low-64 span 和正规方程特征分解，重建全部删相机解、分数、标签和判决。正式与独立特征最大差 `5.62e-15`，分离统计最大差 `1.46e-15`，相机换序最大差 `7.09e-15`，全部必需检查通过。封存判决为 `FAIL_LOW64_CAMERA_JACKKNIFE_RISK_OVERLAP_V224`。
+
+这关闭的是“单一最坏删相机漂移或单一逐相机残差可以作为安全回退阈值”，不是全部多视角机制，更不是整个 C 路线。后续不调整方向、阈值、相机分组或归一化，也不用大模型/GPU 挽救；若继续，必须保留真正的跨相机多变量结构，或者接入映射完整的真实 BOST 二维位移。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v224 leave-one-camera-out stability overlaps and closes the scalar fallback
+
+v223 shows that neither harmonic observability nor global fit residual completely separates safe from unsafe cells. v224 does not retune those scores. It asks a physically distinct multiview-consistency question: fit Low-64 coefficients from the current nine-camera observation, delete each camera in turn, refit from the remaining eight, and measure the worst relative change in the full nine-camera prediction.
+
+All nine reduced systems retain numerical rank `64` across all thirteen geometries. Observable features are sealed before truth scores are opened, so safety labels do not enter feature construction. Under the frozen gates, `1,064` of `1,261` opened cells are safe and `197` unsafe.
+
+The primary safe range is `0.020138-0.091682`, while the unsafe range is `0.037873-0.178650`, giving a strict margin of `-0.053809`. The cheap per-camera residual control, which uses only one full fit, also overlaps: safe and unsafe ranges are `0.478493-0.736101` and `0.565201-0.850216`, with a `-0.170900` margin. No one-dimensional threshold is therefore fail-closed across every cell, and no fallback policy or exact-call saving can be scored.
+
+The independent implementation uses an SVD Low-64 span and normal-matrix eigensystems to rebuild all camera-deletion solutions, scores, labels, and decisions. Maximum formal-independent feature difference is `5.62e-15`, maximum separation-statistic difference is `1.46e-15`, maximum camera-permutation difference is `7.09e-15`, and every required check passes. The sealed decision is `FAIL_LOW64_CAMERA_JACKKNIFE_RISK_OVERLAP_V224`.
+
+This closes only the claim that one worst-camera drift or one per-camera residual can serve as a safe fallback threshold. It does not close all multiview mechanisms or the C route. Orientation, threshold, camera grouping, and normalization will not be retuned, and a larger model or GPU will not rescue this scalar route. Any continuation must preserve genuinely multivariate cross-camera structure or use fully mapped real-BOST 2D displacement.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v223 一维可观测调和风险存在重叠，安全回退关闭
 
 ### 讲人话：风险分数有方向，但没有安全到可以一刀切

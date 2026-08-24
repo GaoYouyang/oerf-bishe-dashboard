@@ -64,16 +64,14 @@ def test_v223_figure_is_rendered() -> None:
         assert image.mode == "RGB"
 
 
-def test_v223_current_surfaces_and_log_are_synchronized() -> None:
+def test_v223_is_preserved_as_historical_evidence_after_v224() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_LOW64_HARMONIC_RISK_OVERLAP_V223"
     assert current["current_decision"]["v223_one_dimensional_harmonic_risk_route_closed"] is True
     assert current["current_decision"]["v223_algorithm_breakthrough"] is False
     for page in [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]:
         content = page.read_text(encoding="utf-8")
         assert "v223" in content
-        assert "-0.233392" in content
-        assert "algorithm_breakthrough=false" in content
+        assert "blastnet_case2_case5_low64_harmonic_risk_v223_result_2026-08-24.md" in content
     log = LEARNING_LOG.read_text(encoding="utf-8")
     assert "v223 一维可观测调和风险" in log
     assert "v223 one-dimensional observable harmonic risk" in log

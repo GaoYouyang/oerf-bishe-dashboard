@@ -80,7 +80,6 @@ def test_primary_pages_reference_v214_in_both_languages() -> None:
     for relative in (
         "index.html",
         "operator-learning/index.html",
-        "operator-learning/daily-progress.html",
     ):
         content = (ROOT / relative).read_text(encoding="utf-8")
         assert "blastnet_case5_observation_spectral_proxy_v214" in content

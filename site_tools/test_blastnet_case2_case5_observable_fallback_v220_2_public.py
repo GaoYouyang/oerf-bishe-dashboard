@@ -60,7 +60,7 @@ def test_v220_2_historical_pages_and_learning_log_remain_synchronized() -> None:
     assert current["v220_2_observable_fallback_scientific_decision"] == "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
     assert current["current_decision"]["v220_2_observable_fallback_route_closed"] is True
     assert current["current_decision"]["v220_2_algorithm_breakthrough"] is False
-    for page in [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]:
+    for page in [ROOT / "index.html", ROOT / "operator-learning/index.html"]:
         content = page.read_text(encoding="utf-8")
         assert "v220.2" in content
         assert "0/13" in content

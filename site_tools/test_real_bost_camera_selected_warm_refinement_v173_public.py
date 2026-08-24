@@ -70,7 +70,8 @@ def test_current_evidence_preserves_v173_but_points_to_v181() -> None:
     assert payload["metrics"]["v173_h1_k0_strict_safe_count"] == 468
     assert payload["metrics"]["v173_h1_k0_exact_A"] == 1
     assert payload["metrics"]["v173_independent_check_count"] == 21
-    assert "null(A)-content explanation is closed" in payload["next_scientific_gate_en"]
+    assert payload["current_decision"]["v224_scalar_camera_jackknife_route_closed"] is True
+    assert payload["current_decision"]["v224_all_multiview_mechanisms_closed"] is False
     assert "paired real-BOST displacement data" in payload["next_scientific_gate_en"]
     assert "配对真实 BOST 位移数据" in payload["next_scientific_gate_zh"]
     assert "真实 BOST" in payload["next_scientific_gate_zh"]

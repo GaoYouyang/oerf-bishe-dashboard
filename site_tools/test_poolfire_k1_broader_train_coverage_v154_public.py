@@ -82,9 +82,9 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
         == "FAIL_BROADER_TRAIN_COVERAGE_V154"
     )
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
-    next_gate = payload["next_scientific_gate_en"].lower()
-    assert "null(a)-content explanation is closed" in next_gate
-    assert "spectral action" in next_gate
+    assert decision["v224_scalar_camera_jackknife_route_closed"] is True
+    assert decision["v224_all_multiview_mechanisms_closed"] is False
+    assert "multivariate cross-camera structure" in payload["next_scientific_gate_en"]
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:
