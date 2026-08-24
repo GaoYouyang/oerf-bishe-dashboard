@@ -4,6 +4,28 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v234 找到 Case 12 策略失败的直接原因：fallback 换坏了三个正确结果
+
+**为什么做。** v230.1 已经打开 Case 12，v229 的 dual-PRESS 策略结果也已经可见。v234 不把它冒充新外门，只做 post-open 因果归因：比较固定 Direct Low64 warm + 未修改 PCGLS K11、Zero geometry-Jacobi PCGLS K16 和固定 dual-PRESS 接受/回退策略，判断失败到底来自 direct 臂还是 fallback。
+
+**实际做了什么。** 正式与完全独立第二实现各自重建 13 个 rig、每 rig 46 帧、598 个单元的场、观测、四项精度门、逐 rig 尾部与逻辑调用账。独立 `14/14` 项检查全真；归因行和 K1-K16 深度表逐项一致，汇总最大数值差为 **1.47e-10**。
+
+**结果。** 固定 Direct K11 达到 **598/598、13/13**；Zero K16 为 **594/598、11/13**；dual-PRESS 策略为 **595/598、11/13**。策略接受 **437** 个、拒绝 **161** 个，但 161 个被拒绝的 direct 结果全部本来就安全。3 个单元只在回退 K16 后失败，恰好解释策略全部 3 个失败；接受 direct 还救回 1 个 K16 不安全单元。Direct K11 每单元为 **12A+11A^T**，策略平均为 **13.076923A+12.346154A^T**，全批次 direct 少 **644A+805A^T**。
+
+**讲人话。** 这次不是“再换一个 reference”，而是把旧策略的失败拆开：固定 K11 本身全过，额外 fallback 既更贵又制造了全部失败。判决为 `POST_OPEN_CASE12_DIRECT_LOW64_K11_CONTRACT_DOMINATES_FIXED_DUAL_PRESS_FALLBACK_V234`。当前 v229 fallback 壳关闭；下一步只能把固定 Direct K11 单独结果前冻结，在下一个全局未打开合格条件上验证。Case 12 已开封，所以仍不是外部泛化、wall/RSS 或算法突破。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v234 finds the direct cause of the Case 12 policy failure
+
+Case 12 and the v229 policy outcomes were already opened, so v234 is explicitly a post-open causal attribution rather than a new external gate. Formal and fully independent implementations rebuild all 598 cells across 13 rigs, including fields, observations, four accuracy gates, rig tails, and logical calls. All **14/14** independent checks pass; attribution and K1-K16 depth rows agree exactly, with a maximum summary difference of **1.47e-10**.
+
+Fixed Direct Low64 warm plus unchanged PCGLS K11 reaches **598/598 strict-safe cells and 13/13 complete rigs**. Zero K16 reaches **594/598 and 11/13**, while the fixed dual-PRESS policy reaches **595/598 and 11/13**. The policy accepts **437** cells and rejects **161**, yet all 161 rejected direct results are already safe. Fallback creates all three policy failures, while direct acceptance rescues one K16-unsafe cell. Direct uses **12A+11A^T** per cell versus the policy mean of **13.076923A+12.346154A^T**, saving **644A+805A^T** over the batch.
+
+In plain language, fixed K11 passes; the added fallback is both more expensive in the logical ledger and responsible for every failure. The decision is `POST_OPEN_CASE12_DIRECT_LOW64_K11_CONTRACT_DOMINATES_FIXED_DUAL_PRESS_FALLBACK_V234`. The current v229 fallback shell closes. The next valid step is a separately preregistered fixed-Direct-K11 test on the next globally unopened eligible condition. This result is not external generalization, wall/RSS speedup, or an algorithm breakthrough.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `resource_speedup=false`, `real_bost=false`.
+
 ## 2026-08-25：v233/v233.1 证明投影拟合好不等于三维场正确
 
 **为什么做。** v232.1 已经关闭会放大浮点差异的 deep-PCGLS reference 壳，但这还没有回答“换成稳定的绝对求解后，Case 12 reference 能不能合格”。v233 因此只检验一个结果前固定的 reference：零均值 DCT1024、observation-only machine ridge、同一 13 个 rig、598 个单元和同一组 field / full-gradient / interior-gradient / observation 绝对门。

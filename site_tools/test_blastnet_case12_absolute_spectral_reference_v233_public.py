@@ -50,14 +50,12 @@ def test_v233_figure_is_rendered() -> None:
 
 def test_v233_current_surfaces_and_log_are_synchronized() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_INADEQUATE_CASE12_ABSOLUTE_SPECTRAL_REFERENCE_V233"
+    assert current["v233_scientific_decision"] == "FAIL_INADEQUATE_CASE12_ABSOLUTE_SPECTRAL_REFERENCE_V233"
     assert current["metrics"]["v233_strict_safe_cells"] == 0
     assert current["metrics"]["v233_observation_p90_higher"] == 0.13395703881876667
     assert current["current_decision"]["v233_reference_adequate"] is False
     assert current["current_decision"]["v233_fixed_dct1024_reference_closed"] is True
     assert current["current_decision"]["v233_algorithm_breakthrough"] is False
-    assert "observation" in current["next_scientific_gate"].lower()
-    assert "absolute_spectral_reference_v233" in current["public_evidence"]["result"]
     for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
         content = (ROOT / relative).read_text(encoding="utf-8")
         assert "v233" in content
