@@ -50,22 +50,20 @@ def test_v230_1_figure_is_rendered() -> None:
         assert image.height >= 700
 
 
-def test_v230_1_current_surfaces_and_log_are_synchronized() -> None:
+def test_v230_1_historical_surfaces_and_log_are_preserved() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-25"
-    assert current["scientific_status"] == "INCONCLUSIVE_INADEQUATE_CASE12_K16_REFERENCE_V230"
+    assert current["v230_scientific_decision"] == "INCONCLUSIVE_INADEQUATE_CASE12_K16_REFERENCE_V230"
     assert current["metrics"]["v230_case12_reference_absolute_strict_safe"] == 594
     assert current["metrics"]["v230_case12_reference_strict_total"] == 598
     assert current["metrics"]["v230_case12_reference_complete_rigs_passed"] == 11
     assert current["current_decision"]["v230_dual_press_policy_adjudicated"] is False
     assert current["current_decision"]["v230_resource_gate_authorized"] is False
     assert current["current_decision"]["v230_algorithm_breakthrough"] is False
-    assert "reference-depth" in current["next_scientific_gate"].lower()
-    assert "external_v230_1" in current["public_evidence"]["result"]
     for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
         content = (ROOT / relative).read_text(encoding="utf-8")
         assert "v230.1" in content
-        assert "blastnet_case12_low64_nested_dual_press_external_v230_1.png" in content
+        assert "blastnet_case12_low64_nested_dual_press_external_v230_1_result_2026-08-25.md" in content
         assert "594/598" in content
     log = (ROOT / "docs/operator_3d_learning_log.md").read_text(encoding="utf-8")
     assert "v230.1 先修正了一个病态数值比较" in log

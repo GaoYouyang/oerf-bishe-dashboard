@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v231 把 K1-K64 全部算完，但不能从失效的数值门里挑一个深度
+
+**为什么做。** v230.1 证明 Case 12 的 K16 reference 在四个内部梯度单元上先失败，因此 dual-PRESS 策略没有资格进入比较。v231 只问一个更基础的问题：保持同一已开封工况、未修改 PCGLS、Jacobi 预条件与全部精度门，K1-K64 中是否存在一个对 598 个单元都合格的最小全局深度。
+
+**实际做了什么。** 正式程序和完全独立第二实现都对 13 个 rig、每 rig 46 帧一次运行至 K64，保存并检查每个深度；没有逐单元选 K，也没有事后放宽门。两套实现都完成了 **598 x 64** 个检查点。K16 父证据的场、残差、指标和调用账逐值一致，观测差最多 **8.88e-16**；独立物理残差闭合到 **8.35e-14**。
+
+**结果。** 结果前冻结的相机换序 `1e-8` 数值门失败。正式实现的场/残差/指标最大差为 **1.085e-2 / 3.446e-1 / 8.402e-3**；独立实现为 **8.711e-3 / 3.510e-1 / 7.006e-3**。两套完整轨迹之间的场和指标差也达到 **1.054e-2 / 8.377e-3**。因此不能打开 K1-K64 科学数组去选一个好看的深度，`selected_depth=null`。
+
+**讲人话。** 这不是“算到 K64 也没有合格 reference”，而是“当前深层 PCGLS 对相机块浮点求和顺序敏感，导致这个问题还不可裁决”。精确判决是 `INCONCLUSIVE_INVALID_CASE12_PCGLS_REFERENCE_DEPTH_V231`。下一步只能在结果盲的前提下先规范相机 ID 排序，再原样重做一次相同 K1-K64 门；这只是修复数值表示，不是算法进展。策略、安全、调用收益与 wall/RSS 继续封存，`algorithm_breakthrough=false`。
+
+### English summary
+
+v231 completes every K1-K64 checkpoint for all **598** Case 12 cells in both the formal and fully independent implementations. K16 parent fields, residuals, metrics, and call ledgers match exactly, observations differ by at most **8.88e-16**, and independent physical residual closure is **8.35e-14**. The preregistered `1e-8` camera-order invariance gate nevertheless fails: formal field/residual/metric discrepancies reach **1.085e-2 / 3.446e-1 / 8.402e-3**, and the independent implementation reaches **8.711e-3 / 3.510e-1 / 7.006e-3**. No depth is selected from invalid science arrays. The exact verdict is `INCONCLUSIVE_INVALID_CASE12_PCGLS_REFERENCE_DEPTH_V231`, not evidence that no adequate depth exists through K64. A separately frozen, result-blind canonical camera-ID ordering is required before repeating the unchanged qualification. No policy, safety, call, wall/RSS, external, real-BOST, paper-success, or algorithm-breakthrough claim is released.
+
 ## 2026-08-25：v230.1 先修正了一个病态数值比较，随后发现 Case 12 的 K16 reference 不够格
 
 **为什么做。** v229 只授权一个冻结的新工况门，Case 12 首次正式与独立执行却在相机换序和第二求解器的近零残差向量相对比较上触发 fail-closed。那时没有解释接受数、精度、调用账或策略胜负。v230.1 要先回答“这是物理/决策漂移，还是一个不适合近零量的数值比较”，再决定科学数组能否释放。
