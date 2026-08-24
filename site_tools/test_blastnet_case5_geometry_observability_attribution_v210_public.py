@@ -76,7 +76,7 @@ def test_v210_remains_preserved_as_parent_evidence_below_v211() -> None:
     assert current["current_decision"]["v210_fixed_primary_strictly_separates"] is False
     assert current["current_decision"]["v210_predictor_authorized"] is False
     assert current["scientific_status"] == (
-        "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
+        "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
 
 

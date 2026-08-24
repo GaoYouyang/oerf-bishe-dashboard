@@ -78,14 +78,14 @@ def test_current_evidence_preserves_v169_but_points_to_v181() -> None:
     assert payload["current_decision"]["v169_predictor_training_authorized"] is False
     assert (
         payload["engineering_status"]
-        == "FAIL_INDEPENDENT_RECOMPUTATION_OBSERVABLE_FALLBACK_V220_2"
+        == "PASS_INDEPENDENT_RECOMPUTATION_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
     assert (
         payload["formal_status"]
-            == "FORMAL_PENDING_INDEPENDENT_OBSERVABLE_FALLBACK_V220_2"
+            == "FORMAL_PENDING_INDEPENDENT_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
     assert payload["scientific_status"] == (
-        "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
+        "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
 
 

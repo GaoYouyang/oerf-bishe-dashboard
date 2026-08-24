@@ -62,7 +62,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
+    assert payload["scientific_status"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     assert (
         payload["v174_equal_cost_selector_scientific_decision"]
         == "PASS_POSTOPEN_SELECTOR_ONLY_HEADROOM_V174"
@@ -70,7 +70,7 @@ def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     assert payload["metrics"]["v174_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v174_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v174_independent_check_count"] == 27
-    assert "current Low-64 K11/K16 observable fallback is closed" in payload["next_scientific_gate_en"]
+    assert "exact Low-64 row-space-lift construction is closed" in payload["next_scientific_gate_en"]
     assert "paired real-BOST displacement data" in payload["next_scientific_gate_en"]
     assert "配对真实 BOST 位移数据" in payload["next_scientific_gate_zh"]
     assert "真实 BOST" in payload["next_scientific_gate_zh"]

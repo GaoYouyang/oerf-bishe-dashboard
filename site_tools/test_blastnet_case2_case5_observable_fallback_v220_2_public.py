@@ -55,9 +55,9 @@ def test_v220_2_figure_is_rendered() -> None:
         assert image.mode == "RGB"
 
 
-def test_v220_2_current_pages_and_learning_log_are_synchronized() -> None:
+def test_v220_2_historical_pages_and_learning_log_remain_synchronized() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
+    assert current["v220_2_observable_fallback_scientific_decision"] == "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
     assert current["current_decision"]["v220_2_observable_fallback_route_closed"] is True
     assert current["current_decision"]["v220_2_algorithm_breakthrough"] is False
     for page in [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]:

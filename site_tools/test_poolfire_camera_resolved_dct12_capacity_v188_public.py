@@ -94,9 +94,9 @@ def test_current_evidence_points_to_v188_without_overclaiming() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
+    assert current["scientific_status"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     assert current["engineering_status"] == (
-        "FAIL_INDEPENDENT_RECOMPUTATION_OBSERVABLE_FALLBACK_V220_2"
+        "PASS_INDEPENDENT_RECOMPUTATION_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
     assert current["metrics"]["v188_primary_k1_five_strict_safe_count"] == 2
     assert current["metrics"]["v188_primary_k1_all_nine_strict_safe_count"] == 0

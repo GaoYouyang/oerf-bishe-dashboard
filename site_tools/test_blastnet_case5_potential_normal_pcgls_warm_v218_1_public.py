@@ -61,7 +61,7 @@ def test_v218_1_figure_is_rendered() -> None:
 
 def test_v218_1_history_is_preserved_after_v220_2() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
+    assert current["scientific_status"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     assert current["v218_1_scientific_decision"] == (
         "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
     )

@@ -16582,6 +16582,36 @@ The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFE
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v221 精确行空间 lift 没有保住 Low-64 暖启动信息
+
+### 讲人话：把起点精确投回“观测看得见的空间”反而抹掉了有用信息，这条解释被独立否定
+
+v220.2 已经说明，同一个 Low-64 K11/K16 可观测阈值不能跨工况稳定回退。v221 没有继续调阈值，而是检验一个物理上不同的解释：direct Low-64 场是否混入了当前观测看不见的近零空间成分，导致 Case 2 失败。
+
+唯一候选先计算 direct Low-64 场的精确 `A` 投影，再用精确 `A^T` lift 回 `range(A^T)`；随后只根据当前观测选择一个 `[0,2]` 内的残差最小缩放，并运行未修改的 geometry-Jacobi PCGLS K10。完整在线账为 `12A+11A^T`，与 direct Low-64 K11 同价。
+
+正式和完全独立程序都重放了 Case 5 与 Case 2 共 `1261` 个单元。Case 5 只有 `202/546` 个绝对严格安全单元、`0/546` matched、`0/13` 完整几何；Case 2 为 `670/715` 绝对安全、`0/715` matched、`0/13`。Zero-start K16 在两边均为 `13/13`，所以 reference 充分。Case 5 同价 direct Low-64 K11 仍为 `546/546、13/13`，说明精确行空间 lift 不是保留有用信号，而是在抑制它。
+
+缩放也没有卡在边界：Case 5 范围 `0.02872-0.03859`，Case 2 为 `0.01739-0.03698`，上下界命中均为 0。独立 `32/32` 检查全真；场、初始化器、逐单元指标、缩放与相机乱序场最大差为 `3.03e-9 / 8.03e-15 / 1.49e-10 / 1.60e-16 / 7.56e-14`，调用账差为 0。
+
+封存判决为 `FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221`。它关闭当前“Low-64 -> 精确 `A^T A` 行空间 lift -> 单缩放 -> PCGLS K10”构造，并否定“只要去掉近零空间成分就能修复 Case 2”的当前解释；不证明所有行空间方法都不可能，也不关闭整条 C 路线。后续不调 alpha、深度或 Low-64 秩，不用大模型或 GPU 挽救，不打开 Case 4/6，也不运行 wall/RSS。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v221 exact row-space lift does not preserve useful Low-64 warm-start information
+
+v220.2 already showed that one Low-64 K11/K16 observable threshold cannot provide stable fallback across conditions. Rather than retuning that threshold, v221 tests a physically distinct explanation: whether the direct Low-64 field contains near-nullspace components invisible to the current observation and therefore fails in Case 2.
+
+The unique candidate applies exact `A` to the direct Low-64 field and exact `A^T` to lift the projection back into `range(A^T)`. It then chooses one residual-minimizing scale in `[0,2]` from the current observation only and runs unchanged geometry-Jacobi PCGLS K10. The complete online ledger is `12A+11A^T`, equal to direct Low-64 K11.
+
+The formal and fully independent programs replay all `1261` Case 5 and Case 2 cells. Case 5 reaches only `202/546` absolute strict-safe cells, `0/546` matched cells, and `0/13` complete rigs. Case 2 reaches `670/715`, `0/715`, and `0/13`. Zero-start K16 reaches `13/13` in both, so the reference is adequate. The equal-cost direct Low-64 K11 control remains at `546/546 and 13/13` in Case 5, showing that the exact row-space lift suppresses rather than preserves useful information.
+
+The scale is not stuck at a bound: it ranges from `0.02872-0.03859` in Case 5 and `0.01739-0.03698` in Case 2, with zero bound hits. All `32/32` independent checks pass. Maximum field, initializer, cell-metric, scale, and camera-permutation field differences are `3.03e-9 / 8.03e-15 / 1.49e-10 / 1.60e-16 / 7.56e-14`, and call-ledger difference is zero.
+
+The sealed decision is `FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221`. It closes the current Low-64 to exact `A^T A` row-space lift to one-scale to PCGLS K10 construction and rejects the current explanation that removing near-nullspace content alone repairs Case 2. It does not prove that all row-space methods are impossible and does not close the full C route. Do not retune the scale, depth, or Low-64 rank, rescue it with a larger model or GPU, open Case 4/6, or run wall/RSS.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v220.2 不放宽数值门，可观测回退没有建立跨工况成功
 
 ### 讲人话：两个程序都看见 Case 2 失败，但验算尺子有两格没对齐，所以只能诚实写 inconclusive

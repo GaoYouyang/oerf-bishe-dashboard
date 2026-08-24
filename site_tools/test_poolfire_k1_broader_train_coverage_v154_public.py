@@ -83,7 +83,7 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     )
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     next_gate = payload["next_scientific_gate_en"].lower()
-    assert "low-64 k11/k16 observable fallback is closed" in next_gate
+    assert "exact low-64 row-space-lift construction is closed" in next_gate
     assert "physically distinct" in next_gate
 
 

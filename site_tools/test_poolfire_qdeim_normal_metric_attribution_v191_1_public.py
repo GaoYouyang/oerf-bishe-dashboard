@@ -99,9 +99,9 @@ def test_v191_1_public_files_exclude_private_execution_details() -> None:
 def test_current_evidence_points_to_v191_1_without_overclaiming() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
+        "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
-    assert current["engineering_status"] == "FAIL_INDEPENDENT_RECOMPUTATION_OBSERVABLE_FALLBACK_V220_2"
+    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_LOW64_EXACT_ROWSPACE_LIFT_V221"
     assert current["metrics"]["v191_mixed_setup_count"] == 21
     assert current["metrics"]["v191_total_setup_count"] == 26
     assert current["current_decision"]["v191_observation_activated_metric_attribution_passed"] is True
