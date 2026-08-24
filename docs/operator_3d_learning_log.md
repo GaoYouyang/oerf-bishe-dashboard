@@ -16582,6 +16582,32 @@ The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFE
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v220.2 不放宽数值门，可观测回退没有建立跨工况成功
+
+### 讲人话：两个程序都看见 Case 2 失败，但验算尺子有两格没对齐，所以只能诚实写 inconclusive
+
+v218.1 在已开封 Case 5 上留下一个值得确认的 deterministic control：Low-64 observation-only 起点接未修改 PCGLS K11，以 `12A+11A^T` 达到 `546/546` matched 单元和 `13/13` 完整几何。v220.2 不训练模型，也不改变表示或深度，只冻结一个可观测回退门：根据初始 residual、K11 residual 及其比值决定停在 K11，或沿同一条 PCGLS 轨迹继续到 K16。
+
+正式与完全独立程序都重放了 Case 5 与 Case 2 共 `1261` 个单元。名义结果在两边相同：Case 5 为 `546/546、13/13`，Case 2 只有 `629/715` matched 单元和 `0/13` 完整几何；固定 Low-64 起点即使继续到 K16，在 Case 2 仍为 `0/13`。因此同一观测阈值不是跨工况解法。
+
+但独立合同没有全部通过。正式场与独立场的最大相对差为 `1.50948e-8`，相机乱序场最大差为 `1.14546e-8`，都略高于结果前冻结的 `1e-8`。虽然 gate selection 和调用账逐项一致，feature、逐单元 metric、summary 最大差只有 `8.19e-16 / 4.29e-10 / 1.52e-10`，这些都不能覆盖已经失败的场级门。
+
+所以没有事后把容差放宽成 `2e-8`，也没有重复运行直到 PASS。正式侧的名义 FAIL 不被包装成独立验证通过；封存状态为 `INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2`。由于没有 validated success，当前 Low-64 K11/K16 可观测回退机制关闭，不打开 Case 4/6，不测 wall/RSS，不训练大模型，也不租 GPU。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v220.2 does not loosen the numerical gate and establishes no validated cross-condition fallback
+
+v218.1 left one deterministic control worth confirming on opened Case 5: an observation-only Low-64 start followed by unchanged PCGLS K11 reaches `546/546` matched cells and `13/13` complete rigs at `12A+11A^T`. v220.2 trains no model and changes neither representation nor depth. It freezes an observable fallback that uses the initial residual, the K11 residual, and their ratio to stop at K11 or continue the same PCGLS trajectory to K16.
+
+The formal and fully independent programs both replay all `1261` Case 5 and Case 2 cells. Their nominal results agree: Case 5 reaches `546/546 and 13/13`, while Case 2 reaches only `629/715` matched cells and `0/13` complete rigs. Even continuing the fixed Low-64 start to K16 leaves Case 2 at `0/13`, so retuning the same observable threshold is not a cross-condition solution.
+
+The independent contract nevertheless fails two checks. Maximum formal-independent field difference is `1.50948e-8`, and maximum camera-permutation field difference is `1.14546e-8`, both above the preregistered `1e-8` gate. Gate selections and call ledgers agree exactly, while maximum feature, cell-metric, and summary differences are only `8.19e-16 / 4.29e-10 / 1.52e-10`; none of those agreements overrides the failed field-level gate.
+
+The tolerance is therefore not loosened post hoc to `2e-8`, and validation is not repeated until it passes. The formal nominal failure is not presented as independently validated. The sealed status is `INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2`. With no validated success, the current Low-64 K11/K16 observable fallback is closed. Case 4/6, wall/RSS, larger-model training, and GPU rental remain closed.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v218.1 关闭 potential-normal，但 Low-64 K11 出现确定性调用余量
 
 ### 讲人话：新想法彻底没过，老 control 却在公平重放里第一次真的省下调用

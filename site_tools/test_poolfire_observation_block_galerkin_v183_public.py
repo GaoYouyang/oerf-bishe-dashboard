@@ -72,7 +72,7 @@ def test_v183_public_files_exclude_private_execution_details() -> None:
 
 def test_current_evidence_preserves_v183_after_v184_supersedes_latest_status() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
+    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
     assert current["v183_observation_block_galerkin_scientific_decision"] == (
         "FAIL_OBSERVATION_BLOCK_GALERKIN_V183"
     )

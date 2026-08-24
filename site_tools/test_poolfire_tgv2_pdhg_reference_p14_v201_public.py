@@ -63,7 +63,7 @@ def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
     assert (
         current["scientific_status"]
-        == "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
+        == "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
     )
     assert (
         current["v201_tgv2_reference_scientific_decision"]
@@ -83,5 +83,5 @@ def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     assert current["current_decision"]["v201_tgv2_reference_adequate"] is False
     assert current["current_decision"]["v201_fixed_tgv2_reference_closed"] is True
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_potential_normal_pcgls_warm_v218_1_result_2026-08-24.md"
+        "blastnet_case2_case5_observable_fallback_v220_2_result_2026-08-24.md"
     )

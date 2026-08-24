@@ -1,0 +1,93 @@
+{
+  "schema_version": "oerf-public-blastnet-case2-case5-observable-fallback-v220.2.0",
+  "updated": "2026-08-24",
+  "title_zh": "v220.2：可观测回退未建立跨工况成功，验证合同保持 inconclusive",
+  "title_en": "v220.2: observable fallback does not establish cross-condition success and remains inconclusive under the validation contract",
+  "scope": {
+    "diagnostic_type": "post-open observation-only adaptive-depth replay",
+    "conditions": 2,
+    "cells": 1261,
+    "rigs_per_condition": 13,
+    "trainable_parameters": 0,
+    "truth_used_by_runtime_gate": false,
+    "wall_rss_measured": false,
+    "new_unopened_condition_opened": false
+  },
+  "runtime_gate": {
+    "inputs": [
+      "normalized initial observation residual",
+      "normalized K11 observation residual",
+      "their ratio"
+    ],
+    "accepted_k11_case5": 189,
+    "total_case5": 546,
+    "accepted_k11_case2": 447,
+    "total_case2": 715
+  },
+  "nominal_recomputation": {
+    "case5": {
+      "matched_cells_passed": 546,
+      "total_cells": 546,
+      "complete_rigs_passed": 13,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 1.0204345841916433
+    },
+    "case2": {
+      "matched_cells_passed": 629,
+      "total_cells": 715,
+      "complete_rigs_passed": 0,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 1.5066087176230984
+    },
+    "combined_mean_logical_calls": {
+      "candidate_A": 14.478191911181602,
+      "candidate_AT": 13.478191911181602,
+      "candidate_total": 27.956383822363204,
+      "reference_A": 16.0,
+      "reference_AT": 16.0,
+      "reference_total": 32.0,
+      "total_reduction_fraction": 0.12636300555114988
+    },
+    "nominal_decision": "FAIL_OBSERVABLE_FALLBACK_DEVELOPMENT_V220_2"
+  },
+  "independent_validation": {
+    "status": "FAIL_INDEPENDENT_RECOMPUTATION_OBSERVABLE_FALLBACK_V220_2",
+    "scientific_decision": "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2",
+    "all_1261_cells_replayed": true,
+    "gate_selections_exact": true,
+    "call_ledgers_exact": true,
+    "nominal_decision_exact": true,
+    "maximum_feature_absolute_difference": 8.187894806610529e-16,
+    "maximum_metric_absolute_difference": 4.29483337782699e-10,
+    "maximum_summary_absolute_difference": 1.5240819717377008e-10,
+    "failed_checks": {
+      "formal_field_relative_difference": {
+        "observed": 1.509475812844814e-8,
+        "frozen_tolerance": 1e-8
+      },
+      "camera_permutation_field_relative_difference": {
+        "observed": 1.1454609238147007e-8,
+        "frozen_tolerance": 1e-8
+      }
+    }
+  },
+  "adjudication": {
+    "tolerance_changed_after_results": false,
+    "formal_failure_adopted_as_independently_validated": false,
+    "observable_fallback_route_retained": false,
+    "validated_success_established": false,
+    "route_action_zh": "不放宽场级数值门、不重复验证、不打开另一工况。由于没有独立验证通过的跨工况成功，且独立侧名义复算在 Case 2 仍为 0/13 完整几何，当前 Low-64 K11/K16 可观测回退机制关闭。",
+    "route_action_en": "Do not loosen the field-level numerical gate, rerun validation, or open another condition. No independently validated cross-condition success exists, and the independent nominal replay still reaches 0/13 complete Case 2 rigs, so the current Low-64 K11/K16 observable fallback mechanism is closed."
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "learned_algorithm": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

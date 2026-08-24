@@ -66,7 +66,7 @@ def test_v215_is_preserved_beneath_the_v217_1_current_headline() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-24"
     assert current["scientific_status"] == (
-        "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
+        "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
     )
     assert current["metrics"]["v215_reference_strict_cells_passed"] == 466
     assert current["metrics"]["v215_reference_complete_rigs_passed"] == 1

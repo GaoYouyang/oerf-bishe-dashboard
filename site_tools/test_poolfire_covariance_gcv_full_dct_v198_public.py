@@ -43,14 +43,14 @@ def test_v198_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v198_evidence_remains_preserved_after_v201() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
+    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
     assert current["metrics"]["v198_primary_strict_safe_cells"] == 2626
     assert current["metrics"]["v198_identity_control_strict_safe_cells"] == 2626
     assert current["current_decision"]["v198_algorithm_breakthrough"] is False
     assert current["current_decision"]["v198_empirical_covariance_route_closed"] is True
     next_gate = current["next_scientific_gate_en"]
-    assert "Low-64 representation and PCGLS K11 depth" in next_gate
-    assert "real-BOST claims remain unauthorized" in next_gate
+    assert "current Low-64 K11/K16 observable fallback is closed" in next_gate
+    assert "paired real-BOST displacement data" in next_gate
 
 
 def test_v198_public_files_exclude_private_execution_details() -> None:

@@ -60,7 +60,7 @@ def test_public_surfaces_are_bilingual_and_point_to_v154() -> None:
         encoding="utf-8"
     )
     daily = SURFACES[2].read_text(encoding="utf-8")
-    assert "49 天" in daily
+    assert "50 天" in daily
     assert "Day 44" in daily
 
 
@@ -83,8 +83,8 @@ def test_current_evidence_closes_current_predictor_and_gpu() -> None:
     )
     assert decision["v162_global_quadratic_geometry_family_closed"] is True
     next_gate = payload["next_scientific_gate_en"].lower()
-    assert "low-64 representation" in next_gate
-    assert "previously unopened public condition" in next_gate
+    assert "low-64 k11/k16 observable fallback is closed" in next_gate
+    assert "physically distinct" in next_gate
 
 
 def test_result_states_independent_failure_and_claim_limits() -> None:

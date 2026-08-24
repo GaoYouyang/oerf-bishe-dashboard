@@ -45,14 +45,14 @@ def test_v199_public_assets_and_bilingual_copy_exist() -> None:
 
 def test_v199_evidence_remains_preserved_after_v201_becomes_current() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
-    assert current["scientific_status"] == "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
-    assert current["formal_status"] == "FORMAL_PENDING_INDEPENDENT_POTENTIAL_NORMAL_PCGLS_WARM_V218_1"
-    assert current["engineering_status"] == "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_PCGLS_WARM_V218_1_1"
+    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
+    assert current["formal_status"] == "FORMAL_PENDING_INDEPENDENT_OBSERVABLE_FALLBACK_V220_2"
+    assert current["engineering_status"] == "FAIL_INDEPENDENT_RECOMPUTATION_OBSERVABLE_FALLBACK_V220_2"
     assert current["v199_fixed_identity_p14_scientific_decision"] == "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199"
     assert current["metrics"]["v199_primary_five_strict_safe_cells"] == 1268
     assert current["metrics"]["v199_reference_five_complete_groups_passed"] == 0
     assert current["current_decision"]["v199_p14_reference_adequate"] is False
     assert current["current_decision"]["v199_exact_call_headroom_interpretable"] is False
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case5_potential_normal_pcgls_warm_v218_1_result_2026-08-24.md"
+        "blastnet_case2_case5_observable_fallback_v220_2_result_2026-08-24.md"
     )

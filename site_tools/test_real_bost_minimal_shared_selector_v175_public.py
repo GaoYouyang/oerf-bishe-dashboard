@@ -70,10 +70,10 @@ def test_current_evidence_retains_v175_as_historical_parent_evidence() -> None:
     assert payload["metrics"]["v175_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v175_ray_axis_maximin_strict_safe_count"] == 455
     assert payload["metrics"]["v175_independent_check_count"] == 31
-    assert payload["scientific_status"] == "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
-    assert "Low-64 representation and PCGLS K11 depth" in payload["next_scientific_gate_en"]
-    assert "real-BOST claims remain unauthorized" in payload["next_scientific_gate_en"]
-    assert "神经、GPU 与真实 BOST 主张继续关闭" in payload["next_scientific_gate_zh"]
+    assert payload["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
+    assert "current Low-64 K11/K16 observable fallback is closed" in payload["next_scientific_gate_en"]
+    assert "paired real-BOST displacement data" in payload["next_scientific_gate_en"]
+    assert "配对真实 BOST 位移数据" in payload["next_scientific_gate_zh"]
     assert "真实 BOST" in payload["next_scientific_gate_zh"]
 
 

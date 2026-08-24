@@ -72,7 +72,7 @@ def test_v208_is_preserved_as_the_historical_parent() -> None:
     assert current["current_decision"]["v208_case5_external_gate_adjudicated"] is False
     assert current["current_decision"]["v208_resource_gate_authorized"] is False
     assert current["scientific_status"] == (
-        "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
+        "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
     )
 
 

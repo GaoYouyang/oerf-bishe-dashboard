@@ -59,10 +59,13 @@ def test_v218_1_figure_is_rendered() -> None:
         assert image.mode == "RGB"
 
 
-def test_v218_1_current_evidence_and_primary_pages_are_synchronized() -> None:
+def test_v218_1_history_is_preserved_after_v220_2() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
-    assert current["engineering_status"] == (
+    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2"
+    assert current["v218_1_scientific_decision"] == (
+        "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
+    )
+    assert current["v218_1_corrected_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_PCGLS_WARM_V218_1_1"
     )
     assert current["metrics"]["v218_1_low64_k11_matched_cells_passed"] == 546
