@@ -16608,6 +16608,36 @@ This closes the fixed `27`-D angular spectrum plus Case 5 cross-rig one-class su
 
 `algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v226 相机分块 PRESS 零危险误接但效用门差一个帧
+
+### 讲人话：安全筛选终于对了，但最差一套相机还少接受一个帧，所以不能算成功
+
+v225 的固定角谱互支持会把危险单元放进快路。v226 不再调整那套表示，而是检验一个物理上不同的问题：遮掉一台相机后，另外八台相机拟合出的 Low-64 场能不能预测被遮相机的二维观测。九个遮相机预测误差组成 PRESS 分数，分数越低越安全；阈值只由已知安全 Case 5 生成，Case 5 完整留一 rig，Case 2 的接受决策在读取其真值门前已经封存。
+
+这个证书在 Case 2 接受 `297/715` 个单元，`297` 个全部安全，`197` 个不安全单元全部拒绝。Direct Low-64 PCGLS K11 / Zero-PCGLS K16 混合策略在 Case 2 和 Case 5 都达到 `13/13` 完整 rig 精度；最大 matched ratio 分别为 `1.027761` 和 `1.007896`，每个 rig 的平均 `A/A^T` 账都严格低于 K16 reference。只看全拟合残差的便宜 control 则在 Case 2 接受 `553` 个单元，其中 `61` 个不安全，完整精度为 `0/13`。
+
+但结果前效用门要求每个 Case 5 留一 rig 至少接受 `10%`。最差 rig 只接受 `4/42=9.52%`，通过至少需要 `5/42`。因此严格判决仍是 `FAIL_LOW64_BLOCK_PRESS_CERTIFICATE_V226`：它把失败从“安全性不成立”收窄到“逐 rig 校准稳定性差一个帧”，却不能事后把 `10%` 改成 `9.5%`，也不能据此授权资源测试。
+
+完全独立的第二实现改用正规矩阵 eigensolve，并显式逐帧、逐相机重建全拟合、九个八相机拟合、PRESS 分数、顺序统计阈值、接受掩码、逐 rig 物理门和调用账。`16/16` 项必需检查通过；特征、阈值、汇总和相机换序最大差为 `1.11e-15 / 2.22e-16 / 3.30e-11 / 1.55e-15`，离散决策完全一致。
+
+这关闭的是当前九相机 exact block-PRESS 证书，不是全部多视角机制或整个 C 路线。不得修改公式、floor、阈值、`10%` 接受比例、Low-64 秩或 PCGLS 深度；不训练大模型、不租 GPU、不跑 wall/RSS，也不打开 Case 4/6。本次没有部署算法、稳定 exact-call 收益、外部泛化或真实 BOST 结论。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v226 camera-block PRESS has zero unsafe accepts but misses utility by one frame
+
+v225's fixed angular-spectrum support allows unsafe cells onto the direct path. v226 does not retune that representation. It asks a physically different question: after holding out one camera, can the Low-64 field fitted on the other eight cameras predict the held-out 2D observation? The nine held-out prediction errors form the PRESS score, where lower is safer. Thresholds come only from known-safe Case 5, Case 5 uses complete leave-one-rig-out evaluation, and Case 2 accept decisions are sealed before its truth gates are read.
+
+The certificate accepts `297/715` Case 2 cells. All `297` are safe and all `197` unsafe cells are rejected. The Direct Low-64 PCGLS K11 / Zero-PCGLS K16 mixed policy reaches `13/13` complete-rig accuracy in both Cases 2 and 5, with maximum matched ratios of `1.027761` and `1.007896`; mean `A/A^T` ledgers are strictly below the K16 reference in every rig. The cheap full-fit-residual control accepts `553` Case 2 cells including `61` unsafe cells and reaches only `0/13` complete rigs.
+
+The preregistered utility gate requires at least `10%` acceptance in every held-out Case 5 rig. The worst rig accepts only `4/42=9.52%`; passing requires at least `5/42`. The strict verdict is therefore still `FAIL_LOW64_BLOCK_PRESS_CERTIFICATE_V226`. The result narrows the failure from unsafe transfer to a one-frame per-rig calibration shortfall, but the `10%` gate cannot be changed to `9.5%` after results and the resource gate is not authorized.
+
+A fully independent implementation uses normal-matrix eigensolves and explicit frame/camera loops to rebuild the full fit, all nine eight-camera fits, PRESS scores, order-statistic thresholds, accept masks, rig physics gates, and call ledgers. All `16/16` required checks pass. Maximum feature, threshold, summary, and camera-permutation differences are `1.11e-15 / 2.22e-16 / 3.30e-11 / 1.55e-15`, with identical discrete decisions.
+
+This closes the current exact nine-camera block-PRESS certificate, not every multiview mechanism or the C route. Its formula, floor, threshold, `10%` acceptance fraction, Low-64 rank, and PCGLS depths will not be changed. No larger model, GPU, wall/RSS run, or Case 4/6 opening is authorized. There is no deployment algorithm, stable exact-call gain, external generalization, or real-BOST result.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v224 逐相机删除稳定度仍重叠，单标量回退关闭
 
 ### 讲人话：删掉一台相机后会不会“变脸”确实能量到，但还不足以安全决定走快路还是回退
