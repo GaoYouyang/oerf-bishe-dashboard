@@ -77,5 +77,5 @@ def test_v204_current_evidence_is_preserved_beneath_the_v205_headline() -> None:
     assert current["current_decision"]["v204_algorithm_breakthrough"] is False
     assert current["current_decision"]["v204_dense_cache_removal_required"] is True
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case2_case5_low64_algebraic_nullspace_attribution_v222_1_result_2026-08-24.md"
+        "blastnet_case2_case5_low64_harmonic_risk_v223_result_2026-08-24.md"
     )

@@ -1,0 +1,80 @@
+{
+  "schema_version": "oerf-public-blastnet-case2-case5-low64-harmonic-risk-v223.0.0",
+  "updated": "2026-08-24",
+  "title_zh": "v223：一维可观测调和风险分数存在重叠，安全回退关闭",
+  "title_en": "v223: overlapping one-dimensional observable harmonic risk closes the safe fallback",
+  "scope": {
+    "diagnostic_type": "post-open mechanism-capacity diagnostic",
+    "conditions": 2,
+    "cells": 1261,
+    "safe_cells": 1064,
+    "unsafe_cells": 197,
+    "trainable_parameters": 0,
+    "deployment_policy_established": false,
+    "wall_rss_measured": false,
+    "new_unopened_condition_opened": false,
+    "truth_used_for_safety_labels": true
+  },
+  "safety_labels": {
+    "definition": "Direct Low-64 PCGLS K11 is safe only when every frozen absolute per-cell gate and every ratio to Zero-PCGLS K16 is at most 1.05.",
+    "case5_safe_cells": 546,
+    "case5_total_cells": 546,
+    "case2_safe_cells": 518,
+    "case2_total_cells": 715
+  },
+  "primary_harmonic_observability": {
+    "role": "deployment-visible observation-and-reported-geometry scalar",
+    "orientation": "higher is safer",
+    "safe_minimum": 0.884742581888209,
+    "safe_maximum": 1.2415346448833515,
+    "unsafe_minimum": 0.6051489663462203,
+    "unsafe_maximum": 1.118134972908838,
+    "strict_separation_margin": -0.23339239102062892,
+    "strict_separation_passed": false,
+    "threshold_exists": false,
+    "policy_evaluated": false
+  },
+  "cheap_fit_residual_control": {
+    "role": "deployment-visible Low-64 observable fit residual",
+    "orientation": "lower is safer",
+    "safe_minimum": 0.4378788524404333,
+    "safe_maximum": 0.7105232994817482,
+    "unsafe_minimum": 0.516021416286436,
+    "unsafe_maximum": 0.7411316578896999,
+    "strict_separation_margin": -0.19450188319531214,
+    "strict_separation_passed": false,
+    "threshold_exists": false,
+    "policy_evaluated": false
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_LOW64_HARMONIC_RISK_V223",
+    "scientific_decision": "FAIL_LOW64_HARMONIC_RISK_OVERLAP_V223",
+    "maximum_camera_permutation_difference": 2.020605904817785e-14,
+    "maximum_formal_independent_feature_difference": 1.2545520178264269e-14,
+    "maximum_separation_difference": 1.1435297153639112e-14,
+    "maximum_policy_difference": 0.0,
+    "end_to_end_physics_independence_proven": false
+  },
+  "adjudication": {
+    "unsafe_cells_shift_toward_lower_harmonic_score": true,
+    "unsafe_cells_shift_toward_higher_fit_residual": true,
+    "either_scalar_supports_fail_closed_selection": false,
+    "one_dimensional_harmonic_risk_route_closed": true,
+    "threshold_or_orientation_retuning_authorized": false,
+    "larger_model_rescue_authorized": false,
+    "route_action_zh": "安全与不安全单元在两个一维可观测分数上都发生重叠，不能冻结一个对全部 1261 个单元都安全的阈值。关闭当前一维调和风险回退，不调方向、阈值、Low-64 基或迭代深度，也不用大模型或 GPU 挽救。",
+    "route_action_en": "Safe and unsafe cells overlap under both one-dimensional observable scores, so no threshold is safe across all 1,261 cells. Close the current one-dimensional harmonic-risk fallback without retuning orientation, threshold, Low-64 basis, or depth, and without a larger-model or GPU rescue."
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployment_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

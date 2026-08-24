@@ -77,7 +77,6 @@ def test_primary_pages_reference_v216_in_both_languages() -> None:
     for relative in (
         "index.html",
         "operator-learning/index.html",
-        "operator-learning/daily-progress.html",
     ):
         content = (ROOT / relative).read_text(encoding="utf-8")
         assert "blastnet_case5_pcgls_reference_warm_readjudication_v216" in content

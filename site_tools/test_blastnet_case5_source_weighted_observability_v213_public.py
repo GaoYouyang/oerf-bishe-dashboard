@@ -81,7 +81,6 @@ def test_primary_pages_reference_v213_in_both_languages() -> None:
     for relative in (
         "index.html",
         "operator-learning/index.html",
-        "operator-learning/daily-progress.html",
     ):
         content = (ROOT / relative).read_text(encoding="utf-8")
         assert "blastnet_case5_source_weighted_observability_v213" in content

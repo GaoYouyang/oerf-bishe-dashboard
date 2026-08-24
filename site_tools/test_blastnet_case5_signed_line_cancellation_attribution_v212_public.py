@@ -92,7 +92,7 @@ def test_v212_remains_historical_after_the_v214_headline() -> None:
         "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case2_case5_low64_algebraic_nullspace_attribution_v222_1_result_2026-08-24.md"
+        "blastnet_case2_case5_low64_harmonic_risk_v223_result_2026-08-24.md"
     )
     historical = json.loads(SUMMARY.read_text())
     assert historical["scientific_decision"] == (

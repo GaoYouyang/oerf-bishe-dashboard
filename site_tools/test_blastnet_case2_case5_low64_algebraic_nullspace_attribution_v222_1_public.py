@@ -69,7 +69,10 @@ def test_v222_1_figure_is_rendered() -> None:
 
 def test_v222_1_current_surfaces_and_log_are_synchronized() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "POST_OPEN_ROWSPACE_PRESERVES_CASE5_BUT_CASE2_HARM_REMAINS_V222_1"
+    assert (
+        current["v222_1_algebraic_nullspace_scientific_decision"]
+        == "POST_OPEN_ROWSPACE_PRESERVES_CASE5_BUT_CASE2_HARM_REMAINS_V222_1"
+    )
     assert current["current_decision"]["v222_inconclusive_preserved"] is True
     assert current["current_decision"]["v222_1_nullspace_explanation_closed"] is True
     assert current["current_decision"]["v222_1_algorithm_breakthrough"] is False

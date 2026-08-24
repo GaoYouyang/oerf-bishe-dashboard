@@ -16582,6 +16582,36 @@ The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFE
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v223 一维可观测调和风险存在重叠，安全回退关闭
+
+### 讲人话：风险分数有方向，但没有安全到可以一刀切
+
+v222.1 已排除 Low-64 起点中 `null(A)` 成分导致跨工况伤害的解释。v223 因此不再改场或训练模型，只检验一个更窄的问题：能否只用当前二维观测与 reported geometry 计算一维分数，在运行 direct Low-64 PCGLS K11 之前识别它相对 Zero-PCGLS K16 的不安全单元。
+
+按全部冻结绝对门与 `1.05` matched 门，`1261` 个已开封单元中有 `1064` 个安全、`197` 个不安全。主调和可观测性分数的安全区间为 `0.884743-1.241535`，不安全区间为 `0.605149-1.118135`，严格分离 margin 为 `-0.233392`。便宜的 Low-64 拟合残差 control 也重叠，安全/不安全区间为 `0.437879-0.710523` 与 `0.516021-0.741132`，margin 为 `-0.194502`。
+
+这说明两个量都含有方向性的风险信息：不安全单元整体偏向更低的调和分数和更高的拟合残差。但结果前门要求对全部单元 fail-closed，区间重叠就意味着不能冻结阈值，因此没有策略、没有候选物理重放，也没有 exact-call 节省可供评分。
+
+独立程序重建 Low-64 响应、两个分数、安全标签和分离门。相机换序、正式/独立特征与 margin 最大差为 `2.02e-14 / 1.25e-14 / 1.14e-14`，离散策略差为 `0`。封存判决为 `FAIL_LOW64_HARMONIC_RISK_OVERLAP_V223`，独立状态为 `PASS_INDEPENDENT_RECOMPUTATION_LOW64_HARMONIC_RISK_V223`。
+
+当前一维调和风险路线关闭：不反转方向、不调阈值、不换 Low-64 基或深度，也不用更大模型或 GPU 挽救。它没有证明物理上不同的更高维可观测机制不可能，但在提出这种机制或拿到映射完整的真实 BOST 数据前，不再扩建当前标量回退。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v223 one-dimensional observable harmonic risk overlaps and closes the safe fallback
+
+v222.1 rules out the Low-64 initializer component in `null(A)` as the cause of cross-condition harm. v223 therefore changes no field and trains no model. It asks whether a one-dimensional score computed only from the current 2D observation and reported geometry can identify unsafe direct Low-64 PCGLS K11 cells before comparing them with Zero-PCGLS K16.
+
+Under every frozen absolute and `1.05` matched gate, `1,064` of `1,261` opened cells are safe and `197` unsafe. The primary harmonic-observability safe range is `0.884743-1.241535`, while the unsafe range is `0.605149-1.118135`, giving a strict margin of `-0.233392`. The cheap Low-64 fit-residual control also overlaps: safe and unsafe ranges are `0.437879-0.710523` and `0.516021-0.741132`, with a `-0.194502` margin.
+
+Both scores carry directional risk information: unsafe cells tend toward lower harmonic score and higher fit residual. The preregistered gate nevertheless requires fail-closed separation across every cell. Overlap therefore means that no threshold or fallback policy is established, and no physical candidate replay or exact-call saving can be scored.
+
+The independent implementation rebuilds the Low-64 response, both scores, safety labels, and separation gates. Maximum camera-permutation, formal-independent feature, and margin differences are `2.02e-14 / 1.25e-14 / 1.14e-14`, with zero discrete-policy difference. The sealed verdict is `FAIL_LOW64_HARMONIC_RISK_OVERLAP_V223`, and the independent status is `PASS_INDEPENDENT_RECOMPUTATION_LOW64_HARMONIC_RISK_V223`.
+
+The one-dimensional harmonic-risk route is closed without reversing orientation, retuning thresholds, changing the Low-64 basis or depth, or using a larger model or GPU. The result does not prove that every physically distinct higher-dimensional observable mechanism is impossible, but this scalar fallback will not be expanded without such a mechanism or fully mapped real-BOST data.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v222.1 正交去除 null(A) 后，Case 5 保留而 Case 2 伤害仍在
 
 ### 讲人话：真正删掉观测看不见的部分，原来的好处和坏处都没变

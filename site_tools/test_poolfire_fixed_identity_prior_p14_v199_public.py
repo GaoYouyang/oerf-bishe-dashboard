@@ -54,5 +54,5 @@ def test_v199_evidence_remains_preserved_after_v201_becomes_current() -> None:
     assert current["current_decision"]["v199_p14_reference_adequate"] is False
     assert current["current_decision"]["v199_exact_call_headroom_interpretable"] is False
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case2_case5_low64_algebraic_nullspace_attribution_v222_1_result_2026-08-24.md"
+        "blastnet_case2_case5_low64_harmonic_risk_v223_result_2026-08-24.md"
     )

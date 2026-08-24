@@ -79,7 +79,7 @@ def test_v206_remains_preserved_parent_evidence() -> None:
     assert current["current_decision"]["v206_global_resource_speedup_claim"] is False
     assert current["current_decision"]["v208_case5_external_gate_adjudicated"] is False
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case2_case5_low64_algebraic_nullspace_attribution_v222_1_result_2026-08-24.md"
+        "blastnet_case2_case5_low64_harmonic_risk_v223_result_2026-08-24.md"
     )
 
 

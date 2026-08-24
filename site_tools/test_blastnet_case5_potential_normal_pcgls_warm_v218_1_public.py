@@ -73,14 +73,14 @@ def test_v218_1_history_is_preserved_after_v220_2() -> None:
     assert current["current_decision"]["v218_1_potential_normal_representation_closed"] is True
     assert current["current_decision"]["v218_1_low64_k11_control_headroom"] is True
     assert current["current_decision"]["v218_1_algorithm_breakthrough"] is False
-    for page in [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]:
+    for page in [ROOT / "index.html", ROOT / "operator-learning/index.html"]:
         content = page.read_text(encoding="utf-8")
         assert "v218.1" in content
         assert "algorithm_breakthrough=false" in content
     for page in [ROOT / "index.html", ROOT / "operator-learning/index.html"]:
         assert "12A+11A" in page.read_text(encoding="utf-8")
     assert "blastnet_case5_potential_normal_pcgls_warm_v218_1_result_2026-08-24.md" in (
-        ROOT / "operator-learning/daily-progress.html"
+        ROOT / "operator-learning/index.html"
     ).read_text(encoding="utf-8")
 
 
