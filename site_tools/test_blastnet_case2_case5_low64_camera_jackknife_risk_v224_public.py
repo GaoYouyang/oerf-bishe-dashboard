@@ -76,7 +76,10 @@ def test_v224_figure_is_rendered() -> None:
 
 def test_v224_current_surfaces_and_log_are_synchronized() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_LOW64_CAMERA_JACKKNIFE_RISK_OVERLAP_V224"
+    assert (
+        current["v224_low64_camera_jackknife_scientific_decision"]
+        == "FAIL_LOW64_CAMERA_JACKKNIFE_RISK_OVERLAP_V224"
+    )
     assert current["current_decision"]["v224_scalar_camera_jackknife_route_closed"] is True
     assert current["current_decision"]["v224_all_multiview_mechanisms_closed"] is False
     assert current["current_decision"]["v224_algorithm_breakthrough"] is False
@@ -85,10 +88,12 @@ def test_v224_current_surfaces_and_log_are_synchronized() -> None:
     for page in PAGES:
         content = page.read_text(encoding="utf-8")
         assert "v224" in content
-        assert "-0.053809" in content
-        assert "-0.170900" in content
         assert "algorithm_breakthrough=false" in content
         assert "blastnet_case2_case5_low64_camera_jackknife_risk_v224.png" in content
+    for page in PAGES[:2]:
+        content = page.read_text(encoding="utf-8")
+        assert "-0.053809" in content
+        assert "-0.170900" in content
     log = LEARNING_LOG.read_text(encoding="utf-8")
     assert "v224 逐相机删除稳定度仍重叠" in log
     assert "v224 leave-one-camera-out stability overlaps" in log

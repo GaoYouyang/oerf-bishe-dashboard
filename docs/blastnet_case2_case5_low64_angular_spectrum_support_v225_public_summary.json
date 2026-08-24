@@ -1,0 +1,125 @@
+{
+  "schema_version": "oerf-public-blastnet-case2-case5-low64-angular-spectrum-support-v225.0.0",
+  "updated": "2026-08-24",
+  "title_zh": "v225：完整九相机角谱互支持仍无法建立安全回退",
+  "title_en": "v225: the full nine-camera angular-spectrum support still cannot establish a safe fallback",
+  "scope": {
+    "diagnostic_type": "post-open cross-condition one-class policy diagnostic",
+    "conditions": 2,
+    "cells": 1261,
+    "case5_cells": 546,
+    "case2_cells": 715,
+    "safe_cells": 1064,
+    "unsafe_cells": 197,
+    "camera_count": 9,
+    "low64_rank": 64,
+    "primary_feature_dimension": 27,
+    "control_feature_dimension": 2,
+    "trainable_parameters": 0,
+    "deployment_policy_established": false,
+    "wall_rss_measured": false,
+    "new_unopened_condition_opened": false,
+    "case2_truth_used_before_policy_decisions": false,
+    "observable_policy_sealed_before_truth_scores": true
+  },
+  "primary_angular_spectrum_policy": {
+    "role": "deployment-visible observation-and-reported-geometry multiview representation",
+    "representation": "Nine leave-one-camera drifts, nine camera-block residuals, and their signed pairing are normalized and projected onto a fixed rank-nine azimuthal basis with harmonics zero through four.",
+    "fit": "One-class mutual support from known-safe Case 5; Case 5 uses leave-one-rig-out fits and Case 2 is scored from all Case 5 rows.",
+    "minimum_accept_fraction_per_rig": 0.1,
+    "case5": {
+      "accepted_cells": 252,
+      "minimum_rig_accept_fraction": 0.0,
+      "maximum_rig_accept_fraction": 1.0,
+      "accepted_unsafe_cells": 0,
+      "support_gate_passed": false,
+      "complete_rigs_accuracy_passed": 13,
+      "complete_rigs_total": 13
+    },
+    "case2": {
+      "accepted_cells": 523,
+      "accepted_safe_cells": 378,
+      "accepted_unsafe_cells": 145,
+      "minimum_rig_accept_fraction": 0.05454545454545454,
+      "maximum_rig_accept_fraction": 1.0,
+      "support_gate_passed": false,
+      "complete_rigs_accuracy_passed": 0,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 1.8752909192529719
+    },
+    "policy_accuracy_passed": false,
+    "per_rig_cost_gate_passed": false,
+    "policy_passed": false
+  },
+  "cheap_two_scalar_control": {
+    "features": [
+      "maximum leave-one-camera drift",
+      "maximum per-camera residual"
+    ],
+    "case5": {
+      "accepted_cells": 339,
+      "minimum_rig_accept_fraction": 0.14285714285714285,
+      "maximum_rig_accept_fraction": 0.7857142857142857,
+      "accepted_unsafe_cells": 0,
+      "support_gate_passed": true
+    },
+    "case2": {
+      "accepted_cells": 186,
+      "accepted_safe_cells": 54,
+      "accepted_unsafe_cells": 132,
+      "minimum_rig_accept_fraction": 0.18181818181818182,
+      "maximum_rig_accept_fraction": 0.32727272727272727,
+      "support_gate_passed": false,
+      "complete_rigs_accuracy_passed": 0,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 1.9139434375266264
+    },
+    "policy_accuracy_passed": false,
+    "per_rig_cost_gate_passed": true,
+    "policy_passed": false
+  },
+  "cost_boundary": {
+    "accepted_direct_K11_exact_A_At": [12, 11],
+    "fallback_zero_PCGLS_K16_exact_A_At": [16, 16],
+    "feature_online_exact_A_At_after_geometry_cache": [0, 0],
+    "geometry_cache_forward_equivalents": 832,
+    "actual_exact_call_reduction_established": false,
+    "fresh_wall_rss_measured": false
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_LOW64_ANGULAR_SPECTRUM_SUPPORT_V225",
+    "scientific_decision": "FAIL_LOW64_ANGULAR_SPECTRUM_MUTUAL_SUPPORT_V225",
+    "required_checks_passed": 17,
+    "required_checks_total": 17,
+    "maximum_formal_independent_feature_difference": 4.40619762898109e-14,
+    "maximum_formal_independent_distance_difference": 8.416286331053291e-13,
+    "maximum_formal_independent_summary_difference": 5.702904815052534e-11,
+    "maximum_camera_permutation_difference": 4.3520742565306136e-14,
+    "discrete_decisions_match": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "adjudication": {
+    "primary_zero_unsafe_acceptance_passed": false,
+    "primary_per_rig_utility_passed": false,
+    "primary_complete_policy_accuracy_passed": false,
+    "cheap_control_passed": false,
+    "angular_spectrum_mutual_support_route_closed": true,
+    "all_multiview_mechanisms_closed": false,
+    "threshold_scale_harmonic_order_or_acceptance_retuning_authorized": false,
+    "larger_model_rescue_authorized": false,
+    "route_action_zh": "保留全部九相机结构并没有自动形成安全回退：主策略在 Case 2 接受了 145 个不安全单元，且 Case 5 至少一个 rig 的接受率为 0。关闭当前固定角谱加跨 rig 互支持策略，不调尺度、半径、调和阶数或接受门，也不用大模型或 GPU 挽救。",
+    "route_action_en": "Preserving all nine-camera structure does not automatically yield a safe fallback: the primary accepts 145 unsafe Case 2 cells and at least one Case 5 rig has zero acceptance. Close this fixed angular-spectrum plus cross-rig mutual-support policy without retuning scale, radius, harmonic order, or acceptance gates, and without a larger-model or GPU rescue."
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployment_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

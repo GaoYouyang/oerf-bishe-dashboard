@@ -16582,6 +16582,32 @@ The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFE
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v225 完整九相机角谱互支持仍不安全
+
+### 讲人话：保留完整九相机模式比压成一个数更合理，但这套固定编码仍会把危险单元放进快路
+
+v224 已经关闭“最坏删相机漂移”和“最大逐相机残差”这两个单标量回退。v225 不再继续调它们，而是保留九个删相机漂移、九个逐相机残差及其局部交互，用 reported geometry 的固定角向基编码成 `27` 维排列不变特征。策略只从已知安全的 Case 5 学一类互支持范围：每条训练半径取不同 rig 最近邻，Case 5 做完整留一 rig，Case 2 只作跨工况评分；特征和接受判决在读取真值指标前封存。
+
+主策略在 Case 5 接受 `252/546` 个单元，但最低 rig 接受率为 `0%`，所以连开发侧最低可用性门都没有守住。它在 Case 2 接受 `523/715` 个单元，其中 `378` 个安全、`145` 个不安全；十三套 rig 的完整策略精度为 `0/13`，最坏 matched ratio 为 `1.875291`。用 v224 两个最大值组成的便宜 control 在 Case 5 最低 rig 接受率为 `14.29%`，但在 Case 2 接受 `186` 个单元时包含 `132` 个不安全，完整精度同样为 `0/13`。
+
+完全独立的第二实现重建角谱特征、跨 rig 距离、训练半径、接受掩码、逐 rig 汇总和相机换序。`17/17` 项检查全部通过；特征、距离、汇总和相机换序最大差分别为 `4.41e-14 / 8.42e-13 / 5.70e-11 / 4.35e-14`。封存判决为 `FAIL_LOW64_ANGULAR_SPECTRUM_MUTUAL_SUPPORT_V225`。
+
+这关闭的是固定 `27` 维角谱加 Case 5 跨 rig 一类互支持，不是全部多视角机制，也不是整个 C 路线。没有训练、物理候选重放、exact-call 减少、wall/RSS、外部泛化或真实 BOST 结果；不再重调尺度、半径、调和阶数、通道或接受门，也不使用大模型或 GPU 挽救。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v225 full nine-camera angular-spectrum support remains unsafe
+
+v224 closes two scalar fallbacks: worst camera-deletion drift and maximum per-camera residual. v225 does not retune them. It preserves all nine deletion drifts, all nine camera residuals, and their local interactions in a fixed `27`-dimensional permutation-invariant angular encoding derived from reported geometry. The one-class support region is learned only from known-safe Case 5 rows: each training radius uses the nearest row from another rig, Case 5 is evaluated by complete leave-one-rig-out, and Case 2 is scored cross-condition. Features and accept decisions are sealed before truth metrics are read.
+
+The primary accepts `252/546` Case 5 cells but has a minimum rig acceptance of `0%`, failing even the development-side utility floor. In Case 2 it accepts `523/715` cells, including `378` safe and `145` unsafe cells; complete policy accuracy is `0/13` rigs and the worst matched ratio is `1.875291`. The cheap control built from the two v224 maxima reaches `14.29%` minimum Case 5 rig acceptance, but its `186` Case 2 accepts include `132` unsafe cells, again yielding `0/13` complete rigs.
+
+A fully independent implementation rebuilds the angular features, cross-rig distances, training radii, acceptance masks, rig summaries, and camera permutations. All `17/17` checks pass. Maximum feature, distance, summary, and camera-permutation differences are `4.41e-14 / 8.42e-13 / 5.70e-11 / 4.35e-14`. The sealed verdict is `FAIL_LOW64_ANGULAR_SPECTRUM_MUTUAL_SUPPORT_V225`.
+
+This closes the fixed `27`-D angular spectrum plus Case 5 cross-rig one-class support policy, not every multiview mechanism or the C route. No training, physical candidate replay, exact-call reduction, wall/RSS, external generalization, or real-BOST result is established. Scale, radius, harmonic order, channels, and acceptance gates will not be retuned, and no larger model or GPU will rescue this route.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v224 逐相机删除稳定度仍重叠，单标量回退关闭
 
 ### 讲人话：删掉一台相机后会不会“变脸”确实能量到，但还不足以安全决定走快路还是回退
