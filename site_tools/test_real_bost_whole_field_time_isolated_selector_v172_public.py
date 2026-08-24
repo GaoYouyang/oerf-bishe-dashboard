@@ -72,13 +72,13 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v172_and_points_to_v181() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == (
+    assert payload["v221_low64_exact_rowspace_lift_scientific_decision"] == (
         "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
     assert payload["metrics"]["v172_primary_strict_safe_count"] == 468
     assert payload["metrics"]["v172_primary_complete_fields_passed"] == 9
     assert payload["metrics"]["v172_independent_check_count"] == 22
-    assert "exact Low-64 row-space-lift construction is closed" in payload["next_scientific_gate_en"]
+    assert "null(A)-content explanation is closed" in payload["next_scientific_gate_en"]
     assert "paired real-BOST displacement data" in payload["next_scientific_gate_en"]
     assert "配对真实 BOST 位移数据" in payload["next_scientific_gate_zh"]
     assert "真实 BOST" in payload["next_scientific_gate_zh"]

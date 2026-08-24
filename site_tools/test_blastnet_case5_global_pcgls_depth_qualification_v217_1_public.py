@@ -65,7 +65,7 @@ def test_v217_1_result_and_figure_are_bilingual_and_nonblank() -> None:
 def test_v217_1_history_is_preserved_beneath_v220_2() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-24"
-    assert current["scientific_status"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
+    assert current["v221_low64_exact_rowspace_lift_scientific_decision"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     assert current["v218_1_scientific_decision"] == "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
     assert current["metrics"]["v217_1_k15_absolute_cells_passed"] == 544
     assert current["metrics"]["v217_1_k15_matched_cells_passed"] == 0

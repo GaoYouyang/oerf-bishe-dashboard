@@ -60,10 +60,10 @@ def test_v197_remains_visible_after_v199_becomes_current_state() -> None:
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
     assert current["updated"] == "2026-08-24"
-    assert current["formal_status"] == (
+    assert current["v221_low64_exact_rowspace_lift_formal_status"] == (
         "FORMAL_PENDING_INDEPENDENT_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
-    assert current["scientific_status"] == (
+    assert current["v221_low64_exact_rowspace_lift_scientific_decision"] == (
         "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
     assert current["v197_future_reference_qualification_formal_status"] == (

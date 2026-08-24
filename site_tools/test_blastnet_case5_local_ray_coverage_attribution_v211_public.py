@@ -76,10 +76,10 @@ def test_v211_result_and_figure_are_bilingual_and_nonblank() -> None:
 
 def test_v211_is_preserved_as_parent_evidence_after_v212() -> None:
     current = json.loads(CURRENT.read_text())
-    assert current["scientific_status"] == (
+    assert current["v221_low64_exact_rowspace_lift_scientific_decision"] == (
         "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
-    assert current["engineering_status"] == (
+    assert current["v221_low64_exact_rowspace_lift_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
     assert current["metrics"]["v211_primary_comparison_count"] == 169

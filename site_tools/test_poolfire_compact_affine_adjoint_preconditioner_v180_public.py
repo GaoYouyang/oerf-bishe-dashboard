@@ -65,7 +65,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v180_after_v181_advance() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
+    assert payload["v221_low64_exact_rowspace_lift_scientific_decision"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     assert payload["metrics"]["v180_five_primary_k1_strict_safe_count"] == 4
     assert payload["metrics"]["v180_all_nine_primary_k1_strict_safe_count"] == 7
     assert payload["metrics"]["v180_five_primary_k1_observation_p90"] > 0.2

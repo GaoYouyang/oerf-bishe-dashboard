@@ -61,7 +61,7 @@ def test_v218_1_figure_is_rendered() -> None:
 
 def test_v218_1_history_is_preserved_after_v220_2() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
+    assert current["v221_low64_exact_rowspace_lift_scientific_decision"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     assert current["v218_1_scientific_decision"] == (
         "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1"
     )
@@ -76,8 +76,12 @@ def test_v218_1_history_is_preserved_after_v220_2() -> None:
     for page in [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]:
         content = page.read_text(encoding="utf-8")
         assert "v218.1" in content
-        assert "12A+11A" in content
         assert "algorithm_breakthrough=false" in content
+    for page in [ROOT / "index.html", ROOT / "operator-learning/index.html"]:
+        assert "12A+11A" in page.read_text(encoding="utf-8")
+    assert "blastnet_case5_potential_normal_pcgls_warm_v218_1_result_2026-08-24.md" in (
+        ROOT / "operator-learning/daily-progress.html"
+    ).read_text(encoding="utf-8")
 
 
 def test_v218_1_learning_log_records_both_route_actions() -> None:

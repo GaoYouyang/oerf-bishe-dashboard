@@ -64,14 +64,14 @@ def test_current_evidence_preserves_v171_but_points_to_v181() -> None:
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
     assert (
-        payload["engineering_status"]
+        payload["v221_low64_exact_rowspace_lift_independent_status"]
         == "PASS_INDEPENDENT_RECOMPUTATION_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
     assert (
-        payload["formal_status"]
+        payload["v221_low64_exact_rowspace_lift_formal_status"]
             == "FORMAL_PENDING_INDEPENDENT_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
-    assert payload["scientific_status"] == (
+    assert payload["v221_low64_exact_rowspace_lift_scientific_decision"] == (
         "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
     assert payload["current_decision"]["v171_result_blind_selector_passed"] is True

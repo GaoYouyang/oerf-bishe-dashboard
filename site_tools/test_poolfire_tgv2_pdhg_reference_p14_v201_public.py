@@ -62,7 +62,7 @@ def test_v201_public_assets_and_bilingual_copy_exist() -> None:
 def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
     assert (
-        current["scientific_status"]
+        current["v221_low64_exact_rowspace_lift_scientific_decision"]
         == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
     assert (
@@ -83,5 +83,5 @@ def test_v201_current_evidence_remains_historical_under_v204_headline() -> None:
     assert current["current_decision"]["v201_tgv2_reference_adequate"] is False
     assert current["current_decision"]["v201_fixed_tgv2_reference_closed"] is True
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case2_case5_low64_exact_rowspace_lift_v221_result_2026-08-24.md"
+        "blastnet_case2_case5_low64_algebraic_nullspace_attribution_v222_1_result_2026-08-24.md"
     )

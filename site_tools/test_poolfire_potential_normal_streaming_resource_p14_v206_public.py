@@ -67,10 +67,10 @@ def test_v206_result_and_figure_are_bilingual_and_nonblank() -> None:
 
 def test_v206_remains_preserved_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text())
-    assert current["scientific_status"] == (
+    assert current["v221_low64_exact_rowspace_lift_scientific_decision"] == (
         "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
-    assert current["engineering_status"] == (
+    assert current["v221_low64_exact_rowspace_lift_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
     assert current["metrics"]["v206_outer_wall_vs_dense_k1_p50"] < 0.90
@@ -79,7 +79,7 @@ def test_v206_remains_preserved_parent_evidence() -> None:
     assert current["current_decision"]["v206_global_resource_speedup_claim"] is False
     assert current["current_decision"]["v208_case5_external_gate_adjudicated"] is False
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case2_case5_low64_exact_rowspace_lift_v221_result_2026-08-24.md"
+        "blastnet_case2_case5_low64_algebraic_nullspace_attribution_v222_1_result_2026-08-24.md"
     )
 
 

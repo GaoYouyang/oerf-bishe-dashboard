@@ -75,7 +75,7 @@ def test_figure_is_nonblank_and_stable_size() -> None:
 
 def test_current_evidence_preserves_v177_after_v181_becomes_current() -> None:
     payload = json.loads(CURRENT.read_text())
-    assert payload["scientific_status"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
+    assert payload["v221_low64_exact_rowspace_lift_scientific_decision"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     assert (
         payload["v177_krylov_capacity_scientific_decision"]
         == "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177"

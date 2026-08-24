@@ -79,7 +79,7 @@ def test_v209_remains_preserved_as_parent_evidence_below_v210() -> None:
         is False
     )
     assert current["current_decision"]["v209_resource_gate_authorized"] is False
-    assert current["scientific_status"] == (
+    assert current["v221_low64_exact_rowspace_lift_scientific_decision"] == (
         "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
 

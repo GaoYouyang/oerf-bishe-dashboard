@@ -57,7 +57,7 @@ def test_v221_figure_is_rendered() -> None:
 
 def test_v221_current_pages_and_learning_log_are_synchronized() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
+    assert current["v221_low64_exact_rowspace_lift_scientific_decision"] == "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     assert current["current_decision"]["v221_exact_rowspace_lift_route_closed"] is True
     assert current["current_decision"]["v221_algorithm_breakthrough"] is False
     for page in [ROOT / "index.html", ROOT / "operator-learning/index.html", ROOT / "operator-learning/daily-progress.html"]:

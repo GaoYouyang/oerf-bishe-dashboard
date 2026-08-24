@@ -71,7 +71,7 @@ def test_v208_is_preserved_as_the_historical_parent() -> None:
     assert current["metrics"]["v208_k16_complete_groups_passed"] == 0
     assert current["current_decision"]["v208_case5_external_gate_adjudicated"] is False
     assert current["current_decision"]["v208_resource_gate_authorized"] is False
-    assert current["scientific_status"] == (
+    assert current["v221_low64_exact_rowspace_lift_scientific_decision"] == (
         "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
 

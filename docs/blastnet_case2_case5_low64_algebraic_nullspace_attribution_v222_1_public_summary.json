@@ -1,0 +1,88 @@
+{
+  "schema_version": "oerf-public-blastnet-case2-case5-low64-algebraic-nullspace-attribution-v222.1.0",
+  "updated": "2026-08-24",
+  "title_zh": "v222.1：正交去除 null(A) 后 Case 5 保留、Case 2 伤害仍在",
+  "title_en": "v222.1: orthogonal null(A) removal preserves Case 5 while Case 2 harm remains",
+  "scope": {
+    "diagnostic_type": "post-open retrospective algebraic mechanism attribution",
+    "conditions": 2,
+    "cells": 1261,
+    "rigs_per_condition": 13,
+    "trainable_parameters": 0,
+    "runtime_candidate_established": false,
+    "truth_used_for_scoring": true,
+    "wall_rss_measured": false,
+    "new_unopened_condition_opened": false
+  },
+  "v222_boundary": {
+    "scientific_status": "INCONCLUSIVE_INVALID_ORTHOGONAL_ROWSPACE_ATTRIBUTION_V222",
+    "frozen_residual_equivalence_tolerance": 1e-9,
+    "maximum_direct_vs_projected_k11_residual_relative_difference": 1.4391801022783394e-9,
+    "independent_validation_passed": false,
+    "relabelled_as_preregistered_pass": false
+  },
+  "algebraic_attribution": {
+    "identity": "x_algebraic = x_direct_final - (x_direct_initializer - P_row x_direct_initializer)",
+    "question": "whether the direct Low-64 component in null(A) is required for the Case 5 benefit or causes the Case 2 transfer harm",
+    "online_algorithm_claim": "none",
+    "deployment_method": false,
+    "fresh_validation": false
+  },
+  "outcomes": {
+    "case5": {
+      "absolute_strict_safe": 546,
+      "matched_strict_safe": 546,
+      "total_cells": 546,
+      "complete_rigs_passed": 13,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 1.0218992155118118,
+      "direct_low64_k11_matched_strict_safe": 546,
+      "direct_low64_k11_complete_rigs_passed": 13,
+      "v221_spectral_lift_matched_strict_safe": 0,
+      "v221_spectral_lift_complete_rigs_passed": 0
+    },
+    "case2": {
+      "absolute_strict_safe": 715,
+      "matched_strict_safe": 518,
+      "total_cells": 715,
+      "complete_rigs_passed": 0,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 1.9139434375266269,
+      "direct_low64_k11_matched_strict_safe": 518,
+      "direct_low64_k11_complete_rigs_passed": 0,
+      "v221_spectral_lift_matched_strict_safe": 0,
+      "v221_spectral_lift_complete_rigs_passed": 0
+    }
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_ALGEBRAIC_NULLSPACE_ATTRIBUTION_V222_1",
+    "scientific_decision": "POST_OPEN_ROWSPACE_PRESERVES_CASE5_BUT_CASE2_HARM_REMAINS_V222_1",
+    "checks_passed": 16,
+    "checks_failed": 0,
+    "maximum_independent_observation_relative_difference": 7.239377934130675e-15,
+    "maximum_projected_initializer_relative_difference": 2.511836150451836e-13,
+    "maximum_algebraic_field_relative_difference": 1.9470328289700702e-13,
+    "maximum_primary_metric_absolute_difference": 1.9206858326015208e-14,
+    "maximum_summary_absolute_difference": 4.3520742565306136e-14,
+    "end_to_end_physics_independence_proven": false
+  },
+  "adjudication": {
+    "nullspace_component_required_for_case5_benefit": false,
+    "nullspace_component_explains_case2_harm": false,
+    "rowspace_capacity_shortage_explanation_supported": false,
+    "spectral_reweighting_attribution_supported": true,
+    "route_action_zh": "保留 v222 的不可判定边界，同时关闭‘Low-64 的 null(A) 成分导致跨工况失败’这一解释。后续机制必须直接改变可观测行空间中的谱作用，不能重调 v221/v222、训练大模型或租 GPU。",
+    "route_action_en": "Preserve v222 as inconclusive and close the explanation that Low-64 null(A) content causes the cross-condition failure. Any future mechanism must directly change the spectral action inside the observable row space; do not retune v221/v222, train a larger model, or rent a GPU."
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "learned_algorithm": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

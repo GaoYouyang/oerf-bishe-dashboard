@@ -16582,6 +16582,40 @@ The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFE
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
+## 2026-08-24：v222.1 正交去除 null(A) 后，Case 5 保留而 Case 2 伤害仍在
+
+### 讲人话：真正删掉观测看不见的部分，原来的好处和坏处都没变
+
+v221 已经证明，把 direct Low-64 起点经过 `A^T A` 谱重加权、单缩放和 PCGLS K10 后，Case 5 与 Case 2 都变成 0 个 matched 单元。但这还不能区分：失败究竟来自“删掉 `null(A)`”，还是来自 `A^T A` 在可观测行空间里改变了不同谱方向的权重。
+
+v222 因此尝试真正的正交行空间投影 `P_row x=A^T(AA^T)^{-1}Ax`，再运行未修改 PCGLS K11。正式程序完成全部 `1261` 个单元，但 direct-vs-projected K11 residual-equivalence 最大差为 `1.43918e-9`，超过结果前冻结的 `1e-9`；首个独立 validator 也没有通过。这个边界没有被放宽，v222 继续记为 `INCONCLUSIVE_INVALID_ORTHOGONAL_ROWSPACE_ATTRIBUTION_V222`。
+
+v222.1 没有重跑或把 v222 包装成成功，只做明确标记为 post-open retrospective 的代数归因。根据精确算术下 PCGLS 不更新初始 `null(A)` 分量的恒等式，构造 `x_algebraic=x_direct_final-(x_direct_initializer-P_row x_direct_initializer)`，再独立重算二维观测、四项指标和完整几何。
+
+结果是 Case 5 仍为 `546/546` 绝对安全、`546/546` matched、`13/13` 完整几何；Case 2 仍为 `715/715` 绝对安全、`518/715` matched、`0/13`。这两组数字与 direct Low-64 K11 逐项相同。独立 `16/16` 检查全真；观测、投影起点、代数场、指标与汇总最大差为 `7.24e-15 / 2.51e-13 / 1.95e-13 / 1.92e-14 / 4.35e-14`。
+
+这改变了机制判断：Low-64 的 `null(A)` 成分不是 Case 5 正效应所必需，也不是 Case 2 跨工况伤害的原因。v221 的失败证据现在指向 `A^T A` 谱重加权，而不是“观测行空间本身没有容量”。封存判决为 `POST_OPEN_ROWSPACE_PRESERVES_CASE5_BUT_CASE2_HARM_REMAINS_V222_1`。
+
+这仍不是部署算法、fresh validation、exact-call 减少、wall/RSS、外部泛化、曲线光路或真实 BOST 结果。v222 本身仍不可判定；后续只能结果前冻结一个直接改变可观测行空间谱作用的新机制，不能重调 v221/v222，也不能用大模型或 GPU 挽救。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v222.1 orthogonal null(A) removal preserves Case 5 while Case 2 harm remains
+
+v221 shows that applying `A^T A` spectral reweighting, one scale, and PCGLS K10 to the direct Low-64 start produces zero matched cells in both Case 5 and Case 2. That result does not distinguish removal of `null(A)` from changed spectral weighting inside the observable row space.
+
+v222 therefore attempts the true orthogonal projection `P_row x=A^T(AA^T)^{-1}Ax` followed by unchanged PCGLS K11. The formal program completes all `1,261` cells, but its direct-versus-projected K11 residual-equivalence difference is `1.43918e-9`, above the preregistered `1e-9` tolerance, and its first independent validator also fails. The tolerance is not relaxed; v222 remains `INCONCLUSIVE_INVALID_ORTHOGONAL_ROWSPACE_ATTRIBUTION_V222`.
+
+v222.1 neither reruns nor relabels v222. It performs explicitly post-open retrospective algebraic attribution using the exact-arithmetic identity that PCGLS does not update the initializer component in `null(A)`: `x_algebraic=x_direct_final-(x_direct_initializer-P_row x_direct_initializer)`. A separate implementation rebuilds the 2D observation, four metrics, and complete-rig summaries.
+
+Case 5 remains at `546/546` absolute-safe cells, `546/546` matched cells, and `13/13` complete rigs. Case 2 remains at `715/715`, `518/715`, and `0/13`. These outcomes are cellwise identical to direct Low-64 K11. All `16/16` independent checks pass, with maximum observation, projected-initializer, algebraic-field, metric, and summary differences of `7.24e-15 / 2.51e-13 / 1.95e-13 / 1.92e-14 / 4.35e-14`.
+
+The mechanism judgment changes: Low-64 content in `null(A)` is neither required for the Case 5 benefit nor the cause of Case 2 transfer harm. Evidence for the v221 failure now points to `A^T A` spectral reweighting rather than insufficient observable-row-space capacity. The sealed decision is `POST_OPEN_ROWSPACE_PRESERVES_CASE5_BUT_CASE2_HARM_REMAINS_V222_1`.
+
+This is still not a deployment algorithm, fresh validation, exact-call reduction, wall/RSS result, external generalization, curved-ray validation, or real BOST. v222 itself remains inconclusive. Any next mechanism must be preregistered and directly change spectral action inside the observable row space rather than retune v221/v222 or invoke a larger model or GPU.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
 ## 2026-08-24：v221 精确行空间 lift 没有保住 Low-64 暖启动信息
 
 ### 讲人话：把起点精确投回“观测看得见的空间”反而抹掉了有用信息，这条解释被独立否定

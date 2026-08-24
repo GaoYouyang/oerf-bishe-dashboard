@@ -88,11 +88,11 @@ def test_v212_result_and_figure_are_bilingual_and_nonblank() -> None:
 
 def test_v212_remains_historical_after_the_v214_headline() -> None:
     current = json.loads(CURRENT.read_text())
-    assert current["scientific_status"] == (
+    assert current["v221_low64_exact_rowspace_lift_scientific_decision"] == (
         "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
     assert current["public_evidence"]["result"].endswith(
-        "blastnet_case2_case5_low64_exact_rowspace_lift_v221_result_2026-08-24.md"
+        "blastnet_case2_case5_low64_algebraic_nullspace_attribution_v222_1_result_2026-08-24.md"
     )
     historical = json.loads(SUMMARY.read_text())
     assert historical["scientific_decision"] == (

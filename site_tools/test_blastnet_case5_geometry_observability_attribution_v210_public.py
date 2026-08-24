@@ -75,7 +75,7 @@ def test_v210_remains_preserved_as_parent_evidence_below_v211() -> None:
     assert current["metrics"]["v210_primary_strictly_greater_count"] == 167
     assert current["current_decision"]["v210_fixed_primary_strictly_separates"] is False
     assert current["current_decision"]["v210_predictor_authorized"] is False
-    assert current["scientific_status"] == (
+    assert current["v221_low64_exact_rowspace_lift_scientific_decision"] == (
         "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221"
     )
 
