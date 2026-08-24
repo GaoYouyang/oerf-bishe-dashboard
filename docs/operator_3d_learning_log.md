@@ -4,6 +4,30 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v235/v235.1 前瞻 Case 7 否定固定 Direct Low64 K11 迁移
+
+**为什么做。** v234 在已开封 Case 12 上说明固定 Direct Low64 warm + 未修改 PCGLS K11 本身全过，失败来自额外 fallback。v235 因此不再调 fallback，而是在读取新数值前把固定 Direct K11 单独冻结，并在当时全局未打开的 BLASTNet Case 7 上做一次 13 rig x 42 帧的前瞻检验。
+
+**实际做了什么。** 正式运行完成 **546/546** 个单元和 **18/18** 项有效性检查。完全独立第二实现重建全部场、观测、四项指标、逐 rig 尾部与调用账。第一次验证的 28 项检查有 26 项为真；另两项只因为数学等价的 Jacobi 重建不是逐字节相同 hash 而失败，所以该记录原样保留为 inconclusive。随后在查看差值前冻结纯几何、0A+0A^T 的 v235.1 数值勘误，不读取 Case 7 密度或科学数组，也不重跑候选。Jacobi 最大相对差只有 **2.18e-16**，17 项检查都满足预期极性，最终恢复独立科学判决。
+
+**结果。** 合格 K16 reference 和固定 Direct K11 的绝对门都是 **546/546、13/13**。但 Direct K11 相对 K16 的 matched-accuracy 只有 **330/546、0/13**；216 个失败中，field / full-gradient / interior-gradient / observation 分别越线 **209 / 204 / 196 / 216** 次，196 个单元四项同时失败。四个冻结的 11A+11A^T 经典对照也都是 **0/13**。Direct 的逻辑账是 **12A+11A^T**，K16 是 **16A+16A^T**，名义总调用少 28.125%；由于匹配精度失败，这不构成有效调用节省，也没有授权 wall/RSS。
+
+**讲人话。** 在 Case 12 上“少算几步也够好”，没有迁移成 Case 7 上“少算几步仍等价于认真算到 K16”。固定 Direct K11 自己看着安全，但 none of the 13 rigs 守住与 K16 的完整匹配门。判决为 `FAIL_CASE7_LOW64_K11_PROSPECTIVE_CONFIRMATION_V235`。当前固定 Direct Low64 K11 迁移路线关闭；不事后调深度、basis、阈值或 fallback，也不用更大模型挽救。保留的未打开工况只留给物理上真正不同、另行预注册的机制。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v235/v235.1 rejects prospective fixed Direct Low64 K11 transfer on Case 7
+
+v234 showed on opened Case 12 that fixed Direct Low64 warm plus unchanged PCGLS K11 passes while the added fallback creates failures. v235 therefore freezes fixed Direct K11 before reading a new condition and tests it once on then-unopened BLASTNet Case 7, covering 13 rigs, 42 frames per rig, and 546 cells.
+
+The formal run completes **546/546** cells and all **18/18** validity checks. A fully independent second implementation rebuilds every field, observation, metric, rig tail, and call ledger. The first validation has 26 of 28 checks true; two fail only because mathematically equivalent Jacobi reconstructions are not byte-identical, so that record remains inconclusive. A geometry-only, 0A+0A^T v235.1 erratum is frozen before inspecting those differences. It reads no Case 7 density or scientific arrays and reruns no candidate. Maximum Jacobi relative difference is **2.18e-16**, and all 17 checks meet their expected polarity, recovering the final independent decision.
+
+Both the qualified K16 reference and fixed Direct K11 are absolute-safe in **546/546 cells and 13/13 rigs**. Yet matched accuracy to K16 holds in only **330/546 cells and 0/13 rigs**. Field, full-gradient, interior-gradient, and observation violations affect **209 / 204 / 196 / 216** of the 216 failures, with 196 cells failing all four metrics. All four frozen equal-or-cheaper controls also reach **0/13**. Direct uses **12A+11A^T** versus **16A+16A^T** for K16, a nominal 28.125% call reduction, but failed matched accuracy makes that reduction ineffective and blocks wall/RSS testing.
+
+In plain language, “fewer steps are good enough on Case 12” does not transfer to “fewer steps remain equivalent to K16 on Case 7.” None of the 13 rigs preserves the full matched gate. The verdict is `FAIL_CASE7_LOW64_K11_PROSPECTIVE_CONFIRMATION_V235`. The current fixed Direct Low64 K11 transfer route closes with no post-open depth, basis, threshold, fallback, or larger-model rescue. Unopened conditions remain reserved for a separately preregistered, physically different mechanism.
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
 ## 2026-08-25：v234 找到 Case 12 策略失败的直接原因：fallback 换坏了三个正确结果
 
 **为什么做。** v230.1 已经打开 Case 12，v229 的 dual-PRESS 策略结果也已经可见。v234 不把它冒充新外门，只做 post-open 因果归因：比较固定 Direct Low64 warm + 未修改 PCGLS K11、Zero geometry-Jacobi PCGLS K16 和固定 dual-PRESS 接受/回退策略，判断失败到底来自 direct 臂还是 fallback。

@@ -48,18 +48,13 @@ def test_v234_figure_is_rendered() -> None:
         assert image.height >= 700
 
 
-def test_v234_current_surfaces_and_log_are_synchronized() -> None:
+def test_v234_historical_surfaces_and_log_remain_available() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == (
-        "POST_OPEN_CASE12_DIRECT_LOW64_K11_CONTRACT_DOMINATES_FIXED_DUAL_PRESS_FALLBACK_V234"
-    )
     assert current["metrics"]["v234_direct_strict_safe_cells"] == 598
     assert current["metrics"]["v234_policy_strict_safe_cells"] == 595
     assert current["metrics"]["v234_fallback_caused_failures"] == 3
     assert current["current_decision"]["v234_current_v229_fallback_shell_closed"] is True
     assert current["current_decision"]["v234_external_generalization"] is False
-    assert "unopened" in current["next_scientific_gate"].lower()
-    assert "direct_fallback_attribution_v234" in current["public_evidence"]["result"]
     for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
         content = (ROOT / relative).read_text(encoding="utf-8")
         assert "v234" in content
