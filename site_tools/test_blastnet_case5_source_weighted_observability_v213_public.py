@@ -69,7 +69,7 @@ def test_v213_result_and_figure_are_bilingual_and_nonblank() -> None:
 
 def test_v213_remains_preserved_as_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["updated"] == "2026-08-24"
+    assert current["updated"] >= "2026-08-24"
     assert current["metrics"]["v213_primary_comparison_count"] == 169
     assert current["metrics"]["v213_primary_strictly_greater_count"] == 169
     assert current["current_decision"]["v213_truth_aware_mechanism_supported"] is True

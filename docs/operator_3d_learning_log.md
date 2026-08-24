@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v229 把事后 OR 线索改成了不读取目标 rig 分数的固定校准门
+
+**为什么做。** v228 已经证明原始 PRESS 与几何白化 PRESS 含有互补安全信号，但固定 OR 是在父失败 rig 已经可见以后提出的，不能当作前瞻部署规则。v229 要回答更窄也更关键的问题：如果完全隔离目标 rig 的分数，只用其他 rig 做折内校准，这种互补性还能否守住逐 rig 安全、效用和成本门。
+
+**实际做了什么。** 在读取连续评分数组前，我固定了唯一的嵌套双 PRESS 校准公式。对每个 Case 5 目标 rig，只用其余 12 个 rig 分别校准原始与 studentized PRESS 阈值，再用内层留一 rig 的固定 10% 顺序统计量校准包络倍率；Case 2 完全不进入校准。目标 rig 分数、Case 2 分数、真值、安全标签、失败身份、搜索、训练和新增候选公式都不参与校准。接受时使用 direct K11，拒绝时回退 Zero-PCGLS K16；校准本身不增加 `A/A^T`。
+
+**结果。** Case 5 接受 **136/546** 个安全单元，危险误接 **0**，最差 rig 为 **5/42=11.90%**，13/13 个完整 rig 精度通过；Case 2 接受 **318/715** 个安全单元，危险误接 **0**，最差 rig 为 **19/55=34.55%**，同样 13/13 个完整 rig 通过。完全独立第二实现重建双分数、内外层校准、逐 rig 决策、物理门和成本账，17/17 项检查全真，离散决策完全一致；原始分数、studentized 分数和汇总最大差分别约为 **1.11e-15 / 6.66e-16 / 2.57e-11**。
+
+**讲人话。** 这次真正排除的是“必须偷看目标 rig 的分数，才能补回逐 rig 效用”这一直接解释。与 v228 的事后 OR 相比，v229 只少接受 4 个 Case 5 和 6 个 Case 2 单元，却换来了目标 rig 分数隔离。但是公式是在 v228 线索之后选定的，因此它仍只是已开封 Case 2/5 上的 `POST_OPEN_FOLD_LOCAL_DUAL_PRESS_CALIBRATION_HEADROOM_V229`，不是部署算法或外部泛化成功。下一步只授权一个另行结果前冻结的未开封工况外门；外门失败就关闭这条组合校准路线。没有 fresh exact-call、wall/RSS、真实 BOST 或论文成功证据，`algorithm_breakthrough=false`。
+
+### English summary
+
+v229 converts the retrospective v228 OR lead into a fixed nested dual-PRESS calibration that never reads target-rig scores. Each Case 5 target rig is calibrated only from the other 12 rigs, and Case 2 never enters calibration. The policy accepts **136/546** safe Case 5 cells with **0** unsafe accepts and a worst rig of **5/42**, and **318/715** safe Case 2 cells with **0** unsafe accepts and a worst rig of **19/55**; both conditions retain **13/13** complete-rig accuracy. A fully independent implementation passes **17/17** checks with identical discrete decisions and maximum raw-score, studentized-score, and summary differences of about **1.11e-15 / 6.66e-16 / 2.57e-11**. This rules out the need to read target-rig scores on the opened data, but the formula was selected after v228, so the result remains post-open development headroom. It authorizes one separately frozen unopened-condition gate and does not establish a deployment algorithm, external generalization, fresh exact-call reduction, wall/RSS speedup, real BOST, paper success, or an algorithm breakthrough.
+
 ## 2026-08-23：观测残差继续下降，三维梯度却没有被救回来
 
 **为什么做。** v200 的 Huber-TV 已经把五相机 reference 从 K2 的 `1213/1313、0/13` 提高到 `1289/1313、5/13`，但剩下 24 个失败单元全部涉及 gradient。v201 不再调整 Huber，而是结果前固定二阶 TGV2：让一个辅助向量场吸收一阶斜坡，再惩罚它的对称梯度，检验“保留斜坡而不是继续压边缘”能否消除这些失败。

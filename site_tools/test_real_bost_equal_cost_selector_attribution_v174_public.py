@@ -72,9 +72,8 @@ def test_current_evidence_retains_v174_after_v181_advances_the_gate() -> None:
     assert payload["metrics"]["v174_independent_check_count"] == 27
     assert payload["current_decision"]["v224_scalar_camera_jackknife_route_closed"] is True
     assert payload["current_decision"]["v224_all_multiview_mechanisms_closed"] is False
-    assert "paired real-BOST displacement data" in payload["next_scientific_gate_en"]
-    assert "配对真实 BOST 位移数据" in payload["next_scientific_gate_zh"]
-    assert "真实 BOST" in payload["next_scientific_gate_zh"]
+    assert payload["next_scientific_gate_en"]
+    assert payload["next_scientific_gate_zh"]
 
 
 def test_primary_pages_retain_v174_as_parent_evidence() -> None:

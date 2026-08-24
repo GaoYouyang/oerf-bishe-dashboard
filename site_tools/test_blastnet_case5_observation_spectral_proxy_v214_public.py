@@ -62,7 +62,7 @@ def test_v214_result_and_figure_are_bilingual_and_nonblank() -> None:
 
 def test_v214_remains_preserved_beneath_the_v215_headline() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["updated"] == "2026-08-24"
+    assert current["updated"] >= "2026-08-24"
     assert current["v214_observation_spectral_proxy_independent_status"] == (
         "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_SPECTRAL_PROXY_V214"
     )

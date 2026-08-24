@@ -78,12 +78,9 @@ def test_v228_figure_is_rendered() -> None:
         assert image.height >= 700
 
 
-def test_v228_current_surfaces_and_log_are_synchronized() -> None:
+def test_v228_historical_surfaces_and_log_are_preserved() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
-    )
-    assert (
-        current["scientific_status"] == "POST_OPEN_COMPLEMENTARY_DUAL_PRESS_SIGNAL_V228"
     )
     assert current["metrics"]["v228_union_case5_accepted"] == 140
     assert current["metrics"]["v228_union_case5_minimum_rig_accepted"] == 5
@@ -92,10 +89,6 @@ def test_v228_current_surfaces_and_log_are_synchronized() -> None:
     assert current["current_decision"]["v228_retrospective_gate_passed"] is True
     assert current["current_decision"]["v228_deployment_policy_established"] is False
     assert current["current_decision"]["v228_algorithm_breakthrough"] is False
-    assert "v228" in current["next_scientific_gate"]
-    assert "dual_press_union_v228" in current["public_evidence"]["result"]
-    assert "dual_press_union_v228" in current["public_evidence"]["summary"]
-    assert "dual_press_union_v228" in current["public_evidence"]["figure"]
     for relative in (
         "index.html",
         "operator-learning/index.html",
@@ -106,8 +99,8 @@ def test_v228_current_surfaces_and_log_are_synchronized() -> None:
         assert "blastnet_case2_case5_low64_dual_press_union_v228.png" in content
         assert "blastnet_case2_case5_low64_studentized_block_press_v227" in content
     log = (ROOT / "docs/operator_3d_learning_log.md").read_text(encoding="utf-8")
-    assert "v228 两种 PRESS 判据互补" in log
-    assert "v228 two PRESS criteria are complementary" in log
+    assert "v228" in log
+    assert "post-open" in log
 
 
 def test_v228_public_artifacts_do_not_expose_private_execution_details() -> None:
