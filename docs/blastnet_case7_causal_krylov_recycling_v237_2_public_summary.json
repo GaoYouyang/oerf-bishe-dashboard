@@ -1,0 +1,113 @@
+{
+  "schema_version": "oerf-public-blastnet-case7-causal-krylov-recycling-v237.2",
+  "updated": "2026-08-25",
+  "scope": {
+    "condition": "already opened BLASTNet Case 7",
+    "rigs": 13,
+    "frames_per_rig": 42,
+    "cells": 546,
+    "evidence_role": "post-open causal solver-recycling mechanism diagnostic",
+    "prospective_or_external_result": false,
+    "new_condition_opened": false
+  },
+  "question": {
+    "primary": "causal FIFO16 measurement-orthonormal Krylov cache plus one unchanged geometry-Jacobi PCGLS iteration",
+    "anchor": "zero-start geometry-Jacobi PCGLS K16 on frame zero of each rig",
+    "causal_update": "drop the oldest cached direction and append the current K1 direction after deterministic measurement-space orthonormalization",
+    "deployment_inputs": "current observation, reported geometry, and prior causal cache only",
+    "truth_used_for_cache_or_coefficients": false,
+    "reference": "zero-start geometry-Jacobi PCGLS K16 on every frame"
+  },
+  "results": {
+    "causal_fifo16_primary": {
+      "absolute_strict_safe_cells": 148,
+      "matched_cells": 13,
+      "matched_frame_zero_cells": 13,
+      "matched_non_anchor_cells": 0,
+      "absolute_complete_rigs_passed": 0,
+      "matched_complete_rigs_passed": 0,
+      "accepted_cache_updates": 533,
+      "rejected_cache_updates": 0,
+      "absolute_p50_p90_worst": {
+        "field": [0.40431726767235204, 0.520899963313706, 0.6039408802891456],
+        "full_gradient": [0.6086305354916617, 0.694949529168471, 0.7891762391483212],
+        "interior_gradient": [0.7547181365350661, 0.8507912977448321, 0.9856097025276558],
+        "observation": [0.22310937849637832, 0.35082175143408556, 0.4335986212343491]
+      },
+      "matched_ratio_p50_p90_worst": {
+        "field": [1.4083397404912148, 1.8092749019557834, 2.058177220355485],
+        "full_gradient": [1.1620439830131408, 1.6990842135871165, 1.9309762123747878],
+        "interior_gradient": [1.3126771584835748, 1.5776545475664419, 1.8175440782325032],
+        "observation": [5.065808997826713, 7.848718834201801, 9.70414606881255]
+      }
+    },
+    "same_ledger_controls": {
+      "fixed_frame_zero_cache": {
+        "absolute_strict_safe_cells": 14,
+        "matched_cells": 13,
+        "complete_rigs_passed": 0
+      },
+      "previous_candidate_field": {
+        "absolute_strict_safe_cells": 13,
+        "matched_cells": 13,
+        "complete_rigs_passed": 0
+      },
+      "zero_geometry_jacobi_pcgls_k2": {
+        "absolute_strict_safe_cells": 0,
+        "matched_cells": 0,
+        "complete_rigs_passed": 0
+      }
+    }
+  },
+  "cost_accounting": {
+    "primary_sequence_exact_calls_A": 98,
+    "primary_sequence_exact_calls_AT": 57,
+    "reference_sequence_exact_calls_A": 672,
+    "reference_sequence_exact_calls_AT": 672,
+    "nominal_total_exact_call_reduction_fraction": 0.8846726190476191,
+    "matched_accuracy_established": false,
+    "effective_exact_call_reduction_established": false,
+    "wall_or_RSS_measured": false
+  },
+  "cache_validity": {
+    "maximum_forward_consistency_relative": 2.2988146095211886e-16,
+    "maximum_measurement_orthogonality_absolute": 4.884981308350689e-15,
+    "all_533_non_anchor_updates_accepted": true
+  },
+  "independent_validation": {
+    "first_validation_status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_CASE7_CAUSAL_KRYLOV_RECYCLING_V237",
+    "first_validation_checks_passed": 20,
+    "first_validation_checks_total": 21,
+    "only_first_validation_failure": "the independently rebuilt frame-zero anchor used a 1e-10 subset tolerance while all independently rebuilt fields used the pre-existing 2e-9 tolerance",
+    "erratum_role": "post-result validation-only correction with no scientific replay or array rewrite",
+    "erratum_status": "PASS_INDEPENDENT_RECOMPUTATION_WITH_ANCHOR_TOLERANCE_ERRATUM_CASE7_CAUSAL_KRYLOV_RECYCLING_V237_2",
+    "erratum_checks_passed": 26,
+    "erratum_checks_total": 26,
+    "direct_anchor_relative_maximum": 7.720473686894012e-10,
+    "inherited_field_relative_maximum": 2e-9,
+    "direct_formal_independent_field_relative_maximum": 1.5833279622408018e-9,
+    "direct_formal_independent_metric_absolute_maximum": 1.7546643304999776e-9,
+    "direct_formal_independent_cache_absolute_maximum": 7.771561172376096e-16,
+    "call_ledgers_exact": true,
+    "prior_inconclusive_evidence_preserved": true
+  },
+  "adjudication": {
+    "scientific_decision": "FAIL_CASE7_CAUSAL_KRYLOV_RECYCLING_V237",
+    "fifo16_plus_k1_recycling_closed": true,
+    "rank_depth_update_or_reset_search_authorized": false,
+    "interpretation": "Causal direction updates materially improve absolute safety over same-ledger temporal controls, but only the thirteen frame-zero anchors match the K16 reference. No later frame matches, so the nominal call reduction is not an accuracy-equivalent saving."
+  },
+  "claims_fixed_false": {
+    "deployment_algorithm": false,
+    "matched_accuracy": false,
+    "effective_exact_call_reduction": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

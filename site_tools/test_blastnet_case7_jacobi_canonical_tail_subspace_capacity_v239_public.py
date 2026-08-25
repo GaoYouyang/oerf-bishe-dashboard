@@ -51,9 +51,9 @@ def test_v239_figure_is_rendered() -> None:
         assert image.height >= 1100
 
 
-def test_v239_is_synchronized_as_the_latest_public_decision() -> None:
+def test_v239_remains_synchronized_as_historical_public_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == (
+    assert current["v239_scientific_decision"] == (
         "FAIL_CASE7_JACOBI_CANONICAL_TAIL_SUBSPACE_CAPACITY_V239"
     )
     assert current["current_decision"]["v239_independent_validation_passed"] is True
@@ -61,9 +61,6 @@ def test_v239_is_synchronized_as_the_latest_public_decision() -> None:
     assert current["metrics"]["v239_jacobi_complete_rigs_passed"] == 0
     assert current["metrics"]["v239_jacobi_global_p90_higher"] > (
         current["metrics"]["v239_global_rank64_global_p90_higher"]
-    )
-    assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case7_jacobi_canonical_tail_subspace_capacity_v239.png"
     )
 
     for page in (FOCUS, HOME, DAILY):
@@ -75,7 +72,8 @@ def test_v239_is_synchronized_as_the_latest_public_decision() -> None:
         assert "data-i18n-zh" in text and "data-i18n-en" in text
 
     log = LEARNING_LOG.read_text(encoding="utf-8")
-    assert log.index("v239") < log.index("v238")
+    assert log.index("v237.2 确认") < log.index("v239")
+    assert log.index("## 2026-08-25：v239") < log.index("## 2026-08-25：v238")
     assert "symmetric geometry-Jacobi" in log
 
 

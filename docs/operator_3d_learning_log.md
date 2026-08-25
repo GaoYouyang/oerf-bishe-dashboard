@@ -4,6 +4,38 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v237.2 确认因果 Krylov 回收“有作用，但远未达到同精度”
+
+**为什么做。** v236、v238、v239 检验的是跨 rig 固定低秩表示，v237 则问了一个物理上不同的问题：能否把上一时刻已经付费得到的 Krylov 方向作为因果 cache，在下一帧只追加一个新方向，从而用很少的新算子调用跟住充分 K16 重建。第一次独立验证重放了全部单元，但因为 anchor 子集误用了比完整独立场门更严的容差，结果保持 inconclusive；这次只解决该验证矛盾。
+
+**实际做了什么。** 每条 Case 7 rig 的第零帧用 geometry-Jacobi PCGLS-K16 建立十六个场方向及观测投影方向，再整理成观测空间正交 FIFO16。后续每帧只用当前观测投影进 cache，运行一次未修改 PCGLS，然后把当前 K1 方向追加并丢掉最老方向。正式与第一次独立实现的科学数组均保持封存。v237.2 不重建物理、不重跑候选、不改写数组，而是直接重算 **2,184** 个 formal-independent 场差、十三个 anchor、指标/缓存差、调用账和判决。
+
+**结果。** 动态 FIFO16 主候选通过绝对门 **148/546**，而同调用账的固定首帧 cache、上一候选场和 Zero-K2 分别只有 **14/546、13/546、0/546**。全部 **533/533** 个非锚点 cache 更新均被接纳，最大 forward consistency 与观测正交误差只有 **2.30e-16 / 4.88e-15**。所以因果方向更新确实改善了绝对误差，这不是“完全没有信号”。
+
+但相对充分 K16 reference，matched 单元只有 **13/546**，恰好全是十三个首帧锚点；后续 **0/533**，绝对门和 matched 门的完整 rig 都是 **0/13**。field / full-gradient / interior-gradient / observation 的 matched p90 比值为 **1.809275 / 1.699084 / 1.577655 / 7.848719**，全部高于完整 rig p90 门 **1.02**。
+
+**验证边界。** 第一次独立实现通过 **20/21** 项；唯一失败把 anchor 限在 `1e-10`，而同一合同对所有独立场差已冻结为 `2e-9`。实际 anchor / 全场最大差为 **7.72e-10 / 1.58e-9**。v237.2 明确是结果后的纯验证勘误，只继承原有 `2e-9` 场门，不根据结果另选阈值。最终 **26/26** 项检查全真，指标与 cache 最大差 **1.75e-9 / 7.77e-16**，调用账逐值一致，旧 inconclusive 证据保留。
+
+**讲人话。** 这个 cache 不是没用，它把绝对安全单元提高了十倍以上；但它没能让任何后续帧追上 K16。整条序列 `98A+57A^T` 对 K16 的 `672A+672A^T` 名义少 **88.47%**，由于同精度失败，不能算有效调用节省，更不能称速度突破。判决是 `FAIL_CASE7_CAUSAL_KRYLOV_RECYCLING_V237`，只关闭冻结的 FIFO16+K1 更新规则，不允许通过增加 rank、深度、reset 搜索或大模型挽救，也不关闭整条 C 路线。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v237.2 confirms that causal Krylov recycling helps but remains far from matched accuracy
+
+v236, v238, and v239 test fixed cross-rig low-rank representations. v237 asks a physically different question: can already-paid Krylov directions be carried causally into the next frame so that one new solver direction tracks an adequate K16 reconstruction? The first independent implementation replays every cell but remains inconclusive because its anchor subset uses a tighter tolerance than the contract's full independent-field gate. v237.2 resolves only that validation inconsistency.
+
+Each Case 7 rig uses frame-zero geometry-Jacobi PCGLS-K16 to build sixteen field and projected directions, then makes them measurement-orthonormal in a FIFO16 cache. Every later frame projects the current observation into the cache, runs one unchanged PCGLS iteration, appends the current K1 direction, and drops the oldest direction. Formal and first-independent scientific arrays remain sealed. v237.2 does not rebuild physics, rerun candidates, or rewrite arrays; it directly recomputes **2,184** formal-independent field comparisons, thirteen anchors, metric/cache differences, call ledgers, and the decision.
+
+The dynamic FIFO16 primary clears the absolute gate in **148/546** cells, versus **14/546, 13/546, and 0/546** for same-ledger fixed-frame-zero cache, previous-field, and Zero-K2 controls. All **533/533** non-anchor cache updates are accepted, with maximum forward-consistency and measurement-orthogonality errors of **2.30e-16 / 4.88e-15**. Causal direction updates therefore have a real absolute-error effect.
+
+However, only **13/546** cells match the adequate K16 reference, exactly the thirteen frame-zero anchors. Later frames reach **0/533**, and both absolute and matched complete-rig counts are **0/13**. Matched p90 ratios for field / full gradient / interior gradient / observation are **1.809275 / 1.699084 / 1.577655 / 7.848719**, all above the complete-rig p90 limit **1.02**.
+
+The first independent implementation passes **20/21** checks. Its only failure applies `1e-10` to anchors even though the same contract already freezes `2e-9` for all independent field comparisons; actual anchor / full-field maxima are **7.72e-10 / 1.58e-9**. v237.2 is explicitly a post-result validation-only erratum that inherits the existing field gate rather than choosing a threshold from the result. All final **26/26** checks pass, metric/cache differences are at most **1.75e-9 / 7.77e-16**, call ledgers are exact, and the original inconclusive record is preserved.
+
+In plain language, the cache is not useless: it raises absolute-safe coverage by more than an order of magnitude. It still fails to make any later frame match K16. The sequence ledger is `98A+57A^T` versus `672A+672A^T`, nominally **88.47%** fewer calls, but matched-accuracy failure means this is not an effective saving or speed breakthrough. The verdict `FAIL_CASE7_CAUSAL_KRYLOV_RECYCLING_V237` closes only frozen FIFO16-plus-K1, with no rank, depth, reset-search, or larger-model rescue. It does not close the full C route.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
 ## 2026-08-25：v239 排除“跨 rig 失配只来自 Jacobi 几何尺度”的解释
 
 **为什么做。** v236 已经证明物理场坐标中的全局 rank-64 尾差空间不能跨 rig 迁移，v238 又排除了固定空间局部化。仍有一个 solver-native 解释值得直接证伪：每条 rig 的 PCGLS 使用不同几何 Jacobi 预条件器，也许尾差在物理场中不共享，但转到对应的对称变量后会共享。
