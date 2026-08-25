@@ -54,18 +54,15 @@ def test_v244_2_figure_and_builder_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v244_2_is_latest_on_bilingual_primary_pages() -> None:
+def test_v244_2_remains_as_historical_evidence_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == (
-        "INCONCLUSIVE_INVALID_CASE19_CANONICAL_CAMERA_ACTUAL_K14_EXTERNAL_V244_2"
-    )
     assert current["current_decision"]["v244_2_prospective_confirmation"] is False
     assert current["current_decision"]["v244_2_fresh_resource_gate_authorized"] is False
     assert current["current_decision"]["v244_2_algorithm_breakthrough"] is False
     assert current["metrics"]["v244_2_reference_absolute_complete_rigs_passed"] == 9
     assert current["metrics"]["v244_2_primary_absolute_complete_rigs_passed"] == 12
-    assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_canonical_camera_actual_k14_external_v244_2.png"
+    assert current["v244_2_scientific_decision"] == (
+        "INCONCLUSIVE_INVALID_CASE19_CANONICAL_CAMERA_ACTUAL_K14_EXTERNAL_V244_2"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")

@@ -4,6 +4,22 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v246 双实现最坏包络否决固定 reference 继续加深
+
+**为什么做。** v244.2 留下两份离散判决一致、但浮点指标差约 `1.0219e-8` 的封存结果。v245 原计划直接比较两套 K14→K16 收敛诊断，但独立 validator 在写出验证结果前越过结果前固定的 `1e-10` 数值门并 fail-closed。没有放宽 v245 容差，也没有第二次调用同一 validator。v246 改问更严格而不同的问题：把每一对 formal/independent 父指标都保留成下界与上界，后续安全、增益和尾部全部按最不利组合裁决。
+
+**独立结果。** formal 与完全独立的逐循环第二实现对 v246 的全部数值、集合和判决最大差为 **0**，独立检查 **16/16** 全真。K14 的确定安全单元为 **313/429**，K16 为 **417/429**，新增 **104**、丢失 **0**；所有 rig×指标的 p90 与 worst 尾部均未恶化。K16 仍有 12 个可能越门分量，其中 11 个具有正的最坏 K14→K16 增益。
+
+**阻断项。** 唯一没有正增益的是 rig 0、frame 0 的内部梯度：K14 与 K16 的包络都约为 **0.758223464859–0.758223464862**，仍高于 **0.75** 门，最坏增益为 **-2.97e-12**。它在数值精度内没有随深度改善，所以不能用其余 11 项的良好趋势替它投票，也不能假定 K20 会自动修复首帧。
+
+**讲人话。** 多算两步总体上确实让 reference 好了很多，但最后那个卡点不是“再多迭代一点就会下降”的样子。结果前规则要求每个尚未过门的分量都显示正向收敛，因此 K20 不运行，K18/K22/K24/K32 也不搜索。关闭的是当前固定深度 global geometry-Jacobi PCGLS reference 加深路线，不是整条 C 路线；下一步只接受新的物理信息，或一个与固定深度、全局低秩和既有 global-quadratic 家族真正不同、结果前唯一冻结且可证伪的机制。
+
+**证据边界。** v246 只读取封存指标，新增调用为 `0A+0A^T`；没有新 forward、adjoint、solver、wall/RSS 或真实 BOST。Case 19 已开封，因此这仍是 post-open 机制诊断。`algorithm_breakthrough=false`，不训练大模型、不租 GPU。
+
+### English note
+
+v245 fails closed before producing independent validation output when its preregistered `1e-10` comparison is exceeded; its tolerance is not relaxed and the same validator is not rerun. v246 instead retains every formal/independent parent metric pair as a worst-case lower/upper envelope. The independent loop implementation passes **16/16** checks with exact agreement with formal. Definitely-safe cells rise from **313/429** at K14 to **417/429** at K16, gaining **104** and losing none, and every complete-rig tail is non-worsening. However, one first-frame interior-gradient component remains about **0.758223** at both depths, above the **0.75** limit with no positive gain. K20 and fixed-depth reference deepening therefore close. This is post-open mechanism evidence, not external generalization, resource speedup, or an algorithmic breakthrough.
+
 ## 2026-08-25：v244.2 Case 19 一次性同族公开门完成，但权威判决保持不确定
 
 **为什么做。** v243 在已经开封的 Case 7 上证明，规范相机 ID 后的实际未修改 K14 warm solver 可以同时守住绝对门和 K16 同精度门。v244 把同一适配器、K14 主候选、K16 reference、四个同价或更便宜 controls、指标门和禁止调参规则一次性搬到此前未开的同族 Case 19，检验这条固定机制能否前瞻复现。

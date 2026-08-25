@@ -51,7 +51,7 @@ def test_v238_figure_is_rendered() -> None:
 def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "INCONCLUSIVE_INVALID_CASE19_CANONICAL_CAMERA_ACTUAL_K14_EXTERNAL_V244_2"
+        "FAIL_CASE19_TWO_IMPLEMENTATION_ENVELOPE_NOT_MONOTONE_V246"
     )
     assert current["current_decision"]["v238_independent_validation_passed"] is True
     assert current["current_decision"]["v238_algorithm_breakthrough"] is False
@@ -60,7 +60,7 @@ def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
         current["metrics"]["v238_global_rank64_global_p90_higher"]
     )
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_canonical_camera_actual_k14_external_v244_2.png"
+        "blastnet_case19_reference_envelope_v246.png"
     )
 
     for page in (FOCUS, HOME, DAILY):
