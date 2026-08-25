@@ -48,9 +48,11 @@ def test_v238_figure_is_rendered() -> None:
         assert image.height >= 1100
 
 
-def test_v238_remains_synchronized_as_parent_evidence_after_v240() -> None:
+def test_v238_remains_synchronized_as_parent_evidence_after_v241() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE7_CAUSAL_REACHABLE_SPAN_NECESSARY_CAPACITY_V240"
+    assert current["scientific_status"] == (
+        "POST_OPEN_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_NECESSARY_HEADROOM_V241"
+    )
     assert current["current_decision"]["v238_independent_validation_passed"] is True
     assert current["current_decision"]["v238_algorithm_breakthrough"] is False
     assert current["metrics"]["v238_octant_complete_rigs_passed"] == 0
@@ -58,7 +60,7 @@ def test_v238_remains_synchronized_as_parent_evidence_after_v240() -> None:
         current["metrics"]["v238_global_rank64_global_p90_higher"]
     )
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case7_causal_reachable_span_capacity_v240.png"
+        "blastnet_case7_maximal_strict_savings_span_capacity_v241.png"
     )
 
     for page in (FOCUS, HOME, DAILY):
@@ -70,7 +72,9 @@ def test_v238_remains_synchronized_as_parent_evidence_after_v240() -> None:
         assert "data-i18n-zh" in text and "data-i18n-en" in text
 
     log = LEARNING_LOG.read_text(encoding="utf-8")
-    assert log.index("## 2026-08-25：v240") < log.index(
+    assert log.index("## 2026-08-25：v241") < log.index(
+        "## 2026-08-25：v240"
+    ) < log.index(
         "## 2026-08-25：v237.2"
     ) < log.index(
         "## 2026-08-25：v239"

@@ -1,0 +1,138 @@
+{
+  "schema_version": "oerf-public-blastnet-case7-maximal-strict-savings-span-capacity-v241",
+  "updated": "2026-08-25",
+  "scope": {
+    "condition": "already opened BLASTNet Case 7",
+    "rigs": 13,
+    "frames_per_rig": 42,
+    "later_frames": 533,
+    "camera_count": 9,
+    "field_shape_zyx": [
+      32,
+      16,
+      16
+    ],
+    "evidence_role": "post-open necessary-capacity audit of the maximal current Krylov depth that still strictly saves both exact operator types",
+    "prospective_or_external_result": false,
+    "new_condition_opened": false
+  },
+  "question": {
+    "candidate_span": "the exact pre-update FIFO16 cache plus the fourteen current geometry-Jacobi PCGLS directions at each later frame",
+    "current_solver_depth": 14,
+    "span_dimension": 30,
+    "coefficient_access": "truth-aware metric-specific least-squares coefficients used only to test necessary capacity",
+    "metrics_optimized_separately": true,
+    "joint_feasibility_tested": false,
+    "reference": "zero-start geometry-Jacobi PCGLS K16 on every frame",
+    "maximal_strict_savings_reason": "K14 uses fewer exact A and A^T calls than K16, while K15 no longer strictly saves A"
+  },
+  "parent_comparison": {
+    "v240_k1_span_dimension": 17,
+    "v240_necessary_safe_later_cells": 0,
+    "v240_complete_rigs_passed": 0,
+    "v240_metric_cell_failures": {
+      "field": 377,
+      "full_gradient": 251,
+      "interior_gradient": 309,
+      "observation": 533
+    },
+    "v240_minimum_metric_p90_higher": {
+      "field": 0.47564154594498775,
+      "full_gradient": 0.6536694850031829,
+      "interior_gradient": 0.7360451353725155,
+      "observation": 0.30163601372583215
+    }
+  },
+  "results": {
+    "necessary_safe_later_cells": 533,
+    "later_cells_total": 533,
+    "necessary_complete_rigs_passed": 13,
+    "rigs_total": 13,
+    "metric_cell_failures": {
+      "field": 0,
+      "full_gradient": 0,
+      "interior_gradient": 0,
+      "observation": 0
+    },
+    "minimum_metric_p50": {
+      "field": 0.21379558529277976,
+      "full_gradient": 0.3759840371919761,
+      "interior_gradient": 0.4374164791143668,
+      "observation": 0.029733440173856297
+    },
+    "minimum_metric_p90_higher": {
+      "field": 0.25984562764322966,
+      "full_gradient": 0.4073779053754507,
+      "interior_gradient": 0.48368022579544084,
+      "observation": 0.036932261047099076
+    },
+    "minimum_metric_worst": {
+      "field": 0.2835487710389327,
+      "full_gradient": 0.443281402499051,
+      "interior_gradient": 0.5277130365048363,
+      "observation": 0.04354705543544144
+    },
+    "absolute_limits": {
+      "field": 0.5,
+      "full_gradient": 0.75,
+      "interior_gradient": 0.75,
+      "observation": 0.2
+    },
+    "design_rank": 30,
+    "metric_designs_audited": 2132,
+    "k14_nesting_violations": 0
+  },
+  "logical_exact_call_ledger": {
+    "k14_later_frame_A": 15,
+    "k14_later_frame_AT": 14,
+    "k15_later_frame_A": 16,
+    "k15_later_frame_AT": 15,
+    "k16_later_frame_A": 16,
+    "k16_later_frame_AT": 16,
+    "k14_sequence_A": 631,
+    "k14_sequence_AT": 590,
+    "k16_sequence_A": 672,
+    "k16_sequence_AT": 672,
+    "nominal_total_exact_call_reduction_fraction": 0.09151785714285714,
+    "effective_call_reduction_established": false,
+    "wall_or_rss_measured": false
+  },
+  "independent_validation": {
+    "first_status": "INCONCLUSIVE_INDEPENDENT_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_CAPACITY_V241",
+    "first_scientific_decision": "INCONCLUSIVE_INVALID_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_CAPACITY_V241",
+    "first_failure_scope": "two non-scientific numerical diagnostics: a reconstructed K1 field comparison and an exact-arithmetic-style projected-direction orthogonality threshold",
+    "sealed_array_erratum_status": "PASS_SEALED_ARRAY_READJUDICATION_NUMERICAL_VALIDITY_ERRATUM_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_V241_1",
+    "sealed_array_erratum_checks_passed": 35,
+    "sealed_array_erratum_checks_total": 35,
+    "new_science_arrays_written_by_erratum": 0,
+    "formal_independent_k14_minimum_metric_absolute_maximum": 3.7119252116468715e-11,
+    "formal_independent_summary_absolute_maximum": 1.2619245925993283e-12,
+    "formal_independent_k1_minimum_metric_absolute_maximum": 1.7763568394002505e-15,
+    "formal_k1_vs_sealed_v240_absolute_maximum": 2.0539125955565396e-14,
+    "independent_k1_vs_sealed_v240_absolute_maximum": 1.9317880628477724e-14,
+    "formal_independent_ranks_exact": true,
+    "direct_projection_replay_passed": true,
+    "cache_physical_checks_passed": true,
+    "permutation_and_adjoint_checks_passed": true
+  },
+  "adjudication": {
+    "scientific_decision": "POST_OPEN_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_NECESSARY_HEADROOM_V241",
+    "necessary_representation_headroom_found": true,
+    "interpretation": "The maximal current Krylov span that still strictly saves both exact operator types has enough metric-specific necessary capacity on all opened Case 7 later frames. This refutes the claim that every same-cache strict-savings current Krylov span lacks necessary directions, but it does not establish one jointly feasible field or a deployable coefficient rule."
+  },
+  "next_gate": "preregister and test the actual unchanged K14 PCGLS coefficients against equal-or-cheaper controls before any predictor, wall/RSS, external, or real-BOST claim",
+  "claims_fixed_false": {
+    "deployment_algorithm": false,
+    "learned_algorithm": false,
+    "joint_feasibility": false,
+    "effective_exact_call_reduction": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

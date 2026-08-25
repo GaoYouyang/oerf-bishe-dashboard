@@ -13,7 +13,6 @@ FIGURE = ROOT / "assets/figures/blastnet_case7_causal_reachable_span_capacity_v2
 BUILDER = ROOT / "site_tools/build_blastnet_case7_causal_reachable_span_capacity_v240_figure.py"
 CURRENT = ROOT / "operator-learning/current-evidence.json"
 FOCUS = ROOT / "operator-learning/index.html"
-HOME = ROOT / "index.html"
 DAILY = ROOT / "operator-learning/daily-progress.html"
 LEARNING_LOG = ROOT / "docs/operator_3d_learning_log.md"
 
@@ -54,19 +53,16 @@ def test_v240_figure_and_source_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v240_is_synchronized_as_the_latest_public_decision() -> None:
+def test_v240_remains_synchronized_as_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE7_CAUSAL_REACHABLE_SPAN_NECESSARY_CAPACITY_V240"
+    assert current["v240_scientific_decision"] == "FAIL_CASE7_CAUSAL_REACHABLE_SPAN_NECESSARY_CAPACITY_V240"
     assert current["current_decision"]["v240_independent_validation_passed"] is True
     assert current["current_decision"]["v240_reachable_span_capacity_passed"] is False
     assert current["current_decision"]["v240_algorithm_breakthrough"] is False
     assert current["metrics"]["v240_later_cells_necessary_safe"] == 0
     assert current["metrics"]["v240_metric_observation_failures"] == 533
-    assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case7_causal_reachable_span_capacity_v240.png"
-    )
 
-    for page in (FOCUS, HOME, DAILY):
+    for page in (FOCUS, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case7_causal_reachable_span_capacity_v240" in text
         assert "0/533" in text and "533/533" in text

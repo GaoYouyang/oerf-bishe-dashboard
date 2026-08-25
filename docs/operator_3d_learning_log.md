@@ -4,6 +4,34 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v241 K14 当前 Krylov 空间恢复必要容量，但还没有形成算法
+
+**为什么做。** v240 已经证明，更新前 FIFO16 cache 加当前 K1 方向的完整 rank-17 空间在后续帧上是 0/533。仍需回答一个更窄的问题：在调用账仍同时严格少于 K16 时，加入当前样本自身更多 Krylov 方向，是否能补回空间里缺失的方向。K14 是唯一最大深度，因为后续帧为 `15A+14A^T`；到 K15 时 `A` 已与 K16 一样是 16 次。
+
+**实际做了什么。** 对同一 13 条已开封 Case 7 rig 和 533 个后续帧，在冻结 FIFO16 cache 上加入当前 K1-K14 方向，形成 rank-30 空间。field、完整梯度、内部梯度和 observation 仍分别使用自己的 truth-aware 最优系数，因此这是必要容量上界，不是一个联合三维场或部署系数规则。
+
+**结果。** 必要安全达到 **533/533**，完整 rig **13/13**，四项失败数都是 **0**。field / 完整梯度 / 内部梯度 / observation 的 p50 为 **0.213796 / 0.375984 / 0.437416 / 0.029733**，p90 为 **0.259846 / 0.407378 / 0.483680 / 0.036932**，worst 为 **0.283549 / 0.443281 / 0.527713 / 0.043547**，全部低于冻结绝对门。全部 **2,132** 个设计秩都恰为 30。
+
+**独立复算与勘误。** 正式 SVD 和独立 pivoted QR 的 K14 最小指标、汇总最大差只有 **3.71e-11 / 1.26e-12**，K1 父对照也与封存 v240 一致。第一次验证仍保留为 inconclusive，因为两个不参与科学判决的附加数值诊断使用了不合适的门。v241.1 不重放物理、不打开新数据、不写新科学数组，只对封存数组重算全部单元、rig、秩、嵌套、父对照、调用账和物理检查，最终 **35/35** 项通过。
+
+**讲人话。** v240 说“K1 空间太小”，v241 进一步说“在还严格省两类调用的最大深度 K14，方向本身已经够用”。这是真正的表示层必要余量，推翻了“所有同 cache 的严格节省 Krylov 空间都没容量”的悲观解释。但四个指标可以选四组不同系数，所以还没有证明一个实际 K14 解能同时过门。序列逻辑账 `631A+590A^T` 对 K16 的 `672A+672A^T` 名义少 **9.1518%**，目前不能叫有效调用收益。下一门只检验实际未修改 K14 PCGLS 系数及同价或更便宜 controls。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v241 finds necessary capacity in the current maximal strict-savings K14 span, but not yet an algorithm
+
+v240 shows that the full rank-17 span of the pre-update FIFO16 cache plus the current K1 direction reaches 0/533 later frames. v241 asks a narrower question: while still using strictly fewer exact `A` and `A^T` calls than K16, do more current-sample Krylov directions restore the missing span capacity? K14 is the unique maximal depth because a later frame uses `15A+14A^T`; at K15, the `A` count already equals K16 at 16.
+
+For the same 13 opened Case 7 rigs and 533 later frames, v241 adds current K1-K14 directions to the frozen FIFO16 cache, producing a rank-30 span. Field, full gradient, interior gradient, and observation still receive separate truth-aware optimal coefficients. This is therefore an optimistic necessary-capacity bound, not one jointly feasible 3D field or a deployment-time coefficient rule.
+
+Necessary-safe coverage reaches **533/533** and complete rigs reach **13/13**, with zero failures in every metric. Field / full-gradient / interior-gradient / observation p50 is **0.213796 / 0.375984 / 0.437416 / 0.029733**, p90 is **0.259846 / 0.407378 / 0.483680 / 0.036932**, and worst is **0.283549 / 0.443281 / 0.527713 / 0.043547**, all below the frozen absolute limits. All **2,132** designs have rank 30.
+
+Formal SVD and independent pivoted QR differ by at most **3.71e-11 / 1.26e-12** on K14 metric minima / summaries, and both reproduce the sealed v240 K1 parent. The first validation remains preserved as inconclusive because two additional numerical diagnostics outside the scientific decision used unsuitable gates. v241.1 replays no physics, opens no new data, and writes no new science arrays; it recomputes every sealed cell, rig, rank, nesting relation, parent control, call ledger, and physical check, passing **35/35** checks.
+
+In plain language, v240 says that the K1 span is too small; v241 says that the maximal current K14 depth which still strictly saves both operator types does contain enough necessary directions. This is genuine representation-level headroom and refutes the pessimistic claim that every same-cache strict-savings Krylov span lacks capacity. It does not prove that one actual K14 solution passes all four gates. The sequence ledger `631A+590A^T` versus `672A+672A^T` for K16 is nominally **9.1518%** lower, but cannot yet be called an effective saving. The next gate is limited to actual unchanged K14 PCGLS coefficients and equal-or-cheaper controls.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
 ## 2026-08-25：v240 冻结因果可达空间容量为零，失败不只是系数没选好
 
 **为什么做。** v237.2 已确认因果 FIFO16+K1 更新确实改善绝对误差，但 533 个后续帧没有一个达到 K16 同精度。仍需区分两种解释：当前只看 observation 的系数公式没选好，或者 FIFO16 cache 加当前 K1 方向本身就缺少必要方向。v240 直接检验第二种解释。
