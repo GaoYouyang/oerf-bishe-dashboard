@@ -4,6 +4,34 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v243 相机 ID 规范化后，实际 K14 warm solver 在已开封 Case 7 全部过门
+
+**为什么做。** v241 只证明 K14 空间具备逐指标必要容量，四项可以使用四组真值可见系数。真正有意义的下一问是：同一个实际未修改 K14 解能否同时通过 field、完整梯度、内部梯度和 observation 门，而且不能被同价或更便宜的经典 control 解释。
+
+**中间为何两次 inconclusive。** v242 和 v242.1 把相机顺序反转后，离散通过/失败判决完全一致，但浮点累加顺序造成的指标、场或恢复残差漂移超过结果前冻结的数值门。两次记录都保留为 inconclusive，没有看到结果后放宽容差。v243 只增加稳定 ASCII 相机 ID 排序，并按同一顺序搬移连续观测块；这个适配器不做数值运算、不改变 dtype，也不增加 `A/A^T`。
+
+**结果。** 因果更新前 FIFO16 warm state 加实际未修改 geometry-Jacobi PCGLS K14 达到 **546/546** 个绝对安全单元、**546/546** 个 K16 同精度单元和 **13/13** 条完整 rig。field / 完整梯度 / 内部梯度 / observation 的 p90 为 **0.278920 / 0.468104 / 0.586947 / 0.037880**，worst 为 **0.309085 / 0.593012 / 0.731493 / 0.054089**。四个同价或更便宜 controls 的同精度完整 rig 全是 **0/13**。
+
+**独立复算。** 正式有效性门 **24/24**、独立检查 **39/39** 全真。正式与独立的场、残差、指标、汇总、replay 和 cache 最大差全部为 **0**；原始与反转相机顺序在规范化后也逐值一致。K14 warm 每条完整 rig 的逻辑账为 `631A+590A^T`，K16 为 `672A+672A^T`，名义总精确调用少 **9.1518%**。
+
+**讲人话。** 这是第一次在当前链上把“空间里可能有方向”推进到“实际未修改 K14 solver 确实同时过门，而且便宜 controls 解释不了”。但 Case 7 已经开封，所以只能称 post-open 机制 headroom。没有独立公开外门、fresh wall/RSS 或真实 BOST，不能称算法突破或资源加速。下一步必须在结果前冻结一条此前未开的独立公开反应流序列，并原样复用适配器、主候选、controls、门和禁止调参规则。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v243 canonical camera IDs make the actual K14 warm solver reproducible and fully passing on opened Case 7
+
+v241 establishes only metric-specific necessary capacity and may use four truth-aware coefficient vectors. The next meaningful question is whether one actual unchanged K14 solution passes field, full-gradient, interior-gradient, and observation gates together, while resisting equal-or-cheaper classical explanations.
+
+v242 and v242.1 preserve identical discrete pass/fail decisions under reversed camera order, but finite summation-order drift in metrics, fields, or restored residuals exceeds the preregistered numerical gates. Both remain inconclusive; no tolerance is relaxed after seeing the result. v243 adds only stable ASCII camera-ID sorting and the corresponding contiguous observation-block reindexing. The adapter performs no arithmetic, changes no dtype, and adds no `A/A^T` call.
+
+The causal pre-update FIFO16 warm state followed by actual unchanged geometry-Jacobi PCGLS K14 reaches **546/546** absolute-safe cells, **546/546** K16-matched cells, and **13/13** complete rigs. Field / full-gradient / interior-gradient / observation p90 is **0.278920 / 0.468104 / 0.586947 / 0.037880**, and worst is **0.309085 / 0.593012 / 0.731493 / 0.054089**. Every equal-or-cheaper control reaches **0/13** matched complete rigs.
+
+All **24/24** formal validity checks and **39/39** independent checks pass. Formal and independent fields, residuals, metrics, summaries, replay, and cache states have maximum difference **0**; canonicalized original and reversed camera orders also agree exactly. The complete-rig ledger is `631A+590A^T` for warm K14 versus `672A+672A^T` for K16, nominally **9.1518%** fewer total exact calls.
+
+This moves the evidence from "the span may contain enough directions" to "the actual unchanged K14 solver passes all gates and cheaper controls do not explain it." Case 7 is already opened, so the result remains post-open mechanism headroom. Without an independent public gate, fresh wall/RSS, or real BOST, it is not an algorithm breakthrough or resource-speed result. The next experiment must freeze a previously unopened independent public reacting-flow sequence and reuse the adapter, primary, controls, gates, and no-retuning rule unchanged.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
 ## 2026-08-25：v241 K14 当前 Krylov 空间恢复必要容量，但还没有形成算法
 
 **为什么做。** v240 已经证明，更新前 FIFO16 cache 加当前 K1 方向的完整 rank-17 空间在后续帧上是 0/533。仍需回答一个更窄的问题：在调用账仍同时严格少于 K16 时，加入当前样本自身更多 Krylov 方向，是否能补回空间里缺失的方向。K14 是唯一最大深度，因为后续帧为 `15A+14A^T`；到 K15 时 `A` 已与 K16 一样是 16 次。

@@ -1,0 +1,165 @@
+{
+  "schema_version": "oerf-public-blastnet-case7-canonical-camera-actual-k14-solver-controls-v243",
+  "updated": "2026-08-25",
+  "scope": {
+    "condition": "already opened BLASTNet Case 7",
+    "rigs": 13,
+    "frames_per_rig": 42,
+    "cells_total": 546,
+    "anchor_cells": 13,
+    "later_cells": 533,
+    "camera_count": 9,
+    "field_shape_zyx": [
+      32,
+      16,
+      16
+    ],
+    "evidence_role": "post-open mechanism audit of actual unchanged K14 solver behavior after deterministic camera-ID canonicalization",
+    "prospective_or_external_result": false,
+    "new_condition_opened": false
+  },
+  "question": {
+    "primary": "causal FIFO16 warm state followed by actual unchanged geometry-Jacobi PCGLS K14",
+    "deployment_visible_inputs_only_before_prediction_barrier": true,
+    "truth_used_for_prediction_or_cache_update": false,
+    "truth_used_only_after_prediction_barrier_for_scoring": true,
+    "camera_adapter": "stable ASCII camera-ID ordering with contiguous observation-block reindexing and no arithmetic or dtype conversion",
+    "reference": "zero-start geometry-Jacobi PCGLS K16 on every frame",
+    "controls": [
+      "zero-start geometry-Jacobi PCGLS K14",
+      "zero-start unpreconditioned CGLS K14",
+      "normalized-backprojection geometry-Jacobi PCGLS K13",
+      "normalized-backprojection unpreconditioned CGLS K13"
+    ],
+    "retuning_after_results": false,
+    "tolerance_relaxation": false
+  },
+  "camera_canonicalization_audit": {
+    "v242_status": "INCONCLUSIVE",
+    "v242_reason": "camera-permutation metric drift was 1.2388770731508458e-08 against the preregistered 1e-08 gate",
+    "v242_1_status": "INCONCLUSIVE",
+    "v242_1_reason": "discrete decisions agreed, but finite camera-order field and restored-residual drifts remained above the frozen numerical gate",
+    "v242_1_field_relative_drift": 1.9039782965016326e-08,
+    "v242_1_restored_residual_relative_drift": 1.1944177180197086e-06,
+    "v243_original_and_reverse_camera_ids_canonicalized_exactly": true,
+    "v243_original_and_reverse_observations_canonicalized_exactly": true,
+    "v243_original_and_reverse_fields_exact": true,
+    "v243_original_and_reverse_residuals_exact": true,
+    "v243_original_and_reverse_metrics_exact": true,
+    "v243_original_and_reverse_call_ledgers_exact": true,
+    "v243_original_and_reverse_replay_exact": true,
+    "v243_original_and_reverse_cache_exact": true
+  },
+  "results": {
+    "primary": {
+      "name": "canonical_camera_dynamic_preupdate_fifo16_actual_geometry_jacobi_pcgls_k14",
+      "passed": true,
+      "absolute_cells_passed": 546,
+      "matched_cells_passed": 546,
+      "cells_total": 546,
+      "absolute_complete_rigs_passed": 13,
+      "matched_complete_rigs_passed": 13,
+      "rigs_total": 13,
+      "p90_higher": {
+        "field": 0.2789203743376507,
+        "full_gradient": 0.46810433205213264,
+        "interior_gradient": 0.5869467129796854,
+        "observation": 0.03787988032959536
+      },
+      "worst": {
+        "field": 0.30908520684485424,
+        "full_gradient": 0.5930119315807006,
+        "interior_gradient": 0.7314926559796777,
+        "observation": 0.05408940422404723
+      },
+      "absolute_limits": {
+        "field": 0.5,
+        "full_gradient": 0.75,
+        "interior_gradient": 0.75,
+        "observation": 0.2
+      }
+    },
+    "equal_or_cheaper_controls": [
+      {
+        "name": "zero_geometry_jacobi_pcgls_k14",
+        "passed": false,
+        "absolute_cells_passed": 507,
+        "matched_cells_passed": 13,
+        "absolute_complete_rigs_passed": 7,
+        "matched_complete_rigs_passed": 0
+      },
+      {
+        "name": "zero_unpreconditioned_cgls_k14",
+        "passed": false,
+        "absolute_cells_passed": 282,
+        "matched_cells_passed": 13,
+        "absolute_complete_rigs_passed": 0,
+        "matched_complete_rigs_passed": 0
+      },
+      {
+        "name": "normalized_backprojection_geometry_jacobi_pcgls_k13",
+        "passed": false,
+        "absolute_cells_passed": 510,
+        "matched_cells_passed": 13,
+        "absolute_complete_rigs_passed": 7,
+        "matched_complete_rigs_passed": 0
+      },
+      {
+        "name": "normalized_backprojection_unpreconditioned_cgls_k13",
+        "passed": false,
+        "absolute_cells_passed": 280,
+        "matched_cells_passed": 13,
+        "absolute_complete_rigs_passed": 0,
+        "matched_complete_rigs_passed": 0
+      }
+    ]
+  },
+  "logical_exact_call_ledger_per_complete_rig": {
+    "primary_A": 631,
+    "primary_AT": 590,
+    "reference_k16_A": 672,
+    "reference_k16_AT": 672,
+    "each_equal_or_cheaper_control_A": 590,
+    "each_equal_or_cheaper_control_AT": 590,
+    "nominal_primary_total_exact_call_reduction_fraction": 0.09151785714285714,
+    "effective_call_reduction_established_on_opened_case7": true,
+    "fresh_wall_or_rss_measured": false,
+    "resource_speedup_established": false
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_CASE7_CANONICAL_CAMERA_ACTUAL_K14_SOLVER_CONTROLS_V243",
+    "formal_validity_checks_passed": 24,
+    "formal_validity_checks_total": 24,
+    "independent_checks_passed": 39,
+    "independent_checks_total": 39,
+    "formal_independent_field_maximum": 0.0,
+    "formal_independent_residual_maximum": 0.0,
+    "formal_independent_metric_maximum": 0.0,
+    "formal_independent_summary_maximum": 0.0,
+    "formal_independent_replay_maximum": 0.0,
+    "formal_independent_cache_maximum": 0.0,
+    "k16_anchor_vs_sealed_parent_maximum_relative": 8.791129869919169e-10,
+    "k1_vs_sealed_parent_maximum_relative": 8.791129869919169e-10,
+    "v241_lower_bound_positive_violation": 0.0,
+    "adjoint_maximum_relative": 1.9115886578392577e-15
+  },
+  "adjudication": {
+    "scientific_decision": "POST_OPEN_CASE7_CANONICAL_CAMERA_ACTUAL_K14_WARM_SPECIFIC_HEADROOM_V243",
+    "actual_unchanged_k14_solver_passed": true,
+    "equal_or_cheaper_controls_explain_result": false,
+    "interpretation": "After deterministic camera-ID canonicalization, the causal warm-specific unchanged K14 solver passes every opened Case 7 cell and complete rig, while all four equal-or-cheaper controls fail. This is post-open mechanism headroom and must be tested without retuning on an unopened independent public reacting-flow sequence before any external or resource claim."
+  },
+  "next_gate": "freeze an unopened independent public reacting-flow sequence before opening it, then reuse the same canonical adapter, K14 primary, controls, thresholds, and no-retuning rule; only after that matched-accuracy gate passes may fresh wall and RSS be measured",
+  "claims_fixed_false": {
+    "learned_algorithm": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "fresh_wall_rss_result": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}
