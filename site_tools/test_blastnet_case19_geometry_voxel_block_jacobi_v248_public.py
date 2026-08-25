@@ -61,9 +61,9 @@ def test_v248_figure_and_builder_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v248_is_latest_on_bilingual_primary_pages() -> None:
+def test_v248_remains_on_bilingual_primary_pages_after_v249() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == (
+    assert current["v248_scientific_decision"] == (
         "INCONCLUSIVE_INVALID_CASE19_GEOMETRY_VOXEL_BLOCK_JACOBI_FRAME_ZERO_V248"
     )
     assert current["current_decision"]["v248_independent_validation_passed"] is False
@@ -73,9 +73,6 @@ def test_v248_is_latest_on_bilingual_primary_pages() -> None:
     assert current["metrics"]["v248_independent_checks_passed"] == 26
     assert current["metrics"]["v248_independent_checks_total"] == 28
     assert current["metrics"]["v248_primary_strict_safe_cells"] == 0
-    assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_geometry_voxel_block_jacobi_v248.png"
-    )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_geometry_voxel_block_jacobi_v248" in text

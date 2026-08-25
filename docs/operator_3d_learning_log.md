@@ -4,6 +4,22 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v249 Haar-MAD 首帧出现 13/13 诊断信号，但独立系数门不闭合
+
+**为什么做。** v248 固定体素块退出后，v249 结果前冻结一条物理上不同的多尺度路线：从 reported-geometry 对角 Jacobi-PCGLS K13 出发，对 `32×16×16` 三维场做一层正交 Haar 变换，用 HHH 子带的 MAD 估计尺度，对七个细节子带做固定软阈值，恢复边界和 active-cell mean gauge 后执行一次精确投影与未修改 PCGLS K1。主候选实际逻辑账为 `15A+14A^T`，参数为 0；同价低频近似、原始 K14 和 K16 reference 均在结果前冻结。
+
+**正式与独立复算。** formal 完成 13 条 rig 的共同首帧并通过 **22/22** 项有效性检查。完全独立第二实现以显式逐点 Haar 配对、独立预处理、观测、Jacobi 与 PCGLS 重建全部候选和四项指标，通过 **33/35** 项。唯一原发失败是 Haar 系数相对差 **1.82098e-11**，高于冻结 **1e-12**；连带使 formal/independent 决策精确一致项失败。初始化场、最终场、残差、观测、指标、汇总、相机换序与调用账均通过各自冻结门。
+
+**只读归因。** 判决后交叉喂入两套 Haar 实现，变换本身最大相对差只有约 **6.83e-16**；两套独立重建的 K13 基场相对差约 **1.57e-11**。所以系数差来自上游预处理、观测与 K13 数值传播，不是 Haar 配对公式。但合同检查的是最终传播系数，不能因为找到了来源就事后改门。
+
+**讲人话。** 两套程序都诊断出 Haar-MAD 主候选 **13/13**，同价低频近似对照 **0/13**，原始 K14 **7/13**，K16 reference **12/13**。这是一条值得记住的首帧信号，却不是可采信的性能通过：预先约定的独立门没有全过，不能把离散计数包装成 headroom。
+
+**路线动作与边界。** 权威判决是 `INCONCLUSIVE_INVALID_CASE19_HAAR_MAD_WARM_FRAME_ZERO_V249`。不放宽容差、不做 v249.1、不调整 Haar 家族、层数、MAD、阈值、子带、支撑或深度，也不启动完整 429 单元序列。没有有效 exact-call 减少、wall/RSS、外部泛化、真实 BOST 或算法突破；`algorithm_breakthrough=false`，不训练大模型、不租 GPU。
+
+### English note
+
+v249 preregisters a physically distinct, non-learned multiscale correction after v248 retires fixed voxel blocks. Starting from reported-geometry diagonal-Jacobi PCGLS K13, it applies one orthonormal 3D Haar level, estimates scale from the HHH-detail MAD, soft-thresholds all seven detail subbands, restores the support and gauge, and performs one exact projection plus one unchanged PCGLS iteration. The primary costs `15A+14A^T` and has zero trainable parameters. Formal passes **22/22** validity checks across 13 frame-zero cells; a fully independent nested-loop implementation passes **33/35** checks. Haar-coefficient relative disagreement is **1.82098e-11**, above the frozen **1e-12** limit, while the initializer, final field, residual, observation, metrics, summaries, permutation checks, and call ledger all pass. Post-decision cross-feeding shows the Haar transforms themselves agree to about **6.83e-16** and attributes the mismatch upstream to independently rebuilt K13 propagation, but this cannot repair the preregistered gate. The primary is diagnostically **13/13**, the equal-cost approximation-only control **0/13**, raw K14 **7/13**, and K16 reference **12/13**. The authoritative verdict remains `INCONCLUSIVE`; there is no tolerance relaxation, v249.1 rescue, full 429-cell run, wall/RSS gate, external-generalization claim, real-BOST claim, or algorithmic breakthrough.
+
 ## 2026-08-26：v248 固定三维体素块首帧门不确定，完整序列关闭
 
 **为什么做。** v247 的坐标线机制退出后，v248 结果前冻结一个物理上不同的局部三维块机制：在 `32×16×16` 网格上使用原点固定、互不重叠的 `4×2×2` 体素块，以精确局部正规块和固定 `1e-6` 对角加载构成 block-PCGLS。主候选与两个对照都固定为 `16A+16A^T`，只先检查 13 条 rig 各自的首帧；主候选必须 `13/13` 通过且便宜对照失败，才允许运行完整 429 单元序列。

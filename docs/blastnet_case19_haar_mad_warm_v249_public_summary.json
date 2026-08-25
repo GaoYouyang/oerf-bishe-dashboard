@@ -1,0 +1,123 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-haar-mad-warm-frame-zero-v249.0",
+  "updated": "2026-08-26",
+  "scope": {
+    "condition": "already-opened same-family public reacting-flow Case 19",
+    "role": "post-open multiscale frame-zero mechanism diagnostic",
+    "rigs": 13,
+    "frames_per_rig_scored": 1,
+    "cells": 13,
+    "active_cameras": 9,
+    "trainable_parameters": 0,
+    "full_sequence_run": false,
+    "fresh_wall_or_rss_run": false
+  },
+  "mechanism": {
+    "name": "one-level 3D Haar-MAD correction followed by restarted Jacobi-PCGLS K1",
+    "field_shape_zyx": [32, 16, 16],
+    "base": "zero-start reported-geometry diagonal-Jacobi PCGLS K13",
+    "transform_order": ["z", "y", "x"],
+    "detail_subbands": 7,
+    "scale_estimator": "MAD of the HHH detail subband divided by 0.6744897501960817",
+    "threshold": "sigma * sqrt(2 * log(7168))",
+    "threshold_rule": "soft threshold all seven detail subbands and preserve LLL",
+    "support_and_gauge": "zero one-voxel boundary and active-cell mean gauge before and after the transform",
+    "primary_logical_calls_A_At": [15, 14],
+    "approximation_control_logical_calls_A_At": [15, 14],
+    "raw_k14_control_logical_calls_A_At": [14, 14],
+    "k16_reference_logical_calls_A_At": [16, 16]
+  },
+  "execution": {
+    "formal_completed": true,
+    "formal_validity_checks_passed": 22,
+    "formal_validity_checks_total": 22,
+    "independent_recomputation_completed": true,
+    "independent_checks_passed": 33,
+    "independent_checks_total": 35,
+    "failed_checks": [
+      "haar_coefficient_agreement",
+      "formal_independent_decision_exact"
+    ],
+    "rerun_after_scientific_scoring": false,
+    "numeric_tolerance_relaxed": false
+  },
+  "formal_independent_agreement": {
+    "haar_coefficient_relative_maximum": 1.8209834396262432e-11,
+    "haar_coefficient_relative_limit": 1e-12,
+    "haar_coefficient_agreement_passed": false,
+    "corrected_initializer_relative_maximum": 1.7218103966131708e-11,
+    "corrected_initializer_relative_limit": 1e-10,
+    "field_relative_maximum": 1.0218821621735942e-09,
+    "field_relative_limit": 1e-08,
+    "normalized_residual_difference": 2.4129504259789613e-10,
+    "normalized_residual_difference_limit": 1e-08,
+    "observation_normalized_difference": 8.381743413032394e-17,
+    "observation_normalized_difference_limit": 1e-12,
+    "metric_absolute_maximum": 4.758426985773667e-11,
+    "metric_absolute_limit": 1e-09,
+    "summary_absolute_maximum": 2.160116530092182e-11,
+    "summary_absolute_limit": 1e-09,
+    "inverse_diagonal_relative_maximum": 2.0712145714922561e-16,
+    "haar_continuous_audit_absolute_maximum": 2.510880392492254e-12,
+    "residual_replay_absolute_maximum": 2.089262021548855e-16,
+    "retained_nonzero_count_maximum_difference": 0,
+    "camera_permutation_maximum_difference": 0,
+    "discrete_summary_flags_equal": true
+  },
+  "post_result_numerical_attribution_not_a_gate_repair": {
+    "formal_base_through_independent_haar_relative_maximum": 6.631434675198344e-16,
+    "independent_base_through_formal_haar_relative_maximum": 6.832874002820335e-16,
+    "recovered_k13_base_field_relative_maximum": 1.5661571657700943e-11,
+    "interpretation": "The Haar pair transform closes near machine precision; the frozen coefficient mismatch originates upstream in independently rebuilt preprocessing, observation, and K13 propagation.",
+    "changes_preregistered_decision": false
+  },
+  "diagnostic_only_not_an_admissible_performance_verdict": {
+    "primary_strict_safe_cells": 13,
+    "approximation_only_control_strict_safe_cells": 0,
+    "raw_k14_control_strict_safe_cells": 7,
+    "k16_reference_strict_safe_cells": 12,
+    "primary_complete_rigs": 13,
+    "approximation_only_control_complete_rigs": 0,
+    "raw_k14_control_complete_rigs": 7,
+    "k16_reference_complete_rigs": 12,
+    "primary_p50_field_gradient_interior_observation": [
+      0.33811351855584293,
+      0.696401729420184,
+      0.6035548190912583,
+      0.11998525430799484
+    ],
+    "primary_p90_field_gradient_interior_observation": [
+      0.3616123790984978,
+      0.719494645124383,
+      0.6413046601074835,
+      0.12862440842128955
+    ],
+    "primary_worst_field_gradient_interior_observation": [
+      0.3644310190131167,
+      0.7207023923413148,
+      0.6593103783749367,
+      0.13220394746728867
+    ]
+  },
+  "adjudication": {
+    "independent_status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_CASE19_HAAR_MAD_WARM_FRAME_ZERO_V249",
+    "scientific_decision": "INCONCLUSIVE_INVALID_CASE19_HAAR_MAD_WARM_FRAME_ZERO_V249",
+    "haar_mad_headroom_established": false,
+    "full_sequence_authorized": false,
+    "current_fixed_v249_authorized": false,
+    "mathematical_impossibility_proven": false,
+    "effective_exact_call_reduction_established": false,
+    "wall_or_rss_authorized": false
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

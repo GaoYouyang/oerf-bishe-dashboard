@@ -62,7 +62,7 @@ def test_v243_figure_and_source_are_public() -> None:
 def test_v243_is_preserved_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "INCONCLUSIVE_INVALID_CASE19_GEOMETRY_VOXEL_BLOCK_JACOBI_FRAME_ZERO_V248"
+        "INCONCLUSIVE_INVALID_CASE19_HAAR_MAD_WARM_FRAME_ZERO_V249"
     )
     assert current["current_decision"]["v243_actual_unchanged_k14_solver_passed"] is True
     assert current["current_decision"]["v243_equal_or_cheaper_controls_explain_result"] is False
@@ -71,7 +71,7 @@ def test_v243_is_preserved_as_historical_parent_evidence() -> None:
     assert current["metrics"]["v243_primary_matched_cells_passed"] == 546
     assert current["metrics"]["v243_primary_matched_complete_rigs_passed"] == 13
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_geometry_voxel_block_jacobi_v248.png"
+        "blastnet_case19_haar_mad_warm_v249.png"
     )
 
     for page in (FOCUS, HOME, DAILY):
