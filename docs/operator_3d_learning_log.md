@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v248 固定三维体素块首帧门不确定，完整序列关闭
+
+**为什么做。** v247 的坐标线机制退出后，v248 结果前冻结一个物理上不同的局部三维块机制：在 `32×16×16` 网格上使用原点固定、互不重叠的 `4×2×2` 体素块，以精确局部正规块和固定 `1e-6` 对角加载构成 block-PCGLS。主候选与两个对照都固定为 `16A+16A^T`，只先检查 13 条 rig 各自的首帧；主候选必须 `13/13` 通过且便宜对照失败，才允许运行完整 429 单元序列。
+
+**执行与独立复算。** 三次评分前工程失效均按原样保留，不产生科学分数；修复仅限首帧相机接口，机制和门不变。有效 formal 批次完成 13/13 个首帧单元并通过 **21/21** 项有效性检查。完全独立第二实现用显式逐块 `matrix.T @ matrix` 与 `solve` 重建块、逆、候选、观测、残差、指标和汇总，通过 **26/28** 项。块、逆、场、归一化残差、指标和汇总均在各自容差内；唯一原发失败是观测数组最大非零差 **1.33e-15**，违反结果前冻结的逐位相同要求，连带使 formal/independent 决策精确一致项失败。
+
+**讲人话。** 两套程序只在十五位小数附近有观测差异，但规则预先写的是“必须逐位相同”，不是“足够接近”。因此不能看到结果后改门。性能计数只能作诊断：固定块主候选 **0/13**，更便宜的对角 Jacobi 对照 **12/13**，未预条件 CGLS **0/13**。主候选不但没有通过首帧门，也被便宜对照明显压倒。
+
+**路线动作与边界。** 权威判决是 `INCONCLUSIVE_INVALID_CASE19_GEOMETRY_VOXEL_BLOCK_JACOBI_FRAME_ZERO_V248`。不放宽逐位要求、不重跑，不扩展块尺寸、重叠、偏移、加载或深度，也不运行完整 429 单元序列。关闭的是当前固定 `4×2×2` 体素块实现，不是整条 C 路线，也不是数学不可能证明。没有有效 exact-call 减少、fresh wall/RSS、外部泛化、真实 BOST 或算法突破；不训练大模型、不租 GPU。
+
+### English note
+
+v248 fixed 3D voxel blocks test a physically distinct local solver mechanism after v247 retires coordinate-line Schwarz. The preregistered primary uses origin-anchored, non-overlapping `4x2x2` blocks on the `32x16x16` grid, exact local normal blocks, fixed `1e-6` diagonal loading, and `16A+16A^T`, with only one frame-zero cell per rig evaluated before any full-sequence run. Three pre-scoring engineering failures are preserved without scientific scores. The valid formal batch completes all 13 frame-zero cells and passes **21/21** validity checks. A fully independent second implementation passes **26/28** checks. Blocks, inverses, fields, normalized residuals, metrics, and summaries remain within their frozen tolerances, but a maximum nonzero observation-array difference of **1.33e-15** violates the preregistered bitwise-equality requirement. Performance counts are therefore diagnostic only: the fixed-block primary is **0/13**, the cheaper diagonal-Jacobi control is **12/13**, and unpreconditioned CGLS is **0/13**. There is no relaxed rerun, block-family expansion, or full 429-cell sequence. The fixed `4x2x2` implementation is retired without claiming mathematical impossibility. No effective exact-call reduction, wall/RSS, external generalization, real BOST, or algorithmic breakthrough is established.
+
 ## 2026-08-26：v247 精确坐标线 Schwarz 因残差独立复算越界保持不确定
 
 **为什么做。** v246 关闭了继续加深固定 reference 的解释，下一步需要一个 solver-native、geometry-local 且不依赖真值或学习器的机制。v247 结果前唯一冻结三个世界坐标轴上的精确正规算子线块，用固定特征值 floor 求逆后等权组合成 PCGLS 预条件器；不搜索轴、分块、floor、缩放、深度、rank 或门。
