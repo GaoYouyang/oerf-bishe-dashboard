@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v247 精确坐标线 Schwarz 因残差独立复算越界保持不确定
+
+**为什么做。** v246 关闭了继续加深固定 reference 的解释，下一步需要一个 solver-native、geometry-local 且不依赖真值或学习器的机制。v247 结果前唯一冻结三个世界坐标轴上的精确正规算子线块，用固定特征值 floor 求逆后等权组合成 PCGLS 预条件器；不搜索轴、分块、floor、缩放、深度、rank 或门。
+
+**执行与独立复算。** formal 完成 13 条 rig、33 帧、429 个单元，21/21 项有效性检查全真。完全独立第二实现重建线块、逆、候选场、残差、指标与汇总，最终只通过 **25/27** 项。精确线块、线块逆、场、指标与汇总差都低于各自冻结界；唯一原发失败是残差数组相对差 **3.2449e-8**，高于冻结的 **1e-8**，最大绝对差为 **2.3768e-9**。`formal_independent_decision_exact` 随之失败，因为 formal pending 判决不能覆盖独立侧的 fail-closed 状态。
+
+**讲人话。** 两套程序对预条件器和最终场几乎完全一致，离散逐 arm 标志也完全相同，但我们事先答应过残差必须在 `1e-8` 内闭合。它实际是 `3.2449e-8`，所以不能因为“看起来很接近”就把规则改掉。v247 不重跑、不放宽容差，也不建立 v247.1 包装成功；权威判决保持 `INCONCLUSIVE_INVALID_CASE19_GEOMETRY_LINE_SCHWARZ_V247`。
+
+**路线动作与边界。** 开封后诊断中四个 arm 都是 0/13 条完整 rig；这些数字不能作为已验证性能结论，只支持停止继续投资当前精确线 Schwarz 实现。它没有被证明数学上不可能，也不关闭整条 C 路线。没有有效 exact-call 减少、fresh wall/RSS、外部泛化、真实 BOST 或算法突破，不训练大模型、不租 GPU。
+
+### English note
+
+v247 freezes a physically distinct solver-native mechanism after v246 closes fixed-reference deepening: exact normal-operator line blocks along the three reported world-coordinate axes, a fixed eigenvalue floor, and equal additive aggregation inside PCGLS, with no search over axes, partitions, floor, scale, depth, rank, or thresholds. Formal completes all 13 rigs, 33 frames, and 429 cells with **21/21** validity checks. A fully independent second implementation rebuilds the blocks, inverses, fields, residuals, metrics, and summaries but passes only **25/27** checks. Line blocks, inverses, fields, metrics, and summaries remain within their frozen limits; the primary failure is residual relative disagreement of **3.2449e-8** against **1e-8**, with maximum absolute disagreement **2.3768e-9**. Discrete arm-level flags agree, but they cannot replace preregistered floating-point closure. There is no rerun, tolerance relaxation, or v247.1 repackaging. The authoritative decision remains `INCONCLUSIVE_INVALID_CASE19_GEOMETRY_LINE_SCHWARZ_V247`. The current exact coordinate-line Schwarz mechanism is retired operationally, not proven mathematically impossible. No effective exact-call reduction, wall/RSS, external-generalization, real-BOST, or algorithm-breakthrough claim is established.
+
 ## 2026-08-25：v246 双实现最坏包络否决固定 reference 继续加深
 
 **为什么做。** v244.2 留下两份离散判决一致、但浮点指标差约 `1.0219e-8` 的封存结果。v245 原计划直接比较两套 K14→K16 收敛诊断，但独立 validator 在写出验证结果前越过结果前固定的 `1e-10` 数值门并 fail-closed。没有放宽 v245 容差，也没有第二次调用同一 validator。v246 改问更严格而不同的问题：把每一对 formal/independent 父指标都保留成下界与上界，后续安全、增益和尾部全部按最不利组合裁决。

@@ -70,8 +70,8 @@ def test_v244_2_remains_as_historical_evidence_on_bilingual_primary_pages() -> N
         assert "26/29" in text and "9/13" in text and "12/13" in text
         assert "data-i18n-zh" in text and "data-i18n-en" in text
     daily = DAILY.read_text(encoding="utf-8")
-    assert 'data-i18n-zh="51 天" data-i18n-en="51 days"' in daily
-    assert "2026-07-06 to 2026-08-25" in daily
+    assert 'data-i18n-zh="52 天" data-i18n-en="52 days"' in daily
+    assert "2026-07-06 to 2026-08-26" in daily
     log = LEARNING_LOG.read_text(encoding="utf-8")
     assert "v244.2 Case 19" in log
     assert "one-shot Case 19" in log
