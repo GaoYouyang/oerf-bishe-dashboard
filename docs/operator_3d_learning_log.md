@@ -4,6 +4,34 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v240 冻结因果可达空间容量为零，失败不只是系数没选好
+
+**为什么做。** v237.2 已确认因果 FIFO16+K1 更新确实改善绝对误差，但 533 个后续帧没有一个达到 K16 同精度。仍需区分两种解释：当前只看 observation 的系数公式没选好，或者 FIFO16 cache 加当前 K1 方向本身就缺少必要方向。v240 直接检验第二种解释。
+
+**实际做了什么。** 对 13 条 Case 7 rig 的每个后续帧，重建更新前的完整 FIFO16 cache，并加入当前原始 K1 方向，得到冻结机制当时能到达的完整 rank-17 线性空间。然后故意给它一个非常宽松的 truth-aware oracle：field、完整梯度、内部梯度和 observation 可以分别选择各自最优系数。四组系数不必相同，因此这只是必要容量下界，不是部署方法，也不证明联合可行。
+
+**结果。** 必要安全后续帧是 **0/533**，完整 rig 是 **0/13**。field、完整梯度、内部梯度和 observation 的逐指标失败数为 **377/533、251/533、309/533、533/533**；对应最小误差 p90 为 **0.475642、0.653669、0.736045、0.301636**。尤其 observation 即使单独挑最优系数也在 533 个后续帧上全部越线；完整 rig 的 matched-observation p90 下界为 **6.3474-7.1059**，而门是 **1.02**。
+
+**独立复算。** 正式实现用 SVD，完全独立实现自行重建 cache 与方向并用 pivoted QR。全部 **2,132** 个逐指标设计在两种实现中数值秩都恰为 17；最小指标和汇总最大差为 **2.22e-16 / 3.55e-15**，相机换序差不超过 **2.22e-16**，最终 **20/20** 项检查全真。
+
+**讲人话。** 这次把失败原因从“某个系数规则不够好”推进为“冻结机制能拿到的这些方向本身不够”。更大的 CNN 或 FNO 只能更复杂地选择同一批方向，不能补出空间里没有的方向，所以不授权大模型或 GPU 挽救。判决 `FAIL_CASE7_CAUSAL_REACHABLE_SPAN_NECESSARY_CAPACITY_V240` 关闭的是更新前 FIFO16+当前 K1 的完整可达线性空间，不是整个 C 路线，也不是空间外数学不可能。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v240 closes the frozen causal reachable span, not merely its coefficient rule
+
+v237.2 confirms that causal FIFO16-plus-K1 updates improve absolute error but no later frame matches K16. v240 distinguishes a weak coefficient rule from an inadequate direction span. For every later frame in 13 Case 7 rigs, it rebuilds the full pre-update FIFO16 cache, adds the current raw K1 direction, and audits the resulting rank-17 span.
+
+The audit is deliberately optimistic: field, full-gradient, interior-gradient, and observation errors may each use their own truth-aware optimal coefficients. These four coefficients need not define one field, so the test provides only necessary capacity, not a deployable method or joint feasibility.
+
+Necessary-safe coverage is **0/533 later frames** and **0/13 complete rigs**. Metric-specific failures are **377/533, 251/533, 309/533, and 533/533**. Minimum-error p90 values are **0.475642, 0.653669, 0.736045, and 0.301636**. Observation is decisive: its own oracle lower bound fails every later frame, while complete-rig matched-observation p90 lower bounds range from **6.3474 to 7.1059** against a **1.02** limit.
+
+Formal SVD and an independent cache rebuild with pivoted QR agree exactly on rank 17 for all **2,132** metric designs. Maximum metric-minimum and summary differences are **2.22e-16 / 3.55e-15**, camera permutation changes a minimum by at most **2.22e-16**, and all **20/20** checks pass.
+
+In plain language, the blocker is no longer just how coefficients are chosen. The frozen mechanism's available directions lack necessary capacity. A larger CNN or FNO cannot create directions absent from this span, so no neural or GPU rescue is authorized. `FAIL_CASE7_CAUSAL_REACHABLE_SPAN_NECESSARY_CAPACITY_V240` closes the pre-update FIFO16-plus-current-K1 reachable span, not the full C route and not mathematical possibility outside that span.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
 ## 2026-08-25：v237.2 确认因果 Krylov 回收“有作用，但远未达到同精度”
 
 **为什么做。** v236、v238、v239 检验的是跨 rig 固定低秩表示，v237 则问了一个物理上不同的问题：能否把上一时刻已经付费得到的 Krylov 方向作为因果 cache，在下一帧只追加一个新方向，从而用很少的新算子调用跟住充分 K16 重建。第一次独立验证重放了全部单元，但因为 anchor 子集误用了比完整独立场门更严的容差，结果保持 inconclusive；这次只解决该验证矛盾。

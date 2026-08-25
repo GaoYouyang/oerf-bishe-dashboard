@@ -56,18 +56,14 @@ def test_v237_2_figure_and_source_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v237_2_is_synchronized_as_the_latest_public_decision() -> None:
+def test_v237_2_remains_synchronized_as_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE7_CAUSAL_KRYLOV_RECYCLING_V237"
+    assert current["v237_scientific_decision"] == "FAIL_CASE7_CAUSAL_KRYLOV_RECYCLING_V237"
     assert current["current_decision"]["v237_final_independent_validation_passed"] is True
     assert current["current_decision"]["v237_algorithm_breakthrough"] is False
     assert current["metrics"]["v237_primary_absolute_safe_cells"] == 148
     assert current["metrics"]["v237_primary_matched_cells"] == 13
     assert current["metrics"]["v237_primary_matched_non_anchor_cells"] == 0
-    assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case7_causal_krylov_recycling_v237_2.png"
-    )
-
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case7_causal_krylov_recycling_v237_2" in text
