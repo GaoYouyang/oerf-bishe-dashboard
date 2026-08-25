@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v251 直接拼接绝对门全过，但 matched-accuracy 为 0/13
+
+**为什么做。** v250 证明首帧固定平滑存在 headroom，但同价线性热扩散完整解释了结果。v251 因此只读审计最直接的完整序列拼接：首帧使用 v250 已封存的线性热解，后 32 帧使用 v244 已封存的因果暖 K14，并与对应 K16 序列比较。这个组合在写合同前已经被查看，所以它明确是 **post-open retrospective** 审计，不是结果盲前瞻试验；不重读真值、观测或原始密度，也不增加算子或求解器调用。
+
+**独立结果。** formal 与不导入其数值实现的逐标量第二程序完整一致，独立检查 **17/17**，最大诊断差为 **0**。最坏双实现包络下，组合的绝对门为 **429/429** 单元、**13/13** 完整 rig；但相对 K16 的 matched-accuracy 只有 **416/429** 单元和 **0/13** 完整 rig。十三个缺口全部位于首帧 observation，逐单元 candidate/K16 比值为 `3.017–3.265`；后续 32 帧没有新增 matched 单元失败。
+
+**我学到的。** “绝对误差很好”不能替代“与合格 reference 同精度”。调用账从 K16 的 `528A+528A^T` 变为组合的 `495A+462A^T`，算术差是 **9.375%**，但 matched-accuracy 没有成立，因此它不是有效 exact-call 减少，更不是速度或内存证据。
+
+**路线动作与边界。** 权威判决为 `FAIL_CASE19_COLD_START_LINEAR_HYBRID_MATCHED_ACCURACY_V251`。关闭“首帧线性热解 + 后续因果暖 K14”的直接拼接，也不再用 K15 热滤波或同类线性平滑扩建；不跑 wall/RSS、不训练大模型、不租 GPU。它不关闭整条 C 路线，也不证明其他物理机制不可能。`algorithm_breakthrough=false`。
+
+### English note
+
+v251 is an explicitly post-open retrospective audit of the most direct complete-sequence composition after v250: the sealed equal-call linear-heat field at frame zero plus the sealed v244 causal warm K14 fields on frames 1–32, compared with the matching K16 sequence. It rereads no truth, observation, raw density, operator, or solver output and adds `0A+0A^T`. Formal and a scalar-loop independent implementation agree exactly across the complete diagnostic and pass **17/17** checks. Under the adverse two-replica envelope, the hybrid passes **429/429** absolute cells and **13/13** absolute complete rigs, but only **416/429** K16-matched cells and **0/13** matched complete rigs. Every miss is the frame-zero observation metric, with candidate/K16 ratios from `3.017` to `3.265`; no later frame adds a matched-cell failure. The nominal ledger difference is **9.375%**, but it is not effective exact-call reduction because matched accuracy fails. The direct linear hybrid and same-family K15/linear-smoothing expansion close, with no wall/RSS, training, GPU, external-generalization, real-BOST, or algorithm-breakthrough claim.
+
 ## 2026-08-26：v250 Charbonnier 首帧通过，但同价线性扩散完整解释结果
 
 **为什么做。** v249 停在独立系数门后，v250 结果前冻结一个物理上不同的局部非线性机制：从 reported-geometry 对角 Jacobi-PCGLS K13 出发，在 active `32×16×16` 图上按 deployment-visible MAD 尺度做 12 步显式 Charbonnier 扩散，再执行一次精确投影和一次未修改 restarted PCGLS K1。主候选逻辑账为 `15A+14A^T`。同时冻结完全同价、同 shell 的线性热扩散对照，避免把“任何局部平滑都有效”误写成 Charbonnier 的非线性优势。

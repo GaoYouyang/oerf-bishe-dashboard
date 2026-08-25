@@ -60,7 +60,7 @@ def test_v247_figure_and_builder_are_public() -> None:
 def test_v247_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "PASS_CASE19_FRAME_ZERO_BUT_CHARBONNIER_ADVANTAGE_NOT_ISOLATED_V250"
+        "FAIL_CASE19_COLD_START_LINEAR_HYBRID_MATCHED_ACCURACY_V251"
     )
     assert current["current_decision"]["v247_independent_validation_passed"] is False
     assert current["current_decision"]["v247_line_schwarz_authorized"] is False
@@ -70,7 +70,7 @@ def test_v247_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -
     assert current["metrics"]["v247_independent_checks_total"] == 27
     assert current["metrics"]["v247_residual_relative_maximum"] > current["metrics"]["v247_residual_relative_limit"]
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_charbonnier_graph_diffusion_v250.png"
+        "blastnet_case19_cold_start_linear_hybrid_attribution_v251.png"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")

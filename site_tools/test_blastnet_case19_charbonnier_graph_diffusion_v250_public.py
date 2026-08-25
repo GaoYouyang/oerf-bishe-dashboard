@@ -64,10 +64,10 @@ def test_v250_figure_and_builder_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v250_is_latest_on_bilingual_primary_pages() -> None:
+def test_v250_remains_preserved_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "PASS_CASE19_FRAME_ZERO_BUT_CHARBONNIER_ADVANTAGE_NOT_ISOLATED_V250"
+        "FAIL_CASE19_COLD_START_LINEAR_HYBRID_MATCHED_ACCURACY_V251"
     )
     decision = current["current_decision"]
     assert decision["v250_independent_validation_passed"] is True
@@ -80,13 +80,10 @@ def test_v250_is_latest_on_bilingual_primary_pages() -> None:
     assert metrics["v250_independent_checks_total"] == 38
     assert metrics["v250_primary_strict_safe_cells"] == 13
     assert metrics["v250_equal_call_control_strict_safe_cells"] == 13
-    assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_charbonnier_graph_diffusion_v250.png"
-    )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_charbonnier_graph_diffusion_v250" in text
-        assert "38/38" in text and "13/13" in text
+        assert "38/38" in text and "13/13" in text and "v251" in text
         assert "data-i18n-zh" in text and "data-i18n-en" in text
     log = LEARNING_LOG.read_text(encoding="utf-8")
     assert "v250 Charbonnier" in log
