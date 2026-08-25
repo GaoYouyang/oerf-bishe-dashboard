@@ -49,11 +49,13 @@ def test_v236_figure_is_rendered() -> None:
 
 def test_v236_remains_as_the_parent_public_decision() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE7_OCTANT_TAIL_SUBSPACE_CAPACITY_V238"
+    assert current["scientific_status"] == (
+        "FAIL_CASE7_JACOBI_CANONICAL_TAIL_SUBSPACE_CAPACITY_V239"
+    )
     assert current["current_decision"]["v236_independent_validation_passed"] is True
     assert current["current_decision"]["v236_algorithm_breakthrough"] is False
     assert current["metrics"]["v236_loro_rank64_complete_rigs_passed"] == 0
-    assert current["public_evidence"]["figure"].endswith("v238.png")
+    assert current["public_evidence"]["figure"].endswith("v239.png")
 
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
@@ -64,7 +66,9 @@ def test_v236_remains_as_the_parent_public_decision() -> None:
         assert "data-i18n-zh" in text and "data-i18n-en" in text
 
     log = LEARNING_LOG.read_text(encoding="utf-8")
-    assert log.index("v238") < log.index("v236") < log.index("v235/v235.1")
+    assert log.index("## 2026-08-25：v239") < log.index("## 2026-08-25：v238") < log.index(
+        "## 2026-08-25：v236"
+    ) < log.index("## 2026-08-25：v235/v235.1")
     assert "post-open mechanism attribution" in log
 
 

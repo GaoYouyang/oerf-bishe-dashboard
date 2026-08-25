@@ -1,0 +1,158 @@
+{
+  "schema_version": "oerf-public-blastnet-case7-jacobi-canonical-tail-subspace-capacity-v239",
+  "updated": "2026-08-25",
+  "scope": {
+    "condition": "already opened BLASTNet Case 7",
+    "rigs": 13,
+    "frames_per_rig": 42,
+    "cells": 546,
+    "evidence_role": "post-open truth-aware representation-capacity diagnostic",
+    "prospective_or_external_result": false,
+    "new_condition_opened": false
+  },
+  "question": {
+    "tail": "Zero-PCGLS-K16 field minus fixed-Low64-warm-PCGLS-K11 field",
+    "fold": "hold out one complete rig and construct the shared basis from the other twelve rigs",
+    "coordinate": "symmetric geometry-Jacobi PCGLS coordinate",
+    "training_matrix_shape": [504, 8192],
+    "rank": 64,
+    "global_control_dimension": 64,
+    "p90_relative_residual_limit": 0.31622776601683794,
+    "worst_relative_residual_limit": 0.5,
+    "late_frames": [26, 41],
+    "truth_aware_oracle_coefficients": true,
+    "deployment_predictor": false
+  },
+  "results": {
+    "fixed_low64_control": {
+      "complete_rigs_passed": 0,
+      "global_p50": 0.9535797389821475,
+      "global_p90_higher": 0.974420421861016,
+      "global_worst": 0.9907178207970768
+    },
+    "global_rank64_control": {
+      "complete_rigs_passed": 0,
+      "global_p50": 0.6454583187766147,
+      "global_p90_higher": 0.731691857413034,
+      "global_worst": 0.8056089365842658,
+      "all_frame_p90_by_rig": [
+        0.6973575432260956,
+        0.7885721091484265,
+        0.7273431704608159,
+        0.7346140518474935,
+        0.6480484369846432,
+        0.6681203329697867,
+        0.7458497747598792,
+        0.742540253178027,
+        0.6749900451705242,
+        0.6800252087827954,
+        0.6859268981847483,
+        0.6577896968775165,
+        0.6867616109336971
+      ],
+      "late_frame_p90_by_rig": [
+        0.4979019561001426,
+        0.5811516995180924,
+        0.5307325310896024,
+        0.6281631415719854,
+        0.46618080908633314,
+        0.4691080226001081,
+        0.5927900406835604,
+        0.5730110145581014,
+        0.4699558388799641,
+        0.5254371674726688,
+        0.5376719848383863,
+        0.45573853856588986,
+        0.49359875414939
+      ]
+    },
+    "jacobi_canonical_rank64_primary": {
+      "complete_rigs_passed": 0,
+      "global_p50": 0.6444732542359358,
+      "global_p90_higher": 0.7348554977915718,
+      "global_worst": 0.8135727516692302,
+      "all_frame_p90_by_rig": [
+        0.6931307523903563,
+        0.7949903967736545,
+        0.7323033812372035,
+        0.7379453946164428,
+        0.6473855681768153,
+        0.6712159177582439,
+        0.750347872764888,
+        0.7444944691733741,
+        0.6752535515623949,
+        0.6762478202240124,
+        0.684250244133652,
+        0.6571162888070253,
+        0.6814814403808251
+      ],
+      "late_frame_p90_by_rig": [
+        0.5091968460612694,
+        0.5962728124477795,
+        0.5409478345802122,
+        0.6327607642605475,
+        0.47686318888420326,
+        0.4849226471398412,
+        0.6078029978370308,
+        0.5816357779245224,
+        0.47849992732905666,
+        0.5324286740881408,
+        0.547849699620505,
+        0.4653025551157718,
+        0.49796878733644284
+      ]
+    }
+  },
+  "comparison": {
+    "jacobi_minus_global_p50": -0.0009850645406789267,
+    "jacobi_minus_global_p90_higher": 0.003163640378537851,
+    "jacobi_minus_global_worst": 0.007963815084964444,
+    "jacobi_all_frame_p90_better_on_rigs": 6,
+    "jacobi_all_frame_p90_worse_on_rigs": 7,
+    "jacobi_late_frame_p90_better_on_rigs": 0,
+    "jacobi_late_frame_p90_worse_on_rigs": 13
+  },
+  "independent_validation": {
+    "formal_method": "sample-Gram eigendecomposition in the canonical coordinate followed by mapped-span QR",
+    "independent_method": "direct economy SVD of every 504x8192 canonical training matrix followed by direct SVD orthonormalization of the mapped physical span",
+    "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_CASE7_JACOBI_CANONICAL_TAIL_V239_2",
+    "checks_passed": 18,
+    "checks_total": 18,
+    "maximum_inverse_diagonal_relative_difference": 9.216683024179825e-17,
+    "maximum_relative_residual_absolute_difference": 1.1213252548714081e-14,
+    "maximum_summary_absolute_difference": 1.021405182655144e-14,
+    "leading_canonical_spectrum_relative_difference": 7.919469541206833e-16,
+    "physical_span_spectrum_relative_difference": 3.698475598841991e-15,
+    "camera_permutation_maximum_relative_difference": 4.539606661221405e-16,
+    "minimum_canonical_training_numerical_rank": 504,
+    "maximum_canonical_basis_orthogonality_absolute": 7.105427357601002e-15,
+    "maximum_physical_basis_orthogonality_absolute": 7.549516567451064e-15,
+    "maximum_physical_span_reconstruction_relative": 3.5422621971562086e-15
+  },
+  "validation_history": {
+    "first_attempt": "failed closed before independent SVD or residual scoring because mathematically equivalent Jacobi reductions were required to have identical byte hashes",
+    "second_attempt": "failed closed before independent SVD or residual scoring because the scalar floor was also required to be bit-identical",
+    "final_erratum": "kept the formal output sealed and applied the already frozen numeric tolerance to the independently rebuilt Jacobi map; no scientific candidate, fold, rank, gate, or result was changed"
+  },
+  "adjudication": {
+    "scientific_decision": "FAIL_CASE7_JACOBI_CANONICAL_TAIL_SUBSPACE_CAPACITY_V239",
+    "symmetric_geometry_jacobi_rank64_representation_closed": true,
+    "rank_expansion_authorized": false,
+    "larger_predictor_rescue_authorized": false,
+    "unopened_condition_consumed": false,
+    "interpretation": "Symmetric geometry-Jacobi coordinates do not recover a transferable rank-64 Case 7 tail space. They slightly improve the median but worsen p90 and worst residuals, and every complete rig still fails."
+  },
+  "claims_fixed_false": {
+    "deployment_algorithm": false,
+    "observation_only_coefficients": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

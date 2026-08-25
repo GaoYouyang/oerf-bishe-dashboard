@@ -4,6 +4,34 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v239 排除“跨 rig 失配只来自 Jacobi 几何尺度”的解释
+
+**为什么做。** v236 已经证明物理场坐标中的全局 rank-64 尾差空间不能跨 rig 迁移，v238 又排除了固定空间局部化。仍有一个 solver-native 解释值得直接证伪：每条 rig 的 PCGLS 使用不同几何 Jacobi 预条件器，也许尾差在物理场中不共享，但转到对应的对称变量后会共享。
+
+**实际做了什么。** 每次完整留出一条 rig，把其他 `12x42=504` 个 `8192` 维尾差分别除以其冻结 Jacobi 逆对角的平方根，形成 **504x8192** 对称坐标训练矩阵；正式实现用样本 Gram 分解建立未中心化 rank 64 空间，再用留出 rig 的几何映回物理场。留出真值只用于最优投影，所以仍是容量上界。独立实现不导入正式实现，对全部 13 个训练矩阵直接做 economy SVD，并独立重建 Jacobi 映射与物理子空间。
+
+**结果。** Jacobi 规范化仍为 **0/13** 完整 rig。全局 p50 / p90 / worst 为 **0.644473 / 0.734855 / 0.813573**，对比物理场全局 rank 64 的 **0.645458 / 0.731692 / 0.805609**：中位数只改善 **0.000985**，但 p90 / worst 分别恶化 **0.003164 / 0.007964**。全帧 p90 在 6 条 rig 改善、7 条恶化，后期帧 p90 则在 **13/13** 条 rig 上全部恶化。
+
+**验证边界。** 前两次 validator 都在任何独立 SVD、残差或科学评分前 fail-closed：一次把数学等价的 Jacobi 归约误要求为逐字节同 hash，另一次又要求 scalar floor 逐位相等。两份失败记录保留。v239.2 只把这项检查改为原先冻结的数值容差，没有重跑或修改正式输出、候选、fold、rank 与门。最终 **18/18** 项检查全真；Jacobi 逆对角最大相对差 **9.22e-17**，残差与汇总最大差 **1.12e-14 / 1.02e-14**，相机乱序最大相对差 **4.54e-16**。
+
+**讲人话。** 把不同相机 rig 的尾差换算到“各自 PCGLS 更自然的坐标”以后，它们还是没有变成一个能跨 rig 共用的 64 维规律，而且最关键的后期尾部统一变差。判决是 `FAIL_CASE7_JACOBI_CANONICAL_TAIL_SUBSPACE_CAPACITY_V239`。关闭的是 symmetric geometry-Jacobi rank-64 规范化，不是整条 C 路线，也不是数学不可能证明；下一机制不能再只是另一种固定低秩坐标映射。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v239 rejects Jacobi geometry scale as the sole source of cross-rig mismatch
+
+v236 shows that a global physical-field rank-64 tail space does not transfer across rigs, and v238 rejects fixed spatial localization. One solver-native explanation remains directly falsifiable: each rig uses a different geometry-Jacobi PCGLS preconditioner, so perhaps the tails become shared in their corresponding symmetric variables even though they are not shared in the physical field.
+
+Every fold holds out one complete rig. The other `12x42=504` tails, each of dimension `8192`, are divided by the square root of their frozen Jacobi inverse diagonals to form a **504x8192** symmetric-coordinate training matrix. The formal implementation uses a sample-Gram decomposition to build an uncentered rank-64 space and maps it back through the held-out rig geometry. Held-out truth supplies only the optimal projection, so this remains a capacity upper bound. The independent implementation imports no formal implementation, directly computes an economy SVD for all 13 training matrices, and independently rebuilds the Jacobi maps and physical spans.
+
+Jacobi canonicalization still reaches **0/13** complete rigs. Global p50 / p90 / worst is **0.644473 / 0.734855 / 0.813573**, versus **0.645458 / 0.731692 / 0.805609** for physical global rank 64. The median improves by only **0.000985**, while p90 / worst worsens by **0.003164 / 0.007964**. All-frame p90 improves on six rigs and worsens on seven; late-frame p90 worsens on **13/13** rigs.
+
+The first two validator attempts fail closed before any independent SVD, residual, or scientific scoring because they incorrectly require bit-identical Jacobi reductions and then a bit-identical scalar floor. Both records remain preserved. v239.2 only applies the originally frozen numeric tolerance to that validation step; it neither reruns nor changes the formal output, candidate, folds, rank, or gates. All final **18/18** checks pass, with maximum inverse-diagonal relative difference **9.22e-17**, residual / summary differences **1.12e-14 / 1.02e-14**, and camera-permutation relative difference **4.54e-16**.
+
+In plain language, moving each rig into its own PCGLS-native coordinate does not reveal a common 64-dimensional cross-rig rule, and the critical late tail becomes uniformly worse. The verdict is `FAIL_CASE7_JACOBI_CANONICAL_TAIL_SUBSPACE_CAPACITY_V239`. It closes symmetric geometry-Jacobi rank-64 canonicalization, not the full C route, and is not a proof of mathematical impossibility. The next mechanism cannot be another fixed low-rank coordinate map.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
 ## 2026-08-25：v238 证明简单固定空间局部性不是 Case 7 缺失结构
 
 **为什么做。** v236 已经排除跨 rig 共享的全局 rank-64 尾差空间，但它还留下一个具体解释：也许尾差本来是局部的，全局 SVD 把不同位置的变化混在了一起。v238 因此不增加总维数，也不读取新工况，只把同一个已开封 Case 7 尾差空间改成固定局部分块，直接检验这个解释。
