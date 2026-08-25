@@ -72,6 +72,9 @@ def test_v244_2_is_latest_on_bilingual_primary_pages() -> None:
         assert "blastnet_case19_canonical_camera_actual_k14_external_v244_2" in text
         assert "26/29" in text and "9/13" in text and "12/13" in text
         assert "data-i18n-zh" in text and "data-i18n-en" in text
+    daily = DAILY.read_text(encoding="utf-8")
+    assert 'data-i18n-zh="51 天" data-i18n-en="51 days"' in daily
+    assert "2026-07-06 to 2026-08-25" in daily
     log = LEARNING_LOG.read_text(encoding="utf-8")
     assert "v244.2 Case 19" in log
     assert "one-shot Case 19" in log
