@@ -50,13 +50,13 @@ def test_v236_figure_is_rendered() -> None:
 def test_v236_remains_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "INCONCLUSIVE_INVALID_CASE19_GEOMETRY_LINE_SCHWARZ_V247"
+        "INCONCLUSIVE_INVALID_CASE19_GEOMETRY_VOXEL_BLOCK_JACOBI_FRAME_ZERO_V248"
     )
     assert current["current_decision"]["v236_independent_validation_passed"] is True
     assert current["current_decision"]["v236_algorithm_breakthrough"] is False
     assert current["metrics"]["v236_loro_rank64_complete_rigs_passed"] == 0
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_geometry_line_schwarz_v247.png"
+        "blastnet_case19_geometry_voxel_block_jacobi_v248.png"
     )
 
     for page in (FOCUS, HOME, DAILY):
