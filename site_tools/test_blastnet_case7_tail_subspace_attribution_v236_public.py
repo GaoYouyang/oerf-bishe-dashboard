@@ -47,15 +47,17 @@ def test_v236_figure_is_rendered() -> None:
         assert image.height >= 900
 
 
-def test_v236_remains_as_the_parent_public_decision() -> None:
+def test_v236_remains_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "POST_OPEN_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_NECESSARY_HEADROOM_V241"
+        "INCONCLUSIVE_INVALID_CASE19_CANONICAL_CAMERA_ACTUAL_K14_EXTERNAL_V244_2"
     )
     assert current["current_decision"]["v236_independent_validation_passed"] is True
     assert current["current_decision"]["v236_algorithm_breakthrough"] is False
     assert current["metrics"]["v236_loro_rank64_complete_rigs_passed"] == 0
-    assert current["public_evidence"]["figure"].endswith("v241.png")
+    assert current["public_evidence"]["figure"].endswith(
+        "blastnet_case19_canonical_camera_actual_k14_external_v244_2.png"
+    )
 
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")

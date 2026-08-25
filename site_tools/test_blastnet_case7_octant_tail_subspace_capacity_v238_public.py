@@ -48,10 +48,10 @@ def test_v238_figure_is_rendered() -> None:
         assert image.height >= 1100
 
 
-def test_v238_remains_synchronized_as_parent_evidence_after_v241() -> None:
+def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "POST_OPEN_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_NECESSARY_HEADROOM_V241"
+        "INCONCLUSIVE_INVALID_CASE19_CANONICAL_CAMERA_ACTUAL_K14_EXTERNAL_V244_2"
     )
     assert current["current_decision"]["v238_independent_validation_passed"] is True
     assert current["current_decision"]["v238_algorithm_breakthrough"] is False
@@ -60,7 +60,7 @@ def test_v238_remains_synchronized_as_parent_evidence_after_v241() -> None:
         current["metrics"]["v238_global_rank64_global_p90_higher"]
     )
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case7_maximal_strict_savings_span_capacity_v241.png"
+        "blastnet_case19_canonical_camera_actual_k14_external_v244_2.png"
     )
 
     for page in (FOCUS, HOME, DAILY):
