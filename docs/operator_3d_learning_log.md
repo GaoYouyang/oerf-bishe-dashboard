@@ -4,6 +4,34 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v244.2 Case 19 一次性同族公开门完成，但权威判决保持不确定
+
+**为什么做。** v243 在已经开封的 Case 7 上证明，规范相机 ID 后的实际未修改 K14 warm solver 可以同时守住绝对门和 K16 同精度门。v244 把同一适配器、K14 主候选、K16 reference、四个同价或更便宜 controls、指标门和禁止调参规则一次性搬到此前未开的同族 Case 19，检验这条固定机制能否前瞻复现。
+
+**执行边界。** 数据获取完成并通过 37/37 文件的独立逐字节校验，但这只是工程输入证据。v244 首次执行在读取数值网格前因继承的 shape 合同不适配而停止；v244.1 又在预测和评分前因把 gauge-centered finite 场误要求为正值而停止。两次都没有科学结果。v244.2 只修这两个执行矛盾，不改科学候选、阈值或算子账。
+
+**独立验证。** 正式运行完成 33 帧 × 13 条 rig × 6 个 arm。完全独立第二实现只通过 **26/29** 项检查；相机换序指标精确性、残差复算和指标复算三项未过冻结数值门。最大 residual 相对差为 **1.1060e-7**，对比冻结 **1e-8**；最大 metric 绝对差为 **1.0219e-8**。因此权威状态必须保持 `INCONCLUSIVE`，不能放宽容差或挑离散判决包装成功。
+
+**开封后诊断。** 忽略上述验证缺口也不能形成外门正结果：K16 reference 的绝对门只有 **417/429** 单元、**9/13** 条完整 rig；K14 warm 主候选为 **428/429**、**12/13**。主候选相对这个不充分 reference 的 matched 完整 rig 是 **13/13**，但 reference 自身和主候选绝对门都未全过，所以 `13/13 matched` 不能单独作成功结论。四个同价或更便宜 controls 的 matched 完整 rig 都是 **0/13**，其中最好的绝对完整 rig 也只有 **2/13**。
+
+**讲人话。** Case 19 没有确认 v243 的固定迁移结论：一方面独立数值闭环差三项，另一方面充分 reference 和主候选绝对精度也分别只有 9/13 与 12/13。固定 Case 7 → Case 19 K14 确认路线按合同关闭，不重跑、不放宽容差、不换 Case 13/18 补考，也不启动 wall/RSS、神经训练或 GPU。它不证明整条 C 路线不可能；后续只接受新的物理信息，或一个物理上真正不同、结果前唯一冻结且可证伪的机制。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v244.2 completes the one-shot Case 19 gate but remains authoritatively inconclusive
+
+v243 shows on opened Case 7 that the actual unchanged K14 warm solver can pass both absolute and K16-matched gates after stable camera-ID canonicalization. v244 carries the same adapter, K14 primary, K16 reference, four equal-or-cheaper controls, metric gates, and no-retuning rule once to the previously unopened same-family Case 19 condition.
+
+Acquisition completes with independent byte validation of all 37 files, but that is engineering input evidence only. The first v244 execution stops before numeric grid parsing because an inherited shape contract does not fit Case 19. v244.1 stops before prediction and scoring because a gauge-centered finite field is incorrectly required to be positive. Neither attempt produces a scientific result. v244.2 repairs only those execution contradictions without changing the scientific candidate, thresholds, or operator ledger.
+
+Formal execution completes 33 frames × 13 rigs × 6 arms. The fully independent second implementation passes only **26/29** checks. Exact camera-permutation metrics, residual recomputation, and metric recomputation miss the frozen numerical gates. The maximum residual relative difference is **1.1060e-7** against **1e-8**, and the maximum metric absolute difference is **1.0219e-8**. The authoritative status therefore remains `INCONCLUSIVE`; no tolerance is relaxed and discrete agreement is not repackaged as validation success.
+
+The post-open diagnostic also cannot support a positive external result. The K16 reference is absolute-safe in only **417/429** cells and **9/13** complete rigs; the K14 warm primary reaches **428/429** and **12/13**. The primary matches this inadequate reference in **13/13** rigs, but `13/13 matched` is not a pass when neither the reference nor primary clears every absolute gate. Every equal-or-cheaper control reaches **0/13** matched rigs, and the best control reaches only **2/13** absolute-safe rigs.
+
+In plain language, Case 19 does not confirm the fixed v243 transfer claim. Independent numerical closure misses three checks, while reference adequacy and primary absolute accuracy reach only 9/13 and 12/13. The fixed Case 7-to-Case 19 K14 confirmation route closes under the contract: no rerun, tolerance relaxation, Case 13/18 substitution, wall/RSS test, neural rescue, or GPU rental. This does not prove the whole C route impossible; continuation requires new physical information or one physically distinct, uniquely preregistered, falsifiable mechanism.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
 ## 2026-08-25：v243 相机 ID 规范化后，实际 K14 warm solver 在已开封 Case 7 全部过门
 
 **为什么做。** v241 只证明 K14 空间具备逐指标必要容量，四项可以使用四组真值可见系数。真正有意义的下一问是：同一个实际未修改 K14 解能否同时通过 field、完整梯度、内部梯度和 observation 门，而且不能被同价或更便宜的经典 control 解释。
