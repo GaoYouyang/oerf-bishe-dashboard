@@ -49,16 +49,17 @@ def test_v235_figure_is_rendered() -> None:
         assert image.height >= 700
 
 
-def test_v235_current_surfaces_and_log_are_synchronized() -> None:
+def test_v235_historical_surfaces_and_log_remain_synchronized_after_v236() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE7_LOW64_K11_PROSPECTIVE_CONFIRMATION_V235"
+    assert current["scientific_status"] == "FAIL_CASE7_LORO_TAIL_SUBSPACE_CAPACITY_V236"
+    assert current["v235_scientific_decision"] == "FAIL_CASE7_LOW64_K11_PROSPECTIVE_CONFIRMATION_V235"
     assert current["metrics"]["v235_primary_absolute_safe_cells"] == 546
     assert current["metrics"]["v235_primary_matched_safe_cells"] == 330
     assert current["metrics"]["v235_primary_matched_complete_rigs"] == 0
     assert current["current_decision"]["v235_fixed_direct_low64_k11_route_closed"] is True
     assert current["current_decision"]["v235_resource_gate_authorized"] is False
-    assert "physically different" in current["next_scientific_gate"].lower()
-    assert "case7_low64_k11_external_v235" in current["public_evidence"]["result"]
+    assert "geometry-local or nonlinear" in current["next_scientific_gate"].lower()
+    assert "case7_tail_subspace_attribution_v236" in current["public_evidence"]["result"]
     for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
         content = (ROOT / relative).read_text(encoding="utf-8")
         assert "v235" in content

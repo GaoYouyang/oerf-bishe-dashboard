@@ -4,6 +4,28 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v236 发现 Case 7 尾差只在混合 rig 时显得低秩
+
+**为什么做。** v235 已经前瞻确认固定 Direct Low64 K11 在 Case 7 的 matched-accuracy 是 **330/546、0/13**。失败从 frame 25 开始，并从 frame 26 起同时覆盖 13 条 rig；把全部 rig 混合后做谱分解，90% / 95% / 99% 能量只需 18 / 24 / 74 个方向。这提示“也许只要学习一个固定低秩尾差修补”值得被直接证伪，但这些联合谱数字已经看过，所以 v236 只能是开封后机制归因。
+
+**实际做了什么。** 我把尾差固定定义为合格 K16 reference 场减去 Low64-K11 场。每次留出一条完整 rig，只用其余 **12×42=504** 个尾差构造 rank 16 / 32 / 64 子空间，并用留出 rig 的真值系数做 oracle 投影。正式实现使用样本 Gram 特征分解，完全独立实现对每个 **504×8192** 矩阵直接做 economy SVD。13 个 fold 全部重算，逐单元相对残差与汇总最大差只有 **6.66e-15 / 5.77e-15**。
+
+**结果。** 固定 Low64 控制、rank 16、rank 32、rank 64 都是 **0/13**。唯一 primary rank 64 的全局 p50 / p90 / worst 为 **0.645458 / 0.731692 / 0.805609**，而冻结门是 p90 不高于 **0.316228**、worst 不高于 **0.500000**。最差 rig 的后期帧 p90 / worst 仍为 **0.628163 / 0.630998**。扩大到 rank 64 没有接近通过。
+
+**讲人话。** 所有 rig 混在一起时，尾差确实看起来有紧凑的联合谱；但一旦拿走目标 rig，它最重要的修正方向并不在其余 rig 学到的固定空间里。判决为 `FAIL_CASE7_LORO_TAIL_SUBSPACE_CAPACITY_V236`：固定全局低秩尾差修补解释关闭，不再扩大 rank 或用更大预测器挽救。这个结果不证明几何局部、坐标条件或非线性机制都不可能，也不是部署算法、调用节省、wall/RSS、外部泛化或真实 BOST 证据。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v236 finds that the Case 7 tail is low-rank only when rigs are mixed
+
+v235 prospectively establishes that fixed Direct Low64 K11 reaches only **330/546 matched cells and 0/13 complete rigs** on Case 7. Failures begin at frame 25 and affect all 13 rigs from frame 26 onward. A joint all-rig decomposition appears compact, requiring only 18 / 24 / 74 directions for 90% / 95% / 99% energy, but those joint-spectrum values were already visible. v236 is therefore explicitly a post-open mechanism attribution.
+
+The tail is fixed as the qualified K16 reference field minus the Low64-K11 field. Each fold holds out one complete rig and builds rank-16, rank-32, and rank-64 subspaces from the other **12×42=504** tails. Held-out truth supplies oracle projection coefficients, so this is a capacity test rather than a deployment predictor. The formal implementation uses a sample-Gram eigendecomposition; the fully independent implementation applies direct economy SVD to every **504×8192** matrix. Maximum per-cell residual and summary differences are **6.66e-15 / 5.77e-15**.
+
+Fixed Low64 and all three leave-one-rig ranks reach **0/13** complete rigs. The unique rank-64 primary has global p50 / p90 / worst residual **0.645458 / 0.731692 / 0.805609**, against frozen p90 / worst limits **0.316228 / 0.500000**. The exact verdict is `FAIL_CASE7_LORO_TAIL_SUBSPACE_CAPACITY_V236`: a fixed global low-rank tail-repair explanation is closed without rank expansion or larger-predictor rescue. Geometry-local, coordinate-conditioned, or nonlinear mechanisms are not ruled out. No deployment algorithm, call saving, wall/RSS result, external generalization, or real-BOST claim is established.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
 ## 2026-08-25：v235/v235.1 前瞻 Case 7 否定固定 Direct Low64 K11 迁移
 
 **为什么做。** v234 在已开封 Case 12 上说明固定 Direct Low64 warm + 未修改 PCGLS K11 本身全过，失败来自额外 fallback。v235 因此不再调 fallback，而是在读取新数值前把固定 Direct K11 单独冻结，并在当时全局未打开的 BLASTNet Case 7 上做一次 13 rig x 42 帧的前瞻检验。
