@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v250 Charbonnier 首帧通过，但同价线性扩散完整解释结果
+
+**为什么做。** v249 停在独立系数门后，v250 结果前冻结一个物理上不同的局部非线性机制：从 reported-geometry 对角 Jacobi-PCGLS K13 出发，在 active `32×16×16` 图上按 deployment-visible MAD 尺度做 12 步显式 Charbonnier 扩散，再执行一次精确投影和一次未修改 restarted PCGLS K1。主候选逻辑账为 `15A+14A^T`。同时冻结完全同价、同 shell 的线性热扩散对照，避免把“任何局部平滑都有效”误写成 Charbonnier 的非线性优势。
+
+**实际结果。** formal 通过 **24/24** 项；完全独立第二实现通过 **38/38** 项。最终场最大相对差 `1.02e-9`，指标与汇总最大绝对差 `4.76e-11 / 2.16e-11`，相机换序、离散判决和调用账一致。Charbonnier 主候选是 **13/13**，同价线性热扩散也是 **13/13**；原始 K14 为 **7/13**，K16 reference 为 **12/13**。
+
+**我学到的。** 首帧证据支持“K13 后做固定局部平滑，再重启一次”这一较宽机制存在 headroom，但无法把收益归因于 Charbonnier conductance。便宜或同价对照不是附属表格，而是决定论文能否诚实声称新机制的核心门。
+
+**下一步边界。** 按结果前规则不运行完整 429 单元序列，关闭当前 Charbonnier 特异路线，也不把已开封的线性热扩散诊断事后包装成前瞻成功。没有序列级 exact-call 减少、wall/RSS、外部泛化或真实 BOST；不训练大模型、不租 GPU。`algorithm_breakthrough=false`。
+
+### English note
+
+v250 preregisters a physically distinct local nonlinear mechanism after v249 stops at its independent coefficient gate. Starting from reported-geometry diagonal-Jacobi PCGLS K13, it performs 12 explicit Charbonnier-diffusion steps on the active `32x16x16` graph using a deployment-visible MAD scale, followed by one exact projection and one unchanged restarted PCGLS iteration. The primary costs `15A+14A^T`. An identical equal-call shell with linear heat conductance is frozen to test whether the gain is nonlinear-specific or simply due to local smoothing. Formal passes **24/24** checks and the fully independent second implementation passes **38/38**. The Charbonnier primary reaches **13/13**, but equal-call linear heat also reaches **13/13**; raw K14 reaches **7/13** and the K16 reference **12/13**. The evidence supports broad frame-zero smoothing headroom, not Charbonnier-specific advantage. The full 429-cell sequence does not run, the Charbonnier-specific route closes, and the opened linear control is not promoted post hoc. There is no sequence-level exact-call reduction, wall/RSS, external-generalization, real-BOST, neural-training, GPU, or algorithm-breakthrough claim.
+
 ## 2026-08-26：v249 Haar-MAD 首帧出现 13/13 诊断信号，但独立系数门不闭合
 
 **为什么做。** v248 固定体素块退出后，v249 结果前冻结一条物理上不同的多尺度路线：从 reported-geometry 对角 Jacobi-PCGLS K13 出发，对 `32×16×16` 三维场做一层正交 Haar 变换，用 HHH 子带的 MAD 估计尺度，对七个细节子带做固定软阈值，恢复边界和 active-cell mean gauge 后执行一次精确投影与未修改 PCGLS K1。主候选实际逻辑账为 `15A+14A^T`，参数为 0；同价低频近似、原始 K14 和 K16 reference 均在结果前冻结。

@@ -64,10 +64,10 @@ def test_v249_figure_and_builder_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v249_is_latest_on_bilingual_primary_pages() -> None:
+def test_v249_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "INCONCLUSIVE_INVALID_CASE19_HAAR_MAD_WARM_FRAME_ZERO_V249"
+        "PASS_CASE19_FRAME_ZERO_BUT_CHARBONNIER_ADVANTAGE_NOT_ISOLATED_V250"
     )
     assert current["current_decision"]["v249_independent_validation_passed"] is False
     assert current["current_decision"]["v249_full_sequence_authorized"] is False
@@ -77,7 +77,7 @@ def test_v249_is_latest_on_bilingual_primary_pages() -> None:
     assert current["metrics"]["v249_independent_checks_total"] == 35
     assert current["metrics"]["v249_primary_strict_safe_cells_diagnostic"] == 13
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_haar_mad_warm_v249.png"
+        "blastnet_case19_charbonnier_graph_diffusion_v250.png"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
