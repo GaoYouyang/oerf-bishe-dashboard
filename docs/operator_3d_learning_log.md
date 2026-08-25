@@ -4,6 +4,30 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-25：v238 证明简单固定空间局部性不是 Case 7 缺失结构
+
+**为什么做。** v236 已经排除跨 rig 共享的全局 rank-64 尾差空间，但它还留下一个具体解释：也许尾差本来是局部的，全局 SVD 把不同位置的变化混在了一起。v238 因此不增加总维数，也不读取新工况，只把同一个已开封 Case 7 尾差空间改成固定局部分块，直接检验这个解释。
+
+**实际做了什么。** 三维 `32x16x16` 尾差固定切成互不重叠的 `2x2x2` 八个 octant，每块只保留 rank 8，所以总维数仍是 **64**。每次完整留出一个 rig，每块只用其他 12 条 rig 的 **504** 个局部尾差建立基；留出真值只用于最优投影系数，因此这是容量上界。正式实现用分块样本 Gram 分解，独立实现对全部 **8x13** 个 **504x1024** 训练块直接做 SVD；**12/12** 项检查全真，组合残差、分块残差和汇总最大差只有 **3.33e-16 / 8.88e-16 / 2.22e-16**。
+
+**结果。** 固定八分块仍是 **0/13**。全局 p50 / p90 / worst 从 v236 全局 rank 64 的 **0.645458 / 0.731692 / 0.805609** 恶化为 **0.667501 / 0.751069 / 0.833760**。更直接地说，13 条留出 rig 的全帧 p90 和后期 p90 全部变差，不存在“局部块至少救回一部分 rig”的信号。
+
+**讲人话。** 把 64 个方向平均拆进八个固定小盒子，没有把跨相机 rig 的尾差结构理顺，反而让每条 rig 都更难拟合。判决为 `FAIL_CASE7_OCTANT_TAIL_SUBSPACE_CAPACITY_V238`：fixed spatial locality 这一简单解释关闭，不增加每块 rank、不结果后改块，也不用更大模型挽救。它不排除几何连续、非线性或 solver-native 机制，不是部署算法、调用节省、wall/RSS、外部泛化或真实 BOST 证据。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v238 rejects simple fixed spatial locality as the missing Case 7 structure
+
+v236 rejects a global rank-64 tail space shared across rigs, but leaves one concrete explanation: perhaps the tail is intrinsically local and global SVD mixes changes at different positions. v238 adds no dimension and opens no new condition. It tests that explanation directly on the same opened Case 7 tails.
+
+The `32x16x16` 3D tail is divided into eight fixed, non-overlapping `2x2x2` octants. Each block retains rank 8, so the total dimension remains exactly **64**. Every fold holds out one complete rig and constructs each block basis from the **504** local tails in the other twelve rigs. Held-out truth supplies only optimal projection coefficients, making this a capacity upper bound. Formal block-Gram decomposition and independent direct SVD over all **8x13** **504x1024** training blocks agree: all **12/12** checks pass, with maximum combined-residual, block-residual, and summary differences of **3.33e-16 / 8.88e-16 / 2.22e-16**.
+
+Fixed octants still reach **0/13** complete rigs. Global p50 / p90 / worst worsens from **0.645458 / 0.731692 / 0.805609** for the v236 global rank-64 space to **0.667501 / 0.751069 / 0.833760**. Both all-frame and late-frame p90 are worse on every one of the 13 held-out rigs.
+
+In plain language, distributing the same 64 directions across eight fixed local boxes does not reveal transferable structure; it makes every rig harder to fit. The decision is `FAIL_CASE7_OCTANT_TAIL_SUBSPACE_CAPACITY_V238`: the simple fixed spatial-locality explanation closes without increasing block rank, adapting blocks after results, or invoking a larger model. Geometry-continuous, nonlinear, and solver-native mechanisms remain untested. No deployment algorithm, call saving, wall/RSS result, external generalization, or real-BOST claim is established.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
 ## 2026-08-25：v236 发现 Case 7 尾差只在混合 rig 时显得低秩
 
 **为什么做。** v235 已经前瞻确认固定 Direct Low64 K11 在 Case 7 的 matched-accuracy 是 **330/546、0/13**。失败从 frame 25 开始，并从 frame 26 起同时覆盖 13 条 rig；把全部 rig 混合后做谱分解，90% / 95% / 99% 能量只需 18 / 24 / 74 个方向。这提示“也许只要学习一个固定低秩尾差修补”值得被直接证伪，但这些联合谱数字已经看过，所以 v236 只能是开封后机制归因。
