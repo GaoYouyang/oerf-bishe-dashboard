@@ -60,7 +60,7 @@ def test_v254_is_retained_after_v255_becomes_latest() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "FAIL_CASE19_EXISTING_CHEAP_ARM_ORACLE_SELECTOR_CAPACITY_V263_1"
+    assert current["scientific_status"] == "POST_OPEN_CASE19_STRATIFIED_RAY_CORRECTION_HEADROOM_V264"
     assert metrics["v254_primary_absolute_safe_cells"] == 383
     assert metrics["v254_primary_absolute_safe_rigs"] == 6
     assert metrics["v254_primary_matched_safe_cells"] == 0
@@ -69,7 +69,7 @@ def test_v254_is_retained_after_v255_becomes_latest() -> None:
     assert decision["v254_k1_set_subspace_closed"] is True
     assert decision["v254_resource_gate_authorized"] is False
     assert decision["v254_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith("blastnet_case19_existing_cheap_arm_oracle_v263_1.png")
+    assert current["public_evidence"]["figure"].endswith("blastnet_case19_stratified_ray_correction_v264.png")
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_k1_set_subspace_v254" in text

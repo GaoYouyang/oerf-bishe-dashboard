@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-27：v264 固定半射线修正达到 13/13 完整门
+
+**为什么做。** v263.1 已经把九个旧候选的 selector 挽救关闭，因为真值逐套相机挑最好仍是 `0/13`。v264 不再拼接旧候选，而是结果前冻结一个新的确定性物理修正：从 v258 场和当前可见残差出发，固定取九台相机、两个位移分量中探测器棋盘偶相位的一半射线，做一次所选射线的精确伴随、geometry-Jacobi 预条件和一次所选射线的精确前向标量线搜索。没有真值输入、训练或结果后调相位。
+
+**实际结果。** 完全独立第二实现通过 `32/32` 项检查。在正式与独立结果的保守包络下，v264 的绝对门、K16-matched 门和联合门都是 `13/13`；v258 与 K15 的联合门仍为 `0/13`。四项指标 p90 为 `0.13418 / 0.25441 / 0.34669 / 0.04924`，对应 matched p90 比为 `0.43560 / 0.45167 / 0.47261 / 0.96580`，observation matched worst 为 `1.04717`，守住冻结的 `1.05` worst 容差。候选场、归一化残差和逐指标的正式/独立最大差为 `1.04e-9 / 2.41e-10 / 4.76e-11`；伴随恒等式与完整 replay 误差分别不超过 `2.79e-15 / 9.56e-15`。
+
+**讲人话。** 这次不是让模型在旧答案里挑，而是只用当前残差的一半交错射线补一小步。十三套相机全部同时守住自身精度门和 K16 对齐门。逻辑射线等价账为 `15.5A+14.5A^T`，低于 K16 的 `16A+16A^T`，但目前只在已经打开的 Case 19 首帧成立，尚未证明完整序列、真实时间/内存、外部工况或真实 BOST。下一步只能原样跑一次完整序列，不能调相位、比例、权重或 fallback。`algorithm_breakthrough=false`。
+
+### English summary
+
+v264 preregisters one deterministic mechanism after v263.1 closes selector rescue over the old arm pool. Starting from the sealed v258 endpoint and deployment-visible residual, it fixes the even detector-checkerboard half of all camera/component rays, applies one selected-ray exact adjoint, the geometry-Jacobi inverse, and one selected-ray exact forward scalar line search. A fully independent implementation passes all `32/32` checks. Under the conservative two-implementation envelope, v264 reaches `13/13` absolute, K16-matched, and joint passes, while v258 and K15 remain at `0/13` joint passes. The logical ray-equivalent ledger is `15.5A+14.5AT` versus K16 at `16A+16AT`. This is opened Case 19 frame-zero mechanism headroom only; it authorizes one unchanged full-sequence gate, not a wall/RSS, external, real-BOST, or algorithm claim. `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-27：v263.1 九个旧候选的真值 oracle 选择仍为 0/13
 
 **为什么做。** 在给 v250、v254、v258、v260、v261 的九个既有低成本候选训练 selector 之前，先问一个必要条件：如果一个知道真值的裁判可以逐 rig 挑最好，候选池里是否至少有一个能同时通过绝对门和保守 K16-matched 门？候选成本最多为 `15A+15A^T`，审计只读已经封存的真值派生指标，不生成新场，不新增算子调用。

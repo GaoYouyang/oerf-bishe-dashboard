@@ -69,7 +69,7 @@ def test_v257_remains_historical_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "FAIL_CASE19_EXISTING_CHEAP_ARM_ORACLE_SELECTOR_CAPACITY_V263_1"
+    assert current["scientific_status"] == "POST_OPEN_CASE19_STRATIFIED_RAY_CORRECTION_HEADROOM_V264"
     assert metrics["v257_independent_checks_passed"] == 23
     assert metrics["v257_independent_checks_total"] == 24
     assert metrics["v257_failed_numeric_checks"] == 1
@@ -79,7 +79,7 @@ def test_v257_remains_historical_on_bilingual_primary_pages() -> None:
     assert decision["v257_full_sequence_authorized"] is False
     assert decision["v257_effective_exact_call_reduction_established"] is False
     assert decision["v257_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith("blastnet_case19_existing_cheap_arm_oracle_v263_1.png")
+    assert current["public_evidence"]["figure"].endswith("blastnet_case19_stratified_ray_correction_v264.png")
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_observable_active_support_v257" in text
