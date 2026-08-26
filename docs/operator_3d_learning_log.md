@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-27：v266 否定“失败只是未选中射线溢出”
+
+**为什么做。** v265.1 已经把固定半射线路线关闭，但 `229` 个失败全部来自 observation。v266 不改候选、不调 mask，也不再做重建，只把封存残差精确拆成选中的 `1152` 条射线与其余 `1152` 条射线，问清楚失败是否只是把误差推到了没参与修正的另一半。
+
+**实际结果。** 完全独立第二实现通过 `18/18` 项检查，并复现 `200` 个 matched、`229` 个失败与 `0/13` 完整轨迹。相对父状态，全部 `429/429` 个单元的选中射线残差都没有增加；也没有任何单元出现“选中部分下降、补集反而上升”。失败中 `119` 个仅在补集相对 K16 留有缺口，`110` 个在两侧都留有缺口；逐 rig 的 `12/13` 个 p90 尾部和全部 `13/13` worst 尾部都是双侧缺口。正式能量独立重算最大相对差 `6.01e-15`，能量守恒差 `4.60e-15`，比值重建差为 `0`。
+
+**讲人话。** 这不是“修好一半、弄坏另一半”那么简单。最严重的十三个尾部在两半观测上都没有追上 K16，所以继续换奇偶相位、比例或权重，只是在同一个已经失败的办法上打转。固定半射线路线继续关闭；v266 新增 `0A+0A^T`，没有新候选，也没有速度、外部或真实 BOST 结果。因为 `119/110` 是混合分布，它也没有证明所有未来的单侧目标都不可能，但下一候选必须物理上不同并同时约束完整观测。`algorithm_breakthrough=false`。
+
+### English summary
+
+v266 changes no v265.1 candidate and exactly partitions the sealed observation residual into selected and unselected rays. The independent implementation passes `18/18` checks and reproduces 200 matched cells, 229 failed cells, and `0/13` complete trajectories. Selected residual does not increase in any of 429 cells, and no cell shows selected residual falling while complement residual rises relative to the parent. Among the failures, 119 are deficient only on the complement and 110 on both partitions; `12/13` p90 tails and all `13/13` worst tails are two-sided. Pure spillover is therefore rejected, while the fixed half-ray route remains closed. This `0A+0AT` post-open attribution constructs no new candidate and establishes no wall/RSS, external, or real-BOST result. `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-27：v265.1 完整序列关闭固定半射线路线
 
 **为什么做。** v264 在已打开 Case 19 首帧上给出 `13/13` 正机制证据。v265.1 不改变相位、比例、权重、阻尼、阈值或 fallback，直接把同一偶相位半射线修正跑到 `13` 套相机的 `33` 帧完整序列，共 `429` 个单元。

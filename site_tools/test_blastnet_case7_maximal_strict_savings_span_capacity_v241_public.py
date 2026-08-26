@@ -57,7 +57,7 @@ def test_v241_figure_and_source_are_public() -> None:
 
 def test_v241_is_preserved_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE19_STRATIFIED_RAY_CORRECTION_FULL_SEQUENCE_V265_1"
+    assert current["scientific_status"] == "MIXED_SELECTED_AND_UNSELECTED_RAY_DEFICIT_V266"
     assert current["current_decision"]["v241_sealed_array_readjudication_passed"] is True
     assert current["current_decision"]["v241_necessary_span_capacity_passed"] is True
     assert current["current_decision"]["v241_joint_feasibility_tested"] is False
@@ -65,7 +65,7 @@ def test_v241_is_preserved_as_historical_parent_evidence() -> None:
     assert current["metrics"]["v241_later_cells_necessary_safe"] == 533
     assert current["metrics"]["v241_complete_rigs_necessary_passed"] == 13
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_stratified_ray_correction_full_sequence_v265_1.png"
+        "blastnet_case19_half_ray_spillover_attribution_v266.png"
     )
 
     for page in (FOCUS, HOME, DAILY):

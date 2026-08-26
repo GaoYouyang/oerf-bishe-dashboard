@@ -76,11 +76,11 @@ def test_v261_remains_preserved_after_v263_1_on_bilingual_primary_pages() -> Non
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "FAIL_CASE19_STRATIFIED_RAY_CORRECTION_FULL_SEQUENCE_V265_1"
-    assert current["headline"].startswith("v265.1")
-    assert current["headline_zh"].startswith("v265.1")
-    assert current["headline_en"].startswith("v265.1")
-    assert "0/13" in current["headline_zh"] and "0/13" in current["headline_en"]
+    assert current["scientific_status"] == "MIXED_SELECTED_AND_UNSELECTED_RAY_DEFICIT_V266"
+    assert current["headline"].startswith("v266")
+    assert current["headline_zh"].startswith("v266")
+    assert current["headline_en"].startswith("v266")
+    assert "119" in current["headline_zh"] and "110" in current["headline_en"]
     assert metrics["v261_independent_checks_passed"] == 41
     assert metrics["v261_primary_absolute_cells"] == 3
     assert metrics["v261_primary_matched_cells"] == 0
@@ -88,7 +88,7 @@ def test_v261_remains_preserved_after_v263_1_on_bilingual_primary_pages() -> Non
     assert decision["v261_primary_improved_over_same_cost_k15"] is False
     assert decision["v261_full_sequence_authorized"] is False
     assert decision["v261_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith("blastnet_case19_stratified_ray_correction_full_sequence_v265_1.png")
+    assert current["public_evidence"]["figure"].endswith("blastnet_case19_half_ray_spillover_attribution_v266.png")
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_component_block_galerkin_v261" in text
