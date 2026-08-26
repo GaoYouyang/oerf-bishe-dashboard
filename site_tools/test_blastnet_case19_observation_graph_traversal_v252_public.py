@@ -72,11 +72,9 @@ def test_v252_figure_and_builder_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v252_is_latest_on_bilingual_primary_pages() -> None:
+def test_v252_is_preserved_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == (
-        "INCONCLUSIVE_INVALID_CASE19_OBSERVATION_GRAPH_TRAVERSAL_V252"
-    )
+    assert current["scientific_status"] == "FAIL_CASE19_K1_RESIDUAL_CONTRACTION_ANCHOR_V253"
     metrics = current["metrics"]
     decision = current["current_decision"]
     assert metrics["v252_numeric_checks_failed"] == 3
@@ -87,7 +85,7 @@ def test_v252_is_latest_on_bilingual_primary_pages() -> None:
     assert decision["v252_observation_graph_traversal_closed"] is True
     assert decision["v252_algorithm_breakthrough"] is False
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_observation_graph_traversal_v252.png"
+        "blastnet_case19_k1_anchor_identifiability_v253.png"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
@@ -95,8 +93,8 @@ def test_v252_is_latest_on_bilingual_primary_pages() -> None:
         assert "427/429" in text and "429/429" in text and "INCONCLUSIVE" in text
         assert "data-i18n-zh" in text and "data-i18n-en" in text
     home = HOME.read_text(encoding="utf-8")
-    assert "当前：v252 观测图遍历保持 INCONCLUSIVE 并退出" in home
-    assert "Current: v252 observation-graph traversal remains INCONCLUSIVE and retires" in home
+    assert "v252 Case 19：三项数值一致性越线" in home
+    assert "v252 Case 19: three numeric agreement checks fail" in home
     log = LEARNING_LOG.read_text(encoding="utf-8")
     assert "v252" in log
     assert "post-open discrete" in log

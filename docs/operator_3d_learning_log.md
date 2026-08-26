@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v253 K1 残差收缩选锚被零调用 control 完全解释
+
+**为什么做。** v252 的两个图遍历缺口都发生在 medoid anchor 自身。v253 因此不运行完整序列，只检验能否从当前批次的 deployment-visible observation 与 reported geometry 中找到安全锚点：对每个 frame 做一次零起点 geometry-Jacobi PCGLS K1，以归一化残差收缩选最小值；结果前固定 13 条 rig、33 帧、tie-break、K16 双实现稳健安全标签，以及最小观测范数和余弦 medoid 两个零调用 control。固定 frame 16 只作依赖时间索引的不合格诊断。
+
+**独立结果。** 独立第二实现通过 `16/16` 项检查；formal-independent 分数最大相对差 `6.10e-16`，相机乱序最大相对差 `3.07e-16`，锚点、稳健标签和调用账完全一致。K1 primary 在所有 rig 都选 frame 3，只通过 `9/13`；最小观测范数 control 也逐 rig 选择完全相同的 frame 3，并得到同一 `9/13` 安全 roster。余弦 medoid 为 `11/13`。固定中点为 `13/13`，但它读时间索引，不能作为部署选择器。
+
+**我学到的。** 一步 Krylov 残差收缩在这批已经开封的 Case 19 上没有提供超出观测幅值的 solver-specific 选锚信息。独立复算通过意味着这条负结论可信，不意味着算法成功。K1 筛查本身每套 rig 要 `33A+33A^T`，却被 `0A+0A^T` control 完全解释。
+
+**路线动作与边界。** 判决为 `FAIL_CASE19_K1_RESIDUAL_CONTRACTION_ANCHOR_V253`。关闭当前 K1 anchor hypothesis，也不再在 Case 19 上增加其他 anchor heuristic、学习型排序、大模型或 GPU；不运行完整遍历、wall/RSS 或资源门。假设复用选中的 K1 状态时得到的 `3.0303%` 只是不曾执行完整链的名义算术差。整条 C 路线没有关闭，但下一机制必须物理上真正不同，或者等待新的配对真实 BOST 信息。`algorithm_breakthrough=false`。
+
+### English note
+
+v253 audits a narrow deployment-visible anchor hypothesis after v252 places both graph-traversal misses at their medoid anchors. One zero-start geometry-Jacobi PCGLS K1 step is run per frame and normalized residual contraction selects the anchor; 13 rigs, 33 frames, deterministic tie-breaking, a robust two-implementation K16 safety label, and two zero-call controls are fixed before results. The independent second implementation passes `16/16` checks, with maximum formal-independent score disagreement `6.10e-16` and camera-permutation disagreement `3.07e-16`. The K1 primary and minimum-observation-norm control select the same frame 3 in every rig and produce exactly the same `9/13` safety roster; cosine medoid reaches `11/13`. Fixed midpoint reaches `13/13` but depends on time index and is inadmissible. The K1 screen costs `33A+33A^T` per rig and is completely explained by a `0A+0A^T` control. The K1 anchor hypothesis closes without a full traversal, wall/RSS run, training, GPU, external-generalization, real-BOST, or algorithm-breakthrough claim.
+
 ## 2026-08-26：v252 图遍历离散结构一致，但独立数值闭环未通过
 
 **为什么做。** v251 说明把固定首帧解直接拼到因果暖序列上不能守住 matched-accuracy。v252 转而检验一个 deployment-visible 的顺序机制：只用每帧 observation 和 reported geometry 建图，以 medoid 为锚点沿最小生成树传播暖启动，并与同价、但不看 observation 的固定中点顺序以及时间顺序对照比较。机制不读取真值、时间或 rig 标签；结果前固定 13 条 rig、33 帧、调用账和独立数值一致性门。
