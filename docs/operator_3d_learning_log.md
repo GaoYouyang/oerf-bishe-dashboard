@@ -4,6 +4,22 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v252 图遍历离散结构一致，但独立数值闭环未通过
+
+**为什么做。** v251 说明把固定首帧解直接拼到因果暖序列上不能守住 matched-accuracy。v252 转而检验一个 deployment-visible 的顺序机制：只用每帧 observation 和 reported geometry 建图，以 medoid 为锚点沿最小生成树传播暖启动，并与同价、但不看 observation 的固定中点顺序以及时间顺序对照比较。机制不读取真值、时间或 rig 标签；结果前固定 13 条 rig、33 帧、调用账和独立数值一致性门。
+
+**独立结果。** 独立程序重建出完全相同的图、medoid、访问顺序与父节点，边权最大绝对差为 `5.55e-16`，逐单元离散判决一致，汇总最大绝对差 `8.92e-11` 也低于 `1e-9` 界。但三项结果前数值门失败：场相对差 `1.1990e-7 > 2e-8`，指标绝对差 `8.6125e-8 > 2e-8`，残差相对差 `8.1713e-6 > 2e-7`。因此权威判决只能是 `INCONCLUSIVE_INVALID_CASE19_OBSERVATION_GRAPH_TRAVERSAL_V252`，不能用离散一致覆盖浮点闭环失败。
+
+**post-open discrete 诊断。** 图遍历达到绝对门 `427/429` 单元、`11/13` 完整 rig；两个缺口都位于 frame 6 的 interior-gradient，而且正是各自图的 medoid 锚点。相同 `496A+464A^T` 调用账下，不看 observation 的固定中点顺序达到 `429/429`、`13/13`；时间顺序为 `428/429`、`12/13`，K16 reference 为 `417/429`、`9/13`。这些数字只用于开封后归因，不是通过独立验证的科学性能结果。
+
+**我学到的。** 可观测图的离散拓扑可以稳定复现，但它没有给出超越简单固定顺序对照的证据。相对 K16 的名义调用差为 `9.0909%`，在独立数值门未过且同价对照更强时不能称有效 exact-call 减少，更不能称 wall/RSS、外部泛化或真实 BOST 收益。
+
+**路线动作与边界。** 不重跑、不换输出、不放宽容差，也不把 v252 事后升级成科学 FAIL。当前 observation-graph traversal 路线停止继续投入；这是基于 post-open 诊断的路线收缩，不是数学不可能证明，也不关闭整条 C 路线。不训练模型、不租 GPU，`algorithm_breakthrough=false`。
+
+### English note
+
+v252 tests a deployment-visible ordering mechanism after v251 rejects the direct cold-start composition. It builds an observation-and-reported-geometry graph, chooses a medoid anchor, and propagates warm starts along a minimum spanning tree, with equal-cost fixed-midpoint and chronological controls. The independent implementation reproduces the graph, medoid, order, parents, and every discrete decision exactly; maximum edge-weight disagreement is `5.55e-16`, and summary disagreement is `8.92e-11`. However, three preregistered numeric checks fail: field relative disagreement `1.1990e-7 > 2e-8`, metric absolute disagreement `8.6125e-8 > 2e-8`, and residual relative disagreement `8.1713e-6 > 2e-7`. The authoritative result therefore remains `INCONCLUSIVE`. In the post-open discrete diagnostic only, graph traversal reaches `427/429` absolute cells and `11/13` complete rigs, while the equal-cost observation-blind midpoint control reaches `429/429` and `13/13`. The nominal `9.0909%` call difference is not effective reduction. The observation-graph route closes operationally without upgrading v252 to a scientific FAIL, and there is no wall/RSS, training, GPU, external-generalization, real-BOST, or algorithm-breakthrough claim.
+
 ## 2026-08-26：v251 直接拼接绝对门全过，但 matched-accuracy 为 0/13
 
 **为什么做。** v250 证明首帧固定平滑存在 headroom，但同价线性热扩散完整解释了结果。v251 因此只读审计最直接的完整序列拼接：首帧使用 v250 已封存的线性热解，后 32 帧使用 v244 已封存的因果暖 K14，并与对应 K16 序列比较。这个组合在写合同前已经被查看，所以它明确是 **post-open retrospective** 审计，不是结果盲前瞻试验；不重读真值、观测或原始密度，也不增加算子或求解器调用。

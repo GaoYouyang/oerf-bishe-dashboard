@@ -67,7 +67,7 @@ def test_v250_figure_and_builder_are_public() -> None:
 def test_v250_remains_preserved_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "FAIL_CASE19_COLD_START_LINEAR_HYBRID_MATCHED_ACCURACY_V251"
+        "INCONCLUSIVE_INVALID_CASE19_OBSERVATION_GRAPH_TRAVERSAL_V252"
     )
     decision = current["current_decision"]
     assert decision["v250_independent_validation_passed"] is True

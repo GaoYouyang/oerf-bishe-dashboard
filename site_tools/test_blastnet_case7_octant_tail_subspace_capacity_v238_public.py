@@ -51,7 +51,7 @@ def test_v238_figure_is_rendered() -> None:
 def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "INCONCLUSIVE_INVALID_CASE19_HAAR_MAD_WARM_FRAME_ZERO_V249"
+        "INCONCLUSIVE_INVALID_CASE19_OBSERVATION_GRAPH_TRAVERSAL_V252"
     )
     assert current["current_decision"]["v238_independent_validation_passed"] is True
     assert current["current_decision"]["v238_algorithm_breakthrough"] is False
@@ -60,7 +60,7 @@ def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
         current["metrics"]["v238_global_rank64_global_p90_higher"]
     )
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_haar_mad_warm_v249.png"
+        "blastnet_case19_observation_graph_traversal_v252.png"
     )
 
     for page in (FOCUS, HOME, DAILY):
