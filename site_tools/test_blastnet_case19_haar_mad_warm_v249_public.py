@@ -66,7 +66,7 @@ def test_v249_figure_and_builder_are_public() -> None:
 
 def test_v249_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE19_KRYLOV_COMPLEMENT_HEAT_FRAME_ZERO_V258"
+    assert current["scientific_status"] == "POST_OPEN_CASE19_CAMERA_LOCAL_OBSERVATION_EXCESS_V259"
     assert current["current_decision"]["v249_independent_validation_passed"] is False
     assert current["current_decision"]["v249_full_sequence_authorized"] is False
     assert current["current_decision"]["v249_haar_mad_headroom_established"] is False
@@ -75,7 +75,7 @@ def test_v249_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -
     assert current["metrics"]["v249_independent_checks_total"] == 35
     assert current["metrics"]["v249_primary_strict_safe_cells_diagnostic"] == 13
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_krylov_complement_heat_v258.png"
+        "blastnet_case19_observation_excess_attribution_v259.png"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")

@@ -1,0 +1,90 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+from PIL import Image
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SUMMARY = ROOT / "docs/blastnet_case19_observation_excess_attribution_v259_public_summary.json"
+RESULT = ROOT / "docs/blastnet_case19_observation_excess_attribution_v259_result_2026-08-26.md"
+FIGURE = ROOT / "assets/figures/blastnet_case19_observation_excess_attribution_v259.png"
+BUILDER = ROOT / "site_tools/build_blastnet_case19_observation_excess_attribution_v259_figure.py"
+CURRENT = ROOT / "operator-learning/current-evidence.json"
+FOCUS = ROOT / "operator-learning/index.html"
+HOME = ROOT / "index.html"
+DAILY = ROOT / "operator-learning/daily-progress.html"
+LEARNING_LOG = ROOT / "docs/operator_3d_learning_log.md"
+
+
+def test_v259_summary_records_independent_post_open_attribution() -> None:
+    data = json.loads(SUMMARY.read_text(encoding="utf-8"))
+    validation = data["independent_validation"]
+    primary = data["primary_attribution"]
+    assert data["scope"]["cells"] == 13
+    assert data["scope"]["new_exact_operator_calls"] == [0, 0]
+    assert data["scope"]["new_candidate_or_field_generated"] is False
+    assert validation["passed"] is True
+    assert validation["checks_passed"] == validation["checks_total"] == 18
+    assert primary["camera"]["localized_rigs"] == 10
+    assert primary["component"]["localized_rigs"] == 13
+    assert primary["frequency"]["localized_rigs"] == 12
+    assert data["adjudication"]["route_action"].startswith("AUTHORIZE_EXACTLY_ONE")
+    assert data["adjudication"]["scientific_pass_claimed"] is False
+    assert all(value is False for value in data["claims_fixed_false"].values())
+
+
+def test_v259_result_is_bilingual_and_preserves_claim_boundaries() -> None:
+    text = RESULT.read_text(encoding="utf-8")
+    assert "# v259：" in text and "# v259:" in text
+    for token in ("18/18", "10/13", "13/13", "12/13", "0A+0A^T", "0.811", "0.924"):
+        assert token in text
+    assert "不是算法通过" in text
+    assert "not an algorithmic pass" in text
+    assert "algorithm_breakthrough=false" in text
+
+
+def test_v259_figure_and_builder_are_public() -> None:
+    assert BUILDER.is_file()
+    assert FIGURE.is_file() and FIGURE.stat().st_size > 40_000
+    with Image.open(FIGURE) as image:
+        assert image.width >= 2800
+        assert image.height >= 1100
+
+
+def test_v259_is_latest_on_bilingual_primary_pages() -> None:
+    current = json.loads(CURRENT.read_text(encoding="utf-8"))
+    metrics = current["metrics"]
+    decision = current["current_decision"]
+    assert current["scientific_status"] == "POST_OPEN_CASE19_CAMERA_LOCAL_OBSERVATION_EXCESS_V259"
+    assert metrics["v259_independent_checks_passed"] == 18
+    assert metrics["v259_camera_localized_rigs"] == 10
+    assert metrics["v259_component_localized_rigs"] == 13
+    assert metrics["v259_frequency_localized_rigs"] == 12
+    assert decision["v259_independent_validation_passed"] is True
+    assert decision["v259_exactly_one_camera_local_diagnostic_authorized"] is True
+    assert decision["v259_full_sequence_authorized"] is False
+    assert decision["v259_algorithm_breakthrough"] is False
+    assert current["public_evidence"]["figure"].endswith("blastnet_case19_observation_excess_attribution_v259.png")
+    for page in (FOCUS, HOME, DAILY):
+        text = page.read_text(encoding="utf-8")
+        assert "blastnet_case19_observation_excess_attribution_v259" in text
+        assert "18/18" in text and "10/13" in text
+        assert "data-i18n-zh" in text and "data-i18n-en" in text
+    assert "v259" in LEARNING_LOG.read_text(encoding="utf-8")
+
+
+def test_v259_public_artifacts_exclude_private_execution_details() -> None:
+    text = SUMMARY.read_text(encoding="utf-8") + RESULT.read_text(encoding="utf-8")
+    forbidden = (
+        "/Users/",
+        "/Volumes/",
+        "private_results",
+        "private_worktrees",
+        "source_commit",
+        "checkpoint.pt",
+        "run ID",
+        "afe015d1",
+    )
+    assert all(token not in text for token in forbidden)

@@ -4,6 +4,18 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v259 把剩余观测阻塞定位到相机局部结构
+
+**为什么做。** v258 已经独立确认：Krylov 正交补热修正的 field、full-gradient 与 interior-gradient 都守住 matched 门，系统性失败只剩 observation。v259 不再造一个新候选，而是用 `0A+0A^T` 对封存的 v258/K16 残差做加性能量分解。相机、双分量、正交二维 DCT 频带、75% 局部门、至少 10/13 rig 和相机→分量→频带→弥散的裁决优先级都在读取结果前固定。
+
+**实际结果。** 完全独立第二实现通过 `18/18` 项检查。父观测指标重放最大差 `5.00e-16`，归一化数组差 `2.82e-9`，能量数组相对差 `8.75e-10`，汇总差 `2.75e-9`，Parseval / 加性闭环误差 `1.97e-15`。v258 相对 K16 的剩余超额在前三相机上达到 `10/13`，中位份额 `0.811`；第二分量达到 `13/13`、中位份额 `1.000`；高频达到 `12/13`、中位份额 `0.924`。raw K14 对照在三种分组上全部为 `0/13`，属于弥散，因此当前结构不是所有残差差异都会自动出现。
+
+**路线动作与边界。** 科学判决为 `POST_OPEN_CASE19_CAMERA_LOCAL_OBSERVATION_EXCESS_V259`。按冻结优先级，只授权下一轮另行冻结一个相机局部、部署可见且可独立证伪的诊断；分量与高频集中只作描述性支持，不能事后替代 primary。v259 没有新场、物理 replay、完整序列、训练、GPU、wall/RSS 或外部门。这是有效机制归因，不是算法通过；`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English summary
+
+v259 does not create another candidate after v258 isolates observation as the only systematic matched-accuracy blocker. It additively decomposes sealed v258/K16 residual excess by camera, two detector-displacement components, and orthonormal 2D DCT bands at `0A+0AT`. A fully independent implementation passes all `18/18` checks. Camera localization reaches `10/13` rigs with median top-three share `0.811`; component 2 reaches `13/13` with median share `1.000`; high frequency reaches `12/13` with median share `0.924`. Raw K14 versus K16 is diffuse under all three groupings. Under the preregistered priority, exactly one separately frozen camera-local diagnostic is authorized next. This is mechanism attribution, not an algorithmic pass, and `algorithm_breakthrough=false`.
+
 ## 2026-08-26：v258 Krylov 正交补热修正绝对门 13/13，但 matched 为 0/13
 
 **为什么做。** v257 的数值合同不确定后，v258 不再使用 active support 或 mask，而是检验一个 solver-native 机制：保留 zero-start geometry-Jacobi PCGLS K13 的场方向与测量方向，把冻结线性热修正中已能被现有 Krylov 测量空间解释的部分扣掉，只把正交补送入最后一次未修改 PCGLS K1。13 个全秩方向、单位对角缩放、无 rank 截断、无 ridge、无裁剪、无搜索、无混合、无回退和 `15A+14A^T` 调用账都在结果前固定。

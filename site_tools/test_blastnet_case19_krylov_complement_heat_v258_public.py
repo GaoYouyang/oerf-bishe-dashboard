@@ -55,11 +55,11 @@ def test_v258_figure_and_builder_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v258_is_latest_on_bilingual_primary_pages() -> None:
+def test_v258_is_preserved_after_v259_becomes_latest() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "FAIL_CASE19_KRYLOV_COMPLEMENT_HEAT_FRAME_ZERO_V258"
+    assert current["scientific_status"] == "POST_OPEN_CASE19_CAMERA_LOCAL_OBSERVATION_EXCESS_V259"
     assert metrics["v258_independent_checks_passed"] == 47
     assert metrics["v258_independent_checks_total"] == 47
     assert metrics["v258_primary_absolute_cells"] == 13
@@ -69,7 +69,7 @@ def test_v258_is_latest_on_bilingual_primary_pages() -> None:
     assert decision["v258_full_sequence_authorized"] is False
     assert decision["v258_effective_exact_call_reduction_established"] is False
     assert decision["v258_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith("blastnet_case19_krylov_complement_heat_v258.png")
+    assert current["public_evidence"]["figure"].endswith("blastnet_case19_observation_excess_attribution_v259.png")
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_krylov_complement_heat_v258" in text

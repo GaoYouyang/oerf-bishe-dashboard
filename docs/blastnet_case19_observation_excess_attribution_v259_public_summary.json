@@ -1,0 +1,117 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-observation-excess-attribution-v259.0",
+  "updated": "2026-08-26",
+  "scope": {
+    "condition": "already-opened same-family public reacting-flow Case 19",
+    "role": "post-open frame-zero additive observation-residual attribution",
+    "rigs": 13,
+    "frames_per_rig": 1,
+    "cells": 13,
+    "active_cameras": 9,
+    "detector_components": 2,
+    "grid": [32, 16, 16],
+    "trainable_parameters": 0,
+    "new_candidate_or_field_generated": false,
+    "new_physical_replay_completed": false,
+    "new_exact_operator_calls": [0, 0],
+    "full_sequence_run": false,
+    "fresh_wall_or_rss_run": false
+  },
+  "attribution": {
+    "primary_comparison": "remaining v258 Krylov-complement heat residual minus the K16 reference residual",
+    "controls": [
+      "removed linear-heat residual minus the remaining v258 residual",
+      "raw K14 residual minus the K16 reference residual"
+    ],
+    "energy_rule": "positive groupwise excess residual energy, normalized within each grouping",
+    "camera_grouping": "nine cameras with top-three positive share",
+    "component_grouping": "two detector displacement components with dominant-component share",
+    "frequency_grouping": "orthonormal two-dimensional DCT bands: DC, low, mid, and high",
+    "localization_threshold": 0.75,
+    "required_localized_rigs": 10,
+    "preregistered_priority": ["camera", "component", "frequency", "diffuse"],
+    "uses_truth_time_or_rig_labels": false
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_CASE19_OBSERVATION_EXCESS_ATTRIBUTION_V259",
+    "scientific_decision": "POST_OPEN_CASE19_CAMERA_LOCAL_OBSERVATION_EXCESS_V259",
+    "completed": true,
+    "passed": true,
+    "checks_passed": 18,
+    "checks_total": 18,
+    "maximum_parent_observation_metric_replay_absolute_difference": 4.996003610813204e-16,
+    "maximum_normalized_array_absolute_difference": 2.8190879630685117e-9,
+    "maximum_energy_array_relative_difference": 8.751300845032541e-10,
+    "maximum_summary_absolute_difference": 2.7488452902790783e-9,
+    "maximum_parseval_or_additive_closure_error": 1.9694271703270557e-15,
+    "end_to_end_physics_independence_proven": false
+  },
+  "primary_attribution": {
+    "camera": {
+      "localized_rigs": 10,
+      "rigs_total": 13,
+      "top_one_share_p50_higher": 0.45285360307239436,
+      "top_three_share_p50_higher": 0.810796525085221,
+      "top_three_share_worst": 0.6098334486776471
+    },
+    "component": {
+      "localized_rigs": 13,
+      "rigs_total": 13,
+      "component_positive_share_p50": [0.0, 1.0]
+    },
+    "frequency": {
+      "localized_rigs": 12,
+      "rigs_total": 13,
+      "dominant_share_p50_higher": 0.9242871531662251,
+      "band_positive_share_p50": [0.0, 0.0, 0.07241388110756788, 0.9242871531662251]
+    },
+    "total_residual_energy_ratio_primary_over_k16": {
+      "p50": 1.3663664954712318,
+      "p90_higher": 1.503951018247945,
+      "worst": 1.8685056729585359
+    }
+  },
+  "control_attribution": {
+    "removed_linear_heat_minus_primary": {
+      "camera_localized_rigs": 0,
+      "component_localized_rigs": 13,
+      "frequency_localized_rigs": 0,
+      "dominant_component_share_p50": 0.908636,
+      "total_energy_ratio_p50_p90_worst": [6.959, 7.666, 7.713]
+    },
+    "raw_k14_minus_k16": {
+      "classification": "diffuse",
+      "camera_localized_rigs": 0,
+      "component_localized_rigs": 0,
+      "frequency_localized_rigs": 0,
+      "camera_top_three_share_p50": 0.385878,
+      "dominant_component_share_p50": 0.533534,
+      "dominant_frequency_share_p50": 0.431135,
+      "total_energy_ratio_p50_p90_worst": [1.549628, 1.60922, 1.62042]
+    }
+  },
+  "adjudication": {
+    "scientific_decision": "POST_OPEN_CASE19_CAMERA_LOCAL_OBSERVATION_EXCESS_V259",
+    "route_action": "AUTHORIZE_EXACTLY_ONE_SEPARATELY_PREREGISTERED_CAMERA_LOCAL_DIAGNOSTIC",
+    "scientific_pass_claimed": false,
+    "scientific_fail_claimed": false,
+    "mechanism_attribution_claimed": true,
+    "component_and_frequency_concentration_are_descriptive_support_only": true,
+    "full_sequence_authorized": false,
+    "predictor_training_authorized": false,
+    "resource_gate_authorized": false,
+    "reason": "the primary excess is camera-local in 10 of 13 rigs under the frozen priority, while the independent recomputation passes all 18 checks"
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "effective_exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

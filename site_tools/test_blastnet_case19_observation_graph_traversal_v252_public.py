@@ -74,7 +74,7 @@ def test_v252_figure_and_builder_are_public() -> None:
 
 def test_v252_is_preserved_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE19_KRYLOV_COMPLEMENT_HEAT_FRAME_ZERO_V258"
+    assert current["scientific_status"] == "POST_OPEN_CASE19_CAMERA_LOCAL_OBSERVATION_EXCESS_V259"
     metrics = current["metrics"]
     decision = current["current_decision"]
     assert metrics["v252_numeric_checks_failed"] == 3
@@ -85,7 +85,7 @@ def test_v252_is_preserved_on_bilingual_primary_pages() -> None:
     assert decision["v252_observation_graph_traversal_closed"] is True
     assert decision["v252_algorithm_breakthrough"] is False
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_krylov_complement_heat_v258.png"
+        "blastnet_case19_observation_excess_attribution_v259.png"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
