@@ -6863,7 +6863,7 @@ DCT low-mode residual、dual ridge、geometry-PCGLS 和 normalized-BP 对照。�
 fresh stopping validation。v9 明确禁止再用 p22 选择模型、K、阈值或救失败结果。
 
 我们在只看官方 metadata 的条件下预指定 `p=45kw_size=03` 为一次性 proxy holdout。
-当前项目受管的 `private_data/PoolFire` 和 `private_results` 范围内，对
+当前项目受管的私有数据区和私有结果区范围内，对
 `45kw_size=03/p45s03` 的名称与文本审计均为零命中，没有 receipt、raw/partial、
 derived rho、pair 或数字结果。但是这只能支持“项目受管范围内、实现前选定的 fresh
 proxy holdout”，不能证明整台机器历史上绝对没有手工下载或删除过副本，也不能称

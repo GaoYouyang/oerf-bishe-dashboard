@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+from html.parser import HTMLParser
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 
 from PIL import Image
 
@@ -16,6 +18,22 @@ FOCUS = ROOT / "operator-learning/index.html"
 HOME = ROOT / "index.html"
 DAILY = ROOT / "operator-learning/daily-progress.html"
 LEARNING_LOG = ROOT / "docs/operator_3d_learning_log.md"
+PUBLICATION_BOUNDARY = ROOT / "publication-boundary.html"
+
+
+class _LinkParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.links: list[str] = []
+
+    def handle_starttag(
+        self,
+        _tag: str,
+        attrs: list[tuple[str, str | None]],
+    ) -> None:
+        for key, value in attrs:
+            if key in {"href", "src"} and value:
+                self.links.append(value)
 
 
 def test_v259_summary_records_independent_post_open_attribution() -> None:
@@ -88,3 +106,50 @@ def test_v259_public_artifacts_exclude_private_execution_details() -> None:
         "afe015d1",
     )
     assert all(token not in text for token in forbidden)
+
+
+def test_publication_boundary_is_bilingual_and_old_private_protocols_are_absent() -> None:
+    text = PUBLICATION_BOUNDARY.read_text(encoding="utf-8")
+    assert "这个资产没有公开" in text
+    assert "This asset is not public" in text
+    assert "data-i18n-zh" in text and "data-i18n-en" in text
+    assert not (
+        ROOT
+        / "learning_labs/protocols/poolfire_c_geometry_equalized_bp_audit_v7.json"
+    ).exists()
+    assert not (
+        ROOT
+        / "learning_labs/protocols/"
+        "poolfire_c_dual_representation_ceiling_clarification_v10_4_2.json"
+    ).exists()
+
+
+def test_all_public_html_local_links_resolve() -> None:
+    missing: list[tuple[str, str]] = []
+    for page in sorted(ROOT.rglob("*.html")):
+        parser = _LinkParser()
+        parser.feed(page.read_text(encoding="utf-8"))
+        for raw in parser.links:
+            parsed = urlsplit(raw)
+            if (
+                parsed.scheme
+                or parsed.netloc
+                or raw.startswith(("#", "mailto:", "tel:", "data:", "javascript:"))
+            ):
+                continue
+            relative = unquote(parsed.path)
+            if not relative:
+                continue
+            target = (
+                ROOT / relative.lstrip("/")
+                if relative.startswith("/")
+                else page.parent / relative
+            )
+            candidates = [target]
+            if relative.endswith("/"):
+                candidates.append(target / "index.html")
+            elif not target.suffix:
+                candidates.extend((target / "index.html", target.with_suffix(".html")))
+            if not any(candidate.exists() for candidate in candidates):
+                missing.append((str(page.relative_to(ROOT)), raw))
+    assert missing == []
