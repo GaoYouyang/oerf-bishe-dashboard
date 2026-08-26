@@ -1,0 +1,87 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-observable-active-support-v257.0",
+  "updated": "2026-08-26",
+  "scope": {
+    "condition": "already-opened same-family public reacting-flow Case 19",
+    "role": "post-open frame-zero mechanism test",
+    "rigs": 13,
+    "frames_per_rig": 1,
+    "cells": 13,
+    "active_cameras": 9,
+    "grid": [32, 16, 16],
+    "trainable_parameters": 0,
+    "truth_available_before_prediction_barrier": false,
+    "physical_replay_completed": true,
+    "full_sequence_run": false,
+    "fresh_wall_or_rss_run": false
+  },
+  "mechanism": {
+    "primary": "K1 seed, geometry-whitened observable active support, masked CGLS K11 correction, then unchanged full-field geometry-Jacobi PCGLS K1",
+    "support_score": "absolute K1 seed divided by the square root of the geometry inverse diagonal",
+    "support_rule": "smallest deterministic support capturing 95% of score-squared energy, followed by one six-neighbor dilation",
+    "masked_correction": "self-adjoint masked mean-zero projection with identity-preconditioned CGLS K11",
+    "camera_permutation_equivariant": true,
+    "uses_truth_time_or_rig_labels": false
+  },
+  "independent_validation": {
+    "status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_CASE19_OBSERVABLE_ACTIVE_SUPPORT_FRAME_ZERO_V257",
+    "scientific_decision": "INCONCLUSIVE_INVALID_CASE19_OBSERVABLE_ACTIVE_SUPPORT_FRAME_ZERO_V257",
+    "completed": true,
+    "passed": false,
+    "checks_passed": 23,
+    "checks_total": 24,
+    "failed_checks": [
+      "observation_normalized_residuals_agree"
+    ],
+    "maximum_observation_normalized_residual_difference": 3.083595246781058e-8,
+    "observation_normalized_residual_tolerance": 2e-8,
+    "residual_limit_ratio": 1.541797623390529,
+    "support_masks_agree_exactly": true,
+    "selected_counts_agree_exactly": true,
+    "maximum_captured_energy_absolute_difference": 3.219646771412954e-15,
+    "maximum_score_energy_relative_difference": 5.779324974799118e-15,
+    "maximum_final_field_relative_difference": 7.683161463603658e-9,
+    "field_relative_tolerance": 2e-8,
+    "maximum_metric_absolute_difference": 5.38203259736747e-10,
+    "maximum_summary_absolute_difference": 1.431840868093559e-9,
+    "metric_and_summary_absolute_tolerance": 2e-8,
+    "discrete_decisions_agree": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "performance_interpretation": {
+    "formal_scientific_arrays_admissible": false,
+    "independent_scientific_arrays_admissible": false,
+    "discrete_counts_published_as_performance": false,
+    "reason": "the preregistered observation-normalized residual agreement check exceeds its frozen tolerance"
+  },
+  "cost_ledger": {
+    "primary_frame_calls_A_At": [14, 13],
+    "same_data_controls_calls_A_At": [14, 14],
+    "k16_reference_frame_calls_A_At": [16, 16],
+    "nominal_combined_exact_call_reduction_fraction": 0.15625,
+    "effective_exact_call_reduction_established": false
+  },
+  "adjudication": {
+    "scientific_decision": "INCONCLUSIVE_INVALID_CASE19_OBSERVABLE_ACTIVE_SUPPORT_FRAME_ZERO_V257",
+    "route_action": "CLOSE_OBSERVABLE_ACTIVE_SUPPORT_CORRECTION_AFTER_INVALID_INDEPENDENT_CONTRACT",
+    "scientific_pass_claimed": false,
+    "scientific_fail_claimed": false,
+    "diagnostic_headroom_claimed": false,
+    "numeric_tolerance_relaxed": false,
+    "rerun_or_retuning_authorized": false,
+    "full_sequence_authorized": false,
+    "resource_gate_authorized": false,
+    "reason": "observation-normalized residual agreement is 1.542 times the frozen independent tolerance"
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

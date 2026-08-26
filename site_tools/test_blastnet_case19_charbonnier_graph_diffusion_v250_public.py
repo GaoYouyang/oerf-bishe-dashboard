@@ -66,7 +66,7 @@ def test_v250_figure_and_builder_are_public() -> None:
 
 def test_v250_remains_preserved_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_GALERKIN_PYRAMID_FRAME_ZERO_V256"
+    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_OBSERVABLE_ACTIVE_SUPPORT_FRAME_ZERO_V257"
     decision = current["current_decision"]
     assert decision["v250_independent_validation_passed"] is True
     assert decision["v250_equal_call_control_explains_result"] is True
