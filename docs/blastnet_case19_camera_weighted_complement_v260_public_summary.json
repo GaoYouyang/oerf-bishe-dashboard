@@ -1,0 +1,105 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-camera-weighted-complement-v260.0",
+  "updated": "2026-08-26",
+  "scope": {
+    "condition": "already-opened same-family public reacting-flow Case 19",
+    "role": "post-open frame-zero camera-weighted mechanism gate",
+    "rigs": 13,
+    "frames_per_rig": 1,
+    "cells": 13,
+    "active_cameras": 9,
+    "grid": [32, 16, 16],
+    "trainable_parameters": 0,
+    "full_sequence_run": false,
+    "fresh_wall_or_rss_run": false,
+    "external_condition_opened": false
+  },
+  "mechanism": {
+    "input": "deployment-visible K13 residual, current observation, and reported geometry",
+    "camera_score": "per-camera squared residual energy divided by per-camera squared observation energy",
+    "camera_weight_normalization": "positive weights normalized to mean one",
+    "correction": "weighted complete K13 measurement projection followed by one unchanged geometry-Jacobi PCGLS step",
+    "uses_truth_time_rig_labels_or_camera_id": false,
+    "uses_top_k_exponent_clipping_threshold_or_fallback": false,
+    "logical_exact_calls_A": 15,
+    "logical_exact_calls_At": 14
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_CASE19_CAMERA_WEIGHTED_COMPLEMENT_FRAME_ZERO_V260",
+    "scientific_decision": "FAIL_CASE19_CAMERA_WEIGHTED_COMPLEMENT_FRAME_ZERO_V260",
+    "completed": true,
+    "passed": true,
+    "checks_passed": 52,
+    "checks_total": 52,
+    "maximum_field_relative_difference": 1.0218821621735942e-9,
+    "maximum_normalized_residual_difference": 2.4129504259789613e-10,
+    "maximum_metric_absolute_difference": 4.758426985773667e-11,
+    "maximum_camera_score_relative_difference": 4.7338359044413244e-11,
+    "maximum_camera_weight_relative_difference": 6.266376842735865e-11,
+    "maximum_camera_permutation_state_field_or_residual_difference": 0.0,
+    "end_to_end_physics_independence_proven": false
+  },
+  "primary": {
+    "absolute_cells": 13,
+    "matched_cells": 0,
+    "absolute_and_matched_cells": 0,
+    "absolute_metrics_p50": [0.12583199668969258, 0.23998875236150136, 0.32162333605790416, 0.060126932779748676],
+    "absolute_metrics_p90_higher": [0.13874665277211468, 0.26286351763257537, 0.3610805867503372, 0.06273899241995969],
+    "absolute_metrics_worst": [0.14385945193707841, 0.27120271102079796, 0.36683461129582695, 0.06349454558317938],
+    "matched_ratio_p90_higher": [0.45169028142234674, 0.4665146073380715, 0.49533583283398896, 1.2281136337318823],
+    "matched_ratio_worst": [0.47396873441339243, 0.4749329540689661, 0.503426584870065, 1.3686279150167422],
+    "only_systematic_matched_blocker": "observation"
+  },
+  "controls": {
+    "unweighted_v258_equal_call": {
+      "logical_exact_calls_A": 15,
+      "logical_exact_calls_At": 14,
+      "absolute_cells": 13,
+      "matched_cells": 0,
+      "observation_matched_ratio_p90_higher": 1.2263568070704154,
+      "observation_matched_ratio_worst": 1.3669329438564553
+    },
+    "linear_heat_equal_call": {
+      "logical_exact_calls_A": 15,
+      "logical_exact_calls_At": 14,
+      "absolute_cells": 13,
+      "matched_cells": 0,
+      "observation_matched_ratio_p90_higher": 3.22165088811705,
+      "observation_matched_ratio_worst": 3.265423025400486
+    },
+    "raw_k14": {
+      "logical_exact_calls_A": 14,
+      "logical_exact_calls_At": 14,
+      "absolute_cells": 7,
+      "matched_cells": 0
+    },
+    "k16_reference": {
+      "logical_exact_calls_A": 16,
+      "logical_exact_calls_At": 16,
+      "absolute_cells": 12,
+      "matched_cells": 13
+    }
+  },
+  "adjudication": {
+    "scientific_decision": "FAIL_CASE19_CAMERA_WEIGHTED_COMPLEMENT_FRAME_ZERO_V260",
+    "route_action": "CLOSE_RESIDUAL_ENERGY_CAMERA_WEIGHTING_AND_REQUIRE_PHYSICALLY_DIFFERENT_MECHANISM_OR_NEW_REAL_2D_DATA",
+    "camera_local_attribution_was_sufficient_repair_rule": false,
+    "camera_weighting_improved_over_equal_call_unweighted_control": false,
+    "full_sequence_authorized": false,
+    "predictor_training_authorized": false,
+    "resource_gate_authorized": false,
+    "reason": "the primary reaches 0 of 13 K16-matched cells and slightly worsens the observation tail relative to the equal-call unweighted control"
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "effective_exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}
