@@ -1,0 +1,138 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-two-color-additive-schwarz-v267",
+  "updated": "2026-08-27",
+  "scope": {
+    "condition": "already-opened BLASTNet Case 19",
+    "role": "post-open complete-sequence deterministic mechanism gate",
+    "rigs": 13,
+    "frames_per_rig": 33,
+    "cells": 429,
+    "camera_count": 9,
+    "trainable_parameters": 0,
+    "truth_used_for_prediction": false,
+    "truth_used_only_for_offline_scoring": true,
+    "unopened_external_condition_tested": false,
+    "real_bost_tested": false
+  },
+  "mechanism": {
+    "name": "synchronous two-color additive Schwarz",
+    "partition": "even and odd detector checkerboard colors across both components",
+    "local_step": "each color computes its own exact partial normal, preconditioned direction, and line search from the unchanged parent residual",
+    "assembly": "the two independently optimized corrections are added synchronously",
+    "camera_permutation_equivariant": true,
+    "search_or_retuning_performed": false
+  },
+  "results": {
+    "primary_absolute_pass_cells": 429,
+    "primary_absolute_pass_rigs": 13,
+    "primary_matched_pass_cells": 2,
+    "primary_matched_pass_rigs": 0,
+    "primary_matched_fail_cells": 427,
+    "matched_failure_counts": {
+      "field": 0,
+      "full_gradient": 0,
+      "interior_gradient": 0,
+      "observation": 427
+    },
+    "primary_maximum_matched_ratio": 2.5026259255377354,
+    "primary_metric_order": [
+      "field",
+      "full_gradient",
+      "interior_gradient",
+      "observation"
+    ],
+    "primary_metric_p50": [
+      0.12564660281003656,
+      0.24215361669709495,
+      0.34818419726353866,
+      0.07035547310626152
+    ],
+    "primary_metric_p90_higher": [
+      0.13991999344566405,
+      0.26325502346599977,
+      0.3850182324827565,
+      0.08262421765825952
+    ],
+    "primary_metric_worst": [
+      0.1779530347556686,
+      0.2881731244413027,
+      0.4399476861324086,
+      0.11837652811923793
+    ],
+    "same_work_full_row_control_matched_pass_cells": 219,
+    "same_work_full_row_control_matched_pass_rigs": 0,
+    "sealed_one_half_control_matched_pass_cells": 200,
+    "sealed_one_half_control_matched_pass_rigs": 0,
+    "sealed_parent_matched_pass_cells": 4,
+    "k15_control_matched_pass_cells": 0,
+    "k16_reference_matched_pass_cells": 429
+  },
+  "cross_color_interference": {
+    "each_color_own_local_step_improved_cells": 429,
+    "combined_state_worse_than_each_color_own_diagonal_cells": {
+      "color_0": 429,
+      "color_1": 429
+    },
+    "combined_state_worse_than_parent_by_color_cells": {
+      "color_0": 402,
+      "color_1": 384
+    },
+    "global_residual_vs_parent": {
+      "worsened_cells": 419,
+      "improved_cells": 10,
+      "ratio_p50": 1.0189412095666113,
+      "ratio_p90_higher": 1.028435963189153,
+      "ratio_worst": 1.0379778466501648
+    },
+    "combined_to_own_diagonal_ratio": {
+      "color_0_p50": 1.4172288073,
+      "color_0_p90_higher": 1.4625409388,
+      "color_0_worst": 1.5283397371,
+      "color_1_p50": 1.4128518102,
+      "color_1_p90_higher": 1.4583648767,
+      "color_1_worst": 1.4955696051
+    }
+  },
+  "cost_ledger": {
+    "primary_calls_A": 16,
+    "primary_calls_At": 15,
+    "same_work_control_calls_A": 16,
+    "same_work_control_calls_At": 15,
+    "reference_calls_A": 16,
+    "reference_calls_At": 16,
+    "fresh_wall_or_rss_measured": false
+  },
+  "independent_validation": {
+    "passed": true,
+    "checks_passed": 24,
+    "checks_total": 24,
+    "maximum_new_field_relative_difference": 1.3301989902354347e-9,
+    "maximum_residual_observation_normalized_difference": 2.074097703030944e-10,
+    "maximum_state_relative_difference": 1.998126147496178e-8,
+    "maximum_metric_absolute_difference": 1.470261690172947e-10,
+    "maximum_partial_adjoint_error": 7.892167956085232e-14,
+    "maximum_physical_replay_error": 1.9319340100078954e-14,
+    "maximum_camera_permutation_difference": 0.0,
+    "end_to_end_physics_independence_proven": false
+  },
+  "adjudication": {
+    "status": "FAIL_CASE19_TWO_COLOR_ADDITIVE_SCHWARZ_V267",
+    "exact_synchronous_two_color_route_closed": true,
+    "cross_color_interference_observed": true,
+    "equal_or_cheaper_control_passed_fully": false,
+    "effective_exact_call_reduction_established": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false,
+    "resource_gate_authorized": false
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "effective_exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}

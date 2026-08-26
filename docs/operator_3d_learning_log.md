@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-27：v267 发现同步双颜色局部步会互相抵消
+
+**为什么做。** v266 说明半射线失败不是单纯把误差推到没选中的另一半，所以 v267 改为同时覆盖完整观测：把两分量探测器射线按偶、奇棋盘颜色分成两块，每块都从同一个父残差独立算一次精确局部 normal、预条件方向和线搜索，再同步相加。预测只读观测、报告几何和求解器状态，不读真值，也不搜索划分、顺序、阻尼或深度。
+
+**实际结果。** 完全独立第二实现通过 `24/24` 项检查。候选绝对门为 `429/429` 个单元、`13/13` 套相机，但 K16-matched 只有 `2/429`、完整相机 `0/13`；其余 `427` 个失败全部只来自 observation。两个颜色块单独评估时都在 `429/429` 个单元上改善自己的局部目标，可同步组合在 `429/429` 上都比各自局部预测更差，全观测残差相对父状态在 `419/429` 上变差、仅 `10/429` 上改善。独立新场最大相对差 `1.33e-9`，指标最大绝对差 `1.47e-10`，局部伴随与物理重放误差分别不超过 `7.90e-14` 与 `1.94e-14`，相机乱序差为 `0`。
+
+**讲人话。** 两个小组各自看自己的题都做对了一步，但它们把答案同时写回完整观测后会互相干扰，局部收益反而被抵消。问题不是浮点误差，也不是多加算力就会消失。精确同步双颜色路线关闭，不再换奇偶划分、更新顺序、阻尼、深度或线搜索，也不用大模型或 GPU 挽救。候选账 `16A+15A^T` 虽少于 K16 的 `16A+16A^T`，但 matched-accuracy 没过，所以不能称有效减调用，更没有 wall/RSS、外部或真实 BOST 结果。`algorithm_breakthrough=false`。
+
+### English summary
+
+v267 splits both detector components into even and odd checkerboard colors. Each block independently computes its exact local normal, preconditioned direction, and line search from the same parent residual before the corrections are added synchronously. The independent implementation passes `24/24` checks. The absolute gate reaches `429/429` cells and `13/13` rigs, but K16-matched accuracy reaches only `2/429` cells and `0/13` rigs; all `427` failures are observation-only. Each block alone improves its local objective on `429/429` cells, yet the synchronous combination is worse than each local prediction on `429/429` and worsens full residual from the parent on `419/429`. The exact synchronous two-color route therefore closes without parity, order, damping, depth, larger-model, or GPU rescue. This post-open negative mechanism result establishes no effective call reduction, wall/RSS, external, or real-BOST result. `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-27：v266 否定“失败只是未选中射线溢出”
 
 **为什么做。** v265.1 已经把固定半射线路线关闭，但 `229` 个失败全部来自 observation。v266 不改候选、不调 mask，也不再做重建，只把封存残差精确拆成选中的 `1152` 条射线与其余 `1152` 条射线，问清楚失败是否只是把误差推到了没参与修正的另一半。

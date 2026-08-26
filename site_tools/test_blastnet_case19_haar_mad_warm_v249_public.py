@@ -66,7 +66,7 @@ def test_v249_figure_and_builder_are_public() -> None:
 
 def test_v249_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "MIXED_SELECTED_AND_UNSELECTED_RAY_DEFICIT_V266"
+    assert current["scientific_status"] == "FAIL_CASE19_TWO_COLOR_ADDITIVE_SCHWARZ_V267"
     assert current["current_decision"]["v249_independent_validation_passed"] is False
     assert current["current_decision"]["v249_full_sequence_authorized"] is False
     assert current["current_decision"]["v249_haar_mad_headroom_established"] is False
@@ -75,7 +75,7 @@ def test_v249_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -
     assert current["metrics"]["v249_independent_checks_total"] == 35
     assert current["metrics"]["v249_primary_strict_safe_cells_diagnostic"] == 13
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_half_ray_spillover_attribution_v266.png"
+        "blastnet_case19_two_color_additive_schwarz_v267.png"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")

@@ -54,11 +54,11 @@ def test_v263_1_figure_is_public_and_readable() -> None:
 def test_v263_1_remains_historical_after_v264_on_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-27"
-    assert current["scientific_status"].endswith("V266")
+    assert current["scientific_status"].endswith("V267")
     assert current["metrics"]["v263_1_oracle_joint_pass_rigs"] == 0
     assert current["current_decision"]["v263_1_selector_over_nine_arms_authorized"] is False
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_half_ray_spillover_attribution_v266.png"
+        "blastnet_case19_two_color_additive_schwarz_v267.png"
     )
     for page in PRIMARY_PAGES:
         text = page.read_text(encoding="utf-8")
