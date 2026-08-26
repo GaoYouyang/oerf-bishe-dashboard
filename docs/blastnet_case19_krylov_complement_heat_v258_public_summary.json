@@ -1,0 +1,105 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-krylov-complement-heat-v258.0",
+  "updated": "2026-08-26",
+  "scope": {
+    "condition": "already-opened same-family public reacting-flow Case 19",
+    "role": "post-open frame-zero mechanism test",
+    "rigs": 13,
+    "frames_per_rig": 1,
+    "cells": 13,
+    "active_cameras": 9,
+    "grid": [32, 16, 16],
+    "trainable_parameters": 0,
+    "truth_available_before_prediction_barrier": false,
+    "physical_replay_completed": true,
+    "full_sequence_run": false,
+    "fresh_wall_or_rss_run": false
+  },
+  "mechanism": {
+    "primary": "zero-start geometry-Jacobi PCGLS K13, linear heat correction projected onto the measurement-space orthogonal complement of the retained Krylov directions, then unchanged geometry-Jacobi PCGLS K1",
+    "projection_rule": "full-rank 13-direction measurement-space Gram solve with unit-diagonal scaling and no rank truncation, ridge, clipping, search, blend, or fallback",
+    "formal_solver": "symmetric eigendecomposition",
+    "independent_solver": "scalar-loop Gram construction and Cholesky solve",
+    "camera_permutation_equivariant": true,
+    "uses_truth_time_or_rig_labels": false
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_CASE19_KRYLOV_COMPLEMENT_HEAT_FRAME_ZERO_V258",
+    "scientific_decision": "FAIL_CASE19_KRYLOV_COMPLEMENT_HEAT_FRAME_ZERO_V258",
+    "completed": true,
+    "passed": true,
+    "checks_passed": 47,
+    "checks_total": 47,
+    "maximum_field_relative_difference": 1.0218821621735942e-9,
+    "maximum_normalized_residual_difference": 2.4129504259789613e-10,
+    "maximum_metric_absolute_difference": 4.758426985773667e-11,
+    "maximum_summary_absolute_difference": 2.2376767105924955e-11,
+    "maximum_complement_correction_relative_difference": 2.119847994921564e-12,
+    "maximum_complement_projection_relative_difference": 1.3823297091857902e-11,
+    "maximum_complement_audit_relative_difference": 1.1962663338548596e-10,
+    "maximum_observation_normalized_difference": 8.381743413032394e-17,
+    "end_to_end_physics_independence_proven": false
+  },
+  "worst_implementation_envelope": {
+    "primary": {
+      "absolute_cells": 13,
+      "matched_cells": 0,
+      "absolute_and_matched_cells": 0,
+      "p50": [0.1256678227577802, 0.24007460981694828, 0.3215895278327203, 0.06013289589503197],
+      "p90_higher": [0.13881056576441958, 0.2627760380041462, 0.3611665629032348, 0.06276325013789028],
+      "worst": [0.1438484993105174, 0.2710777246229052, 0.3662797501746976, 0.06340371611310885],
+      "matched_ratio_p90_higher": [0.45165589233701553, 0.466299609559782, 0.4945866052881722, 1.2263568070704154],
+      "matched_ratio_worst": [0.4740394521889778, 0.47477489882141816, 0.5025838690363796, 1.3669329438564553]
+    },
+    "equal_call_linear_heat_control": {
+      "absolute_cells": 13,
+      "matched_cells": 0,
+      "absolute_and_matched_cells": 0,
+      "observation_matched_ratio_p90_higher": 3.22165088811705,
+      "observation_matched_ratio_worst": 3.265423025400486
+    },
+    "k14_control": {
+      "absolute_cells": 7,
+      "matched_cells": 0,
+      "absolute_and_matched_cells": 0,
+      "observation_matched_ratio_p90_higher": 1.2685504220727202,
+      "observation_matched_ratio_worst": 1.2729571358154723
+    },
+    "k16_reference": {
+      "absolute_cells": 12,
+      "matched_cells": 13,
+      "absolute_and_matched_cells": 12,
+      "interior_gradient_p90_higher": 0.7439542412028688,
+      "interior_gradient_worst": 0.7582234648592374
+    }
+  },
+  "cost_ledger": {
+    "primary_frame_calls_A_At": [15, 14],
+    "equal_call_linear_heat_control_calls_A_At": [15, 14],
+    "k14_control_calls_A_At": [14, 14],
+    "k16_reference_frame_calls_A_At": [16, 16],
+    "effective_exact_call_reduction_established": false
+  },
+  "adjudication": {
+    "scientific_decision": "FAIL_CASE19_KRYLOV_COMPLEMENT_HEAT_FRAME_ZERO_V258",
+    "route_action": "CLOSE_KRYLOV_COMPLEMENT_HEAT_AFTER_ZERO_OF_THIRTEEN_MATCHED_CELLS",
+    "scientific_pass_claimed": false,
+    "scientific_fail_claimed": true,
+    "diagnostic_observation_tail_reduction_claimed": true,
+    "rerun_or_retuning_authorized": false,
+    "full_sequence_authorized": false,
+    "resource_gate_authorized": false,
+    "reason": "all 13 cells clear absolute gates but all 13 fail the K16-matched observation gate; the worst-implementation observation ratios are 1.226 at p90-higher and 1.367 at worst against a frozen 1.05 limit"
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

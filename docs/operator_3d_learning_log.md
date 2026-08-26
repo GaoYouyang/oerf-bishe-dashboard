@@ -4,6 +4,18 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v258 Krylov 正交补热修正绝对门 13/13，但 matched 为 0/13
+
+**为什么做。** v257 的数值合同不确定后，v258 不再使用 active support 或 mask，而是检验一个 solver-native 机制：保留 zero-start geometry-Jacobi PCGLS K13 的场方向与测量方向，把冻结线性热修正中已能被现有 Krylov 测量空间解释的部分扣掉，只把正交补送入最后一次未修改 PCGLS K1。13 个全秩方向、单位对角缩放、无 rank 截断、无 ridge、无裁剪、无搜索、无混合、无回退和 `15A+14A^T` 调用账都在结果前固定。
+
+**实际结果。** 正式 eig 路径与完全独立的逐项 Gram + Cholesky 路径分别封存物理 replay，独立 `47/47` 项检查全真。primary 绝对门为 `13/13`，但 K16-matched 为 `0/13`；field / full-gradient / interior-gradient 的 matched p90 比为 `0.452 / 0.466 / 0.495`，唯一系统性阻塞是 observation，p90-higher / worst 为 `1.226 / 1.367`，高于冻结 `1.05` 门。正交补把等成本线性热 control 的 observation p90 从 `3.222` 降到 `1.226`，是明确改善，但不是通过。raw K14 也只有 `7/13` 绝对通过、`0/13` matched。
+
+**路线动作与边界。** 科学判决为 `FAIL_CASE19_KRYLOV_COMPLEMENT_HEAT_FRAME_ZERO_V258`。当前 Krylov-complement heat 路线关闭，不改投影秩、floor、ridge、热扩散日程、深度、混合或回退，不运行完整 429 单元序列，不训练模型、不租 GPU。名义 `15A+14A^T` 相对 K16 的 `16A+16A^T` 不是有效调用减少，因为 matched-accuracy 未通过且只覆盖已开封首帧。这不关闭 C 路线；`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English summary
+
+v258 tests a solver-native mechanism after v257's numerical contract remains inconclusive. A zero-start geometry-Jacobi PCGLS K13 run retains its field and measurement directions. The frozen linear-heat correction is projected onto the measurement-space orthogonal complement of those directions, and only that complement enters one final unchanged PCGLS K1 step. Formal eigendecomposition and a fully independent scalar-Gram plus Cholesky implementation seal separate physical replays and pass all `47/47` checks. The primary clears `13/13` absolute cells but `0/13` K16-matched cells. Field, full-gradient, and interior-gradient matched p90 ratios are `0.452 / 0.466 / 0.495`; observation alone remains above the frozen gate at `1.226` p90-higher and `1.367` worst. This is a valid negative result. The route closes without retuning, full-sequence expansion, training, GPU use, or speedup claims, and `algorithm_breakthrough=false`.
+
 ## 2026-08-26：v257 可观测 active-support correction 因 residual 独立门越界保持不确定
 
 **为什么做。** v256 关闭后，v257 不再调整 Galerkin transfer，而是结果前唯一冻结一个部署可见的局部非线性机制：以 zero-start geometry-Jacobi PCGLS K1 为种子，用 `|x1| / sqrt(inverse_diagonal)` 构造 geometry-whitened 分数，按固定平坦索引打破并列，取覆盖 95% 分数平方能量的最小 support，再做一次六邻域膨胀。候选随后执行带自伴随 masked mean-zero projection 的 CGLS K11 correction，最后接一轮未修改的 full-field geometry-Jacobi PCGLS K1。阈值、tie-break、膨胀、mask、gauge、深度、四个同数据 controls、K16 reference、容差与调用账均在结果前固定；候选不读 CFD 真值、时间、rig 或失败标签。

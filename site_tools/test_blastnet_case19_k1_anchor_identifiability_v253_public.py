@@ -58,7 +58,7 @@ def test_v253_figure_and_builder_are_public() -> None:
 
 def test_v253_remains_preserved_as_historical_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_OBSERVABLE_ACTIVE_SUPPORT_FRAME_ZERO_V257"
+    assert current["scientific_status"] == "FAIL_CASE19_KRYLOV_COMPLEMENT_HEAT_FRAME_ZERO_V258"
     metrics = current["metrics"]
     decision = current["current_decision"]
     assert metrics["v253_k1_anchor_safe_rigs"] == 9
@@ -70,7 +70,7 @@ def test_v253_remains_preserved_as_historical_evidence() -> None:
     assert decision["v253_full_traversal_mechanism_authorized"] is False
     assert decision["v253_algorithm_breakthrough"] is False
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_observable_active_support_v257.png"
+        "blastnet_case19_krylov_complement_heat_v258.png"
     )
     daily_text = DAILY.read_text(encoding="utf-8")
     assert "blastnet_case19_k1_anchor_identifiability_v253" in daily_text
