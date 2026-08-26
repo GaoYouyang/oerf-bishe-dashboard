@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-27：v263.1 九个旧候选的真值 oracle 选择仍为 0/13
+
+**为什么做。** 在给 v250、v254、v258、v260、v261 的九个既有低成本候选训练 selector 之前，先问一个必要条件：如果一个知道真值的裁判可以逐 rig 挑最好，候选池里是否至少有一个能同时通过绝对门和保守 K16-matched 门？候选成本最多为 `15A+15A^T`，审计只读已经封存的真值派生指标，不生成新场，不新增算子调用。
+
+**实际结果。** 完全独立第二实现通过 `19/19` 项检查；正式与独立的数值数组、汇总最大差均为 `0`。九个候选中有五个能在 `13/13` 套相机上过绝对门，但每个候选的 K16-matched 都是 `0/13`。逐 rig 真值挑最好后，联合门仍为 `0/13`；最佳联合负担 p50 / p90 / worst 为 `1.06082 / 1.06693 / 1.06876`，通过线为 `1.0`。
+
+**讲人话。** 先让一个知道答案的裁判在九种旧办法里逐题挑最好。如果连裁判都一题也救不回来，就没必要训练网络去学怎么挑。结果十三套相机里零套过完整门，所以停止给这九种旧办法造 selector、gate 或更大模型。关闭的只是这个旧候选池，不是整条 C 路线；物理上真正不同的新候选仍可另行预注册。没有完整序列、减调用、wall/RSS、外部泛化或真实 BOST 结果，`algorithm_breakthrough=false`。
+
+### English summary
+
+v263.1 audits a necessary condition before training any selector over nine already sealed arms from v250, v254, v258, v260, and v261. A truth-aware judge may choose the best arm per rig, but every arm has `0/13` K16-matched rigs and the oracle joint gate remains `0/13`. The fully independent implementation passes all `19/19` checks, with zero maximum difference in formal-independent numerical arrays and summaries. Best joint-burden p50 / p90 / worst are `1.06082 / 1.06693 / 1.06876`, against a passing line of `1.0`. Selector, gate, or larger-model rescue restricted to these nine arms therefore closes. This does not close the C route or a physically distinct future candidate, and `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-26：v262 探测器可积性不是当前离散 forward 的精确不变量
 
 **为什么做。** v261 关闭双分量精确块以后，下一条物理上不同的想法是探测器平面的 Hodge / 可积性约束。v262 没有直接花精确调用构造候选，而是先冻结一个标量势梯度投影并审计必要二分：若投影同时保持 `y` 与 `Ax14`，线性关系会让它对 `r14=y-Ax14` 严格无作用；若它改变其中任意一项，它便不是当前 forward 的精确约束。

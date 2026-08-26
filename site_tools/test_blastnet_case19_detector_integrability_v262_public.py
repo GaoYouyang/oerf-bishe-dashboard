@@ -69,17 +69,17 @@ def test_v262_figure_and_builder_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v262_is_latest_on_bilingual_primary_pages() -> None:
+def test_v262_remains_preserved_after_v263_1_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"].endswith("NOT_FORWARD_INVARIANT_V262")
-    assert current["headline_zh"].startswith("v262")
-    assert current["headline_en"].startswith("v262")
+    assert current["scientific_status"] == "FAIL_CASE19_EXISTING_CHEAP_ARM_ORACLE_SELECTOR_CAPACITY_V263_1"
+    assert current["headline_zh"].startswith("v263.1")
+    assert current["headline_en"].startswith("v263.1")
     assert current["metrics"]["v262_independent_checks_passed"] == 24
     assert current["metrics"]["v262_observation_invariant_blocks"] == 0
     assert current["current_decision"]["v262_projected_residual_candidate_authorized"] is False
     assert current["current_decision"]["v262_algorithm_breakthrough"] is False
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_detector_integrability_no_go_v262.png"
+        "blastnet_case19_existing_cheap_arm_oracle_v263_1.png"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")

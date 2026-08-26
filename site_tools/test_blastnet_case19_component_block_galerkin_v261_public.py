@@ -72,15 +72,15 @@ def test_v261_figure_and_builder_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v261_remains_preserved_after_v262_on_bilingual_primary_pages() -> None:
+def test_v261_remains_preserved_after_v263_1_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "FAIL_CASE19_DETECTOR_INTEGRABILITY_PROJECTOR_NOT_FORWARD_INVARIANT_V262"
-    assert current["headline"].startswith("v262")
-    assert current["headline_zh"].startswith("v262")
-    assert current["headline_en"].startswith("v262")
-    assert "0/117" in current["headline_zh"] and "0/117" in current["headline_en"]
+    assert current["scientific_status"] == "FAIL_CASE19_EXISTING_CHEAP_ARM_ORACLE_SELECTOR_CAPACITY_V263_1"
+    assert current["headline"].startswith("v263.1")
+    assert current["headline_zh"].startswith("v263.1")
+    assert current["headline_en"].startswith("v263.1")
+    assert "0/13" in current["headline_zh"] and "0/13" in current["headline_en"]
     assert metrics["v261_independent_checks_passed"] == 41
     assert metrics["v261_primary_absolute_cells"] == 3
     assert metrics["v261_primary_matched_cells"] == 0
@@ -88,7 +88,7 @@ def test_v261_remains_preserved_after_v262_on_bilingual_primary_pages() -> None:
     assert decision["v261_primary_improved_over_same_cost_k15"] is False
     assert decision["v261_full_sequence_authorized"] is False
     assert decision["v261_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith("blastnet_case19_detector_integrability_no_go_v262.png")
+    assert current["public_evidence"]["figure"].endswith("blastnet_case19_existing_cheap_arm_oracle_v263_1.png")
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_component_block_galerkin_v261" in text
