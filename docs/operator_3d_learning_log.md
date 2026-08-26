@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v255 观测信任冷启动因三项独立数值门越界保持不确定
+
+**为什么做。** v251 把完整序列缺口定位到首帧 observation，v254 又关闭了无序全局 K1 子空间。v255 因此只在首帧做一个 deployment-visible 观测残差信任混合：在两个已封存物理端点之间按唯一规则取值，后 32 帧沿用封存的因果 K14。结果前固定信任规则、端点、绝对门、K16-matched 门、两个 endpoint controls、调用账和独立数值容差；不读 CFD 真值、rig 标签或失败标签，训练参数为 0。
+
+**独立结果。** 完全独立第二实现完成物理 replay，但只通过 `26/29` 项检查。混合系数最大绝对差为 `6.73e-9`，超过 `1e-12` 界；残差最大相对差为 `7.51e-9`，超过 `1e-10` 界；逐单元指标最大绝对差为 `1.02e-8`，超过 `1e-9` 界。三项分别约为冻结容差的 `6727.64× / 75.11× / 10.22×`。场相对差 `5.09e-10` 虽通过，但不能覆盖三项明确失败。
+
+**诊断不是结果。** formal 与 independent 的离散门判决一致：primary 诊断计数为绝对和 K16-matched 均 `429/429、13/13`；端点零 control 为绝对 `428/429、12/13`、matched `429/429、13/13`；端点一 control 为绝对 `429/429、13/13`、matched `416/429、0/13`；K16 reference 绝对门只有 `417/429、9/13`。因为连续数值闭环失败，这些计数不能写成算法 headroom、PASS 或 FAIL，reference 不充分也不能把无效结果包装成正结果。
+
+**路线动作与边界。** 权威判决为 `INCONCLUSIVE_INVALID_CASE19_OBSERVATION_TRUST_COLDSTART_V255`。当前观测信任混合关闭，不重跑、不放宽容差，也不重新调节信任规则、端点、平滑或深度。名义账 `498A+465A^T` 对 K16 的 `528A+528A^T` 少 `8.8068%`，但这不是有效减调用，不授权 wall/RSS、外部门、训练或 GPU。这不关闭整条 C 路线。`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English note
+
+v255 tests a deployment-visible frame-zero observation-residual trust blend between two sealed physics endpoints, followed by the sealed causal K14 path on the remaining 32 frames. The independent implementation completes physical replay but passes only `26/29` checks. Blend-coefficient, residual, and cell-metric disagreements are `6.73e-9 / 7.51e-9 / 1.02e-8` against frozen limits of `1e-12 / 1e-10 / 1e-9`, or about `6727.64x / 75.11x / 10.22x` their tolerances. Discrete gates agree and diagnostically show `429/429 cells and 13/13 rigs` for both absolute and K16-matched accuracy, but those counts are inadmissible once continuous numerical closure fails. The authoritative decision remains `INCONCLUSIVE_INVALID_CASE19_OBSERVATION_TRUST_COLDSTART_V255`. There is no rerun, tolerance relaxation, or retuning. The nominal `498A+465A^T` versus `528A+528A^T` ledger difference is `8.8068%`, but it is not effective call reduction and authorizes no wall/RSS, external gate, training, or GPU. The current trust blend closes without closing the C route.
+
 ## 2026-08-26：v254 无序 K1 配对方向子空间未守住 matched-accuracy
 
 **为什么做。** v253 说明从 33 帧里挑一个锚点既不安全，也会被零调用的观测范数 control 完全解释。v254 因此去掉锚点和时间顺序，改问整个 deployment-visible 帧集合能否组成足够的 solver-native 方向池。每帧只做一次 zero-start geometry-Jacobi PCGLS K1，把 K1 场方向与其精确投影配对后归一化；formal 用无序 rank-16 SVD 子空间，独立程序用 Gram 特征分解重建同一空间，再以 measurement projection 初始化并执行未修改的 restarted PCGLS K14。结果前固定 13 条 rig、33 帧、rank、归一化、tie-break、绝对门、K16-matched 门、三个 controls、调用账与失败关闭规则。方向池封存前不读真值、时间索引、rig 标签或失败标签。
