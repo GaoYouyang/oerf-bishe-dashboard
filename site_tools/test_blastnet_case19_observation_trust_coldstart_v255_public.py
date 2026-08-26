@@ -63,11 +63,10 @@ def test_v255_figure_and_builder_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v255_is_latest_on_bilingual_primary_pages() -> None:
+def test_v255_is_preserved_as_bilingual_historical_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_OBSERVATION_TRUST_COLDSTART_V255"
     assert metrics["v255_independent_checks_passed"] == 26
     assert metrics["v255_independent_checks_total"] == 29
     assert metrics["v255_failed_numeric_checks"] == 3
@@ -76,11 +75,10 @@ def test_v255_is_latest_on_bilingual_primary_pages() -> None:
     assert decision["v255_discrete_diagnostic_admissible"] is False
     assert decision["v255_effective_exact_call_reduction_established"] is False
     assert decision["v255_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith("blastnet_case19_observation_trust_coldstart_v255.png")
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_observation_trust_coldstart_v255" in text
-        assert "26/29" in text and "INCONCLUSIVE" in text
+        assert "v255" in text and "INCONCLUSIVE" in text
         assert "data-i18n-zh" in text and "data-i18n-en" in text
     assert "v255" in LEARNING_LOG.read_text(encoding="utf-8")
 

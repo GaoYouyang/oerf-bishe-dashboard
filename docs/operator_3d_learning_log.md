@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v256 Galerkin 粗到细冷启动因 residual 独立门越界保持不确定
+
+**为什么做。** v255 关闭后，Case 19 首帧唯一绝对阻塞仍是 interior-gradient 尾部，同一 fine-grid 迭代从 K14 加深到 K16 也没有改善。v256 因此不再微调旧机制，而是结果前唯一冻结一个经典多层候选：在 `16x8x8` 粗网格运行无预条件 CGLS K4，以 cell-centered 分片线性 tensor transfer 提升到 `32x16x16`，再执行未修改的 fine-grid geometry-Jacobi PCGLS K10。常值端点延拓、一层零边界、active-cell 均值 gauge、精确转置 restriction、两个 controls、K16 reference、数值容差和调用账均在结果前固定；候选不读 CFD 真值、rig 标签或失败标签。
+
+**独立结果。** formal 完成 13 个已开封 Case 19 九相机首帧，22/22 有效性检查与预测屏障封存。完全独立第二实现通过 `19/20` 项。唯一失败是 `residuals_agree`：最大 residual 相对差 `5.91005e-7`，高于冻结 `2e-7`，为 `2.95502×`。coarse field、initializer 和 final field 相对差为 `1.50e-15 / 1.42e-15 / 7.68e-9`，逐单元指标与汇总差为 `5.38e-10 / 8.19e-10`，均在各自冻结界内；观测和相机乱序差为 0。其余 19 项通过不能覆盖一个预注册失败门。
+
+**诊断不是结果。** 两套实现的离散判决一致：primary 绝对与 K16-matched 均为 `13/13`；zero geometry-J PCGLS K14 control 为绝对 `7/13`、matched `0/13`；normalized-BP geometry-J PCGLS K13 control 为绝对 `6/13`、matched `0/13`；K16 reference 自身绝对为 `12/13`。这些计数只能说明无效合同下的离散趋势，不能写成算法 headroom、PASS 或有效性能。
+
+**路线动作与边界。** 权威判决为 `INCONCLUSIVE_INVALID_CASE19_GALERKIN_PYRAMID_FRAME_ZERO_V256`。精确 K4→K10 Galerkin 金字塔关闭，不重跑、不放宽 residual 界，也不搜索深度、transfer、边界或 gauge。名义单帧账 `15A+14A^T` 对 K16 的 `16A+16A^T` 少 `9.375%`，但只跑了首帧且科学合同失效，所以不是有效减调用，不授权完整 429 单元序列、wall/RSS、外门、训练或 GPU。这不否定全部 Galerkin 或多重网格方法，也不关闭 C 路线。`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English note
+
+v256 preregisters one classical multilevel candidate after v255 closes: unpreconditioned CGLS K4 on a `16x8x8` grid, a cell-centered piecewise-linear tensor lift to `32x16x16`, and unchanged fine-grid geometry-Jacobi PCGLS K10. Formal seals all 13 opened Case 19 nine-camera frame-zero cells. A fully independent implementation passes `19/20` checks; the sole `residuals_agree` failure is `5.91005e-7` against `2e-7`, or `2.95502x`. Coarse, initializer, final-field, metric, summary, observation, transfer, and camera-permutation checks pass, but they cannot override one preregistered failure. Diagnostic counts are `13/13` for both primary absolute and K16-matched accuracy, while the two controls reach `7/13` and `6/13` absolute and both `0/13` matched. These counts are inadmissible as headroom. The authoritative decision remains `INCONCLUSIVE`; the exact K4-to-K10 Galerkin pyramid closes without a tolerance relaxation, rerun, parameter search, full sequence, wall/RSS gate, external gate, training, or GPU. The nominal `9.375%` frame-level call difference is not effective exact-call reduction.
+
 ## 2026-08-26：v255 观测信任冷启动因三项独立数值门越界保持不确定
 
 **为什么做。** v251 把完整序列缺口定位到首帧 observation，v254 又关闭了无序全局 K1 子空间。v255 因此只在首帧做一个 deployment-visible 观测残差信任混合：在两个已封存物理端点之间按唯一规则取值，后 32 帧沿用封存的因果 K14。结果前固定信任规则、端点、绝对门、K16-matched 门、两个 endpoint controls、调用账和独立数值容差；不读 CFD 真值、rig 标签或失败标签，训练参数为 0。

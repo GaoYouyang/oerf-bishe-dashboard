@@ -1,0 +1,113 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-galerkin-pyramid-v256.0",
+  "updated": "2026-08-26",
+  "scope": {
+    "condition": "already-opened same-family public reacting-flow Case 19",
+    "role": "post-open frame-zero mechanism test",
+    "rigs": 13,
+    "frames_per_rig": 1,
+    "cells": 13,
+    "active_cameras": 9,
+    "fine_grid": [32, 16, 16],
+    "coarse_grid": [16, 8, 8],
+    "trainable_parameters": 0,
+    "truth_available_before_prediction_barrier": false,
+    "physical_replay_completed": true,
+    "full_sequence_run": false,
+    "fresh_wall_or_rss_run": false
+  },
+  "mechanism": {
+    "primary": "coarse unpreconditioned CGLS K4, cell-centered piecewise-linear lift, then unchanged fine geometry-Jacobi PCGLS K10",
+    "transfer": "tensor-product piecewise-linear transfer with constant endpoint extension",
+    "restriction": "exact transpose of the transfer",
+    "fine_support": "one-voxel zero support with active-cell mean gauge",
+    "camera_permutation_equivariant": true,
+    "uses_truth_or_rig_labels": false
+  },
+  "independent_validation": {
+    "status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_CASE19_GALERKIN_PYRAMID_FRAME_ZERO_V256",
+    "scientific_decision": "INCONCLUSIVE_INVALID_CASE19_GALERKIN_PYRAMID_FRAME_ZERO_V256",
+    "completed": true,
+    "passed": false,
+    "checks_passed": 19,
+    "checks_total": 20,
+    "failed_checks": [
+      "residuals_agree"
+    ],
+    "maximum_residual_relative_difference": 5.910047743489426e-7,
+    "residual_relative_tolerance": 2e-7,
+    "residual_limit_ratio": 2.9550238717447135,
+    "maximum_transfer_matrix_difference": 0.0,
+    "maximum_coarse_field_relative_difference": 1.503308963035564e-15,
+    "maximum_initializer_relative_difference": 1.4163311477964972e-15,
+    "maximum_final_field_relative_difference": 7.683161463603658e-9,
+    "field_relative_tolerance": 2e-8,
+    "maximum_observation_absolute_difference": 0.0,
+    "maximum_residual_replay_absolute_difference": 2.161710109088809e-16,
+    "maximum_transfer_audit_absolute_difference": 2.9388530933689633e-15,
+    "maximum_metric_absolute_difference": 5.38203259736747e-10,
+    "maximum_summary_absolute_difference": 8.18511036726477e-10,
+    "metric_and_summary_absolute_tolerance": 2e-8,
+    "maximum_camera_permutation_difference": 0.0,
+    "discrete_decisions_agree": true,
+    "mechanical_validity_passed": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "diagnostic_only": {
+    "admissible_as_scientific_performance": false,
+    "reason": "the preregistered residual agreement check exceeds its frozen tolerance",
+    "primary": {
+      "absolute_safe_cells": 13,
+      "absolute_safe_rigs": 13,
+      "matched_safe_cells": 13,
+      "matched_safe_rigs": 13
+    },
+    "zero_geometry_jacobi_pcgls_k14_control": {
+      "absolute_safe_cells": 7,
+      "absolute_safe_rigs": 7,
+      "matched_safe_cells": 0,
+      "matched_safe_rigs": 0
+    },
+    "normalized_bp_geometry_jacobi_pcgls_k13_control": {
+      "absolute_safe_cells": 6,
+      "absolute_safe_rigs": 6,
+      "matched_safe_cells": 0,
+      "matched_safe_rigs": 0
+    },
+    "k16_reference": {
+      "absolute_safe_cells": 12,
+      "absolute_safe_rigs": 12,
+      "matched_safe_cells": 13,
+      "matched_safe_rigs": 13
+    }
+  },
+  "cost_ledger": {
+    "primary_frame_calls_A_At": [15, 14],
+    "k16_reference_frame_calls_A_At": [16, 16],
+    "nominal_combined_exact_call_reduction_fraction": 0.09375,
+    "effective_exact_call_reduction_established": false
+  },
+  "adjudication": {
+    "scientific_decision": "INCONCLUSIVE_INVALID_CASE19_GALERKIN_PYRAMID_FRAME_ZERO_V256",
+    "route_action": "CLOSE_EXACT_K4_TO_K10_GALERKIN_PYRAMID_AFTER_INVALID_INDEPENDENT_CONTRACT",
+    "scientific_pass_claimed": false,
+    "scientific_fail_claimed": false,
+    "diagnostic_headroom_claimed": false,
+    "numeric_tolerance_relaxed": false,
+    "rerun_or_retuning_authorized": false,
+    "full_sequence_authorized": false,
+    "resource_gate_authorized": false,
+    "reason": "residual agreement is 2.955 times the frozen independent tolerance"
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}
