@@ -50,7 +50,7 @@ def test_v238_figure_is_rendered() -> None:
 
 def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "POST_OPEN_CASE19_STRATIFIED_RAY_CORRECTION_HEADROOM_V264"
+    assert current["scientific_status"] == "FAIL_CASE19_STRATIFIED_RAY_CORRECTION_FULL_SEQUENCE_V265_1"
     assert current["current_decision"]["v238_independent_validation_passed"] is True
     assert current["current_decision"]["v238_algorithm_breakthrough"] is False
     assert current["metrics"]["v238_octant_complete_rigs_passed"] == 0
@@ -58,7 +58,7 @@ def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
         current["metrics"]["v238_global_rank64_global_p90_higher"]
     )
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_stratified_ray_correction_v264.png"
+        "blastnet_case19_stratified_ray_correction_full_sequence_v265_1.png"
     )
 
     for page in (FOCUS, HOME, DAILY):

@@ -49,12 +49,12 @@ def test_v236_figure_is_rendered() -> None:
 
 def test_v236_remains_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "POST_OPEN_CASE19_STRATIFIED_RAY_CORRECTION_HEADROOM_V264"
+    assert current["scientific_status"] == "FAIL_CASE19_STRATIFIED_RAY_CORRECTION_FULL_SEQUENCE_V265_1"
     assert current["current_decision"]["v236_independent_validation_passed"] is True
     assert current["current_decision"]["v236_algorithm_breakthrough"] is False
     assert current["metrics"]["v236_loro_rank64_complete_rigs_passed"] == 0
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_stratified_ray_correction_v264.png"
+        "blastnet_case19_stratified_ray_correction_full_sequence_v265_1.png"
     )
 
     for page in (FOCUS, HOME, DAILY):

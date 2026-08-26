@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-27：v265.1 完整序列关闭固定半射线路线
+
+**为什么做。** v264 在已打开 Case 19 首帧上给出 `13/13` 正机制证据。v265.1 不改变相位、比例、权重、阻尼、阈值或 fallback，直接把同一偶相位半射线修正跑到 `13` 套相机的 `33` 帧完整序列，共 `429` 个单元。
+
+**实际结果。** 完全独立第二实现通过 `35/35` 项检查，另一个不导入正式或验证器实现的数组程序也复核了形状、计数、汇总和判决。候选绝对门为 `429/429`、完整轨迹 `13/13`，但 K16-matched 只有 `200/429`、完整轨迹 `0/13`。全部 `229` 个 matched 失败都只来自 observation；四项 matched p90 比为 `0.49241 / 0.47497 / 0.60289 / 1.23503`，worst 比为 `0.62231 / 0.55141 / 0.75588 / 1.85517`。
+
+**讲人话。** 第一页看起来很好，但把整本 `33` 页试卷做完后，三维场和梯度仍然很稳，真正送到相机上的二维观测却有 `229` 题没有对齐 K16。论文门要求四项同时匹配，因此不能只挑前三项宣称成功。固定偶相位半射线路线关闭，不调相位、比例、深度、权重或 fallback，也不为它训练大网络或租 GPU。下一步只接受物理上真正不同的机制，或工况配对的真实二维 BOST 数据。`algorithm_breakthrough=false`。
+
+### English summary
+
+v265.1 applies the unchanged v264 even-quincunx half-ray correction to all 33 frames of 13 opened Case 19 rigs, for 429 cells. The independent implementation passes `35/35` checks, with a separate array-only recomputation confirming the decision. The candidate clears every absolute cell and all `13/13` complete trajectories, but only `200/429` cells and `0/13` complete trajectories pass the K16-matched gate. All 229 failures are observation-only; the observation matched p90 and worst ratios are `1.23503` and `1.85517`. The fixed half-ray route therefore closes without retuning or larger-model/GPU rescue. This does not close the C route and establishes no wall/RSS, external, or real-BOST result. `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-27：v264 固定半射线修正达到 13/13 完整门
 
 **为什么做。** v263.1 已经把九个旧候选的 selector 挽救关闭，因为真值逐套相机挑最好仍是 `0/13`。v264 不再拼接旧候选，而是结果前冻结一个新的确定性物理修正：从 v258 场和当前可见残差出发，固定取九台相机、两个位移分量中探测器棋盘偶相位的一半射线，做一次所选射线的精确伴随、geometry-Jacobi 预条件和一次所选射线的精确前向标量线搜索。没有真值输入、训练或结果后调相位。

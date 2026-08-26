@@ -63,20 +63,21 @@ def test_v264_figure_is_public_and_readable() -> None:
         assert image.height >= 1100
 
 
-def test_v264_is_latest_on_primary_pages() -> None:
+def test_v264_remains_historical_after_v265_1() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-27"
-    assert current["scientific_status"].endswith("V264")
+    assert current["scientific_status"].endswith("V265_1")
     assert current["metrics"]["v264_candidate_joint_pass_rigs"] == 13
     assert current["current_decision"]["v264_unchanged_full_sequence_gate_authorized"] is True
     assert current["current_decision"]["v264_algorithm_breakthrough"] is False
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_stratified_ray_correction_v264.png"
+        "blastnet_case19_stratified_ray_correction_full_sequence_v265_1.png"
     )
     for page in PRIMARY_PAGES:
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_stratified_ray_correction_v264" in text
-        assert "32/32" in text and "13/13" in text
+        assert "blastnet_case19_stratified_ray_correction_full_sequence_v265_1" in text
+        assert "32/32" in text and "35/35" in text
         assert "data-i18n-zh" in text and "data-i18n-en" in text
 
 
