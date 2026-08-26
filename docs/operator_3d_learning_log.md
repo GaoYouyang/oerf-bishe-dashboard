@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v262 探测器可积性不是当前离散 forward 的精确不变量
+
+**为什么做。** v261 关闭双分量精确块以后，下一条物理上不同的想法是探测器平面的 Hodge / 可积性约束。v262 没有直接花精确调用构造候选，而是先冻结一个标量势梯度投影并审计必要二分：若投影同时保持 `y` 与 `Ax14`，线性关系会让它对 `r14=y-Ax14` 严格无作用；若它改变其中任意一项，它便不是当前 forward 的精确约束。
+
+**实际结果。** 独立 SVD 实现通过 `24/24` 项检查。13 套 rig × 9 台相机中，观测、K14 预测和 K14 残差各自都只有 `0/117` 个相机块落在冻结的 `1e-8` 不变性门内。三者按相机观测范数归一化的缺陷 p90 为 `0.12752 / 0.13518 / 0.04956`；按残差自身归一化时缺陷 p90 为 `0.74660`，移除能量比例 p90 为 `0.55742`。正式/独立的投影数组、缺陷数组与汇总最大差为 `2.70e-10 / 7.04e-10 / 1.04e-10`，线性和正交能量闭合保持在机器精度附近。
+
+**讲人话。** 这个滤波器在 p90 会扔掉 K14 残差超过一半的能量，但这些内容本来就是当前 forward 自己产生的，不能把它们叫作“物理上不可能的旋度”后删除。固定探测器梯度投影在构造候选重建前关闭。它是零新增调用的开封后 no-go 证据，不是 matched-accuracy、减调用、速度、外部泛化或真实 BOST。`algorithm_breakthrough=false`。
+
+### English summary
+
+v262 freezes one detector-plane scalar-potential gradient projector and audits a necessary linear dichotomy before constructing any candidate. A fully independent SVD implementation passes `24/24` checks. Observation, K14 prediction, and K14 residual each have `0/117` invariant camera blocks at the frozen `1e-8` gate. Their observation-normalized defect p90 values are `0.12752 / 0.13518 / 0.04956`; the residual self-normalized defect p90 is `0.74660`, with a `0.55742` p90 removed-energy fraction. The projector therefore removes content produced by the current discrete forward and cannot be treated as an exact physical constraint. This fixed projector closes before a reconstruction candidate is built; it is zero-call post-open no-go evidence, and `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-26：v261 双分量 2×2 Galerkin 修正被公平对照否定
 
 **为什么做。** v260 已关闭按相机残差能量加权。v261 转向物理上不同的最小结构：保留 BOS 的两个完整有符号探测器分量，从 deployment-visible K13 残差分别构造伴随与 geometry-Jacobi 预条件方向，再用固定 `2×2` Galerkin 系统混合。主候选 `15A+15A^T` 与未修改 K15 同价，同时比较便宜的 v258、raw K14 与 K16 reference；不读真值、时间、rig 标签或相机 ID。

@@ -9,10 +9,10 @@ from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SUMMARY = ROOT / "docs/blastnet_case19_camera_weighted_complement_v260_public_summary.json"
-RESULT = ROOT / "docs/blastnet_case19_camera_weighted_complement_v260_result_2026-08-26.md"
-FIGURE = ROOT / "assets/figures/blastnet_case19_component_block_galerkin_v261.png"
-BUILDER = ROOT / "site_tools/build_blastnet_case19_camera_weighted_complement_v260_figure.py"
+SUMMARY = ROOT / "docs/blastnet_case19_detector_integrability_no_go_v262_public_summary.json"
+RESULT = ROOT / "docs/blastnet_case19_detector_integrability_no_go_v262_result_2026-08-26.md"
+FIGURE = ROOT / "assets/figures/blastnet_case19_detector_integrability_no_go_v262.png"
+BUILDER = ROOT / "site_tools/build_blastnet_case19_detector_integrability_v262_figure.py"
 CURRENT = ROOT / "operator-learning/current-evidence.json"
 FOCUS = ROOT / "operator-learning/index.html"
 HOME = ROOT / "index.html"
@@ -35,37 +35,33 @@ class _LinkParser(HTMLParser):
                 self.links.append(value)
 
 
-def test_v260_summary_records_independent_negative_gate() -> None:
+def test_v262_summary_records_independent_no_go_gate() -> None:
     data = json.loads(SUMMARY.read_text(encoding="utf-8"))
     validation = data["independent_validation"]
-    primary = data["primary"]
-    control = data["controls"]["unweighted_v258_equal_call"]
-    assert data["scope"]["cells"] == 13
-    assert data["mechanism"]["logical_exact_calls_A"] == 15
-    assert data["mechanism"]["logical_exact_calls_At"] == 14
     assert validation["passed"] is True
-    assert validation["checks_passed"] == validation["checks_total"] == 52
-    assert primary["absolute_cells"] == 13
-    assert primary["matched_cells"] == 0
-    assert primary["matched_ratio_p90_higher"][3] > 1.05
-    assert primary["matched_ratio_worst"][3] > 1.05
-    assert primary["matched_ratio_p90_higher"][3] > control["observation_matched_ratio_p90_higher"]
-    assert primary["matched_ratio_worst"][3] > control["observation_matched_ratio_worst"]
-    assert data["adjudication"]["full_sequence_authorized"] is False
+    assert validation["checks_passed"] == validation["checks_total"] == 24
+    assert data["projector"]["rank"] == 255
+    assert data["scope"]["new_exact_calls_A"] == 0
+    assert data["scope"]["new_exact_calls_At"] == 0
+    for source in data["sources"].values():
+        assert source["invariant_camera_blocks"] == 0
+        assert source["camera_blocks"] == 117
+    assert data["sources"]["residual_k14"]["removed_energy_fraction_p90_higher"] > 0.55
+    assert data["adjudication"]["projected_residual_candidate_authorized"] is False
     assert all(value is False for value in data["claims_fixed_false"].values())
 
 
-def test_v260_result_is_bilingual_and_preserves_claim_boundaries() -> None:
+def test_v262_result_is_bilingual_and_preserves_claim_boundaries() -> None:
     text = RESULT.read_text(encoding="utf-8")
-    assert "# v260：" in text and "# v260:" in text
-    for token in ("52/52", "13/13", "0/13", "1.22811", "1.36863", "15A+14A^T"):
+    assert "# v262：" in text and "# v262:" in text
+    for token in ("24/24", "0/117", "0.74660", "0.55742"):
         assert token in text
-    assert "不是算法" in text
-    assert "not an algorithm" in text
+    assert "不生成候选场" in text
+    assert "creates no candidate field" in text
     assert "algorithm_breakthrough=false" in text
 
 
-def test_v260_figure_and_builder_are_public() -> None:
+def test_v262_figure_and_builder_are_public() -> None:
     assert BUILDER.is_file()
     assert FIGURE.is_file() and FIGURE.stat().st_size > 40_000
     with Image.open(FIGURE) as image:
@@ -73,28 +69,27 @@ def test_v260_figure_and_builder_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v260_remains_preserved_after_v261_on_bilingual_primary_pages() -> None:
+def test_v262_is_latest_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    metrics = current["metrics"]
-    decision = current["current_decision"]
-    assert current["scientific_status"] == "FAIL_CASE19_DETECTOR_INTEGRABILITY_PROJECTOR_NOT_FORWARD_INVARIANT_V262"
-    assert metrics["v260_independent_checks_passed"] == 52
-    assert metrics["v260_primary_absolute_cells"] == 13
-    assert metrics["v260_primary_matched_cells"] == 0
-    assert decision["v260_independent_validation_passed"] is True
-    assert decision["v260_camera_weighting_improved_over_unweighted_control"] is False
-    assert decision["v260_full_sequence_authorized"] is False
-    assert decision["v260_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith("blastnet_case19_detector_integrability_no_go_v262.png")
+    assert current["scientific_status"].endswith("NOT_FORWARD_INVARIANT_V262")
+    assert current["headline_zh"].startswith("v262")
+    assert current["headline_en"].startswith("v262")
+    assert current["metrics"]["v262_independent_checks_passed"] == 24
+    assert current["metrics"]["v262_observation_invariant_blocks"] == 0
+    assert current["current_decision"]["v262_projected_residual_candidate_authorized"] is False
+    assert current["current_decision"]["v262_algorithm_breakthrough"] is False
+    assert current["public_evidence"]["figure"].endswith(
+        "blastnet_case19_detector_integrability_no_go_v262.png"
+    )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
-        assert "blastnet_case19_camera_weighted_complement_v260" in text
-        assert "52/52" in text and "0/13" in text
+        assert "blastnet_case19_detector_integrability_no_go_v262" in text
+        assert "24/24" in text and "0/117" in text
         assert "data-i18n-zh" in text and "data-i18n-en" in text
-    assert "v260" in LEARNING_LOG.read_text(encoding="utf-8")
+    assert "v262" in LEARNING_LOG.read_text(encoding="utf-8")
 
 
-def test_v260_public_artifacts_exclude_private_execution_details() -> None:
+def test_v262_public_artifacts_exclude_private_execution_details() -> None:
     text = SUMMARY.read_text(encoding="utf-8") + RESULT.read_text(encoding="utf-8")
     forbidden = (
         "/Users/",
@@ -108,7 +103,7 @@ def test_v260_public_artifacts_exclude_private_execution_details() -> None:
     assert all(token not in text for token in forbidden)
 
 
-def test_all_public_html_local_links_resolve_after_v260() -> None:
+def test_all_public_html_local_links_resolve_after_v262() -> None:
     missing: list[tuple[str, str]] = []
     for page in sorted(ROOT.rglob("*.html")):
         parser = _LinkParser()

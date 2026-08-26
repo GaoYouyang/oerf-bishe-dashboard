@@ -59,7 +59,7 @@ def test_v247_figure_and_builder_are_public() -> None:
 
 def test_v247_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE19_COMPONENT_BLOCK_GALERKIN_FRAME_ZERO_V261"
+    assert current["scientific_status"] == "FAIL_CASE19_DETECTOR_INTEGRABILITY_PROJECTOR_NOT_FORWARD_INVARIANT_V262"
     assert current["current_decision"]["v247_independent_validation_passed"] is False
     assert current["current_decision"]["v247_line_schwarz_authorized"] is False
     assert current["current_decision"]["v247_mechanism_operationally_retired"] is True
@@ -68,7 +68,7 @@ def test_v247_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -
     assert current["metrics"]["v247_independent_checks_total"] == 27
     assert current["metrics"]["v247_residual_relative_maximum"] > current["metrics"]["v247_residual_relative_limit"]
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_component_block_galerkin_v261.png"
+        "blastnet_case19_detector_integrability_no_go_v262.png"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")

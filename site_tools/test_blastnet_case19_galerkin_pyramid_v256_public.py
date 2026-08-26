@@ -67,7 +67,7 @@ def test_v256_remains_historical_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "FAIL_CASE19_COMPONENT_BLOCK_GALERKIN_FRAME_ZERO_V261"
+    assert current["scientific_status"] == "FAIL_CASE19_DETECTOR_INTEGRABILITY_PROJECTOR_NOT_FORWARD_INVARIANT_V262"
     assert metrics["v256_independent_checks_passed"] == 19
     assert metrics["v256_independent_checks_total"] == 20
     assert metrics["v256_failed_numeric_checks"] == 1
@@ -77,7 +77,7 @@ def test_v256_remains_historical_on_bilingual_primary_pages() -> None:
     assert decision["v256_full_sequence_authorized"] is False
     assert decision["v256_effective_exact_call_reduction_established"] is False
     assert decision["v256_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith("blastnet_case19_component_block_galerkin_v261.png")
+    assert current["public_evidence"]["figure"].endswith("blastnet_case19_detector_integrability_no_go_v262.png")
     for page in (FOCUS, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_galerkin_pyramid_v256" in text
