@@ -12,7 +12,7 @@ What passed:
 - CPU `float64`, no device fallback;
 - `34/34` parameter tensors have finite nonzero gradients;
 - zero-head control is exactly zero;
-- the complete model and training head reproduce state SHA256 `8d1629b1b422dc4b5da776fb69bf001c1a89b3fcbd3bef8a2307a2bdfa117028` from the fixed model seed;
+- the complete model and training head reproduce state SHA256 `PRIVATE_CACHE_MANIFEST_SHA256_REDACTED` from the fixed model seed;
 - a second process reproduced all non-timing report fields exactly;
 - repository-scoped L1 route/fresh filesystem audit found zero matching paths.
 
