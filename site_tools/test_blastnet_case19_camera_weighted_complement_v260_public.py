@@ -9,16 +9,15 @@ from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SUMMARY = ROOT / "docs/blastnet_case19_observation_excess_attribution_v259_public_summary.json"
-RESULT = ROOT / "docs/blastnet_case19_observation_excess_attribution_v259_result_2026-08-26.md"
-FIGURE = ROOT / "assets/figures/blastnet_case19_observation_excess_attribution_v259.png"
-BUILDER = ROOT / "site_tools/build_blastnet_case19_observation_excess_attribution_v259_figure.py"
+SUMMARY = ROOT / "docs/blastnet_case19_camera_weighted_complement_v260_public_summary.json"
+RESULT = ROOT / "docs/blastnet_case19_camera_weighted_complement_v260_result_2026-08-26.md"
+FIGURE = ROOT / "assets/figures/blastnet_case19_camera_weighted_complement_v260.png"
+BUILDER = ROOT / "site_tools/build_blastnet_case19_camera_weighted_complement_v260_figure.py"
 CURRENT = ROOT / "operator-learning/current-evidence.json"
 FOCUS = ROOT / "operator-learning/index.html"
 HOME = ROOT / "index.html"
 DAILY = ROOT / "operator-learning/daily-progress.html"
 LEARNING_LOG = ROOT / "docs/operator_3d_learning_log.md"
-PUBLICATION_BOUNDARY = ROOT / "publication-boundary.html"
 
 
 class _LinkParser(HTMLParser):
@@ -36,34 +35,37 @@ class _LinkParser(HTMLParser):
                 self.links.append(value)
 
 
-def test_v259_summary_records_independent_post_open_attribution() -> None:
+def test_v260_summary_records_independent_negative_gate() -> None:
     data = json.loads(SUMMARY.read_text(encoding="utf-8"))
     validation = data["independent_validation"]
-    primary = data["primary_attribution"]
+    primary = data["primary"]
+    control = data["controls"]["unweighted_v258_equal_call"]
     assert data["scope"]["cells"] == 13
-    assert data["scope"]["new_exact_operator_calls"] == [0, 0]
-    assert data["scope"]["new_candidate_or_field_generated"] is False
+    assert data["mechanism"]["logical_exact_calls_A"] == 15
+    assert data["mechanism"]["logical_exact_calls_At"] == 14
     assert validation["passed"] is True
-    assert validation["checks_passed"] == validation["checks_total"] == 18
-    assert primary["camera"]["localized_rigs"] == 10
-    assert primary["component"]["localized_rigs"] == 13
-    assert primary["frequency"]["localized_rigs"] == 12
-    assert data["adjudication"]["route_action"].startswith("AUTHORIZE_EXACTLY_ONE")
-    assert data["adjudication"]["scientific_pass_claimed"] is False
+    assert validation["checks_passed"] == validation["checks_total"] == 52
+    assert primary["absolute_cells"] == 13
+    assert primary["matched_cells"] == 0
+    assert primary["matched_ratio_p90_higher"][3] > 1.05
+    assert primary["matched_ratio_worst"][3] > 1.05
+    assert primary["matched_ratio_p90_higher"][3] > control["observation_matched_ratio_p90_higher"]
+    assert primary["matched_ratio_worst"][3] > control["observation_matched_ratio_worst"]
+    assert data["adjudication"]["full_sequence_authorized"] is False
     assert all(value is False for value in data["claims_fixed_false"].values())
 
 
-def test_v259_result_is_bilingual_and_preserves_claim_boundaries() -> None:
+def test_v260_result_is_bilingual_and_preserves_claim_boundaries() -> None:
     text = RESULT.read_text(encoding="utf-8")
-    assert "# v259：" in text and "# v259:" in text
-    for token in ("18/18", "10/13", "13/13", "12/13", "0A+0A^T", "0.811", "0.924"):
+    assert "# v260：" in text and "# v260:" in text
+    for token in ("52/52", "13/13", "0/13", "1.22811", "1.36863", "15A+14A^T"):
         assert token in text
-    assert "不是算法通过" in text
-    assert "not an algorithmic pass" in text
+    assert "不是算法" in text
+    assert "not an algorithm" in text
     assert "algorithm_breakthrough=false" in text
 
 
-def test_v259_figure_and_builder_are_public() -> None:
+def test_v260_figure_and_builder_are_public() -> None:
     assert BUILDER.is_file()
     assert FIGURE.is_file() and FIGURE.stat().st_size > 40_000
     with Image.open(FIGURE) as image:
@@ -71,31 +73,32 @@ def test_v259_figure_and_builder_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v259_remains_preserved_after_v260_on_bilingual_primary_pages() -> None:
+def test_v260_is_latest_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
     assert current["scientific_status"] == "FAIL_CASE19_CAMERA_WEIGHTED_COMPLEMENT_FRAME_ZERO_V260"
-    assert metrics["v259_independent_checks_passed"] == 18
-    assert metrics["v259_camera_localized_rigs"] == 10
-    assert metrics["v259_component_localized_rigs"] == 13
-    assert metrics["v259_frequency_localized_rigs"] == 12
-    assert decision["v259_independent_validation_passed"] is True
-    assert decision["v259_exactly_one_camera_local_diagnostic_authorized"] is True
-    assert decision["v259_full_sequence_authorized"] is False
-    assert decision["v259_algorithm_breakthrough"] is False
+    assert current["headline"].startswith("v260")
+    assert current["headline_zh"].startswith("v260")
+    assert current["headline_en"].startswith("v260")
+    assert "0/13" in current["headline_zh"] and "0/13" in current["headline_en"]
+    assert metrics["v260_independent_checks_passed"] == 52
+    assert metrics["v260_primary_absolute_cells"] == 13
+    assert metrics["v260_primary_matched_cells"] == 0
+    assert decision["v260_independent_validation_passed"] is True
+    assert decision["v260_camera_weighting_improved_over_unweighted_control"] is False
+    assert decision["v260_full_sequence_authorized"] is False
+    assert decision["v260_algorithm_breakthrough"] is False
     assert current["public_evidence"]["figure"].endswith("blastnet_case19_camera_weighted_complement_v260.png")
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
-        assert "blastnet_case19_observation_excess_attribution_v259" in text
+        assert "blastnet_case19_camera_weighted_complement_v260" in text
+        assert "52/52" in text and "0/13" in text
         assert "data-i18n-zh" in text and "data-i18n-en" in text
-    for page in (FOCUS, DAILY):
-        text = page.read_text(encoding="utf-8")
-        assert "18/18" in text and "10/13" in text
-    assert "v259" in LEARNING_LOG.read_text(encoding="utf-8")
+    assert "v260" in LEARNING_LOG.read_text(encoding="utf-8")
 
 
-def test_v259_public_artifacts_exclude_private_execution_details() -> None:
+def test_v260_public_artifacts_exclude_private_execution_details() -> None:
     text = SUMMARY.read_text(encoding="utf-8") + RESULT.read_text(encoding="utf-8")
     forbidden = (
         "/Users/",
@@ -105,28 +108,11 @@ def test_v259_public_artifacts_exclude_private_execution_details() -> None:
         "source_commit",
         "checkpoint.pt",
         "run ID",
-        "afe015d1",
     )
     assert all(token not in text for token in forbidden)
 
 
-def test_publication_boundary_is_bilingual_and_old_private_protocols_are_absent() -> None:
-    text = PUBLICATION_BOUNDARY.read_text(encoding="utf-8")
-    assert "这个资产没有公开" in text
-    assert "This asset is not public" in text
-    assert "data-i18n-zh" in text and "data-i18n-en" in text
-    assert not (
-        ROOT
-        / "learning_labs/protocols/poolfire_c_geometry_equalized_bp_audit_v7.json"
-    ).exists()
-    assert not (
-        ROOT
-        / "learning_labs/protocols/"
-        "poolfire_c_dual_representation_ceiling_clarification_v10_4_2.json"
-    ).exists()
-
-
-def test_all_public_html_local_links_resolve() -> None:
+def test_all_public_html_local_links_resolve_after_v260() -> None:
     missing: list[tuple[str, str]] = []
     for page in sorted(ROOT.rglob("*.html")):
         parser = _LinkParser()
@@ -142,11 +128,7 @@ def test_all_public_html_local_links_resolve() -> None:
             relative = unquote(parsed.path)
             if not relative:
                 continue
-            target = (
-                ROOT / relative.lstrip("/")
-                if relative.startswith("/")
-                else page.parent / relative
-            )
+            target = ROOT / relative.lstrip("/") if relative.startswith("/") else page.parent / relative
             candidates = [target]
             if relative.endswith("/"):
                 candidates.append(target / "index.html")

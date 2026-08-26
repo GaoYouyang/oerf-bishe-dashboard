@@ -66,7 +66,7 @@ def test_v250_figure_and_builder_are_public() -> None:
 
 def test_v250_remains_preserved_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "POST_OPEN_CASE19_CAMERA_LOCAL_OBSERVATION_EXCESS_V259"
+    assert current["scientific_status"] == "FAIL_CASE19_CAMERA_WEIGHTED_COMPLEMENT_FRAME_ZERO_V260"
     decision = current["current_decision"]
     assert decision["v250_independent_validation_passed"] is True
     assert decision["v250_equal_call_control_explains_result"] is True

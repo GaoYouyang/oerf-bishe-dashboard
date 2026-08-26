@@ -4,6 +4,18 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v260 相机残差能量加权没有修复 K16 观测匹配
+
+**为什么做。** v259 已经把 v258 相对 K16 的剩余观测超额定位到相机局部结构。v260 不继续泛化诊断，而是直接检验最简单的可部署动作：只用 K13 的逐相机归一化残差能量给互补步加权，再执行一次未修改的 geometry-Jacobi PCGLS。分数、均值归一化、冻结方向、线性结构、`15A+14A^T` 调用账与四个对照都在结果前固定，不读真值、时间、rig 标签或相机 ID。
+
+**实际结果。** 完全独立第二实现通过 `52/52` 项检查；场、归一化残差和逐单元指标的最大差分别为 `1.02e-9 / 2.41e-10 / 4.76e-11`，相机分数与权重最大相对差为 `4.73e-11 / 6.27e-11`，相机乱序差为 0。主候选绝对门达到 `13/13`，但 K16-matched 仍为 `0/13`。field / full-gradient / interior-gradient matched p90 都在门内，观测 matched p90/worst 为 `1.2281 / 1.3686`，仍超过 `1.05` 门，而且略差于同价未加权 v258 的 `1.2264 / 1.3669`。
+
+**路线动作与边界。** 科学判决为 `FAIL_CASE19_CAMERA_WEIGHTED_COMPLEMENT_FRAME_ZERO_V260`。这说明 v259 找到的是症状位置，不是充分的修复规则。当前残差能量相机加权族关闭，不调指数、floor、裁剪、rank、heat、深度或 lambda，不扩展完整序列、不训练、不租 GPU、不运行资源门。这是开封后机制负证据，不是整条 C 路线不可能；后续必须另行冻结物理上不同的机制，或等待真正配对的二维双分量 BOST 观测。`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English summary
+
+v260 turns v259's camera-local symptom into one minimal deployment-visible action: normalized per-camera K13 residual energy weights the complement step before one unchanged geometry-Jacobi PCGLS update. A fully independent implementation passes all `52/52` checks. The primary clears `13/13` absolute cells but remains K16-matched in `0/13`; observation matched p90/worst are `1.2281 / 1.3686`, slightly worse than the equal-call unweighted v258 values of `1.2264 / 1.3669`. Symptom localization therefore does not provide a sufficient repair rule. This residual-energy camera-weighting family closes without retuning, full-sequence expansion, training, GPU use, or a resource gate, and `algorithm_breakthrough=false`.
+
 ## 2026-08-26：v259 把剩余观测阻塞定位到相机局部结构
 
 **为什么做。** v258 已经独立确认：Krylov 正交补热修正的 field、full-gradient 与 interior-gradient 都守住 matched 门，系统性失败只剩 observation。v259 不再造一个新候选，而是用 `0A+0A^T` 对封存的 v258/K16 残差做加性能量分解。相机、双分量、正交二维 DCT 频带、75% 局部门、至少 10/13 rig 和相机→分量→频带→弥散的裁决优先级都在读取结果前固定。
