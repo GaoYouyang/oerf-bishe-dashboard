@@ -1,0 +1,101 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-k1-anchor-identifiability-v253.0",
+  "updated": "2026-08-26",
+  "scope": {
+    "condition": "already-opened same-family public reacting-flow Case 19",
+    "role": "post-open mechanism-identifiability audit",
+    "rigs": 13,
+    "frames_per_rig": 33,
+    "cells": 429,
+    "active_cameras": 9,
+    "trainable_parameters": 0,
+    "truth_available_before_anchor_barrier": false,
+    "full_traversal_executed": false,
+    "fresh_wall_or_rss_run": false
+  },
+  "anchor_rules": {
+    "primary": "minimum one-step geometry-Jacobi PCGLS residual-contraction score",
+    "minimum_norm_control": "minimum canonical observation norm",
+    "cosine_medoid_control": "minimum summed canonical observation cosine distance",
+    "fixed_midpoint_diagnostic": "frame 16; time-index dependent and not deployment-admissible",
+    "tie_break": "score, canonical observation norm, then deterministic content digest; unresolved content ties fail closed",
+    "camera_permutation_equivariant": true
+  },
+  "robust_safety_label": {
+    "source": "componentwise maximum of the sealed formal and independent K16 parent metrics",
+    "limits": {
+      "field": 0.5,
+      "full_gradient": 0.75,
+      "interior_gradient": 0.75,
+      "observation": 0.2
+    },
+    "safe_cells": 417,
+    "cells": 429
+  },
+  "results": {
+    "primary": {
+      "anchor_frame_for_all_rigs": 3,
+      "safe_rigs": 9,
+      "rigs": 13,
+      "unsafe_rigs": [0, 5, 9, 12]
+    },
+    "minimum_norm_control": {
+      "anchor_frame_for_all_rigs": 3,
+      "safe_rigs": 9,
+      "rigs": 13,
+      "unsafe_rigs": [0, 5, 9, 12],
+      "identical_to_primary": true
+    },
+    "cosine_medoid_control": {
+      "safe_rigs": 11,
+      "rigs": 13,
+      "unsafe_rigs": [0, 5]
+    },
+    "fixed_midpoint_diagnostic": {
+      "anchor_frame": 16,
+      "safe_rigs": 13,
+      "rigs": 13,
+      "deployment_admissible": false
+    }
+  },
+  "cost_ledger": {
+    "primary_screen_per_rig_A_At": [33, 33],
+    "controls_per_rig_A_At": [0, 0],
+    "hypothetical_future_sequence_A_At": [528, 496],
+    "k16_reference_sequence_A_At": [528, 528],
+    "nominal_combined_arithmetic_difference_fraction": 0.030303030303030304,
+    "effective_exact_call_reduction_established": false
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_CASE19_K1_ANCHOR_IDENTIFIABILITY_V253",
+    "scientific_decision": "FAIL_CASE19_K1_RESIDUAL_CONTRACTION_ANCHOR_V253",
+    "completed": true,
+    "passed": true,
+    "checks_passed": 16,
+    "checks_total": 16,
+    "maximum_formal_independent_score_relative_difference": 6.103622668513222e-16,
+    "maximum_camera_permutation_score_relative_difference": 3.067498173621887e-16,
+    "selected_anchors_equal": true,
+    "robust_metric_derivation_equal": true,
+    "call_ledger_equal": true
+  },
+  "adjudication": {
+    "scientific_decision": "FAIL_CASE19_K1_RESIDUAL_CONTRACTION_ANCHOR_V253",
+    "route_action": "CLOSE_K1_RESIDUAL_CONTRACTION_ANCHOR_HYPOTHESIS",
+    "primary_passes_all_rigs": false,
+    "solver_specific_anchor_signal_isolated": false,
+    "full_traversal_mechanism_authorized": false,
+    "reason": "the primary is safe on only 9 of 13 rigs and selects exactly the same anchors and safe roster as the cheaper minimum-observation-norm control"
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

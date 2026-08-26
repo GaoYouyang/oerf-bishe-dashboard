@@ -1,0 +1,118 @@
+{
+  "schema_version": "oerf-public-blastnet-case2-case5-low64-exact-rowspace-lift-v221.0.0",
+  "updated": "2026-08-24",
+  "title_zh": "v221：精确行空间 lift 未保住 Low-64 暖启动信息，当前构造关闭",
+  "title_en": "v221: the exact row-space lift does not preserve the useful Low-64 warm-start signal and is closed",
+  "scope": {
+    "diagnostic_type": "post-open observation-and-geometry-only deterministic mechanism replay",
+    "conditions": 2,
+    "cells": 1261,
+    "rigs_per_condition": 13,
+    "trainable_parameters": 0,
+    "truth_used_by_runtime_initializer": false,
+    "wall_rss_measured": false,
+    "new_unopened_condition_opened": false
+  },
+  "primary": {
+    "name": "low64_exact_rowspace_lift_pcgls_k10",
+    "idea": "project the direct Low-64 field through exact A then A-transpose, choose one observation-only residual-minimizing scale, and continue unchanged geometry-Jacobi PCGLS K10",
+    "online_exact_calls": {
+      "A": 12,
+      "AT": 11,
+      "total": 23
+    },
+    "observable_scale": {
+      "frozen_bounds": [0.0, 2.0],
+      "case5_minimum": 0.028724448005923654,
+      "case5_maximum": 0.03859241502992246,
+      "case2_minimum": 0.017389541602794118,
+      "case2_maximum": 0.03697557805058096,
+      "lower_bound_hits": 0,
+      "upper_bound_hits": 0
+    }
+  },
+  "outcomes": {
+    "case5": {
+      "absolute_strict_safe": 202,
+      "matched_strict_safe": 0,
+      "total_cells": 546,
+      "complete_rigs_passed": 0,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 1.9492138042822547,
+      "primary_absolute_p50": [0.377908, 0.706838, 0.762340, 0.094784],
+      "primary_absolute_p90_higher": [0.397592, 0.737385, 0.814292, 0.099278],
+      "primary_absolute_worst": [0.413293, 0.750367, 0.881502, 0.105340],
+      "strict_cell_failures_by_metric": {
+        "field": 0,
+        "full_gradient": 3,
+        "interior_gradient": 344,
+        "observation": 0
+      },
+      "controls": {
+        "direct_low64_k11_matched_cells": 546,
+        "direct_low64_k11_complete_rigs": 13,
+        "zero_k11_absolute_cells": 96,
+        "zero_k16_reference_cells": 546,
+        "zero_k16_reference_complete_rigs": 13
+      }
+    },
+    "case2": {
+      "absolute_strict_safe": 670,
+      "matched_strict_safe": 0,
+      "total_cells": 715,
+      "complete_rigs_passed": 0,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 2.1481562757274277,
+      "primary_absolute_p50": [0.371536, 0.637548, 0.667492, 0.088539],
+      "primary_absolute_p90_higher": [0.389511, 0.686129, 0.731262, 0.094065],
+      "primary_absolute_worst": [0.405823, 0.747434, 0.849204, 0.105458],
+      "strict_cell_failures_by_metric": {
+        "field": 0,
+        "full_gradient": 0,
+        "interior_gradient": 45,
+        "observation": 0
+      },
+      "controls": {
+        "direct_low64_k11_absolute_cells": 715,
+        "direct_low64_k11_matched_cells": 518,
+        "direct_low64_k11_complete_rigs": 0,
+        "zero_k11_absolute_cells": 659,
+        "zero_k16_reference_cells": 715,
+        "zero_k16_reference_complete_rigs": 13
+      }
+    }
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_LOW64_EXACT_ROWSPACE_LIFT_V221",
+    "scientific_decision": "FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221",
+    "checks_passed": 32,
+    "checks_failed": 0,
+    "maximum_formal_field_relative_difference": 3.0253400227527925e-9,
+    "maximum_formal_initializer_relative_difference": 8.030733025616119e-15,
+    "maximum_formal_metric_absolute_difference": 1.4913603685329235e-10,
+    "maximum_formal_scale_absolute_difference": 1.5959455978986625e-16,
+    "maximum_formal_dimensional_audit_relative_difference": 1.1703383888979577e-14,
+    "maximum_formal_summary_absolute_difference": 6.679101716144942e-11,
+    "maximum_camera_permutation_field_relative_difference": 7.556511346134087e-14,
+    "call_ledger_difference": 0,
+    "end_to_end_physics_independence_proven": false
+  },
+  "adjudication": {
+    "status": "CLOSE_EXACT_ROWSPACE_LIFT_ROUTE_V221",
+    "exact_rowspace_lift_route_retained": false,
+    "nullspace_removal_explanation_supported": false,
+    "route_action_zh": "精确行空间 lift 没有保住 direct Low-64 的有效暖启动信息，也没有在 K16 matched accuracy 下救回 Case 2。关闭这一冻结构造，不调 alpha、深度或 Low-64 秩，也不用大模型或 GPU 挽救。",
+    "route_action_en": "The exact row-space lift does not preserve the useful direct Low-64 warm-start signal and does not recover Case 2 at K16-matched accuracy. Close this frozen construction without retuning the scale, depth, or Low-64 rank and without a larger-model or GPU rescue."
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "learned_algorithm": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

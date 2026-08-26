@@ -1,0 +1,131 @@
+{
+  "schema_version": "oerf-public-blastnet-case2-case5-low64-block-press-v226.0.0",
+  "updated": "2026-08-24",
+  "title_zh": "v226：相机分块 PRESS 实现零危险误接，但逐 rig 效用门差一个帧",
+  "title_en": "v226: camera-block PRESS reaches zero unsafe accepts but misses the per-rig utility gate by one frame",
+  "scope": {
+    "diagnostic_type": "post-open cross-condition fail-closed certificate diagnostic",
+    "conditions": 2,
+    "cells": 1261,
+    "case5_cells": 546,
+    "case2_cells": 715,
+    "case2_safe_cells": 518,
+    "case2_unsafe_cells": 197,
+    "camera_count": 9,
+    "low64_rank": 64,
+    "trainable_parameters": 0,
+    "variable_cardinality_formula_defined": false,
+    "deployment_algorithm_established": false,
+    "wall_rss_measured": false,
+    "new_unopened_condition_opened": false,
+    "case2_truth_used_before_policy_decisions": false,
+    "observable_policy_sealed_before_truth_scores": true
+  },
+  "primary_block_press_certificate": {
+    "role": "deployment-visible observation-and-reported-geometry camera-block predictive certificate",
+    "score": "Each camera block is held out once; the other eight cameras fit the fixed Low-64 response. The score is the root-sum-square held-out prediction error divided by the full-fit residual, and lower is safer.",
+    "fit": "Thresholds use only Case 5. Case 5 is evaluated leave-one-rig-out; Case 2 uses one threshold fitted from all Case 5 rigs before Case 2 truth labels are read.",
+    "minimum_accept_fraction_per_rig": 0.1,
+    "case5": {
+      "accepted_cells": 126,
+      "accepted_unsafe_cells": 0,
+      "safe_accept_fraction": 0.23076923076923078,
+      "minimum_rig_accept_fraction": 0.09523809523809523,
+      "maximum_rig_accept_fraction": 0.5476190476190477,
+      "minimum_rig_accepted_cells": 4,
+      "minimum_rig_total_cells": 42,
+      "required_minimum_rig_accepted_cells": 5,
+      "support_gate_passed": false,
+      "complete_rigs_accuracy_passed": 13,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 1.0078960694294001
+    },
+    "case2": {
+      "accepted_cells": 297,
+      "accepted_safe_cells": 297,
+      "accepted_unsafe_cells": 0,
+      "safe_accept_fraction": 0.5733590733590733,
+      "minimum_rig_accept_fraction": 0.32727272727272727,
+      "maximum_rig_accept_fraction": 0.4727272727272727,
+      "support_gate_passed": true,
+      "complete_rigs_accuracy_passed": 13,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 1.0277609910834127
+    },
+    "selected_mixed_policy_accuracy_passed": true,
+    "selected_mixed_policy_cost_passed": true,
+    "selected_mixed_policy_passed": true,
+    "certificate_passed": false
+  },
+  "cheap_full_fit_residual_control": {
+    "score": "Full-fit Low-64 relative observation residual, with the same Case 5-only calibration and gates.",
+    "case5": {
+      "accepted_cells": 89,
+      "accepted_unsafe_cells": 0,
+      "safe_accept_fraction": 0.163003663003663,
+      "minimum_rig_accept_fraction": 0.09523809523809523,
+      "maximum_rig_accept_fraction": 0.23809523809523808,
+      "support_gate_passed": false,
+      "complete_rigs_accuracy_passed": 13,
+      "complete_rigs_total": 13
+    },
+    "case2": {
+      "accepted_cells": 553,
+      "accepted_safe_cells": 492,
+      "accepted_unsafe_cells": 61,
+      "safe_accept_fraction": 0.9498069498069498,
+      "minimum_rig_accept_fraction": 0.7454545454545455,
+      "maximum_rig_accept_fraction": 0.7818181818181819,
+      "support_gate_passed": false,
+      "complete_rigs_accuracy_passed": 0,
+      "complete_rigs_total": 13
+    },
+    "policy_passed": false
+  },
+  "cost_boundary": {
+    "accepted_direct_K11_exact_A_At": [12, 11],
+    "fallback_zero_PCGLS_K16_exact_A_At": [16, 16],
+    "feature_online_exact_A_At_after_geometry_cache": [0, 0],
+    "geometry_cache_forward_equivalents": 832,
+    "one_full_and_nine_reduced_dense_factorizations_are_not_exact_calls": true,
+    "all_primary_rigs_have_mean_A_and_At_strictly_below_reference": true,
+    "actual_exact_call_reduction_established": false,
+    "fresh_wall_rss_measured": false
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_LOW64_BLOCK_PRESS_CERTIFICATE_V226",
+    "scientific_decision": "FAIL_LOW64_BLOCK_PRESS_CERTIFICATE_V226",
+    "required_checks_passed": 16,
+    "required_checks_total": 16,
+    "maximum_formal_independent_feature_difference": 1.1102230246251565e-15,
+    "maximum_formal_independent_threshold_difference": 2.220446049250313e-16,
+    "maximum_formal_independent_summary_difference": 3.298328277168139e-11,
+    "maximum_camera_permutation_difference": 1.5543122344752192e-15,
+    "discrete_decisions_match": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "adjudication": {
+    "primary_zero_unsafe_case2_acceptance_passed": true,
+    "primary_complete_policy_accuracy_passed": true,
+    "primary_per_rig_utility_passed": false,
+    "cheap_control_passed": false,
+    "block_press_certificate_route_closed": true,
+    "all_multiview_mechanisms_closed": false,
+    "press_formula_floor_threshold_acceptance_fraction_rank_or_solver_depth_retuning_authorized": false,
+    "larger_model_rescue_authorized": false,
+    "route_action_zh": "相机分块 PRESS 把 Case 2 的 197 个不安全单元全部拒绝，混合策略在 Case 2/5 都达到 13/13 完整 rig 精度并保持较低平均调用账；但 Case 5 最差留一 rig 只接受 4/42 个帧，结果前冻结的 10% 门要求至少 5/42。正式判负并关闭当前 block-PRESS 证书，不改阈值、接受比例、公式、秩或深度。",
+    "route_action_en": "Camera-block PRESS rejects all 197 unsafe Case 2 cells, and the mixed policy reaches 13/13 complete-rig accuracy in both Cases 2 and 5 with a lower mean call ledger. However, the worst held-out Case 5 rig accepts only 4/42 frames, while the preregistered 10% gate requires at least 5/42. Record a formal failure and close this block-PRESS certificate without changing its threshold, acceptance fraction, formula, rank, or depth."
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployment_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

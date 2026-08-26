@@ -1,0 +1,120 @@
+{
+  "schema_version": "oerf-public-blastnet-case2-case5-low64-nested-dual-press-calibration-v229.0.0",
+  "updated": "2026-08-25",
+  "title_zh": "v229：嵌套双 PRESS 校准在已开封数据上通过严格留一门",
+  "title_en": "v229: nested dual-PRESS calibration passes the strict leave-rig-out gate on opened data",
+  "scope": {
+    "diagnostic_type": "results-before v229 calibration on already opened post-open development conditions",
+    "conditions": 2,
+    "cells": 1261,
+    "case5_cells": 546,
+    "case2_cells": 715,
+    "rigs_per_condition": 13,
+    "camera_count": 9,
+    "trainable_parameters": 0,
+    "new_condition_opened": false,
+    "deployment_algorithm_established": false,
+    "external_validation_completed": false
+  },
+  "primary_policy": {
+    "name": "nested jackknife dual-PRESS envelope",
+    "definition": "For each target Case 5 rig, calibrate raw and studentized PRESS thresholds and one envelope multiplier using only the other rigs. For Case 2, calibrate only on all Case 5 rigs. Accept when the lower normalized parent score is no greater than the fitted multiplier.",
+    "minimum_accept_fraction": 0.1,
+    "case5": {
+      "accepted_cells": 136,
+      "accepted_safe_cells": 136,
+      "accepted_unsafe_cells": 0,
+      "minimum_rig_accept_fraction": 0.11904761904761904,
+      "maximum_rig_accept_fraction": 0.5714285714285714,
+      "minimum_rig_accepted_cells": 5,
+      "minimum_rig_total_cells": 42,
+      "per_rig_accepted": [7, 8, 16, 12, 5, 6, 22, 10, 5, 24, 9, 6, 6],
+      "complete_rigs_accuracy_passed": 13,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 1.0078960694294001,
+      "support_gate_passed": true
+    },
+    "case2": {
+      "accepted_cells": 318,
+      "accepted_safe_cells": 318,
+      "accepted_unsafe_cells": 0,
+      "minimum_rig_accept_fraction": 0.34545454545454546,
+      "maximum_rig_accept_fraction": 0.5454545454545454,
+      "minimum_rig_accepted_cells": 19,
+      "minimum_rig_total_cells": 55,
+      "per_rig_accepted": [24, 23, 28, 26, 19, 22, 26, 24, 21, 30, 24, 24, 27],
+      "complete_rigs_accuracy_passed": 13,
+      "complete_rigs_total": 13,
+      "maximum_matched_ratio": 1.0277609910834127,
+      "support_gate_passed": true
+    },
+    "accuracy_gate_passed": true,
+    "logical_cost_gate_passed": true,
+    "opened_development_gate_passed": true
+  },
+  "control_comparison": {
+    "case5_accepted": {
+      "raw_PRESS": 126,
+      "studentized_PRESS": 123,
+      "fixed_OR": 140,
+      "nested_calibration": 136
+    },
+    "case2_accepted_safe": {
+      "raw_PRESS": 297,
+      "studentized_PRESS": 323,
+      "fixed_OR": 324,
+      "nested_calibration": 318
+    },
+    "single_parent_controls_pass": false,
+    "fixed_OR_retrospective_control_pass": true,
+    "primary_is_not_replaced_by_control": true
+  },
+  "cost_boundary": {
+    "accepted_direct_K11_exact_A_At": [12, 11],
+    "fallback_zero_PCGLS_K16_exact_A_At": [16, 16],
+    "case5_mean_A_range": [13.714285714285715, 15.523809523809524],
+    "case5_mean_At_range": [13.142857142857142, 15.404761904761905],
+    "case2_mean_A_range": [13.818181818181818, 14.618181818181817],
+    "case2_mean_At_range": [13.272727272727273, 14.272727272727273],
+    "actual_exact_call_reduction_established": false,
+    "fresh_wall_rss_measured": false
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_NESTED_DUAL_PRESS_CALIBRATION_V229",
+    "scientific_decision": "POST_OPEN_FOLD_LOCAL_DUAL_PRESS_CALIBRATION_HEADROOM_V229",
+    "required_checks_passed": 17,
+    "required_checks_total": 17,
+    "maximum_parent_score_absolute_difference": 1.1102230246251565e-15,
+    "maximum_calibration_array_absolute_difference": 8.881784197001252e-16,
+    "maximum_formal_summary_absolute_difference": 2.5677460158135545e-11,
+    "discrete_decisions_match": true,
+    "formal_tree_unchanged": true,
+    "parent_trees_unchanged": true,
+    "source_closure_unchanged": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "adjudication": {
+    "target_rig_score_noninterference_passed": true,
+    "case2_never_enters_calibration": true,
+    "fold_local_combination_headroom_supported_on_opened_cases": true,
+    "deployment_policy_established": false,
+    "external_validation_completed": false,
+    "unopened_condition_gate_authorized": true,
+    "larger_model_rescue_authorized": false,
+    "route_action_zh": "v229 把 v228 的事后 OR 线索改成一个不读取目标 rig 分数、也不让 Case 2 参与校准的固定嵌套规则。它在已开封 Case 2/5 上通过安全、逐 rig 效用、完整精度和逻辑调用门，因此授权另行冻结一个未开封工况外门。但公式是在 v228 后选定，所以仍只是 post-open development headroom，不是部署或算法突破。",
+    "route_action_en": "v229 turns the retrospective v228 OR lead into one fixed nested rule that excludes the target rig's scores and never lets Case 2 enter calibration. It passes safety, per-rig utility, complete accuracy, and logical-call gates on opened Cases 2 and 5, so a separately frozen unopened-condition gate is now warranted. Because the formula was chosen after v228, this remains post-open development headroom rather than deployment or an algorithmic breakthrough."
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployment_algorithm": false,
+    "preregistered_external_success": false,
+    "exact_call_reduction_established": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

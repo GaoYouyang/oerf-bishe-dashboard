@@ -1,0 +1,100 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-k1-set-subspace-v254.0",
+  "updated": "2026-08-26",
+  "scope": {
+    "condition": "already-opened same-family public reacting-flow Case 19",
+    "role": "post-open whole-sequence mechanism test",
+    "rigs": 13,
+    "frames_per_rig": 33,
+    "cells": 429,
+    "active_cameras": 9,
+    "trainable_parameters": 0,
+    "truth_available_before_prediction_barrier": false,
+    "physical_replay_completed": true,
+    "fresh_wall_or_rss_run": false
+  },
+  "mechanism": {
+    "primary": "unordered rank-16 subspace from normalized paired K1 field and measurement directions, followed by unchanged geometry-Jacobi PCGLS K14",
+    "frame_set_permutation_equivariant": true,
+    "camera_permutation_equivariant": true,
+    "uses_time_or_frame_index": false,
+    "uses_truth_or_rig_labels": false,
+    "rank": 16,
+    "normalization": "paired K1 field and measurement directions divided by the measurement-direction norm"
+  },
+  "results": {
+    "primary": {
+      "absolute_safe_cells": 383,
+      "absolute_safe_rigs": 6,
+      "matched_safe_cells": 0,
+      "matched_safe_rigs": 0,
+      "metric_p50": [0.305835785850409, 0.5873148339522835, 0.6971720854538053, 0.05708926475940242],
+      "metric_p90_higher": [0.32566565950006876, 0.6160539252341208, 0.7509771216241553, 0.06058929921202714],
+      "metric_worst": [0.3409757971366618, 0.6300924677887657, 0.8014520805561783, 0.06621282039827923]
+    },
+    "self_k1_restart_control": {
+      "absolute_safe_cells": 371,
+      "absolute_safe_rigs": 4,
+      "matched_safe_cells": 0,
+      "matched_safe_rigs": 0
+    },
+    "zero_pcgls_k15_control": {
+      "absolute_safe_cells": 383,
+      "absolute_safe_rigs": 4,
+      "matched_safe_cells": 0,
+      "matched_safe_rigs": 0
+    },
+    "sealed_chronological_fifo16_k14_diagnostic": {
+      "absolute_safe_cells": 428,
+      "absolute_safe_rigs": 12,
+      "matched_safe_cells": 429,
+      "matched_safe_rigs": 13,
+      "frame_set_permutation_equivariant": false
+    },
+    "robust_k16_reference": {
+      "absolute_safe_cells": 417,
+      "absolute_safe_rigs": 9,
+      "adequate": false
+    }
+  },
+  "cost_ledger": {
+    "primary_sequence_calls_A_At": [495, 495],
+    "k16_reference_sequence_calls_A_At": [528, 528],
+    "nominal_combined_exact_call_reduction_fraction": 0.0625,
+    "effective_exact_call_reduction_established": false
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_CASE19_K1_SET_SUBSPACE_V254",
+    "scientific_decision": "FAIL_CASE19_K1_SET_SUBSPACE_MATCHED_ACCURACY_V254",
+    "completed": true,
+    "passed": true,
+    "checks_passed": 29,
+    "checks_total": 29,
+    "maximum_field_relative_difference": 7.792181061066954e-10,
+    "maximum_initializer_relative_difference": 7.616850550693742e-13,
+    "maximum_metric_absolute_difference": 3.8843039895652964e-11,
+    "maximum_residual_relative_difference": 5.117355863198184e-8,
+    "maximum_summary_absolute_difference": 1.6380119483017097e-11,
+    "maximum_frame_permutation_field_relative_difference": 3.0204856469084545e-13,
+    "maximum_paired_forward_relative_difference": 3.249848316500318e-15
+  },
+  "adjudication": {
+    "scientific_decision": "FAIL_CASE19_K1_SET_SUBSPACE_MATCHED_ACCURACY_V254",
+    "route_action": "CLOSE_UNORDERED_NORMALIZED_K1_PAIR_RANK16_SUBSPACE",
+    "primary_passes_absolute_gate": false,
+    "primary_passes_matched_accuracy": false,
+    "resource_gate_authorized": false,
+    "reason": "the primary reaches only 383/429 absolute-safe cells and 6/13 complete rigs, while K16-matched accuracy is 0/429 cells and 0/13 rigs"
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

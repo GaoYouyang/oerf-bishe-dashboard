@@ -1,0 +1,117 @@
+{
+  "schema_version": "oerf-public-blastnet-case5-potential-normal-pcgls-warm-v218.1.1",
+  "updated": "2026-08-24",
+  "title_zh": "v218.1：新初始化器失败，但 Low-64 K11 建立确定性调用余量",
+  "title_en": "v218.1: the new initializer fails, while Low-64 K11 establishes deterministic call headroom",
+  "scope": {
+    "diagnostic_type": "post-open observation-and-geometry-only warm-replay adjudication",
+    "opened_density_frames": 42,
+    "virtual_nine_camera_geometries": 13,
+    "cells": 546,
+    "primary_depths": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    "trainable_parameters": 0,
+    "truth_used_by_deployment_candidate": false,
+    "wall_rss_measured": false,
+    "external_condition_opened": false
+  },
+  "primary_result": {
+    "arm": "potential-normal warm initializer plus unchanged PCGLS K14",
+    "logical_exact_A": 15,
+    "logical_exact_AT": 15,
+    "absolute_cells_passed": 0,
+    "absolute_geometries_passed": 0,
+    "matched_cells_passed": 0,
+    "matched_geometries_passed": 0,
+    "maximum_matched_ratio": 14.800036205976104,
+    "p90_field_range": [2.015771889662805, 2.2243949161354126],
+    "p90_full_gradient_range": [3.3270413145201956, 3.6914188724013797],
+    "p90_interior_gradient_range": [7.875959190897407, 9.036833302879321],
+    "p90_observation_range": [0.17515023645973368, 0.21125020527858948],
+    "mechanism_closed": true
+  },
+  "deterministic_controls": {
+    "low64_pcgls_k10": {
+      "logical_exact_A": 11,
+      "logical_exact_AT": 10,
+      "absolute_cells_passed": 546,
+      "absolute_geometries_passed": 13,
+      "matched_cells_passed": 164,
+      "matched_geometries_passed": 0,
+      "maximum_matched_ratio": 1.1643476897688112
+    },
+    "low64_pcgls_k11": {
+      "logical_exact_A": 12,
+      "logical_exact_AT": 11,
+      "absolute_cells_passed": 546,
+      "absolute_geometries_passed": 13,
+      "matched_cells_passed": 546,
+      "matched_geometries_passed": 13,
+      "maximum_matched_ratio": 1.0218992155118076,
+      "p90_field_range": [0.23718175839037942, 0.26056808064385606],
+      "p90_full_gradient_range": [0.48315557653042523, 0.52946227468399],
+      "p90_interior_gradient_range": [0.50095268322318, 0.5356769431601897],
+      "p90_observation_range": [0.049913909362037316, 0.0517634128111445]
+    },
+    "normalized_bp_pcgls_k14": {
+      "logical_exact_A": 15,
+      "logical_exact_AT": 15,
+      "absolute_cells_passed": 546,
+      "absolute_geometries_passed": 13,
+      "matched_cells_passed": 0,
+      "matched_geometries_passed": 0,
+      "maximum_matched_ratio": 1.2000298119938742
+    },
+    "geometry_jacobi_pcgls_k16_reference": {
+      "logical_exact_A": 16,
+      "logical_exact_AT": 16,
+      "absolute_cells_passed": 546,
+      "absolute_geometries_passed": 13,
+      "matched_cells_passed": 546,
+      "matched_geometries_passed": 13,
+      "maximum_matched_ratio": 1.0
+    }
+  },
+  "low64_k11_call_headroom": {
+    "first_passing_depth_in_frozen_roster": 11,
+    "reference_total_exact_calls": 32,
+    "candidate_total_exact_calls": 23,
+    "exact_A_reduction_fraction": 0.25,
+    "exact_AT_reduction_fraction": 0.3125,
+    "total_exact_call_reduction_fraction": 0.28125,
+    "descriptive_control_finding_only": true
+  },
+  "validator_history": {
+    "first_validator_status": "INCONCLUSIVE_VALIDATOR_ADJUDICATION_DEFECT",
+    "first_validator_scientific_arrays_changed": false,
+    "correction_scope": "validator-only reference adjudication; formal arrays, arms, thresholds, solver, and scientific data unchanged",
+    "corrected_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_POTENTIAL_NORMAL_PCGLS_WARM_V218_1_1"
+  },
+  "independent_recomputation": {
+    "all_checks_passed": true,
+    "decision_exact_match": true,
+    "call_ledgers_exact_match": true,
+    "maximum_prediction_coordinate_relative_difference": 2.1655516266194693e-13,
+    "maximum_prediction_field_relative_difference": 2.785695175760065e-13,
+    "maximum_formal_independent_primary_field_relative_difference": 9.336226176352794e-10,
+    "maximum_formal_independent_metric_absolute_difference": 2.3712031227418606e-9,
+    "maximum_formal_independent_summary_absolute_difference": 3.227995648558135e-11,
+    "maximum_camera_permutation_k14_field_relative_difference": 4.4022558607031424e-10,
+    "sealed_inputs_unchanged": true
+  },
+  "scientific_decision": "FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1",
+  "interpretation_zh": "在已开封 Case 5 的 546 个单元和 13 套虚拟九相机几何上，potential-normal 主候选即使继续到 K14 仍为 0/546、0/13，因此该表示关闭。与此同时，同一冻结重放中的既有 Low-64 observation-only 确定性对照在 K11 首次达到 546/546、13/13，并把逻辑精确调用从 K16 参考的 16A+16A^T 降为 12A+11A^T。后者是值得进入一次结果前固定确认门的 control headroom，不是 learned algorithm 或外部成功。",
+  "interpretation_en": "Across 546 opened Case 5 cells and 13 virtual nine-camera geometries, the potential-normal primary remains at 0/546 cells and 0/13 rigs even after PCGLS K14, so that representation is closed. In the same frozen replay, the existing observation-only deterministic Low-64 control first reaches 546/546 cells and 13/13 rigs at K11, reducing the logical exact-call ledger from the K16 reference's 16A+16A^T to 12A+11A^T. This is control headroom worth one preregistered confirmation gate, not a learned algorithm or external success.",
+  "route_action_zh": "停止 potential-normal 的阈值、秩、深度和网络扩建。下一候选固定为 Low-64 K11，不再调表示或深度；只有在一个结果前未开的等价公开工况上再次通过 matched-accuracy 与独立复算，才允许测 fresh wall/RSS 或讨论更一般的算法主张。",
+  "route_action_en": "Stop extending the potential-normal threshold, rank, depth, or network. Fix Low-64 K11 as the next candidate without retuning representation or depth. Fresh wall/RSS or broader algorithm claims remain closed until it again clears matched accuracy and independent recomputation on an equivalent previously unopened public condition.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "learned_algorithm": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

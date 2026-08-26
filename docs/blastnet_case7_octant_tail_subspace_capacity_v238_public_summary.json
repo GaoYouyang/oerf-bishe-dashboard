@@ -1,0 +1,148 @@
+{
+  "schema_version": "oerf-public-blastnet-case7-octant-tail-subspace-capacity-v238",
+  "updated": "2026-08-25",
+  "scope": {
+    "condition": "already opened BLASTNet Case 7",
+    "rigs": 13,
+    "frames_per_rig": 42,
+    "cells": 546,
+    "evidence_role": "post-open truth-aware representation-capacity diagnostic",
+    "prospective_or_external_result": false,
+    "new_condition_opened": false
+  },
+  "question": {
+    "tail": "Zero-PCGLS-K16 field minus fixed-Low64-warm-PCGLS-K11 field",
+    "fold": "hold out one complete rig and construct every block basis from the other twelve rigs",
+    "partition": "fixed non-overlapping 2x2x2 octants in the 32x16x16 field",
+    "blocks": 8,
+    "rank_per_block": 8,
+    "total_dimension": 64,
+    "global_control_dimension": 64,
+    "p90_relative_residual_limit": 0.31622776601683794,
+    "worst_relative_residual_limit": 0.5,
+    "late_frames": [26, 41],
+    "truth_aware_oracle_coefficients": true,
+    "deployment_predictor": false
+  },
+  "results": {
+    "fixed_low64_control": {
+      "complete_rigs_passed": 0,
+      "global_p50": 0.9535797389821475,
+      "global_p90_higher": 0.974420421861016,
+      "global_worst": 0.9907178207970768
+    },
+    "global_rank64_control": {
+      "complete_rigs_passed": 0,
+      "global_p50": 0.6454583187766147,
+      "global_p90_higher": 0.731691857413034,
+      "global_worst": 0.8056089365842658,
+      "all_frame_p90_by_rig": [
+        0.6973575432260956,
+        0.7885721091484265,
+        0.7273431704608159,
+        0.7346140518474935,
+        0.6480484369846432,
+        0.6681203329697867,
+        0.7458497747598792,
+        0.742540253178027,
+        0.6749900451705242,
+        0.6800252087827954,
+        0.6859268981847483,
+        0.6577896968775165,
+        0.6867616109336971
+      ],
+      "late_frame_p90_by_rig": [
+        0.4979019561001426,
+        0.5811516995180924,
+        0.5307325310896024,
+        0.6281631415719854,
+        0.46618080908633314,
+        0.4691080226001081,
+        0.5927900406835604,
+        0.5730110145581014,
+        0.4699558388799641,
+        0.5254371674726688,
+        0.5376719848383863,
+        0.45573853856588986,
+        0.49359875414939
+      ]
+    },
+    "octant_rank8_primary": {
+      "complete_rigs_passed": 0,
+      "global_p50": 0.6675008728362818,
+      "global_p90_higher": 0.7510694994915029,
+      "global_worst": 0.8337603098769115,
+      "all_frame_p90_by_rig": [
+        0.7191710881296651,
+        0.8005180614838837,
+        0.74788800043913,
+        0.7646390612094326,
+        0.6892487795180677,
+        0.6934300367467244,
+        0.7591734178833649,
+        0.7707823288280549,
+        0.7124712121696543,
+        0.7003503825560042,
+        0.6982053276600748,
+        0.6670050974612287,
+        0.7021730392357901
+      ],
+      "late_frame_p90_by_rig": [
+        0.5522278035465664,
+        0.6058450416472819,
+        0.5752939788773902,
+        0.6845974998258569,
+        0.5417012332876422,
+        0.5512229611589555,
+        0.6397555341036055,
+        0.64721227563515,
+        0.5504134970827071,
+        0.5747443504669856,
+        0.6007644818126908,
+        0.534919478211987,
+        0.554687225535541
+      ]
+    }
+  },
+  "comparison": {
+    "octant_minus_global_p50": 0.0220425540596671,
+    "octant_minus_global_p90_higher": 0.0193776420784689,
+    "octant_minus_global_worst": 0.0281513732926457,
+    "octant_all_frame_p90_worse_on_rigs": 13,
+    "octant_late_frame_p90_worse_on_rigs": 13
+  },
+  "independent_validation": {
+    "formal_method": "eight sample-Gram eigendecompositions per held-out-rig fold",
+    "independent_method": "direct economy SVD for all eight 504x1024 block matrices in every fold",
+    "independent_status": "PASS_INDEPENDENT_RECOMPUTATION_CASE7_OCTANT_TAIL_V238",
+    "checks_passed": 12,
+    "checks_total": 12,
+    "maximum_combined_residual_absolute_difference": 3.3306690738754696e-16,
+    "maximum_block_residual_absolute_difference": 8.881784197001252e-16,
+    "maximum_summary_absolute_difference": 2.220446049250313e-16,
+    "minimum_block_training_numerical_rank": 504,
+    "maximum_block_basis_orthogonality_absolute": 3.552713678800501e-15
+  },
+  "adjudication": {
+    "scientific_decision": "FAIL_CASE7_OCTANT_TAIL_SUBSPACE_CAPACITY_V238",
+    "fixed_nonoverlapping_octant_rank8_representation_closed": true,
+    "rank_expansion_authorized": false,
+    "adaptive_partition_rescue_authorized": false,
+    "larger_predictor_rescue_authorized": false,
+    "unopened_condition_consumed": false,
+    "interpretation": "At equal total dimension, fixed octant localization is worse than the already rejected global rank-64 tail space. Simple spatial locality is not the missing transferable structure."
+  },
+  "claims_fixed_false": {
+    "deployment_algorithm": false,
+    "observation_only_coefficients": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

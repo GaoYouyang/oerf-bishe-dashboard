@@ -1,0 +1,88 @@
+{
+  "schema_version": "oerf-public-blastnet-case2-case5-low64-camera-jackknife-risk-v224.0.0",
+  "updated": "2026-08-24",
+  "title_zh": "v224：逐相机删除稳定度仍无法安全分离跨工况伤害",
+  "title_en": "v224: leave-one-camera-out stability still cannot safely separate cross-condition harm",
+  "scope": {
+    "diagnostic_type": "post-open mechanism-capacity diagnostic",
+    "conditions": 2,
+    "cells": 1261,
+    "safe_cells": 1064,
+    "unsafe_cells": 197,
+    "camera_count": 9,
+    "low64_rank": 64,
+    "trainable_parameters": 0,
+    "deployment_policy_established": false,
+    "wall_rss_measured": false,
+    "new_unopened_condition_opened": false,
+    "truth_used_for_safety_labels": true,
+    "observable_features_sealed_before_truth_scores": true
+  },
+  "safety_labels": {
+    "definition": "Direct Low-64 PCGLS K11 is safe only when every frozen absolute per-cell gate and every ratio to Zero-PCGLS K16 is at most 1.05.",
+    "case5_safe_cells": 546,
+    "case5_total_cells": 546,
+    "case2_safe_cells": 518,
+    "case2_total_cells": 715
+  },
+  "primary_camera_jackknife_instability": {
+    "role": "deployment-visible observation-and-reported-geometry scalar",
+    "definition": "Worst full-response change of the Low-64 least-squares fit after deleting any one of nine camera blocks.",
+    "orientation": "lower is safer",
+    "safe_minimum": 0.020138386942734957,
+    "safe_maximum": 0.09168232720840247,
+    "unsafe_minimum": 0.03787326844662715,
+    "unsafe_maximum": 0.17865024291737022,
+    "strict_separation_margin": -0.05380905876177532,
+    "strict_separation_passed": false,
+    "threshold_exists": false,
+    "policy_evaluated": false
+  },
+  "cheap_max_camera_residual_control": {
+    "role": "deployment-visible maximum per-camera Low-64 fit residual",
+    "orientation": "lower is safer",
+    "safe_minimum": 0.4784930736639583,
+    "safe_maximum": 0.7361011641282558,
+    "unsafe_minimum": 0.5652014788159975,
+    "unsafe_maximum": 0.850215852984968,
+    "strict_separation_margin": -0.1708996853122583,
+    "strict_separation_passed": false,
+    "threshold_exists": false,
+    "policy_evaluated": false
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_LOW64_CAMERA_JACKKNIFE_RISK_V224",
+    "scientific_decision": "FAIL_LOW64_CAMERA_JACKKNIFE_RISK_OVERLAP_V224",
+    "minimum_leave_one_camera_rank": 64,
+    "maximum_camera_permutation_difference": 7.0915495697931874e-15,
+    "maximum_formal_independent_feature_difference": 5.620504062164855e-15,
+    "maximum_separation_difference": 1.4606371667724716e-15,
+    "maximum_policy_difference": 0.0,
+    "all_required_checks_passed": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "adjudication": {
+    "all_leave_one_camera_systems_rank_64": true,
+    "camera_permutation_invariant": true,
+    "camera_jackknife_scalar_supports_fail_closed_selection": false,
+    "cheap_view_residual_supports_fail_closed_selection": false,
+    "worst_camera_jackknife_scalar_route_closed": true,
+    "all_multiview_mechanisms_closed": false,
+    "threshold_or_orientation_retuning_authorized": false,
+    "larger_model_rescue_authorized": false,
+    "route_action_zh": "九个删相机子问题都保持满秩，说明失败不是秩坍塌；但安全与不安全单元在最坏删相机漂移和逐相机残差上仍重叠，不能冻结对全部 1261 个单元安全的阈值。关闭当前单标量 jackknife 回退，不调方向、阈值、相机分组或归一化，也不用大模型或 GPU 挽救。",
+    "route_action_en": "All nine leave-one-camera-out systems remain full rank, so the failure is not rank collapse. Safe and unsafe cells still overlap under both worst-camera drift and per-camera residual, preventing a threshold that is safe across all 1,261 cells. Close this scalar jackknife fallback without retuning orientation, threshold, camera grouping, or normalization, and without a larger-model or GPU rescue."
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployment_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

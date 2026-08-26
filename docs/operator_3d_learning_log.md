@@ -4,6 +4,490 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v254 无序 K1 配对方向子空间未守住 matched-accuracy
+
+**为什么做。** v253 说明从 33 帧里挑一个锚点既不安全，也会被零调用的观测范数 control 完全解释。v254 因此去掉锚点和时间顺序，改问整个 deployment-visible 帧集合能否组成足够的 solver-native 方向池。每帧只做一次 zero-start geometry-Jacobi PCGLS K1，把 K1 场方向与其精确投影配对后归一化；formal 用无序 rank-16 SVD 子空间，独立程序用 Gram 特征分解重建同一空间，再以 measurement projection 初始化并执行未修改的 restarted PCGLS K14。结果前固定 13 条 rig、33 帧、rank、归一化、tie-break、绝对门、K16-matched 门、三个 controls、调用账与失败关闭规则。方向池封存前不读真值、时间索引、rig 标签或失败标签。
+
+**独立结果。** 完全独立第二实现通过 `29/29` 项检查。formal-independent 的场相对差、初始化场相对差、指标绝对差、残差相对差与汇总绝对差最大分别为 `7.79e-10 / 7.62e-13 / 3.88e-11 / 5.12e-8 / 1.64e-11`；selected spectrum 相对差 `8.19e-15`，帧集合乱序后的场相对差 `3.02e-13`，配对 forward 相对差 `3.25e-15`。这些数值都通过结果前冻结的界，负判决因此有效。
+
+**正式性能。** rank-16 primary 的绝对门只有 `383/429` 单元、`6/13` 完整 rig；相对 K16 的 matched-accuracy 为 `0/429`、`0/13`。它的 field / full-gradient / interior-gradient / observation p90 为 `0.325666 / 0.616054 / 0.750977 / 0.060589`，内部梯度 p90 已越过绝对门。self-K1 restart K14 为 `371/429`、`4/13`；zero-PCGLS K15 为 `383/429`、`4/13`。封存的 FIFO16 K14 诊断达到 `428/429`、`12/13` 绝对门与 `429/429`、`13/13` matched，但它依赖时间顺序，不能替代无序 frame-set primary。K16 reference 本身只有 `417/429`、`9/13` 绝对安全，仍不充分。
+
+**我学到的。** “把每帧 K1 方向全部放进一个全局低秩池”并不能恢复时间有序暖启动里保留的结构。方向池对相机和帧集合换序稳定，只说明实现满足等变合同；它没有把绝对精度和 matched-accuracy 变成可部署结果。primary 每条 rig 的逻辑账为 `495A+495A^T`，K16 为 `528A+528A^T`，算术差 `6.25%`。因为精度门失败，这不是有效 exact-call 减少，也不授权 fresh wall/RSS。
+
+**路线动作与边界。** 权威判决为 `FAIL_CASE19_K1_SET_SUBSPACE_MATCHED_ACCURACY_V254`。关闭当前 global unordered normalized paired-K1 rank-16 子空间，不增加 rank、深度，不改变归一化，也不以更大 predictor、CNN/FNO/UNO、GPU 或 wall/RSS 挽救。它不证明所有局部、因果或非线性 solver-native 机制不可能，也不关闭整条 C 路线。Case 19 已开封，因此这仍是 post-open mechanism evidence。`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English note
+
+v254 removes the unsafe anchor and all time ordering, then asks whether the complete deployment-visible frame set can form a sufficient solver-native direction pool. Each frame contributes one zero-start geometry-Jacobi PCGLS K1 field and its exact paired projection. Formal builds an unordered rank-16 SVD subspace, while the independent implementation reconstructs the same space through a Gram eigendecomposition; measurement projection initializes an unchanged restarted PCGLS K14 solve. The independent implementation passes `29/29` checks. Maximum formal-independent field, initializer, metric, residual, and summary differences are `7.79e-10 / 7.62e-13 / 3.88e-11 / 5.12e-8 / 1.64e-11`; frame-set and camera permutation contracts also pass. The primary reaches only `383/429` absolute-safe cells and `6/13` complete rigs, with `0/429` cells and `0/13` rigs under K16-matched accuracy. The sealed chronological FIFO16 diagnostic reaches `429/429` matched cells and `13/13` rigs but is order-dependent and inadmissible as a substitute. The primary ledger is `495A+495A^T` versus `528A+528A^T` for K16, a nominal `6.25%` difference that is not effective call reduction because accuracy fails. The global unordered paired-K1 rank-16 subspace closes without rank, depth, normalization, larger-model, GPU, or wall/RSS rescue. This is post-open mechanism evidence, not external generalization, real BOST, resource speedup, or an algorithmic breakthrough.
+
+## 2026-08-26：v253 K1 残差收缩选锚被零调用 control 完全解释
+
+**为什么做。** v252 的两个图遍历缺口都发生在 medoid anchor 自身。v253 因此不运行完整序列，只检验能否从当前批次的 deployment-visible observation 与 reported geometry 中找到安全锚点：对每个 frame 做一次零起点 geometry-Jacobi PCGLS K1，以归一化残差收缩选最小值；结果前固定 13 条 rig、33 帧、tie-break、K16 双实现稳健安全标签，以及最小观测范数和余弦 medoid 两个零调用 control。固定 frame 16 只作依赖时间索引的不合格诊断。
+
+**独立结果。** 独立第二实现通过 `16/16` 项检查；formal-independent 分数最大相对差 `6.10e-16`，相机乱序最大相对差 `3.07e-16`，锚点、稳健标签和调用账完全一致。K1 primary 在所有 rig 都选 frame 3，只通过 `9/13`；最小观测范数 control 也逐 rig 选择完全相同的 frame 3，并得到同一 `9/13` 安全 roster。余弦 medoid 为 `11/13`。固定中点为 `13/13`，但它读时间索引，不能作为部署选择器。
+
+**我学到的。** 一步 Krylov 残差收缩在这批已经开封的 Case 19 上没有提供超出观测幅值的 solver-specific 选锚信息。独立复算通过意味着这条负结论可信，不意味着算法成功。K1 筛查本身每套 rig 要 `33A+33A^T`，却被 `0A+0A^T` control 完全解释。
+
+**路线动作与边界。** 判决为 `FAIL_CASE19_K1_RESIDUAL_CONTRACTION_ANCHOR_V253`。关闭当前 K1 anchor hypothesis，也不再在 Case 19 上增加其他 anchor heuristic、学习型排序、大模型或 GPU；不运行完整遍历、wall/RSS 或资源门。假设复用选中的 K1 状态时得到的 `3.0303%` 只是不曾执行完整链的名义算术差。整条 C 路线没有关闭，但下一机制必须物理上真正不同，或者等待新的配对真实 BOST 信息。`algorithm_breakthrough=false`。
+
+### English note
+
+v253 audits a narrow deployment-visible anchor hypothesis after v252 places both graph-traversal misses at their medoid anchors. One zero-start geometry-Jacobi PCGLS K1 step is run per frame and normalized residual contraction selects the anchor; 13 rigs, 33 frames, deterministic tie-breaking, a robust two-implementation K16 safety label, and two zero-call controls are fixed before results. The independent second implementation passes `16/16` checks, with maximum formal-independent score disagreement `6.10e-16` and camera-permutation disagreement `3.07e-16`. The K1 primary and minimum-observation-norm control select the same frame 3 in every rig and produce exactly the same `9/13` safety roster; cosine medoid reaches `11/13`. Fixed midpoint reaches `13/13` but depends on time index and is inadmissible. The K1 screen costs `33A+33A^T` per rig and is completely explained by a `0A+0A^T` control. The K1 anchor hypothesis closes without a full traversal, wall/RSS run, training, GPU, external-generalization, real-BOST, or algorithm-breakthrough claim.
+
+## 2026-08-26：v252 图遍历离散结构一致，但独立数值闭环未通过
+
+**为什么做。** v251 说明把固定首帧解直接拼到因果暖序列上不能守住 matched-accuracy。v252 转而检验一个 deployment-visible 的顺序机制：只用每帧 observation 和 reported geometry 建图，以 medoid 为锚点沿最小生成树传播暖启动，并与同价、但不看 observation 的固定中点顺序以及时间顺序对照比较。机制不读取真值、时间或 rig 标签；结果前固定 13 条 rig、33 帧、调用账和独立数值一致性门。
+
+**独立结果。** 独立程序重建出完全相同的图、medoid、访问顺序与父节点，边权最大绝对差为 `5.55e-16`，逐单元离散判决一致，汇总最大绝对差 `8.92e-11` 也低于 `1e-9` 界。但三项结果前数值门失败：场相对差 `1.1990e-7 > 2e-8`，指标绝对差 `8.6125e-8 > 2e-8`，残差相对差 `8.1713e-6 > 2e-7`。因此权威判决只能是 `INCONCLUSIVE_INVALID_CASE19_OBSERVATION_GRAPH_TRAVERSAL_V252`，不能用离散一致覆盖浮点闭环失败。
+
+**post-open discrete 诊断。** 图遍历达到绝对门 `427/429` 单元、`11/13` 完整 rig；两个缺口都位于 frame 6 的 interior-gradient，而且正是各自图的 medoid 锚点。相同 `496A+464A^T` 调用账下，不看 observation 的固定中点顺序达到 `429/429`、`13/13`；时间顺序为 `428/429`、`12/13`，K16 reference 为 `417/429`、`9/13`。这些数字只用于开封后归因，不是通过独立验证的科学性能结果。
+
+**我学到的。** 可观测图的离散拓扑可以稳定复现，但它没有给出超越简单固定顺序对照的证据。相对 K16 的名义调用差为 `9.0909%`，在独立数值门未过且同价对照更强时不能称有效 exact-call 减少，更不能称 wall/RSS、外部泛化或真实 BOST 收益。
+
+**路线动作与边界。** 不重跑、不换输出、不放宽容差，也不把 v252 事后升级成科学 FAIL。当前 observation-graph traversal 路线停止继续投入；这是基于 post-open 诊断的路线收缩，不是数学不可能证明，也不关闭整条 C 路线。不训练模型、不租 GPU，`algorithm_breakthrough=false`。
+
+### English note
+
+v252 tests a deployment-visible ordering mechanism after v251 rejects the direct cold-start composition. It builds an observation-and-reported-geometry graph, chooses a medoid anchor, and propagates warm starts along a minimum spanning tree, with equal-cost fixed-midpoint and chronological controls. The independent implementation reproduces the graph, medoid, order, parents, and every discrete decision exactly; maximum edge-weight disagreement is `5.55e-16`, and summary disagreement is `8.92e-11`. However, three preregistered numeric checks fail: field relative disagreement `1.1990e-7 > 2e-8`, metric absolute disagreement `8.6125e-8 > 2e-8`, and residual relative disagreement `8.1713e-6 > 2e-7`. The authoritative result therefore remains `INCONCLUSIVE`. In the post-open discrete diagnostic only, graph traversal reaches `427/429` absolute cells and `11/13` complete rigs, while the equal-cost observation-blind midpoint control reaches `429/429` and `13/13`. The nominal `9.0909%` call difference is not effective reduction. The observation-graph route closes operationally without upgrading v252 to a scientific FAIL, and there is no wall/RSS, training, GPU, external-generalization, real-BOST, or algorithm-breakthrough claim.
+
+## 2026-08-26：v251 直接拼接绝对门全过，但 matched-accuracy 为 0/13
+
+**为什么做。** v250 证明首帧固定平滑存在 headroom，但同价线性热扩散完整解释了结果。v251 因此只读审计最直接的完整序列拼接：首帧使用 v250 已封存的线性热解，后 32 帧使用 v244 已封存的因果暖 K14，并与对应 K16 序列比较。这个组合在写合同前已经被查看，所以它明确是 **post-open retrospective** 审计，不是结果盲前瞻试验；不重读真值、观测或原始密度，也不增加算子或求解器调用。
+
+**独立结果。** formal 与不导入其数值实现的逐标量第二程序完整一致，独立检查 **17/17**，最大诊断差为 **0**。最坏双实现包络下，组合的绝对门为 **429/429** 单元、**13/13** 完整 rig；但相对 K16 的 matched-accuracy 只有 **416/429** 单元和 **0/13** 完整 rig。十三个缺口全部位于首帧 observation，逐单元 candidate/K16 比值为 `3.017–3.265`；后续 32 帧没有新增 matched 单元失败。
+
+**我学到的。** “绝对误差很好”不能替代“与合格 reference 同精度”。调用账从 K16 的 `528A+528A^T` 变为组合的 `495A+462A^T`，算术差是 **9.375%**，但 matched-accuracy 没有成立，因此它不是有效 exact-call 减少，更不是速度或内存证据。
+
+**路线动作与边界。** 权威判决为 `FAIL_CASE19_COLD_START_LINEAR_HYBRID_MATCHED_ACCURACY_V251`。关闭“首帧线性热解 + 后续因果暖 K14”的直接拼接，也不再用 K15 热滤波或同类线性平滑扩建；不跑 wall/RSS、不训练大模型、不租 GPU。它不关闭整条 C 路线，也不证明其他物理机制不可能。`algorithm_breakthrough=false`。
+
+### English note
+
+v251 is an explicitly post-open retrospective audit of the most direct complete-sequence composition after v250: the sealed equal-call linear-heat field at frame zero plus the sealed v244 causal warm K14 fields on frames 1–32, compared with the matching K16 sequence. It rereads no truth, observation, raw density, operator, or solver output and adds `0A+0A^T`. Formal and a scalar-loop independent implementation agree exactly across the complete diagnostic and pass **17/17** checks. Under the adverse two-replica envelope, the hybrid passes **429/429** absolute cells and **13/13** absolute complete rigs, but only **416/429** K16-matched cells and **0/13** matched complete rigs. Every miss is the frame-zero observation metric, with candidate/K16 ratios from `3.017` to `3.265`; no later frame adds a matched-cell failure. The nominal ledger difference is **9.375%**, but it is not effective exact-call reduction because matched accuracy fails. The direct linear hybrid and same-family K15/linear-smoothing expansion close, with no wall/RSS, training, GPU, external-generalization, real-BOST, or algorithm-breakthrough claim.
+
+## 2026-08-26：v250 Charbonnier 首帧通过，但同价线性扩散完整解释结果
+
+**为什么做。** v249 停在独立系数门后，v250 结果前冻结一个物理上不同的局部非线性机制：从 reported-geometry 对角 Jacobi-PCGLS K13 出发，在 active `32×16×16` 图上按 deployment-visible MAD 尺度做 12 步显式 Charbonnier 扩散，再执行一次精确投影和一次未修改 restarted PCGLS K1。主候选逻辑账为 `15A+14A^T`。同时冻结完全同价、同 shell 的线性热扩散对照，避免把“任何局部平滑都有效”误写成 Charbonnier 的非线性优势。
+
+**实际结果。** formal 通过 **24/24** 项；完全独立第二实现通过 **38/38** 项。最终场最大相对差 `1.02e-9`，指标与汇总最大绝对差 `4.76e-11 / 2.16e-11`，相机换序、离散判决和调用账一致。Charbonnier 主候选是 **13/13**，同价线性热扩散也是 **13/13**；原始 K14 为 **7/13**，K16 reference 为 **12/13**。
+
+**我学到的。** 首帧证据支持“K13 后做固定局部平滑，再重启一次”这一较宽机制存在 headroom，但无法把收益归因于 Charbonnier conductance。便宜或同价对照不是附属表格，而是决定论文能否诚实声称新机制的核心门。
+
+**下一步边界。** 按结果前规则不运行完整 429 单元序列，关闭当前 Charbonnier 特异路线，也不把已开封的线性热扩散诊断事后包装成前瞻成功。没有序列级 exact-call 减少、wall/RSS、外部泛化或真实 BOST；不训练大模型、不租 GPU。`algorithm_breakthrough=false`。
+
+### English note
+
+v250 preregisters a physically distinct local nonlinear mechanism after v249 stops at its independent coefficient gate. Starting from reported-geometry diagonal-Jacobi PCGLS K13, it performs 12 explicit Charbonnier-diffusion steps on the active `32x16x16` graph using a deployment-visible MAD scale, followed by one exact projection and one unchanged restarted PCGLS iteration. The primary costs `15A+14A^T`. An identical equal-call shell with linear heat conductance is frozen to test whether the gain is nonlinear-specific or simply due to local smoothing. Formal passes **24/24** checks and the fully independent second implementation passes **38/38**. The Charbonnier primary reaches **13/13**, but equal-call linear heat also reaches **13/13**; raw K14 reaches **7/13** and the K16 reference **12/13**. The evidence supports broad frame-zero smoothing headroom, not Charbonnier-specific advantage. The full 429-cell sequence does not run, the Charbonnier-specific route closes, and the opened linear control is not promoted post hoc. There is no sequence-level exact-call reduction, wall/RSS, external-generalization, real-BOST, neural-training, GPU, or algorithm-breakthrough claim.
+
+## 2026-08-26：v249 Haar-MAD 首帧出现 13/13 诊断信号，但独立系数门不闭合
+
+**为什么做。** v248 固定体素块退出后，v249 结果前冻结一条物理上不同的多尺度路线：从 reported-geometry 对角 Jacobi-PCGLS K13 出发，对 `32×16×16` 三维场做一层正交 Haar 变换，用 HHH 子带的 MAD 估计尺度，对七个细节子带做固定软阈值，恢复边界和 active-cell mean gauge 后执行一次精确投影与未修改 PCGLS K1。主候选实际逻辑账为 `15A+14A^T`，参数为 0；同价低频近似、原始 K14 和 K16 reference 均在结果前冻结。
+
+**正式与独立复算。** formal 完成 13 条 rig 的共同首帧并通过 **22/22** 项有效性检查。完全独立第二实现以显式逐点 Haar 配对、独立预处理、观测、Jacobi 与 PCGLS 重建全部候选和四项指标，通过 **33/35** 项。唯一原发失败是 Haar 系数相对差 **1.82098e-11**，高于冻结 **1e-12**；连带使 formal/independent 决策精确一致项失败。初始化场、最终场、残差、观测、指标、汇总、相机换序与调用账均通过各自冻结门。
+
+**只读归因。** 判决后交叉喂入两套 Haar 实现，变换本身最大相对差只有约 **6.83e-16**；两套独立重建的 K13 基场相对差约 **1.57e-11**。所以系数差来自上游预处理、观测与 K13 数值传播，不是 Haar 配对公式。但合同检查的是最终传播系数，不能因为找到了来源就事后改门。
+
+**讲人话。** 两套程序都诊断出 Haar-MAD 主候选 **13/13**，同价低频近似对照 **0/13**，原始 K14 **7/13**，K16 reference **12/13**。这是一条值得记住的首帧信号，却不是可采信的性能通过：预先约定的独立门没有全过，不能把离散计数包装成 headroom。
+
+**路线动作与边界。** 权威判决是 `INCONCLUSIVE_INVALID_CASE19_HAAR_MAD_WARM_FRAME_ZERO_V249`。不放宽容差、不做 v249.1、不调整 Haar 家族、层数、MAD、阈值、子带、支撑或深度，也不启动完整 429 单元序列。没有有效 exact-call 减少、wall/RSS、外部泛化、真实 BOST 或算法突破；`algorithm_breakthrough=false`，不训练大模型、不租 GPU。
+
+### English note
+
+v249 preregisters a physically distinct, non-learned multiscale correction after v248 retires fixed voxel blocks. Starting from reported-geometry diagonal-Jacobi PCGLS K13, it applies one orthonormal 3D Haar level, estimates scale from the HHH-detail MAD, soft-thresholds all seven detail subbands, restores the support and gauge, and performs one exact projection plus one unchanged PCGLS iteration. The primary costs `15A+14A^T` and has zero trainable parameters. Formal passes **22/22** validity checks across 13 frame-zero cells; a fully independent nested-loop implementation passes **33/35** checks. Haar-coefficient relative disagreement is **1.82098e-11**, above the frozen **1e-12** limit, while the initializer, final field, residual, observation, metrics, summaries, permutation checks, and call ledger all pass. Post-decision cross-feeding shows the Haar transforms themselves agree to about **6.83e-16** and attributes the mismatch upstream to independently rebuilt K13 propagation, but this cannot repair the preregistered gate. The primary is diagnostically **13/13**, the equal-cost approximation-only control **0/13**, raw K14 **7/13**, and K16 reference **12/13**. The authoritative verdict remains `INCONCLUSIVE`; there is no tolerance relaxation, v249.1 rescue, full 429-cell run, wall/RSS gate, external-generalization claim, real-BOST claim, or algorithmic breakthrough.
+
+## 2026-08-26：v248 固定三维体素块首帧门不确定，完整序列关闭
+
+**为什么做。** v247 的坐标线机制退出后，v248 结果前冻结一个物理上不同的局部三维块机制：在 `32×16×16` 网格上使用原点固定、互不重叠的 `4×2×2` 体素块，以精确局部正规块和固定 `1e-6` 对角加载构成 block-PCGLS。主候选与两个对照都固定为 `16A+16A^T`，只先检查 13 条 rig 各自的首帧；主候选必须 `13/13` 通过且便宜对照失败，才允许运行完整 429 单元序列。
+
+**执行与独立复算。** 三次评分前工程失效均按原样保留，不产生科学分数；修复仅限首帧相机接口，机制和门不变。有效 formal 批次完成 13/13 个首帧单元并通过 **21/21** 项有效性检查。完全独立第二实现用显式逐块 `matrix.T @ matrix` 与 `solve` 重建块、逆、候选、观测、残差、指标和汇总，通过 **26/28** 项。块、逆、场、归一化残差、指标和汇总均在各自容差内；唯一原发失败是观测数组最大非零差 **1.33e-15**，违反结果前冻结的逐位相同要求，连带使 formal/independent 决策精确一致项失败。
+
+**讲人话。** 两套程序只在十五位小数附近有观测差异，但规则预先写的是“必须逐位相同”，不是“足够接近”。因此不能看到结果后改门。性能计数只能作诊断：固定块主候选 **0/13**，更便宜的对角 Jacobi 对照 **12/13**，未预条件 CGLS **0/13**。主候选不但没有通过首帧门，也被便宜对照明显压倒。
+
+**路线动作与边界。** 权威判决是 `INCONCLUSIVE_INVALID_CASE19_GEOMETRY_VOXEL_BLOCK_JACOBI_FRAME_ZERO_V248`。不放宽逐位要求、不重跑，不扩展块尺寸、重叠、偏移、加载或深度，也不运行完整 429 单元序列。关闭的是当前固定 `4×2×2` 体素块实现，不是整条 C 路线，也不是数学不可能证明。没有有效 exact-call 减少、fresh wall/RSS、外部泛化、真实 BOST 或算法突破；不训练大模型、不租 GPU。
+
+### English note
+
+v248 fixed 3D voxel blocks test a physically distinct local solver mechanism after v247 retires coordinate-line Schwarz. The preregistered primary uses origin-anchored, non-overlapping `4x2x2` blocks on the `32x16x16` grid, exact local normal blocks, fixed `1e-6` diagonal loading, and `16A+16A^T`, with only one frame-zero cell per rig evaluated before any full-sequence run. Three pre-scoring engineering failures are preserved without scientific scores. The valid formal batch completes all 13 frame-zero cells and passes **21/21** validity checks. A fully independent second implementation passes **26/28** checks. Blocks, inverses, fields, normalized residuals, metrics, and summaries remain within their frozen tolerances, but a maximum nonzero observation-array difference of **1.33e-15** violates the preregistered bitwise-equality requirement. Performance counts are therefore diagnostic only: the fixed-block primary is **0/13**, the cheaper diagonal-Jacobi control is **12/13**, and unpreconditioned CGLS is **0/13**. There is no relaxed rerun, block-family expansion, or full 429-cell sequence. The fixed `4x2x2` implementation is retired without claiming mathematical impossibility. No effective exact-call reduction, wall/RSS, external generalization, real BOST, or algorithmic breakthrough is established.
+
+## 2026-08-26：v247 精确坐标线 Schwarz 因残差独立复算越界保持不确定
+
+**为什么做。** v246 关闭了继续加深固定 reference 的解释，下一步需要一个 solver-native、geometry-local 且不依赖真值或学习器的机制。v247 结果前唯一冻结三个世界坐标轴上的精确正规算子线块，用固定特征值 floor 求逆后等权组合成 PCGLS 预条件器；不搜索轴、分块、floor、缩放、深度、rank 或门。
+
+**执行与独立复算。** formal 完成 13 条 rig、33 帧、429 个单元，21/21 项有效性检查全真。完全独立第二实现重建线块、逆、候选场、残差、指标与汇总，最终只通过 **25/27** 项。精确线块、线块逆、场、指标与汇总差都低于各自冻结界；唯一原发失败是残差数组相对差 **3.2449e-8**，高于冻结的 **1e-8**，最大绝对差为 **2.3768e-9**。`formal_independent_decision_exact` 随之失败，因为 formal pending 判决不能覆盖独立侧的 fail-closed 状态。
+
+**讲人话。** 两套程序对预条件器和最终场几乎完全一致，离散逐 arm 标志也完全相同，但我们事先答应过残差必须在 `1e-8` 内闭合。它实际是 `3.2449e-8`，所以不能因为“看起来很接近”就把规则改掉。v247 不重跑、不放宽容差，也不建立 v247.1 包装成功；权威判决保持 `INCONCLUSIVE_INVALID_CASE19_GEOMETRY_LINE_SCHWARZ_V247`。
+
+**路线动作与边界。** 开封后诊断中四个 arm 都是 0/13 条完整 rig；这些数字不能作为已验证性能结论，只支持停止继续投资当前精确线 Schwarz 实现。它没有被证明数学上不可能，也不关闭整条 C 路线。没有有效 exact-call 减少、fresh wall/RSS、外部泛化、真实 BOST 或算法突破，不训练大模型、不租 GPU。
+
+### English note
+
+v247 freezes a physically distinct solver-native mechanism after v246 closes fixed-reference deepening: exact normal-operator line blocks along the three reported world-coordinate axes, a fixed eigenvalue floor, and equal additive aggregation inside PCGLS, with no search over axes, partitions, floor, scale, depth, rank, or thresholds. Formal completes all 13 rigs, 33 frames, and 429 cells with **21/21** validity checks. A fully independent second implementation rebuilds the blocks, inverses, fields, residuals, metrics, and summaries but passes only **25/27** checks. Line blocks, inverses, fields, metrics, and summaries remain within their frozen limits; the primary failure is residual relative disagreement of **3.2449e-8** against **1e-8**, with maximum absolute disagreement **2.3768e-9**. Discrete arm-level flags agree, but they cannot replace preregistered floating-point closure. There is no rerun, tolerance relaxation, or v247.1 repackaging. The authoritative decision remains `INCONCLUSIVE_INVALID_CASE19_GEOMETRY_LINE_SCHWARZ_V247`. The current exact coordinate-line Schwarz mechanism is retired operationally, not proven mathematically impossible. No effective exact-call reduction, wall/RSS, external-generalization, real-BOST, or algorithm-breakthrough claim is established.
+
+## 2026-08-25：v246 双实现最坏包络否决固定 reference 继续加深
+
+**为什么做。** v244.2 留下两份离散判决一致、但浮点指标差约 `1.0219e-8` 的封存结果。v245 原计划直接比较两套 K14→K16 收敛诊断，但独立 validator 在写出验证结果前越过结果前固定的 `1e-10` 数值门并 fail-closed。没有放宽 v245 容差，也没有第二次调用同一 validator。v246 改问更严格而不同的问题：把每一对 formal/independent 父指标都保留成下界与上界，后续安全、增益和尾部全部按最不利组合裁决。
+
+**独立结果。** formal 与完全独立的逐循环第二实现对 v246 的全部数值、集合和判决最大差为 **0**，独立检查 **16/16** 全真。K14 的确定安全单元为 **313/429**，K16 为 **417/429**，新增 **104**、丢失 **0**；所有 rig×指标的 p90 与 worst 尾部均未恶化。K16 仍有 12 个可能越门分量，其中 11 个具有正的最坏 K14→K16 增益。
+
+**阻断项。** 唯一没有正增益的是 rig 0、frame 0 的内部梯度：K14 与 K16 的包络都约为 **0.758223464859–0.758223464862**，仍高于 **0.75** 门，最坏增益为 **-2.97e-12**。它在数值精度内没有随深度改善，所以不能用其余 11 项的良好趋势替它投票，也不能假定 K20 会自动修复首帧。
+
+**讲人话。** 多算两步总体上确实让 reference 好了很多，但最后那个卡点不是“再多迭代一点就会下降”的样子。结果前规则要求每个尚未过门的分量都显示正向收敛，因此 K20 不运行，K18/K22/K24/K32 也不搜索。关闭的是当前固定深度 global geometry-Jacobi PCGLS reference 加深路线，不是整条 C 路线；下一步只接受新的物理信息，或一个与固定深度、全局低秩和既有 global-quadratic 家族真正不同、结果前唯一冻结且可证伪的机制。
+
+**证据边界。** v246 只读取封存指标，新增调用为 `0A+0A^T`；没有新 forward、adjoint、solver、wall/RSS 或真实 BOST。Case 19 已开封，因此这仍是 post-open 机制诊断。`algorithm_breakthrough=false`，不训练大模型、不租 GPU。
+
+### English note
+
+v245 fails closed before producing independent validation output when its preregistered `1e-10` comparison is exceeded; its tolerance is not relaxed and the same validator is not rerun. v246 instead retains every formal/independent parent metric pair as a worst-case lower/upper envelope. The independent loop implementation passes **16/16** checks with exact agreement with formal. Definitely-safe cells rise from **313/429** at K14 to **417/429** at K16, gaining **104** and losing none, and every complete-rig tail is non-worsening. However, one first-frame interior-gradient component remains about **0.758223** at both depths, above the **0.75** limit with no positive gain. K20 and fixed-depth reference deepening therefore close. This is post-open mechanism evidence, not external generalization, resource speedup, or an algorithmic breakthrough.
+
+## 2026-08-25：v244.2 Case 19 一次性同族公开门完成，但权威判决保持不确定
+
+**为什么做。** v243 在已经开封的 Case 7 上证明，规范相机 ID 后的实际未修改 K14 warm solver 可以同时守住绝对门和 K16 同精度门。v244 把同一适配器、K14 主候选、K16 reference、四个同价或更便宜 controls、指标门和禁止调参规则一次性搬到此前未开的同族 Case 19，检验这条固定机制能否前瞻复现。
+
+**执行边界。** 数据获取完成并通过 37/37 文件的独立逐字节校验，但这只是工程输入证据。v244 首次执行在读取数值网格前因继承的 shape 合同不适配而停止；v244.1 又在预测和评分前因把 gauge-centered finite 场误要求为正值而停止。两次都没有科学结果。v244.2 只修这两个执行矛盾，不改科学候选、阈值或算子账。
+
+**独立验证。** 正式运行完成 33 帧 × 13 条 rig × 6 个 arm。完全独立第二实现只通过 **26/29** 项检查；相机换序指标精确性、残差复算和指标复算三项未过冻结数值门。最大 residual 相对差为 **1.1060e-7**，对比冻结 **1e-8**；最大 metric 绝对差为 **1.0219e-8**。因此权威状态必须保持 `INCONCLUSIVE`，不能放宽容差或挑离散判决包装成功。
+
+**开封后诊断。** 忽略上述验证缺口也不能形成外门正结果：K16 reference 的绝对门只有 **417/429** 单元、**9/13** 条完整 rig；K14 warm 主候选为 **428/429**、**12/13**。主候选相对这个不充分 reference 的 matched 完整 rig 是 **13/13**，但 reference 自身和主候选绝对门都未全过，所以 `13/13 matched` 不能单独作成功结论。四个同价或更便宜 controls 的 matched 完整 rig 都是 **0/13**，其中最好的绝对完整 rig 也只有 **2/13**。
+
+**讲人话。** Case 19 没有确认 v243 的固定迁移结论：一方面独立数值闭环差三项，另一方面充分 reference 和主候选绝对精度也分别只有 9/13 与 12/13。固定 Case 7 → Case 19 K14 确认路线按合同关闭，不重跑、不放宽容差、不换 Case 13/18 补考，也不启动 wall/RSS、神经训练或 GPU。它不证明整条 C 路线不可能；后续只接受新的物理信息，或一个物理上真正不同、结果前唯一冻结且可证伪的机制。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v244.2 completes the one-shot Case 19 gate but remains authoritatively inconclusive
+
+v243 shows on opened Case 7 that the actual unchanged K14 warm solver can pass both absolute and K16-matched gates after stable camera-ID canonicalization. v244 carries the same adapter, K14 primary, K16 reference, four equal-or-cheaper controls, metric gates, and no-retuning rule once to the previously unopened same-family Case 19 condition.
+
+Acquisition completes with independent byte validation of all 37 files, but that is engineering input evidence only. The first v244 execution stops before numeric grid parsing because an inherited shape contract does not fit Case 19. v244.1 stops before prediction and scoring because a gauge-centered finite field is incorrectly required to be positive. Neither attempt produces a scientific result. v244.2 repairs only those execution contradictions without changing the scientific candidate, thresholds, or operator ledger.
+
+Formal execution completes 33 frames × 13 rigs × 6 arms. The fully independent second implementation passes only **26/29** checks. Exact camera-permutation metrics, residual recomputation, and metric recomputation miss the frozen numerical gates. The maximum residual relative difference is **1.1060e-7** against **1e-8**, and the maximum metric absolute difference is **1.0219e-8**. The authoritative status therefore remains `INCONCLUSIVE`; no tolerance is relaxed and discrete agreement is not repackaged as validation success.
+
+The post-open diagnostic also cannot support a positive external result. The K16 reference is absolute-safe in only **417/429** cells and **9/13** complete rigs; the K14 warm primary reaches **428/429** and **12/13**. The primary matches this inadequate reference in **13/13** rigs, but `13/13 matched` is not a pass when neither the reference nor primary clears every absolute gate. Every equal-or-cheaper control reaches **0/13** matched rigs, and the best control reaches only **2/13** absolute-safe rigs.
+
+In plain language, Case 19 does not confirm the fixed v243 transfer claim. Independent numerical closure misses three checks, while reference adequacy and primary absolute accuracy reach only 9/13 and 12/13. The fixed Case 7-to-Case 19 K14 confirmation route closes under the contract: no rerun, tolerance relaxation, Case 13/18 substitution, wall/RSS test, neural rescue, or GPU rental. This does not prove the whole C route impossible; continuation requires new physical information or one physically distinct, uniquely preregistered, falsifiable mechanism.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
+## 2026-08-25：v243 相机 ID 规范化后，实际 K14 warm solver 在已开封 Case 7 全部过门
+
+**为什么做。** v241 只证明 K14 空间具备逐指标必要容量，四项可以使用四组真值可见系数。真正有意义的下一问是：同一个实际未修改 K14 解能否同时通过 field、完整梯度、内部梯度和 observation 门，而且不能被同价或更便宜的经典 control 解释。
+
+**中间为何两次 inconclusive。** v242 和 v242.1 把相机顺序反转后，离散通过/失败判决完全一致，但浮点累加顺序造成的指标、场或恢复残差漂移超过结果前冻结的数值门。两次记录都保留为 inconclusive，没有看到结果后放宽容差。v243 只增加稳定 ASCII 相机 ID 排序，并按同一顺序搬移连续观测块；这个适配器不做数值运算、不改变 dtype，也不增加 `A/A^T`。
+
+**结果。** 因果更新前 FIFO16 warm state 加实际未修改 geometry-Jacobi PCGLS K14 达到 **546/546** 个绝对安全单元、**546/546** 个 K16 同精度单元和 **13/13** 条完整 rig。field / 完整梯度 / 内部梯度 / observation 的 p90 为 **0.278920 / 0.468104 / 0.586947 / 0.037880**，worst 为 **0.309085 / 0.593012 / 0.731493 / 0.054089**。四个同价或更便宜 controls 的同精度完整 rig 全是 **0/13**。
+
+**独立复算。** 正式有效性门 **24/24**、独立检查 **39/39** 全真。正式与独立的场、残差、指标、汇总、replay 和 cache 最大差全部为 **0**；原始与反转相机顺序在规范化后也逐值一致。K14 warm 每条完整 rig 的逻辑账为 `631A+590A^T`，K16 为 `672A+672A^T`，名义总精确调用少 **9.1518%**。
+
+**讲人话。** 这是第一次在当前链上把“空间里可能有方向”推进到“实际未修改 K14 solver 确实同时过门，而且便宜 controls 解释不了”。但 Case 7 已经开封，所以只能称 post-open 机制 headroom。没有独立公开外门、fresh wall/RSS 或真实 BOST，不能称算法突破或资源加速。下一步必须在结果前冻结一条此前未开的独立公开反应流序列，并原样复用适配器、主候选、controls、门和禁止调参规则。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v243 canonical camera IDs make the actual K14 warm solver reproducible and fully passing on opened Case 7
+
+v241 establishes only metric-specific necessary capacity and may use four truth-aware coefficient vectors. The next meaningful question is whether one actual unchanged K14 solution passes field, full-gradient, interior-gradient, and observation gates together, while resisting equal-or-cheaper classical explanations.
+
+v242 and v242.1 preserve identical discrete pass/fail decisions under reversed camera order, but finite summation-order drift in metrics, fields, or restored residuals exceeds the preregistered numerical gates. Both remain inconclusive; no tolerance is relaxed after seeing the result. v243 adds only stable ASCII camera-ID sorting and the corresponding contiguous observation-block reindexing. The adapter performs no arithmetic, changes no dtype, and adds no `A/A^T` call.
+
+The causal pre-update FIFO16 warm state followed by actual unchanged geometry-Jacobi PCGLS K14 reaches **546/546** absolute-safe cells, **546/546** K16-matched cells, and **13/13** complete rigs. Field / full-gradient / interior-gradient / observation p90 is **0.278920 / 0.468104 / 0.586947 / 0.037880**, and worst is **0.309085 / 0.593012 / 0.731493 / 0.054089**. Every equal-or-cheaper control reaches **0/13** matched complete rigs.
+
+All **24/24** formal validity checks and **39/39** independent checks pass. Formal and independent fields, residuals, metrics, summaries, replay, and cache states have maximum difference **0**; canonicalized original and reversed camera orders also agree exactly. The complete-rig ledger is `631A+590A^T` for warm K14 versus `672A+672A^T` for K16, nominally **9.1518%** fewer total exact calls.
+
+This moves the evidence from "the span may contain enough directions" to "the actual unchanged K14 solver passes all gates and cheaper controls do not explain it." Case 7 is already opened, so the result remains post-open mechanism headroom. Without an independent public gate, fresh wall/RSS, or real BOST, it is not an algorithm breakthrough or resource-speed result. The next experiment must freeze a previously unopened independent public reacting-flow sequence and reuse the adapter, primary, controls, gates, and no-retuning rule unchanged.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
+## 2026-08-25：v241 K14 当前 Krylov 空间恢复必要容量，但还没有形成算法
+
+**为什么做。** v240 已经证明，更新前 FIFO16 cache 加当前 K1 方向的完整 rank-17 空间在后续帧上是 0/533。仍需回答一个更窄的问题：在调用账仍同时严格少于 K16 时，加入当前样本自身更多 Krylov 方向，是否能补回空间里缺失的方向。K14 是唯一最大深度，因为后续帧为 `15A+14A^T`；到 K15 时 `A` 已与 K16 一样是 16 次。
+
+**实际做了什么。** 对同一 13 条已开封 Case 7 rig 和 533 个后续帧，在冻结 FIFO16 cache 上加入当前 K1-K14 方向，形成 rank-30 空间。field、完整梯度、内部梯度和 observation 仍分别使用自己的 truth-aware 最优系数，因此这是必要容量上界，不是一个联合三维场或部署系数规则。
+
+**结果。** 必要安全达到 **533/533**，完整 rig **13/13**，四项失败数都是 **0**。field / 完整梯度 / 内部梯度 / observation 的 p50 为 **0.213796 / 0.375984 / 0.437416 / 0.029733**，p90 为 **0.259846 / 0.407378 / 0.483680 / 0.036932**，worst 为 **0.283549 / 0.443281 / 0.527713 / 0.043547**，全部低于冻结绝对门。全部 **2,132** 个设计秩都恰为 30。
+
+**独立复算与勘误。** 正式 SVD 和独立 pivoted QR 的 K14 最小指标、汇总最大差只有 **3.71e-11 / 1.26e-12**，K1 父对照也与封存 v240 一致。第一次验证仍保留为 inconclusive，因为两个不参与科学判决的附加数值诊断使用了不合适的门。v241.1 不重放物理、不打开新数据、不写新科学数组，只对封存数组重算全部单元、rig、秩、嵌套、父对照、调用账和物理检查，最终 **35/35** 项通过。
+
+**讲人话。** v240 说“K1 空间太小”，v241 进一步说“在还严格省两类调用的最大深度 K14，方向本身已经够用”。这是真正的表示层必要余量，推翻了“所有同 cache 的严格节省 Krylov 空间都没容量”的悲观解释。但四个指标可以选四组不同系数，所以还没有证明一个实际 K14 解能同时过门。序列逻辑账 `631A+590A^T` 对 K16 的 `672A+672A^T` 名义少 **9.1518%**，目前不能叫有效调用收益。下一门只检验实际未修改 K14 PCGLS 系数及同价或更便宜 controls。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v241 finds necessary capacity in the current maximal strict-savings K14 span, but not yet an algorithm
+
+v240 shows that the full rank-17 span of the pre-update FIFO16 cache plus the current K1 direction reaches 0/533 later frames. v241 asks a narrower question: while still using strictly fewer exact `A` and `A^T` calls than K16, do more current-sample Krylov directions restore the missing span capacity? K14 is the unique maximal depth because a later frame uses `15A+14A^T`; at K15, the `A` count already equals K16 at 16.
+
+For the same 13 opened Case 7 rigs and 533 later frames, v241 adds current K1-K14 directions to the frozen FIFO16 cache, producing a rank-30 span. Field, full gradient, interior gradient, and observation still receive separate truth-aware optimal coefficients. This is therefore an optimistic necessary-capacity bound, not one jointly feasible 3D field or a deployment-time coefficient rule.
+
+Necessary-safe coverage reaches **533/533** and complete rigs reach **13/13**, with zero failures in every metric. Field / full-gradient / interior-gradient / observation p50 is **0.213796 / 0.375984 / 0.437416 / 0.029733**, p90 is **0.259846 / 0.407378 / 0.483680 / 0.036932**, and worst is **0.283549 / 0.443281 / 0.527713 / 0.043547**, all below the frozen absolute limits. All **2,132** designs have rank 30.
+
+Formal SVD and independent pivoted QR differ by at most **3.71e-11 / 1.26e-12** on K14 metric minima / summaries, and both reproduce the sealed v240 K1 parent. The first validation remains preserved as inconclusive because two additional numerical diagnostics outside the scientific decision used unsuitable gates. v241.1 replays no physics, opens no new data, and writes no new science arrays; it recomputes every sealed cell, rig, rank, nesting relation, parent control, call ledger, and physical check, passing **35/35** checks.
+
+In plain language, v240 says that the K1 span is too small; v241 says that the maximal current K14 depth which still strictly saves both operator types does contain enough necessary directions. This is genuine representation-level headroom and refutes the pessimistic claim that every same-cache strict-savings Krylov span lacks capacity. It does not prove that one actual K14 solution passes all four gates. The sequence ledger `631A+590A^T` versus `672A+672A^T` for K16 is nominally **9.1518%** lower, but cannot yet be called an effective saving. The next gate is limited to actual unchanged K14 PCGLS coefficients and equal-or-cheaper controls.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
+## 2026-08-25：v240 冻结因果可达空间容量为零，失败不只是系数没选好
+
+**为什么做。** v237.2 已确认因果 FIFO16+K1 更新确实改善绝对误差，但 533 个后续帧没有一个达到 K16 同精度。仍需区分两种解释：当前只看 observation 的系数公式没选好，或者 FIFO16 cache 加当前 K1 方向本身就缺少必要方向。v240 直接检验第二种解释。
+
+**实际做了什么。** 对 13 条 Case 7 rig 的每个后续帧，重建更新前的完整 FIFO16 cache，并加入当前原始 K1 方向，得到冻结机制当时能到达的完整 rank-17 线性空间。然后故意给它一个非常宽松的 truth-aware oracle：field、完整梯度、内部梯度和 observation 可以分别选择各自最优系数。四组系数不必相同，因此这只是必要容量下界，不是部署方法，也不证明联合可行。
+
+**结果。** 必要安全后续帧是 **0/533**，完整 rig 是 **0/13**。field、完整梯度、内部梯度和 observation 的逐指标失败数为 **377/533、251/533、309/533、533/533**；对应最小误差 p90 为 **0.475642、0.653669、0.736045、0.301636**。尤其 observation 即使单独挑最优系数也在 533 个后续帧上全部越线；完整 rig 的 matched-observation p90 下界为 **6.3474-7.1059**，而门是 **1.02**。
+
+**独立复算。** 正式实现用 SVD，完全独立实现自行重建 cache 与方向并用 pivoted QR。全部 **2,132** 个逐指标设计在两种实现中数值秩都恰为 17；最小指标和汇总最大差为 **2.22e-16 / 3.55e-15**，相机换序差不超过 **2.22e-16**，最终 **20/20** 项检查全真。
+
+**讲人话。** 这次把失败原因从“某个系数规则不够好”推进为“冻结机制能拿到的这些方向本身不够”。更大的 CNN 或 FNO 只能更复杂地选择同一批方向，不能补出空间里没有的方向，所以不授权大模型或 GPU 挽救。判决 `FAIL_CASE7_CAUSAL_REACHABLE_SPAN_NECESSARY_CAPACITY_V240` 关闭的是更新前 FIFO16+当前 K1 的完整可达线性空间，不是整个 C 路线，也不是空间外数学不可能。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v240 closes the frozen causal reachable span, not merely its coefficient rule
+
+v237.2 confirms that causal FIFO16-plus-K1 updates improve absolute error but no later frame matches K16. v240 distinguishes a weak coefficient rule from an inadequate direction span. For every later frame in 13 Case 7 rigs, it rebuilds the full pre-update FIFO16 cache, adds the current raw K1 direction, and audits the resulting rank-17 span.
+
+The audit is deliberately optimistic: field, full-gradient, interior-gradient, and observation errors may each use their own truth-aware optimal coefficients. These four coefficients need not define one field, so the test provides only necessary capacity, not a deployable method or joint feasibility.
+
+Necessary-safe coverage is **0/533 later frames** and **0/13 complete rigs**. Metric-specific failures are **377/533, 251/533, 309/533, and 533/533**. Minimum-error p90 values are **0.475642, 0.653669, 0.736045, and 0.301636**. Observation is decisive: its own oracle lower bound fails every later frame, while complete-rig matched-observation p90 lower bounds range from **6.3474 to 7.1059** against a **1.02** limit.
+
+Formal SVD and an independent cache rebuild with pivoted QR agree exactly on rank 17 for all **2,132** metric designs. Maximum metric-minimum and summary differences are **2.22e-16 / 3.55e-15**, camera permutation changes a minimum by at most **2.22e-16**, and all **20/20** checks pass.
+
+In plain language, the blocker is no longer just how coefficients are chosen. The frozen mechanism's available directions lack necessary capacity. A larger CNN or FNO cannot create directions absent from this span, so no neural or GPU rescue is authorized. `FAIL_CASE7_CAUSAL_REACHABLE_SPAN_NECESSARY_CAPACITY_V240` closes the pre-update FIFO16-plus-current-K1 reachable span, not the full C route and not mathematical possibility outside that span.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
+## 2026-08-25：v237.2 确认因果 Krylov 回收“有作用，但远未达到同精度”
+
+**为什么做。** v236、v238、v239 检验的是跨 rig 固定低秩表示，v237 则问了一个物理上不同的问题：能否把上一时刻已经付费得到的 Krylov 方向作为因果 cache，在下一帧只追加一个新方向，从而用很少的新算子调用跟住充分 K16 重建。第一次独立验证重放了全部单元，但因为 anchor 子集误用了比完整独立场门更严的容差，结果保持 inconclusive；这次只解决该验证矛盾。
+
+**实际做了什么。** 每条 Case 7 rig 的第零帧用 geometry-Jacobi PCGLS-K16 建立十六个场方向及观测投影方向，再整理成观测空间正交 FIFO16。后续每帧只用当前观测投影进 cache，运行一次未修改 PCGLS，然后把当前 K1 方向追加并丢掉最老方向。正式与第一次独立实现的科学数组均保持封存。v237.2 不重建物理、不重跑候选、不改写数组，而是直接重算 **2,184** 个 formal-independent 场差、十三个 anchor、指标/缓存差、调用账和判决。
+
+**结果。** 动态 FIFO16 主候选通过绝对门 **148/546**，而同调用账的固定首帧 cache、上一候选场和 Zero-K2 分别只有 **14/546、13/546、0/546**。全部 **533/533** 个非锚点 cache 更新均被接纳，最大 forward consistency 与观测正交误差只有 **2.30e-16 / 4.88e-15**。所以因果方向更新确实改善了绝对误差，这不是“完全没有信号”。
+
+但相对充分 K16 reference，matched 单元只有 **13/546**，恰好全是十三个首帧锚点；后续 **0/533**，绝对门和 matched 门的完整 rig 都是 **0/13**。field / full-gradient / interior-gradient / observation 的 matched p90 比值为 **1.809275 / 1.699084 / 1.577655 / 7.848719**，全部高于完整 rig p90 门 **1.02**。
+
+**验证边界。** 第一次独立实现通过 **20/21** 项；唯一失败把 anchor 限在 `1e-10`，而同一合同对所有独立场差已冻结为 `2e-9`。实际 anchor / 全场最大差为 **7.72e-10 / 1.58e-9**。v237.2 明确是结果后的纯验证勘误，只继承原有 `2e-9` 场门，不根据结果另选阈值。最终 **26/26** 项检查全真，指标与 cache 最大差 **1.75e-9 / 7.77e-16**，调用账逐值一致，旧 inconclusive 证据保留。
+
+**讲人话。** 这个 cache 不是没用，它把绝对安全单元提高了十倍以上；但它没能让任何后续帧追上 K16。整条序列 `98A+57A^T` 对 K16 的 `672A+672A^T` 名义少 **88.47%**，由于同精度失败，不能算有效调用节省，更不能称速度突破。判决是 `FAIL_CASE7_CAUSAL_KRYLOV_RECYCLING_V237`，只关闭冻结的 FIFO16+K1 更新规则，不允许通过增加 rank、深度、reset 搜索或大模型挽救，也不关闭整条 C 路线。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v237.2 confirms that causal Krylov recycling helps but remains far from matched accuracy
+
+v236, v238, and v239 test fixed cross-rig low-rank representations. v237 asks a physically different question: can already-paid Krylov directions be carried causally into the next frame so that one new solver direction tracks an adequate K16 reconstruction? The first independent implementation replays every cell but remains inconclusive because its anchor subset uses a tighter tolerance than the contract's full independent-field gate. v237.2 resolves only that validation inconsistency.
+
+Each Case 7 rig uses frame-zero geometry-Jacobi PCGLS-K16 to build sixteen field and projected directions, then makes them measurement-orthonormal in a FIFO16 cache. Every later frame projects the current observation into the cache, runs one unchanged PCGLS iteration, appends the current K1 direction, and drops the oldest direction. Formal and first-independent scientific arrays remain sealed. v237.2 does not rebuild physics, rerun candidates, or rewrite arrays; it directly recomputes **2,184** formal-independent field comparisons, thirteen anchors, metric/cache differences, call ledgers, and the decision.
+
+The dynamic FIFO16 primary clears the absolute gate in **148/546** cells, versus **14/546, 13/546, and 0/546** for same-ledger fixed-frame-zero cache, previous-field, and Zero-K2 controls. All **533/533** non-anchor cache updates are accepted, with maximum forward-consistency and measurement-orthogonality errors of **2.30e-16 / 4.88e-15**. Causal direction updates therefore have a real absolute-error effect.
+
+However, only **13/546** cells match the adequate K16 reference, exactly the thirteen frame-zero anchors. Later frames reach **0/533**, and both absolute and matched complete-rig counts are **0/13**. Matched p90 ratios for field / full gradient / interior gradient / observation are **1.809275 / 1.699084 / 1.577655 / 7.848719**, all above the complete-rig p90 limit **1.02**.
+
+The first independent implementation passes **20/21** checks. Its only failure applies `1e-10` to anchors even though the same contract already freezes `2e-9` for all independent field comparisons; actual anchor / full-field maxima are **7.72e-10 / 1.58e-9**. v237.2 is explicitly a post-result validation-only erratum that inherits the existing field gate rather than choosing a threshold from the result. All final **26/26** checks pass, metric/cache differences are at most **1.75e-9 / 7.77e-16**, call ledgers are exact, and the original inconclusive record is preserved.
+
+In plain language, the cache is not useless: it raises absolute-safe coverage by more than an order of magnitude. It still fails to make any later frame match K16. The sequence ledger is `98A+57A^T` versus `672A+672A^T`, nominally **88.47%** fewer calls, but matched-accuracy failure means this is not an effective saving or speed breakthrough. The verdict `FAIL_CASE7_CAUSAL_KRYLOV_RECYCLING_V237` closes only frozen FIFO16-plus-K1, with no rank, depth, reset-search, or larger-model rescue. It does not close the full C route.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
+## 2026-08-25：v239 排除“跨 rig 失配只来自 Jacobi 几何尺度”的解释
+
+**为什么做。** v236 已经证明物理场坐标中的全局 rank-64 尾差空间不能跨 rig 迁移，v238 又排除了固定空间局部化。仍有一个 solver-native 解释值得直接证伪：每条 rig 的 PCGLS 使用不同几何 Jacobi 预条件器，也许尾差在物理场中不共享，但转到对应的对称变量后会共享。
+
+**实际做了什么。** 每次完整留出一条 rig，把其他 `12x42=504` 个 `8192` 维尾差分别除以其冻结 Jacobi 逆对角的平方根，形成 **504x8192** 对称坐标训练矩阵；正式实现用样本 Gram 分解建立未中心化 rank 64 空间，再用留出 rig 的几何映回物理场。留出真值只用于最优投影，所以仍是容量上界。独立实现不导入正式实现，对全部 13 个训练矩阵直接做 economy SVD，并独立重建 Jacobi 映射与物理子空间。
+
+**结果。** Jacobi 规范化仍为 **0/13** 完整 rig。全局 p50 / p90 / worst 为 **0.644473 / 0.734855 / 0.813573**，对比物理场全局 rank 64 的 **0.645458 / 0.731692 / 0.805609**：中位数只改善 **0.000985**，但 p90 / worst 分别恶化 **0.003164 / 0.007964**。全帧 p90 在 6 条 rig 改善、7 条恶化，后期帧 p90 则在 **13/13** 条 rig 上全部恶化。
+
+**验证边界。** 前两次 validator 都在任何独立 SVD、残差或科学评分前 fail-closed：一次把数学等价的 Jacobi 归约误要求为逐字节同 hash，另一次又要求 scalar floor 逐位相等。两份失败记录保留。v239.2 只把这项检查改为原先冻结的数值容差，没有重跑或修改正式输出、候选、fold、rank 与门。最终 **18/18** 项检查全真；Jacobi 逆对角最大相对差 **9.22e-17**，残差与汇总最大差 **1.12e-14 / 1.02e-14**，相机乱序最大相对差 **4.54e-16**。
+
+**讲人话。** 把不同相机 rig 的尾差换算到“各自 PCGLS 更自然的坐标”以后，它们还是没有变成一个能跨 rig 共用的 64 维规律，而且最关键的后期尾部统一变差。判决是 `FAIL_CASE7_JACOBI_CANONICAL_TAIL_SUBSPACE_CAPACITY_V239`。关闭的是 symmetric geometry-Jacobi rank-64 规范化，不是整条 C 路线，也不是数学不可能证明；下一机制不能再只是另一种固定低秩坐标映射。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v239 rejects Jacobi geometry scale as the sole source of cross-rig mismatch
+
+v236 shows that a global physical-field rank-64 tail space does not transfer across rigs, and v238 rejects fixed spatial localization. One solver-native explanation remains directly falsifiable: each rig uses a different geometry-Jacobi PCGLS preconditioner, so perhaps the tails become shared in their corresponding symmetric variables even though they are not shared in the physical field.
+
+Every fold holds out one complete rig. The other `12x42=504` tails, each of dimension `8192`, are divided by the square root of their frozen Jacobi inverse diagonals to form a **504x8192** symmetric-coordinate training matrix. The formal implementation uses a sample-Gram decomposition to build an uncentered rank-64 space and maps it back through the held-out rig geometry. Held-out truth supplies only the optimal projection, so this remains a capacity upper bound. The independent implementation imports no formal implementation, directly computes an economy SVD for all 13 training matrices, and independently rebuilds the Jacobi maps and physical spans.
+
+Jacobi canonicalization still reaches **0/13** complete rigs. Global p50 / p90 / worst is **0.644473 / 0.734855 / 0.813573**, versus **0.645458 / 0.731692 / 0.805609** for physical global rank 64. The median improves by only **0.000985**, while p90 / worst worsens by **0.003164 / 0.007964**. All-frame p90 improves on six rigs and worsens on seven; late-frame p90 worsens on **13/13** rigs.
+
+The first two validator attempts fail closed before any independent SVD, residual, or scientific scoring because they incorrectly require bit-identical Jacobi reductions and then a bit-identical scalar floor. Both records remain preserved. v239.2 only applies the originally frozen numeric tolerance to that validation step; it neither reruns nor changes the formal output, candidate, folds, rank, or gates. All final **18/18** checks pass, with maximum inverse-diagonal relative difference **9.22e-17**, residual / summary differences **1.12e-14 / 1.02e-14**, and camera-permutation relative difference **4.54e-16**.
+
+In plain language, moving each rig into its own PCGLS-native coordinate does not reveal a common 64-dimensional cross-rig rule, and the critical late tail becomes uniformly worse. The verdict is `FAIL_CASE7_JACOBI_CANONICAL_TAIL_SUBSPACE_CAPACITY_V239`. It closes symmetric geometry-Jacobi rank-64 canonicalization, not the full C route, and is not a proof of mathematical impossibility. The next mechanism cannot be another fixed low-rank coordinate map.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
+## 2026-08-25：v238 证明简单固定空间局部性不是 Case 7 缺失结构
+
+**为什么做。** v236 已经排除跨 rig 共享的全局 rank-64 尾差空间，但它还留下一个具体解释：也许尾差本来是局部的，全局 SVD 把不同位置的变化混在了一起。v238 因此不增加总维数，也不读取新工况，只把同一个已开封 Case 7 尾差空间改成固定局部分块，直接检验这个解释。
+
+**实际做了什么。** 三维 `32x16x16` 尾差固定切成互不重叠的 `2x2x2` 八个 octant，每块只保留 rank 8，所以总维数仍是 **64**。每次完整留出一个 rig，每块只用其他 12 条 rig 的 **504** 个局部尾差建立基；留出真值只用于最优投影系数，因此这是容量上界。正式实现用分块样本 Gram 分解，独立实现对全部 **8x13** 个 **504x1024** 训练块直接做 SVD；**12/12** 项检查全真，组合残差、分块残差和汇总最大差只有 **3.33e-16 / 8.88e-16 / 2.22e-16**。
+
+**结果。** 固定八分块仍是 **0/13**。全局 p50 / p90 / worst 从 v236 全局 rank 64 的 **0.645458 / 0.731692 / 0.805609** 恶化为 **0.667501 / 0.751069 / 0.833760**。更直接地说，13 条留出 rig 的全帧 p90 和后期 p90 全部变差，不存在“局部块至少救回一部分 rig”的信号。
+
+**讲人话。** 把 64 个方向平均拆进八个固定小盒子，没有把跨相机 rig 的尾差结构理顺，反而让每条 rig 都更难拟合。判决为 `FAIL_CASE7_OCTANT_TAIL_SUBSPACE_CAPACITY_V238`：fixed spatial locality 这一简单解释关闭，不增加每块 rank、不结果后改块，也不用更大模型挽救。它不排除几何连续、非线性或 solver-native 机制，不是部署算法、调用节省、wall/RSS、外部泛化或真实 BOST 证据。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v238 rejects simple fixed spatial locality as the missing Case 7 structure
+
+v236 rejects a global rank-64 tail space shared across rigs, but leaves one concrete explanation: perhaps the tail is intrinsically local and global SVD mixes changes at different positions. v238 adds no dimension and opens no new condition. It tests that explanation directly on the same opened Case 7 tails.
+
+The `32x16x16` 3D tail is divided into eight fixed, non-overlapping `2x2x2` octants. Each block retains rank 8, so the total dimension remains exactly **64**. Every fold holds out one complete rig and constructs each block basis from the **504** local tails in the other twelve rigs. Held-out truth supplies only optimal projection coefficients, making this a capacity upper bound. Formal block-Gram decomposition and independent direct SVD over all **8x13** **504x1024** training blocks agree: all **12/12** checks pass, with maximum combined-residual, block-residual, and summary differences of **3.33e-16 / 8.88e-16 / 2.22e-16**.
+
+Fixed octants still reach **0/13** complete rigs. Global p50 / p90 / worst worsens from **0.645458 / 0.731692 / 0.805609** for the v236 global rank-64 space to **0.667501 / 0.751069 / 0.833760**. Both all-frame and late-frame p90 are worse on every one of the 13 held-out rigs.
+
+In plain language, distributing the same 64 directions across eight fixed local boxes does not reveal transferable structure; it makes every rig harder to fit. The decision is `FAIL_CASE7_OCTANT_TAIL_SUBSPACE_CAPACITY_V238`: the simple fixed spatial-locality explanation closes without increasing block rank, adapting blocks after results, or invoking a larger model. Geometry-continuous, nonlinear, and solver-native mechanisms remain untested. No deployment algorithm, call saving, wall/RSS result, external generalization, or real-BOST claim is established.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
+## 2026-08-25：v236 发现 Case 7 尾差只在混合 rig 时显得低秩
+
+**为什么做。** v235 已经前瞻确认固定 Direct Low64 K11 在 Case 7 的 matched-accuracy 是 **330/546、0/13**。失败从 frame 25 开始，并从 frame 26 起同时覆盖 13 条 rig；把全部 rig 混合后做谱分解，90% / 95% / 99% 能量只需 18 / 24 / 74 个方向。这提示“也许只要学习一个固定低秩尾差修补”值得被直接证伪，但这些联合谱数字已经看过，所以 v236 只能是开封后机制归因。
+
+**实际做了什么。** 我把尾差固定定义为合格 K16 reference 场减去 Low64-K11 场。每次留出一条完整 rig，只用其余 **12×42=504** 个尾差构造 rank 16 / 32 / 64 子空间，并用留出 rig 的真值系数做 oracle 投影。正式实现使用样本 Gram 特征分解，完全独立实现对每个 **504×8192** 矩阵直接做 economy SVD。13 个 fold 全部重算，逐单元相对残差与汇总最大差只有 **6.66e-15 / 5.77e-15**。
+
+**结果。** 固定 Low64 控制、rank 16、rank 32、rank 64 都是 **0/13**。唯一 primary rank 64 的全局 p50 / p90 / worst 为 **0.645458 / 0.731692 / 0.805609**，而冻结门是 p90 不高于 **0.316228**、worst 不高于 **0.500000**。最差 rig 的后期帧 p90 / worst 仍为 **0.628163 / 0.630998**。扩大到 rank 64 没有接近通过。
+
+**讲人话。** 所有 rig 混在一起时，尾差确实看起来有紧凑的联合谱；但一旦拿走目标 rig，它最重要的修正方向并不在其余 rig 学到的固定空间里。判决为 `FAIL_CASE7_LORO_TAIL_SUBSPACE_CAPACITY_V236`：固定全局低秩尾差修补解释关闭，不再扩大 rank 或用更大预测器挽救。这个结果不证明几何局部、坐标条件或非线性机制都不可能，也不是部署算法、调用节省、wall/RSS、外部泛化或真实 BOST 证据。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v236 finds that the Case 7 tail is low-rank only when rigs are mixed
+
+v235 prospectively establishes that fixed Direct Low64 K11 reaches only **330/546 matched cells and 0/13 complete rigs** on Case 7. Failures begin at frame 25 and affect all 13 rigs from frame 26 onward. A joint all-rig decomposition appears compact, requiring only 18 / 24 / 74 directions for 90% / 95% / 99% energy, but those joint-spectrum values were already visible. v236 is therefore explicitly a post-open mechanism attribution.
+
+The tail is fixed as the qualified K16 reference field minus the Low64-K11 field. Each fold holds out one complete rig and builds rank-16, rank-32, and rank-64 subspaces from the other **12×42=504** tails. Held-out truth supplies oracle projection coefficients, so this is a capacity test rather than a deployment predictor. The formal implementation uses a sample-Gram eigendecomposition; the fully independent implementation applies direct economy SVD to every **504×8192** matrix. Maximum per-cell residual and summary differences are **6.66e-15 / 5.77e-15**.
+
+Fixed Low64 and all three leave-one-rig ranks reach **0/13** complete rigs. The unique rank-64 primary has global p50 / p90 / worst residual **0.645458 / 0.731692 / 0.805609**, against frozen p90 / worst limits **0.316228 / 0.500000**. The exact verdict is `FAIL_CASE7_LORO_TAIL_SUBSPACE_CAPACITY_V236`: a fixed global low-rank tail-repair explanation is closed without rank expansion or larger-predictor rescue. Geometry-local, coordinate-conditioned, or nonlinear mechanisms are not ruled out. No deployment algorithm, call saving, wall/RSS result, external generalization, or real-BOST claim is established.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `resource_speedup=false`, `real_bost=false`.
+
+## 2026-08-25：v235/v235.1 前瞻 Case 7 否定固定 Direct Low64 K11 迁移
+
+**为什么做。** v234 在已开封 Case 12 上说明固定 Direct Low64 warm + 未修改 PCGLS K11 本身全过，失败来自额外 fallback。v235 因此不再调 fallback，而是在读取新数值前把固定 Direct K11 单独冻结，并在当时全局未打开的 BLASTNet Case 7 上做一次 13 rig x 42 帧的前瞻检验。
+
+**实际做了什么。** 正式运行完成 **546/546** 个单元和 **18/18** 项有效性检查。完全独立第二实现重建全部场、观测、四项指标、逐 rig 尾部与调用账。第一次验证的 28 项检查有 26 项为真；另两项只因为数学等价的 Jacobi 重建不是逐字节相同 hash 而失败，所以该记录原样保留为 inconclusive。随后在查看差值前冻结纯几何、0A+0A^T 的 v235.1 数值勘误，不读取 Case 7 密度或科学数组，也不重跑候选。Jacobi 最大相对差只有 **2.18e-16**，17 项检查都满足预期极性，最终恢复独立科学判决。
+
+**结果。** 合格 K16 reference 和固定 Direct K11 的绝对门都是 **546/546、13/13**。但 Direct K11 相对 K16 的 matched-accuracy 只有 **330/546、0/13**；216 个失败中，field / full-gradient / interior-gradient / observation 分别越线 **209 / 204 / 196 / 216** 次，196 个单元四项同时失败。四个冻结的 11A+11A^T 经典对照也都是 **0/13**。Direct 的逻辑账是 **12A+11A^T**，K16 是 **16A+16A^T**，名义总调用少 28.125%；由于匹配精度失败，这不构成有效调用节省，也没有授权 wall/RSS。
+
+**讲人话。** 在 Case 12 上“少算几步也够好”，没有迁移成 Case 7 上“少算几步仍等价于认真算到 K16”。固定 Direct K11 自己看着安全，但 none of the 13 rigs 守住与 K16 的完整匹配门。判决为 `FAIL_CASE7_LOW64_K11_PROSPECTIVE_CONFIRMATION_V235`。当前固定 Direct Low64 K11 迁移路线关闭；不事后调深度、basis、阈值或 fallback，也不用更大模型挽救。保留的未打开工况只留给物理上真正不同、另行预注册的机制。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v235/v235.1 rejects prospective fixed Direct Low64 K11 transfer on Case 7
+
+v234 showed on opened Case 12 that fixed Direct Low64 warm plus unchanged PCGLS K11 passes while the added fallback creates failures. v235 therefore freezes fixed Direct K11 before reading a new condition and tests it once on then-unopened BLASTNet Case 7, covering 13 rigs, 42 frames per rig, and 546 cells.
+
+The formal run completes **546/546** cells and all **18/18** validity checks. A fully independent second implementation rebuilds every field, observation, metric, rig tail, and call ledger. The first validation has 26 of 28 checks true; two fail only because mathematically equivalent Jacobi reconstructions are not byte-identical, so that record remains inconclusive. A geometry-only, 0A+0A^T v235.1 erratum is frozen before inspecting those differences. It reads no Case 7 density or scientific arrays and reruns no candidate. Maximum Jacobi relative difference is **2.18e-16**, and all 17 checks meet their expected polarity, recovering the final independent decision.
+
+Both the qualified K16 reference and fixed Direct K11 are absolute-safe in **546/546 cells and 13/13 rigs**. Yet matched accuracy to K16 holds in only **330/546 cells and 0/13 rigs**. Field, full-gradient, interior-gradient, and observation violations affect **209 / 204 / 196 / 216** of the 216 failures, with 196 cells failing all four metrics. All four frozen equal-or-cheaper controls also reach **0/13**. Direct uses **12A+11A^T** versus **16A+16A^T** for K16, a nominal 28.125% call reduction, but failed matched accuracy makes that reduction ineffective and blocks wall/RSS testing.
+
+In plain language, “fewer steps are good enough on Case 12” does not transfer to “fewer steps remain equivalent to K16 on Case 7.” None of the 13 rigs preserves the full matched gate. The verdict is `FAIL_CASE7_LOW64_K11_PROSPECTIVE_CONFIRMATION_V235`. The current fixed Direct Low64 K11 transfer route closes with no post-open depth, basis, threshold, fallback, or larger-model rescue. Unopened conditions remain reserved for a separately preregistered, physically different mechanism.
+
+`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+## 2026-08-25：v234 找到 Case 12 策略失败的直接原因：fallback 换坏了三个正确结果
+
+**为什么做。** v230.1 已经打开 Case 12，v229 的 dual-PRESS 策略结果也已经可见。v234 不把它冒充新外门，只做 post-open 因果归因：比较固定 Direct Low64 warm + 未修改 PCGLS K11、Zero geometry-Jacobi PCGLS K16 和固定 dual-PRESS 接受/回退策略，判断失败到底来自 direct 臂还是 fallback。
+
+**实际做了什么。** 正式与完全独立第二实现各自重建 13 个 rig、每 rig 46 帧、598 个单元的场、观测、四项精度门、逐 rig 尾部与逻辑调用账。独立 `14/14` 项检查全真；归因行和 K1-K16 深度表逐项一致，汇总最大数值差为 **1.47e-10**。
+
+**结果。** 固定 Direct K11 达到 **598/598、13/13**；Zero K16 为 **594/598、11/13**；dual-PRESS 策略为 **595/598、11/13**。策略接受 **437** 个、拒绝 **161** 个，但 161 个被拒绝的 direct 结果全部本来就安全。3 个单元只在回退 K16 后失败，恰好解释策略全部 3 个失败；接受 direct 还救回 1 个 K16 不安全单元。Direct K11 每单元为 **12A+11A^T**，策略平均为 **13.076923A+12.346154A^T**，全批次 direct 少 **644A+805A^T**。
+
+**讲人话。** 这次不是“再换一个 reference”，而是把旧策略的失败拆开：固定 K11 本身全过，额外 fallback 既更贵又制造了全部失败。判决为 `POST_OPEN_CASE12_DIRECT_LOW64_K11_CONTRACT_DOMINATES_FIXED_DUAL_PRESS_FALLBACK_V234`。当前 v229 fallback 壳关闭；下一步只能把固定 Direct K11 单独结果前冻结，在下一个全局未打开合格条件上验证。Case 12 已开封，所以仍不是外部泛化、wall/RSS 或算法突破。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v234 finds the direct cause of the Case 12 policy failure
+
+Case 12 and the v229 policy outcomes were already opened, so v234 is explicitly a post-open causal attribution rather than a new external gate. Formal and fully independent implementations rebuild all 598 cells across 13 rigs, including fields, observations, four accuracy gates, rig tails, and logical calls. All **14/14** independent checks pass; attribution and K1-K16 depth rows agree exactly, with a maximum summary difference of **1.47e-10**.
+
+Fixed Direct Low64 warm plus unchanged PCGLS K11 reaches **598/598 strict-safe cells and 13/13 complete rigs**. Zero K16 reaches **594/598 and 11/13**, while the fixed dual-PRESS policy reaches **595/598 and 11/13**. The policy accepts **437** cells and rejects **161**, yet all 161 rejected direct results are already safe. Fallback creates all three policy failures, while direct acceptance rescues one K16-unsafe cell. Direct uses **12A+11A^T** per cell versus the policy mean of **13.076923A+12.346154A^T**, saving **644A+805A^T** over the batch.
+
+In plain language, fixed K11 passes; the added fallback is both more expensive in the logical ledger and responsible for every failure. The decision is `POST_OPEN_CASE12_DIRECT_LOW64_K11_CONTRACT_DOMINATES_FIXED_DUAL_PRESS_FALLBACK_V234`. The current v229 fallback shell closes. The next valid step is a separately preregistered fixed-Direct-K11 test on the next globally unopened eligible condition. This result is not external generalization, wall/RSS speedup, or an algorithm breakthrough.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `resource_speedup=false`, `real_bost=false`.
+
+## 2026-08-25：v233/v233.1 证明投影拟合好不等于三维场正确
+
+**为什么做。** v232.1 已经关闭会放大浮点差异的 deep-PCGLS reference 壳，但这还没有回答“换成稳定的绝对求解后，Case 12 reference 能不能合格”。v233 因此只检验一个结果前固定的 reference：零均值 DCT1024、observation-only machine ridge、同一 13 个 rig、598 个单元和同一组 field / full-gradient / interior-gradient / observation 绝对门。
+
+**实际做了什么。** 正式实现用薄 SVD，独立实现显式重建余弦基、逐列调用物理 forward，再用 Gram/Cholesky 求解。独立程序重算全部 598 个单元，`17/17` 项检查全真；正式与独立场差最大 **1.25e-13**，指标差最大 **6.22e-14**，归一化驻点残差最大 **1.24e-16**。这次数值证书通过，不能再把失败归因于求解器漂移。
+
+**结果。** observation p90-higher 为 **0.133957**，低于冻结 **0.20** 门；但 field / full-gradient / interior-gradient p90-higher 为 **0.820180 / 1.231545 / 0.779164**，分别高于 **0.50 / 0.75 / 0.75**。严格安全单元是 **0/598**，完整 rig 是 **0/13**。
+
+**讲人话。** 这个稳定 reference 能很好解释九相机二维观测，却给出错误的三维场和梯度。二维投影吻合不能替代三维真值门。判决为 `FAIL_INADEQUATE_CASE12_ABSOLUTE_SPECTRAL_REFERENCE_V233`：固定 DCT1024 + machine-ridge reference 关闭，不调 rank、ridge、基、截断或门。它没有裁决 dual-PRESS，也没有建立 exact-call、wall/RSS、外部泛化或真实 BOST 成功。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v233/v233.1 shows that a projection fit does not certify the 3D field
+
+v232.1 closes the deep-PCGLS reference shell that amplifies roundoff differences, but it does not answer whether a numerically stable absolute solve can qualify the Case 12 reference. v233 freezes one such reference before results: zero-mean DCT1024, an observation-only machine ridge, the same 13 rigs and 598 cells, and the same absolute field, full-gradient, interior-gradient, and observation gates.
+
+The formal implementation uses a thin SVD. The independent implementation explicitly rebuilds the cosine basis, applies the physical forward map column by column, and solves with Gram/Cholesky. All **17/17** independent checks pass across all 598 cells. Maximum formal-independent field and metric differences are **1.25e-13** and **6.22e-14**, with maximum normalized stationarity **1.24e-16**. Numerical instability is no longer a viable explanation.
+
+Observation p90-higher is **0.133957**, below the frozen **0.20** gate. Field, full-gradient, and interior-gradient p90-higher are **0.820180 / 1.231545 / 0.779164**, above **0.50 / 0.75 / 0.75**. The result has **0/598** strict-safe cells and **0/13** complete rigs. The exact verdict is `FAIL_INADEQUATE_CASE12_ABSOLUTE_SPECTRAL_REFERENCE_V233`: projection fit does not certify the 3D field. The fixed DCT1024 machine-ridge reference closes without rank, ridge, basis, cutoff, or gate retuning. Dual-PRESS, exact calls, wall/RSS, external generalization, and real BOST remain unadjudicated.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `resource_speedup=false`, `real_bost=false`.
+
+## 2026-08-25：v232.1 把问题收窄到深层 PCGLS 的浮点稳定性
+
+**为什么做。** v231 发现相机块顺序会让深层 PCGLS 轨迹分叉，因此没有资格从 K1-K64 选 reference 深度。v232 只修复这一个数值表示问题：在组装算子、Jacobi 和未修改 PCGLS 之前，按相机 ID 规范排序完整观测块；598 个单元、K1-K64、精度门与 `1e-8` 数值门全部不变。
+
+**实际做了什么。** v232.1 的独立程序不使用正式结果生成科学数组，而是从同一封存的规范观测重建 13 个 rig、598 个单元与每个单元 K1-K64 的场、残差和指标。两套实现各自的相机换序观测、Jacobi、场、残差和指标差都是 **0**，说明规范排序确实修好了 v231 的换序缺口。
+
+**结果。** 两边都各自暂定得到 K17 的 **598/598 个严格单元和 13/13 个完整 rig**，但跨实现数值合同仍失败。K16 场差为 **3.278e-9**；K17 第一次越过 `1e-8`，达到 **1.67429e-8**；更深层的最大场差为 **1.17927e-2**，指标差为 **8.61528e-3**。所以 K17 只是两次失效执行各自给出的 provisional 结果，不能释放；`selected_depth=null`。
+
+**讲人话。** 封存后根因诊断把问题收窄了：正式实现用 `sum(rows*rows)` 构造 Jacobi，独立实现用数学等价的 `einsum`。13 个 rig 的 Jacobi inverse 最大相对差只有 **2.24977e-16**，但深层 PCGLS 会放大它。强制两套 solver 用同一 Jacobi 时，检查的各个深度都逐值一致。最终判决是 `INCONCLUSIVE_INVALID_CASE12_CANONICAL_PCGLS_REFERENCE_DEPTH_V232_1`：关闭当前 deep-PCGLS reference 壳，不做第三次同壳修复、不放宽容差、不事后换深度。这不证明 K64 内无合格 reference，也没有判 dual-PRESS 成功或失败。
+
+`algorithm_breakthrough=false`、`paper_success=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English checkpoint: v232.1 narrows the blocker to deep-PCGLS floating-point stability
+
+v232 preregisters canonical camera-ID ordering before operator, Jacobi, and unchanged-PCGLS assembly while preserving all 598 cells, K1-K64 checkpoints, accuracy gates, and the `1e-8` numerical contract. v232.1 independently rebuilds all 598 x 64 fields, residuals, and metrics from the same sealed canonical observations. Camera-permutation differences in observations, Jacobi states, fields, residuals, and metrics are exactly **zero** in both implementations, so the canonicalization itself works.
+
+Both executions provisionally derive K17 with **598/598 strict cells and 13/13 complete rigs**, but the cross-implementation contract fails. The K16 field difference is **3.278e-9**; K17 is the first depth above `1e-8`, at **1.67429e-8**; deeper states reach a maximum field difference of **1.17927e-2** and metric difference of **8.61528e-3**. K17 therefore cannot be released, and `selected_depth=null`.
+
+A post-seal diagnostic localizes the instability to floating-point reduction in the Jacobi diagonal. Formal `sum(rows*rows)` and independent `einsum` produce inverse diagonals differing by only **2.24977e-16** relatively, yet deep PCGLS amplifies that perturbation. When both solvers receive the same Jacobi, the checked fields agree value for value. The exact verdict is `INCONCLUSIVE_INVALID_CASE12_CANONICAL_PCGLS_REFERENCE_DEPTH_V232_1`. The current deep-PCGLS reference shell closes without a third same-shell repair, tolerance relaxation, or post-result depth substitution. This does not prove that no adequate reference exists through K64 and does not adjudicate dual-PRESS.
+
+`algorithm_breakthrough=false`, `paper_success=false`, `resource_speedup=false`, `real_bost=false`.
+
+## 2026-08-25：v231 把 K1-K64 全部算完，但不能从失效的数值门里挑一个深度
+
+**为什么做。** v230.1 证明 Case 12 的 K16 reference 在四个内部梯度单元上先失败，因此 dual-PRESS 策略没有资格进入比较。v231 只问一个更基础的问题：保持同一已开封工况、未修改 PCGLS、Jacobi 预条件与全部精度门，K1-K64 中是否存在一个对 598 个单元都合格的最小全局深度。
+
+**实际做了什么。** 正式程序和完全独立第二实现都对 13 个 rig、每 rig 46 帧一次运行至 K64，保存并检查每个深度；没有逐单元选 K，也没有事后放宽门。两套实现都完成了 **598 x 64** 个检查点。K16 父证据的场、残差、指标和调用账逐值一致，观测差最多 **8.88e-16**；独立物理残差闭合到 **8.35e-14**。
+
+**结果。** 结果前冻结的相机换序 `1e-8` 数值门失败。正式实现的场/残差/指标最大差为 **1.085e-2 / 3.446e-1 / 8.402e-3**；独立实现为 **8.711e-3 / 3.510e-1 / 7.006e-3**。两套完整轨迹之间的场和指标差也达到 **1.054e-2 / 8.377e-3**。因此不能打开 K1-K64 科学数组去选一个好看的深度，`selected_depth=null`。
+
+**讲人话。** 这不是“算到 K64 也没有合格 reference”，而是“当前深层 PCGLS 对相机块浮点求和顺序敏感，导致这个问题还不可裁决”。精确判决是 `INCONCLUSIVE_INVALID_CASE12_PCGLS_REFERENCE_DEPTH_V231`。下一步只能在结果盲的前提下先规范相机 ID 排序，再原样重做一次相同 K1-K64 门；这只是修复数值表示，不是算法进展。策略、安全、调用收益与 wall/RSS 继续封存，`algorithm_breakthrough=false`。
+
+### English summary
+
+v231 completes every K1-K64 checkpoint for all **598** Case 12 cells in both the formal and fully independent implementations. K16 parent fields, residuals, metrics, and call ledgers match exactly, observations differ by at most **8.88e-16**, and independent physical residual closure is **8.35e-14**. The preregistered `1e-8` camera-order invariance gate nevertheless fails: formal field/residual/metric discrepancies reach **1.085e-2 / 3.446e-1 / 8.402e-3**, and the independent implementation reaches **8.711e-3 / 3.510e-1 / 7.006e-3**. No depth is selected from invalid science arrays. The exact verdict is `INCONCLUSIVE_INVALID_CASE12_PCGLS_REFERENCE_DEPTH_V231`, not evidence that no adequate depth exists through K64. A separately frozen, result-blind canonical camera-ID ordering is required before repeating the unchanged qualification. No policy, safety, call, wall/RSS, external, real-BOST, paper-success, or algorithm-breakthrough claim is released.
+
+## 2026-08-25：v230.1 先修正了一个病态数值比较，随后发现 Case 12 的 K16 reference 不够格
+
+**为什么做。** v229 只授权一个冻结的新工况门，Case 12 首次正式与独立执行却在相机换序和第二求解器的近零残差向量相对比较上触发 fail-closed。那时没有解释接受数、精度、调用账或策略胜负。v230.1 要先回答“这是物理/决策漂移，还是一个不适合近零量的数值比较”，再决定科学数组能否释放。
+
+**实际做了什么。** 在读取真值指标、策略汇总和接受结果前，我冻结了唯一的结果盲数值审裁：比较完整候选场、标量观测误差、保存残差的观测方程闭合、原始与白化分数以及离散决策；近零残差向量的相对差只保留为诊断。正式与完全独立第二实现分别重建相机换序、场、观测、分数和决策。数值门通过后，才释放同一批封存科学数组，逐单元重算 K16 reference 的严格门。
+
+**结果。** 数值检查 **18/18**、科学释放检查 **7/7** 全部通过。正式/独立场差最多约 **4.85e-9**，标量观测误差差 **3.18e-14**，分数差 **2.22e-15**，决策差为 **0**；相机换序场差约 **5.68e-9**，残差方程闭合到 **2.04e-16**。随后 K16 reference 只达到 **594/598** 个严格单元与 **11/13** 个完整 rig。四个失败都在 rig 0/12 的 frame 11/42，且只越过内部梯度门 0.75，范围 **0.751727-0.754621**。
+
+**讲人话。** 原来的数值告警不是相机换序或第二求解器改变了物理场、分数或决策；这个解释已经排除。但科学结果不是“dual-PRESS 外门通过”，而是 reference 先失败：没有合格参考，就不能解释策略接受、安全、exact-call、wall/RSS。精确判决是 `INCONCLUSIVE_INADEQUATE_CASE12_K16_REFERENCE_V230`。下一步只能另行结果前冻结 post-open Case 12 reference-depth qualification，用固定深度名单找最小合格的未修改 PCGLS reference，不能回调策略或放宽门。`algorithm_breakthrough=false`。
+
+### English summary
+
+v230.1 replaces the ill-conditioned relative comparison of a near-zero residual vector with a result-blind numerical adjudication based on complete fields, scalar observation errors, residual-equation closure, both scores, and discrete decisions. All **18/18** numerical checks and **7/7** science-release checks pass. Formal-independent field, scalar-error, and score differences are at most about **4.85e-9 / 3.18e-14 / 2.22e-15**, with **0** decision mismatches. Once that numerical barrier releases the sealed science arrays, the frozen unchanged K16 reference passes only **594/598** strict cells and **11/13** complete rigs. All four misses occur only at the interior-gradient cell gate, in frames 11 and 42 of rigs 0 and 12. The exact verdict is `INCONCLUSIVE_INADEQUATE_CASE12_K16_REFERENCE_V230`: the policy is not adjudicated, and no external, exact-call, wall/RSS, or real-BOST claim is supported. The next valid step is a separately preregistered post-open reference-depth qualification.
+
+## 2026-08-25：v229 把事后 OR 线索改成了不读取目标 rig 分数的固定校准门
+
+**为什么做。** v228 已经证明原始 PRESS 与几何白化 PRESS 含有互补安全信号，但固定 OR 是在父失败 rig 已经可见以后提出的，不能当作前瞻部署规则。v229 要回答更窄也更关键的问题：如果完全隔离目标 rig 的分数，只用其他 rig 做折内校准，这种互补性还能否守住逐 rig 安全、效用和成本门。
+
+**实际做了什么。** 在读取连续评分数组前，我固定了唯一的嵌套双 PRESS 校准公式。对每个 Case 5 目标 rig，只用其余 12 个 rig 分别校准原始与 studentized PRESS 阈值，再用内层留一 rig 的固定 10% 顺序统计量校准包络倍率；Case 2 完全不进入校准。目标 rig 分数、Case 2 分数、真值、安全标签、失败身份、搜索、训练和新增候选公式都不参与校准。接受时使用 direct K11，拒绝时回退 Zero-PCGLS K16；校准本身不增加 `A/A^T`。
+
+**结果。** Case 5 接受 **136/546** 个安全单元，危险误接 **0**，最差 rig 为 **5/42=11.90%**，13/13 个完整 rig 精度通过；Case 2 接受 **318/715** 个安全单元，危险误接 **0**，最差 rig 为 **19/55=34.55%**，同样 13/13 个完整 rig 通过。完全独立第二实现重建双分数、内外层校准、逐 rig 决策、物理门和成本账，17/17 项检查全真，离散决策完全一致；原始分数、studentized 分数和汇总最大差分别约为 **1.11e-15 / 6.66e-16 / 2.57e-11**。
+
+**讲人话。** 这次真正排除的是“必须偷看目标 rig 的分数，才能补回逐 rig 效用”这一直接解释。与 v228 的事后 OR 相比，v229 只少接受 4 个 Case 5 和 6 个 Case 2 单元，却换来了目标 rig 分数隔离。但是公式是在 v228 线索之后选定的，因此它仍只是已开封 Case 2/5 上的 `POST_OPEN_FOLD_LOCAL_DUAL_PRESS_CALIBRATION_HEADROOM_V229`，不是部署算法或外部泛化成功。下一步只授权一个另行结果前冻结的未开封工况外门；外门失败就关闭这条组合校准路线。没有 fresh exact-call、wall/RSS、真实 BOST 或论文成功证据，`algorithm_breakthrough=false`。
+
+### English summary
+
+v229 converts the retrospective v228 OR lead into a fixed nested dual-PRESS calibration that never reads target-rig scores. Each Case 5 target rig is calibrated only from the other 12 rigs, and Case 2 never enters calibration. The policy accepts **136/546** safe Case 5 cells with **0** unsafe accepts and a worst rig of **5/42**, and **318/715** safe Case 2 cells with **0** unsafe accepts and a worst rig of **19/55**; both conditions retain **13/13** complete-rig accuracy. A fully independent implementation passes **17/17** checks with identical discrete decisions and maximum raw-score, studentized-score, and summary differences of about **1.11e-15 / 6.66e-16 / 2.57e-11**. This rules out the need to read target-rig scores on the opened data, but the formula was selected after v228, so the result remains post-open development headroom. It authorizes one separately frozen unopened-condition gate and does not establish a deployment algorithm, external generalization, fresh exact-call reduction, wall/RSS speedup, real BOST, paper success, or an algorithm breakthrough.
+
 ## 2026-08-23：观测残差继续下降，三维梯度却没有被救回来
 
 **为什么做。** v200 的 Huber-TV 已经把五相机 reference 从 K2 的 `1213/1313、0/13` 提高到 `1289/1313、5/13`，但剩下 24 个失败单元全部涉及 gradient。v201 不再调整 Huber，而是结果前固定二阶 TGV2：让一个辅助向量场吸收一阶斜坡，再惩罚它的对称梯度，检验“保留斜坡而不是继续压边缘”能否消除这些失败。
@@ -16579,6 +17063,464 @@ v210 finds directional structure in the actual low-mode forward spectrum, while 
 Only `7/169` comparisons do so; `162/169` reverse. Supplied and virtual-nine medians are `0.64597` and `0.62922`. Virtual nine cameras are better on the single weakest-mode diagnostic, but that diagnostic cannot replace the preregistered all-mode primary. A fully independent implementation agrees to `4.44e-16 / 3.33e-16 / 2.22e-16` in geometry metric, per-mode ratio, and summary, with zero camera-reversal difference and all 15 checks passing.
 
 The sealed verdict is `FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212`. It closes only this fixed 64-mode, fixed-phase, fixed-quadrature, equal-camera scalar; it does not establish that every signed phase structure is irrelevant and does not negate v210's directional actual-forward Gram. No predictor, warm start, physical replay, exact-call reduction, wall/RSS, external-generalization, or real-BOST result is established.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v225 完整九相机角谱互支持仍不安全
+
+### 讲人话：保留完整九相机模式比压成一个数更合理，但这套固定编码仍会把危险单元放进快路
+
+v224 已经关闭“最坏删相机漂移”和“最大逐相机残差”这两个单标量回退。v225 不再继续调它们，而是保留九个删相机漂移、九个逐相机残差及其局部交互，用 reported geometry 的固定角向基编码成 `27` 维排列不变特征。策略只从已知安全的 Case 5 学一类互支持范围：每条训练半径取不同 rig 最近邻，Case 5 做完整留一 rig，Case 2 只作跨工况评分；特征和接受判决在读取真值指标前封存。
+
+主策略在 Case 5 接受 `252/546` 个单元，但最低 rig 接受率为 `0%`，所以连开发侧最低可用性门都没有守住。它在 Case 2 接受 `523/715` 个单元，其中 `378` 个安全、`145` 个不安全；十三套 rig 的完整策略精度为 `0/13`，最坏 matched ratio 为 `1.875291`。用 v224 两个最大值组成的便宜 control 在 Case 5 最低 rig 接受率为 `14.29%`，但在 Case 2 接受 `186` 个单元时包含 `132` 个不安全，完整精度同样为 `0/13`。
+
+完全独立的第二实现重建角谱特征、跨 rig 距离、训练半径、接受掩码、逐 rig 汇总和相机换序。`17/17` 项检查全部通过；特征、距离、汇总和相机换序最大差分别为 `4.41e-14 / 8.42e-13 / 5.70e-11 / 4.35e-14`。封存判决为 `FAIL_LOW64_ANGULAR_SPECTRUM_MUTUAL_SUPPORT_V225`。
+
+这关闭的是固定 `27` 维角谱加 Case 5 跨 rig 一类互支持，不是全部多视角机制，也不是整个 C 路线。没有训练、物理候选重放、exact-call 减少、wall/RSS、外部泛化或真实 BOST 结果；不再重调尺度、半径、调和阶数、通道或接受门，也不使用大模型或 GPU 挽救。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v225 full nine-camera angular-spectrum support remains unsafe
+
+v224 closes two scalar fallbacks: worst camera-deletion drift and maximum per-camera residual. v225 does not retune them. It preserves all nine deletion drifts, all nine camera residuals, and their local interactions in a fixed `27`-dimensional permutation-invariant angular encoding derived from reported geometry. The one-class support region is learned only from known-safe Case 5 rows: each training radius uses the nearest row from another rig, Case 5 is evaluated by complete leave-one-rig-out, and Case 2 is scored cross-condition. Features and accept decisions are sealed before truth metrics are read.
+
+The primary accepts `252/546` Case 5 cells but has a minimum rig acceptance of `0%`, failing even the development-side utility floor. In Case 2 it accepts `523/715` cells, including `378` safe and `145` unsafe cells; complete policy accuracy is `0/13` rigs and the worst matched ratio is `1.875291`. The cheap control built from the two v224 maxima reaches `14.29%` minimum Case 5 rig acceptance, but its `186` Case 2 accepts include `132` unsafe cells, again yielding `0/13` complete rigs.
+
+A fully independent implementation rebuilds the angular features, cross-rig distances, training radii, acceptance masks, rig summaries, and camera permutations. All `17/17` checks pass. Maximum feature, distance, summary, and camera-permutation differences are `4.41e-14 / 8.42e-13 / 5.70e-11 / 4.35e-14`. The sealed verdict is `FAIL_LOW64_ANGULAR_SPECTRUM_MUTUAL_SUPPORT_V225`.
+
+This closes the fixed `27`-D angular spectrum plus Case 5 cross-rig one-class support policy, not every multiview mechanism or the C route. No training, physical candidate replay, exact-call reduction, wall/RSS, external generalization, or real-BOST result is established. Scale, radius, harmonic order, channels, and acceptance gates will not be retuned, and no larger model or GPU will rescue this route.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v226 相机分块 PRESS 零危险误接但效用门差一个帧
+
+### 讲人话：安全筛选终于对了，但最差一套相机还少接受一个帧，所以不能算成功
+
+v225 的固定角谱互支持会把危险单元放进快路。v226 不再调整那套表示，而是检验一个物理上不同的问题：遮掉一台相机后，另外八台相机拟合出的 Low-64 场能不能预测被遮相机的二维观测。九个遮相机预测误差组成 PRESS 分数，分数越低越安全；阈值只由已知安全 Case 5 生成，Case 5 完整留一 rig，Case 2 的接受决策在读取其真值门前已经封存。
+
+这个证书在 Case 2 接受 `297/715` 个单元，`297` 个全部安全，`197` 个不安全单元全部拒绝。Direct Low-64 PCGLS K11 / Zero-PCGLS K16 混合策略在 Case 2 和 Case 5 都达到 `13/13` 完整 rig 精度；最大 matched ratio 分别为 `1.027761` 和 `1.007896`，每个 rig 的平均 `A/A^T` 账都严格低于 K16 reference。只看全拟合残差的便宜 control 则在 Case 2 接受 `553` 个单元，其中 `61` 个不安全，完整精度为 `0/13`。
+
+但结果前效用门要求每个 Case 5 留一 rig 至少接受 `10%`。最差 rig 只接受 `4/42=9.52%`，通过至少需要 `5/42`。因此严格判决仍是 `FAIL_LOW64_BLOCK_PRESS_CERTIFICATE_V226`：它把失败从“安全性不成立”收窄到“逐 rig 校准稳定性差一个帧”，却不能事后把 `10%` 改成 `9.5%`，也不能据此授权资源测试。
+
+完全独立的第二实现改用正规矩阵 eigensolve，并显式逐帧、逐相机重建全拟合、九个八相机拟合、PRESS 分数、顺序统计阈值、接受掩码、逐 rig 物理门和调用账。`16/16` 项必需检查通过；特征、阈值、汇总和相机换序最大差为 `1.11e-15 / 2.22e-16 / 3.30e-11 / 1.55e-15`，离散决策完全一致。
+
+这关闭的是当前九相机 exact block-PRESS 证书，不是全部多视角机制或整个 C 路线。不得修改公式、floor、阈值、`10%` 接受比例、Low-64 秩或 PCGLS 深度；不训练大模型、不租 GPU、不跑 wall/RSS，也不打开 Case 4/6。本次没有部署算法、稳定 exact-call 收益、外部泛化或真实 BOST 结论。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v226 camera-block PRESS has zero unsafe accepts but misses utility by one frame
+
+v225's fixed angular-spectrum support allows unsafe cells onto the direct path. v226 does not retune that representation. It asks a physically different question: after holding out one camera, can the Low-64 field fitted on the other eight cameras predict the held-out 2D observation? The nine held-out prediction errors form the PRESS score, where lower is safer. Thresholds come only from known-safe Case 5, Case 5 uses complete leave-one-rig-out evaluation, and Case 2 accept decisions are sealed before its truth gates are read.
+
+The certificate accepts `297/715` Case 2 cells. All `297` are safe and all `197` unsafe cells are rejected. The Direct Low-64 PCGLS K11 / Zero-PCGLS K16 mixed policy reaches `13/13` complete-rig accuracy in both Cases 2 and 5, with maximum matched ratios of `1.027761` and `1.007896`; mean `A/A^T` ledgers are strictly below the K16 reference in every rig. The cheap full-fit-residual control accepts `553` Case 2 cells including `61` unsafe cells and reaches only `0/13` complete rigs.
+
+The preregistered utility gate requires at least `10%` acceptance in every held-out Case 5 rig. The worst rig accepts only `4/42=9.52%`; passing requires at least `5/42`. The strict verdict is therefore still `FAIL_LOW64_BLOCK_PRESS_CERTIFICATE_V226`. The result narrows the failure from unsafe transfer to a one-frame per-rig calibration shortfall, but the `10%` gate cannot be changed to `9.5%` after results and the resource gate is not authorized.
+
+A fully independent implementation uses normal-matrix eigensolves and explicit frame/camera loops to rebuild the full fit, all nine eight-camera fits, PRESS scores, order-statistic thresholds, accept masks, rig physics gates, and call ledgers. All `16/16` required checks pass. Maximum feature, threshold, summary, and camera-permutation differences are `1.11e-15 / 2.22e-16 / 3.30e-11 / 1.55e-15`, with identical discrete decisions.
+
+This closes the current exact nine-camera block-PRESS certificate, not every multiview mechanism or the C route. Its formula, floor, threshold, `10%` acceptance fraction, Low-64 rank, and PCGLS depths will not be changed. No larger model, GPU, wall/RSS run, or Case 4/6 opening is authorized. There is no deployment algorithm, stable exact-call gain, external generalization, or real-BOST result.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v228 两种 PRESS 判据互补，但只构成事后机制线索
+
+### 讲人话：两个各差一帧的安全筛选，固定并起来后补上了彼此漏掉的帧
+
+v226 的原始相机分块 PRESS 和 v227 的几何白化 PRESS 都把 Case 2 的危险误接保持为 `0`，但它们在 Case 5 失败的 rig 不同。v228 没有训练模型、拟合新分数或重调阈值，只对两份已经封存的接受判决取固定 OR，检查两种 deployment-visible 信号是否真的互补。
+
+固定 OR 在 Case 5 接受 `140/546` 个单元，最差 rig 从两个父证书各自的 `4/42` 提高到 `5/42=11.90%`；十三套 rig 全部守住 matched-accuracy，最大 matched ratio 为 `1.007896`。其中有 `17` 个单元只被原始 PRESS 接受、`14` 个只被白化 PRESS 接受；原先失败的 rig 4 为原始/白化/OR=`5/4/5`，rig 11 为 `4/6/6`。Case 2 接受 `324/715` 个单元，`324` 个全部安全，危险误接仍为 `0`；十三套 rig 全部通过，最大 matched ratio 为 `1.027761`。两边每套 rig 的平均逻辑 `A/A^T` 账都严格低于 K16 reference。
+
+完全独立的第二实现从封存父数组重建两种接受掩码、固定 OR、逐 rig 物理门、matched ratio 与调用账。`17/17` 项必需检查全部通过，正式与独立汇总最大差为 `2.57e-11`，输入与父证据树保持不变。
+
+严格判决是 `POST_OPEN_COMPLEMENTARY_DUAL_PRESS_SIGNAL_V228`。这个结果改变了机制判断：瓶颈不再只是“某个单分数缺少效用”，而是“怎样在结果前完成组合与校准”。但 v226/v227 的失败 rig 在 v228 前已经可见，所以这不是结果前成功、部署算法或外部泛化证据。不得继续在已开封数据上搜索布尔公式、阈值或打开 Case 4/6；下一步只能另行冻结一个前瞻组合校准合同，或者等待映射完整的真实 BOST 数据。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v228 two PRESS criteria are complementary, but only as a retrospective mechanism lead
+
+Raw camera-block PRESS in v226 and geometry-whitened PRESS in v227 both keep unsafe Case 2 accepts at `0`, but they fail on different Case 5 rigs. v228 trains no model, fits no new score, and retunes no threshold. It applies fixed OR to the two sealed accept decisions to test whether the deployment-visible signals are genuinely complementary.
+
+Fixed OR accepts `140/546` Case 5 cells and raises the worst rig from `4/42` under either parent to `5/42=11.90%`; all thirteen rigs retain matched accuracy and the maximum matched ratio is `1.007896`. There are `17` raw-only accepts and `14` whitened-only accepts. For the former failing rigs, raw/whitened/OR counts are `5/4/5` in rig 4 and `4/6/6` in rig 11. In Case 2, OR accepts `324/715` cells, all `324` are safe, and unsafe accepts remain `0`; all thirteen rigs pass with a maximum matched ratio of `1.027761`. Mean logical `A/A^T` cost remains strictly below the K16 reference in every rig of both conditions.
+
+A fully independent second implementation rebuilds the two accept masks, fixed OR, per-rig physics gates, matched ratios, and call ledgers from the sealed parent arrays. All `17/17` required checks pass, the maximum formal-independent summary difference is `2.57e-11`, and the inputs and parent evidence trees remain unchanged.
+
+The strict verdict is `POST_OPEN_COMPLEMENTARY_DUAL_PRESS_SIGNAL_V228`. It changes the mechanism diagnosis: the bottleneck is no longer merely utility of either single score, but prospective combination and calibration. Yet the v226/v227 failure rigs were visible before v228, so this is not preregistered success, a deployment algorithm, or external-generalization evidence. No Boolean formula or threshold search is allowed on the opened data, and Cases 4/6 remain sealed. Any next step must freeze a prospective combination-calibration contract separately or wait for fully mapped real-BOST data.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v227 几何白化提高安全接受但逐 rig 效用仍失败
+
+### 讲人话：白化不是没用，它多救回 26 个安全单元；但最差一套相机仍过不了门
+
+v226 已经把 Case 2 的危险误接降到 `0`，但 Case 5 最差留一 rig 只接受 `4/42`。v227 没有事后改阈值或 `10%` 效用门，而是检验一个物理和统计上不同的问题：被遮相机在当前 reported geometry 下越难预测，它的误差是否应该按预测协方差进行白化后再与其他相机聚合。
+
+正式分数逐台遮相机，用其余八台的 Low-64 响应拟合，再构造 `V_j = I + M_j(M_-j^T M_-j)^-1M_j^T`。九个白化误差二次型开方后除以全拟合残差。这个过程只读二维观测和 reported geometry；Case 5 阈值仍完整留一 rig，Case 2 接受决策在读取其真值门前封存。v226 原始 PRESS 作为父 control 被精确重建，分数、阈值和离散决策差都是 `0`。
+
+白化确实有作用。Case 2 安全接受从 `297` 增加到 `323`，多出 `26` 个，危险误接仍为 `0`；混合策略在 Case 2 和 Case 5 都保持 `13/13` 完整 rig 精度，最大 matched ratio 为 `1.027761 / 1.007896`。但 Case 5 总接受从 `126` 变为 `123`，最差 rig 仍是 `4/42=9.52%`，只是失败从 v226 的 rig 11 移到了 v227 的 rig 4。冻结门要求至少 `5/42`，因此白化改变了分数，却没有解决跨 rig 效用稳定性。
+
+完全独立第二实现不用正式 Cholesky 路线，改用正规矩阵特征分解与 Woodbury 二次型，重建全部 `1261` 个单元、预测协方差、白化分数、阈值、接受决策、物理门和调用账。`19/19` 项必需检查通过；特征、阈值、汇总和相机换序最大差为 `1.11e-15 / 2.22e-16 / 2.57e-11 / 1.55e-15`。
+
+严格判决是 `FAIL_LOW64_STUDENTIZED_BLOCK_PRESS_CERTIFICATE_V227`。这关闭当前 geometry-studentized block-PRESS 单分数证书，不关闭全部多视角机制或整个 C 路线。不得再调协方差公式、floor、阈值、`10%` 门、秩或深度；不训练大模型、不租 GPU、不跑 wall/RSS，也不打开新工况。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v227 geometry whitening raises safe acceptance but per-rig utility still fails
+
+v226 already reduces unsafe Case 2 accepts to `0`, but its worst held-out Case 5 rig accepts only `4/42` frames. v227 does not change the threshold or `10%` utility gate after results. It tests a physically and statistically different question: when a held-out camera is harder to predict under reported geometry, should its error be whitened by predictive covariance before aggregation with other cameras?
+
+The formal score holds out each camera, fits the Low-64 response on the other eight, and forms `V_j = I + M_j(M_-j^T M_-j)^-1M_j^T`. The root-sum-square whitened quadratic errors are divided by the full-fit residual. This reads only 2D observations and reported geometry. Case 5 still uses complete leave-one-rig-out thresholds, and Case 2 accept decisions are sealed before its truth gates are read. Raw v226 PRESS is exactly rebuilt as the parent control with zero score, threshold, and discrete-decision differences.
+
+Whitening has a measurable effect. Safe Case 2 accepts rise from `297` to `323`, adding `26`, while unsafe accepts remain `0`. The mixed policy preserves `13/13` complete-rig accuracy in both Cases 2 and 5, with maximum matched ratios of `1.027761 / 1.007896`. But total Case 5 accepts move from `126` to `123`, and the worst rig remains at `4/42=9.52%`; failure moves from rig 11 in v226 to rig 4 in v227. The frozen gate requires at least `5/42`, so whitening changes the score without solving cross-rig utility stability.
+
+A fully independent implementation replaces the formal Cholesky route with normal-matrix eigendecomposition and a Woodbury quadratic form. It rebuilds all `1261` cells, predictive covariances, whitened scores, thresholds, accept decisions, physical gates, and call ledgers. All `19/19` required checks pass; maximum feature, threshold, summary, and camera-permutation differences are `1.11e-15 / 2.22e-16 / 2.57e-11 / 1.55e-15`.
+
+The strict verdict is `FAIL_LOW64_STUDENTIZED_BLOCK_PRESS_CERTIFICATE_V227`. This closes the current geometry-studentized block-PRESS single-score certificate, not every multiview mechanism or the C route. Covariance formula, floor, threshold, `10%` gate, rank, and depth will not be retuned. No larger model, GPU, wall/RSS run, or new-condition opening is authorized.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v224 逐相机删除稳定度仍重叠，单标量回退关闭
+
+### 讲人话：删掉一台相机后会不会“变脸”确实能量到，但还不足以安全决定走快路还是回退
+
+v223 已证明调和可观测性和全局拟合残差这两个一维分数都不能把安全与不安全单元完全分开。v224 因此没有重调这两个分数，而是换成物理上不同的多视角自一致问题：对当前九视角观测先拟合 Low-64 系数，再逐台删除相机并用剩余八台重拟合，测量完整九视角预测发生的最坏相对漂移。
+
+九个删相机子问题在全部十三套几何中都保持 `64` 阶满秩。观测特征也在读取真值评分前先完成封存，所以安全标签没有参与特征构造。按冻结门，`1261` 个已开封单元仍有 `1064` 个安全、`197` 个不安全。
+
+主指标的安全区间为 `0.020138-0.091682`，不安全区间为 `0.037873-0.178650`，严格 margin 为 `-0.053809`。只做一次全量拟合的便宜逐相机残差 control 也重叠，安全/不安全区间为 `0.478493-0.736101` 与 `0.565201-0.850216`，margin 为 `-0.170900`。因此没有一个一维阈值能对全部单元 fail-closed，也没有回退策略或 exact-call 节省可供评分。
+
+独立第二实现改用 SVD Low-64 span 和正规方程特征分解，重建全部删相机解、分数、标签和判决。正式与独立特征最大差 `5.62e-15`，分离统计最大差 `1.46e-15`，相机换序最大差 `7.09e-15`，全部必需检查通过。封存判决为 `FAIL_LOW64_CAMERA_JACKKNIFE_RISK_OVERLAP_V224`。
+
+这关闭的是“单一最坏删相机漂移或单一逐相机残差可以作为安全回退阈值”，不是全部多视角机制，更不是整个 C 路线。后续不调整方向、阈值、相机分组或归一化，也不用大模型/GPU 挽救；若继续，必须保留真正的跨相机多变量结构，或者接入映射完整的真实 BOST 二维位移。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v224 leave-one-camera-out stability overlaps and closes the scalar fallback
+
+v223 shows that neither harmonic observability nor global fit residual completely separates safe from unsafe cells. v224 does not retune those scores. It asks a physically distinct multiview-consistency question: fit Low-64 coefficients from the current nine-camera observation, delete each camera in turn, refit from the remaining eight, and measure the worst relative change in the full nine-camera prediction.
+
+All nine reduced systems retain numerical rank `64` across all thirteen geometries. Observable features are sealed before truth scores are opened, so safety labels do not enter feature construction. Under the frozen gates, `1,064` of `1,261` opened cells are safe and `197` unsafe.
+
+The primary safe range is `0.020138-0.091682`, while the unsafe range is `0.037873-0.178650`, giving a strict margin of `-0.053809`. The cheap per-camera residual control, which uses only one full fit, also overlaps: safe and unsafe ranges are `0.478493-0.736101` and `0.565201-0.850216`, with a `-0.170900` margin. No one-dimensional threshold is therefore fail-closed across every cell, and no fallback policy or exact-call saving can be scored.
+
+The independent implementation uses an SVD Low-64 span and normal-matrix eigensystems to rebuild all camera-deletion solutions, scores, labels, and decisions. Maximum formal-independent feature difference is `5.62e-15`, maximum separation-statistic difference is `1.46e-15`, maximum camera-permutation difference is `7.09e-15`, and every required check passes. The sealed decision is `FAIL_LOW64_CAMERA_JACKKNIFE_RISK_OVERLAP_V224`.
+
+This closes only the claim that one worst-camera drift or one per-camera residual can serve as a safe fallback threshold. It does not close all multiview mechanisms or the C route. Orientation, threshold, camera grouping, and normalization will not be retuned, and a larger model or GPU will not rescue this scalar route. Any continuation must preserve genuinely multivariate cross-camera structure or use fully mapped real-BOST 2D displacement.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v223 一维可观测调和风险存在重叠，安全回退关闭
+
+### 讲人话：风险分数有方向，但没有安全到可以一刀切
+
+v222.1 已排除 Low-64 起点中 `null(A)` 成分导致跨工况伤害的解释。v223 因此不再改场或训练模型，只检验一个更窄的问题：能否只用当前二维观测与 reported geometry 计算一维分数，在运行 direct Low-64 PCGLS K11 之前识别它相对 Zero-PCGLS K16 的不安全单元。
+
+按全部冻结绝对门与 `1.05` matched 门，`1261` 个已开封单元中有 `1064` 个安全、`197` 个不安全。主调和可观测性分数的安全区间为 `0.884743-1.241535`，不安全区间为 `0.605149-1.118135`，严格分离 margin 为 `-0.233392`。便宜的 Low-64 拟合残差 control 也重叠，安全/不安全区间为 `0.437879-0.710523` 与 `0.516021-0.741132`，margin 为 `-0.194502`。
+
+这说明两个量都含有方向性的风险信息：不安全单元整体偏向更低的调和分数和更高的拟合残差。但结果前门要求对全部单元 fail-closed，区间重叠就意味着不能冻结阈值，因此没有策略、没有候选物理重放，也没有 exact-call 节省可供评分。
+
+独立程序重建 Low-64 响应、两个分数、安全标签和分离门。相机换序、正式/独立特征与 margin 最大差为 `2.02e-14 / 1.25e-14 / 1.14e-14`，离散策略差为 `0`。封存判决为 `FAIL_LOW64_HARMONIC_RISK_OVERLAP_V223`，独立状态为 `PASS_INDEPENDENT_RECOMPUTATION_LOW64_HARMONIC_RISK_V223`。
+
+当前一维调和风险路线关闭：不反转方向、不调阈值、不换 Low-64 基或深度，也不用更大模型或 GPU 挽救。它没有证明物理上不同的更高维可观测机制不可能，但在提出这种机制或拿到映射完整的真实 BOST 数据前，不再扩建当前标量回退。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v223 one-dimensional observable harmonic risk overlaps and closes the safe fallback
+
+v222.1 rules out the Low-64 initializer component in `null(A)` as the cause of cross-condition harm. v223 therefore changes no field and trains no model. It asks whether a one-dimensional score computed only from the current 2D observation and reported geometry can identify unsafe direct Low-64 PCGLS K11 cells before comparing them with Zero-PCGLS K16.
+
+Under every frozen absolute and `1.05` matched gate, `1,064` of `1,261` opened cells are safe and `197` unsafe. The primary harmonic-observability safe range is `0.884743-1.241535`, while the unsafe range is `0.605149-1.118135`, giving a strict margin of `-0.233392`. The cheap Low-64 fit-residual control also overlaps: safe and unsafe ranges are `0.437879-0.710523` and `0.516021-0.741132`, with a `-0.194502` margin.
+
+Both scores carry directional risk information: unsafe cells tend toward lower harmonic score and higher fit residual. The preregistered gate nevertheless requires fail-closed separation across every cell. Overlap therefore means that no threshold or fallback policy is established, and no physical candidate replay or exact-call saving can be scored.
+
+The independent implementation rebuilds the Low-64 response, both scores, safety labels, and separation gates. Maximum camera-permutation, formal-independent feature, and margin differences are `2.02e-14 / 1.25e-14 / 1.14e-14`, with zero discrete-policy difference. The sealed verdict is `FAIL_LOW64_HARMONIC_RISK_OVERLAP_V223`, and the independent status is `PASS_INDEPENDENT_RECOMPUTATION_LOW64_HARMONIC_RISK_V223`.
+
+The one-dimensional harmonic-risk route is closed without reversing orientation, retuning thresholds, changing the Low-64 basis or depth, or using a larger model or GPU. The result does not prove that every physically distinct higher-dimensional observable mechanism is impossible, but this scalar fallback will not be expanded without such a mechanism or fully mapped real-BOST data.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v222.1 正交去除 null(A) 后，Case 5 保留而 Case 2 伤害仍在
+
+### 讲人话：真正删掉观测看不见的部分，原来的好处和坏处都没变
+
+v221 已经证明，把 direct Low-64 起点经过 `A^T A` 谱重加权、单缩放和 PCGLS K10 后，Case 5 与 Case 2 都变成 0 个 matched 单元。但这还不能区分：失败究竟来自“删掉 `null(A)`”，还是来自 `A^T A` 在可观测行空间里改变了不同谱方向的权重。
+
+v222 因此尝试真正的正交行空间投影 `P_row x=A^T(AA^T)^{-1}Ax`，再运行未修改 PCGLS K11。正式程序完成全部 `1261` 个单元，但 direct-vs-projected K11 residual-equivalence 最大差为 `1.43918e-9`，超过结果前冻结的 `1e-9`；首个独立 validator 也没有通过。这个边界没有被放宽，v222 继续记为 `INCONCLUSIVE_INVALID_ORTHOGONAL_ROWSPACE_ATTRIBUTION_V222`。
+
+v222.1 没有重跑或把 v222 包装成成功，只做明确标记为 post-open retrospective 的代数归因。根据精确算术下 PCGLS 不更新初始 `null(A)` 分量的恒等式，构造 `x_algebraic=x_direct_final-(x_direct_initializer-P_row x_direct_initializer)`，再独立重算二维观测、四项指标和完整几何。
+
+结果是 Case 5 仍为 `546/546` 绝对安全、`546/546` matched、`13/13` 完整几何；Case 2 仍为 `715/715` 绝对安全、`518/715` matched、`0/13`。这两组数字与 direct Low-64 K11 逐项相同。独立 `16/16` 检查全真；观测、投影起点、代数场、指标与汇总最大差为 `7.24e-15 / 2.51e-13 / 1.95e-13 / 1.92e-14 / 4.35e-14`。
+
+这改变了机制判断：Low-64 的 `null(A)` 成分不是 Case 5 正效应所必需，也不是 Case 2 跨工况伤害的原因。v221 的失败证据现在指向 `A^T A` 谱重加权，而不是“观测行空间本身没有容量”。封存判决为 `POST_OPEN_ROWSPACE_PRESERVES_CASE5_BUT_CASE2_HARM_REMAINS_V222_1`。
+
+这仍不是部署算法、fresh validation、exact-call 减少、wall/RSS、外部泛化、曲线光路或真实 BOST 结果。v222 本身仍不可判定；后续只能结果前冻结一个直接改变可观测行空间谱作用的新机制，不能重调 v221/v222，也不能用大模型或 GPU 挽救。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v222.1 orthogonal null(A) removal preserves Case 5 while Case 2 harm remains
+
+v221 shows that applying `A^T A` spectral reweighting, one scale, and PCGLS K10 to the direct Low-64 start produces zero matched cells in both Case 5 and Case 2. That result does not distinguish removal of `null(A)` from changed spectral weighting inside the observable row space.
+
+v222 therefore attempts the true orthogonal projection `P_row x=A^T(AA^T)^{-1}Ax` followed by unchanged PCGLS K11. The formal program completes all `1,261` cells, but its direct-versus-projected K11 residual-equivalence difference is `1.43918e-9`, above the preregistered `1e-9` tolerance, and its first independent validator also fails. The tolerance is not relaxed; v222 remains `INCONCLUSIVE_INVALID_ORTHOGONAL_ROWSPACE_ATTRIBUTION_V222`.
+
+v222.1 neither reruns nor relabels v222. It performs explicitly post-open retrospective algebraic attribution using the exact-arithmetic identity that PCGLS does not update the initializer component in `null(A)`: `x_algebraic=x_direct_final-(x_direct_initializer-P_row x_direct_initializer)`. A separate implementation rebuilds the 2D observation, four metrics, and complete-rig summaries.
+
+Case 5 remains at `546/546` absolute-safe cells, `546/546` matched cells, and `13/13` complete rigs. Case 2 remains at `715/715`, `518/715`, and `0/13`. These outcomes are cellwise identical to direct Low-64 K11. All `16/16` independent checks pass, with maximum observation, projected-initializer, algebraic-field, metric, and summary differences of `7.24e-15 / 2.51e-13 / 1.95e-13 / 1.92e-14 / 4.35e-14`.
+
+The mechanism judgment changes: Low-64 content in `null(A)` is neither required for the Case 5 benefit nor the cause of Case 2 transfer harm. Evidence for the v221 failure now points to `A^T A` spectral reweighting rather than insufficient observable-row-space capacity. The sealed decision is `POST_OPEN_ROWSPACE_PRESERVES_CASE5_BUT_CASE2_HARM_REMAINS_V222_1`.
+
+This is still not a deployment algorithm, fresh validation, exact-call reduction, wall/RSS result, external generalization, curved-ray validation, or real BOST. v222 itself remains inconclusive. Any next mechanism must be preregistered and directly change spectral action inside the observable row space rather than retune v221/v222 or invoke a larger model or GPU.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v221 精确行空间 lift 没有保住 Low-64 暖启动信息
+
+### 讲人话：把起点精确投回“观测看得见的空间”反而抹掉了有用信息，这条解释被独立否定
+
+v220.2 已经说明，同一个 Low-64 K11/K16 可观测阈值不能跨工况稳定回退。v221 没有继续调阈值，而是检验一个物理上不同的解释：direct Low-64 场是否混入了当前观测看不见的近零空间成分，导致 Case 2 失败。
+
+唯一候选先计算 direct Low-64 场的精确 `A` 投影，再用精确 `A^T` lift 回 `range(A^T)`；随后只根据当前观测选择一个 `[0,2]` 内的残差最小缩放，并运行未修改的 geometry-Jacobi PCGLS K10。完整在线账为 `12A+11A^T`，与 direct Low-64 K11 同价。
+
+正式和完全独立程序都重放了 Case 5 与 Case 2 共 `1261` 个单元。Case 5 只有 `202/546` 个绝对严格安全单元、`0/546` matched、`0/13` 完整几何；Case 2 为 `670/715` 绝对安全、`0/715` matched、`0/13`。Zero-start K16 在两边均为 `13/13`，所以 reference 充分。Case 5 同价 direct Low-64 K11 仍为 `546/546、13/13`，说明精确行空间 lift 不是保留有用信号，而是在抑制它。
+
+缩放也没有卡在边界：Case 5 范围 `0.02872-0.03859`，Case 2 为 `0.01739-0.03698`，上下界命中均为 0。独立 `32/32` 检查全真；场、初始化器、逐单元指标、缩放与相机乱序场最大差为 `3.03e-9 / 8.03e-15 / 1.49e-10 / 1.60e-16 / 7.56e-14`，调用账差为 0。
+
+封存判决为 `FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221`。它关闭当前“Low-64 -> 精确 `A^T A` 行空间 lift -> 单缩放 -> PCGLS K10”构造，并否定“只要去掉近零空间成分就能修复 Case 2”的当前解释；不证明所有行空间方法都不可能，也不关闭整条 C 路线。后续不调 alpha、深度或 Low-64 秩，不用大模型或 GPU 挽救，不打开 Case 4/6，也不运行 wall/RSS。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v221 exact row-space lift does not preserve useful Low-64 warm-start information
+
+v220.2 already showed that one Low-64 K11/K16 observable threshold cannot provide stable fallback across conditions. Rather than retuning that threshold, v221 tests a physically distinct explanation: whether the direct Low-64 field contains near-nullspace components invisible to the current observation and therefore fails in Case 2.
+
+The unique candidate applies exact `A` to the direct Low-64 field and exact `A^T` to lift the projection back into `range(A^T)`. It then chooses one residual-minimizing scale in `[0,2]` from the current observation only and runs unchanged geometry-Jacobi PCGLS K10. The complete online ledger is `12A+11A^T`, equal to direct Low-64 K11.
+
+The formal and fully independent programs replay all `1261` Case 5 and Case 2 cells. Case 5 reaches only `202/546` absolute strict-safe cells, `0/546` matched cells, and `0/13` complete rigs. Case 2 reaches `670/715`, `0/715`, and `0/13`. Zero-start K16 reaches `13/13` in both, so the reference is adequate. The equal-cost direct Low-64 K11 control remains at `546/546 and 13/13` in Case 5, showing that the exact row-space lift suppresses rather than preserves useful information.
+
+The scale is not stuck at a bound: it ranges from `0.02872-0.03859` in Case 5 and `0.01739-0.03698` in Case 2, with zero bound hits. All `32/32` independent checks pass. Maximum field, initializer, cell-metric, scale, and camera-permutation field differences are `3.03e-9 / 8.03e-15 / 1.49e-10 / 1.60e-16 / 7.56e-14`, and call-ledger difference is zero.
+
+The sealed decision is `FAIL_LOW64_EXACT_ROWSPACE_LIFT_V221`. It closes the current Low-64 to exact `A^T A` row-space lift to one-scale to PCGLS K10 construction and rejects the current explanation that removing near-nullspace content alone repairs Case 2. It does not prove that all row-space methods are impossible and does not close the full C route. Do not retune the scale, depth, or Low-64 rank, rescue it with a larger model or GPU, open Case 4/6, or run wall/RSS.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v220.2 不放宽数值门，可观测回退没有建立跨工况成功
+
+### 讲人话：两个程序都看见 Case 2 失败，但验算尺子有两格没对齐，所以只能诚实写 inconclusive
+
+v218.1 在已开封 Case 5 上留下一个值得确认的 deterministic control：Low-64 observation-only 起点接未修改 PCGLS K11，以 `12A+11A^T` 达到 `546/546` matched 单元和 `13/13` 完整几何。v220.2 不训练模型，也不改变表示或深度，只冻结一个可观测回退门：根据初始 residual、K11 residual 及其比值决定停在 K11，或沿同一条 PCGLS 轨迹继续到 K16。
+
+正式与完全独立程序都重放了 Case 5 与 Case 2 共 `1261` 个单元。名义结果在两边相同：Case 5 为 `546/546、13/13`，Case 2 只有 `629/715` matched 单元和 `0/13` 完整几何；固定 Low-64 起点即使继续到 K16，在 Case 2 仍为 `0/13`。因此同一观测阈值不是跨工况解法。
+
+但独立合同没有全部通过。正式场与独立场的最大相对差为 `1.50948e-8`，相机乱序场最大差为 `1.14546e-8`，都略高于结果前冻结的 `1e-8`。虽然 gate selection 和调用账逐项一致，feature、逐单元 metric、summary 最大差只有 `8.19e-16 / 4.29e-10 / 1.52e-10`，这些都不能覆盖已经失败的场级门。
+
+所以没有事后把容差放宽成 `2e-8`，也没有重复运行直到 PASS。正式侧的名义 FAIL 不被包装成独立验证通过；封存状态为 `INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2`。由于没有 validated success，当前 Low-64 K11/K16 可观测回退机制关闭，不打开 Case 4/6，不测 wall/RSS，不训练大模型，也不租 GPU。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v220.2 does not loosen the numerical gate and establishes no validated cross-condition fallback
+
+v218.1 left one deterministic control worth confirming on opened Case 5: an observation-only Low-64 start followed by unchanged PCGLS K11 reaches `546/546` matched cells and `13/13` complete rigs at `12A+11A^T`. v220.2 trains no model and changes neither representation nor depth. It freezes an observable fallback that uses the initial residual, the K11 residual, and their ratio to stop at K11 or continue the same PCGLS trajectory to K16.
+
+The formal and fully independent programs both replay all `1261` Case 5 and Case 2 cells. Their nominal results agree: Case 5 reaches `546/546 and 13/13`, while Case 2 reaches only `629/715` matched cells and `0/13` complete rigs. Even continuing the fixed Low-64 start to K16 leaves Case 2 at `0/13`, so retuning the same observable threshold is not a cross-condition solution.
+
+The independent contract nevertheless fails two checks. Maximum formal-independent field difference is `1.50948e-8`, and maximum camera-permutation field difference is `1.14546e-8`, both above the preregistered `1e-8` gate. Gate selections and call ledgers agree exactly, while maximum feature, cell-metric, and summary differences are only `8.19e-16 / 4.29e-10 / 1.52e-10`; none of those agreements overrides the failed field-level gate.
+
+The tolerance is therefore not loosened post hoc to `2e-8`, and validation is not repeated until it passes. The formal nominal failure is not presented as independently validated. The sealed status is `INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2`. With no validated success, the current Low-64 K11/K16 observable fallback is closed. Case 4/6, wall/RSS, larger-model training, and GPU rental remain closed.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v218.1 关闭 potential-normal，但 Low-64 K11 出现确定性调用余量
+
+### 讲人话：新想法彻底没过，老 control 却在公平重放里第一次真的省下调用
+
+v217.1 已经把 geometry-Jacobi PCGLS K16 定为同一批已开封 Case 5 数据上的最低可靠 reference。v218.1 随后检验一个物理上不同的 potential-normal warm initializer：它只读取二维观测和已知几何，生成起点后继续执行未修改的 PCGLS K1-K14，并与 K16 同时比较绝对精度和 matched accuracy。
+
+主候选的结果很明确，也不是擦边失败。到 K14 时它仍为 `0/546` 绝对单元、`0/13` 完整几何，同时也是 `0/546` matched 单元、`0/13` matched 几何；逻辑账已经达到 `15A+15A^T`。逐几何 p90 范围为 field `2.016-2.224`、完整梯度 `3.327-3.691`、内部梯度 `7.876-9.037`、observation `0.175-0.211`。因此 scientific decision 是 `FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1`，该表示立即关闭，不再调阈值、秩、深度或网络容量。
+
+真正改变下一步优先级的是同一冻结重放中的既有 Low-64 observation-only control。Low-64 K10 虽然已经通过 `546/546` 绝对单元和 `13/13` 完整几何，但 matched 只有 `164/546`、`0/13`；Low-64 K11 则第一次同时达到 `546/546` matched 单元和 `13/13` 完整几何，最大 matched ratio 为 `1.02190`。它的调用账是 `12A+11A^T`，相对 K16 的 `16A+16A^T`，A 减少 `25%`、A^T 减少 `31.25%`、总精确调用减少 `28.125%`。Normalized BP K14 虽绝对门全过，matched 仍是 `0/546`，所以这个正结果不能被“任何便宜起点都行”解释。
+
+首轮独立 validator 的逐 arm 指标、主候选场、调用账和离散判决都一致，但它额外使用了未冻结的 reference 场容差，并用重新计算的浮点 K16 指标替代封存 K16 指标作 matched 分母，因此按规则保持 inconclusive。修正只改 validator 审裁，不改正式数组、候选、controls、阈值、求解器或数据，首次 inconclusive 证据也原样保留。修正后的独立实现全部检查通过：预测坐标/场最大相对差 `2.17e-13/2.79e-13`，主候选场最大相对差 `9.34e-10`，逐单元指标与汇总最大差 `2.37e-9/3.23e-11`，相机乱序 K14 场差 `4.40e-10`。
+
+Low-64 K11 现在只被称为已开封虚拟 Case 5 上的确定性 control headroom，不是 learned algorithm、wall/RSS 加速、外部泛化或真实 BOST。下一步把 Low-64 表示和 K11 深度原样固定，在一个结果前未开的等价公开工况上做一次确认；确认通过前不测资源、不训练网络、不租 GPU。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v218.1 closes potential-normal while Low-64 K11 establishes deterministic call headroom
+
+v217.1 fixes geometry-Jacobi PCGLS K16 as the lowest reliable reference on the opened Case 5 roster. v218.1 then tests a physically distinct potential-normal warm initializer. It reads only 2D observations and known geometry, generates a starting field, and runs unchanged PCGLS K1-K14. Absolute accuracy and K16-matched accuracy are evaluated together.
+
+The primary fails decisively. At K14 it remains at `0/546` absolute cells and `0/13` complete rigs, as well as `0/546` matched cells and `0/13` matched rigs, despite a `15A+15A^T` logical ledger. Per-rig p90 ranges are `2.016-2.224` for field, `3.327-3.691` for full gradient, `7.876-9.037` for interior gradient, and `0.175-0.211` for observation. The scientific decision is `FAIL_POTENTIAL_NORMAL_PCGLS_WARM_INSUFFICIENT_V218_1`; this representation is closed without further threshold, rank, depth, or network expansion.
+
+The route-changing finding comes from the existing observation-only Low-64 control in the same frozen replay. Low-64 K10 clears all `546/546` absolute cells and `13/13` complete rigs but reaches only `164/546` matched cells and `0/13` matched rigs. Low-64 K11 is the first depth to reach both `546/546` matched cells and `13/13` complete rigs, with a maximum matched ratio of `1.02190`. Its ledger is `12A+11A^T`, versus `16A+16A^T` for K16: A is reduced by `25%`, A^T by `31.25%`, and total exact calls by `28.125%`. Normalized BP K14 clears the absolute gates but remains at `0/546` matched cells, so the positive cannot be explained by any cheap starting point.
+
+The first independent validator agrees on all per-arm metrics, primary fields, call ledgers, and discrete decisions, but introduces an unfrozen reference-field tolerance and substitutes freshly recomputed floating-point K16 metrics for sealed K16 matched denominators. It therefore remains inconclusive. The correction changes validator adjudication only; formal arrays, candidates, controls, thresholds, solver, and data remain unchanged, and the first inconclusive record is preserved. The corrected independent implementation passes every check. Maximum prediction-coordinate/field differences are `2.17e-13/2.79e-13`, maximum primary-field difference is `9.34e-10`, maximum cell-metric/summary differences are `2.37e-9/3.23e-11`, and the K14 camera-permutation field difference is `4.40e-10`.
+
+Low-64 K11 is currently deterministic control headroom on opened virtual Case 5 only. It is not a learned algorithm, wall/RSS speedup, external generalization, or real BOST. Fix the Low-64 representation and K11 depth exactly, then run one confirmation on an equivalent previously unopened public condition. Resource measurement, neural training, and GPU rental remain closed until that confirmation passes.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v217.1 定下最低可靠的全局 PCGLS 深度
+
+### 讲人话：K15 看起来只差一点，但不能当成和 K16 一样
+
+v216 已经证明 geometry-Jacobi PCGLS K16 是合格 reference。接下来最自然的问题是：K16 会不会其实太深？如果 K15、K14 或更浅的全局固定深度也能给出等价结果，就应该先收紧 deterministic baseline，再判断 warm start 到底省了多少调用。
+
+v217 因此在同一批已开封 Case 5 数据上比较 K8 到 K16。第一次执行没有通过独立审计：测试相机换序时，代码反转了相机标签，却没有按 camera ID 把对应观测块恢复到冻结顺序。相机乱序 K16 场相对差约为 `6.35e-10`，高于冻结的 `1e-10` 门。这个执行被保留为 `INCONCLUSIVE_INVALID_GLOBAL_PCGLS_DEPTH_QUALIFICATION_V217`，没有拿来解释科学数字。
+
+v217.1 只修复这个相机包恢复漏项。数据、PCGLS、K8-K16 深度列表、绝对门、matched 门、指标和调用账全部不变，正式科学数组也与不可用 v217 逐字节一致。修复后，相机乱序 K16 场差为 `0`；独立第二实现重新构造相机包、预条件、全部深度的场和观测、逐单元四项指标、逐几何尾部与调用账，`14/14` 项检查全真。
+
+严格结果是：K11/K12/K13/K14/K15 的绝对门通过单元依次为 `96/318/467/526/544`，完整几何为 `0/0/5/8/11`，但 K8-K15 的 matched 单元全部是 `0/546`。只有 K16 同时达到 `546/546` 绝对单元、`13/13` 完整几何和 `546/546` matched 单元。
+
+K15 确实很接近绝对门，只差两个单元；但它相对 K16 的 field / 完整梯度 / 内部梯度 / observation 比值中位数仍为 `1.0546 / 1.0471 / 1.0362 / 1.1176`，而且每个单元至少有一个指标超过 `1.05`。所以不能把 reference 从 K16 降到 K15，再把少一次 A 和一次 A^T 写成“无损加速”。
+
+封存判决为 `PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1`。它的价值是把 deterministic reference 定死，防止未来比较靠削弱裁判获得漂亮数字。下一候选必须是物理上不同、只读取二维观测与已知几何的 warm initializer，在匹配 K16 的 field、完整梯度、内部梯度和 observation 时，同时严格减少 A 与 A^T。
+
+这不是 learned initializer、exact-call 减少、wall/RSS 加速、外部泛化、曲线光路或真实 BOST 结果。
+
+`algorithm_breakthrough=false`、`resource_speedup=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v217.1 qualifies the lowest reliable global PCGLS depth
+
+v216 establishes geometry-Jacobi PCGLS K16 as an adequate reference. The next natural question is whether K16 is deeper than necessary. If K15, K14, or another shallower globally fixed depth were accuracy-equivalent, the deterministic baseline should be tightened before attributing any call saving to a warm start.
+
+v217 therefore compares K8 through K16 on the same opened Case 5 data. The first execution fails independent audit: during the camera-permutation test it reverses camera labels without restoring the corresponding observation blocks by camera ID. The resulting K16 field relative difference is about `6.35e-10`, above the frozen `1e-10` limit. That execution is preserved as `INCONCLUSIVE_INVALID_GLOBAL_PCGLS_DEPTH_QUALIFICATION_V217` and is not used to interpret scientific values.
+
+v217.1 repairs only that camera-packet restoration omission. The data, PCGLS solver, K8-K16 roster, absolute gates, matched gates, metrics, and call ledgers remain unchanged, and the formal science arrays are bit-identical to the invalid v217 execution. After the repair, the camera-permutation K16 field difference is `0`. A fully independent second implementation rebuilds camera packets, preconditioning, every depth's field and observation, all four cell metrics, per-geometry tails, and call ledgers. All `14/14` checks pass.
+
+The strict result is that K11/K12/K13/K14/K15 reach `96/318/467/526/544` absolute cells and `0/0/5/8/11` complete geometries, while every depth from K8 through K15 remains at `0/546` matched cells. Only K16 reaches `546/546` absolute cells, `13/13` complete geometries, and `546/546` matched cells.
+
+K15 is close on the absolute gates, missing only two cells, but its median field / full-gradient / interior-gradient / observation ratios to K16 are still `1.0546 / 1.0471 / 1.0362 / 1.1176`, and every cell exceeds `1.05` in at least one metric. Lowering the reference from K16 to K15 therefore cannot be presented as losslessly saving one A and one A^T.
+
+The sealed decision is `PASS_K16_REMAINS_MINIMAL_ADEQUATE_GLOBAL_PCGLS_DEPTH_V217_1`. Its value is to fix the deterministic referee so future comparisons cannot obtain attractive numbers by weakening it. The next candidate must be a physically distinct warm initializer that reads only 2D observations and known geometry, matches K16 field, full-gradient, interior-gradient, and observation accuracy, and strictly reduces both A and A^T.
+
+This is not a learned initializer, exact-call reduction, wall/RSS speedup, external generalization, curved-ray validation, or real BOST.
+
+`algorithm_breakthrough=false`, `resource_speedup=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v216 现在可以下负结论
+
+### 讲人话：裁判换成合格的 PCGLS 后，当前 low-64 warm start 仍然输了
+
+v215 的代理物理重放没有被判成功或失败，因为当时预注册的 Zero-CGLS K16 reference 自身只在 `466/546` 个单元、`1/13` 套完整几何上合格。v216 没有重跑物理，也没有看到结果后挑参考：它在读取新的 matched 数值前，把同一批已封存控制中已经由两套实现重放的 geometry-Jacobi PCGLS K16 固定为唯一 reference。该参考在 `546/546` 个单元、`13/13` 套完整几何上通过 field、完整梯度、内部梯度与 observation 四项绝对门。
+
+五个固定 low-64 checkpoint 的裁决很直接。K0/K1/K2 均为 `0/546` 绝对通过，K4 为 `390/546`；K8 达到 `546/546` 绝对通过和 `13/13` 完整几何通过，但相对合格 PCGLS-K16 的 matched 结果仍为 `0/546` 单元、`0/13` 完整几何。按逐单元 `1.05` 上限，K8 的 field、完整梯度、内部梯度和 observation 越线数为 `545/546/23/546`；中位 matched ratio 为 `1.14343/1.16705/0.99619/1.71339`。失败不是一个边缘点，也不是只剩内部梯度：完整梯度和 observation 在全部单元都没有达到等价精度。
+
+正式与独立再审裁分别读取 v215 已封存的 formal 与 independent 指标数组，不共享判决函数，也没有新真值读取、forward、adjoint 或训练。独立 `18/18` 项检查全真；父指标最大差 `1.43e-10`，v216 汇总最大差 `1.86e-10`，调用账、reference 充分性、checkpoint 判决和最终结论完全一致。
+
+因此当前 fixed low-64 observation-proxy warm start 正式关闭，不用更大的 CNN、FNO、UNO 或 GPU 挽救。下一门先在结果前确定 K8 到 K16 之间最低仍充分的全局 PCGLS 深度，给未来候选建立更严格且公平的 deterministic baseline。任何新 initializer 都必须达到 matched accuracy、同时严格减少 `A/A^T`，并排除同价或更便宜控制。
+
+这只是已开封 Case 5 的 post-open 机制负结果，不是 wall/RSS、外部泛化、曲线光路或真实 BOST 结论。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint: v216 can now make a valid negative decision
+
+v215 cannot call the proxy a success or failure because its preregistered Zero-CGLS K16 reference is adequate in only `466/546` cells and `1/13` complete geometries. Before reading any new matched value, v216 fixes geometry-Jacobi PCGLS K16 from the same sealed control replay as the sole reference. Both implementations show that this reference clears field, full-gradient, interior-gradient, and observation absolute gates in `546/546` cells and `13/13` complete geometries.
+
+The five fixed low-64 checkpoints yield a clear decision. K0/K1/K2 pass `0/546` absolute cells and K4 passes `390/546`. K8 reaches `546/546` absolute cells and `13/13` complete geometries, yet it matches the adequate PCGLS-K16 reference in `0/546` cells and `0/13` geometries. Under the per-cell `1.05` limit, K8 violates field, full-gradient, interior-gradient, and observation matching in `545/546/23/546` cells, with median ratios of `1.14343/1.16705/0.99619/1.71339`. This is not a marginal-cell or interior-gradient-only miss: full-gradient and observation equivalence fail in every cell.
+
+The formal and independent re-adjudications read separate sealed v215 metric arrays, share no decision implementation, and perform no new truth read, forward, adjoint, or training. All `18/18` independent checks pass; maximum parent-metric and v216-summary differences are `1.43e-10` and `1.86e-10`, while call ledgers, reference adequacy, checkpoint decisions, and the final verdict agree exactly.
+
+The fixed low-64 observation-proxy warm start is therefore closed without a larger CNN, FNO, UNO, or GPU rescue. The next gate preregisters the lowest globally adequate PCGLS depth between K8 and K16, creating a tighter deterministic baseline. Any future initializer must achieve matched accuracy, strictly reduce both `A/A^T`, and survive equal-or-cheaper control attribution.
+
+This is a post-open Case 5 mechanism failure, not wall/RSS evidence, external generalization, curved-ray validation, or real BOST.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v215 物理重放完成，但 reference 不充分
+
+### 讲人话：代理已经接上物理求解器，裁判却先被判定不合格
+
+v214 证明只读取当前二维观测与已知几何，也能构造足以复现 Case 5 谱对齐判别的代理场。v215 没有继续停留在归因指标，而是把该代理作为 warm initializer 接入未修改 CGLS，并对 `13` 套虚拟九相机几何与 `42` 帧已开封 Case 5 数据完成 `546` 个物理重放。
+
+预注册协议要求先确认 Zero-CGLS K16 reference 本身在 field、完整梯度、内部梯度和 observation 四类绝对门上充分，再选择 proxy depth、比较便宜 control 或解释 exact-call 账。结果显示 reference 只有 `466/546` 个单元和 `1/13` 套完整几何通过。共有 `80` 个失败，全部只来自内部梯度；field、完整梯度和 observation 的违反数均为 `0`。十三套几何的内部梯度 p90 范围为 `0.71296-0.78644`，而冻结门为 `0.75`。
+
+完全独立第二实现重建全部方向、候选物理场、二维观测、逐单元指标、逐几何汇总和每个 arm 的 A/A^T 调用账。正式与独立的物理场最大相对差为 `3.42e-9`，逐单元指标最大差为 `1.43e-10`，汇总最大差为 `5.75e-11`，相机乱序指标差最高为 `7.66e-15`；封存输入与正式数组在验证前后保持不变，科学判决完全一致。
+
+v215 不是 warm start 失败，也不是 warm start 成功。因为 reference 不充分，协议在选择任何 proxy depth 前就 fail closed，所以代理、便宜 control 和 exact-call 收益都没有被裁决。真正增量是把 observation-only 代理推进到了完整物理链，同时避免把 reference 不足误写成候选失败。
+
+下一门必须结果前另行冻结 reference qualification。新的 reference 需要在同一 `13 × 42` 范围内独立通过四类充分性门，之后才能重新裁决 v214 proxy field 作为 warm start。不得在 v215 内事后修改 K、门槛或 control。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v214 shows that the current 2D observation and known geometry alone can form a proxy field sufficient to reproduce the Case 5 spectral-alignment decision. v215 moves beyond attribution: it uses that proxy as a warm initializer for unchanged CGLS and completes `546` physical replays across `13` virtual-nine geometries and `42` opened Case 5 frames.
+
+The preregistered protocol first requires the Zero-CGLS K16 reference itself to satisfy absolute field, full-gradient, interior-gradient, and observation gates before any proxy depth, cheap control, or exact-call ledger is adjudicated. The reference clears all four gates in only `466/546` cells and `1/13` complete geometries. All `80` failures are interior-gradient only; field, full-gradient, and observation violation counts are each `0`. Interior-gradient p90 spans `0.71296-0.78644` across the thirteen geometries against the frozen `0.75` gate.
+
+A fully independent second implementation rebuilds every direction, candidate physical field, 2D observation, cell metric, geometry summary, and per-arm A/AT ledger. Maximum formal-independent physical-field relative, cell-metric, and summary differences are `3.42e-9`, `1.43e-10`, and `5.75e-11`; the maximum camera-permutation metric difference is `7.66e-15`. Sealed inputs and formal arrays remain unchanged, and the scientific decision matches exactly.
+
+v215 is not a failed warm start, and it is not a successful one. Because the reference is inadequate, the protocol fails closed before selecting any proxy depth. The proxy, cheap controls, and exact-call gain therefore remain unadjudicated. The substantive increment is connecting the observation-only proxy to the full physics chain while preventing reference inadequacy from being mislabeled as candidate failure.
+
+The next gate must separately preregister reference qualification. A new reference must independently clear all four adequacy families on the same `13 × 42` scope before the v214 proxy field may be adjudicated again as a warm start. K, thresholds, and controls may not be changed post hoc inside v215.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v214 用当前二维观测复现谱对齐判决
+
+### 讲人话：不再偷看三维答案，也能判断哪组相机更看得清
+
+v213 已经证明，Case 5 实际三维源场会把能量加载到师兄标定族的弱谱方向上，因此 truth-aware 指标能把两类九相机几何严格分开。但部署时没有三维真值可读。v214 问的是更接近算法入口的问题：只给当前二维观测与已知相机几何，能不能重建足以作出同一判决的低模代理场。
+
+本轮固定使用同一 low-64 子空间、`42` 帧已开封 Case 5 合成观测和 `39` 套九相机几何。代理只把二维观测投影回几何响应空间，不读取每帧三维 CFD 系数，也不训练模型。主指标仍比较 13 套虚拟九相机与 13 套师兄标定几何的全部 `169` 个跨族配对。
+
+结果为 `169/169` 严格通过，无平局。师兄标定族 min/median/max 为 `0.19783/0.32483/0.59186`，虚拟九相机为 `0.98917/1.06574/1.11703`；虚拟族最小值比师兄族最大值高 `0.39730`。源盲几何 control 仍只有 `167/169`。这排除了“代理必须读取 CFD 真值才能恢复谱对齐判决”的解释。
+
+完全独立第二实现重建 `1638` 个 geometry-frame 观测、39 套几何响应、全部 proxy fields 与谱统计。`19/19` 项检查全真；proxy field 每场 L2 相对差、逐帧指标差、逐几何指标差、奇异值相对差和汇总差最高为 `1.12e-13 / 1.71e-13 / 8.49e-14 / 6.10e-14 / 4.04e-14`。
+
+成本边界必须完整写：几何响应 cache 构造用了 `2496` 个 forward-equivalent probes，合成观测生成用了 `1638A`；只有在观测与 cache 已存在以后，代理本身才是 `0A+0A^T`。因此它不是端到端调用减少或速度结果。
+
+封存判决为 `PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214`。这是一个窄而真实的 observation-visible 机制增量，但还不是 warm start 或重建。下一门必须把 proxy field 作为初值接入未修改 CGLS，物理重放并公平比较 Zero、BP、CGLS、PCGLS 和便宜 control；只有 field、完整梯度、内部梯度与 observation 的 matched-accuracy 全过，才能讨论 exact-call 与资源收益。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v213 shows with opened 3D truth that the Case 5 source loads weak spectral directions of the supplied camera family. v214 moves one step closer to deployment: it asks whether current 2D observations and known geometry alone can reconstruct a low-mode proxy sufficient for the same cross-family decision.
+
+Using the same fixed low-64 span, `42` opened synthetic Case 5 observation frames, and `39` nine-camera geometries, the untrained proxy projects each 2D observation back through the known geometry response. It does not read per-frame 3D CFD coefficients. The primary again evaluates all `169` supplied-versus-virtual-nine comparisons.
+
+All `169/169` comparisons pass strictly with no ties. Supplied-family min/median/max values are `0.19783/0.32483/0.59186`, versus `0.98917/1.06574/1.11703` for virtual nine cameras, yielding a strict gap of `0.39730`. The source-blind geometry control remains at `167/169`. This rejects the explanation that CFD truth must be read inside the proxy to recover the spectral-alignment decision.
+
+A fully independent implementation rebuilds all `1,638` geometry-frame observations, 39 geometry responses, proxy fields, and spectral statistics. All `19/19` checks pass. Maximum per-field proxy relative, frame-metric, geometry-metric, singular-value relative, and summary differences are `1.12e-13 / 1.71e-13 / 8.49e-14 / 6.10e-14 / 4.04e-14`.
+
+The cost boundary is explicit: geometry-response cache construction uses `2,496` forward-equivalent probes and synthetic-observation generation uses `1,638A`. Only after observations and the cache already exist is the proxy itself `0A+0AT`. This is not an end-to-end call-reduction or speed result.
+
+The sealed decision is `PASS_OBSERVATION_ONLY_SPECTRAL_ALIGNMENT_PROXY_STRICTLY_SEPARATES_CASE5_REFERENCE_V214`. It is a narrow but substantive observation-visible mechanism result, not a warm start or reconstruction. The next gate must use the proxy field to initialize unchanged CGLS, physically replay the pipeline, and compare fairly against Zero, BP, CGLS, PCGLS, and cheap controls. Exact-call and resource claims remain closed until field, full-gradient, interior-gradient, and observation matched-accuracy all pass.
+
+`algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-08-24：v213 实际源场谱对齐归因
+
+### 讲人话：不是“最差方向”本身决定成败，而是火焰场有没有把能量压到这个方向上
+
+v210 用固定 low-64 子空间检查几何本身的谱下限，在虚拟环形九相机与师兄标定九相机之间得到 `167/169` 个预期方向比较，但两族仍有重叠。v211 的局部无符号覆盖和 v212 的固定有符号射线相消都没有解释这两个重叠。v213 因而检验一个更贴近源场的问题：几何的弱谱方向，是否恰好承载了 Case 5 实际三维密度场的主要低频能量。
+
+本轮沿用同一个固定 low-64 子空间、`42` 帧已经开封的三维密度场和 `39` 套九相机几何。对每套几何构造迹归一 Gram，再用每帧真实 low-64 系数计算源加权调和可观测性，并把 `42` 帧中的最小值作为唯一主指标。结果前固定的门是：13 套虚拟环形九相机的每一个值，都必须严格高于 13 套师兄标定九相机的每一个值。
+
+结果达到 `169/169`，没有平局。师兄标定族主指标 min/median/max 为 `0.51347/0.52811/0.60360`，虚拟九相机为 `0.89028/0.97869/1.03812`；虚拟族最小值仍比师兄标定族最大值高 `0.28668`。固定 low-64 子空间捕获每帧三维场能量的 `77.69%` 到 `79.38%`，中位数为 `78.47%`。相比之下，源盲 v210 control 仍只有 `167/169`，说明决定差异的不是单独一个最小特征值，而是实际源场能量与几何弱谱方向的对齐。
+
+完全独立第二实现重新读取原始密度文件和三张网格，用不同的分块、插值表达式和 SVD 基构造重建 low-64 投影、全部 Gram、逐帧指标、最坏帧与 `169` 个比较。`19/19` 项检查全真；源投影、逐帧指标、逐几何汇总、Gram 特征值和相机换序最大差分别为 `6.39e-15 / 3.60e-14 / 3.40e-14 / 1.15e-14 / 2.62e-14`。第一次独立程序完成数值重建后仅因一个 `float32` 审计量无法写入 JSON 而失效；v213.1 只修复序列化，并从原始输入完整重跑 formal 与 independent 链，没有修改数据、指标、阈值或几何。
+
+封存判决为 `PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213`。这是一个真实的机制归因增量：它解释了为什么两个九相机几何族在同一 Case 5 源场上表现不同。但它读取了已经开封的三维真值系数，所以仍是 post-open、truth-aware 诊断，不是部署可计算的 predictor 或 warm start，也没有证明 exact-call 减少、wall/RSS、外部泛化、curved ray 或真实 BOST。
+
+下一门只允许一个无训练、无真值输入的最小谱代理：只用部署可见二维观测和已知几何尝试复现同一个 `169/169` 分离。失败就把 v213 保留为真值可见归因，不用 CNN、FNO、UNO、DeepONet 或 GPU 挽救。
+
+`algorithm_breakthrough=false`、`global_resource_speedup_claim=false`、`external_generalization=false`、`real_bost=false`。
+
+### English checkpoint
+
+v210's source-blind low-64 spectral floor moves in the expected direction for `167/169` virtual-ring-nine versus supplied-nine comparisons, while v211's unsigned local coverage and v212's fixed signed-line cancellation do not explain the remaining overlap. v213 asks a source-specific question: whether each geometry's weak spectral directions carry the actual low-frequency energy of the opened Case 5 density trajectory.
+
+Using the same fixed low-64 span, all `42` opened 3D density frames, and `39` nine-camera geometries, the unique primary is the worst-frame source-weighted harmonic observability of the trace-normalized Gram. The preregistered gate requires every one of the 13 virtual-nine values to exceed every one of the 13 supplied-nine values.
+
+The result reaches `169/169` strict comparisons with no ties. Supplied-family min/median/max values are `0.51347/0.52811/0.60360`, versus `0.89028/0.97869/1.03812` for virtual nine cameras. The strict family gap is `0.28668`. The fixed low-64 span captures `77.69%` to `79.38%` of each field's energy, with a `78.47%` median. The source-blind v210 control remains at `167/169`, showing that the distinction is not the weakest eigenvalue alone but the alignment between actual source energy and weak geometry directions.
+
+A fully independent second implementation rereads the raw density files and grids, uses different chunking and interpolation expressions plus SVD rather than the formal basis construction, and rebuilds every projection, Gram, frame metric, worst frame, and comparison. All `19/19` checks pass. Maximum source-projection, frame-metric, geometry-summary, Gram-eigenvalue, and camera-permutation differences are `6.39e-15 / 3.60e-14 / 3.40e-14 / 1.15e-14 / 2.62e-14`. The first independent program completed the numerical rebuild but failed only when serializing one `float32` audit value. v213.1 fixes that serialization and reruns the complete formal and independent chain from raw inputs without changing data, metrics, thresholds, or geometry.
+
+The sealed decision is `PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213`. This is a substantive mechanism-attribution result, but it remains post-open and truth-aware because it reads the opened 3D density coefficients. It is not a deployable predictor or warm start and establishes no exact-call reduction, wall/RSS gain, external generalization, curved-ray result, or real BOST result.
+
+The next gate permits only one untrained, truth-free minimal spectral proxy using deployment-visible 2D observations and known geometry, retaining the same `169/169` strict gate and an independent second implementation. Failure leaves v213 as truth-aware attribution only; no CNN, FNO, UNO, DeepONet, or GPU rescue is authorized.
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
 
