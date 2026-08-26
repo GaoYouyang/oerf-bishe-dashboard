@@ -82,7 +82,7 @@ def test_v251_figure_and_builder_are_public() -> None:
 
 def test_v251_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE19_CAMERA_WEIGHTED_COMPLEMENT_FRAME_ZERO_V260"
+    assert current["scientific_status"] == "FAIL_CASE19_COMPONENT_BLOCK_GALERKIN_FRAME_ZERO_V261"
     metrics = current["metrics"]
     decision = current["current_decision"]
     assert metrics["v251_independent_checks_passed"] == 17
@@ -94,7 +94,7 @@ def test_v251_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -
     assert decision["v251_effective_exact_call_reduction_established"] is False
     assert decision["v251_algorithm_breakthrough"] is False
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_camera_weighted_complement_v260.png"
+        "blastnet_case19_component_block_galerkin_v261.png"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")

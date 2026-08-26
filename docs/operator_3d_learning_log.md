@@ -4,6 +4,18 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v261 双分量 2×2 Galerkin 修正被公平对照否定
+
+**为什么做。** v260 已关闭按相机残差能量加权。v261 转向物理上不同的最小结构：保留 BOS 的两个完整有符号探测器分量，从 deployment-visible K13 残差分别构造伴随与 geometry-Jacobi 预条件方向，再用固定 `2×2` Galerkin 系统混合。主候选 `15A+15A^T` 与未修改 K15 同价，同时比较便宜的 v258、raw K14 与 K16 reference；不读真值、时间、rig 标签或相机 ID。
+
+**实际结果。** 完全独立第二实现通过 `41/41` 项检查；场、归一化残差、逐单元指标和分量系数的最大差分别为 `2.26e-9 / 5.60e-10 / 1.10e-10 / 6.13e-10`，物理 replay 差为 `2.61e-16`。主候选绝对门只有 `3/13`，K16-matched 为 `0/13`；四项 matched p90 比为 `1.1716 / 1.1493 / 1.1183 / 1.3361`，全部高于 `1.05`。同价 K15 的绝对门为 `9/13`，便宜一个伴随调用的 v258 为 `13/13`，因此主候选同时被同价和更便宜对照支配。
+
+**路线动作与边界。** 科学判决为 `FAIL_CASE19_COMPONENT_BLOCK_GALERKIN_FRAME_ZERO_V261`。当前“两个完整分量 + 两个预条件方向 + 固定 2×2 Galerkin”机制族关闭，不扩大分组或块数、不训练系数预测器、不扩展完整序列、不租 GPU、不运行资源门。这是开封后机制负证据，不是整条 C 路线不可能；后续必须另行冻结物理上不同的机制，或等待真正配对的二维双分量 BOST 观测。`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English summary
+
+v261 tests a physically different minimal structure after v260 closes camera weighting: two complete signed detector components each produce an adjoint and geometry-Jacobi-preconditioned direction, mixed by one fixed `2x2` Galerkin solve. A fully independent implementation passes all `41/41` checks. The `15A+15AT` primary clears only `3/13` absolute cells and remains K16-matched in `0/13`; all four matched p90 ratios exceed `1.05`. Equal-cost K15 clears `9/13` absolute cells and cheaper v258 clears `13/13`, so the primary is dominated. This exact component-block family closes without larger blocks, a coefficient predictor, full-sequence expansion, GPU use, or a resource gate, and `algorithm_breakthrough=false`.
+
 ## 2026-08-26：v260 相机残差能量加权没有修复 K16 观测匹配
 
 **为什么做。** v259 已经把 v258 相对 K16 的剩余观测超额定位到相机局部结构。v260 不继续泛化诊断，而是直接检验最简单的可部署动作：只用 K13 的逐相机归一化残差能量给互补步加权，再执行一次未修改的 geometry-Jacobi PCGLS。分数、均值归一化、冻结方向、线性结构、`15A+14A^T` 调用账与四个对照都在结果前固定，不读真值、时间、rig 标签或相机 ID。

@@ -1,0 +1,103 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-component-block-galerkin-v261.0",
+  "updated": "2026-08-26",
+  "scope": {
+    "condition": "already-opened same-family public reacting-flow Case 19",
+    "role": "post-open frame-zero signed-component mechanism gate",
+    "rigs": 13,
+    "frames_per_rig": 1,
+    "cells": 13,
+    "active_cameras": 9,
+    "grid": [32, 16, 16],
+    "trainable_parameters": 0,
+    "full_sequence_run": false,
+    "fresh_wall_or_rss_run": false,
+    "external_condition_opened": false
+  },
+  "mechanism": {
+    "input": "deployment-visible K13 residual and reported geometry",
+    "partition": "the two complete signed detector components, always both",
+    "directions": "one geometry-Jacobi-preconditioned adjoint residual direction per detector component",
+    "mixing": "a fixed two-by-two Galerkin solve in measurement space",
+    "uses_truth_time_rig_labels_or_camera_id": false,
+    "uses_component_selection_threshold_fallback_or_learned_coefficients": false,
+    "logical_exact_calls_A": 15,
+    "logical_exact_calls_At": 15
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_CASE19_COMPONENT_BLOCK_GALERKIN_FRAME_ZERO_V261",
+    "scientific_decision": "FAIL_CASE19_COMPONENT_BLOCK_GALERKIN_FRAME_ZERO_V261",
+    "completed": true,
+    "passed": true,
+    "checks_passed": 41,
+    "checks_total": 41,
+    "maximum_field_relative_difference": 2.2581315278195783e-9,
+    "maximum_normalized_residual_difference": 5.59899447886494e-10,
+    "maximum_metric_absolute_difference": 1.1041867420402696e-10,
+    "maximum_component_coefficient_relative_difference": 6.126897991920442e-10,
+    "maximum_replay_absolute_difference": 2.6116135954390255e-16,
+    "end_to_end_physics_independence_proven": false
+  },
+  "primary": {
+    "absolute_cells": 3,
+    "matched_cells": 0,
+    "absolute_and_matched_cells": 0,
+    "absolute_metrics_p50": [0.3380486368295434, 0.6277371952411968, 0.7658842473353169, 0.06748619668518539],
+    "absolute_metrics_p90_higher": [0.36603974487292634, 0.6527488835999442, 0.828049897056981, 0.0708115727296776],
+    "absolute_metrics_worst": [0.3676736502740681, 0.6575423670015811, 0.8479328904201157, 0.0725600659247651],
+    "matched_ratio_p90_higher": [1.1716276666973502, 1.1492756694650383, 1.1183152853570497, 1.336114708658257],
+    "matched_ratio_worst": [1.1785606873949792, 1.1573927992246476, 1.1196561528807423, 1.3472540893615297],
+    "systematic_matched_blockers": ["field", "full_gradient", "interior_gradient", "observation"]
+  },
+  "controls": {
+    "same_cost_k15": {
+      "logical_exact_calls_A": 15,
+      "logical_exact_calls_At": 15,
+      "absolute_cells": 9,
+      "matched_cells": 0,
+      "matched_ratio_p90_higher": [1.0541420154128154, 1.0473292006611747, 1.0410870114456898, 1.122196929784447]
+    },
+    "cheaper_v258": {
+      "logical_exact_calls_A": 15,
+      "logical_exact_calls_At": 14,
+      "absolute_cells": 13,
+      "matched_cells": 0,
+      "matched_ratio_p90_higher": [0.4516558923431879, 0.46629960956597466, 0.49458660530420423, 1.2263568070724225]
+    },
+    "raw_k14": {
+      "logical_exact_calls_A": 14,
+      "logical_exact_calls_At": 14,
+      "absolute_cells": 7,
+      "matched_cells": 0
+    },
+    "k16_reference": {
+      "logical_exact_calls_A": 16,
+      "logical_exact_calls_At": 16,
+      "absolute_cells": 12,
+      "matched_cells": 13
+    }
+  },
+  "adjudication": {
+    "scientific_decision": "FAIL_CASE19_COMPONENT_BLOCK_GALERKIN_FRAME_ZERO_V261",
+    "route_action": "CLOSE_EXACT_TWO_SIGNED_COMPONENT_BLOCK_AND_REQUIRE_PHYSICALLY_DIFFERENT_MECHANISM_OR_NEW_REAL_2D_DATA",
+    "signed_component_partition_was_sufficient_repair_rule": false,
+    "primary_improved_over_same_cost_k15": false,
+    "primary_improved_over_cheaper_v258": false,
+    "full_sequence_authorized": false,
+    "predictor_training_authorized": false,
+    "resource_gate_authorized": false,
+    "reason": "the primary clears only 3 of 13 absolute cells, reaches 0 of 13 K16-matched cells, and is dominated by both the same-cost K15 and cheaper v258 controls"
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "effective_exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}
