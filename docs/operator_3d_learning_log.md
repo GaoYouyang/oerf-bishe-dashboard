@@ -4,6 +4,22 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v254 无序 K1 配对方向子空间未守住 matched-accuracy
+
+**为什么做。** v253 说明从 33 帧里挑一个锚点既不安全，也会被零调用的观测范数 control 完全解释。v254 因此去掉锚点和时间顺序，改问整个 deployment-visible 帧集合能否组成足够的 solver-native 方向池。每帧只做一次 zero-start geometry-Jacobi PCGLS K1，把 K1 场方向与其精确投影配对后归一化；formal 用无序 rank-16 SVD 子空间，独立程序用 Gram 特征分解重建同一空间，再以 measurement projection 初始化并执行未修改的 restarted PCGLS K14。结果前固定 13 条 rig、33 帧、rank、归一化、tie-break、绝对门、K16-matched 门、三个 controls、调用账与失败关闭规则。方向池封存前不读真值、时间索引、rig 标签或失败标签。
+
+**独立结果。** 完全独立第二实现通过 `29/29` 项检查。formal-independent 的场相对差、初始化场相对差、指标绝对差、残差相对差与汇总绝对差最大分别为 `7.79e-10 / 7.62e-13 / 3.88e-11 / 5.12e-8 / 1.64e-11`；selected spectrum 相对差 `8.19e-15`，帧集合乱序后的场相对差 `3.02e-13`，配对 forward 相对差 `3.25e-15`。这些数值都通过结果前冻结的界，负判决因此有效。
+
+**正式性能。** rank-16 primary 的绝对门只有 `383/429` 单元、`6/13` 完整 rig；相对 K16 的 matched-accuracy 为 `0/429`、`0/13`。它的 field / full-gradient / interior-gradient / observation p90 为 `0.325666 / 0.616054 / 0.750977 / 0.060589`，内部梯度 p90 已越过绝对门。self-K1 restart K14 为 `371/429`、`4/13`；zero-PCGLS K15 为 `383/429`、`4/13`。封存的 FIFO16 K14 诊断达到 `428/429`、`12/13` 绝对门与 `429/429`、`13/13` matched，但它依赖时间顺序，不能替代无序 frame-set primary。K16 reference 本身只有 `417/429`、`9/13` 绝对安全，仍不充分。
+
+**我学到的。** “把每帧 K1 方向全部放进一个全局低秩池”并不能恢复时间有序暖启动里保留的结构。方向池对相机和帧集合换序稳定，只说明实现满足等变合同；它没有把绝对精度和 matched-accuracy 变成可部署结果。primary 每条 rig 的逻辑账为 `495A+495A^T`，K16 为 `528A+528A^T`，算术差 `6.25%`。因为精度门失败，这不是有效 exact-call 减少，也不授权 fresh wall/RSS。
+
+**路线动作与边界。** 权威判决为 `FAIL_CASE19_K1_SET_SUBSPACE_MATCHED_ACCURACY_V254`。关闭当前 global unordered normalized paired-K1 rank-16 子空间，不增加 rank、深度，不改变归一化，也不以更大 predictor、CNN/FNO/UNO、GPU 或 wall/RSS 挽救。它不证明所有局部、因果或非线性 solver-native 机制不可能，也不关闭整条 C 路线。Case 19 已开封，因此这仍是 post-open mechanism evidence。`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English note
+
+v254 removes the unsafe anchor and all time ordering, then asks whether the complete deployment-visible frame set can form a sufficient solver-native direction pool. Each frame contributes one zero-start geometry-Jacobi PCGLS K1 field and its exact paired projection. Formal builds an unordered rank-16 SVD subspace, while the independent implementation reconstructs the same space through a Gram eigendecomposition; measurement projection initializes an unchanged restarted PCGLS K14 solve. The independent implementation passes `29/29` checks. Maximum formal-independent field, initializer, metric, residual, and summary differences are `7.79e-10 / 7.62e-13 / 3.88e-11 / 5.12e-8 / 1.64e-11`; frame-set and camera permutation contracts also pass. The primary reaches only `383/429` absolute-safe cells and `6/13` complete rigs, with `0/429` cells and `0/13` rigs under K16-matched accuracy. The sealed chronological FIFO16 diagnostic reaches `429/429` matched cells and `13/13` rigs but is order-dependent and inadmissible as a substitute. The primary ledger is `495A+495A^T` versus `528A+528A^T` for K16, a nominal `6.25%` difference that is not effective call reduction because accuracy fails. The global unordered paired-K1 rank-16 subspace closes without rank, depth, normalization, larger-model, GPU, or wall/RSS rescue. This is post-open mechanism evidence, not external generalization, real BOST, resource speedup, or an algorithmic breakthrough.
+
 ## 2026-08-26：v253 K1 残差收缩选锚被零调用 control 完全解释
 
 **为什么做。** v252 的两个图遍历缺口都发生在 medoid anchor 自身。v253 因此不运行完整序列，只检验能否从当前批次的 deployment-visible observation 与 reported geometry 中找到安全锚点：对每个 frame 做一次零起点 geometry-Jacobi PCGLS K1，以归一化残差收缩选最小值；结果前固定 13 条 rig、33 帧、tie-break、K16 双实现稳健安全标签，以及最小观测范数和余弦 medoid 两个零调用 control。固定 frame 16 只作依赖时间索引的不合格诊断。

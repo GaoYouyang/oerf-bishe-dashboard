@@ -50,7 +50,7 @@ def test_v238_figure_is_rendered() -> None:
 
 def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE19_K1_RESIDUAL_CONTRACTION_ANCHOR_V253"
+    assert current["scientific_status"] == "FAIL_CASE19_K1_SET_SUBSPACE_MATCHED_ACCURACY_V254"
     assert current["current_decision"]["v238_independent_validation_passed"] is True
     assert current["current_decision"]["v238_algorithm_breakthrough"] is False
     assert current["metrics"]["v238_octant_complete_rigs_passed"] == 0
@@ -58,7 +58,7 @@ def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
         current["metrics"]["v238_global_rank64_global_p90_higher"]
     )
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_k1_anchor_identifiability_v253.png"
+        "blastnet_case19_k1_set_subspace_v254.png"
     )
 
     for page in (FOCUS, HOME, DAILY):

@@ -12,8 +12,6 @@ RESULT = ROOT / "docs/blastnet_case19_k1_anchor_identifiability_v253_result_2026
 FIGURE = ROOT / "assets/figures/blastnet_case19_k1_anchor_identifiability_v253.png"
 BUILDER = ROOT / "site_tools/build_blastnet_case19_k1_anchor_identifiability_v253_figure.py"
 CURRENT = ROOT / "operator-learning/current-evidence.json"
-FOCUS = ROOT / "operator-learning/index.html"
-HOME = ROOT / "index.html"
 DAILY = ROOT / "operator-learning/daily-progress.html"
 LEARNING_LOG = ROOT / "docs/operator_3d_learning_log.md"
 
@@ -58,9 +56,9 @@ def test_v253_figure_and_builder_are_public() -> None:
         assert image.height >= 1100
 
 
-def test_v253_is_latest_on_bilingual_primary_pages() -> None:
+def test_v253_remains_preserved_as_historical_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE19_K1_RESIDUAL_CONTRACTION_ANCHOR_V253"
+    assert current["scientific_status"] == "FAIL_CASE19_K1_SET_SUBSPACE_MATCHED_ACCURACY_V254"
     metrics = current["metrics"]
     decision = current["current_decision"]
     assert metrics["v253_k1_anchor_safe_rigs"] == 9
@@ -72,14 +70,14 @@ def test_v253_is_latest_on_bilingual_primary_pages() -> None:
     assert decision["v253_full_traversal_mechanism_authorized"] is False
     assert decision["v253_algorithm_breakthrough"] is False
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_k1_anchor_identifiability_v253.png"
+        "blastnet_case19_k1_set_subspace_v254.png"
     )
-    for page in (FOCUS, HOME, DAILY):
-        text = page.read_text(encoding="utf-8")
-        assert "blastnet_case19_k1_anchor_identifiability_v253" in text
-        assert "9/13" in text and "11/13" in text and "13/13" in text
-        assert "data-i18n-zh" in text and "data-i18n-en" in text
-    assert "v253" in LEARNING_LOG.read_text(encoding="utf-8")
+    daily_text = DAILY.read_text(encoding="utf-8")
+    assert "blastnet_case19_k1_anchor_identifiability_v253" in daily_text
+    assert "9/13" in daily_text and "11/13" in daily_text and "13/13" in daily_text
+    assert "data-i18n-zh" in daily_text and "data-i18n-en" in daily_text
+    learning_log = LEARNING_LOG.read_text(encoding="utf-8")
+    assert "v253" in learning_log and "FAIL_CASE19_K1_RESIDUAL_CONTRACTION_ANCHOR_V253" in learning_log
 
 
 def test_v253_public_artifacts_exclude_private_execution_details() -> None:

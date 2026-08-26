@@ -64,7 +64,7 @@ def test_v246_figure_and_builder_are_public() -> None:
 
 def test_v246_is_preserved_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE19_K1_RESIDUAL_CONTRACTION_ANCHOR_V253"
+    assert current["scientific_status"] == "FAIL_CASE19_K1_SET_SUBSPACE_MATCHED_ACCURACY_V254"
     assert current["current_decision"]["v246_independent_validation_passed"] is True
     assert current["current_decision"]["v246_fixed_k20_reference_authorized"] is False
     assert current["current_decision"]["v246_fixed_depth_reference_deepening_closed"] is True
@@ -72,7 +72,7 @@ def test_v246_is_preserved_as_historical_parent_evidence() -> None:
     assert current["metrics"]["v246_gained_definitely_safe_cells"] == 104
     assert current["metrics"]["v246_nonpositive_worst_case_gain_components"] == 1
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_k1_anchor_identifiability_v253.png"
+        "blastnet_case19_k1_set_subspace_v254.png"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
@@ -80,8 +80,8 @@ def test_v246_is_preserved_as_historical_parent_evidence() -> None:
         assert "16/16" in text and "104" in text and "K20" in text
         assert "data-i18n-zh" in text and "data-i18n-en" in text
     focus = FOCUS.read_text(encoding="utf-8")
-    assert "v253 Case 19 选锚负判决已封存" in focus
-    assert "v253 Case 19 negative anchor verdict sealed" in focus
+    assert "v254 Case 19 子空间负判决已封存" in focus
+    assert "v254 Case 19 negative subspace verdict sealed" in focus
     assert "历史学习资料版本" in focus
     assert "Archived learning-guide version" in focus
     log = LEARNING_LOG.read_text(encoding="utf-8")
