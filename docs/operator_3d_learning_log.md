@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-26：v257 可观测 active-support correction 因 residual 独立门越界保持不确定
+
+**为什么做。** v256 关闭后，v257 不再调整 Galerkin transfer，而是结果前唯一冻结一个部署可见的局部非线性机制：以 zero-start geometry-Jacobi PCGLS K1 为种子，用 `|x1| / sqrt(inverse_diagonal)` 构造 geometry-whitened 分数，按固定平坦索引打破并列，取覆盖 95% 分数平方能量的最小 support，再做一次六邻域膨胀。候选随后执行带自伴随 masked mean-zero projection 的 CGLS K11 correction，最后接一轮未修改的 full-field geometry-Jacobi PCGLS K1。阈值、tie-break、膨胀、mask、gauge、深度、四个同数据 controls、K16 reference、容差与调用账均在结果前固定；候选不读 CFD 真值、时间、rig 或失败标签。
+
+**独立结果。** formal 完成 13 个已开封 Case 19 九相机首帧并封存物理 replay。完全独立第二实现通过 `23/24` 项；唯一失败是 `observation_normalized_residuals_agree`：最大差 `3.08360e-8`，高于冻结 `2e-8`，为 `1.54180×`。support mask 与 selected count 逐项完全一致，captured energy 与 score energy 差为 `3.22e-15 / 5.78e-15`。final field 相对差 `7.68e-9`，逐单元指标与汇总差 `5.38e-10 / 1.43e-9`，都在 `2e-8` 界内，但不能覆盖唯一预注册失败门。
+
+**诊断不是结果。** 权威判决为 `INCONCLUSIVE_INVALID_CASE19_OBSERVABLE_ACTIVE_SUPPORT_FRAME_ZERO_V257`。正式与独立科学数组均不可用于性能解释，所以不发布或解释无效合同下的通过计数。名义单帧账 `14A+13A^T` 对 K16 的 `16A+16A^T` 少 `15.625%`，但只跑了首帧且独立合同失效，因此不是有效减调用。
+
+**路线动作与边界。** 当前 observable active-support correction 关闭，不重跑、不放宽 residual 界，也不搜索 95% 阈值、膨胀次数、mask 或深度。不授权完整 429 单元序列、wall/RSS、外门、训练或 GPU。这不关闭 C 路线；下一步只能来自新的配对真实 BOST 信息，或一个结果前唯一冻结、部署可见、可独立证伪且物理上真正不同的机制。`algorithm_breakthrough=false`、`paper_success=false`、`external_generalization=false`、`resource_speedup=false`、`real_bost=false`。
+
+### English note
+
+v257 preregisters one deployment-visible local nonlinear mechanism after v256 closes. A zero-start geometry-Jacobi PCGLS K1 seed defines `|x1| / sqrt(inverse_diagonal)`. The smallest flat-index-tie-broken support capturing 95% of score-squared energy receives one six-neighbor dilation, a self-adjoint masked mean-zero CGLS K11 correction, and one unchanged full-field geometry-Jacobi PCGLS K1 step. Formal seals all 13 opened Case 19 nine-camera frame-zero cells. A fully independent implementation passes `23/24` checks; the sole `observation_normalized_residuals_agree` failure is `3.08360e-8` against `2e-8`, or `1.54180x`. Support masks and selected counts agree exactly, while final-field, cell-metric, and summary disagreements remain within their frozen limits. They cannot override the continuous failure. Neither scientific array tree is admissible for performance interpretation. The observable active-support correction closes without tolerance relaxation, rerun, support/depth search, full sequence, wall/RSS gate, external gate, training, or GPU. The nominal `15.625%` frame-level call difference is not effective exact-call reduction, and `algorithm_breakthrough=false`.
+
 ## 2026-08-26：v256 Galerkin 粗到细冷启动因 residual 独立门越界保持不确定
 
 **为什么做。** v255 关闭后，Case 19 首帧唯一绝对阻塞仍是 interior-gradient 尾部，同一 fine-grid 迭代从 K14 加深到 K16 也没有改善。v256 因此不再微调旧机制，而是结果前唯一冻结一个经典多层候选：在 `16x8x8` 粗网格运行无预条件 CGLS K4，以 cell-centered 分片线性 tensor transfer 提升到 `32x16x16`，再执行未修改的 fine-grid geometry-Jacobi PCGLS K10。常值端点延拓、一层零边界、active-cell 均值 gauge、精确转置 restriction、两个 controls、K16 reference、数值容差和调用账均在结果前固定；候选不读 CFD 真值、rig 标签或失败标签。
