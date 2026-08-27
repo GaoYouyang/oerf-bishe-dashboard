@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-27：v271 两条 Haar-IRLS reference 路径各自全过，但跨实现不一致
+
+**为什么做。** v270 的 K16 reference 只通过 `12/13`，无法继续承担 matched-accuracy 裁判。v271 因此换成物理上不同的固定稀疏参考：一层零边界三维 Haar、12 轮 smoothed-L1 IRLS 和结果前冻结的 `2e-5` 跨实现一致性门。formal 使用 LSMR；独立第二实现自行重建 Haar、算子与归一化，并使用反向列序 LSQR。没有训练或按结果搜索 solver、轮数、平滑与正则。
+
+**实际结果。** formal 有效性通过 `18/18`，formal 与 independent 各自都在 `13/13` 套相机上通过四项绝对门。但独立验证只通过 `24/31`：观测差 `8.38e-17`、归一化残差差 `4.93e-6` 在界内，场差 `6.05e-3`、指标和汇总差 `1.84e-3`、目标值相对差 `2.36e-4` 则超过 `2e-5`。离散计数一致，连续物理场与指标不一致。
+
+**讲人话。** 只运行任何一套实现都会得到“13/13 全过”的漂亮结论，真正独立的第二条数值路径却暴露了求解路径敏感性。为了避免假阳性，两个 `13/13` 都只能作诊断，权威判决是 `INCONCLUSIVE_INVALID_CASE19_HAAR_IRLS_REFERENCE_V271`。固定 Haar-IRLS reference 关闭，不重跑、不放宽门，也不调轮数、平滑、solver 或正则。这个结果定位了参考求解的数值不稳定，没有关闭整条 C 路线；也没有 warm initializer、有效减调用、完整序列、wall/RSS、外部泛化或真实 BOST 结果。`algorithm_breakthrough=false`。
+
+### English summary
+
+v271 replaces the inadequate K16 adjudicator with a physically distinct fixed sparse reference: zero-boundary one-level 3D Haar, twelve smoothed-L1 IRLS rounds, and a preregistered `2e-5` cross-implementation agreement limit. Formal LSMR passes `18/18` validity checks, and formal and independent reverse-column LSQR paths each clear all four absolute metrics on `13/13` rigs. Independent validation nevertheless reaches only `24/31`. Observation difference (`8.38e-17`) and normalized-residual difference (`4.93e-6`) remain within bounds, while field difference (`6.05e-3`), metric and summary differences (`1.84e-3`), and objective relative difference (`2.36e-4`) exceed the frozen limit. Either path alone would produce an attractive 13/13 result, but independent solver-path sensitivity makes both counts diagnostic only. The authoritative verdict is `INCONCLUSIVE_INVALID_CASE19_HAAR_IRLS_REFERENCE_V271`. The fixed reference closes without rerun, relaxation, or tuning. No warm initializer, effective call reduction, full sequence, wall/RSS, external, or real-BOST claim follows. `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-27：v270 完整几何 normal-SGS 控制因 reference 不充分而保持不确定
 
 **为什么做。** v269.1 关闭固定缓存历史联合求解后，v270 换成一个物理上不同的经典控制：由 reported geometry 直接构造 active 区域完整稀疏 `A^T A`，按固定 C-order 体素顺序建立 symmetric Gauss-Seidel 预条件器，再运行 Zero-PCGLS K14。它不读取真值、不训练参数，也不是 warm initializer；唯一 primary、两个同价 K14 controls、K16 reference、成本账和 reference-first 判决顺序都在看结果前冻结。
