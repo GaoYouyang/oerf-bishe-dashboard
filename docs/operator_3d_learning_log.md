@@ -4,6 +4,90 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-27：v267 发现同步双颜色局部步会互相抵消
+
+**为什么做。** v266 说明半射线失败不是单纯把误差推到没选中的另一半，所以 v267 改为同时覆盖完整观测：把两分量探测器射线按偶、奇棋盘颜色分成两块，每块都从同一个父残差独立算一次精确局部 normal、预条件方向和线搜索，再同步相加。预测只读观测、报告几何和求解器状态，不读真值，也不搜索划分、顺序、阻尼或深度。
+
+**实际结果。** 完全独立第二实现通过 `24/24` 项检查。候选绝对门为 `429/429` 个单元、`13/13` 套相机，但 K16-matched 只有 `2/429`、完整相机 `0/13`；其余 `427` 个失败全部只来自 observation。两个颜色块单独评估时都在 `429/429` 个单元上改善自己的局部目标，可同步组合在 `429/429` 上都比各自局部预测更差，全观测残差相对父状态在 `419/429` 上变差、仅 `10/429` 上改善。独立新场最大相对差 `1.33e-9`，指标最大绝对差 `1.47e-10`，局部伴随与物理重放误差分别不超过 `7.90e-14` 与 `1.94e-14`，相机乱序差为 `0`。
+
+**讲人话。** 两个小组各自看自己的题都做对了一步，但它们把答案同时写回完整观测后会互相干扰，局部收益反而被抵消。问题不是浮点误差，也不是多加算力就会消失。精确同步双颜色路线关闭，不再换奇偶划分、更新顺序、阻尼、深度或线搜索，也不用大模型或 GPU 挽救。候选账 `16A+15A^T` 虽少于 K16 的 `16A+16A^T`，但 matched-accuracy 没过，所以不能称有效减调用，更没有 wall/RSS、外部或真实 BOST 结果。`algorithm_breakthrough=false`。
+
+### English summary
+
+v267 splits both detector components into even and odd checkerboard colors. Each block independently computes its exact local normal, preconditioned direction, and line search from the same parent residual before the corrections are added synchronously. The independent implementation passes `24/24` checks. The absolute gate reaches `429/429` cells and `13/13` rigs, but K16-matched accuracy reaches only `2/429` cells and `0/13` rigs; all `427` failures are observation-only. Each block alone improves its local objective on `429/429` cells, yet the synchronous combination is worse than each local prediction on `429/429` and worsens full residual from the parent on `419/429`. The exact synchronous two-color route therefore closes without parity, order, damping, depth, larger-model, or GPU rescue. This post-open negative mechanism result establishes no effective call reduction, wall/RSS, external, or real-BOST result. `algorithm_breakthrough=false`.
+
+---
+
+## 2026-08-27：v266 否定“失败只是未选中射线溢出”
+
+**为什么做。** v265.1 已经把固定半射线路线关闭，但 `229` 个失败全部来自 observation。v266 不改候选、不调 mask，也不再做重建，只把封存残差精确拆成选中的 `1152` 条射线与其余 `1152` 条射线，问清楚失败是否只是把误差推到了没参与修正的另一半。
+
+**实际结果。** 完全独立第二实现通过 `18/18` 项检查，并复现 `200` 个 matched、`229` 个失败与 `0/13` 完整轨迹。相对父状态，全部 `429/429` 个单元的选中射线残差都没有增加；也没有任何单元出现“选中部分下降、补集反而上升”。失败中 `119` 个仅在补集相对 K16 留有缺口，`110` 个在两侧都留有缺口；逐 rig 的 `12/13` 个 p90 尾部和全部 `13/13` worst 尾部都是双侧缺口。正式能量独立重算最大相对差 `6.01e-15`，能量守恒差 `4.60e-15`，比值重建差为 `0`。
+
+**讲人话。** 这不是“修好一半、弄坏另一半”那么简单。最严重的十三个尾部在两半观测上都没有追上 K16，所以继续换奇偶相位、比例或权重，只是在同一个已经失败的办法上打转。固定半射线路线继续关闭；v266 新增 `0A+0A^T`，没有新候选，也没有速度、外部或真实 BOST 结果。因为 `119/110` 是混合分布，它也没有证明所有未来的单侧目标都不可能，但下一候选必须物理上不同并同时约束完整观测。`algorithm_breakthrough=false`。
+
+### English summary
+
+v266 changes no v265.1 candidate and exactly partitions the sealed observation residual into selected and unselected rays. The independent implementation passes `18/18` checks and reproduces 200 matched cells, 229 failed cells, and `0/13` complete trajectories. Selected residual does not increase in any of 429 cells, and no cell shows selected residual falling while complement residual rises relative to the parent. Among the failures, 119 are deficient only on the complement and 110 on both partitions; `12/13` p90 tails and all `13/13` worst tails are two-sided. Pure spillover is therefore rejected, while the fixed half-ray route remains closed. This `0A+0AT` post-open attribution constructs no new candidate and establishes no wall/RSS, external, or real-BOST result. `algorithm_breakthrough=false`.
+
+---
+
+## 2026-08-27：v265.1 完整序列关闭固定半射线路线
+
+**为什么做。** v264 在已打开 Case 19 首帧上给出 `13/13` 正机制证据。v265.1 不改变相位、比例、权重、阻尼、阈值或 fallback，直接把同一偶相位半射线修正跑到 `13` 套相机的 `33` 帧完整序列，共 `429` 个单元。
+
+**实际结果。** 完全独立第二实现通过 `35/35` 项检查，另一个不导入正式或验证器实现的数组程序也复核了形状、计数、汇总和判决。候选绝对门为 `429/429`、完整轨迹 `13/13`，但 K16-matched 只有 `200/429`、完整轨迹 `0/13`。全部 `229` 个 matched 失败都只来自 observation；四项 matched p90 比为 `0.49241 / 0.47497 / 0.60289 / 1.23503`，worst 比为 `0.62231 / 0.55141 / 0.75588 / 1.85517`。
+
+**讲人话。** 第一页看起来很好，但把整本 `33` 页试卷做完后，三维场和梯度仍然很稳，真正送到相机上的二维观测却有 `229` 题没有对齐 K16。论文门要求四项同时匹配，因此不能只挑前三项宣称成功。固定偶相位半射线路线关闭，不调相位、比例、深度、权重或 fallback，也不为它训练大网络或租 GPU。下一步只接受物理上真正不同的机制，或工况配对的真实二维 BOST 数据。`algorithm_breakthrough=false`。
+
+### English summary
+
+v265.1 applies the unchanged v264 even-quincunx half-ray correction to all 33 frames of 13 opened Case 19 rigs, for 429 cells. The independent implementation passes `35/35` checks, with a separate array-only recomputation confirming the decision. The candidate clears every absolute cell and all `13/13` complete trajectories, but only `200/429` cells and `0/13` complete trajectories pass the K16-matched gate. All 229 failures are observation-only; the observation matched p90 and worst ratios are `1.23503` and `1.85517`. The fixed half-ray route therefore closes without retuning or larger-model/GPU rescue. This does not close the C route and establishes no wall/RSS, external, or real-BOST result. `algorithm_breakthrough=false`.
+
+---
+
+## 2026-08-27：v264 固定半射线修正达到 13/13 完整门
+
+**为什么做。** v263.1 已经把九个旧候选的 selector 挽救关闭，因为真值逐套相机挑最好仍是 `0/13`。v264 不再拼接旧候选，而是结果前冻结一个新的确定性物理修正：从 v258 场和当前可见残差出发，固定取九台相机、两个位移分量中探测器棋盘偶相位的一半射线，做一次所选射线的精确伴随、geometry-Jacobi 预条件和一次所选射线的精确前向标量线搜索。没有真值输入、训练或结果后调相位。
+
+**实际结果。** 完全独立第二实现通过 `32/32` 项检查。在正式与独立结果的保守包络下，v264 的绝对门、K16-matched 门和联合门都是 `13/13`；v258 与 K15 的联合门仍为 `0/13`。四项指标 p90 为 `0.13418 / 0.25441 / 0.34669 / 0.04924`，对应 matched p90 比为 `0.43560 / 0.45167 / 0.47261 / 0.96580`，observation matched worst 为 `1.04717`，守住冻结的 `1.05` worst 容差。候选场、归一化残差和逐指标的正式/独立最大差为 `1.04e-9 / 2.41e-10 / 4.76e-11`；伴随恒等式与完整 replay 误差分别不超过 `2.79e-15 / 9.56e-15`。
+
+**讲人话。** 这次不是让模型在旧答案里挑，而是只用当前残差的一半交错射线补一小步。十三套相机全部同时守住自身精度门和 K16 对齐门。逻辑射线等价账为 `15.5A+14.5A^T`，低于 K16 的 `16A+16A^T`，但目前只在已经打开的 Case 19 首帧成立，尚未证明完整序列、真实时间/内存、外部工况或真实 BOST。下一步只能原样跑一次完整序列，不能调相位、比例、权重或 fallback。`algorithm_breakthrough=false`。
+
+### English summary
+
+v264 preregisters one deterministic mechanism after v263.1 closes selector rescue over the old arm pool. Starting from the sealed v258 endpoint and deployment-visible residual, it fixes the even detector-checkerboard half of all camera/component rays, applies one selected-ray exact adjoint, the geometry-Jacobi inverse, and one selected-ray exact forward scalar line search. A fully independent implementation passes all `32/32` checks. Under the conservative two-implementation envelope, v264 reaches `13/13` absolute, K16-matched, and joint passes, while v258 and K15 remain at `0/13` joint passes. The logical ray-equivalent ledger is `15.5A+14.5AT` versus K16 at `16A+16AT`. This is opened Case 19 frame-zero mechanism headroom only; it authorizes one unchanged full-sequence gate, not a wall/RSS, external, real-BOST, or algorithm claim. `algorithm_breakthrough=false`.
+
+---
+
+## 2026-08-27：v263.1 九个旧候选的真值 oracle 选择仍为 0/13
+
+**为什么做。** 在给 v250、v254、v258、v260、v261 的九个既有低成本候选训练 selector 之前，先问一个必要条件：如果一个知道真值的裁判可以逐 rig 挑最好，候选池里是否至少有一个能同时通过绝对门和保守 K16-matched 门？候选成本最多为 `15A+15A^T`，审计只读已经封存的真值派生指标，不生成新场，不新增算子调用。
+
+**实际结果。** 完全独立第二实现通过 `19/19` 项检查；正式与独立的数值数组、汇总最大差均为 `0`。九个候选中有五个能在 `13/13` 套相机上过绝对门，但每个候选的 K16-matched 都是 `0/13`。逐 rig 真值挑最好后，联合门仍为 `0/13`；最佳联合负担 p50 / p90 / worst 为 `1.06082 / 1.06693 / 1.06876`，通过线为 `1.0`。
+
+**讲人话。** 先让一个知道答案的裁判在九种旧办法里逐题挑最好。如果连裁判都一题也救不回来，就没必要训练网络去学怎么挑。结果十三套相机里零套过完整门，所以停止给这九种旧办法造 selector、gate 或更大模型。关闭的只是这个旧候选池，不是整条 C 路线；物理上真正不同的新候选仍可另行预注册。没有完整序列、减调用、wall/RSS、外部泛化或真实 BOST 结果，`algorithm_breakthrough=false`。
+
+### English summary
+
+v263.1 audits a necessary condition before training any selector over nine already sealed arms from v250, v254, v258, v260, and v261. A truth-aware judge may choose the best arm per rig, but every arm has `0/13` K16-matched rigs and the oracle joint gate remains `0/13`. The fully independent implementation passes all `19/19` checks, with zero maximum difference in formal-independent numerical arrays and summaries. Best joint-burden p50 / p90 / worst are `1.06082 / 1.06693 / 1.06876`, against a passing line of `1.0`. Selector, gate, or larger-model rescue restricted to these nine arms therefore closes. This does not close the C route or a physically distinct future candidate, and `algorithm_breakthrough=false`.
+
+---
+
+## 2026-08-26：v262 探测器可积性不是当前离散 forward 的精确不变量
+
+**为什么做。** v261 关闭双分量精确块以后，下一条物理上不同的想法是探测器平面的 Hodge / 可积性约束。v262 没有直接花精确调用构造候选，而是先冻结一个标量势梯度投影并审计必要二分：若投影同时保持 `y` 与 `Ax14`，线性关系会让它对 `r14=y-Ax14` 严格无作用；若它改变其中任意一项，它便不是当前 forward 的精确约束。
+
+**实际结果。** 独立 SVD 实现通过 `24/24` 项检查。13 套 rig × 9 台相机中，观测、K14 预测和 K14 残差各自都只有 `0/117` 个相机块落在冻结的 `1e-8` 不变性门内。三者按相机观测范数归一化的缺陷 p90 为 `0.12752 / 0.13518 / 0.04956`；按残差自身归一化时缺陷 p90 为 `0.74660`，移除能量比例 p90 为 `0.55742`。正式/独立的投影数组、缺陷数组与汇总最大差为 `2.70e-10 / 7.04e-10 / 1.04e-10`，线性和正交能量闭合保持在机器精度附近。
+
+**讲人话。** 这个滤波器在 p90 会扔掉 K14 残差超过一半的能量，但这些内容本来就是当前 forward 自己产生的，不能把它们叫作“物理上不可能的旋度”后删除。固定探测器梯度投影在构造候选重建前关闭。它是零新增调用的开封后 no-go 证据，不是 matched-accuracy、减调用、速度、外部泛化或真实 BOST。`algorithm_breakthrough=false`。
+
+### English summary
+
+v262 freezes one detector-plane scalar-potential gradient projector and audits a necessary linear dichotomy before constructing any candidate. A fully independent SVD implementation passes `24/24` checks. Observation, K14 prediction, and K14 residual each have `0/117` invariant camera blocks at the frozen `1e-8` gate. Their observation-normalized defect p90 values are `0.12752 / 0.13518 / 0.04956`; the residual self-normalized defect p90 is `0.74660`, with a `0.55742` p90 removed-energy fraction. The projector therefore removes content produced by the current discrete forward and cannot be treated as an exact physical constraint. This fixed projector closes before a reconstruction candidate is built; it is zero-call post-open no-go evidence, and `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-26：v261 双分量 2×2 Galerkin 修正被公平对照否定
 
 **为什么做。** v260 已关闭按相机残差能量加权。v261 转向物理上不同的最小结构：保留 BOS 的两个完整有符号探测器分量，从 deployment-visible K13 残差分别构造伴随与 geometry-Jacobi 预条件方向，再用固定 `2×2` Galerkin 系统混合。主候选 `15A+15A^T` 与未修改 K15 同价，同时比较便宜的 v258、raw K14 与 K16 reference；不读真值、时间、rig 标签或相机 ID。

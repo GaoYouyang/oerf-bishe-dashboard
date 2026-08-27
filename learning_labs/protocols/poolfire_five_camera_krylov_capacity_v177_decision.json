@@ -1,0 +1,110 @@
+{
+  "schema_version": "oerf-private-poolfire-five-camera-krylov-capacity-v177-decision.0",
+  "status": "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_KRYLOV_CAPACITY_V177",
+  "scientific_decision": "FAIL_BROADER_KRYLOV_REFERENCE_REPRESENTATION_V177",
+  "formal_status": "PASS_FORMAL_POOLFIRE_KRYLOV_CAPACITY_EXECUTION_V177",
+  "independent_check_count": 25,
+  "independent_failed_check_count": 0,
+  "maximum_differences": {
+    "five_camera_metric": 1.2902456880681257e-12,
+    "nine_camera_metric": 6.724620860154573e-13,
+    "capacity_summary": 4.9960036108132044e-15,
+    "adjoint_relative": 2.1281307257059182e-16,
+    "camera_permutation_relative": 2.8633665464518584e-16
+  },
+  "five_camera_zero_cgls_k4": {
+    "strict_safe_candidate_count": 0,
+    "strict_safe_candidate_total": 6552,
+    "cellwise_safe_count": 0,
+    "cellwise_safe_total": 52,
+    "calibration_shared_safe_count": 0,
+    "calibration_shared_safe_total": 13,
+    "cellwise_field_gradient_observation_p90_higher": [
+      0.8208211659183836,
+      0.7882385299883724,
+      0.29814995478781886
+    ],
+    "per_metric_cellwise_oracle_pass_counts": {
+      "field": 0,
+      "gradient": 45,
+      "observation": 1
+    }
+  },
+  "five_camera_zero_cgls_k8": {
+    "strict_safe_candidate_count": 0,
+    "strict_safe_candidate_total": 6552,
+    "cellwise_safe_count": 0,
+    "cellwise_safe_total": 52,
+    "calibration_shared_safe_count": 0,
+    "calibration_shared_safe_total": 13,
+    "cellwise_field_gradient_observation_p90_higher": [
+      0.7680397049017591,
+      0.7785111065064576,
+      0.1345455184422842
+    ],
+    "per_metric_cellwise_oracle_pass_counts": {
+      "field": 0,
+      "gradient": 52,
+      "observation": 52
+    }
+  },
+  "nine_camera_zero_cgls_k4": {
+    "strict_safe_cell_count": 0,
+    "strict_safe_cell_total": 52,
+    "whole_calibrations_safe_count": 0,
+    "whole_calibrations_safe_total": 13,
+    "field_gradient_observation_p90_higher": [
+      0.815319187254417,
+      0.711087858522362,
+      0.31523268655722586
+    ],
+    "per_metric_pass_counts": {
+      "field": 0,
+      "gradient": 52,
+      "observation": 0
+    }
+  },
+  "interpretation": {
+    "supported": "The p22 failure is not explained by the v176 selector choosing the wrong five-camera subset. No one of the 126 five-camera subsets is strict-safe for any frozen calibration-frame cell at K4 or K8, and nine-camera K4 also fails every cell.",
+    "strongest_localization": "At K8, observation and gradient each have a passing subset for all 52 cells, but field has none; the remaining bottleneck is field-reference or representation adequacy rather than subset ranking.",
+    "not_supported": [
+      "deployable selector success",
+      "algorithm breakthrough",
+      "exact-call reduction",
+      "wall or RSS speedup",
+      "external generalization",
+      "curved-ray validity",
+      "real BOST",
+      "mathematical impossibility"
+    ]
+  },
+  "route_decision": {
+    "closed": [
+      "current v175-v176 selector transfer",
+      "five-camera Zero-CGLS K4 reference shell on opened p22",
+      "five-camera Zero-CGLS K8 depth rescue on opened p22",
+      "camera-count-only explanation via nine-camera Zero-CGLS K4"
+    ],
+    "forbidden_rescue": [
+      "retune K after results",
+      "relax frozen accuracy thresholds",
+      "train a larger selector or neural operator",
+      "rent a GPU",
+      "open untouched PoolFire tests"
+    ],
+    "next_scientific_question": "Before any new warm-start model, identify a physically different reference or representation that is independently adequate on the already opened p22 field metric; otherwise wait for new paired real BOS data."
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "broad_external_generalization": false,
+    "untouched_test_evidence": false,
+    "deployable_algorithm": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false,
+    "predictor_training_authorized": false
+  }
+}

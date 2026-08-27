@@ -1,0 +1,152 @@
+{
+  "schema_version": "oerf-poolfire-k1-dual-group-krylov-predictor-v149.1",
+  "status": "FROZEN_AFTER_V148_HEADROOM_BEFORE_FULL_ROSTER_OR_PREDICTION_RESULT",
+  "frozen_at_utc": "2026-08-14T20:00:00Z",
+  "scientific_question": "Does the v148 detector-group Krylov representation retain capacity on all 3700 opened PoolFire cells, and can one shared camera-permutation-equivariant observation/geometry-only CPU predictor recover its canonical group coordinates under complete-trajectory leave-one-out?",
+  "scope": "Post-open development evaluation on five opened PoolFire trajectories. It is not an external test, a physical warm-start replay, a call reduction, a resource result, a curved-ray result, or a real BOST result.",
+  "parent_evidence": {
+    "required_v148_formal_status": "PASS_FORMAL_DETECTOR_KRYLOV_CAPACITY_EXECUTION_V148",
+    "required_v148_scientific_decision": "HEADROOM_BLOCK_DETECTOR_KRYLOV4_V148",
+    "required_v148_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_DETECTOR_KRYLOV_CAPACITY_V148",
+    "v148_formal_manifest_sha256": "99b69423c94305896a9406436426664b38e36dae225b933c344edb74200cf038",
+    "v148_independent_validation_sha256": "b6e9a3f533a7df17c97564e323c462856669805b3284cd754aa46408e2700f09",
+    "v148_protocol_sha256": "3e937c7db8f21c39b42ab796e8aa2cec374b248cf049de69f09f2ebf97442c28",
+    "v143_manifest_sha256": "b8aed2e1012a6a92b86ae08ae5489f937bc429b8e71d4f6cd433fc39d41c14af",
+    "v143_action_labels_sha256": "08dee697ef3289c9c3e48d1c47ddfa1f3b9a45decffb7a574108694dc3c9b4bd",
+    "deployment_feature_manifest_sha256": "0acc8e269f9584a4da5351f3ec1f99135300858cd70c9f0036173abb69bc84f2",
+    "sample_roster_sha256": "c8d2bbb2a0ebcfc4790c8e38383f685e5d4c5fa40306ac3fab53ea3acc7481cb",
+    "reported_pose_tokens_sha256": "9cd8e4095ffe04d8ec4ad5a0269803d5dd5cf1b88347fc070d47f8ebd7d4cbba",
+    "v147_direction_table_sha256": "775c1ff497fd9e4920d3c713d56c3c6d5e3c21dfa19ddd34ac96f3ab8b5bc568",
+    "new_full_roster_oracle_metrics_read": false,
+    "new_outer_predictions_read": false
+  },
+  "immutable_roster": {
+    "sample_count": 3700,
+    "samples_per_trajectory": 740,
+    "trajectory_count": 5,
+    "trajectories": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "camera_counts": [5, 7, 9, 12],
+    "structural_key_count": 96,
+    "validation_or_test_truth_allowed": false,
+    "heldout_trajectory_truth_allowed_in_fit": false
+  },
+  "target_blind_state": {
+    "direction_basis": "exact v148 pair-depth basis rebuilt from exact K1 dual, signed K1 residual, and reported geometry",
+    "selected_rows": "exact frozen v147 target-blind 96-direction table",
+    "grouping": "reported target-camera slot times two plus detector component",
+    "active_group_policy": "use only target-camera/component groups represented by the frozen 96-direction table; require between one and twice the active camera count and never impute a missing group",
+    "canonical_basis": "fixed-order two-pass modified Gram-Schmidt over each group's four normalized Krylov columns",
+    "canonical_degree_order": [0, 1, 2, 3],
+    "canonical_relative_drop_tolerance": 1e-10,
+    "dropped_degree_coordinate": 0.0,
+    "target_used_before_state_barrier": false,
+    "additional_exact_A_calls": 0,
+    "additional_exact_AT_calls": 0
+  },
+  "deployment_visible_group_features": {
+    "local_width": 61,
+    "set_augmented_width": 305,
+    "local_blocks": [
+      "camera_count_active_group_count_and_selected_row_fraction",
+      "detector_component_one_hot",
+      "reported_18_value_target_camera_pose",
+      "signed_K1_residual_local_camera_total_log_norms_and_ratios",
+      "exact_K1_dual_local_camera_total_log_norms_and_ratios",
+      "selected_row_log_norm_mean_std_min_max",
+      "signed_visible_seed_mean_std_min_max_l2_positive_fraction",
+      "upper_triangle_of_four_by_four_local_Krylov_column_Gram",
+      "four_canonical_degree_masks",
+      "four_canonical_residual_ratios"
+    ],
+    "set_context": "concatenate the local vector with active-group mean, standard deviation, minimum, and maximum of the same local vector",
+    "camera_permutation_equivariant": true,
+    "variable_cardinality_supported": [5, 7, 9, 12],
+    "truth_or_teacher_feature_allowed": false
+  },
+  "canonical_target": {
+    "source": "the normalized 96-entry v143 K4-minus-K1 Riesz action selected by the frozen v147 direction table",
+    "coordinate": "inner products with the target-blind fixed-order canonical group basis",
+    "coordinate_count_per_group": 4,
+    "inactive_degree_coordinates_forced_to_zero": true,
+    "raw_ill_conditioned_v148_coefficients_are_not_prediction_targets": true
+  },
+  "outer_evaluation": {
+    "split": "five complete-trajectory leave-one-trajectory-out folds",
+    "fit_only_normalization": true,
+    "group_weight": "each sample has unit total weight split equally across its active groups",
+    "heldout_truth_used_by_fit": false,
+    "model_selection_on_heldout": false,
+    "process_level_never_read_required_for_claim": false,
+    "process_level_never_read_if_unproven_must_be_disclosed": true
+  },
+  "frozen_methods": {
+    "oracle_block_krylov4": "truth-aware canonical projection; capacity upper bound only",
+    "visible_seed_control": "v148 signed visible seed; no fitted parameters",
+    "fit_mean_control": "four weighted fit-only canonical-coordinate means with inactive degrees masked",
+    "linear_set_ridge": {
+      "feature": "305-dimensional standardized set feature",
+      "ridge_fraction_of_weighted_feature_Gram_trace": 0.001,
+      "hyperparameter_selection": "none"
+    },
+    "rff_set_ridge": {
+      "feature": "305-dimensional standardized set feature",
+      "random_feature_count": 128,
+      "random_seed": 14920260815,
+      "lengthscale": "fit-only median positive Euclidean distance among the 512 standardized feature rows with lexicographically smallest SHA-256 digests after rounding to 12 decimal places",
+      "ridge_fraction_of_weighted_feature_Gram_trace": 0.001,
+      "hyperparameter_selection": "none"
+    }
+  },
+  "full_roster_target_space_gate": {
+    "scale_invariant_relative_l2_maximum_each_cell": 0.45,
+    "cosine_minimum_each_cell": 0.9,
+    "scale_invariant_relative_l2_p90_higher_maximum_each_trajectory": 0.35,
+    "scale_invariant_relative_l2_p90_higher_maximum_each_trajectory_camera_count": 0.35,
+    "all_3700_cells_required": true,
+    "all_5_trajectories_required": true,
+    "all_20_trajectory_camera_strata_required": true
+  },
+  "non_exchangeable_decision_rule": [
+    "If target-blind state construction, canonicalization, fitting, scoring, or independent recomputation is invalid, return INCONCLUSIVE_GROUP_KRYLOV_PREDICTOR_V149.",
+    "If oracle_block_krylov4 fails the full 3700-cell gate, return FAIL_FULL_ROSTER_GROUP_KRYLOV_CAPACITY_V149 and close this representation without using a larger model.",
+    "If fit_mean_control passes, return HEADROOM_FIT_MEAN_GROUP_KRYLOV_V149 and prefer it over learned models.",
+    "Else if linear_set_ridge passes, return HEADROOM_LINEAR_GROUP_KRYLOV_PREDICTOR_V149.",
+    "Else if rff_set_ridge passes, return HEADROOM_RFF_GROUP_KRYLOV_PREDICTOR_V149.",
+    "Else return FAIL_OBSERVATION_ONLY_GROUP_KRYLOV_PREDICTOR_V149 and close this predictor family."
+  ],
+  "authorization_after_independent_validation": {
+    "positive_predictor_result": "freeze a separate physical replay with exact A/A^T accounting and matched field/full-gradient/interior-gradient/observation gates",
+    "capacity_or_prediction_failure": "close the current group-Krylov predictor family; do not rescue it with CNN, FNO, UNO, DeepONet, or GPU",
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  },
+  "independent_validation": {
+    "separate_implementation_rebuilds_all_3700_states": true,
+    "separate_implementation_rebuilds_canonical_bases_features_targets_and_folds": true,
+    "separate_implementation_refits_all_three_fit_only_models": true,
+    "formal_arrays_read_only_after_independent_outputs_are_sealed": true,
+    "maximum_state_absolute_difference": 1e-10,
+    "maximum_prediction_absolute_difference": 1e-8,
+    "maximum_metric_absolute_difference": 1e-10,
+    "scientific_decision_exact": true,
+    "shared_frozen_physics_kernels_must_be_disclosed": true
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "physical_replay": false,
+    "exact_call_reduction": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_operator_training_authorized": false
+  }
+}

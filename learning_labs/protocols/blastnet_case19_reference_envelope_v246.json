@@ -1,0 +1,151 @@
+{
+  "schema_version": "oerf-private-blastnet-case19-reference-envelope-protocol-v246.0.0",
+  "status_before_results": "FROZEN_AFTER_V245_COMPARISON_EXCEPTION_AND_BEFORE_ANY_V245_DIAGNOSTIC_SUMMARY_OR_V246_ENVELOPE_RESULT_WAS_INSPECTED",
+  "frozen_at_utc": "2026-08-25T14:53:54Z",
+  "role": "Post-open two-implementation envelope diagnostic deciding whether K14-to-K16 under-iteration is monotone even under the most adverse componentwise combination of the two already sealed parent metric replicas.",
+  "scientific_question": "When the formal and independent v244.2 metric replicas are treated as a componentwise uncertainty envelope rather than forced to agree numerically, does zero-start geometry-Jacobi PCGLS improve from K14 to K16 robustly enough to authorize one fixed K20 reference run?",
+  "why_this_is_not_a_tolerance_relaxation": {
+    "v245_remains_inconclusive": true,
+    "v245_numeric_tolerance_changed": false,
+    "parent_replica_difference_ignored": false,
+    "parent_replica_difference_enters_every_lower_and_upper_bound": true,
+    "envelope_predicates_are_stricter_than_either_replica_alone": true,
+    "v245_formal_diagnostic_values_used_to_choose_v246_rules": false
+  },
+  "evidence_boundary": {
+    "case19_already_opened": true,
+    "prospective_external_result": false,
+    "truth_visible_metrics_used": true,
+    "deployment_method": false,
+    "new_raw_grid_or_density_read": false,
+    "new_operator_or_solver_call": false,
+    "added_exact_calls_A_At": [0, 0],
+    "wall_or_rss_result": false,
+    "learned_model": false
+  },
+  "sealed_parent": {
+    "formal_metrics": {
+      "relative": "formal/metrics.npy",
+      "bytes": 82496,
+      "sha256": "4dc90257d9d580d920a86cff16b22c2cf45b0e21671e8247c22e4156b2616d94"
+    },
+    "independent_metrics": {
+      "relative": "validation/independent_metrics.npy",
+      "bytes": 82496,
+      "sha256": "f15eafcf6ad063d9504a384c3fa1502eb8d0a4a54eb79da77c4bb04e8af63229"
+    },
+    "formal_report": {
+      "relative": "formal/formal_report.json",
+      "bytes": 90003,
+      "sha256": "ba1110d4102fbab2dda2e4e746067e77b8a64f4249a19eeb1a2e60d9af22789a"
+    },
+    "independent_validation": {
+      "relative": "validation/independent_validation.json",
+      "bytes": 76998,
+      "sha256": "66d5eb39878d807faaeeb7ca0dd596b33962d94880386494391f488e296b0a69"
+    },
+    "scientific_decision": {
+      "relative": "validation/SCIENTIFIC_DECISION.json",
+      "bytes": 435,
+      "sha256": "82f38b65f28a93694fc338b18705483ab125df08917fe8e4adf3af047ea162f5"
+    },
+    "required_parent_decision": "INCONCLUSIVE_INVALID_CASE19_CANONICAL_CAMERA_ACTUAL_K14_EXTERNAL_V244_2",
+    "metric_shape": [6, 13, 33, 4],
+    "metric_dtype": "float64",
+    "arm_order": [
+      "canonical_camera_dynamic_preupdate_fifo16_actual_geometry_jacobi_pcgls_k14",
+      "canonical_camera_zero_geometry_jacobi_pcgls_k14",
+      "canonical_camera_zero_unpreconditioned_cgls_k14",
+      "canonical_camera_normalized_bp_geometry_jacobi_pcgls_k13",
+      "canonical_camera_normalized_bp_unpreconditioned_cgls_k13",
+      "canonical_camera_zero_geometry_jacobi_pcgls_k16"
+    ],
+    "zero_geometry_jacobi_pcgls_k14_arm_index": 1,
+    "zero_geometry_jacobi_pcgls_k16_arm_index": 5,
+    "rig_count": 13,
+    "frame_count": 33,
+    "cell_count": 429,
+    "metric_order": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "interior_gradient_relative_l2",
+      "observation_relative_l2"
+    ],
+    "strict_cell_limits": [0.5, 0.75, 0.75, 0.2],
+    "quantile": 0.9,
+    "quantile_method": "higher"
+  },
+  "sealed_v245_failure": {
+    "protocol": {
+      "bytes": 7432,
+      "sha256": "28fe13a1c63191eccf409717a18b1da6367f67398ddc1d1fa0b41b6d2bf834ce"
+    },
+    "formal_report": {
+      "bytes": 22447,
+      "sha256": "e9bb9c826ef09f8f8cba7244db24d7b8ee08f844ecacace55a286633a1ea85a6"
+    },
+    "formal_ready": {
+      "bytes": 405,
+      "sha256": "d40f4cda5934926a31e92858c57028aa2e9c17939d04489b93bf0d8f7484448c"
+    },
+    "failed_attempt_receipt": {
+      "bytes": 1597,
+      "sha256": "9a71cc1d05d9a2b174092605a551fe688f5b1fa6a2f8317952b870d73a037a6f"
+    },
+    "required_status": "INCONCLUSIVE_VALIDATION_ATTEMPT_FAILED_BEFORE_OUTPUT_V245",
+    "required_scientific_decision": "INCONCLUSIVE_INVALID_CASE19_REFERENCE_CONVERGENCE_V245",
+    "second_v245_validator_attempt_forbidden": true,
+    "v245_tolerance_relaxation_forbidden": true,
+    "v245_formal_values_not_a_scientific_result": true
+  },
+  "unique_primary": {
+    "name": "componentwise_two_implementation_envelope_k14_to_k16_monotone_underiteration",
+    "lower_bound_definition": "For each arm, rig, frame and metric, elementwise minimum of the sealed formal and independent parent replicas.",
+    "upper_bound_definition": "For each arm, rig, frame and metric, elementwise maximum of the sealed formal and independent parent replicas.",
+    "definitely_safe_cell_definition": "All four upper metric bounds are less than or equal to the frozen strict cell limits.",
+    "possible_k16_failed_component_definition": "The K16 upper metric bound is greater than its frozen strict limit.",
+    "worst_case_gain_definition": "K14 lower metric bound minus K16 upper metric bound for every possible K16 failed component.",
+    "worst_case_remaining_gap_definition": "K16 upper metric bound minus the frozen strict limit for every possible K16 failed component.",
+    "worst_case_repeat_gain_ratio_definition": "Worst-case remaining gap divided by worst-case gain.",
+    "robust_safe_set_requirement": "The K16 definitely-safe set must be a strict superset of the K14 definitely-safe set.",
+    "robust_component_requirement": "Every possible K16 failed component must have strictly positive worst-case gain and repeat-gain ratio at most one.",
+    "robust_p90_requirement": "For every rig and metric, higher-quantile p90 of the K16 upper bounds must be less than or equal to higher-quantile p90 of the K14 lower bounds.",
+    "robust_worst_requirement": "For every rig and metric, maximum K16 upper bound must be less than or equal to maximum K14 lower bound.",
+    "parent_replica_numeric_tolerance": null,
+    "parent_replica_values_are_enveloped_exactly": true,
+    "formal_independent_v246_numeric_tolerance": 1e-12,
+    "candidate_next_reference_if_authorized": "zero-start canonical-camera geometry-Jacobi PCGLS K20",
+    "candidate_next_reference_depth": 20,
+    "k20_reason": "K20 adds two fixed two-iteration blocks beyond K16: one registered crossing block and one fixed margin block.",
+    "no_depth_threshold_envelope_or_rule_search": true
+  },
+  "formal_method": {
+    "input": "Read both sealed parent metric replicas after verifying all parent and v245-failure byte identities.",
+    "implementation": "Vectorized NumPy lower/upper envelopes, masks and method=higher quantiles.",
+    "output": "One JSON report and READY seal in a previously absent fixed output directory."
+  },
+  "independent_method": {
+    "input": "Read the same two sealed parent metric replicas after the formal report is sealed and all identities are reverified.",
+    "implementation": "Explicit arm/rig/frame/metric loops, scalar min/max and sorted-index higher quantiles; do not import the formal v246 implementation.",
+    "required_agreement": "All counts, index sets, envelope values used by failed components, rig tails, booleans and final decision agree within 1e-12; discrete values agree exactly.",
+    "formal_and_parent_trees_unchanged": true
+  },
+  "decision_order": [
+    "Any source, protocol, parent, v245-failure, shape, dtype, finite, output-exclusivity, formal-independent or seal mismatch gives INCONCLUSIVE_INVALID_CASE19_REFERENCE_ENVELOPE_V246.",
+    "If any robust safe-set, component-gain, repeat-gain, p90 or worst predicate fails, conclude FAIL_CASE19_TWO_IMPLEMENTATION_ENVELOPE_NOT_MONOTONE_V246 and close deeper fixed-reference runs under this mechanism.",
+    "Only if every validity and robust-envelope predicate passes in both v246 implementations may conclude PASS_CASE19_ROBUST_ENVELOPE_AUTHORIZES_FIXED_K20_REFERENCE_V246 and authorize one separately frozen K20 reference run.",
+    "A pass does not repair v244.2 or v245, and does not authorize a warm candidate, predictor, wall/RSS, unopened condition, neural model, GPU, external-generalization claim or real-BOST claim."
+  ],
+  "failure_action": "Close fixed-depth reference deepening for the current global geometry-Jacobi PCGLS mechanism. Do not search K18/K20/K22/K24/K32, alter the envelope, add tolerances, tune preconditioning or use another opened case to rescue it.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

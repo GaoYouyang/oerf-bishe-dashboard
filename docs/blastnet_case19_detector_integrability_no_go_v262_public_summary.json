@@ -1,0 +1,102 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-detector-integrability-no-go-v262.0",
+  "updated": "2026-08-26",
+  "scope": {
+    "condition": "already-opened same-family public reacting-flow Case 19",
+    "role": "post-open frame-zero detector-integrability identifiability audit",
+    "rigs": 13,
+    "frames_per_rig": 1,
+    "camera_blocks": 117,
+    "active_cameras": 9,
+    "detector_shape": [16, 16],
+    "components": 2,
+    "trainable_parameters": 0,
+    "new_exact_calls_A": 0,
+    "new_exact_calls_At": 0,
+    "truth_or_field_metric_read": false,
+    "candidate_reconstruction_run": false,
+    "full_sequence_run": false,
+    "fresh_wall_or_rss_run": false,
+    "external_condition_opened": false
+  },
+  "projector": {
+    "definition": "orthogonal projector onto the range of a fixed scalar-potential detector gradient",
+    "component_zero": "centered detector-u derivative with fixed second-order one-sided boundaries",
+    "component_one": "centered detector-v derivative with fixed second-order one-sided boundaries",
+    "formal_factorization": "symmetric eigensolve of G-transpose-G",
+    "independent_factorization": "full thin SVD of G",
+    "relative_spectral_floor": 1e-12,
+    "rank": 255,
+    "invariance_tolerance": 1e-8,
+    "camera_permutation_equivariant": true
+  },
+  "sources": {
+    "observation": {
+      "observation_normalized_defect_p50_higher": 0.10506378852579815,
+      "observation_normalized_defect_p90_higher": 0.12752058554494158,
+      "observation_normalized_defect_worst": 0.1386298171063689,
+      "self_normalized_defect_p90_higher": 0.12752058554494158,
+      "removed_energy_fraction_p90_higher": 0.016261499737724762,
+      "invariant_camera_blocks": 0,
+      "camera_blocks": 117
+    },
+    "prediction_k14": {
+      "observation_normalized_defect_p50_higher": 0.11459730123810638,
+      "observation_normalized_defect_p90_higher": 0.13517823942803675,
+      "observation_normalized_defect_worst": 0.14428421825937734,
+      "self_normalized_defect_p90_higher": 0.13578755337505927,
+      "removed_energy_fraction_p90_higher": 0.018438259651584573,
+      "invariant_camera_blocks": 0,
+      "camera_blocks": 117
+    },
+    "residual_k14": {
+      "observation_normalized_defect_p50_higher": 0.044842598261396485,
+      "observation_normalized_defect_p90_higher": 0.04955541250612706,
+      "observation_normalized_defect_worst": 0.05432788455973056,
+      "self_normalized_defect_p90_higher": 0.7466030711936065,
+      "removed_energy_fraction_p90_higher": 0.5574161459157254,
+      "invariant_camera_blocks": 0,
+      "camera_blocks": 117
+    }
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_CASE19_DETECTOR_INTEGRABILITY_NO_GO_V262",
+    "scientific_decision": "FAIL_CASE19_DETECTOR_INTEGRABILITY_PROJECTOR_NOT_FORWARD_INVARIANT_V262",
+    "completed": true,
+    "passed": true,
+    "checks_passed": 24,
+    "checks_total": 24,
+    "maximum_projected_array_relative_difference": 2.698390265940603e-10,
+    "maximum_defect_array_absolute_difference": 7.042215699470944e-10,
+    "maximum_summary_absolute_difference": 1.035175556385326e-10,
+    "maximum_linearity_closure": 3.900975673995764e-16,
+    "maximum_energy_closure": 9.233746261161498e-16,
+    "maximum_camera_permutation_relative_difference": 0.0,
+    "end_to_end_physics_independence_proven": false
+  },
+  "adjudication": {
+    "branch": "detector_integrability_not_forward_invariant",
+    "scientific_decision": "FAIL_CASE19_DETECTOR_INTEGRABILITY_PROJECTOR_NOT_FORWARD_INVARIANT_V262",
+    "route_action": "CLOSE_FIXED_DETECTOR_SCALAR_POTENTIAL_GRADIENT_PROJECTOR",
+    "observation_is_invariant": false,
+    "k14_prediction_is_invariant": false,
+    "projected_residual_candidate_authorized": false,
+    "matched_accuracy_tested": false,
+    "full_sequence_authorized": false,
+    "predictor_training_authorized": false,
+    "resource_gate_authorized": false,
+    "reason": "none of the 117 observation or K14-prediction camera blocks is invariant within the frozen 1e-8 tolerance, so this projector is not an exact constraint of the current discrete forward"
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "effective_exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

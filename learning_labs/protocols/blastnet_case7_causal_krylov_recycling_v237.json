@@ -1,0 +1,169 @@
+{
+  "schema_version": "oerf-private-blastnet-case7-causal-krylov-recycling-v237.0.0",
+  "status_before_primary_result": "FROZEN_BEFORE_ANY_V237_RECYCLING_FIELD_OR_METRIC_WAS_COMPUTED",
+  "frozen_at_utc": "2026-08-25T00:56:28Z",
+  "role": "A post-open Case 7 solver-native mechanism diagnostic. It tests causal classical Krylov recycling on the already opened 42-frame sequence. It is not a prospective external gate, a learned method, or a resource measurement.",
+  "scientific_question": "Can a rank-16 measurement-orthonormal Krylov cache, initialized once by zero-start geometry-Jacobi PCGLS K16 and then updated causally by one current-frame PCGLS direction, preserve the frozen K16 field, full-gradient, interior-gradient, and observation accuracy over all 42 frames and all 13 rigs while reducing both exact A and exact A-transpose calls?",
+  "post_open_boundary": {
+    "case7_already_opened": true,
+    "known_before_freeze": {
+      "v235_decision": "FAIL_CASE7_LOW64_K11_PROSPECTIVE_CONFIRMATION_V235",
+      "v236_decision": "FAIL_CASE7_LORO_TAIL_SUBSPACE_CAPACITY_V236",
+      "v235_fixed_low64_matched_cells": [330, 546],
+      "v235_failure_onset": "eight rigs fail at frame 25 and all thirteen fail at frames 26 through 41",
+      "v236_adjacent_same_rig_tail_cosine_median": 0.9845098052968356,
+      "v18_previous_field_first_keyframe_then_one_correction_joint_match_fraction": 0.009900990099009901,
+      "v18_stride2_previous_field_p33_joint_match_fraction": 0.9405940594059405,
+      "v18_stride2_previous_field_heldout_p58_joint_match_fraction": 0.8415841584158416,
+      "v119_local_residual_transport_closed": true,
+      "v163_to_v166_global_temporal_and_transport_families_closed": true
+    },
+    "not_computed_before_freeze": [
+      "any Case 7 PCGLS direction cache",
+      "any dynamic or fixed recycled Case 7 field",
+      "any v237 per-cell metric, complete-rig tail, or decision"
+    ],
+    "claim_limit": "Any passing result is only post-open controlled Case 7 mechanism headroom and requires a new result-before-opening external gate."
+  },
+  "sealed_parent": {
+    "root_role": "private independently validated v235 result tree outside Git",
+    "formal_relative": "formal_c4f0e39e_v235_20260825",
+    "required_files": {
+      "formal_c4f0e39e_v235_20260825/fields.npy": {
+        "bytes": 214696064,
+        "sha256": "2dcaabc245ac42277632c878d3f6dee45ebdf923ec24f959ca8c6f40237bc95d"
+      },
+      "formal_c4f0e39e_v235_20260825/metrics.npy": {
+        "bytes": 104960,
+        "sha256": "b1a6d8760189fefeaae570ee99f6c0abfece1b67d4a602e474737b9920f502ea"
+      },
+      "formal_c4f0e39e_v235_20260825/observations.npy": {
+        "bytes": 20127872,
+        "sha256": "8a856874c7f47b45d1a29ce3ca12017791798561e80a42dd0922c15ef2589f6e"
+      },
+      "formal_c4f0e39e_v235_20260825/formal_report.json": {
+        "bytes": 104038,
+        "sha256": "f6c6d9c16df2a35b4c7c077e40c690de1c82c7a1a85adc7f7310df4ddac178f5"
+      },
+      "validation_erratum_b5a96c8b_v235_1_20260825/SCIENTIFIC_DECISION.json": {
+        "bytes": 473,
+        "sha256": "bdff288dd733ca53c8503090c5e3057c8bb485b63ef9a26ce4782ce3d3bd1a87"
+      }
+    },
+    "required_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_WITH_JACOBI_NUMERIC_ERRATUM_BLASTNET_CASE7_LOW64_K11_V235_1",
+    "required_scientific_decision": "FAIL_CASE7_LOW64_K11_PROSPECTIVE_CONFIRMATION_V235"
+  },
+  "frozen_data_and_physics": {
+    "dataset": "the same already opened public BLASTNet hydrogen-air Case 7 density sequence used by v235",
+    "rig_count": 13,
+    "frame_count": 42,
+    "camera_count": 9,
+    "field_shape_zyx": [32, 16, 16],
+    "observation_size": 4608,
+    "reported_operator": "the same clean reported straight-ray operator per rig as v235",
+    "true_observation": "the same v235 observations generated with each rig's true operator",
+    "preconditioner": "the same exact geometry-Jacobi inverse diagonal with relative floor 1e-6",
+    "reference": "the independently validated v235 zero-start geometry-Jacobi PCGLS K16 field, residual metric, and 16A+16A-transpose per-frame ledger",
+    "truth_use": "only reconstructing the already opened density fields for absolute field and gradient scoring; never cache construction, coefficient selection, update, fallback, or stopping"
+  },
+  "unique_primary": {
+    "name": "causal_fifo16_measurement_orthonormal_recycled_pcgls_k1",
+    "anchor": "For frame 0, run zero-start unchanged geometry-Jacobi PCGLS K16. Save its field and residual and capture its sixteen field search directions p_j and exact projected directions q_j=A p_j.",
+    "cache_canonicalization": "Apply deterministic two-pass modified Gram-Schmidt to q_j in chronological order while applying identical coefficients to p_j, normalize each pair by norm(q_j), and choose sign so the largest-absolute field entry of p_j is positive. The cache must have exact rank 16.",
+    "current_initializer": "For frame t>0, with measurement-orthonormal Q and paired field basis U satisfying A U=Q, set c=Q^T y_t, x0=U c. This reads only current observation and the causal cache.",
+    "refinement": "Run exactly one unchanged geometry-Jacobi PCGLS iteration from x0. Because the initializer is nonzero and no trusted projection token is used, the strict logical ledger is 2A+1A-transpose: one A for x0, one A-transpose for the initial residual, and one A for the PCGLS direction.",
+    "cache_update": "Orthogonalize the current K1 field/projected direction pair against all sixteen cached pairs with the same deterministic two-pass rule. If its projected residual norm exceeds eps*max(field_size,observation_size)*norm(raw_projected_direction), drop the oldest pair and append the normalized canonical pair; otherwise retain the cache unchanged. No reset or alternative update is allowed.",
+    "cache_rank": 16,
+    "refinement_depth_after_anchor": 1,
+    "denominator_floor": 1e-30,
+    "forbidden_variants": [
+      "rank search",
+      "depth search",
+      "periodic or observable reset",
+      "truth-aware reset or selection",
+      "ridge or truncated-SVD coefficient tuning",
+      "basis learned across rigs",
+      "tail predictor",
+      "Low64 initializer",
+      "changed preconditioner",
+      "fallback continuation",
+      "CNN, FNO, UNO, DeepONet, or GPU rescue"
+    ]
+  },
+  "controls": {
+    "fixed_anchor_krylov_pcgls_k1": "Use the same frame-0 K16 cache for every later frame without cache updates; same logical calls as primary.",
+    "previous_candidate_field_pcgls_k1": "Use the immediately previous output field as x0 and run the same one unchanged PCGLS iteration; same logical calls as primary and directly tests the simpler v18-style carry.",
+    "zero_geometry_jacobi_pcgls_k2": "Run zero-start unchanged geometry-Jacobi PCGLS K2 independently on every frame.",
+    "frozen_v235_controls": [
+      "fixed_low64_geometry_jacobi_pcgls_k11",
+      "zero_geometry_jacobi_pcgls_k11",
+      "zero_geometry_jacobi_pcgls_k16"
+    ]
+  },
+  "accuracy_contract": {
+    "metric_order": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "interior_gradient_relative_l2",
+      "observation_relative_l2"
+    ],
+    "strict_cell_limits": [0.5, 0.75, 0.75, 0.2],
+    "complete_rig_p90_higher_limits": [0.5, 0.75, 0.75, 0.2],
+    "complete_rig_worst_limits": [0.75, 1.0, 1.0, 0.35],
+    "matched_accuracy_ratios": {
+      "per_cell_maximum": 1.05,
+      "complete_rig_p90_higher_maximum": 1.02,
+      "complete_rig_worst_maximum": 1.05
+    },
+    "quantile": "NumPy quantile 0.9 method=higher",
+    "all_546_cells_and_all_13_complete_rigs_must_pass": true
+  },
+  "cost_accounting": {
+    "primary_sequence_calls_A_At": [98, 57],
+    "primary_average_calls_A_At_per_frame": [2.3333333333333335, 1.3571428571428572],
+    "fixed_anchor_sequence_calls_A_At": [98, 57],
+    "previous_field_sequence_calls_A_At": [98, 57],
+    "zero_k2_sequence_calls_A_At": [84, 84],
+    "reference_k16_sequence_calls_A_At": [672, 672],
+    "primary_total_exact_call_reduction_fraction_vs_reference": 0.8846726190476191,
+    "cache_storage_float64_values_per_rig": 204800,
+    "geometry_jacobi_setup": "offline setup, separately reported and unchanged from v235",
+    "synthetic_observation_and_truth_scoring": "offline evaluation, excluded from deployment ledger",
+    "wall_or_RSS_claim": false
+  },
+  "validity_and_independence": {
+    "formal_solver": "Explicitly mirror the frozen strict PCGLS recurrence and retain directions during the same calls; compare anchor K16 fields, residuals, and metrics to sealed v235.",
+    "independent_solver": "A separate program must rebuild every rig, observation, preconditioner, causal sequence, cache, candidate field, metric, summary, and call ledger without importing the formal recycling helper. It may use an algebraically equivalent QR projection path.",
+    "anchor_field_and_residual_relative_difference_maximum": 1e-10,
+    "cache_forward_consistency_relative_maximum": 1e-10,
+    "cache_orthogonality_absolute_maximum": 1e-10,
+    "camera_permutation_primary_field_relative_maximum": 1e-9,
+    "formal_independent_field_relative_maximum": 2e-9,
+    "formal_independent_metric_absolute_maximum": 2e-9,
+    "formal_independent_summary_absolute_maximum": 2e-9,
+    "all_parent_source_and_output_seals_unchanged": true,
+    "call_ledgers_exact": true
+  },
+  "decision_order": [
+    "Any parent, source, data, operator, preconditioner, rank, cache forward-consistency, cache orthogonality, PCGLS anchor-equivalence, call-ledger, camera-permutation, finite-array, or independent-recomputation failure makes v237 INCONCLUSIVE_INVALID_CASE7_CAUSAL_KRYLOV_RECYCLING_V237.",
+    "If the frozen K16 reference is not adequate, v237 is inconclusive rather than a candidate failure.",
+    "The unique dynamic FIFO16 primary passes only if all 546 cells and all 13 complete rigs pass both the frozen absolute and matched-accuracy contracts while both sequence-level A and A-transpose calls are below K16.",
+    "If the primary fails any accuracy gate, conclude FAIL_CASE7_CAUSAL_KRYLOV_RECYCLING_V237 and close only this FIFO16 plus K1 recycling mechanism; do not tune rank, depth, update, reset, or preconditioner.",
+    "If the primary passes but either same-ledger fixed-anchor or previous-field control passes, record solver-recycling headroom but do not credit adaptive FIFO cache updates.",
+    "Only if the primary passes, both same-ledger controls fail, no componentwise-cheaper passing control exists, and independent recomputation passes may conclude POST_OPEN_CASE7_CAUSAL_KRYLOV_RECYCLING_HEADROOM_V237. This still requires a new prospective external gate before an algorithm claim."
+  ],
+  "claims_fixed_false": {
+    "prospective_external_confirmation": false,
+    "learned_algorithm": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_benefit": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

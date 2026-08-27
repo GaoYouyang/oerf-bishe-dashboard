@@ -1,0 +1,107 @@
+{
+  "schema_version": "oerf-private-blastnet-case7-causal-krylov-recycling-validation-erratum-v237.2.0",
+  "status": "FROZEN_POSTRESULT_ANCHOR_TOLERANCE_VALIDATOR_ERRATUM_BEFORE_DIRECT_SEALED_ARRAY_RECOMPUTATION_V237_2",
+  "frozen_at_utc": "2026-08-25T03:02:46Z",
+  "scope": "Validation-only correction for the already completed v237.1 causal Krylov-recycling run. The Case 7 data, operators, observations, fields, metrics, cache arrays, exact-call ledgers, summaries, controls, candidate, rank, depth, update rule, accuracy gates, and formal decision remain immutable.",
+  "observed_validator_defect": {
+    "prior_status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_CASE7_CAUSAL_KRYLOV_RECYCLING_V237",
+    "prior_scientific_decision": "INCONCLUSIVE_INVALID_CASE7_CAUSAL_KRYLOV_RECYCLING_V237",
+    "only_false_check": "anchor_matches_frozen_reference",
+    "all_other_checks_true": true,
+    "reported_anchor_reference_field_relative_maximum": 7.720473686894012e-10,
+    "reported_formal_independent_field_relative_maximum": 1.5833279622408018e-9,
+    "reported_formal_independent_metric_absolute_maximum": 1.7546643304999776e-9,
+    "reported_formal_independent_summary_absolute_maximum": 2.9015922997643884e-10,
+    "reported_cache_audit_absolute_maximum": 7.771561172376096e-16,
+    "cause": "The independent implementation intentionally rebuilds the PCGLS anchor through a separate floating-point path. v237 allowed 2e-9 for every formal-independent field comparison but imposed a stricter 1e-10 threshold on the frame-0 anchor, which is a subset of those same independently rebuilt fields. The stricter subset gate is internally inconsistent with the registered independent-field contract.",
+    "scientific_distance_from_passing": "The sealed primary has zero of thirteen complete rigs passing both absolute and matched gates, so this correction cannot turn a marginal scientific result into a pass. It can only resolve whether the already sealed negative is independently valid or remains inconclusive."
+  },
+  "known_before_erratum_freeze": {
+    "formal_pending_decision": "FAIL_CASE7_CAUSAL_KRYLOV_RECYCLING_V237",
+    "formal_primary_complete_rigs_passed_absolute": 0,
+    "formal_primary_complete_rigs_passed_matched": 0,
+    "prior_independent_primary_complete_rigs_passed_absolute": 0,
+    "prior_independent_primary_complete_rigs_passed_matched": 0,
+    "prior_independent_checks_passed": 20,
+    "prior_independent_checks_total": 21,
+    "direct_anchor_recomputation_from_sealed_arrays_performed": false,
+    "direct_full_array_difference_recomputation_performed": false
+  },
+  "correction_rules": {
+    "case7_numeric_replay": "forbidden",
+    "density_geometry_observation_or_operator_reread": "forbidden",
+    "formal_or_independent_array_rewrite": "forbidden",
+    "prior_inconclusive_tree": "Bind and preserve the complete formal and first-validation arrays and reports. Never overwrite, relabel, or delete the prior inconclusive result.",
+    "anchor_recomputation": "Directly compare the sealed first-validation primary frame-0 field for each of thirteen rigs with the sealed v235 zero-start geometry-Jacobi PCGLS-K16 frame-0 reference field. Recompute the relative L2 values without importing either v237 implementation.",
+    "full_array_recomputation": "Directly recompute the maximum formal-independent field relative difference, metric and cache maximum absolute differences, and exact call-ledger equality from the sealed arrays.",
+    "corrected_anchor_relative_maximum": 2e-9,
+    "tolerance_source": "The unchanged v237 formal-independent field-relative maximum already frozen before the v237 independent run. No new tolerance is selected from the observed anchor value.",
+    "report_reconstruction_tolerance": 1e-15,
+    "decision_reconstruction": "Derive the registered decision from the sealed independent summaries without importing the v237 decision helper. The primary already fails, so the only eligible recovered decision is FAIL_CASE7_CAUSAL_KRYLOV_RECYCLING_V237.",
+    "result_order": "Any identity, seal, shape, dtype, finite-array, first-failure-shape, direct-difference, inherited-tolerance, unchanged-tree, or decision mismatch remains inconclusive. Only a complete pass may recover the sealed negative decision."
+  },
+  "sealed_v237_contract": {
+    "source_commit": "07dd61a0a907d8f6b8908ceacf84690a14c7f6ae",
+    "protocol_sha256": "a7d338d5f4dcead4bd497b5f003382dd88320b80eb65c8b4a33c46c890d533a3",
+    "required_formal_status": "FORMAL_PENDING_INDEPENDENT_CASE7_CAUSAL_KRYLOV_RECYCLING_V237",
+    "required_formal_decision": "FAIL_CASE7_CAUSAL_KRYLOV_RECYCLING_V237"
+  },
+  "sealed_parent_reference": {
+    "arm_index": 1,
+    "arm_name": "zero_geometry_jacobi_pcgls_k16",
+    "fields_sha256": "2dcaabc245ac42277632c878d3f6dee45ebdf923ec24f959ca8c6f40237bc95d"
+  },
+  "sealed_formal": {
+    "ready_sha256": "95bf205fb57753b75b3299cacee96f4625320ddf38d50d1d85ba0bbec2772afb",
+    "formal_report_sha256": "878e7a7e54f1f921020d9c22c8e3cf69a2933f243c4b2d5bc77a56a733e6c17d",
+    "fields_sha256": "a547909b5d6ee6c5f79fd4c945bb213c243764f18ebf26e2f7f5c3b3b39d5547",
+    "metrics_sha256": "41c41a71009b8d6aafb64e0bfaab601d59ed5cf80538ebb793413c98023542a1",
+    "logical_exact_calls_sha256": "6c1dcb2e62ae43eca52c5d74c2879566fc494fe3e65ab0a9b54b0b62dcbe45ca",
+    "cache_audit_sha256": "d34f63deb6ef87339f8445c274a1088567c5bbf40c44d8aa4462eafd41c1afc4"
+  },
+  "sealed_first_validation": {
+    "validated_ready_sha256": "47d2d42a2b58b1ff8045268b3aeabfeec6dcab18417b9a1f060192e035bcdfb8",
+    "scientific_decision_sha256": "3521ca3c314086b26a4385b463d087ec8bd1b0bde45c3c84d526d039632695b2",
+    "independent_validation_sha256": "0432530195d2cce0165a0510e84be7c5aa34422bf40c1d17271a09be9ada86e6",
+    "independent_fields_sha256": "6f39a2bd9fa4876a7627831b1fce8902fd95c0e44491cdb3e7e64d926c60a8d9",
+    "independent_metrics_sha256": "9e319010f9e32b88ca4424d73e99a7dfebf1203f82fa3950aa83f67080e3c848",
+    "independent_logical_exact_calls_sha256": "6c1dcb2e62ae43eca52c5d74c2879566fc494fe3e65ab0a9b54b0b62dcbe45ca",
+    "independent_cache_audit_sha256": "5a6656784d32670b50ad43e94bf176762b51edb4b7612774dd8b3d35210d67f8",
+    "required_false_checks": ["anchor_matches_frozen_reference"]
+  },
+  "array_contract": {
+    "formal_and_independent_fields_shape": [4, 13, 42, 32, 16, 16],
+    "formal_and_independent_fields_dtype": "float64",
+    "formal_and_independent_metrics_shape": [4, 13, 42, 4],
+    "formal_and_independent_metrics_dtype": "float64",
+    "formal_and_independent_calls_shape": [4, 13, 42, 2],
+    "formal_and_independent_calls_dtype": "int16",
+    "formal_and_independent_cache_shape": [13, 4],
+    "formal_and_independent_cache_dtype": "float64",
+    "parent_fields_shape": [6, 13, 42, 32, 16, 16],
+    "parent_fields_dtype": "float64",
+    "primary_arm_index": 0,
+    "frame_zero_index": 0
+  },
+  "output_contract": {
+    "pass_status": "PASS_INDEPENDENT_RECOMPUTATION_WITH_ANCHOR_TOLERANCE_ERRATUM_CASE7_CAUSAL_KRYLOV_RECYCLING_V237_2",
+    "inconclusive_status": "INCONCLUSIVE_VALIDATION_ERRATUM_CASE7_CAUSAL_KRYLOV_RECYCLING_V237_2",
+    "pass_scientific_decision": "FAIL_CASE7_CAUSAL_KRYLOV_RECYCLING_V237",
+    "inconclusive_scientific_decision": "INCONCLUSIVE_INVALID_CASE7_CAUSAL_KRYLOV_RECYCLING_V237_2",
+    "validated_ready_only_on_complete_pass": true,
+    "output_science_arrays": 0
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_benefit": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "learned_algorithm": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

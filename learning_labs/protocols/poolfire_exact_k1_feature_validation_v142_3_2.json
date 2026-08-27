@@ -1,0 +1,117 @@
+{
+  "schema_version": "oerf-exact-k1-feature-validation-v142.3.2",
+  "status": "FROZEN_BEFORE_V142_1_COMPLETE_RESULT_AND_BEFORE_FEATURE_EXECUTION",
+  "frozen_at_utc": "2026-08-13T02:30:00Z",
+  "scientific_role": "Independently establish that the deployment-only exact-K1 feature bundle is reproducible before any K4-K1 teacher, fit, prediction or score is allowed.",
+  "visibility_at_freeze": {
+    "v142_1_formal_ready_seen": false,
+    "v142_1_validated_ready_seen": false,
+    "v142_1_adjudication_seen": false,
+    "feature_release_seen": false,
+    "feature_output_seen": false,
+    "latest_v142_1_health_telemetry": {"completed": 590, "expected": 3700, "passing": 590},
+    "complete_scientific_result_seen": false
+  },
+  "parents": {
+    "feature_protocol_path": "learning_labs/protocols/poolfire_exact_k1_feature_execution_v142_3_1.json",
+    "feature_protocol_sha256": "99af030fa8b074b6e05403f32b4dbf07c8626d135c5ac6ac1cd254e145d2af30",
+    "scientific_protocol_path": "learning_labs/protocols/poolfire_exact_k1_dual_ridge_prereg_v142_3.json",
+    "scientific_protocol_sha256": "b1088b9524d248fe77770ea4355fd6e857a8f093f9c90e5ec7e24262ed33e719",
+    "v142_1_protocol_path": "learning_labs/protocols/poolfire_k1_dual_pair_depth_full_capacity_v142_1.json",
+    "v142_1_protocol_sha256": "b0f7535e5c5a4a3ae976751e0a736fc375d425c822f4732d8a76aed807be8831"
+  },
+  "independent_scope": {
+    "sample_count": 3700,
+    "total_direction_count": 8103000,
+    "rebuild_exact_k1_dual_and_residual": true,
+    "rebuild_pair_depth_directions": true,
+    "rebuild_camera_and_direction_features": true,
+    "rebuild_zero_parameter_joint_ls": true,
+    "verify_per_sample_exact_calls": {"A": 1, "AT": 1},
+    "verify_padding_offsets_tokens_and_reported_geometry": true,
+    "formal_runner_import_allowed": false,
+    "formal_feature_helper_import_allowed": false,
+    "shared_low_level_forward_adjoint_disclosed": true
+  },
+  "numerical_gates": {
+    "k1_relative_l2": 1e-10,
+    "camera_feature_max_abs": 2e-12,
+    "direction_feature_max_abs": 2e-11,
+    "joint_ls_coefficient_max_abs_is_diagnostic_only": true,
+    "joint_ls_physical_relative_l2": 1e-6,
+    "pose_max_abs": 1e-12,
+    "parent_containment_max_abs": 1e-10
+  },
+  "execution": {
+    "single_use_release": true,
+    "atomic_open_receipt_before_scientific_arrays": true,
+    "atomic_output_directory": true,
+    "progress_every_cells": 10,
+    "one_validator_process": true,
+    "partial_result_reuse": false
+  },
+  "authorization": {
+    "feature_validation_authorized_before_release": false,
+    "teacher_generation_authorized": false,
+    "ridge_fit_authorized": false,
+    "prediction_authorized": false,
+    "scoring_authorized": false,
+    "neural_training_authorized": false
+  },
+  "failure_action": "Any mismatch or execution failure is inconclusive. Preserve the release receipt and FAILED output; do not generate a teacher or fit a model.",
+  "claim_limits": {
+    "feature_validation_is_algorithm_result": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  },
+  "source_closure": [
+    [
+      "site_tools/validate_poolfire_exact_k1_deployment_features_v142_3.py",
+      "47ef76b147842a471c9f0347d6d0a041f44226ddded9177189d3dc715e68504a"
+    ],
+    [
+      "site_tools/freeze_poolfire_exact_k1_feature_validation_release_v142_3.py",
+      "d4c98be61e26d5b232ee42fe5a27e2f51ce797367cd61d214d2976357f8c6350"
+    ],
+    [
+      "site_tools/test_validate_poolfire_exact_k1_deployment_features_v142_3.py",
+      "b454e82d3900e97e0a0e05f71a228b8e24bb7e80c9a509e82f071772d2ba1997"
+    ],
+    [
+      "site_tools/test_freeze_poolfire_exact_k1_feature_validation_release_v142_3.py",
+      "6afff1a11e8b36c678db902367a799b0ee5554bdb5d285449014ecb544108aae"
+    ],
+    [
+      "site_tools/validate_poolfire_k1_dual_pair_depth_full_capacity_v142_1.py",
+      "6d21cb9ac359f9bb23300d14c1d8f83b96632b587f693e3af3a85149df4aeff7"
+    ],
+    [
+      "site_tools/validate_poolfire_pair_resolved_complete_teacher_v141_2.py",
+      "65e90adf6dbd9c2a719749df561a317b25d945f2a6eeff47b116cdbf3b03f1ca"
+    ],
+    [
+      "site_tools/validate_poolfire_pair_resolved_depth_cost_stage_b_v140_4.py",
+      "5c21d99d67632fc76889b9e2f00b6142d153efc9bc8e9068e7428000a46b2ad2"
+    ],
+    [
+      "site_tools/validate_poolfire_pair_resolved_direction_set_score_v141_3.py",
+      "cff6794310e67f837c71aec61d846a8abf7385d329b7ae73051adb57403bb6c2"
+    ],
+    [
+      "learning_labs/poolfire_camera_set_classical_screen_v127.py",
+      "602d5120c4d0542bb9e104743cda9dc90fd435ff7c05536ac86ac7d121b90f21"
+    ],
+    [
+      "learning_labs/poolfire_camera_set_factorized_controls_v128.py",
+      "2de5e522db05021f6ef0693c2e567bf9e5543b42d30e16c9e102d9308f7b2f90"
+    ],
+    [
+      "learning_labs/nine_view_target_scale_warm_v66.py",
+      "6d6f120e0639c46cfd87ace0db544694973e40808f77c7129cd5eda47a22fe30"
+    ]
+  ]
+}

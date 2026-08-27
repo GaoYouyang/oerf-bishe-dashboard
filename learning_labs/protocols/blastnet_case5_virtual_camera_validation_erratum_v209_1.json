@@ -1,0 +1,55 @@
+{
+  "schema_version": "oerf-private-blastnet-case5-virtual-camera-validation-erratum-v209.1.0",
+  "status": "FROZEN_AFTER_FORMAL_BEFORE_ANY_COMPLETED_INDEPENDENT_RIG_V209_1",
+  "frozen_at_utc": "2026-08-23T10:04:30Z",
+  "scope": "Transparent validator-only erratum for v209. The formal arrays, original protocol, camera rosters, K16 solver, gates, costs, summaries, and decision order are unchanged and are not regenerated.",
+  "original_protocol": {
+    "path": "learning_labs/protocols/blastnet_case5_virtual_camera_information_v209.json",
+    "sha256": "73ce61dc89bcd9e5e15e672f14549cd590ff6cb2efc2821b56698ff8ee214e57"
+  },
+  "sealed_formal": {
+    "ready_sha256": "eaf065cc3c83fad05ae7bdeadbf9635d256d24ea04c031a3787c224dae54236b",
+    "formal_report_sha256": "35fae78d04996d82f22a69b86befd0986f60ee75dc043cceb6ee0c0293728b56",
+    "rig_audit_sha256": "0ca86b9c1519db43804df91af9f06cf57429a93d28d7aa8f2a34cdcc0030ccb6",
+    "fields_sha256": "e58c4982f0e33b5d6c9066097e411d8aa36ee539dcb93bbcee63d78307d1688b",
+    "observations_sha256": "620d5f16a4accfbb557149aa2f29dea39442b069ce159ce7d1cf290269448a60",
+    "residuals_sha256": "d0bd370352e074bd11beb9b916987295373c3df1d6305cefe0436ff9b9d35640",
+    "metrics_sha256": "5372a058a7857fdda7d9e0db68d9e0f82b22bcf1b348caf0f0f33f2f2d45a91a",
+    "logical_exact_calls_sha256": "2fae4a7d418902128c740f347c1748279d54e7124eb06d41b23a556b933fa451"
+  },
+  "failed_attempt": {
+    "stage": "first independent adjoint dot-product check before any rig completed",
+    "error": "The private low-level _adjoint returns [batch,z,y,x], but the independent NumPy adapter indexed [0,0], yielding 256 values and then failing to reshape to [32,16,16].",
+    "log_sha256": "25e3dc93bc995765373c331da1225f84c66da4908f6b3096748a24aa77174f98",
+    "exit_code_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "exit_code": 1,
+    "partial_independent_metrics_bytes": 26336,
+    "partial_independent_metrics_sha256": "fd25c2268201c851a475cad290603a6921f0fa8fa534b1900495f57df5caa503",
+    "completed_independent_rigs": 0,
+    "validated_ready_created": false,
+    "scientific_decision_created": false
+  },
+  "only_authorized_change": {
+    "before": "self.operator._adjoint(tensor)[0,0]",
+    "after": "self.operator._adjoint(tensor)[0]",
+    "reason": "Select the batch axis only and preserve the complete [z,y,x] field.",
+    "forbidden_changes": "No change to formal data, original validator algebra, RNG, camera geometry, thresholds, tolerances, summaries, or decision logic."
+  },
+  "execution_binding": {
+    "formal_repository": "The original detached clean v209 formal commit remains the repository passed into the original validator source-closure checks.",
+    "erratum_repository": "A new detached clean commit contains only this erratum protocol and the wrapper that applies the one-line adapter correction.",
+    "output_rule": "Use one new non-existing validation output. Never delete, overwrite, or interpret the failed partial output."
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_external_generalization": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

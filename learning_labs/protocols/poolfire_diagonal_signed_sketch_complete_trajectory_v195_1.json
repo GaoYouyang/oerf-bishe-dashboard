@@ -1,0 +1,212 @@
+{
+  "schema_version": "oerf-private-poolfire-diagonal-signed-sketch-complete-trajectory-v195.1.0",
+  "frozen_at_utc": "2026-08-22T11:06:50Z",
+  "scientific_question": "Does the fixed full-normal correction preconditioned by the diagonal of the signed-sketch Hessian, which retrospectively passed all 104 v194 development cells, remain strict-safe over the complete 101-frame p=22kw_size=01 trajectory, and does it retain any headroom after cheaper signed-seed and fit-mean controls plus the equal-exact-call full-DCT control are evaluated under the same physical replay?",
+  "role": "result-before-frozen complete-trajectory development gate on p=22kw_size=01, whose truth file and four widely spaced frames were already consumed by v176-v194; this explicitly retires p22 as a stopping-validation source but does not open p14 validation or either untouched test trajectory",
+  "parent_evidence": {
+    "retired_v195_0_protocol_sha256": "ac54c5f48bf347a25b627092a1e86706aa47670a0cf4d41754d9c5b3e7df1fb1",
+    "retired_v195_0_result_count": 0,
+    "v194_protocol_sha256": "d07c33eee727433f988b22c7e7dca6656f26c1bdc11d81338ffbc363553d81d2",
+    "v194_formal_source_commit": "b804b056749f8e0b4b16deaa4141aefea327a7fe",
+    "v194_formal_report_sha256": "c6b401222bfcf9804ff36a25188f4339d3b7cfbce8e10479daf8806134000fe9",
+    "v194_formal_ready_sha256": "0a17f5632cd089eefe55c9472ce2646245f360b65011f382af33bb785c8980e3",
+    "v194_validator_source_commit": "82546cd52bcce1f096eea5cee7d5360eed10aace",
+    "v194_independent_validation_sha256": "0bf2c999ca355cc2bb075935b575bb45848a812bc6bc26ba93b8b3d3594e1578",
+    "v194_validated_ready_sha256": "02b715026043b0c4d50572d9f6baadcb735c19509e804705067454258bcb6650",
+    "v194_decision_sha256": "2fc5013a32dd41a604eb8f76b147187f45cfeea970af64886364bc7bc63d07a9",
+    "v194_scientific_decision": "FAIL_SIGNED_SKETCH_FULL_NORMAL_REFINEMENT_V194",
+    "v193_protocol_sha256": "dae4809d9ea0882ddccfff9f7a54cce337848d5cecf5f26b22deed7ba016ad8a",
+    "v189_protocol_sha256": "8d84a4214743c4c82e50671a6152cb8864187ad21a018f96064dfcf1b79e9e55",
+    "v190_protocol_sha256": "2fa637401d38dc77340fb0fcb9658afbdb42ed08439324bd4b88dc998858428b",
+    "v178_protocol_sha256": "58db4617a2571bbda15a13fb9b6bd2f150775d7673020343671e144cfb31e24e",
+    "v181_protocol_sha256": "e0a3eb477aba1e68a66f95165eb203773af0676db4bce34c8660ceb43fac07e2",
+    "v186_affine_center_sha256": "f75497ae22ce2df35525f08dc198cd79f5d28810a249859772514fe05fb2f98b",
+    "v186_affine_basis_sha256": "3e88d63e83503f7a2fdafa72259414b6a379279c2aab91f13d4d9c62dab7cbaa",
+    "v190_anchor_indices_sha256": "6c317cd5e52c6a7a1a6eaa75aefb60343841a745f4325237f9e4d90cda50bd03"
+  },
+  "data_isolation": {
+    "development_trajectory": "p=22kw_size=01",
+    "official_legacy_role": "stopping_rule_validation",
+    "v195_role": "post-open complete-trajectory development",
+    "frame_indices": "all integer indices 0 through 100 in immutable order",
+    "frame_count": 101,
+    "calibration_count": 13,
+    "sensor_arms": [
+      "v176_geometry_selected_five",
+      "all_nine"
+    ],
+    "pair_manifest_sha256": "ba7e4aba347200030af6c53ce8d593048a2517606909a1eba7dd31fda4e1a2f9",
+    "pair_ready_sha256": "bf27f5d23a185b047191178d63938e3e5ac71bcc62a41350e8071bacc538399e",
+    "pair_checksums_sha256": "cc4669e14bcae91b2807e34ea996bd7694b1a92e4f1d6e238272519d89317ccd",
+    "truth_sha256": "21498fc093c9c8e7538dcb972c03bc0d6ae742c0adc0bc7e2475827247b59ba9",
+    "times_sha256": "d0049a5e96c350180411dd04f5d6d24f5e7959fcc118029e890d79d9d718a320",
+    "already_opened_before_freeze": "the complete p22 truth file had been read by prior runners and frames 0,25,75,100 had been repeatedly scored; no v195 metric, correction or complete-trajectory tail had been computed",
+    "prediction_process_inputs": [
+      "offline-generated vector observations",
+      "reported active-camera IDs and immutable calibration geometry",
+      "sealed v186 affine center and 1009-row basis",
+      "sealed v190 geometry-only anchors",
+      "the fixed v193 SplitMix64 signed hash and 271 buckets"
+    ],
+    "prediction_process_forbidden_inputs": [
+      "CFD truth path or array",
+      "trajectory, frame, time, power or size feature",
+      "field or gradient metric, pass mask or scoring tail",
+      "p14 validation, p22-s05 test, p58-s01 test, real BOST or external data"
+    ],
+    "truth_use": "an isolated observation-builder may use p22 truth only to synthesize immutable vector observations; the predictor subprocess receives no truth path; the scorer may load truth only after the coordinate tree and PREDICTION_BARRIER are sealed",
+    "validation_trajectory_still_sealed": "p=14kw_size=01",
+    "test_trajectories_still_sealed": [
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ]
+  },
+  "fixed_mechanism": {
+    "affine_coordinate_count": 1009,
+    "detector_feature_space": "all 575 non-DC 24x24 detector-potential DCT modes per active camera in sorted canonical camera-ID order",
+    "seed": "exact v193 signed_countsketch1280 coordinate with the immutable 1009 v190 anchors, 271 SplitMix64 buckets, signs, no normalization and Moore-Penrose solve",
+    "primary": "exact v194 signed_sketch_diagonal_normal_step1: form the full-DCT normal residual from the sealed signed seed and add one unit coordinate step divided by diag(H_compact H_compact^T), where H_compact is the immutable signed-sketch response",
+    "diagonal_floor": "sqrt(float64 epsilon) times the maximum positive compact sketch-Hessian diagonal, exactly as v194",
+    "step_size": 1.0,
+    "iteration_count": 1,
+    "forbidden_post_freeze_changes": [
+      "hash, signs, seed, bucket count, anchors or normalization",
+      "step size, repeated steps, line search, ridge, damping, clipping or fallback",
+      "feature selection, threshold, candidate choice or learned parameters"
+    ],
+    "camera_permutation_contract": "reversing input camera/ray order must leave canonical full-DCT features, signed seed, diagonal correction and field unchanged within 1e-10",
+    "variable_cardinality": [
+      5,
+      9
+    ],
+    "trainable_parameter_count": 0
+  },
+  "controls": {
+    "fit_mean": "the sealed v186 affine center, evaluated at K0 and after the same unchanged physical K1",
+    "signed_seed": "the exact v193 signed CountSketch seed before diagonal correction, evaluated at K0 and K1",
+    "full_dct": "the exact v189 full camera-resolved DCT Moore-Penrose coordinate, evaluated at K0 and K1 under identical reported geometry",
+    "closed_full_hessian": "the failed v194 full-Hessian unit step is not rerun"
+  },
+  "physical_replay_and_gates": {
+    "arm_order": [
+      "fit_mean_k0",
+      "fit_mean_k1",
+      "signed_seed_k0",
+      "signed_seed_k1",
+      "full_dct_k0",
+      "full_dct_k1",
+      "diagonal_normal_step1_k0",
+      "diagonal_normal_step1_k1"
+    ],
+    "k1_rule": "one unmodified identity-preconditioned physical CGLS step from the supplied field using the exact current residual and denominator floor 1e-30; breakdown leaves the field unchanged and is reported",
+    "strict_cell_limits": {
+      "field_relative_l2": 0.5,
+      "gradient_relative_l2": 0.75,
+      "observation_relative_l2": 0.2
+    },
+    "complete_calibration_tail_limits": {
+      "field_relative_l2_p90_higher": 0.5,
+      "field_relative_l2_worst": 0.75,
+      "gradient_relative_l2_p90_higher": 0.75,
+      "gradient_relative_l2_worst": 1.0,
+      "observation_relative_l2_p90_higher": 0.2,
+      "observation_relative_l2_worst": 0.35
+    },
+    "required_strict_cells_per_sensor": 1313,
+    "required_strict_cells_total": 2626,
+    "required_complete_calibration_sensor_groups": 26,
+    "all_101_frames_required": true,
+    "hyperparameter_search": "none"
+  },
+  "exact_call_and_cost_ledger": {
+    "fit_mean_k0": [1, 0],
+    "fit_mean_k1": [2, 1],
+    "signed_seed_k0": [1, 0],
+    "signed_seed_k1": [2, 1],
+    "full_dct_k0": [1, 0],
+    "full_dct_k1": [2, 1],
+    "diagonal_normal_step1_k0": [1, 0],
+    "diagonal_normal_step1_k1": [2, 1],
+    "exact_call_order": "[vector forward, vector adjoint]",
+    "offline_truth_observation": "one excluded vector forward per sensor, calibration and frame",
+    "geometry_cache_forward_equivalents": "26 sensor-calibration setups times 1009 affine basis columns, reported separately",
+    "dense_online_work_disclosed": "signed and diagonal arms read every full DCT observation coordinate; the diagonal arm additionally forms a dense 1009-coordinate full normal residual",
+    "resource_claim": "none; logical exact-call equality does not establish lower wall time, memory, setup cost or whole-pipeline work"
+  },
+  "storage_and_process_contract": {
+    "observation_bundle": "one immutable float64 vector-observation file per sensor and calibration plus identity manifest",
+    "prediction_bundle": "streamed float64 coordinate files for signed_seed, full_dct and diagonal_normal_step1 plus compact diagnostics; no scoring truth is present",
+    "prediction_barrier": "all coordinate files and hashes are sealed before the scorer receives the p22 truth path",
+    "scoring_bundle": "all-cell metrics, physical K1 scalars and breakdowns, exact-call receipts, complete tails and a fixed sentinel field roster",
+    "sentinel_roster": "for each sensor and method, calibration index 6 and frame indices 0,50,100",
+    "full_candidate_tree": "not retained; candidates are reconstructed and scored in a memory-bounded stream"
+  },
+  "required_validity_gates": [
+    "all parent protocol, result, validation, decision, affine-basis and anchor bindings remain unchanged",
+    "the p22 pair identity and all 101 ordered times match the frozen binding",
+    "the observation builder, predictor and scorer run as separate processes, and the predictor command exposes no truth or pair path",
+    "all 26 responses reproduce the frozen 1009 coordinate rank and anchor roster",
+    "the v193 signed seed exactly reproduces the sealed v193 four-frame coordinates at indices 0,25,75,100",
+    "the v194 diagonal coordinates exactly reproduce the sealed v194 four-frame diagonal coordinates at indices 0,25,75,100",
+    "the v189 full-DCT coordinates reproduce the sealed v189 four-frame coordinates within 1e-8",
+    "all full-DCT and compact solves satisfy the frozen retained-rank and stationarity limits",
+    "camera/ray reversal preserves full features and all three predicted coordinate families within 1e-10",
+    "all eight physical arms replay exactly their declared calls with no hidden fallback",
+    "all 2626 cells, 26 complete calibration-sensor groups and all 101 frames are present and finite",
+    "prediction arrays and parent/input trees remain unchanged after truth scoring",
+    "the independent implementation rebuilds observations, responses, hashes, coordinates, diagonal correction, physical K1, all metrics and tails without importing the formal v195 implementation"
+  ],
+  "fixed_decision_order": [
+    "Any binding, isolation, process, reproduction, rank, stationarity, noninterference, permutation, replay, call, completeness, finite, source or independent-comparison failure makes v195 inconclusive.",
+    "If diagonal_normal_step1_k1 fails any strict cell or any complete calibration-sensor tail, conclude FAIL_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195 and close this fixed diagonal correction; controls remain diagnostic and cannot rescue it.",
+    "If the diagonal primary passes and fit_mean_k1 also passes the complete gate, conclude PASS_FIT_MEAN_CONTROL_EXPLAINS_V195 and prefer the cheaper fixed prior; do not advance the diagonal mechanism.",
+    "If the diagonal primary passes, fit_mean_k1 fails, and signed_seed_k1 passes, conclude PASS_SIGNED_SEED_CONTROL_EXPLAINS_V195 and prefer the correction-free sketch; do not advance the diagonal mechanism.",
+    "If the diagonal primary passes, both cheaper controls fail, and full_dct_k1 passes, conclude PASS_FULL_DCT_EQUAL_CALL_CONTROL_EXPLAINS_V195; the diagonal mechanism has no established complete-trajectory advantage.",
+    "Only if diagonal_normal_step1_k1 passes all 2626 cells and 26 complete groups while fit_mean_k1, signed_seed_k1 and full_dct_k1 each fail may v195 conclude PASS_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_HEADROOM_V195 and authorize one separately frozen p14 validation gate.",
+    "No v195 outcome is a deployable algorithm, exact-call reduction, resource result, external generalization, curved-ray result, real BOST result, paper success or algorithm breakthrough."
+  ],
+  "independent_recomputation": {
+    "required": true,
+    "must_not_import_formal_v195_module_or_runner": true,
+    "must_independently_rebuild": [
+      "the p22 identity, 101 transformed truth fields and isolated vector observations",
+      "all 26 vector/scalar operators, affine responses, full-DCT features and frozen anchors",
+      "the v193 hash layout, signed compact systems and seed coordinates",
+      "the v194 diagonal full-normal correction and v189 full-DCT control",
+      "all unchanged physical K1 replays, 2626-cell metrics, exact-call receipts and complete tails",
+      "the fixed sentinel fields and final non-exchangeable decision"
+    ],
+    "formal_arrays_read_only_after_independent_arrays_are_complete": true,
+    "numeric_relative_tolerance": 1e-8,
+    "near_zero_absolute_tolerance": 1e-10,
+    "metric_absolute_tolerance": 1e-8,
+    "formal_and_input_trees_unchanged": true
+  },
+  "pre_result_disclosure": {
+    "already_seen": [
+      "v194 diagonal_normal_step1_k1 passed all 104 four-frame development cells",
+      "v194 full-Hessian primary failed all 104 cells and is closed",
+      "v189 full_dct_k1 passed the same 104 cells at equal declared exact-call count",
+      "p22 frames 0,25,75,100 and the containing truth file were already consumed before v195"
+    ],
+    "not_read_or_computed_before_this_freeze": [
+      "any retired v195.0 observation bundle, prediction, metric or result; v195.0 produced zero scientific outputs",
+      "any v195 prediction for the other 97 p22 frames",
+      "any v195 complete-trajectory pass count, tail, control dominance or decision"
+    ]
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_validation": false,
+    "external_generalization": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  },
+  "status_before_results": "FROZEN_BEFORE_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_RESULTS_V195_1"
+}

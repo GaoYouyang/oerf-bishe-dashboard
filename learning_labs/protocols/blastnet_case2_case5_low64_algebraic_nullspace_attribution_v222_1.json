@@ -1,0 +1,99 @@
+{
+  "schema_version": "oerf-private-blastnet-case2-case5-low64-algebraic-nullspace-attribution-v222.1.0",
+  "status": "FROZEN_POST_OPEN_ALGEBRAIC_NULLSPACE_ATTRIBUTION_V222_1",
+  "frozen_at_utc": "2026-08-24T06:13:30Z",
+  "evidence_role": {
+    "role": "post-open retrospective mechanism attribution",
+    "v222_boundary": "v222 remains INCONCLUSIVE because its frozen residual-equivalence gate failed and its first independent validator failed. v222.1 must not relabel that batch as a preregistered pass.",
+    "allowed_question": "Under the exact-arithmetic PCGLS identity, does removing the Low64 initializer component in null(A) preserve the opened Case5 result, and does it remove the opened Case2 transfer harm?",
+    "not_a_deployment_method": true,
+    "not_fresh_validation": true,
+    "not_a_resource_result": true,
+    "not_real_bost": true
+  },
+  "fixed_roster": {
+    "conditions": [
+      {"condition_id": "blastnet_case5", "frame_count": 42},
+      {"condition_id": "blastnet_case2", "frame_count": 55}
+    ],
+    "rig_count_per_condition": 13,
+    "camera_count": 9,
+    "profile": "clean",
+    "total_cells": 1261,
+    "field_shape_zyx": [32, 16, 16],
+    "low64_rank": 64
+  },
+  "fixed_identity": {
+    "direct_final": "The independently sealed v221 direct_low64_pcgls_k11 final field.",
+    "null_component": "n=x_low64-P_row x_low64, where P_row is reconstructed by formal sparse LU and independent dense Cholesky implementations.",
+    "algebraic_rowspace_final": "x_alg=x_direct_final-n. For a linear operator and unchanged deterministic PCGLS, exact arithmetic gives the same Krylov updates whenever the initial residuals match, so x_alg is the row-space-initialized final field without replay-amplified roundoff.",
+    "truth_use": "Opened Case5 and Case2 truth is used only to score x_alg under the frozen v222 accuracy contract.",
+    "hyperparameter_search_count": 0,
+    "trainable_parameter_count": 0
+  },
+  "fixed_arms": {
+    "primary": "algebraic_orthogonal_rowspace_low64_pcgls_k11",
+    "direct_control": "direct_low64_pcgls_k11",
+    "v221_spectral_control": "low64_exact_rowspace_lift_pcgls_k10",
+    "cheaper_control": "zero_geometry_jacobi_pcgls_k11",
+    "reference": "zero_geometry_jacobi_pcgls_k16"
+  },
+  "accuracy_contract": {
+    "metric_order": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "interior_gradient_relative_l2",
+      "observation_relative_l2"
+    ],
+    "strict_cell_limits": [0.5, 0.75, 0.75, 0.2],
+    "complete_rig_p90_higher_limits": [0.5, 0.75, 0.75, 0.2],
+    "complete_rig_worst_limits": [0.75, 1.0, 1.0, 0.35],
+    "matched_accuracy_ratios": {
+      "per_cell_maximum": 1.05,
+      "complete_rig_p90_higher_maximum": 1.02,
+      "complete_rig_worst_maximum": 1.05,
+      "all_metrics_required": true
+    },
+    "quantile_method": "NumPy quantile 0.9 method=higher",
+    "all_cells_and_all_complete_rigs_must_pass": true,
+    "reference_failure_is_inconclusive": true
+  },
+  "fixed_numerical_gates": {
+    "algebraic_vs_v222_replay_field_relative_max": 5e-8,
+    "algebraic_vs_v222_replay_metric_absolute_max": 1e-8,
+    "direct_vs_algebraic_observation_relative_max": 1e-10,
+    "formal_independent_field_relative_max": 5e-8,
+    "formal_independent_metric_absolute_max": 1e-9,
+    "formal_independent_summary_absolute_max": 1e-8,
+    "formal_independent_projected_initializer_relative_max": 5e-9,
+    "discrete_decisions_exact": true
+  },
+  "fixed_decisions": {
+    "invalid": "INCONCLUSIVE_INVALID_POST_OPEN_NULLSPACE_ATTRIBUTION_V222_1",
+    "case5_pass_case2_pass": "POST_OPEN_ROWSPACE_PRESERVES_CASE5_AND_REMOVES_CASE2_HARM_V222_1",
+    "case5_pass_case2_fail": "POST_OPEN_ROWSPACE_PRESERVES_CASE5_BUT_CASE2_HARM_REMAINS_V222_1",
+    "case5_fail_case2_pass": "POST_OPEN_NULLSPACE_CARRIES_CASE5_BENEFIT_AND_CASE2_HARM_V222_1",
+    "case5_fail_case2_fail": "POST_OPEN_NULLSPACE_CONTRIBUTES_CASE5_BENEFIT_WITHOUT_EXPLAINING_CASE2_HARM_V222_1"
+  },
+  "cost_boundary": {
+    "online_algorithm_claim": "none",
+    "diagnostic_replay": "The formal audit uses one offline A per cell; the independent audit assembles 13 exact sparse operators and 13 dense Cholesky projectors. These are attribution costs, not deployment costs.",
+    "wall_and_rss_authorized": false
+  },
+  "stop_rules": [
+    "Do not relax the failed v222 numerical gate or call v222 a valid preregistered result.",
+    "Do not tune rank, projection, K, metrics, gates, controls, or roster after this file is frozen.",
+    "Any algebraic-identity, observation-equivalence, source/input closure, or independent-comparison failure leaves the nullspace question inconclusive.",
+    "No outcome authorizes training, GPU rental, wall/RSS measurement, unopened validation/test access, external-generalization, curved-ray, real-BOST, first, SOTA, paper-success, or algorithm-breakthrough claims."
+  ],
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

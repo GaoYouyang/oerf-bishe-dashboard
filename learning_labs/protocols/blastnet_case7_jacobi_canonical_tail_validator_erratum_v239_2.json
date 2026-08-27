@@ -1,0 +1,107 @@
+{
+  "schema_version": "oerf-private-blastnet-case7-jacobi-canonical-tail-validator-erratum-v239.2.0",
+  "status_before_erratum_validation": "FROZEN_AFTER_TWO_PRE_SVD_VALIDATOR_FAILURES_AND_FULL_THIRTEEN_RIG_MAP_ONLY_AUDIT",
+  "frozen_at_utc": "2026-08-25T02:36:00Z",
+  "scope": "Final validator-only reduction-order erratum. The one sealed v239 formal output is not rerun; no scientific array, candidate, rank, fold, tail, gate, control, or decision rule changes.",
+  "prior_fail_closed_attempts": [
+    {
+      "version": "v239.0",
+      "failure_stage": "rig_0_before_direct_svd",
+      "failure": "independent inverse diagonal SHA differed from the formal sum-reduction SHA"
+    },
+    {
+      "version": "v239.1",
+      "failure_stage": "rig_3_before_direct_svd",
+      "failure": "independent absolute floor differed from the formal scalar by one floating reduction-order ulp"
+    }
+  ],
+  "known_at_freeze": {
+    "formal_status": "FORMAL_PENDING_INDEPENDENT_CASE7_JACOBI_CANONICAL_TAIL_V239",
+    "formal_pending_decision": "FAIL_CASE7_JACOBI_CANONICAL_TAIL_SUBSPACE_CAPACITY_V239",
+    "full_thirteen_rig_map_only_audit": {
+      "rig_count": 13,
+      "bitwise_inverse_hash_matches": 0,
+      "absolute_floor_relative_difference_maximum": 1.5629760766621012e-16,
+      "inverse_diagonal_relative_difference_maximum": 2.1803629246638118e-16,
+      "inverse_diagonal_absolute_difference_maximum": 1.1641532182693481e-10,
+      "frozen_relative_tolerance": 1e-10
+    },
+    "not_computed_by_either_failed_validator": [
+      "any independent direct SVD basis",
+      "any independent v239 relative residual",
+      "any independent v239 tail summary",
+      "any successful independent scientific decision"
+    ]
+  },
+  "immutable_formal": {
+    "formal_commit": "19cf48ec7ff6a6bc3cedb6a77d006e22500ef284",
+    "formal_directory_role": "The sole completed v239 formal output; every file is read-only and must remain byte-identical.",
+    "files": {
+      "READY.json": {
+        "bytes": 996,
+        "sha256": "cf42627a533d80ef2351fe54781f1f9a2292af7f7a034a45bd1a5eacdd5588b9"
+      },
+      "canonical_relative_residuals.npy": {
+        "bytes": 4496,
+        "sha256": "86e2865dd8e0d85a75ba777582f6d39f5e0cca1d6f8dda4c2b6493af8f42c700"
+      },
+      "canonical_training_singular_values.npy": {
+        "bytes": 52544,
+        "sha256": "bb2f98ba1bc58337658829eb4873b1113924dfa80dcedfd7a439111387a157cb"
+      },
+      "formal_report.json": {
+        "bytes": 26516,
+        "sha256": "ed4f31bfdbe8cba13cba3b4289591c369b8b1e7f83bd6a2eba38c447105291ea"
+      },
+      "jacobi_inverse_diagonals.npy": {
+        "bytes": 852096,
+        "sha256": "0eeb0b8d6403e57b989683886fc0e7ea687f35b43f2eac6eb6c1c00d9f3c8d0e"
+      },
+      "physical_span_singular_values.npy": {
+        "bytes": 6784,
+        "sha256": "b4c05310671d8ad592aa2d6d9fd78de2989be7a435b66490f35dd5e4d75d12fd"
+      }
+    }
+  },
+  "single_correction": {
+    "formal_rule": "The sealed formal build remains required to match all v235 Jacobi hashes exactly.",
+    "independent_rule": "The independent einsum reduction records, but does not gate on, scalar-floor or array hash bit identity. It must retain exact rig/camera identity, positive finite values, camera-permutation invariance, and after all direct-SVD residuals are complete it must match the sealed formal inverse diagonal under the original 1e-10 relative tolerance.",
+    "absolute_floor_audit": "Record every independent and sealed formal floor and require the thirteen-rig maximum relative difference to be at most 1e-10.",
+    "forbidden_changes": [
+      "rerunning or replacing formal output",
+      "changing symmetric Jacobi scaling",
+      "changing rank 64, leave-one-rig folds, tails, centering, normalization, or weighting",
+      "changing all-frame or late-frame p90/worst gates",
+      "changing controls or decision order",
+      "reading formal residual arrays before independent direct-SVD residuals are complete",
+      "adding any candidate, predictor, model, GPU run, or resource claim"
+    ]
+  },
+  "validity": {
+    "formal_tree_exact_inventory_match": true,
+    "formal_repository_exact_commit_and_clean": true,
+    "erratum_validator_repository_exact_commit_and_clean": true,
+    "independent_jacobi_positive_finite_and_permutation_invariant": true,
+    "absolute_floor_relative_maximum": 1e-10,
+    "formal_independent_inverse_relative_maximum": 1e-10,
+    "formal_independent_residual_absolute_maximum": 1e-9,
+    "formal_independent_summary_absolute_maximum": 1e-9,
+    "formal_tree_unchanged_after_validation": true,
+    "decision_exact_match": true
+  },
+  "decision_boundary": "A successful v239.2 run may only validate the existing pending v239 decision. Any remaining mismatch is INCONCLUSIVE and cannot authorize scientific retuning.",
+  "claims_fixed_false": {
+    "deployment_algorithm": false,
+    "observation_only_coefficients": false,
+    "learned_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

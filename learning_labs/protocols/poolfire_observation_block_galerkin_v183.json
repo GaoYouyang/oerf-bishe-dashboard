@@ -1,0 +1,177 @@
+{
+  "schema_version": "oerf-private-poolfire-observation-block-galerkin-v183.0",
+  "status_before_results": "FROZEN_BEFORE_OBSERVATION_BLOCK_GALERKIN_RESULTS_V183",
+  "frozen_at_utc": "2026-08-21T14:05:33Z",
+  "scientific_question": "Does the residual left by the failed v182 global Jacobi-PCGLS1 direction contain deployment-visible camera-by-detector-component heterogeneity that a single observable block Galerkin solve can use while preserving the frozen field, gradient, and observation gates?",
+  "role": "post-open deterministic mechanism diagnostic on exactly the same four already-open p22-s01 frames; it is neither a learned predictor nor fresh generalization",
+  "physical_distinction": "v183 does not add a second PCGLS iteration, tune v182 beta, or change its Jacobi diagonal. It decomposes the current centered observation residual into co-permuting physical camera-by-detector-component blocks, forms one Jacobi-preconditioned affine-coordinate direction per block, and solves one joint observable Galerkin problem over those block directions.",
+  "parent_evidence": {
+    "source_commit": "f6e54fbacd89520daeda377f997b0be4ddbd8efe",
+    "v182_protocol_sha256": "16f05cefa211164815dd74ce72e23a9330421b610ccf2a43646f8f10dc0a9a0c",
+    "v182_formal_report_sha256": "51813ed2e5297f6f65db2c3939500f18e9be445fc55439f64d3d5137bb475ced",
+    "v182_independent_validation_sha256": "63321f428f961f1af584e7a261b1a2c1e13e3ba72597f321138fe45669d6a20a",
+    "v182_decision_sha256": "c98ff6348cd55a668b93fab9d290886967d5ebec5818a68282b27d1024df49a8",
+    "v182_formal_status": "PASS_FORMAL_POOLFIRE_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_EXECUTION_V182",
+    "v182_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182",
+    "v182_scientific_decision": "FAIL_OBSERVATION_ADAPTIVE_JACOBI_PCGLS1_V182",
+    "v182_formal_payload_sha256": {
+      "candidate_fields.npy": "1c3739d7fd205baf9efcc7398e0f8da0f8af2588fa181356def71c69b3ad0cf1",
+      "metrics.npy": "2f0e35a9a7bf8cbc19961ddd676788fc5ff24f2a64ea667cedc9292717280829",
+      "betas.npy": "02b7f53046089851faa20071ec0d96aeb179ccd4b94e410cc7072c57e9438c44"
+    }
+  },
+  "data_isolation": {
+    "fit_source": "inherit the v178-v182 ten opened PoolFire fit trajectories, affine center and 1009-row basis, and geometry measurement cache without refitting or reselection",
+    "heldout_source": "exactly p=22kw_size=01 frame indices 0,25,75,100 already opened through v179-v182",
+    "heldout_complete_trajectory_isolation": true,
+    "heldout_truth_forbidden_from": [
+      "the affine center and basis",
+      "camera-component row groups",
+      "the Jacobi diagonal and every block direction",
+      "SVD rank, coefficients, candidate, fallback, stopping, and decision"
+    ],
+    "heldout_truth_allowed_only_for": [
+      "synthetic observation generation through the frozen forward operator",
+      "final field and gradient scoring after observation-only candidates are sealed"
+    ],
+    "validation_trajectories_forbidden": ["p=14kw_size=01"],
+    "test_trajectories_forbidden": ["p=22kw_size=05", "p=58kw_size=01"],
+    "trajectory_identity_feature": false,
+    "time_feature": false,
+    "power_or_size_feature": false,
+    "hyperparameter_search": false
+  },
+  "observation_block_primary": {
+    "name": "camera_component_jacobi_block_galerkin",
+    "centered_system": "M a approximately equals r_y, with M=A U^T and r_y=y-A mean_fit",
+    "row_partition": "one block for each active physical camera ID and detector component in {0,1}; within each camera the frozen forward emits the two detector components consecutively for every ray",
+    "canonical_group_order": "ascending physical camera ID, then detector component 0 then 1",
+    "group_count": {"v176_geometry_selected_five": 10, "all_nine": 18},
+    "group_adjoint": "g_b=M_b^T r_b for the rows in camera-component block b",
+    "geometry_preconditioned_direction": "z_b=D^(-1) g_b, with D=diag(M^T M) and floor forbidden because the independently validated parent diagonal is strictly positive",
+    "observable_direction": "q_b=M z_b",
+    "joint_problem": "minimize ||r_y-Q beta||_2 over all block coefficients, Q=[q_1,...,q_B]",
+    "coefficient_rule": "unique minimum-norm SVD solution using only singular values at least 1e-12 times the largest singular value",
+    "formal_svd_driver": "gesdd",
+    "independent_svd_driver": "gesvd",
+    "relative_singular_value_floor": 1e-12,
+    "cutoff_separation_rule": "if any singular-value ratio lies in [1e-13,1e-11], mark the complete run inconclusive rather than choosing a side of the floor",
+    "candidate_coordinate": "a=sum_b beta_b z_b",
+    "candidate_field": "x0=mean_fit+U^T a",
+    "regularization": "none",
+    "damping": "none",
+    "coefficient_constraints": "none",
+    "clipping": "none",
+    "fallback": "none",
+    "candidate_search": false,
+    "trainable_parameter_count": 0,
+    "camera_permutation_equivariant": true,
+    "variable_cardinality": [5, 9],
+    "deployment_inputs": [
+      "current observation",
+      "reported active-camera IDs and geometry",
+      "fit-only frozen affine center and basis",
+      "sealed geometry-Jacobi diagonal"
+    ]
+  },
+  "blocking_controls": {
+    "global_observation_adaptive_jacobi_pcgls1": "inherit the independently validated failed v182 global residual direction without recomputation or reselection",
+    "geometry_rank16_and_jacobi": "inherit the independently validated failed v181 controls",
+    "affine_coordinate_cgls1_and_fit_mean": "inherit the independently validated failed v181 controls",
+    "full_affine_pseudoinverse": "v179 remains the positive high-cost observable capacity reference, not a compact control"
+  },
+  "evaluation": {
+    "calibration_count": 13,
+    "frame_indices": [0, 25, 75, 100],
+    "time_labels": [0.0, 0.25, 0.75, 1.0],
+    "scored_cell_count_per_sensor_arm": 52,
+    "sensor_arms": ["v176_geometry_selected_five", "all_nine"],
+    "field_arms": ["camera_component_block_galerkin_k0", "camera_component_block_galerkin_k1"],
+    "primary": "unchanged physical CGLS K1 from the block-Galerkin warm field must pass both sensor arms",
+    "cheaper_control": "if block-Galerkin K0 also passes both sensor arms, it blocks any claim that the extra physical K1 is needed",
+    "physical_k1_rule": "one unmodified identity-preconditioned CGLS step from the supplied field using the exact current residual; denominator floor 1e-30",
+    "subset_rule": "reuse the immutable minimal_shared_gram_ridge five-camera subset frozen before p22 truth was opened in v176"
+  },
+  "frozen_operator": {
+    "field_grid_zyx": [32, 16, 16],
+    "target_grid_per_camera": 24,
+    "bounds_xyz": [[-20.0, 50.0], [-20.0, 50.0], [-35.0, 35.0]],
+    "forward": "the calibrated exact-adjoint straight-ray density-gradient proxy inherited from v176-v182",
+    "metrics": ["field_relative_l2", "gradient_relative_l2", "observation_relative_l2"]
+  },
+  "absolute_accuracy_gate": {
+    "strict_cell_safe_required_per_sensor": 52,
+    "strict_cell_safe_total_per_sensor": 52,
+    "whole_calibrations_safe_required_per_sensor": 13,
+    "whole_calibrations_safe_total_per_sensor": 13,
+    "all_four_frames_must_pass_per_sensor": true,
+    "field_relative_l2_p90_higher_max": 0.5,
+    "field_relative_l2_worst_max": 0.75,
+    "gradient_relative_l2_p90_higher_max": 0.75,
+    "gradient_relative_l2_worst_max": 1.0,
+    "observation_relative_l2_p90_higher_max": 0.2,
+    "observation_relative_l2_worst_max": 0.35
+  },
+  "exact_call_and_cache_ledger": {
+    "camera_component_block_galerkin_k0": {"forward": 1, "adjoint": 1},
+    "camera_component_block_galerkin_k1": {"forward": 3, "adjoint": 2},
+    "direct_k4_reference": {"forward": 4, "adjoint": 4},
+    "inherited_geometry_cache_forward_equivalents": 26260,
+    "new_geometry_setup_forward_equivalents": 0,
+    "block_algebra": "all block adjoints and projected directions are dense algebra on the same sealed M and D cache; no extra physical A/A^T is issued per block",
+    "truth_observation": "one excluded offline forward per sensor arm, calibration, and frame",
+    "candidate_scoring_forward_calls": "excluded offline scoring only",
+    "resource_claim": "none; the inherited 26260-forward-equivalent cache, dense 1009-coordinate block algebra, and post-open scoring preclude a deployment wall/RSS claim"
+  },
+  "required_validity_gates": [
+    "the v182 protocol, formal report, independent validation, decision, selected arrays, recursive parent closure, input trees, and source closure remain unchanged",
+    "formal block directions and coefficients use only the current centered observation, reported camera IDs, M, D, center, and affine basis",
+    "every expected camera-component group appears once and only once, with no empty or synthesized group",
+    "every q_b is finite and nonzero, every SVD is finite, and the fixed cutoff is separated by the preregistered decade buffer",
+    "the block-Galerkin K0 centered-observation residual is no larger than the v182 global-line K0 residual within 1e-10",
+    "the normal-equation stationarity ||Q^T(Q beta-r)||/(||Q||_2 ||r||_2) is at most 1e-10",
+    "the prediction API has no truth parameter and fixed-observation truth mutation leaves coefficients and candidates byte-identical",
+    "camera permutation only permutes block columns and changes the reconstructed coordinate and field by at most 1e-10",
+    "all exact-call, inherited-cache, block-algebra, and offline-scoring receipts equal the frozen ledger",
+    "formal and input trees remain unchanged",
+    "the independent second implementation passes every required comparison"
+  ],
+  "independent_recomputation": {
+    "required": true,
+    "must_not_import_formal_v183_runner_or_block_helper": true,
+    "must_independently_rebuild": [
+      "the ten fit trajectories, affine center and basis, thirteen calibrations, frozen five-camera selections, all-nine operators, M, D, and current centered observations",
+      "camera-component row groups from physical camera IDs and frozen component ordering",
+      "every g_b, z_b, q_b, gesvd minimum-norm coefficient, coordinate, K0 field, and observable residual",
+      "unchanged physical K1 replay, all 208 metric rows, call receipts, calibration and frame tails, inherited-control blocking, and decision"
+    ],
+    "formal_arrays_read_only_after_independent_candidates_are_complete": true,
+    "coefficient_absolute_tolerance": 1e-9,
+    "candidate_field_relative_tolerance": 1e-8,
+    "metric_absolute_tolerance": 1e-8,
+    "formal_and_input_trees_unchanged": true
+  },
+  "decision_order": [
+    "Any identity, isolation, parent, group-partition, operator, direction, SVD, cutoff-separation, stationarity, dominance, observation-only, mutation, permutation, K1, call-ledger, finite, seal, or independent-recomputation failure makes v183 inconclusive.",
+    "If block-Galerkin K1 fails both sensor arms, conclude FAIL_OBSERVATION_BLOCK_GALERKIN_V183 and close this camera-component block mechanism.",
+    "If K1 passes all-nine but fails the frozen five-camera arm, conclude FAIL_FIVE_CAMERA_OBSERVATION_BLOCK_GALERKIN_V183.",
+    "If K1 passes five-camera but fails all-nine, conclude FAIL_VARIABLE_CARDINALITY_OBSERVATION_BLOCK_GALERKIN_V183.",
+    "If K1 passes both sensor arms and K0 also passes both, conclude PASS_CHEAPER_OBSERVATION_BLOCK_GALERKIN_K0_V183 and prefer the cheaper deterministic control.",
+    "Only if K1 passes both sensor arms, K0 does not pass both, and all inherited cheaper controls remain failed may v183 conclude PASS_OBSERVATION_BLOCK_GALERKIN_K1_HEADROOM_V183.",
+    "No v183 outcome is a learned algorithm, external generalization result, deployable exact-call reduction result, wall/RSS result, curved-ray result, real BOST result, paper success, or algorithm breakthrough."
+  ],
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "untouched_test_evidence": false,
+    "neural_operator_advantage": false,
+    "deployable_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

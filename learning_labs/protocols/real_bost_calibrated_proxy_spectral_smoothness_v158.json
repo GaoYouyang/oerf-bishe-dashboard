@@ -1,0 +1,124 @@
+{
+  "schema_version": "oerf-private-real-bost-calibrated-proxy-spectral-smoothness-v158.0",
+  "status_before_results": "FROZEN_BEFORE_V158_SPECTRAL_SMOOTHNESS_RESULTS",
+  "scientific_question": "Can one fixed, observation-budgeted classical H1 Tikhonov rule make the five-, seven-, and nine-camera 24x24 calibrated proxy references simultaneously adequate without using field truth for regularization selection?",
+  "role": "post-open private controlled proxy development; not a learned method and not real experimental pairing",
+  "parent": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_PRIVATE_CALIBRATED_PROXY_DENSITY_V157",
+    "decision": "FAIL_REFERENCE_ADEQUACY_V157",
+    "frozen_control": "DCT1024-CGLS K16 at 24x24"
+  },
+  "inputs": {
+    "traced_model_count": 9,
+    "calibration_file_count": 13,
+    "model_calibration_pairing": "complete 9 x 13 cross-product; never infer a true match",
+    "diagnostic_time": 0.5,
+    "field_grid_xyz": [32, 16, 16],
+    "bounds_xyz": [[-20.0, 50.0], [-20.0, 50.0], [-35.0, 35.0]],
+    "field_preprocessing": "subtract global mean, then divide by global RMS",
+    "target_grid_per_camera": 24,
+    "camera_subsets": {
+      "5": [0, 2, 4, 6, 8],
+      "7": [0, 1, 2, 4, 5, 6, 8],
+      "9": [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    },
+    "operator_setup_count": 39,
+    "cell_count": 351
+  },
+  "representation": {
+    "transform": "orthonormal three-dimensional DCT-II coefficients with inverse DCT-III lift",
+    "coefficient_shape": [16, 8, 8],
+    "constant_mode": "remove coefficient (0,0,0) before solving",
+    "active_coefficient_count": 1023,
+    "penalty": "physical-axis Neumann H1 spectral eigenvalue, normalized to median one over active coefficients",
+    "penalty_floor": "none; removing the constant mode makes every registered penalty weight positive"
+  },
+  "regularization": {
+    "geometry_scale": "median generalized normal eigenvalue above max-eigenvalue times 1e-12",
+    "lambda_multipliers": [0.0, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0],
+    "primary_name": "DCT1024-H1-Tikhonov Budget0.18",
+    "selection": "choose the largest registered lambda multiplier whose exact reduced residual norm divided by observation norm is at most 0.18; if none is feasible choose multiplier 0.0",
+    "observation_budget": 0.18,
+    "tie_break": "largest lambda multiplier, then roster order",
+    "truth_forbidden_from": ["basis", "penalty", "geometry scale", "lambda roster", "selection", "fallback", "stopping"],
+    "truth_use": "post-hoc field and gradient scoring only"
+  },
+  "arms": {
+    "primary": "DCT1024-H1-Tikhonov Budget0.18",
+    "fixed_diagnostic_roster": "one row for every frozen lambda multiplier; never substitute one as the primary after results",
+    "parent_control": "DCT1024-CGLS K16"
+  },
+  "cost_accounting": {
+    "geometry_setup": "1023 exact nine-camera A-equivalent basis projections per calibration; camera subsets reuse sealed rows",
+    "geometry_setup_forward_equivalents": 13299,
+    "primary_online_after_geometry_cache": "one exact reduced A-transpose equivalent for B^T y and one exact reduced A equivalent for the selected projection",
+    "primary_online_forward_calls": 1,
+    "primary_online_adjoint_calls": 1,
+    "parent_control_forward_calls": 16,
+    "parent_control_adjoint_calls": 16,
+    "offline_truth_observation_calls": 351,
+    "resource_claim": "forbidden until a future fresh-process wall and whole-pipeline RSS gate"
+  },
+  "metrics": [
+    "zero-mean field relative L2",
+    "full finite-difference gradient relative L2",
+    "observation relative L2",
+    "selected lambda multiplier",
+    "H1 roughness",
+    "generalized eigensystem stationarity",
+    "actual and setup A/A-transpose-equivalent ledger",
+    "p50/p90-higher/worst by arm and camera count"
+  ],
+  "adequacy_gate": {
+    "all_camera_counts_must_pass": [5, 7, 9],
+    "field_relative_l2_p90_higher_max": 0.5,
+    "field_relative_l2_worst_max": 0.75,
+    "gradient_relative_l2_p90_higher_max": 0.75,
+    "gradient_relative_l2_worst_max": 1.0,
+    "observation_relative_l2_p90_higher_max": 0.2,
+    "observation_relative_l2_worst_max": 0.35,
+    "nine_camera_field_p90_relative_to_parent_max": 1.01,
+    "nine_camera_gradient_p90_relative_to_parent_max": 1.01
+  },
+  "validity_gates": {
+    "operator_setup_count": 39,
+    "cell_count": 351,
+    "arm_row_count": 4914,
+    "parent_control_metric_max_abs_difference": 0.00002,
+    "selected_quadratic_vs_direct_residual_max_abs_difference": 0.00000002,
+    "generalized_eigen_stationarity_relative_max": 0.000000005,
+    "all_penalty_weights_positive_and_median_one": true,
+    "all_metrics_finite": true,
+    "all_selected_multipliers_from_frozen_roster": true,
+    "call_ledgers_exact": true
+  },
+  "independent_recomputation": {
+    "formal_v158_import_allowed": false,
+    "camera_ray_construction": "direct from raw R,t with order-3 Gauss-Legendre quadrature",
+    "dct_basis": "standalone analytic orthonormal cosine products; do not call formal basis builder",
+    "reduced_operator": "standalone column-by-column exact forward actions; do not call formal sparse matrix product",
+    "solver": "standalone symmetric generalized eigensolve and standalone normal-equation CG control",
+    "per_cell_metric_max_abs_difference": 0.00003,
+    "summary_metric_max_abs_difference": 0.00003,
+    "selector": "exact row-wise multiplier equality",
+    "call_ledger": "exact equality",
+    "input_parent_and_formal_tree": "unchanged before and after validation"
+  },
+  "decision_order": [
+    "Any input, operator, basis, penalty, stationarity, parent-control, residual, accounting, or independent-recomputation failure makes v158 inconclusive.",
+    "Only the preregistered Budget0.18 primary determines the scientific pass; fixed-lambda rows are diagnostics and cannot replace it after results.",
+    "The primary passes only if five, seven, and nine cameras all satisfy every frozen field, gradient, and observation gate and the nine-camera field and gradient p90 values do not worsen by more than one percent relative to the v157 parent control.",
+    "A valid primary failure closes this private variable-cardinality warm-predictor route pending richer three-dimensional fields or paired experimental two-dimensional measurements; no larger model or GPU rescue is allowed.",
+    "A valid primary pass only authorizes a separately frozen minimal shared-parameter CPU predictor; it is not itself learned, a resource result, external generalization, or real BOST."
+  ],
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "predictor_training_authorized_before_independent_pass": false
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "schema_version": "oerf-private-blastnet-case19-observation-graph-traversal-v252.0",
+  "status_before_results": "FROZEN_BEFORE_ANY_V252_CANDIDATE_FIELD_RESIDUAL_METRIC_OR_DECISION",
+  "frozen_at_utc": "2026-08-26T00:00:00Z",
+  "role": "Post-open falsifiable mechanism diagnostic on already opened BLASTNet Case 19. It asks whether an observation-only offline traversal removes the fixed frame-zero cold-start defect while retaining the unchanged FIFO16 and geometry-Jacobi PCGLS K14 solver.",
+  "scientific_question": "Can a camera-permutation-invariant cosine-medoid and deterministic Prim traversal of the complete deployment-visible observation sequence produce an absolute-safe and K16-matched 33-frame warm reconstruction at fewer logical exact calls, and does it beat an equal-cost observation-blind midpoint traversal plus the sealed chronological parent?",
+  "evidence_boundary": {
+    "case19_already_opened": true,
+    "result_blind_external_or_prospective_claimed": false,
+    "offline_complete_sequence_required": true,
+    "causal_online_method": false,
+    "learned_model": false,
+    "truth_used_for_traversal_anchor_order_solver_or_cache": false,
+    "truth_read_only_after_prediction_barrier": true,
+    "wall_or_rss_result": false,
+    "external_generalization": false,
+    "real_bost": false
+  },
+  "scope": {
+    "rig_count": 13,
+    "frame_count": 33,
+    "cell_count": 429,
+    "camera_count": 9,
+    "field_shape_zyx": [32, 16, 16],
+    "observation_size": 4608,
+    "cache_rank": 16,
+    "anchor_depth": 16,
+    "warm_depth": 14
+  },
+  "sealed_v244_2_parent": {
+    "required_decision": "INCONCLUSIVE_INVALID_CASE19_CANONICAL_CAMERA_ACTUAL_K14_EXTERNAL_V244_2",
+    "primary_arm_index": 0,
+    "reference_k16_arm_index": 5,
+    "files": {
+      "formal_observations": {"relative": "formal/observations.npy", "bytes": 15814784, "sha256": "636904774711a746ffb0b073a0f7100d3598929f2119c2122637ad175de6e444"},
+      "formal_metrics": {"relative": "formal/metrics.npy", "bytes": 82496, "sha256": "4dc90257d9d580d920a86cff16b22c2cf45b0e21671e8247c22e4156b2616d94"},
+      "formal_calls": {"relative": "formal/logical_exact_calls.npy", "bytes": 10424, "sha256": "1f85208acaa474112fd986eebf7b660d203eeb84aafa7b3af4389c30d5bc4a17"},
+      "formal_report": {"relative": "formal/formal_report.json", "bytes": 90003, "sha256": "ba1110d4102fbab2dda2e4e746067e77b8a64f4249a19eeb1a2e60d9af22789a"},
+      "formal_ready": {"relative": "formal/READY.json", "bytes": 1802, "sha256": "20eb80100b5cc4badfa7d55b2ec0ae95a142105fb6930e9a2c108c5b7038d143"},
+      "independent_observations": {"relative": "validation/independent_observations.npy", "bytes": 15814784, "sha256": "2ca83a59a1f774efc8909941baf0a7640a725cbd68bd71b98450e8152cc013e4"},
+      "independent_metrics": {"relative": "validation/independent_metrics.npy", "bytes": 82496, "sha256": "f15eafcf6ad063d9504a384c3fa1502eb8d0a4a54eb79da77c4bb04e8af63229"},
+      "independent_calls": {"relative": "validation/independent_logical_exact_calls.npy", "bytes": 10424, "sha256": "1f85208acaa474112fd986eebf7b660d203eeb84aafa7b3af4389c30d5bc4a17"},
+      "independent_validation": {"relative": "validation/independent_validation.json", "bytes": 76998, "sha256": "66d5eb39878d807faaeeb7ca0dd596b33962d94880386494391f488e296b0a69"},
+      "scientific_decision": {"relative": "validation/SCIENTIFIC_DECISION.json", "bytes": 435, "sha256": "82f38b65f28a93694fc338b18705483ab125df08917fe8e4adf3af047ea162f5"},
+      "validated_ready": {"relative": "validation/VALIDATED_READY.json", "bytes": 1669, "sha256": "ce5d2fec1981ebe539db7fc73fed9875aae3d6002d15791802318db80fcd6695"}
+    }
+  },
+  "unique_primary": {
+    "name": "canonical_camera_cosine_medoid_prim_fifo16_geometry_jacobi_pcgls_k14",
+    "distance": "For each frame divide the canonical 4608-vector by its positive L2 norm; d(i,j)=max(0,1-zi dot zj), symmetrized by arithmetic mean with zero diagonal.",
+    "anchor": "Smallest frame index attaining the minimum row sum of d.",
+    "traversal": "Deterministic Prim growth. At every step choose the lexicographically smallest tuple (distance,parent_frame,child_frame) among visited-to-unvisited edges.",
+    "solver": "Run zero-start geometry-Jacobi PCGLS K16 at the anchor. In traversal order, use the unchanged pre-update FIFO16 observation projection as initializer, run unchanged geometry-Jacobi PCGLS K14, update FIFO16 with only that run's first paired direction, and restore outputs to original frame indices.",
+    "camera_permutation": "Canonical camera IDs and blocks precede distance computation; one shared labeled-camera block permutation must leave distances, anchor, traversal, fields, residuals, calls and decisions unchanged.",
+    "no_truth_time_rig_or_failure_label_in_selection": true
+  },
+  "controls": {
+    "equal_cost_midpoint": {
+      "name": "fixed_midpoint_radial_fifo16_geometry_jacobi_pcgls_k14",
+      "anchor": 16,
+      "order": "16,15,17,14,18,...,0,32",
+      "observation_blind": true,
+      "solver_cache_and_calls_identical_to_primary": true
+    },
+    "sealed_chronological_parent": {
+      "name": "canonical_camera_dynamic_preupdate_fifo16_actual_geometry_jacobi_pcgls_k14",
+      "source": "independently sealed v244.2 formal and independent metric arrays",
+      "same_sequence_calls_A_At": [496, 464]
+    },
+    "sealed_reference": {
+      "name": "canonical_camera_zero_geometry_jacobi_pcgls_k16",
+      "source": "independently sealed v244.2 formal and independent metric arrays",
+      "sequence_calls_A_At": [528, 528],
+      "known_parent_absolute_complete_rigs": 9,
+      "reference_inadequacy_must_remain_fail_closed": true
+    }
+  },
+  "accuracy_contract": {
+    "metric_order": ["field_relative_l2", "gradient_relative_l2", "interior_gradient_relative_l2", "observation_relative_l2"],
+    "strict_cell_limits": [0.5, 0.75, 0.75, 0.2],
+    "complete_rig_p90_higher_limits": [0.5, 0.75, 0.75, 0.2],
+    "complete_rig_worst_limits": [0.75, 1.0, 1.0, 0.35],
+    "quantile": 0.9,
+    "quantile_method": "higher",
+    "matched_per_cell_maximum": 1.05,
+    "matched_complete_rig_p90_higher_maximum": 1.02,
+    "matched_complete_rig_worst_maximum": 1.05
+  },
+  "cost_contract": {
+    "each_new_arm_sequence_calls_A_At_per_rig": [496, 464],
+    "reference_sequence_calls_A_At_per_rig": [528, 528],
+    "nominal_total_exact_call_reduction_fraction": 0.09090909090909091,
+    "distance_graph_exact_calls_A_At": [0, 0],
+    "geometry_setup_and_offline_replay_excluded_and_separately_reported": true,
+    "effective_reduction_requires_absolute_and_matched_accuracy_plus_adequate_reference": true
+  },
+  "prediction_barrier": {
+    "inputs_before_barrier": "Only sealed v244 observation arrays, reported virtual geometry and solver constants.",
+    "sealed_before_truth": ["fields", "residuals", "logical calls", "orders", "parents", "edge distances", "cache audits"],
+    "truth_or_parent_metrics_forbidden_before_barrier": true
+  },
+  "independent_method": {
+    "traversal": "Scalar row normalization, pair loops, row-sum medoid and explicit lexicographic Prim search; do not import the formal v252 traversal module.",
+    "solver": "Use the independently implemented PCGLS and FIFO cache lineage from the v244 independent validator; do not import the formal v252 runner.",
+    "formal_independent_limits": {
+      "field_relative_maximum": 2e-8,
+      "residual_relative_maximum": 2e-7,
+      "metric_absolute_maximum": 2e-8,
+      "summary_absolute_maximum": 1e-9,
+      "edge_distance_absolute_maximum": 2e-14
+    },
+    "tolerance_basis": "Frozen before v252 results from the already sealed v244 two-implementation numeric envelope; it does not alter any accuracy or matched gate."
+  },
+  "decision_order": [
+    "Any protocol, parent, observation, geometry, traversal, prediction-barrier, operator, cache, call, replay, permutation, truth-separation, numeric or independent-recomputation failure gives INCONCLUSIVE_INVALID_CASE19_OBSERVATION_GRAPH_TRAVERSAL_V252.",
+    "If the primary fails any robust absolute or K16-matched cell or complete-rig gate, conclude FAIL_CASE19_OBSERVATION_GRAPH_TRAVERSAL_MATCHED_ACCURACY_V252 and close this traversal.",
+    "If the primary passes but the equal-cost midpoint or sealed chronological control also passes the same robust gates, conclude POST_OPEN_BATCH_ORDER_HEADROOM_BUT_OBSERVATION_GRAPH_ADVANTAGE_NOT_ISOLATED_V252.",
+    "If the primary passes and both controls fail but the K16 reference remains absolutely inadequate, conclude POST_OPEN_OBSERVATION_GRAPH_WARM_HEADROOM_REFERENCE_INADEQUATE_V252. This may guide a future adequate-reference design but cannot establish effective call reduction.",
+    "Only if the primary passes, controls fail, the K16 reference is adequate and independent recomputation passes may conclude PASS_CASE19_OBSERVATION_GRAPH_TRAVERSAL_HEADROOM_V252. Because Case19 is opened, even this would remain development mechanism evidence pending a new unopened condition."
+  ],
+  "failure_action": "Close cosine-medoid Prim traversal without changing distance, normalization, anchor, graph algorithm, cache rank, solver depth, control order or thresholds. Do not add learned ordering, beam search, future Case13/18 rescue, CNN/FNO/UNO/DeepONet or GPU rental.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

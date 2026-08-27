@@ -1,0 +1,50 @@
+{
+  "schema_version": "oerf-private-blastnet-case5-potential-normal-pcgls-warm-validation-erratum-v218.1.1",
+  "status": "FROZEN_POSTRESULT_VALIDATOR_CORRECTION_BEFORE_ANY_CORRECTED_RERUN_V218_1_1",
+  "scope": "Validation-only correction. The v218.1 candidate, prediction barrier, formal arrays, scientific gates, tolerances, controls, costs, and decision order remain unchanged.",
+  "observed_validator_defects": [
+    "The first validator used independently recomputed K16 metrics as the matched-accuracy denominator even though the v218.1 contract defines the independently sealed v217.1 K16 metrics as the reference input.",
+    "The first validator hard-coded 1e-12 parent-reference metric and field gates instead of consuming the frozen 1e-8 parent-reference metric tolerance; the v218.1 protocol defines no additional parent-reference field tolerance."
+  ],
+  "correction_rules": {
+    "independent_replay": "Rebuild all 546 cells, all three warm families, and K16 with the independent eigensolve/manual-PCGLS implementation exactly as before.",
+    "reference_binding": "Require the independently recomputed K16 metrics to match the sealed v217.1 K16 metrics within the unchanged 1e-8 parent-reference metric tolerance and require independently recomputed K16 absolute adequacy.",
+    "matched_adjudication": "After that independent binding passes, use the sealed v217.1 K16 metrics as the denominator for all matched-accuracy summaries, exactly matching the v218.1 scientific contract and formal adjudication input.",
+    "field_audit": "Retain the independently recomputed K16 field difference as a diagnostic only; do not create an unregistered field gate.",
+    "tolerances": "Read every tolerance from the unchanged v218.1 protocol. No threshold may be added, removed, loosened, or selected from the observed scientific values.",
+    "decision": "The corrected validator must independently reproduce the formal discrete decision exactly or remain inconclusive.",
+    "prior_failure": "Bind and preserve the first inconclusive validation tree; never overwrite or reinterpret it as a scientific result."
+  },
+  "sealed_formal": {
+    "formal_report_sha256": "7f819389edb10db504bf36cb630b03deeec5936c4f260549c571d207e405d2a6",
+    "ready_sha256": "b1d08b32b574248947e6c91b811bac31f405665cbe3608125a6138b7a34f2fb9",
+    "primary_fields_sha256": "78366a4f81640afd6ad4c4f5ca20f3eec9d71328e4f97fb5a2423a5228826016",
+    "metrics_sha256": "2a7f584d12fba81c66f1571f7edc4c6b52af9abb6b88a532c736315201e3cad9",
+    "logical_exact_calls_sha256": "336fdca125d78e776ea969de7d594e8fa9d70cde4c3603f265e97e4fbf03b9d1"
+  },
+  "sealed_first_validation": {
+    "independent_validation_sha256": "7bfce86ec910abdf3092272df218658d2d5fbc52ba9f69d114a12fbc15572fe8",
+    "validated_ready_sha256": "e094f23dc15e7d5e1344297dd8d482968efa049396353ec1698003a2a6557669",
+    "scientific_decision_sha256": "09585b7d4924e690fbe1fdcc8c676299c4b1585d00f96d2bbff4c3dcd1588dd6",
+    "independent_metrics_sha256": "970552c5bf67e37cfb3b524a99f5134c5b32436ae18304de4578ae8bdf38f2db",
+    "independent_logical_exact_calls_sha256": "336fdca125d78e776ea969de7d594e8fa9d70cde4c3603f265e97e4fbf03b9d1",
+    "required_status": "INCONCLUSIVE_INDEPENDENT_POTENTIAL_NORMAL_PCGLS_WARM_V218_1",
+    "required_failed_checks": [
+      "all_arm_summaries_match",
+      "reference_fields_bound",
+      "reference_metrics_bound"
+    ]
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "resource_speedup": false,
+    "fresh_external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "learned_algorithm": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false,
+    "wall_rss_measurement_authorized": false
+  }
+}

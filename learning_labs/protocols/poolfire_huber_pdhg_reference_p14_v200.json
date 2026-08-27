@@ -1,0 +1,117 @@
+{
+  "schema_version": "oerf-private-poolfire-huber-pdhg-reference-p14-protocol-v200.0.0",
+  "status_before_results": "FROZEN_BEFORE_HUBER_PDHG_REFERENCE_P14_RESULTS_V200",
+  "frozen_at_utc": "2026-08-23T06:20:00Z",
+  "role": "A one-shot post-v199 classical-reference adequacy audit on the historically exposed p=14kw_size=01 development trajectory. It does not propose a deployable warm initializer and is not fresh validation, external generalization, test evidence, a resource result, or real BOST.",
+  "scientific_question": "Can one fixed, scale-equivariant edge-preserving Huber-PDHG refinement make the five-camera classical reference adequate on every p14 frame and calibration, so that the already-sealed v199 fixed-identity K1 result can be adjudicated against a valid reference?",
+  "physical_distinction": "v200 does not tune the v199 identity ridge, affine coordinates, or CGLS depth. It applies a nonlinear local Huber gradient prior through a primal-dual solver, preserving flame-front edges rather than changing a global quadratic spectral filter.",
+  "parent_evidence": {
+    "v199_protocol_sha256": "766687149ef95dd1e16c060222645f148cd42d99422ded59e5b8c896b50664cd",
+    "v199_formal_status": "PASS_FORMAL_POOLFIRE_FIXED_IDENTITY_PRIOR_P14_EXECUTION_V199",
+    "v199_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_FIXED_IDENTITY_PRIOR_P14_V199",
+    "v199_scientific_decision": "INCONCLUSIVE_P14_REFERENCE_INADEQUATE_V199",
+    "v199_primary_five_camera_strict_safe": 1268,
+    "v199_primary_five_camera_strict_total": 1313,
+    "v199_primary_five_camera_complete_groups_passed": 3,
+    "v199_primary_five_camera_complete_groups_total": 13,
+    "v199_k2_reference_five_camera_strict_safe": 1213,
+    "v199_k2_reference_five_camera_complete_groups_passed": 0
+  },
+  "data_isolation": {
+    "development_trajectory": "p=14kw_size=01",
+    "trajectory_role": "historically exposed development only; never fresh, blind, confirmatory, external, or test evidence",
+    "sensor_arm": "v176_geometry_selected_five",
+    "frame_indices": "all integers 0 through 100 in immutable order",
+    "frame_count": 101,
+    "calibration_indices": "all integers 0 through 12 in immutable order",
+    "calibration_count": 13,
+    "observation_source": "the immutable v199 five-camera observation arrays",
+    "starting_field_source": "the immutable v199 unregularized full-DCT coordinate followed by exactly two unchanged physical CGLS iterations",
+    "truth_access": "truth remains closed until all v200 reference fields, solver diagnostics, hashes, and the prediction barrier are sealed",
+    "untouched_tests_still_sealed": [
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ]
+  },
+  "primary": {
+    "name": "scale_equivariant_huber_pdhg_reference_from_full_dct_k2",
+    "starting_point": "v199 full-DCT K2 reference field reconstructed without truth",
+    "field_scale": "max(RMS of the K2 field, 1e-12)",
+    "observation_scale": "max(RMS of the current observation, 1e-12)",
+    "normalized_operator": "B=(field_scale/observation_scale) A",
+    "normalized_objective": "0.5*||B u-b||_2^2 + 0.001*sum Huber_0.08(|D u|_2), with x=field_scale*u and b=observation/observation_scale",
+    "gradient": "forward-Neumann differences on the physical field axes; spacings are divided by their geometric mean before use",
+    "iterations": 128,
+    "regularization_weight": 0.001,
+    "huber_delta": 0.08,
+    "step_safety": 0.99,
+    "extrapolation": 1.0,
+    "data_norm_squared_upper_bound": "||B||_1*||B||_infinity from the exact sparse physical operator",
+    "gradient_norm_squared_upper_bound": "4*sum_j spacing_j^-2",
+    "initial_duals": "zero data dual and zero edge dual",
+    "fallback": "none",
+    "clipping": "none",
+    "early_stopping": "none",
+    "hyperparameter_search_count": 0,
+    "truth_used_for_prediction": false,
+    "neural_trainable_parameter_count": 0
+  },
+  "controls": {
+    "full_dct_k2_reference": "the byte-bound v199 five-camera reference",
+    "fixed_identity_tau2m8_full_dct_k1": "the byte-bound v199 five-camera primary",
+    "all_nine_reference": "the already-passing v199 all-nine full-DCT K2 arm, inherited without rerun"
+  },
+  "absolute_accuracy_gate": {
+    "metric_order": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "observation_relative_l2"
+    ],
+    "strict_cell_limits": [0.5, 0.75, 0.2],
+    "complete_group_p90_higher_limits": [0.5, 0.75, 0.2],
+    "complete_group_worst_limits": [0.75, 1.0, 0.35],
+    "required_strict_cells": 1313,
+    "required_complete_groups": 13,
+    "quantile_method": "NumPy 0.9 quantile with method=higher",
+    "threshold_search": "none"
+  },
+  "exact_call_and_cache_ledger": {
+    "full_dct_k2_start": [3, 2],
+    "huber_pdhg_iterations": [128, 128],
+    "huber_pdhg_reference_total": [131, 130],
+    "fixed_identity_k1_candidate": [2, 1],
+    "order": "[exact vector forward, exact vector adjoint]",
+    "geometry_cache": "operator assembly and the inherited affine/full-DCT factors are offline setup costs and must remain separate from logical online calls",
+    "resource_claim": "none"
+  },
+  "required_validity_gates": [
+    "all v199 arrays, p14 inputs, calibrations, five-camera selections, affine arrays, frame order, and observations remain unchanged",
+    "the prediction phase has no truth, metric, pass-mask, frame-time, trajectory-label, validation, or test input",
+    "formal and independent implementations separately rebuild sparse physical operators, K2 starts, normalized Huber-PDHG states, fields, observations, metrics, tails, and call ledgers",
+    "the formal K2 start reproduces every v199 five-camera K2 metric within 1e-8 absolute error",
+    "all fields, duals, steps, objectives, metrics, and summaries are finite and every PDHG step contract is strictly below one",
+    "camera and ray permutation preserve the Huber reference within 1e-9 relative error on the frozen sentinel",
+    "formal-independent fields and metrics agree within 1e-8 and discrete gates agree exactly",
+    "the formal tree and all parent/input trees remain unchanged before and after independent validation"
+  ],
+  "fixed_decision_order": [
+    "Any binding, isolation, K2 reproduction, finite, step-contract, permutation, physical-replay, call-ledger, seal, or independent-comparison failure makes v200 inconclusive.",
+    "If the Huber-PDHG reference fails any strict cell or complete calibration group, conclude FAIL_HUBER_PDHG_REFERENCE_ADEQUACY_V200 and close this exact normalized Huber objective and 128-step solver without tuning.",
+    "If the Huber-PDHG reference passes all 1313 cells and 13 groups, conclude PASS_HUBER_PDHG_REFERENCE_ADEQUACY_V200. Because the immutable v199 fixed-identity K1 arm passed only 1268 cells and 3 groups, also record that the fixed-identity tau=2^-8 K1 candidate is closed under an adequate reference.",
+    "No v200 outcome authorizes exact-call reduction, wall/RSS, fresh validation, external generalization, curved-ray validity, real BOST, neural training, GPU rental, paper success, first/SOTA/global uniqueness, or algorithm breakthrough claims."
+  ],
+  "failure_action": "Do not tune Huber weight, delta, iteration count, normalization, boundary rule, or starting CGLS depth after results. A valid failure closes this reference mechanism; a pass closes the v199 fixed-identity K1 candidate and only authorizes a separately preregistered, physically different cheap candidate against the now-qualified reference.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_validation": false,
+    "external_generalization": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

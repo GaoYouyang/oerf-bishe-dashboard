@@ -1,0 +1,120 @@
+{
+  "schema_version": "oerf-poolfire-k1-dual-local-span-collision-v147.0",
+  "status": "FROZEN_AFTER_V146_NEGATIVE_BEFORE_LOCAL_SPAN_OR_COLLISION_RESULT",
+  "frozen_at_utc": "2026-08-14T18:08:00Z",
+  "scientific_question": "Does the deployment-visible direction-local neighborhood already contain a target-compatible action subspace, so that v146 failed because inverse-distance weighting was too rigid, or do locally similar observations remain target-incompatible even under a truth-aware linear-span upper bound?",
+  "scope": "Post-open CPU-only mechanism diagnostic on the same 20 frozen PoolFire sentinels. It is not a deployable predictor, reconstruction result, resource result, external test, curved-ray result, or real BOST result.",
+  "parent_evidence": {
+    "required_v146_formal_status": "PASS_FORMAL_DIRECTION_CONDITIONED_SENTINEL_EXECUTION_V146",
+    "required_v146_scientific_decision": "FAIL_DIRECTION_CONDITIONED_IDENTIFIABILITY_V146",
+    "required_v146_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_DIRECTION_CONDITIONED_V146",
+    "v146_formal_manifest_sha256": "808978184fb492e5ca99f2027926e6ea80506bede6cea5ff4f0d0f89615bab52",
+    "v146_independent_validation_sha256": "88738f43c8a2410fc090e3c52710107ddab25a3c196c05a2752cc9c0eb6fe401",
+    "deployment_feature_manifest_sha256": "0acc8e269f9584a4da5351f3ec1f99135300858cd70c9f0036173abb69bc84f2",
+    "v143_teacher_manifest_sha256": "b8aed2e1012a6a92b86ae08ae5489f937bc429b8e71d4f6cd433fc39d41c14af",
+    "sample_roster_sha256": "c8d2bbb2a0ebcfc4790c8e38383f685e5d4c5fa40306ac3fab53ea3acc7481cb",
+    "v146_protocol_sha256": "5c7c6b707b6b6359524e9f37194076f9b83e116ef77eefe65c4f5a0ff7da0381",
+    "new_sample_neighbors_read": false,
+    "new_oracle_predictions_read": false,
+    "new_collision_statistics_read": false
+  },
+  "immutable_roster": {
+    "sample_count": 3700,
+    "trajectories": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "camera_counts": [5, 7, 9, 12],
+    "outer_split": "complete-trajectory leave-one-trajectory-out",
+    "sentinel_source": "exact frozen v143 one-per-trajectory-by-camera-count roster",
+    "sentinel_count": 20,
+    "structural_key_count": 96,
+    "cross_candidates_per_query": 740,
+    "within_candidates_per_query": 184,
+    "validation_or_test_truth_allowed": false,
+    "stage_b_full_trajectory_allowed": false
+  },
+  "label_free_sample_metric": {
+    "camera_count_match": "exact before distance evaluation",
+    "per_key_design": "reuse the frozen v146 155-dimensional direction-local deployment-visible design and its fold-fit-only whitening",
+    "sample_distance": "square root of the arithmetic mean of the 96 per-key standardized squared RMS distances",
+    "candidate_tie_break": "sample distance then sample index",
+    "neighbor_counts": [8, 32],
+    "labels_read_before_all_neighbor_tables_are_sealed": false,
+    "teacher_or_truth_used_in_distance_or_neighbor_selection": false,
+    "camera_permutation_invariant": true,
+    "variable_cardinality_supported": [5, 7, 9, 12]
+  },
+  "post_open_diagnostics": {
+    "action_vector": "the 96 v143 Riesz-action labels selected by the frozen target-blind direction table for one sample",
+    "action_normalization": "divide each action vector by its positive Euclidean norm; no sign flip",
+    "controls": [
+      "nearest_neighbor",
+      "common_sample_inverse_distance"
+    ],
+    "oracle_methods": [
+      "cross_span8",
+      "cross_span32",
+      "within_span8",
+      "within_span32"
+    ],
+    "oracle_definition": "orthogonally project the normalized query action vector onto the column span of the normalized action vectors from the sealed label-free sample neighbors",
+    "svd_relative_cutoff": 1e-10,
+    "svd_rank_minimum": 1,
+    "oracle_coefficients_are_truth_aware": true,
+    "oracle_is_deployable": false,
+    "relative_neighborhood_fraction": 0.05,
+    "cross_relative_neighborhood_size": 37,
+    "within_relative_neighborhood_size": 10,
+    "relative_neighbor_conflict": "a candidate in the nearest five percent whose normalized target has scale-invariant relative L2 above 0.45 or cosine below 0.9 against the query target",
+    "exact_feature_collision_proven": false
+  },
+  "target_space_gate": {
+    "scale_invariant_relative_l2_maximum_each_frozen_sentinel": 0.45,
+    "cosine_minimum_each_frozen_sentinel": 0.9,
+    "scale_invariant_relative_l2_p90_higher_maximum_each_four_sentinel_trajectory": 0.35,
+    "all_20_frozen_sentinels_required": true,
+    "all_5_trajectory_tails_required": true
+  },
+  "decision_rule": {
+    "cross_span8_passes": "HEADROOM_LOCAL_SPAN8_REWEIGHTING_V147; v146 inverse-distance weighting is too restrictive, but a deployable coefficient rule remains unproven.",
+    "cross_span8_fails_cross_span32_passes": "HEADROOM_WIDER_LOCAL_SPAN32_V147; eight-neighbor rank is insufficient, but the wider local action span has an oracle upper bound.",
+    "cross_span32_fails_within_span32_passes": "FAIL_CROSS_TRAJECTORY_LOCAL_STATE_ALIGNMENT_V147; current deployment-visible state does not align the action subspace across trajectories.",
+    "cross_span32_and_within_span32_fail": "FAIL_LOCAL_SPAN_CAPACITY_V147; even the generous same-trajectory local action-span upper bound misses the frozen gate, so do not enlarge the predictor.",
+    "execution_rank_or_independent_recomputation_failure": "INCONCLUSIVE_LOCAL_SPAN_COLLISION_V147"
+  },
+  "authorization_after_decision": {
+    "headroom_decision": "freeze one minimal observation-only coefficient sentinel on CPU before any neural model or GPU request",
+    "cross_alignment_failure": "change or add a physically measurable deployment-visible condition state; do not increase model size",
+    "local_span_failure": "close the current sample-level direction-local representation and redesign the physical state or target",
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  },
+  "independent_validation": {
+    "separate_implementation_rebuilds_all_20_label_free_sample_distances": true,
+    "separate_implementation_reselects_k8_and_k32_neighbors": true,
+    "separate_implementation_uses_symmetric_gram_eigendecomposition_for_span_projection": true,
+    "formal_arrays_read_only_after_independent_outputs_are_sealed": true,
+    "neighbor_indices_exact": true,
+    "maximum_distance_absolute_difference": 1e-9,
+    "maximum_projection_absolute_difference": 1e-8,
+    "maximum_metric_absolute_difference": 1e-10,
+    "scientific_decision_exact": true
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "physical_replay": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "global_unidentifiability_proven": false,
+    "exact_feature_collision_proven": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

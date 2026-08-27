@@ -1,0 +1,263 @@
+{
+  "schema_version": "oerf-poolfire-pair-resolved-depth-cost-stage-b-protocol-v140.4",
+  "status": "FROZEN_AFTER_V140_4_SENTINEL_BEFORE_FULL_RESULTS",
+  "frozen_at_utc": "2026-08-11T18:18:11Z",
+  "scientific_question": "After the v140.2 full run became inconclusive from an ill-conditioned 1e-10 solve, does the fixed 1e-6 stable solve preserve complete 3700-cell, five-trajectory truth-aware capacity while independently reproducing the new pair-depth block and complete physical candidates?",
+  "data_contract": {
+    "role": "post-open fit-only Stage-B representation-capacity evaluation",
+    "trajectory_order": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "frame_indices": [0, 25, 50, 75, 100],
+    "camera_counts": [5, 7, 9, 12],
+    "factorized_condition_count": 37,
+    "sample_count": 3700,
+    "samples_per_trajectory": 740,
+    "validation_and_test_truth_must_remain_unread": true
+  },
+  "stage_a": {
+    "status": "PASS_V140_STAGE_A_HARD_FAILURE_CAPACITY",
+    "hard_ratio_threshold": 1.05,
+    "hard_failure_count": 151,
+    "pass_count": 151,
+    "cheap_control_pass_count": 0,
+    "meaning": "Stage A authorizes only this frozen Stage B. It is not full capacity or a deployable predictor."
+  },
+  "stage_b": {
+    "active_tail_ratio_threshold": 1.02,
+    "active_tail_count": 2199,
+    "inactive_parent_count": 1501,
+    "roster_definition": "Every sample for which any independently validated v139 selected metric divided by its zero-start CGLS K4 reference exceeds 1.02.",
+    "inactive_parent_retention": "Every sample outside the active tail retains its independently validated v139 candidate without recomputation or reselection.",
+    "candidate_roster": "v139 parent, all six finite projection weights, projection-only endpoint, and the deployment-visible pair-depth joint-LS control.",
+    "per_cell_selection": "Use the unchanged v140 selector and 1.05 per-cell four-metric limit.",
+    "pass_rule": "After replacing exactly the 2199 active-tail rows and retaining exactly the 1501 inactive v139 rows, all 3700 cells must pass the 1.05 four-metric gate and each complete trajectory must pass every p90-higher<=1.02 and worst<=1.05 gate.",
+    "failure_action": "Record the exact failing cells and tails, close this representation, and do not rescue it with a larger predictor or neural model.",
+    "success_action": "Authorize only a separately frozen minimal permutation-equivariant observation/geometry-only predictor under complete-trajectory LOTO."
+  },
+  "stage_b_roster": {
+    "canonical_encoding": "Strictly increasing global sample indices encoded as little-endian signed int32 C-order bytes.",
+    "canonical_int32_sha256": "4e00eeb33744b7cfb333328c9a1941afb514c84c9449c8a0663c6cdfb5227982",
+    "inactive_canonical_int32_sha256": "af8d834623d24265d9cb73da7707e124e152fe5c21a443aec36bbc6fa5bed48b",
+    "camera_count_counts": {
+      "5": 878,
+      "7": 592,
+      "9": 423,
+      "12": 306
+    },
+    "trajectory_counts": {
+      "p=14kw_size=05": 228,
+      "p=22kw_size=03": 513,
+      "p=33kw_size=01": 279,
+      "p=45kw_size=05": 628,
+      "p=58kw_size=03": 551
+    },
+    "factor_counts": {
+      "clean": 58,
+      "combined": 361,
+      "intrinsics_only": 349,
+      "noise_only": 367,
+      "pose_all": 357,
+      "rotation_only": 361,
+      "translation_only": 346
+    },
+    "severity_counts": {
+      "clean": 58,
+      "medium": 1045,
+      "stress": 1096
+    }
+  },
+  "representation_contract": {
+    "parent_basis": "Exactly the complete v139 72C direction prefix.",
+    "pair_basis": "Exactly 24C(C-1) ordered target-peer directions from 12 target-ray samples, six fixed two-sample depth bins, two signed angle branches and the frozen low-low target carrier.",
+    "total_direction_formula": "72C + 24C(C-1)",
+    "nested_basis_counts": {
+      "5": 840,
+      "7": 1512,
+      "9": 2376,
+      "12": 4032
+    },
+    "visible_inputs": "Active-camera zero-start CGLS K1 residual, predicted correction dual and all reported 18-value camera tokens.",
+    "truth_used_for_representation": false,
+    "truth_used_for_coefficients": true,
+    "camera_permutation_equivariant": true,
+    "variable_cardinality": true,
+    "no_representation_change_after_stage_a": true
+  },
+  "objective_roster": {
+    "projection_weights": [1, 4, 16, 64, 256, 1024],
+    "projection_only_endpoint": true,
+    "ridge_fraction": 1e-6,
+    "ridge_scale": "Mean diagonal of each unregularized weighted Gram matrix.",
+    "formal_solver": "float64 direct solve of regularized normal equations",
+    "canonicalization": "Normalize coefficients to unit RMS and orient toward nonnegative projected-target inner product.",
+    "selector": "Prefer all-four-metric feasibility by minimum worst ratio, then observation ratio and roster order; otherwise physical feasibility and minimum observation; otherwise physical minimax.",
+    "truth_boundary": "Teacher targets, four metrics and selector use only already-opened fit truth to measure finite-roster representation capacity.",
+    "stability_change_from_v140_2": "Only the fixed ridge fraction changes from 1e-10 to 1e-6. Candidate directions, ordering, projection weights, selector, gates and logical online shell remain unchanged.",
+    "result_dependent_tuning": false
+  },
+  "cheap_control": {
+    "name": "deployment-visible pair-depth residual joint ridge LS",
+    "ridge_fraction": 1e-8,
+    "truth_used": false,
+    "stage_a_pass_count": 0,
+    "stage_b_scope": "Replay on all 2199 active-tail cells as a diagnostic control; Stage-A failure already proves it cannot satisfy the complete gate.",
+    "extra_exact_calls_for_coefficients": {
+      "A": 0,
+      "AT": 0
+    }
+  },
+  "accuracy_gate": {
+    "paired_reference": "zero-start CGLS K4",
+    "metrics": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "interior_gradient_relative_l2",
+      "reported_observation_relative_l2"
+    ],
+    "per_cell_limit": 1.05,
+    "trajectory_p90_higher_limit": 1.02,
+    "trajectory_worst_limit": 1.05,
+    "quantile_method": "numpy quantile 0.90 method=higher",
+    "all_3700_cells_required": true,
+    "all_five_trajectories_required": true
+  },
+  "call_accounting": {
+    "candidate_online_shell": "zero-start CGLS K1 plus one selected exact AT lift and one exact A projection",
+    "candidate_logical_calls": {
+      "A": 2,
+      "AT": 2
+    },
+    "reference_logical_calls": {
+      "A": 4,
+      "AT": 4
+    },
+    "offline_capacity_work": "Truth-aware direction lifts, seven stable solves and scoring are excluded from any deployment or speed claim. Memory-bounded batches record every framework call and do not change the 2A+2AT deployment shell."
+  },
+  "hierarchical_stability_contract": {
+    "inherited_parent": "Bind the frozen v139.3 independent PASS for the 72C parent block; do not reclassify inherited raw-array rounding under a new threshold.",
+    "new_pair_block": "The v140.4 independent implementation must rebuild every pair-depth direction and contribution without importing the formal v140 core.",
+    "complete_candidate": "Direct solve and independent symmetric eigensolve must agree in physical field/projection images and candidate field/residual within 1e-6; condition<=1e10 and normalized stationarity<=1e-7.",
+    "sentinel_status": "PASS_HIERARCHICAL_STABLE_SOLVER_SENTINEL_V140_4",
+    "sentinel_camera_counts": [5, 7, 9, 12],
+    "sentinel_passing_cells": 4,
+    "full_rerun_authorized": true,
+    "predictor_training_authorized": false
+  },
+  "v140_1_resource_abort": {
+    "run_id": "stageb_r2_07733b6c_v140_1_20260811",
+    "exit_code": 143,
+    "completed_progress_rows": 170,
+    "next_camera_count": 7,
+    "observed_rss_kib_at_abort": 19633440,
+    "observed_swap_used_mib": 16165.62,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "exit_code_sha256": "9d9b18720961e9b4689fd763b85e7b6f36160ccd3a8a1c9ddc5103bb0f66c396",
+    "progress_sha256": "9b7607135a3aa45ff9baf0a23fcdf89568a61cf6db72b96b688f010e30e6da60",
+    "scientific_status": "INCONCLUSIVE_RESOURCE_ABORT_BEFORE_ATOMIC_OUTPUT",
+    "partial_result_reuse": false,
+    "meaning": "The run was terminated before READY because unbatched offline direction lifting exhausted practical host memory. Its partial selections are not evidence and are never reused."
+  },
+  "execution_preflight": {
+    "truth_read": false,
+    "candidate_metrics_scored": false,
+    "five_camera_64_vs_128": {
+      "basis_count": 840,
+      "field_max_abs_difference": 0.0,
+      "projected_max_abs_difference": 0.0,
+      "maximum_resident_bytes": 4034740224,
+      "swaps": 0
+    },
+    "twelve_camera_64_vs_128": {
+      "basis_count": 4032,
+      "field_max_abs_difference": 0.0,
+      "projected_max_abs_difference": 0.0,
+      "maximum_resident_bytes": 7680737280,
+      "swaps": 0
+    },
+    "twelve_camera_full_roster": {
+      "basis_count": 4032,
+      "candidate_count": 7,
+      "all_coefficients_finite": true,
+      "maximum_stationarity": 4.691177637504416e-14,
+      "maximum_condition_number": 5663378473980.395,
+      "offline_forward_calls": 33,
+      "offline_adjoint_calls": 33,
+      "maximum_resident_bytes": 7055458304,
+      "swaps": 0
+    },
+    "meaning": "These fixed observation-only resource checks validate batching and solver feasibility only. They do not score reconstruction, select a candidate, or establish scientific performance."
+  },
+  "decision_rule": {
+    "stage_b_pass": "Only after 3700/3700 cells and 5/5 complete trajectory tails pass under independent recomputation, with stable physical-output equivalence, may a separately frozen minimal predictor be implemented.",
+    "stage_b_fail": "Close this exact pair-resolved representation and report the fixed failure strata; no larger network is authorized.",
+    "inference_limit": "Full truth-aware capacity is not observation-only prediction, wall/RSS speedup, external generalization, curved-ray validation, real BOST or paper success.",
+    "independent_validation_required": true
+  },
+  "sealed_inputs": {
+    "v139_manifest_sha256": "60d57fad7eccf8419928a03c0376209c5a516837c1cf048a7fa7f60db9b4e237",
+    "v139_validation_sha256": "82f8989b969eff7e7036563b400f4791775d9bb0306a1e059d4102fc687cb61f",
+    "v139_selected_metrics_sha256": "331e4b443e7e5b95fd49b1fb91dc48e686eb8adf252232db38c273728508d80b",
+    "sample_roster_sha256": "c8d2bbb2a0ebcfc4790c8e38383f685e5d4c5fa40306ac3fab53ea3acc7481cb",
+    "observations_sha256": "b70738ee5ec4c99dd24f4754866167c095bde8414a4cee6ffc7697372dbff71e",
+    "reported_pose_tokens_sha256": "9cd8e4095ffe04d8ec4ad5a0269803d5dd5cf1b88347fc070d47f8ebd7d4cbba",
+    "camera_mask_sha256": "92c629ce8229f2be97c28513daa5d5b6aaf0d89e0aa1bf8435b4f38063b50bfb",
+    "predicted_correction_dual_sha256": "b0e49e9e8a5228714a7951f7077bdb2dae15bab076d7900a165a6413825b5348",
+    "teacher_correction_dual_sha256": "6c51ef41f09e9d8911756362e114aed05ef8dd7b2a60bdf43097edd51f84a0e8",
+    "k1_residual_sha256": "c8536eda4aa39009ccf262257df39156afa8a2df37888abd7466002bddd278e1",
+    "stage_a_manifest_sha256": "790437d3c799ff11569b866ac5e4c9a991cc086d62c7bb5fc6b6d755dabe0c5e",
+    "stage_a_ready_sha256": "58c340b38c902a32f29ba0d60806fe0137519d397edb8a39d13e859795f56e0a",
+    "stage_a_validation_sha256": "463496476f86f1b922873ac4657c9f67a97e91c9c29b153548f1c16ad6fcf533",
+    "stage_a_validation_ready_sha256": "54bb8ebdb68f5dce45a41846f2804d1294b3170d2e33abb242b75c1ce3cc5695",
+    "v140_4_sentinel_decision_sha256": "44d2d56756726922b9aff5119c3fda998db88dff0dc71899c1aeab6775a3598e",
+    "v140_4_sentinel_ready_sha256": "2b4f8679168b9b2e747c5a3399376f2ff46c7df4fdbf5c1aece1d6cbb82dc437"
+  },
+  "source_closure": {
+    "parent_protocol_path": "learning_labs/protocols/poolfire_pair_resolved_depth_cost_stage_b_v140_2.json",
+    "parent_protocol_sha256": "5a000965477ab426b4c7b5097dad735db0d40c7aac38e5ad392b5ea793e22237",
+    "files": [
+      [
+        "site_tools/run_poolfire_pair_resolved_depth_cost_stage_b_v140_4.py",
+        "20a35754ca4ff87e1ba61943d29effe821665a632315ddc72d5b291ad5e8b8ea"
+      ],
+      [
+        "site_tools/test_run_poolfire_pair_resolved_depth_cost_stage_b_v140_4.py",
+        "f64e6a3a0578e15980e54fd10fb23312f4326dc03d5f6e31e767e6527f6123e6"
+      ]
+    ]
+  },
+  "execution_contract": {
+    "one_unique_run_id": true,
+    "atomic_output_directory": true,
+    "append_only_progress": true,
+    "bound_parent_trees_must_remain_unchanged": true,
+    "formal_repository_must_be_clean": true,
+    "independent_second_implementation_required": true,
+    "spectral_batch_size": 128,
+    "maximum_spectral_batch_size": 128,
+    "batching_changes_direction_order": false,
+    "batching_changes_scientific_candidates": false,
+    "batching_changes_selector_or_gates": false,
+    "offline_framework_calls_recorded": true,
+    "partial_result_reuse": false,
+    "fixed_stable_ridge_fraction": 1e-6,
+    "hierarchical_parent_evidence_bound": true,
+    "stable_sentinel_tree_must_remain_unchanged": true,
+    "validation_truth_read": false,
+    "test_truth_read": false
+  },
+  "claim_limits": {
+    "post_open_truth_aware_capacity_only": true,
+    "deployable_algorithm": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}

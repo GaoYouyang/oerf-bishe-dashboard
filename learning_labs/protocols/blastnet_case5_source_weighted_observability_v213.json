@@ -1,0 +1,110 @@
+{
+  "schema_version": "oerf-private-blastnet-case5-source-weighted-observability-protocol-v213.0.0",
+  "status": "FROZEN_POSTOPEN_BEFORE_ANY_SOURCE_WEIGHTED_OBSERVABILITY_VALUE_V213",
+  "frozen_at_utc": "2026-08-23T16:22:51Z",
+  "scope": "Post-open mechanism attribution on the already opened BLASTNet Case 5 trajectory. It tests whether the actual 42-frame density trajectory aligns with weak directions of the fixed v210 low-64 response Gram. It is not a predictor, reconstruction method, fresh external gate, resource result, curved-ray result, or real-BOST result.",
+  "scientific_question": "Does source alignment, rather than a source-blind spectral floor, strictly separate every passing virtual-ring nine-camera rig from every failing supplied nine-camera calibration?",
+  "frozen_parents": {
+    "v207_release_sha256": "fc608bd1efaecf99f8a12d9d5c880a3a833595fb93db1ed3d56cef93cf61e7fe",
+    "v210_validated_ready_sha256": "6e4b9068243555e18277acd1672b7621ced4c29a0e4807179df91f77e43178cd",
+    "v210_scientific_decision_sha256": "69d6666ee168449e9d6413d99023a216dc9237562ec496fe4b5312177d6f752e",
+    "v210_scientific_decision": "PARTIAL_OVERLAPPING_GEOMETRY_ONLY_OBSERVABILITY_EVIDENCE_V210",
+    "v211_scientific_decision_sha256": "9cc546e8527ffbe29834e8ab51ebf315906354b0bc1d592130cd9ea39b421065",
+    "v211_scientific_decision": "FAIL_LOCAL_RAY_COVERAGE_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V211",
+    "v212_scientific_decision_sha256": "320eb0a71069a7439ed8baf0fdd125e2e4f357178a2014b243e2440a5aab9e47",
+    "v212_scientific_decision": "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212"
+  },
+  "opened_truth": {
+    "frame_count": 42,
+    "source_relative_pattern": "data/RHO_kgm-3_id%03d.dat",
+    "grid_relative_paths": [
+      "grid/X_m.dat",
+      "grid/Y_m.dat",
+      "grid/Z_m.dat"
+    ],
+    "preprocessing": "Reuse the frozen v207 finite-only rectilinear interpolation to 32x16x16, zero outer boundary, supported-interior zero-mean gauge, with no clipping or shifting.",
+    "role": "Truth is used only for this post-open mechanism attribution. It is forbidden from any deployment input, threshold fit, fallback, or future predictor feature."
+  },
+  "geometry_families": {
+    "supplied_nine_failing": {
+      "count": 13,
+      "camera_count": 9,
+      "reference_outcome": "0/546 strict cells and 0/13 complete calibration groups at zero-start CGLS K16 in v208."
+    },
+    "virtual_ring_nine_passing": {
+      "count": 13,
+      "camera_count": 9,
+      "reference_outcome": "546/546 strict cells and 13/13 complete rig groups at zero-start CGLS K16 in v209."
+    },
+    "virtual_ring_twelve_diagnostic": {
+      "count": 13,
+      "camera_count": 12,
+      "role": "diagnostic only; it cannot replace the virtual-nine family"
+    }
+  },
+  "fixed_subspace": {
+    "inheritance": "Exactly the v210 fixed low-64 sine span, support, gauge, rank, orthonormalization invariants, reported geometry, and exact forward response.",
+    "field_shape": [32, 16, 16],
+    "rank": 64,
+    "selection_or_tuning": "none"
+  },
+  "unique_primary": {
+    "name": "worst_frame_source_weighted_harmonic_observability",
+    "geometry_gram": "For response M, G=M^T M/observation_scalar_count and G_normalized=64*G/trace(G), exactly as in v210.",
+    "source_coefficients": "For each preprocessed density x_t and an orthonormal basis B of the fixed low-64 span, c_t=B*x_t.",
+    "frame_metric": "If G_normalized=V diag(lambda) V^T, h_t=||c_t||^2 / sum_i((v_i^T c_t)^2/max(lambda_i,64*float64_epsilon)). Larger is better. Any eigenvalue below -1e-10 times the largest invalidates execution; roundoff-negative values are clipped to zero only after that check.",
+    "geometry_metric": "minimum h_t over all 42 opened frames; the minimum is fixed because the parent reference claim is complete-trajectory adequacy.",
+    "strict_separation_gate": "min(primary over all 13 virtual-ring nine-camera rigs) must be strictly greater than max(primary over all 13 supplied nine-camera calibrations).",
+    "pairwise_audit": "Report all 169 virtual-nine versus supplied-nine comparisons; exact ties are not passes.",
+    "threshold_search": "none"
+  },
+  "frozen_controls_and_diagnostics": {
+    "source_blind_parent_control": "Recompute the v210 trace-normalized low-64 Gram spectral floor and its 169 pair comparisons. It cannot replace the unique primary.",
+    "source_weighted_rayleigh_observability": "For each frame report c_t^T G_normalized c_t / ||c_t||^2 and its per-geometry minimum; diagnostic only.",
+    "low64_source_energy_fraction": "Report ||c_t||^2/||x_t||^2 for all 42 frames; diagnostic only and not a fitted validity threshold.",
+    "virtual_twelve": "Diagnostic only; cannot upgrade a failed virtual-nine primary."
+  },
+  "execution_contract": {
+    "density_reads": 42,
+    "observation_reads": 0,
+    "reconstruction_field_reads": 0,
+    "residual_reads": 0,
+    "parent_metric_array_reads": 0,
+    "trainable_parameters": 0,
+    "fitted_thresholds": 0,
+    "formal_probe_forward_equivalents_per_geometry": 64,
+    "formal_geometry_count": 39,
+    "formal_probe_forward_equivalents_total": 2496,
+    "logical_deployment_calls_A_At": [0, 0],
+    "resource_measurement_authorized": false,
+    "camera_permutation_rule": "Reversing camera blocks may only permute response rows; all source-weighted and source-blind metrics must agree within 1e-12.",
+    "source_and_input_drift": "forbidden"
+  },
+  "independent_validation": {
+    "required": true,
+    "implementation": "A second program must independently parse all 42 raw density files and three grids, reproduce interpolation and gauge without importing the formal preprocessing or v213 runner, build the same low-64 span with SVD rather than QR, independently reconstruct supplied and virtual geometry, recompute every Gram, source coefficient, frame metric, geometry metric, family summary, pairwise decision, and input seal.",
+    "formal_array_absolute_tolerance": 1e-9,
+    "formal_summary_absolute_tolerance": 1e-9,
+    "discrete_decision_exact_match": true
+  },
+  "decision_order": [
+    "Any parent mismatch, source/input drift, prohibited scientific-array read, non-finite value, rank loss, invalid eigenvalue, camera-permutation failure, missing frame/geometry, formal-independent mismatch, or output mutation gives INCONCLUSIVE_INVALID_SOURCE_WEIGHTED_OBSERVABILITY_EXECUTION_V213.",
+    "If all 169 virtual-nine versus supplied-nine primary comparisons are strictly greater, conclude PASS_ACTUAL_SOURCE_ALIGNMENT_STRICTLY_SEPARATES_CASE5_REFERENCE_V213. This is opened-data mechanism evidence only.",
+    "Otherwise conclude FAIL_ACTUAL_SOURCE_ALIGNMENT_DOES_NOT_RESOLVE_CASE5_REFERENCE_OVERLAP_V213 and close this fixed-low64 actual-source-alignment explanation.",
+    "Controls, diagnostics, virtual-twelve results, near misses, medians, or post-hoc thresholds may never replace or upgrade the unique primary."
+  ],
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_external_generalization": false,
+    "broad_external_family_generalization": false,
+    "variable_cardinality_predictor_success": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}
