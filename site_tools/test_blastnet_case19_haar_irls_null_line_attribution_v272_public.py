@@ -59,9 +59,9 @@ def test_v272_figure_is_public_and_readable() -> None:
 
 def test_v272_remains_historical_after_v273() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["headline"].startswith("v274.2")
+    assert current["headline"].startswith("v275")
     assert current["current_decision"]["v272_independent_validation_passed"] is True
-    assert current["public_evidence"]["figure"].endswith("v274_2.png")
+    assert current["public_evidence"]["figure"].endswith("v275.png")
     for path in PAGES:
         text = path.read_text(encoding="utf-8")
         assert "blastnet_case19_haar_irls_null_line_attribution_v272" in text

@@ -61,7 +61,7 @@ def test_v243_figure_and_source_are_public() -> None:
 
 def test_v243_is_preserved_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_CASE19_LORO_FUSION_REFERENCE_V274_2"
+    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275"
     assert current["current_decision"]["v243_actual_unchanged_k14_solver_passed"] is True
     assert current["current_decision"]["v243_equal_or_cheaper_controls_explain_result"] is False
     assert current["current_decision"]["v243_external_generalization"] is False
@@ -69,7 +69,7 @@ def test_v243_is_preserved_as_historical_parent_evidence() -> None:
     assert current["metrics"]["v243_primary_matched_cells_passed"] == 546
     assert current["metrics"]["v243_primary_matched_complete_rigs_passed"] == 13
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_loro_fusion_reference_v274_2.png"
+        "blastnet_case19_bulk_advection_warm_v275.png"
     )
 
     for page in (FOCUS, HOME, DAILY):
