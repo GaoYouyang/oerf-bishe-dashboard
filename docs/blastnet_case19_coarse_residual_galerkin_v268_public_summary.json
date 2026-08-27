@@ -1,0 +1,139 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-coarse-residual-galerkin-v268",
+  "updated": "2026-08-27",
+  "scope": {
+    "condition": "already-opened BLASTNet Case 19",
+    "role": "post-open frame-zero deterministic mechanism gate",
+    "rigs": 13,
+    "frames_per_rig": 1,
+    "cells": 13,
+    "camera_count": 9,
+    "fine_shape_zyx": [32, 16, 16],
+    "coarse_shape_zyx": [16, 8, 8],
+    "trainable_parameters": 0,
+    "truth_used_for_prediction": false,
+    "truth_used_only_for_offline_scoring": true,
+    "full_sequence_tested": false,
+    "unopened_external_condition_tested": false,
+    "real_bost_tested": false
+  },
+  "mechanism": {
+    "name": "one-step global coarse residual Galerkin correction",
+    "parent": "sealed v258 endpoint",
+    "direction": "lift the exact residual normal through the fixed 16x8x8 physical transfer and use one full-residual least-squares step",
+    "camera_permutation_equivariant": true,
+    "search_or_retuning_performed": false
+  },
+  "results": {
+    "metric_order": [
+      "field",
+      "full_gradient",
+      "interior_gradient",
+      "observation"
+    ],
+    "primary_absolute_pass_cells": 13,
+    "primary_matched_pass_cells": 7,
+    "primary_matched_fail_cells": 6,
+    "matched_failure_counts": {
+      "field": 0,
+      "full_gradient": 0,
+      "interior_gradient": 0,
+      "observation": 6
+    },
+    "primary_metric_p50": [
+      0.12318619743493192,
+      0.2373247562520605,
+      0.31806605121642967,
+      0.053617198647033494
+    ],
+    "primary_metric_p90_higher": [
+      0.13741902818499138,
+      0.26014258481609914,
+      0.35799087916044164,
+      0.05553043875555437
+    ],
+    "primary_metric_worst": [
+      0.1418172839773217,
+      0.2682347453595742,
+      0.3636357114694282,
+      0.056335862731734916
+    ],
+    "matched_ratio_p50": [
+      0.43581107769470145,
+      0.4344036867938136,
+      0.4652425514273199,
+      1.0358991379773568
+    ],
+    "matched_ratio_p90_higher": [
+      0.44527827714993745,
+      0.4614092035984588,
+      0.49101636661987014,
+      1.0896501495274908
+    ],
+    "matched_ratio_worst": [
+      0.4677722167431135,
+      0.4700168642593542,
+      0.49928316100022174,
+      1.2095490905962143
+    ],
+    "failing_observation_ratios": [
+      1.0795066175211923,
+      1.2095490905962143,
+      1.0720996716687727,
+      1.0759410266160863,
+      1.0672826271149902,
+      1.0896501495274908
+    ],
+    "same_work_full_row_control_pass_cells": 13,
+    "cheaper_single_half_control_pass_cells": 13,
+    "two_color_control_pass_cells": 0,
+    "sealed_parent_pass_cells": 0,
+    "k15_control_pass_cells": 0
+  },
+  "cost_ledger": {
+    "primary_calls_A": 16,
+    "primary_calls_At": 15,
+    "reference_calls_A": 16,
+    "reference_calls_At": 16,
+    "fresh_wall_or_rss_measured": false
+  },
+  "independent_validation": {
+    "passed": true,
+    "checks_passed": 25,
+    "checks_total": 25,
+    "maximum_candidate_field_relative_difference": 3.6504577664990213e-11,
+    "maximum_candidate_residual_normalized_difference": 5.136192015489199e-12,
+    "maximum_metric_absolute_difference": 4.758426985773667e-11,
+    "maximum_candidate_state_relative_difference": 1.674503996446733e-9,
+    "maximum_transfer_relative_difference": 0.0,
+    "maximum_transfer_adjoint_error": 9.764110379021966e-16,
+    "maximum_coarse_normal_identity_error": 1.6910485335699597e-16,
+    "maximum_residual_orthogonality_error": 2.229554105475206e-16,
+    "maximum_physical_replay_error": 1.644311305410607e-14,
+    "maximum_camera_permutation_difference": 0.0,
+    "end_to_end_physics_independence_proven": false
+  },
+  "adjudication": {
+    "status": "FAIL_CASE19_COARSE_RESIDUAL_GALERKIN_FRAME_ZERO_V268_4",
+    "fixed_one_step_coarse_residual_route_closed": true,
+    "primary_absolute_gate_passed": true,
+    "primary_matched_gate_passed": false,
+    "observation_only_matched_failure": true,
+    "equal_or_cheaper_controls_also_clear_frame_zero_gate": true,
+    "full_sequence_gate_authorized": false,
+    "effective_exact_call_reduction_established": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false,
+    "resource_gate_authorized": false
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "effective_exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}
