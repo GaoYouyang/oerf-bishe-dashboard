@@ -61,7 +61,7 @@ def test_v243_figure_and_source_are_public() -> None:
 
 def test_v243_is_preserved_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_KRYLOV_HISTORY_JOINT_REORTHOGONALIZATION_FRAME_ZERO_V269_1"
+    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_CASE19_GEOMETRY_NORMAL_SGS_FRAME_ZERO_V270"
     assert current["current_decision"]["v243_actual_unchanged_k14_solver_passed"] is True
     assert current["current_decision"]["v243_equal_or_cheaper_controls_explain_result"] is False
     assert current["current_decision"]["v243_external_generalization"] is False
@@ -69,7 +69,7 @@ def test_v243_is_preserved_as_historical_parent_evidence() -> None:
     assert current["metrics"]["v243_primary_matched_cells_passed"] == 546
     assert current["metrics"]["v243_primary_matched_complete_rigs_passed"] == 13
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_krylov_history_joint_reorthogonalization_v269_1.png"
+        "blastnet_case19_geometry_normal_sgs_v270.png"
     )
 
     for page in (FOCUS, HOME, DAILY):

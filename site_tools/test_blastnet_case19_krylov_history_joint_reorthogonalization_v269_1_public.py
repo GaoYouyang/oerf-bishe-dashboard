@@ -62,12 +62,12 @@ def test_v269_1_figure_is_public_and_readable() -> None:
         assert image.height >= 900
 
 
-def test_v269_1_is_latest_and_v268_remains_historical() -> None:
+def test_v269_1_remains_historical_after_v270() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["headline"].startswith("v269.1")
+    assert current["headline"].startswith("v270")
     assert current["metrics"]["v269_1_independent_checks_passed"] == 28
     assert current["current_decision"]["v269_1_fixed_history_route_closed"] is True
-    assert current["public_evidence"]["figure"].endswith("v269_1.png")
+    assert current["public_evidence"]["figure"].endswith("v270.png")
     for path in PAGES:
         text = path.read_text(encoding="utf-8")
         assert "krylov_history_joint_reorthogonalization_v269_1" in text
