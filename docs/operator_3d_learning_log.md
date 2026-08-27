@@ -4,6 +4,22 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-27：v269.1 缓存 Krylov 历史联合求解保持不确定
+
+**为什么做。** v258 的热修正虽然对已有 K13 测量方向做过正交化，但最后追加的 restarted K1 步可能重新引入旧方向上的残差。v269 因此把缓存的 13 对 K13 方向和 1 对 restarted-K1 方向放进同一个 14 维最小残差求解。这是检验 solver-history 交互的必要经典控制；所有方向均已缓存，所以候选仍是 `15A+14A^T`，没有新增精确算子调用、训练或超参数搜索。
+
+**执行边界。** v269.0 在候选指标和汇总未读时发现审计定义错误：只属于热初始化器的 active 区域零均值要求被错误套到了最终 PCGLS 场。v269.1 只保留边界支撑门，把 active 区域均值改为诊断量；候选、方向、求解、成本、控制、数据、指标、阈值和判决顺序都没有改变，旧输出也没有复用。
+
+**实际结果。** formal 通过 `21/21` 项；完全独立第二实现通过 `28/29` 项。唯一失败是要求独立重建的观测数组逐位完全相等，实际最大归一化差只有 `5.20e-16`。候选场、残差和指标最大差分别为 `2.49e-12 / 1.94e-12 / 4.76e-11`，物理残差重放误差为 `2.21e-16`。由于逐位门失败，权威判决只能是 `INCONCLUSIVE`。已经生成的计数只能作 post-open 诊断：绝对门 `13/13`、K16-matched `0/13`，13 个失败全部只来自 observation；observation matched p50 / p90 / worst 为 `1.15178 / 1.22366 / 1.35496`。
+
+**讲人话。** 这个想法本来是把过去算过的方向一次性“重新配平”，避免最后一步把旧误差带回来。两套实现几乎完全重合，但冻结合同要求观测逐位相同，所以不能把诊断数字包装成正式负结果；与此同时，`0/13` 也说明没有值得冒险再修一次门的科学迹象。按 fail-closed 规则，固定 14 列历史联合求解关闭，不重跑、不放宽容差、不训练大模型、不租 GPU。关闭的是这一种固定 solver-history 机制，不是整条 C 路线。`algorithm_breakthrough=false`。
+
+### English summary
+
+v269 jointly reoptimizes the thirteen cached K13 field/projection pairs and the cached restarted-K1 pair in a fourteen-dimensional minimum-residual solve. It is a necessary classical control for solver-history interaction and adds no exact operator call beyond the sealed `15A+14AT` parent ledger. v269.0 stopped before any metric or summary was read because an initializer-only zero-mean invariant had been applied to the final PCGLS field; v269.1 changes only that audit and reuses no old output. Formal passes `21/21` checks and the independent implementation passes `28/29`. The sole blocker is bitwise observation equality, with a maximum normalized difference of `5.20e-16`; field, residual, metric, and physical-replay differences remain within their numerical gates. The authoritative verdict is therefore `INCONCLUSIVE`. Diagnostic-only counts are `13/13` absolute and `0/13` K16-matched, with all thirteen misses coming from observation and matched p50 / p90 / worst of `1.15178 / 1.22366 / 1.35496`. The fixed cached-history solve closes without rerun, tolerance relaxation, training, or GPU rescue. `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-27：v268 固定单步全局粗空间修正未守住 K16 观测匹配门
 
 **为什么做。** v267 说明同步叠加局部方向会发生强跨块干扰，所以 v268 换成一个物理上不同、仍可证伪的确定性机制：从已封存父状态出发，把完整观测残差的精确 normal 限制到固定 `16×8×8` 粗网格，再提升回 `32×16×16` 场，只做一次全残差最小二乘步。预测只读观测、报告几何和求解器状态，不读真值，也不搜索粗网格、步数、阻尼或正则。
