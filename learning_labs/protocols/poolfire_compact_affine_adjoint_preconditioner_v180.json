@@ -1,0 +1,222 @@
+{
+  "schema_version": "oerf-private-poolfire-compact-affine-adjoint-preconditioner-v180.1",
+  "status_before_results": "FROZEN_BEFORE_V180_1_COMPACT_AFFINE_ADJOINT_PRECONDITIONER_RESULTS",
+  "frozen_at_utc": "2026-08-21T09:27:10Z",
+  "scientific_question": "Can one shared compact linear map turn a deployment-visible exact-adjoint lift of centered observations into the v179 affine coordinates across reported geometry and five/nine active cameras, while preserving the frozen K0 and unchanged-CGLS-K1 accuracy gates on an entirely excluded trajectory and resisting cheaper explanations?",
+  "role": "post-open development diagnostic on the same four already-open p22-s01 frames; the complete p22 trajectory remains excluded from every fitted statistic, coefficient, rank choice, ridge choice, normalization, fallback, and stopping rule",
+  "physical_distinction": "v180 does not cache or invert a 1009-column measurement matrix at deployment. It computes one exact adjoint lift from the current centered observation, normalizes by active-camera count, and applies one shared diagonal-plus-rank-16 map fitted only on complete PoolFire fit trajectories. This differs from the v179 per-geometry exact pseudoinverse and from previously closed fixed-coordinate CNN/FNO families.",
+  "parent_evidence": {
+    "v179_protocol_sha256": "6fe2adccc3c6b73f93232bd41fd99838fa340fac14de4b59be9c354c15536255",
+    "v179_formal_report_sha256": "88c87b619a7b17b2d8155526f04f7487ef342b35ca6bf2b8c67595f9117fa599",
+    "v179_independent_validation_sha256": "f8e33c37aa04c3f076ed1dcaad5a7c4bcb930cc77fdb975006489e35f314ce2b",
+    "v179_decision_sha256": "8c00e7d8fa7ab643f62edf3f545fadbd797abcb55ce7cbcb6b236bbbff53a63d",
+    "v179_formal_status": "PASS_FORMAL_POOLFIRE_AFFINE_COORDINATE_OBSERVABILITY_EXECUTION_V179",
+    "v179_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_AFFINE_COORDINATE_OBSERVABILITY_V179",
+    "v179_scientific_decision": "PASS_AFFINE_MEASUREMENT_INVERSE_HEADROOM_V179",
+    "v179_stable_affine_rank": 1009,
+    "v179_measurement_rank_minimum": 1009,
+    "v178_protocol_sha256": "58db4617a2571bbda15a13fb9b6bd2f150775d7673020343671e144cfb31e24e",
+    "v176_frozen_selections_sha256": "dde5f8ab04f87114bed4c241666099c7bf60fba828ddc6c3afcb064386cceca9",
+    "subset_roster_sha256": "8739dcf3d1c4f4385d2374ba074c052d0f5ad113c8bb75ff8958c1225c136f9b",
+    "axis_roster_sha256": "b978321d4859ef265e1155263d4b60dc904b58e406e075504ec02c03d8e323ca",
+    "calibration_tree_seal": "101791e5745b4fefb62eb9a0ec0eea85000ebb7ec358379c57e2aa51aff7d237"
+  },
+  "data_isolation": {
+    "fit_source": "exactly the ten complete train-split trajectories and 1010 transformed fields inherited through v178 and v179",
+    "fit_geometry_arms": "thirteen immutable calibrations crossed with the frozen v176 five-camera subset and all-nine control, yielding 26 geometry/sensor blocks",
+    "fit_row_count": 26260,
+    "heldout_source": "exactly p=22kw_size=01 with only the four already-open frame indices 0,25,75,100 inherited through v179",
+    "heldout_complete_trajectory_isolation": true,
+    "heldout_truth_forbidden_from": [
+      "fit mean and affine basis",
+      "adjoint-feature centering and scaling",
+      "ridge coefficient",
+      "diagonal coefficients",
+      "rank-16 residual map",
+      "camera subset and reported geometry",
+      "fallback and stopping",
+      "model or control selection"
+    ],
+    "heldout_truth_allowed_only_for": [
+      "synthetic observation generation through the frozen forward operator",
+      "final field and gradient scoring after every observation-only candidate is sealed"
+    ],
+    "validation_trajectories_forbidden": ["p=14kw_size=01"],
+    "test_trajectories_forbidden": ["p=22kw_size=05", "p=58kw_size=01"],
+    "trajectory_identity_feature": false,
+    "time_feature": false,
+    "power_or_size_feature": false,
+    "hyperparameter_search": false
+  },
+  "affine_representation": {
+    "definition": "rebuild the v178/v179 arithmetic fit mean and direct thin-SVD basis from the same 1010 fit fields",
+    "relative_singular_value_floor": 1e-10,
+    "expected_rank": 1009,
+    "sign_canonicalization": "largest-absolute field entry is nonnegative; ties use the lowest flat index",
+    "fit_coordinate_rule": "a=(x-mean_fit)U^T",
+    "heldout_field_access": false
+  },
+  "deployment_feature": {
+    "name": "normalized_affine_exact_adjoint",
+    "centered_observation": "r_y=y-A_c mean_fit, where A_c mean_fit is a geometry setup cache and not a heldout-truth statistic",
+    "rule": "g=U A_c^T r_y / number_of_active_cameras",
+    "deployment_inputs": ["observation", "reported active-camera geometry", "fit-only affine mean and basis"],
+    "exact_online_calls": {"forward": 0, "adjoint": 1},
+    "camera_permutation_equivariant": true,
+    "variable_cardinality": [5, 9],
+    "truth_access": false
+  },
+  "fit_statistics": {
+    "streaming_rule": "for each fit-only geometry block form M=A_c U^T and H=M^T M, then accumulate g=aH/n_camera without storing the 26260 by 1009 design matrix",
+    "feature_mean": "arithmetic mean over all 26260 fit rows",
+    "feature_scale": "population standard deviation over all 26260 fit rows with an absolute floor of 1e-12",
+    "target_mean": "arithmetic mean of the repeated fit affine coordinates over all 26260 fit rows",
+    "ridge_objective": "mean squared residual plus 1e-3 times squared Frobenius norm",
+    "normalized_ridge_coefficient": 0.001,
+    "solve_rule": "solve (Z^T Z + N*0.001 I)B=Z^T Y by symmetric eigendecomposition with eigenvalues sorted ascending and no data-dependent cutoff",
+    "fit_only": true
+  },
+  "primary_model": {
+    "name": "shared_diagonal_plus_rank16_adjoint_map",
+    "definition": "fit one diagonal ridge map from standardized g to centered affine coordinates; fit a full ridge map to its residual; retain exactly the first 16 singular components of the residual map; prediction is target_mean + z*diagonal + z*rank16_residual_map",
+    "residual_rank": 16,
+    "rank_or_ridge_search": false,
+    "fitted_coefficient_count": 34322,
+    "fit_normalization_statistic_count": 2018,
+    "shared_across_calibrations_and_sensor_counts": true,
+    "cpu_closed_form": true,
+    "neural_network": false,
+    "fallback": "none; any non-finite statistic, solve failure, rank failure, or evaluation failure makes the run inconclusive"
+  },
+  "blocking_controls": {
+    "shared_diagonal_adjoint_map": {
+      "definition": "the same standardized exact-adjoint feature and ridge objective, retaining only the 1009 per-coordinate diagonal gains and target mean",
+      "fitted_coefficient_count": 2018,
+      "same_online_calls_as_primary": true
+    },
+    "affine_coordinate_cgls1": {
+      "definition": "from mean_fit compute raw g=U A_c^T(y-A_c mean_fit), one exact projected forward M g, beta=(g^Tg)/((Mg)^T(Mg)), and a=beta*g with denominator floor 1e-30",
+      "hyperparameters": 0,
+      "truth_access": false
+    },
+    "fit_mean": {
+      "definition": "the immutable fit mean before and after one unchanged physical CGLS K1 step",
+      "truth_access": false
+    }
+  },
+  "evaluation": {
+    "calibration_count": 13,
+    "frame_indices": [0, 25, 75, 100],
+    "time_labels": [0.0, 0.25, 0.75, 1.0],
+    "scored_cell_count_per_sensor_arm": 52,
+    "sensor_arms": ["v176_geometry_selected_five", "all_nine"],
+    "field_arms": [
+      "shared_diagonal_plus_rank16_k0",
+      "shared_diagonal_plus_rank16_k1",
+      "shared_diagonal_k0",
+      "shared_diagonal_k1",
+      "affine_coordinate_cgls1_k0",
+      "affine_coordinate_cgls1_k1",
+      "fit_mean_k0",
+      "fit_mean_k1"
+    ],
+    "primary": "shared_diagonal_plus_rank16_k0 and k1 on both frozen five-camera and all-nine arms",
+    "cheaper_learned_control": "shared_diagonal_k0 and k1",
+    "deterministic_control": "affine_coordinate_cgls1_k0 and k1",
+    "static_control": "fit_mean_k0 and k1",
+    "subset_rule": "reuse the immutable minimal_shared_gram_ridge five-camera subset index frozen before p22 truth was opened in v176",
+    "physical_k1_rule": "one unmodified identity-preconditioned CGLS step from the supplied field using the exact current residual; denominator floor 1e-30"
+  },
+  "frozen_operator": {
+    "field_grid_zyx": [32, 16, 16],
+    "target_grid_per_camera": 24,
+    "bounds_xyz": [[-20.0, 50.0], [-20.0, 50.0], [-35.0, 35.0]],
+    "forward": "same calibrated exact-adjoint straight-ray density-gradient proxy as v176-v179",
+    "metrics": ["field_relative_l2", "gradient_relative_l2", "observation_relative_l2"]
+  },
+  "absolute_accuracy_gate": {
+    "strict_cell_safe_required_per_sensor": 52,
+    "strict_cell_safe_total_per_sensor": 52,
+    "whole_calibrations_safe_required_per_sensor": 13,
+    "whole_calibrations_safe_total_per_sensor": 13,
+    "all_four_frames_must_pass_per_sensor": true,
+    "field_relative_l2_p90_higher_max": 0.5,
+    "field_relative_l2_worst_max": 0.75,
+    "gradient_relative_l2_p90_higher_max": 0.75,
+    "gradient_relative_l2_worst_max": 1.0,
+    "observation_relative_l2_p90_higher_max": 0.2,
+    "observation_relative_l2_worst_max": 0.35
+  },
+  "exact_call_and_cache_ledger": {
+    "shared_diagonal_plus_rank16_k0": {"forward": 0, "adjoint": 1},
+    "shared_diagonal_plus_rank16_k1": {"forward": 2, "adjoint": 2},
+    "shared_diagonal_k0": {"forward": 0, "adjoint": 1},
+    "shared_diagonal_k1": {"forward": 2, "adjoint": 2},
+    "affine_coordinate_cgls1_k0": {"forward": 1, "adjoint": 1},
+    "affine_coordinate_cgls1_k1": {"forward": 3, "adjoint": 2},
+    "fit_mean_k0": {"forward": 0, "adjoint": 0},
+    "fit_mean_k1": {"forward": 2, "adjoint": 1},
+    "deployment_mean_cache_per_sensor_and_calibration": "one A_c mean_fit projection",
+    "deployment_mean_cache_forward_equivalents": 26,
+    "fit_feature_construction_basis_forward_equivalents": 26234,
+    "fit_feature_construction_total_with_mean_cache": 26260,
+    "truth_observation": "one excluded offline forward per sensor arm, calibration, and frame",
+    "candidate_scoring_forward_calls": "excluded offline scoring only",
+    "resource_claim": "none before a later fresh-process wall/RSS gate"
+  },
+  "required_validity_gates": [
+    "all v179 parent identities, statuses, decisions, arrays, and input trees remain unchanged",
+    "all fit, p22, calibration, subset, selection, and source trees remain unchanged",
+    "affine rank is exactly 1009 and basis orthogonality is within 1e-7",
+    "all 26260 fit rows are accounted for without p22 access",
+    "feature means, scales, Gram matrices, cross-products, diagonal gains, and rank-16 map are finite",
+    "the symmetric ridge solve stationarity is within 1e-8 and the residual map has exactly rank 16",
+    "model parameters and every observation-only candidate are sealed before p22 truth scoring",
+    "fixed-observation heldout-truth mutation leaves all features, coordinates, and fields byte-identical",
+    "camera permutation changes neither adjoint feature nor field candidate beyond 1e-10",
+    "all exact-call, mean-cache, fit-construction, and offline-scoring receipts equal the frozen ledger",
+    "formal and input trees remain unchanged",
+    "independent second implementation passes every required comparison"
+  ],
+  "independent_recomputation": {
+    "required": true,
+    "must_not_import_formal_runner_or_model_helpers": true,
+    "must_independently_rebuild": [
+      "the ten fit input identities, 1010 fields, fit mean, 1009-direction affine basis, and fit affine coordinates",
+      "the thirteen calibrations, frozen five-camera selections, all-nine operators, and all 26 fit geometry blocks",
+      "streamed fit feature moments, standardized Gram and cross-product matrices, diagonal ridge, full residual ridge, and rank-16 truncation",
+      "all deployment exact-adjoint features, diagonal/rank-16/coordinate-CGLS/mean candidates before reading formal candidate arrays",
+      "physical K0/K1 replay, all 832 metric rows, exact-call/cache receipts, calibration and frame tails, control dominance, and decision"
+    ],
+    "formal_arrays_read_only_after_independent_model_and_candidates_are_complete": true,
+    "model_matrix_relative_tolerance": 1e-7,
+    "coordinate_relative_tolerance": 1e-7,
+    "candidate_field_relative_tolerance": 1e-7,
+    "metric_absolute_tolerance": 1e-8,
+    "formal_and_input_trees_unchanged": true
+  },
+  "decision_order": [
+    "Any identity, isolation, affine-basis, fit-row, normalization, ridge, rank, observation-only, mutation, geometry, adjoint, permutation, K1, call-ledger, finite, seal, or independent-recomputation failure makes v180 inconclusive.",
+    "If the rank-16 primary K0 or K1 fails both sensor arms, conclude FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180 and close this shared linear adjoint-preconditioner family.",
+    "If the rank-16 primary passes all-nine but fails the frozen five-camera arm, conclude FAIL_FIVE_CAMERA_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180.",
+    "If the static mean K0 and K1 pass both sensor arms, conclude PASS_STATIC_MEAN_EXPLAINS_V180 and prefer the fixed prior.",
+    "If affine-coordinate CGLS1 K0 and K1 pass both sensor arms, conclude PASS_ONE_STEP_COORDINATE_CONTROL_EXPLAINS_V180 and prefer the deterministic control.",
+    "If the shared diagonal K0 and K1 pass both sensor arms, conclude PASS_SHARED_DIAGONAL_CONTROL_EXPLAINS_V180 and prefer the smaller fitted map; the rank-16 advantage is rejected.",
+    "Only if the rank-16 primary K0 and K1 pass both sensor arms while all three cheaper control families fail may v180 conclude PASS_COMPACT_SHARED_AFFINE_ADJOINT_HEADROOM_V180.",
+    "No v180 outcome is an external generalization result, exact-call reduction result, wall/RSS result, neural-operator advantage, curved-ray result, real BOST result, paper success, or algorithm breakthrough."
+  ],
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "untouched_test_evidence": false,
+    "neural_operator_advantage": false,
+    "deployable_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

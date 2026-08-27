@@ -1,0 +1,145 @@
+{
+  "schema_version": "oerf-nine-view-drc-warm-parent-controls-protocol-112.0",
+  "status": "FROZEN_BEFORE_V112_PARENT_CONTROL_HELDOUT_PREDICTIONS_OR_SCORE",
+  "frozen_at_utc": "2026-08-03T14:48:30Z",
+  "scientific_role": "complete the frozen v111 learned-advantage gate after independently validated Formal Stage A",
+  "parent_contract": {
+    "protocol": "learning_labs/protocols/nine_view_diffeomorphic_ray_conditioned_warm_v111.json",
+    "formal_execution_protocol": "learning_labs/protocols/nine_view_drc_warm_formal_execution_v111.json",
+    "required_formal_status": "PASS_V111_FORMAL_STAGE_A_ALL_SEEDS",
+    "required_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_V111_FORMAL_STAGE_A",
+    "candidate_name": "DRC-Warm",
+    "candidate_online_exact_calls_per_cell": {"A": 2, "A_transpose": 2}
+  },
+  "data_and_split": {
+    "trajectory_ids": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "outer_split": "leave one complete trajectory out",
+    "fit_map_count": 7,
+    "heldout_map_count": 6,
+    "geometry_count": 3,
+    "frame_indices": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+    "training_frame_indices": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90],
+    "fit_only_checkpoint_selection_frame_index": 100,
+    "seeds": [1103, 2203, 3301],
+    "normalization": "identical to the v111 parent: current-frame observation RMS only",
+    "heldout_truth_forbidden_from": [
+      "model input",
+      "basis construction",
+      "normalization",
+      "checkpoint selection",
+      "ridge rank or lambda selection",
+      "acceptance",
+      "fallback"
+    ]
+  },
+  "cnn_training": {
+    "optimizer": "AdamW",
+    "maximum_epochs": 80,
+    "patience_epochs": 12,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "gradient_norm_clip": 1.0,
+    "loss_terms_and_weights": "identical to the frozen v111 formal fit",
+    "fit_only_checkpoint_selection": "identical nested worst trajectory-by-geometry eight-gate ordering to v111",
+    "seed_rule": "all three seeds are trained and reported separately; no best-seed selection or ensemble"
+  },
+  "controls": [
+    {
+      "control_id": "projected_ridge_rank4_k1",
+      "family": "deterministic fit-only reference-chart PCA projected ridge followed by unchanged CGLS K1",
+      "reference_rank": 4,
+      "dimensionless_lambda": 0.01,
+      "basis": "fold-local PCA of supported zero-mean reference truth from the four fit trajectories and ten training frames; maps and geometries do not duplicate truth rows",
+      "coefficient_guard": "closed standardized ball fitted only to fold-local truth coefficients",
+      "deployment": "known map pushes the fold-local mean and modes once; known geometry projects them offline; deployment solves the fixed ridge system from observation only",
+      "online_exact_calls_per_cell": {"A": 2, "A_transpose": 1},
+      "role": "historical low-rank projected-ridge control"
+    },
+    {
+      "control_id": "projected_ridge_rank32_k1",
+      "family": "deterministic fit-only reference-chart PCA projected ridge followed by unchanged CGLS K1",
+      "reference_rank": 32,
+      "dimensionless_lambda": 0.01,
+      "basis": "same fold-local truth basis construction as rank4, retaining the first 32 modes",
+      "coefficient_guard": "same fit-only closed standardized ball",
+      "deployment": "same observation-only projected solve and unchanged K1",
+      "online_exact_calls_per_cell": {"A": 2, "A_transpose": 1},
+      "role": "strong projected-ridge capacity stress; this arm defines the primary projected-ridge comparison"
+    },
+    {
+      "control_id": "temporal_cnn_no_pose_no_map_k1",
+      "family": "v29-style causal three-dimensional CNN followed by unchanged CGLS K1",
+      "inputs": ["reference q8 base", "previous cheap factor BP", "current cheap factor BP", "temporal difference", "support"],
+      "forbidden_inputs": ["local ray geometry", "map displacement or Jacobian", "camera tokens", "raw geometry ID", "raw trajectory ID"],
+      "hidden_channels": 17,
+      "maximum_normalized_correction": 0.5,
+      "online_exact_calls_per_cell": {"A": 2, "A_transpose": 2}
+    },
+    {
+      "control_id": "pose_cnn_no_map_k1",
+      "family": "the 42237-parameter v111 backbone with every explicit map channel replaced by exact zeros",
+      "visible_inputs": ["reference q8 base", "causal cheap BP", "support", "local ray geometry", "camera tokens"],
+      "forbidden_inputs": ["map displacement", "map Jacobian", "map log determinant", "raw geometry ID", "raw trajectory ID"],
+      "online_exact_calls_per_cell": {"A": 2, "A_transpose": 2}
+    },
+    {
+      "control_id": "reference_cnn_no_camera_token_k1",
+      "family": "the 42237-parameter v111 backbone with every camera token replaced by exact zeros",
+      "visible_inputs": ["reference q8 base", "causal cheap BP", "support", "local ray geometry", "map channels"],
+      "forbidden_inputs": ["camera tokens", "raw geometry ID", "raw trajectory ID"],
+      "online_exact_calls_per_cell": {"A": 2, "A_transpose": 2}
+    }
+  ],
+  "scoring": {
+    "cell_roster": "the same 990 heldout trajectory-by-map-by-geometry-by-frame cells per seed as v111",
+    "candidate_comparison_rows": 2970,
+    "metrics": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "interior_gradient_relative_l2",
+      "observation_relative_l2"
+    ],
+    "tails": ["p50", "p90-higher", "worst"],
+    "stage_a_gate": "identical to v111",
+    "primary_projected_ridge_control": "projected_ridge_rank32_k1",
+    "dominance": "an equal-or-lower exact-call control dominates a candidate seed only if it passes the same trajectory gates and is no worse on every frozen trajectory-equal summary component with at least one strict improvement",
+    "paired_better_fraction_definition": "for each candidate seed and parent control separately, compute the fraction of all 990 paired heldout cells for which the candidate error is strictly lower than the control error",
+    "paired_better_fraction_metrics": [
+      "field_relative_l2",
+      "interior_gradient_relative_l2"
+    ],
+    "paired_better_fraction_minimum_each_metric": 0.5,
+    "trajectory_equal_p90_and_worst_definition": "for every heldout trajectory and each of the four metrics, the candidate seed p90-higher and worst must be no greater than the paired parent control values",
+    "trajectory_equal_p90_and_worst_no_worse_required": true,
+    "early_fail_rule": "if any equal-or-lower exact-call parent control passes the same Stage A trajectory gates and rejects learned advantage by dominance or by the frozen paired/tail contract, stop before training or scoring any larger model"
+  },
+  "noninterference": {
+    "prediction_worker_inputs": "deployment bundle plus frozen checkpoint or fold-local projected-ridge artifact only",
+    "truth_path_or_array_forbidden": true,
+    "heldout_label_mutation": "after all predictions are sealed, replace heldout truth arrays in an independent scoring copy with large finite sentinel values and require every prediction byte to remain identical",
+    "process_level_never_read_claim": false
+  },
+  "decision": {
+    "pass_status": "PASS_V112_PARENT_LEARNED_ADVANTAGE_CONTROLS",
+    "fail_status": "FAIL_V112_PARENT_CONTROL_DOMINANCE_OR_ACCURACY",
+    "invalid_status": "INCONCLUSIVE_INVALID_V112_PARENT_CONTROLS",
+    "if_pass": "authorize only a separately frozen fresh-process wall and whole-pipeline RSS gate",
+    "if_fail": "retain the strongest simple control and close the DRC-Warm learned-advantage claim; do not rescue with FNO, UNO or a larger U-Net"
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_advantage": false,
+    "curved_ray_robustness": false,
+    "noise_robustness": false,
+    "camera_calibration_robustness": false,
+    "real_bost": false
+  }
+}

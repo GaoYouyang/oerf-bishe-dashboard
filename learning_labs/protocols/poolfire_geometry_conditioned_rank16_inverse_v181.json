@@ -1,0 +1,220 @@
+{
+  "schema_version": "oerf-private-poolfire-geometry-conditioned-rank16-inverse-v181.0",
+  "status_before_results": "FROZEN_BEFORE_GEOMETRY_CONDITIONED_RANK16_INVERSE_RESULTS_V181",
+  "frozen_at_utc": "2026-08-21T11:08:56Z",
+  "scientific_question": "Does the rank-16 correction rejected in v180 become sufficient when its diagonal whitening and spectral correction are generated separately from each deployment-visible reported geometry, with the rank, data, exact-call shell, K0/K1 replay, and accuracy gates otherwise unchanged?",
+  "role": "post-open mechanism diagnostic on the same four already-open p22-s01 frames; the complete p22 trajectory remains excluded from every affine-basis statistic, geometry factor, rank choice, fallback, and stopping rule",
+  "causal_interpretation": {
+    "primary_pass": "supports geometry dependence, rather than rank-16 correction capacity alone, as the explanation for the v180 shared-map failure",
+    "primary_fail": "shows that this fixed Jacobi-whitened rank-16 geometry factor is insufficient even after geometry conditioning; it does not prove that all geometry-conditioned or nonlinear compact mechanisms are impossible",
+    "what_is_held_fixed": [
+      "rank 16",
+      "the v178/v179 affine basis",
+      "the four opened p22 frames",
+      "the thirteen calibrations and frozen five-camera subsets",
+      "the all-nine control",
+      "the K0 and unchanged physical CGLS K1 arms",
+      "all absolute field, gradient, and observation gates"
+    ]
+  },
+  "parent_evidence": {
+    "v180_protocol_sha256": "3714ed093be02c9659b4644179884e5fa8c23c59a5d80f8d961146288d3850c1",
+    "v180_formal_report_sha256": "df103ea04babf2169f4e5c5cb52392703986909d4e78c39056d6f206723bf5a9",
+    "v180_independent_validation_sha256": "7ac846539bff16d66ba3f80cb36f1bc241966aff91dc2125035d1cd8fed73fa8",
+    "v180_zero_mean_audit_sha256": "2e3b61906c6a4be58da5fa1e497154c20b7c375063284382ed6af932e1dac5d7",
+    "v180_decision_sha256": "500d22fbd734576ac5a9933b3f9a1b1288866aa9ac55a24d6117d5a8a296a7f1",
+    "v180_formal_status": "PASS_FORMAL_POOLFIRE_COMPACT_AFFINE_ADJOINT_EXECUTION_V180",
+    "v180_original_independent_status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_COMPACT_AFFINE_ADJOINT_V180",
+    "v180_zero_mean_audit_status": "PASS_ZERO_MEAN_COMPARISON_AUDIT_V180_1",
+    "v180_scientific_decision": "FAIL_SHARED_COMPACT_ADJOINT_PRECONDITIONER_V180",
+    "v179_stable_affine_rank": 1009,
+    "v178_protocol_sha256": "58db4617a2571bbda15a13fb9b6bd2f150775d7673020343671e144cfb31e24e",
+    "v176_frozen_selections_sha256": "dde5f8ab04f87114bed4c241666099c7bf60fba828ddc6c3afcb064386cceca9",
+    "subset_roster_sha256": "8739dcf3d1c4f4385d2374ba074c052d0f5ad113c8bb75ff8958c1225c136f9b",
+    "axis_roster_sha256": "b978321d4859ef265e1155263d4b60dc904b58e406e075504ec02c03d8e323ca",
+    "calibration_tree_seal": "101791e5745b4fefb62eb9a0ec0eea85000ebb7ec358379c57e2aa51aff7d237"
+  },
+  "data_isolation": {
+    "affine_fit_source": "exactly the ten complete train-split trajectories and 1010 transformed fields inherited through v178-v180",
+    "geometry_factor_source": "reported calibration, active-camera subset, frozen affine basis, and the resulting straight-ray measurement matrix only",
+    "heldout_source": "exactly p=22kw_size=01 with only frame indices 0,25,75,100 already opened through v179-v180",
+    "heldout_complete_trajectory_isolation": true,
+    "heldout_truth_forbidden_from": [
+      "affine mean and basis",
+      "measurement normal matrix",
+      "Jacobi diagonal",
+      "whitened eigensystem and selected rank-16 modes",
+      "camera subset and reported geometry",
+      "fallback, stopping, and decision"
+    ],
+    "heldout_truth_allowed_only_for": [
+      "synthetic observation generation through the frozen forward operator",
+      "final field and gradient scoring after every observation-only candidate is sealed"
+    ],
+    "validation_trajectories_forbidden": ["p=14kw_size=01"],
+    "test_trajectories_forbidden": ["p=22kw_size=05", "p=58kw_size=01"],
+    "trajectory_identity_feature": false,
+    "time_feature": false,
+    "power_or_size_feature": false,
+    "hyperparameter_search": false
+  },
+  "affine_representation": {
+    "definition": "rebuild the v178-v180 arithmetic fit mean and direct thin-SVD basis from the same 1010 fit fields",
+    "relative_singular_value_floor": 1e-10,
+    "expected_rank": 1009,
+    "sign_canonicalization": "largest-absolute field entry is nonnegative; ties use the lowest flat index",
+    "fit_coordinate_rule": "a=(x-mean_fit)U^T",
+    "heldout_field_access": false
+  },
+  "geometry_conditioned_factor": {
+    "name": "jacobi_whitened_normal_rank16_inverse",
+    "measurement_matrix": "M_c=A_c U^T for the current reported calibration and active-camera set",
+    "normal_matrix": "H_c=M_c^T M_c",
+    "jacobi_diagonal": "D_c=diag(H_c); every entry must be finite and greater than 1e-30 or execution is inconclusive",
+    "whitened_normal": "K_c=D_c^(-1/2) H_c D_c^(-1/2), explicitly symmetrized before a full symmetric eigendecomposition",
+    "eigensolver": "scipy.linalg.eigh with driver=evd; eigenvalues are sorted ascending and must be strictly positive without a numerical floor",
+    "mode_score": "abs(1/lambda_i - 1)",
+    "mode_selection": "retain exactly the 16 largest mode scores; ties use lower eigenvalue and then lower original ascending eigen-index",
+    "eigenvector_sign": "the largest-absolute entry is nonnegative; ties use the lowest coordinate index",
+    "primary_action": "for g=U A_c^T(y-A_c mean_fit), let h=D_c^(-1/2)g and return a=D_c^(-1/2)[h+V_r diag(1/lambda_r-1)V_r^T h]",
+    "jacobi_control_action": "a=D_c^(-1)g",
+    "residual_rank": 16,
+    "rank_or_regularization_search": false,
+    "ridge": 0.0,
+    "trainable_parameters": 0,
+    "stored_factor_value_count_across_26_setups": 446394,
+    "shared_across_geometries": false,
+    "camera_permutation_equivariant": true,
+    "variable_cardinality": [5, 9],
+    "fallback": "none; any non-finite diagonal, non-positive eigenvalue, eigensolver failure, rank failure, or replay failure makes the run inconclusive"
+  },
+  "blocking_controls": {
+    "geometry_jacobi_inverse": {
+      "definition": "the same exact-adjoint coordinate feature and geometry-specific Jacobi diagonal, without any spectral correction",
+      "same_online_calls_as_primary": true
+    },
+    "affine_coordinate_cgls1": {
+      "definition": "from mean_fit compute raw g, one exact projected forward M g, beta=(g^Tg)/((Mg)^T(Mg)), and a=beta*g with denominator floor 1e-30",
+      "hyperparameters": 0
+    },
+    "fit_mean": {
+      "definition": "the immutable fit mean before and after one unchanged physical CGLS K1 step"
+    },
+    "v180_shared_rank16_parent": {
+      "definition": "the frozen v180 shared diagonal-plus-rank-16 result is inherited as a negative parent and is not refitted or reselected"
+    }
+  },
+  "evaluation": {
+    "calibration_count": 13,
+    "frame_indices": [0, 25, 75, 100],
+    "time_labels": [0.0, 0.25, 0.75, 1.0],
+    "scored_cell_count_per_sensor_arm": 52,
+    "sensor_arms": ["v176_geometry_selected_five", "all_nine"],
+    "field_arms": [
+      "geometry_rank16_k0",
+      "geometry_rank16_k1",
+      "geometry_jacobi_k0",
+      "geometry_jacobi_k1",
+      "affine_coordinate_cgls1_k0",
+      "affine_coordinate_cgls1_k1",
+      "fit_mean_k0",
+      "fit_mean_k1"
+    ],
+    "primary": "geometry_rank16_k0 and geometry_rank16_k1 on both frozen five-camera and all-nine arms",
+    "physical_k1_rule": "one unmodified identity-preconditioned CGLS step from the supplied field using the exact current residual; denominator floor 1e-30",
+    "subset_rule": "reuse the immutable minimal_shared_gram_ridge five-camera subset frozen before p22 truth was opened in v176"
+  },
+  "frozen_operator": {
+    "field_grid_zyx": [32, 16, 16],
+    "target_grid_per_camera": 24,
+    "bounds_xyz": [[-20.0, 50.0], [-20.0, 50.0], [-35.0, 35.0]],
+    "forward": "the calibrated exact-adjoint straight-ray density-gradient proxy inherited from v176-v180",
+    "metrics": ["field_relative_l2", "gradient_relative_l2", "observation_relative_l2"]
+  },
+  "absolute_accuracy_gate": {
+    "strict_cell_safe_required_per_sensor": 52,
+    "strict_cell_safe_total_per_sensor": 52,
+    "whole_calibrations_safe_required_per_sensor": 13,
+    "whole_calibrations_safe_total_per_sensor": 13,
+    "all_four_frames_must_pass_per_sensor": true,
+    "field_relative_l2_p90_higher_max": 0.5,
+    "field_relative_l2_worst_max": 0.75,
+    "gradient_relative_l2_p90_higher_max": 0.75,
+    "gradient_relative_l2_worst_max": 1.0,
+    "observation_relative_l2_p90_higher_max": 0.2,
+    "observation_relative_l2_worst_max": 0.35
+  },
+  "exact_call_and_cache_ledger": {
+    "geometry_rank16_k0": {"forward": 0, "adjoint": 1},
+    "geometry_rank16_k1": {"forward": 2, "adjoint": 2},
+    "geometry_jacobi_k0": {"forward": 0, "adjoint": 1},
+    "geometry_jacobi_k1": {"forward": 2, "adjoint": 2},
+    "affine_coordinate_cgls1_k0": {"forward": 1, "adjoint": 1},
+    "affine_coordinate_cgls1_k1": {"forward": 3, "adjoint": 2},
+    "fit_mean_k0": {"forward": 0, "adjoint": 0},
+    "fit_mean_k1": {"forward": 2, "adjoint": 1},
+    "deployment_mean_cache_per_sensor_and_calibration": "one A_c mean_fit projection",
+    "deployment_mean_cache_forward_equivalents": 26,
+    "geometry_factor_basis_forward_equivalents": 26234,
+    "geometry_factor_total_with_mean_cache": 26260,
+    "truth_observation": "one excluded offline forward per sensor arm, calibration, and frame",
+    "candidate_scoring_forward_calls": "excluded offline scoring only",
+    "resource_claim": "none; the 26260 geometry-cache projections make v181 a mechanism-capacity audit rather than a deployable resource result"
+  },
+  "required_validity_gates": [
+    "all v180 parent identities, statuses, audit, decision, arrays, and input trees remain unchanged",
+    "all fit, p22, calibration, subset, selection, and source trees remain unchanged",
+    "affine rank is exactly 1009 and basis orthogonality is within 1e-7",
+    "all 26 measurement and geometry factors are sealed before heldout field loading",
+    "every Jacobi diagonal is finite and greater than 1e-30",
+    "every whitened normal eigensystem is finite, strictly positive, reconstructs within 1e-10, and retains exactly 16 canonical modes",
+    "factor construction and prediction APIs have no truth parameter",
+    "fixed-observation heldout-truth mutation leaves every coordinate and field candidate byte-identical",
+    "camera permutation changes the normal matrix, factor, coordinates, and fields by at most 1e-10",
+    "all exact-call, mean-cache, factor-construction, and offline-scoring receipts equal the frozen ledger",
+    "formal and input trees remain unchanged",
+    "independent second implementation passes every required comparison"
+  ],
+  "independent_recomputation": {
+    "required": true,
+    "must_not_import_formal_runner_or_factor_helpers": true,
+    "must_independently_rebuild": [
+      "the ten fit input identities, 1010 fields, fit mean, 1009-direction affine basis, and sign convention",
+      "the thirteen calibrations, frozen five-camera selections, all-nine operators, and all 26 measurement matrices",
+      "every Jacobi diagonal, whitened normal, eigensystem, deterministic rank-16 mode selection, canonical factor, and geometry-only diagnostic",
+      "all deployment exact-adjoint features and geometry-rank16, Jacobi, coordinate-CGLS, and mean candidates before reading formal candidate arrays",
+      "physical K0/K1 replay, all 832 metric rows, exact-call/cache receipts, calibration and frame tails, control dominance, and decision"
+    ],
+    "formal_arrays_read_only_after_independent_factors_and_candidates_are_complete": true,
+    "factor_relative_tolerance": 1e-8,
+    "coordinate_relative_tolerance": 1e-8,
+    "candidate_field_relative_tolerance": 1e-8,
+    "metric_absolute_tolerance": 1e-8,
+    "formal_and_input_trees_unchanged": true
+  },
+  "decision_order": [
+    "Any identity, isolation, affine-basis, geometry-factor, eigensystem, rank, observation-only, mutation, permutation, K1, call-ledger, finite, seal, or independent-recomputation failure makes v181 inconclusive.",
+    "If the geometry-conditioned rank-16 primary K0 or K1 fails both sensor arms, conclude FAIL_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181 and close this fixed Jacobi-whitened rank-16 factorization.",
+    "If the primary passes all-nine but fails the frozen five-camera arm, conclude FAIL_FIVE_CAMERA_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181.",
+    "If the primary passes five-camera but fails all-nine, conclude FAIL_VARIABLE_CARDINALITY_GEOMETRY_CONDITIONED_RANK16_INVERSE_V181.",
+    "If fit mean K0 and K1 pass both sensor arms, prefer the fixed prior and reject the primary advantage.",
+    "If affine-coordinate CGLS1 K0 and K1 pass both sensor arms, prefer the deterministic projected-gradient control and reject the primary advantage.",
+    "If geometry-Jacobi K0 and K1 pass both sensor arms, prefer the rank-zero geometry factor and reject rank-16 necessity.",
+    "Only if geometry-rank16 K0 and K1 pass both sensor arms while all three cheaper controls fail may v181 conclude PASS_GEOMETRY_CONDITIONED_RANK16_HEADROOM_V181.",
+    "No v181 outcome is a learned algorithm, external generalization result, exact-call reduction result, wall/RSS result, curved-ray result, real BOST result, paper success, or algorithm breakthrough."
+  ],
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "untouched_test_evidence": false,
+    "neural_operator_advantage": false,
+    "deployable_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

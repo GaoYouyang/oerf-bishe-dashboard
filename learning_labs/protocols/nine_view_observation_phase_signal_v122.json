@@ -1,0 +1,25 @@
+{
+  "schema_version": "oerf-nine-view-observation-phase-signal-v122.0",
+  "status": "FROZEN_BEFORE_RESULT",
+  "purpose": "A deployment-visible raw-observation-domain diagnostic after q8/BP/residual transport variants were closed.",
+  "scope": "already-open v111 PoolFire proxy bundles; known nine-view finite-source geometry; noiseless straight-ray proxy; no truth, reconstruction, learned model, resource, external, or real-BOST claim",
+  "construction": {
+    "inputs": ["adjacent raw nine-view gradient observations", "known detector layout"],
+    "per_view_scalar": "Euclidean magnitude of the two detector-gradient components",
+    "motion_estimator": "zero-mean Hann-windowed two-dimensional phase correlation independently per view",
+    "signal_score": "relative reduction in centered detector-magnitude mismatch after zero-filled integer shift of the previous frame",
+    "truth_used": false,
+    "geometry_used_for_selection": false
+  },
+  "question": "Do adjacent observations contain repeatable local detector-domain motion signal before any backprojection, field representation, or truth-aware score is introduced?",
+  "roster": "v111 five trajectories x three geometries x six held-out coordinate maps x adjacent frozen-frame pairs x nine views",
+  "signal_gate": {
+    "nonzero_shift_required": true,
+    "relative_improvement_strictly_positive": true,
+    "minimum_positive_view_fraction": 0.20,
+    "minimum_pairs_with_any_positive_view_fraction": 0.50
+  },
+  "failure_action": "Close raw-observation two-dimensional phase transport as a candidate cue under this proxy. Do not train a network or turn it into q8/BP/residual blending.",
+  "pass_action": "A pass authorizes only a separately frozen geometry-coupled correspondence/representation diagnostic. It does not authorize a warm start, reconstruction, training, resource claim, external generalization, or real-BOST claim.",
+  "claim_boundary": "Independent per-view detector shifts do not establish a common three-dimensional displacement, especially under finite-source geometry."
+}

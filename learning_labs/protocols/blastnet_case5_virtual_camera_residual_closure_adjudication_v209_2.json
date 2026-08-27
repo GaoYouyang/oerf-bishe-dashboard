@@ -1,0 +1,89 @@
+{
+  "schema_version": "oerf-private-blastnet-case5-virtual-camera-residual-closure-adjudication-v209.2.0",
+  "status": "FROZEN_POSTOPEN_BEFORE_RESIDUAL_CLOSURE_RESULTS_V209_2",
+  "frozen_at_utc": "2026-08-23T11:05:00Z",
+  "scope": "Final numerical adjudication of the sole v209.1 mismatch. The formal arrays, original v209 protocol, camera rosters, zero-start CGLS K16, accuracy gates, summaries, costs, and scientific decision order remain unchanged and are not regenerated.",
+  "original_protocol": {
+    "path": "learning_labs/protocols/blastnet_case5_virtual_camera_information_v209.json",
+    "sha256": "73ce61dc89bcd9e5e15e672f14549cd590ff6cb2efc2821b56698ff8ee214e57"
+  },
+  "validator_erratum_v209_1": {
+    "protocol_path": "learning_labs/protocols/blastnet_case5_virtual_camera_validation_erratum_v209_1.json",
+    "protocol_sha256": "dd058dfcff6ce7719857201bbb76fcf54c22f2393937501c7b65743e4aea607c",
+    "source_commit": "2cdc25a307c17a5d1c9c9fee9b7524872860df9a",
+    "independent_validation_sha256": "a1f1926ee7df68ca56ed24f1c30059e5401cc6ab428a9d656c85266efbbb3aa7",
+    "validated_ready_sha256": "8b8352dda318ac300bef5890725d71ef2e2fe268ac50a1ccdea996dc4d11bc6c",
+    "validated_ready_v209_1_sha256": "ca09f6a5fc1674ea368e49450deb62c70f9f4c08f3957ff6deb7c0dd9d17564c",
+    "erratum_binding_sha256": "8cdde89c0e28afb76592e525d6cfd80d92d0d545fc9b11b0350a3c4db185c866",
+    "scientific_decision_sha256": "c7899490134f559670b093ba225e33ab097053b73444d225e8211bd06225b6f9",
+    "scientific_decision_v209_1_sha256": "6e5d2485b4d2caa262b2f1d02cd74903113ffb328135f7b4e5973b195b5fc51c",
+    "independent_metrics_sha256": "57eccced1cc4202f8ca03cd76dba93217144f2285561d7085b6efb46184bdcb4",
+    "prior_status": "INCONCLUSIVE_V209_VALIDATION",
+    "prior_scientific_decision": "INCONCLUSIVE_INVALID_VIRTUAL_CAMERA_INFORMATION_EXECUTION_V209",
+    "exact_false_validity_keys": [
+      "all_formal_residuals_match_independent",
+      "formal_and_independent_decisions_agree"
+    ]
+  },
+  "sealed_formal": {
+    "source_commit": "3e83f1c62bfc44bd73a329f8a5034380497aa16e",
+    "ready_sha256": "eaf065cc3c83fad05ae7bdeadbf9635d256d24ea04c031a3787c224dae54236b",
+    "formal_report_sha256": "35fae78d04996d82f22a69b86befd0986f60ee75dc043cceb6ee0c0293728b56",
+    "rig_audit_sha256": "0ca86b9c1519db43804df91af9f06cf57429a93d28d7aa8f2a34cdcc0030ccb6",
+    "fields_sha256": "e58c4982f0e33b5d6c9066097e411d8aa36ee539dcb93bbcee63d78307d1688b",
+    "observations_sha256": "620d5f16a4accfbb557149aa2f29dea39442b069ce159ce7d1cf290269448a60",
+    "residuals_sha256": "d0bd370352e074bd11beb9b916987295373c3df1d6305cefe0436ff9b9d35640",
+    "metrics_sha256": "5372a058a7857fdda7d9e0db68d9e0f82b22bcf1b348caf0f0f33f2f2d45a91a",
+    "logical_exact_calls_sha256": "2fae4a7d418902128c740f347c1748279d54e7124eb06d41b23a556b933fa451",
+    "formal_decision_pending_independent": "PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209"
+  },
+  "numerical_question": {
+    "observed_mismatch": "v209.1 independently reproduced fields, observations, metrics, summaries, gates, calls, geometry, and decisions. Its only numerical mismatch divided two tiny recursive residuals by the tiny formal residual norm, producing an unstable relative scale.",
+    "adjudication_equation": "For every arm, rig, and frame, independently rebuild b and A, rerun CGLS K16, and check the defining equation r = b - A x.",
+    "stable_normalization": "Each residual difference is divided by max(||b||_2, 1e-30), where b is the independently regenerated physical observation for that same cell.",
+    "tolerance": 1e-8,
+    "tolerance_change": "none",
+    "metrics_in_fixed_order": [
+      "independent_vs_formal_residual_over_observation",
+      "formal_recursive_residual_closure_over_observation",
+      "independent_recursive_residual_closure_over_observation",
+      "formal_vs_independent_observation_over_observation"
+    ],
+    "forbidden_changes": "Do not change the 1e-8 tolerance, formal arrays, K16 recurrence, camera geometry, gates, summaries, or scientific decision. Do not introduce a residual-norm denominator, absolute-tolerance fallback, post-result candidate, or another validator patch."
+  },
+  "execution_contract": {
+    "arms": [
+      "virtual_nine_zero_cgls_k16_control",
+      "virtual_twelve_zero_cgls_k16_primary"
+    ],
+    "rig_count": 13,
+    "frame_count": 42,
+    "cells": 1092,
+    "formal_logical_exact_calls_per_cell_A_At": [16, 16],
+    "offline_adjudication_calls_per_cell_A_At": [19, 16],
+    "offline_call_explanation": "1A regenerates b, 16A+16A^T reruns independent CGLS, 1A evaluates the sealed formal field, and 1A evaluates the independent field. These are validation-only calls and are not deployment cost evidence.",
+    "formal_reused_without_regeneration": true,
+    "prior_validation_reused_without_mutation": true,
+    "single_new_output": true
+  },
+  "decision_order": [
+    "If the bound formal or v209.1 trees drift, the source closure changes, the prior false-validity set is not exactly the two frozen keys, any call ledger or finite check fails, or any of the four observation-scaled residual-closure metrics exceeds 1e-8, retain INCONCLUSIVE_INVALID_VIRTUAL_CAMERA_INFORMATION_EXECUTION_V209 and stop numerical patching of this route.",
+    "If all closure checks pass, recover the already matching formal and independent summary decision PASS_SYNTHETIC_RING_GEOMETRY_NOT_CARDINALITY_RESCUES_CASE5_REFERENCE_V209.",
+    "A recovered decision means that the 9-camera prefix and 12-camera ring both pass the synthetic post-open Case 5 reference gate; extra three-camera cardinality is not credited. It remains a virtual-ring geometry diagnostic only.",
+    "No outcome authorizes predictor training, exact-call reduction, wall/RSS claims, fresh external generalization, curved-ray validation, real BOST, paper success, GPU rental, or algorithm breakthrough."
+  ],
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "fresh_external_generalization": false,
+    "broad_external_family_generalization": false,
+    "variable_cardinality_predictor_success": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

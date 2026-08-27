@@ -1,0 +1,160 @@
+{
+  "schema_version": "oerf-private-poolfire-full-dct-k2-complete-trajectory-v196.0.0",
+  "frozen_at_utc": "2026-08-22T15:30:00Z",
+  "scientific_question": "Does the independently validated, deployment-visible full camera-resolved DCT initializer followed by exactly two unchanged identity-preconditioned CGLS iterations pass every cell and complete calibration group on the already-opened p22 trajectory while using fewer exact A/A^T calls than Zero-CGLS K4?",
+  "role": "post-open dense-reference headroom gate on the already-opened complete p=22kw_size=01 development trajectory; it is not a compact initializer, a learned method, validation, test, resource evidence, or a deployable algorithm",
+  "parent_evidence": {
+    "v195_protocol_sha256": "daac3259e8e242e5e77faf03008c65a36c0c4b049ffecec5324f946a3a884de0",
+    "v195_formal_source_commit": "b114bd5af19b102986c46304ad97e636117fe492",
+    "v195_validator_source_commit": "bccafafa0f7cbb198ccb300d92ccbdb286f553d3",
+    "v195_formal_report_sha256": "4f7a115a2c092fe54cb7d6216635fe1d379d320a1092cf4a322ab43dcfbed2fc",
+    "v195_formal_ready_sha256": "45d20a804ecb4100c0f7d44b477076bcaf78c18db97abcef667ed7388b082b33",
+    "v195_independent_validation_sha256": "0073ee23a103588fb2815cfe53dd48fe990866ae435cbb38706d70ea69d4e5a0",
+    "v195_validated_ready_sha256": "e982683853e66a69138c30d7de122410535fdc05fa4df7193c3490758d1a80b3",
+    "v195_scientific_decision_sha256": "01a4aaf3127f074efe259a6230d931a1ce26b3a66f8a2fa98fffb45e2d10d7b5",
+    "v195_scientific_decision": "FAIL_DIAGONAL_SIGNED_SKETCH_COMPLETE_TRAJECTORY_V195_2",
+    "v195_prediction_barrier_sha256": "40e42442ee08181f338163c424e8d73b1dc7613184cacc5c07e2d776be0e64b2",
+    "v195_prediction_ready_sha256": "5ec50b652edf6eb6fcdc09d3d454d1fe2f6f7426e5f1fc2fc323ce637e9192ba",
+    "v195_observation_manifest_sha256": "a500673985530e65720776c2680d0419ff2883d6c3306d0d5d307b9cbdbe9dd6",
+    "v195_observation_ready_sha256": "e8036f922758bdb26b503f99793c6462a5d2ccd57827a8ec0dd656e91a6cef0f",
+    "v195_full_dct_k1_five_strict_safe": "1310/1313",
+    "v195_full_dct_k1_five_complete_groups": "12/13",
+    "v195_full_dct_k1_nine_strict_safe": "1313/1313",
+    "v195_full_dct_k1_nine_complete_groups": "13/13",
+    "v195_only_full_dct_k1_failures": "five-camera calibration index 6, frames 88, 89 and 90; each fails only gradient_relative_l2"
+  },
+  "data_isolation": {
+    "development_trajectory": "p=22kw_size=01",
+    "role": "post-open complete-trajectory development",
+    "frame_indices": "all integer indices 0 through 100 in immutable order",
+    "frame_count": 101,
+    "calibration_count": 13,
+    "sensor_arms": [
+      "v176_geometry_selected_five",
+      "all_nine"
+    ],
+    "truth_use": "formal scoring may read the already-opened p22 truth only after the v195 full-DCT coordinate tree is sealed; the independent validator rebuilds observations from that truth and reported geometry before reading formal arrays",
+    "validation_trajectory_still_sealed": "p=14kw_size=01",
+    "test_trajectories_still_sealed": [
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ],
+    "forbidden_inputs": [
+      "p14 validation, either untouched test trajectory, real BOST, or external data",
+      "any held-out field or gradient metric used for candidate choice, stopping, fallback, damping, or depth selection"
+    ]
+  },
+  "fixed_primary": {
+    "name": "full_dct_k2",
+    "initializer": "the exact v195 full_dct coordinate reconstructed with the frozen v186 affine center and 1009-row field basis",
+    "initializer_inputs": "deployment-visible vector observation and reported active-camera geometry only, as independently validated in v195",
+    "refinement": "exactly two iterations of the unchanged strict v10.1 identity-preconditioned CGLS recurrence",
+    "denominator_floor": 1e-30,
+    "depth": 2,
+    "trainable_parameter_count": 0,
+    "forbidden_post_freeze_changes": [
+      "DCT feature roster, affine center, field basis, rank, Moore-Penrose cutoff, camera order, or coordinate normalization",
+      "CGLS recurrence, depth, preconditioner, denominator floor, line search, damping, clipping, fallback, or stopping rule",
+      "candidate selection, threshold, temporal feature, truth-aware repair, learned parameter, or post-hoc calibration exception"
+    ]
+  },
+  "controls": {
+    "full_dct_k1_parent": "the first checkpoint of the same strict full-DCT-initialized CGLS trajectory; it must reproduce the sealed v195 K1 metrics and fail only the already-recorded three five-camera cells",
+    "zero_cgls_k2": "unchanged strict CGLS from the exact zero field for two iterations",
+    "zero_cgls_k3": "unchanged strict CGLS from the exact zero field for three iterations",
+    "zero_cgls_k4_reference": "unchanged strict CGLS from the exact zero field for four iterations and the accepted reference for this gate"
+  },
+  "physical_replay_and_gates": {
+    "arm_order": [
+      "full_dct_k1_parent",
+      "full_dct_k2",
+      "zero_cgls_k2",
+      "zero_cgls_k3",
+      "zero_cgls_k4_reference"
+    ],
+    "strict_cell_limits": {
+      "field_relative_l2": 0.5,
+      "gradient_relative_l2": 0.75,
+      "observation_relative_l2": 0.2
+    },
+    "complete_calibration_tail_limits": {
+      "field_relative_l2_p90_higher": 0.5,
+      "field_relative_l2_worst": 0.75,
+      "gradient_relative_l2_p90_higher": 0.75,
+      "gradient_relative_l2_worst": 1.0,
+      "observation_relative_l2_p90_higher": 0.2,
+      "observation_relative_l2_worst": 0.35
+    },
+    "required_strict_cells_per_sensor": 1313,
+    "required_strict_cells_total": 2626,
+    "required_complete_calibration_sensor_groups": 26,
+    "all_101_frames_required": true,
+    "hyperparameter_search": "none"
+  },
+  "exact_call_and_cost_ledger": {
+    "full_dct_k1_parent": [2, 1],
+    "full_dct_k2": [3, 2],
+    "zero_cgls_k2": [2, 2],
+    "zero_cgls_k3": [3, 3],
+    "zero_cgls_k4_reference": [4, 4],
+    "exact_call_order": "[vector forward, vector adjoint]",
+    "geometry_cache_forward_equivalents": "26 sensor-calibration setups times 1009 affine basis columns, inherited from v195 and reported separately",
+    "dense_online_work_disclosed": "full-DCT reads all 575 non-DC detector-potential coordinates per active camera and forms a dense 1009-coordinate field initializer",
+    "resource_claim": "none; a logical exact-call difference does not establish wall-time, memory, setup, or whole-pipeline benefit"
+  },
+  "sentinel_roster": {
+    "calibration_index": 6,
+    "frame_indices": [0, 50, 88, 89, 90, 100],
+    "reason": "includes all three previously observed full-DCT K1 five-camera failures plus trajectory anchors"
+  },
+  "fixed_decision_order": [
+    "Any binding, source, isolation, parent-reproduction, call-ledger, finite, completeness, solver-breakdown, camera-permutation, input-tree, or independent-comparison failure makes v196 inconclusive.",
+    "If Zero-CGLS K4 fails any strict cell or complete calibration-sensor tail, conclude INCONCLUSIVE_REFERENCE_ZERO_K4_INADEQUATE_V196; no primary claim is allowed.",
+    "If full_dct_k2 fails any strict cell or complete calibration-sensor tail, conclude FAIL_FULL_DCT_K2_COMPLETE_TRAJECTORY_V196 and close the dense full-DCT K2 reference on this opened trajectory.",
+    "If full_dct_k2 passes and zero_cgls_k2 also passes, conclude PASS_ZERO_K2_CHEAPER_CONTROL_EXPLAINS_V196 and do not advance the full-DCT initializer.",
+    "If full_dct_k2 passes, zero_cgls_k2 fails, and zero_cgls_k3 passes, conclude PASS_ZERO_K3_NEAR_COST_CONTROL_BLOCKS_DENSE_REFERENCE_V196; the one-adjoint difference does not authorize a predictor without a separately frozen complete classical-control and resource gate.",
+    "Only if full_dct_k2 passes all 2626 cells and 26 complete groups while Zero-CGLS K2 and K3 fail and Zero-CGLS K4 passes may v196 conclude PASS_FULL_DCT_K2_DENSE_REFERENCE_HEADROOM_V196 and authorize one separately frozen classical-control gate before any compact predictor.",
+    "No v196 outcome is a compact representation, learned algorithm, validation, external generalization, exact resource speedup, curved-ray result, real BOST result, paper success, or algorithm breakthrough."
+  ],
+  "independent_recomputation": {
+    "required": true,
+    "must_not_import_formal_v196_module_or_strict_solver": true,
+    "must_independently_rebuild": [
+      "the p22 identity, 101 transformed truth fields, reported operators, and all vector observations",
+      "full-DCT initializer fields from the sealed v195 coordinates plus frozen affine center and basis",
+      "a direct float64 identity-CGLS recurrence at warm depths one and two and zero depths two, three, and four",
+      "all 2626-cell metrics, complete calibration tails, exact-call ledgers, sentinel fields, and the non-exchangeable decision"
+    ],
+    "formal_arrays_read_only_after_independent_arrays_are_complete": true,
+    "numeric_relative_tolerance": 1e-8,
+    "near_zero_absolute_tolerance": 1e-10,
+    "metric_absolute_tolerance": 1e-8,
+    "camera_permutation_tolerance": 1e-10,
+    "formal_and_input_trees_unchanged": true
+  },
+  "pre_result_disclosure": {
+    "already_seen": [
+      "all v195 complete-trajectory K0/K1 metrics and controls",
+      "the full-DCT K1 five-camera failures at calibration 6, frames 88 through 90",
+      "all 101 p22 truth frames and both v195 sensor arms"
+    ],
+    "not_read_or_computed_before_this_freeze": [
+      "any full-DCT K2 field, residual, metric, strict mask, tail, or decision on the complete p22 trajectory",
+      "any Zero-CGLS K2, K3, or K4 complete-p22 metric or tail under this v196 contract"
+    ]
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_algorithm": false,
+    "compact_representation": false,
+    "fresh_validation": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  },
+  "status_before_results": "FROZEN_BEFORE_FULL_DCT_K2_COMPLETE_TRAJECTORY_RESULTS_V196"
+}

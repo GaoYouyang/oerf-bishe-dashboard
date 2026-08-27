@@ -1,0 +1,240 @@
+{
+  "schema_version": "oerf-poolfire-exact-k1-dual-view-ridge-v142.4.1",
+  "status": "FROZEN_REPORT_SERIALIZATION_ONLY_RERUN_AFTER_V142_4_FULL_REPLAY",
+  "frozen_at_utc": "2026-08-14T11:59:11Z",
+  "parent_protocol_sha256": "2d79f0a25354a1ef70c65bf5fe204edda469e63588c77567903c1b4bf51eb28a",
+  "scientific_contract_changed": false,
+  "partial_result_reuse_authorized": false,
+  "mechanical_delta": "Convert NumPy scalar values to their native Python scalar equivalents only while serializing the final JSON report. No model, input, fold, threshold, decision rule, physics replay, control, or numerical array is changed, and no partial array from the failed v142.4 validation may be reused.",
+  "scientific_question": "Can the preregistered shared linear exact-K1 direction ridge survive complete-trajectory LOTO and the independently rebuilt geometry feature view, then match Zero-CGLS K4 on all four physical metrics at 3A+3AT?",
+  "reason_for_new_gate": "The original v142.3.2 feature validator completed all 3700 samples but failed its pre-result direction-feature absolute gate. A bounded post-failure attribution found exact K1 dual/residual equality, exact direction tokens, same-basis NumPy/Torch feature agreement at machine precision, and a small discrepancy caused by the independently rebuilt geometric directions. The old release remains consumed and INCONCLUSIVE. This protocol does not relax or overwrite that gate; it requires the final predictor and physical replay to pass under both fixed numerical views.",
+  "visibility_at_freeze": {
+    "v142_3_5_mechanism_capacity_seen": true,
+    "v142_3_5_primary_capacity": "3700/3700 cells and 5/5 trajectories for the fixed pair_depth_projection_only teacher under warm_restart_k1",
+    "v142_3_2_feature_validation_status": "INCONCLUSIVE_EXACT_K1_FEATURE_VALIDATION_V142_3",
+    "v142_3_2_completed_samples": 3700,
+    "v142_3_2_teacher_read": false,
+    "v142_3_2_truth_read": false,
+    "post_failure_attribution_seen": {
+      "sampled_indices_only": true,
+      "same_basis_numpy_torch_max_abs": 3.3306690738754696e-16,
+      "sampled_independent_basis_direction_relative_l2_max": 2.7649255075089108e-9,
+      "sampled_direction_feature_max_abs": 5.421452592413445e-10,
+      "full_3700_per_component_difference_not_preserved": true
+    },
+    "teacher_coefficients_read_by_fit": true,
+    "ridge_fit_seen": true,
+    "heldout_prediction_seen": true,
+    "physical_score_seen": true,
+    "v142_4_validation_failure_status": "INCONCLUSIVE_EXACT_K1_DUAL_VIEW_RIDGE_VALIDATION_V142_4",
+    "v142_4_validation_failure_type": "TypeError",
+    "v142_4_validation_failure_message": "Object of type bool_ is not JSON serializable",
+    "v142_4_scientific_arrays_interpreted": false,
+    "v142_4_partial_result_reuse_allowed": false
+  },
+  "immutable_inputs": {
+    "sample_count": 3700,
+    "trajectory_order": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "camera_counts": [5, 7, 9, 12],
+    "formal_feature_status": "PASS_EXACT_K1_DEPLOYMENT_FEATURE_BARRIER_V142_3",
+    "teacher_status": "PASS_PRETRUTH_EXACT_K1_TEACHER_EXTRACTION_V142_3",
+    "teacher_validation_status": "PASS_INDEPENDENT_RECOMPUTATION_K1_DUAL_FULL_CAPACITY_V142_1",
+    "adjudication_status": "PASS_PRE_RESULT_ADJUDICATION_V142_1",
+    "adjudication_decision": "PASS_WARM_K1_MECHANISM_CAPACITY_HEADROOM_V142_1",
+    "fixed_target": "pair_depth_projection_only",
+    "teacher_ridge_fraction": 0.000001,
+    "old_v141_artifacts_allowed": false
+  },
+  "model": {
+    "label": "shared_linear_exact_k1_direction_ridge",
+    "neural_parameters": 0,
+    "inputs": [
+      "target-camera deployment features",
+      "peer-camera deployment features",
+      "active-camera pooled deployment features",
+      "direction-observable features",
+      "co-permuting direction tokens"
+    ],
+    "camera_numeric_id_feature": false,
+    "prediction_gauge": "unit coefficient RMS",
+    "outer_split": "complete-trajectory leave-one-trajectory-out",
+    "outer_fit_samples": 2960,
+    "outer_heldout_samples": 740,
+    "inner_selection": "leave one of four outer-fit trajectories out",
+    "lambda_grid": [0.000001, 0.0001, 0.01, 1.0],
+    "lambda_tie_break": "larger lambda",
+    "fit_local_normalization": true,
+    "heldout_teacher_read": false,
+    "prediction_barrier_before_truth": true,
+    "nonlinear_rescue_allowed": false
+  },
+  "dual_view_validation": {
+    "formal_view": "sealed v142.3 Torch feature bundle",
+    "independent_view": "rebuild exact K1, pair-depth directions, camera features and direction features with the frozen NumPy geometry implementation",
+    "model_weights_and_fit_normalization_shared_between_views": true,
+    "independent_view_may_refit": false,
+    "formal_prediction_may_select_independent_behavior": false,
+    "both_views_must_be_physically_replayed": true,
+    "reported_feature_and_prediction_differences_are_diagnostic": true,
+    "maximum_per_cell_metric_ratio_difference_between_views": 0.0001,
+    "reason_for_metric_stability_gate": "The allowed implementation-induced metric change is at most 0.01%, at least two orders of magnitude below the 2% trajectory-tail and 5% cell gates."
+  },
+  "physical_gate": {
+    "reference": "Zero-CGLS K4",
+    "candidate": "exact K1 state plus predicted dual correction, exact AT lift, observable line search, then one unchanged restarted CGLS step",
+    "candidate_exact_calls": {"A": 3, "AT": 3},
+    "reference_exact_calls": {"A": 4, "AT": 4},
+    "metrics": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "interior_gradient_relative_l2",
+      "reported_observation_relative_l2"
+    ],
+    "per_cell_metric_ratio_maximum": 1.05,
+    "each_trajectory_p90_higher_ratio_maximum": 1.02,
+    "each_trajectory_worst_ratio_maximum": 1.05,
+    "required_cells_per_view": 3700,
+    "required_trajectories_per_view": 5,
+    "camera_count_and_factor_strata_required": true
+  },
+  "controls": {
+    "newly_replayed": [
+      "joint_ls_warm_restart_k1"
+    ],
+    "bound_independently_validated_controls": [
+      "zero_cgls_k3",
+      "scaled_bp_k2",
+      "geometry_pcgls_k3"
+    ],
+    "zero_cgls_k4_is_reference": true,
+    "learned_advantage_rejected_if_same_or_lower_call_control_passes_or_dominates": true
+  },
+  "independent_validation_implementation": {
+    "stage_1": "Rebuild exact K1, formal and independent pair-depth directions, independent camera/direction features, and both coefficient predictions; seal padded coefficients and formal/independent/joint-LS detector-dual images before any pair-root truth byte is read.",
+    "stage_2": "After the independent prediction barrier, read only the already-opened five-trajectory truth roster and physically replay formal-view ridge, independent-view ridge, and joint-LS through separate exact 3A+3AT shells.",
+    "formal_weights_and_normalization_reused_without_refit": true,
+    "formal_v142_4_model_helper_imported": false,
+    "formal_v142_4_runner_imported": false,
+    "formal_feature_difference_gate_reused": false,
+    "reason_formal_feature_difference_is_diagnostic": "The consumed v142.3.2 release remains numerically inconclusive; v142.4 does not alter its threshold and instead preregisters a stricter downstream physical-stability gate under both views.",
+    "truth_tree_hashed_by_validator_only_after_stage_1_barrier": true,
+    "same_or_lower_control_dominance_must_hold_against_both_views": true,
+    "independent_validation_failure_is_inconclusive": true
+  },
+  "decision_rule": {
+    "both_views_pass_and_controls_fail": "Record current-roster complete-trajectory linear-ridge mechanism evidence and proceed to a separately frozen fresh wall/RSS gate. It remains opened-development evidence until an unopened public external gate passes.",
+    "formal_or_independent_view_fails": "Close the shared linear ridge representation. Do not change the target, lambda grid, feature view, folds, or train a larger model in this branch.",
+    "same_or_lower_control_passes_or_dominates": "Reject the learned-advantage claim.",
+    "execution_or_independent_validation_failure": "Inconclusive; preserve evidence and do not fit or score again under the same release."
+  },
+  "execution": {
+    "single_use_fit_prediction_release": true,
+    "single_use_independent_validation_release": true,
+    "atomic_open_receipt_before_teacher_or_scientific_arrays": true,
+    "atomic_outputs": true,
+    "formal_fit_and_prediction_only_before_score": true,
+    "independent_validator_reads_truth_only_after_all_formal_predictions_are_sealed": true
+  },
+  "authorization": {
+    "ridge_fit_authorized_before_release": false,
+    "prediction_authorized_before_release": false,
+    "scoring_authorized_before_release": false,
+    "neural_training_authorized": false,
+    "resource_gate_authorized": false,
+    "external_gate_authorized": false
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "global_uniqueness": false,
+    "state_of_the_art": false
+  },
+  "source_closure": [
+    [
+      "learning_labs/poolfire_exact_k1_dual_view_ridge_v142_4.py",
+      "15041f9c2a7751790be5e1771511be9d6704eead700c8006973d6735c6d89ca0"
+    ],
+    [
+      "learning_labs/test_poolfire_exact_k1_dual_view_ridge_v142_4.py",
+      "d87a0b181036f307b82bb9f885bf10c3c285cc90128c29c4692ca97c076193ae"
+    ],
+    [
+      "site_tools/freeze_poolfire_exact_k1_dual_view_ridge_release_v142_4.py",
+      "c8fd405383675dc0cfed242a51bcd1b2fc68e0a24795f6095be0444731c4195a"
+    ],
+    [
+      "site_tools/run_poolfire_exact_k1_dual_view_ridge_v142_4.py",
+      "a7f9b8b7c76169e26441e68a72bac191ab6e48b897c12ede9ec459dbe6f11b7f"
+    ],
+    [
+      "site_tools/test_poolfire_exact_k1_dual_view_ridge_v142_4.py",
+      "e3f9d9d6eede03d7caed70403fa3b717c8c5be1713c98ddec9d626c08748b656"
+    ],
+    [
+      "site_tools/freeze_poolfire_exact_k1_dual_view_ridge_validation_v142_4_1.py",
+      "e49b3ec10e9e80dc3d59eadd743d2b92923c56e335da46f8b7e22ea683cbbe7d"
+    ],
+    [
+      "site_tools/validate_poolfire_exact_k1_dual_view_ridge_v142_4_1.py",
+      "a9249a553811353ea431d0179463c9e68e84b6b55075187da48142cd7c43bd92"
+    ],
+    [
+      "site_tools/test_validate_poolfire_exact_k1_dual_view_ridge_v142_4_1.py",
+      "26325b1f0660416cd733b7d1dfb56fa3d45e76f607853a59fe342b8991658769"
+    ],
+    [
+      "site_tools/run_poolfire_pair_resolved_direction_set_loto_fit_v141_3.py",
+      "332858517746fcf70fc10d5082eb92d385f1cabdf56c86f68c58938b03c2d125"
+    ],
+    [
+      "learning_labs/poolfire_pair_resolved_direction_set_predictor_v141_3.py",
+      "edc87add01adfb6aa32186ac68ee5eaf5125e95a523a04c27cfadea7f0ae6c96"
+    ],
+    [
+      "site_tools/validate_poolfire_pair_resolved_direction_set_score_v141_3.py",
+      "cff6794310e67f837c71aec61d846a8abf7385d329b7ae73051adb57403bb6c2"
+    ],
+    [
+      "site_tools/validate_poolfire_exact_k1_deployment_features_v142_3.py",
+      "47ef76b147842a471c9f0347d6d0a041f44226ddded9177189d3dc715e68504a"
+    ],
+    [
+      "site_tools/validate_poolfire_k1_dual_pair_depth_full_capacity_v142_1.py",
+      "6d21cb9ac359f9bb23300d14c1d8f83b96632b587f693e3af3a85149df4aeff7"
+    ],
+    [
+      "site_tools/validate_poolfire_pair_resolved_complete_teacher_v141_2.py",
+      "65e90adf6dbd9c2a719749df561a317b25d945f2a6eeff47b116cdbf3b03f1ca"
+    ],
+    [
+      "site_tools/validate_poolfire_pair_resolved_depth_cost_stage_b_v140_4.py",
+      "5c21d99d67632fc76889b9e2f00b6142d153efc9bc8e9068e7428000a46b2ad2"
+    ],
+    [
+      "site_tools/validate_poolfire_detector_spectral_capacity_v133.py",
+      "2f9f7fbfe6df6430fd9136dff4d5bb916bc486aa6a63fbb2782e1fed0ad955fe"
+    ],
+    [
+      "learning_labs/poolfire_pair_resolved_depth_cost_capacity_v140.py",
+      "1298aa0d2b6c39d1d9825d595c9e2d5f637e172fcc8933a910e018bf56000256"
+    ],
+    [
+      "learning_labs/poolfire_camera_set_classical_screen_v127.py",
+      "602d5120c4d0542bb9e104743cda9dc90fd435ff7c05536ac86ac7d121b90f21"
+    ],
+    [
+      "learning_labs/poolfire_camera_set_factorized_controls_v128.py",
+      "2de5e522db05021f6ef0693c2e567bf9e5543b42d30e16c9e102d9308f7b2f90"
+    ]
+  ]
+}

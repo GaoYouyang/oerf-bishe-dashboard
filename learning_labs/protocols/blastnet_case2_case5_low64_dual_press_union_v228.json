@@ -1,0 +1,136 @@
+{
+  "schema_version": "oerf-private-blastnet-case2-case5-low64-dual-press-union-v228.0.0",
+  "status_before_arrays": "FROZEN_RETROSPECTIVE_LOW64_DUAL_PRESS_UNION_V228",
+  "frozen_at_utc": "2026-08-24T15:13:47Z",
+  "scientific_question": "On already opened BLASTNet Cases 5 and 2, are the independently sealed v226 raw block-PRESS and v227 geometry-studentized block-PRESS acceptance sets genuinely complementary enough that their fixed logical union retains zero unsafe Case 2 accepts while meeting the unchanged per-rig utility, physical-accuracy, and exact-call gates?",
+  "role": "explicitly retrospective post-open mechanism diagnostic; v226 and v227 per-rig failure identities were known before this contract",
+  "known_post_open_lead": {
+    "v226_worst_case5_rig": 11,
+    "v227_worst_case5_rig": 4,
+    "both_worst_rigs_accepted_cells": 4,
+    "frozen_required_cells_per_case5_rig": 5,
+    "consequence": "Any favorable union result is hypothesis-generating evidence about score complementarity, not a preregistered algorithm success or external validation."
+  },
+  "opened_roster": {
+    "conditions": [
+      {
+        "name": "blastnet_case5",
+        "rigs": 13,
+        "frames_per_rig": 42,
+        "role": "already opened one-class calibration and leave-one-rig-out development condition"
+      },
+      {
+        "name": "blastnet_case2",
+        "rigs": 13,
+        "frames_per_rig": 55,
+        "role": "already opened cross-condition safety diagnostic"
+      }
+    ],
+    "camera_count": 9,
+    "low64_rank": 64,
+    "total_cells": 1261,
+    "new_condition_opened": false
+  },
+  "sealed_parent_evidence": {
+    "v226_formal_status": "FORMAL_PENDING_INDEPENDENT_LOW64_BLOCK_PRESS_CERTIFICATE_V226",
+    "v226_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_LOW64_BLOCK_PRESS_CERTIFICATE_V226",
+    "v226_scientific_decision": "FAIL_LOW64_BLOCK_PRESS_CERTIFICATE_V226",
+    "v227_formal_status": "FORMAL_PENDING_INDEPENDENT_LOW64_STUDENTIZED_BLOCK_PRESS_V227",
+    "v227_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_LOW64_STUDENTIZED_BLOCK_PRESS_V227",
+    "v227_scientific_decision": "FAIL_LOW64_STUDENTIZED_BLOCK_PRESS_CERTIFICATE_V227",
+    "v226_formal_tree_sha256": "24b3113cdd794078940870e1fe0e100a0840d6ae8080f39d8f8210d490caf071",
+    "v226_validation_tree_sha256": "01d5e2886610d9c34788e47ca1ce9a1478638951c8e09c4ca1d50b9f813fb9ea",
+    "v227_formal_tree_sha256": "a53e4c669e2e77108d117c00c79e0b89d260b6295557a5f0a9d6c3205d28db1f",
+    "v227_validation_tree_sha256": "909a8de7202ef01839afed4adacc1385f809387812e9b38e0e93831174176fd8",
+    "parent_trees_must_match_before_and_after": true
+  },
+  "observable_policy": {
+    "primary_name": "fixed_raw_OR_studentized_PRESS",
+    "primary_rule": "accept direct Low-64 PCGLS K11 if and only if the sealed v226 raw-PRESS decision OR the sealed v227 studentized-PRESS decision accepts; otherwise use zero-start geometry-Jacobi PCGLS K16",
+    "new_score": null,
+    "new_threshold": null,
+    "new_fit": null,
+    "trainable_parameters": 0,
+    "truth_or_metric_arrays_may_not_be_read_before_union_intersection_and_exclusive_decisions_are_exclusively_sealed": true,
+    "v227_control_decisions_must_exactly_equal_v226_primary_decisions": true,
+    "row_rig_and_condition_indices_must_match_exactly": true
+  },
+  "frozen_diagnostics": {
+    "parents": [
+      "v226_raw_block_PRESS",
+      "v227_geometry_studentized_block_PRESS"
+    ],
+    "secondary_intersection": "v226 AND v227",
+    "exclusive_partitions": [
+      "raw_only",
+      "studentized_only",
+      "both",
+      "neither"
+    ],
+    "report_per_condition_and_per_rig": true,
+    "no_additional_boolean_formula_or_score_region_after_arrays": true
+  },
+  "truth_visible_adjudication": {
+    "safe_definition": "Direct Low-64 PCGLS K11 passes every frozen absolute per-cell gate and every ratio to zero-start geometry-Jacobi PCGLS K16 is at most 1.05.",
+    "minimum_accept_fraction_per_rig": 0.1,
+    "union_requires_zero_unsafe_case2_accepts": true,
+    "union_requires_case5_minimum_accept_fraction_in_every_rig": true,
+    "union_requires_case2_minimum_accept_fraction_in_every_rig": true,
+    "union_requires_complete_physical_policy_accuracy": true,
+    "union_requires_lower_mean_A_and_At_in_every_rig_and_condition": true,
+    "strict_absolute_limits": [0.5, 0.75, 0.75, 0.2],
+    "complete_rig_p90_higher_limits": [0.5, 0.75, 0.75, 0.2],
+    "complete_rig_worst_limits": [0.75, 1.0, 1.0, 0.35],
+    "matched_cell_ratio_maximum": 1.05,
+    "matched_p90_higher_maximum": 1.02,
+    "matched_worst_maximum": 1.05
+  },
+  "cost_ledger": {
+    "accepted_direct_K11_A_At": [12, 11],
+    "fallback_zero_PCGLS_K16_A_At": [16, 16],
+    "union_boolean_A_At": [0, 0],
+    "feature_online_exact_A_At_after_geometry_cache": [0, 0],
+    "feature_dense_linear_algebra": "The raw score is already a byproduct of the v227 full plus nine reduced fits; studentization adds the same nine frozen predictive-covariance solves. The OR adds only a Boolean operation.",
+    "geometry_cache_forward_equivalents_inherited_from_v227": 832,
+    "no_wall_or_rss_claim": true
+  },
+  "independent_validation": {
+    "formal_inputs": "sealed formal v226/v227 decision arrays",
+    "second_inputs": "separately sealed independent v226/v227 decision arrays",
+    "formal_and_independent_each_rebuild_union_intersection_and_exclusive_partitions": true,
+    "formal_and_independent_each_rebuild_support_policy_and_cost_summaries": true,
+    "parent_decisions_must_reproduce_exactly": true,
+    "combined_decisions_must_match_exactly": true,
+    "summary_absolute_tolerance": 1e-10,
+    "parent_trees_must_remain_unchanged": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "decision_order": [
+    "invalid parent seal, alignment, truth barrier, parent drift, or independent mismatch -> INCONCLUSIVE_INVALID_RETROSPECTIVE_DUAL_PRESS_UNION_V228",
+    "union fails safety, per-rig utility, physical accuracy, or per-rig cost -> FAIL_RETROSPECTIVE_DUAL_PRESS_COMPLEMENTARITY_V228",
+    "union passes all opened gates -> POST_OPEN_COMPLEMENTARY_DUAL_PRESS_SIGNAL_V228"
+  ],
+  "interpretation_if_union_passes": "The opened Cases 2 and 5 contain complementary observable evidence across the two already chosen scores; the v226/v227 bottleneck is consistent with scalar aggregation or cross-rig calibration rather than absence of every observable safety signal. This does not validate the OR rule on unseen data.",
+  "stop_rules": {
+    "no_boolean_formula_threshold_covariance_floor_acceptance_fraction_rank_or_solver_depth_retuning_after_arrays": true,
+    "no_claim_of_preregistration_blindness_algorithm_success_or_external_generalization": true,
+    "do_not_open_Case4_Case6_PoolFire_validation_or_test": true,
+    "no_CNN_FNO_UNO_DeepONet_or_GPU_rescue": true,
+    "no_wall_or_RSS_run": true,
+    "failure_closes_the_fixed_OR_diagnostic": true,
+    "success_only_supports_a_future_results_before_contract_on_genuinely_new_data": true
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployment_algorithm": false,
+    "preregistered_success": false,
+    "exact_call_reduction_established": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

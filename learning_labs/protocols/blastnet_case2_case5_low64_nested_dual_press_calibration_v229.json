@@ -1,0 +1,138 @@
+{
+  "schema_version": "oerf-private-blastnet-case2-case5-low64-nested-dual-press-calibration-v229.0.0",
+  "status_before_scores": "FROZEN_POST_OPEN_NESTED_DUAL_PRESS_CALIBRATION_V229",
+  "frozen_at_utc": "2026-08-24T16:16:23Z",
+  "scientific_question": "Can the complementary continuous v226 raw block-PRESS and v227 geometry-studentized PRESS signals be combined by one target-rig-identity-blind nested calibration rule that meets the unchanged safety, complete-rig utility, physical-accuracy, and exact-call gates on already opened BLASTNet Cases 5 and 2?",
+  "role": "results-before for v229 score deserialization, but explicitly post-open development because Cases 5 and 2 and the v226/v227/v228 failure identities were already known when this single calibration formula was chosen",
+  "opened_roster": {
+    "conditions": [
+      {
+        "name": "blastnet_case5",
+        "rigs": 13,
+        "frames_per_rig": 42,
+        "role": "already opened nested leave-one-rig-out calibration and development condition"
+      },
+      {
+        "name": "blastnet_case2",
+        "rigs": 13,
+        "frames_per_rig": 55,
+        "role": "already opened cross-condition safety diagnostic; never enters calibration"
+      }
+    ],
+    "camera_count": 9,
+    "low64_rank": 64,
+    "total_cells": 1261,
+    "new_condition_opened": false
+  },
+  "sealed_parent_evidence": {
+    "v226_formal_status": "FORMAL_PENDING_INDEPENDENT_LOW64_BLOCK_PRESS_CERTIFICATE_V226",
+    "v226_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_LOW64_BLOCK_PRESS_CERTIFICATE_V226",
+    "v226_scientific_decision": "FAIL_LOW64_BLOCK_PRESS_CERTIFICATE_V226",
+    "v227_formal_status": "FORMAL_PENDING_INDEPENDENT_LOW64_STUDENTIZED_BLOCK_PRESS_V227",
+    "v227_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_LOW64_STUDENTIZED_BLOCK_PRESS_V227",
+    "v227_scientific_decision": "FAIL_LOW64_STUDENTIZED_BLOCK_PRESS_CERTIFICATE_V227",
+    "v228_formal_status": "FORMAL_PENDING_INDEPENDENT_RETROSPECTIVE_DUAL_PRESS_UNION_V228",
+    "v228_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_RETROSPECTIVE_DUAL_PRESS_UNION_V228",
+    "v228_scientific_decision": "POST_OPEN_COMPLEMENTARY_DUAL_PRESS_SIGNAL_V228",
+    "v226_formal_tree_sha256": "24b3113cdd794078940870e1fe0e100a0840d6ae8080f39d8f8210d490caf071",
+    "v226_validation_tree_sha256": "01d5e2886610d9c34788e47ca1ce9a1478638951c8e09c4ca1d50b9f813fb9ea",
+    "v227_formal_tree_sha256": "a53e4c669e2e77108d117c00c79e0b89d260b6295557a5f0a9d6c3205d28db1f",
+    "v227_validation_tree_sha256": "909a8de7202ef01839afed4adacc1385f809387812e9b38e0e93831174176fd8",
+    "v228_formal_tree_sha256": "98a9ae1175a4817d0277909c9d83cf72e486f87baff48cbb2fa666d0fa845e9e",
+    "v228_validation_tree_sha256": "8ea66b2064cf7399e6d7980f4a916930a8305044e15cd094d37aa54710238fe3",
+    "parent_trees_must_match_before_and_after": true
+  },
+  "observable_calibration": {
+    "primary_name": "nested_jackknife_dual_PRESS_envelope",
+    "score_direction": "lower is safer for both parents",
+    "minimum_accept_fraction": 0.1,
+    "order_statistic": "stable sort, zero-based index ceil(0.1*n)-1; equality accepts",
+    "parent_threshold": "For each score separately, take the maximum across fit rigs of that rig's fixed lower-tail order statistic.",
+    "inner_normalized_envelope": "For each inner held-out fit rig k, divide each parent score by its threshold calibrated on all other fit rigs and take the pointwise minimum of the two ratios.",
+    "envelope_multiplier": "Take the maximum across inner held-out fit rigs of that rig's fixed 10-percent order statistic of the normalized envelope.",
+    "target_rule": "Using parent thresholds and multiplier fitted without the target rig, accept direct Low-64 PCGLS K11 exactly when min(raw/tau_raw, studentized/tau_studentized) <= multiplier; otherwise use zero-start geometry-Jacobi PCGLS K16.",
+    "case5_outer_calibration": "For each target Case5 rig, all other 12 Case5 rigs are the fit set; the target rig's scores and identity do not enter its thresholds or multiplier.",
+    "case2_calibration": "All 13 Case5 rigs form the fit set; no Case2 score, rig identity, metric, or truth enters thresholds or multiplier.",
+    "positive_parent_threshold_required": true,
+    "threshold_floor": null,
+    "weights": null,
+    "soft_min_temperature": null,
+    "additional_candidate_formula": null,
+    "trainable_parameters": 0,
+    "truth_or_metric_arrays_may_not_be_read_before_all_primary_scores_thresholds_multipliers_envelopes_and_decisions_are_exclusively_sealed": true
+  },
+  "frozen_controls": {
+    "raw_v226_policy": "diagnostic control only",
+    "studentized_v227_policy": "diagnostic control only",
+    "fixed_v228_OR": "post-open diagnostic control only",
+    "no_control_may_replace_the_primary": true
+  },
+  "truth_visible_adjudication": {
+    "safe_definition": "Direct Low-64 PCGLS K11 passes every frozen absolute per-cell gate and every ratio to zero-start geometry-Jacobi PCGLS K16 is at most 1.05.",
+    "minimum_accept_fraction_per_rig": 0.1,
+    "primary_requires_zero_unsafe_case2_accepts": true,
+    "primary_requires_minimum_accept_fraction_in_every_Case5_and_Case2_rig": true,
+    "primary_requires_complete_physical_policy_accuracy": true,
+    "primary_requires_lower_mean_A_and_At_in_every_rig_and_condition": true,
+    "strict_absolute_limits": [0.5, 0.75, 0.75, 0.2],
+    "complete_rig_p90_higher_limits": [0.5, 0.75, 0.75, 0.2],
+    "complete_rig_worst_limits": [0.75, 1.0, 1.0, 0.35],
+    "matched_cell_ratio_maximum": 1.05,
+    "matched_p90_higher_maximum": 1.02,
+    "matched_worst_maximum": 1.05
+  },
+  "noninterference": {
+    "mutating_a_target_Case5_rig_scores_must_not_change_its_raw_threshold_studentized_threshold_or_envelope_multiplier": true,
+    "mutating_any_Case2_score_must_not_change_Case2_calibration": true,
+    "heldout_truth_label_metric_failure_identity_or_control_decision_may_not_enter_calibration": true,
+    "row_rig_and_condition_indices_must_match_exactly": true
+  },
+  "cost_ledger": {
+    "accepted_direct_K11_A_At": [12, 11],
+    "fallback_zero_PCGLS_K16_A_At": [16, 16],
+    "nested_scalar_calibration_A_At": [0, 0],
+    "feature_online_exact_A_At_after_geometry_cache": [0, 0],
+    "geometry_cache_forward_equivalents_inherited_from_v227": 832,
+    "dense_linear_algebra_inherited_from_parent_scores": true,
+    "no_wall_or_rss_claim": true
+  },
+  "independent_validation": {
+    "formal_inputs": "sealed formal v226/v227 continuous score arrays",
+    "second_inputs": "separately sealed independent v226/v227 continuous score arrays",
+    "second_implementation": "manual stable sorting and explicit nested rig loops; it may not import the formal v229 helper or runner",
+    "formal_and_independent_each_rebuild_thresholds_multipliers_envelopes_decisions_support_policy_and_cost": true,
+    "continuous_parent_scores_absolute_tolerance": 1e-10,
+    "threshold_multiplier_envelope_and_summary_absolute_tolerance": 1e-10,
+    "combined_decisions_must_match_exactly": true,
+    "parent_and_formal_trees_must_remain_unchanged": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "decision_order": [
+    "invalid parent seal, index alignment, positive threshold, observable-before-truth barrier, noninterference, parent drift, or independent mismatch -> INCONCLUSIVE_INVALID_NESTED_DUAL_PRESS_CALIBRATION_V229",
+    "primary fails Case2 safety, any Case5/Case2 per-rig utility, complete physical accuracy, or per-rig exact-call reduction -> FAIL_NESTED_DUAL_PRESS_CALIBRATION_V229",
+    "primary passes every opened gate -> POST_OPEN_FOLD_LOCAL_DUAL_PRESS_CALIBRATION_HEADROOM_V229"
+  ],
+  "interpretation_if_primary_passes": "The already opened Cases 5 and 2 support a target-rig-identity-blind fold-local calibration mechanism for the two complementary observable scores. Because the formula was chosen after v228, this remains post-open development evidence and only authorizes a separately frozen unopened-condition gate.",
+  "stop_rules": {
+    "no_fraction_order_statistic_envelope_formula_threshold_floor_weight_temperature_rank_solver_depth_or_parent_score_retuning_after_scores": true,
+    "no_claim_of_preregistered_external_deployment_or_algorithm_success": true,
+    "do_not_open_Case4_Case6_PoolFire_validation_or_test_in_v229": true,
+    "no_CNN_FNO_UNO_DeepONet_or_GPU_rescue": true,
+    "no_wall_or_RSS_run": true,
+    "failure_closes_the_nested_dual_PRESS_calibration_route": true,
+    "success_only_authorizes_a_separately_frozen_external_gate": true
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployment_algorithm": false,
+    "preregistered_success": false,
+    "exact_call_reduction_established": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

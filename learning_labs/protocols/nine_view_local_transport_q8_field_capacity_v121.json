@@ -1,0 +1,24 @@
+{
+  "schema_version": "oerf-nine-view-local-transport-q8-field-capacity-v121.0",
+  "status": "FROZEN_BEFORE_TRUTH_AUDIT",
+  "purpose": "A truth-aware, pre-K1 capacity diagnostic for a physically distinct local transport object after v118 BP-difference and v119.1 residual transport were closed.",
+  "scope": "already-open v111 PoolFire proxy bundles only; known geometry; noiseless straight-ray proxy; no deployment, call-reduction, wall/RSS, external, neural, or real-BOST claim",
+  "deployment_visible_construction": {
+    "inputs": ["current q8 initial field", "previous q8 initial field", "previous cheap factor BP", "current cheap factor BP", "known geometry"],
+    "motion_source": "presealed v117 local phase shifts; accepted exactly when integer shift is nonzero and relative coherence improvement exceeds 1e-12",
+    "formula": "start from q8_current; for each accepted fixed block replace only that block by zero_fill_shift(q8_previous, v117_shift); all other blocks remain q8_current",
+    "truth_forbidden_in_construction": true,
+    "truth_forbidden_in_selection": true
+  },
+  "truth_aware_question": "Across every signal-bearing frozen frame-context, does transported previous q8 reduce initial full-field relative-L2 error versus direct current q8 often enough to establish pre-K1 representation headroom?",
+  "roster": "v111 five trajectories x three geometries x six held-out coordinate maps x frozen frames; frame 0 cannot be signal-bearing because it has no predecessor",
+  "metric": "initial_field_error_reduction = 1 - relative_l2(transported_q8, truth) / relative_l2(q8_current, truth)",
+  "capacity_gate": {
+    "signal_bearing_contexts_must_be_nonzero": true,
+    "median_reduction_strictly_positive": true,
+    "positive_reduction_fraction_minimum": 0.60
+  },
+  "failure_action": "If the capacity gate fails, close simple blockwise previous-q8 replacement under the frozen v117 motion cue. Do not rescue it with a neural network or a new blend search.",
+  "pass_action": "A pass authorizes only a separately frozen deployment-visible candidate and full eight-gate score. It does not authorize training, resource claims, external generalization, or real-BOST claims.",
+  "claim_boundary": "Truth is decoded only after v117 motion input and the validated v111 bundle barrier are verified. This is not a deployable warm start and algorithm_breakthrough remains false."
+}

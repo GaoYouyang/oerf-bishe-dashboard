@@ -1,0 +1,143 @@
+{
+  "schema_version": "oerf-poolfire-k1-dual-direction-conditioned-identifiability-v146.0",
+  "status": "FROZEN_AFTER_V145_NEGATIVE_BEFORE_DIRECTION_CONDITIONED_NEIGHBOR_EXTRACTION",
+  "frozen_at_utc": "2026-08-14T16:33:22Z",
+  "scientific_question": "After hard-matching active camera count, does a direction-conditioned local-plus-global deployment-visible metric identify the 96-key Riesz-action target across complete PoolFire trajectories?",
+  "reason_for_new_gate": "v145 closed one shared global camera-set neighborhood. Its post-result audit showed material cross-trajectory camera-count mixing, but same-trajectory neighborhoods already had more than 95 percent same-count edges and still failed. v146 therefore changes the representation in the smallest physically distinct way: camera count is matched exactly, each structural direction has its own local state, and global moments and observable-pose coupling are added as equal-weight blocks rather than allowed to dominate by dimensionality.",
+  "parent_evidence": {
+    "required_scientific_decision": "FAIL_GLOBAL_CAMERA_STATE_IDENTIFIABILITY_V145",
+    "required_audit_status": "PASS_POST_RESULT_CAMERA_COUNT_MIXING_AUDIT_V145_1",
+    "v145_formal_manifest_sha256": "36af2e39fff003f9dd60c6a8478e6df5c691ff2e8b38ab6fe6d985e25af12c62",
+    "v145_independent_validation_sha256": "2a580d2806aa7ec8e53b8a1cb691610306fce5e8cae4f7150bb6aef372fea63c",
+    "v145_camera_count_audit_sha256": "b866f68c6ebbbbc6ac83503abaf59c378f02bb60f5c042a6ac0f4edc4f7f54d8",
+    "deployment_feature_manifest_sha256": "0acc8e269f9584a4da5351f3ec1f99135300858cd70c9f0036173abb69bc84f2",
+    "v143_teacher_manifest_sha256": "b8aed2e1012a6a92b86ae08ae5489f937bc429b8e71d4f6cd433fc39d41c14af",
+    "new_direction_conditioned_neighbors_read": false,
+    "new_predictions_read": false,
+    "new_metrics_read": false
+  },
+  "immutable_roster": {
+    "sample_count": 3700,
+    "samples_per_trajectory": 740,
+    "samples_per_camera_count_per_trajectory": 185,
+    "trajectories": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "camera_counts": [5, 7, 9, 12],
+    "outer_split": "complete-trajectory leave-one-trajectory-out",
+    "stage_a_sentinels": "reuse the frozen v143 one-per-trajectory-by-camera-count roster",
+    "stage_a_sentinel_count": 20,
+    "stage_b_full_trajectory_authorization": "run all 3700 cells only if at least one cross-trajectory Stage-A method passes all 20 sentinels and all five four-sentinel trajectory tails",
+    "teacher_target": "validated v143 geometry-local block Riesz action",
+    "structural_key_count": 96,
+    "direction_selector": "reuse the target-blind v144 SHA256 structural-key selector",
+    "validation_or_test_truth_allowed": false
+  },
+  "deployment_visible_blocks": {
+    "direction_local": {
+      "width": 155,
+      "definition": "the v143 target-camera, peer-camera, pooled-camera, direction-observable and discrete-token design for the target-blind selected direction"
+    },
+    "global_moments": {
+      "width": 90,
+      "definition": "active-camera mean and population standard deviation of all 45 per-camera deployment-visible features; camera-count one-hot is omitted because count is matched exactly"
+    },
+    "global_observable_pose_coupling": {
+      "width": 486,
+      "definition": "flattened 27x18 active-camera cross-covariance between centered detector-observable features and centered reported-pose features"
+    },
+    "teacher_or_truth_used_in_any_block": false,
+    "numeric_camera_id_used": false,
+    "camera_permutation_invariant": true,
+    "variable_cardinality_supported": [5, 7, 9, 12]
+  },
+  "metric": {
+    "camera_count_match": "candidate camera count must exactly equal query camera count before any distance is evaluated",
+    "cross_candidates_per_query": 740,
+    "within_candidates_per_query": 184,
+    "neighbor_count": 8,
+    "outer_fit_whitening": "for every held-out trajectory and camera count, global blocks use the 740 same-count fit samples; each direction-local block additionally conditions on the structural key",
+    "active_dimension_minimum_standard_deviation": 1e-10,
+    "block_distance": "root mean squared standardized Euclidean distance over active dimensions",
+    "combined_distance": "square root of the arithmetic mean of squared block distances, so local, moments and pose-coupling blocks have equal total weight",
+    "tie_break": "distance, candidate sample index, candidate direction index",
+    "weight": "inverse distance with denominator floor 1e-6",
+    "hyperparameter_selection": "none",
+    "trainable_parameters": 0,
+    "additional_exact_A_calls": 0,
+    "additional_exact_AT_calls": 0
+  },
+  "stage_a_methods": {
+    "cross": [
+      "cross_global_moments",
+      "cross_global_pose_coupled",
+      "cross_local_only",
+      "cross_local_moments",
+      "cross_local_pose_coupled"
+    ],
+    "same_trajectory_post_open_diagnostics": [
+      "within_global_moments",
+      "within_global_pose_coupled",
+      "within_local_only",
+      "within_local_moments",
+      "within_local_pose_coupled"
+    ],
+    "cheap_control": "count_mean",
+    "prediction_target": "one target-blind selected Riesz-action scalar per candidate sample and structural key; the 96 predicted scalars form one sample target vector"
+  },
+  "barriers": {
+    "all_neighbor_indices_sealed_before_any_action_label_is_read": true,
+    "cross_predictions_use_only_outer_fit_trajectory_labels": true,
+    "heldout_trajectory_labels_never_indexed_by_cross_predictors": true,
+    "same_trajectory_diagnostics_exclude_query_label": true,
+    "query_target_used_in_its_own_prediction": false,
+    "heldout_query_target_used_for_block_generation_whitening_or_neighbors": false,
+    "stage_b_not_started_before_independently_validated_stage_a_pass": true,
+    "process_level_global_query_label_never_read_claimed": false
+  },
+  "target_space_gate": {
+    "scale_invariant_relative_l2_maximum_each_frozen_sentinel": 0.45,
+    "cosine_minimum_each_frozen_sentinel": 0.9,
+    "scale_invariant_relative_l2_p90_higher_maximum_each_four_sentinel_trajectory": 0.35,
+    "all_20_frozen_sentinels_required": true,
+    "all_5_trajectory_tails_required": true,
+    "same_gate_applies_to_all_methods_and_control": true
+  },
+  "decision_rule": {
+    "count_mean_passes": "Prefer the cheaper count-conditioned mean and close nonlinear direction-conditioned claims.",
+    "cross_global_method_passes": "Record hard-count global-state sentinel headroom and require Stage B before any predictor.",
+    "cross_local_only_passes": "Record direction-local sentinel headroom and require Stage B before any predictor.",
+    "cross_local_moments_passes_while_cheaper_methods_fail": "Record local-plus-global-moment sentinel headroom and require Stage B before any predictor.",
+    "cross_local_pose_coupled_passes_while_cheaper_methods_fail": "Record local-plus-observable-pose sentinel headroom and require Stage B before any predictor.",
+    "no_cross_method_passes_but_any_within_method_passes": "Close cross-trajectory transfer under the frozen metric; do not train a larger model.",
+    "no_cross_or_within_method_passes": "Close the frozen hard-count direction-conditioned neighbor family; do not rescue it with GPU or a larger model.",
+    "execution_or_independent_recomputation_failure": "Inconclusive; preserve evidence and do not interpret partial arrays."
+  },
+  "independent_validation": {
+    "separate_implementation_must_rebuild_direction_table_and_155D_local_rows": true,
+    "rebuild_90D_moments_and_486D_pose_coupling": true,
+    "rebuild_count_matched_cross_and_within_candidate_rosters": true,
+    "recompute_block_whitening_distances_neighbors_predictions_and_gates": true,
+    "formal_arrays_read_only_after_independent_outputs_are_sealed": true,
+    "maximum_float_array_absolute_difference": 1e-9,
+    "summary_float_absolute_difference": 1e-12,
+    "integer_neighbor_arrays_exact": true,
+    "scientific_decision_exact": true
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "physical_replay": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "global_unidentifiability_proven": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "schema_version": "oerf-poolfire-k1-dual-global-camera-state-v145.0",
+  "status": "FROZEN_AFTER_V144_NEGATIVE_BEFORE_GLOBAL_STATE_EXTRACTION",
+  "frozen_at_utc": "2026-08-14T15:41:45Z",
+  "scientific_question": "Does one permutation-invariant global camera-set state identify the full 96-key Riesz-action target more reliably than the v144 direction-local neighborhoods?",
+  "reason_for_new_gate": "v144 independently showed that the existing 155-dimensional per-direction metric reaches only 1/20 cross-trajectory and 8/20 same-trajectory sentinels. v145 changes the physical representation rather than enlarging that local model: all 96 structural directions share one sample-level camera-set neighborhood, and the richer signature explicitly couples deployment-visible detector state to reported pose.",
+  "parent_evidence": {
+    "required_scientific_decision": "FAIL_LOCAL_OBSERVABLE_IDENTIFIABILITY_V144",
+    "formal_manifest_sha256": "d13a2b289d2a397ea36c1ba29c61ea8c587cf4b20a6841f56227a4cf279b163f",
+    "independent_validation_sha256": "d7a79ce295b5910d4e9ab110f81147caeda5f4c1636617919bb2e6fb3dc93aa0",
+    "post_result_tolerance_audit_sha256": "dc9db82440aee1eb13e5d9c231e36b2e2fb45aae5587a913576ffba83d27db16",
+    "deployment_feature_manifest_sha256": "0acc8e269f9584a4da5351f3ec1f99135300858cd70c9f0036173abb69bc84f2",
+    "v143_teacher_manifest_sha256": "b8aed2e1012a6a92b86ae08ae5489f937bc429b8e71d4f6cd433fc39d41c14af",
+    "new_global_signatures_read": false,
+    "new_neighbor_indices_read": false,
+    "new_predictions_read": false
+  },
+  "immutable_roster": {
+    "sample_count": 3700,
+    "samples_per_trajectory": 740,
+    "trajectories": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "camera_counts": [5, 7, 9, 12],
+    "outer_split": "complete-trajectory leave-one-trajectory-out",
+    "sentinel_indices": "reuse the frozen v143 one-per-trajectory-by-camera-count roster",
+    "sentinel_count": 20,
+    "teacher_target": "validated v143 geometry-local block Riesz action",
+    "structural_key_count": 96,
+    "direction_selector": "reuse the target-blind v144 SHA256 structural-key selector",
+    "validation_or_test_truth_allowed": false
+  },
+  "deployment_visible_inputs": {
+    "camera_feature_source": "the sealed v142.3 45-dimensional per-camera feature: observation, exact-K1 residual and exact-K1 dual low-frequency detector summaries plus reported pose",
+    "active_camera_mask_source": "sealed camera count in the v142.3 feature barrier",
+    "teacher_or_truth_used_in_signature": false,
+    "numeric_camera_id_used": false,
+    "camera_permutation_invariant": true,
+    "variable_cardinality_supported": [5, 7, 9, 12]
+  },
+  "global_signatures": {
+    "moments_control": {
+      "width": 94,
+      "definition": "four-way active-camera-count one-hot, active-camera mean of all 45 features, and active-camera population standard deviation of all 45 features"
+    },
+    "observable_pose_coupled_primary": {
+      "width": 580,
+      "definition": "the 94 moment features followed by the flattened 27x18 active-camera cross-covariance between centered detector-observable features and centered reported-pose features",
+      "physical_role": "retain which deployment-visible detector state co-varies with which reported camera geometry while remaining invariant to camera order"
+    },
+    "outer_fit_whitening": "per fold and per signature, mean and population standard deviation from all 2960 outer-fit samples",
+    "active_dimension_minimum_standard_deviation": 1e-10,
+    "distance": "root mean squared Euclidean distance over active whitened dimensions"
+  },
+  "fixed_predictors": {
+    "cross_trajectory_candidate_samples": "all 2960 outer-fit samples",
+    "same_trajectory_diagnostic_candidates": "all other 739 samples from the opened query trajectory",
+    "neighbor_count": 8,
+    "weight": "inverse distance with denominator floor 1e-6",
+    "prediction_target": "one 96-key target vector per candidate sample using the frozen structural-key selector",
+    "shared_neighbor_rule": "one neighbor roster predicts all 96 keys for a query",
+    "cheap_control": "outer-fit mean 96-key target conditioned only on active camera count",
+    "hyperparameter_selection": "none",
+    "trainable_parameters": 0,
+    "additional_exact_A_calls": 0,
+    "additional_exact_AT_calls": 0
+  },
+  "barriers": {
+    "neighbor_indices_sealed_before_any_action_label_is_read": true,
+    "cross_predictions_use_only_outer_fit_trajectory_labels": true,
+    "heldout_trajectory_labels_never_indexed_by_its_cross_fold_predictor": true,
+    "same_trajectory_diagnostic_excludes_the_query_label": true,
+    "same_trajectory_diagnostic_is_post_open_and_not_deployable": true,
+    "query_target_value_used_in_its_own_prediction": false,
+    "heldout_query_target_used_for_signature_or_neighbor_selection": false,
+    "process_level_global_query_label_never_read_claimed": false,
+    "reason_process_level_never_read_not_claimed": "Every sample is an outer-fold query and also an eligible fit candidate for other trajectory folds; the same-trajectory post-open diagnostic reads other labels from the query trajectory. Isolation is therefore asserted and audited per cross fold, not as a false process-wide claim."
+  },
+  "target_space_gate": {
+    "scale_invariant_relative_l2_maximum_each_frozen_sentinel": 0.45,
+    "cosine_minimum_each_frozen_sentinel": 0.9,
+    "scale_invariant_relative_l2_p90_higher_maximum_each_full_trajectory": 0.35,
+    "all_20_frozen_sentinels_required": true,
+    "all_5_complete_trajectory_tails_required": true,
+    "all_3700_cell individual pass fraction reported_not_gated": true,
+    "same_gate_applies_to_all_predictors_and_control": true
+  },
+  "decision_rule": {
+    "count_mean_control_passes": "Prefer the cheaper camera-count mean and close learned/nonlinear global-state claims.",
+    "cross_moments_passes_and_control_fails": "Record global-moment representation headroom; only a separately frozen all-direction CPU predictor may follow.",
+    "cross_coupled_passes_while_cheaper_methods_fail": "Record observable-pose coupling headroom; only a separately frozen all-direction CPU predictor may follow.",
+    "same_trajectory_moments_or_coupled_passes_but_cross_fails": "Record within-trajectory identifiability without cross-trajectory transfer; do not train a larger model.",
+    "both_same_trajectory_signatures_fail": "Close the frozen global moment and observable-pose-coupled local metrics; do not rescue them with GPU or a larger model.",
+    "execution_or_independent_recomputation_failure": "Inconclusive; preserve evidence and do not interpret partial arrays."
+  },
+  "independent_validation": {
+    "rebuild_camera-count roster and both global signatures": true,
+    "rebuild complete-trajectory and same-trajectory candidate rosters": true,
+    "recompute whitening, exact neighbor order, predictions and all-cell metrics": true,
+    "rebuild structural direction table without importing formal v145 code": true,
+    "formal arrays read_only_after_independent_outputs_are_sealed": true,
+    "maximum_float_array_absolute_difference": 1e-9,
+    "summary_float_absolute_difference": 1e-12,
+    "integer_neighbor_arrays_exact": true,
+    "scientific_decisions_exact": true
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "global_unidentifiability_proven": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

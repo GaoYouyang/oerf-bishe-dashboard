@@ -1,0 +1,146 @@
+{
+  "schema_version": "oerf-private-blastnet-case2-case5-low64-block-press-v226.0.0",
+  "status_before_results": "FROZEN_LOW64_BLOCK_PRESS_CERTIFICATE_V226",
+  "frozen_at_utc": "2026-08-24T09:45:00Z",
+  "scientific_question": "Can camera-block leave-one-out predictive inflation, computed only from the current observations and reported Low-64 geometry response, provide a fail-closed direct-K11 certificate across the already opened BLASTNet Case 5 and Case 2 conditions?",
+  "role": "post-open development diagnostic on already opened BLASTNet Cases 5 and 2",
+  "parent_evidence": {
+    "v221": "PASS_INDEPENDENT_RECOMPUTATION_LOW64_EXACT_ROWSPACE_LIFT_V221",
+    "v222_1": "PASS_INDEPENDENT_ALGEBRAIC_NULLSPACE_ATTRIBUTION_V222_1",
+    "v223": "FAIL_LOW64_HARMONIC_RISK_OVERLAP_V223",
+    "v224": "FAIL_LOW64_CAMERA_JACKKNIFE_RISK_OVERLAP_V224",
+    "v225": "FAIL_LOW64_ANGULAR_SPECTRUM_MUTUAL_SUPPORT_V225"
+  },
+  "opened_roster": {
+    "conditions": [
+      {
+        "name": "blastnet_case5",
+        "rigs": 13,
+        "frames_per_rig": 42,
+        "role": "known-safe one-class calibration with leave-one-rig-out evaluation"
+      },
+      {
+        "name": "blastnet_case2",
+        "rigs": 13,
+        "frames_per_rig": 55,
+        "role": "cross-condition scoring whose truth is unavailable until decisions are sealed"
+      }
+    ],
+    "camera_count": 9,
+    "low64_rank": 64,
+    "new_condition_opened": false
+  },
+  "observable_before_truth_barrier": {
+    "inputs": [
+      "nine-camera synthetic observations",
+      "reported-geometry fixed Low-64 response"
+    ],
+    "full_fit": "Compute the unregularized Moore-Penrose Low-64 fit from all nine camera blocks.",
+    "camera_block_press": "For each camera j, refit Low-64 on the other eight camera blocks and predict the completely held-out block j.",
+    "feature_arrays_thresholds_and_decisions_must_be_exclusively_sealed_before_truth_metric_arrays_are_deserialized": true,
+    "heldout_case2_truth_may_not_affect_feature_generation_threshold_tie_break_or_decision": true
+  },
+  "primary_certificate": {
+    "name": "camera_block_PRESS_inflation",
+    "heldout_error": "E_press=sqrt(sum_j ||M_j c_minus_j-y_j||_2^2)",
+    "full_fit_error": "E_full=||M c-y||_2",
+    "score": "P=E_press/max(E_full,1e-12*||y||_2)",
+    "orientation": "lower is safer",
+    "zero_observation_rule": "Every observation norm must be strictly positive; otherwise execution is invalid.",
+    "rank_rule": "The full response and every eight-camera response must have numerical rank 64; otherwise execution is invalid.",
+    "camera_permutation_invariant": true,
+    "variable_cardinality_formula_defined": false,
+    "cardinality_boundary": "This diagnostic is frozen only for the current nine-camera roster and does not establish 5/7/12-camera behavior.",
+    "trainable_parameters": 0
+  },
+  "cheap_control": {
+    "name": "full_fit_relative_residual",
+    "score": "Q=||M c-y||_2/||y||_2",
+    "orientation": "lower is safer",
+    "same_calibration_policy_and_gates_as_primary": true,
+    "role": "If the single full-fit residual passes, it explains any PRESS headroom without nine reduced fits."
+  },
+  "case5_only_calibration": {
+    "minimum_accept_fraction_per_rig": 0.1,
+    "order_statistic": "For each fit rig with n frames, sort scores ascending and take index ceil(0.1*n)-1.",
+    "threshold": "Maximum of the per-fit-rig order statistics so every fit rig contributes at least the fixed utility fraction; equality accepts.",
+    "case5_evaluation": "For each held-out Case5 rig, rebuild the threshold from the other twelve rigs only.",
+    "case2_evaluation": "Build one threshold from all thirteen Case5 rigs and apply it unchanged to Case2.",
+    "threshold_search": false,
+    "hyperparameter_search": false,
+    "unsafe_label_training": false,
+    "case2_feature_statistics_forbidden_from_threshold": true
+  },
+  "truth_visible_adjudication": {
+    "safe_definition": "Direct Low-64 PCGLS K11 passes every frozen absolute per-cell gate and every ratio to Zero-PCGLS K16 is at most 1.05.",
+    "minimum_accept_fraction_per_rig": 0.1,
+    "primary_requires_zero_unsafe_case2_accepts": true,
+    "primary_requires_case5_loro_minimum_accept_fraction_in_every_rig": true,
+    "primary_requires_case2_minimum_accept_fraction_in_every_rig": true,
+    "primary_requires_complete_physical_policy_accuracy": true,
+    "primary_requires_lower_actual_A_and_At_in_every_rig_and_condition": true,
+    "control_if_it_passes_blocks_primary_specific_headroom": true
+  },
+  "truth_visible_capacity_labels": {
+    "direct_arm": "direct_low64_pcgls_k11",
+    "reference_arm": "zero_geometry_jacobi_pcgls_k16",
+    "strict_absolute_limits": [0.5, 0.75, 0.75, 0.2],
+    "matched_cell_ratio_maximum": 1.05,
+    "truth_role": "Truth and reference metrics are deserialized only after both scores, thresholds, and all decisions are exclusively sealed.",
+    "not_a_deployment_threshold": true
+  },
+  "selected_policy_gate": {
+    "complete_rig_p90_higher_limits": [0.5, 0.75, 0.75, 0.2],
+    "complete_rig_worst_limits": [0.75, 1.0, 1.0, 0.35],
+    "matched_p90_higher_maximum": 1.02,
+    "matched_worst_maximum": 1.05,
+    "all_cells_and_all_complete_rigs_must_pass": true,
+    "mean_A_and_At_must_each_be_strictly_below_reference_in_each_rig_and_condition": true,
+    "wall_and_rss_authorized": false
+  },
+  "cost_ledger": {
+    "accepted_direct_K11_A_At": [12, 11],
+    "fallback_zero_PCGLS_K16_A_At": [16, 16],
+    "feature_online_exact_A_At_after_geometry_cache": [0, 0],
+    "geometry_cache_forward_equivalents": 832,
+    "one_full_and_nine_reduced_dense_factorizations_are_not_exact_calls": true,
+    "no_wall_or_rss_claim": true
+  },
+  "independent_validation": {
+    "second_feature_solver": "normal-matrix eigendecomposition rather than formal response SVD",
+    "second_PRESS_path": "explicit camera and frame loops rather than formal batched residual accumulation",
+    "second_threshold_path": "manual stable sort and explicit rig loops",
+    "feature_absolute_tolerance": 1e-10,
+    "threshold_absolute_tolerance": 1e-10,
+    "summary_absolute_tolerance": 1e-10,
+    "camera_permutation_absolute_tolerance": 1e-10,
+    "policy_decisions_must_match_exactly": true,
+    "parents_source_and_formal_tree_must_remain_unchanged": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "decision_order": [
+    "invalid execution or independent mismatch -> INCONCLUSIVE",
+    "primary safety, per-rig utility, physical accuracy, or per-rig cost failure -> close the block-PRESS certificate",
+    "primary pass and cheap control pass -> control explains the development headroom",
+    "primary pass and cheap control fail -> post-open block-PRESS development headroom only"
+  ],
+  "stop_rules": {
+    "no_PRESS_formula_floor_threshold_acceptance_fraction_rank_or_solver_depth_retuning_after_results": true,
+    "no_CNN_FNO_UNO_DeepONet_or_GPU_rescue": true,
+    "do_not_open_Case4_Case6_PoolFire_validation_or_test": true,
+    "failure_closes_only_this_block_PRESS_certificate": true,
+    "success_does_not_authorize_wall_RSS_external_or_real_BOST_claims": true
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployment_algorithm": false,
+    "exact_call_reduction_established": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

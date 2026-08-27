@@ -1,0 +1,140 @@
+{
+  "schema_version": "oerf-private-blastnet-case7-maximal-strict-savings-span-validation-erratum-v241.1.0",
+  "status": "FROZEN_POSTRESULT_NUMERICAL_VALIDITY_ERRATUM_BEFORE_SEALED_ARRAY_READJUDICATION_V241_1",
+  "frozen_at_utc": "2026-08-25T04:56:26Z",
+  "scope": "Post-result validation-only correction for the completed v241 formal and independent runs. The Case 7 data, operators, observations, cache sequence, K14 directions, K1 control, metric-specific minima, numerical ranks, exact-call ledgers, accuracy gates, summaries, and all scientific arrays remain immutable.",
+  "prior_v241_source": {
+    "commit": "6656873ee59c4a695a9145f41681fe259cd24e78",
+    "protocol_sha256": "fab5f5ce15bc0333530fabfc5c3beb92c0c0b67427c3eee769e8e5984e0016f6",
+    "runner_sha256": "e3abae73a8b7315f72289befa247ce4d7a425862ca9cb99f4e9c86420b15e2ec",
+    "validator_sha256": "4ace640d0305cf79bb11af5ccce111cfd0759fab201ea7d61a9cb2646430c5f3",
+    "test_sha256": "ff806f6dd0cfe68c9b738fec103f7b58a7cfb1feaba1c825d17bb65bd0550e72"
+  },
+  "observed_inconclusive": {
+    "formal_status": "FORMAL_PENDING_INDEPENDENT_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_CAPACITY_V241",
+    "formal_pending_decision": "INCONCLUSIVE_INVALID_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_CAPACITY_V241",
+    "independent_status": "INCONCLUSIVE_INDEPENDENT_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_CAPACITY_V241",
+    "independent_decision": "INCONCLUSIVE_INVALID_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_CAPACITY_V241",
+    "formal_false_checks": [
+      "causal_first_direction_matches_sealed_v237",
+      "current_projected_direction_orthogonality_passed"
+    ],
+    "independent_false_checks": [
+      "formal_validity_all_true",
+      "independent_current_projected_direction_orthogonality_passed"
+    ],
+    "all_other_formal_checks_true": true,
+    "all_other_independent_checks_true": true,
+    "formal_reconstructed_k1_field_relative_maximum_vs_v237": 3.836445647437233e-9,
+    "independent_reconstructed_k1_field_relative_maximum_vs_v237": 6.432178992179858e-10,
+    "formal_current_projected_direction_orthogonality_absolute_maximum": 4.0559314690353544e-7,
+    "independent_current_projected_direction_orthogonality_absolute_maximum": 2.8737199263880603e-8,
+    "formal_independent_k14_minimum_metric_absolute_maximum": 3.7119252116468715e-11,
+    "formal_independent_summary_absolute_maximum": 1.2619245925993283e-12,
+    "formal_independent_k14_rank_exact": true,
+    "formal_independent_k1_minimum_metric_absolute_maximum": 1.7763568394002505e-15,
+    "independent_k1_minimum_metric_absolute_maximum_vs_v240": 1.9317880628477724e-14,
+    "formal_k1_minimum_metric_absolute_maximum_vs_v240": 2.0539125955565396e-14,
+    "k14_minus_k1_positive_nesting_violation_maximum": 0.0,
+    "formal_k14_rank_minimum_and_maximum": [30, 30],
+    "formal_and_independent_summary": {
+      "later_cells_necessary_safe": 533,
+      "later_cells_total": 533,
+      "complete_rigs_necessary_passed": 13,
+      "complete_rigs_total": 13,
+      "metric_cell_failures": {
+        "field_relative_l2": 0,
+        "gradient_relative_l2": 0,
+        "interior_gradient_relative_l2": 0,
+        "observation_relative_l2": 0
+      },
+      "necessary_capacity_passed": true
+    }
+  },
+  "defect_analysis": {
+    "reconstructed_k1_field_check": "The formal audit reconstructed the first K1 field from the captured K14 direction by dividing the direction by the Jacobi inverse diagonal before rebuilding gamma. That diagnostic floating-point path is not the frozen v237 K1 arithmetic and is not used to form any K14 or K1 metric design. The cache update reads only the copied p1 and A p1 columns. The independent reconstructed K1 field passes the inherited 2e-9 bound, while both implementations reproduce all sealed v240 K1 minima and ranks.",
+    "projected_direction_orthogonality_check": "Exact-arithmetic CGLS projected directions are mutually orthogonal, but fourteen finite-precision recurrences need not satisfy a 1e-9 normalized off-diagonal bound. Mutual orthogonality is not required for the tested linear span. Physical validity is instead established by direct A reapplication to the first and fourteenth directions, finite full-rank metric images, exact formal-independent rank agreement, and independent SVD/QR span minima.",
+    "why_no_scientific_gate_changes": "Neither failed assertion is a field, gradient, interior-gradient, observation, matched-accuracy, rank, call-ledger, parent-control, nesting, permutation, forward-consistency, adjoint, or formal-independent tolerance. The erratum changes no scientific array or threshold and introduces no candidate selection."
+  },
+  "sealed_formal_tree": {
+    "READY.json": {"bytes": 1385, "sha256": "6bce2936de3228cd12579fdffcc1009ff05b024fa2d046c9a5a7730e9556f633"},
+    "cache_audit.npy": {"bytes": 856, "sha256": "9a60e979b3dbc45360597dca5f6543fc5c4e3e1bee6cd9d9cea547ffc98c7df3"},
+    "formal_report.json": {"bytes": 31675, "sha256": "8bd3f6533988c8d0a34d443f2a92a718d9a27b7ceb2e9ee62caaae1d2a0d767f"},
+    "k14_design_audit.npy": {"bytes": 68352, "sha256": "c6616e23880b09a1e72235fb1050361c5a07d43d4cfc04bb851a7a477fa1e1ed"},
+    "k14_minimum_metrics.npy": {"bytes": 17184, "sha256": "09b18e40fe86808bdf02e2111f9632620c0047059b7bc0472c70553c7b8c245d"},
+    "k14_numerical_ranks.npy": {"bytes": 4392, "sha256": "a1cb76d57ff5a192a56a9aec57a969321c6ff3ad2a76c21cfcf538a32c1db00f"},
+    "k1_control_design_audit.npy": {"bytes": 68352, "sha256": "2681f578b2585c3b60700e08e41baf2a7c95d1319374d4ed88b01c209f652621"},
+    "k1_control_minimum_metrics.npy": {"bytes": 17184, "sha256": "9634ec9fda1204f08209b944d04f74d20472ae59220fb6f12acd1a9b95c4bc73"},
+    "k1_control_numerical_ranks.npy": {"bytes": 4392, "sha256": "bf12f743b7a47d3190bba1f6a411dd67b5d8b8d31efbab6c1a42458b139a1130"},
+    "logical_exact_calls.npy": {"bytes": 2312, "sha256": "da30f89797e4319277991cd08660f3698544759bfcc9da7a8048779cadfb3fd6"}
+  },
+  "sealed_first_validation_tree": {
+    "SCIENTIFIC_DECISION.json": {"bytes": 490, "sha256": "561944e5b32235fca9eff537ae1682ade7fede30124c234e02f1c2948ab45416"},
+    "VALIDATED_READY.json": {"bytes": 607, "sha256": "dd6398f00c2459cdf1616650d24014a49c688d62ca671cec4a6f74967b3e4822"},
+    "independent_cache_audit.npy": {"bytes": 856, "sha256": "34b7569c501f13487eec0e535c4354483bdc56d0242fbc550ba5aa7108715211"},
+    "independent_k14_minimum_metrics.npy": {"bytes": 17184, "sha256": "98015794d3fc74435330f8e47b7cb80d90237d9737a81400cbbd1df18ceea2c1"},
+    "independent_k14_numerical_ranks.npy": {"bytes": 4392, "sha256": "a1cb76d57ff5a192a56a9aec57a969321c6ff3ad2a76c21cfcf538a32c1db00f"},
+    "independent_k14_qr_audit.npy": {"bytes": 68352, "sha256": "2a3b0f360b26e2c2cf4b2b36048ffb4efbe0cb8ad3a6fdc59eef60301e2350f2"},
+    "independent_k1_control_minimum_metrics.npy": {"bytes": 17184, "sha256": "7fc63a1775166b72abb91c65807e37efcec2f16c16f531aa97a1addf2d1e2bb9"},
+    "independent_k1_control_numerical_ranks.npy": {"bytes": 4392, "sha256": "bf12f743b7a47d3190bba1f6a411dd67b5d8b8d31efbab6c1a42458b139a1130"},
+    "independent_k1_control_qr_audit.npy": {"bytes": 68352, "sha256": "d1f2b35e0788daa7fec9468bf980f6464ef970942415f60c69014deda79bd7bf"},
+    "independent_logical_exact_calls.npy": {"bytes": 2312, "sha256": "da30f89797e4319277991cd08660f3698544759bfcc9da7a8048779cadfb3fd6"},
+    "independent_validation.json": {"bytes": 34055, "sha256": "fcb21553acfea5b08b629af3c89e7bd92d16d256ce04f8e71514cdc3bb72cbd7"}
+  },
+  "sealed_v240_control_arrays": {
+    "formal_relative": "formal_span_36dee8e4_v240_20260825",
+    "minimum_metrics.npy": {"bytes": 17184, "sha256": "e2205259638a97690879644c378528ad4f720a688d596530ed0fea24bbb59ae0"},
+    "numerical_ranks.npy": {"bytes": 4392, "sha256": "bf12f743b7a47d3190bba1f6a411dd67b5d8b8d31efbab6c1a42458b139a1130"},
+    "required_ready_inventory_match": true
+  },
+  "array_contract": {
+    "k14_and_k1_minima_shape": [13, 41, 4],
+    "k14_and_k1_minima_dtype": "float64",
+    "k14_and_k1_ranks_shape": [13, 41, 4],
+    "k14_and_k1_ranks_dtype": "int16",
+    "design_audit_shape": [13, 41, 4, 4],
+    "design_audit_dtype": "float64",
+    "calls_shape": [13, 42, 2],
+    "calls_dtype": "int16",
+    "cache_audit_shape": [13, 7],
+    "cache_audit_dtype": "float64",
+    "v235_metrics_shape": [6, 13, 42, 4],
+    "v235_metrics_dtype": "float64",
+    "reference_arm_index": 1
+  },
+  "readjudication_rules": {
+    "case7_numeric_replay": "forbidden",
+    "density_geometry_observation_or_operator_reread": "forbidden",
+    "formal_independent_or_parent_array_rewrite": "forbidden",
+    "new_candidate_or_tolerance": "forbidden",
+    "required_prior_failure_shape": "The formal and first validation false-check sets must match observed_inconclusive exactly, and every other original check must be true.",
+    "direct_array_checks": "Without importing either v241 numerical implementation, re-open only the sealed arrays; verify identity, shape, dtype, finiteness, K14 and K1 formal-independent differences, exact ranks, exact calls, K1-v240 reproduction, K14 nesting, cache audits, and the recorded summaries.",
+    "summary_recomputation": "Independently recompute all 533 cell gates and all 13 complete-rig p90-higher/worst gates from the sealed K14 minima and the sealed v235 K16 reference metrics using the unchanged v241 accuracy contract.",
+    "diagnostic_handling": "Record both finite-precision projected-direction orthogonality values and both reconstructed-K1 field values, but do not use them as scientific validity gates. Require direct A-direction replay, full rank, independent minima, K1-parent, cache, call, permutation, adjoint, and all unchanged scientific gates instead.",
+    "tree_immutability": "The complete formal, first-validation, v240-control, and v235-reference trees used by the readjudicator must remain byte-identical before and after the run.",
+    "decision_order": "Any seal, source, failure-shape, array, rank, call, K1-parent, nesting, cache, direct-replay, summary, or unchanged-tree mismatch remains inconclusive. Only a complete pass may recover the original v241 scientific decision from the independently recomputed summary."
+  },
+  "output_contract": {
+    "pass_status": "PASS_SEALED_ARRAY_READJUDICATION_NUMERICAL_VALIDITY_ERRATUM_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_V241_1",
+    "inconclusive_status": "INCONCLUSIVE_VALIDATION_ERRATUM_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_V241_1",
+    "pass_scientific_decision": "POST_OPEN_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_NECESSARY_HEADROOM_V241",
+    "inconclusive_scientific_decision": "INCONCLUSIVE_INVALID_CASE7_MAXIMAL_STRICT_SAVINGS_SPAN_CAPACITY_V241_1",
+    "output_science_arrays": 0,
+    "interpretation": "A pass establishes only post-open necessary metric-wise span capacity for the already opened Case 7 sequence. It does not establish joint coefficients, an observation-only rule, an actual K14 reconstruction, effective exact-call saving, wall/RSS benefit, external generalization, curved rays, or real BOST."
+  },
+  "claims_fixed_false": {
+    "joint_feasibility": false,
+    "deployment_algorithm": false,
+    "learned_algorithm": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_benefit": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

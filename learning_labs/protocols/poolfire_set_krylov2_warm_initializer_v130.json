@@ -1,0 +1,147 @@
+{
+  "schema_version": "oerf-poolfire-set-krylov2-warm-initializer-v130.0",
+  "status": "FROZEN_BEFORE_V130_NUMERIC_RESULTS",
+  "frozen_at_utc": "2026-08-10T15:35:00Z",
+  "purpose": "Replace the independently rejected v129 restarted-K1 shell with a physically distinct two-direction Krylov-state initializer that preserves the CGLS conjugate direction while retaining a strict 2A+2A^T deployment budget.",
+  "scientific_question": "Can an unordered pose-conditioned camera-set model predict both the K3 solution dual and the K3-to-K4 conjugate-direction dual, so that an observable two-dimensional least-squares solve matches zero-start CGLS K4 across variable camera sets and factorized camera errors?",
+  "claim_boundary": "This is post-open development on synthetic straight-ray BOS observations of public PoolFire CFD. Stage A is an observation-only exact-teacher capacity diagnostic. It is not a learned result, a fresh or external test, curved-ray evidence, experimental BOST evidence, resource speedup, broad generalization, an algorithm breakthrough, or paper success.",
+  "negative_parent_decision": {
+    "v129_formal_status": "FAIL_V129_STAGE_A_K3_DUAL_SHELL_CAPACITY",
+    "v129_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_POOLFIRE_SET_DUAL_STAGE_A_V129",
+    "v129_training_authorized": false,
+    "mechanism_interpretation": "The exact K3 solution dual followed by observable scaling and restarted CGLS K1 loses the fourth-step conjugate direction. Global candidate/K4 field and observation ratios have p90 1.08840 and 1.11253, while alpha is one to floating-point precision. v129 must not be trained or enlarged."
+  },
+  "parent_closure": {
+    "v129_protocol_path": "learning_labs/protocols/poolfire_set_dual_warm_initializer_v129.json",
+    "v129_protocol_sha256": "fd19106e5e644a4df1439d94cece07676e99b6561048a03c2335ee8942f10794",
+    "v129_core_path": "learning_labs/poolfire_set_dual_warm_initializer_v129.py",
+    "v129_core_sha256": "95c514fa0c681277b07329c847ea7a304aec9a11c915edd95cfac54e957a6ce6",
+    "v128_protocol_path": "learning_labs/protocols/poolfire_camera_set_factorized_controls_v128.json",
+    "v128_protocol_sha256": "0ea09a4254a886b5e062da838b2c95872dab390cf32793837e14a54d77b409a9",
+    "v128_primitives_path": "learning_labs/poolfire_camera_set_factorized_controls_v128.py",
+    "v128_primitives_sha256": "2de5e522db05021f6ef0693c2e567bf9e5543b42d30e16c9e102d9308f7b2f90",
+    "v126_protocol_path": "learning_labs/protocols/camera_set_virtual_bos_dataset_v126.json",
+    "v126_protocol_sha256": "a52d63a03d6785278dad9c7b9ac92433d533753681a052da8bad60f0a86cd1df",
+    "cgls_reference_path": "learning_labs/nine_view_poolfire_full_trajectory_v67.py",
+    "cgls_reference_sha256": "3e63a95a57ea582c25fb1d61d03482207eb828d17bfa8774d8ca8a23759627dd",
+    "exact_operator_reference_path": "learning_labs/nine_view_target_scale_warm_v66.py",
+    "exact_operator_reference_sha256": "6d6f120e0639c46cfd87ace0db544694973e40808f77c7129cd5eda47a22fe30"
+  },
+  "sealed_v129_dataset": {
+    "sample_count": 3700,
+    "sample_roster_sha256": "c8d2bbb2a0ebcfc4790c8e38383f685e5d4c5fa40306ac3fab53ea3acc7481cb",
+    "observations_sha256": "b70738ee5ec4c99dd24f4754866167c095bde8414a4cee6ffc7697372dbff71e",
+    "reported_pose_tokens_sha256": "9cd8e4095ffe04d8ec4ad5a0269803d5dd5cf1b88347fc070d47f8ebd7d4cbba",
+    "camera_mask_sha256": "92c629ce8229f2be97c28513daa5d5b6aaf0d89e0aa1bf8435b4f38063b50bfb",
+    "k3_solution_dual_sha256": "729ea16c8e72e99753ec209948660bda6fa16e914e5d634fa5d77df1609c77ff",
+    "reuse_rule": "v130 may read the sealed v129 observation, pose, mask, K3 solution-dual and sample-roster bytes after verifying these bindings. It must regenerate the conjugate-direction dual and K4 reference from the reported geometry and observation."
+  },
+  "data_contract": {
+    "fit_only_trajectories": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "outer_evaluation": "five leave-one-complete-trajectory-out folds after Stage A",
+    "frame_indices": [0, 25, 50, 75, 100],
+    "camera_counts": [5, 7, 9, 12],
+    "factorized_conditions": "the exact 37-condition v128 roster",
+    "expected_sample_count": 3700,
+    "maximum_camera_count": 12,
+    "detector_shape_vu_components": [16, 16, 2],
+    "reported_camera_token_size": 18,
+    "validation_and_test_truth_must_remain_unread": true
+  },
+  "dual_state_teacher": {
+    "solution_dual_z3": "the natural detector dual after the third zero-start CGLS update, satisfying A^T z3=x3",
+    "direction_dual_e3": "after the third residual update, compute s3=A^T r3, beta3=<s3,s3>/<s2,s2>, p3=s3+beta3 p2 and e3=r3+beta3 e2, satisfying A^T e3=p3",
+    "truth_dependency": false,
+    "future_frame_dependency": false,
+    "trajectory_metadata_dependency": false,
+    "reference": "zero-start CGLS K4 from the identical noisy observation and reported geometry"
+  },
+  "observable_two_direction_shell": {
+    "path": "h=A^T z, p=A^T e, u=A h, v=A p, then solve min_{c0,c1} ||y-c0 u-c1 v||_2 over the frozen coefficient box and return x=c0 h+c1 p",
+    "coefficient_box": [[-2.0, 3.0], [-2.0, 3.0]],
+    "solver": "deterministic exact two-variable box-constrained least squares: evaluate the unconstrained normal-equation solution when feasible, the analytic minimizer on each of four edges, and four corners; choose the lowest residual objective with lexicographic tie break",
+    "degeneracy_rule": "require positive column norms and a finite Gram matrix; edge/corner candidates keep the solve defined when the unconstrained Gram determinant is small",
+    "exact_call_ledger": {"A": 2, "AT": 2},
+    "reference_call_ledger": {"A": 4, "AT": 4},
+    "stage_a_parity_gate": {
+      "maximum_relative_field_difference_to_k4": 1e-10,
+      "maximum_relative_residual_difference_to_k4": 1e-10,
+      "maximum_absolute_metric_difference_to_k4": 1e-10,
+      "required_cell_count": 3700,
+      "required_trajectory_count": 5
+    },
+    "stage_a_failure_action": "Stop v130 before model fitting; do not alter the coefficient box, add directions or enlarge a network after seeing the result."
+  },
+  "conditional_model": {
+    "authorized_only_after_independent_stage_a_pass": true,
+    "id": "odd_pose_set_krylov2_w8_12_g16",
+    "dtype": "float64 CPU",
+    "parameter_count": 11504,
+    "parameter_ceiling": 12000,
+    "inputs": "padded [B,12,2,16,16] noisy observations, [B,12,18] reported pose tokens and [B,12] mask",
+    "outputs": "padded [B,12,2,2,16,16], with state index 0 for z and 1 for e",
+    "architecture": "the v129 shared 2->8->12 camera encoder, 18->16->12 pose MLP, 24->16 camera embedding, masked mean/max DeepSets context and shared decoder, with four output channels and four learned odd skip gains",
+    "set_property": "co-permuting observation, matching pose and mask must co-permute both dual-state outputs; padding stays exactly zero",
+    "scale_property": "per-sample observation RMS normalization plus odd symmetrization, with both dual states restored to observation scale",
+    "truth_input": false,
+    "physical_operator_inside_model": false
+  },
+  "conditional_training": {
+    "outer_rule": "five complete-trajectory leave-one-out folds; every preprocessing value and weight uses only the other four trajectories",
+    "primary_seed": 13001,
+    "replication_seeds_if_primary_passes": [13002, 13003],
+    "epochs": 30,
+    "batch_size": 128,
+    "optimizer": "AdamW",
+    "learning_rate": 0.002,
+    "weight_decay": 0.00001,
+    "gradient_clip_norm": 1.0,
+    "loss": "equal-weight mean of per-sample squared relative-L2 for z3 and e3 over active cameras",
+    "checkpoint_selection": "none; fixed final epoch",
+    "controls": [
+      "zero-start CGLS K2",
+      "geometry-only PCGLS K2",
+      "fixed-lambda shared pose-interaction dual-state ridge",
+      "identical no-pose model",
+      "wrong-pose held-out ablation",
+      "co-permutation exactness"
+    ]
+  },
+  "conditional_accuracy_gate": {
+    "metrics": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "interior_gradient_relative_l2",
+      "reported_observation_relative_l2"
+    ],
+    "paired_reference": "zero-start CGLS K4",
+    "each_heldout_trajectory_metric_p90_ratio_maximum": 1.02,
+    "each_heldout_trajectory_metric_worst_ratio_maximum": 1.05,
+    "all_five_trajectories_required": true,
+    "same_cost_control_non_dominance_required": true,
+    "separate_camera_count_and_factor_reporting_required": true
+  },
+  "decision": {
+    "if_stage_a_passes": "Implement the 11504-parameter model, shared dual-state ridge and ablations; do not claim learning success yet.",
+    "if_primary_model_fails": "Close this representation without FNO, UNO or larger U-Net rescue.",
+    "if_three_seeds_and_controls_pass": "Call it opened-fit development headroom only and freeze one previously unopened public reaction-flow condition before any external claim.",
+    "resource_gate": "Fresh wall and whole-pipeline RSS remain forbidden before independently validated accuracy, replication and control gates pass.",
+    "real_data_gate": "Experimental transfer still requires displacement images, per-camera calibration and IDs, coordinate conventions, repeat-noise information and the laboratory-approved baseline."
+  },
+  "claim_limits": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "real_BOST": false,
+    "wall_time_speedup": false,
+    "whole_pipeline_RSS_speedup": false,
+    "global_uniqueness": false,
+    "state_of_the_art": false
+  }
+}

@@ -1,0 +1,216 @@
+{
+  "schema_version": "oerf-poolfire-residual-adaptive-local-window-capacity-protocol-v136.0",
+  "status": "FROZEN_BEFORE_V136_NUMERIC_RESULTS",
+  "frozen_at_utc": "2026-08-10T04:55:22Z",
+  "scientific_question": "Can a deterministic residual-energy-adaptive smooth 2x2 detector partition repair every remaining v135 observation-only failure while preserving the same 2A+2A^T shell, variable camera cardinality and camera permutation equivariance?",
+  "advisor_alignment": {
+    "direction": "Build and validate on virtual reaction-flow CFD first; migrate to a new laboratory experimental set when it becomes available.",
+    "current_inputs": "Every active camera carries an 18-value reported pose token and each forward/adjoint operator is rebuilt from the corresponding reported geometry.",
+    "current_stress": "The frozen v128 roster contains clean, observation-noise, extrinsic pose, intrinsic calibration and combined perturbations, evaluated with 5, 7, 9 and 12 active cameras.",
+    "next_required_stress": "After this representation gate, separately freeze arbitrary camera add/drop, camera-order permutation, focal/principal-point and extrinsic perturbation tests. Nested camera counts in this diagnostic do not by themselves prove arbitrary camera-set generalization.",
+    "future_real_data": "Keep the clean CFD baseline and use future laboratory displacement images, calibration files and repeated measurements only for a separately frozen migration and final validation gate."
+  },
+  "prior_result": {
+    "v135_status": "FAIL_V135_LOCAL_SPACE_FREQUENCY_CAPACITY",
+    "v135_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_LOCAL_SPACE_FREQUENCY_V135_1",
+    "v135_selected_cell_pass_count": 3162,
+    "v135_sample_count": 3700,
+    "v135_complete_trajectory_pass_count": 0,
+    "v135_observation_only_failure_count": 538,
+    "v135_failure_camera_count_histogram": {
+      "5": 442,
+      "7": 63,
+      "9": 9,
+      "12": 24
+    },
+    "interpretation": "The fixed smooth local-frequency representation preserved all physical metrics and rescued 571 v134 failures, but 538 observation-only failures remained. Their detector residual energy is broad and spatially displaced, so v136 changes only window location and width using visible K1 residual moments."
+  },
+  "data_contract": {
+    "role": "post-open fit-only residual-adaptive representation capacity diagnostic",
+    "trajectory_order": [
+      "p=14kw_size=05",
+      "p=22kw_size=03",
+      "p=33kw_size=01",
+      "p=45kw_size=05",
+      "p=58kw_size=03"
+    ],
+    "frame_indices": [0, 25, 50, 75, 100],
+    "camera_counts": [5, 7, 9, 12],
+    "factorized_conditions": "The frozen v128 roster of 37 clean, observation-noise, pose, intrinsic and combined conditions.",
+    "sample_count": 3700,
+    "samples_per_trajectory": 740,
+    "v135_parent_pass_count": 3162,
+    "v135_parent_failure_count": 538,
+    "validation_and_test_truth_must_remain_unread": true
+  },
+  "representation_contract": {
+    "parent_basis": "Exactly the v133 per-active-camera, per-displacement-component DCT-II LL/LH/HL/HH detector directions.",
+    "visible_adaptation_input": "The per-active-camera and per-displacement-component zero-start CGLS K1 detector residual only.",
+    "truth_used_for_windows": false,
+    "energy": "Square each K1 residual value and normalize over the 16x16 detector for each camera and displacement component.",
+    "pixel_coordinates": "Detector-cell centres 0.5 through 15.5.",
+    "centre": "Residual-energy centroid independently along y and x, clipped to [2.5, 13.5]. A residual with total squared energy at most 1e-30 falls back to centre 8.0.",
+    "transition_half_width": "clip(1.5 times the residual-energy standard deviation, 3.0, 8.0) independently along y and x; empty residual fallback width is 8.0.",
+    "one_dimensional_window": "right(u)=sin(pi*clip((u-centre+half_width)/(2*half_width),0,1)/2)^2 and left=1-right; bottom equals right and top equals left.",
+    "two_dimensional_window_order": [
+      "top_left",
+      "top_right",
+      "bottom_left",
+      "bottom_right"
+    ],
+    "partition_rule": "The four separable nonnegative windows sum to one at every detector pixel within 4e-16.",
+    "direction_order": "v133 parent direction major, then top-left/top-right/bottom-left/bottom-right adaptive window.",
+    "basis_count": "32 times the active camera count, hence 160/224/288/384 directions for 5/7/9/12 cameras.",
+    "strict_containment": "Assigning the same coefficient to all four children of each parent direction reproduces every v133 direction and therefore contains the full v135 fixed-window parent span.",
+    "variable_cardinality": "The identical residual-moment rule is applied only to active cameras.",
+    "camera_permutation_equivariance": "Permuting active cameras permutes their residual moments and basis blocks; no camera index has a distinct parameter.",
+    "input_proposal": "The independently validated v131.1 held-out predicted correction dual restricted to active cameras.",
+    "deployment_boundary": "Window generation is deployment-visible. Truth-aware coefficient fitting and final candidate selection are opened-fit capacity diagnostics, not deployable estimators."
+  },
+  "staged_evaluation": {
+    "cheap_control_scope": "Run the deployment-visible residual-adaptive joint-LS control on all 3700 cells.",
+    "parent_retention": "Retain the independently validated v135 candidate and metrics for the 3162 cells already passing all four per-cell gates.",
+    "oracle_scope": "Run the expensive seven-candidate truth-aware adaptive roster only on the frozen 538 v135 failure indices.",
+    "failure_selector_roster": [
+      "v135_parent",
+      "adaptive_projection_weight_1",
+      "adaptive_projection_weight_4",
+      "adaptive_projection_weight_16",
+      "adaptive_projection_weight_64",
+      "adaptive_projection_weight_256",
+      "adaptive_projection_weight_1024",
+      "adaptive_projection_only",
+      "adaptive_residual_joint_ls"
+    ],
+    "scientific_boundary": "The final selected result is a truth-aware parent-retention capacity upper bound. It does not establish a deployable coefficient predictor."
+  },
+  "objective_roster": {
+    "projection_weights": [1, 4, 16, 64, 256, 1024],
+    "projection_only_endpoint": true,
+    "finite_weight_objective": "Minimize unit-weight relative squared teacher field-lift error plus projection_weight times relative squared teacher projected-lift error in the adaptive basis.",
+    "projection_only_objective": "Minimize relative squared teacher projected-lift error with zero field weight.",
+    "ridge_fraction": 1e-10,
+    "ridge_scale": "Mean diagonal of each candidate unregularized weighted Gram matrix.",
+    "formal_solver": "float64 direct solve of the regularized normal equations",
+    "independent_solver": "float64 symmetric eigendecomposition of the same frozen equations",
+    "canonicalization": "Normalize active coefficients to unit RMS and orient the common sign toward nonnegative projected-target inner product.",
+    "selector": "Prefer any all-four-metric feasible candidate by minimum worst ratio, then observation ratio and roster order; otherwise minimize observation among three-physical-metric feasible candidates; otherwise use physical minimax.",
+    "truth_boundary": "Teacher targets, final metric ratios and the selector use already-opened fit truth only to test capacity."
+  },
+  "cheap_control": {
+    "name": "deployment-visible residual-adaptive per-camera/component joint least squares",
+    "definition": "For each active camera and displacement component, jointly fit the 16 adaptive band-window directions to the visible K1 detector residual with a fixed ridge, concatenate all groups, normalize to unit RMS and use the unchanged observable line search.",
+    "ridge_fraction": 1e-8,
+    "truth_used": false,
+    "extra_exact_calls_for_coefficients": {"A": 0, "AT": 0},
+    "purpose": "Test whether deterministic residual adaptation already explains any capacity gain."
+  },
+  "accuracy_gate": {
+    "paired_reference": "zero-start CGLS K4",
+    "metrics": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "interior_gradient_relative_l2",
+      "reported_observation_relative_l2"
+    ],
+    "grouping": "Each complete trajectory separately over all 740 cells.",
+    "quantile_method": "numpy quantile 0.90 method=higher",
+    "p90_higher_ratio_maximum": 1.02,
+    "worst_ratio_maximum": 1.05,
+    "per_cell_metric_ratio_maximum": 1.05,
+    "truth_aware_cell_pass_requirement": "All four metric ratios must be at most 1.05 for every one of the 3700 opened cells.",
+    "all_five_trajectories_required": true
+  },
+  "call_accounting": {
+    "candidate_online_shell": "zero-start CGLS K1 plus one selected exact A_g^T lift and one exact A_g projection",
+    "candidate_logical_calls": {"A": 2, "AT": 2},
+    "reference_logical_calls": {"A": 4, "AT": 4},
+    "window_generation_cost": "Per-camera residual moments and elementwise detector windows only; no exact operator call.",
+    "cheap_control_coefficient_cost": "Detector-space 16x16 group solves only; no exact operator call.",
+    "offline_capacity_work": "Truth-aware adaptive-basis batching, seven solves and candidate evaluation are diagnostic-only and excluded from deployable cost claims.",
+    "parent_retention_boundary": "Inherited v135 cells retain their already validated 2A+2A^T shell."
+  },
+  "decision_rule": {
+    "all_3700_cells_required": true,
+    "all_five_complete_trajectory_tail_gates_required": true,
+    "cheap_control_pass_action": "If the cheap control alone passes 3700/3700 and all five trajectories, attribute the result to the deterministic control and do not claim learned advantage.",
+    "oracle_pass_action": "If the parent-retention adaptive oracle passes 3700/3700 and all five trajectories while the cheap control fails, record residual-adaptive representation development headroom and authorize only one separately frozen minimal permutation-equivariant observation/geometry-only coefficient predictor under complete-trajectory LOTO.",
+    "oracle_fail_action": "Close this residual-moment adaptive 2x2 representation. Do not enlarge CNN/FNO/UNO/DeepONet; inspect the remaining failure mechanism before choosing another representation.",
+    "inference_limit": "Failure does not prove continuous adaptive-span impossibility, and success does not prove coefficient predictability, arbitrary camera-set generalization, speed, external generalization or real-BOST validity.",
+    "independent_validation_required": true
+  },
+  "source_contract": {
+    "split": "fit",
+    "truth_filename": "rho_downsampled_gauge_fixed.npy",
+    "truth_shape_txyz": [101, 16, 16, 32],
+    "truth_dtype": "float64",
+    "truth_gauge": "interior mean removed with a zero boundary support mask"
+  },
+  "sealed_inputs": {
+    "v135_manifest_sha256": "ff4f602495a2a81eab1089624788dd9931e5cf935d84fb45eccedd7faaffd602",
+    "v135_validation_sha256": "8a55bd2b6f31fe7ed321e6b9963ffc22b312997b18634ae0ff3933f7895becd6",
+    "sample_roster_sha256": "c8d2bbb2a0ebcfc4790c8e38383f685e5d4c5fa40306ac3fab53ea3acc7481cb",
+    "observations_sha256": "b70738ee5ec4c99dd24f4754866167c095bde8414a4cee6ffc7697372dbff71e",
+    "reported_pose_tokens_sha256": "9cd8e4095ffe04d8ec4ad5a0269803d5dd5cf1b88347fc070d47f8ebd7d4cbba",
+    "camera_mask_sha256": "92c629ce8229f2be97c28513daa5d5b6aaf0d89e0aa1bf8435b4f38063b50bfb",
+    "predicted_correction_dual_sha256": "b0e49e9e8a5228714a7951f7077bdb2dae15bab076d7900a165a6413825b5348",
+    "teacher_correction_dual_sha256": "6c51ef41f09e9d8911756362e114aed05ef8dd7b2a60bdf43097edd51f84a0e8",
+    "k1_residual_sha256": "c8536eda4aa39009ccf262257df39156afa8a2df37888abd7466002bddd278e1",
+    "v131_capacity_metrics_sha256": "544d4a3403e6c54ed0bc9b2067062ca241ea5d65ee6c7874768e2d025bd2ca19"
+  },
+  "source_closure": {
+    "files": [
+      ["demo_t16_operator/psu_b0_reconstruction_interface.py", "0aa1695dacf16f95ea32aeb8d0b019451721a48e65238101549447f68e467ba8"],
+      ["learning_labs/camera_set_virtual_bos_dataset_v126.py", "0878cefc75f512b4d6117a55be809535f14e0a524e24210e9bebd341f3b21a9d"],
+      ["learning_labs/nine_view_diffeomorphic_coordinate_stress_v103.py", "e966d15b93f5ec82c71a4551ef79dde37e614c2db3f7c0677fb00820a965078f"],
+      ["learning_labs/nine_view_diffeomorphic_ray_conditioned_warm_v111.py", "8751a03cd6bdacaad67a8e88092994aab4769591d567d87b2318e43ccb4eeb40"],
+      ["learning_labs/nine_view_geometry_correction_v63.py", "39bfe0e694c41236a53acc670452c2575824cbc5948cab67947553b2bff9445a"],
+      ["learning_labs/nine_view_poolfire_full_trajectory_v67.py", "3e63a95a57ea582c25fb1d61d03482207eb828d17bfa8774d8ca8a23759627dd"],
+      ["learning_labs/nine_view_target_scale_warm_v66.py", "6d6f120e0639c46cfd87ace0db544694973e40808f77c7129cd5eda47a22fe30"],
+      ["learning_labs/poolfire_camera_set_classical_screen_v127.py", "602d5120c4d0542bb9e104743cda9dc90fd435ff7c05536ac86ac7d121b90f21"],
+      ["learning_labs/poolfire_camera_set_factorized_controls_v128.py", "2de5e522db05021f6ef0693c2e567bf9e5543b42d30e16c9e102d9308f7b2f90"],
+      ["learning_labs/poolfire_detector_spectral_capacity_v133.py", "a8c8da73859c394b26172ac1cc8c8da09342f32fd8765f12ac12a62cf7126067"],
+      ["learning_labs/poolfire_g0_reference_forward.py", "675a00cfe787d6c9b1702f7bf6635174e813ea392716d55fdfaad2d83bb43785"],
+      ["learning_labs/poolfire_k1_residual_correction_v131.py", "782e07107863b8358232219e1b71d651166a21584559016afb720a523b0ba5e2"],
+      ["learning_labs/poolfire_k1_residual_model_v131_1.py", "4fb30ed98125d6ef6ae449ae9b487f4f3f944243b0664bdab9f921612521679e"],
+      ["learning_labs/poolfire_projection_pareto_capacity_v134.py", "1a42dec37e196d9558bf7a76942de3bc1d64dd66c0900b4cdfbb57021939edb0"],
+      ["learning_labs/poolfire_residual_adaptive_local_window_capacity_v136.py", "3ac21efe14bf2f766d323e996851c9e89177bfb4a388b69136410c389ef5e854"],
+      ["learning_labs/poolfire_set_dual_warm_initializer_v129.py", "95c514fa0c681277b07329c847ea7a304aec9a11c915edd95cfac54e957a6ce6"],
+      ["learning_labs/poolfire_set_krylov2_model_v130.py", "56065245a8181c05733bc176261956e6cce3442f68a021f4fb027d50e0c86299"],
+      ["learning_labs/poolfire_set_krylov2_warm_initializer_v130.py", "18e209b31e0ed996081dc4eb942fb30cff6d3741f0dfe92588aa485c7cd8e5f2"],
+      ["learning_labs/protocols/camera_set_virtual_bos_dataset_v126.json", "a52d63a03d6785278dad9c7b9ac92433d533753681a052da8bad60f0a86cd1df"],
+      ["learning_labs/protocols/poolfire_camera_set_classical_screen_v127.json", "f72d84767783b2bc526610639b022a3310057e409b870ad4d40cc13140f29f46"],
+      ["learning_labs/protocols/poolfire_camera_set_factorized_controls_v128.json", "0ea09a4254a886b5e062da838b2c95872dab390cf32793837e14a54d77b409a9"],
+      ["learning_labs/protocols/poolfire_k1_residual_correction_v131.json", "c3331bd58216cd3a79aa52001c4690a9de48e76910503a4436c8ae2559e94833"],
+      ["learning_labs/protocols/poolfire_k1_residual_loto_v131_1.json", "daec664975c42336cd7828dffeebeb881d3e966281cee5501c0b76798d3bd96f"],
+      ["learning_labs/protocols/poolfire_k1_residual_score_v131_1.json", "e7c62aaad04f97d81e1d89db197182927816f55728473b81cd5c05e7510152f5"],
+      ["learning_labs/test_poolfire_residual_adaptive_local_window_capacity_v136.py", "0d92bce85f534dc3a9bc3f8a45be013454fd8f62b0e264c7a259085b1c1d33df"],
+      ["site_tools/run_poolfire_k1_residual_loto_fit_v131_1.py", "9e48253023bba1a027fcb96ad8e742de92f9c0f03cc37a1461ca322bc4a656cd"],
+      ["site_tools/run_poolfire_k1_residual_predictions_v131_1.py", "e0fd73dee31d74def024c9f969d31f0b1e8e07fdbb8636a83e7b4853f256f634"],
+      ["site_tools/run_poolfire_projection_pareto_capacity_v134.py", "c3a58a74d8ec59a02714aeb1c6658942d5bb47579ae4d755ca7bc381e4f218b8"],
+      ["site_tools/run_poolfire_residual_adaptive_local_window_capacity_v136.py", "f1e7e0d77af18764839088c9b847ff9645eee1c7d00a89050e824c4d812549c1"],
+      ["site_tools/run_poolfire_set_krylov2_loto_fit_v130_1.py", "5d6097fea3065e89705aad14766a423b8076000feddf47bc3a95d2a8254a7d9c"],
+      ["site_tools/run_poolfire_set_krylov2_stage_a_v130.py", "d1d0dbc67aec73568b94f76ed3bf1ede9cd66a1524bba7044b4f1114f77d27a7"],
+      ["site_tools/score_poolfire_k1_residual_loto_v131_1.py", "7cab18e5044d87b4d044cd68d705e414ff569a8b7c49b177757122e12a5d1611"],
+      ["site_tools/test_run_poolfire_residual_adaptive_local_window_capacity_v136.py", "3c9c45d8f00c3159a926e7e4e435eaf278754f6d0d392860efdddb309a29a6c7"],
+      ["site_tools/test_validate_poolfire_residual_adaptive_local_window_capacity_v136_1.py", "c77c06e47a725f6f2aa00d47917a99c9aacc3fd0cc7395ab952e6dc3e0806469"],
+      ["site_tools/validate_poolfire_detector_spectral_capacity_v133.py", "2f9f7fbfe6df6430fd9136dff4d5bb916bc486aa6a63fbb2782e1fed0ad955fe"],
+      ["site_tools/validate_poolfire_k1_residual_loto_score_v131_1.py", "2374b46763ba7ebd2d930a21c1a194732cf7c4feb7014b27e73b54b7234edc92"],
+      ["site_tools/validate_poolfire_residual_adaptive_local_window_capacity_v136_1.py", "ae26b6ded20f4b3d400606d1ee8985c093a30c87a25a2039dde0d50fe5c51a04"]
+    ]
+  },
+  "claim_limits": {
+    "post_open_truth_aware_capacity_only": true,
+    "parent_retention_hybrid_not_deployable": true,
+    "finite_roster_not_continuous_impossibility_proof": true,
+    "arbitrary_camera_add_drop_order_not_yet_validated": true,
+    "future_real_data_not_yet_received": true,
+    "deployable_algorithm": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}

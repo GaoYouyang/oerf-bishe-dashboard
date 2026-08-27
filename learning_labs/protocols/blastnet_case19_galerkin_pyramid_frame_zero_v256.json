@@ -1,0 +1,159 @@
+{
+  "schema_version": "oerf-private-blastnet-case19-galerkin-pyramid-frame-zero-protocol-v256.0.0",
+  "status_before_results": "FROZEN_AFTER_V255_AND_BEFORE_ANY_V256_PYRAMID_FIELD_RESIDUAL_METRIC_OR_GATE_VALUE_WAS_COMPUTED",
+  "frozen_at_utc": "2026-08-26T05:50:26Z",
+  "role": "One post-open Case 19 frame-zero gate for a classical Galerkin coarse-to-fine cold start. It is not a retry of v255, an endpoint blend, graph diffusion, Haar thresholding, a block preconditioner, a global low-rank repair, or a learned model.",
+  "scientific_question": "Can one fixed 16x8x8 Galerkin CGLS K4 solve, lifted to 32x16x16 and followed by unchanged reported-geometry Jacobi-PCGLS K10, repair the common Case 19 cold-start gradient blocker while preserving K16-matched field, gradient and observation accuracy with fewer exact A and A^T calls?",
+  "physical_hypothesis": "The first-frame blocker is a scale-ordering problem rather than missing iteration depth: solving the nested coarse physical field first can establish low-frequency plume structure before the fine-grid Krylov recurrence spends its remaining directions on local detail. This changes the solver space and ordering rather than smoothing a fine-grid endpoint or tuning a residual blend.",
+  "design_evidence_boundary": "Case 19 and v244-v255 are already open. They may motivate a post-open diagnostic, but no v256 pyramid field, residual, metric, pass count or gate value may be computed before this protocol and its implementation closure are committed. The result cannot be called external confirmation.",
+  "post_open_boundary": {
+    "case19_is_already_opened": true,
+    "result_can_only_be_called_post_open_frame_zero_mechanism_evidence": true,
+    "v255_remains": "INCONCLUSIVE_INVALID_CASE19_OBSERVATION_TRUST_COLDSTART_V255",
+    "v255_is_not_rerun_revalidated_or_tolerance_relaxed": true,
+    "case13_and_case18_remain_unopened": true,
+    "poolfire_validation_and_test_remain_sealed": true
+  },
+  "sealed_inputs": {
+    "v126_camera_protocol": {
+      "relative": "learning_labs/protocols/camera_set_virtual_bos_dataset_v126.json",
+      "bytes": 3269,
+      "sha256": "a52d63a03d6785278dad9c7b9ac92433d533753681a052da8bad60f0a86cd1df"
+    },
+    "v209_geometry_protocol": {
+      "relative": "learning_labs/protocols/blastnet_case5_virtual_camera_information_v209.json",
+      "bytes": 8948,
+      "sha256": "73ce61dc89bcd9e5e15e672f14549cd590ff6cb2efc2821b56698ff8ee214e57"
+    },
+    "v244_protocol": {
+      "relative": "learning_labs/protocols/blastnet_case19_canonical_camera_actual_k14_external_v244.json",
+      "bytes": 19191,
+      "sha256": "56f123e46e9be93cdc622800b72f2ab5da4b479dd534c22e350933e1d84f5659"
+    },
+    "case19_acquisition_manifest": {
+      "relative_to_case19_root": "acquisition_v244_r1_20260825/FILE_MANIFEST.json",
+      "bytes": 36578,
+      "sha256": "f1c543de34e5dae94460b281d6eef4079260d1c6568b4e27c58da87ed00fdbf2"
+    },
+    "case19_acquisition_ready": {
+      "relative_to_case19_root": "acquisition_v244_r1_20260825/READY.json",
+      "bytes": 895,
+      "sha256": "ef59bbd56f1b1c43c059cdb03c202a87c37d3d63c6643f0e18b47a27223c34fb"
+    },
+    "case19_byte_validation": {
+      "relative_to_case19_root": "validation_bytes_v244_20260825/independent_validation.json",
+      "bytes": 1038,
+      "sha256": "7085ae2cd95b38196f6cc79a93c15ea3073e17be352d5e31f445b9fffcf6b281"
+    },
+    "case19_byte_validated_ready": {
+      "relative_to_case19_root": "validation_bytes_v244_20260825/VALIDATED_READY.json",
+      "bytes": 617,
+      "sha256": "436a5daeae19c948337fc42fc720870af8d820445ebaf85bad75cbf75c13e87d"
+    }
+  },
+  "frozen_data_and_geometry": {
+    "case_id": 19,
+    "frame_index": 0,
+    "snapshot_id": 0,
+    "rig_count": 13,
+    "camera_count": 9,
+    "field_shape_zyx": [32, 16, 16],
+    "active_shape_zyx": [30, 14, 14],
+    "coarse_shape_zyx": [16, 8, 8],
+    "detector_shape_vu": [16, 16],
+    "observation_length": 4608,
+    "profile": "clean",
+    "reported_equals_true": true,
+    "camera_roster": "For each rig use the first nine stable IDs in the v209 order, then sort IDs in ascending ASCII order before operator construction.",
+    "preprocessing": "Reuse the exact v248 frame-zero full-grid parser, float64 rectilinear interpolation, one-voxel zero support and active-cell mean gauge.",
+    "truth_use": "CFD truth generates the synthetic observation and scores the four veto metrics only. It never enters the pyramid transfer, coarse solve, fine solve, controls, depth or stopping."
+  },
+  "transfer_operator": {
+    "coordinate_convention": "Cell-centred normalized coordinates (i+0.5)/N independently on z, y and x.",
+    "one_dimensional_interpolation": "Piecewise-linear interpolation between adjacent coarse cell centres with constant endpoint extension outside the first and last coarse centres.",
+    "three_dimensional_lift": "Tensor product of the three one-dimensional interpolation matrices, followed by the frozen fine one-voxel support projection and active-cell mean subtraction.",
+    "adjoint_restriction": "Apply the same self-adjoint fine support/gauge projection, then the exact transposes of the x, y and z interpolation matrices in reverse order.",
+    "galerkin_forward": "A_c z = A(P z).",
+    "galerkin_adjoint": "A_c^T r = P^T(A^T r).",
+    "coarse_preconditioner": "Identity only. No coarse diagonal, loading, block inverse or learned map.",
+    "required_adjoint_relative_tolerance": 1e-12,
+    "required_direct_forward_relative_tolerance": 1e-12
+  },
+  "unique_primary": {
+    "name": "canonical_camera_zero_galerkin_coarse_cgls_k4_lift_fine_geometry_jacobi_pcgls_k10",
+    "coarse_stage": "Zero-start unpreconditioned CGLS K4 on A_c over the fixed 16x8x8 coarse coordinates.",
+    "lift": "Apply the frozen P once to the coarse K4 field.",
+    "fine_stage": "Use the lifted field as initializer for exactly ten iterations of the unchanged reported-geometry diagonal-Jacobi PCGLS recurrence on the 32x16x16 operator.",
+    "fine_initializer_projection": "Recompute A(Pz) once through the unchanged PCGLS initializer path; no hidden residual reuse discount is claimed.",
+    "logical_calls_A_At": [15, 14],
+    "trainable_parameters": 0,
+    "uses_truth_time_rig_label_or_metric": false,
+    "camera_permutation_invariant": true
+  },
+  "controls": [
+    {
+      "name": "canonical_camera_zero_geometry_jacobi_pcgls_k14",
+      "definition": "Frozen fine-grid zero-start geometry-Jacobi PCGLS K14 control.",
+      "logical_calls_A_At": [14, 14]
+    },
+    {
+      "name": "canonical_camera_normalized_bp_geometry_jacobi_pcgls_k13",
+      "definition": "Frozen normalized-backprojection geometry-Jacobi PCGLS K13 control inherited from v244.",
+      "logical_calls_A_At": [14, 14]
+    },
+    {
+      "name": "canonical_camera_zero_geometry_jacobi_pcgls_k16_reference",
+      "definition": "Frozen fine-grid K16 comparison reference.",
+      "logical_calls_A_At": [16, 16]
+    }
+  ],
+  "forbidden_search": "No coarse shape, grid offset, coordinate convention, interpolation, endpoint extension, support, gauge, coarse preconditioner, coarse depth, fine depth, total depth, camera subset, rig, initializer, metric, threshold or fallback search is allowed after freeze. Do not substitute injection, cubic interpolation, K6+K8, K8+K6, another pyramid level, v255 endpoints, a learned model or GPU training.",
+  "accuracy_gate": {
+    "metric_order": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "interior_gradient_relative_l2",
+      "observation_relative_l2"
+    ],
+    "strict_cell_limits": [0.5, 0.75, 0.75, 0.2],
+    "matched_cell_ratio_limits": [1.05, 1.05, 1.05, 1.05],
+    "required_cell_count": 13,
+    "required_complete_rigs": 13,
+    "all_13_frame_zero_cells_must_pass_absolute_and_k16_matched": true,
+    "control_dominance": "If the cheaper K14 or normalized-BP K13 control passes all thirteen absolute and K16-matched cells, pyramid-specific headroom is not isolated."
+  },
+  "independent_validation": {
+    "required": true,
+    "method": "A second program must rebuild observations and reported-geometry Jacobi, form all interpolation weights with scalar loops, implement P and P^T with explicit nested accumulation rather than the formal tensor contractions, independently rerun coarse CGLS K4 and fine PCGLS K10 plus all controls, seal predictions before reading formal scientific arrays, and recompute all metrics, gates and call ledgers.",
+    "interpolation_matrix_absolute_tolerance": 0.0,
+    "transfer_adjoint_relative_tolerance": 1e-12,
+    "coarse_field_relative_tolerance": 2e-8,
+    "initializer_relative_tolerance": 2e-8,
+    "formal_field_relative_tolerance": 2e-8,
+    "normalized_residual_difference_tolerance": 2e-7,
+    "formal_metric_absolute_tolerance": 2e-8,
+    "formal_summary_absolute_tolerance": 2e-8,
+    "operator_adjoint_relative_tolerance": 1e-10,
+    "residual_replay_relative_tolerance": 1e-10,
+    "camera_permutation_relative_tolerance": 1e-10,
+    "discrete_decision_exact_match": true,
+    "shared_frozen_low_level_physics_kernel_must_be_disclosed": true
+  },
+  "decision_order": [
+    "Any source, input, shape, finite, transfer, adjoint, support, gauge, permutation, call-ledger, replay, seal or formal-independent mismatch gives INCONCLUSIVE_INVALID_CASE19_GALERKIN_PYRAMID_FRAME_ZERO_V256.",
+    "If the unique primary fails any of the thirteen absolute or K16-matched frame-zero cells, conclude FAIL_CASE19_GALERKIN_PYRAMID_FRAME_ZERO_V256 and close this exact coarse-to-fine split without a full sequence run.",
+    "If the primary passes all thirteen but a cheaper control also passes all thirteen absolute and matched cells, conclude PASS_CASE19_FRAME_ZERO_BUT_GALERKIN_PYRAMID_ADVANTAGE_NOT_ISOLATED_V256 and do not claim pyramid-specific headroom.",
+    "Only if the primary passes 13/13 absolute and matched cells, both cheaper controls remain incomplete, every ledger is exact and independent validation passes may conclude POST_OPEN_CASE19_GALERKIN_PYRAMID_FRAME_ZERO_HEADROOM_V256 and authorize one separately frozen full 429-cell sequence gate."
+  ],
+  "failure_action": "Close the exact 16x8x8 K4 to 32x16x16 K10 Galerkin pyramid without changing transfer, boundary, gauge, depth split, preconditioner, controls or thresholds. Do not rescue with another pyramid schedule, CNN, FNO, UNO, DeepONet or GPU.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

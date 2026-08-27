@@ -1,0 +1,274 @@
+{
+  "schema_version": "oerf-private-poolfire-projection-potential-warm-v184.0",
+  "status_before_results": "FROZEN_BEFORE_PROJECTION_POTENTIAL_WARM_RESULTS_V184",
+  "frozen_at_utc": "2026-08-21T15:32:00Z",
+  "scientific_question": "Can the predominantly integrable detector-plane structure left after v183 be converted, without truth or learned parameters, into one physically distinct scalar-projection warm direction that reaches the frozen field, gradient, and observation gates after unchanged CGLS K1?",
+  "role": "post-open deterministic mechanism diagnostic on exactly the same four already-open p=22kw_size=01 frames; it is neither model training nor fresh generalization",
+  "physical_hypothesis": "Ideal BOS displacement is the detector-plane gradient of a line-integrated density potential. Instead of directly backprojecting the two displacement components as v182-v183 did, v184 first integrates each camera residual into a zero-mean scalar projection potential, then applies the adjoint of a scalar straight-ray projection in the frozen affine field coordinates.",
+  "physical_distinction": "v184 is not a new camera partition, another coefficient per v183 block, a second block-Krylov depth, or a change to the physical CGLS step. It changes the observation representation from vector-gradient residual backprojection to detector integration followed by scalar-ray backprojection, while retaining one global observable line-search coefficient and unchanged physical CGLS K1.",
+  "parent_evidence": {
+    "source_commit": "ef460cfcdcb37f0ad265380d9db7e67a815f2d6b",
+    "v183_protocol_sha256": "34c8cee4505a47eb9d12c836a50cc17ffa7c34c4d70f1e46cdf0fc6257697b43",
+    "v183_formal_report_sha256": "94473b207f405299fe5b2e4da6bee0e6fa595ceebe6878929df5bac263391241",
+    "v183_independent_validation_sha256": "bcab1330e41df0e10912fb329667bad4cec35967caa497e0a65b9e3f3924afbe",
+    "v183_decision_sha256": "2f605a89dc12001c629847fa98e8daab14f8d3b1e0b98d7369d7c9b2214e2613",
+    "v183_candidate_fields_sha256": "9dfae5352c481e91f9e3b585157d8da0d0e807b3d7858ca2202f830b9f0af57f",
+    "v183_metrics_sha256": "ac9c66adf895ac6e1f3816dc4e1cfd4ac8b7c5fdf9cfb2ff92b9b56c2f0c6bd1",
+    "v183_formal_status": "PASS_FORMAL_POOLFIRE_OBSERVATION_BLOCK_GALERKIN_EXECUTION_V183",
+    "v183_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_OBSERVATION_BLOCK_GALERKIN_V183",
+    "v183_scientific_decision": "FAIL_OBSERVATION_BLOCK_GALERKIN_V183"
+  },
+  "post_open_mechanism_diagnostic": {
+    "source": "sealed v183 K1 observation residuals reconstructed without changing any v183 candidate",
+    "camera_field_count": {
+      "five_camera": 260,
+      "all_nine": 468
+    },
+    "gradient_potential_explained_energy": {
+      "five_camera_p10_p50_p90": [
+        0.7086273380927809,
+        0.817230278640183,
+        0.899077023013088
+      ],
+      "all_nine_p10_p50_p90": [
+        0.708895066965236,
+        0.8313841953239036,
+        0.9176252433146912
+      ]
+    },
+    "curl_share": {
+      "five_camera_p10_p50_p90": [
+        0.13573903865954118,
+        0.21788923766256363,
+        0.3233470008282407
+      ],
+      "all_nine_p10_p50_p90": [
+        0.08959983529668238,
+        0.19450146478294625,
+        0.3162108512901923
+      ]
+    },
+    "claim_boundary": "These retrospective values select the scalar-potential mechanism family only. They are not a v184 result, do not set a performance threshold, and do not authorize alternative formulas after v184 is frozen."
+  },
+  "data_isolation": {
+    "fit_source": "inherit the v178-v183 ten opened PoolFire fit trajectories, affine center and 1009-row basis, and frozen calibration roster without refitting or reselection",
+    "heldout_source": "exactly p=22kw_size=01 frame indices 0,25,75,100 already opened through v179-v183",
+    "heldout_complete_trajectory_isolation": true,
+    "heldout_truth_forbidden_from": [
+      "detector graph construction and scalar-potential integration",
+      "scalar ray operator and reduced scalar measurement matrix",
+      "Jacobi diagonal, warm direction, observable coefficient, candidate, fallback, stopping, and decision"
+    ],
+    "heldout_truth_allowed_only_for": [
+      "synthetic observation generation through the frozen forward operator",
+      "final field and gradient scoring after observation-only candidates are sealed"
+    ],
+    "validation_trajectories_forbidden": [
+      "p=14kw_size=01"
+    ],
+    "test_trajectories_forbidden": [
+      "p=22kw_size=05",
+      "p=58kw_size=01"
+    ],
+    "trajectory_identity_feature": false,
+    "time_feature": false,
+    "power_or_size_feature": false,
+    "hyperparameter_search": false
+  },
+  "projection_potential_primary": {
+    "name": "zero_mean_detector_potential_scalar_ray_jacobi",
+    "centered_vector_residual": "r=y-A mean_fit in the frozen two-component calibrated-gradient observation layout",
+    "detector_coordinates": "for each reported camera, use the same 24x24 target-plane u and v cell centers generated from the reported rotation, frozen volume bounds, and camera right/up axes that enter the frozen ray builder",
+    "valid_nodes": "only rays that intersect the frozen field box; preserve lexicographic u-major then v-minor node order and physical camera identity",
+    "gradient_matrix": "at every valid node and component, use the immediate central physical-coordinate difference when both neighbors are valid; otherwise use the unique one-sided immediate difference; a node with no neighbor on either side is invalid",
+    "potential_problem": "for each camera independently, solve min_phi ||G phi-r_camera||_2 subject to sum(phi)=0 using the exact KKT system [[G^T G,1],[1^T,0]]",
+    "formal_kkt_solver": "scipy.linalg.solve symmetric indefinite driver",
+    "independent_kkt_solver": "numpy.linalg.solve on an independently assembled KKT matrix",
+    "potential_gauge": "unweighted arithmetic mean over valid detector nodes is exactly zero within 1e-10 relative tolerance",
+    "scalar_ray_operator": "one trilinear density line integral per valid ray, using the same clipped straight ray, field axes, two-point Gauss quadrature per crossed cell interval, and valid-node order as the calibrated-gradient operator",
+    "scalar_camera_centering": "subtract each active camera block row mean from the reduced scalar measurement matrix so the scalar prediction uses the same per-camera zero-mean gauge as phi",
+    "scalar_reduced_system": "N=C P U^T, where P is the scalar ray operator, U is the frozen affine basis, and C subtracts the active-camera block mean",
+    "scalar_group_order": "active physical cameras in the supplied operator order; camera permutation must only permute scalar blocks",
+    "scalar_gradient": "g=N^T phi",
+    "scalar_jacobi_direction": "z=g/diag(N^T N); no floor is allowed and every diagonal entry must be finite and strictly positive",
+    "observable_image": "q=M z using the original calibrated-gradient reduced matrix M=A U^T",
+    "observable_coefficient": "beta=(r^T q)/(q^T q) with denominator floor 1e-30 only as a fail-closed breakdown check",
+    "candidate_coordinate": "a=beta z",
+    "candidate_field": "x0=mean_fit+U^T a",
+    "regularization": "none",
+    "damping": "none",
+    "coefficient_constraints": "none",
+    "clipping": "none",
+    "fallback": "none",
+    "candidate_search": false,
+    "trainable_parameter_count": 0,
+    "camera_permutation_equivariant": true,
+    "variable_cardinality": [
+      5,
+      9
+    ],
+    "deployment_inputs": [
+      "current observation",
+      "reported active-camera IDs and calibration geometry",
+      "fit-only frozen affine center and basis",
+      "sealed vector and scalar reduced geometry caches"
+    ]
+  },
+  "blocking_controls": {
+    "camera_component_block_galerkin": "inherit the independently validated failed v183 K0/K1 family without recomputation or reselection",
+    "global_observation_adaptive_jacobi_pcgls1": "inherit the independently validated failed v182 family",
+    "geometry_rank16_and_jacobi": "inherit the independently validated failed v181 controls",
+    "full_affine_pseudoinverse": "v179 remains the positive high-cost observable capacity reference, not a compact control"
+  },
+  "evaluation": {
+    "calibration_count": 13,
+    "frame_indices": [
+      0,
+      25,
+      75,
+      100
+    ],
+    "time_labels": [
+      0.0,
+      0.25,
+      0.75,
+      1.0
+    ],
+    "scored_cell_count_per_sensor_arm": 52,
+    "sensor_arms": [
+      "v176_geometry_selected_five",
+      "all_nine"
+    ],
+    "field_arms": [
+      "projection_potential_warm_k0",
+      "projection_potential_warm_k1"
+    ],
+    "primary": "unchanged physical CGLS K1 from the scalar-potential warm field must pass both sensor arms",
+    "cheaper_control": "if scalar-potential K0 also passes both sensor arms, it blocks any claim that the extra physical K1 is needed",
+    "physical_k1_rule": "one unmodified identity-preconditioned CGLS step from the supplied field using the exact current residual; denominator floor 1e-30",
+    "subset_rule": "reuse the immutable minimal_shared_gram_ridge five-camera subset frozen before p22 truth was opened in v176"
+  },
+  "frozen_operator": {
+    "field_grid_zyx": [
+      32,
+      16,
+      16
+    ],
+    "target_grid_per_camera": 24,
+    "bounds_xyz": [
+      [
+        -20.0,
+        50.0
+      ],
+      [
+        -20.0,
+        50.0
+      ],
+      [
+        -35.0,
+        35.0
+      ]
+    ],
+    "vector_forward": "the calibrated exact-adjoint straight-ray density-gradient proxy inherited from v176-v183",
+    "scalar_forward": "the corresponding scalar trilinear density line integral over exactly the same valid clipped rays",
+    "metrics": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "observation_relative_l2"
+    ]
+  },
+  "absolute_accuracy_gate": {
+    "strict_cell_safe_required_per_sensor": 52,
+    "strict_cell_safe_total_per_sensor": 52,
+    "whole_calibrations_safe_required_per_sensor": 13,
+    "whole_calibrations_safe_total_per_sensor": 13,
+    "all_four_frames_must_pass_per_sensor": true,
+    "field_relative_l2_p90_higher_max": 0.5,
+    "field_relative_l2_worst_max": 0.75,
+    "gradient_relative_l2_p90_higher_max": 0.75,
+    "gradient_relative_l2_worst_max": 1.0,
+    "observation_relative_l2_p90_higher_max": 0.2,
+    "observation_relative_l2_worst_max": 0.35
+  },
+  "exact_call_and_cache_ledger": {
+    "projection_potential_warm_k0": {
+      "exact_vector_forward": 1,
+      "exact_vector_adjoint": 0,
+      "scalar_forward": 0,
+      "scalar_adjoint": 1
+    },
+    "projection_potential_warm_k1": {
+      "exact_vector_forward": 3,
+      "exact_vector_adjoint": 1,
+      "scalar_forward": 0,
+      "scalar_adjoint": 1
+    },
+    "direct_k4_reference": {
+      "exact_vector_forward": 4,
+      "exact_vector_adjoint": 4,
+      "scalar_forward": 0,
+      "scalar_adjoint": 0
+    },
+    "inherited_vector_geometry_cache_forward_equivalents": 26260,
+    "new_scalar_geometry_cache_forward_equivalents": 26260,
+    "detector_graph_factorizations": "one immutable geometry-only KKT factor per active camera and calibration; reused across the four frames",
+    "truth_observation": "one excluded offline vector forward per sensor arm, calibration, and frame",
+    "candidate_scoring_forward_calls": "excluded offline scoring only",
+    "resource_claim": "none; the new scalar cache, graph solves, dense 1009-coordinate algebra, and post-open scoring preclude any deployment wall/RSS or effective-cost claim even if matched accuracy passes"
+  },
+  "required_validity_gates": [
+    "the v183 protocol, formal report, independent validation, decision, selected arrays, recursive parent closure, input trees, and source closure remain unchanged",
+    "formal prediction uses only the current centered observation, reported camera IDs and geometry, vector/scalar reduced matrices, center, and affine basis",
+    "valid scalar-ray nodes exactly match the calibrated-gradient ray roster and component pairing for every active camera",
+    "each detector mask is connected, each derivative matrix has rank node_count-1, and each KKT system is finite and nonsingular",
+    "every potential is finite, zero mean, and satisfies KKT stationarity and constraint residual at most 1e-10 relative",
+    "the scalar reduced cache matches direct scalar forward on the center and three fixed affine basis rows within 1e-10",
+    "the scalar operator Euclidean adjoint identity holds within 1e-11",
+    "every scalar Jacobi diagonal and observable image is finite and strictly nonzero",
+    "the observable one-dimensional solve has stationarity at most 1e-10",
+    "the prediction API has no truth parameter and fixed-observation truth mutation leaves potentials, coefficients, coordinates, and candidates byte-identical",
+    "camera permutation only permutes detector/scalar blocks and changes the reconstructed coordinate and field by at most 1e-10",
+    "all vector/scalar call, inherited-cache, new-cache, detector-factor, and offline-scoring receipts equal the frozen ledger",
+    "formal and input trees remain unchanged",
+    "the independent second implementation passes every required comparison"
+  ],
+  "independent_recomputation": {
+    "required": true,
+    "must_not_import_formal_v184_runner_or_potential_helper": true,
+    "must_independently_rebuild": [
+      "the ten fit trajectories, affine center and basis, thirteen calibrations, frozen five-camera selections, all-nine vector operators, vector reduced matrices, and centered observations",
+      "valid detector masks, physical u/v coordinates, finite-difference gradient matrices, zero-mean KKT potentials, and scalar trilinear ray operators",
+      "camera-centered scalar reduced matrices, Jacobi diagonals, scalar-adjoint directions, observable coefficients, coordinates, K0 fields, and observable residuals",
+      "unchanged physical K1 replay, all 208 metric rows, call receipts, calibration and frame tails, inherited-control blocking, and decision"
+    ],
+    "formal_arrays_read_only_after_independent_candidates_are_complete": true,
+    "potential_relative_tolerance": 1e-08,
+    "coordinate_relative_tolerance": 1e-08,
+    "candidate_field_relative_tolerance": 1e-08,
+    "metric_absolute_tolerance": 1e-08,
+    "formal_and_input_trees_unchanged": true
+  },
+  "decision_order": [
+    "Any identity, isolation, parent, detector-mask, graph-rank, KKT, scalar-operator, adjoint, direction, stationarity, observation-only, mutation, permutation, K1, call-ledger, finite, seal, or independent-recomputation failure makes v184 inconclusive.",
+    "If projection-potential K1 fails both sensor arms, conclude FAIL_PROJECTION_POTENTIAL_WARM_V184 and close this exact scalar-potential mechanism.",
+    "If K1 passes all-nine but fails the frozen five-camera arm, conclude FAIL_FIVE_CAMERA_PROJECTION_POTENTIAL_WARM_V184.",
+    "If K1 passes five-camera but fails all-nine, conclude FAIL_VARIABLE_CARDINALITY_PROJECTION_POTENTIAL_WARM_V184.",
+    "If K1 passes both sensor arms and K0 also passes both, conclude PASS_CHEAPER_PROJECTION_POTENTIAL_K0_V184 and prefer the cheaper deterministic control.",
+    "Only if K1 passes both sensor arms, K0 does not pass both, and all inherited cheaper controls remain failed may v184 conclude PASS_PROJECTION_POTENTIAL_K1_HEADROOM_V184.",
+    "No v184 outcome is a learned algorithm, external generalization result, deployable exact-call reduction result, wall/RSS result, curved-ray result, real BOST result, paper success, or algorithm breakthrough."
+  ],
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "untouched_test_evidence": false,
+    "neural_operator_advantage": false,
+    "deployable_algorithm": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

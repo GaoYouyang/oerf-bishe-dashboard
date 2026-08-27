@@ -1,0 +1,186 @@
+{
+  "schema_version": "oerf-private-blastnet-case2-case5-observable-fallback-v220.2.0",
+  "status_before_results": "FROZEN_SECOND_EXECUTION_REPAIR_AFTER_ZERO_SCORED_CELLS_V220_2",
+  "execution_repair": {
+    "failed_run_id": "formal_45fe0eb8_v220_20260824",
+    "failed_source_commit": "45fe0eb827714f41db96956ff01b2c1c3f4fb5e9",
+    "exit_code": 1,
+    "scored_cells_before_failure": 0,
+    "scientific_arrays_interpretable": false,
+    "failure": "The runner bound Case5 to variable-ray v207 calibration observations rather than the sealed v217.1 virtual nine-camera observation tensor, and the shape guard stopped execution before the first solver replay.",
+    "first_only_permitted_change": "Bind Case5 observations to the v217.1 tensor sealed by the independently validated v218.1 parent and require exact shape (13,42,4608).",
+    "second_failed_run": {
+      "run_id": "formal_26c09b86_v220_1_20260824",
+      "source_commit": "26c09b86c26543cac3d2c68742feefdc41e1a0f7",
+      "exit_code": 1,
+      "scored_cells_before_failure": 0,
+      "scientific_arrays_interpretable": false,
+      "failure": "The correctly bound Low-64 batch proxy had flat shape (8192,), while the strict cached-projection API requires field shape (32,16,16).",
+      "partial_output_reuse_forbidden": true
+    },
+    "second_only_permitted_change": "Reshape the already generated Low-64 proxy from (8192,) to (32,16,16) before the cached projection and pass the same shaped values to the initializer.",
+    "unchanged": "Thresholds, OR rule, Low-64 basis, proxy inverse, Jacobi floor, PCGLS K11/K16 trajectory, controls, metrics, gates, costs, raw densities, rigs, Case2 binding, and claims remain unchanged.",
+    "partial_output_reuse_forbidden": true
+  },
+  "scientific_question": "On the already opened BLASTNet Case 5 and Case 2 development conditions, can one fixed observation-only residual gate stop the Low-64 geometry-Jacobi PCGLS trajectory at K11 when safe and otherwise continue the same unchanged trajectory to K16, while preserving the frozen absolute and matched-accuracy gates at lower average exact-call cost than zero-start geometry-Jacobi PCGLS K16?",
+  "evidence_role": {
+    "case5": "already opened development condition with independently validated v218.1 K11 and K16-reference metrics",
+    "case2": "already opened post-open development condition; v219 prospective result remains inconclusive because its preregistered independent byte-hash gate failed",
+    "not_external_confirmation": true,
+    "truth_used_only_for_development_scoring": true
+  },
+  "fixed_roster": {
+    "conditions": [
+      {
+        "condition_id": "blastnet_case5",
+        "frame_count": 42
+      },
+      {
+        "condition_id": "blastnet_case2",
+        "frame_count": 55
+      }
+    ],
+    "rig_count_per_condition": 13,
+    "camera_count": 9,
+    "profile": "clean",
+    "total_cells": 1261,
+    "field_shape_zyx": [
+      32,
+      16,
+      16
+    ],
+    "observation_shape_per_camera": [
+      16,
+      16,
+      2
+    ]
+  },
+  "fixed_initializer_and_solver": {
+    "basis": "same fixed orthonormal Low-64 physical span as v214/v218.1/v219",
+    "proxy": "unregularized Moore-Penrose least-squares fit of the deployment-visible observation in the reported-geometry Low-64 response",
+    "preconditioner": "same exact reported-geometry Jacobi diagonal with relative floor 1e-6",
+    "solver": "unchanged strict PCGLS v10.1",
+    "checkpoints": [
+      11,
+      16
+    ],
+    "no_restart_on_reject": true,
+    "no_training": true,
+    "trainable_parameters": 0
+  },
+  "fixed_observable_gate": {
+    "q0": "norm(y - A*x_low64) / norm(y), using the same cached initial projection already charged to the warm trajectory",
+    "q11": "norm(r_11) / norm(y)",
+    "ratio": "q11 / max(q0, 1e-30)",
+    "q11_threshold": 0.044183406930014484,
+    "ratio_threshold": 0.07520976810780661,
+    "accept_rule": "accept K11 iff q11 <= q11_threshold OR ratio <= ratio_threshold; otherwise continue the same PCGLS state to K16",
+    "threshold_provenance": "post-open fail-closed development thresholds fixed below the smallest already observed unsafe Case2 value for each scalar score; no threshold is refit inside v220",
+    "tie_break": "equality accepts",
+    "truth_forbidden_from_runtime_gate": true,
+    "condition_id_forbidden_from_runtime_gate": true,
+    "rig_id_forbidden_from_runtime_gate": true
+  },
+  "arms": {
+    "primary": "observable_or_gate_low64_pcgls_k11_else_continue_k16",
+    "controls": [
+      "always_low64_pcgls_k11",
+      "q11_only_gate_low64_pcgls_k11_else_continue_k16",
+      "ratio_only_gate_low64_pcgls_k11_else_continue_k16",
+      "always_low64_pcgls_k16",
+      "zero_geometry_jacobi_pcgls_k16"
+    ],
+    "reference": "zero_geometry_jacobi_pcgls_k16"
+  },
+  "exact_call_accounting": {
+    "accepted_k11_A_At": [
+      12,
+      11
+    ],
+    "continued_k16_A_At": [
+      17,
+      16
+    ],
+    "zero_reference_k16_A_At": [
+      16,
+      16
+    ],
+    "gate_extra_A_At": [
+      0,
+      0
+    ],
+    "offline_geometry_response_and_jacobi_costs_must_be_disclosed_separately": true
+  },
+  "accuracy_contract": {
+    "metric_order": [
+      "field_relative_l2",
+      "gradient_relative_l2",
+      "interior_gradient_relative_l2",
+      "observation_relative_l2"
+    ],
+    "strict_cell_limits": [
+      0.5,
+      0.75,
+      0.75,
+      0.2
+    ],
+    "complete_rig_p90_higher_limits": [
+      0.5,
+      0.75,
+      0.75,
+      0.2
+    ],
+    "complete_rig_worst_limits": [
+      0.75,
+      1.0,
+      1.0,
+      0.35
+    ],
+    "matched_accuracy_ratios": {
+      "per_cell_maximum": 1.05,
+      "complete_rig_p90_higher_maximum": 1.02,
+      "complete_rig_worst_maximum": 1.05,
+      "all_metrics_required": true
+    },
+    "quantile_method": "NumPy quantile 0.9 method=higher",
+    "all_cells_and_all_complete_rigs_must_pass": true,
+    "reference_failure_is_inconclusive": true
+  },
+  "resource_gate": {
+    "primary_average_A_and_At_must_each_be_strictly_lower_than_reference_for_each_condition": true,
+    "primary_combined_average_total_exact_calls_must_be_strictly_lower_than_reference": true,
+    "wall_and_rss_authorized": false
+  },
+  "independent_validation": {
+    "required": true,
+    "implementation": "A second program must not import the v220 formal runner. It independently preprocesses both opened raw conditions, builds an SVD Low-64 span and normal-eigensystem proxy, reconstructs the reported rigs and Jacobi state, runs a separately coded PCGLS recurrence through K11 and K16, reapplies the frozen gate, metrics, tails, exact-call ledgers, and condition summaries, and compares formal arrays using numeric tolerances rather than byte identity for independently reconstructed floating states.",
+    "field_relative_tolerance": 1e-8,
+    "metric_absolute_tolerance": 1e-9,
+    "feature_absolute_tolerance": 1e-9,
+    "summary_absolute_tolerance": 1e-8,
+    "discrete_decisions_must_match_exactly": true
+  },
+  "decision_rule": {
+    "invalid": "INCONCLUSIVE_INVALID_OBSERVABLE_FALLBACK_V220_2",
+    "inadequate_reference": "INCONCLUSIVE_INADEQUATE_K16_REFERENCE_V220_2",
+    "accuracy_or_cost_failure": "FAIL_OBSERVABLE_FALLBACK_DEVELOPMENT_V220_2",
+    "dominated": "PASS_OBSERVABLE_FALLBACK_BUT_CONTROL_ADVANTAGE_NOT_ISOLATED_V220_2",
+    "pass": "PASS_OBSERVABLE_FALLBACK_DEVELOPMENT_HEADROOM_V220_2"
+  },
+  "stop_rules": [
+    "Do not change either threshold, the OR rule, Low-64 rank, basis, proxy inverse, Jacobi floor, PCGLS depths, metrics, gates, or controls after warm K16 continuation results are generated.",
+    "If the primary fails any condition-level accuracy or exact-call gate, close this residual fallback and do not rescue it with a larger neural model.",
+    "A pass is post-open development headroom only. It does not authorize wall/RSS claims or establish external, curved-ray, or real-BOST generalization.",
+    "Case4 and Case6 remain unopened until v220.2 is independently validated and a separate prospective contract is frozen."
+  ],
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}

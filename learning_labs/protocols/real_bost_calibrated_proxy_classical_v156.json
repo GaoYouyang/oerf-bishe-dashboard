@@ -1,0 +1,88 @@
+{
+  "schema_version": "oerf-private-real-bost-calibrated-proxy-classical-v156.0",
+  "status_before_results": "FROZEN_BEFORE_V156_PROXY_BASELINE_RESULTS",
+  "scientific_question": "Can the corrected nine-PT reconstructed-field family and all supplied nine-camera calibrations form a finite, exact-adjoint, nondegenerate controlled straight-ray inverse benchmark for the C-route warm-start study?",
+  "role": "post-open private controlled proxy development; not real experimental pairing",
+  "inputs": {
+    "traced_model_count": 9,
+    "calibration_file_count": 13,
+    "model_calibration_pairing": "complete 9 x 13 cross-product; no pair is labelled as the true experimental match",
+    "diagnostic_time": 0.5,
+    "field_grid_xyz": [32, 16, 16],
+    "bounds_xyz": [[-20.0, 50.0], [-20.0, 50.0], [-35.0, 35.0]],
+    "field_preprocessing": "subtract global mean, then divide by global RMS",
+    "target_grid_per_camera": [8, 8],
+    "camera_subsets": {
+      "5": [0, 2, 4, 6, 8],
+      "7": [0, 1, 2, 4, 5, 6, 8],
+      "9": [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    },
+    "cell_count": 351
+  },
+  "operator": {
+    "field_representation": "nodal trilinear scalar field",
+    "observation": "two transverse gradient line integrals per valid ray",
+    "ray_partition": "exact node-plane crossings",
+    "quadrature": "order-2 Gauss-Legendre inside every trilinear cell interval",
+    "adjoint": "exact Euclidean transpose of the stored COO weights",
+    "constant_gauge": "global constant nullspace",
+    "output_units": "arbitrary normalized proxy units"
+  },
+  "classical_arms": [
+    "Zero K0",
+    "normalized BP",
+    "Zero-CGLS K1",
+    "Zero-CGLS K2",
+    "Zero-CGLS K4",
+    "geometry-Jacobi PCGLS K1",
+    "geometry-Jacobi PCGLS K2",
+    "geometry-Jacobi PCGLS K4"
+  ],
+  "metrics": [
+    "zero-mean field relative L2",
+    "full finite-difference gradient relative L2",
+    "observation relative L2",
+    "actual A and A-transpose calls",
+    "per model, calibration and camera-count p50/p90/worst tails"
+  ],
+  "validity_gates": {
+    "all_39_operator_setups_adjoint_relative_error_max": 1e-11,
+    "all_39_operator_setups_constant_response_relative_max": 1e-11,
+    "all_351_cells_finite_and_nonzero_observation": true,
+    "zero_cgls_observation_residual_monotone_through_k4": true,
+    "formal_and_independent_cell_decisions_identical": true
+  },
+  "independent_recomputation": {
+    "formal_operator_import_allowed": false,
+    "formal_baseline_helper_import_allowed": false,
+    "camera_ray_construction": "direct from raw R,t and frozen target-plane coordinates",
+    "quadrature": "independent order-3 Gauss-Legendre inside every node-plane interval",
+    "solvers": "standalone normalized BP, CGLS and geometry-Jacobi PCGLS",
+    "truth_field_max_abs_difference": 2e-7,
+    "per_cell_metric_max_abs_difference": 2e-7,
+    "summary_metric_max_abs_difference": 2e-7,
+    "call_ledger": "exact equality",
+    "input_and_formal_tree": "unchanged before and after validation"
+  },
+  "decision_order": [
+    "Any operator, observation, accounting or independent-recomputation failure makes v156 inconclusive and blocks prediction.",
+    "A valid classical envelope only authorizes a separately frozen minimal CPU warm-start predictor on this private synthetic cross-product.",
+    "No result may infer a true PT-to-calibration match from filenames, metrics or visual appearance.",
+    "Measured two-dimensional BOS observations remain mandatory for a real-BOST claim."
+  ],
+  "deferred_until_valid_proxy": [
+    "dual-ridge selection",
+    "learned warm initializer",
+    "fresh wall and whole-pipeline RSS",
+    "GPU rental",
+    "real experimental matched-accuracy"
+  ],
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}

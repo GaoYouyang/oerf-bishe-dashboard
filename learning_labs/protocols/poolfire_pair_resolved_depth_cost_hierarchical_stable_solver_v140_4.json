@@ -1,0 +1,84 @@
+{
+  "schema_version": "oerf-poolfire-pair-resolved-depth-cost-hierarchical-stable-solver-sentinel-v140.4",
+  "status": "FROZEN_AFTER_V140_3_FAIL_BEFORE_V140_4_HIERARCHICAL_RESULTS",
+  "decision_context": {
+    "v140_2_decision": "INCONCLUSIVE_V140_2_STAGE_B_FORMAL_INDEPENDENT_MISMATCH",
+    "v140_3_decision": "FAIL_3_OF_4_STABLE_SOLVER_SENTINEL",
+    "v140_3_failure_scope": "The five-camera cell failed only full-array direction/contribution equivalence; all cross-solver physical images, candidate states, conditions and four-metric compatibility checks passed.",
+    "post_open_breakdown_sha256": "0ae57865f5afc24a2112af2d0e2faaa1d9f9b815d6d21584b6ebb76350d6101f",
+    "post_open_breakdown_result": "The five-camera failure is inherited from the frozen v139 parent block. New pair directions and pair contributions agree at approximately 6e-14."
+  },
+  "inherited_parent_evidence": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_DEPTH_RESOLVED_RAY_CONSISTENCY_V139_3",
+    "independent_validation_sha256": "82f8989b969eff7e7036563b400f4791775d9bb0306a1e059d4102fc687cb61f",
+    "validated_ready_sha256": "233018f22747b11d27a0d0bb666e28a29c8a8acd376963ed91b1237c72bd6971",
+    "reuse_rule": "Bind the already validated parent evidence. Do not reclassify inherited raw-array rounding under a new stricter threshold."
+  },
+  "sentinel_selection_rule": "Unchanged from v140.3: for each camera count, use the active-tail cell whose actually selected local v140.2 candidate has the largest formal regularized condition number.",
+  "sentinel_roster": [
+    {
+      "sample_index": 2402,
+      "active_tail_position": 1202,
+      "camera_count": 5,
+      "local_index": 6,
+      "candidate_label": "pair_depth_projection_only",
+      "v140_2_condition_number": 3693092190.4382544
+    },
+    {
+      "sample_index": 2551,
+      "active_tail_position": 1351,
+      "camera_count": 7,
+      "local_index": 6,
+      "candidate_label": "pair_depth_projection_only",
+      "v140_2_condition_number": 39258868402.38985
+    },
+    {
+      "sample_index": 2736,
+      "active_tail_position": 1533,
+      "camera_count": 9,
+      "local_index": 4,
+      "candidate_label": "pair_depth_projection_weight_256",
+      "v140_2_condition_number": 735745422838.079
+    },
+    {
+      "sample_index": 2915,
+      "active_tail_position": 1626,
+      "camera_count": 12,
+      "local_index": 6,
+      "candidate_label": "pair_depth_projection_only",
+      "v140_2_condition_number": 20769167208194.32
+    }
+  ],
+  "stable_solver_contract": {
+    "ridge_fraction": 1e-6,
+    "formal_solver": "numpy.linalg.solve",
+    "independent_solver": "symmetric_eigendecomposition",
+    "candidate_objective": "retain_the_originally_selected_v140_2_projection_weight",
+    "gate_scope": "new_pair_block_plus_complete_candidate_physical_outputs",
+    "no_result_dependent_tuning": true
+  },
+  "gates": {
+    "incremental_direction_relative_tolerance": 1e-10,
+    "incremental_contribution_relative_tolerance": 1e-10,
+    "physical_image_relative_tolerance": 1e-6,
+    "candidate_state_relative_tolerance": 1e-6,
+    "maximum_regularized_condition_number": 1e10,
+    "maximum_stationarity": 1e-7,
+    "per_cell_metric_ratio_limit": 1.05,
+    "required_passing_cells": 4
+  },
+  "decision_rule": {
+    "pass": "All four cells bind the frozen v139 parent, pass new pair-block equivalence, pass complete-candidate cross-solver equivalence and pass four-metric compatibility. This only authorizes a full v140.4 stable-capacity rerun.",
+    "fail": "Any failed cell closes hierarchical fixed-ridge 1e-6 stabilization. Do not tune on this roster.",
+    "inconclusive": "Any execution, provenance, finite-value or evidence-binding failure remains inconclusive."
+  },
+  "claim_boundary": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false
+  }
+}

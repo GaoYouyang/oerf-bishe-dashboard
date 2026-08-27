@@ -1,0 +1,103 @@
+{
+  "schema_version": "oerf-private-blastnet-case2-case5-low64-harmonic-risk-v223.0.0",
+  "status_before_results": "FROZEN_OBSERVABLE_HARMONIC_RISK_ATTRIBUTION_V223",
+  "frozen_at_utc": "2026-08-24T00:00:00Z",
+  "scope": "Post-open mechanism-capacity diagnostic on the already opened BLASTNet Case 5 and Case 2 development conditions. It is not a deployable selector, fresh external validation, resource result, curved-ray result, or real-BOST result.",
+  "scientific_question": "Can the already validated deployment-visible Low-64 harmonic observability scalar strictly separate every cell where direct Low64-PCGLS K11 is safe from every cell where it is unsafe relative to the adequate Zero-PCGLS K16 reference, or does the observable row-space transfer harm overlap in this scalar?",
+  "frozen_roster": {
+    "conditions": [
+      {"condition_id": "blastnet_case5", "frame_count": 42},
+      {"condition_id": "blastnet_case2", "frame_count": 55}
+    ],
+    "rig_count_per_condition": 13,
+    "camera_count": 9,
+    "profile": "clean",
+    "total_cells": 1261,
+    "field_shape_zyx": [32, 16, 16],
+    "observation_shape_per_camera": [16, 16, 2]
+  },
+  "frozen_parent_evidence": {
+    "v214_role": "The harmonic-observability formula and high-is-safer orientation are inherited without modification from the independently validated v214 observation-only spectral proxy.",
+    "v221_role": "Formal and independently recomputed direct Low64-PCGLS K11 and Zero-PCGLS K16 metrics provide the post-open safety labels.",
+    "v222_1_role": "The independently validated algebraic attribution establishes that null(A) removal preserves Case5 benefit and Case2 harm, motivating a row-space spectral diagnostic.",
+    "opened_development_only": true
+  },
+  "deployment_visible_primary": {
+    "name": "low64_harmonic_observability",
+    "inputs": ["current_observation_y", "reported_geometry_low64_response_M"],
+    "low64_proxy": "Use the frozen unregularized Moore-Penrose coefficients c_hat from M and y.",
+    "normalized_gram": "G=64*(M^T M / observation_scalar_count)/trace(M^T M / observation_scalar_count).",
+    "scalar": "h=||c_hat||^2 / sum_i((v_i^T c_hat)^2/max(lambda_i,64*float64_epsilon)), where G=V diag(lambda) V^T.",
+    "orientation": "Higher h is safer; this orientation is frozen from v214 and may not be reversed after results.",
+    "trainable_parameters": 0,
+    "fitted_hyperparameters": 0
+  },
+  "cheap_control": {
+    "name": "low64_observable_fit_residual",
+    "scalar": "q0=||M c_hat-y||/||y||.",
+    "orientation": "Lower q0 is safer.",
+    "role": "If q0 alone passes the same strict separation and selected-policy gates, it explains any primary headroom at lower conceptual complexity."
+  },
+  "truth_visible_capacity_labels": {
+    "direct_arm": "direct_low64_pcgls_k11",
+    "reference_arm": "zero_geometry_jacobi_pcgls_k16",
+    "safe_cell": "All four direct metrics satisfy the frozen strict absolute limits and direct/reference ratios are <=1.05.",
+    "strict_absolute_limits": [0.5, 0.75, 0.75, 0.2],
+    "matched_cell_ratio_maximum": 1.05,
+    "truth_role": "Truth and reference metrics are used only to evaluate scalar capacity after both scalar arrays are sealed; they are forbidden from scalar construction.",
+    "not_a_deployment_threshold": true
+  },
+  "strict_separation_gate": {
+    "primary_margin": "min(h over safe cells)-max(h over unsafe cells) must be strictly positive.",
+    "control_margin": "min(q0 over unsafe cells)-max(q0 over safe cells) must be strictly positive.",
+    "threshold_if_positive": "Arithmetic midpoint of the two boundary values; equality follows the frozen safer-side rule.",
+    "no_threshold_search": true,
+    "no_quantile_or_outlier_exception": true,
+    "all_1261_cells_required": true
+  },
+  "selected_policy_gate": {
+    "policy": "Use direct Low64-PCGLS K11 when the scalar accepts; otherwise restart the adequate Zero-PCGLS K16 reference.",
+    "direct_calls_A_At": [12, 11],
+    "reference_calls_A_At": [16, 16],
+    "feature_extra_online_A_At_after_geometry_cache": [0, 0],
+    "complete_rig_p90_higher_limits": [0.5, 0.75, 0.75, 0.2],
+    "complete_rig_worst_limits": [0.75, 1.0, 1.0, 0.35],
+    "matched_p90_higher_maximum": 1.02,
+    "matched_worst_maximum": 1.05,
+    "all_cells_and_all_complete_rigs_must_pass": true,
+    "mean_A_and_At_must_each_be_strictly_below_reference_in_each_condition": true,
+    "geometry_response_cache_forward_equivalents_per_rig": 64,
+    "geometry_response_cache_is_offline": true,
+    "wall_and_rss_authorized": false
+  },
+  "independent_validation": {
+    "required": true,
+    "formal": "QR Low-64 basis, direct SVD proxy, and direct eigendecomposition of the normalized Gram.",
+    "independent": "SVD Low-64 span, normal-eigensystem proxy, independently rebuilt reported rigs, independent labels from the sealed v221 validator, and independent recomputation of both strict separators, selected metrics, rig tails, and call ledgers.",
+    "feature_absolute_tolerance": 1e-9,
+    "summary_absolute_tolerance": 1e-9,
+    "discrete_decisions_must_match_exactly": true,
+    "end_to_end_physics_independence_proven": false
+  },
+  "decision_order": [
+    "Any parent/input/source drift, non-finite value, rank loss, camera-permutation failure, missing cell, formal-independent mismatch, or label mismatch gives INCONCLUSIVE_INVALID_LOW64_HARMONIC_RISK_V223.",
+    "If the primary margin is not strictly positive, conclude FAIL_LOW64_HARMONIC_RISK_OVERLAP_V223 and close this scalar risk gate.",
+    "If the primary separates but the selected policy fails any full accuracy or cost gate, conclude FAIL_LOW64_HARMONIC_RISK_POLICY_V223.",
+    "If the primary passes and the cheap q0 control also passes, conclude PASS_LOW64_HARMONIC_RISK_BUT_FIT_RESIDUAL_CONTROL_EXPLAINS_V223 and do not claim a distinct harmonic mechanism.",
+    "Only if the primary separates, the selected policy passes, and q0 does not pass may the result be called PASS_LOW64_HARMONIC_RISK_DEVELOPMENT_HEADROOM_V223. This authorizes only a separately frozen observation-only selector test."
+  ],
+  "stop_rule": "A failed or inconclusive v223 closes this one-dimensional harmonic-risk route. Do not tune the orientation, threshold, Low-64 rank, basis, residual definition, solver depth, or add a larger model to rescue it.",
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "deployable_selector": false,
+    "exact_call_reduction": false,
+    "resource_speedup": false,
+    "fresh_external_generalization": false,
+    "broad_generalization": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false,
+    "neural_training_authorized": false
+  }
+}

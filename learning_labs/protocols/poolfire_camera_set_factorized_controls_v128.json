@@ -1,0 +1,106 @@
+{
+  "schema_version": "oerf-poolfire-camera-set-factorized-controls-v128.0",
+  "status": "FROZEN_BEFORE_V128_NUMERIC_RESULTS",
+  "purpose": "Factor the camera-set uncertainty requested by the OERF advisor into observation noise, orientation, translation/aiming, intrinsics, all-pose and combined conditions, then compare ordinary and geometry-preconditioned classical solvers before any learned initializer is trained.",
+  "claim_boundary": "This is an opened-fit, noise-free-CFD, coarse-grid known-camera straight-ray proxy diagnostic. It is not a learned algorithm, a fresh or external test, a wall-time or memory result, a curved-ray result, an experimental BOST result, or paper success.",
+  "parent_closure": {
+    "v127_protocol_path": "learning_labs/protocols/poolfire_camera_set_classical_screen_v127.json",
+    "v127_protocol_sha256": "f72d84767783b2bc526610639b022a3310057e409b870ad4d40cc13140f29f46",
+    "v127_primitives_path": "learning_labs/poolfire_camera_set_classical_screen_v127.py",
+    "v127_primitives_sha256": "602d5120c4d0542bb9e104743cda9dc90fd435ff7c05536ac86ac7d121b90f21",
+    "v126_protocol_path": "learning_labs/protocols/camera_set_virtual_bos_dataset_v126.json",
+    "v126_protocol_sha256": "a52d63a03d6785278dad9c7b9ac92433d533753681a052da8bad60f0a86cd1df",
+    "pcgls_reference_path": "learning_labs/nine_view_poolfire_full_trajectory_v67.py",
+    "pcgls_reference_sha256": "3e63a95a57ea582c25fb1d61d03482207eb828d17bfa8774d8ca8a23759627dd"
+  },
+  "source_contract": {
+    "split": "train",
+    "truth_filename": "gauge_truth.npy",
+    "truth_shape_txyz": [101, 16, 16, 32],
+    "truth_dtype": "float64",
+    "truth_gauge": "per_frame_spatial_mean_zero",
+    "trajectory_roster": [
+      {"trajectory": "p=14kw_size=05", "schema_version": "oerf-poolfire-c-fit-coverage-pairs-4.0", "role": "fit_coverage_expansion"},
+      {"trajectory": "p=22kw_size=03", "schema_version": "oerf-poolfire-c-fit-coverage-pairs-4.0", "role": "fit_coverage_expansion"},
+      {"trajectory": "p=33kw_size=01", "schema_version": "oerf-poolfire-c-cross-trajectory-pairs-1.0", "role": "fit"},
+      {"trajectory": "p=45kw_size=05", "schema_version": "oerf-poolfire-c-cross-trajectory-pairs-1.0", "role": "fit"},
+      {"trajectory": "p=58kw_size=03", "schema_version": "oerf-poolfire-c-cross-trajectory-pairs-1.0", "role": "fit"}
+    ],
+    "frame_indices": [0, 25, 50, 75, 100],
+    "validation_and_test_truth_must_remain_unread": true
+  },
+  "field_contract": {
+    "mapping": "poolfire_xyz_to_zyx",
+    "grid_shape_zyx": [32, 16, 16],
+    "outer_boundary_support_voxels": 1,
+    "supported_interior_gauge": "zero_mean"
+  },
+  "camera_set_contract": {
+    "camera_counts": [5, 7, 9, 12],
+    "nested_subset_rule": "For each trajectory, one deterministic permutation of the 12-camera v126 bank is frozen. Every camera count is a prefix, so adding or removing cameras preserves the identity and parameters of retained cameras.",
+    "permutation_rule": "Reordering the same camera IDs must restore observations, pose tokens, factorized perturbations and reconstructions exactly within numerical tolerance.",
+    "true_rig_rule": "One true rig is fixed for every trajectory and retained across frame, camera-count prefix, perturbation factor, severity and repeat.",
+    "reported_rig_rule": "Reported calibration perturbations are fixed across the five selected frames and keyed by trajectory, factor, severity, repeat and stable camera ID. They therefore do not change when the camera roster is reordered or enlarged.",
+    "noise_rule": "Observation noise is independent across frame, repeat and camera ID, but the same camera draw is preserved when the camera-count prefix changes.",
+    "deployment_rule": "Observations are generated with the true rig. Every inverse control receives only the noisy observation and reported geometry; truth is used only for post-reconstruction metrics."
+  },
+  "factorization": {
+    "severities": ["medium", "stress"],
+    "repeat_seeds": [12801, 12802, 12803],
+    "factors": {
+      "noise_only": ["observation_noise"],
+      "rotation_only": ["azimuth", "elevation", "roll"],
+      "translation_only": ["camera_centre", "target_alignment"],
+      "intrinsics_only": ["focal_scale", "principal_point"],
+      "pose_all": ["azimuth", "elevation", "roll", "camera_centre", "target_alignment", "focal_scale", "principal_point"],
+      "combined": ["observation_noise", "azimuth", "elevation", "roll", "camera_centre", "target_alignment", "focal_scale", "principal_point"]
+    },
+    "clean_condition": "clean has one deterministic repeat, zero observation noise and reported geometry exactly equal to the true geometry.",
+    "profile_magnitudes": "Each active component takes its numeric magnitude from the frozen v126 medium or stress profile. Every inactive component is set exactly to zero/null."
+  },
+  "classical_controls": {
+    "jacobi_relative_floor": 1e-6,
+    "arms": [
+      "zero_field",
+      "scaled_exact_bp",
+      "zero_cgls_k1",
+      "zero_cgls_k2",
+      "zero_cgls_k4",
+      "jacobi_bp_unscaled",
+      "geometry_pcgls_k1",
+      "geometry_pcgls_k2",
+      "geometry_pcgls_k4"
+    ],
+    "call_ledger": {
+      "zero_field": {"A": 0, "AT": 0},
+      "scaled_exact_bp": {"A": 1, "AT": 1},
+      "zero_cgls_k1": {"A": 1, "AT": 1},
+      "zero_cgls_k2": {"A": 2, "AT": 2},
+      "zero_cgls_k4": {"A": 4, "AT": 4},
+      "jacobi_bp_unscaled": {"A": 1, "AT": 1},
+      "geometry_pcgls_k1": {"A": 1, "AT": 1},
+      "geometry_pcgls_k2": {"A": 2, "AT": 2},
+      "geometry_pcgls_k4": {"A": 4, "AT": 4}
+    },
+    "jacobi_setup_rule": "diag(A^T A) is computed only from the reported geometry and frozen straight-ray discretization. Setup wall time and state bytes are reported separately and are not counted as a speed result.",
+    "required_metrics": ["field_relative_l2", "gradient_relative_l2", "interior_gradient_relative_l2", "reported_observation_relative_l2"],
+    "aggregation": ["condition_camera_cell_p50", "condition_camera_cell_p90_higher", "condition_camera_cell_worst", "per_trajectory_p50_p90_higher_worst", "paired_ratio_to_clean"]
+  },
+  "validation": {
+    "maximum_adjoint_relative_error": 1e-10,
+    "maximum_permutation_restore_absolute_error": 1e-12,
+    "maximum_scaled_bp_vs_cgls_k1_field_absolute_difference": 1e-10,
+    "maximum_scaled_equalized_bp_vs_pcgls_k1_field_absolute_difference": 1e-10,
+    "maximum_independent_array_absolute_difference": 1e-12,
+    "maximum_independent_metric_absolute_difference": 1e-11,
+    "expected_rig_count": 740,
+    "expected_cell_count": 3700,
+    "expected_control_row_count": 33300
+  },
+  "decision_rule": {
+    "pass_mechanics": "All factor semantics, camera-set invariance, exact ledgers, Jacobi positivity, 3700 cells and 33300 arm rows independently reproduce while validation/test truth stays unread.",
+    "scientific_question": "Which isolated uncertainty source dominates field/gradient tails as camera count changes, and does geometry-only Jacobi PCGLS remove enough error to eliminate apparent headroom for a learned camera-set initializer?",
+    "next_if_stable_residual_headroom": "Only if the same observable residual headroom survives all repeated factorized conditions and stronger controls, freeze a minimal set-conditioned warm initializer with explicit camera masks and pose tokens.",
+    "next_if_no_headroom": "Record the classical explanation and do not train a neural model merely to imitate a solved geometry effect."
+  }
+}

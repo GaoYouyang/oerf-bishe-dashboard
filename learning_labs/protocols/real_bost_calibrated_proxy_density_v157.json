@@ -1,0 +1,113 @@
+{
+  "schema_version": "oerf-private-real-bost-calibrated-proxy-density-v157.0",
+  "status_before_results": "FROZEN_BEFORE_V157_DENSITY_RESULTS",
+  "scientific_question": "Can denser calibrated rays plus a fixed classical spectral prior turn the valid but field-inadequate v156 proxy into a meaningful reconstruction reference before any warm predictor is trained?",
+  "role": "post-open private controlled proxy development; not real experimental pairing",
+  "parent": "PASS_PRIVATE_CONTROLLED_PROXY_CLASSICAL_ENVELOPE_V156",
+  "inputs": {
+    "traced_model_count": 9,
+    "calibration_file_count": 13,
+    "model_calibration_pairing": "complete 9 x 13 cross-product; never infer a true match",
+    "diagnostic_time": 0.5,
+    "field_grid_xyz": [32, 16, 16],
+    "bounds_xyz": [[-20.0, 50.0], [-20.0, 50.0], [-35.0, 35.0]],
+    "field_preprocessing": "subtract global mean, then divide by global RMS",
+    "target_grid_per_camera": [8, 16, 24],
+    "camera_subsets": {
+      "5": [0, 2, 4, 6, 8],
+      "7": [0, 1, 2, 4, 5, 6, 8],
+      "9": [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    },
+    "cell_count": 1053
+  },
+  "operator": {
+    "field_representation": "nodal trilinear scalar field",
+    "observation": "two transverse gradient line integrals per valid ray",
+    "ray_partition": "exact node-plane crossings",
+    "formal_quadrature": "order-2 Gauss-Legendre",
+    "independent_quadrature": "order-3 Gauss-Legendre",
+    "adjoint": "exact Euclidean transpose of stored COO weights",
+    "constant_gauge": "global constant nullspace"
+  },
+  "spectral_controls": {
+    "transform": "orthonormal three-dimensional DCT-II coefficients with inverse DCT-III lift",
+    "dct256_shape": [16, 4, 4],
+    "dct1024_shape": [16, 8, 8],
+    "primary": "DCT1024-CGLS K16 at 24x24 rays per camera",
+    "truth_aware_capacity_controls": ["DCT256 Oracle", "DCT1024 Oracle"],
+    "truth_aware_controls_are_not_deployment_algorithms": true
+  },
+  "classical_arms": {
+    "deployment_visible": [
+      "Zero K0",
+      "Normalized BP",
+      "Zero-CGLS K1/K2/K4/K8/K16",
+      "DCT256-CGLS K1/K2/K4/K8/K16",
+      "DCT1024-CGLS K1/K2/K4/K8/K16",
+      "Geometry-PCGLS K4"
+    ],
+    "truth_aware_capacity_only": ["DCT256 Oracle", "DCT1024 Oracle"]
+  },
+  "metrics": [
+    "zero-mean field relative L2",
+    "full finite-difference gradient relative L2",
+    "observation relative L2",
+    "actual A and A-transpose calls",
+    "p50/p90-higher/worst by arm, ray density and camera count"
+  ],
+  "validity_gates": {
+    "operator_setup_count": 117,
+    "cell_count": 1053,
+    "arm_row_count": 21060,
+    "adjoint_relative_error_max": 1e-11,
+    "constant_response_relative_max": 1e-11,
+    "all_observations_finite_and_nonzero": true,
+    "all_cgls_observation_residuals_monotone_through_k16": true
+  },
+  "primary_adequacy_gate": {
+    "arm": "DCT1024-CGLS K16",
+    "target_grid_per_camera": 24,
+    "all_camera_counts_must_pass": [5, 7, 9],
+    "field_relative_l2_p90_higher_max": 0.5,
+    "field_relative_l2_worst_max": 0.75,
+    "gradient_relative_l2_p90_higher_max": 0.75,
+    "gradient_relative_l2_worst_max": 1.0,
+    "observation_relative_l2_p90_higher_max": 0.2,
+    "observation_relative_l2_worst_max": 0.35,
+    "field_and_gradient_p90_must_not_worsen_from_8_to_24": true
+  },
+  "dct1024_oracle_capacity_gate": {
+    "unique_field_count": 9,
+    "field_relative_l2_p90_higher_max": 0.35,
+    "field_relative_l2_worst_max": 0.5,
+    "gradient_relative_l2_p90_higher_max": 0.5,
+    "gradient_relative_l2_worst_max": 0.75
+  },
+  "independent_recomputation": {
+    "formal_v157_import_allowed": false,
+    "camera_ray_construction": "direct from raw R,t",
+    "quadrature": "order-3 Gauss-Legendre",
+    "solvers": "standalone BP, full CGLS, DCT CGLS and Jacobi PCGLS",
+    "per_cell_metric_max_abs_difference": 0.00002,
+    "summary_metric_max_abs_difference": 0.00002,
+    "call_ledger": "exact equality",
+    "adequacy_decision": "exact equality",
+    "input_and_formal_tree": "unchanged before and after validation"
+  },
+  "decision_order": [
+    "Any operator, observation, accounting or independent-recomputation failure makes v157 inconclusive.",
+    "A failed DCT1024 oracle closes this spectral representation before reconstruction claims.",
+    "A valid proxy but failed primary adequacy gate blocks warm-predictor training; matching a poor K4 reference is not useful progress.",
+    "Only a fully independently verified primary pass authorizes a separately frozen minimal CPU predictor.",
+    "No result may infer a true PT-to-calibration match or claim real BOST without paired two-dimensional measurements."
+  ],
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "gpu_rental_authorized": false
+  }
+}
