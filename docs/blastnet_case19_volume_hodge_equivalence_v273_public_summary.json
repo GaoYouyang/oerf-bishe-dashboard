@@ -1,0 +1,54 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-volume-hodge-equivalence-v273",
+  "updated": "2026-08-27",
+  "scope": "Zero-truth algebraic audit over 13 reported Case 19 geometries under the frozen linear straight-ray discretization",
+  "operator_factorization": {
+    "identity": "A = M D",
+    "D": "fixed zero-boundary finite-difference gradient",
+    "M": "trilinear path integration followed by camera-plane projection",
+    "direct_volume_hodge_lift": "(D^T D)^-1 D^T M^T r = (D^T D)^-1 A^T r",
+    "new_exact_calls": "0A+0A^T",
+    "trainable_parameters": 0,
+    "reads_density_truth_observation_residual_field_or_metric_arrays": false
+  },
+  "formal_result": {
+    "rig_count": 13,
+    "validity_checks_passed": 16,
+    "validity_checks_total": 16,
+    "maximum_active_operator_factorization_relative": 3.5465493040317587e-16,
+    "maximum_hodge_lift_equivalence_relative": 1.3323723195070443e-15,
+    "maximum_camera_permutation_relative": 0.0
+  },
+  "independent_validation": {
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_CASE19_VOLUME_HODGE_EQUIVALENCE_V273",
+    "validity_checks_passed": 16,
+    "validity_checks_total": 16,
+    "maximum_active_operator_factorization_relative": 3.5082010933977325e-16,
+    "maximum_hodge_lift_equivalence_relative": 1.5859680956386115e-12,
+    "maximum_hodge_idempotence_relative": 1.7532355958527533e-12,
+    "maximum_poisson_solve_relative_residual": 9.171324875176604e-13,
+    "maximum_camera_permutation_relative": 0.0,
+    "maximum_formal_independent_common_metric_absolute_difference": 1.7528898300590256e-12,
+    "all_discrete_and_validity_decisions_match": true
+  },
+  "adjudication": {
+    "status": "FAIL_CASE19_DIRECT_VOLUME_HODGE_IS_POISSON_REPARAMETERIZATION_V273",
+    "interpretation": "The direct linear curl-free volume lift is exactly the scalar Dirichlet-Poisson-preconditioned adjoint under the frozen operator. It is a reparameterization, not a new physical direction.",
+    "direct_linear_volume_hodge_route_closed": true,
+    "hodge_boundary_stencil_projector_or_laplacian_tuning_authorized": false,
+    "new_reconstruction_or_accuracy_result": false,
+    "entire_c_route_closed": false
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "effective_exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}
