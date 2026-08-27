@@ -66,12 +66,12 @@ def test_v264_figure_is_public_and_readable() -> None:
 def test_v264_remains_historical_after_v265_1() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-27"
-    assert current["scientific_status"].endswith("V273")
+    assert current["scientific_status"].endswith("V274_2")
     assert current["metrics"]["v264_candidate_joint_pass_rigs"] == 13
     assert current["current_decision"]["v264_unchanged_full_sequence_gate_authorized"] is True
     assert current["current_decision"]["v264_algorithm_breakthrough"] is False
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_volume_hodge_equivalence_v273.png"
+        "blastnet_case19_loro_fusion_reference_v274_2.png"
     )
     for page in PRIMARY_PAGES:
         text = page.read_text(encoding="utf-8")

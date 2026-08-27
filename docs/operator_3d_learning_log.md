@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-27：v274.2 修好标签乱序后仍未通过数值复现门
+
+**为什么做。** v274.1 的多几何 LORO-K16 reference 在两条实现里都出现了 `429/429`、`13/13` 的诊断命中，但跨实现连续场和 rig 乱序超过结果前容差，所以不能判成功。v274.2 只修已定位的数值问题：带标签的 rig block 先规范到同一物理顺序，block 伴随改用补偿求和。数据、13 个留出目标、12 套训练几何、33 帧、CGLS K16、控制组、精度门和成本账全部不变。
+
+**实际结果。** 标签 rig 乱序差被修到严格的 `0`，物理 replay 差为 `3.33e-16`。但相机乱序差仍为 `1.96e-9`，高于冻结 `1e-10`；独立乱序差为 `1.52e-9`。formal 与 independent 的场、目标投影、目标残差差为 `1.32e-9 / 5.14e-9 / 9.93e-8`，均越过冻结的 `1e-9` 一致性门。formal 有效性 `14/15`，独立 `27/32`。
+
+**讲人话。** 这次修复确实解决了一项实现差异，但没有把整条复现合同修好。因此 `429/429` 和 `13/13` 仍只能作为诊断，不能写成科学通过。权威判决是 `INCONCLUSIVE_CASE19_LORO_FUSION_REFERENCE_V274_2`；固定 leave-one-rig-out 零起点 CGLS K16 多几何 reference 关闭，不做第三次数值修补、不放宽容差、不调深度、权重或正则，也不换其他 BLASTNet 工况补考。整条 C 路线没有关闭，`algorithm_breakthrough=false`。
+
+### English summary
+
+v274.2 changes only the numerical-reproducibility path identified by v274.1: labeled rig blocks are canonicalized before assembly and block-adjoint contributions use compensated summation. Data, thirteen held-out targets, twelve training geometries, thirty-three frames, zero-start CGLS K16, controls, accuracy gates, and cost accounting remain unchanged. The repair makes labeled-rig permutation exactly zero and leaves physical replay at `3.33e-16`, but camera permutation remains `1.96e-9` against a frozen `1e-10` limit. Independent permutation is `1.52e-9`; formal-independent field, target-projection, and target-residual differences are `1.32e-9 / 5.14e-9 / 9.93e-8`, all above the frozen `1e-9` agreement limit. Formal validity is `14/15` and independent validity `27/32`. The diagnostic `429/429` cells and `13/13` rigs cannot be promoted to a scientific pass. The authoritative verdict is `INCONCLUSIVE_CASE19_LORO_FUSION_REFERENCE_V274_2`, closing this fixed reference without another numerical repair while leaving the wider C route open. `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-27：v273 证明直接三维 Hodge 提升只是泊松预条件伴随
 
 **为什么做。** v272 关闭固定 Haar-IRLS 后，一个看似物理上不同的方向是先把二维残差提升到三维梯度场，再以 curl-free Hodge/Poisson 恢复标量场。v273 在读取 Case 19 真值、观测、残差、重建场或评分数组之前，先审计冻结 straight-ray 离散。算子精确分解为 `A=M D`：`D` 是零边界有限差分梯度，`M` 是三线性射线路径积分与相机平面投影。

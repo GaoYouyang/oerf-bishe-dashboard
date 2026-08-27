@@ -58,12 +58,12 @@ def test_v271_figure_is_public_and_readable() -> None:
 
 def test_v271_remains_historical() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["headline"].startswith("v273")
+    assert current["headline"].startswith("v274.2")
     assert current["current_decision"]["v271_independent_validation_passed"] is False
-    assert current["public_evidence"]["figure"].endswith("v273.png")
+    assert current["public_evidence"]["figure"].endswith("v274_2.png")
     for path in PAGES:
         text = path.read_text(encoding="utf-8")
-        assert "blastnet_case19_volume_hodge_equivalence_v273" in text
+        assert "blastnet_case19_loro_fusion_reference_v274_2" in text
         assert "blastnet_case19_haar_irls_reference_v271" in text
         assert "blastnet_case19_geometry_normal_sgs_v270" in text
     assert "## 2026-08-27：v271" in LOG.read_text(encoding="utf-8")

@@ -59,13 +59,13 @@ def test_v272_figure_is_public_and_readable() -> None:
 
 def test_v272_remains_historical_after_v273() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["headline"].startswith("v273")
+    assert current["headline"].startswith("v274.2")
     assert current["current_decision"]["v272_independent_validation_passed"] is True
-    assert current["public_evidence"]["figure"].endswith("v273.png")
+    assert current["public_evidence"]["figure"].endswith("v274_2.png")
     for path in PAGES:
         text = path.read_text(encoding="utf-8")
         assert "blastnet_case19_haar_irls_null_line_attribution_v272" in text
-        assert "blastnet_case19_volume_hodge_equivalence_v273" in text
+        assert "blastnet_case19_loro_fusion_reference_v274_2" in text
     assert "## 2026-08-27：v272" in LOG.read_text(encoding="utf-8")
     daily = (ROOT / "operator-learning/daily-progress.html").read_text(encoding="utf-8")
     assert daily.count('data-date="2026-08-27"') == 1
