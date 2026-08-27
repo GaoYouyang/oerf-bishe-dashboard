@@ -1,0 +1,150 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-geometry-normal-sgs-v270",
+  "updated": "2026-08-27",
+  "scope": {
+    "condition": "already-opened BLASTNet Case 19",
+    "role": "post-open frame-zero classical preconditioner control",
+    "rigs": 13,
+    "frames_per_rig": 1,
+    "cells": 13,
+    "camera_count": 9,
+    "field_shape_zyx": [32, 16, 16],
+    "trainable_parameters": 0,
+    "truth_used_for_prediction": false,
+    "truth_used_only_for_offline_scoring": true,
+    "full_sequence_tested": false,
+    "unopened_external_condition_tested": false,
+    "real_bost_tested": false
+  },
+  "mechanism": {
+    "name": "natural-order exact-normal symmetric Gauss-Seidel PCGLS",
+    "normal_matrix": "active geometry-only A^T A",
+    "ordering": "fixed C-order active voxels",
+    "preconditioner": "M=(D+L) D^-1 (D+L)^T",
+    "primary_depth": 14,
+    "reference_depth": 16,
+    "search_or_retuning_performed": false,
+    "is_warm_initializer": false
+  },
+  "formal_validation": {
+    "passed": true,
+    "checks_passed": 21,
+    "checks_total": 21
+  },
+  "independent_validation": {
+    "passed": true,
+    "status": "PASS_INDEPENDENT_RECOMPUTATION_CASE19_GEOMETRY_NORMAL_SGS_FRAME_ZERO_V270",
+    "checks_passed": 32,
+    "checks_total": 32,
+    "maximum_field_relative_difference": 1.3089320119566358e-10,
+    "maximum_normalized_residual_difference": 2.4129504259789613e-10,
+    "maximum_metric_absolute_difference": 4.758426985773667e-11,
+    "maximum_summary_absolute_difference": 7.906066912255483e-10,
+    "maximum_normalized_observation_difference": 8.381743413032394e-17,
+    "maximum_physical_replay_error": 3.522609666721711e-16,
+    "maximum_normal_diagonal_relative_difference": 1.4000616888716512e-15,
+    "maximum_preconditioner_probe_relative_difference": 1.5435518940468234e-15,
+    "end_to_end_physics_independence_proven": false
+  },
+  "reference_adequacy": {
+    "name": "zero-start geometry-Jacobi PCGLS K16",
+    "passes_all_absolute_cells": false,
+    "absolute_pass_cells": 12,
+    "required_absolute_pass_cells": 13,
+    "failing_rig_count": 1,
+    "failing_metric": "interior_gradient",
+    "failing_value": 0.7582234648376363,
+    "frozen_limit": 0.75,
+    "excess_over_limit": 0.0082234648376363,
+    "metric_order": [
+      "field",
+      "full_gradient",
+      "interior_gradient",
+      "observation"
+    ],
+    "p90_higher": [
+      0.31459649172514614,
+      0.5745606140664693,
+      0.7439542412028688,
+      0.05401127609567986
+    ],
+    "worst": [
+      0.3184913597975942,
+      0.5813380905029887,
+      0.7582234648376363,
+      0.055946746818018665
+    ]
+  },
+  "diagnostic_results": {
+    "authoritative_mechanism_adjudication": false,
+    "metric_order": [
+      "field",
+      "full_gradient",
+      "interior_gradient",
+      "observation"
+    ],
+    "primary_absolute_pass_cells": 0,
+    "primary_matched_pass_cells": 0,
+    "primary_metric_p50": [
+      2.0567002219907087,
+      3.456397485193442,
+      7.252624570828568,
+      0.056252077849244915
+    ],
+    "primary_metric_p90_higher": [
+      2.0947716047589533,
+      3.5171475514183346,
+      7.485685028272283,
+      0.057945527555174285
+    ],
+    "primary_metric_worst": [
+      2.268464221373382,
+      3.8656307371538157,
+      8.11337969769636,
+      0.05802500297162376
+    ],
+    "geometry_jacobi_k14_absolute_pass_cells": 7,
+    "geometry_jacobi_k14_matched_pass_cells": 0,
+    "unpreconditioned_cgls_k14_absolute_pass_cells": 0,
+    "unpreconditioned_cgls_k14_matched_pass_cells": 0
+  },
+  "geometry_setup_disclosure": {
+    "exact_normal_nonzeros_minimum": 8638220,
+    "exact_normal_nonzeros_maximum": 8968214,
+    "stored_state_bytes_minimum": 207528972,
+    "stored_state_bytes_maximum": 215448828,
+    "processed_one_rig_at_a_time": true,
+    "setup_excluded_from_logical_online_call_ledger": true,
+    "fresh_wall_or_whole_pipeline_rss_measured": false
+  },
+  "cost_ledger": {
+    "primary_calls_A": 14,
+    "primary_calls_At": 14,
+    "equal_cost_controls_calls_A": 14,
+    "equal_cost_controls_calls_At": 14,
+    "reference_calls_A": 16,
+    "reference_calls_At": 16,
+    "effective_exact_call_reduction_established": false
+  },
+  "adjudication": {
+    "status": "INCONCLUSIVE_REFERENCE_INADEQUATE_CASE19_GEOMETRY_NORMAL_SGS_FRAME_ZERO_V270",
+    "reference_inadequacy_is_authoritative": true,
+    "primary_counts_are_diagnostic_only": true,
+    "natural_order_exact_normal_sgs_advanced": false,
+    "retuning_or_deeper_same_reference_authorized": false,
+    "full_sequence_gate_authorized": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false,
+    "resource_gate_authorized": false
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "effective_exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}

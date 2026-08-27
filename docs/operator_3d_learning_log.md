@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-27：v270 完整几何 normal-SGS 控制因 reference 不充分而保持不确定
+
+**为什么做。** v269.1 关闭固定缓存历史联合求解后，v270 换成一个物理上不同的经典控制：由 reported geometry 直接构造 active 区域完整稀疏 `A^T A`，按固定 C-order 体素顺序建立 symmetric Gauss-Seidel 预条件器，再运行 Zero-PCGLS K14。它不读取真值、不训练参数，也不是 warm initializer；唯一 primary、两个同价 K14 controls、K16 reference、成本账和 reference-first 判决顺序都在看结果前冻结。
+
+**实际结果。** formal 通过 `21/21` 项，完全独立第二实现通过 `32/32` 项。场、残差、指标与汇总最大差为 `1.31e-10 / 2.41e-10 / 4.76e-11 / 7.91e-10`，观测差为 `8.38e-17`，物理重放误差为 `3.52e-16`。但 K16 reference 只通过 `12/13` 套相机；唯一失败的 interior-gradient 为 `0.758223`，高于冻结 `0.750000` 门 `0.008223`。因此权威判决是 `INCONCLUSIVE_REFERENCE_INADEQUATE_CASE19_GEOMETRY_NORMAL_SGS_FRAME_ZERO_V270`。
+
+**讲人话。** 两套代码把同一控制复算到一致，问题不在执行；真正阻断是“裁判答案”自己有一套没过线。独立验证后的诊断显示 normal-SGS K14 绝对与 matched 都是 `0/13`，field / full-gradient / interior-gradient p90 为 `2.09477 / 3.51715 / 7.48569`；geometry-Jacobi K14 绝对门为 `7/13`，未预条件 CGLS K14 为 `0/13`。这些数字没有给自然顺序 exact-normal SGS 留下推进迹象，但按冻结顺序不能包装成正式算法负判决。执行封存，不调顺序、松弛、载荷或深度，不跑完整序列、训练和 GPU。`14A+14A^T` 只是逻辑账；reference 不充分且 matched-accuracy 未成立，所以没有有效减调用、wall/RSS、外部泛化或真实 BOST 结果。`algorithm_breakthrough=false`。
+
+### English summary
+
+v270 tests a physically distinct classical control after v269.1 closes the fixed cached-history solve. It constructs the full sparse active `A^T A` from reported geometry, applies a natural C-order symmetric Gauss-Seidel preconditioner, and runs zero-start PCGLS K14. Formal passes `21/21` checks and a fully independent implementation passes `32/32`; maximum field, residual, metric, and summary differences are `1.31e-10 / 2.41e-10 / 4.76e-11 / 7.91e-10`. The K16 reference nevertheless clears only `12/13` rigs because one interior-gradient value is `0.758223` against the frozen `0.750000` limit. The authoritative verdict is therefore `INCONCLUSIVE_REFERENCE_INADEQUATE_CASE19_GEOMETRY_NORMAL_SGS_FRAME_ZERO_V270`. Independently verified diagnostics show normal-SGS K14 at `0/13` absolute and matched, geometry-Jacobi K14 at `7/13` absolute, and unpreconditioned CGLS K14 at `0/13` absolute. These diagnostics provide no reason to advance natural-order exact-normal SGS, but reference-first adjudication prevents promoting them to a formal algorithmic failure. No ordering, relaxation, loading, depth, training, GPU, full-sequence, call-reduction, wall/RSS, external, or real-BOST claim follows. `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-27：v269.1 缓存 Krylov 历史联合求解保持不确定
 
 **为什么做。** v258 的热修正虽然对已有 K13 测量方向做过正交化，但最后追加的 restarted K1 步可能重新引入旧方向上的残差。v269 因此把缓存的 13 对 K13 方向和 1 对 restarted-K1 方向放进同一个 14 维最小残差求解。这是检验 solver-history 交互的必要经典控制；所有方向均已缓存，所以候选仍是 `15A+14A^T`，没有新增精确算子调用、训练或超参数搜索。
