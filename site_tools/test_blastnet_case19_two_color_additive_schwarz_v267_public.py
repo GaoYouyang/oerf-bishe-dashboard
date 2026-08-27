@@ -85,12 +85,12 @@ def test_v267_figure_is_public_and_readable() -> None:
 def test_v267_remains_historical_after_v268_becomes_latest() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-27"
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_CASE19_GEOMETRY_NORMAL_SGS_FRAME_ZERO_V270"
+    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_HAAR_IRLS_REFERENCE_V271"
     assert current["metrics"]["v267_primary_matched_pass_cells"] == 2
     assert current["metrics"]["v267_global_residual_worsened_cells"] == 419
     assert current["current_decision"]["v267_exact_synchronous_two_color_route_closed"] is True
     assert current["current_decision"]["v267_predictor_training_authorized"] is False
-    assert current["public_evidence"]["figure"].endswith("geometry_normal_sgs_v270.png")
+    assert current["public_evidence"]["figure"].endswith("haar_irls_reference_v271.png")
     for page in HISTORICAL_PAGES:
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_two_color_additive_schwarz_v267" in text

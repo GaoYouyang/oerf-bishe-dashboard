@@ -71,15 +71,15 @@ def test_v262_figure_and_builder_are_public() -> None:
 
 def test_v262_remains_preserved_after_v263_1_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_CASE19_GEOMETRY_NORMAL_SGS_FRAME_ZERO_V270"
-    assert current["headline_zh"].startswith("v270")
-    assert current["headline_en"].startswith("v270")
+    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_HAAR_IRLS_REFERENCE_V271"
+    assert current["headline_zh"].startswith("v271")
+    assert current["headline_en"].startswith("v271")
     assert current["metrics"]["v262_independent_checks_passed"] == 24
     assert current["metrics"]["v262_observation_invariant_blocks"] == 0
     assert current["current_decision"]["v262_projected_residual_candidate_authorized"] is False
     assert current["current_decision"]["v262_algorithm_breakthrough"] is False
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_geometry_normal_sgs_v270.png"
+        "blastnet_case19_haar_irls_reference_v271.png"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")

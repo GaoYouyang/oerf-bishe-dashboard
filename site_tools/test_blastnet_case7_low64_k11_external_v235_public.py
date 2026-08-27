@@ -51,7 +51,7 @@ def test_v235_figure_is_rendered() -> None:
 
 def test_v235_historical_surfaces_and_log_remain_synchronized() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_CASE19_GEOMETRY_NORMAL_SGS_FRAME_ZERO_V270"
+    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_HAAR_IRLS_REFERENCE_V271"
     assert current["v235_scientific_decision"] == "FAIL_CASE7_LOW64_K11_PROSPECTIVE_CONFIRMATION_V235"
     assert current["metrics"]["v235_primary_absolute_safe_cells"] == 546
     assert current["metrics"]["v235_primary_matched_safe_cells"] == 330
@@ -59,7 +59,7 @@ def test_v235_historical_surfaces_and_log_remain_synchronized() -> None:
     assert current["current_decision"]["v235_fixed_direct_low64_k11_route_closed"] is True
     assert current["current_decision"]["v235_resource_gate_authorized"] is False
     assert current["current_decision"]["v244_2_fixed_confirmation_route_closed"] is True
-    assert "case19_geometry_normal_sgs_v270" in (
+    assert "case19_haar_irls_reference_v271" in (
         current["public_evidence"]["result"]
     )
     for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):

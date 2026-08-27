@@ -77,7 +77,7 @@ def test_v260_remains_preserved_after_v261_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_CASE19_GEOMETRY_NORMAL_SGS_FRAME_ZERO_V270"
+    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_HAAR_IRLS_REFERENCE_V271"
     assert metrics["v260_independent_checks_passed"] == 52
     assert metrics["v260_primary_absolute_cells"] == 13
     assert metrics["v260_primary_matched_cells"] == 0
@@ -85,7 +85,7 @@ def test_v260_remains_preserved_after_v261_on_bilingual_primary_pages() -> None:
     assert decision["v260_camera_weighting_improved_over_unweighted_control"] is False
     assert decision["v260_full_sequence_authorized"] is False
     assert decision["v260_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith("blastnet_case19_geometry_normal_sgs_v270.png")
+    assert current["public_evidence"]["figure"].endswith("blastnet_case19_haar_irls_reference_v271.png")
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_camera_weighted_complement_v260" in text

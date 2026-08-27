@@ -1,0 +1,103 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-haar-irls-reference-v271",
+  "updated": "2026-08-27",
+  "scope": {
+    "condition": "already-opened BLASTNet Case 19",
+    "role": "post-open frame-zero reference-adequacy audit",
+    "rigs": 13,
+    "frames_per_rig": 1,
+    "cells": 13,
+    "camera_count": 9,
+    "field_shape_zyx": [32, 16, 16],
+    "trainable_parameters": 0,
+    "truth_used_for_prediction": false,
+    "truth_used_only_for_offline_scoring": true,
+    "full_sequence_tested": false,
+    "unopened_external_condition_tested": false,
+    "real_bost_tested": false
+  },
+  "mechanism": {
+    "name": "fixed zero-boundary one-level 3D Haar smoothed-L1 IRLS reference",
+    "rounds": 12,
+    "formal_solver": "LSMR",
+    "independent_solver": "reverse-column LSQR",
+    "row_normalization": true,
+    "search_or_retuning_performed": false,
+    "is_warm_initializer": false
+  },
+  "formal_validation": {
+    "passed": true,
+    "checks_passed": 18,
+    "checks_total": 18,
+    "absolute_pass_cells": 13,
+    "required_absolute_pass_cells": 13
+  },
+  "independent_validation": {
+    "passed": false,
+    "status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_CASE19_HAAR_IRLS_REFERENCE_V271",
+    "checks_passed": 24,
+    "checks_total": 31,
+    "independent_absolute_pass_cells": 13,
+    "required_absolute_pass_cells": 13,
+    "failed_checks": [
+      "formal_independent_field",
+      "formal_independent_metric",
+      "formal_independent_objective",
+      "formal_independent_physical_residual_roster",
+      "formal_independent_scaled_residual_roster",
+      "formal_independent_summary",
+      "scientific_decision_exact"
+    ],
+    "cross_implementation_limit": 0.00002,
+    "maximum_field_relative_difference": 0.00605170017637385,
+    "maximum_metric_absolute_difference": 0.0018435249859834624,
+    "maximum_objective_relative_difference": 0.0002362764623026856,
+    "maximum_summary_absolute_difference": 0.0018435249859834624,
+    "maximum_normalized_residual_difference": 0.000004928160443423429,
+    "maximum_normalized_observation_difference": 8.381743413032394e-17,
+    "maximum_row_norm_difference": 0.0,
+    "maximum_camera_permutation_difference": 0.0,
+    "maximum_adjoint_error": 9.848433108585019e-15,
+    "end_to_end_physics_independence_proven": false
+  },
+  "diagnostic_results": {
+    "admissible_for_performance_interpretation": false,
+    "metric_order": ["field", "full_gradient", "interior_gradient", "observation"],
+    "formal_absolute_pass_cells": 13,
+    "independent_absolute_pass_cells": 13,
+    "formal_metric_p90_higher": [
+      0.0034562585129155592,
+      0.004310900125698652,
+      0.012141803323890803,
+      0.00008323086008621818
+    ],
+    "independent_metric_p90_higher": [
+      0.002976202079953863,
+      0.003733588516092616,
+      0.01029827833790734,
+      0.00006391697910543562
+    ]
+  },
+  "adjudication": {
+    "status": "INCONCLUSIVE_INVALID_CASE19_HAAR_IRLS_REFERENCE_V271",
+    "cross_implementation_agreement_required": true,
+    "individual_absolute_pass_counts_are_diagnostic_only": true,
+    "fixed_haar_irls_reference_advanced": false,
+    "rerun_or_tolerance_relaxation_authorized": false,
+    "solver_round_epsilon_or_regularization_tuning_authorized": false,
+    "full_sequence_gate_authorized": false,
+    "predictor_training_authorized": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false,
+    "resource_gate_authorized": false
+  },
+  "claims_fixed_false": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "effective_exact_call_reduction": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false
+  }
+}
