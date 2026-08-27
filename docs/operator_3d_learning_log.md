@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-28：v275 整体平流有物理动机，但 reference 与独立数值门都没过
+
+**为什么做。** v274.2 关闭了固定多几何 LORO-K16 reference，下一条候选必须物理上真正不同。Case 19 提供官方入口速度与 33 个时间戳，因此 v275 只冻结一个 deterministic 假设：把上一帧自己的重建沿 source-x 按 `u_in Δt` 做因果半拉格朗日平流，再执行未修改 geometry-Jacobi PCGLS K14。它只看上一帧重建、官方速度、时间和 reported geometry，不搜索速度、方向、插值、边界或深度；同样平流后的 K16 是 matched reference。
+
+**执行与独立复算。** formal 有效性检查全真。第一次独立尝试完成 416/416 个预测后，在 truth scoring 前因为完整性代码触发禁读守卫而 fail-closed，没有科学结果。v275.1 只把 observation/source-grid release 与 truth seal 拆开，失败预测不复用，科学候选和门不变。修复后的独立第二实现通过 **26/31** 项：内部有效性、相机乱序、物理 replay、调用账、离散判决、control roster 与汇总一致；但 transport、transport audit、field、residual、metric 五个跨实现数值门失败。最大差分别为 `3.3268e-9 / 1.2154e-10 / 1.5192e-8 / 1.5673e-6 / 1.0219e-8`，对应冻结上限为 `1e-12 / 1e-12 / 1e-8 / 1e-8 / 1e-8`。
+
+**讲人话。** 两套程序对“哪条路线输赢”的离散判断一致，但我们事先答应过连续场、残差和 transport 也必须闭环。它们没有闭环，所以不能把接近阈值的数字算作通过。诊断中，K14 主候选与 K16 reference 都只有 **428/429、12/13** 的绝对安全，reference 自身不充分；主候选 matched 更只有 **13/429、0/13**。`496A+464A^T` 对 `560A+528A^T` 的算术差因此不是有效减调用。
+
+**路线动作与边界。** 权威判决为 `INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275`。关闭固定“官方速度整体平流 + previous-self + K14”，不放宽容差，不调速度、方向、插值、边界或深度，也不用大模型或 GPU 挽救。它不证明局部速度场、非刚性输运或整条 C 路线不可能；下一步只接受配对真实二维 BOST 数据，或物理上真正不同、结果前唯一冻结且可证伪的新机制。`algorithm_breakthrough=false`。
+
+### English note
+
+v275 tests a physically distinct deterministic mechanism after v274.2 closes the fixed multi-geometry reference: causally advect the previous reconstruction along source-x by the official `u_in Δt`, then run unchanged geometry-Jacobi PCGLS K14. The predictor uses only the previous reconstruction, official speed, timestamps, and reported geometry; transported K16 is the matched reference. Formal validity is complete. A first independent attempt computes all 416 predictions but fails closed before truth scoring when integrity code triggers the truth-open guard; v275.1 repairs only the visible-release boundary and does not reuse failed predictions. The repaired implementation passes **26/31** checks. Internal validity, camera permutation, replay, calls, discrete decisions, controls, and summaries agree, but transport, transport audit, field, residual, and metric cross-implementation limits fail. Diagnostic counts are only **428/429 cells and 12/13 rigs** for both primary and reference, while primary matched accuracy is **13/429 and 0/13**. The fixed bulk-advection mechanism closes without tolerance relaxation, parameter adjustment, neural rescue, or GPU rental. This is not an impossibility result for local or nonrigid transport, nor an algorithmic breakthrough.
+
 ## 2026-08-27：v274.2 修好标签乱序后仍未通过数值复现门
 
 **为什么做。** v274.1 的多几何 LORO-K16 reference 在两条实现里都出现了 `429/429`、`13/13` 的诊断命中，但跨实现连续场和 rig 乱序超过结果前容差，所以不能判成功。v274.2 只修已定位的数值问题：带标签的 rig block 先规范到同一物理顺序，block 伴随改用补偿求和。数据、13 个留出目标、12 套训练几何、33 帧、CGLS K16、控制组、精度门和成本账全部不变。

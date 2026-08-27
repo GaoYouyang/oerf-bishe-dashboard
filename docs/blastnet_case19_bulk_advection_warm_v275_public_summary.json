@@ -1,0 +1,93 @@
+{
+  "schema_version": "oerf-public-blastnet-case19-bulk-advection-warm-v275.0.0",
+  "updated": "2026-08-28",
+  "scope": {
+    "condition": "opened public reacting-flow Case 19 proxy",
+    "frames_per_rig": 33,
+    "rigs": 13,
+    "cells": 429,
+    "ray_model": "straight-ray proxy",
+    "analysis_role": "post-open mechanism diagnostic"
+  },
+  "mechanism": {
+    "name": "fixed bulk-advection previous-self warm start",
+    "inputs": [
+      "deployment-visible previous reconstruction",
+      "official inlet speed",
+      "official snapshot times",
+      "reported geometry"
+    ],
+    "transport": "causal semi-Lagrangian shift on the source-x axis with zero inflow",
+    "primary_solver": "unchanged geometry-Jacobi PCGLS K14",
+    "reference_solver": "the same transport followed by unchanged PCGLS K16",
+    "trainable_parameters": 0
+  },
+  "execution": {
+    "formal_validity_all_true": true,
+    "first_independent_attempt_failed_before_truth_scoring": true,
+    "first_independent_attempt_scientific_result": false,
+    "repaired_predictor_reads_only_sealed_deployment_visible_inputs": true,
+    "independent_checks_passed": 26,
+    "independent_checks_total": 31,
+    "discrete_decision_matches": true,
+    "logical_calls_match_exactly": true,
+    "summary_matches_within_tolerance": true
+  },
+  "failed_independent_numeric_gates": {
+    "transport_relative_difference": {
+      "observed": 3.326820085024774e-9,
+      "limit": 1e-12
+    },
+    "transport_audit_absolute_difference": {
+      "observed": 1.2153782147361625e-10,
+      "limit": 1e-12
+    },
+    "field_relative_difference": {
+      "observed": 1.5191937770901028e-8,
+      "limit": 1e-8
+    },
+    "residual_relative_difference": {
+      "observed": 1.5673454416080782e-6,
+      "limit": 1e-8
+    },
+    "metric_absolute_difference": {
+      "observed": 1.021917933607952e-8,
+      "limit": 1e-8
+    },
+    "summary_absolute_difference": {
+      "observed": 2.1292390073313072e-9,
+      "limit": 1e-8,
+      "passed": true
+    }
+  },
+  "diagnostic_results_not_scientific_pass": {
+    "primary_absolute_cells": 428,
+    "reference_absolute_cells": 428,
+    "primary_absolute_complete_rigs": 12,
+    "reference_absolute_complete_rigs": 12,
+    "primary_matched_cells": 13,
+    "primary_matched_complete_rigs": 0,
+    "passing_equal_or_cheaper_controls": 0
+  },
+  "cost_accounting": {
+    "primary_sequence_logical_calls_A_At": [496, 464],
+    "reference_sequence_logical_calls_A_At": [560, 528],
+    "effective_exact_call_reduction_established": false,
+    "fresh_wall_or_rss_measured": false
+  },
+  "adjudication": {
+    "independent_validation_status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_CASE19_BULK_ADVECTION_WARM_V275",
+    "scientific_decision": "INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275",
+    "formal_pending_decision": "INCONCLUSIVE_INADEQUATE_CASE19_BULK_ADVECTION_K16_REFERENCE_V275",
+    "current_fixed_bulk_advection_route_closed": true,
+    "tolerance_relaxation_authorized": false,
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "external_generalization": false,
+    "resource_speedup": false,
+    "curved_ray_validated": false,
+    "real_bost": false,
+    "neural_training_authorized": false,
+    "gpu_rental_authorized": false
+  }
+}
