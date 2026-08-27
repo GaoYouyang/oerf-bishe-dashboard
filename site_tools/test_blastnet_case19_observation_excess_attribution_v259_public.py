@@ -75,7 +75,7 @@ def test_v259_remains_preserved_after_v260_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_HAAR_IRLS_REFERENCE_V271"
+    assert current["scientific_status"] == "MIXED_OR_NEAR_FLAT_CASE19_HAAR_IRLS_NULL_LINE_V272"
     assert metrics["v259_independent_checks_passed"] == 18
     assert metrics["v259_camera_localized_rigs"] == 10
     assert metrics["v259_component_localized_rigs"] == 13
@@ -84,7 +84,7 @@ def test_v259_remains_preserved_after_v260_on_bilingual_primary_pages() -> None:
     assert decision["v259_exactly_one_camera_local_diagnostic_authorized"] is True
     assert decision["v259_full_sequence_authorized"] is False
     assert decision["v259_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith("blastnet_case19_haar_irls_reference_v271.png")
+    assert current["public_evidence"]["figure"].endswith("blastnet_case19_haar_irls_null_line_attribution_v272.png")
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_observation_excess_attribution_v259" in text

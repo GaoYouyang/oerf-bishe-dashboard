@@ -59,7 +59,7 @@ def test_v247_figure_and_builder_are_public() -> None:
 
 def test_v247_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_HAAR_IRLS_REFERENCE_V271"
+    assert current["scientific_status"] == "MIXED_OR_NEAR_FLAT_CASE19_HAAR_IRLS_NULL_LINE_V272"
     assert current["current_decision"]["v247_independent_validation_passed"] is False
     assert current["current_decision"]["v247_line_schwarz_authorized"] is False
     assert current["current_decision"]["v247_mechanism_operationally_retired"] is True
@@ -68,7 +68,7 @@ def test_v247_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -
     assert current["metrics"]["v247_independent_checks_total"] == 27
     assert current["metrics"]["v247_residual_relative_maximum"] > current["metrics"]["v247_residual_relative_limit"]
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_haar_irls_reference_v271.png"
+        "blastnet_case19_haar_irls_null_line_attribution_v272.png"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")

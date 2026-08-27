@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-27：v272 把 v271 的求解差异收紧为单向端点支配
+
+**为什么做。** v271 的 formal LSMR 与 independent reverse-column LSQR 各自都通过 `13/13`，但跨实现连续场不一致。v272 不重跑求解器，而是只读两组封存系数、算子观测和各自最终平滑参数，在两端点之间检查固定 smoothed-L1 目标。它不读密度真值、三维场、指标或几何，不生成候选，新增调用为 `0A+0A^T`。
+
+**实际结果。** 13 条端点线的算子观测最大相对差为 `5.20e-16`，全部低于冻结 `1e-12` 门。独立端点在 `13/13` 条线段上都能向 formal 端点严格降低自己的目标，最小/中位/最大相对下降为 `1.218e-4 / 1.533e-4 / 2.363e-4`；formal 端点在预注册线段内部的严格向内下降为 `0/13`，所有线段最小点都落在 `alpha=1`。
+
+**独立复算与讲人话。** 第二实现反向逐项使用 `math.fsum` 并独立执行 80 次二分，通过 `14/14` 项检查；连续量最大绝对/相对差为 `1.42e-14 / 2.32e-16`，离散判决完全一致。结果说明 independent 端点被 formal 端点单向支配，却不能证明两套实现共同欠收敛，也不能证明结构性非唯一。权威判决为 `MIXED_OR_NEAR_FLAT_CASE19_HAAR_IRLS_NULL_LINE_V272`。固定 Haar-IRLS 继续关闭，不重跑、不放宽门、不调参；没有 warm initializer、matched-accuracy、有效减调用、完整序列、wall/RSS、外部泛化或真实 BOST。`algorithm_breakthrough=false`。
+
+### English summary
+
+v272 performs a read-only line audit over the two sealed v271 coefficient endpoints instead of rerunning either solver. All thirteen endpoint lines are numerically observation-null, with a maximum relative operator-observation difference of `5.20e-16`. Every independent endpoint has strict descent toward the formal endpoint (`13/13`), with minimum/median/maximum relative descent `1.218e-4 / 1.533e-4 / 2.363e-4`, while no formal endpoint has preregistered inward descent on the tested segment (`0/13`); every segment minimum lies at `alpha=1`. A reverse-order scalar `math.fsum` implementation independently passes `14/14` checks, with maximum absolute/relative differences `1.42e-14 / 2.32e-16` and exact discrete agreement. The result establishes one-way endpoint dominance, not common underoptimization or structural nonuniqueness. The authoritative verdict is `MIXED_OR_NEAR_FLAT_CASE19_HAAR_IRLS_NULL_LINE_V272`; the fixed Haar-IRLS route remains closed and `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-27：v271 两条 Haar-IRLS reference 路径各自全过，但跨实现不一致
 
 **为什么做。** v270 的 K16 reference 只通过 `12/13`，无法继续承担 matched-accuracy 裁判。v271 因此换成物理上不同的固定稀疏参考：一层零边界三维 Haar、12 轮 smoothed-L1 IRLS 和结果前冻结的 `2e-5` 跨实现一致性门。formal 使用 LSMR；独立第二实现自行重建 Haar、算子与归一化，并使用反向列序 LSQR。没有训练或按结果搜索 solver、轮数、平滑与正则。
