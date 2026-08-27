@@ -50,7 +50,7 @@ def test_v238_figure_is_rendered() -> None:
 
 def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "MIXED_OR_NEAR_FLAT_CASE19_HAAR_IRLS_NULL_LINE_V272"
+    assert current["scientific_status"] == "FAIL_CASE19_DIRECT_VOLUME_HODGE_IS_POISSON_REPARAMETERIZATION_V273"
     assert current["current_decision"]["v238_independent_validation_passed"] is True
     assert current["current_decision"]["v238_algorithm_breakthrough"] is False
     assert current["metrics"]["v238_octant_complete_rigs_passed"] == 0
@@ -58,7 +58,7 @@ def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
         current["metrics"]["v238_global_rank64_global_p90_higher"]
     )
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_haar_irls_null_line_attribution_v272.png"
+        "blastnet_case19_volume_hodge_equivalence_v273.png"
     )
 
     for page in (FOCUS, HOME, DAILY):

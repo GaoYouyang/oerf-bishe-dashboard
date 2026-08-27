@@ -64,7 +64,7 @@ def test_v246_figure_and_builder_are_public() -> None:
 
 def test_v246_is_preserved_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "MIXED_OR_NEAR_FLAT_CASE19_HAAR_IRLS_NULL_LINE_V272"
+    assert current["scientific_status"] == "FAIL_CASE19_DIRECT_VOLUME_HODGE_IS_POISSON_REPARAMETERIZATION_V273"
     assert current["current_decision"]["v246_independent_validation_passed"] is True
     assert current["current_decision"]["v246_fixed_k20_reference_authorized"] is False
     assert current["current_decision"]["v246_fixed_depth_reference_deepening_closed"] is True
@@ -72,7 +72,7 @@ def test_v246_is_preserved_as_historical_parent_evidence() -> None:
     assert current["metrics"]["v246_gained_definitely_safe_cells"] == 104
     assert current["metrics"]["v246_nonpositive_worst_case_gain_components"] == 1
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_haar_irls_null_line_attribution_v272.png"
+        "blastnet_case19_volume_hodge_equivalence_v273.png"
     )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")

@@ -65,12 +65,12 @@ def test_v266_figure_is_public_and_readable() -> None:
 def test_v266_remains_historical_after_v267() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-27"
-    assert current["scientific_status"] == "MIXED_OR_NEAR_FLAT_CASE19_HAAR_IRLS_NULL_LINE_V272"
+    assert current["scientific_status"] == "FAIL_CASE19_DIRECT_VOLUME_HODGE_IS_POISSON_REPARAMETERIZATION_V273"
     assert current["metrics"]["v266_cell_failure_complement_only"] == 119
     assert current["metrics"]["v266_cell_failure_both_positive"] == 110
     assert current["current_decision"]["v266_fixed_half_ray_route_closed"] is True
     assert current["current_decision"]["v266_new_candidate_authorized"] is False
-    assert current["public_evidence"]["figure"].endswith("haar_irls_null_line_attribution_v272.png")
+    assert current["public_evidence"]["figure"].endswith("volume_hodge_equivalence_v273.png")
     for page in PRIMARY_PAGES:
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_half_ray_spillover_attribution_v266" in text

@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-27：v273 证明直接三维 Hodge 提升只是泊松预条件伴随
+
+**为什么做。** v272 关闭固定 Haar-IRLS 后，一个看似物理上不同的方向是先把二维残差提升到三维梯度场，再以 curl-free Hodge/Poisson 恢复标量场。v273 在读取 Case 19 真值、观测、残差、重建场或评分数组之前，先审计冻结 straight-ray 离散。算子精确分解为 `A=M D`：`D` 是零边界有限差分梯度，`M` 是三线性射线路径积分与相机平面投影。
+
+**实际结果。** 直接 Hodge 提升满足 `(D^T D)^-1 D^T M^T r=(D^T D)^-1 A^T r`，因此只是标量伴随的固定 Dirichlet-Poisson 预条件写法。13 套 reported geometry 上，正式 `A=M D` 最大相对误差 `3.55e-16`，Hodge 提升等价误差 `1.33e-15`；独立实现对应为 `3.51e-16 / 1.59e-12`，Poisson 残差 `9.17e-13`，相机乱序误差 `0`。两边公共指标最大差 `1.75e-12`，独立有效性 `16/16` 全真。
+
+**讲人话。** 这条“三维梯度优先”路线表面换了变量，实际没有多出新的物理方向。权威判决为 `FAIL_CASE19_DIRECT_VOLUME_HODGE_IS_POISSON_REPARAMETERIZATION_V273`；直接线性 volume-Hodge 关闭，不调边界、模板、projector 或 Laplacian。这个 no-go 审计新增 `0A+0A^T`，避免了无效大实验，但没有新重建、matched-accuracy、减调用、wall/RSS、外部门或真实 BOST。它不关闭非线性物理、非二次先验、噪声感知、curved ray 或整条 C 路线。`algorithm_breakthrough=false`。
+
+### English summary
+
+v273 audits the frozen straight-ray algebra before reading any Case 19 truth, observation, residual, field, or score array. The operator factorizes as `A=M D`, where `D` is the zero-boundary finite-difference gradient and `M` is trilinear path integration plus camera-plane projection. Consequently, direct curl-free volumetric recovery satisfies `(D^T D)^-1 D^T M^T r=(D^T D)^-1 A^T r`: it is the scalar adjoint under a fixed Dirichlet-Poisson preconditioner, not a new physical direction. Across thirteen reported geometries, formal factorization and Hodge-equivalence errors are `3.55e-16 / 1.33e-15`; independent values are `3.51e-16 / 1.59e-12`, with a `9.17e-13` Poisson residual, zero camera-permutation error, and `16/16` validity checks. The maximum common-metric difference is `1.75e-12`. The authoritative verdict is `FAIL_CASE19_DIRECT_VOLUME_HODGE_IS_POISSON_REPARAMETERIZATION_V273`. This zero-call no-go result closes only the direct linear volume-Hodge route and establishes no reconstruction, matched-accuracy, resource, external, curved-ray, or real-BOST result. `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-27：v272 把 v271 的求解差异收紧为单向端点支配
 
 **为什么做。** v271 的 formal LSMR 与 independent reverse-column LSQR 各自都通过 `13/13`，但跨实现连续场不一致。v272 不重跑求解器，而是只读两组封存系数、算子观测和各自最终平滑参数，在两端点之间检查固定 smoothed-L1 目标。它不读密度真值、三维场、指标或几何，不生成候选，新增调用为 `0A+0A^T`。
