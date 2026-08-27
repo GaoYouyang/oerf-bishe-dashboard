@@ -57,7 +57,7 @@ def test_v241_figure_and_source_are_public() -> None:
 
 def test_v241_is_preserved_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_CASE19_TWO_COLOR_ADDITIVE_SCHWARZ_V267"
+    assert current["scientific_status"] == "FAIL_CASE19_COARSE_RESIDUAL_GALERKIN_FRAME_ZERO_V268_4"
     assert current["current_decision"]["v241_sealed_array_readjudication_passed"] is True
     assert current["current_decision"]["v241_necessary_span_capacity_passed"] is True
     assert current["current_decision"]["v241_joint_feasibility_tested"] is False
@@ -65,7 +65,7 @@ def test_v241_is_preserved_as_historical_parent_evidence() -> None:
     assert current["metrics"]["v241_later_cells_necessary_safe"] == 533
     assert current["metrics"]["v241_complete_rigs_necessary_passed"] == 13
     assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_two_color_additive_schwarz_v267.png"
+        "blastnet_case19_coarse_residual_galerkin_v268.png"
     )
 
     for page in (FOCUS, HOME, DAILY):

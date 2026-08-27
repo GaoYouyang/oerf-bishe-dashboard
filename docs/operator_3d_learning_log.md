@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-27：v268 固定单步全局粗空间修正未守住 K16 观测匹配门
+
+**为什么做。** v267 说明同步叠加局部方向会发生强跨块干扰，所以 v268 换成一个物理上不同、仍可证伪的确定性机制：从已封存父状态出发，把完整观测残差的精确 normal 限制到固定 `16×8×8` 粗网格，再提升回 `32×16×16` 场，只做一次全残差最小二乘步。预测只读观测、报告几何和求解器状态，不读真值，也不搜索粗网格、步数、阻尼或正则。
+
+**实际结果。** 完全独立第二实现通过 `25/25` 项检查。候选通过绝对门 `13/13`，但相对 K16 的 matched-accuracy 只通过 `7/13`；六个失败全部只来自 observation，field、full-gradient 和 interior-gradient 没有 matched 失败。observation matched p50 / p90 / worst 为 `1.035899 / 1.089650 / 1.209549`。独立候选场最大相对差 `3.65e-11`，指标最大绝对差 `4.76e-11`，相机乱序差 `0`，物理残差重放误差 `1.65e-14`。
+
+**讲人话。** 这一步把三维场和梯度压得很好，但送回相机的二维观测仍有六套没有追上 K16。更关键的是，同一首帧小门上，同价 full-row control 和更便宜 single-half control 都已经是 `13/13`，所以即使主候选通过，也不能在这里隔离出新优势。固定单步粗空间路线关闭，不改粗网格、基、步数、粗解或正则，也不用大模型或 GPU 挽救。逻辑账 `16A+15A^T` 虽少于 K16 的 `16A+16A^T`，但 matched-accuracy 没过，不能称有效减调用。这是已打开 Case 19 上的 post-open 首帧负机制证据，不是完整序列、wall/RSS、外部泛化或真实 BOST 结果。`algorithm_breakthrough=false`。
+
+### English summary
+
+v268 tests a physically distinct deterministic mechanism after v267 exposes strong cross-block interference. Starting from the sealed parent, it restricts the exact normal of the full-observation residual to a fixed `16×8×8` coarse grid, lifts it back to the `32×16×16` field, and takes one full-residual least-squares step. The fully independent implementation passes `25/25` checks. The candidate clears the absolute gate on `13/13` rigs but reaches only `7/13` K16-matched rigs; all six failures are observation-only. Observation matched p50 / p90 / worst are `1.035899 / 1.089650 / 1.209549`. Equal-cost full-row and cheaper single-half controls both reach `13/13` on the same restricted frame-zero gate. The fixed one-step coarse route therefore closes without grid, basis, step-count, coarse-solve, regularization, larger-model, or GPU rescue. Its nominal `16A+15AT` ledger is not effective call reduction because matched accuracy fails. This is post-open negative frame-zero mechanism evidence, not a full-sequence, wall/RSS, external, or real-BOST result. `algorithm_breakthrough=false`.
+
+---
+
 ## 2026-08-27：v267 发现同步双颜色局部步会互相抵消
 
 **为什么做。** v266 说明半射线失败不是单纯把误差推到没选中的另一半，所以 v267 改为同时覆盖完整观测：把两分量探测器射线按偶、奇棋盘颜色分成两块，每块都从同一个父残差独立算一次精确局部 normal、预条件方向和线搜索，再同步相加。预测只读观测、报告几何和求解器状态，不读真值，也不搜索划分、顺序、阻尼或深度。

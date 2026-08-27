@@ -11,8 +11,7 @@ SUMMARY = ROOT / "docs/blastnet_case19_two_color_additive_schwarz_v267_public_su
 RESULT = ROOT / "docs/blastnet_case19_two_color_additive_schwarz_v267_result_2026-08-27.md"
 FIGURE = ROOT / "assets/figures/blastnet_case19_two_color_additive_schwarz_v267.png"
 CURRENT = ROOT / "operator-learning/current-evidence.json"
-PRIMARY_PAGES = (
-    ROOT / "index.html",
+HISTORICAL_PAGES = (
     ROOT / "operator-learning/index.html",
     ROOT / "operator-learning/daily-progress.html",
 )
@@ -83,20 +82,22 @@ def test_v267_figure_is_public_and_readable() -> None:
         assert image.height >= 1100
 
 
-def test_v267_is_latest_and_v266_remains_historical() -> None:
+def test_v267_remains_historical_after_v268_becomes_latest() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-08-27"
-    assert current["scientific_status"] == "FAIL_CASE19_TWO_COLOR_ADDITIVE_SCHWARZ_V267"
+    assert current["scientific_status"] == "FAIL_CASE19_COARSE_RESIDUAL_GALERKIN_FRAME_ZERO_V268_4"
     assert current["metrics"]["v267_primary_matched_pass_cells"] == 2
     assert current["metrics"]["v267_global_residual_worsened_cells"] == 419
     assert current["current_decision"]["v267_exact_synchronous_two_color_route_closed"] is True
     assert current["current_decision"]["v267_predictor_training_authorized"] is False
-    assert current["public_evidence"]["figure"].endswith("two_color_additive_schwarz_v267.png")
-    for page in PRIMARY_PAGES:
+    assert current["public_evidence"]["figure"].endswith("coarse_residual_galerkin_v268.png")
+    for page in HISTORICAL_PAGES:
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_two_color_additive_schwarz_v267" in text
         assert "v266" in text
         assert "data-i18n-zh" in text and "data-i18n-en" in text
+    log = (ROOT / "docs/operator_3d_learning_log.md").read_text(encoding="utf-8")
+    assert "v267" in log and "v268" in log
 
 
 def test_v267_daily_progress_keeps_one_day_card() -> None:
