@@ -2,9 +2,11 @@
   "schema_version": "oerf-operator-learning-current-evidence-v1",
   "updated": "2026-08-28",
   "route": "C: permutation-invariant variable-camera observation/geometry-only warm initializer for three-dimensional BOST reconstruction",
-  "engineering_status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_CASE19_BULK_ADVECTION_WARM_V275",
+  "engineering_status": "INCONCLUSIVE_INVALID_CASE19_TV_PDHG_REFERENCE_V276",
   "scientific_status": "INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275",
-  "formal_status": "INCONCLUSIVE_INADEQUATE_CASE19_BULK_ADVECTION_K16_REFERENCE_V275",
+  "formal_status": "INCONCLUSIVE_INVALID_CASE19_TV_PDHG_REFERENCE_V276",
+  "v276_execution_status": "INCONCLUSIVE_INVALID_CASE19_TV_PDHG_REFERENCE_V276",
+  "v276_scientific_result_status": "NO_FORMAL_SCIENTIFIC_RESULT_GENERATED_V276",
   "v275_independent_status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_CASE19_BULK_ADVECTION_WARM_V275",
   "v275_scientific_decision": "INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275",
   "v274_2_independent_status": "INCONCLUSIVE_INDEPENDENT_RECOMPUTATION_CASE19_LORO_FUSION_REFERENCE_V274_2",
@@ -420,6 +422,9 @@
   "headline": "v275 independently evaluates fixed official-speed bulk advection on opened Case 19, but passes only 26/31 numerical checks. The primary and transported K16 reference are each absolute-safe in 428/429 cells and 12/13 rigs, while the primary reaches only 13/429 matched cells and 0/13 matched rigs. The fixed mechanism is inconclusive and closes.",
   "headline_en": "v275 independently evaluates fixed official-speed bulk advection on opened Case 19, but passes only 26/31 numerical checks. The primary and transported K16 reference are each absolute-safe in 428/429 cells and 12/13 rigs, while the primary reaches only 13/429 matched cells and 0/13 matched rigs. The fixed mechanism is inconclusive and closes.",
   "headline_zh": "v275 在已开封 Case 19 上独立审计固定官方速度整体平流，但数值检查只通过 26/31。主候选与平流 K16 reference 的绝对门都只有 428/429 单元、12/13 rig，主候选 matched 更只有 13/429 与 0/13；固定机制保持不确定并关闭。",
+  "latest_execution_headline": "v276 ends before formal scoring: at least one frozen rig misses the preregistered equality-replay validity limit, so no metric, pass count, or independent scientific validation exists. The fixed TV-PDHG execution closes; v275 remains the latest interpretable scientific evidence.",
+  "latest_execution_headline_en": "v276 ends before formal scoring: at least one frozen rig misses the preregistered equality-replay validity limit, so no metric, pass count, or independent scientific validation exists. The fixed TV-PDHG execution closes; v275 remains the latest interpretable scientific evidence.",
+  "latest_execution_headline_zh": "v276 在正式评分前结束：至少一套冻结 rig 未满足预注册的等式重放有效性门，因此没有指标、通过数或独立科学验证。固定 TV-PDHG execution 关闭；v275 仍是最近一次可解释的科学证据。",
   "metrics": {
     "v275_cells_total": 429,
     "v275_rigs_total": 13,
@@ -4250,6 +4255,14 @@
     "v225_maximum_formal_independent_summary_difference": 5.702904815052534e-11
   },
   "current_decision": {
+    "v276_formal_completed": false,
+    "v276_prediction_ready_generated": false,
+    "v276_metrics_generated": false,
+    "v276_independent_validation_run": false,
+    "v276_scientific_result_interpretable": false,
+    "v276_fixed_tv_pdhg_execution_closed": true,
+    "v276_rerun_authorized": false,
+    "v276_algorithm_breakthrough": false,
     "v275_formal_completed": true,
     "v275_independent_recomputation_completed": true,
     "v275_independent_validation_passed": false,
@@ -6512,9 +6525,12 @@
     "v243_gpu_rental_authorized": false,
     "v243_algorithm_breakthrough": false
   },
-  "next_scientific_gate": "v275 closes the fixed official-speed whole-field bulk-advection previous-self K14 mechanism after independent numerical closure, reference adequacy, and matched accuracy all fail. Do not relax tolerances or tune speed, sign, interpolation, boundary handling, or depth. Continue only with condition-matched real two-component BOST data or a uniquely preregistered mechanism that is physically distinct from fixed rigid bulk transport.",
-  "next_scientific_gate_en": "v275 closes the fixed official-speed whole-field bulk-advection previous-self K14 mechanism after independent numerical closure, reference adequacy, and matched accuracy all fail. Do not relax tolerances or tune speed, sign, interpolation, boundary handling, or depth. Continue only with condition-matched real two-component BOST data or a uniquely preregistered mechanism that is physically distinct from fixed rigid bulk transport.",
-  "next_scientific_gate_zh": "v275 因独立数值闭环、reference 充分性和 matched-accuracy 均未通过，关闭固定官方速度整体平流 previous-self K14 机制。后续不放宽容差，不调速度、方向、插值、边界或深度；只接受工况配对的真实二维双分量 BOST 数据，或与固定刚性整体输运物理上真正不同、结果前唯一冻结的新机制。",
+  "next_scientific_gate": "v276 closes only the fixed TV-PDHG execution after its preregistered equality-replay validity gate fails before scoring. Do not rerun it with more iterations, a looser limit, changed steps, stencil, or boundary handling. Continue only with condition-matched real two-component BOST data or one uniquely preregistered reference mechanism that is physically and numerically distinct from the closed fixed TV-PDHG execution and earlier rigid-transport or global-quadratic families.",
+  "next_scientific_gate_en": "v276 closes only the fixed TV-PDHG execution after its preregistered equality-replay validity gate fails before scoring. Do not rerun it with more iterations, a looser limit, changed steps, stencil, or boundary handling. Continue only with condition-matched real two-component BOST data or one uniquely preregistered reference mechanism that is physically and numerically distinct from the closed fixed TV-PDHG execution and earlier rigid-transport or global-quadratic families.",
+  "next_scientific_gate_zh": "v276 因预注册的等式重放有效性门在评分前失败，只关闭固定 TV-PDHG execution；不增加迭代、不放宽门、不改步长、差分或边界，也不重跑。后续只接受工况配对的真实二维双分量 BOST 数据，或与已关闭的固定 TV-PDHG、刚性整体输运及 global-quadratic 家族在物理和数值上真正不同、结果前唯一冻结的新 reference 机制。",
+  "latest_execution_evidence": {
+    "note": "../document_reader.html?doc=docs%2Fblastnet_case19_tv_basis_pursuit_reference_v276_execution_note_2026-08-28.md"
+  },
   "public_evidence": {
     "result": "../document_reader.html?doc=docs%2Fblastnet_case19_bulk_advection_warm_v275_result_2026-08-28.md",
     "summary": "../docs/blastnet_case19_bulk_advection_warm_v275_public_summary.json",
