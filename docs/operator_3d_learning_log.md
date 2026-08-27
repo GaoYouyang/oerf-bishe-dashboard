@@ -4,6 +4,18 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-28：v276 固定 TV-PDHG 在正式评分前因等式重放失效
+
+**为什么做。** v275 之后，Case 19 仍缺少充分且可复现的 reference。v276 在读取新结果前冻结一个物理上不同的经典参考：等式约束的各向同性三维 TV，固定零边界、零均值、迭代预算和停止门，不搜索正则参数，也不使用真值早停。全尺寸合成审计中，两套实现的场相对差约为 `1.03e-15`，因此只授权一次正式执行。
+
+**实际执行。** 唯一 formal 使用 10 个 CPU worker threads。至少一套冻结相机 rig 在固定停止点未满足预注册的 row-scaled equality replay 门，程序在 `PREDICTION_READY`、正式指标数组、通过数和 `READY` 生成前 fail-closed。因此 v276 没有 field、gradient、observation、matched-accuracy 或 exact-call 科学数字，也没有启动独立科学 validator。
+
+**讲人话与路线动作。** 这次确实把计算线程用起来了，但算力不能替代预注册的数值有效性。权威状态是 `INCONCLUSIVE_INVALID_CASE19_TV_PDHG_REFERENCE_V276`：只关闭这份固定 TV-PDHG execution，不增加迭代、不放宽等式门、不改步长、差分或边界，也不重跑。它是评分前数值执行失效，不是 TV 的科学负结果，更不是“差一点成功”。v275 继续作为最近一次可解释的独立科学证据；`algorithm_breakthrough=false`。
+
+### English note
+
+v276 opens one physically distinct classical reference after v275 leaves Case 19 without an adequate reproducible adjudicator: equality-constrained isotropic 3D total variation with fixed boundary, mean, iteration, and stopping conventions, no regularization search, and no truth-guided early stopping. A full-size synthetic audit brings the two implementations to approximately `1.03e-15` relative field agreement, authorizing one formal run. The ten-thread formal execution then fails closed because at least one frozen rig does not satisfy the preregistered row-scaled equality-replay limit at the fixed stopping point. This occurs before `PREDICTION_READY`, metric arrays, pass counts, or `READY`; no scientific metric exists and no independent scientific validator is started. The authoritative status is `INCONCLUSIVE_INVALID_CASE19_TV_PDHG_REFERENCE_V276`. The fixed execution closes without more iterations, a relaxed equality gate, changed steps, stencil, boundaries, or rerun. This is a numerical execution failure, not a scientific TV result or an algorithmic breakthrough. v275 remains the latest independently evaluated scientific evidence.
+
 ## 2026-08-28：v275 整体平流有物理动机，但 reference 与独立数值门都没过
 
 **为什么做。** v274.2 关闭了固定多几何 LORO-K16 reference，下一条候选必须物理上真正不同。Case 19 提供官方入口速度与 33 个时间戳，因此 v275 只冻结一个 deterministic 假设：把上一帧自己的重建沿 source-x 按 `u_in Δt` 做因果半拉格朗日平流，再执行未修改 geometry-Jacobi PCGLS K14。它只看上一帧重建、官方速度、时间和 reported geometry，不搜索速度、方向、插值、边界或深度；同样平流后的 K16 是 matched reference。
