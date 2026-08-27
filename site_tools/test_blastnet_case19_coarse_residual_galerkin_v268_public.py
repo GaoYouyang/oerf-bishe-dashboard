@@ -75,12 +75,11 @@ def test_v268_figure_is_public_and_readable() -> None:
         assert image.height >= 900
 
 
-def test_v268_is_latest_and_v267_remains_historical() -> None:
+def test_v268_remains_historical_after_v269_1() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["headline"].startswith("v268")
+    assert current["headline"].startswith("v269.1")
     assert current["metrics"]["v268_primary_matched_pass_cells"] == 7
     assert current["current_decision"]["v268_fixed_one_step_coarse_route_closed"] is True
-    assert current["public_evidence"]["figure"].endswith("coarse_residual_galerkin_v268.png")
     for path in PAGES:
         text = path.read_text(encoding="utf-8")
         assert "blastnet_case19_coarse_residual_galerkin_v268" in text
