@@ -4,6 +4,20 @@
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。
 
+## 2026-08-29：v278.1 旧数据已跑到标定扰动门，先坏的是 reference
+
+**为什么做。** 用户明确要求继续使用师兄此前提供的数据。v278.1 因此不等新的二维文件，直接把九个可执行三维场与十三套九相机标定接入受控虚拟 BOS：从密度场生成像素锁定的二维代理观测，在四个归一化时间下分别加入 clean、观测噪声、位姿误差、内参误差和组合误差。因为缺少逐帧配对实测位移，这一轮从一开始就冻结为虚拟代理，不能叫真实 BOST。
+
+**实际执行与独立复算。** 四个固定算法臂覆盖 `2,340` 个实验单元、`9,360` 条评分行。正式实现和完全独立第二实现的 `21/21` 项检查全真；逐行、分层汇总和最终审裁最大差为 `1.25e-11 / 1.70e-12 / 4.99e-12`。所以这次不是任务没跑、网络中断或两套实现意见不一致。
+
+**科学结果。** K16 reference 在 clean、观测噪声、内参误差的 `12/12` 个时间分层通过，但四个位姿误差和四个组合误差分层全部失败，只达到 `12/20`。位姿条件最坏归一化门负担约 `1.72–1.76`，组合条件约 `1.82–1.84`，通过线为 `1.0`。主候选和更便宜 control 的 `20/20` matched 只能记作诊断，因为冻结规则要求 reference 自己先合格。
+
+**讲人话与路线动作。** 旧数据当然有用，而且已经把问题推进到相机标定误差下的鲁棒性。现在先暴露的是裁判答案在轻微姿态误差下不可靠，不是候选已经成功或失败。权威判决为 `INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1`。下一步先建立一个真正通过位姿/组合扰动门的 reference，不针对这八个已打开失败分层回头调候选。`real_bost=false`、`resource_speedup=false`、`algorithm_breakthrough=false`，不训练神经网络，也不租 GPU。
+
+### English note
+
+v278.1 directly uses the previously supplied nine executable 3D fields and thirteen nine-camera calibrations in a controlled virtual-BOS robustness experiment. Four normalized times and five frozen conditions produce `2,340` cells and `9,360` scored rows. A fully independent implementation passes all `21/21` checks, with maximum row, summary, and adjudication differences of `1.25e-11 / 1.70e-12 / 4.99e-12`. The K16 reference passes all twelve clean, observation-noise, and intrinsic-error strata but fails all four pose and all four combined strata, reaching only `12/20`. Reference-first adjudication therefore stops before candidate success, failure, or cheaper-control dominance can be claimed. The authoritative status is `INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1`. Existing data have advanced the work to calibration-robustness testing, but paired measured displacement is still absent, so this is not real BOST, a resource result, or an algorithmic breakthrough.
+
 ## 2026-08-28：v276 固定 TV-PDHG 在正式评分前因等式重放失效
 
 **为什么做。** v275 之后，Case 19 仍缺少充分且可复现的 reference。v276 在读取新结果前冻结一个物理上不同的经典参考：等式约束的各向同性三维 TV，固定零边界、零均值、迭代预算和停止门，不搜索正则参数，也不使用真值早停。全尺寸合成审计中，两套实现的场相对差约为 `1.03e-15`，因此只授权一次正式执行。
