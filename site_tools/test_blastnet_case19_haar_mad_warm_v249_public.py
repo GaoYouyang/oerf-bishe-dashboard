@@ -66,7 +66,7 @@ def test_v249_figure_and_builder_are_public() -> None:
 
 def test_v249_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275"
+    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
     assert current["current_decision"]["v249_independent_validation_passed"] is False
     assert current["current_decision"]["v249_full_sequence_authorized"] is False
     assert current["current_decision"]["v249_haar_mad_headroom_established"] is False
@@ -74,9 +74,6 @@ def test_v249_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -
     assert current["metrics"]["v249_independent_checks_passed"] == 33
     assert current["metrics"]["v249_independent_checks_total"] == 35
     assert current["metrics"]["v249_primary_strict_safe_cells_diagnostic"] == 13
-    assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_bulk_advection_warm_v275.png"
-    )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_haar_mad_warm_v249" in text

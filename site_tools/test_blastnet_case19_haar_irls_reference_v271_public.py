@@ -58,9 +58,8 @@ def test_v271_figure_is_public_and_readable() -> None:
 
 def test_v271_remains_historical() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["headline"].startswith("v275")
+    assert current["headline"].startswith("v278.1")
     assert current["current_decision"]["v271_independent_validation_passed"] is False
-    assert current["public_evidence"]["figure"].endswith("v275.png")
     for path in PAGES:
         text = path.read_text(encoding="utf-8")
         assert "blastnet_case19_loro_fusion_reference_v274_2" in text

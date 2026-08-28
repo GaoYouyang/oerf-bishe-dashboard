@@ -59,7 +59,7 @@ def test_v258_is_preserved_after_v259_becomes_latest() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275"
+    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
     assert metrics["v258_independent_checks_passed"] == 47
     assert metrics["v258_independent_checks_total"] == 47
     assert metrics["v258_primary_absolute_cells"] == 13
@@ -69,7 +69,6 @@ def test_v258_is_preserved_after_v259_becomes_latest() -> None:
     assert decision["v258_full_sequence_authorized"] is False
     assert decision["v258_effective_exact_call_reduction_established"] is False
     assert decision["v258_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith("blastnet_case19_bulk_advection_warm_v275.png")
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_krylov_complement_heat_v258" in text

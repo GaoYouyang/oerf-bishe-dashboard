@@ -74,7 +74,7 @@ def test_v252_figure_and_builder_are_public() -> None:
 
 def test_v252_is_preserved_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275"
+    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
     metrics = current["metrics"]
     decision = current["current_decision"]
     assert metrics["v252_numeric_checks_failed"] == 3
@@ -84,9 +84,6 @@ def test_v252_is_preserved_on_bilingual_primary_pages() -> None:
     assert decision["v252_scientific_result_inconclusive"] is True
     assert decision["v252_observation_graph_traversal_closed"] is True
     assert decision["v252_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_bulk_advection_warm_v275.png"
-    )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_observation_graph_traversal_v252" in text

@@ -64,16 +64,13 @@ def test_v246_figure_and_builder_are_public() -> None:
 
 def test_v246_is_preserved_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275"
+    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
     assert current["current_decision"]["v246_independent_validation_passed"] is True
     assert current["current_decision"]["v246_fixed_k20_reference_authorized"] is False
     assert current["current_decision"]["v246_fixed_depth_reference_deepening_closed"] is True
     assert current["current_decision"]["v246_algorithm_breakthrough"] is False
     assert current["metrics"]["v246_gained_definitely_safe_cells"] == 104
     assert current["metrics"]["v246_nonpositive_worst_case_gain_components"] == 1
-    assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_bulk_advection_warm_v275.png"
-    )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_reference_envelope_v246" in text

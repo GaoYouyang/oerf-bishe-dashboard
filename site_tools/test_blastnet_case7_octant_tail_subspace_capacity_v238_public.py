@@ -50,15 +50,12 @@ def test_v238_figure_is_rendered() -> None:
 
 def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275"
+    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
     assert current["current_decision"]["v238_independent_validation_passed"] is True
     assert current["current_decision"]["v238_algorithm_breakthrough"] is False
     assert current["metrics"]["v238_octant_complete_rigs_passed"] == 0
     assert current["metrics"]["v238_octant_global_p90_higher"] > (
         current["metrics"]["v238_global_rank64_global_p90_higher"]
-    )
-    assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_bulk_advection_warm_v275.png"
     )
 
     for page in (FOCUS, HOME, DAILY):

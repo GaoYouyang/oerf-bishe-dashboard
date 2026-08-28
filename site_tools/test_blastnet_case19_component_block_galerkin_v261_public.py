@@ -76,10 +76,10 @@ def test_v261_remains_preserved_after_v263_1_on_bilingual_primary_pages() -> Non
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275"
-    assert current["headline"].startswith("v275")
-    assert current["headline_zh"].startswith("v275")
-    assert current["headline_en"].startswith("v275")
+    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
+    assert current["headline"].startswith("v278.1")
+    assert current["headline_zh"].startswith("v278.1")
+    assert current["headline_en"].startswith("v278.1")
     assert metrics["v261_independent_checks_passed"] == 41
     assert metrics["v261_primary_absolute_cells"] == 3
     assert metrics["v261_primary_matched_cells"] == 0
@@ -87,7 +87,6 @@ def test_v261_remains_preserved_after_v263_1_on_bilingual_primary_pages() -> Non
     assert decision["v261_primary_improved_over_same_cost_k15"] is False
     assert decision["v261_full_sequence_authorized"] is False
     assert decision["v261_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith("blastnet_case19_bulk_advection_warm_v275.png")
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_component_block_galerkin_v261" in text

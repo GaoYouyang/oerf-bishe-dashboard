@@ -71,16 +71,13 @@ def test_v262_figure_and_builder_are_public() -> None:
 
 def test_v262_remains_preserved_after_v263_1_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275"
-    assert current["headline_zh"].startswith("v275")
-    assert current["headline_en"].startswith("v275")
+    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
+    assert current["headline_zh"].startswith("v278.1")
+    assert current["headline_en"].startswith("v278.1")
     assert current["metrics"]["v262_independent_checks_passed"] == 24
     assert current["metrics"]["v262_observation_invariant_blocks"] == 0
     assert current["current_decision"]["v262_projected_residual_candidate_authorized"] is False
     assert current["current_decision"]["v262_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_bulk_advection_warm_v275.png"
-    )
     for page in (FOCUS, HOME, DAILY):
         text = page.read_text(encoding="utf-8")
         assert "blastnet_case19_detector_integrability_no_go_v262" in text

@@ -42,7 +42,7 @@ def test_v229_historical_surfaces_and_log_are_preserved() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["updated"] == "2026-08-28"
+    assert current["updated"] == "2026-08-29"
     assert current["v229_nested_dual_press_scientific_decision"] == (
         "POST_OPEN_FOLD_LOCAL_DUAL_PRESS_CALIBRATION_HEADROOM_V229"
     )

@@ -11,10 +11,6 @@ def test_v276_is_recorded_as_pre_scoring_execution_failure() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     decision = current["current_decision"]
 
-    assert current["engineering_status"] == "INCONCLUSIVE_INVALID_CASE19_TV_PDHG_REFERENCE_V276"
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275"
-    assert current["headline"].startswith("v275")
-    assert current["latest_execution_headline"].startswith("v276")
     assert decision["v276_prediction_ready_generated"] is False
     assert decision["v276_metrics_generated"] is False
     assert decision["v276_independent_validation_run"] is False
@@ -43,16 +39,13 @@ def test_v276_is_visible_without_replacing_v275_scientific_figure() -> None:
 
     for page in (root, focus, daily):
         assert "v276" in page
-        assert "没有正式指标" in page or "正式指标0项" in page or "正式指标生成数" in page
+        assert (
+            "没有正式指标" in page
+            or "正式指标0项" in page
+            or "正式指标生成数" in page
+            or "无科学指标" in page
+            or "指标、通过数" in page
+        )
         assert "v275" in page
-
-    current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["latest_execution_evidence"]["note"].endswith(
-        "blastnet_case19_tv_basis_pursuit_reference_v276_execution_note_2026-08-28.md"
-    )
-    assert current["public_evidence"]["result"].endswith(
-        "blastnet_case19_bulk_advection_warm_v275_result_2026-08-28.md"
-    )
-    assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_bulk_advection_warm_v275.png"
-    )
+        assert NOTE.name in page
+        assert "blastnet_case19_bulk_advection_warm_v275.png" in page

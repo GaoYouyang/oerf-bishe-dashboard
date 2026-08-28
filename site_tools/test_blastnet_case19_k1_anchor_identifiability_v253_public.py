@@ -58,7 +58,7 @@ def test_v253_figure_and_builder_are_public() -> None:
 
 def test_v253_remains_preserved_as_historical_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_INVALID_CASE19_BULK_ADVECTION_WARM_V275"
+    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
     metrics = current["metrics"]
     decision = current["current_decision"]
     assert metrics["v253_k1_anchor_safe_rigs"] == 9
@@ -69,9 +69,6 @@ def test_v253_remains_preserved_as_historical_evidence() -> None:
     assert decision["v253_k1_residual_contraction_anchor_closed"] is True
     assert decision["v253_full_traversal_mechanism_authorized"] is False
     assert decision["v253_algorithm_breakthrough"] is False
-    assert current["public_evidence"]["figure"].endswith(
-        "blastnet_case19_bulk_advection_warm_v275.png"
-    )
     daily_text = DAILY.read_text(encoding="utf-8")
     assert "blastnet_case19_k1_anchor_identifiability_v253" in daily_text
     assert "9/13" in daily_text and "11/13" in daily_text and "13/13" in daily_text

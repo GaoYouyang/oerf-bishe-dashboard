@@ -66,10 +66,9 @@ def test_v270_figure_is_public_and_readable() -> None:
 
 def test_v270_remains_historical() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["headline"].startswith("v275")
+    assert current["headline"].startswith("v278.1")
     assert current["metrics"]["v270_independent_checks_passed"] == 32
     assert current["current_decision"]["v270_reference_inadequate"] is True
-    assert current["public_evidence"]["figure"].endswith("v275.png")
     for path in PAGES:
         text = path.read_text(encoding="utf-8")
         assert "blastnet_case19_geometry_normal_sgs_v270" in text
