@@ -77,7 +77,7 @@ def test_v260_remains_preserved_after_v261_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
+    assert current["scientific_status"] == "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280"
     assert metrics["v260_independent_checks_passed"] == 52
     assert metrics["v260_primary_absolute_cells"] == 13
     assert metrics["v260_primary_matched_cells"] == 0

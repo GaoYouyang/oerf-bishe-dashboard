@@ -58,7 +58,7 @@ def test_v253_figure_and_builder_are_public() -> None:
 
 def test_v253_remains_preserved_as_historical_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
+    assert current["scientific_status"] == "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280"
     metrics = current["metrics"]
     decision = current["current_decision"]
     assert metrics["v253_k1_anchor_safe_rigs"] == 9

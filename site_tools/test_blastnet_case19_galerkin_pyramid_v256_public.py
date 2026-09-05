@@ -67,7 +67,7 @@ def test_v256_remains_historical_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
+    assert current["scientific_status"] == "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280"
     assert metrics["v256_independent_checks_passed"] == 19
     assert metrics["v256_independent_checks_total"] == 20
     assert metrics["v256_failed_numeric_checks"] == 1

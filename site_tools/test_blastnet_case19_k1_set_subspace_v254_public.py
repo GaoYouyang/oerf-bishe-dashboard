@@ -60,7 +60,7 @@ def test_v254_is_retained_after_v255_becomes_latest() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
+    assert current["scientific_status"] == "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280"
     assert metrics["v254_primary_absolute_safe_cells"] == 383
     assert metrics["v254_primary_absolute_safe_rigs"] == 6
     assert metrics["v254_primary_matched_safe_cells"] == 0

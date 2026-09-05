@@ -50,7 +50,7 @@ def test_v238_figure_is_rendered() -> None:
 
 def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
+    assert current["scientific_status"] == "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280"
     assert current["current_decision"]["v238_independent_validation_passed"] is True
     assert current["current_decision"]["v238_algorithm_breakthrough"] is False
     assert current["metrics"]["v238_octant_complete_rigs_passed"] == 0

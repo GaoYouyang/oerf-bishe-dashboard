@@ -74,7 +74,7 @@ def test_v252_figure_and_builder_are_public() -> None:
 
 def test_v252_is_preserved_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
+    assert current["scientific_status"] == "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280"
     metrics = current["metrics"]
     decision = current["current_decision"]
     assert metrics["v252_numeric_checks_failed"] == 3

@@ -77,7 +77,7 @@ def test_v268_figure_is_public_and_readable() -> None:
 
 def test_v268_remains_historical_after_v269_1() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["headline"].startswith("v278.1")
+    assert current["headline"].startswith("v280")
     assert current["metrics"]["v268_primary_matched_pass_cells"] == 7
     assert current["current_decision"]["v268_fixed_one_step_coarse_route_closed"] is True
     for path in PAGES:

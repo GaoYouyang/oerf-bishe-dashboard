@@ -64,8 +64,8 @@ def test_v266_figure_is_public_and_readable() -> None:
 
 def test_v266_remains_historical_after_v267() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["updated"] == "2026-08-29"
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
+    assert current["updated"] == "2026-09-05"
+    assert current["scientific_status"] == "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280"
     assert current["metrics"]["v266_cell_failure_complement_only"] == 119
     assert current["metrics"]["v266_cell_failure_both_positive"] == 110
     assert current["current_decision"]["v266_fixed_half_ray_route_closed"] is True

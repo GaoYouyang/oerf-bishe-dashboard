@@ -1,5 +1,23 @@
 # 3D 逆问题学习持续日志
 
+## 2026-09-05：v280 先分清误差从哪里来
+
+1,404 个已开封虚拟单元完成独立误差分解。clean 场误差中逆放大项的有符号贡献中位数为 82.27%–84.10%；pose 中几何项为 81.79%–88.41%。这是归因，不是重建改善。
+
+只用现有三维场生成受控代理；归因读取真值，没有训练或部署提速。分量分位数不能相加；v279 仍不确定。algorithm_breakthrough=false、real_bost=false。
+
+讲人话：把缺失的细节强行解释成已有低频结构，可能让投影更贴合，却把三维场带偏。位姿误差则又贡献了另一大块误差。因此继续加迭代或堆网络没有充分依据，先检验模型误差处理。
+
+### English
+
+Independent error decomposition covers 1,404 opened virtual cells. Median signed contributions to field error are 82.27%–84.10% for inverse aliasing in clean data and 81.79%–88.41% for geometry mismatch under pose error. This is attribution, not improved reconstruction.
+
+Existing 3D fields generate a controlled proxy; attribution uses truth, with no training or deployment speedup. Component quantiles do not add; v279 remains inconclusive. algorithm_breakthrough=false; real_bost=false.
+
+In plain language: fitting missing fine structure with available coarse modes can improve the projection fit while distorting the volume. Pose error adds a separate large contribution. More iterations or a larger network is not yet justified; examine model discrepancy first.
+
+[双语结果 / Bilingual result](real_bost_error_sources_v280_result_2026-09-05.md)
+
 日期：2026-07-16
 
 这份日志只记录我在读懂和复核这条实验线时真正学到的东西。重点不是把结果写成“模型越来越强”，而是把每次尝试的前提、数字、失败原因和下一步验证条件留下来。

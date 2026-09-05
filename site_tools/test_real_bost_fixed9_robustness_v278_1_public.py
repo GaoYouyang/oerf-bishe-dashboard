@@ -61,7 +61,7 @@ def test_v278_1_figure_is_readable() -> None:
 
 def test_v278_1_is_synchronized_once() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
+    assert _summary()["scientific_decision"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
     assert current["metrics"]["v278_1_cells"] == 2340
     assert current["current_decision"]["v278_1_reference_adequate"] is False
     for path in PAGES:

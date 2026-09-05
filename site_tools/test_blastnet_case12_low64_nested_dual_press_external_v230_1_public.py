@@ -52,7 +52,7 @@ def test_v230_1_figure_is_rendered() -> None:
 
 def test_v230_1_historical_surfaces_and_log_are_preserved() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["updated"] == "2026-08-29"
+    assert current["updated"] == "2026-09-05"
     assert current["v230_scientific_decision"] == "INCONCLUSIVE_INADEQUATE_CASE12_K16_REFERENCE_V230"
     assert current["metrics"]["v230_case12_reference_absolute_strict_safe"] == 594
     assert current["metrics"]["v230_case12_reference_strict_total"] == 598

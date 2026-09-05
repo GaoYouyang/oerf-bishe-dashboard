@@ -64,7 +64,7 @@ def test_v246_figure_and_builder_are_public() -> None:
 
 def test_v246_is_preserved_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1"
+    assert current["scientific_status"] == "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280"
     assert current["current_decision"]["v246_independent_validation_passed"] is True
     assert current["current_decision"]["v246_fixed_k20_reference_authorized"] is False
     assert current["current_decision"]["v246_fixed_depth_reference_deepening_closed"] is True
