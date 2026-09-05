@@ -44,6 +44,24 @@ def test_exact_normal_diagnostic_is_not_prediction_success():
         assert note and '10/25' in note['data-i18n-zh'] and '10/25' in note['data-i18n-en']
 
 
+def test_normal_cache_arithmetic_is_not_a_wall_or_reconstruction_claim():
+    data = json.loads((ROOT / f'docs/{STEM}.json').read_text())
+    row = data['diagnostics']['exact_normal_cache']
+    assert row['normal_nonzeros'] == 64746812 and row['factor_nonzeros'] == 2960876
+    assert row['geometry_rows'] == 29700 and row['independently_verified']
+    assert abs(row['normal_nonzeros'] / (2 * row['factor_nonzeros']) - row['arithmetic_terms_ratio']) < 1e-6
+    assert row['memory_budget_passed'] and not row['arithmetic_budget_passed']
+    assert row['measured_wall_ratio'] is None
+    assert not row['truth_or_teacher_read'] and not row['predictor_or_replay_run']
+    current = json.loads((ROOT / 'operator-learning/current-evidence.json').read_text())
+    assert current['latest_diagnostic']['measured_wall_ratio'] is None
+    assert not current['latest_diagnostic']['cheap_control_screen_passed']
+    for path in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        note = BeautifulSoup((ROOT / path).read_text(), 'html.parser').select_one('#normal-cache-diagnostic')
+        assert note and '10.93' in note['data-i18n-zh'] and '10.93' in note['data-i18n-en']
+        assert 'not measured wall' in note['data-i18n-en']
+
+
 def test_weak_message_not_uniformly_harmless():
     data = json.loads((ROOT / f'docs/{STEM}.json').read_text())
     diagnostic = data['diagnostics']['global_context']

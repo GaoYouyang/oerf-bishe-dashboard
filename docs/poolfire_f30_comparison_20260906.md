@@ -73,6 +73,14 @@ BP指观测线搜索后的反投影，在此线性问题中与零起点CGLS K1�
 
 精确normal对照已完成：后续机制必须说明如何用更便宜的观测/几何映射取得有效信息，并排除普通迭代方向的解释。当前固定表示和系数重训路线保持关闭；不改门、不加大模型追通过，现有数据仍可用于有依据的研究。本次仅用公开训练数据的固定干净几何，没有验证5/7/12相机精度、未知位姿、观测噪声、外部条件或真实BOST。私有数据不发布，也不重复索取已经找不到的实验配对。全部成功标志继续false。
 
+## 追加：不能把精确normal缓存当作便宜特征
+
+在当前一套扩展F30九相机几何上，只检查 `B=AA^T` 的结构，不读观测、CFD真值或教师场，不训练、不重建。按结果前固定的浮点舍入阈值去掉数值零后，A含2,960,876个非零项，B仍有64,746,812个，CSR需777,080,548字节，约741.08 MiB。内存没有超过预设1 GiB上限；失败的是算术项数门：一次B乘法为直接A/AT分解的10.933726倍，即使保守数值下界也有10.931226倍。
+
+正式逐基向量forward/稀疏乘积与独立解析行/稠密点积重建了全部29,700行；第二实现实际倒序相机。逐行支持计数完全一致，完整Gram相对差约1.68e-16，保留矩阵作用与直接A/AT的探针差不超过6.70e-15。两实现仍共用同一几何合同，不是独立实验标定。只存小型计数证据，没有保存大矩阵。
+
+结论仅是当前几何的精确normal CSR未通过便宜控制筛选。**10.93倍是算术项数，不是实测慢了10.93倍**。离线构造和B乘法不能从成本账中消失；旧三轴简化几何的稀疏捷径不能直接套用。未测试新的近似、结构化分解或学习器，505帧重建结论不变，不能宣称调用减少、资源优势或算法突破。
+
 # PoolFire: local gains reproduce, stable matched accuracy remains unmet
 
 Across five public training trajectories and 505 frames with complete-trajectory LOTO, the random-feature neural operator passes 409 cells and 2/5 complete trajectories; the linearized control passes 412 cells and 1/5 trajectories. Neither passes the complete objective.
@@ -112,3 +120,11 @@ Formal and independent physics/prediction/scoring implementations reconstruct tr
 The table lists logical online A/AT calls only. Offline teachers, direction projections, geometry construction, features, caches and memory are not free; evaluation replay is not deployment saving. Stable same-accuracy call reduction, fresh-process wall and whole-pipeline RSS benefit remain unproven.
 
 The exact-normal comparison is complete. Any next mechanism must justify a genuinely cheaper observation/geometry map and exclude ordinary iterative-direction explanations. The fixed representations and readout-retraining route remain closed; no threshold or larger-model rescue. Existing data remain usable for justified research. This fixed clean public-train geometry does not validate 5/7/12-camera accuracy, unseen pose, noise, external conditions or real BOST. Private data are not published and already-lost experimental pairs are not repeatedly requested. All success flags remain false.
+
+## Added: an exact-normal cache is not a cheap feature here
+
+This checks only `B=AA^T` on the current expanded F30 nine-camera geometry: no observations, CFD truth, teacher fields, training or reconstruction. The preregistered roundoff-only cutoff leaves 2,960,876 nonzeros in A and 64,746,812 in B. B would need 777,080,548 CSR bytes, about 741.08 MiB, within the preset 1 GiB memory ceiling. Arithmetic eligibility fails: one B product has 10.933726 times the scalar multiply-add terms of factorized A/AT; even the conservative numerical lower bound is 10.931226.
+
+Formal canonical-column forward/sparse products and independent analytical-row/dense products reconstruct all 29,700 rows. The second implementation actually reverses camera order. Per-row support counts agree exactly; complete-Gram relative difference is about 1.68e-16 and retained-action versus factorized probes differs by at most 6.70e-15. Both share the geometry contract, not independent experimental calibration. Only small count evidence remains; no large matrix is persisted.
+
+Only this exact-normal CSR cheap-control screen fails. **10.93 is an arithmetic-term ratio, not a measured 10.93-fold slowdown.** Offline construction and B multiplication cannot vanish from the ledger; old three-axis sparsity does not transfer automatically. No new approximation, structured factorization or learner was tested. The 505-frame reconstruction conclusions remain unchanged, with no call-saving, resource or algorithm-breakthrough claim.

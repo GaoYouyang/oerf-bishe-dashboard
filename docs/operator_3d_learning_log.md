@@ -1,3 +1,13 @@
+## 2026-09-06：把计算提前存下来，不一定更便宜
+
+在当前九相机几何中，精确normal缓存仍需64,746,812个非零项，约741 MiB。单次乘法的算术项数是直接A/AT分解的10.93倍，因此没有通过便宜控制筛选。独立第二实现核对全部29,700行；没有读取密度真值、训练或重建，也没有保存这个大矩阵。
+
+讲人话：省掉名字叫A或AT的调用，不代表省掉了计算。这次排除了直接套用旧稀疏缓存捷径的依据，不是实测慢了10.93倍，也不是新的算法成功。
+
+For this nine-camera geometry, the exact-normal cache still needs 64,746,812 nonzeros and about 741 MiB. A product has 10.93 times the arithmetic terms of factorized A/AT, failing the cheap-control screen. An independent implementation checks all 29,700 rows; no density truth, training or reconstruction is used and no large matrix remains. Fewer operations named A or AT do not imply less work. This is not a measured 10.93-fold slowdown or a new algorithmic success.
+
+[双语数值与范围 / Bilingual values and scope](poolfire_f30_comparison_20260906.md)
+
 ## 2026-09-06：有物理信息，不等于需要更复杂的跨相机模块
 
 沿冻结离散射线算出的信息确实补充了当前表示缺少的内容。25个固定已开封帧中，跨相机方向可消除的教师表示损失中位比例为29.16%至51.46%，但普通normal方向给出了相近信息；跨相机只在10/25帧不弱于它。因此不基于这次诊断扩建模型，也不把精确算子工作藏进“免费特征”。没有新预测器或完整轨迹成功。
