@@ -27,6 +27,23 @@ def test_aggregate_counts_and_cost_boundary():
     assert not data['criterion']['absolute_reference_adequacy_proven']
 
 
+def test_exact_normal_diagnostic_is_not_prediction_success():
+    data = json.loads((ROOT / f'docs/{STEM}.json').read_text())
+    diagnostic = data['diagnostics']['exact_normal_complement']
+    assert diagnostic['cells'] == 25 and diagnostic['frames_per_trajectory'] == 5
+    assert diagnostic['cross_at_least_normal_cells'] == 10
+    assert diagnostic['cross_median_quarter_gate_trajectories'] == 5
+    assert not diagnostic['promotion_gate_passed']
+    assert diagnostic['teacher_visible'] and not diagnostic['new_predictor']
+    assert not diagnostic['K1_refinement_run']
+    assert all(row['cross'] >= .25 for row in diagnostic['per_trajectory'])
+    assert diagnostic['per_trajectory'][3]['normal'] > .50
+    for path in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT / path).read_text(), 'html.parser')
+        note = soup.select_one('#normal-moment-diagnostic')
+        assert note and '10/25' in note['data-i18n-zh'] and '10/25' in note['data-i18n-en']
+
+
 def test_weak_message_not_uniformly_harmless():
     data = json.loads((ROOT / f'docs/{STEM}.json').read_text())
     diagnostic = data['diagnostics']['global_context']

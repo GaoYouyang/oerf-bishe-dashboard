@@ -1,3 +1,11 @@
+## 2026-09-06：有物理信息，不等于需要更复杂的跨相机模块
+
+沿冻结离散射线算出的信息确实补充了当前表示缺少的内容。25个固定已开封帧中，跨相机方向可消除的教师表示损失中位比例为29.16%至51.46%，但普通normal方向给出了相近信息；跨相机只在10/25帧不弱于它。因此不基于这次诊断扩建模型，也不把精确算子工作藏进“免费特征”。没有新预测器或完整轨迹成功。
+
+Physical ray-integral information complements the existing weak global message, but does not justify a more elaborate isolated cross-camera module. Across 25 fixed post-open probes, median removable teacher representation loss is 29.16%-51.46%; ordinary normal information is comparable, with cross at least as useful on only 10/25 frames. No model expansion, free-operator claim, new predictor or full-trajectory success follows.
+
+[双语数值与限定范围 / Bilingual values and limits](poolfire_f30_comparison_20260906.md)
+
 # 3D 逆问题学习持续日志
 
 ## 2026-09-06：有局部学习改善，但还没有稳定胜过便宜方法
