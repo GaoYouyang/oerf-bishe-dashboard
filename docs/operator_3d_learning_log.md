@@ -1,5 +1,23 @@
 # 3D 逆问题学习持续日志
 
+## 2026-09-06：有局部学习改善，但还没有稳定胜过便宜方法
+
+五条公开训练轨迹、505帧、完整轨迹留一验证：随机特征神经算子通过409帧、2/5条完整轨迹；线性化对照通过412帧、1/5条轨迹。两者都没有通过完整目标。
+
+预测只读观测与几何，隐层固定、只拟合17个读出系数；不是完整训练的大网络。候选在线账2A+2A^T，直接场ridge更便宜，仅2A+1A^T。没有稳定调用减少、实测提速、外部泛化或真实BOST结论。
+
+讲人话：不能只说409帧效果不错，就忽略剩下的96帧。全局消息通道看起来像在交流，在线性化实例中却只贡献极小的初始场变化；下一步要先把物理信息传递讲明白，不能用更大的模型掩盖问题。此处是已独立封存证据的整理，不是新训练或提速。
+
+### English
+
+Across five public training trajectories and 505 frames with complete-trajectory LOTO, the random-feature neural operator passes 409 cells and 2/5 complete trajectories; the linearized control passes 412 cells and 1/5 trajectories. Neither passes the complete objective.
+
+Predictions use observations and geometry only; hidden weights are fixed and only 17 readout coefficients are fitted, not a fully trained large network. Candidate online cost is 2A+2AT; direct-field ridge is cheaper at 2A+1AT. Stable call reduction, measured speedup, external generalization and real BOST are not established.
+
+In plain language:409 favorable cells do not erase96 failures. The global message channel appears to communicate, yet its linearized instance barely changes the initializer. Next clarify the physical information transfer; a larger model is not a substitute. This is a consolidation of sealed independent evidence, not new training or speedup.
+
+[双语结果 / Bilingual result](poolfire_f30_comparison_20260906.md)
+
 ## 2026-09-05：v283：投影吻合仍不代表三维梯度正确
 
 完整采样的固定 TSVD 参考通过 8/12 分层：七、九相机全部通过，五相机四个时刻全部失败。五相机投影相对误差低于 5.2e-7，但全梯度 p90 仍为 1.258–1.273，高于 0.75 门。

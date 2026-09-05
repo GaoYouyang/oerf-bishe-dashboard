@@ -36,7 +36,6 @@ def test_all_five_camera_strata_fail_despite_image_fit():
 
 def test_latest_and_historical_bilingual_sections():
     current=json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert current['scientific_status']=='FAIL_FIXED_NODAL_TSVD_REFERENCE_V283'
     assert current['current_decision']['v283_fixed_reference_closed']
     for path in ('index.html','operator-learning/index.html'):
         soup=BeautifulSoup((ROOT/path).read_text(),'html.parser')
@@ -46,7 +45,7 @@ def test_latest_and_historical_bilingual_sections():
             assert node.get('data-i18n-zh') and node.get('data-i18n-en')
         assert soup.select_one('#v282-finite-background')
     home=BeautifulSoup((ROOT/'index.html').read_text(),'html.parser')
-    assert STEM in home.select_one('#latestFigure')['src']
+    assert STEM in home.select_one('#v283-nodal-reference img')['src']
     report=(ROOT/f'docs/{STEM}_result_2026-09-05.md').read_text()
     assert '# v283: fitting projections' in report and '不是实测 BOST' in report
     assert (ROOT/f'assets/figures/{STEM}.png').stat().st_size>10000
