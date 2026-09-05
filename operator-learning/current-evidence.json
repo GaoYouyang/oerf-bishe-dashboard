@@ -1,10 +1,10 @@
 {
   "schema_version": "oerf-operator-learning-current-evidence-v1",
-  "updated": "2026-08-29",
+  "updated": "2026-09-05",
   "route": "C: permutation-invariant variable-camera observation/geometry-only warm initializer for three-dimensional BOST reconstruction",
-  "engineering_status": "PASS_INDEPENDENT_RECOMPUTATION_FIXED9_ROBUSTNESS_V278_1",
-  "scientific_status": "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1",
-  "formal_status": "PASS_FORMAL_FIXED9_ROBUSTNESS_V278_1",
+  "engineering_status": "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280",
+  "scientific_status": "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280",
+  "formal_status": "FORMAL_SOURCE_BUDGET_PENDING_INDEPENDENT_V280",
   "v278_1_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_FIXED9_ROBUSTNESS_V278_1",
   "v278_1_scientific_decision": "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1",
   "v276_execution_status": "INCONCLUSIVE_INVALID_CASE19_TV_PDHG_REFERENCE_V276",
@@ -421,13 +421,18 @@
   "v212_signed_line_cancellation_scientific_decision": "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212",
   "latest_valid_mechanism_status": "PASS_INDEPENDENT_ADJUDICATION_STREAMING_COMPACT_FRESH_RESOURCE_V206",
   "latest_valid_mechanism_formal_status": "PASS_FORMAL_POTENTIAL_NORMAL_STREAMING_FRESH_RESOURCE_EXECUTION_V206",
-  "headline": "v278.1 uses the previously supplied 3D fields and nine-camera calibrations in 2,340 controlled virtual-BOS cells. Independent recomputation passes 21/21 checks, but the K16 reference is adequate in only 12/20 condition-time strata and fails every pose and combined stratum, so candidate adjudication remains inconclusive.",
-  "headline_en": "v278.1 uses the previously supplied 3D fields and nine-camera calibrations in 2,340 controlled virtual-BOS cells. Independent recomputation passes 21/21 checks, but the K16 reference is adequate in only 12/20 condition-time strata and fails every pose and combined stratum, so candidate adjudication remains inconclusive.",
-  "headline_zh": "v278.1 已把此前提供的三维场与九相机标定用于 2,340 个受控虚拟 BOS 单元。独立复算 21/21 通过，但 K16 reference 仅在 12/20 个条件-时间分层充分，全部位姿与组合扰动分层失败，因此候选仍不可裁决。",
-  "latest_execution_headline": "v278.1 completes formal scoring and independent recomputation on the existing supplied data. The implementation closes, but reference-first adjudication stops because pose perturbations invalidate K16; this is controlled virtual BOS, not paired experimental BOST.",
-  "latest_execution_headline_en": "v278.1 completes formal scoring and independent recomputation on the existing supplied data. The implementation closes, but reference-first adjudication stops because pose perturbations invalidate K16; this is controlled virtual BOS, not paired experimental BOST.",
-  "latest_execution_headline_zh": "v278.1 已在现有师兄数据上完成正式评分与独立复算。实现闭环，但位姿扰动使 K16 reference 失效，reference-first 审裁因此停止；这是受控虚拟 BOS，不是配对真实 BOST。",
+  "headline": "v280: Independent error decomposition covers 1,404 opened virtual cells. Median signed contributions to field error are 82.27%–84.10% for inverse aliasing in clean data and 81.79%–88.41% for geometry mismatch under pose error. This is attribution, not improved reconstruction.",
+  "headline_en": "v280: Independent error decomposition covers 1,404 opened virtual cells. Median signed contributions to field error are 82.27%–84.10% for inverse aliasing in clean data and 81.79%–88.41% for geometry mismatch under pose error. This is attribution, not improved reconstruction.",
+  "headline_zh": "v280: 1,404 个已开封虚拟单元完成独立误差分解。clean 场误差中逆放大项的有符号贡献中位数为 82.27%–84.10%；pose 中几何项为 81.79%–88.41%。这是归因，不是重建改善。",
+  "latest_execution_headline": "Independent error decomposition covers 1,404 opened virtual cells. Median signed contributions to field error are 82.27%–84.10% for inverse aliasing in clean data and 81.79%–88.41% for geometry mismatch under pose error. This is attribution, not improved reconstruction.",
+  "latest_execution_headline_en": "Independent error decomposition covers 1,404 opened virtual cells. Median signed contributions to field error are 82.27%–84.10% for inverse aliasing in clean data and 81.79%–88.41% for geometry mismatch under pose error. This is attribution, not improved reconstruction.",
+  "latest_execution_headline_zh": "1,404 个已开封虚拟单元完成独立误差分解。clean 场误差中逆放大项的有符号贡献中位数为 82.27%–84.10%；pose 中几何项为 81.79%–88.41%。这是归因，不是重建改善。",
   "metrics": {
+    "v280_cells": 1404,
+    "v280_independent_checks_passed": 15,
+    "v280_independent_checks_total": 15,
+    "v280_clean_alias_median_range": "82.27–84.10%",
+    "v280_pose_geometry_median_range": "81.79–88.41%",
     "v278_1_cells": 2340,
     "v278_1_scored_rows": 9360,
     "v278_1_independent_checks_passed": 21,
@@ -4268,6 +4273,11 @@
     "v225_maximum_formal_independent_summary_difference": 5.702904815052534e-11
   },
   "current_decision": {
+    "v280_independent_validation_passed": true,
+    "v280_algorithm_breakthrough": false,
+    "v280_attribution_only": true,
+    "v280_predictor_training_authorized": false,
+    "v279_inconclusive": true,
     "v278_1_formal_completed": true,
     "v278_1_independent_recomputation_completed": true,
     "v278_1_independent_validation_passed": true,
@@ -6551,16 +6561,16 @@
     "v243_gpu_rental_authorized": false,
     "v243_algorithm_breakthrough": false
   },
-  "next_scientific_gate": "Before judging the v278.1 warm-start candidate, preregister one perturbation-robust reference that independently passes every pose and combined condition-time stratum. Do not tune the opened candidate against the eight failed strata. Paired measured two-component displacement remains necessary for a real-BOST claim.",
-  "next_scientific_gate_en": "Before judging the v278.1 warm-start candidate, preregister one perturbation-robust reference that independently passes every pose and combined condition-time stratum. Do not tune the opened candidate against the eight failed strata. Paired measured two-component displacement remains necessary for a real-BOST claim.",
-  "next_scientific_gate_zh": "在裁决 v278.1 warm-start 候选前，先结果前冻结一个能独立通过全部位姿与组合条件-时间分层的扰动稳健 reference；不得针对已打开的八个失败分层调候选。真实 BOST 主张仍需要配对实测二维双分量位移。",
+  "next_scientific_gate": "First distinguish model-discrepancy treatment mathematically from closed prior routes, then preregister one observation/geometry-available classical control with complete-model holdouts. Retain a separate finite-background pixel-forward audit; do not change old gates or enlarge a network.",
+  "next_scientific_gate_en": "First distinguish model-discrepancy treatment mathematically from closed prior routes, then preregister one observation/geometry-available classical control with complete-model holdouts. Retain a separate finite-background pixel-forward audit; do not change old gates or enlarge a network.",
+  "next_scientific_gate_zh": "先比较模型误差处理与已关闭先验路线的数学区别，再冻结一个观测/几何可用且按完整模型留出的经典对照；同时保留有限背景像素 forward 的独立物理审计，不修改旧门或扩大网络。",
   "latest_execution_evidence": {
-    "note": "../document_reader.html?doc=docs%2Freal_bost_fixed9_robustness_v278_1_result_2026-08-29.md"
+    "note": "../document_reader.html?doc=docs%2Freal_bost_error_sources_v280_result_2026-09-05.md"
   },
   "public_evidence": {
-    "result": "../document_reader.html?doc=docs%2Freal_bost_fixed9_robustness_v278_1_result_2026-08-29.md",
-    "summary": "../docs/real_bost_fixed9_robustness_v278_1_public_summary.json",
-    "figure": "../assets/figures/real_bost_fixed9_robustness_v278_1.png"
+    "result": "../document_reader.html?doc=docs%2Freal_bost_error_sources_v280_result_2026-09-05.md",
+    "summary": "../docs/real_bost_error_sources_v280_public_summary.json",
+    "figure": "../assets/figures/real_bost_error_sources_v280.png"
   },
   "v154_broader_train_coverage_formal_status": "PASS_FORMAL_BROADER_TRAIN_COVERAGE_EXECUTION_V154",
   "v154_broader_train_coverage_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_BROADER_TRAIN_COVERAGE_V154",
