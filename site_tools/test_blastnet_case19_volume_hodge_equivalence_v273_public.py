@@ -59,7 +59,7 @@ def test_v273_figure_is_public_and_readable() -> None:
 
 def test_v273_remains_historical_after_v274_2_and_the_daily_card_is_unique() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["headline"].startswith("v282")
+    assert current["headline"].startswith("v283")
     assert current["current_decision"]["v273_independent_validation_passed"] is True
     for path in PAGES:
         assert "blastnet_case19_volume_hodge_equivalence_v273" in path.read_text(encoding="utf-8")

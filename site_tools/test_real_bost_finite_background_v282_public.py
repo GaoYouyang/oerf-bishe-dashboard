@@ -23,7 +23,7 @@ def test_optical_scope_not_algorithm_claim():
 
 def test_current_figure_and_bilingual_scope():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert current['scientific_status'] == 'PASS_LINEAR_VIRTUAL_PIXEL_INTERFACE_V282'
+    assert current['scientific_status'] == 'FAIL_FIXED_NODAL_TSVD_REFERENCE_V283'
     assert current['metrics']['v282_maps'] == 468
     assert current['current_decision']['v281_fixed_estimator_closed']
     assert not current['current_decision']['v282_predictor_training_authorized']
@@ -35,8 +35,8 @@ def test_current_figure_and_bilingual_scope():
             assert node.get('data-i18n-zh') and node.get('data-i18n-en')
         assert soup.select_one('#v281-fold-discrepancy')
     home = BeautifulSoup((ROOT/'index.html').read_text(), 'html.parser')
-    assert STEM in home.select_one('#latestFigure')['src']
-    assert '不是重建误差' in home.select_one('#latestFigureCaption').get_text()
+    assert STEM in home.select_one('#v282-finite-background img')['src']
+    assert '不是重建误差' in home.select_one('#v282-finite-background figcaption').get_text()
 
 
 def test_one_daily_date_and_equivalent_report():

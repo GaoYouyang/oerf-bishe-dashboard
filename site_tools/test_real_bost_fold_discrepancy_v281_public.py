@@ -24,7 +24,7 @@ def test_redacted_result_and_failure_gate():
 
 def test_current_manifest_and_figure():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert current['scientific_status'] == 'PASS_LINEAR_VIRTUAL_PIXEL_INTERFACE_V282'
+    assert current['scientific_status'] == 'FAIL_FIXED_NODAL_TSVD_REFERENCE_V283'
     assert current['current_decision']['v281_fixed_estimator_closed'] is True
     assert current['metrics']['v281_cells'] == 108
     assert (ROOT/f'assets/figures/{STEM}.png').stat().st_size > 10000

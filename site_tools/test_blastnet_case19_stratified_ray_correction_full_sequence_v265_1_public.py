@@ -72,7 +72,7 @@ def test_v265_1_figure_is_public_and_readable() -> None:
 def test_v265_1_remains_historical_after_v266() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-09-05"
-    assert current["scientific_status"] == "PASS_LINEAR_VIRTUAL_PIXEL_INTERFACE_V282"
+    assert current["scientific_status"] == "FAIL_FIXED_NODAL_TSVD_REFERENCE_V283"
     assert current["metrics"]["v265_1_candidate_matched_pass_cells"] == 200
     assert current["current_decision"]["v265_1_fixed_half_ray_route_closed"] is True
     assert current["current_decision"]["v265_1_algorithm_breakthrough"] is False

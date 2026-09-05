@@ -50,7 +50,7 @@ def test_v238_figure_is_rendered() -> None:
 
 def test_v238_remains_synchronized_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "PASS_LINEAR_VIRTUAL_PIXEL_INTERFACE_V282"
+    assert current["scientific_status"] == "FAIL_FIXED_NODAL_TSVD_REFERENCE_V283"
     assert current["current_decision"]["v238_independent_validation_passed"] is True
     assert current["current_decision"]["v238_algorithm_breakthrough"] is False
     assert current["metrics"]["v238_octant_complete_rigs_passed"] == 0

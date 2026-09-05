@@ -59,7 +59,7 @@ def test_v272_figure_is_public_and_readable() -> None:
 
 def test_v272_remains_historical_after_v273() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["headline"].startswith("v282")
+    assert current["headline"].startswith("v283")
     assert current["current_decision"]["v272_independent_validation_passed"] is True
     for path in PAGES:
         text = path.read_text(encoding="utf-8")

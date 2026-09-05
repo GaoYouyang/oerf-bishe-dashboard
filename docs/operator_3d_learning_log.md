@@ -1,5 +1,23 @@
 # 3D 逆问题学习持续日志
 
+## 2026-09-05：v283：投影吻合仍不代表三维梯度正确
+
+完整采样的固定 TSVD 参考通过 8/12 分层：七、九相机全部通过，五相机四个时刻全部失败。五相机投影相对误差低于 5.2e-7，但全梯度 p90 仍为 1.258–1.273，高于 0.75 门。
+
+独立复算有效，固定参考方法整体失败。1,404 个单元使用同一离散模型生成和反演干净虚拟数据；不是实测 BOST、跨模型学习或加速。十三份标定仅有十一种不同几何，不能视为十三个独立实验。
+
+讲人话：二维图几乎一模一样，三维梯度仍可能是错的。当前五相机参考不够好；继续压低投影残差或堆算力，不会自动解决这个问题。下一轮先做小而有判别力的实验。
+
+### English
+
+The full-sampling fixed TSVD reference passes 8/12 strata: all seven/nine-camera strata pass, while all four five-camera times fail. Five-camera relative projection error stays below 5.2e-7, but full-gradient p90 is 1.258–1.273 versus the 0.75 limit.
+
+Independent recomputation is valid, but the fixed reference fails overall. The 1,404 cells use the same discretization for clean virtual generation and inversion; this is not measured BOST, cross-model learning or acceleration. Thirteen calibration files contain only eleven distinct geometries, not thirteen independent experiments.
+
+In plain language: nearly identical 2D images can coexist with wrong 3D gradients. This five-camera reference is inadequate; a smaller image residual or more compute alone does not solve that. The next experiment starts small and decision-focused.
+
+[双语结果 / Bilingual result](real_bost_nodal_reference_v283_result_2026-09-05.md)
+
 ## 2026-09-05：v282：有限背景虚拟像素位移接口通过独立审计
 
 九个现有三维场、四个时刻与十三份相机标定生成 468 组虚拟位移图，五、七、九相机子集共 1,404 个诊断单元。固定薄层近似的位移差异中位数约 1.9%–2.1%，最坏约 6.0%。

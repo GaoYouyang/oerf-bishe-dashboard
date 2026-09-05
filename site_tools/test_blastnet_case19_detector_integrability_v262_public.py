@@ -71,9 +71,9 @@ def test_v262_figure_and_builder_are_public() -> None:
 
 def test_v262_remains_preserved_after_v263_1_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "PASS_LINEAR_VIRTUAL_PIXEL_INTERFACE_V282"
-    assert current["headline_zh"].startswith("v282")
-    assert current["headline_en"].startswith("v282")
+    assert current["scientific_status"] == "FAIL_FIXED_NODAL_TSVD_REFERENCE_V283"
+    assert current["headline_zh"].startswith("v283")
+    assert current["headline_en"].startswith("v283")
     assert current["metrics"]["v262_independent_checks_passed"] == 24
     assert current["metrics"]["v262_observation_invariant_blocks"] == 0
     assert current["current_decision"]["v262_projected_residual_candidate_authorized"] is False

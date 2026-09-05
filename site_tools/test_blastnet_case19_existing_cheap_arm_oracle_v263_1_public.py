@@ -54,7 +54,7 @@ def test_v263_1_figure_is_public_and_readable() -> None:
 def test_v263_1_remains_historical_after_v264_on_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-09-05"
-    assert current["scientific_status"] == "PASS_LINEAR_VIRTUAL_PIXEL_INTERFACE_V282"
+    assert current["scientific_status"] == "FAIL_FIXED_NODAL_TSVD_REFERENCE_V283"
     assert current["metrics"]["v263_1_oracle_joint_pass_rigs"] == 0
     assert current["current_decision"]["v263_1_selector_over_nine_arms_authorized"] is False
     for page in PRIMARY_PAGES:

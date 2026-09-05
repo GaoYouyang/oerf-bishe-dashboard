@@ -66,7 +66,7 @@ def test_v270_figure_is_public_and_readable() -> None:
 
 def test_v270_remains_historical() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["headline"].startswith("v282")
+    assert current["headline"].startswith("v283")
     assert current["metrics"]["v270_independent_checks_passed"] == 32
     assert current["current_decision"]["v270_reference_inadequate"] is True
     for path in PAGES:
