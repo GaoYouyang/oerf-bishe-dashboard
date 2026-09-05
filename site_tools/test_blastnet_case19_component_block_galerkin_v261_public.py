@@ -76,10 +76,10 @@ def test_v261_remains_preserved_after_v263_1_on_bilingual_primary_pages() -> Non
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "FAIL_LOMO_DISCREPANCY_SENTINEL_V281"
-    assert current["headline"].startswith("v281")
-    assert current["headline_zh"].startswith("v281")
-    assert current["headline_en"].startswith("v281")
+    assert current["scientific_status"] == "PASS_LINEAR_VIRTUAL_PIXEL_INTERFACE_V282"
+    assert current["headline"].startswith("v282")
+    assert current["headline_zh"].startswith("v282")
+    assert current["headline_en"].startswith("v282")
     assert metrics["v261_independent_checks_passed"] == 41
     assert metrics["v261_primary_absolute_cells"] == 3
     assert metrics["v261_primary_matched_cells"] == 0

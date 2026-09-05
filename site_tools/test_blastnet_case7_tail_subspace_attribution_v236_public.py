@@ -49,7 +49,7 @@ def test_v236_figure_is_rendered() -> None:
 
 def test_v236_remains_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_LOMO_DISCREPANCY_SENTINEL_V281"
+    assert current["scientific_status"] == "PASS_LINEAR_VIRTUAL_PIXEL_INTERFACE_V282"
     assert current["current_decision"]["v236_independent_validation_passed"] is True
     assert current["current_decision"]["v236_algorithm_breakthrough"] is False
     assert current["metrics"]["v236_loro_rank64_complete_rigs_passed"] == 0

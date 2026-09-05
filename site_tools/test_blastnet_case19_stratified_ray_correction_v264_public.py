@@ -66,7 +66,7 @@ def test_v264_figure_is_public_and_readable() -> None:
 def test_v264_remains_historical_after_v265_1() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-09-05"
-    assert current["scientific_status"] == "FAIL_LOMO_DISCREPANCY_SENTINEL_V281"
+    assert current["scientific_status"] == "PASS_LINEAR_VIRTUAL_PIXEL_INTERFACE_V282"
     assert current["metrics"]["v264_candidate_joint_pass_rigs"] == 13
     assert current["current_decision"]["v264_unchanged_full_sequence_gate_authorized"] is True
     assert current["current_decision"]["v264_algorithm_breakthrough"] is False

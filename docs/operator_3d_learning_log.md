@@ -1,5 +1,23 @@
 # 3D 逆问题学习持续日志
 
+## 2026-09-05：v282：有限背景虚拟像素位移接口通过独立审计
+
+九个现有三维场、四个时刻与十三份相机标定生成 468 组虚拟位移图，五、七、九相机子集共 1,404 个诊断单元。固定薄层近似的位移差异中位数约 1.9%–2.1%，最坏约 6.0%。
+
+通过的是线性化光学接口与精确离散伴随，不是重建或加速。背景、折射率尺度和边界支撑均为明确虚拟设定；每相机仅用 8×8 射线。十三份文件只对应十一种不同像素算子，不能当作十三个独立实验。
+
+讲人话：现在能按明确的虚拟相机和背景，把三维场转成有符号的像素位移；薄层换算并非完全一样。但把尺子定义清楚，不等于已经把逆问题解好了。
+
+### English
+
+Nine existing 3D sources, four times and thirteen calibration files produce 468 virtual displacement maps and 1,404 five/seven/nine-camera diagnostics. The fixed thin-plane approximation differs by about 1.9%–2.1% at the median and 6.0% at worst.
+
+This validates a linearized optical interface and exact discrete adjoint, not reconstruction or speed. Background, refractivity scale and boundary support are explicit virtual choices, with only 8×8 rays per camera. Thirteen files contain eleven distinct pixel operators, not thirteen independent experiments.
+
+In plain language: explicit virtual cameras and backgrounds now turn the 3D fields into signed pixel displacement. Thin-plane conversion is not identical. Defining the measurement correctly does not mean the inverse problem has been solved.
+
+[双语结果 / Bilingual result](real_bost_finite_background_v282_result_2026-09-05.md)
+
 ## 2026-09-05：v281 误差来源能分清，不代表补偿能迁移
 
 九个完整模型轮流留出，在一套预选九相机几何上得到 108 个虚拟单元。协方差补偿、不补偿和只减均值均为 0/12 分层通过。部分场误差下降，但梯度尾部仍失败。

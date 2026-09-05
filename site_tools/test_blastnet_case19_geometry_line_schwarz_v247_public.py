@@ -59,7 +59,7 @@ def test_v247_figure_and_builder_are_public() -> None:
 
 def test_v247_is_preserved_as_historical_evidence_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_LOMO_DISCREPANCY_SENTINEL_V281"
+    assert current["scientific_status"] == "PASS_LINEAR_VIRTUAL_PIXEL_INTERFACE_V282"
     assert current["current_decision"]["v247_independent_validation_passed"] is False
     assert current["current_decision"]["v247_line_schwarz_authorized"] is False
     assert current["current_decision"]["v247_mechanism_operationally_retired"] is True
