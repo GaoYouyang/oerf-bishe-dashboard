@@ -2,9 +2,9 @@
   "schema_version": "oerf-operator-learning-current-evidence-v1",
   "updated": "2026-09-05",
   "route": "C: permutation-invariant variable-camera observation/geometry-only warm initializer for three-dimensional BOST reconstruction",
-  "engineering_status": "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280",
-  "scientific_status": "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280",
-  "formal_status": "FORMAL_SOURCE_BUDGET_PENDING_INDEPENDENT_V280",
+  "engineering_status": "PASS_INDEPENDENT_FOLD_DISCREPANCY_V281",
+  "scientific_status": "FAIL_LOMO_DISCREPANCY_SENTINEL_V281",
+  "formal_status": "FORMAL_PENDING_INDEPENDENT_V281",
   "v278_1_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_FIXED9_ROBUSTNESS_V278_1",
   "v278_1_scientific_decision": "INCONCLUSIVE_REFERENCE_INADEQUATE_FIXED9_ROBUSTNESS_V278_1",
   "v276_execution_status": "INCONCLUSIVE_INVALID_CASE19_TV_PDHG_REFERENCE_V276",
@@ -421,13 +421,19 @@
   "v212_signed_line_cancellation_scientific_decision": "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212",
   "latest_valid_mechanism_status": "PASS_INDEPENDENT_ADJUDICATION_STREAMING_COMPACT_FRESH_RESOURCE_V206",
   "latest_valid_mechanism_formal_status": "PASS_FORMAL_POTENTIAL_NORMAL_STREAMING_FRESH_RESOURCE_EXECUTION_V206",
-  "headline": "v280: Independent error decomposition covers 1,404 opened virtual cells. Median signed contributions to field error are 82.27%–84.10% for inverse aliasing in clean data and 81.79%–88.41% for geometry mismatch under pose error. This is attribution, not improved reconstruction.",
-  "headline_en": "v280: Independent error decomposition covers 1,404 opened virtual cells. Median signed contributions to field error are 82.27%–84.10% for inverse aliasing in clean data and 81.79%–88.41% for geometry mismatch under pose error. This is attribution, not improved reconstruction.",
-  "headline_zh": "v280: 1,404 个已开封虚拟单元完成独立误差分解。clean 场误差中逆放大项的有符号贡献中位数为 82.27%–84.10%；pose 中几何项为 81.79%–88.41%。这是归因，不是重建改善。",
-  "latest_execution_headline": "Independent error decomposition covers 1,404 opened virtual cells. Median signed contributions to field error are 82.27%–84.10% for inverse aliasing in clean data and 81.79%–88.41% for geometry mismatch under pose error. This is attribution, not improved reconstruction.",
-  "latest_execution_headline_en": "Independent error decomposition covers 1,404 opened virtual cells. Median signed contributions to field error are 82.27%–84.10% for inverse aliasing in clean data and 81.79%–88.41% for geometry mismatch under pose error. This is attribution, not improved reconstruction.",
-  "latest_execution_headline_zh": "1,404 个已开封虚拟单元完成独立误差分解。clean 场误差中逆放大项的有符号贡献中位数为 82.27%–84.10%；pose 中几何项为 81.79%–88.41%。这是归因，不是重建改善。",
+  "headline": "v281: Leaving out each of nine complete models gives 108 virtual cells on one preselected nine-camera rig. Covariance correction, no correction and mean-only correction all pass 0/12 strata. Some field errors decrease, but gradient tails still fail.",
+  "headline_en": "v281: Leaving out each of nine complete models gives 108 virtual cells on one preselected nine-camera rig. Covariance correction, no correction and mean-only correction all pass 0/12 strata. Some field errors decrease, but gradient tails still fail.",
+  "headline_zh": "v281: 九个完整模型轮流留出，在一套预选九相机几何上得到 108 个虚拟单元。协方差补偿、不补偿和只减均值均为 0/12 分层通过。部分场误差下降，但梯度尾部仍失败。",
+  "latest_execution_headline": "Leaving out each of nine complete models gives 108 virtual cells on one preselected nine-camera rig. Covariance correction, no correction and mean-only correction all pass 0/12 strata. Some field errors decrease, but gradient tails still fail.",
+  "latest_execution_headline_en": "Leaving out each of nine complete models gives 108 virtual cells on one preselected nine-camera rig. Covariance correction, no correction and mean-only correction all pass 0/12 strata. Some field errors decrease, but gradient tails still fail.",
+  "latest_execution_headline_zh": "九个完整模型轮流留出，在一套预选九相机几何上得到 108 个虚拟单元。协方差补偿、不补偿和只减均值均为 0/12 分层通过。部分场误差下降，但梯度尾部仍失败。",
   "metrics": {
+    "v281_cells": 108,
+    "v281_passed_strata": 0,
+    "v281_total_strata": 12,
+    "v281_field_harm_count": 26,
+    "v281_independent_checks_passed": 16,
+    "v281_independent_checks_total": 16,
     "v280_cells": 1404,
     "v280_independent_checks_passed": 15,
     "v280_independent_checks_total": 15,
@@ -4273,6 +4279,10 @@
     "v225_maximum_formal_independent_summary_difference": 5.702904815052534e-11
   },
   "current_decision": {
+    "v281_independent_validation_passed": true,
+    "v281_algorithm_breakthrough": false,
+    "v281_fixed_estimator_closed": true,
+    "v281_predictor_training_authorized": false,
     "v280_independent_validation_passed": true,
     "v280_algorithm_breakthrough": false,
     "v280_attribution_only": true,
@@ -6561,16 +6571,16 @@
     "v243_gpu_rental_authorized": false,
     "v243_algorithm_breakthrough": false
   },
-  "next_scientific_gate": "First distinguish model-discrepancy treatment mathematically from closed prior routes, then preregister one observation/geometry-available classical control with complete-model holdouts. Retain a separate finite-background pixel-forward audit; do not change old gates or enlarge a network.",
-  "next_scientific_gate_en": "First distinguish model-discrepancy treatment mathematically from closed prior routes, then preregister one observation/geometry-available classical control with complete-model holdouts. Retain a separate finite-background pixel-forward audit; do not change old gates or enlarge a network.",
-  "next_scientific_gate_zh": "先比较模型误差处理与已关闭先验路线的数学区别，再冻结一个观测/几何可用且按完整模型留出的经典对照；同时保留有限背景像素 forward 的独立物理审计，不修改旧门或扩大网络。",
+  "next_scientific_gate": "Stop covariance, iteration-depth and network variations. Next examine the physical interface between finite-background pixel observations and an adequate reference, under explicit synthetic optical assumptions and independent audits, never labeling simulations as measurements.",
+  "next_scientific_gate_en": "Stop covariance, iteration-depth and network variations. Next examine the physical interface between finite-background pixel observations and an adequate reference, under explicit synthetic optical assumptions and independent audits, never labeling simulations as measurements.",
+  "next_scientific_gate_zh": "停止调协方差、迭代深度或网络；下一步先审视有限背景像素观测与合格参考的物理接口。只能在明确合成光学假设和独立审计下继续，不能把模拟当成实测。",
   "latest_execution_evidence": {
-    "note": "../document_reader.html?doc=docs%2Freal_bost_error_sources_v280_result_2026-09-05.md"
+    "note": "../document_reader.html?doc=docs%2Freal_bost_fold_discrepancy_v281_result_2026-09-05.md"
   },
   "public_evidence": {
-    "result": "../document_reader.html?doc=docs%2Freal_bost_error_sources_v280_result_2026-09-05.md",
-    "summary": "../docs/real_bost_error_sources_v280_public_summary.json",
-    "figure": "../assets/figures/real_bost_error_sources_v280.png"
+    "result": "../document_reader.html?doc=docs%2Freal_bost_fold_discrepancy_v281_result_2026-09-05.md",
+    "summary": "../docs/real_bost_fold_discrepancy_v281_public_summary.json",
+    "figure": "../assets/figures/real_bost_fold_discrepancy_v281.png"
   },
   "v154_broader_train_coverage_formal_status": "PASS_FORMAL_BROADER_TRAIN_COVERAGE_EXECUTION_V154",
   "v154_broader_train_coverage_independent_status": "PASS_INDEPENDENT_RECOMPUTATION_BROADER_TRAIN_COVERAGE_V154",

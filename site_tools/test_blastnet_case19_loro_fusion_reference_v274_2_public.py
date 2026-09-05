@@ -60,7 +60,7 @@ def test_v274_2_figure_is_public_and_readable() -> None:
 
 def test_v274_2_remains_historical_after_v275_and_daily_card_is_unique() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["headline"].startswith("v280")
+    assert current["headline"].startswith("v281")
     assert current["current_decision"]["v274_2_independent_validation_passed"] is False
     for path in PAGES:
         assert "blastnet_case19_loro_fusion_reference_v274_2" in path.read_text(encoding="utf-8")

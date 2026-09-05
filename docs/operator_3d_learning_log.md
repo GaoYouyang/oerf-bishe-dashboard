@@ -1,5 +1,23 @@
 # 3D 逆问题学习持续日志
 
+## 2026-09-05：v281 误差来源能分清，不代表补偿能迁移
+
+九个完整模型轮流留出，在一套预选九相机几何上得到 108 个虚拟单元。协方差补偿、不补偿和只减均值均为 0/12 分层通过。部分场误差下降，但梯度尾部仍失败。
+
+训练统计只用其他八个模型；全部预测先封存，再计算留出误差。这是已开封数据的经典对照，不是外部泛化或真实 BOST。关闭这套固定补偿，算法突破与提速仍未成立。
+
+讲人话：在其他场上学到的误差模式，确实能帮到一些样本，但也会伤害另一些。clean 场误差都低于 0.5，梯度却全部超过 0.75，不能只挑好看的指标。固定补偿关闭，不加大模型挽救。
+
+### English
+
+Leaving out each of nine complete models gives 108 virtual cells on one preselected nine-camera rig. Covariance correction, no correction and mean-only correction all pass 0/12 strata. Some field errors decrease, but gradient tails still fail.
+
+Training statistics use only the other eight models; all predictions seal before held-out scoring. This is a classical comparator on opened data, not external generalization or real BOST. The fixed correction closes; no algorithm breakthrough or speedup is established.
+
+In plain language: error patterns estimated from other fields help some samples and harm others. Clean field errors stay below 0.5 but every gradient tail exceeds 0.75; selecting only favorable metrics would be misleading. The fixed correction closes without a larger model.
+
+[双语结果 / Bilingual result](real_bost_fold_discrepancy_v281_result_2026-09-05.md)
+
 ## 2026-09-05：v280 先分清误差从哪里来
 
 1,404 个已开封虚拟单元完成独立误差分解。clean 场误差中逆放大项的有符号贡献中位数为 82.27%–84.10%；pose 中几何项为 81.79%–88.41%。这是归因，不是重建改善。

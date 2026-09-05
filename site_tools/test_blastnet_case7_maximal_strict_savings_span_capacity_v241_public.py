@@ -57,7 +57,7 @@ def test_v241_figure_and_source_are_public() -> None:
 
 def test_v241_is_preserved_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280"
+    assert current["scientific_status"] == "FAIL_LOMO_DISCREPANCY_SENTINEL_V281"
     assert current["current_decision"]["v241_sealed_array_readjudication_passed"] is True
     assert current["current_decision"]["v241_necessary_span_capacity_passed"] is True
     assert current["current_decision"]["v241_joint_feasibility_tested"] is False

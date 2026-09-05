@@ -57,7 +57,7 @@ def test_v275_figure_is_rendered() -> None:
 def test_v275_remains_visible_on_public_surfaces() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "PASS_INDEPENDENT_LINEAR_SOURCE_BUDGET_V280"
+        "FAIL_LOMO_DISCREPANCY_SENTINEL_V281"
     )
     assert current["metrics"]["v275_independent_checks_passed"] == 26
     assert current["current_decision"]["v275_algorithm_breakthrough"] is False
