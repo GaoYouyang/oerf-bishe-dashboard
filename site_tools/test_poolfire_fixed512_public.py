@@ -289,6 +289,20 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_causal_error_attribution_is_not_new_accuracy_or_causal_shares():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["causal_error_attribution"]
+    assert data["status"] == "PASS_FIXED_CAUSAL_ERROR_ATTRIBUTION"
+    assert data["transitions"] == 2500 and data["midpoint_transitions"] == 25
+    assert data["all"]["inherited_larger"] == [2449, 2444, 2445, 2440]
+    assert data["midpoints"]["inherited_larger"] == [25] * 4
+    assert data["paired_norm_max"] < 1e-6 and data["paired_signed_cross_max"] < 1e-6
+    assert not any(data[k] for k in ("recomputed_steps", "new_predictions", "new_truth_reads", "counterfactual_reference_refresh", "new_factor_solves", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost", "predictor_training_authorized", "positive_causal_shares", "new_reconstruction_accuracy_result", "old_recipe_reopened"))
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        note = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#causal-error-attribution")
+        assert len(note) == 1
+        assert all("2449/2500" in note[0][f"data-i18n-{lang}"] and "91.63%" in note[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_causal_carry_separates_improvement_equivalence_and_accuracy():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["causal_state_carry"]
     assert data["status"] == "FAIL_CAUSAL_ONE_STATE_K1_ACCURACY"

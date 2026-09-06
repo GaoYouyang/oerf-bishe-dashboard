@@ -1,3 +1,11 @@
+## 2026-09-07：旧误差为什么没有消下去
+
+因果误差拆解已独立复算：2500次帧间转移中，2449/2500次的旧场误差残留大于当前帧变化残留；固定25个中点在四指标空间中均如此。一次校正后，旧场误差分量范数的中位保留率为91.63%。这说明当前固定递推对累积误差的消除较弱，而非历史解毫无用处。拆解保留有符号交叉项，不把次数当成误差贡献百分比；没有新预测、训练或精度突破，原单状态K1配方仍关闭。
+
+Causal error attribution is independently verified: the inherited field-error remainder exceeds the current-innovation remainder in 2449/2500 transitions; all 25 fixed midpoints show this in all four metric spaces. The median retained fraction of the inherited field-error norm after one correction is 91.63%. This frozen recurrence weakly removes accumulated error; history is not irrelevant. Signed cross terms are retained, and counts are not percentages of causal error contribution. There are no new predictions, training or accuracy breakthrough; the original single-state K1 recipe remains closed.
+
+[独立归因 / Independent attribution](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：历史解有用，但一次校正仍不够
 
 历史状态复用已独立验证：五条已开封序列、五组5/7/9相机的25个检查点，四指标1%门仍为0/25，直接解对照25/25。复用上一帧解在全部25点的四指标均不差于同在线调用数的Zero-CGLS2，场误差p90从76.15%降至57.46%，但仍不达标。更便宜的直接场复用与dual复用数值等价（最大差6.90e-15），后续每帧分别为2A+1A^T与2A+2A^T；冷启动与几何因子构建另计。因此有历史解的帮助，没有dual特有优势，也不是学习、速度或真实BOST突破。

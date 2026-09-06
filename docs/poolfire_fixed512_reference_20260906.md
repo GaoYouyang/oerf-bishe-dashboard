@@ -700,3 +700,32 @@ The formal path uses frozen CGLS and Cholesky cold initialization; the second pa
 Close this fixed single-state, scalar-rescale, K1 recipe without rescuing it through added K, history, refreshes or extrapolation. This does not reject every recycling method or the C route. There are0trained parameters and no learned advantage, speedup or real-BOST result. Any next mechanism must identify useful information beyond the cheaper previous-field control.
 
 历史状态复用是已有经典方向，而非本项目首创；本次未实现完整回收Krylov子空间方法。Reusing prior solver information is established, not project novelty; this experiment does not implement a full recycled Krylov subspace method. [Survey of Subspace Recycling Iterative Methods](https://arxiv.org/abs/2001.10347).
+
+## 2026-09-07 旧误差与当前变化 / Inherited Error and Current Innovation
+
+因果误差拆解已独立复算：2500次帧间转移中，2449/2500次的旧场误差残留大于当前帧变化残留；固定25个中点在四指标空间中均如此。一次校正后，旧场误差分量范数的中位保留率为91.63%。这说明当前固定递推对累积误差的消除较弱，而非历史解毫无用处。拆解保留有符号交叉项，不把次数当成误差贡献百分比；没有新预测、训练或精度突破，原单状态K1配方仍关闭。
+
+Causal error attribution is independently verified: the inherited field-error remainder exceeds the current-innovation remainder in 2449/2500 transitions; all 25 fixed midpoints show this in all four metric spaces. The median retained fraction of the inherited field-error norm after one correction is 91.63%. This frozen recurrence weakly removes accumulated error; history is not irrelevant. Signed cross terms are retained, and counts are not percentages of causal error contribution. There are no new predictions, training or accuracy breakthrough; the original single-state K1 recipe remains closed.
+
+| 误差空间 / Error space | 旧残留较大 / Inherited larger | 旧误差保留中位数 / Median inherited retention | 新变化保留中位数 / Median innovation retention |
+|---|---:|---:|---:|
+| 场 / Field | 2449/2500 | 0.916348 | 0.838957 |
+| 全梯度 / Full gradient | 2444/2500 | 0.921835 | 0.829478 |
+| 内梯度 / Interior gradient | 2445/2500 | 0.915854 | 0.831475 |
+| 观测 / Observation | 2440/2500 | 0.845936 | 0.681998 |
+
+这是已开封数据上的固定递推归因，不是新候选。保持实际使用的幅度s和步长alpha；令P=I-alpha A^T A，旧误差为s乘以上一帧解与参考解之差，当前变化为s乘以上一帧参考解再减去当前参考解。实际终点误差恰为这两项经过P后的和，再加alpha A^T(y-A参考解)。参考解来自此前合格经典解，不读取新的CFD真值；参考缺陷项在四空间中最大仅1.70e-15。
+
+This is attribution of a fixed recurrence on opened data, not a new candidate. Keep the actual scale s and step alpha, with P=I-alpha A^T A. Inherited error is s times the previous computed-minus-reference field; innovation is s times the previous reference minus the current reference. Endpoint error equals their images under P plus alpha A^T(y-A reference). References are previously qualified classical solutions, with no new CFD truth read; the maximum reference-defect term across four spaces is only1.70e-15.
+
+各分量会抵消或叠加，已保留三个有符号交叉项并核验完整平方范数恒等式。不能说“97.96%的误差由历史造成”，也不能从本次固定alpha拆解推断“换成完美上一帧并重新选择步长”会怎样。原配方0/25的真值精度结论不变；本次2500转移的参考相对误差不是新完成的2500个真值评分。
+
+Components can cancel or reinforce. All three signed cross terms are retained and the complete squared-norm identity is checked. Do not say that97.96percent of error is caused by history, or infer a counterfactual using a perfect previous frame and a newly chosen step from this fixed-alpha decomposition. The original0/25 truth-accuracy result is unchanged; reference-relative attribution of2500transitions is not2500new truth scores.
+
+两实现的分量范数/交叉项最大差7.99e-10/6.84e-10，离散分类完全一致；退出后复算5000个分量组及200次原始物理投影，范数/物理差最大6.11e-15/8.09e-16。正式和第二实现离线合计50000A+15000A^T，另有35000次梯度场处理；退出后另计同量重放与200次子集、200次完整九相机物理正演。43.91秒和约0.93GiB只是审计遥测，不是部署速度或内存优势。
+
+The two implementations differ by at most7.99e-10/6.84e-10 in component norms/cross terms, with identical discrete classifications. Post-exit replay covers5000component groups and200original physical projections, with norm/physical differences at most6.11e-15/8.09e-16. Formal and independent offline work totals50000A+15000A^T plus35000gradient-field evaluations; post-exit replay separately repeats that work and adds200subset and200full-nine-camera forward equivalents. The43.91seconds and about0.93GiB are audit telemetry, not deployment speed or memory advantage.
+
+下一步重点是用部署可见状态消除累积逆误差，并与更便宜的上一帧场复用比较；这不授权增加历史长度、K、外推或直接解刷新来挽救已失败配方。学习优势、同精度加速、外部泛化和真实BOST仍未建立。
+
+The next priority is contracting accumulated inverse error from deployment-visible state, compared with cheaper previous-field carry. This does not authorize rescuing the failed recipe through more history, K, extrapolation or direct-reference refreshes. Learned advantage, equal-accuracy acceleration, external generalization and real BOST remain unestablished.
