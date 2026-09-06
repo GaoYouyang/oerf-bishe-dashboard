@@ -176,3 +176,20 @@ def test_local_gaussian_failure_and_truth_aware_attribution():
         assert len(note) == 1
         for lang in ("zh", "en"):
             assert all(value in note[0][f"data-i18n-{lang}"] for value in ("0/15", "9.08%", "1500"))
+
+
+def test_oracle_noise_gate_issue_does_not_rescue_old_failures():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["oracle_noise_gate_audit"]
+    assert data["status"] == "FAIL_NOISY_OBSERVATION_GATE_ORACLE_COMPATIBILITY"
+    assert data["oracle"]["cells"] == 1515 and data["oracle"]["rejected"] == 308
+    assert data["oracle"]["by_seed_rejected"] == [95, 112, 101]
+    assert data["old_scientific_decisions_unchanged"] and data["future_metric_is_not_retroactive"]
+    assert data["original_execution_exit_code"] == 1 and data["report_only_recovery_verified"]
+    assert all(v["counterfactual_budget_joint_passing"] == v["field_and_gradients_passing"] == 0 for v in data["oracle"]["candidates"].values())
+    assert not data["reconstruction_success"] and not data["algorithm_breakthrough"] and not data["real_bost"]
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        soup = BeautifulSoup((ROOT / relative).read_text(), "html.parser")
+        note = soup.select("#oracle-noise-gate-result")
+        assert len(note) == 1
+        for lang in ("zh", "en"):
+            assert all(value in note[0][f"data-i18n-{lang}"] for value in ("308/1515", "0.000141", "0/15"))

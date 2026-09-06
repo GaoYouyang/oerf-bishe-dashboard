@@ -248,3 +248,41 @@ These norms are not additive percentage shares: signed cross terms are present. 
 本轮关闭这个固定局部高斯先验配置，不调整块大小、协方差秩、数值载荷或深度来补救。数据仍为已打开的公开训练轨迹、固定九相机与合成噪声。高斯先验只是工作模型，不证明实际信号或归一化后的噪声具有高斯独立分布，也不提供经校准的后验区间。贝叶斯小块模型已有[经典原始研究](https://www.ipol.im/pub/art/2013/16/)；本试验不是NL-Bayes完整复现、组件首创、外部门或真实BOST结果。
 
 This fixed local-Gaussian configuration is closed, without patch-size, covariance-rank, numerical-load or depth rescue. Data remain opened public training trajectories with fixed nine-camera synthetic noise. The Gaussian prior is a working model, not proof that actual signals or normalized noise are independent Gaussian samples, nor a calibrated posterior interval. Bayesian patch models have [established primary literature](https://www.ipol.im/pub/art/2013/16/). This is not a full NL-Bayes reproduction, component novelty, untouched external result or real BOST result.
+
+## 真实场与噪声观测门 / Truth Oracle and the Noise Gate
+
+观测门审计发现一个小但真实的问题：加入1%合成噪声后，旧观测门会拒绝308/1515个真实三维场输入。噪声按干净观测归一化，评分却除以带噪观测；最大超门仅0.000141个百分点，解释不了已有5%至10%的场与梯度误差。同一15个中点的旧候选，即使按已知噪声预算诊断，联合通过仍均为0/15。独立复算确认，这是评价口径问题，不是算法成功；旧失败不翻案，后续新试验才可另冻噪声一致的指标。
+
+Observation-gate audit finds a small but real issue: with1% synthetic noise, the old gate rejects308/1515 exact true-field inputs. Noise is normalized by clean observations, but scoring divides by noisy observations. Maximum excess is only0.000141 percentage points and cannot explain existing5% to10% field/gradient errors. On the same15 midpoints, all inherited candidates still pass0/15 jointly even under a known-noise-budget diagnostic. Independent recomputation confirms a metric-semantics issue, not algorithm success. Old failures stand; only new preregistered experiments may adopt noise-consistent metrics.
+
+令干净投影为b，噪声为e，观测y=b+e，且||e||=delta||b||，delta=0.01。
+真实场的旧观测分数为delta/sqrt(1+delta^2+2delta*c)，其中c是b与e夹角余弦。
+它超过delta当且仅当c<-delta/2。这是范数恒等式，不是新算法或新定理。
+
+Let clean projection be b, noise e, y=b+e and ||e||=delta||b|| with delta=0.01.
+The truth oracle's old score is delta/sqrt(1+delta^2+2delta*c), where c is the angle cosine between b and e.
+It exceeds delta exactly when c<-delta/2. This is a norm identity, not a new algorithm or theorem.
+
+独立矩阵各重放505个真实场，合计离线1010A、0A^T；1515个噪声样本逐项复算，三个seed分别拒绝95/112/101个。五条轨迹分别拒绝65/73/53/64/53个，每条303样本。两实现离散判决完全一致，公式差1.74e-17，重放相对差7.86e-16。球面均匀噪声方向下理论拒绝概率约19.4435%，本次实际20.3300%；前者不是本次实测比例。归一化后的噪声方向不是独立高斯分量，也不是实验测得噪声。
+
+Each independent matrix replays505 true fields, totaling1010 offline A calls and0 A^T. All1515 noisy cases are recomputed; three seeds reject95/112/101 cases. The five trajectories reject65/73/53/64/53 out of303 each. Discrete decisions agree exactly; formula discrepancy is1.74e-17 and relative replay discrepancy7.86e-16. Uniform sphere directions imply about19.4435% theoretical rejection probability; observed rejection is20.3300%, not the theoretical value. Normalized noise directions do not have independent Gaussian components and are not measured experimental noise.
+
+| 同一15个中点 / Same15 midpoints | 干净投影误差p90 / Clean projection | 带噪拟合误差p90 / Noisy fit | 场与梯度联合通过 / Field+gradient passes |
+|---|---:|---:|---:|
+| 直接逆 / Direct inverse | 0.4502% | 0.8982% | 0/15 |
+| 小波+K1 / Haar+K1 | 0.8075% | 1.1356% | 0/15 |
+| 局部先验+K1 / Local prior+K1 | 0.7971% | 1.1338% | 0/15 |
+| 单体素先验+K1 / Pointwise prior+K1 | 0.5415% | 0.9487% | 0/15 |
+| 局部先验，无迭代 / Local prior, no refinement | 1.0350% | 1.3105% | 0/15 |
+
+四个带迭代/直接逆候选在这15个样本中，干净投影误差都低于1%，但场与梯度均未过关。投影接近并不意味着三维恢复准确。平方带噪残差由干净投影误差能量、噪声能量和带符号交叉项组成，独立闭合差5.43e-20。不能把去噪后残差增大直接等同于三维恢复变差，也不能把投影变准当作三维成功。
+
+For the four refined/direct candidates, clean projection error is below1% on all15 samples, yet field/gradient accuracy fails throughout. Projection agreement does not imply accurate3D recovery. Squared noisy residual decomposes into clean-projection error energy, noise energy and a signed cross term, with independent closure discrepancy5.43e-20. A larger post-denoising residual is not by itself worse3D recovery, and a better projection is not3D success.
+
+新增的已知噪声预算残差||prediction-y||/||e||仅作诊断，单位门加1e-12相对舍入余量；它不替换旧门，也不让旧失败候选通过。未来若采用，需要结果前另行冻结，真实实验还需要独立噪声估计，不能偷读真值生成噪声预算。[经典差异原则背景](https://www.imm.dtu.dk/~pcha/Regutools/)不构成本项目首创。
+
+The known-budget residual ||prediction-y||/||e|| is diagnostic only, with a unit bound and1e-12 relative roundoff allowance. It neither replaces frozen gates nor rescues failed candidates. Future use requires a new preregistration; real experiments need independent noise estimation, not a truth-derived budget. [Classical discrepancy-principle context](https://www.imm.dtu.dk/~pcha/Regutools/) is not project novelty.
+
+执行备注：第一次任务在数组封存后因JSON布尔序列化失败退出；保留原始失败、只重建报告，未重放、未改数组或门。独立数值检查14项与额外终态核验通过。工程修复不是科学结果；本轮没有训练、速度优势、外部泛化或真实BOST结论。
+
+Execution note: the first task failed during JSON boolean serialization after array sealing. The failure was retained and only the report rebuilt, without replay or altered arrays/gates. All14 numerical checks and a separate terminal audit pass. Engineering repair is not science; no training, speed advantage, external generalization or real BOST result is claimed.
