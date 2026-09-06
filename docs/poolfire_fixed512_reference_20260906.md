@@ -689,7 +689,7 @@ The primary carries only its previous computed dual, rescales it nonnegatively u
 
 Zero、BP、CGLS2、Jacobi2、BP+K1及历史dual-ridge对照均为0/25，直接解为25/25。历史ridge的3A+3A^T加4次求解是更贵诊断，不冒充同价对照；直接解为1A+1A^T加2次求解且有几何预处理。主候选相对CGLS2在25点四指标全部不差、场误差全部更低，但不满足1%精度，不能据此声称减少达到相同精度所需的调用。
 
-Zero, BP, CGLS2, Jacobi2, BP+K1 and inherited dual-ridge controls all pass0/25; the direct control passes25/25. Inherited ridge costs3A+3A^T plus4solves and is an expensive diagnostic, not a matched-cost control. Direct solution costs1A+1A^T plus2solves after geometry preprocessing. The primary is no worse than CGLS2 in all four metrics at all25points, with lower field error at every point, but fails1%accuracy; fewer calls to equal accuracy are not established.
+Zero, BP, CGLS2, Jacobi2, BP+K1 and inherited dual-ridge controls all pass0/25; the direct control passes25/25. Inherited ridge costs3A+3A^T plus4solves and is an expensive diagnostic, not a matched-cost control. Direct solution costs1A+1A^T plus2solves after geometry preprocessing. The primary is no worse than CGLS2 in all four metrics at all25points, with lower field error at every point, but fails 1% accuracy; fewer calls to equal accuracy are not established.
 
 正式实现使用冻结CGLS和Cholesky冷启动，第二实现独立递推并使用带列主元QR冷启动；因果场/残差/dual最大差1.35e-10/8.81e-10/1.53e-9。退出后独立重放全部dual与残差状态、固定中点转移和物理评分，最大物理差7.26e-16、指标差1.82e-12。123.81秒与2.63GiB只是执行遥测，不是部署wall/RSS优势。
 
