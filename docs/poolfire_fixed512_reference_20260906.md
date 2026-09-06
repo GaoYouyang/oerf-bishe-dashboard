@@ -582,3 +582,27 @@ With n=5880 unknowns and correction rank r, the tested generic dense Woodbury re
 No CFD truth or observations are read, and no prediction, physical replay or reconstruction score is produced: 0A+0AT. Four QR, four triangular SVD and four rectangular SVD setups are charged separately as offline geometry auditing. About 24 seconds and 3.70GiB peak are not deployment wall/RSS advantage. This does not reject streaming, sparse or hierarchical updates, prove natural CFD fields incompressible, or authorize a larger network.
 
 来源边界 / Source boundaries: [Hager1989](https://doi.org/10.1137/1031049)与[Yip1986](https://doi.org/10.1137/0907034)是既有逆更新与稳定性文献，本次只读取出版方摘要；不将其结论冒充本BOS系统的稳定性或速度证明。These are prior inverse-update and stability references; only publisher abstracts were read, and no BOS stability or speed guarantee is imported.
+
+## 两级混合仍未通过 / Two-Stage Mixing Still Fails
+
+两级非局部Monarch近似已独立确认失败：几何构造的1572864个系数可表达全局满秩映射，但接上精确lift与K1仍为0/25通过，单级块对照也为0/25，直接参考25/25。同等3A+3AT预算下，普通CGLS3在全部25点的四指标均不更差。关闭这个固定的矩阵Frobenius近似配方；矩阵近似最优不等于物理重建最优，不能据此否定所有Monarch权重。12MiB仅为主候选系数载荷，不是全流程内存，更不是提速成果。
+
+The two-stage nonlocal Monarch approximation independently fails: 1572864 geometry-derived coefficients can represent a globally full-rank map, yet exact lift and K1 pass 0/25 cases; the single-stage block control also passes 0/25, and direct reference passes 25/25. At the same 3A+3AT budget, ordinary CGLS3 is no worse on all four metrics at all 25 points. This closes the fixed matrix-Frobenius approximation recipe; matrix-optimal does not mean reconstruction-optimal and does not reject all possible Monarch weights. The 12MiB figure is only the primary coefficient payload, not whole-pipeline memory or a speed result.
+
+| 相机组 / Set | 原始逆矩阵Frobenius相对误差 / Raw inverse error | 主候选场p90 / Primary field p90 | 块对照场p90 / Block field p90 | Zero3场p90 / Zero3 field p90 |
+|---|---:|---:|---:|---:|
+| g0 (5) | 0.386451 | 0.906215 | 0.907138 | 0.657781 |
+| g1 (7) | 0.234257 | 0.902575 | 0.902389 | 0.630135 |
+| g2 (9) | 0.517523 | 0.919011 | 0.895137 | 0.587162 |
+| g3 (5) | 0.356364 | 0.892936 | 0.897503 | 0.629517 |
+| g4 (7) | 0.293023 | 0.899824 | 0.900739 | 0.614968 |
+
+仍是五条已打开轨迹的中点乘五组相机，共25必要点，四项相对误差门均为0.01。全部2525预测在CFD评分真值前封存；失败后跳过剩余2500次修正，不将其记为失败或成功。主候选把8192个节点固定拆成64×128，两级块混合可连接全部输入输出；每个重排小块的秩1约束不等于整个算子秩1。正式SVD和独立Gram特征分解分别得到矩阵Frobenius近似，再用带零边界mask的T转置乘T构造正半定逆平方作用，最后精确lift、观测线搜索与未修改CGLS K1。
+
+These remain the opened midpoints of five trajectories across five camera sets: 25 necessary cases, with all four relative-error gates at 0.01. All 2525 predictions seal before CFD scoring truth; the other 2500 refinements are skipped, not scored failures or successes. The 8192 nodes split into a fixed 64×128 layout, whose two block-mixing stages connect all inputs and outputs. Rank one for each reshuffled small block does not mean a globally rank-one operator. Formal SVD and independent Gram eigendecomposition produce the matrix-Frobenius approximation. Its masked adjoint-product supplies a positive-semidefinite inverse-square action, followed by exact lift, observation line search and unchanged CGLS K1.
+
+独立逆矩阵/Monarch矩阵/新终点最大相对差为9.38e-11/1.10e-10/7.08e-11；退出后100预测重应用、400物理场重放，指标最大差1.82e-12。81920个块未出现最大奇异值并列。每查询3A+3AT、4级块乘、0次稠密三角求解；主系数12MiB，对照系数8MiB，实验档案还保留离线逆矩阵与全部预测。五组几何双实现的117600次三角右端求解、40960次SVD与40960次Gram特征分解全部另记，几何构造不是免费。约109秒、峰值4.77GiB只是诊断遥测，不是部署wall/RSS优势。
+
+The independent inverse/Monarch-matrix/new-endpoint relative differences are at most 9.38e-11/1.10e-10/7.08e-11. Post-exit checks reapply 100 predictions and replay 400 physical fields, with metric difference at most 1.82e-12. No top-singular-value ties occur in 81920 blocks. Each query uses 3A+3AT, four block-multiply stages and zero dense triangular solves. Primary coefficients occupy 12MiB and controls 8MiB; the experiment archive also retains offline inverses and all predictions. Across five geometries and two definitions, 117600 triangular RHS solves, 40960 SVDs and 40960 Gram eigendecompositions are charged separately: geometry construction is not free. About 109 seconds and 4.77GiB peak are diagnostic telemetry, not deployment wall/RSS advantage.
+
+来源与边界 / Sources and boundaries: [Monarch 2022](https://proceedings.mlr.press/v162/dao22a.html)提供两级结构和矩阵Frobenius投影依据，不保证本BOS物理误差；[FIO inverse 2021](https://arxiv.org/html/2105.02995v1)将forward蝶形结构与正规算子的层次逆结合，不能直接套用其假设；[fast transforms 2019](https://proceedings.mlr.press/v97/dao19a.html)是可学习快速结构变换的先例。Monarch supplies the structure and matrix-projection argument, not a BOS accuracy guarantee. The FIO paper combines a forward butterfly with a hierarchical normal inverse under assumptions not asserted here. Learnable fast structured transforms are established prior art. 此次不训练模型、不扩大块/层/秩或K救援，也不将此结果称为全部Monarch权重的物理能力上界。No model is trained or rescued by larger blocks, stages, rank or K; this is not a physical-capacity upper bound for all Monarch weights.

@@ -289,6 +289,24 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_monarch_projection_failure_keeps_physical_and_resource_boundaries():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["monarch_inverse"]
+    assert data["status"] == "FAIL_FIXED_MONARCH_INVERSE_PHYSICAL_GATE"
+    assert data["primary_passing"] == data["block_passing"] == 0 and data["direct_passing"] == 25
+    assert data["zero3_dominates_primary_cases"] == 25 and data["source_passing"] == 5
+    assert data["predicted_cases"] == 2525 and data["unrun_refinements"] == 2500
+    assert data["geometry_coefficients"] == 1572864 and data["coefficient_bytes"] == 12582912
+    assert data["online_A"] == data["online_AT"] == 3 and data["online_block_multiply_stages"] == 4
+    assert data["offline_triangular_solves"] == 117600 and data["offline_block_svd"] == 40960
+    assert data["trainable_parameters"] == 0 and data["full_rank_capable"]
+    assert data["coefficient_payload_not_whole_pipeline_memory"] and data["fixed_recipe_closed"]
+    assert not any(data[k] for k in ("all_monarch_weights_rejected", "physical_optimality_proved", "global_rank_truncation", "dense_factor_in_prediction", "setup_free", "complete_sequence_claim", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost"))
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        notes = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#monarch-inverse-gate")
+        assert len(notes) == 1
+        assert all("1572864" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_downdate_cache_bound_does_not_claim_reconstruction_or_all_updates():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["exact_downdate_cache"]
     assert data["status"] == "FAIL_GENERIC_DENSE_WOODBURY_INCREMENTAL_CACHE_SAVING"
