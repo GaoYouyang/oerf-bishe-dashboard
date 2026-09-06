@@ -289,6 +289,21 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_dual_monitor_is_reference_relative_and_keeps_abstentions():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["dual_error_monitor"]
+    assert data["status"] == "PASS_FIXED_ALGEBRAIC_ERROR_MONITOR"
+    assert data["interval_coverage"] == data["intervals"] == 690
+    assert data["false_accepts"] == 0 and data["fixed_queries_per_path"] == 115
+    assert sum(row["raw_false_accepts"][0] for row in data["rows"]) == 11
+    assert sum(row["adjoint_false_accepts"][0] for row in data["rows"]) == 15
+    assert data["rows"][-1]["accepted"] == [1, 1] and data["rows"][-1]["abstained"] == [4, 4]
+    assert not any(data[k] for k in ("CFD_accuracy_certified", "adaptive_queries_certified", "training_probe_reuse_authorized", "predictor_training_authorized", "new_field_predictions", "new_CFD_truth_reads", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost"))
+    for rel in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        note = BeautifulSoup((ROOT / rel).read_text(), "html.parser").select("#dual-error-monitor")
+        assert len(note) == 1
+        assert all("690" in note[0][f"data-i18n-{lang}"] and "115" in note[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_projected_factor_audit_never_reopens_parent_gate():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["projected_factor_numerical_audit"]
     assert data["status"] == "PASS_READ_ONLY_PROJECTED_FACTOR_FAILURE_AUDIT"

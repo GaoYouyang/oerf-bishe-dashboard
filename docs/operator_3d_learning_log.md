@@ -1,3 +1,11 @@
+## 2026-09-07：这次能识别残差的误导，但仍会保守
+
+随机对偶误差监测通过独立检查：115个固定输入中，只看观测残差会误放11个相对经典参考解不合格的输入，伴随残差会误放15个，新监测器误放0个；两实现的690个误差区间全部覆盖。它明确放行26个、拒绝81个、暂不判断8个。保守性也存在：5个合格K512输入只放行1个，其余4个暂不判断。这是参考解相对误差的监测工具，不是CFD真值精度证明、新重建、学习或加速成果；未来训练和审计探针必须隔离。
+
+The randomized dual error monitor passes independent checks. Among 115 fixed inputs, an observation-residual threshold falsely accepts 11 inputs that fail the classical-reference-relative gate; an adjoint-residual threshold falsely accepts 15, while the monitor falsely accepts none. All 690 error intervals across both implementations cover. It accepts 26, rejects 81 and abstains on 8 inputs. Conservatism remains: of five adequate K512 inputs, it accepts only one and abstains on four. This monitors reference-relative error, not CFD-truth accuracy, new reconstruction, learning or acceleration; future training and audit probes must be separate.
+
+[误差监测证据 / Error-monitor evidence](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：正对角为什么仍不够
 
 稀疏正因子试验保持数值未定：两实现的误差比差值3.23e-4超过冻结1e-6门限，不公布正式通过或失败计数。独立只读审计复现了该差异，并验证全部已存校正的物理投影。九相机下，观测误差剩余比仅0.0316至0.0435，但场误差剩余比为1.137至1.681，反而放大。正对角和因子接近不等于逆作用有效；不能只看残差下降。这不是NeuralIF评测、训练或加速成果，固定投影不再推进。

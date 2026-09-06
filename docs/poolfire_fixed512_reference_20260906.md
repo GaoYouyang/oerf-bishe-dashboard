@@ -763,3 +763,39 @@ The structural control was motivated by triangular factor representations in the
 这次改变的是后续目标选择：必须直接验证逆作用的误差控制，并同时守住场与内部梯度，不能把矩阵近似或观测残差作为充分替代。固定投影不再推进，不授权换填充、对角、顺序、训练大模型或租GPU来挽救。学习优势、同精度加速、泛化和真实BOST仍未建立。
 
 The consequence is a sharper research criterion: directly verify inverse-action error control together with field and interior-gradient safeguards; matrix approximation or observation residual is not a sufficient substitute. The fixed projection is not pursued, with no rescue through fill, diagonal, ordering changes, larger models or GPU rental. Learned advantage, equal-accuracy acceleration, generalization and real BOST remain unestablished.
+
+## 2026-09-07 从残差监测场误差 / Monitoring Field Error from Residuals
+
+随机对偶误差监测通过独立检查：115个固定输入中，只看观测残差会误放11个相对经典参考解不合格的输入，伴随残差会误放15个，新监测器误放0个；两实现的690个误差区间全部覆盖。它明确放行26个、拒绝81个、暂不判断8个。保守性也存在：5个合格K512输入只放行1个，其余4个暂不判断。这是参考解相对误差的监测工具，不是CFD真值精度证明、新重建、学习或加速成果；未来训练和审计探针必须隔离。
+
+The randomized dual error monitor passes independent checks. Among 115 fixed inputs, an observation-residual threshold falsely accepts 11 inputs that fail the classical-reference-relative gate; an adjoint-residual threshold falsely accepts 15, while the monitor falsely accepts none. All 690 error intervals across both implementations cover. It accepts 26, rejects 81 and abstains on 8 inputs. Conservatism remains: of five adequate K512 inputs, it accepts only one and abstains on four. This monitors reference-relative error, not CFD-truth accuracy, new reconstruction, learning or acceleration; future training and audit probes must be separate.
+
+| 输入 / Input | 数量 / N | 放行 / Accept | 拒绝 / Reject | 暂不判断 / Abstain | 观测残差误放 / Raw false accept |
+|---|---:|---:|---:|---:|---:|
+| 零场 / Zero | 25 | 0 | 25 | 0 | 0 |
+| 因果旧场 / Causal | 25 | 0 | 25 | 0 | 0 |
+| 投影压力输入 / Projected stress | 25 | 0 | 25 | 0 | 1 |
+| 直接解对照 / Direct control | 25 | 25 | 0 | 0 | 0 |
+| 旧学习器+K256 / Prior learner+K256 | 5 | 0 | 3 | 2 | 5 |
+| Zero-CGLS258 | 5 | 0 | 3 | 2 | 5 |
+| Zero-CGLS512 | 5 | 1 | 0 | 4 | 0 |
+
+表中是每条实现的115个固定输入，两条实现分类完全一致。690是两条实现各115输入乘以三个场指标，并不是690个新重建。输入来自已封存的零场、因果场、压力场、直接解和迭代解；旧投影试验仍为数值未定，没有通过压力输入重新获得资格。误放指被放行却未满足相对经典参考解的四指标1%门，不等同于新完成CFD真值评分。暂不判断不是失败，也不允许提前停止求解。
+
+The table is per implementation for 115 fixed inputs, with identical classifications. The 690 intervals are two implementations times 115 inputs times three field metrics, not 690 new reconstructions. Inputs are sealed zero, causal, stress, direct and iterative fields. The old projected-factor experiment remains inconclusive; stress inputs do not restore its eligibility. False acceptance means accepting an input that misses the four-metric 1% gate relative to a classical reference, not a new CFD-truth score. Abstention is not failure and does not authorize early stopping.
+
+方法依据[Smetana、Zahm和Patera的随机残差误差估计研究](https://arxiv.org/abs/1807.10489)，不是新的误差估计原理。这里对场、全梯度、内部梯度各使用64个固定高斯探针，通过已合格几何因子预计算残差到误差投影的线性映射。输入仅为当前场、观测和几何，查询不做新的完整求解。独立实现从QR和显式梯度伴随重建映射；退出后重放230次查询和350次原始物理投影，最大估计量/物理相对差7.95e-14/5.90e-14。
+
+The method follows [Smetana, Zahm and Patera's randomized residual-error estimation research](https://arxiv.org/abs/1807.10489), not a new estimation principle. This application uses 64 fixed Gaussian probes for each of field, full-gradient and interior-gradient errors, precomputing residual-to-error projections from qualified geometry factors. Queries use only the current field, observation and geometry, without a new complete solve. The independent path rebuilds maps from QR and explicit gradient adjoints. Post-exit replay covers 230 queries and 350 native physical projections, with estimator/physical relative differences at most 7.95e-14/5.90e-14.
+
+预注册区间倍率为2.20464，并加1e-6数值保护量。高斯概率论证只适用于与探针独立的固定有限查询族；当前数值保护经过这批输入核验，不是统一舍入误差定理。不能用同一批审计探针训练模型后再声称验证有效，也不能据此认证自适应查询、未见几何或真实实验。参考解自身的离散、建模及真值误差仍需另行验证。
+
+The preregistered interval multiplier is 2.20464 with a 1e-6 numerical guard. The Gaussian argument concerns a fixed finite query family independent of the probes; the numerical guard is checked on these inputs, not a uniform roundoff theorem. Training against the same audit probes invalidates that validation claim; adaptive queries, unseen geometry and real experiments are not certified. Discretization, modeling and truth error of the reference itself still need separate validation.
+
+每个几何的监测映射载荷为25.34至45.62MB，不是完整流水线内存。构建仍继承完整因子，新增1920个右端项、3840次三角求解和1920次A，核验另计1920次A^T。独立一次监测在没有缓存残差时需1A，另需384次观测长度点积；监测分量本身不需要A^T或三角求解，但本次便宜伴随对照实际另外执行两次A^T。这里没有测量部署加速，也不把准备成本藏入缓存。
+
+Monitor-map payload is 25.34 to 45.62 MB per geometry, not whole-pipeline memory. Construction still inherits complete factors and adds 1920 right-hand sides, 3840 triangular solves and 1920 A calls, with another 1920 A^T checks. A standalone monitor needs 1A when no residual is cached plus 384 observation-length dot products. Its monitor component uses no A^T or triangular solve, but the tested cheap adjoint control separately executes two A^T calls. Deployment acceleration is unmeasured and setup cost is not hidden in a cache.
+
+这一步为后续学习暖启动提供了更可靠的误差检查接口，但没有产生新的场预测，没有授权训练或GPU，更没有完成论文目标。接下来必须把学习收益、同价经典解释、完整轨迹精度和真实资源账连接起来；旧失败模型不因这个辅助工具而重新变成有效算法。
+
+This provides a better error-checking interface for a future learned warm start, but generates no new field prediction, authorizes no training or GPU use and does not complete the paper goal. Learned benefit, matched-cost classical explanations, full-trajectory accuracy and real resource accounting must still be connected. An auxiliary monitor does not rehabilitate previously failed models.
