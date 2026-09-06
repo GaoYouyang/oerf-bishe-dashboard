@@ -1,3 +1,11 @@
+## 2026-09-06：局部耦合改善精度，但半预算仍未全过门
+
+经典对照进展：局部稀疏近似逆配合固定256步，在五个已打开哨兵的四项误差上均优于同预算Jacobi；全部1%门通过3/5，对照为0/5。两个失败点的内部梯度误差约1.111%与1.186%。当前配置封存，不加深或调参；不是完整序列、学习加速或真实BOST成果。
+
+Classical control: a local sparse approximate inverse at fixed 256 steps improves all four errors over same-budget Jacobi on five opened sentinels. The 1% gate passes 3/5 versus 0/5; two interior-gradient errors remain about 1.111% and 1.186%. This configuration is closed without depth or parameter tuning. No complete-sequence, learned-speedup or real-BOST result is established.
+
+[五点对照、成本与边界 / Five-point comparison, costs and scope](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-06：区分修正方向和步长
 
 方向诊断：K4到合格参考的修正，在全部505帧上平均法向算子灵敏度更低。沿实际观测残差梯度，任何单个标量步长的场误差下界都至少29.57%，不能一步达到1%目标；这不排除后续多步CGLS或多方向暖启动，尚无学习加速结论。

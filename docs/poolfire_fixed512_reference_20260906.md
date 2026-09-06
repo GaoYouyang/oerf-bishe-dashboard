@@ -66,3 +66,31 @@ The second check instead uses the actual visible direction `g4=AT(y-Ax4)`. For q
 文献提供的是方法提醒，不是本任务的成功证据：[HINTS](https://arxiv.org/abs/2208.13273)强调神经与经典迭代的误差成分互补；[DL-HIM训练与更新可靠性研究](https://arxiv.org/html/2602.06842v1)讨论训练初始右端项和部署残差之间的分布差异。这里没有复现其PDE速度结果，也没有证明本任务出现其假固定点现象。
 
 The literature supplies methodological context, not our performance evidence: [HINTS](https://arxiv.org/abs/2208.13273) motivates complementary error correction; the [DL-HIM training/update study](https://arxiv.org/html/2602.06842v1) discusses mismatched initial training inputs and deployment residuals. Their PDE speed results are not reproduced here, and their false-fixed-point phenomenon has not been established for our one-shot initializer.
+
+## 局部近似逆对照 / Local approximate-inverse control
+
+经典对照进展：局部稀疏近似逆配合固定256步，在五个已打开哨兵的四项误差上均优于同预算Jacobi；全部1%门通过3/5，对照为0/5。两个失败点的内部梯度误差约1.111%与1.186%。当前配置封存，不加深或调参；不是完整序列、学习加速或真实BOST成果。
+
+Classical control: a local sparse approximate inverse at fixed 256 steps improves all four errors over same-budget Jacobi on five opened sentinels. The 1% gate passes 3/5 versus 0/5; two interior-gradient errors remain about 1.111% and 1.186%. This configuration is closed without depth or parameter tuning. No complete-sequence, learned-speedup or real-BOST result is established.
+
+| Opened midpoint / 已打开中点 | FSAI interior error / 内部梯度误差 | Jacobi interior error / 内部梯度误差 |
+|---|---:|---:|
+| p=14kw_size=05 | 1.110643% | 2.887197% |
+| p=22kw_size=03 | 1.185324% | 2.306541% |
+| p=33kw_size=01 | 0.832263% | 2.113687% |
+| p=45kw_size=05 | 0.851966% | 2.937497% |
+| p=58kw_size=03 | 0.793125% | 2.108898% |
+
+这只是同一干净九相机设置的五个历史中点，不是五条完整轨迹。FSAI的场、全梯度与观测误差五点均通过，只有上表前两个内部梯度误差失门；不能事后放宽1%标准。两实现逐项判决一致，场/观测/指标最大差约2.04e-4/3.22e-5/1.88e-4，守住预先固定的数值界。相同场的独立物理回放差约7.03e-16。
+
+These are five historical midpoints in one clean nine-camera acquisition, not five complete trajectories. FSAI field, full-gradient and observation errors pass all five points; only the first two interior-gradient errors miss the unchanged 1% threshold. Both implementations agree on every gate. Maximum field/image/metric differences are about 2.04e-4/3.22e-5/1.88e-4 within the preset numerical bounds; independent replay of the same field differs by about 7.03e-16.
+
+每个求解仍需256A+256AT，另有256次L和257次L转置稀疏乘法。每套几何因子有103548个CSR存储项，约1.22MiB，需8192个局部求解；不能把几何预处理和因子运算当免费。20个离线终态合计5120A+5120AT，评分/探针另33A。没有端到端速度或新学习参数结果。
+
+Each solve still needs 256 A+256 AT plus 256 L and 257 transposed-L sparse actions in the formal path. Each geometry factor stores 103548 CSR entries, about 1.22 MiB, and requires 8192 local solves; setup and factor actions are not free. Twenty offline endpoints total 5120 A+5120 AT, plus 33 scoring/probe A calls. There is no end-to-end speed or new learned-parameter result.
+
+最初启动在观测/评分前发现常数零空间假设错误，已作为工程失效保留。现有forward先施加外边界零支撑再求梯度，因此不能任意减去求解均值；修正版本不做该后处理，不改因子配置、步数或门。几何边界应由实际算子决定，不能直接套用连续无限域直觉。
+
+The first attempt stopped before observations/scoring because its constant-nullspace premise was invalid. This forward applies outer-zero support before differentiation, so arbitrary mean subtraction is not legitimate. The corrected run omits that postprocessing without changing factor settings, depth or gates. Boundary semantics must follow the actual operator, not an unbounded-domain intuition.
+
+[FSAI原始论文 / Original FSAI paper](https://epubs.siam.org/doi/10.1137/0614004)是该经典方法的来源，不是本任务的突破证据。This is established numerical methodology, not component originality or proof of learned BOST acceleration.

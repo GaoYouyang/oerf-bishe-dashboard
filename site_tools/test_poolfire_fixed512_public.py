@@ -70,3 +70,20 @@ def test_actual_residual_bound_has_narrow_scope():
     text = (ROOT / f"docs/{STEM}.md").read_text()
     assert "lower bounds, not measured-error ranges" in text
     assert "preprocessed gauge-fixed" in text
+
+
+def test_fsai_sentinel_is_not_complete_sequence_or_learning_success():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["fsai_sentinel"]
+    assert data["sentinel_points"] == 5 and data["primary_passing_points"] == 3
+    assert data["jacobi_passing_points"] == 0
+    assert data["primary_no_worse_all_four_metrics_points"] == 5
+    assert data["per_endpoint_exact_calls"] == {"A": 256, "AT": 256}
+    assert not any(data[key] for key in ("complete_sequence_verified", "learned_algorithm",
+        "resource_speedup", "external_generalization", "full_sequence_launch_authorized"))
+    assert len(data["rows"]) == 5
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        soup = BeautifulSoup((ROOT / relative).read_text(), "html.parser")
+        notes = soup.select("#fsai-sentinel-result")
+        assert len(notes) == 1
+        for lang in ("zh", "en"):
+            assert all(value in notes[0][f"data-i18n-{lang}"] for value in ("3/5", "0/5", "256"))
