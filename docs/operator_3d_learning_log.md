@@ -1,3 +1,11 @@
+## 2026-09-07：精确解可以分块，资源收益还要实测 / Exact Solutions Can Be Blocked; Resources Still Need Measurement
+
+精确分块直接解已通过2525/2525个已打开的干净代理样本、25/25个来源与相机集合分层，五条完整轨迹全部通过四指标1%门；完整直接解对照也全部通过。五套几何只需736–784个接口节点，保存的因子数值量减少36.7%–38.0%，没有删弱耦合或训练模型。这是经典求解对照的实质进展，不是整机内存下降、加速、学习突破或外部泛化；下一步实测包含准备成本的时间与RSS。
+
+Exact block direct solving passes 2525/2525 already-opened clean proxy cells, all25 source-camera-set strata and all five complete trajectories at the four-metric1% gate; the full direct comparator also passes every cell. The five geometries need only736–784 interface nodes, reducing stored numeric factor payload by36.7%–38.0% without dropping weak couplings or training a model. This is progress in a classical solver control, not a whole-process memory reduction, speedup, learning breakthrough or external generalization. Next comes measured time and RSS including setup.
+
+[完整已开封序列证据 / Full opened-sequence evidence](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：确实训练了，也确实还不够 / Trained, but Still Insufficient
 
 三参数学习器完成五折训练，独立封存输出复算显示：场误差p90从不学习行扫描对照的57.68%降至44.69%，但四指标1%必要精度门仍为0/25，合格直接解参考为25/25。因此关闭这条固定的一次行扫描加K1方案，不增加轮数或扩大模型。旧dual-ridge对照在17/25数值配对中不合格，原整族判决仍为未定；这里是单独的必要精度否决，不是恢复整族资格。这不是完整轨迹、同价优势、加速或论文突破。

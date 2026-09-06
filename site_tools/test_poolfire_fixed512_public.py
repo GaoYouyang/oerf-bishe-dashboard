@@ -289,6 +289,25 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_exact_block_sequences_are_classical_accuracy_not_resource_success():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["exact_block_full_sequences"]
+    assert data["status"] == "PASS_EXACT_BLOCK_FULL_OPENED_SEQUENCES"
+    assert data["primary_passing"] == data["reference_passing"] == data["cells"] == 2525
+    assert data["complete_source_geometry_strata"] == 25 and data["complete_trajectories"] == 5
+    assert data["harm"] == 0 and len(data["rows"]) == 50
+    assert data["classical_only"] and data["clean_opened_only"] and data["resource_comparison_authorized"]
+    assert data["independent_replay"]["physical_states"] == 10100
+    assert data["cost"]["per_query_A"] == data["cost"]["per_query_AT"] == 1
+    assert not any(data[k] for k in ("predictor_authorized", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost"))
+    for row in data["geometry"]:
+        assert 736 <= row["interface_nodes"] <= 784
+        assert .62 < row["factor_numeric_bytes"]/row["full_packed_factor_bytes"] < .64
+    for rel in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        note = BeautifulSoup((ROOT / rel).read_text(), "html.parser").select("#exact-block-sequences")
+        assert len(note) == 1
+        assert all("2525/2525" in note[0][f"data-i18n-{lang}"] and "RSS" in note[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_shared3_necessary_veto_does_not_rehabilitate_family():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["shared3_necessary_audit"]
     assert data["status"] == "FAIL_SEALED_PRIMARY_NECESSARY_ACCURACY"

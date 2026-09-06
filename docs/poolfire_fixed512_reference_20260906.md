@@ -836,3 +836,41 @@ Training accounting is corrected: the original counters omitted the teacher proj
 决策是停止这条固定三参数、一次行扫描、K1方案，不加轮数、扫描次数或大模型救援；总论文目标继续，但本次没有算法突破、加速、外部泛化或真实BOST成功。
 
 The decision stops this fixed three-parameter, one-row-sweep, K1 recipe without adding epochs, sweeps or a larger model. The overall paper objective remains open; this result establishes no algorithm breakthrough, acceleration, external generalization or real-BOST success.
+
+## 2026-09-07 精确分块的完整已开封序列证据 / Full Opened-Sequence Evidence for Exact Block Solving
+
+精确分块直接解已通过2525/2525个已打开的干净代理样本、25/25个来源与相机集合分层，五条完整轨迹全部通过四指标1%门；完整直接解对照也全部通过。五套几何只需736–784个接口节点，保存的因子数值量减少36.7%–38.0%，没有删弱耦合或训练模型。这是经典求解对照的实质进展，不是整机内存下降、加速、学习突破或外部泛化；下一步实测包含准备成本的时间与RSS。
+
+Exact block direct solving passes 2525/2525 already-opened clean proxy cells, all25 source-camera-set strata and all five complete trajectories at the four-metric1% gate; the full direct comparator also passes every cell. The five geometries need only736–784 interface nodes, reducing stored numeric factor payload by36.7%–38.0% without dropping weak couplings or training a model. This is progress in a classical solver control, not a whole-process memory reduction, speedup, learning breakthrough or external generalization. Next comes measured time and RSS including setup.
+
+| 相机集合 / Camera set | 相机数 / Cameras | 接口节点 / Interface nodes | 分块因子MB / Block factor MB | 完整打包因子MB / Full packed factor MB | 通过 / Passing |
+|---|---:|---:|---:|---:|---:|
+| 1 | 5 | 753 | 86.15 | 138.32 | 505/505 |
+| 2 | 7 | 779 | 86.56 | 138.32 | 505/505 |
+| 3 | 9 | 784 | 87.61 | 138.32 | 505/505 |
+| 4 | 5 | 736 | 85.84 | 138.32 | 505/505 |
+| 5 | 7 | 755 | 85.79 | 138.32 | 505/505 |
+
+MB为十进制，另需每套47040字节索引。不包括稀疏forward、观测、临时装配矩阵、运行库或系统缓存，因此不是RSS节省。表中完整打包因子已只计算下三角，不拿浪费一半空间的完整方阵夸大收益。
+
+MB is decimal; each set additionally needs47040 index bytes. Sparse forward storage, observations, temporary setup matrices, libraries and system caches are excluded, so this is not an RSS saving. The comparator already stores only a packed lower triangle, not a wasteful full square array.
+
+结构审计只读几何：先以二部图匹配检验接口下界，再在两份独立forward的全部非零支持并集上确认两个内部区域没有任何共用测量行。最终接口包含736–784个节点，保留全部5880个有效未知量；不按真值选分割、不删小系数。几何证书与场精度是两个不同的门，后者已单独完成。
+
+The structural audit is geometry-only: a bipartite matching first tests an interface lower bound, followed by exact row-disjointness of the two interiors in the union of both independently assembled forward supports. The final interface contains736–784 nodes while retaining all5880 active unknowns, with no truth-selected partition or small-coefficient dropping. A geometry certificate and field accuracy are separate gates; the latter is now independently complete.
+
+正式求解使用打包Cholesky、两个内部块与完整Schur接口；第二实现从独立forward重新构造分块LU。完整直接解对照分别用完整Cholesky和完整LU。全部候选与对照预测先封存，再读取CFD真值评分。五条来源每条101帧，在五套5/7/9相机集合上共2525个单元，没有新增拟合、深度或正则搜索。候选四指标最坏相对误差依次为9.39e-11/8.25e-11/1.46e-10/1.63e-13，四门伤害单元为0。
+
+The formal solver uses packed Cholesky for two interiors and an exact Schur interface; a second implementation rebuilds block LU from the independent forward. Full direct controls use full Cholesky and full LU respectively. All predictions are sealed before CFD-truth scoring. Five sources with101 frames each across five5/7/9-camera sets yield2525 cells, without fitting, deeper refinement or regularization search. Candidate worst relative field/full-gradient/interior-gradient/observation errors are9.39e-11/8.25e-11/1.46e-10/1.63e-13; zero cells fail the four-gate criterion while the direct reference passes.
+
+独立退出后验证重放10100个候选及对照场状态，并做5050次原生投影差分检查与25次打包因子预测重放；逐来源与相机集合的p50/p90/worst全部核对。这里是已开封干净数据上的经典精确解，不是留出轨迹上的学习，也不证明噪声、连续位姿变化或更大网格能保持表现。
+
+The independent post-exit validator replays10100 candidate/control field states,5050 native difference probes and25 packed-factor predictions, checking every source-camera-set p50/p90/worst summary. This is a classical exact solution on already-opened clean data, not held-out learned prediction and not evidence for noise, continuous pose changes or larger grids.
+
+每次独立查询包含1A+1A^T；分块另需6次打包三角求解与4次耦合矩阵向量乘，对照需要2次三角求解。算子调用相同不代表耗时相同。几何准备、因子构建、首次加载与重复使用必须进入下一次独立资源比较，不能把缓存准备当作免费。
+
+Each standalone query includes1A+1A^T; the block method additionally needs six packed triangular solves and four coupling matvecs, versus two triangular solves for the full direct control. Equal exact-call counts do not imply equal runtime. Geometry preparation, factor construction, first load and repeated use must enter the next separate resource comparison; cached setup is not free.
+
+Schur域分解不是我们的首创，学习接口也已有先例。相关一级来源：[Schur域分解与低秩修正](https://arxiv.org/abs/1505.04340)、[学习域分解接口条件](https://arxiv.org/abs/2205.09833)。这里只借鉴其问题分解思路，不把本文献的性能或创新性算到本实验。本轮没有授权神经训练、租GPU或真实BOST结论。
+
+Schur domain decomposition is established, and learned interface conditions also have prior work: [Schur-based domain decomposition with low-rank corrections](https://arxiv.org/abs/1505.04340) and [learning interface conditions](https://arxiv.org/abs/2205.09833). These motivate decomposition, not transferred performance or novelty claims. This result authorizes no neural training, GPU rental or real-BOST claim.
