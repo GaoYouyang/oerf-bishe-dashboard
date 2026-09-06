@@ -509,3 +509,29 @@ Each fold uses only its original 404 training frames across three camera sets, t
 正式Gram/Cholesky与独立物理重建/流式QR复算一致，Gram和物理最小值最大差分别为5.06e-13与3.07e-11。没有保存新系数、checkpoint或预测，没有重新训练或改写旧判决。两实现离线诊断合计246440A、117160AT、234320次三角求解；共享因子与其构建仍非免费。约298秒、峰值2.18GiB仅为本次诊断遥测，不是部署提速。下一步应核查表示与训练目标到最终精确修正的接口，不能把这份诊断当成增加轮数或大模型救援的许可。
 
 Formal Gram/Cholesky and independent physical reconstruction/streaming QR agree, with maximum Gram and physical-minimum differences of 5.06e-13 and 3.07e-11. No new coefficients, checkpoints or predictions were saved, and no retraining or old-verdict revision occurred. Across both implementations this offline diagnostic costs 246440A, 117160AT and 234320 triangular solves; the shared factor and setup are not free. About 298 seconds and 2.18GiB peak are diagnostic telemetry, not deployment speedup. Subsequent work must examine representation and the interface between training loss and final exact refinement, not treat this diagnostic as permission for more epochs or larger-model rescue.
+
+## 理想输出层加K1也救不回固定特征 / Ideal Heads Plus K1 Cannot Rescue Fixed Features
+
+精确修正后的容量归因已独立完成：在原先25个已打开检验点中，20/20个删相机点即使允许理想输出系数、观测线搜索和一次K1，当前固定49参数模型特征仍无法达到四指标1%门槛。四组场误差下界p90为67.7%–70.5%；固定线性特征也全部失败。九相机近精确结果仍来自不学习即可通过的恒等情形。这排除了仅优化当前输出层来补救的解释，不证明所有隐藏表示或全C路线无效；不是新预测、完整序列或新的泛化成功。
+
+Post-refinement capacity attribution is independently complete: among the same 25 opened cases, all 20/20 camera-removal cases remain outside the four-metric 1% gates even with ideal output coefficients, observation line search and one K1 on the frozen 49-parameter features. Field-error lower-bound p90 is 67.7%-70.5% across four groups; the fixed linear features also fail throughout. Near-exact nine-camera cases remain identities that need no learning. This rules out rescue by output-head optimization alone, not every hidden representation or the whole C route. It is no new prediction, complete-sequence result or fresh generalization success.
+
+| 相机组 / Camera set | 固定非线性特征排除 / Fixed nonlinear excluded | 场下界p90 / Field bound p90 | 固定线性特征排除 / Fixed linear excluded | 场下界p90 / Field bound p90 |
+|---|---:|---:|---:|---:|
+| g0 (5) | 5/5 | 0.704517 | 5/5 | 0.693666 |
+| g1 (7) | 5/5 | 0.677197 | 5/5 | 0.66297 |
+| g2 (9) | 0/5 | 1.35269e-12 | 0/5 | 1.35269e-12 |
+| g3 (5) | 5/5 | 0.689551 | 5/5 | 0.666031 |
+| g4 (7) | 5/5 | 0.688738 | 5/5 | 0.659209 |
+
+这里的数值是误差分数。每组只有五条轨迹各一个已打开中点，门为0.01。没有部署新基底或进行训练：令X为原先特征经过精确lift的方向，b=A^Ty、H=A^TA；任意输出系数和观测标量线搜索后，一步CGLS的输出一定包含在span[X,b,HX]内。我们分别为每项指标在这个更宽松空间里找理想解，甚至不要求不同指标共用一个解、不同样本共用输出层。连这种乐观下界都失败，才可排除相应固定特征；下界通过则不能证明实际模型可行。
+
+Values are error fractions. Each group contains one already-opened midpoint from each of five trajectories; the gate is 0.01. No basis expansion or training is deployed: let X contain the original feature directions after exact lift, b=A^Ty and H=A^TA. Any output coefficients, scalar observation line search and one CGLS step produce a field inside span[X,b,HX]. We independently optimize each metric in this larger space, without requiring one solution across metrics or one shared head across samples. Only a failed optimistic lower bound can exclude these fixed features; a passing bound would not establish a realizable model.
+
+删相机的80个单元/指标界限在两套实现中均满足条件数门，最小奇异值比非线性/线性为1.76e-4/1.26e-5，远高于1e-10。九相机空间退化，不作不可能性认证；其近精确输出早已由不学习对照给出。训练侧最优性诊断发现的优化缺口仍成立，但填平缺口不足以救回这些固定特征经过K1的结果。不同隐藏特征或真正非局部表示未被排除，旧失败判决不变。
+
+All 80 removal cell/metric bounds per model meet the two-implementation conditioning gate: minimum singular ratios are 1.76e-4 and 1.26e-5 for nonlinear and linear features, well above 1e-10. Nine-camera spaces are degenerate and receive no impossibility certificate; their near-exact outputs were already supplied without learning. The training-side optimization gaps remain real, but closing them cannot rescue these frozen features after K1. Different hidden features or genuinely nonlocal representations are not excluded, and the old failure verdict is unchanged.
+
+所有观测/几何方向在读取评分真值前封存。SVD与独立逆序行QR、独立物理重建及原生forward重放通过；旧输出包含误差2.58e-11，两套误差下界差1.92e-10，退出后800项投影重算差3.34e-15。没有新模型、预测或最优系数。离线额外3100次子集A、1190次子集AT、1960次原生九相机A和1140次三角求解；退出验证再加1960次子集A。原候选3A+3AT及4次三角求解的在线账和大因子成本没有改变。约74秒、峰值9.97GiB是归因遥测，不是部署提速、真实BOST或论文突破。
+
+All observation/geometry directions seal before scoring-truth access. SVD and independent reversed-row QR, separate physical reconstruction and native-forward replay pass; old-output containment differs by at most 2.58e-11, paired error bounds by 1.92e-10 and 800 post-exit projection recomputations by 3.34e-15. No new model, prediction or optimum coefficients are produced. Additional offline work is 3100 subset A, 1190 subset AT, 1960 native nine-camera A and 1140 triangular solves; post-exit verification adds 1960 subset A. The original online 3A+3AT and four triangular solves, large factor and setup remain unchanged. About 74 seconds and 9.97GiB peak are attribution telemetry, not deployment speedup, real BOST or a paper breakthrough.

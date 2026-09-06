@@ -289,6 +289,24 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_fixed_point_capacity_is_post_open_lower_bound_not_predictor():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["point49_post_k1_capacity"]
+    assert data["status"] == "FAIL_FROZEN_POINT49_POST_K1_REACHABLE_CAPACITY"
+    assert data["evaluated_cases"] == 25 and data["primary_certified_misses"] == data["linear_certified_misses"] == 20
+    assert data["post_open_only"] and data["fixed_hidden_features_only"] and data["after_alpha_and_K1"]
+    assert data["original_feature_sets_unchanged"] and data["no_shared_head_or_joint_metric_feasibility_claim"]
+    assert data["no_complete_sequence_claim"] and data["factor_setup_not_free"]
+    assert not any(data[k] for k in ("new_predictions", "new_models", "parent_verdict_changed", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost"))
+    for row in data["geometry"]:
+        for model in row["models"]:
+            assert model["certified_miss_cases"] == (0 if row["camera_count"] == 9 else 5)
+    assert data["all_metric_projections_recomputed"] == 800
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        notes = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#point49-post-k1-capacity")
+        assert len(notes) == 1
+        assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_head_diagnostic_does_not_rescue_old_prediction():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["point49_head_optimality"]
     assert data["status"] == "PASS_TRAINING_ONLY_FROZEN_HEAD_DIAGNOSTIC"
