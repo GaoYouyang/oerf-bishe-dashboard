@@ -87,3 +87,21 @@ def test_fsai_sentinel_is_not_complete_sequence_or_learning_success():
         assert len(notes) == 1
         for lang in ("zh", "en"):
             assert all(value in notes[0][f"data-i18n-{lang}"] for value in ("3/5", "0/5", "256"))
+
+
+def test_field81_is_a_failed_necessary_gate_not_505_successes():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["field81_learning"]
+    assert data["status"] == "FAIL_FIELD81_NECESSARY_MIDPOINTS"
+    assert data["parameters_per_model"] == 81 and data["outer_fits"] == 10
+    assert data["predictions_sealed"] == 505 and data["evaluated_midpoints"] == 5
+    assert data["primary_passing"] == 0 and data["remaining_refinement_skipped"] == 500
+    assert data["per_deployment_exact_calls"] == {"A": 258, "AT": 258}
+    assert data["zero_bp_ridge_dominate_primary_all_four_points"] == 5
+    assert not any(data[k] for k in ("complete_sequence_verified", "learned_advantage", "resource_speedup", "external_generalization", "real_bost"))
+    assert all(row["formal"][2] > .01 and row["independent"][2] > .01 for row in data["rows"])
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        soup = BeautifulSoup((ROOT / relative).read_text(), "html.parser")
+        notes = soup.select("#field81-learning-result")
+        assert len(notes) == 1
+        for lang in ("zh", "en"):
+            assert all(value in notes[0][f"data-i18n-{lang}"] for value in ("81", "505", "0/5", "258", "500"))

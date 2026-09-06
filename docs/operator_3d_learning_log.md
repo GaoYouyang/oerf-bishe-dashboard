@@ -1,3 +1,11 @@
+## 2026-09-06：真正训练了小模型，但仍未胜过同预算经典法
+
+新一轮学习验证：81参数三维状态小算子完成10个完整轨迹外折拟合，505个预测先封存。七种同预算方法在五个预定中点均为0/5通过；候选内部梯度误差2.12%至3.02%，高于1%门，且普通CGLS、BP与旧dual-ridge的四项误差都更低。每次部署258A+258AT，另计几何准备与映射；已关闭该配置并跳过余下500帧重建。不是完整序列通过、学习加速或真实BOST成果。
+
+New learning check: an 81-parameter field-state operator completed 10 whole-trajectory outer-fold fits, with all 505 predictions sealed first. All seven same-budget methods passed 0/5 prescribed midpoints. Candidate interior-gradient errors were 2.12% to 3.02%, above the 1% gate; ordinary CGLS, BP and frozen dual-ridge had lower errors on all four metrics. Each deployment costs 258 A+258 AT, plus geometry setup and maps. This configuration is closed and the remaining 500 refinements were skipped. No complete-sequence, learned-speedup or real-BOST success is established.
+
+[中点对照、独立复算与成本 / Midpoints, independent checks and costs](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-06：局部耦合改善精度，但半预算仍未全过门
 
 经典对照进展：局部稀疏近似逆配合固定256步，在五个已打开哨兵的四项误差上均优于同预算Jacobi；全部1%门通过3/5，对照为0/5。两个失败点的内部梯度误差约1.111%与1.186%。当前配置封存，不加深或调参；不是完整序列、学习加速或真实BOST成果。

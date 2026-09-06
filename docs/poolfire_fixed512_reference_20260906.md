@@ -94,3 +94,33 @@ Each solve still needs 256 A+256 AT plus 256 L and 257 transposed-L sparse actio
 The first attempt stopped before observations/scoring because its constant-nullspace premise was invalid. This forward applies outer-zero support before differentiation, so arbitrary mean subtraction is not legitimate. The corrected run omits that postprocessing without changing factor settings, depth or gates. Boundary semantics must follow the actual operator, not an unbounded-domain intuition.
 
 [FSAI原始论文 / Original FSAI paper](https://epubs.siam.org/doi/10.1137/0614004)是该经典方法的来源，不是本任务的突破证据。This is established numerical methodology, not component originality or proof of learned BOST acceleration.
+
+## 三维状态小算子 / Small Field-State Operator
+
+新一轮学习验证：81参数三维状态小算子完成10个完整轨迹外折拟合，505个预测先封存。七种同预算方法在五个预定中点均为0/5通过；候选内部梯度误差2.12%至3.02%，高于1%门，且普通CGLS、BP与旧dual-ridge的四项误差都更低。每次部署258A+258AT，另计几何准备与映射；已关闭该配置并跳过余下500帧重建。不是完整序列通过、学习加速或真实BOST成果。
+
+New learning check: an 81-parameter field-state operator completed 10 whole-trajectory outer-fold fits, with all 505 predictions sealed first. All seven same-budget methods passed 0/5 prescribed midpoints. Candidate interior-gradient errors were 2.12% to 3.02%, above the 1% gate; ordinary CGLS, BP and frozen dual-ridge had lower errors on all four metrics. Each deployment costs 258 A+258 AT, plus geometry setup and maps. This configuration is closed and the remaining 500 refinements were skipped. No complete-sequence, learned-speedup or real-BOST success is established.
+
+| 已开中点 / Opened midpoint | 正式内部梯度误差 / Formal interior error | 独立复算 / Independent |
+|---|---:|---:|
+| p=14kw_size=05 | 2.941796% | 2.948222% |
+| p=22kw_size=03 | 2.285119% | 2.284554% |
+| p=33kw_size=01 | 2.127788% | 2.121805% |
+| p=45kw_size=05 | 3.015663% | 3.017217% |
+| p=58kw_size=03 | 2.144515% | 2.148611% |
+
+本次真正训练了一个新的共享参数模型：观测先经物理伴随与固定局部几何映射汇合到三维，再由逐点小网络预测修正，经精确正向与伴随构造暖启动，最后使用未修改的CGLS。训练目标是已通过精度门的K512参考，不再是较弱K4。每折仅用其余四条轨迹的404帧，留出的101帧不进入训练目标或归一化；两种表示各五折，每个模型81参数。只有干净九相机的历史数据证据，不是新工况泛化。
+
+A new shared-parameter model was actually trained: an adjoint and fixed local geometry map fuse observations into a 3D state, a pointwise small network predicts a correction, exact forward/adjoint actions form the initializer, and unchanged CGLS refines it. Teachers are the qualified K512 reference rather than weak K4. Each fold trains on404 frames from four other trajectories; its101 withheld frames do not enter teacher fitting or normalization. Two representations use five folds each, with81 parameters per model. Evidence is restricted to opened clean nine-camera data, not a new-condition generalization result.
+
+在两套数值实现中，候选四项误差均优于自身无学习几何滤波对照，但均劣于同预算普通CGLS、BP和旧dual-ridge。对同参数量Jacobi小网络的细微优势未在两套实现中完全一致，不能称稳定优势。候选场与全梯度误差也失门，只有观测误差通过。因此小幅降低训练损失不是节省精确调用的证据，合格参考仍未被更便宜的学习算法替代。
+
+In both numerical paths the candidate improves all four errors over its own no-learning geometry filter, but loses on all four to same-budget ordinary CGLS, BP and frozen dual-ridge. Small differences from the same-size Jacobi network do not yield identical dominance in both implementations and are not a reliable advantage. Candidate field and full-gradient errors also fail; only observation passes. Lower training loss is therefore not evidence of exact-call savings, and a cheaper learned algorithm has not replaced the qualified reference.
+
+五个必要中点的逐指标判决一致，独立状态/观测/指标最大差为2.43e-4/3.78e-5/2.25e-4，守住预定数值界；同一场的原生物理回放差7.12e-16。这里不是五条完整轨迹：根据结果前停止规则，其余500帧未做最终重建。全部505个预测已经封存，不能把预测数量写成505个准确重建。
+
+Every metric decision agrees at the five necessary midpoints. Independent state/image/metric discrepancies of2.43e-4/3.78e-5/2.25e-4 satisfy the preset numerical bounds; same-field native replay differs by7.12e-16. These are not five complete trajectories: the pre-result stopping rule skipped the remaining500 final reconstructions. All505 predictions were sealed, but that count must not be reported as505 accurate reconstructions.
+
+新离线训练、预测、核验与评分总账329650A+249850AT；实际70个终态求解另18030A+17990AT，初始化已在预测阶段执行并单列。每种方法的单次部署账均为258A+258AT；几何因子、映射以及已有参考的构建成本不免费。没有fresh wall/RSS优势、GPU需求或论文成功结论。不扩大或调参挽救这个固定配置，也不据此否定所有三维算子学习。
+
+New offline training, prediction, audits and scoring total329650 A+249850 AT; the70 actual endpoint solves add18030 A+17990 AT, with initializer work executed and recorded in the prediction stage. Each method's per-deployment ledger is258 A+258 AT; geometry factors, maps and inherited reference construction are not free. No fresh wall/RSS advantage, GPU need or paper-success claim is established. This fixed configuration will not be enlarged or retuned, and its failure does not rule out all3D operator learning.
