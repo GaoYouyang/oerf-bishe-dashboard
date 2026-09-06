@@ -1,3 +1,11 @@
+## 2026-09-07：把求导与投影分开检查 / Separating Derivative and Projection
+
+求导阶段审计缩小了问题范围：在20个已封存敏感方向上，差分梯度的完整条件数为7.79，没有精确零空间；归一化梯度响应为0.497至0.651，但完整前向响应仅0.00148至0.02190。更强衰减出现在后续插值、投影与积分的组合中，尚不能单独归因给其中一项。独立物理重放通过。本轮不支持把问题简单归结为差分求导的棋盘格零模式；没有更换算子、训练网络或获得重建与加速成果。
+
+Derivative-stage auditing narrows the diagnosis: on 20 sealed sensitive witnesses, the complete finite-difference gradient has condition number 7.79 and no exact nullspace. Normalized gradient responses span 0.497 to 0.651, but full forward responses are only 0.00148 to 0.02190. Stronger attenuation lies in the subsequent interpolation, projection and integration jointly, not yet attributable to one of them. Independent physical replay passes. This does not support a simple derivative-checkerboard null-mode explanation; no operator was changed or network trained, and no reconstruction or acceleration result was obtained.
+
+[独立阶段审计 / Independent stage audit](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：物理旋转不能省略离散误差 / Physical Rotation Does Not Remove Discretization Error
 
 旋转规范化检查得到混合结果：同一10个几何组合中，固定三线性坐标旋转使所有20个既定敏感方向的偏差降低42.47%–63.46%，但整体算子差异只在7/10组合改善，另外3个变大。40个旋转后见证场已独立物理重放。相机与射线确实共同旋转，但当前边界、插值和梯度离散不能直接当成精确旋转对称性；尚未单独归因于其中一项。不继续开发这份固定旋转方案。它不否定所有等变网络，也不是重建精度或加速结果。

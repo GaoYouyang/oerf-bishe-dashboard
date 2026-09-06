@@ -1056,3 +1056,31 @@ Formal sparse barycentric interpolation and independent SciPy affine-transform c
 等变重建已有文献基础：[Celledoni等，2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8317019/)。这项工作提供对称性建模背景，不保证我们的BOS网格满足相同恒等式。保留局部物理收益，停止这份固定规范化方案，不扩展成“所有等变学习不可行”的结论。
 
 Equivariant reconstruction has established prior art: [Celledoni et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8317019/). It provides symmetry-modeling context, not a guarantee for this BOS grid. Retain the localized physical benefit, stop promotion of this fixed canonicalization recipe, and do not generalize the result to all equivariant learning.
+
+## 2026-09-07 求导并非唯一薄弱环节 / Weakness Is Not Just the Derivative
+
+求导阶段审计缩小了问题范围：在20个已封存敏感方向上，差分梯度的完整条件数为7.79，没有精确零空间；归一化梯度响应为0.497至0.651，但完整前向响应仅0.00148至0.02190。更强衰减出现在后续插值、投影与积分的组合中，尚不能单独归因给其中一项。独立物理重放通过。本轮不支持把问题简单归结为差分求导的棋盘格零模式；没有更换算子、训练网络或获得重建与加速成果。
+
+Derivative-stage auditing narrows the diagnosis: on 20 sealed sensitive witnesses, the complete finite-difference gradient has condition number 7.79 and no exact nullspace. Normalized gradient responses span 0.497 to 0.651, but full forward responses are only 0.00148 to 0.02190. Stronger attenuation lies in the subsequent interpolation, projection and integration jointly, not yet attributable to one of them. Independent physical replay passes. This does not support a simple derivative-checkerboard null-mode explanation; no operator was changed or network trained, and no reconstruction or acceleration result was obtained.
+
+| 集合/Set | 相机/Cameras | 梯度响应/Gradient response | 完整响应/Forward response | 下游条件下界/Downstream condition bound |
+|---|---:|---:|---:|---:|
+| 1 | 5 | 0.590054--0.590058 | 0.002263--0.002267 | 56.6906 |
+| 2 | 7 | 0.496772--0.499710 | 0.003515--0.003554 | 36.5035 |
+| 3 | 9 | 0.644186--0.651085 | 0.016662--0.021903 | 7.7006 |
+| 4 | 5 | 0.643480--0.644144 | 0.001485--0.001496 | 86.4315 |
+| 5 | 7 | 0.550429--0.551300 | 0.004265--0.004286 | 30.0816 |
+
+归一化量为rho_G=||Gx||/(g_rms||x||)、rho_A=||Ax||/(a_rms||x||)，其中g_rms=||G||F/sqrt(n)、a_rms=||A||F/sqrt(n)，n=5880。rho_after=rho_A/rho_G范围0.002305至0.033640，其基准是a_rms/g_rms，不是下游算子的Frobenius范数。这些不是场误差，也不是信号能量占比。20个方向来自既有几何敏感性诊断，并非随机样本。
+
+The normalized quantities are rho_G=||Gx||/(g_rms||x||) and rho_A=||Ax||/(a_rms||x||), where g_rms=||G||F/sqrt(n), a_rms=||A||F/sqrt(n), and n=5880. Their quotient rho_after spans 0.002305 to 0.033640 and is normalized by a_rms/g_rms, not the downstream operator's Frobenius norm. These are not field errors or signal-energy shares. The 20 witnesses come from the previous geometry-sensitivity diagnostic, not random sampling.
+
+完整梯度奇异值范围2.78267至21.68717，由逐轴Gram特征值和独立原生差分SVD分别重建。端点一阶差分与零边界注入使梯度可识别，不能套用周期棋盘格零空间结论。对A=B G作薄QR分解后，kappa(B在range(G)上的限制)>=1/(rho_A*kappa(G))；表内给每组最强下界，不是实际条件数估计。最严重弱响应不能仅由梯度这一步解释，但插值误差与物理积分消去尚未分开。
+
+The full gradient singular range, 2.78267 to 21.68717, is rebuilt through small-axis Gram eigenvalues and independently through native derivative SVDs. First-order endpoint differences and zero-boundary injection make this gradient injective; a periodic checkerboard nullspace argument does not apply. A thin QR decomposition of G in A=B G yields kappa(B restricted to range(G))>=1/(rho_A*kappa(G)). The table reports the strongest lower bound per set, not an estimate of the actual condition number. The severe weak responses cannot be explained by the derivative alone, but interpolation error and physical cancellation remain unseparated.
+
+独立谱/梯度/前向差不超过2.62e-16/1.08e-16/1.10e-13。正式20次稀疏A与独立20次原生九相机A均为离线诊断；没有真值、观测读取或部署预测。优先研究后续几何耦合，而非无依据更改差分阶数；这不授权恢复失败的固定射线图网络，也不证明任何学习方案有效。
+
+Independent spectrum/gradient/forward differences are at most 2.62e-16/1.08e-16/1.10e-13. The 20 formal sparse A actions and 20 independent native nine-camera A actions are offline diagnostics only, without truth, observation reads or deployment predictions. Prioritize downstream geometry coupling over an unjustified derivative-order change. This does not reopen the failed fixed ray-graph network or establish a successful learner.
+
+[NumPy梯度边界约定 / NumPy gradient boundary conventions](https://numpy.org/doc/stable/reference/generated/numpy.gradient.html)；[SciPy对称特征值 / SciPy symmetric eigensolver](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.eigh.html)。文档只支持数值定义，不是本实验成果来源。The documentation supports numerical definitions, not these experimental findings.

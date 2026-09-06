@@ -289,6 +289,20 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_gradient_stage_is_attribution_not_a_new_reconstruction():
+    data=json.loads((ROOT/f"docs/{STEM}.json").read_text())["gradient_stage_attribution"]
+    assert data["status"]=="DOWNSTREAM_DOMINATES_FIXED_WITNESS_ATTENUATION"
+    assert data["independent_status"]=="PASS_INDEPENDENT_GRADIENT_STAGE_ATTRIBUTION"
+    assert data["witnesses"]==20 and data["camera_sets"]==5
+    assert 7.79<data["gradient_condition"]<7.80
+    assert data["truth_arrays_parsed"]==data["observation_arrays_parsed"]==data["predictions"]==data["trainable_parameters"]==0
+    assert not any(data[k] for k in ("predictor_authorized","algorithm_breakthrough","resource_speedup","external_generalization","real_bost","paper_success"))
+    for rel in ("index.html","operator-learning/index.html","operator-learning/daily-progress.html"):
+        notes=BeautifulSoup((ROOT/rel).read_text(),"html.parser").select("#gradient-stage-attribution")
+        assert len(notes)==1
+        assert all("7.79" in notes[0][f"data-i18n-{lang}"] and "0.02190" in notes[0][f"data-i18n-{lang}"] for lang in ("zh","en"))
+
+
 def test_rig_rotation_is_mixed_geometry_evidence_not_prediction():
     data=json.loads((ROOT/f"docs/{STEM}.json").read_text())["rig_rotation_commutator"]
     assert data["status"]=="NO_UNIFORM_SUPPORT_FIXED_RIG_CANONICALIZATION"
