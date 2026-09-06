@@ -729,3 +729,37 @@ The two implementations differ by at most7.99e-10/6.84e-10 in component norms/cr
 下一步重点是用部署可见状态消除累积逆误差，并与更便宜的上一帧场复用比较；这不授权增加历史长度、K、外推或直接解刷新来挽救已失败配方。学习优势、同精度加速、外部泛化和真实BOST仍未建立。
 
 The next priority is contracting accumulated inverse error from deployment-visible state, compared with cheaper previous-field carry. This does not authorize rescuing the failed recipe through more history, K, extrapolation or direct-reference refreshes. Learned advantage, equal-accuracy acceleration, external generalization and real BOST remain unestablished.
+
+## 2026-09-07 正因子不等于有效逆作用 / Positive Factors Do Not Ensure Useful Inverse Actions
+
+稀疏正因子试验保持数值未定：两实现的误差比差值3.23e-4超过冻结1e-6门限，不公布正式通过或失败计数。独立只读审计复现了该差异，并验证全部已存校正的物理投影。九相机下，观测误差剩余比仅0.0316至0.0435，但场误差剩余比为1.137至1.681，反而放大。正对角和因子接近不等于逆作用有效；不能只看残差下降。这不是NeuralIF评测、训练或加速成果，固定投影不再推进。
+
+The sparse positive-factor experiment remains numerically inconclusive: the paired error-ratio difference of 3.23e-4 exceeds the frozen 1e-6 gate; no formal pass or failure counts are reported. An independent read-only audit reproduces that discrepancy and verifies the physical projections of all stored corrections. With nine cameras, observation-error ratios are only 0.0316 to 0.0435, but field-error ratios are 1.137 to 1.681: the field error grows. Positive diagonals and factor closeness do not ensure a useful inverse action; residual reduction alone is insufficient. This is not a NeuralIF evaluation, training or acceleration result; the fixed projection is not pursued.
+
+这是已开封的五个固定相机集合、25个固定中点上的结构诊断。把合格完整Cholesky因子投影到固定法方程下三角图，只保留原正对角，不调填充、顺序、载荷或缩放。正式用稀疏三角求解，第二实现从原QR独立重建完整因子后用密集三角求解。输入只用已有场、当前观测与几何；所有校正先封存，再读取此前合格经典参考场比较误差。没有新增CFD真值或新轨迹预测。
+
+This structural diagnostic uses five opened fixed camera sets and 25 fixed midpoints. A qualified complete Cholesky factor is projected onto the fixed lower normal-equation graph, retaining original positive diagonals without changing fill, order, shifts or scaling. Formal sparse triangular solves are compared with dense triangular solves after an independent QR-based full-factor rebuild. Actions use only the existing field, current observation and geometry and are sealed before comparison with previously qualified classical reference fields. There is no new CFD truth or trajectory prediction.
+
+下表只描述已存校正后的参考相对误差范数与校正前之比，超过1表示放大。它不是新的重建精度评分，也不是绕过原数值门的正式负判决。原绝对差门不变；只读审计另用独立梯度、精确求和和原始物理投影核验同一组输出，其相对一致性不能替代原绝对一致性。
+
+The table describes the reference-relative error norm after a stored correction divided by its previous norm; values above 1 mean amplification. It is neither a new reconstruction-accuracy score nor a formal rejection bypassing the original numerical gate. That absolute gate is unchanged. The read-only audit separately checks the same outputs with independent gradients, accurate summation and native physics; its relative agreement does not replace the original absolute agreement.
+
+| 相机集合 / Camera set | 场误差剩余比 / Field-error ratio | 观测误差剩余比 / Observation-error ratio |
+|---|---:|---:|
+| 1: 5 cameras | 28903.7397 to 75910.0171 | 532.3590 to 1579.2600 |
+| 2: 7 cameras | 66.1781 to 247.8501 | 0.8382 to 2.9917 |
+| 3: 9 cameras | 1.1371 to 1.6806 | 0.0316 to 0.0435 |
+| 4: 5 cameras | 617109.6496 to 719508.3720 | 11698.5282 to 16983.6510 |
+| 5: 7 cameras | 50.0844 to 80.0824 | 0.8168 to 1.5041 |
+
+完整因子校正对照的四空间最大误差比为2.30e-10；未缩放Jacobi的场误差比为2.09至3.10，均仅作诊断。投影因子相对完整因子的Frobenius差只有约0.93%至5.29%，三角求解反向误差不超过4.20e-16，却不能据此推出逆作用准确。只读审计的指标相对差2.24e-14、原始物理投影差8.93e-15，退出后再次验证150个误差比组和200次物理投影。原试验仍为数值未定，不改写成正式算法失败。
+
+The full-factor correction control has a maximum four-space ratio of 2.30e-10; unscaled Jacobi has field ratios of 2.09 to 3.10, both diagnostic only. Projected factors differ from complete factors by only about 0.93% to 5.29% in relative Frobenius norm, with triangular backward errors no greater than 4.20e-16; this does not imply inverse-action accuracy. The read-only audit has relative metric discrepancy 2.24e-14 and native projection discrepancy 8.93e-15; post-exit verification repeats 150 ratio groups and 200 physical projections. The original experiment remains inconclusive, not a formal algorithm failure.
+
+该结构控制受到[NeuralIF作者论文](https://arxiv.org/abs/2305.16368)的三角因子表示启发，但没有实现或评价其学习方法；本结果不能否定所有稀疏因子。几何构建仍继承完整因子成本，另加五次QR和十次结构积。单独残差查询为1A+1A^T加两次三角求解；双CSR方向约91.7至100.3MB，只是因子载荷，不是完整内存或速度优势。
+
+The structural control was motivated by triangular factor representations in the [NeuralIF authors' paper](https://arxiv.org/abs/2305.16368), but does not implement or evaluate their learned method and cannot reject all sparse factors. Geometry construction still inherits complete-factor costs plus five QR factorizations and ten structural products. A standalone residual query costs 1A+1A^T plus two triangular solves; the two CSR orientations occupy about 91.7 to 100.3 MB, a factor payload rather than whole-pipeline memory or speed evidence.
+
+这次改变的是后续目标选择：必须直接验证逆作用的误差控制，并同时守住场与内部梯度，不能把矩阵近似或观测残差作为充分替代。固定投影不再推进，不授权换填充、对角、顺序、训练大模型或租GPU来挽救。学习优势、同精度加速、泛化和真实BOST仍未建立。
+
+The consequence is a sharper research criterion: directly verify inverse-action error control together with field and interior-gradient safeguards; matrix approximation or observation residual is not a sufficient substitute. The fixed projection is not pursued, with no rescue through fill, diagonal, ordering changes, larger models or GPU rental. Learned advantage, equal-accuracy acceleration, generalization and real BOST remain unestablished.

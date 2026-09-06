@@ -1,3 +1,11 @@
+## 2026-09-07：正对角为什么仍不够
+
+稀疏正因子试验保持数值未定：两实现的误差比差值3.23e-4超过冻结1e-6门限，不公布正式通过或失败计数。独立只读审计复现了该差异，并验证全部已存校正的物理投影。九相机下，观测误差剩余比仅0.0316至0.0435，但场误差剩余比为1.137至1.681，反而放大。正对角和因子接近不等于逆作用有效；不能只看残差下降。这不是NeuralIF评测、训练或加速成果，固定投影不再推进。
+
+The sparse positive-factor experiment remains numerically inconclusive: the paired error-ratio difference of 3.23e-4 exceeds the frozen 1e-6 gate; no formal pass or failure counts are reported. An independent read-only audit reproduces that discrepancy and verifies the physical projections of all stored corrections. With nine cameras, observation-error ratios are only 0.0316 to 0.0435, but field-error ratios are 1.137 to 1.681: the field error grows. Positive diagonals and factor closeness do not ensure a useful inverse action; residual reduction alone is insufficient. This is not a NeuralIF evaluation, training or acceleration result; the fixed projection is not pursued.
+
+[数值失败只读审计 / Read-only numerical-failure audit](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：旧误差为什么没有消下去
 
 因果误差拆解已独立复算：2500次帧间转移中，2449/2500次的旧场误差残留大于当前帧变化残留；固定25个中点在四指标空间中均如此。一次校正后，旧场误差分量范数的中位保留率为91.63%。这说明当前固定递推对累积误差的消除较弱，而非历史解毫无用处。拆解保留有符号交叉项，不把次数当成误差贡献百分比；没有新预测、训练或精度突破，原单状态K1配方仍关闭。

@@ -289,6 +289,21 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_projected_factor_audit_never_reopens_parent_gate():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["projected_factor_numerical_audit"]
+    assert data["status"] == "PASS_READ_ONLY_PROJECTED_FACTOR_FAILURE_AUDIT"
+    assert data["parent_status"] == "INCONCLUSIVE_PROJECTED_FACTOR_ACTION"
+    assert data["original_ratio_difference"] > data["original_tolerance"] == 1e-6
+    assert data["diagnostic_only"] and data["original_absolute_gate_unchanged"]
+    assert data["native_replays"] == 200 and data["ratio_groups"] == 150
+    assert data["rows"][2]["min"][0] > 1 and data["rows"][2]["max"][3] < .05
+    assert not any(data[k] for k in ("parent_gate_reopened", "formal_contraction_verdict", "new_actions", "new_factor_solves", "new_CFD_truth_reads", "predictor_training_authorized", "neuralif_implemented", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost"))
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        note = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#projected-factor-audit")
+        assert len(note) == 1
+        assert all("3.23e-4" in note[0][f"data-i18n-{lang}"] and "1.137" in note[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_causal_error_attribution_is_not_new_accuracy_or_causal_shares():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["causal_error_attribution"]
     assert data["status"] == "PASS_FIXED_CAUSAL_ERROR_ATTRIBUTION"
