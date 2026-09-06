@@ -289,6 +289,22 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_camera61_is_a_necessary_failure_not_full_sequence_success():
+    data=json.loads((ROOT/f"docs/{STEM}.json").read_text())["camera_set61"]
+    assert data["status"]=="FAIL_CAMERA61_NECESSARY_MIDPOINTS" and data["independent_verified"]
+    assert data["trainable_parameters"]==61 and data["folds"]==5
+    assert data["predictions_per_arm"]==505 and data["evaluated_midpoints"]==5
+    assert data["primary_joint_pass"]==0 and data["paired_nonharm_midpoints"]==3
+    assert data["remaining_refinements_cancelled"]==500
+    assert all(row[2]>.01 for row in data["primary_metrics"])
+    assert data["grouped_AT_not_equal_work_to_pooled"] and data["cached_direct_remains_cheaper"]
+    assert not any(data[k] for k in ("evaluated_full_sequence","independent_optimization_repeated","predictor_promotion","algorithm_breakthrough","resource_speedup","external_generalization","real_bost","paper_success"))
+    for rel in ("index.html","operator-learning/index.html","operator-learning/daily-progress.html"):
+        notes=BeautifulSoup((ROOT/rel).read_text(),"html.parser").select("#camera-set61-result")
+        assert len(notes)==1
+        assert all("0/5" in notes[0][f"data-i18n-{lang}"] and "2.134%" in notes[0][f"data-i18n-{lang}"] for lang in ("zh","en"))
+
+
 def test_gradient_stage_is_attribution_not_a_new_reconstruction():
     data=json.loads((ROOT/f"docs/{STEM}.json").read_text())["gradient_stage_attribution"]
     assert data["status"]=="DOWNSTREAM_DOMINATES_FIXED_WITNESS_ATTENUATION"

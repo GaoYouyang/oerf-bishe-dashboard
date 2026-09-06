@@ -1,3 +1,11 @@
+## 2026-09-07：分开看各相机，仍未形成优势 / Separate Cameras, Still No Advantage
+
+61参数逐相机集合初始化器已完成跨轨迹训练与独立复算，但五个固定中点通过0/5；内部梯度误差为2.134%至3.017%，均超过1%门槛。保留相机分歧相对先求和的同规模对照只在3/5点四指标不劣，且在全部五点都未胜过Zero、BP和历史ridge。已取消余下500帧的细化评分，关闭这个固定模型与训练配置，不增加网络规模或轮数。这是有效的负结果，不是重建、加速或论文成功。
+
+The 61-parameter camera-set initializer completed trajectory-held-out training and independent replay, but passes 0/5 fixed midpoints. Interior-gradient errors are 2.134% to 3.017%, above the 1% gate. Retaining camera disagreement is non-harmful on all four metrics against the same-size pooled control at only 3/5 points, and is worse than Zero, BP and historical ridge at all five points. The remaining 500 frame refinements are cancelled and this fixed model/schedule is closed without widening or more epochs. This is a valid negative result, not reconstruction, acceleration or paper success.
+
+[独立学习检验 / Independently checked learning](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：把求导与投影分开检查 / Separating Derivative and Projection
 
 求导阶段审计缩小了问题范围：在20个已封存敏感方向上，差分梯度的完整条件数为7.79，没有精确零空间；归一化梯度响应为0.497至0.651，但完整前向响应仅0.00148至0.02190。更强衰减出现在后续插值、投影与积分的组合中，尚不能单独归因给其中一项。独立物理重放通过。本轮不支持把问题简单归结为差分求导的棋盘格零模式；没有更换算子、训练网络或获得重建与加速成果。

@@ -1084,3 +1084,35 @@ The full gradient singular range, 2.78267 to 21.68717, is rebuilt through small-
 Independent spectrum/gradient/forward differences are at most 2.62e-16/1.08e-16/1.10e-13. The 20 formal sparse A actions and 20 independent native nine-camera A actions are offline diagnostics only, without truth, observation reads or deployment predictions. Prioritize downstream geometry coupling over an unjustified derivative-order change. This does not reopen the failed fixed ray-graph network or establish a successful learner.
 
 [NumPy梯度边界约定 / NumPy gradient boundary conventions](https://numpy.org/doc/stable/reference/generated/numpy.gradient.html)；[SciPy对称特征值 / SciPy symmetric eigensolver](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.eigh.html)。文档只支持数值定义，不是本实验成果来源。The documentation supports numerical definitions, not these experimental findings.
+
+## 2026-09-07 逐相机集合学习未通过 / Camera-Set Learning Does Not Pass
+
+61参数逐相机集合初始化器已完成跨轨迹训练与独立复算，但五个固定中点通过0/5；内部梯度误差为2.134%至3.017%，均超过1%门槛。保留相机分歧相对先求和的同规模对照只在3/5点四指标不劣，且在全部五点都未胜过Zero、BP和历史ridge。已取消余下500帧的细化评分，关闭这个固定模型与训练配置，不增加网络规模或轮数。这是有效的负结果，不是重建、加速或论文成功。
+
+The 61-parameter camera-set initializer completed trajectory-held-out training and independent replay, but passes 0/5 fixed midpoints. Interior-gradient errors are 2.134% to 3.017%, above the 1% gate. Retaining camera disagreement is non-harmful on all four metrics against the same-size pooled control at only 3/5 points, and is worse than Zero, BP and historical ridge at all five points. The remaining 500 frame refinements are cancelled and this fixed model/schedule is closed without widening or more epochs. This is a valid negative result, not reconstruction, acceleration or paper success.
+
+| 固定中点/Midpoint | 集合模型内部梯度/Set interior gradient | 求和对照/Pooled control | Zero-CGLS |
+|---|---:|---:|---:|
+| 1 | 2.95911% | 2.94577% | 2.92036% |
+| 2 | 2.30233% | 2.31018% | 2.27662% |
+| 3 | 2.13385% | 2.12948% | 2.11064% |
+| 4 | 3.01725% | 3.01792% | 2.99853% |
+| 5 | 2.15074% | 2.15818% | 2.12532% |
+
+这是五条已开封轨迹、每条101帧、九相机clean条件下的完整轨迹留一训练。每折只读取其余404帧的观测与已知几何，用合格K512求解器场作teacher；查询轨迹不参与训练。两种61参数模型各训练20轮，全部505帧的外折预测先封存，然后才评分五个预注册中点。表中不是完整序列尾部统计；未运行的500帧不能被记成500次失败。四指标依次为field、full-gradient、interior-gradient与observation，均要求相对误差不超过1%。
+
+This uses complete-trajectory leave-one-out training on five opened 101-frame trajectories under clean nine-camera geometry. Each fold uses only the other 404 observations and known geometry, with qualified K512 solver fields as teachers; the query trajectory is excluded from training. Both 61-parameter models train for 20 epochs. All 505 outer predictions are sealed before scoring five preregistered midpoints. The table is not a full-sequence tail statistic; the 500 unrun refinements are not 500 failed evaluations. The field, full-gradient, interior-gradient and observation gates each require relative error at most 1%.
+
+主模型保留每个相机的伴随回投影，再在每个体素上共享集合融合；配对对照先求和，再按几何对角贡献重新分配给同一网络。它没有增加新观测信息：已知A时，A^T y仍足以定义最小二乘问题。集合网络是既有方法，不是组件首创。当前固定表示和训练配置失败，不能推出所有逐相机或集合方法无效。
+
+The primary retains each camera adjoint volume before shared per-voxel set fusion. The paired control first pools adjoints, then redistributes the sum according to geometric diagonal contributions for the identical network. This adds no new observation information: with known A, A^T y still defines the least-squares problem. Set networks are established methods, not a component novelty claim. Failure closes this fixed representation and training configuration, not all per-camera or set-based methods.
+
+独立实现重建全部逐相机输入，核验各轮首批梯度与Adam更新，并用封存权重重放1010条学习预测和70个物理端点。它没有独立重训第二遍。预测dual/初始场最大差1.66e-14/1.12e-14；跨Krylov端点field/image/metric最大差2.44e-4/4.36e-5/2.26e-4，满足结果前冻结的数值容差且离散判决一致。同一场的原生物理重放残差差不超过1.31e-13。第一次启动只因缺省零方位字段在训练前退出，记录保留；修正未改科学合同。
+
+Independent implementations rebuild all camera-resolved inputs, check each epoch's first-batch gradients and Adam step, and replay 1010 learned predictions and 70 physical endpoints from sealed weights. This is not a second independent optimization. Maximum dual/initial-field differences are 1.66e-14/1.12e-14; cross-Krylov endpoint field/image/metric differences are 2.44e-4/4.36e-5/2.26e-4, within the pre-result numerical tolerances with identical discrete decisions. Same-field native residual replay differs by at most 1.31e-13. The first launch exited before training due to an omitted zero-azimuth field; its evidence is retained and the correction changed no scientific contract.
+
+部署账为258A、257次普通A^T和1次分组A^T；分组调用保留九个体积，不等于一次普通伴随的FLOPs或内存。配对对照只需普通伴随，缓存直接解仍是逻辑调用更少的强对照。约589.5秒和6.06GiB只是本次整个实验进程遥测，不是部署wall/RSS基准。合成接口支持5/7/9/12相机，不代表本次已验证实际相机增删或换位姿；没有外部泛化、真实BOST或算力优势结论。
+
+Deployment accounting is 258A, 257 ordinary adjoints and one grouped adjoint. The grouped action retains nine volumes and is not equal to one pooled adjoint in FLOPs or memory. The paired control needs only ordinary adjoints; cached direct solving remains a stronger alternative with fewer logical calls. Roughly 589.5 seconds and 6.06 GiB are whole-experiment process telemetry, not deployment wall/RSS benchmarks. Synthetic 5/7/9/12-camera interfaces do not establish actual camera-removal or pose generalization here. There is no external, real-BOST or resource-advantage claim.
+
+[Deep Sets](https://arxiv.org/abs/1703.06114)提供集合结构先例，不支持本实验的成功主张。Deep Sets supplies architectural prior art, not evidence of success in this experiment.
