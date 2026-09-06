@@ -1,3 +1,11 @@
+## 2026-09-07：文件小，不代表算得快 / Smaller Factors Do Not Mean Faster Solves
+
+精确分块资源门独立确认未通过：三种实现、五套几何、各三次新进程测试，精度全部保持，但预定资源门为0/5。相对高效BLAS直接解，分块的505帧批量查询耗时为1.49–1.73倍，缓存就绪进程峰值内存少约2.0%–13.3%。这是速度与内存的取舍，不是加速；不再以较慢的打包直接解替代强对照来宣称胜出。算子缓存生成成本尚未计入，重复测试不是新数据或外部验证。
+
+Independent validation rejects the exact-block resource gate: three implementations across five geometries, each in three fresh processes, preserve accuracy but pass0/5 resource strata. Relative to optimized BLAS direct solving, the505-frame block query takes1.49–1.73 times as long while cache-ready process peak memory is about2.0%–13.3% lower. This is a speed-memory tradeoff, not acceleration; the slower packed direct control cannot replace the strong comparator to claim a win. Operator-cache construction remains excluded, and repetitions are not new data or external validation.
+
+[资源比较与边界 / Resource comparison and boundary](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：精确解可以分块，资源收益还要实测 / Exact Solutions Can Be Blocked; Resources Still Need Measurement
 
 精确分块直接解已通过2525/2525个已打开的干净代理样本、25/25个来源与相机集合分层，五条完整轨迹全部通过四指标1%门；完整直接解对照也全部通过。五套几何只需736–784个接口节点，保存的因子数值量减少36.7%–38.0%，没有删弱耦合或训练模型。这是经典求解对照的实质进展，不是整机内存下降、加速、学习突破或外部泛化；下一步实测包含准备成本的时间与RSS。

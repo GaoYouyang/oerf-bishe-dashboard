@@ -289,6 +289,24 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_exact_block_resource_preserves_accuracy_but_rejects_speed_claim():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["exact_block_resource"]
+    assert data["status"] == "FAIL_FIXED_BLOCK_CACHE_READY_RESOURCE_GATE"
+    assert data["independent_status"] == "PASS_INDEPENDENT_BLOCK_RESOURCE_REPLAY"
+    assert data["trials"] == 45 and data["independently_replayed_states"] == 22725
+    assert data["primary_strata_pass"] == 0 and data["all_repeated_accuracy_cells_pass"]
+    assert len(data["records"]) == 45 and len(data["strata"]) == 5
+    assert data["cache_ready_boundary"] and data["whole_worker_peak_rss"]
+    assert not any(data[k] for k in ("geometry_cache_construction_included", "true_cold_filesystem", "from_geometry_comparison_authorized", "predictor_authorized", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost"))
+    for row in data["strata"]:
+        assert not row["passing"]
+        assert not row["checks"]["full_blas"]["query"] and row["checks"]["full_blas"]["rss"]
+    for rel in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        note = BeautifulSoup((ROOT / rel).read_text(), "html.parser").select("#exact-block-resources")
+        assert len(note) == 1
+        assert all("0/5" in note[0][f"data-i18n-{lang}"] and "1.49" in note[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_exact_block_sequences_are_classical_accuracy_not_resource_success():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["exact_block_full_sequences"]
     assert data["status"] == "PASS_EXACT_BLOCK_FULL_OPENED_SEQUENCES"

@@ -874,3 +874,47 @@ Each standalone query includes1A+1A^T; the block method additionally needs six p
 Schur域分解不是我们的首创，学习接口也已有先例。相关一级来源：[Schur域分解与低秩修正](https://arxiv.org/abs/1505.04340)、[学习域分解接口条件](https://arxiv.org/abs/2205.09833)。这里只借鉴其问题分解思路，不把本文献的性能或创新性算到本实验。本轮没有授权神经训练、租GPU或真实BOST结论。
 
 Schur domain decomposition is established, and learned interface conditions also have prior work: [Schur-based domain decomposition with low-rank corrections](https://arxiv.org/abs/1505.04340) and [learning interface conditions](https://arxiv.org/abs/2205.09833). These motivate decomposition, not transferred performance or novelty claims. This result authorizes no neural training, GPU rental or real-BOST claim.
+
+## 2026-09-07 精确分块的资源否决 / Resource Veto for Exact Block Solving
+
+精确分块资源门独立确认未通过：三种实现、五套几何、各三次新进程测试，精度全部保持，但预定资源门为0/5。相对高效BLAS直接解，分块的505帧批量查询耗时为1.49–1.73倍，缓存就绪进程峰值内存少约2.0%–13.3%。这是速度与内存的取舍，不是加速；不再以较慢的打包直接解替代强对照来宣称胜出。算子缓存生成成本尚未计入，重复测试不是新数据或外部验证。
+
+Independent validation rejects the exact-block resource gate: three implementations across five geometries, each in three fresh processes, preserve accuracy but pass0/5 resource strata. Relative to optimized BLAS direct solving, the505-frame block query takes1.49–1.73 times as long while cache-ready process peak memory is about2.0%–13.3% lower. This is a speed-memory tradeoff, not acceleration; the slower packed direct control cannot replace the strong comparator to claim a win. Operator-cache construction remains excluded, and repetitions are not new data or external validation.
+
+| 集合 / Set | 方法 / Method | 新进程总秒 / Fresh process s | 505帧查询秒 / Query s | 峰值MiB / Peak MiB |
+|---|---|---:|---:|---:|
+| 1 | 精确分块 / Exact block | 39.7827 | 1.5824 | 621.47 |
+| 1 | 完整打包 / Full packed | 4.2582 | 3.3339 | 802.73 |
+| 1 | 高效直接 / BLAS direct | 1.8205 | 0.9355 | 703.56 |
+| 2 | 精确分块 / Exact block | 3.1396 | 1.7519 | 700.72 |
+| 2 | 完整打包 / Full packed | 4.4965 | 3.4989 | 835.22 |
+| 2 | 高效直接 / BLAS direct | 2.1139 | 1.1068 | 741.77 |
+| 3 | 精确分块 / Exact block | 5.7033 | 1.9350 | 724.00 |
+| 3 | 完整打包 / Full packed | 4.7659 | 3.6683 | 888.89 |
+| 3 | 高效直接 / BLAS direct | 2.3840 | 1.3014 | 759.19 |
+| 4 | 精确分块 / Exact block | 2.6336 | 1.6223 | 607.88 |
+| 4 | 完整打包 / Full packed | 4.2230 | 3.3305 | 809.28 |
+| 4 | 高效直接 / BLAS direct | 1.8196 | 0.9390 | 700.92 |
+| 5 | 精确分块 / Exact block | 2.7832 | 1.7876 | 723.39 |
+| 5 | 完整打包 / Full packed | 4.5245 | 3.5172 | 837.22 |
+| 5 | 高效直接 / BLAS direct | 2.1298 | 1.1402 | 738.11 |
+
+表中均为三次平衡顺序重复的中位数，完整原始计时保留在配套JSON。MiB为2^20字节。所有worker串行执行，均为8线程，第一帧独立查询，之后固定16帧批量。没有清空操作系统文件缓存，因此新进程不等于冷磁盘测试。三次重复不足以支持总体显著性或换机器后的保证。
+
+Values are medians of three balanced-order repetitions; the companion JSON retains raw timings. MiB means2^20 bytes. Workers are serial with eight threads each, the first frame queried alone and later frames in fixed batches of16. Operating-system file caches were not purged: fresh processes are not cold-disk trials. Three repetitions support neither population-significance claims nor guarantees on other machines.
+
+每次从已验证的CSR算子与观测读取开始，计入库加载、数组读取、预处理、完整查询与等格式输出。分块必须重新发现原接口并重建因子，不直接借用旧因子；完整打包和高效直接解也重新分解。高效对照使用多右端BLAS，分块耦合也批量化，未故意选择慢对照。每个方法每次完整序列均为505A+505A^T，分块每帧另需6次三角求解和4次耦合乘法，对照为2次三角求解。
+
+Every worker starts by reading validated CSR operators and observations, including library imports, array loading, preparation, complete queries and identical-format output. Block solving rediscovers its original interface and reconstructs factors; full packed and optimized direct controls also refactor. The strong control uses multiple-RHS BLAS, and block coupling is batched too; no deliberately slow control is chosen. Each full sequence uses505A+505A^T for every method, with six triangular solves and four coupling products per block query versus two triangular solves for the controls.
+
+第一套几何的接口发现耗时约37.3–37.6秒，是实际准备成本，不删除异常值。即使只看准备后的批量查询，分块仍在五套几何中均慢于BLAS对照，所以不能用文件体积减少36.7%–38.0%推断加速。实际峰值内存的差距只有约2.0%–13.3%，也没有预先要求的时间与内存同时优势。
+
+Interface discovery for the first geometry actually takes about37.3–37.6 seconds; this setup cost is retained, not deleted as an outlier. Even preparation-excluded batch queries are slower than the BLAS control in all five geometries. Thus a36.7%–38.0% reduction in numeric factor payload does not imply acceleration. Measured peak-memory reductions are only about2.0%–13.3%, with no pre-required joint time-memory advantage.
+
+全部45个进程退出并封存后，独立实现重放22725个输出场及四项指标，全部守住原1%精度门。field/image/residual/metric最大核验差约6.80e-10/1.47e-12/8.57e-16/9.85e-10；父进程wait4与子进程RSS、起止计时、顺序与算子账独立核对。22725是重复验证量，不是新增独立科学样本，原2525/2525精度结论没有被推翻。
+
+After all45 processes exit and their outputs are sealed, independent replay checks22725 fields and all four metrics, preserving the original1% accuracy gates. Maximum field/image/residual/metric audit discrepancies are about6.80e-10/1.47e-12/8.57e-16/9.85e-10. Parent wait4 and child RSS, timestamps, ordering and operator ledgers are cross-checked. The22725 count is repeated verification, not additional independent scientific data; the original2525/2525 accuracy result remains valid.
+
+边界不可省略：测量覆盖缓存就绪求解进程的完整峰值内存，不是相机几何到最终结果的全部成本。公共算子缓存的29700条解析行与独立8192次canonical forward准备未计入。即便此门通过也不能直接宣布端到端加速；当前0/5，故不再扩展这份固定实现的资源优势主张，不调分块、线程、批量或换对照救援。仍需寻找学习能胜过强经典基线的真实使用条件，而不是把经典精确解当成算子学习成功。
+
+The boundary matters: measurements cover the whole peak memory of a cache-ready solver process, not every cost from camera geometry to the final result. Shared operator-cache construction, including29700 analytic rows and8192 canonical forward probes for independent assembly, is excluded. Even a pass would not establish end-to-end acceleration. The actual0/5 closes this fixed implementation's resource-advantage claim without retuning partitions, threads, batch size or comparators. The remaining research must identify conditions where learning can beat a strong classical baseline, rather than relabel a classical exact solution as operator-learning success.
