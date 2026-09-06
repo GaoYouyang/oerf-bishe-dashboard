@@ -289,6 +289,24 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_downstream_partition_is_conditional_not_actual_error_causation():
+    data=json.loads((ROOT/f"docs/{STEM}.json").read_text())["downstream_energy_partition"]
+    assert data["status"]=="UNIFORM_INTEGRATION_RETENTION_BOTTLENECK"
+    assert data["independent_status"]=="PASS_INDEPENDENT_DOWNSTREAM_ENERGY_PARTITION"
+    assert data["witnesses"]==20 and data["distinct_geometry_sign_combinations"]==10
+    assert data["controls"]==5 and data["maximum_samples_per_ray"]==64
+    assert data["energy_is_ray_weighted_second_moment"] and data["additive_share_not_multiplicative_retention"]
+    assert data["truth_arrays_parsed"]==data["observation_arrays_parsed"]==data["predictions"]==data["trainable_parameters"]==0
+    assert not any(data[k] for k in ("actual_learned_error_cause_established","predictor_authorized","algorithm_breakthrough","resource_speedup","external_generalization","real_bost","paper_success"))
+    for group in data["groups"]:
+        assert group["retention_ranges"][2][1]<1/64
+        assert .82<group["smooth_control_retention"][2]<.84
+    for rel in ("index.html","operator-learning/index.html","operator-learning/daily-progress.html"):
+        notes=BeautifulSoup((ROOT/rel).read_text(),"html.parser").select("#downstream-energy-partition")
+        assert len(notes)==1
+        assert all("4.65e-7" in notes[0][f"data-i18n-{lang}"] and "0.833" in notes[0][f"data-i18n-{lang}"] for lang in ("zh","en"))
+
+
 def test_camera61_is_a_necessary_failure_not_full_sequence_success():
     data=json.loads((ROOT/f"docs/{STEM}.json").read_text())["camera_set61"]
     assert data["status"]=="FAIL_CAMERA61_NECESSARY_MIDPOINTS" and data["independent_verified"]

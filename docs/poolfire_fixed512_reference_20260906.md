@@ -1116,3 +1116,35 @@ Independent implementations rebuild all camera-resolved inputs, check each epoch
 Deployment accounting is 258A, 257 ordinary adjoints and one grouped adjoint. The grouped action retains nine volumes and is not equal to one pooled adjoint in FLOPs or memory. The paired control needs only ordinary adjoints; cached direct solving remains a stronger alternative with fewer logical calls. Roughly 589.5 seconds and 6.06 GiB are whole-experiment process telemetry, not deployment wall/RSS benchmarks. Synthetic 5/7/9/12-camera interfaces do not establish actual camera-removal or pose generalization here. There is no external, real-BOST or resource-advantage claim.
 
 [Deep Sets](https://arxiv.org/abs/1703.06114)提供集合结构先例，不支持本实验的成功主张。Deep Sets supplies architectural prior art, not evidence of success in this experiment.
+
+## 2026-09-07 沿射线抵消的阶段证据 / Stage Evidence of Within-Ray Cancellation
+
+下游物理诊断进一步定位了弱响应：在20条预先固定的几何见证上，插值和横向投影的条件保留比约为0.314至0.622、0.500至0.541，沿射线求和却只有4.65e-7至1.15e-4；平滑控制为0.827至0.833。独立复算确认了强烈的沿射线符号抵消。这里的保留比不是实际信号损失百分比，也尚未证明这就是学习失败的原因；没有修改测量算子、训练新模型或获得加速成果。
+
+Downstream diagnosis localizes the weak response further: across 20 fixed geometry witnesses, conditional retention is about 0.314 to 0.622 after interpolation and 0.500 to 0.541 after transverse projection, but only 4.65e-7 to 1.15e-4 after ray summation; the smooth control retains 0.827 to 0.833. Independent replay confirms strong within-ray sign cancellation. These ratios are not percentages of actual signal loss and do not yet establish the cause of learning failure. No measurement operator was changed, new model trained or acceleration achieved.
+
+| 集合/Set | 相机/Cameras | 插值保留/Interpolation | 横向保留/Transverse | 射线求和/Ray sum | 平滑控制求和/Smooth ray sum |
+|---|---:|---:|---:|---:|---:|
+| 1 | 5 | 0.6215--0.6223 | 0.5004--0.5007 | 1.088e-06--1.090e-06 | 0.827089 |
+| 2 | 7 | 0.5493--0.5496 | 0.5300--0.5303 | 4.047e-06--4.093e-06 | 0.832778 |
+| 3 | 9 | 0.3142--0.4483 | 0.5332--0.5414 | 9.541e-05--1.146e-04 | 0.828984 |
+| 4 | 5 | 0.5256--0.5261 | 0.5050--0.5059 | 4.648e-07--4.731e-07 | 0.831545 |
+| 5 | 7 | 0.5157--0.5166 | 0.5284--0.5286 | 5.200e-06--5.228e-06 | 0.831730 |
+
+20条见证是10个既定几何/符号组合的两套实现，不是20次独立采集，也不是实际CFD误差样本。五个控制场均为零边界、单位范数的最低阶余弦乘积。当前正式描述判决为UNIFORM_INTEGRATION_RETENTION_BOTTLENECK，独立状态为PASS_INDEPENDENT_DOWNSTREAM_ENERGY_PARTITION；两者都不是重建通过。
+
+The 20 witnesses are two implementations of 10 fixed geometry/sign combinations, not 20 independent acquisitions or actual CFD error samples. The five controls use the same zero-boundary unit-norm lowest-order cosine product. The descriptive outcome is UNIFORM_INTEGRATION_RETENTION_BOTTLENECK with PASS_INDEPENDENT_DOWNSTREAM_ENERGY_PARTITION; neither is a reconstruction pass.
+
+源前向使用64点均匀矩形求和，不是梯形积分。令g为原网格离散梯度，h_rt为其三线性采样，T_r为正交横向投影，k_r为长度乘系统常数除64，n_r为有效点数。定义E0为sum(n_r k_r^2 lambda_rtv ||g_v||^2)，E1为sum(n_r k_r^2 ||h_rt||^2)，E2为sum(n_r k_r^2 ||T_r h_rt||^2)，E3为sum(||k_r sum_t T_r h_rt||^2)=||Ax||^2。Jensen不等式、正交投影及Cauchy-Schwarz保证E0>=E1>=E2>=E3。表中分别是E1/E0、E2/E1、E3/E2。
+
+The source forward uses a uniform 64-point rectangle sum, not trapezoidal quadrature. Let g be the existing discrete gradient, h_rt its trilinear samples, T_r the orthogonal transverse projection, k_r the length times system constant divided by 64, and n_r the valid-sample count. Define E0=sum(n_r k_r^2 lambda_rtv ||g_v||^2), E1=sum(n_r k_r^2 ||h_rt||^2), E2=sum(n_r k_r^2 ||T_r h_rt||^2), and E3=sum(||k_r sum_t T_r h_rt||^2)=||Ax||^2. Jensen, orthogonal projection and Cauchy-Schwarz give E0>=E1>=E2>=E3. The table reports E1/E0, E2/E1 and E3/E2.
+
+E0只是按射线加权的梯度二阶矩上界，不是总场能量。求和是最强乘性衰减环节，但插值可占更大的加性缺口；不能把两种说法混同。一个封存后可直接推导的结论是：若每条射线的每个投影分量均无符号变化，则E3/E2>=1/max(n_r)>=1/64。所有见证均低于1/64，因此单纯采样幅度不均不足以解释它，必有沿射线正负抵消。该推论不区分物理抵消和离散误差贡献，也不能通过对测量取绝对值来修复。
+
+E0 is only a ray-weighted nodal-gradient second-moment bound, not total field energy. Ray summation is the strongest multiplicative attenuation here, while interpolation can have a larger additive gap; these claims must not be conflated. A direct post-seal deduction is that sign-consistent components on every ray require E3/E2>=1/max(n_r)>=1/64. Every witness lies below 1/64, so uneven sample magnitudes alone cannot explain it: within-ray sign cancellation must occur. This does not separate physical and discretization contributions, and taking absolute values of measurements is not a valid repair.
+
+NumPy八角插值与独立重建的原生Torch因子、独立CSR分别重放25个场。图像/逐射线二阶矩/汇总最大差不超过1.48e-12/3.07e-14/4.71e-14，原生因子重组与原生A逐值相同。新工作只含离线25次因子前向和25次CSR前向、独立25次原生和25次CSR前向及梯度/二阶矩辅助动作；无真值、观测、预测、训练或新增逆解。下一步只能先检查已封存学习误差是否具有相同特征，不能凭这些特选方向授权新网络。
+
+NumPy eight-corner interpolation and independently rebuilt native Torch factors plus independent CSR replay 25 fields. Image/per-ray-moment/summary discrepancies are at most 1.48e-12/3.07e-14/4.71e-14; native factor recomposition equals native A elementwise. New work consists only of 25 offline factorized and 25 CSR forwards, 25 independent native and 25 independent CSR forwards, plus gradient/moment work. There are no truth, observation or prediction reads, training or new inverse solves. The next question is whether sealed learned error fields exhibit the same structure; these selected witnesses alone cannot authorize a new network.
+
+[BOST测量模型 / BOST measurement model](https://opg.optica.org/oe/fulltext.cfm?uri=oe-30-11-19100)支持梯度线积分的物理形式，不是本实验成果的外部验证。The source supports the gradient line-integral model, not external validation of these findings.

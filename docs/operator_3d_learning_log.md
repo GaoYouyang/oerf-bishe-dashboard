@@ -1,3 +1,11 @@
+## 2026-09-07：沿射线的正负抵消 / Opposite Signs Along Rays
+
+下游物理诊断进一步定位了弱响应：在20条预先固定的几何见证上，插值和横向投影的条件保留比约为0.314至0.622、0.500至0.541，沿射线求和却只有4.65e-7至1.15e-4；平滑控制为0.827至0.833。独立复算确认了强烈的沿射线符号抵消。这里的保留比不是实际信号损失百分比，也尚未证明这就是学习失败的原因；没有修改测量算子、训练新模型或获得加速成果。
+
+Downstream diagnosis localizes the weak response further: across 20 fixed geometry witnesses, conditional retention is about 0.314 to 0.622 after interpolation and 0.500 to 0.541 after transverse projection, but only 4.65e-7 to 1.15e-4 after ray summation; the smooth control retains 0.827 to 0.833. Independent replay confirms strong within-ray sign cancellation. These ratios are not percentages of actual signal loss and do not yet establish the cause of learning failure. No measurement operator was changed, new model trained or acceleration achieved.
+
+[阶段审计 / Stage audit](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：分开看各相机，仍未形成优势 / Separate Cameras, Still No Advantage
 
 61参数逐相机集合初始化器已完成跨轨迹训练与独立复算，但五个固定中点通过0/5；内部梯度误差为2.134%至3.017%，均超过1%门槛。保留相机分歧相对先求和的同规模对照只在3/5点四指标不劣，且在全部五点都未胜过Zero、BP和历史ridge。已取消余下500帧的细化评分，关闭这个固定模型与训练配置，不增加网络规模或轮数。这是有效的负结果，不是重建、加速或论文成功。
