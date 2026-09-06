@@ -1,3 +1,11 @@
+## 2026-09-06：从学习失败定位到固定表示缺口
+
+已定位上一学习器的表示缺口：只审计同样25个必要点。即便让每项指标分别选择最理想的系数，并把原四方向加一次CGLS的所有可能输出放进一个更宽松的九列空间，删相机的20/20点仍有不可消除的超门误差；四组场误差下界p90约58%–63%，远高于1%。原学习器输出的空间包含检查及独立SVD/QR复算通过。这不是新算法或完整序列结果，也不是整个逆问题不可能；它说明继续训练同一套方向表示无法补上当前缺口。
+
+The previous learner has a localized representation gap on the same 25 necessary cases. Even allowing a separate ideal coefficient choice for each metric, in a relaxed nine-column space containing every possible output of the old four directions plus one CGLS step, all 20/20 camera-removal cases retain unavoidable gate violations. Across four groups, field-error lower-bound p90 remains about 58%-63%, far above 1%. Original-output containment and independent SVD/QR checks pass. This is not a new algorithm, a complete-sequence result, or an impossibility claim for the inverse problem. More training within these same directions cannot close the measured gap.
+
+[详细归因 / Attribution](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-06：实际训练的小学习器未通过
 
 小学习器的实测负结果：64参数模型完成五折整轨迹留一训练，2525个外折预测在评分前封存；随后25个必要检验点只通过5个，这5个九相机点不用学习也能通过。删相机后的20个点全部失败，44参数线性对照也仅5/25，合格直接因子为25/25。按预定规则停止其余2500个细化，不称完整序列失败或成功；关闭这条单因子迁移学习机制，不追加模型或训练轮数。独立物理复算通过，但学习优势、速度收益和论文突破均未成立。

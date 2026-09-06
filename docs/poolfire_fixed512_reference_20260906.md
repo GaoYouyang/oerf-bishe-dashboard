@@ -427,3 +427,33 @@ Candidate online work is4A+4A^T plus four triangular solves for nine cameras, an
 独立终态又重放400个物理输出，指标最大差4.55e-13，原生/稀疏投影最大差7.25e-16，全部输入和封存预测不变。这是可核验的负算法证据，不是突破。关闭这套固定四方向单因子迁移配方，不增加方向数、网络规模、训练轮数或事后换控制。它不证明整个C路线不可能；新推进必须带来不同的物理信息或机制，而不是重命名本次失败。
 
 A separate terminal audit replays400 physical outputs, with metric discrepancy at most4.55e-13 and native/sparse projection discrepancy at most7.25e-16. Inputs and sealed predictions remain unchanged. This is verifiable negative algorithm evidence, not a breakthrough. The fixed four-direction single-factor transfer recipe is closed: no extra directions, larger network, longer training or post-hoc control substitution. It does not prove the whole C route impossible; further progress needs different physical information or a different mechanism, not a renamed retry.
+
+## 为什么多训也不够 / Why More Training Is Insufficient Here
+
+已定位上一学习器的表示缺口：只审计同样25个必要点。即便让每项指标分别选择最理想的系数，并把原四方向加一次CGLS的所有可能输出放进一个更宽松的九列空间，删相机的20/20点仍有不可消除的超门误差；四组场误差下界p90约58%–63%，远高于1%。原学习器输出的空间包含检查及独立SVD/QR复算通过。这不是新算法或完整序列结果，也不是整个逆问题不可能；它说明继续训练同一套方向表示无法补上当前缺口。
+
+The previous learner has a localized representation gap on the same 25 necessary cases. Even allowing a separate ideal coefficient choice for each metric, in a relaxed nine-column space containing every possible output of the old four directions plus one CGLS step, all 20/20 camera-removal cases retain unavoidable gate violations. Across four groups, field-error lower-bound p90 remains about 58%-63%, far above 1%. Original-output containment and independent SVD/QR checks pass. This is not a new algorithm, a complete-sequence result, or an impossibility claim for the inverse problem. More training within these same directions cannot close the measured gap.
+
+这是对上一轮已开封25个中点的事后归因，不重训、不重跑2525个预测、不新增相机或工况。令四个观测生成方向的精确提升为D，H=A^T A，b=A^T y。任意系数a加未修改CGLS一步都满足x=D a+alpha(b-H D a)，所以输出一定属于span([D,b,HD])。诊断给这个九列空间独立自由系数，比真实四系数和受约束线搜索更宽松；每项误差又分别求自己的最优解。因此表中是乐观下界，不是一组可同时部署的重建。
+
+This is post-open attribution on the previous 25 midpoint cases: no refit, rerun of 2525 predictions, new camera set or new flow condition. Let D contain exact lifts of the four observation-generated directions, H=A^T A and b=A^T y. Arbitrary coefficients followed by unchanged one-step CGLS satisfy x=D a+alpha(b-H D a), hence lie in span([D,b,HD]). The diagnostic allows independent coefficients on this nine-column space, more freedom than the actual four coefficients and constrained line search. Each metric also gets its own optimum. Thus the table shows optimistic lower bounds, not one jointly deployable reconstruction.
+
+下表误差为分数，原冻结门均0.01。g0/g1为参与拟合的五/七相机集合，g3/g4为未参与拟合的五/七相机集合；g2为完整九相机。每组仅五条轨迹各一个中点，不能称完整序列证据。
+
+Errors below are fractions; the original frozen gates are all 0.01. g0/g1 are five/seven-camera sets used in fitting; g3/g4 are excluded from fitting; g2 is the full-nine set. Each group contains only one midpoint from each of five trajectories, not complete-sequence evidence.
+
+| 相机组 / Camera group | 必然超门 / Unavoidable misses | 场下界p90 / Field bound | 全梯度 / Full gradient | 内部梯度 / Interior gradient | 投影 / Projection |
+|---|---:|---:|---:|---:|---:|
+| g0 (5) | 5/5 | 0.612763 | 0.678434 | 0.793058 | 0.503534 |
+| g1 (7) | 5/5 | 0.577922 | 0.643026 | 0.758816 | 0.561746 |
+| g2 (9) | 0/5 | 1.35265e-12 | 1.35543e-12 | 2.17726e-12 | 1.47635e-13 |
+| g3 (5) | 5/5 | 0.593791 | 0.669346 | 0.765124 | 0.505905 |
+| g4 (7) | 5/5 | 0.630654 | 0.669435 | 0.775093 | 0.577508 |
+
+正式SVD与独立带列主元QR分别重建方向、梯度、投影和乐观误差。最大下界指标差4.82e-13，目标归一化投影残差向量差3.26e-12，原输出空间包含残差1.71e-15。删相机各指标九列矩阵的最小/最大奇异值比均至少0.0733，明显高于结果前1e-10数值条件门；不是靠丢弃病态小方向制造下界。九相机近秩亏只报告已有近精确可达性，不制造不可能性证书。
+
+Formal SVD and independent column-pivoted QR separately rebuild directions, gradients, projections and optimistic errors. Maximum lower-bound metric discrepancy is 4.82e-13, target-normalized projection-residual vector discrepancy 3.26e-12, and original-output containment residual 1.71e-15. For every camera-removal metric, the nine-column matrix has a minimum/maximum singular-value ratio of at least 0.0733, well above the preregistered 1e-10 conditioning guard. The bound is not manufactured by dropping ill-conditioned small directions. Near-rank-deficient full-nine cases only report existing near-exact reachability, not an impossibility certificate.
+
+科学变化：上一轮只知道学习器失败，现在能排除“同一表示只要再学好系数就够了”这个解释。关闭的是固定九相机因子生成的这四个方向及其一次CGLS修正，不是所有几何条件学习器、其他物理表示或BOST本身。继续研究必须改变信息或表示，而非继续调该模型的规模、轮数和系数。没有新增部署收益，全部算子工作是单独披露的离线诊断。
+
+Scientific change: the previous result established learner failure; this audit rules out the explanation that better coefficients in the same representation would suffice. The closure applies to these four shared-nine-factor directions with one CGLS correction, not all geometry-conditioned learners, other physical representations or BOST itself. Further research must change information or representation, not keep tuning this model's size, epochs or coefficients. No new deployment benefit is claimed; all operator work is separately disclosed offline diagnosis.

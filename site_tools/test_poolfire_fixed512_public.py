@@ -267,3 +267,23 @@ def test_factor_transfer_reports_actual_learning_and_necessary_failure():
         assert len(note) == 1
         for lang in ("zh", "en"):
             assert all(value in note[0][f"data-i18n-{lang}"] for value in ("64", "2525", "5/25", "25/25", "2500"))
+
+
+def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["factor_transfer_capacity"]
+    assert data["status"] == "FAIL_FIXED_TRANSFER_REACHABLE_CAPACITY"
+    assert data["evaluated_cases"] == 25 and data["unavoidable_miss_cases"] == 20
+    assert data["conditioning_qualified"] and data["optimistic_separate_metric_oracles"]
+    assert data["no_training"] and data["diagnostic_not_deployment"] and data["post_open_only"]
+    assert not data["actual_initializer_expanded"] and not data["new_predictor_authorized"]
+    assert not any(data[k] for k in ("complete_trajectory_accuracy_claim", "algorithm_breakthrough", "paper_success", "external_generalization", "resource_speedup", "real_bost"))
+    for row in data["geometry"]:
+        assert row["evaluated"] == 5
+        if row["camera_count"] != 9:
+            assert row["unavoidable_miss_cases"] == 5
+            assert row["smallest_primary_metric_condition_ratio"] > .07
+            assert row["relaxed_post_K1_p90"][0] > .5
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        notes = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#factor-transfer-capacity")
+        assert len(notes) == 1
+        assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
