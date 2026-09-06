@@ -289,6 +289,21 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_inverse_attribution_keeps_diagnosis_distinct_from_algorithm_success():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["monarch_attribution"]
+    assert data["status"] == "PASS_FIXED_RECIPE_ERROR_ATTRIBUTION"
+    assert data["conclusion"] == "ERROR_PRESENT_BEFORE_LIFT_ALL25"
+    assert data["primary_first_action_passing"] == 0 and data["cases"] == 25
+    assert data["original_float64_audit_inconclusive"] and data["prior_recipe_still_closed"]
+    assert data["unchanged_tolerance"] == 1e-6 and data["reference_defect_max"] < 1e-9
+    assert data["independent_post_exit"]["decimal_raw_coordinates"] == 819200
+    assert not any(data[k] for k in ("new_candidate", "truth_arrays_read", "retuning_authorized", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost", "new_CFD_accuracy_claim", "complete_sequence_claim"))
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        notes = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#inverse-error-attribution")
+        assert len(notes) == 1
+        assert all("8724" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_monarch_projection_failure_keeps_physical_and_resource_boundaries():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["monarch_inverse"]
     assert data["status"] == "FAIL_FIXED_MONARCH_INVERSE_PHYSICAL_GATE"

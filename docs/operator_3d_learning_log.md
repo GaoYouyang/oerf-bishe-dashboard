@@ -1,3 +1,11 @@
+## 2026-09-07：错误在lift之前就已出现
+
+误差归因已独立复算：25点在单次逆作用阶段就全部未过参考相对精度检查，五组相机的场误差p90约40至8724倍。完整lift的参考接口缺陷不超过6.48e-10，不能解释这个量级的失败；后续组合进一步放大误差，线搜索把结果大幅缩小，却不能改变错误方向。仍是已开封诊断，不是新算法或新重建成绩；原Monarch配方保持关闭。
+
+The error attribution is independently verified: all 25 points already fail the reference-relative diagnostic at the single inverse action, with field-error p90 ranging from about 40 to 8724 across five camera sets. The full-lift reference-interface defect is at most 6.48e-10 and cannot explain errors of this magnitude. The subsequent composition amplifies error, while line search strongly shrinks the output without changing its direction. This is post-open diagnosis, not a new algorithm or reconstruction result; the fixed Monarch recipe remains closed.
+
+[完整解释 / Full explanation](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-06：两级非局部结构仍未满足物理精度
 
 两级非局部Monarch近似已独立确认失败：几何构造的1572864个系数可表达全局满秩映射，但接上精确lift与K1仍为0/25通过，单级块对照也为0/25，直接参考25/25。同等3A+3AT预算下，普通CGLS3在全部25点的四指标均不更差。关闭这个固定的矩阵Frobenius近似配方；矩阵近似最优不等于物理重建最优，不能据此否定所有Monarch权重。12MiB仅为主候选系数载荷，不是全流程内存，更不是提速成果。

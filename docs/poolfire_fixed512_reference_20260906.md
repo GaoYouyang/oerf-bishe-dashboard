@@ -606,3 +606,33 @@ These remain the opened midpoints of five trajectories across five camera sets: 
 The independent inverse/Monarch-matrix/new-endpoint relative differences are at most 9.38e-11/1.10e-10/7.08e-11. Post-exit checks reapply 100 predictions and replay 400 physical fields, with metric difference at most 1.82e-12. No top-singular-value ties occur in 81920 blocks. Each query uses 3A+3AT, four block-multiply stages and zero dense triangular solves. Primary coefficients occupy 12MiB and controls 8MiB; the experiment archive also retains offline inverses and all predictions. Across five geometries and two definitions, 117600 triangular RHS solves, 40960 SVDs and 40960 Gram eigendecompositions are charged separately: geometry construction is not free. About 109 seconds and 4.77GiB peak are diagnostic telemetry, not deployment wall/RSS advantage.
 
 来源与边界 / Sources and boundaries: [Monarch 2022](https://proceedings.mlr.press/v162/dao22a.html)提供两级结构和矩阵Frobenius投影依据，不保证本BOS物理误差；[FIO inverse 2021](https://arxiv.org/html/2105.02995v1)将forward蝶形结构与正规算子的层次逆结合，不能直接套用其假设；[fast transforms 2019](https://proceedings.mlr.press/v97/dao19a.html)是可学习快速结构变换的先例。Monarch supplies the structure and matrix-projection argument, not a BOS accuracy guarantee. The FIO paper combines a forward butterfly with a hierarchical normal inverse under assumptions not asserted here. Learnable fast structured transforms are established prior art. 此次不训练模型、不扩大块/层/秩或K救援，也不将此结果称为全部Monarch权重的物理能力上界。No model is trained or rescued by larger blocks, stages, rank or K; this is not a physical-capacity upper bound for all Monarch weights.
+
+## 2026-09-07 误差从哪里进入 / Where Error Enters
+
+误差归因已独立复算：25点在单次逆作用阶段就全部未过参考相对精度检查，五组相机的场误差p90约40至8724倍。完整lift的参考接口缺陷不超过6.48e-10，不能解释这个量级的失败；后续组合进一步放大误差，线搜索把结果大幅缩小，却不能改变错误方向。仍是已开封诊断，不是新算法或新重建成绩；原Monarch配方保持关闭。
+
+The error attribution is independently verified: all 25 points already fail the reference-relative diagnostic at the single inverse action, with field-error p90 ranging from about 40 to 8724 across five camera sets. The full-lift reference-interface defect is at most 6.48e-10 and cannot explain errors of this magnitude. The subsequent composition amplifies error, while line search strongly shrinks the output without changing its direction. This is post-open diagnosis, not a new algorithm or reconstruction result; the fixed Monarch recipe remains closed.
+
+| 相机组 / Set | 单次逆作用 / Single inverse | 原始lift / Raw lift | 线搜索后 / After scaling | K1后 / After K1 |
+|---|---:|---:|---:|---:|
+| g0 | 3047.15 | 1.35626e+08 | 0.999052 | 0.906215 |
+| g1 | 345.521 | 2.53946e+06 | 0.999382 | 0.902575 |
+| g2 | 39.8136 | 11910.2 | 1.03749 | 0.919011 |
+| g3 | 8723.96 | 5.33596e+08 | 0.995734 | 0.892936 |
+| g4 | 1270.47 | 7.41037e+06 | 1 | 0.899824 |
+
+表中均为场误差p90，相对于同一观测和几何的合格直接解，不是新的CFD真值评分。原始25点0/25结论不变。单级块对照在四阶段也全部未过检查。
+
+The table reports field-error p90 relative to the qualified direct solution for the same observation and geometry, not new CFD-truth scores. The original 0/25 result is unchanged. The single-block control also fails every diagnostic point at all four stages.
+
+固定分解保留参考缺陷、左右一次项、二次项、线搜索缩放与K1增量；它们是会相互抵消的向量，不能当作独立百分比相加。主候选二次项范数为两个一次项范数之和的约94.6至49615倍，线搜索系数介于0与4.26e-5，两点直接归零。这支持当前配方在实际观测上的逆作用严重失真；不证明所有Monarch权重、非局部表示或学习方法无效。
+
+The fixed expansion retains reference defect, two linear terms, the quadratic term, line-search scaling and K1 increment. These are coherent vectors with cancellation, not independent additive percentages. The primary quadratic-term norm is about 94.6 to49615 times the sum of the two linear-term norms; line-search coefficients range from0 to4.26e-5, with two zero cases. This supports severe inverse-action distortion on actual observations for this recipe, not impossibility for all Monarch weights, nonlocal representations or learning methods.
+
+最初float64归因因原始恒等式差2.10e-6超过1e-6而保持未定。相同系数与容差下，仅用MPFR128累加和高低两个float64字传递数值，完成正式结构化与独立稠密误差矩阵双实现；退出后Decimal80复算819200个坐标。原始恒等式最大差1.17e-23，端点恒等式1.09e-16，物理范数复算差小于9e-15。高精度只修复审计运算，没有训练模型或改善原预测。
+
+The initial float64 attribution remains inconclusive because its raw identity discrepancy2.10e-6 exceeded1e-6. With unchanged coefficients and tolerance, MPFR128 accumulation and two-float64-word transport enable the structured formal and explicit dense-error independent definitions. Post-exit Decimal80 checks819200 coordinates: raw identity discrepancy at most1.17e-23, endpoint identity1.09e-16, and physical-norm replay below9e-15. Higher precision repairs audit arithmetic only; it does not train a model or improve the original predictions.
+
+全量诊断约329秒、峰值9.77GiB，属于审计遥测，不是部署wall/RSS优势；重建独立逆矩阵的58800次三角右端求解和所有额外算子调用单列计入离线账。Full diagnosis takes about329seconds and9.77GiB peak as audit telemetry, not deployment wall/RSS advantage. The58800 triangular RHS solves for independent inverse reconstruction and all extra operator calls are explicitly offline costs.
+
+数值库 / Numerical library: [GNU MPFR](https://www.mpfr.org/mpfr-current/mpfr.html). 求和与点积误差背景 / Summation and dot-product background: [Ogita, Rump and Oishi](https://doi.org/10.1137/030601818). 这些是已有数值工具，不是本项目创新。These are established numerical tools, not project novelty.
