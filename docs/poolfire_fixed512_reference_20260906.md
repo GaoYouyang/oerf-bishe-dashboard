@@ -286,3 +286,37 @@ The known-budget residual ||prediction-y||/||e|| is diagnostic only, with a unit
 执行备注：第一次任务在数组封存后因JSON布尔序列化失败退出；保留原始失败、只重建报告，未重放、未改数组或门。独立数值检查14项与额外终态核验通过。工程修复不是科学结果；本轮没有训练、速度优势、外部泛化或真实BOST结论。
 
 Execution note: the first task failed during JSON boolean serialization after array sealing. The failure was retained and only the report rebuilt, without replay or altered arrays/gates. All14 numerical checks and a separate terminal audit pass. Engineering repair is not science; no training, speed advantage, external generalization or real BOST result is claimed.
+
+## 实际场是否互相混淆 / Are Actual Source Fields Ambiguous?
+
+实际CFD配对审计：505个已打开的处理后三维场共127,260对，在1%有界观测噪声下没有相互重叠，最接近的一对也需约8.93%噪声才相交。只看观测幅值则有11,468对发生歧义，完整投影结构包含额外信息。但505/505个场的最近邻都来自自身轨迹，有限样本可区分不等于未见轨迹可重建。独立复算已确认；这是对失败原因的约束，不是学习、重建或真实BOST成功。
+
+Actual-CFD pair audit: among127,260 pairs of505 opened, processed3D fields, no observation balls overlap at1% bounded noise. Even the closest pair needs about8.93% noise to intersect. Amplitude-only observations admit11,468 ambiguous pairs, so full projection structure carries additional information. However, nearest neighbors of505/505 fields belong to their own trajectories. Finite-sample distinguishability is not unseen-trajectory reconstruction. Independently verified; this constrains failure explanations, not learned, reconstruction or real BOST success.
+
+本轮仅使用已有五条公开训练轨迹的505个规范与边界处理后CFD目标，不合成任意节点扰动、不改变幅值、不打开新数据。对观测b_i和b_j，两个相对有界噪声球相交的最小半径为eta=||b_i-b_j||/(||b_i||+||b_j||)。若它不超过1%，而某个场或梯度分离比B_D=||D*x_i-D*x_j||/(||D*x_i||+||D*x_j||)超过1%，同一个观测下就不能同时为两个真值提供1%相对精度。这是三角不等式，不是新定理。
+
+Only505 existing gauge- and boundary-processed CFD targets from five public training trajectories are used, without arbitrary nodal perturbations, amplitude changes or new data. For observations b_i,b_j, the minimum relative bounded-noise radius for ball intersection is eta=||b_i-b_j||/(||b_i||+||b_j||). If eta is at most1% while a field/gradient separation ratio B_D=||D*x_i-D*x_j||/(||D*x_i||+||D*x_j||) exceeds1%, a single estimate at the common observation cannot be within1% of both truths. This follows from the triangle inequality, not a new theorem.
+
+全部127,260对的eta都大于1%，最小为8.92899335%。最近一对的场/全梯度/内部梯度分离比为8.4470%/10.9610%/18.7920%，但构造共同观测需要两端各8.9290%噪声，因此不能拿它充当1%的反例。只用观测范数这一便宜信息时，11,468对会混淆；这里没有运行任何新重建器。
+
+Every one of127,260 pairs has eta above1%; the minimum is8.92899335%. The closest pair has field/full-gradient/interior-gradient separation ratios8.4470%/10.9610%/18.7920%, but its common observation needs8.9290% noise at either endpoint. It is therefore not a1%counterexample. Using only the cheap observation norm admits11,468 ambiguous pairs; no new reconstructor is run here.
+
+| 已打开轨迹 / Opened trajectory | 最近邻来自同轨迹 / Same-trajectory nearest | 最近邻噪声交叠半径p90 / Nearest overlap radius p90 |
+|---|---:|---:|
+| 1 | 101/101 | 12.0986% |
+| 2 | 101/101 | 16.8384% |
+| 3 | 101/101 | 15.5848% |
+| 4 | 101/101 | 19.2312% |
+| 5 | 101/101 | 20.5547% |
+
+正式Gram距离与独立直接差分距离、独立导数的最大比值差4.23e-14，全部阈值与最近邻判决一致。独立物理重放最近一对及其加权组合，总计离线6A、0A^T；共同观测相对差7.43e-16以内。7项数值检查与单独终态核验通过，无模型训练和速度主张。
+
+Formal Gram distances and independent direct differences/derivatives agree within4.23e-14 in ratios; all threshold and nearest-neighbor decisions match. Independent physical replay of the closest endpoints and their weighted combination totals6offline A calls and0 A^T, with common-observation relative discrepancy below7.43e-16. All7 numerical checks and a separate terminal audit pass, without model training or speed claims.
+
+这只排除了“已存这505个实际场在1%有界噪声下彼此不可区分”的解释。有限字典辨认甚至可以靠记忆完成，不证明连续CFD流形、帧间状态、未见轨迹、物理模型偏差或真实实验可辨识。它也不是之前球面随机噪声的平均风险结论。最近邻全部属于自身轨迹，更要求保持整轨迹外折，不能拿随机帧划分冒充外推。旧先验和旧预测器失败保持不变；不恢复已关闭的幅值、最近邻库或更大模型路线。
+
+This only excludes mutual1% bounded-noise ambiguity among these505 stored actual fields. Finite-dictionary identification can be memorization; it proves nothing about a continuous CFD manifold, between-frame states, unseen trajectories, physical-model mismatch or real experiments. It is not an average-risk result for earlier random sphere noise. All nearest neighbors being within their own trajectories reinforces complete-trajectory outer folds; random-frame splits cannot stand in for extrapolation. Old prior/predictor failures remain unchanged; closed amplitude, nearest-library and larger-model paths are not revived.
+
+物理先验用于约束病态逆问题是[经典背景](https://www.imm.dtu.dk/~pcha/Regularization/regu.html)。本次增量是实际源类别的可审查证据，不是组件首创、算法突破、泛化或真实BOST结果。
+
+Physical solution constraints for ill-posed inverses are [established background](https://www.imm.dtu.dk/~pcha/Regularization/regu.html). This increment is inspectable evidence about the actual source class, not component novelty, algorithm breakthrough, generalization or real BOST.

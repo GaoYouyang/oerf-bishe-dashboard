@@ -193,3 +193,20 @@ def test_oracle_noise_gate_issue_does_not_rescue_old_failures():
         assert len(note) == 1
         for lang in ("zh", "en"):
             assert all(value in note[0][f"data-i18n-{lang}"] for value in ("308/1515", "0.000141", "0/15"))
+
+
+def test_actual_source_pair_audit_is_not_a_learned_success():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["actual_CFD_pair_noise_audit"]
+    assert data["status"] == "NO_1PCT_AMBIGUITY_FOUND_IN_OPENED_CFD_ROSTER"
+    assert data["pair_count"] == 127260 and data["conflicts"] == data["observation_overlap_pairs"] == 0
+    assert .08928 < data["minimum_relative_noise"] < .08930
+    assert data["amplitude_only_conflicts"] == 11468 and data["nearest_same_trajectory"] == 505
+    assert data["finite_opened_roster_only"] and data["old_decisions_unchanged"]
+    assert not data["continuous_source_identifiability_proven"] and not data["random_noise_risk_claim"]
+    assert not data["learned_advantage"] and not data["algorithm_breakthrough"] and not data["real_bost"]
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        soup = BeautifulSoup((ROOT / relative).read_text(), "html.parser")
+        note = soup.select("#physical-pair-result")
+        assert len(note) == 1
+        for lang in ("zh", "en"):
+            assert all(value in note[0][f"data-i18n-{lang}"] for value in ("127,260", "8.93%", "505/505"))
