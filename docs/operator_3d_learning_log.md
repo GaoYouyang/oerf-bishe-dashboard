@@ -1,3 +1,11 @@
+## 2026-09-06：五/七相机完整经典参考通过
+
+五/七相机完整序列参考通过：固定两个相机子集各505/505帧满足场、全梯度、内部梯度与投影的1%门，合计1010/1010、10/10完整轨迹分组；同观测一步CGLS各0/505。Cholesky与独立QR及物理重放一致。每个子集需另建几何因子，在线1A+1A^T及两次三角求解，不等于免费或速度优势。仅限这两个无噪声子集，未验证任意增删、12相机、噪声或新工况；不是学习算法突破。
+
+Complete-sequence references pass for five and seven cameras: each of two fixed subsets achieves505/505 frames within the1% field, full-gradient, interior-gradient and projection gates, totaling1010/1010 and10/10 complete trajectory groups. Same-observation one-step CGLS passes0/505 for each subset. Cholesky agrees with independent QR and physical replay. Each subset needs its own geometry factor; online cost is1A+1A^T plus two triangular solves, not free work or a speed advantage. Only these two clean subsets are tested, not arbitrary camera changes,12 cameras, noise or new conditions; this is not a learned algorithm breakthrough.
+
+[详细结果 / Details](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-06：非局部平均未保住三维结构
 
 非局部自相似恢复失败：只从当前输入寻找相似三维小块，并考虑几何传播的块间噪声相关性，再做精确lift与一步CGLS，固定15个样本仍为0/15。场/全梯度/内部梯度/干净投影误差p90为15.39%/23.85%/25.75%/9.00%，比直接逆更差。独立复算已确认；关闭此固定配置，未运行剩余1500个样本，不调带宽、块大小或深度补救。零训练参数；不是算法、速度或真实BOST成功。

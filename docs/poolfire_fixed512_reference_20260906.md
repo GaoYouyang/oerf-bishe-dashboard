@@ -359,3 +359,34 @@ Only this fixed weighting, patch, search, noise-estimation, self-weight and K1 c
 [非局部均值原始说明](https://www.ipol.im/pub/art/2011/bcm_nlm/revisions/2011-09-13/bcm_nlm.htm)与[相关噪声原始研究](https://webpages.tuni.fi/foi/papers/ICIP2019_Ymir.pdf)是背景。本试验不是完整BM3D/NL-Bayes复现、组件首创或新噪声理论。
 
 The [original nonlocal-means description](https://www.ipol.im/pub/art/2011/bcm_nlm/revisions/2011-09-13/bcm_nlm.htm) and [primary correlated-noise study](https://webpages.tuni.fi/foi/papers/ICIP2019_Ymir.pdf) are background. This is not a full BM3D/NL-Bayes reproduction, component novelty or new noise theory.
+
+## 删相机后的完整参考 / Complete References After Camera Removal
+
+五/七相机完整序列参考通过：固定两个相机子集各505/505帧满足场、全梯度、内部梯度与投影的1%门，合计1010/1010、10/10完整轨迹分组；同观测一步CGLS各0/505。Cholesky与独立QR及物理重放一致。每个子集需另建几何因子，在线1A+1A^T及两次三角求解，不等于免费或速度优势。仅限这两个无噪声子集，未验证任意增删、12相机、噪声或新工况；不是学习算法突破。
+
+Complete-sequence references pass for five and seven cameras: each of two fixed subsets achieves505/505 frames within the1% field, full-gradient, interior-gradient and projection gates, totaling1010/1010 and10/10 complete trajectory groups. Same-observation one-step CGLS passes0/505 for each subset. Cholesky agrees with independent QR and physical replay. Each subset needs its own geometry factor; online cost is1A+1A^T plus two triangular solves, not free work or a speed advantage. Only these two clean subsets are tested, not arbitrary camera changes,12 cameras, noise or new conditions; this is not a learned algorithm breakthrough.
+
+同一批五条已打开公开PoolFire轨迹、每条101帧，保留原三维网格和每台相机50x33双分量采样。两个子集保持全部原5880个有效未知量，数值QR秩均5880，无正则、无缩小未知区域、无真值选择。全部预测在真值评分前封存。下表为相对误差分数，不是百分比；四项门均0.01。
+
+The same five opened public PoolFire trajectories contain101 frames each, retaining the original3D grid and50x33 two-component sampling per camera. Both subsets retain all5880 original active unknowns and have numerical QR rank5880, without regularization, shrinking the unknown region or truth-based selection. All predictions seal before truth scoring. Table entries are relative fractions, not percentages; all four gates are0.01.
+
+| 固定相机数 / Fixed camera count | 通过 / Passing | 场最坏值 / Worst field | 全梯度 / Full gradient | 内部梯度 / Interior gradient | 投影 / Projection |
+|---|---:|---:|---:|---:|---:|
+| 5 | 505/505 | 9.1053e-11 | 5.9644e-11 | 1.0716e-10 | 1.9611e-13 |
+| 7 | 505/505 | 7.1518e-11 | 3.5908e-11 | 6.7846e-11 | 1.3900e-13 |
+
+每档独立8项数值检查全真。两档最大场/投影/指标实现差约9.11e-11/1.97e-13/1.07e-10，原生物理重放差不超过8.08e-16。另一次终态核验检查4040个物理输出及全部指标、尾部和调用账，指标差不超过2.23e-16。九相机已有505/505证据只继承，不重跑、不计入新1010个单元。
+
+All eight numerical checks pass independently for each subset. Across both subsets, maximum field/projection/metric implementation differences are approximately9.11e-11/1.97e-13/1.07e-10, with native physical replay within8.08e-16. A separate terminal audit checks4040 physical outputs and all metrics, tails and calls, with metric discrepancy at most2.23e-16. The existing nine-camera505/505 evidence is inherited, not rerun or counted among the new1010 cells.
+
+每档均需要一个276595200字节的几何因子，因子构建与保存、原始算子构建另计。一步CGLS虽然同为1A+1A^T，却不需要两次三角求解，所以相同调用数不是相同计算量。本轮包含独立QR与物理审计，不能拿总耗时当部署速度。没有新的fresh wall/RSS优势结论。
+
+Each subset requires its own276595200-byte geometry factor; factor construction/storage and original operator construction are additional work. One-step CGLS also uses1A+1A^T but needs no triangular solves, so equal call counts are not equal computational work. This run includes independent QR and physical audits; its total duration is not deployment speed. No new fresh wall/RSS advantage is claimed.
+
+这排除了在上述干净离散采样中“删相机必然丢掉有效自由度”的解释，不表示任意五相机都够，也不表示抗噪。五/七相机法方程倒条件数估计约1.80e-8/3.51e-8，满秩不等于噪声稳定。旧低采样配置、旧带噪九相机和已关闭学习器的失败均不变。后续可变相机学习器必须与合格经典因子比较，而非只战胜一步CGLS或不充分参考；完整跨轨迹预测、抗噪、资源收益和真实BOST仍待证明。
+
+This rules out loss of a numerically active degree of freedom for these clean discrete acquisitions, not the claim that any five cameras suffice or that reconstruction is noise-robust. Five/seven-camera reciprocal normal-condition estimates are approximately1.80e-8/3.51e-8; full rank is not noise stability. Failures of earlier lower-sampling configurations, noisy nine-camera data and closed learners remain unchanged. A future variable-camera learner must compete with qualified classical factors, not merely one-step CGLS or inadequate references. Complete cross-trajectory prediction, noise robustness, resource benefits and real BOST remain unproved.
+
+方法采用既有[Cholesky分解](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.cholesky.html)与独立[带列主元QR](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.qr.html)，不是组件首创。
+
+The methods use established [Cholesky factorization](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.cholesky.html) and independent [column-pivoted QR](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.qr.html), without component novelty.

@@ -228,3 +228,23 @@ def test_correlated_nlm_is_a_fixed_sentinel_failure():
         assert len(note) == 1
         for lang in ("zh", "en"):
             assert all(value in note[0][f"data-i18n-{lang}"] for value in ("0/15", "15.39%", "1500"))
+
+
+def test_camera_dropout_reference_has_complete_but_clean_limited_scope():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["camera_dropout_reference"]
+    assert data["status"] == "PASS_FIXED_CAMERA_DROPOUT_DIRECT_REFERENCE"
+    assert data["new_primary_cells"] == data["passing"] == 1010
+    assert data["complete_trajectory_camera_groups"] == 10 and data["camera_counts"] == [5, 7]
+    for row in data["subsets"].values():
+        assert row["primary_passing"] == 505 and row["control_passing"] == 0
+        assert row["complete_trajectories"] == 5 and row["numerical_rank"] == 5880
+        assert max(row["primary_worst"]) < .01
+    assert data["separate_geometry_factor_required"] and data["equal_exact_calls_not_equal_work"]
+    assert data["clean_only"] and data["inherited_nine_camera_not_rerun"] and data["old_failures_unchanged"]
+    assert not any(data[key] for key in ("learned_advantage", "twelve_cameras_tested", "arbitrary_subsets_tested", "noise_robustness", "real_bost", "resource_speedup", "paper_success"))
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        soup = BeautifulSoup((ROOT / relative).read_text(), "html.parser")
+        note = soup.select("#camera-dropout-reference")
+        assert len(note) == 1
+        for lang in ("zh", "en"):
+            assert all(value in note[0][f"data-i18n-{lang}"] for value in ("505/505", "1010/1010", "0/505", "12"))
