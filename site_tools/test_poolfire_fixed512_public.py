@@ -158,3 +158,21 @@ def test_haar4_prediction_count_is_not_reconstruction_success():
         assert len(notes) == 1
         for lang in ("zh", "en"):
             assert all(value in notes[0][f"data-i18n-{lang}"] for value in ("1515", "0/15", "1500", "10.13%"))
+
+
+def test_local_gaussian_failure_and_truth_aware_attribution():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["local_gaussian_noise_prior"]
+    assert data["status"] == "FAIL_FIXED_PATCH_GAUSSIAN_PRIOR"
+    assert data["primary_passing"] == 0 and data["evaluated_midpoints_per_arm"] == 15
+    assert data["sealed_predictions_per_prior"] == 1515 and data["skipped_primary_refinements"] == 1500
+    assert not data["complete_refinement_done"] and not data["neural_training"]
+    assert data["attribution_truth_aware"] and data["attribution_is_not_deployment"]
+    assert data["component_norms_are_not_additive_shares"]
+    assert all(row["propagated_error_energy_exceeds_bias_cells"] == 15 for row in data["attribution"])
+    assert not data["learned_advantage"] and not data["resource_speedup"] and not data["real_bost"]
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        soup = BeautifulSoup((ROOT / relative).read_text(), "html.parser")
+        note = soup.select("#patch-gaussian-result")
+        assert len(note) == 1
+        for lang in ("zh", "en"):
+            assert all(value in note[0][f"data-i18n-{lang}"] for value in ("0/15", "9.08%", "1500"))

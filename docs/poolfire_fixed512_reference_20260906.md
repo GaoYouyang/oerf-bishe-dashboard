@@ -207,3 +207,44 @@ The input first passes through the direct inverse, followed by denoising, exact 
 本轮只关闭这个固定四阈值、小波表示和训练损失的配置，不证明其他非线性先验不可能。数据仍是已打开的公开训练轨迹与固定九相机合成噪声，不是未打开的外部门、可变相机泛化或实验位移图。小波收缩是经典方法，本项目不作首创声明，参见[Donoho与Johnstone的原始研究](https://statistics.stanford.edu/technical-reports/ideal-spatial-adaptation-wavelet-shrinkage)。
 
 This closes the fixed four-threshold wavelet representation and training-loss configuration, not every nonlinear prior. The data remain previously opened public training trajectories with fixed nine-camera synthetic noise, not an untouched external condition, variable-camera generalization or experimental displacement images. Wavelet shrinkage is classical; no first-use claim is made. See [Donoho and Johnstone's primary report](https://statistics.stanford.edu/technical-reports/ideal-spatial-adaptation-wavelet-shrinkage).
+
+## 局部相关性与误差来源 / Local Correlation and Error Sources
+
+局部统计先验仍未过关：用其他完整轨迹学习邻近密度相关性，配合几何噪声协方差与一步CGLS，15个固定中点仍为0/15。场/全梯度/内部梯度误差p90为5.10%/5.41%/9.08%，较单体素控制改善，但远超1%门。独立误差分解显示，残留输入误差较大，先验本身也会改动真实结构；这不支持简单加强去噪或增加迭代。已关闭这个固定配置，跳过剩余1500次重建验证；不是完整重建、加速或真实BOST成功。
+
+Local statistical prior still fails: neighboring-density correlations learned from other complete trajectories, combined with geometry-noise covariance and one CGLS step, give0/15 on fixed midpoints. Field/full-gradient/interior-gradient p90 errors are5.10%/5.41%/9.08%, better than the pointwise control but far above1%. Independent error decomposition finds substantial remaining input error and distortion of true structure by the prior itself. This does not support simply stronger denoising or more iterations. This fixed configuration is closed and1500 further reconstruction checks are skipped. No complete reconstruction, acceleration or real BOST success.
+
+| 同一15个中点 / Same 15 midpoint-seed cases | 场p90 / Field | 全梯度p90 / Full gradient | 内部梯度p90 / Interior gradient | 观测p90 / Observation |
+|---|---:|---:|---:|---:|
+| 局部联合先验+K1 / Local joint prior+K1 | 5.097% | 5.410% | 9.079% | 1.134% |
+| 单体素先验+K1 / Pointwise prior+K1 | 6.129% | 6.210% | 10.788% | 0.949% |
+| 局部先验，无迭代 / Local prior, no refinement | 5.170% | 5.505% | 9.304% | 1.310% |
+| 单体素先验，无迭代 / Pointwise prior, no refinement | 6.131% | 6.210% | 10.789% | 0.966% |
+
+先验只用外折中的其他完整轨迹估计共享局部均值与协方差；单体素控制只使用中心均值与方差。两个先验各自封存1515个外折预测，然后进行15个必要中点检查。独立实现分别重建统计量、噪声相关性、增益、预测、精确lift、原有K1与物理观测，13项检查全真。场/观测/指标最大差1.85e-12/5.49e-12/3.93e-13。表内四臂均0/15，不是它们已完成1515次重建。旧的直接逆、小波、Zero、BP、CGLS、Jacobi和dual-ridge证据仅复用，没有换参数重跑。
+
+The prior estimates shared local means and covariance only from other complete trajectories in each outer fold; the pointwise control uses central mean and variance only. Both priors seal1515 outer predictions before15 necessary midpoint checks. Independent implementations rebuild statistics, noise correlation, gains, predictions, exact lift, unchanged K1 and physical observations. All13 checks pass; maximum field/image/metric differences are1.85e-12/5.49e-12/3.93e-13. Each table arm passes0/15, not1515 completed reconstruction checks. Earlier direct, wavelet, Zero, BP, CGLS, Jacobi and dual-ridge evidence is reused without retuned reruns.
+
+局部联合先验对全部15个配对样本的场与两种梯度指标都比单体素控制好，但观测拟合全部变差。完整逻辑在线账仍为3A+3A^T和四次三角求解，几何因子、逆矩阵、局部噪声表及外折增益构建另计。估计405个统计量不等于神经网络训练；没有新的实测速度或内存优势。
+
+The local joint prior improves all three field metrics over the pointwise control in all15 paired samples, while observation fit worsens in all15. The complete logical online ledger remains3A+3A^T and four triangular solves; geometry factorization, inverse, local-noise tables and fold gain construction cost extra. Estimating405 statistics is not neural-network training. No new measured speed or memory advantage is established.
+
+### 结果后归因 / Post-Open Attribution
+
+封存后才读取已评分真值，分解“最终误差 = 先验偏差 + 保留的输入误差 + K1校正”，不重训、不选参数、不新增A/A^T调用。状态闭合相对差7.78e-15，平方指标闭合差6.08e-18，独立能量项最大差4.61e-14。这是用于理解失败的真值可见诊断，不是部署可用的去噪器。
+
+Only after sealing, already-scored truth is used to decompose final error into prior bias, propagated inverse-state error and K1 correction. There is no refitting, parameter selection or extra A/A^T call. Relative state closure is7.78e-15, squared-metric closure6.08e-18 and maximum independent energy-term difference4.61e-14. This truth-aware diagnostic explains failure; it is not a deployable denoiser.
+
+| 分量中位相对范数 / Median component norm | 先验偏差 / Prior bias | 保留的输入误差 / Propagated inverse error | K1校正 / K1 correction |
+|---|---:|---:|---:|
+| 场 / Field | 1.878% | 3.694% | 0.417% |
+| 全梯度 / Full gradient | 2.564% | 4.517% | 0.621% |
+| 内部梯度 / Interior gradient | 4.617% | 6.943% | 1.030% |
+
+这些范数不是能相加的百分比份额，分量之间有带符号交叉项。三项指标中，全部15个样本的保留输入误差能量都大于先验偏差能量，但先验偏差本身也不小。K1在全部15个样本上改善了三项场指标，仍不足以通过门。下一步不能把问题简单归咎于算得不够久，也不能假设加强去噪一定有效。
+
+These norms are not additive percentage shares: signed cross terms are present. For all three metrics, propagated input-error energy exceeds prior-bias energy in every one of15 cases, but the bias itself is substantial. K1 improves all three field metrics in all15 cases and still does not pass. The gap cannot simply be attributed to insufficient computation, nor does it imply stronger denoising must work.
+
+本轮关闭这个固定局部高斯先验配置，不调整块大小、协方差秩、数值载荷或深度来补救。数据仍为已打开的公开训练轨迹、固定九相机与合成噪声。高斯先验只是工作模型，不证明实际信号或归一化后的噪声具有高斯独立分布，也不提供经校准的后验区间。贝叶斯小块模型已有[经典原始研究](https://www.ipol.im/pub/art/2013/16/)；本试验不是NL-Bayes完整复现、组件首创、外部门或真实BOST结果。
+
+This fixed local-Gaussian configuration is closed, without patch-size, covariance-rank, numerical-load or depth rescue. Data remain opened public training trajectories with fixed nine-camera synthetic noise. The Gaussian prior is a working model, not proof that actual signals or normalized noise are independent Gaussian samples, nor a calibrated posterior interval. Bayesian patch models have [established primary literature](https://www.ipol.im/pub/art/2013/16/). This is not a full NL-Bayes reproduction, component novelty, untouched external result or real BOST result.
