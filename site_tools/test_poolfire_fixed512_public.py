@@ -289,6 +289,26 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_actual_error_partition_preserves_shared_not_specific_boundary():
+    data=json.loads((ROOT/f"docs/{STEM}.json").read_text())["actual_error_partition"]
+    assert data["status"]=="COMMON_FINAL_ERROR_CANCELLATION_SIGNATURE"
+    assert data["independent_status"]=="PASS_INDEPENDENT_ACTUAL_ERROR_PARTITION"
+    assert data["cases_per_arm"]==5 and data["states"]==60 and data["sealed_paths"]==2
+    assert data["paired_signature_counts"]==dict(camera61=10,collapsed61=10,zero_cgls=10)
+    assert data["new_fits"]==data["new_solver_iterations"]==0
+    assert data["post_open"] and data["truth_used_only_for_audit"]
+    assert not any(data[k] for k in ("camera61_specific_cause_proven","physical_vs_discrete_origin_resolved","predictor_authorized","algorithm_breakthrough","resource_speedup","external_generalization","real_bost","paper_success"))
+    assert len(data["groups"])==6
+    for group in data["groups"]:
+        if group["phase"]=="after":
+            assert group["retention_ranges"][2][1]<1/64
+            assert group["score_ranges"][2][0]>.01
+    for rel in ("index.html","operator-learning/index.html","operator-learning/daily-progress.html"):
+        notes=BeautifulSoup((ROOT/rel).read_text(),"html.parser").select("#actual-error-partition")
+        assert len(notes)==1
+        assert all("1.87e-4" in notes[0][f"data-i18n-{lang}"] for lang in ("zh","en"))
+
+
 def test_downstream_partition_is_conditional_not_actual_error_causation():
     data=json.loads((ROOT/f"docs/{STEM}.json").read_text())["downstream_energy_partition"]
     assert data["status"]=="UNIFORM_INTEGRATION_RETENTION_BOTTLENECK"

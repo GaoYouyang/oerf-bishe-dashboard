@@ -1,3 +1,11 @@
+## 2026-09-07：小观测残差不等于小场误差 / Small Residual Is Not Small Field Error
+
+已封存模型的实际误差也有沿射线抵消：学习模型、合并相机对照和Zero-CGLS，在相同五个时刻的两套实现中全部出现同一特征。射线求和的条件保留比从迭代前约0.279至0.428，降为迭代后1.87e-4至2.57e-4；观测误差约0.025%至0.032%，内部梯度误差仍约2.1%至3.0%。独立复算通过。这不是学习模型特有的原因，也不是算法成功；尚未区分连续物理抵消和离散求和的影响。
+
+Actual sealed errors also exhibit within-ray cancellation: the learner, pooled-camera control and Zero-CGLS share the signature at all five fixed times in both implementations. Conditional ray-sum retention drops from about 0.279 to 0.428 before refinement to 1.87e-4 to 2.57e-4 afterward; observation error is about 0.025% to 0.032%, while interior-gradient error remains about 2.1% to 3.0%. Independent replay passes. This is neither a learner-specific cause nor algorithm success; continuous physical cancellation and discrete summation effects remain unseparated.
+
+[实际误差审计 / Actual error audit](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：沿射线的正负抵消 / Opposite Signs Along Rays
 
 下游物理诊断进一步定位了弱响应：在20条预先固定的几何见证上，插值和横向投影的条件保留比约为0.314至0.622、0.500至0.541，沿射线求和却只有4.65e-7至1.15e-4；平滑控制为0.827至0.833。独立复算确认了强烈的沿射线符号抵消。这里的保留比不是实际信号损失百分比，也尚未证明这就是学习失败的原因；没有修改测量算子、训练新模型或获得加速成果。

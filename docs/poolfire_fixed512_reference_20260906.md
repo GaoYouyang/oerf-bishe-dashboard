@@ -1148,3 +1148,34 @@ NumPy八角插值与独立重建的原生Torch因子、独立CSR分别重放25�
 NumPy eight-corner interpolation and independently rebuilt native Torch factors plus independent CSR replay 25 fields. Image/per-ray-moment/summary discrepancies are at most 1.48e-12/3.07e-14/4.71e-14; native factor recomposition equals native A elementwise. New work consists only of 25 offline factorized and 25 CSR forwards, 25 independent native and 25 independent CSR forwards, plus gradient/moment work. There are no truth, observation or prediction reads, training or new inverse solves. The next question is whether sealed learned error fields exhibit the same structure; these selected witnesses alone cannot authorize a new network.
 
 [BOST测量模型 / BOST measurement model](https://opg.optica.org/oe/fulltext.cfm?uri=oe-30-11-19100)支持梯度线积分的物理形式，不是本实验成果的外部验证。The source supports the gradient line-integral model, not external validation of these findings.
+
+## 2026-09-07 实际误差的共同抵消特征 / Cancellation Shared by Actual Errors
+
+已封存模型的实际误差也有沿射线抵消：学习模型、合并相机对照和Zero-CGLS，在相同五个时刻的两套实现中全部出现同一特征。射线求和的条件保留比从迭代前约0.279至0.428，降为迭代后1.87e-4至2.57e-4；观测误差约0.025%至0.032%，内部梯度误差仍约2.1%至3.0%。独立复算通过。这不是学习模型特有的原因，也不是算法成功；尚未区分连续物理抵消和离散求和的影响。
+
+Actual sealed errors also exhibit within-ray cancellation: the learner, pooled-camera control and Zero-CGLS share the signature at all five fixed times in both implementations. Conditional ray-sum retention drops from about 0.279 to 0.428 before refinement to 1.87e-4 to 2.57e-4 afterward; observation error is about 0.025% to 0.032%, while interior-gradient error remains about 2.1% to 3.0%. Independent replay passes. This is neither a learner-specific cause nor algorithm success; continuous physical cancellation and discrete summation effects remain unseparated.
+
+| 方法 / Arm | 阶段 / Stage | 射线求和保留 / Ray retention | 内部梯度误差 / Interior-gradient error |
+|---|---|---:|---:|
+| camera61 | 迭代前 / Before | 0.279284--0.368702 | 98.9216%--105.2065% |
+| camera61 | 迭代后 / After | 0.000187906--0.000257207 | 2.1338%--3.0215% |
+| collapsed61 | 迭代前 / Before | 0.291023--0.356523 | 98.7560%--102.5122% |
+| collapsed61 | 迭代后 / After | 0.000187895--0.000257304 | 2.1295%--3.0179% |
+| zero_cgls | 迭代前 / Before | 0.284373--0.428478 | 100.0000%--100.0000% |
+| zero_cgls | 迭代后 / After | 0.000187097--0.000256173 | 2.1088%--2.9985% |
+
+范围包括同一五个必要时刻的两套已封存实现，不是十个独立样本；60个状态包括三种方法、迭代前后及两套实现。没有重新训练、增加迭代、计算其余500个端点或打开新条件。旧1%四指标门和原失败结论不变。
+
+Ranges cover two sealed implementations at the same five necessary midpoints, not ten independent cases. The 60 states span three arms, before/after refinement and both implementations. No fitting, added iterations, remaining 500 endpoints or new conditions were run. The original four-metric 1% gates and failures are unchanged.
+
+原样重建error=field-truth，真值只用于事后归因。正式NumPy八角插值与独立原生Torch梯度、插值和前向分别复算；重放A(error)=A(field)-A(truth)，以及最终误差投影等于封存残差的负值。图像、逐射线能量、保留比的最大差约2.15e-13、1.91e-14、1.17e-14；输入输出树均未改变。
+
+Errors are rebuilt as field minus truth, with truth used only for post-open attribution. Formal NumPy eight-corner factors and independent native Torch gradients, interpolation and forward operations replay A(error)=A(field)-A(truth), including the negative sealed residual at each endpoint. Maximum image, per-ray-energy and retention discrepancies are about 2.15e-13, 1.91e-14 and 1.17e-14; input/output trees remain unchanged.
+
+全部最终误差的射线求和保留比既小于插值、横向投影的保留比，又小于自身迭代前值和1/64。因此抵消存在于实际误差，不再只是特选几何方向上的现象；但两种对照同样出现，不能证明它是网络特有的因果机制。E0仍不是总场能量，保留比也不是误差百分比或物理不可辨识性证明。下一步只允许有界核对连续分段积分与既有离散求和，不据此扩大网络。
+
+Every final error has ray-sum retention below interpolation/transverse retention, its own initial value and 1/64. Cancellation therefore occurs in actual errors, not only selected geometry witnesses. Both controls share it, so this is not a learner-specific causal explanation. E0 is not total field energy; retention is neither an error percentage nor proof of physical non-identifiability. The next bounded question compares continuous cellwise integration with existing discrete summation, without enlarging a network.
+
+正式离线账130次CSR前向、60次因子前向和梯度/二阶矩工作；独立账130次原生前向、60次独立CSR前向、60次梯度和120次二阶矩插值。它们不是新部署算法的在线账，不授权速度、泛化或真实BOST主张。
+
+Offline formal work comprises 130 CSR and 60 factorized forwards plus gradient/moment work; independent work comprises 130 native and 60 independent CSR forwards, 60 gradients and 120 moment interpolations. These are not online costs of a new deployment algorithm and authorize no speed, generalization or real-BOST claim.
