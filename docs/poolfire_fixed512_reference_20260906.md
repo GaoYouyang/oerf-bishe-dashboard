@@ -320,3 +320,42 @@ This only excludes mutual1% bounded-noise ambiguity among these505 stored actual
 物理先验用于约束病态逆问题是[经典背景](https://www.imm.dtu.dk/~pcha/Regularization/regu.html)。本次增量是实际源类别的可审查证据，不是组件首创、算法突破、泛化或真实BOST结果。
 
 Physical solution constraints for ill-posed inverses are [established background](https://www.imm.dtu.dk/~pcha/Regularization/regu.html). This increment is inspectable evidence about the actual source class, not component novelty, algorithm breakthrough, generalization or real BOST.
+
+## 查询自身的非局部相似性 / Within-Query Nonlocal Similarity
+
+非局部自相似恢复失败：只从当前输入寻找相似三维小块，并考虑几何传播的块间噪声相关性，再做精确lift与一步CGLS，固定15个样本仍为0/15。场/全梯度/内部梯度/干净投影误差p90为15.39%/23.85%/25.75%/9.00%，比直接逆更差。独立复算已确认；关闭此固定配置，未运行剩余1500个样本，不调带宽、块大小或深度补救。零训练参数；不是算法、速度或真实BOST成功。
+
+Nonlocal self-similarity reconstruction fails: matching3D patches only within the current input, accounting for geometry-propagated interpatch noise correlation, then exact lift and one CGLS step gives0/15 fixed samples. Field/full-gradient/interior-gradient/clean-projection p90 errors are15.39%/23.85%/25.75%/9.00%, worse than the direct inverse. Independently verified. This fixed configuration is closed and1500 remaining samples are not run; no bandwidth, patch-size or depth rescue. Zero trained parameters; no algorithm, speed or real BOST success.
+
+本次与旧固定局部高斯先验不同：不拟合均值或协方差，只在当前带噪重建内寻找形状相似的小块，再平均其中心值。噪声强度由当前最小二乘残差及已知剩余维数估计，不读取真值、其他帧或轨迹标签。使用同一块大小、同一噪声估计的便宜控制忽略块间噪声协方差。两条路线的预测及物理输出先封存，才读取真值评分。
+
+Unlike the previous fixed local Gaussian prior, this method fits no signal mean or covariance: it matches similarly shaped patches inside the current noisy reconstruction and averages their centers. Noise strength is estimated from the current least-squares residual and known residual dimension, without truth, another frame or trajectory labels. A cheaper control uses the same patch size and noise estimate but ignores interpatch noise covariance. Both routes seal predictions and physical outputs before truth is read for scoring.
+
+| 同一15个样本 / Same15 cases | 场p90 / Field | 全梯度p90 / Full gradient | 内部梯度p90 / Interior gradient | 干净投影p90 / Clean projection |
+|---|---:|---:|---:|---:|
+| 相关NLM+K1 / Correlated NLM+K1 | 15.388% | 23.851% | 25.747% | 9.000% |
+| 忽略块间相关+K1 / Interpatch-independent+K1 | 14.766% | 23.531% | 24.433% | 8.829% |
+| 相关NLM，无迭代 / Correlated NLM, no refinement | 16.796% | 27.100% | 28.148% | 12.402% |
+| 忽略块间相关，无迭代 / Interpatch-independent, no refinement | 16.243% | 26.836% | 27.028% | 13.156% |
+| 原直接逆 / Inherited direct inverse | 6.144% | 6.221% | 10.820% | 0.450% |
+| 原局部高斯先验+K1 / Inherited local Gaussian+K1 | 5.097% | 5.410% | 9.079% | 0.797% |
+
+新试验结果前固定场、全梯度、内部梯度和干净投影各1%的门；带噪观测拟合单独报告。表内所有方法均0/15，不是旧方法改门后的成功。旧Zero/BP/CGLS3/Jacobi3/dual-ridge、小波及局部先验证据只复用，不重新训练或调整，其场与梯度失败保持不变。
+
+Before results, this new experiment fixes1% bounds for field, full gradient, interior gradient and clean projection, with noisy-observation fit reported separately. Every table method passes0/15; this is not success obtained by changing old gates. Sealed Zero/BP/CGLS3/Jacobi3/dual-ridge, wavelet and local-prior outputs are reused without retraining or adjustment; their field/gradient failures stand.
+
+相关NLM相比忽略块间相关的控制，场/全梯度/内部梯度/干净投影分别在15/13/15/4个样本上更差。两种方法的有效加权邻居数中位数为4.41/4.21，它不是独立样本数或已校准的方差降低倍数。主方法带噪拟合p90为9.0445%，明显不属于旧观测门的微小归一化误差。
+
+Relative to the interpatch-independent control, correlated NLM worsens field/full-gradient/interior-gradient/clean projection in15/13/15/4 cases. Median effective weighted-neighbor counts are4.41/4.21, not independent sample counts or calibrated variance-reduction factors. Primary noisy-fit p90 is9.0445%, far beyond the tiny normalization mismatch in the old observation gate.
+
+独立13项数值检查全真；几何噪声量/预测场/物理投影/指标最大差4.57e-13/2.79e-12/1.57e-12/7.45e-13。额外终态核验重查60个配对物理输出、192个权重计算及全部轨迹尾部和调用账。完整逻辑在线账4A+3A^T和四次三角求解，稠密几何协方差与非局部匹配成本另计，不构成算子调用或资源优势。
+
+All13 numerical checks pass independently; maximum geometry-noise/predicted-field/physical-projection/metric differences are4.57e-13/2.79e-12/1.57e-12/7.45e-13. A separate terminal audit rechecks60 paired physical outputs,192 weight computations and all trajectory tails/cost receipts. The complete logical online ledger is4A+3A^T plus four triangular solves; dense geometry covariance and nonlocal matching cost extra. No exact-call or resource advantage is established.
+
+关闭的是这个固定权重、块大小、搜索、噪声估计、自权重和K1组合，不否定所有自相似方法。更多平均并未保住当前三维结构，不能靠更大搜索、调带宽、块大小、top-k或深度来挽救。剩余1500个样本未执行，不是完整序列失败率。数据仍为已打开公开轨迹、固定九相机和合成噪声，没有真实BOST或外部泛化结果。
+
+Only this fixed weighting, patch, search, noise-estimation, self-weight and K1 combination is closed, not all self-similarity methods. More averaging did not preserve the current3D structure; larger search, bandwidth, patch-size, top-k or depth tuning is not authorized as rescue. The remaining1500 samples are unexecuted, not a complete-sequence failure rate. Data remain opened public trajectories, fixed nine cameras and synthetic noise, without real BOST or external-generalization evidence.
+
+[非局部均值原始说明](https://www.ipol.im/pub/art/2011/bcm_nlm/revisions/2011-09-13/bcm_nlm.htm)与[相关噪声原始研究](https://webpages.tuni.fi/foi/papers/ICIP2019_Ymir.pdf)是背景。本试验不是完整BM3D/NL-Bayes复现、组件首创或新噪声理论。
+
+The [original nonlocal-means description](https://www.ipol.im/pub/art/2011/bcm_nlm/revisions/2011-09-13/bcm_nlm.htm) and [primary correlated-noise study](https://webpages.tuni.fi/foi/papers/ICIP2019_Ymir.pdf) are background. This is not a full BM3D/NL-Bayes reproduction, component novelty or new noise theory.

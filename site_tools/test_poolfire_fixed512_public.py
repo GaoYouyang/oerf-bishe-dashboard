@@ -210,3 +210,21 @@ def test_actual_source_pair_audit_is_not_a_learned_success():
         assert len(note) == 1
         for lang in ("zh", "en"):
             assert all(value in note[0][f"data-i18n-{lang}"] for value in ("127,260", "8.93%", "505/505"))
+
+
+def test_correlated_nlm_is_a_fixed_sentinel_failure():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["correlated_nonlocal_means"]
+    assert data["status"] == "FAIL_FIXED_CORRELATED_NLM" and data["passing"] == 0
+    assert data["cells_per_arm"] == 15 and data["unexecuted_remaining_cells"] == 1500
+    assert all(row["passing"] == 0 for row in data["summaries"].values())
+    assert data["primary_harm_vs_diagonal"] == [15, 13, 15, 4]
+    assert data["new_observation_metric"] == "clean_projection_relative_error" and data["old_decisions_unchanged"]
+    assert data["primary_online"] == {"A": 4, "AT": 3, "triangular": 4}
+    assert data["fitted_parameters"] == 0 and data["no_other_frame_input"]
+    assert not data["complete_sequence_evaluated"] and not data["algorithm_breakthrough"] and not data["real_bost"]
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        soup = BeautifulSoup((ROOT / relative).read_text(), "html.parser")
+        note = soup.select("#correlated-nlm-result")
+        assert len(note) == 1
+        for lang in ("zh", "en"):
+            assert all(value in note[0][f"data-i18n-{lang}"] for value in ("0/15", "15.39%", "1500"))
