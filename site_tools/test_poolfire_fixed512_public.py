@@ -105,3 +105,19 @@ def test_field81_is_a_failed_necessary_gate_not_505_successes():
         assert len(notes) == 1
         for lang in ("zh", "en"):
             assert all(value in notes[0][f"data-i18n-{lang}"] for value in ("81", "505", "0/5", "258", "500"))
+
+
+def test_direct_factor_is_classical_cache_ready_not_learned_speedup():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["direct_factor_resource"]
+    assert data["accuracy_passed"] == data["independent_accuracy_passed"] == 505
+    assert data["complete_trajectories"] == 5 and data["repetitions_per_arm"] == 3
+    assert len(data["measurements"]) == 9 and data["retained_factor_bytes"] == 276595200
+    assert data["factor_returned_residual_calls"] == {"A": 1, "AT": 1, "triangular_solves": 2}
+    assert all(data["summary"][arm]["median_wall_seconds"] > 0 for arm in ("factor", "cgls", "pcgls"))
+    assert not any(data[k] for k in ("learned_advantage", "algorithm_breakthrough", "whole_bos_pipeline_speedup", "filesystem_cache_cold", "external_generalization", "real_bost"))
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        soup = BeautifulSoup((ROOT / relative).read_text(), "html.parser")
+        notes = soup.select("#direct-factor-resource-result")
+        assert len(notes) == 1
+        assert "不是学习算法加速" in notes[0]["data-i18n-zh"]
+        assert "not learned acceleration" in notes[0]["data-i18n-en"]

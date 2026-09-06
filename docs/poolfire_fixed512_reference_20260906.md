@@ -124,3 +124,31 @@ Every metric decision agrees at the five necessary midpoints. Independent state/
 新离线训练、预测、核验与评分总账329650A+249850AT；实际70个终态求解另18030A+17990AT，初始化已在预测阶段执行并单列。每种方法的单次部署账均为258A+258AT；几何因子、映射以及已有参考的构建成本不免费。没有fresh wall/RSS优势、GPU需求或论文成功结论。不扩大或调参挽救这个固定配置，也不据此否定所有三维算子学习。
 
 New offline training, prediction, audits and scoring total329650 A+249850 AT; the70 actual endpoint solves add18030 A+17990 AT, with initializer work executed and recorded in the prediction stage. Each method's per-deployment ledger is258 A+258 AT; geometry factors, maps and inherited reference construction are not free. No fresh wall/RSS advantage, GPU need or paper-success claim is established. This fixed configuration will not be enlarged or retuned, and its failure does not rule out all3D operator learning.
+
+## 固定几何经典直接解 / Fixed-Geometry Classical Direct Solve
+
+补齐关键经典对照：固定九相机几何的缓存直接分解，经独立QR复算，在505帧、5条完整轨迹上四项1%精度门全部通过。每种方法三次新进程测量，直接分解/CGLS512/Jacobi-PCGLS512的505帧总耗时中位数为2.80/166.85/168.86秒，进程峰值内存中位数为1.21/0.72/0.73GiB。包含重新分解、求解和写盘；不包含原始BOS矩阵构建与观测生成。该结果是经典方法对照，不是学习算法加速或真实BOST成果。
+
+Classical comparator completed: cached direct factorization for one fixed nine-camera geometry passed all four 1% gates on505 frames and five complete trajectories, independently checked by rectangular QR. Across three fresh processes per method, median505-frame wall times for direct factorization/CGLS512/Jacobi-PCGLS512 are2.80/166.85/168.86seconds; median process peak memory is1.21/0.72/0.73GiB. Measurements include refactorization, solves and output writing, but exclude original BOS matrix construction and observation generation. This is a classical comparison, not learned acceleration or a real-BOST result.
+
+| 经典方法 / Classical method | 505帧总秒数中位数 / Median seconds | 进程峰值GiB中位数 / Median peak GiB | 准备秒数中位数 / Median setup seconds |
+|---|---:|---:|---:|
+| factor | 2.798 | 1.208 | 0.9211 |
+| cgls | 166.852 | 0.725 | 0.0000 |
+| pcgls | 168.856 | 0.725 | 0.0076 |
+
+这次补齐的是一个简单但关键的对照：同一相机几何被505帧复用时，可以先分解有效场空间的正规矩阵，再对每帧做一次伴随和两次三角求解。独立实现不形成正规方程，而是对相机行块乱序后的矩形矩阵做带列主元QR。未加新的正则、截断或训练参数；两者的场最大差2.242e-12、观测最大差3.680e-14，全部轨迹均通过。直接解的四项误差也都小于已合格的两种K512参考。
+
+The missing comparator is simple but important:505 frames share the same camera geometry, so the active field normal matrix can be factored once and each frame solved using one adjoint and two triangular solves. The independent implementation forms no normal equations: it uses column-pivoted rectangular QR after camera-block row permutation. No new regularization, truncation or trained parameters are used. Maximum field and observation discrepancies are2.242e-12 and3.680e-14; every complete trajectory passes. Direct-solve errors are also lower on all four metrics than both qualified K512 references.
+
+计时在独立精度门之后另行冻结。三种方法按固定轮换次序各启动三次，重新加载矩阵与观测并重建各自准备；全部九次的505个场和物理残差都通过独立回放与精度核验。直接分解使用8个BLAS线程，迭代法使用8个帧线程且每帧BLAS单线程。内存是整个求解进程峰值，包含因子、临时数组、输入和输出；监督进程另列，二者峰值之和只是并发内存上界，不是同步采样的精确峰值。操作系统文件缓存未清空。
+
+Resource measurements were frozen separately after independent accuracy qualification. Each method ran three times in a fixed rotated order, reloading matrices and observations and rebuilding its own preparation. All505 fields and physical residuals from all nine runs passed independent replay and accuracy checks. Direct factorization uses eight BLAS threads; iterative methods use eight frame threads with single-thread BLAS. Peak memory covers the entire solve process, including factors, temporaries, inputs and outputs. Supervisor memory is listed separately; the sum of separate peaks is only a concurrent-memory upper bound, not an exactly synchronized peak. Operating-system file caches were not purged.
+
+保留的直接因子约263.8MiB；其几何准备成本和三角求解不能当作免费操作。返回场及物理残差时直接法为1A+1AT加两次三角求解，两种K512迭代法为513A+512AT，其中一次A用于重新计算物理残差。这里没有证明512倍加速、最小迭代步数、任意相机变化、观测噪声稳定性或完整BOS端到端加速。现有几何矩阵与无噪声观测已就绪是比较的前提。
+
+The retained direct factor occupies about263.8MiB; geometry preparation and triangular solves are not free. Returning a field and physical residual costs1A+1AT plus two triangular solves for the direct method, versus513A+512AT for either K512 method, including one fresh residual projection. This does not establish a512-fold speedup, minimum iteration depth, arbitrary camera changes, noise stability or complete BOS end-to-end acceleration. Existing geometry matrices and clean observations are prerequisites for this comparison.
+
+科学判断：固定小规模、干净线性代理上的精度与调用数，单独不足以支持学习优势。后续学习必须说明为何不能直接复用这个经典解，并在同样计入准备与内存的条件下胜过它；不能只拿较慢的迭代法当对照。当前没有学习算法突破或真实实验结论。
+
+Scientific consequence: accuracy and exact-call counts alone on this small, fixed, clean linear proxy do not support a learned advantage. Future learning must explain when this classical solution cannot simply be reused and beat it with preparation and memory included, not compare only against slower iterative solvers. No learned algorithm breakthrough or real-experiment conclusion follows.
