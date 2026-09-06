@@ -44,6 +44,30 @@ def test_exact_normal_diagnostic_is_not_prediction_success():
         assert note and '10/25' in note['data-i18n-zh'] and '10/25' in note['data-i18n-en']
 
 
+def test_trained_comparator_is_not_an_independent_retraining_or_success_claim():
+    data = json.loads((ROOT / f'docs/{STEM}.json').read_text())
+    trained = data['trained_neural_comparator']
+    arm = next(a for a in data['arms'] if a['arm'] == 'trained_ray_set_k1')
+    assert len(data['arms']) == 15
+    assert (arm['passing_cells'], arm['complete_trajectories']) == (420, 1)
+    assert [r['passing_cells'] for r in arm['trajectory_results']] == [101, 89, 90, 49, 91]
+    assert trained['trainable_parameters_per_fold'] == 369
+    assert trained['additional_train_only_output_scale_per_fold'] == 1
+    assert trained['epochs'] == 20 and trained['optimizer_updates'] == 10100
+    assert trained['hidden_weights_trained'] and trained['independent_prediction_and_physical_replay']
+    assert trained['shared_sealed_parameter_artifacts'] and not trained['independent_optimizer_trajectory_repeated']
+    assert trained['dominates_cheaper_ridge_cells'] == 504 and not trained['cheap_control_gate_passed']
+    assert trained['fixed_budget_instance_closed']
+    assert trained['call_counts']['training_A'] == trained['call_counts']['training_AT'] == 80800
+    current = json.loads((ROOT / 'operator-learning/current-evidence.json').read_text())
+    assert current['latest_prediction'] == trained
+    for file in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT / file).read_text(), 'html.parser')
+        note = soup.select_one('#trained-ray-set-result')
+        assert note and '504/505' in note['data-i18n-zh'] and '504/505' in note['data-i18n-en']
+        assert 'not independent retraining' in note['data-i18n-en']
+
+
 def test_normal_cache_arithmetic_is_not_a_wall_or_reconstruction_claim():
     data = json.loads((ROOT / f'docs/{STEM}.json').read_text())
     row = data['diagnostics']['exact_normal_cache']

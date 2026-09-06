@@ -1,3 +1,19 @@
+## 2026-09-06：真正训练隐层后，多过11帧仍不算稳定成功
+
+同一505帧完整轨迹留一：369参数全训练比较器通过420帧、1/5条完整轨迹；旧随机特征为409帧、2/5，线性对照为412帧、1/5。稳定同精度与便宜对照门仍未通过。
+
+这次隐层与读出共369参数全部训练，另有每折一个仅由训练集确定的输出尺度；输入仍只有观测与几何。候选在线2A+2AT，更便宜的直接场ridge为2A+1AT；仍无稳定调用减少、资源优势或真实BOST结论。
+
+固定20轮全训练已独立重放：逐轨迹通过101/89/90/49/91帧，仅504/505帧在四指标上均不差于便宜ridge，未通过全部505帧门。第二实现共享封存权重，独立推理与物理重放，不是独立重训。关闭这个固定预算实例，不追加轮数、改种子或扩大模型追通过。
+
+On the same 505-frame complete-trajectory LOTO, the fully trained 369-parameter comparator passes 420 cells and 1/5 trajectories; the old random features pass 409 and 2/5, and the linear control 412 and 1/5. Stable matched accuracy and the cheaper-control gate remain unmet.
+
+All 369 hidden and readout parameters are trained, with one additional train-only output scale per fold; inputs remain observations and geometry only. Online cost is 2A+2AT versus cheaper direct-field ridge at 2A+1AT. Stable call reduction, resource benefit and real BOST remain unproven.
+
+The fixed 20-epoch trained comparator is independently replayed: per-trajectory passes are 101/89/90/49/91, and all-four nonharm against cheaper ridge holds on only 504/505 cells, failing the all-505 gate. The second implementation shares sealed weights but independently infers and physically replays; it is not independent retraining. This fixed-budget instance closes without extra epochs, reseeding or model expansion to chase a pass.
+
+[双语数值与边界 / Bilingual values and limits](poolfire_f30_comparison_20260906.md)
+
 ## 2026-09-06：把计算提前存下来，不一定更便宜
 
 在当前九相机几何中，精确normal缓存仍需64,746,812个非零项，约741 MiB。单次乘法的算术项数是直接A/AT分解的10.93倍，因此没有通过便宜控制筛选。独立第二实现核对全部29,700行；没有读取密度真值、训练或重建，也没有保存这个大矩阵。

@@ -1,6 +1,18 @@
 # PoolFire：局部改善已复现，稳定同精度尚未通过
 
-2026-09-06。五条公开训练轨迹、505帧、完整轨迹留一验证：随机特征神经算子通过409帧、2/5条完整轨迹；线性化对照通过412帧、1/5条轨迹。两者都没有通过完整目标。
+2026-09-06。同一505帧完整轨迹留一：369参数全训练比较器通过420帧、1/5条完整轨迹；旧随机特征为409帧、2/5，线性对照为412帧、1/5。稳定同精度与便宜对照门仍未通过。
+
+## 全训练小模型：帧数增加，完整目标仍失败
+
+原比较器只训练17个读出值。这次保持8/8宽度与同一初始化，训练全部369参数，另存每折一个仅由训练集决定的输出尺度。五折各20轮，共10,100步；只用训练轨迹的K4教师，不用留出真值、时间或轨迹标签调参，不挑最佳轮次。预测先封存再评分。优化方式不同，这不是隐层训练的单因素因果实验，固定预算也不保证收敛。
+
+逐轨迹通过101/89/90/49/91帧，合计420/505、1/5完整轨迹。p45由旧随机特征22帧提高到49帧，但p33由101降到90；总数增加不等于稳定性提高。更便宜直接场ridge的四指标无伤害仅504/505帧，标量对照为505/505，固定审裁仍失败。field/full-gradient/interior-gradient/observation超过1.01倍K4的帧数分别58/12/21/57，计数有重叠。
+
+第二实现共享封存的最终权重，独立重建推理、精确lift、未修改K1与505帧物理评分；不是独立重训。100个局部训练梯度及优化器转移另行核对，不代表第二条完整优化轨迹。预测/场/指标最大相对差约6.71e-15/3.87e-15/1.48e-15，汇总7.78e-14，离散判定一致。
+
+训练本身80,800A+80,800AT；两实现教师图像各505A，独立梯度探针800A+800AT，两实现最终重建各1,010A+1,010AT、评分各505A，另有29,700行解析几何构建。候选逻辑在线仍2A+2AT。约72.53分钟、峰值3.916GiB只作本次运行遥测，不是fresh资源比较或加速结论。
+
+关闭此固定预算实例，不加轮数、换学习率/种子/宽度追通过；不概括所有神经网络失败。当前只有局部改善，仍无完整稳定学习优势、速度或论文突破。
 
 ## 比什么，如何判定
 
@@ -25,6 +37,7 @@
 | 固定逆频率滤波 + K1 / Fixed inverse-frequency filter + K1 | 0/505 | 0/5 | 2A + 2AT |
 | 随机特征神经算子 + K1 / Random-feature neural operator + K1 | 409/505 | 2/5 | 2A + 2AT |
 | 线性化对照 + K1 / Linearized control + K1 | 412/505 | 1/5 | 2A + 2AT |
+| 全训练小型神经比较器 + K1 / Fully trained small neural comparator + K1 | 420/505 | 1/5 | 2A + 2AT |
 | 固定系数去全局消息消融 / Fixed-coefficient context-off ablation | 412/505 | 1/5 | 2A + 2AT |
 
 BP指观测线搜索后的反投影，在此线性问题中与零起点CGLS K1等价。单元通过数不是总体成功概率；即使K4在表中通过，它也是定义比较线的参考，不是一次新算法发现。
@@ -33,13 +46,13 @@ BP指观测线搜索后的反投影，在此线性问题中与零起点CGLS K1�
 
 随机特征比较器以每条射线的带符号双分量观测和几何编码为输入，包含跨相机全局均值上下文。隐层352个随机量固定，仅学习17个共享读出系数。训练目标是K4的场、全梯度、内部梯度和投影的等权归一化物理误差，不是把留出CFD真值喂给预测器。它是读出训练的随机特征神经算子，不能概括所有完整训练的神经算子。
 
-| 轨迹 / Trajectory | 直接场ridge | 神经比较器 | 线性化对照 | 固定系数去消息消融 |
-|---|---:|---:|---:|---:|
-| p14-s05 | 0/101 | 101/101 | 101/101 | 101/101 |
-| p22-s03 | 0/101 | 91/101 | 98/101 | 98/101 |
-| p33-s01 | 0/101 | 101/101 | 100/101 | 100/101 |
-| p45-s05 | 0/101 | 22/101 | 23/101 | 23/101 |
-| p58-s03 | 0/101 | 94/101 | 90/101 | 90/101 |
+| 轨迹 / Trajectory | 直接场ridge | 神经比较器 | 线性化对照 | 固定系数去消息消融 | 全训练比较器 |
+|---|---:|---:|---:|---:|---:|
+| p14-s05 | 0/101 | 101/101 | 101/101 | 101/101 | 101/101 |
+| p22-s03 | 0/101 | 91/101 | 98/101 | 98/101 | 89/101 |
+| p33-s01 | 0/101 | 101/101 | 100/101 | 100/101 | 90/101 |
+| p45-s05 | 0/101 | 22/101 | 23/101 | 23/101 | 49/101 |
+| p58-s03 | 0/101 | 94/101 | 90/101 | 90/101 | 91/101 |
 
 神经比较器在501/505帧的四指标全部优于直接场ridge，线性化对照为502/505，但少数尾部仍失败；该ridge还少一次AT，不能从公平对照中删掉。两者均优于便宜的K2/标量基线，却未稳定守住K4误差。这是有局部学习改善、无完整稳定优势，不是“所有学习都没用”，也不是算法突破。
 
@@ -83,7 +96,19 @@ BP指观测线搜索后的反投影，在此线性问题中与零起点CGLS K1�
 
 # PoolFire: local gains reproduce, stable matched accuracy remains unmet
 
-Across five public training trajectories and 505 frames with complete-trajectory LOTO, the random-feature neural operator passes 409 cells and 2/5 complete trajectories; the linearized control passes 412 cells and 1/5 trajectories. Neither passes the complete objective.
+On the same 505-frame complete-trajectory LOTO, the fully trained 369-parameter comparator passes 420 cells and 1/5 trajectories; the old random features pass 409 and 2/5, and the linear control 412 and 1/5. Stable matched accuracy and the cheaper-control gate remain unmet.
+
+## Fully trained small model: more passing cells, still no complete success
+
+The old comparator fitted only17 readout values. Keeping width8/8 and the same initialization, this run trains all369 parameters plus one stored train-only output scale per fold. Five folds each use20 epochs, totaling10,100 steps. Only training-trajectory K4 teachers enter fitting; query truth, time and trajectory IDs do not guide tuning, stopping or iterate selection. Predictions seal before scoring. Optimization differs from the old readout solve, so this is not a single-factor causal ablation and finite-budget convergence is not guaranteed.
+
+Trajectory counts are101/89/90/49/91, totaling420/505 and1/5 complete trajectories. p45 rises from the old random-feature22 to49, but p33 falls from101 to90. A larger total does not establish better stability. All-four nonharm against cheaper direct-field ridge holds on504/505 cells; the scalar control on505/505. The fixed adjudication fails. Counts exceeding1.01 timesK4 are58/12/21/57 for field/full-gradient/interior-gradient/observation, with overlaps.
+
+The second implementation shares sealed final weights but independently reconstructs inference, exact lift, unchangedK1 and all505 physical scores; it is not independent retraining. Separate checks of100 local gradients and optimizer transitions are not a second full optimization trajectory. Prediction/field/metric maximum relative differences are about6.71e-15/3.87e-15/1.48e-15, with summary7.78e-14 and identical discrete decisions.
+
+Training alone costs80,800A+80,800AT. Each implementation prepares505 teacher-imageA calls; independent gradient probes add800A+800AT; each final reconstruction uses1,010A+1,010AT and scoring505A, plus29,700 analytical geometry rows. Logical online cost remains2A+2AT. About72.53 minutes and3.916GiB peakRSS are run telemetry, not a fresh resource comparison or speedup.
+
+This fixed-budget instance closes without extra epochs, learning-rate/seed/width rescue. It does not establish that all neural networks fail. Local improvements remain, without complete stable learned advantage, speedup or a paper breakthrough.
 
 ## Data, criterion and comparison
 

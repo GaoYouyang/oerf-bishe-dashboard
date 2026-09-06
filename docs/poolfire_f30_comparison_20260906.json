@@ -2207,6 +2207,160 @@
       ],
       "is_reference": false,
       "post_open_ablation": true
+    },
+    {
+      "arm": "trained_ray_set_k1",
+      "label_zh": "全训练小型神经比较器 + K1",
+      "label_en": "Fully trained small neural comparator + K1",
+      "logical_calls": {
+        "A": 2,
+        "AT": 2
+      },
+      "passing_cells": 420,
+      "complete_trajectories": 1,
+      "is_reference": false,
+      "trajectory_results": [
+        {
+          "trajectory": "p14-s05",
+          "cells": 101,
+          "passing_cells": 101,
+          "complete_pass": true,
+          "error_tails": {
+            "field": {
+              "median": 0.4246734317619472,
+              "p90_higher": 0.4348666898535546,
+              "worst": 0.43943603616757987
+            },
+            "full_gradient": {
+              "median": 0.4244558991083052,
+              "p90_higher": 0.44123857273090117,
+              "worst": 0.44549015075759407
+            },
+            "interior_gradient": {
+              "median": 0.4473506780598091,
+              "p90_higher": 0.45903853871246747,
+              "worst": 0.4665321707553858
+            },
+            "observation": {
+              "median": 0.2598688984896548,
+              "p90_higher": 0.2710030279257309,
+              "worst": 0.2890940478384688
+            }
+          }
+        },
+        {
+          "trajectory": "p22-s03",
+          "cells": 101,
+          "passing_cells": 89,
+          "complete_pass": false,
+          "error_tails": {
+            "field": {
+              "median": 0.4057307403526161,
+              "p90_higher": 0.41796730003138277,
+              "worst": 0.4277375968912794
+            },
+            "full_gradient": {
+              "median": 0.396055347625684,
+              "p90_higher": 0.40632726272685504,
+              "worst": 0.41028265961693566
+            },
+            "interior_gradient": {
+              "median": 0.43825602446663425,
+              "p90_higher": 0.4507950012656465,
+              "worst": 0.46305977411048976
+            },
+            "observation": {
+              "median": 0.30337093415704314,
+              "p90_higher": 0.3190814266396991,
+              "worst": 0.34007861352525465
+            }
+          }
+        },
+        {
+          "trajectory": "p33-s01",
+          "cells": 101,
+          "passing_cells": 90,
+          "complete_pass": false,
+          "error_tails": {
+            "field": {
+              "median": 0.37787702729382433,
+              "p90_higher": 0.385607658511816,
+              "worst": 0.39394354801706155
+            },
+            "full_gradient": {
+              "median": 0.3498896776192856,
+              "p90_higher": 0.3667245394987522,
+              "worst": 0.3778292756609101
+            },
+            "interior_gradient": {
+              "median": 0.3953623860388727,
+              "p90_higher": 0.40327188036633954,
+              "worst": 0.41196028188601486
+            },
+            "observation": {
+              "median": 0.30496957802044994,
+              "p90_higher": 0.3259280455436263,
+              "worst": 0.34908915424525755
+            }
+          }
+        },
+        {
+          "trajectory": "p45-s05",
+          "cells": 101,
+          "passing_cells": 49,
+          "complete_pass": false,
+          "error_tails": {
+            "field": {
+              "median": 0.42831116502599037,
+              "p90_higher": 0.4537872488770416,
+              "worst": 0.4659787981352259
+            },
+            "full_gradient": {
+              "median": 0.43550283284357777,
+              "p90_higher": 0.4596611319419656,
+              "worst": 0.46438589075446823
+            },
+            "interior_gradient": {
+              "median": 0.455534652700794,
+              "p90_higher": 0.48252073856053057,
+              "worst": 0.4911504609487523
+            },
+            "observation": {
+              "median": 0.3002179595086065,
+              "p90_higher": 0.3571452556664877,
+              "worst": 0.3748508932286142
+            }
+          }
+        },
+        {
+          "trajectory": "p58-s03",
+          "cells": 101,
+          "passing_cells": 91,
+          "complete_pass": false,
+          "error_tails": {
+            "field": {
+              "median": 0.40984877337085635,
+              "p90_higher": 0.43020276923904555,
+              "worst": 0.4346045001337832
+            },
+            "full_gradient": {
+              "median": 0.40406565456631793,
+              "p90_higher": 0.41659975874221417,
+              "worst": 0.426281700706995
+            },
+            "interior_gradient": {
+              "median": 0.4345956591343347,
+              "p90_higher": 0.4483751611202183,
+              "worst": 0.45757141893128805
+            },
+            "observation": {
+              "median": 0.30202371382349913,
+              "p90_higher": 0.330974271411678,
+              "worst": 0.34872443632084105
+            }
+          }
+        }
+      ]
     }
   ],
   "neural_comparator": {
@@ -2236,7 +2390,7 @@
       "memory_budget_passed": true,
       "arithmetic_budget_passed": false,
       "gram_relative_difference": 1.676e-16,
-      "normal_action_relative_difference": 6.70e-15,
+      "normal_action_relative_difference": 6.7e-15,
       "per_row_support_disagreements": 0,
       "truth_or_teacher_read": false,
       "predictor_or_replay_run": false,
@@ -2256,11 +2410,36 @@
       "K1_refinement_run": false,
       "max_gain_absolute_difference": 1.005e-12,
       "per_trajectory": [
-        {"trajectory": "p14-s05", "cross": 0.432876, "normal": 0.403604, "self": 0.102952},
-        {"trajectory": "p22-s03", "cross": 0.378452, "normal": 0.386243, "self": 0.130810},
-        {"trajectory": "p33-s01", "cross": 0.312453, "normal": 0.322233, "self": 0.200733},
-        {"trajectory": "p45-s05", "cross": 0.514595, "normal": 0.509331, "self": 0.342759},
-        {"trajectory": "p58-s03", "cross": 0.291649, "normal": 0.306216, "self": 0.212580}
+        {
+          "trajectory": "p14-s05",
+          "cross": 0.432876,
+          "normal": 0.403604,
+          "self": 0.102952
+        },
+        {
+          "trajectory": "p22-s03",
+          "cross": 0.378452,
+          "normal": 0.386243,
+          "self": 0.13081
+        },
+        {
+          "trajectory": "p33-s01",
+          "cross": 0.312453,
+          "normal": 0.322233,
+          "self": 0.200733
+        },
+        {
+          "trajectory": "p45-s05",
+          "cross": 0.514595,
+          "normal": 0.509331,
+          "self": 0.342759
+        },
+        {
+          "trajectory": "p58-s03",
+          "cross": 0.291649,
+          "normal": 0.306216,
+          "self": 0.21258
+        }
       ],
       "cost_boundary": "Exact normal messages require physical operator work; no free message, matched-accuracy gain or speedup is established."
     },
@@ -2307,5 +2486,72 @@
     "post-open diagnostics are not prospective confirmation or new trainable candidates",
     "K4 is a relative comparator, not a certified absolute reconstruction reference",
     "no larger-model or post-hoc threshold rescue; the full research goal remains open"
-  ]
+  ],
+  "trained_neural_comparator": {
+    "status": "FAIL_FIXED_BUDGET_TRAINABLE_RAY_SET_LOTO",
+    "cells": 505,
+    "matched_cells": 420,
+    "complete_trajectories_passed": 1,
+    "cheap_control_gate_passed": false,
+    "trainable_parameters_per_fold": 369,
+    "additional_train_only_output_scale_per_fold": 1,
+    "hidden_weights_trained": true,
+    "independent_optimizer_trajectory_repeated": false,
+    "independent_gradient_probe_batches": 100,
+    "independent_prediction_and_physical_replay": true,
+    "shared_sealed_parameter_artifacts": true,
+    "epochs": 20,
+    "optimizer_updates": 10100,
+    "logical_online_ledger": {
+      "trained_ray_set_k1": [
+        2,
+        2
+      ],
+      "direct_field_ridge": [
+        2,
+        1
+      ]
+    },
+    "call_counts": {
+      "offline_teacher_image_A": 505,
+      "independent_offline_teacher_image_A": 505,
+      "training_AT": 80800,
+      "training_A": 80800,
+      "independent_training_probe_AT": 800,
+      "independent_training_probe_A": 800,
+      "trained_ray_set_k1_AT": 1010,
+      "trained_ray_set_k1_A": 1010,
+      "independent_trained_ray_set_k1_AT": 1010,
+      "independent_trained_ray_set_k1_A": 1010,
+      "scoring_A": 505,
+      "independent_scoring_A": 505
+    },
+    "fixed_budget_instance_closed": true,
+    "dominates_cheaper_ridge_cells": 504,
+    "maximum_relative_differences": {
+      "geometry": 9.770318149495167e-15,
+      "teacher_images": 7.509106439381368e-16,
+      "train_only_alpha": 8.76212777151602e-16,
+      "train_only_regularizer": 8.513073842688934e-16,
+      "training_dual": 6.692652143865132e-15,
+      "training_loss": 2.8312620466773267e-15,
+      "training_gradient": 7.023257667433417e-14,
+      "adam_update": 2.973000110415374e-17,
+      "prediction": 6.709846666233331e-15,
+      "prediction_camera_order": 2.4066653785349336e-16,
+      "field": 3.870011699493206e-15,
+      "residual": 9.632474330755705e-15,
+      "image": 3.583777496296211e-15,
+      "physical_replay": 3.3382593462757932e-15,
+      "metric_field": 1.3446948595184502e-15,
+      "metric_full_gradient": 9.312866817770859e-16,
+      "metric_interior_gradient": 9.537994542512343e-16,
+      "metric_observation": 1.4730299929758074e-15,
+      "gate_ratio": 1.5323469444393164e-15,
+      "summary": 7.771548885630695e-14
+    },
+    "finite_budget_convergence_guaranteed": false,
+    "reported_runtime_rss_are_benchmark": false,
+    "report": "docs/poolfire_f30_comparison_20260906.md"
+  }
 }
