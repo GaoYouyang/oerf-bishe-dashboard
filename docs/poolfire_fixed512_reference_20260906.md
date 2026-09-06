@@ -799,3 +799,40 @@ Monitor-map payload is 25.34 to 45.62 MB per geometry, not whole-pipeline memory
 这一步为后续学习暖启动提供了更可靠的误差检查接口，但没有产生新的场预测，没有授权训练或GPU，更没有完成论文目标。接下来必须把学习收益、同价经典解释、完整轨迹精度和真实资源账连接起来；旧失败模型不因这个辅助工具而重新变成有效算法。
 
 This provides a better error-checking interface for a future learned warm start, but generates no new field prediction, authorizes no training or GPU use and does not complete the paper goal. Learned benefit, matched-cost classical explanations, full-trajectory accuracy and real resource accounting must still be connected. An auxiliary monitor does not rehabilitate previously failed models.
+
+## 2026-09-07 三参数学习器的必要精度否决 / Necessary-Accuracy Veto of a Three-Parameter Learner
+
+三参数学习器完成五折训练，独立封存输出复算显示：场误差p90从不学习行扫描对照的57.68%降至44.69%，但四指标1%必要精度门仍为0/25，合格直接解参考为25/25。因此关闭这条固定的一次行扫描加K1方案，不增加轮数或扩大模型。旧dual-ridge对照在17/25数值配对中不合格，原整族判决仍为未定；这里是单独的必要精度否决，不是恢复整族资格。这不是完整轨迹、同价优势、加速或论文突破。
+
+The three-parameter learner completed five-fold training. Independent sealed-output replay shows field-error p90 falling from 57.68% for the untrained row-sweep control to 44.69%, but it still passes 0/25 necessary four-metric 1% accuracy cells; the qualified direct reference passes 25/25. This fixed one-row-sweep plus K1 recipe is closed without more epochs or a larger model. The historical dual-ridge comparator fails 17/25 numerical pairs, so the original family remains inconclusive; this separate necessary-accuracy veto does not restore family eligibility. It is not full-trajectory, matched-cost, acceleration or paper success.
+
+| 方法 / Method | 数值合格 / Numeric | 四门通过 / Four gates | 场 / Field p90 | 全梯度 / Full grad p90 | 内梯度 / Inner grad p90 | 观测 / Observation p90 |
+|---|---:|---:|---:|---:|---:|---:|
+| shared3_rows_K1 | 25/25 | 0/25 | 0.446885 | 0.449518 | 0.576402 | 0.240577 |
+| unit_rows_K1 | 25/25 | 0/25 | 0.576783 | 0.549577 | 0.690537 | 0.448358 |
+| simultaneous_rows_K1 | 25/25 | 0/25 | 0.751248 | 0.638502 | 0.762017 | 0.568946 |
+| Zero_CGLS3 | 25/25 | 0/25 | 0.629517 | 0.589929 | 0.694397 | 0.483105 |
+| Jacobi_PCG3 | 25/25 | 0/25 | 0.624565 | 0.587828 | 0.684932 | 0.473425 |
+| BP_CGLS2 | 25/25 | 0/25 | 0.630093 | 0.585913 | 0.692416 | 0.493675 |
+| historical_dual_ridge_K1 | 8/25 | 不作裁决 / Not adjudicated | 未定 / N/A | 未定 / N/A | 未定 / N/A | 未定 / N/A |
+| direct64 | 25/25 | 25/25 | 6.8383e-11 | 5.74847e-11 | 1.11498e-10 | 1.61451e-13 |
+
+表中误差是相对误差，不是百分数。五条已打开轨迹各留下整条来源不参与该折训练，只对五个预定中点和五套5/7/9相机集合进行必要条件测试。九相机集合没有参与训练。25不是完整轨迹2525个样本，也不是新外部测试。训练使用其他来源的观测、几何和经典参考教师；留下来源的真值不参与拟合、标准化、超参选择或停止。两实现均独立完成固定训练后封存模型；没有因为预测阶段问题重训。
+
+Table values are relative errors, not percentages. Each of five already-opened source trajectories is excluded entirely from its training fold; the necessary screen evaluates five fixed midpoint queries across five 5/7/9-camera sets. The nine-camera set is excluded from training. These 25 cells are not the full 2525-cell trajectory evaluation or a new external test. Training uses other sources' observations, geometry and classical-reference teachers; excluded-source truth is absent from fitting, normalization, hyperparameter selection and stopping. Both implementations finish fixed training and seal their models independently, without retraining after prediction-stage errors.
+
+原整族失败的数值检查不能删除：历史dual-ridge对照的最大观测差约4.01e-7，超过原定1e-8。新学习器本身的双实现场/观测差为6.38e-15/6.97e-15。独立的单向审查保留全部对照，但只允许在参考充分且候选数值有效时否决候选的必要精度；即便必要门通过，也不授权整族成功。这里候选0/25，故无需修旧对照或扩大完整评分来证明这一具体方案不能满足既定目标。原整族仍未定，单独必要门明确未过，两者不混淆。
+
+The original family's failed numerical check is retained: the historical dual-ridge comparator has an observation discrepancy around4.01e-7, above the original1e-8. The learner's own paired field/observation discrepancies are6.38e-15/6.97e-15. The independent one-way audit retains every comparator and can only veto necessary accuracy when the reference is adequate and the candidate is numerically valid; even a necessary pass cannot authorize family success. The candidate passes0/25, so repairing that old comparator or expanding the full evaluation is unnecessary to reject this specific recipe against the fixed target. The original family remains inconclusive while this separate necessary condition fails.
+
+退出后第二实现重放400个场状态与25次学习预测，物理投影/指标最大差5.05e-12/1.82e-12，学习预测重放差为0。它支持上述有限否决，而非所有学习行方法不可能。误差相对未学习对照下降是局部学习信号，不足以声称资源优势或部署精度；初始场还需要一次非免费的稀疏行扫描，在线精确算子壳为2A+2A^T。
+
+Post-exit independent replay covers400 field states and25 learned predictions, with physical-projection/metric differences at most5.05e-12/1.82e-12 and zero learned-prediction replay discrepancy. This supports the limited veto, not impossibility of all learned row methods. Error reduction relative to the untrained control is a local learning signal, not sufficient deployment accuracy or resource advantage. The initializer still requires a non-free sparse row sweep in addition to the2A+2A^T online exact-operator shell.
+
+训练账也作了纠正：原计数漏掉每次目标计算的教师投影。按两份冻结实现与完整训练轨迹复核，每个样本应为9A+8A^T右端项等价工作；两实现合计6400次样本目标计算为57600A+51200A^T，导数核验另计126A+112A^T。稀疏行及其导数、梯度和几何/教师准备仍另计。这不是矩阵启动次数、完整实测耗时或RSS，不发布模型权重。
+
+Training accounting is corrected: the original counters omitted the teacher projection at each objective evaluation. Both frozen implementations and their completed traces imply9A+8A^T right-hand-side-equivalent operations per example:6400 example evaluations across both paths total57600A+51200A^T, plus126A+112A^T for derivative checks. Sparse rows and their derivatives, gradients, and geometry/teacher setup remain additional. These are not matrix-launch counts, full measured runtime or RSS; model weights are not published.
+
+决策是停止这条固定三参数、一次行扫描、K1方案，不加轮数、扫描次数或大模型救援；总论文目标继续，但本次没有算法突破、加速、外部泛化或真实BOST成功。
+
+The decision stops this fixed three-parameter, one-row-sweep, K1 recipe without adding epochs, sweeps or a larger model. The overall paper objective remains open; this result establishes no algorithm breakthrough, acceleration, external generalization or real-BOST success.

@@ -289,6 +289,24 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_shared3_necessary_veto_does_not_rehabilitate_family():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["shared3_necessary_audit"]
+    assert data["status"] == "FAIL_SEALED_PRIMARY_NECESSARY_ACCURACY"
+    assert data["original_family_status"] == "INCONCLUSIVE_SHARED3_NUMERICAL"
+    assert data["reference_numeric"] and data["primary_numeric"] and data["reference_pass"]
+    assert data["parameters_per_model"] == 3 and data["folds"] == 5
+    assert len(data["rows"]) == 8
+    assert data["rows"][0]["passing"] == 0 and data["rows"][-1]["passing"] == 25
+    assert data["rows"][6]["passing"] is None and data["rows"][6]["numerical_valid_pairs"] == 8
+    assert data["independent_replay"]["states"] == 400
+    assert data["training_accounting"]["teacher_image_A_previously_omitted"] == 6414
+    assert not any(data[k] for k in ("primary_pass", "training9camera", "training_rerun", "full_trajectory_evaluation", "family_rehabilitated", "continuation_authorized", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost"))
+    for rel in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        note = BeautifulSoup((ROOT / rel).read_text(), "html.parser").select("#shared3-primary-audit")
+        assert len(note) == 1
+        assert all("0/25" in note[0][f"data-i18n-{lang}"] and "44.69%" in note[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_dual_monitor_is_reference_relative_and_keeps_abstentions():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["dual_error_monitor"]
     assert data["status"] == "PASS_FIXED_ALGEBRAIC_ERROR_MONITOR"

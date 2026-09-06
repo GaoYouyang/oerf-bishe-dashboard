@@ -1,3 +1,11 @@
+## 2026-09-07：确实训练了，也确实还不够 / Trained, but Still Insufficient
+
+三参数学习器完成五折训练，独立封存输出复算显示：场误差p90从不学习行扫描对照的57.68%降至44.69%，但四指标1%必要精度门仍为0/25，合格直接解参考为25/25。因此关闭这条固定的一次行扫描加K1方案，不增加轮数或扩大模型。旧dual-ridge对照在17/25数值配对中不合格，原整族判决仍为未定；这里是单独的必要精度否决，不是恢复整族资格。这不是完整轨迹、同价优势、加速或论文突破。
+
+The three-parameter learner completed five-fold training. Independent sealed-output replay shows field-error p90 falling from 57.68% for the untrained row-sweep control to 44.69%, but it still passes 0/25 necessary four-metric 1% accuracy cells; the qualified direct reference passes 25/25. This fixed one-row-sweep plus K1 recipe is closed without more epochs or a larger model. The historical dual-ridge comparator fails 17/25 numerical pairs, so the original family remains inconclusive; this separate necessary-accuracy veto does not restore family eligibility. It is not full-trajectory, matched-cost, acceleration or paper success.
+
+[独立必要门证据 / Independent necessary-gate evidence](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：这次能识别残差的误导，但仍会保守
 
 随机对偶误差监测通过独立检查：115个固定输入中，只看观测残差会误放11个相对经典参考解不合格的输入，伴随残差会误放15个，新监测器误放0个；两实现的690个误差区间全部覆盖。它明确放行26个、拒绝81个、暂不判断8个。保守性也存在：5个合格K512输入只放行1个，其余4个暂不判断。这是参考解相对误差的监测工具，不是CFD真值精度证明、新重建、学习或加速成果；未来训练和审计探针必须隔离。
