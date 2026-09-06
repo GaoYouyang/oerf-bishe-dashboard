@@ -1,3 +1,15 @@
+## 2026-09-06：先确认能恢复，再谈怎样更省计算
+
+从五条已开封轨迹各取中间一帧，经典LSMR与独立LSQR均通过四指标1%门。LSMR密度相对误差约1.1e-6，原K4约0.41至0.48：这五个干净样本不是“天然恢复不了”，K4早停留下了可恢复信息。下一步应研究可靠精度下的计算量，而不把接近弱基准当成终点。
+
+One fixed midpoint per opened trajectory passes the1% four-metric gate with classical LSMR and independent LSQR. LSMR density error is about1.1e-6 versus0.41--0.48 for K4: these five clean samples are recoverable, and K4 truncation leaves useful information. Next study compute at useful accuracy rather than treating agreement with a weak comparator as the endpoint.
+
+代价不能省略：LSMR用了1945至2122次迭代，数据生成与反演还使用同一离散forward。因此这只是五点无噪声一致性，不是5条完整轨迹、学习突破、同价加速、噪声鲁棒性或真实BOST。所有旧负结果不变。
+
+Costs and limits remain explicit:1945--2122 LSMR iterations, and the same discrete forward for generation and inversion. This is only a five-point clean consistency check, not five complete trajectories, a learned breakthrough, equal-cost speedup, noise robustness or real BOST. All old negative results remain unchanged.
+
+[双语诊断、图表与调用账 / Bilingual diagnosis, figure and call accounting](poolfire_endpoint_pilot_20260906.md)
+
 ## 2026-09-06：跨相机图消息没有赢过配对便宜对照
 
 新增配对小模型已独立重放：177参数跨相机图消息通过367/505帧、1/5完整轨迹；同参数、同预算的便宜同相机对照为370/505、1/5。跨相机方案仅154/505帧四指标均不差于配对对照，未显示稳定优势；关闭这个固定方案，不追加训练。两者在线2A+2AT之外均有一次图运算，不是免费消息或实测加速。

@@ -100,7 +100,7 @@ def test_trained_loss_attribution_does_not_replace_the_predictor():
     assert p45['query_train_optimal_head_teacher_loss_mean'] > p45['query_original_teacher_loss_mean']
     assert diagnostic['call_counts']['basis_A'] == diagnostic['call_counts']['basis_AT'] == 42925
     current = json.loads((ROOT / 'operator-learning/current-evidence.json').read_text())
-    assert current['latest_diagnostic'] == diagnostic
+    assert current['previous_loss_diagnostic'] == diagnostic
     assert current['previous_trained_prediction']['matched_cells'] == 420
     for file in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
         note = BeautifulSoup((ROOT / file).read_text(), 'html.parser').select_one('#trained-loss-attribution')
