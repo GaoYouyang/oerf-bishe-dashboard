@@ -289,6 +289,25 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_causal_carry_separates_improvement_equivalence_and_accuracy():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["causal_state_carry"]
+    assert data["status"] == "FAIL_CAUSAL_ONE_STATE_K1_ACCURACY"
+    assert data["predicted_cases"] == 2525 and data["scored_cases"] == 25
+    assert data["skipped_scores"] == 2500 and data["primary_passes"] == 0
+    assert data["cheaper_field_passes"] == 0 and data["direct_reference_passes"] == 25
+    assert data["primary_no_worse_CGLS2_all_four"] == 25
+    assert data["primary_field_better_CGLS2"] == 25
+    assert data["cheaper_field_equivalence_max"] < 1e-12
+    assert data["primary_warm_calls"] == {"A": 2, "AT": 2, "triangular": 0}
+    assert data["cheaper_field_warm_calls"] == {"A": 2, "AT": 1, "triangular": 0}
+    assert data["cold_factor_setup_not_free"] and data["geometry_fixed_within_sequence"]
+    assert not any(data[k] for k in ("complete_sequence_passed", "future_frame_or_truth_in_prediction", "learned_model", "trainable_parameters", "algorithm_breakthrough", "paper_success", "external_generalization", "resource_speedup", "real_bost", "neural_training_authorized", "full_sequence_accuracy_evaluated", "abrupt_camera_change_evaluated", "retuning_authorized", "predictor_training_authorized", "gpu_rental_authorized", "inherited_ridge_is_matched_cost", "dual_advantage"))
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        note = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#causal-state-carry")
+        assert len(note) == 1
+        assert all("0/25" in note[0][f"data-i18n-{lang}"] and "57.46%" in note[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_ic0_construction_does_not_claim_reconstruction_or_speed():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["ic0_construction"]
     assert data["status"] == "FAIL_NATURAL_UNSHIFTED_IC0_CONSTRUCTION"

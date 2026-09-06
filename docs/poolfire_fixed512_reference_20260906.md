@@ -639,7 +639,7 @@ The initial float64 attribution remains inconclusive because its raw identity di
 
 ## 2026-09-07 零填充因子能否成立 / Can a Zero-Fill Factor Be Constructed?
 
-固定IC(0)构造审计已独立复算：五组5/7/9相机全部出现负主元，可用因子0/5；同一方程的完整Cholesky对照全部正常。说明自然顺序、不加填充或对角修正的这条近似因子配方不可直接使用，不能归咎于原方程没有正定解。只关闭该固定配方，没有进行重建评分或训练，也不是算法、速度或真实BOST突破。
+固定IC(0)构造审计已独立复算：五组5/7/9相机全部出现负主元，可用因子0/5；同一方程的完整Cholesky对照全部正常。说明自然顺序、不加填充或对角修正的这条近似因子配方不可直接使用，不能归咎于原正规矩阵不正定。只关闭该固定配方，没有进行重建评分或训练，也不是算法、速度或真实BOST突破。
 
 The fixed IC(0) construction audit is independently verified: all five 5/7/9-camera sets encounter negative pivots, yielding 0/5 usable factors, while complete Cholesky controls for the same equations all succeed. This natural-order recipe without added fill or diagonal shifts is not directly usable; its breakdown is not evidence that the original normal equations lack positive definiteness. Only this fixed recipe is closed. No reconstruction scoring or training was performed, and no algorithm, speed or real-BOST breakthrough is claimed.
 
@@ -664,3 +664,39 @@ No observations or CFD truth are read; there are no predictions, training or phy
 Do not rescue this frozen recipe with post-result fill, shifts or reordering. The result does not reject every sparse factor or close the C route.
 
 已有经典实现 / Established classical implementation: [ilupp IC(0)](https://ilupp.readthedocs.io/en/latest/). 这是经典控制，不是项目首创。This is a classical control, not project novelty.
+
+## 2026-09-07 复用上一帧解 / Reusing the Previous Solution
+
+历史状态复用已独立验证：五条已开封序列、五组5/7/9相机的25个检查点，四指标1%门仍为0/25，直接解对照25/25。复用上一帧解在全部25点的四指标均不差于同在线调用数的Zero-CGLS2，场误差p90从76.15%降至57.46%，但仍不达标。更便宜的直接场复用与dual复用数值等价（最大差6.90e-15），后续每帧分别为2A+1A^T与2A+2A^T；冷启动与几何因子构建另计。因此有历史解的帮助，没有dual特有优势，也不是学习、速度或真实BOST突破。
+
+Causal state reuse is independently verified: across five opened sequences and five 5/7/9-camera sets, the four-metric 1% gate remains 0/25 checkpoints, while the direct reference passes 25/25. Reusing the previous solution is no worse in all four metrics at all 25 points than Zero-CGLS2 with the same online operator count; field-error p90 decreases from 76.15% to 57.46%, but remains inadequate. Cheaper direct-field carry is numerically equivalent to dual carry (maximum difference 6.90e-15), costing 2A+1A^T versus 2A+2A^T per later frame; cold initialization and geometry factors are separately charged. History helps, but no dual-specific benefit, learning, speed or real-BOST breakthrough is established.
+
+| 相机组 / Set | 相机数 / Cameras | 场p90 / Field | 全梯度p90 / Full gradient | 内梯度p90 / Interior gradient | 观测p90 / Observation |
+|---|---:|---:|---:|---:|---:|
+| g0 | 5 | 0.564233 | 0.533419 | 0.734862 | 0.440827 |
+| g1 | 7 | 0.543762 | 0.508676 | 0.689440 | 0.454572 |
+| g2 | 9 | 0.529930 | 0.487331 | 0.683381 | 0.456988 |
+| g3 | 5 | 0.555483 | 0.520399 | 0.726311 | 0.436798 |
+| g4 | 7 | 0.545764 | 0.509310 | 0.702724 | 0.454604 |
+
+表内均为相对误差，冻结门为0.01。每条序列101帧，同一序列内几何固定，不测试中途换相机。两种实现均先封存每个候选的全部2525条因果预测，再读取CFD真值评分；固定25个中点已失败，因此其余2500个真值评分跳过，不计作失败。没有完整序列精度通过或未开封外部泛化结论。
+
+Table entries are relative errors with a frozen0.01 threshold. Each sequence has101frames with fixed geometry; changing cameras mid-sequence is not tested. Both implementations seal all2525causal predictions per arm before reading CFD truth for scoring. The25fixed midpoints already fail, so2500remaining truth scores are skipped, not counted as failures. No complete-sequence accuracy pass or unopened external generalization is established.
+
+主候选只保存上一帧算出的dual，用当前观测做非负幅度缩放，经精确lift和未修改CGLS K1更新；不读取未来观测，不用时间/工况标签，不刷新直接参考解。便宜对照保存自己的上一帧三维解，执行相同缩放与K1，固定A下二者代数等价。每序列冷启动均为2A+2A^T加4次三角右端求解，几何因子构建另计。101帧合计主候选202A+202A^T，对照202A+102A^T，各另有冷启动4次求解。
+
+The primary carries only its previous computed dual, rescales it nonnegatively using current observations, and applies the exact lift and unchanged CGLS K1. It uses no future observations, time/condition labels or direct-reference refresh. The cheaper control carries its own previous3Dsolution and uses the same scale and K1; for fixed A they are algebraically equivalent. Both cold initializations cost2A+2A^T plus4triangular RHS solves per sequence, with geometry factors separately charged. The101-frame totals are202A+202A^T for dual carry and202A+102A^T for field carry, each plus4cold solves.
+
+Zero、BP、CGLS2、Jacobi2、BP+K1及历史dual-ridge对照均为0/25，直接解为25/25。历史ridge的3A+3A^T加4次求解是更贵诊断，不冒充同价对照；直接解为1A+1A^T加2次求解且有几何预处理。主候选相对CGLS2在25点四指标全部不差、场误差全部更低，但不满足1%精度，不能据此声称减少达到相同精度所需的调用。
+
+Zero, BP, CGLS2, Jacobi2, BP+K1 and inherited dual-ridge controls all pass0/25; the direct control passes25/25. Inherited ridge costs3A+3A^T plus4solves and is an expensive diagnostic, not a matched-cost control. Direct solution costs1A+1A^T plus2solves after geometry preprocessing. The primary is no worse than CGLS2 in all four metrics at all25points, with lower field error at every point, but fails1%accuracy; fewer calls to equal accuracy are not established.
+
+正式实现使用冻结CGLS和Cholesky冷启动，第二实现独立递推并使用带列主元QR冷启动；因果场/残差/dual最大差1.35e-10/8.81e-10/1.53e-9。退出后独立重放全部dual与残差状态、固定中点转移和物理评分，最大物理差7.26e-16、指标差1.82e-12。123.81秒与2.63GiB只是执行遥测，不是部署wall/RSS优势。
+
+The formal path uses frozen CGLS and Cholesky cold initialization; the second path independently recurs and uses column-pivoted QR. Maximum paired causal field/residual/dual differences are1.35e-10/8.81e-10/1.53e-9. Post-exit verification replays every dual and residual state, fixed midpoint transitions and physical scores, with maximum physical/metric differences7.26e-16/1.82e-12. The123.81seconds and2.63GiB are execution telemetry, not deployment wall/RSS advantage.
+
+关闭这个固定单状态、幅度缩放、K1配方，不通过增加K、历史、刷新或外推挽救。不否定所有历史复用方法或C路线。0个训练参数，无学习优势、速度提升或真实BOST结论。下一机制必须说明它相对更便宜的上一帧场复用新增了什么有效信息。
+
+Close this fixed single-state, scalar-rescale, K1 recipe without rescuing it through added K, history, refreshes or extrapolation. This does not reject every recycling method or the C route. There are0trained parameters and no learned advantage, speedup or real-BOST result. Any next mechanism must identify useful information beyond the cheaper previous-field control.
+
+历史状态复用是已有经典方向，而非本项目首创；本次未实现完整回收Krylov子空间方法。Reusing prior solver information is established, not project novelty; this experiment does not implement a full recycled Krylov subspace method. [Survey of Subspace Recycling Iterative Methods](https://arxiv.org/abs/2001.10347).

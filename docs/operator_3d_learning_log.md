@@ -1,6 +1,14 @@
+## 2026-09-07：历史解有用，但一次校正仍不够
+
+历史状态复用已独立验证：五条已开封序列、五组5/7/9相机的25个检查点，四指标1%门仍为0/25，直接解对照25/25。复用上一帧解在全部25点的四指标均不差于同在线调用数的Zero-CGLS2，场误差p90从76.15%降至57.46%，但仍不达标。更便宜的直接场复用与dual复用数值等价（最大差6.90e-15），后续每帧分别为2A+1A^T与2A+2A^T；冷启动与几何因子构建另计。因此有历史解的帮助，没有dual特有优势，也不是学习、速度或真实BOST突破。
+
+Causal state reuse is independently verified: across five opened sequences and five 5/7/9-camera sets, the four-metric 1% gate remains 0/25 checkpoints, while the direct reference passes 25/25. Reusing the previous solution is no worse in all four metrics at all 25 points than Zero-CGLS2 with the same online operator count; field-error p90 decreases from 76.15% to 57.46%, but remains inadequate. Cheaper direct-field carry is numerically equivalent to dual carry (maximum difference 6.90e-15), costing 2A+1A^T versus 2A+2A^T per later frame; cold initialization and geometry factors are separately charged. History helps, but no dual-specific benefit, learning, speed or real-BOST breakthrough is established.
+
+[实验结果 / Experiment result](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：稀疏因子在构造阶段就失效
 
-固定IC(0)构造审计已独立复算：五组5/7/9相机全部出现负主元，可用因子0/5；同一方程的完整Cholesky对照全部正常。说明自然顺序、不加填充或对角修正的这条近似因子配方不可直接使用，不能归咎于原方程没有正定解。只关闭该固定配方，没有进行重建评分或训练，也不是算法、速度或真实BOST突破。
+固定IC(0)构造审计已独立复算：五组5/7/9相机全部出现负主元，可用因子0/5；同一方程的完整Cholesky对照全部正常。说明自然顺序、不加填充或对角修正的这条近似因子配方不可直接使用，不能归咎于原正规矩阵不正定。只关闭该固定配方，没有进行重建评分或训练，也不是算法、速度或真实BOST突破。
 
 The fixed IC(0) construction audit is independently verified: all five 5/7/9-camera sets encounter negative pivots, yielding 0/5 usable factors, while complete Cholesky controls for the same equations all succeed. This natural-order recipe without added fill or diagonal shifts is not directly usable; its breakdown is not evidence that the original normal equations lack positive definiteness. Only this fixed recipe is closed. No reconstruction scoring or training was performed, and no algorithm, speed or real-BOST breakthrough is claimed.
 
