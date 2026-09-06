@@ -535,3 +535,27 @@ All 80 removal cell/metric bounds per model meet the two-implementation conditio
 所有观测/几何方向在读取评分真值前封存。SVD与独立逆序行QR、独立物理重建及原生forward重放通过；旧输出包含误差2.58e-11，两套误差下界差1.92e-10，退出后800项投影重算差3.34e-15。没有新模型、预测或最优系数。离线额外3100次子集A、1190次子集AT、1960次原生九相机A和1140次三角求解；退出验证再加1960次子集A。原候选3A+3AT及4次三角求解的在线账和大因子成本没有改变。约74秒、峰值9.97GiB是归因遥测，不是部署提速、真实BOST或论文突破。
 
 All observation/geometry directions seal before scoring-truth access. SVD and independent reversed-row QR, separate physical reconstruction and native-forward replay pass; old-output containment differs by at most 2.58e-11, paired error bounds by 1.92e-10 and 800 post-exit projection recomputations by 3.34e-15. No new model, prediction or optimum coefficients are produced. Additional offline work is 3100 subset A, 1190 subset AT, 1960 native nine-camera A and 1140 triangular solves; post-exit verification adds 1960 subset A. The original online 3A+3AT and four triangular solves, large factor and setup remain unchanged. About 74 seconds and 9.97GiB peak are attribution telemetry, not deployment speedup, real BOST or a paper breakthrough.
+
+## 全模式全局滤波仍不够 / Full-Mode Global Filtering Is Insufficient
+
+全模式非局部经典对照已独立确认失败：保留全部5880个有效正弦模式，仅用相机几何构造逆滤波，经过精确lift与K1仍为0/25通过；节点对角对照也为0/25，直接参考25/25。相同3A+3AT预算下，Zero-CGLS3在全部25点的四项指标均不劣于新对照。每组只需47040字节对角数据，但额外几何构建与变换不是免费的，精度失败更不能包装成提速。关闭这个固定模式对角近似，不排除所有非局部学习；没有新的完整序列、泛化或真实BOST成果。
+
+The full-mode nonlocal classical baseline independently fails: all 5880 active sine modes are retained, with an inverse filter derived only from camera geometry, yet exact lift and K1 pass 0/25 cases. The nodal-diagonal control also passes 0/25; direct reference passes 25/25. At the same 3A+3AT budget, Zero-CGLS3 is no worse on all four metrics at every one of the 25 cases. Each subset needs only 47040 bytes of diagonal data, but setup and transforms are not free and failed accuracy cannot establish speedup. This closes one fixed mode-diagonal approximation, not every nonlocal learner; it provides no new complete-sequence, generalization or real-BOST result.
+
+| 相机组 / Camera set | 正弦场p90 / Sine field p90 | 节点场p90 / Nodal field p90 | Zero3场p90 / Zero3 field p90 | 正弦通过 / Sine pass | 直接参考 / Direct pass |
+|---|---:|---:|---:|---:|---:|
+| g0 (5) | 0.864123 | 0.877023 | 0.657781 | 0/5 | 5/5 |
+| g1 (7) | 0.866053 | 0.868680 | 0.630135 | 0/5 | 5/5 |
+| g2 (9) | 0.761361 | 0.861751 | 0.587162 | 0/5 | 5/5 |
+| g3 (5) | 0.806865 | 0.865133 | 0.629517 | 0/5 | 5/5 |
+| g4 (7) | 0.825199 | 0.863002 | 0.614968 | 0/5 | 5/5 |
+
+这里是原先五条轨迹的已打开中点乘五组相机，共25必要点；误差为分数，四指标门均为0.01。全部2525预测在读取评分真值前封存，剩余2500次修正按失败规则跳过。候选不训练、不用稠密因子、不截断模式：对每个相机计算每个正弦模式的真实投影能量，按当前相机集合相加，形成正弦域的正规算子对角。仅保留这个对角后作逆平方滤波，再精确lift、观测线搜索和一次未修改CGLS。节点对角是便宜的新对照；旧控制复用已封存端点并重新物理评分，没有重复训练。
+
+These are the same opened midpoints from five trajectories across five camera sets, totaling 25 necessary cases; errors are fractions and every gate is 0.01. All 2525 predictions seal before scoring truth; the other 2500 refinements are skipped after failure. No training, dense factor or mode truncation is used: exact per-camera sine-mode projection energies are summed over the active set to form the normal-operator diagonal in sine coordinates. Its inverse-square filter precedes exact lift, observation line search and unchanged CGLS K1. A nodal-diagonal filter is the cheap new control; old controls reuse sealed endpoints with fresh physical scoring, not repeated training.
+
+正式FFT与独立正弦张量定义得到一致的几何能量、预测和修正；新终点最大相对差1.44e-13，退出后重应用100个预测、重放400个物理场，指标最大差1.82e-12。每查询3A+3AT、2次DST、0次三角求解；每相机组47040字节，全部九相机能量表423360字节。但每套实现需5880次九相机forward构建，直接参考仍只需1A+1AT和2次三角求解（另计各组稠密因子与构建）。约61秒、峰值2.93GiB只是诊断遥测，不是部署wall/RSS优势。此负结果没有定量证明所有跨模式耦合的作用，也不许可事后调滤波幂次或增加K。
+
+Formal FFT and independent sine-tensor definitions agree on geometry energies, predictions and refinement; the new endpoint relative difference is at most 1.44e-13. Post-exit checks reapply 100 predictions and replay 400 physical fields, with metric difference at most 1.82e-12. Per query: 3A+3AT, two DSTs and zero triangular solves; 47040 bytes per subset and 423360 bytes for all nine camera energies. Each implementation nevertheless requires 5880 full-nine forward setup actions. Direct reference still needs only 1A+1AT and two triangular solves, plus its per-subset dense factor/setup. About 61 seconds and 2.93GiB peak are diagnostic telemetry, not deployment wall/RSS advantage. This negative result neither quantifies all cross-mode coupling nor permits post-hoc filter-exponent or K tuning.
+
+来源边界 / Source Boundaries: [SciPy DST定义 / DST definition](https://docs.scipy.org/doc/scipy/reference/generated/scipy.fft.dst.html)支持所用正交变换；[Chan 1988](https://doi.org/10.1137/0909051)仅查阅了出版方摘要，其循环/Toeplitz预条件结论不能直接用于本BOS算子；[MGKN 2020](https://arxiv.org/abs/2006.09535)已有多层非局部图核，非局部性本身不构成首创。The SciPy definition supports the transform convention. Only the publisher abstract of Chan 1988 was read; its circulant/Toeplitz claims do not validate this BOS operator. MGKN already develops multilevel nonlocal graph kernels, so nonlocality alone is not a novelty claim here.

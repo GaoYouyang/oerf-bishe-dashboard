@@ -289,6 +289,23 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_sine_diagonal_preserves_failure_control_and_setup_cost():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["sine_normal_diagonal"]
+    assert data["status"] == "FAIL_FIXED_FULL_MODE_SINE_NORMAL_DIAGONAL"
+    assert data["retained_modes"] == 5880 and data["modes_truncated"] == data["trainable_parameters"] == 0
+    assert data["primary_passing"] == data["nodal_passing"] == 0 and data["direct_passing"] == 25
+    assert data["zero3_dominates_primary_cases"] == 25 and data["source_passing"] == 5
+    assert data["predicted_cases"] == 2525 and data["unrun_refinements"] == 2500
+    assert data["subset_diagonal_bytes"] == 47040 and data["setup_full9_A_per_implementation"] == 5880
+    assert data["online_A"] == data["online_AT"] == 3 and data["online_DST"] == 2 and data["online_triangular"] == 0
+    assert data["post_open_only"] and data["recipe_closed"] and data["subset_setup_not_free"]
+    assert not any(data[k] for k in ("dense_factor_in_prediction", "complete_sequence_claim", "all_nonlocal_models_rejected", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost"))
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        notes = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#sine-normal-diagonal")
+        assert len(notes) == 1
+        assert all("47040" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_fixed_point_capacity_is_post_open_lower_bound_not_predictor():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["point49_post_k1_capacity"]
     assert data["status"] == "FAIL_FROZEN_POINT49_POST_K1_REACHABLE_CAPACITY"
