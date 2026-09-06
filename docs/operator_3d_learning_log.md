@@ -1,3 +1,11 @@
+## 2026-09-06：精确相机删减的通用稠密缓存不省存储
+
+精确相机删减更新的存储审计已独立完成：四组5/7相机均需要至少2436个独立修正方向。对于本次限定的“稠密修正矩阵＋压缩存储的小型因子”，增量至少138335568字节，已不小于压缩存储的直接因子138321120字节，且尚未计入共享九相机因子。因此不再构建这个没有存储优势依据的稠密缓存。只关闭这种表示，不排除结构化或流式更新；没有读取真值、预测、重建或实测提速结论。
+
+The exact camera-removal cache audit is independently complete: all four 5/7-camera sets require at least 2436 independent correction directions. For the specific dense correction plus packed small-factor representation, incremental storage is at least 138335568 bytes, already no smaller than a packed direct factor at 138321120 bytes, before the shared nine-camera factor is counted. This dense cache has no basis for a storage-saving claim and will not be built. Only this representation is closed, not structured or streaming updates; no truth reading, prediction, reconstruction or measured speedup is established.
+
+[详细记录 / Detailed evidence](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-06：全模式非局部经典对照仍失败，存储小不等于算法有效
 
 全模式非局部经典对照已独立确认失败：保留全部5880个有效正弦模式，仅用相机几何构造逆滤波，经过精确lift与K1仍为0/25通过；节点对角对照也为0/25，直接参考25/25。相同3A+3AT预算下，Zero-CGLS3在全部25点的四项指标均不劣于新对照。每组只需47040字节对角数据，但额外几何构建与变换不是免费的，精度失败更不能包装成提速。关闭这个固定模式对角近似，不排除所有非局部学习；没有新的完整序列、泛化或真实BOST成果。

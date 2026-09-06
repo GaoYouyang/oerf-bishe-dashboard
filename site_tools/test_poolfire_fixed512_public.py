@@ -289,6 +289,21 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_downdate_cache_bound_does_not_claim_reconstruction_or_all_updates():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["exact_downdate_cache"]
+    assert data["status"] == "FAIL_GENERIC_DENSE_WOODBURY_INCREMENTAL_CACHE_SAVING"
+    assert data["certified_sets"] == data["total_removal_sets"] == 4
+    assert data["generic_dense_correction_only"] and data["packed_representation_comparison"]
+    assert data["shared_source_factor_charged_separately"] and data["exact_full_rank_not_estimated"]
+    assert all(row["rank_lower_bound"] == 2436 and row["incremental_bytes_lower_bound"] >= row["packed_direct_bytes"] for row in data["geometry"])
+    assert all(data[k] == 0 for k in ("observations_read", "truth_arrays_read", "trainable_parameters", "predictions", "physical_replays", "A", "AT"))
+    assert not any(data[k] for k in ("all_downdates_rejected", "measured_storage_speedup", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost"))
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        notes = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#exact-downdate-cache")
+        assert len(notes) == 1
+        assert all("2436" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_sine_diagonal_preserves_failure_control_and_setup_cost():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["sine_normal_diagonal"]
     assert data["status"] == "FAIL_FIXED_FULL_MODE_SINE_NORMAL_DIAGONAL"

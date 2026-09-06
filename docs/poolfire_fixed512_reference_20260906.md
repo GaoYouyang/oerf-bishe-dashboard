@@ -559,3 +559,26 @@ These are the same opened midpoints from five trajectories across five camera se
 Formal FFT and independent sine-tensor definitions agree on geometry energies, predictions and refinement; the new endpoint relative difference is at most 1.44e-13. Post-exit checks reapply 100 predictions and replay 400 physical fields, with metric difference at most 1.82e-12. Per query: 3A+3AT, two DSTs and zero triangular solves; 47040 bytes per subset and 423360 bytes for all nine camera energies. Each implementation nevertheless requires 5880 full-nine forward setup actions. Direct reference still needs only 1A+1AT and two triangular solves, plus its per-subset dense factor/setup. About 61 seconds and 2.93GiB peak are diagnostic telemetry, not deployment wall/RSS advantage. This negative result neither quantifies all cross-mode coupling nor permits post-hoc filter-exponent or K tuning.
 
 来源边界 / Source Boundaries: [SciPy DST定义 / DST definition](https://docs.scipy.org/doc/scipy/reference/generated/scipy.fft.dst.html)支持所用正交变换；[Chan 1988](https://doi.org/10.1137/0909051)仅查阅了出版方摘要，其循环/Toeplitz预条件结论不能直接用于本BOS算子；[MGKN 2020](https://arxiv.org/abs/2006.09535)已有多层非局部图核，非局部性本身不构成首创。The SciPy definition supports the transform convention. Only the publisher abstract of Chan 1988 was read; its circulant/Toeplitz claims do not validate this BOS operator. MGKN already develops multilevel nonlocal graph kernels, so nonlocality alone is not a novelty claim here.
+
+## 精确更新不一定省存储 / Exact Updating Does Not Necessarily Save Storage
+
+精确相机删减更新的存储审计已独立完成：四组5/7相机均需要至少2436个独立修正方向。对于本次限定的“稠密修正矩阵＋压缩存储的小型因子”，增量至少138335568字节，已不小于压缩存储的直接因子138321120字节，且尚未计入共享九相机因子。因此不再构建这个没有存储优势依据的稠密缓存。只关闭这种表示，不排除结构化或流式更新；没有读取真值、预测、重建或实测提速结论。
+
+The exact camera-removal cache audit is independently complete: all four 5/7-camera sets require at least 2436 independent correction directions. For the specific dense correction plus packed small-factor representation, incremental storage is at least 138335568 bytes, already no smaller than a packed direct factor at 138321120 bytes, before the shared nine-camera factor is counted. This dense cache has no basis for a storage-saving claim and will not be built. Only this representation is closed, not structured or streaming updates; no truth reading, prediction, reconstruction or measured speedup is established.
+
+| 相机组 / Set | 相机 / Cameras | 修正秩下界 / Rank lower bound | 最小奇异值/余量 / Smallest singular value/margin |
+|---|---:|---:|---:|
+| g0 | 5 | 2436 | 1675379.81 |
+| g1 | 7 | 2436 | 717328.11 |
+| g3 | 5 | 2436 | 2307249.87 |
+| g4 | 7 | 2436 | 617894.42 |
+
+设未知数n=5880、修正秩r；所测试的通用稠密Woodbury表示需n*r+r*(r+1)/2个数，压缩存储的直接Cholesky因子需n*(n+1)/2个数。结果前由此固定临界r=2436，再用唯一均匀列选取见证验证四组删减算子至少具有这个秩；不是查看结果后选择秩。正式QR加三角SVD与独立矩形SVD分开重建几何，归一化奇异谱最大差4.58e-16，最小证书余量倍率超过61万。没有估计完整秩，没有截断或调秩。该比较针对压缩三角表示，并非现有完整方阵数组实现的内存实测。
+
+With n=5880 unknowns and correction rank r, the tested generic dense Woodbury representation stores n*r+r*(r+1)/2 scalars, while a packed direct Cholesky factor stores n*(n+1)/2. This fixes the break-even witness rank r=2436 before results. A single uniformly selected column witness certifies that lower bound for each removal operator; rank was not selected afterward. Formal QR plus triangular SVD and independent rectangular SVD separately rebuild geometry, with normalized singular-spectrum difference at most 4.58e-16 and minimum certificate margin ratio above 610000. No full rank is estimated or truncated. This compares packed triangular representations, not measured memory of the current full-square array implementation.
+
+这里没有CFD真值或观测读取，也没有新预测、物理重放或重建评分，新增账0A+0AT；四次QR、四次三角SVD与四次矩形SVD作为离线几何审计另记。约24秒、峰值3.70GiB不是部署wall/RSS优势。该结论不排除流式、稀疏或层次化更新，不证明自然CFD场不可压缩，更不能作为扩大网络的许可。
+
+No CFD truth or observations are read, and no prediction, physical replay or reconstruction score is produced: 0A+0AT. Four QR, four triangular SVD and four rectangular SVD setups are charged separately as offline geometry auditing. About 24 seconds and 3.70GiB peak are not deployment wall/RSS advantage. This does not reject streaming, sparse or hierarchical updates, prove natural CFD fields incompressible, or authorize a larger network.
+
+来源边界 / Source boundaries: [Hager1989](https://doi.org/10.1137/1031049)与[Yip1986](https://doi.org/10.1137/0907034)是既有逆更新与稳定性文献，本次只读取出版方摘要；不将其结论冒充本BOS系统的稳定性或速度证明。These are prior inverse-update and stability references; only publisher abstracts were read, and no BOS stability or speed guarantee is imported.
