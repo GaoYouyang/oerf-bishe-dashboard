@@ -139,3 +139,22 @@ def test_noisy_inverse_failure_does_not_erase_clean_result():
         assert len(notes) == 1
         for lang in ("zh", "en"):
             assert all(value in notes[0][f"data-i18n-{lang}"] for value in ("1%", "1515", "0/5", "10.10%", "15"))
+
+
+def test_haar4_prediction_count_is_not_reconstruction_success():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["haar4_noise_initializer"]
+    assert data["status"] == "FAIL_FIXED_HAAR4_NOISE_INITIALIZER"
+    assert data["trainable_parameters"] == 4 and data["complete_trajectory_outer_folds"] == 5
+    assert data["sealed_outer_predictions_per_method"] == 1515
+    assert data["evaluated_midpoints_per_arm"] == 15 and data["primary_passing"] == 0
+    assert data["skipped_primary_refinements"] == 1500 and not data["full_refinement_completed"]
+    assert data["primary_better_than_direct_by_metric"] == [15, 15, 15, 0]
+    assert data["primary_online"] == dict(A=3, AT=3, triangular_solves=4)
+    assert not data["learned_advantage_established"] and not data["resource_speedup"] and not data["real_bost"]
+    assert all(v["all_four_passing"] == 0 for v in data["arms"].values())
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        soup = BeautifulSoup((ROOT / relative).read_text(), "html.parser")
+        notes = soup.select("#haar4-noise-result")
+        assert len(notes) == 1
+        for lang in ("zh", "en"):
+            assert all(value in notes[0][f"data-i18n-{lang}"] for value in ("1515", "0/15", "1500", "10.13%"))

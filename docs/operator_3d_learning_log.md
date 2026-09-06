@@ -1,3 +1,11 @@
+## 2026-09-06：四参数去噪仍未守住精度
+
+四参数去噪已完成独立复算：五折完整轨迹留出先封存1515个预测，再检验15个固定中点，最终0/15通过。相比同样15个样本的直接逆，场/全梯度/内部梯度p90从6.14%/6.22%/10.82%降到5.67%/5.80%/10.13%，但仍远超1%门，观测残差也升至1.14%。学习阈值优于不训练的通用阈值，但不足以解决噪声恢复；已跳过剩余1500次重建验证，关闭这个固定配置。不是完整重建、加速或真实BOST成功。
+
+Four-parameter denoising independently checked: five complete-trajectory outer folds seal1515 predictions before15 fixed midpoint tests; the final result is0/15. Against the direct inverse on those same15 samples, field/full-gradient/interior-gradient p90 decreases from6.14%/6.22%/10.82% to5.67%/5.80%/10.13%, still far above the1% gates; observation-residual p90 rises to1.14%. Learned thresholds outperform untrained universal thresholds, but do not solve noisy recovery. The remaining1500 reconstruction checks are skipped and this fixed configuration is closed. This is not complete reconstruction, acceleration or real BOST success.
+
+[完整说明 / Full report](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-06：快速直接解的噪声边界
 
 适用边界已确认：同一固定几何加入1%合成观测噪声，三个固定种子共1515个样本，直接解为0/1515、完整轨迹0/5。场/全梯度/内部梯度误差p90为5.59%/6.19%/10.10%，都超过1%门；观测残差却全部通过。Zero、BP和两种512步迭代对照在15个固定中点也均未通过。干净数据的快速结果仍有效，但不能当作噪声下的准确重建；这不是实验噪声或学习成果。

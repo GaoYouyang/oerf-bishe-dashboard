@@ -178,3 +178,32 @@ Maximum independent field/image/metric discrepancies are2.32e-12/3.81e-14/6.70e-
 四个经典对照各自的0/15只针对五个固定中点乘三个种子，不是它们完整轨迹的结论，也不是最优迭代深度的结论。没有事后换参考、改噪声、放宽门或加大模型。上一节干净数据的505/505和计时结果保持原结论，仅将其适用范围限定清楚：当前直接逆不能作为1%噪声下满足同一精度门的教师。该负结果不证明所有去噪先验或估计器不可能；它要求后续方法先解决噪声下的估计稳定性，再讨论暖启动加速。
 
 Each classical control's0/15 refers only to five fixed midpoints times three seeds, not its complete trajectories or an optimal iteration count. There is no post-hoc reference switch, noise change, relaxed gate or larger model. The previous clean505/505 and timing result remains intact; its boundary is now explicit: this direct inverse is not a teacher meeting the same accuracy gate at1% noise. This negative result does not prove all denoising priors or estimators impossible. It requires future work to address estimation stability under noise before claiming warm-start acceleration.
+
+## 四参数非线性去噪 / Four-Parameter Nonlinear Denoising
+
+四参数去噪已完成独立复算：五折完整轨迹留出先封存1515个预测，再检验15个固定中点，最终0/15通过。相比同样15个样本的直接逆，场/全梯度/内部梯度p90从6.14%/6.22%/10.82%降到5.67%/5.80%/10.13%，但仍远超1%门，观测残差也升至1.14%。学习阈值优于不训练的通用阈值，但不足以解决噪声恢复；已跳过剩余1500次重建验证，关闭这个固定配置。不是完整重建、加速或真实BOST成功。
+
+Four-parameter denoising independently checked: five complete-trajectory outer folds seal1515 predictions before15 fixed midpoint tests; the final result is0/15. Against the direct inverse on those same15 samples, field/full-gradient/interior-gradient p90 decreases from6.14%/6.22%/10.82% to5.67%/5.80%/10.13%, still far above the1% gates; observation-residual p90 rises to1.14%. Learned thresholds outperform untrained universal thresholds, but do not solve noisy recovery. The remaining1500 reconstruction checks are skipped and this fixed configuration is closed. This is not complete reconstruction, acceleration or real BOST success.
+
+| 方法 / Method | 场p90 / Field | 全梯度p90 / Full gradient | 内部梯度p90 / Interior gradient | 噪声观测p90 / Noisy residual |
+|---|---:|---:|---:|---:|
+| 直接逆 / Direct inverse | 6.144% | 6.221% | 10.820% | 0.898% |
+| 学习阈值 + K1 / Learned thresholds + K1 | 5.673% | 5.799% | 10.125% | 1.136% |
+| 通用阈值 + K1 / Universal thresholds + K1 | 14.209% | 13.391% | 23.594% | 6.706% |
+| 学习阈值，不迭代 / Learned thresholds, no refinement | 5.727% | 5.860% | 10.256% | 1.246% |
+
+表内严格比较同样的五条轨迹中点乘三个噪声种子，合计15个样本，不能与上一节1515个样本的分位数混用。三项场指标在全部15个配对样本上都比直接逆改善，但观测拟合在全部15个样本上变差；未达到四指标同时通过。学习模型好于通用阈值，只是这个小型对照的相对改善，不是稳定算法优势。
+
+Every row compares the same five trajectory midpoints times three noise seeds, totaling15 samples. These quantiles must not be mixed with the previous1515-sample summary. All three field metrics improve over the direct inverse in every paired sample, while observation fit worsens in every sample. The four metrics do not pass together. Beating universal thresholds is a relative improvement within this small control, not an established algorithmic advantage.
+
+只学习四个共享的尺度阈值；逐系数的噪声放大量仅由已知几何计算。训练、目标归一化都只用外折中的其他完整轨迹，部署输入只含有噪观测与几何。两套独立实现分别重新训练五折，并核对预测、精确lift、原有一步CGLS与物理观测。最终场/观测/指标最大差为1.65e-12/3.11e-12/2.65e-13，全部离散判决一致。1515是先封存的外折预测数，不是1515次已经通过或完成的重建验证。
+
+Only four shared scale thresholds are learned; coefficientwise noise amplification comes solely from known geometry. Training and target normalization use only the other complete trajectories in each outer fold. Deployment receives noisy observations and geometry only. Two implementations independently refit all five folds and check predictions, exact lift, one unchanged CGLS step and physical observations. Maximum final field/image/metric discrepancies are1.65e-12/3.11e-12/2.65e-13, with identical discrete decisions. The1515 count denotes sealed outer predictions, not1515 completed or successful reconstruction checks.
+
+输入先经过直接逆，再去噪、精确lift与K1，完整逻辑在线账为3A+3A^T和四次三角求解；几何因子与噪声放大表构建另计，不能把缓存当作免费。通用阈值、有/无K1、Zero、BP、CGLS3、Jacobi3和历史dual-ridge+K2均作明确对照，各0/15。不训练的直接逆对照已从上一轮封存证据复用，没有重复重跑。没有做新的wall/RSS速度比较。
+
+The input first passes through the direct inverse, followed by denoising, exact lift and K1. The complete logical online ledger is3A+3A^T and four triangular solves. Geometry factorization and the noise-amplification table cost extra; cached work is not free. Explicit controls include universal thresholds, with/without K1, Zero, BP, CGLS3, Jacobi3 and historical dual-ridge+K2, each0/15. The untrained direct control is reused from the previous sealed evidence without rerunning it. No new wall/RSS speed comparison was performed.
+
+本轮只关闭这个固定四阈值、小波表示和训练损失的配置，不证明其他非线性先验不可能。数据仍是已打开的公开训练轨迹与固定九相机合成噪声，不是未打开的外部门、可变相机泛化或实验位移图。小波收缩是经典方法，本项目不作首创声明，参见[Donoho与Johnstone的原始研究](https://statistics.stanford.edu/technical-reports/ideal-spatial-adaptation-wavelet-shrinkage)。
+
+This closes the fixed four-threshold wavelet representation and training-loss configuration, not every nonlinear prior. The data remain previously opened public training trajectories with fixed nine-camera synthetic noise, not an untouched external condition, variable-camera generalization or experimental displacement images. Wavelet shrinkage is classical; no first-use claim is made. See [Donoho and Johnstone's primary report](https://statistics.stanford.edu/technical-reports/ideal-spatial-adaptation-wavelet-shrinkage).
