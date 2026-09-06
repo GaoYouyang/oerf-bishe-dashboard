@@ -1,3 +1,11 @@
+## 2026-09-06：实际训练的小学习器未通过
+
+小学习器的实测负结果：64参数模型完成五折整轨迹留一训练，2525个外折预测在评分前封存；随后25个必要检验点只通过5个，这5个九相机点不用学习也能通过。删相机后的20个点全部失败，44参数线性对照也仅5/25，合格直接因子为25/25。按预定规则停止其余2500个细化，不称完整序列失败或成功；关闭这条单因子迁移学习机制，不追加模型或训练轮数。独立物理复算通过，但学习优势、速度收益和论文突破均未成立。
+
+Measured negative result for the small learner: a64-parameter model completes five complete-trajectory outer folds, with2525 outer predictions sealed before scoring. Only5/25 necessary cases pass; the same five nine-camera cases also pass without learning. All20 camera-removal cases fail. The44-parameter linear control also passes5/25, while qualified direct factors pass25/25. The preregistered stop skips2500 remaining refinements; this is neither a complete-sequence failure count nor a complete-sequence success. This single-factor transfer recipe is closed, with no larger-model or longer-training rescue. Independent physical recomputation passes, but learned advantage, speed benefits and a paper breakthrough remain unestablished.
+
+[详细结果 / Details](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-06：五/七相机完整经典参考通过
 
 五/七相机完整序列参考通过：固定两个相机子集各505/505帧满足场、全梯度、内部梯度与投影的1%门，合计1010/1010、10/10完整轨迹分组；同观测一步CGLS各0/505。Cholesky与独立QR及物理重放一致。每个子集需另建几何因子，在线1A+1A^T及两次三角求解，不等于免费或速度优势。仅限这两个无噪声子集，未验证任意增删、12相机、噪声或新工况；不是学习算法突破。

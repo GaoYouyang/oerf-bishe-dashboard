@@ -248,3 +248,22 @@ def test_camera_dropout_reference_has_complete_but_clean_limited_scope():
         assert len(note) == 1
         for lang in ("zh", "en"):
             assert all(value in note[0][f"data-i18n-{lang}"] for value in ("505/505", "1010/1010", "0/505", "12"))
+
+
+def test_factor_transfer_reports_actual_learning_and_necessary_failure():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["factor_transfer_learner"]
+    assert data["status"] == "FAIL_FIXED_FACTOR_TRANSFER_LEARNER"
+    assert data["primary_parameters"] == 64 and data["linear_control_parameters"] == 44
+    assert data["outer_folds"] == 5 and data["predicted_cases"] == 2525
+    assert data["necessary_cases_evaluated"] == 25 and data["primary_passing"] == 5
+    assert data["full_cases_evaluated"] == 0 and data["remaining_refinements_not_run"] == 2500
+    assert data["primary_camera_removal_passing"] == 0 and data["primary_camera_removal_tested"] == 20
+    assert data["arms"]["unlearned_mix"]["passing"] == data["arms"]["linear44"]["passing"] == 5
+    assert data["arms"]["direct"]["passing"] == 25
+    assert data["full_recipe_closed"] and data["geometry_factor_setup_not_free"]
+    assert not any(data[k] for k in ("learned_advantage", "full_complete_trajectory_claim", "resource_speedup", "paper_success", "real_bost", "external_generalization", "larger_model_rescue_authorized"))
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        note = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#factor-transfer-learner")
+        assert len(note) == 1
+        for lang in ("zh", "en"):
+            assert all(value in note[0][f"data-i18n-{lang}"] for value in ("64", "2525", "5/25", "25/25", "2500"))

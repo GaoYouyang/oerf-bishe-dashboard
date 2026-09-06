@@ -390,3 +390,40 @@ This rules out loss of a numerically active degree of freedom for these clean di
 方法采用既有[Cholesky分解](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.cholesky.html)与独立[带列主元QR](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.qr.html)，不是组件首创。
 
 The methods use established [Cholesky factorization](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.cholesky.html) and independent [column-pivoted QR](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.qr.html), without component novelty.
+
+## 单因子迁移学习失败 / Single-Factor Transfer Learning Fails
+
+小学习器的实测负结果：64参数模型完成五折整轨迹留一训练，2525个外折预测在评分前封存；随后25个必要检验点只通过5个，这5个九相机点不用学习也能通过。删相机后的20个点全部失败，44参数线性对照也仅5/25，合格直接因子为25/25。按预定规则停止其余2500个细化，不称完整序列失败或成功；关闭这条单因子迁移学习机制，不追加模型或训练轮数。独立物理复算通过，但学习优势、速度收益和论文突破均未成立。
+
+Measured negative result for the small learner: a64-parameter model completes five complete-trajectory outer folds, with2525 outer predictions sealed before scoring. Only5/25 necessary cases pass; the same five nine-camera cases also pass without learning. All20 camera-removal cases fail. The44-parameter linear control also passes5/25, while qualified direct factors pass25/25. The preregistered stop skips2500 remaining refinements; this is neither a complete-sequence failure count nor a complete-sequence success. This single-factor transfer recipe is closed, with no larger-model or longer-training rescue. Independent physical recomputation passes, but learned advantage, speed benefits and a paper breakthrough remain unestablished.
+
+本轮不再只建立经典参考，而是实际训练并检验一个小学习器：复用完整九相机几何因子，由当前观测和有效相机几何构造四个双空间方向，用64个共享参数预测方向系数，再精确伴随提升并执行未修改CGLS一步。每折完全排除一条101帧轨迹，另有两个相机子集完全不进入拟合。三套训练几何和两套留出子集仍来自同一套已知相机，不能称任意新位姿或外部流场泛化。
+
+This run actually trains and tests a small learner rather than only establishing another classical reference. One full-nine-camera factor generates four dual-space directions from the current observation and active geometry. A64-scalar shared predictor mixes them, followed by exact adjoint lift and unchanged one-step CGLS. Each fold excludes an entire101-frame trajectory; two further camera subsets never enter fitting. The three fit geometries and two held-out subsets still use the same known cameras, not arbitrary new poses or external flow conditions.
+
+唯一主模型64参数，线性学习对照44参数；各五折、20轮，末轮封存，无真值选择、无外折调参。训练教师为不读CFD真值的直接求解器。学习器的四项训练误差穿过实际CGLS一步；独立导数与Adam更新核验通过。下表只统计25个必要点，误差为分数，四门均0.01，不能拿剩余未运行点凑分母。
+
+The unique primary has64 parameters and the linear learned control44. Each has five folds and20 fixed epochs; the final epoch is sealed without truth-based selection or outer-fold tuning. Training teachers are direct solvers that do not read CFD truth. The four training errors differentiate through actual one-step CGLS, with independent derivative and Adam-update checks. The table covers only25 necessary cases. Errors are fractions and each gate is0.01; unexecuted cases do not belong in the denominator.
+
+| 方法 / Method | 通过 / Passing | 场p90 / Field | 全梯度 / Full gradient | 内部梯度 / Interior gradient | 投影 / Projection |
+|---|---:|---:|---:|---:|---:|
+| 学习器 / Learned64 | 5/25 | 0.69821 | 0.715908 | 0.798396 | 0.599012 |
+| 线性学习器 / Linear44 | 5/25 | 0.697975 | 0.716417 | 0.79734 | 0.596223 |
+| 不学习组合 / Unlearned mix | 5/25 | 0.688378 | 0.755672 | 0.80411 | 0.598003 |
+| Zero-CGLS | 0/25 | 0.426924 | 0.424733 | 0.525954 | 0.323146 |
+| Jacobi-PCGLS | 0/25 | 0.423392 | 0.428612 | 0.524184 | 0.32137 |
+| BP-CGLS | 0/25 | 0.459991 | 0.436444 | 0.526963 | 0.343495 |
+| Dual ridge | 0/25 | 1801.45 | 1744.49 | 2177.03 | 1044.67 |
+| 直接因子 / Direct factor | 25/25 | 6.8383e-11 | 5.74847e-11 | 1.11498e-10 | 1.61451e-13 |
+
+学习器、不学习组合、线性对照均只在五个九相机点通过；四组五/七相机检验各0/5。全九相机恢复来自已经可用的解析因子，而非新学到的优势。两个新留出子集的经典参考已独立达到1010/1010，故这次不能归因于参考本身不充分。直接因子在必要点25/25通过，同时明确需要各子集自己的几何预处理。
+
+The learner, unlearned mix and linear control pass only the five nine-camera cases; each of the four five/seven-camera groups passes0/5. Full-nine recovery comes from the already available analytic factor, not a newly learned advantage. References for the two new held-out subsets independently pass1010/1010, so inadequate references do not explain this rejection. Direct factors pass25/25 necessary cases but explicitly require geometry-specific preprocessing.
+
+候选九相机在线为4A+4A^T及4次三角求解，删相机为10A+10A^T及16次三角求解；同预算Zero/BP/Jacobi/dual-ridge均披露。直接因子含投影只需1A+1A^T及两次三角求解，几何构建和存储另计。单个公共几何因子约276.6MB，学习训练、参考QR、离线物理响应和独立复算并不免费。没有测得新的部署速度或内存优势。
+
+Candidate online work is4A+4A^T plus four triangular solves for nine cameras, and10A+10A^T plus16 triangular solves after camera removal. Same-budget Zero/BP/Jacobi/dual-ridge controls are disclosed. A direct factor including projection uses1A+1A^T and two triangular solves, with separate geometry construction and storage. One shared factor occupies about276.6MB; learning, reference QR, offline physical responses and independent validation are additional work. No new deployment speed or memory advantage has been measured.
+
+独立终态又重放400个物理输出，指标最大差4.55e-13，原生/稀疏投影最大差7.25e-16，全部输入和封存预测不变。这是可核验的负算法证据，不是突破。关闭这套固定四方向单因子迁移配方，不增加方向数、网络规模、训练轮数或事后换控制。它不证明整个C路线不可能；新推进必须带来不同的物理信息或机制，而不是重命名本次失败。
+
+A separate terminal audit replays400 physical outputs, with metric discrepancy at most4.55e-13 and native/sparse projection discrepancy at most7.25e-16. Inputs and sealed predictions remain unchanged. This is verifiable negative algorithm evidence, not a breakthrough. The fixed four-direction single-factor transfer recipe is closed: no extra directions, larger network, longer training or post-hoc control substitution. It does not prove the whole C route impossible; further progress needs different physical information or a different mechanism, not a renamed retry.
