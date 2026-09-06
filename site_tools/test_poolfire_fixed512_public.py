@@ -289,6 +289,19 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_ic0_construction_does_not_claim_reconstruction_or_speed():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["ic0_construction"]
+    assert data["status"] == "FAIL_NATURAL_UNSHIFTED_IC0_CONSTRUCTION"
+    assert data["certified_breakdowns"] == 5 and data["constructible_sets"] == 0
+    assert all(r["valid"] and r["jacobi_positive"] for r in data["geometries"])
+    assert all(c["valid"] for r in data["geometries"] for c in r["dense_cholesky_controls"])
+    assert data["independent_post_exit"]["construction_only"]
+    assert not any(data[k] for k in ("observations_read", "truth_arrays_read", "predictions", "physical_replays", "A", "AT", "trainable_parameters", "predictor_training_authorized", "physical_replay_authorized", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost", "retuning_authorized", "full_reconstruction_evaluated", "all_sparse_factors_rejected"))
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        note = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#ic0-construction-gate")
+        assert len(note) == 1 and all("0/5" in note[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_inverse_attribution_keeps_diagnosis_distinct_from_algorithm_success():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["monarch_attribution"]
     assert data["status"] == "PASS_FIXED_RECIPE_ERROR_ATTRIBUTION"

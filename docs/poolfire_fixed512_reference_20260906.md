@@ -636,3 +636,31 @@ The initial float64 attribution remains inconclusive because its raw identity di
 全量诊断约329秒、峰值9.77GiB，属于审计遥测，不是部署wall/RSS优势；重建独立逆矩阵的58800次三角右端求解和所有额外算子调用单列计入离线账。Full diagnosis takes about329seconds and9.77GiB peak as audit telemetry, not deployment wall/RSS advantage. The58800 triangular RHS solves for independent inverse reconstruction and all extra operator calls are explicitly offline costs.
 
 数值库 / Numerical library: [GNU MPFR](https://www.mpfr.org/mpfr-current/mpfr.html). 求和与点积误差背景 / Summation and dot-product background: [Ogita, Rump and Oishi](https://doi.org/10.1137/030601818). 这些是已有数值工具，不是本项目创新。These are established numerical tools, not project novelty.
+
+## 2026-09-07 零填充因子能否成立 / Can a Zero-Fill Factor Be Constructed?
+
+固定IC(0)构造审计已独立复算：五组5/7/9相机全部出现负主元，可用因子0/5；同一方程的完整Cholesky对照全部正常。说明自然顺序、不加填充或对角修正的这条近似因子配方不可直接使用，不能归咎于原方程没有正定解。只关闭该固定配方，没有进行重建评分或训练，也不是算法、速度或真实BOST突破。
+
+The fixed IC(0) construction audit is independently verified: all five 5/7/9-camera sets encounter negative pivots, yielding 0/5 usable factors, while complete Cholesky controls for the same equations all succeed. This natural-order recipe without added fill or diagonal shifts is not directly usable; its breakdown is not evidence that the original normal equations lack positive definiteness. Only this fixed recipe is closed. No reconstruction scoring or training was performed, and no algorithm, speed or real-BOST breakthrough is claimed.
+
+| 相机组 / Set | 相机数 / Cameras | 首次负主元行（从1起） / First negative row (1-based) | 主元/原对角 / Pivot / original diagonal |
+|---|---:|---:|---:|
+| g0 | 5 | 311 | -0.37717588 |
+| g1 | 7 | 495 | -0.57192608 |
+| g2 | 9 | 1749 | -0.74788100 |
+| g3 | 5 | 249 | -0.05355333 |
+| g4 | 7 | 445 | -0.08337631 |
+
+完整Cholesky的十次双实现对照均为正，矩阵重放差不超过1.15e-15。两种IC构造在相同首个位置失效，有限前缀最大差1.99e-12；退出后独立代数重放6.77e-16、80位Decimal主元复核1.65e-16。负主元不是接近零的边界事件。便宜Jacobi对角也均为正，但这并不证明其重建精度。
+
+All ten complete Cholesky controls across both matrix definitions have positive factors and matrix replay error at most1.15e-15. Both IC constructions fail at the same first index, with finite-prefix difference at most1.99e-12; post-exit algebra replay is at most6.77e-16 and80-digit Decimal pivot verification1.65e-16. Negative pivots are not near-zero boundary cases. The cheap Jacobi diagonals are also positive, which does not certify reconstruction accuracy.
+
+未读取观测或CFD真值，未预测、未训练、未做物理重放，向量算子新增账0A+0A^T。几何构建另计15次正规矩阵乘积、10次结构图乘积、10次完整Cholesky与10次前缀因子化。23.75秒、2.09GiB只是本地审计遥测，不是部署wall/RSS优势；失败前缀不是可部署的完整模型。
+
+No observations or CFD truth are read; there are no predictions, training or physical replays, and zero new vector A/A^T actions. Geometry work is separately charged:15 normal products,10 symbolic products,10 complete Cholesky controls and10 prefix factorizations. The23.75seconds and2.09GiB are local audit telemetry, not deployment wall/RSS advantage; failed prefixes are not deployable complete models.
+
+不通过事后增加填充、移动对角或重新排序挽救这条已冻结配方；这不否定所有稀疏因子，也不关闭C路线。
+
+Do not rescue this frozen recipe with post-result fill, shifts or reordering. The result does not reject every sparse factor or close the C route.
+
+已有经典实现 / Established classical implementation: [ilupp IC(0)](https://ilupp.readthedocs.io/en/latest/). 这是经典控制，不是项目首创。This is a classical control, not project novelty.

@@ -1,3 +1,11 @@
+## 2026-09-07：稀疏因子在构造阶段就失效
+
+固定IC(0)构造审计已独立复算：五组5/7/9相机全部出现负主元，可用因子0/5；同一方程的完整Cholesky对照全部正常。说明自然顺序、不加填充或对角修正的这条近似因子配方不可直接使用，不能归咎于原方程没有正定解。只关闭该固定配方，没有进行重建评分或训练，也不是算法、速度或真实BOST突破。
+
+The fixed IC(0) construction audit is independently verified: all five 5/7/9-camera sets encounter negative pivots, yielding 0/5 usable factors, while complete Cholesky controls for the same equations all succeed. This natural-order recipe without added fill or diagonal shifts is not directly usable; its breakdown is not evidence that the original normal equations lack positive definiteness. Only this fixed recipe is closed. No reconstruction scoring or training was performed, and no algorithm, speed or real-BOST breakthrough is claimed.
+
+[审计结果 / Audit result](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：错误在lift之前就已出现
 
 误差归因已独立复算：25点在单次逆作用阶段就全部未过参考相对精度检查，五组相机的场误差p90约40至8724倍。完整lift的参考接口缺陷不超过6.48e-10，不能解释这个量级的失败；后续组合进一步放大误差，线搜索把结果大幅缩小，却不能改变错误方向。仍是已开封诊断，不是新算法或新重建成绩；原Monarch配方保持关闭。
