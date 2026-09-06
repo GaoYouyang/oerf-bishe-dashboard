@@ -289,6 +289,21 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_rig_rotation_is_mixed_geometry_evidence_not_prediction():
+    data=json.loads((ROOT/f"docs/{STEM}.json").read_text())["rig_rotation_commutator"]
+    assert data["status"]=="NO_UNIFORM_SUPPORT_FIXED_RIG_CANONICALIZATION"
+    assert data["independent_status"]=="PASS_INDEPENDENT_RIG_ROTATION_COMMUTATOR"
+    assert data["geometry_cases"]==10 and data["raw_improved_cases"]==7
+    assert data["old_witnesses"]==data["witness_improved"]==20
+    assert data["transported_fields"]==40 and data["geometry_only"]
+    assert data["truth_arrays_parsed"]==data["observation_arrays_parsed"]==data["new_predictions"]==0
+    assert not any(data[k] for k in ("predictor_authorized","algorithm_breakthrough","resource_speedup","external_generalization","real_bost","paper_success","exact_discrete_rotation_equivariance_assumed"))
+    for rel in ("index.html","operator-learning/index.html","operator-learning/daily-progress.html"):
+        notes=BeautifulSoup((ROOT/rel).read_text(),"html.parser").select("#rig-rotation-commutator")
+        assert len(notes)==1
+        assert all("7/10" in notes[0][f"data-i18n-{lang}"] and "63.46%" in notes[0][f"data-i18n-{lang}"] for lang in ("zh","en"))
+
+
 def test_scalar_gate_bound_is_one_way_oracle_veto_not_prediction():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["scalar_gate_capacity"]
     assert data["status"] == "FAIL_SCALAR_GATED_K1_NECESSARY_CAPACITY"

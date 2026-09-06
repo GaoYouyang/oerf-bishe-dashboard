@@ -1,3 +1,11 @@
+## 2026-09-07：物理旋转不能省略离散误差 / Physical Rotation Does Not Remove Discretization Error
+
+旋转规范化检查得到混合结果：同一10个几何组合中，固定三线性坐标旋转使所有20个既定敏感方向的偏差降低42.47%–63.46%，但整体算子差异只在7/10组合改善，另外3个变大。40个旋转后见证场已独立物理重放。相机与射线确实共同旋转，但当前边界、插值和梯度离散不能直接当成精确旋转对称性；尚未单独归因于其中一项。不继续开发这份固定旋转方案。它不否定所有等变网络，也不是重建精度或加速结果。
+
+Rig canonicalization gives mixed evidence: across the same 10 geometry combinations, fixed trilinear coordinate rotation reduces the defect on all 20 pre-fixed sensitive witnesses by 42.47%–63.46%, but the overall operator defect improves in only 7/10 combinations and worsens in three. All 40 transported witness fields were independently replayed. Cameras and rays do co-rotate, but the current boundary, interpolation and gradient discretization cannot simply be treated as an exact rotation symmetry; these effects have not been individually attributed. This fixed rotation recipe is not promoted. The result does not reject all equivariant networks and is not reconstruction accuracy or acceleration.
+
+[独立旋转诊断 / Independent rotation audit](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：先排除整类无效训练 / Exclude an Ineffective Family Before Training
 
 独立容量否决：对同一50个已打开样本，旧因子结果乘任意全局标量、再接原版CGLS一步，仍受三维输出空间限制。即使读取真值并在更宽松空间取最优，场误差下界仍为62.05%–88.46%，50/50均不能达到1%门槛；直接解参考仍为50/50通过。因此不再训练这类标量门或范数截断器。已独立重放200个oracle场。这是事后机制排除，不是新算法、预测成功或加速，也不排除空间变化或其他物理方向。

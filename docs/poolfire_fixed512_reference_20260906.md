@@ -1021,3 +1021,38 @@ Globalmin/p50/p90/worst field-error lower bounds of the three-dimensional relaxa
 成本单列：每套离线方向构造50A+100A^T；独立native调用仍运行九相机算子并把未使用行置零。假设采用普通初始化API包裹旧K2，总账为4A+3A^T加5次三角解，几何构建另算。这不是加速证明。它只关闭当前固定b上的全局标量门/范数截断加K1，不能扩展为对空间门、其他方向或任意学习器的不可能性断言。
 
 Costs remain separate: each offline basis implementation uses50A+100A^T; independent native calls still execute a nine-camera operator with unused rows zero-filled. A hypothetical ordinary-initializer wrapper around oldK2 totals4A+3A^T plus5 triangular solves, with geometry construction separate. This is not a speedup proof. The result closes only global scalar gates/norm caps on this fixedb followed byK1, not spatial gates, other directions or arbitrary learners.
+
+## 2026-09-07 旋转坐标与离散物理的差异 / Rotation Coordinates Versus Discrete Physics
+
+旋转规范化检查得到混合结果：同一10个几何组合中，固定三线性坐标旋转使所有20个既定敏感方向的偏差降低42.47%–63.46%，但整体算子差异只在7/10组合改善，另外3个变大。40个旋转后见证场已独立物理重放。相机与射线确实共同旋转，但当前边界、插值和梯度离散不能直接当成精确旋转对称性；尚未单独归因于其中一项。不继续开发这份固定旋转方案。它不否定所有等变网络，也不是重建精度或加速结果。
+
+Rig canonicalization gives mixed evidence: across the same 10 geometry combinations, fixed trilinear coordinate rotation reduces the defect on all 20 pre-fixed sensitive witnesses by 42.47%–63.46%, but the overall operator defect improves in only 7/10 combinations and worsens in three. All 40 transported witness fields were independently replayed. Cameras and rays do co-rotate, but the current boundary, interpolation and gradient discretization cannot simply be treated as an exact rotation symmetry; these effects have not been individually attributed. This fixed rotation recipe is not promoted. The result does not reject all equivariant networks and is not reconstruction accuracy or acceleration.
+
+| 集合/Set | 相机/Cameras | 角度/Angle | 整体偏差比/Global defect ratio | 敏感方向偏差比/Witness ratio |
+|---|---:|---:|---:|---:|
+| 1 | 5 | -0.25 | 0.989792 | 0.391501 |
+| 2 | 7 | -0.25 | 0.981969 | 0.369685 |
+| 3 | 9 | -0.25 | 0.988200 | 0.558068 |
+| 4 | 5 | -0.25 | 0.980767 | 0.466171 |
+| 5 | 7 | -0.25 | 0.990221 | 0.574502 |
+| 1 | 5 | +0.25 | 0.999299 | 0.391720 |
+| 2 | 7 | +0.25 | 1.002220 | 0.575289 |
+| 3 | 9 | +0.25 | 1.002182 | 0.458619 |
+| 4 | 5 | +0.25 | 1.010827 | 0.506889 |
+| 5 | 7 | +0.25 | 0.996912 | 0.365376 |
+
+比较E=A_new-A_old U与不旋转控制D=A_new-A_old。整体比为||E||F/||D||F；见证比为||Ew||/||Dw||，表中取同一几何的两个既定见证中较大值。小于1表示改善。这些不是场误差、速度比或新的最大奇异增益。整体比范围0.980767–1.010827，敏感方向比范围0.365376–0.575289；预定的全组合联合改善门未过。
+
+Compare E=A_new-A_old U with the no-rotation control D=A_new-A_old. The global ratio is ||E||F/||D||F; the witness ratio is ||Ew||/||Dw||, taking the larger of the two pre-fixed witnesses per geometry in the table. Below one means improvement. These are not field errors, speed ratios or newly computed maximum singular gains. Global ratios span 0.980767–1.010827 and sensitive-witness ratios span 0.365376–0.575289. The pre-fixed uniform joint-improvement screen is not met.
+
+U仅按已知旋转取样f(Rp)，固定零外推、三线性插值和原有支撑掩膜；没有选择角度、插值阶数或符号。相机点/投影向量的共同旋转恒等差最大2.04e-13/6.22e-15，但两种旋转分别改变1799/1776个立方体有效采样标记，且||U^T U-I||F/sqrt(n)=0.07113495。它们表明该离散映射不是精确酉旋转，不等于已经证明哪个离散项独自造成剩余偏差。
+
+U samples f(Rp) using only the known rotation, fixed zero extrapolation, trilinear interpolation and the original support mask. No angle, interpolation order or sign was selected. Joint camera-point/projection-vector rotation identities differ by at most 2.04e-13/6.22e-15. The two rotations change 1799/1776 cube-validity sample flags, and ||U^T U-I||F/sqrt(n)=0.07113495. These establish that this discrete map is not an exact unitary rotation, not which individual discretization term causes the remaining defect.
+
+正式稀疏重心插值与独立SciPy affine-transform坐标基构造差1.91e-15；同一见证的指标差不超过6.97e-14。另一个进程原始物理重放40个旋转场，旧/新/旋转后投影差不超过1.09e-13，偏差增益差2.86e-15。未读取CFD真值或观测，未训练或生成部署预测；全部工作是离线几何审计，不能算部署调用减少。
+
+Formal sparse barycentric interpolation and independent SciPy affine-transform coordinate-basis construction differ by 1.91e-15; same-witness metrics differ by at most 6.97e-14. A separate process physically replays 40 transported fields: old/new/transported projection differences are below 1.09e-13, and defect-gain difference is 2.86e-15. No CFD truth or observations were read, and no deployment predictor was trained or evaluated. All work is offline geometry auditing, not reduced deployment calls.
+
+等变重建已有文献基础：[Celledoni等，2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8317019/)。这项工作提供对称性建模背景，不保证我们的BOS网格满足相同恒等式。保留局部物理收益，停止这份固定规范化方案，不扩展成“所有等变学习不可行”的结论。
+
+Equivariant reconstruction has established prior art: [Celledoni et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8317019/). It provides symmetry-modeling context, not a guarantee for this BOS grid. Retain the localized physical benefit, stop promotion of this fixed canonicalization recipe, and do not generalize the result to all equivariant learning.
