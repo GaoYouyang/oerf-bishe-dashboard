@@ -289,6 +289,21 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_pose_amplification_is_geometry_diagnosis_not_algorithm_success():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["pose_inverse_amplification"]
+    assert data["status"] == "CONFIRMED_OLD_INVERSE_POSE_AMPLIFICATION"
+    assert data["independent_status"] == "PASS_INDEPENDENT_GEOMETRY_AMPLIFICATION_CERTIFICATES"
+    assert data["cells"] == 10 and data["checked_witnesses"] == 20
+    assert data["truth_arrays_parsed"] == data["observation_arrays_parsed"] == data["new_predictions"] == 0
+    assert data["geometry_only"] and data["hypothesis_not_sole_causal_attribution"]
+    assert not any(data[k] for k in ("predictor_authorized", "algorithm_breakthrough", "resource_speedup", "external_generalization", "real_bost", "paper_success", "standard_condition_number_computed", "learned_accuracy_established"))
+    assert len(data["rows"]) == 20 and all(row["contrast"] > 1 and row["leading_gain"] > 1 for row in data["rows"])
+    for rel in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        note = BeautifulSoup((ROOT / rel).read_text(), "html.parser").select("#pose-inverse-amplification")
+        assert len(note) == 1
+        assert all("3.40%" in note[0][f"data-i18n-{lang}"] and "21.76" in note[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_known_pose_reuse_failure_is_not_learning_or_speed_success():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["known_pose_factor_reuse"]
     assert data["status"] == "FAIL_KNOWN_POSE_REUSED_FACTOR_K2_SCREEN"

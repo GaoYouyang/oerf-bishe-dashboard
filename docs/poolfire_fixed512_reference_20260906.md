@@ -947,3 +947,42 @@ Maximum paired field/image relative differences are about2.03e-10/8.10e-11; nati
 结论仅限这份固定复用控制。小幅相机旋转不保证旧逆因子能安全直接复用；具体敏感谱模式尚未独立定位，不能编造根因。它没有关闭全部变姿方法，也没有授权新的学习模型、迭代深度搜索或GPU。下一步应先利用已封存算子诊断这种敏感性，而不是继续堆候选。这里仍是已开封数据的受控虚拟机制证据。
 
 The conclusion is limited to this fixed reuse control. A small camera rotation does not guarantee safe direct reuse of an old inverse factor. Specific sensitive spectral modes have not yet been independently localized, so no root cause is asserted. This closes neither every pose-transfer method nor licenses a new learner, iteration-depth search or GPU. The next step should first diagnose this sensitivity using sealed operators, not accumulate candidates. The evidence remains a controlled virtual mechanism study on already-opened data.
+
+## 2026-09-07 旧因子的几何扰动放大 / Geometry-Perturbation Amplification by the Old Factor
+
+已独立定位旧因子的变姿敏感性：同一 ±0.25° 旋转下，10个几何组合的算子相对变化仅约3.40%–3.46%，但旧因子归一化后的变化达到21.46%–73.89%，对比放大6.28–21.76倍。20个几何见证方向经原始物理算子复核。这解释了为什么不能仅凭角度接近判断旧因子可复用，但尚未把之前的全部重建误差归因于它；不是新算法、精度恢复或加速结果。诊断不读取真值或观测，也不授权谱修补、更多迭代或训练。
+
+Independent geometry-only diagnosis localizes old-factor pose sensitivity: under the same ±0.25° rotations, the operator changes by only about3.40%–3.46% across10 geometry combinations, but old-factor-normalized change reaches21.46%–73.89%, a6.28–21.76-fold contrast. All20 geometry witnesses are checked with native physical operators. Nearby angles therefore cannot alone justify factor reuse, but the entire earlier reconstruction error has not been attributed to this effect. This is not a new algorithm, restored accuracy or acceleration. The diagnosis reads neither truth nor observations and authorizes no spectral repair, extra iterations or training.
+
+| 集合/Set | 相机/Cameras | 角度/Angle | 原始变化/Raw % | 加权变化/Weighted % | 对比/Contrast | 最大方向增益/Leading gain |
+|---|---:|---:|---:|---:|---:|---:|
+| 1 | 5 | -0.25 | 3.4535 | 65.0228 | 18.8279 | 10.3158 |
+| 1 | 5 | +0.25 | 3.4009 | 64.7025 | 19.0251 | 10.3465 |
+| 2 | 7 | -0.25 | 3.4569 | 38.6741 | 11.1875 | 5.5273 |
+| 2 | 7 | +0.25 | 3.4168 | 38.5266 | 11.2755 | 5.4810 |
+| 3 | 9 | -0.25 | 3.4270 | 21.5333 | 6.2835 | 1.7633 |
+| 3 | 9 | +0.25 | 3.4025 | 21.4566 | 6.3061 | 1.7483 |
+| 4 | 5 | -0.25 | 3.4191 | 73.6414 | 21.5381 | 12.5618 |
+| 4 | 5 | +0.25 | 3.3961 | 73.8890 | 21.7571 | 12.4998 |
+| 5 | 7 | -0.25 | 3.4218 | 38.7118 | 11.3132 | 5.6431 |
+| 5 | 7 | +0.25 | 3.4064 | 38.8765 | 11.4127 | 5.6774 |
+
+这里仅使用上次封存的旧/新几何算子与支持节点，不读取CFD场、观测或重建输出。原始变化定义为||D||F/||A0||F，D=A1-A0。令A0^T A0=L L^T，加权变化为||D L^-T||F/sqrt(n)，其中n=5880；旧白化算子的Frobenius范数为sqrt(n)。对比列为两者之比，不是速度比、条件数或预测误差。最大方向增益为max_x ||D x||/||A0 x||。所有范围仅指这10个已经打开的几何组合。
+
+Only sealed old/new geometry operators and supported-node metadata are read, not CFD fields, observations or reconstruction outputs. Raw change is||D||F/||A0||F, withD=A1-A0. ForA0^T A0=L L^T, weighted change is||D L^-T||F/sqrt(n), n=5880; the old whitened operator has Frobenius normsqrt(n). Contrast is their ratio, not a speed ratio, condition number or prediction error. Leading gain ismax_x ||D x||/||A0 x||. All ranges apply only to these10 already-opened geometry combinations.
+
+正式实现用Cholesky白化和标准特征问题，独立实现用逆相机顺序累计、LU求迹和广义特征问题。两套实现的标量不变量最大相对差约9.99e-11；20个见证方向另经native旧/新算子重放，差约1.08e-13/8.76e-15，物理特征残差最大4.78e-10。旧算子的白化恒等控制通过。退化特征向量可以不同，不强制比较其坐标。
+
+The formal implementation uses Cholesky whitening and a standard eigenproblem; the independent implementation uses reverse-camera accumulation, LU for the trace and a generalized eigenproblem. Maximum relative discrepancy of scalar invariants is about9.99e-11. Separate native old/new replay of20 witness directions differs by1.08e-13/8.76e-15, with maximum physical eigen-residual4.78e-10. Old-operator whitening identity controls pass. Degenerate eigenvectors may differ, so their coordinates are not forced to agree.
+
+最大敏感方向在旧几何下的增益仅为该算子单位方向均方增益尺度的约0.15%–2.19%。其扰动/旧响应比达到1.75–12.56。最大单方向只占加权扰动总能量的1.13%–4.95%；这不是源场重建误差的能量分布，不能把两者混为一谈。我们确认了几何敏感性存在，尚未声称它单独造成全部K2误差。
+
+The leading-sensitive directions have old-geometry gains only about0.15%–2.19% of the operator's RMS unit-direction gain scale. Their perturbation/old-response ratios reach1.75–12.56. The leading direction contributes only1.13%–4.95% of total weighted perturbation energy. This is not the energy distribution of source-field reconstruction error, and the two must not be conflated. Geometry sensitivity is confirmed, without claiming it alone caused every K2 error.
+
+这也符合数值分析的基本警示：解误差需要同时考虑扰动与问题敏感性，不能只看残差或输入变化。[LAPACK标准误差分析](https://www.netlib.org/lapack/lug/node78.html)。此处没有计算标准条件数，也不是首创理论。
+
+This is consistent with the basic numerical-analysis warning that solution error depends on both perturbations and problem sensitivity, not only residuals or input changes. [LAPACK standard error analysis](https://www.netlib.org/lapack/lug/node78.html). No standard condition number is computed here, and no new theory is claimed.
+
+本诊断使用了稠密因子、求迹和20次最大特征问题，属于离线分析，不能包装成便宜的部署修正。它没有解除固定两步复用失败，也未授权低秩/谱修补或更多训练。后续必须先审计一个有明确观测输入、能控制放大且成本可信的不同机制，再决定是否值得学习；高效完整直接解仍是强对照。
+
+This diagnosis uses dense factors, trace calculations and20 top-eigenproblems offline; it cannot be repackaged as a cheap deployed correction. It does not rehabilitate fixed two-step reuse or authorize low-rank/spectral repair or more training. Any different mechanism must first have explicit observation inputs, controlled amplification and a credible cost path before learning is considered. Optimized full direct solving remains the strong control.

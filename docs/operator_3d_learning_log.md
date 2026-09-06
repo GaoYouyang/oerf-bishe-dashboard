@@ -1,3 +1,11 @@
+## 2026-09-07：不是角度近就能复用 / Nearby Angles Do Not Guarantee Reuse
+
+已独立定位旧因子的变姿敏感性：同一 ±0.25° 旋转下，10个几何组合的算子相对变化仅约3.40%–3.46%，但旧因子归一化后的变化达到21.46%–73.89%，对比放大6.28–21.76倍。20个几何见证方向经原始物理算子复核。这解释了为什么不能仅凭角度接近判断旧因子可复用，但尚未把之前的全部重建误差归因于它；不是新算法、精度恢复或加速结果。诊断不读取真值或观测，也不授权谱修补、更多迭代或训练。
+
+Independent geometry-only diagnosis localizes old-factor pose sensitivity: under the same ±0.25° rotations, the operator changes by only about3.40%–3.46% across10 geometry combinations, but old-factor-normalized change reaches21.46%–73.89%, a6.28–21.76-fold contrast. All20 geometry witnesses are checked with native physical operators. Nearby angles therefore cannot alone justify factor reuse, but the entire earlier reconstruction error has not been attributed to this effect. This is not a new algorithm, restored accuracy or acceleration. The diagnosis reads neither truth nor observations and authorizes no spectral repair, extra iterations or training.
+
+[独立几何诊断 / Independent geometry diagnosis](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：角度变化小，复用误差不一定小 / Small Pose Changes Need Not Mean Small Reuse Error
 
 已知相机变姿的旧因子复用独立确认失败：整套相机固定旋转 ±0.25°，五套相机子集与五条已开封轨迹的中间帧共50个单元，重新分解的直接解通过50/50；旧因子复用两步、零初值两步和Jacobi两步均为0/50。独立重建几何并重放全部400个输出状态，确认不是两套实现之间的数值分歧。关闭这份固定两步复用方案，不加深或换角度补救；它既不证明学习可行，也不是完整轨迹、速度或真实实验结果。
