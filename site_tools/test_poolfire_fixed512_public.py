@@ -121,3 +121,21 @@ def test_direct_factor_is_classical_cache_ready_not_learned_speedup():
         assert len(notes) == 1
         assert "不是学习算法加速" in notes[0]["data-i18n-zh"]
         assert "not learned acceleration" in notes[0]["data-i18n-en"]
+
+
+def test_noisy_inverse_failure_does_not_erase_clean_result():
+    doc = json.loads((ROOT / f"docs/{STEM}.json").read_text())
+    data = doc["direct_inverse_noise_boundary"]
+    assert data["status"] == "FAIL_FIXED_1PCT_DIRECT_INVERSE"
+    assert data["primary_passing"] == 0 and data["noisy_samples"] == 1515
+    assert data["complete_trajectories"] == 0 and data["unique_opened_frames"] == 505
+    assert data["four_metric_pass_counts"] == [0, 0, 0, 1515]
+    assert data["control_midpoints_per_arm"] == 15 and not data["control_full_sequences_evaluated"]
+    assert data["clean_result_still_valid"] and doc["direct_factor_resource"]["accuracy_passed"] == 505
+    assert not data["measured_experimental_noise"] and not data["learned_advantage"]
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        soup = BeautifulSoup((ROOT / relative).read_text(), "html.parser")
+        notes = soup.select("#direct-noise-boundary")
+        assert len(notes) == 1
+        for lang in ("zh", "en"):
+            assert all(value in notes[0][f"data-i18n-{lang}"] for value in ("1%", "1515", "0/5", "10.10%", "15"))

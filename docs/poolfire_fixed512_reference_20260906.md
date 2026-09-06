@@ -152,3 +152,29 @@ The retained direct factor occupies about263.8MiB; geometry preparation and tria
 科学判断：固定小规模、干净线性代理上的精度与调用数，单独不足以支持学习优势。后续学习必须说明为何不能直接复用这个经典解，并在同样计入准备与内存的条件下胜过它；不能只拿较慢的迭代法当对照。当前没有学习算法突破或真实实验结论。
 
 Scientific consequence: accuracy and exact-call counts alone on this small, fixed, clean linear proxy do not support a learned advantage. Future learning must explain when this classical solution cannot simply be reused and beat it with preparation and memory included, not compare only against slower iterative solvers. No learned algorithm breakthrough or real-experiment conclusion follows.
+
+## 合成噪声边界 / Synthetic Noise Boundary
+
+适用边界已确认：同一固定几何加入1%合成观测噪声，三个固定种子共1515个样本，直接解为0/1515、完整轨迹0/5。场/全梯度/内部梯度误差p90为5.59%/6.19%/10.10%，都超过1%门；观测残差却全部通过。Zero、BP和两种512步迭代对照在15个固定中点也均未通过。干净数据的快速结果仍有效，但不能当作噪声下的准确重建；这不是实验噪声或学习成果。
+
+Applicability boundary confirmed: adding1% synthetic observation noise to the same fixed geometry gives1515 samples across three fixed seeds. The direct inverse passes0/1515 samples and0/5 complete trajectories. Field/full-gradient/interior-gradient p90 errors are5.59%/6.19%/10.10%, above the1% gates, although every observation-residual gate passes. Zero, BP and both512-step controls also fail their15 fixed midpoints. Clean-data speed remains valid, but does not establish accurate noisy reconstruction. These are not measured experimental noise or learned results.
+
+| 轨迹 / Trajectory | 场p90 / Field | 全梯度p90 / Full gradient | 内部梯度p90 / Interior gradient | 噪声观测p90 / Noisy residual |
+|---|---:|---:|---:|---:|
+| p=14kw_size=05 | 5.617% | 5.762% | 10.022% | 0.898% |
+| p=22kw_size=03 | 4.657% | 5.769% | 8.669% | 0.898% |
+| p=33kw_size=01 | 4.820% | 6.423% | 8.988% | 0.898% |
+| p=45kw_size=05 | 6.389% | 6.259% | 10.898% | 0.898% |
+| p=58kw_size=03 | 5.072% | 5.919% | 9.738% | 0.898% |
+
+每行汇总同一轨迹101帧、三个预先固定噪声种子，共303个样本。噪声是作用于全部观测分量、按干净观测L2范数归一到1%的高斯方向，不是归一化后仍相互独立的高斯噪声，也不是实验测量。输入构造不读取密度真值，求解器只读有噪观测与已知几何；全部直接解及中点对照先封存，再读取真值评分。两套实现分别构造输入、执行Cholesky/QR求解与物理回放，逐指标离散判决完全一致。
+
+Each row covers101 frames and three pre-fixed noise seeds, or303 samples. Noise is a Gaussian direction over every observation component, normalized to1% of the clean observation's L2 norm. Its components are not independent Gaussian samples after normalization, and it is not experimentally measured noise. Input construction does not read density truth; solvers receive only noisy observations and known geometry. All direct fields and midpoint controls are sealed before truth scoring. The two paths independently construct inputs, solve by Cholesky/QR and replay the physics, with identical discrete metric decisions.
+
+独立场/观测/指标最大差2.32e-12/3.81e-14/6.70e-13，正规方程驻点残差1.11e-16。观测残差p90约0.898%，但内部梯度误差p90约10.10%，最坏12.48%。干净到有噪的场变化也通过独立线性回放。因此这里暴露的是该未正则化估计器对所测噪声的放大，不是求解尚未收敛。观测拟合好，不等于三维场恢复准确。
+
+Maximum independent field/image/metric discrepancies are2.32e-12/3.81e-14/6.70e-13, with normal-stationarity residual1.11e-16. Observation-residual p90 is about0.898%, but interior-gradient p90 is10.10% and worst error12.48%. Clean-to-noisy field changes also pass independent linear replay. This exposes amplification of the tested noise by the unregularized estimator, not an unconverged solve. A good observation fit does not imply accurate3D recovery.
+
+四个经典对照各自的0/15只针对五个固定中点乘三个种子，不是它们完整轨迹的结论，也不是最优迭代深度的结论。没有事后换参考、改噪声、放宽门或加大模型。上一节干净数据的505/505和计时结果保持原结论，仅将其适用范围限定清楚：当前直接逆不能作为1%噪声下满足同一精度门的教师。该负结果不证明所有去噪先验或估计器不可能；它要求后续方法先解决噪声下的估计稳定性，再讨论暖启动加速。
+
+Each classical control's0/15 refers only to five fixed midpoints times three seeds, not its complete trajectories or an optimal iteration count. There is no post-hoc reference switch, noise change, relaxed gate or larger model. The previous clean505/505 and timing result remains intact; its boundary is now explicit: this direct inverse is not a teacher meeting the same accuracy gate at1% noise. This negative result does not prove all denoising priors or estimators impossible. It requires future work to address estimation stability under noise before claiming warm-start acceleration.
