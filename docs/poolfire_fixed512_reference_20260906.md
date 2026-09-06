@@ -918,3 +918,32 @@ After all45 processes exit and their outputs are sealed, independent replay chec
 边界不可省略：测量覆盖缓存就绪求解进程的完整峰值内存，不是相机几何到最终结果的全部成本。公共算子缓存的29700条解析行与独立8192次canonical forward准备未计入。即便此门通过也不能直接宣布端到端加速；当前0/5，故不再扩展这份固定实现的资源优势主张，不调分块、线程、批量或换对照救援。仍需寻找学习能胜过强经典基线的真实使用条件，而不是把经典精确解当成算子学习成功。
 
 The boundary matters: measurements cover the whole peak memory of a cache-ready solver process, not every cost from camera geometry to the final result. Shared operator-cache construction, including29700 analytic rows and8192 canonical forward probes for independent assembly, is excluded. Even a pass would not establish end-to-end acceleration. The actual0/5 closes this fixed implementation's resource-advantage claim without retuning partitions, threads, batch size or comparators. The remaining research must identify conditions where learning can beat a strong classical baseline, rather than relabel a classical exact solution as operator-learning success.
+
+## 2026-09-07 已知变姿下的经典复用否决 / Classical Reuse Veto Under Known Pose Changes
+
+已知相机变姿的旧因子复用独立确认失败：整套相机固定旋转 ±0.25°，五套相机子集与五条已开封轨迹的中间帧共50个单元，重新分解的直接解通过50/50；旧因子复用两步、零初值两步和Jacobi两步均为0/50。独立重建几何并重放全部400个输出状态，确认不是两套实现之间的数值分歧。关闭这份固定两步复用方案，不加深或换角度补救；它既不证明学习可行，也不是完整轨迹、速度或真实实验结果。
+
+Independent validation rejects old-factor reuse under known camera-pose changes: fixed whole-rig rotations of ±0.25°, five camera subsets and midpoint frames from five already-opened trajectories give50 cells. Refactored direct solving passes50/50; two-step old-factor reuse, zero-start CGLS and Jacobi each pass0/50. Independently reconstructed geometry and all400 output-state replays confirm this is not numerical disagreement between implementations. This fixed two-step reuse scheme is closed without extra steps or angle changes. It establishes neither learning feasibility nor full-trajectory, speed or real-experiment success.
+
+| 方法 / Method | 四项1%门 / Four1% gates | Field p90 ratio | Full-gradient p90 ratio | Interior-gradient p90 ratio | Observation p90 ratio |
+|---|---:|---:|---:|---:|---:|
+| 旧因子 + K2 / Reused factor + K2 | 0/50 | 40.70675 | 34.09180 | 67.52400 | 0.83363 |
+| 零初值 K2 / Zero CGLS K2 | 0/50 | 0.76170 | 0.65481 | 0.80531 | 0.61823 |
+| 当前Jacobi K2 / Current Jacobi K2 | 0/50 | 0.75685 | 0.65959 | 0.78788 | 0.60885 |
+| 新几何直接解 / Refactored direct | 50/50 | 6.60e-11 | 5.42e-11 | 9.33e-11 | 1.52e-13 |
+
+表中为50个单元汇总后的相对误差比值，不是百分数；40.70675不表示40.7%。逐符号、相机集合、方法的p90和最坏值保留在配套JSON。每项误差均需不超过0.01，不靠汇总平均掩盖失败单元。
+
+These are relative-error ratios aggregated over50 cells, not percentages:40.70675 does not mean40.7%. The companion JSON retains p90 and worst errors by sign, camera set and method. Every error must be at most0.01; aggregate means cannot conceal failed cells.
+
+相机几何和生成观测同时改变，因此测试的是已知几何迁移，不是未报告的标定误差。保持原探测器、网格、边界和支持节点不变；两个几何实现检查覆盖和相机乱序，随后分别用解析组装与逐坐标物理forward构造算子。旧因子通过右变量变换接入未修改CGLS；独立实现用LU与原坐标预条件递推。所有预测先封存，再计算真值评分。生成虚拟观测允许读取来源场，不将真值传给求解器。
+
+Camera geometry and generated observations change together, so this tests known-geometry transfer, not unreported calibration error. Detector, grid, boundaries and supported nodes remain fixed. Two geometry implementations check coverage and camera reordering, then build operators through analytic assembly and coordinate-basis physical forwards. The old factor enters unchanged CGLS through a right-coordinate transform; the independent implementation uses LU and original-coordinate preconditioned recurrence. Predictions seal before truth scoring. Source fields generate virtual observations but are not solver inputs.
+
+两套实现的field/image最大相对差约2.03e-10/8.10e-11；native/residual重放差约1.25e-14/1.63e-14，独立汇总差约1.93e-9，均守住结果前固定数值门。每个复用查询实际为2A+2A^T，加5次三角求解，包含最终坐标映射；旧因子构建不是免费。新几何直接查询为1A+1A^T加2次三角求解，但需重新构建和分解。两套新几何共59400条解析行、16384次独立坐标forward，以及生成观测和审计成本均单列，不能声称运行时间优势。
+
+Maximum paired field/image relative differences are about2.03e-10/8.10e-11; native/residual replay differences are1.25e-14/1.63e-14 and independent summary difference1.93e-9, within the pre-fixed numerical gates. Every reuse query actually costs2A+2A^T plus five triangular solves, including the final coordinate mapping; old-factor construction is not free. A new-geometry direct query costs1A+1A^T plus two triangular solves but requires reconstruction and refactorization. Setup for the two geometries includes59400 analytic rows and16384 independent coordinate forwards; observation generation and audits are separately offline. No runtime advantage is established.
+
+结论仅限这份固定复用控制。小幅相机旋转不保证旧逆因子能安全直接复用；具体敏感谱模式尚未独立定位，不能编造根因。它没有关闭全部变姿方法，也没有授权新的学习模型、迭代深度搜索或GPU。下一步应先利用已封存算子诊断这种敏感性，而不是继续堆候选。这里仍是已开封数据的受控虚拟机制证据。
+
+The conclusion is limited to this fixed reuse control. A small camera rotation does not guarantee safe direct reuse of an old inverse factor. Specific sensitive spectral modes have not yet been independently localized, so no root cause is asserted. This closes neither every pose-transfer method nor licenses a new learner, iteration-depth search or GPU. The next step should first diagnose this sensitivity using sealed operators, not accumulate candidates. The evidence remains a controlled virtual mechanism study on already-opened data.

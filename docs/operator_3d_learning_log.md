@@ -1,3 +1,11 @@
+## 2026-09-07：角度变化小，复用误差不一定小 / Small Pose Changes Need Not Mean Small Reuse Error
+
+已知相机变姿的旧因子复用独立确认失败：整套相机固定旋转 ±0.25°，五套相机子集与五条已开封轨迹的中间帧共50个单元，重新分解的直接解通过50/50；旧因子复用两步、零初值两步和Jacobi两步均为0/50。独立重建几何并重放全部400个输出状态，确认不是两套实现之间的数值分歧。关闭这份固定两步复用方案，不加深或换角度补救；它既不证明学习可行，也不是完整轨迹、速度或真实实验结果。
+
+Independent validation rejects old-factor reuse under known camera-pose changes: fixed whole-rig rotations of ±0.25°, five camera subsets and midpoint frames from five already-opened trajectories give50 cells. Refactored direct solving passes50/50; two-step old-factor reuse, zero-start CGLS and Jacobi each pass0/50. Independently reconstructed geometry and all400 output-state replays confirm this is not numerical disagreement between implementations. This fixed two-step reuse scheme is closed without extra steps or angle changes. It establishes neither learning feasibility nor full-trajectory, speed or real-experiment success.
+
+[独立对照与边界 / Independent controls and boundaries](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：文件小，不代表算得快 / Smaller Factors Do Not Mean Faster Solves
 
 精确分块资源门独立确认未通过：三种实现、五套几何、各三次新进程测试，精度全部保持，但预定资源门为0/5。相对高效BLAS直接解，分块的505帧批量查询耗时为1.49–1.73倍，缓存就绪进程峰值内存少约2.0%–13.3%。这是速度与内存的取舍，不是加速；不再以较慢的打包直接解替代强对照来宣称胜出。算子缓存生成成本尚未计入，重复测试不是新数据或外部验证。

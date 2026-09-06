@@ -289,6 +289,21 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_known_pose_reuse_failure_is_not_learning_or_speed_success():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["known_pose_factor_reuse"]
+    assert data["status"] == "FAIL_KNOWN_POSE_REUSED_FACTOR_K2_SCREEN"
+    assert data["independent_status"] == "PASS_INDEPENDENT_KNOWN_POSE_REUSE_SCREEN"
+    assert data["passing"] == {"reuse":0, "zero":0, "jacobi":0, "direct":50}
+    assert data["native_states"] == 400 and len(data["rows"]) == 40
+    assert data["fixed_rotations_degrees"] == [-.25, .25] and data["known_geometry_change"]
+    assert not any(data[k] for k in ("calibration_error", "full_trajectory", "classical_full_sequence_authorized", "predictor_authorized", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost"))
+    assert data["calls"]["query_p0_reuse_triangular"] == 250
+    for rel in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        note = BeautifulSoup((ROOT / rel).read_text(), "html.parser").select("#known-pose-factor-reuse")
+        assert len(note) == 1
+        assert all("0/50" in note[0][f"data-i18n-{lang}"] and "50/50" in note[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_exact_block_resource_preserves_accuracy_but_rejects_speed_claim():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["exact_block_resource"]
     assert data["status"] == "FAIL_FIXED_BLOCK_CACHE_READY_RESOURCE_GATE"
