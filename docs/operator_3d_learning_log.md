@@ -1,3 +1,15 @@
+## 2026-09-06：完整序列有了精度合格的经典基线
+
+完整序列经典基线通过：普通CGLS与几何Jacobi PCGLS固定512步，两种独立实现均为505/505帧、5/5条已打开轨迹通过四指标1%门。主基线最坏密度/内部梯度误差约0.660%/0.979%。每次求解512A+512AT；步数来自五点试点，不是最小调用数、学习加速或外部泛化。
+
+Complete-sequence classical reference passes: ordinary CGLS and geometry-Jacobi PCGLS at fixed512 steps both pass505/505 frames and5/5 opened trajectories under the1% four-metric gate in two independent implementations. Worst primary density/interior-gradient errors are about0.660%/0.979%. Each solve costs512A+512AT; the budget is pilot-informed, not minimum calls, learned speedup or external generalization.
+
+使用同一干净九相机离散forward；512来自已看过的试点，5个设计点复用，500帧新增评价。不能称独立测试或真实BOST，旧学习负结果与中间曲线不确定判决不变。
+
+The same clean nine-camera discrete forward is used;512 was selected after the pilot, with5 reused design points and500 newly evaluated frames. This is not an independent test or real BOST; prior learned failures and intermediate-curve inconclusiveness remain unchanged.
+
+[双语完整结果与成本 / Bilingual full result and costs](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-06：先确认能恢复，再谈怎样更省计算
 
 从五条已开封轨迹各取中间一帧，经典LSMR与独立LSQR均通过四指标1%门。LSMR密度相对误差约1.1e-6，原K4约0.41至0.48：这五个干净样本不是“天然恢复不了”，K4早停留下了可恢复信息。下一步应研究可靠精度下的计算量，而不把接近弱基准当成终点。
