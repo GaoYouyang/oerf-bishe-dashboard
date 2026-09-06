@@ -1,3 +1,15 @@
+## 2026-09-06：区分修正方向和步长
+
+方向诊断：K4到合格参考的修正，在全部505帧上平均法向算子灵敏度更低。沿实际观测残差梯度，任何单个标量步长的场误差下界都至少29.57%，不能一步达到1%目标；这不排除后续多步CGLS或多方向暖启动，尚无学习加速结论。
+
+Direction diagnosis: the K4-to-qualified-reference correction has lower mean normal-operator sensitivity on all505 frames. Along the actual observation-residual gradient, every scalar step has a field-error lower bound of at least29.57%, excluding one-step attainment of the1% gate. This does not exclude further CGLS or multidirection warm starts and establishes no learned speedup.
+
+这两项参考可见诊断不重新训练或延长旧模型，也不排除后续多步CGLS；没有新的学习加速结论。
+
+These reference-visible diagnostics neither retrain nor extend a closed model and do not exclude subsequent multistep CGLS. No new learned-speedup claim follows.
+
+[合并诊断、公式与边界 / Combined diagnosis, inequality and limits](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-06：完整序列有了精度合格的经典基线
 
 完整序列经典基线通过：普通CGLS与几何Jacobi PCGLS固定512步，两种独立实现均为505/505帧、5/5条已打开轨迹通过四指标1%门。主基线最坏密度/内部梯度误差约0.660%/0.979%。每次求解512A+512AT；步数来自五点试点，不是最小调用数、学习加速或外部泛化。

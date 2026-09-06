@@ -45,3 +45,28 @@ def test_bilingual_notes_and_no_private_identifiers():
         content = (ROOT / f"docs/{STEM}.{suffix}").read_text()
         assert all(term not in content for term in ("/Users/", "/Volumes/", "private_results", "sha256", ".pt"))
     assert (ROOT / f"assets/figures/{STEM}.png").stat().st_size > 10000
+
+
+def test_actual_residual_bound_has_narrow_scope():
+    public = json.loads((ROOT / f"docs/{STEM}.json").read_text())
+    data = public["direction_diagnostic"]
+    assert data["cells"] == 505 and data["complete_trajectories"] == 5
+    assert .2957 < data["minimum_field_error_lower_bound"] < .2958
+    assert data["field_target"] == data["reference_field_error_guarantee"] == .01
+    assert data["excludes_only_single_scalar_completion"]
+    assert not data["excludes_further_cgls"] and not data["excludes_multidirection_warm_start"]
+    assert not data["CFD_truth_parsed"] and not data["learned_speedup"]
+    assert len(data["trajectories"]) == 5
+    for row in data["trajectories"]:
+        assert row["minimum_actual_residual_scalar_bound"] >= data["minimum_field_error_lower_bound"]
+        assert 0 < row["median_rayleigh_ratio"] < 1
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        soup = BeautifulSoup((ROOT / relative).read_text(), "html.parser")
+        notes = soup.select("#late-direction-diagnostic")
+        assert len(notes) == 1
+        for lang in ("zh", "en"):
+            assert "29.57%" in notes[0][f"data-i18n-{lang}"]
+            assert "CGLS" in notes[0][f"data-i18n-{lang}"]
+    text = (ROOT / f"docs/{STEM}.md").read_text()
+    assert "lower bounds, not measured-error ranges" in text
+    assert "preprocessed gauge-fixed" in text
