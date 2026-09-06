@@ -457,3 +457,33 @@ Formal SVD and independent column-pivoted QR separately rebuild directions, grad
 科学变化：上一轮只知道学习器失败，现在能排除“同一表示只要再学好系数就够了”这个解释。关闭的是固定九相机因子生成的这四个方向及其一次CGLS修正，不是所有几何条件学习器、其他物理表示或BOST本身。继续研究必须改变信息或表示，而非继续调该模型的规模、轮数和系数。没有新增部署收益，全部算子工作是单独披露的离线诊断。
 
 Scientific change: the previous result established learner failure; this audit rules out the explanation that better coefficients in the same representation would suffice. The closure applies to these four shared-nine-factor directions with one CGLS correction, not all geometry-conditioned learners, other physical representations or BOST itself. Further research must change information or representation, not keep tuning this model's size, epochs or coefficients. No new deployment benefit is claimed; all operator work is separately disclosed offline diagnosis.
+
+## 全局输入加局部学习仍未过门 / Global Input With Local Learning Still Fails
+
+49参数学习实验已独立确认失败：使用完整九相机几何逆算子提供全局信息，再学习共享局部响应，仍只通过25个必要点中的5个九相机点；这5个不学习也能通过。其余20/20删相机点失败，四组场误差p90为87.7%–90.8%，目标为1%。15参数线性对照同样未通过。已封存2525个外折预测，但其余2500次物理修正按规则不再运行。关闭该固定配置；不是完整序列验证、学习优势、提速或真实BOST成果。
+
+The 49-parameter learner independently fails: a shared local response on global full-nine inverse information passes only the five full-nine cases among 25 necessary cases, which also pass without learning. All 20/20 camera-removal cases fail; field-error p90 across four groups is 87.7%-90.8% against 1%. The 15-parameter linear control also fails. All 2525 outer predictions are sealed, but the other 2500 physical refinements are skipped by the fixed rule. This closes the fixed recipe, not a complete-sequence validation, learned advantage, speedup or real-BOST result.
+
+这次是真正的跨轨迹拟合，不是测试数或页面工作。五折分别留一整条轨迹，49参数奇对称点映射和15参数线性对照各固定20轮；拟合只用训练侧观测生成的合格直接解作为教师。完整九相机逆算子是共享的全局输入/输出动作，当前相机几何还进入覆盖率特征与精确forward/adjoint。额外两组五/七相机完全未参与拟合。CFD真值仅在全部预测封存后作否决评分，不能参与归一化、停止或回退。
+
+This is actual complete-trajectory leave-one-out fitting, not engineering test counts or page work. Each of five folds trains a 49-parameter odd point map and a 15-parameter linear control for exactly 20 epochs, using qualified observation-derived direct solutions only on the training side. One full-nine inverse supplies shared global input/output actions; active geometry also enters coverage features and exact forward/adjoint operations. Two additional five/seven-camera sets are excluded from fitting. CFD truth is used only for veto scoring after every prediction is sealed, never normalization, stopping or fallback.
+
+| 相机组 / Camera set | 学习 / Learned | 线性 / Linear | 不学习 / Unlearned | 直接参考 / Direct | 学习场p90 / Learned field p90 |
+|---|---:|---:|---:|---:|---:|
+| g0 (5) | 0/5 | 0/5 | 0/5 | 5/5 | 0.908141 |
+| g1 (7) | 0/5 | 0/5 | 0/5 | 5/5 | 0.876949 |
+| g2 (9) | 5/5 | 5/5 | 5/5 | 5/5 | 1.35496e-12 |
+| g3 (5) | 0/5 | 0/5 | 0/5 | 5/5 | 0.899071 |
+| g4 (7) | 0/5 | 0/5 | 0/5 | 5/5 | 0.892178 |
+
+表中每组只有五条轨迹各一个中点，误差为分数，冻结四指标门均为0.01。九相机时模型校正被结构性设为零，所以通过来自已验证的直接逆信息，不是神经网络贡献。删相机的20个点上，学习器均至少有一项指标劣于不学习版本；Zero-CGLS3、Jacobi-PCGLS3与BP+CGLS2也都未通过绝对门。完整直接参考25/25通过，不能用弱迭代对照替代它。详细四指标与所有控制汇总见配套JSON。
+
+Each group has one midpoint from each of five trajectories; errors are fractions and all four frozen gates are 0.01. At nine cameras the learned correction is structurally zero, so those passes come from verified direct-inverse information, not the network. On all 20 removal cases the learner harms at least one metric versus its unlearned version. Zero-CGLS3, Jacobi-PCGLS3 and BP+CGLS2 also fail the absolute gates. The qualified direct reference passes 25/25 and cannot be replaced by weak iterative controls. The companion JSON includes all four metrics and every control summary.
+
+独立链核验训练特征、物理损失、显式梯度、Adam更新、两套预测、未修改K1与400个物理场。梯度最大相对差3.03e-11；两套终点指标最大绝对差3.47e-8；退出后的重放指标最大差1.82e-12，原生forward差7.19e-16，输入与预测树前后不变。上一轮H8/K64的数值不确定仍原样保留，未被这次结果“修复”。本次负结果不证明所有局部/非线性学习不可能，也没有证明20轮拟合达到全局最优。
+
+Independent checks cover features, physical loss, explicit gradients, Adam updates, both prediction paths, unchanged K1 and 400 physical fields. Maximum gradient relative difference is 3.03e-11; paired endpoint-metric absolute difference is 3.47e-8; post-exit metric replay differs by at most 1.82e-12 and native forward by 7.19e-16, with input/prediction trees unchanged. The preceding H8/K64 numerical uncertainty remains unchanged, not retroactively repaired. This negative result does not disprove every local/nonlinear learner or establish global optimality after 20 epochs.
+
+成本：候选每查询3A+3AT、4次三角求解，另有约276.6MB的共享因子及其构建；分组直接参考每查询1A+1AT、2次三角求解，但各组需自己的因子。不能把共享大因子当免费输入，也不能仅凭K1或49参数声称部署更快。42.6分钟、峰值约7.71GiB只是这次拟合与审计的本地遥测，不是fresh wall/RSS对比。
+
+Cost: the candidate uses 3A+3AT and four triangular solves per query, plus a shared factor of about 276.6MB and its setup. Each subset direct reference uses 1A+1AT and two triangular solves but requires its own factor. The large shared factor is not free; K1 or 49 parameters alone cannot establish faster deployment. About 42.6 minutes and a 7.71GiB peak are local fit/audit telemetry, not a fresh wall/RSS comparison.

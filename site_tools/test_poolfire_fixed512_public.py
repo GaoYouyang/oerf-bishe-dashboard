@@ -287,3 +287,21 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         notes = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#factor-transfer-capacity")
         assert len(notes) == 1
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
+def test_point49_reports_fixed_negative_and_factor_cost():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["source_conditioned_point49"]
+    assert data["status"] == "FAIL_FIXED_SOURCE_CONDITIONED_POINT49"
+    assert data["evaluated_cases"] == 25 and data["predicted_cases"] == 2525
+    assert data["unrun_refinements"] == 2500
+    assert data["primary_passing"] == data["linear_passing"] == data["unlearned_passing"] == 5
+    assert data["direct_passing"] == 25 and data["removal_cases_passing"] == 0
+    assert data["model_parameters"] == 49 and data["linear_parameters"] == 15
+    assert data["online_A"] == data["online_AT"] == 3 and data["online_triangular"] == 4
+    assert data["shared_factor_bytes"] > 270000000 and data["factor_setup_not_free"]
+    assert data["nine_camera_identity_not_learning"] and data["frozen_recipe_closed"]
+    assert not any(data[k] for k in ("complete_sequence_accuracy_established", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost"))
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        notes = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#source-conditioned-point49")
+        assert len(notes) == 1
+        assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))

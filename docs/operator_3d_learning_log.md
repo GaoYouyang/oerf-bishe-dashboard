@@ -1,3 +1,11 @@
+## 2026-09-06：49参数全局条件学习的明确负结果
+
+49参数学习实验已独立确认失败：使用完整九相机几何逆算子提供全局信息，再学习共享局部响应，仍只通过25个必要点中的5个九相机点；这5个不学习也能通过。其余20/20删相机点失败，四组场误差p90为87.7%–90.8%，目标为1%。15参数线性对照同样未通过。已封存2525个外折预测，但其余2500次物理修正按规则不再运行。关闭该固定配置；不是完整序列验证、学习优势、提速或真实BOST成果。
+
+The 49-parameter learner independently fails: a shared local response on global full-nine inverse information passes only the five full-nine cases among 25 necessary cases, which also pass without learning. All 20/20 camera-removal cases fail; field-error p90 across four groups is 87.7%-90.8% against 1%. The 15-parameter linear control also fails. All 2525 outer predictions are sealed, but the other 2500 physical refinements are skipped by the fixed rule. This closes the fixed recipe, not a complete-sequence validation, learned advantage, speedup or real-BOST result.
+
+[详细记录 / Detailed evidence](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-06：从学习失败定位到固定表示缺口
 
 已定位上一学习器的表示缺口：只审计同样25个必要点。即便让每项指标分别选择最理想的系数，并把原四方向加一次CGLS的所有可能输出放进一个更宽松的九列空间，删相机的20/20点仍有不可消除的超门误差；四组场误差下界p90约58%–63%，远高于1%。原学习器输出的空间包含检查及独立SVD/QR复算通过。这不是新算法或完整序列结果，也不是整个逆问题不可能；它说明继续训练同一套方向表示无法补上当前缺口。
