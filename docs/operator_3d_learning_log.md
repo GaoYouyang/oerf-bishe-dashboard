@@ -1,3 +1,11 @@
+## 2026-09-06：跨相机图消息没有赢过配对便宜对照
+
+新增配对小模型已独立重放：177参数跨相机图消息通过367/505帧、1/5完整轨迹；同参数、同预算的便宜同相机对照为370/505、1/5。跨相机方案仅154/505帧四指标均不差于配对对照，未显示稳定优势；关闭这个固定方案，不追加训练。两者在线2A+2AT之外均有一次图运算，不是免费消息或实测加速。
+
+The new paired 177-parameter models are independently replayed: cross-camera graph messages pass 367/505 cells and 1/5 trajectories; the cheaper same-camera control with equal parameters and training budget passes 370/505 and 1/5. All-four nonharm against the paired control holds on only 154/505 cells, not stable advantage. This fixed design closes without extra training. Both add one graph action to 2A+2AT; messages are not free or a measured speedup.
+
+[双语完整比较 / Bilingual full comparison](poolfire_f30_comparison_20260906.md)
+
 ## 2026-09-06：训练确实改变了表示，但剩余误差不只是读出没调好
 
 固定隐层的独立审计：精确优化读出仅能再消除1.9%-4.3%的训练目标损失；505帧留出初始化教师损失均以现有方向外的部分为主，逐轨迹中位占比81.6%-88.2%。学到的隐层改善464/505帧的表示下界，但不等于最终K1重建成功，也不证明整个网络已经收敛；没有替换模型或追加训练。

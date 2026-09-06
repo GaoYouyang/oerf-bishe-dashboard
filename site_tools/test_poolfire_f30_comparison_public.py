@@ -48,7 +48,7 @@ def test_trained_comparator_is_not_an_independent_retraining_or_success_claim():
     data = json.loads((ROOT / f'docs/{STEM}.json').read_text())
     trained = data['trained_neural_comparator']
     arm = next(a for a in data['arms'] if a['arm'] == 'trained_ray_set_k1')
-    assert len(data['arms']) == 15
+    assert len(data['arms']) == 17
     assert (arm['passing_cells'], arm['complete_trajectories']) == (420, 1)
     assert [r['passing_cells'] for r in arm['trajectory_results']] == [101, 89, 90, 49, 91]
     assert trained['trainable_parameters_per_fold'] == 369
@@ -60,7 +60,7 @@ def test_trained_comparator_is_not_an_independent_retraining_or_success_claim():
     assert trained['fixed_budget_instance_closed']
     assert trained['call_counts']['training_A'] == trained['call_counts']['training_AT'] == 80800
     current = json.loads((ROOT / 'operator-learning/current-evidence.json').read_text())
-    assert current['latest_prediction'] == trained
+    assert current['previous_trained_prediction'] == trained
     for file in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT / file).read_text(), 'html.parser')
         note = soup.select_one('#trained-ray-set-result')
@@ -101,7 +101,7 @@ def test_trained_loss_attribution_does_not_replace_the_predictor():
     assert diagnostic['call_counts']['basis_A'] == diagnostic['call_counts']['basis_AT'] == 42925
     current = json.loads((ROOT / 'operator-learning/current-evidence.json').read_text())
     assert current['latest_diagnostic'] == diagnostic
-    assert current['latest_prediction']['matched_cells'] == 420
+    assert current['previous_trained_prediction']['matched_cells'] == 420
     for file in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
         note = BeautifulSoup((ROOT / file).read_text(), 'html.parser').select_one('#trained-loss-attribution')
         assert note and '464/505' in note['data-i18n-zh'] and '464/505' in note['data-i18n-en']
@@ -116,6 +116,34 @@ def test_weak_message_not_uniformly_harmless():
     assert not diagnostic['strict_uniform_removability_passed']
     assert diagnostic['ablation_all_four_better_cells'] == 41
     assert diagnostic['parent_all_four_better_cells'] == 12
+
+
+def test_paired_sparse_graph_closes_without_free_message_or_retraining_claim():
+    data = json.loads((ROOT / f'docs/{STEM}.json').read_text())
+    arms = {a['arm']: a for a in data['arms']}
+    graph = data['sparse_graph_comparator']
+    assert graph['matched_cells'] == 367 and graph['complete_trajectories'] == 1
+    assert graph['same_camera_control_matched_cells'] == 370
+    assert graph['dominates_paired_local_cells'] == 154
+    assert graph['dominates_cheaper_ridge_cells'] == 504
+    assert not graph['cheap_control_gate_passed'] and graph['fixed_representation_closed']
+    assert graph['extra_online_graph_actions'] == 1 and graph['measured_speedup'] is None
+    assert graph['trainable_parameters_per_arm_fold'] == 177
+    assert graph['optimizer_updates_total'] == 20200
+    assert graph['independent_gradient_probes'] == 200
+    assert not graph['independent_optimizer_trajectory_repeated']
+    assert graph['shared_sealed_parameter_artifacts']
+    assert graph['new_accuracy_camera_counts'] == [9]
+    for arm, counts in (('local', [101, 70, 73, 58, 68]), ('graph', [101, 62, 58, 67, 79])):
+        assert [r['passing_cells'] for r in arms[arm + '_message_k1']['trajectory_results']] == counts
+        assert graph['call_counts'][arm + '_training_A'] == 80800
+        assert graph['call_counts'][arm + '_training_AT'] == 80800
+    current = json.loads((ROOT / 'operator-learning/current-evidence.json').read_text())
+    assert current['latest_prediction'] == graph
+    for file in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        note = BeautifulSoup((ROOT / file).read_text(), 'html.parser').select_one('#sparse-graph-result')
+        assert note and all('367/505' in note[a] and '370/505' in note[a]
+                            for a in ('data-i18n-zh', 'data-i18n-en'))
 
 
 def test_private_boundary_bilingual_current_and_archives():

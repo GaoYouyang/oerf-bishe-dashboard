@@ -1,6 +1,24 @@
 # PoolFire：局部改善已复现，稳定同精度尚未通过
 
-2026-09-06。同一505帧完整轨迹留一：369参数全训练比较器通过420帧、1/5条完整轨迹；旧随机特征为409帧、2/5，线性对照为412帧、1/5。稳定同精度与便宜对照门仍未通过。
+2026-09-06。最新配对实验：跨相机图消息367/505帧、1/5完整轨迹，同相机对照370/505、1/5；未显示稳定优势。此前369参数模型420/505、1/5，随机特征409/505、2/5，线性对照412/505、1/5。各固定方案均未通过完整门。
+
+## 配对图消息：局部改善不能覆盖跨轨迹退步
+
+新增配对小模型已独立重放：177参数跨相机图消息通过367/505帧、1/5完整轨迹；同参数、同预算的便宜同相机对照为370/505、1/5。跨相机方案仅154/505帧四指标均不差于配对对照，未显示稳定优势；关闭这个固定方案，不追加训练。两者在线2A+2AT之外均有一次图运算，不是免费消息或实测加速。
+
+| 轨迹 / Trajectory | 同相机 / Same-camera | 跨相机 / Cross-camera |
+|---|---:|---:|
+| p14-s05 | 101/101 | 101/101 |
+| p22-s03 | 70/101 | 62/101 |
+| p33-s01 | 73/101 | 58/101 |
+| p45-s05 | 58/101 | 67/101 |
+| p58-s03 | 68/101 | 79/101 |
+
+仅改变配对模型所用图：primary保留由射线重叠构造的有符号跨相机边，control在同一选边集合中删除跨相机边后独立归一化。它不是为同相机模型重新挑选的最优图。两者各177参数、每折一个TRAIN-only尺度、五折各20轮，合计20,200步；不是旧369参数模型的单因素消融。全部1,010个预测在读取评分真值前封存。第二实现共享最终参数，独立重建几何、推理、lift、未修改K1和评分；200个局部梯度/Adam探针不等于独立重训。
+
+对p45/p58有改善，对p22/p33则退步。相对便宜直接场ridge也只有504/505帧四指标无伤害，未达到全部505帧门。图边支持完全一致，预测/场/指标最大相对差约1.25e-14/6.76e-15/3.43e-15，汇总7.78e-14。这个固定邻域、归一化、模型和训练预算关闭；不通过调邻居、宽度、轮数或学习率追结果，不排除所有图方法。
+
+primary图843,170个非零项，其中318,114个跨相机项，CSR约9.76MiB；control525,056项、约6.12MiB。primary一次图动作约为一个A/AT对的0.1424倍标量乘加项，不是wall-time比例。几何构建另有8,192A及1,495,427,768稀疏Gram乘加项，独立路径29,700行解析几何及7,226,081,280,000稠密Gram乘加项。每臂训练80,800A+80,800AT，独立探针800A+800AT，最终重建每路径1,010A+1,010AT、评分505A；教师图像每路径另505A。整轮约144.36分钟、峰值4.66GiB只是双模型和验证链的遥测，没有比较性加速证据。数值精度只覆盖当前干净九相机代理，不是5/7/12相机性能或真实BOST。
 
 ## 全训练小模型：帧数增加，完整目标仍失败
 
@@ -57,6 +75,8 @@
 | 线性化对照 + K1 / Linearized control + K1 | 412/505 | 1/5 | 2A + 2AT |
 | 全训练小型神经比较器 + K1 / Fully trained small neural comparator + K1 | 420/505 | 1/5 | 2A + 2AT |
 | 固定系数去全局消息消融 / Fixed-coefficient context-off ablation | 412/505 | 1/5 | 2A + 2AT |
+| 同相机图消息 / Same-camera graph | 370/505 | 1/5 | 2A + 2AT + graph |
+| 跨相机图消息 / Cross-camera graph | 367/505 | 1/5 | 2A + 2AT + graph |
 
 BP指观测线搜索后的反投影，在此线性问题中与零起点CGLS K1等价。单元通过数不是总体成功概率；即使K4在表中通过，它也是定义比较线的参考，不是一次新算法发现。
 
@@ -114,7 +134,7 @@ BP指观测线搜索后的反投影，在此线性问题中与零起点CGLS K1�
 
 # PoolFire: local gains reproduce, stable matched accuracy remains unmet
 
-On the same 505-frame complete-trajectory LOTO, the fully trained 369-parameter comparator passes 420 cells and 1/5 trajectories; the old random features pass 409 and 2/5, and the linear control 412 and 1/5. Stable matched accuracy and the cheaper-control gate remain unmet.
+Latest paired experiment: cross-camera graph messages pass367/505 cells and1/5 trajectories versus370/505 and1/5 for the same-camera control, without stable advantage. Earlier results remain420/505 and1/5 for the369-parameter model,409/505 and2/5 for random features, and412/505 and1/5 for the linear control. None passes the full gate.
 
 ## Fully trained small model: more passing cells, still no complete success
 
@@ -137,6 +157,16 @@ The bilingual loss-attribution table reports a teacher-visible orthogonal-projec
 Two implementations rebuild2,525 fold-sample physical states,505 query projections and5 TRAIN optima. QR/directSVD and Cholesky/eigh decomposition, objective and summary differences are at most3.65e-14. Each path costs42,925A+42,925AT plus505 teacher-imageA calls, with29,700 analytical geometry rows. About38.93 minutes and3.676GiB peakRSS are audit telemetry, not newK1, CFD truth scoring or deployment savings.
 
 Readout adjustment alone is not the supported next explanation; a new predictor must first justify genuinely different cheap physical information transfer. No such successful mechanism is established here. Linear/nonlinear variable separation is classical numerical analysis: [Golub and Pereyra,1973](https://epubs.siam.org/doi/10.1137/0710036), not a project novelty.
+
+## Paired graph messages: mixed transfer, no stable advantage
+
+The new paired 177-parameter models are independently replayed: cross-camera graph messages pass 367/505 cells and 1/5 trajectories; the cheaper same-camera control with equal parameters and training budget passes 370/505 and 1/5. All-four nonharm against the paired control holds on only 154/505 cells, not stable advantage. This fixed design closes without extra training. Both add one graph action to 2A+2AT; messages are not free or a measured speedup.
+
+The paired models differ in their graph: the primary retains signed cross-camera edges from ray overlap, while the control deletes those edges from the same selection and normalizes separately. It is not a newly optimized local graph. Each has177 parameters, one TRAIN-only scale per fold and20 epochs in each of five folds:20,200 updates total. This is not a single-factor ablation of the old369-parameter model. All1,010 predictions are sealed before scoring truth. The second implementation shares final parameters but rebuilds geometry, inference, lift, unchangedK1 and scores independently;200 local gradient/Adam probes are not independent retraining. The bilingual paired-count table above gives all five trajectories.
+
+Gains onp45/p58 coexist with losses onp22/p33. All-four nonharm versus cheaper direct-field ridge also holds on only504/505 cells, below the all505 gate. Graph supports agree exactly; prediction/field/metric relative differences are at most1.25e-14/6.76e-15/3.43e-15, with summary7.78e-14. This fixed neighborhood, normalization, model and schedule close without neighbor/width/epoch/lr rescue; this does not reject all graph methods.
+
+The primary has843,170 nonzeros, including318,114 cross-camera entries, and about9.76MiB CSR storage; the control has525,056 entries and6.12MiB. One primary graph action uses0.1424 of anA/AT pair's scalar multiply-add terms, not its wall-time. Geometry setup additionally costs8,192A and1,495,427,768 sparseGram terms; the independent path uses29,700 analytical rows and7,226,081,280,000 denseGram terms. Per arm:80,800A+80,800AT training,800A+800AT independent probes,1,010A+1,010AT final reconstruction and505A scoring per path; teacher images add505A per path. The144.36-minute chain and4.66GiB peakRSS are two-model-plus-validation telemetry, not comparative speedup. Accuracy covers only this clean nine-camera proxy, not5/7/12-camera performance or realBOST.
 
 ## Data, criterion and comparison
 
