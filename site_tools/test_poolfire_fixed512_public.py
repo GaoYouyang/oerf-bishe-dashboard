@@ -289,6 +289,24 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_head_diagnostic_does_not_rescue_old_prediction():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["point49_head_optimality"]
+    assert data["status"] == "PASS_TRAINING_ONLY_FROZEN_HEAD_DIAGNOSTIC"
+    assert data["folds"] == 5 and data["training_queries_per_fold"] == 1212
+    assert data["no_heldout_truth"] and data["raw_before_alpha_and_K1"] and data["hidden_weights_fixed"]
+    assert data["no_global_hidden_optimum_claim"] and data["no_new_models"]
+    assert not any(data[k] for k in ("new_predictions", "new_checkpoints", "retraining", "parent_verdict_changed", "algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost"))
+    assert data["offline_A"] == 246440 and data["offline_AT"] == 117160 and data["offline_triangular"] == 234320
+    for row in data["records"]:
+        for arm in ("primary", "linear"):
+            assert row[arm]["material_gap"] and row[arm]["unregularized_minimum_certified"]
+            assert row[arm]["unregularized_minimum"] > 1e-4
+    for relative in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        notes = BeautifulSoup((ROOT / relative).read_text(), "html.parser").select("#point49-head-diagnostic")
+        assert len(notes) == 1
+        assert all("K1" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_point49_reports_fixed_negative_and_factor_cost():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["source_conditioned_point49"]
     assert data["status"] == "FAIL_FIXED_SOURCE_CONDITIONED_POINT49"

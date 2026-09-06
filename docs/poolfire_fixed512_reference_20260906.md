@@ -487,3 +487,25 @@ Independent checks cover features, physical loss, explicit gradients, Adam updat
 成本：候选每查询3A+3AT、4次三角求解，另有约276.6MB的共享因子及其构建；分组直接参考每查询1A+1AT、2次三角求解，但各组需自己的因子。不能把共享大因子当免费输入，也不能仅凭K1或49参数声称部署更快。42.6分钟、峰值约7.71GiB只是这次拟合与审计的本地遥测，不是fresh wall/RSS对比。
 
 Cost: the candidate uses 3A+3AT and four triangular solves per query, plus a shared factor of about 276.6MB and its setup. Each subset direct reference uses 1A+1AT and two triangular solves but requires its own factor. The large shared factor is not free; K1 or 49 parameters alone cannot establish faster deployment. About 42.6 minutes and a 7.71GiB peak are local fit/audit telemetry, not a fresh wall/RSS comparison.
+
+## 训练没到最优，但固定特征也不够 / Optimization Gap and Frozen-Feature Limit
+
+训练侧最优性诊断已独立完成：固定49参数模型的隐藏特征后，只调整输出层，原训练目标仍可降低19.86%–47.08%；15参数线性对照可降低76.22%–83.53%。但无正则物理训练损失的最小值仍分别为3.56–6.11和0.565–0.576，不能让所有训练样本的原始四项误差都达1%。这是优化缺口与固定特征拟合限制同时存在，不是新预测或留出集成功；不约束观测线搜索与K1后的误差，也不证明所有隐藏表示无效。旧学习失败判决不变。
+
+The training-only optimality diagnostic is independently complete: with the 49-parameter hidden features fixed, output coefficients alone could reduce the original training objective by 19.86%-47.08%; the 15-parameter linear control allows 76.22%-83.53%. Yet minimum unregularized physical training losses remain 3.56-6.11 and 0.565-0.576, excluding 1% raw accuracy on all four metrics for every training query. Optimization gaps and frozen-feature fit limits coexist. This is no new prediction or held-out success, no bound after observation line search and K1, and no disproof of all hidden representations. The old learned-failure verdict is unchanged.
+
+| 外折 / Fold | 原始训练损失 / Old loss | 固定特征物理最小值 / Physical minimum | 输出层目标余地 / Objective gap | 线性物理最小值 / Linear minimum |
+|---|---:|---:|---:|---:|
+| 0 | 5.277930 | 3.795179 | 28.09% | 0.575867 |
+| 1 | 5.384785 | 4.073942 | 24.33% | 0.569750 |
+| 2 | 9.122746 | 6.110322 | 33.02% | 0.567083 |
+| 3 | 4.446019 | 3.561916 | 19.86% | 0.568411 |
+| 4 | 7.942268 | 4.203244 | 47.08% | 0.564952 |
+
+五折分别只使用原先404帧训练侧、三组相机，共1212查询；不读留出教师或CFD真值。表内损失是原始lift在观测线搜索/K1之前的四项相对平方误差均值，不是留出误差百分比。物理最小值来自无正则目标；目标余地来自原先固定正则训练目标。正则损失不是物理下界。数值证明只针对固定隐藏特征和输出系数，不证明隐藏层全局最优，也不排除精确修正后的改善。
+
+Each fold uses only its original 404 training frames across three camera sets, totaling 1212 queries, with no held-out teacher or CFD truth. Losses are means of four squared relative raw-lift errors before observation line search/K1, not held-out error percentages. Physical minima use the unregularized objective; objective gaps use the original fixed-ridge training objective. A regularized loss is not a physical lower bound. These certificates concern only frozen hidden features and output coefficients, not global hidden-layer optimality or possible improvement after exact refinement.
+
+正式Gram/Cholesky与独立物理重建/流式QR复算一致，Gram和物理最小值最大差分别为5.06e-13与3.07e-11。没有保存新系数、checkpoint或预测，没有重新训练或改写旧判决。两实现离线诊断合计246440A、117160AT、234320次三角求解；共享因子与其构建仍非免费。约298秒、峰值2.18GiB仅为本次诊断遥测，不是部署提速。下一步应核查表示与训练目标到最终精确修正的接口，不能把这份诊断当成增加轮数或大模型救援的许可。
+
+Formal Gram/Cholesky and independent physical reconstruction/streaming QR agree, with maximum Gram and physical-minimum differences of 5.06e-13 and 3.07e-11. No new coefficients, checkpoints or predictions were saved, and no retraining or old-verdict revision occurred. Across both implementations this offline diagnostic costs 246440A, 117160AT and 234320 triangular solves; the shared factor and setup are not free. About 298 seconds and 2.18GiB peak are diagnostic telemetry, not deployment speedup. Subsequent work must examine representation and the interface between training loss and final exact refinement, not treat this diagnostic as permission for more epochs or larger-model rescue.

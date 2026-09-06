@@ -1,3 +1,11 @@
+## 2026-09-06：训练最优性诊断，优化缺口与固定特征限制并存
+
+训练侧最优性诊断已独立完成：固定49参数模型的隐藏特征后，只调整输出层，原训练目标仍可降低19.86%–47.08%；15参数线性对照可降低76.22%–83.53%。但无正则物理训练损失的最小值仍分别为3.56–6.11和0.565–0.576，不能让所有训练样本的原始四项误差都达1%。这是优化缺口与固定特征拟合限制同时存在，不是新预测或留出集成功；不约束观测线搜索与K1后的误差，也不证明所有隐藏表示无效。旧学习失败判决不变。
+
+The training-only optimality diagnostic is independently complete: with the 49-parameter hidden features fixed, output coefficients alone could reduce the original training objective by 19.86%-47.08%; the 15-parameter linear control allows 76.22%-83.53%. Yet minimum unregularized physical training losses remain 3.56-6.11 and 0.565-0.576, excluding 1% raw accuracy on all four metrics for every training query. Optimization gaps and frozen-feature fit limits coexist. This is no new prediction or held-out success, no bound after observation line search and K1, and no disproof of all hidden representations. The old learned-failure verdict is unchanged.
+
+[详细记录 / Detailed evidence](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-06：49参数全局条件学习的明确负结果
 
 49参数学习实验已独立确认失败：使用完整九相机几何逆算子提供全局信息，再学习共享局部响应，仍只通过25个必要点中的5个九相机点；这5个不学习也能通过。其余20/20删相机点失败，四组场误差p90为87.7%–90.8%，目标为1%。15参数线性对照同样未通过。已封存2525个外折预测，但其余2500次物理修正按规则不再运行。关闭该固定配置；不是完整序列验证、学习优势、提速或真实BOST成果。
