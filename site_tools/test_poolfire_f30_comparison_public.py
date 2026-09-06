@@ -78,12 +78,33 @@ def test_normal_cache_arithmetic_is_not_a_wall_or_reconstruction_claim():
     assert row['measured_wall_ratio'] is None
     assert not row['truth_or_teacher_read'] and not row['predictor_or_replay_run']
     current = json.loads((ROOT / 'operator-learning/current-evidence.json').read_text())
-    assert current['latest_diagnostic']['measured_wall_ratio'] is None
-    assert not current['latest_diagnostic']['cheap_control_screen_passed']
+    assert current['normal_cache_diagnostic']['measured_wall_ratio'] is None
+    assert not current['normal_cache_diagnostic']['cheap_control_screen_passed']
     for path in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
         note = BeautifulSoup((ROOT / path).read_text(), 'html.parser').select_one('#normal-cache-diagnostic')
         assert note and '10.93' in note['data-i18n-zh'] and '10.93' in note['data-i18n-en']
         assert 'not measured wall' in note['data-i18n-en']
+
+
+def test_trained_loss_attribution_does_not_replace_the_predictor():
+    data = json.loads((ROOT / f'docs/{STEM}.json').read_text())
+    diagnostic = data['diagnostics']['trained_loss_attribution']
+    assert diagnostic['floor_dominant_query_cells'] == 505
+    assert diagnostic['learned_floor_lower_than_random_feature_cells'] == 464
+    assert not diagnostic['new_deployed_model'] and not diagnostic['nonlinear_convergence_proven']
+    assert not diagnostic['final_K1_or_truth_error_bound'] and not diagnostic['optimizer_retry_authorized']
+    assert sum(r['learned_floor_lower_cells'] for r in diagnostic['per_trajectory']) == 464
+    assert all(.018 < r['train_objective_removable_fraction'] < .043 for r in diagnostic['per_trajectory'])
+    assert all(.81 < r['query_floor_fraction_median'] < .89 for r in diagnostic['per_trajectory'])
+    p45 = diagnostic['per_trajectory'][3]
+    assert p45['query_train_optimal_head_teacher_loss_mean'] > p45['query_original_teacher_loss_mean']
+    assert diagnostic['call_counts']['basis_A'] == diagnostic['call_counts']['basis_AT'] == 42925
+    current = json.loads((ROOT / 'operator-learning/current-evidence.json').read_text())
+    assert current['latest_diagnostic'] == diagnostic
+    assert current['latest_prediction']['matched_cells'] == 420
+    for file in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        note = BeautifulSoup((ROOT / file).read_text(), 'html.parser').select_one('#trained-loss-attribution')
+        assert note and '464/505' in note['data-i18n-zh'] and '464/505' in note['data-i18n-en']
 
 
 def test_weak_message_not_uniformly_harmless():

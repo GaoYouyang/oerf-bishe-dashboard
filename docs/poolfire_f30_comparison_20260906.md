@@ -14,6 +14,24 @@
 
 关闭此固定预算实例，不加轮数、换学习率/种子/宽度追通过；不概括所有神经网络失败。当前只有局部改善，仍无完整稳定学习优势、速度或论文突破。
 
+## 损失归因：不是只差把最后一层训好
+
+固定隐层的独立审计：精确优化读出仅能再消除1.9%-4.3%的训练目标损失；505帧留出初始化教师损失均以现有方向外的部分为主，逐轨迹中位占比81.6%-88.2%。学到的隐层改善464/505帧的表示下界，但不等于最终K1重建成功，也不证明整个网络已经收敛；没有替换模型或追加训练。
+
+| 轨迹 / Trajectory | 训练目标可消除 / TRAIN removable | 留出表示下界占比中位 / QUERY floor fraction median | 下界降低帧 / Lower floor |
+|---|---:|---:|---:|
+| p14-s05 | 4.28% | 81.63% | 101/101 |
+| p22-s03 | 2.40% | 85.16% | 101/101 |
+| p33-s01 | 1.90% | 87.90% | 60/101 |
+| p45-s05 | 2.63% | 88.21% | 101/101 |
+| p58-s03 | 2.62% | 86.91% | 101/101 |
+
+这里的下界是给定这17个学到的物理方向、允许逐样本读取K4教师的正交投影剩余，不是所有网络的能力上限或最终CFD误差下界。固定训练预算仍关闭。即使精确优化TRAIN读出，p45留出教师损失均值也从0.141960变为0.146902，说明训练目标下降不保证迁移改善。没有用诊断系数替换已封存预测。
+
+两套实现独立重建2,525个折-样本物理状态、505个查询投影及5个TRAIN最优解；QR/直接SVD和Cholesky/eigh的分解、目标与汇总差均不超过3.65e-14。每套离线42,925A+42,925AT及505次教师图像A，另有29,700行解析几何。约38.93分钟、峰值3.676GiB只作审计遥测；没有新K1、CFD真值评分或部署节省。
+
+因此下一步不能只依赖读出微调，应先说明新的低成本物理信息如何进入预测器。这不是已经找到新机制。线性与非线性变量分离是既有数值分析思想：[Golub与Pereyra，1973](https://epubs.siam.org/doi/10.1137/0710036)，不是本项目首创。
+
 ## 比什么，如何判定
 
 不是等不到数据：用已有五条公开PoolFire训练轨迹各101帧，在同一套九相机F30几何上做完整轨迹留一。每折其他404帧用于拟合，留出101帧不参与输入标准化、超参、回退或停止选择；全部预测先封存再读评分真值。五条轨迹很少，时间帧相关，不能说成505个独立实验或未打开外部验证。
@@ -110,19 +128,29 @@ Training alone costs80,800A+80,800AT. Each implementation prepares505 teacher-im
 
 This fixed-budget instance closes without extra epochs, learning-rate/seed/width rescue. It does not establish that all neural networks fail. Local improvements remain, without complete stable learned advantage, speedup or a paper breakthrough.
 
+## Loss attribution: not merely an unfinished last layer
+
+With hidden features fixed, an independent audit finds only 1.9%-4.3% of the training objective removable by exact readout optimization. All 505 query initializer teacher losses are dominated by the part outside the current span, with trajectory medians of 81.6%-88.2%. Learned features lower the span floor on 464/505 cells, not a final-K1 success or proof of full-network convergence. No model replacement or extra training occurs.
+
+The bilingual loss-attribution table reports a teacher-visible orthogonal-projection residual in the particular 17 learned physical directions, not the capacity limit of all networks or a final CFD-error bound. The fixed training budget remains closed. Even exact TRAIN-head optimization changes p45 query mean teacher loss from0.141960 to0.146902: lower training loss does not ensure better transfer. Diagnostic coefficients never replace sealed predictions.
+
+Two implementations rebuild2,525 fold-sample physical states,505 query projections and5 TRAIN optima. QR/directSVD and Cholesky/eigh decomposition, objective and summary differences are at most3.65e-14. Each path costs42,925A+42,925AT plus505 teacher-imageA calls, with29,700 analytical geometry rows. About38.93 minutes and3.676GiB peakRSS are audit telemetry, not newK1, CFD truth scoring or deployment savings.
+
+Readout adjustment alone is not the supported next explanation; a new predictor must first justify genuinely different cheap physical information transfer. No such successful mechanism is established here. Linear/nonlinear variable separation is classical numerical analysis: [Golub and Pereyra,1973](https://epubs.siam.org/doi/10.1137/0710036), not a project novelty.
+
 ## Data, criterion and comparison
 
 Existing data are usable: five original public PoolFire training trajectories provide 101 frames each on one nine-camera F30 geometry. Complete-trajectory LOTO fits on 404 frames and excludes all 101 query frames from input normalization, hyperparameters, fallback and stopping. Predictions seal before truth scoring. Frames are time-correlated, and five trajectories are a small sample, not 505 independent experiments or untouched external validation.
 
 The fixed32×16×16 target has a zero outer support and demeaned interior. Clean observations are straight-ray gradient integrals, not measured pixel displacements. The expanded50×33 detector supplies29,700 scalar observations versus 9,216 on the old32×16 detector; one A call has different work across these grids. Better sampling coverage is not an algorithm gain.
 
-Every cell must satisfy all four field/full-gradient/interior-gradient/observation errors<=CGLS K2 and<=1.01*CGLS K4. All101 frames must pass per trajectory. K4 is a relative comparator, not an absolute-truth certificate. The first table reaggregates independently sealed scores without a rerun or criterion change. Line-search BP equals zero-start CGLS K1 here. Cell counts are not population success probabilities; K4 remains the defining reference, not a new discovery.
+Every cell must satisfy all four field/full-gradient/interior-gradient/observation errors<=CGLS K2 and<=1.01*CGLS K4. All101 frames must pass per trajectory. K4 is a relative comparator, not an absolute-truth certificate. The method-comparison table reaggregates independently sealed scores without a rerun or criterion change. Line-search BP equals zero-start CGLS K1 here. Cell counts are not population success probabilities; K4 remains the defining reference, not a new discovery.
 
 ## Learned comparator and cheaper explanation
 
 The random-feature comparator reads signed two-component ray observations and geometry with a global multiview mean context. Its352 random hidden quantities are fixed; only 17 shared readout coefficients are fitted. Training distills equal normalized physical K4 field/full-gradient/interior-gradient/projection losses. Query CFD truth is never a prediction input. This readout-trained random-feature neural operator does not represent all fully trained neural operators.
 
-The second table compares identical trajectory rosters. The neural comparator dominates direct-field ridge in all four metrics on 501/505 cells; the linearized control does so on 502/505. The remaining tails matter, and ridge uses one fewer AT. Both improve on K2/scalar controls but do not consistently preserve K4 errors. This is local learned improvement without complete stable advantage, not evidence that all learning fails or that an algorithm breakthrough exists.
+The per-trajectory comparison table uses identical rosters. The random-feature comparator dominates direct-field ridge in all four metrics on 501/505 cells; the linearized control does so on 502/505. The remaining tails matter, and ridge uses one fewer AT. Both improve on K2/scalar controls but do not consistently preserve K4 errors. This is local learned improvement without complete stable advantage, not evidence that all learning fails or that an algorithm breakthrough exists.
 
 ## What the diagnosis establishes
 
@@ -132,7 +160,7 @@ The actual observation coupling is weak in this fixed instance. This does not sh
 
 ## Added: physical messages carry information, but ordinary normal information explains much of it
 
-Five fixed equally spaced frames from each of the five opened trajectories give 25 post-open probes. Exact signed messages are split into cross-camera and same-camera terms; their sum is the ordinary normal message `AA^T y`. Without training or K1 refinement, the third table measures the median fraction of the existing 17-direction initializer's K4 teacher-loss floor removed by one cue. This is a four-block normalized squared teacher-loss diagnostic, not CFD truth error or final reconstruction improvement.
+Five fixed equally spaced frames from each of the five opened trajectories give 25 post-open probes. Exact signed messages are split into cross-camera and same-camera terms; their sum is the ordinary normal message `AA^T y`. Without training or K1 refinement, the normal-message table measures the median fraction of the existing 17-direction initializer's K4 teacher-loss floor removed by one cue. This is a four-block normalized squared teacher-loss diagnostic, not CFD truth error or final reconstruction improvement.
 
 Cross-camera medians exceed the preset 25% gate in all five trajectories, but cross is at least as useful as the cheaper ordinary-normal cue on only 10/25 frames. The required all-25 control comparison therefore fails. Physical directions supply complementary information, but isolating this cross-camera moment has no established stable extra value. This does not prove all local coupling useless.
 

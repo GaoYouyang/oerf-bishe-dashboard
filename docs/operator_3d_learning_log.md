@@ -1,3 +1,11 @@
+## 2026-09-06：训练确实改变了表示，但剩余误差不只是读出没调好
+
+固定隐层的独立审计：精确优化读出仅能再消除1.9%-4.3%的训练目标损失；505帧留出初始化教师损失均以现有方向外的部分为主，逐轨迹中位占比81.6%-88.2%。学到的隐层改善464/505帧的表示下界，但不等于最终K1重建成功，也不证明整个网络已经收敛；没有替换模型或追加训练。
+
+With hidden features fixed, an independent audit finds only 1.9%-4.3% of the training objective removable by exact readout optimization. All 505 query initializer teacher losses are dominated by the part outside the current span, with trajectory medians of 81.6%-88.2%. Learned features lower the span floor on 464/505 cells, not a final-K1 success or proof of full-network convergence. No model replacement or extra training occurs.
+
+[双语损失分解与边界 / Bilingual loss attribution and limits](poolfire_f30_comparison_20260906.md)
+
 ## 2026-09-06：真正训练隐层后，多过11帧仍不算稳定成功
 
 同一505帧完整轨迹留一：369参数全训练比较器通过420帧、1/5条完整轨迹；旧随机特征为409帧、2/5，线性对照为412帧、1/5。稳定同精度与便宜对照门仍未通过。
