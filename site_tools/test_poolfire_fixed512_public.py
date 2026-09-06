@@ -289,6 +289,23 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_scalar_gate_bound_is_one_way_oracle_veto_not_prediction():
+    data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["scalar_gate_capacity"]
+    assert data["status"] == "FAIL_SCALAR_GATED_K1_NECESSARY_CAPACITY"
+    assert data["independent_status"] == "PASS_INDEPENDENT_SCALAR_GATE_CAPACITY_CERTIFICATES"
+    assert data["cells"] == data["primary_violations"] == data["reference_passing"] == 50
+    assert data["primary_passing"] == data["scalar_passing"] == data["new_deployment_predictions"] == 0
+    assert data["physical_oracle_states"] == 200
+    assert data["oracle_only"] and data["field_necessary_bound_only"] and data["post_open"]
+    assert not any(data[k] for k in ("full_trajectory", "gate_training_authorized", "predictor_authorized", "algorithm_breakthrough", "resource_speedup", "external_generalization", "real_bost", "paper_success"))
+    assert data["primary_quantiles"]["min"] > .62 and data["primary_quantiles"]["worst"] < .89
+    assert data["hypothetical_wrapper_calls"] == dict(A=4, AT=3, triangular=5)
+    for rel in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html"):
+        note = BeautifulSoup((ROOT / rel).read_text(), "html.parser").select("#scalar-gate-capacity")
+        assert len(note) == 1
+        assert all("62.05%" in note[0][f"data-i18n-{lang}"] and "88.46%" in note[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
+
+
 def test_pose_amplification_is_geometry_diagnosis_not_algorithm_success():
     data = json.loads((ROOT / f"docs/{STEM}.json").read_text())["pose_inverse_amplification"]
     assert data["status"] == "CONFIRMED_OLD_INVERSE_POSE_AMPLIFICATION"

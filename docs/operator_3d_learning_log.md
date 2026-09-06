@@ -1,3 +1,11 @@
+## 2026-09-07：先排除整类无效训练 / Exclude an Ineffective Family Before Training
+
+独立容量否决：对同一50个已打开样本，旧因子结果乘任意全局标量、再接原版CGLS一步，仍受三维输出空间限制。即使读取真值并在更宽松空间取最优，场误差下界仍为62.05%–88.46%，50/50均不能达到1%门槛；直接解参考仍为50/50通过。因此不再训练这类标量门或范数截断器。已独立重放200个oracle场。这是事后机制排除，不是新算法、预测成功或加速，也不排除空间变化或其他物理方向。
+
+Independent capacity veto: for the same50 already-opened samples, any global scalar gate on the old-factor output followed by one unchanged CGLS step remains confined to a three-dimensional output space. Even truth-aware optimal fitting in a larger relaxed space leaves a62.05%–88.46% field-error lower bound: all50 fail the1% requirement, while the direct reference remains50/50. Scalar gates or global norm caps in this family will not be trained. All200 oracle fields were independently replayed. This is post-open mechanism exclusion, not a new algorithm, prediction success or acceleration; spatially varying changes and other physical directions are not excluded.
+
+[独立容量否决 / Independent capacity veto](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：不是角度近就能复用 / Nearby Angles Do Not Guarantee Reuse
 
 已独立定位旧因子的变姿敏感性：同一 ±0.25° 旋转下，10个几何组合的算子相对变化仅约3.40%–3.46%，但旧因子归一化后的变化达到21.46%–73.89%，对比放大6.28–21.76倍。20个几何见证方向经原始物理算子复核。这解释了为什么不能仅凭角度接近判断旧因子可复用，但尚未把之前的全部重建误差归因于它；不是新算法、精度恢复或加速结果。诊断不读取真值或观测，也不授权谱修补、更多迭代或训练。

@@ -986,3 +986,38 @@ This is consistent with the basic numerical-analysis warning that solution error
 本诊断使用了稠密因子、求迹和20次最大特征问题，属于离线分析，不能包装成便宜的部署修正。它没有解除固定两步复用失败，也未授权低秩/谱修补或更多训练。后续必须先审计一个有明确观测输入、能控制放大且成本可信的不同机制，再决定是否值得学习；高效完整直接解仍是强对照。
 
 This diagnosis uses dense factors, trace calculations and20 top-eigenproblems offline; it cannot be repackaged as a cheap deployed correction. It does not rehabilitate fixed two-step reuse or authorize low-rank/spectral repair or more training. Any different mechanism must first have explicit observation inputs, controlled amplification and a credible cost path before learning is considered. Optimized full direct solving remains the strong control.
+
+## 2026-09-07 标量门的必要容量否决 / Necessary-Capacity Veto of Scalar Gates
+
+独立容量否决：对同一50个已打开样本，旧因子结果乘任意全局标量、再接原版CGLS一步，仍受三维输出空间限制。即使读取真值并在更宽松空间取最优，场误差下界仍为62.05%–88.46%，50/50均不能达到1%门槛；直接解参考仍为50/50通过。因此不再训练这类标量门或范数截断器。已独立重放200个oracle场。这是事后机制排除，不是新算法、预测成功或加速，也不排除空间变化或其他物理方向。
+
+Independent capacity veto: for the same50 already-opened samples, any global scalar gate on the old-factor output followed by one unchanged CGLS step remains confined to a three-dimensional output space. Even truth-aware optimal fitting in a larger relaxed space leaves a62.05%–88.46% field-error lower bound: all50 fail the1% requirement, while the direct reference remains50/50. Scalar gates or global norm caps in this family will not be trained. All200 oracle fields were independently replayed. This is post-open mechanism exclusion, not a new algorithm, prediction success or acceleration; spatially varying changes and other physical directions are not excluded.
+
+| 集合/Set | 相机/Cameras | 角度/Angle | 标量下界p90/Scalar % | 松弛K1下界p90/Relaxed % | 最坏/Worst % | 通过/Pass |
+|---|---:|---:|---:|---:|---:|---:|
+| 1 | 5 | -0.25 | 99.9654 | 85.8312 | 88.3870 | 0/5 |
+| 2 | 7 | -0.25 | 99.8966 | 85.0915 | 87.2239 | 0/5 |
+| 3 | 9 | -0.25 | 80.3765 | 69.5215 | 71.1976 | 0/5 |
+| 4 | 5 | -0.25 | 99.9984 | 84.5753 | 86.5398 | 0/5 |
+| 5 | 7 | -0.25 | 99.8594 | 84.8970 | 87.0370 | 0/5 |
+| 1 | 5 | +0.25 | 99.9991 | 85.8896 | 88.4574 | 0/5 |
+| 2 | 7 | +0.25 | 99.8979 | 84.9586 | 87.2050 | 0/5 |
+| 3 | 9 | +0.25 | 81.2832 | 71.9188 | 72.2418 | 0/5 |
+| 4 | 5 | +0.25 | 99.9956 | 84.4785 | 86.4048 | 0/5 |
+| 5 | 7 | +0.25 | 99.8261 | 84.8423 | 86.9311 | 0/5 |
+
+令b为封存的旧因子K2结果，q=A^T y，H=A^T A。任意有限标量t作初值x0=t b后，原版CGLS一步得到x=t b+alpha(q-t H b)。所以所有可能输出均在span(b,q,Hb)中，无论t由多复杂的观测/几何网络给出。我们允许三列系数完全独立，这是比真实门更乐观的松弛，不是新算法。完整四指标要求包含场门，所以场误差下界失败已足够否决。
+
+Letb be the sealed old-factor K2 output, q=A^T y andH=A^T A. Fromx0=t b, one unchanged CGLS step givesx=t b+alpha(q-t H b). Every output therefore lies inspan(b,q,Hb), regardless of how complex an observation/geometry network chooses the finite scalart. Allowing three independent coefficients is an optimistic relaxation, not a new algorithm. Field accuracy is necessary for the four-metric requirement, so failure of this lower bound suffices for a veto.
+
+两套方向基在读取新的目标数组前封存：正式实现用解析稀疏算子和主元QR，独立实现用逆相机顺序原始forward/adjoint与逆行SVD。最优场差相对目标为1.63e-11；另一个进程重建300列方向并重放200个oracle场，摘要差2.96e-13、native投影差9.14e-15。最小奇异值比大于0.00428，结论不依赖近秩缺失或放宽容差。
+
+Both bases seal before new target-array reads. The formal implementation uses analytic sparse operators and pivoted QR; the independent implementation uses reversed-camera native forward/adjoint and reversed-row SVD. Optimal fields differ by1.63e-11 relative to the target. A separate process reconstructs300 basis columns and replays200 oracle fields: summary difference2.96e-13, native projection difference9.14e-15. Minimum singular-value ratio exceeds0.00428, so the verdict does not depend on near rank loss or relaxed tolerances.
+
+三维松弛空间的全局min/p50/p90/worst场误差下界为62.0457%/80.8295%/86.9417%/88.4574%。单标量最佳拟合的中位误差为99.8622%。这些是读真值的容量下界，不是部署预测精度；没有训练参数，没有新的部署预测，也没有完整轨迹或未开外门结论。
+
+Globalmin/p50/p90/worst field-error lower bounds of the three-dimensional relaxation are62.0457%/80.8295%/86.9417%/88.4574%. Median error of the best scalar-only fit is99.8622%. These are truth-aware capacity bounds, not deployed prediction accuracy: no parameters were trained, no new deployment predictions were made, and no complete-trajectory or untouched external result follows.
+
+成本单列：每套离线方向构造50A+100A^T；独立native调用仍运行九相机算子并把未使用行置零。假设采用普通初始化API包裹旧K2，总账为4A+3A^T加5次三角解，几何构建另算。这不是加速证明。它只关闭当前固定b上的全局标量门/范数截断加K1，不能扩展为对空间门、其他方向或任意学习器的不可能性断言。
+
+Costs remain separate: each offline basis implementation uses50A+100A^T; independent native calls still execute a nine-camera operator with unused rows zero-filled. A hypothetical ordinary-initializer wrapper around oldK2 totals4A+3A^T plus5 triangular solves, with geometry construction separate. This is not a speedup proof. The result closes only global scalar gates/norm caps on this fixedb followed byK1, not spatial gates, other directions or arbitrary learners.
