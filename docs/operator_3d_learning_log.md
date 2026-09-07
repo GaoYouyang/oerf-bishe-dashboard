@@ -1,3 +1,11 @@
+## 2026-09-07：梯度损失早于K1 / Gradient Harm Predates K1
+
+进一步独立归因：p33的101帧内部梯度损失在暖启动阶段已全部存在，并非CGLS一步新造成。两版误差差距中位数从0.725个百分点缩小到0.633个百分点。全505帧中仍有25帧出现新的内部梯度损失、56帧原有损失消失，不能泛化为CGLS永不伤害。两版均未达到四指标1%；下一步优先研究暖启动的空间与相机耦合。
+
+Further independent attribution: all101 p33 interior-gradient harms already exist in the warm initializer, rather than being newly caused by the CGLS step. The median gap between versions shrinks from0.725 to0.633 percentage points. Across505 frames,25 new interior-gradient harms appear and56 old harms disappear, so this does not mean CGLS never harms. Neither version meets four-metric1% accuracy; prioritize initializer spatial-camera coupling.
+
+[报告 / Report](poolfire_camera_mix_ablation_20260907.md)
+
 ## 2026-09-07：跨相机贡献与梯度取舍 / Camera Contribution and Gradient Trade-offs
 
 跨相机消融已独立复算：冻结原模型，只关闭相机间混合，并分别用训练折匹配整体尺度。保留混合时，489/505帧场误差、485/505帧观测误差更好；但内部梯度为253帧更好、252帧更差，p33轨迹101帧内部梯度全部更差。两种版本都未过1%精度门。跨相机交互有贡献，也存在指标取舍；不能简单删掉，更不是算法突破。

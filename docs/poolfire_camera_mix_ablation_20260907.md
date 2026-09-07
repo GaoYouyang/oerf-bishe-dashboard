@@ -1,5 +1,44 @@
 # 跨相机混合消融 / Cross-Camera Mixing Ablation
 
+## 阶段归因更新 / Stage Attribution Update
+
+进一步独立归因：p33的101帧内部梯度损失在暖启动阶段已全部存在，并非CGLS一步新造成。两版误差差距中位数从0.725个百分点缩小到0.633个百分点。全505帧中仍有25帧出现新的内部梯度损失、56帧原有损失消失，不能泛化为CGLS永不伤害。两版均未达到四指标1%；下一步优先研究暖启动的空间与相机耦合。
+
+Further independent attribution: all101 p33 interior-gradient harms already exist in the warm initializer, rather than being newly caused by the CGLS step. The median gap between versions shrinks from0.725 to0.633 percentage points. Across505 frames,25 new interior-gradient harms appear and56 old harms disappear, so this does not mean CGLS never harms. Neither version meets four-metric1% accuracy; prioritize initializer spatial-camera coupling.
+
+![Initializer and CGLS interior-gradient trade-off](../assets/figures/poolfire_camera_mix_stage_20260907.png)
+
+表中差距为“保留混合误差减去关闭混合误差”，正值表示保留混合更差；单位为相对误差的百分点。分类按相同1e-9方向容差，不替代严格1%精度门。
+
+Gaps are full-mixing error minus self-only error; positive means full mixing is worse, in percentage points of relative error. Stage categories use the same1e-9 directional tolerance, not a replacement for strict1% accuracy.
+
+| 轨迹 / Trajectory | K1前差距中位数 / Pre gap | K1后 / Post gap | 已有 / 新增 / 消除 / 均无损失 |
+|---|---:|---:|---|
+| p=14kw_size=05 | -0.0425 pp | 0.0311 pp | 40 / 16 / 0 / 45 |
+| p=22kw_size=03 | 0.0472 pp | -0.0271 pp | 43 / 0 / 22 / 36 |
+| p=33kw_size=01 | 0.7254 pp | 0.6328 pp | 101 / 0 / 0 / 0 |
+| p=45kw_size=05 | -0.6389 pp | -0.4396 pp | 1 / 7 / 0 / 93 |
+| p=58kw_size=03 | 0.1076 pp | -0.0213 pp | 42 / 2 / 34 / 23 |
+
+
+两版权重、训练折尺度与CGLS一步均固定。令初始误差为e、CGLS改变量为h；对每项指标核对 `||e+h||² = ||e||² + 2<e,h> + ||h||²`，梯度项先施加相同导数，观测项使用投影残差。各分量中位数不能相加当作因果百分比。这里只定位既定模型的阶段，不证明全部架构的误差来源。
+
+Both sets of weights, training-fold scales and the single CGLS step are fixed. For initial error e and CGLS change h, verify `||e+h||² = ||e||² + 2<e,h> + ||h||²`, applying the same derivatives for gradient metrics and using projection residuals for observation. Marginal medians of signed terms are not additive causal percentages. This localizes stages of these fixed models, not every architecture's error source.
+
+独立程序重建全部1010个端点，使用另一套张量收缩、物理矩阵、CGLS和导数计算；平方误差分量最大绝对差为4.02e-16。全部1010个新初始场另经原生forward核验。20个既有对照报告完整保留，直接解仍达标，两种学习版本仍0/505。新增工作没有训练参数，没有获得新的重建或速度成功。
+
+The independent program rebuilds all1010 endpoints with a separate tensor contraction, physical matrix, CGLS and derivative implementation; maximum absolute squared-term difference is4.02e-16. Native forward also checks all1010 new initial fields. All20 prior control reports remain intact; full direct qualifies, while both learned versions remain0/505. This work adds no trained parameters and no reconstruction or speed success.
+
+本轮正式离线账为3030A+1010AT，独立复算为4040A+2020AT，按冻结源码循环与完成状态重建，并非单独实测的部署调用计数。原在线逻辑账仍2A+2AT，训练、teacher与几何成本不免费。没有新增数据、其他相机数量精度或真实BOST结论。
+
+Formal offline work is3030A+1010AT and independent replay4040A+2020AT, reconstructed from frozen source loops and completion rather than a separately instrumented deployment count. Original logical online cost stays2A+2AT; training, teachers and geometry are not free. No new data, other-cardinality accuracy or real-BOST result follows.
+
+本次排除了“p33损失全部由K1新制造”的解释；优先检查暖启动的空间与相机耦合，而不是替换精化器。没有授权事后调混合强度、扩大模型或更换目标包装成功。
+
+This rejects the explanation that K1 newly creates all p33 harm. Prioritize the initializer's spatial-camera coupling rather than replacing the refiner. It does not authorize post-hoc mixing-strength tuning, a larger model or changing objectives to relabel success.
+
+
+
 2026-09-07
 
 跨相机消融已独立复算：冻结原模型，只关闭相机间混合，并分别用训练折匹配整体尺度。保留混合时，489/505帧场误差、485/505帧观测误差更好；但内部梯度为253帧更好、252帧更差，p33轨迹101帧内部梯度全部更差。两种版本都未过1%精度门。跨相机交互有贡献，也存在指标取舍；不能简单删掉，更不是算法突破。
