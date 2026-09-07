@@ -1,3 +1,11 @@
+## 2026-09-08：固定特征的校正损失下界 / Frozen-Feature Correction-Loss Floor
+
+固定新模型的隐藏特征后，即使给17个校正方向逐样本最优的组合系数，五个CFD检验点仍有98.1%至98.7%的当前联合平方校正损失无法消除；32个合成审计样本的中位数为99.845%。独立复算确认该下界，排除只改最后读出系数来修复主要损失。这不是完整网络的能力上限，也不是最终CGLS调用数或速度结论；已有505样本求解度量结果及上一轮暖启动失败均保留。
+
+With the new model's hidden features fixed, even per-example optimal coefficients for its 17 correction directions leave 98.1%-98.7% of the current joint squared correction loss at the five CFD checks; the median across 32 synthetic audit examples is 99.845%. Independent recomputation confirms this floor, ruling out readout-coefficient changes alone as a fix for most of that loss. This is not a whole-network capacity limit or a final CGLS call-count/speed result. The earlier 505-sample solver-metric result and the previous warm-start failure both remain.
+
+[报告 / Report](poolfire_warm_cost_angular_audit_20260908.md)
+
 ## 2026-09-08：合成残差学习 / Manufactured Residual Learning
 
 这次实际训练了一个369参数的误差校正器：512个训练样本由物理算子及16步迭代生成，不用CFD真值训练新模型。独立复算后0/5点获得稳定调用数优势，且没有胜过同前缀的“不校正”对照。固定配方已关闭，不加长训练或扩大网络。此前505样本的求解度量收益仍保留，但暖启动、端到端提速与论文成功尚未成立。

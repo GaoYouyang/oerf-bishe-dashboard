@@ -2,6 +2,50 @@
 
 2026-09-08
 
+## 最新定位：固定特征的校正损失下界 / Latest Diagnosis: Frozen-Feature Correction-Loss Floor
+
+固定新模型的隐藏特征后，即使给17个校正方向逐样本最优的组合系数，五个CFD检验点仍有98.1%至98.7%的当前联合平方校正损失无法消除；32个合成审计样本的中位数为99.845%。独立复算确认该下界，排除只改最后读出系数来修复主要损失。这不是完整网络的能力上限，也不是最终CGLS调用数或速度结论；已有505样本求解度量结果及上一轮暖启动失败均保留。
+
+With the new model's hidden features fixed, even per-example optimal coefficients for its 17 correction directions leave 98.1%-98.7% of the current joint squared correction loss at the five CFD checks; the median across 32 synthetic audit examples is 99.845%. Independent recomputation confirms this floor, ruling out readout-coefficient changes alone as a fix for most of that loss. This is not a whole-network capacity limit or a final CGLS call-count/speed result. The earlier 505-sample solver-metric result and the previous warm-start failure both remain.
+
+| 旧CFD中点 / CFD midpoint | 当前联合平方损失 / Current joint squared loss | 最优空间下界 / Best span floor | 下界占当前损失 / Floor share |
+|---|---:|---:|---:|
+| 1 | 0.875265893 | 0.862163288 | 98.503014% |
+| 2 | 0.864627450 | 0.852285772 | 98.572602% |
+| 3 | 0.849716642 | 0.837797412 | 98.597270% |
+| 4 | 0.887622606 | 0.876078016 | 98.699381% |
+| 5 | 0.854042150 | 0.837844860 | 98.103455% |
+
+
+这里的损失是场、全梯度、内部梯度、观测四个归一化平方误差的平均，目标是16步迭代后仍需补上的场。百分比不是丢失了多少密度、单一场相对误差，也不是最终求解器的误差下界。每个样本单独使用知道目标的最优系数，仅用于数学诊断，不能部署。
+
+The loss is the average of normalized squared errors in field, full gradient, interior gradient and observation, targeting the field still missing after 16 solver steps. The percentage is not missing density, a single relative field error, or a lower bound on the final solver error. Each example receives target-aware optimal coefficients solely for mathematical diagnosis, not deployment.
+
+固定的是隐藏权重，而不是所有样本共用的三维基底。17个方向仍随各样本的观测与几何变化，下界也是逐样本独立求解。
+
+The hidden weights are frozen, not a common 3D basis for all samples. The 17 directions still depend on each example's observation and geometry, and its floor is solved separately.
+
+两个总体分别报告：32个合成审计样本全部由空间下界主导，下界比例为99.689%至99.909%，中位数99.8449%；五个已开封CFD中点也全部主导。合成目标来自已知构造误差，CFD目标来自此前验证的观测/几何全解减去实际前缀场，不解析CFD真值。CFD实际校正包含原有观测线搜索，合成审计保留原始模型输出；不将两组混为同一种试验。
+
+The populations are reported separately. All 32 synthetic audit examples are span-floor-dominant, with fractions 99.689%-99.909% and median 99.8449%; all five opened CFD midpoints are also dominant. Synthetic targets are known manufactured errors; CFD targets are previously qualified observation/geometry-derived full solutions minus the actual prefix, without parsing CFD truth. Actual CFD corrections include their existing observation line search, while the synthetic audit uses raw model outputs; the populations are not pooled as equivalent experiments.
+
+固定的学习特征比单一BP方向更有表达能力：五个CFD点的最佳标量BP联合损失约0.9573至0.9694，17方向下界约0.8378至0.8761。但相对于当前模型，只改组合系数最多消除约1.30%至1.90%的当前联合损失，不能修复主要初始损失。这不改变上一轮实际调用数失败，也不证明修改隐藏特征无效或所有网络都不可能。
+
+The frozen learned features are more expressive than a scalar BP direction: the five CFD scalar-oracle losses are about 0.9573-0.9694 versus 0.8378-0.8761 for the 17-direction floor. But changing only the readout coefficients can remove at most about 1.30%-1.90% of the current joint loss, not repair most initial loss. This does not overturn the previous actual-call failure, nor prove hidden-feature changes ineffective or all networks impossible.
+
+分别重建了17个真实物理方向，采用独立Torch/NumPy特征、两份已验证物理算子、不同梯度离散实现及QR/SVD求解，原生正向和伴随核验通过。空间最优场最大相对差约1.50e-13，损失下界最大绝对差6.51e-14；退出后独立重建74行下界与判决，并确认封存输入输出不变。没有重训或生成新的CGLS轨迹。
+
+The 17 actual physical directions were separately rebuilt with Torch/NumPy features, two qualified physical operators, different gradient implementations and QR/SVD solves. Native forward and adjoint audits passed. Maximum relative oracle-field discrepancy is about 1.50e-13 and absolute loss-floor discrepancy 6.51e-14. A post-exit audit independently rebuilt 74 floor/decision rows and verified unchanged seals. No retraining or new CGLS trajectory was produced.
+
+新增全部为离线诊断：1332次正向与1258次伴随，另有666次原生正向和629次原生伴随核验。并未降低在线调用，也没有端到端耗时/内存、外部泛化、真实BOST或论文成功结论。此前独立结果与图表均保留。
+
+All new work is offline diagnosis: 1332 forward and 1258 adjoint actions, plus 666 native-forward and 629 native-adjoint audits. No online-call reduction, end-to-end time/memory benefit, external generalization, real-BOST or paper success is established. Earlier independent results and figures remain.
+
+下一机制必须提供物理上不同的校正方向，并先通过便宜容量与经典对照检验；不继续更换标签、回归器或读出系数来修复当前固定特征。暖启动目标尚未完成。
+
+A next mechanism must supply physically different correction directions and first pass a cheap capacity/classical-control test; do not replace labels, regressors or readout coefficients to repair the current frozen features. The warm-start objective remains unmet.
+
+
 ## 最新：合成残差学习未形成暖启动收益 / Latest: Manufactured Residual Learning Does Not Produce Warm-Start Value
 
 这次实际训练了一个369参数的误差校正器：512个训练样本由物理算子及16步迭代生成，不用CFD真值训练新模型。独立复算后0/5点获得稳定调用数优势，且没有胜过同前缀的“不校正”对照。固定配方已关闭，不加长训练或扩大网络。此前505样本的求解度量收益仍保留，但暖启动、端到端提速与论文成功尚未成立。

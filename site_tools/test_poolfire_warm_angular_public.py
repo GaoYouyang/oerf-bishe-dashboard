@@ -162,3 +162,37 @@ def test_manufactured_residual_bilingual_and_preserved_history():
         assert soup.select_one('#inverse-probe-result') and soup.select_one('#error-shape-result')
         if 'daily' in rel:
             assert soup.select_one('#latest #manufactured-residual-result')
+
+
+def test_frozen_feature_floor_is_only_a_joint_initial_loss_bound():
+    d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['manufactured_feature_capacity']
+    assert d['status'] == 'FROZEN_FEATURE_FLOOR_DOMINATES_RESIDUAL_ERROR'
+    assert (d['examples'], d['independent_rows'], d['readout_directions']) == (37, 74, 17)
+    assert d['oracle_not_deployable'] and d['bound_on_initial_joint_loss_only']
+    assert d['oracle_not_run_through_refinement'] and d['frozen_hidden_parameters']
+    assert not any(d[k] for k in ('new_training', 'new_solver_runs', 'cfd_truth_parsed', 'full_trajectories',
+        'full505_authorized', 'algorithm_breakthrough', 'paper_success', 'resource_speedup', 'external_generalization', 'real_bost'))
+    for summary in d['summaries']:
+        assert summary['populations']['synthetic']['floor_dominant'] == 32
+        assert summary['populations']['cfd']['floor_dominant'] == 5
+        assert .981 < summary['populations']['cfd']['fractions']['min'] < .982
+        assert .986 < summary['populations']['cfd']['fractions']['worst'] < .987
+    for row in d['cfd_points']:
+        assert abs(row['floor']+row['excess']-row['total']) < 1e-9
+        assert row['floor'] < row['scalar_floor']
+        assert .981 < row['floor_fraction'] < .987
+
+
+def test_feature_floor_bilingual_scope_and_history():
+    evidence = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert evidence['latest_manufactured_feature_capacity']['examples'] == 37
+    assert evidence['latest_manufactured_residual']['failed'] == 5
+    for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
+        note = soup.select_one('#manufactured-feature-floor-result')
+        assert '联合平方' in note['data-i18n-zh'] and 'joint squared' in note['data-i18n-en']
+        assert '完整网络' in note['data-i18n-zh'] and 'whole-network' in note['data-i18n-en']
+        assert note.get_text() == note['data-i18n-zh']
+        assert soup.select_one('#manufactured-residual-result') and soup.select_one('#inverse-probe-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #manufactured-feature-floor-result')
