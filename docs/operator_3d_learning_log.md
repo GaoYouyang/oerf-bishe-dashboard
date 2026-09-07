@@ -1,3 +1,11 @@
+## 2026-09-07：张量模型完成实测 / Tensor Learner Evaluated
+
+1840参数世界坐标张量模型完成五折训练与独立物理复算：四指标1%门通过0/505帧、完整轨迹0/5；合格完整直接解仍为505/505、5/5。505帧四项指标均优于所列九个非完整直接解对照，包括岭回归、PCGLS和旧369参数模型；但仍未达到1%精度门。该固定方案停止，不追加轮数或扩大模型；没有学习加速或论文突破。
+
+The 1840-parameter world-frame tensor model completed five-fold training and independent physical replay: 0/505 frames and 0/5 trajectories pass the four-metric 1% gate. Qualified full direct solving still passes 505/505 and 5/5. The learner improves every metric on every frame over all nine listed non-full-direct controls, including ridge, PCGLS and the old369-parameter model, but fails the1% accuracy gate. This fixed recipe stops without extra epochs or a larger model; no learned speedup or paper breakthrough.
+
+[报告 / Report](poolfire_world_tensor1840_20260907.md)
+
 ## 2026-09-07：实际训练后停止75参数方案 / Stopping the Trained 75-Parameter Recipe
 
 75参数几何输运模型已完成五折训练与独立预测、物理复算：505帧的四指标1%门通过0帧、完整轨迹0/5；合格完整直接解为505/505、5/5。它在503/505帧上四项均不劣于固定输运对照，但每帧至少一项仍弱于已有岭回归和369参数模型。这个固定方案已关闭，不加轮数挽救；没有学习加速或论文突破。
