@@ -29,7 +29,7 @@ def test_diagnosis_and_limits():
 
 def test_bilingual_and_privacy():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in current['latest_execution_evidence']['note']
+    assert STEM in current['latest_tensor_train_diagnosis']['summary']
     assert current['latest_tensor_train_diagnosis']['optimizer_steps'] == 0
     for relative in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/relative).read_text(), 'html.parser')

@@ -1,3 +1,11 @@
+## 2026-09-07：优化有帮助，但未解决精度 / Optimization Helps but Accuracy Still Fails
+
+全批量L-BFGS已独立复算：同一1840参数模型从原初始化训练，五折训练目标比Adam降低8.65%–9.45%，五条留出轨迹的场误差p90均改善，但1%门仍为0/505、0/5完整轨迹。29帧至少一项指标比Adam更差，公平不伤害门也失败。优化有帮助，但该固定方案没有解决精度问题；五折均到200次迭代上限，不能声称已收敛或表示必然不足。
+
+Independently verified full-batch L-BFGS: the same1840-parameter model is trained from its original initialization. Train objectives are 8.65%-9.45% below Adam and held-out field p90 improves in all five trajectories. Yet the1% gate remains0/505, with0/5 complete trajectories. At least one metric worsens on29 frames versus Adam, so the no-harm comparison also fails. Optimization helps but this fixed recipe does not solve accuracy. All five folds reach the200-iteration cap; convergence and intrinsic representation failure are not established.
+
+[报告 / Report](poolfire_tensor_lbfgs_20260907.md)
+
 ## 2026-09-07：先诊断，不把未拟合当成缺数据 / Diagnose Before Blaming Missing Data
 
 封存权重诊断已独立确认：2020个重叠训练折样本的1%门通过0个，留出帧仍为0/505。训练内已经有明显误差，不能只归因于跨轨迹数据不足。五折都有训练目标下降方向，但微扰只降低目标约0.023%–0.029%，不证明多训就能达标，也未证明表示能力不足。没有更新或部署新权重。

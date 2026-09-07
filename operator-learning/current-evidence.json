@@ -696,9 +696,9 @@
   "headline": "On the same 505-frame complete-trajectory LOTO, the fully trained 369-parameter comparator passes 420 cells and 1/5 trajectories; the old random features pass 409 and 2/5, and the linear control 412 and 1/5. Stable matched accuracy and the cheaper-control gate remain unmet.",
   "headline_en": "On the same 505-frame complete-trajectory LOTO, the fully trained 369-parameter comparator passes 420 cells and 1/5 trajectories; the old random features pass 409 and 2/5, and the linear control 412 and 1/5. Stable matched accuracy and the cheaper-control gate remain unmet.",
   "headline_zh": "同一505帧完整轨迹留一：369参数全训练比较器通过420帧、1/5条完整轨迹；旧随机特征为409帧、2/5，线性对照为412帧、1/5。稳定同精度与便宜对照门仍未通过。",
-  "latest_execution_headline": "Independent frozen-weight diagnosis: 0/2020 overlapping train-fold pairs pass the 1% gate; held-out frames remain at 0/505. Substantial error is already present in training, so cross-trajectory data shortage cannot be the sole explanation. All five folds have a train-objective descent direction, but the tiny probes reduce that objective by only about 0.023%-0.029%. This proves neither that more training reaches the target nor that the representation lacks capacity. No new weights were updated or deployed.",
-  "latest_execution_headline_en": "Independent frozen-weight diagnosis: 0/2020 overlapping train-fold pairs pass the 1% gate; held-out frames remain at 0/505. Substantial error is already present in training, so cross-trajectory data shortage cannot be the sole explanation. All five folds have a train-objective descent direction, but the tiny probes reduce that objective by only about 0.023%-0.029%. This proves neither that more training reaches the target nor that the representation lacks capacity. No new weights were updated or deployed.",
-  "latest_execution_headline_zh": "封存权重诊断已独立确认：2020个重叠训练折样本的1%门通过0个，留出帧仍为0/505。训练内已经有明显误差，不能只归因于跨轨迹数据不足。五折都有训练目标下降方向，但微扰只降低目标约0.023%–0.029%，不证明多训就能达标，也未证明表示能力不足。没有更新或部署新权重。",
+  "latest_execution_headline": "Independently verified full-batch L-BFGS: the same1840-parameter model is trained from its original initialization. Train objectives are 8.65%-9.45% below Adam and held-out field p90 improves in all five trajectories. Yet the1% gate remains0/505, with0/5 complete trajectories. At least one metric worsens on29 frames versus Adam, so the no-harm comparison also fails. Optimization helps but this fixed recipe does not solve accuracy. All five folds reach the200-iteration cap; convergence and intrinsic representation failure are not established.",
+  "latest_execution_headline_en": "Independently verified full-batch L-BFGS: the same1840-parameter model is trained from its original initialization. Train objectives are 8.65%-9.45% below Adam and held-out field p90 improves in all five trajectories. Yet the1% gate remains0/505, with0/5 complete trajectories. At least one metric worsens on29 frames versus Adam, so the no-harm comparison also fails. Optimization helps but this fixed recipe does not solve accuracy. All five folds reach the200-iteration cap; convergence and intrinsic representation failure are not established.",
+  "latest_execution_headline_zh": "全批量L-BFGS已独立复算：同一1840参数模型从原初始化训练，五折训练目标比Adam降低8.65%–9.45%，五条留出轨迹的场误差p90均改善，但1%门仍为0/505、0/5完整轨迹。29帧至少一项指标比Adam更差，公平不伤害门也失败。优化有帮助，但该固定方案没有解决精度问题；五折均到200次迭代上限，不能声称已收敛或表示必然不足。",
   "metrics": {
     "poolfire_f30_cells": 505,
     "poolfire_f30_neural_matched_cells": 409,
@@ -6872,8 +6872,8 @@
   "next_scientific_gate_en": "Define useful absolute accuracy and classical accuracy-versus-compute before any new learned target. The five-point clean endpoint pass is not whole-trajectory adequacy or minimal-cost evidence; closed predictors remain closed.",
   "next_scientific_gate_zh": "75参数训练方案已关闭。沿用现有合格完整直接解和已开封数据，先论证一个物理上真正不同、成本可信的学习逆映射，再启动拟合。保留四指标1%门、完整轨迹隔离及强对照和便宜对照；尚未选定新架构，此阶段不需要租GPU或补回已丢失的实验配对。",
   "latest_execution_evidence": {
-    "note": "../document_reader.html?doc=docs%2Fpoolfire_tensor_train_diagnosis_20260907.md",
-    "figure": "assets/figures/poolfire_tensor_train_diagnosis_20260907.png"
+    "note": "../document_reader.html?doc=docs%2Fpoolfire_tensor_lbfgs_20260907.md",
+    "figure": "assets/figures/poolfire_tensor_lbfgs_20260907.png"
   },
   "public_evidence": {
     "result": "../document_reader.html?doc=docs%2Fpoolfire_f30_comparison_20260906.md",
@@ -18578,5 +18578,13 @@
     "optimizer_steps": 0,
     "independent_status": "PASS_INDEPENDENT_TRAIN_STATIONARITY_DIAGNOSIS",
     "summary": "../docs/poolfire_tensor_train_diagnosis_20260907.json"
+  },
+  "latest_tensor_lbfgs": {
+    "status": "FAIL_OPENED_WORLD_TENSOR_LBFGS_LOTO",
+    "query_passing": 0,
+    "complete_trajectories": 0,
+    "any_harm_vs_adam": 29,
+    "independent_status": "PASS_INDEPENDENT_WORLD_TENSOR_LBFGS",
+    "summary": "../docs/poolfire_tensor_lbfgs_20260907.json"
   }
 }
