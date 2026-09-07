@@ -1,3 +1,11 @@
+## 2026-09-07：换作预条件器也没有省算 / Preconditioner Reuse Did Not Save Actions
+
+复用冻结学习模型作PCGLS预条件器，在五个已开封哨兵的经典对照调用预算内，两条路径均0/5通过四项1%精度。观测误差均低于0.33%，场误差仍约5.6%-8.9%。原报告序列化失败保留；另行端点独立审计通过，关闭此用法，不是算法或速度突破。
+
+Reusing the frozen learned map as a PCGLS preconditioner passes four-metric 1% accuracy on 0/5 opened sentinels in both paths within cheaper classical-control action caps. Observation errors stay below 0.33%, but field errors remain about 5.6%-8.9%. The parent serialization failure is retained; a separate independent endpoint audit passes. This reuse is closed, not an algorithm or speed breakthrough.
+
+[报告 / Report](poolfire_dual_pcgls_20260907.md)
+
 ## 2026-09-07：误差保留位置更清楚了 / Error Retention Is Better Located
 
 20个重叠训练折次与帧组合中，学习暖启动的普通场误差能量中位数只剩零初值的6.37%，但逆法矩阵加权误差仍剩83.68%；反投影也呈现同方向现象。双实现确认了弱灵敏度加权误差保留较多，不证明迭代慢的因果关系，也不是省算、泛化或真实BOST突破。

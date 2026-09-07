@@ -23,7 +23,7 @@ def test_scope_and_energy_units():
 
 def test_bilingual_notes_and_privacy():
     d = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in d['latest_execution_evidence']['note']
+    assert STEM in d['latest_inverse_moment']['summary']
     assert d['next_scientific_gate'] == d['next_scientific_gate_en']
     assert d['latest_functional_stop']['status'] == 'FAIL_FUNCTIONAL_CERTIFIED_WARM_NECESSARY_PILOT'
     for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
