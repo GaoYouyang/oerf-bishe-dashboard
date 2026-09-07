@@ -42,7 +42,7 @@ def test_bilingual_pages_and_current_manifest():
             assert '505' in text and '0/5' in text and '1%' in text
     current=json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
     assert current['latest_world_tensor1840']['passing_frames']==0
-    assert STEM in current['latest_execution_evidence']['note']
+    assert STEM in current['latest_world_tensor1840']['summary']
     daily=BeautifulSoup((ROOT/'operator-learning/daily-progress.html').read_text(),'html.parser')
     assert len(daily.select('#latest'))==1
     assert daily.select_one('#latest')['data-date']=='2026-09-07'

@@ -1,3 +1,11 @@
+## 2026-09-07：先诊断，不把未拟合当成缺数据 / Diagnose Before Blaming Missing Data
+
+封存权重诊断已独立确认：2020个重叠训练折样本的1%门通过0个，留出帧仍为0/505。训练内已经有明显误差，不能只归因于跨轨迹数据不足。五折都有训练目标下降方向，但微扰只降低目标约0.023%–0.029%，不证明多训就能达标，也未证明表示能力不足。没有更新或部署新权重。
+
+Independent frozen-weight diagnosis: 0/2020 overlapping train-fold pairs pass the 1% gate; held-out frames remain at 0/505. Substantial error is already present in training, so cross-trajectory data shortage cannot be the sole explanation. All five folds have a train-objective descent direction, but the tiny probes reduce that objective by only about 0.023%-0.029%. This proves neither that more training reaches the target nor that the representation lacks capacity. No new weights were updated or deployed.
+
+[诊断 / Diagnosis](poolfire_tensor_train_diagnosis_20260907.md)
+
 ## 2026-09-07：张量模型完成实测 / Tensor Learner Evaluated
 
 1840参数世界坐标张量模型完成五折训练与独立物理复算：四指标1%门通过0/505帧、完整轨迹0/5；合格完整直接解仍为505/505、5/5。505帧四项指标均优于所列九个非完整直接解对照，包括岭回归、PCGLS和旧369参数模型；但仍未达到1%精度门。该固定方案停止，不追加轮数或扩大模型；没有学习加速或论文突破。
