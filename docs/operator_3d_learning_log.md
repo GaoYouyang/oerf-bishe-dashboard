@@ -1,3 +1,15 @@
+## 2026-09-08：完整轨迹通过，但不是暖启动结论 / Complete Trajectories Pass, Not Warm Attribution
+
+完整五轨迹505/505帧独立通过：零初值加冻结学习残差度量，在四指标1%精度下，每帧A和AT均少于理想停止的Jacobi。A减少中位数22.64%，最弱帧仅0.87%。这是已打开clean九相机数据上的度量结果，不是暖启动贡献、计时提速或外部泛化。
+
+All 505 frames and five complete trajectories pass independently: zero initialization with the frozen learned residual metric uses fewer A and AT actions on every frame than ideal-stopped Jacobi at four-metric 1% accuracy. Median A reduction is 22.64%, with only 0.87% on the weakest frame. This is a metric result on opened clean nine-camera data, not warm-start attribution, measured speedup or external generalization.
+
+这次没有新训练；保留旧停止界限，先封存预测，再让Jacobi用真值尽早停止来比较。最弱帧只省三次A，所以重点转为补齐强对照，而不是再造更大模型。旧暖启动与经验停止失败不被改写。
+
+No new training: retain the old stopping bound, seal predictions first, and grant Jacobi truth-aware early stopping. The weakest frame saves only three A actions, so prioritize stronger controls rather than a larger model. Earlier warm-start and empirical-stop failures remain unchanged.
+
+[报告 / Report](poolfire_full_metric_cost_20260908.md)
+
 ## 2026-09-07：有用的是度量，暖启动归因仍未定 / Useful Metric, Unresolved Warm Attribution
 
 学习残差度量在五个已开封哨兵上均通过原始精度认证，A调用约降62.3%-67.7%；但零初值配合同一学习度量也几乎同样快。两版对暖启动额外收益的判决不一致，故总体仍为INCONCLUSIVE。这是小范围的学习度量收益，不是暖启动、完整序列或实测速度突破。

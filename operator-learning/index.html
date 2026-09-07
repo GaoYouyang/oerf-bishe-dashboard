@@ -552,9 +552,9 @@
       </aside>
     </div>
     <div class="current-grid" aria-label="当前核心状态" data-i18n-aria-label-zh="当前核心状态" data-i18n-aria-label-en="Current core status">
-      <div class="current-metric"><b id="liveWitnessCount">420 / 505</b><span data-i18n-en="Fully trained comparator passing cells" data-i18n-zh="全训练比较器单元通过">全训练比较器单元通过</span></div>
-      <div class="current-metric"><b id="liveFailureCount">1 / 5</b><span data-i18n-en="Fully trained comparator complete trajectories" data-i18n-zh="全训练比较器完整轨迹">全训练比较器完整轨迹</span></div>
-      <div class="current-metric"><b id="liveCallBudget">2A + 2AT</b><span data-i18n-en="Candidate logical online calls" data-i18n-zh="候选逻辑在线调用">候选逻辑在线调用</span></div>
+      <div class="current-metric"><b id="liveWitnessCount">505 / 505</b><span data-i18n-en="Metric comparison passing frames" data-i18n-zh="度量对照通过帧">度量对照通过帧</span></div>
+      <div class="current-metric"><b id="liveFailureCount">5 / 5</b><span data-i18n-en="Metric comparison complete trajectories" data-i18n-zh="度量对照完整轨迹">度量对照完整轨迹</span></div>
+      <div class="current-metric"><b id="liveCallBudget">261-353 A</b><span data-i18n-en="Candidate A-call range" data-i18n-zh="候选A调用范围">候选A调用范围</span></div>
       <div class="current-metric warning"><b id="liveBreakthrough">false</b><span data-i18n-html-zh="<code>algorithm_breakthrough</code>；固定路线已关闭" data-i18n-html-en="<code>algorithm_breakthrough</code>; fixed route closed"><code>algorithm_breakthrough</code>；固定路线已关闭</span></div>
     </div>
     <details class="header-archive">
@@ -983,6 +983,12 @@
   </header>
 
   <main id="main">
+<section class="band" id="full-metric-coverage">
+<h2 data-i18n-zh="完整轨迹：度量省调用，暖启动贡献仍待证明" data-i18n-en="Complete trajectories: metric saves calls; warm contribution unproven">完整轨迹：度量省调用，暖启动贡献仍待证明</h2>
+<p id="full-metric-cost-result" data-i18n-zh="完整五轨迹505/505帧独立通过：零初值加冻结学习残差度量，在四指标1%精度下，每帧A和AT均少于理想停止的Jacobi。A减少中位数22.64%，最弱帧仅0.87%。这是已打开clean九相机数据上的度量结果，不是暖启动贡献、计时提速或外部泛化。" data-i18n-en="All 505 frames and five complete trajectories pass independently: zero initialization with the frozen learned residual metric uses fewer A and AT actions on every frame than ideal-stopped Jacobi at four-metric 1% accuracy. Median A reduction is 22.64%, with only 0.87% on the weakest frame. This is a metric result on opened clean nine-camera data, not warm-start attribution, measured speedup or external generalization.">完整五轨迹505/505帧独立通过：零初值加冻结学习残差度量，在四指标1%精度下，每帧A和AT均少于理想停止的Jacobi。A减少中位数22.64%，最弱帧仅0.87%。这是已打开clean九相机数据上的度量结果，不是暖启动贡献、计时提速或外部泛化。</p>
+<p><a href="../document_reader.html?doc=docs%2Fpoolfire_full_metric_cost_20260908.md" data-i18n-zh="完整比较与边界" data-i18n-en="Complete comparison and limits">完整比较与边界</a></p>
+<figure style="margin:16px 0"><img src="../assets/figures/poolfire_full_metric_cost_20260908.png" style="display:block;width:100%;height:auto" alt="Five complete trajectories: median and weakest-frame action savings, not timing." data-i18n-alt-zh="五条完整轨迹的中位数与最弱帧调用减少；不是计时。" data-i18n-alt-en="Five complete trajectories: median and weakest-frame action savings, not timing." /></figure>
+</section>
     <section id="poolfire-f30-comparison" class="band">
 <h2  data-i18n-zh="PoolFire：局部改善已复现，稳定同精度尚未通过" data-i18n-en="PoolFire: local gains reproduce, stable matched accuracy remains unmet">PoolFire：局部改善已复现，稳定同精度尚未通过</h2>
 <p  data-i18n-zh="最新配对实验：跨相机图消息367/505帧、1/5完整轨迹，同相机对照370/505、1/5；未显示稳定优势。此前369参数模型420/505、1/5，随机特征409/505、2/5，线性对照412/505、1/5。各固定方案均未通过完整门。" data-i18n-en="Latest paired experiment: cross-camera graph messages pass367/505 cells and1/5 trajectories versus370/505 and1/5 for the same-camera control, without stable advantage. Earlier results remain420/505 and1/5 for the369-parameter model,409/505 and2/5 for random features, and412/505 and1/5 for the linear control. None passes the full gate.">最新配对实验：跨相机图消息367/505帧、1/5完整轨迹，同相机对照370/505、1/5；未显示稳定优势。此前369参数模型420/505、1/5，随机特征409/505、2/5，线性对照412/505、1/5。各固定方案均未通过完整门。</p>
@@ -3867,23 +3873,23 @@
         .then(evidence => {
           const metrics = evidence.metrics || {};
           const decision = evidence.current_decision || {};
-          document.getElementById('liveWitnessCount').textContent = '420 / 505';
-          document.getElementById('liveFailureCount').textContent = '1 / 5';
-          document.getElementById('liveCallBudget').textContent = '2A + 2AT';
+          document.getElementById('liveWitnessCount').textContent = '505 / 505';
+          document.getElementById('liveFailureCount').textContent = '5 / 5';
+          document.getElementById('liveCallBudget').textContent = '261-353 A';
           document.getElementById('liveBreakthrough').textContent = String(Boolean(decision.algorithm_breakthrough));
           const nextGateZh = String(evidence.next_scientific_gate_zh || evidence.next_scientific_gate).trim();
           const nextGateEn = String(evidence.next_scientific_gate_en || evidence.next_scientific_gate).trim();
           const nextGateSentenceZh = /[。！？.!?]$/.test(nextGateZh) ? nextGateZh : `${nextGateZh}。`;
           const nextGateSentenceEn = /[。！？.!?]$/.test(nextGateEn) ? nextGateEn : `${nextGateEn}.`;
           const status = document.getElementById('liveEvidenceStatus');
-          status.setAttribute('data-i18n-zh', "九个完整模型轮流留出，在一套预选九相机几何上得到 108 个虚拟单元。协方差补偿、不补偿和只减均值均为 0/12 分层通过。部分场误差下降，但梯度尾部仍失败。");
-          status.setAttribute('data-i18n-en', "Leaving out each of nine complete models gives 108 virtual cells on one preselected nine-camera rig. Covariance correction, no correction and mean-only correction all pass 0/12 strata. Some field errors decrease, but gradient tails still fail.");
+          status.setAttribute('data-i18n-zh', evidence.latest_execution_headline_zh || "完整五轨迹505/505帧独立通过：零初值加冻结学习残差度量，在四指标1%精度下，每帧A和AT均少于理想停止的Jacobi。A减少中位数22.64%，最弱帧仅0.87%。这是已打开clean九相机数据上的度量结果，不是暖启动贡献、计时提速或外部泛化。");
+          status.setAttribute('data-i18n-en', evidence.latest_execution_headline_en || "All 505 frames and five complete trajectories pass independently: zero initialization with the frozen learned residual metric uses fewer A and AT actions on every frame than ideal-stopped Jacobi at four-metric 1% accuracy. Median A reduction is 22.64%, with only 0.87% on the weakest frame. This is a metric result on opened clean nine-camera data, not warm-start attribution, measured speedup or external generalization.");
           window.OERFLanguage?.translateSubtree(status);
         })
         .catch(() => {
           const status = document.getElementById('liveEvidenceStatus');
-          status.setAttribute('data-i18n-zh', "九个完整模型轮流留出，在一套预选九相机几何上得到 108 个虚拟单元。协方差补偿、不补偿和只减均值均为 0/12 分层通过。部分场误差下降，但梯度尾部仍失败。");
-          status.setAttribute('data-i18n-en', "Leaving out each of nine complete models gives 108 virtual cells on one preselected nine-camera rig. Covariance correction, no correction and mean-only correction all pass 0/12 strata. Some field errors decrease, but gradient tails still fail.");
+          status.setAttribute('data-i18n-zh', "完整五轨迹505/505帧独立通过：零初值加冻结学习残差度量，在四指标1%精度下，每帧A和AT均少于理想停止的Jacobi。A减少中位数22.64%，最弱帧仅0.87%。这是已打开clean九相机数据上的度量结果，不是暖启动贡献、计时提速或外部泛化。");
+          status.setAttribute('data-i18n-en', "All 505 frames and five complete trajectories pass independently: zero initialization with the frozen learned residual metric uses fewer A and AT actions on every frame than ideal-stopped Jacobi at four-metric 1% accuracy. Median A reduction is 22.64%, with only 0.87% on the weakest frame. This is a metric result on opened clean nine-camera data, not warm-start attribution, measured speedup or external generalization.");
           window.OERFLanguage?.translateSubtree(status);
         });
     })();

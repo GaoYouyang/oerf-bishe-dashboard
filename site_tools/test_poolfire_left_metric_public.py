@@ -39,7 +39,7 @@ def test_certified_metric_gain_is_not_warm_attribution():
 
 def test_bilingual_attribution_and_redacted_payload():
     d = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in d['latest_execution_evidence']['note']
+    assert STEM in d['latest_left_metric']['summary']
     assert d['latest_left_metric']['warm_attribution_confirmed'] is False
     assert d['next_scientific_gate'] == d['next_scientific_gate_en']
     for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
@@ -50,7 +50,7 @@ def test_bilingual_attribution_and_redacted_payload():
             assert all(v in notes[0][f'data-i18n-{lang}'] for v in ('INCONCLUSIVE', '62.3%-67.7%'))
         if 'daily' in rel:
             assert len(soup.select('#latest')) == 1
-            assert soup.select_one('#latest #left-metric-result')
+            assert soup.select_one('#day-20260907-left-metric #left-metric-result')
     for ext in ('md', 'json'):
         value = (ROOT/'docs'/f'{STEM}.{ext}').read_text()
         assert not any(v in value for v in ('/Users/', '/Volumes/', 'private_results', 'sha256', '.pt', 'parameters.json'))
