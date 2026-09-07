@@ -1,3 +1,11 @@
+## 2026-09-07：全局分量补丁不足 / Global Component Patch Is Insufficient
+
+独立复算完成：冻结1840参数模型，只拟合九系数世界分量混合矩阵，另设三系数对角与单系数缩放对照。五折训练目标仅相对降低0.08%–0.16%；1%精度仍为0/505、0/5完整轨迹，相比原模型405帧至少一项指标变差。这说明只补全局分量混合不足，关闭该固定补丁；不是所有物理耦合都无效，也不是算法突破。
+
+Independent verification is complete: freeze the1840-parameter model and fit only a nine-coefficient world-component matrix, with diagonal-three and scalar-one controls. Training objectives fall by only0.08%–0.16% across five folds. The1% accuracy gate remains0/505 and0/5 complete trajectories;405 frames worsen in at least one metric against the parent. Global component mixing alone is insufficient, so this fixed patch is closed. This does not reject all physical coupling and is not a breakthrough.
+
+[报告 / Report](poolfire_world_component_head_20260907.md)
+
 ## 2026-09-07：局部归一化没有改善精度 / Local Normalization Does Not Improve Accuracy
 
 局部几何归一化已完成五折训练与独立复算：保持1840参数和训练预算，只加入每条射线的双分量灵敏度归一化。1%门仍为0/505、0/5完整轨迹；相对原L-BFGS模型，459帧至少一项指标变差，五条轨迹中四条场误差p90恶化。该固定方案关闭，不追加训练。新模型仍严格优于三个新增便宜对照和九个旧弱对照，但没有胜过已有强学习基线，也不是算法突破。
