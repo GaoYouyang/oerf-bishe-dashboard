@@ -1,3 +1,11 @@
+## 2026-09-07：87参数模型训练完成但未达标 / 87-Parameter Model Trained, Accuracy Failed
+
+87参数频率选择相机模型已完成训练和独立复算：新模型与同规模便宜对照均为0/505、0/5完整轨迹通过四指标1%门。新模型在505帧上均至少一项指标差于对照，直接解仍505/505通过。两版都在200次迭代预算用完后停止，并未证明收敛；关闭这套固定训练方案，不把它扩大成整个表示类别无效的结论，也不是精度或速度突破。
+
+The 87-parameter frequency-selective camera model has been trained and independently verified. Both it and the same-size cheaper control pass 0/505 frames and 0/5 complete trajectories at four-metric 1% accuracy. The new model worsens at least one metric on all 505 frames versus the control; full direct still passes 505/505. Both stop at the 200-iteration budget, without demonstrated convergence. Close this fixed training recipe, not the entire representation class; this is not an accuracy or speed breakthrough.
+
+[报告 / Report](poolfire_spectral_camera_precision_20260907.md)
+
 ## 2026-09-07：梯度损失早于K1 / Gradient Harm Predates K1
 
 进一步独立归因：p33的101帧内部梯度损失在暖启动阶段已全部存在，并非CGLS一步新造成。两版误差差距中位数从0.725个百分点缩小到0.633个百分点。全505帧中仍有25帧出现新的内部梯度损失、56帧原有损失消失，不能泛化为CGLS永不伤害。两版均未达到四指标1%；下一步优先研究暖启动的空间与相机耦合。

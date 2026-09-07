@@ -24,7 +24,7 @@ def test_mixed_not_algorithm_success():
 
 def test_bilingual_links_and_privacy():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in current['latest_execution_evidence']['note']
+    assert STEM in current['latest_camera_mix_ablation']['summary']
     for path in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/path).read_text(),'html.parser')
         notes = soup.select('#camera-mix-result')
