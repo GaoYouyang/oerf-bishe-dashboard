@@ -1,3 +1,11 @@
+## 2026-09-07：实际训练后停止75参数方案 / Stopping the Trained 75-Parameter Recipe
+
+75参数几何输运模型已完成五折训练与独立预测、物理复算：505帧的四指标1%门通过0帧、完整轨迹0/5；合格完整直接解为505/505、5/5。它在503/505帧上四项均不劣于固定输运对照，但每帧至少一项仍弱于已有岭回归和369参数模型。这个固定方案已关闭，不加轮数挽救；没有学习加速或论文突破。
+
+The 75-parameter geometry-transport model completed five-fold training and independent prediction/physical replay: 0/505 frames and 0/5 trajectories pass the four-metric 1% gate; qualified full direct solving passes 505/505 and 5/5. It is jointly no worse than fixed transport on 503/505 frames, but at least one metric remains worse than ridge and the existing 369-parameter model on every frame. This fixed recipe is closed without extra epochs; no learned speedup or paper breakthrough.
+
+[实测与边界 / Measurements and limits](poolfire_vector_transport75_20260907.md)
+
 ## 2026-09-07：精确积分不是直接解药 / Exact Integration Is Not a Direct Remedy
 
 逐网格精确积分审计完成：同一批实际误差的投影幅值仅变为旧64点求和的1.015至1.043倍，但投影细节的差异达到旧微弱响应的27.8%至37.9%。独立多项式积分复算通过。结果既不满足“统一显著增强”，也不满足“1%内等价”，因此保留混合判决；弱响应没有因精确积分而明显消失。没有改动旧观测、重建判决或训练模型，也没有算法突破。

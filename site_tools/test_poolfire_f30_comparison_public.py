@@ -166,6 +166,6 @@ def test_private_boundary_bilingual_current_and_archives():
         image = section.select_one('img')
         assert image.get('data-i18n-alt-zh') and image.get('data-i18n-alt-en')
     daily = BeautifulSoup((ROOT / 'operator-learning/daily-progress.html').read_text(), 'html.parser')
-    assert daily.select_one('#latest')['data-date'] == '2026-09-06'
+    assert daily.select_one('#day-20260906')['data-date'] == '2026-09-06'
     assert daily.select_one('#day-2026-09-05')
     assert (ROOT / f'assets/figures/{STEM}.png').stat().st_size > 10000
