@@ -1,3 +1,11 @@
+## 2026-09-08：减少相机小门 / Camera-Removal Pilot
+
+不重新训练的五／七相机学习度量小门失败。七相机实际四项1%精度通过5/5个固定帧，五相机通过3/5；但在预先固定的2048步内，观测／几何停止证明只通过2/10个条件。普通CGLS和Jacobi的实际精度分别在七相机通过2/5、五相机0/5，停止证明均未通过。学习信号仍在，但不能声称稳定的相机减少迁移；不延长预算、不重训挽救。这里是五条已打开轨迹的中点，不是完整轨迹或外部验证，暖启动优势仍未成立。
+
+The no-refit five/seven-camera learned-metric pilot fails. Actual four-metric 1% accuracy passes5/5 fixed frames with seven cameras and3/5 with five; the observation/geometry stopping certificate passes only2/10 conditions within the preregistered2048 steps. Both ordinary CGLS and Jacobi pass actual accuracy on2/5 seven-camera and0/5 five-camera frames, with no certified stops. A learning signal remains, but stable camera-removal transfer is not established. No budget extension or rescue refit. These are midpoints of five opened trajectories, not complete trajectories or external validation; warm advantage remains unproved.
+
+[报告 / Report](poolfire_camera_subset_metric_20260908.md)
+
 ## 2026-09-08：经典参考解先过门 / Classical References First
 
 五、七相机的经典参考解均通过：两个预定子集各505/505帧、5/5完整轨迹达到场、全梯度、内部梯度、观测四项1%门。合计1010个条件单元重复使用同一505帧，不是1010个独立新样本。未加正则的直接解与独立QR解、物理重放一致。这解除这两个无噪声子集的参考解障碍，不是学习度量迁移、暖启动收益或实际加速；缓存直接解仍是强对照。

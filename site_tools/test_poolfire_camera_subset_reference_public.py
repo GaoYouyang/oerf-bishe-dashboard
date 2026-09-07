@@ -21,7 +21,7 @@ def test_reference_pass_not_learned_claim():
 
 def test_bilingual_current_and_historical_evidence():
     d = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in d['latest_execution_evidence']['note']
+    assert STEM in d['latest_camera_subset_reference']['summary']
     assert d['latest_full_trajectory_controls']['passing'] == 505
     assert d['latest_solver_loss_alignment']['conflict_folds'] == 0
     for rel in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
@@ -30,7 +30,7 @@ def test_bilingual_current_and_historical_evidence():
         assert '505/505' in note['data-i18n-zh'] and '505/505' in note['data-i18n-en']
         assert soup.select_one('#solver-loss-alignment-result') and soup.select_one('#actual-warm-cost-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #camera-subset-reference-result')
+            assert soup.select_one('#day-20260908-camera-subset-reference #camera-subset-reference-result')
 
 
 def test_redaction_and_figure():
