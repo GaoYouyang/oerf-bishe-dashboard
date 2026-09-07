@@ -1,3 +1,11 @@
+## 2026-09-08：几何逆模式暖启动对照 / Geometry Inverse-Mode Warm Control
+
+新对照只用几何生成16个逆算子模式、只用二维观测确定系数，随后执行原CGLS。独立复算后0/5点优于对照：该初始化需208至239对正向/伴随调用，零初始化需125至167对；未滤波随机模式也未带来优势。固定配方已关闭，不增加维数或更换种子。已有505样本的求解度量收益仍保留，但这不是暖启动、速度或论文成功。
+
+A new control generates 16 inverse-operator modes from geometry alone, chooses coefficients from 2D observations, then runs unchanged CGLS. Independent recomputation finds 0/5 wins: it needs 208-239 forward/adjoint pairs, versus 125-167 for zero initialization; raw random modes also provide no advantage. The fixed recipe is closed without rank or seed changes. The separate 505-sample solver-metric benefit remains, but this is not warm-start, speed or paper success.
+
+[报告 / Report](poolfire_warm_cost_angular_audit_20260908.md)
+
 ## 2026-09-08：同误差范数的方向诊断 / Direction at Equal Error Norm
 
 新诊断把误差大小与方向分开：在五个已打开中点，把初始场误差调到相同范数后，旧暖启动的误差方向仍需多38至50步才满足原四项1%精度。独立复算说明瓶颈不只是初始误差大小。这是需要完整参考解的离线反事实诊断，不是可部署暖启动、实际调用节省或速度突破。
@@ -146,7 +154,7 @@ The 87-parameter frequency-selective camera model has been trained and independe
 
 进一步独立归因：p33的101帧内部梯度损失在暖启动阶段已全部存在，并非CGLS一步新造成。两版误差差距中位数从0.725个百分点缩小到0.633个百分点。全505帧中仍有25帧出现新的内部梯度损失、56帧原有损失消失，不能泛化为CGLS永不伤害。两版均未达到四指标1%；下一步优先研究暖启动的空间与相机耦合。
 
-Further independent attribution: all101 p33 interior-gradient harms already exist in the warm initializer, rather than being newly caused by the CGLS step. The median gap between versions shrinks from0.725 to0.633 percentage points. Across505 frames,25 new interior-gradient harms appear and56 old harms disappear, so this does not mean CGLS never harms. Neither version meets four-metric1% accuracy; prioritize initializer spatial-camera coupling.
+Further independent attribution: all101 p33 interior-gradient harms already exist in the warm initializer, rather than being newly caused by the CGLS step. The median gap between versions shrinks from0.725 to0.633 percentage points. Across505 frames,25 new interior-gradient harms appear and56 old harms disappear, so this does not mean CGLS never harms. Neither version meets four-metric 1% accuracy; prioritize initializer spatial-camera coupling.
 
 [报告 / Report](poolfire_camera_mix_ablation_20260907.md)
 
@@ -290,7 +298,7 @@ Independent validation rejects the exact-block resource gate: three implementati
 
 精确分块直接解已通过2525/2525个已打开的干净代理样本、25/25个来源与相机集合分层，五条完整轨迹全部通过四指标1%门；完整直接解对照也全部通过。五套几何只需736–784个接口节点，保存的因子数值量减少36.7%–38.0%，没有删弱耦合或训练模型。这是经典求解对照的实质进展，不是整机内存下降、加速、学习突破或外部泛化；下一步实测包含准备成本的时间与RSS。
 
-Exact block direct solving passes 2525/2525 already-opened clean proxy cells, all25 source-camera-set strata and all five complete trajectories at the four-metric1% gate; the full direct comparator also passes every cell. The five geometries need only736–784 interface nodes, reducing stored numeric factor payload by36.7%–38.0% without dropping weak couplings or training a model. This is progress in a classical solver control, not a whole-process memory reduction, speedup, learning breakthrough or external generalization. Next comes measured time and RSS including setup.
+Exact block direct solving passes 2525/2525 already-opened clean proxy cells, all25 source-camera-set strata and all five complete trajectories at the four-metric 1% gate; the full direct comparator also passes every cell. The five geometries need only736–784 interface nodes, reducing stored numeric factor payload by36.7%–38.0% without dropping weak couplings or training a model. This is progress in a classical solver control, not a whole-process memory reduction, speedup, learning breakthrough or external generalization. Next comes measured time and RSS including setup.
 
 [完整已开封序列证据 / Full opened-sequence evidence](poolfire_fixed512_reference_20260906.md)
 

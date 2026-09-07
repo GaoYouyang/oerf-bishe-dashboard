@@ -2,6 +2,42 @@
 
 2026-09-08
 
+## 最新对照：几何逆模式没有省下求解 / Latest Control: Geometry Inverse Modes Do Not Save Work
+
+新对照只用几何生成16个逆算子模式、只用二维观测确定系数，随后执行原CGLS。独立复算后0/5点优于对照：该初始化需208至239对正向/伴随调用，零初始化需125至167对；未滤波随机模式也未带来优势。固定配方已关闭，不增加维数或更换种子。已有505样本的求解度量收益仍保留，但这不是暖启动、速度或论文成功。
+
+A new control generates 16 inverse-operator modes from geometry alone, chooses coefficients from 2D observations, then runs unchanged CGLS. Independent recomputation finds 0/5 wins: it needs 208-239 forward/adjoint pairs, versus 125-167 for zero initialization; raw random modes also provide no advantage. The fixed recipe is closed without rank or seed changes. The separate 505-sample solver-metric benefit remains, but this is not warm-start, speed or paper success.
+
+| 旧中点 / Midpoint | 几何逆模式 / Inverse modes | 原始随机模式 / Raw modes | 零初始 / Zero | 旧神经暖初始 / Old neural |
+|---|---:|---:|---:|---:|
+| 1 | 217 | 156 | 140 | 140 |
+| 2 | 208 | 143 | 135-136 | 135 |
+| 3 | 210 | 138-139 | 129-130 | 130 |
+| 4 | 239 | 194 | 167 | 167 |
+| 5 | 218 | 137 | 125 | 125 |
+
+
+每个数字同时表示A和A转置调用数，已包含暖初始化的精确lift及初始残差计算。首次与持续四项1%达标的次数相同；区间仅表示两种数值实现的差异，不是统计置信区间。这些停止点在事后通过真值评分得到，不是可部署的停止规则。
+
+Each number is both the forward and adjoint count, including the warm exact lift and initial residual evaluation. First and sustained four-metric 1% crossings agree; ranges are differences between two numerical implementations, not statistical confidence intervals. These stopping points are evaluated retrospectively with truth, not deployable stopping rules.
+
+结果前固定16个随机世界坐标探针，经过一次几何正规算子逆作用，形成主候选空间；未滤波探针构成对照。基空间不读场、误差、时间或轨迹标签，系数只读二维观测。它不同于此前从场误差训练的全局子空间，但随机子空间方法本身已有文献。两个新增方案都在五点输给零初始；逆滤波方案也输给原始探针对照。
+
+Sixteen random world-coordinate probes were fixed before results. One inverse-normal geometry action generates the primary span; unfiltered probes form the control. Neither field, error, time nor trajectory labels enter the span, and coefficients use only2D observations. This differs from the earlier field-error-trained global space, but randomized subspace methods are established literature. Both new arms lose to zero at all five points; inverse filtering also loses to raw probes.
+
+全部5140个新状态先封存，再独立进行四指标评分和原生正向重放；评分最大相对差2.32e-15，重放差7.08e-16，初始场独立差9.81e-12。实际新增递推为5140A+5120A转置，初始lift为20A转置；几何构造与核验160A+96A转置、192个完整因子向量三角求解；初始化核验20A+20A转置；评分5140A+5140原生A+10一致性A。完整几何分解的继承成本并不免费；系数与dual读取还需16方向稠密运算。直接输出同一缓存场在数学上等价且可少一次A转置，因此没有dual编码自身的优势。
+
+All 5140 new states were sealed before independent four-metric scoring and native forward replay. Maximum relative discrepancies are 2.32e-15 for scoring, 7.08e-16 for replay and 9.81e-12 for independent initials. New recurrences consume 5140forward/5120adjoint actions; initialization 20adjoints; geometry construction/audits 160forward/96adjoints and 192 full-factor vector triangular solves; initial audits 20forward/20adjoints; scoring 5140forward/5140native-forward/10consistency actions. Inherited full geometry factorization is nonfree, and readout requires dense 16-direction work. Direct output of the same cached field is mathematically equivalent and avoids one adjoint, so there is no intrinsic dual-encoding advantage.
+
+这只关闭固定16模式、一次逆作用、一次观测投影的方案，不证明所有几何表示、合成误差训练或暖启动都不可能。没有训练新模型、扩跑完整轨迹或打开新数据，也没有真实BOST、端到端提速或论文成功。已有505样本的学习求解度量结果单独保留。当前数据足够继续有边界的虚拟研究，不需要为了此失败租GPU或追加数据。
+
+Only the fixed 16-mode/one-inverse/one-observation-projection recipe is closed, not all geometry representations, synthetic-error training or warm starts. No new model, full-trajectory expansion or new data was used, and no real-BOST, end-to-end speed or paper success is established. The separate 505-sample learned solver-metric result remains. Existing data suffice for bounded virtual research; this failure does not require GPU rental or additional data.
+
+方法背景 / Method context: [Randomized subspace iteration](https://arxiv.org/abs/1408.2208); [canonical-angle analysis](https://doi.org/10.1137/18M1179432). 文献背景不是本实验性能或首创证明 / Literature is neither performance evidence for this experiment nor an originality claim.
+
+此前独立结论与反事实图保留在下方 / Earlier independent conclusions and counterfactual figure remain below.
+
+
 ## 最新诊断：相同误差大小，不同细化难度 / Latest: Equal Error Size, Different Refinement Difficulty
 
 新诊断把误差大小与方向分开：在五个已打开中点，把初始场误差调到相同范数后，旧暖启动的误差方向仍需多38至50步才满足原四项1%精度。独立复算说明瓶颈不只是初始误差大小。这是需要完整参考解的离线反事实诊断，不是可部署暖启动、实际调用节省或速度突破。
@@ -29,7 +65,7 @@ The warm initial L2 error norm is39.09%-46.01% of zero's norm, not an energy fra
 
 独立执行20条额外数值轨迹，共5140状态；全体状态先封存再读取CFD真值评分。独立范数差1.42e-16，稀疏/网格评分差8.68e-15，原生重放差7.11e-16。新增递推5140A+5120A转置，度量2570F+2560F转置+5120T；构造验证20A、10原生A、10A转置；评分5140A、5140原生A和10一致性A，均为离线诊断成本。完整参考、模型训练与缓存不免费。
 
-Twenty additional numerical paths produce5140 states, all sealed before CFD-truth scoring. Independent norm discrepancy is1.42e-16, sparse/grid scoring8.68e-15, and native replay7.11e-16. New recurrences consume5140A+5120adjoints and metric2570F+2560F-transpose+5120T. Construction validation uses20A,10nativeA,10adjoints; scoring5140A,5140nativeA and10consistencyA. All are offline diagnostic costs; full reference, training and caches are nonfree.
+Twenty additional numerical paths produce5140 states, all sealed before CFD-truth scoring. Independent norm discrepancy is1.42e-16, sparse/grid scoring8.68e-15, and native replay7.11e-16. New recurrences consume 5140A+5120adjoints and metric2570F+2560F-transpose+5120T. Construction validation uses20A,10nativeA,10adjoints; scoring 5140A,5140nativeA and10consistencyA. All are offline diagnostic costs; full reference, training and caches are nonfree.
 
 该受控干预支持：这套初始化的剩余误差形状抵消了大部分幅度改善收益。它只适用于这五个已打开中点和冻结求解器，不是完整轨迹或外部验证；没有识别专属低频/近零空间模式，也没有证明某种新损失或模型一定有效。后续优先审查如何改变慢收敛误差结构，而不盲目降低初始L2、加大模型或重训旧配方。没有新算法突破、实际提速、真实BOST或论文成功。
 
@@ -61,7 +97,7 @@ Each cell lists (A calls, adjoint calls), not their sum or an iteration count. W
 
 首次四项1%达标与持续达标结论一致。五个模型校正点全部被便宜对照以更少或相等的两种调用击败；四点与BP校正同价，第四点还多一次A和A转置。该结果不能证明所有残差学习无效，也不是HINTS复现。五点仍是已开封轨迹的中点，而非五条完整序列或独立新工况。两种递推的一步差异保留为区间；这些是真值可见的事后理想停止时刻，不是部署停止规则。
 
-First four-metric1% hits and sustained hits agree. Every model-correction point is beaten by cheaper controls in both action counts; four tie BP correction, while midpoint4 costs one extra forward and adjoint. This does not disprove all residual learning or reproduce HINTS. These are midpoints of opened trajectories, not five complete sequences or independent new conditions. One-step differences between recurrences remain intervals. Crossings are truth-visible retrospective ideal stopping times, not deployable stops.
+First four-metric 1% hits and sustained hits agree. Every model-correction point is beaten by cheaper controls in both action counts; four tie BP correction, while midpoint4 costs one extra forward and adjoint. This does not disprove all residual learning or reproduce HINTS. These are midpoints of opened trajectories, not five complete sequences or independent new conditions. One-step differences between recurrences remain intervals. Crossings are truth-visible retrospective ideal stopping times, not deployable stops.
 
 全部7710个状态先封存再读真值，逐状态稀疏与网格导数独立评分最大相对差2.87e-15，原生物理重放差7.21e-16，相机逆序差2.46e-16。新增递推7360A+7330A转置；度量应用3670F+3650F转置+7310T另计；离线评分7710A、原生重放7710A、一致性10A另计。预测、训练和几何缓存均不免费。没有fresh wall/RSS、可变相机预测、外部、真实BOST或论文成功。
 

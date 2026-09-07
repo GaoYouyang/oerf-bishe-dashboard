@@ -97,3 +97,35 @@ def test_error_shape_bilingual_and_figure():
         if 'daily' in rel:
             assert soup.select_one('#latest #error-shape-result')
     assert (ROOT/'assets/figures/poolfire_warm_error_shape_20260908.png').stat().st_size > 10000
+
+
+def test_geometry_inverse_probe_cost_and_scope():
+    data = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['inverse_probe']
+    assert data['status'] == 'FAIL_GEOMETRY_INVERSE_PROBE_WARM_PILOT'
+    assert data['robust_wins'] == 0 and data['fixed_recipe_closed']
+    assert (data['unique_frames'], data['camera_count'], data['scored_states']) == (5, 9, 5140)
+    assert data['geometry_requires_inherited_full_factor']
+    assert data['posterior_cost_not_deployable_stopping']
+    assert data['direct_field_equivalent_saves_one_AT']
+    assert not any(data[k] for k in ('new_fitting', 'full_trajectories', 'full505_authorized',
+        'algorithm_breakthrough', 'paper_success', 'resource_speedup', 'external_generalization', 'real_bost'))
+    for point, expected in zip(data['points'], (217, 208, 210, 239, 218)):
+        bands = point['costs_A_equals_AT']
+        assert bands['first'] == bands['sustained']
+        assert bands['first']['inverse_probe'] == [expected, expected]
+        assert expected > max(bands['first'][a][1] for a in ('raw_probe', 'zero', 'old_neural'))
+
+
+def test_geometry_inverse_probe_bilingual_and_preserved_history():
+    evidence = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert evidence['latest_inverse_probe']['robust_wins'] == 0
+    assert evidence['latest_full_trajectory_controls']['passing'] == 505
+    for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
+        note = soup.select_one('#inverse-probe-result')
+        assert '0/5' in note['data-i18n-zh'] and '0/5' in note['data-i18n-en']
+        assert '505' in note['data-i18n-zh'] and '505' in note['data-i18n-en']
+        assert note.get_text() == note['data-i18n-zh']
+        assert soup.select_one('#error-shape-result') and soup.select_one('#residual-reuse-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #inverse-probe-result')
