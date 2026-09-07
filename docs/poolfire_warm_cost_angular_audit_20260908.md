@@ -2,6 +2,44 @@
 
 2026-09-08
 
+## 最新诊断：相同误差大小，不同细化难度 / Latest: Equal Error Size, Different Refinement Difficulty
+
+新诊断把误差大小与方向分开：在五个已打开中点，把初始场误差调到相同范数后，旧暖启动的误差方向仍需多38至50步才满足原四项1%精度。独立复算说明瓶颈不只是初始误差大小。这是需要完整参考解的离线反事实诊断，不是可部署暖启动、实际调用节省或速度突破。
+
+A new diagnosis separates error size from direction: at five opened midpoints, with initial field-error norms matched, the old warm error direction needs38-50 more refinements to meet the original four1% accuracy gates. Independent recomputation shows that initial error size is not the only issue. These offline counterfactuals require a full reference; they are not deployable warm starts, achieved call savings or a speed breakthrough.
+
+![Offline counterfactual refinement comparison](../assets/figures/poolfire_warm_error_shape_20260908.png)
+
+| 旧中点 / Midpoint | 零方向、暖范数 / Cold direction, warm norm | 原暖启动 / Original warm | 原零初始 / Original zero | 暖方向、零范数 / Warm direction, zero norm |
+|---|---:|---:|---:|---:|
+| 1 | 101 | 139 | 140 | 178 |
+| 2 | 91 | 134 | 135-136 | 176-177 |
+| 3 | 81 | 129 | 129-130 | 173 |
+| 4 | 116-117 | 166 | 167 | 212 |
+| 5 | 84 | 124 | 125 | 165 |
+
+
+表格是细化步数，不是在线A/A转置成本。用已有观测求得的合格完整参考场t和冻结暖初始w，令a=||t-w||/||t||。两个额外离线初始场为(1-a)t和t-(t-w)/a，分别保持零初始、暖初始的误差方向，并把误差范数调至另一组。它们事先已经需要完整解，不能拿来宣称省下求解成本。原两个对照沿用封存轨迹，额外两组真实执行未改动的CGLS细化，不用缩放旧曲线冒充重算。
+
+The table lists refinement steps, not online forward/adjoint cost. From the qualified full observation-derived reference t and frozen warm initial w, set a=||t-w||/||t||. Two additional offline initials, (1-a)t and t-(t-w)/a, retain zero-start and warm error directions while matching the other error norm. They already require the full solution and cannot claim to save its cost. The two original controls reuse sealed curves; both new arms actually run unchanged CGLS refinement rather than rescaling old curves as simulated computation.
+
+暖初始误差的L2范数是零初始的39.09%至46.01%，不是能量比例。把范数固定在暖初始层级，保留零初始误差方向的对照比原暖初始少38至50步；固定在零初始层级，暖误差方向多38至45步。两层级、五点、首次与持续达标均一致。只看field的预注册次要结果也呈现同向差异，因此不是只有梯度验收条件造成的现象；但它不替换四指标主判据。
+
+The warm initial L2 error norm is39.09%-46.01% of zero's norm, not an energy fraction. At the warm norm, retaining zero's error direction needs38-50 fewer refinements than the original warm state; at the zero norm, warm direction needs38-45 more. Both norm levels, all five points, and first/sustained hits agree. Preregistered secondary field-only crossings show the same directional effect, so it is not solely the gradient acceptance criterion; that secondary result does not replace the four-metric primary.
+
+独立执行20条额外数值轨迹，共5140状态；全体状态先封存再读取CFD真值评分。独立范数差1.42e-16，稀疏/网格评分差8.68e-15，原生重放差7.11e-16。新增递推5140A+5120A转置，度量2570F+2560F转置+5120T；构造验证20A、10原生A、10A转置；评分5140A、5140原生A和10一致性A，均为离线诊断成本。完整参考、模型训练与缓存不免费。
+
+Twenty additional numerical paths produce5140 states, all sealed before CFD-truth scoring. Independent norm discrepancy is1.42e-16, sparse/grid scoring8.68e-15, and native replay7.11e-16. New recurrences consume5140A+5120adjoints and metric2570F+2560F-transpose+5120T. Construction validation uses20A,10nativeA,10adjoints; scoring5140A,5140nativeA and10consistencyA. All are offline diagnostic costs; full reference, training and caches are nonfree.
+
+该受控干预支持：这套初始化的剩余误差形状抵消了大部分幅度改善收益。它只适用于这五个已打开中点和冻结求解器，不是完整轨迹或外部验证；没有识别专属低频/近零空间模式，也没有证明某种新损失或模型一定有效。后续优先审查如何改变慢收敛误差结构，而不盲目降低初始L2、加大模型或重训旧配方。没有新算法突破、实际提速、真实BOST或论文成功。
+
+This controlled intervention supports that this initializer's remaining error shape offsets much of its amplitude-reduction benefit. It is conditional on five opened midpoints and the frozen solver, not complete-trajectory or external evidence. It does not identify exclusive low-frequency/near-null modes or prove a new loss/model will work. Next prioritize how to change slow error structure, not blindly reduce initial L2, enlarge models or refit old recipes. No new algorithm breakthrough, achieved speedup, real-BOST or paper success.
+
+方法背景而非本实验结论来源 / Method context, not evidence of this experiment's outcome: [CGLS, Fong thesis Algorithm1.7](https://web.stanford.edu/group/SOL/dissertations/david-fong-thesis-online.pdf); [Axelsson on initial error and convergence phases](https://doi.org/10.1016/S0378-4754(02)00097-6).
+
+下方保留此前封存结果 / Previously sealed results remain below.
+
+
 ## 新增：一次残差复用 / Addition: One-Shot Residual Reuse
 
 残差复用检验也未带来调用收益：固定16步后，把旧小模型应用于当前残差，只校正一次再继续原CGLS，五个已打开中点均未胜过便宜对照。独立复算已封存；不扩跑、不调深度或放大旧模型。它只关闭这套不重训的复用配方，不否定全部残差学习。既有固定九相机学习度量收益保留，但暖启动、资源与论文成功仍未成立。
