@@ -20,7 +20,7 @@ def test_complete_trajectory_counts_and_limits():
 
 def test_current_and_bilingual_history():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in current['latest_execution_evidence']['note']
+    assert STEM in current['latest_full_trajectory_metric']['summary']
     assert current['latest_full_trajectory_metric']['passing'] == 505
     assert current['latest_left_metric']['warm_attribution_confirmed'] is False
     for rel in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
@@ -30,7 +30,7 @@ def test_current_and_bilingual_history():
         assert all('22.64%' in note[0][f'data-i18n-{lang}'] and '0.87%' in note[0][f'data-i18n-{lang}'] for lang in ('zh','en'))
         assert soup.select_one('#left-metric-result')
         if 'daily' in rel:
-            assert len(soup.select('#latest')) == 1 and soup.select_one('#latest #full-metric-cost-result')
+            assert len(soup.select('#latest')) == 1 and soup.select_one('#day-20260908-full-metric #full-metric-cost-result')
 
 
 def test_redacted_report_and_figure():

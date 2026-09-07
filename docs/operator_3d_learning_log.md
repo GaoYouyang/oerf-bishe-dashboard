@@ -1,3 +1,15 @@
+## 2026-09-08：完整公平对照补齐 / Full-Roster Fair Controls Completed
+
+四项完整轨迹对照独立通过505/505帧：零初值加冻结学习度量，相对普通CGLS、BP和历史dual-ridge的A减少中位数为23.48%-23.63%。未训练同结构度量有1008/1010条实现路径在512步内未达标，只给成本下界。学习度量作用得到补强，暖启动贡献、实测提速与外部泛化仍未证明。
+
+All four complete-trajectory comparisons pass independently on 505/505 frames: zero initialization with the frozen learned metric reduces median A calls by 23.48%-23.63% versus ordinary CGLS, BP and historical dual ridge. The untrained metric has 1008/1010 implementation paths censored at 512 iterations, giving cost lower bounds only. Learned-metric evidence is stronger; warm-start contribution, measured speedup and external generalization remain unproven.
+
+没有新训练。之前的Jacobi证据保留，这次把普通CGLS、BP、历史ridge和未训练度量补到全部505帧。三项经典对照都找到首次达标；未训练度量的未达标路径只能给成本下界。接下来检验暖初始化的额外作用，不能把从零开始的度量收益改名。
+
+No new training. The Jacobi evidence is retained; ordinary CGLS, BP, historical ridge and the untrained metric now cover all 505 frames. All three classical controls have finite first crossings. Censored untrained-metric paths provide lower bounds only. Next test additional warm-initializer value without renaming a zero-start metric gain.
+
+[报告 / Report](poolfire_full_control_cost_20260908.md)
+
 ## 2026-09-08：完整轨迹通过，但不是暖启动结论 / Complete Trajectories Pass, Not Warm Attribution
 
 完整五轨迹505/505帧独立通过：零初值加冻结学习残差度量，在四指标1%精度下，每帧A和AT均少于理想停止的Jacobi。A减少中位数22.64%，最弱帧仅0.87%。这是已打开clean九相机数据上的度量结果，不是暖启动贡献、计时提速或外部泛化。
