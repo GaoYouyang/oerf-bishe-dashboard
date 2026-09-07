@@ -1,3 +1,11 @@
+## 2026-09-07：243参数分层模型精度未通过 / Hierarchical Model Fails Accuracy
+
+243参数分层几何模型完成首次精度训练与独立复算：新模型和86参数便宜对照均为0/505帧、0/5完整轨迹通过四指标1%门。新模型在485帧上至少一项指标差于便宜对照；完整直接解仍505/505通过。十次拟合均在200次迭代预算耗尽后停止，未证明收敛。关闭这套固定训练方案，不推断全部分层表示无效，也不声称算法或速度突破。
+
+The 243-parameter hierarchical geometry model completes its first accuracy fit and independent verification. It and the cheaper 86-parameter control pass 0/505 frames and 0/5 complete trajectories at four-metric 1% accuracy. The new model harms at least one metric on 485 frames versus the cheaper control; full direct still passes 505/505. All ten fits stop at the 200-iteration budget without demonstrated convergence. Close this fixed training recipe, not all hierarchical representations; no algorithm or speed breakthrough is claimed.
+
+[报告 / Report](poolfire_butterfly_accuracy_20260907.md)
+
 ## 2026-09-07：87参数模型训练完成但未达标 / 87-Parameter Model Trained, Accuracy Failed
 
 87参数频率选择相机模型已完成训练和独立复算：新模型与同规模便宜对照均为0/505、0/5完整轨迹通过四指标1%门。新模型在505帧上均至少一项指标差于对照，直接解仍505/505通过。两版都在200次迭代预算用完后停止，并未证明收敛；关闭这套固定训练方案，不把它扩大成整个表示类别无效的结论，也不是精度或速度突破。
