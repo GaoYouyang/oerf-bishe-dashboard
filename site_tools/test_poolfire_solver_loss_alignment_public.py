@@ -20,7 +20,7 @@ def test_negative_diagnostic_not_algorithm_claim():
 
 def test_paired_language_and_prior_evidence():
     data = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in data['latest_execution_evidence']['note']
+    assert STEM in data['latest_solver_loss_alignment']['summary']
     assert data['latest_full_trajectory_controls']['passing'] == 505
     for rel in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/rel).read_text(),'html.parser')
@@ -29,7 +29,7 @@ def test_paired_language_and_prior_evidence():
         assert 'TRAIN' in note['data-i18n-zh'] and 'TRAIN' in note['data-i18n-en']
         assert soup.select_one('#actual-warm-cost-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #solver-loss-alignment-result')
+            assert soup.select_one('#day-20260908-solver-loss-alignment #solver-loss-alignment-result')
 
 
 def test_redacted_report_and_figure():

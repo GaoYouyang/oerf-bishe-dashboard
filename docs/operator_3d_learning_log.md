@@ -1,3 +1,11 @@
+## 2026-09-08：经典参考解先过门 / Classical References First
+
+五、七相机的经典参考解均通过：两个预定子集各505/505帧、5/5完整轨迹达到场、全梯度、内部梯度、观测四项1%门。合计1010个条件单元重复使用同一505帧，不是1010个独立新样本。未加正则的直接解与独立QR解、物理重放一致。这解除这两个无噪声子集的参考解障碍，不是学习度量迁移、暖启动收益或实际加速；缓存直接解仍是强对照。
+
+Classical references pass for both fixed five- and seven-camera subsets: each reaches all four 1% gates (field, full gradient, interior gradient and observation) on 505/505 frames and 5/5 complete trajectories. The 1010 condition-cells reuse the same 505 frames, not 1010 independent new samples. Unregularized direct and independent QR solutions agree with physical replay. This removes the reference obstacle for these two clean subsets, not learned-metric transfer, warm benefit or measured speedup. Cached direct remains a strong control.
+
+[报告 / Report](poolfire_camera_subset_reference_20260908.md)
+
 ## 2026-09-08：没有局部梯度冲突 / No Local Gradient Conflict
 
 新的局部诊断未发现梯度冲突：5个训练折、20个重叠TRAIN配对中，初值损失与16步后损失的梯度余弦均为正，约0.148至0.536；沿初值下降方向的两档固定小步都降低两项损失，冲突0/5。独立复算已完成。因此不以“两个目标方向相反”为理由重训。仅为固定模型训练点的回顾性解释检查，不是外折测试、暖启动收益或加速结果；505帧学习度量证据不变。
