@@ -1,4 +1,11 @@
 {
+  "latest_loss_oracle_cost": {
+    "status": "FAIL_FIXED_LOSS_ORACLE_CONDITIONAL_COST",
+    "passing": 0,
+    "failed": 5,
+    "summary": "../docs/poolfire_warm_cost_angular_audit_20260908.json",
+    "algorithm_success": false
+  },
   "latest_manufactured_feature_capacity": {
     "status": "FROZEN_FEATURE_FLOOR_DOMINATES_RESIDUAL_ERROR",
     "examples": 37,
@@ -791,12 +798,12 @@
   "v212_signed_line_cancellation_scientific_decision": "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212",
   "latest_valid_mechanism_status": "VERIFIED_FIXED_GLOBAL_OBSERVATION_CONTEXT_ABLATION",
   "latest_valid_mechanism_formal_status": "SEALED_POST_OPEN_DIAGNOSTIC",
-  "headline": "Fixed-feature capacity floor: readout changes cannot remove most correction loss.",
-  "headline_en": "Fixed-feature capacity floor: readout changes cannot remove most correction loss.",
-  "headline_zh": "固定特征容量下界：只调组合系数无法消除主要校正损失。",
-  "latest_execution_headline": "With the new model's hidden features fixed, even per-example optimal coefficients for its 17 correction directions leave 98.1%-98.7% of the current joint squared correction loss at the five CFD checks; the median across 32 synthetic audit examples is 99.845%. Independent recomputation confirms this floor, ruling out readout-coefficient changes alone as a fix for most of that loss. This is not a whole-network capacity limit or a final CGLS call-count/speed result. The earlier 505-sample solver-metric result and the previous warm-start failure both remain.",
-  "latest_execution_headline_en": "With the new model's hidden features fixed, even per-example optimal coefficients for its 17 correction directions leave 98.1%-98.7% of the current joint squared correction loss at the five CFD checks; the median across 32 synthetic audit examples is 99.845%. Independent recomputation confirms this floor, ruling out readout-coefficient changes alone as a fix for most of that loss. This is not a whole-network capacity limit or a final CGLS call-count/speed result. The earlier 505-sample solver-metric result and the previous warm-start failure both remain.",
-  "latest_execution_headline_zh": "固定新模型的隐藏特征后，即使给17个校正方向逐样本最优的组合系数，五个CFD检验点仍有98.1%至98.7%的当前联合平方校正损失无法消除；32个合成审计样本的中位数为99.845%。独立复算确认该下界，排除只改最后读出系数来修复主要损失。这不是完整网络的能力上限，也不是最终CGLS调用数或速度结论；已有505样本求解度量结果及上一轮暖启动失败均保留。",
+  "headline": "Loss-optimal correction does not save work: 0/5 robust diagnostic wins.",
+  "headline_en": "Loss-optimal correction does not save work: 0/5 robust diagnostic wins.",
+  "headline_zh": "损失最优校正未省计算：五个诊断点稳健优势0/5。",
+  "latest_execution_headline": "Actual refinement is now checked: per-example initial-loss-optimal coefficients in the frozen features, followed by the original observation line search, give the same call-count intervals as the trained model at all five opened CFD midpoints. All cost more than zero-start with the same solver metric: 0/5 robust wins. Independent recomputation passed. This is conditional-cost diagnosis using an expensive reference, not a deployable algorithm; loss-optimal is not call-optimal and does not exclude all coefficient choices. The earlier 505-sample cold-start solver-metric result remains; the learned warm-start goal is unmet.",
+  "latest_execution_headline_en": "Actual refinement is now checked: per-example initial-loss-optimal coefficients in the frozen features, followed by the original observation line search, give the same call-count intervals as the trained model at all five opened CFD midpoints. All cost more than zero-start with the same solver metric: 0/5 robust wins. Independent recomputation passed. This is conditional-cost diagnosis using an expensive reference, not a deployable algorithm; loss-optimal is not call-optimal and does not exclude all coefficient choices. The earlier 505-sample cold-start solver-metric result remains; the learned warm-start goal is unmet.",
+  "latest_execution_headline_zh": "实际求解检验完成：给当前固定特征逐样本的初始损失最优系数，保留原观测线搜索后，五个旧CFD中点的调用区间仍与原训练模型一致，比同一求解度量的零启动更贵，稳健优势0/5。独立复算通过。这只是依赖昂贵参考解的条件成本诊断，不是可部署算法；损失最优不等于调用数最优，不能据此排除所有系数组合。此前505样本冷启动求解度量结果保留，学习暖启动目标仍未完成。",
   "metrics": {
     "poolfire_f30_cells": 505,
     "poolfire_f30_neural_matched_cells": 409,
@@ -6966,9 +6973,9 @@
     "v243_gpu_rental_authorized": false,
     "v243_algorithm_breakthrough": false
   },
-  "next_scientific_gate": "A next mechanism must supply physically different correction directions and first pass a cheap capacity/classical-control test; do not replace labels, regressors or readout coefficients to repair the current frozen features. The warm-start objective remains unmet.",
-  "next_scientific_gate_en": "A next mechanism must supply physically different correction directions and first pass a cheap capacity/classical-control test; do not replace labels, regressors or readout coefficients to repair the current frozen features. The warm-start objective remains unmet.",
-  "next_scientific_gate_zh": "下一机制必须提供物理上不同的校正方向，并先通过便宜容量与经典对照检验；不继续更换标签、回归器或读出系数来修复当前固定特征。暖启动目标尚未完成。",
+  "next_scientific_gate": "Close this fixed loss-oracle and line-search composition; do not enlarge or retrain the rejected model. A next mechanism must first test physical directions and actual solver cost, not authorize training from initial-loss reduction alone.",
+  "next_scientific_gate_en": "Close this fixed loss-oracle and line-search composition; do not enlarge or retrain the rejected model. A next mechanism must first test physical directions and actual solver cost, not authorize training from initial-loss reduction alone.",
+  "next_scientific_gate_zh": "当前固定损失最优系数与线搜索的组合关闭；不扩大或重训被否定的模型。下一机制先检验物理方向与实际求解成本，不能只凭初始损失下降授权训练。",
   "latest_execution_evidence": {
     "note": "../document_reader.html?doc=docs%2Fpoolfire_warm_cost_angular_audit_20260908.md",
     "figure": "assets/figures/poolfire_warm_error_shape_20260908.png"

@@ -2,6 +2,46 @@
 
 2026-09-08
 
+## 最新检验：损失最优校正的实际成本 / Latest Test: Actual Cost of Loss-Optimal Correction
+
+实际求解检验完成：给当前固定特征逐样本的初始损失最优系数，保留原观测线搜索后，五个旧CFD中点的调用区间仍与原训练模型一致，比同一求解度量的零启动更贵，稳健优势0/5。独立复算通过。这只是依赖昂贵参考解的条件成本诊断，不是可部署算法；损失最优不等于调用数最优，不能据此排除所有系数组合。此前505样本冷启动求解度量结果保留，学习暖启动目标仍未完成。
+
+Actual refinement is now checked: per-example initial-loss-optimal coefficients in the frozen features, followed by the original observation line search, give the same call-count intervals as the trained model at all five opened CFD midpoints. All cost more than zero-start with the same solver metric: 0/5 robust wins. Independent recomputation passed. This is conditional-cost diagnosis using an expensive reference, not a deployable algorithm; loss-optimal is not call-optimal and does not exclude all coefficient choices. The earlier 505-sample cold-start solver-metric result remains; the learned warm-start goal is unmet.
+
+| 旧CFD中点 / Midpoint | 损失最优 / Loss oracle | 原模型 / Trained | 不加校正 / Prefix only | 零启动 / Zero metric |
+|---|---|---|---|---|
+| 1 | (154, 153) | (154, 153) | (153, 152) | (140, 140) |
+| 2 | (150, 149) | (150, 149) | (149, 148) | (135-136, 135-136) |
+| 3 | (143-144, 142-143) | (143-144, 142-143) | (143, 142) | (129-130, 129-130) |
+| 4 | (178, 177) | (178, 177) | (177, 176) | (167, 167) |
+| 5 | (139, 138) | (139, 138) | (139, 138) | (125, 125) |
+
+
+表中每格为条件调用账(A, AT)，范围覆盖两种数值实现；首次同时通过与此后持续通过四项1%精度门的账一致。所有校正分支计入相同16步前缀与实际校正、后续迭代。原网络和BP控制也纳入正式审裁，完整六分支数据见本报告JSON。
+
+Each entry is a conditional (A, AT) count; ranges cover both numerical implementations. First and sustained crossings of all four 1% accuracy gates have identical counts. Correction branches include the same 16-step prefix, actual correction and refinement. Old-network and BP controls are also included in adjudication; the report JSON retains all six arms.
+
+昂贵完整参考解及逐样本最优系数的准备成本没有计入表格，因此这不是可部署在线成本或算法优势。即使暂不计这些额外成本，这个校正组合也没有优于原训练模型或不加校正，且五点均比同一度量零启动昂贵。只覆盖五个已开封中点，不是完整轨迹结果。
+
+The expensive full reference and per-example oracle preparation are excluded from this table, so these are not deployable online costs or an algorithmic advantage. Even excluding those extra costs, the correction composition does not robustly beat the trained model or prefix-only control, and costs more than zero-start with the same metric at every point. These are five opened midpoints, not complete trajectories.
+
+本轮不重训：直接使用上一轮已封存、在线搜索之前最小化联合初始损失的系数，保留原观测线搜索和未修改的求解器。线搜索前联合损失为0.862163/0.852286/0.837797/0.876078/0.837845，线搜索后为0.868085/0.857439/0.843567/0.881056/0.844313。线搜索降低观测损失，不保证降低联合损失。这些系数不是使调用数最少的答案；失败只关闭这个固定组合，不能推出17方向中所有系数组合都无效，更不能推出所有暖启动不可能。
+
+No retraining occurs: the preceding sealed coefficients minimize joint initial loss before line search, followed by the original observation line search and unchanged solver. Joint losses before line search are 0.862163/0.852286/0.837797/0.876078/0.837845, and after it 0.868085/0.857439/0.843567/0.881056/0.844313. The line search reduces observation loss, not necessarily joint loss. These coefficients do not minimize call count. Failure closes this fixed composition, not every coefficient choice in the 17-direction span or every warm start.
+
+10条新求解轨迹在读取CFD真值评分前封存，共2570条存储并评分的状态记录，其中170条继承前缀，2400条为本轮校正及迭代记录。独立实现重建输入、校正、后续迭代、原生物理重放和四指标；损失下界重现最大差3.33e-15，同状态指标最大差1.85e-15。退出后另行重建60行成本与裁决，封存树未变。
+
+Ten new solver paths were sealed before reading CFD truth for scoring. Of 2570 stored/scored entries, 170 are inherited prefix entries and 2400 are new correction/refinement entries. Independent implementations rebuilt inputs, corrections, refinement, native physical replay and all four metrics. Maximum loss-floor reproduction discrepancy is 3.33e-15; same-state metric discrepancy is 1.85e-15. A separate post-exit audit rebuilt 60 cost/decision rows with unchanged seals.
+
+实际新增校正和迭代为2400A+2390AT；继承前缀仅在逻辑账计160A+160AT，没有重算。另有原生校正核验10A+10AT，评分2570次稀疏正向、2570次原生正向和10次一致性正向。求解度量工作另计1195F+1190FT+2380T。以上均是离线诊断工作，不是速度或内存优势。没有训练成功、外部泛化、真实BOST或论文成功结论。下方此前的容量报告保持其历史范围，不应误读为本轮没有实际求解。
+
+Actual new correction/refinement work is 2400A+2390AT. Inherited prefixes contribute a logical 160A+160AT without recomputation. Additional work comprises 10A+10AT for native correction audits, 2570 sparse forwards, 2570 native forwards and 10 consistency forwards for scoring. Metric work is separately 1195F+1190FT+2380T. These are offline diagnostic costs, not time or memory gains. No training success, external generalization, real-BOST or paper success is established. The earlier capacity report below retains its historical scope; it does not mean this new test omitted actual refinement.
+
+当前固定损失最优系数与线搜索的组合关闭；不扩大或重训被否定的模型。下一机制先检验物理方向与实际求解成本，不能只凭初始损失下降授权训练。
+
+Close this fixed loss-oracle and line-search composition; do not enlarge or retrain the rejected model. A next mechanism must first test physical directions and actual solver cost, not authorize training from initial-loss reduction alone.
+
+
 ## 最新定位：固定特征的校正损失下界 / Latest Diagnosis: Frozen-Feature Correction-Loss Floor
 
 固定新模型的隐藏特征后，即使给17个校正方向逐样本最优的组合系数，五个CFD检验点仍有98.1%至98.7%的当前联合平方校正损失无法消除；32个合成审计样本的中位数为99.845%。独立复算确认该下界，排除只改最后读出系数来修复主要损失。这不是完整网络的能力上限，也不是最终CGLS调用数或速度结论；已有505样本求解度量结果及上一轮暖启动失败均保留。

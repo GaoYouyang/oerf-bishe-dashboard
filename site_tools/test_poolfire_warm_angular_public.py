@@ -196,3 +196,53 @@ def test_feature_floor_bilingual_scope_and_history():
         assert soup.select_one('#manufactured-residual-result') and soup.select_one('#inverse-probe-result')
         if 'daily' in rel:
             assert soup.select_one('#latest #manufactured-feature-floor-result')
+
+
+def test_loss_oracle_actual_cost_not_a_call_optimal_bound():
+    d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['loss_oracle_cost']
+    assert d['status'] == 'FAIL_FIXED_LOSS_ORACLE_CONDITIONAL_COST'
+    assert (d['passing'], d['failed'], d['inconclusive']) == (0, 5, 0)
+    assert (d['unique_cfd_frames'], d['new_solver_runs'], d['camera_count']) == (5, 10, 9)
+    assert (d['stored_scored_entries'], d['inherited_prefix_entries'], d['computed_state_entries']) == (2570, 170, 2400)
+    assert all(d[k] for k in ('loss_oracle_not_call_optimal', 'oracle_not_deployable',
+        'conditional_shell_excludes_oracle_preparation', 'oracle_reference_inherited_nonfree',
+        'original_observation_line_search_retained', 'posterior_stops_not_deployable', 'fixed_composition_closed'))
+    assert not any(d[k] for k in ('new_training', 'trained_model_requalified', 'full_trajectories',
+        'full505_authorized', 'algorithm_breakthrough', 'paper_success', 'resource_speedup', 'external_generalization', 'real_bost'))
+    for p, low in zip(d['points'], ([154, 153], [150, 149], [143, 142], [178, 177], [139, 138])):
+        b = p['intervals']['first_cost']
+        assert b == p['intervals']['sustained_cost']
+        assert b['loss_oracle']['lower'] == low
+        assert b['loss_oracle'] == b['manufactured_neural']
+        assert all(a > z for a, z in zip(low, b['zero_metric']['upper']))
+        assert all(a >= z for a, z in zip(low, b['prefix_only']['upper']))
+
+
+def test_loss_oracle_public_cost_receipts_and_losses():
+    d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['loss_oracle_cost']
+    assert d['actual_new_correction_refinement'] == dict(A=2400, AT=2390)
+    assert d['inherited_prefix_logical'] == dict(A=160, AT=160)
+    assert d['raw_native_audit'] == dict(A=10, AT=10)
+    assert d['scoring_work'] == dict(A=2570, native_A=2570, consistency_A=10)
+    assert d['metric_work'] == dict(F=1195, FT=1190, T=2380)
+    for row in d['initialization_losses']:
+        assert row['after_line_search_joint_loss'] >= row['raw_joint_loss']
+        assert set(row) == {'point', 'raw_joint_loss', 'after_line_search_joint_loss'}
+    assert d['maxima']['raw_joint_loss_reproduces_floor'] < 1e-8
+
+
+def test_loss_oracle_bilingual_and_preserved_capacity_history():
+    evidence = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert evidence['latest_loss_oracle_cost']['failed'] == 5
+    assert evidence['latest_manufactured_feature_capacity']['examples'] == 37
+    assert evidence['latest_full_trajectory_controls']['passing'] == 505
+    for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
+        note = soup.select_one('#loss-oracle-cost-result')
+        assert '0/5' in note['data-i18n-zh'] and '0/5' in note['data-i18n-en']
+        assert '损失最优不等于调用数最优' in note['data-i18n-zh']
+        assert 'loss-optimal is not call-optimal' in note['data-i18n-en']
+        assert note.get_text() == note['data-i18n-zh']
+        assert soup.select_one('#manufactured-feature-floor-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #loss-oracle-cost-result')
