@@ -1,3 +1,11 @@
+## 2026-09-08：更准的教师仍未让暖启动省算 / Accurate Teachers Still Do Not Establish Warm Savings
+
+教师质量对照已独立复算：保持ridge映射、学习度量和停止规则不变，只把早停教师换成观测/几何生成的高精度解，额外省调用认证门仍为0/5。全部20个端点的实际四指标精度都达标，失败的是更省计算的停止认证，不是重建失败。关闭这套固定配置，不扩跑505帧；此前学习度量的完整轨迹收益不变。
+
+The teacher-quality comparison is independently verified: with the ridge map, learned metric and stop fixed, replacing early-stopped teachers with accurate observation/geometry-derived solutions still passes 0/5 extra-call-saving certificate gates. All 20 endpoints meet the actual four-metric accuracy target; the failure concerns certified savings, not reconstruction. Close this configuration without a 505-frame expansion. The previous complete-trajectory metric advantage remains unchanged.
+
+[报告 / Report](poolfire_teacher_fidelity_warm_20260908.md)
+
 ## 2026-09-08：完整公平对照补齐 / Full-Roster Fair Controls Completed
 
 四项完整轨迹对照独立通过505/505帧：零初值加冻结学习度量，相对普通CGLS、BP和历史dual-ridge的A减少中位数为23.48%-23.63%。未训练同结构度量有1008/1010条实现路径在512步内未达标，只给成本下界。学习度量作用得到补强，暖启动贡献、实测提速与外部泛化仍未证明。

@@ -20,7 +20,7 @@ def test_complete_controls_and_censoring():
 
 def test_current_bilingual_and_history():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in current['latest_execution_evidence']['note']
+    assert STEM in current['latest_full_trajectory_controls']['summary']
     assert current['formal_status'] == 'PASS_FULL_ROSTER_CONTROL_COST'
     assert current['latest_full_trajectory_controls']['passing'] == 505
     assert not current['latest_full_trajectory_controls']['warm_attribution_confirmed']
@@ -33,7 +33,7 @@ def test_current_bilingual_and_history():
             assert '1008/1010' in notes[0][f'data-i18n-{lang}']
         assert soup.select_one('#full-metric-cost-result') and soup.select_one('#left-metric-result')
         if 'daily' in rel:
-            assert len(soup.select('#latest')) == 1 and soup.select_one('#latest #full-control-cost-result')
+            assert len(soup.select('#latest')) == 1 and soup.select_one('#day-20260908-full-controls #full-control-cost-result')
 
 
 def test_redacted_report_and_figure():

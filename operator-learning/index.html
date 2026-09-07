@@ -983,6 +983,12 @@
   </header>
 
   <main id="main">
+<section class="band" id="teacher-fidelity">
+<h2 data-i18n-zh="高精度教师未带来额外省算" data-i18n-en="Accurate teachers do not establish extra savings">高精度教师未带来额外省算</h2>
+<p id="teacher-fidelity-result" data-i18n-zh="教师质量对照已独立复算：保持ridge映射、学习度量和停止规则不变，只把早停教师换成观测/几何生成的高精度解，额外省调用认证门仍为0/5。全部20个端点的实际四指标精度都达标，失败的是更省计算的停止认证，不是重建失败。关闭这套固定配置，不扩跑505帧；此前学习度量的完整轨迹收益不变。" data-i18n-en="The teacher-quality comparison is independently verified: with the ridge map, learned metric and stop fixed, replacing early-stopped teachers with accurate observation/geometry-derived solutions still passes 0/5 extra-call-saving certificate gates. All 20 endpoints meet the actual four-metric accuracy target; the failure concerns certified savings, not reconstruction. Close this configuration without a 505-frame expansion. The previous complete-trajectory metric advantage remains unchanged.">教师质量对照已独立复算：保持ridge映射、学习度量和停止规则不变，只把早停教师换成观测/几何生成的高精度解，额外省调用认证门仍为0/5。全部20个端点的实际四指标精度都达标，失败的是更省计算的停止认证，不是重建失败。关闭这套固定配置，不扩跑505帧；此前学习度量的完整轨迹收益不变。</p>
+<p><a href="../document_reader.html?doc=docs%2Fpoolfire_teacher_fidelity_warm_20260908.md" data-i18n-zh="五点对照与精度边界" data-i18n-en="Five-point comparison and accuracy limits">五点对照与精度边界</a></p>
+<figure><img src="../assets/figures/poolfire_teacher_fidelity_warm_20260908.png" alt="五个已开封中点：实际内部梯度误差均小于1%，认证上界仍大于1%；两者不可混同。" data-i18n-alt-zh="五个已开封中点：实际内部梯度误差均小于1%，认证上界仍大于1%；两者不可混同。" data-i18n-alt-en="Five opened midpoints: actual interior-gradient errors are below 1%, but certificate bounds remain above 1%. They are distinct quantities." style="max-width:100%;height:auto" /></figure>
+</section>
 <section class="band" id="full-control-coverage">
 <h2 data-i18n-zh="完整轨迹上的四项公平对照" data-i18n-en="Four fair controls across complete trajectories">完整轨迹上的四项公平对照</h2>
 <p id="full-control-cost-result" data-i18n-zh="四项完整轨迹对照独立通过505/505帧：零初值加冻结学习度量，相对普通CGLS、BP和历史dual-ridge的A减少中位数为23.48%-23.63%。未训练同结构度量有1008/1010条实现路径在512步内未达标，只给成本下界。学习度量作用得到补强，暖启动贡献、实测提速与外部泛化仍未证明。" data-i18n-en="All four complete-trajectory comparisons pass independently on 505/505 frames: zero initialization with the frozen learned metric reduces median A calls by 23.48%-23.63% versus ordinary CGLS, BP and historical dual ridge. The untrained metric has 1008/1010 implementation paths censored at 512 iterations, giving cost lower bounds only. Learned-metric evidence is stronger; warm-start contribution, measured speedup and external generalization remain unproven.">四项完整轨迹对照独立通过505/505帧：零初值加冻结学习度量，相对普通CGLS、BP和历史dual-ridge的A减少中位数为23.48%-23.63%。未训练同结构度量有1008/1010条实现路径在512步内未达标，只给成本下界。学习度量作用得到补强，暖启动贡献、实测提速与外部泛化仍未证明。</p>
@@ -3888,14 +3894,14 @@
           const nextGateSentenceZh = /[。！？.!?]$/.test(nextGateZh) ? nextGateZh : `${nextGateZh}。`;
           const nextGateSentenceEn = /[。！？.!?]$/.test(nextGateEn) ? nextGateEn : `${nextGateEn}.`;
           const status = document.getElementById('liveEvidenceStatus');
-          status.setAttribute('data-i18n-zh', evidence.latest_execution_headline_zh || "四项完整轨迹对照独立通过505/505帧：零初值加冻结学习度量，相对普通CGLS、BP和历史dual-ridge的A减少中位数为23.48%-23.63%。未训练同结构度量有1008/1010条实现路径在512步内未达标，只给成本下界。学习度量作用得到补强，暖启动贡献、实测提速与外部泛化仍未证明。");
-          status.setAttribute('data-i18n-en', evidence.latest_execution_headline_en || "All four complete-trajectory comparisons pass independently on 505/505 frames: zero initialization with the frozen learned metric reduces median A calls by 23.48%-23.63% versus ordinary CGLS, BP and historical dual ridge. The untrained metric has 1008/1010 implementation paths censored at 512 iterations, giving cost lower bounds only. Learned-metric evidence is stronger; warm-start contribution, measured speedup and external generalization remain unproven.");
+          status.setAttribute('data-i18n-zh', evidence.latest_execution_headline_zh || "教师质量对照已独立复算：保持ridge映射、学习度量和停止规则不变，只把早停教师换成观测/几何生成的高精度解，额外省调用认证门仍为0/5。全部20个端点的实际四指标精度都达标，失败的是更省计算的停止认证，不是重建失败。关闭这套固定配置，不扩跑505帧；此前学习度量的完整轨迹收益不变。");
+          status.setAttribute('data-i18n-en', evidence.latest_execution_headline_en || "The teacher-quality comparison is independently verified: with the ridge map, learned metric and stop fixed, replacing early-stopped teachers with accurate observation/geometry-derived solutions still passes 0/5 extra-call-saving certificate gates. All 20 endpoints meet the actual four-metric accuracy target; the failure concerns certified savings, not reconstruction. Close this configuration without a 505-frame expansion. The previous complete-trajectory metric advantage remains unchanged.");
           window.OERFLanguage?.translateSubtree(status);
         })
         .catch(() => {
           const status = document.getElementById('liveEvidenceStatus');
-          status.setAttribute('data-i18n-zh', "四项完整轨迹对照独立通过505/505帧：零初值加冻结学习度量，相对普通CGLS、BP和历史dual-ridge的A减少中位数为23.48%-23.63%。未训练同结构度量有1008/1010条实现路径在512步内未达标，只给成本下界。学习度量作用得到补强，暖启动贡献、实测提速与外部泛化仍未证明。");
-          status.setAttribute('data-i18n-en', "All four complete-trajectory comparisons pass independently on 505/505 frames: zero initialization with the frozen learned metric reduces median A calls by 23.48%-23.63% versus ordinary CGLS, BP and historical dual ridge. The untrained metric has 1008/1010 implementation paths censored at 512 iterations, giving cost lower bounds only. Learned-metric evidence is stronger; warm-start contribution, measured speedup and external generalization remain unproven.");
+          status.setAttribute('data-i18n-zh', "教师质量对照已独立复算：保持ridge映射、学习度量和停止规则不变，只把早停教师换成观测/几何生成的高精度解，额外省调用认证门仍为0/5。全部20个端点的实际四指标精度都达标，失败的是更省计算的停止认证，不是重建失败。关闭这套固定配置，不扩跑505帧；此前学习度量的完整轨迹收益不变。");
+          status.setAttribute('data-i18n-en', "The teacher-quality comparison is independently verified: with the ridge map, learned metric and stop fixed, replacing early-stopped teachers with accurate observation/geometry-derived solutions still passes 0/5 extra-call-saving certificate gates. All 20 endpoints meet the actual four-metric accuracy target; the failure concerns certified savings, not reconstruction. Close this configuration without a 505-frame expansion. The previous complete-trajectory metric advantage remains unchanged.");
           window.OERFLanguage?.translateSubtree(status);
         });
     })();
