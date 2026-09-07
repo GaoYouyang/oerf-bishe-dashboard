@@ -696,9 +696,9 @@
   "headline": "On the same 505-frame complete-trajectory LOTO, the fully trained 369-parameter comparator passes 420 cells and 1/5 trajectories; the old random features pass 409 and 2/5, and the linear control 412 and 1/5. Stable matched accuracy and the cheaper-control gate remain unmet.",
   "headline_en": "On the same 505-frame complete-trajectory LOTO, the fully trained 369-parameter comparator passes 420 cells and 1/5 trajectories; the old random features pass 409 and 2/5, and the linear control 412 and 1/5. Stable matched accuracy and the cheaper-control gate remain unmet.",
   "headline_zh": "同一505帧完整轨迹留一：369参数全训练比较器通过420帧、1/5条完整轨迹；旧随机特征为409帧、2/5，线性对照为412帧、1/5。稳定同精度与便宜对照门仍未通过。",
-  "latest_execution_headline": "Independent verification is complete: freeze the1840-parameter model and fit only a nine-coefficient world-component matrix, with diagonal-three and scalar-one controls. Training objectives fall by only0.08%–0.16% across five folds. The1% accuracy gate remains0/505 and0/5 complete trajectories;405 frames worsen in at least one metric against the parent. Global component mixing alone is insufficient, so this fixed patch is closed. This does not reject all physical coupling and is not a breakthrough.",
-  "latest_execution_headline_en": "Independent verification is complete: freeze the1840-parameter model and fit only a nine-coefficient world-component matrix, with diagonal-three and scalar-one controls. Training objectives fall by only0.08%–0.16% across five folds. The1% accuracy gate remains0/505 and0/5 complete trajectories;405 frames worsen in at least one metric against the parent. Global component mixing alone is insufficient, so this fixed patch is closed. This does not reject all physical coupling and is not a breakthrough.",
-  "latest_execution_headline_zh": "独立复算完成：冻结1840参数模型，只拟合九系数世界分量混合矩阵，另设三系数对角与单系数缩放对照。五折训练目标仅相对降低0.08%–0.16%；1%精度仍为0/505、0/5完整轨迹，相比原模型405帧至少一项指标变差。这说明只补全局分量混合不足，关闭该固定补丁；不是所有物理耦合都无效，也不是算法突破。",
+  "latest_execution_headline": "The camera-mixing ablation is independently verified: freeze the parent, remove only inter-camera mixing, and match each version with a training-only scalar. Keeping mixing improves field error on489/505 frames and observation error on485/505, but interior-gradient error improves on253 and worsens on252; all101 p33 frames have worse interior gradients. Neither version passes1% accuracy. Cross-camera exchange contributes but involves metric trade-offs; simply deleting it is not a solution or a breakthrough.",
+  "latest_execution_headline_en": "The camera-mixing ablation is independently verified: freeze the parent, remove only inter-camera mixing, and match each version with a training-only scalar. Keeping mixing improves field error on489/505 frames and observation error on485/505, but interior-gradient error improves on253 and worsens on252; all101 p33 frames have worse interior gradients. Neither version passes1% accuracy. Cross-camera exchange contributes but involves metric trade-offs; simply deleting it is not a solution or a breakthrough.",
+  "latest_execution_headline_zh": "跨相机消融已独立复算：冻结原模型，只关闭相机间混合，并分别用训练折匹配整体尺度。保留混合时，489/505帧场误差、485/505帧观测误差更好；但内部梯度为253帧更好、252帧更差，p33轨迹101帧内部梯度全部更差。两种版本都未过1%精度门。跨相机交互有贡献，也存在指标取舍；不能简单删掉，更不是算法突破。",
   "metrics": {
     "poolfire_f30_cells": 505,
     "poolfire_f30_neural_matched_cells": 409,
@@ -6872,8 +6872,8 @@
   "next_scientific_gate_en": "Define useful absolute accuracy and classical accuracy-versus-compute before any new learned target. The five-point clean endpoint pass is not whole-trajectory adequacy or minimal-cost evidence; closed predictors remain closed.",
   "next_scientific_gate_zh": "75参数训练方案已关闭。沿用现有合格完整直接解和已开封数据，先论证一个物理上真正不同、成本可信的学习逆映射，再启动拟合。保留四指标1%门、完整轨迹隔离及强对照和便宜对照；尚未选定新架构，此阶段不需要租GPU或补回已丢失的实验配对。",
   "latest_execution_evidence": {
-    "note": "../document_reader.html?doc=docs%2Fpoolfire_world_component_head_20260907.md",
-    "figure": "assets/figures/poolfire_world_component_head_20260907.png"
+    "note": "../document_reader.html?doc=docs%2Fpoolfire_camera_mix_ablation_20260907.md",
+    "figure": "assets/figures/poolfire_camera_mix_ablation_20260907.png"
   },
   "public_evidence": {
     "result": "../document_reader.html?doc=docs%2Fpoolfire_f30_comparison_20260906.md",
@@ -18602,5 +18602,22 @@
     "any_harm_vs_previous": 405,
     "independent_status": "PASS_INDEPENDENT_CONDITIONAL_WORLD_HEAD",
     "summary": "../docs/poolfire_world_component_head_20260907.json"
+  },
+  "latest_camera_mix_ablation": {
+    "status": "MIXED_CURRENT_CROSS_CAMERA_EFFECT",
+    "full_metric_wins": [
+      489,
+      390,
+      253,
+      485
+    ],
+    "self_metric_wins": [
+      16,
+      115,
+      252,
+      20
+    ],
+    "independent_status": "PASS_INDEPENDENT_CAMERA_MIX_ABLATION",
+    "summary": "../docs/poolfire_camera_mix_ablation_20260907.json"
   }
 }
