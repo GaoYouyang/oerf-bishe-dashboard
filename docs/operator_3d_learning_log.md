@@ -1,3 +1,11 @@
+## 2026-09-08：没有局部梯度冲突 / No Local Gradient Conflict
+
+新的局部诊断未发现梯度冲突：5个训练折、20个重叠TRAIN配对中，初值损失与16步后损失的梯度余弦均为正，约0.148至0.536；沿初值下降方向的两档固定小步都降低两项损失，冲突0/5。独立复算已完成。因此不以“两个目标方向相反”为理由重训。仅为固定模型训练点的回顾性解释检查，不是外折测试、暖启动收益或加速结果；505帧学习度量证据不变。
+
+The local diagnostic finds no gradient conflict: across five training folds and 20 overlapping TRAIN pairs, initial and 16-step loss gradients have positive cosines, about 0.148 to 0.536. Both fixed positive steps along initial-loss descent reduce both losses: 0/5 conflicts. Independent checks are complete. This does not justify refitting on an opposing-objectives explanation. It is a retrospective fixed-model TRAIN diagnostic, not outer testing, warm benefit or speedup. The 505-frame learned-metric evidence stands.
+
+[报告 / Report](poolfire_solver_loss_alignment_20260908.md)
+
 ## 2026-09-08：不是只有证书保守 / Not Just Conservative Certificates
 
 实际精度成本已独立复算：五个已开封轨迹中点，四项误差同时达到1%时，准确教师暖启动需要158–159/145/145/171/152次A及同次数Aᵀ；同一学习度量的零初值为140/135–136/129–130/167/125次。两套实现的成本区间在五点均明确落后，0/5通过；首次达标与持续达标判决一致。因此不能只归因于停机证书保守。仅为回顾性五点证据，不是完整轨迹或可部署停机；505帧学习度量正结果不变。

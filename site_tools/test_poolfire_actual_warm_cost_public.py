@@ -26,7 +26,7 @@ def test_interval_decision_and_limited_scope():
 
 def test_bilingual_latest_and_historical_evidence_retained():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in current['latest_execution_evidence']['note']
+    assert STEM in current['latest_actual_warm_cost']['summary']
     assert current['latest_full_trajectory_controls']['passing'] == 505
     assert current['latest_teacher_fidelity_warm']['all20_actual_accuracy']
     assert current['latest_metric_similarity']['passing'] == 0
@@ -36,10 +36,9 @@ def test_bilingual_latest_and_historical_evidence_retained():
         assert note and '0/5' in note['data-i18n-zh'] and '0/5' in note['data-i18n-en']
         assert soup.select_one('#metric-similarity-result') and soup.select_one('#teacher-fidelity-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #actual-warm-cost-result')
+            assert soup.select_one('#day-20260908-actual-warm-cost #actual-warm-cost-result')
         if rel == 'index.html':
-            assert STEM in soup.select_one('#latestFigure')['src']
-            assert 'truth-oracle' in soup.select_one('#latestFigureCaption')['data-i18n-en']
+            assert STEM in soup.select_one('#actual-warm-cost img')['src']
 
 
 def test_redaction_and_figure():
