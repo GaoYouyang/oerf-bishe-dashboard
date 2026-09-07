@@ -20,7 +20,7 @@ def test_actual_accuracy_is_not_certificate_failure():
 
 def test_current_bilingual_preserves_full_roster_result():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in current['latest_execution_evidence']['note']
+    assert STEM in current['latest_teacher_fidelity_warm']['summary']
     assert current['latest_teacher_fidelity_warm']['passing'] == 0
     assert current['latest_full_trajectory_controls']['passing'] == 505
     for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
@@ -31,11 +31,9 @@ def test_current_bilingual_preserves_full_roster_result():
             assert '0/5' in notes[0][f'data-i18n-{language}']
             assert '20' in notes[0][f'data-i18n-{language}']
         if 'daily' in rel:
-            assert len(soup.select('#latest')) == 1 and soup.select_one('#latest #teacher-fidelity-result')
+            assert len(soup.select('#latest')) == 1 and soup.select_one('#day-20260908-teacher-fidelity #teacher-fidelity-result')
         if rel == 'index.html':
-            assert STEM in soup.select_one('#latestFigure')['src']
-            assert 'certificate' in soup.select_one('#latestFigureCaption')['data-i18n-en']
-            assert STEM in soup.select_one('#latestEvidenceLink')['href']
+            assert STEM in soup.select_one('#teacher-fidelity img')['src']
 
 
 def test_public_report_privacy_and_scope():

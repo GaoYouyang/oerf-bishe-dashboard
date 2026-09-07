@@ -1,3 +1,11 @@
+## 2026-09-08：整体相似与弱方向信息不同 / Field Similarity and Weak Directions Differ
+
+相似度诊断已独立复算：在20个重叠的训练配对中，冻结学习度量选出的邻居有17个三维场误差更小、3个不变，但逆法向加权的弱方向误差有10个更差、7个改善、3个不变，最坏恶化22.01%。五个训练折筛选门为0/5。没有新拟合或外折测试；不能把“冷求解更快”直接当作“暖启动相似度更可靠”。505帧学习度量正结果不变。
+
+The independently verified similarity diagnostic covers 20 overlapping training pairs. Neighbors selected by the frozen learned metric have smaller field errors in 17 pairs and ties in 3, but inverse-normal-weighted weak-direction errors worsen in 10, improve in 7 and tie in 3, with 22.01% worst harm. The five TRAIN-fold screens pass 0/5. No new fit or outer test is run. Faster cold solving does not automatically make warm-start similarity reliable. The 505-frame learned-metric result remains unchanged.
+
+[报告 / Report](poolfire_metric_similarity_20260908.md)
+
 ## 2026-09-08：更准的教师仍未让暖启动省算 / Accurate Teachers Still Do Not Establish Warm Savings
 
 教师质量对照已独立复算：保持ridge映射、学习度量和停止规则不变，只把早停教师换成观测/几何生成的高精度解，额外省调用认证门仍为0/5。全部20个端点的实际四指标精度都达标，失败的是更省计算的停止认证，不是重建失败。关闭这套固定配置，不扩跑505帧；此前学习度量的完整轨迹收益不变。
