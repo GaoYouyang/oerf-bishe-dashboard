@@ -27,7 +27,7 @@ def test_separate_audit_and_necessary_scope():
 
 def test_bilingual_notes_and_no_private_payload():
     d = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in d['latest_execution_evidence']['note']
+    assert STEM in d['latest_dual_pcgls']['summary']
     assert d['next_scientific_gate'] == d['next_scientific_gate_en']
     assert d['latest_dual_pcgls']['parent_exit_code'] == 1
     for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):

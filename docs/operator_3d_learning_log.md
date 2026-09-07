@@ -1,3 +1,11 @@
+## 2026-09-07：有用的是度量，暖启动归因仍未定 / Useful Metric, Unresolved Warm Attribution
+
+学习残差度量在五个已开封哨兵上均通过原始精度认证，A调用约降62.3%-67.7%；但零初值配合同一学习度量也几乎同样快。两版对暖启动额外收益的判决不一致，故总体仍为INCONCLUSIVE。这是小范围的学习度量收益，不是暖启动、完整序列或实测速度突破。
+
+The learned residual metric certifies all five opened sentinels with about 62.3%-67.7% fewer A actions. Zero initialization with the same metric is almost as fast. The two paths disagree on warm-specific control dominance, so the overall result remains INCONCLUSIVE. This is limited learned-metric headroom, not a warm-start, complete-sequence or measured-speed breakthrough.
+
+[报告 / Report](poolfire_left_metric_20260907.md)
+
 ## 2026-09-07：换作预条件器也没有省算 / Preconditioner Reuse Did Not Save Actions
 
 复用冻结学习模型作PCGLS预条件器，在五个已开封哨兵的经典对照调用预算内，两条路径均0/5通过四项1%精度。观测误差均低于0.33%，场误差仍约5.6%-8.9%。原报告序列化失败保留；另行端点独立审计通过，关闭此用法，不是算法或速度突破。
