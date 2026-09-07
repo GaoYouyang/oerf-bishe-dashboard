@@ -22,7 +22,7 @@ def test_training_diagnostic_not_outer_or_reconstruction_claim():
 
 def test_latest_bilingual_and_historical_results_retained():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in current['latest_execution_evidence']['note']
+    assert STEM in current['latest_metric_similarity']['summary']
     assert current['latest_full_trajectory_controls']['passing'] == 505
     assert current['latest_teacher_fidelity_warm']['all20_actual_accuracy']
     for rel in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
@@ -31,10 +31,9 @@ def test_latest_bilingual_and_historical_results_retained():
         assert note and soup.select_one('#teacher-fidelity-result') and soup.select_one('#full-control-cost-result')
         assert '0/5' in note['data-i18n-zh'] and '0/5' in note['data-i18n-en']
         if 'daily' in rel:
-            assert soup.select_one('#latest #metric-similarity-result')
+            assert soup.select_one('#day-20260908-metric-similarity #metric-similarity-result')
         if rel == 'index.html':
-            assert STEM in soup.select_one('#latestFigure')['src']
-            assert 'TRAIN' in soup.select_one('#latestFigureCaption')['data-i18n-en']
+            assert STEM in soup.select_one('#metric-similarity img')['src']
 
 
 def test_redacted_report_limits_and_figure():

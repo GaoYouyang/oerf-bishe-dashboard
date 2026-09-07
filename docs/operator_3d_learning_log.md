@@ -1,3 +1,11 @@
+## 2026-09-08：不是只有证书保守 / Not Just Conservative Certificates
+
+实际精度成本已独立复算：五个已开封轨迹中点，四项误差同时达到1%时，准确教师暖启动需要158–159/145/145/171/152次A及同次数Aᵀ；同一学习度量的零初值为140/135–136/129–130/167/125次。两套实现的成本区间在五点均明确落后，0/5通过；首次达标与持续达标判决一致。因此不能只归因于停机证书保守。仅为回顾性五点证据，不是完整轨迹或可部署停机；505帧学习度量正结果不变。
+
+Actual-accuracy costs are independently checked at five previously opened trajectory midpoints. At simultaneous 1% error in all four metrics, accurate-teacher warm starts need 158–159/145/145/171/152 A actions and the same adjoint counts; zero starts with the same learned metric need 140/135–136/129–130/167/125. Both-path intervals robustly lose at every point: 0/5 pass, with identical first-hit and sustained-hit decisions. Conservative certificates alone do not explain the gap. This is retrospective five-point evidence, not complete trajectories or deployable stopping. The 505-frame metric result stands.
+
+[报告 / Report](poolfire_actual_warm_cost_20260908.md)
+
 ## 2026-09-08：整体相似与弱方向信息不同 / Field Similarity and Weak Directions Differ
 
 相似度诊断已独立复算：在20个重叠的训练配对中，冻结学习度量选出的邻居有17个三维场误差更小、3个不变，但逆法向加权的弱方向误差有10个更差、7个改善、3个不变，最坏恶化22.01%。五个训练折筛选门为0/5。没有新拟合或外折测试；不能把“冷求解更快”直接当作“暖启动相似度更可靠”。505帧学习度量正结果不变。
