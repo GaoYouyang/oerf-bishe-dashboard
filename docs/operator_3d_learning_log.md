@@ -1,3 +1,11 @@
+## 2026-09-07：误差保留位置更清楚了 / Error Retention Is Better Located
+
+20个重叠训练折次与帧组合中，学习暖启动的普通场误差能量中位数只剩零初值的6.37%，但逆法矩阵加权误差仍剩83.68%；反投影也呈现同方向现象。双实现确认了弱灵敏度加权误差保留较多，不证明迭代慢的因果关系，也不是省算、泛化或真实BOST突破。
+
+Across 20 overlapping TRAIN fold-frame pairs, the learned warm start retains a median 6.37% of zero-start field-error energy, but 83.68% under inverse-normal weighting. Backprojection shows the same ordering. Two implementations confirm greater retention under weak-sensitivity weighting, not a causal explanation of iteration counts or a speed, generalization or real-BOST breakthrough.
+
+[报告 / Report](poolfire_inverse_moment_20260907.md)
+
 ## 2026-09-07：停止认证通过，但暖启动未稳定省算 / Certified Stop, No Stable Warm-Start Savings
 
 几何误差界使六种方法在五个已开封代表帧上均通过停止认证和四指标1%门；但冻结学习暖启动没有稳定少算。例如一帧需947次前向调用，Jacobi为932次，独立实现也确认劣势。关闭这套固定配置，不扩跑505帧。误差界需要几何准备，不是免费加速，也不是完整轨迹、外部泛化或真实BOST成果。

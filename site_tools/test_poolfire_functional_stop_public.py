@@ -24,7 +24,7 @@ def test_scope_and_independent_counterexamples():
 
 def test_bilingual_current_claims_and_private_boundary():
     c = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in c['latest_execution_evidence']['note']
+    assert STEM in c['latest_functional_stop']['summary']
     assert c['next_scientific_gate'] == c['next_scientific_gate_en']
     for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
