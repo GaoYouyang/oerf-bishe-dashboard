@@ -312,7 +312,7 @@
       </div>
       <aside class="verdict" aria-label="当前科学判决" data-i18n-aria-label-zh="当前科学判决" data-i18n-aria-label-en="Current scientific verdict">
         <b data-i18n-zh="完整轨迹：度量省调用，暖启动贡献仍待证明" data-i18n-en="Complete trajectories: metric saves calls; warm contribution unproven">完整轨迹：度量省调用，暖启动贡献仍待证明</b>
-<p id="headlineVerdict" data-i18n-zh="暖启动实际调用收益仍为0/5；同时定位减少相机后的剩余误差，保留学习度量的已有证据。" data-i18n-en="Warm actual-call savings remain 0/5; omitted-view error is localized, while existing learned-metric evidence remains.">暖启动实际调用收益仍为0/5；同时定位减少相机后的剩余误差，保留学习度量的已有证据。</p>
+<p id="headlineVerdict" data-i18n-zh="残差复用0/5，停止扩跑旧暖启动；保留固定九相机学习度量的已有收益。" data-i18n-en="Residual reuse0/5: stop expanding the old warm start; retain existing fixed-nine-camera learned-metric gains.">残差复用0/5，停止扩跑旧暖启动；保留固定九相机学习度量的已有收益。</p>
         <p data-i18n-zh="仍未证明暖初始化额外价值、实测端到端提速或真实BOST；模型训练、度量应用与几何准备均非免费。" data-i18n-en="Warm-initializer value, measured end-to-end speedup and real BOST remain unproven; fitting, metric applications and geometry setup are nonfree.">仍未证明暖初始化额外价值、实测端到端提速或真实BOST；模型训练、度量应用与几何准备均非免费。</p>
       </aside>
     </div>
@@ -326,6 +326,7 @@
 
   <main id="main">
 <section class="band" id="warm-cost-angular">
+<p id="residual-reuse-result" data-i18n-zh="残差复用检验也未带来调用收益：固定16步后，把旧小模型应用于当前残差，只校正一次再继续原CGLS，五个已打开中点均未胜过便宜对照。独立复算已封存；不扩跑、不调深度或放大旧模型。它只关闭这套不重训的复用配方，不否定全部残差学习。既有固定九相机学习度量收益保留，但暖启动、资源与论文成功仍未成立。" data-i18n-en="Residual reuse also gives no call savings: after a fixed16-step prefix, the old small model corrects the current residual once before unchanged CGLS resumes. It fails against cheaper controls at all five opened midpoints, with independent recomputation sealed. No expansion, depth tuning or model enlargement. This closes only the no-refit reuse recipe, not all residual learning. Existing fixed-nine-camera learned-metric evidence remains; warm, resource and paper success remain unproved.">残差复用检验也未带来调用收益：固定16步后，把旧小模型应用于当前残差，只校正一次再继续原CGLS，五个已打开中点均未胜过便宜对照。独立复算已封存；不扩跑、不调深度或放大旧模型。它只关闭这套不重训的复用配方，不否定全部残差学习。既有固定九相机学习度量收益保留，但暖启动、资源与论文成功仍未成立。</p>
 <h2 data-i18n-zh="暖启动实际成本与缺失视角误差" data-i18n-en="Warm actual cost and omitted-view error">暖启动实际成本与缺失视角误差</h2>
 <p id="warm-cost-angular-result" data-i18n-zh="旧非线性暖启动的实际达标成本已核清：五个已打开中点中，可靠节省调用为0/5，4个比较未过，1个因一调用区间重叠仍不确定。5920个恢复状态均经独立物理评分，旧预算和计算轨迹未变；不是只有停止证明太保守。另一个误差归因显示，减少相机后三类方法剩余误差都更容易被缺失视角看见，但未确认单一共享误差方向。两项都不是算法突破；固定九相机的既有学习度量收益保留，暖启动收益仍未成立。" data-i18n-en="The old nonlinear warm start now has actual-accuracy costs: 0/5 robust savings at five opened midpoints, four failed comparisons and one inconclusive one-call overlap. All 5920 recovered states received independent physical scoring, with the original budgets and numerical trajectories unchanged; certificate conservatism is not the only issue. A separate attribution finds remaining errors more visible from omitted cameras in all three methods, without confirming one shared error direction. Neither audit is an algorithm breakthrough. The existing fixed-nine-camera learned-metric benefit remains, while warm benefit is unproved.">旧非线性暖启动的实际达标成本已核清：五个已打开中点中，可靠节省调用为0/5，4个比较未过，1个因一调用区间重叠仍不确定。5920个恢复状态均经独立物理评分，旧预算和计算轨迹未变；不是只有停止证明太保守。另一个误差归因显示，减少相机后三类方法剩余误差都更容易被缺失视角看见，但未确认单一共享误差方向。两项都不是算法突破；固定九相机的既有学习度量收益保留，暖启动收益仍未成立。</p>
 <p><a href="./document_reader.html?doc=docs%2Fpoolfire_warm_cost_angular_audit_20260908.md" data-i18n-zh="独立复算与结论边界" data-i18n-en="Independent audits and limits">独立复算与结论边界</a></p>
@@ -762,8 +763,8 @@
 
   <script>
     (() => {
-      const fallbackZh = "旧非线性暖启动的实际达标成本已核清：五个已打开中点中，可靠节省调用为0/5，4个比较未过，1个因一调用区间重叠仍不确定。5920个恢复状态均经独立物理评分，旧预算和计算轨迹未变；不是只有停止证明太保守。另一个误差归因显示，减少相机后三类方法剩余误差都更容易被缺失视角看见，但未确认单一共享误差方向。两项都不是算法突破；固定九相机的既有学习度量收益保留，暖启动收益仍未成立。";
-      const fallbackEn = "The old nonlinear warm start now has actual-accuracy costs: 0/5 robust savings at five opened midpoints, four failed comparisons and one inconclusive one-call overlap. All 5920 recovered states received independent physical scoring, with the original budgets and numerical trajectories unchanged; certificate conservatism is not the only issue. A separate attribution finds remaining errors more visible from omitted cameras in all three methods, without confirming one shared error direction. Neither audit is an algorithm breakthrough. The existing fixed-nine-camera learned-metric benefit remains, while warm benefit is unproved.";
+      const fallbackZh = "残差复用检验也未带来调用收益：固定16步后，把旧小模型应用于当前残差，只校正一次再继续原CGLS，五个已打开中点均未胜过便宜对照。独立复算已封存；不扩跑、不调深度或放大旧模型。它只关闭这套不重训的复用配方，不否定全部残差学习。既有固定九相机学习度量收益保留，但暖启动、资源与论文成功仍未成立。";
+      const fallbackEn = "Residual reuse also gives no call savings: after a fixed16-step prefix, the old small model corrects the current residual once before unchanged CGLS resumes. It fails against cheaper controls at all five opened midpoints, with independent recomputation sealed. No expansion, depth tuning or model enlargement. This closes only the no-refit reuse recipe, not all residual learning. Existing fixed-nine-camera learned-metric evidence remains; warm, resource and paper success remain unproved.";
       const setBilingualText = (element, zh, en) => {
         element.setAttribute('data-i18n-zh', zh);
         element.setAttribute('data-i18n-en', en || zh);
