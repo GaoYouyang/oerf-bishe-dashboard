@@ -289,6 +289,26 @@ def test_transfer_capacity_is_a_post_open_lower_bound_not_new_predictor():
         assert all("20/20" in notes[0][f"data-i18n-{lang}"] for lang in ("zh", "en"))
 
 
+def test_cell_integral_keeps_mixed_and_no_reconstruction_claim():
+    d=json.loads((ROOT/f"docs/{STEM}.json").read_text())["cell_integral_error_audit"]
+    assert d["status"]=="MIXED_CELL_INTEGRAL_RESPONSE_CHANGE"
+    assert d["independent_status"]=="PASS_INDEPENDENT_CELL_INTEGRAL_ERROR_AUDIT"
+    assert d["states"]==60 and d["distinct_midpoints"]==5 and d["sealed_paths"]==2
+    assert d["analytic_segments"]==173997 and d["native_old_A"]==60
+    assert d["old_forward_unchanged"] and d["continuous_ratio_is_not_discrete_ratio"]
+    assert d["new_fits"]==d["new_solver_iterations"]==0
+    assert not any(d[k] for k in ("reconstruction_improvement_established","predictor_authorized","algorithm_breakthrough","resource_speedup","external_generalization","real_bost","paper_success"))
+    assert len(d["groups"])==6
+    for g in d["groups"]:
+        if g["phase"]=="after":
+            assert 1<g["gain"][0]<=g["gain"][1]<1.05
+            assert .27<g["discrepancy"][0]<=g["discrepancy"][1]<.38
+    for rel in ("index.html","operator-learning/index.html","operator-learning/daily-progress.html"):
+        notes=BeautifulSoup((ROOT/rel).read_text(),"html.parser").select("#cell-integral-error")
+        assert len(notes)==1
+        assert all("1.015" in notes[0][f"data-i18n-{lang}"] and "37.9%" in notes[0][f"data-i18n-{lang}"] for lang in ("zh","en"))
+
+
 def test_actual_error_partition_preserves_shared_not_specific_boundary():
     data=json.loads((ROOT/f"docs/{STEM}.json").read_text())["actual_error_partition"]
     assert data["status"]=="COMMON_FINAL_ERROR_CANCELLATION_SIGNATURE"

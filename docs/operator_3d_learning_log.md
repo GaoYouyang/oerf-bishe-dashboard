@@ -1,3 +1,11 @@
+## 2026-09-07：精确积分不是直接解药 / Exact Integration Is Not a Direct Remedy
+
+逐网格精确积分审计完成：同一批实际误差的投影幅值仅变为旧64点求和的1.015至1.043倍，但投影细节的差异达到旧微弱响应的27.8%至37.9%。独立多项式积分复算通过。结果既不满足“统一显著增强”，也不满足“1%内等价”，因此保留混合判决；弱响应没有因精确积分而明显消失。没有改动旧观测、重建判决或训练模型，也没有算法突破。
+
+Cellwise exact integration is independently verified: projections of the same actual errors have only 1.015 to 1.043 times the amplitude of the old 64-point sum, while their detailed differences reach 27.8% to 37.9% of the old weak responses. Independent polynomial integration agrees. Neither uniform large amplification nor equivalence within 1% passes, so the outcome remains mixed; weak response does not markedly disappear. Old observations and reconstruction decisions are unchanged, with no new training or algorithm breakthrough.
+
+[积分核对 / Integral audit](poolfire_fixed512_reference_20260906.md)
+
 ## 2026-09-07：小观测残差不等于小场误差 / Small Residual Is Not Small Field Error
 
 已封存模型的实际误差也有沿射线抵消：学习模型、合并相机对照和Zero-CGLS，在相同五个时刻的两套实现中全部出现同一特征。射线求和的条件保留比从迭代前约0.279至0.428，降为迭代后1.87e-4至2.57e-4；观测误差约0.025%至0.032%，内部梯度误差仍约2.1%至3.0%。独立复算通过。这不是学习模型特有的原因，也不是算法成功；尚未区分连续物理抵消和离散求和的影响。

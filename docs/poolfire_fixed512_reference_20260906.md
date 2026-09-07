@@ -1179,3 +1179,34 @@ Every final error has ray-sum retention below interpolation/transverse retention
 正式离线账130次CSR前向、60次因子前向和梯度/二阶矩工作；独立账130次原生前向、60次独立CSR前向、60次梯度和120次二阶矩插值。它们不是新部署算法的在线账，不授权速度、泛化或真实BOST主张。
 
 Offline formal work comprises 130 CSR and 60 factorized forwards plus gradient/moment work; independent work comprises 130 native and 60 independent CSR forwards, 60 gradients and 120 moment interpolations. These are not online costs of a new deployment algorithm and authorize no speed, generalization or real-BOST claim.
+
+## 2026-09-07 精确积分没有消除弱响应 / Weak Response Survives Exact Integration
+
+逐网格精确积分审计完成：同一批实际误差的投影幅值仅变为旧64点求和的1.015至1.043倍，但投影细节的差异达到旧微弱响应的27.8%至37.9%。独立多项式积分复算通过。结果既不满足“统一显著增强”，也不满足“1%内等价”，因此保留混合判决；弱响应没有因精确积分而明显消失。没有改动旧观测、重建判决或训练模型，也没有算法突破。
+
+Cellwise exact integration is independently verified: projections of the same actual errors have only 1.015 to 1.043 times the amplitude of the old 64-point sum, while their detailed differences reach 27.8% to 37.9% of the old weak responses. Independent polynomial integration agrees. Neither uniform large amplification nor equivalence within 1% passes, so the outcome remains mixed; weak response does not markedly disappear. Old observations and reconstruction decisions are unchanged, with no new training or algorithm breakthrough.
+
+| 方法 / Arm | 阶段 / Stage | 精确/旧幅值 / Amplitude ratio | 相对旧响应差异 / Difference vs old | 连续Cauchy保留比 / Continuous retention |
+|---|---|---:|---:|---:|
+| camera61 | 迭代前 / Before | 1.015556--1.015949 | 1.9459%--2.2323% | 0.279011--0.368442 |
+| camera61 | 迭代后 / After | 1.014641--1.042764 | 27.7807%--37.8439% | 0.000190446--0.000258447 |
+| collapsed61 | 迭代前 / Before | 1.015530--1.015939 | 1.9658%--2.2912% | 0.2907--0.356274 |
+| collapsed61 | 迭代后 / After | 1.015123--1.042752 | 27.7729%--37.8425% | 0.00019059--0.000258548 |
+| zero_cgls | 迭代前 / Before | 1.015507--1.016019 | 2.0372%--2.2462% | 0.28411--0.428162 |
+| zero_cgls | 迭代后 / After | 1.015346--1.042539 | 27.8819%--37.9131% | 0.000189181--0.000257587 |
+
+仍是五个必要时刻、三种方法、迭代前后与两套已封存实现，共60状态，不是60次独立实验。新算子只精确积分同一有限窗口、同一盒内的三线性离散梯度插值，不是原始连续CFD梯度或无限长物理射线。旧64点控制完全保留；不得用新算子对旧观测评分后声称重建提高。
+
+These remain five necessary times, three arms, before/after and two sealed implementations: 60 states, not 60 independent experiments. The new map exactly integrates the same trilinear discrete-gradient interpolant within the same finite window and box, not the original continuous CFD gradient or an infinite physical ray. The old 64-point control is retained exactly; scoring a changed map against old observations cannot establish better reconstruction.
+
+正式实现将14850条射线划为173997个单元区间，每区间固定四点Gauss，精确积分三次投影和六次平方幅度；独立实现逐射线重建交点，用三次多项式系数解析积分。图像、逐射线能量、连续保留比最大相对差约1.85e-13、6.77e-14、1.04e-14，旧原生前向控制差约2.15e-13，全部输入输出树不变。
+
+The formal implementation partitions 14850 rays into 173997 cell intervals, using four fixed Gauss nodes to integrate cubic projections and degree-six squared amplitudes. The independent implementation rebuilds intersections ray by ray and analytically integrates power coefficients. Maximum relative image, per-ray-energy and continuous-retention differences are about 1.85e-13, 6.77e-14 and 1.04e-14; old native-control disagreement is about 2.15e-13. All input/output trees remain unchanged.
+
+连续保留比定义为sum(||c integral(Tg)ds||^2)/sum(c^2 L_inside integral||Tg||^2 ds)。它不是原先离散E3/E2，也不是误差百分比，不能套用离散1/64符号下界。正式描述判决MIXED_CELL_INTEGRAL_RESPONSE_CHANGE：全部最终状态未达到幅值>2倍且差异>旧响应的统一增强门，也未达到差异<=1%的统一等价门。这不证明无离散效应，也不保证新旧逆解等价。
+
+Continuous retention is sum(||c integral(Tg)ds||^2)/sum(c^2 L_inside integral||Tg||^2 ds). It is not the old discrete E3/E2 or an error percentage; the discrete 1/64 sign bound does not apply. The descriptive outcome is MIXED_CELL_INTEGRAL_RESPONSE_CHANGE: the final states meet neither uniform gain>2 plus discrepancy>old response, nor uniform discrepancy<=1%. This neither proves absence of discretization effects nor equivalence of inverse solutions.
+
+新工作只有60次单元积分、60次梯度、41759280个向量节点求值，以及独立60次解析积分和60次原生旧前向。没有新逆解、学习或资源优势。这组分解诊断至此停止，不再扫积分点数、改门、调比例或扩大网络；下一步须直接论证具有成本优势可能性的非局部逆作用表示。
+
+New work consists of 60 cell integrals, 60 gradients, 41759280 vector-node evaluations, and independently 60 analytic integrals plus 60 old native forwards. There is no new inverse solve, learning or resource advantage. This partition chain stops here: no quadrature-count sweep, gate change, rescaling or larger network. The next decision must directly justify a nonlocal inverse-action representation with a credible cost path.
