@@ -23,7 +23,7 @@ def test_negative_gate_and_partial_signal_are_distinct():
 
 def test_current_bilingual_and_historical_evidence():
     d = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in d['latest_execution_evidence']['note']
+    assert STEM in d['latest_camera_subset_metric']['summary']
     assert d['latest_full_trajectory_controls']['passing'] == 505
     for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
@@ -31,7 +31,7 @@ def test_current_bilingual_and_historical_evidence():
         assert '2/10' in note['data-i18n-zh'] and '2/10' in note['data-i18n-en']
         assert soup.select_one('#camera-subset-reference-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #camera-subset-metric-result')
+            assert soup.select_one('#day-20260908-camera-subset-metric #camera-subset-metric-result')
 
 
 def test_redaction_links_and_figure():
