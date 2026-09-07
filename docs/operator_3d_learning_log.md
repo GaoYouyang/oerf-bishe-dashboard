@@ -1,3 +1,11 @@
+## 2026-09-07：停止认证通过，但暖启动未稳定省算 / Certified Stop, No Stable Warm-Start Savings
+
+几何误差界使六种方法在五个已开封代表帧上均通过停止认证和四指标1%门；但冻结学习暖启动没有稳定少算。例如一帧需947次前向调用，Jacobi为932次，独立实现也确认劣势。关闭这套固定配置，不扩跑505帧。误差界需要几何准备，不是免费加速，也不是完整轨迹、外部泛化或真实BOST成果。
+
+Geometry error bounds let all six methods certify stopping and four-metric 1% accuracy on five opened representative frames. The frozen learned warm start still does not consistently save calls: one frame needs 947 forward actions versus 932 for Jacobi, with the disadvantage independently confirmed. Close this fixed configuration without expanding to 505 frames. The bounds require geometry setup; this is neither free acceleration nor a complete-trajectory, external or real-BOST result.
+
+[报告 / Report](poolfire_functional_stop_20260907.md)
+
 ## 2026-09-07：243参数分层模型精度未通过 / Hierarchical Model Fails Accuracy
 
 243参数分层几何模型完成首次精度训练与独立复算：新模型和86参数便宜对照均为0/505帧、0/5完整轨迹通过四指标1%门。新模型在485帧上至少一项指标差于便宜对照；完整直接解仍505/505通过。十次拟合均在200次迭代预算耗尽后停止，未证明收敛。关闭这套固定训练方案，不推断全部分层表示无效，也不声称算法或速度突破。

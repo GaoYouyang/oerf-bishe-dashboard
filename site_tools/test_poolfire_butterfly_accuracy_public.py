@@ -28,7 +28,7 @@ def test_independent_accuracy_decision_and_retained_controls():
 
 def test_current_bilingual_claims_and_redaction():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in current['latest_execution_evidence']['note']
+    assert STEM in current['latest_butterfly_accuracy']['summary']
     assert current['next_scientific_gate'] == current['next_scientific_gate_en']
     assert all('243' in current[f'next_scientific_gate_{lang}'] for lang in ('zh', 'en'))
     for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
