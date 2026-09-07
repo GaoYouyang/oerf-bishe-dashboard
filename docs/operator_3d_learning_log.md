@@ -1,3 +1,11 @@
+## 2026-09-07：局部归一化没有改善精度 / Local Normalization Does Not Improve Accuracy
+
+局部几何归一化已完成五折训练与独立复算：保持1840参数和训练预算，只加入每条射线的双分量灵敏度归一化。1%门仍为0/505、0/5完整轨迹；相对原L-BFGS模型，459帧至少一项指标变差，五条轨迹中四条场误差p90恶化。该固定方案关闭，不追加训练。新模型仍严格优于三个新增便宜对照和九个旧弱对照，但没有胜过已有强学习基线，也不是算法突破。
+
+Local geometry normalization is independently verified after five-fold training: keep1840 parameters and the same training budget, adding only per-ray two-component sensitivity normalization. The1% gate remains0/505, with0/5 complete trajectories. Versus the prior L-BFGS model,459 frames worsen in at least one metric and field p90 worsens in four of five trajectories. This fixed recipe is closed without extra training. It still strictly beats three new cheap controls and nine older weak controls, but not the existing strong learned baselines; this is not an algorithmic breakthrough.
+
+[报告 / Report](poolfire_ray_metric_tensor_20260907.md)
+
 ## 2026-09-07：优化有帮助，但未解决精度 / Optimization Helps but Accuracy Still Fails
 
 全批量L-BFGS已独立复算：同一1840参数模型从原初始化训练，五折训练目标比Adam降低8.65%–9.45%，五条留出轨迹的场误差p90均改善，但1%门仍为0/505、0/5完整轨迹。29帧至少一项指标比Adam更差，公平不伤害门也失败。优化有帮助，但该固定方案没有解决精度问题；五折均到200次迭代上限，不能声称已收敛或表示必然不足。
