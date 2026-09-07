@@ -129,3 +129,36 @@ def test_geometry_inverse_probe_bilingual_and_preserved_history():
         assert soup.select_one('#error-shape-result') and soup.select_one('#residual-reuse-result')
         if 'daily' in rel:
             assert soup.select_one('#latest #inverse-probe-result')
+
+
+def test_manufactured_residual_new_fit_and_actual_cost():
+    d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['manufactured_residual']
+    assert d['status'] == 'FAIL_MANUFACTURED_RESIDUAL_WARM_NECESSARY_PILOT'
+    assert (d['passing'], d['failed'], d['inconclusive']) == (0, 5, 0)
+    assert (d['new_models'], d['trainable_parameters'], d['steps'], d['cfd_fit_samples']) == (1, 369, 640, 0)
+    assert (d['scored_states'], d['unique_cfd_frames'], d['camera_count']) == (10280, 5, 9)
+    assert d['downstream_metric_uses_own_fold_cfd_training'] and d['posterior_stops_not_deployable']
+    assert d['fixed_recipe_closed'] and not d['full_trajectories']
+    assert not any(d[k] for k in ('full505_authorized', 'algorithm_breakthrough', 'paper_success',
+        'resource_speedup', 'external_generalization', 'real_bost'))
+    for point, low in zip(d['points'], ([154, 153], [150, 149], [143, 142], [178, 177], [139, 138])):
+        assert point['intervals']['first_cost'] == point['intervals']['sustained_cost']
+        b = point['intervals']['first_cost']
+        assert b['manufactured_neural']['lower'] == low
+        assert all(a > z for a, z in zip(low, b['zero_metric']['upper']))
+        assert all(a >= z for a, z in zip(low, b['prefix_only']['upper']))
+
+
+def test_manufactured_residual_bilingual_and_preserved_history():
+    e = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert e['latest_manufactured_residual']['failed'] == 5
+    assert e['latest_full_trajectory_controls']['passing'] == 505
+    for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
+        note = soup.select_one('#manufactured-residual-result')
+        assert '0/5' in note['data-i18n-zh'] and '0/5' in note['data-i18n-en']
+        assert '369' in note['data-i18n-zh'] and '369' in note['data-i18n-en']
+        assert note.get_text() == note['data-i18n-zh']
+        assert soup.select_one('#inverse-probe-result') and soup.select_one('#error-shape-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #manufactured-residual-result')

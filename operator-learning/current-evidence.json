@@ -1,4 +1,11 @@
 {
+  "latest_manufactured_residual": {
+    "status": "FAIL_MANUFACTURED_RESIDUAL_WARM_NECESSARY_PILOT",
+    "passing": 0,
+    "failed": 5,
+    "summary": "../docs/poolfire_warm_cost_angular_audit_20260908.json",
+    "algorithm_success": false
+  },
   "latest_inverse_probe": {
     "status": "FAIL_GEOMETRY_INVERSE_PROBE_WARM_PILOT",
     "robust_wins": 0,
@@ -778,12 +785,12 @@
   "v212_signed_line_cancellation_scientific_decision": "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212",
   "latest_valid_mechanism_status": "VERIFIED_FIXED_GLOBAL_OBSERVATION_CONTEXT_ABLATION",
   "latest_valid_mechanism_formal_status": "SEALED_POST_OPEN_DIAGNOSTIC",
-  "headline": "Geometry inverse-mode warm start:0/5 wins, independently rejected fixed recipe.",
-  "headline_en": "Geometry inverse-mode warm start:0/5 wins, independently rejected fixed recipe.",
-  "headline_zh": "几何逆模式暖启动0/5：独立负结果，停止这份固定配方。",
-  "latest_execution_headline": "A new control generates 16 inverse-operator modes from geometry alone, chooses coefficients from 2D observations, then runs unchanged CGLS. Independent recomputation finds 0/5 wins: it needs 208-239 forward/adjoint pairs, versus 125-167 for zero initialization; raw random modes also provide no advantage. The fixed recipe is closed without rank or seed changes. The separate 505-sample solver-metric benefit remains, but this is not warm-start, speed or paper success.",
-  "latest_execution_headline_en": "A new control generates 16 inverse-operator modes from geometry alone, chooses coefficients from 2D observations, then runs unchanged CGLS. Independent recomputation finds 0/5 wins: it needs 208-239 forward/adjoint pairs, versus 125-167 for zero initialization; raw random modes also provide no advantage. The fixed recipe is closed without rank or seed changes. The separate 505-sample solver-metric benefit remains, but this is not warm-start, speed or paper success.",
-  "latest_execution_headline_zh": "新对照只用几何生成16个逆算子模式、只用二维观测确定系数，随后执行原CGLS。独立复算后0/5点优于对照：该初始化需208至239对正向/伴随调用，零初始化需125至167对；未滤波随机模式也未带来优势。固定配方已关闭，不增加维数或更换种子。已有505样本的求解度量收益仍保留，但这不是暖启动、速度或论文成功。",
+  "headline": "New trained error corrector: 0/5 wins, no advantage over no correction.",
+  "headline_en": "New trained error corrector: 0/5 wins, no advantage over no correction.",
+  "headline_zh": "新训练的误差校正器0/5：未胜过不校正，停止固定配方。",
+  "latest_execution_headline": "A new 369-parameter error corrector was actually trained on 512 samples manufactured by the physical operator and 16 solver steps, without CFD truth in the new fit. Independent recomputation finds 0/5 robust call-count wins and no advantage over the same-prefix no-correction control. The fixed recipe is closed without longer training or a larger network. The separate 505-sample solver-metric benefit remains; warm-start, end-to-end speed and paper success are not established.",
+  "latest_execution_headline_en": "A new 369-parameter error corrector was actually trained on 512 samples manufactured by the physical operator and 16 solver steps, without CFD truth in the new fit. Independent recomputation finds 0/5 robust call-count wins and no advantage over the same-prefix no-correction control. The fixed recipe is closed without longer training or a larger network. The separate 505-sample solver-metric benefit remains; warm-start, end-to-end speed and paper success are not established.",
+  "latest_execution_headline_zh": "这次实际训练了一个369参数的误差校正器：512个训练样本由物理算子及16步迭代生成，不用CFD真值训练新模型。独立复算后0/5点获得稳定调用数优势，且没有胜过同前缀的“不校正”对照。固定配方已关闭，不加长训练或扩大网络。此前505样本的求解度量收益仍保留，但暖启动、端到端提速与论文成功尚未成立。",
   "metrics": {
     "poolfire_f30_cells": 505,
     "poolfire_f30_neural_matched_cells": 409,
@@ -6953,9 +6960,9 @@
     "v243_gpu_rental_authorized": false,
     "v243_algorithm_breakthrough": false
   },
-  "next_scientific_gate": "Prioritize the verified solver metric and its cross-geometry/stopping limitations; do not rescue this failure through higher rank, new seeds or old-model loss refits.",
-  "next_scientific_gate_en": "Prioritize the verified solver metric and its cross-geometry/stopping limitations; do not rescue this failure through higher rank, new seeds or old-model loss refits.",
-  "next_scientific_gate_zh": "优先核对已验证求解度量的跨几何与停止条件局限；不把本次失败换成更高维数、新种子或旧模型改损失重训。",
+  "next_scientific_gate": "Before another fit, test a genuinely different correction mechanism with a cheap capacity/control gate; do not retrain the same representation on another label set. Cross-camera and deployable-stopping limits of the solver metric remain unresolved and do not replace the warm-start objective.",
+  "next_scientific_gate_en": "Before another fit, test a genuinely different correction mechanism with a cheap capacity/control gate; do not retrain the same representation on another label set. Cross-camera and deployable-stopping limits of the solver metric remain unresolved and do not replace the warm-start objective.",
+  "next_scientific_gate_zh": "下一次训练前，先用便宜对照检验真正不同的校正机制是否有容量；不继续更换标签来重训同一表示。求解度量的跨相机与可部署停止局限仍需解决，不能替代暖启动目标。",
   "latest_execution_evidence": {
     "note": "../document_reader.html?doc=docs%2Fpoolfire_warm_cost_angular_audit_20260908.md",
     "figure": "assets/figures/poolfire_warm_error_shape_20260908.png"

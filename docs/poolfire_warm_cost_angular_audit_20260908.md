@@ -2,6 +2,48 @@
 
 2026-09-08
 
+## 最新：合成残差学习未形成暖启动收益 / Latest: Manufactured Residual Learning Does Not Produce Warm-Start Value
+
+这次实际训练了一个369参数的误差校正器：512个训练样本由物理算子及16步迭代生成，不用CFD真值训练新模型。独立复算后0/5点获得稳定调用数优势，且没有胜过同前缀的“不校正”对照。固定配方已关闭，不加长训练或扩大网络。此前505样本的求解度量收益仍保留，但暖启动、端到端提速与论文成功尚未成立。
+
+A new 369-parameter error corrector was actually trained on 512 samples manufactured by the physical operator and 16 solver steps, without CFD truth in the new fit. Independent recomputation finds 0/5 robust call-count wins and no advantage over the same-prefix no-correction control. The fixed recipe is closed without longer training or a larger network. The separate 505-sample solver-metric benefit remains; warm-start, end-to-end speed and paper success are not established.
+
+| 旧中点 / Midpoint | 新校正器 / New corrector | 旧校正器 / Old corrector | BP | 不校正 / No correction | 零初始 / Zero |
+|---|---:|---:|---:|---:|---:|
+| 1 | 154 / 153 | 154 / 153 | 154 / 153 | 153 / 152 | 140 / 140 |
+| 2 | 150 / 149 | 150 / 149 | 150 / 149 | 149 / 148 | 135-136 / 135-136 |
+| 3 | 143-144 / 142-143 | 143 / 142 | 144 / 143 | 143 / 142 | 129-130 / 129-130 |
+| 4 | 178 / 177 | 178 / 177 | 178 / 177 | 177 / 176 | 167 / 167 |
+| 5 | 139 / 138 | 140 / 139 | 140 / 139 | 139 / 138 | 125 / 125 |
+
+
+每格为正向A调用数 / 伴随调用数，包含16步前缀、校正、精确lift、线搜索及重启残差计算。首次和持续满足四指标1%的次数一致。范围仅表示两种数值实现，不是统计置信区间；停止位置由事后真值评分得到，不是可部署证书。
+
+Each cell lists forward / adjoint counts, including the 16-step prefix, correction, exact lift, line search and restart residual calculation. First and sustained four-metric 1% crossings agree. Ranges reflect two numerical implementations, not statistical confidence intervals; stopping locations use retrospective truth scoring, not deployable certificates.
+
+唯一新模型从零训练：已知随机三维场经物理正向和16步Jacobi-PCGLS生成残余误差标签，再训练369参数、相机共享的校正器。512个训练样本、32个独立合成审计样本，固定20轮、640次更新，没有CFD真值训练或事后选择。下游求解度量仍来自各查询自身的跨轨迹外折训练，因此不能称整个系统不使用CFD训练。架构支持相机集合输入，但这里只检验固定九相机。
+
+One new model was trained from scratch: known random 3D fields pass through the physical forward operator and 16 Jacobi-PCGLS steps to manufacture remaining-error targets for a 369-parameter camera-shared corrector. The fixed fit uses 512 training samples, 32 separate synthetic audit samples, 20 epochs and 640 updates, without CFD truth in that fit or post-hoc selection. The downstream metric still comes from each query's own cross-trajectory outer-fold training, so the whole system is not CFD-training-free. The architecture accepts camera sets, but only fixed nine-camera performance is tested here.
+
+新校正器在第五点比旧校正器/BP少一对调用，却只追平“不校正”；没有一点稳定胜过同前缀不校正，五点均输给零初始。因此不能把局部小改善包装为实际暖启动收益。该试验不能唯一归因于训练分布、表示能力或损失，也不证明所有残差学习不可能。
+
+At the fifth point, the new corrector saves one action pair against the old corrector/BP but merely ties no correction. It never robustly beats same-prefix no correction, and all five points lose to zero initialization. This small local improvement is not warm-start value. The test does not uniquely attribute the limitation to training distribution, representation or loss, nor prove all residual learning impossible.
+
+每次更新均独立重建梯度和Adam步骤；最大相对差约3.80e-14和4.74e-17。全部10,280个新物理状态先封存后评分，四指标第二实现与原生正向重放通过，最大评分/重放差约2.29e-15/7.15e-16；退出后独立重建50行成本判决并确认封存数据不变。
+
+Every update received an independent gradient and Adam reconstruction, with maximum relative differences about 3.80e-14 and 4.74e-17. All 10,280 new physical states were sealed before scoring; second-implementation four-metric scoring and native forward replay passed, with maximum discrepancies about 2.29e-15 / 7.15e-16. A post-exit audit independently rebuilt 50 cost-decision rows and verified unchanged sealed evidence.
+
+离线合成与校验、训练、推断账分开披露于配套摘要。实际共享前缀160A+160伴随，校正及递推9590A+9550伴随；训练和独立训练核验各20480A+20480伴随。研究总计算量不是在线收益，当前也没有fresh wall/RSS、完整序列、外部或真实BOST结论。
+
+Offline synthesis/audits, training and inference are accounted separately in the companion summary. Actual shared prefixes consume 160 forward/160 adjoint actions, correction/refinement 9590 forward/9550 adjoint, and training plus independent training audit each 20480 forward/20480 adjoint. Aggregate research work is not online saving. Fresh wall/RSS, full-sequence, external and real-BOST conclusions remain absent.
+
+下一次训练前，先用便宜对照检验真正不同的校正机制是否有容量；不继续更换标签来重训同一表示。求解度量的跨相机与可部署停止局限仍需解决，不能替代暖启动目标。
+
+Before another fit, test a genuinely different correction mechanism with a cheap capacity/control gate; do not retrain the same representation on another label set. Cross-camera and deployable-stopping limits of the solver metric remain unresolved and do not replace the warm-start objective.
+
+此前独立结论与反事实图保留在下方 / Earlier independent conclusions and counterfactual figure remain below.
+
+
 ## 最新对照：几何逆模式没有省下求解 / Latest Control: Geometry Inverse Modes Do Not Save Work
 
 新对照只用几何生成16个逆算子模式、只用二维观测确定系数，随后执行原CGLS。独立复算后0/5点优于对照：该初始化需208至239对正向/伴随调用，零初始化需125至167对；未滤波随机模式也未带来优势。固定配方已关闭，不增加维数或更换种子。已有505样本的求解度量收益仍保留，但这不是暖启动、速度或论文成功。

@@ -312,7 +312,7 @@
       </div>
       <aside class="verdict" aria-label="当前科学判决" data-i18n-aria-label-zh="当前科学判决" data-i18n-aria-label-en="Current scientific verdict">
         <b data-i18n-zh="完整轨迹：度量省调用，暖启动贡献仍待证明" data-i18n-en="Complete trajectories: metric saves calls; warm contribution unproven">完整轨迹：度量省调用，暖启动贡献仍待证明</b>
-<p id="headlineVerdict" data-i18n-zh="几何逆模式暖启动0/5：独立负结果，停止这份固定配方。" data-i18n-en="Geometry inverse-mode warm start:0/5 wins, independently rejected fixed recipe.">几何逆模式暖启动0/5：独立负结果，停止这份固定配方。</p>
+<p id="headlineVerdict" data-i18n-zh="新训练的误差校正器0/5：未胜过不校正，停止固定配方。" data-i18n-en="New trained error corrector: 0/5 wins, no advantage over no correction.">新训练的误差校正器0/5：未胜过不校正，停止固定配方。</p>
         <p data-i18n-zh="仍未证明暖初始化额外价值、实测端到端提速或真实BOST；模型训练、度量应用与几何准备均非免费。" data-i18n-en="Warm-initializer value, measured end-to-end speedup and real BOST remain unproven; fitting, metric applications and geometry setup are nonfree.">仍未证明暖初始化额外价值、实测端到端提速或真实BOST；模型训练、度量应用与几何准备均非免费。</p>
       </aside>
     </div>
@@ -326,6 +326,8 @@
 
   <main id="main">
 <section class="band" id="warm-error-shape">
+<h2 data-i18n-zh="最新：合成残差学习未减少调用" data-i18n-en="Latest: manufactured-residual learning does not reduce calls">最新：合成残差学习未减少调用</h2>
+<p id="manufactured-residual-result" data-i18n-zh="这次实际训练了一个369参数的误差校正器：512个训练样本由物理算子及16步迭代生成，不用CFD真值训练新模型。独立复算后0/5点获得稳定调用数优势，且没有胜过同前缀的“不校正”对照。固定配方已关闭，不加长训练或扩大网络。此前505样本的求解度量收益仍保留，但暖启动、端到端提速与论文成功尚未成立。" data-i18n-en="A new 369-parameter error corrector was actually trained on 512 samples manufactured by the physical operator and 16 solver steps, without CFD truth in the new fit. Independent recomputation finds 0/5 robust call-count wins and no advantage over the same-prefix no-correction control. The fixed recipe is closed without longer training or a larger network. The separate 505-sample solver-metric benefit remains; warm-start, end-to-end speed and paper success are not established.">这次实际训练了一个369参数的误差校正器：512个训练样本由物理算子及16步迭代生成，不用CFD真值训练新模型。独立复算后0/5点获得稳定调用数优势，且没有胜过同前缀的“不校正”对照。固定配方已关闭，不加长训练或扩大网络。此前505样本的求解度量收益仍保留，但暖启动、端到端提速与论文成功尚未成立。</p>
 <h2 data-i18n-zh="后续对照：逆模式初始化未提速" data-i18n-en="Follow-up: inverse-mode initialization does not accelerate">后续对照：逆模式初始化未提速</h2>
 <p id="inverse-probe-result" data-i18n-zh="新对照只用几何生成16个逆算子模式、只用二维观测确定系数，随后执行原CGLS。独立复算后0/5点优于对照：该初始化需208至239对正向/伴随调用，零初始化需125至167对；未滤波随机模式也未带来优势。固定配方已关闭，不增加维数或更换种子。已有505样本的求解度量收益仍保留，但这不是暖启动、速度或论文成功。" data-i18n-en="A new control generates 16 inverse-operator modes from geometry alone, chooses coefficients from 2D observations, then runs unchanged CGLS. Independent recomputation finds 0/5 wins: it needs 208-239 forward/adjoint pairs, versus 125-167 for zero initialization; raw random modes also provide no advantage. The fixed recipe is closed without rank or seed changes. The separate 505-sample solver-metric benefit remains, but this is not warm-start, speed or paper success.">新对照只用几何生成16个逆算子模式、只用二维观测确定系数，随后执行原CGLS。独立复算后0/5点优于对照：该初始化需208至239对正向/伴随调用，零初始化需125至167对；未滤波随机模式也未带来优势。固定配方已关闭，不增加维数或更换种子。已有505样本的求解度量收益仍保留，但这不是暖启动、速度或论文成功。</p>
 <h2 data-i18n-zh="误差更小不等于更易消除" data-i18n-en="Smaller error need not be easier to remove">误差更小不等于更易消除</h2>
@@ -771,8 +773,8 @@
 
   <script>
     (() => {
-      const fallbackZh = "新对照只用几何生成16个逆算子模式、只用二维观测确定系数，随后执行原CGLS。独立复算后0/5点优于对照：该初始化需208至239对正向/伴随调用，零初始化需125至167对；未滤波随机模式也未带来优势。固定配方已关闭，不增加维数或更换种子。已有505样本的求解度量收益仍保留，但这不是暖启动、速度或论文成功。";
-      const fallbackEn = "A new control generates 16 inverse-operator modes from geometry alone, chooses coefficients from 2D observations, then runs unchanged CGLS. Independent recomputation finds 0/5 wins: it needs 208-239 forward/adjoint pairs, versus 125-167 for zero initialization; raw random modes also provide no advantage. The fixed recipe is closed without rank or seed changes. The separate 505-sample solver-metric benefit remains, but this is not warm-start, speed or paper success.";
+      const fallbackZh = "这次实际训练了一个369参数的误差校正器：512个训练样本由物理算子及16步迭代生成，不用CFD真值训练新模型。独立复算后0/5点获得稳定调用数优势，且没有胜过同前缀的“不校正”对照。固定配方已关闭，不加长训练或扩大网络。此前505样本的求解度量收益仍保留，但暖启动、端到端提速与论文成功尚未成立。";
+      const fallbackEn = "A new 369-parameter error corrector was actually trained on 512 samples manufactured by the physical operator and 16 solver steps, without CFD truth in the new fit. Independent recomputation finds 0/5 robust call-count wins and no advantage over the same-prefix no-correction control. The fixed recipe is closed without longer training or a larger network. The separate 505-sample solver-metric benefit remains; warm-start, end-to-end speed and paper success are not established.";
       const setBilingualText = (element, zh, en) => {
         element.setAttribute('data-i18n-zh', zh);
         element.setAttribute('data-i18n-en', en || zh);
