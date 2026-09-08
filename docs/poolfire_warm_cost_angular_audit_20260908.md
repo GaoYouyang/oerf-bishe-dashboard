@@ -2,11 +2,47 @@
 
 2026-09-08
 
+## 最新全量判决 / Latest Full Warm-AMG Verdict
+
+全量推翻了五点的稳定优势判断：一次学习初值加同一AMG-PCGLS，在505个已开封九相机样本上全部满足四项1%精度和共同观测停止证书，但仅441/505严格少用A及AT；其余64个被至少一个规定经典对照追平或超过，完整轨迹0/5。相对每例最便宜对照的配对A节省中位数为6.90%，最坏却多用13次A及AT；中位数不能替代完整轨迹门。独立复算和调用审计通过，关闭这套固定组合的全量稳定收益主张，不调模型或停止规则挽救；不是速度、泛化或论文突破。
+
+The full roster overturns the five-point expectation of a stable advantage: one learned initialization plus the same AMG-PCGLS meets all four 1% accuracy targets and the common observation-only stopping certificate on all 505 opened nine-camera samples, but uses strictly fewer A and AT calls on only 441/505. At least one prescribed classical control ties or beats it on the other 64; complete trajectories: 0/5. Median paired A savings versus the cheapest control per frame are 6.90%, yet the worst frame requires 13 extra A and AT calls. The median cannot replace the complete-trajectory gate. Independent recomputation and cost audits pass. The fixed full-roster advantage claim is closed, without model or stopping-rule rescue; this is not speed, generalization or a paper breakthrough.
+
+| 轨迹 / Trajectory | 精度通过 / Accuracy | 严格省调用 / Strict Savings | 对照追平或超过 / Counterexamples | 最小A差 / Minimum A Margin |
+|---|---:|---:|---:|---:|
+| 1 | 101/101 | 96/101 | 5 | -3 |
+| 2 | 101/101 | 92/101 | 9 | -8 |
+| 3 | 101/101 | 100/101 | 1 | 0 |
+| 4 | 101/101 | 58/101 | 43 | -13 |
+| 5 | 101/101 | 95/101 | 6 | -8 |
+
+
+A差为每帧最便宜规定对照的保守调用下界减去学习初值的调用上界；负数表示更费调用。每个比较同时要求A和AT严格减少。64个反例中，历史数据拟合ridge追平或超过53个，BP为22个，未训练T0为18个，零初值和一次V初值各14个；这些集合重叠，不能相加。原五个中点仍全部通过，但不能代表整条序列。没有从全量里重选五个好样本。
+
+The A margin is the cheapest prescribed control's conservative per-frame lower count minus the learned initializer's upper count; a negative value means extra work. Every comparison requires strictly fewer A and AT calls. Among the 64 counterexamples, historical data-fitted ridge ties or wins on 53, BP on 22, untrained T0 on 18, and zero and one-V starts on 14 each. These sets overlap and must not be added. All original five midpoints still pass, but do not represent complete sequences. No replacement favorable five-point subset is selected.
+
+全量中位数仍有约6.90%的配对A节省，这是描述性结果，不替代结果前的505/505与5/5完整轨迹门。最坏相对最便宜对照多13次A及AT，额外A约13.13%。失败集中程度不同，第四条轨迹有43个反例，但其他四条也至少各有一个。精度全部通过，所以本次关闭的是稳定成本优势，不是重建精度或数值有效性。
+
+The full-roster median still has about 6.90% paired A savings. This is descriptive, not a replacement for the preregistered 505/505 and 5/5 complete-trajectory gates. The worst case needs 13 extra A and AT calls versus its cheapest control, about 13.13% extra A. The fourth trajectory contains 43 counterexamples, but every other trajectory also has at least one. All accuracy gates pass; the failure concerns stable cost advantage, not reconstruction accuracy or numerical validity.
+
+两套实现各比较五种非零初值，共5050条逻辑路径；其中50条继承已封存中点，5000条新运行。零初值AMG沿用此前独立全量结果。所有新预测先封存再读取查询真值评分，停止只看观测证书。独立25项数值核验通过，逐状态评分最大差4.44e-16，原生forward差7.93e-16；退出后独立审裁重建2525个配对比较、5050条停止历史和逐轨迹尾部。没有重新训练模型。
+
+Two implementations compare five nonzero initializers, giving 5050 logical paths: 50 inherited sealed midpoint refinements and 5000 new runs. Zero-start AMG reuses the previously independently qualified full roster. All new predictions are sealed before query-truth scoring; stopping uses only the observation certificate. All 25 independent numerical checks pass, with maximum same-state score discrepancy 4.44e-16 and native-forward discrepancy 7.93e-16. Post-exit independent adjudication rebuilds 2525 paired comparisons, 5050 stopping histories and all trajectory tails. No model is retrained.
+
+调用账包含一次学习映射、精确伴随初值、观测线搜索和物理确认。新增求解实际执行571830A+566830AT，与包含继承路径的逻辑总账577614A+572564AT分开；它们是整个试验多对照总账，不是每例部署成本。V循环、几何层级、停止证书和学习/ridge准备均不免费。完整缓存直接求解在只看在线调用时仍未被超越。没有fresh wall、完整管线RSS、变相机/噪声、未开外部工况或真实BOST结论。
+
+Accounting includes one learned-map application, the exact-adjoint initializer, observation line search and physical confirmation. New solver execution totals 571830A+566830AT, separately from the logical 577614A+572564AT including inherited paths; these are multi-control experiment totals, not per-query deployment costs. V cycles, geometry hierarchy, stopping-certificate and learned/ridge preparation are not free. Full cached direct solving remains unbeaten on online calls alone. There is no fresh-wall, whole-pipeline RSS, camera/noise-shift, unopened external-condition or real-BOST result.
+
+封存固定组合，不调模型、初值、AMG或停止证书挽救。先从已封存结果和文献辨别尾部劣势的原因；只有物理上不同且可证伪的机制才另冻小门，不授权大模型、外部数据或资源成功主张。
+
+Seal the fixed composition without changing the model, initializer, AMG or stopping certificate to rescue it. Examine sealed results and literature for the tail disadvantage; preregister another small gate only for a physically distinct, falsifiable mechanism. No large-model, external-data or resource-success authorization.
+
+
 ## 最新哨兵判决 / Latest Warm-AMG Sentinel Verdict
 
-暖启动出现五点正信号：已冻结的学习映射只生成一次初值，随后使用强经典AMG-PCGLS。在五个已开封九相机样本上，两套实现均通过四项1%精度和共同观测停止证书；已计入初值构造后，分别需要110/100/93/111/112次A调用。补充的历史dual-ridge配同一AMG仍需116/109/111/118/119次，其他规定对照也未解释这五点优势。这是必要哨兵检验，不是完整轨迹、实际速度或论文突破；完整505帧验证尚待独立判决。
+暖启动出现五点正信号：已冻结的学习映射只生成一次初值，随后使用强经典AMG-PCGLS。在五个已开封九相机样本上，两套实现均通过四项1%精度和共同观测停止证书；已计入初值构造后，分别需要110/100/93/111/112次A调用。补充的历史dual-ridge配同一AMG仍需116/109/111/118/119次，其他规定对照也未解释这五点优势。这是必要哨兵检验，不是完整轨迹、实际速度或论文突破；当时完整505帧尚待验证；现已独立判为441/505、完整轨迹0/5。
 
-A positive five-point warm-start signal: the frozen learned map produces only one initial field, followed by strong classical AMG-PCGLS. Both implementations meet all four 1% accuracy targets and the common observation-only stopping certificate on five opened nine-camera samples. Including initialization, A counts are 110/100/93/111/112. Historical dual ridge with the same AMG still needs 116/109/111/118/119; the other prescribed controls also do not explain this five-point advantage. This is a necessary sentinel test, not complete trajectories, a wall-time win or a paper breakthrough. Full 505-frame verification awaits independent adjudication.
+A positive five-point warm-start signal: the frozen learned map produces only one initial field, followed by strong classical AMG-PCGLS. Both implementations meet all four 1% accuracy targets and the common observation-only stopping certificate on five opened nine-camera samples. Including initialization, A counts are 110/100/93/111/112. Historical dual ridge with the same AMG still needs 116/109/111/118/119; the other prescribed controls also do not explain this five-point advantage. This is a necessary sentinel test, not complete trajectories, a wall-time win or a paper breakthrough. At that time full verification was pending; it has now independently yielded 441/505 and 0/5 complete trajectories.
 
 | 哨兵 / Point | 学习初值 / Learned | 零初值 / Zero | BP | 未训练T0 / Untrained T0 | 一次V / One V | 历史ridge / Historical Ridge |
 |---|---:|---:|---:|---:|---:|---:|

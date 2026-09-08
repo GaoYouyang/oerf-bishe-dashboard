@@ -1,10 +1,22 @@
 {
+  "latest_tensor_warm_amg_full": {
+    "status": "FAIL_TENSOR_WARM_AMG_FULL_STRICT_COST",
+    "eligible": 505,
+    "passing": 441,
+    "rejected": 64,
+    "complete_trajectories": 0,
+    "full_roster_pending": false,
+    "fixed_full_claim_closed": true,
+    "summary": "../docs/poolfire_warm_cost_angular_audit_20260908.json"
+  },
   "latest_tensor_warm_amg_pilot": {
     "status": "PASS_WARM_AMG_NECESSARY_PILOT_WITH_RIDGE_CONTROL",
     "passing_points": 5,
     "complete_trajectories": false,
-    "full_roster_pending": true,
-    "summary": "../docs/poolfire_warm_cost_angular_audit_20260908.json"
+    "full_roster_pending": false,
+    "summary": "../docs/poolfire_warm_cost_angular_audit_20260908.json",
+    "full_roster_pending_at_pilot": true,
+    "subsequent_full_status": "FAIL_TENSOR_WARM_AMG_FULL_STRICT_COST"
   },
   "latest_full_amg_control": {
     "status": "PASS_FULL_OPENED_AMG_CERTIFIED_CONTROL",
@@ -850,12 +862,12 @@
   "v212_signed_line_cancellation_scientific_decision": "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212",
   "latest_valid_mechanism_status": "VERIFIED_FIXED_GLOBAL_OBSERVATION_CONTEXT_ABLATION",
   "latest_valid_mechanism_formal_status": "SEALED_POST_OPEN_DIAGNOSTIC",
-  "headline": "Learned initialization plus AMG beats strong controls on five points; full 505-frame verification is pending.",
-  "headline_en": "Learned initialization plus AMG beats strong controls on five points; full 505-frame verification is pending.",
-  "headline_zh": "学习初值加AMG在五点通过强对照，完整505帧尚待独立验证。",
-  "latest_execution_headline": "A positive five-point warm-start signal: the frozen learned map produces only one initial field, followed by strong classical AMG-PCGLS. Both implementations meet all four 1% accuracy targets and the common observation-only stopping certificate on five opened nine-camera samples. Including initialization, A counts are 110/100/93/111/112. Historical dual ridge with the same AMG still needs 116/109/111/118/119; the other prescribed controls also do not explain this five-point advantage. This is a necessary sentinel test, not complete trajectories, a wall-time win or a paper breakthrough. Full 505-frame verification awaits independent adjudication.",
-  "latest_execution_headline_en": "A positive five-point warm-start signal: the frozen learned map produces only one initial field, followed by strong classical AMG-PCGLS. Both implementations meet all four 1% accuracy targets and the common observation-only stopping certificate on five opened nine-camera samples. Including initialization, A counts are 110/100/93/111/112. Historical dual ridge with the same AMG still needs 116/109/111/118/119; the other prescribed controls also do not explain this five-point advantage. This is a necessary sentinel test, not complete trajectories, a wall-time win or a paper breakthrough. Full 505-frame verification awaits independent adjudication.",
-  "latest_execution_headline_zh": "暖启动出现五点正信号：已冻结的学习映射只生成一次初值，随后使用强经典AMG-PCGLS。在五个已开封九相机样本上，两套实现均通过四项1%精度和共同观测停止证书；已计入初值构造后，分别需要110/100/93/111/112次A调用。补充的历史dual-ridge配同一AMG仍需116/109/111/118/119次，其他规定对照也未解释这五点优势。这是必要哨兵检验，不是完整轨迹、实际速度或论文突破；完整505帧验证尚待独立判决。",
+  "headline": "Learned warm + AMG saves calls on 441/505, but complete trajectories are 0/5; stable advantage is unproved.",
+  "headline_en": "Learned warm + AMG saves calls on 441/505, but complete trajectories are 0/5; stable advantage is unproved.",
+  "headline_zh": "学习初值加AMG全量441/505省调用，但完整轨迹0/5；稳定优势未成立。",
+  "latest_execution_headline": "The full roster overturns the five-point expectation of a stable advantage: one learned initialization plus the same AMG-PCGLS meets all four 1% accuracy targets and the common observation-only stopping certificate on all 505 opened nine-camera samples, but uses strictly fewer A and AT calls on only 441/505. At least one prescribed classical control ties or beats it on the other 64; complete trajectories: 0/5. Median paired A savings versus the cheapest control per frame are 6.90%, yet the worst frame requires 13 extra A and AT calls. The median cannot replace the complete-trajectory gate. Independent recomputation and cost audits pass. The fixed full-roster advantage claim is closed, without model or stopping-rule rescue; this is not speed, generalization or a paper breakthrough.",
+  "latest_execution_headline_en": "The full roster overturns the five-point expectation of a stable advantage: one learned initialization plus the same AMG-PCGLS meets all four 1% accuracy targets and the common observation-only stopping certificate on all 505 opened nine-camera samples, but uses strictly fewer A and AT calls on only 441/505. At least one prescribed classical control ties or beats it on the other 64; complete trajectories: 0/5. Median paired A savings versus the cheapest control per frame are 6.90%, yet the worst frame requires 13 extra A and AT calls. The median cannot replace the complete-trajectory gate. Independent recomputation and cost audits pass. The fixed full-roster advantage claim is closed, without model or stopping-rule rescue; this is not speed, generalization or a paper breakthrough.",
+  "latest_execution_headline_zh": "全量推翻了五点的稳定优势判断：一次学习初值加同一AMG-PCGLS，在505个已开封九相机样本上全部满足四项1%精度和共同观测停止证书，但仅441/505严格少用A及AT；其余64个被至少一个规定经典对照追平或超过，完整轨迹0/5。相对每例最便宜对照的配对A节省中位数为6.90%，最坏却多用13次A及AT；中位数不能替代完整轨迹门。独立复算和调用审计通过，关闭这套固定组合的全量稳定收益主张，不调模型或停止规则挽救；不是速度、泛化或论文突破。",
   "metrics": {
     "poolfire_f30_cells": 505,
     "poolfire_f30_neural_matched_cells": 409,
@@ -7025,9 +7037,9 @@
     "v243_gpu_rental_authorized": false,
     "v243_algorithm_breakthrough": false
   },
-  "next_scientific_gate": "Keep the model, initializer, AMG, stopping rule and accuracy gates fixed while independently validating all five complete opened trajectories and every prescribed control. Do not infer speed, external generalization or paper success from five points.",
-  "next_scientific_gate_en": "Keep the model, initializer, AMG, stopping rule and accuracy gates fixed while independently validating all five complete opened trajectories and every prescribed control. Do not infer speed, external generalization or paper success from five points.",
-  "next_scientific_gate_zh": "保持模型、初值、AMG、停止规则与精度门不变，完成五条完整已开封轨迹及全部规定对照的独立验证；不从五点推断速度、外部泛化或论文成功。",
+  "next_scientific_gate": "Seal the fixed composition without changing the model, initializer, AMG or stopping certificate to rescue it. Examine sealed results and literature for the tail disadvantage; preregister another small gate only for a physically distinct, falsifiable mechanism. No large-model, external-data or resource-success authorization.",
+  "next_scientific_gate_en": "Seal the fixed composition without changing the model, initializer, AMG or stopping certificate to rescue it. Examine sealed results and literature for the tail disadvantage; preregister another small gate only for a physically distinct, falsifiable mechanism. No large-model, external-data or resource-success authorization.",
+  "next_scientific_gate_zh": "封存固定组合，不调模型、初值、AMG或停止证书挽救。先从已封存结果和文献辨别尾部劣势的原因；只有物理上不同且可证伪的机制才另冻小门，不授权大模型、外部数据或资源成功主张。",
   "latest_execution_evidence": {
     "note": "../document_reader.html?doc=docs%2Fpoolfire_warm_cost_angular_audit_20260908.md",
     "figure": "assets/figures/poolfire_warm_error_shape_20260908.png"

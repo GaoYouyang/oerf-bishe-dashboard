@@ -1,8 +1,16 @@
+## 2026-09-08：五点正信号未通过完整轨迹 / Five-Point Promise Does Not Pass Complete Trajectories
+
+全量推翻了五点的稳定优势判断：一次学习初值加同一AMG-PCGLS，在505个已开封九相机样本上全部满足四项1%精度和共同观测停止证书，但仅441/505严格少用A及AT；其余64个被至少一个规定经典对照追平或超过，完整轨迹0/5。相对每例最便宜对照的配对A节省中位数为6.90%，最坏却多用13次A及AT；中位数不能替代完整轨迹门。独立复算和调用审计通过，关闭这套固定组合的全量稳定收益主张，不调模型或停止规则挽救；不是速度、泛化或论文突破。
+
+The full roster overturns the five-point expectation of a stable advantage: one learned initialization plus the same AMG-PCGLS meets all four 1% accuracy targets and the common observation-only stopping certificate on all 505 opened nine-camera samples, but uses strictly fewer A and AT calls on only 441/505. At least one prescribed classical control ties or beats it on the other 64; complete trajectories: 0/5. Median paired A savings versus the cheapest control per frame are 6.90%, yet the worst frame requires 13 extra A and AT calls. The median cannot replace the complete-trajectory gate. Independent recomputation and cost audits pass. The fixed full-roster advantage claim is closed, without model or stopping-rule rescue; this is not speed, generalization or a paper breakthrough.
+
+[报告 / Report](poolfire_warm_cost_angular_audit_20260908.md)
+
 ## 2026-09-08：一次学习初值与强经典求解互补 / One-Shot Learned Warm and Strong Classical Refinement
 
-暖启动出现五点正信号：已冻结的学习映射只生成一次初值，随后使用强经典AMG-PCGLS。在五个已开封九相机样本上，两套实现均通过四项1%精度和共同观测停止证书；已计入初值构造后，分别需要110/100/93/111/112次A调用。补充的历史dual-ridge配同一AMG仍需116/109/111/118/119次，其他规定对照也未解释这五点优势。这是必要哨兵检验，不是完整轨迹、实际速度或论文突破；完整505帧验证尚待独立判决。
+暖启动出现五点正信号：已冻结的学习映射只生成一次初值，随后使用强经典AMG-PCGLS。在五个已开封九相机样本上，两套实现均通过四项1%精度和共同观测停止证书；已计入初值构造后，分别需要110/100/93/111/112次A调用。补充的历史dual-ridge配同一AMG仍需116/109/111/118/119次，其他规定对照也未解释这五点优势。这是必要哨兵检验，不是完整轨迹、实际速度或论文突破；当时完整505帧尚待验证；现已独立判为441/505、完整轨迹0/5。
 
-A positive five-point warm-start signal: the frozen learned map produces only one initial field, followed by strong classical AMG-PCGLS. Both implementations meet all four 1% accuracy targets and the common observation-only stopping certificate on five opened nine-camera samples. Including initialization, A counts are 110/100/93/111/112. Historical dual ridge with the same AMG still needs 116/109/111/118/119; the other prescribed controls also do not explain this five-point advantage. This is a necessary sentinel test, not complete trajectories, a wall-time win or a paper breakthrough. Full 505-frame verification awaits independent adjudication.
+A positive five-point warm-start signal: the frozen learned map produces only one initial field, followed by strong classical AMG-PCGLS. Both implementations meet all four 1% accuracy targets and the common observation-only stopping certificate on five opened nine-camera samples. Including initialization, A counts are 110/100/93/111/112. Historical dual ridge with the same AMG still needs 116/109/111/118/119; the other prescribed controls also do not explain this five-point advantage. This is a necessary sentinel test, not complete trajectories, a wall-time win or a paper breakthrough. At that time full verification was pending; it has now independently yielded 441/505 and 0/5 complete trajectories.
 
 [报告 / Report](poolfire_warm_cost_angular_audit_20260908.md)
 

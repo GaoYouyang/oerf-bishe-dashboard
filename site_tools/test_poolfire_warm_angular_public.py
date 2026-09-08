@@ -11,7 +11,9 @@ def test_tensor_warm_amg_positive_pilot_includes_ridge_and_costs():
     d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['tensor_warm_amg_pilot']
     assert d['status'] == 'PASS_WARM_AMG_NECESSARY_PILOT_WITH_RIDGE_CONTROL'
     assert (d['passing_points'],d['opened_points'],d['query_paths'],d['camera_count']) == (5,5,50,9)
-    assert d['full_roster_pending'] and not d['complete_trajectories']
+    assert not d['full_roster_pending'] and not d['complete_trajectories']
+    assert d['full_roster_pending_at_pilot']
+    assert d['subsequent_full_status'] == 'FAIL_TENSOR_WARM_AMG_FULL_STRICT_COST'
     assert all(d[k] for k in ('original_objective','single_learned_application','initial_costs_included',
         'common_observation_only_stop','old_excluded_trajectory_parameters','ridge_is_data_fitted',
         'query_truth_after_prediction_barrier','setup_nonfree','full_direct_unbeaten'))
@@ -28,9 +30,9 @@ def test_tensor_warm_amg_positive_pilot_includes_ridge_and_costs():
 
 def test_tensor_amg_pilot_bilingual_scope_and_full_control_history():
     evidence = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert evidence['latest_tensor_warm_amg_pilot']['full_roster_pending']
+    assert not evidence['latest_tensor_warm_amg_pilot']['full_roster_pending']
     assert evidence['latest_full_amg_control']['passing'] == 505
-    assert 'pending' in evidence['headline_en']
+    assert '0/5' in evidence['headline_en']
     for rel in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/rel).read_text(),'html.parser')
         note = soup.select_one('#tensor-warm-amg-pilot-result')
@@ -40,6 +42,46 @@ def test_tensor_amg_pilot_bilingual_scope_and_full_control_history():
         assert soup.select_one('#full-amg-control-result')
         if 'daily' in rel:
             assert soup.select_one('#latest #tensor-warm-amg-pilot-result')
+
+
+def test_full_tensor_amg_cost_failure_is_not_accuracy_failure():
+    d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['tensor_warm_amg_full']
+    assert d['status'] == 'FAIL_TENSOR_WARM_AMG_FULL_STRICT_COST'
+    assert (d['eligible'],d['passing'],d['rejected'],d['complete_trajectories']) == (505,441,64,0)
+    assert (d['logical_paths'],d['new_paths'],d['inherited_paths']) == (5050,5000,50)
+    assert [t['passing'] for t in d['trajectories']] == [96,92,100,58,95]
+    assert [t['rejected'] for t in d['trajectories']] == [5,9,1,43,6]
+    assert [t['minimum_A_margin'] for t in d['trajectories']] == [-3,-8,0,-13,-8]
+    assert all(d[k] for k in ('numerical_valid','initial_costs_included','common_observation_only_stop',
+        'query_truth_after_barrier','same_AMG_all_controls','ridge_is_data_fitted','no_new_fitting',
+        'fixed_full_claim_closed','opened_roster_not_external','setup_nonfree','full_direct_unbeaten'))
+    assert not any(d[k] for k in ('full_roster_pending','learned_warm_success','algorithm_breakthrough',
+        'paper_success','resource_speedup','external_generalization','real_bost'))
+    assert d['actual_solver'] == dict(A=571830,AT=566830)
+    assert d['logical_solver'] == dict(A=577614,AT=572564)
+    assert d['maximum_extra_A'] == d['maximum_extra_AT'] == 13
+    assert .0689 < d['paired_A_saving']['median'] < .0690
+    assert -.1314 < d['paired_A_saving']['min'] < -.1313
+    assert d['control_attribution']['dual_ridge']['control_no_worse'] == 53
+    assert d['control_attribution']['bp']['control_no_worse'] == 22
+
+
+def test_full_tensor_amg_bilingual_latest_and_historical_pilot():
+    e = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert e['latest_tensor_warm_amg_full']['fixed_full_claim_closed']
+    assert e['latest_tensor_warm_amg_full']['passing'] == 441
+    assert '0/5' in e['headline_zh'] and '0/5' in e['headline_en']
+    for rel in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(),'html.parser')
+        n = soup.select_one('#tensor-warm-amg-full-result')
+        assert '441/505' in n['data-i18n-zh'] and '441/505' in n['data-i18n-en']
+        assert '64' in n['data-i18n-zh'] and '64' in n['data-i18n-en']
+        assert '0/5' in n['data-i18n-zh'] and '0/5' in n['data-i18n-en']
+        assert n.get_text() == n['data-i18n-zh']
+        assert soup.select_one('#tensor-warm-amg-pilot-result')
+        assert soup.select_one('#full-amg-control-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #tensor-warm-amg-full-result')
 
 
 def test_full_amg_common_certificate_and_scoped_costs():
