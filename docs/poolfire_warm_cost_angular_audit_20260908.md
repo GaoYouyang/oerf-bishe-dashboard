@@ -2,6 +2,42 @@
 
 2026-09-08
 
+## 最新哨兵判决 / Latest Warm-AMG Sentinel Verdict
+
+暖启动出现五点正信号：已冻结的学习映射只生成一次初值，随后使用强经典AMG-PCGLS。在五个已开封九相机样本上，两套实现均通过四项1%精度和共同观测停止证书；已计入初值构造后，分别需要110/100/93/111/112次A调用。补充的历史dual-ridge配同一AMG仍需116/109/111/118/119次，其他规定对照也未解释这五点优势。这是必要哨兵检验，不是完整轨迹、实际速度或论文突破；完整505帧验证尚待独立判决。
+
+A positive five-point warm-start signal: the frozen learned map produces only one initial field, followed by strong classical AMG-PCGLS. Both implementations meet all four 1% accuracy targets and the common observation-only stopping certificate on five opened nine-camera samples. Including initialization, A counts are 110/100/93/111/112. Historical dual ridge with the same AMG still needs 116/109/111/118/119; the other prescribed controls also do not explain this five-point advantage. This is a necessary sentinel test, not complete trajectories, a wall-time win or a paper breakthrough. Full 505-frame verification awaits independent adjudication.
+
+| 哨兵 / Point | 学习初值 / Learned | 零初值 / Zero | BP | 未训练T0 / Untrained T0 | 一次V / One V | 历史ridge / Historical Ridge |
+|---|---:|---:|---:|---:|---:|---:|
+| 1 | 110 | 119 | 119 | 119 | 119 | 116 |
+| 2 | 100 | 121 | 120 | 121 | 121 | 109 |
+| 3 | 93 | 122 | 121 | 121 | 122 | 111 |
+| 4 | 111 | 121 | 121 | 121 | 121 | 118 |
+| 5 | 112 | 125 | 123 | 124 | 125 | 119 |
+
+
+表中为A次数，每格AT均比A少1；两套实现的这些计数全部一致。相对最便宜的已测对照，五点分别节省6/9/18/7/7次A及AT，对应A节省5.17%/8.26%/16.22%/5.93%/5.88%。不是两个总体中位数相除，也不是事后读真值选停止点。初值的1A+1AT、观测线搜索和最终物理确认均计入。
+
+The table reports A calls; AT is one less in every cell. Both implementations agree on all listed counts. Versus the cheapest tested control, the five points save 6/9/18/7/7 A and AT calls, or 5.17%/8.26%/16.22%/5.93%/5.88% of A calls. These are paired savings, not a ratio of aggregate medians or truth-selected stopping points. The initial 1A+1AT, observation line search and final physical confirmation are included.
+
+改变的是组合方式：已冻结的学习算子只产生一次观测侧方向，经精确伴随提升和观测线搜索形成初值；之后保持原始未加权观测目标，用经典AMG-PCGLS求精。对照也使用同一AMG。历史dual-ridge是用训练数据拟合的经典对照，不是无训练方法；它被单独补测，未因先前五点看似通过而跳过。学习映射没有重新拟合，查询轨迹仍完整排除在其训练外。
+
+The change is the composition: the frozen learned operator supplies one observation-space direction, lifted by the exact adjoint and scaled by an observation line search. Classical AMG-PCGLS then refines the original unweighted observation objective. Controls use the same AMG. Historical dual ridge is a classical data-fitted control, not training-free; it was tested separately rather than skipped after the earlier five-point pass. The learned map was not refit, and its entire query trajectory remains excluded from training.
+
+两批共50条新路径均先封存预测再读真值评分。学习初值试验的独立同状态评分最大差2.22e-16、原生重放7.09e-16、相机乱序差7.61e-16；ridge补测对应评分差1.11e-16。退出后的独立审裁核对了证书历史和调用账。旧的“连续使用学习度量不敌经典AMG”全量结论保留，本轮五点初值组合不是把旧负结果改写为成功。
+
+Both batches, 50 new paths in total, sealed predictions before truth scoring. The learned-initializer study has maximum independent same-state score discrepancy 2.22e-16, native replay discrepancy 7.09e-16 and camera-permutation discrepancy 7.61e-16; the added ridge test has score discrepancy 1.11e-16. Post-exit independent adjudication checks certificate histories and call accounts. The earlier full-roster result that a continuously applied learned metric loses to classical AMG remains intact; this five-point initialization composition does not rewrite that negative evidence.
+
+只授权完整已开封轨迹验证，不代表完整暖启动路线成功。几何预处理、停止证书准备、V循环、学习与ridge准备均不免费；完整缓存直接求解在单看在线调用时仍未被超越。没有实际耗时/内存、未开外部工况、变相机/噪声或真实BOST结论，也不主张组件原创。
+
+This authorizes complete opened-trajectory verification only, not success of the full learned-warm route. Geometry preprocessing, certificate preparation, V cycles, learned and ridge preparation are not free; full cached direct solving remains unbeaten on online calls alone. There is no wall/RSS, unopened external-condition, camera/noise-shift or real-BOST result, and no component-originality claim.
+
+保持模型、初值、AMG、停止规则与精度门不变，完成五条完整已开封轨迹及全部规定对照的独立验证；不从五点推断速度、外部泛化或论文成功。
+
+Keep the model, initializer, AMG, stopping rule and accuracy gates fixed while independently validating all five complete opened trajectories and every prescribed control. Do not infer speed, external generalization or paper success from five points.
+
+
 ## 最新全量判决 / Latest Full-Roster AMG Verdict
 
 完整已开封轨迹验证完成：固定经典AMG对照在505/505帧、5/5条完整轨迹上通过四项1%精度门，并在与原学习方法相同、只用观测的停止证书下，用更少的A和AT调用。逐帧保守配对的A调用节省中位数为60.14%，最小54.02%。两套求解实现、物理重放与退出后独立审裁一致。这否定了原学习方法相对此强对照的调用数优势；不是新的学习算法、实际速度或论文突破。仅限固定九相机、无噪声、已开封数据；几何缓存、停止证书准备和V循环均不免费。

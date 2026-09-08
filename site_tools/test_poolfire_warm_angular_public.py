@@ -7,6 +7,41 @@ ROOT = Path(__file__).resolve().parents[1]
 STEM = 'poolfire_warm_cost_angular_audit_20260908'
 
 
+def test_tensor_warm_amg_positive_pilot_includes_ridge_and_costs():
+    d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['tensor_warm_amg_pilot']
+    assert d['status'] == 'PASS_WARM_AMG_NECESSARY_PILOT_WITH_RIDGE_CONTROL'
+    assert (d['passing_points'],d['opened_points'],d['query_paths'],d['camera_count']) == (5,5,50,9)
+    assert d['full_roster_pending'] and not d['complete_trajectories']
+    assert all(d[k] for k in ('original_objective','single_learned_application','initial_costs_included',
+        'common_observation_only_stop','old_excluded_trajectory_parameters','ridge_is_data_fitted',
+        'query_truth_after_prediction_barrier','setup_nonfree','full_direct_unbeaten'))
+    assert not any(d[k] for k in ('new_fitting','algorithm_breakthrough','learned_warm_success',
+        'paper_success','resource_speedup','external_generalization','real_bost'))
+    assert [p['primary_upper']['A'] for p in d['points']] == [110,100,93,111,112]
+    assert [p['controls']['dual_ridge']['lower']['A'] for p in d['points']] == [116,109,111,118,119]
+    for p in d['points']:
+        assert p['primary_lower'] == p['primary_upper']
+        assert p['primary_upper']['A'] == p['primary_upper']['AT']+1
+        assert len(p['controls']) == 5
+        assert all(p['primary_upper'][key] < value['lower'][key] for key in ('A','AT') for value in p['controls'].values())
+
+
+def test_tensor_amg_pilot_bilingual_scope_and_full_control_history():
+    evidence = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert evidence['latest_tensor_warm_amg_pilot']['full_roster_pending']
+    assert evidence['latest_full_amg_control']['passing'] == 505
+    assert 'pending' in evidence['headline_en']
+    for rel in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(),'html.parser')
+        note = soup.select_one('#tensor-warm-amg-pilot-result')
+        assert '五个已开封' in note['data-i18n-zh'] and 'five opened' in note['data-i18n-en']
+        assert 'dual-ridge' in note['data-i18n-zh'] and 'dual ridge' in note['data-i18n-en']
+        assert note.get_text() == note['data-i18n-zh']
+        assert soup.select_one('#full-amg-control-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #tensor-warm-amg-pilot-result')
+
+
 def test_full_amg_common_certificate_and_scoped_costs():
     d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['full_amg_control']
     assert d['status'] == 'PASS_FULL_OPENED_AMG_CERTIFIED_CONTROL'
