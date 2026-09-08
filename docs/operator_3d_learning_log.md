@@ -1,3 +1,11 @@
+## 2026-09-08：压缩解法与暖启动 / Sketch Solve Versus Warm Start
+
+几何压缩检验完成：五个已开封相机集合的25个检查点中，固定近似逆平方暖启动数值有效但精度通过0/25；更简单的压缩直接求解与其精确对偶版本均为25/25。完整对照组仍因旧ridge对照的17个数值超差保持“不确定”；独立封存输出审计只支持关闭原主方案的必要精度门，不恢复完整比较。没有新训练、速度或论文突破，505帧冷启动学习度量证据保留。
+
+The geometry-sketch test is complete: across 25 checkpoints in five opened camera sets, the fixed inverse-squared warm initializer is numerically valid but passes accuracy at 0/25. Simpler direct sketch-and-solve and its exact-dual version each pass 25/25. The whole comparison remains inconclusive because the old ridge control has 17 numerical mismatches. An independent sealed-output audit supports only a necessary-accuracy rejection of the original primary, not rehabilitation of the family. There is no new training, speedup or paper breakthrough; the 505-frame cold learned-metric evidence remains.
+
+[报告 / Report](poolfire_warm_cost_angular_audit_20260908.md)
+
 ## 2026-09-08：损失最优校正的实际成本 / Actual Cost of Loss-Optimal Correction
 
 实际求解检验完成：给当前固定特征逐样本的初始损失最优系数，保留原观测线搜索后，五个旧CFD中点的调用区间仍与原训练模型一致，比同一求解度量的零启动更贵，稳健优势0/5。独立复算通过。这只是依赖昂贵参考解的条件成本诊断，不是可部署算法；损失最优不等于调用数最优，不能据此排除所有系数组合。此前505样本冷启动求解度量结果保留，学习暖启动目标仍未完成。

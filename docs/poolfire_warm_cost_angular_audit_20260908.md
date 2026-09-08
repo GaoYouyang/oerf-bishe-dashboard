@@ -2,6 +2,50 @@
 
 2026-09-08
 
+## 最新检验：固定压缩暖启动的必要门 / Latest: Necessary Gate for Fixed Sketch Warm Start
+
+几何压缩检验完成：五个已开封相机集合的25个检查点中，固定近似逆平方暖启动数值有效但精度通过0/25；更简单的压缩直接求解与其精确对偶版本均为25/25。完整对照组仍因旧ridge对照的17个数值超差保持“不确定”；独立封存输出审计只支持关闭原主方案的必要精度门，不恢复完整比较。没有新训练、速度或论文突破，505帧冷启动学习度量证据保留。
+
+The geometry-sketch test is complete: across 25 checkpoints in five opened camera sets, the fixed inverse-squared warm initializer is numerically valid but passes accuracy at 0/25. Simpler direct sketch-and-solve and its exact-dual version each pass 25/25. The whole comparison remains inconclusive because the old ridge control has 17 numerical mismatches. An independent sealed-output audit supports only a necessary-accuracy rejection of the original primary, not rehabilitation of the family. There is no new training, speedup or paper breakthrough; the 505-frame cold learned-metric evidence remains.
+
+| 固定方法 / Fixed arm | 数值有效 / Numerically valid | 精度通过 / Accuracy passes |
+|---|---:|---:|
+| 近似逆平方暖启动 / Inverse-squared warm start | 25/25 | 0/25 |
+| 压缩直接求解 / Direct sketch solve | 25/25 | 25/25 |
+| 精确对偶压缩解 / Exact-dual sketch solve | 25/25 | 25/25 |
+| 对角控制 / Diagonal control | 25/25 | 0/25 |
+| Zero CGLS3 | 25/25 | 0/25 |
+| Jacobi PCGLS3 | 25/25 | 0/25 |
+| BP + CGLS2 | 25/25 | 0/25 |
+| 旧ridge / Old ridge | 8/25 | 仅诊断 / diagnostic only |
+| 完整直接参考 / Full direct reference | 25/25 | 25/25 |
+
+
+这是五个已开封相机集合(5/7/9/5/7相机)各五个旧CFD中点，不是完整轨迹或新的独立外部测试。四指标仍为场、完整梯度、内部梯度和观测，全部须不超过1%。两个独立实现分别重建压缩算子并使用QR或SVD；预测封存后才读真值评分。
+
+These are five old CFD midpoints in each of five opened camera sets (5/7/9/5/7 cameras), not full trajectories or a new external test. Field, full-gradient, interior-gradient and observation errors must all remain at or below 1%. Two independent implementations rebuild the sketch and use QR or SVD; truth is read for scoring only after prediction sealing.
+
+完整family保持不确定，不能因为删除一个坏对照就改称全组通过。随后只读封存输出的全九方法审计没有重跑求解、生成预测或调阈值：它确认原主方案的25个点均数值有效但精度失败。因此只能作必要条件否决。主方案场/观测跨实现最大差为1.94e-12/1.08e-12；压缩直接解为6.82e-13/1.42e-14。旧ridge的观测最大差4.01e-7超过原1e-8门，17个点无效，不能参与有效比较。
+
+The whole family remains inconclusive; removing an invalid control cannot make it a full pass. The subsequent read-only audit of all nine sealed arms reruns no solver, generates no prediction and changes no threshold. It establishes that all 25 original-primary cells are numerically valid but fail accuracy, allowing only necessary-condition rejection. Primary field/image discrepancies are at most 1.94e-12/1.08e-12; direct-sketch discrepancies are 6.82e-13/1.42e-14. The old ridge image discrepancy reaches 4.01e-7 against the unchanged 1e-8 gate, invalidating 17 cells and preventing valid family comparison.
+
+令H=A^T A、B=SA、M=(B^T B)^-1。固定主方案得到H M^2 A^T y；即使y=A x且B满秩，也不能把H M^2 H当成单位阵。简单压缩解B^+ S y是不同的经典方法。本轮五个压缩矩阵均满列秩，条件数约683至7884；这不保证原组合的精度，也不构成新算法。
+
+Let H=A^T A, B=SA and M=(B^T B)^-1. The fixed primary produces H M^2 A^T y; even when y=A x and B has full rank, H M^2 H need not be identity. The simpler B^+ S y is a different classical method. All five sketches here have full column rank, with condition numbers around 683 to 7884; this does not guarantee the original composition's accuracy or establish a new algorithm.
+
+主方案查询为3A+3AT及四次三角求解。直接压缩解形成场时不需要查询A/AT，但要计压缩、稠密因子作用和一次三角求解；构造与存储几何因子绝非免费。精确对偶版本还要附加因子与散射工作，并走2A+2AT。没有fresh wall/RSS、完整轨迹、训练或泛化结论，强完整直接解仍是不可省略的资源对照。
+
+The primary query costs 3A+3AT plus four triangular solves. Direct sketch solving needs no query A/AT to form the field, but still incurs sketch application, dense factor work and one triangular solve; geometry construction/storage are not free. The exact-dual version adds factor/scatter work and a 2A+2AT shell. No fresh wall/RSS, full-trajectory, training or generalization result is established. A strong full direct solver remains an essential resource comparator.
+
+压缩最小二乘与压缩解初始化有既有文献，本轮不声称组件首创：[数值稳定性研究 / Numerical stability study](https://arxiv.org/abs/2302.07202)。这里只采用其方法区分，不借文献替代本项目的性能验证。
+
+Sketch-based least squares and sketch-and-solve initialization have prior literature; no component novelty is claimed here. The linked numerical-stability study supports the methodological distinction, not this project's performance.
+
+关闭固定近似逆平方组合，不调整压缩种子或规模，不训练更大替代模型。后续重计算前先核验继承对照，新增暖启动价值必须超越已验证冷启动和强经典解法。
+
+Close the fixed inverse-squared composition without changing sketch seeds/sizes or training a larger surrogate. Qualify inherited controls before another heavy run; additional warm value must beat the validated cold solver and strong classical methods.
+
+
 ## 最新检验：损失最优校正的实际成本 / Latest Test: Actual Cost of Loss-Optimal Correction
 
 实际求解检验完成：给当前固定特征逐样本的初始损失最优系数，保留原观测线搜索后，五个旧CFD中点的调用区间仍与原训练模型一致，比同一求解度量的零启动更贵，稳健优势0/5。独立复算通过。这只是依赖昂贵参考解的条件成本诊断，不是可部署算法；损失最优不等于调用数最优，不能据此排除所有系数组合。此前505样本冷启动求解度量结果保留，学习暖启动目标仍未完成。

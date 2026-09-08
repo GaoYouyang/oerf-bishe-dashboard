@@ -246,3 +246,33 @@ def test_loss_oracle_bilingual_and_preserved_capacity_history():
         assert soup.select_one('#manufactured-feature-floor-result')
         if 'daily' in rel:
             assert soup.select_one('#latest #loss-oracle-cost-result')
+
+
+def test_physical_sketch_necessary_failure_not_family_rehabilitation():
+    data = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['physical_sketch']
+    assert data['family_status'] == 'INCONCLUSIVE_P03_PHYSICAL_SKETCH_NUMERIC'
+    assert data['necessary_status'] == 'FAIL_SEALED_P03_PRIMARY_NECESSARY_ACCURACY'
+    assert data['checkpoints'] == 25 and data['cameras'] == [5, 7, 9, 5, 7]
+    assert [r['numerical_valid'] for r in data['arms']] == [25]*7+[8, 25]
+    assert [r['accuracy_passing'] for r in data['arms']] == [0, 25, 25, 0, 0, 0, 0, 0, 25]
+    assert data['fixed_primary_closed'] and data['geometry_factor_nonfree']
+    assert data['direct_control_not_primary_substitution']
+    assert not any(data[k] for k in ('full_family_rehabilitated', 'trained_algorithm', 'full_trajectories',
+        'resource_speedup', 'algorithm_breakthrough', 'paper_success', 'external_generalization', 'real_bost', 'training_authorized'))
+
+
+def test_physical_sketch_bilingual_and_retained_scientific_boundaries():
+    evidence = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert evidence['latest_physical_sketch']['primary_passing'] == 0
+    assert evidence['latest_physical_sketch']['direct_passing'] == 25
+    assert evidence['latest_full_trajectory_controls']['passing'] == 505
+    for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
+        note = soup.select_one('#physical-sketch-result')
+        for lang in ('zh', 'en'):
+            assert '0/25' in note['data-i18n-'+lang] and '25/25' in note['data-i18n-'+lang]
+        assert '不确定' in note['data-i18n-zh'] and 'inconclusive' in note['data-i18n-en']
+        assert note.get_text() == note['data-i18n-zh']
+        assert soup.select_one('#loss-oracle-cost-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #physical-sketch-result')
