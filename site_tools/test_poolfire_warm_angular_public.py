@@ -7,6 +7,39 @@ ROOT = Path(__file__).resolve().parents[1]
 STEM = 'poolfire_warm_cost_angular_audit_20260908'
 
 
+def test_tail_audit_quality_does_not_rehabilitate_cost_failure():
+    d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['warm_amg_tail_audit']
+    assert d['status'] == 'INITIAL_METRIC_DOMINANCE_DOES_NOT_PREVENT_COST_HARM'
+    assert (d['frames'],d['comparisons'],d['parent_passing'],d['parent_rejected'],d['parent_complete_trajectories']) == (505,2525,441,64,0)
+    names = ('zero','bp','fixed_tensor','one_v_cycle','dual_ridge')
+    assert [d['controls'][n]['strict_harm'] for n in names] == [11,16,13,10,40]
+    assert [d['controls'][n]['control_no_worse'] for n in names] == [14,22,18,14,53]
+    assert all(d['controls'][n]['initial_metric_dominance'] == [505]*4 for n in names)
+    assert d['additional_calls'] == dict(A=0,AT=0,V=0)
+    assert d['independent_aggregation_maximum'] == 0
+    assert all(d[k] for k in ('not_new_physical_recomputation','post_open_diagnostic',
+        'selected_inputs_unchanged','bound_slack_not_earlier_stop_proof','initial_loss_not_iteration_objective'))
+    assert not any(d[k] for k in ('causal_spectral_diagnosis','new_policy_authorized','training_authorized',
+        'stopping_change_authorized','algorithm_breakthrough','paper_success','resource_speedup','external_generalization','real_bost'))
+    assert all(s['limiting_metric_counts'] == [0,0,505,0] for s in d['certificate_slack'])
+
+
+def test_tail_audit_bilingual_and_full_failure_preserved():
+    e = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert e['latest_warm_amg_tail_audit']['comparisons'] == 2525
+    assert e['latest_tensor_warm_amg_full']['complete_trajectories'] == 0
+    for rel in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(),'html.parser')
+        note = soup.select_one('#warm-amg-tail-audit-result')
+        assert '2525' in note['data-i18n-zh'] and '2525' in note['data-i18n-en']
+        assert '不是新求解' in note['data-i18n-zh'] and 'not a new solve' in note['data-i18n-en']
+        assert note.get_text() == note['data-i18n-zh']
+        assert soup.select_one('#tensor-warm-amg-full-result')
+        assert soup.select_one('#tensor-warm-amg-pilot-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #warm-amg-tail-audit-result')
+
+
 def test_tensor_warm_amg_positive_pilot_includes_ridge_and_costs():
     d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['tensor_warm_amg_pilot']
     assert d['status'] == 'PASS_WARM_AMG_NECESSARY_PILOT_WITH_RIDGE_CONTROL'

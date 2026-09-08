@@ -1,3 +1,11 @@
+## 2026-09-08：初值更准但仍会更慢 / Better Initial Metrics Can Still Cost More
+
+尾部诊断进一步收紧了问题：在全部505帧与五种同AMG对照的2525组比较中，学习初值的场、全梯度、内部梯度和观测误差均更小，但仍会更费调用。相对零初值、BP、未训练T0、一次V和历史ridge，严格变慢分别发生11/16/13/10/40次，集合有重叠。因此初值四项误差占优不足以保证后续迭代更快；全量判决仍是441/505省调用、完整轨迹0/5。这是对已独立评分数组的二次独立汇总，不是新求解、谱因果证明或新训练成功。
+
+The tail audit sharpens the problem: across all 505 frames and five same-AMG controls, all 2525 comparisons favor the learned initial field on field, full-gradient, interior-gradient and observation errors. Yet it can require more calls. Strict slowdowns versus zero, BP, untrained T0, one-V and historical ridge occur 11/16/13/10/40 times, with overlapping sets. Better initial metrics are therefore insufficient to guarantee cheaper refinement. The full verdict remains 441/505 call savings and 0/5 complete trajectories. This independently re-aggregates previously independently scored arrays; it is not a new solve, causal spectral proof or successful new training.
+
+[报告 / Report](poolfire_warm_cost_angular_audit_20260908.md)
+
 ## 2026-09-08：五点正信号未通过完整轨迹 / Five-Point Promise Does Not Pass Complete Trajectories
 
 全量推翻了五点的稳定优势判断：一次学习初值加同一AMG-PCGLS，在505个已开封九相机样本上全部满足四项1%精度和共同观测停止证书，但仅441/505严格少用A及AT；其余64个被至少一个规定经典对照追平或超过，完整轨迹0/5。相对每例最便宜对照的配对A节省中位数为6.90%，最坏却多用13次A及AT；中位数不能替代完整轨迹门。独立复算和调用审计通过，关闭这套固定组合的全量稳定收益主张，不调模型或停止规则挽救；不是速度、泛化或论文突破。

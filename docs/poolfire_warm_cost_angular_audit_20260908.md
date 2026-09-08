@@ -2,6 +2,38 @@
 
 2026-09-08
 
+## 最新初值质量诊断 / Latest Initial-Quality Diagnosis
+
+尾部诊断进一步收紧了问题：在全部505帧与五种同AMG对照的2525组比较中，学习初值的场、全梯度、内部梯度和观测误差均更小，但仍会更费调用。相对零初值、BP、未训练T0、一次V和历史ridge，严格变慢分别发生11/16/13/10/40次，集合有重叠。因此初值四项误差占优不足以保证后续迭代更快；全量判决仍是441/505省调用、完整轨迹0/5。这是对已独立评分数组的二次独立汇总，不是新求解、谱因果证明或新训练成功。
+
+The tail audit sharpens the problem: across all 505 frames and five same-AMG controls, all 2525 comparisons favor the learned initial field on field, full-gradient, interior-gradient and observation errors. Yet it can require more calls. Strict slowdowns versus zero, BP, untrained T0, one-V and historical ridge occur 11/16/13/10/40 times, with overlapping sets. Better initial metrics are therefore insufficient to guarantee cheaper refinement. The full verdict remains 441/505 call savings and 0/5 complete trajectories. This independently re-aggregates previously independently scored arrays; it is not a new solve, causal spectral proof or successful new training.
+
+| 同AMG对照 / Same-AMG Control | 初值四项占优 / Better on All Four | 学习严格变慢 / Strict Slowdowns | 对照不差含平局 / Control No Worse |
+|---|---:|---:|---:|
+| 零初值 / Zero | 505/505 | 11 | 14 |
+| BP | 505/505 | 16 | 22 |
+| 未训练T0 / Untrained T0 | 505/505 | 13 | 18 |
+| 一次V / One V | 505/505 | 10 | 14 |
+| 历史ridge / Historical Ridge | 505/505 | 40 | 53 |
+
+
+比较使用两套数值路径的保守区间：学习初值最坏误差加1e-9，仍小于对照最好误差，才计入占优。所有2525组四项均占优，四项相对误差平方的均值也均占优；但上述严格调用反例仍存在。学习确实改善了这些初始物理误差，不等于已经解决后续迭代难度。反例按对照会重叠，不能把表中各行相加当作不同样本。
+
+Comparisons use conservative intervals across both numerical paths: the learned initial state's worst error plus 1e-9 must be below the control's best error. All 2525 comparisons satisfy this on all four metrics and also on their mean squared relative error, yet the strict call counterexamples remain. Learning improves these initial physical errors, but that does not settle subsequent iteration difficulty. Counterexample sets overlap across controls; table rows must not be summed as distinct samples.
+
+源码核对表明，冻结模型训练的是精确伴随提升后的场、全梯度、内部梯度和投影相对平方误差，参照训练侧直接解；没有把AMG后续迭代或停止证书纳入优化。这说明训练目标和最终成本不是同一量，不证明改一个损失就会有效。旧配方保持关闭，不以这些查询结果选新损失、阈值或路由器。
+
+Source inspection confirms that the frozen model minimizes relative squared field, full-gradient, interior-gradient and projection errors after the exact-adjoint lift, against a training-side direct solution. Later AMG iterations and the stopping certificate are not part of that optimization. Training quality and final cost are different quantities; this does not prove that a different loss will work. The old recipe stays closed, without selecting a new loss, threshold or router from these query outcomes.
+
+停时最大的证书分量在505个样本上均为内部梯度。该证书与实际内部梯度误差之比的中位数约16.22、p90约17.97；这只描述证书松弛度，不说明何时真实精度第一次达标，也不授权提前停止或改证书。独立汇总使用已封存、已物理复核的数组，两种归约实现逐记录与统计量最大差为0，新增A/AT/V调用均为0，没有新训练或新物理复算。
+
+At stopping, the largest certificate component is interior gradient on all 505 samples. Its certificate-to-actual-error ratio has median about 16.22 and p90 about 17.97. This describes bound slack only: it does not locate the first actual-accuracy crossing or authorize earlier stopping or a changed certificate. Two independent reducers use sealed, previously physically audited arrays and agree exactly on records and summaries. Additional A, AT and V calls are all zero, with no new fitting or physical recomputation.
+
+不把更低初值误差当作省迭代的充分条件。先明确与后续迭代相容的、可部署且物理不同的方向表示和便宜对照；不重训旧配方、不改停止门、不用查询标签路由。
+
+Do not treat lower initial error as sufficient for fewer iterations. First specify a deployable, physically distinct direction representation compatible with refinement and a cheap control; no old-recipe refit, stopping-gate change or query-label routing.
+
+
 ## 最新全量判决 / Latest Full Warm-AMG Verdict
 
 全量推翻了五点的稳定优势判断：一次学习初值加同一AMG-PCGLS，在505个已开封九相机样本上全部满足四项1%精度和共同观测停止证书，但仅441/505严格少用A及AT；其余64个被至少一个规定经典对照追平或超过，完整轨迹0/5。相对每例最便宜对照的配对A节省中位数为6.90%，最坏却多用13次A及AT；中位数不能替代完整轨迹门。独立复算和调用审计通过，关闭这套固定组合的全量稳定收益主张，不调模型或停止规则挽救；不是速度、泛化或论文突破。
