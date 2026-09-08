@@ -7,6 +7,40 @@ ROOT = Path(__file__).resolve().parents[1]
 STEM = 'poolfire_warm_cost_angular_audit_20260908'
 
 
+def test_true_crossings_do_not_rehabilitate_fixed_cost_failure():
+    d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['certified_tail_crossings']
+    assert d['status'] == 'REFUTED_CERTIFICATE_ONLY_TAIL_EXPLANATION'
+    assert (d['selected_cases'], d['numerical_paths'], d['recovered_states']) == (64, 256, 27932)
+    assert d['summary']['first'] == dict(primary_ahead=17, control_no_worse=47, strict_harm=34)
+    assert d['summary']['first'] == d['summary']['sustained']
+    assert d['recrossing_paths'] == 0 and d['independent_checks'] == 7
+    assert len(d['trajectories']) == 5 and d['parent_complete_trajectories'] == 0
+    assert d['replay_offline'] == dict(A=27932, AT=27676, V=27676)
+    assert d['independent_score'] == dict(native_A=27932, csr_A=27932)
+    assert all(d[k] for k in ('numerical_valid', 'post_open_diagnostic',
+        'ideal_cost_includes_initialization', 'oracle_not_deployable',
+        'selection_from_old_certified_costs', 'selected_control_not_oracle_cheapest',
+        'truth_after_state_barrier'))
+    assert not any(d[k] for k in ('replay_truth_read', 'new_training', 'new_policy_authorized',
+        'algorithm_breakthrough', 'paper_success', 'resource_speedup', 'external_generalization', 'real_bost'))
+
+
+def test_true_crossings_bilingual_and_prior_evidence_retained():
+    e = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert e['latest_certified_tail_crossings']['strict_harm'] == 34
+    assert e['latest_tensor_warm_amg_full']['complete_trajectories'] == 0
+    for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
+        note = soup.select_one('#certified-tail-crossing-result')
+        assert note.get_text() == note['data-i18n-zh']
+        for lang in ('zh', 'en'):
+            assert all(t in note['data-i18n-'+lang] for t in ('64', '17', '47', '34', '13', '441/505', '0/5'))
+        assert soup.select_one('#amg-error-propagation-result')
+        assert soup.select_one('#tensor-warm-amg-full-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #certified-tail-crossing-result')
+
+
 def test_amg_error_primary_and_fraction_are_not_interchangeable():
     d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['amg_error_propagation']
     assert d['status'] == 'REFUTED_UNIFORM_AMG_ERROR_EXCESS'

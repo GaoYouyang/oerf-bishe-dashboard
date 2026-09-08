@@ -2,6 +2,41 @@
 
 2026-09-08
 
+## 最新真实达标诊断 / Latest Actual-Accuracy Crossing Diagnosis
+
+最新AMG诊断：把64个原有成本反例的中间状态补齐后，假设双方都在首次达到四项真实精度门时立即停止，学习初值仅17个更省调用；47个仍无优势，其中34个严格更费调用、13个持平。因此，停止证书保守不是这些反例的唯一原因。独立物理重放与逐状态评分通过。这是读取已开封真值的理想停止诊断，不是可部署策略；原全量结论仍为441/505省调用、完整轨迹0/5。
+
+Latest AMG diagnosis: after recovering intermediate states for the 64 old cost counterexamples, suppose both arms stop immediately upon first reaching all four true-accuracy gates. The learned start saves calls on only 17; it still has no advantage on 47, including 34 strict harms and 13 ties. A conservative stopping certificate is therefore not the sole explanation for these cases. Independent physical replay and per-state scoring pass. This ideal-stop diagnosis uses already-opened truth; it is not a deployable policy. The full result remains 441/505 call savings and 0/5 complete trajectories.
+
+| 判断 / Adjudication | 首次达标 / First Crossing | 持续达标 / Sustained Crossing |
+|---|---:|---:|
+| 学习更省调用 / Learned Cheaper | 17 | 17 |
+| 对照不更贵 / Control No Worse | 47 | 47 |
+| 其中学习严格更贵 / Of These: Learned Strictly Costlier | 34 | 34 |
+| 其中持平 / Of These: Ties | 13 | 13 |
+
+
+范围仅为原有64个已开封成本反例。每个反例在补算前按旧的封存调用账固定一个最便宜对照，再用原有初值、缓存投影、求解器和停止证书回放到原端点。未用新精度事后挑对照，也未改模型或延长求解。两种初值、两条数值路径共256条回放，封存27932个中间状态后才读取真值评分。
+
+Only the 64 already-opened cost counterexamples are included. Each comparator was fixed from the old sealed certified costs before recovery. Original starts, cached projections, solvers and certificates were replayed only to their original endpoints. New accuracies did not select the comparator; neither the model nor solve depth changed. Two starts and two numerical paths produce 256 replays. All 27932 intermediate states were sealed before truth scoring.
+
+唯一主检验是field、full-gradient、interior-gradient和observation四项相对误差同时不超过1%的首次位置，理想调用账为kA+kAT加原初值构造成本。双方均不计停止判定开销，这是使用真值的理想对照，不是可部署规则。持续达标仅为原封存端点以内的次要描述；256条已保存路径未见重新越门。五折反例数为5/9/1/43/6，对照仍不更贵的数量为2/9/0/31/5。
+
+The sole primary is the first state with all four relative errors, field, full gradient, interior gradient and observation, at or below 1%. Ideal calls are kA+kAT plus original initialization. Neither arm pays stopping-decision overhead. This is a truth-dependent ideal comparison, not a deployable rule. Sustained crossings are secondary and limited to each original sealed endpoint; none of the 256 stored paths recrosses a gate. The five folds contain 5/9/1/43/6 cases, with 2/9/0/31/5 remaining no-worse controls.
+
+独立核验7项全通过。原证书历史、早期探针、端点和残差最大差均0；独立逐状态原生射线投影差约8.06e-16，物理指标差约2.22e-16。新增离线回放27932A+27676AT+27676V，正式评分27932次CSR-A，独立评分27932次原生A及27932次CSR-A。构造与评分不免费，不能据此声称部署加速。
+
+All seven independent checks pass. Original certificate histories, early probes, endpoints and residuals reproduce with zero maximum difference. Independent per-state native-ray projection differs by about 8.06e-16 and physical metrics by about 2.22e-16. Added offline recovery costs 27932A+27676AT+27676V; formal scoring costs 27932 CSR-A; independent scoring costs 27932 native-A plus 27932 CSR-A. Construction and scoring are nonfree and establish no deployment speedup.
+
+这次排除了“全部只是停止证书太保守”的解释，但没有证明唯一谱原因，也不证明改进证书毫无价值。17个逆转只属于条件化诊断，不能替代全505帧门；所选对照不是按真实首次达标成本寻找的最便宜对照。原441/505与0/5结论不变，没有新训练、真实BOST或论文突破。
+
+This refutes the claim that these tails arise solely from conservative certificates. It does not identify a unique spectral cause or show certificate improvements are worthless. The 17 reversals are conditional diagnostics, not a replacement for the full 505-frame gate; the selected comparator is not the oracle-cheapest control. The original 441/505 and 0/5 result is unchanged. There is no new training, real-BOST result or paper breakthrough.
+
+当前固定方案不能靠单改停止条件挽救。新机制须在结果前明确可部署信息如何改善求解行为，并与便宜对照公平比较；不以更小初始误差、旧误差代理或更大模型代替调用证据。
+
+Changing stopping alone cannot rescue the fixed recipe. Any new mechanism must specify before results how deployable information improves solver behavior and face cheap controls; smaller initial error, old error proxies or larger models do not replace call evidence.
+
+
 ## 最新AMG误差传播诊断 / Latest AMG Error-Propagation Diagnosis
 
 新的AMG诊断排除了一个简单解释：在比历史ridge更费调用的40个样本、比零初值更费调用的11个样本中，学习初值经过固定四次AMG误差传播后的残留观测空间能量仍全部更小。两组样本会重叠。误差保留比例分别在32/40和7/11个样本上更高，但比例较高不等于残留总量更多。两种实现及原生射线重放独立通过；这不是新的PCGLS运行、因果证明或加速成功。原全量结论仍为441/505省调用、完整轨迹0/5。

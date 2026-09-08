@@ -1,3 +1,11 @@
+## 2026-09-08：不只是停止条件保守 / Not Only Conservative Stopping
+
+最新AMG诊断：把64个原有成本反例的中间状态补齐后，假设双方都在首次达到四项真实精度门时立即停止，学习初值仅17个更省调用；47个仍无优势，其中34个严格更费调用、13个持平。因此，停止证书保守不是这些反例的唯一原因。独立物理重放与逐状态评分通过。这是读取已开封真值的理想停止诊断，不是可部署策略；原全量结论仍为441/505省调用、完整轨迹0/5。
+
+Latest AMG diagnosis: after recovering intermediate states for the 64 old cost counterexamples, suppose both arms stop immediately upon first reaching all four true-accuracy gates. The learned start saves calls on only 17; it still has no advantage on 47, including 34 strict harms and 13 ties. A conservative stopping certificate is therefore not the sole explanation for these cases. Independent physical replay and per-state scoring pass. This ideal-stop diagnosis uses already-opened truth; it is not a deployable policy. The full result remains 441/505 call savings and 0/5 complete trajectories.
+
+[报告 / Report](poolfire_warm_cost_angular_audit_20260908.md)
+
 ## 2026-09-08：残留误差总量仍解释不了调用尾部 / Remaining Error Still Does Not Explain Call Tails
 
 新的AMG诊断排除了一个简单解释：在比历史ridge更费调用的40个样本、比零初值更费调用的11个样本中，学习初值经过固定四次AMG误差传播后的残留观测空间能量仍全部更小。两组样本会重叠。误差保留比例分别在32/40和7/11个样本上更高，但比例较高不等于残留总量更多。两种实现及原生射线重放独立通过；这不是新的PCGLS运行、因果证明或加速成功。原全量结论仍为441/505省调用、完整轨迹0/5。
