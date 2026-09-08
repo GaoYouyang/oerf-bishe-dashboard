@@ -1,3 +1,11 @@
+## 2026-09-08：目标是否改变 / Objective Compatibility
+
+目标边界核验：在同一个九相机几何的8个共享人工观测方向上，五个冻结学习度量全部改变了原始最小二乘的驻点条件；未训练的同结构度量也如此，恒等对照没有。两个独立实现与退出后复算一致。因此左侧残差加权不能自动当作保持原问题的暖启动。505帧无噪声冷启动结果保留；本轮没有训练、噪声重建评分、速度或真实BOST结论。
+
+Objective boundary checked: on eight shared artificial measurement directions in one nine-camera geometry, all five frozen learned metrics change the stationary-point condition of original least squares. The untrained same-architecture metric also does; the identity control does not. Two independent implementations and a post-exit audit agree. Left residual weighting is therefore not automatically an objective-preserving warm start. The 505-frame clean cold-solver result remains; this audit adds no training, noisy-reconstruction score, speedup or real-BOST result.
+
+[报告 / Report](poolfire_warm_cost_angular_audit_20260908.md)
+
 ## 2026-09-08：压缩解法与暖启动 / Sketch Solve Versus Warm Start
 
 几何压缩检验完成：五个已开封相机集合的25个检查点中，固定近似逆平方暖启动数值有效但精度通过0/25；更简单的压缩直接求解与其精确对偶版本均为25/25。完整对照组仍因旧ridge对照的17个数值超差保持“不确定”；独立封存输出审计只支持关闭原主方案的必要精度门，不恢复完整比较。没有新训练、速度或论文突破，505帧冷启动学习度量证据保留。

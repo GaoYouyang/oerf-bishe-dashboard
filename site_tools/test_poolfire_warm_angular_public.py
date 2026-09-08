@@ -276,3 +276,36 @@ def test_physical_sketch_bilingual_and_retained_scientific_boundaries():
         assert soup.select_one('#loss-oracle-cost-result')
         if 'daily' in rel:
             assert soup.select_one('#latest #physical-sketch-result')
+
+
+def test_metric_boundary_is_not_a_noise_performance_or_warm_result():
+    data = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['metric_objective_boundary']
+    assert data['status'] == 'COUNTEREXAMPLES_TO_LEARNED_METRIC_OBJECTIVE_PRESERVATION'
+    assert data['numerical_valid'] and data['shared_probes'] == 8 and data['learned_models'] == 5
+    assert data['shared_probes_not_independent_rows'] and data['ratios_not_reconstruction_errors']
+    assert data['geometry_factors_nonfree'] and data['clean505_result_unchanged']
+    assert data['new_fitted_parameters'] == data['new_iterative_solver_paths'] == 0
+    assert not any(data[k] for k in ('cfd_truth_read', 'cfd_observations_read', 'measured_noise',
+        'final_reconstruction_scored', 'learned_warm_advantage', 'training_authorized',
+        'resource_speedup', 'algorithm_breakthrough', 'paper_success', 'external_generalization', 'real_bost'))
+    for p in (0, 1):
+        rows = [r for r in data['summaries'] if r['path'] == p]
+        assert [r['preserving'] for r in rows] == [8, 0, 0, 0, 0, 0, 0]
+        assert rows[0]['leakage']['worst'] < 2e-13
+        assert all(.32 < r['leakage']['p50'] < .35 for r in rows[2:])
+
+
+def test_metric_boundary_bilingual_and_retains_strong_clean_control():
+    evidence = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert evidence['latest_metric_objective_boundary']['learned_pairs'] == 40
+    assert not evidence['latest_metric_objective_boundary']['new_performance_claim']
+    assert evidence['latest_full_trajectory_controls']['passing'] == 505
+    for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
+        note = soup.select_one('#metric-objective-boundary')
+        assert '未训练' in note['data-i18n-zh'] and 'untrained' in note['data-i18n-en']
+        assert '505' in note['data-i18n-zh'] and '505' in note['data-i18n-en']
+        assert note.get_text() == note['data-i18n-zh']
+        assert soup.select_one('#physical-sketch-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #metric-objective-boundary')

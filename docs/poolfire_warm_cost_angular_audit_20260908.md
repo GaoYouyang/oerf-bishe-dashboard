@@ -2,6 +2,25 @@
 
 2026-09-08
 
+## 补充边界：加权目标不等于暖启动 / Boundary: Weighted Objective Is Not Warm Initialization
+
+目标边界核验：在同一个九相机几何的8个共享人工观测方向上，五个冻结学习度量全部改变了原始最小二乘的驻点条件；未训练的同结构度量也如此，恒等对照没有。两个独立实现与退出后复算一致。因此左侧残差加权不能自动当作保持原问题的暖启动。505帧无噪声冷启动结果保留；本轮没有训练、噪声重建评分、速度或真实BOST结论。
+
+Objective boundary checked: on eight shared artificial measurement directions in one nine-camera geometry, all five frozen learned metrics change the stationary-point condition of original least squares. The untrained same-architecture metric also does; the identity control does not. Two independent implementations and a post-exit audit agree. Left residual weighting is therefore not automatically an objective-preserving warm start. The 505-frame clean cold-solver result remains; this audit adds no training, noisy-reconstruction score, speedup or real-BOST result.
+
+设P为观测空间到A值域的正交投影，T=F^T F为冻结残差度量。本轮只从已知几何生成8个单位方向n，满足A^T n约为零。对于y=n，原始最小二乘在x=0驻定；加权问题在该点的梯度为-A^T T n。五个学习度量的40个“模型×方向”组合均非零，两个实现一致。未训练度量也出现反例，因此不是学习独有的问题。这里没有读取CFD观测或真值，也没有模拟或估计真实实验噪声。
+
+Let P project measurement space orthogonally onto the range of A, and let T=F^T F be a frozen residual metric. Eight unit directions n are generated from known geometry alone, with A^T n approximately zero. For y=n, original least squares is stationary at x=0; the weighted gradient there is -A^T T n. All 40 learned-map/direction combinations are nonzero, with both implementations agreeing. The untrained metric also supplies counterexamples, so this is not specific to learning. No CFD observations or truth are read, and no experimental noise is simulated or estimated.
+
+报告的比值是||P T n||/||T n||，不是场误差或噪声百分比。恒等对照最大约1.08e-13，未训练度量中位数0.182751，五个学习度量中位数0.329956至0.347536。两条独立路径的比值最大差9.64e-14，原生伴随重放最大差4.49e-18。只有8个共享人工方向，不得把重复实现和模型组合当成独立样本。
+
+The reported ratio is ||P T n||/||T n||, not a field error or noise percentage. Its identity-control maximum is about 1.08e-13; the untrained median is 0.182751, and the five learned medians range from 0.329956 to 0.347536. The two independent paths differ in this ratio by at most 9.64e-14; native-adjoint replay differs by at most 4.49e-18. There are only eight shared artificial directions; repeated implementations and model combinations are not independent samples.
+
+这是对实际冻结度量的目标兼容性反例，不是“学习度量必然有害”的定理，也没有否定已封存的505帧无噪声结果。未来必须区分保留原始目标的暖启动与另有物理依据的加权估计，不能省略强冷启动和完整直接求解对照。本轮离线主计算128A+256AT，另有128次原生AT、256个三角求解右端项、48F+48FT+48T；退出后复算112A+240AT。继承几何因子、存储和度量应用并不免费，无部署资源优势声明。
+
+These are objective-compatibility counterexamples for the actual frozen metrics, not a theorem that learned metrics must harm reconstruction or a rejection of the sealed 505-frame clean result. Future work must distinguish original-objective warm initialization from physically justified weighted estimation, retaining strong cold and full-direct controls. Offline main work is 128A+256AT, plus 128 native AT actions, 256 triangular right-hand sides and 48F+48FT+48T; the post-exit audit adds 112A+240AT. Inherited geometry factors, storage and metric application are not free, and no deployment resource advantage is claimed.
+
+
 ## 最新检验：固定压缩暖启动的必要门 / Latest: Necessary Gate for Fixed Sketch Warm Start
 
 几何压缩检验完成：五个已开封相机集合的25个检查点中，固定近似逆平方暖启动数值有效但精度通过0/25；更简单的压缩直接求解与其精确对偶版本均为25/25。完整对照组仍因旧ridge对照的17个数值超差保持“不确定”；独立封存输出审计只支持关闭原主方案的必要精度门，不恢复完整比较。没有新训练、速度或论文突破，505帧冷启动学习度量证据保留。
