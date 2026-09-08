@@ -343,3 +343,34 @@ def test_handoff_bilingual_is_five_points_not_full_trajectories():
         assert soup.select_one('#metric-objective-boundary') and soup.select_one('#physical-sketch-result')
         if 'daily' in rel:
             assert soup.select_one('#latest #metric-prefix-handoff-result')
+
+
+def test_amg_counterexample_is_calls_not_resource_or_warm_success():
+    data = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['amg_classical_control']
+    assert data['status'] == 'CLASSICAL_AMG_COUNTEREXAMPLE_TO_STRICT_LEARNED_T_ADVANTAGE'
+    assert (data['opened_points'], data['primary_passing_points'], data['cameras']) == (5, 5, 9)
+    assert data['independent_hierarchy'] and data['numerical_valid']
+    assert data['geometry_cache_nonfree'] and data['V_cycle_nonfree']
+    assert data['first_equals_sustained'] and data['crossings_not_deployable']
+    assert data['clean505_against_old_controls_preserved'] and data['full_direct_unbeaten']
+    assert not any(data[k] for k in ('complete_trajectories', 'new_training', 'algorithm_breakthrough',
+        'paper_success', 'resource_speedup', 'external_generalization', 'real_bost', 'learned_warm_success'))
+    for row, count in zip(data['points'], (71, 70, 73, 70, 75)):
+        assert row['amg'] == dict(lower=count, upper=count)
+        assert count < row['learned']['lower']
+
+
+def test_amg_bilingual_retains_old_505_and_handoff_history():
+    evidence = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert evidence['latest_amg_classical_control']['amg_earlier_points'] == 5
+    assert evidence['latest_full_trajectory_controls']['passing'] == 505
+    for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
+        note = soup.select_one('#amg-classical-control-result')
+        assert note.get_text() == note['data-i18n-zh']
+        assert '70至75' in note['data-i18n-zh'] and '70 to 75' in note['data-i18n-en']
+        assert '505' in note['data-i18n-zh'] and '505' in note['data-i18n-en']
+        assert '不免费' in note['data-i18n-zh'] and 'not free' in note['data-i18n-en']
+        assert soup.select_one('#metric-prefix-handoff-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #amg-classical-control-result')

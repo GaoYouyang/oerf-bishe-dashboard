@@ -2,6 +2,38 @@
 
 2026-09-08
 
+## 最新改判：标准AMG对照 / Latest: Standard AMG Comparator
+
+更强经典对照改变了判断：五个已开封、无噪声九相机样本上，固定标准AMG预条件PCGLS用70至75次A和同量AT达到四项1%精度，原学习度量需125至167次。两套独立层级与求解实现、退出后评分均通过。学习方法相对于这个新对照没有调用数优势。AMG的几何缓存和每步V循环不免费，因此尚不能说实际更快。旧505帧对旧对照的结果保留；本轮不是完整轨迹、暖启动成功或论文突破。
+
+A stronger classical control changes the verdict: on five opened clean nine-camera samples, fixed standard AMG-preconditioned PCGLS attains all four 1% accuracy targets in 70 to 75 A actions and the same AT count, versus 125 to 167 for the learned metric. Independent hierarchy and solver implementations and post-exit scoring pass. The learned method has no call advantage over this new control. AMG geometry caches and V cycles are not free, so lower wall time is unproven. The old 505-frame result against old controls remains valid; this is not a full-trajectory result, successful warm initializer or paper breakthrough.
+
+| 旧样本 / Old Point | 经典AMG / Classical AMG | 原学习度量 / Learned Metric |
+|---|---:|---:|
+| 1 | 71 | 140 |
+| 2 | 70 | 135 to 136 |
+| 3 | 73 | 129 to 130 |
+| 4 | 70 | 167 |
+| 5 | 75 | 125 |
+
+
+每个数字同时表示A与AT次数。AMG两套实现首次与持续达标次数一致；持续仅指之后保持到256步前缀末尾。四指标均要求误差不超过1%，不靠真值提前停止。它是零初值、原始观测目标的经典预条件PCGLS，不是学习型暖启动。五点不能写成五条完整轨迹；旧505帧试验未被重跑或篡改。
+
+Each number denotes both A and AT counts. Both AMG implementations agree on first and sustained crossings; sustained refers only to the remaining 256-step prefix. All four errors must be at most 1%; no truth-based stopping is used during iteration. This is classical zero-start PCGLS for the original observation objective, not a learned warm initializer. Five points are not five full trajectories; the old 505-frame experiment is neither rerun nor altered.
+
+几何构建、缓存法矩阵和每步V循环必须另计。固定层级含四次对称前后平滑扫掠、粗解与限制/延拓等工作，因此调用次数减少不能直接等同于更快或更省内存。完整直接求解也仍是强对照。独立层级作用差1.94e-15，原生物理重放差7.08e-16，退出后独立评分最大差5.33e-15；这些证明本轮数值与判决可复核，不证明部署速度。
+
+Geometry setup, cached normal matrices and every V cycle have separate costs. The fixed hierarchy includes four forward/backward smoothing sweeps, a coarse solve, and restriction/prolongation work; fewer calls do not imply lower wall time or memory. Full direct solving remains a strong comparator. Independent hierarchy-action discrepancy is 1.94e-15, native replay 7.08e-16, and post-exit score discrepancy 5.33e-15. These qualify the numerical verdict, not deployment speed.
+
+保留AMG为后续学习的必需对照，先核验完整已开封轨迹覆盖及非免费开销。不以旧对照优势继续扩模型，不把经典求解当成暖启动创新。
+
+Retain AMG as a mandatory learning comparator; qualify full opened-trajectory coverage and nonfree overhead before wider claims. Do not expand the model on old-control superiority or relabel a classical solver as warm-start innovation.
+
+采用已有[PyAMG平滑聚合 / PyAMG smoothed aggregation](https://pyamg.readthedocs.io/en/latest/generated/pyamg.aggregation.html)，不主张组件创新。配置在看结果前固定，没有搜索强度、层数或平滑参数。
+
+This uses established PyAMG smoothed aggregation, with no component-novelty claim. Configuration was fixed before results, without searching strength, levels or smoothing parameters.
+
+
 ## 最新检验：固定16步交接 / Latest: Fixed 16-Step Handoff
 
 固定交接检验未通过：五个已开封九相机样本上，学习度量先跑16步，经精确伴随提升初值后交给原始CGLS，全部算到273A+273AT仍未达到四项1%精度目标。同点重启但继续用学习度量，在128至169A及同量AT达到目标，比不中断只多2至3次调用。两个独立实现与退出后评分一致。这只关闭固定16步交接，不否定505帧无噪声冷启动证据，也不是完整轨迹、速度、外部泛化或真实BOST结论。
