@@ -2,6 +2,42 @@
 
 2026-09-08
 
+## 最新全量判决 / Latest Full-Roster AMG Verdict
+
+完整已开封轨迹验证完成：固定经典AMG对照在505/505帧、5/5条完整轨迹上通过四项1%精度门，并在与原学习方法相同、只用观测的停止证书下，用更少的A和AT调用。逐帧保守配对的A调用节省中位数为60.14%，最小54.02%。两套求解实现、物理重放与退出后独立审裁一致。这否定了原学习方法相对此强对照的调用数优势；不是新的学习算法、实际速度或论文突破。仅限固定九相机、无噪声、已开封数据；几何缓存、停止证书准备和V循环均不免费。
+
+Full opened-roster verification is complete: fixed classical AMG passes all four 1% accuracy gates on 505/505 frames and 5/5 complete trajectories, with fewer A and AT calls under the same observation-only stopping certificate as the learned method. Conservatively paired per-frame A savings have median 60.14% and minimum 54.02%. Two solver implementations, physical replay and separate post-exit adjudication agree. This rejects the learned method's call advantage over this stronger control, not a new learned algorithm, wall-time win or paper breakthrough. Scope is fixed nine-camera, clean, already opened data; geometry caches, certificate preparation and V cycles are not free.
+
+| 轨迹 / Trajectory | 达标且领先 / Qualified and Fewer Calls | AMG A中位 / Median A | A节省中位 / Median Paired Saving | 最小节省 / Minimum Saving |
+|---|---:|---:|---:|---:|
+| 1 | 101/101 | 118 | 60.75% | 58.02% |
+| 2 | 101/101 | 118 | 59.22% | 55.97% |
+| 3 | 101/101 | 120 | 58.19% | 54.02% |
+| 4 | 101/101 | 117 | 63.52% | 59.80% |
+| 5 | 101/101 | 119 | 59.32% | 54.87% |
+
+
+AMG的保守A调用范围102至125、中位119，AT范围101至124、中位118；原学习方法的有利A下界范围261至352、中位297，AT范围260至351、中位296。节省是每帧配对后统计，不是两个中位数相除。每一步包含一个非免费V循环，成功停止另含一次显式物理确认。两套旧层级复用并重新核验作用，两套求解独立运行全部505帧；不是重新构造层级，也没有重新训练学习模型。
+
+Conservative AMG A counts range from 102 to 125, median 119; AT from 101 to 124, median 118. Favorable learned A lower bounds range from 261 to 352, median 297; AT from 260 to 351, median 296. Savings are paired per frame before aggregation, not the ratio of two medians. Every step includes a nonfree V cycle and successful stopping includes an explicit physical confirmation. Both previously qualified hierarchies are reused and their actions rechecked; two solvers independently process all 505 frames. No hierarchy reconstruction or learned-model refit occurs.
+
+本轮主比较双方使用同一个不读真值的精度停止证书；它与此前五点70至75次调用的事后真值交叉不同，不能混用。二级Zero/BP/dual-ridge/未训练度量/Jacobi比较各为505/505，但对照使用其原先更有利的事后首次达标或截尾下界，必须单独标明。原505帧相对于旧对照的结果保留，不能再扩写成相对于所有经典方法的学习优势。
+
+Both primary methods use the same truth-free accuracy stopping certificate. This differs from the earlier five-point retrospective true-error crossings at 70 to 75 calls; the counts must not be mixed. Each secondary comparison against Zero/BP/dual ridge/untrained metric/Jacobi passes 505/505, but those controls use their earlier favorable ideal first-hit or censoring bounds and must be labelled separately. The old 505-frame result against old controls remains valid, not evidence of superiority over all classical methods.
+
+全部1010个终点先封存，再读真值评分。独立同状态评分最大差2.17e-19，原生物理重放7.97e-16，成对早期状态3.67e-14；退出后的调用数、证书触发历史和轨迹汇总完全一致。四项误差均低于1%，不是要求两个方法误差逐值相等。
+
+All 1010 endpoints are sealed before truth scoring. Maximum independent same-state score difference is 2.17e-19, native physical replay discrepancy 7.97e-16, and paired early-state discrepancy 3.67e-14. Post-exit call counts, certificate-trigger histories and trajectory summaries agree exactly. Both methods meet all four 1% thresholds; their errors are not required to be numerically identical.
+
+结论只涉及同一固定几何的已开封、无噪声数据。完整直接求解在单看在线调用数时仍未被超越；几何预处理、停止证书准备、V循环和学习成本都须另计，当前没有端到端时间或内存优势。AMG是已有经典方法，本轮没有学习型暖启动创新、未开外门或真实BOST成功。
+
+The conclusion concerns already opened clean data at one fixed geometry only. Full cached direct solving remains unbeaten on online calls alone. Geometry preprocessing, certificate preparation, V cycles and learning costs require separate accounting; no end-to-end time or memory advantage has been established. AMG is an established classical method, not a new learned warm initializer, unopened external result or real-BOST success.
+
+保留AMG和完整直接求解为强对照。下一步先明确学习必须补足的实际不足，再冻结最小机制；不继续扩张已失去调用数优势的模型，也不把调用数等同于速度。
+
+Retain AMG and full direct solving as strong controls. Identify the practical deficit that learning must address before freezing a minimal mechanism; do not expand the model whose call advantage is lost or equate calls with speed.
+
+
 ## 最新改判：标准AMG对照 / Latest: Standard AMG Comparator
 
 更强经典对照改变了判断：五个已开封、无噪声九相机样本上，固定标准AMG预条件PCGLS用70至75次A和同量AT达到四项1%精度，原学习度量需125至167次。两套独立层级与求解实现、退出后评分均通过。学习方法相对于这个新对照没有调用数优势。AMG的几何缓存和每步V循环不免费，因此尚不能说实际更快。旧505帧对旧对照的结果保留；本轮不是完整轨迹、暖启动成功或论文突破。

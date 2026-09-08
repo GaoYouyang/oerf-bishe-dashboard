@@ -7,6 +7,43 @@ ROOT = Path(__file__).resolve().parents[1]
 STEM = 'poolfire_warm_cost_angular_audit_20260908'
 
 
+def test_full_amg_common_certificate_and_scoped_costs():
+    d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['full_amg_control']
+    assert d['status'] == 'PASS_FULL_OPENED_AMG_CERTIFIED_CONTROL'
+    assert (d['frames'], d['eligible'], d['passing'], d['complete_trajectories']) == (505, 505, 505, 5)
+    assert d['query_paths'] == 1010 and d['camera_count'] == 9
+    assert all(d[k] for k in ('common_observation_only_primary_stop', 'conservative_paired_intervals',
+        'secondary_uses_ideal_control_stops', 'query_truth_after_prediction_seal',
+        'inherited_independently_qualified_hierarchy', 'geometry_and_certificate_setup_nonfree',
+        'V_cycle_nonfree', 'full_direct_unbeaten', 'opened_data_not_external'))
+    assert not any(d[k] for k in ('new_training', 'algorithm_breakthrough', 'learned_warm_success',
+        'paper_success', 'resource_speedup', 'external_generalization', 'real_bost'))
+    assert d['cost_stats']['amg_upper']['A'] == dict(min=102, median=119, max=125)
+    assert d['cost_stats']['learned_lower']['A'] == dict(min=261, median=297, max=352)
+    assert .6013 < d['cost_stats']['savings_lower']['A']['median'] < .6014
+    assert .5402 < d['cost_stats']['savings_lower']['A']['min'] < .5403
+    assert len(d['trajectories']) == 5 and all(t['passing'] == 101 for t in d['trajectories'])
+    assert all(v == 505 for v in d['secondary_passing'].values())
+    assert d['post_summary_maximum'] == 0
+
+
+def test_full_amg_bilingual_latest_and_pilot_preserved():
+    e = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert e['latest_full_amg_control']['complete_trajectories'] == 5
+    assert e['latest_amg_classical_control']['opened_points'] == 5
+    assert 'AMG' in e['headline_en'] and '505' in e['headline_zh']
+    for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
+        note = soup.select_one('#full-amg-control-result')
+        assert '505/505' in note['data-i18n-zh'] and '505/505' in note['data-i18n-en']
+        assert '停止证书' in note['data-i18n-zh'] and 'stopping certificate' in note['data-i18n-en']
+        assert '不免费' in note['data-i18n-zh'] and 'not free' in note['data-i18n-en']
+        assert note.get_text() == note['data-i18n-zh']
+        assert soup.select_one('#amg-classical-control-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #full-amg-control-result')
+
+
 def test_cost_failure_and_uncertainty_are_distinct():
     d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())
     assert d['status'] == 'FAIL_NONLINEAR_RETROSPECTIVE_ACTUAL_COST'

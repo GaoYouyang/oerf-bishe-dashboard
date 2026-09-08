@@ -1,4 +1,14 @@
 {
+  "latest_full_amg_control": {
+    "status": "PASS_FULL_OPENED_AMG_CERTIFIED_CONTROL",
+    "passing": 505,
+    "frames": 505,
+    "complete_trajectories": 5,
+    "median_A_saving": 0.6013513513513513,
+    "minimum_A_saving": 0.5402298850574713,
+    "resource_speedup": false,
+    "summary": "../docs/poolfire_warm_cost_angular_audit_20260908.json"
+  },
   "latest_amg_classical_control": {
     "status": "CLASSICAL_AMG_COUNTEREXAMPLE_TO_STRICT_LEARNED_T_ADVANTAGE",
     "opened_points": 5,
@@ -833,12 +843,12 @@
   "v212_signed_line_cancellation_scientific_decision": "FAIL_SIGNED_LINE_CANCELLATION_DOES_NOT_EXPLAIN_CASE5_REFERENCE_V212",
   "latest_valid_mechanism_status": "VERIFIED_FIXED_GLOBAL_OBSERVATION_CONTEXT_ABLATION",
   "latest_valid_mechanism_formal_status": "SEALED_POST_OPEN_DIAGNOSTIC",
-  "headline": "Classical AMG uses fewer calls on five points; the learned advantage fails this stronger control.",
-  "headline_en": "Classical AMG uses fewer calls on five points; the learned advantage fails this stronger control.",
-  "headline_zh": "经典AMG在五点上用更少调用；原学习优势未通过更强对照。",
-  "latest_execution_headline": "A stronger classical control changes the verdict: on five opened clean nine-camera samples, fixed standard AMG-preconditioned PCGLS attains all four 1% accuracy targets in 70 to 75 A actions and the same AT count, versus 125 to 167 for the learned metric. Independent hierarchy and solver implementations and post-exit scoring pass. The learned method has no call advantage over this new control. AMG geometry caches and V cycles are not free, so lower wall time is unproven. The old 505-frame result against old controls remains valid; this is not a full-trajectory result, successful warm initializer or paper breakthrough.",
-  "latest_execution_headline_en": "A stronger classical control changes the verdict: on five opened clean nine-camera samples, fixed standard AMG-preconditioned PCGLS attains all four 1% accuracy targets in 70 to 75 A actions and the same AT count, versus 125 to 167 for the learned metric. Independent hierarchy and solver implementations and post-exit scoring pass. The learned method has no call advantage over this new control. AMG geometry caches and V cycles are not free, so lower wall time is unproven. The old 505-frame result against old controls remains valid; this is not a full-trajectory result, successful warm initializer or paper breakthrough.",
-  "latest_execution_headline_zh": "更强经典对照改变了判断：五个已开封、无噪声九相机样本上，固定标准AMG预条件PCGLS用70至75次A和同量AT达到四项1%精度，原学习度量需125至167次。两套独立层级与求解实现、退出后评分均通过。学习方法相对于这个新对照没有调用数优势。AMG的几何缓存和每步V循环不免费，因此尚不能说实际更快。旧505帧对旧对照的结果保留；本轮不是完整轨迹、暖启动成功或论文突破。",
+  "headline": "All 505 frames: classical AMG uses fewer calls than the learned method; no learned-warm breakthrough yet.",
+  "headline_en": "All 505 frames: classical AMG uses fewer calls than the learned method; no learned-warm breakthrough yet.",
+  "headline_zh": "全505帧：经典AMG比原学习方法用更少调用，尚无学习型暖启动突破。",
+  "latest_execution_headline": "Full opened-roster verification is complete: fixed classical AMG passes all four 1% accuracy gates on 505/505 frames and 5/5 complete trajectories, with fewer A and AT calls under the same observation-only stopping certificate as the learned method. Conservatively paired per-frame A savings have median 60.14% and minimum 54.02%. Two solver implementations, physical replay and separate post-exit adjudication agree. This rejects the learned method's call advantage over this stronger control, not a new learned algorithm, wall-time win or paper breakthrough. Scope is fixed nine-camera, clean, already opened data; geometry caches, certificate preparation and V cycles are not free.",
+  "latest_execution_headline_en": "Full opened-roster verification is complete: fixed classical AMG passes all four 1% accuracy gates on 505/505 frames and 5/5 complete trajectories, with fewer A and AT calls under the same observation-only stopping certificate as the learned method. Conservatively paired per-frame A savings have median 60.14% and minimum 54.02%. Two solver implementations, physical replay and separate post-exit adjudication agree. This rejects the learned method's call advantage over this stronger control, not a new learned algorithm, wall-time win or paper breakthrough. Scope is fixed nine-camera, clean, already opened data; geometry caches, certificate preparation and V cycles are not free.",
+  "latest_execution_headline_zh": "完整已开封轨迹验证完成：固定经典AMG对照在505/505帧、5/5条完整轨迹上通过四项1%精度门，并在与原学习方法相同、只用观测的停止证书下，用更少的A和AT调用。逐帧保守配对的A调用节省中位数为60.14%，最小54.02%。两套求解实现、物理重放与退出后独立审裁一致。这否定了原学习方法相对此强对照的调用数优势；不是新的学习算法、实际速度或论文突破。仅限固定九相机、无噪声、已开封数据；几何缓存、停止证书准备和V循环均不免费。",
   "metrics": {
     "poolfire_f30_cells": 505,
     "poolfire_f30_neural_matched_cells": 409,
@@ -7008,9 +7018,9 @@
     "v243_gpu_rental_authorized": false,
     "v243_algorithm_breakthrough": false
   },
-  "next_scientific_gate": "Retain AMG as a mandatory learning comparator; qualify full opened-trajectory coverage and nonfree overhead before wider claims. Do not expand the model on old-control superiority or relabel a classical solver as warm-start innovation.",
-  "next_scientific_gate_en": "Retain AMG as a mandatory learning comparator; qualify full opened-trajectory coverage and nonfree overhead before wider claims. Do not expand the model on old-control superiority or relabel a classical solver as warm-start innovation.",
-  "next_scientific_gate_zh": "保留AMG为后续学习的必需对照，先核验完整已开封轨迹覆盖及非免费开销。不以旧对照优势继续扩模型，不把经典求解当成暖启动创新。",
+  "next_scientific_gate": "Retain AMG and full direct solving as strong controls. Identify the practical deficit that learning must address before freezing a minimal mechanism; do not expand the model whose call advantage is lost or equate calls with speed.",
+  "next_scientific_gate_en": "Retain AMG and full direct solving as strong controls. Identify the practical deficit that learning must address before freezing a minimal mechanism; do not expand the model whose call advantage is lost or equate calls with speed.",
+  "next_scientific_gate_zh": "保留AMG和完整直接求解为强对照。下一步先明确学习必须补足的实际不足，再冻结最小机制；不继续扩张已失去调用数优势的模型，也不把调用数等同于速度。",
   "latest_execution_evidence": {
     "note": "../document_reader.html?doc=docs%2Fpoolfire_warm_cost_angular_audit_20260908.md",
     "figure": "assets/figures/poolfire_warm_error_shape_20260908.png"
