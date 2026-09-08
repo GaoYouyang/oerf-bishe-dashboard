@@ -2,6 +2,37 @@
 
 2026-09-08
 
+## 最新AMG误差传播诊断 / Latest AMG Error-Propagation Diagnosis
+
+新的AMG诊断排除了一个简单解释：在比历史ridge更费调用的40个样本、比零初值更费调用的11个样本中，学习初值经过固定四次AMG误差传播后的残留观测空间能量仍全部更小。两组样本会重叠。误差保留比例分别在32/40和7/11个样本上更高，但比例较高不等于残留总量更多。两种实现及原生射线重放独立通过；这不是新的PCGLS运行、因果证明或加速成功。原全量结论仍为441/505省调用、完整轨迹0/5。
+
+The new AMG diagnostic refutes a simple explanation: on all 40 strict call harms versus historical ridge and all 11 versus zero, the learned start still leaves less absolute observation-space error energy after exactly four AMG error-propagation cycles. The sets overlap. The retained fraction is higher on 32/40 and 7/11 respectively, but a larger fraction does not mean more absolute error. Independent implementations and native-ray replay pass. This is not a new PCGLS run, causal proof or acceleration success. The full result remains 441/505 call savings and 0/5 complete trajectories.
+
+| 同AMG对照 / Same-AMG Control | 严格调用反例 / Strict Call Harms | 残留总量更小 / Less Absolute Error | 保留比例更高 / Higher Retained Fraction |
+|---|---:|---:|---:|
+| 历史ridge / Historical Ridge | 40 | 40 | 32 |
+| 零初值 / Zero | 11 | 11 | 7 |
+
+
+固定使用 e4=(I-B A^T A)^4(t-x0)。t是已通过独立精度门的观测导出直接解，B是原有AMG预条件器；覆盖全部505帧的学习、ridge、零初值和两套数值路径，不读取CFD真值、不训练。唯一主检验是四次传播后的绝对观测空间误差能量除以参考能量。保留比例使用各自初始误差作分母，两者不能混淆。
+
+The fixed diagnostic is e4=(I-B A^T A)^4(t-x0). Here t is the independently qualified observation-derived direct solution and B is the existing AMG preconditioner. All 505 frames, learned/ridge/zero starts and both numerical paths are covered, without CFD truth access or fitting. The sole primary measures absolute observation-space error energy after four cycles, divided by reference energy. Retained fractions instead divide by each start's own initial error: these quantities are not interchangeable.
+
+在全505帧中，学习残留总量比ridge更小502次、更大3次，比零初值更小505次。所有预先已知的严格调用反例里，它仍更小，否定了这次“绝对AMG难消除误差更多”的统一解释。保留比例的描述性差异不是事后替代的成功标准，也不能证明后续PCG为何更慢。四次定常传播不是PCG的Krylov多项式；不能据此排除全部晚期谱结构或停止证书影响。
+
+Across all 505 frames, learned absolute remaining error is lower than ridge on 502 and higher on 3; it is lower than zero on all 505. It remains lower on every previously known strict call harm, refuting this uniform absolute-AMG-error-excess explanation. Descriptive differences in retained fractions are not a replacement success criterion or a causal explanation of slower PCG. Four stationary cycles are not the PCG Krylov polynomial; this does not exclude all late spectral structure or stopping-certificate effects.
+
+正式实现采用冻结PyAMG与A^T(Ae)，独立实现重建正规矩阵并用另写的三角校正扫描、粗层解和原生射线重放。全部15项核验通过，端点差约8.99e-14、原生投影差约2.65e-16、汇总差约4.86e-17。新增计算全部是离线诊断：正式16160A+12120AT+12120V；独立16160次CSR-A、3030次原生A、12120V、2次正规矩阵构建及12120次正规矩阵乘法（另列相当于12120对A/AT）。几何与参考构建不免费，没有部署节省。
+
+The formal implementation uses frozen PyAMG with A^T(Ae); the independent implementation rebuilds normal matrices and uses separately written triangular correction sweeps, coarse solves and native-ray replay. All 15 checks pass: endpoint difference about 8.99e-14, native projection 2.65e-16, summary 4.86e-17. All new work is offline diagnosis: formal 16160A+12120AT+12120V; independent 16160 CSR-A, 3030 native-A, 12120V, two normal builds and 12120 normal products, separately equivalent to 12120 A/AT pairs. Geometry and reference construction are nonfree. No deployment savings are established.
+
+不把更小的初始误差或四次AMG残留总量视为省迭代的充分保证。下一机制必须明确连接可部署信息与后续求解行为，先排除便宜解释；不改旧模型、循环次数或停止门救援。
+
+Do not treat smaller initial error or four-cycle AMG residual magnitude as a sufficient guarantee of iteration savings. A next mechanism must explicitly connect deployable information to refinement behavior and exclude cheap explanations; no old-model, cycle-count or stopping-gate rescue.
+
+方法背景 / Method context: [PyAMG V-cycle API](https://pyamg.readthedocs.io/en/latest/generated/pyamg.multilevel.html), [CG theory](https://netlib.org/linalg/old_html_templates/subsubsection2.6.3.1.1.html). 文献说明两类迭代的区别，不预言本次数字。These sources distinguish the iterations; they do not predict these numerical findings.
+
+
 ## 最新初值质量诊断 / Latest Initial-Quality Diagnosis
 
 尾部诊断进一步收紧了问题：在全部505帧与五种同AMG对照的2525组比较中，学习初值的场、全梯度、内部梯度和观测误差均更小，但仍会更费调用。相对零初值、BP、未训练T0、一次V和历史ridge，严格变慢分别发生11/16/13/10/40次，集合有重叠。因此初值四项误差占优不足以保证后续迭代更快；全量判决仍是441/505省调用、完整轨迹0/5。这是对已独立评分数组的二次独立汇总，不是新求解、谱因果证明或新训练成功。

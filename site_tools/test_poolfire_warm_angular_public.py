@@ -7,6 +7,42 @@ ROOT = Path(__file__).resolve().parents[1]
 STEM = 'poolfire_warm_cost_angular_audit_20260908'
 
 
+def test_amg_error_primary_and_fraction_are_not_interchangeable():
+    d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['amg_error_propagation']
+    assert d['status'] == 'REFUTED_UNIFORM_AMG_ERROR_EXCESS'
+    assert (d['frames'], d['cycles'], d['arms'], d['numerical_paths']) == (505, 4, 3, 2)
+    assert d['numerical_valid'] and d['independent_checks'] == 15 and d['stationary_not_pcg']
+    assert d['geometry_and_reference_nonfree'] and d['parent_complete_trajectories'] == 0
+    for name, harm, fraction in (('dual_ridge', 40, 32), ('zero', 11, 7)):
+        row = d['comparisons'][name]
+        assert row['strict_harm'] == row['lower_on_harm'] == harm
+        assert row['excess_on_harm'] == row['unresolved_on_harm'] == 0
+        assert row['fraction_excess_on_harm'] == fraction
+        assert len(row['trajectories']) == 5
+    assert d['formal_offline'] == dict(A=16160, AT=12120, V=12120)
+    assert d['independent_offline']['native_A'] == 3030
+    assert d['independent_normal_forward_equivalent_pairs'] == 12120
+    assert not any(d[k] for k in ('cfd_truth_read', 'new_training', 'new_policy_authorized',
+        'causal_cost_explanation', 'algorithm_breakthrough', 'paper_success',
+        'resource_speedup', 'external_generalization', 'real_bost'))
+
+
+def test_amg_error_bilingual_retains_previous_counterexamples():
+    e = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert e['latest_amg_error_propagation']['cycles'] == 4
+    assert e['latest_tensor_warm_amg_full']['complete_trajectories'] == 0
+    for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
+        note = soup.select_one('#amg-error-propagation-result')
+        for lang in ('zh', 'en'):
+            assert all(t in note['data-i18n-'+lang] for t in ('40', '11', '32/40', '7/11', '0/5'))
+        assert note.get_text() == note['data-i18n-zh']
+        assert soup.select_one('#warm-amg-tail-audit-result')
+        assert soup.select_one('#tensor-warm-amg-full-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #amg-error-propagation-result')
+
+
 def test_tail_audit_quality_does_not_rehabilitate_cost_failure():
     d = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['warm_amg_tail_audit']
     assert d['status'] == 'INITIAL_METRIC_DOMINANCE_DOES_NOT_PREVENT_COST_HARM'

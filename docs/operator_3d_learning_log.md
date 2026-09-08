@@ -1,3 +1,11 @@
+## 2026-09-08：残留误差总量仍解释不了调用尾部 / Remaining Error Still Does Not Explain Call Tails
+
+新的AMG诊断排除了一个简单解释：在比历史ridge更费调用的40个样本、比零初值更费调用的11个样本中，学习初值经过固定四次AMG误差传播后的残留观测空间能量仍全部更小。两组样本会重叠。误差保留比例分别在32/40和7/11个样本上更高，但比例较高不等于残留总量更多。两种实现及原生射线重放独立通过；这不是新的PCGLS运行、因果证明或加速成功。原全量结论仍为441/505省调用、完整轨迹0/5。
+
+The new AMG diagnostic refutes a simple explanation: on all 40 strict call harms versus historical ridge and all 11 versus zero, the learned start still leaves less absolute observation-space error energy after exactly four AMG error-propagation cycles. The sets overlap. The retained fraction is higher on 32/40 and 7/11 respectively, but a larger fraction does not mean more absolute error. Independent implementations and native-ray replay pass. This is not a new PCGLS run, causal proof or acceleration success. The full result remains 441/505 call savings and 0/5 complete trajectories.
+
+[报告 / Report](poolfire_warm_cost_angular_audit_20260908.md)
+
 ## 2026-09-08：初值更准但仍会更慢 / Better Initial Metrics Can Still Cost More
 
 尾部诊断进一步收紧了问题：在全部505帧与五种同AMG对照的2525组比较中，学习初值的场、全梯度、内部梯度和观测误差均更小，但仍会更费调用。相对零初值、BP、未训练T0、一次V和历史ridge，严格变慢分别发生11/16/13/10/40次，集合有重叠。因此初值四项误差占优不足以保证后续迭代更快；全量判决仍是441/505省调用、完整轨迹0/5。这是对已独立评分数组的二次独立汇总，不是新求解、谱因果证明或新训练成功。
