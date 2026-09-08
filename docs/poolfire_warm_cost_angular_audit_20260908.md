@@ -2,6 +2,42 @@
 
 2026-09-08
 
+## 最新检验：固定16步交接 / Latest: Fixed 16-Step Handoff
+
+固定交接检验未通过：五个已开封九相机样本上，学习度量先跑16步，经精确伴随提升初值后交给原始CGLS，全部算到273A+273AT仍未达到四项1%精度目标。同点重启但继续用学习度量，在128至169A及同量AT达到目标，比不中断只多2至3次调用。两个独立实现与退出后评分一致。这只关闭固定16步交接，不否定505帧无噪声冷启动证据，也不是完整轨迹、速度、外部泛化或真实BOST结论。
+
+The fixed handoff test fails: on five opened nine-camera samples, 16 learned-metric steps followed by an exact adjoint lift and original CGLS never attain all four 1% accuracy targets through 273A+273AT. Resetting at the same initial field while retaining the learned metric attains them in 128 to 169A and the same number of AT actions, only 2 to 3 extra calls over uninterrupted solving. Both independent implementations and post-exit scoring agree. This closes only the fixed 16-step handoff, preserves the 505-frame clean cold-solver evidence, and establishes no full-trajectory, speed, external-generalization or real-BOST result.
+
+| 旧样本 / Old Point | 交给原始CGLS / Original CGLS Handoff | 同点重启学习度量 / Learned-Metric Reset | 不中断学习度量 / Uninterrupted Metric |
+|---|---:|---:|---:|
+| 1 | >=274 | 142 | 140 |
+| 2 | >=274 | 138 | 135 to 136 |
+| 3 | >=274 | 132 | 129 to 130 |
+| 4 | >=274 | 169 | 167 |
+| 5 | >=274 | 128 | 125 |
+
+
+表中每个数字同时表示A次数和AT次数，包含16步初值生成、一次精确伴随提升和后续初始前向计算。交接后k步的总账为(17+k)A+(17+k)AT。两个实现的首次达标与持续达标结果一致；不中断控制的单步差以区间披露。主方案只是在273A+273AT的预注册前缀内没有达标，下界274不是发散或永远无法重建的证明。四指标是场、完整梯度、内部梯度和观测，全部要求不超过1%。
+
+Each table number denotes both the A count and AT count, including the 16-step initializer, one exact adjoint lift and the suffix's initial forward. After k suffix steps the total is (17+k)A+(17+k)AT. First and sustained hits agree; one-step implementation differences for uninterrupted solving remain intervals. The primary simply has no hit within the preregistered 273A+273AT prefix: its lower bound of 274 is not proof of divergence or permanent reconstruction failure. Field, full-gradient, interior-gradient and observation errors must all be at most 1%.
+
+同点重启控制与主方案使用完全相同的初值，只是继续使用原来的学习度量；它比不中断仅多2至3次A/AT。这支持本次固定16步组合依赖后续持续加权，而不能只把失速归因于重启。它不排除所有其他暖启动。旧经典控制同样存在前缀截断，因此不能把两个未达标前缀强行排出优劣；完整直接解仍是不能省略的强资源对照。
+
+The reset control starts at exactly the primary's initial field but retains the original learned metric, costing only 2 to 3 more A/AT actions than uninterrupted solving. This supports dependence on continued weighting in this fixed 16-step construction; the slowdown cannot be attributed merely to restarting. It does not exclude all other warm initializers. The older classical prefixes are also censored, so two censored methods cannot be forcibly ranked; full direct solving remains an essential strong resource comparator.
+
+20条新路径的5140个后续状态和170个前缀状态均在真值评分前封存。前缀与旧状态逐位一致；精确提升差1.12e-15，原生物理重放差7.11e-16，退出后独立评分差1.11e-15。实际新增求解5300A+5300AT；离线共用初值仅节省审计工作，每个方法的逻辑账仍独立计入完整初值成本。度量应用、继承训练、几何构建、完整直接因子、存储和评分不免费。首次达标来自事后真值，不是部署停止规则，也不构成速度证明。
+
+All 5,140 suffix states and 170 prefix states from 20 new paths are sealed before truth scoring. Prefixes reproduce the old states bitwise; exact-lift discrepancy is 1.12e-15, native physical replay 7.11e-16, and post-exit independent scoring 1.11e-15. Actual new solving uses 5,300A+5,300AT. Offline prefix sharing only saves audit work: each method's logical account still includes its complete initializer. Metric applications, inherited training, geometry, full direct factors, storage and scoring are not free. Truth-derived first hits are not deployable stopping rules or speed evidence.
+
+封存固定16步交接，不搜索其他交接深度。下一种暖启动须提供非冗余、计入部署成本的慢误差校正信息，并保留强冷启动和完整直接求解对照。
+
+Close the fixed 16-step handoff without searching switch depths. A next warm mechanism needs nonredundant, deployment-costed information about slow error components, retaining strong cold and full-direct controls.
+
+求解与初值校正是经典数值方法，不声称组件首创：[Stanford CGLS说明 / Stanford CGLS documentation](https://web.stanford.edu/group/SOL/software/cgls/)。文献用于核对方法角色，不能替代本轮的性能验证。
+
+Solving and initial-guess correction are classical numerical methods; no component novelty is claimed. The linked documentation clarifies the method's role, not this experiment's performance.
+
+
 ## 补充边界：加权目标不等于暖启动 / Boundary: Weighted Objective Is Not Warm Initialization
 
 目标边界核验：在同一个九相机几何的8个共享人工观测方向上，五个冻结学习度量全部改变了原始最小二乘的驻点条件；未训练的同结构度量也如此，恒等对照没有。两个独立实现与退出后复算一致。因此左侧残差加权不能自动当作保持原问题的暖启动。505帧无噪声冷启动结果保留；本轮没有训练、噪声重建评分、速度或真实BOST结论。

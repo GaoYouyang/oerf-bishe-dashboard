@@ -309,3 +309,37 @@ def test_metric_boundary_bilingual_and_retains_strong_clean_control():
         assert soup.select_one('#physical-sketch-result')
         if 'daily' in rel:
             assert soup.select_one('#latest #metric-objective-boundary')
+
+
+def test_fixed_handoff_cost_censoring_and_same_reset_control():
+    data = json.loads((ROOT/'docs'/f'{STEM}.json').read_text())['metric_prefix_handoff']
+    assert data['status'] == 'FAIL_FIXED_METRIC_PREFIX_HANDOFF_NECESSARY_COST'
+    assert data['numerical_valid'] and data['unique_opened_points'] == 5
+    assert (data['prefix_steps'], data['suffix_steps'], data['camera_count']) == (16, 256, 9)
+    assert data['primary_passing_points'] == 0 and data['reset_passing_points'] == 5
+    assert data['first_equals_sustained'] and data['right_censored_not_divergence']
+    assert data['crossings_not_deployable'] and data['classical_ordering_still_censored']
+    assert data['full_direct_unbeaten'] and data['clean505_preserved'] and data['fixed_16_handoff_closed']
+    assert not any(data[k] for k in ('complete_trajectories', 'new_training', 'algorithm_breakthrough',
+        'paper_success', 'resource_speedup', 'external_generalization', 'real_bost'))
+    for row, reset in zip(data['points'], (142, 138, 132, 169, 128)):
+        assert row['handoff'] == dict(lower=274, upper=None)
+        assert row['reset'] == dict(lower=reset, upper=reset)
+        assert 2 <= reset-row['uninterrupted']['upper'] <= reset-row['uninterrupted']['lower'] <= 3
+
+
+def test_handoff_bilingual_is_five_points_not_full_trajectories():
+    evidence = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    assert evidence['latest_metric_prefix_handoff']['opened_points'] == 5
+    assert not evidence['latest_metric_prefix_handoff']['complete_trajectories']
+    assert evidence['latest_full_trajectory_controls']['passing'] == 505
+    for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
+        soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
+        note = soup.select_one('#metric-prefix-handoff-result')
+        for lang in ('zh', 'en'):
+            assert '273A+273AT' in note['data-i18n-'+lang] and '505' in note['data-i18n-'+lang]
+        assert '固定16步' in note['data-i18n-zh'] and 'fixed 16-step' in note['data-i18n-en']
+        assert note.get_text() == note['data-i18n-zh']
+        assert soup.select_one('#metric-objective-boundary') and soup.select_one('#physical-sketch-result')
+        if 'daily' in rel:
+            assert soup.select_one('#latest #metric-prefix-handoff-result')

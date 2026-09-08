@@ -1,3 +1,11 @@
+## 2026-09-08：短初值还是持续加权 / Short Initializer or Continued Weighting
+
+固定交接检验未通过：五个已开封九相机样本上，学习度量先跑16步，经精确伴随提升初值后交给原始CGLS，全部算到273A+273AT仍未达到四项1%精度目标。同点重启但继续用学习度量，在128至169A及同量AT达到目标，比不中断只多2至3次调用。两个独立实现与退出后评分一致。这只关闭固定16步交接，不否定505帧无噪声冷启动证据，也不是完整轨迹、速度、外部泛化或真实BOST结论。
+
+The fixed handoff test fails: on five opened nine-camera samples, 16 learned-metric steps followed by an exact adjoint lift and original CGLS never attain all four 1% accuracy targets through 273A+273AT. Resetting at the same initial field while retaining the learned metric attains them in 128 to 169A and the same number of AT actions, only 2 to 3 extra calls over uninterrupted solving. Both independent implementations and post-exit scoring agree. This closes only the fixed 16-step handoff, preserves the 505-frame clean cold-solver evidence, and establishes no full-trajectory, speed, external-generalization or real-BOST result.
+
+[报告 / Report](poolfire_warm_cost_angular_audit_20260908.md)
+
 ## 2026-09-08：目标是否改变 / Objective Compatibility
 
 目标边界核验：在同一个九相机几何的8个共享人工观测方向上，五个冻结学习度量全部改变了原始最小二乘的驻点条件；未训练的同结构度量也如此，恒等对照没有。两个独立实现与退出后复算一致。因此左侧残差加权不能自动当作保持原问题的暖启动。505帧无噪声冷启动结果保留；本轮没有训练、噪声重建评分、速度或真实BOST结论。
