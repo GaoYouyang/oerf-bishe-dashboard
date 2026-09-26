@@ -29,6 +29,12 @@ The mandatory same-AMG comparisons include Zero, BP, fixed-tensor, one-V-cycle, 
 
 A post-hoc equal-thirds chronology check finds 14/34, 11/34, and 9/33 cost failures in the early, middle, and late portions of fold 4; the other four folds have 7, 4, 0, and 7 failures in total. This argues against describing the result as only a late-frame tail, while the strong fold concentration points to a trajectory-level generalization problem that this table alone cannot explain. The thirds were chosen after opening the result, are descriptive only, and do not change the frozen all-frame/all-trajectory gate.
 
+### Post-hoc aggregate call audit (not the frozen primary)
+
+After the primary result was sealed, two separate reducers independently summed the sealed receipts. Candidate accuracy passed on all 505 queries, and historical dual-ridge was accuracy-qualified on all 505. For **each** of the two frozen geometry paths, summing over the 505 queries gives candidate totals of 53,050 A and 52,545 A^T calls, versus 57,133 A and 56,628 A^T for dual-ridge: 4,083 fewer calls for each operator (7.15% fewer A calls and 7.21% fewer A^T calls). Every held-out fold has a lower cumulative total; per-fold savings for each operator are 804, 993, 1,166, 259, and 861.
+
+This cumulative metric was not preregistered and does **not** change `FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST`: the frozen primary requires strict per-query savings against every same-AMG control, and 52 query pairs still fail that criterion. These operator counts are not wall-time or memory measurements and do not establish deployment speedup.
+
 ## Interpretation and boundary
 
 The result supports a narrower observation: the fitted initializer can preserve the required final accuracy and beat all listed controls on many individual frames in this opened clean nine-camera proxy. It does **not** establish a stable trajectory-level reduction in exact calls. No matched fresh-process wall-time or whole-pipeline RSS comparison was performed, so no speed or resource advantage is claimed.
@@ -48,3 +54,5 @@ Close this exact recipe. Do not tune its optimizer budget, loss, stopping rule, 
 结果打开后按每折帧序等分早/中/晚的探索性检查显示：第 4 折三段分别有 14/34、11/34、9/33 个成本反例；其余四折合计分别有 7、4、0、7 个。失败不能简单概括成“只在后段恶化”，但强烈的整轨迹集中也不能由这张表单独解释。该等分是事后描述，不是预注册分层，不改变冻结门槛。
 
 因此这不是“没有学习信号”：很多单帧上有条件性的调用优势；但它没有达到预注册的稳定完整轨迹优势，当前配方应关闭。没有做匹配的 fresh-process 墙钟时间或全流程 RSS 对照，不能称为加速或资源优势；也不是外部泛化、真实 BOST、算法突破或论文成功。不得根据留出结果追加训练轮数、改损失或放大模型来追过门槛。
+
+**未预注册的累计调用补充统计（不替代正式判决）：**另用两套独立汇总程序从封存回执聚合，候选与历史 dual-ridge 都在 505/505 查询上通过精度门。对每条冻结几何路径分别汇总 505 个查询，候选使用 53,050 次 A 和 52,545 次 A^T；dual-ridge 为 57,133 次 A 和 56,628 次 A^T。也就是 A 与 A^T 各少 4,083 次（分别约 7.15% 和 7.21%），五折各自的累计调用都更低，逐折节省量依次为 804、993、1,166、259、861。这个事后累计指标没有预注册，不能抹掉 52 个逐查询成本反例或改变 `FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST`；它也不是墙钟/RSS 加速证据。
