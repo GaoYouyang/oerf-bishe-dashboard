@@ -21,7 +21,14 @@ def test_complete_controls_and_censoring():
 def test_current_bilingual_and_history():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
     assert STEM in current['latest_full_trajectory_controls']['summary']
-    assert current['formal_status'] == 'PASS_FULL_ROSTER_CONTROL_COST'
+    assert current['formal_status'] == 'PASS_V284_NUMERICAL_AND_PHYSICAL_AUDITS'
+    assert current['scientific_status'] == 'FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST'
+    assert current['latest_solver_in_loop_loto_v284']['status'] == current['scientific_status']
+    aggregate = current['latest_solver_in_loop_loto_v284']['posthoc_aggregate_cost_vs_dual_ridge']
+    assert not aggregate['preregistered'] and not aggregate['changes_primary_verdict']
+    assert aggregate['candidate_calls_per_path'] == {'A': 53050, 'AT': 52545}
+    assert aggregate['dual_ridge_calls_per_path'] == {'A': 57133, 'AT': 56628}
+    assert aggregate['saved_calls_per_path'] == {'A': 4083, 'AT': 4083}
     assert current['latest_full_trajectory_controls']['passing'] == 505
     assert not current['latest_full_trajectory_controls']['warm_attribution_confirmed']
     for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
