@@ -6,6 +6,8 @@
 
 **讲人话。** 线上看起来每帧少做一点，不代表整套学习流程更省：以现在这批结果，要服务几十万级查询才可能在算子调用数上补回训练账，而且严格逐帧/整轨迹成本门仍只有 `453/505` 帧、`1/5` 轨迹通过。结论继续是 `FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST`；不据此调参、训练路由器或宣称资源收益。
 
+**精度与成本拆分（事后归因）。** 回核独立封存的 505 条评分后，候选自身的四指标精度与求解器证书门是 `505/505` 通过；但其中 52 条没有通过严格成本优势门，而且每一条都至少被一个同价基线解释，没有未决成本区间。AMG dual-ridge 在其中 42 条单独就不比候选差（不同控制的计数会重叠）。逐折成本优势通过数是 `94/101、97/101、101/101、67/101、94/101`，第 4 折贡献了 52 个成本失败中的 34 个。故更准确的结论是：这批已开封查询上，候选达到自身精度门，但调用数优势不够稳定，只有 `1/5` 条完整轨迹通过严格成本门；没有端到端时间或内存收益证据。这是对旧评分的事后计数，不是新预测/新测试，也不授权回头调参。
+
 **训练收敛边界（事后核验）。** 五折拟合都用满冻结的 200 次迭代上限，优化器均报告未收敛；末端梯度无穷范数为 `9.57e-5`–`1.96e-4`，而目标容差是 `1e-6`。训练损失下降了 `82.02%`–`86.12%`，但这不等于优化器已收敛。独立复算只使用拟合样本，末端梯度与封存值最大差 `1.16e-14`，且未读取查询数据。这说明 v284 检验的是固定计算预算下的拟合，不是收敛解；它既不能证明多跑会改善留出表现，也不能推翻已封存的严格成本失败，更不授权在已开封数据上重拟合。科学判决不变。
 
 ### English
@@ -15,6 +17,8 @@ This is a post-hoc deterministic reduction of the already-open, independently va
 `algorithm_breakthrough=false`; `paper_success=false`; `resource_speedup=false`.
 
 **Training-convergence boundary (post-hoc audit).** All five fits reached the frozen 200-iteration cap and reported optimizer non-convergence. Terminal gradient infinity norms were `9.57e-5`–`1.96e-4` against `gtol=1e-6`; training loss fell by `82.02%`–`86.12%`. An independent recomputation used fit-only samples, matched sealed terminal gradients within `1.16e-14`, and did not read query data. Thus v284 tested a fixed compute budget, not a converged optimizer solution. This neither shows that more iterations would improve held-out results nor reverses the frozen strict-cost failure, and it does not authorize refitting on opened data. The scientific verdict is unchanged.
+
+**Accuracy-versus-cost attribution (post-hoc tally).** Rechecking the independently sealed 505 point scores shows that all `505/505` queries met the candidate's frozen four-metric accuracy and solver-certificate eligibility gate. Strict cost dominance passed on `453/505`; each of the other 52 points was explained by at least one no-worse control, with no unresolved cost intervals. AMG dual-ridge alone was no worse on 42 points (control counts overlap). Per-fold strict-cost passes were `94/101`, `97/101`, `101/101`, `67/101`, and `94/101`; fold 3 contributed 34 of the 52 cost rejections. This is a post-hoc reduction of opened scores, not new prediction or confirmation. It means accuracy eligibility was not the failing gate here; robust cost advantage was. No end-to-end time or memory benefit is established.
 
 ## 2026-09-27：v285 同族复验再次暴露场精度与观测一致性的冲突
 
