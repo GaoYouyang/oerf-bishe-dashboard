@@ -75,7 +75,7 @@ def test_v259_remains_preserved_after_v260_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST"
+    assert current["scientific_status"] == "FAIL_CASE2_SAME_FAMILY_POSTOPEN_TRANSFER_ACCURACY_V285"
     assert metrics["v259_independent_checks_passed"] == 18
     assert metrics["v259_camera_localized_rigs"] == 10
     assert metrics["v259_component_localized_rigs"] == 13

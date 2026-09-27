@@ -23,7 +23,7 @@ def test_optical_scope_not_algorithm_claim():
 
 def test_current_figure_and_bilingual_scope():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert current['scientific_status'] == 'FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST'
+    assert current['scientific_status'] == 'FAIL_CASE2_SAME_FAMILY_POSTOPEN_TRANSFER_ACCURACY_V285'
     assert current['metrics']['v282_maps'] == 468
     assert current['current_decision']['v281_fixed_estimator_closed']
     assert not current['current_decision']['v282_predictor_training_authorized']

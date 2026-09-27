@@ -21,11 +21,11 @@ def test_complete_controls_and_censoring():
 def test_current_bilingual_and_history():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
     assert STEM in current['latest_full_trajectory_controls']['summary']
-    assert current['formal_status'] == 'PASS_V284_NUMERICAL_AND_PHYSICAL_AUDITS'
-    assert current['scientific_status'] == 'FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST'
+    assert current['formal_status'] == 'PASS_V285_FORMAL_AND_INDEPENDENT_RECOMPUTATION'
+    assert current['scientific_status'] == 'FAIL_CASE2_SAME_FAMILY_POSTOPEN_TRANSFER_ACCURACY_V285'
     assert current['next_scientific_gate'] == current['next_scientific_gate_en']
     assert current['next_scientific_gate_zh']
-    assert current['latest_solver_in_loop_loto_v284']['status'] == current['scientific_status']
+    assert current['latest_solver_in_loop_loto_v284']['status'] == 'FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST'
     aggregate = current['latest_solver_in_loop_loto_v284']['posthoc_aggregate_cost_vs_dual_ridge']
     assert not aggregate['preregistered'] and not aggregate['changes_primary_verdict']
     assert aggregate['candidate_calls_per_path'] == {'A': 53050, 'AT': 52545}

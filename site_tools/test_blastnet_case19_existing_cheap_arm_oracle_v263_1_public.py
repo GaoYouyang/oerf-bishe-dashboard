@@ -54,7 +54,7 @@ def test_v263_1_figure_is_public_and_readable() -> None:
 def test_v263_1_remains_historical_after_v264_on_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["updated"] == "2026-09-27"
-    assert current["scientific_status"] == "FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST"
+    assert current["scientific_status"] == "FAIL_CASE2_SAME_FAMILY_POSTOPEN_TRANSFER_ACCURACY_V285"
     assert current["metrics"]["v263_1_oracle_joint_pass_rigs"] == 0
     assert current["current_decision"]["v263_1_selector_over_nine_arms_authorized"] is False
     for page in PRIMARY_PAGES:

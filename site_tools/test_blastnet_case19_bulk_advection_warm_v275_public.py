@@ -57,7 +57,7 @@ def test_v275_figure_is_rendered() -> None:
 def test_v275_remains_visible_on_public_surfaces() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     assert current["scientific_status"] == (
-        "FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST"
+        "FAIL_CASE2_SAME_FAMILY_POSTOPEN_TRANSFER_ACCURACY_V285"
     )
     assert current["metrics"]["v275_independent_checks_passed"] == 26
     assert current["current_decision"]["v275_algorithm_breakthrough"] is False

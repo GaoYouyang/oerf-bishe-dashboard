@@ -51,7 +51,7 @@ def test_v235_figure_is_rendered() -> None:
 
 def test_v235_historical_surfaces_and_log_remain_synchronized() -> None:
     current = json.loads((ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST"
+    assert current["scientific_status"] == "FAIL_CASE2_SAME_FAMILY_POSTOPEN_TRANSFER_ACCURACY_V285"
     assert current["v235_scientific_decision"] == "FAIL_CASE7_LOW64_K11_PROSPECTIVE_CONFIRMATION_V235"
     assert current["metrics"]["v235_primary_absolute_safe_cells"] == 546
     assert current["metrics"]["v235_primary_matched_safe_cells"] == 330

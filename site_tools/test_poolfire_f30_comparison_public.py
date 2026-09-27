@@ -154,8 +154,8 @@ def test_private_boundary_bilingual_current_and_archives():
     assert '# PoolFire:' in text and '完整轨迹' in text and 'not 505 independent' in text
     current = json.loads((ROOT / 'operator-learning/current-evidence.json').read_text())
     assert data['scientific_status'] == 'NO_STABLE_MATCHED_ACCURACY_IN_FIXED_F30_LEARNED_COMPARATORS'
-    assert current['scientific_status'] == 'FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST'
-    assert current['latest_solver_in_loop_loto_v284']['status'] == current['scientific_status']
+    assert current['scientific_status'] == 'FAIL_CASE2_SAME_FAMILY_POSTOPEN_TRANSFER_ACCURACY_V285'
+    assert current['latest_solver_in_loop_loto_v284']['status'] == 'FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST'
     assert current['current_decision']['v283_fixed_reference_closed']
     assert STEM in current['public_evidence']['summary']
     for file in ('index.html', 'operator-learning/index.html'):

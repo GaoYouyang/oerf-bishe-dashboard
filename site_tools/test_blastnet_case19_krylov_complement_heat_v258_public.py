@@ -59,7 +59,7 @@ def test_v258_is_preserved_after_v259_becomes_latest() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST"
+    assert current["scientific_status"] == "FAIL_CASE2_SAME_FAMILY_POSTOPEN_TRANSFER_ACCURACY_V285"
     assert metrics["v258_independent_checks_passed"] == 47
     assert metrics["v258_independent_checks_total"] == 47
     assert metrics["v258_primary_absolute_cells"] == 13

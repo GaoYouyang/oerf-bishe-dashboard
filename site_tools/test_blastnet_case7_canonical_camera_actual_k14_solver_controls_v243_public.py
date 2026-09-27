@@ -61,7 +61,7 @@ def test_v243_figure_and_source_are_public() -> None:
 
 def test_v243_is_preserved_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST"
+    assert current["scientific_status"] == "FAIL_CASE2_SAME_FAMILY_POSTOPEN_TRANSFER_ACCURACY_V285"
     assert current["current_decision"]["v243_actual_unchanged_k14_solver_passed"] is True
     assert current["current_decision"]["v243_equal_or_cheaper_controls_explain_result"] is False
     assert current["current_decision"]["v243_external_generalization"] is False

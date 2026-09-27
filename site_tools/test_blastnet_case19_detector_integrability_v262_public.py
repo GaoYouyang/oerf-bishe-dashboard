@@ -71,9 +71,9 @@ def test_v262_figure_and_builder_are_public() -> None:
 
 def test_v262_remains_preserved_after_v263_1_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST"
-    assert current["headline_zh"].startswith("v284")
-    assert current["headline_en"].startswith("v284")
+    assert current["scientific_status"] == "FAIL_CASE2_SAME_FAMILY_POSTOPEN_TRANSFER_ACCURACY_V285"
+    assert current["headline_zh"].startswith("v285")
+    assert current["headline_en"].startswith("v285")
     assert current["metrics"]["v262_independent_checks_passed"] == 24
     assert current["metrics"]["v262_observation_invariant_blocks"] == 0
     assert current["current_decision"]["v262_projected_residual_candidate_authorized"] is False
