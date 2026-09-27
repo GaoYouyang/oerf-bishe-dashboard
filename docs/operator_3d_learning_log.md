@@ -1,3 +1,31 @@
+## 2026-09-27：v284 线上调用节省不足以抵消离线拟合账（事后核算）
+
+**核算范围。** 只对已经开封并独立验证的 v284 505 个查询收据做确定性汇总；Python 与独立 JavaScript 两种实现得到相同结果，封存结果文件哈希前后不变。这是事后调用数核算，不改变 v284 的冻结判决，也不是新留出测试。
+
+**结果。** 相对 AMG dual-ridge，候选在线合计少用 `4,083 A` 与 `4,083 A^T`，约每个查询各少 `8.09` 次；但训练加拟合验证账至少为 `5,514,720 A` 和 `5,518,640 A^T`。若极乐观地假定这一小批查询的平均节省能在未来保持，单算 A/Aᵀ 调用也要约 `682,081` / `682,566` 个查询才达到离线调用数的收支平衡。计算尚未计入 `4,242,000` 个 V-cycle 与 setup，也没有 wall-time/RSS，因此不能换算成速度优势。
+
+**讲人话。** 线上看起来每帧少做一点，不代表整套学习流程更省：以现在这批结果，要服务几十万级查询才可能在算子调用数上补回训练账，而且严格逐帧/整轨迹成本门仍只有 `453/505` 帧、`1/5` 轨迹通过。结论继续是 `FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST`；不据此调参、训练路由器或宣称资源收益。
+
+### English
+
+This is a post-hoc deterministic reduction of the already-open, independently validated v284 receipts, not a new holdout test and not a change to the frozen verdict. Python and a separate JavaScript reducer agree, and the sealed result file hash was unchanged. Against AMG dual-ridge, the candidate saved `4,083 A` and `4,083 A^T` applications across 505 queries, about `8.09` of each per query. Yet training plus fit validation used at least `5,514,720 A` and `5,518,640 A^T` applications. Even assuming the observed pooled savings repeat indefinitely, call-count break-even requires roughly `682,081` / `682,566` queries for A/A-transpose. This excludes `4,242,000` V-cycles and setup, and no wall-time/RSS was measured. The frozen strict gate remains `453/505` frames and `1/5` complete trajectories; status remains `FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST`. No tuning, router fitting, or resource-speedup claim follows.
+
+`algorithm_breakthrough=false`; `paper_success=false`; `resource_speedup=false`.
+
+## 2026-09-27：v285 同族复验再次暴露场精度与观测一致性的冲突
+
+**为什么做。** v40 的 SARC-K3-M4 在另一条 H2-air 配置上已有外部门失败；v285 冻结同一方法，在同一 H2-air 数据族的另一配置上做 54 帧复验，检查原结论是否只是一种配置偶然。候选、阈值和四个比较臂均未按这批结果调整。
+
+**结果。** 联合精度门为 `0/54` 帧通过。相对 Direct-K4，候选的场误差和梯度误差在 `54/54` 帧更低，但观测误差在 `54/54` 帧更高；观测误差比值中位数为 `1.18754`。候选优于 Direct-K3 的三项误差并不能抵消相对 Direct-K4 与 Zero-K4 的冻结门失败。独立实现重放 216 个曲线 forward，最大指标差 `2.50e-16`，封存预测场和屏障不变。
+
+**讲人话。** 这条方法能把三维场往更像真值的方向推一点，却稳定地让它更不符合测量数据；不能只挑场误差说成功。v285 是同一 H2-air 数据族的配置复验，不是新的独立数据族；没有运行资源门，也没有真实 BOST。固定 SARC 配方对该族继续关闭，不对已开封结果调参。
+
+### English
+
+The joint accuracy gate passes `0/54` frames. Against Direct-K4, field and gradient errors are lower on `54/54` frames, while observation error is higher on `54/54`; the median observation-error ratio is `1.18754`. Independent replay of 216 curved-forward outputs agrees to `2.50e-16`. This is a same-family configuration replication, not cross-family generalization or real BOST; no resource gate was run. The fixed SARC recipe remains closed for this family.
+
+`algorithm_breakthrough=false`; `paper_success=false`; `external_generalization=false`; `resource_speedup=false`; `real_bost=false`.
+
 ## 2026-09-08：不只是停止条件保守 / Not Only Conservative Stopping
 
 最新AMG诊断：把64个原有成本反例的中间状态补齐后，假设双方都在首次达到四项真实精度门时立即停止，学习初值仅17个更省调用；47个仍无优势，其中34个严格更费调用、13个持平。因此，停止证书保守不是这些反例的唯一原因。独立物理重放与逐状态评分通过。这是读取已开封真值的理想停止诊断，不是可部署策略；原全量结论仍为441/505省调用、完整轨迹0/5。
