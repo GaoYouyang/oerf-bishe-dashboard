@@ -20,6 +20,20 @@
 
 `algorithm_breakthrough=false`; `paper_success=false`; `external_generalization=false`; `resource_speedup=false`; `real_bost=false`.
 
+## 2026-09-27：v284 线上调用节省不足以抵消离线拟合账（事后核算）
+
+**核算范围。** 只对已经开封并独立验证的 v284 505 个查询收据做确定性汇总；Python 与独立 JavaScript 两种实现得到相同结果，封存结果文件哈希前后不变。这是事后调用数核算，不改变 v284 的冻结判决，也不是新留出测试。
+
+**结果。** 相对 AMG dual-ridge，候选在线合计少用 `4,083 A` 与 `4,083 A^T`，约每个查询各少 `8.09` 次；但训练加拟合验证账至少为 `5,514,720 A` 和 `5,518,640 A^T`。若极乐观地假定这一小批查询的平均节省能在未来保持，单算 A/Aᵀ 调用也要约 `682,081` / `682,566` 个查询才达到离线调用数的收支平衡。计算尚未计入 `4,242,000` 个 V-cycle 与 setup，也没有 wall-time/RSS，因此不能换算成速度优势。
+
+**讲人话。** 线上看起来每帧少做一点，不代表整套学习流程更省：以现在这批结果，要服务几十万级查询才可能在算子调用数上补回训练账，而且严格逐帧/整轨迹成本门仍只有 `453/505` 帧、`1/5` 轨迹通过。结论继续是 `FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST`；不据此调参、训练路由器或宣称资源收益。
+
+### English
+
+This is a post-hoc deterministic reduction of the already-open, independently validated v284 receipts, not a new holdout test and not a change to the frozen verdict. Python and a separate JavaScript reducer agree, and the sealed result file hash was unchanged. Against AMG dual-ridge, the candidate saved `4,083 A` and `4,083 A^T` applications across 505 queries, about `8.09` of each per query. Yet training plus fit validation used at least `5,514,720 A` and `5,518,640 A^T` applications. Even assuming the observed pooled savings repeat indefinitely, call-count break-even requires roughly `682,081` / `682,566` queries for A/A-transpose. This excludes `4,242,000` V-cycles and setup, and no wall-time/RSS was measured. The frozen strict gate remains `453/505` frames and `1/5` complete trajectories; status remains `FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST`. No tuning, router fitting, or resource-speedup claim follows.
+
+`algorithm_breakthrough=false`; `paper_success=false`; `resource_speedup=false`.
+
 ## 2026-09-05：v280 先分清误差从哪里来
 
 1,404 个已开封虚拟单元完成独立误差分解。clean 场误差中逆放大项的有符号贡献中位数为 82.27%–84.10%；pose 中几何项为 81.79%–88.41%。这是归因，不是重建改善。
