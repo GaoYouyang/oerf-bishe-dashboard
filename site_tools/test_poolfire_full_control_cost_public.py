@@ -23,6 +23,8 @@ def test_current_bilingual_and_history():
     assert STEM in current['latest_full_trajectory_controls']['summary']
     assert current['formal_status'] == 'PASS_V284_NUMERICAL_AND_PHYSICAL_AUDITS'
     assert current['scientific_status'] == 'FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST'
+    assert current['next_scientific_gate'] == current['next_scientific_gate_en']
+    assert current['next_scientific_gate_zh']
     assert current['latest_solver_in_loop_loto_v284']['status'] == current['scientific_status']
     aggregate = current['latest_solver_in_loop_loto_v284']['posthoc_aggregate_cost_vs_dual_ridge']
     assert not aggregate['preregistered'] and not aggregate['changes_primary_verdict']
