@@ -84,8 +84,8 @@ def test_v267_figure_is_public_and_readable() -> None:
 
 def test_v267_remains_historical_after_v268_becomes_latest() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["updated"] == "2026-09-05"
-    assert current["scientific_status"] == "FAIL_FIXED_NODAL_TSVD_REFERENCE_V283"
+    assert current["updated"] == "2026-09-27"
+    assert current["scientific_status"] == "FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST"
     assert current["metrics"]["v267_primary_matched_pass_cells"] == 2
     assert current["metrics"]["v267_global_residual_worsened_cells"] == 419
     assert current["current_decision"]["v267_exact_synchronous_two_color_route_closed"] is True

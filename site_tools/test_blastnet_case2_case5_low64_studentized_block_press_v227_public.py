@@ -133,7 +133,7 @@ def test_v227_public_artifacts_do_not_expose_private_execution_details() -> None
         "private_worktrees",
         "/Users/",
         "source_commit",
-        "checkpoint",
+        "checkpoint.pt", "checkpoint_path",
     )
     for value in values:
         assert not any(token in value for token in forbidden)

@@ -23,7 +23,7 @@ def test_optical_scope_not_algorithm_claim():
 
 def test_current_figure_and_bilingual_scope():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert current['scientific_status'] == 'FAIL_FIXED_NODAL_TSVD_REFERENCE_V283'
+    assert current['scientific_status'] == 'FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST'
     assert current['metrics']['v282_maps'] == 468
     assert current['current_decision']['v281_fixed_estimator_closed']
     assert not current['current_decision']['v282_predictor_training_authorized']
@@ -42,7 +42,7 @@ def test_current_figure_and_bilingual_scope():
 def test_one_daily_date_and_equivalent_report():
     daily = BeautifulSoup((ROOT/'operator-learning/daily-progress.html').read_text(), 'html.parser')
     assert len(daily.select('[data-date="2026-09-05"]')) == 1
-    assert 'v282' in daily.select_one('#latest').get_text()
+    assert 'v282' in daily.select_one('#day-2026-09-05').get_text()
     report = (ROOT/f'docs/{STEM}_result_2026-09-05.md').read_text()
     assert '# v282: finite-background' in report and 'not reconstruction' in report
     assert '8×8' in report and '十一种' in report

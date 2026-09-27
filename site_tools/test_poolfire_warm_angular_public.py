@@ -38,7 +38,7 @@ def test_true_crossings_bilingual_and_prior_evidence_retained():
         assert soup.select_one('#amg-error-propagation-result')
         assert soup.select_one('#tensor-warm-amg-full-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #certified-tail-crossing-result')
+            assert soup.select_one('#certified-tail-crossing-result')
 
 
 def test_amg_error_primary_and_fraction_are_not_interchangeable():
@@ -74,7 +74,7 @@ def test_amg_error_bilingual_retains_previous_counterexamples():
         assert soup.select_one('#warm-amg-tail-audit-result')
         assert soup.select_one('#tensor-warm-amg-full-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #amg-error-propagation-result')
+            assert soup.select_one('#amg-error-propagation-result')
 
 
 def test_tail_audit_quality_does_not_rehabilitate_cost_failure():
@@ -107,7 +107,7 @@ def test_tail_audit_bilingual_and_full_failure_preserved():
         assert soup.select_one('#tensor-warm-amg-full-result')
         assert soup.select_one('#tensor-warm-amg-pilot-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #warm-amg-tail-audit-result')
+            assert soup.select_one('#warm-amg-tail-audit-result')
 
 
 def test_tensor_warm_amg_positive_pilot_includes_ridge_and_costs():
@@ -135,7 +135,8 @@ def test_tensor_amg_pilot_bilingual_scope_and_full_control_history():
     evidence = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
     assert not evidence['latest_tensor_warm_amg_pilot']['full_roster_pending']
     assert evidence['latest_full_amg_control']['passing'] == 505
-    assert '0/5' in evidence['headline_en']
+    assert 'v284' in evidence['headline_en']
+    assert evidence['latest_full_amg_control']['complete_trajectories'] == 5
     for rel in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/rel).read_text(),'html.parser')
         note = soup.select_one('#tensor-warm-amg-pilot-result')
@@ -144,7 +145,7 @@ def test_tensor_amg_pilot_bilingual_scope_and_full_control_history():
         assert note.get_text() == note['data-i18n-zh']
         assert soup.select_one('#full-amg-control-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #tensor-warm-amg-pilot-result')
+            assert soup.select_one('#tensor-warm-amg-pilot-result')
 
 
 def test_full_tensor_amg_cost_failure_is_not_accuracy_failure():
@@ -173,7 +174,8 @@ def test_full_tensor_amg_bilingual_latest_and_historical_pilot():
     e = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
     assert e['latest_tensor_warm_amg_full']['fixed_full_claim_closed']
     assert e['latest_tensor_warm_amg_full']['passing'] == 441
-    assert '0/5' in e['headline_zh'] and '0/5' in e['headline_en']
+    assert 'v284' in e['headline_zh'] and 'v284' in e['headline_en']
+    assert e['latest_tensor_warm_amg_full']['complete_trajectories'] == 0
     for rel in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/rel).read_text(),'html.parser')
         n = soup.select_one('#tensor-warm-amg-full-result')
@@ -184,7 +186,7 @@ def test_full_tensor_amg_bilingual_latest_and_historical_pilot():
         assert soup.select_one('#tensor-warm-amg-pilot-result')
         assert soup.select_one('#full-amg-control-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #tensor-warm-amg-full-result')
+            assert soup.select_one('#tensor-warm-amg-full-result')
 
 
 def test_full_amg_common_certificate_and_scoped_costs():
@@ -211,7 +213,7 @@ def test_full_amg_bilingual_latest_and_pilot_preserved():
     e = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
     assert e['latest_full_amg_control']['complete_trajectories'] == 5
     assert e['latest_amg_classical_control']['opened_points'] == 5
-    assert 'AMG' in e['headline_en'] and '505' in e['headline_zh']
+    assert 'v284' in e['headline_en'] and '505' in e['headline_zh']
     for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
         note = soup.select_one('#full-amg-control-result')
@@ -221,7 +223,7 @@ def test_full_amg_bilingual_latest_and_pilot_preserved():
         assert note.get_text() == note['data-i18n-zh']
         assert soup.select_one('#amg-classical-control-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #full-amg-control-result')
+            assert soup.select_one('#full-amg-control-result')
 
 
 def test_cost_failure_and_uncertainty_are_distinct():
@@ -240,7 +242,7 @@ def test_cost_failure_and_uncertainty_are_distinct():
 
 def test_current_bilingual_and_retained_evidence():
     d = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert STEM in d['latest_execution_evidence']['note']
+    assert "solver_in_loop_loto_v284_result_2026-09-27.md" in d['latest_execution_evidence']['note']
     assert d['latest_full_trajectory_controls']['passing'] == 505
     for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
@@ -249,7 +251,7 @@ def test_current_bilingual_and_retained_evidence():
         assert '不确定' in note['data-i18n-zh'] and 'inconclusive' in note['data-i18n-en']
         assert soup.select_one('#camera-subset-metric-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #warm-cost-angular-result')
+            assert soup.select_one('#warm-cost-angular-result')
 
 
 def test_redaction_links_and_figure():
@@ -284,7 +286,7 @@ def test_residual_reuse_bilingual_and_current():
         assert n.get_text() == n['data-i18n-zh']
         assert soup.select_one('#warm-cost-angular-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #residual-reuse-result')
+            assert soup.select_one('#residual-reuse-result')
 
 
 def test_error_shape_is_counterfactual_not_speedup():
@@ -312,7 +314,7 @@ def test_error_shape_bilingual_and_figure():
         assert '离线反事实' in note['data-i18n-zh'] and 'offline counterfactuals' in note['data-i18n-en']
         assert note.get_text() == note['data-i18n-zh']
         if 'daily' in rel:
-            assert soup.select_one('#latest #error-shape-result')
+            assert soup.select_one('#error-shape-result')
     assert (ROOT/'assets/figures/poolfire_warm_error_shape_20260908.png').stat().st_size > 10000
 
 
@@ -345,7 +347,7 @@ def test_geometry_inverse_probe_bilingual_and_preserved_history():
         assert note.get_text() == note['data-i18n-zh']
         assert soup.select_one('#error-shape-result') and soup.select_one('#residual-reuse-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #inverse-probe-result')
+            assert soup.select_one('#inverse-probe-result')
 
 
 def test_manufactured_residual_new_fit_and_actual_cost():
@@ -378,7 +380,7 @@ def test_manufactured_residual_bilingual_and_preserved_history():
         assert note.get_text() == note['data-i18n-zh']
         assert soup.select_one('#inverse-probe-result') and soup.select_one('#error-shape-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #manufactured-residual-result')
+            assert soup.select_one('#manufactured-residual-result')
 
 
 def test_frozen_feature_floor_is_only_a_joint_initial_loss_bound():
@@ -412,7 +414,7 @@ def test_feature_floor_bilingual_scope_and_history():
         assert note.get_text() == note['data-i18n-zh']
         assert soup.select_one('#manufactured-residual-result') and soup.select_one('#inverse-probe-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #manufactured-feature-floor-result')
+            assert soup.select_one('#manufactured-feature-floor-result')
 
 
 def test_loss_oracle_actual_cost_not_a_call_optimal_bound():
@@ -462,7 +464,7 @@ def test_loss_oracle_bilingual_and_preserved_capacity_history():
         assert note.get_text() == note['data-i18n-zh']
         assert soup.select_one('#manufactured-feature-floor-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #loss-oracle-cost-result')
+            assert soup.select_one('#loss-oracle-cost-result')
 
 
 def test_physical_sketch_necessary_failure_not_family_rehabilitation():
@@ -492,7 +494,7 @@ def test_physical_sketch_bilingual_and_retained_scientific_boundaries():
         assert note.get_text() == note['data-i18n-zh']
         assert soup.select_one('#loss-oracle-cost-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #physical-sketch-result')
+            assert soup.select_one('#physical-sketch-result')
 
 
 def test_metric_boundary_is_not_a_noise_performance_or_warm_result():
@@ -525,7 +527,7 @@ def test_metric_boundary_bilingual_and_retains_strong_clean_control():
         assert note.get_text() == note['data-i18n-zh']
         assert soup.select_one('#physical-sketch-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #metric-objective-boundary')
+            assert soup.select_one('#metric-objective-boundary')
 
 
 def test_fixed_handoff_cost_censoring_and_same_reset_control():
@@ -559,7 +561,7 @@ def test_handoff_bilingual_is_five_points_not_full_trajectories():
         assert note.get_text() == note['data-i18n-zh']
         assert soup.select_one('#metric-objective-boundary') and soup.select_one('#physical-sketch-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #metric-prefix-handoff-result')
+            assert soup.select_one('#metric-prefix-handoff-result')
 
 
 def test_amg_counterexample_is_calls_not_resource_or_warm_success():
@@ -590,4 +592,4 @@ def test_amg_bilingual_retains_old_505_and_handoff_history():
         assert '不免费' in note['data-i18n-zh'] and 'not free' in note['data-i18n-en']
         assert soup.select_one('#metric-prefix-handoff-result')
         if 'daily' in rel:
-            assert soup.select_one('#latest #amg-classical-control-result')
+            assert soup.select_one('#amg-classical-control-result')

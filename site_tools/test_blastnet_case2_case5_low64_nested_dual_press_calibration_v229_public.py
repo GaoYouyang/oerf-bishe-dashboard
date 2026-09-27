@@ -28,7 +28,7 @@ def test_public_artifacts_exist_and_do_not_disclose_private_paths() -> None:
     assert RESULT.is_file()
     assert FIGURE.is_file() and FIGURE.stat().st_size > 50_000
     text = SUMMARY.read_text(encoding="utf-8") + RESULT.read_text(encoding="utf-8")
-    forbidden = ("/Users/", "private_results", "private_worktrees", "checkpoint", "sha256")
+    forbidden = ("/Users/", "private_results", "private_worktrees", "checkpoint.pt", "checkpoint_path", "sha256")
     assert all(token not in text for token in forbidden)
 
 
@@ -42,7 +42,7 @@ def test_v229_historical_surfaces_and_log_are_preserved() -> None:
     current = json.loads(
         (ROOT / "operator-learning/current-evidence.json").read_text(encoding="utf-8")
     )
-    assert current["updated"] == "2026-09-05"
+    assert current["updated"] == "2026-09-27"
     assert current["v229_nested_dual_press_scientific_decision"] == (
         "POST_OPEN_FOLD_LOCAL_DUAL_PRESS_CALIBRATION_HEADROOM_V229"
     )

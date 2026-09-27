@@ -24,7 +24,7 @@ def test_redacted_result_and_failure_gate():
 
 def test_current_manifest_and_figure():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert current['scientific_status'] == 'FAIL_FIXED_NODAL_TSVD_REFERENCE_V283'
+    assert current['scientific_status'] == 'FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST'
     assert current['current_decision']['v281_fixed_estimator_closed'] is True
     assert current['metrics']['v281_cells'] == 108
     assert (ROOT/f'assets/figures/{STEM}.png').stat().st_size > 10000
@@ -43,6 +43,6 @@ def test_bilingual_sections_and_single_daily_date():
         assert soup.select_one('#v280-source-budget') is not None
     daily = BeautifulSoup((ROOT/'operator-learning/daily-progress.html').read_text(), 'html.parser')
     assert len(daily.select('[data-date="2026-09-05"]')) == 1
-    assert 'v281' in daily.select_one('#latest').get_text()
+    assert 'v281' in daily.select_one('#day-2026-09-05').get_text()
     note = (ROOT/f'docs/{STEM}_result_2026-09-05.md').read_text()
     assert '# v281: cross-model' in note and '0/12' in note

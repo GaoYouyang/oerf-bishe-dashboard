@@ -45,7 +45,8 @@ def test_bilingual_pages_and_current_manifest():
     assert STEM in current['latest_vector_transport75']['summary']
     daily=BeautifulSoup((ROOT/'operator-learning/daily-progress.html').read_text(),'html.parser')
     assert len(daily.select('#latest'))==1
-    assert daily.select_one('#latest')['data-date']=='2026-09-07'
+    assert daily.select_one('#latest')['data-date']=='2026-09-27'
+    assert daily.select_one('[data-date="2026-09-07"]')
     report=(ROOT/f'docs/{STEM}.md').read_text()
     assert '74.61%' in report and 'not independently retrained' in report
     assert (ROOT/f'assets/figures/{STEM}.png').stat().st_size>10000
