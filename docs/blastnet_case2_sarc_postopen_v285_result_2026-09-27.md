@@ -26,7 +26,7 @@ A descriptive, post-open breakdown of the sealed scores finds:
 | Observation vs Zero-K4 | 1/54 |
 | Field / gradient / observation all lower vs Direct-K3 | 54/54 |
 
-Against Direct-K4, the candidate's observation-error ratio has median `1.18754`, p90 `1.34227`, and maximum `1.48144`. The candidate therefore improves truth-scored field and gradient errors while consistently worsening measurement fit relative to the stronger K4 controls. The comparison to Direct-K3 is favorable on these three metrics, but that does not repair the frozen joint gate against Direct-K4 and Zero-K4.
+Against Direct-K4, the candidate's frame-wise observation-error ratio has median `1.18921`, linear p90 `1.33596`, and maximum `1.48144`. These descriptive quantiles were independently recomputed from the sealed 54-row report on 2026-09-28. The candidate therefore improves truth-scored field and gradient errors while consistently worsening measurement fit relative to the stronger K4 controls. The comparison to Direct-K3 is favorable on these three metrics, but that does not repair the frozen joint gate against Direct-K4 and Zero-K4.
 
 This breakdown is post hoc: it localizes the observed tradeoff in this opened configuration but does not establish causality or authorize a blend, threshold, or safeguard. The frozen candidate remains closed; do not tune it against these scores.
 

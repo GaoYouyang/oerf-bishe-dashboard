@@ -20,7 +20,7 @@ This is a process-resource tradeoff on one opened workload, not lifecycle or tra
 
 **为什么做。** v40 的 SARC-K3-M4 在另一条 H2-air 配置上已有外部门失败；v285 冻结同一方法，在同一 H2-air 数据族的另一配置上做 54 帧复验，检查原结论是否只是一种配置偶然。候选、阈值和四个比较臂均未按这批结果调整。
 
-**结果。** 联合精度门为 `0/54` 帧通过。相对 Direct-K4，候选的场误差和梯度误差在 `54/54` 帧更低，但观测误差在 `54/54` 帧更高；观测误差比值中位数为 `1.18754`。候选优于 Direct-K3 的三项误差并不能抵消相对 Direct-K4 与 Zero-K4 的冻结门失败。独立实现重放 216 个曲线 forward，最大指标差 `2.50e-16`，封存预测场和屏障不变。
+**结果。** 联合精度门为 `0/54` 帧通过。相对 Direct-K4，候选的场误差和梯度误差在 `54/54` 帧更低，但观测误差在 `54/54` 帧更高；逐帧观测误差比值中位数/P90 为 `1.18921 / 1.33596`。相对 Zero-K4 的对应比值为 `1.18069 / 1.29867`。这些分位数于 2026-09-28 从封存的 54 行评分独立重算。候选优于 Direct-K3 的三项误差并不能抵消相对 Direct-K4 与 Zero-K4 的冻结门失败。独立实现重放 216 个曲线 forward，最大指标差 `2.50e-16`，封存预测场和屏障不变。
 
 **讲人话。** 这条方法确实能把三维场往更像真值的方向推一点，却稳定地让它更不符合测量数据；所以不能只挑场误差说成功。更关键的是，另一种完整轨迹的经典 AMG-PCGLS 在已开封 PoolFire 查询上已满足精度且逐对调用更省；这两组证据的成本协议不同，不能拼成学习器的资源优势。v285 是同一 H2-air 数据族的配置复验，不是新的独立数据族；没有运行资源门，也没有真实 BOST。固定 SARC 配方对该族继续关闭，不对已开封结果调参。
 
@@ -30,7 +30,7 @@ This is a process-resource tradeoff on one opened workload, not lifecycle or tra
 
 **Why.** SARC-K3-M4 had already failed a distinct-configuration H2-air transfer check under v40. v285 freezes the same method on 54 frames from another configuration in the same H2-air family to test whether the earlier result was configuration-specific. The candidate, thresholds, and four comparison arms were not changed in response to these outcomes.
 
-**Result.** The joint accuracy gate passes `0/54` frames. Against Direct-K4, field and gradient errors are lower on `54/54` frames, while observation error is higher on `54/54`; the median observation-error ratio is `1.18754`. Improvement over Direct-K3 on all three errors does not rescue the frozen gates against Direct-K4 and Zero-K4. An independent implementation replayed 216 curved-forward outputs; the maximum metric difference was `2.50e-16`, and sealed predictions and barrier were unchanged.
+**Result.** The joint accuracy gate passes `0/54` frames. Against Direct-K4, field and gradient errors are lower on `54/54` frames, while observation error is higher on `54/54`; the frame-wise observation-error ratio median/linear p90 is `1.18921 / 1.33596`. Against Zero-K4, the corresponding ratio is `1.18069 / 1.29867`. These quantiles were independently recomputed from the sealed 54-row score report on 2026-09-28. Improvement over Direct-K3 on all three errors does not rescue the frozen gates against Direct-K4 and Zero-K4. An independent implementation replayed 216 curved-forward outputs; the maximum metric difference was `2.50e-16`, and sealed predictions and barrier were unchanged.
 
 **Plain-language interpretation.** The method can move the 3D field closer to truth while making it consistently less consistent with the measurements. Reporting only field error would therefore be misleading. Separately, a complete-roster classical AMG-PCGLS control on opened PoolFire queries meets accuracy and uses fewer paired calls, but those results use a different cost protocol and cannot be combined into a learned-method resource advantage. v285 is a same-family configuration replication, not a new independent data family; no resource gate or real BOST test was run. The fixed SARC recipe remains closed for this family, with no tuning on opened outcomes.
 
