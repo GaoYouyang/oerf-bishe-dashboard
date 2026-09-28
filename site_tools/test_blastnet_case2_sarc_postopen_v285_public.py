@@ -19,6 +19,8 @@ def test_v285_scientific_summary_and_independent_replay():
     assert result["field_lower_than_direct_k4_frames"] == 54
     assert result["gradient_lower_than_direct_k4_frames"] == 54
     assert result["observation_lower_than_direct_k4_frames"] == 0
+    assert abs(result["observation_ratio_vs_direct_k4_median"] - 1.18921) < 5e-6
+    assert abs(result["observation_ratio_vs_direct_k4_p90"] - 1.33596) < 5e-6
     assert not result["independent_dataset_family"]
     assert not result["independent_external_generalization"]
     assert not result["real_bost"] and not result["algorithm_breakthrough"]

@@ -24,13 +24,13 @@ This is a post-hoc deterministic reduction of the already-open, independently va
 
 **为什么做。** v40 的 SARC-K3-M4 在另一条 H2-air 配置上已有外部门失败；v285 冻结同一方法，在同一 H2-air 数据族的另一配置上做 54 帧复验，检查原结论是否只是一种配置偶然。候选、阈值和四个比较臂均未按这批结果调整。
 
-**结果。** 联合精度门为 `0/54` 帧通过。相对 Direct-K4，候选的场误差和梯度误差在 `54/54` 帧更低，但观测误差在 `54/54` 帧更高；观测误差比值中位数为 `1.18754`。候选优于 Direct-K3 的三项误差并不能抵消相对 Direct-K4 与 Zero-K4 的冻结门失败。独立实现重放 216 个曲线 forward，最大指标差 `2.50e-16`，封存预测场和屏障不变。
+**结果。** 联合精度门为 `0/54` 帧通过。相对 Direct-K4，候选的场误差和梯度误差在 `54/54` 帧更低，但观测误差在 `54/54` 帧更高；逐帧观测误差比值中位数/P90 为 `1.18921 / 1.33596`。相对 Zero-K4 的对应比值为 `1.18069 / 1.29867`。这些分位数于 2026-09-28 从封存的 54 行评分独立重算。候选优于 Direct-K3 的三项误差并不能抵消相对 Direct-K4 与 Zero-K4 的冻结门失败。独立实现重放 216 个曲线 forward，最大指标差 `2.50e-16`，封存预测场和屏障不变。
 
 **讲人话。** 这条方法能把三维场往更像真值的方向推一点，却稳定地让它更不符合测量数据；不能只挑场误差说成功。v285 是同一 H2-air 数据族的配置复验，不是新的独立数据族；没有运行资源门，也没有真实 BOST。固定 SARC 配方对该族继续关闭，不对已开封结果调参。
 
 ### English
 
-The joint accuracy gate passes `0/54` frames. Against Direct-K4, field and gradient errors are lower on `54/54` frames, while observation error is higher on `54/54`; the median observation-error ratio is `1.18754`. Independent replay of 216 curved-forward outputs agrees to `2.50e-16`. This is a same-family configuration replication, not cross-family generalization or real BOST; no resource gate was run. The fixed SARC recipe remains closed for this family.
+The joint accuracy gate passes `0/54` frames. Against Direct-K4, field and gradient errors are lower on `54/54` frames, while observation error is higher on `54/54`; the frame-wise observation-error ratio median/linear p90 is `1.18921 / 1.33596`. Against Zero-K4, the corresponding ratio is `1.18069 / 1.29867`. These quantiles were independently recomputed from the sealed 54-row score report on 2026-09-28. Independent replay of 216 curved-forward outputs agrees to `2.50e-16`. This is a same-family configuration replication, not cross-family generalization or real BOST; no resource gate was run. The fixed SARC recipe remains closed for this family.
 
 `algorithm_breakthrough=false`; `paper_success=false`; `external_generalization=false`; `resource_speedup=false`; `real_bost=false`.
 
