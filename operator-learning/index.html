@@ -1178,7 +1178,8 @@
 </tbody></table></div>
 <p data-i18n-zh="四指标 p90 在五条轨迹上的范围依次为：场 0.000459–0.000485、全梯度 0.000346–0.000451、内部梯度 0.000661–0.000682、观测 5.74e-6–7.42e-6；均低于 0.01 门。独立验证 26/26 项通过，退出后成本与轨迹摘要重建与封存结果完全相同。" data-i18n-en="Across the five trajectories, metric p90 ranges are 0.000459–0.000485 for field, 0.000346–0.000451 for full gradient, 0.000661–0.000682 for interior gradient, and 5.74e-6–7.42e-6 for observations, all below the 0.01 limits. All 26 independent checks pass; the post-exit reconstruction of cost and trajectory summaries exactly matches the sealed result.">四指标 p90 在五条轨迹上的范围依次为：场 0.000459–0.000485、全梯度 0.000346–0.000451、内部梯度 0.000661–0.000682、观测 5.74e-6–7.42e-6；均低于 0.01 门。独立验证 26/26 项通过，退出后成本与轨迹摘要重建与封存结果完全相同。</p>
 <p data-i18n-zh="未预注册的累计调用补充统计：候选与 dual-ridge 都在 505/505 帧通过精度门。对每条冻结几何路径汇总 505 帧，候选为 53,050 A / 52,545 A^T，dual-ridge 为 57,133 A / 56,628 A^T；五折分别都少 804、993、1,166、259、861 次 A 与 A^T，累计少 4,083 次/算子（7.15% / 7.21%）。这是事后总量，不改变严格逐帧判决 FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST，也没有墙钟时间或RSS测量。" data-i18n-en="Unregistered cumulative-call supplement: candidate and dual-ridge both pass accuracy on 505/505 frames. Summed over 505 frames per frozen geometry path, the candidate uses 53,050 A / 52,545 A^T calls versus 57,133 / 56,628 for dual-ridge. Each fold is lower by 804, 993, 1,166, 259 and 861 calls for both operators, totaling 4,083 fewer per operator (7.15% / 7.21%). This post-hoc aggregate does not change the strict pointwise verdict FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST and is not a wall-time or RSS measurement.">未预注册的累计调用补充统计：候选与 dual-ridge 都在 505/505 帧通过精度门。对每条冻结几何路径汇总 505 帧，候选为 53,050 A / 52,545 A^T，dual-ridge 为 57,133 A / 56,628 A^T；五折分别都少 804、993、1,166、259、861 次 A 与 A^T，累计少 4,083 次/算子（7.15% / 7.21%）。这是事后总量，不改变严格逐帧判决 FAIL_SOLVER_IN_LOOP_LOTO_STRICT_COST，也没有墙钟时间或RSS测量。</p>
-<p data-i18n-zh="结论边界：冻结的严格逐帧门失败，但事后累计账显示五折总调用量都低于 dual-ridge；这个新统计仍属探索性，不能改写正式门槛。未做匹配的 fresh-process 墙钟时间或全流程 RSS 对照，不称加速、资源优势、外部泛化、真实 BOST 或算法突破。关闭当前固定配方，不通过追加轮数、改损失或扩大模型追过逐帧门槛。" data-i18n-en="Boundary: the frozen strict per-query gate fails, while the post-hoc cumulative ledger is lower than dual-ridge in all five folds. This secondary statistic is exploratory and cannot rewrite the formal gate. No matched fresh-process wall-time or whole-pipeline RSS comparison was run; this is not a speedup, resource advantage, external generalization, real BOST result or algorithmic breakthrough. Close this fixed recipe rather than chasing the pointwise gate with more epochs, a changed loss or a larger model.">结论边界：冻结的严格逐帧门失败，但事后累计账显示五折总调用量都低于 dual-ridge；这个新统计仍属探索性，不能改写正式门槛。未做匹配的 fresh-process 墙钟时间或全流程 RSS 对照，不称加速、资源优势、外部泛化、真实 BOST 或算法突破。关闭当前固定配方，不通过追加轮数、改损失或扩大模型追过逐帧门槛。</p>
+<p data-i18n-zh="结论边界：冻结的严格逐帧门失败，事后累计账不改写正式门槛。同一已开封批次的五组配对进程复测显示，缓存推理墙钟中位数比认证 AMG-PCGLS 低约 11.9%，但峰值 RSS 高约 34.1%；训练和 AMG 建层/证书准备成本排除，且未重评精度。因此只报告进程级执行路径取舍，不称全流程加速或资源优势。正式严格成本判决仍为 453/505 帧、1/5 轨迹通过；也不是外部泛化、真实 BOST 或算法突破。" data-i18n-en="Boundary: the frozen strict per-query gate fails; post-hoc totals do not rewrite it. Five paired process replays on the same opened roster measured about 11.9% lower median cached-inference wall time for learned than certified AMG-PCGLS, but about 34.1% higher peak RSS. Training and AMG hierarchy/certificate setup were excluded, and accuracy was not rerated. Report only this process-level tradeoff, not a full-pipeline speedup or resource advantage. The strict result remains 453/505 frames and 1/5 trajectories; this is not external generalization, real BOST or an algorithmic breakthrough.">结论边界：冻结的严格逐帧门失败，事后累计账不改写正式门槛。同一已开封批次的五组配对进程复测显示，缓存推理墙钟中位数比认证 AMG-PCGLS 低约 11.9%，但峰值 RSS 高约 34.1%；训练和 AMG 建层/证书准备成本排除，且未重评精度。因此只报告进程级执行路径取舍，不称全流程加速或资源优势。正式严格成本判决仍为 453/505 帧、1/5 轨迹通过；也不是外部泛化、真实 BOST 或算法突破。</p>
+<p><a href="../document_reader.html?doc=docs%2Fv284_cached_resource_repeatability_2026-09-28.md" data-i18n-zh="阅读五组资源复测及范围" data-i18n-en="Read the five-pair resource replay and scope">阅读五组资源复测及范围</a></p>
 <p data-i18n-zh="事后等分帧序的探索性检查：第 4 折早/中/晚失败为 14/34、11/34、9/33；其余四折总失败为 7、4、0、7。失败集中在轨迹而不只是末段，但这不能解释原因；等分未预注册，不改变正式门槛。" data-i18n-en="Exploratory post-hoc equal-thirds check: fold 4 has 14/34, 11/34 and 9/33 failures in its early, middle and late segments; total failures in the other folds are 7, 4, 0 and 7. Failures concentrate by trajectory, not only at the end, but this does not explain the cause. The split was not preregistered and changes no formal gate.">事后等分帧序的探索性检查：第 4 折早/中/晚失败为 14/34、11/34、9/33；其余四折总失败为 7、4、0、7。失败集中在轨迹而不只是末段，但这不能解释原因；等分未预注册，不改变正式门槛。</p>
 <p><a href="../document_reader.html?doc=docs%2Fsolver_in_loop_loto_v284_result_2026-09-27.md" data-i18n-zh="阅读双语结果与完整边界" data-i18n-en="Read the bilingual result and full limitations">阅读双语结果与完整边界</a></p>
 </section>
@@ -1287,7 +1288,7 @@
         </article>
         <article class="focus-card boundary">
           <h3 data-i18n-zh="最危险求解器近邻：NOWS" data-i18n-en="Most dangerous solver neighbor: NOWS">最危险求解器近邻：NOWS</h3>
-          <p data-i18n-zh="neural operator 给 CG/GMRES 初值并保持 solver infrastructure 不变已有先例；“learned warm start + unchanged Krylov”本身不是贡献。" data-i18n-en="A neural operator providing initial guesses to CG/GMRES while leaving solver infrastructure unchanged already exists; learned warm start plus unchanged Krylov is not itself a contribution.">neural operator 给 CG/GMRES 初值并保持 solver infrastructure 不变已有先例；“learned warm start + unchanged Krylov”本身不是贡献。</p>
+          <p data-i18n-zh="neural operator 给 CG/GMRES 初值并保持 solver infrastructure 不变已有先例；另有工作用可微 FGMRES 的残差与 Krylov 子空间夹角训练神经预条件器。因此 solver-aware 目标本身也不是新意。该方法不是 BOST/CGLS warm initializer，不能据此推断本任务有效。" data-i18n-en="Neural-operator initial guesses for CG/GMRES with unchanged solver infrastructure are established prior art. Another paper trains a neural preconditioner using residual-to-Krylov-subspace angles from differentiable FGMRES, so a solver-aware objective alone is not novel either. That method is not a BOST/CGLS warm initializer, and its gains do not transfer by assumption.">neural operator 给 CG/GMRES 初值并保持 solver infrastructure 不变已有先例；另有工作用可微 FGMRES 的残差与 Krylov 子空间夹角训练神经预条件器。因此 solver-aware 目标本身也不是新意。该方法不是 BOST/CGLS warm initializer，不能据此推断本任务有效。</p>
         </article>
         <article class="focus-card positive">
           <h3 data-i18n-zh="仍可检验的贡献" data-i18n-en="Contribution that remains testable">仍可检验的贡献</h3>
@@ -1300,6 +1301,7 @@
         <a class="button" href="https://arxiv.org/abs/2510.05926" target="_blank" rel="noreferrer">WB-IPM</a>
         <a class="button" href="https://arxiv.org/abs/2508.17120" target="_blank" rel="noreferrer">Nine-view NIRT</a>
         <a class="button" href="https://arxiv.org/abs/2511.02481" target="_blank" rel="noreferrer">NOWS</a>
+        <a class="button" href="https://link.springer.com/article/10.1007/s40574-025-00522-2" target="_blank" rel="noreferrer" data-i18n-zh="Krylov 几何神经预条件" data-i18n-en="Krylov-geometry neural preconditioning">Krylov 几何神经预条件</a>
         <a class="button" href="https://www.nature.com/articles/s43588-024-00732-2" target="_blank" rel="noreferrer">DIMON</a>
       </div>
     </section>
@@ -3885,13 +3887,9 @@
 已勾选证据门：${passed}
 最近未通过：${pending}
 
-当前固定 PoolFire 几何的 v58.1 仍是最强资源正结果：B=A A^T 只有 2.58% 非零，五条轨迹505帧的最大 field / residual 差为4.34e-16 / 1.44e-15；170个fresh process的端到端wall ratio为0.824652，RSS p90 ratio为1.000865。
+最新冻结结果：PoolFire v284 的五折完整轨迹评估精度门通过，但严格调用成本优势仅 453/505 帧、完整轨迹 1/5；不能据此声称稳定省时。独立同族 H₂-air v285 复验 54 帧联合精度门 0/54；场/梯度误差较低，但观测误差 54/54 更高。没有新的外部数据族、真实实验 BOST 或匹配端到端资源优势。
 
-最新 v59 从 BLASTNet 外部坐标重新构造 A、B 和 CSR，不复用 PoolFire 稀疏位置。独立重算5个observation的最大 field / residual 差为4.30e-15 / 6.03e-15，说明相同三轴拓扑内的坐标尺度/长宽比代数迁移成立。但34个五帧fresh process的核心/outer/RSS ratio为0.809684 / 1.023894 / 1.153122：核心更快，短序列端到端与内存双双失败。
-
-因此当前不是 learned operator、任意相机迁移或真实 BOST。下一项只允许冻结 batch-length 摊销曲线与真正不同视角拓扑；若物理核心仍成立，再只学习几何变化/曲折光线的小修正并保留精确回退。algorithm_breakthrough=false。
-
-截至 2026-07-26 的公开一级来源检索没有发现完全同构的整套方法，但 learned warm start、learned backprojection、neural operator + Krylov、WB-IPM 和 Learned ReSeSOp 都是强近邻；当前只主张组合级差异，不主张全球唯一。还需要确认组内是否已有未发表的 observation-space filter / warm start / 专利，以及真实流程中 A、A^T、光流、ray tracing 哪部分最贵。`;
+论文边界也已按近邻工作收紧：NOWS 已研究 neural-operator warm start 与 Krylov 求解器结合（https://doi.org/10.1016/j.cma.2026.118989）；BOS 中已有连续神经折射率场重建（NeRIF：https://arxiv.org/abs/2409.14722；NeRIP：https://doi.org/10.1016/j.combustflame.2026.115082）。所以不能把“神经网络暖启动迭代求解器”或“神经场用于 BOST”单独当作新颖性。若继续形成论文，可能的窄主张只能由 BOST 物理接口、精确算子与未修改求解器的耦合、严格 matched-cost/tail 对照及真实迁移共同支撑；目前这些证据尚不足以支持算法突破或投稿就绪判断。`;
       }
 
       function bindProfile() {

@@ -18809,3 +18809,18 @@ The substantive increment is not a stronger algorithm. It prevents a false concl
 The next step requires either a physically distinct, preregistered mechanism that first establishes 3D-field reference adequacy, or condition-matched real 2D BOS displacement with camera/calibration mapping, repeated-noise data, and an accepted baseline. External generalization, global resource speedup, and real BOST remain unestablished.
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+## 2026-09-28：v284 同一已开封批次的配对资源复测
+
+**范围。** 五组 fresh-process 配对复测沿用已开封的 v284 505 查询 roster，每个进程执行两条冻结几何路径共 1,010 行；包括进程启动、缓存文件加载、预测/证书与结果封存。训练拟合和 AMG 层级/证书构建成本排除；没有重新评分真值，也没有打开新的验证数据。
+
+**结果。** learned / 认证 AMG-PCGLS 的中位进程墙钟分别为 `3,226.10 / 3,662.70 s`，配对墙钟比中位数 `0.8808`；峰值 RSS 中位数 `2.356 / 1.757 GiB`。十个计时收据均成功并与封存输出重放吻合。更少的 A/Aᵀ 调用并未在这条缓存执行路径上换来更短墙钟，但 learned 用了更多内存。
+
+**边界。** 这仅是已开封同一工作负载的进程级资源取舍；不覆盖学习拟合、AMG 建层/证书准备，不重评精度，不能代表全流程或跨轨迹不确定性。认证 AMG 仍在 505/505 点逐点少用 A 和 Aᵀ；v284 正式成本门仍是 `453/505` 点、`1/5` 整轨迹通过，判决不变。不是端到端加速、算法突破、外部泛化或真实 BOST。
+
+### English
+
+Five paired fresh-process replays reuse the already-open v284 505-query roster, running two frozen geometry paths (1,010 rows) per process. They include startup, cached-artifact loading, prediction/certification, and output sealing, but exclude model fitting and AMG hierarchy/certificate construction. No truth accuracy was rescored and no new validation data were opened.
+
+Median process wall time was `3,226.10 / 3,662.70 s` for learned / certified AMG-PCGLS, with median paired ratio `0.8808`; median peak RSS was `2.356 / 1.757 GiB`. All ten timing receipts passed replay checks. Fewer A/A-transpose calls did not imply lower wall time on this cached path, while the learned path used more memory.
+
+This is a process-resource tradeoff on one opened workload, not lifecycle or trajectory-level evidence. AMG still uses fewer exact A and A-transpose calls on all 505 paired queries; the v284 strict-cost result remains `453/505` queries and `1/5` complete trajectories. No end-to-end speedup, algorithm breakthrough, external generalization, or real BOST claim follows.
