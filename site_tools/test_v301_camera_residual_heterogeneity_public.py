@@ -37,5 +37,12 @@ def test_v301_bilingual_artifacts_keep_evidence_boundary_and_privacy() -> None:
     for required in ("data-i18n-zh=", "data-i18n-en=", "v301-camera-residual"):
         assert required in PAGE.read_text(encoding="utf-8")
     assert 'id="research-update-2026-09-30-v301"' in LOG.read_text(encoding="utf-8")
-    for forbidden in ("private" + "_results", "/users/" + "gaoyouyang", "checkpoint_sha256", "raw_data_path", "/private/"):
-        assert forbidden not in joined
+    forbidden = (
+        "private" + "_results",
+        "/users/" + "gaoyouyang",
+        "checkpoint" + "_sha256",
+        "raw" + "_data_path",
+        "/private" + "/",
+    )
+    for forbidden_marker in forbidden:
+        assert forbidden_marker not in joined
