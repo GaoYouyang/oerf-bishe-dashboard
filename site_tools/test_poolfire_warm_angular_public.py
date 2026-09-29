@@ -135,7 +135,7 @@ def test_tensor_amg_pilot_bilingual_scope_and_full_control_history():
     evidence = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
     assert not evidence['latest_tensor_warm_amg_pilot']['full_roster_pending']
     assert evidence['latest_full_amg_control']['passing'] == 505
-    assert 'v285' in evidence['headline_en']
+    assert "Common-stop audit:" in evidence["headline_en"]
     assert evidence['latest_full_amg_control']['complete_trajectories'] == 5
     for rel in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/rel).read_text(),'html.parser')
@@ -174,7 +174,7 @@ def test_full_tensor_amg_bilingual_latest_and_historical_pilot():
     e = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
     assert e['latest_tensor_warm_amg_full']['fixed_full_claim_closed']
     assert e['latest_tensor_warm_amg_full']['passing'] == 441
-    assert 'v285' in e['headline_zh'] and 'v285' in e['headline_en']
+    assert "共同停止审裁：" in e["headline_zh"] and "Common-stop audit:" in e["headline_en"]
     assert e['latest_tensor_warm_amg_full']['complete_trajectories'] == 0
     for rel in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/rel).read_text(),'html.parser')
@@ -213,7 +213,7 @@ def test_full_amg_bilingual_latest_and_pilot_preserved():
     e = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
     assert e['latest_full_amg_control']['complete_trajectories'] == 5
     assert e['latest_amg_classical_control']['opened_points'] == 5
-    assert 'v285' in e['headline_en'] and '0/54' in e['headline_zh']
+    assert "Common-stop audit:" in e["headline_en"]
     for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
         note = soup.select_one('#full-amg-control-result')
@@ -242,7 +242,7 @@ def test_cost_failure_and_uncertainty_are_distinct():
 
 def test_current_bilingual_and_retained_evidence():
     d = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert "blastnet_case2_sarc_postopen_v285_result_2026-09-27.md" in d['latest_execution_evidence']['note']
+    assert "solver_in_loop_common_stop_v4_result_2026-09-29.md" in d['latest_execution_evidence']['note']
     assert d['latest_full_trajectory_controls']['passing'] == 505
     for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')

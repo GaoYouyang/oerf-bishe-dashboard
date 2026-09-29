@@ -30,9 +30,10 @@ def test_current_bilingual_claims_and_redaction():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
     assert STEM in current['latest_butterfly_accuracy']['summary']
     assert current['next_scientific_gate'] == current['next_scientific_gate_en']
-    assert all('v284' in current[f'next_scientific_gate_{lang}'] for lang in ('zh', 'en'))
+    assert 'robust cost gate' in current['next_scientific_gate_en']
+    assert '稳健成本门' in current['next_scientific_gate_zh']
     assert '物理上不同' in current['next_scientific_gate_zh']
-    assert 'physically distinct' in current['next_scientific_gate_en']
+    assert 'genuinely different' in current['next_scientific_gate_en']
     for rel in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/rel).read_text(), 'html.parser')
         notes = soup.select('#butterfly-accuracy-result')

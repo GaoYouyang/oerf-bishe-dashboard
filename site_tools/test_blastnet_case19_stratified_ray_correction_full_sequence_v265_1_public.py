@@ -71,8 +71,8 @@ def test_v265_1_figure_is_public_and_readable() -> None:
 
 def test_v265_1_remains_historical_after_v266() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["updated"] == "2026-09-27"
-    assert current["scientific_status"] == "FAIL_CASE2_SAME_FAMILY_POSTOPEN_TRANSFER_ACCURACY_V285"
+    assert current["updated"] == "2026-09-29"
+    assert current["scientific_status"] == "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
     assert current["metrics"]["v265_1_candidate_matched_pass_cells"] == 200
     assert current["current_decision"]["v265_1_fixed_half_ray_route_closed"] is True
     assert current["current_decision"]["v265_1_algorithm_breakthrough"] is False

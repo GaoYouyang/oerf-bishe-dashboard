@@ -38,7 +38,7 @@ def test_v280_publication_is_bilingual_and_consistent():
     assert '不是配对实测像素位移' in note
     assert 'paired measured pixel displacement' in note
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert current['scientific_status'] == 'FAIL_CASE2_SAME_FAMILY_POSTOPEN_TRANSFER_ACCURACY_V285'
+    assert current['scientific_status'] == 'FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE'
     assert current['metrics']['v280_cells'] == 1404
     assert current['current_decision']['v280_attribution_only'] is True
     for name in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):

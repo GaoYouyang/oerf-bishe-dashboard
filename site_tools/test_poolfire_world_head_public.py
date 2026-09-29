@@ -29,7 +29,7 @@ def test_conditional_failure_and_disclosed_repair():
 
 def test_current_bilingual_links_and_privacy():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert "blastnet_case2_sarc_postopen_v285_result_2026-09-27.md" in current['latest_execution_evidence']['note']
+    assert "solver_in_loop_common_stop_v4_result_2026-09-29.md" in current['latest_execution_evidence']['note']
     for path in ('index.html','operator-learning/index.html','operator-learning/daily-progress.html'):
         soup = BeautifulSoup((ROOT/path).read_text(),'html.parser')
         notes = soup.select('#world-head-result')

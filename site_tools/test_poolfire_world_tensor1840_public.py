@@ -45,7 +45,7 @@ def test_bilingual_pages_and_current_manifest():
     assert STEM in current['latest_world_tensor1840']['summary']
     daily=BeautifulSoup((ROOT/'operator-learning/daily-progress.html').read_text(),'html.parser')
     assert len(daily.select('#latest'))==1
-    assert daily.select_one('#latest')['data-date']=='2026-09-27'
+    assert daily.select_one('#latest')['data-date']=="2026-09-30"
     assert daily.select_one('[data-date="2026-09-07"]')
     report=(ROOT/f'docs/{STEM}.md').read_text()
     assert '26.40%' in report and 'not independently retrained' in report
