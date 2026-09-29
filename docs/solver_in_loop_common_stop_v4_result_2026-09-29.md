@@ -6,6 +6,8 @@
 
 在同一套冻结的 AMG-PCGLS 迭代与共同停止证书下，已经训练并封存的学习初值能否在满足相同最终精度时，稳定地同时减少精确前向算子 `A` 和伴随算子 `A^T` 调用？本审计只覆盖五条已经开封的 PoolFire 轨迹、505 帧，以及既有封存预测；它不是新训练、盲测、未开封外部门或真实 BOST 验证。
 
+本次复用的正是 v284 已封存的 learned initial field 与其投影图像；v3 将同一状态放入共同 AMG-PCGLS 迭代/停止合同中评估，v4 是独立复算与审裁。没有新模型权重或新学习初值。因此，这是对同一 learned state 更换为共同 solver/stopping evaluation 的后续比较，不是新增一个学习算法。
+
 ### 独立复算与结果
 
 独立验证对物理投影、残差、场/全梯度/内部梯度/观测四项指标、停止证书和精确调用账的 8 项检查全部通过。505/505 帧均满足冻结的四项精度门。
@@ -23,6 +25,8 @@
 ### Question and scope
 
 Under the same frozen AMG-PCGLS recurrence and common stopping certificate, does the already-trained and sealed learned initializer robustly reduce both exact forward (`A`) and adjoint (`A^T`) calls at matched final accuracy? This audit covers only five already-opened PoolFire trajectories, 505 frames, and the existing sealed predictions. It is not new training, a blind test, an unopened external gate, or experimental BOST validation.
+
+The reused state is the already sealed v284 learned initial field and projected image. The v3 run evaluates that same state under a common AMG-PCGLS recurrence and stopping contract; v4 performs the independent replay and adjudication. No new model weights or learned initializer were produced. This is a solver/stopping reevaluation of the same learned state, not an additional learning algorithm.
 
 ### Independent replay and result
 
