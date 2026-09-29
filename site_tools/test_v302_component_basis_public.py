@@ -21,6 +21,9 @@ def test_v302_summary_preserves_the_frozen_scope_and_result() -> None:
     assert summary["scope"]["views"] == 9
     assert summary["scope"]["new_data_opened"] is False
     assert summary["scope"]["new_split_opened"] is False
+    assert summary["measurement_interface"]["unit"] == "radian"
+    assert summary["measurement_interface"]["pixel_displacement_mapping_in_this_branch"] is False
+    assert summary["measurement_interface"]["separate_v282_virtual_pixel_forward_exists"] is True
     assert summary["full_2x2_vs_diagonal"]["folds_improved"] == 1
     assert summary["full_2x2_vs_diagonal"]["folds_worsened"] == 4
     assert summary["independent_recomputation"]["upstream_seals_unchanged"] is True
@@ -33,7 +36,7 @@ def test_v302_public_surfaces_are_bilingual_and_keep_claim_limits() -> None:
     learning = LEARNING.read_text(encoding="utf-8")
     note = NOTE.read_text(encoding="utf-8")
     combined = "\n".join((page, daily, log, learning, note, SUMMARY.read_text(encoding="utf-8"))).lower()
-    for required in ("algorithm_breakthrough=false", "real_bost=false", "v284", "2.66e-15"):
+    for required in ("algorithm_breakthrough=false", "real_bost=false", "v284", "2.66e-15", "radians", "弧度"):
         assert required in combined
     assert 'id="v302-component-basis"' in page
     assert 'data-i18n-zh=' in page and 'data-i18n-en=' in page

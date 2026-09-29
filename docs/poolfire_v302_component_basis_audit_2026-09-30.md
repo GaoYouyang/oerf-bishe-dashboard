@@ -5,6 +5,10 @@
 
 ## 中文
 
+### 观测量说明
+
+本诊断所用的 V299–V302 前向分支输出两个横向小偏折角，单位为弧度；它没有把角度映射到背景面物理位移或图像像素，也没有使用经验证的混合物密度—折射率关系。项目中的 V282 是另一条独立的虚拟有限背景像素前向，在明确假设下生成像素位移并验证线性化算子/伴随；它不是实测 BOS，也不能自动替代本诊断的角度观测。两条链均不能据此声称已验证真实实验位移。
+
 ### 问题与方法
 
 V300 的事后分析显示，两个图像位移分量需要不同的标量增益；V301 则显示相机间差异温和。V302 检查一个更窄的可能性：是否存在跨相机共享的二维分量混合（例如存储分量基底不一致）。只使用相同五条已开封 PoolFire 轨迹的 25 行、9 个视角及原有效射线掩码。每折留一整条轨迹，用其余四条拟合，再在留出的整条轨迹上比较恒等映射、对角缩放和无截距的完整 2×2 线性映射。离散投影由已开封真值经冻结算子计算，因此这是回顾性归因，不是部署输入。
@@ -20,6 +24,10 @@ V300 的事后分析显示，两个图像位移分量需要不同的标量增益
 结果削弱了“共享的分量旋转/交叉混合是主要错配来源”这一特定解释；它与分量尺度差异相容，但不能确认物理来源。相机局部坐标是否可由同一矩阵变换也尚未由真实标定验证。本结果不构成相机标定、因果识别、可部署修正、前瞻泛化、matched-accuracy 调用节省、wall/RSS 收益、真实 BOST 或算法突破；v284 的整轨迹严格成本失败不变。
 
 ## English
+
+### Observable clarification
+
+The V299–V302 forward branch used here outputs two transverse small-angle deflections in radians. It does not map them to physical background-plane or image-pixel displacement, and it does not use a validated mixture density-to-refractivity relation. V282 is a separate virtual finite-background pixel forward under explicit assumptions; its linearized operator/adjoint check is not measured BOS and does not automatically replace the angular observations in this diagnostic. Neither branch establishes validation against measured experimental displacement.
 
 ### Question and method
 
