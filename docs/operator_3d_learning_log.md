@@ -1,3 +1,43 @@
+## 2026-09-30：v298 连续观测与离散反演算子不匹配的事后分解
+
+**问题。** 在已开封样本中，连续方式生成的二维观测与实际用于迭代的离散算子存在多大差异？预算加深时，二维残差与三维真值误差是否总是同向变化？
+
+**结果。** 五条已开封 PoolFire 轨迹各取五行，共 25 行。把已知三维场代入离散算子，所得投影与合成观测的相对差 p50/p90/worst 为 `0.239253 / 0.290883 / 0.305524`。总预算 `2A+2A^T` 时，learned warm 相对 Zero 的场、全梯度、内部梯度和观测残差四项真值误差均在 `25/25` 行更低。总预算 `17A+17A^T` 时，场/全梯度中位误差为 `0.243313 / 0.445191`，略高于 Zero 的 `0.236866 / 0.429261`；观测残差中位数却略低（`0.1245` 对 `0.1254`）。因此观测拟合改善不保证三维误差同步改善。
+
+**独立复算。** 形式与独立分解最大绝对差 `3.82e-14`；观测残差汇总对既有封存结果最大差 `1.11e-16`，输入保持不变。
+
+**边界与决定。** 这是已开封、真值评分样本上的事后归因，不是因果证明、新预测、在线停止规则或新的留出测试；它不推翻 v284 的整轨迹严格成本失败，不支持稳定省调用、wall/RSS、真实 BOST 或算法突破。它把后续物理核查重点收敛到观测生成与反演算子的一致性，不授权调阈值或后验挑选迭代停止点。`algorithm_breakthrough=false`; `paper_success=false`; `external_generalization=false`; `resource_speedup=false`; `real_bost=false`。
+
+### English
+
+**Question.** On already-open samples, how different are continuously generated 2D observations from the discrete operator used by the solver? As the iteration budget grows, do observation residuals and 3D truth errors always move together?
+
+**Result.** Five rows from each of five already-open PoolFire trajectories (25 rows). Applying the discrete operator to the known 3D field gives a projection whose relative mismatch to the synthetic observation has p50/p90/worst `0.239253 / 0.290883 / 0.305524`. At total budget `2A+2A^T`, learned warm has lower truth-scored field, full-gradient, interior-gradient, and observation-residual errors than Zero on all `25/25` rows. At `17A+17A^T`, median field/full-gradient errors are `0.243313 / 0.445191`, slightly higher than Zero's `0.236866 / 0.429261`, while median observation residual is slightly lower (`0.1245` vs `0.1254`). Better observation fit therefore need not imply a simultaneous improvement in 3D error.
+
+**Independent recomputation.** Formal and independent decompositions differ by at most `3.82e-14`; observation-residual summary differs from the sealed prior result by at most `1.11e-16`, with inputs unchanged.
+
+**Boundary and decision.** This is post-open attribution on truth-scored rows, not causal proof, a new prediction, online stopping rule, or a new held-out test. It does not reverse v284's full-trajectory strict-cost failure and establishes no robust call savings, wall/RSS benefit, real BOST, or algorithmic breakthrough. It directs physical follow-up toward consistency between observation generation and inversion operators; it does not authorize threshold tuning or post-hoc stopping-point selection. `algorithm_breakthrough=false`; `paper_success=false`; `external_generalization=false`; `resource_speedup=false`; `real_bost=false`.
+
+## 2026-09-30：v296 已开封 CGLS 检查点的同精度调用前沿
+
+**问题。** 在固定 learned 初值和离散 CGLS 检查点上，warm start 能否用更少的前向/伴随调用，达到 Zero 与归一化 BP 在目标预算下的四指标质量？
+
+**结果。** 五条已开封 PoolFire 轨迹各取五个样本行，共 25 行。匹配定义为 field、full-gradient、interior-gradient、observation-residual 四项真值指标在同一行都不劣。目标预算 3 时，warm 在预算 2 匹配 Zero/BP 为 `24/25`、`23/25`，每个匹配点少一次 `A` 和一次 `A^T`。目标预算 5 时，warm 在预算 3 匹配为 `4/25`、`7/25`，少两次各自调用；对 Zero 的四个匹配都来自同一轨迹，对 BP 的七个匹配只出现在前三条轨迹。目标预算 9 与 17 均无更低预算匹配。controls 在更低采样预算也没有匹配 warm 的四指标向量。
+
+**独立复算。** 对冻结 formal 与 independent arrays 分别重做离散检查点搜索，最大指标差 `2.44e-15`，匹配计数一致。仅读取封存数组，没有重跑 forward/adjoint 或训练。
+
+**边界。** 这是已开封行的 post-open 真值评分诊断，且使用离散预算网格；生成观测的连续 straight-ray 与离散求解器有算子不匹配。它不是在线停止规则、连续迭代阈值、完整轨迹泛化、绝对精度通过、fresh wall/RSS 或真实 BOST。浅层信号随预算加深消退且轨迹异质；`algorithm_breakthrough=false`、`paper_success=false`。
+
+### English checkpoint
+
+**Question.** On the frozen learned initial state and discrete CGLS checkpoints, can warm start reach the four-metric quality of Zero or normalized BP at a target budget with fewer forward/adjoint calls?
+
+**Result.** The post-open diagnostic uses five rows from each of five already-open PoolFire trajectories (25 rows). A match requires no worse truth-scored field, full-gradient, interior-gradient, and observation-residual metrics on that row. At target budget 3, warm at budget 2 matches Zero/BP on `24/25` and `23/25` rows, saving one `A` and one `A^T` each on those rows. At target budget 5, warm at budget 3 matches on `4/25` and `7/25`, saving two of each operator; all four Zero matches come from one trajectory, and the BP matches occur only on the first three trajectories. No lower-budget warm match occurs at targets 9 or 17. Neither control reaches warm's four-metric vector at a lower sampled budget.
+
+**Independent recomputation.** Searching the sealed formal and independent arrays separately gives a maximum metric difference of `2.44e-15` and identical discrete match counts. This reads sealed arrays only; it reruns no forward/adjoint or training.
+
+**Boundary.** This is post-open, truth-scored checkpoint-grid evidence. The observation generator is continuous straight-ray while the solver uses the frozen discrete operator, so an operator mismatch remains. It is not an online stopping rule, continuous threshold-crossing result, complete-trajectory generalization, absolute-accuracy pass, fresh wall/RSS result, or real BOST. The shallow signal fades with budget and varies by trajectory; `algorithm_breakthrough=false`, `paper_success=false`.
+
 ## 2026-09-27：v284 线上调用节省不足以抵消离线拟合账（事后核算）
 
 **核算范围。** 只对已经开封并独立验证的 v284 505 个查询收据做确定性汇总；Python 与独立 JavaScript 两种实现得到相同结果，封存结果文件哈希前后不变。这是事后调用数核算，不改变 v284 的冻结判决，也不是新留出测试。
