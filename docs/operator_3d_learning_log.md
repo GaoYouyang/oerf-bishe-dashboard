@@ -1,3 +1,19 @@
+## 2026-09-30：v301 相机间残差差异温和
+
+**问题。** V300 排除了单一全局比例足以解释连续观测与离散投影差异。剩余差异是否由某个视角单独支配？
+
+**设计。** 沿用相同五条已开封 PoolFire 轨迹、25 个样本、9 个视角和既有有效射线掩码；分别独立汇总相机残差比。没有拟合逐相机增益、训练、运行求解器或打开新数据。
+
+**结果。** 跨视角残差比变异系数为 `0.055279`；p50/p90/worst 的最大/中位视角比为 `1.134 / 1.196 / 1.255`。典型相机 p50 落在 `0.217–0.256`。视角间存在温和差异，但没有单一视角明显主导。
+
+**独立复算。** formal 与独立实现的汇总最大绝对差 `1.17e-14`；输入封存树前后不变。
+
+**边界与含义。** 这是已开封样本上的回顾性描述，削弱“单一坏相机主导”的解释，但不能识别物理根因，也不支持事后相机增益校正。没有新 forward、重建、matched-accuracy 调用节省、wall/RSS、外部泛化或真实 BOST 结果；v284 严格成本失败不变。`algorithm_breakthrough=false`、`paper_success=false`。
+
+### English checkpoint
+
+On the same 25 opened samples from five PoolFire trajectories and nine views, the across-view residual-ratio CV is `0.055279`; max-to-median view ratios for p50/p90/worst are `1.134 / 1.196 / 1.255`. Typical per-view p50 is `0.217–0.256`, so heterogeneity is modest and no single view dominates. A fully independent summary differs by at most `1.17e-14`, with sealed inputs unchanged. This post-open description identifies no cause and justifies no per-camera gain correction. It establishes no new reconstruction, matched-accuracy call savings, wall/RSS benefit, external generalization, or real BOST; v284's strict-cost failure remains.
+
 ## 2026-09-30：v300 单一增益不足以解释前向差异
 
 **问题。** V295 的连续射线积分已对步长收敛，V298–V299 显示它与离散求解器投影的差异会影响已开封样本的深层误差方向。剩下的差异是否只是统一的幅值比例？
