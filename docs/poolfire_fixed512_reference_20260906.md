@@ -1,0 +1,1212 @@
+# 完整序列的固定预算经典基线 / Fixed-budget classical sequence reference
+
+## 中文
+
+2026-09-06。普通CGLS主基线与几何Jacobi PCGLS同价对照，固定512步，正式和独立实现均通过505/505帧、5/5条完整轨迹。每条101帧，每帧密度、全梯度、内部梯度和观测相对误差均不超过1%，不是只让平均值通过。最坏值在两种实现中取较大者：
+
+| Metric / 指标 | Worst primary error / 主基线最坏误差 |
+|---|---:|
+| Density / 密度 | 0.659559% |
+| Full gradient / 全梯度 | 0.560067% |
+| Interior gradient / 内部梯度 | 0.978795% |
+| Observation / 观测 | 0.008466% |
+
+这把此前的五点可恢复性检查扩展成完整已打开序列上的经典精度标尺。它支持后续研究在有用的最终精度下减少计算，而不是只模仿误差较大的K4。内部梯度仍接近1%门，不能推断噪声鲁棒。
+
+范围必须说明：固定512来自已经看过的五点试点；复用5个试点，另外500帧首次在这个预算下评价，但五条轨迹都是已打开的训练资料。只有一个干净九相机几何，数据生成和反演使用同一离散forward。不是独立测试、相机增删泛化、学习成功、真实BOST或论文突破。此前中间迭代曲线的数值不确定判决保持不变；本次没有重新认证它们，也没有证明512是最小调用数。
+
+独立检查区分了同一场的物理重放与第二条求解路径。跨路径场/投影/指标最大差为8.98e-5/1.12e-5/9.99e-5，均在原有数值界内；同一场的投影/指标差仅7.87e-16/2.02e-17。每帧1%判断完全一致。严格同价非劣计数主基线为86/88、Jacobi为301/301；前者的数值排序不完全一致，因此不声称主基线更优。
+
+每次逻辑求解为512A+512AT，不是加速结果。两臂、两实现的2000次新增离线求解共1,024,000A+1,024,000AT。复用几何的8192次基向量forward及29700解析行构建、原试点全部40960A+40960AT和本次额外4040次forward重放均单独披露。没有训练参数，也没有端到端时间或内存优势结论。
+
+## English
+
+Both the ordinary CGLS primary and equal-cost geometry-Jacobi PCGLS control at fixed512 steps pass505/505 frames and5/5 complete101-frame sequences in both implementations. EVERY frame meets1% relative density, full-gradient, interior-gradient and observation error, not merely the mean. The table takes the worse value across both implementations.
+
+This extends the earlier five-point recoverability check to a useful-accuracy classical reference across the opened sequences. It motivates reducing computation at equivalent final accuracy, rather than only imitating the weak K4 comparator. Interior-gradient error remains close to the gate; noise robustness does not follow.
+
+The budget is pilot-informed: five design points are reused and500 other frames are newly evaluated at this budget, but all trajectories are already-opened training material. Only one clean nine-camera geometry and the same discrete forward are used for data generation and inversion. This is not an independent test, variable-camera generalization, learned success, real BOST or a paper breakthrough. The old intermediate-curve numerical verdict remains inconclusive and is NOT requalified;512 is not proven minimal.
+
+Same-field physical replay and the second solver trajectory are checked separately. Cross-path field/image/metric differences8.98e-5/1.12e-5/9.99e-5 satisfy the original bounds; same-field image/metric differences are7.87e-16/2.02e-17. All1% cell decisions agree. Strict equal-cost nonharm counts are86/88 for the primary and301/301 for Jacobi, so the primary ranking is not numerically identical and no primary-superiority claim is made.
+
+Each logical solve costs512A+512AT. The2000 new offline solves cost1,024,000A+1,024,000AT, separately from reused geometry setup (8192 canonical forwards and29700 analytical rows), the entire inherited pilot (40960A+40960AT), and4040 new physical forwards. No parameters are trained and no end-to-end time or memory speedup is established.
+
+![Worst errors across five opened sequences / 五条已打开轨迹的最坏误差](../assets/figures/poolfire_fixed512_reference_20260906.png)
+
+[Redacted aggregate / 去隐私汇总](poolfire_fixed512_reference_20260906.json)
+
+## 后续方向诊断 / Follow-on direction diagnosis
+
+密度误差指预处理后的固定规范网格场，不是原分辨率CFD或实验绝对密度精度。本次没有训练模型或追加求解迭代，只读取已封存的K4、K512、观测和已验证的几何算子。
+
+方向诊断：K4到合格参考的修正，在全部505帧上平均法向算子灵敏度更低。沿实际观测残差梯度，任何单个标量步长的场误差下界都至少29.57%，不能一步达到1%目标；这不排除后续多步CGLS或多方向暖启动，尚无学习加速结论。
+
+K4到参考的场差异逐轨迹中位数约40.6%至48.6%。修正量的平均灵敏度更低，但灵敏度比在0.159至0.627之间，不能宣称全部落在近零特征值或某个空间低频带。参考误差法向方向上的最优标量只能消除18%至32%的场差异能量。
+
+第二项检查使用真实部署可见方向 `g4=AT(y-Ax4)`，没有把它与参考误差的法向方向混为一谈。令 `R=x512`，`m=min_alpha ||R-x4-alpha*g4||/||R||`，由已验证的参考误差不超过1%，三角不等式给出每个真实场误差的下界 `max(0,0.99*m-0.01)`。每帧下界都超过29.57%；表格是下界，不是测得误差的范围。
+
+| Trajectory / 轨迹 | Median late/K4 Rayleigh / 灵敏度比中位数 | Minimum scalar-step error lower bound / 标量一步误差下界最小值 |
+|---|---:|---:|
+| p=14kw_size=05 | 0.2347 | 38.1634% |
+| p=22kw_size=03 | 0.4242 | 31.5886% |
+| p=33kw_size=01 | 0.4792 | 29.5737% |
+| p=45kw_size=05 | 0.2722 | 32.5921% |
+| p=58kw_size=03 | 0.3621 | 33.3510% |
+
+两实现逐帧排除结论一致，下界最大绝对差为2.31e-6，步长最大相对差为1.99e-6。合计新增3030A+2020AT，无CFD真值数组解析、训练或新求解终态。该排除只适用于单次标量修正直接完成任务，不排除其后继续CGLS、多方向修正或其他暖启动；旧学习失败和本页经典基线通过的结论都不变。
+
+Density errors concern preprocessed gauge-fixed grid fields, not original-resolution CFD or calibrated experimental density. No training or additional solver iterations occur: the diagnostic reads sealed K4/K512 fields, observations and verified geometry operators.
+
+Direction diagnosis: the K4-to-qualified-reference correction has lower mean normal-operator sensitivity on all 505 frames. Along the actual observation-residual gradient, every scalar step has a field-error lower bound of at least 29.57%, excluding one-step attainment of the 1% gate. This does not exclude further CGLS or multidirection warm starts and establishes no learned speedup.
+
+Trajectory-median K4-to-reference field gaps are 40.6%--48.6%. The lower mean sensitivity ratio ranges from 0.159 to 0.627; it is NOT an exclusive near-null or spatial low-frequency band certificate. An oracle scalar along the reference-error normal direction removes 18%--32% of late field-error energy.
+
+The second check instead uses the actual visible direction `g4=AT(y-Ax4)`. For qualified reference `R=x512`, define `m=min_alpha ||R-x4-alpha*g4||/||R||`. The verified 1% reference guarantee and reverse triangle imply the truth-field error lower bound `max(0,0.99*m-0.01)` for EVERY scalar. The table reports lower bounds, not measured-error ranges. Both implementations exclude all 505 frames, with maximum absolute bound difference 2.31e-6 and relative alpha difference 1.99e-6. Total new work is 3030A+2020AT, with no CFD truth array parsing, model fitting or new solver endpoint. Further CGLS, multidirection corrections and other warm initializers are not excluded.
+
+文献提供的是方法提醒，不是本任务的成功证据：[HINTS](https://arxiv.org/abs/2208.13273)强调神经与经典迭代的误差成分互补；[DL-HIM训练与更新可靠性研究](https://arxiv.org/html/2602.06842v1)讨论训练初始右端项和部署残差之间的分布差异。这里没有复现其PDE速度结果，也没有证明本任务出现其假固定点现象。
+
+The literature supplies methodological context, not our performance evidence: [HINTS](https://arxiv.org/abs/2208.13273) motivates complementary error correction; the [DL-HIM training/update study](https://arxiv.org/html/2602.06842v1) discusses mismatched initial training inputs and deployment residuals. Their PDE speed results are not reproduced here, and their false-fixed-point phenomenon has not been established for our one-shot initializer.
+
+## 局部近似逆对照 / Local approximate-inverse control
+
+经典对照进展：局部稀疏近似逆配合固定256步，在五个已打开哨兵的四项误差上均优于同预算Jacobi；全部1%门通过3/5，对照为0/5。两个失败点的内部梯度误差约1.111%与1.186%。当前配置封存，不加深或调参；不是完整序列、学习加速或真实BOST成果。
+
+Classical control: a local sparse approximate inverse at fixed 256 steps improves all four errors over same-budget Jacobi on five opened sentinels. The 1% gate passes 3/5 versus 0/5; two interior-gradient errors remain about 1.111% and 1.186%. This configuration is closed without depth or parameter tuning. No complete-sequence, learned-speedup or real-BOST result is established.
+
+| Opened midpoint / 已打开中点 | FSAI interior error / 内部梯度误差 | Jacobi interior error / 内部梯度误差 |
+|---|---:|---:|
+| p=14kw_size=05 | 1.110643% | 2.887197% |
+| p=22kw_size=03 | 1.185324% | 2.306541% |
+| p=33kw_size=01 | 0.832263% | 2.113687% |
+| p=45kw_size=05 | 0.851966% | 2.937497% |
+| p=58kw_size=03 | 0.793125% | 2.108898% |
+
+这只是同一干净九相机设置的五个历史中点，不是五条完整轨迹。FSAI的场、全梯度与观测误差五点均通过，只有上表前两个内部梯度误差失门；不能事后放宽1%标准。两实现逐项判决一致，场/观测/指标最大差约2.04e-4/3.22e-5/1.88e-4，守住预先固定的数值界。相同场的独立物理回放差约7.03e-16。
+
+These are five historical midpoints in one clean nine-camera acquisition, not five complete trajectories. FSAI field, full-gradient and observation errors pass all five points; only the first two interior-gradient errors miss the unchanged 1% threshold. Both implementations agree on every gate. Maximum field/image/metric differences are about 2.04e-4/3.22e-5/1.88e-4 within the preset numerical bounds; independent replay of the same field differs by about 7.03e-16.
+
+每个求解仍需256A+256AT，另有256次L和257次L转置稀疏乘法。每套几何因子有103548个CSR存储项，约1.22MiB，需8192个局部求解；不能把几何预处理和因子运算当免费。20个离线终态合计5120A+5120AT，评分/探针另33A。没有端到端速度或新学习参数结果。
+
+Each solve still needs 256 A+256 AT plus 256 L and 257 transposed-L sparse actions in the formal path. Each geometry factor stores 103548 CSR entries, about 1.22 MiB, and requires 8192 local solves; setup and factor actions are not free. Twenty offline endpoints total 5120 A+5120 AT, plus 33 scoring/probe A calls. There is no end-to-end speed or new learned-parameter result.
+
+最初启动在观测/评分前发现常数零空间假设错误，已作为工程失效保留。现有forward先施加外边界零支撑再求梯度，因此不能任意减去求解均值；修正版本不做该后处理，不改因子配置、步数或门。几何边界应由实际算子决定，不能直接套用连续无限域直觉。
+
+The first attempt stopped before observations/scoring because its constant-nullspace premise was invalid. This forward applies outer-zero support before differentiation, so arbitrary mean subtraction is not legitimate. The corrected run omits that postprocessing without changing factor settings, depth or gates. Boundary semantics must follow the actual operator, not an unbounded-domain intuition.
+
+[FSAI原始论文 / Original FSAI paper](https://epubs.siam.org/doi/10.1137/0614004)是该经典方法的来源，不是本任务的突破证据。This is established numerical methodology, not component originality or proof of learned BOST acceleration.
+
+## 三维状态小算子 / Small Field-State Operator
+
+新一轮学习验证：81参数三维状态小算子完成10个完整轨迹外折拟合，505个预测先封存。七种同预算方法在五个预定中点均为0/5通过；候选内部梯度误差2.12%至3.02%，高于1%门，且普通CGLS、BP与旧dual-ridge的四项误差都更低。每次部署258A+258AT，另计几何准备与映射；已关闭该配置并跳过余下500帧重建。不是完整序列通过、学习加速或真实BOST成果。
+
+New learning check: an 81-parameter field-state operator completed 10 whole-trajectory outer-fold fits, with all 505 predictions sealed first. All seven same-budget methods passed 0/5 prescribed midpoints. Candidate interior-gradient errors were 2.12% to 3.02%, above the 1% gate; ordinary CGLS, BP and frozen dual-ridge had lower errors on all four metrics. Each deployment costs 258 A+258 AT, plus geometry setup and maps. This configuration is closed and the remaining 500 refinements were skipped. No complete-sequence, learned-speedup or real-BOST success is established.
+
+| 已开中点 / Opened midpoint | 正式内部梯度误差 / Formal interior error | 独立复算 / Independent |
+|---|---:|---:|
+| p=14kw_size=05 | 2.941796% | 2.948222% |
+| p=22kw_size=03 | 2.285119% | 2.284554% |
+| p=33kw_size=01 | 2.127788% | 2.121805% |
+| p=45kw_size=05 | 3.015663% | 3.017217% |
+| p=58kw_size=03 | 2.144515% | 2.148611% |
+
+本次真正训练了一个新的共享参数模型：观测先经物理伴随与固定局部几何映射汇合到三维，再由逐点小网络预测修正，经精确正向与伴随构造暖启动，最后使用未修改的CGLS。训练目标是已通过精度门的K512参考，不再是较弱K4。每折仅用其余四条轨迹的404帧，留出的101帧不进入训练目标或归一化；两种表示各五折，每个模型81参数。只有干净九相机的历史数据证据，不是新工况泛化。
+
+A new shared-parameter model was actually trained: an adjoint and fixed local geometry map fuse observations into a 3D state, a pointwise small network predicts a correction, exact forward/adjoint actions form the initializer, and unchanged CGLS refines it. Teachers are the qualified K512 reference rather than weak K4. Each fold trains on404 frames from four other trajectories; its101 withheld frames do not enter teacher fitting or normalization. Two representations use five folds each, with81 parameters per model. Evidence is restricted to opened clean nine-camera data, not a new-condition generalization result.
+
+在两套数值实现中，候选四项误差均优于自身无学习几何滤波对照，但均劣于同预算普通CGLS、BP和旧dual-ridge。对同参数量Jacobi小网络的细微优势未在两套实现中完全一致，不能称稳定优势。候选场与全梯度误差也失门，只有观测误差通过。因此小幅降低训练损失不是节省精确调用的证据，合格参考仍未被更便宜的学习算法替代。
+
+In both numerical paths the candidate improves all four errors over its own no-learning geometry filter, but loses on all four to same-budget ordinary CGLS, BP and frozen dual-ridge. Small differences from the same-size Jacobi network do not yield identical dominance in both implementations and are not a reliable advantage. Candidate field and full-gradient errors also fail; only observation passes. Lower training loss is therefore not evidence of exact-call savings, and a cheaper learned algorithm has not replaced the qualified reference.
+
+五个必要中点的逐指标判决一致，独立状态/观测/指标最大差为2.43e-4/3.78e-5/2.25e-4，守住预定数值界；同一场的原生物理回放差7.12e-16。这里不是五条完整轨迹：根据结果前停止规则，其余500帧未做最终重建。全部505个预测已经封存，不能把预测数量写成505个准确重建。
+
+Every metric decision agrees at the five necessary midpoints. Independent state/image/metric discrepancies of2.43e-4/3.78e-5/2.25e-4 satisfy the preset numerical bounds; same-field native replay differs by7.12e-16. These are not five complete trajectories: the pre-result stopping rule skipped the remaining500 final reconstructions. All505 predictions were sealed, but that count must not be reported as505 accurate reconstructions.
+
+新离线训练、预测、核验与评分总账329650A+249850AT；实际70个终态求解另18030A+17990AT，初始化已在预测阶段执行并单列。每种方法的单次部署账均为258A+258AT；几何因子、映射以及已有参考的构建成本不免费。没有fresh wall/RSS优势、GPU需求或论文成功结论。不扩大或调参挽救这个固定配置，也不据此否定所有三维算子学习。
+
+New offline training, prediction, audits and scoring total329650 A+249850 AT; the70 actual endpoint solves add18030 A+17990 AT, with initializer work executed and recorded in the prediction stage. Each method's per-deployment ledger is258 A+258 AT; geometry factors, maps and inherited reference construction are not free. No fresh wall/RSS advantage, GPU need or paper-success claim is established. This fixed configuration will not be enlarged or retuned, and its failure does not rule out all3D operator learning.
+
+## 固定几何经典直接解 / Fixed-Geometry Classical Direct Solve
+
+补齐关键经典对照：固定九相机几何的缓存直接分解，经独立QR复算，在505帧、5条完整轨迹上四项1%精度门全部通过。每种方法三次新进程测量，直接分解/CGLS512/Jacobi-PCGLS512的505帧总耗时中位数为2.80/166.85/168.86秒，进程峰值内存中位数为1.21/0.72/0.73GiB。包含重新分解、求解和写盘；不包含原始BOS矩阵构建与观测生成。该结果是经典方法对照，不是学习算法加速或真实BOST成果。
+
+Classical comparator completed: cached direct factorization for one fixed nine-camera geometry passed all four 1% gates on505 frames and five complete trajectories, independently checked by rectangular QR. Across three fresh processes per method, median505-frame wall times for direct factorization/CGLS512/Jacobi-PCGLS512 are2.80/166.85/168.86seconds; median process peak memory is1.21/0.72/0.73GiB. Measurements include refactorization, solves and output writing, but exclude original BOS matrix construction and observation generation. This is a classical comparison, not learned acceleration or a real-BOST result.
+
+| 经典方法 / Classical method | 505帧总秒数中位数 / Median seconds | 进程峰值GiB中位数 / Median peak GiB | 准备秒数中位数 / Median setup seconds |
+|---|---:|---:|---:|
+| factor | 2.798 | 1.208 | 0.9211 |
+| cgls | 166.852 | 0.725 | 0.0000 |
+| pcgls | 168.856 | 0.725 | 0.0076 |
+
+这次补齐的是一个简单但关键的对照：同一相机几何被505帧复用时，可以先分解有效场空间的正规矩阵，再对每帧做一次伴随和两次三角求解。独立实现不形成正规方程，而是对相机行块乱序后的矩形矩阵做带列主元QR。未加新的正则、截断或训练参数；两者的场最大差2.242e-12、观测最大差3.680e-14，全部轨迹均通过。直接解的四项误差也都小于已合格的两种K512参考。
+
+The missing comparator is simple but important:505 frames share the same camera geometry, so the active field normal matrix can be factored once and each frame solved using one adjoint and two triangular solves. The independent implementation forms no normal equations: it uses column-pivoted rectangular QR after camera-block row permutation. No new regularization, truncation or trained parameters are used. Maximum field and observation discrepancies are2.242e-12 and3.680e-14; every complete trajectory passes. Direct-solve errors are also lower on all four metrics than both qualified K512 references.
+
+计时在独立精度门之后另行冻结。三种方法按固定轮换次序各启动三次，重新加载矩阵与观测并重建各自准备；全部九次的505个场和物理残差都通过独立回放与精度核验。直接分解使用8个BLAS线程，迭代法使用8个帧线程且每帧BLAS单线程。内存是整个求解进程峰值，包含因子、临时数组、输入和输出；监督进程另列，二者峰值之和只是并发内存上界，不是同步采样的精确峰值。操作系统文件缓存未清空。
+
+Resource measurements were frozen separately after independent accuracy qualification. Each method ran three times in a fixed rotated order, reloading matrices and observations and rebuilding its own preparation. All505 fields and physical residuals from all nine runs passed independent replay and accuracy checks. Direct factorization uses eight BLAS threads; iterative methods use eight frame threads with single-thread BLAS. Peak memory covers the entire solve process, including factors, temporaries, inputs and outputs. Supervisor memory is listed separately; the sum of separate peaks is only a concurrent-memory upper bound, not an exactly synchronized peak. Operating-system file caches were not purged.
+
+保留的直接因子约263.8MiB；其几何准备成本和三角求解不能当作免费操作。返回场及物理残差时直接法为1A+1AT加两次三角求解，两种K512迭代法为513A+512AT，其中一次A用于重新计算物理残差。这里没有证明512倍加速、最小迭代步数、任意相机变化、观测噪声稳定性或完整BOS端到端加速。现有几何矩阵与无噪声观测已就绪是比较的前提。
+
+The retained direct factor occupies about263.8MiB; geometry preparation and triangular solves are not free. Returning a field and physical residual costs1A+1AT plus two triangular solves for the direct method, versus513A+512AT for either K512 method, including one fresh residual projection. This does not establish a512-fold speedup, minimum iteration depth, arbitrary camera changes, noise stability or complete BOS end-to-end acceleration. Existing geometry matrices and clean observations are prerequisites for this comparison.
+
+科学判断：固定小规模、干净线性代理上的精度与调用数，单独不足以支持学习优势。后续学习必须说明为何不能直接复用这个经典解，并在同样计入准备与内存的条件下胜过它；不能只拿较慢的迭代法当对照。当前没有学习算法突破或真实实验结论。
+
+Scientific consequence: accuracy and exact-call counts alone on this small, fixed, clean linear proxy do not support a learned advantage. Future learning must explain when this classical solution cannot simply be reused and beat it with preparation and memory included, not compare only against slower iterative solvers. No learned algorithm breakthrough or real-experiment conclusion follows.
+
+## 合成噪声边界 / Synthetic Noise Boundary
+
+适用边界已确认：同一固定几何加入1%合成观测噪声，三个固定种子共1515个样本，直接解为0/1515、完整轨迹0/5。场/全梯度/内部梯度误差p90为5.59%/6.19%/10.10%，都超过1%门；观测残差却全部通过。Zero、BP和两种512步迭代对照在15个固定中点也均未通过。干净数据的快速结果仍有效，但不能当作噪声下的准确重建；这不是实验噪声或学习成果。
+
+Applicability boundary confirmed: adding1% synthetic observation noise to the same fixed geometry gives1515 samples across three fixed seeds. The direct inverse passes0/1515 samples and0/5 complete trajectories. Field/full-gradient/interior-gradient p90 errors are5.59%/6.19%/10.10%, above the1% gates, although every observation-residual gate passes. Zero, BP and both512-step controls also fail their15 fixed midpoints. Clean-data speed remains valid, but does not establish accurate noisy reconstruction. These are not measured experimental noise or learned results.
+
+| 轨迹 / Trajectory | 场p90 / Field | 全梯度p90 / Full gradient | 内部梯度p90 / Interior gradient | 噪声观测p90 / Noisy residual |
+|---|---:|---:|---:|---:|
+| p=14kw_size=05 | 5.617% | 5.762% | 10.022% | 0.898% |
+| p=22kw_size=03 | 4.657% | 5.769% | 8.669% | 0.898% |
+| p=33kw_size=01 | 4.820% | 6.423% | 8.988% | 0.898% |
+| p=45kw_size=05 | 6.389% | 6.259% | 10.898% | 0.898% |
+| p=58kw_size=03 | 5.072% | 5.919% | 9.738% | 0.898% |
+
+每行汇总同一轨迹101帧、三个预先固定噪声种子，共303个样本。噪声是作用于全部观测分量、按干净观测L2范数归一到1%的高斯方向，不是归一化后仍相互独立的高斯噪声，也不是实验测量。输入构造不读取密度真值，求解器只读有噪观测与已知几何；全部直接解及中点对照先封存，再读取真值评分。两套实现分别构造输入、执行Cholesky/QR求解与物理回放，逐指标离散判决完全一致。
+
+Each row covers101 frames and three pre-fixed noise seeds, or303 samples. Noise is a Gaussian direction over every observation component, normalized to1% of the clean observation's L2 norm. Its components are not independent Gaussian samples after normalization, and it is not experimentally measured noise. Input construction does not read density truth; solvers receive only noisy observations and known geometry. All direct fields and midpoint controls are sealed before truth scoring. The two paths independently construct inputs, solve by Cholesky/QR and replay the physics, with identical discrete metric decisions.
+
+独立场/观测/指标最大差2.32e-12/3.81e-14/6.70e-13，正规方程驻点残差1.11e-16。观测残差p90约0.898%，但内部梯度误差p90约10.10%，最坏12.48%。干净到有噪的场变化也通过独立线性回放。因此这里暴露的是该未正则化估计器对所测噪声的放大，不是求解尚未收敛。观测拟合好，不等于三维场恢复准确。
+
+Maximum independent field/image/metric discrepancies are2.32e-12/3.81e-14/6.70e-13, with normal-stationarity residual1.11e-16. Observation-residual p90 is about0.898%, but interior-gradient p90 is10.10% and worst error12.48%. Clean-to-noisy field changes also pass independent linear replay. This exposes amplification of the tested noise by the unregularized estimator, not an unconverged solve. A good observation fit does not imply accurate3D recovery.
+
+四个经典对照各自的0/15只针对五个固定中点乘三个种子，不是它们完整轨迹的结论，也不是最优迭代深度的结论。没有事后换参考、改噪声、放宽门或加大模型。上一节干净数据的505/505和计时结果保持原结论，仅将其适用范围限定清楚：当前直接逆不能作为1%噪声下满足同一精度门的教师。该负结果不证明所有去噪先验或估计器不可能；它要求后续方法先解决噪声下的估计稳定性，再讨论暖启动加速。
+
+Each classical control's0/15 refers only to five fixed midpoints times three seeds, not its complete trajectories or an optimal iteration count. There is no post-hoc reference switch, noise change, relaxed gate or larger model. The previous clean505/505 and timing result remains intact; its boundary is now explicit: this direct inverse is not a teacher meeting the same accuracy gate at1% noise. This negative result does not prove all denoising priors or estimators impossible. It requires future work to address estimation stability under noise before claiming warm-start acceleration.
+
+## 四参数非线性去噪 / Four-Parameter Nonlinear Denoising
+
+四参数去噪已完成独立复算：五折完整轨迹留出先封存1515个预测，再检验15个固定中点，最终0/15通过。相比同样15个样本的直接逆，场/全梯度/内部梯度p90从6.14%/6.22%/10.82%降到5.67%/5.80%/10.13%，但仍远超1%门，观测残差也升至1.14%。学习阈值优于不训练的通用阈值，但不足以解决噪声恢复；已跳过剩余1500次重建验证，关闭这个固定配置。不是完整重建、加速或真实BOST成功。
+
+Four-parameter denoising independently checked: five complete-trajectory outer folds seal1515 predictions before15 fixed midpoint tests; the final result is0/15. Against the direct inverse on those same15 samples, field/full-gradient/interior-gradient p90 decreases from6.14%/6.22%/10.82% to5.67%/5.80%/10.13%, still far above the1% gates; observation-residual p90 rises to1.14%. Learned thresholds outperform untrained universal thresholds, but do not solve noisy recovery. The remaining1500 reconstruction checks are skipped and this fixed configuration is closed. This is not complete reconstruction, acceleration or real BOST success.
+
+| 方法 / Method | 场p90 / Field | 全梯度p90 / Full gradient | 内部梯度p90 / Interior gradient | 噪声观测p90 / Noisy residual |
+|---|---:|---:|---:|---:|
+| 直接逆 / Direct inverse | 6.144% | 6.221% | 10.820% | 0.898% |
+| 学习阈值 + K1 / Learned thresholds + K1 | 5.673% | 5.799% | 10.125% | 1.136% |
+| 通用阈值 + K1 / Universal thresholds + K1 | 14.209% | 13.391% | 23.594% | 6.706% |
+| 学习阈值，不迭代 / Learned thresholds, no refinement | 5.727% | 5.860% | 10.256% | 1.246% |
+
+表内严格比较同样的五条轨迹中点乘三个噪声种子，合计15个样本，不能与上一节1515个样本的分位数混用。三项场指标在全部15个配对样本上都比直接逆改善，但观测拟合在全部15个样本上变差；未达到四指标同时通过。学习模型好于通用阈值，只是这个小型对照的相对改善，不是稳定算法优势。
+
+Every row compares the same five trajectory midpoints times three noise seeds, totaling15 samples. These quantiles must not be mixed with the previous1515-sample summary. All three field metrics improve over the direct inverse in every paired sample, while observation fit worsens in every sample. The four metrics do not pass together. Beating universal thresholds is a relative improvement within this small control, not an established algorithmic advantage.
+
+只学习四个共享的尺度阈值；逐系数的噪声放大量仅由已知几何计算。训练、目标归一化都只用外折中的其他完整轨迹，部署输入只含有噪观测与几何。两套独立实现分别重新训练五折，并核对预测、精确lift、原有一步CGLS与物理观测。最终场/观测/指标最大差为1.65e-12/3.11e-12/2.65e-13，全部离散判决一致。1515是先封存的外折预测数，不是1515次已经通过或完成的重建验证。
+
+Only four shared scale thresholds are learned; coefficientwise noise amplification comes solely from known geometry. Training and target normalization use only the other complete trajectories in each outer fold. Deployment receives noisy observations and geometry only. Two implementations independently refit all five folds and check predictions, exact lift, one unchanged CGLS step and physical observations. Maximum final field/image/metric discrepancies are1.65e-12/3.11e-12/2.65e-13, with identical discrete decisions. The1515 count denotes sealed outer predictions, not1515 completed or successful reconstruction checks.
+
+输入先经过直接逆，再去噪、精确lift与K1，完整逻辑在线账为3A+3A^T和四次三角求解；几何因子与噪声放大表构建另计，不能把缓存当作免费。通用阈值、有/无K1、Zero、BP、CGLS3、Jacobi3和历史dual-ridge+K2均作明确对照，各0/15。不训练的直接逆对照已从上一轮封存证据复用，没有重复重跑。没有做新的wall/RSS速度比较。
+
+The input first passes through the direct inverse, followed by denoising, exact lift and K1. The complete logical online ledger is3A+3A^T and four triangular solves. Geometry factorization and the noise-amplification table cost extra; cached work is not free. Explicit controls include universal thresholds, with/without K1, Zero, BP, CGLS3, Jacobi3 and historical dual-ridge+K2, each0/15. The untrained direct control is reused from the previous sealed evidence without rerunning it. No new wall/RSS speed comparison was performed.
+
+本轮只关闭这个固定四阈值、小波表示和训练损失的配置，不证明其他非线性先验不可能。数据仍是已打开的公开训练轨迹与固定九相机合成噪声，不是未打开的外部门、可变相机泛化或实验位移图。小波收缩是经典方法，本项目不作首创声明，参见[Donoho与Johnstone的原始研究](https://statistics.stanford.edu/technical-reports/ideal-spatial-adaptation-wavelet-shrinkage)。
+
+This closes the fixed four-threshold wavelet representation and training-loss configuration, not every nonlinear prior. The data remain previously opened public training trajectories with fixed nine-camera synthetic noise, not an untouched external condition, variable-camera generalization or experimental displacement images. Wavelet shrinkage is classical; no first-use claim is made. See [Donoho and Johnstone's primary report](https://statistics.stanford.edu/technical-reports/ideal-spatial-adaptation-wavelet-shrinkage).
+
+## 局部相关性与误差来源 / Local Correlation and Error Sources
+
+局部统计先验仍未过关：用其他完整轨迹学习邻近密度相关性，配合几何噪声协方差与一步CGLS，15个固定中点仍为0/15。场/全梯度/内部梯度误差p90为5.10%/5.41%/9.08%，较单体素控制改善，但远超1%门。独立误差分解显示，残留输入误差较大，先验本身也会改动真实结构；这不支持简单加强去噪或增加迭代。已关闭这个固定配置，跳过剩余1500次重建验证；不是完整重建、加速或真实BOST成功。
+
+Local statistical prior still fails: neighboring-density correlations learned from other complete trajectories, combined with geometry-noise covariance and one CGLS step, give0/15 on fixed midpoints. Field/full-gradient/interior-gradient p90 errors are5.10%/5.41%/9.08%, better than the pointwise control but far above1%. Independent error decomposition finds substantial remaining input error and distortion of true structure by the prior itself. This does not support simply stronger denoising or more iterations. This fixed configuration is closed and1500 further reconstruction checks are skipped. No complete reconstruction, acceleration or real BOST success.
+
+| 同一15个中点 / Same 15 midpoint-seed cases | 场p90 / Field | 全梯度p90 / Full gradient | 内部梯度p90 / Interior gradient | 观测p90 / Observation |
+|---|---:|---:|---:|---:|
+| 局部联合先验+K1 / Local joint prior+K1 | 5.097% | 5.410% | 9.079% | 1.134% |
+| 单体素先验+K1 / Pointwise prior+K1 | 6.129% | 6.210% | 10.788% | 0.949% |
+| 局部先验，无迭代 / Local prior, no refinement | 5.170% | 5.505% | 9.304% | 1.310% |
+| 单体素先验，无迭代 / Pointwise prior, no refinement | 6.131% | 6.210% | 10.789% | 0.966% |
+
+先验只用外折中的其他完整轨迹估计共享局部均值与协方差；单体素控制只使用中心均值与方差。两个先验各自封存1515个外折预测，然后进行15个必要中点检查。独立实现分别重建统计量、噪声相关性、增益、预测、精确lift、原有K1与物理观测，13项检查全真。场/观测/指标最大差1.85e-12/5.49e-12/3.93e-13。表内四臂均0/15，不是它们已完成1515次重建。旧的直接逆、小波、Zero、BP、CGLS、Jacobi和dual-ridge证据仅复用，没有换参数重跑。
+
+The prior estimates shared local means and covariance only from other complete trajectories in each outer fold; the pointwise control uses central mean and variance only. Both priors seal1515 outer predictions before15 necessary midpoint checks. Independent implementations rebuild statistics, noise correlation, gains, predictions, exact lift, unchanged K1 and physical observations. All13 checks pass; maximum field/image/metric differences are1.85e-12/5.49e-12/3.93e-13. Each table arm passes0/15, not1515 completed reconstruction checks. Earlier direct, wavelet, Zero, BP, CGLS, Jacobi and dual-ridge evidence is reused without retuned reruns.
+
+局部联合先验对全部15个配对样本的场与两种梯度指标都比单体素控制好，但观测拟合全部变差。完整逻辑在线账仍为3A+3A^T和四次三角求解，几何因子、逆矩阵、局部噪声表及外折增益构建另计。估计405个统计量不等于神经网络训练；没有新的实测速度或内存优势。
+
+The local joint prior improves all three field metrics over the pointwise control in all15 paired samples, while observation fit worsens in all15. The complete logical online ledger remains3A+3A^T and four triangular solves; geometry factorization, inverse, local-noise tables and fold gain construction cost extra. Estimating405 statistics is not neural-network training. No new measured speed or memory advantage is established.
+
+### 结果后归因 / Post-Open Attribution
+
+封存后才读取已评分真值，分解“最终误差 = 先验偏差 + 保留的输入误差 + K1校正”，不重训、不选参数、不新增A/A^T调用。状态闭合相对差7.78e-15，平方指标闭合差6.08e-18，独立能量项最大差4.61e-14。这是用于理解失败的真值可见诊断，不是部署可用的去噪器。
+
+Only after sealing, already-scored truth is used to decompose final error into prior bias, propagated inverse-state error and K1 correction. There is no refitting, parameter selection or extra A/A^T call. Relative state closure is7.78e-15, squared-metric closure6.08e-18 and maximum independent energy-term difference4.61e-14. This truth-aware diagnostic explains failure; it is not a deployable denoiser.
+
+| 分量中位相对范数 / Median component norm | 先验偏差 / Prior bias | 保留的输入误差 / Propagated inverse error | K1校正 / K1 correction |
+|---|---:|---:|---:|
+| 场 / Field | 1.878% | 3.694% | 0.417% |
+| 全梯度 / Full gradient | 2.564% | 4.517% | 0.621% |
+| 内部梯度 / Interior gradient | 4.617% | 6.943% | 1.030% |
+
+这些范数不是能相加的百分比份额，分量之间有带符号交叉项。三项指标中，全部15个样本的保留输入误差能量都大于先验偏差能量，但先验偏差本身也不小。K1在全部15个样本上改善了三项场指标，仍不足以通过门。下一步不能把问题简单归咎于算得不够久，也不能假设加强去噪一定有效。
+
+These norms are not additive percentage shares: signed cross terms are present. For all three metrics, propagated input-error energy exceeds prior-bias energy in every one of15 cases, but the bias itself is substantial. K1 improves all three field metrics in all15 cases and still does not pass. The gap cannot simply be attributed to insufficient computation, nor does it imply stronger denoising must work.
+
+本轮关闭这个固定局部高斯先验配置，不调整块大小、协方差秩、数值载荷或深度来补救。数据仍为已打开的公开训练轨迹、固定九相机与合成噪声。高斯先验只是工作模型，不证明实际信号或归一化后的噪声具有高斯独立分布，也不提供经校准的后验区间。贝叶斯小块模型已有[经典原始研究](https://www.ipol.im/pub/art/2013/16/)；本试验不是NL-Bayes完整复现、组件首创、外部门或真实BOST结果。
+
+This fixed local-Gaussian configuration is closed, without patch-size, covariance-rank, numerical-load or depth rescue. Data remain opened public training trajectories with fixed nine-camera synthetic noise. The Gaussian prior is a working model, not proof that actual signals or normalized noise are independent Gaussian samples, nor a calibrated posterior interval. Bayesian patch models have [established primary literature](https://www.ipol.im/pub/art/2013/16/). This is not a full NL-Bayes reproduction, component novelty, untouched external result or real BOST result.
+
+## 真实场与噪声观测门 / Truth Oracle and the Noise Gate
+
+观测门审计发现一个小但真实的问题：加入1%合成噪声后，旧观测门会拒绝308/1515个真实三维场输入。噪声按干净观测归一化，评分却除以带噪观测；最大超门仅0.000141个百分点，解释不了已有5%至10%的场与梯度误差。同一15个中点的旧候选，即使按已知噪声预算诊断，联合通过仍均为0/15。独立复算确认，这是评价口径问题，不是算法成功；旧失败不翻案，后续新试验才可另冻噪声一致的指标。
+
+Observation-gate audit finds a small but real issue: with1% synthetic noise, the old gate rejects308/1515 exact true-field inputs. Noise is normalized by clean observations, but scoring divides by noisy observations. Maximum excess is only0.000141 percentage points and cannot explain existing5% to10% field/gradient errors. On the same15 midpoints, all inherited candidates still pass0/15 jointly even under a known-noise-budget diagnostic. Independent recomputation confirms a metric-semantics issue, not algorithm success. Old failures stand; only new preregistered experiments may adopt noise-consistent metrics.
+
+令干净投影为b，噪声为e，观测y=b+e，且||e||=delta||b||，delta=0.01。
+真实场的旧观测分数为delta/sqrt(1+delta^2+2delta*c)，其中c是b与e夹角余弦。
+它超过delta当且仅当c<-delta/2。这是范数恒等式，不是新算法或新定理。
+
+Let clean projection be b, noise e, y=b+e and ||e||=delta||b|| with delta=0.01.
+The truth oracle's old score is delta/sqrt(1+delta^2+2delta*c), where c is the angle cosine between b and e.
+It exceeds delta exactly when c<-delta/2. This is a norm identity, not a new algorithm or theorem.
+
+独立矩阵各重放505个真实场，合计离线1010A、0A^T；1515个噪声样本逐项复算，三个seed分别拒绝95/112/101个。五条轨迹分别拒绝65/73/53/64/53个，每条303样本。两实现离散判决完全一致，公式差1.74e-17，重放相对差7.86e-16。球面均匀噪声方向下理论拒绝概率约19.4435%，本次实际20.3300%；前者不是本次实测比例。归一化后的噪声方向不是独立高斯分量，也不是实验测得噪声。
+
+Each independent matrix replays505 true fields, totaling1010 offline A calls and0 A^T. All1515 noisy cases are recomputed; three seeds reject95/112/101 cases. The five trajectories reject65/73/53/64/53 out of303 each. Discrete decisions agree exactly; formula discrepancy is1.74e-17 and relative replay discrepancy7.86e-16. Uniform sphere directions imply about19.4435% theoretical rejection probability; observed rejection is20.3300%, not the theoretical value. Normalized noise directions do not have independent Gaussian components and are not measured experimental noise.
+
+| 同一15个中点 / Same15 midpoints | 干净投影误差p90 / Clean projection | 带噪拟合误差p90 / Noisy fit | 场与梯度联合通过 / Field+gradient passes |
+|---|---:|---:|---:|
+| 直接逆 / Direct inverse | 0.4502% | 0.8982% | 0/15 |
+| 小波+K1 / Haar+K1 | 0.8075% | 1.1356% | 0/15 |
+| 局部先验+K1 / Local prior+K1 | 0.7971% | 1.1338% | 0/15 |
+| 单体素先验+K1 / Pointwise prior+K1 | 0.5415% | 0.9487% | 0/15 |
+| 局部先验，无迭代 / Local prior, no refinement | 1.0350% | 1.3105% | 0/15 |
+
+四个带迭代/直接逆候选在这15个样本中，干净投影误差都低于1%，但场与梯度均未过关。投影接近并不意味着三维恢复准确。平方带噪残差由干净投影误差能量、噪声能量和带符号交叉项组成，独立闭合差5.43e-20。不能把去噪后残差增大直接等同于三维恢复变差，也不能把投影变准当作三维成功。
+
+For the four refined/direct candidates, clean projection error is below1% on all15 samples, yet field/gradient accuracy fails throughout. Projection agreement does not imply accurate3D recovery. Squared noisy residual decomposes into clean-projection error energy, noise energy and a signed cross term, with independent closure discrepancy5.43e-20. A larger post-denoising residual is not by itself worse3D recovery, and a better projection is not3D success.
+
+新增的已知噪声预算残差||prediction-y||/||e||仅作诊断，单位门加1e-12相对舍入余量；它不替换旧门，也不让旧失败候选通过。未来若采用，需要结果前另行冻结，真实实验还需要独立噪声估计，不能偷读真值生成噪声预算。[经典差异原则背景](https://www.imm.dtu.dk/~pcha/Regutools/)不构成本项目首创。
+
+The known-budget residual ||prediction-y||/||e|| is diagnostic only, with a unit bound and1e-12 relative roundoff allowance. It neither replaces frozen gates nor rescues failed candidates. Future use requires a new preregistration; real experiments need independent noise estimation, not a truth-derived budget. [Classical discrepancy-principle context](https://www.imm.dtu.dk/~pcha/Regutools/) is not project novelty.
+
+执行备注：第一次任务在数组封存后因JSON布尔序列化失败退出；保留原始失败、只重建报告，未重放、未改数组或门。独立数值检查14项与额外终态核验通过。工程修复不是科学结果；本轮没有训练、速度优势、外部泛化或真实BOST结论。
+
+Execution note: the first task failed during JSON boolean serialization after array sealing. The failure was retained and only the report rebuilt, without replay or altered arrays/gates. All14 numerical checks and a separate terminal audit pass. Engineering repair is not science; no training, speed advantage, external generalization or real BOST result is claimed.
+
+## 实际场是否互相混淆 / Are Actual Source Fields Ambiguous?
+
+实际CFD配对审计：505个已打开的处理后三维场共127,260对，在1%有界观测噪声下没有相互重叠，最接近的一对也需约8.93%噪声才相交。只看观测幅值则有11,468对发生歧义，完整投影结构包含额外信息。但505/505个场的最近邻都来自自身轨迹，有限样本可区分不等于未见轨迹可重建。独立复算已确认；这是对失败原因的约束，不是学习、重建或真实BOST成功。
+
+Actual-CFD pair audit: among127,260 pairs of505 opened, processed3D fields, no observation balls overlap at1% bounded noise. Even the closest pair needs about8.93% noise to intersect. Amplitude-only observations admit11,468 ambiguous pairs, so full projection structure carries additional information. However, nearest neighbors of505/505 fields belong to their own trajectories. Finite-sample distinguishability is not unseen-trajectory reconstruction. Independently verified; this constrains failure explanations, not learned, reconstruction or real BOST success.
+
+本轮仅使用已有五条公开训练轨迹的505个规范与边界处理后CFD目标，不合成任意节点扰动、不改变幅值、不打开新数据。对观测b_i和b_j，两个相对有界噪声球相交的最小半径为eta=||b_i-b_j||/(||b_i||+||b_j||)。若它不超过1%，而某个场或梯度分离比B_D=||D*x_i-D*x_j||/(||D*x_i||+||D*x_j||)超过1%，同一个观测下就不能同时为两个真值提供1%相对精度。这是三角不等式，不是新定理。
+
+Only505 existing gauge- and boundary-processed CFD targets from five public training trajectories are used, without arbitrary nodal perturbations, amplitude changes or new data. For observations b_i,b_j, the minimum relative bounded-noise radius for ball intersection is eta=||b_i-b_j||/(||b_i||+||b_j||). If eta is at most1% while a field/gradient separation ratio B_D=||D*x_i-D*x_j||/(||D*x_i||+||D*x_j||) exceeds1%, a single estimate at the common observation cannot be within1% of both truths. This follows from the triangle inequality, not a new theorem.
+
+全部127,260对的eta都大于1%，最小为8.92899335%。最近一对的场/全梯度/内部梯度分离比为8.4470%/10.9610%/18.7920%，但构造共同观测需要两端各8.9290%噪声，因此不能拿它充当1%的反例。只用观测范数这一便宜信息时，11,468对会混淆；这里没有运行任何新重建器。
+
+Every one of127,260 pairs has eta above1%; the minimum is8.92899335%. The closest pair has field/full-gradient/interior-gradient separation ratios8.4470%/10.9610%/18.7920%, but its common observation needs8.9290% noise at either endpoint. It is therefore not a1%counterexample. Using only the cheap observation norm admits11,468 ambiguous pairs; no new reconstructor is run here.
+
+| 已打开轨迹 / Opened trajectory | 最近邻来自同轨迹 / Same-trajectory nearest | 最近邻噪声交叠半径p90 / Nearest overlap radius p90 |
+|---|---:|---:|
+| 1 | 101/101 | 12.0986% |
+| 2 | 101/101 | 16.8384% |
+| 3 | 101/101 | 15.5848% |
+| 4 | 101/101 | 19.2312% |
+| 5 | 101/101 | 20.5547% |
+
+正式Gram距离与独立直接差分距离、独立导数的最大比值差4.23e-14，全部阈值与最近邻判决一致。独立物理重放最近一对及其加权组合，总计离线6A、0A^T；共同观测相对差7.43e-16以内。7项数值检查与单独终态核验通过，无模型训练和速度主张。
+
+Formal Gram distances and independent direct differences/derivatives agree within4.23e-14 in ratios; all threshold and nearest-neighbor decisions match. Independent physical replay of the closest endpoints and their weighted combination totals6offline A calls and0 A^T, with common-observation relative discrepancy below7.43e-16. All7 numerical checks and a separate terminal audit pass, without model training or speed claims.
+
+这只排除了“已存这505个实际场在1%有界噪声下彼此不可区分”的解释。有限字典辨认甚至可以靠记忆完成，不证明连续CFD流形、帧间状态、未见轨迹、物理模型偏差或真实实验可辨识。它也不是之前球面随机噪声的平均风险结论。最近邻全部属于自身轨迹，更要求保持整轨迹外折，不能拿随机帧划分冒充外推。旧先验和旧预测器失败保持不变；不恢复已关闭的幅值、最近邻库或更大模型路线。
+
+This only excludes mutual1% bounded-noise ambiguity among these505 stored actual fields. Finite-dictionary identification can be memorization; it proves nothing about a continuous CFD manifold, between-frame states, unseen trajectories, physical-model mismatch or real experiments. It is not an average-risk result for earlier random sphere noise. All nearest neighbors being within their own trajectories reinforces complete-trajectory outer folds; random-frame splits cannot stand in for extrapolation. Old prior/predictor failures remain unchanged; closed amplitude, nearest-library and larger-model paths are not revived.
+
+物理先验用于约束病态逆问题是[经典背景](https://www.imm.dtu.dk/~pcha/Regularization/regu.html)。本次增量是实际源类别的可审查证据，不是组件首创、算法突破、泛化或真实BOST结果。
+
+Physical solution constraints for ill-posed inverses are [established background](https://www.imm.dtu.dk/~pcha/Regularization/regu.html). This increment is inspectable evidence about the actual source class, not component novelty, algorithm breakthrough, generalization or real BOST.
+
+## 查询自身的非局部相似性 / Within-Query Nonlocal Similarity
+
+非局部自相似恢复失败：只从当前输入寻找相似三维小块，并考虑几何传播的块间噪声相关性，再做精确lift与一步CGLS，固定15个样本仍为0/15。场/全梯度/内部梯度/干净投影误差p90为15.39%/23.85%/25.75%/9.00%，比直接逆更差。独立复算已确认；关闭此固定配置，未运行剩余1500个样本，不调带宽、块大小或深度补救。零训练参数；不是算法、速度或真实BOST成功。
+
+Nonlocal self-similarity reconstruction fails: matching3D patches only within the current input, accounting for geometry-propagated interpatch noise correlation, then exact lift and one CGLS step gives0/15 fixed samples. Field/full-gradient/interior-gradient/clean-projection p90 errors are15.39%/23.85%/25.75%/9.00%, worse than the direct inverse. Independently verified. This fixed configuration is closed and1500 remaining samples are not run; no bandwidth, patch-size or depth rescue. Zero trained parameters; no algorithm, speed or real BOST success.
+
+本次与旧固定局部高斯先验不同：不拟合均值或协方差，只在当前带噪重建内寻找形状相似的小块，再平均其中心值。噪声强度由当前最小二乘残差及已知剩余维数估计，不读取真值、其他帧或轨迹标签。使用同一块大小、同一噪声估计的便宜控制忽略块间噪声协方差。两条路线的预测及物理输出先封存，才读取真值评分。
+
+Unlike the previous fixed local Gaussian prior, this method fits no signal mean or covariance: it matches similarly shaped patches inside the current noisy reconstruction and averages their centers. Noise strength is estimated from the current least-squares residual and known residual dimension, without truth, another frame or trajectory labels. A cheaper control uses the same patch size and noise estimate but ignores interpatch noise covariance. Both routes seal predictions and physical outputs before truth is read for scoring.
+
+| 同一15个样本 / Same15 cases | 场p90 / Field | 全梯度p90 / Full gradient | 内部梯度p90 / Interior gradient | 干净投影p90 / Clean projection |
+|---|---:|---:|---:|---:|
+| 相关NLM+K1 / Correlated NLM+K1 | 15.388% | 23.851% | 25.747% | 9.000% |
+| 忽略块间相关+K1 / Interpatch-independent+K1 | 14.766% | 23.531% | 24.433% | 8.829% |
+| 相关NLM，无迭代 / Correlated NLM, no refinement | 16.796% | 27.100% | 28.148% | 12.402% |
+| 忽略块间相关，无迭代 / Interpatch-independent, no refinement | 16.243% | 26.836% | 27.028% | 13.156% |
+| 原直接逆 / Inherited direct inverse | 6.144% | 6.221% | 10.820% | 0.450% |
+| 原局部高斯先验+K1 / Inherited local Gaussian+K1 | 5.097% | 5.410% | 9.079% | 0.797% |
+
+新试验结果前固定场、全梯度、内部梯度和干净投影各1%的门；带噪观测拟合单独报告。表内所有方法均0/15，不是旧方法改门后的成功。旧Zero/BP/CGLS3/Jacobi3/dual-ridge、小波及局部先验证据只复用，不重新训练或调整，其场与梯度失败保持不变。
+
+Before results, this new experiment fixes1% bounds for field, full gradient, interior gradient and clean projection, with noisy-observation fit reported separately. Every table method passes0/15; this is not success obtained by changing old gates. Sealed Zero/BP/CGLS3/Jacobi3/dual-ridge, wavelet and local-prior outputs are reused without retraining or adjustment; their field/gradient failures stand.
+
+相关NLM相比忽略块间相关的控制，场/全梯度/内部梯度/干净投影分别在15/13/15/4个样本上更差。两种方法的有效加权邻居数中位数为4.41/4.21，它不是独立样本数或已校准的方差降低倍数。主方法带噪拟合p90为9.0445%，明显不属于旧观测门的微小归一化误差。
+
+Relative to the interpatch-independent control, correlated NLM worsens field/full-gradient/interior-gradient/clean projection in15/13/15/4 cases. Median effective weighted-neighbor counts are4.41/4.21, not independent sample counts or calibrated variance-reduction factors. Primary noisy-fit p90 is9.0445%, far beyond the tiny normalization mismatch in the old observation gate.
+
+独立13项数值检查全真；几何噪声量/预测场/物理投影/指标最大差4.57e-13/2.79e-12/1.57e-12/7.45e-13。额外终态核验重查60个配对物理输出、192个权重计算及全部轨迹尾部和调用账。完整逻辑在线账4A+3A^T和四次三角求解，稠密几何协方差与非局部匹配成本另计，不构成算子调用或资源优势。
+
+All13 numerical checks pass independently; maximum geometry-noise/predicted-field/physical-projection/metric differences are4.57e-13/2.79e-12/1.57e-12/7.45e-13. A separate terminal audit rechecks60 paired physical outputs,192 weight computations and all trajectory tails/cost receipts. The complete logical online ledger is4A+3A^T plus four triangular solves; dense geometry covariance and nonlocal matching cost extra. No exact-call or resource advantage is established.
+
+关闭的是这个固定权重、块大小、搜索、噪声估计、自权重和K1组合，不否定所有自相似方法。更多平均并未保住当前三维结构，不能靠更大搜索、调带宽、块大小、top-k或深度来挽救。剩余1500个样本未执行，不是完整序列失败率。数据仍为已打开公开轨迹、固定九相机和合成噪声，没有真实BOST或外部泛化结果。
+
+Only this fixed weighting, patch, search, noise-estimation, self-weight and K1 combination is closed, not all self-similarity methods. More averaging did not preserve the current3D structure; larger search, bandwidth, patch-size, top-k or depth tuning is not authorized as rescue. The remaining1500 samples are unexecuted, not a complete-sequence failure rate. Data remain opened public trajectories, fixed nine cameras and synthetic noise, without real BOST or external-generalization evidence.
+
+[非局部均值原始说明](https://www.ipol.im/pub/art/2011/bcm_nlm/revisions/2011-09-13/bcm_nlm.htm)与[相关噪声原始研究](https://webpages.tuni.fi/foi/papers/ICIP2019_Ymir.pdf)是背景。本试验不是完整BM3D/NL-Bayes复现、组件首创或新噪声理论。
+
+The [original nonlocal-means description](https://www.ipol.im/pub/art/2011/bcm_nlm/revisions/2011-09-13/bcm_nlm.htm) and [primary correlated-noise study](https://webpages.tuni.fi/foi/papers/ICIP2019_Ymir.pdf) are background. This is not a full BM3D/NL-Bayes reproduction, component novelty or new noise theory.
+
+## 删相机后的完整参考 / Complete References After Camera Removal
+
+五/七相机完整序列参考通过：固定两个相机子集各505/505帧满足场、全梯度、内部梯度与投影的1%门，合计1010/1010、10/10完整轨迹分组；同观测一步CGLS各0/505。Cholesky与独立QR及物理重放一致。每个子集需另建几何因子，在线1A+1A^T及两次三角求解，不等于免费或速度优势。仅限这两个无噪声子集，未验证任意增删、12相机、噪声或新工况；不是学习算法突破。
+
+Complete-sequence references pass for five and seven cameras: each of two fixed subsets achieves505/505 frames within the1% field, full-gradient, interior-gradient and projection gates, totaling1010/1010 and10/10 complete trajectory groups. Same-observation one-step CGLS passes0/505 for each subset. Cholesky agrees with independent QR and physical replay. Each subset needs its own geometry factor; online cost is1A+1A^T plus two triangular solves, not free work or a speed advantage. Only these two clean subsets are tested, not arbitrary camera changes,12 cameras, noise or new conditions; this is not a learned algorithm breakthrough.
+
+同一批五条已打开公开PoolFire轨迹、每条101帧，保留原三维网格和每台相机50x33双分量采样。两个子集保持全部原5880个有效未知量，数值QR秩均5880，无正则、无缩小未知区域、无真值选择。全部预测在真值评分前封存。下表为相对误差分数，不是百分比；四项门均0.01。
+
+The same five opened public PoolFire trajectories contain101 frames each, retaining the original3D grid and50x33 two-component sampling per camera. Both subsets retain all5880 original active unknowns and have numerical QR rank5880, without regularization, shrinking the unknown region or truth-based selection. All predictions seal before truth scoring. Table entries are relative fractions, not percentages; all four gates are0.01.
+
+| 固定相机数 / Fixed camera count | 通过 / Passing | 场最坏值 / Worst field | 全梯度 / Full gradient | 内部梯度 / Interior gradient | 投影 / Projection |
+|---|---:|---:|---:|---:|---:|
+| 5 | 505/505 | 9.1053e-11 | 5.9644e-11 | 1.0716e-10 | 1.9611e-13 |
+| 7 | 505/505 | 7.1518e-11 | 3.5908e-11 | 6.7846e-11 | 1.3900e-13 |
+
+每档独立8项数值检查全真。两档最大场/投影/指标实现差约9.11e-11/1.97e-13/1.07e-10，原生物理重放差不超过8.08e-16。另一次终态核验检查4040个物理输出及全部指标、尾部和调用账，指标差不超过2.23e-16。九相机已有505/505证据只继承，不重跑、不计入新1010个单元。
+
+All eight numerical checks pass independently for each subset. Across both subsets, maximum field/projection/metric implementation differences are approximately9.11e-11/1.97e-13/1.07e-10, with native physical replay within8.08e-16. A separate terminal audit checks4040 physical outputs and all metrics, tails and calls, with metric discrepancy at most2.23e-16. The existing nine-camera505/505 evidence is inherited, not rerun or counted among the new1010 cells.
+
+每档均需要一个276595200字节的几何因子，因子构建与保存、原始算子构建另计。一步CGLS虽然同为1A+1A^T，却不需要两次三角求解，所以相同调用数不是相同计算量。本轮包含独立QR与物理审计，不能拿总耗时当部署速度。没有新的fresh wall/RSS优势结论。
+
+Each subset requires its own276595200-byte geometry factor; factor construction/storage and original operator construction are additional work. One-step CGLS also uses1A+1A^T but needs no triangular solves, so equal call counts are not equal computational work. This run includes independent QR and physical audits; its total duration is not deployment speed. No new fresh wall/RSS advantage is claimed.
+
+这排除了在上述干净离散采样中“删相机必然丢掉有效自由度”的解释，不表示任意五相机都够，也不表示抗噪。五/七相机法方程倒条件数估计约1.80e-8/3.51e-8，满秩不等于噪声稳定。旧低采样配置、旧带噪九相机和已关闭学习器的失败均不变。后续可变相机学习器必须与合格经典因子比较，而非只战胜一步CGLS或不充分参考；完整跨轨迹预测、抗噪、资源收益和真实BOST仍待证明。
+
+This rules out loss of a numerically active degree of freedom for these clean discrete acquisitions, not the claim that any five cameras suffice or that reconstruction is noise-robust. Five/seven-camera reciprocal normal-condition estimates are approximately1.80e-8/3.51e-8; full rank is not noise stability. Failures of earlier lower-sampling configurations, noisy nine-camera data and closed learners remain unchanged. A future variable-camera learner must compete with qualified classical factors, not merely one-step CGLS or inadequate references. Complete cross-trajectory prediction, noise robustness, resource benefits and real BOST remain unproved.
+
+方法采用既有[Cholesky分解](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.cholesky.html)与独立[带列主元QR](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.qr.html)，不是组件首创。
+
+The methods use established [Cholesky factorization](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.cholesky.html) and independent [column-pivoted QR](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.qr.html), without component novelty.
+
+## 单因子迁移学习失败 / Single-Factor Transfer Learning Fails
+
+小学习器的实测负结果：64参数模型完成五折整轨迹留一训练，2525个外折预测在评分前封存；随后25个必要检验点只通过5个，这5个九相机点不用学习也能通过。删相机后的20个点全部失败，44参数线性对照也仅5/25，合格直接因子为25/25。按预定规则停止其余2500个细化，不称完整序列失败或成功；关闭这条单因子迁移学习机制，不追加模型或训练轮数。独立物理复算通过，但学习优势、速度收益和论文突破均未成立。
+
+Measured negative result for the small learner: a64-parameter model completes five complete-trajectory outer folds, with2525 outer predictions sealed before scoring. Only5/25 necessary cases pass; the same five nine-camera cases also pass without learning. All20 camera-removal cases fail. The44-parameter linear control also passes5/25, while qualified direct factors pass25/25. The preregistered stop skips2500 remaining refinements; this is neither a complete-sequence failure count nor a complete-sequence success. This single-factor transfer recipe is closed, with no larger-model or longer-training rescue. Independent physical recomputation passes, but learned advantage, speed benefits and a paper breakthrough remain unestablished.
+
+本轮不再只建立经典参考，而是实际训练并检验一个小学习器：复用完整九相机几何因子，由当前观测和有效相机几何构造四个双空间方向，用64个共享参数预测方向系数，再精确伴随提升并执行未修改CGLS一步。每折完全排除一条101帧轨迹，另有两个相机子集完全不进入拟合。三套训练几何和两套留出子集仍来自同一套已知相机，不能称任意新位姿或外部流场泛化。
+
+This run actually trains and tests a small learner rather than only establishing another classical reference. One full-nine-camera factor generates four dual-space directions from the current observation and active geometry. A64-scalar shared predictor mixes them, followed by exact adjoint lift and unchanged one-step CGLS. Each fold excludes an entire101-frame trajectory; two further camera subsets never enter fitting. The three fit geometries and two held-out subsets still use the same known cameras, not arbitrary new poses or external flow conditions.
+
+唯一主模型64参数，线性学习对照44参数；各五折、20轮，末轮封存，无真值选择、无外折调参。训练教师为不读CFD真值的直接求解器。学习器的四项训练误差穿过实际CGLS一步；独立导数与Adam更新核验通过。下表只统计25个必要点，误差为分数，四门均0.01，不能拿剩余未运行点凑分母。
+
+The unique primary has64 parameters and the linear learned control44. Each has five folds and20 fixed epochs; the final epoch is sealed without truth-based selection or outer-fold tuning. Training teachers are direct solvers that do not read CFD truth. The four training errors differentiate through actual one-step CGLS, with independent derivative and Adam-update checks. The table covers only25 necessary cases. Errors are fractions and each gate is0.01; unexecuted cases do not belong in the denominator.
+
+| 方法 / Method | 通过 / Passing | 场p90 / Field | 全梯度 / Full gradient | 内部梯度 / Interior gradient | 投影 / Projection |
+|---|---:|---:|---:|---:|---:|
+| 学习器 / Learned64 | 5/25 | 0.69821 | 0.715908 | 0.798396 | 0.599012 |
+| 线性学习器 / Linear44 | 5/25 | 0.697975 | 0.716417 | 0.79734 | 0.596223 |
+| 不学习组合 / Unlearned mix | 5/25 | 0.688378 | 0.755672 | 0.80411 | 0.598003 |
+| Zero-CGLS | 0/25 | 0.426924 | 0.424733 | 0.525954 | 0.323146 |
+| Jacobi-PCGLS | 0/25 | 0.423392 | 0.428612 | 0.524184 | 0.32137 |
+| BP-CGLS | 0/25 | 0.459991 | 0.436444 | 0.526963 | 0.343495 |
+| Dual ridge | 0/25 | 1801.45 | 1744.49 | 2177.03 | 1044.67 |
+| 直接因子 / Direct factor | 25/25 | 6.8383e-11 | 5.74847e-11 | 1.11498e-10 | 1.61451e-13 |
+
+学习器、不学习组合、线性对照均只在五个九相机点通过；四组五/七相机检验各0/5。全九相机恢复来自已经可用的解析因子，而非新学到的优势。两个新留出子集的经典参考已独立达到1010/1010，故这次不能归因于参考本身不充分。直接因子在必要点25/25通过，同时明确需要各子集自己的几何预处理。
+
+The learner, unlearned mix and linear control pass only the five nine-camera cases; each of the four five/seven-camera groups passes0/5. Full-nine recovery comes from the already available analytic factor, not a newly learned advantage. References for the two new held-out subsets independently pass1010/1010, so inadequate references do not explain this rejection. Direct factors pass25/25 necessary cases but explicitly require geometry-specific preprocessing.
+
+候选九相机在线为4A+4A^T及4次三角求解，删相机为10A+10A^T及16次三角求解；同预算Zero/BP/Jacobi/dual-ridge均披露。直接因子含投影只需1A+1A^T及两次三角求解，几何构建和存储另计。单个公共几何因子约276.6MB，学习训练、参考QR、离线物理响应和独立复算并不免费。没有测得新的部署速度或内存优势。
+
+Candidate online work is4A+4A^T plus four triangular solves for nine cameras, and10A+10A^T plus16 triangular solves after camera removal. Same-budget Zero/BP/Jacobi/dual-ridge controls are disclosed. A direct factor including projection uses1A+1A^T and two triangular solves, with separate geometry construction and storage. One shared factor occupies about276.6MB; learning, reference QR, offline physical responses and independent validation are additional work. No new deployment speed or memory advantage has been measured.
+
+独立终态又重放400个物理输出，指标最大差4.55e-13，原生/稀疏投影最大差7.25e-16，全部输入和封存预测不变。这是可核验的负算法证据，不是突破。关闭这套固定四方向单因子迁移配方，不增加方向数、网络规模、训练轮数或事后换控制。它不证明整个C路线不可能；新推进必须带来不同的物理信息或机制，而不是重命名本次失败。
+
+A separate terminal audit replays400 physical outputs, with metric discrepancy at most4.55e-13 and native/sparse projection discrepancy at most7.25e-16. Inputs and sealed predictions remain unchanged. This is verifiable negative algorithm evidence, not a breakthrough. The fixed four-direction single-factor transfer recipe is closed: no extra directions, larger network, longer training or post-hoc control substitution. It does not prove the whole C route impossible; further progress needs different physical information or a different mechanism, not a renamed retry.
+
+## 为什么多训也不够 / Why More Training Is Insufficient Here
+
+已定位上一学习器的表示缺口：只审计同样25个必要点。即便让每项指标分别选择最理想的系数，并把原四方向加一次CGLS的所有可能输出放进一个更宽松的九列空间，删相机的20/20点仍有不可消除的超门误差；四组场误差下界p90约58%–63%，远高于1%。原学习器输出的空间包含检查及独立SVD/QR复算通过。这不是新算法或完整序列结果，也不是整个逆问题不可能；它说明继续训练同一套方向表示无法补上当前缺口。
+
+The previous learner has a localized representation gap on the same 25 necessary cases. Even allowing a separate ideal coefficient choice for each metric, in a relaxed nine-column space containing every possible output of the old four directions plus one CGLS step, all 20/20 camera-removal cases retain unavoidable gate violations. Across four groups, field-error lower-bound p90 remains about 58%-63%, far above 1%. Original-output containment and independent SVD/QR checks pass. This is not a new algorithm, a complete-sequence result, or an impossibility claim for the inverse problem. More training within these same directions cannot close the measured gap.
+
+这是对上一轮已开封25个中点的事后归因，不重训、不重跑2525个预测、不新增相机或工况。令四个观测生成方向的精确提升为D，H=A^T A，b=A^T y。任意系数a加未修改CGLS一步都满足x=D a+alpha(b-H D a)，所以输出一定属于span([D,b,HD])。诊断给这个九列空间独立自由系数，比真实四系数和受约束线搜索更宽松；每项误差又分别求自己的最优解。因此表中是乐观下界，不是一组可同时部署的重建。
+
+This is post-open attribution on the previous 25 midpoint cases: no refit, rerun of 2525 predictions, new camera set or new flow condition. Let D contain exact lifts of the four observation-generated directions, H=A^T A and b=A^T y. Arbitrary coefficients followed by unchanged one-step CGLS satisfy x=D a+alpha(b-H D a), hence lie in span([D,b,HD]). The diagnostic allows independent coefficients on this nine-column space, more freedom than the actual four coefficients and constrained line search. Each metric also gets its own optimum. Thus the table shows optimistic lower bounds, not one jointly deployable reconstruction.
+
+下表误差为分数，原冻结门均0.01。g0/g1为参与拟合的五/七相机集合，g3/g4为未参与拟合的五/七相机集合；g2为完整九相机。每组仅五条轨迹各一个中点，不能称完整序列证据。
+
+Errors below are fractions; the original frozen gates are all 0.01. g0/g1 are five/seven-camera sets used in fitting; g3/g4 are excluded from fitting; g2 is the full-nine set. Each group contains only one midpoint from each of five trajectories, not complete-sequence evidence.
+
+| 相机组 / Camera group | 必然超门 / Unavoidable misses | 场下界p90 / Field bound | 全梯度 / Full gradient | 内部梯度 / Interior gradient | 投影 / Projection |
+|---|---:|---:|---:|---:|---:|
+| g0 (5) | 5/5 | 0.612763 | 0.678434 | 0.793058 | 0.503534 |
+| g1 (7) | 5/5 | 0.577922 | 0.643026 | 0.758816 | 0.561746 |
+| g2 (9) | 0/5 | 1.35265e-12 | 1.35543e-12 | 2.17726e-12 | 1.47635e-13 |
+| g3 (5) | 5/5 | 0.593791 | 0.669346 | 0.765124 | 0.505905 |
+| g4 (7) | 5/5 | 0.630654 | 0.669435 | 0.775093 | 0.577508 |
+
+正式SVD与独立带列主元QR分别重建方向、梯度、投影和乐观误差。最大下界指标差4.82e-13，目标归一化投影残差向量差3.26e-12，原输出空间包含残差1.71e-15。删相机各指标九列矩阵的最小/最大奇异值比均至少0.0733，明显高于结果前1e-10数值条件门；不是靠丢弃病态小方向制造下界。九相机近秩亏只报告已有近精确可达性，不制造不可能性证书。
+
+Formal SVD and independent column-pivoted QR separately rebuild directions, gradients, projections and optimistic errors. Maximum lower-bound metric discrepancy is 4.82e-13, target-normalized projection-residual vector discrepancy 3.26e-12, and original-output containment residual 1.71e-15. For every camera-removal metric, the nine-column matrix has a minimum/maximum singular-value ratio of at least 0.0733, well above the preregistered 1e-10 conditioning guard. The bound is not manufactured by dropping ill-conditioned small directions. Near-rank-deficient full-nine cases only report existing near-exact reachability, not an impossibility certificate.
+
+科学变化：上一轮只知道学习器失败，现在能排除“同一表示只要再学好系数就够了”这个解释。关闭的是固定九相机因子生成的这四个方向及其一次CGLS修正，不是所有几何条件学习器、其他物理表示或BOST本身。继续研究必须改变信息或表示，而非继续调该模型的规模、轮数和系数。没有新增部署收益，全部算子工作是单独披露的离线诊断。
+
+Scientific change: the previous result established learner failure; this audit rules out the explanation that better coefficients in the same representation would suffice. The closure applies to these four shared-nine-factor directions with one CGLS correction, not all geometry-conditioned learners, other physical representations or BOST itself. Further research must change information or representation, not keep tuning this model's size, epochs or coefficients. No new deployment benefit is claimed; all operator work is separately disclosed offline diagnosis.
+
+## 全局输入加局部学习仍未过门 / Global Input With Local Learning Still Fails
+
+49参数学习实验已独立确认失败：使用完整九相机几何逆算子提供全局信息，再学习共享局部响应，仍只通过25个必要点中的5个九相机点；这5个不学习也能通过。其余20/20删相机点失败，四组场误差p90为87.7%–90.8%，目标为1%。15参数线性对照同样未通过。已封存2525个外折预测，但其余2500次物理修正按规则不再运行。关闭该固定配置；不是完整序列验证、学习优势、提速或真实BOST成果。
+
+The 49-parameter learner independently fails: a shared local response on global full-nine inverse information passes only the five full-nine cases among 25 necessary cases, which also pass without learning. All 20/20 camera-removal cases fail; field-error p90 across four groups is 87.7%-90.8% against 1%. The 15-parameter linear control also fails. All 2525 outer predictions are sealed, but the other 2500 physical refinements are skipped by the fixed rule. This closes the fixed recipe, not a complete-sequence validation, learned advantage, speedup or real-BOST result.
+
+这次是真正的跨轨迹拟合，不是测试数或页面工作。五折分别留一整条轨迹，49参数奇对称点映射和15参数线性对照各固定20轮；拟合只用训练侧观测生成的合格直接解作为教师。完整九相机逆算子是共享的全局输入/输出动作，当前相机几何还进入覆盖率特征与精确forward/adjoint。额外两组五/七相机完全未参与拟合。CFD真值仅在全部预测封存后作否决评分，不能参与归一化、停止或回退。
+
+This is actual complete-trajectory leave-one-out fitting, not engineering test counts or page work. Each of five folds trains a 49-parameter odd point map and a 15-parameter linear control for exactly 20 epochs, using qualified observation-derived direct solutions only on the training side. One full-nine inverse supplies shared global input/output actions; active geometry also enters coverage features and exact forward/adjoint operations. Two additional five/seven-camera sets are excluded from fitting. CFD truth is used only for veto scoring after every prediction is sealed, never normalization, stopping or fallback.
+
+| 相机组 / Camera set | 学习 / Learned | 线性 / Linear | 不学习 / Unlearned | 直接参考 / Direct | 学习场p90 / Learned field p90 |
+|---|---:|---:|---:|---:|---:|
+| g0 (5) | 0/5 | 0/5 | 0/5 | 5/5 | 0.908141 |
+| g1 (7) | 0/5 | 0/5 | 0/5 | 5/5 | 0.876949 |
+| g2 (9) | 5/5 | 5/5 | 5/5 | 5/5 | 1.35496e-12 |
+| g3 (5) | 0/5 | 0/5 | 0/5 | 5/5 | 0.899071 |
+| g4 (7) | 0/5 | 0/5 | 0/5 | 5/5 | 0.892178 |
+
+表中每组只有五条轨迹各一个中点，误差为分数，冻结四指标门均为0.01。九相机时模型校正被结构性设为零，所以通过来自已验证的直接逆信息，不是神经网络贡献。删相机的20个点上，学习器均至少有一项指标劣于不学习版本；Zero-CGLS3、Jacobi-PCGLS3与BP+CGLS2也都未通过绝对门。完整直接参考25/25通过，不能用弱迭代对照替代它。详细四指标与所有控制汇总见配套JSON。
+
+Each group has one midpoint from each of five trajectories; errors are fractions and all four frozen gates are 0.01. At nine cameras the learned correction is structurally zero, so those passes come from verified direct-inverse information, not the network. On all 20 removal cases the learner harms at least one metric versus its unlearned version. Zero-CGLS3, Jacobi-PCGLS3 and BP+CGLS2 also fail the absolute gates. The qualified direct reference passes 25/25 and cannot be replaced by weak iterative controls. The companion JSON includes all four metrics and every control summary.
+
+独立链核验训练特征、物理损失、显式梯度、Adam更新、两套预测、未修改K1与400个物理场。梯度最大相对差3.03e-11；两套终点指标最大绝对差3.47e-8；退出后的重放指标最大差1.82e-12，原生forward差7.19e-16，输入与预测树前后不变。上一轮H8/K64的数值不确定仍原样保留，未被这次结果“修复”。本次负结果不证明所有局部/非线性学习不可能，也没有证明20轮拟合达到全局最优。
+
+Independent checks cover features, physical loss, explicit gradients, Adam updates, both prediction paths, unchanged K1 and 400 physical fields. Maximum gradient relative difference is 3.03e-11; paired endpoint-metric absolute difference is 3.47e-8; post-exit metric replay differs by at most 1.82e-12 and native forward by 7.19e-16, with input/prediction trees unchanged. The preceding H8/K64 numerical uncertainty remains unchanged, not retroactively repaired. This negative result does not disprove every local/nonlinear learner or establish global optimality after 20 epochs.
+
+成本：候选每查询3A+3AT、4次三角求解，另有约276.6MB的共享因子及其构建；分组直接参考每查询1A+1AT、2次三角求解，但各组需自己的因子。不能把共享大因子当免费输入，也不能仅凭K1或49参数声称部署更快。42.6分钟、峰值约7.71GiB只是这次拟合与审计的本地遥测，不是fresh wall/RSS对比。
+
+Cost: the candidate uses 3A+3AT and four triangular solves per query, plus a shared factor of about 276.6MB and its setup. Each subset direct reference uses 1A+1AT and two triangular solves but requires its own factor. The large shared factor is not free; K1 or 49 parameters alone cannot establish faster deployment. About 42.6 minutes and a 7.71GiB peak are local fit/audit telemetry, not a fresh wall/RSS comparison.
+
+## 训练没到最优，但固定特征也不够 / Optimization Gap and Frozen-Feature Limit
+
+训练侧最优性诊断已独立完成：固定49参数模型的隐藏特征后，只调整输出层，原训练目标仍可降低19.86%–47.08%；15参数线性对照可降低76.22%–83.53%。但无正则物理训练损失的最小值仍分别为3.56–6.11和0.565–0.576，不能让所有训练样本的原始四项误差都达1%。这是优化缺口与固定特征拟合限制同时存在，不是新预测或留出集成功；不约束观测线搜索与K1后的误差，也不证明所有隐藏表示无效。旧学习失败判决不变。
+
+The training-only optimality diagnostic is independently complete: with the 49-parameter hidden features fixed, output coefficients alone could reduce the original training objective by 19.86%-47.08%; the 15-parameter linear control allows 76.22%-83.53%. Yet minimum unregularized physical training losses remain 3.56-6.11 and 0.565-0.576, excluding 1% raw accuracy on all four metrics for every training query. Optimization gaps and frozen-feature fit limits coexist. This is no new prediction or held-out success, no bound after observation line search and K1, and no disproof of all hidden representations. The old learned-failure verdict is unchanged.
+
+| 外折 / Fold | 原始训练损失 / Old loss | 固定特征物理最小值 / Physical minimum | 输出层目标余地 / Objective gap | 线性物理最小值 / Linear minimum |
+|---|---:|---:|---:|---:|
+| 0 | 5.277930 | 3.795179 | 28.09% | 0.575867 |
+| 1 | 5.384785 | 4.073942 | 24.33% | 0.569750 |
+| 2 | 9.122746 | 6.110322 | 33.02% | 0.567083 |
+| 3 | 4.446019 | 3.561916 | 19.86% | 0.568411 |
+| 4 | 7.942268 | 4.203244 | 47.08% | 0.564952 |
+
+五折分别只使用原先404帧训练侧、三组相机，共1212查询；不读留出教师或CFD真值。表内损失是原始lift在观测线搜索/K1之前的四项相对平方误差均值，不是留出误差百分比。物理最小值来自无正则目标；目标余地来自原先固定正则训练目标。正则损失不是物理下界。数值证明只针对固定隐藏特征和输出系数，不证明隐藏层全局最优，也不排除精确修正后的改善。
+
+Each fold uses only its original 404 training frames across three camera sets, totaling 1212 queries, with no held-out teacher or CFD truth. Losses are means of four squared relative raw-lift errors before observation line search/K1, not held-out error percentages. Physical minima use the unregularized objective; objective gaps use the original fixed-ridge training objective. A regularized loss is not a physical lower bound. These certificates concern only frozen hidden features and output coefficients, not global hidden-layer optimality or possible improvement after exact refinement.
+
+正式Gram/Cholesky与独立物理重建/流式QR复算一致，Gram和物理最小值最大差分别为5.06e-13与3.07e-11。没有保存新系数、checkpoint或预测，没有重新训练或改写旧判决。两实现离线诊断合计246440A、117160AT、234320次三角求解；共享因子与其构建仍非免费。约298秒、峰值2.18GiB仅为本次诊断遥测，不是部署提速。下一步应核查表示与训练目标到最终精确修正的接口，不能把这份诊断当成增加轮数或大模型救援的许可。
+
+Formal Gram/Cholesky and independent physical reconstruction/streaming QR agree, with maximum Gram and physical-minimum differences of 5.06e-13 and 3.07e-11. No new coefficients, checkpoints or predictions were saved, and no retraining or old-verdict revision occurred. Across both implementations this offline diagnostic costs 246440A, 117160AT and 234320 triangular solves; the shared factor and setup are not free. About 298 seconds and 2.18GiB peak are diagnostic telemetry, not deployment speedup. Subsequent work must examine representation and the interface between training loss and final exact refinement, not treat this diagnostic as permission for more epochs or larger-model rescue.
+
+## 理想输出层加K1也救不回固定特征 / Ideal Heads Plus K1 Cannot Rescue Fixed Features
+
+精确修正后的容量归因已独立完成：在原先25个已打开检验点中，20/20个删相机点即使允许理想输出系数、观测线搜索和一次K1，当前固定49参数模型特征仍无法达到四指标1%门槛。四组场误差下界p90为67.7%–70.5%；固定线性特征也全部失败。九相机近精确结果仍来自不学习即可通过的恒等情形。这排除了仅优化当前输出层来补救的解释，不证明所有隐藏表示或全C路线无效；不是新预测、完整序列或新的泛化成功。
+
+Post-refinement capacity attribution is independently complete: among the same 25 opened cases, all 20/20 camera-removal cases remain outside the four-metric 1% gates even with ideal output coefficients, observation line search and one K1 on the frozen 49-parameter features. Field-error lower-bound p90 is 67.7%-70.5% across four groups; the fixed linear features also fail throughout. Near-exact nine-camera cases remain identities that need no learning. This rules out rescue by output-head optimization alone, not every hidden representation or the whole C route. It is no new prediction, complete-sequence result or fresh generalization success.
+
+| 相机组 / Camera set | 固定非线性特征排除 / Fixed nonlinear excluded | 场下界p90 / Field bound p90 | 固定线性特征排除 / Fixed linear excluded | 场下界p90 / Field bound p90 |
+|---|---:|---:|---:|---:|
+| g0 (5) | 5/5 | 0.704517 | 5/5 | 0.693666 |
+| g1 (7) | 5/5 | 0.677197 | 5/5 | 0.66297 |
+| g2 (9) | 0/5 | 1.35269e-12 | 0/5 | 1.35269e-12 |
+| g3 (5) | 5/5 | 0.689551 | 5/5 | 0.666031 |
+| g4 (7) | 5/5 | 0.688738 | 5/5 | 0.659209 |
+
+这里的数值是误差分数。每组只有五条轨迹各一个已打开中点，门为0.01。没有部署新基底或进行训练：令X为原先特征经过精确lift的方向，b=A^Ty、H=A^TA；任意输出系数和观测标量线搜索后，一步CGLS的输出一定包含在span[X,b,HX]内。我们分别为每项指标在这个更宽松空间里找理想解，甚至不要求不同指标共用一个解、不同样本共用输出层。连这种乐观下界都失败，才可排除相应固定特征；下界通过则不能证明实际模型可行。
+
+Values are error fractions. Each group contains one already-opened midpoint from each of five trajectories; the gate is 0.01. No basis expansion or training is deployed: let X contain the original feature directions after exact lift, b=A^Ty and H=A^TA. Any output coefficients, scalar observation line search and one CGLS step produce a field inside span[X,b,HX]. We independently optimize each metric in this larger space, without requiring one solution across metrics or one shared head across samples. Only a failed optimistic lower bound can exclude these fixed features; a passing bound would not establish a realizable model.
+
+删相机的80个单元/指标界限在两套实现中均满足条件数门，最小奇异值比非线性/线性为1.76e-4/1.26e-5，远高于1e-10。九相机空间退化，不作不可能性认证；其近精确输出早已由不学习对照给出。训练侧最优性诊断发现的优化缺口仍成立，但填平缺口不足以救回这些固定特征经过K1的结果。不同隐藏特征或真正非局部表示未被排除，旧失败判决不变。
+
+All 80 removal cell/metric bounds per model meet the two-implementation conditioning gate: minimum singular ratios are 1.76e-4 and 1.26e-5 for nonlinear and linear features, well above 1e-10. Nine-camera spaces are degenerate and receive no impossibility certificate; their near-exact outputs were already supplied without learning. The training-side optimization gaps remain real, but closing them cannot rescue these frozen features after K1. Different hidden features or genuinely nonlocal representations are not excluded, and the old failure verdict is unchanged.
+
+所有观测/几何方向在读取评分真值前封存。SVD与独立逆序行QR、独立物理重建及原生forward重放通过；旧输出包含误差2.58e-11，两套误差下界差1.92e-10，退出后800项投影重算差3.34e-15。没有新模型、预测或最优系数。离线额外3100次子集A、1190次子集AT、1960次原生九相机A和1140次三角求解；退出验证再加1960次子集A。原候选3A+3AT及4次三角求解的在线账和大因子成本没有改变。约74秒、峰值9.97GiB是归因遥测，不是部署提速、真实BOST或论文突破。
+
+All observation/geometry directions seal before scoring-truth access. SVD and independent reversed-row QR, separate physical reconstruction and native-forward replay pass; old-output containment differs by at most 2.58e-11, paired error bounds by 1.92e-10 and 800 post-exit projection recomputations by 3.34e-15. No new model, prediction or optimum coefficients are produced. Additional offline work is 3100 subset A, 1190 subset AT, 1960 native nine-camera A and 1140 triangular solves; post-exit verification adds 1960 subset A. The original online 3A+3AT and four triangular solves, large factor and setup remain unchanged. About 74 seconds and 9.97GiB peak are attribution telemetry, not deployment speedup, real BOST or a paper breakthrough.
+
+## 全模式全局滤波仍不够 / Full-Mode Global Filtering Is Insufficient
+
+全模式非局部经典对照已独立确认失败：保留全部5880个有效正弦模式，仅用相机几何构造逆滤波，经过精确lift与K1仍为0/25通过；节点对角对照也为0/25，直接参考25/25。相同3A+3AT预算下，Zero-CGLS3在全部25点的四项指标均不劣于新对照。每组只需47040字节对角数据，但额外几何构建与变换不是免费的，精度失败更不能包装成提速。关闭这个固定模式对角近似，不排除所有非局部学习；没有新的完整序列、泛化或真实BOST成果。
+
+The full-mode nonlocal classical baseline independently fails: all 5880 active sine modes are retained, with an inverse filter derived only from camera geometry, yet exact lift and K1 pass 0/25 cases. The nodal-diagonal control also passes 0/25; direct reference passes 25/25. At the same 3A+3AT budget, Zero-CGLS3 is no worse on all four metrics at every one of the 25 cases. Each subset needs only 47040 bytes of diagonal data, but setup and transforms are not free and failed accuracy cannot establish speedup. This closes one fixed mode-diagonal approximation, not every nonlocal learner; it provides no new complete-sequence, generalization or real-BOST result.
+
+| 相机组 / Camera set | 正弦场p90 / Sine field p90 | 节点场p90 / Nodal field p90 | Zero3场p90 / Zero3 field p90 | 正弦通过 / Sine pass | 直接参考 / Direct pass |
+|---|---:|---:|---:|---:|---:|
+| g0 (5) | 0.864123 | 0.877023 | 0.657781 | 0/5 | 5/5 |
+| g1 (7) | 0.866053 | 0.868680 | 0.630135 | 0/5 | 5/5 |
+| g2 (9) | 0.761361 | 0.861751 | 0.587162 | 0/5 | 5/5 |
+| g3 (5) | 0.806865 | 0.865133 | 0.629517 | 0/5 | 5/5 |
+| g4 (7) | 0.825199 | 0.863002 | 0.614968 | 0/5 | 5/5 |
+
+这里是原先五条轨迹的已打开中点乘五组相机，共25必要点；误差为分数，四指标门均为0.01。全部2525预测在读取评分真值前封存，剩余2500次修正按失败规则跳过。候选不训练、不用稠密因子、不截断模式：对每个相机计算每个正弦模式的真实投影能量，按当前相机集合相加，形成正弦域的正规算子对角。仅保留这个对角后作逆平方滤波，再精确lift、观测线搜索和一次未修改CGLS。节点对角是便宜的新对照；旧控制复用已封存端点并重新物理评分，没有重复训练。
+
+These are the same opened midpoints from five trajectories across five camera sets, totaling 25 necessary cases; errors are fractions and every gate is 0.01. All 2525 predictions seal before scoring truth; the other 2500 refinements are skipped after failure. No training, dense factor or mode truncation is used: exact per-camera sine-mode projection energies are summed over the active set to form the normal-operator diagonal in sine coordinates. Its inverse-square filter precedes exact lift, observation line search and unchanged CGLS K1. A nodal-diagonal filter is the cheap new control; old controls reuse sealed endpoints with fresh physical scoring, not repeated training.
+
+正式FFT与独立正弦张量定义得到一致的几何能量、预测和修正；新终点最大相对差1.44e-13，退出后重应用100个预测、重放400个物理场，指标最大差1.82e-12。每查询3A+3AT、2次DST、0次三角求解；每相机组47040字节，全部九相机能量表423360字节。但每套实现需5880次九相机forward构建，直接参考仍只需1A+1AT和2次三角求解（另计各组稠密因子与构建）。约61秒、峰值2.93GiB只是诊断遥测，不是部署wall/RSS优势。此负结果没有定量证明所有跨模式耦合的作用，也不许可事后调滤波幂次或增加K。
+
+Formal FFT and independent sine-tensor definitions agree on geometry energies, predictions and refinement; the new endpoint relative difference is at most 1.44e-13. Post-exit checks reapply 100 predictions and replay 400 physical fields, with metric difference at most 1.82e-12. Per query: 3A+3AT, two DSTs and zero triangular solves; 47040 bytes per subset and 423360 bytes for all nine camera energies. Each implementation nevertheless requires 5880 full-nine forward setup actions. Direct reference still needs only 1A+1AT and two triangular solves, plus its per-subset dense factor/setup. About 61 seconds and 2.93GiB peak are diagnostic telemetry, not deployment wall/RSS advantage. This negative result neither quantifies all cross-mode coupling nor permits post-hoc filter-exponent or K tuning.
+
+来源边界 / Source Boundaries: [SciPy DST定义 / DST definition](https://docs.scipy.org/doc/scipy/reference/generated/scipy.fft.dst.html)支持所用正交变换；[Chan 1988](https://doi.org/10.1137/0909051)仅查阅了出版方摘要，其循环/Toeplitz预条件结论不能直接用于本BOS算子；[MGKN 2020](https://arxiv.org/abs/2006.09535)已有多层非局部图核，非局部性本身不构成首创。The SciPy definition supports the transform convention. Only the publisher abstract of Chan 1988 was read; its circulant/Toeplitz claims do not validate this BOS operator. MGKN already develops multilevel nonlocal graph kernels, so nonlocality alone is not a novelty claim here.
+
+## 精确更新不一定省存储 / Exact Updating Does Not Necessarily Save Storage
+
+精确相机删减更新的存储审计已独立完成：四组5/7相机均需要至少2436个独立修正方向。对于本次限定的“稠密修正矩阵＋压缩存储的小型因子”，增量至少138335568字节，已不小于压缩存储的直接因子138321120字节，且尚未计入共享九相机因子。因此不再构建这个没有存储优势依据的稠密缓存。只关闭这种表示，不排除结构化或流式更新；没有读取真值、预测、重建或实测提速结论。
+
+The exact camera-removal cache audit is independently complete: all four 5/7-camera sets require at least 2436 independent correction directions. For the specific dense correction plus packed small-factor representation, incremental storage is at least 138335568 bytes, already no smaller than a packed direct factor at 138321120 bytes, before the shared nine-camera factor is counted. This dense cache has no basis for a storage-saving claim and will not be built. Only this representation is closed, not structured or streaming updates; no truth reading, prediction, reconstruction or measured speedup is established.
+
+| 相机组 / Set | 相机 / Cameras | 修正秩下界 / Rank lower bound | 最小奇异值/余量 / Smallest singular value/margin |
+|---|---:|---:|---:|
+| g0 | 5 | 2436 | 1675379.81 |
+| g1 | 7 | 2436 | 717328.11 |
+| g3 | 5 | 2436 | 2307249.87 |
+| g4 | 7 | 2436 | 617894.42 |
+
+设未知数n=5880、修正秩r；所测试的通用稠密Woodbury表示需n*r+r*(r+1)/2个数，压缩存储的直接Cholesky因子需n*(n+1)/2个数。结果前由此固定临界r=2436，再用唯一均匀列选取见证验证四组删减算子至少具有这个秩；不是查看结果后选择秩。正式QR加三角SVD与独立矩形SVD分开重建几何，归一化奇异谱最大差4.58e-16，最小证书余量倍率超过61万。没有估计完整秩，没有截断或调秩。该比较针对压缩三角表示，并非现有完整方阵数组实现的内存实测。
+
+With n=5880 unknowns and correction rank r, the tested generic dense Woodbury representation stores n*r+r*(r+1)/2 scalars, while a packed direct Cholesky factor stores n*(n+1)/2. This fixes the break-even witness rank r=2436 before results. A single uniformly selected column witness certifies that lower bound for each removal operator; rank was not selected afterward. Formal QR plus triangular SVD and independent rectangular SVD separately rebuild geometry, with normalized singular-spectrum difference at most 4.58e-16 and minimum certificate margin ratio above 610000. No full rank is estimated or truncated. This compares packed triangular representations, not measured memory of the current full-square array implementation.
+
+这里没有CFD真值或观测读取，也没有新预测、物理重放或重建评分，新增账0A+0AT；四次QR、四次三角SVD与四次矩形SVD作为离线几何审计另记。约24秒、峰值3.70GiB不是部署wall/RSS优势。该结论不排除流式、稀疏或层次化更新，不证明自然CFD场不可压缩，更不能作为扩大网络的许可。
+
+No CFD truth or observations are read, and no prediction, physical replay or reconstruction score is produced: 0A+0AT. Four QR, four triangular SVD and four rectangular SVD setups are charged separately as offline geometry auditing. About 24 seconds and 3.70GiB peak are not deployment wall/RSS advantage. This does not reject streaming, sparse or hierarchical updates, prove natural CFD fields incompressible, or authorize a larger network.
+
+来源边界 / Source boundaries: [Hager1989](https://doi.org/10.1137/1031049)与[Yip1986](https://doi.org/10.1137/0907034)是既有逆更新与稳定性文献，本次只读取出版方摘要；不将其结论冒充本BOS系统的稳定性或速度证明。These are prior inverse-update and stability references; only publisher abstracts were read, and no BOS stability or speed guarantee is imported.
+
+## 两级混合仍未通过 / Two-Stage Mixing Still Fails
+
+两级非局部Monarch近似已独立确认失败：几何构造的1572864个系数可表达全局满秩映射，但接上精确lift与K1仍为0/25通过，单级块对照也为0/25，直接参考25/25。同等3A+3AT预算下，普通CGLS3在全部25点的四指标均不更差。关闭这个固定的矩阵Frobenius近似配方；矩阵近似最优不等于物理重建最优，不能据此否定所有Monarch权重。12MiB仅为主候选系数载荷，不是全流程内存，更不是提速成果。
+
+The two-stage nonlocal Monarch approximation independently fails: 1572864 geometry-derived coefficients can represent a globally full-rank map, yet exact lift and K1 pass 0/25 cases; the single-stage block control also passes 0/25, and direct reference passes 25/25. At the same 3A+3AT budget, ordinary CGLS3 is no worse on all four metrics at all 25 points. This closes the fixed matrix-Frobenius approximation recipe; matrix-optimal does not mean reconstruction-optimal and does not reject all possible Monarch weights. The 12MiB figure is only the primary coefficient payload, not whole-pipeline memory or a speed result.
+
+| 相机组 / Set | 原始逆矩阵Frobenius相对误差 / Raw inverse error | 主候选场p90 / Primary field p90 | 块对照场p90 / Block field p90 | Zero3场p90 / Zero3 field p90 |
+|---|---:|---:|---:|---:|
+| g0 (5) | 0.386451 | 0.906215 | 0.907138 | 0.657781 |
+| g1 (7) | 0.234257 | 0.902575 | 0.902389 | 0.630135 |
+| g2 (9) | 0.517523 | 0.919011 | 0.895137 | 0.587162 |
+| g3 (5) | 0.356364 | 0.892936 | 0.897503 | 0.629517 |
+| g4 (7) | 0.293023 | 0.899824 | 0.900739 | 0.614968 |
+
+仍是五条已打开轨迹的中点乘五组相机，共25必要点，四项相对误差门均为0.01。全部2525预测在CFD评分真值前封存；失败后跳过剩余2500次修正，不将其记为失败或成功。主候选把8192个节点固定拆成64×128，两级块混合可连接全部输入输出；每个重排小块的秩1约束不等于整个算子秩1。正式SVD和独立Gram特征分解分别得到矩阵Frobenius近似，再用带零边界mask的T转置乘T构造正半定逆平方作用，最后精确lift、观测线搜索与未修改CGLS K1。
+
+These remain the opened midpoints of five trajectories across five camera sets: 25 necessary cases, with all four relative-error gates at 0.01. All 2525 predictions seal before CFD scoring truth; the other 2500 refinements are skipped, not scored failures or successes. The 8192 nodes split into a fixed 64×128 layout, whose two block-mixing stages connect all inputs and outputs. Rank one for each reshuffled small block does not mean a globally rank-one operator. Formal SVD and independent Gram eigendecomposition produce the matrix-Frobenius approximation. Its masked adjoint-product supplies a positive-semidefinite inverse-square action, followed by exact lift, observation line search and unchanged CGLS K1.
+
+独立逆矩阵/Monarch矩阵/新终点最大相对差为9.38e-11/1.10e-10/7.08e-11；退出后100预测重应用、400物理场重放，指标最大差1.82e-12。81920个块未出现最大奇异值并列。每查询3A+3AT、4级块乘、0次稠密三角求解；主系数12MiB，对照系数8MiB，实验档案还保留离线逆矩阵与全部预测。五组几何双实现的117600次三角右端求解、40960次SVD与40960次Gram特征分解全部另记，几何构造不是免费。约109秒、峰值4.77GiB只是诊断遥测，不是部署wall/RSS优势。
+
+The independent inverse/Monarch-matrix/new-endpoint relative differences are at most 9.38e-11/1.10e-10/7.08e-11. Post-exit checks reapply 100 predictions and replay 400 physical fields, with metric difference at most 1.82e-12. No top-singular-value ties occur in 81920 blocks. Each query uses 3A+3AT, four block-multiply stages and zero dense triangular solves. Primary coefficients occupy 12MiB and controls 8MiB; the experiment archive also retains offline inverses and all predictions. Across five geometries and two definitions, 117600 triangular RHS solves, 40960 SVDs and 40960 Gram eigendecompositions are charged separately: geometry construction is not free. About 109 seconds and 4.77GiB peak are diagnostic telemetry, not deployment wall/RSS advantage.
+
+来源与边界 / Sources and boundaries: [Monarch 2022](https://proceedings.mlr.press/v162/dao22a.html)提供两级结构和矩阵Frobenius投影依据，不保证本BOS物理误差；[FIO inverse 2021](https://arxiv.org/html/2105.02995v1)将forward蝶形结构与正规算子的层次逆结合，不能直接套用其假设；[fast transforms 2019](https://proceedings.mlr.press/v97/dao19a.html)是可学习快速结构变换的先例。Monarch supplies the structure and matrix-projection argument, not a BOS accuracy guarantee. The FIO paper combines a forward butterfly with a hierarchical normal inverse under assumptions not asserted here. Learnable fast structured transforms are established prior art. 此次不训练模型、不扩大块/层/秩或K救援，也不将此结果称为全部Monarch权重的物理能力上界。No model is trained or rescued by larger blocks, stages, rank or K; this is not a physical-capacity upper bound for all Monarch weights.
+
+## 2026-09-07 误差从哪里进入 / Where Error Enters
+
+误差归因已独立复算：25点在单次逆作用阶段就全部未过参考相对精度检查，五组相机的场误差p90约40至8724倍。完整lift的参考接口缺陷不超过6.48e-10，不能解释这个量级的失败；后续组合进一步放大误差，线搜索把结果大幅缩小，却不能改变错误方向。仍是已开封诊断，不是新算法或新重建成绩；原Monarch配方保持关闭。
+
+The error attribution is independently verified: all 25 points already fail the reference-relative diagnostic at the single inverse action, with field-error p90 ranging from about 40 to 8724 across five camera sets. The full-lift reference-interface defect is at most 6.48e-10 and cannot explain errors of this magnitude. The subsequent composition amplifies error, while line search strongly shrinks the output without changing its direction. This is post-open diagnosis, not a new algorithm or reconstruction result; the fixed Monarch recipe remains closed.
+
+| 相机组 / Set | 单次逆作用 / Single inverse | 原始lift / Raw lift | 线搜索后 / After scaling | K1后 / After K1 |
+|---|---:|---:|---:|---:|
+| g0 | 3047.15 | 1.35626e+08 | 0.999052 | 0.906215 |
+| g1 | 345.521 | 2.53946e+06 | 0.999382 | 0.902575 |
+| g2 | 39.8136 | 11910.2 | 1.03749 | 0.919011 |
+| g3 | 8723.96 | 5.33596e+08 | 0.995734 | 0.892936 |
+| g4 | 1270.47 | 7.41037e+06 | 1 | 0.899824 |
+
+表中均为场误差p90，相对于同一观测和几何的合格直接解，不是新的CFD真值评分。原始25点0/25结论不变。单级块对照在四阶段也全部未过检查。
+
+The table reports field-error p90 relative to the qualified direct solution for the same observation and geometry, not new CFD-truth scores. The original 0/25 result is unchanged. The single-block control also fails every diagnostic point at all four stages.
+
+固定分解保留参考缺陷、左右一次项、二次项、线搜索缩放与K1增量；它们是会相互抵消的向量，不能当作独立百分比相加。主候选二次项范数为两个一次项范数之和的约94.6至49615倍，线搜索系数介于0与4.26e-5，两点直接归零。这支持当前配方在实际观测上的逆作用严重失真；不证明所有Monarch权重、非局部表示或学习方法无效。
+
+The fixed expansion retains reference defect, two linear terms, the quadratic term, line-search scaling and K1 increment. These are coherent vectors with cancellation, not independent additive percentages. The primary quadratic-term norm is about 94.6 to49615 times the sum of the two linear-term norms; line-search coefficients range from0 to4.26e-5, with two zero cases. This supports severe inverse-action distortion on actual observations for this recipe, not impossibility for all Monarch weights, nonlocal representations or learning methods.
+
+最初float64归因因原始恒等式差2.10e-6超过1e-6而保持未定。相同系数与容差下，仅用MPFR128累加和高低两个float64字传递数值，完成正式结构化与独立稠密误差矩阵双实现；退出后Decimal80复算819200个坐标。原始恒等式最大差1.17e-23，端点恒等式1.09e-16，物理范数复算差小于9e-15。高精度只修复审计运算，没有训练模型或改善原预测。
+
+The initial float64 attribution remains inconclusive because its raw identity discrepancy2.10e-6 exceeded1e-6. With unchanged coefficients and tolerance, MPFR128 accumulation and two-float64-word transport enable the structured formal and explicit dense-error independent definitions. Post-exit Decimal80 checks819200 coordinates: raw identity discrepancy at most1.17e-23, endpoint identity1.09e-16, and physical-norm replay below9e-15. Higher precision repairs audit arithmetic only; it does not train a model or improve the original predictions.
+
+全量诊断约329秒、峰值9.77GiB，属于审计遥测，不是部署wall/RSS优势；重建独立逆矩阵的58800次三角右端求解和所有额外算子调用单列计入离线账。Full diagnosis takes about329seconds and9.77GiB peak as audit telemetry, not deployment wall/RSS advantage. The58800 triangular RHS solves for independent inverse reconstruction and all extra operator calls are explicitly offline costs.
+
+数值库 / Numerical library: [GNU MPFR](https://www.mpfr.org/mpfr-current/mpfr.html). 求和与点积误差背景 / Summation and dot-product background: [Ogita, Rump and Oishi](https://doi.org/10.1137/030601818). 这些是已有数值工具，不是本项目创新。These are established numerical tools, not project novelty.
+
+## 2026-09-07 零填充因子能否成立 / Can a Zero-Fill Factor Be Constructed?
+
+固定IC(0)构造审计已独立复算：五组5/7/9相机全部出现负主元，可用因子0/5；同一方程的完整Cholesky对照全部正常。说明自然顺序、不加填充或对角修正的这条近似因子配方不可直接使用，不能归咎于原正规矩阵不正定。只关闭该固定配方，没有进行重建评分或训练，也不是算法、速度或真实BOST突破。
+
+The fixed IC(0) construction audit is independently verified: all five 5/7/9-camera sets encounter negative pivots, yielding 0/5 usable factors, while complete Cholesky controls for the same equations all succeed. This natural-order recipe without added fill or diagonal shifts is not directly usable; its breakdown is not evidence that the original normal equations lack positive definiteness. Only this fixed recipe is closed. No reconstruction scoring or training was performed, and no algorithm, speed or real-BOST breakthrough is claimed.
+
+| 相机组 / Set | 相机数 / Cameras | 首次负主元行（从1起） / First negative row (1-based) | 主元/原对角 / Pivot / original diagonal |
+|---|---:|---:|---:|
+| g0 | 5 | 311 | -0.37717588 |
+| g1 | 7 | 495 | -0.57192608 |
+| g2 | 9 | 1749 | -0.74788100 |
+| g3 | 5 | 249 | -0.05355333 |
+| g4 | 7 | 445 | -0.08337631 |
+
+完整Cholesky的十次双实现对照均为正，矩阵重放差不超过1.15e-15。两种IC构造在相同首个位置失效，有限前缀最大差1.99e-12；退出后独立代数重放6.77e-16、80位Decimal主元复核1.65e-16。负主元不是接近零的边界事件。便宜Jacobi对角也均为正，但这并不证明其重建精度。
+
+All ten complete Cholesky controls across both matrix definitions have positive factors and matrix replay error at most1.15e-15. Both IC constructions fail at the same first index, with finite-prefix difference at most1.99e-12; post-exit algebra replay is at most6.77e-16 and80-digit Decimal pivot verification1.65e-16. Negative pivots are not near-zero boundary cases. The cheap Jacobi diagonals are also positive, which does not certify reconstruction accuracy.
+
+未读取观测或CFD真值，未预测、未训练、未做物理重放，向量算子新增账0A+0A^T。几何构建另计15次正规矩阵乘积、10次结构图乘积、10次完整Cholesky与10次前缀因子化。23.75秒、2.09GiB只是本地审计遥测，不是部署wall/RSS优势；失败前缀不是可部署的完整模型。
+
+No observations or CFD truth are read; there are no predictions, training or physical replays, and zero new vector A/A^T actions. Geometry work is separately charged:15 normal products,10 symbolic products,10 complete Cholesky controls and10 prefix factorizations. The23.75seconds and2.09GiB are local audit telemetry, not deployment wall/RSS advantage; failed prefixes are not deployable complete models.
+
+不通过事后增加填充、移动对角或重新排序挽救这条已冻结配方；这不否定所有稀疏因子，也不关闭C路线。
+
+Do not rescue this frozen recipe with post-result fill, shifts or reordering. The result does not reject every sparse factor or close the C route.
+
+已有经典实现 / Established classical implementation: [ilupp IC(0)](https://ilupp.readthedocs.io/en/latest/). 这是经典控制，不是项目首创。This is a classical control, not project novelty.
+
+## 2026-09-07 复用上一帧解 / Reusing the Previous Solution
+
+历史状态复用已独立验证：五条已开封序列、五组5/7/9相机的25个检查点，四指标1%门仍为0/25，直接解对照25/25。复用上一帧解在全部25点的四指标均不差于同在线调用数的Zero-CGLS2，场误差p90从76.15%降至57.46%，但仍不达标。更便宜的直接场复用与dual复用数值等价（最大差6.90e-15），后续每帧分别为2A+1A^T与2A+2A^T；冷启动与几何因子构建另计。因此有历史解的帮助，没有dual特有优势，也不是学习、速度或真实BOST突破。
+
+Causal state reuse is independently verified: across five opened sequences and five 5/7/9-camera sets, the four-metric 1% gate remains 0/25 checkpoints, while the direct reference passes 25/25. Reusing the previous solution is no worse in all four metrics at all 25 points than Zero-CGLS2 with the same online operator count; field-error p90 decreases from 76.15% to 57.46%, but remains inadequate. Cheaper direct-field carry is numerically equivalent to dual carry (maximum difference 6.90e-15), costing 2A+1A^T versus 2A+2A^T per later frame; cold initialization and geometry factors are separately charged. History helps, but no dual-specific benefit, learning, speed or real-BOST breakthrough is established.
+
+| 相机组 / Set | 相机数 / Cameras | 场p90 / Field | 全梯度p90 / Full gradient | 内梯度p90 / Interior gradient | 观测p90 / Observation |
+|---|---:|---:|---:|---:|---:|
+| g0 | 5 | 0.564233 | 0.533419 | 0.734862 | 0.440827 |
+| g1 | 7 | 0.543762 | 0.508676 | 0.689440 | 0.454572 |
+| g2 | 9 | 0.529930 | 0.487331 | 0.683381 | 0.456988 |
+| g3 | 5 | 0.555483 | 0.520399 | 0.726311 | 0.436798 |
+| g4 | 7 | 0.545764 | 0.509310 | 0.702724 | 0.454604 |
+
+表内均为相对误差，冻结门为0.01。每条序列101帧，同一序列内几何固定，不测试中途换相机。两种实现均先封存每个候选的全部2525条因果预测，再读取CFD真值评分；固定25个中点已失败，因此其余2500个真值评分跳过，不计作失败。没有完整序列精度通过或未开封外部泛化结论。
+
+Table entries are relative errors with a frozen0.01 threshold. Each sequence has101frames with fixed geometry; changing cameras mid-sequence is not tested. Both implementations seal all2525causal predictions per arm before reading CFD truth for scoring. The25fixed midpoints already fail, so2500remaining truth scores are skipped, not counted as failures. No complete-sequence accuracy pass or unopened external generalization is established.
+
+主候选只保存上一帧算出的dual，用当前观测做非负幅度缩放，经精确lift和未修改CGLS K1更新；不读取未来观测，不用时间/工况标签，不刷新直接参考解。便宜对照保存自己的上一帧三维解，执行相同缩放与K1，固定A下二者代数等价。每序列冷启动均为2A+2A^T加4次三角右端求解，几何因子构建另计。101帧合计主候选202A+202A^T，对照202A+102A^T，各另有冷启动4次求解。
+
+The primary carries only its previous computed dual, rescales it nonnegatively using current observations, and applies the exact lift and unchanged CGLS K1. It uses no future observations, time/condition labels or direct-reference refresh. The cheaper control carries its own previous3Dsolution and uses the same scale and K1; for fixed A they are algebraically equivalent. Both cold initializations cost2A+2A^T plus4triangular RHS solves per sequence, with geometry factors separately charged. The101-frame totals are202A+202A^T for dual carry and202A+102A^T for field carry, each plus4cold solves.
+
+Zero、BP、CGLS2、Jacobi2、BP+K1及历史dual-ridge对照均为0/25，直接解为25/25。历史ridge的3A+3A^T加4次求解是更贵诊断，不冒充同价对照；直接解为1A+1A^T加2次求解且有几何预处理。主候选相对CGLS2在25点四指标全部不差、场误差全部更低，但不满足1%精度，不能据此声称减少达到相同精度所需的调用。
+
+Zero, BP, CGLS2, Jacobi2, BP+K1 and inherited dual-ridge controls all pass0/25; the direct control passes25/25. Inherited ridge costs3A+3A^T plus4solves and is an expensive diagnostic, not a matched-cost control. Direct solution costs1A+1A^T plus2solves after geometry preprocessing. The primary is no worse than CGLS2 in all four metrics at all25points, with lower field error at every point, but fails 1% accuracy; fewer calls to equal accuracy are not established.
+
+正式实现使用冻结CGLS和Cholesky冷启动，第二实现独立递推并使用带列主元QR冷启动；因果场/残差/dual最大差1.35e-10/8.81e-10/1.53e-9。退出后独立重放全部dual与残差状态、固定中点转移和物理评分，最大物理差7.26e-16、指标差1.82e-12。123.81秒与2.63GiB只是执行遥测，不是部署wall/RSS优势。
+
+The formal path uses frozen CGLS and Cholesky cold initialization; the second path independently recurs and uses column-pivoted QR. Maximum paired causal field/residual/dual differences are1.35e-10/8.81e-10/1.53e-9. Post-exit verification replays every dual and residual state, fixed midpoint transitions and physical scores, with maximum physical/metric differences7.26e-16/1.82e-12. The123.81seconds and2.63GiB are execution telemetry, not deployment wall/RSS advantage.
+
+关闭这个固定单状态、幅度缩放、K1配方，不通过增加K、历史、刷新或外推挽救。不否定所有历史复用方法或C路线。0个训练参数，无学习优势、速度提升或真实BOST结论。下一机制必须说明它相对更便宜的上一帧场复用新增了什么有效信息。
+
+Close this fixed single-state, scalar-rescale, K1 recipe without rescuing it through added K, history, refreshes or extrapolation. This does not reject every recycling method or the C route. There are0trained parameters and no learned advantage, speedup or real-BOST result. Any next mechanism must identify useful information beyond the cheaper previous-field control.
+
+历史状态复用是已有经典方向，而非本项目首创；本次未实现完整回收Krylov子空间方法。Reusing prior solver information is established, not project novelty; this experiment does not implement a full recycled Krylov subspace method. [Survey of Subspace Recycling Iterative Methods](https://arxiv.org/abs/2001.10347).
+
+## 2026-09-07 旧误差与当前变化 / Inherited Error and Current Innovation
+
+因果误差拆解已独立复算：2500次帧间转移中，2449/2500次的旧场误差残留大于当前帧变化残留；固定25个中点在四指标空间中均如此。一次校正后，旧场误差分量范数的中位保留率为91.63%。这说明当前固定递推对累积误差的消除较弱，而非历史解毫无用处。拆解保留有符号交叉项，不把次数当成误差贡献百分比；没有新预测、训练或精度突破，原单状态K1配方仍关闭。
+
+Causal error attribution is independently verified: the inherited field-error remainder exceeds the current-innovation remainder in 2449/2500 transitions; all 25 fixed midpoints show this in all four metric spaces. The median retained fraction of the inherited field-error norm after one correction is 91.63%. This frozen recurrence weakly removes accumulated error; history is not irrelevant. Signed cross terms are retained, and counts are not percentages of causal error contribution. There are no new predictions, training or accuracy breakthrough; the original single-state K1 recipe remains closed.
+
+| 误差空间 / Error space | 旧残留较大 / Inherited larger | 旧误差保留中位数 / Median inherited retention | 新变化保留中位数 / Median innovation retention |
+|---|---:|---:|---:|
+| 场 / Field | 2449/2500 | 0.916348 | 0.838957 |
+| 全梯度 / Full gradient | 2444/2500 | 0.921835 | 0.829478 |
+| 内梯度 / Interior gradient | 2445/2500 | 0.915854 | 0.831475 |
+| 观测 / Observation | 2440/2500 | 0.845936 | 0.681998 |
+
+这是已开封数据上的固定递推归因，不是新候选。保持实际使用的幅度s和步长alpha；令P=I-alpha A^T A，旧误差为s乘以上一帧解与参考解之差，当前变化为s乘以上一帧参考解再减去当前参考解。实际终点误差恰为这两项经过P后的和，再加alpha A^T(y-A参考解)。参考解来自此前合格经典解，不读取新的CFD真值；参考缺陷项在四空间中最大仅1.70e-15。
+
+This is attribution of a fixed recurrence on opened data, not a new candidate. Keep the actual scale s and step alpha, with P=I-alpha A^T A. Inherited error is s times the previous computed-minus-reference field; innovation is s times the previous reference minus the current reference. Endpoint error equals their images under P plus alpha A^T(y-A reference). References are previously qualified classical solutions, with no new CFD truth read; the maximum reference-defect term across four spaces is only1.70e-15.
+
+各分量会抵消或叠加，已保留三个有符号交叉项并核验完整平方范数恒等式。不能说“97.96%的误差由历史造成”，也不能从本次固定alpha拆解推断“换成完美上一帧并重新选择步长”会怎样。原配方0/25的真值精度结论不变；本次2500转移的参考相对误差不是新完成的2500个真值评分。
+
+Components can cancel or reinforce. All three signed cross terms are retained and the complete squared-norm identity is checked. Do not say that97.96percent of error is caused by history, or infer a counterfactual using a perfect previous frame and a newly chosen step from this fixed-alpha decomposition. The original0/25 truth-accuracy result is unchanged; reference-relative attribution of2500transitions is not2500new truth scores.
+
+两实现的分量范数/交叉项最大差7.99e-10/6.84e-10，离散分类完全一致；退出后复算5000个分量组及200次原始物理投影，范数/物理差最大6.11e-15/8.09e-16。正式和第二实现离线合计50000A+15000A^T，另有35000次梯度场处理；退出后另计同量重放与200次子集、200次完整九相机物理正演。43.91秒和约0.93GiB只是审计遥测，不是部署速度或内存优势。
+
+The two implementations differ by at most7.99e-10/6.84e-10 in component norms/cross terms, with identical discrete classifications. Post-exit replay covers5000component groups and200original physical projections, with norm/physical differences at most6.11e-15/8.09e-16. Formal and independent offline work totals50000A+15000A^T plus35000gradient-field evaluations; post-exit replay separately repeats that work and adds200subset and200full-nine-camera forward equivalents. The43.91seconds and about0.93GiB are audit telemetry, not deployment speed or memory advantage.
+
+下一步重点是用部署可见状态消除累积逆误差，并与更便宜的上一帧场复用比较；这不授权增加历史长度、K、外推或直接解刷新来挽救已失败配方。学习优势、同精度加速、外部泛化和真实BOST仍未建立。
+
+The next priority is contracting accumulated inverse error from deployment-visible state, compared with cheaper previous-field carry. This does not authorize rescuing the failed recipe through more history, K, extrapolation or direct-reference refreshes. Learned advantage, equal-accuracy acceleration, external generalization and real BOST remain unestablished.
+
+## 2026-09-07 正因子不等于有效逆作用 / Positive Factors Do Not Ensure Useful Inverse Actions
+
+稀疏正因子试验保持数值未定：两实现的误差比差值3.23e-4超过冻结1e-6门限，不公布正式通过或失败计数。独立只读审计复现了该差异，并验证全部已存校正的物理投影。九相机下，观测误差剩余比仅0.0316至0.0435，但场误差剩余比为1.137至1.681，反而放大。正对角和因子接近不等于逆作用有效；不能只看残差下降。这不是NeuralIF评测、训练或加速成果，固定投影不再推进。
+
+The sparse positive-factor experiment remains numerically inconclusive: the paired error-ratio difference of 3.23e-4 exceeds the frozen 1e-6 gate; no formal pass or failure counts are reported. An independent read-only audit reproduces that discrepancy and verifies the physical projections of all stored corrections. With nine cameras, observation-error ratios are only 0.0316 to 0.0435, but field-error ratios are 1.137 to 1.681: the field error grows. Positive diagonals and factor closeness do not ensure a useful inverse action; residual reduction alone is insufficient. This is not a NeuralIF evaluation, training or acceleration result; the fixed projection is not pursued.
+
+这是已开封的五个固定相机集合、25个固定中点上的结构诊断。把合格完整Cholesky因子投影到固定法方程下三角图，只保留原正对角，不调填充、顺序、载荷或缩放。正式用稀疏三角求解，第二实现从原QR独立重建完整因子后用密集三角求解。输入只用已有场、当前观测与几何；所有校正先封存，再读取此前合格经典参考场比较误差。没有新增CFD真值或新轨迹预测。
+
+This structural diagnostic uses five opened fixed camera sets and 25 fixed midpoints. A qualified complete Cholesky factor is projected onto the fixed lower normal-equation graph, retaining original positive diagonals without changing fill, order, shifts or scaling. Formal sparse triangular solves are compared with dense triangular solves after an independent QR-based full-factor rebuild. Actions use only the existing field, current observation and geometry and are sealed before comparison with previously qualified classical reference fields. There is no new CFD truth or trajectory prediction.
+
+下表只描述已存校正后的参考相对误差范数与校正前之比，超过1表示放大。它不是新的重建精度评分，也不是绕过原数值门的正式负判决。原绝对差门不变；只读审计另用独立梯度、精确求和和原始物理投影核验同一组输出，其相对一致性不能替代原绝对一致性。
+
+The table describes the reference-relative error norm after a stored correction divided by its previous norm; values above 1 mean amplification. It is neither a new reconstruction-accuracy score nor a formal rejection bypassing the original numerical gate. That absolute gate is unchanged. The read-only audit separately checks the same outputs with independent gradients, accurate summation and native physics; its relative agreement does not replace the original absolute agreement.
+
+| 相机集合 / Camera set | 场误差剩余比 / Field-error ratio | 观测误差剩余比 / Observation-error ratio |
+|---|---:|---:|
+| 1: 5 cameras | 28903.7397 to 75910.0171 | 532.3590 to 1579.2600 |
+| 2: 7 cameras | 66.1781 to 247.8501 | 0.8382 to 2.9917 |
+| 3: 9 cameras | 1.1371 to 1.6806 | 0.0316 to 0.0435 |
+| 4: 5 cameras | 617109.6496 to 719508.3720 | 11698.5282 to 16983.6510 |
+| 5: 7 cameras | 50.0844 to 80.0824 | 0.8168 to 1.5041 |
+
+完整因子校正对照的四空间最大误差比为2.30e-10；未缩放Jacobi的场误差比为2.09至3.10，均仅作诊断。投影因子相对完整因子的Frobenius差只有约0.93%至5.29%，三角求解反向误差不超过4.20e-16，却不能据此推出逆作用准确。只读审计的指标相对差2.24e-14、原始物理投影差8.93e-15，退出后再次验证150个误差比组和200次物理投影。原试验仍为数值未定，不改写成正式算法失败。
+
+The full-factor correction control has a maximum four-space ratio of 2.30e-10; unscaled Jacobi has field ratios of 2.09 to 3.10, both diagnostic only. Projected factors differ from complete factors by only about 0.93% to 5.29% in relative Frobenius norm, with triangular backward errors no greater than 4.20e-16; this does not imply inverse-action accuracy. The read-only audit has relative metric discrepancy 2.24e-14 and native projection discrepancy 8.93e-15; post-exit verification repeats 150 ratio groups and 200 physical projections. The original experiment remains inconclusive, not a formal algorithm failure.
+
+该结构控制受到[NeuralIF作者论文](https://arxiv.org/abs/2305.16368)的三角因子表示启发，但没有实现或评价其学习方法；本结果不能否定所有稀疏因子。几何构建仍继承完整因子成本，另加五次QR和十次结构积。单独残差查询为1A+1A^T加两次三角求解；双CSR方向约91.7至100.3MB，只是因子载荷，不是完整内存或速度优势。
+
+The structural control was motivated by triangular factor representations in the [NeuralIF authors' paper](https://arxiv.org/abs/2305.16368), but does not implement or evaluate their learned method and cannot reject all sparse factors. Geometry construction still inherits complete-factor costs plus five QR factorizations and ten structural products. A standalone residual query costs 1A+1A^T plus two triangular solves; the two CSR orientations occupy about 91.7 to 100.3 MB, a factor payload rather than whole-pipeline memory or speed evidence.
+
+这次改变的是后续目标选择：必须直接验证逆作用的误差控制，并同时守住场与内部梯度，不能把矩阵近似或观测残差作为充分替代。固定投影不再推进，不授权换填充、对角、顺序、训练大模型或租GPU来挽救。学习优势、同精度加速、泛化和真实BOST仍未建立。
+
+The consequence is a sharper research criterion: directly verify inverse-action error control together with field and interior-gradient safeguards; matrix approximation or observation residual is not a sufficient substitute. The fixed projection is not pursued, with no rescue through fill, diagonal, ordering changes, larger models or GPU rental. Learned advantage, equal-accuracy acceleration, generalization and real BOST remain unestablished.
+
+## 2026-09-07 从残差监测场误差 / Monitoring Field Error from Residuals
+
+随机对偶误差监测通过独立检查：115个固定输入中，只看观测残差会误放11个相对经典参考解不合格的输入，伴随残差会误放15个，新监测器误放0个；两实现的690个误差区间全部覆盖。它明确放行26个、拒绝81个、暂不判断8个。保守性也存在：5个合格K512输入只放行1个，其余4个暂不判断。这是参考解相对误差的监测工具，不是CFD真值精度证明、新重建、学习或加速成果；未来训练和审计探针必须隔离。
+
+The randomized dual error monitor passes independent checks. Among 115 fixed inputs, an observation-residual threshold falsely accepts 11 inputs that fail the classical-reference-relative gate; an adjoint-residual threshold falsely accepts 15, while the monitor falsely accepts none. All 690 error intervals across both implementations cover. It accepts 26, rejects 81 and abstains on 8 inputs. Conservatism remains: of five adequate K512 inputs, it accepts only one and abstains on four. This monitors reference-relative error, not CFD-truth accuracy, new reconstruction, learning or acceleration; future training and audit probes must be separate.
+
+| 输入 / Input | 数量 / N | 放行 / Accept | 拒绝 / Reject | 暂不判断 / Abstain | 观测残差误放 / Raw false accept |
+|---|---:|---:|---:|---:|---:|
+| 零场 / Zero | 25 | 0 | 25 | 0 | 0 |
+| 因果旧场 / Causal | 25 | 0 | 25 | 0 | 0 |
+| 投影压力输入 / Projected stress | 25 | 0 | 25 | 0 | 1 |
+| 直接解对照 / Direct control | 25 | 25 | 0 | 0 | 0 |
+| 旧学习器+K256 / Prior learner+K256 | 5 | 0 | 3 | 2 | 5 |
+| Zero-CGLS258 | 5 | 0 | 3 | 2 | 5 |
+| Zero-CGLS512 | 5 | 1 | 0 | 4 | 0 |
+
+表中是每条实现的115个固定输入，两条实现分类完全一致。690是两条实现各115输入乘以三个场指标，并不是690个新重建。输入来自已封存的零场、因果场、压力场、直接解和迭代解；旧投影试验仍为数值未定，没有通过压力输入重新获得资格。误放指被放行却未满足相对经典参考解的四指标1%门，不等同于新完成CFD真值评分。暂不判断不是失败，也不允许提前停止求解。
+
+The table is per implementation for 115 fixed inputs, with identical classifications. The 690 intervals are two implementations times 115 inputs times three field metrics, not 690 new reconstructions. Inputs are sealed zero, causal, stress, direct and iterative fields. The old projected-factor experiment remains inconclusive; stress inputs do not restore its eligibility. False acceptance means accepting an input that misses the four-metric 1% gate relative to a classical reference, not a new CFD-truth score. Abstention is not failure and does not authorize early stopping.
+
+方法依据[Smetana、Zahm和Patera的随机残差误差估计研究](https://arxiv.org/abs/1807.10489)，不是新的误差估计原理。这里对场、全梯度、内部梯度各使用64个固定高斯探针，通过已合格几何因子预计算残差到误差投影的线性映射。输入仅为当前场、观测和几何，查询不做新的完整求解。独立实现从QR和显式梯度伴随重建映射；退出后重放230次查询和350次原始物理投影，最大估计量/物理相对差7.95e-14/5.90e-14。
+
+The method follows [Smetana, Zahm and Patera's randomized residual-error estimation research](https://arxiv.org/abs/1807.10489), not a new estimation principle. This application uses 64 fixed Gaussian probes for each of field, full-gradient and interior-gradient errors, precomputing residual-to-error projections from qualified geometry factors. Queries use only the current field, observation and geometry, without a new complete solve. The independent path rebuilds maps from QR and explicit gradient adjoints. Post-exit replay covers 230 queries and 350 native physical projections, with estimator/physical relative differences at most 7.95e-14/5.90e-14.
+
+预注册区间倍率为2.20464，并加1e-6数值保护量。高斯概率论证只适用于与探针独立的固定有限查询族；当前数值保护经过这批输入核验，不是统一舍入误差定理。不能用同一批审计探针训练模型后再声称验证有效，也不能据此认证自适应查询、未见几何或真实实验。参考解自身的离散、建模及真值误差仍需另行验证。
+
+The preregistered interval multiplier is 2.20464 with a 1e-6 numerical guard. The Gaussian argument concerns a fixed finite query family independent of the probes; the numerical guard is checked on these inputs, not a uniform roundoff theorem. Training against the same audit probes invalidates that validation claim; adaptive queries, unseen geometry and real experiments are not certified. Discretization, modeling and truth error of the reference itself still need separate validation.
+
+每个几何的监测映射载荷为25.34至45.62MB，不是完整流水线内存。构建仍继承完整因子，新增1920个右端项、3840次三角求解和1920次A，核验另计1920次A^T。独立一次监测在没有缓存残差时需1A，另需384次观测长度点积；监测分量本身不需要A^T或三角求解，但本次便宜伴随对照实际另外执行两次A^T。这里没有测量部署加速，也不把准备成本藏入缓存。
+
+Monitor-map payload is 25.34 to 45.62 MB per geometry, not whole-pipeline memory. Construction still inherits complete factors and adds 1920 right-hand sides, 3840 triangular solves and 1920 A calls, with another 1920 A^T checks. A standalone monitor needs 1A when no residual is cached plus 384 observation-length dot products. Its monitor component uses no A^T or triangular solve, but the tested cheap adjoint control separately executes two A^T calls. Deployment acceleration is unmeasured and setup cost is not hidden in a cache.
+
+这一步为后续学习暖启动提供了更可靠的误差检查接口，但没有产生新的场预测，没有授权训练或GPU，更没有完成论文目标。接下来必须把学习收益、同价经典解释、完整轨迹精度和真实资源账连接起来；旧失败模型不因这个辅助工具而重新变成有效算法。
+
+This provides a better error-checking interface for a future learned warm start, but generates no new field prediction, authorizes no training or GPU use and does not complete the paper goal. Learned benefit, matched-cost classical explanations, full-trajectory accuracy and real resource accounting must still be connected. An auxiliary monitor does not rehabilitate previously failed models.
+
+## 2026-09-07 三参数学习器的必要精度否决 / Necessary-Accuracy Veto of a Three-Parameter Learner
+
+三参数学习器完成五折训练，独立封存输出复算显示：场误差p90从不学习行扫描对照的57.68%降至44.69%，但四指标1%必要精度门仍为0/25，合格直接解参考为25/25。因此关闭这条固定的一次行扫描加K1方案，不增加轮数或扩大模型。旧dual-ridge对照在17/25数值配对中不合格，原整族判决仍为未定；这里是单独的必要精度否决，不是恢复整族资格。这不是完整轨迹、同价优势、加速或论文突破。
+
+The three-parameter learner completed five-fold training. Independent sealed-output replay shows field-error p90 falling from 57.68% for the untrained row-sweep control to 44.69%, but it still passes 0/25 necessary four-metric 1% accuracy cells; the qualified direct reference passes 25/25. This fixed one-row-sweep plus K1 recipe is closed without more epochs or a larger model. The historical dual-ridge comparator fails 17/25 numerical pairs, so the original family remains inconclusive; this separate necessary-accuracy veto does not restore family eligibility. It is not full-trajectory, matched-cost, acceleration or paper success.
+
+| 方法 / Method | 数值合格 / Numeric | 四门通过 / Four gates | 场 / Field p90 | 全梯度 / Full grad p90 | 内梯度 / Inner grad p90 | 观测 / Observation p90 |
+|---|---:|---:|---:|---:|---:|---:|
+| shared3_rows_K1 | 25/25 | 0/25 | 0.446885 | 0.449518 | 0.576402 | 0.240577 |
+| unit_rows_K1 | 25/25 | 0/25 | 0.576783 | 0.549577 | 0.690537 | 0.448358 |
+| simultaneous_rows_K1 | 25/25 | 0/25 | 0.751248 | 0.638502 | 0.762017 | 0.568946 |
+| Zero_CGLS3 | 25/25 | 0/25 | 0.629517 | 0.589929 | 0.694397 | 0.483105 |
+| Jacobi_PCG3 | 25/25 | 0/25 | 0.624565 | 0.587828 | 0.684932 | 0.473425 |
+| BP_CGLS2 | 25/25 | 0/25 | 0.630093 | 0.585913 | 0.692416 | 0.493675 |
+| historical_dual_ridge_K1 | 8/25 | 不作裁决 / Not adjudicated | 未定 / N/A | 未定 / N/A | 未定 / N/A | 未定 / N/A |
+| direct64 | 25/25 | 25/25 | 6.8383e-11 | 5.74847e-11 | 1.11498e-10 | 1.61451e-13 |
+
+表中误差是相对误差，不是百分数。五条已打开轨迹各留下整条来源不参与该折训练，只对五个预定中点和五套5/7/9相机集合进行必要条件测试。九相机集合没有参与训练。25不是完整轨迹2525个样本，也不是新外部测试。训练使用其他来源的观测、几何和经典参考教师；留下来源的真值不参与拟合、标准化、超参选择或停止。两实现均独立完成固定训练后封存模型；没有因为预测阶段问题重训。
+
+Table values are relative errors, not percentages. Each of five already-opened source trajectories is excluded entirely from its training fold; the necessary screen evaluates five fixed midpoint queries across five 5/7/9-camera sets. The nine-camera set is excluded from training. These 25 cells are not the full 2525-cell trajectory evaluation or a new external test. Training uses other sources' observations, geometry and classical-reference teachers; excluded-source truth is absent from fitting, normalization, hyperparameter selection and stopping. Both implementations finish fixed training and seal their models independently, without retraining after prediction-stage errors.
+
+原整族失败的数值检查不能删除：历史dual-ridge对照的最大观测差约4.01e-7，超过原定1e-8。新学习器本身的双实现场/观测差为6.38e-15/6.97e-15。独立的单向审查保留全部对照，但只允许在参考充分且候选数值有效时否决候选的必要精度；即便必要门通过，也不授权整族成功。这里候选0/25，故无需修旧对照或扩大完整评分来证明这一具体方案不能满足既定目标。原整族仍未定，单独必要门明确未过，两者不混淆。
+
+The original family's failed numerical check is retained: the historical dual-ridge comparator has an observation discrepancy around4.01e-7, above the original1e-8. The learner's own paired field/observation discrepancies are6.38e-15/6.97e-15. The independent one-way audit retains every comparator and can only veto necessary accuracy when the reference is adequate and the candidate is numerically valid; even a necessary pass cannot authorize family success. The candidate passes0/25, so repairing that old comparator or expanding the full evaluation is unnecessary to reject this specific recipe against the fixed target. The original family remains inconclusive while this separate necessary condition fails.
+
+退出后第二实现重放400个场状态与25次学习预测，物理投影/指标最大差5.05e-12/1.82e-12，学习预测重放差为0。它支持上述有限否决，而非所有学习行方法不可能。误差相对未学习对照下降是局部学习信号，不足以声称资源优势或部署精度；初始场还需要一次非免费的稀疏行扫描，在线精确算子壳为2A+2A^T。
+
+Post-exit independent replay covers400 field states and25 learned predictions, with physical-projection/metric differences at most5.05e-12/1.82e-12 and zero learned-prediction replay discrepancy. This supports the limited veto, not impossibility of all learned row methods. Error reduction relative to the untrained control is a local learning signal, not sufficient deployment accuracy or resource advantage. The initializer still requires a non-free sparse row sweep in addition to the2A+2A^T online exact-operator shell.
+
+训练账也作了纠正：原计数漏掉每次目标计算的教师投影。按两份冻结实现与完整训练轨迹复核，每个样本应为9A+8A^T右端项等价工作；两实现合计6400次样本目标计算为57600A+51200A^T，导数核验另计126A+112A^T。稀疏行及其导数、梯度和几何/教师准备仍另计。这不是矩阵启动次数、完整实测耗时或RSS，不发布模型权重。
+
+Training accounting is corrected: the original counters omitted the teacher projection at each objective evaluation. Both frozen implementations and their completed traces imply9A+8A^T right-hand-side-equivalent operations per example:6400 example evaluations across both paths total57600A+51200A^T, plus126A+112A^T for derivative checks. Sparse rows and their derivatives, gradients, and geometry/teacher setup remain additional. These are not matrix-launch counts, full measured runtime or RSS; model weights are not published.
+
+决策是停止这条固定三参数、一次行扫描、K1方案，不加轮数、扫描次数或大模型救援；总论文目标继续，但本次没有算法突破、加速、外部泛化或真实BOST成功。
+
+The decision stops this fixed three-parameter, one-row-sweep, K1 recipe without adding epochs, sweeps or a larger model. The overall paper objective remains open; this result establishes no algorithm breakthrough, acceleration, external generalization or real-BOST success.
+
+## 2026-09-07 精确分块的完整已开封序列证据 / Full Opened-Sequence Evidence for Exact Block Solving
+
+精确分块直接解已通过2525/2525个已打开的干净代理样本、25/25个来源与相机集合分层，五条完整轨迹全部通过四指标1%门；完整直接解对照也全部通过。五套几何只需736–784个接口节点，保存的因子数值量减少36.7%–38.0%，没有删弱耦合或训练模型。这是经典求解对照的实质进展，不是整机内存下降、加速、学习突破或外部泛化；下一步实测包含准备成本的时间与RSS。
+
+Exact block direct solving passes 2525/2525 already-opened clean proxy cells, all25 source-camera-set strata and all five complete trajectories at the four-metric1% gate; the full direct comparator also passes every cell. The five geometries need only736–784 interface nodes, reducing stored numeric factor payload by36.7%–38.0% without dropping weak couplings or training a model. This is progress in a classical solver control, not a whole-process memory reduction, speedup, learning breakthrough or external generalization. Next comes measured time and RSS including setup.
+
+| 相机集合 / Camera set | 相机数 / Cameras | 接口节点 / Interface nodes | 分块因子MB / Block factor MB | 完整打包因子MB / Full packed factor MB | 通过 / Passing |
+|---|---:|---:|---:|---:|---:|
+| 1 | 5 | 753 | 86.15 | 138.32 | 505/505 |
+| 2 | 7 | 779 | 86.56 | 138.32 | 505/505 |
+| 3 | 9 | 784 | 87.61 | 138.32 | 505/505 |
+| 4 | 5 | 736 | 85.84 | 138.32 | 505/505 |
+| 5 | 7 | 755 | 85.79 | 138.32 | 505/505 |
+
+MB为十进制，另需每套47040字节索引。不包括稀疏forward、观测、临时装配矩阵、运行库或系统缓存，因此不是RSS节省。表中完整打包因子已只计算下三角，不拿浪费一半空间的完整方阵夸大收益。
+
+MB is decimal; each set additionally needs47040 index bytes. Sparse forward storage, observations, temporary setup matrices, libraries and system caches are excluded, so this is not an RSS saving. The comparator already stores only a packed lower triangle, not a wasteful full square array.
+
+结构审计只读几何：先以二部图匹配检验接口下界，再在两份独立forward的全部非零支持并集上确认两个内部区域没有任何共用测量行。最终接口包含736–784个节点，保留全部5880个有效未知量；不按真值选分割、不删小系数。几何证书与场精度是两个不同的门，后者已单独完成。
+
+The structural audit is geometry-only: a bipartite matching first tests an interface lower bound, followed by exact row-disjointness of the two interiors in the union of both independently assembled forward supports. The final interface contains736–784 nodes while retaining all5880 active unknowns, with no truth-selected partition or small-coefficient dropping. A geometry certificate and field accuracy are separate gates; the latter is now independently complete.
+
+正式求解使用打包Cholesky、两个内部块与完整Schur接口；第二实现从独立forward重新构造分块LU。完整直接解对照分别用完整Cholesky和完整LU。全部候选与对照预测先封存，再读取CFD真值评分。五条来源每条101帧，在五套5/7/9相机集合上共2525个单元，没有新增拟合、深度或正则搜索。候选四指标最坏相对误差依次为9.39e-11/8.25e-11/1.46e-10/1.63e-13，四门伤害单元为0。
+
+The formal solver uses packed Cholesky for two interiors and an exact Schur interface; a second implementation rebuilds block LU from the independent forward. Full direct controls use full Cholesky and full LU respectively. All predictions are sealed before CFD-truth scoring. Five sources with101 frames each across five5/7/9-camera sets yield2525 cells, without fitting, deeper refinement or regularization search. Candidate worst relative field/full-gradient/interior-gradient/observation errors are9.39e-11/8.25e-11/1.46e-10/1.63e-13; zero cells fail the four-gate criterion while the direct reference passes.
+
+独立退出后验证重放10100个候选及对照场状态，并做5050次原生投影差分检查与25次打包因子预测重放；逐来源与相机集合的p50/p90/worst全部核对。这里是已开封干净数据上的经典精确解，不是留出轨迹上的学习，也不证明噪声、连续位姿变化或更大网格能保持表现。
+
+The independent post-exit validator replays10100 candidate/control field states,5050 native difference probes and25 packed-factor predictions, checking every source-camera-set p50/p90/worst summary. This is a classical exact solution on already-opened clean data, not held-out learned prediction and not evidence for noise, continuous pose changes or larger grids.
+
+每次独立查询包含1A+1A^T；分块另需6次打包三角求解与4次耦合矩阵向量乘，对照需要2次三角求解。算子调用相同不代表耗时相同。几何准备、因子构建、首次加载与重复使用必须进入下一次独立资源比较，不能把缓存准备当作免费。
+
+Each standalone query includes1A+1A^T; the block method additionally needs six packed triangular solves and four coupling matvecs, versus two triangular solves for the full direct control. Equal exact-call counts do not imply equal runtime. Geometry preparation, factor construction, first load and repeated use must enter the next separate resource comparison; cached setup is not free.
+
+Schur域分解不是我们的首创，学习接口也已有先例。相关一级来源：[Schur域分解与低秩修正](https://arxiv.org/abs/1505.04340)、[学习域分解接口条件](https://arxiv.org/abs/2205.09833)。这里只借鉴其问题分解思路，不把本文献的性能或创新性算到本实验。本轮没有授权神经训练、租GPU或真实BOST结论。
+
+Schur domain decomposition is established, and learned interface conditions also have prior work: [Schur-based domain decomposition with low-rank corrections](https://arxiv.org/abs/1505.04340) and [learning interface conditions](https://arxiv.org/abs/2205.09833). These motivate decomposition, not transferred performance or novelty claims. This result authorizes no neural training, GPU rental or real-BOST claim.
+
+## 2026-09-07 精确分块的资源否决 / Resource Veto for Exact Block Solving
+
+精确分块资源门独立确认未通过：三种实现、五套几何、各三次新进程测试，精度全部保持，但预定资源门为0/5。相对高效BLAS直接解，分块的505帧批量查询耗时为1.49–1.73倍，缓存就绪进程峰值内存少约2.0%–13.3%。这是速度与内存的取舍，不是加速；不再以较慢的打包直接解替代强对照来宣称胜出。算子缓存生成成本尚未计入，重复测试不是新数据或外部验证。
+
+Independent validation rejects the exact-block resource gate: three implementations across five geometries, each in three fresh processes, preserve accuracy but pass0/5 resource strata. Relative to optimized BLAS direct solving, the505-frame block query takes1.49–1.73 times as long while cache-ready process peak memory is about2.0%–13.3% lower. This is a speed-memory tradeoff, not acceleration; the slower packed direct control cannot replace the strong comparator to claim a win. Operator-cache construction remains excluded, and repetitions are not new data or external validation.
+
+| 集合 / Set | 方法 / Method | 新进程总秒 / Fresh process s | 505帧查询秒 / Query s | 峰值MiB / Peak MiB |
+|---|---|---:|---:|---:|
+| 1 | 精确分块 / Exact block | 39.7827 | 1.5824 | 621.47 |
+| 1 | 完整打包 / Full packed | 4.2582 | 3.3339 | 802.73 |
+| 1 | 高效直接 / BLAS direct | 1.8205 | 0.9355 | 703.56 |
+| 2 | 精确分块 / Exact block | 3.1396 | 1.7519 | 700.72 |
+| 2 | 完整打包 / Full packed | 4.4965 | 3.4989 | 835.22 |
+| 2 | 高效直接 / BLAS direct | 2.1139 | 1.1068 | 741.77 |
+| 3 | 精确分块 / Exact block | 5.7033 | 1.9350 | 724.00 |
+| 3 | 完整打包 / Full packed | 4.7659 | 3.6683 | 888.89 |
+| 3 | 高效直接 / BLAS direct | 2.3840 | 1.3014 | 759.19 |
+| 4 | 精确分块 / Exact block | 2.6336 | 1.6223 | 607.88 |
+| 4 | 完整打包 / Full packed | 4.2230 | 3.3305 | 809.28 |
+| 4 | 高效直接 / BLAS direct | 1.8196 | 0.9390 | 700.92 |
+| 5 | 精确分块 / Exact block | 2.7832 | 1.7876 | 723.39 |
+| 5 | 完整打包 / Full packed | 4.5245 | 3.5172 | 837.22 |
+| 5 | 高效直接 / BLAS direct | 2.1298 | 1.1402 | 738.11 |
+
+表中均为三次平衡顺序重复的中位数，完整原始计时保留在配套JSON。MiB为2^20字节。所有worker串行执行，均为8线程，第一帧独立查询，之后固定16帧批量。没有清空操作系统文件缓存，因此新进程不等于冷磁盘测试。三次重复不足以支持总体显著性或换机器后的保证。
+
+Values are medians of three balanced-order repetitions; the companion JSON retains raw timings. MiB means2^20 bytes. Workers are serial with eight threads each, the first frame queried alone and later frames in fixed batches of16. Operating-system file caches were not purged: fresh processes are not cold-disk trials. Three repetitions support neither population-significance claims nor guarantees on other machines.
+
+每次从已验证的CSR算子与观测读取开始，计入库加载、数组读取、预处理、完整查询与等格式输出。分块必须重新发现原接口并重建因子，不直接借用旧因子；完整打包和高效直接解也重新分解。高效对照使用多右端BLAS，分块耦合也批量化，未故意选择慢对照。每个方法每次完整序列均为505A+505A^T，分块每帧另需6次三角求解和4次耦合乘法，对照为2次三角求解。
+
+Every worker starts by reading validated CSR operators and observations, including library imports, array loading, preparation, complete queries and identical-format output. Block solving rediscovers its original interface and reconstructs factors; full packed and optimized direct controls also refactor. The strong control uses multiple-RHS BLAS, and block coupling is batched too; no deliberately slow control is chosen. Each full sequence uses505A+505A^T for every method, with six triangular solves and four coupling products per block query versus two triangular solves for the controls.
+
+第一套几何的接口发现耗时约37.3–37.6秒，是实际准备成本，不删除异常值。即使只看准备后的批量查询，分块仍在五套几何中均慢于BLAS对照，所以不能用文件体积减少36.7%–38.0%推断加速。实际峰值内存的差距只有约2.0%–13.3%，也没有预先要求的时间与内存同时优势。
+
+Interface discovery for the first geometry actually takes about37.3–37.6 seconds; this setup cost is retained, not deleted as an outlier. Even preparation-excluded batch queries are slower than the BLAS control in all five geometries. Thus a36.7%–38.0% reduction in numeric factor payload does not imply acceleration. Measured peak-memory reductions are only about2.0%–13.3%, with no pre-required joint time-memory advantage.
+
+全部45个进程退出并封存后，独立实现重放22725个输出场及四项指标，全部守住原1%精度门。field/image/residual/metric最大核验差约6.80e-10/1.47e-12/8.57e-16/9.85e-10；父进程wait4与子进程RSS、起止计时、顺序与算子账独立核对。22725是重复验证量，不是新增独立科学样本，原2525/2525精度结论没有被推翻。
+
+After all45 processes exit and their outputs are sealed, independent replay checks22725 fields and all four metrics, preserving the original1% accuracy gates. Maximum field/image/residual/metric audit discrepancies are about6.80e-10/1.47e-12/8.57e-16/9.85e-10. Parent wait4 and child RSS, timestamps, ordering and operator ledgers are cross-checked. The22725 count is repeated verification, not additional independent scientific data; the original2525/2525 accuracy result remains valid.
+
+边界不可省略：测量覆盖缓存就绪求解进程的完整峰值内存，不是相机几何到最终结果的全部成本。公共算子缓存的29700条解析行与独立8192次canonical forward准备未计入。即便此门通过也不能直接宣布端到端加速；当前0/5，故不再扩展这份固定实现的资源优势主张，不调分块、线程、批量或换对照救援。仍需寻找学习能胜过强经典基线的真实使用条件，而不是把经典精确解当成算子学习成功。
+
+The boundary matters: measurements cover the whole peak memory of a cache-ready solver process, not every cost from camera geometry to the final result. Shared operator-cache construction, including29700 analytic rows and8192 canonical forward probes for independent assembly, is excluded. Even a pass would not establish end-to-end acceleration. The actual0/5 closes this fixed implementation's resource-advantage claim without retuning partitions, threads, batch size or comparators. The remaining research must identify conditions where learning can beat a strong classical baseline, rather than relabel a classical exact solution as operator-learning success.
+
+## 2026-09-07 已知变姿下的经典复用否决 / Classical Reuse Veto Under Known Pose Changes
+
+已知相机变姿的旧因子复用独立确认失败：整套相机固定旋转 ±0.25°，五套相机子集与五条已开封轨迹的中间帧共50个单元，重新分解的直接解通过50/50；旧因子复用两步、零初值两步和Jacobi两步均为0/50。独立重建几何并重放全部400个输出状态，确认不是两套实现之间的数值分歧。关闭这份固定两步复用方案，不加深或换角度补救；它既不证明学习可行，也不是完整轨迹、速度或真实实验结果。
+
+Independent validation rejects old-factor reuse under known camera-pose changes: fixed whole-rig rotations of ±0.25°, five camera subsets and midpoint frames from five already-opened trajectories give50 cells. Refactored direct solving passes50/50; two-step old-factor reuse, zero-start CGLS and Jacobi each pass0/50. Independently reconstructed geometry and all400 output-state replays confirm this is not numerical disagreement between implementations. This fixed two-step reuse scheme is closed without extra steps or angle changes. It establishes neither learning feasibility nor full-trajectory, speed or real-experiment success.
+
+| 方法 / Method | 四项1%门 / Four1% gates | Field p90 ratio | Full-gradient p90 ratio | Interior-gradient p90 ratio | Observation p90 ratio |
+|---|---:|---:|---:|---:|---:|
+| 旧因子 + K2 / Reused factor + K2 | 0/50 | 40.70675 | 34.09180 | 67.52400 | 0.83363 |
+| 零初值 K2 / Zero CGLS K2 | 0/50 | 0.76170 | 0.65481 | 0.80531 | 0.61823 |
+| 当前Jacobi K2 / Current Jacobi K2 | 0/50 | 0.75685 | 0.65959 | 0.78788 | 0.60885 |
+| 新几何直接解 / Refactored direct | 50/50 | 6.60e-11 | 5.42e-11 | 9.33e-11 | 1.52e-13 |
+
+表中为50个单元汇总后的相对误差比值，不是百分数；40.70675不表示40.7%。逐符号、相机集合、方法的p90和最坏值保留在配套JSON。每项误差均需不超过0.01，不靠汇总平均掩盖失败单元。
+
+These are relative-error ratios aggregated over50 cells, not percentages:40.70675 does not mean40.7%. The companion JSON retains p90 and worst errors by sign, camera set and method. Every error must be at most0.01; aggregate means cannot conceal failed cells.
+
+相机几何和生成观测同时改变，因此测试的是已知几何迁移，不是未报告的标定误差。保持原探测器、网格、边界和支持节点不变；两个几何实现检查覆盖和相机乱序，随后分别用解析组装与逐坐标物理forward构造算子。旧因子通过右变量变换接入未修改CGLS；独立实现用LU与原坐标预条件递推。所有预测先封存，再计算真值评分。生成虚拟观测允许读取来源场，不将真值传给求解器。
+
+Camera geometry and generated observations change together, so this tests known-geometry transfer, not unreported calibration error. Detector, grid, boundaries and supported nodes remain fixed. Two geometry implementations check coverage and camera reordering, then build operators through analytic assembly and coordinate-basis physical forwards. The old factor enters unchanged CGLS through a right-coordinate transform; the independent implementation uses LU and original-coordinate preconditioned recurrence. Predictions seal before truth scoring. Source fields generate virtual observations but are not solver inputs.
+
+两套实现的field/image最大相对差约2.03e-10/8.10e-11；native/residual重放差约1.25e-14/1.63e-14，独立汇总差约1.93e-9，均守住结果前固定数值门。每个复用查询实际为2A+2A^T，加5次三角求解，包含最终坐标映射；旧因子构建不是免费。新几何直接查询为1A+1A^T加2次三角求解，但需重新构建和分解。两套新几何共59400条解析行、16384次独立坐标forward，以及生成观测和审计成本均单列，不能声称运行时间优势。
+
+Maximum paired field/image relative differences are about2.03e-10/8.10e-11; native/residual replay differences are1.25e-14/1.63e-14 and independent summary difference1.93e-9, within the pre-fixed numerical gates. Every reuse query actually costs2A+2A^T plus five triangular solves, including the final coordinate mapping; old-factor construction is not free. A new-geometry direct query costs1A+1A^T plus two triangular solves but requires reconstruction and refactorization. Setup for the two geometries includes59400 analytic rows and16384 independent coordinate forwards; observation generation and audits are separately offline. No runtime advantage is established.
+
+结论仅限这份固定复用控制。小幅相机旋转不保证旧逆因子能安全直接复用；具体敏感谱模式尚未独立定位，不能编造根因。它没有关闭全部变姿方法，也没有授权新的学习模型、迭代深度搜索或GPU。下一步应先利用已封存算子诊断这种敏感性，而不是继续堆候选。这里仍是已开封数据的受控虚拟机制证据。
+
+The conclusion is limited to this fixed reuse control. A small camera rotation does not guarantee safe direct reuse of an old inverse factor. Specific sensitive spectral modes have not yet been independently localized, so no root cause is asserted. This closes neither every pose-transfer method nor licenses a new learner, iteration-depth search or GPU. The next step should first diagnose this sensitivity using sealed operators, not accumulate candidates. The evidence remains a controlled virtual mechanism study on already-opened data.
+
+## 2026-09-07 旧因子的几何扰动放大 / Geometry-Perturbation Amplification by the Old Factor
+
+已独立定位旧因子的变姿敏感性：同一 ±0.25° 旋转下，10个几何组合的算子相对变化仅约3.40%–3.46%，但旧因子归一化后的变化达到21.46%–73.89%，对比放大6.28–21.76倍。20个几何见证方向经原始物理算子复核。这解释了为什么不能仅凭角度接近判断旧因子可复用，但尚未把之前的全部重建误差归因于它；不是新算法、精度恢复或加速结果。诊断不读取真值或观测，也不授权谱修补、更多迭代或训练。
+
+Independent geometry-only diagnosis localizes old-factor pose sensitivity: under the same ±0.25° rotations, the operator changes by only about3.40%–3.46% across10 geometry combinations, but old-factor-normalized change reaches21.46%–73.89%, a6.28–21.76-fold contrast. All20 geometry witnesses are checked with native physical operators. Nearby angles therefore cannot alone justify factor reuse, but the entire earlier reconstruction error has not been attributed to this effect. This is not a new algorithm, restored accuracy or acceleration. The diagnosis reads neither truth nor observations and authorizes no spectral repair, extra iterations or training.
+
+| 集合/Set | 相机/Cameras | 角度/Angle | 原始变化/Raw % | 加权变化/Weighted % | 对比/Contrast | 最大方向增益/Leading gain |
+|---|---:|---:|---:|---:|---:|---:|
+| 1 | 5 | -0.25 | 3.4535 | 65.0228 | 18.8279 | 10.3158 |
+| 1 | 5 | +0.25 | 3.4009 | 64.7025 | 19.0251 | 10.3465 |
+| 2 | 7 | -0.25 | 3.4569 | 38.6741 | 11.1875 | 5.5273 |
+| 2 | 7 | +0.25 | 3.4168 | 38.5266 | 11.2755 | 5.4810 |
+| 3 | 9 | -0.25 | 3.4270 | 21.5333 | 6.2835 | 1.7633 |
+| 3 | 9 | +0.25 | 3.4025 | 21.4566 | 6.3061 | 1.7483 |
+| 4 | 5 | -0.25 | 3.4191 | 73.6414 | 21.5381 | 12.5618 |
+| 4 | 5 | +0.25 | 3.3961 | 73.8890 | 21.7571 | 12.4998 |
+| 5 | 7 | -0.25 | 3.4218 | 38.7118 | 11.3132 | 5.6431 |
+| 5 | 7 | +0.25 | 3.4064 | 38.8765 | 11.4127 | 5.6774 |
+
+这里仅使用上次封存的旧/新几何算子与支持节点，不读取CFD场、观测或重建输出。原始变化定义为||D||F/||A0||F，D=A1-A0。令A0^T A0=L L^T，加权变化为||D L^-T||F/sqrt(n)，其中n=5880；旧白化算子的Frobenius范数为sqrt(n)。对比列为两者之比，不是速度比、条件数或预测误差。最大方向增益为max_x ||D x||/||A0 x||。所有范围仅指这10个已经打开的几何组合。
+
+Only sealed old/new geometry operators and supported-node metadata are read, not CFD fields, observations or reconstruction outputs. Raw change is||D||F/||A0||F, withD=A1-A0. ForA0^T A0=L L^T, weighted change is||D L^-T||F/sqrt(n), n=5880; the old whitened operator has Frobenius normsqrt(n). Contrast is their ratio, not a speed ratio, condition number or prediction error. Leading gain ismax_x ||D x||/||A0 x||. All ranges apply only to these10 already-opened geometry combinations.
+
+正式实现用Cholesky白化和标准特征问题，独立实现用逆相机顺序累计、LU求迹和广义特征问题。两套实现的标量不变量最大相对差约9.99e-11；20个见证方向另经native旧/新算子重放，差约1.08e-13/8.76e-15，物理特征残差最大4.78e-10。旧算子的白化恒等控制通过。退化特征向量可以不同，不强制比较其坐标。
+
+The formal implementation uses Cholesky whitening and a standard eigenproblem; the independent implementation uses reverse-camera accumulation, LU for the trace and a generalized eigenproblem. Maximum relative discrepancy of scalar invariants is about9.99e-11. Separate native old/new replay of20 witness directions differs by1.08e-13/8.76e-15, with maximum physical eigen-residual4.78e-10. Old-operator whitening identity controls pass. Degenerate eigenvectors may differ, so their coordinates are not forced to agree.
+
+最大敏感方向在旧几何下的增益仅为该算子单位方向均方增益尺度的约0.15%–2.19%。其扰动/旧响应比达到1.75–12.56。最大单方向只占加权扰动总能量的1.13%–4.95%；这不是源场重建误差的能量分布，不能把两者混为一谈。我们确认了几何敏感性存在，尚未声称它单独造成全部K2误差。
+
+The leading-sensitive directions have old-geometry gains only about0.15%–2.19% of the operator's RMS unit-direction gain scale. Their perturbation/old-response ratios reach1.75–12.56. The leading direction contributes only1.13%–4.95% of total weighted perturbation energy. This is not the energy distribution of source-field reconstruction error, and the two must not be conflated. Geometry sensitivity is confirmed, without claiming it alone caused every K2 error.
+
+这也符合数值分析的基本警示：解误差需要同时考虑扰动与问题敏感性，不能只看残差或输入变化。[LAPACK标准误差分析](https://www.netlib.org/lapack/lug/node78.html)。此处没有计算标准条件数，也不是首创理论。
+
+This is consistent with the basic numerical-analysis warning that solution error depends on both perturbations and problem sensitivity, not only residuals or input changes. [LAPACK standard error analysis](https://www.netlib.org/lapack/lug/node78.html). No standard condition number is computed here, and no new theory is claimed.
+
+本诊断使用了稠密因子、求迹和20次最大特征问题，属于离线分析，不能包装成便宜的部署修正。它没有解除固定两步复用失败，也未授权低秩/谱修补或更多训练。后续必须先审计一个有明确观测输入、能控制放大且成本可信的不同机制，再决定是否值得学习；高效完整直接解仍是强对照。
+
+This diagnosis uses dense factors, trace calculations and20 top-eigenproblems offline; it cannot be repackaged as a cheap deployed correction. It does not rehabilitate fixed two-step reuse or authorize low-rank/spectral repair or more training. Any different mechanism must first have explicit observation inputs, controlled amplification and a credible cost path before learning is considered. Optimized full direct solving remains the strong control.
+
+## 2026-09-07 标量门的必要容量否决 / Necessary-Capacity Veto of Scalar Gates
+
+独立容量否决：对同一50个已打开样本，旧因子结果乘任意全局标量、再接原版CGLS一步，仍受三维输出空间限制。即使读取真值并在更宽松空间取最优，场误差下界仍为62.05%–88.46%，50/50均不能达到1%门槛；直接解参考仍为50/50通过。因此不再训练这类标量门或范数截断器。已独立重放200个oracle场。这是事后机制排除，不是新算法、预测成功或加速，也不排除空间变化或其他物理方向。
+
+Independent capacity veto: for the same50 already-opened samples, any global scalar gate on the old-factor output followed by one unchanged CGLS step remains confined to a three-dimensional output space. Even truth-aware optimal fitting in a larger relaxed space leaves a62.05%–88.46% field-error lower bound: all50 fail the1% requirement, while the direct reference remains50/50. Scalar gates or global norm caps in this family will not be trained. All200 oracle fields were independently replayed. This is post-open mechanism exclusion, not a new algorithm, prediction success or acceleration; spatially varying changes and other physical directions are not excluded.
+
+| 集合/Set | 相机/Cameras | 角度/Angle | 标量下界p90/Scalar % | 松弛K1下界p90/Relaxed % | 最坏/Worst % | 通过/Pass |
+|---|---:|---:|---:|---:|---:|---:|
+| 1 | 5 | -0.25 | 99.9654 | 85.8312 | 88.3870 | 0/5 |
+| 2 | 7 | -0.25 | 99.8966 | 85.0915 | 87.2239 | 0/5 |
+| 3 | 9 | -0.25 | 80.3765 | 69.5215 | 71.1976 | 0/5 |
+| 4 | 5 | -0.25 | 99.9984 | 84.5753 | 86.5398 | 0/5 |
+| 5 | 7 | -0.25 | 99.8594 | 84.8970 | 87.0370 | 0/5 |
+| 1 | 5 | +0.25 | 99.9991 | 85.8896 | 88.4574 | 0/5 |
+| 2 | 7 | +0.25 | 99.8979 | 84.9586 | 87.2050 | 0/5 |
+| 3 | 9 | +0.25 | 81.2832 | 71.9188 | 72.2418 | 0/5 |
+| 4 | 5 | +0.25 | 99.9956 | 84.4785 | 86.4048 | 0/5 |
+| 5 | 7 | +0.25 | 99.8261 | 84.8423 | 86.9311 | 0/5 |
+
+令b为封存的旧因子K2结果，q=A^T y，H=A^T A。任意有限标量t作初值x0=t b后，原版CGLS一步得到x=t b+alpha(q-t H b)。所以所有可能输出均在span(b,q,Hb)中，无论t由多复杂的观测/几何网络给出。我们允许三列系数完全独立，这是比真实门更乐观的松弛，不是新算法。完整四指标要求包含场门，所以场误差下界失败已足够否决。
+
+Letb be the sealed old-factor K2 output, q=A^T y andH=A^T A. Fromx0=t b, one unchanged CGLS step givesx=t b+alpha(q-t H b). Every output therefore lies inspan(b,q,Hb), regardless of how complex an observation/geometry network chooses the finite scalart. Allowing three independent coefficients is an optimistic relaxation, not a new algorithm. Field accuracy is necessary for the four-metric requirement, so failure of this lower bound suffices for a veto.
+
+两套方向基在读取新的目标数组前封存：正式实现用解析稀疏算子和主元QR，独立实现用逆相机顺序原始forward/adjoint与逆行SVD。最优场差相对目标为1.63e-11；另一个进程重建300列方向并重放200个oracle场，摘要差2.96e-13、native投影差9.14e-15。最小奇异值比大于0.00428，结论不依赖近秩缺失或放宽容差。
+
+Both bases seal before new target-array reads. The formal implementation uses analytic sparse operators and pivoted QR; the independent implementation uses reversed-camera native forward/adjoint and reversed-row SVD. Optimal fields differ by1.63e-11 relative to the target. A separate process reconstructs300 basis columns and replays200 oracle fields: summary difference2.96e-13, native projection difference9.14e-15. Minimum singular-value ratio exceeds0.00428, so the verdict does not depend on near rank loss or relaxed tolerances.
+
+三维松弛空间的全局min/p50/p90/worst场误差下界为62.0457%/80.8295%/86.9417%/88.4574%。单标量最佳拟合的中位误差为99.8622%。这些是读真值的容量下界，不是部署预测精度；没有训练参数，没有新的部署预测，也没有完整轨迹或未开外门结论。
+
+Globalmin/p50/p90/worst field-error lower bounds of the three-dimensional relaxation are62.0457%/80.8295%/86.9417%/88.4574%. Median error of the best scalar-only fit is99.8622%. These are truth-aware capacity bounds, not deployed prediction accuracy: no parameters were trained, no new deployment predictions were made, and no complete-trajectory or untouched external result follows.
+
+成本单列：每套离线方向构造50A+100A^T；独立native调用仍运行九相机算子并把未使用行置零。假设采用普通初始化API包裹旧K2，总账为4A+3A^T加5次三角解，几何构建另算。这不是加速证明。它只关闭当前固定b上的全局标量门/范数截断加K1，不能扩展为对空间门、其他方向或任意学习器的不可能性断言。
+
+Costs remain separate: each offline basis implementation uses50A+100A^T; independent native calls still execute a nine-camera operator with unused rows zero-filled. A hypothetical ordinary-initializer wrapper around oldK2 totals4A+3A^T plus5 triangular solves, with geometry construction separate. This is not a speedup proof. The result closes only global scalar gates/norm caps on this fixedb followed byK1, not spatial gates, other directions or arbitrary learners.
+
+## 2026-09-07 旋转坐标与离散物理的差异 / Rotation Coordinates Versus Discrete Physics
+
+旋转规范化检查得到混合结果：同一10个几何组合中，固定三线性坐标旋转使所有20个既定敏感方向的偏差降低42.47%–63.46%，但整体算子差异只在7/10组合改善，另外3个变大。40个旋转后见证场已独立物理重放。相机与射线确实共同旋转，但当前边界、插值和梯度离散不能直接当成精确旋转对称性；尚未单独归因于其中一项。不继续开发这份固定旋转方案。它不否定所有等变网络，也不是重建精度或加速结果。
+
+Rig canonicalization gives mixed evidence: across the same 10 geometry combinations, fixed trilinear coordinate rotation reduces the defect on all 20 pre-fixed sensitive witnesses by 42.47%–63.46%, but the overall operator defect improves in only 7/10 combinations and worsens in three. All 40 transported witness fields were independently replayed. Cameras and rays do co-rotate, but the current boundary, interpolation and gradient discretization cannot simply be treated as an exact rotation symmetry; these effects have not been individually attributed. This fixed rotation recipe is not promoted. The result does not reject all equivariant networks and is not reconstruction accuracy or acceleration.
+
+| 集合/Set | 相机/Cameras | 角度/Angle | 整体偏差比/Global defect ratio | 敏感方向偏差比/Witness ratio |
+|---|---:|---:|---:|---:|
+| 1 | 5 | -0.25 | 0.989792 | 0.391501 |
+| 2 | 7 | -0.25 | 0.981969 | 0.369685 |
+| 3 | 9 | -0.25 | 0.988200 | 0.558068 |
+| 4 | 5 | -0.25 | 0.980767 | 0.466171 |
+| 5 | 7 | -0.25 | 0.990221 | 0.574502 |
+| 1 | 5 | +0.25 | 0.999299 | 0.391720 |
+| 2 | 7 | +0.25 | 1.002220 | 0.575289 |
+| 3 | 9 | +0.25 | 1.002182 | 0.458619 |
+| 4 | 5 | +0.25 | 1.010827 | 0.506889 |
+| 5 | 7 | +0.25 | 0.996912 | 0.365376 |
+
+比较E=A_new-A_old U与不旋转控制D=A_new-A_old。整体比为||E||F/||D||F；见证比为||Ew||/||Dw||，表中取同一几何的两个既定见证中较大值。小于1表示改善。这些不是场误差、速度比或新的最大奇异增益。整体比范围0.980767–1.010827，敏感方向比范围0.365376–0.575289；预定的全组合联合改善门未过。
+
+Compare E=A_new-A_old U with the no-rotation control D=A_new-A_old. The global ratio is ||E||F/||D||F; the witness ratio is ||Ew||/||Dw||, taking the larger of the two pre-fixed witnesses per geometry in the table. Below one means improvement. These are not field errors, speed ratios or newly computed maximum singular gains. Global ratios span 0.980767–1.010827 and sensitive-witness ratios span 0.365376–0.575289. The pre-fixed uniform joint-improvement screen is not met.
+
+U仅按已知旋转取样f(Rp)，固定零外推、三线性插值和原有支撑掩膜；没有选择角度、插值阶数或符号。相机点/投影向量的共同旋转恒等差最大2.04e-13/6.22e-15，但两种旋转分别改变1799/1776个立方体有效采样标记，且||U^T U-I||F/sqrt(n)=0.07113495。它们表明该离散映射不是精确酉旋转，不等于已经证明哪个离散项独自造成剩余偏差。
+
+U samples f(Rp) using only the known rotation, fixed zero extrapolation, trilinear interpolation and the original support mask. No angle, interpolation order or sign was selected. Joint camera-point/projection-vector rotation identities differ by at most 2.04e-13/6.22e-15. The two rotations change 1799/1776 cube-validity sample flags, and ||U^T U-I||F/sqrt(n)=0.07113495. These establish that this discrete map is not an exact unitary rotation, not which individual discretization term causes the remaining defect.
+
+正式稀疏重心插值与独立SciPy affine-transform坐标基构造差1.91e-15；同一见证的指标差不超过6.97e-14。另一个进程原始物理重放40个旋转场，旧/新/旋转后投影差不超过1.09e-13，偏差增益差2.86e-15。未读取CFD真值或观测，未训练或生成部署预测；全部工作是离线几何审计，不能算部署调用减少。
+
+Formal sparse barycentric interpolation and independent SciPy affine-transform coordinate-basis construction differ by 1.91e-15; same-witness metrics differ by at most 6.97e-14. A separate process physically replays 40 transported fields: old/new/transported projection differences are below 1.09e-13, and defect-gain difference is 2.86e-15. No CFD truth or observations were read, and no deployment predictor was trained or evaluated. All work is offline geometry auditing, not reduced deployment calls.
+
+等变重建已有文献基础：[Celledoni等，2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8317019/)。这项工作提供对称性建模背景，不保证我们的BOS网格满足相同恒等式。保留局部物理收益，停止这份固定规范化方案，不扩展成“所有等变学习不可行”的结论。
+
+Equivariant reconstruction has established prior art: [Celledoni et al., 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC8317019/). It provides symmetry-modeling context, not a guarantee for this BOS grid. Retain the localized physical benefit, stop promotion of this fixed canonicalization recipe, and do not generalize the result to all equivariant learning.
+
+## 2026-09-07 求导并非唯一薄弱环节 / Weakness Is Not Just the Derivative
+
+求导阶段审计缩小了问题范围：在20个已封存敏感方向上，差分梯度的完整条件数为7.79，没有精确零空间；归一化梯度响应为0.497至0.651，但完整前向响应仅0.00148至0.02190。更强衰减出现在后续插值、投影与积分的组合中，尚不能单独归因给其中一项。独立物理重放通过。本轮不支持把问题简单归结为差分求导的棋盘格零模式；没有更换算子、训练网络或获得重建与加速成果。
+
+Derivative-stage auditing narrows the diagnosis: on 20 sealed sensitive witnesses, the complete finite-difference gradient has condition number 7.79 and no exact nullspace. Normalized gradient responses span 0.497 to 0.651, but full forward responses are only 0.00148 to 0.02190. Stronger attenuation lies in the subsequent interpolation, projection and integration jointly, not yet attributable to one of them. Independent physical replay passes. This does not support a simple derivative-checkerboard null-mode explanation; no operator was changed or network trained, and no reconstruction or acceleration result was obtained.
+
+| 集合/Set | 相机/Cameras | 梯度响应/Gradient response | 完整响应/Forward response | 下游条件下界/Downstream condition bound |
+|---|---:|---:|---:|---:|
+| 1 | 5 | 0.590054--0.590058 | 0.002263--0.002267 | 56.6906 |
+| 2 | 7 | 0.496772--0.499710 | 0.003515--0.003554 | 36.5035 |
+| 3 | 9 | 0.644186--0.651085 | 0.016662--0.021903 | 7.7006 |
+| 4 | 5 | 0.643480--0.644144 | 0.001485--0.001496 | 86.4315 |
+| 5 | 7 | 0.550429--0.551300 | 0.004265--0.004286 | 30.0816 |
+
+归一化量为rho_G=||Gx||/(g_rms||x||)、rho_A=||Ax||/(a_rms||x||)，其中g_rms=||G||F/sqrt(n)、a_rms=||A||F/sqrt(n)，n=5880。rho_after=rho_A/rho_G范围0.002305至0.033640，其基准是a_rms/g_rms，不是下游算子的Frobenius范数。这些不是场误差，也不是信号能量占比。20个方向来自既有几何敏感性诊断，并非随机样本。
+
+The normalized quantities are rho_G=||Gx||/(g_rms||x||) and rho_A=||Ax||/(a_rms||x||), where g_rms=||G||F/sqrt(n), a_rms=||A||F/sqrt(n), and n=5880. Their quotient rho_after spans 0.002305 to 0.033640 and is normalized by a_rms/g_rms, not the downstream operator's Frobenius norm. These are not field errors or signal-energy shares. The 20 witnesses come from the previous geometry-sensitivity diagnostic, not random sampling.
+
+完整梯度奇异值范围2.78267至21.68717，由逐轴Gram特征值和独立原生差分SVD分别重建。端点一阶差分与零边界注入使梯度可识别，不能套用周期棋盘格零空间结论。对A=B G作薄QR分解后，kappa(B在range(G)上的限制)>=1/(rho_A*kappa(G))；表内给每组最强下界，不是实际条件数估计。最严重弱响应不能仅由梯度这一步解释，但插值误差与物理积分消去尚未分开。
+
+The full gradient singular range, 2.78267 to 21.68717, is rebuilt through small-axis Gram eigenvalues and independently through native derivative SVDs. First-order endpoint differences and zero-boundary injection make this gradient injective; a periodic checkerboard nullspace argument does not apply. A thin QR decomposition of G in A=B G yields kappa(B restricted to range(G))>=1/(rho_A*kappa(G)). The table reports the strongest lower bound per set, not an estimate of the actual condition number. The severe weak responses cannot be explained by the derivative alone, but interpolation error and physical cancellation remain unseparated.
+
+独立谱/梯度/前向差不超过2.62e-16/1.08e-16/1.10e-13。正式20次稀疏A与独立20次原生九相机A均为离线诊断；没有真值、观测读取或部署预测。优先研究后续几何耦合，而非无依据更改差分阶数；这不授权恢复失败的固定射线图网络，也不证明任何学习方案有效。
+
+Independent spectrum/gradient/forward differences are at most 2.62e-16/1.08e-16/1.10e-13. The 20 formal sparse A actions and 20 independent native nine-camera A actions are offline diagnostics only, without truth, observation reads or deployment predictions. Prioritize downstream geometry coupling over an unjustified derivative-order change. This does not reopen the failed fixed ray-graph network or establish a successful learner.
+
+[NumPy梯度边界约定 / NumPy gradient boundary conventions](https://numpy.org/doc/stable/reference/generated/numpy.gradient.html)；[SciPy对称特征值 / SciPy symmetric eigensolver](https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.eigh.html)。文档只支持数值定义，不是本实验成果来源。The documentation supports numerical definitions, not these experimental findings.
+
+## 2026-09-07 逐相机集合学习未通过 / Camera-Set Learning Does Not Pass
+
+61参数逐相机集合初始化器已完成跨轨迹训练与独立复算，但五个固定中点通过0/5；内部梯度误差为2.134%至3.017%，均超过1%门槛。保留相机分歧相对先求和的同规模对照只在3/5点四指标不劣，且在全部五点都未胜过Zero、BP和历史ridge。已取消余下500帧的细化评分，关闭这个固定模型与训练配置，不增加网络规模或轮数。这是有效的负结果，不是重建、加速或论文成功。
+
+The 61-parameter camera-set initializer completed trajectory-held-out training and independent replay, but passes 0/5 fixed midpoints. Interior-gradient errors are 2.134% to 3.017%, above the 1% gate. Retaining camera disagreement is non-harmful on all four metrics against the same-size pooled control at only 3/5 points, and is worse than Zero, BP and historical ridge at all five points. The remaining 500 frame refinements are cancelled and this fixed model/schedule is closed without widening or more epochs. This is a valid negative result, not reconstruction, acceleration or paper success.
+
+| 固定中点/Midpoint | 集合模型内部梯度/Set interior gradient | 求和对照/Pooled control | Zero-CGLS |
+|---|---:|---:|---:|
+| 1 | 2.95911% | 2.94577% | 2.92036% |
+| 2 | 2.30233% | 2.31018% | 2.27662% |
+| 3 | 2.13385% | 2.12948% | 2.11064% |
+| 4 | 3.01725% | 3.01792% | 2.99853% |
+| 5 | 2.15074% | 2.15818% | 2.12532% |
+
+这是五条已开封轨迹、每条101帧、九相机clean条件下的完整轨迹留一训练。每折只读取其余404帧的观测与已知几何，用合格K512求解器场作teacher；查询轨迹不参与训练。两种61参数模型各训练20轮，全部505帧的外折预测先封存，然后才评分五个预注册中点。表中不是完整序列尾部统计；未运行的500帧不能被记成500次失败。四指标依次为field、full-gradient、interior-gradient与observation，均要求相对误差不超过1%。
+
+This uses complete-trajectory leave-one-out training on five opened 101-frame trajectories under clean nine-camera geometry. Each fold uses only the other 404 observations and known geometry, with qualified K512 solver fields as teachers; the query trajectory is excluded from training. Both 61-parameter models train for 20 epochs. All 505 outer predictions are sealed before scoring five preregistered midpoints. The table is not a full-sequence tail statistic; the 500 unrun refinements are not 500 failed evaluations. The field, full-gradient, interior-gradient and observation gates each require relative error at most 1%.
+
+主模型保留每个相机的伴随回投影，再在每个体素上共享集合融合；配对对照先求和，再按几何对角贡献重新分配给同一网络。它没有增加新观测信息：已知A时，A^T y仍足以定义最小二乘问题。集合网络是既有方法，不是组件首创。当前固定表示和训练配置失败，不能推出所有逐相机或集合方法无效。
+
+The primary retains each camera adjoint volume before shared per-voxel set fusion. The paired control first pools adjoints, then redistributes the sum according to geometric diagonal contributions for the identical network. This adds no new observation information: with known A, A^T y still defines the least-squares problem. Set networks are established methods, not a component novelty claim. Failure closes this fixed representation and training configuration, not all per-camera or set-based methods.
+
+独立实现重建全部逐相机输入，核验各轮首批梯度与Adam更新，并用封存权重重放1010条学习预测和70个物理端点。它没有独立重训第二遍。预测dual/初始场最大差1.66e-14/1.12e-14；跨Krylov端点field/image/metric最大差2.44e-4/4.36e-5/2.26e-4，满足结果前冻结的数值容差且离散判决一致。同一场的原生物理重放残差差不超过1.31e-13。第一次启动只因缺省零方位字段在训练前退出，记录保留；修正未改科学合同。
+
+Independent implementations rebuild all camera-resolved inputs, check each epoch's first-batch gradients and Adam step, and replay 1010 learned predictions and 70 physical endpoints from sealed weights. This is not a second independent optimization. Maximum dual/initial-field differences are 1.66e-14/1.12e-14; cross-Krylov endpoint field/image/metric differences are 2.44e-4/4.36e-5/2.26e-4, within the pre-result numerical tolerances with identical discrete decisions. Same-field native residual replay differs by at most 1.31e-13. The first launch exited before training due to an omitted zero-azimuth field; its evidence is retained and the correction changed no scientific contract.
+
+部署账为258A、257次普通A^T和1次分组A^T；分组调用保留九个体积，不等于一次普通伴随的FLOPs或内存。配对对照只需普通伴随，缓存直接解仍是逻辑调用更少的强对照。约589.5秒和6.06GiB只是本次整个实验进程遥测，不是部署wall/RSS基准。合成接口支持5/7/9/12相机，不代表本次已验证实际相机增删或换位姿；没有外部泛化、真实BOST或算力优势结论。
+
+Deployment accounting is 258A, 257 ordinary adjoints and one grouped adjoint. The grouped action retains nine volumes and is not equal to one pooled adjoint in FLOPs or memory. The paired control needs only ordinary adjoints; cached direct solving remains a stronger alternative with fewer logical calls. Roughly 589.5 seconds and 6.06 GiB are whole-experiment process telemetry, not deployment wall/RSS benchmarks. Synthetic 5/7/9/12-camera interfaces do not establish actual camera-removal or pose generalization here. There is no external, real-BOST or resource-advantage claim.
+
+[Deep Sets](https://arxiv.org/abs/1703.06114)提供集合结构先例，不支持本实验的成功主张。Deep Sets supplies architectural prior art, not evidence of success in this experiment.
+
+## 2026-09-07 沿射线抵消的阶段证据 / Stage Evidence of Within-Ray Cancellation
+
+下游物理诊断进一步定位了弱响应：在20条预先固定的几何见证上，插值和横向投影的条件保留比约为0.314至0.622、0.500至0.541，沿射线求和却只有4.65e-7至1.15e-4；平滑控制为0.827至0.833。独立复算确认了强烈的沿射线符号抵消。这里的保留比不是实际信号损失百分比，也尚未证明这就是学习失败的原因；没有修改测量算子、训练新模型或获得加速成果。
+
+Downstream diagnosis localizes the weak response further: across 20 fixed geometry witnesses, conditional retention is about 0.314 to 0.622 after interpolation and 0.500 to 0.541 after transverse projection, but only 4.65e-7 to 1.15e-4 after ray summation; the smooth control retains 0.827 to 0.833. Independent replay confirms strong within-ray sign cancellation. These ratios are not percentages of actual signal loss and do not yet establish the cause of learning failure. No measurement operator was changed, new model trained or acceleration achieved.
+
+| 集合/Set | 相机/Cameras | 插值保留/Interpolation | 横向保留/Transverse | 射线求和/Ray sum | 平滑控制求和/Smooth ray sum |
+|---|---:|---:|---:|---:|---:|
+| 1 | 5 | 0.6215--0.6223 | 0.5004--0.5007 | 1.088e-06--1.090e-06 | 0.827089 |
+| 2 | 7 | 0.5493--0.5496 | 0.5300--0.5303 | 4.047e-06--4.093e-06 | 0.832778 |
+| 3 | 9 | 0.3142--0.4483 | 0.5332--0.5414 | 9.541e-05--1.146e-04 | 0.828984 |
+| 4 | 5 | 0.5256--0.5261 | 0.5050--0.5059 | 4.648e-07--4.731e-07 | 0.831545 |
+| 5 | 7 | 0.5157--0.5166 | 0.5284--0.5286 | 5.200e-06--5.228e-06 | 0.831730 |
+
+20条见证是10个既定几何/符号组合的两套实现，不是20次独立采集，也不是实际CFD误差样本。五个控制场均为零边界、单位范数的最低阶余弦乘积。当前正式描述判决为UNIFORM_INTEGRATION_RETENTION_BOTTLENECK，独立状态为PASS_INDEPENDENT_DOWNSTREAM_ENERGY_PARTITION；两者都不是重建通过。
+
+The 20 witnesses are two implementations of 10 fixed geometry/sign combinations, not 20 independent acquisitions or actual CFD error samples. The five controls use the same zero-boundary unit-norm lowest-order cosine product. The descriptive outcome is UNIFORM_INTEGRATION_RETENTION_BOTTLENECK with PASS_INDEPENDENT_DOWNSTREAM_ENERGY_PARTITION; neither is a reconstruction pass.
+
+源前向使用64点均匀矩形求和，不是梯形积分。令g为原网格离散梯度，h_rt为其三线性采样，T_r为正交横向投影，k_r为长度乘系统常数除64，n_r为有效点数。定义E0为sum(n_r k_r^2 lambda_rtv ||g_v||^2)，E1为sum(n_r k_r^2 ||h_rt||^2)，E2为sum(n_r k_r^2 ||T_r h_rt||^2)，E3为sum(||k_r sum_t T_r h_rt||^2)=||Ax||^2。Jensen不等式、正交投影及Cauchy-Schwarz保证E0>=E1>=E2>=E3。表中分别是E1/E0、E2/E1、E3/E2。
+
+The source forward uses a uniform 64-point rectangle sum, not trapezoidal quadrature. Let g be the existing discrete gradient, h_rt its trilinear samples, T_r the orthogonal transverse projection, k_r the length times system constant divided by 64, and n_r the valid-sample count. Define E0=sum(n_r k_r^2 lambda_rtv ||g_v||^2), E1=sum(n_r k_r^2 ||h_rt||^2), E2=sum(n_r k_r^2 ||T_r h_rt||^2), and E3=sum(||k_r sum_t T_r h_rt||^2)=||Ax||^2. Jensen, orthogonal projection and Cauchy-Schwarz give E0>=E1>=E2>=E3. The table reports E1/E0, E2/E1 and E3/E2.
+
+E0只是按射线加权的梯度二阶矩上界，不是总场能量。求和是最强乘性衰减环节，但插值可占更大的加性缺口；不能把两种说法混同。一个封存后可直接推导的结论是：若每条射线的每个投影分量均无符号变化，则E3/E2>=1/max(n_r)>=1/64。所有见证均低于1/64，因此单纯采样幅度不均不足以解释它，必有沿射线正负抵消。该推论不区分物理抵消和离散误差贡献，也不能通过对测量取绝对值来修复。
+
+E0 is only a ray-weighted nodal-gradient second-moment bound, not total field energy. Ray summation is the strongest multiplicative attenuation here, while interpolation can have a larger additive gap; these claims must not be conflated. A direct post-seal deduction is that sign-consistent components on every ray require E3/E2>=1/max(n_r)>=1/64. Every witness lies below 1/64, so uneven sample magnitudes alone cannot explain it: within-ray sign cancellation must occur. This does not separate physical and discretization contributions, and taking absolute values of measurements is not a valid repair.
+
+NumPy八角插值与独立重建的原生Torch因子、独立CSR分别重放25个场。图像/逐射线二阶矩/汇总最大差不超过1.48e-12/3.07e-14/4.71e-14，原生因子重组与原生A逐值相同。新工作只含离线25次因子前向和25次CSR前向、独立25次原生和25次CSR前向及梯度/二阶矩辅助动作；无真值、观测、预测、训练或新增逆解。下一步只能先检查已封存学习误差是否具有相同特征，不能凭这些特选方向授权新网络。
+
+NumPy eight-corner interpolation and independently rebuilt native Torch factors plus independent CSR replay 25 fields. Image/per-ray-moment/summary discrepancies are at most 1.48e-12/3.07e-14/4.71e-14; native factor recomposition equals native A elementwise. New work consists only of 25 offline factorized and 25 CSR forwards, 25 independent native and 25 independent CSR forwards, plus gradient/moment work. There are no truth, observation or prediction reads, training or new inverse solves. The next question is whether sealed learned error fields exhibit the same structure; these selected witnesses alone cannot authorize a new network.
+
+[BOST测量模型 / BOST measurement model](https://opg.optica.org/oe/fulltext.cfm?uri=oe-30-11-19100)支持梯度线积分的物理形式，不是本实验成果的外部验证。The source supports the gradient line-integral model, not external validation of these findings.
+
+## 2026-09-07 实际误差的共同抵消特征 / Cancellation Shared by Actual Errors
+
+已封存模型的实际误差也有沿射线抵消：学习模型、合并相机对照和Zero-CGLS，在相同五个时刻的两套实现中全部出现同一特征。射线求和的条件保留比从迭代前约0.279至0.428，降为迭代后1.87e-4至2.57e-4；观测误差约0.025%至0.032%，内部梯度误差仍约2.1%至3.0%。独立复算通过。这不是学习模型特有的原因，也不是算法成功；尚未区分连续物理抵消和离散求和的影响。
+
+Actual sealed errors also exhibit within-ray cancellation: the learner, pooled-camera control and Zero-CGLS share the signature at all five fixed times in both implementations. Conditional ray-sum retention drops from about 0.279 to 0.428 before refinement to 1.87e-4 to 2.57e-4 afterward; observation error is about 0.025% to 0.032%, while interior-gradient error remains about 2.1% to 3.0%. Independent replay passes. This is neither a learner-specific cause nor algorithm success; continuous physical cancellation and discrete summation effects remain unseparated.
+
+| 方法 / Arm | 阶段 / Stage | 射线求和保留 / Ray retention | 内部梯度误差 / Interior-gradient error |
+|---|---|---:|---:|
+| camera61 | 迭代前 / Before | 0.279284--0.368702 | 98.9216%--105.2065% |
+| camera61 | 迭代后 / After | 0.000187906--0.000257207 | 2.1338%--3.0215% |
+| collapsed61 | 迭代前 / Before | 0.291023--0.356523 | 98.7560%--102.5122% |
+| collapsed61 | 迭代后 / After | 0.000187895--0.000257304 | 2.1295%--3.0179% |
+| zero_cgls | 迭代前 / Before | 0.284373--0.428478 | 100.0000%--100.0000% |
+| zero_cgls | 迭代后 / After | 0.000187097--0.000256173 | 2.1088%--2.9985% |
+
+范围包括同一五个必要时刻的两套已封存实现，不是十个独立样本；60个状态包括三种方法、迭代前后及两套实现。没有重新训练、增加迭代、计算其余500个端点或打开新条件。旧1%四指标门和原失败结论不变。
+
+Ranges cover two sealed implementations at the same five necessary midpoints, not ten independent cases. The 60 states span three arms, before/after refinement and both implementations. No fitting, added iterations, remaining 500 endpoints or new conditions were run. The original four-metric 1% gates and failures are unchanged.
+
+原样重建error=field-truth，真值只用于事后归因。正式NumPy八角插值与独立原生Torch梯度、插值和前向分别复算；重放A(error)=A(field)-A(truth)，以及最终误差投影等于封存残差的负值。图像、逐射线能量、保留比的最大差约2.15e-13、1.91e-14、1.17e-14；输入输出树均未改变。
+
+Errors are rebuilt as field minus truth, with truth used only for post-open attribution. Formal NumPy eight-corner factors and independent native Torch gradients, interpolation and forward operations replay A(error)=A(field)-A(truth), including the negative sealed residual at each endpoint. Maximum image, per-ray-energy and retention discrepancies are about 2.15e-13, 1.91e-14 and 1.17e-14; input/output trees remain unchanged.
+
+全部最终误差的射线求和保留比既小于插值、横向投影的保留比，又小于自身迭代前值和1/64。因此抵消存在于实际误差，不再只是特选几何方向上的现象；但两种对照同样出现，不能证明它是网络特有的因果机制。E0仍不是总场能量，保留比也不是误差百分比或物理不可辨识性证明。下一步只允许有界核对连续分段积分与既有离散求和，不据此扩大网络。
+
+Every final error has ray-sum retention below interpolation/transverse retention, its own initial value and 1/64. Cancellation therefore occurs in actual errors, not only selected geometry witnesses. Both controls share it, so this is not a learner-specific causal explanation. E0 is not total field energy; retention is neither an error percentage nor proof of physical non-identifiability. The next bounded question compares continuous cellwise integration with existing discrete summation, without enlarging a network.
+
+正式离线账130次CSR前向、60次因子前向和梯度/二阶矩工作；独立账130次原生前向、60次独立CSR前向、60次梯度和120次二阶矩插值。它们不是新部署算法的在线账，不授权速度、泛化或真实BOST主张。
+
+Offline formal work comprises 130 CSR and 60 factorized forwards plus gradient/moment work; independent work comprises 130 native and 60 independent CSR forwards, 60 gradients and 120 moment interpolations. These are not online costs of a new deployment algorithm and authorize no speed, generalization or real-BOST claim.
+
+## 2026-09-07 精确积分没有消除弱响应 / Weak Response Survives Exact Integration
+
+逐网格精确积分审计完成：同一批实际误差的投影幅值仅变为旧64点求和的1.015至1.043倍，但投影细节的差异达到旧微弱响应的27.8%至37.9%。独立多项式积分复算通过。结果既不满足“统一显著增强”，也不满足“1%内等价”，因此保留混合判决；弱响应没有因精确积分而明显消失。没有改动旧观测、重建判决或训练模型，也没有算法突破。
+
+Cellwise exact integration is independently verified: projections of the same actual errors have only 1.015 to 1.043 times the amplitude of the old 64-point sum, while their detailed differences reach 27.8% to 37.9% of the old weak responses. Independent polynomial integration agrees. Neither uniform large amplification nor equivalence within 1% passes, so the outcome remains mixed; weak response does not markedly disappear. Old observations and reconstruction decisions are unchanged, with no new training or algorithm breakthrough.
+
+| 方法 / Arm | 阶段 / Stage | 精确/旧幅值 / Amplitude ratio | 相对旧响应差异 / Difference vs old | 连续Cauchy保留比 / Continuous retention |
+|---|---|---:|---:|---:|
+| camera61 | 迭代前 / Before | 1.015556--1.015949 | 1.9459%--2.2323% | 0.279011--0.368442 |
+| camera61 | 迭代后 / After | 1.014641--1.042764 | 27.7807%--37.8439% | 0.000190446--0.000258447 |
+| collapsed61 | 迭代前 / Before | 1.015530--1.015939 | 1.9658%--2.2912% | 0.2907--0.356274 |
+| collapsed61 | 迭代后 / After | 1.015123--1.042752 | 27.7729%--37.8425% | 0.00019059--0.000258548 |
+| zero_cgls | 迭代前 / Before | 1.015507--1.016019 | 2.0372%--2.2462% | 0.28411--0.428162 |
+| zero_cgls | 迭代后 / After | 1.015346--1.042539 | 27.8819%--37.9131% | 0.000189181--0.000257587 |
+
+仍是五个必要时刻、三种方法、迭代前后与两套已封存实现，共60状态，不是60次独立实验。新算子只精确积分同一有限窗口、同一盒内的三线性离散梯度插值，不是原始连续CFD梯度或无限长物理射线。旧64点控制完全保留；不得用新算子对旧观测评分后声称重建提高。
+
+These remain five necessary times, three arms, before/after and two sealed implementations: 60 states, not 60 independent experiments. The new map exactly integrates the same trilinear discrete-gradient interpolant within the same finite window and box, not the original continuous CFD gradient or an infinite physical ray. The old 64-point control is retained exactly; scoring a changed map against old observations cannot establish better reconstruction.
+
+正式实现将14850条射线划为173997个单元区间，每区间固定四点Gauss，精确积分三次投影和六次平方幅度；独立实现逐射线重建交点，用三次多项式系数解析积分。图像、逐射线能量、连续保留比最大相对差约1.85e-13、6.77e-14、1.04e-14，旧原生前向控制差约2.15e-13，全部输入输出树不变。
+
+The formal implementation partitions 14850 rays into 173997 cell intervals, using four fixed Gauss nodes to integrate cubic projections and degree-six squared amplitudes. The independent implementation rebuilds intersections ray by ray and analytically integrates power coefficients. Maximum relative image, per-ray-energy and continuous-retention differences are about 1.85e-13, 6.77e-14 and 1.04e-14; old native-control disagreement is about 2.15e-13. All input/output trees remain unchanged.
+
+连续保留比定义为sum(||c integral(Tg)ds||^2)/sum(c^2 L_inside integral||Tg||^2 ds)。它不是原先离散E3/E2，也不是误差百分比，不能套用离散1/64符号下界。正式描述判决MIXED_CELL_INTEGRAL_RESPONSE_CHANGE：全部最终状态未达到幅值>2倍且差异>旧响应的统一增强门，也未达到差异<=1%的统一等价门。这不证明无离散效应，也不保证新旧逆解等价。
+
+Continuous retention is sum(||c integral(Tg)ds||^2)/sum(c^2 L_inside integral||Tg||^2 ds). It is not the old discrete E3/E2 or an error percentage; the discrete 1/64 sign bound does not apply. The descriptive outcome is MIXED_CELL_INTEGRAL_RESPONSE_CHANGE: the final states meet neither uniform gain>2 plus discrepancy>old response, nor uniform discrepancy<=1%. This neither proves absence of discretization effects nor equivalence of inverse solutions.
+
+新工作只有60次单元积分、60次梯度、41759280个向量节点求值，以及独立60次解析积分和60次原生旧前向。没有新逆解、学习或资源优势。这组分解诊断至此停止，不再扫积分点数、改门、调比例或扩大网络；下一步须直接论证具有成本优势可能性的非局部逆作用表示。
+
+New work consists of 60 cell integrals, 60 gradients, 41759280 vector-node evaluations, and independently 60 analytic integrals plus 60 old native forwards. There is no new inverse solve, learning or resource advantage. This partition chain stops here: no quadrature-count sweep, gate change, rescaling or larger network. The next decision must directly justify a nonlocal inverse-action representation with a credible cost path.

@@ -1,0 +1,47 @@
+{
+  "version": "v296-postopen-checkpoint-frontier",
+  "date": "2026-09-30",
+  "evidence_class": "post-open descriptive diagnostic",
+  "sample_count": 25,
+  "trajectory_count": 5,
+  "offsets_per_trajectory": 5,
+  "matched_call_budgets_per_operator": [2, 3, 5, 9, 17],
+  "metrics": ["field", "full_gradient", "interior_gradient", "observation_residual"],
+  "comparison_rule": "all four metrics no worse at an already-sampled checkpoint; truth used only for scoring",
+  "warm_matches_control_target_at_lower_budget": {
+    "target_budget_3": {
+      "zero": 24,
+      "bp": 23,
+      "applications_saved_per_operator": 1
+    },
+    "target_budget_5": {
+      "zero": 4,
+      "bp": 7,
+      "applications_saved_per_operator": 2
+    },
+    "target_budget_9": {
+      "zero": 0,
+      "bp": 0
+    },
+    "target_budget_17": {
+      "zero": 0,
+      "bp": 0
+    }
+  },
+  "control_matches_warm_target_at_lower_budget": {
+    "zero": 0,
+    "bp": 0
+  },
+  "formal_independent_metric_max_abs": 2.4424906541753444e-15,
+  "scope_limits": [
+    "already-open rows only",
+    "discrete checkpoint grid only",
+    "continuous-observation/discrete-solver operator mismatch",
+    "not a deployable stopping rule",
+    "not complete-trajectory generalization",
+    "not wall-time or RSS evidence",
+    "not real BOST",
+    "algorithm_breakthrough=false",
+    "paper_success=false"
+  ]
+}
