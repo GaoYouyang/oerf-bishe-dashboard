@@ -1,3 +1,19 @@
+## 2026-09-30：v299 精确离散观测反事实
+
+**问题。** v298 的连续观测与反演实际使用的离散算子存在明显不匹配；17-call 时 learned 对场/全梯度中位误差更差，但观测残差略好。这个前后分离是否仍出现在与离散算子严格一致的观测下？
+
+**设计。** 保留相同五条已开封 PoolFire 轨迹的 25 行、预测器、BP 起点、CGLS 和预算，只将观测替换为冻结离散算子的 `y=A x_truth`。真值用于合成这个已开封反事实观测与最终评分；不训练、不调参、不打开新数据。Zero、归一化 BP、learned 仍按 `2/3/5/9/17 A/A^T` 匹配成本。
+
+**结果。** 原连续观测与离散一致反事实的差异 p50/p90/worst 为 `0.239253 / 0.290883 / 0.305524`。预算 2 时 learned 四项误差均在 25/25 行低于 Zero。预算 17 时 learned-minus-Zero 场/全梯度/内部梯度/观测误差中位差为 `-0.004108 / -0.008820 / -0.003524 / -0.003397`，更低行数 `20/25 / 20/25 / 19/25 / 20/25`。v298 原连续观测下相同预算的前两项中位差为 `+0.005983 / +0.014646`，内部梯度也略高，观测残差略低。
+
+**独立复算。** 独立构造离散观测、初始场并用 SciPy/NumPy 与 `math.fsum` CGLS 重放。算子/观测/初始场/状态/指标最大绝对差分别约 `1.11e-15 / 4.00e-15 / 6.22e-15 / 5.44e-15 / 2.33e-15`；正式输出与上游封存输入未变。
+
+**解释与边界。** 这使“连续观测与离散求解器不一致可能参与 v298 深层误差分歧”更可信，但不是因果证明：反事实观测来自已开封真值，且只评估原已开封帧。固定预算同误差向量比较不是少调用证据；无新轨迹泛化、在线停止规则、端到端 wall/RSS 或真实 BOST。v284 完整轨迹严格成本失败保持不变，`algorithm_breakthrough=false`、`paper_success=false`。
+
+### English checkpoint
+
+v299 keeps the same 25 rows from five already-open PoolFire trajectories, the frozen predictor, BP initializer, CGLS, and budgets; it replaces only the observations with `y=A x_truth` from the frozen discrete operator. Truth is used to synthesize this post-open counterfactual and score it, with no training, tuning, or new data. At `17A+17A^T`, learned-minus-Zero median differences for field/full-gradient/interior-gradient/observation are `-0.004108 / -0.008820 / -0.003524 / -0.003397`, lower on `20/25 / 20/25 / 19/25 / 20/25` rows. Under v298's original continuous observations, field and full-gradient differences were `+0.005983 / +0.014646`. Independent NumPy/SciPy replay differs by at most `5.44e-15` in the state. This supports, but does not prove causally, that observation/operator mismatch contributes to the late-budget metric split. It remains post-open counterfactual evidence: no new-trajectory generalization, deployable stopping rule, exact-call savings, wall/RSS, real BOST, or reversal of v284's strict-cost failure.
+
 ## 2026-09-30：v298 连续观测与离散反演算子不匹配的事后分解
 
 **问题。** 在已开封样本中，连续方式生成的二维观测与实际用于迭代的离散算子存在多大差异？预算加深时，二维残差与三维真值误差是否总是同向变化？
