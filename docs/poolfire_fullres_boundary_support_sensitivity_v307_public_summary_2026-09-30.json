@@ -1,0 +1,78 @@
+{
+  "date": "2026-09-30",
+  "experiment": "V307",
+  "evidence_role": "post_open_descriptive_representation_sensitivity",
+  "input_scope": {
+    "already_opened_train_trajectories": 11,
+    "frames_per_trajectory": 5,
+    "total_frames": 55,
+    "validation_test_external_accessed": false,
+    "field_shape_xyz": [80, 80, 200],
+    "rho_unit_status": "unverified"
+  },
+  "operation": "subtract interior mean, then measure effect of zeroing the outer one-voxel shell",
+  "centered_l2_removed_fraction": {
+    "p50": 0.19076054534881995,
+    "p90": 0.2565205658877139,
+    "worst": 0.2866769930166863
+  },
+  "centered_energy_removed_fraction": {
+    "p50": 0.036389585661779196,
+    "p90": 0.06582514236105247,
+    "worst": 0.0821836983250892
+  },
+  "raw_boundary_to_interior_rms": {
+    "p50": 1.0204203319973464,
+    "p90": 1.0296894129529035,
+    "worst": 1.0316426425658076
+  },
+  "exact_zero_boundary_rho_voxels": {
+    "p50": 0,
+    "p90": 0,
+    "worst": 0
+  },
+  "independent_recomputation": {
+    "status": "PASS",
+    "float_metrics_checked": 220,
+    "integer_checks": 110,
+    "max_relative_scaled_difference": 4.991233052417472e-12,
+    "input_receipts_unchanged": true
+  },
+  "companion_v306_native_grid_gradient_stencil_audit": {
+    "evidence_role": "post_open_descriptive_train_only_numerical_discretization",
+    "already_opened_train_trajectories": 11,
+    "frames_per_trajectory": 5,
+    "total_frames": 55,
+    "stencils_compared": ["numpy_gradient_edge_order_1", "numpy_gradient_edge_order_2"],
+    "summary_quantile_method": "linear interpolation over the 55 sealed per-frame metrics",
+    "full_gradient_relative_l2_difference": {
+      "p50": 0.06593981184283161,
+      "p90": 0.09058487813912056,
+      "worst": 0.09724539016339892
+    },
+    "boundary_shell_relative_l2_difference": {
+      "p50": 0.23912053831181238,
+      "p90": 0.26419895195281118,
+      "worst": 0.27672125400222974
+    },
+    "strict_interior_relative_l2_difference": {"p50": 0.0, "p90": 0.0, "worst": 0.0},
+    "boundary_gradient_norm_fraction": {
+      "edge_order_1": {"p50": 0.22596875858608892, "p90": 0.31150953442906887, "worst": 0.328454173560283},
+      "edge_order_2": {"p50": 0.26943892451171714, "p90": 0.36384081969383175, "worst": 0.3855902344279849}
+    },
+    "independent_recomputation": {
+      "status": "PASS_V306_INDEPENDENT_RECOMPUTATION",
+      "float_metrics_checked": 715,
+      "integer_checks": 110,
+      "max_relative_scaled_difference": 9.361885651877522e-16,
+      "formal_tree_and_inputs_unchanged": true
+    },
+    "interpretation": "native-grid endpoint-stencil sensitivity concentrated on the one-voxel shell; does not identify physical boundary semantics or BOS observation error"
+  },
+  "interpretation": "non-negligible numerical representation sensitivity only; does not establish physical boundary conditions, BOS, reconstruction, or algorithm gain",
+  "algorithm_breakthrough": false,
+  "paper_success": false,
+  "resource_speedup": false,
+  "external_generalization": false,
+  "real_bost": false
+}
