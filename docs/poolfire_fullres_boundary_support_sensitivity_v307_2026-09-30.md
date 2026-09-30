@@ -1,6 +1,7 @@
 # V307 Full-Resolution Boundary-Support Sensitivity
 
-**Date / 日期:** 2026-09-30  
+**Date / 日期:** 2026-09-30
+
 **Evidence role:** Post-open descriptive audit on prepared PoolFire training fields; not a reconstruction or algorithm test.
 
 ## Question and fixed calculation
