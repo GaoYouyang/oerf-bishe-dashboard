@@ -20,12 +20,18 @@ def test_p14_replication_is_bilingual_and_scoped() -> None:
         assert "2.5816%" in text
         assert "2.6189%" in text
         assert "2.6406%" in text
+        assert "101346" in text
         assert "algorithm_breakthrough=false" in text or "算法突破" in text
         assert "real BOST" in text or "真实 BOST" in text
 
     assert "2.75e-12" in note and "2.75e-12" in daily and "2.75e-12" in log
     assert "no p14 projection difference was recomputed" in note
     assert "p14 本次未重新计算二维投影" in focus
+    assert "101325 Pa" in note and "NIST" in note
+    assert "101022.67" in note and "101022.67" in log
+    assert "no pressure field" in note
+    assert "101023 Pa" in focus
+    assert "没有压力场或已知边界压力" in daily
     assert 'id="latest"' in daily
     assert "p14 independently reproduces" in daily
 

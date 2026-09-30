@@ -18,12 +18,15 @@
 - 经相同三视角直线投影后，观测相对差 p50/p90/worst 为 `2.33%/2.42%/2.48%`。
 - p14 的 101 帧复现得到场差 p50/p90/worst `0.0925%/0.0936%/0.0953%`，梯度差 `2.5816%/2.6189%/2.6406%`，梯度方向余弦 p90 `0.9998616`。这条复现只核对三维场与梯度，没有重新做二维投影。
 - p22 与 p14 的 formal 输入分别由独立路径重建；p14 的最大绝对差为 `2.75e-12`。两条轨迹都只是已开封训练工况，不构成留出验证。
+- 对 p22 的全部 101 帧、每帧 1.28 million voxels，另按质量分数与摩尔分数两种条件假设逐体素计算理想气体压力。跨帧中位的空间 p10/p50/p90 分别为 `101330.74/101346.33/101363.30 Pa` 与 `100996.27/101022.67/101037.70 Pa`。相对标准大气压 `101325 Pa`（定义见 [NIST SI Guide](https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors)），质量分数假设的 p50 偏差约 `+21 Pa`，摩尔分数假设约 `-302 Pa`。两套独立实现对所有逐帧分位数最大差 `2.91e-11 Pa`。
 
 ### 数据与解释边界
 
 公开 REALM 论文将 `Y_k` 定义为物种质量分数，描述 PoolFire 为单步甲烷-空气机制，并给出 `0.015 m` 网格间距；官方 PoolFire 字段统计列出 9 个变量。论文正文对快照通道的概述包含压力，而字段统计及当前本地导出列出的 9 个通道未列压力。需进一步确认导出版本与精确通道映射，不能只由变量名推断缺失组分必定为 `N2`。
 
 两条已开封轨迹都显示，在同一条件组分闭合和系数假设下，梯度相对变化处于约 `2.6%-3.5%` 的量级，明显大于三维 refractivity 场本身约 `0.09%-0.13%` 的差异。p22 的投影差只适用于其已计算的三视角离散代理，不能外推为 p14 投影结果。本诊断提示密度到折射率的物理映射可能影响梯度目标，但没有确认数据组分语义或实际气体光学模型。它不是实验标定、像素位移、三维重建评分、求解器/学习器收益、外部泛化或真实 BOST。未访问 validation/test；没有拟合或应用校正系数。
+
+附加的理想气体一致性检查使质量分数解释相对更可信：在假定当前 `rho` 为质量密度、`T` 为 K、四种已导出物种为质量分数且遗漏部分只有 N2 时，隐含压力的时空分布中心约 `1 atm`，并比摩尔分数假设更靠近标准大气压。不过没有压力字段、边界压力或版本级导出配置，因此两种基底仍未被数据直接辨别；该检查不能确认真实单位或物种闭合。
 
 ### 下一步要核实的物理输入
 
@@ -50,6 +53,8 @@ The public REALM paper defines `Y_k` as species mass fractions, describes PoolFi
 
 Across two already-open training trajectories, the same conditional closure/coefficient assumptions produce gradient differences of roughly `2.6%-3.5%`, larger than the `0.09%-0.13%` refractivity-field differences. The projection difference was computed only for the p22 three-view discrete proxy; no p14 projection difference was recomputed. This suggests that the density-to-refractivity mapping may affect the gradient target, but it does not confirm species semantics or the actual gas-optics law. It is not experimental calibration, pixel displacement, reconstruction accuracy, solver/learner gain, external generalization, or real BOST. Validation/test were not accessed; no correction coefficient was fitted or applied.
 
+An additional all-voxel ideal-gas plausibility check is more consistent with the mass-fraction interpretation: assuming `rho` is mass density, `T` is kelvin, the four exported species are mass fractions, and the omitted remainder is only N2, the implied pressure is centered near `1 atm` and closer to standard atmospheric pressure than under the mole-fraction interpretation. There is no pressure field, boundary-pressure reference, or export-version record, so this does not identify the actual basis, units, or species closure.
+
 ### Physical inputs to confirm next
 
 First confirm the export mapping, units for each channel, whether the four listed species are mass fractions, and which species are omitted. Then confirm the actual `n(rho,T,Y)` relation, wavelength, the two `XYdeflection` components, the physical unit of `level`, and the optical/camera scale from physical displacement to pixels. Existing 3-D fields and camera calibrations need not be resent; a missing paired 2-D experimental file need not be searched for just to continue virtual forward studies.
@@ -60,5 +65,6 @@ First confirm the export mapping, units for each channel, whether the four liste
 - [Official REALM PoolFire field statistics](https://github.com/deepflame-ai/REALM/blob/main/datasets/cases/PoolFire/PoolFire_stats.yaml)
 - [Visible-light BOS Gladstone-Dale species coefficients](https://doi.org/10.6108/JPNE.2026.6.1.087)
 - [Raffel, Background-oriented schlieren (BOS) techniques](https://doi.org/10.1007/s00348-015-1927-5)
+- [NIST Guide to the SI: standard atmosphere is exactly 101325 Pa](https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors)
 
 `algorithm_breakthrough=false`; `paper_success=false`; `external_generalization=false`; `resource_speedup=false`; `real_bost=false`.

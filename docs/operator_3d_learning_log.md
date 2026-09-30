@@ -18911,6 +18911,22 @@ The next step requires either a physically distinct, preregistered mechanism tha
 Beyond the earlier conditional p22 diagnostic, all 101 frames of a second already-open PoolFire training trajectory were recomputed with the same frozen species coefficients, nitrogen-complement assumption, and fixed `Kbar`. For p14, the p50/p90/worst refractivity-field differences between `rho*Kmix` and `rho*Kbar` are `0.09253% / 0.09356% / 0.09528%`; gradient differences are `2.5816% / 2.6189% / 2.6406%`. An independent stencil implementation differs by at most `2.75e-12`; inputs are unchanged and no validation/test/external data were accessed.
 
 This reproduces conditional gradient sensitivity on a second opened training trajectory, rather than establishing that the effect is physically calibrated. Species semantics, omitted-species closure, applicable wavelength, and the actual `n(rho,T,Y)` law remain unconfirmed; no p14 2-D projection was recomputed. This is not a calibrated BOS forward, reconstruction-accuracy result, solver gain, or algorithmic breakthrough. The next useful supervisor clarification is the exported composition basis/closure and actual refractivity law/wavelength; real experimental mapping remains a separate input.
+
+## 2026-09-30：PoolFire 全体素理想气体一致性检查
+
+对已开封 p22-size03 训练轨迹的 101 帧、每帧 1.28 million voxels，在“CH4/CO2/H2O/O2 是质量分数”与“它们是摩尔分数”两种冻结条件假设下，令未列部分为 N2，并按理想气体关系逐体素推算压力。跨帧中位的空间 p10/p50/p90 在质量分数假设下为 `101330.74/101346.33/101363.30 Pa`，摩尔分数假设下为 `100996.27/101022.67/101037.70 Pa`。与标准大气压 `101325 Pa`（NIST 给出为精确定义）相比，质量分数假设的 p50 偏差约 `+21 Pa`，摩尔分数假设约 `-302 Pa`。
+
+formal 与独立实现对每个逐帧空间分位数的最大绝对差为 `2.91e-11 Pa`；两实现使用同一结果前冻结合同并核对同一输入 manifest。该检查在给定 `rho`、`T` 和物种基底假设下，使质量分数解释更符合“约 1 atm”的量级，但数据没有压力通道或已知边界压力；两个结果均接近 1 atm。因此不能据此确认真实 rho/T 单位、物种基底、缺失组分、导出版本或边界条件，更不能把它称为真实物理校准或 BOS 算法结果。没有访问 validation/test/external，也没有产生 A/Aᵀ 调用。
+
+### English checkpoint
+
+For all 101 frames and 1.28 million voxels per frame from the already-open p22-size03 training trajectory, ideal-gas pressure was computed voxelwise under two frozen conditional hypotheses: CH4/CO2/H2O/O2 are mass fractions, or they are mole fractions, with the unlisted remainder assigned to N2. The temporal-median spatial p10/p50/p90 are `101330.74/101346.33/101363.30 Pa` for the mass basis and `100996.27/101022.67/101037.70 Pa` for the mole basis. Relative to the exactly defined standard atmosphere `101325 Pa`, the mass-basis p50 is about `+21 Pa` away and the mole-basis p50 about `-302 Pa`.
+
+Formal and independent implementations differ by at most `2.91e-11 Pa` over every per-frame spatial quantile. This conditionally favors a mass-fraction interpretation at an approximately atmospheric scale, but there is no pressure channel or known boundary-pressure reference, and both estimates remain near one atmosphere. It does not verify rho/T units, species basis, omitted species, export version, or boundary conditions, and is not experimental calibration or a BOS algorithm result. No validation/test/external data were accessed and no A/Aᵀ calls were made.
+
+Source for the exact standard-atmosphere conversion: [NIST Guide to the SI](https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors).
+
+`algorithm_breakthrough=false`, `paper_success=false`, `external_generalization=false`, `real_bost=false`.
 ## 2026-09-28：v284 同一已开封批次的配对资源复测
 
 **范围。** 五组 fresh-process 配对复测沿用已开封的 v284 505 查询 roster，每个进程执行两条冻结几何路径共 1,010 行；包括进程启动、缓存文件加载、预测/证书与结果封存。训练拟合和 AMG 层级/证书构建成本排除；没有重新评分真值，也没有打开新的验证数据。
