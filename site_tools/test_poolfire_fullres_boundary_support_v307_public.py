@@ -23,6 +23,13 @@ def test_v307_summary_preserves_scope_and_frozen_conclusion() -> None:
     assert summary["centered_energy_removed_fraction"]["p50"] == 0.036389585661779196
     assert summary["independent_recomputation"]["status"] == "PASS"
     assert summary["interpretation"].startswith("non-negligible numerical representation sensitivity only")
+    v306 = summary["companion_v306_native_grid_gradient_stencil_audit"]
+    assert v306["total_frames"] == 55
+    assert v306["full_gradient_relative_l2_difference"]["p50"] == 0.06593981184283161
+    assert v306["strict_interior_relative_l2_difference"]["worst"] == 0.0
+    assert v306["independent_recomputation"]["status"] == "PASS_V306_INDEPENDENT_RECOMPUTATION"
+    assert v306["independent_recomputation"]["float_metrics_checked"] == 715
+    assert v306["independent_recomputation"]["integer_checks"] == 110
     for key in ("algorithm_breakthrough", "paper_success", "resource_speedup", "external_generalization", "real_bost"):
         assert summary[key] is False
 
@@ -44,6 +51,9 @@ def test_v307_is_bilingual_and_linked_without_private_identifiers() -> None:
     assert "not a confirmed boundary condition" in contents["log"]
     assert "不是 BOS 投影" in contents["focus"]
     assert "not a new warm start" in contents["note"]
+    assert "6.59%" in contents["focus"] and "6.59%" in contents["daily"]
+    assert "715 个浮点指标" in contents["log"]
+    assert "9.36e-16" in contents["note"]
     payload = "\n".join(contents.values()).lower()
     for forbidden in ("/users/gaoyouyang", "private_results", "checkpoint_sha256", "raw_data_path"):
         assert forbidden not in payload
