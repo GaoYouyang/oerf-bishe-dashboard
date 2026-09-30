@@ -1,3 +1,21 @@
+## 2026-09-30：v307 全分辨率边界支撑不是可忽略操作
+
+V304.2 的边界 mask 结果针对一份构造时已将外壳置零的 32×16×16 代理；它不能说明准备态全分辨率桥接场的外壳也是零。V307 固定检查 11 条已开封训练轨迹、每条 5 帧，共 55 帧。先减内部均值，再量化把当前网格最外一层置零会移除的范数与能量，不设置科学通过门。
+
+置零会移除去中心场 L2 范数的中位数 `19.08%`、p90 `25.65%`、最大 `28.67%`；能量占比中位数 `3.64%`、p90 `6.58%`、最大 `8.22%`。原始 rho 边界/内部 RMS 中位数为 `1.020`，55 帧均没有精确为零的边界体素。独立实现重算 220 个浮点指标和 110 个整数检查，最大相对缩放差 `4.99e-12`，输入 receipts 未变。
+
+这纠正的是两种数据表示结论的适用范围：对当前准备态全分辨率桥接数组，一层置零会明显改变数值场；它没有回答外壳在物理上代表什么、正确的域外延拓/差分是什么，也没有验证 BOS 投影或三维重建。rho 的单位及上游处理仍未核实。V307 不是算法增益，v284 严格整轨迹学习成本判决不变，也没有访问 validation/test/external。详见 [v307 双语摘要](poolfire_fullres_boundary_support_sensitivity_v307_2026-09-30.md)。
+
+### English checkpoint
+
+V304.2's support-mask result concerns a `32x16x16` proxy whose shell was already zeroed during construction; it says nothing about the shell of the prepared full-resolution bridge. V307 fixes 55 frames from 11 already-opened training trajectories and subtracts each interior mean before measuring the effect of zeroing the current grid's outer layer. No scientific pass threshold is introduced.
+
+Zeroing the shell removes median `19.08%` of centered-field L2 norm (p90 `25.65%`, worst `28.67%`) and median `3.64%` of centered energy (p90 `6.58%`, worst `8.22%`). The raw-rho boundary/interior RMS median is `1.020`; no boundary voxel is exactly zero in any of the 55 frames. An independent implementation checks 220 floating metrics and 110 integer values, with maximum relative-scaled difference `4.99e-12` and unchanged input receipts.
+
+This corrects the scope of two representations: one-layer zeroing materially changes the prepared full-resolution bridge numerically. It does not identify the physical meaning of the shell or the correct exterior extension/derivative, and it validates neither BOS projection nor 3D reconstruction. Rho units and upstream processing remain unverified. V307 is not an algorithm gain; V284's strict full-trajectory learned-cost verdict is unchanged, and no validation/test/external data were accessed.
+
+`algorithm_breakthrough=false`; `paper_success=false`; `resource_speedup=false`; `external_generalization=false`; `real_bost=false`.
+
 ## 2026-09-30：v302 共享分量混合不是主要错配解释
 
 对同一批五条已开封轨迹的 25 行做整轨迹留一归因：用四条拟合、第五条评分。两个分量分别缩放的对角 control 在 5/5 折降低连续观测与离散真值投影的归一化差异；允许共享的完整 2×2 分量混合只在 1/5 折略优于对角 control，其余 4/5 折略差，最大变化约 3.5e-5。独立实现最大差 2.66e-15。
