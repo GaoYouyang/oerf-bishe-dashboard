@@ -18899,6 +18899,18 @@ The substantive increment is not a stronger algorithm. It prevents a false concl
 The next step requires either a physically distinct, preregistered mechanism that first establishes 3D-field reference adequacy, or condition-matched real 2D BOS displacement with camera/calibration mapping, repeated-noise data, and an accepted baseline. External generalization, global resource speedup, and real BOST remain unestablished.
 
 `algorithm_breakthrough=false`, `global_resource_speedup_claim=false`, `external_generalization=false`, `real_bost=false`.
+
+## 2026-09-30：p14 独立复现组分—折射率梯度敏感性
+
+在此前 p22 条件性诊断之外，对第二条已开封 PoolFire 训练轨迹的全部 101 帧，按冻结的相同物种系数、N2 补足假设与固定 `Kbar` 重算 `rho*Kmix` 相对 `rho*Kbar` 的差异。p14 的折射率场差 p50/p90/worst 为 `0.09253% / 0.09356% / 0.09528%`，梯度差为 `2.5816% / 2.6189% / 2.6406%`；独立 stencil 实现的最大绝对差为 `2.75e-12`，输入保持不变，未访问 validation/test/external。
+
+这把条件性梯度敏感性从单条轨迹复现到第二条已开封训练轨迹，帮助判断它不是只在 p22 出现的数值偶然；同时没有确认组分语义、缺失物种、适用波长或真实 `n(rho,T,Y)`，p14 本次也没有重新计算二维投影。因此它仍是物理假设敏感性，不是已校准 BOS 前向、重建精度、求解器收益或算法突破。下一步应把待确认项集中交师兄：导出组分的基准与物种闭合、实际折射率公式及波长；真实实验映射仍需另行提供。
+
+### English checkpoint
+
+Beyond the earlier conditional p22 diagnostic, all 101 frames of a second already-open PoolFire training trajectory were recomputed with the same frozen species coefficients, nitrogen-complement assumption, and fixed `Kbar`. For p14, the p50/p90/worst refractivity-field differences between `rho*Kmix` and `rho*Kbar` are `0.09253% / 0.09356% / 0.09528%`; gradient differences are `2.5816% / 2.6189% / 2.6406%`. An independent stencil implementation differs by at most `2.75e-12`; inputs are unchanged and no validation/test/external data were accessed.
+
+This reproduces conditional gradient sensitivity on a second opened training trajectory, rather than establishing that the effect is physically calibrated. Species semantics, omitted-species closure, applicable wavelength, and the actual `n(rho,T,Y)` law remain unconfirmed; no p14 2-D projection was recomputed. This is not a calibrated BOS forward, reconstruction-accuracy result, solver gain, or algorithmic breakthrough. The next useful supervisor clarification is the exported composition basis/closure and actual refractivity law/wavelength; real experimental mapping remains a separate input.
 ## 2026-09-28：v284 同一已开封批次的配对资源复测
 
 **范围。** 五组 fresh-process 配对复测沿用已开封的 v284 505 查询 roster，每个进程执行两条冻结几何路径共 1,010 行；包括进程启动、缓存文件加载、预测/证书与结果封存。训练拟合和 AMG 层级/证书构建成本排除；没有重新评分真值，也没有打开新的验证数据。
