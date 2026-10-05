@@ -239,3 +239,25 @@ are not free. Validator elapsed time is not deployment latency. This is three-fr
 not learned acceleration, full-sequence, noise/calibration robustness, sealed-test, external, real-BOST,
 resource speedup or paper success. Earlier representability and basic reconstruction evidence remain valid.
 Private arrays, formulas, protocols, source, factors and figures remain unpublished.
+
+### 10月6日 固定方向本身缺少场精度容量
+
+后续解析容量审计已独立封存，13项检查全真。在同一99个已开封训练哨兵上，
+即使允许真值可见的最优标量选择，沿这条固定经典状态修正方向也无法达到原场精度门。
+因此不是仅仅在观测与场的最优系数之间折中不够好；该方向的场精度容量本身不足。
+观测单项控制也未达到四指标同精度。不训练这一固定方向的标量选择器。
+这只关闭当前方向，不证明全部学习初始化、三维BOST或论文可能性为假。
+它是事后容量诊断，不是部署算法、完整时序、真实实验或算力突破。
+下一阶段要改变有物理依据的表示，而不是继续给已排除的方向调系数。
+
+### October 6 The fixed direction lacks field-accuracy capacity
+
+The analytic capacity audit is independently sealed with all 13 checks passing. On the same 99
+opened train sentinels, even truth-aware optimal scalar selection along this fixed classical-state
+contrast cannot meet the original field gate. Failure is not merely a compromise between observation
+and field optimal coefficients: the direction itself lacks field-accuracy capacity. The observation-only
+control also misses four-metric matched accuracy. No scalar selector for this fixed direction is trained.
+This closes only the current direction, not all learned initialization, 3D BOST or paper potential.
+It is post-open attribution, not a deployable algorithm, full sequence, real experiment or resource gain.
+The next research question must concern a physically justified representation, not coefficient tuning
+along an already excluded direction. Private arrays, protocols, source and figures remain unpublished.

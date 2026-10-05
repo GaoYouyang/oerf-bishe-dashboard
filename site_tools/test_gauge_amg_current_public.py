@@ -34,7 +34,7 @@ def test_tradeoff_is_bilingual_scoped_and_not_acceleration(page):
     text = (ROOT/page).read_text()
     parser = Section(); parser.feed(text)
     assert text.count(f'id="{BLOCK}"') == 1
-    assert len(parser.nodes) == 3
+    assert len(parser.nodes) == 4
     assert all(node.get('data-i18n-en') for node in parser.nodes)
     english = ' '.join(node['data-i18n-en'] for node in parser.nodes)
     for phrase in ('no training', 'matched accuracy fails', 'most 3D field errors are higher',
@@ -74,3 +74,22 @@ def test_note_keeps_cost_recovery_and_scope():
                    'three-frame sentinel', 'paper success', 'remain unpublished'):
         assert phrase in latest
     assert not re.search(r'\b[0-9a-f]{40,64}\b', latest)
+
+
+def test_fixed_direction_capacity_is_not_global_refutation_or_learning():
+    evidence = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
+    result = evidence['latest_fixed_direction_capacity']
+    assert result['cells'] == result['conservatively_infeasible_cells'] == 99
+    assert result['field_individually_unreachable_cells'] == 99
+    assert result['original_feasible_cells'] == result['observation_control_matched_cells'] == 0
+    assert result['independent_checks_passed'] == 13 and result['post_open_attribution_only']
+    assert result['new_training_parameters'] == 0
+    assert not any(result[key] for key in ('whole_direction_refuted', 'algorithm_breakthrough',
+        'paper_success', 'resource_speedup', 'external_generalization', 'real_bost'))
+    for page in PAGES:
+        parser = Section(); parser.feed((ROOT/page).read_text())
+        nodes = [node for node in parser.nodes if node.get('id') == 'poolfire-fixed-direction-capacity-20261006']
+        assert len(nodes) == 1
+        english = nodes[0]['data-i18n-en']
+        assert 'truth-aware' in english and 'not a refutation of all learned initialization' in english
+        assert 'post-open capacity attribution' in english and 'remains unproven' in english
