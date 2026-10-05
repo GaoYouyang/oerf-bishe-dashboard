@@ -52,6 +52,14 @@
 
 先前表示可行性通过仍有效，旧优化参考失败仍保留。能表达固定目标不等于能廉价预测；基本重建精度不等于同精度加速。本次没有证明整个方向不可能，也没有有效调用、时间或内存节省。训练参数、私有数值、源码和图表不公开。
 
+### 同算子张量初值与更简单的有限步基线
+
+另行冻结的静态三维张量表示对照已经完成：每个样本只用当前观测优化，随后接原样 CGLS。部分空间误差改善，但四指标精度等价门未过，优化与细化的总调用还高于普通 CGLS。普通 CGLS 在更低预算下守住了全部已测哨兵的有限目标匹配与基本绝对精度门，提供了更简单的应用基线；不是驻点认证或完整序列结论。
+
+两套优化实现使用共同冻结的离散矩阵输入，独立重建几何与物理算子对最终场重放。求解全过程并非独立生成算子系数。完整状态先于真值评分封存；坐标读取接口错误只接续缺失评分，没有重训、重跑细化或修改门。原分离算子压力测试失败与旧优化参考失败均保留。
+
+关闭这个固定简化方案，不调模型规模或优化深度救援。它不是完整 TDBOST 复现，不否定师兄原算法，也不证明 C 路线不可能。没有跨轨迹学习、完整序列、外门、真实实验或资源成果；私有输入、参数、数值与图表不发布。
+
 ## English
 
 This update publishes only a qualitative interface check on a private 3D scalar proxy. Raw fields, camera geometry, numerical arrays, figures and group source code are not released. Physical semantics and units remain unconfirmed, so this is neither calibrated pixel BOS displacement nor real-BOST transfer.
@@ -103,3 +111,11 @@ A subsequently preregistered small-model experiment isolates complete trajectori
 The fixed small model meets basic absolute accuracy but fails four-metric matched accuracy against the fixed finite-iterate algorithm comparator. Same-input linear and cheaper classical controls also fail that matched gate, so this is not rejection through an already passing cheap control. This fixed model closes without full-sequence escalation, training-recipe revision or larger-network rescue. It is a learning-sentinel veto on opened training data, not unopened generalization, noise robustness or real BOST.
 
 Earlier representability remains valid, and old optimization-reference failures remain unchanged. Representing a fixed target does not establish cheap prediction; basic reconstruction accuracy is not matched-accuracy acceleration. This establishes neither impossibility of the entire direction nor valid call, time or memory saving. Trained parameters, private numerical results, source and figures are not released.
+
+### Same operator tensor initializer and simpler finite baseline
+
+A separately preregistered static 3D tensor-field control is complete. Each instance is optimized only against its current observation before unchanged CGLS. Some spatial errors improve, but four-metric matched accuracy fails and total optimization plus refinement calls exceed plain CGLS. Plain CGLS matches the finite target and basic absolute gates on every tested sentinel at lower budget, providing a simpler application baseline, not a stationary reference or full-sequence result.
+
+Two optimizer implementations use a shared frozen discrete matrix input. Independently reconstructed geometry and physical operators replay every final field; operator coefficients are not independently generated throughout each solve. Complete states are sealed before truth scoring. A coordinate-access API failure resumes only missing scoring, without fitting, refinement reruns or gate changes. The original split-physics stress-test failure and old optimization-reference failures remain unchanged.
+
+This fixed adaptation closes without model-size or optimizer-depth rescue. It is not full TDBOST reproduction, does not disprove the original algorithm and is not an impossibility proof for the C route. There is no cross-trajectory learning, full sequence, external gate, real experiment or resource result. Private inputs, parameters, numerical values and figures are not released.
