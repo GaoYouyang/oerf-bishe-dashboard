@@ -85,3 +85,18 @@ def test_main_poolfire_attribution_does_not_repair_reference(page):
     assert 'full-space stationarity gate in 0/99 cells' in content
     assert 'parent failed verdict is unchanged' in content
     assert 'not an accuracy veto on all finite-budget reconstructions' in content
+
+
+@pytest.mark.parametrize('page', PAGES)
+def test_fixed_target_lift_is_not_learning_or_reference_rescue(page):
+    parser = Extract('poolfire-fixed-target-lift-20261005')
+    parser.feed((ROOT / page).read_text())
+    translations = [a for a in parser.attributes if 'data-i18n-zh' in a]
+    assert len(translations) == 1 and translations[0].get('data-i18n-en')
+    content = str(parser.attributes)
+    for claim in ('representation gate passes', 'sentinel targets only', 'coefficients read the targets',
+                  'preparation is expensive', 'No training or call saving', 'Old reference failures remain unchanged',
+                  'complete-trajectory prediction and fair total cost are still untested'):
+        assert claim in content
+    for private in ('/Users/', 'private_results', 'psi=U', '1e6', 'alpha0', '7.276'):
+        assert private not in content

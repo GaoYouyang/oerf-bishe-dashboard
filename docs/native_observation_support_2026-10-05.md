@@ -38,6 +38,12 @@
 
 [Hybrid projection methods 综述](https://arxiv.org/html/2105.07221v2) 区分早停的迭代正则化与完整空间优化。这里的含义是：非驻点不是所有有限预算重建的精度否决；未来比较必须预先区分合格优化参考与有限应用精度目标，不能事后将旧失败参考换名为成功。当前没有 learned algorithm、同成本优势、资源节省、外部门或真实 BOST 成果。
 
+### 主线固定目标的完整 lift
+
+随后另行冻结的主线表示审计通过：两套实现分别重建未修改的方向及三角伴随关系，使用相同固定有限目标生成离线系数，再做新鲜物理伴随和前向重放。全部哨兵目标都满足冻结复现与有限范数包络门。这里只证明固定目标的表示可行；不是三维真值可恢复性、完整序列、相机乱序或新相机泛化证明。
+
+系数构造读取目标且重复昂贵方向计算，所有离线与重放调用保留，不能将一次伴随应用说成廉价在线算法。没有训练、同精度省调用或资源成果。旧参考失败不变；未来预测必须另冻目标政策、整轨迹隔离与公平经典对照，不能把这次表示证书当作学习授权，也不能把不同原生代理的条件性限制转移到 PoolFire。
+
 ## English
 
 This update publishes only a qualitative interface check on a private 3D scalar proxy. Raw fields, camera geometry, numerical arrays, figures and group source code are not released. Physical semantics and units remain unconfirmed, so this is neither calibrated pixel BOS displacement nor real-BOST transfer.
@@ -75,3 +81,9 @@ This closes only that bounded representation family. It establishes neither an e
 A separate preregistered replay of every existing sentinel uses identical states, observations and selected parameters in both physical implementations. It independently checks forward, adjoint and normal actions, scalar measures and stratum tails. All checks pass; neither K128 arm meets the inherited full-space stationarity gate. This separates identical-input operator agreement from finite-Krylov reference questions, without replacing the original failed independent comparison. No new inverse solve, CFD truth reading or unopened input access was performed.
 
 The [hybrid projection survey](https://arxiv.org/html/2105.07221v2) distinguishes early-stopped iterative regularization from full-space optimization. The implication here is that nonstationarity is not an accuracy veto for every finite-budget reconstruction. Future comparisons must preregister whether they target a qualified optimization reference or finite application accuracy; an old failed reference cannot be relabeled as success. There is still no learned algorithm, equal-cost advantage, resource reduction, external gate or real BOST result.
+
+### Main-route full lift of fixed targets
+
+A subsequently preregistered main-route representation audit passes. Two implementations separately rebuild unchanged directions and the triangular adjoint relation, generate offline coefficients for identical fixed finite targets, then freshly replay physical adjoint and forward actions. Every sentinel target meets the frozen reproduction and finite-norm-envelope gates. This proves fixed-target representability, not CFD-truth recoverability, full-sequence coverage, permutation testing or new-camera generalization.
+
+Coefficient construction reads the targets and repeats expensive direction generation. All offline and replay calls remain accounted for; a single adjoint application is not a cheap online algorithm. There is no training, matched-accuracy call saving or resource result. Old reference failures remain unchanged. Prediction needs a separate target policy, complete-trajectory isolation and fair classical controls; this certificate alone authorizes no learning, and a different native proxy's conditional obstruction cannot be transferred to PoolFire.
