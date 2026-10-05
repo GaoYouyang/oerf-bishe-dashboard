@@ -56,7 +56,7 @@ def test_v275_figure_is_rendered() -> None:
 
 def test_v275_remains_visible_on_public_surfaces() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == (
+    assert current["historical_common_stop_v4_header"]["scientific_status"] == (
         "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
     )
     assert current["metrics"]["v275_independent_checks_passed"] == 26

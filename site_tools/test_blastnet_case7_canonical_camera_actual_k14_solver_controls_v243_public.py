@@ -61,7 +61,7 @@ def test_v243_figure_and_source_are_public() -> None:
 
 def test_v243_is_preserved_as_historical_parent_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
+    assert current["historical_common_stop_v4_header"]["scientific_status"] == "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
     assert current["current_decision"]["v243_actual_unchanged_k14_solver_passed"] is True
     assert current["current_decision"]["v243_equal_or_cheaper_controls_explain_result"] is False
     assert current["current_decision"]["v243_external_generalization"] is False

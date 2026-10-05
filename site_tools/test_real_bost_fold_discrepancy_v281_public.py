@@ -24,7 +24,7 @@ def test_redacted_result_and_failure_gate():
 
 def test_current_manifest_and_figure():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
-    assert current['scientific_status'] == 'FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE'
+    assert current["historical_common_stop_v4_header"]['scientific_status'] == 'FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE'
     assert current['current_decision']['v281_fixed_estimator_closed'] is True
     assert current['metrics']['v281_cells'] == 108
     assert (ROOT/f'assets/figures/{STEM}.png').stat().st_size > 10000

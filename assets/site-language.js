@@ -40,7 +40,7 @@
       const value = translatedValue(element, 'data-i18n-html', language);
       if (value !== null) element.innerHTML = value;
     }
-    for (const attribute of ['placeholder', 'aria-label', 'title', 'alt', 'value']) {
+    for (const attribute of ['placeholder', 'aria-label', 'title', 'alt', 'value', 'src']) {
       const prefix = `data-i18n-${attribute}`;
       if (!element.hasAttribute(`${prefix}-zh`) && !element.hasAttribute(`${prefix}-en`)) continue;
       const value = translatedValue(element, prefix, language);
@@ -64,6 +64,8 @@
       '[data-i18n-title-en]',
       '[data-i18n-alt-zh]',
       '[data-i18n-alt-en]',
+      '[data-i18n-src-zh]',
+      '[data-i18n-src-en]',
       '[data-i18n-value-zh]',
       '[data-i18n-value-en]'
     ].join(',')).forEach(element => translateElement(element, language));

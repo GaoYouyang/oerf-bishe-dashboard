@@ -11,7 +11,7 @@ REPORT = ROOT / "docs/blastnet_case2_sarc_postopen_v285_result_2026-09-27.md"
 def test_v285_scientific_summary_and_independent_replay():
     evidence = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
     result = evidence["latest_case2_sarc_v285"]
-    assert evidence["scientific_status"] == "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
+    assert evidence["historical_common_stop_v4_header"]["scientific_status"] == "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
     assert result["status"] == "FAIL_CASE2_SAME_FAMILY_POSTOPEN_TRANSFER_ACCURACY_V285"
     assert result["frames"] == 54 and result["joint_accuracy_passed"] == 0
     assert result["independent_curved_forward_replays"] == 216

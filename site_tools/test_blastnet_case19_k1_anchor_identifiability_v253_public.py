@@ -58,7 +58,7 @@ def test_v253_figure_and_builder_are_public() -> None:
 
 def test_v253_remains_preserved_as_historical_evidence() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
+    assert current["historical_common_stop_v4_header"]["scientific_status"] == "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
     metrics = current["metrics"]
     decision = current["current_decision"]
     assert metrics["v253_k1_anchor_safe_rigs"] == 9

@@ -64,7 +64,7 @@ def test_v269_1_figure_is_public_and_readable() -> None:
 
 def test_v269_1_remains_historical_after_v270() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["headline"].startswith("Common-stop audit:")
+    assert current["historical_common_stop_v4_header"]["headline"].startswith("Common-stop audit:")
     assert current["metrics"]["v269_1_independent_checks_passed"] == 28
     assert current["current_decision"]["v269_1_fixed_history_route_closed"] is True
     for path in PAGES:

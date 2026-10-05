@@ -1,3 +1,18 @@
+## 2026-10-05：重正交 Hybrid-GCV 参考资格独立审查
+
+重正交 Hybrid-GCV 参考审查完成：3,333 个样本、36 个分层，独立检查 13/13 通过。128 步绝对误差门为 36/36，但 64 到 128 步四指标稳定性为 0/36，固定参考尝试关闭。没有同精度调用节省、资源优势或真实 BOST 结论。
+
+独立运行的 3,333 个单元已于此前完成；本次只恢复汇总所需的轨迹/相机元数据关联，核验原始数据身份、全部保存状态、四指标及判决。13/13 检查通过，逐检查点状态/物理指标/汇总最大差为 3.06e-11/1.84e-11/1.39e-12。原文件不改、求解器不重跑，新增 0A+0A^T。补齐汇总是工程修复，参考资格被拒绝才是科学判断。四指标在 36 层的最大 p90 变化为 0.049488/0.079524/0.083842/0.005240，均超过冻结 0.001 门。关闭本次固定尝试，不加深或改门救援，也不把宽泛绝对门视为同精度证据。
+
+### English checkpoint
+
+Reorthogonalized Hybrid-GCV reference audit completed: 3,333 samples, 36 strata, and 13/13 independent checks pass. Absolute accuracy at 128 steps passes 36/36, but four-metric stability from 64 to 128 steps passes 0/36. This fixed reference attempt closes; no matched-accuracy call saving, resource benefit, or real BOST result is established.
+
+The independent run had already computed all 3,333 cells. This audit restores only in-memory trajectory/camera metadata for finalization and verifies original data identity, every saved state, four metrics and decisions. All 13 checks pass; maximum per-checkpoint state, physical-metric and summary differences are 3.06e-11/1.84e-11/1.39e-12. No original file changed and no solver was rerun, adding 0A+0A^T. Summary repair is engineering; reference rejection is the scientific outcome. Maximum p90 changes across 36 strata are 0.049488/0.079524/0.083842/0.005240, all above the frozen 0.001 gate. Close this fixed attempt without depth/threshold rescue. Broad absolute limits are not matched accuracy.
+
+[双语完整记录 / Full bilingual note](poolfire_hybrid_gcv_reference_2026-10-05.md) · [脱敏摘要 / Redacted summary](poolfire_hybrid_gcv_reference_2026-10-05_public_summary.json)
+
+
 ## 2026-09-30：v307 全分辨率边界支撑不是可忽略操作
 
 V304.2 的边界 mask 结果针对一份构造时已将外壳置零的 32×16×16 代理；它不能说明准备态全分辨率桥接场的外壳也是零。V307 固定检查 11 条已开封训练轨迹、每条 5 帧，共 55 帧。先减内部均值，再量化把当前网格最外一层置零会移除的范数与能量，不设置科学通过门。

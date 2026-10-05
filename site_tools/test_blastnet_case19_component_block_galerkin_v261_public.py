@@ -76,10 +76,10 @@ def test_v261_remains_preserved_after_v263_1_on_bilingual_primary_pages() -> Non
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
     metrics = current["metrics"]
     decision = current["current_decision"]
-    assert current["scientific_status"] == "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
-    assert current["headline"].startswith("Common-stop audit:")
-    assert current["headline_zh"].startswith("共同停止审裁：")
-    assert current["headline_en"].startswith("Common-stop audit:")
+    assert current["historical_common_stop_v4_header"]["scientific_status"] == "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
+    assert current["historical_common_stop_v4_header"]["headline"].startswith("Common-stop audit:")
+    assert current["historical_common_stop_v4_header"]["headline_zh"].startswith("共同停止审裁：")
+    assert current["historical_common_stop_v4_header"]["headline_en"].startswith("Common-stop audit:")
     assert metrics["v261_independent_checks_passed"] == 41
     assert metrics["v261_primary_absolute_cells"] == 3
     assert metrics["v261_primary_matched_cells"] == 0

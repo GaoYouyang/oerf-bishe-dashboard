@@ -22,8 +22,8 @@ def test_current_bilingual_and_history():
     current = json.loads((ROOT/'operator-learning/current-evidence.json').read_text())
     assert STEM in current['latest_full_trajectory_controls']['summary']
     assert current['formal_status'] == 'PASS_V285_FORMAL_AND_INDEPENDENT_RECOMPUTATION'
-    assert current['scientific_status'] == 'FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE'
-    assert current['latest_common_stop_audit_v4']['status'] == current['scientific_status']
+    assert current["historical_common_stop_v4_header"]['scientific_status'] == 'FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE'
+    assert current['latest_common_stop_audit_v4']['status'] == current['historical_common_stop_v4_header']['scientific_status']
     assert current['latest_common_stop_audit_v4']['new_learned_initializer'] is False
     assert current['latest_common_stop_audit_v4']['v3_solver_refined_outputs'] is True
     assert current['next_scientific_gate'] == current['next_scientific_gate_en']

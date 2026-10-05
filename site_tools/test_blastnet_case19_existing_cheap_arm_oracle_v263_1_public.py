@@ -53,8 +53,8 @@ def test_v263_1_figure_is_public_and_readable() -> None:
 
 def test_v263_1_remains_historical_after_v264_on_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["updated"] == "2026-09-29"
-    assert current["scientific_status"] == "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
+    assert current["historical_common_stop_v4_header"]["updated"] == "2026-09-29"
+    assert current["historical_common_stop_v4_header"]["scientific_status"] == "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
     assert current["metrics"]["v263_1_oracle_joint_pass_rigs"] == 0
     assert current["current_decision"]["v263_1_selector_over_nine_arms_authorized"] is False
     for page in PRIMARY_PAGES:

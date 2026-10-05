@@ -94,7 +94,7 @@
   <header>
     <a class="button" href="./index.html" data-i18n-zh="返回主导航" data-i18n-en="Back to main navigation">返回主导航</a>
     <h1 data-i18n-zh="学习日志模板" data-i18n-en="Learning Log Template">学习日志模板</h1>
-    <p data-i18n-zh="这里记录真正改变研究判断的进展、失败与下一步。最后更新：2026-09-30。" data-i18n-en="This log records results, failures and next steps that actually change the research decision. Last updated: 2026-09-30.">这里记录真正改变研究判断的进展、失败与下一步。最后更新：2026-09-30。</p>
+    <p data-i18n-zh="这里记录真正改变研究判断的进展、失败与下一步。最后更新：2026-10-05。" data-i18n-en="This log records results, failures and next steps that actually change the research decision. Last updated: 2026-10-05.">这里记录真正改变研究判断的进展、失败与下一步。最后更新：2026-10-05。</p>
     <div class="button-row">
       <a class="button primary" href="./thesis_pathway_matrix.html" data-i18n-zh="选题路线矩阵" data-i18n-en="Thesis Pathway Matrix">选题路线矩阵</a>
       <a class="button" href="./he_bost_14day_reading_plan.html" data-i18n-zh="14 天 He/BOST 精读执行包" data-i18n-en="14-Day He/BOST Close-Reading Package">14 天 He/BOST 精读执行包</a>
@@ -105,6 +105,15 @@
   </header>
 
   <main>
+<section class="band" id="hybrid-gcv-reference-20261005">
+<h2 data-i18n-zh="2026-10-05｜算得一致，参考仍未稳定" data-i18n-en="2026-10-05 | Consistent computation, unstable reference">2026-10-05｜算得一致，参考仍未稳定</h2>
+<p data-i18n-zh="重正交 Hybrid-GCV 参考审查完成：3,333 个样本、36 个分层，独立检查 13/13 通过。128 步绝对误差门为 36/36，但 64 到 128 步四指标稳定性为 0/36，固定参考尝试关闭。没有同精度调用节省、资源优势或真实 BOST 结论。" data-i18n-en="Reorthogonalized Hybrid-GCV reference audit completed: 3,333 samples, 36 strata, and 13/13 independent checks pass. Absolute accuracy at 128 steps passes 36/36, but four-metric stability from 64 to 128 steps passes 0/36. This fixed reference attempt closes; no matched-accuracy call saving, resource benefit, or real BOST result is established.">重正交 Hybrid-GCV 参考审查完成：3,333 个样本、36 个分层，独立检查 13/13 通过。128 步绝对误差门为 36/36，但 64 到 128 步四指标稳定性为 0/36，固定参考尝试关闭。没有同精度调用节省、资源优势或真实 BOST 结论。</p>
+<p data-i18n-zh="这次补齐的是已完成独立运行的汇总，不是重新训练或重跑求解器。只恢复内存中的元数据关联，原结果与冻结标准不变；新增 0A+0A^T。" data-i18n-en="This completes the summary of an existing independent run, not new training or a solver rerun. Only in-memory metadata associations were restored; original results and frozen criteria are unchanged, adding 0A+0A^T.">这次补齐的是已完成独立运行的汇总，不是重新训练或重跑求解器。只恢复内存中的元数据关联，原结果与冻结标准不变；新增 0A+0A^T。</p>
+<p data-i18n-zh="本轮只能拒绝这套固定参考，不能由此认定整个 C 路线失败。达到宽泛绝对门不等于四指标精度匹配。" data-i18n-en="This rejects only the fixed reference attempt, not the entire C route. Passing broad absolute limits is not four-metric accuracy matching.">本轮只能拒绝这套固定参考，不能由此认定整个 C 路线失败。达到宽泛绝对门不等于四指标精度匹配。</p>
+<p><a href="./document_reader.html?doc=docs%2Fpoolfire_hybrid_gcv_reference_2026-10-05.md" data-i18n-zh="完整双语判决" data-i18n-en="Full bilingual result">完整双语判决</a> · <a href="./docs/poolfire_hybrid_gcv_reference_2026-10-05_public_summary.json" data-i18n-zh="脱敏数值摘要" data-i18n-en="Redacted numerical summary">脱敏数值摘要</a></p>
+
+<p data-i18n-zh="下方为保留的历史记录；各项结论只适用于其原数据与算子合同。" data-i18n-en="The entries below are retained historical records; each conclusion applies only to its original data and operator contract.">下方为保留的历史记录；各项结论只适用于其原数据与算子合同。</p>
+</section>
     <section class="notice" id="research-update-2026-09-30-v307-boundary-support">
       <h2 data-i18n-zh="2026-09-30｜V307：全分辨率边界置零并非可忽略" data-i18n-en="2026-09-30 | V307: zeroing the full-resolution boundary is not negligible">2026-09-30｜V307：全分辨率边界置零并非可忽略</h2>
       <p data-i18n-zh="在 11 条已开封训练轨迹的 55 帧准备态全分辨率场上，先减内部均值再置零最外一层，会移除 L2 范数中位数 19.08%、p90 25.65%。V304.2 的“无影响”只适用于已预先置零的低分辨率代理。两者不矛盾；物理边界含义仍未知。独立复算 220 个浮点指标与 110 个整数检查，最大差 4.99e-12。" data-i18n-en="On 55 prepared full-resolution fields from 11 already-opened training trajectories, subtracting the interior mean and zeroing the outer layer removes a median 19.08% of L2 norm (p90 25.65%). V304.2's no-effect result applies only to a coarse proxy whose shell was already zero. The results do not conflict; physical boundary semantics remain unknown. Independent recomputation checks 220 floating metrics and 110 integer values, with maximum difference 4.99e-12.">在 11 条已开封训练轨迹的 55 帧准备态全分辨率场上，先减内部均值再置零最外一层，会移除 L2 范数中位数 19.08%、p90 25.65%。V304.2 的“无影响”只适用于已预先置零的低分辨率代理。两者不矛盾；物理边界含义仍未知。独立复算 220 个浮点指标与 110 个整数检查，最大差 4.99e-12。</p>

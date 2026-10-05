@@ -74,7 +74,7 @@ def test_v252_figure_and_builder_are_public() -> None:
 
 def test_v252_is_preserved_on_bilingual_primary_pages() -> None:
     current = json.loads(CURRENT.read_text(encoding="utf-8"))
-    assert current["scientific_status"] == "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
+    assert current["historical_common_stop_v4_header"]["scientific_status"] == "FAIL_LEARNED_INITIALIZER_NO_ROBUST_CALL_ADVANTAGE"
     metrics = current["metrics"]
     decision = current["current_decision"]
     assert metrics["v252_numeric_checks_failed"] == 3
