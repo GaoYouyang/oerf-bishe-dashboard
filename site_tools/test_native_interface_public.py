@@ -8,8 +8,9 @@ PAGES = ('index.html', 'operator-learning/index.html', 'operator-learning/daily-
 
 
 class Extract(HTMLParser):
-    def __init__(self):
+    def __init__(self, block_id='native-interface-check-20261005'):
         super().__init__()
+        self.block_id = block_id
         self.active = False
         self.tag = None
         self.attributes = []
@@ -17,7 +18,7 @@ class Extract(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
-        if attrs.get('id') == 'native-interface-check-20261005':
+        if attrs.get('id') == self.block_id:
             assert not self.active
             self.active, self.tag = True, tag
         if self.active:
@@ -37,7 +38,7 @@ def test_native_interface_bilingual_and_private(page):
     parser = Extract()
     parser.feed((ROOT / page).read_text())
     translated = [a for a in parser.attributes if 'data-i18n-zh' in a]
-    assert len(translated) == 5
+    assert len(translated) == 6
     assert all(a.get('data-i18n-en') for a in translated)
     content = '\n'.join(parser.text) + '\n' + str(parser.attributes)
     for forbidden in ('jetflame', 'spray', 'Vq', '.mat', '/Users/', 'private_results', '101×174', '1774974', '1,774,974', '10.43655'):
@@ -54,6 +55,8 @@ def test_native_interface_bilingual_and_private(page):
     assert 'post-open unchanged-CGLS refinement' in content
     assert 'without harming 3D accuracy' in content
     assert 'only the refinement increment, not the full TV initializer' in content
+    assert 'preregistered finite dual norm' in content
+    assert 'not unbounded-dual, general-PCGLS or PoolFire impossibility' in content
     assert any('native_observation_support_2026-10-05.md' in a.get('href', '') for a in parser.attributes)
 
 
@@ -64,5 +67,21 @@ def test_qualitative_note_has_no_private_arrays_or_counts():
     assert 'equal-total-cost algorithm advantage' in note
     assert 'complete nonlinear TV initial state' in note
     assert 'Historical costs' in note
+    assert 'bounded representation family' in note
+    assert 'General PCGLS' in note
+    assert 'identical states, observations and selected parameters' in note
+    assert 'old failed reference cannot be relabeled as success' in note
     for forbidden in ('jetflame', 'spray', 'Vq', '.mat', '/Users/', 'private_results', '101×174', '1774974', '1,774,974', '10.43655', '60/60', '43/60'):
         assert forbidden not in note
+
+
+@pytest.mark.parametrize('page', PAGES)
+def test_main_poolfire_attribution_does_not_repair_reference(page):
+    parser = Extract('hybrid-gcv-reference-20261005')
+    parser.feed((ROOT / page).read_text())
+    content = '\n'.join(parser.text) + '\n' + str(parser.attributes)
+    assert 'identical-input normal-action replay' in content
+    assert '12/12 independent checks on all 99 existing sentinels' in content
+    assert 'full-space stationarity gate in 0/99 cells' in content
+    assert 'parent failed verdict is unchanged' in content
+    assert 'not an accuracy veto on all finite-budget reconstructions' in content

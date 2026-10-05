@@ -26,6 +26,18 @@
 
 新鲜伴随见证只核对细化增量，并未证明完整的非线性 TV 初值能由 exact lift 产生。昂贵 TV 初值的历史成本全部保留，收敛认证也没有因观测拟合改善而改写。下一实质门是合格参考、完整初始化的表示可行性和便宜 observation/geometry-only 初始化的公平比较；没有授权训练、完整时序、未打开数据或速度结论。
 
+### 条件性伴随表示限制
+
+内部独立见证进一步给出必要场误差界：在该冻结原生离散算子和结果前固定的有限对偶范数条件下，pure-adjoint 场族不能达到原场精度门。已知伴随表示对照没有误报。局部字典的独立门失败仍保留为不可判定，不因同一见证的物理重放通过而改写。
+
+这只关闭该有界表示族，不证明精确零空间、无界对偶不可达性、连续光学或整个 C 路线不可能。一般 PCGLS 可能改变原伴随范围，没有被排除；普通 CGLS 的终端累计对偶范数也未在这个界中测量。不能转移到 PoolFire、另一网格、完整时序或真实 BOST。更大的预测器无法改变一个固定表示族的容量，但本次并未训练预测器。私有条件值、数值结果与图表仍不发布。
+
+### 主线 PoolFire 同输入正规作用
+
+主线另行结果前冻结了全体既有哨兵的同输入重放：两套物理实现使用完全相同的状态、观测和已选参数，独立核对前向、伴随、正规残差、标量和分层尾部。完整检查通过；两种 K128 状态均未满足继承的完整空间驻点门。它将同输入算子作用的一致性与有限 Krylov 参考问题区分开，不能覆盖旧的独立超门判决，也没有新逆解、CFD 真值读取或未打开数据访问。
+
+[Hybrid projection methods 综述](https://arxiv.org/html/2105.07221v2) 区分早停的迭代正则化与完整空间优化。这里的含义是：非驻点不是所有有限预算重建的精度否决；未来比较必须预先区分合格优化参考与有限应用精度目标，不能事后将旧失败参考换名为成功。当前没有 learned algorithm、同成本优势、资源节省、外部门或真实 BOST 成果。
+
 ## English
 
 This update publishes only a qualitative interface check on a private 3D scalar proxy. Raw fields, camera geometry, numerical arrays, figures and group source code are not released. Physical semantics and units remain unconfirmed, so this is neither calibrated pixel BOS displacement nor real-BOST transfer.
@@ -51,3 +63,15 @@ The separately frozen classical TV solve under clean observation constraints is 
 Unchanged CGLS from the sealed finite TV initial states independently improves observation fit without harming their existing 3D accuracy. The same short zero-start control fails the joint accuracy gate. This supports compatibility of a structured initial state with unchanged refinement, not blind confirmation, a qualified reference or equal-total-cost algorithm advantage.
 
 A fresh adjoint witness covers only the refinement increment: it does not establish that the complete nonlinear TV initial state can be produced by exact lift. Historical costs of the expensive TV state are retained, and better observation fit does not revise convergence certification. The next substantive requirements remain a qualified reference, full-initializer representability and a fair comparison of genuinely cheap observation/geometry-only initialization. Training, full-sequence escalation, unopened data and speed claims remain unauthorized.
+
+### Conditional adjoint representation limit
+
+An internal independent witness supplies a necessary field-error bound: for the frozen native discretization and a preregistered finite dual norm, the pure-adjoint field family cannot meet the unchanged field-accuracy gate. A known adjoint-representable control gives no false positive. The failed local dictionary remains inconclusive; agreement when replaying an identical witness does not revise that failed dictionary audit.
+
+This closes only that bounded representation family. It establishes neither an exact nullspace, unbounded-dual impossibility, continuous optical certification nor failure of the C route. General PCGLS may change the original adjoint range and is not excluded; the accumulated terminal dual norm of ordinary CGLS is also not measured by this bound. No transfer to PoolFire, another grid, a full sequence or real BOST follows. A larger predictor cannot alter a fixed representation's capacity, but no predictor was trained. Private condition values, numerical results and figures remain unpublished.
+
+### Main PoolFire identical input normal action
+
+A separate preregistered replay of every existing sentinel uses identical states, observations and selected parameters in both physical implementations. It independently checks forward, adjoint and normal actions, scalar measures and stratum tails. All checks pass; neither K128 arm meets the inherited full-space stationarity gate. This separates identical-input operator agreement from finite-Krylov reference questions, without replacing the original failed independent comparison. No new inverse solve, CFD truth reading or unopened input access was performed.
+
+The [hybrid projection survey](https://arxiv.org/html/2105.07221v2) distinguishes early-stopped iterative regularization from full-space optimization. The implication here is that nonstationarity is not an accuracy veto for every finite-budget reconstruction. Future comparisons must preregister whether they target a qualified optimization reference or finite application accuracy; an old failed reference cannot be relabeled as success. There is still no learned algorithm, equal-cost advantage, resource reduction, external gate or real BOST result.
