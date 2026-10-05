@@ -145,3 +145,17 @@ The independently sealed classical control combines the full within-camera two-c
 Two implementations construct geometry factors independently, solve with a shared frozen matrix and replay every endpoint through independently reconstructed physics. All states seal before truth scoring. The ill-conditioned synthetic finite-step refinement failures remain failed; pre-science controlled diagnosis explains floating-point sensitivity without exempting actual-data numerical or physical gates. Factorization, cache storage and block actions are not free. No learned, full-sequence, external, noise/calibration-robustness, real BOST or resource result follows. Private numerical results, source, factors and parameters are not released.
 
 This is an existing classical block projection idea, not a new invention. See [Sorensen and Hansen, block reconstruction methods](https://backend.orbit.dtu.dk/ws/files/127276212/BlockAIRv3.pdf). That paper does not establish BOST acceleration in this experiment.
+
+### 10月6日 信息审计与输入舍入
+
+受控信息审计仍未通过完整教师数值一致性门，结论保留为不确定。单独冻结的交叉输入对照使用全部已检验训练哨兵：两套原样教师代码在相同精确输入上输出一致；九相机受控样本的极小输入舍入差异却放大到原一致性门之外。交叉状态先封存，独立汇总核验原因，不改原容差、扰动或目标。
+
+该诊断不能证明局部特征不足、三维重建不可能或旧模型失败的原因；旧基本重建和同精度失败结论保留。没有新真值、测试或训练，新增投影只是共同矩阵作用而非新物理验证。全部诊断计算是离线成本，不是加速，不能据此改造已关闭模型或租GPU。私有数值、源码、系数和参数不公开。
+
+### October 6 Information audit and input rounding
+
+The controlled information audit remains inconclusive because complete teacher numerical closure fails. A separately frozen crossed-input comparison covers every tested training sentinel. Both unchanged teacher implementations agree on the same exact input, whereas tiny input-rounding differences in the controlled nine-camera samples amplify beyond the original consistency gate. Crossed states seal before independently recomputed diagnostic aggregation; no original tolerance, perturbation or target is changed.
+
+This does not prove insufficient local features, impossible 3D reconstruction or the cause of the old model failure. Old basic-accuracy and matched-accuracy decisions remain unchanged. There is no new truth, test or training; new projection checks use the shared matrix rather than a newly rebuilt physical operator. All diagnostic work is offline cost, not acceleration, and cannot authorize rescue of a closed model or GPU rental. Private numerical results, source, coefficients and parameters remain unpublished.
+
+Finite-precision CGLS/LSQR behavior is established numerical analysis, not a new invention. [Bjorck, Elfving and Strakos](https://epubs.siam.org/doi/10.1137/S089547989631202X) study attainable accuracy for particular implementations; their paper alone does not establish the cause in this proxy.
