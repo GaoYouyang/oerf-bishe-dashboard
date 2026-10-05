@@ -86,7 +86,9 @@
     footer { color: var(--muted); font-size: 12px; margin: 34px 0; }
     @media (max-width: 840px) {
       .grid.two { grid-template-columns: 1fr; }
-      table { display: block; overflow-x: auto; }
+      table { table-layout: fixed; }
+      th, td { overflow-wrap: anywhere; }
+      p { overflow-wrap: anywhere; }
     }
   </style>
 </head>
@@ -109,6 +111,7 @@
 <h2 data-i18n-zh="私有三维输入：先核对观测支持" data-i18n-en="Private 3D input: observation support first">私有三维输入：先核对观测支持</h2>
 <p data-i18n-zh="内部独立第二实现确认：旧粗探测器存在零列节点；由已知坐标和几何定义的原生密采样完整视野配置消除了零列。相同采样密度的旧视野对照也解除支持下界否决，不能把改善归功于独特算法或学习模型。" data-i18n-en="An internal independent second implementation confirms zero-column nodes in the old coarse detector. A geometry-only complete-view configuration with native-scale dense sampling removes them. The equally dense old-view control also clears the support-bound veto; improvement cannot be credited to a unique algorithm or learned model.">内部独立第二实现确认：旧粗探测器存在零列节点；由已知坐标和几何定义的原生密采样完整视野配置消除了零列。相同采样密度的旧视野对照也解除支持下界否决，不能把改善归功于独特算法或学习模型。</p>
 <p data-i18n-zh="这只是必要的观测支持检查，不是四指标重建成功、合格参考解、真实 BOST 或提速。更密的探测器改变每次 A/A^T 的成本；物理语义与单位仍待确认。私有原始场、几何、数值数组和图表不公开。" data-i18n-en="This is only a necessary observation-support check, not four-metric reconstruction success, a qualified reference, real BOST or speedup. Denser detectors change the cost of each A/A^T call; physical semantics and units remain unconfirmed. Private raw fields, geometry, numerical arrays and figures are not published.">这只是必要的观测支持检查，不是四指标重建成功、合格参考解、真实 BOST 或提速。更密的探测器改变每次 A/A^T 的成本；物理语义与单位仍待确认。私有原始场、几何、数值数组和图表不公开。</p>
+<p data-i18n-zh="后续同固定场的独立物理重放确认：三维场差别很大时，二维观测仍可接近。真值可见的固定场对中，TV 偏好正确场，平方梯度则偏好错误场；这只是先验排序，不是 TV 重建成功。随后经典 TV 有限步结果独立一致并改善首帧精度，但收敛证书未过，参考仍不可判定；不授权训练或提速结论。" data-i18n-en="A later independent physical replay of identical fixed fields confirms that large 3D differences can coexist with nearly identical 2D observations. In a truth-visible fixed-pair audit, TV favors the true field while squared gradients favor the wrong field. This is only prior ranking, not TV reconstruction success. Later classical TV finite iterates independently agree and improve first-frame accuracy, but fail convergence certification. The unregularized reference remains inconclusive, and the TV reference is also uncertified; no training or speed claim is authorized.">后续同固定场的独立物理重放确认：三维场差别很大时，二维观测仍可接近。真值可见的固定场对中，TV 偏好正确场，平方梯度则偏好错误场；这只是先验排序，不是 TV 重建成功。随后经典 TV 有限步结果独立一致并改善首帧精度，但收敛证书未过，参考仍不可判定；不授权训练或提速结论。</p>
 <p><a href="document_reader.html?doc=docs%2Fnative_observation_support_2026-10-05.md" data-i18n-zh="定性说明与证据边界" data-i18n-en="Qualitative note and evidence limits">定性说明与证据边界</a></p>
 </section>
 <section class="band" id="hybrid-gcv-reference-20261005">

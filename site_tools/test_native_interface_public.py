@@ -37,7 +37,7 @@ def test_native_interface_bilingual_and_private(page):
     parser = Extract()
     parser.feed((ROOT / page).read_text())
     translated = [a for a in parser.attributes if 'data-i18n-zh' in a]
-    assert len(translated) == 4
+    assert len(translated) == 5
     assert all(a.get('data-i18n-en') for a in translated)
     content = '\n'.join(parser.text) + '\n' + str(parser.attributes)
     for forbidden in ('jetflame', 'spray', 'Vq', '.mat', '/Users/', 'private_results', '101×174', '1774974', '1,774,974', '10.43655'):
@@ -45,6 +45,12 @@ def test_native_interface_bilingual_and_private(page):
     assert 'necessary observation-support check' in content
     assert 'equally dense old-view control' in content
     assert 'not four-metric reconstruction success' in content
+    assert 'truth-visible fixed-pair audit' in content
+    assert 'not TV reconstruction success' in content
+    assert 'unregularized reference remains inconclusive' in content
+    assert 'nearly identical 2D observations' in content
+    assert 'fail convergence certification' in content
+    assert 'no training or speed claim is authorized' in content
     assert any('native_observation_support_2026-10-05.md' in a.get('href', '') for a in parser.attributes)
 
 
