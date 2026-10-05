@@ -203,3 +203,39 @@ pooled field/gradient improvement is not a replacement for four per-cell gates.
 Preconditioner applications, caches and prior learning are not free, and validator elapsed time is not deployment latency.
 No learned acceleration, full-sequence, sealed external, resource or real-BOST conclusion follows.
 Private formulas, protocols, arrays, source and figures remain unpublished.
+
+### 10月6日 观测拟合与三维场精度分离
+
+同一已开封公开训练哨兵上的固定AMG经典对照现已独立封存。
+不训练模型，不改变物理数据项；严格四指标同精度失败，基础分层只有部分通过。
+相比相同算子调用预算的普通CGLS，全部观测拟合更好，却有多数三维场更差。
+该信号说明残差下降不能代替三维物理精度；不证明某一种零空间或层级构造是唯一根因。
+关闭这一个固定配方，不修改层级、平滑或深度救援，也不关闭整个C路线。
+
+两套实现分别构造层级和细化，以共同冻结矩阵求解，独立重建物理算子重放全部终点。
+原独立时限中断保留，只复用已完成前缀并按原科学合同接续剩余状态。
+后续模块导入和元数据写入顺序错误同样保留；不放宽门，不重置单次凭证，不重复完整计算。
+缓存正规矩阵作用、几何层级、中断和重复准备工作、旧训练均不是免费。
+独立运行耗时不能充当公平部署时延。只有三帧哨兵，没有完整时序、噪声标定扰动、
+封存测试、外部、真实BOST或学习加速结论；高水平论文目标仍未达到。
+已有可表示性与基本经典重建证据保留。私有数值数组、公式、协议、源码、因子和图表不发布。
+
+### October 6 Observation fit versus 3D field accuracy
+
+The fixed AMG classical control is independently sealed on the same opened public train sentinels.
+It trains no model and changes no physical data term. Strict four-metric matched accuracy fails;
+only some basic strata pass. Every observation fit improves over plain CGLS at the same operator-call budget,
+yet most 3D field errors worsen. A lower residual is not sufficient for physical accuracy.
+This does not identify a unique nullspace or hierarchy failure cause. The exact fixed recipe closes
+without hierarchy, smoothing or depth rescue, not the whole C route.
+
+Both implementations separately build hierarchy and refinement, solve with a shared frozen matrix
+and replay every endpoint through independently rebuilt physics. The original independent time-limit
+failure remains preserved; only completed prefixes are reused and remaining states continue under
+the unchanged science contract. Import and metadata-output-order failures also remain preserved.
+No accuracy gate is relaxed, single-use receipt reset or complete computation repeated.
+Cached normal actions, geometry hierarchies, interrupted and duplicate setup work and prior training
+are not free. Validator elapsed time is not deployment latency. This is three-frame sentinel evidence only,
+not learned acceleration, full-sequence, noise/calibration robustness, sealed-test, external, real-BOST,
+resource speedup or paper success. Earlier representability and basic reconstruction evidence remain valid.
+Private arrays, formulas, protocols, source, factors and figures remain unpublished.
