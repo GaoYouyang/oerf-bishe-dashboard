@@ -60,6 +60,12 @@
 
 关闭这个固定简化方案，不调模型规模或优化深度救援。它不是完整 TDBOST 复现，不否定师兄原算法，也不证明 C 路线不可能。没有跨轨迹学习、完整序列、外门、真实实验或资源成果；私有输入、参数、数值与图表不发布。
 
+### 有限积分盒导数补偿初值
+
+一个结果前固定的经典初值对照已完成：只用当前观测、已知几何与便宜 BP 状态估计有限积分盒和离散标量投影导数的差异，做固定软滤波与精确伴随提升，再接原样 CGLS。独立复算确认基础精度通过，但四指标同精度失败；在每个已检验哨兵上，便宜 BP 初值和普通 CGLS 对照的四项误差都更低。补偿优于单独滤波的部分样本不构成加速，关闭这个固定机制，不修改滤波、边界或预算救援。
+
+两套实现使用共同冻结的离散矩阵作为求解输入，并由独立重建的物理算子重放最终场，全部状态先于真值评分封存。合成核验中的光滑边界恒等式不适用于截断插值分支；单独解析检查解释了差异，原失败记录保留，候选和科学门不变。额外导数作用与准备成本不免费。这不是学习模型、精确无旋约束、完整序列、外部泛化、真实 BOST 或资源优势，也不证明整个 C 路线不可能。
+
 ## English
 
 This update publishes only a qualitative interface check on a private 3D scalar proxy. Raw fields, camera geometry, numerical arrays, figures and group source code are not released. Physical semantics and units remain unconfirmed, so this is neither calibrated pixel BOS displacement nor real-BOST transfer.
@@ -119,3 +125,9 @@ A separately preregistered static 3D tensor-field control is complete. Each inst
 Two optimizer implementations use a shared frozen discrete matrix input. Independently reconstructed geometry and physical operators replay every final field; operator coefficients are not independently generated throughout each solve. Complete states are sealed before truth scoring. A coordinate-access API failure resumes only missing scoring, without fitting, refinement reruns or gate changes. The original split-physics stress-test failure and old optimization-reference failures remain unchanged.
 
 This fixed adaptation closes without model-size or optimizer-depth rescue. It is not full TDBOST reproduction, does not disprove the original algorithm and is not an impossibility proof for the C route. There is no cross-trajectory learning, full sequence, external gate, real experiment or resource result. Private inputs, parameters, numerical values and figures are not released.
+
+### Finite box derivative compensation initializer
+
+A preregistered classical initializer control is complete. It uses only the current observation, known geometry and a cheap BP state to estimate the finite-box and discrete scalar-projection derivative defect, then applies a fixed soft filter, exact adjoint lift and unchanged CGLS. Independent recomputation confirms basic accuracy but fails four-metric matched accuracy. On every tested sentinel, cheaper BP initialization and plain CGLS controls have lower errors in all four metrics. Improvement over the filter-only arm on some samples is not acceleration. This fixed mechanism closes without filter, boundary or budget rescue.
+
+Two implementations use a shared frozen matrix for solves, independently reconstructed physics replays every final field and all states are sealed before truth scoring. A synthetic smooth-boundary identity does not hold for the clipped interpolation branch; separate analytic checks explain the difference while preserving the failed record and leaving the candidate and scientific gates unchanged. Additional derivative actions and setup are not free. This is not a learned model, exact curl-free constraint, full sequence, external generalization, real BOST or resource advantage, and does not establish impossibility of the C route.
