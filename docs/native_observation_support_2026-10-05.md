@@ -159,3 +159,17 @@ The controlled information audit remains inconclusive because complete teacher n
 This does not prove insufficient local features, impossible 3D reconstruction or the cause of the old model failure. Old basic-accuracy and matched-accuracy decisions remain unchanged. There is no new truth, test or training; new projection checks use the shared matrix rather than a newly rebuilt physical operator. All diagnostic work is offline cost, not acceleration, and cannot authorize rescue of a closed model or GPU rental. Private numerical results, source, coefficients and parameters remain unpublished.
 
 Finite-precision CGLS/LSQR behavior is established numerical analysis, not a new invention. [Bjorck, Elfving and Strakos](https://epubs.siam.org/doi/10.1137/S089547989631202X) study attainable accuracy for particular implementations; their paper alone does not establish the cause in this proxy.
+
+### 10月6日 观测前置选择学习实验
+
+另行冻结的小模型先对当前观测做共享非线性选择，再执行精确跨相机传播与伴随提升，接原样CGLS。使用经典算法的三维输出场监督，不直接拟合任意对偶坐标。整轨迹留出的训练和独立第二实现已封存；基础精度通过，四指标同精度失败。同价后置学习对照也未通过。关闭这个固定结构与配方，不通过加宽、改目标损失或加深细化救援。
+
+封存结果的事后描述发现：初值更接近目标，部分便宜初值的误差也改善，但近预算的普通CGLS仍更好。不是纯粹没学到，而是改善不足以形成最终同精度成本优势。后置对照参数量不同，不能把这个比较说成严格隔离的顺序因果证明。两套训练使用共同冻结矩阵，并由独立重建的物理算子重放终点；不是所有算子系数都独立生成。训练、教师、几何缓存、诊断与部署成本分开披露，没有完整时序、封存测试、噪声标定鲁棒性、时间内存优势、外部泛化或真实BOST结论。私有原始数据、协议、数值数组、源码、权重与图表不公开。
+
+### October 6 Learning observation selection before physics propagation
+
+A separately frozen small model applies shared nonlinear selection to the current observation before exact cross-camera propagation and adjoint lift, then unchanged CGLS. Supervision uses a classical algorithm's physical field rather than arbitrary dual coordinates. Complete-trajectory held-out training and an independent second implementation are sealed: basic accuracy passes, four-metric matched accuracy fails, and the equal-call-budget post-selection learned control also fails. This fixed architecture and recipe close without width, target/loss or refinement-depth rescue.
+
+Post-open description finds a closer initializer and improvements over some cheap warm starts, but near-budget plain CGLS remains better. Some learning occurs, yet it does not yield final matched-accuracy cost benefit. The control has a different parameter count, so this is not a parameter-matched causal proof of ordering. Both fits use a shared frozen matrix and independently reconstructed final physical replay; operator coefficients are not independently generated throughout each solve. Training, teacher, geometry-cache, diagnostics and deployment costs remain separate. No full sequence, sealed test, noise/calibration robustness, resource speedup, external or real-BOST result follows. Private data, protocols, arrays, source, weights and figures remain unpublished.
+
+Physics-embedded learning and variable-input equivariance have established precedents in [learned primal-dual reconstruction](https://arxiv.org/abs/1707.06474) and [VIDON](https://arxiv.org/abs/2205.11404). Neither supplies evidence of BOST acceleration in this trial.
