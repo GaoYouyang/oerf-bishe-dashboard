@@ -116,8 +116,8 @@ def test_normal_gate_learning_failure_is_not_global_impossibility(page):
                   'separately train, lift, physically replay', 'without full-sequence or larger-network escalation',
                   'old optimization-reference failures are unchanged', 'no impossibility proof'):
         assert claim in content
-    for private in ('/Users/', 'private_results', 'NormalGate66', '66-parameter', '0/99',
-                    '1390.50', '0.434806', '0.886948', '0861a253'):
+    for private in ('/Users/', 'private_results', 'FROZEN.json', 'state_dict',
+                    'trainable_parameters', 'learning_rate', 'sha256'):
         assert private not in content
 
 
@@ -128,5 +128,5 @@ def test_learning_note_retains_scope_and_prior_verdicts():
     assert 'basic reconstruction accuracy is not matched-accuracy acceleration' in note
     assert 'not unopened generalization, noise robustness or real BOST' in note
     assert 'old optimization-reference failures remain unchanged' in note
-    for private in ('NormalGate66', '0/99', '35,547', '0.434806', '1390.50'):
+    for private in ('FROZEN.json', 'state_dict', 'trainable_parameters', 'learning_rate', 'sha256'):
         assert private not in note
