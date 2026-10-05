@@ -51,6 +51,9 @@ def test_native_interface_bilingual_and_private(page):
     assert 'nearly identical 2D observations' in content
     assert 'fail convergence certification' in content
     assert 'no training or speed claim is authorized' in content
+    assert 'post-open unchanged-CGLS refinement' in content
+    assert 'without harming 3D accuracy' in content
+    assert 'only the refinement increment, not the full TV initializer' in content
     assert any('native_observation_support_2026-10-05.md' in a.get('href', '') for a in parser.attributes)
 
 
@@ -58,5 +61,8 @@ def test_qualitative_note_has_no_private_arrays_or_counts():
     note = (ROOT / 'docs/native_observation_support_2026-10-05.md').read_text()
     assert '## 中文' in note and '## English' in note
     assert 'not an open external benchmark' in note
+    assert 'equal-total-cost algorithm advantage' in note
+    assert 'complete nonlinear TV initial state' in note
+    assert 'Historical costs' in note
     for forbidden in ('jetflame', 'spray', 'Vq', '.mat', '/Users/', 'private_results', '101×174', '1774974', '1,774,974', '10.43655', '60/60', '43/60'):
         assert forbidden not in note

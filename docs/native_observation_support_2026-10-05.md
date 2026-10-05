@@ -20,6 +20,12 @@
 
 随后单独冻结的经典干净观测约束 TV 求解完成。成熟求解库与单独递推、几何和梯度实现的有限步输出通过内部独立一致性核对，首帧三维精度改善；但新鲜可行性与固定点收敛证书没有通过，权威参考判决仍不可判定。不能把绝对精度门通过替代参考认证，也不能把昂贵经典求解当成便宜 initializer。没有开启完整时序扩展，不授权学习、提速、外部泛化或真实 BOST 结论；不事后加深迭代、放宽证书或挑选更容易的场。
 
+### 后开封固定初值与精确细化
+
+原样 CGLS 接在已封存的 TV 有限步初值后，独立复算确认二维拟合改善而已有三维精度未受伤害；同样短的零初值对照未达到联合精度门。这只支持结构性初值与未修改细化器的兼容性，不是盲测、合格参考或等总成本算法优势。
+
+新鲜伴随见证只核对细化增量，并未证明完整的非线性 TV 初值能由 exact lift 产生。昂贵 TV 初值的历史成本全部保留，收敛认证也没有因观测拟合改善而改写。下一实质门是合格参考、完整初始化的表示可行性和便宜 observation/geometry-only 初始化的公平比较；没有授权训练、完整时序、未打开数据或速度结论。
+
 ## English
 
 This update publishes only a qualitative interface check on a private 3D scalar proxy. Raw fields, camera geometry, numerical arrays, figures and group source code are not released. Physical semantics and units remain unconfirmed, so this is neither calibrated pixel BOS displacement nor real-BOST transfer.
@@ -39,3 +45,9 @@ The unregularized native reference fails its frozen-budget convergence certifica
 A truth-visible fixed-pair audit also confirms that isotropic TV favors the true field while a squared-gradient penalty favors the wrong field. This ranking fits no parameters and computes no new inverse solution; it proves neither uniqueness nor successful TV reconstruction. TV already has [BOS flame-tomography precedents](https://www.sciencedirect.com/science/article/pii/S0010218018302694) and is not a first-method contribution here.
 
 The separately frozen classical TV solve under clean observation constraints is now complete. Finite iterates from an established solver library and a separate recurrence, geometry and gradient implementation pass internal independent consistency checks and improve first-frame 3D accuracy. Fresh feasibility and fixed-point convergence certificates nevertheless fail, leaving the authoritative reference verdict inconclusive. Absolute accuracy is not reference certification, and an expensive classical solve is not a cheap initializer. No full-sequence escalation, learning, speed, external generalization or real-BOST claim is authorized; iteration depth, certificates and target fields are not revised after results.
+
+### Post-open fixed initial state and exact refinement
+
+Unchanged CGLS from the sealed finite TV initial states independently improves observation fit without harming their existing 3D accuracy. The same short zero-start control fails the joint accuracy gate. This supports compatibility of a structured initial state with unchanged refinement, not blind confirmation, a qualified reference or equal-total-cost algorithm advantage.
+
+A fresh adjoint witness covers only the refinement increment: it does not establish that the complete nonlinear TV initial state can be produced by exact lift. Historical costs of the expensive TV state are retained, and better observation fit does not revise convergence certification. The next substantive requirements remain a qualified reference, full-initializer representability and a fair comparison of genuinely cheap observation/geometry-only initialization. Training, full-sequence escalation, unopened data and speed claims remain unauthorized.
