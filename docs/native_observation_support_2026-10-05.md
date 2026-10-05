@@ -173,3 +173,33 @@ A separately frozen small model applies shared nonlinear selection to the curren
 Post-open description finds a closer initializer and improvements over some cheap warm starts, but near-budget plain CGLS remains better. Some learning occurs, yet it does not yield final matched-accuracy cost benefit. The control has a different parameter count, so this is not a parameter-matched causal proof of ordering. Both fits use a shared frozen matrix and independently reconstructed final physical replay; operator coefficients are not independently generated throughout each solve. Training, teacher, geometry-cache, diagnostics and deployment costs remain separate. No full sequence, sealed test, noise/calibration robustness, resource speedup, external or real-BOST result follows. Private data, protocols, arrays, source, weights and figures remain unpublished.
 
 Physics-embedded learning and variable-input equivariance have established precedents in [learned primal-dual reconstruction](https://arxiv.org/abs/1707.06474) and [VIDON](https://arxiv.org/abs/2205.11404). Neither supplies evidence of BOST acceleration in this trial.
+
+### 10月6日 固定频谱经典对照
+
+在同一已开封公开训练哨兵上，新增一个只依赖网格和已知几何的固定半阶预条件PCGLS对照。
+它不训练参数，不改变物理算子、最小二乘目标、原精度门或迭代预算。
+正式快速变换和独立直接余弦实现分别重建滤波、求解和物理重放，独立门全部通过。
+基础精度通过，严格四指标同精度失败；关闭这一固定配方，不调指数、尺度、边界或深度救援。
+
+事后描述确认，相同A/AT调用预算下，它改善不少样本相对普通CGLS或Jacobi的四项误差，
+但存在退化样本，不是逐样本稳定支配。观测一致性在所有样本未过门，也不是唯一瓶颈。
+这一局部信号要求后续学习模型面对更强的经典竞争，不能只靠低预算误差或场梯度汇总选择模型。
+预条件作用、缓存和旧学习训练不是免费；数值验证耗时不是公平部署时延。
+没有学习加速、完整时序、封存外门、资源或真实BOST结论。私有公式、合同、数组、源码与图表不发布。
+
+### October 6 Fixed spectral classical control
+
+A fixed half-order auxiliary preconditioner adds a stronger classical PCGLS control on the same opened public train sentinels.
+It reads only the grid and known geometry, with zero new fitted parameters and no change to the physical operator,
+least-squares objective, accuracy gates or iteration budget. Fast transforms and separate direct-cosine matrices
+independently reconstruct the filter, solver and physical replay; all independent checks pass.
+Basic accuracy passes but strict four-metric matched accuracy fails. The exact fixed recipe closes without exponent,
+scale, boundary or depth rescue. This is neither a return to the closed older dataset route nor a regularization retune.
+
+Post-open descriptions agree across both implementations: at the same A/AT budget, many samples improve over
+plain CGLS or Jacobi, but some regress, so there is no uniform dominance. Observation consistency fails in every
+sample without being the only bottleneck. Future learning must face this stronger classical competition;
+pooled field/gradient improvement is not a replacement for four per-cell gates.
+Preconditioner applications, caches and prior learning are not free, and validator elapsed time is not deployment latency.
+No learned acceleration, full-sequence, sealed external, resource or real-BOST conclusion follows.
+Private formulas, protocols, arrays, source and figures remain unpublished.
