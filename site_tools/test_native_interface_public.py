@@ -100,3 +100,33 @@ def test_fixed_target_lift_is_not_learning_or_reference_rescue(page):
         assert claim in content
     for private in ('/Users/', 'private_results', 'psi=U', '1e6', 'alpha0', '7.276'):
         assert private not in content
+
+
+@pytest.mark.parametrize('page', PAGES)
+def test_normal_gate_learning_failure_is_not_global_impossibility(page):
+    parser = Extract('poolfire-normal-gate-loto-20261005')
+    source = (ROOT / page).read_text()
+    parser.feed(source)
+    assert source.count('id="poolfire-normal-gate-loto-20261005"') == 1
+    translations = [a for a in parser.attributes if 'data-i18n-zh' in a]
+    assert len(translations) == 1 and translations[0].get('data-i18n-en')
+    content = str(parser.attributes)
+    for claim in ('strict complete-trajectory-held-out', 'meets basic absolute accuracy',
+                  'not four-metric matched accuracy', 'not a veto caused by an already passing cheap control',
+                  'separately train, lift, physically replay', 'without full-sequence or larger-network escalation',
+                  'old optimization-reference failures are unchanged', 'no impossibility proof'):
+        assert claim in content
+    for private in ('/Users/', 'private_results', 'NormalGate66', '66-parameter', '0/99',
+                    '1390.50', '0.434806', '0.886948', '0861a253'):
+        assert private not in content
+
+
+def test_learning_note_retains_scope_and_prior_verdicts():
+    note = (ROOT / 'docs/native_observation_support_2026-10-05.md').read_text()
+    assert '### 主线小模型学习哨兵判决' in note
+    assert '### Main-route small-model learning sentinel' in note
+    assert 'basic reconstruction accuracy is not matched-accuracy acceleration' in note
+    assert 'not unopened generalization, noise robustness or real BOST' in note
+    assert 'old optimization-reference failures remain unchanged' in note
+    for private in ('NormalGate66', '0/99', '35,547', '0.434806', '1390.50'):
+        assert private not in note

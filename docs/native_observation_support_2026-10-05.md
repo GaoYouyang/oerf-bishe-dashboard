@@ -44,6 +44,14 @@
 
 系数构造读取目标且重复昂贵方向计算，所有离线与重放调用保留，不能将一次伴随应用说成廉价在线算法。没有训练、同精度省调用或资源成果。旧参考失败不变；未来预测必须另冻目标政策、整轨迹隔离与公平经典对照，不能把这次表示证书当作学习授权，也不能把不同原生代理的条件性限制转移到 PoolFire。
 
+### 主线小模型学习哨兵判决
+
+随后另行结果前冻结的小模型实验，按完整轨迹隔离训练与评分，仅读取部署可见观测、报告几何和精确正规作用来预测对偶初始化，再接原样 CGLS。两套实现分别构建特征、训练、提升、物理重放与评分，内部独立检查一致。
+
+固定小模型守住基本绝对精度门，但未达到固定有限步算法对照的四指标精度等价门。同输入线性和便宜经典对照也未通过该精度等价门，因此不是以已通过的便宜对照否决模型。结果关闭这个固定模型，不扩完整序列、修改训练配方或用更大网络救援。此次是已开封训练数据的学习哨兵否决，不是未开封泛化、噪声鲁棒性或真实 BOST 验证。
+
+先前表示可行性通过仍有效，旧优化参考失败仍保留。能表达固定目标不等于能廉价预测；基本重建精度不等于同精度加速。本次没有证明整个方向不可能，也没有有效调用、时间或内存节省。训练参数、私有数值、源码和图表不公开。
+
 ## English
 
 This update publishes only a qualitative interface check on a private 3D scalar proxy. Raw fields, camera geometry, numerical arrays, figures and group source code are not released. Physical semantics and units remain unconfirmed, so this is neither calibrated pixel BOS displacement nor real-BOST transfer.
@@ -87,3 +95,11 @@ The [hybrid projection survey](https://arxiv.org/html/2105.07221v2) distinguishe
 A subsequently preregistered main-route representation audit passes. Two implementations separately rebuild unchanged directions and the triangular adjoint relation, generate offline coefficients for identical fixed finite targets, then freshly replay physical adjoint and forward actions. Every sentinel target meets the frozen reproduction and finite-norm-envelope gates. This proves fixed-target representability, not CFD-truth recoverability, full-sequence coverage, permutation testing or new-camera generalization.
 
 Coefficient construction reads the targets and repeats expensive direction generation. All offline and replay calls remain accounted for; a single adjoint application is not a cheap online algorithm. There is no training, matched-accuracy call saving or resource result. Old reference failures remain unchanged. Prediction needs a separate target policy, complete-trajectory isolation and fair classical controls; this certificate alone authorizes no learning, and a different native proxy's conditional obstruction cannot be transferred to PoolFire.
+
+### Main-route small-model learning sentinel
+
+A subsequently preregistered small-model experiment isolates complete trajectories for fitting and scoring. Only deployment-visible observations, reported geometry and an exact normal action predict a dual initializer before unchanged CGLS. Two implementations separately reconstruct features, train, lift, physically replay and score, with matching internal independent checks.
+
+The fixed small model meets basic absolute accuracy but fails four-metric matched accuracy against the fixed finite-iterate algorithm comparator. Same-input linear and cheaper classical controls also fail that matched gate, so this is not rejection through an already passing cheap control. This fixed model closes without full-sequence escalation, training-recipe revision or larger-network rescue. It is a learning-sentinel veto on opened training data, not unopened generalization, noise robustness or real BOST.
+
+Earlier representability remains valid, and old optimization-reference failures remain unchanged. Representing a fixed target does not establish cheap prediction; basic reconstruction accuracy is not matched-accuracy acceleration. This establishes neither impossibility of the entire direction nor valid call, time or memory saving. Trained parameters, private numerical results, source and figures are not released.
