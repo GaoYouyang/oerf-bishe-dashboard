@@ -261,3 +261,42 @@ This closes only the current direction, not all learned initialization, 3D BOST 
 It is post-open attribution, not a deployable algorithm, full sequence, real experiment or resource gain.
 The next research question must concern a physically justified representation, not coefficient tuning
 along an already excluded direction. Private arrays, protocols, source and figures remain unpublished.
+
+### 10月6日 完整观测学习有局部收益但不够
+
+新的非局部初值从多相机观测和报告几何预测，再精确伴随提升、原样CGLS细化。
+整条留出轨迹不参加任何拟合，评价仍只包含每条三帧，共99个已开封训练哨兵。
+14项独立核验通过，基础精度33/33分层通过；严格四指标同精度0/99，关闭唯一
+冻结的记忆核配方，不改模型或细化预算挽救。有限经典比较不是收敛认证。
+
+两套程序分别汇总封存误差：近似同算子调用预算下，97/99个样本的四项误差均
+不高于普通CGLS，场误差中位数约低3.2%；两个样本的场或内部梯度稍有伤害。
+对更强PCGLS，四项同时不高于对照65/99、同时不低于对照10/99。
+线性和最近邻记忆对照也未达到严格同精度；不能宣称普遍非线性优势。
+
+这保留有限的学习信号，不证明信息已经足够、不改变原失败门，也不否定全方向。
+大型记忆库、教师标签、训练和几何准备不免费；没有fresh wall/RSS部署优势。
+仅已有5/7/9相机子集和输入乱序，不是任意新位姿、完整时序、封存测试、外部或
+真实BOST验证，更不是论文成熟度。私有数组、源码、协议、记忆库与权重不发布。
+
+### October 6 Whole-observation learning helps locally but is insufficient
+
+A new nonlocal initializer reads multi-camera observations and reported geometry before
+exact adjoint lift and unchanged CGLS refinement. The entire held trajectory is excluded
+from fitting; evaluation still covers only three frames per trajectory, 99 opened train
+sentinels. All 14 independent checks and 33/33 basic strata pass, but strict four-metric
+matched accuracy is 0/99. Close this fixed memory-kernel recipe without model or refinement
+rescue. The finite classical comparator is not a stationarity certificate.
+
+Two separate post-closure reductions agree: at a near-equal operator-call budget, all four
+errors are no higher than plain CGLS in 97/99 cells, with about 3.2% lower median field error;
+two cells have slight field or interior-gradient harm. Against stronger PCGLS, all-four
+nonworse and nonbetter counts are 65/99 and 10/99. Linear and nearest memory controls also
+miss strict matched accuracy, so universal nonlinear superiority is not established.
+
+This retains a limited learning signal, not proof of information sufficiency, a revised
+success gate or global refutation. Large memory banks, teacher labels, fitting and geometry
+preparation are not free. No fresh wall/RSS deployment advantage is measured. Evidence
+covers existing 5/7/9-camera subsets and input reordering, not arbitrary new poses, full
+sequences, sealed tests, external generalization, real BOST or paper maturity. Private
+arrays, source, protocols, banks and weights remain unpublished.
