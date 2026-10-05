@@ -131,3 +131,17 @@ This fixed adaptation closes without model-size or optimizer-depth rescue. It is
 A preregistered classical initializer control is complete. It uses only the current observation, known geometry and a cheap BP state to estimate the finite-box and discrete scalar-projection derivative defect, then applies a fixed soft filter, exact adjoint lift and unchanged CGLS. Independent recomputation confirms basic accuracy but fails four-metric matched accuracy. On every tested sentinel, cheaper BP initialization and plain CGLS controls have lower errors in all four metrics. Improvement over the filter-only arm on some samples is not acceleration. This fixed mechanism closes without filter, boundary or budget rescue.
 
 Two implementations use a shared frozen matrix for solves, independently reconstructed physics replays every final field and all states are sealed before truth scoring. A synthetic smooth-boundary identity does not hold for the clipped interpolation branch; separate analytic checks explain the difference while preserving the failed record and leaving the candidate and scientific gates unchanged. Additional derivative actions and setup are not free. This is not a learned model, exact curl-free constraint, full sequence, external generalization, real BOST or resource advantage, and does not establish impossibility of the C route.
+
+### 完整相机块初值
+
+完整相机双分量几何伪逆、精确伴随提升和原样CGLS的经典对照已独立封存。相对于BP与逐行归一化初值，细化后每个已检验训练哨兵的四项误差均更低；但仍未达到高预算有限基线的四指标同精度门。因此局部改善不是加速成功，固定机制关闭，不调截断、分块、阻尼或步数救援。
+
+两套实现分别构造几何因子，以共同冻结的矩阵求解，独立重建物理算子重放全部终点，完整状态先于真值评分封存。合成病态矩阵的有限步细化失败保留，结果前控制诊断解释浮点敏感性，不取消实际样本的原数值和物理门。几何分解、缓存和块作用并非免费；没有学习、完整序列、外部泛化、噪声标定鲁棒性、真实BOST或时间内存优势。私有数值、源码、因子和参数不公开。
+
+### Full camera block initializer
+
+The independently sealed classical control combines the full within-camera two-component geometry pseudoinverse, exact adjoint lift and unchanged CGLS. After refinement, all four errors are lower than BP and row-energy warm starts on every tested training sentinel. Nevertheless, four-metric matched accuracy against the higher-budget finite baseline fails. Local improvement is not acceleration; the fixed mechanism closes without cutoff, block, damping or depth rescue.
+
+Two implementations construct geometry factors independently, solve with a shared frozen matrix and replay every endpoint through independently reconstructed physics. All states seal before truth scoring. The ill-conditioned synthetic finite-step refinement failures remain failed; pre-science controlled diagnosis explains floating-point sensitivity without exempting actual-data numerical or physical gates. Factorization, cache storage and block actions are not free. No learned, full-sequence, external, noise/calibration-robustness, real BOST or resource result follows. Private numerical results, source, factors and parameters are not released.
+
+This is an existing classical block projection idea, not a new invention. See [Sorensen and Hansen, block reconstruction methods](https://backend.orbit.dtu.dk/ws/files/127276212/BlockAIRv3.pdf). That paper does not establish BOST acceleration in this experiment.
