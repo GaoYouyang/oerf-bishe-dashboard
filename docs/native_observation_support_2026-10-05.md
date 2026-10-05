@@ -300,3 +300,33 @@ preparation are not free. No fresh wall/RSS deployment advantage is measured. Ev
 covers existing 5/7/9-camera subsets and input reordering, not arbitrary new poses, full
 sequences, sealed tests, external generalization, real BOST or paper maturity. Private
 arrays, source, protocols, banks and weights remain unpublished.
+
+### 10月6日 训练库投影归因不是全方向证伪
+
+后续事后归因已独立封存，11项检查通过。所有训练库方向先于留出经典目标封存；
+读取该有限目标做最佳初始场投影时，相对目标误差中位数约38.3%、p90约45.2%。
+它改善了此前初值误差，却仍有明显表示缺口。接相同短程细化后，严格同精度
+0/99；只用观测求系数的对照也0/99，两者基础精度33/33。
+
+因此不能单以“系数没学准”解释当前失败。但初始场最优不等于细化后四指标全局
+最优，未证明所有系数选择、训练库或学习方向不可能。原固定核模型保持关闭，
+不调模型、扩大训练库或加深细化来改判。目标可见诊断不是部署预测，没有新学习、
+完整序列、少调用、实测速率、外部或真实BOST成果。私有数组、源码、协议和权重
+不发布；基础交付与论文创新仍须分开。
+
+### October 6 Bank projection attribution is not global refutation
+
+A subsequent post-open audit is independently sealed with all 11 checks passing. Fit-only
+bank directions seal before held classical targets are opened. Their best initial field
+projection has about 38.3% median and 45.2% p90 relative error to the finite target. It improves
+the earlier initializer but leaves a substantial representation gap. After unchanged short
+refinement, strict matched accuracy remains 0/99; observation-only coefficient inversion
+also gives 0/99. Both pass 33/33 basic strata.
+
+Coefficient prediction error alone does not explain this result. However, optimal initial
+field projection is not globally optimal over all refined four-metric paths; no impossibility
+claim covers every coefficient choice, the entire bank or learning direction. The original
+kernel recipe remains closed without model, bank-size or refinement-depth rescue. This
+target-visible diagnostic is not deployment prediction, new learning, full-sequence evidence,
+fewer calls, measured speed, external generalization or real BOST. Private arrays, source,
+protocols and weights remain unpublished. Basic delivery and paper innovation stay separate.

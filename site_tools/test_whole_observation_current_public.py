@@ -34,7 +34,7 @@ class Section(HTMLParser):
 def test_local_gain_does_not_override_failure_or_claim_whole_sequence(page):
     text = (ROOT / page).read_text()
     parser = Section(); parser.feed(text)
-    assert text.count(f'id="{BLOCK}"') == 1 and len(parser.nodes) == 4
+    assert text.count(f'id="{BLOCK}"') == 1 and len(parser.nodes) == 5
     assert all(node.get('data-i18n-en') for node in parser.nodes)
     english = ' '.join(node['data-i18n-en'] for node in parser.nodes)
     for phrase in ('held trajectory is excluded', '33/33', '0/99', '97/99', '3.2%',
@@ -69,3 +69,25 @@ def test_note_preserves_scope_cost_and_existing_verdicts():
                    'not proof of information sufficiency', 'are not free',
                    'No fresh wall/RSS', 'weights remain unpublished'):
         assert phrase in latest
+
+
+def test_target_visible_projection_is_not_global_capacity_refutation():
+    evidence = json.loads((ROOT / 'operator-learning/current-evidence.json').read_text())
+    result = evidence['latest_bank_projection_attribution']
+    assert result['cells'] == 99 and result['basic_strata_passed_both_witnesses'] == 33
+    assert result['target_projection_matched_cells'] == result['observation_inverse_matched_cells'] == 0
+    assert result['independent_checks_passed'] == 11
+    assert result['initial_relative_target_error_median_percent_rounded'] == 38.3
+    assert result['initial_relative_target_error_p90_percent_rounded'] == 45.2
+    assert result['post_open_target_visible_attribution']
+    assert result['initial_projection_is_not_all_refined_paths_optimum']
+    assert not any(result[k] for k in ('whole_bank_capacity_refuted', 'whole_learning_direction_refuted',
+        'new_learning_authorized', 'full_sequence_authorized', 'algorithm_breakthrough', 'paper_success',
+        'resource_speedup', 'external_generalization', 'real_bost'))
+    for page in PAGES:
+        parser = Section(); parser.feed((ROOT / page).read_text())
+        node, = [n for n in parser.nodes if n.get('id') == 'poolfire-bank-projection-attribution-20261006']
+        english = node['data-i18n-en']
+        for phrase in ('held finite classical target', '38.3%', '45.2%', 'not optimal over all refined paths',
+                       'target-visible post-open attribution', 'not deployment prediction'):
+            assert phrase in english
