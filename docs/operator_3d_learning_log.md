@@ -1,3 +1,52 @@
+## 2026-10-06：保边缘学习初值没有抵消自身成本
+
+从当前反投影生成非二次TV方向，再精确投影、伴随提升和原样CGLS。
+一个跨相机共享参数只用折内训练CFD场拟合；整条留出轨迹不参与拟合，
+没有有限经典teacher、时间/工况标签或留出停止统计。这不是旧记忆库或
+全局二次几何权重调参，也不是神经算子或完整TV逆求解器。
+
+同一99个三帧训练哨兵，30/30项独立检查通过，指标最大差1.86e-14。
+基础精度33/33分层通过，严格四指标同精度0/99。同调用预算普通CGLS
+和少一次伴随的BP对照，在全部99个样本的四项误差上都更好。学习在
+91/99个样本上不劣于固定TV，但不足以超过便宜经典对照。
+
+首轮因样本键JSON空格差异在细化/评分前停止，解析后99个身份完全一致。
+原失败保留，接续逐位复用正式初值且不重训；独立程序重新构造全部输入
+与拟合。共享物理稀疏输入的独立范围已披露，工程修复不是科研突破。
+
+关闭这个固定单步TV混合，不调平滑、线搜索、损失或深度。99A+99AT不是
+有效同精度节省；缓存、训练、空间梯度和核验成本另计。不否定全部TV、
+物理先验或BOST；此前有限学习收益保留。没有完整时序、实测资源收益、
+外部或真实BOST结论，主目标未完成。
+
+### English
+
+A nonquadratic TV direction is extracted from the current backprojection,
+projected and lifted with exact operators, then followed by unchanged CGLS.
+One shared coefficient is fitted only on fold-train CFD fields with entire held
+trajectories excluded. No finite teacher, time/condition label or held stopping
+statistic enters fitting. This is neither a retuned memory bank/global quadratic
+prior, nor a neural operator/full TV inverse solver.
+
+All 30 independent checks pass on the same 99 three-frame train sentinels,
+with maximum metric difference 1.86e-14. Basic accuracy passes 33/33 strata,
+but strict four-metric matching remains 0/99. Same-call plain CGLS and the
+one-adjoint-cheaper BP control beat all four errors in all 99 cells. Learning is
+no worse than fixed TV on 91/99 cells, without beating cheap classical controls.
+
+The first attempt stopped before refinement/scoring on JSON key whitespace.
+All 99 parsed identities match. The preserved prefix is reused byte-identically
+without refit, while the independent program rebuilds its own basis and fit.
+Common sparse physical input is disclosed; engineering repair is not research gain.
+
+Close this fixed one-step TV mixture without smoothing, line-search, loss or depth
+rescue. Its 99A+99AT is not effective matched-accuracy savings; setup, fitting,
+gradients and verification are nonfree. Earlier modest learning evidence remains
+valid; this does not refute all TV, priors or BOST. Full sequences, fresh resource
+benefit, external and real-BOST evidence remain outstanding.
+
+[脱敏科学摘要 / Privacy-safe summary](poolfire_range_tv_prior_2026-10-06_public_summary.json)
+
 ## 2026-10-06：观测残差最优，不等于场重建最优
 
 本轮完成限定的理论筛查，而不是新算法试验：精确算术下，仅把当前观测
