@@ -34,7 +34,7 @@ class Section(HTMLParser):
 def test_local_gain_does_not_override_failure_or_claim_whole_sequence(page):
     text = (ROOT / page).read_text()
     parser = Section(); parser.feed(text)
-    assert text.count(f'id="{BLOCK}"') == 1 and len(parser.nodes) == 5
+    assert text.count(f'id="{BLOCK}"') == 1 and len(parser.nodes) == 7
     assert all(node.get('data-i18n-en') for node in parser.nodes)
     english = ' '.join(node['data-i18n-en'] for node in parser.nodes)
     for phrase in ('held trajectory is excluded', '33/33', '0/99', '97/99', '3.2%',
