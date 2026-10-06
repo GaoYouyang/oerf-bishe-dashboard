@@ -1,3 +1,55 @@
+## 2026-10-07：学习逆作用进入迭代，场匹配增加但观测未解决
+
+**做了什么、为什么。** 保留已独立验证的训练逆作用，不增大模型、不重新
+拟合；把一次性初值作用改为当前观测驱动的固定预条件迭代，再做精确伴随
+提升与未修改CGLS。普通、对角与纯几何三种对照用相同调用预算。
+这是已有[PCG方法](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.cg.html)
+的应用，不是新求解定理，也不推翻上一轮固定初值的失败判决。
+
+**有效性与范围。** 35/35独立检查全真；正式与第二实现分别重算迭代、
+提升、物理重放与四指标。仍只有11条已打开轨迹、99个三帧训练哨兵、5/7/9
+相机；整条留出轨迹不进入拟合，但没有评估完整序列。全部新预测先封存，
+再读对照端点和CFD评分。相机乱序复算通过；12相机仅有合成代数验证。
+
+**成功与失败。** 训练方案在99/99样本上四项误差都低于同预算普通、对角
+与几何迭代。场、全梯度、内部梯度单项匹配从上一方案32/19/16增加到
+71/54/56；前三项联合匹配53/99。但是观测仍0/99，四项联合同精度0/99，
+绝对分层33/33。场误差中位数26.05%，参考26.41%；观测0.01051，参考0.00309，
+也比旧方案0.00913更差。九相机两项梯度均为0/33，不能只看总体中位数。
+正式判决`FAIL_FROZEN_TRAINED_DUAL_PCG30_WARM4_SENTINEL_CLOSED`。
+
+**成本与下一判断。** 每个查询35A+35AT，另有30次预条件作用；小求解、
+低秩乘积及继承的几何/拟合/昂贵教师不免费。没有fresh部署时间或RSS证据。
+关闭这套固定迭代版本，不调深度、参数或门挽救。学习信息有实质作用，但
+未证明同精度加速；主目标仍未完成，不等于全部学习或BOST都被否定。
+
+### English
+
+Reuse the independently sealed trained inverse action as a fixed preconditioner
+inside current-query dual PCG, then exact adjoint lift and unchanged CGLS. No new
+fit or larger model. Plain, diagonal and geometry controls use the same budget.
+PCG is established, not our new theorem; the preceding one-shot result stays closed.
+All 35/35 independent checks pass on the same 99 three-frame train sentinels from
+11 opened trajectories and native 5/7/9 cameras. Complete-trajectory fit exclusion
+is not complete-sequence evaluation. Predictions seal before comparator/CFD reads;
+downstream permutation is recomputed, while full fit equivariance is inherited.
+
+The trained arm lowers all four errors against each new cheap control in 99/99
+samples. Field/full-gradient/interior-gradient matches rise from32/19/16 to
+71/54/56, with53/99 joint first-three matches. Observation remains0/99, joint
+four-error matching0/99, absolute strata33/33. Median field26.05% versus26.41%
+reference does not imply pointwise equivalence. Observation0.01051 versus0.00309
+is also worse than the previous0.00913. Both nine-camera gradient matches are0/33.
+
+Each query uses35A+35AT plus30 preconditioner actions and nonfree small solves,
+products, inherited geometry, fitting and expensive teachers. Mixed audit cost
+is not fresh deployment evidence. Close this fixed iterative recipe without
+parameter, split or gate rescue. Useful information is not joint accuracy or
+a speedup; the whole goal remains active and unmet. No full-sequence, external,
+real-BOST, algorithm-breakthrough or paper-success claim follows.
+
+[脱敏摘要 / Public summary](poolfire_learned_dual_pcg_2026-10-07_public_summary.json)
+
 ## 2026-10-07：训练响应有用，但小型逆作用仍未达到同精度
 
 **做了什么、为什么。** 不再扩大旧训练场方向库，而是用每折其他轨迹的30条
