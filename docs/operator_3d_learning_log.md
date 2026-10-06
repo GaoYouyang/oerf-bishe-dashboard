@@ -1,3 +1,30 @@
+## 2026-10-07：固定层次表示缩小了存储，却丢失了有效逆作用
+
+在读取原生结果前固定一个纯几何层次逆因子表示，不读真值、当前观测或
+轨迹标签生成它，不训练模型。正式和独立计算封存并一致；同一99个三帧
+训练哨兵、5/7/9相机上严格匹配0/99、基础分层0/33。全部样本四项误差都
+高于普通CGLS35，场/观测误差比中位数约10.83/20.18。
+
+密集逆因子约1071MiB，压缩因子25.4MiB，但精度失败；34A+34AT还需68次
+层次扫描，完整矩阵、逆因子和压缩建立仍非免费。这不是同精度内存或速度
+优势。上一轮完整分解99/99、33/33正结果不变。关闭本配方，不扩大rank或
+用更大网络挽救；不否定全部层次方法或C路线。学习、完整序列与论文主目标
+仍未完成。下一学习假设不能假定这个失败表示已有容量。
+
+A fixed geometry-only hierarchical inverse-factor representation is frozen
+before native reads and built without CFD truth,query or trajectory labels.
+No model is trained. Formal and independent calculations agree:0/99 strict
+matches and0/33 absolute strata on the same opened three-frame train sentinels
+and5/7/9 cameras. All cells have all four errors above plain CGLS35;median
+field/observation error ratios are10.83/20.18.
+
+The dense inverse factor is about1071MiB and compressed factor25.4MiB,but
+accuracy fails. Online34A+34AT adds68 hierarchy scans;full normal,inverse and
+compression setup remain nonfree. This is not a matched-accuracy resource gain.
+The full-factor positive witness retains99/99 and33/33. Close this fixed recipe
+without rank/network rescue;not all hierarchical methods or C-route mechanisms
+are disproved. The learned,full-sequence and paper goals remain unmet.
+
 ## 2026-10-07：少调用达标的强经典见证，不是学习成功
 
 只由报告几何确定的完整正规矩阵固定分解，加原样零初值PCGLS34，在同一
