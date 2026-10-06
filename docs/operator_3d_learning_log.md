@@ -32,6 +32,34 @@ full sequences, learned resource gains, external transfer and real BOST are unpr
 
 [脱敏摘要 / Public summary](poolfire_inverse_action_span_2026-10-07_public_summary.json)
 
+## 2026-10-07：稀疏学习因子优化成功，但重建没有同精度
+
+新做了真正的58参数学习试验：只用已知相机几何产生的算子训练稀疏
+正对角因子，再对当前观测求解、精确伴随提升，并保持CGLS不变。
+不是固定训练场组合，不读任何轨迹观测、教师场或CFD真值来拟合。
+两套实现分别训练和重建，30/30独立检查通过。
+
+同一11条轨迹、99个三帧训练哨兵、5/7/9相机上，33/33绝对分层通过，
+严格同精度却为0/99。场误差中位数33.13%，便宜对角初值32.63%，参考
+26.41%；四项误差中位数均高于对角初值。算子拟合损失下降不等于有效
+逆作用。因子及转置17.21MiB只表示存储，不是总RSS或速度优势。
+关闭固定版本，不靠增宽、增加邻居或训练轮数挽救。经典最终重建
+99/99同精度仍有效；失败不关闭全BOST或全部学习。
+
+English: the two independent 58-parameter operator-only fits and exact-lift
+unchanged-CGLS reconstructions pass all 30 checks. On the same 99 opened
+three-frame sentinels, 33/33 absolute strata pass but strict accuracy matches
+are 0/99. Median field error is 33.13%, versus 32.63% for the cheap diagonal
+seed and 26.41% for the reference. All four median errors exceed the cheap
+seed. Operator fit loss decreases, but this is not matched reconstruction.
+The factor plus transpose payload of 17.21MiB is not total RSS or a speedup.
+This is transductive known-geometry learning, not unseen-geometry transfer;
+geometry setup, fitting and sparse solves are nonfree. Close the exact recipe
+without tuning. Full sequences, learned resource gains, external transfer and
+real BOST remain unproved; the whole goal remains active and unmet.
+
+[脱敏摘要 / Public summary](poolfire_neural_sparse_dual_factor_2026-10-07_public_summary.json)
+
 ## 2026-10-07：同精度经典初值更慢且内存更高
 
 在同一99个已打开三帧训练哨兵、11条轨迹、5/7/9相机上，经典一次ridge
