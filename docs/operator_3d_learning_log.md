@@ -1,3 +1,34 @@
+## 2026-10-07：少调用达标的强经典见证，不是学习成功
+
+只由报告几何确定的完整正规矩阵固定分解，加原样零初值PCGLS34，在同一
+99个已打开三帧训练哨兵上四指标严格匹配99/99、基础分层33/33。独立24/24
+项检查通过；候选生成不读CFD真值或教师，不训练参数。普通CGLS35、
+Jacobi-PCGLS35和旧学习记忆库仍严格0/99，新经典对照在全部99样本的四项
+误差均不差于它们。候选场、物理图像最大相对差4.38e-11/8.55e-11。
+
+在线34A+34AT，有限参考为128A+128AT；但另有34次因子求解，每档几何仅
+LU因子约415–731MiB，正规矩阵、几何、分解和存储还要另计。因此只有当前
+样本上的少调用精度见证，没有fresh wall/RSS或端到端速度、内存结论。
+下一问题是便宜的学习能否捕获有用的全局耦合，在完整成本上公平竞争；
+旧失败配方不重开。范围仍为11条已打开轨迹的三帧、5/7/9相机，没有完整
+序列、任意位姿、外部或真实BOST；原学习与论文目标未完成。
+
+A reported-geometry-only full-normal factor with unchanged zero-PCGLS34 passes
+99/99 strict four-metric matches and 33/33 absolute strata. All 24 independent
+checks pass. Candidate generation reads no CFD truth or teacher and fits no
+parameters. Plain CGLS35, Jacobi-PCGLS35 and the closed learned bank remain 0/99.
+This classical arm is no worse on all four errors in every cell. Maximum field
+and physical-image relative differences are 4.38e-11 and 8.55e-11.
+
+Online callbacks are 34A+34AT versus the finite reference's 128A+128AT, plus
+34 factor solves. LU factors alone occupy 415-731MiB per geometry, excluding
+normal matrices, geometry, setup and storage. No fresh wall/RSS or total-cost
+speedup is established. The question becomes whether cheap learning can capture
+useful global coupling and compete on total cost. Closed recipes remain closed.
+This covers only three opened train frames per trajectory and native5/7/9
+cameras, not full sequences, arbitrary poses, external data or real BOST. The
+learned and paper goals remain unmet.
+
 ## 2026-10-07：冻结模型消融 相似度加权有一致增量作用
 
 补充的方向诊断独立11/11通过：最优有符号标量缩放去权重初值，仍不能
