@@ -1,3 +1,42 @@
+## 2026-10-06：有符号射线图初值没有稳定增益
+
+实际拟合三个共享参数，以当前多相机测量射线的几何耦合和观测正负关系生成
+初值，再精确伴随提升并接原样CGLS。整条留出轨迹不参与拟合。26/26项独立
+检查通过，逐样本指标最大差2.98e-14。99个已开封三帧训练哨兵基础精度33/33，
+严格四指标同精度0/99；同预算普通CGLS对照下，四项均不更差28/99、四项均
+更差50/99。去掉非线性项的两参数图对照下，分别40/99与54/99。当前非线性项
+没有稳定优势，关闭这一固定配方，不扩大图度数、模型或细化深度。
+
+原独立程序在特征动作、标签、拟合或评分前因稀疏辅助函数改变存储行顺序而
+停止。原失败保留，另行冻结的工程接续只恢复未被改动的求解输入并逐位复用
+独立程序自己的封存图。算法与判据未改，工程修复不是科学突破。图运算独立
+重建，但物理稀疏矩阵为共享冻结输入；单独物理重放的独立范围已披露。
+
+图缓存、标签和训练成本不免费；99A+99AT不是同精度节省。仅覆盖已有5/7/9
+相机和三帧哨兵，没有完整时序、外部或真实BOST结论，也不能据此否定全部
+射线图、学习初值或BOST。此前有限学习收益保留，主目标未完成。
+
+### English
+
+A three-parameter signed cross-ray operator was actually fitted on observations
+and reported geometry with complete-trajectory fit exclusion, exact adjoint lift
+and unchanged CGLS. All 26 independent checks pass; maximum metric difference is
+2.98e-14. The 99 opened three-frame train sentinels pass 33/33 basic strata but
+0/99 strict matches. Against equal-budget plain CGLS, all-four no-worse/harm are
+28/99 and 50/99; against the two-parameter linear graph, 40/99 and 54/99. The tested
+nonlinear term has no stable advantage; close this fixed recipe without rescue.
+
+The original independent attempt stopped before feature actions, labels, fitting
+or score due to a sparse helper mutating stored row order. Its failure is retained.
+A separately frozen engineering continuation reuses its own graph byte-identically
+on immutable fresh solver inputs, with unchanged algorithm and gates. Common
+frozen physical sparse inputs and separate graph math/physical replay are disclosed.
+This repair is not a scientific breakthrough. Setup and fitting are nonfree;
+99A+99AT is not a saving because matched accuracy fails. No full-sequence, external,
+real-BOST or paper success; earlier modest learning evidence remains valid.
+
+[脱敏摘要 / Privacy-safe summary](poolfire_signed_ray_pair_2026-10-06_public_summary.json)
+
 ## 2026-10-06：六参数学习初值没有获益，表示缺口比拟合规模更重要
 
 这次真的拟合了一个新初值：用当前观测和报告几何生成谱模式响应，六个参数共享，整条留出轨迹不参与拟合，再精确伴随提升并接原样CGLS。20/20项独立检查通过，99个已开封三帧训练哨兵的基础精度33/33，但严格四指标同精度0/99。同调用预算的普通CGLS在全部99个样本的四项误差都更好，因此关闭这一固定方案，不扩大模型或加深细化。
