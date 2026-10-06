@@ -1,3 +1,42 @@
+## 2026-10-06：最终模型训练与留出诊断
+
+保持模型不变，补算990次折内最终终点，复用99个留出终点；不是新增990个样本，
+也不是再次训练。两种实现独立17/17核验通过，所有990场/观测最大相对差
+2.35e-12，1089损失记录最大绝对差1.77e-13。训练历史最后一项是更新前损失，
+本轮重新评价最终模型，避免把它误当最终成绩。
+
+相对无学习初值的有限CGLS128联合距离损失，11个外折训练改善0.05106%-0.05822%，
+中位0.05425%；留出改善0.02196%-0.08849%，中位0.06106%。它不是CFD相对误差，
+不能和之前场误差中位改善0.00138%混用。全部训练与留出增益都很小，没有
+“大训练收益、留出崩塌”；不能只怪跨轨迹泛化，但容量与优化尚未区分。
+
+每种实现新增92,103A+90,123AT、几何另计，无新拟合、教师构建或CFD读取。
+原配方保持关闭、0/99不变，不授权增加训练或大模型救援。这不是部署benchmark、
+外部泛化、真实BOST或论文成功；不否定全部学习初值。主目标仍未完成。
+
+### English
+
+Keep all models fixed, evaluate 990 final fold-train endpoints and reuse the
+99 held endpoints: not 990 new samples or retraining. All 17 independent checks
+pass; maximum relative field/image and absolute loss-row differences are
+2.35e-12 and 1.77e-13. The original last history row is pre-update, so this audit
+actually evaluates the deployed final models instead of treating it as final loss.
+
+Finite-CGLS128 joint-distance loss reductions over the no-learning seed range
+from 0.05106% to 0.05822% in train, median 0.05425%, and 0.02196% to 0.08849% in
+held, median 0.06106%. These are not CFD-relative errors and must not be mixed
+with the previous 0.00138% median field-error reduction. All train and held gains
+are tiny, without large-fit/held-collapse behavior. Held-trajectory collapse alone
+is not the explanation; capacity versus optimization remains unresolved.
+
+Each implementation adds 92,103A+90,123AT plus geometry. No new fit, teacher
+construction or CFD read. The original recipe stays closed, its 0/99 unchanged,
+without more-training or larger-network rescue. This is not a deployment
+benchmark, external, real-BOST or paper-success result. It does not refute all
+learned initializers; the main goal remains unmet.
+
+[脱敏诊断 / Privacy-safe diagnosis](poolfire_endpoint_fit_transfer_2026-10-06_public_summary.json)
+
 ## 2026-10-06：直接训练最终重建，微小收益仍不足以抵消成本
 
 52个跨相机共享参数的世界坐标集合模型，只读取当前观测和报告几何，精确伴随
