@@ -1,3 +1,53 @@
+## 2026-10-07：同精度经典初值更慢且内存更高
+
+在同一99个已打开三帧训练哨兵、11条轨迹、5/7/9相机上，经典一次ridge
+初值与有限CGLS128各运行三次结果前固定、交错的新进程。新因子每次重新
+建立，查询和参考保留原矩阵行与观测顺序；没有新训练、参数搜索或数据开封。
+
+52/52独立核验通过。每组都99/99四指标同精度、33/33基础分层通过，
+并复现两个父实现的场、物理投影和误差。三次中位总时间22.88秒对35.49秒，
+单推理进程峰值RSS0.68GiB对5.61GiB，经典初值在三组中均更慢且更占内存。
+35A+35AT另加一次因子求解，不能自动胜过128A+128AT的总成本。
+
+查询加输出阶段从19.54秒降到7.29秒，但新因子建立约24.73秒，抵消收益。
+未来学习的明确任务是便宜地替代这个全局逆作用及其构建和存储，同时保住
+强经典对照精度，而不是在昂贵因子后面加系数。便宜替代能否存在仍未证明。
+
+本轮包含新进程、几何接口、缓存读取、新因子、查询与输出；不含历史算子
+和观测生成，未清空OS缓存。旧PCGLS性能尝试仍无效，不重新认定。只支持
+本机固定缓存输入范围的负资源判决，不是冷启动原始数据、完整序列、学习
+加速、外部或真实BOST结果。主目标仍未完成，私有数据、源码和参数不公开。
+
+### English
+
+The same99 opened three-frame train sentinels from11 trajectories and5/7/9
+cameras are run in three fixed interleaved fresh processes per method.New ridge
+factors are constructed in every candidate run;query and reference matrices and
+observations retain their qualified original ordering.No new training,parameter
+search or data opening occurs.
+
+All52/52 independent checks pass.Each pair matches99/99 on four metrics and
+passes33/33 sampled absolute strata,with fields,physical images and errors
+reproduced against both parent implementations.Median total wall rises from
+22.88s to35.49s and single-inference-process peak RSS from0.68GiB to5.61GiB.
+The classical seed is slower and uses more memory in every pair.Fewer35A+35AT
+callbacks plus one factor solve do not imply lower total cost than128A+128AT.
+
+Query and output time falls from19.54s to7.29s,but new factor setup takes
+about24.73s.A future learned substitute must cheaply replace the actual global
+inverse action,construction and storage while retaining strong classical
+accuracy,not merely add coefficients.The existence of such a substitute is
+still unproved.
+
+Fresh startup,interfaces,cache reads,new factors,queries and output are included;
+historical operator/observation generation is excluded andOS caches are not
+purged.The old PCGLS cost attempt remains inconclusive,not requalified.This is
+a negative cached-input resource result on this Mac,not cold raw-data deployment,
+full sequences,learning acceleration,external transfer or real BOST.The main
+goal remains unmet;private data,source and parameters remain unpublished.
+
+Evidence: [privacy-safe classical initializer cost summary](poolfire_direct_ridge_cost_2026-10-07_public_summary.json).
+
 ## 2026-10-07：直接ridge初值达标，但学习没有独特收益
 
 这次不使用空间积分或训练场记忆库，而让当前观测经过实际完整法方程的

@@ -62,7 +62,7 @@ def test_latest_aggregate_preserves_scientific_boundaries_and_history():
     assert evidence['latest_hybrid_gcv_reference']['reference_stable_strata'] == 0
     assert 'latest_case2_sarc_v285' in evidence
     for page in PAGES[:2]:
-        assert 'const current = evidence.latest_direct_ridge_initializer || evidence.latest_native_classical_control;' in (ROOT/page).read_text()
+        assert 'const current = evidence.latest_direct_ridge_cost || evidence.latest_direct_ridge_initializer || evidence.latest_native_classical_control;' in (ROOT/page).read_text()
 
 
 def test_note_keeps_cost_recovery_and_scope():
