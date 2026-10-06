@@ -1,3 +1,31 @@
+## 2026-10-07：计时未定，差异定位到九相机参考端点
+
+六次新进程试验已经一次性完成，但参考复现检查失败，正式计时判断保持
+INCONCLUSIVE_RESOURCE_VALIDITY，不能依据原始计时判速度或内存胜负。
+两套只读审计49/49项核验一致，最大诊断差2.71e-19：候选三次都复现原场，
+每种方法的三次结果各自逐位一致，差异只定位到九相机CGLS128参考端点。
+新参考重排观测行后重新计算，旧参考来自继承结果；尚未证明排序是唯一原因。
+这不是候选精度崩溃，也不撤销原经典99/99达标见证。审计没有新求解、训练、
+真值读取或A/AT调用；初次元数据读取失败保留，只作单独的读取修复。
+不重跑计时、不放宽门、不事后改判成功。未来需结果前统一参考表示与生成方式。
+学习初值、完整序列、实际资源收益和外部验证主目标仍未完成。
+
+Six fresh-process trials completed once, but qualified reference identity
+fails. The resource verdict remains INCONCLUSIVE_RESOURCE_VALIDITY; raw
+timings cannot qualify a speed or memory winner. Two read-only audits agree
+on all 49 checks, with maximum diagnostic discrepancy 2.71e-19. All candidate
+repeats reproduce their qualified parent; each method's three repeats are
+bitwise identical. The discrepancy is localized to nine-camera CGLS128
+reference endpoints. The new reference is recomputed after observation-row
+sorting while the older reference is inherited; sorting is not proved the
+unique cause. The original classical 99/99 witness remains qualified.
+There are no new solves, fits, truth reads or A/AT calls in this audit. Its
+initial metadata-reader failure is preserved with a separate reader-only
+repair. No timing retry, tolerance relaxation or retrospective success is
+allowed. Future comparisons must bind reference representation and generation
+together before results. The learned, full-sequence, resource and external
+main goal remains unmet.
+
 ## 2026-10-07：固定层次表示缩小了存储，却丢失了有效逆作用
 
 在读取原生结果前固定一个纯几何层次逆因子表示，不读真值、当前观测或
