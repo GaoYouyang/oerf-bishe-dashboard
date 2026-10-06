@@ -1,3 +1,39 @@
+## 2026-10-06：初值损失下降，不等于最终重建受益
+
+已开封的同一99个三帧训练哨兵，新增且只新增一个同预算“精确提升＋只重启”
+控制。27/27项独立检查通过，无新拟合，原模型、状态和失败判决不改。
+学习初值的联合损失在折内训练/留出评估的下降中位数约0.17127%/0.17084%，
+但接完原样CGLS后，四项误差在99/99样本都高于只重启控制。观测误差比
+中位数为1.00897；只重启控制本身也在99/99样本四项均不如同成本冷CGLS。
+
+所以不能说只因训练不够、留出泛化崩溃或重启成本。简单误差差额分解的
+重启/提升比例中位数为77%–81%，未通过结果前近乎全部解释门，判为混合效应。
+这些不是总误差能量份额或唯一因果机制。初值有限目标距离不等于CFD真值
+精度，训练内评估有重复样本，评价不是完整序列或未开测试。原多尺度配方
+保持关闭，不改损失、层数或深度；新候选须核对最终物理收益和无修正控制。
+没有加速、实测资源、外部或真实BOST结论，整个学习目标仍未完成。
+
+### English
+
+Only one same-budget exact-lift/no-correction restart control is added on the
+same 99 opened three-frame train sentinels. All 27 independent checks pass with
+no refit or change to existing models, states or the closed algorithm verdict.
+Median initial joint-loss reduction is 0.17127% in fold-train assessments and
+0.17084% on held records. Yet after unchanged CGLS, the learned endpoint has
+higher errors on all four metrics than no-correction restart in all 99 cells;
+median observation ratio is 1.00897. Restart itself also loses all four errors
+to same-cost cold CGLS in all 99 cells.
+
+This cannot be attributed only to optimization failure, held-fold collapse or
+restart cost. Median combined lift/restart shares of scalar-error differences
+are 77%-81%, missing the preregistered near-total-explanation rule: mixed effects.
+These are not energy fractions or unique universal causes. Initial distance to
+a finite target is not CFD truth accuracy; train assessments reuse records and
+evaluation is not full sequences or untouched tests. The Haar recipe remains
+closed without loss, level or depth rescue. Future screening must check physical
+endpoint benefit and a no-correction control. No acceleration, resource, external
+or real-BOST success is claimed; the main learning goal remains unmet.
+
 ## 2026-10-06：多尺度局部初值仍未超过同成本经典算法
 
 从当前观测和几何生成求解状态，提取多尺度局部特征，以八个共享参数拟合
