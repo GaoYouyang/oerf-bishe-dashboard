@@ -1,3 +1,53 @@
+## 2026-10-07：直接ridge初值达标，但学习没有独特收益
+
+这次不使用空间积分或训练场记忆库，而让当前观测经过实际完整法方程的
+ridge逆作用形成初值。两个共享系数只在其他轨迹上拟合，精确伴随提升后接
+原样CGLS。整条留出轨迹不参与训练；评估仍只有11条已开封轨迹的三帧、
+5/7/9相机，共99个训练哨兵，不是完整序列或外部验证。
+
+正式和独立第二实现117/117检查通过。学习型混合与不学习的直接ridge
+初值都达到99/99四指标同精度、33/33基础分层；不学习对照已经解释收益。
+学习候选在68/99单元的四项误差都更大，没有任何单元四项同时更好，场和
+观测误差中位比分别高0.53%和19.20%。相对普通CGLS35的改善不能替代
+这个更强的同成本对照。
+
+两种初值均为35A+35AT另加一次因子求解，有限参考为128A+128AT；
+原完整因子PCGLS是34A+34AT另加34次求解。因子数组约415至731MiB，
+法方程矩阵、建立、训练和标签另计，没有新鲜部署时间或内存优势证据。
+
+保留通过的经典初值为基线，关闭这条固定两系数配方的独特学习收益主张，
+不改ridge、损失或深度救援。这个结果证明当前哨兵上的经典warm start可行，
+不证明学习加速，更不否定全部学习或BOST。完整学习、序列、总成本与外部门
+主目标仍未完成；共享规范CSR和编排已披露，私有数据、源码和参数不公开。
+
+### English
+
+A full ridge-normal inverse acts on the current observation to generate a warm
+seed. Two shared coefficients fit other trajectories only, followed by exact
+adjoint lift and unchanged CGLS. Entire held trajectories are excluded from fit,
+but evaluation remains 99 opened three-frame train sentinels from eleven
+trajectories and native5/7/9 cameras, not complete sequences or external data.
+
+All117/117 independent checks pass. Both learned and unlearned ridge seeds
+match99/99 cells on all four metrics and pass33/33 basic strata. The unlearned
+same-cost control explains the gain. The learned arm worsens all four errors
+in68/99 cells and improves all four in none; median field/observation ratios
+are higher by0.53%/19.20%. Improvement against ordinary CGLS35 is not a learned
+contribution against this stronger control.
+
+Both arms use35A+35AT plus one factor solve versus finite CGLS128. Earlier
+full-factor PCGLS uses34A+34AT plus34 solves. Factor arrays occupy about415
+to731MiB with normal matrices, setup, labels and fitting additional. There is
+no fresh deployment time or memory result.
+
+Retain the passing classical warm initializer, but close distinct learned
+eligibility for this fixed two-coefficient recipe without ridge, loss or depth
+rescue. The whole learned/full-sequence/total-cost/external goal remains unmet.
+Shared canonical CSR and orchestration are disclosed; private data, source
+and parameters remain unpublished. This does not refute all learning or BOST.
+
+Evidence: [privacy-safe ridge learning and control summary](poolfire_direct_ridge_learning_2026-10-07_public_summary.json).
+
 ## 2026-10-07：非局部世界积分初值没有带来同预算增益
 
 本轮实际训练并检验了一个两共享系数的算子回归初值：输入只含当前观测与
