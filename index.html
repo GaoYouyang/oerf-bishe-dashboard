@@ -302,7 +302,7 @@
       <div>
         <div class="eyebrow"><span data-i18n-en="Gao Youyang · OERF C-route graduation research · Updated " data-i18n-zh="Gao Youyang 毕业设计 · OERF C 路线 · 更新至 ">Gao Youyang 毕业设计 · OERF C 路线 · 更新至 </span><span id="updatedDate">2026-10-07</span></div>
         <h1 data-i18n-zh="三维 BOST 重建的 Warm Start 研究" data-i18n-en="Warm-start methods for 3D BOST reconstruction">三维 BOST 重建的 Warm Start 研究</h1>
-<p class="lead" data-i18n-zh="研究目标：让只读取多相机观测与几何的学习型初值帮助CGLS/PCGLS在相同重建精度下减少调用。最新学习型与经典ridge初值均通过训练哨兵同精度门，但不学习对照已解释收益；学习优势与总成本收益尚未证明。" data-i18n-en="Research goal: an observation/geometry-only learned initializer that reduces CGLS/PCGLS calls at matched reconstruction accuracy. The latest learned and classical ridge seeds both pass train-sentinel accuracy, but the unlearned control explains the gain. Learned value and total-cost benefits remain unproven.">研究目标：让只读取多相机观测与几何的学习型初值帮助CGLS/PCGLS在相同重建精度下减少调用。最新学习型与经典ridge初值均通过训练哨兵同精度门，但不学习对照已解释收益；学习优势与总成本收益尚未证明。</p>
+<p class="lead" data-i18n-zh="研究目标：让只读取多相机观测与几何的学习型初值帮助CGLS/PCGLS在相同重建精度下减少调用。经典初值已通过训练哨兵同精度门，但总时间/内存未赢；学习优势未成立。最新容量审计排除普通Krylov35内的标量系数修补，不否定其他方向映射或整个C路线。" data-i18n-en="Research goal: an observation/geometry-only learned initializer that reduces CGLS/PCGLS calls at matched reconstruction accuracy. Classical seeds pass train-sentinel accuracy but not total time/memory gains; learned value is unproved. The latest capacity audit rules out scalar-only repair within normal Krylov35, not other direction maps or the C route.">研究目标：让只读取多相机观测与几何的学习型初值帮助CGLS/PCGLS在相同重建精度下减少调用。经典初值已通过训练哨兵同精度门，但总时间/内存未赢；学习优势未成立。最新容量审计排除普通Krylov35内的标量系数修补，不否定其他方向映射或整个C路线。</p>
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="./operator-learning/" data-i18n-zh="进入完整 C 路线研究台" data-i18n-en="Open the full C-route lab">进入完整 C 路线研究台</a>
           <a class="button" href="./operator-learning/daily-progress.html" data-i18n-zh="查看每日实质增量" data-i18n-en="View daily research increments">查看每日实质增量</a>
@@ -317,14 +317,22 @@
       </aside>
     </div>
     <div class="metrics" aria-label="当前研究状态" data-i18n-aria-label-zh="当前研究状态" data-i18n-aria-label-en="Current research status">
-<div class="metric"><b id="witnessMetric">99</b><span data-i18n-zh="本次训练哨兵" data-i18n-en="Current train sentinels">本次训练哨兵</span></div>
-<div class="metric"><b id="failureMetric">33 / 33</b><span data-i18n-zh="本轮基础精度分层" data-i18n-en="Current basic-accuracy strata">本轮基础精度分层</span></div>
-<div class="metric"><b id="callMetric">99 / 99</b><span data-i18n-zh="本轮四指标同精度" data-i18n-en="Current four-metric matches">本轮四指标同精度</span></div>
+<div class="metric"><b id="witnessMetric">99</b><span data-i18n-zh="经典初值训练哨兵" data-i18n-en="Classical-seed train sentinels">经典初值训练哨兵</span></div>
+<div class="metric"><b id="failureMetric">33 / 33</b><span data-i18n-zh="经典初值绝对精度分层" data-i18n-en="Classical-seed absolute strata">经典初值绝对精度分层</span></div>
+<div class="metric"><b id="callMetric">99 / 99</b><span data-i18n-zh="经典初值四指标同精度" data-i18n-en="Classical-seed four-error matches">经典初值四指标同精度</span></div>
       <div class="metric warning"><b id="breakthroughMetric">false</b><span data-i18n-html-zh="<code>algorithm_breakthrough</code>；学习加速尚未通过" data-i18n-html-en="<code>algorithm_breakthrough</code>; learned acceleration unproven"><code>algorithm_breakthrough</code>；学习加速尚未通过</span></div>
     </div>
   </header>
 
   <main id="main">
+<section class="band" id="poolfire-normal-krylov-budget-20261007">
+<h2 data-i18n-zh="35步普通Krylov：只改系数不能补齐观测误差" data-i18n-en="Normal Krylov35: coefficients alone cannot close the observation gap">35步普通Krylov：只改系数不能补齐观测误差</h2>
+<p data-i18n-zh="同一11条轨迹、99个三帧训练哨兵、5/7/9相机。只用当前观测与已知几何生成完整35方向，不读CFD真值、不拟合模型；这不是完整序列、真实BOST或新预测器。" data-i18n-en="The same 11 trajectories, 99 three-frame train sentinels and 5/7/9 cameras. Build all 35 directions from the current observation and known geometry, without CFD truth or model fitting; not full sequences, real BOST or a new predictor.">同一11条轨迹、99个三帧训练哨兵、5/7/9相机。只用当前观测与已知几何生成完整35方向，不读CFD真值、不拟合模型；这不是完整序列、真实BOST或新预测器。</p>
+<p data-i18n-zh="23/23独立检查通过。即使系数取最优，观测匹配仍为0/99，99/99均有数值下界证书；最优观测误差是参考的3.48至5.68倍，中位数4.31倍。普通CGLS35与完整系数最优解的残差差异不超过4.03e-16。" data-i18n-en="All 23/23 independent checks pass. Even optimal coefficients give 0/99 observation matches, with numerical lower-bound certificates on 99/99. Minimum observation error is 3.48 to 5.68 times the reference, median 4.31. Ordinary CGLS35 and the full coefficient optimum differ in residual by at most 4.03e-16.">23/23独立检查通过。即使系数取最优，观测匹配仍为0/99，99/99均有数值下界证书；最优观测误差是参考的3.48至5.68倍，中位数4.31倍。普通CGLS35与完整系数最优解的残差差异不超过4.03e-16。</p>
+<p data-i18n-zh="这只限制当前观测的无预条件普通Krylov35空间，不是所有35次调用算法。经典初值、失败学习初值与对角初值在空间外的场范数比例中位数为19.16%/50.22%/22.85%；空间外能量更多不代表方向更有用，也不构成新训练目标。" data-i18n-en="This restricts the current-query unpreconditioned Krylov35 span, not all 35-call algorithms. Median outside-span field-norm fractions for the classical, failed learned and diagonal seeds are 19.16%/50.22%/22.85%. More outside energy does not imply more useful directions or define a new training target.">这只限制当前观测的无预条件普通Krylov35空间，不是所有35次调用算法。经典初值、失败学习初值与对角初值在空间外的场范数比例中位数为19.16%/50.22%/22.85%；空间外能量更多不代表方向更有用，也不构成新训练目标。</p>
+<p data-i18n-zh="方向生成每个查询35A+35AT，另有两次A重放；完整重正交、投影求解与基存储不免费，不是速度优势。停止只学习这组标量系数的尝试；其他方向映射仍待检验。主目标仍未完成：四项同精度、总时间/内存、完整序列及外部迁移仍不可由本次审计替代。" data-i18n-en="Basis generation uses 35A+35AT per query plus two A replays; full reorthogonalization, projected solves and basis storage are nonfree, not a speed advantage. Stop scalar-only readouts of these directions; other direction maps remain untested. The main goal remains unmet: this audit cannot replace four-error accuracy, total time/memory, full sequences or external transfer.">方向生成每个查询35A+35AT，另有两次A重放；完整重正交、投影求解与基存储不免费，不是速度优势。停止只学习这组标量系数的尝试；其他方向映射仍待检验。主目标仍未完成：四项同精度、总时间/内存、完整序列及外部迁移仍不可由本次审计替代。</p>
+<p><a href="docs/poolfire_normal_krylov_budget_2026-10-07_public_summary.json" data-i18n-zh="脱敏方向预算容量摘要" data-i18n-en="Privacy-safe direction-budget capacity summary">脱敏方向预算容量摘要</a></p>
+</section>
 <section class="band" id="poolfire-neural-sparse-dual-factor-20261007">
 <h2 data-i18n-zh="2026-10-07：58参数稀疏逆因子未达到同精度" data-i18n-en="2026-10-07: A 58-parameter sparse inverse factor misses matched accuracy">2026-10-07：58参数稀疏逆因子未达到同精度</h2>
 <p data-i18n-zh="同一11条轨迹、99个三帧训练哨兵、5/7/9相机。58参数只拟合已知几何算子，不读轨迹观测、教师场或CFD真值；不是未知几何或完整序列验证。" data-i18n-en="The same 11 trajectories, 99 three-frame train sentinels and 5/7/9 cameras. The 58 parameters fit only known geometry operators, without trajectory observations, teacher fields or CFD truth; not unseen-geometry or complete-sequence validation.">同一11条轨迹、99个三帧训练哨兵、5/7/9相机。58参数只拟合已知几何算子，不读轨迹观测、教师场或CFD真值；不是未知几何或完整序列验证。</p>

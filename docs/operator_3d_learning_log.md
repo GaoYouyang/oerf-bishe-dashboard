@@ -1,3 +1,57 @@
+## 2026-10-07：普通Krylov35缺少观测匹配方向，标量系数不能补齐
+
+在同一11条已打开轨迹、99个三帧训练哨兵、5/7/9相机上，用当前观测
+与已知几何生成完整无预条件普通Krylov35空间，并求完整最小观测残差。
+99/99均有数值下界证书超过原参考观测匹配门，0可行、0未决。
+最优残差/参考误差的min/median/max为3.47626/4.31281/5.67712，
+普通CGLS35与完整系数最优解的残差差异最多4.03e-16。
+
+formal用normal Arnoldi/SVD，独立实现用全重正交Golub-Kahan/QR；
+23/23独立检查全真，空间/场/观测最大差为8.67e-13/6.48e-14/1.15e-14。
+全部99个新状态先封存，再读取参考与初值。新增CFD读取、训练、标签构造
+均为0。每个查询35A+35AT加2A重放；每套主账3663A+3465AT、
+乱序账1155A+1155AT。基构造、重正交、求解、存储及旧缓存不免费。
+
+经典ridge、失败稀疏学习因子、对角初值在K35外的场范数比例中位数
+为19.16%/50.22%/22.85%。失败学习初值的空间外能量更多，说明
+生成不同方向本身不够，必须有物理相关性与便宜实现。这个归因不是
+新训练目标，不重新训练、缩放或细化已经关闭的模型。
+
+精确结论是关闭只在此K35内选择标量系数的预算路线，不是所有35次调用
+算法不可行，也不是全部C路线被证伪。预条件器或非多项式空间映射可以
+离开该空间，但有效性与总成本需另证。本次没有四指标成功、完整序列、
+学习加速、端到端资源优势、外部泛化、真实BOST或论文突破。
+
+### English
+
+The full current-query unpreconditioned normal-Krylov35 span is reconstructed
+on the same 99 opened, three-frame train sentinels from 11 trajectories and
+5/7/9 cameras. All 99 numerical lower bounds exceed the unchanged reference
+observation-match limit; none are feasible or unresolved. The minimum-to-reference
+ratio ranges from 3.47626 to 5.67712, median 4.31281. Ordinary CGLS35 and the
+complete coefficient optimum differ in residual by at most 4.03e-16.
+
+Separate normal-Arnoldi/SVD and reorthogonalized Golub-Kahan/QR implementations
+pass 23/23 checks. Span/field/image differences are at most 8.67e-13/6.48e-14/
+1.15e-14. All query states seal before parent arrays are read; no CFD truth,
+training or new labels. Each basis costs 35A+35AT plus two A replays. Each mode
+adds 3663A+3465AT main and 1155A+1155AT permutation actions; basis solves,
+reorthogonalization, storage and inherited caches are nonfree.
+
+Median outside-span fractions are 19.16%/50.22%/22.85% for classical ridge,
+the closed learned sparse factor and the diagonal seed. Outside energy is not
+evidence of useful directions or a new training target. This closes scalar-only
+readouts within this validated K35, not arbitrary 35-call algorithms, geometry
+preconditioners or nonpolynomial maps. It is a necessary observation gate, not
+four-error reconstruction, total-cost gains, full sequences, external transfer,
+real BOST or paper success. The whole goal remains active and unmet.
+
+The algebraic relationship and numerical distinction are established context,
+not novelty: [Stanford SOL LSQR](https://web.stanford.edu/group/SOL/software/lsqr/)
+and [CGLS](https://web.stanford.edu/group/SOL/software/cgls/).
+
+[脱敏摘要 / Public summary](poolfire_normal_krylov_budget_2026-10-07_public_summary.json)
+
 ## 2026-10-07：训练方向库缺少初值方向，不只是预测系数问题
 
 在99个已打开三帧训练哨兵、11条轨迹、5/7/9相机上，整条留出轨迹不进入
