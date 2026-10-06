@@ -1,3 +1,54 @@
+## 2026-10-06：直接训练最终重建，微小收益仍不足以抵消成本
+
+52个跨相机共享参数的世界坐标集合模型，只读取当前观测和报告几何，精确伴随
+提升后接原样CGLS，并穿过所有细化步骤训练最终物理场。两套实现分别重训11个
+整轨迹留出外折；留出目标、CFD真值与统计不参与拟合。25/25独立检查通过，
+拟合最大相对差4.35e-14、四项指标最大绝对差9.27e-15。基础门33/33、严格
+四指标同精度0/99；评价仍为99个已开封三帧训练哨兵，不是完整序列。
+
+封存后两种汇总不增加训练或物理调用。相对无学习初值，98/99四项不更差、
+1个均更差；场/观测中位改善仅0.00138%/0.01106%。普通CGLS在99/99个样本
+四项都更好，模型场/观测中位误差比1.00269/1.02008。相对PCGLS：2个四项
+不更差、43个均更差、54个混合。不是完全没学到，而是收益不足。
+
+5/7/9相机下模型逻辑预算94A+98AT、92A+98AT、90A+98AT，普通CGLS则94A+94AT、
+92A+92AT、90A+90AT。每种实现训练另耗2,914,560A+2,914,560AT，几何缓存、
+标签、模型和存储也不免费；不是有效加速，没有fresh wall/RSS或真实BOST结论。
+
+关闭这一固定配方，不调网络、损失、训练步数或深度。记录排序失效按唯一键
+复核封存结果，不重训、不改门，原失败保留；修复不是创新。不同模型之间不能
+作为严格的损失位置因果消融；不否定全部学习初值，此前有限学习信号保留。
+主目标仍未完成，没有外部泛化、完整时序或高水平论文成熟结论。
+
+### English
+
+A world-local camera-set model with 52 shared parameters reads only current
+observations and reported geometry. Exact adjoint lift and unchanged CGLS remain
+fixed, while training differentiates through every refinement step for the final
+physical endpoint. Both implementations independently retrain all 11 complete-
+trajectory outer folds without held targets, CFD truth or held statistics in fit.
+All 25 checks pass; maximum fit-relative and metric-absolute differences are
+4.35e-14 and 9.27e-15. Basic strata pass 33/33, but strict four-metric matching is
+0/99 on already-open three-frame train sentinels, not full sequences.
+
+Post-closure reductions add no fitting or physical calls. Against the no-learning
+seed, all-four no-worse/harm counts are 98/99 and 1/99. Median field/observation
+reductions are only 0.00138%/0.01106%. Plain CGLS wins all four errors in all 99
+cells; learned median field/observation ratios are 1.00269/1.02008. Against PCGLS,
+2 cells are all-four no-worse, 43 all-four harm and 54 mixed. Learning is not absent;
+the benefit is too small to repay its cost.
+
+Logical 5/7/9-camera budgets are 94A+98AT, 92A+98AT and 90A+98AT versus plain CGLS's
+94A+94AT, 92A+92AT and 90A+90AT. Each implementation separately spends
+2,914,560A+2,914,560AT on training; caches, labels, model and storage are nonfree.
+This is not effective acceleration, fresh wall/RSS or real BOST. Close the fixed
+recipe without network, loss, update-count or depth rescue. Preserve original
+engineering failures; unique-key validation neither refits nor changes gates.
+Different models are not a causal loss-location ablation. This does not refute all
+learned initializers; prior modest gains remain valid and the main goal is unmet.
+
+[脱敏摘要 / Privacy-safe summary](poolfire_endpoint_world_set_2026-10-06_public_summary.json)
+
 ## 2026-10-06：固定迭代步长没有救回学习修正
 
 不重训、不重跑正式场，只对已有学习修正做固定步长的扰动传递/完整重放。
