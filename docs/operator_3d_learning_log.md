@@ -1,3 +1,43 @@
+## 2026-10-07：非局部世界积分初值没有带来同预算增益
+
+本轮实际训练并检验了一个两共享系数的算子回归初值：输入只含当前观测与
+报告几何，使用三维世界坐标上的全局场值依赖传播，再精确伴随提升和原样
+CGLS细化。去掉场值依赖的几何积分对照保持同参数数与同调用账。
+11个外折各排除完整留出轨迹；评分仍只覆盖99个三帧训练哨兵和5/7/9相机，
+不是完整时序、未开测试或真实BOST。
+
+110/110独立核验通过，基础精度两方法均为33/33分层，同精度均为0/99。
+候选对普通CGLS35及几何积分对照，均在99/99单元四项误差更差。
+对CGLS35的场、全梯度、内部梯度、观测中位误差比分别高
+0.34%、0.35%、0.24%、3.36%。原强经典99/99见证保持有效。
+关闭这个固定配方，不调核、损失或细化深度挽救；它不是整个学习初值或BOST
+方向被证伪。独立数学实现共享规范CSR输入与编排，这一共同基础已披露。
+每方法35A+35AT之外，密集积分、训练教师与几何准备都不免费；没有实际速度、
+内存或外部泛化胜利。主目标仍未完成。
+
+### English
+
+A two-shared-coefficient operator-regression initializer uses only current
+observations and reported geometry, with range-dependent all-world-node transport,
+exact adjoint lift and unchanged CGLS. A geometry-only integral is the same-budget
+control. All 11 outer folds exclude their complete held trajectory; evaluation
+still covers only 99 opened three-frame train sentinels with native 5/7/9 cameras.
+
+All 110 independent checks pass. Both arms pass 33/33 basic strata but match 0/99
+cells. The primary worsens all four errors versus both CGLS35 and its geometry-only
+integral control in all 99 cells. Median error ratios versus CGLS35 increase by
+0.34%, 0.35%, 0.24% and 3.36% for field, full gradient, interior gradient and
+observation. The original strong-classical 99/99 witness remains valid.
+
+This exact recipe closes without kernel, loss or solver-depth rescue, not a
+refutation of every learned initializer or BOST. Independent mathematical
+implementations share disclosed canonical CSR inputs and orchestration. Each arm
+costs 35A+35AT plus nonfree dense quadrature; teacher and geometry costs remain
+disclosed. No full-sequence, deployment speed, memory or external success is
+claimed. The complete main goal remains unmet.
+
+Evidence: [privacy-safe nonlocal initializer summary](poolfire_world_nonlocal_2026-10-07_public_summary.json).
+
 ## 2026-10-07：计时未定，差异定位到九相机参考端点
 
 六次新进程试验已经一次性完成，但参考复现检查失败，正式计时判断保持
