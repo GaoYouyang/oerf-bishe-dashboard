@@ -1,3 +1,37 @@
+## 2026-10-06：观测残差最优，不等于场重建最优
+
+本轮完成限定的理论筛查，而不是新算法试验：精确算术下，仅把当前观测
+和同一个未预条件正常算子的幂做全局标量多项式初值，再接原样CGLS，
+不能在常规完整动作计账下获得比同预算冷CGLS更低的观测残差。两种
+独立精确实现对36个有理数例子一致；普遍结论来自经典Krylov最优性和
+代数包含推导，不来自有限测试数，也不宣称首创。
+
+单独冻结的范围反例说明，同一空间内仍可用极小残差代价换得较低场
+误差；残差下界不能否定物理先验或全部四指标容差目标。反例真值可见，
+不是预测器或冻结细化路径的成功。有限精度、梯度、相机/空间耦合、
+外部方向、变预条件和非线性物理不在限定结论内。旧方案不重开；没有
+新CFD评分、训练、加速、实测资源、外部或真实BOST成果。
+
+### English
+
+This is scoped theoretical screening, not a new algorithm experiment. In exact
+arithmetic, global scalar polynomial seeds from the current observation and the
+same unpreconditioned normal powers, followed by unchanged CGLS, cannot beat the
+cold observed-residual minimum at the conventional fully counted budget. Two
+independent exact implementations agree on 36 rational examples. The general
+statement is an algebraic application of classical Krylov optimality, not a proof
+by test enumeration or a first/SOTA claim.
+
+A separately frozen caveat shows that same-space prior selection can improve
+field error for a tiny residual penalty. It uses visible algebraic truth, not a
+predictor or a successful fixed refinement path. Residual optimality does not
+refute physical priors or all four-metric tolerance goals. Finite precision,
+gradients, camera/spatial coupling, external vectors, variable preconditioning and
+nonlinear physics are outside the scoped statement. No old recipe is reopened,
+and no new CFD, training, acceleration, resource, external or real-BOST result is claimed.
+
+[限定理论摘要 / Scoped theory note](krylov_budget_boundary_2026-10-06_public_note.json)
+
 ## 2026-10-06：有符号射线图初值没有稳定增益
 
 实际拟合三个共享参数，以当前多相机测量射线的几何耦合和观测正负关系生成
