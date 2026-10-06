@@ -1,3 +1,39 @@
+## 2026-10-06：固定迭代步长没有救回学习修正
+
+不重训、不重跑正式场，只对已有学习修正做固定步长的扰动传递/完整重放。
+26/26项独立检查通过；99个已开封三帧训练哨兵中，33个四项均有传递伤害，
+66个混合，没有四项同时从好变坏的步长反馈反转。冻结后的观测误差全部
+高于无修正重启，中位数/p90/最坏比1.05787/28.02494/70.25871；原样CGLS
+自适应在全部99个样本减轻这一观测恶化，但仍未超过无修正重启。
+
+不能只怪自适应步长，固定步长也不是替代算法。反事实基础门32/33、严格
+匹配0/99；原学习配方保持关闭，不改变损失、深度或阈值。正式计算首次
+停在漏记评分投影的调用账校验；原失败不删除，原数组逐位复用，独立复算
+只修调用账与结果前JSON身份比较。两种实现各审计14652A+12870AT，缓存、
+训练和继承数据另计。不是完整序列、神经算子比较、实测提速或真实BOST。
+这排除一个简单解释，不否定全部学习初值；主目标仍未完成。
+
+### English
+
+Without refitting or rerunning formal fields, propagate the existing learned
+correction with the no-correction restart's frozen scalar schedule. Independent
+homogeneous transport and affine replay pass 26/26 checks. Among 99 opened
+three-frame train sentinels, 33 have all-four transported harm, 66 are mixed,
+and none has an all-four feedback reversal. Frozen observation error exceeds
+restart in every cell, with median/p90/worst ratios 1.05787/28.02494/70.25871.
+Unchanged adaptive CGLS alleviates this observation harm in every cell, yet
+does not recover benefit over no-correction restart.
+
+Do not blame only coefficient feedback or propose frozen replay as CGLS.
+Counterfactual basic/strict gates are 32/33 and 0/99. The original learning
+recipe stays closed without loss, depth or threshold rescue. Formal execution
+first stopped at omitted scoring-forward bookkeeping. Original failures stay
+intact; formal arrays are adopted byte-identically. Only the call ledger and
+pre-start JSON identity comparison are corrected. Each mode audits 14652A+
+12870AT; setup, training and inherited data remain nonfree. No full-sequence,
+neural-operator comparison, measured-speed or real-BOST success is claimed.
+This excludes one simple explanation, not all learning. The main goal is unmet.
+
 ## 2026-10-06：初值损失下降，不等于最终重建受益
 
 已开封的同一99个三帧训练哨兵，新增且只新增一个同预算“精确提升＋只重启”
