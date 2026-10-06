@@ -1,3 +1,37 @@
+## 2026-10-07：训练方向库缺少初值方向，不只是预测系数问题
+
+在99个已打开三帧训练哨兵、11条轨迹、5/7/9相机上，整条留出轨迹不进入
+30个同相机基数训练方向。读取留出目标的离线最优系数也不能在四个空间
+同时达到1%初值重现门：99/99有不可行下界证书，0个可行，0个未决。
+主方向库的场/全梯度/内部梯度/物理观测误差中位数为
+41.16%/55.92%/60.21%/45.95%；反投影与有限CGLS训练方向对照也均未通过。
+
+独立16/16检查通过，重建场最大相对差1.53e-10。新增0A+0AT、0模型拟合、
+0新CFD真值读取、0新标签构造。已有因子、标签和缓存非免费；离线投影
+成本不是部署加速。本轮没有训练预测器，也没有运行新的重建或细化。
+
+这关闭固定30方向库的精确初值蒸馏设想，不增加rank、样本库或网络挽救。
+初值重现不是最终CFD误差；经典最终重建99/99同精度和总资源失败均保持。
+不能据此否定另一种初值、后续CGLS或全部学习/BOST。后续必须明确生成
+当前观测与几何自身的空间方向。完整序列、学习加速、外部和真实BOST未证明。
+
+### English
+
+An offline target-visible oracle tests the full 30 same-count directions from
+other trajectories on 99 opened, three-frame PoolFire train sentinels with
+5/7/9 cameras. All 99 have a lower-bound certificate ruling out simultaneous
+one-percent seed reproduction in four spaces. Primary median discrepancies
+are 41.16%, 55.92%, 60.21% and 45.95%. BP and finite-CGLS direction controls
+also fail. All 16 independent checks pass; projected fields agree to 1.53e-10.
+
+No new physical calls, model fits, CFD truth reads or labels. Inherited factors
+and caches remain nonfree. This is capacity evidence, not deployment prediction,
+CFD matched accuracy or speed. Do not enlarge this fixed bank to rescue it.
+Other initializers, current-query directions and unchanged CGLS remain possible;
+full sequences, learned resource gains, external transfer and real BOST are unproved.
+
+[脱敏摘要 / Public summary](poolfire_inverse_action_span_2026-10-07_public_summary.json)
+
 ## 2026-10-07：同精度经典初值更慢且内存更高
 
 在同一99个已打开三帧训练哨兵、11条轨迹、5/7/9相机上，经典一次ridge
