@@ -1,3 +1,52 @@
+## 2026-10-07：训练响应有用，但小型逆作用仍未达到同精度
+
+**做了什么、为什么。** 不再扩大旧训练场方向库，而是用每折其他轨迹的30条
+逆响应构造平衡割线逆作用，保留当前观测的对角补空间，再做精确伴随提升与
+未修改CGLS34。几何对照使用同一作用形式，却不读训练响应。它借鉴已有
+[block-BFGS方法](https://proceedings.mlr.press/v48/gower16.html)，不是新定理。
+
+**有效性与范围。** 31/31独立检查全真；两套实现分别构造模型与重建。
+只用同一11条已打开轨迹、99个三帧训练哨兵、5/7/9相机。33个外折模型不读
+留出轨迹响应，全部模型和新预测先封存后评分。相机乱序一致；不是完整序列、
+未知位姿或真实BOST。模型作用、最终场、指标最大差约2.75e-10、4.85e-10、6.49e-11。
+
+**成功与失败。** 训练方法在97/99样本上四项误差都低于几何对照；场误差
+中位数27.79%，几何对照32.63%，参考26.41%，确实学到了有用响应。但观测误差
+中位数0.00913，参考0.00309；四项联合同精度0/99，绝对分层33/33。
+单项场/全梯度/内部梯度/观测匹配32/99、19/99、16/99、0/99。
+因此正式判决是`FAIL_TRAINED_BALANCED_MULTISECANT30_SENTINEL_CLOSED`。
+不能把绝对通过、便宜改善或割线代数成立包装成同精度加速。
+
+**成本与下一判断。** 两个新方法每个查询35A+35AT，另有小求解和低秩乘积；
+几何、训练和昂贵教师不免费。没有fresh部署速度或RSS结论。关闭当前固定
+30响应版本，不靠加方向、改参数或放宽门挽救；其他机制仍需独立假设。
+主目标仍未完成，算法突破、论文成功、资源优势、外部泛化与真实BOST均为false。
+
+### English
+
+A single balanced secant inverse action uses 30 non-held inverse responses and
+retains a query-specific diagonal complement, instead of enlarging the closed
+training-field bank. It borrows established block-BFGS ideas, not a new theorem.
+The geometry-only control uses the same action without training responses.
+All 31/31 independent checks pass on 99 three-frame train sentinels from
+11 opened trajectories and native 5/7/9 cameras. Fits exclude the entire held
+trajectory, but evaluation is not a complete sequence or unseen geometry.
+
+Training responses lower all four errors versus geometry-only action in 97/99
+cells. Median field errors are 27.79% trained, 32.63% geometry and 26.41%
+reference. Nevertheless, observation medians remain 0.00913 versus 0.00309;
+strict joint matches are 0/99 while absolute strata pass 33/33. Individual
+field/full-gradient/interior-gradient/observation matches are 32/99, 19/99,
+16/99 and 0/99. This is useful directional information, not matched success.
+
+Each query costs 35A+35AT plus small solves and low-rank products; teacher,
+geometry and training costs are nonfree. No fresh deployment resource result
+is claimed. Close this exact 30-response recipe without tuning or rank rescue.
+The whole goal remains active and unmet; no paper, speedup, external or real
+BOST claim follows. It does not refute all inverse-action learning or BOST.
+
+[脱敏摘要 / Public summary](poolfire_balanced_multisecant_2026-10-07_public_summary.json)
+
 ## 2026-10-07：普通Krylov35缺少观测匹配方向，标量系数不能补齐
 
 在同一11条已打开轨迹、99个三帧训练哨兵、5/7/9相机上，用当前观测
