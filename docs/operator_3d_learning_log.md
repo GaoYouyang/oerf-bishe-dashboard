@@ -1,3 +1,60 @@
+## 2026-10-07：冻结模型消融 相似度加权有一致增量作用
+
+不重新训练已关闭的全观测模型，只把当前样本相似度权重固定为常数，保留
+原折内训练库、已拟合系数、几何转移、观测幅值匹配和原样CGLS33。所有预测
+先封存再评分；评价仍是99个已开封三帧训练哨兵、11个整轨迹拟合排除折、
+5/7/9原生相机，不是完整序列或任意位姿泛化。
+
+正式和独立复算15/15项检查通过，指标最大绝对差6.49e-11。去权重后99/99
+样本四项最终误差都更差，相对原模型的场/观测误差中位比为
+1.00596917/1.03263228。这说明相似度加权对这个冻结模型有一致增量作用，
+但不是全部收益：去权重仍保留原模型97个对普通CGLS改善样本中的88个，
+相对普通CGLS四项不更差88/99、四项都更差2/99；场/观测中位比为
+0.97439764/0.86224311。
+
+控制仍使用观测幅值和CGLS，不能称完全不读观测；系数是在高斯加权下拟合的，
+不是重新训练最优全局先验的公平对照。差额不是总误差因果份额，也没有证明
+非局部信息普遍必要。两版本仍是基础33/33、严格同精度0/99，原配方继续关闭。
+未来表示应同时考虑训练得到的物理方向与当前观测条件选择，而不是假定任一
+因素能单独解释收益；不扩大旧库或调参挽救。
+
+单次35A+34AT，存储、几何与训练库非免费。每种实现新增主审计
+6,039A+3,465AT，乱序验证1,155A+1,122AT及六次准备探针另计；没有新拟合或
+教师构建。这不是有效加速、fresh wall/RSS、外部或真实BOST、论文突破，
+主目标仍未完成。
+
+### English
+
+Keep the closed whole-observation model fixed and replace only current-query
+similarity weights by constants. Its fold-train bank, fitted coefficients,
+geometry transfer, observation amplitude matching and unchanged CGLS33 remain.
+All predictions seal before scoring. Scope remains 99 opened three-frame train
+sentinels, eleven whole-trajectory fit exclusions and 5/7/9 native cameras, not
+complete sequences or arbitrary-pose transfer.
+
+All 15 independent checks pass; maximum cell-metric absolute difference is
+6.49e-11. Removing query weights worsens all four final errors in every cell,
+with median removed/original field/observation ratios 1.00596917/1.03263228.
+This is a consistent incremental effect in this frozen model, not the entire
+benefit: removal retains 88 of 97 original gain cells against plain CGLS, with
+all-four no-worse/harm counts 88/99 and 2/99 and median field/observation ratios
+0.97439764/0.86224311 against that control.
+
+The removed-weight control still uses observations for amplitude and CGLS;
+it is not observation-blind. Its coefficients were fitted under Gaussian
+conditioning, not optimized anew as a best global prior. Differences are not
+causal shares of total error or a universal necessity theorem for nonlocality.
+Both versions retain 33/33 basic strata and 0/99 strict matches; the original
+recipe stays closed. Future representations should consider both learned
+physical directions and observation conditioning without expanding or tuning
+the closed bank recipe.
+
+Queries cost 35A+34AT with nonfree bank storage and geometry. Each implementation
+adds 6,039A+3,465AT main audit calls, 1,155A+1,122AT permutation checks and six
+setup probes, without refitting or teacher construction. This is not effective
+acceleration, fresh wall/RSS, external/real BOST or paper-breakthrough evidence.
+The main goal remains unmet.
+
 ## 2026-10-06：跨相机张量初值有微小几何信号，但未获成本优势
 
 新方案用当前观测的有符号反投影和报告的相机方向形成密集跨相机张量特征，
