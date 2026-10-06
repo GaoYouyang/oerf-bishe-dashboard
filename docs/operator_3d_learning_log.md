@@ -1,5 +1,17 @@
 ## 2026-10-07：冻结模型消融 相似度加权有一致增量作用
 
+补充的方向诊断独立11/11通过：最优有符号标量缩放去权重初值，仍不能
+重现99/99个条件初值；方向相对残余最小/中位/最大为2.39%/8.63%/16.75%。
+它排除本次种子差异只是幅值变化的解释，不排除所有幅值调整后的CGLS路径。
+没有新求解、训练、CFD读取或A/AT调用；原0/99严格门和配方关闭状态不变。
+
+The added direction diagnostic passes 11/11 independent checks. Even the best
+signed scalar times the uniform-query seed cannot reproduce any of the 99
+conditioned seeds; relative directional residuals are 2.39%/8.63%/16.75% at
+minimum/median/maximum. This excludes an amplitude-only explanation of these
+seed differences, not all amplitude-tuned CGLS paths. No new solve, fit, CFD
+read or A/AT call occurs. The original 0/99 strict gate and closed recipe remain.
+
 不重新训练已关闭的全观测模型，只把当前样本相似度权重固定为常数，保留
 原折内训练库、已拟合系数、几何转移、观测幅值匹配和原样CGLS33。所有预测
 先封存再评分；评价仍是99个已开封三帧训练哨兵、11个整轨迹拟合排除折、

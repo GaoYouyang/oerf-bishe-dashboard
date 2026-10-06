@@ -46,7 +46,7 @@ def test_query_weight_note_preserves_bilingual_limits():
         notes = soup.select('#' + MARKER)
         assert len(notes) == 1
         pairs = notes[0].select('[data-i18n-zh][data-i18n-en]')
-        assert len(pairs) == 7
+        assert len(pairs) == 8
         zh = ' '.join(p['data-i18n-zh'] for p in pairs)
         en = ' '.join(p['data-i18n-en'] for p in pairs)
         assert all(term in zh for term in ('没有重训或新标签', '三帧训练哨兵', '不是完整序列', '88', '97', '0/99', '不能叫完全不读观测', '不是有效加速'))
@@ -56,3 +56,22 @@ def test_query_weight_note_preserves_bilingual_limits():
         assert image['data-i18n-alt-zh'] and image['data-i18n-alt-en']
         assert image['width'] == '1320' and image['height'] == '560'
         assert (ROOT / name).parent.joinpath(image['src']).resolve().is_file()
+
+
+def test_direction_diagnostic_is_not_an_amplitude_tuned_solver_claim():
+    data = json.loads((ROOT / 'docs' / SUMMARY).read_text())['direction_diagnostic']
+    assert data['decision'] == 'QUERY_CONDITIONING_CHANGES_SEED_DIRECTION_IN_ALL_SENTINELS'
+    assert data['independent_checks_passed'] == data['independent_checks_total'] == 11
+    assert data['changed_seed_directions'] == data['cells'] == 99
+    assert .08628 < data['seed_relative_noncollinearity']['median'] < .08629
+    assert .02394 < data['seed_relative_noncollinearity']['min'] < .02395
+    assert .16754 < data['seed_relative_noncollinearity']['max'] < .16755
+    assert data['new_A'] == data['new_AT'] == data['new_fits'] == data['new_CFD_reads'] == 0
+    assert data['all_amplitude_tuned_CGLS_paths_ruled_out'] is False
+    assert data['finite_reference_distances_are_CFD_errors'] is False
+    for name in ('index.html', 'operator-learning/index.html', 'operator-learning/daily-progress.html', 'learning_log.html'):
+        soup = BeautifulSoup((ROOT / name).read_text(), 'html.parser')
+        note = soup.select_one('#' + MARKER + ' [data-direction-diagnostic]')
+        assert note is not None
+        assert '8.63%' in note['data-i18n-zh'] and '8.63%' in note['data-i18n-en']
+        assert '0/99' in note['data-i18n-zh'] and '0/99' in note['data-i18n-en']
