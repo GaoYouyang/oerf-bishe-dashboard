@@ -1,3 +1,21 @@
+## 2026-10-06：六参数学习初值没有获益，表示缺口比拟合规模更重要
+
+这次真的拟合了一个新初值：用当前观测和报告几何生成谱模式响应，六个参数共享，整条留出轨迹不参与拟合，再精确伴随提升并接原样CGLS。20/20项独立检查通过，99个已开封三帧训练哨兵的基础精度33/33，但严格四指标同精度0/99。同调用预算的普通CGLS在全部99个样本的四项误差都更好，因此关闭这一固定方案，不扩大模型或加深细化。
+
+关键认识不是又一个失败计数。两套封存结果归因显示，128个几何模式对有限CGLS99到CGLS128之间剩余修正的场能量中位数只覆盖0.00077%，对应观测能量约1.01%；最大独立差2.12e-15。分母是两个有限端点的修正，不是全部CFD重建误差，也不是所有细化路径的最佳初值。这组表示没有覆盖大部分剩余修正，单纯增加拟合参数缺少依据。不能据此说所有学习初值或BOST不可能。
+
+99A+99AT是失败候选的查询预算，不是同精度少调用的成果。几何缓存、标签构造、排序、密集作用与训练不免费；没有完整时序、实测时间/内存、外部泛化、真实BOST或论文突破。此前小幅学习信号仍保留，主目标尚未完成。
+
+### English checkpoint
+
+A new initializer was actually fitted: six shared parameters condition geometric modal responses on current observations and reported geometry, with complete held trajectories excluded from fitting, followed by exact adjoint lift and unchanged CGLS. All 20 independent checks pass. The 99 opened three-frame train sentinels pass 33/33 basic strata but 0/99 strict four-metric matches. Same-budget plain CGLS has lower errors on all four metrics in all 99 cells, closing this fixed recipe without model or refinement expansion.
+
+The useful conclusion is not another failure count. Two sealed-result reductions find that 128 geometry modes capture only 0.00077% median field energy and about 1.01% median image energy of the remaining finite CGLS99-to-CGLS128 correction; maximum independent difference is 2.12e-15. The denominator is a correction between finite endpoints, not total CFD reconstruction error or optimum over all refined paths. This identifies a limitation of the current range, not proof against all learned initializers or BOST. Simply fitting more parameters lacks support.
+
+The failed candidate's 99A+99AT query budget is not a matched-accuracy saving. Geometry caches, labels, sorting, dense actions and fitting are nonfree. No full-sequence, fresh wall/RSS, external, real-BOST or paper breakthrough is established. Earlier modest learning evidence remains valid; the main goal is unmet.
+
+[脱敏摘要 / Privacy-safe summary](poolfire_modal_response_2026-10-06_public_summary.json)
+
 ## 2026-10-05：重正交 Hybrid-GCV 参考资格独立审查
 
 重正交 Hybrid-GCV 参考审查完成：3,333 个样本、36 个分层，独立检查 13/13 通过。128 步绝对误差门为 36/36，但 64 到 128 步四指标稳定性为 0/36，固定参考尝试关闭。没有同精度调用节省、资源优势或真实 BOST 结论。
