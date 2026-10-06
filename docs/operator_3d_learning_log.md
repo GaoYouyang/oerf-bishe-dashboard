@@ -1,3 +1,51 @@
+## 2026-10-06：跨相机张量初值有微小几何信号，但未获成本优势
+
+新方案用当前观测的有符号反投影和报告的相机方向形成密集跨相机张量特征，
+实际拟合两个共享系数，再经精确提升和原样CGLS；同规模去几何版本是固定对照。
+每种实现分别完成11个整轨迹排除外折、22次小拟合，不重训旧小网络。
+评价仍为99个已开封三帧训练哨兵和5/7/9相机，不是完整序列；留出目标、
+真值与统计不进入拟合或预测。
+
+独立20/20核验通过，逐样本指标最大差1.06e-14。参考和候选基础精度都通过
+33/33分层，候选及去几何对照严格四指标同精度均为0/99。候选相对去几何
+对照四项不更差63/99、四项均更差31/99，场/观测误差比中位数为
+0.99988454/0.99866742，收益很小且不普遍。普通CGLS在99/99个样本四项
+都更好，候选/普通CGLS场与观测误差比中位数为1.00244883/1.02102673。
+
+5/7/9相机单次候选查询为94A+98AT、92A+98AT、90A+98AT；普通CGLS使用
+94/92/90次A及同数AT。每种实现新增审计21,681A+18,909AT，另有六次准备
+探针；历史标签、几何、张量与训练不免费。这不是fresh wall/RSS或有效加速。
+判决为FAIL_ANGULAR_TENSOR_CUBIC2_LOTO_CLOSED，关闭固定配方，不调阶数、
+ridge或深度挽救；不否定全部几何学习，没有完整时序、外部、真实BOST或
+论文成功结论，主目标仍未完成。
+
+### English
+
+A new two-shared-coefficient operator forms dense camera tensor features from
+signed backprojections of current observations and reported camera axes, then
+uses exact lift and unchanged CGLS. An equal-size geometry-erased version is a
+fixed control. Each implementation fits eleven complete-trajectory exclusions
+and 22 small linear models without retraining the old neural comparator. Scope
+remains 99 opened three-frame train sentinels and 5/7/9 cameras, not full
+sequences; held targets, truth and statistics are excluded from fitting/prediction.
+
+All 20 independent checks pass; maximum cell-metric difference is 1.06e-14.
+Reference and candidate both pass 33/33 basic strata, but candidate and erased
+control each achieve 0/99 strict four-metric matches. Against the erased control,
+all-four no-worse/harm counts are 63/99 and 31/99, with median field/observation
+ratios 0.99988454/0.99866742: small, non-universal benefit. Plain CGLS beats all
+four errors in all 99 cells; median candidate/plain-CGLS ratios are
+1.00244883/1.02102673 for field/observation.
+
+For 5/7/9 cameras the candidate costs 94A+98AT, 92A+98AT and 90A+98AT, while
+ordinary CGLS uses 94/92/90 of each. Each implementation adds
+21,681A+18,909AT audit calls and six setup probes; inherited labels, geometry,
+tensor operations and training are nonfree. This is not fresh wall/RSS or
+effective acceleration. FAIL_ANGULAR_TENSOR_CUBIC2_LOTO_CLOSED closes this fixed
+recipe without degree, ridge or depth rescue. It does not refute all
+geometry-aware learning or establish full-sequence, external, real-BOST or paper
+success. The main goal remains unmet.
+
 ## 2026-10-06：最终模型训练与留出诊断
 
 保持模型不变，补算990次折内最终终点，复用99个留出终点；不是新增990个样本，
