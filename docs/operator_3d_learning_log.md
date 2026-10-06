@@ -1,3 +1,44 @@
+## 2026-10-06：多尺度局部初值仍未超过同成本经典算法
+
+从当前观测和几何生成求解状态，提取多尺度局部特征，以八个共享参数拟合
+折内有限经典场与观测，再精确伴随提升并接原样CGLS。整条留出轨迹不参与
+拟合；CFD真值只在预测后否决。这不是单步TV或固定全局标量多项式，但也
+没有完成标准神经算子比较。既有小波/稀疏算子学习文献不是本方案成功依据。
+
+同一99个三帧训练哨兵，33/33项独立检查通过，指标最大差5.62e-12。
+基础精度33/33分层通过，严格四指标同精度0/99。同成本普通CGLS与少一次
+伴随的BP在99/99样本四项误差均更小。场与观测误差比中位数为1.0062/1.0501。
+非线性对线性版本四项不更差63/99、均更差35/99，场误差中位数仅改善约0.003%。
+这不足以证明超过强经典对照。
+
+关闭这一固定多尺度配方，不调层数、阈值、损失或深度。96A+96AT不是有效
+同精度节省；几何缓存、标签、训练和核验另计。失败原因尚未唯一定位，不否定
+全部小波表示、非线性先验、学习初值或BOST；此前有限学习收益保留。评价
+不是完整序列、未打开测试或真实BOST，没有实测提速结论，主目标未完成。
+
+### English
+
+Current observations and geometry generate a solver state and multiscale local
+features. Eight shared coefficients fit fold-train finite classical fields and
+observations, followed by exact adjoint lift and unchanged CGLS. Entire held
+trajectories are excluded; CFD truth is only a post-prediction veto. This is not
+one-step TV or a fixed global scalar polynomial, nor a completed standard
+neural-operator comparison. Wavelet/sparsity prior art is not this recipe's success.
+
+All 33 independent checks pass on 99 three-frame train sentinels, with maximum
+metric difference 5.62e-12. Basic accuracy passes 33/33 strata; strict four-metric
+matching is 0/99. Same-cost CGLS and one-adjoint-cheaper BP beat all four errors
+in all 99 cells. Median field/observation ratios are 1.0062/1.0501. Against the
+linear version, all-four no-worse/harm counts are 63/99 and 35/99, with only about
+0.003% median field improvement, insufficient against strong classical controls.
+
+Close this fixed recipe without level, threshold, loss or depth rescue.96A+96AT
+is not effective matched-accuracy saving; geometry, labels, training and audits
+are nonfree. The cause is not uniquely identified. This does not refute all
+wavelets, nonlinear priors, learning or BOST; earlier limited learning evidence
+remains valid. No full-sequence, untouched-test, real-BOST or measured-speed
+claim is made. The main goal remains unachieved.
+
 ## 2026-10-06：保边缘学习初值没有抵消自身成本
 
 从当前反投影生成非二次TV方向，再精确投影、伴随提升和原样CGLS。
