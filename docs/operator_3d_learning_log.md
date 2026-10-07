@@ -1,3 +1,55 @@
+## 2026-10-07：谱块压缩未保住逆作用，下一对象是观测到初值
+
+仅用三套5/7/9相机几何与每套12个固定有效方向探针，不读取CFD场、
+实验观测或训练标签，不训练模型。47/47独立核验全真。固定谱块表示
+每套378,038,160字节，为完整逆矩阵的33.66%，未达到冻结10%预算。
+这是打包系数/索引存储，不是RSS。
+
+| 相机 / Cameras | 逆作用最坏相对误差 / Worst inverse action | 投影作用最坏相对误差 / Worst projected action |
+| --- | ---: | ---: |
+| 5 | 1795.82 | 921.11 |
+| 7 | 914.36 | 448.23 |
+| 9 | 277.67 | 135.78 |
+
+这些是无量纲逆作用探针误差，不是CFD场误差、最终重建或同精度测试。
+比便宜谱对角control更好，但仍远高于冻结1%门；关闭固定压缩配方，
+不追加秩或调整参数，不推断所有谱表示都不可能。
+
+原正式运行完成数组后因回调成本计数失效，失败证据原样保留。
+仅账本修正后接收旧数组并重放物理输出，第二实现独立重建全部表示；
+未重复正式逆求解或SVD，丢失的旧标量诊断标为不可用而非补造。
+混合审计时间/内存不是部署测速，之前完整序列经典提速证据不变。
+
+下一研究对象是观测到初值的有效映射，而不是整个逆矩阵。
+前者排除了不可观测方向的大逆增益，但这个代数事实不是全部误差
+成因的证明，也不是已实现的轻量学习算法。需要另做容量审计、
+保持精确A^T提升接口及最终四项物理匹配。
+
+### English
+
+This geometry-only audit uses three 5/7/9-camera operators and 12 fixed range
+probes each, with no CFD fields, experimental observations, labels or fitting.
+All 47/47 independent checks pass. Packed coefficients and indices use
+378,038,160 bytes per geometry, 33.66% of dense-inverse storage, missing the
+fixed 10% budget. This is not peak RSS. The table reports dimensionless
+inverse-action errors, not CFD-field or final-reconstruction errors. The fixed
+recipe beats a cheap spectral-diagonal control but misses the fixed 1% gate;
+close it without rank or parameter tuning, not the whole spectral family.
+
+The original counter failure and arrays are preserved. An accounting-only
+successor adopts complete old arrays, checks physical replays and is verified
+by a separate full reconstruction. No formal inverse solve or SVD is repeated;
+lost scalar diagnostics are unavailable, not invented. Audit resources are not
+deployment benchmarks. Prior full-sequence classical speed evidence remains.
+
+Next target: the effective observation-to-initializer map, not the whole
+inverse. It excludes large inverse gain on unobservable directions. This is
+an algebraic distinction, not a demonstrated causal diagnosis or learned gain.
+Separate capacity, an exact A^T lift interface and final four-error matching
+are still necessary.
+
+[脱敏摘要 / Public summary](poolfire_spectral_inverse_structure_2026-10-07_public_summary.json)
+
 ## 2026-10-07：完整序列经典初值实际更快，但峰值内存约8.5倍
 
 保持两方法不变，在11条已打开训练轨迹的全部101帧、5/7/9相机上，
