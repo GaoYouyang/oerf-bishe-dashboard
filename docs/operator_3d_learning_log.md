@@ -1,3 +1,62 @@
+## 2026-10-07：当前观测驱动的28权重网络仍未达到同精度
+
+**做了什么、为什么。** 从当前观测、已知几何与一次物理残差生成非线性
+双空间初值，精确伴随提升后接未修改CGLS。它不是固定训练场方向的组合，
+也不是只读取算子的稀疏因子。28个共享权重、每折一个训练标签尺度，
+11折均排除整条留出轨迹；每折只用其余90个样本，无留出标签、CFD真值或
+轨迹/时间ID进入训练。固定小模型先验证，不把更大网络当作默认救援。
+[FCG-NO](https://proceedings.mlr.press/v235/rudikov24a.html)提供残差感知学习的
+先例，但其灵活CG求解器没有替换本项目的原样CGLS，也不是BOST成功依据。
+
+**有效性与范围。** 38/38独立核验全真。Torch自动微分/Adam与独立NumPy
+解析梯度/Adam分别训练、重建和评分。每实现11个外折模型，加一次乱序
+重拟合审计，共12次拟合；28权重之外的尺度只来自本折训练标签。
+全部输入先于标签封存、全部模型先于预测封存、全部预测先于对照/CFD评分
+封存。17个旧终点逐位保留。仍是11条已打开轨迹、99个三帧训练哨兵、
+5/7/9相机，不是完整序列、未知几何或真实实验；12相机仅有合成测试。
+
+**成功与失败。** 网络与确定性残差对照都通过33/33绝对分层，却都只有
+0/99四项联合同精度；网络的四个单项也全为0/99。它在94/99样本上四项都
+低于便宜对角初值，但在92/99上四项都高于已有训练式迭代。场误差中位数
+32.59%，参考26.41%；观测0.01355，参考0.00309。归一化训练损失从1.00000
+降到0.99258，不是表示容量、优化收敛或重建成功证明。正式判决
+`FAIL_QUERY_RESIDUAL_DUAL28_SENTINEL_CLOSED`。
+
+**成本与下一判断。** 两种新方法每个查询35A+35AT，训练、网络、完整
+教师因子和几何准备不免费；审计耗时/RSS不是fresh部署资源证据。
+关闭这一固定点式残差网络，不改特征、宽度、损失、训练轮数或求解深度
+挽救。新旧方法同时改变了模型与算法安排，不能据此把差异全部归因于
+非局部性。当前证据只否定这套具体配方。主目标仍未完成；更大网络不是
+结论，没有同精度下的调用/总资源优势、外部泛化或论文突破。
+
+### English
+
+A current-query observation/geometry/physical-residual map supplies a nonlinear
+dual seed,exact adjoint lift and unchanged CGLS. Twenty-eight shared weights
+and one train-label scale per model;each of11 whole-trajectory exclusions uses
+only the other90 cells. No held label,CFD,time/trajectory ID or other-mode result
+enters fitting. This is not an enlarged closed field bank or operator-only factor.
+FCG-NO is a methodological precedent,not BOST evidence;its flexible solver is
+not substituted for unchanged CGLS.
+
+All38/38 independent checks pass. Torch autograd/Adam and independently derived
+NumPy gradients/Adam reconstruct their own models,physics and scores. Inputs
+seal before labels,models before predictions,predictions before controls/CFD.
+All17 old endpoints remain bitwise unchanged. Same99 three-frame train sentinels,
+11 opened trajectories,known5/7/9-camera geometries;not complete sequences,
+unseen geometry or real BOST. Twelve cameras are synthetic-only.
+
+Both new methods pass33/33 absolute strata but match0/99 jointly;all four
+individual primary matches are0/99. It lowers all four errors versus the cheap
+diagonal seed in94/99 samples,but raises all four versus the previous trained
+iteration in92/99. Median field32.59% versus26.41% reference;observation0.01355
+versus0.00309. Loss1.00000 to0.99258 is not capacity,convergence or success.
+Models and solver arrangements both differ,so this is not a causal nonlocality
+ablation. Close this fixed recipe without width,feature,loss,epoch or depth rescue.
+Each query35A+35AT;teachers,training,network work and geometry remain nonfree.
+No fresh deployment benchmark,same-accuracy call/resource advantage or paper
+breakthrough;the whole goal remains active and unmet.
+
 ## 2026-10-07：学习逆作用进入迭代，场匹配增加但观测未解决
 
 **做了什么、为什么。** 保留已独立验证的训练逆作用，不增大模型、不重新
