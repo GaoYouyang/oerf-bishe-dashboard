@@ -1,3 +1,55 @@
+## 2026-10-07：观测映射降到4%–6%存储，但精确提升仍放大误差
+
+这一轮直接构建观测到初值的矩形映射，分别按频率与射线几何分组，
+不再先压缩整个逆矩阵再乘A^T。三套5/7/9相机、36个合成测量探针，
+不读取CFD场、实验观测、训练标签或轨迹信息，不训练模型。
+68/68独立核验全真，存储门3/3通过，提升后的作用门0/36。
+
+| 相机 / Cameras | 打包存储占比 / Packed storage | 原映射最坏作用误差 / Worst raw action | 提升后最坏作用误差 / Worst lifted action |
+| --- | ---: | ---: | ---: |
+| 5 | 4.26% | 3.713 | 42,747.82 |
+| 7 | 5.14% | 4.640 | 56,069.99 |
+| 9 | 6.02% | 4.336 | 61,101.10 |
+
+这里是无量纲初值作用探针相对误差，不是CFD密度、实验位移、最终
+重建误差或完整轨迹门。打包系数/索引存储不是RSS。原映射本身已经
+未达冻结1%门，残差形式的精确提升又放大了近似误差；便宜BP更好。
+精确经典目标原始/对偶接口差小于1e-9，说明精确恒等式不能自动给
+近似映射带来稳定性。不能事后选择未提升输出替代唯一primary。
+
+每查询1A+1AT另有表示应用，构建还有48,614个右端列、完整因子与
+变换；每套实现441A+351AT审计回调，均非免费。未运行refinement，
+没有新资源测速、学习、外部或真实BOST结果。关闭固定分组压缩与
+提升配方，不加秩、不修改特征或提升公式。下一表示须直接保住物理
+作用；先盘点合格算子的稀疏结构，寻找更低内存的精确经典对照。
+之前完整序列经典提速证据不变。
+
+### English
+
+Construct the rectangular observation-to-seed map directly, grouping frequency
+and ray geometry instead of compressing the entire inverse first. Three
+5/7/9-camera operators and 36 synthetic measurement probes use no CFD fields,
+experimental observations, labels or fitting. All 68/68 independent checks
+pass. Storage passes 3/3, but lifted-action accuracy passes 0/36.
+
+The table reports dimensionless seed-action errors, not CFD density,
+experimental displacement, final reconstruction or complete-trajectory gates.
+Packed coefficients/indices are not RSS. Raw actions already miss the fixed
+1% gate; the residual-form exact lift amplifies their error and cheaper BP is
+better. Exact classical primal/dual closure is below 1e-9, so the exact
+identity does not automatically stabilize an approximate map. Raw output
+cannot replace the sole lifted primary afterward.
+
+Online cost is 1A+1AT plus map application. Construction also has 48,614 RHS
+columns, full factors and transforms; each implementation audits 441A+351AT,
+all nonfree. No refinement, new resource benchmark, learned, external or real
+BOST result. Close this fixed recipe without rank, feature or lift tuning.
+Next representations must retain physical action. First inventory operator
+sparsity for a lower-memory exact classical control. Prior full-sequence
+classical speed evidence remains unchanged.
+
+[脱敏摘要 / Public summary](poolfire_range_cross_lift_2026-10-07_public_summary.json)
+
 ## 2026-10-07：谱块压缩未保住逆作用，下一对象是观测到初值
 
 仅用三套5/7/9相机几何与每套12个固定有效方向探针，不读取CFD场、
