@@ -1,3 +1,56 @@
+## 2026-10-07：固定参考通过全部训练时序，仍不是学习加速
+
+**做了什么、为什么。** 原合格有限 CGLS128 对照只有99个三帧哨兵。
+早期完整序列尝试在算子初始化时退出，没有科学输出。本轮保持算法、
+步数、物理算子和四项门限不变，实际重算11条已打开训练轨迹的全部101帧，
+5/7/9相机共1,111个三维场、3,333个单元。没有复活失败模型或打开新条件。
+
+**有效性与结论。** 25/25独立核验全真。两套已有求解递推分别重建；
+第二实现独立重采样原CFD、物理投影、四指标与整段尾部。共享CSR输入、
+观测、调度和NumPy库已披露，并非完全独立软件栈。原99个观测与参考终点
+逐位保留；场结果两实现逐位一致，投影相对差5.68e-16，指标绝对差2.16e-14。
+33/33完整轨迹分层通过四项p90绝对门；额外检查发现全部3,333个单元
+逐点也守住同样门限。正式判决 `PASS_FIXED_CGLS128_FULL_TEMPORAL_REFERENCE_ONLY`。
+
+五、七、九相机汇总场p90分别0.41972/0.30673/0.19503，全梯度p90
+0.64666/0.46806/0.28622，内部梯度0.60728/0.45007/0.28620，观测
+0.00339/0.00371/0.00328。最坏单帧四项为0.44601/0.67118/0.62957/0.00405。
+这只是声明的代理门下合格，不代表高精度实验密度测量。Zero和BP均0/33
+绝对分层；参考自匹配不是学习贡献。
+
+**成本和下一判断。** 每参考查询128A+128AT；每实现实际456621A+429957AT，
+含全部推断、评分和输入一致性审计。输入、几何、存储和独立重算不免费；
+审计时间/RSS不是部署性能。完整时序有限基线现在有证据，学习同精度、
+调用减少和总资源优势仍未通过。有限参考不是已认证收敛真解；旧数值
+身份失败和全部旧算法负结果保留。下一模型仍需物理上不同且结果前冻结，
+不能把本轮通过当作旧模型的完整时序授权。主目标仍未完成。
+
+### English
+
+Keep the already chosen CGLS128 finite comparator,physical operator and four
+limits unchanged. Recompute all101 frames of11 opened train trajectories at
+5/7/9 cameras:1111 fields,3333 cells. The earlier all-frame setup failure is
+preserved;no failed learner or untouched condition is reopened.
+
+All25/25 independent checks pass. Separate archived recurrences rebuild states;
+the second implementation independently resamples original CFD and reconstructs
+physical images,gradients and full tails. Shared CSR inputs,observations,
+orchestration and NumPy are disclosed,not wholly independent stacks. Original99
+observations/reference endpoints are bitwise preserved. States match bitwise,
+image relative difference5.68e-16,metric absolute difference2.16e-14. All33/33
+complete strata pass;additionally all3333 individual cells satisfy the same
+absolute limits. Zero/BP pass0/33. Reference self-matching is tautological.
+
+Pooled5/7/9-camera field p90 is.41972/.30673/.19503,full gradient
+.64666/.46806/.28622,interior gradient.60728/.45007/.28620,observation
+.00339/.00371/.00328. Worst individual errors are.44601/.67118/.62957/.00405.
+These are declared proxy gates,not high-accuracy experimental density evidence.
+The fixed baseline uses128A+128AT per query;setup,input generation,storage and
+audit work are nonfree. Mixed audit time/RSS is not deployment performance.
+This qualifies only a finite full-temporal baseline,not a stationary inverse,
+learner,speedup,unseen transfer or real BOST. Closed recipes stay closed;
+the original whole goal remains active and unmet.
+
 ## 2026-10-07：当前观测驱动的28权重网络仍未达到同精度
 
 **做了什么、为什么。** 从当前观测、已知几何与一次物理残差生成非线性
