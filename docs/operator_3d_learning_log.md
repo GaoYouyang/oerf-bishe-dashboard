@@ -1,3 +1,19 @@
+## 2026-10-07: 共享空间学习器：精度稳定，尚未补足收敛差距 / Shared spatial learner: stable accuracy, unresolved convergence gap
+
+本轮直接训练一个54参数共享学习器，利用观测反投影的多尺度世界空间结构生成dual初值，再做精确AT提升和原样CGLS33。11个外折各自从其他10条轨迹训练，整条留出轨迹不参与该折训练标签、训练统计、停止或回退；评估是99个已打开哨兵、5/7/9相机，不是完整序列或外部泛化。训练不读CFD真值，仅使用训练轨迹的CGLS128参考场。
+
+This round trains an actual 54-parameter shared learner using multiscale world-space structure in observation backprojections, then exact AT lifting and unchanged CGLS33. Each of 11 outer models trains on the other 10 trajectories; its held-out trajectory supplies no labels, population normalization, stopping or fallback. Evaluation covers 99 opened sentinels and 5/7/9 cameras, not complete sequences or external generalization. Training reads only training-trajectory CGLS128 fields, not CFD truth.
+
+formal和独立解析梯度第二实现完成，40/40检查通过；模型与最终场最大相对差约1.73e-15和9.48e-15，指标最大差3.86e-12。候选与同价两步Richardson对照均守住33/33基础分层，但严格四指标同精度均为0/99；完整经典逆对照仍99/99。相对普通CGLS35，候选场、全梯度、内梯度、观测误差中位比分别0.99994、0.99903、0.99990、0.99478，接近基线，不能称稳定加速。
+
+Formal training and an independent analytic-gradient implementation pass 40/40 checks. Maximum relative model/final-field differences are about 1.73e-15/9.48e-15; maximum metric difference is 3.86e-12. Both learner and equal-cost two-step Richardson control satisfy 33/33 basic strata but match 0/99 cells across all four strict metrics; full classical inverse controls still match 99/99. Learner/plain-CGLS35 median field/full-gradient/interior-gradient/observation error ratios are 0.99994/0.99903/0.99990/0.99478: near baseline, not stable acceleration.
+
+两臂单次均35A+35AT；每种实现新增训练149490A+148500AT、输入缓存99AT，所有物理重放与评分另计，参考标签与既有几何建立也不免费。停止这份固定空间聚合/射线头配方，不搜索宽度、学习率或轮数。下一步研究未被学习初值补上的物理收敛误差成分。没有fresh wall/RSS、完整序列、真实BOST或论文突破结论。
+
+Both arms cost 35A+35AT per standalone query. Each implementation adds 149490A+148500AT for training and 99AT for input caching; physical replays/scoring are separate, and reused teachers/geometry are nonfree. Stop this fixed spatial-aggregation/ray-head recipe without width, rate or epoch searches. Next study physical convergence-error components that the learned seed leaves unresolved. There is no fresh wall/RSS, full-sequence, real-BOST or paper-breakthrough claim.
+
+[脱敏摘要 / Privacy-safe summary](poolfire_spatial_ray_shared54_2026-10-07_public_summary.json)
+
 ## 2026-10-07: 稀疏逆因子诊断：正定不等于稳定 / Sparse inverse-factor diagnosis: positive definiteness is not stability
 
 为学习型warm start寻找结构化物理逆表示，固定稀疏预算下分别按因子幅值和逆敏感度保留条目。原正式检验在首个对照样本的相机乱序一致性门停止；主候选尚未运行，99样本的精度判决仍为inconclusive，不写成0/99失败。没有重启、放宽容差或改用固定查询顺序。
