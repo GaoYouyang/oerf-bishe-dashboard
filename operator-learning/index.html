@@ -540,27 +540,27 @@
       <div>
 <div class="eyebrow" data-i18n-zh="毕业设计 · C 路线 · 学习与经典初值比较 · 2026-10-07" data-i18n-en="Graduation research · C route · learned versus classical seeds · 2026-10-07">毕业设计 · C 路线 · 学习与经典初值比较 · 2026-10-07</div>
         <h1 data-i18n-zh="三维 BOST 重建的 Warm Start 研究" data-i18n-en="Warm-Start Methods for 3D BOST Reconstruction">三维 BOST 重建的 Warm Start 研究</h1>
-<p class="lead" data-i18n-zh="研究目标：让只读取多相机观测与几何的学习型初值帮助CGLS/PCGLS在相同重建精度下减少调用。最新学习型与经典ridge初值均通过训练哨兵同精度门，但不学习对照已解释收益；学习优势与总成本收益尚未证明。" data-i18n-en="Research goal: an observation/geometry-only learned initializer that reduces CGLS/PCGLS calls at matched reconstruction accuracy. The latest learned and classical ridge seeds both pass train-sentinel accuracy, but the unlearned control explains the gain. Learned value and total-cost benefits remain unproven.">研究目标：让只读取多相机观测与几何的学习型初值帮助CGLS/PCGLS在相同重建精度下减少调用。最新学习型与经典ridge初值均通过训练哨兵同精度门，但不学习对照已解释收益；学习优势与总成本收益尚未证明。</p>
+<p class="lead" data-i18n-zh="研究目标：让只读取多相机观测与几何的学习型初值帮助CGLS/PCGLS在相同重建精度下减少调用。经典初值现已通过完整训练序列同精度门，并实测更快但更占内存；接下来寻找能替代昂贵逆算子准备、存储和求解的轻量映射。" data-i18n-en="Research goal: an observation/geometry-only learned initializer that reduces CGLS/PCGLS calls at matched reconstruction accuracy. The classical seed now matches complete training sequences and runs faster, but uses more memory. Next, seek a lightweight map that replaces costly inverse-operator preparation, storage and solves.">研究目标：让只读取多相机观测与几何的学习型初值帮助CGLS/PCGLS在相同重建精度下减少调用。经典初值现已通过完整训练序列同精度门，并实测更快但更占内存；接下来寻找能替代昂贵逆算子准备、存储和求解的轻量映射。</p>
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="#research-progress" data-i18n-zh="查看当前研究进程" data-i18n-en="View current research progress">查看当前研究进程</a>
           <a class="button" href="daily-progress.html" data-i18n-zh="查看每日实质增量" data-i18n-en="View daily substantive increments">查看每日实质增量</a>
-<a class="button" href="#poolfire-direct-ridge-cost-20261007" data-i18n-zh="阅读最新双语判决" data-i18n-en="Read the latest bilingual result">阅读最新双语判决</a>
+<a class="button" href="#poolfire-full-temporal-direct-cost-20261007" data-i18n-zh="阅读最新双语判决" data-i18n-en="Read the latest bilingual result">阅读最新双语判决</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_case19_bulk_advection_warm_v275_result_2026-08-28.md" data-i18n-zh="回看 v275 科学证据" data-i18n-en="Review the v275 scientific evidence">回看 v275 科学证据</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fc_route_primary_source_red_team_2026-08-04.md" data-i18n-zh="阅读 8 月 4 日一级来源红队" data-i18n-en="Read the Aug 4 primary-source red team">阅读 8 月 4 日一级来源红队</a>
         </div>
       </div>
       <aside class="hero-verdict" aria-label="最新执行状态" data-i18n-aria-label-zh="最新执行状态" data-i18n-aria-label-en="Latest execution status">
-<b data-i18n-zh="最新：少调用未带来资源优势" data-i18n-en="Latest: fewer calls do not yield resource gains">最新：少调用未带来资源优势</b>
-<p data-i18n-zh="经典初值三组均99/99同精度，但含新因子建立的缓存输入总时间35.49秒对22.88秒，峰值RSS5.61对0.68GiB；52/52独立核验通过。更少调用未变成资源优势，学习、完整序列与真实BOST仍未证明。" data-i18n-en="The classical seed matches99/99 in all three pairs, but cached-input total time including new factors is35.49s versus22.88s and peak RSS5.61 versus0.68GiB;52/52 independent checks pass. Fewer calls do not yield a resource advantage. Learning,full sequences and real BOST remain unproved.">经典初值三组均99/99同精度，但含新因子建立的缓存输入总时间35.49秒对22.88秒，峰值RSS5.61对0.68GiB；52/52独立核验通过。更少调用未变成资源优势，学习、完整序列与真实BOST仍未证明。</p>
+<b data-i18n-zh="最新：完整序列更快，内存仍昂贵" data-i18n-en="Latest: faster full sequences, but expensive memory">最新：完整序列更快，内存仍昂贵</b>
+<p data-i18n-zh="完整序列经典初值通过3,333/3,333同精度与33/33完整轨迹门。三组总时间中位数135.99秒对161.72秒，约快16%；峰值RSS为5.675对0.668GiB。57/57独立核验通过。下一重点是替代大因子构建、存储和求解，同时保留四项精度。" data-i18n-en="The full-sequence classical seed passes 3,333/3,333 matched cells and 33/33 complete strata. Median wall time across three pairs is 135.99 s versus 161.72 s, about 16% faster; peak RSS is 5.675 versus 0.668 GiB. All 57/57 independent checks pass. The next target is to replace large-factor construction, storage and solves while retaining all four errors.">完整序列经典初值通过3,333/3,333同精度与33/33完整轨迹门。三组总时间中位数135.99秒对161.72秒，约快16%；峰值RSS为5.675对0.668GiB。57/57独立核验通过。下一重点是替代大因子构建、存储和求解，同时保留四项精度。</p>
         <p data-i18n-en="The earlier v285 same-family H2-air transfer still fails its joint accuracy gate on all 54 frames." data-i18n-zh="此前 v285 的 H₂-air 同族迁移仍是 54 帧联合精度门全部失败。">此前 v285 的 H₂-air 同族迁移仍是 54 帧联合精度门全部失败。</p>
-<a class="button" href="#poolfire-direct-ridge-cost-20261007" data-i18n-zh="查看同精度总成本比较" data-i18n-en="View matched-accuracy total costs">查看同精度总成本比较</a>
+<a class="button" href="#poolfire-full-temporal-direct-cost-20261007" data-i18n-zh="查看同精度总成本比较" data-i18n-en="View matched-accuracy total costs">查看同精度总成本比较</a>
         <p data-i18n-en="In the earlier comparator, all 369 hidden and readout parameters are trained, with one additional train-only output scale per fold; inputs remain observations and geometry only. Online cost is 2A+2AT versus cheaper direct-field ridge at 2A+1AT. Stable call reduction, resource benefit and real BOST remain unproven." data-i18n-zh="此前隐层与读出共369参数全部训练，另有每折一个仅由训练集确定的输出尺度；输入仍只有观测与几何。候选在线2A+2AT，更便宜的直接场ridge为2A+1AT；仍无稳定调用减少、资源优势或真实BOST结论。">此前隐层与读出共369参数全部训练，另有每折一个仅由训练集确定的输出尺度；输入仍只有观测与几何。候选在线2A+2AT，更便宜的直接场ridge为2A+1AT；仍无稳定调用减少、资源优势或真实BOST结论。</p>
       </aside>
     </div>
     <div class="current-grid" aria-label="当前核心状态" data-i18n-aria-label-zh="当前核心状态" data-i18n-aria-label-en="Current core status">
-<div class="current-metric"><b id="liveWitnessCount">99</b><span data-i18n-zh="本次训练哨兵" data-i18n-en="Current train sentinels">本次训练哨兵</span></div>
+<div class="current-metric"><b id="liveWitnessCount">3,333</b><span data-i18n-zh="本次完整序列查询" data-i18n-en="Current full-sequence queries">本次训练哨兵</span></div>
 <div class="current-metric"><b id="liveFailureCount">33 / 33</b><span data-i18n-zh="本轮基础精度分层" data-i18n-en="Current basic-accuracy strata">本轮基础精度分层</span></div>
-<div class="current-metric"><b id="liveCallBudget">99 / 99</b><span data-i18n-zh="本轮四指标同精度" data-i18n-en="Current four-metric matches">本轮四指标同精度</span></div>
+<div class="current-metric"><b id="liveCallBudget">3,333 / 3,333</b><span data-i18n-zh="本轮四指标同精度" data-i18n-en="Current four-metric matches">本轮四指标同精度</span></div>
       <div class="current-metric warning"><b id="liveBreakthrough">false</b><span data-i18n-html-zh="<code>algorithm_breakthrough</code>；固定路线已关闭" data-i18n-html-en="<code>algorithm_breakthrough</code>; fixed route closed"><code>algorithm_breakthrough</code>；固定路线已关闭</span></div>
     </div>
     <details class="header-archive">
@@ -989,6 +989,15 @@
   </header>
 
   <main id="main">
+<section class="band" id="poolfire-full-temporal-direct-cost-20261007">
+<h2 data-i18n-zh="完整序列实测：经典初值更快，但内存仍昂贵" data-i18n-en="Full-sequence measurements: a faster classical seed, but expensive memory">完整序列实测：经典初值更快，但内存仍昂贵</h2>
+<p data-i18n-zh="保持不训练的DirectRidge-Warm34和CGLS128不变，测试11条已打开训练轨迹的全部101帧、5/7/9相机，共3,333次查询。两方法各三次独立进程，57/57独立核验通过：每组均3,333/3,333四项误差匹配、33/33完整轨迹门通过。三次重复终点逐位一致，再独立重建物理评分与整段尾部。" data-i18n-en="Keep unlearned DirectRidge-Warm34 and CGLS128 unchanged. Evaluate all 101 frames of 11 opened train trajectories at 5/7/9 cameras: 3,333 queries. Three fresh processes per method; all 57/57 independent checks pass. Each pair has 3,333/3,333 four-error matches and 33/33 complete strata. Repeated endpoints are bitwise identical before independent physics and full-tail scoring.">保持不训练的DirectRidge-Warm34和CGLS128不变，测试11条已打开训练轨迹的全部101帧、5/7/9相机，共3,333次查询。两方法各三次独立进程，57/57独立核验通过：每组均3,333/3,333四项误差匹配、33/33完整轨迹门通过。三次重复终点逐位一致，再独立重建物理评分与整段尾部。</p>
+<p data-i18n-zh="总时间中位数：经典初值135.99秒，参考161.72秒，三组都更快，约下降16%；峰值推理RSS为5.675对0.668GiB，约8.5倍。三组时间比例0.850/0.841/0.854，RSS比例8.484/8.289/8.586。判决是没有同时赢得时间和内存，不把实际时间收益抹掉，也不包装成学习突破。" data-i18n-en="Total wall medians: classical seed 135.99 s versus reference 161.72 s, faster in all three pairs, about 16% less time. Peak inference RSS is 5.675 versus 0.668 GiB, about 8.5x. Paired wall ratios 0.850/0.841/0.854; RSS ratios 8.484/8.289/8.586. No joint time-memory win; retain the measured time benefit without calling it learned progress.">总时间中位数：经典初值135.99秒，参考161.72秒，三组都更快，约下降16%；峰值推理RSS为5.675对0.668GiB，约8.5倍。三组时间比例0.850/0.841/0.854，RSS比例8.484/8.289/8.586。判决是没有同时赢得时间和内存，不把实际时间收益抹掉，也不包装成学习突破。</p>
+<p data-i18n-zh="计时含新因子建立、物理接口、读入和压缩输出；因子准备约25.00秒。历史算子和观测生成不在计时内且不免费，未清文件缓存。两方法都用八路查询；旧99查询是串行，负结果保留，不能把不同工作量和调度的差异全归因于摊销。这里只是本机固定几何的缓存输入测试。" data-i18n-en="Timing includes new factors, physical interfaces, input and compressed output; factor preparation is about 25.00 s. Historical operator/input generation is excluded and nonfree; filesystem cache is not purged. Both arms use eight query workers. Old 99-query execution was serial and its negative result is preserved: workload and scheduling effects are not isolated. Fixed-geometry cached-input measurements on this Mac only.">计时含新因子建立、物理接口、读入和压缩输出；因子准备约25.00秒。历史算子和观测生成不在计时内且不免费，未清文件缓存。两方法都用八路查询；旧99查询是串行，负结果保留，不能把不同工作量和调度的差异全归因于摊销。这里只是本机固定几何的缓存输入测试。</p>
+<p data-i18n-zh="每查询35A+35AT和一次因子求解，参考128A+128AT。下一算法切入点是替代大因子的构建、存储和三角求解，同时保留四项精度；不能把经典逆算子的贡献算给学习。没有新训练、未见工况、噪声或真实BOST结果。" data-i18n-en="Each query uses 35A+35AT plus one factor solve versus reference 128A+128AT. The next algorithmic target is to replace large-factor construction, storage and triangular solves while retaining all four errors, not credit the classic inverse to learning. No new training, unseen condition, noise or real-BOST result.">每查询35A+35AT和一次因子求解，参考128A+128AT。下一算法切入点是替代大因子的构建、存储和三角求解，同时保留四项精度；不能把经典逆算子的贡献算给学习。没有新训练、未见工况、噪声或真实BOST结果。</p>
+<figure><img src="../assets/figures/poolfire_full_temporal_direct_cost_20261007_zh.png" data-i18n-src-zh="../assets/figures/poolfire_full_temporal_direct_cost_20261007_zh.png" data-i18n-src-en="../assets/figures/poolfire_full_temporal_direct_cost_20261007_en.png" width="1375" height="704" style="max-width:100%;height:auto" alt="完整序列经典初值时间更低，但峰值RSS更高" data-i18n-alt-zh="完整序列经典初值时间更低，但峰值RSS更高" data-i18n-alt-en="Full-sequence classic seed lowers wall time but increases peak RSS"><figcaption data-i18n-zh="红点为三次实测，柱为中位数；相同完整序列同精度，不是学习或真实实验加速。" data-i18n-en="Dots are three measurements; bars are medians. Same complete-sequence accuracy, not learned or real-experiment acceleration.">红点为三次实测，柱为中位数；相同完整序列同精度，不是学习或真实实验加速。</figcaption></figure>
+<p><a href="../docs/poolfire_full_temporal_direct_cost_2026-10-07_public_summary.json" data-i18n-zh="脱敏完整序列资源摘要" data-i18n-en="Privacy-safe full-sequence resource summary">脱敏完整序列资源摘要</a></p>
+</section>
 <section class="band" id="poolfire-full-temporal-direct-control-20261007">
 <h2 data-i18n-zh="完整时序经典初值通过，学习贡献仍待证明" data-i18n-en="A classical warm initializer passes all frames; learned value remains unproved">完整时序经典初值通过，学习贡献仍待证明</h2>
 <p data-i18n-zh="保持已合格的不训练 DirectRidge-Warm34 初值与未修改CGLS不变，扩展到11条已打开训练轨迹的全部101帧、5/7/9相机：1,111个场、3,333个单元。没有改参数、训练模型、打开新条件或真实实验。" data-i18n-en="Keep the qualified unlearned DirectRidge-Warm34 initializer and unchanged CGLS fixed. Extend to all 101 frames of 11 opened train trajectories at 5/7/9 cameras: 1,111 fields and 3,333 cells. No parameter change, model fit, unseen condition or real experiment is opened.">保持已合格的不训练 DirectRidge-Warm34 初值与未修改CGLS不变，扩展到11条已打开训练轨迹的全部101帧、5/7/9相机：1,111个场、3,333个单元。没有改参数、训练模型、打开新条件或真实实验。</p>
@@ -2743,7 +2752,7 @@
             <div class="field"><label for="codeLevel">编程基础</label><select id="codeLevel"><option value="low">NumPy/PyTorch 不系统</option><option value="mid">能改现有训练代码</option><option value="high">能独立设计实验框架</option></select></div>
             <div class="field"><label for="dataLevel">数据条件</label><select id="dataLevel"><option value="synthetic">只有合成数据</option><option value="open">可用开放 BOS 数据</option><option value="lab">可向组内申请样例</option></select></div>
           </div>
-          <p class="lead" style="font-size:13px;margin-top:13px;">进度按“能不能独立产出证据”计算，不按仓库里已经有多少代码计算。</p>
+<p class="lead" data-i18n-zh="研究目标：让只读取多相机观测与几何的学习型初值帮助CGLS/PCGLS在相同重建精度下减少调用。经典初值现已通过完整训练序列同精度门，并实测更快但更占内存；接下来寻找能替代昂贵逆算子准备、存储和求解的轻量映射。" data-i18n-en="Research goal: an observation/geometry-only learned initializer that reduces CGLS/PCGLS calls at matched reconstruction accuracy. The classical seed now matches complete training sequences and runs faster, but uses more memory. Next, seek a lightweight map that replaces costly inverse-operator preparation, storage and solves.">研究目标：让只读取多相机观测与几何的学习型初值帮助CGLS/PCGLS在相同重建精度下减少调用。经典初值现已通过完整训练序列同精度门，并实测更快但更占内存；接下来寻找能替代昂贵逆算子准备、存储和求解的轻量映射。</p>
         </div>
         <div id="recommendation" class="recommendation" aria-live="polite"></div>
       </div>
@@ -4333,6 +4342,18 @@
           return response.json();
         })
         .then(evidence => {
+          const fullTemporal = evidence.latest_full_temporal_direct_cost;
+          if (fullTemporal) {
+            document.getElementById('liveWitnessCount').textContent = fullTemporal.cells.toLocaleString('en-US');
+            document.getElementById('liveFailureCount').textContent = `${fullTemporal.complete_absolute_strata_each_pair} / ${fullTemporal.complete_strata}`;
+            document.getElementById('liveCallBudget').textContent = `${fullTemporal.matched_cells_each_pair.toLocaleString('en-US')} / ${fullTemporal.cells.toLocaleString('en-US')}`;
+            document.getElementById('liveBreakthrough').textContent = String(fullTemporal.algorithm_breakthrough);
+            const status = document.getElementById('liveEvidenceStatus');
+            status.setAttribute('data-i18n-zh', fullTemporal.headline_zh);
+            status.setAttribute('data-i18n-en', fullTemporal.headline_en);
+            window.OERFLanguage?.translateSubtree(status);
+            return;
+          }
           const current = evidence.latest_direct_ridge_cost || evidence.latest_direct_ridge_initializer || evidence.latest_native_classical_control;
           if (current) {
             document.getElementById('liveWitnessCount').textContent = String(current.cells);

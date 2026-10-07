@@ -1,3 +1,45 @@
+## 2026-10-07：完整序列经典初值实际更快，但峰值内存约8.5倍
+
+保持两方法不变，在11条已打开训练轨迹的全部101帧、5/7/9相机上，
+两方法各运行三次独立进程。全部3,333/3,333单元四项误差匹配，
+33/33完整轨迹门通过；57/57独立核验全真，三次重复终点逐位一致。
+独立物理评分、原CFD重采样与完整尾部复算还分别核对两套合格父实现。
+
+含新因子建立、物理接口、输入和压缩输出，总时间中位数经典初值
+135.99秒、参考161.72秒，三组均更快，约下降16%；峰值推理RSS
+5.675对0.668GiB，约8.5倍。时间比0.850/0.841/0.854，RSS比
+8.484/8.289/8.586。正式判决为
+`NO_JOINT_FULL_TEMPORAL_CACHED_DIRECT_RESOURCE_ADVANTAGE`：有经典时间收益，
+但没有同时赢得时间和内存，不是学习突破。
+
+两方法均八路查询、查询BLAS单线程；因子准备约25.00秒。历史算子
+与观测生成不在计时内且不免费，未清文件缓存。旧99查询为串行且
+负结果保留，不能将工作量与调度差异全部解释成摊销。每查询经典
+35A+35AT加一次因子求解，参考128A+128AT。下一算法切入点是以便宜
+的观测/几何映射替代大因子构建、存储和求解，同时保留四项精度。
+没有新训练、未知工况、噪声、外部或真实BOST证据。
+
+### English
+
+Three fresh processes per unchanged method cover 11 opened train trajectories,
+all 101 frames and 5/7/9 cameras: 3333 queries. All 57/57 checks pass. Each pair
+matches 3333/3333 in four errors and 33/33 complete strata; repeated fields are
+bitwise identical before independent physical scoring and both-parent checks.
+Whole cached-pipeline wall medians are 135.99 s classic versus 161.72 s reference,
+about 16% less time in all pairs. Peak inference RSS is 5.675 versus 0.668 GiB,
+about 8.5x. Paired wall ratios 0.850/0.841/0.854 and RSS ratios 8.484/8.289/8.586.
+NO_JOINT_FULL_TEMPORAL_CACHED_DIRECT_RESOURCE_ADVANTAGE retains the measured
+classic time benefit but does not claim a joint time-memory or learned win.
+
+Both arms use 8 query workers and 1 query BLAS thread; new factors, interfaces,
+inputs and compressed output are timed. Factor preparation is about 25.00 s.
+Historical operator/input generation is excluded and nonfree; OS caches are
+not purged. Old 99-query execution was serial and its negative result remains
+unchanged; workload and scheduling effects are not causally isolated.
+35A+35AT plus one solve versus 128A+128AT. Learning must replace costly factors
+without losing four-error accuracy, not claim their established contribution.
+No new fit, unseen condition, noise, external or real-BOST result is reported.
+
 ## 2026-10-07：不训练的经典初值也通过完整时序同精度门
 
 **做了什么、为什么。** 原DirectRidge-Warm34经典初值只有99个三帧哨兵。
