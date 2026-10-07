@@ -1,3 +1,48 @@
+## 2026-10-07：精确带状初值保住完整序列精度，时间少5.53%
+
+把同一个经典初值的大分解换成保留所有系数的精确带状分解。
+11条已打开训练轨迹、全部101帧、5/7/9相机，三组新进程均保住
+3,333/3,333四项误差匹配及33/33完整分层。57/57独立核验通过，
+三次重复逐位一致；此前数值资格另有51/51检查。
+
+| 本轮新进程 / Fresh arm | 时间中位数 / Median wall s | 峰值RSS中位数 / Median GiB |
+| --- | ---: | ---: |
+| CGLS128 | 161.04 | 0.666 |
+| Exact-band Warm34 | 152.13 | 3.678 |
+
+时间约少5.53%，三组均更快，但RSS均为对照5.5至6.0倍，未同时
+赢得时间和内存。因子总字节较原稀疏因子少45.9%，不是整进程RSS
+胜出。旧稀疏计时不变，两轮差别不是新鲜因果对照。
+
+每查询35A+35AT另加一次因子求解，对照128A+128AT。计时包含新
+因子、读入与输出；历史算子/观测生成不包含且非免费。未清文件
+缓存。这里是固定几何缓存输入的经典时间收益，不是学习或真实
+实验结果。下一轮检验无需大因子的逐行射线对偶初值，保留精确
+提升与原CGLS，并把所有逐行运算计入成本；该机制尚未得到结果。
+
+### English
+
+Replace the same classical initializer's factor representation with exact
+banded Cholesky, retaining every coefficient. Across eleven opened train
+trajectories, every 101-frame sequence and 5/7/9 cameras, all three fresh
+pairs retain 3,333/3,333 four-error matches and 33/33 complete strata.
+All 57/57 independent checks pass and repeats are bitwise identical;
+the numerical parent separately has 51/51 checks.
+
+Median wall is 152.13 s versus 161.04 s, about 5.53% less time in all pairs.
+Median peak RSS is 3.678 versus 0.666 GiB, with paired ratios 5.5 to 6.0.
+The 45.9% factor-payload reduction is not a process-memory win. Earlier
+sparse timings stay intact; cross-run differences are not a causal pair.
+
+Online cost is 35A+35AT plus one factor solve versus 128A+128AT. Timing
+includes new factors, input and output but excludes nonfree historical
+operator/observation generation; filesystem cache is not purged. This is
+a cached-input classical time benefit, not learned or real-BOST evidence.
+Next, test a row-action dual seed without large factors, exact lifting and
+unchanged CGLS, charging all row arithmetic. That mechanism is untested.
+
+[脱敏摘要 / Public summary](poolfire_exact_band_cost_2026-10-07_public_summary.json)
+
 ## 2026-10-07：观测映射降到4%–6%存储，但精确提升仍放大误差
 
 这一轮直接构建观测到初值的矩形映射，分别按频率与射线几何分组，
