@@ -1,3 +1,55 @@
+## 2026-10-07：不训练的经典初值也通过完整时序同精度门
+
+**做了什么、为什么。** 原DirectRidge-Warm34经典初值只有99个三帧哨兵。
+本轮不改任何参数、全因子或未修改CGLS，将同一个不训练的对照扩展到
+11条已打开训练轨迹的全部101帧、5/7/9相机，共1,111个场、3,333个单元。
+没有复活旧学习模型，也没有打开新条件、验证测试或真实实验。
+
+**科学结果。** 29/29独立核验全真。全部3,333/3,333单元同时匹配四项
+参考误差，四个单项也均3,333/3,333；33/33完整轨迹匹配与绝对p90门通过。
+所有单帧也满足绝对门。五/七/九相机场p90为0.39991/0.24265/0.07908，
+全梯度0.62126/0.37317/0.11411，内部梯度0.58839/0.36672/0.11419，
+观测0.000577/0.000789/0.000586。正式判决
+`PASS_FIXED_DIRECT_RIDGE_FULL_TEMPORAL_STRONG_CONTROL_ONLY`。
+
+两实现独立重建全因子、求解递推、物理投影、原CFD重采样、梯度与整段
+分位数；共享CSR、观测、NumPy和调度披露。场相对差3.40e-11，指标
+绝对差7.55e-12；原99个初值与终点逐位保留，33个首帧乱序审计通过。
+这里只是固定原生几何和声明代理门，不是任意相机、实验精度或真实BOST。
+
+**成本和下一判断。** 每查询35A+35AT和一次实际因子求解，参考128A+128AT。
+实际每实现137808A+117810AT，含评分、一致性和乱序；3375次因子求解
+含查询、乱序与探针。全因子构建、存储、三角求解、输入、教师和I/O不免费。
+本轮未测fresh wall/RSS，原99查询整流水线不占优结论原样保留。
+完整时序有了更强的不训练初值对照，不代表学习贡献；未来学习必须提供
+其外的价值。旧负结果继续关闭，主目标仍未完成，不宣称算法/资源/论文突破。
+
+### English
+
+Extend only the unchanged unlearned DirectRidge-Warm34 control from99 sampled
+sentinels to11 opened train trajectories x101 frames x5/7/9 cameras:1111 fields,
+3333 cells. No parameter, factor, warm recurrence or gate changes;no learner,
+untouched condition or real data is opened. All29/29 independent checks pass.
+All3333 cells match all four reference errors,each individual match is3333/3333,
+and all33 complete strata pass matched and absolute-p90 gates. Every individual
+cell also meets the original absolute limits. This is
+PASS_FIXED_DIRECT_RIDGE_FULL_TEMPORAL_STRONG_CONTROL_ONLY,not learned success.
+
+Field p90 at5/7/9 cameras is.39991/.24265/.07908;full gradient
+.62126/.37317/.11411,interior gradient.58839/.36672/.11419,observation
+.000577/.000789/.000586. Separately rebuilt factors,recurrences,physics,
+raw-rho resampling,metrics and quantiles agree;shared CSR/observations/NumPy/
+orchestration are disclosed. Field relative difference3.40e-11,metric absolute
+difference7.55e-12. Original99 initial/final anchors are bitwise preserved;
+33 frame-zero order audits pass,not arbitrary geometry/noise or real BOST.
+
+Standalone cost35A+35AT and one factor solve versus finite CGLS128128A+128AT.
+Global setup/storage/triangular solves,input/reference generation and I/O are
+nonfree. Mixed audit wall/RSS is not deployment performance;the prior99-query
+whole-pipeline resource failure is preserved. A full-temporal strong classical
+control now exists;learning must add distinct value beyond it. Closed learners
+stay closed and the original whole goal remains active and unmet.
+
 ## 2026-10-07：固定参考通过全部训练时序，仍不是学习加速
 
 **做了什么、为什么。** 原合格有限 CGLS128 对照只有99个三帧哨兵。
