@@ -1,3 +1,23 @@
+## 2026-10-07: 探测器频带初值没有达到高精度参考 / Detector-band seeds do not match the high-accuracy reference
+
+11条已打开训练轨迹，各取0/50/100帧、5/7/9相机，共99个样本。34/34独立核验通过；固定九方向初值加CGLS34，33/33采样绝对精度分层通过，但四项同时匹配CGLS128为0/99。不是完整序列或新工况测试。
+
+Eleven opened train trajectories at frames 0/50/100 and 5/7/9 cameras: 99 samples. All 34/34 independent checks pass. The fixed nine-direction seed plus CGLS34 passes 33/33 sampled absolute strata but matches CGLS128 in all four errors on 0/99 samples. This is not a full-sequence or unseen-condition test.
+
+每相机保留二维位移正负相位，做固定八频带逆径向滤波，加BP方向，经精确AT提升。方向只读观测与报告几何；容量系数读取本样本CGLS128参考，选择最小初始场误差，尚未训练或预测。实际网格九方向均非空、秩为9；这不是对精修后所有系数的最优搜索。
+
+Each camera retains signed displacement phase through eight fixed inverse-radial bands plus BP, followed by exact AT lifting. Directions read only observations and reported geometry; capacity coefficients use the same-query CGLS128 reference to minimize initial-field error, with no training or prediction. All nine native directions are nonempty and rank nine. This does not optimize coefficients over all refined paths.
+
+相对同预算CGLS35，容量初值的场、全梯度、内部梯度、观测误差中位数比例为1.00088、1.00037、1.00053、1.00549；没有稳定改善。无需参考的整频带最小二乘control在99/99样本四项都更差。保留此前逐射线小幅改善和完整序列经典初值证据。
+
+Relative to same-budget CGLS35, capacity-seed median error ratios are 1.00088, 1.00037, 1.00053 and 1.00549 for field, full gradient, interior gradient and observation, with no consistent gain. The reference-free full-band least-squares control worsens all four errors on 99/99 samples. Earlier modest row-action gains and full-sequence classical-seed evidence remain intact.
+
+最终场双实现最大相对差1.40e-14，四指标最大绝对差3.66e-12。主方案每查询35A+35AT，另计FFT、容量方向的9AT、SVD与参考构建；不建立完整大因子。关闭本固定频带、系数选择和Warm34配方，不调频带或加大网络；未做部署时间/RSS、外部或真实BOST验证。
+
+Maximum final-field relative difference is 1.40e-14 and metric absolute difference is 3.66e-12. The primary uses 35A+35AT per query, with FFTs, nine capacity-direction AT lifts, SVD and reference construction charged separately; no full normal factor is built. Close this fixed band, coefficient-selection and Warm34 recipe without retuning bands or enlarging a network. Deployment wall/RSS, external and real-BOST validation are not performed.
+
+[脱敏摘要 / Privacy-safe summary](poolfire_detector_riesz_2026-10-07_public_summary.json)
+
 ## 2026-10-07：逐射线修正有小幅收益，尚未替代高精度参考
 
 在11条已打开训练轨迹的0/50/100帧和5/7/9相机上，做一次正反
