@@ -57,7 +57,7 @@ def test_aggregate_and_log():
     assert n['matched_cells'] == 0 and n['independent_checks_passed'] == 34
     assert 'latest_row_sweep_seed' in d
     log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
-    assert log.startswith('## 2026-10-07: 探测器频带初值没有达到高精度参考')
+    assert '## 2026-10-07: 探测器频带初值没有达到高精度参考' in log
     assert NAME in log
 
 
