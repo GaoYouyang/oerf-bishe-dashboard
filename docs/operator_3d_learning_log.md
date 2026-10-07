@@ -1,3 +1,19 @@
+## 2026-10-07: 梯度优先学习初值：物理链闭合，短预算收益不足 / Gradient-first learned seed: physical closure, insufficient short-budget benefit
+
+本轮采用不同的物理表示：保留标量射线积分和世界坐标横向基，先从二维位移形成三维梯度信息，再做一致的势场积分。19参数局部非线性响应和2参数线性对照分别在11个完整轨迹外折训练，每折只用其他10条轨迹的参考场；99个已打开哨兵、5/7/9相机，不是完整序列或新工况。训练不读CFD真值，留出轨迹不参与该折标签、训练统计、停止或回退。
+
+This round changes the physical representation: keep scalar ray integration and world transverse bases, form vector-gradient information from 2D displacement, and consistently integrate a potential. A 19-parameter local nonlinear response and 2-parameter linear control are separately trained in 11 whole-trajectory outer folds, each using reference fields from only the other 10 trajectories. The 99 opened sentinels and 5/7/9 cameras are not complete sequences or new conditions. Training reads no CFD truth; held trajectories supply no fit labels, population statistics, stopping or fallback.
+
+formal与独立解析梯度第二实现完成：48/48主验证和5/5附加物理检查通过；最终场最大相对差4.22e-15，指标最大差3.86e-12，全部势场的离散方程残差不超过8.01e-15。两臂均守住33/33基础分层，但严格四指标同精度为0/99。相对普通CGLS35，学习器场/全梯度/内梯度/观测误差中位比分别1.01183/1.01108/1.00859/1.10395，线性对照也相近；本配方没有把表示变化转化为有效重建收益。
+
+Formal training and an independent analytic-gradient implementation pass 48/48 main checks plus 5/5 additional physics checks. Maximum relative final-field difference is 4.22e-15, metric difference 3.86e-12, and all discrete potential-equation residuals are at most 8.01e-15. Both arms retain 33/33 basic strata but match 0/99 cells across all four strict metrics. Learner/plain-CGLS35 median field/full-gradient/interior-gradient/observation error ratios are 1.01183/1.01108/1.00859/1.10395; the linear control is similar. This recipe has not converted the representation change into effective reconstruction gains.
+
+精确提升后保持原样CGLS31；单次精确账33A+32AT，另有3次辅助梯度反投影，保守计为35AT-equivalent，不能忽略辅助算子、积分、几何建立和训练。每种实现新增拟合298980A+247500AT，两臂合计99000个样本更新。关闭这份固定局部梯度响应配方，不调整宽度、轮数或求解深度挽救。物理表示实现可复用；没有同精度加速、fresh wall/RSS、外部泛化、真实BOST或论文突破结论。
+
+Exact lifting is followed by unchanged CGLS31. Each query uses 33A+32AT exact calls plus three auxiliary gradient-backprojection products, conservatively 35AT-equivalent; auxiliary operators, integration, geometry setup and fitting are nonfree. Each implementation adds 298980A+247500AT for fitting, totaling 99000 sample updates across both arms. Close this fixed local-gradient-response recipe without width, epoch or solver-depth rescue. The physical representation implementation remains reusable, but there is no matched-accuracy acceleration, fresh wall/RSS, external generalization, real-BOST or paper-breakthrough claim.
+
+[脱敏摘要 / Privacy-safe summary](poolfire_vector_gradient_first19_2026-10-07_public_summary.json)
+
 ## 2026-10-07: 共享空间学习器：精度稳定，尚未补足收敛差距 / Shared spatial learner: stable accuracy, unresolved convergence gap
 
 本轮直接训练一个54参数共享学习器，利用观测反投影的多尺度世界空间结构生成dual初值，再做精确AT提升和原样CGLS33。11个外折各自从其他10条轨迹训练，整条留出轨迹不参与该折训练标签、训练统计、停止或回退；评估是99个已打开哨兵、5/7/9相机，不是完整序列或外部泛化。训练不读CFD真值，仅使用训练轨迹的CGLS128参考场。
