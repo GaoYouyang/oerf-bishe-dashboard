@@ -1,3 +1,30 @@
+## 2026-10-07：逐射线修正有小幅收益，尚未替代高精度参考
+
+在11条已打开训练轨迹的0/50/100帧和5/7/9相机上，做一次正反
+射线残差扫掠、精确对偶提升和原CGLS32。99个样本的四项误差
+都比同预算CGLS35低，误差中位数比例降低0.82%/1.00%/0.74%/7.62%。
+但相对CGLS128的严格四指标匹配为0/99；33/33采样绝对精度
+分层通过。独立32/32核验通过，最终场/指标最大差1.52e-15/3.66e-12。
+
+每查询33A+33AT，行运算另计，上界35A+35AT等效量；验证与历史
+构建非免费。没有训练、大因子、新数据或资源测速。这套固定双扫
+掠配方关闭，不增加次数或调深度；小幅收益和此前经典结果保留。
+
+### English
+
+One forward/backward ray-row residual sweep, exact dual lift and unchanged
+CGLS32 on 99 opened train sentinels at frames 0/50/100 and 5/7/9 cameras.
+Every sample improves all four errors over same-budget CGLS35, with median
+ratio reductions of 0.82%/1.00%/0.74%/7.62%. Strict four-error matching to
+CGLS128 remains 0/99, while 33/33 sampled absolute strata pass. All 32/32
+independent checks pass; field/metric differences are 1.52e-15/3.66e-12.
+
+There are 33A+33AT callbacks plus charged row work, bounded by 35A+35AT
+equivalents. Validation and historical construction are nonfree. No
+training, large factors, new data or fresh resource benchmark. Close this
+fixed double-sweep recipe without extra sweeps or depth tuning; retain its
+modest gain and prior classical evidence, not a learned breakthrough.
+
 ## 2026-10-07：精确带状初值保住完整序列精度，时间少5.53%
 
 把同一个经典初值的大分解换成保留所有系数的精确带状分解。
