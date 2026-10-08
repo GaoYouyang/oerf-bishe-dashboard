@@ -1,3 +1,19 @@
+## 2026-10-08: 跨尺度近邻耦合：分解正确，截断后逆作用失真 / Cross-scale neighbor coupling: correct decomposition, distorted inverse action after truncation
+
+本轮检验非标准多尺度结构：在每层同时保留细节—细节、细节—粗尺度及其转置耦合，只留下空间支撑相接的项。只读已打开的5/7/9相机算子、每档12个新的固定几何范围探针；41×17×17的11849个空间自由度不删。不读取CFD、实际观测、轨迹标签或留出集，不训练预测器。它不是旧对角缩放或低秩因子的换名重跑。
+
+This round tests a nonstandard multiscale structure: retain detail-detail, detail-scaling and transpose couplings at every level, but only between touching spatial supports. It reads the opened 5/7/9-camera operators and 12 new fixed geometry-range probes per setup. All 11849 spatial degrees on the 41x17x17 grid remain. No CFD, actual observation, trajectory label or held split is read; no predictor is trained. This is not a renamed diagonal-scaling or low-rank-factor retry.
+
+正式运行与独立第二实现235/235检查通过。未截断的跨尺度分解复现逆作用，最大相对差7.60e-12；截断后的存储只占完整稠密逆的0.7436%，但5/7/9相机最坏场逆作用相对误差为5801.46/2543.27/848.76，远超结果前1%门。物理投影误差也失败；九相机甚至未在场误差上胜过同树对角对照。只保留近邻不能保住这里的逆作用。
+
+All 235/235 independent checks pass. The untruncated cross-scale decomposition reproduces inverse action with maximum relative difference 7.60e-12. Truncated storage is only 0.7436% of the full dense inverse, but worst field inverse-action errors for 5/7/9 cameras are 5801.46/2543.27/848.76, far above the prospective 1% gate. Physical projection errors also fail; at nine cameras the field error is worse than the same-tree diagonal control. Neighbor-only retention does not preserve these inverse actions.
+
+这个结果把问题定位到固定近邻截断，而不是完整跨尺度分解：删掉的耦合对这些探针的合成作用很重要，具体关键项仍需另行结果前审计。关闭这份相接支撑配方，不调邻域、树或门槛挽救；它不否定所有耦合表示，也不是CFD重建判决或CGLS无法补偿的证明。每个实现252A+72AT，另9A+9AT顺序探针、3次完整因子构建、35547个完整逆右端与36个目标右端求解，全都不免费；没有学习、加速、fresh部署wall/RSS或真实BOST突破。
+
+This localizes the defect to fixed neighbor truncation, not the complete cross-scale decomposition: discarded couplings matter to the combined action on these probes; specific critical entries need a separate prospective audit. Close this touching-support recipe without neighborhood, tree or gate rescue. It does not refute every coupled representation, judge CFD reconstruction, or prove CGLS cannot compensate. Each implementation consumes 252A+72AT, plus 9A+9AT order probes, three full factors, 35547 full-inverse RHS and 36 target RHS solves, all nonfree. There is no learned, acceleration, fresh deployment wall/RSS or real BOST breakthrough.
+
+[脱敏摘要 / Privacy-safe summary](poolfire_nonstandard_touching_2026-10-08_public_summary.json)
+
 ## 2026-10-08: 完整多尺度表示：独立缩放仍不能保留逆作用 / Complete multiscale representation: independent scaling still loses inverse action
 
 本轮不是又一次训练，而是纯几何表示审计：只用已打开的5/7/9相机物理算子，每档12个固定范围探针。41×17×17全部11849个空间自由度都保留，用无填充的完整加权Haar和完整DCT对照；各档允许11848个非恒定系数取最有利的固定实数缩放值。不读取CFD、实验观测、轨迹标签或留出集。
