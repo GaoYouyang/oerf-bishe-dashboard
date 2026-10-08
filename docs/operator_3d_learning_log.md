@@ -1,3 +1,15 @@
+## 2026-10-09: 小载荷与联合耦合分开审计 / Audit compact storage and joint coupling separately
+
+在11条已打开train轨迹、每条三帧和5/7/9相机的99个样本上，新的隐式几何初值通过33/33基本绝对精度分层，但严格四指标同精度为0/99。参考与昂贵直接初值仍为99/99。两套实现分别重建几何、候选与物理回放；场最大相对差3.13e-14，指标最大绝对差4.16e-12，相机ID重命名与行乱序通过。没有拟合参数，关闭该固定结构；这不是完整序列或学习成功。
+
+Across 99 anchors from eleven opened train trajectories, three frames each and 5/7/9 cameras, the implicit geometry initializer passes 33/33 basic absolute sampled strata but 0/99 strict four-error matches. Qualified reference and expensive direct initialization remain 99/99. Separate implementations rebuild geometry, candidates and physical replay; maximum field-relative and metric-absolute differences are 3.13e-14 and 4.16e-12. Camera-ID relabeling and row shuffling pass. No parameters are fitted. Close this fixed structure; it is not a complete-sequence or learned success.
+
+封存后，精确的表示类归因发现：5/7/9相机分别有82.87%/84.70%/86.20%的测量normal矩阵Frobenius平方能量在整个单轴相加类之外，独立算术最大相对差3.45e-14。这不是逆作用或CFD误差下界，也不证明所有学习不可能。它降低仅学各轴小权重的优先级，下一机制应明确保留联合几何信息。每个新初值的逻辑在线账为35A+35AT，轴变换、几何构建、缓存和继承参考仍非免费；混合审计时间不是部署速度。本轮没有新加速、wall/RSS、外部泛化或真实BOST结论，原有经典证据不变。
+
+Post-seal exact class attribution finds 82.87%/84.70%/86.20% of measurement-normal squared Frobenius energy outside the entire additive-axis class at 5/7/9 cameras; independent arithmetic differs by at most 3.45e-14 relatively. This is not an inverse-action or CFD-error lower bound, nor impossibility of all learning. It lowers the priority of learning only small axis weights; any next mechanism must identify retained joint geometry. Each new initializer costs 35A+35AT logically online; axis transforms, geometry construction, caches and inherited references remain nonfree. Mixed audit time is not deployment latency. No new acceleration, wall/RSS, external or real-BOST result follows; existing classical evidence stays unchanged.
+
+[去隐私判决与耦合汇总 / Privacy-safe verdict and coupling summary](poolfire_detector_precision_2026-10-09_public_summary.json)
+
 ## 2026-10-08: 因果观测历史：有帮助，但学习修正未达到同等精度 / Causal observation history helps, but learned correction misses matched accuracy
 
 本轮把学习初值改为严格因果的信息路径：只用当前和过去二维观测、已报告几何及上一帧实际求解出的状态，不读取未来帧或留出轨迹教师。三参数非线性修正与两参数线性修正、直接沿用上一帧以及Zero/BP/CGLS/PCGLS/dual-ridge公平比较。仍是同一11条已开封公开train轨迹，每条101帧、5/7/9相机，共3333样本与33个完整分层；没有新开validation/test、原生12相机、扰动或真实实验。每折排除整条轨迹，训练使用其余10条的有限CGLS128教师增量；训练明确使用teacher forcing，留出滚动预测不使用。
