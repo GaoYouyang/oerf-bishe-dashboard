@@ -1,3 +1,19 @@
+## 2026-10-09: 双轴容量与实际逆作用分开检验 / Separate pair-class capacity from actual inverse action
+
+全部双轴相加算子的精确表示类审计已独立完成：5/7/9相机仍有63.56%/68.09%/71.43%的normal矩阵Frobenius平方能量在类外，两实现最大相对差1.13e-14。这不是逆作用或三维误差下界。全部非零因子可精确稀疏打包；静态应用算术降低，但没有新的wall/RSS结论。
+
+Independent whole-class attribution finds63.56%/68.09%/71.43% of normal-matrix squared Frobenius energy outside all additive two-axis operators at5/7/9 cameras; maximum relative discrepancy is1.13e-14. This is not an inverse-action or3D-error bound. Lossless packing retains all nonzero entries and reduces static arithmetic, not a new wall/RSS result.
+
+随后唯一方差缩放双轴相关性初值也完成实际精化与独立物理回放。同一99个train哨兵、33分层，通过33/33基本质量但严格四指标同精度0/99；强参考和直接初值仍99/99。场独立差1.25e-14。新初值99/99不弱于自身世界分量对角控制，但只有28/99不弱于更便宜CGLS35，对DualRidgeCG35为0/99。固定配方关闭，不加深、不调尺度、不训练救援。
+
+The sole variance-scaled pair-correlation initializer then undergoes actual refinement and independent physical replay. The same99 train anchors pass33/33 basic strata but0/99 strict four-error matches; qualified reference and direct initialization remain99/99. Field discrepancy is1.25e-14. It is no worse than its world-component diagonal on99/99 anchors, but only28/99 versus cheaper CGLS35 and0/99 versus DualRidgeCG35. Close the fixed recipe without deeper, retuned or learned rescue.
+
+每个新初值仍为35A+35AT，额外近似几何应用、布局、归约、构建与缓存非免费。没有新训练、新条件、完整时序、资源突破或真实BOST结论。此类别负证据合并记录；下一投入优先保留强经典全局作用并降低完整setup/应用/RSS成本，不能只用载荷小来授权学习。
+
+Each new arm still uses35A+35AT; additional approximate geometry applications, layouts, reductions, construction and caches are nonfree. There is no new training, condition, complete sequence, resource breakthrough or real BOST result. Group this category of negative evidence; prioritize strong classical global action at lower complete setup/application/RSS cost. Small payload alone does not authorize learning.
+
+[合并去隐私汇总 / Combined privacy-safe summary](poolfire_detector_precision_2026-10-09_public_summary.json)
+
 ## 2026-10-09: 小载荷与联合耦合分开审计 / Audit compact storage and joint coupling separately
 
 在11条已打开train轨迹、每条三帧和5/7/9相机的99个样本上，新的隐式几何初值通过33/33基本绝对精度分层，但严格四指标同精度为0/99。参考与昂贵直接初值仍为99/99。两套实现分别重建几何、候选与物理回放；场最大相对差3.13e-14，指标最大绝对差4.16e-12，相机ID重命名与行乱序通过。没有拟合参数，关闭该固定结构；这不是完整序列或学习成功。

@@ -42,7 +42,7 @@ def test_bilingual_notes_and_preserved_prior_evidence():
         text = (SITE / name).read_text()
         assert text.count(f'id="{MARKER}"') == 1
         note = text[text.index(f'id="{MARKER}"'):text.index('id="poolfire-primal-balanced-coarse-20261009"')]
-        assert note.count("data-i18n-zh=") == note.count("data-i18n-en=") == 4
+        assert note.count("data-i18n-zh=") == note.count("data-i18n-en=") == 6
         assert all(term in note for term in ("0/99", "33/33", "82.87%/84.70%/86.20%", NAME))
         assert "not an inverse-action" in note and "not a complete-sequence" in note
         assert "no new speedup" in note
@@ -51,3 +51,34 @@ def test_bilingual_notes_and_preserved_prior_evidence():
     assert current["latest_primal_balanced_coarse"]["matched_cells"] == 0
     assert current["latest_finite_loss_decomposition"]["actual_harm"] == 98
     assert NAME in (SITE / "docs/operator_3d_learning_log.md").read_text()
+
+
+def test_pair_class_and_actual_inverse_remain_distinct():
+    data = json.loads((SITE / "docs" / NAME).read_text())
+    pair = data["pair_class_followup"]
+    assert pair["camera_counts"] == [5, 7, 9]
+    assert all(.63 < v < .72 for v in pair["outside_whole_pair_squared_frobenius_fraction"])
+    assert pair["is_inverse_action_or_CFD_error_bound"] is False
+    assert pair["static_arithmetic_is_not_runtime_or_RSS"]
+    follow = data["variance_scaled_inverse_followup"]
+    assert follow["primary_matched_cells"] == follow["diagonal_control_matched_cells"] == 0
+    assert follow["primary_absolute_sampled_strata"] == 33
+    assert follow["reference_matched_cells"] == follow["direct_control_matched_cells"] == 99
+    assert follow["joint_no_worse_vs_own_diagonal"] == 99
+    assert follow["joint_no_worse_vs_CGLS35"] == 28
+    assert follow["joint_no_worse_vs_DualRidgeCG35"] == 0
+    assert follow["fixed_recipe_closed"] and follow["new_fits"] == 0
+    assert follow["complete_sequence"] is follow["learned_result"] is False
+    assert data["cost_scope"]["followup_approximate_pair_geometry_work_nonfree"]
+
+
+def test_followup_is_bilingual_and_retains_old_evidence():
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        text = (SITE / name).read_text()
+        note = text[text.index(f'id="{MARKER}"'):text.index('id="poolfire-primal-balanced-coarse-20261009"')]
+        assert "63.56%/68.09%/71.43%" in note and "28/99" in note and "DualRidgeCG35" in note
+        assert "Close this fixed recipe" in note and "No new speedup" in note
+    current = json.loads((SITE / "operator-learning/current-evidence.json").read_text())
+    assert current["latest_pair_precision"]["matched_cells"] == 0
+    assert current["latest_pair_precision"]["reference_matched_cells"] == 99
+    assert current["latest_detector_precision"]["matched_cells"] == 0
