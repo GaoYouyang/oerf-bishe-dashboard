@@ -1,3 +1,23 @@
+## 2026-10-08: 原尺度弱方向归因：不能把失败统一解释为弱方向支配 / Inherited-scale weak-direction attribution: uniform dominance is not established
+
+本轮是已开封数据上的根因诊断，不重跑重建或训练。保持11条PoolFire训练轨迹、三帧、5/7/9相机、99个哨兵和11849个空间自由度，使用失败因子原有的归一化和固定尺度构造平滑弱方向滤波。其分数取0至1，衡量差分在该尺度下向弱观测组合的集中程度；它不是物理场能量占比，也不把严格不可见方向与小但非零灵敏度分开。只与同一有限CGLS128场比较，不读取新CFD真值。
+
+This is post-open root-cause diagnosis, without rerunning reconstruction or training. Keep 11 PoolFire train trajectories, three frames, 5/7/9 cameras, 99 sentinels and 11849 spatial degrees. A smooth weak-direction filter retains the failed factor's original normalization and fixed scale. Its score from 0 to 1 measures discrepancy concentration toward weakly observed combinations at that scale. It is not a physical-field energy fraction and does not separate exact invisibility from small nonzero sensitivity. Only the same finite CGLS128 state is compared; no new CFD truth is read.
+
+独立17/17核验通过。正式实现使用稀疏正规矩阵与LU，第二实现独立按行块累加正规矩阵并用稠密Cholesky求解；两者各自重建物理投影并封存后比较。失败主平方根配方有0/99个差分达到预注册0.90分数，最小/中位/最大为0.200448/0.527235/0.860037；5/7/9相机各六个固定见证中，满足输出高分且明显增幅的数量为0/0/0。场差分分数最大绝对差6.10e-12，分解/物理图像最大相对差2.91e-10/1.12e-09。
+
+All 17/17 independent checks pass. Formal uses sparse normal assembly and LU; the second implementation independently accumulates row blocks and uses dense Cholesky. Each rebuilds physical replay and seals its outputs before comparison. The failed principal-root recipe has 0/99 discrepancies meeting the preregistered 0.90 score, with min/median/max 0.200448/0.527235/0.860037. Among six fixed witnesses each for 5/7/9 cameras, high-output-score and substantial-increase counts are 0/0/0. Maximum field-score absolute difference is 6.10e-12; decomposition/physical-image relative differences are 2.91e-10/1.12e-09.
+
+通过才支持原尺度弱方向集中；未通过只否定“所有失败差分统一由这一个尺度支配”的说法，不能否定个别弱或不可见方向。经典对照也报告分数和差分范数，不能把对照的小绝对误差高分误读成算法失败。原压缩配方仍关闭，不调整尺度、层级、邻域或迭代数。后续观察空间初始化仍须通过精确伴随lift与全部四项匹配精度，不能靠给当前失败换参数推进。
+
+A pass supports concentration at the inherited scale. A failure rejects only uniform dominance of all failed discrepancies at that one scale; it does not exclude individual weak or invisible directions. Classical controls include both scores and discrepancy norms: a high score on a small absolute control error is not algorithm failure. The compressed recipe stays closed, without scale, hierarchy, neighborhood or iteration changes. Future observation-space initialization still requires exact-adjoint lift and all four matched physical errors; changing parameters of the failed recipe is not progress.
+
+每个实现新增1887A+63AT、三次正规矩阵构建、三次因子分解、342次诊断滤波求解与54次封存因子扫描；重建迭代与训练参数新增均为0。继承35547次几何forward-equivalent以及旧状态构造成本均不免费。本轮不是学习初始化器、完整轨迹、exact-call减少、端到端wall/RSS、公开外门或真实BOST结论。
+
+Each implementation adds 1887A+63AT, three normal builds, three factorizations, 342 diagnostic filter solves and 54 sealed-factor scans. New reconstruction iterations and trainable parameters are zero. The inherited 35547 geometry forward-equivalent projections and old state generation are nonfree. This is not a learned initializer, full trajectory, exact-call reduction, end-to-end wall/RSS, external public gate or real BOST conclusion.
+
+[脱敏摘要 / Privacy-safe summary](poolfire_weak_direction_attribution_2026-10-08_public_summary.json)
+
 ## 2026-10-08: 排除未覆盖节点解释：所有节点被触及，不等于组合方向可分辨 / Uncovered-node explanation excluded: node coverage is not directional identifiability
 
 本轮只归因，不重跑重建。保持11条已开封公开PoolFire训练轨迹的三帧、5/7/9相机和11849个空间自由度，检查前轮失败的主平方根因子结果。用系数严格非零的列定义节点覆盖，不设幅值阈值；在完全未覆盖节点上去掉局部均值，可得到一个严格不可见且不含常数规范的子空间。两套实现分别重建覆盖、投影、18个固定方向见证、297份场差分解和物理投影，不读取新观测或CFD真值，不构造新逆、不训练模型。
