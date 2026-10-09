@@ -12,6 +12,10 @@ The original execution remains resource-invalid after exceeding its frozen audit
 
 Prior independent, constant-gauge-removed attribution certifies at least80.19%/86.73%/89.32% of geometry-normalized weak squared gap energy at5/7/9 cameras. These are not CFD truth-error fractions, exact unobservability or a unique cause; qualified direct initialization need not copy the reference field. Prioritize affordable, effective nonstationary global action and prove four-error benefit against strong classical controls, rather than pile up small recipes. Direction construction is within75/91/107 online A/AT pairs, with nonfree setup, reorthogonalization, storage, audits and failed work. No new valid call reduction, resource, external or real-BOST success follows.
 
+只读任务容量补充仅检验同一已开封train轨迹首帧的5/7/9相机三个完整存储例子。固定终点加全部已存方向的真值可见线性修正，主方法四项预算归一化平方误差和的数值下界为23.8268/18.1869/16.9640，全局控制为7.0471/5.5611/5.0092；四门同时可行要求不超过4。因此六个固定修正类均不可行，不值得仅训练更好的终点系数。两套实现场/指标差低于3e-15，12次离线oracle、66A+12AT另计，无新方向、精化或训练。它不要求逐点复制teacher，也不约束改变初值后重新运行CGLS的全部轨迹，不是全方向不可能证明或部署资源证据。
+
+The read-only task-capacity pilot covers only three fully stored examples from one opened train trajectory at frame zero, with 5/7/9 cameras. A truth-visible linear repair of each fixed endpoint using all stored directions yields numerical lower bounds 23.8268/18.1869/16.9640 for the sum of four budget-normalized squared errors; the global control yields 7.0471/5.5611/5.0092. Simultaneous four-budget feasibility requires a sum at most4, so all six fixed repair classes are infeasible. Independent field/metric differences are below3e-15. Twelve offline oracle solves and66A+12AT are charged, with no new directions, refinement or training. This does not demand pointwise teacher identity or constrain every alternative initialization followed by a new CGLS trajectory; it is not universal impossibility or deployment-resource evidence.
+
 [合并去隐私复盘 / Combined privacy-safe review](poolfire_global_review_2026-10-09_public_summary.json)
 
 ## 2026-10-09: 双轴容量与实际逆作用分开检验 / Separate pair-class capacity from actual inverse action
