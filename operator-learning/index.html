@@ -544,7 +544,7 @@
         <div class="actions" style="margin-top:14px;">
           <a class="button primary" href="#research-progress" data-i18n-zh="查看当前研究进程" data-i18n-en="View current research progress">查看当前研究进程</a>
           <a class="button" href="daily-progress.html" data-i18n-zh="查看每日实质增量" data-i18n-en="View daily substantive increments">查看每日实质增量</a>
-<a class="button" href="#poolfire-noise-representation-review-20261009" data-i18n-zh="阅读最新双语判决" data-i18n-en="Read the latest bilingual result">阅读最新双语判决</a>
+<a class="button" href="#poolfire-learning-transfer-review-20261010" data-i18n-zh="阅读最新双语判决" data-i18n-en="Read the latest bilingual result">阅读最新双语判决</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fblastnet_case19_bulk_advection_warm_v275_result_2026-08-28.md" data-i18n-zh="回看 v275 科学证据" data-i18n-en="Review the v275 scientific evidence">回看 v275 科学证据</a>
           <a class="button" href="../document_reader.html?doc=docs%2Fc_route_primary_source_red_team_2026-08-04.md" data-i18n-zh="阅读 8 月 4 日一级来源红队" data-i18n-en="Read the Aug 4 primary-source red team">阅读 8 月 4 日一级来源红队</a>
         </div>
@@ -561,7 +561,7 @@
 <div class="current-metric"><b id="liveWitnessCount">3,333</b><span data-i18n-zh="经典控制完整序列查询" data-i18n-en="Classical-control full-sequence queries">经典控制完整序列查询</span></div>
 <div class="current-metric"><b id="liveFailureCount">33 / 33</b><span data-i18n-zh="经典控制基础精度分层" data-i18n-en="Classical-control basic-accuracy strata">经典控制基础精度分层</span></div>
 <div class="current-metric"><b id="liveCallBudget">3,333 / 3,333</b><span data-i18n-zh="经典控制四指标同精度" data-i18n-en="Classical-control four-error matches">经典控制四指标同精度</span></div>
-      <div class="current-metric warning"><b id="liveBreakthrough">false</b><span data-i18n-html-zh="<code>algorithm_breakthrough</code>；固定路线已关闭" data-i18n-html-en="<code>algorithm_breakthrough</code>; fixed route closed"><code>algorithm_breakthrough</code>；固定路线已关闭</span></div>
+      <div class="current-metric warning"><b id="liveBreakthrough">false</b><span data-i18n-html-zh="<code>algorithm_breakthrough</code>；学习加速尚未通过" data-i18n-html-en="<code>algorithm_breakthrough</code>; learned acceleration unproven"><code>algorithm_breakthrough</code>；学习加速尚未通过</span></div>
     </div>
     <details class="header-archive">
       <summary data-i18n-zh="展开历史证据快捷入口与旧浏览器学习进度" data-i18n-en="Expand historical-evidence shortcuts and legacy browser learning progress">展开历史证据快捷入口与旧浏览器学习进度</summary>
@@ -989,6 +989,13 @@
   </header>
 
   <main id="main">
+<section class="band" id="poolfire-learning-transfer-review-20261010">
+<h2 data-i18n-zh="阶段复盘：学习有小幅最终收益，但强对照仍未过" data-i18n-en="Phase review: small learned endpoint gains, but the strong control still wins">阶段复盘：学习有小幅最终收益，但强对照仍未过</h2>
+<p data-i18n-zh="同一11条已打开train轨迹、三帧、5/7/9相机共99个训练内样本。小型递归初值训练后的最终四项真实误差全部优于自身未学习版本；场、全梯度、内部梯度、观测改善中位数为0.2801%、0.3295%、0.2134%、2.7517%。这是有限正信号，不是跨轨迹预测或完整序列成功。" data-i18n-en="The same 99 in-sample anchors cover eleven opened train trajectories, three frames and 5/7/9 cameras. After fitting a small recursive initializer, all four actual endpoint errors improve over its own unfitted version on every cell. Median relative gains are 0.2801%, 0.3295%, 0.2134% and 2.7517% for field, full gradient, interior gradient and observation. This is a limited positive signal, not held-trajectory prediction or full-sequence success.">同一11条已打开train轨迹、三帧、5/7/9相机共99个训练内样本。小型递归初值训练后的最终四项真实误差全部优于自身未学习版本；场、全梯度、内部梯度、观测改善中位数为0.2801%、0.3295%、0.2134%、2.7517%。这是有限正信号，不是跨轨迹预测或完整序列成功。</p>
+<p data-i18n-zh="无训练的双实现归因确认：实际CGLS系数适应在全部99个平均教师终点损失上帮助、而非摧毁学习收益。冻结未学习系数历史不是精确终点替代，实际/反事实场差最大0.5963%；该数值等同失败并不证明近似梯度训练无用。" data-i18n-en="A no-fit, two-implementation attribution confirms that actual CGLS coefficient adaptation helps rather than destroys the learned benefit in mean teacher endpoint loss on all 99 cells. Frozen unfitted coefficient history is not an exact endpoint substitute: maximum actual/counterfactual field discrepancy is 0.5963%. Failure of numerical identity does not prove approximate-gradient training useless.">无训练的双实现归因确认：实际CGLS系数适应在全部99个平均教师终点损失上帮助、而非摧毁学习收益。冻结未学习系数历史不是精确终点替代，实际/反事实场差最大0.5963%；该数值等同失败并不证明近似梯度训练无用。</p>
+<p data-i18n-zh="同成本冷CGLS35仍在99/99至少一项更好，四指标同参考仍0/99；固定配方关闭，不追加同族训练救援。已有3333样本完整经典精度链保留，但公平批量测速无稳定时间或内存优势。下一投入优先能保留到最终端点的有效逆作用与强同价对照，停止只追初值loss和重复小变体。" data-i18n-en="Equal-call cold CGLS35 remains better on at least one metric in all 99 cells; four-error matches remain 0/99. Close the fixed recipe without more same-family training. Retain the complete 3333-cell classical accuracy chain, but fair batched timing has no stable time or memory win. Prioritize effective inverse action that survives refinement and beats strong equal-cost controls, rather than seed loss or repeated tiny variants.">同成本冷CGLS35仍在99/99至少一项更好，四指标同参考仍0/99；固定配方关闭，不追加同族训练救援。已有3333样本完整经典精度链保留，但公平批量测速无稳定时间或内存优势。下一投入优先能保留到最终端点的有效逆作用与强同价对照，停止只追初值loss和重复小变体。</p>
+<p><a href="../docs/poolfire_learning_transfer_review_2026-10-10_public_summary.json" data-i18n-zh="去隐私阶段摘要" data-i18n-en="Privacy-safe phase summary">去隐私阶段摘要</a> · <a href="../document_reader.html?doc=docs%2Fpoolfire_learning_transfer_review_2026-10-10_plain_language.md" data-i18n-zh="双语讲人话记录" data-i18n-en="Bilingual plain-language record">双语讲人话记录</a></p>
+</section>
 <section class="band" id="poolfire-noise-representation-review-20261009">
 <h2 data-i18n-zh="合并复盘：表示能力、噪声与实际成本" data-i18n-en="Combined review: representation, noise and actual costs">合并复盘：表示能力、噪声与实际成本</h2>
 <p data-i18n-zh="11条已打开train轨迹、5/7/9相机的99个三帧哨兵，在0.1%与1%受控噪声下共198样本。直接经典初值四指标匹配由99/99降为2/99，基础绝对精度仍全部通过。1%档88/99样本观测误差更低而真实场误差更高；这是虚拟噪声，不是实验或完整序列证据。" data-i18n-en="Across 99 three-frame anchors from 11 opened train trajectories and 5/7/9 cameras, controlled 0.1% and 1% noise gives 198 cells. Direct-classical four-error matches fall from 99/99 to 2/99 while all basic absolute strata pass. At 1%, 88/99 cells have lower observation error but higher actual field error. This is virtual noise, not experimental or complete-sequence evidence.">11条已打开train轨迹、5/7/9相机的99个三帧哨兵，在0.1%与1%受控噪声下共198样本。直接经典初值四指标匹配由99/99降为2/99，基础绝对精度仍全部通过。1%档88/99样本观测误差更低而真实场误差更高；这是虚拟噪声，不是实验或完整序列证据。</p>

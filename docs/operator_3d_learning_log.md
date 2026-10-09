@@ -1,3 +1,15 @@
+## 2026-10-10: 学习的最终收益与强控制分开判断 / Separate learned endpoint effects from strong-control success
+
+同一99个训练内样本上，小型递归初值拟合后四项真实终点误差全部优于自身未学习版本，中位相对改善0.2801%/0.3295%/0.2134%/2.7517%。无训练的独立固定状态归因确认原CGLS系数适应帮助、而非摧毁平均教师终点收益；但同成本冷CGLS35仍在99/99至少一项更好，同参考0/99。当前固定配方关闭，不扩大训练或换门；下一投入关注有效逆作用能否保留到端点并胜过强对照。
+
+On the same99 in-sample anchors, fitted recursive initialization improves all four actual endpoint errors over its own unfitted arm, with median relative gains0.2801%/0.3295%/0.2134%/2.7517%. Independent no-fit fixed-state attribution finds original CGLS coefficient adaptation helps rather than destroys mean teacher endpoint gains. Equal-call cold CGLS35 still wins on at least one error in every cell, and matches remain0/99. Close the fixed recipe without more fitting or changed gates; prioritize effective inverse action retained at the endpoint against strong controls.
+
+固定系数反事实与实际场最大差0.5963%，未过结果前1e-7数值等同门，不代表近似梯度训练无用。此处是训练内三帧而非LOTO、完整序列或真实实验。保留已有3333完整经典精度链，但公平批量成本无稳定优势；训练与归因预算不是fresh部署性能。主目标未完成，不把有限正信号包装成算法或论文突破。
+
+Frozen-history counterfactual and actual fields differ by at most0.5963%, failing the predeclared1e-7 identity gate, not proving approximate-gradient training useless. These are in-sample three-frame anchors, not LOTO, complete sequences or real experiments. Retain3333 complete classical matches but no stable fair-batched resource benefit. Fit/audit budgets are not fresh deployment performance. The main goal remains incomplete; a limited signal is not an algorithm or paper breakthrough.
+
+[阶段去隐私汇总 / Privacy-safe phase summary](poolfire_learning_transfer_review_2026-10-10_public_summary.json)
+
 ## 2026-10-09: 合并复盘噪声、学习哨兵与初值表示 / Combined noise, learned-sentinel and seed-representation review
 
 受控噪声审计的直接经典初值在0.1%/1%两档由99/99降为2/99四指标匹配；1%档88/99样本观测误差更低而真实场误差更高。这不是实验噪声或完整时间序列。新的观测交互初值严格留整条轨迹拟合，在99个三帧哨兵上33/33基本分层、0/99同精度；不优于线性控制，固定配方关闭。继承辅助源码最初绑定遗漏另行核验通过，保留并披露原遗漏。
