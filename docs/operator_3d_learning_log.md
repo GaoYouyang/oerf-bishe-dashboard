@@ -1,3 +1,19 @@
+## 2026-10-09: 全局复盘与封存方向的只读裁决 / Global review and read-only adjudication of sealed directions
+
+同一99个已打开PoolFire train哨兵、三帧与5/7/9相机，固定相机分组、同预算全局方向和稍便宜冷CGLS均为0/99四指标匹配，基本质量均33/33；合格参考与直接初值仍99/99。封存后描述性比较中，分组在任何一项误差上都没有一次严格优于这两个控制。固定配方关闭，不增加方向或用大网络救援。
+
+On the same99 opened PoolFire train anchors, three frames and5/7/9 cameras, grouped initialization, equal-budget global directions and slightly cheaper cold CGLS each yield0/99 four-error matches and33/33 basic strata; reference and direct initialization remain99/99. Post-seal descriptive comparison finds no strictly lower grouped error on any metric against either control. Close the fixed recipe without added directions or larger-network rescue.
+
+原运行仍因审计输出超出冻结体积上限而资源失效。另冻只读裁决，复用已有完整候选、保留物理商空间与四指标门，双实现重新核验评分。场/指标差最大1.39e-14/4.16e-12，新评分与原评分一致。只纠正过一次样本键元组/JSON列表的格式比较，旧失败不删除；不重跑推理、不修改旧限额、不把旧运行改成完整PASS。这是后执行诊断，不是完整序列、LOTO或部署资源证明。
+
+The original execution remains resource-invalid after exceeding its frozen audit-output volume. A separately frozen read-only assessment reuses sealed candidates, retains physical-quotient and four-metric gates, and independently recomputes scores. Maximum field/metric discrepancies are1.39e-14/4.16e-12; fresh and old scores agree. Only a tuple/JSON-list key comparison was corrected, preserving that failed attempt. No inference rerun, cap change or promotion of the old execution occurs. This is post-execution diagnosis, not full sequences, LOTO or deployment resources.
+
+此前已独立扣除常数方向的物理归因表明：失败学习端点相对有限参考的几何归一化弱方向平方能量，5/7/9相机下界至少80.19%/86.73%/89.32%。这些不是CFD真值误差比例、精确不可观测或唯一因果解释；强直接初值也不必复制参考场。由此优先级是便宜地保留有效非平稳全局作用，并在四项实际误差与强经典控制下证明收益，不继续堆小配方。新方向构建含于75/91/107对在线A/AT，额外setup、重正交、存储、审计与失败工作非免费；没有新有效调用减少、资源、外部或真实BOST成功。
+
+Prior independent, constant-gauge-removed attribution certifies at least80.19%/86.73%/89.32% of geometry-normalized weak squared gap energy at5/7/9 cameras. These are not CFD truth-error fractions, exact unobservability or a unique cause; qualified direct initialization need not copy the reference field. Prioritize affordable, effective nonstationary global action and prove four-error benefit against strong classical controls, rather than pile up small recipes. Direction construction is within75/91/107 online A/AT pairs, with nonfree setup, reorthogonalization, storage, audits and failed work. No new valid call reduction, resource, external or real-BOST success follows.
+
+[合并去隐私复盘 / Combined privacy-safe review](poolfire_global_review_2026-10-09_public_summary.json)
+
 ## 2026-10-09: 双轴容量与实际逆作用分开检验 / Separate pair-class capacity from actual inverse action
 
 全部双轴相加算子的精确表示类审计已独立完成：5/7/9相机仍有63.56%/68.09%/71.43%的normal矩阵Frobenius平方能量在类外，两实现最大相对差1.13e-14。这不是逆作用或三维误差下界。全部非零因子可精确稀疏打包；静态应用算术降低，但没有新的wall/RSS结论。
