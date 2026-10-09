@@ -1,3 +1,15 @@
+## 2026-10-09: 合并复盘噪声、学习哨兵与初值表示 / Combined noise, learned-sentinel and seed-representation review
+
+受控噪声审计的直接经典初值在0.1%/1%两档由99/99降为2/99四指标匹配；1%档88/99样本观测误差更低而真实场误差更高。这不是实验噪声或完整时间序列。新的观测交互初值严格留整条轨迹拟合，在99个三帧哨兵上33/33基本分层、0/99同精度；不优于线性控制，固定配方关闭。继承辅助源码最初绑定遗漏另行核验通过，保留并披露原遗漏。
+
+Controlled noise reduces direct-classical four-error matches from99/99 at0.1% to2/99 at1%;88/99 cells at1% have lower observation error but higher actual field error. This is not experimental noise or a complete temporal sequence. The new content-conditioned initializer fits with whole-trajectory exclusion and achieves33/33 basic strata but0/99 matches on99 three-frame anchors; it does not improve over its linear control. Close the fixed recipe. Separately verified inherited helper closure discloses, rather than erases, the original binding omission.
+
+事后教师可见的最优初值系数归因表明：联合场/物理图像拟合平方损失的空间外占比逐样本中位数88.586%、平均84.776%。它不是CFD真值误差比例、不可恢复证明或最终CGLS端点下界。三项独立核验19/19、13/13、12/12全真。既有3333样本经典控制仍同精度，但公平批量工作负载89.19对88.85秒、RSS约3.891对0.697GiB无稳定提速；旧逐个右端约16%改善只保留原范围。下一优先级是不同的有效逆表示与噪声稳健性，不继续调旧读出或用大网络救援。没有新学习加速、外部或真实BOST结论。
+
+Post-open teacher-visible optimal seed coefficients attribute a sample-median88.586% and sample-mean84.776% of joint field/physical-image squared fit loss to directions outside the current features. This is not a CFD truth-error fraction, irrecoverability proof or final CGLS endpoint bound. Independent checks pass19/19,13/13 and12/12. Classical controls remain matched on3333 cells, but fair batched wall time89.19 versus88.85s and RSS about3.891 versus0.697GiB show no stable win; preserve the older roughly16% scalar-workload gain only in its original scope. Prioritize different effective inverse representations and noise stability, not old-readout tuning or larger-network rescue. No new learned speedup, external or real-BOST result follows.
+
+[合并去隐私摘要 / Combined privacy-safe summary](poolfire_noise_representation_review_2026-10-09_public_summary.json)
+
 ## 2026-10-09: 全局复盘与封存方向的只读裁决 / Global review and read-only adjudication of sealed directions
 
 同一99个已打开PoolFire train哨兵、三帧与5/7/9相机，固定相机分组、同预算全局方向和稍便宜冷CGLS均为0/99四指标匹配，基本质量均33/33；合格参考与直接初值仍99/99。封存后描述性比较中，分组在任何一项误差上都没有一次严格优于这两个控制。固定配方关闭，不增加方向或用大网络救援。

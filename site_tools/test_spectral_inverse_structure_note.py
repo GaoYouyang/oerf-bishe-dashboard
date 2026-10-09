@@ -62,5 +62,5 @@ def test_old_full_sequence_resource_record_remains_primary():
     assert "observation-to-initializer map" in log and "57/57独立核验全真" in log
     for name in ("index.html", "operator-learning/index.html"):
         soup = BeautifulSoup((ROOT / name).read_text(), "html.parser")
-        hero = soup.select_one(".hero" if name == "index.html" else ".hero-grid")
-        assert "3,333/3,333" in hero.get_text() and "135.99" in hero.get_text()
+        historical = soup.find(id="poolfire-full-temporal-direct-cost-20261007")
+        assert "3,333/3,333" in historical.get_text() and "135.99" in historical.get_text()

@@ -58,5 +58,5 @@ def test_previous_full_sequence_and_spectral_records_unchanged():
     assert log.index("观测映射降到4%") < log.index("谱块压缩未保住逆作用")
     for file in ("index.html", "operator-learning/index.html"):
         soup = BeautifulSoup((ROOT / file).read_text(), "html.parser")
-        hero = soup.select_one(".hero" if file == "index.html" else ".hero-grid")
-        assert "3,333/3,333" in hero.get_text() and "135.99" in hero.get_text()
+        historical = soup.find(id="poolfire-full-temporal-direct-cost-20261007")
+        assert "3,333/3,333" in historical.get_text() and "135.99" in historical.get_text()

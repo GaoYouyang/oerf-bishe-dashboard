@@ -57,8 +57,8 @@ def test_old_evidence_and_best_sparse_timing_stay_intact():
     assert current["latest_range_cross_lift"]["lifted_action_probes_passed"] == 0
     for name in PAGES[:2]:
         doc = BeautifulSoup((ROOT / name).read_text(), "html.parser")
-        hero = doc.select_one(".hero-verdict" if name.startswith("operator") else ".verdict")
-        assert "135.99" in hero.get_text()
+        historical = doc.find(id="poolfire-full-temporal-direct-cost-20261007")
+        assert "135.99" in historical.get_text()
 
 
 def test_no_private_exports_and_no_learned_claim():

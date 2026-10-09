@@ -67,5 +67,5 @@ def test_prior_records_are_retained():
         text = (ROOT / name).read_text()
         assert text.index("const fullTemporal = evidence.latest_full_temporal_direct_cost;") < text.index("const current = evidence.latest_direct_ridge_cost")
         soup = BeautifulSoup(text, "html.parser")
-        hero = soup.select_one(".hero" if name == "index.html" else ".hero-grid")
-        assert "3,333/3,333" in hero.get_text() and "135.99" in hero.get_text()
+        historical = soup.find(id="poolfire-full-temporal-direct-cost-20261007")
+        assert "3,333/3,333" in historical.get_text() and "135.99" in historical.get_text()
