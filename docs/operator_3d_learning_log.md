@@ -1,3 +1,11 @@
+## 2026-10-10: 完整留轨迹图网络 / Whole-trajectory ray-graph prediction
+
+新分段积分forward及有限CGLS128参考上，共享3841参数跨相机有符号图网络完成11个完整轨迹LOTO、101帧、5/7/9相机，共3333held查询。独立图/网络/lift/精化/物理评分23/23通过，非独立重训。预注册强参考四指标匹配0/3333、完整层0/33，基本绝对质量33/33。事后只读配对显示，对同动作冷CGLS35四项不差3333/3333，场/全梯度/内部梯度/观测的配对相对改善中位数0.3459%/0.3928%/0.2604%/3.5481%；对Jacobi-PCGLS与dual-ridge四项不差分别684/3333与0/3333。保留小而一致的外折学习信号，不改变FAIL，不加宽、加训练或换门救援。没有fresh资源、未开封外部或真实BOST结论。
+
+Under the newly qualified segmented forward and finiteCGLS128 reference, a shared3841-parameter signed cross-camera graph completes11 whole-trajectory LOTO folds and3333 held queries. Independent graph/prediction/lift/refinement/physical scoring passes23/23 checks, with shared weights/canonical inputs, not independent retraining. Strong-reference matches remain0/3333 and0/33 complete strata despite33/33 basic quality. Posthoc pairing finds all3333 queries jointly no worse than equal-action coldCGLS35, with median paired gains0.3459%/0.3928%/0.2604%/3.5481%; joint nonworse counts against Jacobi/dual-ridge are684/3333 and0/3333. Retain the modest consistent held-fold signal without changingFAIL or expanding this recipe. No fresh resources, unopened transfer or realBOST.
+
+[简明双语结果 / Bilingual result](segmented_cross_ray_learning_2026-10-10.md) · [去隐私摘要 / Privacy-safe summary](segmented_cross_ray_learning_2026-10-10_public_summary.json)
+
 ## 2026-10-10: 学习的最终收益与强控制分开判断 / Separate learned endpoint effects from strong-control success
 
 同一99个训练内样本上，小型递归初值拟合后四项真实终点误差全部优于自身未学习版本，中位相对改善0.2801%/0.3295%/0.2134%/2.7517%。无训练的独立固定状态归因确认原CGLS系数适应帮助、而非摧毁平均教师终点收益；但同成本冷CGLS35仍在99/99至少一项更好，同参考0/99。当前固定配方关闭，不扩大训练或换门；下一投入关注有效逆作用能否保留到端点并胜过强对照。

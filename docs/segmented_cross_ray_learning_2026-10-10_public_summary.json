@@ -1,0 +1,210 @@
+{
+  "date": "2026-10-10",
+  "population": {
+    "opened_train_trajectories": 11,
+    "frames_per_trajectory": 101,
+    "active_cameras": [
+      5,
+      7,
+      9
+    ],
+    "queries": 3333,
+    "complete_strata": 33
+  },
+  "physics": "Segmented integral of the same discrete-gradient trilinear interpolant; linear weak-deflection straight-ray BOS proxy. Not continuous CFD integration, calibrated pixels, curved rays, or paired experimental BOS.",
+  "reference": {
+    "method": "CGLS128",
+    "complete_absolute_strata": 33,
+    "finite_not_converged": true
+  },
+  "primary": {
+    "name": "SignedCrossRayIncrement-Warm33",
+    "shared_parameters": 3841,
+    "outer_folds": 11,
+    "updates_per_fold": 330,
+    "inputs": "Observation, signed exact-K1 residual and reported geometry only; no held-trajectory teacher, CFD truth, time or trajectory label in training inputs, normalization or selection.",
+    "absolute_strata": 33,
+    "matched_cells": 0,
+    "complete_matched_strata": 0,
+    "standalone_actions": {
+      "A": 35,
+      "AT": 35
+    }
+  },
+  "decision": "FAIL_SIGNED_CROSS_RAY_INCREMENT_COMPLETE_LOTO",
+  "validation": {
+    "checks_passed": 23,
+    "shared_weights_and_canonical_inputs": true,
+    "independently_rebuilt_graph_prediction_lift_refinement_scoring": true,
+    "independent_retraining": false,
+    "metric_max_abs": 1.8984813721090177e-14,
+    "readback_median_max_abs": 2.6862193025500858e-15
+  },
+  "descriptive_readback": {
+    "posthoc": true,
+    "tolerance_absolute": 1e-10,
+    "not_a_new_success_gate": true,
+    "formula": "median((control_error-learned_error)/control_error), per paired held query",
+    "comparisons": {
+      "CGLS35": {
+        "all_four_nonworse_cells": 3333,
+        "median_paired_relative_improvement": {
+          "field_rel_l2_gauge_centered": 0.0034589183483011046,
+          "gradient_rel_l2": 0.003928265115229299,
+          "interior_gradient_rel_l2": 0.002604477759593229,
+          "observation_rel_l2": 0.035481038756792274
+        }
+      },
+      "JacobiPCGLS35": {
+        "all_four_nonworse_cells": 684,
+        "median_paired_relative_improvement": {
+          "field_rel_l2_gauge_centered": 0.022920746139556605,
+          "gradient_rel_l2": 0.018567153058561464,
+          "interior_gradient_rel_l2": 0.019627200865392883,
+          "observation_rel_l2": -0.040987081995017924
+        }
+      },
+      "DualRidgeCG35": {
+        "all_four_nonworse_cells": 0,
+        "median_paired_relative_improvement": {
+          "field_rel_l2_gauge_centered": -0.020915685001236833,
+          "gradient_rel_l2": 0.0004176059378599053,
+          "interior_gradient_rel_l2": -0.017030169379641816,
+          "observation_rel_l2": 0.7423797580522515
+        }
+      },
+      "BP-LS1-Warm33": {
+        "all_four_nonworse_cells": 3333,
+        "median_paired_relative_improvement": {
+          "field_rel_l2_gauge_centered": 0.007120466546126151,
+          "gradient_rel_l2": 0.007681017248920816,
+          "interior_gradient_rel_l2": 0.005337221034895129,
+          "observation_rel_l2": 0.07124997311209588
+        }
+      },
+      "UntrainedCrossRay-Warm33": {
+        "all_four_nonworse_cells": 3333,
+        "median_paired_relative_improvement": {
+          "field_rel_l2_gauge_centered": 0.007120466546126151,
+          "gradient_rel_l2": 0.007681017248920816,
+          "interior_gradient_rel_l2": 0.005337221034895129,
+          "observation_rel_l2": 0.07124997311209649
+        }
+      }
+    }
+  },
+  "primary_pooled_camera_metrics": {
+    "5": {
+      "field_rel_l2_gauge_centered": {
+        "p50": 0.3883117918024418,
+        "p90": 0.44654701236969135,
+        "worst": 0.4669474582701592
+      },
+      "gradient_rel_l2": {
+        "p50": 0.6084314575037794,
+        "p90": 0.6821329264984036,
+        "worst": 0.7030048875905802
+      },
+      "interior_gradient_rel_l2": {
+        "p50": 0.5935014711548254,
+        "p90": 0.6299502526311592,
+        "worst": 0.6503277336654493
+      },
+      "observation_rel_l2": {
+        "p50": 0.015249569332692881,
+        "p90": 0.016615441070151966,
+        "worst": 0.0178758797417487
+      }
+    },
+    "7": {
+      "field_rel_l2_gauge_centered": {
+        "p50": 0.31481940345874027,
+        "p90": 0.35568252384568894,
+        "worst": 0.38215448600832247
+      },
+      "gradient_rel_l2": {
+        "p50": 0.4689557520157609,
+        "p90": 0.53448241406476,
+        "worst": 0.5683296809630534
+      },
+      "interior_gradient_rel_l2": {
+        "p50": 0.48183438753841046,
+        "p90": 0.5106556028959651,
+        "worst": 0.5474359304321438
+      },
+      "observation_rel_l2": {
+        "p50": 0.01309162775882441,
+        "p90": 0.014443239982330167,
+        "worst": 0.015544223390240659
+      }
+    },
+    "9": {
+      "field_rel_l2_gauge_centered": {
+        "p50": 0.23310497517612253,
+        "p90": 0.2603176384416208,
+        "worst": 0.27731644630715135
+      },
+      "gradient_rel_l2": {
+        "p50": 0.34548806116459707,
+        "p90": 0.3907634217652782,
+        "worst": 0.4212084388804436
+      },
+      "interior_gradient_rel_l2": {
+        "p50": 0.3561731555596396,
+        "p90": 0.3898763338352314,
+        "worst": 0.44570510429952237
+      },
+      "observation_rel_l2": {
+        "p50": 0.010269940912373822,
+        "p90": 0.011246102934634575,
+        "worst": 0.01247002467085673
+      }
+    }
+  },
+  "costs": {
+    "equal_action_controls": [
+      "CGLS35",
+      "JacobiPCGLS35",
+      "DualRidgeCG35"
+    ],
+    "cheaper_bp_warm": {
+      "A": 35,
+      "AT": 34
+    },
+    "training_updates": 3630,
+    "terminal_gradient_audit_actions": {
+      "A": 264,
+      "AT": 198
+    },
+    "actual_shared_inference_actions_per_implementation": {
+      "A": 693264,
+      "AT": 689931
+    },
+    "physical_scoring_actions_per_implementation": {
+      "A": 29997,
+      "AT": 0
+    },
+    "earlier_aborted_startup_setup_is_additional_overhead": true,
+    "training_actions": {
+      "A": 14520,
+      "AT": 10890
+    },
+    "nonfree": "Geometry/graph setup, teacher generation, model fit/evaluation, caches, physical scoring and independent validation are additional work. Shared audit actions cover all methods, not one deployed model; standalone primary actions remain 35A+35AT per query. Earlier aborted startup setup is outside the completed-run timing. Fewer calls are not established at matched accuracy.",
+    "completed_mixed_offline_audit_seconds": 1403.1842966252007,
+    "not_fresh_deployment_wall_or_rss": true
+  },
+  "limits": [
+    "Opened train-family evidence, not a prospective unopened external test",
+    "No native 12-camera, noise, pose or intrinsic-error gate",
+    "No algorithmic breakthrough, resource speedup, real BOST or paper-ready claim",
+    "Literal recipe closes; no width, epochs, learning-rate, loss, threshold or refinement-depth rescue"
+  ],
+  "claims": {
+    "algorithm_breakthrough": false,
+    "paper_success": false,
+    "resource_speedup": false,
+    "external_generalization": false,
+    "real_bost": false,
+    "curved_ray_validated": false
+  }
+}
