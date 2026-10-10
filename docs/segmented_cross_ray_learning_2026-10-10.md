@@ -4,6 +4,12 @@
 
 ## 实际做了什么
 
+最新总体机制复核固定原11个外折权重，在全部3,333查询中仅把网络增量替换成零信号处几何门控的一阶JVP，保留原数据依赖K1、归一化、基项及原样CGLS33。它不是整个映射关于原始观测的线性化；门还依赖以前训练的权重，不是无学习几何逆。
+
+事先冻结的90%改善保留门覆盖33完整层的四指标均值/p90/最坏值，共396比较；176项和2/33完整层通过。四指标逐层均值改善保留率中位数为86.46%/88.14%/89.12%/91.90%。大部分平均小收益可保留，但高阶观测作用对一致尾部仍有贡献；不能把2/33写成全部收益主要来自非线性，更不证明非线性不可替代。相对冷35/原非线性网络四项均不差3,296/3,333和192/3,333；强参考仍0/3,333匹配，绝对质量33/33。
+
+两实现独立重建图/JVP/精化/物理评分，165比较一致；共享原权重与canonical输入，不是独立重训。场/图像相对差1.85e-14/6.63e-14、指标/汇总绝对差1.13e-14/5.93e-13。单查询仍35A+35AT，每审计路径含评分/lift共123321A+119988AT，继承几何与旧训练另计。199.26秒、2.78GiB混合审计与减少图作用次数均不是部署加速。这项归因到此为止，不调展开点、Taylor阶数或重训救援；下一投入仍是不同有效纠错信息与强控制，而非扩大已关闭模型。
+
 先对同一离散梯度的三线性插值表示做分段射线积分，另行独立核验新的观测与有限CGLS128参考。随后结果前固定唯一图网络：由已知射线之间的有符号物理耦合传递消息，输入只含当前观测、精确K1残差和reported geometry；按相机等权池化，参数共享，不把相机序号、时间或轨迹标签作为特征。预测dual修正，fresh exact A^T lift后接未修改CGLS33。在线字面账35A+35A^T，几何/图缓存和网络工作另计。
 
 每个外折只用其他十条轨迹的有限CGLS128场作teacher，330次固定CPU更新，每个训练轨迹×相机约11帧，不是全数据epoch；held轨迹teacher不进入输入、标准化、参数选择、停止或回退。全部模型先封存，再预测全部held查询，最后才读取CFD真值评分。不是独立数据集或未打开的外部门。
@@ -53,6 +59,10 @@
 图消息算子已有[Graph Kernel Network](https://arxiv.org/abs/2003.03485)先例。此处不是该论文的BOS复现，不作first或SOTA声明。
 
 ## English
+
+The latest global mechanism review keeps all11 models unchanged and replaces only the neural increment by its exact zero-signal geometry-gated JVP on all3333 queries. Data-dependentK1 normalization/base/residual and unchangedCGLS33 remain; gates depend on learned weights, so this is neither whole-map linearization nor an untrained geometry inverse. The prefrozen90%-effect-retention gate passes176/396 mean/p90/worst comparisons and2/33 complete strata. Median per-stratum mean gain retention is86.46%/88.14%/89.12%/91.90%. Much of the modest average signal survives; higher-order observation dependence affects uniform tails. This does not prove nonlinear necessity or that all gains are nonlinear. Joint nonharm againstcold35/nonlinear is3296/3333 and192/3333, while strong-reference matches remain0/3333 and absolute strata33/33.
+
+Independent graph/JVP/refinement/physical scoring agrees on165 comparisons under shared weights/canonical inputs, not independent retraining. Field/image relative differences1.85e-14/6.63e-14 and metric/summary absolute differences1.13e-14/5.93e-13. Per-query35A+35AT is unchanged; each audit path uses123321A+119988AT including scoring/lift, plus nonfree inherited setup/fitting. The199.26-second,2.78-GiB mixed audit and smaller graph-action count are not deployment speed evidence. End this attribution without Taylor-order, expansion-point or training rescue; prioritize different effective repair and strong controls before model expansion.
 
 A separately frozen robustness check keeps all11 terminal held-trajectory models unchanged. Each of99 opened anchors receives two1%-relative-L2 spherical observation perturbations:198 queries and66 three-frame strata. No fitting or selection. The learned endpoint retains joint nonworse performance against equal-action coldCGLS35 on198/198 queries, with median paired gains0.3332%/0.3745%/0.2655%/3.0475% for field/full-gradient/interior/noisy-observation errors. AgainstJacobi/dual-ridge the counts are39/198 and0/198; strong finite-reference matches remain0/198. Both learner and noisy reference retain66 absolute strata. Independent reconstruction passes42 checks, with field/image relative differences1.94e-14/6.99e-14 and metric difference1.59e-14. Weights, canonicalCSR and perturbed inputs are shared, not independently refitted. Each path's68508A+66726AT covers nine methods/reference/scoring; the learner remains35 pairs plus nonfree graph/setup/oldtraining. The99.25-second,2.542-GiB mixed audit is not deployment timing. Fixed-radius perturbations are not calibrated experimental noise, full noisy sequences or statistical guarantees; originalFAIL stays closed and no training expansion, resource or real-BOST claim follows.
 

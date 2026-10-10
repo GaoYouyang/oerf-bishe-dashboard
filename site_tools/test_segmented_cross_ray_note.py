@@ -70,7 +70,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 9
+        assert len(reader.pairs) == 10
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -141,3 +141,23 @@ def test_controlled_noise_signal_preserves_the_stronger_gate():
     assert data["decision"].startswith("FAIL_") and data["primary"]["matched_cells"] == 0
     for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
         assert (ROOT / name).read_text().count('id="controlled-noise-signal"') == 1
+
+
+def test_tangent_attribution_preserves_scope_and_failure():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    audit = data["geometry_tangent_attribution"]
+    assert audit["queries"] == 3333 and audit["complete_strata"] == 33
+    assert audit["tail_comparisons_passed"] == 176 and audit["tail_comparisons"] == 396
+    assert audit["complete_retention_strata"] == 2 and audit["retention_fraction_gate"] == .9
+    assert audit["only_neural_increment_linearized"] and audit["data_dependent_k1_retained"]
+    assert audit["gates_depend_on_previously_learned_weights"]
+    assert audit["new_fits"] == 0 and not audit["model_rescue_authorized"]
+    assert audit["strong_reference_matches"] == 0 and audit["absolute_strata"] == 33
+    assert audit["standalone_actions"] == {"A": 35, "AT": 35}
+    assert not audit["deployment_resource_claim"]
+    assert data["decision"].startswith("FAIL_")
+    assert not data["claims"]["algorithm_breakthrough"]
+    note = (ROOT / f"docs/{NAME}.md").read_text()
+    assert "86.46%" in note and "91.90%" in note
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="geometry-tangent-attribution"') == 1
