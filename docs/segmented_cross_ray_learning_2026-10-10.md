@@ -134,7 +134,19 @@
 
 ![等价经典实现的准备与查询取舍 / Equivalent classical preparation/query tradeoff](../assets/cholesky_control_cost_2026-10-11.png)
 
+## 原生相机数量的强经典资格
+
+保持同一解析初值、正则规则和CGLS4，在已打开十一条轨迹的完整101帧上新增七/九相机2222个查询。两路径分别封存全部预测后才评分；继承五相机封存证据而非重跑，共**3333/3333严格匹配、33/33完整轨迹-相机分层匹配和绝对门通过，212/212独立检查全真**。有限CGLS128参考自身33/33充分。最大场/物理图像相对差3.16e-13/5.07e-13、指标/汇总差5.08e-14/2.57e-13。
+
+每档相机相对冷35、Jacobi35、dual35和有限CGLS128均1111/1111四指标不差。七/九相机相对有限参考的场/全梯度/内部梯度/观测误差比中位数为0.796997/0.779195/0.806835/0.214066和0.545612/0.517959/0.532612/0.190280。该零参数对照的资格不再局限五相机，但不是学习贡献、LOTO或未开封泛化。
+
+每查询5A+5AT外有两次三角求解，七/九相机完整因子约1.065/1.778GiB，完整法矩阵信息、准备和缓存非免费。新两档每实现预测11110A+11110AT、评分4444A、离线探针12A+12AT等价量另列。113.92秒/约7.974GiB为单个混合审计子进程，不是部署wall/RSS或端到端资源改善。十二相机、变几何、噪声/标定扰动、学习完整外折、外部与真实BOST仍未通过。下一优先最小学习终点/强对照门，检验是否能绕开大因子且保持最终精度，通过后才完整外折和资源测量；不扩已关闭学习配方。
+
 ## English
+
+The unchanged ridge rule, exact adjoint lift and CGLS4 qualify native seven/nine cameras on all101 frames of the same eleven opened trajectories. Both2222-query prediction sets seal before own scoring. Inheriting, not rerunning, five-camera evidence yields **3333/3333 strict matches and33/33 complete matched/absolute trajectory-camera strata; all212 independent checks pass**. Finite CGLS128 is itself33/33 adequate. Field/image differences are3.16e-13/5.07e-13 and metric/summary differences5.08e-14/2.57e-13. Every count is1111/1111 jointly nonworse against cold35, Jacobi35, dual35 and finite128. This is a zero-parameter classical control, not learned LOTO or unopened generalization.
+
+Seven/nine full factors occupyabout1.065/1.778GiB;5A+5AT and two triangular solves per query do not make setup/storage free. New prediction calls per path11110A+11110AT, scoring4444A and offline probe equivalents12A+12AT are separate. The113.92s/7.974GiB mixed audit is not deployment timing or whole-system memory improvement. Native12, new geometry, perturbations, learned complete folds, external and real BOS remain unqualified. First prove small learned endpoint/control value without full factors, then authorize expensive outer-fold and resource evidence; do not expand closed recipes.
 
 Equivalent Cholesky evaluation keeps the ridge, exact lift and CGLS4 unchanged. All1111 opened five-camera queries and11 trajectories pass, with75 full and11 factor checks; shared data/infrastructure are disclosed. Factor preparation isabout1.2s, not the historical42.61s spectral cost. Initial C-layout query timing165.96ms is preserved. A separately frozen layout-only correction removes per-call570MB factor copies, keeps values/probe results identical and does not repeat scientific scoring. New preparation4.110s includes conversion, query mean43.557ms comes from33 anchors repeated3 times, cacheabout544MiB, child peakabout1.69GiB. Historical reference comparison yields an estimated20-query break-even, not simultaneous pairing, stable deployment or whole-sequence wall. Triangular queries remain slower than spectral products. Qualify actual cardinality/geometry and factor-storage economics before learned compression; no learned, external or real-BOS success.
 

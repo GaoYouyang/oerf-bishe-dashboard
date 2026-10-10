@@ -8,6 +8,29 @@ ROOT = Path(__file__).resolve().parents[1]
 NAME = "segmented_cross_ray_learning_2026-10-10"
 
 
+def test_native_classical_cardinality_does_not_replace_learned_primary():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    audit = data["analytic_cholesky_cardinality"]
+    assert audit["decision"] == "QUALIFIED_FIXED_CHOLESKY_NATIVE579"
+    assert audit["native_camera_counts"] == [5, 7, 9]
+    assert audit["untested_camera_counts"] == [12]
+    assert audit["queries"] == audit["matched_queries"] == 3333
+    assert audit["new_queries"] == 2222 and audit["inherited_five_camera_queries"] == 1111
+    assert audit["matched_strata"] == audit["absolute_strata"] == audit["reference_absolute_strata"] == 33
+    assert audit["independent_checks"] == 212 and audit["trainable_parameters"] == 0
+    assert audit["own_predictions_sealed_before_CFD_score"]
+    assert audit["standalone_actions"] == {"A": 5, "AT": 5}
+    assert audit["triangular_solves_per_query"] == 2
+    assert audit["full_factor_and_setup_nonfree"] and audit["mixed_audit_is_not_deployment_timing"]
+    assert all(not value for value in audit["claims"].values())
+    assert all(pair["joint_nonharm"] == 1111 and pair["harm"] == 0 for pair in audit["comparisons"].values())
+    assert data["primary"]["matched_cells"] == 0 and data["decision"].startswith("FAIL_")
+    evidence = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())["latest_signed_cross_ray"]
+    assert evidence["analytic_cholesky_cardinality"] == audit
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="cholesky-native-cardinality"') == 1
+
+
 def test_authoritative_failure_and_posthoc_gain_are_separate():
     data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
     assert data["population"]["queries"] == 3333
@@ -70,7 +93,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 22
+        assert len(reader.pairs) == 23
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
