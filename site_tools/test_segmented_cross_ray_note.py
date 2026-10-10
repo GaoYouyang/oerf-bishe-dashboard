@@ -70,7 +70,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 10
+        assert len(reader.pairs) == 11
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -161,3 +161,30 @@ def test_tangent_attribution_preserves_scope_and_failure():
     assert "86.46%" in note and "91.90%" in note
     for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
         assert (ROOT / name).read_text().count('id="geometry-tangent-attribution"') == 1
+
+
+def test_classical_prior_information_is_not_neural_or_range_success():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    prior = data["fold_prior_information"]
+    assert prior["queries"] == 3333 and prior["complete_strata"] == 33
+    assert prior["complete_held_trajectory_excluded"] and prior["training_cfd_labels_used"]
+    assert prior["prior_fits_each_mode"] == 22 and prior["neural_updates"] == 0
+    assert prior["coefficients_per_prior_fold"] == 35547
+    assert prior["decision"].startswith("FAIL_") and prior["literal_recipe_closed"]
+    assert prior["raw_cfd_prior"]["harm_vs_cold"] == 228
+    assert prior["finite_teacher_prior"]["harm_vs_cold"] == 12
+    for arm in ("raw_cfd_prior", "finite_teacher_prior"):
+        assert prior[arm]["strong_reference_matches"] == 0
+        assert prior[arm]["absolute_strata"] == 33
+    assert prior["explicit_prior_plus_adjoint_correction"]
+    assert not prior["pure_range_initializer"] and not prior["native_exact_kernel_identified"]
+    assert not prior["variable_cardinality_neural_learner"]
+    assert not prior["existing_initializer_contract_changed"]
+    assert prior["independent_checks_passed"] == 114
+    assert prior["standalone_actions"] == {"A": 35, "AT": 34}
+    assert prior["strong_classical_controls_cost_one_more_AT"]
+    assert prior["postseal_descriptive_pairs_not_success_gate"]
+    assert not prior["deployment_resource_claim"] and not prior["main_goal_complete"]
+    assert data["primary"]["matched_cells"] == 0
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="fold-prior-information"') == 1

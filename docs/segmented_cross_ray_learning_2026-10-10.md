@@ -4,6 +4,14 @@
 
 ## 实际做了什么
 
+10月11日新增一个不同的信息源对照：每个完整留轨迹外折只用其他十条全部帧，分别拟合原始CFD和有限CGLS128的三维场均值。相同观测范数归一化、当前观测精确K1校正与原样CGLS32，共3333查询/33完整层；无held标签、统计或选择。两种先验均基本质量33/33，强参考匹配0/3333、0/33。
+
+原始CFD先验相对冷CGLS35的场/全梯度/内部梯度/观测误差改善中位数14.3834%/13.6394%/12.2175%/18.3361%；四项同时不差3105/3333，伤害228。相对有限teacher先验，场改善9.1331%，四项不差2742/3333，并非处处更好。对Jacobi/dual-ridge四项不差2411/3333和2736/3333。这些是封存后的描述性配对，不替代预注册失败。简单先验的信息来源值得继续辨清，但不是同容量神经网络比较。
+
+两路径独立构造先验、求解与CFD物理评分，114/114比较通过；先验/场/物理图像相对差8.23e-16/6.96e-15/2.48e-14，指标/汇总绝对差1.09e-14/2.93e-14。**显式训练场先验加exact A^T校正不是pure A^T-dual初值，不改变既有严格range-only合同，也没有分離原生精确核空间。** 三个已知相机集合缓存不是可变基数神经算子，22先验拟合/实现，每个先验每折35547系数。两路径共享canonical输入、编排和数值库；不是独立数据或神经重训。
+
+每查询35A+34AT，与BP-Warm33等账；冷/Jacobi/dual35多一个AT，不能误称逐项更便宜。每审计路径含双臂预测/物理评分/lift共243309A+233310AT，继承35547几何setup等价投影与2旧factory A、先验拟合、CFD和teacher构造均非免费。230.85秒/1.23GiB混合审计不是fresh部署测量。关闭字面均值/归一化/K1/Warm32配方，不调权重、深度或门救援；优先研究原始场信息如何通过合法物理接口产生稳定纠错，而非扩旧网络。主目标仍未完成。[核空间学习原论文](https://arxiv.org/abs/1806.06137)在自己的形式中使用数据一致修正，并不证明本对照的原生核空间、BOS或速度结论。
+
 最新总体机制复核固定原11个外折权重，在全部3,333查询中仅把网络增量替换成零信号处几何门控的一阶JVP，保留原数据依赖K1、归一化、基项及原样CGLS33。它不是整个映射关于原始观测的线性化；门还依赖以前训练的权重，不是无学习几何逆。
 
 事先冻结的90%改善保留门覆盖33完整层的四指标均值/p90/最坏值，共396比较；176项和2/33完整层通过。四指标逐层均值改善保留率中位数为86.46%/88.14%/89.12%/91.90%。大部分平均小收益可保留，但高阶观测作用对一致尾部仍有贡献；不能把2/33写成全部收益主要来自非线性，更不证明非线性不可替代。相对冷35/原非线性网络四项均不差3,296/3,333和192/3,333；强参考仍0/3,333匹配，绝对质量33/33。
@@ -59,6 +67,10 @@
 图消息算子已有[Graph Kernel Network](https://arxiv.org/abs/2003.03485)先例。此处不是该论文的BOS复现，不作first或SOTA声明。
 
 ## English
+
+AnOct11 comparator fits raw-CFD and finiteCGLS128 field means from exactly other trajectories under11 complete folds, with identical normalization, observation correction and unchangedCGLS32. Both pass33 absolute strata but match0/3333 strong references. Raw-CFD has median field/observation gains14.38%/18.34% versus cold35 and field9.13% versus finite-teacher mean, but harms228 versus cold and is not uniformly better. These are post-seal descriptive effects, not new success gates. All114 independent checks pass, including own priors/recurrence/physics/CFD scoring and fold exclusion.
+
+This explicit trained field prior plus exact adjoint correction is NOT a pure-range initializer or native exact-kernel identification, and does not change the strict initializer contract. Three known-cardinality caches,22 fits per implementation and35547 coefficients per prior/fold are not a shared neural operator. Per-query35A+34AT equalsBP-Warm33; cold/Jacobi/dual35 cost one extraAT. Each two-arm audit243309A+233310AT, inherited setup35547 forward equivalents and2 old factoryA, fitting/data/teacher/cache costs remain nonfree. The230.85-second/1.23-GiB mixed audit is not deployment timing. Close this literal mean recipe; prioritize a lawful stable raw-field information path rather than expansion of the old network. No neural, resource, external, real-BOST or paper success.
 
 The latest global mechanism review keeps all11 models unchanged and replaces only the neural increment by its exact zero-signal geometry-gated JVP on all3333 queries. Data-dependentK1 normalization/base/residual and unchangedCGLS33 remain; gates depend on learned weights, so this is neither whole-map linearization nor an untrained geometry inverse. The prefrozen90%-effect-retention gate passes176/396 mean/p90/worst comparisons and2/33 complete strata. Median per-stratum mean gain retention is86.46%/88.14%/89.12%/91.90%. Much of the modest average signal survives; higher-order observation dependence affects uniform tails. This does not prove nonlinear necessity or that all gains are nonlinear. Joint nonharm againstcold35/nonlinear is3296/3333 and192/3333, while strong-reference matches remain0/3333 and absolute strata33/33.
 
