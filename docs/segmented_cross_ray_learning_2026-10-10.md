@@ -34,6 +34,10 @@
 
 ## 总体决定
 
+补充一项限定数值归因：99个原生规模采样查询、33个三帧层中，沿每档相机一个固定范围方向，对封存学习初值作正/负1e-12相对微扰，CGLS33的四映射相对终点变化最多2.66e-13；一个固定行序打乱最多1.90e-13。独立递推与物理响应18/18检查通过，最大响应差1.66e-13。两条路径共享原初值/终点与canonical观测，不是独立重训。不读CFD或teacher、不测新准确率、不证明任意扰动、噪声或完整序列稳定。不能把不利制造算例直接归因到原生求解器；此前未过资格的几何构造不因此重开。
+
+每路径新增13,860A+13,071A^T，继承准备和原训练成本非免费；55.28秒约633MiB为混合诊断开销，不是部署资源证据。停止这轮数值细节深挖，回到有效剩余方向与强控制比较，不把资格审计当成算法成果。
+
 保留小幅完整留轨迹信号和可靠物理/经典基准；关闭当前字面图网络配方，不加宽、加轮次、换loss、阈值或精化深度救援。下一投入必须解释它能修复什么强经典控制未便宜提供的剩余误差，再另行结果前冻结。不是整个C路线关闭，也不是算法突破或论文就绪。
 
 图消息算子已有[Graph Kernel Network](https://arxiv.org/abs/2003.03485)先例。此处不是该论文的BOS复现，不作first或SOTA声明。
@@ -55,5 +59,7 @@ A separately frozen post-open attribution reads each path's own sealed endpoints
 This supports a limited relative-observability hypothesis, not a full spectral decomposition, CFD true-error result or proof of every failure cause. Control median ratios are1.39 forJacobi,57.15 fordual-ridge and55.86 forBP-warm; a larger ratio alone is not a quality ranking. Closeness to a finite teacher is not automatically closeness toCFD. GNP motivates weak-spectrum coverage but uses nonlinearFGMRES, not unchangedCGLS/PCGLS; it is not BOS evidence. No new training or reopening follows.
 
 Close this literal recipe without more width, epochs, changed loss, graph thresholds or refinement depth. Retain the small held-trajectory signal and qualified physics/classical comparison. Prioritize genuinely different residual-repair action that strong cheap controls do not explain. No algorithmic breakthrough, resource speedup or paper-ready claim follows. Graph message operators have existing GKN precedent; nofirst/SOTA claim is made.
+
+A separate99-anchor/33-sampled-stratum native diagnostic finds at most2.66e-13 four-map endpoint response to a fixed plus/minus1e-12 relative range perturbation of sealed learned seeds. One row-order shuffle gives1.90e-13. Independent recurrence/physical responses pass18 checks, with maximum disagreement1.66e-13. Common seed/endpoint bytes and canonical observations are disclosed; this is not retraining, new accuracy or universal/full-sequence/noise stability. NoCFD/teacher scoring occurred. Manufacturing eligibility failures cannot be generalized into native solver failure; failed geometry recipes remain unqualified. Each path costs13,860A+13,071AT plus inherited preparation. The55.28-second,633-MiB mixed diagnostic is not deployment timing. End this numerical digression and return to effective residual repair and strong controls.
 
 [去隐私结构化摘要 / Privacy-safe structured summary](segmented_cross_ray_learning_2026-10-10_public_summary.json)

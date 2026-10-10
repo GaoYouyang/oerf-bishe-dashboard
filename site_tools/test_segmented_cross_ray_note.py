@@ -70,7 +70,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 7
+        assert len(reader.pairs) == 8
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -106,3 +106,19 @@ def test_directional_diagnostic_does_not_overturn_the_algorithm_gate():
     assert "not a full eigenspectrum" in audit["limits"]
     assert data["decision"].startswith("FAIL_")
     assert data["primary"]["matched_cells"] == 0
+
+
+def test_roundoff_diagnostic_is_not_algorithm_success():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    audit = data["native_roundoff_diagnostic"]
+    assert audit["queries"] == 99 and audit["sampled_strata"] == 33
+    assert audit["independent_checks_passed"] == 18
+    assert audit["maximum_four_map_endpoint_response"] < 3e-13
+    assert audit["relative_seed_perturbation"] == 1e-12
+    assert audit["no_cfd_or_teacher_scoring"]
+    assert not audit["new_candidate_tested"]
+    assert audit["earlier_numerical_failures_unchanged"]
+    assert data["decision"].startswith("FAIL_")
+    assert not data["claims"]["algorithm_breakthrough"]
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="native-roundoff-diagnostic"') == 1
