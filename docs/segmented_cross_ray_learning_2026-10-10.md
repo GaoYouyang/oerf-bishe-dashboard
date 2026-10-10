@@ -98,7 +98,23 @@
 
 图消息算子已有[Graph Kernel Network](https://arxiv.org/abs/2003.03485)先例。此处不是该论文的BOS复现，不作first或SOTA声明。
 
+## 10月11日：精度小门可达，但零参数对照阻断学习贡献
+
+从当前合格物理重新构造完整观测几何信息，结果前冻结一个17参数、共享的观测能量谱响应；fresh exact adjoint lift后接原样短CGLS精化。只评估已打开十一条轨迹各三个帧、原生五相机，共33个训练内锚点。没有完整留轨迹外折、101帧全序列或其他相机基数证据。
+
+主模型达到**33/33四指标严格参考匹配、11/11采样绝对层**。13参数仅几何学习为27/33；同动作冷CGLS5为0/33。但是**零参数未训练谱响应也达到33/33，而且在全部33个锚点的四项误差均更低**。主模型/零参数误差比中位数为场1.045712、全梯度1.045386、内部梯度1.035129、观测5.140236。科学判决为学习贡献失败，而不是准确率小门失败；不事后把对照换成learned primary，不扩大本模型救援。
+
+独立路径分别重建几何、观测、有限teacher、拟合和物理评分，**22/22检查通过，含独立重训**；最大最终场/指标差1.48e-12/7.36e-14。两路径共享数据来源和部分物理基础设施，不是独立数据集。
+
+每查询逻辑5A+5AT，**另有两次稠密谱乘法与非免费的完整法矩阵准备、分解和大缓存**。每套准备的信息等价量为8446A+8446AT，不是实际逐查询在线回调次数；调用减少不能自动等同速度。下一投入先核算强解析对照的完整成本及摊销条件，作为公平benchmark资格，不是学习或资源成功。未开封validation/test没有读取，不声称外部泛化、曲线光线或真实BOST。
+
+![精度小门通过不等于学习贡献 / Accuracy matching is not learned value](../assets/spectral_energy_control_2026-10-11.png)
+
 ## English
+
+The Oct 11 spectral screen reaches strict four-metric reference matching on **33/33 opened five-camera training anchors**, with 11/11 sampled absolute strata. The 17-parameter observation-energy learner passes this accuracy screen; geometry-only learning matches 27/33 and equal-action cold CGLS5 matches 0/33. However, the **untrained zero-parameter response also matches 33/33 and has lower errors on every metric of every anchor**. Median learner/control error ratios are 1.045712, 1.045386, 1.035129 and 5.140236. Learned-value eligibility fails, not the accuracy screen. Close the literal learner without expansion or posthoc primary substitution.
+
+Separate reconstruction and refitting pass all 22 independent checks; maximum final-state and metric differences are 1.48e-12 and 7.36e-14. Data sources and some physical infrastructure are shared, so this is not an independent dataset. Each query requires 5A+5AT plus two dense spectral products, full-normal preparation, factorization and a large cache. The setup information equivalent is 8446A+8446AT per implementation, not counted online callbacks. Prioritize whole-cost qualification and amortization of this analytical benchmark. Three-frame in-sample evidence is not complete-trajectory LOTO, full sequences, other cardinalities, unseen transfer, deployment speed or real BOS evidence. No new validation/test was opened.
 
 An Oct 11 classical endpoint screen right-whitens every unchanged CGLS35 action with a full cyclic-normal response, rather than reviving the old one-time range-filter seed. Loading only preconditions the coordinates. Separate SciPy/Torch spectra/actions, original recurrences and own physical CSR/raw-cache metrics agree on 20 checks. On 33 opened five-camera anchors the primary matches 0/33, passes 0/11 sampled absolute strata and is jointly nonworse than cold35 on 0/33. The uniform control preserves cold35 and 11/11 basic quality. Every observation error improves while every field/full-gradient/interior error worsens; median ratios are 1.404825/1.556658/1.397759/0.832581. No single failure cause is proved. Close the fixed mechanism without tuning; native 7/9 remain untested. Each 35A+35AT query pays 71 FFT/IFFT pairs plus nonfree setup. The 12.24-second, 0.671-GiB mixed audit is not deployment timing. No learned initializer, full sequence, external or real BOST success; preconditioned endpoints are not automatically valid pure-adjoint teachers.
 

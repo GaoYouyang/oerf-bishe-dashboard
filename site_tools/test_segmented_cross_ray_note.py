@@ -70,7 +70,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 16
+        assert len(reader.pairs) == 18
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -290,3 +290,40 @@ def test_cyclic_right_control_keeps_observation_and_field_quality_distinct():
     assert live["latest_signed_cross_ray"]["cyclic_right_preconditioned_control"] == audit
     for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
         assert (ROOT / name).read_text().count('id="cyclic-right-cgls-control"') == 1
+
+
+def test_spectral_accuracy_screen_does_not_claim_learned_or_resource_success():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    audit = data["spectral_energy_response"]
+    assert audit["decision"] == "FAIL_IN_SAMPLE_SPECTRAL_ENERGY_RESPONSE"
+    assert audit["queries"] == 33 and audit["sampled_trajectory_strata"] == 11
+    assert "five-camera" in audit["scope"] and "in-sample" in audit["scope"]
+    assert audit["learned_parameters"] == 17
+    assert audit["matched_cells"] == {
+        "SpectralEnergy17-Warm4": 33,
+        "GeometrySpectral13-Warm4": 27,
+        "UntrainedSpectral-Warm4": 33,
+        "CGLS5": 0,
+    }
+    assert audit["sampled_absolute_strata"]["SpectralEnergy17-Warm4"] == 11
+    assert audit["sampled_absolute_strata"]["UntrainedSpectral-Warm4"] == 11
+    assert audit["untrained_all_four_better_cells"] == 33
+    ratios = audit["learned_over_untrained_median_error_ratios"]
+    assert all(r > 1 for r in ratios.values()) and 5.14 < ratios["observation_rel_l2"] < 5.15
+    assert audit["independent_checks_passed"] == 22 and audit["independent_retraining"]
+    assert not audit["independent_dataset"]
+    assert audit["maximum_cell_metric_difference"] < 1e-7
+    assert audit["standalone_actions"] == {"A": 5, "AT": 5}
+    assert audit["dense_spectral_products_per_query"] == 2
+    assert audit["normal_setup_information_equivalents_each_implementation"] == {"A": 8446, "AT": 8446}
+    assert audit["setup_and_dense_cache_nonfree"]
+    for key in ("complete_sequence", "strict_LOTO", "native_other_counts_tested", "new_validation_or_test_opened",
+                "learned_value_established", "resource_speedup", "algorithm_breakthrough", "external_generalization",
+                "curved_ray_validated", "real_bost", "paper_success"):
+        assert audit[key] is False
+    live = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
+    assert live["latest_signed_cross_ray"]["spectral_energy_response"] == audit
+    assert data["primary"]["matched_cells"] == 0
+    assert all(value is False for value in data["claims"].values())
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="spectral-energy-control"') == 1
