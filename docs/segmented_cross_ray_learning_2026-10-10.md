@@ -22,6 +22,16 @@
 
 共3,630次训练更新，训练账14,520A+10,890A^T，另有梯度审计264A+198A^T。每条独立实现路径的全部方法共享预测账693,264A+689,931A^T，物理评分29,997A；不是单模型部署账。teacher、图构建与缓存亦不免费；1,403.18秒是完成运行的混合离线审计，不含更早启动失效的几何开销，更不是部署计时。没有fresh部署wall/RSS、native12相机、扰动门、未开封外部泛化、曲线光线或真实实验BOST结论。观测仍是线性弱偏折直线射线代理，不是标定像素位移。
 
+## 剩余误差方向：为什么小收益还不够
+
+随后对已封存的全部3,333个最终场和物理投影，做了结果前冻结的零训练归因。令E为有限CGLS128场减冷CGLS35场，D为学习最终场减冷CGLS35场，比较R(v)=||Av||²/||v-mean(v)||²。两条路径分别读取自身已封存场/投影，独立重建梯度、内积与统计；数组/汇总最大差3.30e-12/1.88e-12。新增0A+0A^T，不重训、不重新求解，继承数据与投影成本仍非免费。
+
+学习修正的R(D)/R(E)中位数为**34.70**；5/7/9相机分别**19.62/33.94/43.15**，3,333/3,333查询和33/33完整层中位数均大于1。场方向对齐cosine中位数**0.3483**，修正幅度约为剩余场差的**5.00%**，实际有限teacher场差范数减少中位数**1.73%**。即便teacher可见地沿这个固定最终方向自由缩放，可解释场差能量的中位数也只有**12.13%**；这不是任意初值加精化的容量上界。
+
+这支持“修正主要作用于相对更强可观测方向，剩余有限参考差更弱可观测”的限定解释，**不是完整特征谱分析、CFD真实误差判决或全部失败根因证明**。控制R比值为Jacobi1.39、dual-ridge57.15、BP-warm55.86；较大比值本身不决定算法优劣。有限teacher更接近也不自动等于CFD更准确。
+
+下一投入先检查新机制是否能提供强控制尚未有效提供的剩余方向，而不是直接扩大网络。[Graph Neural Preconditioners](https://arxiv.org/html/2406.00809v3)讨论弱谱方向的训练覆盖，但它的非线性预条件器使用FGMRES；不能直接塞进本项目原样CGLS/PCGLS，也不是BOS有效性的证据。这项诊断不重开原配方或授权新训练。
+
 ## 总体决定
 
 保留小幅完整留轨迹信号和可靠物理/经典基准；关闭当前字面图网络配方，不加宽、加轮次、换loss、阈值或精化深度救援。下一投入必须解释它能修复什么强经典控制未便宜提供的剩余误差，再另行结果前冻结。不是整个C路线关闭，也不是算法突破或论文就绪。
@@ -39,6 +49,10 @@ Each fold uses only the other ten trajectories' finite CGLS128 fields as teacher
 **A separate post-seal descriptive readback finds all3,333 queries jointly no worse than equal-action coldCGLS35**, with absolute comparison tolerance1e-10. Median paired relative improvements are0.3459% field,0.3928% full gradient,0.2604% interior gradient and3.5481% observation. This is a modest consistent whole-trajectory learning signal, not a new success gate. Against equal-action Jacobi-PCGLS35 the joint nonworse count is684/3,333; against dual-ridge-CG35 it is0/3,333. Beating the cheaper BP warm control or the untrained structure cannot establish superiority over strong controls.
 
 Independent graph/features/NumPy prediction/lift/refinement/physical scoring passes 23/23 checks; maximum metric difference is 1.90e-14 and paired-median readback difference 2.69e-15. The paths share sealed weights, canonical CSR, observations and finite teachers; this is not independent retraining. The 3,630 training updates cost 14,520A+10,890AT, with another 264A+198AT for gradient audits. Each implementation's shared all-method inference uses 693,264A+689,931AT, plus 29,997A for physical scoring; these are not one model's standalone deployment counts. Teachers, graphs and caches are nonfree. The completed-run 1,403.18-second mixed audit excludes earlier aborted startup setup and is not fresh deployment wall/RSS. Native 12 cameras, perturbations, unopened transfer, curved rays and paired real BOS are untested.
+
+A separately frozen post-open attribution reads each path's own sealed endpoints and physical replay images for all3,333 queries. E is the finiteCGLS128-minus-cold35 gap and D the learned-minus-cold35 endpoint correction. R(v)=||Av||²/||center(v)||². Median R(D)/R(E) is34.70, with5/7/9-camera medians19.62/33.94/43.15; all queries and33 complete-stratum medians exceed1. Median field cosine is0.3483, step/gap norm is5.00%, and realized finite-teacher gap-norm reduction is1.73%. Teacher-visible scaling along this fixed final direction explains a median12.13% of field-gap energy, not arbitrary warm-seed capacity. Independent derivative/arithmetic/statistic reconstruction differs by at most3.30e-12 per array and1.88e-12 per summary, with0 additionalA/AT. Original state/replay costs remain nonfree.
+
+This supports a limited relative-observability hypothesis, not a full spectral decomposition, CFD true-error result or proof of every failure cause. Control median ratios are1.39 forJacobi,57.15 fordual-ridge and55.86 forBP-warm; a larger ratio alone is not a quality ranking. Closeness to a finite teacher is not automatically closeness toCFD. GNP motivates weak-spectrum coverage but uses nonlinearFGMRES, not unchangedCGLS/PCGLS; it is not BOS evidence. No new training or reopening follows.
 
 Close this literal recipe without more width, epochs, changed loss, graph thresholds or refinement depth. Retain the small held-trajectory signal and qualified physics/classical comparison. Prioritize genuinely different residual-repair action that strong cheap controls do not explain. No algorithmic breakthrough, resource speedup or paper-ready claim follows. Graph message operators have existing GKN precedent; nofirst/SOTA claim is made.
 

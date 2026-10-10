@@ -70,7 +70,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 6
+        assert len(reader.pairs) == 7
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -90,3 +90,19 @@ def test_new_note_has_no_private_execution_identity():
     evidence = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())["latest_signed_cross_ray"]
     assert evidence["matched_queries"] == 0 and evidence["absolute_strata"] == 33
     assert "segmented-cross-ray-20261010" in evidence["note"]
+
+
+def test_directional_diagnostic_does_not_overturn_the_algorithm_gate():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    audit = data["endpoint_direction_attribution"]
+    assert audit["queries"] == 3333 and audit["complete_strata"] == 33
+    assert audit["cells_ratio_above_one"] == 3333
+    assert audit["strata_median_ratio_above_one"] == 33
+    assert 34 < audit["median_rayleigh_ratio"] < 35
+    assert .34 < audit["field_alignment_cosine_median"] < .36
+    assert .12 < audit["teacher_visible_field_line_energy_capacity_median"] < .13
+    assert audit["additional_actions"] == {"A": 0, "AT": 0}
+    assert audit["own_sealed_endpoints_and_physical_replays"]
+    assert "not a full eigenspectrum" in audit["limits"]
+    assert data["decision"].startswith("FAIL_")
+    assert data["primary"]["matched_cells"] == 0
