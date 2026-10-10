@@ -4,6 +4,16 @@
 
 ## 实际做了什么
 
+### 条件先验压缩没有保住重建收益
+
+10月11日条件先验压缩未通过：每折排除留出轨迹全部101帧，128配对Fourier统计读出在33个干净锚点只匹配20/33、采样匹配分层4/11；绝对门11/11不等于保住收益。21项独立复算一致。场误差比原精确核中位恶化36.86%；线性64对照28/33也失败，不事后替换。预测器payload为原来的8.43%，局部cached八查询计时0.317s对0.366s，但共享完整逆因子仍非免费，准确率失败不能称同精度加速。关闭固定压缩配方，不增加特征救援；原干净1111/1111与噪声56/66证据保留。
+
+每查询5A+5AT、一次完整inverse/two triangular solves；本次仅压缩保守不可见统计先验，并未训练神经隐藏权重或替代完整经典range求解。三个时刻不是完整轨迹预测；完整留轨迹只指每个拟合排除了留出轨迹的全部101帧。
+
+English: Oct 11 conditional-prior compression FAIL: each fit excludes all 101 held-trajectory frames. Paired-Fourier128 matches 20/33 clean anchors and 4/11 sampled strata; 11/11 absolute strata do not preserve the original value. All 21 independent checks agree. Median paired field error is 36.86% worse than the exact kernel. Linear64 reaches 28/33 but also fails and is not substituted. Predictor-only payload is 8.43% of the original; local cached eight-query timing is 0.317s versus 0.366s. Both still retain the nonfree full inverse, and failed accuracy is not matched-accuracy acceleration. Close this fixed recipe without adding features. Preserve clean 1111/1111 and noise 56/66 evidence.
+
+[Random-feature原始研究](https://papers.nips.cc/paper_files/paper/2007/hash/013a006f03dbc5392effeb8f18fda755-Abstract.html)提供方法先例，不是本BOS有效性或新颖性保证。
+
 ### 全频响应的求解坐标控制
 
 10月11日新增一个零参数经典终点门：当前分段物理的全频周期平均normal响应，作为每一步的右坐标预条件，而非旧配方的一次range-filter初值。以AC与CA^T执行原样零起点CGLS35；loading只在预条件器里，不改最小二乘目标。分别用SciPy/Torch从各自物理CSR构造频谱与作用，原样双递推、各自raw缓存和四指标重放，20/20独立检查一致。

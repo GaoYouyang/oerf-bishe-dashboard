@@ -93,7 +93,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 28
+        assert len(reader.pairs) == 29
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
