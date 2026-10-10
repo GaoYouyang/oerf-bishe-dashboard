@@ -4,6 +4,14 @@
 
 ## 实际做了什么
 
+### 全频响应的求解坐标控制
+
+10月11日新增一个零参数经典终点门：当前分段物理的全频周期平均normal响应，作为每一步的右坐标预条件，而非旧配方的一次range-filter初值。以AC与CA^T执行原样零起点CGLS35；loading只在预条件器里，不改最小二乘目标。分别用SciPy/Torch从各自物理CSR构造频谱与作用，原样双递推、各自raw缓存和四指标重放，20/20独立检查一致。
+
+五相机11条已打开train轨迹、0/50/100帧共33锚点。主控制匹配0/33、绝对采样门0/11、对冷35四项不差0/33；均匀响应控制保持冷35指标和11/11基本质量。33/33观测改善，同时33/33场、全梯度和内部梯度更差；配对比值中位数为1.404825/1.556658/1.397759/0.832581。没有证明核空间污染、边界效应或单一失败根因。
+
+固定周期右预条件机制停止，不调响应、loading、padding或步数；7/9未展开，不是失败。每查询35A+35AT加71FFT/IFFT，两新臂均实际计费；setup、继承物理和teacher非免费。12.24秒、0.671GiB混合审计不是部署wall/RSS。该经典终态不能自动当作纯A^T学习teacher；没有学习、完整序列、外门或真实BOST成功。保留可靠强控制，继续要求新机制有实际三维终点价值，不仅低残差。[CGLS原始软件说明](https://web.stanford.edu/group/SOL/software/cgls/)是经典背景，不提供本BOS性能或新颖性结论。
+
 ### 当前物理下的先验分量干预
 
 10月11日另行冻结一个机制归因，复用other-fold rawCFD与finiteCGLS128先验，不训练新模型。当前分段物理上，五相机11完整外折、每折101帧，共1111查询；两个干预仅分别保留先验差的Q部分或保守不可见h，归一化、精确校正和原样CGLS32不变。Q由[常数,A^T非零归一化行]的未pivot薄QR保留所有列，**Q可能大于纯range，h不是完整核空间**。两套全部预测封存后才评分。
@@ -91,6 +99,8 @@
 图消息算子已有[Graph Kernel Network](https://arxiv.org/abs/2003.03485)先例。此处不是该论文的BOS复现，不作first或SOTA声明。
 
 ## English
+
+An Oct 11 classical endpoint screen right-whitens every unchanged CGLS35 action with a full cyclic-normal response, rather than reviving the old one-time range-filter seed. Loading only preconditions the coordinates. Separate SciPy/Torch spectra/actions, original recurrences and own physical CSR/raw-cache metrics agree on 20 checks. On 33 opened five-camera anchors the primary matches 0/33, passes 0/11 sampled absolute strata and is jointly nonworse than cold35 on 0/33. The uniform control preserves cold35 and 11/11 basic quality. Every observation error improves while every field/full-gradient/interior error worsens; median ratios are 1.404825/1.556658/1.397759/0.832581. No single failure cause is proved. Close the fixed mechanism without tuning; native 7/9 remain untested. Each 35A+35AT query pays 71 FFT/IFFT pairs plus nonfree setup. The 12.24-second, 0.671-GiB mixed audit is not deployment timing. No learned initializer, full sequence, external or real BOST success; preconditioned endpoints are not automatically valid pure-adjoint teachers.
 
 A prefrozen current-physics prior intervention uses1111 five-camera queries and11 whole-trajectory folds, with sealed other-fold rawCFD/finiteCGLS128 means and no fitting. Unpivoted all-columnQR of[constant,normalized nonzero A^T rows] gives a possibly enlarged retained space, not guaranteed pure range; its complementh is conservative, not the full kernel. Two unchangedCGLS32 arms keep retained delta orh; all own predictions seal before score. Signed pooled normalized-square field-gain fraction is30.8354897557/46.3947490281=66.4633%. Nine trajectories gain, two lose;159 nonpositive-gain queries and undefined negative-denominator fractions remain visible. Actual paired endpoint identities and image invariance hold to1.62e-14/2.81e-15.
 

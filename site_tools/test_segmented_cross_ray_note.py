@@ -70,7 +70,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 14
+        assert len(reader.pairs) == 16
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -267,3 +267,26 @@ def test_conservative_invisible_prior_attribution_does_not_claim_learned_speedup
     assert live["latest_signed_cross_ray"]["prior_gain_kernel_intervention"] == audit
     for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
         assert (ROOT / name).read_text().count('id="segmented-prior-kernel-intervention"') == 1
+
+
+def test_cyclic_right_control_keeps_observation_and_field_quality_distinct():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    audit = data["cyclic_right_preconditioned_control"]
+    assert audit["decision"] == "FAIL_CYCLIC_RIGHT_CGLS35_SAMPLED_ACCURACY"
+    assert audit["queries"] == 33 and audit["native_camera_counts"] == [5]
+    assert audit["untested_native_camera_counts"] == [7, 9]
+    assert audit["trainable_parameters"] == 0 and audit["independent_checks_passed"] == 20
+    assert audit["matched_queries"] == audit["sampled_absolute_strata_passed"] == audit["joint_nonharm_vs_cold"] == 0
+    assert audit["sampled_absolute_strata_total"] == audit["uniform_control_absolute_strata"] == 11
+    assert audit["lower_observation_worse_all_three_field_metrics"] == 33
+    ratios = audit["median_primary_to_uniform_error_ratios"]
+    assert all(r > 1 for r in ratios[:3]) and 0 < ratios[3] < 1
+    assert audit["standalone_actions"] == {"A":35,"AT":35,"FFT3":71,"IFFT3":71}
+    assert audit["setup_and_inherited_costs_nonfree"] and audit["loading_only_in_preconditioner"]
+    assert audit["exact_adjoint_teacher_not_qualified"]
+    assert all(not audit[k] for k in ("whole_noisy_sequence", "learned_algorithm_success", "resource_speedup", "external_generalization", "real_bost", "paper_success"))
+    assert data["primary"]["matched_cells"] == 0 and data["decision"].startswith("FAIL_")
+    live = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
+    assert live["latest_signed_cross_ray"]["cyclic_right_preconditioned_control"] == audit
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="cyclic-right-cgls-control"') == 1
