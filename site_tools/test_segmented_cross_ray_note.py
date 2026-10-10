@@ -70,7 +70,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 18
+        assert len(reader.pairs) == 20
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -327,3 +327,40 @@ def test_spectral_accuracy_screen_does_not_claim_learned_or_resource_success():
     assert all(value is False for value in data["claims"].values())
     for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
         assert (ROOT / name).read_text().count('id="spectral-energy-control"') == 1
+
+
+def test_analytical_full5_accuracy_and_cost_diagnostic_are_not_learned_success():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    audit = data["analytic_full5_control_qualification"]
+    assert audit["queries"] == audit["matched_queries"] == 1111
+    assert audit["complete_trajectories"] == audit["complete_matched_trajectories"] == 11
+    assert audit["absolute_trajectories"] == audit["reference_absolute_trajectories"] == 11
+    assert audit["frames_per_trajectory"] == 101 and audit["trainable_parameters"] == 0
+    assert audit["native_camera_counts"] == [5] and audit["untested_camera_counts"] == [7, 9, 12]
+    assert audit["independent_accuracy_checks"] == 75
+    assert all(v < 1e-7 for v in audit["independent_maximum"].values())
+    assert all(r["joint_nonharm"] == 1111 and r["harm"] == 0 for r in audit["comparisons"].values())
+    assert audit["standalone_actions"] == {"A": 5, "AT": 5}
+    assert audit["dense_spectral_products_per_query"] == 2
+    assert audit["normal_setup_information_equivalents"] == {"A": 8446, "AT": 8446}
+    assert audit["inherited_cache_and_setup_nonfree"]
+    cost = audit["cost"]
+    assert cost["timed_anchor_queries"] == 33 and cost["repeats_per_anchor"] == 3
+    assert "not whole temporal pipeline timing" in cost["scope"]
+    assert cost["break_even_same_geometry_queries"] == 332
+    assert not cost["original_five_arm_chain_completed"] and cost["archive_key_failure_preserved"]
+    assert not cost["consumed_arms_rerun"] and cost["only_unopened_reference_completed"]
+    assert not cost["timing_independently_repeated"] and not cost["OS_cache_purged"]
+    assert cost["parent_memory_not_in_child_peak"]
+    assert cost["implementation_specific_not_inverse_cost_lower_bound"]
+    assert not cost["equivalent_cheaper_factorization_qualified_on_current_operator"]
+    assert "not an inverse-action cost lower bound" in audit["limits"]
+    for n, methods in cost["setup_plus_queries_extrapolated"].items():
+        for name, item in (("FixedAnalyticSpectral-Warm4", cost["analytic"]), ("CGLS128", cost["finite_reference"])):
+            assert abs(methods[name] - item["cold_setup_seconds"] - int(n)*item["mean_query_seconds"]) < 1e-10
+    assert all(value is False for value in audit["claims"].values())
+    assert data["primary"]["matched_cells"] == 0 and not data["claims"]["algorithm_breakthrough"]
+    live = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
+    assert live["latest_signed_cross_ray"]["analytic_full5_control_qualification"] == audit
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="analytic-full5-control"') == 1

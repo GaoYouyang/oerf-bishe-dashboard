@@ -110,7 +110,27 @@
 
 ![精度小门通过不等于学习贡献 / Accuracy matching is not learned value](../assets/spectral_energy_control_2026-10-11.png)
 
+## 10月11日：解析强基准全序列资格与成本诊断
+
+不改变前述零参数对照的公式、正则或短精化深度，扩展到已打开十一条轨迹全部101帧、原生五相机。两路径分别封存全部预测后才进行自身物理重放和CFD评分：**1111/1111严格匹配，11/11完整轨迹匹配及绝对p90通过，75/75独立检查通过**。最大场/图像相对差2.03e-12/5.91e-12、指标/汇总差1.72e-13/1.07e-12。相对冷35、Jacobi35、dual35和有限CGLS128，均1111/1111四指标不差。相对有限参考的四项误差比中位数为0.943766/0.936439/0.954885/0.188398。
+
+这资格只属于**已打开五相机的解析benchmark**，不是learned primary、完整学习外折、其他相机基数或未开封外部证据。上一17参数学习配方仍关闭，不能把解析方法事后替换成学习成功。
+
+独立全精度验证通过后，两个新进程分别从reported geometry重建相同分段射线矩阵，计量准备与单查询应用。固定33锚点各重复三次、顺序单查询、同8线程、不丢首调用，OS页缓存未清空。解析准备**45.129秒**，其中分解42.610秒；有限CGLS128准备**1.984秒**。单查询均值为**22.556/152.576毫秒**，p90为23.971/155.757毫秒。解析缓存约544MiB；新进程峰值RSS2.696/0.713GiB包含库、准备及资格检查、不含轻量supervisor，不是全系统同步峰值或内存改善。
+
+每解析查询5A+5AT之外有两次稠密谱乘法；完整法矩阵包含8446A+8446AT信息等价量，准备与缓存非免费。按本次均值估计，同一几何需约**332查询**才摊销：101查询总计47.407/17.394秒，1111查询总计70.189/171.496秒。**这些总计是准备加采样均值的外推，不是对应全序列fresh端到端实测。** 新几何不能直接复用旧因子。单机单时段两方法计时不能证明稳定部署加速。
+
+原五方法成本链在冷35的归档字段查验处退出，失败保留；该未封存计时不具权威性。没有重跑已消费的方法或改冻结源码，只在另冻窄接力中完成尚未打开的有限参考比较。Jacobi/dual计时未执行，五方法合同仍不完整。**这些成本只代表当前特征分解实现，不是逆作用成本下界；先核验同公式的更便宜经典分解，再判断学习能否减少新几何准备/存储。** 历史normal-factor对照的物理/求解配置不同，不能直接移植成本；不在完整分解已付费后继续拟合能量参数，也不据此宣称学习、资源、外部或真实BOST成功。
+
+![五相机解析精度与明确外推的摊销成本 / Analytical accuracy and explicitly extrapolated amortization](../assets/analytic_full5_cost_2026-10-11.png)
+
 ## English
+
+The fixed zero-parameter analytical warm control now qualifies **1111/1111 opened five-camera queries and 11/11 complete 101-frame trajectories**, with all **75 independent checks** passing. Each path seals predictions before own physical replay and CFD scoring; shared data sources and infrastructure are disclosed. Maximum state/image relative differences are 2.03e-12/5.91e-12, and metric/summary differences 1.72e-13/1.07e-12. All queries are jointly nonworse than cold35, Jacobi35, dual35 and finite CGLS128; median ratios versus the finite reference are 0.943766/0.936439/0.954885/0.188398. This is an analytical benchmark, not a replacement learned primary, LOTO, other cardinalities or external evidence.
+
+Fresh-process warm-filesystem diagnostics rebuild the segmented geometry, then measure setup and 33 sequential anchors repeated three times without discarding first calls. Analytical setup is **45.129s** including 42.610s factor preparation, versus **1.984s** for CGLS128. Mean query times are **22.556/152.576ms**; the analytical cache is about544MiB, and child peaks2.696/0.713GiB include preparation/qualification but not the lightweight parent. Two dense products and full-normal information are nonfree. Estimated same-geometry break-even is **332 queries**. The101/1111 totals47.407/17.394s and70.189/171.496s are **extrapolated**, not complete-pipeline wall measurements. This is not a stable deployment or memory gain.
+
+Preserve the original five-arm archive-check failure; only the unopened finite-reference timing was completed under a separate frozen continuation. No consumed arm was repeated or original source changed. Jacobi/dual timing remains unmeasured. Costs are specific to this eigendecomposition, not an inverse-action lower bound: first qualify cheaper mathematically equivalent classical factorization, then assess learned preparation/storage compression. The older normal-factor comparator has a different physical/solver configuration. Do not expand the closed energy learner. Learned, resource, external and real-BOS success remain unproved.
 
 The Oct 11 spectral screen reaches strict four-metric reference matching on **33/33 opened five-camera training anchors**, with 11/11 sampled absolute strata. The 17-parameter observation-energy learner passes this accuracy screen; geometry-only learning matches 27/33 and equal-action cold CGLS5 matches 0/33. However, the **untrained zero-parameter response also matches 33/33 and has lower errors on every metric of every anchor**. Median learner/control error ratios are 1.045712, 1.045386, 1.035129 and 5.140236. Learned-value eligibility fails, not the accuracy screen. Close the literal learner without expansion or posthoc primary substitution.
 
