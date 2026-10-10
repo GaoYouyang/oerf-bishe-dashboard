@@ -4,6 +4,10 @@
 
 ## 实际做了什么
 
+最新信息定位直接重放33组已封存的other-fold训练均值：中心化d=CFD均值-有限teacher均值，R(v)=||Av||²/||v||²。33/33的R(d)/R(CFD均值)<1，中位**1.7981e-4**；三维差异范数/原均值范数中位**17.897%**，对应投影差异/原投影范数中位**0.2401%**。差异有明显场幅度却相对弱可观测。这不是单帧重建误差、所有teacher误差根因、精确核空间或真实噪声阈值，不证明不可识别或伴随接口不可能。
+
+两路径各自均值、物理CSR与NumPy/Torch算术，43/43比较通过；数组/统计最大差1.49e-15/4.44e-16。每路径新增99A+0AT，无新fit、网络更新、solver步数或held真值读取。继承setup/teacher/均值拟合与验证非免费，8.52秒/790MiB是混合诊断，不是部署速度。原均值和网络的强参考FAIL不变；下一学习机制应先解释原始场弱信息的合法稳定作用，不继续扩旧网络，也不以有限teacher或投影拟合好代替三维学习。
+
 10月11日新增一个不同的信息源对照：每个完整留轨迹外折只用其他十条全部帧，分别拟合原始CFD和有限CGLS128的三维场均值。相同观测范数归一化、当前观测精确K1校正与原样CGLS32，共3333查询/33完整层；无held标签、统计或选择。两种先验均基本质量33/33，强参考匹配0/3333、0/33。
 
 原始CFD先验相对冷CGLS35的场/全梯度/内部梯度/观测误差改善中位数14.3834%/13.6394%/12.2175%/18.3361%；四项同时不差3105/3333，伤害228。相对有限teacher先验，场改善9.1331%，四项不差2742/3333，并非处处更好。对Jacobi/dual-ridge四项不差2411/3333和2736/3333。这些是封存后的描述性配对，不替代预注册失败。简单先验的信息来源值得继续辨清，但不是同容量神经网络比较。
@@ -67,6 +71,10 @@
 图消息算子已有[Graph Kernel Network](https://arxiv.org/abs/2003.03485)先例。此处不是该论文的BOS复现，不作first或SOTA声明。
 
 ## English
+
+The latest physical information-location audit replays33 immutable other-fold training-mean pairs. For centered d=CFDmean-finiteTeacherMean andR(v)=||Av||²/||v||², all33 ratiosR(d)/R(CFDmean)<1, median1.7981e-4. Median relative field/image differences are17.897%/0.2401%. This is relatively weak training-mean information, not single-frame errors, all teacher-error causes, exact kernels or calibrated noise bounds. It does not prove nonidentifiability or impossibility of an adjoint initializer.
+
+Own means/physicalCSR/NumPy versusTorch arithmetic pass43 checks with array/statistic differences1.49e-15/4.44e-16. Each path99A+0AT, no newfit/network/solve/held-truth input. Setup, earlier teacher/mean fitting andvalidation remain nonfree. The8.52-second/790-MiB mixed audit is not deployment timing. Preserve the raw-field clue but keep old mean/learnerFAIL unchanged; require a genuinely new lawful stable information mechanism before fitting, not expansion of the old network.
 
 AnOct11 comparator fits raw-CFD and finiteCGLS128 field means from exactly other trajectories under11 complete folds, with identical normalization, observation correction and unchangedCGLS32. Both pass33 absolute strata but match0/3333 strong references. Raw-CFD has median field/observation gains14.38%/18.34% versus cold35 and field9.13% versus finite-teacher mean, but harms228 versus cold and is not uniformly better. These are post-seal descriptive effects, not new success gates. All114 independent checks pass, including own priors/recurrence/physics/CFD scoring and fold exclusion.
 

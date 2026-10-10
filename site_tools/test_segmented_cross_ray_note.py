@@ -188,3 +188,18 @@ def test_classical_prior_information_is_not_neural_or_range_success():
     assert data["primary"]["matched_cells"] == 0
     for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
         assert (ROOT / name).read_text().count('id="fold-prior-information"') == 1
+
+
+def test_training_mean_information_location_does_not_promote_success():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    audit = data["fold_prior_information"]["information_location"]
+    assert audit["prior_pairs"] == audit["ratio_below_one"] == 33
+    assert .00017 < audit["rayleigh_ratio_median"] < .00019
+    assert .17 < audit["field_difference_ratio_median"] < .18
+    assert .0023 < audit["image_difference_ratio_median"] < .0025
+    assert audit["actions_per_mode"] == {"A": 99, "AT": 0}
+    assert audit["independent_checks_passed"] == 43
+    assert audit["new_fits"] == audit["new_solver_steps"] == audit["new_network_updates"] == 0
+    assert audit["no_new_held_truth"] and audit["original_closed_verdicts_unchanged"]
+    assert not audit["native_exact_kernel_identified"] and not audit["deployment_resource_claim"]
+    assert data["primary"]["matched_cells"] == 0 and data["decision"].startswith("FAIL_")
