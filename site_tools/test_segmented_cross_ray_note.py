@@ -70,7 +70,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 8
+        assert len(reader.pairs) == 9
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -122,3 +122,22 @@ def test_roundoff_diagnostic_is_not_algorithm_success():
     assert not data["claims"]["algorithm_breakthrough"]
     for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
         assert (ROOT / name).read_text().count('id="native-roundoff-diagnostic"') == 1
+
+
+def test_controlled_noise_signal_preserves_the_stronger_gate():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    noise = data["controlled_noise_signal"]
+    assert noise["anchors"] == 99 and noise["queries"] == 198
+    assert noise["draws_per_anchor"] == 2 and noise["relative_l2_radius"] == .01
+    assert noise["all_four_nonworse_vs_cold"] == 198
+    assert noise["all_four_nonworse_vs_jacobi"] == 39
+    assert noise["all_four_nonworse_vs_dual_ridge"] == 0
+    assert noise["strong_reference_matches"] == 0
+    assert noise["reference_absolute_sampled_strata"] == 66
+    assert noise["independent_checks_passed"] == 42
+    assert noise["new_fits"] == 0 and not noise["full_noisy_sequence"]
+    assert noise["original_clean_failure_unchanged"]
+    assert not noise["model_rescue_authorized"] and not noise["deployment_resource_claim"]
+    assert data["decision"].startswith("FAIL_") and data["primary"]["matched_cells"] == 0
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="controlled-noise-signal"') == 1

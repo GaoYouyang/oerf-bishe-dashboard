@@ -22,6 +22,16 @@
 
 共3,630次训练更新，训练账14,520A+10,890A^T，另有梯度审计264A+198A^T。每条独立实现路径的全部方法共享预测账693,264A+689,931A^T，物理评分29,997A；不是单模型部署账。teacher、图构建与缓存亦不免费；1,403.18秒是完成运行的混合离线审计，不含更早启动失效的几何开销，更不是部署计时。没有fresh部署wall/RSS、native12相机、扰动门、未开封外部泛化、曲线光线或真实实验BOST结论。观测仍是线性弱偏折直线射线代理，不是标定像素位移。
 
+## 受控噪声下的小信号是否保留
+
+另行结果前冻结一次有限鲁棒性检查，不改变旧模型：原11个完整留轨迹外折权重在99个0/50/100帧锚点、5/7/9相机上，各接受两份相对L2半径1%的观测扰动，共198查询、66三帧层。无重训、参数选择或回退。固定半径球面扰动不是实验噪声或已知方差的独立高斯模型。
+
+相对同动作冷CGLS35，198/198查询四项均不差且至少一项严格更好，场/全梯度/内部梯度/含噪观测误差的配对相对改善中位数为**0.3332%/0.3745%/0.2655%/3.0475%**，比较容差1e-10。相对同动作Jacobi/dual-ridge四项不差仅**39/198和0/198**；强参考匹配仍**0/198**。学习与含噪有限参考均守住66/66采样绝对门，不能替代严格匹配。
+
+独立图、网络、原样求解、exact lift、物理投影及CFD评分42/42检查通过；最大场/投影相对差1.94e-14/6.99e-14，指标差1.59e-14。两路径共享旧权重、canonical CSR与新扰动输入，不是独立重训。每路径实际68508A+66726AT包括九个方法、新含噪参考和评分，单模型仍35A+35AT；几何、图及旧训练非免费。99.25秒、约2.542GiB为混合审计，不是部署计时。
+
+这保留了一个有限正信号，不改变原干净FAIL、授权旧模型扩展或证明完整噪声序列、任意扰动、同精度加速及真实BOST。[统计CG研究](https://arxiv.org/abs/2406.15001)已有预测/重建与噪声相关分析；本次不移植其统计风险界或停止规则。
+
 ## 剩余误差方向：为什么小收益还不够
 
 随后对已封存的全部3,333个最终场和物理投影，做了结果前冻结的零训练归因。令E为有限CGLS128场减冷CGLS35场，D为学习最终场减冷CGLS35场，比较R(v)=||Av||²/||v-mean(v)||²。两条路径分别读取自身已封存场/投影，独立重建梯度、内积与统计；数组/汇总最大差3.30e-12/1.88e-12。新增0A+0A^T，不重训、不重新求解，继承数据与投影成本仍非免费。
@@ -43,6 +53,8 @@
 图消息算子已有[Graph Kernel Network](https://arxiv.org/abs/2003.03485)先例。此处不是该论文的BOS复现，不作first或SOTA声明。
 
 ## English
+
+A separately frozen robustness check keeps all11 terminal held-trajectory models unchanged. Each of99 opened anchors receives two1%-relative-L2 spherical observation perturbations:198 queries and66 three-frame strata. No fitting or selection. The learned endpoint retains joint nonworse performance against equal-action coldCGLS35 on198/198 queries, with median paired gains0.3332%/0.3745%/0.2655%/3.0475% for field/full-gradient/interior/noisy-observation errors. AgainstJacobi/dual-ridge the counts are39/198 and0/198; strong finite-reference matches remain0/198. Both learner and noisy reference retain66 absolute strata. Independent reconstruction passes42 checks, with field/image relative differences1.94e-14/6.99e-14 and metric difference1.59e-14. Weights, canonicalCSR and perturbed inputs are shared, not independently refitted. Each path's68508A+66726AT covers nine methods/reference/scoring; the learner remains35 pairs plus nonfree graph/setup/oldtraining. The99.25-second,2.542-GiB mixed audit is not deployment timing. Fixed-radius perturbations are not calibrated experimental noise, full noisy sequences or statistical guarantees; originalFAIL stays closed and no training expansion, resource or real-BOST claim follows.
 
 A shared3,841-parameter signed cross-camera ray graph completed11 whole-trajectory LOTO folds,101 frames and5/7/9 cameras:3,333 held queries and33 complete strata. It reads current observations, exact-K1 residuals and reported geometry only. Camera IDs route grouping but are not learned features. Known signed ray couplings provide nonlinear messages; a fresh exact adjoint lift is followed by unchangedCGLS33, costing35A+35AT per standalone query plus nonfree geometry/graph/network work.
 
