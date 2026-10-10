@@ -1,5 +1,84 @@
 {
   "latest_signed_cross_ray": {
+    "reciprocal_raw_prior_energy": {
+      "date": "2026-10-11",
+      "decision": "FAIL_RECIPROCAL_RAW_PRIOR_ENERGY_COMPLETE_LOTO",
+      "queries": 3333,
+      "complete_strata": 33,
+      "outer_folds": 11,
+      "shared_parameters": 1091,
+      "geometry_bias_parameters": 481,
+      "training_updates_all_arms": 7260,
+      "raw_cfd_other_fold_targets": true,
+      "complete_held_trajectory_excluded": true,
+      "native_camera_counts": [
+        5,
+        7,
+        9
+      ],
+      "manufactured_12_only": true,
+      "exact_adjoint_initializer": true,
+      "unchanged_refinement": true,
+      "primary": {
+        "matched_cells": 0,
+        "complete_matched_strata": 0,
+        "absolute_strata": 33,
+        "all_four_nonworse_vs_cold": 2496,
+        "harm_vs_cold": 837,
+        "all_four_nonworse_vs_bias": 3333,
+        "all_four_nonworse_vs_untrained": 3333,
+        "all_four_nonworse_vs_jacobi": 216,
+        "all_four_nonworse_vs_dual_ridge": 0,
+        "median_paired_relative_improvement_vs_cold": {
+          "field": 0.0005642769943950965,
+          "gradient": 0.001082599218709901,
+          "interior_gradient": 0.0004538469598793782,
+          "observation": 0.007727335589435724
+        }
+      },
+      "bias_control": {
+        "matched_cells": 0,
+        "complete_matched_strata": 0,
+        "absolute_strata": 33,
+        "all_four_nonworse_vs_cold": 0
+      },
+      "untrained_control": {
+        "matched_cells": 0,
+        "complete_matched_strata": 0,
+        "absolute_strata": 33,
+        "all_four_nonworse_vs_cold": 0
+      },
+      "independent_checks_passed": 38,
+      "independent_retraining": false,
+      "shared_frozen_weights_inputs_CSR": true,
+      "standalone_actions": {
+        "A": 35,
+        "AT": 35
+      },
+      "shared_three_arm_actions": {
+        "A": 103,
+        "AT": 103
+      },
+      "maximum_state_relative_difference": 7.920089364668062e-14,
+      "maximum_metric_absolute_difference": 1.1601830607332886e-14,
+      "literal_recipe_closed": true,
+      "global_route_impossibility": false,
+      "deployment_resource_claim": false,
+      "mixed_offline_seconds": 741.5171224591322,
+      "mixed_offline_peak_rss_bytes": 4255350784,
+      "geometry_setup_training_and_cache_nonfree": true,
+      "unopened_external_conditions_read": false,
+      "convex_energy_precedent": "https://proceedings.mlr.press/v70/amos17b.html",
+      "claims": {
+        "algorithm_breakthrough": false,
+        "paper_success": false,
+        "resource_speedup": false,
+        "external_generalization": false,
+        "real_bost": false,
+        "curved_ray_validated": false,
+        "main_goal_complete": false
+      }
+    },
     "fold_prior_information": {
       "date": "2026-10-11", "queries": 3333, "complete_strata": 33,
       "raw_cfd_field_improvement_vs_cold_median": 0.143834053837077,
@@ -73,8 +152,8 @@
     },
     "note": "../index.html#segmented-cross-ray-20261010",
     "summary": "../docs/segmented_cross_ray_learning_2026-10-10_public_summary.json",
-    "headline_zh": "完整留轨迹图网络已独立核验：对冷CGLS35，3333/3333查询四项均不差，观测误差配对改善中位数3.55%；但强参考四指标匹配0/3333，仍未稳定胜过Jacobi/dual-ridge控制。小幅学习信号成立，同精度加速未成立。",
-    "headline_en": "The whole-trajectory ray graph is independently validated: all3333 queries are jointly no worse than coldCGLS35, with3.55% median paired observation improvement. Strong-reference four-error matches remain0/3333; Jacobi/dual-ridge controls are not uniformly dominated. A modest learned signal is supported, not matched-accuracy acceleration."
+    "headline_zh": "10月11日完整复算：新rawCFD互易能量学习对自身对照3333/3333四项不差，但对同价冷CGLS只有2496/3333，837有伤害，强参考0/3333。停止这份配方；此前旧图模型的小幅一致收益保留。下一投入看不同有效纠错信息，不靠扩模型、运行数量或CPU负荷替代质量。",
+    "headline_en": "Oct 11 complete validation: the new raw-CFD reciprocal energy learner beats its own controls on all 3,333 queries, but is jointly nonworse than equal-action cold CGLS on only 2,496, harming 837; strong matches remain 0/3,333. Close this recipe and retain the earlier graph's modest consistent signal. Prioritize different effective correction information, not model size, run count or CPU load as substitutes for quality."
   },
   "latest_research_synthesis": {
     "updated": "2026-10-10",

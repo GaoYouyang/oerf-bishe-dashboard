@@ -70,7 +70,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 11
+        assert len(reader.pairs) == 12
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -203,3 +203,35 @@ def test_training_mean_information_location_does_not_promote_success():
     assert audit["no_new_held_truth"] and audit["original_closed_verdicts_unchanged"]
     assert not audit["native_exact_kernel_identified"] and not audit["deployment_resource_claim"]
     assert data["primary"]["matched_cells"] == 0 and data["decision"].startswith("FAIL_")
+
+
+def test_reciprocal_raw_energy_learning_keeps_control_and_failure_boundaries():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    audit = data["reciprocal_raw_prior_energy"]
+    assert audit["queries"] == 3333 and audit["complete_strata"] == 33
+    assert audit["outer_folds"] == 11 and audit["shared_parameters"] == 1091
+    assert audit["geometry_bias_parameters"] == 481
+    assert audit["training_updates_all_arms"] == 7260
+    assert audit["raw_cfd_other_fold_targets"] and audit["complete_held_trajectory_excluded"]
+    assert audit["native_camera_counts"] == [5, 7, 9] and audit["manufactured_12_only"]
+    assert audit["primary"]["matched_cells"] == 0
+    assert audit["primary"]["complete_matched_strata"] == 0
+    assert audit["primary"]["absolute_strata"] == 33
+    assert audit["primary"]["all_four_nonworse_vs_cold"] == 2496
+    assert audit["primary"]["harm_vs_cold"] == 837
+    assert audit["primary"]["all_four_nonworse_vs_bias"] == 3333
+    assert audit["primary"]["all_four_nonworse_vs_untrained"] == 3333
+    assert audit["primary"]["all_four_nonworse_vs_jacobi"] == 216
+    assert audit["primary"]["all_four_nonworse_vs_dual_ridge"] == 0
+    assert .00056 < audit["primary"]["median_paired_relative_improvement_vs_cold"]["field"] < .00057
+    assert .0077 < audit["primary"]["median_paired_relative_improvement_vs_cold"]["observation"] < .0078
+    assert audit["independent_checks_passed"] == 38 and not audit["independent_retraining"]
+    assert audit["standalone_actions"] == {"A": 35, "AT": 35}
+    assert audit["shared_three_arm_actions"] == {"A": 103, "AT": 103}
+    assert audit["literal_recipe_closed"] and not audit["global_route_impossibility"]
+    assert not audit["deployment_resource_claim"] and not audit["unopened_external_conditions_read"]
+    assert all(v is False for v in audit["claims"].values())
+    live = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
+    assert live["latest_signed_cross_ray"]["reciprocal_raw_prior_energy"] == audit
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="reciprocal-raw-prior-energy"') == 1

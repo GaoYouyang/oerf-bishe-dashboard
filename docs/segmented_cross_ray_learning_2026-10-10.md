@@ -4,7 +4,15 @@
 
 ## 实际做了什么
 
-最新信息定位直接重放33组已封存的other-fold训练均值：中心化d=CFD均值-有限teacher均值，R(v)=||Av||²/||v||²。33/33的R(d)/R(CFD均值)<1，中位**1.7981e-4**；三维差异范数/原均值范数中位**17.897%**，对应投影差异/原投影范数中位**0.2401%**。差异有明显场幅度却相对弱可观测。这不是单帧重建误差、所有teacher误差根因、精确核空间或真实噪声阈值，不证明不可识别或伴随接口不可能。
+10月11日进一步实际完成一个**1091参数、rawCFD训练的互易残差能量模型**，不是扩宽旧图网络：几何条件的凸有符号边能量产生dual修正，exact伴随lift之后原样CGLS33。只有固定几何下的残差纠正Jacobian保证对称/半正定，不声称整个K1/精化映射凸或互易。凸神经能量有[ICNN原论文](https://proceedings.mlr.press/v70/amos17b.html)先例，不声称first或SOTA。
+
+同一11完整留轨迹外折/3333查询/33层，raw标签只来自其他轨迹；另训481参数几何先验对照，运行未训练模型。22模型和两实现全部预测封存后才评分。38/38独立闭包一致，own图边/features/NumPy系数与dual/另一原样求解器/物理CSR与raw重采样/尾部与账；权重、canonical输入共享，不是独立重训或新数据集。
+
+学习模型对几何先验和未训练模型3333/3333四项均不差，但对同价冷CGLS35只有2496/3333、837有伤害，场/全梯度/内部梯度/观测改善中位0.05643%/0.10826%/0.04538%/0.77273%。对Jacobi/dual-ridge四项不差216/3333和0/3333。三方法均基本质量33/33、强参考0/3333和0/33。**自身对照的学习信号不能替代强经典优势；固定配方FAIL并停止，不扩宽、不加轮次/loss/精化救援。** 这不是所有凸先验、原始场信息或C路线不可能。
+
+每方法35A+35AT，三臂共享前缀审计103A+103AT/查询；setup、raw标签、7260更新与缓存非免费。741.52秒/3.96GiB是混合离线运行，不是fresh部署资源优势。验证最大场相对差7.93e-14、指标绝对差1.17e-14；无外门、真实BOST或论文突破。总体收益优先于不断生成配方：保留可靠物理/控制，下一不同信息作用先证明有效纠错，再扩大拟合。
+
+上一项信息定位直接重放33组已封存的other-fold训练均值：中心化d=CFD均值-有限teacher均值，R(v)=||Av||²/||v||²。33/33的R(d)/R(CFD均值)<1，中位**1.7981e-4**；三维差异范数/原均值范数中位**17.897%**，对应投影差异/原投影范数中位**0.2401%**。差异有明显场幅度却相对弱可观测。这不是单帧重建误差、所有teacher误差根因、精确核空间或真实噪声阈值，不证明不可识别或伴随接口不可能。
 
 两路径各自均值、物理CSR与NumPy/Torch算术，43/43比较通过；数组/统计最大差1.49e-15/4.44e-16。每路径新增99A+0AT，无新fit、网络更新、solver步数或held真值读取。继承setup/teacher/均值拟合与验证非免费，8.52秒/790MiB是混合诊断，不是部署速度。原均值和网络的强参考FAIL不变；下一学习机制应先解释原始场弱信息的合法稳定作用，不继续扩旧网络，也不以有限teacher或投影拟合好代替三维学习。
 
@@ -71,6 +79,10 @@
 图消息算子已有[Graph Kernel Network](https://arxiv.org/abs/2003.03485)先例。此处不是该论文的BOS复现，不作first或SOTA声明。
 
 ## English
+
+A separately frozen 1091-parameter raw-CFD learner uses a geometry-conditioned convex signed-edge energy gradient, exact adjoint initialization and unchanged CGLS33. Its fixed-geometry residual-correction Jacobian is reciprocal/PSD, not the entire deployed map. Eleven complete-trajectory folds cover3333 queries/33 strata with a481-parameter geometry-bias control and an untrained arm. Other-fold labels only; all22 models and both prediction paths seal before scoring. Shared weights/inputs/CSR, own edge plans, NumPy coefficients/VJP, separate original solver and physicalCSR/raw resampling/metrics are disclosed; not independent retraining. Convex-energy learning has [ICNN precedent](https://proceedings.mlr.press/v70/amos17b.html), not a first/SOTA claim.
+
+All38 independent checks agree. The learner is jointly nonworse than bias and untrained arms on all3333 queries, but only2496/3333 versus equal-action coldCGLS35, harming837. Median field/gradient/interior/observation gains versus cold are0.05643%/0.10826%/0.04538%/0.77273%; joint counts versusJacobi/dual-ridge are216/3333 and0/3333. All arms retain33/33 basic absolute strata but match0/3333 strong references and0/33 complete strata. Close the literal recipe without width/update/loss/refinement rescue; this is not universal impossibility of convex priors, raw information or the C route. Each arm35A+35AT, shared three-arm audit103pairs; setup/training/cache nonfree. The741.52s/3.96GiB mixed offline run is not deployment speed, external transfer, realBOST or paper success. Prioritize different effective correction information over more fitting.
 
 The latest physical information-location audit replays33 immutable other-fold training-mean pairs. For centered d=CFDmean-finiteTeacherMean andR(v)=||Av||²/||v||², all33 ratiosR(d)/R(CFDmean)<1, median1.7981e-4. Median relative field/image differences are17.897%/0.2401%. This is relatively weak training-mean information, not single-frame errors, all teacher-error causes, exact kernels or calibrated noise bounds. It does not prove nonidentifiability or impossibility of an adjoint initializer.
 
