@@ -70,7 +70,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 20
+        assert len(reader.pairs) == 22
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -364,3 +364,43 @@ def test_analytical_full5_accuracy_and_cost_diagnostic_are_not_learned_success()
     assert live["latest_signed_cross_ray"]["analytic_full5_control_qualification"] == audit
     for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
         assert (ROOT / name).read_text().count('id="analytic-full5-control"') == 1
+
+
+def test_equivalent_classical_factor_and_layout_cost_do_not_claim_learning():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    a = data["analytic_cholesky_equivalence"]
+    assert a["queries"] == a["matched_queries"] == 1111
+    assert a["complete_trajectories"] == a["matched_trajectories"] == a["absolute_trajectories"] == 11
+    assert a["reference_absolute_trajectories"] == 11
+    assert a["independent_full_checks"] == 75 and a["independent_factor_checks"] == 11
+    assert a["trainable_parameters"] == 0 and a["native_camera_counts"] == [5]
+    assert a["untested_camera_counts"] == [7, 9, 12]
+    assert a["formula_regularization_and_CGLS_depth_unchanged"]
+    assert a["separate_scipy_sparse_and_torch_dense_factor_reconstruction"]
+    assert a["shared_data_and_verification_infrastructure"]
+    assert all(value < 1e-7 for value in a["independent_maximum"].values())
+    assert a["maximum_prior_spectral_endpoint_relative"] < 1e-7
+    assert a["maximum_stationarity_relative"] < 1e-7
+    assert a["maximum_factor_identity_relative"] < 1e-10
+    assert a["standalone_actions"] == {"A": 5, "AT": 5}
+    assert a["triangular_solves_per_query"] == 2 and a["full_factor_and_setup_nonfree"]
+    assert a["normal_information_equivalents"] == {"A": 8446, "AT": 8446}
+    costs, layout = a["costs"], a["layout_diagnostic"]
+    assert "not simultaneous paired" in costs["scope"]
+    assert costs["historical_same_geometry_break_even_queries"] == 20
+    assert costs["break_even_is_extrapolated"] and not costs["timing_independently_repeated"]
+    assert not costs["whole_system_RSS_measured"]
+    assert costs["corrected_F_layout"]["method_prepare_seconds"] < costs["historical_spectral"]["method_prepare_seconds"]
+    assert costs["corrected_F_layout"]["mean_query_seconds"] > costs["historical_spectral"]["mean_query_seconds"]
+    for n, rows in costs["preparation_plus_n_queries_extrapolated"].items():
+        for name, record in (("F-layout", costs["corrected_F_layout"]), ("historical_spectral", costs["historical_spectral"]), ("historical_CGLS128", costs["historical_finite_reference"])):
+            assert abs(rows[name] - record["cold_setup_seconds"] - int(n)*record["mean_query_seconds"]) < 1e-10
+    assert all(layout[k] for k in ("engineering_only", "unchanged_factor_values", "probe_bitwise_equal", "original_C_cost_preserved", "conversion_in_preparation", "full1111_scoring_not_repeated_for_layout"))
+    assert min(layout["C_transient_tracked_bytes_range"]) > 570_000_000
+    assert max(layout["F_transient_tracked_bytes_range"]) < 100_000
+    assert all(value is False for value in a["claims"].values())
+    live = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
+    assert live["latest_signed_cross_ray"]["analytic_cholesky_equivalence"] == a
+    assert data["primary"]["matched_cells"] == 0
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="cholesky-equivalent-control"') == 1

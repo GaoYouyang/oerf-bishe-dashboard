@@ -124,7 +124,19 @@
 
 ![五相机解析精度与明确外推的摊销成本 / Analytical accuracy and explicitly extrapolated amortization](../assets/analytic_full5_cost_2026-10-11.png)
 
+## 等价Cholesky实现与布局成本补测
+
+固定正则、精确伴随提升和CGLS4不变，直接解同一ridge方程而非完整特征分解。独立SciPy稀疏Gram/Torch稠密Gram两路径在1111查询和11完整轨迹均守住原四指标门，75项全序列与11项因子检查通过；终点与谱实现最大差1.41e-12，两实现最大场/指标差1.79e-13/1.30e-14。不是学习、其他基数或外部数据验证。
+
+分解准备从历史42.61s降到约1.2s。首次C布局缓存计时查询165.96ms原样保留；调用级诊断确认每次约570MB临时因子复制。另冻布局补测只在加载时一次转为列主序，因子逐元素/探针逐位一致，不重复1111科学评分或调公式。准备含写入/加载/转换总计4.110s，33锚点各三次的查询均值43.557ms，缓存约544MiB，子进程峰值约1.69GiB。与旧有限参考1.984s/152.576ms的比较为历史诊断，估计20次同几何摊销；不是同时配对或完整序列fresh wall。
+
+这排除了“完整谱准备必需”的解释，但没有学习价值结论。稳态三角求解比谱乘法22.556ms慢，准备/查询是取舍；完整法矩阵、每查询两次三角求解与5A+5AT均非免费。下一先核验其他相机/几何中的强经典对照，再判断轻量学习能否绕开大因子；不扩已关闭模型、不把经典对照换成learned primary。
+
+![等价经典实现的准备与查询取舍 / Equivalent classical preparation/query tradeoff](../assets/cholesky_control_cost_2026-10-11.png)
+
 ## English
+
+Equivalent Cholesky evaluation keeps the ridge, exact lift and CGLS4 unchanged. All1111 opened five-camera queries and11 trajectories pass, with75 full and11 factor checks; shared data/infrastructure are disclosed. Factor preparation isabout1.2s, not the historical42.61s spectral cost. Initial C-layout query timing165.96ms is preserved. A separately frozen layout-only correction removes per-call570MB factor copies, keeps values/probe results identical and does not repeat scientific scoring. New preparation4.110s includes conversion, query mean43.557ms comes from33 anchors repeated3 times, cacheabout544MiB, child peakabout1.69GiB. Historical reference comparison yields an estimated20-query break-even, not simultaneous pairing, stable deployment or whole-sequence wall. Triangular queries remain slower than spectral products. Qualify actual cardinality/geometry and factor-storage economics before learned compression; no learned, external or real-BOS success.
 
 The fixed zero-parameter analytical warm control now qualifies **1111/1111 opened five-camera queries and 11/11 complete 101-frame trajectories**, with all **75 independent checks** passing. Each path seals predictions before own physical replay and CFD scoring; shared data sources and infrastructure are disclosed. Maximum state/image relative differences are 2.03e-12/5.91e-12, and metric/summary differences 1.72e-13/1.07e-12. All queries are jointly nonworse than cold35, Jacobi35, dual35 and finite CGLS128; median ratios versus the finite reference are 0.943766/0.936439/0.954885/0.188398. This is an analytical benchmark, not a replacement learned primary, LOTO, other cardinalities or external evidence.
 
