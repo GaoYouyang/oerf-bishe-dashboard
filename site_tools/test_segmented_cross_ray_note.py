@@ -93,7 +93,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 23
+        assert len(reader.pairs) == 24
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -427,3 +427,29 @@ def test_equivalent_classical_factor_and_layout_cost_do_not_claim_learning():
     assert data["primary"]["matched_cells"] == 0
     for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
         assert (ROOT / name).read_text().count('id="cholesky-equivalent-control"') == 1
+
+
+def test_learned_galerkin_gate_preserves_qualified_classics_and_failure():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    audit = data["learned_galerkin_two_grid"]
+    assert audit["decision"] == "FAIL_NECESSARY_NATIVE5_LEARNED_GALERKIN_TWO_GRID"
+    assert audit["native_camera_counts"] == [5] and audit["queries"] == 33
+    assert audit["shared_parameters"] == 17 and audit["synthetic_rhs"] == 8
+    assert audit["training_CFD_or_native_observation_reads"] == 0
+    assert audit["independent_retraining"] and audit["independent_checks"] == 31
+    assert audit["own_predictions_sealed_before_CFD_score"]
+    assert audit["primary"]["matched_queries"] == audit["primary"]["sampled_absolute_tails"] == 0
+    assert audit["primary_new_control_nonharm"]["InitialGalerkinTwoGrid-Warm4"] == 33
+    assert audit["primary_new_control_nonharm"]["DiagonalTwoSweep-Warm4"] == 0
+    assert audit["primary_new_control_nonharm"]["ColdCGLS7"] == 0
+    assert audit["standalone_actions"] == {"A": 7, "AT": 7, "coarse_solves": 1}
+    assert audit["full_Gram_training_teacher_and_geometry_setup_nonfree"]
+    assert audit["literal_recipe_closed"] and not audit["deployment_timing"]
+    assert not audit["strict_LOTO"] and not audit["full_sequence"]
+    assert all(not v for v in audit["claims"].values())
+    assert data["analytic_cholesky_cardinality"]["matched_queries"] == 3333
+    assert data["primary"]["matched_cells"] == 0
+    evidence = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())["latest_signed_cross_ray"]
+    assert evidence["learned_galerkin_two_grid"] == audit
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="learned-galerkin-two-grid"') == 1

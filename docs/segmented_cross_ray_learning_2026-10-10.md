@@ -202,4 +202,16 @@ Close this literal recipe without more width, epochs, changed loss, graph thresh
 
 A separate99-anchor/33-sampled-stratum native diagnostic finds at most2.66e-13 four-map endpoint response to a fixed plus/minus1e-12 relative range perturbation of sealed learned seeds. One row-order shuffle gives1.90e-13. Independent recurrence/physical responses pass18 checks, with maximum disagreement1.66e-13. Common seed/endpoint bytes and canonical observations are disclosed; this is not retraining, new accuracy or universal/full-sequence/noise stability. NoCFD/teacher scoring occurred. Manufacturing eligibility failures cannot be generalized into native solver failure; failed geometry recipes remain unqualified. Each path costs13,860A+13,071AT plus inherited preparation. The55.28-second,633-MiB mixed diagnostic is not deployment timing. End this numerical digression and return to effective residual repair and strong controls.
 
+## 学习Galerkin两层网格必要小门 / Learned Galerkin Two-Grid Screen
+
+10月11日：纯算子监督的17共享参数小模型只使用8个人工右端，不读CFD、原生观测或轨迹标签训练；每套实现独立64次固定更新。在五相机11条已打开轨迹的33个锚点上，两实现分别封存预测后物理重放，31/31核验通过。场/图像最大相对差4.80e-15/2.28e-15，指标最大差1.27e-14。科学判决FAIL_NECESSARY_NATIVE5_LEARNED_GALERKIN_TWO_GRID：强匹配0/33、采样绝对尾部0/11；相对未训练两层网格33/33四指标改善，但相对便宜双扫描、同价冷7及强经典控制均没有四指标联合不差单元。只关闭这份具体配方，不关闭AMG或C路线，不调粗层、强连接、宽度、损失、轮次或深度挽救。
+
+每查询7A+7AT与一次粗解，双扫描6A+6AT，冷7为7A+7AT；完整法矩阵、监督用经典因子、几何/粗层构建与训练均非免费。在线不存完整细层因子不等于资源成功。83.71秒、3.93GiB为混合审计，不是fresh部署wall/RSS。这里只覆盖已知固定几何与三锚点，不是严格LOTO、完整序列、七/九/十二相机准确率、新几何、外部或真实BOST。原未排序CSR造成离散粗层不一致的失效保持未定；只另冻索引存储排序修正，物理系数、模型、训练预算和科学门不变。
+
+The 17-parameter operator-only model uses eight manufactured RHS and 64 fixed updates per independently fitted implementation, without CFD/native observations or trajectory labels. All31 independent checks pass on33 opened native5 anchors; maximum field/image differences are4.80e-15/2.28e-15 and metric difference1.27e-14. Strong matches remain0/33 and sampled absolute tails0/11. Learning improves the initial two-grid on33/33 four-metric pairs, but joint nonharm against cheaper/same-cost and strong controls is0/33. Close only this exact recipe, not AMG or the C route. Do not rescue it by changing coarse size, strength, width, loss, epochs or depth.
+
+Each learned query pays7A+7AT plus a coarse solve; the cheaper two-sweep pays6A+6AT and cold7 pays7A+7AT. Fine Gram/teacher factor/setup/training are nonfree. The83.71s/3.93GiB audit is not deployment timing or a resource win. Known geometry and three anchors are not strictLOTO, full sequences, other native camera counts, external or real BOS. Preserve the original inconclusive unsorted-CSR attempt; only index storage ordering was corrected in a separately frozen successor, leaving physics/model/budget/scientific gates unchanged.
+
+[Luz et al., ICML2020](https://proceedings.mlr.press/v119/luz20a.html) provides prior work on learning AMG interpolation. This is a small necessary screen for this inverse problem, not a full replication orfirst/SOTA claim. Qualified native5/7/9 zero-parameter control remains3333/3333 and33/33; it is not replaced by a learned-success claim.
+
 [去隐私结构化摘要 / Privacy-safe structured summary](segmented_cross_ray_learning_2026-10-10_public_summary.json)

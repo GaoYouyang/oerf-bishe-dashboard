@@ -266,8 +266,8 @@
     },
     "note": "../index.html#segmented-cross-ray-20261010",
     "summary": "../docs/segmented_cross_ray_learning_2026-10-10_public_summary.json",
-    "headline_zh": "10月11日原生相机基数资格：解析初值、正则规则与CGLS4不变，七/九相机新增2222/2222查询通过；继承五相机封存结果后，共3333/3333、33/33完整101帧轨迹分层通过，212项独立核验全真。两实现最大场/图像相对差3.16e-13/5.07e-13；逐基数相对冷35、Jacobi35、dual35、有限CGLS128均1111/1111四指标不差。每查询5A+5AT外还有两次三角求解，七/九相机完整因子约1.065/1.778GiB，建立非免费。只覆盖已打开、固定几何的5/7/9相机，不是学习、LOTO、扰动、新几何、外部、真实BOST或部署计时。下一项学习必须守住强经典最终精度并证明实际成本价值。",
-    "headline_en": "Oct 11 native cardinality qualification: the analytical seed, loading rule and CGLS4 are unchanged. All 2222 new seven/nine-camera queries pass; inherited five-camera evidence gives 3333/3333 queries and 33/33 complete 101-frame strata, with all 212 independent checks. Maximum field/image differences are 3.16e-13/5.07e-13. Each count is jointly nonworse on all four errors for 1111/1111 queries against cold35, Jacobi35, dual35 and finite CGLS128. Each query pays 5A+5AT plus two triangular solves; seven/nine full factors take about 1.065/1.778GiB and nonfree setup. This covers opened fixed geometry at 5/7/9 cameras, not learning, LOTO, perturbations, new geometry, external or real BOS, or deployment timing. Learning must now retain strong classical endpoint accuracy and show actual cost value.",
+    "headline_zh": "学习Galerkin小门：31项独立核验通过，33个锚点强匹配仍为0；保留原生5/7/9强经典资格，关闭本学习配方，不扩训练。",
+    "headline_en": "Learned Galerkin screen: 31 independent checks pass, but 0/33 strong matches. Retain qualified native5/7/9 classics; close this learning recipe without larger training.",
     "spectral_energy_response": {
       "date": "2026-10-11",
       "decision": "FAIL_IN_SAMPLE_SPECTRAL_ENERGY_RESPONSE",
@@ -834,6 +834,143 @@
         "main_goal_complete": false
       },
       "limits": "Native5/7/9 on the same opened trajectories and fixed nested camera geometry only. Seven/nine predictions and factors were independently reconstructed; five-camera evidence is inherited without rerun. No learned model, unopened external gate, native12, noise/pose/intrinsic transfer, fresh deployment timing or stable resource gain. A qualified strong control raises the bar for learning: preserve all four errors while demonstrating actual setup/storage/query value without large factors."
+    },
+    "learned_galerkin_two_grid": {
+      "date": "2026-10-11",
+      "decision": "FAIL_NECESSARY_NATIVE5_LEARNED_GALERKIN_TWO_GRID",
+      "role": "Necessary small known-geometry learned Galerkin two-grid screen on opened data",
+      "native_camera_counts": [
+        5
+      ],
+      "manufactured_camera_counts": [
+        5,
+        7,
+        9,
+        12
+      ],
+      "queries": 33,
+      "trajectories": 11,
+      "frames": [
+        0,
+        50,
+        100
+      ],
+      "full_sequence": false,
+      "strict_LOTO": false,
+      "shared_parameters": 17,
+      "operator_supervised": true,
+      "synthetic_rhs": 8,
+      "training_CFD_or_native_observation_reads": 0,
+      "fixed_updates_per_implementation": 64,
+      "independent_retraining": true,
+      "shared_aggregation_library": "PyAMG",
+      "own_predictions_sealed_before_CFD_score": true,
+      "independent_checks": 31,
+      "maximum": {
+        "states": 4.7972387003333435e-15,
+        "duals": 3.705788689456749e-15,
+        "images": 2.2766735153043742e-15,
+        "features": 1.4974976206906026e-15,
+        "physical_interpolation": 3.5674150897603723e-16,
+        "coarse": 1.958322902815816e-15,
+        "fit_parameters": 4.159274153290791e-15,
+        "fit_history": 2.118581224368071e-15,
+        "metrics": 1.2656542480726785e-14
+      },
+      "primary": {
+        "matched_queries": 0,
+        "sampled_absolute_tails": 0,
+        "median_metrics": [
+          0.5275310195009361,
+          0.7893608957996685,
+          0.6741041673835946,
+          0.22255543199988656
+        ],
+        "stronger_nonharm": {
+          "CGLS35": 0,
+          "JacobiPCGLS35": 0,
+          "DualRidgeCG35": 0
+        },
+        "qualified_full_cholesky_nonharm": 0
+      },
+      "controls": {
+        "InitialGalerkinTwoGrid-Warm4": {
+          "matched_queries": 0,
+          "sampled_absolute_tails": 0,
+          "median_metrics": [
+            0.5354310011466593,
+            0.7962604449476014,
+            0.6782114416388614,
+            0.2366711235855916
+          ]
+        },
+        "DiagonalTwoSweep-Warm4": {
+          "matched_queries": 0,
+          "sampled_absolute_tails": 0,
+          "median_metrics": [
+            0.5460998908017802,
+            0.7832996038624656,
+            0.6636623460600888,
+            0.27209806012146526
+          ]
+        },
+        "ColdCGLS7": {
+          "matched_queries": 0,
+          "sampled_absolute_tails": 5,
+          "median_metrics": [
+            0.4737781418219501,
+            0.735439928037809,
+            0.6464678795920903,
+            0.12983418316349926
+          ]
+        }
+      },
+      "primary_new_control_nonharm": {
+        "InitialGalerkinTwoGrid-Warm4": 33,
+        "DiagonalTwoSweep-Warm4": 0,
+        "ColdCGLS7": 0
+      },
+      "primary_new_control_strict": {
+        "InitialGalerkinTwoGrid-Warm4": 33,
+        "DiagonalTwoSweep-Warm4": 0,
+        "ColdCGLS7": 0
+      },
+      "terminal_operator_losses": [
+        0.8105666418548034,
+        0.8105666418548036
+      ],
+      "standalone_actions": {
+        "A": 7,
+        "AT": 7,
+        "coarse_solves": 1
+      },
+      "diagonal_control_actions": {
+        "A": 6,
+        "AT": 6
+      },
+      "cold_control_actions": {
+        "A": 7,
+        "AT": 7
+      },
+      "full_Gram_training_teacher_and_geometry_setup_nonfree": true,
+      "full_fine_factor_not_retained_online": true,
+      "prior_unsorted_CSR_attempt": "Preserved as inconclusive; only CSR index storage ordering was corrected in a separately frozen successor. Matrix coefficients, strength, model, optimizer, budget and scientific gates were unchanged.",
+      "scientific_decision_selected_no_hyperparameters": true,
+      "literal_recipe_closed": true,
+      "mixed_audit_seconds": 83.70785166602582,
+      "mixed_audit_peak_rss_bytes": 4219289600,
+      "deployment_timing": false,
+      "claims": {
+        "algorithm_breakthrough": false,
+        "learned_success": false,
+        "resource_speedup": false,
+        "external_generalization": false,
+        "paper_success": false,
+        "curved_ray_validated": false,
+        "real_bost": false,
+        "main_goal_complete": false
+      },
+      "limits": "Native five-camera, known fixed geometry, three opened anchors per trajectory only. Operator-only manufactured supervision is not strict trajectory LOTO or unseen-geometry learning. The model uses exact matrix-free normal applications and a Galerkin coarse solve before unchanged CGLS4. A valid miss closes only this exact learned two-grid recipe, not algebraic multigrid or the full C route. No width, loss, threshold, coarse-size, epoch or depth rescue; no deployment or external claim."
     }
   },
   "latest_research_synthesis": {
