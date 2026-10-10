@@ -70,7 +70,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 12
+        assert len(reader.pairs) == 14
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -235,3 +235,35 @@ def test_reciprocal_raw_energy_learning_keeps_control_and_failure_boundaries():
     assert live["latest_signed_cross_ray"]["reciprocal_raw_prior_energy"] == audit
     for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
         assert (ROOT / name).read_text().count('id="reciprocal-raw-prior-energy"') == 1
+
+
+def test_conservative_invisible_prior_attribution_does_not_claim_learned_speedup():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    audit = data["prior_gain_kernel_intervention"]
+    assert audit["queries"] == 1111 and audit["complete_trajectory_folds"] == 11
+    assert audit["native_camera_counts"] == [5]
+    assert audit["new_fits"] == audit["new_network_updates"] == 0
+    gain = audit["pooled_field_gain"]
+    assert abs(gain["fraction"]-gain["lost_by_removing_h"]/gain["full_raw_vs_finite_gain"]) < 1e-14
+    assert .6646 < gain["fraction"] < .6647 and gain["signed_not_clipped"]
+    assert audit["positive_gain_trajectories"] == 9 and audit["negative_gain_trajectories"] == 2
+    assert audit["nonpositive_gain_queries"] == 159
+    assert audit["negative_denominator_fraction_undefined"]
+    assert audit["conservative_complement_not_full_kernel"]
+    assert audit["retained_Q_space_not_guaranteed_pure_range"]
+    assert audit["independent_checks_passed"] == 57
+    assert audit["field_identity_relative_max"] < 1e-7 and audit["image_identity_relative_max"] < 1e-7
+    assert audit["standalone_actions"] == {"A": 35, "AT": 34}
+    for arm in audit["interventions"].values():
+        assert arm["matched_queries"] == arm["complete_matched_strata"] == 0
+        assert arm["absolute_strata"] == 11
+        assert arm["non_harm_vs_cold"]+arm["harm_vs_cold"] == 1111
+    assert audit["original_failures_and_contract_unchanged"]
+    assert not audit["pure_range_speedup_impossibility"] and not audit["new_predictor_authorized"]
+    assert not audit["unopened_external_conditions_read"] and not audit["deployment_resource_claim"]
+    assert all(v is False for v in audit["claims"].values())
+    assert data["decision"].startswith("FAIL_") and data["primary"]["matched_cells"] == 0
+    live = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())
+    assert live["latest_signed_cross_ray"]["prior_gain_kernel_intervention"] == audit
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="segmented-prior-kernel-intervention"') == 1

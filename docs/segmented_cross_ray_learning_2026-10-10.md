@@ -4,6 +4,18 @@
 
 ## 实际做了什么
 
+### 当前物理下的先验分量干预
+
+10月11日另行冻结一个机制归因，复用other-fold rawCFD与finiteCGLS128先验，不训练新模型。当前分段物理上，五相机11完整外折、每折101帧，共1111查询；两个干预仅分别保留先验差的Q部分或保守不可见h，归一化、精确校正和原样CGLS32不变。Q由[常数,A^T非零归一化行]的未pivot薄QR保留所有列，**Q可能大于纯range，h不是完整核空间**。两套全部预测封存后才评分。
+
+预注册聚合净归一化平方场误差收益，移除h损失30.8354897557，完整raw相对finite收益46.3947490281，比值**66.4633%**。九条轨迹净收益正、两条负；159/1111查询完整先验收益非正。负分母的轨迹比例未定义，不裁剪负收益或挑选工况。实际终点差=beta*h至1.62e-14，配对物理投影差至2.81e-15，说明这部分统计先验能改变场而不改变观测拟合。
+
+57/57独立比较一致，共享核验predictionCSR/观测，独立SciPy/Torch QR和场投影、另一原样递推、各自物理CSR/raw缓存/四指标/尾部，非独立重训或数据集。保留Q/保留h两干预均绝对门11/11、强参考0/1111和0/11；对冷35四项不差1100/1111和967/1111，伤害11和144。单干预35A+34AT，QR/继承setup/既有拟合非免费；90.21秒/2.64GiB混合离线审计不是部署wall/RSS。
+
+**总体下一投入分开可观测求解效率与不可见统计重建。** 纯A^T不能直接表达本次h，但有限CGLS128也在range，所以这不证明pure-range加速不可能。不能把原始场先验收益全算成dual网络可学的逆动作。显式可迁移先验如要学习，须另冻接口、容量、成本和负收益风险；不自动授权训练，原均值/网络FAIL不变。[核空间学习](https://arxiv.org/abs/1806.06137)已有数据一致修正先例，不是本BOS有效性、first或收敛率证明。当前固定五相机几何和已开train家族，没有native7/9/12、扰动、未开外门、真实BOST或速度结论。
+
+![五相机先验净收益与移除保守不可见分量的损失，负值保留](../assets/segmented_prior_kernel_intervention_2026-10-11.png)
+
 10月11日进一步实际完成一个**1091参数、rawCFD训练的互易残差能量模型**，不是扩宽旧图网络：几何条件的凸有符号边能量产生dual修正，exact伴随lift之后原样CGLS33。只有固定几何下的残差纠正Jacobian保证对称/半正定，不声称整个K1/精化映射凸或互易。凸神经能量有[ICNN原论文](https://proceedings.mlr.press/v70/amos17b.html)先例，不声称first或SOTA。
 
 同一11完整留轨迹外折/3333查询/33层，raw标签只来自其他轨迹；另训481参数几何先验对照，运行未训练模型。22模型和两实现全部预测封存后才评分。38/38独立闭包一致，own图边/features/NumPy系数与dual/另一原样求解器/物理CSR与raw重采样/尾部与账；权重、canonical输入共享，不是独立重训或新数据集。
@@ -79,6 +91,10 @@
 图消息算子已有[Graph Kernel Network](https://arxiv.org/abs/2003.03485)先例。此处不是该论文的BOS复现，不作first或SOTA声明。
 
 ## English
+
+A prefrozen current-physics prior intervention uses1111 five-camera queries and11 whole-trajectory folds, with sealed other-fold rawCFD/finiteCGLS128 means and no fitting. Unpivoted all-columnQR of[constant,normalized nonzero A^T rows] gives a possibly enlarged retained space, not guaranteed pure range; its complementh is conservative, not the full kernel. Two unchangedCGLS32 arms keep retained delta orh; all own predictions seal before score. Signed pooled normalized-square field-gain fraction is30.8354897557/46.3947490281=66.4633%. Nine trajectories gain, two lose;159 nonpositive-gain queries and undefined negative-denominator fractions remain visible. Actual paired endpoint identities and image invariance hold to1.62e-14/2.81e-15.
+
+All57 final checks agree under shared predictionCSR/observations, separateQR/projection/recurrence, own physicalCSR/rawcache metrics and tails, not independent data/training. Both arms pass11 absolute strata but match0/1111 strong references and0/11 complete strata; joint nonharm versuscold35 is1100/1111 and967/1111. Each35A+34AT plus nonfreeQR/setup/old fitting;90.21s/2.64GiB is mixed offline, not deployment. Separate observable solver efficiency from invisible statistical reconstruction, without claiming pure-range impossibility, changing original failures/contracts or authorizing training. FiniteCGLS128 is itself in range. No native7/9/12, perturbation, unopened external, realBOST, learned speed or paper success follows. Existing null-space learning precedent does not transfer its assumptions or rates to this BOS audit.
 
 A separately frozen 1091-parameter raw-CFD learner uses a geometry-conditioned convex signed-edge energy gradient, exact adjoint initialization and unchanged CGLS33. Its fixed-geometry residual-correction Jacobian is reciprocal/PSD, not the entire deployed map. Eleven complete-trajectory folds cover3333 queries/33 strata with a481-parameter geometry-bias control and an untrained arm. Other-fold labels only; all22 models and both prediction paths seal before scoring. Shared weights/inputs/CSR, own edge plans, NumPy coefficients/VJP, separate original solver and physicalCSR/raw resampling/metrics are disclosed; not independent retraining. Convex-energy learning has [ICNN precedent](https://proceedings.mlr.press/v70/amos17b.html), not a first/SOTA claim.
 
