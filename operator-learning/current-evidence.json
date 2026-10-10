@@ -266,8 +266,8 @@
     },
     "note": "../index.html#segmented-cross-ray-20261010",
     "summary": "../docs/segmented_cross_ray_learning_2026-10-10_public_summary.json",
-    "headline_zh": "完整留轨迹条件先验：1111/1111查询、11/11轨迹，21项独立核验；配对场误差比无先验经典解下降27.4%。这是经典统计先验的价值，不是神经算子、速度、外部或真实BOST成功。",
-    "headline_en": "Full trajectory-excluded conditional prior:1111/1111 queries,11/11 trajectories,21 independent checks; paired field error falls27.4% versus the zero-prior classical solve. Classical statistical-prior value is not neural, speed, external or real-BOS success.",
+    "headline_zh": "条件先验噪声门：21项独立核验，收益66/66保留但严格匹配56/66；十个失败均为全梯度边界增差。clean1111/1111仍有效，下一先审计边界噪声响应，不放宽门或扩大网络。",
+    "headline_en": "Conditional-prior noise gate: 21 independent checks; value retained on 66/66, strict matches 56/66. Ten full-gradient misses have boundary excess. Clean 1111/1111 stays valid; audit boundary noise response without relaxing gates or larger networks.",
     "spectral_energy_response": {
       "date": "2026-10-11",
       "decision": "FAIL_IN_SAMPLE_SPECTRAL_ENERGY_RESPONSE",
@@ -1084,6 +1084,170 @@
         "main_goal_complete": false
       },
       "limits": "One known native5 rig, opened public CFD family, complete101-frame trajectory-excluded statistical prediction only. Other native counts, arbitrary pose/active-set changes, perturbations, unopened external conditions and real BOS remain untested. The prior is an explicit field component outside pure adjoint range; the range solve and its full factor remain classical. This does not fulfill or replace the requested neural warm-start, resource, external and paper objective."
+    },
+    "conditional_null_noise": {
+      "date": "2026-10-11",
+      "decision": "FAIL_UNIFORM_NATIVE5_CONDITIONAL_NULL_NOISE_TRANSFER",
+      "role": "Necessary opened-family native5 controlled-noise transfer of a classical nonparametric prior",
+      "queries": 66,
+      "trajectories": 11,
+      "native_camera_counts": [
+        5
+      ],
+      "query_frames": [
+        0,
+        50,
+        100
+      ],
+      "draws": 2,
+      "fixed_relative_noise_radius": 0.01,
+      "full_noisy_sequence": false,
+      "noise_factory_reused": true,
+      "experimental_noise": false,
+      "complete_held_trajectory_excluded": true,
+      "source_rows_per_fold": 1010,
+      "new_fits": 0,
+      "neural_parameters": 0,
+      "independent_checks": 21,
+      "own_independently_fitted_parent_models_reused": true,
+      "new_independent_training": false,
+      "shared_noise_factory_and_prediction_CSR": true,
+      "sampled_reference_adequate": true,
+      "primary": {
+        "matched": 56,
+        "matched_strata": 17,
+        "absolute_strata": 22,
+        "median_metrics": [
+          0.29086516806788065,
+          0.4760463901124915,
+          0.44670194709376976,
+          0.002094528396373095
+        ],
+        "strong_nonharm": {
+          "CGLS35": 66,
+          "JacobiPCGLS35": 66,
+          "DualRidgeCG35": 66
+        }
+      },
+      "controls": {
+        "MeanNull-RidgeWarm4": {
+          "matched": 46,
+          "matched_strata": 14,
+          "absolute_strata": 22,
+          "median_metrics": [
+            0.3372193329972829,
+            0.5429698123834408,
+            0.5155689262377388,
+            0.0020945283963721383
+          ]
+        },
+        "QualifiedRidge-Warm4": {
+          "matched": 0,
+          "matched_strata": 0,
+          "absolute_strata": 22,
+          "median_metrics": [
+            0.37530943612177636,
+            0.6001053784037631,
+            0.5776989207822593,
+            0.002094528396372542
+          ]
+        }
+      },
+      "paired_control_comparison": {
+        "MeanNull-RidgeWarm4": {
+          "nonharm": 66,
+          "median_field_ratio": 0.8630347727887816
+        },
+        "QualifiedRidge-Warm4": {
+          "nonharm": 66,
+          "median_field_ratio": 0.7876069867204913
+        }
+      },
+      "maximum": {
+        "states": 1.2868611831837705e-12,
+        "seeds": 1.2711845483154744e-12,
+        "duals": 3.932750604359425e-12,
+        "priors": 6.4461307591823916e-12,
+        "weights": 4.0045086077976255e-11,
+        "images": 2.0841729619585962e-12,
+        "metrics": 2.458588888032409e-13
+      },
+      "metric_failure_counts": {
+        "ConditionalNullRBF-RidgeWarm4": {
+          "field_rel_l2_gauge_centered": 0,
+          "gradient_rel_l2": 10,
+          "interior_gradient_rel_l2": 0,
+          "observation_rel_l2": 0
+        },
+        "MeanNull-RidgeWarm4": {
+          "field_rel_l2_gauge_centered": 17,
+          "gradient_rel_l2": 20,
+          "interior_gradient_rel_l2": 17,
+          "observation_rel_l2": 0
+        },
+        "QualifiedRidge-Warm4": {
+          "field_rel_l2_gauge_centered": 52,
+          "gradient_rel_l2": 66,
+          "interior_gradient_rel_l2": 58,
+          "observation_rel_l2": 0
+        }
+      },
+      "prior_contribution_shift": {
+        "median": 0.005256968985640195,
+        "worst": 0.008191675491556786
+      },
+      "kernel_weight_shift": {
+        "median": 0.008833583440487172,
+        "worst": 0.011671701915898358
+      },
+      "post_open_boundary_diagnostics": {
+        "all66": {
+          "queries": 66,
+          "boundary_positive": 65,
+          "interior_negative": 66,
+          "summed_normalized_boundary_excess": 0.9707287759673682,
+          "summed_normalized_interior_excess": -6.628138945433562,
+          "primary_to_reference_pooled_boundary_error_ratio": 1.24495096777967,
+          "primary_to_reference_pooled_interior_error_ratio": 0.598359599198943
+        },
+        "failed10_descriptive": {
+          "queries": 10,
+          "boundary_positive": 10,
+          "interior_negative": 10,
+          "summed_normalized_boundary_excess": 0.24567357771212275,
+          "summed_normalized_interior_excess": -0.12352178780976866,
+          "primary_to_reference_pooled_boundary_error_ratio": 1.5111279670061564,
+          "primary_to_reference_pooled_interior_error_ratio": 0.9265913293840191
+        }
+      },
+      "post_open_boundary_maximum": 5.534461777756405e-13,
+      "no_boundary_mask_derivative_or_acceptance_change": true,
+      "no_new_physical_calls_for_attribution": true,
+      "standalone_actions": {
+        "A": 5,
+        "AT": 5
+      },
+      "full_geometry_factor_and_source_bank_nonfree": true,
+      "uniform_noise_recipe_claim_closed": true,
+      "clean_full1111_result_unchanged": true,
+      "mixed_audit": {
+        "exit": 0,
+        "seconds": 17.501723042223603,
+        "peak_rss_bytes": 2333818880
+      },
+      "deployment_timing": false,
+      "claims": {
+        "algorithm_breakthrough": false,
+        "paper_success": false,
+        "resource_speedup": false,
+        "external_generalization": false,
+        "curved_ray_validated": false,
+        "real_bost": false,
+        "neural_training_authorized": false,
+        "gpu_rental_authorized": false,
+        "full_noisy_sequence": false,
+        "main_goal_complete": false
+      }
     }
   },
   "latest_research_synthesis": {

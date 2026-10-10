@@ -93,7 +93,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 26
+        assert len(reader.pairs) == 28
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -486,3 +486,30 @@ def test_conditional_null_prior_preserves_learning_and_resource_boundaries():
     assert (ROOT / "assets/conditional_null_prior_2026-10-11.png").is_file()
     for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
         assert (ROOT / name).read_text().count('id="conditional-null-prior"') == 1
+
+
+def test_conditional_noise_failure_preserves_clean_value_and_boundaries():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    audit = data["conditional_null_noise"]
+    assert audit["decision"] == "FAIL_UNIFORM_NATIVE5_CONDITIONAL_NULL_NOISE_TRANSFER"
+    assert audit["queries"] == 66 and audit["independent_checks"] == 21
+    assert audit["sampled_reference_adequate"] and audit["new_fits"] == audit["neural_parameters"] == 0
+    assert audit["primary"]["matched"] == 56 and audit["primary"]["matched_strata"] == 17
+    assert audit["primary"]["absolute_strata"] == 22
+    assert audit["controls"]["QualifiedRidge-Warm4"]["matched"] == 0
+    assert all(r["nonharm"] == 66 for r in audit["paired_control_comparison"].values())
+    assert list(audit["metric_failure_counts"]["ConditionalNullRBF-RidgeWarm4"].values()) == [0, 10, 0, 0]
+    assert audit["post_open_boundary_diagnostics"]["failed10_descriptive"]["boundary_positive"] == 10
+    assert audit["post_open_boundary_diagnostics"]["failed10_descriptive"]["interior_negative"] == 10
+    assert audit["no_boundary_mask_derivative_or_acceptance_change"]
+    assert audit["no_new_physical_calls_for_attribution"] and audit["uniform_noise_recipe_claim_closed"]
+    assert audit["clean_full1111_result_unchanged"] and audit["full_geometry_factor_and_source_bank_nonfree"]
+    assert not audit["experimental_noise"] and not audit["full_noisy_sequence"] and not audit["deployment_timing"]
+    assert all(not value for value in audit["claims"].values())
+    assert data["conditional_null_prior"]["primary"]["matched_queries"] == 1111
+    assert data["analytic_cholesky_cardinality"]["matched_queries"] == 3333
+    evidence = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())["latest_signed_cross_ray"]
+    assert evidence["conditional_null_noise"] == audit
+    assert (ROOT / "assets/conditional_null_noise_2026-10-11.png").is_file()
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="conditional-null-noise"') == 1

@@ -232,4 +232,20 @@ Allqueries retain5A+5AT and full classical triangular solves; the source bank, k
 
 ![条件先验完整序列聚合结果 / Full-sequence conditional-prior aggregate results](../assets/conditional_null_prior_2026-10-11.png)
 
+## 条件先验噪声与边界瓶颈 / Conditional-Prior Noise and Boundary Bottleneck
+
+10月11日，保持此前核模型、train-only带宽、ridge、源库、解析range初值与CGLS4不变，0重拟合。复用已封存的1%固定相对L2半径球面噪声，五相机11条轨迹、0/50/100时刻、两次draw，全部66查询与22采样分层；不是实验噪声、iid Gaussian保证或完整噪声轨迹。每个模型仍排除整条101帧留出轨迹；两套预测先封存，再各自物理重放与评分。共享噪声工厂/预测CSR/源家族和库已披露，各自继承独立拟合的clean核因子，不是新的独立训练。
+
+21/21独立检查全真，有限CGLS128噪声参考在22/22绝对分层充分。权威判决FAIL_UNIFORM_NATIVE5_CONDITIONAL_NULL_NOISE_TRANSFER：候选严格匹配56/66、采样分层17/22、绝对22/22。均值控制46/66与14/22；无先验解析控制0/66与0/22，两者绝对门均22/22。候选对均值/无先验及三种35步强经典控制均66/66四指标联合不差，配对场误差比对均值/无先验的中位数0.863035/0.787607，即下降13.6965%/21.2393%。平均收益不能替代统一严格门；clean1111/1111完整留轨迹证据保持不变。
+
+结果后只读归因保留全部查询和有符号差：候选场/全梯度/内部梯度/观测失败数0/10/0/0，无先验控制52/66/58/0。独立归约最大差5.06e-13；候选先验场贡献的噪声变化中位/最坏0.5257%/0.8192%。再用原物理导数及原一体素interior mask补集，独立重建误差空间分解，最大差5.53e-13，新增0A+0AT。全部66的逐query真值全梯度能量归一后汇总边界/内部平方误差比为1.244951/0.598360；10个失败全部有边界正增差与内部负差，其边界增加0.245674超过内部收益0.123522。这只是结果后描述，不证明边界是假象，不许可删除边界、改变导数或放宽验收门。
+
+每查询仍5A+5AT外加完整经典与核三角解、1010源距离/场混合；几何QR、源/训练缓存、原噪声与强参考构造均非免费。17.50秒/2.174GiB是混合审计，不是fresh部署速度。关闭这份配方的统一1%噪声迁移主张，不调核、正则、源库或精化深度挽救，不上大网络/GPU。下一有效工作是边界噪声响应/可观测性与已有机制的只读审计，再决定物理上不同的结果前冻结候选。神经、资源、外部、真实BOST与论文主目标仍未完成。
+
+The unchanged clean kernel and classical range/CGLS4 pipeline, with zero refits and complete held-trajectory exclusion, is tested on all 66 existing native5 noisy anchors and 22 three-frame/draw strata. All 21 independent checks agree; the same-query finiteCGLS128 reference passes all 22 absolute strata. Strict matches are 56/66 and sampled matched strata 17/22, so uniform noise transfer fails. The mean/zero controls match 46/0 queries. Nevertheless every primary query is jointly nonharm to both and the three strong 35-step controls, with paired median field gains 13.6965%/21.2393%. The clean 1111-query result remains frozen.
+
+All ten primary misses are full-gradient only. Independent post-open reductions and physical-gradient spatial replay show boundary excess exceeding interior benefit on those ten, using the unchanged one-voxel boundary band. Across all 66, normalized pooled boundary/interior squared-error ratios to reference are 1.244951/0.598360. This is descriptive attribution, not causal proof, a new gate or permission to drop boundary voxels. No additional exact actions or fitting are used in the attribution. Each prediction still pays 5A+5AT plus full classical/kernel/source-bank costs. The 17.50s/2.174GiB mixed audit is not deployment speed. Close this recipe's uniform-noise claim without retuning; prioritize boundary noise response and physical observability before any genuinely different mechanism.
+
+![噪声指标失败与边界误差分解 / Noise metric misses and boundary error decomposition](../assets/conditional_null_noise_2026-10-11.png)
+
 [去隐私结构化摘要 / Privacy-safe structured summary](segmented_cross_ray_learning_2026-10-10_public_summary.json)
