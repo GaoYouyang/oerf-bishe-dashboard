@@ -266,8 +266,8 @@
     },
     "note": "../index.html#segmented-cross-ray-20261010",
     "summary": "../docs/segmented_cross_ray_learning_2026-10-10_public_summary.json",
-    "headline_zh": "学习Galerkin小门：31项独立核验通过，33个锚点强匹配仍为0；保留原生5/7/9强经典资格，关闭本学习配方，不扩训练。",
-    "headline_en": "Learned Galerkin screen: 31 independent checks pass, but 0/33 strong matches. Retain qualified native5/7/9 classics; close this learning recipe without larger training.",
+    "headline_zh": "完整留轨迹条件先验：1111/1111查询、11/11轨迹，21项独立核验；配对场误差比无先验经典解下降27.4%。这是经典统计先验的价值，不是神经算子、速度、外部或真实BOST成功。",
+    "headline_en": "Full trajectory-excluded conditional prior:1111/1111 queries,11/11 trajectories,21 independent checks; paired field error falls27.4% versus the zero-prior classical solve. Classical statistical-prior value is not neural, speed, external or real-BOS success.",
     "spectral_energy_response": {
       "date": "2026-10-11",
       "decision": "FAIL_IN_SAMPLE_SPECTRAL_ENERGY_RESPONSE",
@@ -971,6 +971,119 @@
         "main_goal_complete": false
       },
       "limits": "Native five-camera, known fixed geometry, three opened anchors per trajectory only. Operator-only manufactured supervision is not strict trajectory LOTO or unseen-geometry learning. The model uses exact matrix-free normal applications and a Galerkin coarse solve before unchanged CGLS4. A valid miss closes only this exact learned two-grid recipe, not algebraic multigrid or the full C route. No width, loss, threshold, coarse-size, epoch or depth rescue; no deployment or external claim."
+    },
+    "conditional_null_prior": {
+      "date": "2026-10-11",
+      "decision": "PASS_FULL_NATIVE5_CONDITIONAL_NULL_PRIOR_HEADROOM",
+      "role": "Opened-family classical nonparametric conditional conservative-null prior headroom",
+      "native_camera_counts": [
+        5
+      ],
+      "manufactured_camera_counts": [
+        5,
+        7,
+        9,
+        12
+      ],
+      "queries": 1111,
+      "trajectories": 11,
+      "frames_per_trajectory": 101,
+      "full_sequence": true,
+      "complete_held_trajectory_excluded_from_each_model": true,
+      "legal_source_rows_per_fold": 1010,
+      "query_uses_current_signed_observation_and_reported_geometry_only": true,
+      "predictor_kind": "Classical nonlinear kernel regression to conservative invisible field components",
+      "neural_parameters": 0,
+      "pure_range_initializer": false,
+      "full_nullspace_identified": false,
+      "independent_checks": 21,
+      "maximum": {
+        "states": 1.3624366342243398e-12,
+        "seeds": 1.3539284231440815e-12,
+        "duals": 3.099436578034255e-12,
+        "prior": 7.004157849424407e-12,
+        "weights": 5.399682930790642e-11,
+        "images": 1.3748861791776194e-12,
+        "metrics": 3.855249453010856e-13
+      },
+      "own_predictions_sealed_before_held_CFD_score": true,
+      "independent_new_retraining": false,
+      "own_independently_rebuilt_parent_fits_reused_without_recipe_changes": true,
+      "primary": {
+        "matched_queries": 1111,
+        "matched_trajectories": 11,
+        "absolute_trajectories": 11,
+        "median_metrics": [
+          0.24042131103340417,
+          0.36707475039713555,
+          0.37680770996242574,
+          0.0005753380718139681
+        ],
+        "stronger_nonharm": {
+          "CGLS35": 1111,
+          "JacobiPCGLS35": 1111,
+          "DualRidgeCG35": 1111
+        }
+      },
+      "controls": {
+        "MeanNull-RidgeWarm4": {
+          "matched_queries": 1011,
+          "matched_trajectories": 8,
+          "absolute_trajectories": 11,
+          "median_metrics": [
+            0.29940462505828963,
+            0.45094743922392727,
+            0.46905825102287657,
+            0.0005753380718288544
+          ]
+        },
+        "QualifiedRidge-Warm4": {
+          "matched_queries": 1111,
+          "matched_trajectories": 11,
+          "absolute_trajectories": 11,
+          "median_metrics": [
+            0.3367464227480934,
+            0.5233668765468452,
+            0.5335775524466814,
+            0.0005753380718318816
+          ]
+        }
+      },
+      "paired_control_comparison": {
+        "MeanNull-RidgeWarm4": {
+          "four_metric_nonharm": 1111,
+          "harm": 0,
+          "median_field_error_ratio": 0.8293661242050533
+        },
+        "QualifiedRidge-Warm4": {
+          "four_metric_nonharm": 1111,
+          "harm": 0,
+          "median_field_error_ratio": 0.7264254604235287
+        }
+      },
+      "standalone_actions": {
+        "A": 5,
+        "AT": 5
+      },
+      "geometry_factor_retained": true,
+      "kernel_and_source_bank_nonfree": true,
+      "classical_range_control_also_matches_all": true,
+      "exact_call_reduction_attributed_to_learning": false,
+      "mixed_audit_seconds": 76.47529837489128,
+      "mixed_audit_peak_rss_bytes": 2579628032,
+      "deployment_timing": false,
+      "claims": {
+        "algorithm_breakthrough": false,
+        "learned_inverse_action_success": false,
+        "neural_operator_success": false,
+        "resource_speedup": false,
+        "external_generalization": false,
+        "paper_success": false,
+        "curved_ray_validated": false,
+        "real_bost": false,
+        "main_goal_complete": false
+      },
+      "limits": "One known native5 rig, opened public CFD family, complete101-frame trajectory-excluded statistical prediction only. Other native counts, arbitrary pose/active-set changes, perturbations, unopened external conditions and real BOS remain untested. The prior is an explicit field component outside pure adjoint range; the range solve and its full factor remain classical. This does not fulfill or replace the requested neural warm-start, resource, external and paper objective."
     }
   },
   "latest_research_synthesis": {

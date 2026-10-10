@@ -93,7 +93,7 @@ def test_bilingual_current_sections_and_links():
         assert text.count(f'id="{marker}"') == 1
         reader = NewSection(marker)
         reader.feed(text)
-        assert len(reader.pairs) == 24
+        assert len(reader.pairs) == 26
         assert all(a and b for a, b in reader.pairs)
         for link in reader.links:
             parts = urlsplit(link)
@@ -453,3 +453,36 @@ def test_learned_galerkin_gate_preserves_qualified_classics_and_failure():
     assert evidence["learned_galerkin_two_grid"] == audit
     for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
         assert (ROOT / name).read_text().count('id="learned-galerkin-two-grid"') == 1
+
+
+def test_conditional_null_prior_preserves_learning_and_resource_boundaries():
+    data = json.loads((ROOT / f"docs/{NAME}_public_summary.json").read_text())
+    audit = data["conditional_null_prior"]
+    assert audit["decision"] == "PASS_FULL_NATIVE5_CONDITIONAL_NULL_PRIOR_HEADROOM"
+    assert audit["native_camera_counts"] == [5] and audit["queries"] == 1111
+    assert audit["full_sequence"] and audit["complete_held_trajectory_excluded_from_each_model"]
+    assert audit["legal_source_rows_per_fold"] == 1010
+    assert audit["independent_checks"] == 21 and audit["neural_parameters"] == 0
+    assert not audit["pure_range_initializer"] and not audit["full_nullspace_identified"]
+    assert audit["own_predictions_sealed_before_held_CFD_score"]
+    assert audit["own_independently_rebuilt_parent_fits_reused_without_recipe_changes"]
+    assert not audit["independent_new_retraining"]
+    assert audit["primary"]["matched_queries"] == 1111
+    assert audit["primary"]["matched_trajectories"] == audit["primary"]["absolute_trajectories"] == 11
+    for control in audit["paired_control_comparison"].values():
+        assert control["four_metric_nonharm"] == 1111 and control["harm"] == 0
+        assert control["median_field_error_ratio"] <= .95
+    assert set(audit["primary"]["stronger_nonharm"].values()) == {1111}
+    assert audit["controls"]["MeanNull-RidgeWarm4"]["matched_queries"] == 1011
+    assert audit["controls"]["QualifiedRidge-Warm4"]["matched_queries"] == 1111
+    assert audit["geometry_factor_retained"] and audit["kernel_and_source_bank_nonfree"]
+    assert audit["standalone_actions"] == {"A": 5, "AT": 5}
+    assert not audit["exact_call_reduction_attributed_to_learning"] and not audit["deployment_timing"]
+    assert all(not v for v in audit["claims"].values())
+    assert data["analytic_cholesky_cardinality"]["matched_queries"] == 3333
+    assert data["primary"]["matched_cells"] == 0
+    evidence = json.loads((ROOT / "operator-learning/current-evidence.json").read_text())["latest_signed_cross_ray"]
+    assert evidence["conditional_null_prior"] == audit
+    assert (ROOT / "assets/conditional_null_prior_2026-10-11.png").is_file()
+    for name in ("index.html", "operator-learning/index.html", "operator-learning/daily-progress.html", "learning_log.html"):
+        assert (ROOT / name).read_text().count('id="conditional-null-prior"') == 1

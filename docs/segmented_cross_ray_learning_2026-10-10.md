@@ -214,4 +214,22 @@ Each learned query pays7A+7AT plus a coarse solve; the cheaper two-sweep pays6A+
 
 [Luz et al., ICML2020](https://proceedings.mlr.press/v119/luz20a.html) provides prior work on learning AMG interpolation. This is a small necessary screen for this inverse problem, not a full replication orfirst/SOTA claim. Qualified native5/7/9 zero-parameter control remains3333/3333 and33/33; it is not replaced by a learned-success claim.
 
+## 条件保守不可见场先验 / Conditional Conservative-Invisible Field Prior
+
+10月11日，保持结果前冻结配方，从33锚点小门继续到同一11条已打开公开轨迹的全部1111帧。每个核模型只使用其余10条轨迹的1010个源样本；整条101帧留出轨迹的输入和场标签不参与其训练、带宽或归一化。轨迹/时间标签仅用于隔离折，不进入数值预测。每套实现分别拟合的小门模型原样复用，两套完整预测先封存，再分别物理重放与评分，不是重新独立训练或新独立数据集。
+
+唯一primary为经典非参数RBF回归：当前带符号观测按自身范数归一化，预测其他轨迹提供的保守不可见场分量，再与精确经典range初值相加，接原样CGLS4。核带宽只由fold-train距离的固定低中位数得到，ridge固定1e-6；没有held-out阈值、回退、选择或超参调节。保守投影不是完整零空间识别。它是显式场统计先验，不能冒充纯A^T神经初值；不可见结构和数据一致性学习有已有文献，例如[Schwab等的Deep Null Space Learning](https://arxiv.org/abs/1806.06137)，核回归可参考[Rasmussen与Williams的教材](https://gaussianprocess.org/gpml/chapters/RW2.pdf)。这里不宣称first/SOTA或继承其定理。
+
+权威判决PASS_FULL_NATIVE5_CONDITIONAL_NULL_PRIOR_HEADROOM，独立21/21项全真。唯一候选1111/1111四指标匹配、11/11完整轨迹绝对与匹配门通过；对均值先验、无先验合格经典控制及CGLS35/Jacobi35/dual35，全部1111查询四指标联合不差。配对场误差比中位数为0.829366与0.726425，分别下降17.0634%与27.3575%；这不是两个总体中位数之比。候选场/全梯度/内部梯度/观测误差中位数为0.240421/0.367075/0.376808/0.000575338。均值控制只有1011/1111匹配、8/11完整匹配，因此全局均值不能解释全部收益。状态/先验/权重/图像最大相对差1.37e-12/7.01e-12/5.40e-11/1.38e-12，指标最大绝对差3.86e-13。
+
+每次非零查询仍需5A+5AT、完整经典双三角求解；条件先验另需1010个源距离、核双三角及场混合。几何QR、源场、训练缓存和完整经典因子均非免费。无先验控制自身已1111/1111匹配且同为5对精确动作，因此这里的精度提升不是学习导致的exact-call reduction。76.48秒/2.403GiB只是混合离线审计，不是fresh部署wall/RSS。当前0神经参数；仅一套已知五相机rig、已打开数据，原生七/九/十二、增删/新位姿/扰动、未打开外门和真实BOST尚未验证。只读审计确认原生七/九不满足当前shape-forced QR的构造条件，不能盲目扩同一配方；这不是物理零空间不存在的证明。下一先做可构造五相机的窄扰动/新几何门，然后再决定小模型压缩，不能直接宣布论文成功。
+
+The unchanged pre-frozen recipe advances from33 anchors to all1111 frames of11 opened public trajectories. Each model excludes the entire101-frame held trajectory and uses1010 samples from the other ten; held inputs/field labels do not fit its bandwidth, normalization or predictor. Fold labels only enforce separation. Each implementation reuses its own independently fitted parent model unchanged, seals all fresh predictions before scoring, then performs its own physical replay. This is not new independent retraining or an independent dataset.
+
+Classical nonlinear RBF regression maps current signed normalized observations to a conservative invisible field component, then adds the exact classical range seed and unchanged CGLS4. The train-only lower-median bandwidth and1e-6 ridge remain fixed. All21 independent checks pass. The primary matches1111/1111 queries and11/11 complete trajectories, with joint four-metric nonharm on allqueries against mean/zero-prior and strong35-step controls. Paired median field-error reductions are17.0634%/27.3575% versus mean/zero prior. The mean control matches1011/1111 and8/11 complete trajectories. This isolates conditional-prior value beyond a global mean; it does not establish universal identifiability.
+
+Allqueries retain5A+5AT and full classical triangular solves; the source bank, kernel solves and geometry setup are nonfree. The zero-prior control already matchesall1111 with the same exact-action count, so no call reduction is attributed to learning. The76.48s/2.403GiB audit is not deployment timing. There are zero neural parameters, one known native5 rig, and no native-cardinality/perturbation, unopened external, real-BOS, resource or paper success. A read-only shape audit shows this QR complement is ineligible for native7/9, not that their physical nullspaces are absent. Prioritize a narrow eligible-native5 perturbation/new-geometry gate before a minimal neural compression decision.
+
+![条件先验完整序列聚合结果 / Full-sequence conditional-prior aggregate results](../assets/conditional_null_prior_2026-10-11.png)
+
 [去隐私结构化摘要 / Privacy-safe structured summary](segmented_cross_ray_learning_2026-10-10_public_summary.json)
