@@ -10,11 +10,7 @@
 
 **合并边界记录。** 当前压缩与神经小门尚未形成“同精度、优于强对照且真正节省资源”的完整证据；失败配方关闭，不靠扩大模型、改门或事后换控制包装成功。普通试错集中归档，重要正向进展与真正转机才单独汇报。所有负结果、无结论判决与限定范围保持，未打开外部工况和真实BOST仍未验证。
 
-10月11日合并边界：源观测子空间逆压缩未保住完整留轨迹的四指标匹配；另一个直接神经场先验虽守住101/101精度、显著缩小先验载荷，却未保留强条件核的场收益，也未优于均值控制。固定压缩配方与这份学习配方均关闭，既有1111查询条件先验正证据不变。小载荷或经典补偿后的精度不单独算学习突破，不扩大为全方向不可能。
-
-**下一投入的分界更清楚了。** 一次独立全源复算发现：上一小模型的完整训练目标也未优于初始均值，而已有线性读出在源样本上降低约34.29%。这不是新的泛化成果，也不能单独证明容量或优化根因；但足以避免把无效源拟合误称为单纯缺数据。今后新的物理机制先验证实际源拟合，再投入大型外折；原失败配方不重开。
-
-同一条取舍补充：有用条件场先验在十个固定源锚点、32个观测派生方向上的局部响应，即使最佳16维压缩仍留下约56%–58%的场与梯度微分相对残差，独立重算一致。空间分布的条件信息值得关注，但一个独立核验的新射线积分模型也未通过完整源拟合，因此不展开大型外折或微调救援。下一投入先解决有效条件拟合，不能把换表示本身当作突破。这些是源内表示与拟合边界，不是端点误差下界、泛化证明或全方向失败。
+**下一模型有了更明确的信息目标。** 在已打开数据族的1010合法源样本上，十个完整源轨迹内层外折、各自训练统计下，非线性条件先验的场与全梯度联合目标比均值低39.30%，十个源组均改善。一个预固定全观测仿射对照未保留这份价值，不能据此否定所有线性方法。后续优先保留这份有效条件信息，先验证实际源拟合，再投入完整物理外折；这不是新的神经重建、外部泛化或速度突破。
 
 **Whole-trajectory field gains are established.** At one known five-camera geometry with clean virtual observations, the classical conditional prior matches all four metrics on1111/1111 queries across11 fully excluded101-frame trajectories. Paired median field errors fall27.36% versus no prior and17.06% versus a mean prior; joint nonharm is1111/1111 against both. Observation-conditioned field information is useful, beyond selected frames. This remains classical statistical-prior evidence, not a neural breakthrough.
 
@@ -24,17 +20,31 @@
 
 **Consolidated boundary record.** Compression and neural small gates have not yet established joint matched accuracy, strong-control value and genuine resource savings. Closed recipes are not rescued by larger models, changed gates or posthoc control selection. Routine trials remain archived; meaningful gains and turning points receive focused reports. Negative/inconclusive decisions and scope limits remain intact. Unopened-condition transfer and realBOST remain unvalidated.
 
-Consolidated Oct11 boundary: source-observation-span inverse compression misses complete-trajectory four-error matching. A separate direct neural field prior matches101/101 queries and sharply reduces its prior payload, but does not retain strong-kernel field gains or improve on the mean control. Both fixed recipes close; existing1111-query conditional-prior evidence remains intact. A small payload or accuracy recovered by classical compensation alone is not a learned breakthrough, nor evidence against the entire research direction.
-
-**The next investment is better defined.** An independent complete-source replay finds that the last small model does not beat its initial mean on its actual training objective; the existing linear readout reduces that source objective by about34.29%. This is not new generalization or proof of a unique capacity/optimization cause, but it prevents attributing unsuccessful source fitting to data shortage alone. A genuinely new physical mechanism must establish actual source fitting before a large outer experiment; closed recipes stay closed.
-
-The same investment decision is sharpened by an independently reproduced source-local response audit: on ten fixed source anchors and32 observation-derived directions, even the best16-dimensional approximation leaves about56%–58% relative field-and-gradient differential error. Spatially distributed conditional information merits attention, but a separately verified new ray-integration model also misses complete-source fitting; no large outer run or recipe tuning follows. Establish effective conditional fitting before treating a representation change as progress. These are source-only representation and fit boundaries, not endpoint error bounds, transfer proof or failure of the whole direction.
+**The next model has a clearer information target.** On1010 legal source samples from the opened family, ten complete inner-source trajectory folds with train-only statistics show39.30% lower field-plus-full-gradient objective for the nonlinear conditional prior versus mean; all ten groups improve. One fixed full-observation affine control does not retain that value, without disproving all linear estimators. Preserve this useful conditional information and establish actual source fitting before complete physical outer evaluation. This is not new neural reconstruction, external transfer or speed evidence.
 
 Evidence: [public result summary](segmented_cross_ray_learning_2026-10-10_public_summary.json), [packed deployment scope](packed_prior_deployment_revision_2026-10-11.md), [milestones and figures](../operator-learning/daily-progress.html#milestones).
 
 ## 完整研究归档 / Complete Research Archive
 
 The dated records below preserve historical decisions and scope; they are not live process status.
+
+## 2026-10-11: 条件表示与源拟合的合并边界 / Consolidated Representation Boundaries
+
+10月11日合并边界：源观测子空间逆压缩未保住完整留轨迹的四指标匹配；另一个直接神经场先验虽守住101/101精度、显著缩小先验载荷，却未保留强条件核的场收益，也未优于均值控制。固定压缩配方与这份学习配方均关闭，既有1111查询条件先验正证据不变。小载荷或经典补偿后的精度不单独算学习突破，不扩大为全方向不可能。
+
+一次独立全源复算发现：上一小模型的完整训练目标也未优于初始均值，而已有线性读出在源样本上降低约34.29%。这不是新的泛化成果，也不能单独证明容量或优化根因；但足以避免把无效源拟合误称为单纯缺数据。今后新的物理机制先验证实际源拟合，再投入大型外折；原失败配方不重开。
+
+有用条件场先验在十个固定源锚点、32个观测派生方向上的局部响应，即使最佳16维压缩仍留下约56%–58%的场与梯度微分相对残差，独立重算一致。空间分布的条件信息值得关注，但一个独立核验的新射线积分模型也未通过完整源拟合，因此不展开大型外折或微调救援。下一投入先解决有效条件拟合，不能把换表示本身当作突破。这些是源内表示与拟合边界，不是端点误差下界、泛化证明或全方向失败。
+
+新的有界源内对照使用十个完整轨迹内层外折、每折909源样本。非线性核/均值/固定仿射的联合目标为0.645131/1.062900/2.068480；非线性核相对均值低39.30%，十组均无伤害；固定仿射为均值的1.946倍、核的3.206倍，事前primary判决FAIL。两实现独立重建与终态全网格回读一致，未做物理求解器终点或新增神经更新。旧线性读出的34.29%是不同特征上的源内拟合，不是此次完整轨迹排除，不能相互替代。固定正则与归纳偏置会影响对照，不证明非线性是唯一原因或每个线性方法都失败。
+
+Consolidated Oct11 boundary: source-observation-span inverse compression misses complete-trajectory four-error matching. A separate direct neural field prior matches101/101 queries and sharply reduces its prior payload, but does not retain strong-kernel field gains or improve on the mean control. Both fixed recipes close; existing1111-query conditional-prior evidence remains intact. A small payload or accuracy recovered by classical compensation alone is not a learned breakthrough, nor evidence against the entire research direction.
+
+An independent complete-source replay finds that the last small model does not beat its initial mean on its actual training objective; the existing linear readout reduces that source objective by about34.29%. This is not new generalization or proof of a unique capacity/optimization cause, but it prevents attributing unsuccessful source fitting to data shortage alone. A genuinely new physical mechanism must establish actual source fitting before a large outer experiment; closed recipes stay closed.
+
+An independently reproduced source-local response audit on ten fixed source anchors and32 observation-derived directions finds that even the best16-dimensional approximation leaves about56%–58% relative field-and-gradient differential error. Spatially distributed conditional information merits attention, but a separately verified new ray-integration model also misses complete-source fitting; no large outer run or recipe tuning follows. Establish effective conditional fitting before treating a representation change as progress. These are source-only representation and fit boundaries, not endpoint error bounds, transfer proof or failure of the whole direction.
+
+The new bounded source-only comparison uses ten complete inner-trajectory folds and909 fit sources each. Nonlinear kernel/mean/fixed affine objectives are0.645131/1.062900/2.068480: the kernel lowers the mean objective by39.30% and is nonharmful in all ten groups; the affine rule is1.946 times mean and3.206 times kernel, failing its predefined primary. Own implementation and terminal full-grid readback agree. No physical solver endpoint or new neural update is evaluated. The earlier34.29% linear-readout gain was in-sample with different features, not this complete exclusion. Fixed regularization and inductive bias affect comparisons; this does not uniquely attribute the cause to nonlinearity or disprove all linear estimators.
 
 ## 2026-10-10: 完整留轨迹图网络 / Whole-trajectory ray-graph prediction
 

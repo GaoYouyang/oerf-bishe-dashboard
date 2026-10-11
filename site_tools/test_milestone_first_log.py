@@ -65,3 +65,21 @@ def test_markdown_leads_with_scoped_milestones_without_deleting_history():
     assert '固定压缩配方' in log
     assert '## 2026-10-10: 完整留轨迹图网络' in log
     assert '0/3333' in log
+
+
+def test_source_information_signal_has_its_own_scope_and_keeps_counterevidence():
+    log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
+    digest, archive = log.split('## 完整研究归档', 1)
+    evidence = json.loads((ROOT / 'docs/segmented_cross_ray_learning_2026-10-10_public_summary.json').read_text())
+    audit = evidence['conditional_information_control_audit']
+    assert round(100 * (1 - audit['rbf_mean_objective_ratio']), 2) == 39.30
+    assert audit['inner_source_queries'] == 1010 and audit['fit_sources_per_fold'] == 909
+    assert audit['rbf_nonharm_source_groups'] == audit['source_groups'] == 10
+    assert audit['reference_eligible'] and not audit['primary_eligible']
+    assert audit['decision'] == 'FAIL_FIXED_AFFINE_CONDITIONAL_INFORMATION'
+    assert audit['first_outer_held_reads'] == audit['new_neural_updates'] == 0
+    assert not audit['physical_endpoint_scored'] and not any(audit['claims'].values())
+    assert '39.30%' in digest and 'inner-source' in digest
+    assert '不是新的神经重建' in digest and 'not new neural reconstruction' in digest
+    assert '34.29%' in archive and '56%–58%' in archive
+    assert '3.206' in archive and '不证明非线性是唯一原因' in archive
