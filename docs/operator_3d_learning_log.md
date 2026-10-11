@@ -1,3 +1,33 @@
+# 毕设阶段成果与研究日志 / FYP Milestones and Research Log
+
+## 阶段摘要（证据截至2026-10-11） / Milestone Digest (Evidence Through 2026-10-11)
+
+**完整轨迹场收益已成立。** 已知五相机、干净虚拟观测下，经典条件先验在11条完全留出轨迹、每条101帧，共1111/1111查询守住四指标匹配。相对无先验与均值先验，场误差的配对中位降低27.36%和17.06%，联合不伤害均为1111/1111。它支持“观测条件化的场先验确实有信息价值”，不是只看几个好帧；目前仍属于经典统计先验，不是神经算法突破。
+
+**多相机比较底座已稳定。** 同一已打开公开数据族、已知5/7/9相机经典解析初值经独立复算，达到3333/3333查询、33/33完整轨迹分层匹配。它为学习方法提供可靠强对照，经典省调用不能归因于学习。
+
+**受限部署时间确有改善。** 无损打包保留精度；一条预固定101帧五相机轨迹、两实现各三轮新进程，墙时为配对CGLS128的0.244/0.247倍。但峰值RSS仍约1.73倍、准备成本另计，联合资源门仍未通过。下一重点是保留场收益、减少完整因子与源库依赖，并证明学习相对强经典对照的额外价值。
+
+**合并边界记录。** 当前压缩与神经小门尚未形成“同精度、优于强对照且真正节省资源”的完整证据；失败配方关闭，不靠扩大模型、改门或事后换控制包装成功。普通试错集中归档，重要正向进展与真正转机才单独汇报。所有负结果、无结论判决与限定范围保持，未打开外部工况和真实BOST仍未验证。
+
+10月11日新增独立审计：源观测子空间加对角补空间的逆压缩在一条完整101帧留轨迹上没有守住四指标匹配，关闭该固定压缩配方，已有条件先验成果不变。仅属已打开工况的机制排除，不扩展为全方向不可能。
+
+**Whole-trajectory field gains are established.** At one known five-camera geometry with clean virtual observations, the classical conditional prior matches all four metrics on1111/1111 queries across11 fully excluded101-frame trajectories. Paired median field errors fall27.36% versus no prior and17.06% versus a mean prior; joint nonharm is1111/1111 against both. Observation-conditioned field information is useful, beyond selected frames. This remains classical statistical-prior evidence, not a neural breakthrough.
+
+**The multicamera comparison base is stable.** Independently recomputed classical analytic initialization at known5/7/9-camera setups in the same opened public-data family matches3333/3333 queries and33/33 complete trajectory strata. It is a strong control; its classical call savings are not attributable to learning.
+
+**Limited prepared-deployment time improves measurably.** Lossless packing preserves accuracy. On one fixed101-frame five-camera trajectory, two implementations with three fresh-process rounds each measure wall ratios of0.244/0.247 to pairedCGLS128. Peak RSS remains about1.73 times higher and preparation is separate, so the joint resource gate still fails. Priorities are retaining field gains, reducing factor/source-bank dependence, and establishing additional learned value over strong controls.
+
+**Consolidated boundary record.** Compression and neural small gates have not yet established joint matched accuracy, strong-control value and genuine resource savings. Closed recipes are not rescued by larger models, changed gates or posthoc control selection. Routine trials remain archived; meaningful gains and turning points receive focused reports. Negative/inconclusive decisions and scope limits remain intact. Unopened-condition transfer and realBOST remain unvalidated.
+
+An additional independent Oct11 audit closes the fixed source-observation-span inverse with a diagonal complement: it does not preserve four-error matching on one complete101-frame held trajectory. Existing conditional-prior gains remain intact. This eliminates an opened-condition recipe, not the entire research direction.
+
+Evidence: [public result summary](segmented_cross_ray_learning_2026-10-10_public_summary.json), [packed deployment scope](packed_prior_deployment_revision_2026-10-11.md), [milestones and figures](../operator-learning/daily-progress.html#milestones).
+
+## 完整研究归档 / Complete Research Archive
+
+The dated records below preserve historical decisions and scope; they are not live process status.
+
 ## 2026-10-10: 完整留轨迹图网络 / Whole-trajectory ray-graph prediction
 
 新分段积分forward及有限CGLS128参考上，共享3841参数跨相机有符号图网络完成11个完整轨迹LOTO、101帧、5/7/9相机，共3333held查询。独立图/网络/lift/精化/物理评分23/23通过，非独立重训。预注册强参考四指标匹配0/3333、完整层0/33，基本绝对质量33/33。事后只读配对显示，对同动作冷CGLS35四项不差3333/3333，场/全梯度/内部梯度/观测的配对相对改善中位数0.3459%/0.3928%/0.2604%/3.5481%；对Jacobi-PCGLS与dual-ridge四项不差分别684/3333与0/3333。保留小而一致的外折学习信号，不改变FAIL，不加宽、加训练或换门救援。没有fresh资源、未开封外部或真实BOST结论。
