@@ -83,3 +83,21 @@ def test_source_information_signal_has_its_own_scope_and_keeps_counterevidence()
     assert '不是新的神经重建' in digest and 'not new neural reconstruction' in digest
     assert '34.29%' in archive and '56%–58%' in archive
     assert '3.206' in archive and '不证明非线性是唯一原因' in archive
+
+
+def test_effective_graph_source_fit_preserves_endpoint_and_strong_control_limits():
+    log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
+    digest, archive = log.split('## 完整研究归档', 1)
+    evidence = json.loads((ROOT / 'docs/segmented_cross_ray_learning_2026-10-10_public_summary.json').read_text())
+    fit = evidence['physical_graph_source_fit_audit']
+    assert fit['necessary_source_fit_pass']
+    assert fit['sources'] == 1010 and fit['mean_and_zero_joint_nonharm_groups'] == 10
+    assert round(100*(1-fit['neural_mean_joint_ratio']), 2) == 55.58
+    assert round(100*(1-fit['neural_zero_joint_ratio']), 2) == 70.00
+    assert fit['neural_RBF_source_joint_ratio'] > 1 and fit['neural_mean_source_observation_MSE_ratio'] > 1
+    assert fit['RBF_control_in_sample_here'] and fit['source_fit_is_not_four_error_matching']
+    assert not fit['CGLS_endpoints_evaluated'] and not fit['complete_outer_trajectory_evaluated']
+    assert fit['first_outer_reads'] == 0 and not any(fit['claims'].values())
+    assert '55.58%' in digest and '70.00%' in digest
+    assert '未超过强条件核' in digest and 'not complete-held reconstruction' in digest
+    assert '2.01910' in archive and '1.99882' in archive
