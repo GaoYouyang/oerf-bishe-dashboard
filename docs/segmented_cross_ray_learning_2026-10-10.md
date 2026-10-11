@@ -4,6 +4,14 @@
 
 ## 实际做了什么
 
+### 原始场协方差没有保住强参考精度
+
+10月11日原始场协方差小门：每折排除留出轨迹全部101帧，5/7/9相机共99个干净锚点，23项独立核验一致。场误差相对均值/零先验中位改善9.22%/23.95%，绝对分层33/33，但强参考四指标匹配0/99、采样匹配分层0/33；99个查询均未守住观测同精度。每查询35A+34AT及1010维源空间求解，不依赖完整测量逆因子，但源库与新几何重建非免费。局部缓存八查询0.089s对冷CGLS128的0.258s，准确率失败不能称同精度加速。关闭固定配方，不加深或调正则；这是三时刻经典统计小门，不是神经、全序列、外部或真实BOST。原clean1111/1111与noise56/66保留。
+
+English: Oct 11 raw-field covariance screen: each fold excludes all 101 held-trajectory frames. Across 5/7/9 cameras, 99 clean anchors pass all 23 independent checks. Paired median field error improves 9.22%/23.95% over mean/zero prior, and 33/33 absolute strata pass, but four-metric strong-reference matches are 0/99 and sampled matched strata 0/33; all 99 miss observation matching. Each query pays 35A+34AT and a 1010-source solve without the full measurement inverse; source storage and new-geometry rebuilding remain nonfree. Local cached eight-query latency is 0.089s versus cold CGLS128 at 0.258s, not matched-accuracy acceleration because accuracy fails. Close this fixed recipe without depth or ridge rescue. Three anchors are not neural, full-sequence, external or real-BOST evidence. Preserve clean 1111/1111 and noise 56/66.
+
+原始场整体协方差通过实际多视角投影进入源样本空间的正则求解，与此前局部补丁Gaussian去噪、截断teacher-tail或Fourier压缩不同。每折1010个合法源全部保留；模型/预测先封存，再评分留出CFD。统计先验仍有价值，但不等于以较少调用求得同精度逆作用。方法先例见[Learning the optimal Tikhonov regularizer for inverse problems](https://proceedings.neurips.cc/paper_files/paper/2021/file/d3e6cd9f66f2c1d3840ade4161cf7406-Paper.pdf)；本代理不继承其最优性或实验噪声假设。
+
 ### 条件先验压缩没有保住重建收益
 
 10月11日条件先验压缩未通过：每折排除留出轨迹全部101帧，128配对Fourier统计读出在33个干净锚点只匹配20/33、采样匹配分层4/11；绝对门11/11不等于保住收益。21项独立复算一致。场误差比原精确核中位恶化36.86%；线性64对照28/33也失败，不事后替换。预测器payload为原来的8.43%，局部cached八查询计时0.317s对0.366s，但共享完整逆因子仍非免费，准确率失败不能称同精度加速。关闭固定压缩配方，不增加特征救援；原干净1111/1111与噪声56/66证据保留。
