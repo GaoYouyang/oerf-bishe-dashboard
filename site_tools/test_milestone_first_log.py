@@ -101,3 +101,28 @@ def test_effective_graph_source_fit_preserves_endpoint_and_strong_control_limits
     assert '55.58%' in digest and '70.00%' in digest
     assert '未超过强条件核' in digest and 'not complete-held reconstruction' in digest
     assert '2.01910' in archive and '1.99882' in archive
+
+
+def test_complete_held_graph_gain_keeps_strict_observation_and_cost_boundary():
+    log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
+    digest, archive = log.split('## 完整研究归档', 1)
+    evidence = json.loads((ROOT / 'docs/segmented_cross_ray_learning_2026-10-10_public_summary.json').read_text())
+    held = evidence['physical_graph_first_outer']
+    assert held['decision'] == 'FAIL_PHYSICAL_GRAPH_FIRST_OUTER_QUALITY'
+    assert held['queries'] == held['four_error_reference_matched'] == 101
+    assert held['complete_held_trajectories'] == 1 and held['new_train_updates'] == 0
+    assert held['source_statistics_train_only'] and held['reference_adequate']
+    assert held['RBF_spatial_nonharm_each_metric'] == 101
+    for metric, gain in (('field',35.99),('full_gradient',36.52),('interior_gradient',32.98)):
+        assert round(100*(1-held['RBF_median_ratios'][metric]),2) == gain
+        assert str(gain) + '%' in digest
+    assert held['RBF_joint_nonharm'] == 96 and held['RBF_observation_harm_count'] == 5
+    assert held['raw_corrected_mean_joint_nonharm'] == 0 and held['raw_corrected_mean_observation_harm_count'] == 101
+    assert held['raw_corrected_mean_observation_median_ratio'] > 1
+    assert held['standalone_neural_actions']['A'] > held['standalone_cached_control_actions']['A']
+    assert held['literal_recipe_closed'] and not held['further_folds_authorized']
+    assert held['independent_checks_pass'] == 31 and held['terminal_summary_pass']
+    assert not any(held['claims'].values())
+    assert '严格联合门仍未通过' in digest and 'strict joint gate still fails' in digest
+    assert '1.461007' in archive and '7.70995e-6' in archive
+    assert '源拟合本身不是完整留出重建' in digest
