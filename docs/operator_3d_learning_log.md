@@ -10,7 +10,7 @@
 
 **合并边界记录。** 当前压缩与神经小门尚未形成“同精度、优于强对照且真正节省资源”的完整证据；失败配方关闭，不靠扩大模型、改门或事后换控制包装成功。普通试错集中归档，重要正向进展与真正转机才单独汇报。所有负结果、无结论判决与限定范围保持，未打开外部工况和真实BOST仍未验证。
 
-10月11日新增独立审计：源观测子空间加对角补空间的逆压缩在一条完整101帧留轨迹上没有守住四指标匹配，关闭该固定压缩配方，已有条件先验成果不变。仅属已打开工况的机制排除，不扩展为全方向不可能。
+10月11日合并边界：源观测子空间逆压缩未保住完整留轨迹的四指标匹配；另一个直接神经场先验虽守住101/101精度、显著缩小先验载荷，却未保留强条件核的场收益，也未优于均值控制。固定压缩配方与这份学习配方均关闭，既有1111查询条件先验正证据不变。小载荷或经典补偿后的精度不单独算学习突破，不扩大为全方向不可能。
 
 **Whole-trajectory field gains are established.** At one known five-camera geometry with clean virtual observations, the classical conditional prior matches all four metrics on1111/1111 queries across11 fully excluded101-frame trajectories. Paired median field errors fall27.36% versus no prior and17.06% versus a mean prior; joint nonharm is1111/1111 against both. Observation-conditioned field information is useful, beyond selected frames. This remains classical statistical-prior evidence, not a neural breakthrough.
 
@@ -20,7 +20,7 @@
 
 **Consolidated boundary record.** Compression and neural small gates have not yet established joint matched accuracy, strong-control value and genuine resource savings. Closed recipes are not rescued by larger models, changed gates or posthoc control selection. Routine trials remain archived; meaningful gains and turning points receive focused reports. Negative/inconclusive decisions and scope limits remain intact. Unopened-condition transfer and realBOST remain unvalidated.
 
-An additional independent Oct11 audit closes the fixed source-observation-span inverse with a diagonal complement: it does not preserve four-error matching on one complete101-frame held trajectory. Existing conditional-prior gains remain intact. This eliminates an opened-condition recipe, not the entire research direction.
+Consolidated Oct11 boundary: source-observation-span inverse compression misses complete-trajectory four-error matching. A separate direct neural field prior matches101/101 queries and sharply reduces its prior payload, but does not retain strong-kernel field gains or improve on the mean control. Both fixed recipes close; existing1111-query conditional-prior evidence remains intact. A small payload or accuracy recovered by classical compensation alone is not a learned breakthrough, nor evidence against the entire research direction.
 
 Evidence: [public result summary](segmented_cross_ray_learning_2026-10-10_public_summary.json), [packed deployment scope](packed_prior_deployment_revision_2026-10-11.md), [milestones and figures](../operator-learning/daily-progress.html#milestones).
 
