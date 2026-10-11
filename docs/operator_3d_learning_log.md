@@ -14,7 +14,7 @@
 
 **下一投入的分界更清楚了。** 一次独立全源复算发现：上一小模型的完整训练目标也未优于初始均值，而已有线性读出在源样本上降低约34.29%。这不是新的泛化成果，也不能单独证明容量或优化根因；但足以避免把无效源拟合误称为单纯缺数据。今后新的物理机制先验证实际源拟合，再投入大型外折；原失败配方不重开。
 
-同一条取舍补充：有用条件场先验在十个固定源锚点、32个观测派生方向上的局部响应，即使最佳16维压缩仍留下约56%–58%的场与梯度微分相对残差，独立重算一致。因此下一表示优先保留空间分布的信息，而不是再把所有视角挤入单个小全局编码。这是源局部响应诊断，不是端点误差下界、泛化证明或新算法成果。
+同一条取舍补充：有用条件场先验在十个固定源锚点、32个观测派生方向上的局部响应，即使最佳16维压缩仍留下约56%–58%的场与梯度微分相对残差，独立重算一致。空间分布的条件信息值得关注，但一个独立核验的新射线积分模型也未通过完整源拟合，因此不展开大型外折或微调救援。下一投入先解决有效条件拟合，不能把换表示本身当作突破。这些是源内表示与拟合边界，不是端点误差下界、泛化证明或全方向失败。
 
 **Whole-trajectory field gains are established.** At one known five-camera geometry with clean virtual observations, the classical conditional prior matches all four metrics on1111/1111 queries across11 fully excluded101-frame trajectories. Paired median field errors fall27.36% versus no prior and17.06% versus a mean prior; joint nonharm is1111/1111 against both. Observation-conditioned field information is useful, beyond selected frames. This remains classical statistical-prior evidence, not a neural breakthrough.
 
@@ -28,7 +28,7 @@ Consolidated Oct11 boundary: source-observation-span inverse compression misses 
 
 **The next investment is better defined.** An independent complete-source replay finds that the last small model does not beat its initial mean on its actual training objective; the existing linear readout reduces that source objective by about34.29%. This is not new generalization or proof of a unique capacity/optimization cause, but it prevents attributing unsuccessful source fitting to data shortage alone. A genuinely new physical mechanism must establish actual source fitting before a large outer experiment; closed recipes stay closed.
 
-The same investment decision is sharpened by an independently reproduced source-local response audit: on ten fixed source anchors and32 observation-derived directions, even the best16-dimensional approximation leaves about56%–58% relative field-and-gradient differential error. Prioritize spatially distributed conditional information rather than another small global code for every view. This is a local differential diagnostic, not an endpoint error bound, transfer proof or new algorithm result.
+The same investment decision is sharpened by an independently reproduced source-local response audit: on ten fixed source anchors and32 observation-derived directions, even the best16-dimensional approximation leaves about56%–58% relative field-and-gradient differential error. Spatially distributed conditional information merits attention, but a separately verified new ray-integration model also misses complete-source fitting; no large outer run or recipe tuning follows. Establish effective conditional fitting before treating a representation change as progress. These are source-only representation and fit boundaries, not endpoint error bounds, transfer proof or failure of the whole direction.
 
 Evidence: [public result summary](segmented_cross_ray_learning_2026-10-10_public_summary.json), [packed deployment scope](packed_prior_deployment_revision_2026-10-11.md), [milestones and figures](../operator-learning/daily-progress.html#milestones).
 
