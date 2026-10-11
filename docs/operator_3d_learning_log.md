@@ -12,6 +12,8 @@
 
 10月11日合并边界：源观测子空间逆压缩未保住完整留轨迹的四指标匹配；另一个直接神经场先验虽守住101/101精度、显著缩小先验载荷，却未保留强条件核的场收益，也未优于均值控制。固定压缩配方与这份学习配方均关闭，既有1111查询条件先验正证据不变。小载荷或经典补偿后的精度不单独算学习突破，不扩大为全方向不可能。
 
+**下一投入的分界更清楚了。** 一次独立全源复算发现：上一小模型的完整训练目标也未优于初始均值，而已有线性读出在源样本上降低约34.29%。这不是新的泛化成果，也不能单独证明容量或优化根因；但足以避免把无效源拟合误称为单纯缺数据。今后新的物理机制先验证实际源拟合，再投入大型外折；原失败配方不重开。
+
 **Whole-trajectory field gains are established.** At one known five-camera geometry with clean virtual observations, the classical conditional prior matches all four metrics on1111/1111 queries across11 fully excluded101-frame trajectories. Paired median field errors fall27.36% versus no prior and17.06% versus a mean prior; joint nonharm is1111/1111 against both. Observation-conditioned field information is useful, beyond selected frames. This remains classical statistical-prior evidence, not a neural breakthrough.
 
 **The multicamera comparison base is stable.** Independently recomputed classical analytic initialization at known5/7/9-camera setups in the same opened public-data family matches3333/3333 queries and33/33 complete trajectory strata. It is a strong control; its classical call savings are not attributable to learning.
@@ -21,6 +23,8 @@
 **Consolidated boundary record.** Compression and neural small gates have not yet established joint matched accuracy, strong-control value and genuine resource savings. Closed recipes are not rescued by larger models, changed gates or posthoc control selection. Routine trials remain archived; meaningful gains and turning points receive focused reports. Negative/inconclusive decisions and scope limits remain intact. Unopened-condition transfer and realBOST remain unvalidated.
 
 Consolidated Oct11 boundary: source-observation-span inverse compression misses complete-trajectory four-error matching. A separate direct neural field prior matches101/101 queries and sharply reduces its prior payload, but does not retain strong-kernel field gains or improve on the mean control. Both fixed recipes close; existing1111-query conditional-prior evidence remains intact. A small payload or accuracy recovered by classical compensation alone is not a learned breakthrough, nor evidence against the entire research direction.
+
+**The next investment is better defined.** An independent complete-source replay finds that the last small model does not beat its initial mean on its actual training objective; the existing linear readout reduces that source objective by about34.29%. This is not new generalization or proof of a unique capacity/optimization cause, but it prevents attributing unsuccessful source fitting to data shortage alone. A genuinely new physical mechanism must establish actual source fitting before a large outer experiment; closed recipes stay closed.
 
 Evidence: [public result summary](segmented_cross_ray_learning_2026-10-10_public_summary.json), [packed deployment scope](packed_prior_deployment_revision_2026-10-11.md), [milestones and figures](../operator-learning/daily-progress.html#milestones).
 
