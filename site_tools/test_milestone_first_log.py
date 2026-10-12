@@ -218,6 +218,15 @@ def test_retrieval_training_mean_is_not_loto_or_physical_breakthrough():
     assert gate['shared_weights_not_independent_optimizer'] and gate['source_value_bank_and_search_nonfree']
     assert not gate['complete_trajectory_prediction'] and not gate['native_four_metric_result']
     assert not gate['physical_or_outer_expansion_authorized'] and not gate['new_breakthrough_claim']
+    capacity = gate['post_open_capacity_followup']
+    assert capacity['decision'] == 'FAIL_PILOT_POSITIVE_VALUE_SUPPORT'
+    assert capacity['queries'] == 72 and capacity['source_groups'] == 9
+    assert capacity['independent_valid'] and capacity['independent_checks'] == 22
+    assert capacity['target_visible_diagnostic_only']
+    assert capacity['aggregate_convex_MSE_interval'][1] < capacity['same_pilot_GMM_MSE']
+    assert capacity['adequate_groups'] == 7 and capacity['insufficient_groups'] == 2
+    assert capacity['signed_capacity_is_not_predictability_or_stability']
+    assert not capacity['scorer_retraining_or_physical_outer_authorized'] and not capacity['new_breakthrough_claim']
     log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
     digest, archive = log.split('## 完整研究归档', 1)
     assert '检索均值小门合并边界' in archive and 'Consolidated retrieval-mean boundary' in archive
