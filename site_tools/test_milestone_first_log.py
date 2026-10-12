@@ -174,8 +174,28 @@ def test_followup_likelihood_does_not_overwrite_statistical_signal_authority():
     assert follow['training_mean_audit_post_open_not_new_gate']
     assert follow['prior_GMM_inconclusive_and_numeric_gains_preserved']
     assert follow['likelihood_fit_not_field_value'] and not follow['new_breakthrough_claim']
+    drift = follow['state_dependent_denoising_followup']
+    assert drift['decision'] == 'FAIL_CONDITIONAL_DENOISING_DRIFT_SOURCE_GATE'
+    assert drift['independent_valid'] and drift['independent_checks'] == 35
+    assert drift['parameters'] == 3547 and drift['actual_updates'] == 1024
+    assert drift['training_fields'] == 909 and drift['fixed_source_patches'] == 29088
+    assert drift['source_groups'] == 9 and drift['source_in_sample_only']
+    assert drift['fixed_noise_MSE_initial_final'][1] < .95 * drift['fixed_noise_MSE_initial_final'][0]
+    assert drift['all_source_groups_fit_noise_residual']
+    assert all(value > 1.05 for value in drift['neural_single_drift_GMM_ratios'])
+    assert drift['source_groups_passing_value_gate'] == 0
+    assert drift['independent_mean_action_diff'] <= 1e-7
+    assert drift['shared_weights_not_independent_optimizer']
+    assert drift['training_corruption_not_experimental_BOS_noise']
+    assert drift['deterministic_drift_not_reverse_SDE_or_exact_conditional_mean']
+    assert drift['no_source_value_bank_or_GMM_teacher_in_neural_action']
+    assert drift['literal_recipe_closed'] and drift['old_GMM_authority_unchanged']
+    assert not drift['physical_or_outer_expansion_authorized'] and not drift['native_four_metric_result']
+    assert not drift['new_breakthrough_claim']
     log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
     assert '后续神经检验合并边界' in log and 'Consolidated neural follow-up' in log
+    digest, archive = log.split('## 完整研究归档', 1)
+    assert archive.count('6.196705') == 2 and '6.196705' not in digest
 
 
 def test_structured_pilot_spatial_gain_is_not_a_complete_four_metric_result():
