@@ -1,6 +1,6 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
-## 阶段摘要（证据截至2026-10-11） / Milestone Digest (Evidence Through 2026-10-11)
+## 阶段摘要（证据截至2026-10-12） / Milestone Digest (Evidence Through 2026-10-12)
 
 **完整轨迹场收益已成立。** 已知五相机、干净虚拟观测下，经典条件先验在11条完全留出轨迹、每条101帧，共1111/1111查询守住四指标匹配。相对无先验与均值先验，场误差的配对中位降低27.36%和17.06%，联合不伤害均为1111/1111。它支持“观测条件化的场先验确实有信息价值”，不是只看几个好帧；目前仍属于经典统计先验，不是神经算法突破。
 
@@ -16,6 +16,8 @@
 
 **学习收益首次完整保留到本轮留出重建。** 同一已打开数据族、已知五相机与干净虚拟观测下，模型未训练的一整条101帧轨迹全部匹配四指标参考。相对强经典条件核，场/全梯度/内部梯度误差配对中位降低35.99%/36.52%/32.98%，三项逐帧都更低，两实现独立复算一致。严格联合门仍未通过：对条件核有5帧观测伤害，对校正均值的101帧观测误差均更高；固定配方关闭，不扩更多外折或调参救援。保留这份实质空间收益，但不称完整突破、加速或论文成功；多轨迹、噪声、新相机及外部门尚未验证。
 
+**局部条件信息出现空间与观测双收益。** 新的统计先验在十个完整源轨迹内层留出、1010查询中，校正种子的场与全梯度联合MSE比校正均值低51.84%、比单高斯低64.33%、比RBF低35.91%；观测MSE比均值低84.05%，十个源组的候选数值条件均满足，独立复算一致。权威状态仍为未定：RBF参考在一个源组未过事前资格门；对RBF逐帧联合不伤害997/1010，不是所有帧都赢。因此不启动这份配方外折、不改门或微调救援。这是source-LOTO的统计信息转机，不是新增神经训练、最终CGLS重建、完整加速或论文成功。
+
 **Whole-trajectory field gains are established.** At one known five-camera geometry with clean virtual observations, the classical conditional prior matches all four metrics on1111/1111 queries across11 fully excluded101-frame trajectories. Paired median field errors fall27.36% versus no prior and17.06% versus a mean prior; joint nonharm is1111/1111 against both. Observation-conditioned field information is useful, beyond selected frames. This remains classical statistical-prior evidence, not a neural breakthrough.
 
 **The multicamera comparison base is stable.** Independently recomputed classical analytic initialization at known5/7/9-camera setups in the same opened public-data family matches3333/3333 queries and33/33 complete trajectory strata. It is a strong control; its classical call savings are not attributable to learning.
@@ -30,11 +32,27 @@
 
 **Learned gains now survive a complete held reconstruction in this run.** At known native five-camera geometry with clean virtual observations in the same opened family, all101 frames of one wholly excluded trajectory match the four-error reference. Paired median field/full-gradient/interior-gradient errors fall35.99%/36.52%/32.98% versus the strong classical conditional kernel, with every frame better on each spatial metric and independent implementations agreeing. The strict joint gate still fails: five observation harms versus the kernel, and higher observation error on all101 frames versus the corrected mean. Close the fixed recipe without wider folds or tuning rescue. Retain this substantive spatial gain without claiming a full breakthrough, acceleration or paper success; multi-trajectory,noise,new-camera and external gates remain untested for this model.
 
+**Local conditioning yields both spatial and observation gains.** A new statistical prior on ten complete inner-source trajectory folds and1010 queries lowers corrected-seed field-plus-full-gradient MSE by51.84% versus corrected mean,64.33% versus a single Gaussian and35.91% versus RBF; observation MSE falls84.05% versus mean. All ten groups satisfy candidate numerical predicates and own implementations agree. Authority remains inconclusive because RBF misses its preregistered qualification in one group. Framewise joint nonharm versus RBF is997/1010, not universal dominance. No outer run, changed gate or tuning rescue follows. This source-LOTO information signal is not new neural training, final CGLS reconstruction, full acceleration or paper success.
+
 Evidence: [public result summary](segmented_cross_ray_learning_2026-10-10_public_summary.json), [packed deployment scope](packed_prior_deployment_revision_2026-10-11.md), [milestones and figures](../operator-learning/daily-progress.html#milestones).
 
 ## 完整研究归档 / Complete Research Archive
 
 The dated records below preserve historical decisions and scope; they are not live process status.
+
+## 2026-10-12: 局部条件统计信息 / Local Conditional Statistical Information
+
+已打开数据族、已知五相机、十条合法源轨迹的内层完整留出：每折909训练字段，采样与标准化均排除该折101查询。局部联合统计分布只根据当前观测派生场预测密度先验，再使用原物理校正；不保留源库作推理、不把时间或轨迹标签输入预测。联合MSE为0.514084，对照校正均值1.067374、单高斯1.441230、RBF0.802170；观测MSE为0.173032，对照均值1.084737。相对均值和单高斯的联合不伤害均为1010/1010，对RBF997/1010；观测对四个控制均1010/1010不伤害。
+
+正式状态`INCONCLUSIVE_PATCH_SOURCE_CONTROL`保留：RBF在一个完整源组的联合目标0.516128，高于均值0.453623，未满足结果前参考资格。候选自身的十组数值谓词满足，不能替代reference-first门。33项独立核验和48项终态只读核验通过，逐种子/指标最大差约9.27e-13/2.56e-12；EM拟合共享，不是独立优化。这里是规范化平方种子误差，不是上一图网络的最终相对误差，两种目标不能混写。
+
+新增账每实现为11120A+2030AT+2030完整逆作用，另有5050评分A，包含训练尺度重放；父输入与几何准备非免费。没有新增神经更新、CGLS终点、第一外折、噪声/新几何、fresh资源或真实BOST判决。局部统计条件化是已有方法，不称EPLL全图优化或收敛PnP。保留双收益信息作为下一真正不同学习机制的强对照线索，不重跑/调参这份未定配方，不救原关闭图模型，也不把统计对照代替神经warm-start目标。
+
+In the opened family at one known five-camera setup, ten complete inner-source trajectory folds each train on909 fields and exclude101 query fields before patch sampling and whitening. A local joint statistical distribution predicts a density prior from the current observation-derived field, followed by unchanged physical correction. Inference uses no source bank, time or trajectory features. Joint MSE is0.514084 versus corrected mean1.067374,single Gaussian1.441230 andRBF0.802170. Observation MSE is0.173032 versus mean1.084737. Framewise joint nonharm is1010/1010 versus mean/single and997/1010 versusRBF; observation nonharm is1010/1010 versus all four controls.
+
+Preserve`INCONCLUSIVE_PATCH_SOURCE_CONTROL`: in one complete source group, RBF joint0.516128 exceeds mean0.453623 and misses preregistered reference qualification. Candidate numerical predicates passing in all ten groups do not override reference-first authority. All33 independent and48 terminal checks pass, with maximum seed/metric differences about9.27e-13/2.56e-12. EM fitting is shared, not independently optimized. These normalized squared seed errors differ from the last graph's final relative errors.
+
+Each implementation adds11120A+2030AT+2030 full inverse actions, plus5050 scoringA, including training-scale replays; inherited source and geometry preparation is nonfree. There are no new neural updates,CGLS endpoints,first-outer,noise/new-geometry,fresh-resource or real-BOST conclusions. Local statistical conditioning is established methodology, not an EPLL whole-image optimizer or convergent PnP claim. Retain this dual-benefit signal to guide a genuinely different learned mechanism and strong control. Do not rerun/tune the inconclusive recipe, rescue the closed graph or substitute statistical-control success for the neural warm-start objective.
 
 ## 2026-10-11: 条件表示与源拟合的合并边界 / Consolidated Representation Boundaries
 

@@ -126,3 +126,35 @@ def test_complete_held_graph_gain_keeps_strict_observation_and_cost_boundary():
     assert '严格联合门仍未通过' in digest and 'strict joint gate still fails' in digest
     assert '1.461007' in archive and '7.70995e-6' in archive
     assert '源拟合本身不是完整留出重建' in digest
+
+
+def test_local_joint_signal_keeps_reference_first_and_source_only_scope():
+    evidence = json.loads((ROOT / 'docs/segmented_cross_ray_learning_2026-10-10_public_summary.json').read_text())
+    value = evidence['local_conditional_statistical_signal']
+    assert value['decision'] == 'INCONCLUSIVE_PATCH_SOURCE_CONTROL'
+    assert value['source_queries'] == 1010 and value['source_groups'] == 10
+    assert value['fit_fields_per_fold'] == 909 and value['query_fields_per_fold'] == 101
+    assert value['query_excluded_before_sampling_whitening_fit']
+    assert value['query_truth_time_labels_not_predictor_inputs']
+    assert not value['retained_source_bank_at_inference']
+    for name,gain in (('mean',51.84),('single_gaussian',64.33),('RBF',35.91)):
+        assert round(100*(1-value['primary_joint_ratios'][name]),2) == gain
+    assert round(100*(1-value['primary_mean_observation_MSE_ratio']),2) == 84.05
+    assert value['groups_meeting_candidate_numeric_predicates'] == 10
+    assert not value['reference_eligible'] and not value['primary_eligible']
+    assert not value['numeric_predicates_override_reference_first']
+    assert value['reference_failed_groups'] == 1
+    assert value['reference_failed_group_joint_RBF_mean'][0] > value['reference_failed_group_joint_RBF_mean'][1]
+    assert value['joint_nonharm_frames']['RBF'] == 997
+    assert value['observation_nonharm_frames_each_control'] == 1010
+    assert value['independent_reconstruction_checks'] == 33 and value['terminal_readback_checks'] == 48
+    assert value['first_outer_reads'] == value['new_neural_updates'] == 0
+    assert not value['first_outer_authorized'] and not value['CGLS_endpoints_evaluated']
+    assert value['shared_EM_fit_not_independent_optimizer'] and not any(value['claims'].values())
+    log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
+    digest,archive = log.split('## 完整研究归档',1)
+    assert all(token in digest for token in ('51.84%','64.33%','35.91%','84.05%','997/1010'))
+    assert 'authority remains inconclusive' in digest.lower()
+    assert 'source-LOTO' in digest and '最终CGLS' in digest
+    assert 'INCONCLUSIVE_PATCH_SOURCE_CONTROL' in archive
+    assert 'EM fitting is shared' in archive and '11120A+2030AT' in archive
