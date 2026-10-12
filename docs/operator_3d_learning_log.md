@@ -50,6 +50,8 @@ The dated records below preserve historical decisions and scope; they are not li
 
 后续神经检验合并边界：新的条件密度网络实际训练且似然改善，但没有保留校正场价值，固定配方关闭、不展开外折。只读训练均值核验确认，似然拟合与有用条件均值不能混称；已有局部统计双收益及其未定状态都不变。下一真正不同机制先看实际源均值作用与强控制，不重复扩分布头、轮次或试错页面。
 
+结构化跟进合并边界：固定30个合法源pilot、每组3帧的全协方差拼接，相对独立patch均值/便宜对角拼接的场与全梯度联合MSE低25.79%/8.28%，但观测MSE比前者高6.51%，四项门仅5/30，固定作用关闭。保留跨patch空间耦合线索，不称完整轨迹、神经训练或速度成果，不蒸馏关闭作用或调协方差/物理补空间救援；此前统计信号及未定状态不变。
+
 In the opened family at one known five-camera setup, ten complete inner-source trajectory folds each train on909 fields and exclude101 query fields before patch sampling and whitening. A local joint statistical distribution predicts a density prior from the current observation-derived field, followed by unchanged physical correction. Inference uses no source bank, time or trajectory features. Joint MSE is0.514084 versus corrected mean1.067374,single Gaussian1.441230 andRBF0.802170. Observation MSE is0.173032 versus mean1.084737. Framewise joint nonharm is1010/1010 versus mean/single and997/1010 versusRBF; observation nonharm is1010/1010 versus all four controls.
 
 Preserve`INCONCLUSIVE_PATCH_SOURCE_CONTROL`: in one complete source group, RBF joint0.516128 exceeds mean0.453623 and misses preregistered reference qualification. Candidate numerical predicates passing in all ten groups do not override reference-first authority. All33 independent and48 terminal checks pass, with maximum seed/metric differences about9.27e-13/2.56e-12. EM fitting is shared, not independently optimized. These normalized squared seed errors differ from the last graph's final relative errors.
@@ -57,6 +59,8 @@ Preserve`INCONCLUSIVE_PATCH_SOURCE_CONTROL`: in one complete source group, RBF j
 Each implementation adds11120A+2030AT+2030 full inverse actions, plus5050 scoringA, including training-scale replays; inherited source and geometry preparation is nonfree. There are no new neural updates,CGLS endpoints,first-outer,noise/new-geometry,fresh-resource or real-BOST conclusions. Local statistical conditioning is established methodology, not an EPLL whole-image optimizer or convergent PnP claim. Retain this dual-benefit signal to guide a genuinely different learned mechanism and strong control. Do not rerun/tune the inconclusive recipe, rescue the closed graph or substitute statistical-control success for the neural warm-start objective.
 
 Consolidated neural follow-up: a genuinely trained conditional density network improves likelihood without retaining corrected-field value. Close its fixed recipe without outer expansion. Read-only training-mean checks distinguish likelihood fit from a useful conditional mean; the prior statistical dual-benefit signal and inconclusive authority remain unchanged. A genuinely different future mechanism must check actual legal-source mean fidelity versus strong controls, not expand density heads,updates or trial pages.
+
+Consolidated structured follow-up: full conditional-covariance consensus on30 fixed source pilot queries,three per group,reduces field/full-gradient joint MSE25.79% versus independent patch means and8.28% versus cheaper diagonal consensus. Observation MSE rises6.51% versus the former; the four-metric gate passes only5/30,so close the fixed action. Keep the cross-patch spatial-coupling clue,not a full-trajectory,neural-training or speed result. Do not distill the closed action or tune covariance/physical complements; the earlier statistical signal and inconclusive authority stay unchanged.
 
 ## 2026-10-11: 条件表示与源拟合的合并边界 / Consolidated Representation Boundaries
 

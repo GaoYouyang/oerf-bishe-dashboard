@@ -176,3 +176,24 @@ def test_followup_likelihood_does_not_overwrite_statistical_signal_authority():
     assert follow['likelihood_fit_not_field_value'] and not follow['new_breakthrough_claim']
     log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
     assert '后续神经检验合并边界' in log and 'Consolidated neural follow-up' in log
+
+
+def test_structured_pilot_spatial_gain_is_not_a_complete_four_metric_result():
+    evidence = json.loads((ROOT / 'docs/segmented_cross_ray_learning_2026-10-10_public_summary.json').read_text())
+    parent = evidence['local_conditional_statistical_signal']
+    pilot = parent['structured_covariance_pilot']
+    assert parent['decision'] == 'INCONCLUSIVE_PATCH_SOURCE_CONTROL'
+    assert pilot['decision'] == 'FAIL_CONDITIONAL_COVARIANCE_CONSENSUS_PILOT'
+    assert pilot['independent_valid'] and pilot['independent_checks'] == 41
+    assert pilot['queries'] == 30 and pilot['snapshots_per_source_group'] == 3
+    assert pilot['training_fields_per_source_fold'] == 909 and pilot['full_query_group_excluded_each_fit']
+    assert pilot['native_known_cameras'] == 5
+    assert all(value < 1 for value in pilot['joint_GMM_diagonal_ratios'])
+    assert pilot['observation_GMM_ratio'] > 1 and pilot['four_metric_GMM_diagonal_counts'] == [5, 27]
+    assert pilot['spatial_three_metric_GMM_nonharm_count'] == 30
+    assert pilot['literal_recipe_closed'] and pilot['old_GMM_authority_unchanged']
+    assert not pilot['complete_trajectory_result'] and not pilot['new_neural_training']
+    assert not pilot['learned_or_old_GMM_outer_authorized'] and not pilot['new_breakthrough_claim']
+    assert pilot['full_setup_and_local_solve_nonfree']
+    log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
+    assert '结构化跟进合并边界' in log and 'Consolidated structured follow-up' in log
