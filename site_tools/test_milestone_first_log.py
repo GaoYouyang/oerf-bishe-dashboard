@@ -192,10 +192,23 @@ def test_followup_likelihood_does_not_overwrite_statistical_signal_authority():
     assert drift['literal_recipe_closed'] and drift['old_GMM_authority_unchanged']
     assert not drift['physical_or_outer_expansion_authorized'] and not drift['native_four_metric_result']
     assert not drift['new_breakthrough_claim']
+    audit = drift['exact_score_functional_audit']
+    assert audit['decision'] == 'FAIL_EXACT_SCORE_FIXED_PATH_MEAN_FIDELITY'
+    assert audit['independent_valid'] and audit['independent_checks'] == 36
+    assert audit['training_fields'] == 909 and audit['fixed_source_patches'] == 29088
+    assert audit['source_groups'] == 9 and audit['source_in_sample_diagnostic_only']
+    assert round(audit['actual_mean_MSE_ratio'], 6) == 3.172652
+    assert abs(audit['actual_mean_MSE_ratio'] - audit['exact_score_action_MSE']/audit['direct_conditional_mean_MSE']) < 1e-12
+    assert audit['groups_preserving_mean_fidelity'] == 0 and audit['independent_state_action_diff'] <= 1e-7
+    assert audit['new_training_updates'] == audit['native_A'] == audit['native_AT'] == 0
+    assert audit['fixed_functional_closed'] and audit['score_accuracy_not_mean_estimator_fidelity']
+    assert audit['old_neural_and_GMM_authority_unchanged']
+    assert not audit['physical_or_outer_expansion_authorized'] and not audit['new_breakthrough_claim']
     log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
     assert '后续神经检验合并边界' in log and 'Consolidated neural follow-up' in log
     digest, archive = log.split('## 完整研究归档', 1)
     assert archive.count('6.196705') == 2 and '6.196705' not in digest
+    assert archive.count('3.172652') == 2 and '3.172652' not in digest
 
 
 def test_structured_pilot_spatial_gain_is_not_a_complete_four_metric_result():
