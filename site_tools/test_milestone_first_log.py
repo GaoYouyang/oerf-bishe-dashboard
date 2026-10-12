@@ -158,3 +158,21 @@ def test_local_joint_signal_keeps_reference_first_and_source_only_scope():
     assert 'source-LOTO' in digest and '最终CGLS' in digest
     assert 'INCONCLUSIVE_PATCH_SOURCE_CONTROL' in archive
     assert 'EM fitting is shared' in archive and '11120A+2030AT' in archive
+
+
+def test_followup_likelihood_does_not_overwrite_statistical_signal_authority():
+    evidence = json.loads((ROOT / 'docs/segmented_cross_ray_learning_2026-10-10_public_summary.json').read_text())
+    parent = evidence['local_conditional_statistical_signal']
+    follow = parent['consolidated_neural_followup']
+    assert parent['decision'] == 'INCONCLUSIVE_PATCH_SOURCE_CONTROL'
+    assert follow['decision'] == 'FAIL_GEOMETRY_PATCH_CONDITIONAL_DENSITY_SOURCE_GATE'
+    assert follow['actual_training_and_independent_physics'] and follow['source_likelihood_pass']
+    assert follow['source_loto_all_gate_groups'] == 0
+    assert all(ratio > 1 for ratio in follow['joint_mean_RBF_GMM_ratios'])
+    assert follow['training_conditional_mean_MSE_primary_range'][0] > follow['training_conditional_mean_MSE_GMM_range'][1]
+    assert follow['literal_recipe_closed'] and not follow['outer_authorized']
+    assert follow['training_mean_audit_post_open_not_new_gate']
+    assert follow['prior_GMM_inconclusive_and_numeric_gains_preserved']
+    assert follow['likelihood_fit_not_field_value'] and not follow['new_breakthrough_claim']
+    log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
+    assert '后续神经检验合并边界' in log and 'Consolidated neural follow-up' in log
