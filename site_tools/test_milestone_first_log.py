@@ -199,6 +199,51 @@ def test_neural_law_source_fit_keeps_loto_physics_and_dependency_limits():
     assert '6048个非免费' in digest and '6048 nonfree' in digest
 
 
+def test_neural_law_loto_positive_spatial_signal_keeps_two_observation_failures():
+    evidence = json.loads((ROOT / 'docs/segmented_cross_ray_learning_2026-10-10_public_summary.json').read_text())
+    parent = evidence['local_conditional_statistical_signal']
+    source = parent['conditional_law_neural_source_signal']
+    value = source['complete_source_LOTO_followup']
+    assert parent['decision'] == 'INCONCLUSIVE_PATCH_SOURCE_CONTROL'
+    assert source['decision'] == 'PASS_NECESSARY_CONDITIONAL_LAW_NEURAL_SOURCE_GATE'
+    assert value['decision'] == 'FAIL_CONDITIONAL_LAW_NEURAL_SOURCE_LOTO_VALUE'
+    assert value['independent_valid'] and value['independent_checks'] == 47
+    assert value['terminal_readback_checks'] == 40
+    assert value['queries'] == 1010 and value['complete_source_groups'] == 10
+    assert value['query_fields_per_fold'] == 101 and value['fit_fields_per_fold'] == 909
+    assert value['every_fit_law_sampling_normalizer_excludes_whole_query_group']
+    assert value['all_source_fits_pass'] == 10 and value['actual_new_updates'] == 9216
+    assert value['inherited_fold0_updates_reused_not_retrained'] == 1024
+    assert value['native_known_cameras'] == 5 and value['source_LOTO_not_unopened_external']
+    assert value['normalized_squared_corrected_seed_metrics']
+    mse = value['joint_MSE']
+    for control, gain in (('GMM', 9.25), ('mean', 56.29), ('RBF', 41.84)):
+        assert round(100 * (1 - mse['neural'] / mse[control]), 2) == gain
+    assert all(pair[0] < pair[1] for pair in value['neural_GMM_MSE'].values())
+    assert value['all10_spatial_group_means_lower_than_GMM']
+    assert value['mean_joint_four_metric_frame_nonharm'] == 1010
+    assert value['RBF_joint_four_metric_frame_nonharm'] == 1001
+    assert value['GMM_joint_four_metric_frame_nonharm'] == 479
+    assert value['complete_groups_passing_all_gates'] == 8
+    assert value['failed_groups_only_GMM_observation_fidelity'] == 2
+    assert all(ratio > value['frozen_GMM_fidelity_bound'] == 1.05 for ratio in value['failed_observation_GMM_ratios'])
+    assert max(value['native_state_prior_image_max_relative_diff']) <= 1e-7
+    assert value['shared_weights_and_statistics_not_independent_optimizer']
+    assert value['old_GMM_authority_unchanged'] and value['literal_recipe_closed']
+    assert value['standalone_seed_primary'] == {'A': 1, 'AT': 2, 'inverse': 2}
+    assert value['full_factors_source_preparation_statistical_fitting_and_RBF_nonfree']
+    assert not value['physical_endpoint_or_old_model_outer_authorized']
+    assert not value['final_CGLS_matching_or_fresh_resources_evaluated']
+    assert value['first_outer_reads'] == 0
+    assert not any(value[key] for key in ('algorithm_breakthrough', 'resource_speedup', 'external_generalization', 'paper_success', 'main_goal_complete'))
+    log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
+    digest, _ = log.split('## 完整研究归档', 1)
+    assert '9.25%/56.29%/41.84%' in digest and 'ten complete source trajectories' in digest
+    assert digest.count('479/1010') == 2
+    assert '固定配方关闭' in digest and 'Close the fixed recipe' in digest
+    assert '不是最终CGLS相对误差匹配' in digest and 'not final relative CGLS matching' in digest
+
+
 def test_followup_likelihood_does_not_overwrite_statistical_signal_authority():
     evidence = json.loads((ROOT / 'docs/segmented_cross_ray_learning_2026-10-10_public_summary.json').read_text())
     parent = evidence['local_conditional_statistical_signal']
