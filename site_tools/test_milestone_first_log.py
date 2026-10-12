@@ -160,6 +160,45 @@ def test_local_joint_signal_keeps_reference_first_and_source_only_scope():
     assert 'EM fitting is shared' in archive and '11120A+2030AT' in archive
 
 
+def test_neural_law_source_fit_keeps_loto_physics_and_dependency_limits():
+    evidence = json.loads((ROOT / 'docs/segmented_cross_ray_learning_2026-10-10_public_summary.json').read_text())
+    parent = evidence['local_conditional_statistical_signal']
+    value = parent['conditional_law_neural_source_signal']
+    assert parent['decision'] == 'INCONCLUSIVE_PATCH_SOURCE_CONTROL'
+    assert value['decision'] == 'PASS_NECESSARY_CONDITIONAL_LAW_NEURAL_SOURCE_GATE'
+    assert value['independent_valid'] and value['independent_checks'] == 39
+    assert value['terminal_readback_checks'] == 38
+    assert value['training_fields'] == 909 and value['fixed_source_patches'] == 29088
+    assert value['trainable_parameters'] == 2024 and value['actual_updates'] == 1024
+    assert value['fixed_source_response_coefficients'] == 6048
+    assert value['source_statistical_laws_and_context_nonfree']
+    for name, ratio in zip(('initial_uniform', 'GMM'), value['neural_initial_GMM_ratios']):
+        assert abs(ratio - value['mean_MSE']['neural'] / value['mean_MSE'][name]) < 1e-12
+    assert round(100 * (1 - value['neural_initial_GMM_ratios'][0]), 2) == 75.31
+    assert round(100 * (1 - value['neural_initial_GMM_ratios'][1]), 2) == 6.30
+    assert value['source_groups_passing_literal_gate'] == value['source_training_groups'] == 9
+    assert value['source_groups_better_than_GMM'] == 7
+    assert value['two_GMM_harms_within_frozen_fidelity_bound']
+    assert value['GMM_group_fidelity_factor'] == 1.05
+    assert value['independent_mean_action_relative_diff'] <= 1e-7
+    assert value['full_fixed_source_fit_equals_actual_deployed_mean_MSE']
+    assert value['shared_weights_not_independent_optimizer']
+    assert value['no_GMM_responsibility_or_oracle_teacher']
+    assert value['no_query_truth_time_or_trajectory_labels_in_inference']
+    assert value['no_whole_source_value_bank_at_inference']
+    assert value['source_in_sample_only'] and value['old_GMM_authority_unchanged']
+    assert not value['complete_trajectory_LOTO_evaluated'] and not value['native_four_metric_result']
+    assert value['native_A'] == value['native_AT'] == value['first_outer_reads'] == 0
+    assert value['separate_source_LOTO_contract_eligible']
+    assert not any(value[name] for name in ('new_breakthrough_claim', 'resource_speedup', 'external_generalization', 'paper_success', 'main_goal_complete'))
+    log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
+    digest, _ = log.split('## 完整研究归档', 1)
+    assert digest.count('75.31%') == digest.count('6.30%') == 2
+    assert '7/9' in digest and 'Seven of nine' in digest
+    assert '不是完整轨迹LOTO' in digest and 'not complete-trajectory LOTO' in digest
+    assert '6048个非免费' in digest and '6048 nonfree' in digest
+
+
 def test_followup_likelihood_does_not_overwrite_statistical_signal_authority():
     evidence = json.loads((ROOT / 'docs/segmented_cross_ray_learning_2026-10-10_public_summary.json').read_text())
     parent = evidence['local_conditional_statistical_signal']
