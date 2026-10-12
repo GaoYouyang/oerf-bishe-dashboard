@@ -227,6 +227,21 @@ def test_retrieval_training_mean_is_not_loto_or_physical_breakthrough():
     assert capacity['adequate_groups'] == 7 and capacity['insufficient_groups'] == 2
     assert capacity['signed_capacity_is_not_predictability_or_stability']
     assert not capacity['scorer_retraining_or_physical_outer_authorized'] and not capacity['new_breakthrough_claim']
+    affine = gate['target_free_affine_followup']
+    assert affine['decision'] == 'FAIL_LOCAL_AFFINE_FEATURE_TRANSPORT_SOURCE_GATE'
+    assert affine['independent_valid'] and affine['independent_checks'] == 31
+    assert affine['training_fields'] == 909 and affine['fixed_source_patches'] == 29088
+    assert affine['source_groups'] == 9 and affine['source_in_sample_only']
+    assert not affine['query_target_enters_coefficient_choice']
+    assert affine['affine_distance_uniform_GMM_ratios'][0] < .95
+    assert affine['affine_distance_uniform_GMM_ratios'][1] < .95
+    assert affine['affine_distance_uniform_GMM_ratios'][2] > 1.05
+    assert affine['source_groups_passing_strong_control_fidelity'] == 1
+    assert affine['all_source_groups_improve_distance_and_uniform']
+    assert affine['independent_value_action_diff'] <= 1e-7 and affine['condition_max'] <= 1001.000001
+    assert affine['literal_recipe_closed'] and affine['old_GMM_authority_unchanged']
+    assert not affine['native_four_metric_result'] and not affine['new_neural_training']
+    assert not affine['physical_or_outer_expansion_authorized'] and not affine['new_breakthrough_claim']
     log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
     digest, archive = log.split('## 完整研究归档', 1)
     assert '检索均值小门合并边界' in archive and 'Consolidated retrieval-mean boundary' in archive
