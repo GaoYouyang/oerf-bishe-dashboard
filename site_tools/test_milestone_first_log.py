@@ -197,3 +197,28 @@ def test_structured_pilot_spatial_gain_is_not_a_complete_four_metric_result():
     assert pilot['full_setup_and_local_solve_nonfree']
     log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
     assert '结构化跟进合并边界' in log and 'Consolidated structured follow-up' in log
+
+
+def test_retrieval_training_mean_is_not_loto_or_physical_breakthrough():
+    evidence = json.loads((ROOT / 'docs/segmented_cross_ray_learning_2026-10-10_public_summary.json').read_text())
+    parent = evidence['local_conditional_statistical_signal']
+    gate = parent['consolidated_retrieval_mean_gate']
+    assert parent['decision'] == 'INCONCLUSIVE_PATCH_SOURCE_CONTROL'
+    assert gate['decision'] == 'FAIL_LOCAL_RETRIEVAL_SOURCE_MEAN_GATE'
+    assert gate['independent_valid'] and gate['independent_checks'] == 30
+    assert gate['training_fields'] == 909 and gate['fixed_source_patches'] == 29088
+    assert gate['parameters'] == 1312 and gate['actual_updates'] == 512
+    assert gate['source_in_sample_only'] and gate['neural_weights_fit_all_nine_source_training_groups']
+    assert gate['entire_query_trajectory_excluded_from_retrieval_bank']
+    assert gate['neural_distance_uniform_GMM_ratios'][0] < .95
+    assert gate['neural_distance_uniform_GMM_ratios'][1] < .95
+    assert gate['neural_distance_uniform_GMM_ratios'][2] > 1.05
+    assert gate['source_groups_passing_strong_control_fidelity'] == 0
+    assert gate['literal_recipe_closed'] and gate['old_GMM_authority_unchanged']
+    assert gate['shared_weights_not_independent_optimizer'] and gate['source_value_bank_and_search_nonfree']
+    assert not gate['complete_trajectory_prediction'] and not gate['native_four_metric_result']
+    assert not gate['physical_or_outer_expansion_authorized'] and not gate['new_breakthrough_claim']
+    log = (ROOT / 'docs/operator_3d_learning_log.md').read_text()
+    digest, archive = log.split('## 完整研究归档', 1)
+    assert '检索均值小门合并边界' in archive and 'Consolidated retrieval-mean boundary' in archive
+    assert '1.88757' in archive and 'retrieval-mean' not in digest
