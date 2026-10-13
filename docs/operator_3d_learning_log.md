@@ -48,6 +48,10 @@ Evidence: [public result summary](segmented_cross_ray_learning_2026-10-10_public
 
 The dated records below preserve historical decisions and scope; they are not live process status.
 
+10月13日筛选方法补充：精确代数与独立数值实现核验了一个构造反例，四项初值误差都较大的向量仍可用更少CGLS步数达到精确解。因此后续真正不同的方案仍须证明合法源拟合，但应按其实际有限精化端点与总成本筛选，不能把初值优于强基线当作普遍必要条件。旧实验判决与所有最终门保持；这个构造例子不含训练、原生BOST或全流程速度证据。通过下游迭代训练初值已有[公开文献](https://www.jmlr.org/papers/v25/23-1174.html)，本项目也已做过相关对照，仅换loss不是新机制。
+
+October13 screening note: exact algebra and an independent numerical implementation verify a constructed case where worse errors in all four seed metrics still lead to an exact solution in fewer CGLS steps. Genuinely different future methods must still demonstrate lawful source fitting, but screening should evaluate their actual finite refined output and total cost; seed superiority over a strong control is not universally necessary. All old decisions and final gates remain unchanged. This constructed case supplies no training, native BOST or whole-pipeline speed evidence. Downstream-aware initializer training has [published precedent](https://www.jmlr.org/papers/v25/23-1174.html) and has already been tested here; changing only the loss is not a new mechanism.
+
 ## 2026-10-12: 局部条件统计信息 / Local Conditional Statistical Information
 
 已打开数据族、已知五相机、十条合法源轨迹的内层完整留出：每折909训练字段，采样与标准化均排除该折101查询。局部联合统计分布只根据当前观测派生场预测密度先验，再使用原物理校正；不保留源库作推理、不把时间或轨迹标签输入预测。联合MSE为0.514084，对照校正均值1.067374、单高斯1.441230、RBF0.802170；观测MSE为0.173032，对照均值1.084737。相对均值和单高斯的联合不伤害均为1010/1010，对RBF997/1010；观测对四个控制均1010/1010不伤害。
