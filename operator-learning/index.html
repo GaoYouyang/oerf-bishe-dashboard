@@ -1901,6 +1901,11 @@
 </figure>
 <p  data-i18n-zh="先比较模型误差处理与已关闭先验路线的数学区别，再冻结一个观测/几何可用且按完整模型留出的经典对照；同时保留有限背景像素 forward 的独立物理审计，不修改旧门或扩大网络。" data-i18n-en="First distinguish model-discrepancy treatment mathematically from closed prior routes, then preregister one observation/geometry-available classical control with complete-model holdouts. Retain a separate finite-background pixel-forward audit; do not change old gates or enlarge a network.">先比较模型误差处理与已关闭先验路线的数学区别，再冻结一个观测/几何可用且按完整模型留出的经典对照；同时保留有限背景像素 forward 的独立物理审计，不修改旧门或扩大网络。</p>
 </section>
+    <section id="frozen-endpoint-posthoc-20261014" class="band">
+      <h2 data-i18n-zh="学习场信息保留到最终精化" data-i18n-en="Learned field information survives final refinement">学习场信息保留到最终精化</h2>
+      <p data-i18n-zh="事后复核：冻结学习初值+CGLS3在十条完整源留轨迹上达到1010/1010四指标参考匹配和10/10绝对轨迹门；场/梯度联合MSE比强GMM低9.25%。两条轨迹观测MSE仍高6.82%/7.28%，完整质量门失败；更便宜的Range4也全部匹配，学习加速未成立。范围是已开封、干净、已知五相机，尚无新几何或外部验证。旧FAIL/INCONCLUSIVE保留。" data-i18n-en="Posthoc review: frozen learned initialization plus CGLS3 achieves1010/1010 four-reference-error matches and10/10 absolute trajectory passes, with9.25% lower field/gradient MSE than strong GMM. Observation MSE remains6.82%/7.28% higher on two trajectories, failing full quality; cheaper Range4 also fully matches, so learned acceleration is unproven. Scope: opened clean known-five-camera data, without new geometry or external validation. Old FAIL/INCONCLUSIVE remain.">事后复核：冻结学习初值+CGLS3在十条完整源留轨迹上达到1010/1010四指标参考匹配和10/10绝对轨迹门；场/梯度联合MSE比强GMM低9.25%。两条轨迹观测MSE仍高6.82%/7.28%，完整质量门失败；更便宜的Range4也全部匹配，学习加速未成立。范围是已开封、干净、已知五相机，尚无新几何或外部验证。旧FAIL/INCONCLUSIVE保留。</p>
+      <a href="../docs/frozen_neural_endpoint_posthoc_2026-10-14_public_summary.json" data-i18n-zh="完整对照和成本范围" data-i18n-en="Complete controls and cost scope">完整对照和成本范围</a>
+    </section>
     <section id="research-summary" class="band">
       <div class="section-head">
         <div>
@@ -4656,7 +4661,7 @@
           return response.json();
         })
         .then(evidence => {
-          const graph = evidence.latest_signed_cross_ray;
+          const graph = evidence.latest_frozen_endpoint_posthoc || evidence.latest_signed_cross_ray;
           if (graph) {
             document.getElementById('liveWitnessCount').textContent = graph.queries.toLocaleString('en-US');
             document.getElementById('liveFailureCount').textContent = `${graph.absolute_strata} / ${graph.complete_strata}`;

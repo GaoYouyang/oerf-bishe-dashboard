@@ -325,6 +325,12 @@
   </header>
 
   <main id="main">
+<section class="band" id="frozen-endpoint-posthoc-20261014">
+<h2 data-i18n-zh="学习场收益保留到完整轨迹端点" data-i18n-en="Learned field gains reach complete-trajectory endpoints">学习场收益保留到完整轨迹端点</h2>
+<p data-i18n-zh="10月14日事后复核：已冻结的学习初值经过3步CGLS，在十条完整源留轨迹的1010/1010查询上全部达到四指标参考精度，10/10完整轨迹绝对门通过。场与梯度联合MSE比强GMM低9.25%，十组空间目标均改善。范围是已开封公开数据、干净虚拟观测与已知五相机；两套封存物理结果及重建汇总一致。" data-i18n-en="Oct14 posthoc review: frozen learned initialization followed by three CGLS steps matches all four reference errors on1010/1010 queries across ten complete source-held trajectories, with10/10 absolute trajectory passes. Field/gradient MSE is9.25% lower than strong GMM and every group improves spatially. Scope: opened public data, clean virtual observations and known five-camera geometry; both sealed physical paths and rebuilt summaries agree.">10月14日事后复核：已冻结的学习初值经过3步CGLS，在十条完整源留轨迹的1010/1010查询上全部达到四指标参考精度，10/10完整轨迹绝对门通过。场与梯度联合MSE比强GMM低9.25%，十组空间目标均改善。范围是已开封公开数据、干净虚拟观测与已知五相机；两套封存物理结果及重建汇总一致。</p>
+<p data-i18n-zh="仍需解决：两个轨迹观测MSE比强GMM高6.82%/7.28%，超过原5%容许线；528个查询至少一项伤害GMM。更便宜的Range4也达到1010/1010匹配，网络和它同为5A+5AT，但完整逆作用为2次对1次，因此学习省调用与速度未成立。完整质量判决为POSTHOC_ROBUST_QUALITY_FAIL，旧FAIL/INCONCLUSIVE保留。下一重点是观测稳定性与完整逆因子的成本。" data-i18n-en="Remaining gaps: observation MSE is6.82%/7.28% higher than strong GMM on two trajectories, exceeding the original5% allowance;528 queries harm GMM on at least one metric. Cheaper Range4 also matches1010/1010; both use5A+5AT, but the network needs two full inverse actions versus one. Learned call savings and speed remain unproven. Full quality verdict: POSTHOC_ROBUST_QUALITY_FAIL; old FAIL/INCONCLUSIVE remain. Next priorities are observation stability and geometry-inverse cost.">仍需解决：两个轨迹观测MSE比强GMM高6.82%/7.28%，超过原5%容许线；528个查询至少一项伤害GMM。更便宜的Range4也达到1010/1010匹配，网络和它同为5A+5AT，但完整逆作用为2次对1次，因此学习省调用与速度未成立。完整质量判决为POSTHOC_ROBUST_QUALITY_FAIL，旧FAIL/INCONCLUSIVE保留。下一重点是观测稳定性与完整逆因子的成本。</p>
+<p><a href="docs/frozen_neural_endpoint_posthoc_2026-10-14_public_summary.json" data-i18n-zh="查看完整对照与证据范围" data-i18n-en="Full comparison and evidence scope">查看完整对照与证据范围</a></p>
+</section>
 <section class="band" id="segmented-cross-ray-20261010">
 <h2 data-i18n-zh="场先验有收益，成本压缩仍有取舍" data-i18n-en="Field priors help; compression still trades accuracy for cost">场先验有收益，成本压缩仍有取舍</h2>
 <p id="frozen-neural-hybrid" data-i18n-zh="10月11日冻结网络的残差校正检验：不重训、不调参，9个已开封锚点经经典校正后9/9四指标匹配、3/3采样绝对门。场误差比无先验/均值中位降低30.51%/10.95%；但4个观测指标伤害使均值联合不伤害仅5/9，预注册价值门仍FAIL。独立18项与终态68项一致。网络6A+6AT，更便宜无先验5A+5AT且自身9/9；完整几何因子非免费，不能归因学习省调用。保留学习场收益，关闭固定接口；不是完整序列、外部、资源、论文或真实BOST成功。" data-i18n-en="Oct 11 frozen-network residual correction: no refit or tuning. The nine post-open anchors match all four reference metrics, with three sampled absolute strata passing. Median field error falls 30.51% vs no prior and 10.95% vs the fold mean. Yet four observation-only harms leave joint mean-control nonharm at 5/9: the preregistered value gate remains FAIL. Independent 18-check action and 68-check terminal audits agree. Neural queries use 6A+6AT; the cheaper no-prior control uses 5A+5AT and also matches 9/9. The full geometry factor is nonfree: no learned call savings. Retain field gains and close this interface, not a full-sequence, external, resource, paper or real-BOST success.">10月11日冻结网络的残差校正检验：不重训、不调参，9个已开封锚点经经典校正后9/9四指标匹配、3/3采样绝对门。场误差比无先验/均值中位降低30.51%/10.95%；但4个观测指标伤害使均值联合不伤害仅5/9，预注册价值门仍FAIL。独立18项与终态68项一致。网络6A+6AT，更便宜无先验5A+5AT且自身9/9；完整几何因子非免费，不能归因学习省调用。保留学习场收益，关闭固定接口；不是完整序列、外部、资源、论文或真实BOST成功。</p>
@@ -1436,7 +1442,7 @@
           return response.json();
         })
         .then((evidence) => {
-          const graph = evidence.latest_signed_cross_ray;
+          const graph = evidence.latest_frozen_endpoint_posthoc || evidence.latest_signed_cross_ray;
           if (graph) {
             document.getElementById('witnessMetric').textContent = graph.queries.toLocaleString('en-US');
             document.getElementById('failureMetric').textContent = `${graph.absolute_strata} / ${graph.complete_strata}`;

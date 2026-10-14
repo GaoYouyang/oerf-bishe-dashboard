@@ -1,6 +1,12 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
-## 阶段摘要（证据截至2026-10-12） / Milestone Digest (Evidence Through 2026-10-12)
+## 阶段摘要（证据截至2026-10-14） / Milestone Digest (Evidence Through 2026-10-14)
+
+**学习场收益保留到完整轨迹端点。** 10月14日对已封存结果进行事后数值复核：冻结学习初值+CGLS3在十条完整源留轨迹的1010/1010查询上达到四指标参考精度，10/10完整轨迹绝对门通过；场/全梯度联合MSE比强GMM低9.25%，十组空间目标均改善。两个轨迹观测MSE仍比GMM高6.82%/7.28%，超过原5%容许线；528个查询至少一项伤害GMM，完整质量判决仍为POSTHOC_ROBUST_QUALITY_FAIL。更便宜的Range4也全部匹配，网络和它同为5A+5AT，但完整逆作用为2次对1次，不能归因学习加速。范围限于已开封公开数据、干净观测与已知五相机；此次0训练/求解/真值测试读取，旧FAIL/INCONCLUSIVE保留。后续重点是观测稳定性和完整逆因子的成本。
+
+**Learned field gains survive complete-trajectory endpoints.** The Oct14 posthoc review of sealed results finds that frozen learned initialization plus CGLS3 matches all four reference errors on1010/1010 queries across ten complete source-held trajectories and passes10/10 absolute trajectory tails. Field/full-gradient MSE is9.25% lower than strong GMM, with every group improving spatially. Two observation-MSE groups remain6.82%/7.28% higher, exceeding the original5% allowance;528 queries harm GMM on at least one metric. The full verdict remains POSTHOC_ROBUST_QUALITY_FAIL. Cheaper Range4 also fully matches: both use5A+5AT, while the network requires two full inverse actions versus one. Learned acceleration is therefore unproven. Scope: opened public data, clean observations and known five-camera geometry;no new training,solver or truth/test reads. Old FAIL/INCONCLUSIVE remain. Next priorities are observation stability and geometry-inverse cost.
+
+Evidence: [complete public comparison](frozen_neural_endpoint_posthoc_2026-10-14_public_summary.json).
 
 **完整轨迹场收益已成立。** 已知五相机、干净虚拟观测下，经典条件先验在11条完全留出轨迹、每条101帧，共1111/1111查询守住四指标匹配。相对无先验与均值先验，场误差的配对中位降低27.36%和17.06%，联合不伤害均为1111/1111。它支持“观测条件化的场先验确实有信息价值”，不是只看几个好帧；目前仍属于经典统计先验，不是神经算法突破。
 
