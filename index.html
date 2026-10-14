@@ -325,6 +325,13 @@
   </header>
 
   <main id="main">
+<section class="band" id="multilevel-source-20261015">
+<h2 data-i18n-zh="实际神经学习获得完整源内空间收益" data-i18n-en="Actual neural learning retains full-source spatial value">实际神经学习获得完整源内空间收益</h2>
+<p data-i18n-zh="新有限背景位移代理下，1093参数多尺度世界图模型实际训练后，在909源帧、九条完整源轨迹、已知干净五相机上，场/全梯度联合相对MSE比同源强GMM低45.28%；909/909样本的三项空间误差均更低，四指标也全部匹配同一reference，独立复算一致。全部样本参与拟合，这是完整源内学习收益，不是留轨迹泛化；不能与旧无权重或27样本数字直接拼接。" data-i18n-en="On a new finite-background displacement proxy, the trained 1093-parameter multilevel world graph lowers joint field/full-gradient relative MSE 45.28% versus source-matched strong GMM across 909 frames, nine complete source trajectories and known clean five-camera geometry. Every frame improves all 3 spatial errors and matches all 4 reference errors; independent replay agrees. All samples participated in fitting: full-source learned value, not held-trajectory generalization or a directly comparable extension of old unweighted/27-sample totals.">新有限背景位移代理下，1093参数多尺度世界图模型实际训练后，在909源帧、九条完整源轨迹、已知干净五相机上，场/全梯度联合相对MSE比同源强GMM低45.28%；909/909样本的三项空间误差均更低，四指标也全部匹配同一reference，独立复算一致。全部样本参与拟合，这是完整源内学习收益，不是留轨迹泛化；不能与旧无权重或27样本数字直接拼接。</p>
+<p data-i18n-zh="完整判决仍FAIL：观测MSE约为GMM的10.18倍，九组观测非伤害门均未过。观测相对L2 p90为0.06215%，GMM为0.01921%，reference为0.38390%；都匹配reference不会撤销原门。模型与GMM均5A+5AT、两次完整逆，全部准备/训练非免费。固定配方关闭，不调参救援；尚无外折、变量几何、提速或真实BOST结论。" data-i18n-en="The full verdict remains FAIL: observation MSE is about 10.18 times GMM and all 9 observation-nonharm groups fail. Observation relative-L2 p 90 is 0.06215%, versus GMM 0.01921% and reference 0.38390%; reference matching does not cancel the original gate. Both model and GMM use 5A+5AT and 2 complete inverses; preparation/training are nonfree. Close the fixed recipe without tuning rescue: no outer, variable-geometry, speed or real-BOST conclusion.">完整判决仍FAIL：观测MSE约为GMM的10.18倍，九组观测非伤害门均未过。观测相对L2 p90为0.06215%，GMM为0.01921%，reference为0.38390%；都匹配reference不会撤销原门。模型与GMM均5A+5AT、两次完整逆，全部准备/训练非免费。固定配方关闭，不调参救援；尚无外折、变量几何、提速或真实BOST结论。</p>
+<p><a href="docs/multilevel_graph_source_2026-10-15_public_summary.json" data-i18n-zh="完整对照、指标与边界" data-i18n-en="All controls, metrics and boundaries">完整对照、指标与边界</a></p>
+<figure><img src="assets/multilevel_graph_source_2026-10-15.png" width="1920" height="992" style="display:block;width:100%;height:auto" alt="实际源学习的空间收益和保留的观测限制" data-i18n-alt-zh="实际源学习的空间收益和保留的观测限制" data-i18n-alt-en="Actual source-learned spatial gains with the retained observation limit" loading="lazy"></figure>
+</section>
 <section class="band" id="latent-consensus-20261015">
 <h2 data-i18n-zh="全场非线性推断出现空间收益" data-i18n-en="Global nonlinear inference reveals spatial gains">全场非线性推断出现空间收益</h2>
 <p data-i18n-zh="10月15日源内小门：九组、27个已开封样本、已知干净五相机。全场潜变量联合推断的场/全梯度联合相对MSE比强GMM低58.50%，三项空间误差逐样本都改善，27/27达到四指标参考精度，独立复算一致。先验拟合包含这些样本，因此这是源内容量线索，尚非留轨迹泛化。" data-i18n-en="Oct15 source pilot:27 already-seen samples from9 groups at one known clean five-camera setup. Global latent inference lowers joint field/full-gradient relative MSE58.50% versus strongGMM. All27 improve each spatial metric and match all four reference errors; independent reconstruction agrees. The prior fit includes these samples, so this is source-capacity evidence, not held-trajectory generalization.">10月15日源内小门：九组、27个已开封样本、已知干净五相机。全场潜变量联合推断的场/全梯度联合相对MSE比强GMM低58.50%，三项空间误差逐样本都改善，27/27达到四指标参考精度，独立复算一致。先验拟合包含这些样本，因此这是源内容量线索，尚非留轨迹泛化。</p>
@@ -1462,8 +1469,13 @@
           return response.json();
         })
         .then((evidence) => {
-          const graph = evidence.latest_frozen_endpoint_posthoc || evidence.latest_signed_cross_ray;
+          const graph = evidence.latest_multilevel_source || evidence.latest_frozen_endpoint_posthoc || evidence.latest_signed_cross_ray;
           if (graph) {
+            if (graph.source_in_sample) {
+              for (const [id, zh, en] of [['witnessMetric', '参与拟合的完整源帧', 'Frames included in source fitting'], ['failureMetric', '源内绝对精度分层', 'Source absolute-accuracy strata'], ['callMetric', '源内四指标参考匹配', 'Source four-error reference matches']]) {
+                setBilingualText(document.querySelector(`#${id} + span`), zh, en);
+              }
+            }
             document.getElementById('witnessMetric').textContent = graph.queries.toLocaleString('en-US');
             document.getElementById('failureMetric').textContent = `${graph.absolute_strata} / ${graph.complete_strata}`;
             document.getElementById('callMetric').textContent = `${graph.matched_queries} / ${graph.queries.toLocaleString('en-US')}`;

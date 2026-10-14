@@ -989,6 +989,13 @@
   </header>
 
   <main id="main">
+    <section id="multilevel-source-20261015" class="band">
+      <h2 data-i18n-zh="多尺度图学习保住了源内空间收益" data-i18n-en="Multilevel graph learning retains source spatial value">多尺度图学习保住了源内空间收益</h2>
+      <p data-i18n-zh="新有限背景归一化位移代理：1093参数模型直接训练精化后的有限端点，完整909源帧、九组、已知干净五相机，场/全梯度联合相对MSE为0.037258，强GMM为0.068086，降低45.28%；比等参数LinearV低69.53%。三项空间误差逐帧全改善，909/909四项匹配reference，独立复算一致。全部源参与拟合，不是留轨迹泛化，也不与旧无权重数字混比。" data-i18n-en="New finite-background normalized-displacement proxy: a 1093-parameter model trains the actual refined endpoint. Across 909 source frames, nine groups and known clean five-camera geometry, joint field/full-gradient relative MSE is 0.037258 versus strong GMM 0.068086, 45.28% lower and 69.53% below equal-parameter LinearV. Every frame improves all 3 spatial errors and 909/909 match all 4 reference errors, with independent replay agreement. All sources participate in fitting: not held-trajectory generalization or a mixed comparison with old unweighted totals.">新有限背景归一化位移代理：1093参数模型直接训练精化后的有限端点，完整909源帧、九组、已知干净五相机，场/全梯度联合相对MSE为0.037258，强GMM为0.068086，降低45.28%；比等参数LinearV低69.53%。三项空间误差逐帧全改善，909/909四项匹配reference，独立复算一致。全部源参与拟合，不是留轨迹泛化，也不与旧无权重数字混比。</p>
+      <p data-i18n-zh="完整门仍FAIL：观测MSE约为强GMM的10.18倍，九组观测非伤害均未过。pooled观测L2 p90为0.06215%，GMM为0.01921%，reference为0.38390%；绝对值小不放宽原门。两者均5A+5AT/两次完整逆，几何/拟合/训练非免费。固定配方关闭，不调loss、层数或精化救援；无外折、原生变量相机、资源、论文或真实BOST成功。" data-i18n-en="Full FAIL remains: observation MSE is about 10.18 times strong GMM and all 9 observation-nonharm groups fail. Pooled observation-L2 p 90 is 0.06215%, GMM 0.01921%, reference 0.38390%; small absolute errors do not relax the original gate. Both use 5A+5AT/2 complete inverses; geometry, fitting and training are nonfree. Close the fixed recipe without loss, level or refinement rescue: no outer, native variable-camera, resource, paper or real-BOST success.">完整门仍FAIL：观测MSE约为强GMM的10.18倍，九组观测非伤害均未过。pooled观测L2 p90为0.06215%，GMM为0.01921%，reference为0.38390%；绝对值小不放宽原门。两者均5A+5AT/两次完整逆，几何/拟合/训练非免费。固定配方关闭，不调loss、层数或精化救援；无外折、原生变量相机、资源、论文或真实BOST成功。</p>
+      <p><a href="../docs/multilevel_graph_source_2026-10-15_public_summary.json" data-i18n-zh="全部对照与独立范围" data-i18n-en="All controls and independence scope">全部对照与独立范围</a></p>
+      <figure><img src="../assets/multilevel_graph_source_2026-10-15.png" width="1920" height="992" style="display:block;width:100%;height:auto" alt="神经模型的空间误差更低，但观测非伤害仍未过门" data-i18n-alt-zh="神经模型的空间误差更低，但观测非伤害仍未过门" data-i18n-alt-en="Neural spatial errors improve, while observation nonharm still fails" loading="lazy"></figure>
+    </section>
     <section id="latent-consensus-20261015" class="band">
       <h2 data-i18n-zh="全场联合推断保留了更多空间信息" data-i18n-en="Global joint inference retains more spatial information">全场联合推断保留了更多空间信息</h2>
       <p data-i18n-zh="同909源先验内的27个固定样本、九组、已知干净五相机：非线性潜变量全场推断+CGLS3的联合场/梯度相对MSE为0.024675，强GMM为0.059450，降低58.50%；三项空间误差27/27改善，四指标参考匹配27/27，独立重建一致。源先验包含试验样本，这不是完整留轨迹验证。" data-i18n-en="On27 fixed samples within the909-source prior fit,nine groups,known clean five-camera geometry,nonlinear global latent inference+CGLS3 has joint field/gradient relative MSE0.024675 versus strongGMM0.059450,a58.50% reduction. Every spatial metric improves on27/27;all four reference matches pass27/27 and independent reconstruction agrees. Pilot samples are part of prior fitting,not complete-held-trajectory validation.">同909源先验内的27个固定样本、九组、已知干净五相机：非线性潜变量全场推断+CGLS3的联合场/梯度相对MSE为0.024675，强GMM为0.059450，降低58.50%；三项空间误差27/27改善，四指标参考匹配27/27，独立重建一致。源先验包含试验样本，这不是完整留轨迹验证。</p>
@@ -4678,8 +4685,16 @@
           return response.json();
         })
         .then(evidence => {
-          const graph = evidence.latest_frozen_endpoint_posthoc || evidence.latest_signed_cross_ray;
+          const graph = evidence.latest_multilevel_source || evidence.latest_frozen_endpoint_posthoc || evidence.latest_signed_cross_ray;
           if (graph) {
+            if (graph.source_in_sample) {
+              for (const [id, zh, en] of [['liveWitnessCount', '参与拟合的完整源帧', 'Frames included in source fitting'], ['liveFailureCount', '源内绝对精度分层', 'Source absolute-accuracy strata'], ['liveCallBudget', '源内四指标参考匹配', 'Source four-error reference matches']]) {
+                const label = document.querySelector(`#${id} + span`);
+                label.setAttribute('data-i18n-zh', zh);
+                label.setAttribute('data-i18n-en', en);
+                window.OERFLanguage?.translateSubtree(label);
+              }
+            }
             document.getElementById('liveWitnessCount').textContent = graph.queries.toLocaleString('en-US');
             document.getElementById('liveFailureCount').textContent = `${graph.absolute_strata} / ${graph.complete_strata}`;
             document.getElementById('liveCallBudget').textContent = `${graph.matched_queries} / ${graph.queries.toLocaleString('en-US')}`;
