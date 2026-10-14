@@ -2,6 +2,12 @@
 
 ## 阶段摘要（证据截至2026-10-14） / Milestone Digest (Evidence Through 2026-10-14)
 
+**额外视角辨认出学习场信息。** 冻结网络仍只读五相机，不重训；九条已开封源轨迹、909帧生成未作输入的额外四虚拟视角。其相对残差平方均值比强GMM低13.38%，九组均值全改善，39帧仍受伤。两路独立物理图像差2.71e-13，核验通过。它支持不同的跨视角测量监督，不是扩大旧网络；仍非新九相机部署、变量相机泛化、提速或真实BOST，旧完整质量FAIL保留。
+
+**Additional views detect learned field information.** No refit;the frozen model still reads only five cameras. Generate four extra virtual views absent from its inputs on909 frames/nine opened source trajectories. Mean relative squared residual is13.38% lower than strong GMM;every group mean improves,39 frames remain harmed. Independently reconstructed physical images agree within2.71e-13 and validation passes. This supports distinct cross-view measurement supervision,not enlargement of the old model. It is not new nine-camera deployment,variable-camera transfer,speedup or realBOST;old full-qualityFAIL remains.
+
+Evidence: [full additional-view comparison and scope](additional_view_information_2026-10-14_public_summary.json).
+
 **学习场收益保留到完整轨迹端点。** 10月14日对已封存结果进行事后数值复核：冻结学习初值+CGLS3在十条完整源留轨迹的1010/1010查询上达到四指标参考精度，10/10完整轨迹绝对门通过；场/全梯度联合MSE比强GMM低9.25%，十组空间目标均改善。两个轨迹观测MSE仍比GMM高6.82%/7.28%，超过原5%容许线；528个查询至少一项伤害GMM，完整质量判决仍为POSTHOC_ROBUST_QUALITY_FAIL。更便宜的Range4也全部匹配，网络和它同为5A+5AT，但完整逆作用为2次对1次，不能归因学习加速。范围限于已开封公开数据、干净观测与已知五相机；此次0训练/求解/真值测试读取，旧FAIL/INCONCLUSIVE保留。后续重点是观测稳定性和完整逆因子的成本。
 
 **Learned field gains survive complete-trajectory endpoints.** The Oct14 posthoc review of sealed results finds that frozen learned initialization plus CGLS3 matches all four reference errors on1010/1010 queries across ten complete source-held trajectories and passes10/10 absolute trajectory tails. Field/full-gradient MSE is9.25% lower than strong GMM, with every group improving spatially. Two observation-MSE groups remain6.82%/7.28% higher, exceeding the original5% allowance;528 queries harm GMM on at least one metric. The full verdict remains POSTHOC_ROBUST_QUALITY_FAIL. Cheaper Range4 also fully matches: both use5A+5AT, while the network requires two full inverse actions versus one. Learned acceleration is therefore unproven. Scope: opened public data, clean observations and known five-camera geometry;no new training,solver or truth/test reads. Old FAIL/INCONCLUSIVE remain. Next priorities are observation stability and geometry-inverse cost.
