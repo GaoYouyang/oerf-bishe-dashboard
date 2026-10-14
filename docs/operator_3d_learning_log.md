@@ -2,6 +2,12 @@
 
 ## 阶段摘要（证据截至2026-10-14） / Milestone Digest (Evidence Through 2026-10-14)
 
+**输出限制与训练不足已分开。** 同909合法源帧、九组、已知五相机，在固定dual范数预算内，纯伴随输出的场/全梯度联合相对MSE下界为0.149256，而强GMM为0.078392；九组均超过原1.05倍容许线，906/909逐帧被排除。两实现下界最大差3.16e-11。这改变后续投入：分别设计可观测求解与场先验作用，最终四指标、强对照、精确lift和全成本要求不变。已有网络0.523456仍远高于下界，不能把其拟合不足全部归因于输出类别。旧FAIL和已有空间收益保留，不重训旧配方。真值可见、已开封源内、有限范数类别的数值证据，不是无条件不可能性、算法突破、外部泛化或速度成果。
+
+**Output limits are distinct from fitting deficits.** On909 legal source frames,nine groups,known five-camera geometry,the field/full-gradient joint relative-MSE lower bound for the fixed norm-bounded pure-adjoint class is0.149256,versus strong GMM at0.078392. All nine group bounds exceed the existing1.05 allowance;906/909 individual frames are excluded. Independent bounds differ by at most3.16e-11. This changes future investment:distinguish observable solution and field-prior action while retaining final four metrics,strong controls,exact lift and full cost. The network at0.523456 remains far above the bound;its fitting deficit is not explained away. Keep old FAIL verdicts and spatial gains,without retrying closed recipes. Truth-visible,post-open,bounded-norm numerical evidence,not unconditional impossibility,algorithm breakthrough,external generalization or speedup.
+
+Evidence: [bound, norm budget and scope](adjoint_comparator_bound_2026-10-14_public_summary.json).
+
 **额外视角辨认出学习场信息。** 冻结网络仍只读五相机，不重训；九条已开封源轨迹、909帧生成未作输入的额外四虚拟视角。其相对残差平方均值比强GMM低13.38%，九组均值全改善，39帧仍受伤。两路独立物理图像差2.71e-13，核验通过。它支持不同的跨视角测量监督，不是扩大旧网络；仍非新九相机部署、变量相机泛化、提速或真实BOST，旧完整质量FAIL保留。
 
 **Additional views detect learned field information.** No refit;the frozen model still reads only five cameras. Generate four extra virtual views absent from its inputs on909 frames/nine opened source trajectories. Mean relative squared residual is13.38% lower than strong GMM;every group mean improves,39 frames remain harmed. Independently reconstructed physical images agree within2.71e-13 and validation passes. This supports distinct cross-view measurement supervision,not enlargement of the old model. It is not new nine-camera deployment,variable-camera transfer,speedup or realBOST;old full-qualityFAIL remains.
