@@ -1,6 +1,16 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
-## 阶段摘要（证据截至2026-10-14） / Milestone Digest (Evidence Through 2026-10-14)
+## 阶段摘要（证据截至2026-10-15） / Milestone Digest (Evidence Through 2026-10-15)
+
+**全场非线性推断出现更强的空间信息。** 固定27个已开封源样本、九组、已知干净五相机，联合潜变量/全场推断+CGLS3的场/全梯度联合相对MSE为0.024675，比强GMM的0.059450低58.50%，比单Gaussian低85.03%。三项空间误差逐样本均改善，27/27守住四项参考精度和绝对门，独立重建一致。这是909源先验拟合内的容量小门，试验样本参与过先验拟合，不是完整留轨迹验证或新的神经训练。
+
+**Global nonlinear inference reveals stronger spatial information.** On27 fixed already-seen source samples from9 groups at a known clean five-camera setup,joint latent/world inference+CGLS3 gives field/full-gradient joint relative MSE0.024675 versus strongGMM0.059450:58.50% lower,and85.03% below a single Gaussian. Every sample improves all3 spatial metrics;27/27 match all4 reference errors and pass absolute gates,with independent reconstruction agreement. This is a capacity pilot within the909-source prior fit;pilot samples participated in that fit,not complete-held-trajectory validation or new neural training.
+
+**完整失败与成本限制保留。** 观测MSE为强GMM的14.62倍，九组观测保真门全失败，完整判决仍FAIL。每查询12A+11AT、8次完整逆作用；强GMM为5A+5AT、2次逆作用，更便宜range为5A+5AT、1次逆作用。没有同精度资源或学习加速证据。固定配方关闭，不调参、加迭代或蒸馏失败输出救援。保留有价值的判断：完整三维场共同处理离散非线性模式，能利用此前局部预测器没有保住的源信息。未来学习作用仍需自己的表示、观测保证和成本定义。
+
+**Retain the complete failure and cost boundary.** Observation MSE is14.62 times strongGMM;all9 observation-fidelity group gates fail and the full verdict remains FAIL. Standalone12A+11AT with8 complete inverse actions compares to5A+5AT/2 for strongGMM and5A+5AT/1 for cheaper range. No matched-resource or learned-acceleration evidence. Close the fixed recipe without tuning,more iterations or distilling failed outputs. Retain the useful assessment:joint3D discrete nonlinear-mode inference extracts source information not retained by prior local predictors. A future learned action still needs its own representation,observation guarantee and cost definition.
+
+Evidence: [complete source-pilot controls and scope](latent_consensus_source_2026-10-15_public_summary.json), [spatial gain and remaining boundary](../assets/latent_consensus_source_2026-10-15.png).
 
 **输出限制与训练不足已分开。** 同909合法源帧、九组、已知五相机，在固定dual范数预算内，纯伴随输出的场/全梯度联合相对MSE下界为0.149256，而强GMM为0.078392；九组均超过原1.05倍容许线，906/909逐帧被排除。两实现下界最大差3.16e-11。这改变后续投入：分别设计可观测求解与场先验作用，最终四指标、强对照、精确lift和全成本要求不变。已有网络0.523456仍远高于下界，不能把其拟合不足全部归因于输出类别。旧FAIL和已有空间收益保留，不重训旧配方。真值可见、已开封源内、有限范数类别的数值证据，不是无条件不可能性、算法突破、外部泛化或速度成果。
 
