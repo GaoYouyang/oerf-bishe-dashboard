@@ -325,6 +325,13 @@
   </header>
 
   <main id="main">
+<section class="band" id="potential-loto-20261015">
+<h2 data-i18n-zh="完整留轨迹：学到的空间收益被保留" data-i18n-en="Complete held trajectories: learned spatial value retained">完整留轨迹：学到的空间收益被保留</h2>
+<p data-i18n-zh="九条已用于研究开发的公开轨迹，每折完整留出101帧，其余808帧独立拟合全部统计、对照和225参数模型；全部预测双实现封存后才评分。909/909样本匹配四项reference精度，9/9轨迹绝对尾部门通过，场/全梯度联合MSE比同折线性和均值初值低34.78%和34.83%。这是探索性LOTO，不是未开外门；范围仍为干净、已知五相机的归一化有限背景代理。" data-i18n-en="Nine public trajectories previously used in development: each fold holds all 101 frames and fits every statistic, control and 225-parameter model on the other 808 frames. Both prediction paths seal before scoring. All 909 frames match four reference errors and all 9 absolute trajectory tails pass; joint field/full-gradient MSE is 34.78% and 34.83% below fold-matched linear and mean initializers. Exploratory LOTO, not an unopened external gate; still a clean known-five-camera normalized finite-background proxy.">九条已用于研究开发的公开轨迹，每折完整留出101帧，其余808帧独立拟合全部统计、对照和225参数模型；全部预测双实现封存后才评分。909/909样本匹配四项reference精度，9/9轨迹绝对尾部门通过，场/全梯度联合MSE比同折线性和均值初值低34.78%和34.83%。这是探索性LOTO，不是未开外门；范围仍为干净、已知五相机的归一化有限背景代理。</p>
+<p data-i18n-zh="强对照边界：GMM0也全部匹配且更准，神经空间MSE仍高35.86%、观测MSE为其4.06倍。神经4A+3AT/一完整逆，另7QT/十个小Poisson；GMM0为1A+2AT/两逆，成本向量不可比较，尚无调用或速度优势。独立数值重建共享观测、规范算子/因子、权重和一次EM拟合；变量相机、噪声、未开外部与真实BOST仍待验证。" data-i18n-en="Strong-control boundary: GMM0 also fully matches and is more accurate; neural spatial MSE is 35.86% higher and observation MSE 4.06 x GMM0. Neural 4A+3AT/one full inverse plus 7QT/ten small Poisson solves versus GMM0&#x27;s 1A+2AT/two inverses are incomparable vectors, not a call or speed advantage. Independent numerical reconstruction shares observations, canonical operator/factor, weights and one EM fit. Variable cameras, noise, unopened external and realBOST remain unvalidated.">强对照边界：GMM0也全部匹配且更准，神经空间MSE仍高35.86%、观测MSE为其4.06倍。神经4A+3AT/一完整逆，另7QT/十个小Poisson；GMM0为1A+2AT/两逆，成本向量不可比较，尚无调用或速度优势。独立数值重建共享观测、规范算子/因子、权重和一次EM拟合；变量相机、噪声、未开外部与真实BOST仍待验证。</p>
+<p><a href="docs/potential_primal_loto_2026-10-15_public_summary.json" data-i18n-zh="全部对照、尾部与成本" data-i18n-en="All controls, tails and costs">全部对照、尾部与成本</a></p>
+<figure><img src="assets/potential_primal_loto_2026-10-15.png" width="1920" height="912" style="display:block;width:100%;height:auto" alt="留轨迹学习收益与更强GMM对照" data-i18n-alt-zh="留轨迹学习收益与更强GMM对照" data-i18n-alt-en="Held-trajectory learned gains with the stronger GMM control" loading="lazy"></figure>
+</section>
 <section class="band" id="multilevel-source-20261015">
 <h2 data-i18n-zh="实际神经学习获得完整源内空间收益" data-i18n-en="Actual neural learning retains full-source spatial value">实际神经学习获得完整源内空间收益</h2>
 <p data-i18n-zh="新有限背景位移代理下，1093参数多尺度世界图模型实际训练后，在909源帧、九条完整源轨迹、已知干净五相机上，场/全梯度联合相对MSE比同源强GMM低45.28%；909/909样本的三项空间误差均更低，四指标也全部匹配同一reference，独立复算一致。全部样本参与拟合，这是完整源内学习收益，不是留轨迹泛化；不能与旧无权重或27样本数字直接拼接。" data-i18n-en="On a new finite-background displacement proxy, the trained 1093-parameter multilevel world graph lowers joint field/full-gradient relative MSE 45.28% versus source-matched strong GMM across 909 frames, nine complete source trajectories and known clean five-camera geometry. Every frame improves all 3 spatial errors and matches all 4 reference errors; independent replay agrees. All samples participated in fitting: full-source learned value, not held-trajectory generalization or a directly comparable extension of old unweighted/27-sample totals.">新有限背景位移代理下，1093参数多尺度世界图模型实际训练后，在909源帧、九条完整源轨迹、已知干净五相机上，场/全梯度联合相对MSE比同源强GMM低45.28%；909/909样本的三项空间误差均更低，四指标也全部匹配同一reference，独立复算一致。全部样本参与拟合，这是完整源内学习收益，不是留轨迹泛化；不能与旧无权重或27样本数字直接拼接。</p>
@@ -1469,8 +1476,13 @@
           return response.json();
         })
         .then((evidence) => {
-          const graph = evidence.latest_multilevel_source || evidence.latest_frozen_endpoint_posthoc || evidence.latest_signed_cross_ray;
+          const graph = evidence.latest_potential_loto || evidence.latest_multilevel_source || evidence.latest_frozen_endpoint_posthoc || evidence.latest_signed_cross_ray;
           if (graph) {
+            if (graph.exploratory_complete_trajectory_loto) {
+              for (const [id, zh, en] of [['witnessMetric', '完整留轨迹预测帧', 'Complete-held-trajectory frames'], ['failureMetric', '留轨迹绝对精度分层', 'Held-trajectory absolute strata'], ['callMetric', '留轨迹四指标参考匹配', 'Held-trajectory four-error matches']]) {
+                setBilingualText(document.querySelector(`#${id} + span`), zh, en);
+              }
+            }
             if (graph.source_in_sample) {
               for (const [id, zh, en] of [['witnessMetric', '参与拟合的完整源帧', 'Frames included in source fitting'], ['failureMetric', '源内绝对精度分层', 'Source absolute-accuracy strata'], ['callMetric', '源内四指标参考匹配', 'Source four-error reference matches']]) {
                 setBilingualText(document.querySelector(`#${id} + span`), zh, en);
