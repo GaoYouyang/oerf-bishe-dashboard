@@ -313,7 +313,7 @@
       <aside class="verdict" aria-label="当前科学判决" data-i18n-aria-label-zh="当前科学判决" data-i18n-aria-label-en="Current scientific verdict">
 <b data-i18n-zh="总体判决：学习收益与有限范围资源权衡已获证据" data-i18n-en="Current verdict: learned value and a scoped resource tradeoff established">总体判决：学习收益与有限范围资源权衡已获证据</b>
 <p id="headlineVerdict" data-i18n-zh="10月11日完整复算：新rawCFD互易能量学习对自身对照3333/3333四项不差，但对同价冷CGLS只有2496/3333，837有伤害，强参考0/3333。停止这份配方；此前旧图模型的小幅一致收益保留。下一投入看不同有效纠错信息，不靠扩模型、运行数量或CPU负荷替代质量。" data-i18n-en="Oct 11 complete validation: the new raw-CFD reciprocal energy learner beats its own controls on all 3,333 queries, but is jointly nonworse than equal-action cold CGLS on only 2,496, harming 837; strong matches remain 0/3,333. Close this recipe and retain the earlier graph's modest consistent signal. Prioritize different effective correction information, not model size, run count or CPU load as substitutes for quality.">10月11日完整复算：新rawCFD互易能量学习对自身对照3333/3333四项不差，但对同价冷CGLS只有2496/3333，837有伤害，强参考0/3333。停止这份配方；此前旧图模型的小幅一致收益保留。下一投入看不同有效纠错信息，不靠扩模型、运行数量或CPU负荷替代质量。</p>
-        <p data-i18n-zh="证据仅限干净已知五相机、开发可见轨迹的归一化有限背景代理；未证变相机、噪声、未开外部门或真实BOST。模型训练非免费；合成位移不能冒充实验校准的像素位移。更快的Range0与更准的GMM0均保留，不宣称全面支配或论文成功。" data-i18n-en="Evidence is limited to a clean known-five-camera normalized finite-background proxy on development-visible trajectories; variable cameras, noise, unopened external and real BOST remain unproven. Training is nonfree; synthetic displacement is not experimentally calibrated pixel displacement. Retain faster Range0 and more accurate GMM0 without claiming universal dominance or paper success.">证据仅限干净已知五相机、开发可见轨迹的归一化有限背景代理；未证变相机、噪声、未开外部门或真实BOST。模型训练非免费；合成位移不能冒充实验校准的像素位移。更快的Range0与更准的GMM0均保留，不宣称全面支配或论文成功。</p>
+        <p data-i18n-zh="当前已验证干净已知5/7/9嵌套相机基数、开发可见轨迹的归一化有限背景代理；任意增删/位姿、噪声、未开外部门或真实BOST仍未证。资源计时只在原五相机完成。训练和统计拟合非免费；合成位移不能冒充实验校准像素位移。更便宜Range0与更准GMM0均保留，不宣称全面支配或论文成功。" data-i18n-en="Current evidence covers clean known nested 5/7/9-camera counts in a normalized finite-background proxy on development-visible trajectories; arbitrary subsets/poses, noise, unopened external and real BOST remain unproven. Resource timing covers only the original five cameras. Training/statistical fitting are nonfree; synthetic displacement is not experimentally calibrated pixel displacement. Retain cheaper Range0 and more accurate GMM0 without universal dominance or paper-success claims.">当前已验证干净已知5/7/9嵌套相机基数、开发可见轨迹的归一化有限背景代理；任意增删/位姿、噪声、未开外部门或真实BOST仍未证。资源计时只在原五相机完成。训练和统计拟合非免费；合成位移不能冒充实验校准像素位移。更便宜Range0与更准GMM0均保留，不宣称全面支配或论文成功。</p>
       </aside>
     </div>
     <div class="metrics" aria-label="当前研究状态" data-i18n-aria-label-zh="当前研究状态" data-i18n-aria-label-en="Current research status">
@@ -325,6 +325,13 @@
   </header>
 
   <main id="main">
+<section id="potential-native-20261015" class="band">
+<h2 data-i18n-zh="同一五相机模型，直接迁移到七/九相机" data-i18n-en="The same five-camera model transfers to seven/nine cameras">同一五相机模型，直接迁移到七/九相机</h2>
+<p data-i18n-zh="原225参数权重、均值/尺度和七组RMS全部不变，零神经重训、零CGLS；七/九相机各909个新查询全部匹配四项reference误差，18/18完整轨迹分层守住绝对尾部门。场/全梯度联合MSE相对同折线性初值分别低29.08%/25.29%，相对原生均值控制低27.55%/23.26%。全部双路径预测先整体封存，再独立评分；逐指标最大差7.52e-15。" data-i18n-en="All 225 weights, mean/scale and seven RMS groups remain unchanged: no neural refit or CGLS. All 909 new queries at each of seven/nine cameras match four reference errors, with all 18 complete-trajectory strata meeting absolute tail bounds. Joint field/full-gradient MSE is 29.08%/25.29% below fold-matched linear initializers and 27.55%/23.26% below native mean controls. Both full prediction paths seal before independent scoring; maximum per-metric difference is 7.52e-15.">原225参数权重、均值/尺度和七组RMS全部不变，零神经重训、零CGLS；七/九相机各909个新查询全部匹配四项reference误差，18/18完整轨迹分层守住绝对尾部门。场/全梯度联合MSE相对同折线性初值分别低29.08%/25.29%，相对原生均值控制低27.55%/23.26%。全部双路径预测先整体封存，再独立评分；逐指标最大差7.52e-15。</p>
+<p data-i18n-zh="强对照保持：更便宜的Range0也全部过门；每折仅用808合法源重新拟合的原生GMM0仍更准，学习器joint MSE为其1.90/2.87倍，观测MSE为其5.90/8.27倍。每query为1A+1AT/一逆、另7QT和14/18个小Poisson；这些动作不能标成同一成本。仅已知嵌套干净相机与已参与开发的九轨迹，不涵盖任意增删相机、任意位姿、噪声、未开外部或真实BOST；没有新的七/九相机wall/RSS结论。" data-i18n-en="Keep the strong controls: cheaper Range0 also passes. Native GMM0, refitted only on each fold's 808 legal source frames, remains more accurate; learned joint MSE is 1.90/2.87 times GMM0 and observation MSE is 5.90/8.27 times. Per query: 1A+1AT/one inverse, plus 7QT and 14/18 small Poisson solves; these are not interchangeable costs. Only known nested clean cameras and nine development-visible trajectories: not arbitrary camera addition/deletion, pose, noise, unopened external or real BOST. No new seven/nine-camera wall/RSS result.">强对照保持：更便宜的Range0也全部过门；每折仅用808合法源重新拟合的原生GMM0仍更准，学习器joint MSE为其1.90/2.87倍，观测MSE为其5.90/8.27倍。每query为1A+1AT/一逆、另7QT和14/18个小Poisson；这些动作不能标成同一成本。仅已知嵌套干净相机与已参与开发的九轨迹，不涵盖任意增删相机、任意位姿、噪声、未开外部或真实BOST；没有新的七/九相机wall/RSS结论。</p>
+<p><a href="docs/potential_native_cardinality_2026-10-15_public_summary.json" data-i18n-zh="七/九相机的全部对照、尾部和调用" data-i18n-en="All seven/nine-camera controls, tails and calls">七/九相机的全部对照、尾部和调用</a></p>
+<figure><img src="assets/potential_native_cardinality_2026-10-15.png" width="1920" height="912" style="display:block;width:100%;height:auto" alt="原五相机权重迁移到七和九相机，保留更便宜Range0与更准GMM0" data-i18n-alt-zh="原五相机权重迁移到七和九相机，保留更便宜Range0与更准GMM0" data-i18n-alt-en="Five-camera weights transfer to seven and nine cameras; retain cheaper Range0 and more accurate GMM0" loading="lazy"></figure>
+</section>
 <section class="band" id="potential-resource-20261015">
 <h2 data-i18n-zh="无需CGLS保留学习收益，并测得资源权衡" data-i18n-en="Learned value without CGLS, with a measured resource tradeoff">无需CGLS保留学习收益，并测得资源权衡</h2>
 <p data-i18n-zh="同一225参数、同权重的纯lift在909个探索性留轨迹样本上仍全部匹配四项reference精度，9/9轨迹尾部通过。三种方法各3次全新进程，包含几何重建、fresh factor、九折模型读取和全部输出：Learned0中位38.78秒，GMM0为81.39秒，耗时低52.35%；最大生命周期RSS为1.119/1.173GiB，低4.59%。全部输出封存后独立评分一致，未重训、未挑最好一次。" data-i18n-en="The same 225-parameter weights with lift only still match all 4 reference errors on 909 exploratory held-trajectory frames and pass 9/9 trajectory tails. Three fresh processes per method include geometry reconstruction, fresh factorization, nine outer-model loads and complete output: Learned0 median 38.78 s versus GMM0 81.39 s, 52.35% less wall; maximum lifetime RSS 1.119/1.173 GiB, 4.59% less. Independent scoring agrees after all outputs seal; no refit or best-run selection.">同一225参数、同权重的纯lift在909个探索性留轨迹样本上仍全部匹配四项reference精度，9/9轨迹尾部通过。三种方法各3次全新进程，包含几何重建、fresh factor、九折模型读取和全部输出：Learned0中位38.78秒，GMM0为81.39秒，耗时低52.35%；最大生命周期RSS为1.119/1.173GiB，低4.59%。全部输出封存后独立评分一致，未重训、未挑最好一次。</p>
@@ -1483,7 +1490,7 @@
           return response.json();
         })
         .then((evidence) => {
-          const graph = evidence.latest_potential_resource || evidence.latest_potential_loto || evidence.latest_multilevel_source || evidence.latest_frozen_endpoint_posthoc || evidence.latest_signed_cross_ray;
+          const graph = evidence.latest_potential_native || evidence.latest_potential_resource || evidence.latest_potential_loto || evidence.latest_multilevel_source || evidence.latest_frozen_endpoint_posthoc || evidence.latest_signed_cross_ray;
           if (graph) {
             if (graph.exploratory_complete_trajectory_loto) {
               for (const [id, zh, en] of [['witnessMetric', '完整留轨迹预测帧', 'Complete-held-trajectory frames'], ['failureMetric', '留轨迹绝对精度分层', 'Held-trajectory absolute strata'], ['callMetric', '留轨迹四指标参考匹配', 'Held-trajectory four-error matches']]) {
@@ -1492,6 +1499,11 @@
             }
             if (graph.source_in_sample) {
               for (const [id, zh, en] of [['witnessMetric', '参与拟合的完整源帧', 'Frames included in source fitting'], ['failureMetric', '源内绝对精度分层', 'Source absolute-accuracy strata'], ['callMetric', '源内四指标参考匹配', 'Source four-error reference matches']]) {
+                setBilingualText(document.querySelector(`#${id} + span`), zh, en);
+              }
+            }
+            if (graph.native_cardinality_transfer) {
+              for (const [id, zh, en] of [['witnessMetric', '新基数留轨迹查询', 'Native-count held queries'], ['failureMetric', '轨迹×相机数绝对门', 'Trajectory/count absolute strata'], ['callMetric', '新基数四指标参考匹配', 'Native-count four-error matches']]) {
                 setBilingualText(document.querySelector(`#${id} + span`), zh, en);
               }
             }

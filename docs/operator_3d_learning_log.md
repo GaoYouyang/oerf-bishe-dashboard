@@ -2,6 +2,16 @@
 
 ## 阶段摘要（证据截至2026-10-15） / Milestone Digest (Evidence Through 2026-10-15)
 
+**五相机学到的信息已直接迁移到原生七/九相机。** 同一225参数模型及原五相机统计不变，零神经重训、零CGLS，新增1818/1818查询匹配四项reference误差、18/18完整轨迹分层通过；双路径全部预测整体封存后独立评分一致。场/全梯度联合MSE比同折线性初值低29.08%/25.29%，比原生均值控制低27.55%/23.26%。独立逐指标最大差7.52e-15。五相机原证据继承，不重复计算。
+
+**Five-camera learned information transfers directly to native seven/nine cameras.** Unchanged 225-parameter weights and original five-camera statistics, no neural refit or CGLS: all 1,818 new queries match four reference errors and all 18 complete-trajectory strata pass. Both entire prediction paths seal before independent scoring. Joint field/full-gradient MSE is 29.08%/25.29% below fold-matched linear initializers and 27.55%/23.26% below native mean controls. Maximum independent per-metric difference 7.52e-15. Prior five-camera evidence is inherited, not rerun.
+
+更便宜Range0也全部过门；18次原生GMM只拟合各折808合法源，仍更准，学习joint MSE为其1.90/2.87倍、观测MSE为其5.90/8.27倍，四项逐帧harm在两种相机数均为909/909。学习每query1A+1AT/一逆、另7QT及14/18个小Poisson；离线统计拟合和几何非免费，不能只相加异构动作。这里只是已知嵌套干净相机、已development-visible九轨迹的探索性LOTO；不是任意增删/位姿/噪声、未开外部或真实BOST，无新七/九相机wall/RSS。旧科学判决和反证保持。
+
+Cheaper Range0 also passes. The 18 native GMM fits use only each fold's 808 legal source frames and remain more accurate: learned joint MSE is 1.90/2.87 times GMM0 and observation MSE 5.90/8.27 times, with 909/909 per-frame harms in all four metrics at each count. Learned query cost 1A+1AT/one inverse plus 7QT and 14/18 small Poisson solves; offline fitting and geometry are nonfree and heterogeneous actions are not interchangeable. Known nested clean cameras and nine development-visible exploratory LOTO trajectories only: no arbitrary camera addition/deletion, pose, noise, unopened external, real BOST or new seven/nine-camera wall/RSS evidence. Earlier verdicts and counterevidence remain intact.
+
+Evidence: [all native-count controls, tails and calls](potential_native_cardinality_2026-10-15_public_summary.json), [scoped transfer figure](../assets/potential_native_cardinality_2026-10-15.png). The five-camera resource milestone below retains its original scope.
+
 **学习收益无需CGLS，并有完整资源证据。** 同一225参数冻结权重、零新训练，在九条开发可见轨迹的探索性LOTO中，纯lift仍909/909四项reference匹配、9/9轨迹尾部通过。三种方法各固定3次fresh进程，含几何重建/factor/九折模型读取/909帧输出；学习器、Range0、GMM0中位完整耗时分别38.78、35.60、81.39秒，最大生命周期RSS分别1.119、1.118、1.173GiB。全部输出先封存，独立评分、实际调用和终态回读通过。相对GMM0耗时低52.35%、最大RSS低4.59%，不是只给核函数计时。文件缓存未清空，离线拟合非免费。
 
 **Learned value needs no CGLS and now has whole-process resource evidence.** Same frozen225-parameter weights, zero new training: lift only matches all4 reference errors on909/909 frames and passes9/9 trajectory tails in exploratory LOTO on nine development-visible trajectories. Three fixed fresh processes per method include geometry reconstruction/factor/nine outer-model loads/909 field outputs. Learned0,Range0,GMM0 median whole-process wall is38.78,35.60,81.39 s; maximum lifetime RSS1.119,1.118,1.173 GiB. All outputs seal before independent scoring; actual calls and terminal readback pass. Versus GMM0,52.35% less wall and4.59% less maximum RSS, not kernel-only timing. Filesystem cache was not cleared; offline fitting is nonfree.

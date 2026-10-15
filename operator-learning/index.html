@@ -989,6 +989,13 @@
   </header>
 
   <main id="main">
+<section id="potential-native-20261015" class="band">
+<h2 data-i18n-zh="同一五相机模型，直接迁移到七/九相机" data-i18n-en="The same five-camera model transfers to seven/nine cameras">同一五相机模型，直接迁移到七/九相机</h2>
+<p data-i18n-zh="原225参数权重、均值/尺度和七组RMS全部不变，零神经重训、零CGLS；七/九相机各909个新查询全部匹配四项reference误差，18/18完整轨迹分层守住绝对尾部门。场/全梯度联合MSE相对同折线性初值分别低29.08%/25.29%，相对原生均值控制低27.55%/23.26%。全部双路径预测先整体封存，再独立评分；逐指标最大差7.52e-15。" data-i18n-en="All 225 weights, mean/scale and seven RMS groups remain unchanged: no neural refit or CGLS. All 909 new queries at each of seven/nine cameras match four reference errors, with all 18 complete-trajectory strata meeting absolute tail bounds. Joint field/full-gradient MSE is 29.08%/25.29% below fold-matched linear initializers and 27.55%/23.26% below native mean controls. Both full prediction paths seal before independent scoring; maximum per-metric difference is 7.52e-15.">原225参数权重、均值/尺度和七组RMS全部不变，零神经重训、零CGLS；七/九相机各909个新查询全部匹配四项reference误差，18/18完整轨迹分层守住绝对尾部门。场/全梯度联合MSE相对同折线性初值分别低29.08%/25.29%，相对原生均值控制低27.55%/23.26%。全部双路径预测先整体封存，再独立评分；逐指标最大差7.52e-15。</p>
+<p data-i18n-zh="强对照保持：更便宜的Range0也全部过门；每折仅用808合法源重新拟合的原生GMM0仍更准，学习器joint MSE为其1.90/2.87倍，观测MSE为其5.90/8.27倍。每query为1A+1AT/一逆、另7QT和14/18个小Poisson；这些动作不能标成同一成本。仅已知嵌套干净相机与已参与开发的九轨迹，不涵盖任意增删相机、任意位姿、噪声、未开外部或真实BOST；没有新的七/九相机wall/RSS结论。" data-i18n-en="Keep the strong controls: cheaper Range0 also passes. Native GMM0, refitted only on each fold's 808 legal source frames, remains more accurate; learned joint MSE is 1.90/2.87 times GMM0 and observation MSE is 5.90/8.27 times. Per query: 1A+1AT/one inverse, plus 7QT and 14/18 small Poisson solves; these are not interchangeable costs. Only known nested clean cameras and nine development-visible trajectories: not arbitrary camera addition/deletion, pose, noise, unopened external or real BOST. No new seven/nine-camera wall/RSS result.">强对照保持：更便宜的Range0也全部过门；每折仅用808合法源重新拟合的原生GMM0仍更准，学习器joint MSE为其1.90/2.87倍，观测MSE为其5.90/8.27倍。每query为1A+1AT/一逆、另7QT和14/18个小Poisson；这些动作不能标成同一成本。仅已知嵌套干净相机与已参与开发的九轨迹，不涵盖任意增删相机、任意位姿、噪声、未开外部或真实BOST；没有新的七/九相机wall/RSS结论。</p>
+<p><a href="../docs/potential_native_cardinality_2026-10-15_public_summary.json" data-i18n-zh="七/九相机的全部对照、尾部和调用" data-i18n-en="All seven/nine-camera controls, tails and calls">七/九相机的全部对照、尾部和调用</a></p>
+<figure><img src="../assets/potential_native_cardinality_2026-10-15.png" width="1920" height="912" style="display:block;width:100%;height:auto" alt="原五相机权重迁移到七和九相机，保留更便宜Range0与更准GMM0" data-i18n-alt-zh="原五相机权重迁移到七和九相机，保留更便宜Range0与更准GMM0" data-i18n-alt-en="Five-camera weights transfer to seven and nine cameras; retain cheaper Range0 and more accurate GMM0" loading="lazy"></figure>
+</section>
     <section id="potential-resource-20261015" class="band">
       <h2 data-i18n-zh="纯lift保住学习收益，完整资源比较通过" data-i18n-en="Lift-only retains learned value; whole-process resource comparison passes">纯lift保住学习收益，完整资源比较通过</h2>
       <p data-i18n-zh="无需CGLS精化，同一冻结225参数模型909/909匹配四项reference、9/9轨迹尾部通过。隔离存储竞争后，三种方法各3次fresh进程，重建几何与factor、读取九折模型并输出909帧；学习器/GMM0中位完整耗时38.78/81.39秒，最大RSS为1.119/1.173GiB，分别低52.35%/4.59%。全部九次输出封存后独立评分，逐帧指标与旧封存一致。" data-i18n-en="No CGLS refinement: the same frozen 225-parameter model matches all 4 reference errors on 909/909 frames and passes 9/9 trajectory tails. With storage competition isolated, each of three methods runs in three fresh processes, rebuilding geometry/factor, loading nine outer models and outputting 909 frames. Learned/GMM0 median whole-process wall is 38.78/81.39 s and maximum RSS 1.119/1.173 GiB, reductions of 52.35%/4.59%. All nine outputs seal before independent scoring; per-frame metrics agree with prior sealed results.">无需CGLS精化，同一冻结225参数模型909/909匹配四项reference、9/9轨迹尾部通过。隔离存储竞争后，三种方法各3次fresh进程，重建几何与factor、读取九折模型并输出909帧；学习器/GMM0中位完整耗时38.78/81.39秒，最大RSS为1.119/1.173GiB，分别低52.35%/4.59%。全部九次输出封存后独立评分，逐帧指标与旧封存一致。</p>
@@ -4699,7 +4706,7 @@
           return response.json();
         })
         .then(evidence => {
-          const graph = evidence.latest_potential_resource || evidence.latest_potential_loto || evidence.latest_multilevel_source || evidence.latest_frozen_endpoint_posthoc || evidence.latest_signed_cross_ray;
+          const graph = evidence.latest_potential_native || evidence.latest_potential_resource || evidence.latest_potential_loto || evidence.latest_multilevel_source || evidence.latest_frozen_endpoint_posthoc || evidence.latest_signed_cross_ray;
           if (graph) {
             if (graph.exploratory_complete_trajectory_loto) {
               for (const [id, zh, en] of [['liveWitnessCount', '完整留轨迹预测帧', 'Complete-held-trajectory frames'], ['liveFailureCount', '留轨迹绝对精度分层', 'Held-trajectory absolute strata'], ['liveCallBudget', '留轨迹四指标参考匹配', 'Held-trajectory four-error matches']]) {
@@ -4711,6 +4718,14 @@
             }
             if (graph.source_in_sample) {
               for (const [id, zh, en] of [['liveWitnessCount', '参与拟合的完整源帧', 'Frames included in source fitting'], ['liveFailureCount', '源内绝对精度分层', 'Source absolute-accuracy strata'], ['liveCallBudget', '源内四指标参考匹配', 'Source four-error reference matches']]) {
+                const label = document.querySelector(`#${id} + span`);
+                label.setAttribute('data-i18n-zh', zh);
+                label.setAttribute('data-i18n-en', en);
+                window.OERFLanguage?.translateSubtree(label);
+              }
+            }
+            if (graph.native_cardinality_transfer) {
+              for (const [id, zh, en] of [['liveWitnessCount', '新基数留轨迹查询', 'Native-count held queries'], ['liveFailureCount', '轨迹×相机数绝对门', 'Trajectory/count absolute strata'], ['liveCallBudget', '新基数四指标参考匹配', 'Native-count four-error matches']]) {
                 const label = document.querySelector(`#${id} + span`);
                 label.setAttribute('data-i18n-zh', zh);
                 label.setAttribute('data-i18n-en', en);
