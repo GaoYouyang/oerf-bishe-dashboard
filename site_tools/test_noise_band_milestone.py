@@ -29,7 +29,11 @@ def test_counterevidence_not_promoted_or_suppressed():
     assert row["simulator_reported_variance_is_new_side_information"]
     assert row["old_noise_failure_unchanged"] and not row["real_noise_calibration_established"]
     assert row["inherited_independent_physical_fields_disclosed"]
-    assert not row["fresh_fused_inference_measured"]
+    assert not row["initial_action_stage_fresh_fused_inference_measured"]
+    assert row["fresh_fused_inference_measured"]
+    resource = json.loads((ROOT / "docs" / row["later_shared_spectrum_resource_summary"]).read_text())
+    assert resource["actual_fresh_processes"] == 25 and resource["independent_all25_pass"]
+    assert resource["statistics_by_method"]["RawGMM0"]["wall_seconds"]["median"] < resource["statistics_by_method"]["BandNN"]["wall_seconds"]["median"]
     assert not any(row["claims"].values())
     assert row["joint"][7]<row["joint"][0]<row["joint"][1]
     assert abs(row["joint"][0]-row["joint"][3])<1e-6

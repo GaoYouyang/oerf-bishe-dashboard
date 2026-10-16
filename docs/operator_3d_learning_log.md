@@ -1,5 +1,22 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-16 含噪七/九相机迁移 / Noisy Native-Cardinality Transfer
+
+10月16日独立确认：沿用五相机训练的225参数权重与全部统计，七/九相机各909帧全部达到场、全梯度、内部梯度和观测四指标reference匹配，18/18完整轨迹分层通过绝对尾部门。场/全梯度联合相对MSE比原含噪学习器分别低28.94%/29.63%；零新训练、零CGLS。四个完整预测群体先封存再评分，双实现逐指标最大差2.21e-12。
+
+Oct 16 independent confirmation: reuse the five-camera-trained 225 weights and all statistics. All 909 frames at each of seven/nine cameras match the field, full-gradient, interior-gradient and observation reference errors; all 18 complete-trajectory strata pass absolute tails. Joint relative field/full-gradient MSE falls 28.94%/29.63% versus the original noisy learner, with no new training or CGLS. All four prediction populations seal before scoring; maximum independent per-metric difference is 2.21e-12.
+
+相同滤波的原生均值控制相比，空间联合MSE分别低19.30%/11.85%，但强对照并非全被击败：七相机同滤波GMM0仍更准；九相机学习器的空间联合MSE比它低5.75%，匹配909/909而GMM0为907/909。更便宜的同滤波Range也全部匹配；仅用含噪RMS的同价plug-in近乎相同，不事后晋升为primary，也不把已知噪声方差说成必需优势。
+
+Joint spatial MSE is 19.30%/11.85% below the same-filter native mean control. Strong controls are not universally beaten: same-filter GMM0 remains more accurate at seven cameras; at nine cameras the learner has 5.75% lower joint spatial MSE and matches 909/909 versus GMM0 at 907/909. Cheaper same-filter Range also fully matches. The equal-cost noisy-RMS plug-in is nearly identical; it is not promoted posthoc, nor is known variance claimed as an essential advantage.
+
+范围限定：九条轨迹已参与开发，相机为已知嵌套5/7/9集合；1% Gaussian模拟噪声的报告方差属于条件输入，位移是归一化有限背景代理，不是真实实验像素。每query逻辑账为1A+1AT、一精确逆作用，另7QT、14/18个小Poisson及3次全谱乘法；完整谱与几何准备非免费。已有五相机fresh计时仍显示raw GMM更快，不能外推七/九相机提速。尚未证明任意增删/位姿、未开外部、曲线射线或真实BOST。
+
+Scope: nine development-visible trajectories and known nested 5/7/9-camera sets. Reported variance for 1% simulated Gaussian noise is conditional input; displacement is a normalized finite-background proxy, not real experimental pixels. Logical per-query cost is 1A+1AT and one exact inverse action, plus 7QT, 14/18 small Poisson solves and three full-spectrum products. Spectrum and geometry setup are nonfree. Existing five-camera fresh timings still show raw GMM is faster and cannot imply seven/nine-camera speed. Arbitrary subsets/poses, unopened external data, curved rays and real BOST remain unproven.
+
+[全部对照与范围 / Full controls and scope](noise_band_native_cardinality_2026-10-16_public_summary.json).
+
+
 ## 2026-10-16 含噪阶段进展 / Scoped Noisy Reconstruction Progress
 
 同一九条完整留出轨迹、909帧、已知五相机和1% Gaussian模拟噪声，原225参数学习prior不变，新增几何分块噪声知情数据作用。场/全梯度联合MSE比原含噪模型低18.14%，四项reference匹配从894/909恢复到909/909，九条绝对尾部门全过。双路径新校正和物理评分独立一致，逐指标最大差2.66e-13；零新训练、零CGLS。
