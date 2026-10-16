@@ -1,5 +1,26 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-16 含噪阶段进展 / Scoped Noisy Reconstruction Progress
+
+同一九条完整留出轨迹、909帧、已知五相机和1% Gaussian模拟噪声，原225参数学习prior不变，新增几何分块噪声知情数据作用。场/全梯度联合MSE比原含噪模型低18.14%，四项reference匹配从894/909恢复到909/909，九条绝对尾部门全过。双路径新校正和物理评分独立一致，逐指标最大差2.66e-13；零新训练、零CGLS。
+
+Same nine complete excluded trajectories, 909 frames, known five cameras and 1% simulated Gaussian noise. Keep the original 225-parameter learned prior and add a geometry-banded noise-informed data action. Joint field/full-gradient MSE falls 18.14% versus the original noisy model; four-error reference matches recover from 894/909 to 909/909, with all nine absolute tails passing. Independent new corrections and physical scores agree within 2.66e-13 per metric; no refitting or CGLS.
+
+收益不只来自一般收缩：相对全局JS控制低18.14%，相同滤波的线性/均值控制低30.72%/30.75%，九组非伤害均通过。但同滤波GMM0仍更准：学习joint MSE高22.49%；更便宜Range0也全匹配。观测MSE比未滤波学习器略高，仍低于原reference，不宣称四项误差都改善。
+
+The benefit is not generic shrinkage alone: joint MSE is 18.14% below global JS and 30.72%/30.75% below same-filter linear/mean controls, with all nine group nonharm gates passing. Same-filter GMM0 remains more accurate: learned joint MSE is 22.49% higher. Cheaper Range0 also fully matches. Observation MSE rises versus the unfiltered learner but remains below the original reference; not every error improves.
+
+范围要说清：primary新增使用模拟器报告方差，旧失败噪声合同没有这个输入；这是条件标定假设，不是真实实验噪声已知。仅从含噪观测RMS估计方差的同算量plug-in控制也909/909匹配、误差几乎相同，但不事后晋升为primary。旧负结论保持，九条轨迹已参与开发，不是未开外门。
+
+Scope matters: the primary newly receives simulator-reported variance, which the old failed noise contract withheld. This is a conditional calibration assumption, not known real experimental noise. An equal-compute plug-in using only noisy-observation RMS also matches 909/909 with nearly identical error, but is not promoted posthoc to primary. Old negative verdicts remain; these trajectories informed development, not an unopened external gate.
+
+本轮明示继承原折内模型的已独立封存场，独立重建新增物理作用；没有重训，也未实测完整fused部署。稠密谱缓存、两次谱乘法、几何与统计拟合非免费。下一步核验从观测到输出的直接fused推理及完整资源成本；没有新提速、七/九相机噪声、任意位姿、曲线射线或真实BOST结论。
+
+This audit explicitly inherits independently sealed own-fold model fields and independently reconstructs the new physical action. No refitting or fresh full fused deployment was measured. Dense spectral cache, two spectral products, geometry and statistical fitting are nonfree. Next verify direct observation-to-output fused inference and complete resource cost. No new speed, seven/nine-camera noise, arbitrary-pose, curved-ray or real-BOST claim.
+
+[完整对照与范围 / Full controls and scope](noise_informed_band_2026-10-16_public_summary.json).
+
+
 ## 阶段摘要（证据截至2026-10-15） / Milestone Digest (Evidence Through 2026-10-15)
 
 **五相机学到的信息已直接迁移到原生七/九相机。** 同一225参数模型及原五相机统计不变，零神经重训、零CGLS，新增1818/1818查询匹配四项reference误差、18/18完整轨迹分层通过；双路径全部预测整体封存后独立评分一致。场/全梯度联合MSE比同折线性初值低29.08%/25.29%，比原生均值控制低27.55%/23.26%。独立逐指标最大差7.52e-15。五相机原证据继承，不重复计算。
