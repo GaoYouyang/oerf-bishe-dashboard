@@ -1,5 +1,25 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-17 | 同一五相机小模型：完整迁移到七／九相机 / Five-camera models transfer to seven/nine cameras across all nine folds
+
+10月17日：每个完整外折的五相机225参数动态头及其神经校准保持冻结，直接迁移至同一已知机位集合的七／九相机，零神经重训。两个新基数各909/909查询、各9/9完整轨迹通过四指标参考匹配与绝对尾部门；合并五相机共2727个相机数×帧查询、27/27分层。仍是同九条909帧的开发集LOTO，早先全源pilot参与选型，不是新增1818个物理帧或未开外部验证。
+
+Oct 17: each complete outer fold keeps its five-camera 225-parameter dynamic head and neural calibration frozen for seven/nine cameras from the same known nested layout, with no neural retraining. Each new count passes 909/909 four-error reference matches and 9/9 complete-trajectory absolute tails; including five cameras gives 2,727 count/frame queries and 27/27 strata. These are still the same 909 development frames in nine trajectories; an earlier all-source pilot influenced selection, not 1,818 new physical frames or unopened external evidence.
+
+七／九相机联合场-全梯度MSE为0.013961/0.000866，比各自源内最优两幅值固定模板低21.71%/25.54%，每条轨迹均守住原形状增量及四MSE非伤害门。每折经典mean/GMM/static只用另外八条轨迹的808帧拟合，不借用全部909帧的拟合结果；外折模型调度是验证流程，不是部署时读取轨迹ID。225是动态神经头参数数目，源均值场、RMS和几何缓存也有成本。
+
+Seven/nine-camera joint field/full-gradient MSE is 0.013961/0.000866, 21.71%/25.54% below the respective source-optimal two-amplitude static class. Every trajectory retains the original conditional-value and four-MSE nonharm gates. Each classical mean/GMM/static control fits only the other 808 source frames, not an all-909-frame fit. Fold-model dispatch belongs to evaluation, not a trajectory-ID input at deployment. The 225 parameters belong to the dynamic neural head; source mean fields, RMS and geometry caches are nonfree.
+
+GMM0在三个基数都更准，Range0也全部参考匹配，强对照没有删除。五相机909查询的fresh整进程中位耗时：NN13.98秒、BetaGMM18.21秒、Range8.00秒；NN较GMM快却更不准确，也没有通过逐次RSS非伤害门。七／九相机尚无fresh资源结论。0次CGLS不等于免求解：NN仍用一完整normal逆、7次QT及每相机2个小求解，完整normal构建和训练/统计拟合也非免费；当前不能称整体提速或实际误差等价。
+
+GMM0 is more accurate at all three counts, and Range0 also passes every reference match; strong controls remain visible. Five-camera fresh whole-process medians for 909 queries are 13.98 s neural, 18.21 s beta GMM and 8.00 s Range: neural is faster than GMM but less accurate, and it misses paired RSS nonharm. No seven/nine-camera fresh resource result exists. Zero CGLS does not mean zero solve: neural still needs one full normal inverse, seven transpose splats and two small solves per camera; normal construction, source fitting and training are nonfree. No overall speedup or actual-error-equivalence claim.
+
+双实现独立重建物理作用与评分后，又把本次全部3636个保留神经场换回原CFD尺度，用独立差分重算，四指标最大差3.16e-16。这只是保留输出的单位换算核验，不是额外执行一次原尺度输入预测；历史尺度不进入模型，部署幅值由观测自身计算，密度常数项仍属不可辨识规范。只验证干净、已知理想针孔与弱折射代理；实际相机乱序、噪声/标定扰动、未开外部、曲线光线、真实BOST和论文成功仍未证明。
+
+After dual numerical reconstruction of physical actions and scores, all 3,636 retained neural fields in this native-count study were converted back to the original CFD scale and checked with direct finite differences; the maximum four-error difference is 3.16e-16. This is a unit-conversion audit of retained outputs, not an extra native prediction from raw-scale input. Historical scaling is not a model input; deployment amplitude is observation-derived, and the constant-density gauge remains unidentified. Scope is clean known ideal pinhole and first-order weak refraction; native camera reordering, noise/calibration perturbations, unopened external data, curved rays, real BOST and paper success remain unproven.
+
+[全部聚合证据 / Complete aggregate evidence](pinhole_native_loto_2026-10-17_public_summary.json).
+
 ## 2026-10-17 | 透视五相机：小模型的完整九折条件增量 / Pinhole five-camera baseline: conditional value across nine complete folds
 
 10月17日完成探索性完整九折：909帧全部达到场、全梯度、内部梯度和观测四项Reference128匹配，9/9完整轨迹通过绝对尾部门。每折只用其余八条轨迹的808帧从零拟合225参数小模型、线性消融、全部统计与强对照；留出预测双封存后才评分。此前全源pilot参与过选型，因此这是开发集LOTO，不是无偏模型选择或未开外部验证。
