@@ -1,5 +1,25 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-16 | 透视相机物理接口与完整序列参考已打通 / Pinhole physical interface and complete-sequence reference established
+
+10月16日完成一个物理接口转向：在同一组近距离虚拟相机和同一909帧上，即使保留精确像素方向Jacobian，平行路径与透视路径的二维位移仍有显著差异。5/7/9相机的相对差异中位数为69.67%/69.46%/67.88%，全部2727个查询均超过结果前固定的0.1%模型比较 allowance。这是两种虚拟前向模型的差异，不是真实相机误差，也不是重建误差。
+
+Oct 16 physical-interface turning point: for the same close-range virtual cameras and 909 fields, parallel and perspective paths differ materially even when the exact pixel-direction Jacobian is retained. Median relative displacement differences are 69.67%/69.46%/67.88% at 5/7/9 cameras; all 2,727 queries exceed the preregistered 0.1% model-comparison allowance. These compare two virtual forward models, not measured-camera or reconstruction errors.
+
+随后单独冻结透视模型的经典参考门：不训练网络，保持原样Zero-CGLS128及四项绝对阈值。5/7/9相机各909帧、27/27完整轨迹分层全部通过场、全梯度、内部梯度和观测尾部门；双实现预测先整体封存，再分别物理重放与评分。逐指标最大差1.55e-15，保留全部六个经典对照；短程对照未取得四项reference匹配，不把参考自匹配叫作学习收益。
+
+A separate result-before gate then tests unchanged zero-start CGLS128, with no neural training and unchanged four absolute thresholds. All 909 frames at each of 5/7/9 cameras and all 27/27 complete-trajectory strata meet field, full-gradient, interior-gradient and observation tails. Both complete predictions seal before separate physical replay and scoring; maximum per-metric difference is 1.55e-15. All six classical arms remain; short controls obtain no four-error reference matches, and reference self-matching is not learned value.
+
+这改变下一步投入：先在已验证的透视forward上建立几何匹配的强统计对照，再冻结适合该接口的学习表示，不能直接沿用旧平行光学习器或为它重训包装成功。此前小模型的留轨迹、变相机和含噪收益仍属于明确的平行光代理；完整成本折中与所有反证保留。
+
+This changes the next investment: establish geometry-native strong statistical controls on the qualified pinhole forward, then preregister a representation appropriate to that interface. Do not simply reuse or retrain the old parallel-ray learner as a claimed success. Earlier small-model trajectory, camera-count and noisy gains remain scoped to their explicit parallel-ray proxy, with all complete-cost tradeoffs and counterevidence retained.
+
+范围：公开开发可见轨迹、已知嵌套相机、干净合成位移、理想针孔与弱折射一阶模型；虚拟焦距1000像素、折射系数1e-4/存储密度单位，不推定实测单位。独立姿态与显式图像读出方向保持原符号，原接口中止完整保留。不是有限孔径、原生曲线光线、未开外部门或真实BOST验证；没有新的学习精度、调用减少、fresh wall/RSS、算法突破或论文成功结论。
+
+Scope: public development-visible trajectories, known nested cameras, clean synthetic displacement, ideal pinhole and first-order weak refraction. Focal length is a virtual 1,000 pixels and refractivity is 1e-4 per stored-density unit, not inferred experimental units. Proper pose and explicit image readout preserve signs; the original interface abort remains intact. No finite-aperture, native curved-ray, unopened-external or real-BOST validation; no new learned accuracy, call reduction, fresh wall/RSS, algorithm-breakthrough or paper-success claim.
+
+[完整聚合证据 / Complete aggregate evidence](pinhole_forward_reference_2026-10-16_public_summary.json).
+
 ## 2026-10-16 含噪七/九相机迁移 / Noisy Native-Cardinality Transfer
 
 10月16日独立确认：沿用五相机训练的225参数权重与全部统计，七/九相机各909帧全部达到场、全梯度、内部梯度和观测四指标reference匹配，18/18完整轨迹分层通过绝对尾部门。场/全梯度联合相对MSE比原含噪学习器分别低28.94%/29.63%；零新训练、零CGLS。四个完整预测群体先封存再评分，双实现逐指标最大差2.21e-12。
