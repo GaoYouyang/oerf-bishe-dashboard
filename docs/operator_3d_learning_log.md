@@ -14,9 +14,11 @@ The benefit is not generic shrinkage alone: joint MSE is 18.14% below global JS 
 
 Scope matters: the primary newly receives simulator-reported variance, which the old failed noise contract withheld. This is a conditional calibration assumption, not known real experimental noise. An equal-compute plug-in using only noisy-observation RMS also matches 909/909 with nearly identical error, but is not promoted posthoc to primary. Old negative verdicts remain; these trajectories informed development, not an unopened external gate.
 
-本轮明示继承原折内模型的已独立封存场，独立重建新增物理作用；没有重训，也未实测完整fused部署。稠密谱缓存、两次谱乘法、几何与统计拟合非免费。下一步核验从观测到输出的直接fused推理及完整资源成本；没有新提速、七/九相机噪声、任意位姿、曲线射线或真实BOST结论。
+后续已独立验证从原始观测到三维场的完整部署；共用一次全局谱分解、零重训，原909/909匹配保持。五方法各五次fresh进程均包含几何准备，统一16帧批处理与10线程预算：学习方法中位52.05秒、1.44GiB；同滤波GMM0为58.52秒、1.93GiB但更准；无滤波GMM0仅12.98秒、1.66GiB且也全部匹配。因此这是精度与成本折中，不是全面提速或与GMM实际误差等价。谱、几何及历史源拟合非免费；无七/九相机噪声、任意位姿、未开外部或真实BOST结论。
 
-This audit explicitly inherits independently sealed own-fold model fields and independently reconstructs the new physical action. No refitting or fresh full fused deployment was measured. Dense spectral cache, two spectral products, geometry and statistical fitting are nonfree. Next verify direct observation-to-output fused inference and complete resource cost. No new speed, seven/nine-camera noise, arbitrary-pose, curved-ray or real-BOST claim.
+Later independent replay verifies the complete raw-observation-to-field deployment. One shared full spectrum and no refitting preserve909/909 matches. Five fresh processes per method include geometry, with equal batch16 and10-thread budgets: learned median52.05s/1.44GiB; same-filter GMM0 is58.52s/1.93GiB but more accurate; raw GMM0 is only12.98s/1.66GiB and also fully matches. This is an accuracy-cost tradeoff, not a global speedup or equal actual GMM error. Spectrum, geometry and historical source fitting are nonfree. No seven/nine-camera noise, arbitrary-pose, unopened-external or real-BOST claim.
+
+[完整部署与资源重复 / Direct deployment and resource repeats](noise_band_resource_2026-10-16_public_summary.json).
 
 [完整对照与范围 / Full controls and scope](noise_informed_band_2026-10-16_public_summary.json).
 
