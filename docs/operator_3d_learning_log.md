@@ -16,6 +16,12 @@ Scope: nine development-visible trajectories and known nested 5/7/9-camera sets.
 
 [全部对照与范围 / Full controls and scope](noise_band_native_cardinality_2026-10-16_public_summary.json).
 
+完整成本现已核验：7/9相机各909帧，五方法各五次fresh进程全部完成，包含几何准备和所需全谱/Cholesky。学习方法中位128.68/264.10秒、2.65/4.33GiB；全部匹配的同滤波Range为123.84/258.10秒，同滤波GMM为136.82/276.12秒。学习方法相对Range空间联合MSE低32.60%/17.65%，但wall高3.91%/2.33%。没有组合通过冻结的稳定5%提速与逐次RSS非伤害联合门；这仍是精度/成本折中，不是全面加速。主要时间在几何/全谱准备，不能靠加大小网络或租GPU掩盖；旧五相机结果不重跑、不合并。
+
+Complete cost is now verified: 909 frames at each of seven/nine cameras, five fresh processes for each of five methods, including geometry and the required full spectrum/Cholesky. Learned medians are 128.68/264.10 s and 2.65/4.33 GiB; fully matched same-filter Range takes 123.84/258.10 s and same-filter GMM 136.82/276.12 s. Versus Range, learned joint spatial MSE is 32.60%/17.65% lower but wall is 3.91%/2.33% higher. No pair passes the frozen joint stable 5% wall reduction and every-repeat RSS nonharm gate. This remains an accuracy/cost tradeoff, not global acceleration. Geometry/full-spectrum setup dominates; a larger head or GPU rental is not a demonstrated remedy. Earlier five-camera outcomes are not rerun or pooled.
+
+[完整成本 / Complete resource evidence](noise_band_native_resource_2026-10-16_public_summary.json).
+
 
 ## 2026-10-16 含噪阶段进展 / Scoped Noisy Reconstruction Progress
 
