@@ -18,9 +18,9 @@ def payload():
 
 def test_actual_camera_removal_not_new_physical_population():
     p = payload()
-    assert p["physical_camera_ids"] == [0, 1, 3, 4, 5, 6, 7, 8]
-    assert p["physical_camera_count"] == 8 and p["dropped_camera_id"] == 2
-    assert p["actual_removal_not_padding"] and p["known_hardware_layout"]
+    assert p["active_camera_ids"] == [0, 1, 3, 4, 5, 6, 7, 8]
+    assert p["active_camera_count"] == 8 and p["dropped_camera_id"] == 2
+    assert p["actual_removal_not_padding"] and p["known_virtual_layout"]
     assert (
         p["unique_development_frames"],
         p["complete_held_blocks"],

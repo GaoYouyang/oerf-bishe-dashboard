@@ -2,9 +2,9 @@
 
 ## 2026-10-17 | 实际删相机的完整留出验证 / Complete held-block validation after actual camera removal
 
-真正删除已知九机硬件的Camera2，非连续ID八台相机，不补零；原五相机各折225头与神经统计完全冻结，零重训。各折经典对照只用另外808源帧。909/909四指标Reference128匹配、9/9完整101帧留出块通过原绝对尾部与条件价值门；联合场／全梯度MSE0.005362，比源内最优两幅值固定模板低22.46%，逐块低9.38%至38.09%。
+真正删除已知九视角虚拟配置的Camera2，非连续ID八台相机，不补零；原五相机各折225头与神经统计完全冻结，零重训。各折经典对照只用另外808源帧。909/909四指标Reference128匹配、9/9完整101帧留出块通过原绝对尾部与条件价值门；联合场／全梯度MSE0.005362，比源内最优两幅值固定模板低22.46%，逐块低9.38%至38.09%。
 
-Actually remove Camera2 from known nine-camera hardware, retaining eight noncontiguous IDs without padding. Original five-camera fold-specific225 heads and neural statistics stay frozen, with no retraining. Each classical control fits only the other808 source frames. All909/909 four-error Reference128 matches and9/9 complete101-frame held blocks pass original absolute tails and conditional-value gates. Joint field/full-gradient MSE0.005362 is22.46% below the source-optimal two-amplitude static class, with9.38%-38.09% reductions per block.
+Actually remove Camera2 from known nine-view virtual camera layout, retaining eight noncontiguous IDs without padding. Original five-camera fold-specific225 heads and neural statistics stay frozen, with no retraining. Each classical control fits only the other808 source frames. All909/909 four-error Reference128 matches and9/9 complete101-frame held blocks pass original absolute tails and conditional-value gates. Joint field/full-gradient MSE0.005362 is22.46% below the source-optimal two-amplitude static class, with9.38%-38.09% reductions per block.
 
 强对照不删除：Gamma/Beta GMM0误差0.002255/0.002272，仍更准；Range0更便宜且也全部匹配。神经方法仍用完整normal逆、7QT和16个相机小求解。仅为同909个已开封开发帧上的一个预先固定删除配置；原全源pilot选型暴露、归一化密度规范和弱折射针孔代理范围保持。没有该配置的fresh wall/RSS、任意子集、未开外部或真实BOST结论，旧负／资源反证原样保留。
 
