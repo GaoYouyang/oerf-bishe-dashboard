@@ -1,5 +1,17 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-17 | 完整源块排除后，统计收益仍保留 / Paired source-block crossfit
+
+这次把八个已开封源块分别完整排除：每次只用其余707帧重拟合归一化、条件分布和源均值，预测排除的101帧。五相机双背景统计GMM3取得808/808四指标参考匹配、8/8完整块尾部通过，双实现物理复算与存盘读回一致。场／全梯度联合相对MSE为0.009207，比同折Single3／Mean4／Range4低50.89%／64.92%／70.04%。这说明条件统计收益不只来自把同一源块放进自己的拟合。
+
+Exclude each of eight already-opened source blocks completely, refit normalization, conditional laws and source means on the other707 frames, then predict the excluded101 frames. Five-camera paired GMM3 attains808/808 four-error reference matches and8/8 complete-block tail passes, independently confirmed through physical reconstruction and retained-field readback. Joint relative field/full-gradient MSE0.009207 is50.89%/64.92%/70.04% below same-fold Single3/Mean4/Range4. The gain therefore survives removing the predicted source block from its own fitting.
+
+八块早已用于开发，因此这是post-open source-block机制证据，不是未开外门或新的神经成功。GMM0也全部通过，联合MSE0.009208；GMM3仍需4A+4AT和两次完整normal逆，几何、双背景raw行、统计拟合与后验非免费。没有fresh wall/RSS、任意相机配置或真实BOST结论。近期神经头和协方差度量未超过强统计／线性对照的旧FAIL原样保留，不能用本次经典对照通过来改判。下一阶段仍需低成本学习初值及公平精度—成本验证，不是把统计方法当作全C路线完成。
+
+All eight blocks were previously used for development: this is post-open source-block mechanism evidence, not unopened external or new neural success. GMM0 also passes throughout at joint MSE0.009208; GMM3 still requires4A+4AT and two full normal inverses, with nonfree geometry, paired raw rows, statistical fitting and conditional inference. No fresh wall/RSS, arbitrary-camera-layout or real-BOST result. Recent neural-head and covariance-metric failures against strong statistical/linear controls remain FAIL; a classical-control pass cannot rewrite them. A low-cost learned initializer and fair matched-accuracy cost evidence remain necessary for the full C objective.
+
+[逐块聚合证据与图 / Block-level aggregate evidence and figure](paired_source_crossfit_2026-10-17_public_summary.json).
+
 ## 2026-10-17 | 数据侧的正向转机：双背景源内信息 / Acquisition turning point: paired source information
 
 这次不再只加工同一份单背景观测，而是用已有三维源场仿真两个背景距离的观测。同808个已开封拟合源、八条完整源轨迹，五相机双背景强统计GMM3的场／全梯度联合相对MSE为0.008415，原近屏Gamma／Beta强统计对照为0.058107／0.059429，降低85.52%／85.84%。真实确定性条件均值先通过完整源拟合检查，再做固定物理lift与三步CGLS；808/808四指标匹配参考，8/8源轨迹尾部通过，独立物理复算和原场读回一致。
