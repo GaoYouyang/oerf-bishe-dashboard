@@ -1,5 +1,17 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-17 | 数据侧的正向转机：双背景源内信息 / Acquisition turning point: paired source information
+
+这次不再只加工同一份单背景观测，而是用已有三维源场仿真两个背景距离的观测。同808个已开封拟合源、八条完整源轨迹，五相机双背景强统计GMM3的场／全梯度联合相对MSE为0.008415，原近屏Gamma／Beta强统计对照为0.058107／0.059429，降低85.52%／85.84%。真实确定性条件均值先通过完整源拟合检查，再做固定物理lift与三步CGLS；808/808四指标匹配参考，8/8源轨迹尾部通过，独立物理复算和原场读回一致。
+
+Instead of further processing the same single-background input, simulate two background distances from the existing source fields. On the same808 opened fitting frames in eight complete source trajectories, five-camera paired GMM3 reaches joint relative field/full-gradient MSE0.008415 versus0.058107/0.059429 for the original near-screen gamma/beta statistical controls, reductions85.52%/85.84%. The actual deterministic conditional mean passes the complete-source fit check before the fixed physical lift and three CGLS steps. All808 four-error reference matches and8/8 source tails pass independent physical reconstruction and retained-field readback.
+
+这只是源内统计控制，不是跨轨迹泛化或新的神经warm initializer。近屏对照只比较空间误差，不混用观测分母。双曝光、双倍raw行、几何、拟合、条件后验和两次完整normal逆均非免费；GMM0也全部匹配且MSE几乎相同，故不能把零CGLS当成学习或速度收益。没有fresh wall/RSS、未开外部或真实BOST结论。下一核心仍是把新增物理信息变成廉价共享学习初值的实际质量与总成本价值，而非用更多数据替代论文目标；旧结果和反证不改判。
+
+This is a source-in-sample statistical control, not cross-trajectory generalization or a new neural warm initializer. Near-screen controls enter spatial comparisons only; observation denominators are not mixed. Two captures, doubled raw rows, geometry, fitting, conditional inference and two full normal inverses remain nonfree. GMM0 also fully matches with almost identical MSE, so zero CGLS alone is not learned or speed value. No fresh wall/RSS, unopened external or real-BOST claim. The next core question remains useful quality and total-cost value from a cheap shared learned initializer, not substituting more data for the full objective. Earlier results and counterevidence remain intact.
+
+[聚合证据与图 / Aggregate evidence and figure](paired_source_information_2026-10-17_public_summary.json).
+
 ## 2026-10-17 | 实际删相机的完整留出验证 / Complete held-block validation after actual camera removal
 
 真正删除已知九视角虚拟配置的Camera2，非连续ID八台相机，不补零；原五相机各折225头与神经统计完全冻结，零重训。各折经典对照只用另外808源帧。909/909四指标Reference128匹配、9/9完整101帧留出块通过原绝对尾部与条件价值门；联合场／全梯度MSE0.005362，比源内最优两幅值固定模板低22.46%，逐块低9.38%至38.09%。

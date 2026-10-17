@@ -33,7 +33,9 @@ def test_new_digest_links_resolve_locally():
         soup = BeautifulSoup((ROOT / name).read_text(), 'html.parser')
         for anchor in soup.select('#milestones a[href]'):
             url = urlsplit(anchor['href'])
-            path = (ROOT / name).parent / unquote(url.path)
+            if url.scheme or url.netloc:
+                continue
+            path = (ROOT / name).parent / unquote(url.path) if url.path else ROOT / name
             assert path.resolve().is_file()
             doc = parse_qs(url.query).get('doc')
             if doc:
