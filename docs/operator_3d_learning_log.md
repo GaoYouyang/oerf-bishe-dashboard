@@ -1,5 +1,26 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-17 | Coupled conditioning / 一致处理的统计机制进展
+
+五相机、固定1%合成噪声、同808帧：让同一观测处理同时进入先验上下文和物理数据响应后，场／全梯度联合相对MSE从原样含噪统计模型的0.175981降至0.071890，降低59.15%。808/808样本匹配参考的四指标，8/8完整源块尾部通过；正式计算、独立物理复算和保留场读回一致。
+
+Five cameras, fixed 1% synthetic noise, the same 808 frames: applying the same observation action to both prior context and physical data response lowers joint relative field/full-gradient MSE from 0.175981 for unchanged raw-noisy statistical inference to 0.071890, a 59.15% reduction. All 808 samples match four reference errors and all eight complete-block tails pass, with independent physical reconstruction and retained-field readback.
+
+一致处理比只处理物理数据响应的0.078501改善8.42%，比只处理先验输入的0.120529改善40.35%；比同样处理的源均值对照0.080711改善10.93%。所有预先固定的强对照、绝对精度、四指标匹配和逐块空间非伤害门均保留；较大的原始观测残差不自动等于较差的场，残差始终针对原始含噪观测完整报告。
+
+Coupled conditioning improves by 8.42% over data-response-only processing at 0.078501 and by 40.35% over prior-input-only processing at 0.120529; it improves by 10.93% over the identically processed source-mean control at 0.080711. All pre-fixed strong controls, absolute accuracy, four-error reference matching and blockwise spatial non-harm gates remain in force. A larger raw observation residual does not automatically imply a worse field; residuals are reported against the original noisy data.
+
+每个冻结统计法则仍只由其他707帧拟合，整块101帧未进入自己的拟合；本次没有重训或新神经参数。但八块早已用于开发，噪声法则已知，且目前只测五相机，因此仅支持已开封源上的统计机制，不是未开外门、任意噪声／机位或真实BOST。旧神经失败与原样噪声迁移反证不改判，也没有宣称恢复到干净数据精度。
+
+Each frozen statistical law was fit only on the other 707 frames, excluding its complete 101-frame query block. There is no retraining or new neural parameter. However, all eight blocks were already used in development, the synthetic noise law is known, and only five cameras are tested here. This is post-open statistical mechanism evidence, not unopened external, arbitrary-noise/layout or real-BOST evidence. Earlier neural failures and raw-noise-transfer counterevidence stand; clean-data accuracy has not been recovered.
+
+Coupled GMM0同样808/808匹配、8/8尾部通过，联合MSE为0.071880，不能把三步CGLS说成关键新收益。GMM3仍付4A+4AT、两次完整normal逆，额外谱分解／基作用、几何、拟合、后验与双背景采集都不免费。当前没有fresh wall/RSS、学习提速或完整C路线成功；下一核心是固定机制的变相机迁移和真正学习增益，而不是再调当前配方。
+
+Coupled GMM0 also matches all 808 samples and eight tails at joint MSE 0.071880, so three CGLS steps cannot be credited as the key new gain. GMM3 still pays 4A+4AT and two full normal inverses; spectral decomposition/basis actions, geometry, fitting, posterior inference and paired acquisition are nonfree. There is no fresh wall/RSS, learned speedup or completed C-route result. The next core questions are fixed-mechanism camera transfer and genuine learned value, not retuning this recipe.
+
+[Aggregate data / 汇总数据](paired_coupled_conditioning_2026-10-17_public_summary.json)
+
+
 ## 2026-10-17 | 完整源块排除后，统计收益仍保留 / Paired source-block crossfit
 
 这次把八个已开封源块分别完整排除：每次只用其余707帧重拟合归一化、条件分布和源均值，预测排除的101帧。五相机双背景统计GMM3取得808/808四指标参考匹配、8/8完整块尾部通过，双实现物理复算与存盘读回一致。场／全梯度联合相对MSE为0.009207，比同折Single3／Mean4／Range4低50.89%／64.92%／70.04%。这说明条件统计收益不只来自把同一源块放进自己的拟合。
