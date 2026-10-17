@@ -148,7 +148,7 @@ def test_four_bilingual_pages_and_current_headline():
     assert evidence["latest_pinhole_flat_loto"]["queries"] == 909
     for name in ("index.html", "operator-learning/index.html"):
         assert (
-            "const graph = evidence.latest_pinhole_native_loto || evidence.latest_pinhole_flat_loto ||"
+            "evidence.latest_pinhole_native_loto || evidence.latest_pinhole_flat_loto ||"
             in (ROOT / name).read_text()
         )
 

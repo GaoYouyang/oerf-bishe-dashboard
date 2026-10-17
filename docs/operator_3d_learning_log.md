@@ -1,5 +1,17 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-17 | 实际删相机的完整留出验证 / Complete held-block validation after actual camera removal
+
+真正删除已知九机硬件的Camera2，非连续ID八台相机，不补零；原五相机各折225头与神经统计完全冻结，零重训。各折经典对照只用另外808源帧。909/909四指标Reference128匹配、9/9完整101帧留出块通过原绝对尾部与条件价值门；联合场／全梯度MSE0.005362，比源内最优两幅值固定模板低22.46%，逐块低9.38%至38.09%。
+
+Actually remove Camera2 from known nine-camera hardware, retaining eight noncontiguous IDs without padding. Original five-camera fold-specific225 heads and neural statistics stay frozen, with no retraining. Each classical control fits only the other808 source frames. All909/909 four-error Reference128 matches and9/9 complete101-frame held blocks pass original absolute tails and conditional-value gates. Joint field/full-gradient MSE0.005362 is22.46% below the source-optimal two-amplitude static class, with9.38%-38.09% reductions per block.
+
+强对照不删除：Gamma/Beta GMM0误差0.002255/0.002272，仍更准；Range0更便宜且也全部匹配。神经方法仍用完整normal逆、7QT和16个相机小求解。仅为同909个已开封开发帧上的一个预先固定删除配置；原全源pilot选型暴露、归一化密度规范和弱折射针孔代理范围保持。没有该配置的fresh wall/RSS、任意子集、未开外部或真实BOST结论，旧负／资源反证原样保留。
+
+Strong controls remain: gamma/beta GMM0 attain lower MSE0.002255/0.002272; cheaper Range0 also fully matches. Neural inference still uses a full normal inverse,7 transpose splats and16 small camera solves. This is one predetermined deletion on the same909 opened development frames, retaining earlier all-source pilot selection exposure, normalized density gauge and weak-refraction pinhole scope. No fresh wall/RSS, arbitrary subsets, unopened external or real-BOST claim; earlier negative/resource counterevidence is intact.
+
+[全部聚合证据 / Complete aggregate evidence](pinhole_camera_deletion_2026-10-17_public_summary.json).
+
 ## 2026-10-17 | 同一五相机小模型：完整迁移到七／九相机 / Five-camera models transfer to seven/nine cameras across all nine folds
 
 10月17日：每个完整外折的五相机225参数动态头及其神经校准保持冻结，直接迁移至同一已知机位集合的七／九相机，零神经重训。两个新基数各909/909查询、各9/9完整轨迹通过四指标参考匹配与绝对尾部门；合并五相机共2727个相机数×帧查询、27/27分层。仍是同九条909帧的开发集LOTO，早先全源pilot参与选型，不是新增1818个物理帧或未开外部验证。
