@@ -1,5 +1,25 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-19 | 五相机动态头：完整迁移至十二相机 / Five-camera dynamic heads transfer to twelve cameras across all nine folds
+
+10月19日：各完整外折保留原五相机225参数动态头及归一化，零神经重训，直接处理固定十二相机虚拟布局。新增基数在909/909查询、9/9完整开发轨迹通过四指标参考匹配、绝对尾部与冻结强对照门。加上已有5/7/9相机证据，共3636个相机数×帧查询、36个完整分层；仍是同九条909个物理帧，不是新增909个独立实验样本。
+
+Oct 19: each outer fold retains its original five-camera 225-parameter dynamic head and calibration, with no neural retraining, for a fixed twelve-camera virtual layout. The added count passes all 909 four-error reference matches, all nine complete development trajectories and the frozen strong-control gates. Together with existing five/seven/nine-camera evidence this gives 3,636 count/frame queries and 36 complete strata, still the same 909 physical frames, not 909 additional independent experiments.
+
+十二相机联合场—全梯度相对MSE为3.14452e-05，比逐折源内最优静态模板低16.95%，每条完整轨迹至少低8.38%。经典mean/GMM/static逐折只用另外八条轨迹的808帧拟合；模型调度属于LOTO流程，不把轨迹ID输入部署模型。225仅为动态头参数数，源均值、RMS及几何缓存也有成本。
+
+Twelve-camera joint field/full-gradient relative MSE is 3.14452e-05, 16.95% below the fold-specific source-optimal static class, with at least 8.38% improvement on every complete trajectory. Classical mean/GMM/static fits use only the other 808 frames per fold. Model dispatch is part of LOTO evaluation, not a trajectory-ID input at deployment. The 225 parameters count the dynamic head only; source means, RMS and geometry caches are nonfree.
+
+更强Gamma/Beta GMM仍更准。均值/range/static/GMM的全部精度与匹配计数均公开；这里证明的是同一求解次数下的精度增量，不是实际误差等价或整体提速。神经端仍需一完整normal逆、1次AT、7次QT和24个相机小求解；GMM需两次完整逆，不能仅据此宣布更快。十二相机尚无fresh整流水线耗时/RSS结论。
+
+Stronger gamma/beta GMMs remain more accurate. All mean/range/static/GMM errors and reference-match counts are reported. This establishes an accuracy increment at the same solve count, not actual-error equivalence or overall speedup. Neural inference still needs one full normal inverse, one adjoint, seven transpose splats and 24 small camera solves; GMM needs two full inverses, which alone does not prove faster execution. No fresh twelve-camera whole-pipeline wall/RSS conclusion exists.
+
+范围是已开封开发轨迹、已知干净针孔、固定九相机加三个旋转虚拟相机的弱折射代理，源内pilot曾参与选型。双实现与全字段独立读盘复算通过，但不构成无偏未开外部验证、任意机位泛化、十二台真实相机实验或密度常数项恢复；不改变此前含噪/扰动失败边界，也不宣称论文成功。
+
+Scope is already-open development trajectories, clean known pinholes and a weak-refraction proxy with nine original plus three rotated virtual cameras; an earlier source pilot influenced selection. Independent numerical reconstruction and full-field readback pass, but do not establish unbiased unopened external evidence, arbitrary-layout generalization, a real twelve-camera experiment or recovery of the constant-density gauge. Earlier noise/perturbation boundaries remain intact; paper success is not claimed.
+
+[聚合证据 / Aggregate evidence](pinhole_native12_loto_2026-10-19_public_summary.json).
+
 ## 2026-10-17 | Coupled conditioning / 一致处理的统计机制进展
 
 五相机、固定1%合成噪声、同808帧：让同一观测处理同时进入先验上下文和物理数据响应后，场／全梯度联合相对MSE从原样含噪统计模型的0.175981降至0.071890，降低59.15%。808/808样本匹配参考的四指标，8/8完整源块尾部通过；正式计算、独立物理复算和保留场读回一致。
