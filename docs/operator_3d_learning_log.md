@@ -1,5 +1,23 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-20 | 整幅观测编码带来可复算的源拟合增量 / Reproducible source-fit gain from whole-observation encoding
+
+在原始200×80×80网格上，先把整幅相机观测无损编码为一个标量势及两分量残差，再进行共享非线性图像编码、透视拉回与相机集合聚合。相同密集观测下，新模型和便宜的局部Raw3对照均有1185个可训练参数，并各执行相同2048步；没有重用旧模型权重。9条合法拟合轨迹、909个不同源场、5/7/9相机共2727个完整源单元均已计算，两路独立物理实现与单独审裁一致。
+
+On the original 200-by-80-by-80 grid, each complete camera observation is losslessly encoded as one scalar potential and two residual components before shared nonlinear image encoding, perspective pullback and camera-set aggregation. With identical dense observations, the new model and inexpensive local Raw3 control each have 1,185 trainable parameters and the same 2,048 updates; neither reuses old trained weights. All 2,727 complete source cells, spanning nine lawful fitting trajectories, 909 distinct fields and 5/7/9 cameras, have been evaluated with two independently implemented physical paths and a separate owner adjudication.
+
+新模型的原始场／全梯度标准化平方风险为0.50123043／0.61532358，源均值对照为1／1，Raw3为0.55769298／0.63092404。因此相对源均值分别降低49.88%／38.47%，两项等权联合平方风险比同参数Raw3低6.06%；27个轨迹—相机分组均满足原定非伤害要求，且各组联合风险均低于Raw3。数值闭包的场／物理图像最大相对差为2.89e-13，风险／四指标最大绝对差为3.40e-14／5.62e-14。这支持“非局部观测在非线性编码之前进入”值得继续研究，而不是仅凭小批训练损失判断成功。
+
+Normalized raw-field/full-gradient squared risks are 0.50123043/0.61532358 for the new model, 1/1 for the source mean, and 0.55769298/0.63092404 for Raw3. The respective reductions from the source mean are 49.88%/38.47%; equally weighted joint squared risk is 6.06% below the equal-parameter Raw3 control. All 27 trajectory-camera groups satisfy the original nonharm requirements, with lower joint risk than Raw3 in every group. Maximum field/physical-image relative discrepancy is 2.89e-13, with risk/four-metric absolute discrepancies of 3.40e-14/5.62e-14. This supports further study of nonlocal observations entering before nonlinear encoding, rather than declaring success from minibatch loss alone.
+
+边界仍严格限于训练源：两路共用同一套最终训练权重，并非独立重训；源均值另有1280000个统计坐标，整幅势求解、密集观测生成、几何、归一化与拟合均非免费。标量势不是密度投影或新增观测信息，也不是物理可积性定理。初值尚不满足完整最终精度：五相机完整源的场／全梯度／内部梯度／观测90分位为0.494532／0.765054／0.769314／0.609191，梯度与观测仍有缺口。密集观测不同，不能把与旧模型的数值差全部归功于新表示。没有留轨迹泛化、最终CGLS、exact-call减少、该模型fresh耗时／RSS或论文突破结论；全量研发与双实现核验约3.93小时不是部署耗时。
+
+Scope remains strictly the fitting sources. The two paths share the same final trained states, not independent retraining. The source mean adds 1,280,000 statistical coordinates; whole-image potential solves, dense observation generation, geometry, normalization and fitting are nonfree. The scalar potential is neither a density projection, new measured information nor a physical integrability theorem. Initializers still miss complete final accuracy: five-camera full-source higher-p90 field/full-gradient/interior-gradient/observation errors are 0.494532/0.765054/0.769314/0.609191, leaving gradient and observation gaps. Dense observations differ from the old model, so cross-version changes cannot all be attributed to this representation. Held-trajectory generalization, final CGLS, fewer exact calls, fresh time/RSS for this model and a paper breakthrough remain unestablished; about 3.93 hours of research and dual-implementation checking is not deployment time.
+
+此前完整fresh成本对比保持不变：在明确限定的同网格、保留9+3视角开发布局中，旧神经模型约快21%–22%，但峰值RSS约为强统计对照的两倍，统计对照仍更准确。新源拟合进步不能改写该时间—内存折中，也不能冒充原始网格实际优势。下一决策是使用逐折排除的源统计与完整留轨迹验证，先检验最终精度和强对照价值，再为合格方法实测完整成本。
+
+The earlier fresh cost comparison is unchanged: within the explicitly matched-grid, retained nine-plus-three development layout, the older neural model is about 21%–22% faster but uses roughly twice the peak RSS of stronger statistical controls, which remain more accurate. This new source-fit gain neither changes that time-memory tradeoff nor proves a native-grid practical advantage. The next decision requires fold-excluded source statistics and complete-trajectory validation: establish final accuracy and value against strong controls before measuring complete costs for an eligible method.
+
 ## 2026-10-19 | 原始网格上的有效源拟合 / Useful source fitting on the original grid
 
 修正此前已确认的粗细网格物理错配后，新模型先在每台相机二维观测上编码邻域，再依据相机几何拉回三维点并聚合可变视角集合。9条合法拟合轨迹、909个不同的200×80×80源场，5/7/9相机共2727个源单元已完整计算并用两个数值实现独立物理重放。固定最终权重的原始场／全梯度标准化平方风险为0.42760468／0.79483787，相对源均值场降低57.24%／20.52%；联合平方风险比centre-only对照低33.69%，所有冻结的源拟合和27分组非伤害要求通过。这是实际完整源动作，不是仅有自动微分检查或小批损失下降。
