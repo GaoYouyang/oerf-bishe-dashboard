@@ -20,6 +20,12 @@ Earlier counterevidence must remain explicit: on a wholly new twelve-camera ring
 
 [聚合证据 / Aggregate evidence](pinhole_native12_loto_2026-10-19_public_summary.json).
 
+### Frozen Statistical Transfer Fairness
+
+补齐公平对照：原五相机训练的Gamma/Beta GMM与原归一化直接迁移至同一保留9+3布局，无新拟合；两者各909/909查询四误差达到或优于冻结神经初值，9/9完整轨迹绝对门通过，联合MSE分别4.85468e-6/5.05066e-6（神经为3.14452e-5）。因此不能只给统计对照计入每个新rig重拟合成本，也不能把免重训说成神经方法独有的能力。两种统计对照仍需两次完整normal逆；神经需一次逆和完整encoder，实际耗时与内存优劣尚未测定。此补充不改写旧正负结论。
+
+Fair-control completion: the original five-camera Gamma/Beta GMM laws and normalization transfer directly to this same retained nine-plus-three layout, with no new fit. Each reaches or improves on the frozen neural initializer's four errors on all 909 queries and passes absolute tails on all nine complete trajectories. Joint MSE is 4.85468e-6 / 5.05066e-6, versus neural 3.14452e-5. Statistical controls must therefore not be charged per-rig retraining while neural weights are reused; transfer without retraining is not neural-exclusive. Both statistical controls still require two full normal inverses; neural requires one plus its full encoder. Actual wall time and memory superiority remain unmeasured. Earlier positive and negative verdicts are unchanged.
+
 ## 2026-10-17 | Coupled conditioning / 一致处理的统计机制进展
 
 五相机、固定1%合成噪声、同808帧：让同一观测处理同时进入先验上下文和物理数据响应后，场／全梯度联合相对MSE从原样含噪统计模型的0.175981降至0.071890，降低59.15%。808/808样本匹配参考的四指标，8/8完整源块尾部通过；正式计算、独立物理复算和保留场读回一致。

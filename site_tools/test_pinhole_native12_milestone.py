@@ -28,6 +28,12 @@ class Native12Milestone(unittest.TestCase):
         self.assertTrue(p["current_result_is_retained_9_plus_3_layout_only"])
         self.assertTrue(p["previous_new_ring_failure_not_overturned"])
         self.assertFalse(p["previous_new_twelve_ring"]["conditional_value_pass"])
+        frozen = p["frozen_five_camera_statistical_transfer"]
+        self.assertEqual(frozen["new_source_fits"], 0)
+        self.assertEqual(frozen["queries_per_method"], 909)
+        self.assertTrue(frozen["both_actual_neural_accuracy_eligible"])
+        self.assertTrue(frozen["transfer_without_refit_not_neural_exclusive"])
+        self.assertFalse(frozen["fresh_wholepipeline_wall_RSS_measured"])
         for key in (
             "resource_speedup",
             "actual_error_equivalence",
