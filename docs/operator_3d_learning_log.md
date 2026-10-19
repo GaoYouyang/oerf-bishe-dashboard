@@ -38,6 +38,20 @@ The cost is explicit: median lifetime peak RSS is 5.95/2.97/3.00GiB. Neural uses
 
 [全部九次测量 / All nine trials](pinhole_retained12_resource_2026-10-19_public_summary.json).
 
+### 观测生成的分辨率检查 / Observation-Generation Resolution Check
+
+补齐一个会影响下一步实验设计的物理检查：同一条已开封公开 CFD 轨迹的全部101帧、相同5/7/9相机与有限背景模型，分别在原始细网格和重建用粗网格上生成观测。两种观测的相对差高分位数为60.16%／59.68%／59.26%；即便允许每帧理想标量校准，仍为59.30%／58.57%／58.18%。这不是实测噪声，也不是重建场误差。
+
+A physical check now informs the next experiment: generate observations from both the original fine grid and the reconstruction's coarse grid, using all 101 frames of one already-open public CFD trajectory, the same 5/7/9 cameras and the same finite-background model. Higher-p90 relative observation discrepancies are 60.16%/59.68%/59.26%. Even an ideal per-frame scalar calibration leaves 59.30%/58.57%/58.18%. These are neither measured noise nor reconstructed-field errors.
+
+固定解释性对照也已运行：先在细网格计算梯度、再把梯度采到粗节点进行积分，差异仍明显。因此只补一个增益或替换粗节点梯度值不足以消除该模式差异。独立积分与差分实现、全量物理回放和保存结果回读一致；细网格本身仍不是连续 CFD 或实验真值。本次没有训练网络或求解重建。
+
+A fixed explanatory control was also evaluated: compute fine-grid gradients first, then sample them onto coarse nodes for integration. A substantial discrepancy remains, so neither one gain nor substituting coarse-node gradient values removes the pattern difference. Independent integration and differentiation implementations agree with full physical replay and saved-result readback. The fine grid is itself not continuous-CFD or experimental truth. No network training or reconstruction was performed.
+
+此前神经方法的精度增量与本机时间优势，继续只在明确声明的同网格代理任务内成立，更高的内存代价和强统计反证不变。现在优先回答粗网格未知量与算子能否在细网格生成的观测下满足原精度要求，再决定物理一致的多分辨率接口与后续学习投入；不把新观测悄悄替换进旧试验，也不把这个检查写成算法突破。
+
+The earlier neural accuracy increment and local time advantage remain valid within their explicitly matched-grid proxy task; the higher memory use and stronger statistical counterevidence stand. The next priority is whether the coarse field and operator can meet the original accuracy requirements on fine-grid-generated observations, before investing in a physically consistent multiresolution interface or further learning. The new observations do not silently replace old experiments, and this check is not an algorithmic breakthrough.
+
 ## 2026-10-17 | Coupled conditioning / 一致处理的统计机制进展
 
 五相机、固定1%合成噪声、同808帧：让同一观测处理同时进入先验上下文和物理数据响应后，场／全梯度联合相对MSE从原样含噪统计模型的0.175981降至0.071890，降低59.15%。808/808样本匹配参考的四指标，8/8完整源块尾部通过；正式计算、独立物理复算和保留场读回一致。
