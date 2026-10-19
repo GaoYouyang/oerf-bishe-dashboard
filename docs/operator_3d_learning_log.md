@@ -10,9 +10,9 @@ Oct 19: each outer fold retains its original five-camera 225-parameter dynamic h
 
 Twelve-camera joint field/full-gradient relative MSE is 3.14452e-05, 16.95% below the fold-specific source-optimal static class, with at least 8.38% improvement on every complete trajectory. Classical mean/GMM/static fits use only the other 808 frames per fold. Model dispatch is part of LOTO evaluation, not a trajectory-ID input at deployment. The 225 parameters count the dynamic head only; source means, RMS and geometry caches are nonfree.
 
-更强Gamma/Beta GMM仍更准。均值/range/static/GMM的全部精度与匹配计数均公开；这里证明的是同一求解次数下的精度增量，不是实际误差等价或整体提速。神经端仍需一完整normal逆、1次AT、7次QT和24个相机小求解；GMM需两次完整逆，不能仅据此宣布更快。十二相机尚无fresh整流水线耗时/RSS结论。
+更强Gamma/Beta GMM仍更准。均值/range/static/GMM的全部精度与匹配计数均公开；这里证明的是同一求解次数下的精度增量，不是实际误差等价或整体提速。神经端仍需一完整normal逆、1次AT、7次QT和24个相机小求解；GMM需两次完整逆，不能仅据此宣布更快。此前精度阶段尚无完整计时；本轮测量见下。
 
-Stronger gamma/beta GMMs remain more accurate. All mean/range/static/GMM errors and reference-match counts are reported. This establishes an accuracy increment at the same solve count, not actual-error equivalence or overall speedup. Neural inference still needs one full normal inverse, one adjoint, seven transpose splats and 24 small camera solves; GMM needs two full inverses, which alone does not prove faster execution. No fresh twelve-camera whole-pipeline wall/RSS conclusion exists.
+Stronger gamma/beta GMMs remain more accurate. All mean/range/static/GMM errors and reference-match counts are reported. This establishes an accuracy increment at the same solve count, not actual-error equivalence or overall speedup. Neural inference still needs one full normal inverse, one adjoint, seven transpose splats and 24 small camera solves; GMM needs two full inverses, which alone does not prove faster execution. The preceding accuracy-only stage had no complete timing; the new measurements are below.
 
 需同时保留此前反证：另一套全新十二相机环形布局在首条完整101帧上虽全部匹配参考精度，但神经头联合MSE比简单静态对照更差12.12%，条件增量与非伤害门失败，原FAIL继续有效；其余八条未运行。当前保留视角9+3布局的9/9通过不能推翻该结果，不能作为放宽旧失败后更换几何的成功，也不构成任意布局、未开外部或真实BOST证据。密度常数项、fresh资源和论文成功仍未证明。
 
@@ -22,9 +22,21 @@ Earlier counterevidence must remain explicit: on a wholly new twelve-camera ring
 
 ### Frozen Statistical Transfer Fairness
 
-补齐公平对照：原五相机训练的Gamma/Beta GMM与原归一化直接迁移至同一保留9+3布局，无新拟合；两者各909/909查询四误差达到或优于冻结神经初值，9/9完整轨迹绝对门通过，联合MSE分别4.85468e-6/5.05066e-6（神经为3.14452e-5）。因此不能只给统计对照计入每个新rig重拟合成本，也不能把免重训说成神经方法独有的能力。两种统计对照仍需两次完整normal逆；神经需一次逆和完整encoder，实际耗时与内存优劣尚未测定。此补充不改写旧正负结论。
+补齐公平对照：原五相机训练的Gamma/Beta GMM与原归一化直接迁移至同一保留9+3布局，无新拟合；两者各909/909查询四误差达到或优于冻结神经初值，9/9完整轨迹绝对门通过，联合MSE分别4.85468e-6/5.05066e-6（神经为3.14452e-5）。因此不能只给统计对照计入每个新rig重拟合成本，也不能把免重训说成神经方法独有的能力。两种统计对照仍需两次完整normal逆；神经需一次逆和完整encoder，该公平对照阶段尚未计时，新增完整测量见下。此补充不改写旧正负结论。
 
-Fair-control completion: the original five-camera Gamma/Beta GMM laws and normalization transfer directly to this same retained nine-plus-three layout, with no new fit. Each reaches or improves on the frozen neural initializer's four errors on all 909 queries and passes absolute tails on all nine complete trajectories. Joint MSE is 4.85468e-6 / 5.05066e-6, versus neural 3.14452e-5. Statistical controls must therefore not be charged per-rig retraining while neural weights are reused; transfer without retraining is not neural-exclusive. Both statistical controls still require two full normal inverses; neural requires one plus its full encoder. Actual wall time and memory superiority remain unmeasured. Earlier positive and negative verdicts are unchanged.
+Fair-control completion: the original five-camera Gamma/Beta GMM laws and normalization transfer directly to this same retained nine-plus-three layout, with no new fit. Each reaches or improves on the frozen neural initializer's four errors on all 909 queries and passes absolute tails on all nine complete trajectories. Joint MSE is 4.85468e-6 / 5.05066e-6, versus neural 3.14452e-5. Statistical controls must therefore not be charged per-rig retraining while neural weights are reused; transfer without retraining is not neural-exclusive. Both statistical controls still require two full normal inverses; neural requires one plus its full encoder. That fair-control stage was not timed; complete new measurements follow below. Earlier positive and negative verdicts are unchanged.
+
+### 完整耗时与峰值内存 / Full Time and Peak RSS
+
+完整计时完成：同一保留9+3布局、909查询，三轮均衡顺序fresh进程，原五相机神经／Gamma／Beta模型均不重训。首次全进程中位耗时为12.61／16.18／15.92秒；几何就绪后的在线阶段为5.79／9.84／9.55秒。神经端分别节省约22.04%／20.77%首次时间和41.13%／39.36%在线时间，所有逐轮时间门一致通过。
+
+Complete timing: the same retained 9+3 layout and 909 queries, three balanced fresh processes per method, no retraining of the original five-camera neural or Gamma/Beta laws. Median full first-use time is 12.61/16.18/15.92 seconds; geometry-ready online time is 5.79/9.84/9.55 seconds. Neural saves 22.04%/20.77% first-use time and 41.13%/39.36% online time; every paired time gate passes.
+
+代价也明确：lifetime峰值RSS中位为5.95／2.97／3.00GiB，神经端约占两倍内存，未通过RSS非伤害门，所以不是时间与内存同时胜出。两个统计对照仍更准确；比较是共同满足原神经精度要求，不是神经达到了GMM的更低误差。三者在线A/AT次数相同，差别涉及normal逆与完整encoder，不能声称相对GMM减少A/AT。在线阶段仍包含观测、encoder、模型读取及输出；不是另一个fresh warm-cache进程。仅为已开封开发布局的有限候选本机证据，未证明全经典成本前沿、未开外部或真实BOST。
+
+The cost is explicit: median lifetime peak RSS is 5.95/2.97/3.00GiB. Neural uses about twice the memory and fails RSS nonharm, so this is not a joint time-and-memory win. Both statistical controls remain more accurate: the comparison meets the same neural accuracy requirement, not the lower GMM errors. All three have identical online A/AT counts; normal inverses and the full encoder differ. The online phase includes observations, encoder, model reads and outputs; it is not another fresh warm-cache process. This is a finite-method local result on opened development data, not a full classical frontier, unopened external or real BOST evidence.
+
+[全部九次测量 / All nine trials](pinhole_retained12_resource_2026-10-19_public_summary.json).
 
 ## 2026-10-17 | Coupled conditioning / 一致处理的统计机制进展
 

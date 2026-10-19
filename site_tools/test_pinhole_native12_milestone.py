@@ -70,6 +70,27 @@ class Native12Milestone(unittest.TestCase):
         self.assertEqual(cost["full_inverse"], 1)
         self.assertEqual(cost["camera_small_RHS"], 24)
 
+    def test_fresh_resource_tradeoff(self):
+        self.assertTrue(self.data["fresh_native12_wholepipeline_wall_RSS_measured"])
+        p = json.loads(
+            (ROOT / "docs" / self.data["latest_resource_summary"]).read_text()
+        )
+        self.assertEqual(p["fresh_processes"], 9)
+        self.assertEqual(p["queries_per_process"], 909)
+        self.assertTrue(p["scoped_local_wall_time_advantage"])
+        self.assertFalse(p["local_joint_time_RSS_advantage"])
+        self.assertFalse(p["RSS_nonharm_gate_pass"])
+        self.assertFalse(p["resource_speedup"])
+        self.assertTrue(p["GMM_actual_errors_remain_smaller"])
+        for row in p["methods"]:
+            for key in (
+                "whole_first_use_seconds",
+                "geometry_ready_online_seconds",
+                "whole_process_peak_RSS_GiB",
+            ):
+                self.assertEqual(len(row[key]["all3"]), 3)
+                self.assertEqual(sorted(row[key]["all3"])[1], row[key]["median"])
+
     def test_public_privacy_and_bilingual_entrypoints(self):
         self.assertIsNone(re.search(r"\b[a-f0-9]{64}\b", self.raw))
         for token in (
