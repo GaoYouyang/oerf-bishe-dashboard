@@ -1,5 +1,15 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-19 | 原始网格上的有效源拟合 / Useful source fitting on the original grid
+
+修正此前已确认的粗细网格物理错配后，新模型先在每台相机二维观测上编码邻域，再依据相机几何拉回三维点并聚合可变视角集合。9条合法拟合轨迹、909个不同的200×80×80源场，5/7/9相机共2727个源单元已完整计算并用两个数值实现独立物理重放。固定最终权重的原始场／全梯度标准化平方风险为0.42760468／0.79483787，相对源均值场降低57.24%／20.52%；联合平方风险比centre-only对照低33.69%，所有冻结的源拟合和27分组非伤害要求通过。这是实际完整源动作，不是仅有自动微分检查或小批损失下降。
+
+After addressing the previously established coarse/fine physical mismatch, the new model encodes neighborhoods in each two-dimensional camera observation before geometry-based pullback to world points and variable-view aggregation. All 2,727 source cells, spanning nine lawful fitting trajectories, 909 distinct 200-by-80-by-80 fields and 5/7/9 cameras, were computed in full with two independently implemented physical replays. Frozen final weights yield raw field/full-gradient normalized squared risks of 0.42760468/0.79483787, reductions of 57.24%/20.52% from the source mean. Joint squared risk is 33.69% below the centre-only control, and every frozen source-fit and 27-group nonharm requirement passes. These are actual complete-source actions, not only automatic-differentiation checks or decreasing minibatch losses.
+
+范围严格限于训练源：1113是共享优化坐标数，另有1280000个源均值统计坐标及3个RMS；centre-only仅473个active坐标，并非等容量因果消融。两路统计、场、物理图像及指标闭包一致，但共用同一训练终态，不是假称独立重训。原始初值仍未达到最终梯度和观测精度要求；没有完成留轨迹、最终CGLS、强经典前沿或新方法的fresh耗时／RSS比较。完整核验的约2.85小时属于研发与双实现验证开销，不能写成部署推理耗时。此前已测神经局部更快但峰值内存约双倍的结论保持不变；下一步是固定模型的排除轨迹精度与公平物理对照，不是重复源训练或宣称论文突破。
+
+Scope is strictly the fitting sources: 1,113 counts shared optimized coordinates, with another 1,280,000 source-mean statistical coordinates and three RMS scalars; the centre-only control has only 473 active coordinates and is not a capacity-matched causal ablation. Both numerical paths agree on statistics, fields, physical images and metrics, but share one trained final state rather than independent retraining. Raw initializers still miss the final gradient and observation accuracy requirements. Held-trajectory results, final CGLS, the strong classical frontier and fresh time/RSS comparisons for this new model remain unestablished. About 2.85 hours of complete checking are research and dual-implementation validation overhead, not deployment inference time. Earlier measured local neural speed gains with roughly doubled peak memory remain unchanged. Next comes fixed-model excluded-trajectory accuracy and fair physical controls, not repeated source training or a paper-breakthrough claim.
+
 ## 2026-10-19 | 保留原视角增至十二相机：九折验证 / Nine-fold validation when expanding the retained camera layout to twelve
 
 10月19日：各完整外折保留原五相机225参数动态头及归一化，零神经重训。在保留原九个视角、再增加三个旋转视角的固定9+3布局中，十二相机909/909查询、9/9完整开发轨迹通过冻结精度与强对照门。这是已知视角布局的扩展，不是全新十二相机布局迁移已获解决；同九条909个物理帧仍是post-selection开发证据。
