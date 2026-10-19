@@ -25,6 +25,9 @@ class Native12Milestone(unittest.TestCase):
         )
         self.assertEqual(p["neural_train_camera_count"], 5)
         self.assertFalse(p["neural_retraining_for_native12"])
+        self.assertTrue(p["current_result_is_retained_9_plus_3_layout_only"])
+        self.assertTrue(p["previous_new_ring_failure_not_overturned"])
+        self.assertFalse(p["previous_new_twelve_ring"]["conditional_value_pass"])
         for key in (
             "resource_speedup",
             "actual_error_equivalence",
@@ -79,7 +82,9 @@ class Native12Milestone(unittest.TestCase):
         ):
             html = (ROOT / name).read_text()
             self.assertEqual(html.count('id="pinhole-native12-loto-20261019"'), 1)
-            self.assertIn("Five-camera dynamic heads transfer to twelve cameras", html)
+            self.assertIn(
+                "Nine-fold validation when expanding the retained camera layout", html
+            )
             self.assertIn(f"{SLUG}_public_summary.json", html)
         self.assertTrue((ROOT / f"assets/{SLUG}.png").stat().st_size > 20000)
 

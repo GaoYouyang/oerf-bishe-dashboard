@@ -1,10 +1,10 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
-## 2026-10-19 | 五相机动态头：完整迁移至十二相机 / Five-camera dynamic heads transfer to twelve cameras across all nine folds
+## 2026-10-19 | 保留原视角增至十二相机：九折验证 / Nine-fold validation when expanding the retained camera layout to twelve
 
-10月19日：各完整外折保留原五相机225参数动态头及归一化，零神经重训，直接处理固定十二相机虚拟布局。新增基数在909/909查询、9/9完整开发轨迹通过四指标参考匹配、绝对尾部与冻结强对照门。加上已有5/7/9相机证据，共3636个相机数×帧查询、36个完整分层；仍是同九条909个物理帧，不是新增909个独立实验样本。
+10月19日：各完整外折保留原五相机225参数动态头及归一化，零神经重训。在保留原九个视角、再增加三个旋转视角的固定9+3布局中，十二相机909/909查询、9/9完整开发轨迹通过冻结精度与强对照门。这是已知视角布局的扩展，不是全新十二相机布局迁移已获解决；同九条909个物理帧仍是post-selection开发证据。
 
-Oct 19: each outer fold retains its original five-camera 225-parameter dynamic head and calibration, with no neural retraining, for a fixed twelve-camera virtual layout. The added count passes all 909 four-error reference matches, all nine complete development trajectories and the frozen strong-control gates. Together with existing five/seven/nine-camera evidence this gives 3,636 count/frame queries and 36 complete strata, still the same 909 physical frames, not 909 additional independent experiments.
+Oct 19: each outer fold retains its original five-camera 225-parameter dynamic head and calibration without neural retraining. For the fixed retained nine-view layout plus three rotated views, all 909 queries and nine complete development trajectories pass the frozen accuracy and strong-control gates. This is an extension of retained known views, not a solution of transfer to a wholly new twelve-camera layout; the same 909 physical frames remain post-selection development evidence.
 
 十二相机联合场—全梯度相对MSE为3.14452e-05，比逐折源内最优静态模板低16.95%，每条完整轨迹至少低8.38%。经典mean/GMM/static逐折只用另外八条轨迹的808帧拟合；模型调度属于LOTO流程，不把轨迹ID输入部署模型。225仅为动态头参数数，源均值、RMS及几何缓存也有成本。
 
@@ -14,9 +14,9 @@ Twelve-camera joint field/full-gradient relative MSE is 3.14452e-05, 16.95% belo
 
 Stronger gamma/beta GMMs remain more accurate. All mean/range/static/GMM errors and reference-match counts are reported. This establishes an accuracy increment at the same solve count, not actual-error equivalence or overall speedup. Neural inference still needs one full normal inverse, one adjoint, seven transpose splats and 24 small camera solves; GMM needs two full inverses, which alone does not prove faster execution. No fresh twelve-camera whole-pipeline wall/RSS conclusion exists.
 
-范围是已开封开发轨迹、已知干净针孔、固定九相机加三个旋转虚拟相机的弱折射代理，源内pilot曾参与选型。双实现与全字段独立读盘复算通过，但不构成无偏未开外部验证、任意机位泛化、十二台真实相机实验或密度常数项恢复；不改变此前含噪/扰动失败边界，也不宣称论文成功。
+需同时保留此前反证：另一套全新十二相机环形布局在首条完整101帧上虽全部匹配参考精度，但神经头联合MSE比简单静态对照更差12.12%，条件增量与非伤害门失败，原FAIL继续有效；其余八条未运行。当前保留视角9+3布局的9/9通过不能推翻该结果，不能作为放宽旧失败后更换几何的成功，也不构成任意布局、未开外部或真实BOST证据。密度常数项、fresh资源和论文成功仍未证明。
 
-Scope is already-open development trajectories, clean known pinholes and a weak-refraction proxy with nine original plus three rotated virtual cameras; an earlier source pilot influenced selection. Independent numerical reconstruction and full-field readback pass, but do not establish unbiased unopened external evidence, arbitrary-layout generalization, a real twelve-camera experiment or recovery of the constant-density gauge. Earlier noise/perturbation boundaries remain intact; paper success is not claimed.
+Earlier counterevidence must remain explicit: on a wholly new twelve-camera ring, the first complete 101-frame trajectory matched reference accuracy throughout, but neural joint MSE was 12.12% worse than a simple static control; conditional-value and nonharm gates failed and the original failure remains valid. The other eight trajectories were not run. The retained-layout nine-plus-three result cannot overturn that failure or serve as a successful geometry replacement after a closed recipe. It is not arbitrary-layout, unopened external or real-BOST evidence. Constant-density recovery, fresh resource benefit and paper success remain unproven.
 
 [聚合证据 / Aggregate evidence](pinhole_native12_loto_2026-10-19_public_summary.json).
 
