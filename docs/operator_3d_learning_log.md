@@ -52,6 +52,14 @@ A fixed explanatory control was also evaluated: compute fine-grid gradients firs
 
 The earlier neural accuracy increment and local time advantage remain valid within their explicitly matched-grid proxy task; the higher memory use and stronger statistical counterevidence stand. The next priority is whether the coarse field and operator can meet the original accuracy requirements on fine-grid-generated observations, before investing in a physically consistent multiresolution interface or further learning. The new observations do not silently replace old experiments, and this check is not an algorithmic breakthrough.
 
+后续兼容性检查已给出更明确的结果：在这101帧的九相机任务中，包含保守浮点误差预留的独立下界证实98帧不能同时满足原场误差≤0.5与观测残差≤0.2。两项90分位门各只允许10帧超门，因此当前有限粗网格物理模型下，两项完整轨迹要求无法同时成立。这是对任意该网格mean-zero场的约束，不是某个网络训练失败。
+
+The compatibility check now gives a sharper result: in this 101-frame nine-camera task, independently reproduced lower bounds including conservative floating-point allowances certify that 98 frames cannot simultaneously meet field error at most 0.5 and observation residual at most 0.2. Each 90th-percentile gate permits only 10 violating frames, so both complete-trajectory requirements cannot hold in the current finite coarse-grid physical model. This constrains any mean-zero field on that grid, not one unsuccessfully trained network.
+
+结论限定于当前有限算子、这一已开封轨迹和标准IEEE舍入模型。五／七相机本探针没有证实冲突，不等于已证实可行；此前同网格任务的精度与时间结论不改判。下一步明确为建立与原始细网格观测一致的矩阵自由物理forward及真正的离散adjoint，再评估参考重建和学习；不是扩大旧网络或放宽门槛。
+
+The conclusion is limited to the current finite operator, this opened trajectory and the standard IEEE rounding model. These probes certify no conflict at five/seven cameras, which is not proof of feasibility. Earlier matched-grid accuracy and timing results remain unchanged. The next step is a matrix-free physical forward and its actual discrete adjoint consistent with native-grid observations, before evaluating reconstruction references or learning.
+
 ## 2026-10-17 | Coupled conditioning / 一致处理的统计机制进展
 
 五相机、固定1%合成噪声、同808帧：让同一观测处理同时进入先验上下文和物理数据响应后，场／全梯度联合相对MSE从原样含噪统计模型的0.175981降至0.071890，降低59.15%。808/808样本匹配参考的四指标，8/8完整源块尾部通过；正式计算、独立物理复算和保留场读回一致。
