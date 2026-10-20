@@ -1,5 +1,17 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-20 执行内存减半 / Execution Memory Halved
+
+10月20日完成无损执行优化后的完整对比：同一保留9+3机位、909查询、41x17x17离散，原五相机神经和Gamma/Beta统计模型不重训，三个方法各测三次独立进程。神经首次全流程13.10秒，对照15.96/15.80秒，少17.90%/17.07%；峰值RSS由旧实现5.95GiB降为2.98GiB，下降49.82%。这是执行层的实质改善，旧结果保留。
+
+Oct 20: complete measurement after function-preserving execution changes on the same retained9+3 layout, 909 queries and 41x17x17 grid. Original five-camera neural and Gamma/Beta statistical models remain frozen, with three fresh processes per method. Neural full first use takes13.10s versus15.96/15.80s, saving17.90%/17.07%. Its peak RSS falls from the previous5.95GiB to2.98GiB, a49.82% reduction. This is an execution improvement; the old results remain intact.
+
+仍有明确取舍：统计对照为2.85/2.90GiB，神经RSS仍高4.63%/2.76%，未通过内存非伤害门，不能称时间与内存全面胜出。对照实际更准确；三者只是共同满足冻结神经精度要求，A/AT在线次数相同。全部9次均通过909四指标匹配、9条完整轨迹尾部及两套物理实现复核。全流程包含启动/导入、几何与逆算子准备、观测/模型读取、推理、持久输出及退出；历史训练/EM和上游模拟另计且非免费。几何就绪在线是同进程阶段，不是另一冷启动。仅为已开封开发代理，不是128万点原始场、任意机位、未开外部或真实BOST验证，也不是新算法突破。
+
+A tradeoff remains: controls use2.85/2.90GiB; neural RSS is still4.63%/2.76% higher and fails memory nonharm, so this is not a joint time/RSS win. Controls remain more accurate; all methods meet the frozen neural accuracy requirement and use identical online A/AT counts. All nine trials pass909 four-error matches, nine complete-trajectory tails and both physical implementations. Full time includes startup/imports, geometry/inverse preparation, observation/model reads, inference, durable output and exit. Historical training/EM and upstream simulation remain nonfree offline costs. Geometry-ready online is a phase of the same process, not a separate cold start. Opened development proxy only, not the original1.28-million-point field, arbitrary layouts, unopened external evidence, real BOST or a new algorithmic breakthrough.
+
+[全部九次测量 / All nine trials](retained12_sparse_stream_resource_2026-10-20_public_summary.json).
+
 ## 2026-10-20 | 整幅观测编码带来可复算的源拟合增量 / Reproducible source-fit gain from whole-observation encoding
 
 在原始200×80×80网格上，先把整幅相机观测无损编码为一个标量势及两分量残差，再进行共享非线性图像编码、透视拉回与相机集合聚合。相同密集观测下，新模型和便宜的局部Raw3对照均有1185个可训练参数，并各执行相同2048步；没有重用旧模型权重。9条合法拟合轨迹、909个不同源场、5/7/9相机共2727个完整源单元均已计算，两路独立物理实现与单独审裁一致。
