@@ -18,6 +18,10 @@ Scope remains strictly the fitting sources. The two paths share the same final t
 
 The earlier fresh cost comparison is unchanged: within the explicitly matched-grid, retained nine-plus-three development layout, the older neural model is about 21%–22% faster but uses roughly twice the peak RSS of stronger statistical controls, which remain more accurate. This new source-fit gain neither changes that time-memory tradeoff nor proves a native-grid practical advantage. The next decision requires fold-excluded source statistics and complete-trajectory validation: establish final accuracy and value against strong controls before measuring complete costs for an eligible method.
 
+后续投资边界：完整留轨迹流程在预测前的源内检查停止。排除第一条轨迹后，另外808个训练源上的联合增量为3.85%，未达到预注册的5%最低门；其余源拟合与分组非伤害要求通过。尚未生成任何留出预测，因此不能称为留轨迹泛化失败。上述九源6.06%结果仍成立，但当前固定的直接场解码方案关闭，不通过改门、加训练或事后替换对照来挽救。
+
+Subsequent investment boundary: the complete-trajectory workflow stopped at its source-only check before held prediction. After excluding the first trajectory, joint improvement on the other 808 fitting fields is 3.85%, below the preregistered 5% minimum; the other source-fit and group nonharm requirements pass. No held prediction was generated, so this is not evidence of failed held-trajectory generalization. The nine-source 6.06% result above remains valid, but this fixed direct-field-decoding recipe closes without changing gates, adding training or promoting a control after the fact.
+
 ## 2026-10-19 | 原始网格上的有效源拟合 / Useful source fitting on the original grid
 
 修正此前已确认的粗细网格物理错配后，新模型先在每台相机二维观测上编码邻域，再依据相机几何拉回三维点并聚合可变视角集合。9条合法拟合轨迹、909个不同的200×80×80源场，5/7/9相机共2727个源单元已完整计算并用两个数值实现独立物理重放。固定最终权重的原始场／全梯度标准化平方风险为0.42760468／0.79483787，相对源均值场降低57.24%／20.52%；联合平方风险比centre-only对照低33.69%，所有冻结的源拟合和27分组非伤害要求通过。这是实际完整源动作，不是仅有自动微分检查或小批损失下降。
