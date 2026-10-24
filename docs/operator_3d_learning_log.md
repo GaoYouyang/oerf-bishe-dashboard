@@ -1,5 +1,9 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+> 日期校对：2026-10-24，北京时间（Asia/Shanghai）。事件日期、公开成果日期与本次校对日期分开记录。近期成果属于10月，8月内容是历史；不把历史成果改成今天，也不将近期事件归入8月。最新公开阶段成果发生于2026-10-20。此次仅修正日期导航和月份归档，不改写科研数字或判决。
+>
+> Chronology reviewed on 2026-10-24 in Asia/Shanghai. Event dates, milestone publication dates and this review date are distinct. Recent milestones belong to October; August is historical. Historical results are not relabeled as today's work. The latest published milestone occurred on 2026-10-20. This changes calendar navigation and grouping, not scientific quantities or verdicts.
+
 ## 2026-10-20 执行内存减半 / Execution Memory Halved
 
 10月20日完成无损执行优化后的完整对比：同一保留9+3机位、909查询、41x17x17离散，原五相机神经和Gamma/Beta统计模型不重训，三个方法各测三次独立进程。神经首次全流程13.10秒，对照15.96/15.80秒，少17.90%/17.07%；峰值RSS由旧实现5.95GiB降为2.98GiB，下降49.82%。这是执行层的实质改善，旧结果保留。
