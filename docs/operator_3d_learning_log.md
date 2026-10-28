@@ -1,5 +1,21 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-29 | 原始网格上的经典参考余量 / Classical Reference Headroom on the Native Grid
+
+在同一批已开封公开训练源上，预注册的线性Gaussian对照使完整轨迹四指标绝对尾部门由旧参考的8/9提高到9/9。范围为9条轨迹、909个源场、200×80×80原始网格和已知无噪声五相机代理；这是源内参考结果，不是留轨迹泛化或学习算法成功。
+
+On the same opened public fitting sources, a preregistered linear Gaussian control raises the complete-trajectory four-metric absolute-tail count from the old reference's 8/9 to 9/9. Scope is nine trajectories, 909 fields, the native 200-by-80-by-80 grid and a known clean five-camera proxy. This is in-sample reference headroom, not held-trajectory generalization or a learned-algorithm success.
+
+场／全梯度等权联合相对MSE由0.24201913降至0.23750372，降低1.87%，九个源轨迹分组的空间联合误差均下降。但观测MSE比旧参考高14.63%，虽仍守住绝对观测门，也不能称四指标全面优于旧参考。两项事实共同保留。
+
+Equally weighted relative field/full-gradient MSE falls from 0.24201913 to 0.23750372, a 1.87% reduction, with lower spatial joint error in all nine source groups. However, observation MSE is 14.63% higher than the old reference. It remains within the absolute observation gate, but this is not componentwise four-metric dominance. Both facts remain explicit.
+
+完整物理场、二维观测和指标经独立第二实现复算，最大差分别约6.80e-12、3.54e-12和5.32e-13。该线性方法原本只是预注册对照；同轮非线性混合主方法未通过冻结的相对精度与非伤害要求，已关闭，不能事后把对照改名为主方法成功。当前没有由此获得神经训练、A/AT减少、fresh全流程耗时／RSS、未开外部或真实BOST结论；既有时间—内存结果的限定范围也不改变。
+
+An independently implemented physical reconstruction reproduces complete fields, observations and metrics, with maximum discrepancies of approximately 6.80e-12, 3.54e-12 and 5.32e-13. The linear method was a preregistered control. The nonlinear mixture primary misses its frozen relative-accuracy and nonharm requirements and is closed; the control is not relabeled as primary success afterward. This result establishes no neural training, fewer A/AT calls, fresh whole-pipeline time/RSS advantage, unopened external result or real BOST evidence. Earlier time-memory results retain their original limited scope.
+
+### 2026-10-24 历史日期校对 / Historical Chronology Review
+
 > 日期校对：2026-10-24，北京时间（Asia/Shanghai）。事件日期、公开成果日期与本次校对日期分开记录。近期成果属于10月，8月内容是历史；不把历史成果改成今天，也不将近期事件归入8月。最新公开阶段成果发生于2026-10-20。此次仅修正日期导航和月份归档，不改写科研数字或判决。
 >
 > Chronology reviewed on 2026-10-24 in Asia/Shanghai. Event dates, milestone publication dates and this review date are distinct. Recent milestones belong to October; August is historical. Historical results are not relabeled as today's work. The latest published milestone occurred on 2026-10-20. This changes calendar navigation and grouping, not scientific quantities or verdicts.
