@@ -1,5 +1,19 @@
 # 毕设阶段成果与研究日志 / FYP Milestones and Research Log
 
+## 2026-10-29 | 完整耦合的低存储经典对照 / Lower-Storage Full-Coupling Classical Control
+
+在9条已开封公开训练轨迹、909个原始200×80×80源场、已知无噪声五相机代理上，完整保留全局Cholesky因子，只将全部下三角系数以单精度打包保存，并以双精度分块求解。909/909个样本的场、全梯度、内部梯度和观测误差均满足结果前冻结的参考匹配要求；9/9条完整轨迹守住绝对尾部门。四指标相对参考的最大比值约1.00000106，不能将数值接近表述成逐字节相同。
+
+On nine opened public fitting trajectories, 909 native 200-by-80-by-80 fields and a known clean five-camera proxy, the complete global Cholesky factor is retained. Only its lower-triangular coefficients are stored in packed single precision, with blocked double-precision solves. All 909 cases meet the preregistered reference-matching requirements for field, full-gradient, interior-gradient and observation errors; all nine complete trajectories satisfy the absolute-tail gates. The largest error ratio to the reference is approximately1.00000106, not bytewise equality.
+
+独立物理与求解实现复核通过：完整场、物理图像和指标最大差约2.31e-12、2.12e-12和1.77e-13，全部原预测字节重放通过。两路共用同一份封存的量化系数，各自重建物理算子、源协方差和未量化参考；这不是两次独立训练或独立量化拟合。
+
+Independent physical and solve implementations agree, with maximum field, physical-image and metric discrepancies of approximately2.31e-12,2.12e-12 and1.77e-13. Every original prediction passes bytewise replay. Both paths share the same sealed quantized coefficients while separately reconstructing the physical operator, source covariance and unquantized reference. This is not independent retraining or independent quantizer fitting.
+
+实际模型文件含路由、尺度与元数据共188.40MB，是不含任何元数据的最小双精度打包全因子375.62MB的50.16%，静态逆表示存储减少49.84%。这是常规数值表示得到的强经典对照，不是神经算法成果，也不是整个项目磁盘或全流程RSS减半。源统计、几何、完整核与因子准备均非免费；两者在线仍各需1次A^T和1次协方差作用，且新表示另有解码工作。没有由此证明速度、exact-call减少、跨轨迹或新机位泛化、外部验证或真实BOST；后续学习内存主张必须公平比较这个更省存储的完整信息对照。
+
+The actual model files, including routing, scales and metadata, occupy188.40MB:50.16% of even a bare minimal packed double-precision full factor at375.62MB, a49.84% static inverse-representation reduction. This established numerical-format technique is a strong classical control, not a neural result or a halving of project disk use or whole-pipeline RSS. Source statistics, geometry, complete-kernel construction and factorization remain nonfree. Both online actions still require one A-transpose and one covariance action, and the new format adds decoding. It establishes no speed advantage, exact-call reduction, held-trajectory or new-layout generalization, external validation or real BOST result. Future learned-memory claims must fairly compare against this lower-storage full-information control.
+
 ## 2026-10-29 | 原始网格上的经典参考余量 / Classical Reference Headroom on the Native Grid
 
 在同一批已开封公开训练源上，预注册的线性Gaussian对照使完整轨迹四指标绝对尾部门由旧参考的8/9提高到9/9。范围为9条轨迹、909个源场、200×80×80原始网格和已知无噪声五相机代理；这是源内参考结果，不是留轨迹泛化或学习算法成功。
